@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", "module": "ESNext", "moduleResolution": "Bundler",
+    "ignoreDeprecations": "6.0",
+    "baseUrl": "..",
+    "paths": {
+      "@/*": ["./src/*"],
+      "three": ["./.check/three-stub.ts"],
+      "three/examples/jsm/utils/BufferGeometryUtils.js": ["./.check/bgu-stub.ts"]
+    }
+  }
+}

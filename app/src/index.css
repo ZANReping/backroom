@@ -1,0 +1,204 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --ink: #0a0908;
+    --panel: #14120c;
+    --panel-edge: #3a3423;
+    --text-dim: #8a8266;
+    --text: #d6cfae;
+    --amber: #e8b93c;
+    --blood: #b3352b;
+    --sanity: #7a6fd0;
+    --stamina: #6f9a55;
+    --hunger: #c98a3d;
+    --exit: #f5e37a;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    background: var(--ink);
+    color: var(--text);
+    overscroll-behavior: none;
+  }
+
+  body {
+    font-family: 'Noto Sans SC', system-ui, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+    overflow: hidden;
+  }
+
+  .font-title {
+    font-family: 'ZCOOL QingKe HuangYou', 'Noto Sans SC', sans-serif;
+    letter-spacing: 0.12em;
+  }
+  .font-mono2 {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+@layer components {
+  .menu-btn {
+    @apply relative block w-full border px-4 py-3 text-left text-[15px] transition-all duration-150;
+    border-color: var(--panel-edge);
+    background: color-mix(in srgb, var(--panel) 80%, transparent);
+    color: var(--text);
+  }
+  .menu-btn:hover,
+  .menu-btn:active {
+    border-color: var(--amber);
+    color: var(--amber);
+    transform: scale(0.98);
+  }
+  .menu-btn::before {
+    content: '▸';
+    position: absolute;
+    left: 8px;
+    opacity: 0;
+    transition: all 0.15s;
+    color: var(--amber);
+  }
+  .menu-btn:hover::before {
+    opacity: 1;
+    left: 12px;
+  }
+  .menu-btn:hover {
+    padding-left: 28px;
+  }
+  .hud-panel {
+    border: 1px solid var(--panel-edge);
+    background: color-mix(in srgb, var(--panel) 85%, transparent);
+    border-radius: 4px;
+  }
+  /* 自定义触屏布局：暂停键被移出时，隐藏 HUD 右上角默认暂停键（由 TouchControls 按自定义位置渲染） */
+  .br-hide-hud-pause .absolute.right-3.top-3 > .flex.gap-2 > button:last-of-type {
+    display: none;
+  }
+  .scanlines::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 60;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0 2px,
+      rgba(0, 0, 0, 0.18) 2px 3px
+    );
+    opacity: 0.6;
+  }
+  .vhs-grain::before {
+    content: '';
+    position: fixed;
+    inset: -100%;
+    pointer-events: none;
+    z-index: 59;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    opacity: 0.06;
+    animation: grain 0.45s steps(4) infinite;
+  }
+}
+
+@keyframes grain {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-4%, 3%); }
+  50% { transform: translate(3%, -5%); }
+  75% { transform: translate(-2%, -2%); }
+  100% { transform: translate(4%, 4%); }
+}
+@keyframes flickerIn {
+  0% { opacity: 0; }
+  30% { opacity: 0.35; }
+  45% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes pulseAmber {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(232, 185, 60, 0.5); }
+  50% { box-shadow: 0 0 12px 2px rgba(232, 185, 60, 0.35); }
+}
+@keyframes barPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+@keyframes toastUp {
+  0% { transform: translateY(0); opacity: 0; }
+  12% { transform: translateY(-24px); opacity: 1; }
+  80% { transform: translateY(-24px); opacity: 1; }
+  100% { transform: translateY(-34px); opacity: 0; }
+}
+@keyframes slideUp {
+  from { transform: translateY(24px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes damageFlash {
+  0% { opacity: 0.65; }
+  100% { opacity: 0; }
+}
+@keyframes glitchJitter {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(1px, -1px); }
+  40% { transform: translate(-1px, 1px); }
+  60% { transform: translate(1px, 1px); }
+  80% { transform: translate(-1px, 0); }
+}
+@keyframes dripDown {
+  from { height: 0; }
+  to { height: 100%; }
+}
+@keyframes whiteout {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+.anim-flickerIn { animation: flickerIn 0.6s steps(3) both; }
+.anim-slideUp { animation: slideUp 0.28s ease-out both; }
+@keyframes hungerPulse {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.015); }
+}
+@keyframes sanityBreathe {
+  0%, 100% { opacity: 0.5; filter: blur(0px); }
+  50% { opacity: 1; filter: blur(2px); }
+}
+@keyframes hpPulse {
+  0%, 100% { opacity: 0.45; }
+  15% { opacity: 1; }
+  30% { opacity: 0.5; }
+}
+@keyframes cornerShadow {
+  0%, 88%, 100% { opacity: 0; }
+  92% { opacity: 1; }
+  96% { opacity: 0.4; }
+}
+@keyframes shatter {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-1px, 1px); }
+  40% { transform: translate(1px, -1px); }
+  60% { transform: translate(-1px, -1px); }
+  80% { transform: translate(1px, 1px); }
+}
+@keyframes lootPop {
+  from { transform: scale(0.6); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.anim-hungerPulse { animation: hungerPulse 2.2s ease-in-out infinite; }
+.anim-sanityBreathe { animation: sanityBreathe 3.2s ease-in-out infinite; }
+.anim-hpPulse { animation: hpPulse 1s ease-in-out infinite; }
+.anim-cornerShadow { animation: cornerShadow 5s linear infinite; }
+.anim-shatter { animation: shatter 0.5s linear infinite; }
+.anim-lootPop { animation: lootPop 0.25s cubic-bezier(0.2, 1.6, 0.4, 1) both; }
+/* 手机横屏：HUD 压缩到两侧，让出画面中心 */
+@media (orientation: landscape) and (pointer: coarse) {
+  .hud-panel { background: color-mix(in srgb, var(--panel) 72%, transparent); }
+  html { font-size: 13px; }
+}
+.anim-pulseAmber { animation: pulseAmber 1.6s ease-in-out infinite; }
+.anim-barPulse { animation: barPulse 1s ease-in-out infinite; }
+.anim-glitch { animation: glitchJitter 0.09s linear infinite; }
+.anim-toast { animation: toastUp 1.6s ease-out both; }
