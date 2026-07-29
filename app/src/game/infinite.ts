@@ -5,7 +5,9 @@
 // 迷宫（回溯 DFS，全覆盖连通）+ 柱群 + 开阔区混合；稀有变体房间见 variantOf。
 import { RNG } from './rng'
 import { UNIVERSAL_ITEMS } from './items'
+import { makeEntity, ENTITIES, type Entity } from './entities'
 import type { GameMap } from './mapgen'
+import { fixHanging, HANGING_KINDS } from './mapgen'
 import type { ExitInstance, GroundItem, LevelDef, LightSource, Structure } from './types'
 
 export const CS = 32 // chunk 边长（瓦片）
@@ -63,7 +65,7 @@ export interface LiveChunk {
   key: string
   cx: number
   cy: number
-  variant: L0Variant
+  variant: string // v29：变体 id（L0=maze/pillars/… L1=aisle/parking/…，宽松化为 string 支持多无限层级）
   tiles: Uint8Array // CS*CS 局部
   wet: Uint8Array
   elev: Uint8Array
@@ -73,6 +75,7 @@ export interface LiveChunk {
   items: GroundItem[]
   lights: LightSource[]
   exits: ExitInstance[]
+  entities: Entity[] // v25：chunk 生成实体（L0 实体绝迹故恒为空；卸载即消失，不持久化动态状态）
 }
 
 // 被卸载 chunk 的动态状态（loot/开门/已读涂鸦/掉落物/追加光源/出口发现）
@@ -95,6 +98,7 @@ export interface InfiniteState {
   rev: number // 窗口版本号（每次平移 +1，渲染层同步用）
   redo?: number // chunk 几何强制重建计数（红室蔓延等全图着色变化时 +1，渲染层据此重建全部已构建 chunk）
   plague?: boolean // 红室蔓延：玩家进入红室后，全部区域（含新生成）强制红室化且不产物资
+  blackout?: boolean // v29：L1 停电事件——stitch 时剔除 gen=1 且无 keep 标记的灯（维护通廊 keep 灯除外）
 }
 
 // ---------- 确定性哈希（负坐标安全）----------
@@ -133,10 +137,15 @@ export function variantOf(seed: number, cx: number, cy: number): L0Variant {
   return r2 < 0.55 ? 'maze' : r2 < 0.8 ? 'pillars' : 'open'
 }
 
+// ---------- 多无限层级注册表（v29：L0 内置；L1 等由 infiniteL1.ts 注册，避免循环依赖）----------
+// 实现位于 infiniteRegistry.ts（无依赖独立模块，防循环初始化 TDZ）
+import { registerInfiniteLevel, infiniteImplFor, type GenChunk } from './infiniteRegistry'
+export { infiniteImplFor, type GenChunk }
+
 // ---------- 边缘开口（两侧 chunk 共享同一边哈希 → 自然缝合）----------
 // 竖直边（cx, cy）|(cx+1, cy) 之间：key = ('v', cx+1, cy)；水平边：('h', cx, cy+1)
 // 开口槽位对齐迷宫格（10 格），开口 2 瓦片宽
-function edgeOpen(seed: number, vertical: boolean, a: number, b: number): boolean[] {
+export function edgeOpen(seed: number, vertical: boolean, a: number, b: number): boolean[] {
   const slots = new Array<boolean>(10).fill(false)
   let count = 0
   for (let k = 0; k < 10; k++) {
@@ -147,9 +156,9 @@ function edgeOpen(seed: number, vertical: boolean, a: number, b: number): boolea
 }
 
 // 台阶编码（与 mapgen 一致：dir(低3位) | lo档<<3 | hi档<<5；档：0正常 1低洼-1.2m）
-const encStep = (dir: number, lo: number, hi: number) => dir | (lo << 3) | (hi << 5)
+export const encStep = (dir: number, lo: number, hi: number) => dir | (lo << 3) | (hi << 5)
 
-// ---------- 出口保底：每 RS×RS chunk 超区域恰有 1 个闪烁门出口 ----------
+// ---------- 出口保底：每 RS×RS chunk 超区域恰有 1 个出口「闪烁的墙壁」 ----------
 export function regionHost(seed: number, rx: number, ry: number): { cx: number; cy: number } {
   return {
     cx: rx * RS + (h32(seed, 0xe11, rx, ry) % RS),
@@ -157,24 +166,12 @@ export function regionHost(seed: number, rx: number, ry: number): { cx: number; 
   }
 }
 // 出口 chunk 内目标点（确定性；实际出口=最近的「地板且邻墙」瓦片）
-function exitTarget(seed: number, cx: number, cy: number): { x: number; y: number } {
+export function exitTarget(seed: number, cx: number, cy: number): { x: number; y: number } {
   return { x: 6 + (h32(seed, 0xe21, cx, cy) % 20), y: 6 + (h32(seed, 0xe22, cx, cy) % 20) }
 }
 
 // ---------- chunk 生成（世界坐标内容；纯函数：同种子同坐标必一致）----------
-interface GenChunk {
-  variant: L0Variant
-  tiles: Uint8Array
-  wet: Uint8Array
-  elev: Uint8Array
-  step: Uint8Array
-  tint: Uint8Array
-  structures: Structure[] // 世界坐标
-  items: GroundItem[]
-  lights: LightSource[]
-  exits: ExitInstance[]
-}
-
+// ---------- chunk 生成（世界坐标内容；纯函数：同种子同坐标必一致；GenChunk 契约见 infiniteRegistry）----------
 function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: number, forceVariant?: L0Variant): GenChunk {
   const variant = forceVariant ?? variantOf(seed, cx, cy)
   const rng = new RNG(h32(seed, cx, cy, 0x1a0))
@@ -187,6 +184,7 @@ function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: number, forc
   const items: GroundItem[] = []
   const lights: LightSource[] = []
   const exits: ExitInstance[] = []
+  const entities: { type: string; x: number; y: number }[] = []
   const li = (x: number, y: number) => y * CS + x
   const isF = (x: number, y: number) => x >= 0 && y >= 0 && x < CS && y < CS && tiles[li(x, y)] === 1
   const WX = cx * CS, WY = cy * CS
@@ -280,8 +278,9 @@ function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: number, forc
       carve(2, 2, CS - 3, CS - 3)
       for (let y = 5; y < CS - 4; y += 6)
         for (let x = 5; x < CS - 4; x += 6)
+          // v29：柱群与柱厅同款——立柱贴墙纸（wp 标记由渲染层处理）
           if (rng.chance(0.85) && Math.abs(x - 16) + Math.abs(y - 16) > 4)
-            pushStruct('pillar', x + rng.int(-1, 1), y + rng.int(-1, 1), 1, 1, true)
+            pushStruct('pillar', x + rng.int(-1, 1), y + rng.int(-1, 1), 1, 1, true, false, { wp: 1 })
       break
     }
     case 'open': {
@@ -356,6 +355,8 @@ function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: number, forc
     case 'arch':
       for (const [lx, ly] of [[10, 15], [16, 11], [21, 16], [14, 20]] as const) pushLight(lx, ly, 4.2, def.palette.light)
       placeWallHug('graffiti', true, { loreKind: 'arch' }, { x0: 8, y0: 11, x1: 23, y1: 20 })
+      // v32：滋水枪——很小概率出现在拱门区域
+      if (rng.chance(0.05)) pushItem('squirtgun', rng.int(10, 21), rng.int(10, 21))
       break
     case 'pillarhall':
       for (const [lx, ly] of [[9, 9], [22, 9], [15, 15], [9, 22], [22, 22]] as const) pushLight(lx, ly, 4, def.palette.light)
@@ -412,6 +413,8 @@ function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: number, forc
       pushItem('megfolder', tx, ty - 1)
       // 文件会随房间的正常变化偶尔消失——报告缺失后需补放
       if (rng.chance(0.75)) pushItem('megfolder', tx + 1, ty - 1)
+      // 桌面文档：M.E.G.「后室重要层级」文档（可交互阅读，查看后存入图鉴）
+      pushStruct('megdoc', tx, ty, 1, 1, false, false, { manila: 1, ontable: 1, doc: 'meg_levels' })
       // 会合点性质：前人留下的少量补给与字条（不属于 wiki 明文陈设，作为可玩性保留且刻意稀疏）
       if (rng.chance(0.55)) pushStruct('crate', rx1 - 2, ry1 - 2, 1, 1, true, true, { loot: 1 })
       if (rng.chance(0.7)) pushItem('almond', rx0 + 2, ry1 - 2)
@@ -419,6 +422,12 @@ function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: number, forc
       // 灯光与 Level 0 几乎完全相同，并发出同样恼人的噪音；亮度剧烈波动、会周期性完全熄灭
       pushStruct('hanglight', midX, midY, 1, 1, false, false, { manila: 1 })
       pushLight(midX, midY, 5.0, '#e5c88f')
+      // v29：马尼拉室固定生成一个「闪烁的墙壁」（房间西北角 (13,13) 的西墙——入口只开在
+      // 四边中点，角部墙体恒完整；与超区域保底出口并存，均通往 Level 1）
+      if (def.exits.length > 0) {
+        exits.push({ def: def.exits[0], x: WX + 13, y: WY + 13, discovered: false })
+        pushLight(13, 13, 2.5, '#f5e37a')
+      }
       break
     }
     case 'red':
@@ -433,7 +442,7 @@ function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: number, forc
 
   // ---- 通用内容（灯光/灯阵/湿地毯/容器/涂鸦/物品；熄灯区无灯）----
   if (variant !== 'blackout') {
-    const nL = variant === 'red' ? 0 : rng.int(5, 9)
+    const nL = variant === 'red' ? 0 : rng.int(0, 3)
     for (let i = 0; i < nL; i++) {
       for (let t = 0; t < 30; t++) {
         const x = rng.int(2, CS - 3), y = rng.int(2, CS - 3)
@@ -442,8 +451,30 @@ function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: number, forc
         break
       }
     }
-    if (rng.chance(0.5)) placeFree('lightgrid', 2, 1, false)
-    if (rng.chance(0.35)) placeFree('hanglight', 1, 1, false)
+    // v29：保底照明——按 8 格间距的 4×4 网格每格至少 1 盏（半径更大、覆盖更均匀），
+    // 确保正常区域（非熄灯区）每隔一段路必定有灯，不再有连续几十格的无灯黑区
+    if (variant !== 'red') {
+      for (let gy = 0; gy < 4; gy++)
+        for (let gx = 0; gx < 4; gx++) {
+          let done = false
+          for (let t = 0; t < 20 && !done; t++) {
+            const x = gx * 8 + rng.int(1, 7), y = gy * 8 + rng.int(1, 7)
+            if (!isF(x, y) || holeAt(x, y)) continue
+            pushLight(x, y, rng.range(5, 7.5), def.palette.light)
+            done = true
+          }
+          // 兜底：随机尝试全落空（格内地板稀少）时，确定性扫描格内第一块可用地板
+          if (!done)
+            outer: for (let y = gy * 8; y < gy * 8 + 8; y++)
+              for (let x = gx * 8; x < gx * 8 + 8; x++) {
+                if (!isF(x, y) || holeAt(x, y)) continue
+                pushLight(x, y, rng.range(5, 7.5), def.palette.light)
+                break outer
+              }
+        }
+      if (rng.chance(0.5)) placeFree('lightgrid', 2, 1, false)
+      if (rng.chance(0.35)) placeFree('hanglight', 1, 1, false)
+    }
   }
   // 湿地毯斑块
   for (let i = 0, n = rng.int(1, 3); i < n; i++) {
@@ -461,7 +492,8 @@ function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: number, forc
   // 物品（独特 + 通用池；磁带低频保底；红室不产任何物资）
   const pool = [...def.items, ...UNIVERSAL_ITEMS]
   for (let i = 0, n = variant === 'red' ? 0 : rng.int(1, 3); i < n; i++) {
-    const t = rng.weighted(pool.map((p) => ({ v: p.type, w: p.w })))
+    const t0 = rng.weighted(pool.map((p) => ({ v: p.type, w: p.w })))
+    const t = t0 === 'almond' && rng.chance(0.1) ? 'cashew' : t0 // v32：腰果水 1/10 概率替代杏仁水
     for (let tr = 0; tr < 30; tr++) {
       const x = rng.int(2, CS - 3), y = rng.int(2, CS - 3)
       if (!isF(x, y) || solidAtL(x, y) || holeAt(x, y)) continue
@@ -478,7 +510,7 @@ function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: number, forc
     }
   }
 
-  // ---- 出口（本 chunk 为所在超区域宿主 → 放置唯一闪烁门）----
+  // ---- 出口（本 chunk 为所在超区域宿主 → 放置唯一「闪烁的墙壁」）----
   const rx = Math.floor(cx / RS), ry = Math.floor(cy / RS)
   const host = regionHost(seed, rx, ry)
   if (host.cx === cx && host.cy === cy && def.exits.length > 0) {
@@ -494,12 +526,95 @@ function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: number, forc
     if (best >= 0) {
       const ex = best % CS, ey = Math.floor(best / CS)
       exits.push({ def: def.exits[0], x: WX + ex, y: WY + ey, discovered: false })
-      pushLight(ex, ey, 3.5, '#f5e37a')
+      pushLight(ex, ey, 2.5, '#f5e37a') // 出口微光（v29：闪烁的墙壁面片本身发光，点光只需柔和烘托）
       placeWallHug('graffiti', true, { loreKind: 'exitguide' }, { x0: Math.max(1, ex - 5), y0: Math.max(1, ey - 5), x1: Math.min(CS - 2, ex + 5), y1: Math.min(CS - 2, ey + 5) })
     }
   }
 
-  return { variant, tiles, wet, elev, step, tint, structures, items, lights, exits }
+  // ---- 罕见出口「向下的灰色阶梯」（每 2×2 超区域 1 个——比闪烁的墙壁稀有 4 倍）----
+  if (def.exits.length > 1 && def.exits[1].kind === 'graystairs') {
+    const R2 = RS * 2
+    const rx2 = Math.floor(cx / R2), ry2 = Math.floor(cy / R2)
+    const host2 = { cx: rx2 * R2 + (h32(seed, 0xe51, rx2, ry2) % R2), cy: ry2 * R2 + (h32(seed, 0xe52, rx2, ry2) % R2) }
+    if (host2.cx === cx && host2.cy === cy) {
+      const tgt = exitTarget(seed, cx, cy)
+      // 楼梯走向需 4 格畅通（玩家要真实走下去；邻墙方向反侧为走向）
+      const runOk = (x: number, y: number) => {
+        for (const [wx, wy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
+          if (isF(x + wx, y + wy)) continue
+          let clear = true
+          for (let k = 1; k <= 4; k++) if (!isF(x - wx * k, y - wy * k) || holeAt(x - wx * k, y - wy * k) || solidAtL(x - wx * k, y - wy * k)) { clear = false; break }
+          if (clear) return [wx, wy]
+        }
+        return null
+      }
+      let best = -1, bd = -1, bdir: number[] | null = null
+      for (let y = 1; y < CS - 1; y++)
+        for (let x = 1; x < CS - 1; x++) {
+          if (!isF(x, y) || solidAtL(x, y) || holeAt(x, y)) continue
+          if (isF(x + 1, y) && isF(x - 1, y) && isF(x, y + 1) && isF(x, y - 1)) continue // 需邻墙
+          const dir = runOk(x, y)
+          if (!dir) continue
+          const d = Math.hypot(x - tgt.x, y - tgt.y) // 尽量远离区域主出口
+          if (d > bd) { bd = d; best = li(x, y); bdir = dir }
+        }
+      if (best >= 0 && bdir) {
+        const ex = best % CS, ey = Math.floor(best / CS)
+        exits.push({ def: def.exits[1], x: WX + ex, y: WY + ey, discovered: false })
+        pushLight(ex, ey, 2.5, '#9aa2b0') // 冷灰微光（与闪烁的墙壁的暖黄光区分）
+        // 走向上的 3 格标为深渊洞口（elev=4）——地面视觉上开洞，踏步真正伸入黑暗
+        for (let k = 1; k <= 3; k++) elev[li(ex - bdir[0] * k, ey - bdir[1] * k)] = 4
+      }
+    }
+  }
+
+  // ---- v25：实体（栖息地过滤，与有限层同一契约）----
+  // L0 设定实体绝迹（def.entities=[]），本块默认不产生任何实体；若未来无限层级配置实体：
+  // indoor=普通地板（chunk 全室内，无 outdoor=1 瓦片）、outdoor=室外瓦片、any=随意；
+  // 无符合瓦片（如 outdoor 栖息地在全室内 chunk）时降级 any 并计数告警。
+  if (def.entities.length > 0) {
+    const outdoorAt = (_x: number, _y: number) => false // L0 chunk 无室外瓦片（全室内）
+    let habMiss = 0
+    for (const se of def.entities) {
+      const hab = ENTITIES[se.type]?.habitat ?? 'any'
+      const n = rng.int(se.min, se.max)
+      for (let i = 0; i < n; i++) {
+        const tryPick = (want: 'indoor' | 'outdoor' | 'any'): { x: number; y: number } | null => {
+          for (let t = 0; t < 40; t++) {
+            const x = rng.int(2, CS - 3), y = rng.int(2, CS - 3)
+            if (!isF(x, y) || solidAtL(x, y) || holeAt(x, y)) continue
+            if (want === 'outdoor' && !outdoorAt(x, y)) continue
+            if (want === 'indoor' && outdoorAt(x, y)) continue
+            return { x, y }
+          }
+          return null
+        }
+        let p = tryPick(hab)
+        if (!p && hab !== 'any') { habMiss++; p = tryPick('any') }
+        if (p) entities.push({ type: se.type, x: WX + p.x + 0.5, y: WY + p.y + 0.5 })
+      }
+    }
+    if (habMiss > 0) console.warn(`[habitat] 无限 chunk(${cx},${cy}) 无符合瓦片，降级 any ×${habMiss}`)
+  }
+
+  // v26：悬挂生成物查重——同一块天花板瓦片不重叠放置多个悬挂物（L0 chunk 全室内必有天花板；
+  // 世界坐标判定，chunk 边界处与邻 chunk 的冲突由窗口缝合后的 fixHanging 兜底）
+  {
+    const taken = new Set<number>()
+    for (let i = 0; i < structures.length; i++) {
+      const s = structures[i]
+      if (!HANGING_KINDS.includes(s.kind)) continue
+      let dup = false
+      for (let ty = Math.floor(s.y); ty < Math.floor(s.y + s.h) && !dup; ty++)
+        for (let tx = Math.floor(s.x); tx < Math.floor(s.x + s.w) && !dup; tx++)
+          if (taken.has(ty * 4096 + tx)) dup = true
+      if (dup) { structures.splice(i, 1); i--; continue }
+      for (let ty = Math.floor(s.y); ty < Math.floor(s.y + s.h); ty++)
+        for (let tx = Math.floor(s.x); tx < Math.floor(s.x + s.w); tx++) taken.add(ty * 4096 + tx)
+    }
+  }
+
+  return { variant, tiles, wet, elev, step, tint, structures, items, lights, exits, entities }
 }
 
 // ================= 窗口管理：加载/卸载/平移/状态持久化 =================
@@ -516,14 +631,18 @@ function mapSetCapped<K, V>(map: Map<K, V>, key: K, val: V, cap: number) {
 // 由确定性 raw 数据 + 持久动态状态实例化「活体」chunk（窗口坐标对象）
 function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, ox: number, oy: number): LiveChunk {
   const key = chunkKey(cx, cy)
-  const raw = genL0ChunkRaw(def, inf.seed, cx, cy, inf.plague ? 'red' : undefined)
+  const raw = infiniteImplFor(def.id).genRaw(def, inf.seed, cx, cy, inf.plague ? 'red' : undefined)
   const st = inf.state.get(key)
   const structures: Structure[] = raw.structures.map((s) => {
     const live: Structure = { ...s, x: s.x - ox, y: s.y - oy, data: s.data ? { ...s.data } : undefined }
     const saved = st?.structs.find((q) => q.sid === (s.data?.sid as number | undefined))
     if (saved) {
       if (saved.looted) live.looted = true
-      if (saved.data) live.data = { ...live.data, ...saved.data }
+      if (saved.data) {
+        live.data = { ...live.data, ...saved.data }
+        // v31：可交互门（维护通廊墨黑金属门）——恢复 open 时同步 solid（开门不阻挡）
+        if (live.kind === 'inkdoor' && saved.data.open !== undefined) live.solid = !saved.data.open
+      }
     }
     return live
   })
@@ -537,7 +656,9 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
   const lights: LightSource[] = raw.lights.map((l) => ({ ...l, x: l.x - ox, y: l.y - oy }))
   for (const e of st?.extraLights ?? []) lights.push({ ...e, x: e.x - ox, y: e.y - oy })
   const exits: ExitInstance[] = raw.exits.map((e) => ({ def: e.def, x: e.x - ox, y: e.y - oy, discovered: st?.exitDisc ?? false }))
-  return { key, cx, cy, variant: raw.variant, tiles: raw.tiles, wet: raw.wet, elev: raw.elev, tint: raw.tint, structures, items, lights, exits }
+  // v25：chunk 实体（栖息地过滤结果，世界坐标 → 窗口坐标）
+  const entities: Entity[] = raw.entities.map((e) => makeEntity(e.type, e.x - ox, e.y - oy))
+  return { key, cx, cy, variant: raw.variant, tiles: raw.tiles, wet: raw.wet, elev: raw.elev, tint: raw.tint, structures, items, lights, exits, entities }
 }
 
 // 把已加载 chunk 内容缝合进窗口数组与对象列表
@@ -568,6 +689,8 @@ function stitch(m: GameMap, explored?: Uint8Array) {
     m.items.push(...c.items.filter((it) => !inf.taken.has(it.id)))
     m.lights.push(...c.lights)
     m.exits.push(...c.exits)
+    // v25：chunk 实体按对象身份并入（不重建 m.entities，保留活体状态；已死实体由引擎清理）
+    for (const e of c.entities) if (!e.dead && !m.entities.includes(e)) m.entities.push(e)
     if (explored) {
       const bm = inf.explored.get(c.key)
       if (bm)
@@ -575,6 +698,8 @@ function stitch(m: GameMap, explored?: Uint8Array) {
           for (let x = 0; x < CS; x++) if (bm[y * CS + x]) explored[(y0 + y) * W + x0 + x] = 1
     }
   }
+  // v29：L1 停电事件——剔除层级固有灯（维护通廊 keep 灯与玩家追加灯保留）
+  if (inf.blackout) m.lights = m.lights.filter((l) => l.keep === 1 || !l.gen)
   // pit 台阶重建：低洼与正常高度交界处生成双向坡道（确定性，与生成器一致）
   for (let y = 0; y < W; y++)
     for (let x = 0; x < W; x++) {
@@ -585,6 +710,14 @@ function stitch(m: GameMap, explored?: Uint8Array) {
       else if (y > 0 && m.elev[i - W] === 0) m.step[i] = encStep(4, 1, 0)
       else if (y < W - 1 && m.elev[i + W] === 0) m.step[i] = encStep(3, 1, 0)
     }
+  // v26：窗口级悬挂物兜底校验（跨 chunk 边界查重/天花板依附；冲突就近移位或取消）。
+  // m.structures 与 LiveChunk.structures 共享对象引用——取消项需同步回各 chunk，
+  // 否则下次窗口平移重新缝合时被移除的悬挂物会复活
+  fixHanging(m)
+  for (const c of inf.chunks.values()) {
+    if (c.structures.some((s) => HANGING_KINDS.includes(s.kind)))
+      c.structures = c.structures.filter((s) => m.structures.includes(s))
+  }
 }
 
 // 保存窗口已探索位图到各 chunk（平移/卸载前调用）
@@ -633,12 +766,15 @@ function evictChunk(m: GameMap, c: LiveChunk) {
     if (!l.gen) st.extraLights.push({ ...l, x: l.x + inf.ox, y: l.y + inf.oy })
   }
   for (const e of c.exits) if (e.discovered) st.exitDisc = true
+  // v25：卸载 chunk 时其实体一并移出窗口（不持久化；重访时按 raw 栖息地过滤结果重建）
+  if (c.entities.length > 0) m.entities = m.entities.filter((e) => !c.entities.includes(e))
   mapSetCapped(inf.state, c.key, st, STATE_CAP)
   inf.chunks.delete(c.key)
 }
 
-// 初始生成（L0 无限模式入口）
-export function generateInfiniteL0(def: LevelDef, seed: number): GameMap {
+// 初始生成（无限层级入口；v29 泛化：按 def.id 经注册表分派 chunk 生成器）
+// v29：firstVisit=false 时跳过出生点物资散落（初始物资仅首次到层刷新，杜绝往返刷物资）
+export function generateInfinite(def: LevelDef, seed: number, firstVisit = true): GameMap {
   const W = WIN_TILES
   const m: GameMap = {
     w: W, h: W,
@@ -668,17 +804,21 @@ export function generateInfiniteL0(def: LevelDef, seed: number): GameMap {
     for (let cx = -WIN_R; cx <= WIN_R; cx++)
       inf.chunks.set(chunkKey(cx, cy), instantiate(def, inf, cx, cy, inf.ox, inf.oy))
   stitch(m)
-  // 出生点：世界原点 chunk 中心迷宫格（格(4,4) 覆盖局部 14..15，保证地板；兜底螺旋找地板）
+  // 出生点：世界原点 chunk 中心（局部 15,15）；兜底螺旋找「地板且无实心结构遮挡」的落点
   const spx = WIN_R * CS + 15, spy = WIN_R * CS + 15
   m.spawn = { x: spx, y: spy }
-  if (m.tiles[spy * W + spx] !== 1) {
+  const spawnBlocked = (x: number, y: number) =>
+    x < 0 || y < 0 || x >= W || y >= W || m.tiles[y * W + x] !== 1 ||
+    m.structures.some((s) => s.solid && x >= s.x && x < s.x + s.w && y >= s.y && y < s.y + s.h)
+  if (spawnBlocked(spx, spy)) {
     outer: for (let r = 1; r < 10; r++)
       for (let j = -r; j <= r; j++)
         for (let i = -r; i <= r; i++)
-          if (m.tiles[(spy + j) * W + spx + i] === 1) { m.spawn = { x: spx + i, y: spy + j }; break outer }
+          if (!spawnBlocked(spx + i, spy + j)) { m.spawn = { x: spx + i, y: spy + j }; break outer }
   }
   // 开局物资散落（玩家一无所有：绷带 + 杏仁水 + 手电筒 + 随机消耗品，散在出生点周围）
-  {
+  // v29：仅 Level 0 首次到层（firstVisit）刷新——重访不再重复生成；Level 1 起不再发放
+  if (firstVisit && def.id === 0) {
     const rng0 = new RNG(h32(seed, 0x5eed))
     const scatter = ['bandage', 'almond', 'flashlight', rng0.pick(['bandage', 'canned', 'battery', 'glowstick', 'coffee'])]
     const solidAt0 = (x: number, y: number) =>
@@ -738,6 +878,7 @@ export function updateInfinite(m: GameMap, def: LevelDef, px: number, py: number
     for (const it of c.items) { it.x -= dx; it.y -= dy }
     for (const l of c.lights) { l.x -= dx; l.y -= dy }
     for (const e of c.exits) { e.x -= dx; e.y -= dy }
+    for (const e of c.entities) { e.x -= dx; e.y -= dy } // v25
   }
   inf.ox = nox; inf.oy = noy
   // 加载新进入窗口的 chunk
@@ -774,7 +915,7 @@ export function l0RegionExitPos(m: GameMap, rx: number, ry: number, def: LevelDe
   const hit = inf.regionExits.get(key)
   if (hit) return hit
   const host = regionHost(inf.seed, rx, ry)
-  const raw = genL0ChunkRaw(def, inf.seed, host.cx, host.cy, inf.plague ? 'red' : undefined)
+  const raw = infiniteImplFor(def.id).genRaw(def, inf.seed, host.cx, host.cy, inf.plague ? 'red' : undefined)
   const e = raw.exits[0]
   if (!e) return null
   const pos = { x: e.x + 0.5, y: e.y + 0.5 }
@@ -800,7 +941,8 @@ export function l0NearestExit(m: GameMap, def: LevelDef, wx: number, wy: number)
 }
 
 // ---------- 开发者/测试辅助：搜索最近指定变体 chunk（世界坐标中心）----------
-export function findNearestVariant(seed: number, wx: number, wy: number, kind: L0Variant, maxR = 60): { cx: number; cy: number; d: number } | null {
+// v29：fn 参数支持多无限层级（缺省 L0 variantOf；L1 传 infiniteImplFor(1).variantOf）
+export function findNearestVariant(seed: number, wx: number, wy: number, kind: string, maxR = 60, fn: (seed: number, cx: number, cy: number) => string = variantOf): { cx: number; cy: number; d: number } | null {
   const pcx = Math.floor(wx / CS), pcy = Math.floor(wy / CS)
   let bcx = 0, bcy = 0, bd = 1e9, found = false
   for (let r = 0; r <= maxR; r++) {
@@ -808,7 +950,7 @@ export function findNearestVariant(seed: number, wx: number, wy: number, kind: L
       for (let dx = -r; dx <= r; dx++) {
         if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue
         const cx = pcx + dx, cy = pcy + dy
-        if (variantOf(seed, cx, cy) !== kind) continue
+        if (fn(seed, cx, cy) !== kind) continue
         const d = Math.hypot(dx, dy)
         if (d < bd) { bd = d; bcx = cx; bcy = cy; found = true }
       }
@@ -816,3 +958,17 @@ export function findNearestVariant(seed: number, wx: number, wy: number, kind: L
   }
   return null
 }
+
+// ---------- v29：外部触发重缝合（停电恢复等需要立即按当前 chunk 重建窗口数组）----------
+export function restitch(m: GameMap) {
+  if (m.inf) stitch(m)
+}
+
+// L0 注册（内置层级；L1 等由 infiniteL1.ts 自行注册）
+registerInfiniteLevel(0, {
+  genRaw: (def, seed, cx, cy, fv) => genL0ChunkRaw(def, seed, cx, cy, fv as L0Variant | undefined),
+  variantOf,
+  rareVariants: RARE_VARIANTS,
+  variantNames: VARIANT_NAMES,
+  variantLore: VARIANT_LORE,
+})

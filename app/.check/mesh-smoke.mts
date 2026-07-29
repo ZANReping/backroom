@@ -69,6 +69,7 @@ const KINDS: StructKind[] = [
   'towerblock','blackwindow','shopfront','subwayent','arcadecab','megsign',
   'libshelf','endletters','homedoor',
   'locker','toolbox','suitcase','fridge','safebox',
+  'column','roundarch','scaffold','roadblock','inkdoor','megdoc',
 ]
 const DEF = LEVELS[11]
 const MAP = generateLevel(LEVELS[11], 4242)

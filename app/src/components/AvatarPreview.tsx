@@ -8,10 +8,11 @@ interface Props {
   avatar: AvatarCfg
   gloves?: boolean
   suit?: boolean
+  divemask?: boolean // 头饰栏装备潜水面罩
   size?: number
 }
 
-export default function AvatarPreview({ avatar, gloves, suit, size = 150 }: Props) {
+export default function AvatarPreview({ avatar, gloves, suit, divemask, size = 150 }: Props) {
   const ref = useRef<HTMLCanvasElement>(null)
   const key = JSON.stringify(avatar)
   useEffect(() => {
@@ -31,7 +32,7 @@ export default function AvatarPreview({ avatar, gloves, suit, size = 150 }: Prop
     const rim = new THREE.DirectionalLight(0x9ab0d0, 0.55)
     rim.position.set(-2, 1.4, -1.6)
     scene.add(rim)
-    const model = buildPlayerModel(JSON.parse(key) as AvatarCfg, { gloves, suit })
+    const model = buildPlayerModel(JSON.parse(key) as AvatarCfg, { gloves, suit, divemask })
     scene.add(model)
     let raf = 0
     const loop = (t: number) => {
@@ -45,6 +46,6 @@ export default function AvatarPreview({ avatar, gloves, suit, size = 150 }: Prop
       model.traverse((o) => { const m = o as THREE.Mesh; if (m.geometry) m.geometry.dispose() })
       r.dispose()
     }
-  }, [key, gloves, suit, size])
+  }, [key, gloves, suit, divemask, size])
   return <canvas ref={ref} style={{ width: size, height: Math.round(size * 1.45), imageRendering: 'auto' }} />
 }

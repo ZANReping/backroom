@@ -43,6 +43,11 @@ export interface EntityDef {
   smokeShroud?: boolean // 自身生成浓密翻涌的烟雾遮蔽真身（残破者）
   huge?: number // 巨型体量缩放（>1 时渲染放大且不进窄道）
   secondArms?: boolean // 胸甲内藏第二对带爪手臂（派对客）
+  // ===== v25：栖息地（生成位置过滤）=====
+  // indoor=仅室内瓦片（m.outdoor=0）；outdoor=仅室外瓦片（m.outdoor=1，如小巷/街道/田野/海面）；
+  // any（缺省）=随意。生成时无符合瓦片则降级 any 并计数告警。
+  habitat?: 'indoor' | 'outdoor' | 'any'
+  aquatic?: boolean // 水生：outdoor 栖息地额外接受水域瓦片（liquid≠0，如 L7 海面）
   color: string
   desc: string // 图鉴外形简述（初见解锁）
   codex: EntityCodex

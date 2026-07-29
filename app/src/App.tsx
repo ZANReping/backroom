@@ -19,9 +19,11 @@ import FallIntro from '@/components/FallIntro'
 import HUD, { type LogEntry, type Toast } from '@/components/HUD'
 import TouchControls from '@/components/TouchControls'
 import PauseMenu from '@/components/PauseMenu'
-import InventoryOverlay, { discoverFromEngine } from '@/components/InventoryOverlay'
+import InventoryOverlay, { discoverFromEngine, loadCodex, saveCodex } from '@/components/InventoryOverlay'
+import DocOverlay from '@/components/DocOverlay'
 import AvatarEditor from '@/components/AvatarEditor'
 import DeathScreen from '@/components/DeathScreen'
+import NotebookOverlay from '@/components/NotebookOverlay'
 import VictoryScreen from '@/components/VictoryScreen'
 import LootPanel from '@/components/LootPanel'
 import FullscreenHint from '@/components/FullscreenHint'
@@ -29,7 +31,7 @@ import LayoutEditor, { loadTouchLayout, type TouchLayoutStore } from '@/componen
 import Cutscene, { type CutKind, type CutIn } from '@/components/Cutscene'
 
 type Screen = 'title' | 'intro' | 'game' | 'fall'
-type Overlay = 'none' | 'settings' | 'howto' | 'pause' | 'inventory' | 'codex' | 'death' | 'victory' | 'avatar'
+type Overlay = 'none' | 'settings' | 'howto' | 'pause' | 'inventory' | 'codex' | 'death' | 'victory' | 'avatar' | 'notebook' | 'doc'
 
 // 冒烟测试钩子（Playwright page.evaluate 用）
 if (typeof window !== 'undefined') {
@@ -83,6 +85,7 @@ function Game() {
   const pendingIntro = useRef(false)
   const [fallDmg, setFallDmg] = useState<number | null>(null)
   const [deathCause, setDeathCause] = useState('')
+  const [docId, setDocId] = useState('meg_levels')
   const [invTab, setInvTab] = useState<'背包' | '地图'>('背包')
   const [hasSave, setHasSave] = useState(() => !!storage.get('br_save'))
   const [, setTick] = useState(0)
@@ -180,9 +183,22 @@ function Game() {
         case 'levelchange':
           setFallDmg(null)
           break
+        case 'notebook':
+          setOverlay('notebook')
+          break
+        case 'doc': {
+          // 阅读 M.E.G. 文档：打开文档视图，并解锁图鉴「文档」存档
+          const id = e.text ?? 'meg_levels'
+          const c = loadCodex()
+          if (!c[`doc_${id}`]) { c[`doc_${id}`] = true; saveCodex(c) }
+          setDocId(id)
+          setOverlay('doc')
+          break
+        }
       }
     }
-    engine.on(handler)
+    // 返回取消订阅函数作为清理：StrictMode 双调用/HMR 重挂载时不再累积监听器（播报重复好几遍的根因）
+    return engine.on(handler)
   }, [addLog])
 
   // 开始新一局（先播开场坠落动画 FallIntro，淡出时进入游戏并播爬起动画）
@@ -384,14 +400,14 @@ function Game() {
         engine.player.x = attractMap.spawn.x + 0.5
         engine.player.y = attractMap.spawn.y + 0.5
         engine.player.flashlight = true
-        renderer.render(canvas, engine, { grain: settings.grain, flicker: settings.flicker / 100, shake: false }, dt)
+        renderer.render(canvas, engine, { grain: settings.grain, flicker: settings.flicker / 100, shake: false, dust: settings.dust }, dt)
         engine.player.x = px; engine.player.y = py
         engine.player.flashlight = fl
         engine.map = savedMap
       } else {
         renderer.applyView(engine)
         engine.update(dt)
-        renderer.render(canvas, engine, { grain: settings.grain, flicker: settings.flicker / 100, shake: settings.shake }, dt)
+        renderer.render(canvas, engine, { grain: settings.grain, flicker: settings.flicker / 100, shake: settings.shake, dust: settings.dust }, dt)
       }
 
       hudAcc += dt
@@ -409,7 +425,17 @@ function Game() {
       window.removeEventListener('wheel', onWheel)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [settings.grain, settings.flicker, settings.shake, settings.dynamicRes])
+  }, [settings.grain, settings.dust, settings.flicker, settings.shake, settings.dynamicRes])
+
+  // 画面设置：手电实时阴影（移动端强制关闭）
+  useEffect(() => {
+    rendererRef.current?.setShadows(settings.shadows && !isMobile)
+  }, [settings.shadows, isMobile])
+
+  // 画面设置：战争迷雾（距离雾）
+  useEffect(() => {
+    rendererRef.current?.setFog(settings.fogOfWar)
+  }, [settings.fogOfWar])
 
   const quitToTitle = () => {
     engine.over = true
@@ -421,9 +447,15 @@ function Game() {
 
   const levelDef = engine.levelDef
 
+  // 现象「孤立效应」附加表现：Level 0 内对画布施加极轻微的画面微调色（每次进层重新随机）
+  const cg = engine.colorGrade
+  const gradeFilter = engine.player.level === 0 && (cg.hue !== 0 || cg.sat !== 1 || cg.con !== 1 || cg.bri !== 1)
+    ? `hue-rotate(${cg.hue.toFixed(2)}deg) saturate(${cg.sat.toFixed(3)}) contrast(${cg.con.toFixed(3)}) brightness(${cg.bri.toFixed(3)})`
+    : undefined
+
   return (
     <div className={`fixed inset-0 overflow-hidden ${settings.grain ? 'vhs-grain scanlines' : 'scanlines'} ${customPause ? 'br-hide-hud-pause' : ''}`} style={{ background: 'var(--ink)' }}>
-      <canvas ref={canvasRef} style={{ position: 'fixed', top: 0, left: 0, zIndex: 1 }} />
+      <canvas ref={canvasRef} style={{ position: 'fixed', top: 0, left: 0, zIndex: 1, filter: gradeFilter }} />
 
       {/* 受伤闪屏 */}
       {damageFlash > 0 && (
@@ -431,6 +463,16 @@ function Game() {
       )}
       {sanityFlash > 0 && (
         <div key={sanityFlash} className="pointer-events-none fixed inset-0 z-40" style={{ boxShadow: 'inset 0 0 120px 40px rgba(122,111,208,0.6)', animation: 'damageFlash 0.3s ease-out both' }} />
+      )}
+      {/* v30 植殖癌：视野逐渐变绿（绿色浸染 + 绿植色 vignette，随 engine.plantK 渐变） */}
+      {engine.plantK > 0.01 && (
+        <div
+          className="pointer-events-none fixed inset-0 z-40"
+          style={{
+            background: `rgba(74,140,58,${(engine.plantK * 0.26).toFixed(3)})`,
+            boxShadow: `inset 0 0 ${Math.round(120 + engine.plantK * 180)}px ${Math.round(40 + engine.plantK * 60)}px rgba(42,104,38,${(0.2 + engine.plantK * 0.6).toFixed(3)})`,
+          }}
+        />
       )}
 
       {/* 出口过渡动画（v23：切入切出过场演出）*/}
@@ -487,6 +529,12 @@ function Game() {
       {/* 战利品面板（容器搜索）*/}
       {screen === 'game' && overlay === 'none' && engine.lootPanel && (
         <LootPanel engine={engine} onClose={() => { engine.closeLootPanel(); setTick((n) => n + 1) }} />
+      )}
+      {overlay === 'notebook' && (
+        <NotebookOverlay onClose={() => setOverlay('none')} />
+      )}
+      {overlay === 'doc' && (
+        <DocOverlay docId={docId} onClose={() => setOverlay('none')} />
       )}
       <FullscreenHint />
       {screen === 'game' && isMobile && overlay === 'none' && (

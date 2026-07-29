@@ -35,6 +35,7 @@ export const L8: LevelDef = {
     { type: 'driedfruit', w: 12 },
     { type: 'uvlamp', w: 8 },
     { type: 'stonekazoo', w: 5 },
+    { type: 'fuyouyu', w: 1 }, // v32：福友玉——很小概率
   ],
   itemCount: [13, 18],
   structures: ['stalagspike', 'handspike', 'glowshroom', 'tarhands', 'roadsign', 'campstall', 'bonepile', 'crate', 'corpse', 'ladder'],

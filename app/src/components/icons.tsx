@@ -55,6 +55,12 @@ export const IconFullscreen = (p: SVGProps<SVGSVGElement>) => (
 export const IconFullscreenExit = (p: SVGProps<SVGSVGElement>) => (
   <svg {...base(p)}><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" /></svg>
 )
+export const IconIsolation = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base(p)}><circle cx="12" cy="7.5" r="2.5" /><path d="M7 19.5c0-3 2.2-4.8 5-4.8s5 1.8 5 4.8" /><path d="M2 12h2.5M19.5 12H22" /></svg>
+)
+export const IconPlant = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base(p)}><path d="M12 21v-9" /><path d="M12 12c0-4 2.5-6.5 7-6.5 0 4-2.5 6.5-7 6.5z" /><path d="M12 15c0-3.5-2.2-5.5-6-5.5 0 3.5 2.2 5.5 6 5.5z" /></svg>
+)
 export const IconSkull = (p: SVGProps<SVGSVGElement>) => (
   <svg {...base(p)}><path d="M12 3a8 8 0 0 0-8 8c0 3 1.5 5 3.5 6.5V21h9v-3.5C18.5 16 20 14 20 11a8 8 0 0 0-8-8z" /><path d="M9 11h.01M15 11h.01" strokeWidth="3" /></svg>
 )

@@ -1,7 +1,7 @@
 // 渲染器公共工具：常量/调色/几何与程序化纹理基础
 import * as THREE from 'three'
 
-export interface RenderOpts { grain: boolean; flicker: number; shake: boolean }
+export interface RenderOpts { grain: boolean; flicker: number; shake: boolean; dust: boolean }
 
 // 视角共享状态（桌面 Pointer Lock / 移动端右半屏拖动写入）
 export const look = { yaw: 0, pitch: 0, locked: false }
@@ -71,12 +71,13 @@ const texCache = new Map<string, THREE.Texture>()
 // 导致墙纸静默退化为纯色噪点兜底。构建产物的 JS 模块一定位于 <base>assets/ 下，
 // 用 import.meta.url 向上推导 <base>textures/ 与页面路径完全解耦；dev 下回退 BASE_URL。
 function textureUrl(name: string): string {
+  const file = name.includes('.') ? name : `${name}.jpg` // 允许显式带扩展名（如 manila_wallpaper.png）
   try {
     const mod = import.meta.url
-    if (mod.includes('/assets/')) return new URL(`../textures/${name}.jpg`, mod).href
+    if (mod.includes('/assets/')) return new URL(`../textures/${file}`, mod).href
   } catch { /* dev/旧浏览器回退 */ }
-  const base = (import.meta.env.BASE_URL ?? '/').replace(/\/?$/, '/')
-  return `${base}textures/${name}.jpg`
+  const base = ((import.meta.env?.BASE_URL as string | undefined) ?? '/').replace(/\/?$/, '/')
+  return `${base}textures/${file}`
 }
 export function levelTexture(name: string, fallback: () => THREE.Texture): THREE.Texture {
   const cached = texCache.get(name)
@@ -87,19 +88,21 @@ export function levelTexture(name: string, fallback: () => THREE.Texture): THREE
   ph.wrapS = THREE.RepeatWrapping
   ph.wrapT = THREE.RepeatWrapping
   texCache.set(name, ph)
-  const url = textureUrl(name)
-  new THREE.TextureLoader().load(
-    url,
-    (t) => {
-      ph.image = t.image
-      ph.magFilter = THREE.LinearFilter
-      ph.minFilter = THREE.LinearMipmapLinearFilter
-      ph.generateMipmaps = true
-      ph.needsUpdate = true
-    },
-    undefined,
-    (err) => { console.warn(`[textures] ${url} 加载失败，保留程序化兜底`, err) },
-  )
+  try {
+    const url = textureUrl(name)
+    new THREE.TextureLoader().load(
+      url,
+      (t) => {
+        ph.image = t.image
+        ph.magFilter = THREE.LinearFilter
+        ph.minFilter = THREE.LinearMipmapLinearFilter
+        ph.generateMipmaps = true
+        ph.needsUpdate = true
+      },
+      undefined,
+      (err) => { console.warn(`[textures] ${url} 加载失败，保留程序化兜底`, err) },
+    )
+  } catch { /* 离线校验/桩环境无 TextureLoader：保留程序化兜底 */ }
   return ph
 }
 
@@ -126,6 +129,57 @@ export function noiseTexture(base: string, alt: string, n = 128): THREE.CanvasTe
   return tex
 }
 
+
+// v26：马尼拉室墙纸——程序化同步生成（无异步加载，杜绝"纹理未换入"回归）。
+// 近白底细竖条纹：顶点色 #e5c88f（马尼拉文件夹暖米色）与之叠乘后呈现带条纹的米色墙纸，
+// 世界空间 UV（1m 一循环）下条纹宽约 3.9cm，与 L0 黄墙纸同密度、跨墙盒无缝。
+let manilaWallTex: THREE.CanvasTexture | null = null
+export function manilaWallTexture(): THREE.CanvasTexture {
+  if (manilaWallTex) return manilaWallTex
+  const n = 256
+  const c = document.createElement('canvas')
+  c.width = c.height = n
+  const g = c.getContext('2d')!
+  // 26 列竖条纹（一图覆盖 1m → 列宽 ≈3.9cm），明暗交替 + 轻微抖动
+  const rng = mulberry(0x9e3779b9)
+  for (let i = 0; i < 26; i++) {
+    const x = Math.floor((i * n) / 26)
+    const w = Math.ceil(n / 26)
+    const base = i % 2 === 0 ? 246 : 232
+    const jit = Math.floor(rng() * 8)
+    g.fillStyle = `rgb(${base - jit},${base - 6 - jit},${base - 26 - jit})`
+    g.fillRect(x, 0, w, n)
+  }
+  // 纸面斑驳（细密噪点，做旧但保持浅色调）
+  const img = g.getImageData(0, 0, n, n)
+  for (let i = 0; i < n * n; i++) {
+    const v = (rng() - 0.5) * 14
+    img.data[i * 4] = Math.max(0, Math.min(255, img.data[i * 4] + v))
+    img.data[i * 4 + 1] = Math.max(0, Math.min(255, img.data[i * 4 + 1] + v))
+    img.data[i * 4 + 2] = Math.max(0, Math.min(255, img.data[i * 4 + 2] + v))
+  }
+  g.putImageData(img, 0, 0)
+  // 底部踢脚阴影线 + 偶发水渍痕（竖向渐变暗条），近景更有「旧墙纸」质感
+  const grad = g.createLinearGradient(0, n - 26, 0, n)
+  grad.addColorStop(0, 'rgba(90,70,40,0)')
+  grad.addColorStop(1, 'rgba(90,70,40,0.22)')
+  g.fillStyle = grad
+  g.fillRect(0, n - 26, n, 26)
+  for (let k = 0; k < 4; k++) {
+    const sx = rng() * n, sw = 3 + rng() * 7, sh = 40 + rng() * 90
+    const st = g.createLinearGradient(0, 0, 0, sh)
+    st.addColorStop(0, 'rgba(120,95,55,0.10)')
+    st.addColorStop(1, 'rgba(120,95,55,0)')
+    g.fillStyle = st
+    g.fillRect(sx, 0, sw, sh)
+  }
+  manilaWallTex = new THREE.CanvasTexture(c)
+  manilaWallTex.colorSpace = THREE.SRGBColorSpace
+  manilaWallTex.wrapS = THREE.RepeatWrapping
+  manilaWallTex.wrapT = THREE.RepeatWrapping
+  manilaWallTex.anisotropy = 4
+  return manilaWallTex
+}
 
 // 确定性随机（装饰摆放随地图稳定）
 export function mulberry(seed: number): () => number {

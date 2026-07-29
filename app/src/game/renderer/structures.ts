@@ -203,17 +203,50 @@ function emit(mesh: THREE.Mesh, hex: string, intensity = 1): THREE.Mesh {
   return mesh
 }
 
+// 绿色 EXIT 指示灯牌（程序纹理：深底绿字；levelTexture 全局缓存）
+function exitSignTexture(): THREE.Texture {
+  return levelTexture('exit_sign_v1', () => {
+    const [cv, c] = makeCanvasCtx(96, 32)
+    c.fillStyle = '#06210f'
+    c.fillRect(0, 0, 96, 32)
+    c.strokeStyle = '#1d5c33'
+    c.strokeRect(1.5, 1.5, 93, 29)
+    c.fillStyle = '#3aff72'
+    c.font = 'bold 20px monospace'
+    c.textAlign = 'center'
+    c.textBaseline = 'middle'
+    c.fillText('EXIT', 48, 17)
+    return toTex(cv)
+  })
+}
+
+// v26：悬挂物贴合天花板底面——按所在瓦片的实际顶高（挑高=H*1.75 / 上层楼板底 2.65 / 普通=H），
+// 取代旧版一律用层高 H（挑高区吊灯悬空在半天、楼板下的灯嵌进楼板底）
+function hangingCeil(s: Structure, m: GameMap, H: number): number {
+  const tx = Math.floor(s.x + s.w / 2), ty = Math.floor(s.y + s.h / 2)
+  if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return H
+  const i = ty * m.w + tx
+  if (m.up && m.up[i] === 1) return 2.65
+  if (m.ceiling && m.ceiling[i] === 1) return H * 1.75
+  return H
+}
+
 // ---------- 结构低模 ----------
 export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: number): THREE.Object3D | null {
   const grp = new THREE.Group()
   const cx = s.x + s.w / 2, cz = s.y + s.h / 2
   const H = wallH
+  const CH = hangingCeil(s, m, H) // v26：本瓦片天花板底面高度（悬挂物专用）
   switch (s.kind) {
     case 'pillar': {
-      // data.wp=1（L0 柱厅）：立柱贴墙纸，与墙面同材质观感
-      if (s.data?.wp) grp.add(wallpaperBox(0.75, H, 0.75, _def, 0, H / 2, 0))
-      else grp.add(box(0.75, H, 0.75, '#6b6b6e', 0, H / 2, 0))
-      grp.add(box(0.9, 0.25, 0.9, '#555558', 0, 0.12, 0))
+      // data.wp=1（L0 柱厅/柱群）：立柱贴墙纸，与墙面同材质观感；柱底同样贴墙纸
+      if (s.data?.wp) {
+        grp.add(wallpaperBox(0.75, H, 0.75, _def, 0, H / 2, 0))
+        grp.add(wallpaperBox(0.9, 0.25, 0.9, _def, 0, 0.12, 0))
+      } else {
+        grp.add(box(0.75, H, 0.75, '#6b6b6e', 0, H / 2, 0))
+        grp.add(box(0.9, 0.25, 0.9, '#555558', 0, 0.12, 0))
+      }
       break
     }
     case 'car': {
@@ -329,14 +362,14 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       break
     }
     case 'ballroom': {
-      // 吊灯
-      grp.add(cyl(0.04, 0.04, H - 2.0, '#b08d46', 0, H - (H - 2.0) / 2, 0))
+      // 吊灯（v26：吊链顶端贴合本瓦片天花板底面）
+      grp.add(cyl(0.04, 0.04, CH - 2.0, '#b08d46', 0, CH - (CH - 2.0) / 2, 0))
       grp.add(cyl(0.7, 0.9, 0.4, '#b08d46', 0, 1.95, 0, 10))
       grp.add(glow(0.6, 0.25, 0.6, '#ffd9a0', 0, 1.75, 0))
       break
     }
     case 'lightgrid': {
-      grp.add(glow(s.w * 0.9, 0.06, 0.3, '#fff6d8', 0, H - 0.04, 0))
+      grp.add(glow(s.w * 0.9, 0.06, 0.3, '#fff6d8', 0, CH - 0.05, 0)) // v26：灯排贴天花板底面
       break
     }
     case 'bed': {
@@ -429,6 +462,28 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       else if (d === 3) { vgrp.position.set(-0.5 + off, vy, 0); vgrp.rotation.y = Math.PI / 2 }
       else { vgrp.position.set(0.5 - off, vy, 0); vgrp.rotation.y = -Math.PI / 2 }
       grp.add(vgrp)
+      break
+    }
+    case 'rebar': {
+      // 突出墙壁的锈蚀钢筋（L1，wikidot/Fandom：严重生锈，刺伤可致破伤风）——2~3 根锈杆斜出墙面
+      const d = wallDir(s, m)
+      if (d === null) return null
+      const rgrp = new THREE.Group()
+      const rr = mulberry(s.x * 31 + s.y * 77)
+      const n = 2 + Math.floor(rr() * 2)
+      for (let i = 0; i < n; i++) {
+        const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.024, 0.5, 6), new THREE.MeshLambertMaterial({ color: i % 2 ? '#6e3a20' : '#7a4a2e' }))
+        rod.rotation.x = Math.PI / 2 + (rr() - 0.5) * 0.5 // 斜出墙面
+        rod.rotation.z = (rr() - 0.5) * 0.6
+        rod.position.set((i - (n - 1) / 2) * 0.14, (rr() - 0.5) * 0.2, 0.18)
+        rgrp.add(rod)
+      }
+      const ry = 0.9 + rr() * 0.8 // 腰到胸口高度（最易划伤过往行人）
+      if (d === 0) rgrp.position.set(0, ry, -0.5)
+      else if (d === 2) { rgrp.position.set(0, ry, 0.5); rgrp.rotation.y = Math.PI }
+      else if (d === 3) { rgrp.position.set(-0.5, ry, 0); rgrp.rotation.y = Math.PI / 2 }
+      else { rgrp.position.set(0.5, ry, 0); rgrp.rotation.y = -Math.PI / 2 }
+      grp.add(rgrp)
       break
     }
     case 'socket': {
@@ -561,8 +616,8 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       break
     }
     case 'chandelier': {
-      // L5 水晶吊灯：吊链 + 金环 + 水晶挂坠（自发光）
-      grp.add(cyl(0.03, 0.03, H - 2.1, '#8a6d2e', 0, H - (H - 2.1) / 2, 0))
+      // L5 水晶吊灯：吊链 + 金环 + 水晶挂坠（自发光）（v26：吊链顶端贴合本瓦片天花板底面）
+      grp.add(cyl(0.03, 0.03, CH - 2.1, '#8a6d2e', 0, CH - (CH - 2.1) / 2, 0))
       grp.add(cyl(0.5, 0.62, 0.22, '#b08d46', 0, 2.0, 0, 10))
       grp.add(cyl(0.3, 0.42, 0.18, '#b08d46', 0, 1.8, 0, 8))
       for (let i = 0; i < 8; i++) {
@@ -573,11 +628,11 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       break
     }
     case 'hanglight': {
-      // L0 荧光灯吊线版：吊线 + 灯管（红色变种供红房间）
+      // L0 荧光灯吊线版：吊线 + 灯管（红色变种供红房间）（v26：吊线顶端贴合本瓦片天花板底面）
       const c = s.data?.red ? '#ff5a4a' : '#e8e2c8'
-      grp.add(box(0.02, 0.45, 0.02, '#3a3630', -0.25, H - 0.22, 0))
-      grp.add(box(0.02, 0.45, 0.02, '#3a3630', 0.25, H - 0.22, 0))
-      grp.add(glow(0.95, 0.07, 0.2, c, 0, H - 0.48, 0))
+      grp.add(box(0.02, 0.45, 0.02, '#3a3630', -0.25, CH - 0.22, 0))
+      grp.add(box(0.02, 0.45, 0.02, '#3a3630', 0.25, CH - 0.22, 0))
+      grp.add(glow(0.95, 0.07, 0.2, c, 0, CH - 0.48, 0))
       grp.rotation.z = (mulberry(s.x * 131 + s.y * 17)() - 0.5) * 0.12 // 轻微歪斜
       break
     }
@@ -1489,6 +1544,103 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       break
     }
 
+    // ===== v30：Level 1 区段扩展 =====
+    case 'column': {
+      // 哥特段圆柱：圆形石柱 + 柱础 + 柱头
+      grp.add(cyl(0.34, 0.38, H, '#7e7a74', 0, H / 2, 0, 14))
+      grp.add(cyl(0.48, 0.52, 0.22, '#6a665f', 0, 0.11, 0, 14))
+      grp.add(cyl(0.46, 0.36, 0.3, '#6a665f', 0, H - 0.15, 0, 14))
+      break
+    }
+    case 'roundarch': {
+      // 哥特段圆形拱门：双侧石柱 + 半圆拱顶（非实心，拱洞沿本地 z 轴可穿行）
+      const stone = '#7e7a74', dark = '#6a665f'
+      const springY = H * 0.55 // 起拱高度
+      grp.add(cyl(0.14, 0.17, springY, stone, -0.38, springY / 2, 0, 10))
+      grp.add(cyl(0.14, 0.17, springY, stone, 0.38, springY / 2, 0, 10))
+      grp.add(cyl(0.2, 0.22, 0.14, dark, -0.38, 0.07, 0, 10)) // 柱础
+      grp.add(cyl(0.2, 0.22, 0.14, dark, 0.38, 0.07, 0, 10))
+      const arch = new THREE.Mesh(
+        new THREE.TorusGeometry(0.38, 0.11, 8, 16, Math.PI),
+        new THREE.MeshLambertMaterial({ color: stone }),
+      )
+      arch.position.set(0, springY, 0) // 半圆环躺在 XY 竖直面内，拱洞朝 z 轴打开
+      grp.add(arch)
+      grp.add(box(0.2, 0.16, 0.24, dark, 0, springY + 0.42, 0)) // 拱顶石
+      break
+    }
+    case 'scaffold': {
+      // 衔尾段脚手架：四角立杆 + 两层横杆 + 顶部踏板（2×1）
+      const hw = s.w / 2 - 0.12, hd = s.h / 2 - 0.12
+      for (const [px, pz] of [[-hw, -hd], [hw, -hd], [-hw, hd], [hw, hd]] as const)
+        grp.add(cyl(0.045, 0.045, H * 0.82, '#8a7a3a', px, H * 0.41, pz, 6))
+      for (const ly of [H * 0.32, H * 0.62]) {
+        grp.add(box(s.w - 0.1, 0.05, 0.05, '#8a7a3a', 0, ly, -hd))
+        grp.add(box(s.w - 0.1, 0.05, 0.05, '#8a7a3a', 0, ly, hd))
+        grp.add(box(0.05, 0.05, s.h - 0.1, '#8a7a3a', -hw, ly, 0))
+        grp.add(box(0.05, 0.05, s.h - 0.1, '#8a7a3a', hw, ly, 0))
+      }
+      grp.add(box(s.w - 0.06, 0.06, s.h - 0.06, '#a08a5a', 0, H * 0.82, 0)) // 踏板
+      break
+    }
+    case 'roadblock': {
+      // 衔尾段施工路障：双立柱 + 橙白条纹横板
+      grp.add(box(0.08, 0.8, 0.08, '#3a3d42', -0.38, 0.4, 0))
+      grp.add(box(0.08, 0.8, 0.08, '#3a3d42', 0.38, 0.4, 0))
+      grp.add(box(0.92, 0.2, 0.06, '#d9642a', 0, 0.62, 0))
+      grp.add(box(0.92, 0.07, 0.07, '#e8e2d2', 0, 0.62, 0.005))
+      grp.add(box(0.92, 0.14, 0.06, '#d9642a', 0, 0.3, 0))
+      grp.add(glow(0.07, 0.07, 0.07, '#ffb03a', -0.38, 0.86, 0))
+      grp.add(glow(0.07, 0.07, 0.07, '#ffb03a', 0.38, 0.86, 0))
+      break
+    }
+    case 'megdoc': {
+      // M.E.G. 文档：牛皮纸封皮 + 几页摊开的纸（data.ontable=放在桌面上）
+      const y0 = s.data?.ontable ? 0.76 : 0
+      grp.add(box(0.24, 0.015, 0.3, '#c9a86a', 0, y0 + 0.008, 0))
+      grp.add(box(0.22, 0.01, 0.28, '#e8e2d2', 0.01, y0 + 0.022, 0.01))
+      const page = box(0.2, 0.008, 0.26, '#dcd6c4', -0.015, y0 + 0.032, -0.01)
+      page.rotation.y = 0.12
+      grp.add(page)
+      grp.add(box(0.06, 0.006, 0.06, '#3a5a7a', -0.06, y0 + 0.038, 0.08)) // M.E.G. 徽记色块
+      break
+    }
+    case 'inkdoor': {
+      // 维护通廊墨黑色金属门：嵌在墙洞里的门框（双立柱 + 门楣 + 门槛，横跨 2 格门洞）
+      // + 一扇向走廊内敞开的门扇——一眼即知「这是门，而且能过」。
+      // 标准朝向：通行沿本地 x 轴（门框平面垂直 x）；data.rot=1 旋转 90°（通行沿本地 z 轴）。
+      const ink = '#14161a', ink2 = '#1c1f24'
+      const doorH = H * 0.78
+      grp.add(box(0.5, doorH, 0.24, ink, 0, doorH / 2, -0.95)) // 门洞两侧立柱（跨 2 瓦片）
+      grp.add(box(0.5, doorH, 0.24, ink, 0, doorH / 2, 0.95))
+      grp.add(box(0.5, 0.3, 2.14, ink2, 0, doorH + 0.15, 0)) // 门楣
+      grp.add(box(0.46, 0.05, 1.9, '#0a0b0d', 0, 0.025, 0)) // 门槛
+      // 门顶封墙：门楣上方直到天花板全部封死（只留门洞通行）
+      const sealH = H - (doorH + 0.3)
+      if (sealH > 0.05) grp.add(box(0.46, sealH, 2.14, '#a8a49a', 0, doorH + 0.3 + sealH / 2, 0))
+      // 绿色 EXIT 指示灯（门楣正上方、封墙板上，两侧各一块自发光牌）
+      for (const sd of [-1, 1]) {
+        const sign = new THREE.Mesh(new THREE.PlaneGeometry(0.72, 0.26), new THREE.MeshBasicMaterial({ map: exitSignTexture() }))
+        sign.position.set(sd * 0.236, doorH + 0.5, 0)
+        sign.rotation.y = sd > 0 ? Math.PI / 2 : -Math.PI / 2
+        grp.add(sign)
+      }
+      grp.add(glow(0.32, 0.05, 0.05, '#3ae06a', 0, doorH + 0.32, 0)) // EXIT 绿色底光
+      // 门扇：初始关闭（恰好覆盖门洞），铰链在 +z 侧立柱；
+      // userData.lid 由 renderer.updateStructs 驱动——交互开门后向走廊内旋开至 ~106°
+      const leaf = box(0.08, doorH - 0.18, 1.7, '#181b20', 0, 0, 0)
+      leaf.geometry.translate(0, 0, -0.85) // 铰链边移到局部 z=0
+      leaf.position.set(0.06, doorH / 2, 0.86)
+      leaf.userData.lid = 1
+      leaf.add(box(0.06, 0.08, 0.14, '#8a9098', 0.07, 0, -1.48)) // 门把手（随门扇）
+      grp.add(leaf)
+      // 门楣两端的冷白描边灯（黑暗中也能认出这是一扇门）
+      grp.add(glow(0.1, 0.04, 0.1, '#e8e8e0', 0.26, doorH + 0.04, -0.95))
+      grp.add(glow(0.1, 0.04, 0.1, '#e8e8e0', 0.26, doorH + 0.04, 0.95))
+      if (s.data?.rot) grp.rotation.y = Math.PI / 2
+      break
+    }
+
     case 'prefabmark': return null
     case 'wet': return null
     default: return null
@@ -1506,31 +1658,40 @@ export function buildExit(kind: string, def: LevelDef): THREE.Group {
     mat.userData.base = col('#f5e37a')
     return mat
   }
-  // v17：闪烁门专用——不规则电流式狂闪材质（render() 出口动画按 strobe 处理）
+  // v17/v29：闪烁的墙壁专用——规律明灭的闪烁材质（render() 出口动画按 strobe 处理）
   const strobeMat = () => {
     const mat = new THREE.MeshBasicMaterial({ color: '#f5e37a' })
     mat.userData.strobe = true
     mat.userData.base = col('#f5e37a')
     return mat
   }
+  // v30：洞口地板——与本层地板同纹理同色调（从外往里看是地板延续；黑色只出现在更深处）
+  const levelFloorQuad = (w: number, d: number, x: number, y: number, z: number) => {
+    const m = new THREE.Mesh(
+      new THREE.PlaneGeometry(w, d),
+      new THREE.MeshLambertMaterial({ color: def.palette.floor, map: levelTexture(`l${def.id}_floor`, () => noiseTexture(def.palette.floor, def.palette.floorAlt)) }),
+    )
+    m.rotation.x = -Math.PI / 2
+    m.position.set(x, y, z)
+    return m
+  }
   switch (kind) {
     case 'flickerdoor': {
-      // 墙壁上罕见地闪烁的门：门框 + 半开门板 + 狂闪光缝 + 闪烁门框灯带
-      grp.add(box(0.18, 2.4, 0.5, def.palette.wallTop, -0.7, 1.2, 0))
-      grp.add(box(0.18, 2.4, 0.5, def.palette.wallTop, 0.7, 1.2, 0))
-      grp.add(box(1.6, 0.2, 0.5, def.palette.wallTop, 0, 2.45, 0))
-      const slit = new THREE.Mesh(new THREE.BoxGeometry(1.2, 2.2, 0.06), strobeMat())
-      slit.position.set(0, 1.1, -0.06)
-      grp.add(slit)
-      // 半开的门板（门后黄光泄出）
-      const panel = box(0.58, 2.15, 0.05, '#3a3526', 0, 0, 0)
-      panel.position.set(-0.3, 1.08, 0.12)
-      panel.rotation.y = 0.55
-      grp.add(panel)
-      // 门框上沿闪烁灯带
-      const strip = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.07, 0.07), strobeMat())
-      strip.position.set(0, 2.32, 0.26)
-      grp.add(strip)
+      // v29：闪烁的墙壁——不做门体模型：墙面上的一片门形区域规律地闪烁光芒
+      // 主体：门形发光面片（贴墙朝向由 orientExitToWall 按相邻墙调整；半透明透出墙纸纹理）
+      const glowMat = strobeMat()
+      glowMat.transparent = true
+      glowMat.opacity = 0.85
+      const glow = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 2.1), glowMat)
+      glow.position.set(0, 1.08, 0)
+      grp.add(glow)
+      // 光晕：略大的半透明加色面片，同步闪烁，营造"一片光芒"感
+      const haloMat = new THREE.MeshBasicMaterial({ color: '#f5e37a', transparent: true, opacity: 0.14, blending: THREE.AdditiveBlending, depthWrite: false })
+      haloMat.userData.strobe = true
+      haloMat.userData.base = col('#f5e37a')
+      const halo = new THREE.Mesh(new THREE.PlaneGeometry(1.7, 2.7), haloMat)
+      halo.position.set(0, 1.1, 0.012)
+      grp.add(halo)
       break
     }
     case 'crack': case 'arcflash': {
@@ -1585,7 +1746,80 @@ export function buildExit(kind: string, def: LevelDef): THREE.Group {
       grp.add(mg)
       break
     }
-    case 'stairs': case 'emergstairs': case 'hatch': case 'backvent': case 'breakerdoor': case 'firedoor': case 'fireexit':
+    case 'graystairs': {
+      // 下行的灰色阶梯：12 级混凝土踏步沿走向下探（与引擎坡道 z=-1.23·s 严格对齐，无偏移）+ 两侧护栏 + 底部漆黑
+      for (let i = 0; i < 12; i++) {
+        const z = 0.1 - i * 0.22
+        grp.add(box(1.1, 0.1, 0.26, '#7a7a7e', 0, 1.23 * z - 0.06, z))
+      }
+      grp.add(box(0.08, 0.55, 2.9, '#5e5e62', -0.6, 0.05, -1.05))
+      grp.add(box(0.08, 0.55, 2.9, '#5e5e62', 0.6, 0.05, -1.05))
+      const dark = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 3.6), new THREE.MeshBasicMaterial({ color: '#000000' }))
+      dark.rotation.x = -Math.PI / 2
+      dark.position.set(0, -3.3, -0.9)
+      grp.add(dark)
+      break
+    }
+    case 'graystairsup': {
+      // 上行的灰色阶梯：12 级混凝土踏步沿走向上升（与引擎坡道严格对齐），没入顶部漆黑
+      for (let i = 0; i < 12; i++) {
+        const z = 0.1 - i * 0.22
+        grp.add(box(1.1, 0.1, 0.26, '#7a7a7e', 0, -1.23 * z - 0.06, z))
+      }
+      grp.add(box(0.08, 0.55, 2.9, '#5e5e62', -0.6, 0.6, -1.05))
+      grp.add(box(0.08, 0.55, 2.9, '#5e5e62', 0.6, 0.6, -1.05))
+      const dark = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 3.6), new THREE.MeshBasicMaterial({ color: '#000000' }))
+      dark.rotation.x = Math.PI / 2
+      dark.position.set(0, 3.4, -0.9)
+      grp.add(dark)
+      break
+    }
+    case 'stairs': {
+      // 楼梯井（独特模型·嵌墙镂空）：墙体开洞内的楼梯井道——内侧壁 + 下探踏步没入黑暗 + 绿色出口灯牌 + 扶手
+      // 朝向约定：开口朝 -z（出口格/房间侧），组中心 = 墙格中心（geometry 已在该墙格开门洞）
+      grp.add(box(0.06, 2.3, 1.0, '#4a4a4e', -0.42, 1.15, 0))
+      grp.add(box(0.06, 2.3, 1.0, '#4a4a4e', 0.42, 1.15, 0))
+      // 下探踏步（自洞口地面开始逐级下探，修正悬空偏移）
+      for (let i = 0; i < 5; i++) grp.add(box(0.8, 0.1, 0.2, '#5e5e62', 0, 0.02 - i * 0.19, -0.28 + i * 0.17))
+      // 洞口地面与本层地板一致（入口处地板延续）；黑色只在踏步下方更深处
+      grp.add(levelFloorQuad(1, 0.26, 0, 0.005, -0.37))
+      const dkFloor = new THREE.Mesh(new THREE.PlaneGeometry(0.84, 0.8), new THREE.MeshBasicMaterial({ color: '#000000' }))
+      dkFloor.rotation.x = -Math.PI / 2
+      dkFloor.position.set(0, -0.78, 0.05)
+      grp.add(dkFloor)
+      const dkBack = new THREE.Mesh(new THREE.PlaneGeometry(0.84, 2.3), new THREE.MeshBasicMaterial({ color: '#020202', side: THREE.DoubleSide }))
+      dkBack.position.set(0, 1.05, 0.5)
+      grp.add(dkBack)
+      grp.add(box(0.08, 2.3, 0.1, '#78787c', -0.44, 1.15, -0.42))
+      grp.add(box(0.08, 2.3, 0.1, '#78787c', 0.44, 1.15, -0.42))
+      grp.add(box(0.96, 0.12, 0.1, '#8a8a8e', 0, 2.36, -0.42))
+      const sign = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.16, 0.05), new THREE.MeshBasicMaterial({ color: '#7ddb6a' }))
+      sign.position.set(0, 2.14, -0.5)
+      grp.add(sign)
+      grp.add(box(0.03, 0.03, 0.8, '#8a8a8e', -0.36, 0.9, 0.05))
+      grp.add(box(0.03, 0.03, 0.8, '#8a8a8e', 0.36, 0.9, 0.05))
+      break
+    }
+    case 'unlockeddoor': {
+      // 未上锁的门（独特模型·嵌墙镂空）：墙洞内的门框 + 虚掩门板（向房间侧旋开）+ 门后暗室 + 黄铜把手 + 小门牌
+      grp.add(box(0.08, 2.2, 0.1, '#6b6b6e', -0.44, 1.1, -0.42))
+      grp.add(box(0.08, 2.2, 0.1, '#6b6b6e', 0.44, 1.1, -0.42))
+      grp.add(box(0.96, 0.1, 0.1, '#78787c', 0, 2.26, -0.42))
+      const dk = new THREE.Mesh(new THREE.PlaneGeometry(0.84, 2.1), new THREE.MeshBasicMaterial({ color: '#000000', side: THREE.DoubleSide }))
+      dk.position.set(0, 1.05, 0.5)
+      grp.add(dk)
+      // 洞口地面与本层地板一致（从外往里看是地板延续）；黑色只留在深处的暗室
+      grp.add(levelFloorQuad(1, 1, 0, 0.005, 0))
+      const panel = box(0.8, 2.05, 0.04, '#4d5156')
+      panel.geometry.translate(0.4, 0, 0)
+      panel.position.set(-0.4, 1.04, -0.42)
+      panel.rotation.y = 0.55
+      const handle = box(0.03, 0.14, 0.045, '#c9a03a', 0.68, -0.02, 0.04)
+      panel.add(handle)
+      grp.add(panel)
+      grp.add(box(0.24, 0.1, 0.02, '#c9c4b0', 0.44, 1.68, -0.48))
+      break
+    }
     default: {
       // 门框 + 发光门缝
       grp.add(box(0.15, 2.3, 0.4, def.palette.wallTop, -0.65, 1.15, 0))

@@ -27,6 +27,13 @@ for (let trial = 0; trial < 12; trial++) {
     if (m.tint[y * m.w + x] === 1) tn++
   }
   const en = m.entities.filter((e) => !e.dead && near(e.x, e.y)).length
+  // v29：马尼拉室固定生成一个「闪烁的墙壁」出口（房间西北角西墙）
+  const exs = m.exits.filter((e) => near(e.x + 0.5, e.y + 0.5))
+  if (exs.length === 0) bad('马尼拉室没有固定生成「闪烁的墙壁」出口')
+  else {
+    const e = exs[0]
+    if (m.tiles[Math.floor(e.y) * m.w + Math.floor(e.x) - 1] === 1) bad('出口西侧不是墙（面板无处贴合）')
+  }
   // 门洞数：房间四面墙上的开口
   found++; tables += tb; chairs += ch; folders += fo; tinted += tn; ents += en
   doorsSeen.add(fo) // 占位，防未使用

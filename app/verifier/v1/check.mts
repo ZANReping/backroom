@@ -120,5 +120,24 @@ console.log('[6] v17 L0 教学关卡设定')
   ok(m0.inf!.chunks.size === 25, '初始窗口加载 5×5=25 chunk', `${m0.inf!.chunks.size}`)
 }
 
+// ---------- v25：新增物品（v23/v25）图标专属 SVG 分支 + 独特配色 ----------
+console.log('[7] v25 新物品图标')
+{
+  const NEW_ITEMS = ['chalkstub', 'megfolder', 'rope', 'divemask', 'thingmeat', 'oddbook', 'cavingsuit', 'xenonmarble', 'driedfruit', 'uvlamp', 'stonekazoo', 'pockets', 'housekey', 'wheatgrain', 'nails', 'timber', 'presses', 'pamphlet', 'citywater', 'endnote']
+  const gcBlock = hudSrc.slice(hudSrc.indexOf('const GLYPH_COLOR'), hudSrc.indexOf('const ICON_IMG'))
+  const colorOf = new Map<string, string>()
+  for (const mm of gcBlock.matchAll(/(\w+): '(#[0-9a-f]{6})'/g)) colorOf.set(mm[1], mm[2])
+  for (const t of NEW_ITEMS) {
+    const glyph = ITEMS[t].glyph
+    ok(new RegExp(`case '${glyph}'`).test(hudSrc), `${t}: SVG 分支存在`, `glyph=${glyph}`)
+    const c = colorOf.get(t)
+    ok(!!c, `${t}: GLYPH_COLOR 配色存在`, c ?? '缺失')
+    if (c) {
+      const dup = [...colorOf.entries()].find(([k, v]) => v === c && k !== t)
+      ok(!dup, `${t}: 配色全局唯一`, dup ? `与 ${dup[0]} 同色 ${c}` : c)
+    }
+  }
+}
+
 console.log(`\n结果：${pass} 通过 / ${fail} 失败`)
 if (fail > 0) { console.log('失败项：' + fails.join(' | ')); process.exit(1) }

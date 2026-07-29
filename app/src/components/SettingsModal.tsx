@@ -8,9 +8,12 @@ export interface GameSettings {
   difficulty: Difficulty
   autoSprint: boolean
   grain: boolean
+  dust: boolean // 漂浮尘埃粒子（默认关闭）
   shake: boolean
   flicker: number // 0-100
   dynamicRes: boolean
+  shadows: boolean // 手电实时阴影（移动端强制关闭）
+  fogOfWar: boolean // 战争迷雾（距离雾）：关闭后远处不再被雾遮蔽
   volume: number
   ambient: number
   sfx: number
@@ -24,7 +27,7 @@ export interface GameSettings {
 
 export const defaultSettings: GameSettings = {
   difficulty: 'normal', autoSprint: false,
-  grain: true, shake: true, flicker: 70, dynamicRes: true,
+  grain: true, dust: false, shake: true, flicker: 70, dynamicRes: true, shadows: true, fogOfWar: true,
   volume: 80, ambient: 50, sfx: 90, muted: false,
   leftHanded: false, stickSize: 120, btnOpacity: 70,
   sensitivity: 1.0, devMode: false,
@@ -120,9 +123,12 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
           {tab === '画面' && (
             <div>
               <Toggle k="grain" label="VHS 颗粒" />
+              <Toggle k="dust" label="漂浮尘埃粒子" />
               <Toggle k="shake" label="屏幕震动" />
               <Slider k="flicker" label="灯光闪烁强度" />
               <Toggle k="dynamicRes" label="动态分辨率" />
+              <Toggle k="shadows" label="实时阴影（手电）" />
+              <Toggle k="fogOfWar" label="战争迷雾（距离雾）" />
             </div>
           )}
           {tab === '音频' && (

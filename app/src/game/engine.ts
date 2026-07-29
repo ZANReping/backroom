@@ -1,29 +1,40 @@
 // 游戏引擎：玩家/实体AI/生存系统/交互/出入口/事件派发
-import { generateLevel, tileAt, tileH, groundHeightAt, solidStructAtFloor, bandOfZ, FLOOR_H, POOL_DEPTH, type GameMap } from './mapgen'
+import { generateLevel, tileAt, tileH, groundHeightAt, solidStructAtFloor, bandOfZ, FLOOR_H, POOL_DEPTH, structStandTopAt, ceilingHeightAt, type GameMap } from './mapgen'
+import { WALL_H } from './renderer/shared'
 import { LEVELS, LEVEL_EVENTS, WIN_TAPES, NORMAL_LEVELS, levelLabel } from './levels'
 import { ITEMS, itemName } from './items'
 import { recordEncounter, makeEntity, ENTITIES, type Entity } from './entities'
-import { createIntegrator, integrateMove, type MoveIntegrator } from './player'
+import { canOccupy, createIntegrator, integrateMove, PLAYER_RADIUS, type MoveIntegrator } from './player'
 import { look } from './renderer3d'
-import type { ExitDef, LightSource, Structure } from './types'
+import type { ExitDef, ExitInstance, LightSource, Structure } from './types'
 import { audio } from './audio'
 import { seedString, RNG, randomSeed } from './rng'
-import { updateInfinite, l0NearestExit, findNearestVariant, CS, RARE_VARIANTS, VARIANT_NAMES, chunkKey, applyRedPlague, type L0Variant } from './infinite'
+import { updateInfinite, l0NearestExit, findNearestVariant, CS, chunkKey, applyRedPlague, infiniteImplFor, restitch } from './infinite'
 import { prefabsForLevel, placePrefabForced } from './prefabs'
 
 export interface InvSlot { type: string; count: number }
 // 装备槽位标识：hotbar/backpack 为背包格；offhand/body/gloves/pocket 为装备位（主手=快捷栏选中项，不是独立槽位）
-export type SlotWhere = 'hotbar' | 'backpack' | 'offhand' | 'body' | 'gloves' | 'pocket'
+export type SlotWhere = 'hotbar' | 'backpack' | 'offhand' | 'body' | 'gloves' | 'head' | 'pocket'
 export interface SlotRef { w: SlotWhere; i: number }
 export interface EquipState {
-  offhand: InvSlot | null // 副手：持久手持（打火机）
-  body: InvSlot | null // 身体：服饰（绝缘服）
+  offhand: InvSlot | null // 副手：持久手持（打火机/手电筒）
+  body: InvSlot | null // 身体：服饰（绝缘服/保温服）
   gloves: InvSlot | null // 手套：隔热手套
+  head: InvSlot | null // 头饰：潜水面罩
   pockets: (InvSlot | null)[] // 口袋 ×4：持久小物（兔子脚/门禁卡/钥匙）
 }
 export type MsgKind = 'loot' | 'damage' | 'lore' | 'system'
+/** 飞行中的投掷物（v28 可投掷道具；落地触发效果） */
+export interface Projectile {
+  id: number
+  type: string
+  x: number; y: number; z: number // z=离地高度（米）
+  floorZ: number // 落点地面高度（掷出时玩家脚下高度）
+  vx: number; vy: number; vz: number
+  done?: boolean
+}
 export interface HudEvent {
-  kind: 'msg' | 'toast' | 'damage' | 'sanityhit' | 'transition' | 'dead' | 'victory' | 'levelchange' | 'lootpanel'
+  kind: 'msg' | 'toast' | 'damage' | 'sanityhit' | 'transition' | 'dead' | 'victory' | 'levelchange' | 'lootpanel' | 'notebook' | 'doc'
   cutIn?: string
   dest?: number | 'random' | 'win'
   text?: string
@@ -131,7 +142,7 @@ export class Engine {
   // 共用 scanInteract 的同一选择结果，杜绝「提示普通门却触发相邻上锁门」的目标漂移。
   private interactTarget: { kind: string; label: string; s?: Structure; it?: GameMap['items'][number]; e?: GameMap['exits'][number] } | null = null
   // 开发者模式（v8 扩展：statLock=每帧锁满状态，oneHit=一击必杀，invisible=实体不追击，frozenAI=冻结实体）
-  dev = { god: false, noclip: false, speed: false, statLock: true, oneHit: false, invisible: false, frozenAI: false }
+  dev = { god: false, noclip: false, speed: false, statLock: true, oneHit: false, invisible: false, frozenAI: false, phenOn: new Set<string>(), phenOff: new Set<string>() }
   // 地图就地修改版本号（开发者强制生成固定结构时 +1；渲染层据此重建有限层静态几何）
   mapRev = 0
   // 开场爬起动画计时（>0 时锁定移动/攻击/跳跃，渲染层相机从贴地侧躺缓慢起身）
@@ -145,11 +156,47 @@ export class Engine {
   private moveIt: MoveIntegrator = createIntegrator()
   // 攻击挥动动画计时（渲染层读取做手部挥砍/准心收缩）
   attackAnimT = 0
+  // 攻击动画种类（渲染层据此切换动作）：punch=空手出拳 swing=武器挥舞 throw=投掷
+  attackAnimKind: 'punch' | 'swing' | 'throw' | 'spray' | 'drink' = 'punch'
+  // 飞行中的投掷物（订书机/汽油罐等；落地触发效果，见 landProjectile）
+  projectiles: Projectile[] = []
+  private projId = 1
   // 层级氛围事件（wiki 设定播报）计时
   private ambientT = 14
   // L1 停电事件：剩余时间 + 被移除光源的备份
   blackoutT = 0
+  // v31：「闪烁」预警期（完全停电前灯光快速闪烁的秒数；渲染层据此做灯光快闪）
+  blackoutWarnT = 0
+  private blackoutPendingDur = 0
   private blackoutBackup: LightSource[] | null = null
+
+  // v29：经 L0「向下的灰色阶梯」进入 L1 的标记（下一次 loadLevel(1) 时在出生点附近生成返程阶梯）
+  private arriveStairs = false
+  // v29：返程「向上的灰色阶梯」（世界坐标固定；窗口平移 stitch 后重新注入）
+  private bonusExit: { def: ExitDef; wx: number; wy: number } | null = null
+  // v29：本局已到过的层级（初始物资仅首次进 L0 刷新）
+  private visitedLevels = new Set<number>()
+  // v29：玩家当前在可行走阶梯上（碰撞 z 按地面处理、跳过重力贴地；由 updateStairs 每帧维护）
+  private onStairs = false
+
+  // 现象系统：当前生效的现象 id 列表（每帧由 step 重算；HUD 左上角与物品栏「状态」页读取展示）
+  activePhenomena: string[] = []
+  // 现象「孤立效应」的附加表现：每次进入 Level 0，画面色调/饱和度/对比度/亮度
+  // 发生极轻微偏移（幅度刻意控制在一般无法察觉的范围；App.tsx 以 CSS filter 施加到画布）
+  colorGrade = { hue: 0, sat: 1, con: 1, bri: 1 }
+  // v30：植殖癌（Level 1 花园段）——0..1 进展度：在花园段内约 75 秒涨满，离开后以 2 倍速消退。
+  // 行为逐渐僵硬（移动减速）、视野逐渐变绿（App.tsx 绿色覆盖层），涨满即原地生根（死亡）
+  plantK = 0
+  private plantStage = 0
+  private inGardenEff = false // 本帧植殖癌是否生效（含开发者强制开/关），供现象列表读取
+  // ===== v32：新物品机制状态 =====
+  axeDur = 0 // 斧头耐久（获得时重置为 5；破门 -1，耗尽报废）
+  squirtTank: 'none' | 'water' | 'almond' | 'cashew' = 'none' // 滋水枪储罐液体（单一种类）
+  squirtAmmo = 0 // 储罐剩余喷射份数（1 瓶 = 3 份，上限 9 瓶 = 27 份）
+  warpBerryLevel: number | null = null // 迁跃浆果：首次获得时所在层级（食用传送目标）
+  royalAddictT = 0 // 皇家口粮成瘾剩余秒数（期间其他食物不回饥饿）
+  sanityFloor = 0 // 皇家口粮锁定的理智下限（成瘾崩塌期间不生效）
+  private royalDrainT = 0 // 成瘾崩塌：理智急速下降剩余秒数
 
   constructor() {
     this.player = this.freshPlayer()
@@ -165,7 +212,7 @@ export class Engine {
       hotbar: new Array(7).fill(null), // 开局一无所有（物资散落在出生点周围）
       backpack: new Array(16).fill(null),
       selected: 0,
-      equip: { offhand: null, body: null, gloves: null, pockets: [null, null, null, null] },
+      equip: { offhand: null, body: null, gloves: null, head: null, pockets: [null, null, null, null] },
       kills: 0, tapes: 0, steps: 0,
       startTime: Date.now(), aliveTime: 0,
       hasGloves: false, hasSuit: false, hasLighter: false, hasRabbit: false, hasPockets: false,
@@ -173,9 +220,23 @@ export class Engine {
     }
   }
 
-  on(fn: (e: HudEvent) => void) { this.listeners.push(fn) }
+  // 全量播报历史（HUD 左下仅显示最近几条且截断；物品栏「日志」页展示完整记录，上限 400 条）
+  msgLog: { text: string; kind: MsgKind }[] = []
+
+  // 粉笔头画在墙上的记号（level + 世界坐标 + 墙面朝向；换层重新生成地图时清空）
+  wallMarks: { level: number; wx: number; wy: number; dir: number }[] = []
+
+  /** 订阅引擎事件；返回取消订阅函数（调用方必须在卸载时取消，否则监听器累积会导致播报重复） */
+  on(fn: (e: HudEvent) => void): () => void {
+    this.listeners.push(fn)
+    return () => { this.listeners = this.listeners.filter((f) => f !== fn) }
+  }
   emit(e: HudEvent) { for (const f of this.listeners) f(e) }
-  msg(text: string, kind: MsgKind = 'system') { this.emit({ kind: 'msg', text, msgKind: kind }) }
+  msg(text: string, kind: MsgKind = 'system') {
+    this.msgLog.push({ text, kind })
+    if (this.msgLog.length > 400) this.msgLog.splice(0, this.msgLog.length - 400)
+    this.emit({ kind: 'msg', text, msgKind: kind })
+  }
 
   newRun(seed: number, difficulty: Difficulty) {
     this.seed = seed
@@ -183,6 +244,8 @@ export class Engine {
     this.player = this.freshPlayer()
     this.over = false; this.victory = false; this.transition = null
     this.time = 0
+    this.msgLog = [] // 新一局清空播报历史
+    this.visitedLevels.clear() // 新一局重置到层记录（初始物资首访刷新用）
     this.loadLevel(0)
     this.introT = 3.2 // 开场：摔到 L0 地面后缓慢爬起
     this.msg(`你坠入了后室。种子 ${seedString(seed)}`, 'system')
@@ -191,7 +254,15 @@ export class Engine {
 
   loadLevel(id: number) {
     const def = LEVELS[id]
-    this.map = generateLevel(def, this.seed + this.time * 7 + id * 131)
+    // v29：初始物资仅首次到层刷新（重访 L0 不再白嫖出生点补给）
+    const firstVisit = !this.visitedLevels.has(id)
+    this.visitedLevels.add(id)
+    // v29：经 L0 灰色阶梯下行 → L1 出生点附近生成返程阶梯（在换图前取走标记）
+    const viaStairs = this.arriveStairs
+    this.arriveStairs = false
+    this.map = generateLevel(def, this.seed + this.time * 7 + id * 131, firstVisit)
+    this.bonusExit = null
+    this.wallMarks = [] // 地图重新生成，旧粉笔记号随之失效
     this.player.level = id
     this.player.x = this.map.spawn.x + 0.5
     this.player.y = this.map.spawn.y + 0.5
@@ -215,8 +286,21 @@ export class Engine {
     this.lootPanel = null
     this.seenThisLevel = new Set()
     this.blackoutT = 0
+    this.blackoutWarnT = 0
     this.provoked = false
     this.blackoutBackup = null
+    this.plantK = 0 // v30：换层后植殖癌进展归零
+    this.plantStage = 0
+    // 现象「孤立效应」：每次进入 Level 0，画面微调色重新随机（极其轻微，一般无法察觉）
+    this.colorGrade = id === 0
+      ? {
+          hue: (Math.random() * 2 - 1) * 1.5,
+          sat: 1 + (Math.random() * 2 - 1) * 0.02,
+          con: 1 + (Math.random() * 2 - 1) * 0.015,
+          bri: 1 + (Math.random() * 2 - 1) * 0.02,
+        }
+      : { hue: 0, sat: 1, con: 1, bri: 1 }
+    if (id === 1 && viaStairs && this.map.inf) this.placeBonusStairs() // v29：返程「向上的灰色阶梯」
     this.ambientT = 10 + Math.random() * 8
     audio.startHum(id)
     audio.startBGM(id)
@@ -231,7 +315,8 @@ export class Engine {
       collapse: '某处地板看起来不结实。',
       freight: '你隐约听见货运电梯绞盘的锈响。',
       hatch: '某处有一个维修通道的方形舱口。',
-      stairs: '楼梯间的穿堂风从某个方向吹来。',
+      stairs: '楼梯井的穿堂风从某个方向吹来。',
+      unlockeddoor: '某处有一扇没上锁的门——推开试试。',
       breakerdoor: '主电闸门就在本层，配电声隐隐可闻。',
       shaft: '排水竖井的滴水声在地底回荡。',
       backvent: '回流通风口在本层某处。',
@@ -244,7 +329,7 @@ export class Engine {
       revolving: '大堂旋转门是离开这里的正门。',
       servicelift: '货运梯藏在本层的服务区。',
       mirror: '本层的某面镜子不是镜子。',
-      flickerdoor: '某处有一扇灯光疯狂闪烁的门——跟着电流声与气流走。',
+      flickerdoor: '某处有一面墙在规律地闪烁——跟着电流声与气流走。',
       // v23：Level 5–11 与结局层
       boilerdeep: '锅炉房深处的管道后面有一道下行的口子。据说从那里能到 Level 6。',
       seastairs: '往下走，仔细听——某个方向传来极微弱的海浪声。',
@@ -373,6 +458,7 @@ export class Engine {
     if (p.slowT > 0) { p.slowT -= dt; speed *= 0.5 }
     if (p.flashJamT > 0) p.flashJamT -= dt
     if (this.dev.speed) speed *= 1.8
+    if (this.plantK > 0) speed *= 1 - 0.55 * Math.min(1, this.plantK) // v30 植殖癌：行为逐渐僵硬
     if (p.coffeeT > 0) p.coffeeT -= dt
     this.statusMsgT.stamina -= dt
     this.statusMsgT.hunger -= dt
@@ -395,6 +481,31 @@ export class Engine {
           if (dark) { p.sanity = Math.max(0, p.sanity - 6); this.emit({ kind: 'sanityhit' }) }
         }
       } else this.manilaT = 4
+    }
+    // v30：植殖癌（Level 1 花园段）——行为逐渐僵硬、视野逐渐变绿，最终原地生根化为一株植物
+    {
+      const inf = m.inf
+      const realGarden = this.levelDef.id === 1 && !!inf &&
+        inf.chunks.get(chunkKey(Math.floor((inf.ox + p.x) / CS), Math.floor((inf.oy + p.y) / CS)))?.variant === 'garden'
+      // 开发者面板现象开关：可强制触发/屏蔽植殖癌（无视所在区段）
+      const inGarden = (realGarden || this.dev.phenOn.has('plantcancer')) && !this.dev.phenOff.has('plantcancer')
+      this.inGardenEff = inGarden
+      if (inGarden) this.plantK = Math.min(1, this.plantK + dt / 75)
+      else this.plantK = Math.max(0, this.plantK - dt / 37)
+      const stages: [number, string][] = [
+        [0.25, '你的关节有些发僵，像是很久没有活动过。'],
+        [0.5, '视野的边缘泛起一层新绿。你的动作越来越迟缓了。'],
+        [0.75, '皮肤下浮现出叶脉般的纹路——阳光照在身上，竟有种光合作用的暖意。'],
+      ]
+      while (this.plantStage < stages.length && this.plantK >= stages[this.plantStage][0]) {
+        this.msg(stages[this.plantStage][1], 'damage')
+        this.plantStage++
+      }
+      if (this.plantK <= 0.05 && this.plantStage > 0) {
+        this.plantStage = 0
+        this.msg('绿意从视野里褪去，四肢重新听使唤了。', 'system')
+      }
+      if (this.plantK >= 1) { this.die('植殖癌——你在阳光里生根，化作了一株绿植'); return }
     }
     // v23：⚠ 切勿把 Pockets 带入 Level 9——会立即引来 Entity 96「The Neighborhood Watch」
     if (p.hasPockets && this.levelDef.id === 9) {
@@ -419,7 +530,7 @@ export class Engine {
       // 固定子步积分：dt 先入累加器，按 FIXED_STEP 切分子步逐次「移动→解碰撞」。
       // 高帧率不会积分抖动，低帧率不会大步长穿墙弹回；脚步声/噪音按实际位移计。
       const scale = Math.min(mag, 1) / mag
-      const moved = integrateMove(m, p, this.input.mx * scale, this.input.my * scale, speed, dt, this.moveIt, { noclip: this.dev.noclip, z: p.z, crouch: p.crouching, band })
+      const moved = integrateMove(m, p, this.input.mx * scale, this.input.my * scale, speed, dt, this.moveIt, { noclip: this.dev.noclip, z: this.onStairs ? 0 : p.z, crouch: p.crouching, band: this.onStairs ? 0 : band })
       const movedDist = Math.hypot(moved.x, moved.y)
       p.facing = Math.atan2(this.input.my, this.input.mx)
       this.stepAcc += movedDist
@@ -498,8 +609,8 @@ export class Engine {
     if (!this.ride) this.updateClimb(dt, mag)
 
     // ---- v7：垂直（跳跃/重力/高度档贴地）+ v13 深水浮沉 ----
-    if (this.ride || this.climb) {
-      // 垂直位置由电梯/梯子脚本驱动
+    if (this.ride || this.climb || this.onStairs) {
+      // 垂直位置由电梯/梯子/可行走阶梯脚本驱动（onStairs 时由 updateStairs 绑定坡道高度）
     } else if (lq === 1) {
       // 深水中：下沉→池底；跳跃=向上划水；浮力趋向水面
       const FLOAT_Z = -0.5 // 浮起时水面下的平衡高度（头露出水面）
@@ -531,7 +642,8 @@ export class Engine {
         }
       } else this.breathT = Math.max(0, this.breathT - dt * 2)
     } else {
-      const g = groundHeightAt(m, p.x, p.y, band)
+      // v26：地面高度 = 地形地面 与 可站立结构顶面（桌/床/箱等低矮家具）取高者
+      const g = Math.max(groundHeightAt(m, p.x, p.y, band), structStandTopAt(m, p.x, p.y, p.z, band))
       if (this.input.jump && !introLock) {
         this.input.jump = false
         // 贴地且未蹲伏才能起跳（蹲伏中无法发力）
@@ -559,6 +671,18 @@ export class Engine {
         if (p.vz < 0) p.vz = 0
       }
     }
+    // v26：天花板碰撞——跳跃/上浮头顶不穿天花板（室外/挑高区按各自顶高；风道底 1.15m）
+    if (!this.ride && !this.climb) {
+      const ceil = ceilingHeightAt(m, p.x, p.y, WALL_H[this.levelDef.gen] ?? 3, band)
+      const headH = p.crouching ? 0.95 : 1.55
+      const maxZ = ceil - headH
+      if (p.z > maxZ) {
+        p.z = Math.max(groundHeightAt(m, p.x, p.y, band), maxZ)
+        if (p.vz > 0) p.vz = 0
+      }
+    }
+    // v29：可行走灰色阶梯——走下去/走上去自动换层（覆盖本帧重力贴地结果）
+    this.updateStairs(dt)
     // 深坑坠落：跌入深渊（elev=4，洞底 -10m）持续下坠，超过 -4.5m 即死（环境抹除，无视无敌）
     if (!this.ride && !this.climb && p.z < -4.5 && !this.dev.noclip) { this.die('坠入深坑', true); return }
     // 离水判定（走出液体格）
@@ -580,8 +704,25 @@ export class Engine {
     if (p.hunger <= 0 && !this.dev.god) { p.hp -= 1.2 * dt; if (p.hp <= 0) { this.die('饿死了'); return } }
     // 理智：黑暗中流失
     const lit = this.isLit(p.x, p.y)
+    // 现象判定：孤立效应——Level 0 除马尼拉室外的所有区域发生（红室 tint=2，马尼拉 tint=1），
+    // 生效期间替代原版的黑暗理智流失机制；植殖癌——花园段生效（判定见上方，含染病未愈期）。
+    // 开发者面板可对每个现象强制开（phenOn）/强制关（phenOff）
+    const pTint = m.tint?.[Math.floor(p.y) * m.w + Math.floor(p.x)] ?? 0
+    let isolation = p.level === 0 && pTint !== 1
+    if (this.dev.phenOn.has('isolation')) isolation = true
+    if (this.dev.phenOff.has('isolation')) isolation = false
+    const flickerActive = this.levelDef.id === 1 &&
+      (this.dev.phenOn.has('flicker') || (!this.dev.phenOff.has('flicker') && (this.blackoutWarnT > 0 || this.blackoutT > 0)))
+    this.activePhenomena = [
+      ...(isolation ? ['isolation'] : []),
+      ...(this.inGardenEff || this.plantK > 0.01 ? ['plantcancer'] : []),
+      ...(flickerActive ? ['flicker'] : []),
+    ]
     if (!this.dev.god) {
-      if (!lit && !p.flashlight) p.sanity -= 1.5 * dm.drain * dt
+      if (isolation) {
+        // 孤立效应：缓慢失去理智；红室内流失速率加倍
+        p.sanity -= 0.25 * dm.drain * (pTint === 2 ? 2 : 1) * dt
+      } else if (!lit && !p.flashlight) p.sanity -= 1.5 * dm.drain * dt
       else if (!lit) p.sanity -= 0.5 * dm.drain * dt
       else p.sanity = Math.min(100, p.sanity + 0.4 * dt)
       // 附近实体压迫感
@@ -591,6 +732,14 @@ export class Engine {
         if (d < 5 && !e.def.passive) p.sanity -= (5 - d) * 0.5 * dt
       }
       p.sanity = Math.max(0, Math.min(100, p.sanity))
+      // v32：皇家口粮——理智下限锁定（成瘾崩塌期间失效，崩塌时理智急速下降）
+      if (this.royalDrainT > 0) { this.royalDrainT -= dt; p.sanity = Math.max(0, p.sanity - 9 * dt) }
+      else if (p.sanity < this.sanityFloor) p.sanity = this.sanityFloor
+    }
+    // v32：皇家口粮成瘾期计时（期间其他食物不恢复饥饿）
+    if (this.royalAddictT > 0) {
+      this.royalAddictT -= dt
+      if (this.royalAddictT <= 0) this.msg('对皇家口粮的渴求终于褪去了。', 'system')
     }
     // v23：Level 6 的外带光源全部失效——开关是响的，灯头在发烫，但视野里什么都没有改变
     if (this.levelDef.noFlashlight && p.flashlight && this.statusMsgT.battery <= 0) {
@@ -629,14 +778,17 @@ export class Engine {
       this.input.attack = false
       if (!introLock) this.attack()
     }
+    this.updateProjectiles(dt)
     if (this.input.toggleLight) {
       this.input.toggleLight = false
-      if (p.equip.offhand?.type !== 'flashlight') {
-        this.msg('没有手电筒。它应该装在【副手】装备位。', 'system')
+      // v32：头灯（头饰栏）与手电筒（副手）共用开关与电池
+      const beamKind = p.equip.offhand?.type === 'flashlight' ? '手电筒' : p.equip.head?.type === 'headlamp' ? '头灯' : null
+      if (!beamKind) {
+        this.msg('没有手电筒或头灯。手电筒装在【副手】，头灯装在【头饰】。', 'system')
       } else if (p.battery > 0 || p.flashlight) {
         p.flashlight = !p.flashlight
         audio.uiTick()
-        this.msg(p.flashlight ? '手电筒：开' : '手电筒：关', 'system')
+        this.msg(`${beamKind}：${p.flashlight ? '开' : '关'}`, 'system')
       }
     }
 
@@ -695,6 +847,15 @@ export class Engine {
       }
     }
 
+    // 锈蚀钢筋（L1：突出墙壁的生锈金属尖端——wikidot/Fandom：刺伤可致破伤风；一次性划伤）
+    for (const s of m.structures) {
+      if (s.kind !== 'rebar' || s.data?.triggered) continue
+      if (Math.hypot(s.x + 0.5 - p.x, s.y + 0.5 - p.y) < 0.9) {
+        s.data = { ...s.data, triggered: 1 }
+        this.hurtPlayer(4, '锈蚀钢筋')
+      }
+    }
+
     // 蒸汽阀门伤害
     for (const s of m.structures) {
       if (s.kind === 'valve' && s.data?.on) {
@@ -714,9 +875,20 @@ export class Engine {
       this.ambientT = 16 + Math.random() * 18
       this.rollAmbientEvent()
     }
+    if (this.blackoutWarnT > 0) {
+      // v31：「闪烁」预警期——灯光快速明灭数秒后才真正停电
+      this.blackoutWarnT -= dt
+      if (this.blackoutWarnT <= 0) this.applyBlackout()
+    }
     if (this.blackoutT > 0) {
       this.blackoutT -= dt
       if (this.blackoutT <= 0) this.endBlackout()
+    }
+    // 开发者现象开关：强制触发/屏蔽「闪烁」
+    if (this.dev.phenOn.has('flicker') && this.levelDef.id === 1 && this.blackoutT <= 0 && this.blackoutWarnT <= 0) this.startBlackout(20)
+    if (this.dev.phenOff.has('flicker')) {
+      if (this.blackoutWarnT > 0) this.blackoutWarnT = 0
+      else if (this.blackoutT > 0) this.endBlackout()
     }
 
     // ---- 视野 ----
@@ -736,8 +908,8 @@ export class Engine {
   // ---------- 层级氛围事件（wiki 设定播报）----------
   private rollAmbientEvent() {
     const lvl = this.player.level
-    // L1 停电事件（Fandom：停电数分钟到数天，实体倾巢而出）
-    if (lvl === 1 && this.blackoutT <= 0 && Math.random() < 0.3) {
+    // L1「闪烁」现象（Fandom：停电数分钟到数天，实体倾巢而出）——低频率随机发生
+    if (lvl === 1 && this.blackoutT <= 0 && this.blackoutWarnT <= 0 && !this.dev.phenOff.has('flicker') && Math.random() < 0.12) {
       this.startBlackout(14 + Math.random() * 10)
       return
     }
@@ -748,16 +920,36 @@ export class Engine {
 
   private startBlackout(dur: number) {
     const m = this.map
-    if (!m || this.blackoutBackup) return
-    this.blackoutBackup = m.lights
-    m.lights = m.lights.filter(() => Math.random() < 0.15) // 仅剩零星应急灯
-    this.blackoutT = dur
+    if (!m || this.blackoutBackup || m.inf?.blackout || this.blackoutWarnT > 0) return
+    // v31：「闪烁」——完全停电前先进入预警期：所有主区域灯光快速闪烁数秒
+    this.blackoutWarnT = 3.5
+    this.blackoutPendingDur = dur
+    this.msg('灯光开始剧烈闪烁，电流声忽高忽低——', 'damage')
+    audio.spark()
+  }
+
+  private applyBlackout() {
+    const m = this.map
+    if (!m) return
+    if (m.inf) {
+      // 无限模式：stitch 会重建 m.lights，数组置换会被冲掉——改走 inf.blackout 标志
+      // （stitch 据此剔除层级固有灯；维护通廊 keep 灯与玩家追加灯保留）
+      m.inf.blackout = true
+      m.lights = m.lights.filter((l) => l.keep === 1 || !l.gen)
+    } else {
+      this.blackoutBackup = m.lights
+      m.lights = m.lights.filter(() => Math.random() < 0.15) // 仅剩零星应急灯
+    }
+    this.blackoutT = this.blackoutPendingDur
     this.msg('灯光一排排熄灭——停电了。黑暗里有什么开始移动。', 'damage')
     audio.spark()
   }
 
   private endBlackout() {
-    if (this.blackoutBackup && this.map) {
+    if (this.map?.inf) {
+      this.map.inf.blackout = false
+      restitch(this.map) // 立即按 chunk 重建窗口数组，灯光恢复
+    } else if (this.blackoutBackup && this.map) {
       // 停电期间玩家可能用荧光棒追加了光源，保留新增部分
       const added = this.map.lights.filter((l) => !this.blackoutBackup!.includes(l))
       this.map.lights = [...this.blackoutBackup, ...added]
@@ -983,6 +1175,26 @@ export class Engine {
           break
         }
       }
+
+      // ---- v26：实体-玩家最小间距（碰撞推挤分离，攻击判定用距离+面向而非重叠）----
+      if (!this.dev.invisible && Math.abs(e.z - p.z) < 1.2) {
+        const MIN_SEP = def.stationary ? 0.5 : 0.56
+        let sx = e.x - p.x, sy = e.y - p.y
+        let sd = Math.hypot(sx, sy)
+        if (sd < 1e-4) { const a = Math.random() * Math.PI * 2; sx = Math.cos(a); sy = Math.sin(a); sd = 1 }
+        if (sd < MIN_SEP) {
+          const ux = sx / sd, uy = sy / sd, push = MIN_SEP - sd
+          if (!def.stationary) {
+            // 实体侧退 60%（目标瓦片可站才移动，防止被推进墙里）
+            const ex = e.x + ux * push * 0.6, ey = e.y + uy * push * 0.6
+            if (this.entityWalkH(m, Math.floor(ex), Math.floor(ey), bandOfZ(e.z)) !== null) { e.x = ex; e.y = ey }
+          }
+          // 玩家侧退剩余部分（碰撞校验，贴墙时不强推）
+          const k = def.stationary ? 1 : 0.4
+          const px2 = p.x - ux * push * k, py2 = p.y - uy * push * k
+          if (canOccupy(m, px2, py2, PLAYER_RADIUS, { z: p.z, crouch: p.crouching, band: bandOfZ(p.z) })) { p.x = px2; p.y = py2 }
+        }
+      }
     }
     m.entities = m.entities.filter((e) => !e.dead || e.deathT > 0)
   }
@@ -1134,6 +1346,25 @@ export class Engine {
     if (nx === e.x && ny === e.y) return true // 卡住
     e.facing = Math.atan2(dy, dx)
     e.x = nx; e.y = ny
+    // v26：实体半径防穿模——把半径 0.24m 的「圆」从相邻阻挡瓦片（墙/实心结构/不可达高差）中推出，
+    // 实体不再半身卡进桌柜/墙体（此前实体为零半径质点，贴墙移动时模型穿进实心结构）
+    {
+      const ER = 0.24
+      const etx = Math.floor(e.x), ety = Math.floor(e.y)
+      for (let ty2 = ety - 1; ty2 <= ety + 1; ty2++) {
+        for (let tx2 = etx - 1; tx2 <= etx + 1; tx2++) {
+          if (tx2 === etx && ty2 === ety) continue
+          if (this.entityWalkH(m, tx2, ty2, band) !== null) continue
+          const cx2 = Math.max(tx2, Math.min(tx2 + 1, e.x))
+          const cy2 = Math.max(ty2, Math.min(ty2 + 1, e.y))
+          const ddx = e.x - cx2, ddy = e.y - cy2
+          const dd = Math.hypot(ddx, ddy)
+          if (dd >= ER || dd < 1e-6) continue
+          e.x = cx2 + (ddx / dd) * ER
+          e.y = cy2 + (ddy / dd) * ER
+        }
+      }
+    }
     // v13：跟随地面（楼梯坡道连续爬升；上下层带随 z 自动切换）
     e.z = groundHeightAt(m, e.x, e.y, bandOfZ(e.z))
     // 深坑：实体坠入后死亡（无血花，直坠深渊消散）
@@ -1168,24 +1399,71 @@ export class Engine {
     this.emit({ kind: 'dead', text: cause })
   }
 
-  private attack() {
-    const p = this.player, m = this.map!
-    audio.swing()
-    this.attackAnimT = 0.35 // 手部挥砍动画/准心收缩反馈
-    const held = p.hotbar[p.selected]
-    // 开发者模式：一击必杀
-    const dmg = this.dev.oneHit ? 99999 : held ? (ITEMS[held.type].weapon ?? 8) : 8
-    const reach = 1.6
-    let hit = false
-    for (const e of m.entities) {
-      if (e.dead || e.disguised) continue
-      const d = Math.hypot(e.x - p.x, e.y - p.y)
-      if (d > reach) continue
-      if (Math.abs(e.z - p.z) >= 1) continue // 高差过大打不到（跨层够不着）
+  // 攻击距离：基础 1.9m，巨型实体按体量加成（v28：原 1.6 过短，近身常常够不到）
+  private attackReach(e: Entity): number {
+    return 1.9 + Math.max(0, (e.def.huge ?? 1) - 1) * 0.6
+  }
+
+  /** 当前攻击能否命中该实体：距离 + 高差 + 朝向锥（贴脸 <0.9m 免除朝向判定——
+   *  实体与玩家几乎重合时 atan2 方向退化，旧判定会永远 miss，这就是"近身打不到"的根因） */
+  private canHit(e: Entity): boolean {
+    const p = this.player
+    if (e.dead || e.disguised) return false
+    const d = Math.hypot(e.x - p.x, e.y - p.y)
+    if (d > this.attackReach(e)) return false
+    if (Math.abs(e.z - p.z) >= 1) return false // 高差过大打不到（跨层够不着）
+    if (d >= 0.9) {
       const ang = Math.atan2(e.y - p.y, e.x - p.x)
       let diff = Math.abs(ang - p.facing)
       if (diff > Math.PI) diff = Math.PI * 2 - diff
-      if (diff > 1.1) continue
+      if (diff > 1.1) return false
+    }
+    return true
+  }
+
+  /** 准星当前可命中的最近实体（渲染层据此改变准星样式） */
+  aimEntity(): Entity | null {
+    const m = this.map
+    if (!m) return null
+    let best: Entity | null = null, bd = 1e9
+    for (const e of m.entities) {
+      if (!this.canHit(e)) continue
+      const d = Math.hypot(e.x - this.player.x, e.y - this.player.y)
+      if (d < bd) { bd = d; best = e }
+    }
+    return best
+  }
+
+  private killCheck(e: Entity) {
+    if (e.hp > 0 || e.dead) return
+    const p = this.player, m = this.map!
+    e.dead = true; e.deathT = 1.4
+    p.kills++
+    this.msg(`击杀了 ${e.def.name}`, 'loot')
+    if (Math.random() < (p.hasRabbit ? 0.6 : 0.35)) {
+      const drops = ['bandage', 'almond', 'canned', 'battery']
+      const t0 = drops[Math.floor(Math.random() * drops.length)]
+      const t = t0 === 'almond' && Math.random() < 0.1 ? 'cashew' : t0 // v32：腰果水 1/10 替代
+      m.items.push({ id: Date.now() % 100000 + Math.random(), type: t, x: e.x, y: e.y })
+    }
+  }
+
+  private attack() {
+    const p = this.player, m = this.map!
+    const held = p.hotbar[p.selected]
+    // 可投掷道具：左键掷出而非近战
+    if (held && ITEMS[held.type]?.throw) { this.throwHeld(held.type); return }
+    // v32：滋水枪——左键喷射储罐液体
+    if (held?.type === 'squirtgun') { this.squirt(); return }
+    audio.swing()
+    this.attackAnimT = 0.35 // 手部挥砍动画/准心收缩反馈
+    this.attackAnimKind = held && ITEMS[held.type]?.weapon ? 'swing' : 'punch'
+    // 开发者模式：一击必杀
+    const dmg = this.dev.oneHit ? 99999 : held ? (ITEMS[held.type].weapon ?? 8) : 8
+    let hit = false
+    for (const e of m.entities) {
+      if (!this.canHit(e)) continue
+      const ang = Math.atan2(e.y - p.y, e.x - p.x)
       // 绝缘猎手：近战伤害减半
       const eff = e.def.type === 'insulator' ? dmg * 0.5 : dmg
       e.hp -= eff
@@ -1196,20 +1474,195 @@ export class Engine {
       if (e.def.type === 'insulator' && Math.random() < 0.4) this.msg('攻击被绝缘服缓冲了。', 'system')
       this.provoked = true // v23：主动挑衅解除「Level 11 Effect」的被动状态
       if (e.def.passive) { e.state = 'chase'; e.stateT = 0 } // 激怒无面灵
-      if (e.hp <= 0) {
-        e.dead = true; e.deathT = 1.4
-        p.kills++
-        this.msg(`击杀了 ${e.def.name}`, 'loot')
-        if (Math.random() < (p.hasRabbit ? 0.6 : 0.35)) {
-          const drops = ['bandage', 'almond', 'canned', 'battery']
-          const t = drops[Math.floor(Math.random() * drops.length)]
-          m.items.push({ id: Date.now() % 100000 + Math.random(), type: t, x: e.x, y: e.y })
-        }
-      }
+      this.killCheck(e)
     }
     if (hit) { audio.hit(); this.camShake = Math.min(1, this.camShake + 0.15) }
     // 空手/武器挥击也产生噪音
     this.noiseEvent(p.x, p.y, 5, false)
+  }
+
+  // ---------- v28：可投掷道具 ----------
+  /** 掷出手持的可投掷物品（消耗 1 个；订书机/玻璃珠落地后可捡回） */
+  private throwHeld(type: string) {
+    const p = this.player
+    const slot = p.hotbar[p.selected]
+    if (!slot || slot.type !== type) return
+    slot.count--
+    if (slot.count <= 0) p.hotbar[p.selected] = null
+    audio.swing()
+    this.attackAnimT = 0.35
+    this.attackAnimKind = 'throw'
+    const speed = 9
+    this.projectiles.push({
+      id: this.projId++, type,
+      x: p.x + Math.cos(p.facing) * 0.4, y: p.y + Math.sin(p.facing) * 0.4,
+      z: p.z + 1.4, floorZ: p.z,
+      vx: Math.cos(p.facing) * speed, vy: Math.sin(p.facing) * speed, vz: 2.6,
+    })
+    this.msg(`你掷出了${ITEMS[type].name}。`, 'system')
+    this.noiseEvent(p.x, p.y, 4, false)
+  }
+
+  // ---------- v32：滋水枪 / 迁跃浆果 ----------
+  /** 滋水枪储罐容量（份数）：9 瓶 × 每瓶 3 份 = 27 */
+  static readonly SQUIRT_CAP = 27
+  /** 往滋水枪储罐装入 1 瓶液体（3 份喷射量；储罐只能装一种液体，清水无需对应物品） */
+  loadSquirt(liquid: 'water' | 'almond' | 'cashew'): boolean {
+    const NAME = { water: '清水', almond: '杏仁水', cashew: '腰果水' } as const
+    if (this.squirtTank !== 'none' && this.squirtTank !== liquid) {
+      this.msg(`储罐里还有别的液体——喷完或喝完才能换。`, 'system')
+      return false
+    }
+    if (this.squirtAmmo >= Engine.SQUIRT_CAP) { this.msg(`储罐已经装满了。（${Engine.SQUIRT_CAP}/${Engine.SQUIRT_CAP}）`, 'system'); return false }
+    if (liquid !== 'water' && !this.hasItem(liquid)) { this.msg(`背包里没有${NAME[liquid]}。`, 'system'); return false }
+    if (liquid !== 'water') this.consumeItem(liquid)
+    this.squirtTank = liquid
+    this.squirtAmmo = Math.min(Engine.SQUIRT_CAP, this.squirtAmmo + 3)
+    audio.pickup()
+    this.msg(`装入 1 瓶${NAME[liquid]}（储罐 ${this.squirtAmmo}/${Engine.SQUIRT_CAP}）。`, 'loot')
+    return true
+  }
+
+  /** 滋水枪喷射：清水无效果；杏仁水雾轻伤实体，腰果水雾造成更大伤害 */
+  private squirt() {
+    const p = this.player, m = this.map!
+    if (this.squirtAmmo <= 0 || this.squirtTank === 'none') {
+      this.msg('储罐是空的——先装入液体。', 'system')
+      return
+    }
+    this.squirtAmmo--
+    audio.swing()
+    this.attackAnimT = 0.35
+    this.attackAnimKind = 'spray' // 滋水枪专属喷射动画
+    const dmg = this.squirtTank === 'cashew' ? 20 : 8
+    const pc = this.squirtTank === 'cashew' ? '#c9a05a' : this.squirtTank === 'almond' ? '#c9e8a0' : '#9adfff'
+    for (let i = 0; i < 10; i++) {
+      const a = p.facing + (Math.random() - 0.5) * 0.5
+      const sp = 4 + Math.random() * 2
+      this.particles.push({
+        x: p.x + Math.cos(p.facing) * 0.5, y: p.y + Math.sin(p.facing) * 0.5,
+        vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, t: 0, life: 0.4,
+        color: pc, size: 1.5,
+      })
+    }
+    if (this.squirtTank !== 'water') {
+      let hit = false
+      for (const e of m.entities) {
+        if (e.dead || e.hidden) continue
+        const d = Math.hypot(e.x - p.x, e.y - p.y)
+        if (d > 3.5) continue
+        const ang = Math.atan2(e.y - p.y, e.x - p.x)
+        let diff = Math.abs(ang - p.facing)
+        if (diff > Math.PI) diff = Math.PI * 2 - diff
+        if (diff > 0.6) continue
+        e.hp -= dmg
+        e.stunT = 0.4
+        hit = true
+        this.provoked = true
+        this.killCheck(e)
+      }
+      if (hit) audio.hit()
+      this.msg(this.squirtTank === 'cashew' ? '你喷出一道苦涩的腰果水雾——实体被灼得发颤。' : '你喷出一道甜腻的杏仁水雾。', 'system')
+    } else {
+      this.msg('你喷出一道清水——什么效果也没有。', 'system')
+    }
+    if (this.squirtAmmo <= 0) {
+      this.squirtTank = 'none'
+      this.msg('储罐空了。', 'system')
+    }
+  }
+
+  /** 迁跃浆果：传送回首次发现这种浆果的层级 */
+  private warpToBerryLevel() {
+    const dest = this.warpBerryLevel
+    if (dest === null || dest === this.player.level) {
+      this.msg('浆果的空间涟漪荡开——但你已经在这里了。', 'lore')
+      return
+    }
+    this.msg('浆果在你口中炸开一圈空间涟漪——', 'lore')
+    this.transition = { anim: 'bloom', t: 0, dest }
+    this.emit({ kind: 'transition', anim: 'bloom', dest })
+  }
+
+  private updateProjectiles(dt: number) {
+    const m = this.map!
+    for (const pr of this.projectiles) {
+      const nx = pr.x + pr.vx * dt, ny = pr.y + pr.vy * dt
+      pr.vz -= 9.8 * dt
+      pr.z += pr.vz * dt
+      if (pr.z <= pr.floorZ) { pr.done = true; this.landProjectile(pr, pr.x, pr.y); continue }
+      // 撞墙：在原地提前落地
+      if (tileAt(m, Math.floor(nx), Math.floor(ny)) !== 1) { pr.done = true; this.landProjectile(pr, pr.x, pr.y); continue }
+      pr.x = nx; pr.y = ny
+    }
+    this.projectiles = this.projectiles.filter((pr) => !pr.done)
+  }
+
+  private landProjectile(pr: Projectile, x: number, y: number) {
+    const m = this.map!
+    const kind = ITEMS[pr.type].throw
+    switch (kind) {
+      case 'explode': { // 汽油罐：范围伤害
+        this.noiseEvent(x, y, 18, true)
+        this.camShake = Math.min(1, this.camShake + 0.5)
+        audio.hit()
+        for (let i = 0; i < 14; i++) {
+          const a = Math.random() * Math.PI * 2
+          this.particles.push({ x, y, vx: Math.cos(a) * 3, vy: Math.sin(a) * 3, t: 0, life: 0.6, color: i % 3 === 0 ? '#e8823c' : '#c93a1e', size: 3 + Math.random() * 3 })
+        }
+        let n = 0
+        for (const e of m.entities) {
+          if (e.dead || e.disguised) continue
+          const d = Math.hypot(e.x - x, e.y - y)
+          if (d > 3.2 || Math.abs(e.z - pr.floorZ) >= 1) continue
+          e.hp -= d < 2.2 ? 45 : 20
+          e.stunT = Math.max(e.stunT, 0.6)
+          this.bloodParticles(e.x, e.y)
+          n++
+          this.killCheck(e)
+        }
+        this.msg(n > 0 ? `汽油罐轰然炸开——火焰吞没了 ${n} 个实体。` : '汽油罐轰然炸开，火焰很快熄灭了。', n > 0 ? 'damage' : 'system')
+        break
+      }
+      case 'shock': { // 电容器：电击 + 长眩晕
+        this.noiseEvent(x, y, 12, true)
+        audio.spark()
+        for (let i = 0; i < 10; i++) {
+          const a = Math.random() * Math.PI * 2
+          this.particles.push({ x, y, vx: Math.cos(a) * 2.2, vy: Math.sin(a) * 2.2, t: 0, life: 0.4, color: '#9ad2ff', size: 2 + Math.random() * 2 })
+        }
+        let n = 0
+        for (const e of m.entities) {
+          if (e.dead || e.disguised) continue
+          const d = Math.hypot(e.x - x, e.y - y)
+          if (d > 2.8 || Math.abs(e.z - pr.floorZ) >= 1) continue
+          e.hp -= 20
+          e.stunT = Math.max(e.stunT, 2.5)
+          n++
+          this.killCheck(e)
+        }
+        this.msg(n > 0 ? `电容器炸开一团电火花——${n} 个实体被电得僵直。` : '电容器炸开一团电火花，什么也没电到。', n > 0 ? 'damage' : 'system')
+        break
+      }
+      case 'noise': { // 订书机：落地脆响引怪（可捡回）
+        m.items.push({ id: Math.random(), type: pr.type, x, y })
+        this.noiseEvent(x, y, 16, true)
+        this.msg('订书机「啪」地砸在远处——有什么听见了。', 'system')
+        break
+      }
+      case 'lure': { // 氙气玻璃珠：引路者的筑巢材料（可捡回）
+        m.items.push({ id: Math.random(), type: pr.type, x, y })
+        this.noiseEvent(x, y, 8, false)
+        let n = 0
+        for (const e of m.entities) {
+          if (e.dead || e.def.type !== 'lightguide') continue
+          e.state = 'investigate'; e.targetX = x; e.targetY = y; e.stateT = 10
+          n++
+        }
+        this.msg(n > 0 ? '玻璃珠滚落在地——蓝绿色的微光朝它聚拢过来。' : '玻璃珠滚落在地，发出清脆的声响。', n > 0 ? 'lore' : 'system')
+        break
+      }
+    }
   }
 
   bloodParticles(x: number, y: number) {
@@ -1234,12 +1687,21 @@ export class Engine {
     p.x -= dx; p.y -= dy
     for (const f of this.fakes) { f.x -= dx; f.y -= dy }
     for (const pt of this.particles) { pt.x -= dx; pt.y -= dy }
+    for (const pr of this.projectiles) { pr.x -= dx; pr.y -= dy }
     // 窗口重建对象列表：中断进行中的引用型状态
     this.searching = null
     this.lootPanel = null
     this.interactTarget = null
     this.ride = null
     this.climb = null
+    // v29：返程阶梯（世界坐标固定；stitch 重建 m.exits 后重新注入，并同步所属 chunk 供渲染）
+    if (this.bonusExit && m.inf && !m.exits.some((e) => e.def === this.bonusExit!.def)) {
+      const inf = m.inf
+      const exit: ExitInstance = { def: this.bonusExit.def, x: this.bonusExit.wx - inf.ox, y: this.bonusExit.wy - inf.oy, discovered: true }
+      m.exits.push(exit)
+      const c = inf.chunks.get(chunkKey(Math.floor(this.bonusExit.wx / CS), Math.floor(this.bonusExit.wy / CS)))
+      if (c && !c.exits.some((e) => e.def === this.bonusExit!.def)) c.exits.push(exit)
+    }
   }
 
   // ---------- 交互 ----------
@@ -1307,6 +1769,7 @@ export class Engine {
     const band = bandOfZ(p.z)
     // 出口（进入判定仍用近距离，不挡拾取；v13：出口都在主层，上层不触发）
     if (band === 0) for (const e of m.exits) {
+      if (e.def.kind === 'graystairs' || e.def.kind === 'graystairsup') continue // v29：可行走阶梯——直接走上去/走下去，无 E 交互
       if (Math.hypot(e.x + 0.5 - p.x, e.y + 0.5 - p.y) < 1.6) {
         e.discovered = true
         this.interactTarget = { kind: 'exit', label: `进入 ${e.def.name}`, e }
@@ -1364,16 +1827,21 @@ export class Engine {
       else if (s.kind === 'handspike') consider('handspike', '触摸 石头做的手', s, d, true)
       else if (s.kind === 'hoteldoor') {
         if (s.data?.locked) {
-          const can = this.hasItem('crowbar') || this.hasPocket('skeleton')
-          consider('hoteldoor', can ? '撬开 上锁的房门' : '上锁的房门（需要撬棍/万能钥匙）', s, d, can)
+          const canAxe = this.hasItem('axe') && this.axeDur > 0
+          const can = this.hasItem('crowbar') || this.hasPocket('skeleton') || canAxe
+          const label = canAxe ? `劈开 上锁的房门（斧头耐久 ${this.axeDur}/5）`
+            : can ? '撬开 上锁的房门' : '上锁的房门（需要撬棍/万能钥匙/斧头）'
+          consider('hoteldoor', label, s, d, can)
         } else consider('hoteldoor', s.data?.open ? '关上 房门' : '打开 房门', s, d, true)
       }
       else if (s.kind === 'rollerdoor') consider('rollerdoor', s.data?.open ? '放下 卷帘门' : '升起 卷帘门', s, d, true)
       else if (s.kind === 'glassdoor') consider('glassdoor', s.data?.open ? '关上 玻璃门' : '推开 玻璃门', s, d, true)
+      else if (s.kind === 'inkdoor') consider('inkdoor', s.data?.open ? '关上 墨黑色金属门' : '打开 墨黑色金属门', s, d, true)
       else if (s.kind === 'glasswin') consider('glasswin', '眺望 窗外', s, d, true)
       else if (s.kind === 'windowtrap') consider('windowtrap', s.data?.triggered ? '查看 窗户（已无异常）' : '查看 未涂黑的窗户', s, d, true)
       else if (s.kind === 'windowblack') consider('windowblack', '查看 涂黑的窗户', s, d, true)
       else if (s.kind === 'graffiti') consider('graffiti', '查看 涂鸦', s, d, true)
+      else if (s.kind === 'megdoc') consider('megdoc', '阅读 M.E.G. 文档', s, d, true)
       else if (s.kind === 'valve') consider('valve', s.data?.on ? '关闭 蒸汽阀门' : '打开 蒸汽阀门', s, d, true)
       else if (s.kind === 'booth' && !this.player.leverPulled) consider('lever', '扳动 电源拉杆', s, d, true)
       else if (s.kind === 'server' && s.locked) consider('server', '刷门禁卡 进入', s, d, this.hasPocket('keycard'))
@@ -1521,7 +1989,21 @@ export class Engine {
         const s = t.s && t.s.kind === 'hoteldoor' && Math.hypot(t.s.x + 0.5 - p.x, t.s.y + 0.5 - p.y) < 2.6 ? t.s : null
         if (!s) return
         if (s.data?.locked) {
-          if (this.hasPocket('skeleton')) {
+          if (this.hasItem('axe') && this.axeDur > 0) {
+            // v32：斧头破门——消耗 1 点耐久（共 5 点，耗尽斧头报废）
+            this.axeDur--
+            s.data = { ...s.data, locked: 0, open: 1 }
+            s.solid = false
+            audio.hit()
+            this.noiseEvent(p.x, p.y, 16, true) // 破门巨响引来实体
+            if (this.axeDur <= 0) {
+              this.consumeItem('axe')
+              this.axeDur = this.hasItem('axe') ? 5 : 0
+              this.msg('你一斧劈开了门锁——斧刃崩断，斧头报废了！', 'damage')
+            } else {
+              this.msg(`你一斧劈开了门锁！（斧头耐久剩余 ${this.axeDur}）`, 'system')
+            }
+          } else if (this.hasPocket('skeleton')) {
             s.data = { ...s.data, locked: 0, open: 1 }
             s.solid = false
             this.msg('黄铜万能钥匙转了一圈——锁开了。', 'loot')
@@ -1569,6 +2051,25 @@ export class Engine {
           'system',
         )
         audio.uiTick()
+        break
+      }
+      case 'inkdoor': {
+        // 维护通廊墨黑色金属门（横跨 2 格门洞，交互开/关；关门时实心阻挡）
+        const s = t.s && t.s.kind === 'inkdoor' && Math.hypot(t.s.x + t.s.w / 2 - p.x, t.s.y + t.s.h / 2 - p.y) < 2.6 ? t.s : null
+        if (!s) return
+        const open = s.data?.open ? 0 : 1
+        s.data = { ...s.data, open }
+        s.solid = !open
+        this.msg(open ? '墨黑色金属门吱呀一声开了——门后是一片晃眼的白。' : '你带上了墨黑色金属门。', 'system')
+        audio.uiTick()
+        break
+      }
+      case 'megdoc': {
+        // M.E.G. 文档：打开文档视图（App 侧记录到图鉴「文档」分类）
+        const s = t.s && t.s.kind === 'megdoc' ? t.s : null
+        if (!s) return
+        audio.pickup()
+        this.emit({ kind: 'doc', text: (s.data?.doc as string) ?? 'meg_levels' })
         break
       }
       case 'glasswin': {
@@ -1622,14 +2123,14 @@ export class Engine {
           ],
           manila: [
             '一份泛黄的文档：「马尼拉室——给还能读到这句话的人。床是干净的，水在柜子里。别把这里的事告诉墙纸。」',
-            '文档第二页：「……在这里睡了一晚，嗡鸣声远了。如果你找到闪烁的门，别犹豫。——K.」',
+            '文档第二页：「……在这里睡了一晚，嗡鸣声远了。如果你找到那面闪烁的墙，别犹豫。——K.」',
           ],
           red: [
             '「红房间里待太久的人，出来时都不说话。」',
             '「红色不是灯光的颜色，是这里『空气』的颜色。数到十，离开。」',
           ],
           exitguide: [
-            '涂鸦箭头指向一侧：「闪烁的门在这边——跟着电流声。」',
+            '涂鸦箭头指向一侧：「闪烁的墙在这边——跟着电流声。」',
             '「门在闪。灯闪三下停一下的就是真的，别信常亮的。」',
           ],
         }
@@ -1729,7 +2230,18 @@ export class Engine {
       const cap = lucky ? loot.length : loot.length - 1 // 非幸运不出磁带
       items.push(loot[Math.floor(Math.random() * cap)])
     }
-    return items
+    // v32：小概率稀有掉落（onceOwned=玩家已拥有一个后不再生成）
+    const RARE: Record<string, { type: string; p: number; onceOwned?: boolean }[]> = {
+      crate: [{ type: 'knife', p: 0.1 }, { type: 'axe', p: 0.08 }, { type: 'headlamp', p: 0.06 }],
+      dresser: [{ type: 'notebook', p: 0.12, onceOwned: true }],
+    }
+    for (const r of RARE[kind] ?? []) {
+      if (Math.random() >= r.p) continue
+      if (r.onceOwned && this.hasItem(r.type)) continue
+      items.push(r.type)
+    }
+    // v32：腰果水 1/10 概率替代杏仁水（开局势能物资不受影响——那部分不走生成器）
+    return items.map((t) => (t === 'almond' && Math.random() < 0.1 ? 'cashew' : t))
   }
 
   // 搜索进度完成：打开面板，内容 = 结构上持久的物品数组（拿取即同步容器剩余）
@@ -1826,6 +2338,8 @@ export class Engine {
       return
     }
     audio.pickup()
+    // v29：经 L0「向下的灰色阶梯」下行 → 在 L1 出生点附近生成返程阶梯
+    if (def.kind === 'graystairs' && def.dest === 1) this.arriveStairs = true
     // v23：立刻解析 random 目标——过场演出需要知道「切入」的是哪一层
     const dest: number | 'win' = def.dest === 'random' ? Math.floor(Math.random() * NORMAL_LEVELS) : def.dest
     const cutIn = dest === 'win' ? undefined : (def.cutIn ?? LEVELS[dest]?.entryAnim)
@@ -1833,15 +2347,102 @@ export class Engine {
     this.emit({ kind: 'transition', anim: def.anim, fallDamage: def.fallDamage, cutIn, dest })
   }
 
+  // ---------- v29：可行走灰色阶梯（走下去→L1 / 走上去→L0，自动换层，无需按 E）----------
+  private updateStairs(dt: number) {
+    const m = this.map, p = this.player
+    this.onStairs = false
+    if (!m || this.transition || this.ride || this.climb) return
+    const at = (x: number, y: number) => (x < 0 || y < 0 || x >= m.w || y >= m.h ? 0 : m.tiles[y * m.w + x])
+    for (const e of m.exits) {
+      const up = e.def.kind === 'graystairsup'
+      if (!up && e.def.kind !== 'graystairs') continue
+      const tx = Math.floor(e.x), ty = Math.floor(e.y)
+      // 阶梯走向 = 邻墙且反侧 4 格畅通（地板且无实心结构；优先级同渲染层 orientStairs；兜底取第一面墙）
+      let dx = 0, dy = 0
+      const solidAtT = (x: number, y: number) => m.structures.some((s) => s.solid && x >= s.x && x < s.x + s.w && y >= s.y && y < s.y + s.h)
+      const sides: [number, number][] = []
+      for (const [wx, wy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
+        if (at(tx + wx, ty + wy) === 1) continue
+        sides.push([wx, wy])
+        let clear = true
+        for (let k = 1; k <= 4; k++) if (at(tx - wx * k, ty - wy * k) !== 1 || solidAtT(tx - wx * k, ty - wy * k)) { clear = false; break }
+        if (clear) { dx = -wx; dy = -wy; break }
+      }
+      if (!dx && !dy) {
+        if (!sides.length) continue
+        dx = -sides[0][0]; dy = -sides[0][1]
+      }
+      const cx = tx + 0.5, cy = ty + 0.5
+      const s = (p.x - cx) * dx + (p.y - cy) * dy // 沿走向距离（入口≈0，深入为正）
+      const latS = (p.x - cx) * dy - (p.y - cy) * dx // 横向偏移（带符号）
+      if (s < -0.8 || s > 3.1 || Math.abs(latS) > 1.0) continue
+      this.onStairs = true // 碰撞 z 按地面处理、跳过重力贴地（本帧由这里接管垂直位置）
+      // 在阶梯上：高度沿走向绑定（下行 -3.2m / 上行 +3.2m，坡道与可见踏步严格一致），横向限位防跌落
+      const t = Math.max(0, Math.min(1, s / 2.6))
+      const targetZ = (up ? 3.2 : -3.2) * t
+      p.z += (targetZ - p.z) * Math.min(1, dt * 12)
+      p.vz = 0
+      if (s > -0.1 && Math.abs(latS) > 0.55) {
+        const over = Math.abs(latS) - 0.55, sgn = latS > 0 ? 1 : -1
+        p.x -= dy * over * sgn
+        p.y += dx * over * sgn
+      }
+      if (t >= 0.93) this.takeExit(e.def) // 走到尽头：自动换层
+      return // 同帧只处理一个阶梯
+    }
+  }
+
+  // v29：在 L1 出生点附近放置返程「向上的灰色阶梯」（邻墙地板格，就近搜索）
+  private placeBonusStairs() {
+    const m = this.map!, inf = m.inf!, W = m.w
+    const at = (x: number, y: number) => (x < 0 || y < 0 || x >= W || y >= W ? 0 : m.tiles[y * W + x])
+    const solidAt = (x: number, y: number) => m.structures.some((s) => s.solid && x >= s.x && x < s.x + s.w && y >= s.y && y < s.y + s.h)
+    // 可行走阶梯：走向需 4 格畅通（地板且无实心结构）
+    const runOk = (x: number, y: number) => {
+      for (const [wx, wy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
+        if (at(x + wx, y + wy) === 1) continue
+        let clear = true
+        for (let k = 1; k <= 4; k++) if (at(x - wx * k, y - wy * k) !== 1 || solidAt(x - wx * k, y - wy * k)) { clear = false; break }
+        if (clear) return true
+      }
+      return false
+    }
+    for (let r = 1; r <= 6; r++)
+      for (let dy = -r; dy <= r; dy++)
+        for (let dx = -r; dx <= r; dx++) {
+          const x = Math.floor(m.spawn.x) + dx, y = Math.floor(m.spawn.y) + dy
+          if (x < 1 || y < 1 || x >= W - 1 || y >= W - 1) continue
+          if (m.tiles[y * W + x] !== 1 || !runOk(x, y)) continue
+          if (m.tiles[y * W + x + 1] === 1 && m.tiles[y * W + x - 1] === 1 && m.tiles[(y + 1) * W + x] === 1 && m.tiles[(y - 1) * W + x] === 1) continue // 需邻墙
+          const def: ExitDef = { kind: 'graystairsup', name: '向上的灰色阶梯', dest: 0, anim: 'bloom' }
+          this.bonusExit = { def, wx: inf.ox + x, wy: inf.oy + y }
+          const exit: ExitInstance = { def, x, y, discovered: true }
+          m.exits.push(exit)
+          // 渲染层按 chunk 出口列表构建网格——必须同步进所属 LiveChunk 才会被渲染
+          const c = inf.chunks.get(chunkKey(Math.floor((inf.ox + x) / CS), Math.floor((inf.oy + y) / CS)))
+          c?.exits.push(exit)
+          this.msg('不远处有一段向上的灰色阶梯——可以循原路返回 Level 0。', 'lore')
+          return
+        }
+  }
+
   // ---------- 背包 ----------
   addItem(type: string): boolean {
     const p = this.player
     const def = ITEMS[type]
     const all = [...p.hotbar, ...p.backpack]
-    for (const s of all) if (s && s.type === type && s.count < def.stack) { s.count++; this.syncPassives(); return true }
-    for (let i = 0; i < p.hotbar.length; i++) if (!p.hotbar[i]) { p.hotbar[i] = { type, count: 1 }; this.syncPassives(); return true }
-    for (let i = 0; i < p.backpack.length; i++) if (!p.backpack[i]) { p.backpack[i] = { type, count: 1 }; this.syncPassives(); return true }
-    return false
+    let ok = false
+    for (const s of all) if (!ok && s && s.type === type && s.count < def.stack) { s.count++; ok = true }
+    for (let i = 0; !ok && i < p.hotbar.length; i++) if (!p.hotbar[i]) { p.hotbar[i] = { type, count: 1 }; ok = true }
+    for (let i = 0; !ok && i < p.backpack.length; i++) if (!p.backpack[i]) { p.backpack[i] = { type, count: 1 }; ok = true }
+    if (ok) {
+      this.syncPassives()
+      // v32：迁跃浆果——首次获得时记录所在层级（食用后传送回这里）
+      if (type === 'warpberry' && this.warpBerryLevel === null) this.warpBerryLevel = p.level
+      // v32：斧头——获得时重置耐久（5 点，破门消耗）
+      if (type === 'axe' && this.axeDur <= 0) this.axeDur = 5
+    }
+    return ok
   }
   hasItem(type: string): boolean { return this.countItem(type) > 0 }
   countItem(type: string): number {
@@ -1869,14 +2470,63 @@ export class Engine {
     const def = ITEMS[s.type]
     // 装备类物品：主手使用无效果 → 提示其作用与应在的装备位
     if (def.equip) {
-      const slotName = { offhand: '副手', body: '身体', gloves: '手套', pocket: '口袋' }[def.equip]
+      const slotName = { offhand: '副手', body: '身体', gloves: '手套', head: '头饰', pocket: '口袋' }[def.equip]
       this.msg(`${def.name} 是装备（${def.passive ?? def.desc}），应放在【${slotName}】栏——在背包中拖拽到对应装备位。`, 'system')
       return
     }
-    if (!def.use || def.use === 'none') { this.msg(`${def.name} 无法直接使用。`, 'system'); return }
+    if (!def.use || def.use === 'none') {
+      // v32：笔记本和笔——翻开笔记本（可自由书写，字迹自动保留）
+      if (s.type === 'notebook') { this.emit({ kind: 'notebook' }); return }
+      // v32：滋水枪——右键/使用 = 把储罐液体对自己喝一口（杏仁水理智+10，腰果水-10，清水无效果）
+      if (s.type === 'squirtgun') {
+        if (this.squirtAmmo <= 0 || this.squirtTank === 'none') {
+          this.msg('储罐是空的——在物品栏选中滋水枪，于右侧信息栏装入液体。', 'system')
+          return
+        }
+        this.squirtAmmo--
+        this.attackAnimT = 0.35
+        this.attackAnimKind = 'drink' // 举到嘴边的饮用动画
+        audio.pickup()
+        if (this.squirtTank === 'almond') { this.player.sanity = Math.min(100, this.player.sanity + 10); this.msg('你就着储罐喝了一口杏仁水——甜腻。（理智 +10）', 'loot') }
+        else if (this.squirtTank === 'cashew') { this.player.sanity = Math.max(0, this.player.sanity - 10); this.msg('你就着储罐喝了一口腰果水——苦涩烧喉。（理智 -10）', 'damage') }
+        else this.msg('你就着储罐喝了一口清水。', 'system')
+        if (this.squirtAmmo <= 0) { this.squirtTank = 'none'; this.msg('储罐空了。', 'system') }
+        return
+      }
+      this.msg(`${def.name} 无法直接使用。`, 'system')
+      return
+    }
     const p = this.player
     switch (def.use) {
-      case 'eat': p.hunger = Math.min(100, p.hunger + (def.value ?? 30)); break
+      case 'eat': {
+        // v32：皇家口粮——饥饿全满 + 理智下限锁定 + 成瘾机制（可多次食用，逐次加长成瘾）
+        if (s.type === 'royalration') {
+          p.hunger = 100
+          if (this.sanityFloor < 40) {
+            this.sanityFloor = 40
+            this.msg('甘美难以言喻——你的理智下限仿佛被钉住了。（理智不再跌破 40）', 'lore')
+          } else this.msg('甘美依旧，渴求更深了。', 'loot')
+          this.royalAddictT += 180
+          // 成瘾性触发：概率把余下的皇家口粮全部消耗掉，理智急速下降
+          if (Math.random() < 0.25) {
+            for (const arr of [p.hotbar, p.backpack])
+              for (let i = 0; i < arr.length; i++)
+                if (arr[i]?.type === 'royalration') arr[i] = null
+            this.royalDrainT = 5
+            this.msg('渴求压倒了你——余下的皇家口粮被发疯般全部吃光！理智开始崩塌。', 'damage')
+          }
+          break
+        }
+        // 成瘾期间：其他所有食物均不恢复饥饿（仍被吃掉）
+        if (this.royalAddictT > 0) {
+          this.msg('成瘾发作：其他食物尝起来像灰烬，一点也吃不饱。', 'damage')
+          break
+        }
+        p.hunger = Math.min(100, p.hunger + (def.value ?? 30))
+        // v32：迁跃浆果——食用后传送回首次发现这种浆果的层级
+        if (s.type === 'warpberry') this.warpToBerryLevel()
+        break
+      }
       case 'heal': p.hp = Math.min(100, p.hp + (def.value ?? 30)); break
       case 'sanity': p.sanity = Math.min(100, p.sanity + (def.value ?? 30)); break
       case 'bigsanity': p.sanity = Math.min(100, p.sanity + (def.value ?? 60)); break
@@ -1891,9 +2541,58 @@ export class Engine {
     this.emit({ kind: 'toast', text: `使用了 ${def.name}` })
     this.consumeItem(s.type)
   }
+  // ---------- 粉笔头：在墙上画白色记号 ----------
+  /** 手持粉笔头右键：在面前墙上画记号（消耗 1 支；同一墙面不重复消耗） */
+  private drawChalk() {
+    const p = this.player, m = this.map!
+    const ox = m.inf ? m.inf.ox : 0, oy = m.inf ? m.inf.oy : 0
+    // 沿朝向由近及远探测墙面
+    for (const r of [0.8, 1.2, 1.6]) {
+      const tx = Math.floor(p.x + Math.cos(p.facing) * r)
+      const ty = Math.floor(p.y + Math.sin(p.facing) * r)
+      if (tileAt(m, tx, ty) === 1) continue // 地板，继续往前探
+      // 墙面朝向玩家的一侧（4 向：0=+x 1=-x 2=+y 3=-y）
+      const dx = p.x - (tx + 0.5), dy = p.y - (ty + 0.5)
+      const dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 0 : 1) : (dy > 0 ? 2 : 3)
+      const wx = ox + tx, wy = oy + ty
+      if (this.wallMarks.some((mk) => mk.level === p.level && mk.wx === wx && mk.wy === wy && mk.dir === dir)) {
+        this.msg('这面墙上已经有你的记号了。', 'system')
+        return
+      }
+      this.wallMarks.push({ level: p.level, wx, wy, dir })
+      if (this.wallMarks.length > 60) this.wallMarks.shift() // 上限 60，丢弃最旧
+      const slot = p.hotbar[p.selected]
+      if (slot && slot.type === 'chalkstub' && --slot.count <= 0) p.hotbar[p.selected] = null
+      audio.uiTick()
+      this.msg('你在墙上画下一道白色记号。', 'system')
+      return
+    }
+    this.msg('伸手可及的范围内没有墙——粉笔无处下笔。', 'system')
+  }
+
   // v18：快捷使用当前持有物品（默认鼠标右键，同背包「使用」按钮效果）
+  // v23b/v26：主手持**装备类**物品（手电/打火机/手套/服饰/口袋类）按右键 = 直接装入对应装备位
+  // （占位则互换——v23b 曾实现后随仓库同步丢失，玩家反馈"没有实现"，此为断链修复）；
+  // 武器（撬棍/扳手/木板）本就握在主手，右键提示用法；其余物品 = 使用（吃/喝/治疗…）
   quickUse() {
-    this.useSlot('hotbar', this.player.selected)
+    const p = this.player
+    const s = p.hotbar[p.selected]
+    if (!s) return
+    const def = ITEMS[s.type]
+    if (def?.equip) {
+      if (this.equipItem('hotbar', p.selected)) audio.uiTick()
+      return
+    }
+    if (s.type === 'chalkstub') { this.drawChalk(); return }
+    if (def?.throw) {
+      this.msg(`${def.name} 就握在你手里——左键把它掷出去。`, 'system')
+      return
+    }
+    if (def?.weapon) {
+      this.msg(`${def.name} 就握在你手里——左键挥舞攻击（伤害 ${def.weapon}）。`, 'system')
+      return
+    }
+    this.useSlot('hotbar', p.selected)
   }
   // v20：快捷丢弃当前手持物品（默认 Q，整叠丢到脚下地面；空手无效）
   quickDrop() {
@@ -1956,6 +2655,11 @@ export class Engine {
     const eq = ITEMS[s.type]?.equip
     if (!eq) { this.msg(`${itemName(s.type)} 不是装备。`, 'system'); return false }
     if (eq === 'pocket') {
+      // 口袋不允许重复道具（同类护符/钥匙只生效一件，堆叠没有意义）
+      if (this.player.equip.pockets.some((x) => x?.type === s.type)) {
+        this.msg(`口袋里已经有一件 ${itemName(s.type)} 了。`, 'system')
+        return false
+      }
       const free = this.player.equip.pockets.findIndex((x) => !x)
       if (free < 0) { this.msg('口袋栏已满。', 'system'); return false }
       return this.moveSlot(from, { w: 'pocket', i: free })
@@ -1974,13 +2678,19 @@ export class Engine {
       return ITEMS[s.type]?.equip === (r.w === 'pocket' ? 'pocket' : r.w)
     }
     if (!fits(to, fs) || !fits(from, ts)) {
-      const name = to.w === 'offhand' ? '副手' : to.w === 'body' ? '身体' : to.w === 'gloves' ? '手套' : to.w === 'pocket' ? '口袋' : ''
+      const name = to.w === 'offhand' ? '副手' : to.w === 'body' ? '身体' : to.w === 'gloves' ? '手套' : to.w === 'head' ? '头饰' : to.w === 'pocket' ? '口袋' : ''
       if (name) this.msg(`${itemName(fs.type)} 不能放在【${name}】栏。`, 'system')
+      return false
+    }
+    // 口袋不允许重复道具（拖拽换入同样校验）
+    if (to.w === 'pocket' && this.player.equip.pockets.some((x, xi) => xi !== to.i && x?.type === fs.type)) {
+      this.msg(`口袋里已经有一件 ${itemName(fs.type)} 了。`, 'system')
       return false
     }
     this.slotSet(from, ts)
     this.slotSet(to, fs)
     if (to.w === 'offhand' && fs.type === 'flashlight') this.player.flashlight = true // 装备手电筒即点亮
+    if (to.w === 'head' && fs.type === 'headlamp') this.player.flashlight = true // v32：装备头灯即点亮
     this.syncPassives()
     return true
   }
@@ -1995,8 +2705,8 @@ export class Engine {
     const wantBag = 16 + (p.hasPockets ? 4 : 0)
     while (p.backpack.length < wantBag) p.backpack.push(null)
     while (p.backpack.length > wantBag && !p.backpack[p.backpack.length - 1]) p.backpack.pop()
-    // 手电筒=副手装备：未装备则强制关灯（装备/拾取时由对应路径点亮）
-    if (p.equip.offhand?.type !== 'flashlight') p.flashlight = false
+    // 照明=副手手电筒 / 头饰头灯：两者皆无则强制关灯（装备/拾取时由对应路径点亮）
+    if (p.equip.offhand?.type !== 'flashlight' && p.equip.head?.type !== 'headlamp') p.flashlight = false
   }
 
   // ---------- 视野 ----------
@@ -2139,6 +2849,70 @@ export class Engine {
     this.msg('[DEV] 状态已清空', 'system')
   }
 
+  /** 召唤指定出口：仅限本层可生成的种类（levelDef.exits）；在玩家附近邻墙地板生成一个并标记已发现 */
+  devSummonExit(kind: string): boolean {
+    const m = this.map
+    if (!m) return false
+    const def = this.levelDef.exits.find((e) => e.kind === kind)
+    if (!def) { this.msg('[DEV] 本层不会生成该出口。', 'system'); return false }
+    const p = this.player
+    const at = (x: number, y: number) => (x < 0 || y < 0 || x >= m.w || y >= m.h ? 0 : m.tiles[y * m.w + x])
+    const solidAt = (x: number, y: number) => m.structures.some((s) => s.solid && x >= s.x && x < s.x + s.w && y >= s.y && y < s.y + s.h)
+    // 可行走阶梯：走向需 4 格畅通（真实走下去/走上去的通道）
+    const stairKind = kind === 'graystairs' || kind === 'graystairsup'
+    const runOk = (x: number, y: number) => {
+      if (!stairKind) return true
+      for (const [wx, wy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
+        if (at(x + wx, y + wy) === 1) continue
+        let clear = true
+        for (let k = 1; k <= 4; k++) if (at(x - wx * k, y - wy * k) !== 1 || solidAt(x - wx * k, y - wy * k)) { clear = false; break }
+        if (clear) return true
+      }
+      return false
+    }
+    let best: { x: number; y: number; score: number } | null = null
+    for (let ty = Math.floor(p.y) - 7; ty <= Math.floor(p.y) + 7; ty++)
+      for (let tx = Math.floor(p.x) - 7; tx <= Math.floor(p.x) + 7; tx++) {
+        if (at(tx, ty) !== 1 || solidAt(tx, ty) || !runOk(tx, ty)) continue
+        if (at(tx + 1, ty) === 1 && at(tx - 1, ty) === 1 && at(tx, ty + 1) === 1 && at(tx, ty - 1) === 1) continue // 需邻墙
+        const d = Math.hypot(tx + 0.5 - p.x, ty + 0.5 - p.y)
+        if (d < 1.6 || d > 8) continue
+        if (m.exits.some((e) => Math.floor(e.x) === tx && Math.floor(e.y) === ty)) continue
+        const ang = Math.abs(Math.atan2(ty + 0.5 - p.y, tx + 0.5 - p.x) - p.facing)
+        const score = d + Math.min(ang, Math.PI * 2 - ang) * 2 // 优先朝向侧
+        if (!best || score < best.score) best = { x: tx, y: ty, score }
+      }
+    if (!best) { this.msg('[DEV] 附近没有可放置出口的邻墙地板。', 'system'); return false }
+    const exit: ExitInstance = { def, x: best.x, y: best.y, discovered: true }
+    m.exits.push(exit)
+    // 无限模式：同步进所属 LiveChunk，窗口重缝合后不丢（chunk 卸载后失效，dev 工具可接受）
+    const inf = m.inf
+    if (inf) {
+      const c = inf.chunks.get(chunkKey(Math.floor((inf.ox + best.x) / CS), Math.floor((inf.oy + best.y) / CS)))
+      c?.exits.push(exit)
+      // 下行阶梯：走向 3 格标为深渊洞口（视觉开洞；同步 chunk 局部数组防 stitch 还原）
+      if (kind === 'graystairs' && c) {
+        for (const [wx, wy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
+          if (at(best.x + wx, best.y + wy) === 1) continue
+          let clear = true
+          for (let k = 1; k <= 3; k++) if (at(best.x - wx * k, best.y - wy * k) !== 1) { clear = false; break }
+          if (!clear) continue
+          for (let k = 1; k <= 3; k++) {
+            const hx = best.x - wx * k, hy = best.y - wy * k
+            m.elev[hy * m.w + hx] = 4
+            const lx = hx - (c.cx * CS - inf.ox), ly = hy - (c.cy * CS - inf.oy)
+            if (lx >= 0 && ly >= 0 && lx < CS && ly < CS) c.elev[ly * CS + lx] = 4
+          }
+          break
+        }
+      }
+      inf.redo = (inf.redo ?? 0) + 1 // 出口网格只在 chunk 构建时生成——强制重建以渲染新召唤的出口
+    }
+    this.mapRev++ // 有限层：触发渲染层重建静态几何（含新出口）
+    this.msg(`[DEV] 已在附近召唤出口「${def.name}」（${best.x},${best.y}）`, 'system')
+    return true
+  }
+
   /** 传送：exit=最近出口 / entity=最近实体 / container=最近未搜容器 / spawn=出生点 */
   devTeleport(target: 'exit' | 'entity' | 'container' | 'spawn'): boolean {
     const m = this.map
@@ -2206,12 +2980,13 @@ export class Engine {
 
   /** v17：传送到无限 L0 最近的指定变体 chunk 中心（截图/冒烟测试用）。
    *  优先已加载窗口内的变体 chunk；没有则定位最近未生成 chunk（传送即触发流式生成）。 */
-  devGotoVariant(kind: L0Variant): boolean {
+  devGotoVariant(kind: string): boolean {
     const m = this.map
     if (!m?.inf) { this.msg('[DEV] 当前不是无限层级。', 'system'); return false }
     const inf = m.inf
     const p = this.player
-    const name = VARIANT_NAMES[kind]
+    const impl = infiniteImplFor(this.levelDef.id)
+    const name = impl.variantNames[kind] ?? kind
     // 已生成区域内已有该变体 → 直接传送（同一窗口内无需流式加载）
     const loaded = [...inf.chunks.values()].find((c) => c.variant === kind)
     if (loaded) {
@@ -2223,7 +2998,7 @@ export class Engine {
       return true
     }
     // 未生成：搜索最近的目标变体 chunk 并传送（窗口平移即强制生成该新区域）
-    const hit = findNearestVariant(inf.seed, inf.ox + p.x, inf.oy + p.y, kind)
+    const hit = findNearestVariant(inf.seed, inf.ox + p.x, inf.oy + p.y, kind, 60, impl.variantOf)
     if (!hit) { this.msg(`[DEV] 附近没有变体 ${name}。`, 'system'); return false }
     // 世界坐标目标（chunk 中心）；直接改写玩家窗口坐标，由窗口平移完成流式加载
     const wcx = hit.cx * CS + CS / 2, wcy = hit.cy * CS + CS / 2
@@ -2238,20 +3013,20 @@ export class Engine {
   /** 当前层级可能生成的固定结构（prefab）与变种房间清单，标注是否已出现在已生成区域 */
   devLevelStructures(): {
     prefabs: { id: string; name: string; found: boolean }[]
-    variants: { id: L0Variant; name: string; found: boolean }[]
+    variants: { id: string; name: string; found: boolean }[]
   } {
     const m = this.map
     const def = this.levelDef
-    // 无限层级（L0）不走 prefab 生成路径，只有变种房间；有限层级只有固定结构
+    // 无限层级不走 prefab 生成路径，只有变种房间；有限层级只有固定结构
     const prefabs = m?.inf ? [] : prefabsForLevel(def.id, def.skipPrefabs).map((pf) => ({
       id: pf.id,
       name: pf.name,
       found: !!m?.structures.some((s) => s.kind === 'prefabmark' && s.data?.prefab === pf.id),
     }))
     const variants = m?.inf
-      ? RARE_VARIANTS.map((v) => ({
-          id: v as L0Variant,
-          name: VARIANT_NAMES[v],
+      ? infiniteImplFor(def.id).rareVariants.map((v) => ({
+          id: v,
+          name: infiniteImplFor(def.id).variantNames[v] ?? v,
           found: [...m.inf!.chunks.values()].some((c) => c.variant === v),
         }))
       : []
@@ -2288,7 +3063,70 @@ export class Engine {
     return true
   }
 
-  /** v17：传送到最近的保底闪烁门出口（窗口外也可达） */
+  /** 测试场地：仅 L0 无限模式、开发者模式专用——在附近开辟 80×80 无墙空旷区域并传送（不会自然生成） */
+  devTestField(): boolean {
+    const m = this.map
+    if (!m?.inf || this.levelDef.id !== 0) { this.msg('[DEV] 测试场地仅在教学关卡（Level 0）可用。', 'system'); return false }
+    const p = this.player
+    const W = m.w
+    // 场地中心：玩家前方 48 格（限制在当前 chunk 窗口内）
+    const cx = Math.max(42, Math.min(W - 42, Math.round(p.x + 48)))
+    const cy = Math.max(42, Math.min(W - 42, Math.round(p.y)))
+    const R = 40
+    const x0 = cx - R, y0 = cy - R, x1 = cx + R, y1 = cy + R
+    const inR = (x: number, y: number) => x >= x0 && x <= x1 && y >= y0 && y <= y1
+    // 关键：无限模式的窗口数组（m.tiles 等）只是已加载 chunk 的缝合副本，
+    // 窗口平移时 stitch() 会用 chunk 数据覆盖它们——必须同步改写底层 LiveChunk，
+    // 否则传送触发平移后场地立刻被原始迷宫还原；渲染层也只认 inf.redo，不认 mapRev
+    const inf = m.inf!
+    for (const c of inf.chunks.values()) {
+      const wx0 = c.cx * CS - inf.ox, wy0 = c.cy * CS - inf.oy
+      const lx0 = Math.max(x0, wx0) - wx0, ly0 = Math.max(y0, wy0) - wy0
+      const lx1 = Math.min(x1, wx0 + CS - 1) - wx0, ly1 = Math.min(y1, wy0 + CS - 1) - wy0
+      if (lx0 > lx1 || ly0 > ly1) continue
+      for (let ly = ly0; ly <= ly1; ly++)
+        for (let lx = lx0; lx <= lx1; lx++) {
+          const i = ly * CS + lx
+          c.tiles[i] = 1; c.elev[i] = 0; c.tint[i] = 0; c.wet[i] = 0
+        }
+      c.structures = c.structures.filter((s) => !inR(s.x + s.w / 2, s.y + s.h / 2))
+      c.items = c.items.filter((it) => !inR(it.x, it.y))
+      c.lights = c.lights.filter((l) => !inR(l.x, l.y))
+      c.exits = c.exits.filter((e) => !inR(e.x, e.y))
+      c.entities = c.entities.filter((e) => !inR(e.x, e.y))
+    }
+    for (let y = y0; y <= y1; y++)
+      for (let x = x0; x <= x1; x++) {
+        const i = y * W + x
+        m.tiles[i] = 1; m.elev[i] = 0; m.step[i] = 0; m.crawl[i] = 0
+        m.liquid[i] = 0; m.outdoor[i] = 0; m.tint[i] = 0; m.wet[i] = 0
+        m.up[i] = 0; m.upWall[i] = 0; m.stair[i] = 0; m.ceiling[i] = 0
+      }
+    // 清空区域内结构/物品/实体/光源/出口（空旷无阻挡）
+    m.structures = m.structures.filter((s) => !inR(s.x + s.w / 2, s.y + s.h / 2))
+    m.items = m.items.filter((it) => !inR(it.x, it.y))
+    m.entities = m.entities.filter((e) => !inR(e.x, e.y))
+    m.lights = m.lights.filter((l) => !inR(l.x, l.y))
+    m.exits = m.exits.filter((e) => !inR(e.x, e.y))
+    // 场地照明：按 8 格网格补灯，同时写入窗口数组与底层 LiveChunk——
+    // 窗口平移 stitch 从 chunk 重建 m.lights 后灯仍在（清空 gen 灯后场地不能是黑场）
+    for (let y = y0 + 4; y <= y1; y += 8)
+      for (let x = x0 + 4; x <= x1; x += 8) {
+        const L = { x: x + 0.5, y: y + 0.5, r: 5, color: '#d9c39a', flickerSeed: Math.random() * 100, gen: 1 as const }
+        m.lights.push(L)
+        for (const c of inf.chunks.values()) {
+          const wx0 = c.cx * CS - inf.ox, wy0 = c.cy * CS - inf.oy
+          if (L.x >= wx0 && L.x < wx0 + CS && L.y >= wy0 && L.y < wy0 + CS) { c.lights.push(L); break }
+        }
+      }
+    p.x = cx; p.y = cy; p.z = 0; p.vz = 0
+    this.mapRev++ // 有限层渲染重建用（无限层忽略，保留无害）
+    inf.redo = (inf.redo ?? 0) + 1 // 无限层：通知渲染层重建全部已烘焙 chunk 几何
+    this.msg('[DEV] 已生成「测试场地」（80×80 空旷区域）并传送。', 'system')
+    return true
+  }
+
+  /** v17：传送到最近的保底出口「闪烁的墙壁」（窗口外也可达） */
   devGotoExit(): boolean {
     const m = this.map
     if (!m?.inf) return this.devTeleport('exit')
@@ -2315,7 +3153,7 @@ export class Engine {
         if (spot) { p.x = spot.x; p.y = spot.y }
       }
     }
-    this.msg(`[DEV] 已传送到闪烁门出口（约 ${w.d.toFixed(0)}m 外）`, 'system')
+    this.msg(`[DEV] 已传送到出口「闪烁的墙壁」（约 ${w.d.toFixed(0)}m 外）`, 'system')
     return true
   }
 

@@ -8,7 +8,7 @@ export const DEEP_ENTITIES: Record<string, EntityDef> = {
   // ==================== Level 6「Lights Out」 ====================
   mimicry: {
     type: 'mimicry', name: '模仿者', hp: 60, speed: 1.9, damage: 22, sight: 2, hearing: 11,
-    darkAmbusher: true, voiceLure: true, hearsSprint: true, color: '#20242a',
+    darkAmbusher: true, voiceLure: true, hearsSprint: true, color: '#20242a', habitat: 'indoor',
     desc: '黑暗里传来同伴的声音在叫你的名字。你的同伴此刻正站在你旁边，一言不发。',
     codex: {
       no: 'Level 6 社区「Mimicry」', danger: '4 级（高威胁）', habitat: 'Level 6',
@@ -27,7 +27,7 @@ export const DEEP_ENTITIES: Record<string, EntityDef> = {
   // ==================== Level 7「Thalassophobia」 ====================
   tiny: {
     type: 'tiny', name: '小不点', hp: 90, speed: 2.4, damage: 24, sight: 5, hearing: 14,
-    hearsSprint: true, color: '#5a7a86',
+    hearsSprint: true, color: '#5a7a86', habitat: 'outdoor', aquatic: true, // L7 有光带/微光带海面
     desc: '活动于有光带与微光带的海洋捕食者。听觉极其敏锐——比任何一双眼睛都灵。',
     codex: {
       no: 'Entity 720「Tiny」', danger: '4 级（高威胁）', habitat: 'Level 7 · Daylight / Twilight Zone',
@@ -44,7 +44,7 @@ export const DEEP_ENTITIES: Record<string, EntityDef> = {
   },
   thething: {
     type: 'thething', name: '7 层之物', hp: 260, speed: 1.7, damage: 45, sight: 9, hearing: 8,
-    lightAverse: true, huge: 2.6, color: '#2e3a40',
+    lightAverse: true, huge: 2.6, color: '#2e3a40', habitat: 'outdoor', aquatic: true, // L7 开放水域（午夜区/深渊上部）
     desc: '它已经杀光了这片海洋里的所有其他生命。器官长在不该长的位置，鳍与鳃错位生长，体表覆着一层与雾几乎相同的细白粉尘。',
     codex: {
       no: 'The Thing On Level 7', danger: '5 级（极端威胁）', habitat: 'Level 7 · Midnight Zone 与 Abyss 上部',
@@ -63,7 +63,7 @@ export const DEEP_ENTITIES: Record<string, EntityDef> = {
   // ==================== Level 8「Cave Systems」 ====================
   wrangler: {
     type: 'wrangler', name: '缠斗者', hp: 200, speed: 2.2, damage: 40, sight: 8, hearing: 9,
-    phases: true, huge: 1.9, color: '#4a3c34',
+    phases: true, huge: 1.9, color: '#4a3c34', habitat: 'any',
     desc: '蛇形巨型捕食者，长度以英里计。成体有一颗类人的头，白色发光的眼睛；雄性永远挂着令人不安的宽阔笑容。',
     codex: {
       no: 'Wrangler（Level 8 顶级掠食者）', danger: '5 级（极端威胁）', habitat: 'Level 8 全境',
@@ -80,7 +80,7 @@ export const DEEP_ENTITIES: Record<string, EntityDef> = {
   },
   camocrawler: {
     type: 'camocrawler', name: '迷彩爬行者', hp: 110, speed: 2.0, damage: 30, sight: 0, hearing: 13,
-    blind: true, throws: true, hearsSprint: true, color: '#5c5a4a',
+    blind: true, throws: true, hearsSprint: true, color: '#5c5a4a', habitat: 'any',
     desc: '失明，靠回声定位。四条手臂，其中一对专门用来抬起并投掷巨石。领地性极强。',
     codex: {
       no: 'Camo Crawler', danger: '4 级（高威胁）', habitat: 'Level 8 · Handyland 及周边洞系',
@@ -97,7 +97,7 @@ export const DEEP_ENTITIES: Record<string, EntityDef> = {
   },
   lightguide: {
     type: 'lightguide', name: '引路者', hp: 30, speed: 1.4, damage: 0, sight: 8, hearing: 6,
-    passive: true, friendly: true, color: '#66e0d0',
+    passive: true, friendly: true, color: '#66e0d0', habitat: 'any',
     desc: '生物发光的小生物，外观像一颗缀满宝石的星星，发出蓝绿色的辉光。它不靠近，也不远离——它在等你跟上来。',
     codex: {
       no: 'Entity 35「Light Guides」', danger: '0 级（无害·友善）', habitat: 'Level 8 · Hyperspace Lane',
@@ -114,7 +114,7 @@ export const DEEP_ENTITIES: Record<string, EntityDef> = {
   },
   deathrat: {
     type: 'deathrat', name: '死亡鼠', hp: 26, speed: 3.1, damage: 9, sight: 5, hearing: 8,
-    color: '#3e3630',
+    color: '#3e3630', habitat: 'any',
     desc: '成群出没的原生啮齿实体。它们在具有双向重力的洞穴天顶筑巢，靠通风管道往返 Level 2。',
     codex: {
       no: 'Death Rats（Level 8 原生种）', danger: '2 级（低威胁·成群时 3 级）', habitat: 'Level 8 · Rottnest Jungle 天顶',
@@ -131,7 +131,7 @@ export const DEEP_ENTITIES: Record<string, EntityDef> = {
   },
   wretch: {
     type: 'wretch', name: '可怜虫', hp: 75, speed: 1.8, damage: 20, sight: 6, hearing: 6,
-    color: '#8a4a3a',
+    color: '#8a4a3a', habitat: 'any',
     desc: '红棕色、干燥剥落的皮肤，布满孔洞与脓疱；骷髅般消瘦，眼睑已经溶解——它的眼睛永远闭不上。',
     codex: {
       no: 'Entity 15「Wretches」', danger: '3 级（中威胁·具传染性）', habitat: 'Level 8 难民营 / Level 9 郊区',
@@ -150,7 +150,7 @@ export const DEEP_ENTITIES: Record<string, EntityDef> = {
   // ==================== Level 9「The Suburbs」 ====================
   watcher: {
     type: 'watcher', name: '观察者', hp: 120, speed: 0.7, damage: 34, sight: 12, hearing: 4,
-    beamAttack: true, color: '#d8d2c4',
+    beamAttack: true, color: '#d8d2c4', habitat: 'outdoor', // L9 郊区街道
     desc: '巨型眼球状结构，表面伸出多条视神经与血管，静默悬浮。它发射的光束能把活体瞬间化为细灰色粉尘。',
     codex: {
       no: 'Entity 96「The Neighborhood Watch」· Watchers', danger: '5 级（极端威胁）', habitat: 'Level 9',
@@ -167,7 +167,7 @@ export const DEEP_ENTITIES: Record<string, EntityDef> = {
   },
   strider: {
     type: 'strider', name: '阔步者', hp: 150, speed: 2.9, damage: 38, sight: 10, hearing: 7,
-    charger: true, huge: 1.6, color: '#c8b9a4',
+    charger: true, huge: 1.6, color: '#c8b9a4', habitat: 'outdoor', // L9 街道巡逻
     desc: '中央一颗眼球，下方六条约 2.4 米长的附肢——由脉络膜、神经与血管构成。体积约一辆汽车大小。',
     codex: {
       no: 'Entity 96「The Neighborhood Watch」· Striders', danger: '5 级（极端威胁）', habitat: 'Level 9',
@@ -184,7 +184,7 @@ export const DEEP_ENTITIES: Record<string, EntityDef> = {
   },
   mangled: {
     type: 'mangled', name: '残破者', hp: 320, speed: 1.5, damage: 50, sight: 9, hearing: 10,
-    voiceLure: true, smokeShroud: true, huge: 3.2, color: '#4a4048',
+    voiceLure: true, smokeShroud: true, huge: 3.2, color: '#4a4048', habitat: 'outdoor', // L9 PA3 区及周边山口
     desc: '体量巨大、形态不定，目击描述多为「蜘蛛状、约一栋房子大小」。它自身生成浓密翻涌的烟雾遮蔽真身——烟雾之下，是无数张人脸融合成的单一团块。',
     codex: {
       no: 'Entity 63「The Mangled」', danger: '5 级（极端威胁）', habitat: 'Level 9 · PA3 区及周边山口',
@@ -203,7 +203,7 @@ export const DEEP_ENTITIES: Record<string, EntityDef> = {
   // ==================== Level 10「Bumper Crop」 ====================
   soilworm: {
     type: 'soilworm', name: '土壤蠕虫', hp: 18, speed: 1.6, damage: 7, sight: 2, hearing: 5,
-    ambusher: true, color: '#8a6a52',
+    ambusher: true, color: '#8a6a52', habitat: 'outdoor', // L10 田野地表下
     desc: '栖息在地表以下约一米处的小型蠕虫状实体。只要你不往深处挖，它们就一直待在下面。',
     codex: {
       no: 'Level 10 原生蠕虫（未正式命名）', danger: '1 级（低威胁）', habitat: 'Level 10 · 地表以下约 1 米',
@@ -222,7 +222,7 @@ export const DEEP_ENTITIES: Record<string, EntityDef> = {
   // ==================== Level 601「The End」 ====================
   partygoer: {
     type: 'partygoer', name: '派对客', hp: 130, speed: 2.5, damage: 34, sight: 8, hearing: 7,
-    feignNeutral: true, secondArms: true, color: '#e8c93c',
+    feignNeutral: true, secondArms: true, color: '#e8c93c', habitat: 'indoor',
     desc: '高大的两足噩梦，光滑的皮革质感皮肤，通体鲜黄。脸上刻着一个涂满血的笑脸符号「=)」。长而软的面条状手臂，末端不是手，而是环着倒钩牙的吸盘状的口。',
     codex: {
       no: 'Entity 67「Partygoers =)」', danger: '5 级（极端威胁）', habitat: 'The SS Fun =) · Level 601',
@@ -241,7 +241,7 @@ export const DEEP_ENTITIES: Record<string, EntityDef> = {
   // ==================== 跨层：Entity 2 ====================
   windowent: {
     type: 'windowent', name: '窗户', hp: 90, speed: 0, damage: 32, sight: 5, hearing: 0,
-    stationary: true, ambusher: true, color: '#6a5a44',
+    stationary: true, ambusher: true, color: '#6a5a44', habitat: 'indoor',
     desc: '一扇再普通不过的木框窗，玻璃后是一片模糊扭曲、却诡异地熟悉的风景。风景里站着一个深色的、轮廓不清的人形剪影。',
     codex: {
       no: 'Entity 2「Windows」', danger: '4 级（高威胁·固定）', habitat: 'Level 0 / 24 / 77 / 79 / 80 / 102 / 103 / 108 / 116 / 117 / 406',

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <!-- L0 黄色墙纸：竖条暗纹 -->
+    <pattern id="wp" width="8" height="8" patternUnits="userSpaceOnUse">
+      <rect width="8" height="8" fill="#c9ad45"/>
+      <rect x="3" width="2" height="8" fill="#b4963a"/>
+    </pattern>
+  </defs>
+  <rect width="64" height="64" rx="10" fill="url(#wp)"/>
+  <!-- 俯视迷宫墙（Level 0 黄色迷宫） -->
+  <g fill="#241d0f">
+    <rect x="9" y="9" width="32" height="6"/>
+    <rect x="9" y="9" width="6" height="28"/>
+    <rect x="23" y="25" width="30" height="6"/>
+    <rect x="47" y="25" width="6" height="26"/>
+    <rect x="13" y="43" width="26" height="6"/>
+    <rect x="27" y="43" width="6" height="12"/>
+  </g>
+  <!-- 出口微光（玩家/目标点） -->
+  <circle cx="20" cy="36" r="4.5" fill="#f5e37a"/>
+  <rect width="64" height="64" rx="10" fill="none" stroke="#241d0f" stroke-width="4"/>
+</svg>

@@ -4,7 +4,7 @@ import type { EntityDef } from './types'
 // 兽形/载具/虫形实体（猎犬/团块/死亡飞蛾/运输车/管道蠕虫）
 export const CRITTER_ENTITIES: Record<string, EntityDef> = {
   hound: {
-    type: 'hound', name: '猎犬', hp: 35, speed: 3.4, damage: 18, sight: 6, hearing: 12, hearsSprint: true, color: '#7e6c58',
+    type: 'hound', name: '猎犬', hp: 35, speed: 3.4, damage: 18, sight: 6, hearing: 12, hearsSprint: true, color: '#7e6c58', habitat: 'any',
     desc: '四肢着地的人形掠食者，听觉极其灵敏，速度全实体中最快。',
     codex: {
       no: 'Entity 8「Hound」', danger: '4 级（高威胁）', habitat: 'Level 1 / Level 4 / Level 5 / Level 9 / Level 11 等多个层级',
@@ -20,7 +20,7 @@ export const CRITTER_ENTITIES: Record<string, EntityDef> = {
     aggroStinger: true,
   },
   clump: {
-    type: 'clump', name: '团块', hp: 60, speed: 0.9, damage: 20, sight: 4, hearing: 6, grabs: true, color: '#5a4638',
+    type: 'clump', name: '团块', hp: 60, speed: 0.9, damage: 20, sight: 4, hearing: 6, grabs: true, color: '#5a4638', habitat: 'any',
     desc: '由腐烂肢体纠缠而成的缓慢肉块，常堵在走廊中央。臂展远超目测。',
     codex: {
       no: 'Entity 5「Clump」', danger: '3 级（中威胁）', habitat: 'Level 2 / Level 3 的狭窄走廊 · Level 8',
@@ -36,7 +36,7 @@ export const CRITTER_ENTITIES: Record<string, EntityDef> = {
     aggroStinger: true,
   },
   deathmoth: {
-    type: 'deathmoth', name: '死亡飞蛾', hp: 15, speed: 3.2, damage: 8, sight: 5, hearing: 2, lightLure: true, drainsLight: true, color: '#8a7a5a',
+    type: 'deathmoth', name: '死亡飞蛾', hp: 15, speed: 3.2, damage: 8, sight: 5, hearing: 2, lightLure: true, drainsLight: true, color: '#8a7a5a', habitat: 'any', // 随意偏室内（主巢在 L5 酒店客房/走廊，亦可扑向室外灯源）
     desc: '趋光的巨型蛾群，翼展接近半米。你的手电光对它们而言就是邀请函。',
     codex: {
       no: 'Entity 4「Deathmoths」', danger: '2 级（低威胁，集群时升 4 级）', habitat: 'Level 5 恐怖酒店（主巢）、Level 1、Level 8、Level 9',
@@ -52,7 +52,7 @@ export const CRITTER_ENTITIES: Record<string, EntityDef> = {
     aggroStinger: true,
   },
   carrier: {
-    type: 'carrier', name: '运输车', hp: 90, speed: 2.0, damage: 30, sight: 9, hearing: 2, charger: true, color: '#d9c39a',
+    type: 'carrier', name: '运输车', hp: 90, speed: 2.0, damage: 30, sight: 9, hearing: 2, charger: true, color: '#d9c39a', habitat: 'outdoor', // 卷帘门外小巷/装卸区车道巡逻
     desc: '在车道上巡逻的无人运输车，车灯是它唯一的眼睛。',
     codex: {
       no: '未编号（Level 1 特有）', danger: '4 级（高威胁）', habitat: 'Level 1 停车场车道',
@@ -68,7 +68,7 @@ export const CRITTER_ENTITIES: Record<string, EntityDef> = {
     aggroStinger: true,
   },
   pipeworm: {
-    type: 'pipeworm', name: '管道蠕虫', hp: 45, speed: 2.8, damage: 20, sight: 5, hearing: 8, ambusher: true, color: '#7a4a2e',
+    type: 'pipeworm', name: '管道蠕虫', hp: 45, speed: 2.8, damage: 20, sight: 5, hearing: 8, ambusher: true, color: '#7a4a2e', habitat: 'any',
     desc: '从管道里破墙而出的蠕虫。压力表剧烈抖动时，快跑。',
     codex: {
       no: '未编号（Level 2 特有）', danger: '4 级（高威胁）', habitat: 'Level 2 管道走廊',

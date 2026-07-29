@@ -7,7 +7,7 @@
 // v7：z 轴高度系统——canOccupy 增加 z/crouch 选项：
 //   - 高差 > STEP_UP(0.65m) 的瓦片不可直接踏上（跳跃滞空时 p.z 抬高后可通过）；
 //   - 蹲伏低通道（crawl=1）未蹲伏不可进入。
-import { groundHeightAt, solidStructAtFloor, STEP_UP, type GameMap } from './mapgen'
+import { groundHeightAt, structBlocksPoint, STEP_UP, type GameMap } from './mapgen'
 
 export const PLAYER_RADIUS = 0.32
 export const FIXED_STEP = 1 / 120 // 固定物理子步（秒）
@@ -35,15 +35,15 @@ export function canOccupy(m: GameMap, x: number, y: number, r = PLAYER_RADIUS, o
     if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return false
     const i = ty * m.w + tx
     if (m.stair[i] & 7) {
-      // 楼梯坡道：两层带均可通行（连续爬升）；实心结构按楼层过滤
-      if (solidStructAtFloor(m, tx, ty, band)) return false
+      // 楼梯坡道：两层带均可通行（连续爬升）；实心结构按楼层过滤（v26：精细碰撞盒亚瓦片判定）
+      if (structBlocksPoint(m, sx, sy, z, band)) return false
     } else if (band === 1) {
       // 上层：须有上层楼板且非上层墙；实心结构按上层过滤
       if (m.up[i] !== 1 || m.upWall[i] === 1) return false
-      if (solidStructAtFloor(m, tx, ty, 1)) return false
+      if (structBlocksPoint(m, sx, sy, z, 1)) return false
     } else {
       if (m.tiles[i] !== 1) return false
-      if (solidStructAtFloor(m, tx, ty, 0)) return false
+      if (structBlocksPoint(m, sx, sy, z, 0)) return false
       // 蹲伏低通道：头顶风道，未蹲伏不可进入
       if (m.crawl && m.crawl[i] === 1 && !opts.crouch) return false
     }

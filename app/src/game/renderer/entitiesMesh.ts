@@ -177,6 +177,51 @@ export function buildItemMesh(type: string): THREE.Group {
       em(0.2, 0.01, 0.14, '#d8cfae'); em(0.2, 0.012, 0.04, '#3a2a1e', 0, 0.001, -0.052)
       em(0.12, 0.012, 0.01, '#2a2620', -0.01, 0.008, 0.02); break
 
+    // ---------- v32：后室扩展物品 ----------
+    case 'cashew': // 腰果水：与杏仁水几乎一样的瓶子——但液体发褐，别搞混
+      em(0.14, 0.26, 0.14, '#d8cfc0'); em(0.08, 0.07, 0.08, '#8a6a3a', 0, 0.17, 0)
+      em(0.145, 0.07, 0.145, '#c9a05a', 0, -0.02, 0); break
+    case 'knife': // 刀：刀刃 + 护手 + 柄
+      em(0.22, 0.012, 0.035, '#c9cdd4', 0.03, 0, 0)
+      em(0.018, 0.04, 0.06, '#8a8a8a', -0.09, 0, 0)
+      em(0.09, 0.025, 0.03, '#3a2e22', -0.15, 0, 0); break
+    case 'axe': // 斧头：长柄 + 斧刃 + 斧楔
+      cm(0.016, 0.02, 0.34, '#8a6a42', 0, 0, 0, 6, 0, Math.PI / 2)
+      em(0.07, 0.1, 0.025, '#9aa0a8', 0.16, 0.02, 0)
+      em(0.03, 0.05, 0.032, '#7a8288', 0.1, 0.02, 0); break
+    case 'headlamp': // 头灯：头带 + 灯体 + 灯杯
+      em(0.26, 0.035, 0.03, '#2a2d30')
+      em(0.09, 0.08, 0.07, '#3a3d42', 0, 0, 0.05)
+      em(0.06, 0.05, 0.015, '#fff2d0', 0, 0, 0.09); break
+    case 'notebook': // 笔记本和笔：皮面本 + 书页 + 笔
+      em(0.2, 0.03, 0.26, '#5a3a2a')
+      em(0.18, 0.025, 0.24, '#e8e2d2', 0.012, 0.026, 0)
+      cm(0.008, 0.008, 0.2, '#2a2d30', 0.06, 0.05, 0.02, 6, 0, Math.PI / 2); break
+    case 'fuyouyu': { // 福友玉：温润玉环 + 挂绳 + 玉坠
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.07, 0.022, 8, 16),
+        new THREE.MeshLambertMaterial({ color: '#6ad9a8', emissive: '#2a6a4a', emissiveIntensity: 0.4 }))
+      ring.rotation.x = Math.PI / 2
+      grp.add(ring)
+      cm(0.006, 0.006, 0.16, '#8a3a3a', 0, 0.1, 0, 5)
+      em(0.03, 0.01, 0.03, '#3a8a68', 0, -0.075, 0); break }
+    case 'squirtgun': // 滋水枪：枪身 + 储水罐 + 扳机 + 枪口
+      em(0.2, 0.06, 0.05, '#e86a3a')
+      cm(0.045, 0.045, 0.09, '#4ac9e8', -0.03, 0.075, 0, 8)
+      em(0.04, 0.07, 0.03, '#e8b93c', 0.03, -0.06, 0)
+      em(0.06, 0.03, 0.03, '#e86a3a', 0.12, 0.005, 0); break
+    case 'warpberry': { // 迁跃浆果：双果 + 空间涟漪环
+      cm(0.05, 0.06, 0.06, '#8a4ae0', -0.03, 0, 0, 8)
+      cm(0.04, 0.05, 0.05, '#b06ae0', 0.04, 0, 0.02, 8)
+      const ripple = new THREE.Mesh(new THREE.TorusGeometry(0.09, 0.006, 6, 16),
+        new THREE.MeshBasicMaterial({ color: '#c9a0ff', transparent: true, opacity: 0.6 }))
+      ripple.rotation.x = Math.PI / 2
+      grp.add(ripple)
+      break }
+    case 'royalration': // 皇家口粮：金色餐盒 + 红缎带 + 小冠饰
+      em(0.18, 0.06, 0.12, '#d9b13b')
+      em(0.18, 0.015, 0.03, '#a8283a', 0, 0.035, 0)
+      em(0.05, 0.03, 0.05, '#e8c93d', 0, 0.05, 0); break
+
     default: em(0.2, 0.2, 0.2, '#d6cfae')
   }
   // 发光描边底座（按稀有度/类别配色）
@@ -197,6 +242,13 @@ export function buildItemMesh(type: string): THREE.Group {
     cavingsuit: '#9a8fd0', divemask: '#9a8fd0', rope: '#9a8fd0', pockets: '#c9a0d0', // 装备：紫
     megfolder: '#c9b458', oddbook: '#c9b458', pamphlet: '#c9b458', endnote: '#c9b458', chalkstub: '#e8e2d2', // 纸物/文书
     stonekazoo: '#a8a294', presses: '#e8b93c',
+    // v32 新增
+    cashew: '#c9a05a', // 腰果水：褐
+    knife: '#d96a4a', axe: '#d96a4a', // 武器：红
+    headlamp: '#e8b93c', // 电气：琥珀
+    notebook: '#c9b458', // 纸物
+    fuyouyu: '#6ad9a8', squirtgun: '#4ac9e8', // 后室异物：玉绿 / 水蓝
+    warpberry: '#b06ae0', royalration: '#ffd94d', // 珍稀：紫 / 金
   }
   const gc = ITEM_GLOW[type] ?? '#e8b93c'
   const halo = new THREE.Mesh(new THREE.RingGeometry(0.18, 0.26, 10), new THREE.MeshBasicMaterial({ color: gc, transparent: true, opacity: 0.45, side: THREE.DoubleSide }))

@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { ELEV_H, type GameMap } from '../mapgen'
 import type { LevelDef } from '../types'
-import { col, rampGeo, levelTexture, noiseTexture, OUTDOOR_FLOOR } from './shared'
+import { col, rampGeo, levelTexture, noiseTexture, OUTDOOR_FLOOR, manilaWallTexture, makeCanvasCtx, toTex } from './shared'
 
 // v17：range 限定构建范围（无限模式按 chunk 构建；坐标读取全图，跨 chunk 接缝一致）
 export interface TerrainRange { x0: number; y0: number; x1: number; y1: number }
@@ -14,12 +14,12 @@ const hv = (x: number, y: number, s: number) => {
   h ^= h >>> 13
   return (h >>> 0) / 4294967296
 }
-// v17：tint 着色（1=马尼拉米色墙纸 2=红室 3=熄灯区仅雾/无灯）
+// v17：tint 着色（1=马尼拉米色墙纸 2=红室 3=熄灯区仅雾/无灯 5=维护通廊白 6=花园段青翠 7=跃金段高饱和金）
 // v20：马尼拉墙面色改为确定的马尼拉文件夹暖米色 #e5c88f，且墙面走独立无纹理网格
 // （顶点色 × L0 黄色墙纸纹理永远发黄——v19 的蓝通道补偿也无法把黄纸变成米色）
-const TINT_FLOOR: Record<number, string> = { 1: '#c9ad74', 2: '#8a1e14' }
-const TINT_WALL: Record<number, string> = { 1: '#e5c88f', 2: '#a82318' }
-const TINT_CEIL: Record<number, string> = { 1: '#c9b185', 2: '#5e120b' }
+const TINT_FLOOR: Record<number, string> = { 1: '#c9ad74', 2: '#8a1e14', 5: '#8a887e', 6: '#5a7a44', 7: '#8a6d24' }
+const TINT_WALL: Record<number, string> = { 1: '#e5c88f', 2: '#a82318', 5: '#b8b4a8', 6: '#8fae7a', 7: '#c99a2e' }
+const TINT_CEIL: Record<number, string> = { 1: '#c9b185', 2: '#5e120b', 5: '#c8c4b8', 6: '#c4d9ae', 7: '#a8842a' }
 export function buildTerrain(m: GameMap, def: LevelDef, wallH: number, g: THREE.Group, range?: TerrainRange) {
   const pal = def.palette
   const H = wallH
@@ -113,14 +113,14 @@ for (let y = RY0; y < RY1; y++) {
   }
 }
 if (floorGeos.length) {
-  const floorMat = new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_floor`, () => noiseTexture(pal.floor, pal.floorAlt)), emissive: col(pal.floor).multiplyScalar(0.06) })
+  const floorMat = new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_floor`, () => noiseTexture(pal.floor, pal.floorAlt)) })
   g.add(new THREE.Mesh(mergeGeometries(floorGeos)!, floorMat))
 }
 if (abyssGeos.length) {
   g.add(new THREE.Mesh(mergeGeometries(abyssGeos)!, new THREE.MeshBasicMaterial({ color: '#000000' })))
 }
 if (floorGeos2.length) {
-  const floorMat2 = new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(tex2.floor!, () => noiseTexture(pal.floor, pal.floorAlt)), emissive: col(pal.floor).multiplyScalar(0.06) })
+  const floorMat2 = new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(tex2.floor!, () => noiseTexture(pal.floor, pal.floorAlt)) })
   g.add(new THREE.Mesh(mergeGeometries(floorGeos2)!, floorMat2))
 }
 // v12：室外地面材质——较高自发光模拟夜空环境光（月光/城市光污染），
@@ -199,7 +199,7 @@ for (let y = RY0; y < RY1; y++) {
 {
   const slopeGeos = [...wedgeGeos, ...riserGeos]
   if (slopeGeos.length) {
-    const slopeMat = new THREE.MeshLambertMaterial({ vertexColors: true, side: THREE.DoubleSide, map: levelTexture(`l${def.id}_floor`, () => noiseTexture(pal.floor, pal.floorAlt)), emissive: col(pal.floor).multiplyScalar(0.06) })
+    const slopeMat = new THREE.MeshLambertMaterial({ vertexColors: true, side: THREE.DoubleSide, map: levelTexture(`l${def.id}_floor`, () => noiseTexture(pal.floor, pal.floorAlt)) })
     g.add(new THREE.Mesh(mergeGeometries(slopeGeos)!, slopeMat))
   }
 }
@@ -226,7 +226,7 @@ for (let y = RY0; y < RY1; y++) {
   }
 }
 if (ceilGeos.length) {
-  const ceilMat = new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_ceil`, () => noiseTexture(pal.wallTop, pal.wallTop)), emissive: col(pal.wallTop).multiplyScalar(0.05) })
+  const ceilMat = new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_ceil`, () => noiseTexture(pal.wallTop, pal.wallTop)) })
   g.add(new THREE.Mesh(mergeGeometries(ceilGeos)!, ceilMat))
 }
 
@@ -318,13 +318,13 @@ if (m.floors > 1) {
     }
   }
   if (slabGeos.length) {
-    g.add(new THREE.Mesh(mergeGeometries(slabGeos)!, new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_floor`, () => noiseTexture(pal.floor, pal.floorAlt)), emissive: col(pal.floor).multiplyScalar(0.06) })))
+    g.add(new THREE.Mesh(mergeGeometries(slabGeos)!, new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_floor`, () => noiseTexture(pal.floor, pal.floorAlt)) })))
   }
   if (upWallGeos.length) {
-    g.add(new THREE.Mesh(mergeGeometries(upWallGeos)!, new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_wall`, () => noiseTexture(pal.wall, pal.wallTop)), emissive: col(pal.wall).multiplyScalar(0.06) })))
+    g.add(new THREE.Mesh(mergeGeometries(upWallGeos)!, new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_wall`, () => noiseTexture(pal.wall, pal.wallTop)) })))
   }
   if (upCeilGeos.length) {
-    g.add(new THREE.Mesh(mergeGeometries(upCeilGeos)!, new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_ceil`, () => noiseTexture(pal.wallTop, pal.wallTop)), emissive: col(pal.wallTop).multiplyScalar(0.05) })))
+    g.add(new THREE.Mesh(mergeGeometries(upCeilGeos)!, new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_ceil`, () => noiseTexture(pal.wallTop, pal.wallTop)) })))
   }
   if (railGeos.length) {
     g.add(new THREE.Mesh(mergeGeometries(railGeos)!, new THREE.MeshLambertMaterial({ color: '#43484f' })))
@@ -335,9 +335,25 @@ if (m.floors > 1) {
 //      v7：低洼延伸墙=底部下探到相邻最低地面；挑高/室外邻接=顶部提升）----
 const wallGeos: THREE.BufferGeometry[] = []
 const wallGeos2: THREE.BufferGeometry[] = []
-const manilaWallGeos: THREE.BufferGeometry[] = [] // v20：马尼拉室墙面独立合并（无纹理纯色米色）
+const manilaWallGeos: THREE.BufferGeometry[] = [] // v20/v26：马尼拉室墙面独立合并（米色竖纹墙纸，与世界 UV 对齐）
 const wSide = col(WALL_TINT[def.id] ?? pal.wall), wTop = col(pal.wallTop)
 const isFloor = (x: number, y: number) => x >= 0 && y >= 0 && x < m.w && y < m.h && m.tiles[y * m.w + x] === 1
+// v30：门类出口（楼梯井/未上锁的门）在墙上开门洞——记录墙格 → 门洞朝向（优先级同渲染层 orientDoor）
+const DOOR_EXIT_KINDS = ['stairs', 'unlockeddoor']
+const holeMap = new Map<number, number>() // 墙格 index → 门洞朝向（0=+x 1=-x 2=+y 3=-y，指向出口格）
+for (const e of m.exits ?? []) {
+  if (!DOOR_EXIT_KINDS.includes(e.def.kind)) continue
+  const ex = Math.floor(e.x), ey = Math.floor(e.y)
+  const sides = [[1, 0], [-1, 0], [0, 1], [0, -1]] as const
+  for (let s = 0; s < 4; s++) {
+    const [wx, wy] = sides[s]
+    const hx = ex + wx, hy = ey + wy
+    if (hx < 0 || hy < 0 || hx >= m.w || hy >= m.h) continue
+    if (m.tiles[hy * m.w + hx] === 1) continue
+    holeMap.set(hy * m.w + hx, s)
+    break
+  }
+}
 for (let y = RY0; y < RY1; y++) {
   for (let x = RX0; x < RX1; x++) {
     if (m.tiles[y * m.w + x] === 1) continue
@@ -363,31 +379,112 @@ for (let y = RY0; y < RY1; y++) {
     const tnt = m.tint[y * m.w + x]
     const wSideT = tnt && TINT_WALL[tnt] ? col(TINT_WALL[tnt]) : wSide
     const wTopT = tnt && TINT_CEIL[tnt] ? col(TINT_CEIL[tnt]) : wTop
+    const pushWallGeo = (geo: THREE.BoxGeometry) => {
+      if (tnt === 1) worldWallUV(geo, 1) // v26：马尼拉墙纸恒定世界空间 UV（任意层级生效，不依赖 L0 的 wuv 开关）
+      else if (wuv) worldWallUV(geo, wuv) // v16：世界空间 UV，跨盒无缝
+      const pos = geo.attributes.position
+      const carr = new Float32Array(pos.count * 3)
+      for (let i = 0; i < pos.count; i++) {
+        const top2 = pos.getY(i) > top - 0.01
+        const c = top2 ? wTopT : wSideT
+        carr[i * 3] = c.r; carr[i * 3 + 1] = c.g; carr[i * 3 + 2] = c.b
+      }
+      geo.setAttribute('color', new THREE.BufferAttribute(carr, 3))
+      ;(tnt === 1 ? manilaWallGeos : tex2.wall && zoneB(x, y) ? wallGeos2 : wallGeos).push(geo)
+    }
+    const holeSide = holeMap.get(y * m.w + x)
+    if (holeSide !== undefined) {
+      // v30：门洞墙——两侧窄柱 + 门楣（门洞宽 0.84m 高 2.3m，出口内腔模型嵌在洞中，从外往里看镂空）
+      const OW = 0.84, OH = 2.3, mg = (1 - OW) / 2
+      if (holeSide <= 1) { // 门洞开在 ±x 面：沿 z 向分两侧
+        for (const zs of [-1, 1]) {
+          const g2 = new THREE.BoxGeometry(1, top - base, mg)
+          g2.translate(x + 0.5, (top + base) / 2, y + 0.5 + zs * (OW / 2 + mg / 2))
+          pushWallGeo(g2)
+        }
+      } else { // 门洞开在 ±y 面：沿 x 向分两侧
+        for (const xs of [-1, 1]) {
+          const g2 = new THREE.BoxGeometry(mg, top - base, 1)
+          g2.translate(x + 0.5 + xs * (OW / 2 + mg / 2), (top + base) / 2, y + 0.5)
+          pushWallGeo(g2)
+        }
+      }
+      const gl = new THREE.BoxGeometry(1, top - (base + OH), 1) // 门楣（门洞上方封口）
+      gl.translate(x + 0.5, (top + base + OH) / 2, y + 0.5)
+      pushWallGeo(gl)
+      continue
+    }
     const geo = new THREE.BoxGeometry(1, top - base, 1)
     geo.translate(x + 0.5, (top + base) / 2, y + 0.5)
-    if (wuv) worldWallUV(geo, wuv) // v16：世界空间 UV，跨盒无缝
-    const pos = geo.attributes.position
-    const carr = new Float32Array(pos.count * 3)
-    for (let i = 0; i < pos.count; i++) {
-      const top2 = pos.getY(i) > top - 0.01
-      const c = top2 ? wTopT : wSideT
-      carr[i * 3] = c.r; carr[i * 3 + 1] = c.g; carr[i * 3 + 2] = c.b
-    }
-    geo.setAttribute('color', new THREE.BufferAttribute(carr, 3))
-    ;(tnt === 1 ? manilaWallGeos : tex2.wall && zoneB(x, y) ? wallGeos2 : wallGeos).push(geo)
+    pushWallGeo(geo)
   }
 }
-// v20：马尼拉室墙面——纯色米色材质（不叠 L0 黄墙纸纹理，保证肉眼可辨的米色系）
+// v26：马尼拉室墙面——v29 起换用真实米色锦缎墙纸贴图（public/textures/manila_wallpaper.png，
+// 加载失败回退程序化米色竖纹）。贴图本身已是马尼拉文件夹暖米色 → 不再叠乘顶点色；
+// repeat 0.67：1 个图案循环 ≈1.5m（单个菱形纹样 ≈30cm，与真实墙纸比例一致）
 if (manilaWallGeos.length) {
-  const manilaMat = new THREE.MeshLambertMaterial({ vertexColors: true, emissive: col(TINT_WALL[1]).multiplyScalar(0.1) })
+  const manilaTex = levelTexture('manila_wallpaper.png', manilaWallTexture)
+  manilaTex.repeat.set(0.67, 0.67)
+  const manilaMat = new THREE.MeshLambertMaterial({ map: manilaTex })
   g.add(new THREE.Mesh(mergeGeometries(manilaWallGeos)!, manilaMat))
 }
 if (wallGeos.length) {
-  const wallMat = new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_wall`, () => noiseTexture(pal.wall, pal.wallTop)), emissive: col(pal.wall).multiplyScalar(0.06) })
+  const wallMat = new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_wall`, () => noiseTexture(pal.wall, pal.wallTop)) })
   g.add(new THREE.Mesh(mergeGeometries(wallGeos)!, wallMat))
 }
 if (wallGeos2.length) {
-  const wallMat2 = new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(tex2.wall!, () => noiseTexture(pal.wall, pal.wallTop)), emissive: col(pal.wall).multiplyScalar(0.06) })
+  const wallMat2 = new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(tex2.wall!, () => noiseTexture(pal.wall, pal.wallTop)) })
   g.add(new THREE.Mesh(mergeGeometries(wallGeos2)!, wallMat2))
 }
+// ---- v31：花园段（tint=6）立体草地——每瓦片 2 丛交叉面片草叶（程序纹理 + alphaTest 剪裁），
+// 确定性哈希散布（同瓦片重建位置一致），铺满整个地面 ----
+{
+  const grassGeos: THREE.BufferGeometry[] = []
+  for (let y = RY0; y < RY1; y++)
+    for (let x = RX0; x < RX1; x++) {
+      const ti = y * m.w + x
+      if (m.tiles[ti] !== 1 || m.tint[ti] !== 6) continue
+      for (let k = 0; k < 2; k++) {
+        const px = x + 0.2 + hv(x, y, 11 + k) * 0.6
+        const pz = y + 0.2 + hv(x, y, 21 + k) * 0.6
+        const gh = 0.26 + hv(x, y, 31 + k) * 0.22
+        const gw = 0.4 + hv(x, y, 41 + k) * 0.2
+        const yaw = hv(x, y, 51 + k) * Math.PI
+        for (const a of [yaw, yaw + Math.PI / 2]) {
+          const gq = new THREE.PlaneGeometry(gw, gh)
+          gq.rotateY(a)
+          gq.translate(px, ELEV_H[m.elev[ti]] + gh / 2, pz)
+          grassGeos.push(gq)
+        }
+      }
+    }
+  if (grassGeos.length) {
+    g.add(new THREE.Mesh(mergeGeometries(grassGeos)!, new THREE.MeshLambertMaterial({
+      map: grassTexture(), alphaTest: 0.35, side: THREE.DoubleSide, color: '#7fae5a',
+    })))
+  }
+}
+}
+
+// 草叶程序纹理：透明底 + 带渐变的弯曲草茎笔触（alphaTest 剪出草形；levelTexture 全局缓存）
+function grassTexture(): THREE.Texture {
+  return levelTexture('grass_tuft_v1', () => {
+    const [cv, c] = makeCanvasCtx(64, 64)
+    c.clearRect(0, 0, 64, 64)
+    let s = 7
+    const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647
+    for (let i = 0; i < 26; i++) {
+      const x0 = 4 + rnd() * 56, w = 1.5 + rnd() * 2, h = 30 + rnd() * 34, lean = (rnd() - 0.5) * 14
+      const grad = c.createLinearGradient(0, 64, 0, 64 - h)
+      grad.addColorStop(0, '#3f6b2a')
+      grad.addColorStop(1, '#8fc464')
+      c.strokeStyle = grad
+      c.lineWidth = w
+      c.beginPath()
+      c.moveTo(x0, 64)
+      c.quadraticCurveTo(x0 + lean * 0.4, 64 - h * 0.6, x0 + lean, 64 - h)
+      c.stroke()
+    }
+    return toTex(cv)
+  })
 }

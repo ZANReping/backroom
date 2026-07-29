@@ -67,6 +67,8 @@ export interface LevelDef {
   sd?: string
   /** 光照系数：所有光源半径/强度倍率。L6=0（外带光源完全失效）、L8=0.12（100 流明只剩 12 流明） */
   lightMul?: number
+  /** 灯光柔和度：点光源强度倍率（<1 更柔和；配合更密的保底光源让照度更均匀）。L0=0.7 */
+  lightSoft?: number
   /** 熵效应：电池/食物/理智的额外损耗倍率（L8=2.2） */
   entropy?: number
   /** 「Level 11 Effect」：实体主动攻击倾向下降的系数（0=正常，1=完全被动）。主动攻击会解除 */
@@ -100,6 +102,7 @@ export type StructKind =
   | 'desk' | 'door' | 'ballroom' | 'lightgrid' | 'wet'   | 'graffiti' | 'crate'
   | 'corpse' | 'ladder' | 'vent' | 'mirror' | 'elevator' | 'frontdesk' | 'bed' | 'sconce'
   | 'socket' // 墙上插板（L0 装饰：米色插座面板）
+  | 'rebar' // 突出墙壁的锈蚀钢筋（L1：靠近划伤，wikidot/Fandom 破伤风梗）
   // v6 新增：层级特色生成物与预制结构内容
   | 'hoteldoor' // 可交互房门（开关/上锁，撬棍/万能钥匙）
   | 'windowblack' // L4 涂黑窗户（安全装饰）
@@ -168,6 +171,13 @@ export type StructKind =
   | 'suitcase'     // 行李箱 / 背包
   | 'fridge'       // 冰箱 / 冷柜
   | 'safebox'      // 保险箱（需撬棍）
+  // ===== v30：Level 1 区段扩展（天鹰/跃金/哥特/衔尾/花园/维护通廊）=====
+  | 'column'       // 哥特段圆柱（圆形石柱）
+  | 'roundarch'    // 哥特段圆形拱门（半圆拱顶，非实心，可从拱洞穿行）
+  | 'scaffold'     // 衔尾段脚手架（杆件框架 + 踏板）
+  | 'roadblock'    // 衔尾段施工路障（条纹护栏）
+  | 'inkdoor'      // 维护通廊墨黑色金属门框（非实心，可通行）
+  | 'megdoc'       // M.E.G. 文档（可交互打开文档视图；查看后存入图鉴「文档」）
 
 export interface Structure {
   kind: StructKind
@@ -199,6 +209,7 @@ export interface LightSource {
   flickerSeed: number
   z?: number // v13：灯具高度基准（米；缺省按层高/室外规则）
   gen?: number // v17：无限模式标记——1=chunk 生成器固有灯（窗口迁移不需另存）；缺省=玩家/事件追加
+  keep?: 1 // v29：停电保留灯（L1 维护通廊：永远灯火通明，停电事件/熄灯 stitch 均不熄灭）
 }
 
 // v7 数据契约：GameMap 含 elev（0正常/1低洼-1.2m/2高台+1.2m/3室外地面）与 outdoor（0室内/1室外），

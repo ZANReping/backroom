@@ -4,7 +4,8 @@ import type { LevelDef, Structure, GroundItem, LightSource, ExitInstance } from 
 import { UNIVERSAL_ITEMS } from './items'
 import { makeEntity, ENTITIES, type Entity } from './entities'
 import { placePrefabs, scatterFeatures } from './prefabs'
-import { generateInfiniteL0, type InfiniteState } from './infinite'
+import { generateInfinite, type InfiniteState } from './infinite'
+import './infiniteL1' // v29：注册 Level 1 无限 chunk 生成器（副作用导入）
 import { genDeep } from './mapgenDeep'
 
 export interface GameMap {
@@ -33,6 +34,8 @@ export interface GameMap {
   // ---- v17 数据契约：无限模式（L0）与墙面/地面 tint ----
   tint: Uint8Array // 0=无 1=马尼拉墙纸 2=红室 3=熄灯区（几何着色/雾氛围用）
   inf?: InfiniteState // 无限 chunk 模式状态（仅 L0；有限层级缺省）
+  // ---- v25：栖息地降级计数（`${type}:${habitat}` → 次数；无符合瓦片时降级 any 的告警计数）----
+  habitatFallback?: Record<string, number>
 }
 
 // ---- v7 高度系统 ----
@@ -110,6 +113,130 @@ function isSolidStruct(m: GameMap, x: number, y: number): boolean {
 // v13：楼层过滤的实心结构判定（碰撞/AI 按所在楼层高度带过滤；lift 跨层不算实心）
 export function solidStructAtFloor(m: GameMap, x: number, y: number, floor: 0 | 1): boolean {
   return m.structures.some((s) => s.solid && (s.floor ?? 0) === floor && x >= s.x && x < s.x + s.w && y >= s.y && y < s.y + s.h)
+}
+
+// ================= v26：精细碰撞体积 =================
+// 结构碰撞盒（世界坐标 AABB）。top=碰撞顶面高度；stand=true 时顶面可作为站立平台（接入 z 物理）。
+// FULL_BLOCK 表示全高阻挡（不可跳上/翻越）；缺省类型 = 整个 w×h 外接范围全高阻挡（旧行为）。
+export interface ColliderBox { x0: number; y0: number; x1: number; y1: number; top: number; stand: boolean }
+export const FULL_BLOCK = 9e9
+
+// 按类型定义精确碰撞（与 renderer/structures.ts 的低模外观尺寸逐一核对）：
+// - table 桌：顶板 s.w*0.85 × s.h*0.8 @0.75m → 桌面可跳上；chair 椅：座面 0.42×0.42 @0.45m
+// - bed 床：垫面 s.w*0.95 × s.h*0.95 @≈0.47m → 0.5m 可跳上
+// - frontdesk 前台：视觉仅 s.w×0.7m 台面（原 w×h=4×2 外接方块 → 空气墙）→ 真实轮廓全高阻挡
+// - ladder 装饰梯：双立柱+横档仅 0.56×0.14m 薄片（原 1×2 整瓦阻挡 → 空气墙）→ 细柱不挡路
+// - desk 书桌：顶板 s.w*0.9×0.7 @0.77m；crate 木箱：0.84×0.84 @0.70m
+export function structColliders(s: Structure): ColliderBox[] {
+  const cx = s.x + s.w / 2, cy = s.y + s.h / 2
+  switch (s.kind) {
+    case 'table':
+      if (s.data?.chair) return [{ x0: cx - 0.23, y0: cy - 0.23, x1: cx + 0.23, y1: cy + 0.23, top: 0.47, stand: true }]
+      return [{ x0: cx - s.w * 0.425, y0: cy - s.h * 0.4, x1: cx + s.w * 0.425, y1: cy + s.h * 0.4, top: 0.75, stand: true }]
+    case 'bed':
+      return [{ x0: cx - s.w * 0.475, y0: cy - s.h * 0.475, x1: cx + s.w * 0.475, y1: cy + s.h * 0.475, top: 0.5, stand: true }]
+    case 'frontdesk':
+      return [{ x0: s.x + 0.02, y0: cy - 0.36, x1: s.x + s.w - 0.02, y1: cy + 0.36, top: FULL_BLOCK, stand: false }]
+    case 'ladder':
+      return [{ x0: cx - 0.28, y0: cy - 0.07, x1: cx + 0.28, y1: cy + 0.07, top: FULL_BLOCK, stand: false }]
+    case 'desk':
+      return [{ x0: cx - s.w * 0.45, y0: cy - 0.35, x1: cx + s.w * 0.45, y1: cy + 0.35, top: 0.77, stand: true }]
+    case 'crate':
+      return [{ x0: cx - 0.42, y0: cy - 0.42, x1: cx + 0.42, y1: cy + 0.42, top: 0.7, stand: true }]
+    default:
+      return [{ x0: s.x, y0: s.y, x1: s.x + s.w, y1: s.y + s.h, top: FULL_BLOCK, stand: false }]
+  }
+}
+
+// 世界点 (x,y) 在脚底高度 z 处是否被实心结构碰撞盒阻挡（精细亚瓦片判定）
+export function structBlocksPoint(m: GameMap, x: number, y: number, z: number, band: 0 | 1): boolean {
+  for (const s of m.structures) {
+    if (!s.solid || (s.floor ?? 0) !== band) continue
+    if (x < s.x - 0.6 || x > s.x + s.w + 0.6 || y < s.y - 0.6 || y > s.y + s.h + 0.6) continue
+    for (const b of structColliders(s)) {
+      if (x < b.x0 || x > b.x1 || y < b.y0 || y > b.y1) continue
+      // 顶面高差超过步行可踏上的 STEP_UP 才阻挡（跳跃抬高 z 后可通过低矮家具）
+      if (b.top - z > STEP_UP) return true
+    }
+  }
+  return false
+}
+
+// 世界点 (x,y) 处可站立的结构顶面高度（无则 -Infinity；仅当玩家 z 已接近/高于顶面时生效，
+// 与 structBlocksPoint 的放行条件衔接：能进入 footprint 即可落在顶面上，不会卡进家具内部）
+export function structStandTopAt(m: GameMap, x: number, y: number, z: number, band: 0 | 1): number {
+  let best = -Infinity
+  for (const s of m.structures) {
+    if (!s.solid || (s.floor ?? 0) !== band) continue
+    if (x < s.x - 0.6 || x > s.x + s.w + 0.6 || y < s.y - 0.6 || y > s.y + s.h + 0.6) continue
+    for (const b of structColliders(s)) {
+      if (!b.stand) continue
+      if (x < b.x0 || x > b.x1 || y < b.y0 || y > b.y1) continue
+      if (b.top <= z + STEP_UP - 0.1) best = Math.max(best, b.top)
+    }
+  }
+  return best
+}
+
+// ================= v26：天花板碰撞 + 悬挂物依附 =================
+// 瓦片是否有天花板（室内地板即有顶；室外/虚空/边界无顶）
+export function hasCeiling(m: GameMap, tx: number, ty: number): boolean {
+  if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return false
+  const i = ty * m.w + tx
+  return m.tiles[i] === 1 && m.outdoor[i] !== 1
+}
+
+// 世界点 (x,y) 的天花板底面高度（米；无天花板 = Infinity）
+// wallH=本层层高；挑高区（ceiling=1）= wallH*1.75；上层楼板下 = 楼板底 FLOOR_H-0.35；
+// 蹲伏风道 = 风道底 1.15m；上层走band=1 的上层天花板
+export function ceilingHeightAt(m: GameMap, x: number, y: number, wallH: number, band: 0 | 1 = 0): number {
+  const tx = Math.floor(x), ty = Math.floor(y)
+  if (!hasCeiling(m, tx, ty)) return Infinity
+  const i = ty * m.w + tx
+  if (band === 1) return m.ceiling[i] === 1 ? wallH * 1.75 : FLOOR_H + 2.6
+  if (m.up[i] === 1) return FLOOR_H - 0.35 // 上层楼板底面即本层天花板
+  if (m.crawl[i] === 1) return 1.15 // 头顶风道（蹲伏通道）
+  return m.ceiling[i] === 1 ? wallH * 1.75 : wallH
+}
+
+// 悬挂生成物（吊灯/荧光灯/指示灯排）——必须依附天花板放置；sconce 壁灯贴墙不在此列
+export const HANGING_KINDS: readonly string[] = ['chandelier', 'hanglight', 'lightgrid']
+
+// 悬挂物放置校验（生成后调用）：
+// 1) 占据的每块瓦片都必须有天花板（非室外/非虚空）——否则尝试就近移位（2 格内有顶空位），失败则移除
+// 2) 同一块天花板瓦片不重叠放置多个悬挂物——后放的就近移位，失败则移除
+export function fixHanging(m: GameMap) {
+  const taken = new Set<number>()
+  const kept: Structure[] = []
+  const fits = (s: Structure, nx: number, ny: number): boolean => {
+    for (let ty = Math.floor(ny); ty < Math.floor(ny + s.h); ty++)
+      for (let tx = Math.floor(nx); tx < Math.floor(nx + s.w); tx++) {
+        if (!hasCeiling(m, tx, ty)) return false
+        if (taken.has(ty * m.w + tx)) return false
+      }
+    return true
+  }
+  const occupy = (s: Structure) => {
+    for (let ty = Math.floor(s.y); ty < Math.floor(s.y + s.h); ty++)
+      for (let tx = Math.floor(s.x); tx < Math.floor(s.x + s.w); tx++) taken.add(ty * m.w + tx)
+  }
+  for (const s of m.structures) {
+    if (!HANGING_KINDS.includes(s.kind)) { kept.push(s); continue }
+    if (fits(s, s.x, s.y)) { occupy(s); kept.push(s); continue }
+    // 就近移位：以原中心为圆心 2 格内找有顶且不冲突的位置
+    let moved = false
+    for (let r = 1; r <= 2 && !moved; r++) {
+      for (let dy = -r; dy <= r && !moved; dy++)
+        for (let dx = -r; dx <= r && !moved; dx++) {
+          const nx = s.x + dx, ny = s.y + dy
+          if (!fits(s, nx, ny)) continue
+          s.x = nx; s.y = ny
+          occupy(s); kept.push(s); moved = true
+        }
+    }
+    // 移位失败：取消该悬挂物（不再悬空/嵌入/重叠）
+  }
+  m.structures = kept
 }
 
 // 任意结构（含非实心装饰/prefabmark）占据判定：室外改造挖区/砌墙时避让，防止压坏既有内容
@@ -411,9 +538,10 @@ function validate(m: GameMap, def: LevelDef): boolean {
   return ratio <= (limit[def.gen] ?? 0.3)
 }
 
-export function generateLevel(def: LevelDef, seed: number): GameMap {
-  // v17：无限模式层级（L0）走 chunk 流式生成路径，不做有限地图质量校验
-  if (def.infinite) return generateInfiniteL0(def, seed)
+export function generateLevel(def: LevelDef, seed: number, firstVisit = true): GameMap {
+  // v17：无限模式层级（L0/L1）走 chunk 流式生成路径，不做有限地图质量校验
+  // v29：firstVisit=false 时跳过出生点物资散落（初始物资仅首次到层刷新）
+  if (def.infinite) return generateInfinite(def, seed, firstVisit)
   // 质量校验重 roll（限 6 次，兜底返回最后一次结果）
   for (let attempt = 0; attempt < 6; attempt++) {
     const m = genOnce(def, seed + attempt * 10007)
@@ -842,19 +970,26 @@ function genOnce(def: LevelDef, seed: number): GameMap {
     }
     if (flattened) bfs()
   }
-  const reachFloor = (margin = 0, opts: { indoor?: boolean } = {}): { x: number; y: number } => {
+  // v25：返回 null 版本（供栖息地过滤判定「无符合瓦片」），reachFloor 保留出生点兜底
+  const reachFloorTry = (margin = 0, opts: { indoor?: boolean; outdoor?: boolean; anyHabitat?: boolean; waterOk?: boolean } = {}): { x: number; y: number } | null => {
     for (let t = 0; t < 600; t++) {
       const x = rng.int(1, size - 2), y = rng.int(1, size - 2)
       const ii = y * size + x
       if (reach[ii] && tileAt(m, x, y) === 1) {
-        if (m.stair[ii] !== 0 || m.liquid[ii] !== 0) continue // v13：楼梯坡道/液体上不放置出口/实体/物品
+        if (m.stair[ii] !== 0 || (m.liquid[ii] !== 0 && !opts.waterOk)) continue // v13：楼梯坡道/液体上不放置出口/实体/物品（v25：水生实体豁免水域）
         if (opts.indoor && (m.elev[ii] !== 0 || m.outdoor[ii] !== 0 || m.crawl[ii] !== 0)) continue
+        // v25：室外栖息地（小巷/街道/田野，outdoor=1）；水生实体额外接受水域（liquid≠0，如 L7 海面）
+        if (opts.outdoor && m.outdoor[ii] !== 1 && !(opts.waterOk && m.liquid[ii] !== 0)) continue
+        // v25：any 栖息地=室内正常高度 + 室外地面皆可，但不上高台/低洼/蹲伏通道
+        if (opts.anyHabitat && ((m.elev[ii] !== 0 && m.elev[ii] !== 3) || m.crawl[ii] !== 0)) continue
         if (margin && Math.hypot(x - m.spawn.x, y - m.spawn.y) < margin) continue
         return { x, y }
       }
     }
-    return { ...m.spawn }
+    return null
   }
+  const reachFloor = (margin = 0, opts: { indoor?: boolean; outdoor?: boolean; anyHabitat?: boolean; waterOk?: boolean } = {}): { x: number; y: number } =>
+    reachFloorTry(margin, opts) ?? { ...m.spawn }
   // v8：先校验 prefab 可达性（此时房间开放地板仍在，走廊补救有效），再做孤岛回填
   ensurePrefabsReachable(m, reach, bfs)
 
@@ -916,20 +1051,38 @@ function genOnce(def: LevelDef, seed: number): GameMap {
   }
 
   // 实体（黑暗伏击者优先生成在无光角落；趋光者生成在远离光源处）
+  // v25：按 EntityDef.habitat 过滤候选瓦片——indoor=室内（outdoor=0 且正常高度）、outdoor=室外（outdoor=1）、
+  // any=随意（仅排除楼梯坡道/液体）。无符合瓦片时降级 any 并在 m.habitatFallback 计数告警。
+  const habMiss: Record<string, number> = {}
   for (const se of def.entities) {
     const n = rng.int(se.min, se.max)
     const edef = ENTITIES[se.type]
+    const hab = edef?.habitat ?? 'any'
+    const habOpts = hab === 'indoor' ? { indoor: true as const } : hab === 'outdoor' ? { outdoor: true as const, waterOk: edef?.aquatic === true } : { anyHabitat: true as const }
+    const pickSpot = (): { x: number; y: number } => {
+      let p = reachFloorTry(10, habOpts)
+      if (!p && hab !== 'any') { // 降级：本层无符合栖息地的瓦片（如车库小巷生成失败）
+        const key = `${se.type}:${hab}`
+        habMiss[key] = (habMiss[key] ?? 0) + 1
+        p = reachFloorTry(10, { anyHabitat: true }) ?? reachFloorTry(10, { indoor: true })
+      }
+      return p ?? { ...m.spawn }
+    }
     for (let i = 0; i < n; i++) {
-      let p = reachFloor(10, { indoor: true }) // 实体强制正常高度室内可达区
+      let p = pickSpot()
       if (edef?.darkAmbusher) {
         for (let t = 0; t < 14; t++) {
-          const q = reachFloor(10, { indoor: true })
+          const q = pickSpot()
           const dark = !m.lights.some((l) => Math.hypot(l.x - q.x - 0.5, l.y - q.y - 0.5) < l.r)
           if (dark) { p = q; break }
         }
       }
       m.entities.push(makeEntity(se.type, p.x + 0.5, p.y + 0.5))
     }
+  }
+  if (Object.keys(habMiss).length > 0) {
+    m.habitatFallback = habMiss
+    console.warn(`[habitat] L${def.id} 无符合瓦片，降级 any：${Object.entries(habMiss).map(([k, v]) => `${k}×${v}`).join(' ')}`)
   }
 
   // 物品（独特 + 通用混合）
@@ -942,12 +1095,14 @@ function genOnce(def: LevelDef, seed: number): GameMap {
   const containers = m.structures.filter((s) => s.data?.loot === 1 && CONTAINER_KINDS.includes(s.kind))
   const nInContainer = containers.length ? Math.min(Math.round(nItems * bias), containers.length * 3) : 0
   for (let i = 0; i < nItems - nInContainer; i++) {
-    const t = rng.weighted(pool.map((p) => ({ v: p.type, w: p.w })))
+    const t0 = rng.weighted(pool.map((p) => ({ v: p.type, w: p.w })))
+    const t = t0 === 'almond' && rng.chance(0.1) ? 'cashew' : t0 // v32：腰果水 1/10 概率替代杏仁水
     const p = reachFloor(3)
     m.items.push({ id: iid++, type: t, x: p.x + 0.5, y: p.y + 0.5 })
   }
   for (let i = 0; i < nInContainer; i++) {
-    const t = rng.weighted(pool.map((p) => ({ v: p.type, w: p.w })))
+    const t0 = rng.weighted(pool.map((p) => ({ v: p.type, w: p.w })))
+    const t = t0 === 'almond' && rng.chance(0.1) ? 'cashew' : t0 // v32：腰果水 1/10 概率替代杏仁水
     const c = containers[rng.int(0, containers.length - 1)]
     const cur = Array.isArray(c.data!.lootItems) ? (c.data!.lootItems as string[]) : []
     if (cur.length >= 4) continue
@@ -958,6 +1113,9 @@ function genOnce(def: LevelDef, seed: number): GameMap {
     const p = reachFloor(8, { indoor: true })
     m.items.push({ id: iid++, type: 'tape', x: p.x + 0.5, y: p.y + 0.5 })
   }
+
+  // v26：悬挂生成物放置校验——必须依附有天花板的瓦片，同瓦片不重叠（冲突就近移位或取消）
+  fixHanging(m)
 
   return m
 }
@@ -1578,8 +1736,8 @@ function placeUpperContent(m: GameMap, rng: RNG, def: LevelDef) {
     if (!p) break
     m.items.push({ id: 970000 + m.items.length * 13, type: rng.pick(upItems), x: p.x + 0.5, y: p.y + 0.5, z: FLOOR_H })
   }
-  // 上层实体 ×1（上层房间有独立威胁）
-  const se = def.entities[0]
+  // 上层实体 ×1（上层房间有独立威胁；v25：上层房间属室内，跳过 outdoor 栖息地的实体）
+  const se = def.entities.find((e) => (ENTITIES[e.type]?.habitat ?? 'any') !== 'outdoor') ?? def.entities[0]
   if (se && spots.length > 1) {
     const p = take()
     if (p) m.entities.push(makeEntity(se.type, p.x + 0.5, p.y + 0.5, FLOOR_H))

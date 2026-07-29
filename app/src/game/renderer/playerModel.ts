@@ -6,6 +6,7 @@ import type { AvatarCfg } from '../avatar'
 export interface EquipVisual {
   gloves?: boolean // 隔热手套：手部变黄
   suit?: boolean // 绝缘服：躯干/四肢变橡胶绿
+  divemask?: boolean // 潜水面罩（头饰栏）：镜框 + 视窗玻璃 + 头带
 }
 
 export function buildPlayerModel(cfg: AvatarCfg, ev: EquipVisual = {}): THREE.Group {
@@ -37,9 +38,17 @@ export function buildPlayerModel(cfg: AvatarCfg, ev: EquipVisual = {}): THREE.Gr
   bx(0.09, 0.12, 0.11, handC, 0.28, 0.8)
   // 头
   bx(0.26, 0.26, 0.24, skin, 0, 1.5)
-  // 眼睛（正面 +Z）
+  // 眼睛（正面 +Z；潜水面罩会盖住）
   bx(0.035, 0.04, 0.012, '#1c1a18', -0.06, 1.52, 0.125)
   bx(0.035, 0.04, 0.012, '#1c1a18', 0.06, 1.52, 0.125)
+  // 潜水面罩（头饰栏装备）：镜框 + 青色视窗玻璃 + 环绕头带
+  if (ev.divemask) {
+    bx(0.24, 0.11, 0.03, '#2a2d30', 0, 1.52, 0.13) // 镜框
+    bx(0.19, 0.07, 0.012, '#7ac9d9', 0, 1.52, 0.148) // 视窗玻璃
+    bx(0.02, 0.05, 0.26, '#2a2d30', -0.135, 1.53, 0) // 头带（左）
+    bx(0.02, 0.05, 0.26, '#2a2d30', 0.135, 1.53, 0) // 头带（右）
+    bx(0.27, 0.05, 0.02, '#2a2d30', 0, 1.53, -0.125) // 头带（后）
+  }
   // 发型
   const hc = cfg.hairColor
   if (cfg.hair === 1) { // 短发：头顶 + 后脑

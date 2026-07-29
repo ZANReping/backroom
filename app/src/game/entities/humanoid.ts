@@ -4,7 +4,7 @@ import type { EntityDef } from './types'
 // 人形/类人实体（钝人/窃皮者/无面灵/绝缘猎手/复印机幽灵/久坐者/侍者/镜中人）
 export const HUMANOID_ENTITIES: Record<string, EntityDef> = {
   duller: {
-    type: 'duller', name: '钝人', hp: 70, speed: 1.3, damage: 15, sight: 6, hearing: 5, color: '#2f2f36',
+    type: 'duller', name: '钝人', hp: 70, speed: 1.3, damage: 15, sight: 6, hearing: 5, color: '#2f2f36', habitat: 'indoor',
     desc: '约两米高的深灰人形，接近黑但仍能分辨。没有面部，也没有耳朵。手臂长得不成比例，还能继续伸长。站姿摇晃，走法不像人。',
     codex: {
       no: 'Entity 6「Dullers」', danger: '3 级（中威胁）', habitat: 'Level 1 / Level 4',
@@ -20,7 +20,7 @@ export const HUMANOID_ENTITIES: Record<string, EntityDef> = {
     aggroStinger: true,
   },
   skinstealer: {
-    type: 'skinstealer', name: '窃皮者', hp: 55, speed: 2.6, damage: 25, sight: 7, hearing: 5, color: '#c2b478',
+    type: 'skinstealer', name: '窃皮者', hp: 55, speed: 2.6, damage: 25, sight: 7, hearing: 5, color: '#c2b478', habitat: 'indoor',
     desc: '真身是高大的苍黄色人形，眼窝深凹、眼球纯白。体表布满微观凸起，像章鱼触手上的吸盘。它的血是半透明的。',
     codex: {
       no: 'Entity 10「Skin-Stealer」', danger: '4 级（高威胁）', habitat: '主要分布于前三层 · Level 2 / Level 5',
@@ -36,7 +36,7 @@ export const HUMANOID_ENTITIES: Record<string, EntityDef> = {
     aggroStinger: true,
   },
   faceling: {
-    type: 'faceling', name: '无面灵', hp: 50, speed: 1.0, damage: 10, sight: 5, hearing: 3, passive: true, color: '#d6c9a0',
+    type: 'faceling', name: '无面灵', hp: 50, speed: 1.0, damage: 10, sight: 5, hearing: 3, passive: true, color: '#d6c9a0', habitat: 'indoor',
     desc: '与人类高度相似的人形，头发完好，唯独整张脸是一片光滑的空白——没有眼、没有鼻、没有嘴。它们没有眼睛，却「像看得见一样」地移动。',
     codex: {
       no: 'Entity 9「Facelings」', danger: '1 级（中立，激怒后 3 级）', habitat: 'Level 0 / Level 1 / Level 11（数量最多）',
@@ -52,7 +52,7 @@ export const HUMANOID_ENTITIES: Record<string, EntityDef> = {
     aggroStinger: false,
   },
   insulator: {
-    type: 'insulator', name: '绝缘猎手', hp: 80, speed: 1.6, damage: 28, sight: 7, hearing: 4, color: '#d9b13b',
+    type: 'insulator', name: '绝缘猎手', hp: 80, speed: 1.6, damage: 28, sight: 7, hearing: 4, color: '#d9b13b', habitat: 'indoor',
     desc: '穿着破损绝缘服的猎手，懂得利用带电的配电柜伏击流浪者。',
     codex: {
       no: '未编号（Level 3 特有）', danger: '4 级（高威胁）', habitat: 'Level 3 配电柜密集区',
@@ -68,7 +68,7 @@ export const HUMANOID_ENTITIES: Record<string, EntityDef> = {
     aggroStinger: true,
   },
   copierwraith: {
-    type: 'copierwraith', name: '复印机幽灵', hp: 45, speed: 2.2, damage: 16, sight: 7, hearing: 5, spawnsFakes: true, color: '#7fb0c9',
+    type: 'copierwraith', name: '复印机幽灵', hp: 45, speed: 2.2, damage: 16, sight: 7, hearing: 5, spawnsFakes: true, color: '#7fb0c9', habitat: 'indoor',
     desc: '半透明的人形残影，会复制出你的幻影来迷惑你。',
     codex: {
       no: '未编号（Level 4 特有）', danger: '3 级（中威胁）', habitat: 'Level 4 废弃办公室',
@@ -84,7 +84,7 @@ export const HUMANOID_ENTITIES: Record<string, EntityDef> = {
     aggroStinger: true,
   },
   seated: {
-    type: 'seated', name: '久坐者', hp: 60, speed: 0, damage: 12, sight: 6, hearing: 0, stationary: true, color: '#8f8a7c',
+    type: 'seated', name: '久坐者', hp: 60, speed: 0, damage: 12, sight: 6, hearing: 0, stationary: true, color: '#8f8a7c', habitat: 'indoor',
     desc: '坐在工位上一动不动的人影。看到你会尖叫，引来其他东西。',
     codex: {
       no: '未编号（Level 4 特有）', danger: '3 级（警报源）', habitat: 'Level 4 隔间区',
@@ -100,7 +100,7 @@ export const HUMANOID_ENTITIES: Record<string, EntityDef> = {
     aggroStinger: false,
   },
   bellhop: {
-    type: 'bellhop', name: '侍者', hp: 70, speed: 2.5, damage: 26, sight: 8, hearing: 6, feignNeutral: true, color: '#b08d46',
+    type: 'bellhop', name: '侍者', hp: 70, speed: 2.5, damage: 26, sight: 8, hearing: 6, feignNeutral: true, color: '#b08d46', habitat: 'indoor',
     desc: '提着行李车的侍者，制服笔挺。它微笑着……直到它不笑了。',
     codex: {
       no: '未编号（Level 5 特有）', danger: '4 级（高威胁）', habitat: 'Level 5 恐怖酒店主厅与客房走廊',
@@ -116,7 +116,7 @@ export const HUMANOID_ENTITIES: Record<string, EntityDef> = {
     aggroStinger: true,
   },
   mirrorself: {
-    type: 'mirrorself', name: '镜中人', hp: 50, speed: 2.4, damage: 20, sight: 8, hearing: 3, mirrorMove: true, color: '#e8d8c8',
+    type: 'mirrorself', name: '镜中人', hp: 50, speed: 2.4, damage: 20, sight: 8, hearing: 3, mirrorMove: true, color: '#e8d8c8', habitat: 'indoor',
     desc: '镜子里走出来的「你」，动作与你完全镜像。',
     codex: {
       no: '未编号（Level 5 特有）', danger: '4 级（高威胁）', habitat: 'Level 5 客房镜子附近',

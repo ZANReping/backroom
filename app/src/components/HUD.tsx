@@ -9,9 +9,14 @@ import { seedString } from '@/game/rng'
 import { look } from '@/game/renderer3d'
 import { exitArrowRotation } from '@/game/guide'
 import { CS } from '@/game/infinite'
+import { CONTAINER_KINDS } from '@/game/mapgen'
 import { audio } from '@/game/audio'
 import { bindLabelFor } from '@/game/keybinds'
-import { IconHP, IconStamina, IconHunger, IconSanity, IconBattery, IconPause, IconMap, IconInteract, IconCrouch } from './icons'
+import { IconHP, IconStamina, IconHunger, IconSanity, IconBattery, IconPause, IconMap, IconInteract, IconCrouch, IconIsolation, IconPlant } from './icons'
+import { PHENOMENA, rarityText } from '@/game/phenomena'
+
+// 现象图标映射（phenomena.ts 中 def.icon → 具体 SVG 组件）
+const PHEN_ICON = { isolation: IconIsolation, plant: IconPlant, flicker: IconStamina } as const
 
 export interface LogEntry { id: number; text: string; kind: string; t: number }
 export interface Toast { id: number; text: string }
@@ -111,6 +116,24 @@ function Minimap({ engine, size }: { engine: Engine; size: number }) {
         g.beginPath(); g.arc(ex2, ey2, 2.5 * k, 0, 7); g.fill()
         g.shadowBlur = 0
       }
+      // 标注（v32）：已探索区域内的容器（亮=未搜刮 暗=已搜刮）与地面物品
+      for (const st of m.structures) {
+        if (!CONTAINER_KINDS.includes(st.kind)) continue
+        const idx = Math.floor(st.y + st.h / 2) * m.w + Math.floor(st.x + st.w / 2)
+        if (idx < 0 || idx >= m.w * m.h || !engine.explored[idx]) continue
+        const sx = (st.x + st.w / 2 - px + half) * s, sy = (st.y + st.h / 2 - py + half) * s
+        if (sx < 0 || sy < 0 || sx > size || sy > size) continue
+        g.fillStyle = st.looted ? 'rgba(160,140,90,0.35)' : '#c9a03a'
+        g.fillRect(sx - 1.5 * k, sy - 1.5 * k, 3 * k, 3 * k)
+      }
+      for (const it of m.items) {
+        const idx = Math.floor(it.y) * m.w + Math.floor(it.x)
+        if (idx < 0 || idx >= m.w * m.h || !engine.explored[idx]) continue
+        const sx = (it.x - px + half) * s, sy = (it.y - py + half) * s
+        if (sx < 0 || sy < 0 || sx > size || sy > size) continue
+        g.fillStyle = '#6ad9c9'
+        g.fillRect(sx - 0.75 * k, sy - 0.75 * k, 1.5 * k, 1.5 * k)
+      }
       g.fillStyle = '#e8b93c'
       g.beginPath(); g.arc(size / 2, size / 2, 2 * k, 0, 7); g.fill()
       return
@@ -144,6 +167,20 @@ function Minimap({ engine, size }: { engine: Engine; size: number }) {
       g.shadowColor = '#f5e37a'; g.shadowBlur = 5 * k
       g.beginPath(); g.arc((e.x + 0.5) * s, (e.y + 0.5) * s, 2.5 * k, 0, 7); g.fill()
       g.shadowBlur = 0
+    }
+    // 标注（v32）：已探索区域内的容器（亮=未搜刮 暗=已搜刮）与地面物品
+    for (const st of m.structures) {
+      if (!CONTAINER_KINDS.includes(st.kind)) continue
+      const idx = Math.floor(st.y + st.h / 2) * m.w + Math.floor(st.x + st.w / 2)
+      if (idx < 0 || idx >= m.w * m.h || !engine.explored[idx]) continue
+      g.fillStyle = st.looted ? 'rgba(160,140,90,0.35)' : '#c9a03a'
+      g.fillRect((st.x + st.w / 2) * s - 1.5 * k, (st.y + st.h / 2) * s - 1.5 * k, 3 * k, 3 * k)
+    }
+    for (const it of m.items) {
+      const idx = Math.floor(it.y) * m.w + Math.floor(it.x)
+      if (idx < 0 || idx >= m.w * m.h || !engine.explored[idx]) continue
+      g.fillStyle = '#6ad9c9'
+      g.fillRect(it.x * s - 0.75 * k, it.y * s - 0.75 * k, 1.5 * k, 1.5 * k)
     }
     // 玩家标记：高度指示（低洼变暗+↓，高台↑）+ 蹲伏缩小
     const pz = engine.player as unknown as { crouching?: boolean }
@@ -188,6 +225,9 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
     : null
   const floorText = floorInfo ? `${floorInfo.cur + 1}F/共${floorInfo.total}层` : null
 
+  // 当前生效的现象（engine.step 每帧重算；本组件由 App 的 0.12s tick 驱动重渲染）
+  const phenomena = engine.activePhenomena.map((id) => PHENOMENA[id]).filter(Boolean)
+
   const vitals = (
     <div className={`flex flex-col gap-1 ${isMobile ? 'w-[120px] max-md:landscape:w-auto max-md:landscape:flex-row max-md:landscape:gap-2.5' : 'w-[200px]'}`}>
       <Bar color="var(--blood)" value={p.hp} icon={<IconHP width={14} height={14} />} label="HP" compact={isMobile} critical={p.hp <= 30} />
@@ -198,7 +238,17 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
   )
 
   const hotbar = (
-    <div className="flex gap-1 overflow-x-auto">
+    <div className="flex flex-col items-center gap-1">
+      {/* 选中物品名（快捷栏上方） */}
+      {p.hotbar[p.selected] && (
+        <div
+          className="font-mono2 px-2 py-0.5 text-[11px]"
+          style={{ color: 'var(--amber)', background: 'color-mix(in srgb, var(--panel) 85%, transparent)', border: '1px solid var(--panel-edge)' }}
+        >
+          {ITEMS[p.hotbar[p.selected]!.type]?.name ?? p.hotbar[p.selected]!.type}
+        </div>
+      )}
+      <div className="flex gap-1 overflow-x-auto">
       {p.hotbar.map((s, i) => (
         <button
           key={i}
@@ -222,13 +272,44 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
           )}
         </button>
       ))}
+      </div>
     </div>
   )
 
   return (
     <div className="pointer-events-none fixed inset-0 z-30" style={{ padding: 'calc(env(safe-area-inset-top) + 8px) calc(env(safe-area-inset-right) + 8px) calc(env(safe-area-inset-bottom) + 8px) calc(env(safe-area-inset-left) + 8px)' }}>
-      {/* 左上：状态 */}
-      <div className="hud-panel pointer-events-auto absolute left-3 top-3 p-2">{vitals}</div>
+      {/* 左上：状态 + 当前现象 */}
+      <div className="absolute left-3 top-3 flex flex-col items-start gap-1.5">
+        <div className="hud-panel pointer-events-auto p-2">
+          {vitals}
+          {/* 福友玉（口袋栏）：实体感应——随最近实体距离改变温度提示 */}
+          {p.equip.pockets.some((s) => s?.type === 'fuyouyu') && (() => {
+            let best = Infinity
+            for (const e of engine.map?.entities ?? []) {
+              if (e.dead || e.hidden) continue
+              best = Math.min(best, Math.hypot(e.x - p.x, e.y - p.y))
+            }
+            const [txt, c] = best < 6 ? ['发烫——实体近在咫尺', 'var(--blood)']
+              : best < 15 ? ['微温——实体就在附近', 'var(--amber)']
+                : best < 30 ? ['温润——实体在远处游荡', 'var(--text-dim)']
+                  : ['平静——四周暂无实体', 'var(--text-dim)']
+            return <div className="font-mono2 mt-1.5 border-t pt-1.5 text-[10px]" style={{ color: c, borderColor: 'var(--panel-edge)' }}>◈ 福友玉：{txt}</div>
+          })()}
+        </div>
+        {phenomena.length > 0 && (
+          <div className="hud-panel pointer-events-auto flex flex-col gap-1 px-2 py-1.5">
+            {phenomena.map((d) => {
+              const Icon = PHEN_ICON[d.icon]
+              return (
+                <div key={d.id} className="flex items-center gap-1.5" title={`${d.name}（罕见度：${rarityText(d)}）\n${d.desc}`}>
+                  <span style={{ color: 'var(--sanity)', width: 14, height: 14 }}><Icon width={14} height={14} /></span>
+                  <span className="font-mono2 text-[10px]" style={{ color: 'var(--text-dim)' }}>{d.name}</span>
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </div>
 
       {/* 顶部中央：位置 + 消息（移动端；v10 修复与状态栏/开发者面板重叠——
           移动端改为左右留白锚定，为左上状态条与右上按钮让位，日志限宽限高且纯展示） */}
@@ -642,8 +723,20 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
                     <DevBtn onClick={() => engine.devTeleport('entity')}>👁 最近实体</DevBtn>
                     <DevBtn onClick={() => engine.devTeleport('container')}>📦 最近容器</DevBtn>
                     <DevBtn onClick={() => engine.devTeleport('spawn')}>⌂ 出生点</DevBtn>
+                    {engine.levelDef.id === 0 && (
+                      <DevBtn onClick={() => engine.devTestField()} title="仅教学关卡：生成 80×80 无墙空旷测试场地并传送（不会自然生成）">⬜ 测试场地（L0）</DevBtn>
+                    )}
                   </div>
                 </DevSection>
+                {engine.levelDef.exits.length > 0 && (
+                  <DevSection label="召唤出口（仅本层可生成；生成在附近邻墙处）">
+                    <div className="grid grid-cols-2 gap-1">
+                      {engine.levelDef.exits.map((e) => (
+                        <DevBtn key={e.kind} title={`在附近召唤出口「${e.name}」`} onClick={() => engine.devSummonExit(e.kind)}>🚪 {e.name}</DevBtn>
+                      ))}
+                    </div>
+                  </DevSection>
+                )}
                 {info && (
                   <DevSection label="出口方位">
                     {info.exits.length === 0 && <div style={{ color: 'var(--text-dim)' }}>本层无出口</div>}
@@ -688,7 +781,7 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
             {tab === 'world' && (
               <>
                 <DevSection label="层级跳转">
-                  <div className="flex gap-1">
+                  <div className="flex flex-wrap gap-1">
                     {LEVELS.map((lv) => (
                       <DevBtn key={lv.id} active={p.level === lv.id} onClick={() => engine.devJump(lv.id)}>L{levelNo(lv.id)}</DevBtn>
                     ))}
@@ -703,6 +796,45 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
                     <DevBtn active={engine.dev.frozenAI} onClick={() => { engine.dev.frozenAI = !engine.dev.frozenAI }} title="实体 AI 完全冻结">冻结AI</DevBtn>
                     <DevBtn active={engine.dev.god} onClick={() => { engine.dev.god = !engine.dev.god }} title="无敌（默认随开发者模式开启）">无敌</DevBtn>
                   </div>
+                </DevSection>
+                <DevSection label="现象（当前层可触发）">
+                  {(() => {
+                    const lvl = engine.levelDef.id
+                    const list = Object.values(PHENOMENA).filter((d) => !d.levels || d.levels.includes(lvl))
+                    if (!list.length) return <div style={{ color: 'var(--text-dim)' }}>本层无可触发的现象</div>
+                    return (
+                      <div className="space-y-1">
+                        {list.map((d) => {
+                          const on = engine.dev.phenOn.has(d.id)
+                          const off = engine.dev.phenOff.has(d.id)
+                          const activeNow = engine.activePhenomena.includes(d.id)
+                          return (
+                            <div key={d.id} className="flex items-center gap-1">
+                              <span className="flex-1" style={{ color: activeNow ? 'var(--amber)' : 'var(--text-dim)' }} title={`${d.name}（罕见度：${rarityText(d)}）\n${d.desc}`}>
+                                {activeNow ? '●' : '○'} {d.name}
+                              </span>
+                              <DevBtn
+                                active={on}
+                                title="强制开启（无视触发条件，再次点击恢复自动）"
+                                onClick={() => {
+                                  if (on) engine.dev.phenOn.delete(d.id)
+                                  else { engine.dev.phenOn.add(d.id); engine.dev.phenOff.delete(d.id) }
+                                }}
+                              >开</DevBtn>
+                              <DevBtn
+                                active={off}
+                                title="强制关闭（即使满足触发条件也不生效，再次点击恢复自动）"
+                                onClick={() => {
+                                  if (off) engine.dev.phenOff.delete(d.id)
+                                  else { engine.dev.phenOff.add(d.id); engine.dev.phenOn.delete(d.id) }
+                                }}
+                              >关</DevBtn>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )
+                  })()}
                 </DevSection>
                 <DevSection label="层级事件">
                   <div className="grid grid-cols-2 gap-1">
@@ -764,6 +896,16 @@ const GLYPH_COLOR: Record<string, string> = {
   wrench: '#9aa0a8', gloves: '#b89a2e', suit: '#5a8a5a', fuse: '#e8c93d',
   capacitor: '#4a8ac9', coffee: '#a06a3e', stapler: '#6a7078', keycard: '#7fb0c9',
   skeleton: '#b08d46', silverware: '#d8d8e0', sedative: '#9adfff', flashlight: '#f0d060',
+  // ===== v25：v23/v25 新增物品专属配色（各自独特，一眼可辨） =====
+  chalkstub: '#f0f0f8', megfolder: '#bf9b5f', rope: '#a8854e', divemask: '#4ac9c9',
+  thingmeat: '#c95a6a', oddbook: '#8a6ac9', cavingsuit: '#d97a2e', xenonmarble: '#66e0d0',
+  driedfruit: '#b86a2e', uvlamp: '#b48aff', stonekazoo: '#9a8a72', pockets: '#d96ac9',
+  housekey: '#c9c9d2', wheatgrain: '#d9c25a', nails: '#7d8896', timber: '#96682e',
+  presses: '#cfa12e', pamphlet: '#7ac9b0', citywater: '#3aa0d8', endnote: '#8a7a6a',
+  // ===== v32：后室扩展物品 =====
+  cashew: '#c9a05a',
+  knife: '#c9cdd4', axe: '#d96a3a', headlamp: '#f0d060', notebook: '#8a6a4a',
+  fuyouyu: '#6ad9a8', squirtgun: '#4ac9e8', warpberry: '#b06ae0', royalration: '#e8c93d',
 }
 // v14：网络素材贴图图标（game-icons.net，CC BY 3.0，见 public/textures/icons/SOURCES.md）；
 // 不在表内或加载失败的物品回退手绘 SVG。
@@ -819,6 +961,54 @@ export function ItemGlyph({ type, size = 24 }: { type: string; size?: number }) 
       case 'silver': return <path d="M8 3v7a2 2 0 0 0 4 0V3m-2 0v18m6-15c0 4-1 5-1 5v10" {...s} />
       case 'syringe': return <><path d="M4 20l6-6m0 0L17 7m-9 5 3 3" {...s} /><path d="M15 5l4 4m-7-2 4 4" {...s} /></>
       case 'scrap': return <><path d="M5 4h14v13l-4 3H5z" {...s} /><path d="M15 20v-3h4" {...s} /><path d="M8 8h8M8 12h5" {...s} /></>
+      {/* ===== v25：v23/v25 新增物品专属图标（此前全部落到默认 box） ===== */}
+      {/* 粉笔头：斜放的短粉笔，带一道环纹 */}
+      case 'chalk': return <><path d="M5 16.5 14.5 7l2.5 2.5L7.5 19H5z" {...s} /><path d="M12 9.5l2.5 2.5" {...s} /></>
+      {/* M.E.G. 文件夹：带标签页的牛皮纸文件夹 */}
+      case 'folder': return <><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2.5h8.5A1.5 1.5 0 0 1 21 9v9.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5z" {...s} /><path d="M3 10.5h18" {...s} /></>
+      {/* 尼龙绳：双圈绳卷 + 垂下的绳头 */}
+      case 'rope': return <><ellipse cx="10.5" cy="10" rx="6.5" ry="5" {...s} /><ellipse cx="10.5" cy="10" rx="3" ry="2.2" {...s} /><path d="M14 14.2c2 1 3.5 2.8 4 5.3" {...s} /></>
+      {/* 潜水面罩：大镜窗 + 呼吸管 */}
+      case 'mask': return <><path d="M4 10a3 3 0 0 1 3-3h7a3 3 0 0 1 3 3v2a3 3 0 0 1-3 3h-1.5l-1.5-1.5L9.5 15H7a3 3 0 0 1-3-3z" {...s} /><path d="M4 11H2m17-1v5a2 2 0 0 1-2 2h-1.5M19 10V4" {...s} /></>
+      {/* 巨兽之肉：带骨肉的腿肉 */}
+      case 'meat': return <><ellipse cx="10" cy="14.5" rx="6.5" ry="4.8" {...s} /><path d="M14.8 11 18.5 6.5" {...s} /><circle cx="18.3" cy="4.8" r="1.3" {...s} /><circle cx="20" cy="6.6" r="1.3" {...s} /></>
+      {/* 书本：封面 + 书脊带 + 书名行（oddbook/pamphlet） */}
+      case 'book': return <><rect x="5" y="3" width="14" height="18" rx="1.5" {...s} /><path d="M9 3v18" {...s} /><path d="M12.5 7.5h4M12.5 10.5h2.5" {...s} /></>
+      {/* 氙气玻璃珠：带高光与内芯的弹珠 */}
+      case 'marble': return <><circle cx="12" cy="12" r="7" {...s} /><path d="M8 10.5a4.8 4.8 0 0 1 5-3.2" {...s} /><circle cx="14" cy="14" r="1.4" {...s} /></>
+      {/* 干果与干菜：两颗皱缩干果 + 果柄 */}
+      case 'fruit': return <><circle cx="9" cy="14.5" r="4.5" {...s} /><circle cx="16.8" cy="12" r="3.4" {...s} /><path d="M9 10V7" {...s} /><path d="M9 7.6c0-2 1.4-2.8 3-2.6 0 2-1.4 2.8-3 2.6z" {...s} /><circle cx="8" cy="13.5" r="0.7" {...f} /><circle cx="10.5" cy="15.8" r="0.7" {...f} /><circle cx="16.3" cy="11.8" r="0.7" {...f} /></>
+      {/* 人工紫外灯：灯管 + 上下紫外线 */}
+      case 'uv': return <><rect x="3.5" y="10" width="17" height="4.5" rx="2.2" {...s} /><path d="M7 7.5V5m5 2.5V4m5 3.5V5M7 17v2.5m5-2.5V19m5-2v2.5" {...s} /></>
+      {/* 石卡祖笛：锥形笛身 + 顶部振膜孔 */}
+      case 'kazoo': return <><path d="M3 11.5h10.5L20 9v7.5l-6.5-1.5H3z" {...s} /><circle cx="9" cy="9.2" r="1.7" {...s} /><path d="M9 10.9v.6" {...s} /></>
+      {/* Pockets 布袋：束口袋（袋身 + 扎口 + 绳结） */}
+      case 'pocket': return <><path d="M8.5 8.5C6.5 10.5 5 12.7 5 15a7 5.6 0 0 0 14 0c0-2.3-1.5-4.5-3.5-6.5" {...s} /><path d="M9 8.5l1.2-3.6h3.6L15 8.5M9.3 6.3h5.4" {...s} /></>
+      {/* 割下的小麦：麦秆 + 左右麦粒 + 芒 */}
+      case 'wheat': return <><path d="M12 21V6.5" {...s} /><path d="M12 9 9.5 7M12 9l2.5-2M12 12.5l-2.5-2M12 12.5l2.5-2M12 16l-2.5-2M12 16l2.5-2M12 6.5V3m-2 1.4L11.2 6M14 4.4 12.8 6" {...s} /></>
+      {/* 一把钉子：三枚扇开的铁钉 */}
+      case 'nails': return <><path d="M7 5.5 9.5 19M5.6 6.3l3.2-.8M12.5 5l1.5 13.7M11.1 5.6l3.2-.6M17.5 5.5 15.7 19m.4-13.7 3.2.5" {...s} /></>
+      {/* 木板：两块错开的板材 + 木纹 + 钉孔 */}
+      case 'timber': return <><rect x="4" y="6.5" width="16" height="4.6" rx="0.8" {...s} /><rect x="5" y="13" width="15" height="4.6" rx="0.8" {...s} /><path d="M7 8.8h6M9.5 15.3h7" {...s} /><circle cx="17.6" cy="8.8" r="0.7" {...f} /><circle cx="7" cy="15.3" r="0.7" {...f} /></>
+      {/* presses 压印币：外圈齿纹 + 内圈 + P 字压印 */}
+      case 'coin': return <><circle cx="12" cy="12" r="7.5" {...s} /><circle cx="12" cy="12" r="5.2" {...s} /><path d="M10.6 15.8V8.6h2.6a1.9 1.9 0 0 1 0 3.8h-2.6" {...s} /></>
+      {/* ===== v32：后室扩展物品图标 ===== */}
+      {/* 刀：斜置刀刃 + 护手 + 柄 */}
+      case 'knife': return <><path d="M4 20 14 10l5-7 2 2-6 6-9 9z" {...s} /><path d="M12.5 11.5l2.2 2.2" {...s} /></>
+      {/* 斧头：斜柄 + 斧刃 */}
+      case 'axe': return <><path d="M7 21 15 7" {...s} /><path d="M13.5 4.5c2.8-2.2 6-1.6 7.5 1-1.6.4-2.8 1.4-3.4 3-1.6-1-3.2-2.5-4.1-4z" {...s} /></>
+      {/* 头灯：头带弧线 + 灯体 + 光束 */}
+      case 'headlamp': return <><path d="M3 12c0-4.5 4-8 9-8s9 3.5 9 8" {...s} /><rect x="9" y="9" width="6" height="6" rx="1" {...s} /><circle cx="12" cy="12" r="1.6" {...s} /><path d="M12 16v3m-3-1 1 1m5-1-1 1" {...s} /></>
+      {/* 笔记本和笔：皮面本 + 斜放的笔 */}
+      case 'notebook': return <><rect x="4" y="4" width="12" height="16" rx="1" {...s} /><path d="M8 4v16" {...s} /><path d="M15.5 16.5l4.5-4.5 1.5 1.5-4.5 4.5-2 .5z" {...s} /></>
+      {/* 福友玉：玉环 + 挂绳 */}
+      case 'jade': return <><circle cx="12" cy="14.5" r="5.5" {...s} /><circle cx="12" cy="14.5" r="1.8" {...s} /><path d="M12 9V4m-2 2 2-2 2 2" {...s} /></>
+      {/* 滋水枪：枪身 + 顶部储罐 + 枪口 */}
+      case 'watergun': return <><path d="M3 11h11l4 2v3h-5l-1 4H9l1-4H6a3 3 0 0 1-3-3z" {...s} /><rect x="7" y="4.5" width="6" height="5" rx="1.5" {...s} /><path d="M18.5 13H21" {...s} /></>
+      {/* 迁跃浆果：双果 + 叶片 + 涟漪 */}
+      case 'berry': return <><circle cx="9" cy="14" r="4.5" {...s} /><circle cx="16.5" cy="12" r="3.5" {...s} /><path d="M11.5 9.5c0-3 2-5 5-5 0 3-2 5-5 5z" {...s} /><path d="M4 6c1-1 2.5-1 3.5 0" {...s} /></>
+      {/* 皇家口粮：餐盒 + 小皇冠 */}
+      case 'ration': return <><rect x="5" y="10" width="14" height="10" rx="1.5" {...s} /><path d="M8 10V8l2 1.5L12 7l2 2.5L16 8v2" {...s} /><path d="M8.5 14.5h7" {...s} /></>
       default: return <rect x="7" y="7" width="10" height="10" {...s} />
     }
   })()
