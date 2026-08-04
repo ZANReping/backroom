@@ -4,12 +4,12 @@ import type { EntityDef } from './types'
 // 兽形/载具/虫形实体（猎犬/团块/死亡飞蛾/运输车/管道蠕虫）
 export const CRITTER_ENTITIES: Record<string, EntityDef> = {
   hound: {
-    type: 'hound', name: '猎犬', hp: 35, speed: 3.4, damage: 18, sight: 6, hearing: 12, hearsSprint: true, color: '#7e6c58', habitat: 'any',
+    type: 'hound', name: '猎犬', hp: 35, speed: 3.4, damage: 18, sight: 6, hearing: 12, hearsSprint: true, intimidatable: true, color: '#7e6c58', habitat: 'any',
     desc: '四肢着地的人形掠食者，听觉极其灵敏，速度全实体中最快。',
     codex: {
       no: 'Entity 8「Hound」', danger: '4 级（高威胁）', habitat: 'Level 1 / Level 4 / Level 5 / Level 9 / Level 11 等多个层级',
       behavior: '视力平平，但听觉半径极大，对奔跑脚步声尤其敏感——冲刺会把半个楼层外的它引来。',
-      counter: '在它附近慢走，不要冲刺。若已被发现，利用转角甩开视线，它主要靠声音重新锁定你。',
+      counter: '在它附近慢走，不要冲刺。若被盯上，直视它的眼睛并持续制造噪声（奔踏、反复挥击）可将它震慑在原地——但一旦移开视线或停止发声，它立刻恢复行动。',
       lore: [
         '「猎犬」指一类四肢着地、骨骼结构明显异于人类的人形掠食者。其颈椎可以 180 度旋转，奔跑时关节发出湿响。',
         '它的内耳结构异常发达。实验记录显示，它对 12 米外的奔跑声的反应时间不足一秒，但对同距离慢速拖行声几乎无反应。',
@@ -20,18 +20,18 @@ export const CRITTER_ENTITIES: Record<string, EntityDef> = {
     aggroStinger: true,
   },
   clump: {
-    type: 'clump', name: '团块', hp: 60, speed: 0.9, damage: 20, sight: 4, hearing: 6, grabs: true, color: '#5a4638', habitat: 'any',
-    desc: '由腐烂肢体纠缠而成的缓慢肉块，常堵在走廊中央。臂展远超目测。',
+    type: 'clump', name: '肢团', hp: 60, speed: 3.4, damage: 20, sight: 0, hearing: 14, blind: true, grabs: true, color: '#5a4638', habitat: 'any',
+    desc: '由腐烂肢体纠缠而成的肉块，没有眼睛。听见声音后会以与体型不符的高速冲撞声源。',
     codex: {
-      no: 'Entity 5「Clump」', danger: '3 级（中威胁）', habitat: 'Level 2 / Level 3 的狭窄走廊 · Level 8',
-      behavior: '移动极慢，但倾向于堵在通道正中。抓住你时会将你拖住减速，臂展接近两米。',
-      counter: '绕行或把它引开——弄出声响让它离开门口再溜过去。被抓后体力会瞬间耗尽，别硬闯。',
+      no: 'Entity 5「Clumps」', danger: '3 级（中威胁）', habitat: 'Level 1 / Level 2 / Level 3 的走廊 · Level 8',
+      behavior: '完全失明，依靠听觉捕猎。一旦听见脚步、搜索或碰撞声，会以远超目测的高速径直冲撞声源；抓住你时会将你拖住减速，臂展接近两米。',
+      counter: '慢走或蹲行通过它的领地，途中不要搜索容器、不要拾取物品。若已被锁定，制造一次远端声响（投掷物）把它引开。',
       lore: [
-        '团块是一个由数十条人类肢体融合而成的聚合实体。X 光透视显示其内部没有骨架，肢体之间以未知方式共享神经信号。',
-        '它的「堵门」行为被推测为捕猎策略：狭窄通道中，缓慢不再是弱点。多名流浪者报告被其伸出的手臂拖住脚踝，靠同伴拖拽才得以脱身。',
-        '团块会持续发出类似多人呓语的声音。M.E.G. 语言学家在其中识别出过完整的求救短句，这一发现至今没有解释。',
+        '肢团是一个由数十条人类肢体融合而成的聚合实体。X 光透视显示其内部没有骨架，也没有任何视觉器官，肢体之间以未知方式共享神经信号。',
+        '它的爆发式冲锋与其笨重外形完全不符：记录中它曾在 1.2 秒内横跨整条走廊扑向一处脚步声的来源。安静，是对付它唯一的护甲。',
+        '肢团会持续发出类似多人呓语的声音。M.E.G. 语言学家在其中识别出过完整的求救短句，这一发现至今没有解释。',
       ],
-      sighting: '「走廊尽头那团东西在动。我绕道走了二十分钟，值得。」——Level 3 勘探笔记。',
+      sighting: '「我蹲着挪过整个大厅，连罐头都不敢碰。它就在两米外，朝另一个方向的响声冲过去了。」——Level 1 幸存者访谈。',
     },
     aggroStinger: true,
   },
@@ -71,7 +71,7 @@ export const CRITTER_ENTITIES: Record<string, EntityDef> = {
     type: 'pipeworm', name: '管道蠕虫', hp: 45, speed: 2.8, damage: 20, sight: 5, hearing: 8, ambusher: true, color: '#7a4a2e', habitat: 'any',
     desc: '从管道里破墙而出的蠕虫。压力表剧烈抖动时，快跑。',
     codex: {
-      no: '未编号（Level 2 特有）', danger: '4 级（高威胁）', habitat: 'Level 2 管道走廊',
+      no: '未编号（Level 2 特有）', danger: '4 级（高威胁）', habitat: 'Level 2 废弃公共带',
       behavior: '潜伏在管道网络中，只在猎物靠近时破墙而出；附近压力表会提前剧烈抖动。',
       counter: '看到疯狂抖动的压力表就放慢脚步准备后撤；它破土后的前两三秒最危险，拉开距离后它反而笨拙。',
       lore: [
@@ -82,5 +82,57 @@ export const CRITTER_ENTITIES: Record<string, EntityDef> = {
       sighting: '「表针跳了三下，我就趴下了。它从我头顶穿过去，咬走了我的背包。」——Level 2 幸存者。',
     },
     aggroStinger: true,
+  },
+  corpserat: {
+    type: 'corpserat', name: '尸鼠', hp: 26, speed: 3.1, damage: 9, sight: 5, hearing: 8,
+    passive: true, hunts: ['deathmoth'], grudge: true, color: '#8a8078', habitat: 'any',
+    desc: '成群出没的灰白巨鼠，以腐肉与死亡飞蛾为食。不惹它，它就不惹你；惹了它，整群都会记住你。',
+    codex: {
+      no: '未编号（Level 2 / Level 8 共有种）', danger: '1 级（中立，激怒后 3 级·成群记仇）', habitat: 'Level 2 废弃公共带 · Level 8 Rottnest Jungle 天顶（经通风管道往返）· Level 9 郊区',
+      behavior: '以 2~3 只小群活动，常年在廊道里翻找腐肉，不主动攻击玩家。它对死亡飞蛾有强烈的捕食欲——附近出现飞蛾时总会优先扑上去撕碎。未被攻击时温驯避人；一旦被攻击，整群转为凶猛反击且记仇不放——这股狠劲与 Level 8 天顶巢群如出一辙。',
+      counter: '互不打扰即可。若在黑暗里听见细碎的抓挠与扑翼声，多半是它们在替你清理飞蛾——别插手，更别踩到它。若已激怒鼠群，拉开距离没有意义：它们不会消气，只能全部解决或立刻离层。',
+      lore: [
+        '尸鼠是废弃公共带最常见的原生小型实体，体长约半米，毛色灰白近腐；Level 8 Rottnest Jungle 天顶的深褐色巢群（旧档称「死亡鼠」）经基因比对确认为同一物种——它们沿着连通两层的通风管道往返迁徙，毛色随栖息地的管道积灰与洞顶菌光分化。',
+        '观察记录：尸鼠会在死亡飞蛾落地或扑灯时从管道阴影里窜出，精准咬断飞蛾的头部后拖回墙缝。M.E.G. 外勤戏称它们为「免费的驱虫服务」。',
+        'Rottnest Jungle 是一个拥有独特双向重力的巨大洞厅，天顶上的尸鼠巢群从下往上看是一整片倒挂的巢。鼠类排泄物形成的肥沃土壤支撑起了洞厅里那片多彩的生物发光蘑菇森林——整个生态系统的底座，是老鼠拉的屎。',
+        '「大停电」事件后，Level 2 的窃皮者销声匿迹，尸鼠的数量却明显增加。一种假说认为：窃皮者曾是尸鼠唯一的天敌。',
+      ],
+      sighting: '「手电扫过去的时候，一团灰白的东西正把一只飞蛾往墙缝里拖。它看了我一眼，继续拖。我队友踢了它一脚——我们跑了三条廊道才甩掉那一整群。」——Level 2 流浪者。',
+    },
+    aggroStinger: false,
+  },
+  ferren: {
+    type: 'ferren', name: 'Ferren', hp: 12, speed: 2.2, damage: 0, sight: 4, hearing: 3,
+    passive: true, noRetaliate: true, color: '#d8cbb0', habitat: 'any',
+    desc: '一只雪貂大小的「切行」吉祥物——无害，像宠物一样到处漫游。',
+    codex: {
+      no: 'Entity 92「Ferren」', danger: '0 级（无害）', habitat: '商人之家（Level 1 跃金地段）的雪貂笼',
+      behavior: '无危害，不会攻击玩家，仅会像宠物一样漫游；偶尔「切行」消失又在别处出现。',
+      counter: '请勿伤害——商人之家视它为吉祥物。攻击它会让 B.N.T.G. 恼火，杀死它的后果更严重。',
+      lore: [
+        '「切行」吉祥物 Ferren 是商人之家的非正式成员。它常年在货架与保险库之间漫游，没人知道它什么时候来的，也没人见过它进食。',
+        'B.N.T.G. 为它修了雪貂笼，但更多时候它待在人的脚边。警备队长布洛克坚称它不咬人——「至少没咬过我」。',
+        '部分流浪者相信摸一摸 Ferren 的脑袋能带来好运。商人之家对此不予置评，但伤害 Ferren 的人会被请出市场。',
+      ],
+      sighting: '「它就卧在我的柜台下面。别踩到它，很贵。」——玛戈，杂货摊主',
+    },
+    aggroStinger: false,
+  },
+  jerry: {
+    type: 'jerry', name: '鹉主杰瑞', hp: 30, speed: 0, damage: 0, sight: 5, hearing: 0,
+    passive: true, noRetaliate: true, stationary: true, color: '#2a5fd8', habitat: 'any',
+    desc: '一只蓝色的小鹦鹉——杰瑞的信众膜拜的「鹉主」。它一动不动地栖息在圣地的栖木上，羽毛蓝得不像后室的造物。',
+    codex: {
+      no: 'Entity 7「Jerry」', danger: '1 级（本身无害；其信众是另一回事）', habitat: 'Level 274「杰瑞的房间」——主间穹顶下的栖木',
+      behavior: '蓝色的雄性鹦鹉，信众称其为「鹉主」。它几乎从不离开栖木，不攻击任何来客；但靠近并「接触」它的流浪者会不受控地开始诵咏赞美它的话语——信众称这一过程为「教化」。教化完成的流浪者再也不愿离开 Level 274。',
+      counter: '保持距离即可。若已接触它但尚未被教化，趁还走得动立刻离开。想彻底摆脱教化：喂它一瓶杏仁水——被驯服的鹉主不再教化和任何人。但切记别让信众看见你这么做，在他们眼中那是亵渎。',
+      lore: [
+        'Entity 7「Jerry」是一只蓝色的雄性鹦鹉，栖息于 Level 274 主间的栖木上。除了颜色鲜艳得异常之外，它与一只普通鹦鹉几乎没有区别——直到你触碰它。',
+        '与杰瑞发生身体接触的流浪者会开始不受控地诵咏赞美它的话语，并逐渐丧失离开 Level 274 的意愿。信众把这一现象尊称为「教化」，把被教化的流浪者迎为「兄弟姐妹」。',
+        '「杰瑞的信众」（The Followers Of Jerry）是围绕它形成的宗教组织。他们在各层级张贴海报传播教义，并把足够虔诚的流浪者引到 Level 274。信众对鹉主的维护近乎狂热——公开非议杰瑞，或当着他们的面「驯服」鹉主，都会立刻招来敌意。',
+      ],
+      sighting: '「我只是想摸摸它。后来……后来我在那个房间里住了多久来着？兄弟姐妹们说，那叫回家。」——一名被驯服后赎回自我的流浪者。',
+    },
+    aggroStinger: false,
   },
 }

@@ -1,7 +1,8 @@
 // v23 新机制验证：熵效应 / Level 11 Effect / Pockets / 容器搜索 / 绊线 / L7 落水
 ;(globalThis as unknown as Record<string, unknown>).window = { addEventListener() {}, removeEventListener() {}, matchMedia: () => ({ matches: false }) }
 ;(globalThis as unknown as Record<string, unknown>).document = { createElement: () => ({ getContext: () => null, style: {} }), getElementById: () => null, addEventListener() {}, removeEventListener() {}, body: { appendChild() {} } }
-const { engine, CONTAINERS } = await import('../src/game/engine.ts')
+const { engine } = await import('../src/game/engine.ts')
+const { CONTAINERS } = await import('../src/game/containers.ts')
 const { LEVELS } = await import('../src/game/levels/index.ts')
 const { tileAt } = await import('../src/game/mapgen.ts')
 

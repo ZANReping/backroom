@@ -4,12 +4,12 @@ import type { EntityDef } from './types'
 // 人形/类人实体（钝人/窃皮者/无面灵/绝缘猎手/复印机幽灵/久坐者/侍者/镜中人）
 export const HUMANOID_ENTITIES: Record<string, EntityDef> = {
   duller: {
-    type: 'duller', name: '钝人', hp: 70, speed: 1.3, damage: 15, sight: 6, hearing: 5, color: '#2f2f36', habitat: 'indoor',
+    type: 'duller', name: '钝人', hp: 70, speed: 1.3, damage: 15, sight: 6, hearing: 5, phases: true, color: '#2f2f36', habitat: 'indoor',
     desc: '约两米高的深灰人形，接近黑但仍能分辨。没有面部，也没有耳朵。手臂长得不成比例，还能继续伸长。站姿摇晃，走法不像人。',
     codex: {
       no: 'Entity 6「Dullers」', danger: '3 级（中威胁）', habitat: 'Level 1 / Level 4',
-      behavior: '缓慢但永不停歇地追踪目标。手臂能伸展到很远的距离——你以为拉开了安全距离，它的手却还在你背后。手持两倍自身体重的物品时仍能高速奔跑。',
-      counter: '不要与它缠斗。它畏惧杏仁水——泼出去或砸碎一瓶，通常能让它退开。',
+      behavior: '缓慢但永不停歇地追踪目标，能够径直穿过墙壁——它行动时会产生刺耳的沙沙声，隔着墙也能听见。手臂能伸展到很远的距离，手持两倍自身体重的物品时仍能高速奔跑。',
+      counter: '不要与它缠斗，也别指望墙壁能挡住它——听声辨位，朝沙沙声的反方向撤离。它畏惧杏仁水：泼出去或砸碎一瓶，通常能让它退开。',
       lore: [
         '外形为高大、深灰的人形，皮肤颜色接近黑色但仍可分辨；骨架脆弱，缺失若干显著特征——没有脸，也没有耳朵。',
         '皮肤深色多皱，局部撕裂或呈「煮烂」状，露出下面紫红色的肉。那层紫色肌肉具有超自然性质，它的速度与力量都来自那里。',

@@ -64,3 +64,14 @@ export const IconPlant = (p: SVGProps<SVGSVGElement>) => (
 export const IconSkull = (p: SVGProps<SVGSVGElement>) => (
   <svg {...base(p)}><path d="M12 3a8 8 0 0 0-8 8c0 3 1.5 5 3.5 6.5V21h9v-3.5C18.5 16 20 14 20 11a8 8 0 0 0-8-8z" /><path d="M9 11h.01M15 11h.01" strokeWidth="3" /></svg>
 )
+// v29b：移动端「快捷使用」（= PC 右键使用手持物品）
+export const IconQuickUse = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base(p)}><path d="M9 11.5V5a1.8 1.8 0 0 1 3.6 0v5.2" /><path d="M12.6 10.5 16 9.6a1.8 1.8 0 0 1 2.2 2.5l-2.8 5.6A4.5 4.5 0 0 1 11.4 20h-.8a4.5 4.5 0 0 1-4.5-4.5v-2.8l1.7-2.6" /><path d="M9 13.5h3.6" /></svg>
+)
+// v29b：移动端滚轮模拟（快捷栏上/下切换）
+export const IconWheelUp = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base(p)}><rect x="9" y="2.5" width="6" height="19" rx="3" /><path d="M12 6v3" /><path d="m9.2 12.4 2.8-2.8 2.8 2.8" /></svg>
+)
+export const IconWheelDown = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base(p)}><rect x="9" y="2.5" width="6" height="19" rx="3" /><path d="M12 6v3" /><path d="m9.2 14.8 2.8 2.8 2.8-2.8" /></svg>
+)

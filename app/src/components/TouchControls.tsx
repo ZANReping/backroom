@@ -2,8 +2,9 @@
 import { useRef, useState, useCallback, useEffect } from 'react'
 import type { Engine } from '@/game/engine'
 import { look } from '@/game/renderer3d'
+import { audio } from '@/game/audio'
 import type { GameSettings } from './SettingsModal'
-import { IconFlashlight, IconBackpack, IconSprint, IconInteract, IconAttack, IconPause, IconJump, IconCrouch } from './icons'
+import { IconFlashlight, IconBackpack, IconSprint, IconInteract, IconAttack, IconPause, IconJump, IconCrouch, IconQuickUse, IconWheelUp, IconWheelDown } from './icons'
 import { CONTROL_SIZES, clampLayoutItem, type TouchControlId, type TouchLayoutMap } from './LayoutEditor'
 
 interface Props {
@@ -113,6 +114,16 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
   useEffect(() => {
     engine.input.sprint = sprinting.current || sprintHold
   }, [sprintHold, engine])
+
+  // v29b：滚轮模拟——循环切换快捷栏选中槽（与 PC 滚轮逻辑一致）
+  const cycleSlot = (dir: 1 | -1) => {
+    const n = engine.player.hotbar.length
+    if (n === 0) return
+    engine.player.selected = (engine.player.selected + dir + n) % n
+    audio.uiTick()
+  }
+  // v29b：快捷使用——与 PC 右键（quickuse 绑定）相同的快捷使用/装备逻辑
+  const quickUse = () => { engine.quickUse() }
 
   const interact = engine.getInteract()
   // v7：跳跃/蹲伏输入（游戏层契约字段，防御性写入，字段不存在也只是无害的额外属性）
@@ -227,6 +238,37 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
         <IconCrouch width={24} height={24} />,
       )}
       {fixedBtn('pause', CONTROL_SIZES.pause, {}, (e) => { e.stopPropagation(); onPause?.() }, undefined, <IconPause width={20} height={20} />)}
+      {/* v29b：快捷使用 + 滚轮模拟按钮组（仅移动端渲染本组件；锚在摇杆侧底角，远离右侧交互/背包按钮簇与底部快捷栏，
+          ≥48px 触摸目标，safe-area 适配；按钮本身是触摸目标并 stopPropagation，不会误触发浮点摇杆） */}
+      <div
+        className={`absolute ${side === 'left' ? 'left-3' : 'right-3'} flex flex-col items-center gap-2.5`}
+        style={{ bottom: landscape ? 'calc(env(safe-area-inset-bottom) + 88px)' : 'calc(env(safe-area-inset-bottom) + 148px)' }}
+      >
+        <button
+          aria-label="快捷栏上一切换（模拟滚轮上）"
+          className="flex items-center justify-center rounded-full active:scale-90"
+          style={{ ...btnBase, width: 48, height: 48 }}
+          onTouchStart={(e) => { e.stopPropagation(); cycleSlot(-1) }}
+        >
+          <IconWheelUp width={22} height={22} />
+        </button>
+        <button
+          aria-label="快捷栏下一切换（模拟滚轮下）"
+          className="flex items-center justify-center rounded-full active:scale-90"
+          style={{ ...btnBase, width: 48, height: 48 }}
+          onTouchStart={(e) => { e.stopPropagation(); cycleSlot(1) }}
+        >
+          <IconWheelDown width={22} height={22} />
+        </button>
+        <button
+          aria-label="快捷使用（等同于 PC 右键）"
+          className="flex items-center justify-center rounded-full active:scale-90"
+          style={{ ...btnBase, width: 56, height: 56, borderColor: 'var(--amber)', color: 'var(--amber)' }}
+          onTouchStart={(e) => { e.stopPropagation(); quickUse() }}
+        >
+          <IconQuickUse width={24} height={24} />
+        </button>
+      </div>
       {/* 默认按钮组（未被自定义的按钮保持原排布；横屏弧形）*/}
       {(!isCustom('backpack') || !isCustom('flashlight') || !isCustom('crouch') || !isCustom('sprint') || !isCustom('jump') || !isCustom('attack')) && (
         <div

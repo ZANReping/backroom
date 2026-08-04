@@ -7,9 +7,27 @@ export interface DocDef {
   title: string // 文档标题
   no: string // 文档编号（如 3/7）
   body: DocSection[]
+  style?: 'note' // 渲染风格：缺省=M.E.G. 红头文件；note=手写纸条（横线黄纸、无抬头落款）
 }
 
 export const DOCS: Record<string, DocDef> = {
+  // 首次进入 Level 1 时出生点旁的纸条（wikidot Level 1：探险者总署附在杏仁水瓶上的留言）
+  welcome_note: {
+    id: 'welcome_note',
+    title: '致新流浪者的纸条',
+    no: '—',
+    style: 'note',
+    body: [
+      {
+        head: '',
+        paras: [
+          '你好，流浪者！',
+          '恭喜你成功抵达此处，可谓吉星高照。在如此环境下仍能安全读到这段文字，并非易事。探险者总署为你奉上这瓶特别制作的杏仁水，以资奖励。请即刻前来与我们联络，我们将助你辨明方向，并详尽说明目前状况。前路尚远，请沿着走廊不断前行，直至遇见他人为止——他们将带领你前往安全区域。',
+          '请将空瓶和纸条放在一起，这样我们便可重新装满它。在此致谢，祝好！',
+        ],
+      },
+    ],
+  },
   // 马尼拉室桌上的 M.E.G. 文档（The Manila Room 会合点资料）
   meg_levels: {
     id: 'meg_levels',

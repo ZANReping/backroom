@@ -1,6 +1,6 @@
 // 第一人称手部/手持物品 viewmodel + 屏幕中心准心（DOM 注入）
 import * as THREE from 'three'
-import { buildItemMesh } from './entitiesMesh'
+import { buildItemMesh } from './itemsMesh'
 
 // ---------- 第一人称手部/手持物品 ----------
 export function vmat(color: string | number) {

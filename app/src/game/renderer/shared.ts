@@ -32,7 +32,8 @@ export const OUTDOOR_FLOOR: Record<string, string> = {
 export function col(hex: string): THREE.Color { return new THREE.Color(hex) }
 
 // 台阶/坡道楔形几何（封闭棱柱：顶面斜坡 + 四个侧面到底边，消除侧缝）
-export function rampGeo(dir: number, low: number, high: number, tx: number, tz: number, cTop: THREE.Color, base?: number): THREE.BufferGeometry {
+// v46：skip 可按边跳过侧面——同向连续楼梯坡道的相邻侧面在接缝处完全重叠（同面片闪色），由调用方跳过
+export function rampGeo(dir: number, low: number, high: number, tx: number, tz: number, cTop: THREE.Color, base?: number, skip?: { px?: boolean; nx?: boolean; pz?: boolean; nz?: boolean }): THREE.BufferGeometry {
   const hAt = (fx: number, fz: number) => {
     const t = dir === 1 ? fx : dir === 2 ? 1 - fx : dir === 3 ? fz : 1 - fz
     return low + (high - low) * t
@@ -51,10 +52,10 @@ export function rampGeo(dir: number, low: number, high: number, tx: number, tz: 
   // 顶面斜坡（逆时针朝上）
   quad([tx, h00, tz], [tx, h01, tz + 1], [tx + 1, h11, tz + 1], [tx + 1, h10, tz], cTop)
   // 四个侧面
-  quad([tx, b, tz + 1], [tx, h01, tz + 1], [tx + 1, h11, tz + 1], [tx + 1, b, tz + 1], cSide)
-  quad([tx + 1, b, tz], [tx + 1, h10, tz], [tx, h00, tz], [tx, b, tz], cSide)
-  quad([tx, b, tz], [tx, h00, tz], [tx, h01, tz + 1], [tx, b, tz + 1], cSide)
-  quad([tx + 1, b, tz + 1], [tx + 1, h11, tz + 1], [tx + 1, h10, tz], [tx + 1, b, tz], cSide)
+  if (!skip?.pz) quad([tx, b, tz + 1], [tx, h01, tz + 1], [tx + 1, h11, tz + 1], [tx + 1, b, tz + 1], cSide)
+  if (!skip?.nz) quad([tx + 1, b, tz], [tx + 1, h10, tz], [tx, h00, tz], [tx, b, tz], cSide)
+  if (!skip?.nx) quad([tx, b, tz], [tx, h00, tz], [tx, h01, tz + 1], [tx, b, tz + 1], cSide)
+  if (!skip?.px) quad([tx + 1, b, tz + 1], [tx + 1, h11, tz + 1], [tx + 1, h10, tz], [tx + 1, b, tz], cSide)
   const geo = new THREE.BufferGeometry()
   geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(pos), 3))
   geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(carr), 3))

@@ -3,13 +3,18 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import type { Engine } from '@/game/engine'
 import { ITEMS } from '@/game/items'
-import { ENTITIES } from '@/game/entities'
-import { WIN_TAPES, LEVELS, levelNo } from '@/game/levels'
+import { ENTITIES, entitySpawnLevels } from '@/game/entities'
+import { WIN_TAPES, LEVELS, levelNo, levelLabel } from '@/game/levels'
 import { seedString } from '@/game/rng'
 import { look } from '@/game/renderer3d'
 import { exitArrowRotation } from '@/game/guide'
-import { CS } from '@/game/infinite'
-import { CONTAINER_KINDS } from '@/game/mapgen'
+import { CS, infiniteImplFor } from '@/game/infinite'
+import { CONTAINER_KINDS } from '@/game/containers'
+import { DOCS } from '@/game/docs'
+import { OUTPOSTS } from '@/game/outposts'
+import { NPCS } from '@/game/npcs'
+import { FACTIONS } from '@/game/factions'
+import { storage } from '@/game/storage'
 import { audio } from '@/game/audio'
 import { bindLabelFor } from '@/game/keybinds'
 import { IconHP, IconStamina, IconHunger, IconSanity, IconBattery, IconPause, IconMap, IconInteract, IconCrouch, IconIsolation, IconPlant } from './icons'
@@ -126,6 +131,18 @@ function Minimap({ engine, size }: { engine: Engine; size: number }) {
         g.fillStyle = st.looted ? 'rgba(160,140,90,0.35)' : '#c9a03a'
         g.fillRect(sx - 1.5 * k, sy - 1.5 * k, 3 * k, 3 * k)
       }
+      // 定居点地标：鲜黄三角（v35，探索过即显示）
+      for (const st of m.structures) {
+        if (st.kind !== 'landmark') continue
+        const idx = Math.floor(st.y + st.h / 2) * m.w + Math.floor(st.x + st.w / 2)
+        if (idx < 0 || idx >= m.w * m.h || !engine.explored[idx]) continue
+        const sx = (st.x + st.w / 2 - px + half) * s, sy = (st.y + st.h / 2 - py + half) * s
+        if (sx < 0 || sy < 0 || sx > size || sy > size) continue
+        g.fillStyle = '#ffd94d'
+        g.beginPath()
+        g.moveTo(sx, sy - 3 * k); g.lineTo(sx + 2.6 * k, sy + 2 * k); g.lineTo(sx - 2.6 * k, sy + 2 * k)
+        g.closePath(); g.fill()
+      }
       for (const it of m.items) {
         const idx = Math.floor(it.y) * m.w + Math.floor(it.x)
         if (idx < 0 || idx >= m.w * m.h || !engine.explored[idx]) continue
@@ -141,10 +158,19 @@ function Minimap({ engine, size }: { engine: Engine; size: number }) {
     const s = size / m.w
     g.fillStyle = '#0a0908'; g.fillRect(0, 0, size, size)
     const { elev, outdoor } = mapZData(m)
+    // v43：多层地图只画玩家当前层（band1=上层 up 楼板，band0=主层 tiles），别让两层叠着画
+    const pBand = (m.floors ?? 1) > 1 ? ((engine.player.z ?? 0) >= 1.5 ? 1 : 0) : 0
     for (let y = 0; y < m.h; y++)
       for (let x = 0; x < m.w; x++) {
         const idx = y * m.w + x
-        if (!engine.explored[idx] || m.tiles[idx] !== 1) continue
+        if (!engine.explored[idx]) continue
+        if (pBand === 1) {
+          if (m.up[idx] !== 1) continue
+          g.fillStyle = '#31423a' // 上层楼板：灰绿底色区分
+          g.fillRect(x * s, y * s, Math.ceil(s), Math.ceil(s))
+          continue
+        }
+        if (m.tiles[idx] !== 1) continue
         const out = outdoor ? outdoor[idx] === 1 : false
         const el = elev ? elev[idx] : 0
         // 0=正常 1=低洼(偏蓝更深) 2=高台(偏黄更亮) 3=室外地面；outdoor 优先按室外色
@@ -162,25 +188,33 @@ function Minimap({ engine, size }: { engine: Engine; size: number }) {
         }
       }
     for (const e of m.exits) {
-      if (!e.discovered) continue
+      if (pBand !== 0 || !e.discovered) continue // v43：出口都在主层，上层视图不画
       g.fillStyle = '#f5e37a'
       g.shadowColor = '#f5e37a'; g.shadowBlur = 5 * k
       g.beginPath(); g.arc((e.x + 0.5) * s, (e.y + 0.5) * s, 2.5 * k, 0, 7); g.fill()
       g.shadowBlur = 0
     }
-    // 标注（v32）：已探索区域内的容器（亮=未搜刮 暗=已搜刮）与地面物品
+    // 标注（v32）：已探索区域内的容器（亮=未搜刮 暗=已搜刮）与地面物品；v43：按层过滤
     for (const st of m.structures) {
       if (!CONTAINER_KINDS.includes(st.kind)) continue
+      if (pBand !== (st.floor ?? 0)) continue
       const idx = Math.floor(st.y + st.h / 2) * m.w + Math.floor(st.x + st.w / 2)
       if (idx < 0 || idx >= m.w * m.h || !engine.explored[idx]) continue
       g.fillStyle = st.looted ? 'rgba(160,140,90,0.35)' : '#c9a03a'
       g.fillRect((st.x + st.w / 2) * s - 1.5 * k, (st.y + st.h / 2) * s - 1.5 * k, 3 * k, 3 * k)
     }
     for (const it of m.items) {
+      if (pBand !== ((it.z ?? 0) >= 1.5 ? 1 : 0)) continue
       const idx = Math.floor(it.y) * m.w + Math.floor(it.x)
       if (idx < 0 || idx >= m.w * m.h || !engine.explored[idx]) continue
       g.fillStyle = '#6ad9c9'
       g.fillRect(it.x * s - 0.75 * k, it.y * s - 0.75 * k, 1.5 * k, 1.5 * k)
+    }
+    // NPC：软绿点（据点居民位置；v46：多层按 NPC 所在楼层带过滤——夹楼居民在上层视图显示）
+    for (const n of engine.npcs) {
+      if ((m.floors ?? 1) > 1 && (n.floor ?? 0) !== pBand) continue
+      g.fillStyle = '#7ac97a'
+      g.beginPath(); g.arc(n.x * s, n.y * s, 2 * k, 0, 7); g.fill()
     }
     // 玩家标记：高度指示（低洼变暗+↓，高台↑）+ 蹲伏缩小
     const pz = engine.player as unknown as { crouching?: boolean }
@@ -202,19 +236,51 @@ function Minimap({ engine, size }: { engine: Engine; size: number }) {
 export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, onPause, onInventory, onSelectSlot, onUseSlot }: Props) {
   const p = engine.player
   const def = engine.levelDef
+  // v40：据点是主层级的子层级——顶部信息栏的层级号显示主层级（如 Alpha 基地显示 LEVEL 1 而非 LEVEL 101）
+  const outpostDef = Object.values(OUTPOSTS).find((o) => o.levelId === p.level)
+  const dispId = outpostDef?.parent ?? def.id
   const interact = engine.getInteract()
   const now = Date.now()
   // 移动端横屏：小地图默认折叠，点击展开为半透明大地图浮层
   const landscape = isMobile && typeof window !== 'undefined' && window.innerWidth > window.innerHeight
   const [mapOpen, setMapOpen] = useState(false)
+  // v29b：快捷栏 touchstart 直触后抑制紧随其后的合成 click（React 根委托为 passive，不能 preventDefault）
+  const hotbarTouchT = useRef(0)
   const bigMapSize = Math.max(180, Math.floor(Math.min(window.innerHeight - 96, window.innerWidth * 0.45, 360)))
 
-  // 出口方向指引（有限层 20 格内；v17 无限 L0 全距离——保底出口再远也有气流指引）
+  // 当前区域名（无限层=所在区段/变种房间；据点=所在区域；其余层级不显示）
+  let areaName: string | null = null
+  let curVariant: string | null = null // v41：当前区段变体（衔尾段=ouroboros，BRC 声望显示用）
+  const infMap = engine.map?.inf
+  if (infMap) {
+    const impl = infiniteImplFor(engine.levelDef.id)
+    if (impl?.variantOf) {
+      const v = impl.variantOf(infMap.seed, Math.floor((infMap.ox + p.x) / CS), Math.floor((infMap.oy + p.y) / CS))
+      curVariant = v
+      areaName = impl.variantNames?.[v] ?? null
+    }
+  } else if (engine.map?.zones?.length) {
+    let bd = 1e9
+    // v43：多层据点——区域名只取玩家所在楼层带（z 缺省 0=主层）
+    const zBand = (engine.map.floors ?? 1) > 1 ? ((p.z ?? 0) >= 1.5 ? 1 : 0) : 0
+    for (const z of engine.map.zones) {
+      if ((z.z ?? 0) !== zBand) continue
+      const d = Math.hypot(z.x - p.x, z.y - p.y)
+      if (d < bd) { bd = d; areaName = z.name }
+    }
+  }
+
+  // 出口方向指引（默认 30m 内，DevPanel 可增大；附近无出口但有定居点地标时改为蓝色地标指引）
   const exit = engine.nearestExit()
-  const isInfMap = !!engine.map?.inf
-  let exitArrow: { rel: number; d: number } | null = null
-  if (exit && (exit.d < 20 || isInfMap)) {
+  const hintDist = engine.dev.hintDist
+  let exitArrow: { rel: number; d: number; landmark?: boolean } | null = null
+  if (exit && exit.d <= hintDist) {
     exitArrow = { rel: exitArrowRotation(p.x, p.y, look.yaw, exit.x + 0.5, exit.y + 0.5), d: exit.d }
+  } else {
+    const lm = engine.nearestLandmark()
+    if (lm && lm.d <= hintDist) {
+      exitArrow = { rel: exitArrowRotation(p.x, p.y, look.yaw, lm.x, lm.y), d: lm.d, landmark: true }
+    }
   }
 
   // v13 楼层契约（防御性读取：另一 agent 实现中——player.floor 0 起始 / map.floors 总层数，缺省或多层数据不存在则不显示）
@@ -258,8 +324,13 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
             borderColor: p.selected === i ? 'var(--amber)' : 'var(--panel-edge)',
             boxShadow: p.selected === i ? 'inset 0 0 6px rgba(232,185,60,0.5)' : 'none',
             background: 'color-mix(in srgb, var(--panel) 85%, transparent)',
+            // v29b：多点触控下快捷栏必须可点——touchstart 直触（合成 click 用时间戳抑制），
+            // touchAction:none 防止浏览器把第二指触摸当作手势吃掉；摇杆/视角层不覆盖此热区（HUD z-30 在上）
+            touchAction: 'none',
+            WebkitTouchCallout: 'none',
           }}
-          onClick={() => onSelectSlot(i)}
+          onTouchStart={isMobile ? (e) => { e.stopPropagation(); hotbarTouchT.current = Date.now(); onSelectSlot(i) } : undefined}
+          onClick={() => { if (Date.now() - hotbarTouchT.current < 600) return; onSelectSlot(i) }}
           onContextMenu={(e) => { e.preventDefault(); onUseSlot(i) }}
           onDoubleClick={() => onUseSlot(i)}
         >
@@ -309,6 +380,23 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
             })}
           </div>
         )}
+        {/* v35：身处据点时显示与该据点团体的声望；v41：衔尾段（BRC 领域）显示 BRC 声望；v45：信众宣传间（信众领地）显示 jerry 声望 */}
+        {(() => {
+          const o = outpostDef
+          const factionId = o ? o.faction : curVariant === 'ouroboros' ? 'brc' : engine.jerryTerritory ? 'jerry' : null
+          const fac = factionId ? FACTIONS[factionId] : null
+          if (!fac?.hasRep) return null
+          const rep = engine.rep[fac.id] ?? 0
+          return (
+            <div className="hud-panel pointer-events-auto px-2 py-1" title={`与${fac.name}的声望（图鉴「团体」页查看详情）`}>
+              <span className="font-mono2 text-[10px]" style={{ color: fac.sub ?? fac.color }}>
+                {fac.en} 声望 {rep > 0 ? '+' : ''}{rep}
+                {/* v45：Level 274 内显示教化值（接触鹉主积累；满 100 无法主动离开） */}
+                {p.level === 274 && engine.indoctrination > 0 ? ` · 教化 ${Math.round(engine.indoctrination)}/100` : ''}
+              </span>
+            </div>
+          )
+        })()}
       </div>
 
       {/* 顶部中央：位置 + 消息（移动端；v10 修复与状态栏/开发者面板重叠——
@@ -319,8 +407,8 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
       >
         <div className="hud-panel font-mono2 inline-block max-w-full truncate px-3 py-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>
           {isMobile
-            ? `L${def.id} ${def.name}${floorText ? ` · ${floorText}` : ''} · 磁带 ${p.tapes}/${WIN_TAPES}`
-            : `LEVEL ${def.id} · ${def.name} · B${def.id}${floorText ? ` · ${floorText}` : ''} · 磁带 ${p.tapes}/${WIN_TAPES}`}
+            ? `L${dispId} ${def.name}${floorText ? ` · ${floorText}` : ''} · 磁带 ${p.tapes}/${WIN_TAPES}`
+            : `LEVEL ${dispId} · ${def.name} · B${dispId}${floorText ? ` · ${floorText}` : ''} · 磁带 ${p.tapes}/${WIN_TAPES}`}
         </div>
         {isMobile && (
           <div className="pointer-events-none mx-auto mt-1 max-h-[3.6em] space-y-0.5 overflow-hidden" style={{ maxWidth: '100%' }}>
@@ -354,6 +442,10 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
           </>
         ) : (
           <div className="hud-panel pointer-events-auto p-1.5"><Minimap engine={engine} size={140} /></div>
+        )}
+        {/* 当前区域名（区段/变种房间/据点区域） */}
+        {areaName && (
+          <div className="hud-panel font-mono2 px-2 py-0.5 text-[10px]" style={{ color: 'var(--amber)' }}>{areaName}</div>
         )}
         <div className="hud-panel flex items-center gap-2 px-2 py-1">
           {/* 蹲伏状态提示（防御性读取 v7 字段） */}
@@ -439,23 +531,25 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
         <div className="hud-panel font-mono2 absolute left-1/2 top-14 -translate-x-1/2 px-3 py-1 text-[11px]" style={{ color: 'var(--sanity)' }}>⚡ 手电瘫痪 {p.flashJamT.toFixed(1)}s</div>
       )}
 
-      {/* 出口方向指引 */}
+      {/* 出口方向指引（蓝色=定居点地标） */}
       {exitArrow && (
         <div
           className="pointer-events-none fixed z-[31] font-mono2 flex flex-col items-center text-[12px]"
           style={{
-            color: 'var(--exit)',
+            color: exitArrow.landmark ? '#6abfff' : 'var(--exit)',
             left: '50%', top: '18%',
             transform: `translateX(-50%) rotate(${exitArrow.rel}rad)`,
             opacity: 0.75,
           }}
         >
-          <div style={{ fontSize: 26, textShadow: '0 0 8px var(--exit)' }}>➤</div>
+          <div style={{ fontSize: 26, textShadow: exitArrow.landmark ? '0 0 8px #6abfff' : '0 0 8px var(--exit)' }}>➤</div>
         </div>
       )}
       {exitArrow && (
-        <div className="pointer-events-none fixed left-1/2 top-[24%] z-[31] -translate-x-1/2 font-mono2 text-[11px]" style={{ color: 'var(--exit)', opacity: 0.7 }}>
-          你感觉到{exitArrow.d < 8 ? '明显的' : exitArrow.d > 60 ? '一丝遥远的' : '一丝'}气流（{Math.round(exitArrow.d)}m）
+        <div className="pointer-events-none fixed left-1/2 top-[24%] z-[31] -translate-x-1/2 font-mono2 text-[11px]" style={{ color: exitArrow.landmark ? '#6abfff' : 'var(--exit)', opacity: 0.7 }}>
+          {exitArrow.landmark
+            ? `你瞥见一抹鲜亮的颜色——那是定居点地标的方向（${Math.round(exitArrow.d)}m）`
+            : `你感觉到${exitArrow.d < 8 ? '明显的' : exitArrow.d > 60 ? '一丝遥远的' : '一丝'}气流（${Math.round(exitArrow.d)}m）`}
         </div>
       )}
 
@@ -487,7 +581,7 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
             {/* v13：当前楼层标注（多楼层契约存在时） */}
             {floorInfo && (
               <div className="font-mono2 text-[12px]" style={{ color: 'var(--amber)' }}>
-                L{def.id} · {def.name} · 当前 {floorInfo.cur + 1}F / 共{floorInfo.total}层
+                L{dispId} · {def.name} · 当前 {floorInfo.cur + 1}F / 共{floorInfo.total}层
               </div>
             )}
             <div className="font-mono2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>
@@ -589,6 +683,57 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
   const p = engine.player
   const [tab, setTab] = useState<DevTab>('spawn')
   const [collapsed, setCollapsed] = useState(isMobile)
+  // 给予物品翻页（物品总数固定，无需重置页码）
+  const [itemPage, setItemPage] = useState(0)
+  const allItems = Object.values(ITEMS)
+  const perPage = 16
+  const itemPages = Math.max(1, Math.ceil(allItems.length / perPage))
+  const pageItems = allItems.slice(itemPage * perPage, (itemPage + 1) * perPage)
+  // 召唤实体按层分页（默认页=玩家当前所在层；末页「其他」=无自然生成层级的事件实体）
+  const entPages = [
+    ...LEVELS.map((lv) => ({
+      label: `${levelLabel(lv.id)} · ${lv.name}`,
+      // v34：生成池 + 特殊事件归属（如 L1 的笑魇/手臂）都计入本层
+      ents: Object.values(ENTITIES).filter((d) => entitySpawnLevels(d.type).some((s) => s.id === lv.id)),
+    })),
+    { label: '其他（无任何生成路径）', ents: Object.values(ENTITIES).filter((d) => entitySpawnLevels(d.type).length === 0) },
+  ]
+  const [entPage, setEntPage] = useState(() => {
+    const i = LEVELS.findIndex((lv) => lv.id === engine.player.level)
+    return i >= 0 ? i : 0
+  })
+  const curEntPage = entPages[Math.min(entPage, entPages.length - 1)]
+  // 图鉴全开（世界页开关）：开启时备份 br_codex/br_codex_seen 再全开；关闭时从备份原样恢复
+  const [codexAll, setCodexAll] = useState(() => storage.get('br_codex_devbak') !== null)
+  const toggleCodexAll = () => {
+    if (!codexAll) {
+      if (storage.get('br_codex_devbak') === null) {
+        storage.set('br_codex_devbak', storage.get('br_codex') ?? '{}')
+        storage.set('br_codex_seen_devbak', storage.get('br_codex_seen') ?? '{}')
+      }
+      const c: Record<string, boolean> = {}
+      for (const t of Object.keys(ITEMS)) c[t] = true
+      for (const t of Object.keys(ENTITIES)) c[t] = true
+      for (const lv of LEVELS) c[`level_${lv.id}`] = true
+      for (const id of Object.keys(DOCS)) c[`doc_${id}`] = true
+      // v41：全开扩展到据点/固定 NPC（团体页本就不设限；随机 NPC 只显示遇见过的——其 npc_ 键已在图鉴中）
+      for (const o of Object.values(OUTPOSTS)) c[`outpost_${o.id}`] = true
+      for (const id of Object.keys(NPCS)) c[`npc_${id}`] = true
+      storage.set('br_codex', JSON.stringify(c))
+      const seen: Record<string, number> = {}
+      for (const t of Object.keys(ENTITIES)) seen[t] = 6
+      storage.set('br_codex_seen', JSON.stringify(seen))
+      setCodexAll(true)
+    } else {
+      const bak = storage.get('br_codex_devbak')
+      const bakSeen = storage.get('br_codex_seen_devbak')
+      if (bak !== null) storage.set('br_codex', bak)
+      if (bakSeen !== null) storage.set('br_codex_seen', bakSeen)
+      storage.remove('br_codex_devbak')
+      storage.remove('br_codex_seen_devbak')
+      setCodexAll(false)
+    }
+  }
   const fps = useFps()
   const info = tab === 'info' || tab === 'teleport' ? engine.devInfo() : null
 
@@ -648,10 +793,18 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
           <div className="min-h-0 flex-1 overflow-y-auto p-2" style={{ touchAction: 'pan-y' }}>
             {tab === 'spawn' && (
               <>
-                <DevSection label={`召唤实体（前方 3 格 · 共 ${Object.keys(ENTITIES).length} 种）`}>
+                <DevSection label={`召唤实体（前方 3 格 · 共 ${Object.keys(ENTITIES).length} 种 · 按层分页）`}>
+                  <div className="mb-1 flex items-center gap-1">
+                    <DevBtn onClick={() => setEntPage((n) => (n - 1 + entPages.length) % entPages.length)}>‹</DevBtn>
+                    <span className="flex-1 text-center" style={{ color: 'var(--text-dim)' }}>{curEntPage.label}（{curEntPage.ents.length} 种）</span>
+                    <DevBtn onClick={() => setEntPage((n) => (n + 1) % entPages.length)}>›</DevBtn>
+                  </div>
+                  {curEntPage.ents.length === 0 && (
+                    <div className="mb-1" style={{ color: 'var(--text-dim)' }}>本层无自然生成实体</div>
+                  )}
                   <div className="grid grid-cols-3 gap-1">
-                    {Object.values(ENTITIES).map((d) => (
-                      <DevBtn key={d.type} title={d.desc} onClick={() => engine.devSpawnEntity(d.type)}>
+                    {curEntPage.ents.map((d) => (
+                      <DevBtn key={d.type} title={entitySpawnLevels(d.type).some((s) => s.event) ? `${d.desc}（特殊事件生成）` : d.desc} onClick={() => engine.devSpawnEntity(d.type)}>
                         <span style={{ color: d.color }}>●</span> {d.name}
                       </DevBtn>
                     ))}
@@ -660,9 +813,9 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
                     <DevBtn wide onClick={() => engine.devSpawnAllEntities()}>⚠ 每种一只（环绕召唤）</DevBtn>
                   </div>
                 </DevSection>
-                <DevSection label={`给予物品（共 ${Object.keys(ITEMS).length} 种 · 点名称入包 / ▾ 脚下）`}>
+                <DevSection label={`给予物品（第 ${itemPage + 1}/${itemPages} 页 · 共 ${allItems.length} 种 · 点名称入包 / ▾ 脚下）`}>
                   <div className="grid grid-cols-2 gap-1">
-                    {Object.values(ITEMS).map((d) => (
+                    {pageItems.map((d) => (
                       <div key={d.type} className="flex gap-0.5">
                         <DevBtn onClick={() => engine.devGiveItem(d.type)} title={d.desc}>
                           <span className="inline-block align-middle" style={{ transform: 'scale(0.75)', transformOrigin: 'left center' }}><ItemGlyph type={d.type} size={16} /></span>
@@ -671,6 +824,11 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
                         <DevBtn onClick={() => engine.devGiveItem(d.type, true)} title={`${d.name} 生成在脚下`}>▾</DevBtn>
                       </div>
                     ))}
+                  </div>
+                  <div className="mt-1 flex items-center gap-1">
+                    <DevBtn onClick={() => setItemPage((n) => Math.max(0, n - 1))}>‹ 上一页</DevBtn>
+                    <span className="flex-1 text-center" style={{ color: 'var(--text-dim)' }}>{itemPage + 1} / {itemPages}</span>
+                    <DevBtn onClick={() => setItemPage((n) => Math.min(itemPages - 1, n + 1))}>下一页 ›</DevBtn>
                   </div>
                   <div className="mt-1">
                     <DevBtn wide onClick={() => engine.devGiveSupplies()}>🎁 全套补给（杏仁水×5 罐头×5 电池×3）</DevBtn>
@@ -704,6 +862,18 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
                     </div>
                   ))}
                 </DevSection>
+                <DevSection label="团体声望（点击调整）">
+                  {Object.values(FACTIONS).filter((f) => f.hasRep).map((f) => (
+                    <div key={f.id} className="mb-1 flex items-center gap-1.5">
+                      <span className="w-14 shrink-0 font-mono2" style={{ color: f.sub ?? f.color }}>{f.en}</span>
+                      <DevBtn onClick={() => engine.changeRep(f.id, -10)}>−10</DevBtn>
+                      <DevBtn onClick={() => engine.changeRep(f.id, -1)}>−1</DevBtn>
+                      <span className="flex-1 text-center" style={{ color: f.sub ?? f.color }}>{engine.rep[f.id] ?? 0}</span>
+                      <DevBtn onClick={() => engine.changeRep(f.id, 1)}>＋1</DevBtn>
+                      <DevBtn onClick={() => engine.changeRep(f.id, 10)}>＋10</DevBtn>
+                    </div>
+                  ))}
+                </DevSection>
                 <DevSection label="时间控制">
                   <div className="flex gap-1">
                     <DevBtn onClick={() => engine.devFastForward(60)}>⏩ 快进 60 秒</DevBtn>
@@ -722,6 +892,7 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
                     <DevBtn onClick={() => engine.devTeleport('exit')}>🚪 最近出口</DevBtn>
                     <DevBtn onClick={() => engine.devTeleport('entity')}>👁 最近实体</DevBtn>
                     <DevBtn onClick={() => engine.devTeleport('container')}>📦 最近容器</DevBtn>
+                    <DevBtn onClick={() => engine.devTeleport('landmark')}>🚩 最近地标</DevBtn>
                     <DevBtn onClick={() => engine.devTeleport('spawn')}>⌂ 出生点</DevBtn>
                     {engine.levelDef.id === 0 && (
                       <DevBtn onClick={() => engine.devTestField()} title="仅教学关卡：生成 80×80 无墙空旷测试场地并传送（不会自然生成）">⬜ 测试场地（L0）</DevBtn>
@@ -747,6 +918,21 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
                     ))}
                   </DevSection>
                 )}
+                {(() => {
+                  const alive = engine.npcs.filter((n) => !n.dead)
+                  if (!alive.length) return null
+                  return (
+                    <DevSection label="传送到 NPC（本层已生成）">
+                      <div className="grid grid-cols-2 gap-1">
+                        {alive.map((n) => (
+                          <DevBtn key={n.id} title={`传送到 ${n.def.name}（${n.def.role}）身旁`} onClick={() => engine.devGotoNpc(n.id)}>
+                            🧑 {n.def.name}
+                          </DevBtn>
+                        ))}
+                      </div>
+                    </DevSection>
+                  )
+                })()}
                 {(() => {
                   const ls = engine.devLevelStructures()
                   if (!ls.prefabs.length && !ls.variants.length) return null
@@ -787,6 +973,21 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
                     ))}
                   </div>
                 </DevSection>
+                <DevSection label="据点跳转">
+                  <div className="grid grid-cols-2 gap-1">
+                    {Object.values(OUTPOSTS).map((o) => (
+                      <DevBtn key={o.id} active={p.level === o.levelId} title={o.intro[0]} onClick={() => engine.devJumpOutpost(o.id)}>🚩 {o.name}</DevBtn>
+                    ))}
+                  </div>
+                </DevSection>
+                <DevSection label={`出口提示距离：${engine.dev.hintDist}m（默认 30m）`}>
+                  <div className="flex items-center gap-1">
+                    <DevBtn onClick={() => { engine.dev.hintDist = Math.max(10, engine.dev.hintDist - 10) }}>−10m</DevBtn>
+                    <DevBtn onClick={() => { engine.dev.hintDist = Math.min(500, engine.dev.hintDist + 10) }}>＋10m</DevBtn>
+                    <DevBtn onClick={() => { engine.dev.hintDist = Math.min(500, engine.dev.hintDist + 50) }}>＋50m</DevBtn>
+                    <DevBtn onClick={() => { engine.dev.hintDist = 30 }}>重置</DevBtn>
+                  </div>
+                </DevSection>
                 <DevSection label="开关">
                   <div className="grid grid-cols-3 gap-1">
                     <DevBtn active={engine.dev.noclip} onClick={() => { engine.dev.noclip = !engine.dev.noclip }}>穿墙</DevBtn>
@@ -795,6 +996,8 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
                     <DevBtn active={engine.dev.invisible} onClick={() => { engine.dev.invisible = !engine.dev.invisible }} title="实体不会索敌/追击/触发特殊行为">隐形</DevBtn>
                     <DevBtn active={engine.dev.frozenAI} onClick={() => { engine.dev.frozenAI = !engine.dev.frozenAI }} title="实体 AI 完全冻结">冻结AI</DevBtn>
                     <DevBtn active={engine.dev.god} onClick={() => { engine.dev.god = !engine.dev.god }} title="无敌（默认随开发者模式开启）">无敌</DevBtn>
+                    <DevBtn active={engine.dev.bright} onClick={() => { engine.dev.bright = !engine.dev.bright }} title="一键照明：层级全局增亮——灯光强度拉满、环境光常亮，无视停电/熄灯区/层级光照系数">一键照明</DevBtn>
+                    <DevBtn active={codexAll} onClick={toggleCodexAll} title="图鉴全开：实体/物品/层级/文档全部解锁（关闭后恢复到开启前的图鉴进度）">图鉴全开</DevBtn>
                   </div>
                 </DevSection>
                 <DevSection label="现象（当前层可触发）">
@@ -906,6 +1109,32 @@ const GLYPH_COLOR: Record<string, string> = {
   cashew: '#c9a05a',
   knife: '#c9cdd4', axe: '#d96a3a', headlamp: '#f0d060', notebook: '#8a6a4a',
   fuyouyu: '#6ad9a8', squirtgun: '#4ac9e8', warpberry: '#b06ae0', royalration: '#e8c93d',
+  // ===== v38：Tom 的餐馆菜肴 =====
+  tomatosoup: '#d95a3a', gardensalad: '#7ac97a', garlicbread: '#d9a85a', pasta: '#e8b93c',
+  meatstew: '#c96a4a', pizza: '#e08a4a', lasagna: '#d9a03d', tomsspecial: '#c95a4a',
+  grilledsteak: '#a86a3e', jambread: '#c98a6a',
+  // ===== v40：此前缺专属色的两件（像素图已补齐，此处仅作 404 兜底配色） =====
+  disinfectant: '#9fd0d8', welcomenote: '#f0e6c0',
+}
+// v28：全部 66 件物品的原创像素画图标（128×128 RGBA，32×32 原稿放大，内部原创、无外部版权，
+// 见 public/textures/icons/SOURCES.md；v40 补齐消毒液/欢迎纸条/Tom 餐馆 10 道菜，
+// 由 scripts/gen-item-icons.py 批量生成）。优先于下方 v14/v21 旧贴图；贴图 404/加载失败时
+// 依次回退旧贴图 → 手绘 SVG 兜底。
+const PIXEL_ICON: Record<string, true> = {
+  almond: true, axe: true, bandage: true, battery: true, canned: true, capacitor: true,
+  carkey: true, cashew: true, cavingsuit: true, chalkstub: true, citywater: true, coffee: true,
+  crowbar: true, divemask: true, driedfruit: true, endnote: true, flashlight: true, fuse: true,
+  fuyouyu: true, gas: true, gloves: true, glowstick: true, headlamp: true, housekey: true,
+  keycard: true, knife: true, lighter: true, megfolder: true, nails: true, notebook: true,
+  oddbook: true, pamphlet: true, pockets: true, presses: true, rabbit: true, rope: true,
+  royalration: true, sedative: true, silverware: true, skeleton: true, squirtgun: true,
+  stapler: true, stonekazoo: true, suit: true, tape: true, thingmeat: true, timber: true,
+  uvlamp: true, wallpaper: true, warpberry: true, wheatgrain: true, wrench: true, xenonmarble: true,
+  eaglecoin: true, // v35：天鹰币（像素手绘硬币）
+  // ===== v40：此前无像素图的 12 件（gen-item-icons.py 批量生成） =====
+  disinfectant: true, welcomenote: true,
+  tomatosoup: true, gardensalad: true, garlicbread: true, pasta: true, meatstew: true,
+  pizza: true, lasagna: true, tomsspecial: true, grilledsteak: true, jambread: true,
 }
 // v14：网络素材贴图图标（game-icons.net，CC BY 3.0，见 public/textures/icons/SOURCES.md）；
 // 不在表内或加载失败的物品回退手绘 SVG。
@@ -918,18 +1147,32 @@ const ICON_IMG: Record<string, true> = {
 }
 export function ItemGlyph({ type, size = 24 }: { type: string; size?: number }) {
   const [imgErr, setImgErr] = useState(false)
+  const [pixelErr, setPixelErr] = useState(false)
   const def = ITEMS[type]
   const g = def?.glyph ?? 'box'
   const color = GLYPH_COLOR[type] ?? 'var(--text)'
+  const base = (import.meta.env.BASE_URL ?? '/').replace(/\/?$/, '/')
+  // v28：原创像素画贴图优先；imageRendering: pixelated 保证小格子内像素锐利不糊
+  if (PIXEL_ICON[type] && !pixelErr) {
+    return (
+      <img
+        className="pixel-icon"
+        src={`${base}textures/icons/pixel/item_${type}.png`}
+        width={size} height={size} alt={def?.name ?? type}
+        draggable={false}
+        onError={() => setPixelErr(true)}
+        style={{ display: 'inline-block', verticalAlign: 'middle', imageRendering: 'pixelated', filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.9))' }}
+      />
+    )
+  }
   if (ICON_IMG[type] && !imgErr) {
-    const base = (import.meta.env.BASE_URL ?? '/').replace(/\/?$/, '/')
     return (
       <img
         src={`${base}textures/icons/${type}.png`}
         width={size} height={size} alt={def?.name ?? type}
         draggable={false}
         onError={() => setImgErr(true)}
-        style={{ display: 'inline-block', verticalAlign: 'middle', filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.9))' }}
+        style={{ display: 'inline-block', verticalAlign: 'middle', imageRendering: 'pixelated', filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.9))' }}
       />
     )
   }
@@ -1009,6 +1252,13 @@ export function ItemGlyph({ type, size = 24 }: { type: string; size?: number }) 
       case 'berry': return <><circle cx="9" cy="14" r="4.5" {...s} /><circle cx="16.5" cy="12" r="3.5" {...s} /><path d="M11.5 9.5c0-3 2-5 5-5 0 3-2 5-5 5z" {...s} /><path d="M4 6c1-1 2.5-1 3.5 0" {...s} /></>
       {/* 皇家口粮：餐盒 + 小皇冠 */}
       case 'ration': return <><rect x="5" y="10" width="14" height="10" rx="1.5" {...s} /><path d="M8 10V8l2 1.5L12 7l2 2.5L16 8v2" {...s} /><path d="M8.5 14.5h7" {...s} /></>
+      {/* ===== v38：Tom 的餐馆菜肴图标 ===== */}
+      {/* 碗（番茄浓汤/炖肉煲/招牌炖菜/沙拉）：半球碗身 + 两缕热气 */}
+      case 'bowl': return <><path d="M3.5 11.5h17a8.5 6.5 0 0 1-17 0z" {...s} /><path d="M3.5 11.5h17" {...s} /><path d="M9 8c0-1.6 2-1.6 2-3.2M13.5 8c0-1.6 2-1.6 2-3.2" {...s} /></>
+      {/* 盘（意面/披萨/千层面）：平盘 + 内圈 + 中央点缀 */}
+      case 'plate': return <><ellipse cx="12" cy="14" rx="8.5" ry="5" {...s} /><ellipse cx="12" cy="14" rx="4.8" ry="2.6" {...s} /><circle cx="12" cy="13.4" r="0.8" {...f} /></>
+      {/* 面包（蒜香烤面包/果酱面包）：椭圆面包 + 两道割口 */}
+      case 'bread': return <><ellipse cx="12" cy="14.5" rx="8" ry="5.5" {...s} /><path d="M7.5 13c1-1.3 2-1.3 3 0M12.5 13c1-1.3 2-1.3 3 0" {...s} /></>
       default: return <rect x="7" y="7" width="10" height="10" {...s} />
     }
   })()

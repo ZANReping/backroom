@@ -7,8 +7,8 @@ import { getRenderer, look, type Renderer3D } from '@/game/renderer3d'
 import * as THREE from 'three'
 import { audio } from '@/game/audio'
 import { randomSeed } from '@/game/rng'
-import { getKeybinds } from '@/game/keybinds'
-import { LEVELS, levelLabel, levelNo } from '@/game/levels'
+import { getKeybinds, type KeyBindMap } from '@/game/keybinds'
+import { LEVELS, levelLabel, levelNo, levelDefOf } from '@/game/levels'
 import { generateLevel } from '@/game/mapgen'
 import type { HudEvent } from '@/game/engine'
 import TitleScreen from '@/components/TitleScreen'
@@ -21,6 +21,8 @@ import TouchControls from '@/components/TouchControls'
 import PauseMenu from '@/components/PauseMenu'
 import InventoryOverlay, { discoverFromEngine, loadCodex, saveCodex } from '@/components/InventoryOverlay'
 import DocOverlay from '@/components/DocOverlay'
+import LandmarkOverlay from '@/components/LandmarkOverlay'
+import DialogOverlay from '@/components/DialogOverlay'
 import AvatarEditor from '@/components/AvatarEditor'
 import DeathScreen from '@/components/DeathScreen'
 import NotebookOverlay from '@/components/NotebookOverlay'
@@ -31,7 +33,7 @@ import LayoutEditor, { loadTouchLayout, type TouchLayoutStore } from '@/componen
 import Cutscene, { type CutKind, type CutIn } from '@/components/Cutscene'
 
 type Screen = 'title' | 'intro' | 'game' | 'fall'
-type Overlay = 'none' | 'settings' | 'howto' | 'pause' | 'inventory' | 'codex' | 'death' | 'victory' | 'avatar' | 'notebook' | 'doc'
+type Overlay = 'none' | 'settings' | 'howto' | 'pause' | 'inventory' | 'codex' | 'death' | 'victory' | 'avatar' | 'notebook' | 'doc' | 'landmark' | 'dialog'
 
 // 冒烟测试钩子（Playwright page.evaluate 用）
 if (typeof window !== 'undefined') {
@@ -86,11 +88,15 @@ function Game() {
   const [fallDmg, setFallDmg] = useState<number | null>(null)
   const [deathCause, setDeathCause] = useState('')
   const [docId, setDocId] = useState('meg_levels')
-  const [invTab, setInvTab] = useState<'背包' | '地图'>('背包')
+  const [landmarkId, setLandmarkId] = useState('alpha')
+  const [dialogId, setDialogId] = useState('kat')
+  const [invTab, setInvTab] = useState<'背包' | '图鉴' | '状态' | '地图' | '日志' | '任务'>('背包')
   const [hasSave, setHasSave] = useState(() => !!storage.get('br_save'))
   const [, setTick] = useState(0)
   const overlayRef = useRef(overlay)
   overlayRef.current = overlay
+  const invTabRef = useRef(invTab)
+  invTabRef.current = invTab
   const screenRef = useRef(screen)
   screenRef.current = screen
   const sensRef = useRef(settings.sensitivity)
@@ -162,13 +168,14 @@ function Game() {
             setCut({
               kind: e.anim as CutKind,
               cutIn: e.cutIn as CutIn | undefined,
-              toName: d !== undefined ? `${levelLabel(d)} · ${LEVELS[d]?.name ?? ''}` : e.dest === 'win' ? undefined : '未知层级',
-              caption: CUT_CAPTION[e.anim] ?? '你换了一层',
+              toName: d !== undefined ? (levelDefOf(d)?.label ?? `${levelLabel(d)} · ${levelDefOf(d)?.name ?? ''}`) : e.dest === 'win' ? undefined : '未知层级',
+              caption: e.cutIn === 'outpost' ? '你跟着鲜黄色地标指示的路线，成功抵达了' : CUT_CAPTION[e.anim] ?? '你换了一层',
             })
             if (e.fallDamage) setTimeout(() => setFallDmg(e.fallDamage!), 900)
           } else if (e.anim === 'intro') {
-            // 层级已载入：若过场还在播，等过场结束再出层级卡
-            if (cutRef.current) pendingIntro.current = true
+            // 层级已载入：据点跳过层级卡（专属切入动画后直接进入）；其余若过场还在播，等过场结束再出层级卡
+            if (levelDefOf(engine.player.level)?.gen === 'outpost') setScreen('game')
+            else if (cutRef.current) pendingIntro.current = true
             else setScreen('intro')
           }
           break
@@ -195,6 +202,20 @@ function Game() {
           setOverlay('doc')
           break
         }
+        case 'landmark':
+          // v35：查看定居点地标（地标卡 + 可前往据点）
+          setLandmarkId(e.text ?? 'alpha')
+          setOverlay('landmark')
+          break
+        case 'dialog': {
+          // v35：与 NPC 交谈——打开对话窗，并解锁图鉴「NPC」存档（只显示遇见过的 NPC）
+          const id = e.text ?? 'kat'
+          const c = loadCodex()
+          if (!c[`npc_${id}`]) { c[`npc_${id}`] = true; saveCodex(c) }
+          setDialogId(id)
+          setOverlay('dialog')
+          break
+        }
       }
     }
     // 返回取消订阅函数作为清理：StrictMode 双调用/HMR 重挂载时不再累积监听器（播报重复好几遍的根因）
@@ -207,12 +228,26 @@ function Game() {
     audio.resume()
     look.yaw = 0; look.pitch = 0
     const s = seed ?? randomSeed()
+    if (seed === undefined) {
+      // 全新开局（非「继续游戏」）：清空 NPC 聊天记录与随机 NPC 图鉴记录
+      storage.remove('br_npc_chat')
+      const c = loadCodex()
+      let cleared = false
+      for (const k of Object.keys(c)) if (k.startsWith('npc_rand_')) { delete c[k]; cleared = true }
+      if (cleared) saveCodex(c)
+    }
     engine.newRun(s, settings.difficulty)
-    engine.paused = true
     setLog([])
     setOverlay('none')
-    setFallPlaying(true)
-    setScreen('fall')
+    if (seed !== undefined) {
+      // 继续游戏：跳过开场坠落动画，直接进入游戏（引擎读档恢复到存档层级）
+      setScreen('game')
+      engine.paused = false
+    } else {
+      engine.paused = true
+      setFallPlaying(true)
+      setScreen('fall')
+    }
     storage.set('br_save', JSON.stringify({ seed: s, difficulty: settings.difficulty }))
     setHasSave(true)
   }, [settings.difficulty])
@@ -220,13 +255,25 @@ function Game() {
   // 键盘输入（v18：全部键位读自定义绑定表 getKeybinds()，方向键/Ctrl/Tab 为始终生效的辅助键）
   useEffect(() => {
     const keys: Record<string, boolean> = {}
+    // 页签键：背包/地图/图鉴/任务/状态/日志——游戏中直开对应页签；背包打开时切换页签，再按当前页签键关闭
+    const tabKeys = (kb: KeyBindMap): [string, typeof invTab][] => [
+      [kb.inventory, '背包'], ['Tab', '背包'], [kb.map, '地图'],
+      [kb.codex, '图鉴'], [kb.quest, '任务'], [kb.status, '状态'], [kb.log, '日志'],
+    ]
+    const openTab = (t: typeof invTab) => { discoverFromEngine(engine); setInvTab(t); setOverlay('inventory') }
     const down = (e: KeyboardEvent) => {
       if (screenRef.current !== 'game' || overlayRef.current !== 'none') {
         const kb = getKeybinds()
-        // 背包打开时再按背包键/Tab 关闭背包（v22 背包键切换）
-        if ((e.code === kb.inventory || e.code === 'Tab') && overlayRef.current === 'inventory') {
-          e.preventDefault(); setOverlay('none')
-        } else if (e.key === 'Escape' && overlayRef.current !== 'none' && overlayRef.current !== 'death' && overlayRef.current !== 'victory') {
+        if (overlayRef.current === 'inventory') {
+          const hit = tabKeys(kb).find(([c]) => c === e.code)
+          if (hit) {
+            e.preventDefault()
+            if (hit[1] === invTabRef.current) setOverlay('none')
+            else setInvTab(hit[1])
+            return
+          }
+        }
+        if (e.key === 'Escape' && overlayRef.current !== 'none' && overlayRef.current !== 'death' && overlayRef.current !== 'victory') {
           setOverlay(screenRef.current === 'game' ? 'none' : 'none')
         }
         return
@@ -248,8 +295,12 @@ function Game() {
       }
       if (c === b.flashlight) engine.input.toggleLight = true
       if (c === b.jump) { engine.input.jump = true; e.preventDefault() }
-      if (c === b.inventory || c === 'Tab') { e.preventDefault(); discoverFromEngine(engine); setInvTab('背包'); setOverlay('inventory') }
-      if (c === b.map) { discoverFromEngine(engine); setInvTab('地图'); setOverlay('inventory') }
+      if (c === b.inventory || c === 'Tab') { e.preventDefault(); openTab('背包') }
+      if (c === b.map) openTab('地图')
+      if (c === b.codex) openTab('图鉴')
+      if (c === b.quest) openTab('任务')
+      if (c === b.status) openTab('状态')
+      if (c === b.log) openTab('日志')
       // Esc：面板打开时优先关面板，再按才暂停
       if (c === 'Escape') { if (engine.lootPanel) { engine.closeLootPanel(); setTick((n) => n + 1) } else setOverlay('pause') }
       for (let i = 0; i < engine.player.hotbar.length; i++) if (c === b[`slot${i + 1}`]) engine.player.selected = i
@@ -437,6 +488,14 @@ function Game() {
     rendererRef.current?.setFog(settings.fogOfWar)
   }, [settings.fogOfWar])
 
+  // 画面设置：距离雾远近 / 远处灯光全开
+  useEffect(() => {
+    rendererRef.current?.setFogScale(settings.fogScale / 100)
+  }, [settings.fogScale])
+  useEffect(() => {
+    rendererRef.current?.setFarLights(settings.farLights)
+  }, [settings.farLights])
+
   const quitToTitle = () => {
     engine.over = true
     audio.stopHum()
@@ -535,6 +594,12 @@ function Game() {
       )}
       {overlay === 'doc' && (
         <DocOverlay docId={docId} onClose={() => setOverlay('none')} />
+      )}
+      {overlay === 'landmark' && (
+        <LandmarkOverlay outpostId={landmarkId} onClose={() => setOverlay('none')} />
+      )}
+      {overlay === 'dialog' && (
+        <DialogOverlay npcId={dialogId} onClose={() => setOverlay('none')} />
       )}
       <FullscreenHint />
       {screen === 'game' && isMobile && overlay === 'none' && (

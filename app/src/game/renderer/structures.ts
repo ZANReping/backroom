@@ -1,7 +1,7 @@
 // 结构/出口低模（按 StructKind 建造，含可动盖板/门铰链 userData 约定）
 import * as THREE from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
-import { doorNeedsRotate, type GameMap } from '../mapgen'
+import { doorNeedsRotate, tallCeilH, type GameMap } from '../mapgen'
 import type { LevelDef, Structure } from '../types'
 import { box, cyl, glow, col, mulberry, levelTexture, noiseTexture, makeCanvasCtx, toTex } from './shared'
 
@@ -16,13 +16,19 @@ function wallpaperBox(w: number, h: number, d: number, def: LevelDef, x = 0, y =
     else uv.setXY(i, uv.getX(i) * w, uv.getY(i) * h) // 侧面：条纹保持竖直、密度与墙面一致
   }
   const m = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({
-    color: '#d8cbab', // 与墙面 WALL_TINT 相同的暖白叠乘
+    color: def.id === 0 ? '#d8cbab' : '#e8e8e8', // L0 暖白叠乘黄墙纸；其余层级中性白（防灰墙贴图被叠暖）
     map: levelTexture(`l${def.id}_wall`, () => noiseTexture(def.palette.wall, def.palette.wallTop)),
   }))
   m.position.set(x, y, z)
   return m
 }
 import { graffitiTextures } from './textures'
+
+// 贴图 Lambert 材质（v34：容器木纹/金属贴图）——磁盘贴图经 levelTexture 缓存，离线自动回退程序噪点；
+// tint 近白叠乘保留贴图本色（looted 时传暗色达成变暗）
+function texLambert(name: string, fbBase: string, fbAlt: string, tint: string | number = '#e8e2d2'): THREE.MeshLambertMaterial {
+  return new THREE.MeshLambertMaterial({ color: tint, map: levelTexture(name, () => noiseTexture(fbBase, fbAlt)) })
+}
 
 // 贴墙方向：返回随机一个相邻非地板方向（0北 1东 2南 3西），无墙返回 null
 export function wallDir(s: Structure, m: GameMap): number | null {
@@ -83,11 +89,57 @@ function faceMount(o: THREE.Object3D, d: number, off: number, y: number, lat = 0
 }
 
 // 让家具正面（局部 +Z）背对最近的墙
+// 实心面即墙（tile!==1：砌墙或虚空——虚空在渲染层同样立起墙盒，装饰贴上不算浮空）
+function wallDirs(s: Structure, m: GameMap): number[] {
+  const tx = Math.floor(s.x + s.w / 2), ty = Math.floor(s.y + s.h / 2)
+  const out: number[] = []
+  for (const [dx, dy, d] of NB4) {
+    const nx = tx + dx, ny = ty + dy
+    if (nx < 0 || ny < 0 || nx >= m.w || ny >= m.h) continue
+    if (m.tiles[ny * m.w + nx] !== 1) out.push(d)
+  }
+  return out
+}
+
 function faceOutward(o: THREE.Object3D, s: Structure, m: GameMap) {
-  const wd = neighborDirs(s, m, false)
+  const wd = wallDirs(s, m)
   if (!wd.length) return
   const f = (wd[0] + 2) % 4
   o.rotation.y = f === 0 ? Math.PI : f === 1 ? Math.PI / 2 : f === 2 ? 0 : -Math.PI / 2
+}
+
+// 强制贴墙（墙面装饰）：朝向并贴上最近的实心瓦片（砌墙或虚空皆可——渲染层虚空同样立墙盒）。
+// 四邻优先；四邻全空则沿四方向各搜至 3 格取最近墙面，把装饰整体平移过去——彻底消除「浮空」。
+// （取代旧 faceOutward+hugWall 组合：旧实现只认砌墙 tile===2，虚空旁装饰停留在瓦片中心悬浮）
+function mountOnWall(o: THREE.Object3D, parent: THREE.Object3D, s: Structure, m: GameMap, dist = 0.42) {
+  const tx = Math.floor(s.x + s.w / 2), ty = Math.floor(s.y + s.h / 2)
+  let dir = -1, r = 1
+  for (const [dx, dy, d] of NB4) {
+    const nx = tx + dx, ny = ty + dy
+    if (nx < 0 || ny < 0 || nx >= m.w || ny >= m.h) continue
+    if (m.tiles[ny * m.w + nx] !== 1) { dir = d; break }
+  }
+  if (dir < 0) {
+    let best = Infinity
+    for (const [dx, dy, d] of NB4) {
+      for (let rr = 2; rr <= 3; rr++) {
+        const nx = tx + dx * rr, ny = ty + dy * rr
+        if (nx < 0 || ny < 0 || nx >= m.w || ny >= m.h) break
+        if (m.tiles[ny * m.w + nx] !== 1) {
+          if (rr < best) { best = rr; dir = d; r = rr }
+          break
+        }
+      }
+    }
+  }
+  if (dir < 0) return
+  const f = (dir + 2) % 4
+  parent.rotation.y = f === 0 ? Math.PI : f === 1 ? Math.PI / 2 : f === 2 ? 0 : -Math.PI / 2
+  const [wx, wz] = dir === 0 ? [0, -1] : dir === 1 ? [1, 0] : dir === 2 ? [0, 1] : [-1, 0]
+  const th = parent.rotation.y
+  const dd = dist + r - 1
+  o.position.x += (wx * Math.cos(th) - wz * Math.sin(th)) * dd
+  o.position.z += (wx * Math.sin(th) + wz * Math.cos(th)) * dd
 }
 
 // 顶点色共享材质：合并网格用（麦丛/树篱/书架等高频结构统一走这两个材质，避免上千份材质）
@@ -205,7 +257,7 @@ function emit(mesh: THREE.Mesh, hex: string, intensity = 1): THREE.Mesh {
 
 // 绿色 EXIT 指示灯牌（程序纹理：深底绿字；levelTexture 全局缓存）
 function exitSignTexture(): THREE.Texture {
-  return levelTexture('exit_sign_v1', () => {
+  return levelTexture('exit_sign_v1.png', () => {
     const [cv, c] = makeCanvasCtx(96, 32)
     c.fillStyle = '#06210f'
     c.fillRect(0, 0, 96, 32)
@@ -227,7 +279,7 @@ function hangingCeil(s: Structure, m: GameMap, H: number): number {
   if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return H
   const i = ty * m.w + tx
   if (m.up && m.up[i] === 1) return 2.65
-  if (m.ceiling && m.ceiling[i] === 1) return H * 1.75
+  if (m.ceiling && m.ceiling[i] === 1) return tallCeilH(m, H) // v46：多层挑高与上层天花拉平
   return H
 }
 
@@ -239,14 +291,13 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
   const CH = hangingCeil(s, m, H) // v26：本瓦片天花板底面高度（悬挂物专用）
   switch (s.kind) {
     case 'pillar': {
-      // data.wp=1（L0 柱厅/柱群）：立柱贴墙纸，与墙面同材质观感；柱底同样贴墙纸
-      if (s.data?.wp) {
-        grp.add(wallpaperBox(0.75, H, 0.75, _def, 0, H / 2, 0))
-        grp.add(wallpaperBox(0.9, 0.25, 0.9, _def, 0, 0.12, 0))
-      } else {
-        grp.add(box(0.75, H, 0.75, '#6b6b6e', 0, H / 2, 0))
-        grp.add(box(0.9, 0.25, 0.9, '#555558', 0, 0.12, 0))
-      }
+      // v34：立柱默认使用该层级的墙纸（与墙面同材质观感；无磁盘贴图的层级经 levelTexture 回退程序噪点）
+      // v46：柱高自动顶到实际顶面——夹楼板下=楼板底 2.65（真支撑柱），挑高区=挑高顶
+      // （开阔挑高区的柱子不再半截悬空，始终与地面和天花板相连）
+      const pti = Math.floor(cz) * m.w + Math.floor(cx)
+      const ph = m.up?.[pti] === 1 ? 2.65 : (m.floors ?? 1) > 1 && m.ceiling?.[pti] === 1 ? tallCeilH(m, H) : H
+      grp.add(wallpaperBox(0.75, ph, 0.75, _def, 0, ph / 2, 0))
+      grp.add(wallpaperBox(0.9, 0.25, 0.9, _def, 0, 0.12, 0))
       break
     }
     case 'car': {
@@ -268,8 +319,98 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       break
     }
     case 'pipes': {
-      grp.add(cyl(0.14, 0.14, H, '#7a4a2e', -0.15, H / 2, 0))
-      grp.add(cyl(0.1, 0.1, H, '#8a8a8a', 0.18, H / 2, 0.1))
+      if (s.data?.cross) {
+        // v41：横穿廊道的大小管道（L2 扭曲的廊道）——沿局部 X 横卧，与 crawl 低通道风道同高
+        const len = s.w
+        const big = cyl(0.16, 0.16, len, '#7a4a2e', 0, 1.02, -0.2)
+        big.rotation.z = Math.PI / 2
+        grp.add(big)
+        const small = cyl(0.09, 0.09, len, '#8a8a8a', 0, 0.62, 0.18)
+        small.rotation.z = Math.PI / 2
+        grp.add(small)
+        break
+      }
+      // v41：data.rust=生锈变体（L2 肮脏的廊道：金属普遍生锈，锈橙棕）
+      const rust = !!s.data?.rust
+      const cA = rust ? '#8a4526' : '#7a4a2e' // 主管（锈橙/铜棕）
+      const cB = rust ? '#6e5a42' : '#8a8a8a' // 次管（灰棕/钢灰）
+      // v42：端头弧形拐弯（任何平行管道的尽头都不留悬空断头）——贝塞尔弯管 + 竖直段接入天花板/地板
+      const endEl = Number(s.data?.endEl ?? 0) // 1=向上入顶 2=向下入地
+      const south = Number(s.data?.endS ?? 0) === 1
+      const addElbow = (x: number, hy: number, rad: number, cc: string) => {
+        if (!endEl) return
+        const up = endEl === 1
+        const zs = south ? 1 : -1
+        const zc = zs * 0.2 // 弯心（自管排末端内收）
+        const curve = new THREE.QuadraticBezierCurve3(
+          new THREE.Vector3(x, hy, zc - zs * 0.3),
+          new THREE.Vector3(x, hy, zc),
+          new THREE.Vector3(x, hy + (up ? 0.3 : -0.3), zc),
+        )
+        grp.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 6, rad, 6), new THREE.MeshLambertMaterial({ color: cc })))
+        const y2 = up ? H : 0 // 竖直段直插天花板/地板
+        const vy = hy + (up ? 0.3 : -0.3)
+        grp.add(cyl(rad, rad, Math.abs(y2 - vy) + 0.08, cc, x, (y2 + vy) / 2, zc))
+      }
+      if (s.data?.run) {
+        // v42：贴墙平行粗管群——沿廊道走向多条不同粗细管道贴墙布置（实心，廊道净宽 3→2）
+        const hug = Number(s.data?.side ?? 0) === 1 ? 1 : -1 // 墙在 hug 侧
+        const rows: [number, number, number, string][] = [
+          [0.3, 0.13, 0, cA], [0.62, 0.09, 0.07, cB], [0.98, 0.16, -0.05, cA],
+        ]
+        for (const [hy, rad, ox, cc] of rows) {
+          const p = cyl(rad, rad, 1.0, cc, hug * (0.3 + ox), hy, 0)
+          p.rotation.x = Math.PI / 2
+          grp.add(p)
+          addElbow(hug * (0.3 + ox), hy, rad, cc)
+        }
+        grp.add(box(0.08, 1.1, 0.1, '#3a352e', hug * 0.44, 0.55, 0)) // 管箍支架
+        break
+      }
+      if (s.data?.wall) {
+        // v42：代墙平行管道——整段墙面化身多层沿廊道走向的管排（不压缩净宽；段旁禁止生成门）
+        const dir = Number(s.data?.side ?? 0) === 1 ? -1 : 1 // 朝廊道方向（西墙线→+x）
+        const rows: [number, number, string][] = [
+          [0.42, 0.16, cA], [0.98, 0.1, cB], [1.55, 0.13, cA], [2.12, 0.09, cB],
+        ]
+        for (const [hy, rad, cc] of rows) {
+          const px = dir * (0.5 + rad * 0.4) // 凸出墙面（管排即墙）
+          const p = cyl(rad, rad, 1.0, cc, px, hy, 0)
+          p.rotation.x = Math.PI / 2
+          grp.add(p)
+          addElbow(px, hy, rad, cc)
+        }
+        // 竖向连通短管（管排之间的落水连通管观感）
+        grp.add(cyl(0.07, 0.07, H, cB, dir * 0.52, H / 2, (s.x + s.y) % 2 ? -0.3 : 0.3))
+        break
+      }
+      if (s.data?.ceil) {
+        // v42：天花板两缘管线装饰——细管 + 电缆线束沿廊道走向（非实心纯装饰）
+        const dir = Number(s.data?.side ?? 0) === 1 ? -1 : 1
+        const px = dir * 0.44
+        const p = cyl(0.05, 0.05, 1.0, cB, px, H - 0.2, 0)
+        p.rotation.x = Math.PI / 2
+        grp.add(p)
+        addElbow(px, H - 0.2, 0.05, cB)
+        // 电缆线束（3 条细线；按瓦片哈希偶发下垂环）
+        const mrand = mulberry((Math.floor(s.x) * 73856093) ^ (Math.floor(s.y) * 19349663))
+        for (let k2 = 0; k2 < 3; k2++) {
+          const cx2 = dir * (0.34 + k2 * 0.05), cy2 = H - 0.3 - k2 * 0.05
+          const cb = box(0.025, 0.025, 1.0, ['#16181a', '#3a2020', '#1e2a38'][k2], cx2, cy2, 0)
+          grp.add(cb)
+          if (k2 === 1 && mrand() < 0.3) { // 下垂环
+            const loop = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.014, 5, 8, Math.PI), new THREE.MeshLambertMaterial({ color: '#16181a' }))
+            loop.geometry.rotateY(Math.PI / 2)
+            loop.geometry.rotateX(Math.PI)
+            loop.position.set(cx2, cy2, (mrand() - 0.5) * 0.6)
+            grp.add(loop)
+          }
+        }
+        break
+      }
+      grp.add(cyl(0.14, 0.14, H, cA, -0.15, H / 2, 0))
+      grp.add(cyl(0.1, 0.1, H, cB, 0.18, H / 2, 0.1))
+      if (rust) grp.add(cyl(0.16, 0.16, 0.5, '#9a4e24', -0.15, 0.9, 0)) // 锈蚀鼓包
       break
     }
     case 'valve': {
@@ -285,17 +426,20 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       break
     }
     case 'boiler': {
-      grp.add(cyl(1.3, 1.4, 2.6, '#4a3f35', 0, 1.3, 0, 12))
-      grp.add(cyl(0.2, 0.2, 1.5, '#a63a2e', 0.9, 2.6, 0))
-      grp.add(glow(0.5, 0.3, 0.05, '#ff6a3a', 0, 0.9, s.h / 2 - 0.3))
+      // v41：data.dead=废弃状态（L2 肮脏的廊道：暗色/不发光）
+      const dead = !!s.data?.dead
+      grp.add(cyl(1.3, 1.4, 2.6, dead ? '#332c26' : '#4a3f35', 0, 1.3, 0, 12))
+      grp.add(cyl(0.2, 0.2, 1.5, dead ? '#6e3428' : '#a63a2e', 0.9, 2.6, 0))
+      if (!dead) grp.add(glow(0.5, 0.3, 0.05, '#ff6a3a', 0, 0.9, s.h / 2 - 0.3))
       break
     }
     case 'generator': {
-      grp.add(box(s.w * 0.9, 1.4, s.h * 0.85, '#3a3f46', 0, 0.7, 0))
-      const drum = cyl(0.35, 0.35, s.w * 0.7, '#2e3238', 0, 1.6, 0, 10)
+      const dead = !!s.data?.dead
+      grp.add(box(s.w * 0.9, 1.4, s.h * 0.85, dead ? '#2b2e33' : '#3a3f46', 0, 0.7, 0))
+      const drum = cyl(0.35, 0.35, s.w * 0.7, dead ? '#22252a' : '#2e3238', 0, 1.6, 0, 10)
       drum.rotation.z = Math.PI / 2
       grp.add(drum)
-      grp.add(glow(0.2, 0.1, 0.05, '#9adfff', s.w * 0.3, 1.0, s.h * 0.43))
+      if (!dead) grp.add(glow(0.2, 0.1, 0.05, '#9adfff', s.w * 0.3, 1.0, s.h * 0.43))
       break
     }
     case 'cabinet': {
@@ -308,6 +452,9 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       door.position.set(0.44, 0.2, -0.22)
       door.userData.lid = 1
       grp.add(door)
+      // v48 缺省朝向：背贴最近墙、正面（+Z）朝外；data.deg 可显式覆盖
+      if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
+      else faceOutward(grp, s, m)
       break
     }
     case 'trench': {
@@ -334,9 +481,30 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       for (let i = 0; i < 4; i++) grp.add(glow(0.1, 0.04, 0.03, i % 2 ? '#6f9a55' : '#9adfff', -0.6 + i * 0.4, 1.6, s.h * 0.46))
       break
     }
+    case 'bigcomputer': {
+      // 大号台式电脑（L2 电脑房）：低柜 + 大机箱 + CRT 显示器（微光屏）+ 键盘 + 背部线缆
+      const dead = !!s.data?.dead
+      grp.add(box(s.w * 0.95, 0.72, 0.85, '#6e6a5c', 0, 0.36, 0)) // 低柜（桌台）
+      grp.add(box(s.w * 0.95, 0.04, 0.9, '#8f8a7c', 0, 0.74, 0)) // 台面
+      grp.add(box(0.5, 0.52, 0.7, '#b0a894', -s.w * 0.26, 1.02, 0)) // 大机箱（卧式）
+      grp.add(box(0.46, 0.03, 0.66, '#8f887a', -s.w * 0.26, 1.3, 0)) // 机箱顶盖
+      grp.add(glow(0.05, 0.05, 0.03, dead ? '#3a3f46' : '#6f9a55', -s.w * 0.26 + 0.14, 0.94, 0.36)) // 电源灯
+      // CRT 显示器（厚后脑 + 微光屏，data.dead=屏幕熄灭）
+      grp.add(box(0.66, 0.56, 0.58, '#c0b8a8', s.w * 0.18, 1.06, -0.05))
+      grp.add(box(0.5, 0.42, 0.1, '#a89f8e', s.w * 0.18, 1.06, -0.36)) // 后脑
+      if (dead) grp.add(box(0.5, 0.4, 0.03, '#1a2226', s.w * 0.18, 1.06, 0.245))
+      else grp.add(glow(0.5, 0.4, 0.03, '#6fae8a', s.w * 0.18, 1.06, 0.245)) // 微光屏（绿）
+      grp.add(box(0.46, 0.03, 0.18, '#b8b0a0', s.w * 0.18, 0.78, 0.42)) // 键盘
+      for (let i = 0; i < 3; i++) // 键帽行
+        grp.add(box(0.4, 0.012, 0.03, '#8f887a', s.w * 0.18, 0.8, 0.37 + i * 0.05))
+      grp.add(cyl(0.02, 0.02, 0.5, '#3a352e', s.w * 0.18 - 0.2, 0.5, -0.4, 6)) // 背部线缆
+      break
+    }
     case 'vending': {
       grp.add(box(0.95, 2.0, 0.7, '#5a3a3a', 0, 1.0, 0))
       grp.add(glow(0.7, 1.2, 0.04, '#ffe9b0', 0, 1.2, 0.36))
+      // v46：data.deg 指定朝向（缺省朝南 +z；EL3A 休息室售货机面朝公共区，不再背朝外）
+      if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
       break
     }
     case 'desk': {
@@ -402,10 +570,13 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       break
     }
     case 'crate': {
-      // 木箱：板条 + 可开盖板
-      grp.add(box(0.8, 0.62, 0.8, '#6a5a40', 0, 0.31, 0))
+      // 木箱：板条（木纹贴图）+ 可开盖板
+      const crateMat = texLambert('crate_wood', '#6a5a40', '#554730')
+      const body = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.62, 0.8), crateMat)
+      body.position.set(0, 0.31, 0)
+      grp.add(body)
       for (let i = 0; i < 3; i++) grp.add(box(0.84, 0.06, 0.84, '#554730', 0, 0.12 + i * 0.22, 0))
-      const lid = box(0.84, 0.08, 0.84, '#7a6a4a', 0, 0, 0)
+      const lid = new THREE.Mesh(new THREE.BoxGeometry(0.84, 0.08, 0.84), crateMat)
       lid.geometry.translate(0, 0, 0.42) // 铰链在后缘
       lid.position.set(0, 0.66, -0.42)
       lid.userData.lid = 1
@@ -462,6 +633,13 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       else if (d === 3) { vgrp.position.set(-0.5 + off, vy, 0); vgrp.rotation.y = Math.PI / 2 }
       else { vgrp.position.set(0.5 - off, vy, 0); vgrp.rotation.y = -Math.PI / 2 }
       grp.add(vgrp)
+      break
+    }
+    case 'ceilvent': {
+      // v33：自天花板向下伸出的通风管道（Level 1；停电时「手臂」由此伸出猎捕）——少量出现于常规区段
+      grp.add(box(0.55, 0.8, 0.55, '#4a4a4e', 0, CH - 0.4, 0)) // 垂下的管体
+      grp.add(box(0.64, 0.07, 0.64, '#3a3a3e', 0, CH - 0.83, 0)) // 端口边框
+      for (let i = 0; i < 3; i++) grp.add(box(0.5, 0.035, 0.07, '#202023', 0, CH - 0.87, -0.17 + i * 0.17)) // 百叶栅格
       break
     }
     case 'rebar': {
@@ -543,10 +721,21 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       }
       const swingIn = floorNear(wzx, wzz) >= floorNear(-wzx, -wzz) ? 1 : -1
       grp.userData.swing = swingIn * (mirror ? -1 : 1)
-      grp.add(box(0.14, 2.15, 0.24, '#2a1516', -0.46, 1.07, 0))
-      grp.add(box(0.14, 2.15, 0.24, '#2a1516', 0.46, 1.07, 0))
-      grp.add(box(1.06, 0.14, 0.24, '#2a1516', 0, 2.2, 0))
-      const panel = box(0.88, 2.1, 0.07, '#4a2628', 0, 0, 0)
+      // v41：门的颜色/材料各异（L2 废弃公共带：data.hue 0..4 门板/门框配色）
+      const HUES: { panel: string; frame: string; inset: string }[] = [
+        { panel: '#4a2628', frame: '#2a1516', inset: '#3a1e20' }, // 0 暗红木门（默认）
+        { panel: '#3a4a42', frame: '#222e28', inset: '#2c3a32' }, // 1 墨绿金属门
+        { panel: '#3e4248', frame: '#26282c', inset: '#32363c' }, // 2 钢灰金属门
+        { panel: '#5a4a2e', frame: '#362c1c', inset: '#483a24' }, // 3 赭黄旧木门
+        { panel: '#4a3a46', frame: '#2c222a', inset: '#3c2e38' }, // 4 灰紫旧门
+      ]
+      const sealed = !!s.data?.sealed
+      const hue = sealed ? { panel: '#2e3238', frame: '#1c1e22', inset: '#26282c' } // 锁死：冷灰钢门
+        : HUES[typeof s.data?.hue === 'number' ? s.data.hue % HUES.length : 0]
+      grp.add(box(0.14, 2.15, 0.24, hue.frame, -0.46, 1.07, 0))
+      grp.add(box(0.14, 2.15, 0.24, hue.frame, 0.46, 1.07, 0))
+      grp.add(box(1.06, 0.14, 0.24, hue.frame, 0, 2.2, 0))
+      const panel = box(0.88, 2.1, 0.07, hue.panel, 0, 0, 0)
       panel.geometry.translate(mirror ? -0.44 : 0.44, 1.05, 0) // 铰链在左缘（镜像=右缘）
       panel.position.set(mirror ? 0.44 : -0.44, 0, 0)
       panel.userData.lid = 1
@@ -557,11 +746,22 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       // panel 网格原点在铰链缘（position.x = ±0.44），子件局部坐标需补偿该偏移；
       // 把手贴在开门侧（leading edge）而非旧版的铰链侧。
       const hingeOff = mirror ? -0.44 : 0.44 // 子件局部 X 补偿：嵌板回到门面中央
-      const knob = glow(0.06, 0.06, 0.1, s.data?.locked ? '#c93a2e' : '#b08d46', 0, 0, 0)
+      const knob = glow(0.06, 0.06, 0.1, sealed ? '#3a3f46' : s.data?.locked ? '#c93a2e' : '#b08d46', 0, 0, 0)
       knob.position.set(hingeOff + (mirror ? -0.3 : 0.3), 1.02, 0.05)
       panel.add(knob)
-      panel.add(box(0.6, 0.8, 0.02, '#3a1e20', hingeOff, 1.55, 0.045))
-      panel.add(box(0.6, 0.5, 0.02, '#3a1e20', hingeOff, 0.5, 0.045))
+      panel.add(box(0.6, 0.8, 0.02, hue.inset, hingeOff, 1.55, 0.045))
+      panel.add(box(0.6, 0.5, 0.02, hue.inset, hingeOff, 0.5, 0.045))
+      if (sealed) {
+        // 锁死的门（L2：锁的结构闻所未闻）——门扇焊死：交叉钢条 + 铆钉 + 门缝灌铅
+        const bar1 = box(1.0, 0.09, 0.03, '#22252a', hingeOff, 1.05, 0.06)
+        bar1.rotation.z = 0.6
+        panel.add(bar1)
+        const bar2 = box(1.0, 0.09, 0.03, '#22252a', hingeOff, 1.05, 0.06)
+        bar2.rotation.z = -0.6
+        panel.add(bar2)
+        for (const [rx, ry] of [[-0.28, 1.7], [0.28, 1.7], [-0.28, 0.4], [0.28, 0.4]] as const)
+          panel.add(glow(0.04, 0.04, 0.02, '#4a4f56', hingeOff + rx, ry, 0.06))
+      }
       break
     }
     case 'windowblack': case 'windowtrap': case 'hotelwindow': {
@@ -648,6 +848,9 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       dd.position.set(0.44, 0.1, -0.23)
       dd.userData.lid = 1
       grp.add(dd)
+      // v48 缺省朝向：背贴最近墙、抽屉面（+Z）朝外；data.deg 可显式覆盖
+      if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
+      else faceOutward(grp, s, m)
       break
     }
     case 'arch': {
@@ -658,18 +861,153 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       break
     }
     case 'maingen': {
-      // L3 主发电机（大型）：基座 + 双转鼓 + 指示灯
-      grp.add(box(s.w * 0.92, 1.2, s.h * 0.9, '#2e3238', 0, 0.6, 0))
-      const d1 = cyl(0.55, 0.55, s.w * 0.6, '#3a3f46', -s.w * 0.18, 1.7, 0, 12)
+      // L3 主发电机（大型）：基座 + 双转鼓 + 指示灯（v41：data.dead=废弃状态，指示灯全灭、机身暗色）
+      const dead = !!s.data?.dead
+      grp.add(box(s.w * 0.92, 1.2, s.h * 0.9, dead ? '#22252a' : '#2e3238', 0, 0.6, 0))
+      const d1 = cyl(0.55, 0.55, s.w * 0.6, dead ? '#2b2e33' : '#3a3f46', -s.w * 0.18, 1.7, 0, 12)
       d1.rotation.z = Math.PI / 2
       grp.add(d1)
-      const d2 = cyl(0.45, 0.45, s.w * 0.45, '#26282c', s.w * 0.22, 1.6, 0.4, 10)
+      const d2 = cyl(0.45, 0.45, s.w * 0.45, dead ? '#1c1e22' : '#26282c', s.w * 0.22, 1.6, 0.4, 10)
       d2.rotation.z = Math.PI / 2
       grp.add(d2)
       grp.add(box(s.w * 0.95, 0.2, s.h * 0.95, '#1c1e22', 0, 0.1, 0))
-      for (let i = 0; i < 4; i++)
-        grp.add(glow(0.12, 0.08, 0.04, i % 2 ? '#6f9a55' : '#9adfff', -s.w * 0.3 + i * 0.3, 1.0, s.h * 0.46))
+      if (!dead)
+        for (let i = 0; i < 4; i++)
+          grp.add(glow(0.12, 0.08, 0.04, i % 2 ? '#6f9a55' : '#9adfff', -s.w * 0.3 + i * 0.3, 1.0, s.h * 0.46))
       grp.add(glow(0.3, 0.14, 0.05, '#d9b13b', s.w * 0.32, 1.3, s.h * 0.46))
+      break
+    }
+    case 'machinewall': {
+      // v42：代墙大型机器（task 9）——整段墙面化身工业设备，凸出墙面但不占廊道净空（落在墙线瓦片，段旁禁门）。
+      // data.mv：0=锅炉 1=发电机组 2=主发电机 3=机柜排 4=变压器；data.dead=废弃态（暗色/不发光）
+      const dead = !!s.data?.dead
+      const mv = Number(s.data?.mv ?? 0)
+      const dir = Number(s.data?.side ?? 0) === 1 ? -1 : 1 // 朝廊道方向（西墙线→+x）
+      const fx = (d: number) => dir * (0.5 + d) // 自墙面凸出
+      if (mv === 0) {
+        // 锅炉墙：卧式铆接罐 + 直通天花板的烟囱 + 炉口微光
+        const tank = cyl(0.42, 0.46, 0.98, dead ? '#332c26' : '#4a3f35', fx(0.34), 1.35, 0, 12)
+        tank.rotation.x = Math.PI / 2
+        grp.add(tank)
+        for (const zz of [-0.3, 0.3]) { // 铆接环带
+          const band = cyl(0.44, 0.44, 0.08, dead ? '#2b251f' : '#5a4c40', fx(0.34), 1.35, zz, 12)
+          band.rotation.x = Math.PI / 2
+          grp.add(band)
+        }
+        grp.add(cyl(0.12, 0.14, H - 1.6, dead ? '#3a2e24' : '#6e4630', fx(0.3), 1.6 + (H - 1.6) / 2, 0.2)) // 烟囱入顶
+        if (!dead) grp.add(glow(0.3, 0.2, 0.04, '#ff6a3a', fx(0.62), 0.6, 0)) // 炉口
+        else grp.add(box(0.3, 0.2, 0.04, '#1c1814', fx(0.62), 0.6, 0))
+      } else if (mv === 1) {
+        // 发电机组墙：箱体 + 顶部转鼓 + 指示灯
+        grp.add(box(0.5, 1.5, 0.95, dead ? '#23262b' : '#3a3f46', fx(0.25), 0.75, 0))
+        const drum = cyl(0.28, 0.28, 0.8, dead ? '#1e2126' : '#2e3238', fx(0.28), 1.72, 0, 10)
+        drum.rotation.x = Math.PI / 2
+        grp.add(drum)
+        for (let i = 0; i < 3; i++)
+          grp.add(glow(0.07, 0.07, 0.03, dead ? '#2a2d33' : i % 2 ? '#6f9a55' : '#9adfff', fx(0.44), 1.1 + i * 0.18, -0.3))
+      } else if (mv === 2) {
+        // 主发电机墙：基座 + 双转鼓 + 黄铭牌
+        grp.add(box(0.56, 0.24, 0.98, '#1c1e22', fx(0.28), 0.12, 0))
+        grp.add(box(0.5, 1.1, 0.9, dead ? '#22252a' : '#2e3238', fx(0.25), 0.8, 0))
+        const d1 = cyl(0.36, 0.36, 0.86, dead ? '#2b2e33' : '#3a3f46', fx(0.3), 1.62, -0.05, 12)
+        d1.rotation.x = Math.PI / 2
+        grp.add(d1)
+        const d2 = cyl(0.26, 0.26, 0.7, dead ? '#1c1e22' : '#26282c', fx(0.26), 1.5, 0.3, 10)
+        d2.rotation.x = Math.PI / 2
+        grp.add(d2)
+        grp.add(box(0.02, 0.3, 0.4, '#d9b13b', fx(0.51), 1.0, 0.2)) // 铭牌
+        if (!dead) for (let i = 0; i < 3; i++) grp.add(glow(0.08, 0.06, 0.03, i % 2 ? '#6f9a55' : '#9adfff', fx(0.46), 0.6 + i * 0.16, -0.32))
+      } else if (mv === 3) {
+        // 机柜排墙：两台高机柜 + 散热栅 + 指示灯
+        for (const zz of [-0.24, 0.24]) {
+          grp.add(box(0.44, 2.2, 0.42, dead ? '#26282c' : '#3a3f46', fx(0.22), 1.1, zz))
+          for (let i = 0; i < 5; i++) grp.add(box(0.02, 0.03, 0.3, dead ? '#1c1e22' : '#2b2e33', fx(0.45), 0.5 + i * 0.16, zz)) // 散热栅
+          grp.add(glow(0.06, 0.06, 0.03, dead ? '#2a2d33' : '#6f9a55', fx(0.45), 1.95, zz - 0.1))
+        }
+      } else {
+        // 变压器墙：三柱线圈 + 绝缘子盘 + 顶部母排
+        for (const zz of [-0.3, 0, 0.3]) {
+          grp.add(cyl(0.11, 0.13, 1.5, dead ? '#332c26' : '#5a4632', fx(0.3), 0.95, zz, 8))
+          for (let i = 0; i < 3; i++) grp.add(cyl(0.16, 0.16, 0.04, dead ? '#4a4440' : '#8a8a8a', fx(0.3), 1.55 + i * 0.14, zz, 8)) // 绝缘子盘
+        }
+        grp.add(box(0.06, 0.08, 0.98, dead ? '#3a352e' : '#7a5a2e', fx(0.3), 2.1, 0)) // 母排
+        if (!dead) grp.add(glow(0.05, 0.05, 0.03, '#9adfff', fx(0.42), 1.9, 0))
+      }
+      break
+    }
+
+    // ===== v43：办公区EL3A 仓储家具 =====
+    case 'pallet': {
+      // 木托盘堆（仓库装饰，非容器）：木托盘（垫木 + 面板缝）+ 缠绕膜包裹的箱堆（半透膜 + 内箱）
+      const wood = '#8a6f46', woodD = '#6f5836'
+      for (const lx of [-0.32, 0, 0.32]) grp.add(box(0.14, 0.09, 0.8, woodD, lx, 0.045, 0)) // 三条垫木
+      for (const lz of [-0.3, -0.1, 0.1, 0.3]) grp.add(box(0.84, 0.03, 0.14, wood, 0, 0.105, lz)) // 面板（留缝）
+      // 缠绕膜包裹的箱堆：内层两只错位纸箱 + 外层半透明膜（微微发亮）
+      const rng = mulberry((Math.floor(s.x) * 73856093) ^ (Math.floor(s.y) * 19349663) ^ 0x9a11)
+      const b1 = box(0.62, 0.42, 0.62, '#a08653', -0.04, 0.33, 0.03)
+      b1.rotation.y = (rng() - 0.5) * 0.14
+      grp.add(b1)
+      const b2 = box(0.5, 0.34, 0.5, '#96784a', 0.05, 0.71, -0.04)
+      b2.rotation.y = (rng() - 0.5) * 0.3
+      grp.add(b2)
+      const wrap = new THREE.Mesh(
+        new THREE.BoxGeometry(0.76, 0.92, 0.76),
+        new THREE.MeshLambertMaterial({ color: '#cfd8dc', transparent: true, opacity: 0.28 }),
+      )
+      wrap.position.y = 0.58
+      grp.add(wrap)
+      grp.add(box(0.77, 0.05, 0.77, '#e8ecee', 0, 0.3, 0)) // 膜束腰亮纹
+      break
+    }
+    case 'handrail': {
+      // 扶手栏杆（夹楼内缘/阶梯两侧，非实心）：两根立柱 + 顶部扶手 + 中间横杆；
+      // 默认贴在瓦片 +z 边缘（面向中庭/坡道），data.deg 绕 Y 旋转（0=+z 90=+x 180=-z 270=-x）
+      const metal = '#5a6367', metalD = '#464e52'
+      const h0 = s.data?.h0 !== undefined ? Number(s.data.h0) : null
+      const h1 = s.data?.h1 !== undefined ? Number(s.data.h1) : null
+      if (h0 !== null && h1 !== null) {
+        // v49 斜扶手（阶梯两侧）：随坡道倾斜——h0/h1=坡道面在本瓦片局部 -x/+x 端的高度
+        // （相对结构底座：1F 段相对地面 0，2F 侧挡段相对上层地板 3.0，可为负下探到坡道面）；
+        // 立柱立于坡道面，扶手/横杆绕 Z 旋转对齐坡角，逐级衔接落地端与落梯口
+        const post = (px: number, hBase: number) => {
+          const bot = Math.min(hBase, 0), top = hBase + 1.0
+          grp.add(cyl(0.025, 0.03, top - bot, metalD, px, (top + bot) / 2, 0.42, 8)) // 立柱（立于坡道面）
+          grp.add(cyl(0.05, 0.05, 0.02, metalD, px, bot + 0.01, 0.42, 8)) // 底座片
+        }
+        post(-0.42, h0); post(0.42, h1)
+        const rail = (rh: number, r: number) => {
+          const y0 = h0 + rh, y1 = h1 + rh
+          const g = cyl(r, r, Math.hypot(0.98, y1 - y0), metal, 0, (y0 + y1) / 2, 0.42, 8)
+          g.rotation.z = Math.PI / 2 + Math.atan2(y1 - y0, 0.98) // 旋转对齐坡角（β=0 时退化为水平）
+          grp.add(g)
+        }
+        rail(1.0, 0.03) // 顶部扶手（坡道面上方 1.0m）
+        rail(0.55, 0.018) // 中间横杆
+      } else {
+        for (const px of [-0.42, 0.42]) {
+          grp.add(cyl(0.025, 0.03, 1.0, metalD, px, 0.5, 0.42, 8)) // 立柱
+          grp.add(cyl(0.05, 0.05, 0.02, metalD, px, 0.01, 0.42, 8)) // 底座片
+        }
+        grp.add(cyl(0.03, 0.03, 0.98, metal, 0, 1.0, 0.42, 8).rotateZ(Math.PI / 2)) // 顶部扶手
+        grp.add(cyl(0.018, 0.018, 0.9, metal, 0, 0.55, 0.42, 8).rotateZ(Math.PI / 2)) // 中间横杆
+      }
+      grp.rotation.y = ((Number(s.data?.deg) || 0) * Math.PI) / 180
+      break
+    }
+    case 'walllamp': {
+      // v46：壁挂斜照大灯（EL3A 挑高仓库区照明）——墙面背板 + 斜臂 + 下倾灯箱体 +
+      // 斜向下自发光灯板；配套光源由生成器以 fixZ 放置（灯具贴墙，不再悬空）
+      const inner = new THREE.Group()
+      grp.add(inner)
+      inner.add(box(0.6, 0.52, 0.06, '#34383e', 0, 2.28, 0)) // 墙面背板
+      inner.add(box(0.07, 0.07, 0.3, '#464e52', 0, 2.44, 0.17)) // 斜臂
+      const housing = new THREE.Group()
+      housing.position.set(0, 2.3, 0.33)
+      housing.rotation.x = 0.62 // 下倾 ~35°（灯光斜投向地面作业区）
+      housing.add(box(0.64, 0.3, 0.36, '#49505a', 0, 0, 0)) // 灯箱体
+      housing.add(glow(0.52, 0.03, 0.26, '#fff2d8', 0, -0.165, 0)) // 斜向下灯板
+      inner.add(housing)
+      mountOnWall(inner, grp, s, m) // 强制贴最近墙（含虚空墙），不浮空
       break
     }
     case 'megcrate': {
@@ -686,35 +1024,60 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
     }
     case 'glasswin': {
       // 半透玻璃窗（实心，仅观察）：窗台 + 上梁 + 侧框 + 透明玻璃
+      // v48 缺省朝向：强制贴最近墙（含虚空墙）、玻璃面（+Z）朝室内，不再立在瓦片中央
+      const inner = new THREE.Group()
+      grp.add(inner)
       const frame = '#3a352e'
-      grp.add(box(1.0, 0.85, 0.22, frame, 0, 0.425, 0)) // 窗台
-      grp.add(box(1.0, Math.max(0.2, H - 2.1), 0.22, frame, 0, 2.1 + Math.max(0.2, H - 2.1) / 2, 0)) // 上梁
-      grp.add(box(0.08, 1.25, 0.22, frame, -0.46, 1.475, 0))
-      grp.add(box(0.08, 1.25, 0.22, frame, 0.46, 1.475, 0))
-      const glass = new THREE.Mesh(
-        new THREE.PlaneGeometry(0.88, 1.25),
-        new THREE.MeshLambertMaterial({ color: '#93a7b8', transparent: true, opacity: 0.24, side: THREE.DoubleSide, depthWrite: false }),
-      )
-      glass.position.set(0, 1.475, 0)
-      grp.add(glass)
-      // 窗棂十字
-      grp.add(box(0.88, 0.03, 0.03, frame, 0, 1.475, 0.01))
-      grp.add(box(0.03, 1.25, 0.03, frame, 0, 1.475, 0.01))
+      if (s.data?.stain === 'blue') {
+        // v47：蓝色彩玻窗（Level 274 教堂花窗）——石框尖拱 + 蓝白彩玻格 + 圣辉
+        const sf = '#c8ccd8' // 石框
+        inner.add(box(1.0, 0.5, 0.22, sf, 0, 0.25, 0)) // 窗台
+        inner.add(box(0.08, 2.1, 0.22, sf, -0.46, 1.55, 0)) // 侧框（左）
+        inner.add(box(0.08, 2.1, 0.22, sf, 0.46, 1.55, 0)) // 侧框（右）
+        inner.add(box(1.0, 0.14, 0.22, sf, 0, 2.66, 0)) // 上梁
+        inner.add(box(0.6, 0.14, 0.22, sf, 0, 2.78, 0)) // 尖拱顶（收分）
+        const paneCols = ['#2a5fd8', '#4142a5', '#7ab0e8', '#0071c9', '#9adfff'] // 蓝白彩玻
+        for (let py = 0; py < 4; py++)
+          for (let px = 0; px < 3; px++) {
+            const c = paneCols[(px * 7 + py * 3) % paneCols.length]
+            const pane = new THREE.Mesh(
+              new THREE.PlaneGeometry(0.26, 0.46),
+              new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: 0.82, side: THREE.DoubleSide }),
+            )
+            pane.position.set(-0.29 + px * 0.29, 0.74 + py * 0.48, 0)
+            inner.add(pane)
+          }
+        for (let px = 0; px < 4; px++) inner.add(box(0.03, 1.92, 0.03, frame, -0.435 + px * 0.29, 1.46, 0.01)) // 竖棂
+        for (let py = 0; py < 5; py++) inner.add(box(0.88, 0.03, 0.03, frame, 0, 0.5 + py * 0.48, 0.01)) // 横棂
+        inner.add(glow(0.2, 0.2, 0.02, '#9adfff', 0, 2.4, 0.02)) // 顶部圣辉（鹉主之蓝）
+      } else {
+        inner.add(box(1.0, 0.85, 0.22, frame, 0, 0.425, 0)) // 窗台
+        inner.add(box(1.0, Math.max(0.2, H - 2.1), 0.22, frame, 0, 2.1 + Math.max(0.2, H - 2.1) / 2, 0)) // 上梁
+        inner.add(box(0.08, 1.25, 0.22, frame, -0.46, 1.475, 0))
+        inner.add(box(0.08, 1.25, 0.22, frame, 0.46, 1.475, 0))
+        const glass = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.88, 1.25),
+          new THREE.MeshLambertMaterial({ color: '#93a7b8', transparent: true, opacity: 0.24, side: THREE.DoubleSide, depthWrite: false }),
+        )
+        glass.position.set(0, 1.475, 0)
+        inner.add(glass)
+        // 窗棂十字
+        inner.add(box(0.88, 0.03, 0.03, frame, 0, 1.475, 0.01))
+        inner.add(box(0.03, 1.25, 0.03, frame, 0, 1.475, 0.01))
+      }
+      mountOnWall(inner, grp, s, m) // 强制贴最近墙（含虚空墙），玻璃面朝室内
       break
     }
     case 'rollerdoor': {
-      // 卷帘门（可交互升降）：门框 + 帘板（lid 滑动开门动画）
-      grp.add(box(0.14, 2.5, 0.3, '#3a3d40', -0.5, 1.25, 0))
-      grp.add(box(0.14, 2.5, 0.3, '#3a3d40', 0.5, 1.25, 0))
-      grp.add(box(1.14, 0.3, 0.3, '#2e3236', 0, 2.6, 0)) // 卷轴盒
-      const panel = box(0.92, 2.3, 0.06, '#5a5e63', 0, 0, 0)
-      panel.geometry.translate(0, 1.15, 0)
+      // 卷帘门（可交互升降）：无门框——整幅波纹钢帘板与墙同高，相邻门等宽同纹无缝相连成卷帘墙；
+      // 顶部卷轴盒（lid 滑动开门动画：帘板收进盒内；v35 波纹钢贴图面板）
+      grp.add(box(s.w - 0.02, 0.22, 0.22, '#2e3236', 0, H - 0.11, 0)) // 卷轴盒
+      const panel = new THREE.Mesh(
+        new THREE.BoxGeometry(s.w - 0.02, H - 0.24, 0.05),
+        texLambert('corrugated_steel', '#5a5e63', '#45494e', '#e2e4e0'),
+      )
+      panel.geometry.translate(0, (H - 0.24) / 2, 0)
       panel.userData.lid = 1
-      // 帘板横向纹路
-      for (let i = 0; i < 6; i++) {
-        const slat = box(0.92, 0.03, 0.02, '#45494e', 0, 0.3 + i * 0.36, 0.04)
-        panel.add(slat)
-      }
       grp.add(panel)
       grp.rotation.y = doorNeedsRotate(m, s) // v9：门板平面与墙线平行
       break
@@ -818,9 +1181,13 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       break
     }
     case 'barrel': {
-      // 木桶（装杏仁水）：竖立圆柱 + 两道桶箍
-      const wood = s.looted ? '#4a3420' : '#6a4a2e'
-      grp.add(cyl(0.3, 0.34, 0.88, wood, 0, 0.44, 0, 10))
+      // 木桶（装杏仁水）：竖立圆柱（竖纹木板贴图，looted 变暗）+ 两道桶箍
+      const body = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.3, 0.34, 0.88, 10),
+        texLambert('barrel_wood', s.looted ? '#4a3420' : '#6a4a2e', '#3a2a18', s.looted ? '#8a7a68' : '#e8e2d2'),
+      )
+      body.position.set(0, 0.44, 0)
+      grp.add(body)
       for (const hy of [0.24, 0.66]) {
         const hoop = new THREE.Mesh(new THREE.TorusGeometry(0.325, 0.03, 5, 12), new THREE.MeshLambertMaterial({ color: '#3a3a3c' }))
         hoop.rotation.x = Math.PI / 2
@@ -1422,6 +1789,10 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
             })
       }
       grp.add(mergedMesh(parts))
+      // v48 缺省朝向：背贴最近墙、架面朝外（双面书架）；L601 阵列排（data.row）保持阵列朝向不转，
+      // data.deg 可显式覆盖
+      if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
+      else if (!s.data?.row) faceOutward(grp, s, m)
       break
     }
     case 'endletters': {
@@ -1464,11 +1835,13 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
 
     // ===================== v23：通用新容器（均带「已搜刮」视觉变化）=====================
     case 'locker': {
-      // 储物柜：竖直金属柜 + 通风百叶 + 把手
-      const body = s.looted ? '#3f464b' : '#5a636a'
-      grp.add(box(0.64, 1.9, 0.46, body, 0, 0.95, 0))
+      // 储物柜：竖直金属柜（金属贴图，looted 变暗）+ 通风百叶 + 把手
+      const metalMat = texLambert('locker_metal', s.looted ? '#3f464b' : '#5a636a', '#394046', s.looted ? '#7a8288' : '#e8eaec')
+      const body = new THREE.Mesh(new THREE.BoxGeometry(0.64, 1.9, 0.46), metalMat)
+      body.position.set(0, 0.95, 0)
+      grp.add(body)
       grp.add(box(0.68, 0.07, 0.5, '#4a5259', 0, 1.92, 0))
-      const door = box(0.58, 1.82, 0.05, s.looted ? '#485057' : '#646d75', 0, 0, 0)
+      const door = new THREE.Mesh(new THREE.BoxGeometry(0.58, 1.82, 0.05), texLambert('locker_metal', s.looted ? '#485057' : '#646d75', '#394046', s.looted ? '#868e94' : '#f0f2f4'))
       door.geometry.translate(0.29, 0.95, 0) // 铰链在左缘
       door.position.set(-0.29, 0.02, 0.235)
       if (s.looted) door.rotation.y = -1.2 // 已搜刮：柜门半开
@@ -1569,6 +1942,20 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       grp.add(box(0.2, 0.16, 0.24, dark, 0, springY + 0.42, 0)) // 拱顶石
       break
     }
+    case 'vaultcol': {
+      // 哥特段拱顶柱（v34，参照地下停车场交叉拱）：粗圆柱身 + 柱顶喇叭展开顶到天花；
+      // data.archX/archY 时从柱顶向 +x/+y 伸出连拱板（纯视觉，与邻柱连成连续拱腹）
+      const stone = '#7e7a74', dark = '#6a665f'
+      grp.add(cyl(0.5, 0.54, 0.22, dark, 0, 0.11, 0, 14)) // 柱础
+      grp.add(cyl(0.36, 0.42, H * 0.62, stone, 0, H * 0.31, 0, 14)) // 柱身（0 ~ H*0.62）
+      grp.add(cyl(0.46, 0.36, H * 0.12, stone, 0, H * 0.68, 0, 14)) // 过渡圆台（H*0.62 ~ H*0.74）
+      grp.add(cyl(1.05, 0.46, H * 0.26, stone, 0, H * 0.87, 0, 14)) // 喇叭头展开（H*0.74 ~ H，顶到天花）
+      const spanX = (s.data?.spanX as number | undefined) ?? 0
+      const spanY = (s.data?.spanY as number | undefined) ?? 0
+      if (s.data?.archX && spanX > 0) grp.add(box(spanX, 0.34, 1.2, stone, spanX / 2, H - 0.42, 0))
+      if (s.data?.archY && spanY > 0) grp.add(box(1.2, 0.34, spanY, stone, 0, H - 0.42, spanY / 2))
+      break
+    }
     case 'scaffold': {
       // 衔尾段脚手架：四角立杆 + 两层横杆 + 顶部踏板（2×1）
       const hw = s.w / 2 - 0.12, hd = s.h / 2 - 0.12
@@ -1592,6 +1979,42 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       grp.add(box(0.92, 0.14, 0.06, '#d9642a', 0, 0.3, 0))
       grp.add(glow(0.07, 0.07, 0.07, '#ffb03a', -0.38, 0.86, 0))
       grp.add(glow(0.07, 0.07, 0.07, '#ffb03a', 0.38, 0.86, 0))
+      break
+    }
+    case 'debrispile': {
+      // 衔尾段建材碎料堆（非容器不阻挡）：沙堆 + 碎砖 + 斜搭的木板（位置确定性，重建一致）
+      const rng = mulberry((Math.floor(s.x) * 73856093) ^ (Math.floor(s.y) * 19349663) ^ 0x51ab)
+      grp.add(cyl(0.34, 0.46, 0.18, '#9a8f7a', 0.1, 0.09, -0.08, 10)) // 沙堆（扁圆台）
+      grp.add(cyl(0.2, 0.3, 0.12, '#8a7f6c', -0.22, 0.06, 0.2, 8))   // 小沙堆
+      for (let i = 0; i < 4; i++) { // 碎砖
+        const b = box(0.2, 0.09, 0.1, i % 2 ? '#8a4a3a' : '#7a4034',
+          (rng() - 0.5) * 0.6, 0.045 + (i > 1 ? 0.09 : 0), (rng() - 0.5) * 0.6)
+        b.rotation.y = rng() * Math.PI
+        grp.add(b)
+      }
+      const plank = box(0.62, 0.035, 0.14, '#a08a5a', 0.05, 0.16, 0.12) // 斜搭的木板
+      plank.rotation.z = 0.28
+      plank.rotation.y = -0.4 + rng() * 0.8
+      grp.add(plank)
+      break
+    }
+    case 'scrap': {
+      // 碎金属堆（L2 肮脏的廊道地面散件；非容器不阻挡）：扭曲金属片 + 躺倒短管 + 弯钩件
+      const rng = mulberry((Math.floor(s.x) * 73856093) ^ (Math.floor(s.y) * 19349663) ^ 0x5c4a)
+      for (let i = 0; i < 3; i++) {
+        const p = box(0.28 + rng() * 0.22, 0.03, 0.14 + rng() * 0.12, i % 2 ? '#6e4a30' : '#5a5a5e',
+          (rng() - 0.5) * 0.5, 0.02 + i * 0.04, (rng() - 0.5) * 0.5)
+        p.rotation.y = rng() * Math.PI
+        p.rotation.z = (rng() - 0.5) * 0.5
+        grp.add(p)
+      }
+      const tube = cyl(0.05, 0.05, 0.55, '#7a4a2e', 0.08, 0.07, -0.08, 8) // 躺倒的短管
+      tube.rotation.z = Math.PI / 2 - 0.12
+      tube.rotation.y = 0.5
+      grp.add(tube)
+      const hook = box(0.04, 0.22, 0.04, '#8a4526', -0.2, 0.1, 0.16) // 弯钩件
+      hook.rotation.z = 0.7
+      grp.add(hook)
       break
     }
     case 'megdoc': {
@@ -1640,6 +2063,520 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       if (s.data?.rot) grp.rotation.y = Math.PI / 2
       break
     }
+    case 'landmark': {
+      // 定居点地标（v35，wikidot 图一：饰有团队标志的彩色布料 + 悬挂物资 + 系着的纸条）
+      // v46：海报形地标（data.poster，EL3A）——贴在廊道墙上的海报（data.tex 指定贴图），
+      // 交互/小地图标注/前往与布料地标一致
+      if (s.data?.poster) {
+        const ptex = (s.data?.tex as string | undefined) ?? 'el3a_poster.png'
+        const inner2 = new THREE.Group()
+        grp.add(inner2)
+        inner2.add(box(0.98, 1.26, 0.03, '#223a2c', 0, 1.32, 0)) // 海报背板（BNTG 深绿描边）
+        const ppanel = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.9, 1.18),
+          new THREE.MeshLambertMaterial({ map: levelTexture(ptex, () => noiseTexture('#23402f', '#1e3729')) }),
+        )
+        ppanel.position.set(0, 1.32, 0.021)
+        inner2.add(ppanel)
+        inner2.add(glow(0.16, 0.05, 0.05, '#ffe8a0', 0, 2.02, 0.05)) // 顶部小暖灯（鲜亮易寻）
+        mountOnWall(inner2, grp, s, m) // 强制贴最近墙（含虚空墙），不浮空
+        break
+      }
+      const bntg = s.data?.outpost === 'bntg'
+      const ariane = s.data?.outpost === 'ariane'
+      const tom = s.data?.outpost === 'tom'
+      const el3a = s.data?.outpost === 'el3a' // v43：办公区EL3A——BNTG 灰绿变体布料
+      const clothC = ariane ? '#8676e2' : el3a ? '#5f7a62' : bntg ? '#3a5a44' : tom ? '#b04030' : '#d9b13b' // 阿丽亚娜紫 / EL3A 灰绿 / BNTG 深绿 / Tom 暖红 / M.E.G. 鲜黄
+      const markC = ariane ? '#f0eefc' : bntg || el3a ? '#e8e8e0' : tom ? '#f8ecd8' : '#3a332c'
+      grp.add(cyl(0.03, 0.05, 1.7, '#4a4038', 0, 0.85, 0, 6)) // 立杆
+      grp.add(box(0.56, 0.72, 0.03, clothC, 0, 1.22, 0.02)) // 团队色布料
+      if (ariane) {
+        // 阿丽亚娜徽记：圆环（wikidot：一环紫色圆环组成的圆环——以单环简化表达）
+        const ring = new THREE.Mesh(new THREE.RingGeometry(0.07, 0.1, 16), new THREE.MeshLambertMaterial({ color: markC, side: THREE.DoubleSide }))
+        ring.position.set(0, 1.3, 0.045)
+        grp.add(ring)
+      } else {
+        // 徽记（深色方块拼的展翅/天平标）
+        grp.add(box(0.06, 0.2, 0.012, markC, 0, 1.3, 0.045))
+        grp.add(box(0.13, 0.05, 0.012, markC, -0.08, 1.32, 0.045))
+        grp.add(box(0.13, 0.05, 0.012, markC, 0.08, 1.32, 0.045))
+        grp.add(box(0.2, 0.05, 0.012, markC, 0, 1.24, 0.045))
+      }
+      // 悬挂的杏仁水瓶（细绳 + 瓶）
+      grp.add(box(0.012, 0.14, 0.012, '#8a8474', 0.2, 0.95, 0.03))
+      grp.add(cyl(0.045, 0.05, 0.14, '#c9d9a8', 0.2, 0.82, 0.03, 6))
+      // 系着的纸条
+      grp.add(box(0.14, 0.18, 0.012, '#f0e6c0', -0.18, 1.1, 0.045))
+      // 顶部小暖灯（鲜亮易寻——与灰暗景观形成鲜明对比）
+      grp.add(glow(0.1, 0.06, 0.1, '#ffe8a0', 0, 1.74, 0))
+      break
+    }
+
+    // ===== v35：据点（Alpha 基地）家具 =====
+    case 'serverrack': {
+      // 中控室无线电机柜：深色机柜 + 顶部监视器 + 表盘/指示灯/线缆
+      grp.add(box(0.72, 1.86, 0.4, '#24272c', 0, 0.93, 0)) // 机柜主体
+      for (const sx of [-0.17, 0.17]) { // 顶部两台监视器（微仰）
+        const mon = box(0.28, 0.22, 0.2, '#3a3e45', sx, 1.98, -0.02)
+        mon.rotation.x = -0.22
+        grp.add(mon)
+        grp.add(box(0.22, 0.14, 0.015, '#5a6a78', sx, 1.99, 0.085))
+      }
+      const dial = cyl(0.09, 0.09, 0.02, '#d8d2c2', -0.18, 1.5, 0.21, 12) // 大表盘
+      dial.rotation.x = Math.PI / 2
+      grp.add(dial)
+      for (let i = 0; i < 4; i++) grp.add(cyl(0.02, 0.02, 0.015, '#c9b458', -0.02 + i * 0.09, 1.5, 0.205, 6).rotateX(Math.PI / 2)) // 小旋钮
+      for (let i = 0; i < 3; i++) grp.add(glow(0.03, 0.03, 0.012, ['#7ac97a', '#e8b93c', '#d96a4a'][i], -0.2 + i * 0.08, 1.28, 0.205)) // 指示灯
+      for (let i = 0; i < 5; i++) grp.add(box(0.06, 0.02, 0.02, '#c94a3a', -0.15 + i * 0.075, 1.06, 0.21)) // 红色接线排
+      for (let i = 0; i < 3; i++) grp.add(box(0.015, 0.5, 0.015, '#15181c', -0.24 + i * 0.05, 0.55, 0.21)) // 垂下线缆
+      grp.add(box(0.6, 0.06, 0.34, '#15181c', 0, 0.16, 0.02)) // 底部线槽
+      break
+    }
+    case 'officechair': {
+      // 办公转椅（非实心）：五星脚 + 气杆 + 座面 + 靠背 + 扶手
+      grp.add(cyl(0.03, 0.03, 0.32, '#6a6a70', 0, 0.24, 0, 8)) // 气杆
+      for (let i = 0; i < 4; i++) { // 四星脚
+        const a = (i * Math.PI) / 2 + Math.PI / 4
+        const leg = box(0.3, 0.03, 0.05, '#4a4a50', Math.cos(a) * 0.15, 0.06, Math.sin(a) * 0.15)
+        leg.rotation.y = -a
+        grp.add(leg)
+      }
+      grp.add(box(0.42, 0.07, 0.4, '#2e2e33', 0, 0.44, 0)) // 座面
+      const back = box(0.4, 0.44, 0.07, '#2e2e33', 0, 0.76, -0.18) // 靠背（微后倾）
+      back.rotation.x = 0.12
+      grp.add(back)
+      grp.add(box(0.05, 0.05, 0.3, '#4a4a50', -0.2, 0.56, -0.02)) // 扶手（左）
+      grp.add(box(0.05, 0.05, 0.3, '#4a4a50', 0.2, 0.56, -0.02)) // 扶手（右）
+      // v35：朝向机制——正对最近的桌子（桌/书桌，2.5 格内）；附近没有桌子则背向最近的墙
+      {
+        const cx = s.x + s.w / 2, cy = s.y + s.h / 2
+        let bt: { x: number; y: number } | null = null, bd = 1e9
+        for (const o of m.structures) {
+          if (o === s || (o.kind !== 'table' && o.kind !== 'desk' && o.kind !== 'dtable')) continue
+          const ox = o.x + o.w / 2, oy = o.y + o.h / 2
+          const d = Math.hypot(ox - cx, oy - cy)
+          if (d < bd) { bd = d; bt = { x: ox, y: oy } }
+        }
+        if (bt && bd <= 2.5) {
+          grp.rotation.y = Math.atan2(bt.x - cx, bt.y - cy) // 模型正面 +Z 指向桌子
+        } else {
+          faceOutward(grp, s, m) // 无桌：背墙（faceOutward 即正面背向最近墙面）
+        }
+      }
+      break
+    }
+    case 'binshelf': {
+      // 储物货架：金属立柱 + 三层搁板 + 蓝/灰收纳箱（白色标签）
+      const hw = s.w / 2 - 0.06
+      for (const px of [-hw, hw]) for (const pz of [-0.16, 0.16]) grp.add(box(0.05, 1.9, 0.05, '#8a8a8e', px, 0.95, pz)) // 立柱
+      for (const sy of [0.3, 0.85, 1.4, 1.86]) grp.add(box(s.w - 0.04, 0.04, 0.42, '#9a9a9e', 0, sy, 0)) // 搁板
+      const binC = ['#2e4ac9', '#5a5f66', '#2e4ac9', '#5a5f66', '#3a5ad9']
+      let bi = 0
+      for (const sy of [0.44, 0.99, 1.54]) {
+        for (let bx0 = -hw + 0.24; bx0 <= hw - 0.2; bx0 += 0.46) {
+          const bc = binC[bi++ % binC.length]
+          grp.add(box(0.4, 0.26, 0.36, bc, bx0, sy, 0)) // 收纳箱
+          grp.add(box(0.12, 0.09, 0.012, '#f0f0ea', bx0, sy + 0.02, 0.19)) // 白色标签
+        }
+      }
+      // v48 缺省朝向：背贴最近墙、标签面（+Z）朝外；data.deg 可显式覆盖
+      if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
+      else faceOutward(grp, s, m)
+      break
+    }
+    case 'bunkbed': {
+      // 双层床：木框架 + 上下铺 + 床梯 + 床垫枕头（沿本地 z 纵放，占地 1×2）
+      const wood = '#7a5a34', mat = '#e8e4d8'
+      for (const px of [-0.4, 0.4]) for (const pz of [-0.92, 0.92]) grp.add(box(0.08, 1.6, 0.08, wood, px, 0.8, pz)) // 四柱
+      for (const dy of [0.5, 1.2]) { // 两层床板 + 床垫 + 枕头
+        grp.add(box(0.86, 0.07, 1.9, wood, 0, dy, 0))
+        grp.add(box(0.78, 0.12, 1.8, mat, 0, dy + 0.09, 0))
+        grp.add(box(0.5, 0.1, 0.3, '#f0ede0', 0, dy + 0.16, -0.7))
+      }
+      for (const dx of [-0.32, 0.32]) grp.add(box(0.05, 1.3, 0.05, wood, dx, 0.75, 0.98)) // 床梯立杆
+      for (let i = 0; i < 4; i++) grp.add(box(0.68, 0.04, 0.04, wood, 0, 0.3 + i * 0.32, 0.98)) // 梯档
+      grp.add(box(0.86, 0.3, 0.06, wood, 0, 1.5, -0.92)) // 上铺护栏（床头）
+      grp.add(box(0.06, 0.24, 1.8, wood, -0.4, 1.42, 0)) // 上铺侧护栏
+      break
+    }
+    case 'screenboard': {
+      // 投影幕 + 黑板（贴墙，朝外，背板贴墙面）
+      const inner = new THREE.Group()
+      grp.add(inner)
+      inner.add(box(1.9, 1.0, 0.05, '#1e2a26', 0, 1.15, 0)) // 黑板
+      inner.add(box(1.94, 0.06, 0.07, '#6a6a62', 0, 0.62, 0.01)) // 板槽
+      inner.add(box(1.5, 0.86, 0.04, '#e8e6e0', 0, 2.1, 0.02)) // 投影幕（垂下）
+      const roll = cyl(0.025, 0.025, 1.56, '#9a9a9e', 0, 2.56, 0.02, 8)
+      roll.rotation.z = Math.PI / 2
+      inner.add(roll) // 幕布卷轴
+      inner.add(box(0.2, 0.05, 0.05, '#4a4a42', -0.6, 0.64, 0.04)) // 板擦
+      mountOnWall(inner, grp, s, m) // 强制贴最近墙（含虚空墙），不浮空
+      break
+    }
+    case 'noticeboard': case 'megposter': case 'photo': {
+      // 据点墙面装饰：贴图画板（公告栏/标语海报/相片，磁盘贴图 + 程序兜底，背板贴墙面）
+      // data.tex 可指定替代贴图（如 bntg_poster.png）
+      const tex = (s.data?.tex as string | undefined) ?? (s.kind === 'noticeboard' ? 'noticeboard.png' : s.kind === 'megposter' ? 'poster_slogan.png' : 'photo.png')
+      const fb = s.kind === 'noticeboard' ? '#8a6a42' : s.kind === 'megposter' ? '#efe8d2' : '#c9b87a'
+      if (s.data?.flat) {
+        // 躺在地板上的画作/地面导引贴花（data.flat：小径画廊；data.tex 可换贴图，如 mall_arrow.png）
+        if (!s.data?.tex) grp.add(box(0.66, 0.02, 0.54, '#4a4038', 0, 0.01, 0)) // 画作背板（贴花无背板）
+        const panel = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.62, 0.5),
+          new THREE.MeshLambertMaterial({ map: levelTexture(tex, () => noiseTexture(fb, '#5a4e34')), transparent: true }),
+        )
+        const deg = ((s.data?.deg as number | undefined) ?? 0) * Math.PI / 180
+        if (deg) panel.geometry.rotateZ(deg) // data.deg：贴花朝向（如地面箭头转向）
+        panel.rotation.x = -Math.PI / 2
+        panel.position.set(0, 0.025, 0)
+        grp.add(panel)
+        break
+      }
+      const w = s.kind === 'photo' ? 0.62 : 0.92, h = s.kind === 'photo' ? 0.5 : 0.72
+      const inner = new THREE.Group()
+      grp.add(inner)
+      inner.add(box(w + 0.06, h + 0.06, 0.03, '#4a4038', 0, 1.3, 0)) // 背框
+      const panel = new THREE.Mesh(
+        new THREE.PlaneGeometry(w, h),
+        new THREE.MeshLambertMaterial({ map: levelTexture(tex, () => noiseTexture(fb, '#5a4e34')) }),
+      )
+      panel.position.set(0, 1.3, 0.021)
+      inner.add(panel)
+      mountOnWall(inner, grp, s, m) // 强制贴最近墙（含虚空墙），不浮空
+      break
+    }
+    case 'ventgrate': {
+      // 天花板通风口格栅（仅风口无管道）：边框 + 百叶，贴在天花板底面
+      grp.add(box(0.56, 0.05, 0.56, '#6a6a70', 0, H - 0.03, 0))
+      grp.add(box(0.46, 0.02, 0.46, '#2a2d30', 0, H - 0.055, 0))
+      for (let i = 0; i < 4; i++) grp.add(box(0.42, 0.015, 0.05, '#8a8a8e', 0, H - 0.065, -0.15 + i * 0.1))
+      break
+    }
+    // ===================== v36：商人之家商场风装饰 =====================
+    case 'bench': {
+      // 商场长椅：木座面 + 靠背 + 金属侧架
+      const wood = '#9a7d55', frame = '#3f4448'
+      grp.add(box(1.36, 0.07, 0.48, wood, 0, 0.44, 0)) // 座面
+      grp.add(box(1.36, 0.46, 0.06, wood, 0, 0.78, -0.23)) // 靠背
+      for (const lx of [-0.58, 0.58]) {
+        grp.add(box(0.07, 0.44, 0.44, frame, lx, 0.22, 0)) // 侧架（座腿）
+        grp.add(box(0.07, 0.52, 0.06, frame, lx, 0.72, -0.23)) // 靠背支柱
+      }
+      // v46：data.deg 指定朝向（缺省朝南 +z；休息室长椅面朝公共区，不再正面对着墙）
+      if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
+      break
+    }
+    case 'planter': {
+      // 花坛：矮石框 + 泥土 + 三株绿植
+      grp.add(box(1.08, 0.4, 0.58, '#9a958c', 0, 0.2, 0)) // 石框
+      grp.add(box(0.96, 0.05, 0.46, '#41321f', 0, 0.41, 0)) // 泥土
+      for (const [px, pz, ph] of [[-0.3, 0.04, 0.34], [0.06, -0.08, 0.5], [0.34, 0.06, 0.28]] as const) {
+        grp.add(box(0.05, ph, 0.05, '#3e5a2a', px, 0.42 + ph / 2, pz)) // 茎
+        grp.add(box(0.22, 0.18, 0.22, '#4e7a34', px, 0.44 + ph, pz)) // 叶冠
+      }
+      break
+    }
+    case 'trashbin': {
+      // 商场垃圾桶：金属圆筒 + 深色投口 + 底座圈
+      grp.add(cyl(0.24, 0.21, 0.7, '#7d8489', 0, 0.37, 0, 12)) // 筒身
+      grp.add(cyl(0.22, 0.22, 0.04, '#2c2f33', 0, 0.72, 0, 12)) // 投口
+      grp.add(cyl(0.25, 0.25, 0.05, '#5a6165', 0, 0.045, 0, 12)) // 底座圈
+      break
+    }
+    case 'shopsign': {
+      // 悬挂店招（商人之家市场街/大厅）：吊杆 + 贴图招牌板 + 顶部描边灯
+      const tex = (s.data?.tex as string | undefined) ?? 'bntg_poster.png'
+      grp.add(box(0.04, 0.3, 0.04, '#3a3a3e', -0.3, H - 0.15, 0)) // 吊杆（左）
+      grp.add(box(0.04, 0.3, 0.04, '#3a3a3e', 0.3, H - 0.15, 0)) // 吊杆（右）
+      grp.add(box(0.84, 0.34, 0.05, '#2a2d30', 0, H - 0.48, 0)) // 招牌背板
+      const panel = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.78, 0.28),
+        new THREE.MeshLambertMaterial({ map: levelTexture(tex, () => noiseTexture('#2e3a32', '#e8e8e0')) }),
+      )
+      panel.position.set(0, H - 0.48, 0.031)
+      grp.add(panel)
+      grp.add(glow(0.86, 0.03, 0.03, '#7ac97a', 0, H - 0.29, 0)) // 顶部描边灯
+      faceOutward(grp, s, m)
+      break
+    }
+
+    // ===================== v37：希波克拉底 - 1（阿丽亚娜集团据点）医疗家具 =====================
+    case 'hospitalbed': {
+      // 病床：金属框 + 白床垫 + 枕头 + 床头摇起（沿本地 z 纵放）
+      // v38：毯子按坐标奇偶在 浅蓝/薄荷/薰衣草 三色间轮换（枕头保持白，实例级变色）
+      const metal = '#c8ccd2', mat = '#f2f2f4'
+      const blanket = ['#9ab8d8', '#a8d8c0', '#c8bce8'][(((s.x + s.y) % 3) + 3) % 3]
+      const hw = s.w / 2 - 0.07, hl = s.h / 2 - 0.08
+      for (const px of [-hw, hw]) for (const pz of [-hl, hl]) grp.add(box(0.06, 0.5, 0.06, metal, px, 0.25, pz)) // 床腿
+      grp.add(box(s.w - 0.06, 0.08, s.h - 0.12, metal, 0, 0.48, 0)) // 床框
+      grp.add(box(s.w - 0.16, 0.12, s.h * 0.58, mat, 0, 0.58, s.h * 0.17)) // 床垫平段（床尾侧）
+      grp.add(box(s.w - 0.18, 0.05, s.h * 0.46, blanket, 0, 0.665, s.h * 0.22)) // 毯子（三色轮换）
+      const head = box(s.w - 0.16, 0.1, s.h * 0.36, mat, 0, 0.7, -s.h * 0.24) // 床头摇起段
+      head.rotation.x = -0.44
+      grp.add(head)
+      const pillow = box(s.w - 0.4, 0.08, 0.24, '#fafaf8', 0, 0.84, -s.h * 0.33) // 枕头（贴在摇起段上）
+      pillow.rotation.x = -0.44
+      grp.add(pillow)
+      grp.add(box(s.w - 0.06, 0.52, 0.05, metal, 0, 0.6, -hl)) // 床头板
+      grp.add(box(s.w - 0.06, 0.34, 0.05, metal, 0, 0.52, hl)) // 床尾板
+      grp.add(box(0.04, 0.16, s.h * 0.4, metal, -hw, 0.72, s.h * 0.12)) // 侧护栏（左）
+      grp.add(box(0.04, 0.16, s.h * 0.4, metal, hw, 0.72, s.h * 0.12)) // 侧护栏（右）
+      break
+    }
+    case 'ivstand': {
+      // 输液架：金属立杆 + 四爪底座 + 挂钩横杆 + 半透明输液袋
+      const metal = '#b8bcc4'
+      for (let i = 0; i < 4; i++) { // 四爪底座
+        const a = (i * Math.PI) / 2 + Math.PI / 4
+        const leg = box(0.26, 0.03, 0.04, metal, Math.cos(a) * 0.13, 0.05, Math.sin(a) * 0.13)
+        leg.rotation.y = -a
+        grp.add(leg)
+      }
+      grp.add(cyl(0.018, 0.024, 1.7, metal, 0, 0.85, 0, 8)) // 立杆
+      grp.add(box(0.34, 0.02, 0.02, metal, 0, 1.68, 0)) // 挂钩横杆
+      const bag = new THREE.Mesh(
+        new THREE.BoxGeometry(0.1, 0.2, 0.06),
+        // v38：输液袋液体按坐标奇偶在 透明/淡黄/淡粉 间轮换
+        new THREE.MeshLambertMaterial({ color: ['#e8f0e2', '#f0e8c0', '#f0d4dc'][(((s.x + s.y) % 3) + 3) % 3], transparent: true, opacity: 0.72 }),
+      )
+      bag.position.set(-0.12, 1.52, 0)
+      grp.add(bag) // 输液袋（半透明）
+      grp.add(cyl(0.006, 0.006, 0.52, '#d8dcd8', -0.12, 1.14, 0, 4)) // 输液管垂下
+      break
+    }
+    case 'medcabinet': {
+      // 药品柜：薄荷白柜 + 玻璃门（透出药瓶）+ 紫色十字（阿丽亚娜主题色，呼应红十字）
+      // v38：柜体薄荷白 + 柜门把手/边框深色（紫十字保留），不再清一色纯白
+      grp.add(box(0.72, 1.5, 0.34, '#e2efe6', 0, 0.75, 0)) // 柜体（薄荷白）
+      grp.add(box(0.64, 0.56, 0.03, '#d5e2da', 0, 0.3, 0.165)) // 下部实门
+      grp.add(box(0.74, 0.04, 0.36, '#5a6068', 0, 1.52, 0)) // 顶部深色边框
+      grp.add(box(0.74, 0.04, 0.36, '#5a6068', 0, 0.02, 0)) // 底部深色踢脚
+      for (let i = 0; i < 3; i++) grp.add(cyl(0.032, 0.032, 0.13, ['#c96a4a', '#4a8ac9', '#7ac97a'][i], -0.18 + i * 0.18, 1.0, 0.1, 6)) // 玻璃后的药瓶
+      grp.add(box(0.56, 0.03, 0.26, '#c2cdc6', 0, 1.18, 0.02)) // 玻璃层板
+      const glass = new THREE.Mesh(
+        new THREE.BoxGeometry(0.62, 0.68, 0.02),
+        new THREE.MeshLambertMaterial({ color: '#cfe0e8', transparent: true, opacity: 0.38 }),
+      )
+      glass.position.set(0, 1.02, 0.17)
+      grp.add(glass) // 玻璃门
+      grp.add(box(0.03, 0.12, 0.03, '#4a4e54', 0.26, 1.02, 0.185)) // 柜门把手（深色）
+      grp.add(box(0.2, 0.06, 0.02, '#8676e2', 0, 1.42, 0.175)) // 紫十字（横）
+      grp.add(box(0.06, 0.2, 0.02, '#8676e2', 0, 1.42, 0.175)) // 紫十字（竖）
+      faceOutward(grp, s, m) // 柜门背墙朝外
+      break
+    }
+    case 'labbench': {
+      // 实验台：石板灰台案（v38：不再纯白）+ 显微镜 + 试管组（彩色液体）+ 烧杯
+      const hw = s.w / 2 - 0.07
+      for (const px of [-hw, hw]) grp.add(box(0.08, 0.82, 0.6, '#d8dce2', px, 0.41, 0)) // 台腿
+      grp.add(box(s.w, 0.07, 0.72, '#6a7278', 0, 0.86, 0)) // 台面（石板灰）
+      grp.add(box(s.w, 0.04, 0.72, '#5a6167', 0, 0.9, 0)) // 防腐蚀垫层
+      // 显微镜（左）
+      const mx = -s.w / 2 + 0.3
+      grp.add(box(0.16, 0.03, 0.16, '#3a3e45', mx, 0.94, 0)) // 底座
+      grp.add(box(0.05, 0.22, 0.05, '#3a3e45', mx - 0.05, 1.05, -0.04)) // 支架
+      const tube = cyl(0.035, 0.035, 0.18, '#2a2d33', mx, 1.14, 0.02, 8) // 镜筒（微倾）
+      tube.rotation.x = 0.5
+      grp.add(tube)
+      grp.add(box(0.1, 0.02, 0.1, '#5a5f66', mx, 1.0, 0.04)) // 载物台
+      // 试管组（中）：木架 + 5 支彩色液体试管
+      grp.add(box(0.3, 0.04, 0.08, '#9a7d55', 0.05, 0.95, 0.16))
+      for (let i = 0; i < 5; i++) {
+        grp.add(cyl(0.016, 0.016, 0.12, '#e8ecf0', -0.05 + i * 0.05, 1.03, 0.16, 6)) // 玻璃管
+        grp.add(cyl(0.013, 0.013, 0.05, ['#c96a4a', '#7ac97a', '#4a8ac9', '#8676e2', '#e8b93c'][i], -0.05 + i * 0.05, 1.0, 0.16, 6)) // 液体
+      }
+      // 烧杯（右）
+      grp.add(cyl(0.05, 0.045, 0.12, '#e8ecf0', s.w / 2 - 0.32, 0.98, -0.12, 10))
+      grp.add(cyl(0.043, 0.043, 0.06, '#9fd0c8', s.w / 2 - 0.32, 0.96, -0.12, 10)) // 淡绿液体
+      break
+    }
+    case 'specimentank': {
+      // 标本罐：玻璃圆筒 + 淡紫/淡绿/淡琥珀液体（半透明自发光）+ 内部悬浮样本块 + 金属底座/顶盖
+      // v38：按坐标奇偶三色轮换（确定性）
+      const liquidC = ['#a894e8', '#8fd0a0', '#e0c078'][(((s.x + s.y) % 3) + 3) % 3]
+      grp.add(cyl(0.3, 0.32, 0.1, '#6a6e75', 0, 0.05, 0, 14)) // 底座
+      grp.add(cyl(0.3, 0.3, 0.06, '#8a8e94', 0, 1.62, 0, 14)) // 顶盖
+      const liquid = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.26, 0.26, 1.44, 14),
+        new THREE.MeshBasicMaterial({ color: liquidC, transparent: true, opacity: 0.5 }),
+      )
+      liquid.position.set(0, 0.86, 0)
+      grp.add(liquid) // 液体（自发光恒定发亮）
+      grp.add(box(0.16, 0.2, 0.12, '#7a5a68', 0.04, 0.9, 0.02)) // 样本块（悬浮）
+      grp.add(box(0.08, 0.1, 0.08, '#6a4a58', -0.06, 0.68, -0.04)) // 小样本块
+      grp.add(cyl(0.008, 0.008, 0.3, '#c8b8e0', 0, 1.32, 0, 4)) // 悬丝
+      const glass = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.28, 0.28, 1.5, 14),
+        new THREE.MeshLambertMaterial({ color: '#d8e8f0', transparent: true, opacity: 0.22 }),
+      )
+      glass.position.set(0, 0.88, 0)
+      grp.add(glass) // 玻璃外罩
+      grp.add(box(0.16, 0.1, 0.02, '#f0f0ea', 0, 0.34, 0.3)) // 标签
+      break
+    }
+
+    // ===================== v38：Tom 的餐馆（独立餐馆据点）家具 =====================
+    case 'stove': {
+      // 灶台：不锈钢灶体 + 四炉眼 + 一锅热汤 + 防油背板（背板贴墙，faceOutward 背墙朝外）
+      grp.add(box(0.8, 0.86, 0.6, '#9a9ea4', 0, 0.43, 0)) // 灶体
+      grp.add(box(0.82, 0.05, 0.62, '#33363b', 0, 0.885, 0)) // 灶面
+      for (const [bx, bz] of [[-0.2, -0.14], [0.2, -0.14], [-0.2, 0.16], [0.2, 0.16]] as const)
+        grp.add(cyl(0.09, 0.09, 0.015, '#14161a', bx, 0.915, bz, 10)) // 炉眼
+      grp.add(cyl(0.13, 0.11, 0.12, '#c8ccd2', -0.2, 0.99, -0.14, 12)) // 锅
+      grp.add(cyl(0.115, 0.115, 0.02, '#d98a4a', -0.2, 1.05, -0.14, 12)) // 锅里热汤
+      for (let i = 0; i < 3; i++) grp.add(cyl(0.02, 0.02, 0.02, '#2a2d33', -0.2 + i * 0.2, 0.68, 0.31, 6).rotateX(Math.PI / 2)) // 旋钮
+      grp.add(box(0.8, 0.5, 0.05, '#8a8e94', 0, 1.16, -0.29)) // 防油背板
+      faceOutward(grp, s, m)
+      break
+    }
+    case 'kcounter': {
+      // 厨房料理台：暖木橱柜 + 浅色台面 + 柜门缝 + 挂杆厨具 + 刀架磁条 + 砧板
+      const hw = s.w / 2 - 0.06
+      grp.add(box(s.w - 0.04, 0.78, 0.6, '#8a6a48', 0, 0.39, 0)) // 柜体
+      grp.add(box(s.w + 0.02, 0.05, 0.64, '#e8e4da', 0, 0.83, 0)) // 台面
+      for (let dx = -hw + 0.3; dx <= hw - 0.2; dx += 0.5) grp.add(box(0.02, 0.6, 0.02, '#5a4630', dx, 0.42, 0.31)) // 柜门缝
+      grp.add(box(0.3, 0.02, 0.22, '#c9a875', -hw + 0.35, 0.865, 0.08)) // 砧板
+      grp.add(box(0.16, 0.03, 0.1, '#d95a3a', hw - 0.3, 0.875, 0.1)) // 番茄一堆
+      // 墙面挂杆 + 挂勺/铲（-z 侧）
+      const rail = cyl(0.012, 0.012, Math.min(s.w - 0.3, 1.4), '#7d8489', 0, 1.35, -0.24, 6)
+      rail.rotation.z = Math.PI / 2
+      grp.add(rail)
+      for (let i = 0; i < 3; i++) {
+        grp.add(box(0.015, 0.2, 0.015, '#c8ccd2', -0.35 + i * 0.28, 1.23, -0.24)) // 柄
+        grp.add(box(0.07, 0.09, 0.02, '#c8ccd2', -0.35 + i * 0.28, 1.09, -0.24)) // 勺/铲头
+      }
+      grp.add(box(0.4, 0.05, 0.02, '#4a4e54', hw - 0.4, 1.3, -0.26)) // 刀架磁条
+      grp.add(box(0.03, 0.14, 0.012, '#d8dce2', hw - 0.45, 1.2, -0.26)) // 刀 1
+      grp.add(box(0.03, 0.11, 0.012, '#d8dce2', hw - 0.33, 1.22, -0.26)) // 刀 2
+      faceOutward(grp, s, m)
+      break
+    }
+    case 'sink': {
+      // 水槽：橱柜 + 不锈钢双槽台面 + 水龙头
+      grp.add(box(0.8, 0.78, 0.6, '#8a6a48', 0, 0.39, 0)) // 柜体
+      grp.add(box(0.84, 0.06, 0.64, '#c8ccd2', 0, 0.83, 0)) // 不锈钢台面
+      for (const sx of [-0.2, 0.2]) grp.add(box(0.32, 0.03, 0.42, '#7d8489', sx, 0.845, 0.02)) // 双槽（凹陷深色）
+      grp.add(cyl(0.025, 0.03, 0.3, '#d8dce2', 0, 1.0, -0.22, 8)) // 龙头立管
+      grp.add(box(0.03, 0.03, 0.22, '#d8dce2', 0, 1.14, -0.12)) // 龙头弯臂
+      grp.add(cyl(0.018, 0.018, 0.07, '#d8dce2', 0, 1.11, -0.01, 6)) // 出水口
+      grp.add(box(0.05, 0.03, 0.05, '#d9c96a', 0.3, 0.875, -0.2)) // 海绵
+      faceOutward(grp, s, m)
+      break
+    }
+    case 'freezer': {
+      // 卧式冷冻柜：白柜 + 顶盖双缝 + 温控面板（运行灯）+ 散热格栅（非容器）
+      grp.add(box(1.1, 0.8, 0.62, '#eef0f2', 0, 0.42, 0)) // 柜体
+      grp.add(box(1.12, 0.06, 0.64, '#f7f8fa', 0, 0.85, 0)) // 顶盖
+      grp.add(box(0.015, 0.015, 0.62, '#c9ced4', 0, 0.885, 0)) // 顶盖中缝
+      grp.add(box(0.2, 0.1, 0.02, '#3a3e45', -0.34, 0.6, 0.315)) // 温控面板
+      grp.add(glow(0.03, 0.03, 0.012, '#7ac97a', -0.34, 0.6, 0.33)) // 运行灯
+      for (let i = 0; i < 4; i++) grp.add(box(0.24, 0.015, 0.02, '#b8bec6', 0.3, 0.3 + i * 0.08, 0.325)) // 散热格栅
+      faceOutward(grp, s, m)
+      break
+    }
+    case 'dtable': {
+      // 餐桌：白桌布圆桌 + 两副餐盘餐具 + 水杯 + 小烛台（烛火自发光）+ 对侧两把餐椅（餐椅随桌成型，凸出邻格仅视觉）
+      grp.add(cyl(0.3, 0.34, 0.06, '#5a4630', 0, 0.03, 0, 10)) // 桌脚底座
+      grp.add(cyl(0.06, 0.08, 0.68, '#6a5334', 0, 0.37, 0, 8)) // 桌脚
+      grp.add(cyl(0.52, 0.58, 0.14, '#f2eee2', 0, 0.72, 0, 16)) // 桌布垂边
+      grp.add(cyl(0.5, 0.5, 0.03, '#faf6ea', 0, 0.8, 0, 16)) // 桌面
+      for (const [px, pz] of [[-0.2, 0.12], [0.2, -0.12]] as const) {
+        grp.add(cyl(0.09, 0.09, 0.015, '#e8ecf0', px, 0.825, pz, 10)) // 餐盘
+        grp.add(box(0.02, 0.01, 0.12, '#c8ccd2', px + 0.13, 0.825, pz)) // 餐具
+      }
+      grp.add(cyl(0.035, 0.03, 0.09, '#9fc0d8', 0.05, 0.86, 0.2, 8)) // 水杯
+      grp.add(cyl(0.02, 0.03, 0.1, '#b89858', -0.05, 0.86, -0.2, 8)) // 小烛台
+      grp.add(glow(0.03, 0.045, 0.03, '#ffd890', -0.05, 0.945, -0.2)) // 烛火
+      for (const cz of [-0.78, 0.78]) { // 两把餐椅（对侧）
+        grp.add(box(0.4, 0.05, 0.4, '#7a5a34', 0, 0.44, cz)) // 椅面
+        grp.add(box(0.4, 0.5, 0.05, '#7a5a34', 0, 0.72, cz + (cz > 0 ? 0.18 : -0.18))) // 靠背
+        for (const lx of [-0.16, 0.16]) for (const lz of [-0.16, 0.16])
+          grp.add(box(0.04, 0.44, 0.04, '#5a4630', lx, 0.22, cz + lz)) // 椅腿
+      }
+      break
+    }
+
+    // ===================== v45：Level 274「杰瑞的房间」（教堂风穹顶 + 杰瑞栖木） =====================
+    case 'domering': {
+      // 教堂穹顶（置于大厅中央，非实心纯装饰）：同心环形肋 + 放射拱肋 + 顶心圣辉盘
+      // data.r=穹顶半径（米） data.apex=顶高（米）；拱肋自基环（r, 3.2m）收拢至顶心
+      const R = (s.data?.r as number | undefined) ?? 12
+      const apex = (s.data?.apex as number | undefined) ?? 5.1
+      const rib = '#e8ecf8', ribDark = '#b8c0e0', gold = '#d4af37'
+      // 同心环形肋（三环，越高越收）
+      for (const [ry, rr] of [[0.55, 0.88], [0.78, 0.62], [0.92, 0.34]] as const) {
+        const ring = new THREE.Mesh(new THREE.TorusGeometry(R * rr, 0.09, 6, 40), new THREE.MeshLambertMaterial({ color: rib }))
+        ring.rotation.x = Math.PI / 2
+        ring.position.set(0, apex * ry, 0)
+        grp.add(ring)
+      }
+      // 放射拱肋（8 根：基环 → 顶心的四分之一圆弧，小段盒体拼弧）
+      const y0 = 3.2
+      for (let ri = 0; ri < 8; ri++) {
+        const a = (ri / 8) * Math.PI * 2
+        for (let ti = 0; ti <= 6; ti++) {
+          const th = (ti / 6) * (Math.PI / 2) * 0.96
+          const rad = R * Math.cos(th)
+          const y = y0 + Math.sin(th) * (apex - y0)
+          grp.add(box(0.22, 0.22, 0.22, ti % 2 ? rib : ribDark, Math.cos(a) * rad, y, Math.sin(a) * rad))
+        }
+      }
+      // 顶心圣辉盘（自发光圆盘 + 光晕球：蓝白圣辉自穹顶洒落）
+      const halo = new THREE.Mesh(new THREE.SphereGeometry(0.5, 12, 8), new THREE.MeshBasicMaterial({ color: '#fdf8e2' }))
+      halo.position.set(0, apex + 0.05, 0)
+      grp.add(halo)
+      const disc = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 1.1, 0.08, 20), new THREE.MeshLambertMaterial({ color: gold }))
+      disc.position.set(0, apex - 0.15, 0)
+      grp.add(disc)
+      break
+    }
+    case 'perch': {
+      // 杰瑞的栖木：石座 + 木立柱 + 顶部横杆（鹉主 Entity 7 栖息于横杆上）+ 金饰环 + 供品小碟
+      grp.add(cyl(0.3, 0.36, 0.14, '#c8ccd8', 0, 0.07, 0, 12)) // 石座
+      grp.add(cyl(0.06, 0.09, 0.44, '#6a4e34', 0, 0.36, 0, 8)) // 木立柱
+      const bar = cyl(0.035, 0.035, 0.72, '#7a5a3a', 0, 0.55, 0, 8) // 顶部横杆
+      bar.rotation.z = Math.PI / 2
+      grp.add(bar)
+      grp.add(cyl(0.1, 0.1, 0.03, '#d4af37', 0, 0.5, 0, 10)) // 金饰环
+      grp.add(cyl(0.07, 0.05, 0.035, '#d8b060', 0.22, 0.16, 0.1, 8)) // 供品小碟（杏仁水色）
+      break
+    }
+
+    // ===================== v47：Level 274 教堂细化（讲坛/烛台/圣水盆） =====================
+    case 'pulpit': {
+      // 讲坛：石阶高台 + 斜面讲案 + 金饰鹉徽（教堂布道位；data.deg 朝向，缺省朝南 +z）
+      grp.add(box(1.0, 0.18, 1.0, '#c8ccd8', 0, 0.09, 0)) // 基座平台
+      grp.add(box(0.8, 0.16, 0.8, '#d4d8e4', 0, 0.26, -0.06)) // 上台面
+      grp.add(box(0.62, 0.72, 0.5, '#8a90b8', 0, 0.7, -0.1)) // 台身（蓝白石材）
+      const desk = box(0.62, 0.07, 0.44, '#6a4e34', 0, 1.12, -0.06) // 斜面讲案（木）
+      desk.rotation.x = -0.28
+      grp.add(desk)
+      grp.add(box(0.62, 0.05, 0.06, '#6a4e34', 0, 1.05, 0.16)) // 案前挡条
+      grp.add(box(0.16, 0.2, 0.02, '#d4af37', 0, 0.72, 0.16)) // 正面金饰鹉徽
+      grp.add(box(0.1, 0.1, 0.021, '#4142a5', 0, 0.72, 0.165)) // 徽上蓝羽
+      if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
+      break
+    }
+    case 'candlestand': {
+      // 烛台：细杆三臂烛架 + 自发光烛火（非实心；教堂烛火常明）
+      grp.add(cyl(0.09, 0.12, 0.04, '#3a352e', 0, 0.02, 0, 10)) // 底座
+      grp.add(cyl(0.016, 0.02, 1.06, '#4a4442', 0, 0.55, 0, 6)) // 主杆
+      for (const [ax, az] of [[-0.14, 0], [0.14, 0], [0, 0.14]] as const) {
+        grp.add(box(0.2, 0.02, 0.02, '#4a4442', ax / 2, 1.02, az / 2).rotateY(Math.atan2(az, ax || 1e-6))) // 横臂
+        grp.add(cyl(0.024, 0.02, 0.1, '#e8e0c8', ax, 1.1, az, 6)) // 烛身
+        grp.add(glow(0.02, 0.05, 0.02, '#ffd9a0', ax, 1.18, az)) // 烛火
+      }
+      break
+    }
+    case 'holyfont': {
+      // 圣水盆：石盆 + 蓝色圣水微光（信众以蓝为圣色——入门前以圣水净手）
+      grp.add(cyl(0.14, 0.2, 0.5, '#c8ccd8', 0, 0.25, 0, 10)) // 盆柱
+      grp.add(cyl(0.3, 0.22, 0.18, '#b8c0d4', 0, 0.58, 0, 12)) // 盆体
+      grp.add(cyl(0.24, 0.24, 0.02, '#4a7ac9', 0, 0.66, 0, 12)) // 蓝色圣水面
+      grp.add(glow(0.06, 0.02, 0.06, '#9adfff', 0, 0.68, 0)) // 水面圣辉
+      grp.add(cyl(0.32, 0.32, 0.03, '#d4af37', 0, 0.68, 0, 12)) // 金饰盆沿
+      break
+    }
 
     case 'prefabmark': return null
     case 'wet': return null
@@ -1685,13 +2622,6 @@ export function buildExit(kind: string, def: LevelDef): THREE.Group {
       const glow = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 2.1), glowMat)
       glow.position.set(0, 1.08, 0)
       grp.add(glow)
-      // 光晕：略大的半透明加色面片，同步闪烁，营造"一片光芒"感
-      const haloMat = new THREE.MeshBasicMaterial({ color: '#f5e37a', transparent: true, opacity: 0.14, blending: THREE.AdditiveBlending, depthWrite: false })
-      haloMat.userData.strobe = true
-      haloMat.userData.base = col('#f5e37a')
-      const halo = new THREE.Mesh(new THREE.PlaneGeometry(1.7, 2.7), haloMat)
-      halo.position.set(0, 1.1, 0.012)
-      grp.add(halo)
       break
     }
     case 'crack': case 'arcflash': {
@@ -1709,15 +2639,11 @@ export function buildExit(kind: string, def: LevelDef): THREE.Group {
       break
     }
     case 'collapse': case 'shaft': case 'window': {
-      // 黑洞 + 发光边缘
+      // 黑洞
       const hole = new THREE.Mesh(new THREE.CircleGeometry(0.7, 12), new THREE.MeshBasicMaterial({ color: '#000000' }))
       hole.rotation.x = -Math.PI / 2
       hole.position.y = 0.02
       grp.add(hole)
-      const ring = new THREE.Mesh(new THREE.RingGeometry(0.68, 0.85, 12), pulseMat())
-      ring.rotation.x = -Math.PI / 2
-      ring.position.y = 0.03
-      grp.add(ring)
       break
     }
     case 'freight': case 'elevatorshaft': case 'stafflift': case 'servicelift': {
@@ -1747,13 +2673,20 @@ export function buildExit(kind: string, def: LevelDef): THREE.Group {
       break
     }
     case 'graystairs': {
-      // 下行的灰色阶梯：12 级混凝土踏步沿走向下探（与引擎坡道 z=-1.23·s 严格对齐，无偏移）+ 两侧护栏 + 底部漆黑
+      // 下行的灰色阶梯：12 级混凝土踏步沿走向下探（与引擎坡道 z=-1.23·s 严格对齐，无偏移）+ 两侧顺坡护栏 + 底部漆黑
       for (let i = 0; i < 12; i++) {
         const z = 0.1 - i * 0.22
         grp.add(box(1.1, 0.1, 0.26, '#7a7a7e', 0, 1.23 * z - 0.06, z))
       }
-      grp.add(box(0.08, 0.55, 2.9, '#5e5e62', -0.6, 0.05, -1.05))
-      grp.add(box(0.08, 0.55, 2.9, '#5e5e62', 0.6, 0.05, -1.05))
+      // v29a 修复：护栏原来水平横架（深端悬空 2.6m 横跨洞口）——改为顺坡斜置，与踏步平行且高出踏面 ~0.85m
+      // 坡面：踏面 y=1.2308·z（z 为局部纵深，负值深入）；护栏中心线 y=1.2308·z+0.85，倾角 atan(1.2308)
+      for (const sx of [-0.6, 0.6]) {
+        const rail = box(0.08, 0.07, 4.0, '#5e5e62', sx, 1.2308 * -1.1 + 0.85, -1.1)
+        rail.rotation.x = -Math.atan(1.2308) // 局部 +z 轴向 → 顺坡向下
+        grp.add(rail)
+        // 入口端立柱（衔接地板与护栏端头）
+        grp.add(box(0.08, 0.9, 0.08, '#5e5e62', sx, 0.45, 0.28))
+      }
       const dark = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 3.6), new THREE.MeshBasicMaterial({ color: '#000000' }))
       dark.rotation.x = -Math.PI / 2
       dark.position.set(0, -3.3, -0.9)
@@ -1766,8 +2699,13 @@ export function buildExit(kind: string, def: LevelDef): THREE.Group {
         const z = 0.1 - i * 0.22
         grp.add(box(1.1, 0.1, 0.26, '#7a7a7e', 0, -1.23 * z - 0.06, z))
       }
-      grp.add(box(0.08, 0.55, 2.9, '#5e5e62', -0.6, 0.6, -1.05))
-      grp.add(box(0.08, 0.55, 2.9, '#5e5e62', 0.6, 0.6, -1.05))
+      // v29a 修复：同下行——护栏顺坡斜置（与上行踏步平行，高出踏面 ~0.85m）
+      for (const sx of [-0.6, 0.6]) {
+        const rail = box(0.08, 0.07, 4.0, '#5e5e62', sx, -1.2308 * -1.1 + 0.85, -1.1)
+        rail.rotation.x = Math.atan(1.2308) // 顺坡向上
+        grp.add(rail)
+        grp.add(box(0.08, 0.9, 0.08, '#5e5e62', sx, 0.45, 0.28))
+      }
       const dark = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 3.6), new THREE.MeshBasicMaterial({ color: '#000000' }))
       dark.rotation.x = Math.PI / 2
       dark.position.set(0, 3.4, -0.9)
@@ -1820,6 +2758,54 @@ export function buildExit(kind: string, def: LevelDef): THREE.Group {
       grp.add(box(0.24, 0.1, 0.02, '#c9c4b0', 0.44, 1.68, -0.48))
       break
     }
+    case 'fireexit': {
+      // 消防出口（独特模型·嵌墙镂空）：金属防火门（虚掩）+ 绿色 EXIT 灯牌 + 钢制门框 + 门后暗室
+      // 朝向约定：开口朝 -z（出口格/凹龛侧），组中心 = 墙格中心（geometry 已在该墙格开门洞）
+      grp.add(box(0.1, 2.3, 0.14, '#3a3f46', -0.45, 1.15, -0.4)) // 门框立柱
+      grp.add(box(0.1, 2.3, 0.14, '#3a3f46', 0.45, 1.15, -0.4))
+      grp.add(box(1.0, 0.12, 0.14, '#43484f', 0, 2.32, -0.4)) // 门楣
+      const dk = new THREE.Mesh(new THREE.PlaneGeometry(0.84, 2.2), new THREE.MeshBasicMaterial({ color: '#020402', side: THREE.DoubleSide }))
+      dk.position.set(0, 1.1, 0.5)
+      grp.add(dk)
+      grp.add(levelFloorQuad(1, 1, 0, 0.005, 0)) // 洞口地面与本层地板一致
+      // 金属防火门（向凹龛侧虚掩；推杆 + 观察小窗）
+      const panel = box(0.82, 2.2, 0.05, '#5a6068')
+      panel.geometry.translate(0.41, 0, 0)
+      panel.position.set(-0.41, 1.1, -0.42)
+      panel.rotation.y = 0.38
+      panel.add(box(0.5, 0.05, 0.03, '#43484f', 0.41, 0.05, 0.045)) // 推杆
+      panel.add(box(0.16, 0.24, 0.02, '#20262c', 0.41, 0.62, 0.04)) // 观察小窗（嵌丝玻璃）
+      grp.add(panel)
+      // 绿色 EXIT 灯牌（门楣上方，两侧可见）+ 底部绿光晕
+      const sign = new THREE.Mesh(new THREE.PlaneGeometry(0.72, 0.26), new THREE.MeshBasicMaterial({ map: exitSignTexture() }))
+      sign.position.set(0, 2.56, -0.42)
+      grp.add(sign)
+      const sign2 = new THREE.Mesh(new THREE.PlaneGeometry(0.72, 0.26), new THREE.MeshBasicMaterial({ map: exitSignTexture() }))
+      sign2.rotation.y = Math.PI
+      sign2.position.set(0, 2.56, -0.38)
+      grp.add(sign2)
+      grp.add(glow(0.5, 0.06, 0.06, '#3ae06a', 0, 2.42, -0.4))
+      break
+    }
+    case 'officedoor': {
+      // 办公走廊尽头（独特模型·嵌墙镂空）：L4 风办公室门——浅色门框 + 毛玻璃上板 + 木门下板 + 门后暗室
+      grp.add(box(0.08, 2.2, 0.1, '#8f8a7c', -0.44, 1.1, -0.42))
+      grp.add(box(0.08, 2.2, 0.1, '#8f8a7c', 0.44, 1.1, -0.42))
+      grp.add(box(0.96, 0.1, 0.1, '#9a958a', 0, 2.26, -0.42))
+      const dk = new THREE.Mesh(new THREE.PlaneGeometry(0.84, 2.1), new THREE.MeshBasicMaterial({ color: '#050504', side: THREE.DoubleSide }))
+      dk.position.set(0, 1.05, 0.5)
+      grp.add(dk)
+      grp.add(levelFloorQuad(1, 1, 0, 0.005, 0))
+      const panel = box(0.8, 2.05, 0.04, '#7a6a52')
+      panel.geometry.translate(0.4, 0, 0)
+      panel.position.set(-0.4, 1.04, -0.42)
+      panel.rotation.y = 0.5
+      panel.add(box(0.56, 0.7, 0.02, '#c4c7c2', 0.4, 0.55, 0.035)) // 毛玻璃上板
+      panel.add(box(0.03, 0.14, 0.045, '#c9a03a', 0.68, -0.02, 0.04)) // 黄铜把手
+      grp.add(panel)
+      grp.add(box(0.3, 0.12, 0.02, '#e8e4da', 0.44, 1.7, -0.48)) // 门牌
+      break
+    }
     default: {
       // 门框 + 发光门缝
       grp.add(box(0.15, 2.3, 0.4, def.palette.wallTop, -0.65, 1.15, 0))
@@ -1831,10 +2817,5 @@ export function buildExit(kind: string, def: LevelDef): THREE.Group {
       break
     }
   }
-  // 出口上方小射灯感（自发光地板光晕）
-  const halo = new THREE.Mesh(new THREE.CircleGeometry(1.2, 12), new THREE.MeshBasicMaterial({ color: '#f5e37a', transparent: true, opacity: 0.12 }))
-  halo.rotation.x = -Math.PI / 2
-  halo.position.y = 0.015
-  grp.add(halo)
   return grp
 }

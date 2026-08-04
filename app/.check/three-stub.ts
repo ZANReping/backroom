@@ -128,6 +128,13 @@ export class Shape {
   holes: unknown[] = []
 }
 export class Path extends Shape {}
+// v42：管道端头弧形拐弯（structures.ts pipes endEl）用到的曲线/管体
+export class QuadraticBezierCurve3 {
+  constructor(public v0 = new Vector3(), public v1 = new Vector3(), public v2 = new Vector3()) { void v0; void v1; void v2 }
+}
+export class CubicBezierCurve3 extends QuadraticBezierCurve3 {}
+export class CatmullRomCurve3 extends QuadraticBezierCurve3 {}
+export class TubeGeometry extends BoxGeometry { constructor(public curve?: unknown, ..._a: number[]) { super(); void curve; void _a } }
 export class Material {
   color = new Color(); emissive = new Color(); userData: Record<string, unknown> = {}
   opacity = 1; transparent = false; side = 0; visible = true; map: unknown = null

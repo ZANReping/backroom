@@ -20,6 +20,7 @@ export interface EntityDef {
   sight: number // 视野（瓦片）
   hearing: number // 听觉半径
   passive?: boolean // 不被激怒不攻击
+  noRetaliate?: boolean // 无危害：被攻击也绝不反击（Ferren；provoked 对其无效）
   stationary?: boolean
   hearsSprint?: boolean // 对跑步声敏感
   darkAmbusher?: boolean // 只在黑暗中逼近（光照下退却）
@@ -42,7 +43,15 @@ export interface EntityDef {
   voiceLure?: boolean // 用熟悉的人脸/声音诱骗（残破者、模仿者）
   smokeShroud?: boolean // 自身生成浓密翻涌的烟雾遮蔽真身（残破者）
   huge?: number // 巨型体量缩放（>1 时渲染放大且不进窄道）
+  scale?: number // 实例级体型缩放（<1 变小；L2 温顺死亡飞蛾 0.6，由 calm 生成标记带入）
   secondArms?: boolean // 胸甲内藏第二对带爪手臂（派对客）
+  // ===== v33：Level 1 实体特性 =====
+  lightHunter?: boolean // 趋光猎手：仅玩家手电亮时可索敌/追击；灯灭时退却（笑魇）
+  intimidatable?: boolean // 可被「直视眼睛 + 制造噪声」威慑定身（猎犬）
+  // ===== v41：Level 2 实体特性 =====
+  hunts?: string[] // 实体对实体仇恨：主动猎杀附近的指定类型实体（尸鼠猎杀死亡飞蛾）；被玩家激怒时优先反击玩家
+  // ===== v42：尸鼠（合并死亡鼠）特性 =====
+  grudge?: boolean // 记仇：被动实体被激怒后持续仇恨，脱战 8 秒也不平息（死亡鼠的凶猛反击血统）
   // ===== v25：栖息地（生成位置过滤）=====
   // indoor=仅室内瓦片（m.outdoor=0）；outdoor=仅室外瓦片（m.outdoor=1，如小巷/街道/田野/海面）；
   // any（缺省）=随意。生成时无符合瓦片则降级 any 并计数告警。
@@ -76,4 +85,9 @@ export interface Entity {
   screamed?: boolean // 久坐者
   disguised?: string // 窃皮者伪装成的物品类型
   fakeT?: number // 复印机幽灵幻影计时
+  scrapeT?: number // 穿墙沙沙声计时（钝人）
+  intimidated?: boolean // 猎犬：正处于「直视+噪音」威慑中（播报去抖）
+  provoked?: boolean // 被动实体（无面灵）：被玩家攻击后激怒，持续反击直到脱战平息
+  targetEnt?: Entity // 实体对实体仇恨目标（被其他实体攻击后反击伤害者——死亡飞蛾反击尸鼠）
+  blackoutSpawn?: boolean // 停电期间生成（笑魇）：灯光恢复时消散
 }

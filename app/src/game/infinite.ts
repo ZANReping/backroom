@@ -6,6 +6,7 @@
 import { RNG } from './rng'
 import { UNIVERSAL_ITEMS } from './items'
 import { makeEntity, ENTITIES, type Entity } from './entities'
+import type { NpcState } from './npcs'
 import type { GameMap } from './mapgen'
 import { fixHanging, HANGING_KINDS } from './mapgen'
 import type { ExitInstance, GroundItem, LevelDef, LightSource, Structure } from './types'
@@ -70,12 +71,15 @@ export interface LiveChunk {
   wet: Uint8Array
   elev: Uint8Array
   tint: Uint8Array // 0=无 1=马尼拉 2=红室 3=熄灯
+  crawl: Uint8Array // v41：蹲伏低通道（L2 扭曲的廊道；其余层级恒全 0）
   // 以下为「活体」对象（窗口坐标，随窗口平移；跨平移保持对象身份与状态）
   structures: Structure[]
   items: GroundItem[]
   lights: LightSource[]
   exits: ExitInstance[]
   entities: Entity[] // v25：chunk 生成实体（L0 实体绝迹故恒为空；卸载即消失，不持久化动态状态）
+  npcs: NpcState[] // v39：chunk 生成 NPC（衔尾段 BRC 员工；与实体同一契约——卸载即消失，重访按 raw 重建）
+  habFallback?: Record<string, number> // v27：本 chunk 栖息地降级计数（缝合时并入 m.habitatFallback）
 }
 
 // 被卸载 chunk 的动态状态（loot/开门/已读涂鸦/掉落物/追加光源/出口发现）
@@ -180,6 +184,7 @@ function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: number, forc
   const elev = new Uint8Array(CS * CS)
   const step = new Uint8Array(CS * CS)
   const tint = new Uint8Array(CS * CS)
+  const crawl = new Uint8Array(CS * CS)
   const structures: Structure[] = []
   const items: GroundItem[] = []
   const lights: LightSource[] = []
@@ -572,9 +577,9 @@ function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: number, forc
   // L0 设定实体绝迹（def.entities=[]），本块默认不产生任何实体；若未来无限层级配置实体：
   // indoor=普通地板（chunk 全室内，无 outdoor=1 瓦片）、outdoor=室外瓦片、any=随意；
   // 无符合瓦片（如 outdoor 栖息地在全室内 chunk）时降级 any 并计数告警。
+  const habFallback: Record<string, number> = {}
   if (def.entities.length > 0) {
     const outdoorAt = (_x: number, _y: number) => false // L0 chunk 无室外瓦片（全室内）
-    let habMiss = 0
     for (const se of def.entities) {
       const hab = ENTITIES[se.type]?.habitat ?? 'any'
       const n = rng.int(se.min, se.max)
@@ -590,10 +595,11 @@ function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: number, forc
           return null
         }
         let p = tryPick(hab)
-        if (!p && hab !== 'any') { habMiss++; p = tryPick('any') }
+        if (!p && hab !== 'any') { habFallback[`${se.type}:${hab}`] = (habFallback[`${se.type}:${hab}`] ?? 0) + 1; p = tryPick('any') }
         if (p) entities.push({ type: se.type, x: WX + p.x + 0.5, y: WY + p.y + 0.5 })
       }
     }
+    const habMiss = Object.values(habFallback).reduce((a, b) => a + b, 0)
     if (habMiss > 0) console.warn(`[habitat] 无限 chunk(${cx},${cy}) 无符合瓦片，降级 any ×${habMiss}`)
   }
 
@@ -614,7 +620,7 @@ function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: number, forc
     }
   }
 
-  return { variant, tiles, wet, elev, step, tint, structures, items, lights, exits, entities }
+  return { variant, tiles, wet, elev, step, tint, crawl, structures, items, lights, exits, entities, habFallback }
 }
 
 // ================= 窗口管理：加载/卸载/平移/状态持久化 =================
@@ -641,7 +647,8 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
       if (saved.data) {
         live.data = { ...live.data, ...saved.data }
         // v31：可交互门（维护通廊墨黑金属门）——恢复 open 时同步 solid（开门不阻挡）
-        if (live.kind === 'inkdoor' && saved.data.open !== undefined) live.solid = !saved.data.open
+        // v41：hoteldoor 同样恢复（L2 废弃公共带的房间门）
+        if ((live.kind === 'inkdoor' || live.kind === 'hoteldoor') && saved.data.open !== undefined) live.solid = !saved.data.open
       }
     }
     return live
@@ -657,8 +664,23 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
   for (const e of st?.extraLights ?? []) lights.push({ ...e, x: e.x - ox, y: e.y - oy })
   const exits: ExitInstance[] = raw.exits.map((e) => ({ def: e.def, x: e.x - ox, y: e.y - oy, discovered: st?.exitDisc ?? false }))
   // v25：chunk 实体（栖息地过滤结果，世界坐标 → 窗口坐标）
-  const entities: Entity[] = raw.entities.map((e) => makeEntity(e.type, e.x - ox, e.y - oy))
-  return { key, cx, cy, variant: raw.variant, tiles: raw.tiles, wet: raw.wet, elev: raw.elev, tint: raw.tint, structures, items, lights, exits, entities }
+  // v41：calm 实例标记（L2 被动死亡飞蛾）——浅拷贝 def 置被动语义，不污染共享实体定义
+  // v44：scale 实例标记（L2 温顺死亡飞蛾体型 0.6）——与 calm 一并浅拷贝带入
+  const entities: Entity[] = raw.entities.map((e) => {
+    const ent = makeEntity(e.type, e.x - ox, e.y - oy)
+    if (e.calm || e.scale !== undefined) ent.def = { ...ent.def, ...(e.calm ? { passive: true } : {}), ...(e.scale !== undefined ? { scale: e.scale } : {}) }
+    return ent
+  })
+  // v39：chunk NPC（BRC 员工；定义由 raw 内嵌，工作点即岗位锚点，面向工作面）
+  const npcs: NpcState[] = (raw.npcs ?? []).map((sp) => ({
+    id: sp.def.id, def: sp.def,
+    x: sp.x - ox, y: sp.y - oy, facing: sp.facing ?? Math.random() * Math.PI * 2,
+    homeX: sp.x - ox, homeY: sp.y - oy, homeFacing: sp.facing,
+    tx: sp.x - ox, ty: sp.y - oy,
+    moveT: 1 + Math.random() * 5, bubbleText: '', bubbleT: 0,
+    hp: sp.def.faction === 'brc' ? 55 : sp.def.faction === 'jerry' ? 45 : undefined, // BRC 员工/信众可伤害可杀死；其余 NPC 无敌（据点居民契约）
+  }))
+  return { key, cx, cy, variant: raw.variant, tiles: raw.tiles, wet: raw.wet, elev: raw.elev, tint: raw.tint, crawl: raw.crawl, structures, items, lights, exits, entities, npcs, habFallback: raw.habFallback }
 }
 
 // 把已加载 chunk 内容缝合进窗口数组与对象列表
@@ -671,7 +693,9 @@ function stitch(m: GameMap, explored?: Uint8Array) {
   m.stair.fill(0); m.liquid.fill(0); m.tint.fill(0)
   if (explored) explored.fill(0)
   m.structures = []; m.items = []; m.lights = []; m.exits = []
+  const habFb: Record<string, number> = {}
   for (const c of inf.chunks.values()) {
+    if (c.habFallback) for (const [k, v] of Object.entries(c.habFallback)) habFb[k] = (habFb[k] ?? 0) + v
     const x0 = c.cx * CS - inf.ox, y0 = c.cy * CS - inf.oy
     for (let y = 0; y < CS; y++) {
       const dstRow = (y0 + y) * W + x0
@@ -682,6 +706,7 @@ function stitch(m: GameMap, explored?: Uint8Array) {
         m.wet[di] = c.wet[si]
         m.elev[di] = c.elev[si]
         m.tint[di] = c.tint[si]
+        m.crawl[di] = c.crawl[si] // v41：蹲伏低通道随窗口缝合（L2 扭曲的廊道）
       }
     }
     // 台阶：raw 的 step 未存进 LiveChunk（pit 台阶由 elev 派生重建）——这里按 elev 边重建
@@ -698,6 +723,8 @@ function stitch(m: GameMap, explored?: Uint8Array) {
           for (let x = 0; x < CS; x++) if (bm[y * CS + x]) explored[(y0 + y) * W + x0 + x] = 1
     }
   }
+  // v27：栖息地降级计数并入（与有限层 GameMap.habitatFallback 同契约，供验证器/调试面板读取）
+  m.habitatFallback = habFb
   // v29：L1 停电事件——剔除层级固有灯（维护通廊 keep 灯与玩家追加灯保留）
   if (inf.blackout) m.lights = m.lights.filter((l) => l.keep === 1 || !l.gen)
   // pit 台阶重建：低洼与正常高度交界处生成双向坡道（确定性，与生成器一致）
@@ -835,6 +862,24 @@ export function generateInfinite(def: LevelDef, seed: number, firstVisit = true)
       }
     }
   }
+  // v34：首次进入 Level 1——出生点旁放「致新流浪者的纸条」+ 一瓶杏仁水
+  // （wikidot Level 1：探险者总署把纸条附在特别制作的杏仁水瓶上；查看纸条即收录图鉴「文档」）
+  if (firstVisit && def.id === 1) {
+    const rng0 = new RNG(h32(seed, 0x5eed, 1))
+    const scatter = ['welcomenote', 'almond']
+    const solidAt0 = (x: number, y: number) =>
+      m.structures.some((s) => s.solid && x >= s.x && x < s.x + s.w && y >= s.y && y < s.y + s.h)
+    let placed = 0
+    for (let r = 1; r < 6 && placed < scatter.length; r++) {
+      for (let t = 0; t < 40 && placed < scatter.length; t++) {
+        const x = m.spawn.x + rng0.int(-r, r), y = m.spawn.y + rng0.int(-r, r)
+        if (x < 1 || y < 1 || x >= W - 1 || y >= W - 1) continue
+        if (m.tiles[y * W + x] !== 1 || solidAt0(x, y)) continue
+        if (m.items.some((it) => Math.abs(it.x - x - 0.5) < 0.9 && Math.abs(it.y - y - 0.5) < 0.9)) continue
+        m.items.push({ id: Math.random(), type: scatter[placed++], x: x + 0.5, y: y + 0.5 })
+      }
+    }
+  }
   return m
 }
 
@@ -867,6 +912,34 @@ export function updateInfinite(m: GameMap, def: LevelDef, px: number, py: number
   absorb(m.items, (it) => it.id < GEN_ITEM_BASE, (c) => c.items)
   absorb(m.lights, (l) => !l.gen, (c) => c.lights)
 
+  // v33：实体归属重定——追击/游荡离开出生 chunk 的实体改挂当前所在 chunk。
+  // 否则其实体仍属出生 chunk，该 chunk 掉出窗口卸载时会把正在玩家脸上的实体一并移除
+  // （“追击途中凭空消失”）；重定后实体随所在 chunk 存活，只有离玩家足够远才被卸载。
+  for (const e of m.entities) {
+    if (e.dead) continue
+    const ccx = Math.floor((inf.ox + e.x) / CS), ccy = Math.floor((inf.oy + e.y) / CS)
+    const home = inf.chunks.get(chunkKey(ccx, ccy))
+    if (home?.entities.includes(e)) continue
+    // 脱离旧归属（所在 chunk 未加载时 home 为空：高速位移的兜底——先摘出来，走下方无归属平移）
+    for (const oc of inf.chunks.values()) {
+      const i = oc.entities.indexOf(e)
+      if (i >= 0) { oc.entities.splice(i, 1); break }
+    }
+    if (home) home.entities.push(e)
+  }
+  // v39：NPC 归属重定（与实体同契约）——锚定员工本不移动，仅坦白后敌对追击的员工会跨 chunk
+  for (const c of inf.chunks.values()) {
+    for (let i = c.npcs.length - 1; i >= 0; i--) {
+      const n = c.npcs[i]
+      if (n.dead) continue
+      const ccx = Math.floor((inf.ox + n.x) / CS), ccy = Math.floor((inf.oy + n.y) / CS)
+      const home = inf.chunks.get(chunkKey(ccx, ccy))
+      if (!home || home === c) continue
+      c.npcs.splice(i, 1)
+      home.npcs.push(n)
+    }
+  }
+
   // 卸载窗口外 chunk（持久化动态状态）
   const ncx0 = pcx - WIN_R, ncy0 = pcy - WIN_R
   for (const c of [...inf.chunks.values()]) {
@@ -878,8 +951,12 @@ export function updateInfinite(m: GameMap, def: LevelDef, px: number, py: number
     for (const it of c.items) { it.x -= dx; it.y -= dy }
     for (const l of c.lights) { l.x -= dx; l.y -= dy }
     for (const e of c.exits) { e.x -= dx; e.y -= dy }
-    for (const e of c.entities) { e.x -= dx; e.y -= dy } // v25
+    for (const e of c.entities) { e.x -= dx; e.y -= dy; e.targetX -= dx; e.targetY -= dy } // v25；v33 补 target（游荡/调查目标同为窗口坐标）
+    for (const n of c.npcs) { n.x -= dx; n.y -= dy; n.homeX -= dx; n.homeY -= dy; n.tx -= dx; n.ty -= dy } // v39：chunk NPC 同样随窗口平移
   }
+  // v33：仍无 chunk 归属的实体（所在 chunk 未加载的召唤/事件实体）同样随窗口平移，
+  // 否则窗口跳动后它们保留旧窗口坐标——视觉上相对世界“瞬移”一个 chunk
+  for (const e of m.entities) if (!inAnyChunk((c) => c.entities, e)) { e.x -= dx; e.y -= dy; e.targetX -= dx; e.targetY -= dy }
   inf.ox = nox; inf.oy = noy
   // 加载新进入窗口的 chunk
   for (let cy = ncy0; cy < ncy0 + WIN_CHUNKS; cy++)

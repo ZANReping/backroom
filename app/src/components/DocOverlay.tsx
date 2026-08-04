@@ -9,7 +9,49 @@ export default function DocOverlay({ docId, onClose }: { docId: string; onClose:
   const doc = DOCS[docId]
   if (!doc) return null
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 p-4" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 p-4"
+      style={{ WebkitTouchCallout: 'none' }}
+      onClick={onClose}
+      // v29b：移动端改为正常点按关闭——touchend 直触（不再依赖 iOS 合成 click，避免误变长按判定）
+      onTouchEnd={(e) => { if (e.target === e.currentTarget) onClose() }}
+    >
+      {doc.style === 'note' ? (
+        /* 手写纸条风格：泛黄横线纸 + 斜体，无红头/落款（v34：L1 迎新纸条） */
+        <div
+          className="anim-slideUp relative flex max-h-[86dvh] w-full max-w-[620px] flex-col overflow-hidden rounded-sm"
+          style={{
+            background: '#f3e9c6',
+            backgroundImage:
+              'repeating-linear-gradient(to bottom, transparent 0, transparent 27px, rgba(122,100,58,0.30) 27px, rgba(122,100,58,0.30) 28px)',
+            border: '1px solid #cfc09a',
+            boxShadow: '0 14px 46px rgba(0,0,0,0.75), inset 0 0 60px rgba(150,130,80,0.16)',
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="overflow-y-auto px-8 pb-2 pt-6" style={{ fontFamily: SERIF }}>
+            {doc.body.map((sec, i) => (
+              <section key={i}>
+                {sec.paras.map((para, j) => (
+                  <p key={j} className="text-justify" style={{ color: '#4d4331', fontSize: 15, lineHeight: '28px', fontStyle: 'italic', margin: 0, marginBottom: 28 }}>
+                    {para}
+                  </p>
+                ))}
+              </section>
+            ))}
+          </div>
+          <div className="shrink-0 px-8 py-2 text-right" style={{ background: 'rgba(0,0,0,0.04)' }}>
+            <button
+              className="font-mono2 px-4 py-1 text-[12px]"
+              style={{ color: '#6a6455', border: '1px solid #cfc09a', background: 'rgba(255,252,238,0.7)' }}
+              onClick={() => { audio.uiTick(); onClose() }}
+              onTouchStart={() => { audio.uiTick(); onClose() }}
+            >
+              放回（Esc）
+            </button>
+          </div>
+        </div>
+      ) : (
       <div
         className="anim-slideUp relative flex max-h-[86dvh] w-full max-w-[620px] flex-col overflow-hidden rounded-sm"
         style={{
@@ -65,11 +107,14 @@ export default function DocOverlay({ docId, onClose }: { docId: string; onClose:
             className="font-mono2 px-4 py-1 text-[12px]"
             style={{ color: '#6a6455', border: '1px solid #c9c2ae', background: 'rgba(255,252,244,0.7)' }}
             onClick={() => { audio.uiTick(); onClose() }}
+            // v29b：移动端正常点按即关闭（合成 click 重复触发 onClose 亦幂等无害）
+            onTouchStart={() => { audio.uiTick(); onClose() }}
           >
             放回（Esc）
           </button>
         </div>
       </div>
+      )}
     </div>
   )
 }

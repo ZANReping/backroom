@@ -113,7 +113,8 @@ console.log('[6] v17 L0 教学关卡设定')
   ok(L0.name === '教学关卡', 'L0 显示名=教学关卡（内部 id 不变）', `id=${L0.id}`)
   ok(L0.infinite === true, 'L0 infinite=true（无边界无限 chunk 生成）')
   ok(L0.entities.length === 0, 'L0 实体绝迹（定义 entities=0，含通用/特殊池均不生成）')
-  ok(L0.exits.length === 1 && L0.exits[0].kind === 'flickerdoor' && L0.exits[0].dest === 1, 'L0 唯一出口=闪烁门→L1')
+  // v27：用户版新增罕见第二出口「向下的灰色阶梯」（仍 →L1），主出口闪烁门不变；断言放宽为「主出口=闪烁门→L1 且所有出口均 →L1」
+  ok(L0.exits[0].kind === 'flickerdoor' && L0.exits[0].dest === 1 && L0.exits.every((e) => e.dest === 1), 'L0 主出口=闪烁门→L1（v27 起允许额外出口，均 →L1）')
   const m0 = generateLevel(L0, 20260726)
   ok(!!m0.inf, 'L0 运行时携带无限模式状态（inf）')
   ok(m0.entities.length === 0, 'L0 运行时实体数=0')
@@ -137,6 +138,35 @@ console.log('[7] v25 新物品图标')
       ok(!dup, `${t}: 配色全局唯一`, dup ? `与 ${dup[0]} 同色 ${c}` : c)
     }
   }
+}
+
+// ---------- v28：53 件原创像素画物品图标（pixel/item_<id>.png，128×128 RGBA，HUD 登记 + pixelated 渲染）----------
+console.log('[8] v28 原创像素画图标')
+{
+  const PIXEL_DIR = `${ICON_DIR}/pixel`
+  const itemIds = Object.keys(ITEMS).sort()
+  ok(existsSync(PIXEL_DIR), 'pixel/ 目录存在')
+  const pixelPngs = existsSync(PIXEL_DIR) ? readdirSync(PIXEL_DIR).filter((f) => f.startsWith('item_') && f.endsWith('.png')) : []
+  ok(pixelPngs.length === itemIds.length, `像素贴图数量=${itemIds.length}（53 件全覆盖）`, `${pixelPngs.length} 张`)
+  const pxBlock = hudSrc.slice(hudSrc.indexOf('const PIXEL_ICON'), hudSrc.indexOf('const ICON_IMG'))
+  for (const id of itemIds) {
+    const f = `${PIXEL_DIR}/item_${id}.png`
+    ok(existsSync(f), `${id}: 像素贴图存在`)
+    if (existsSync(f)) {
+      const buf = readFileSync(f)
+      const isPng = buf.length > 33 && buf[0] === 0x89 && buf[1] === 0x50
+      const w = isPng ? buf.readUInt32BE(16) : 0
+      const h = isPng ? buf.readUInt32BE(20) : 0
+      const colorType = isPng ? buf[25] : 0
+      ok(isPng && w === 128 && h === 128 && colorType === 6, `${id}: 128×128 RGBA`, isPng ? `${w}×${h} ct=${colorType} ${buf.length}B` : '非 PNG')
+      ok(buf.length < 64 * 1024, `${id}: <64KB`, `${buf.length}B`)
+    }
+    ok(new RegExp(`\\b${id}: true`).test(pxBlock), `${id}: PIXEL_ICON 已登记`)
+  }
+  ok(hudSrc.includes('textures/icons/pixel/item_'), 'ItemGlyph 使用 pixel/ 路径')
+  ok(hudSrc.includes('pixelErr'), '像素贴图 404 回退链（pixel→旧贴图→SVG）')
+  ok(hudSrc.includes("imageRendering: 'pixelated'"), '图标 img pixelated 渲染')
+  ok(sources.includes('v28') && sources.includes('原创像素画'), 'SOURCES.md 记录 v28 原创像素画来源说明')
 }
 
 console.log(`\n结果：${pass} 通过 / ${fail} 失败`)

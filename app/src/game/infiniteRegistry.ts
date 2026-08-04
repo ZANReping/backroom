@@ -1,5 +1,6 @@
 // 多无限层级注册表（独立无依赖模块，避免 infinite.ts ↔ infiniteL1.ts 循环初始化 TDZ）
 import type { LevelDef, Structure, GroundItem, LightSource, ExitInstance } from './types'
+import type { NpcDef } from './npcs' // 仅类型引用（编译期擦除，不产生运行时环）
 
 // chunk 原始生成数据（世界坐标内容；纯函数：同种子同坐标必一致）
 export interface GenChunk {
@@ -9,11 +10,19 @@ export interface GenChunk {
   elev: Uint8Array
   step: Uint8Array
   tint: Uint8Array
+  crawl: Uint8Array // v41：蹲伏低通道（L2 扭曲的廊道横穿管道；L0/L1 恒全 0）
   structures: Structure[]
   items: GroundItem[]
   lights: LightSource[]
   exits: ExitInstance[]
-  entities: { type: string; x: number; y: number }[]
+  // v41：calm=实例级被动（L2 死亡飞蛾通常不主动攻击玩家）——instantiate 浅拷贝 def 置 passive
+  // v44：scale=实例级体型缩放（L2 温顺死亡飞蛾 0.6）——instantiate 一并浅拷贝带入 def
+  entities: { type: string; x: number; y: number; calm?: boolean; scale?: number }[]
+  // v39：chunk 生成 NPC（BRC 员工随衔尾段 chunk 生成；定义完整内嵌，按 chunk 确定性生成）
+  npcs?: { def: NpcDef; x: number; y: number; facing?: number }[]
+  // v27：栖息地降级计数（`${type}:${habitat}` → 次数，与有限层 GameMap.habitatFallback 同契约）；
+  // 无符合瓦片时降级 any 并在此计数，缝合进窗口时并入 m.habitatFallback
+  habFallback?: Record<string, number>
 }
 
 export interface InfiniteLevelImpl {

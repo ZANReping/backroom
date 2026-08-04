@@ -16,7 +16,7 @@ def: LevelDef,
 wallH: number,
 g: THREE.Group,
 fixtures: { mat: THREE.MeshBasicMaterial; seed: number }[],
-range?: { x0: number; y0: number; x1: number; y1: number }, // v17：无限模式按 chunk 范围构建
+range?: { x0: number; y0: number; x1: number; y1: number; variant?: string }, // v17：无限模式按 chunk 范围构建（含 chunk 变体）
 ) {
   const rng = mulberry(def.id * 7919 + m.w * 131 + m.h * 17 + (range ? range.x0 * 911 + range.y0 * 557 : 0))
   const H = wallH
@@ -165,9 +165,9 @@ range?: { x0: number; y0: number; x1: number; y1: number }, // v17：无限模�
       break
     }
     case 'garage': { // L1 停车场
-      // 废弃车变种（纯视觉，不同颜色/歪斜/破损）
+      // 废弃车变种（纯视觉，不同颜色/歪斜/破损）——仅天鹰段（parking）生成，其余区段不出汽车
       const carCols = ['#4a3f38', '#39454a', '#4a4440', '#3d2f2f', '#2f3a35', '#46402e']
-      for (let i = 0; i < ri(4, 6); i++) {
+      for (let i = 0, n = range?.variant && range.variant !== 'parking' ? 0 : ri(4, 6); i < n; i++) {
         const s = pickFloor(); if (!s) break
         const x = s.x + 0.5, z = s.y + 0.5, ry = rng() < 0.5 ? 0 : Math.PI / 2, skew = rf(-0.08, 0.08)
         const cc = carCols[Math.floor(rng() * carCols.length)]
@@ -218,14 +218,11 @@ range?: { x0: number; y0: number; x1: number; y1: number }, // v17：无限模�
         const s = pickWall(); if (!s) break
         wallDecal(s, texGaugeDial(ns()), 0.3, 0.3, rf(1.3, 1.7), 0.97)
       }
-      // 警示带（横跨通道，双面）
+      // 警示带（v42 修复浮空：贴到最近墙面张贴——黄黑条纹警告条，不再横跨通道悬空）
       for (let i = 0; i < ri(3, 4); i++) {
-        const s = pickFloor(); if (!s) break
-        const mat = new THREE.MeshLambertMaterial({ map: texCautionTape(ns()), transparent: true, depthWrite: false, side: THREE.DoubleSide })
-        const p = new THREE.Mesh(new THREE.PlaneGeometry(rf(1.4, 2.2), 0.12), mat)
-        p.position.set(s.x + 0.5, rf(1.0, 1.35), s.y + 0.5)
-        p.rotation.y = rng() < 0.5 ? 0 : Math.PI / 2
-        g.add(p)
+        const s = pickWall(); if (!s) break
+        const p = wallDecal(s, texCautionTape(ns()), rf(1.4, 2.2), 0.12, rf(1.0, 1.35), 0.96)
+        p.userData.cautionTape = { x: s.x, y: s.y, d: s.d } // 冒烟断言用：贴墙锚点（瓦片 + 墙方向）
       }
       // 滴水管 + 小水洼反光
       for (let i = 0; i < ri(3, 5); i++) {

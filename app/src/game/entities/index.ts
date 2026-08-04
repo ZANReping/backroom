@@ -7,6 +7,7 @@ import type { Entity, EntityDef } from './types'
 
 export type { AIState, EntityCodex, EntityDef, Entity } from './types'
 export { loadSeen, recordEncounter, unlockTier } from './codex'
+export { entitySpawnLevels, entityThreat, entityRarity, ENTITY_RARITY_LABEL, type EntitySpawn, type EntityRarity } from './spawns'
 
 export const ENTITIES: Record<string, EntityDef> = {
   // 通用实体（设定依据 Backrooms Wikidot / Fandom 官方条目，M.E.G. 档案风格）
@@ -26,7 +27,7 @@ export function makeEntity(type: string, x: number, y: number, z = 0): Entity {
     stateT: 0, attackCd: 0, stunT: 0,
     facing: Math.random() * Math.PI * 2,
     lungeT: 0, dead: false, deathT: 0, animT: Math.random() * 10,
-    hidden: def.ambusher ? true : undefined,
+    hidden: def.ambusher || type === 'arms' ? true : undefined,
     disguised: type === 'skinstealer' ? 'bandage' : undefined,
   }
 }

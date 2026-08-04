@@ -25,6 +25,9 @@ export interface OccupyOpts {
 export function canOccupy(m: GameMap, x: number, y: number, r = PLAYER_RADIUS, opts: OccupyOpts = {}): boolean {
   const z = opts.z ?? 0
   const band: 0 | 1 = opts.band ?? (z >= 1.5 ? 1 : 0)
+  // v46：中心格是否为楼梯坡道（爬楼梯途中 z≥1.5 换带时，身体悬出坡道边缘属正常，见下方溢出放行）
+  const ctx = Math.floor(x), cty = Math.floor(y)
+  const centerStair = ctx >= 0 && cty >= 0 && ctx < m.w && cty < m.h && (m.stair[cty * m.w + ctx] & 7) !== 0
   const offs = [
     [-r, -r], [r, -r], [-r, r], [r, r],
     [-r, 0], [r, 0], [0, -r], [0, r],
@@ -34,13 +37,20 @@ export function canOccupy(m: GameMap, x: number, y: number, r = PLAYER_RADIUS, o
     const tx = Math.floor(sx), ty = Math.floor(sy)
     if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return false
     const i = ty * m.w + tx
+    let spill = false // 本采样格为「楼梯溢出格」（中心在坡道、身体悬到主层地板上空）
     if (m.stair[i] & 7) {
       // 楼梯坡道：两层带均可通行（连续爬升）；实心结构按楼层过滤（v26：精细碰撞盒亚瓦片判定）
       if (structBlocksPoint(m, sx, sy, z, band)) return false
     } else if (band === 1) {
-      // 上层：须有上层楼板且非上层墙；实心结构按上层过滤
-      if (m.up[i] !== 1 || m.upWall[i] === 1) return false
-      if (structBlocksPoint(m, sx, sy, z, 1)) return false
+      if (m.up[i] !== 1 || m.upWall[i] === 1) {
+        // v46 楼梯溢出放行：中心在坡道、采样格是普通主层地板（上空无物）→ 放行
+        // （此前一律按「上层无楼板」拦截——爬坡到 z≥1.5 换带瞬间，半径采样扫到坡道旁的
+        // 一层地板即卡死，是「阶梯边缘移动卡死 / 多层交界处无法跳跃」的根因）；
+        // 跌落保护不变：中心不在坡道时，悬出夹楼边缘仍被拦截
+        if (!centerStair || m.tiles[i] !== 1) return false
+        if (structBlocksPoint(m, sx, sy, z, 0) || structBlocksPoint(m, sx, sy, z, 1)) return false // 两层带结构都挡（主层立柱/楼梯口 2F 实心侧挡）
+        spill = true
+      } else if (structBlocksPoint(m, sx, sy, z, 1)) return false
     } else {
       if (m.tiles[i] !== 1) return false
       if (structBlocksPoint(m, sx, sy, z, 0)) return false
@@ -48,7 +58,8 @@ export function canOccupy(m: GameMap, x: number, y: number, r = PLAYER_RADIUS, o
       if (m.crawl && m.crawl[i] === 1 && !opts.crouch) return false
     }
     // 高度档：目标地面高于脚底 STEP_UP 以上不可直接踏上（跳跃抬高 z 后放行）
-    const g = groundHeightAt(m, sx, sy, band)
+    // （溢出格按主层地面计——悬在一层上空时一层地面远低于脚底，不再误拦）
+    const g = groundHeightAt(m, sx, sy, spill ? 0 : band)
     if (g - z > STEP_UP) return false
   }
   return true

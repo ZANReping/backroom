@@ -4,6 +4,7 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import type { GameMap } from '../mapgen'
 import type { LevelDef } from '../types'
 import { col, SKY } from './shared'
+import { makeSkyMesh, SKY_PROFILES } from './skybox'
 
 export function buildSkyAndLiquids(m: GameMap, def: LevelDef, g: THREE.Group) {
 // ---- v7 室外：天空盒 + 远景低模楼群剪影 + 泳池水面 ----
@@ -38,11 +39,13 @@ export function buildSkyAndLiquids(m: GameMap, def: LevelDef, g: THREE.Group) {
   // 天空色——「藏青虚空立方体/大片区域虚空化」的根源；现盒面恒在地图边界之外，
   // 室内墙面不会再被天空覆盖，天空只经真正的室外开口（无天花板区/护墙上方）可见。
   if (regions.length) {
-    const sky = new THREE.Mesh(
+    // v35：有配置的层级用精致程序化天空盒（日月/星野/银河/分形云）；其余保持纯色盒回退
+    const prof = SKY_PROFILES[def.id]
+    const sky = makeSkyMesh(m, def) ?? new THREE.Mesh(
       new THREE.BoxGeometry(m.w + 20, 30, m.h + 20),
       new THREE.MeshBasicMaterial({ color: skyHex, side: THREE.BackSide, fog: false }),
     )
-    sky.position.set(m.w / 2, 9, m.h / 2)
+    if (!prof) sky.position.set(m.w / 2, 9, m.h / 2)
     g.add(sky)
   }
   for (const R of regions) {
@@ -52,7 +55,7 @@ export function buildSkyAndLiquids(m: GameMap, def: LevelDef, g: THREE.Group) {
     // 现在逐个做瓦片 AABB 检测：包围盒（含 0.6m 余量）覆盖任何地板瓦片则丢弃。
     let sd = (Math.floor(R.cx * 131 + R.cz * 719) >>> 0) || 1
     const rnd = () => ((sd = (sd * 1664525 + 1013904223) >>> 0) / 4294967296)
-    const silMat = new THREE.MeshBasicMaterial({ color: col(skyHex).multiplyScalar(0.45), fog: true })
+    const silMat = new THREE.MeshBasicMaterial({ color: col(SKY_PROFILES[def.id]?.horizon ?? skyHex).multiplyScalar(0.45), fog: true })
     const silGeos: THREE.BufferGeometry[] = []
     const overlapsFloor = (cx: number, cz: number, hw: number, hd: number) => {
       const x0 = Math.max(0, Math.floor(cx - hw - 0.6)), x1 = Math.min(m.w - 1, Math.floor(cx + hw + 0.6))

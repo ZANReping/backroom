@@ -19,7 +19,7 @@ export type ExitAnim = 'bloom' | 'shutter' | 'iris' | 'glitch' | 'fall' | 'nocli
 export interface ExitDef {
   kind: string
   name: string
-  dest: number | 'random' | 'win'
+  dest: number | 'random' | 'win' | 'back' // back=返回进入据点前的层级（engine.outpostReturn）
   anim: ExitAnim
   req?: { fuses?: number; keycard?: boolean; lever?: boolean; tapes?: number; rope?: boolean; lantern?: boolean }
   reqText?: string
@@ -28,8 +28,8 @@ export interface ExitDef {
   cutIn?: CutInKind
 }
 
-/** v23 切入（进入层级）过场类型 */
-export type CutInKind = 'fall' | 'collapse' | 'wade' | 'crawl' | 'step' | 'surface' | 'dark'
+/** v23 切入（进入层级）过场类型；v35 追加 'outpost'（抵达据点：路标汇拢 + 暖光亮起） */
+export type CutInKind = 'fall' | 'collapse' | 'wade' | 'crawl' | 'step' | 'surface' | 'dark' | 'outpost'
 
 export interface SpawnEntry {
   type: string
@@ -48,6 +48,8 @@ export interface LevelDef {
   gen: 'rooms' | 'garage' | 'pipes' | 'grid' | 'office' | 'hotel'
     // v23：Level 6–11 与 Level 601 的新生成器
     | 'darkhall' | 'ocean' | 'caves' | 'suburb' | 'field' | 'city' | 'library'
+    // v35：据点（完全手工布局的特殊小层级，mapgenOutpost.ts）
+    | 'outpost'
   size: number
   infinite?: boolean // v17：无限 chunk 流式生成（L0 专用路径；有限层级缺省 false）
   skipPrefabs?: string[] // v8：生成器已内置同类区域的层级跳过指定 prefab（如 L5 内置客房/宴会厅）
@@ -63,6 +65,10 @@ export interface LevelDef {
   // ================= v23 新增字段 =================
   /** 显示编号（缺省=id）。Level 601 在数组中排在末位，但对玩家显示 601 */
   displayId?: number
+  /** 层级短标签（缺省=`Level ${displayId ?? id}`）。据点等专有名称层级用（如「Alpha 基地」） */
+  label?: string
+  /** 进入本层即获得完整地图（据点：规模有限且对居民开放） */
+  fullMap?: boolean
   /** 官方生存难度分级（Survival Difficulty，wiki 卡片） */
   sd?: string
   /** 光照系数：所有光源半径/强度倍率。L6=0（外带光源完全失效）、L8=0.12（100 流明只剩 12 流明） */
@@ -174,10 +180,60 @@ export type StructKind =
   // ===== v30：Level 1 区段扩展（天鹰/跃金/哥特/衔尾/花园/维护通廊）=====
   | 'column'       // 哥特段圆柱（圆形石柱）
   | 'roundarch'    // 哥特段圆形拱门（半圆拱顶，非实心，可从拱洞穿行）
+  | 'vaultcol'     // 哥特段拱顶柱（v34：粗圆柱 + 柱顶喇叭展开，可按 data.archX/archY 伸出连拱板）
   | 'scaffold'     // 衔尾段脚手架（杆件框架 + 踏板）
   | 'roadblock'    // 衔尾段施工路障（条纹护栏）
+  | 'debrispile'   // 衔尾段建材碎料堆（砖块/木板/沙堆；非容器，不阻挡通行）
   | 'inkdoor'      // 维护通廊墨黑色金属门框（非实心，可通行）
   | 'megdoc'       // M.E.G. 文档（可交互打开文档视图；查看后存入图鉴「文档」）
+  // ===== v33：Level 1 实体扩展 =====
+  | 'ceilvent'     // 自天花板向下伸出的通风管道（停电时「手臂」由此伸出猎捕）
+  | 'landmark'     // 定居点地标（亮色布料挂物资+纸条；交互显示据点介绍，可前往对应据点）
+  // ===== v35：据点（Alpha 基地）家具 =====
+  | 'serverrack'   // 中控室无线电机柜（表盘/指示灯/线缆）
+  | 'officechair'  // 办公转椅
+  | 'binshelf'     // 储物货架（蓝灰收纳箱）
+  | 'bunkbed'      // 双层床（民居）
+  | 'screenboard'  // 投影幕 + 黑板（会议室/教室，贴墙）
+  | 'noticeboard'  // 软木公告栏（据点墙面装饰）
+  | 'megposter'    // M.E.G. 标语海报（据点墙面装饰）
+  | 'photo'        // 相片（据点墙面装饰）
+  | 'shopsign'     // 悬挂店招（市场街/大厅：吊杆 + 贴图招牌板 + 描边灯）
+  | 'ventgrate'    // 天花板通风口格栅（仅通风口，无整条管道）
+  // ===== v36：商人之家商场风装饰 =====
+  | 'bench'        // 商场长椅（木座面 + 靠背 + 金属短腿）
+  | 'planter'      // 花坛（矮石框 + 泥土 + 绿植）
+  | 'trashbin'     // 商场垃圾桶（金属圆筒 + 深色投口）
+  // ===== v37：希波克拉底 - 1（阿丽亚娜集团据点）医疗家具 =====
+  | 'hospitalbed'  // 病床（金属框 + 白床垫 + 枕头 + 床头摇起）
+  | 'ivstand'      // 输液架（立杆 + 挂钩 + 半透明输液袋）
+  | 'medcabinet'   // 药品柜（白柜 + 玻璃门 + 紫十字）
+  | 'labbench'     // 实验台（台案 + 显微镜 + 试管组 + 烧杯）
+  | 'specimentank' // 标本罐（玻璃圆筒 + 半透明自发光液体 + 内部样本块）
+  // ===== v38：Tom 的餐馆（独立餐馆据点）家具 =====
+  | 'stove'        // 灶台（不锈钢灶 + 四个炉眼 + 锅 + 防油背板）
+  | 'kcounter'     // 厨房料理台（台面 + 橱柜 + 挂勺/刀架）
+  | 'sink'         // 水槽（台盆 + 水龙头）
+  | 'freezer'      // 卧式冷冻柜（白柜 + 顶盖；非容器——据点禁用 loot 容器）
+  | 'dtable'       // 餐桌（白桌布圆桌 + 餐盘餐具 + 小烛台 + 对侧两把餐椅）
+  // ===== v41：Level 2「废弃公共带」无限化 =====
+  | 'bigcomputer'  // 大号台式电脑（大机箱 + CRT 微光屏 + 键盘；L2 电脑房）
+  | 'scrap'        // 碎金属堆（扭曲金属片 + 短管；肮脏的廊道地面散件，非容器不阻挡）
+  // ===== v42：Level 2 墙面段 =====
+  | 'machinewall'  // 代墙大型机器（整段代替 L2 廊道墙面：data.mv 0 锅炉/1 发电机组/2 主发电机/3 机柜排/4 变压器）
+  // ===== v43：办公区EL3A（BNTG 双层据点）仓储家具 =====
+  | 'pallet'       // 木托盘堆（木托盘 + 缠绕膜包裹的箱堆；仓库装饰，非容器）
+  | 'handrail'     // 扶手栏杆（夹楼边缘/阶梯两侧：立柱 + 横杆；v46 实心化——细条碰撞盒真实阻挡；
+                   // v49 斜扶手——data.h0/h1=坡道面在瓦片局部 -x/+x 端的高度[相对结构底座]，扶手旋转对齐坡角）
+  // ===== v46：办公区EL3A 真多层重排 =====
+  | 'walllamp'     // 壁挂斜照大灯（贴墙灯箱向下投光 + 配套光源；挑高仓库区照明，非实心）
+  // ===== v45：Level 274「杰瑞的房间」（教堂风穹顶主间）=====
+  | 'domering'     // 教堂穹顶（置于大厅中央，非实心：同心环形肋 + 放射拱肋 + 顶心圣辉盘；data.r=半径 data.apex=顶高）
+  | 'perch'        // 杰瑞的栖木（立柱 + 顶部横杆 + 金饰托盘；鹉主 Entity 7 栖息其上）
+  // ===== v47：Level 274 教堂细化（居住区 + 教堂房间/装饰）=====
+  | 'pulpit'       // 讲坛（高台 + 斜面讲案 + 金饰鹉徽；data.deg 朝向，缺省朝南）
+  | 'candlestand'  // 烛台（细杆三臂烛架 + 自发光烛火，非实心）
+  | 'holyfont'     // 圣水盆（石盆 + 蓝色圣水微光；杰瑞的信众以蓝为圣色）
 
 export interface Structure {
   kind: StructKind
@@ -195,6 +251,7 @@ export interface Structure {
 export interface GroundItem {
   id: number
   type: string
+  count?: number // 堆叠数量（玩家整叠丢弃时保留；缺省=1）
   x: number
   y: number
   fake?: boolean
@@ -208,6 +265,8 @@ export interface LightSource {
   color: string
   flickerSeed: number
   z?: number // v13：灯具高度基准（米；缺省按层高/室外规则）
+  fixZ?: number // v46：灯具绝对安装高度（米；壁灯/立灯用——光源点取 fixZ-0.2，与 z 互斥，z 优先）
+  noFix?: 1 // v46：不渲染默认自发光灯具盒（实体灯具由结构模型提供——walllamp/立灯，杜绝悬空灯）
   gen?: number // v17：无限模式标记——1=chunk 生成器固有灯（窗口迁移不需另存）；缺省=玩家/事件追加
   keep?: 1 // v29：停电保留灯（L1 维护通廊：永远灯火通明，停电事件/熄灯 stitch 均不熄灭）
 }

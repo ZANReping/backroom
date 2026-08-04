@@ -1,4 +1,5 @@
-// 锅炉房节点（L2 管道走廊）
+// 锅炉房节点（L2 废弃公共带；v41：死代码——L2 已改无限 chunk 生成（infiniteL2.ts），
+// 无限层级不走 prefab 路径，本文件仅保留作参考）
 import { S, light, drop, type PrefabDef } from './shared'
 
 export const L2_PREFABS: PrefabDef[] = [

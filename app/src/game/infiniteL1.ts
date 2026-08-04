@@ -5,6 +5,8 @@
 // chunk 边界按共享边哈希 edgeOpen 开 2 宽口打通（原为 28×28 封闭大厅，玩家无法走出出生 chunk）。
 import { RNG } from './rng'
 import { UNIVERSAL_ITEMS } from './items'
+import { ENTITIES } from './entities'
+import { brcWorkerDef, type NpcDef } from './npcs'
 import type { LevelDef, Structure, LightSource, ExitInstance, GroundItem } from './types'
 import {
   CS, RS, GEN_ITEM_BASE, h32, regionHost, exitTarget, edgeOpen,
@@ -35,12 +37,12 @@ export const L1_VARIANT_LORE: Record<string, string[]> = {
     '但有时板条箱会被液态痛苦填满，原因不明。翻翻看不亏，但别在箱子堆里逗留太久。',
   ],
   gothic: [
-    '哥特段——多数区域充斥着圆形拱门和成排的圆柱，像一座被搬进地下的废弃圣殿。光线在这里总是偏暗，石柱的影子拉得很长。',
-    '档案记载，拱门之间的回声会延迟数秒才返回，仿佛大厅比看起来大得多。不要在拱廊下呼喊同伴的名字。',
+    '哥特段——成排的粗壮圆柱望不到头，柱顶像漏斗一样展开，与邻柱连成连绵的拱腹，像一座被搬进地下的交叉拱停车场。光线在这里总是偏暗，石柱的影子拉得很长。',
+    '档案记载，拱腹之下的回声会延迟数秒才返回，仿佛大厅比看起来大得多。不要在拱廊下呼喊同伴的名字。',
   ],
   ouroboros: [
-    '衔尾段——永无止境的施工状态。脚手架搭了又拆、拆了又搭，路障围住的区域从未完工，半成品墙垛上的钢筋锈了又被人敲直。',
-    '施工灯永远亮着，却从没有人见过施工队。有流浪者声称，闭着眼能听到锤子敲打的声音从墙的另一侧传来——可墙的另一侧还是这里。',
+    '衔尾段——永无止境的施工状态。灰色毛坯混凝土、铲到一半露出补丁的墙、深色吊顶上裸露的风管与红色管道；脚手架搭了又拆、拆了又搭，路障围住的区域从未完工。',
+    '这里是后室装修公司的领域。穿制服的黑影员工在墙边与脚手架旁日夜敲打——他们从不回应，也从不停手。档案备注：模仿他们的动作似乎能换取好感；但如果你对他们的同事动过手，千万不要当面说出来。',
   ],
   garden: [
     '花园段——青翠欲滴的色调与勃勃生机的表象：绿色植物与充足的阳光，在永夜的后室里像一场过于美好的梦。',
@@ -61,7 +63,6 @@ export function l1VariantOf(seed: number, cx: number, cy: number): L1Variant {
     // 出生安全区：过道/天鹰段
     return h01(seed, 0xb111, cx, cy) < 0.6 ? 'aisle' : 'parking'
   }
-  // v31：相同区段更易相连——2×2 chunk 区块共享同一基底变体，块内每 chunk 仅 15% 概率异质
   const pick = (r: number): L1Variant => {
     if (r < 0.01) return 'garden' // 花园段：极其稀有
     if (r < 0.035) return 'ouroboros' // 衔尾段：十分稀有
@@ -71,11 +72,27 @@ export function l1VariantOf(seed: number, cx: number, cy: number): L1Variant {
     if (r < 0.62) return 'parking' // 天鹰段：最常见
     return 'aisle'
   }
-  if (h01(seed, 0x1e1f, cx, cy) < 0.15) {
+  // v34：异质率 15% → 6%（群系更成片）；异质 chunk 不出维护通廊（保持其成块出现）
+  if (h01(seed, 0x1e1f, cx, cy) < 0.06) {
     const v = pick(h01(seed, 0x1e20, cx, cy))
-    return v === 'maintenance' ? 'aisle' : v // 异质 chunk 不出维护通廊（保持其成块出现）
+    return v === 'maintenance' ? 'aisle' : v
   }
-  return pick(h01(seed, 0x1e1e, Math.floor(cx / 2), Math.floor(cy / 2)))
+  // v34：群系聚集——低频值噪声群系图（取代 v31 的 2×2 方块共享）；
+  // pick() 权重不变（全局频率保持），但相同区段聚成 ~6 chunk 跨度的有机团块，像不同群系
+  return pick(biomeNoise(seed, cx, cy))
+}
+
+// 群系噪声：格点哈希 + smoothstep 双线性插值的低频值噪声（纯函数）
+const BIOME_S = 6 // 群系尺度（chunk）
+const biomeSmooth = (t: number) => t * t * (3 - 2 * t)
+function biomeNoise(seed: number, cx: number, cy: number): number {
+  const fx = cx / BIOME_S, fy = cy / BIOME_S
+  const x0 = Math.floor(fx), y0 = Math.floor(fy)
+  const tx = biomeSmooth(fx - x0), ty = biomeSmooth(fy - y0)
+  const v00 = h01(seed, 0xb100, x0, y0), v10 = h01(seed, 0xb100, x0 + 1, y0)
+  const v01 = h01(seed, 0xb100, x0, y0 + 1), v11 = h01(seed, 0xb100, x0 + 1, y0 + 1)
+  const a = v00 + (v10 - v00) * tx, b = v01 + (v11 - v01) * tx
+  return a + (b - a) * ty
 }
 
 // ---------- chunk 生成（纯函数：同种子同坐标必一致）----------
@@ -87,11 +104,13 @@ export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
   const elev = new Uint8Array(CS * CS)
   const step = new Uint8Array(CS * CS)
   const tint = new Uint8Array(CS * CS)
+  const crawl = new Uint8Array(CS * CS) // v41：GenChunk 契约新增（L1 无蹲伏低通道，恒全 0）
   const structures: Structure[] = []
   const items: GroundItem[] = []
   const lights: LightSource[] = []
   const exits: ExitInstance[] = []
   const entities: { type: string; x: number; y: number }[] = []
+  const npcs: { def: NpcDef; x: number; y: number; facing?: number }[] = []
   const li = (x: number, y: number) => y * CS + x
   const isF = (x: number, y: number) => x >= 0 && y >= 0 && x < CS && y < CS && tiles[li(x, y)] === 1
   const WX = cx * CS, WY = cy * CS
@@ -264,6 +283,10 @@ export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
           if (isF(x, y)) wet[li(x, y)] = 1
         }
       }
+      // v35：定居点地标——天鹰段小概率出现（wikidot：M.E.G. 罗经点小队放置的引路标志）
+      if (rng.chance(0.04)) placeFree('landmark', 1, 1, false, false, { outpost: 'alpha' })
+      // v38：Tom 的餐馆地标——天鹰段更小概率出现（与 alpha 独立判定，暖红布料）
+      if (rng.chance(0.015)) placeFree('landmark', 1, 1, false, false, { outpost: 'tom' })
       break
     }
     case 'storage': {
@@ -274,19 +297,24 @@ export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
       if (rng.chance(0.7)) placeFree('toolbox', 1, 1, false, true, { loot: 1 })
       if (rng.chance(0.6)) placeFree('locker', 1, 1, true, true, { loot: 1 })
       if (rng.chance(0.4)) placeFree('suitcase', 1, 1, false, true, { loot: 1 })
+      // v35：BNTG 商人之家地标——跃金段小概率出现（深绿天平布料 + 压印币）
+      if (rng.chance(0.04)) placeFree('landmark', 1, 1, false, false, { outpost: 'bntg' })
       break
     }
     case 'gothic': {
-      // 哥特段：圆形拱门与圆柱充斥——双列柱廊 + 圆形拱门排（拱门非实心，可从拱洞穿行）
-      for (let x = 7; x < CS - 6; x += 6) {
-        if (isF(x, 8) && !solidAtL(x, 8)) pushStruct('column', x, 8, 1, 1, true)
-        if (isF(x, CS - 9) && !solidAtL(x, CS - 9)) pushStruct('column', x, CS - 9, 1, 1, true)
-        if (isF(x, 11) && !solidAtL(x, 11)) pushStruct('roundarch', x, 11, 1, 1, false)
-        if (isF(x, CS - 12) && !solidAtL(x, CS - 12)) pushStruct('roundarch', x, CS - 12, 1, 1, false)
+      // 哥特段（v34 按参考图重做）：拱顶柱森林——规则柱网（5 格间距），粗圆柱柱顶喇叭展开，
+      // 相邻柱之间以连拱板连成连续拱腹（参照地下停车场交叉拱）；暖暗灯光照度极低
+      const G = [4, 9, 14, 19, 24, 29]
+      const last = G[G.length - 1]
+      for (const x of G) for (const y of G) {
+        if (!isF(x, y) || solidAtL(x, y)) continue
+        pushStruct('vaultcol', x, y, 1, 1, true, false, {
+          archX: x < last ? 1 : 0, spanX: 5,
+          archY: y < last ? 1 : 0, spanY: 5,
+        })
       }
-      for (let i = 0, n = rng.int(1, 3); i < n; i++) placeFree('column', 1, 1, true)
       if (rng.chance(0.5)) placeWallHug('graffiti', true, { lore: rng.int(0, 5) })
-      // v32：滋水枪——很小概率出现在拱门区域
+      // v32：滋水枪——很小概率出现在拱廊深处
       if (rng.chance(0.05)) {
         for (let tr = 0; tr < 30; tr++) {
           const x = rng.int(2, CS - 3), y = rng.int(2, CS - 3)
@@ -295,13 +323,26 @@ export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
           break
         }
       }
+      // v37：阿丽亚娜集团地标——哥特段小概率出现（紫环布料 + 消毒液）
+      if (rng.chance(0.04)) placeFree('landmark', 1, 1, false, false, { outpost: 'ariane' })
       break
     }
     case 'ouroboros': {
-      // 衔尾段：永无止境的施工状态——脚手架/施工路障/半成品墙垛 + 突出钢筋，
-      // 暖橙施工灯永亮（keep，见下方灯光布置）
-      for (let i = 0, n = rng.int(2, 4); i < n; i++) placeFree('scaffold', 2, 1, true)
-      for (let i = 0, n = rng.int(3, 5); i < n; i++) placeFree('roadblock', 1, 1, true)
+      // 衔尾段（v39 施工化）：灰色毛坯混凝土 + 铲到一半的补丁墙 + 深色裸露吊顶
+      // （tint=10 基底，散布 tint=11 补丁斑块——地面读作新浇水泥补丁、墙面读作残存粉刷）；
+      // 脚手架/红色管道/施工路障加密 + 建材碎料堆散落，暖橙施工灯永亮（keep，见下方灯光布置）
+      for (let y = 0; y < CS; y++) for (let x = 0; x < CS; x++) tint[li(x, y)] = 10
+      for (let b = 0, nB = rng.int(5, 8); b < nB; b++) { // 补丁斑块（2~4 格不规则团）
+        const px0 = rng.int(2, CS - 3), py0 = rng.int(2, CS - 3)
+        for (let j = 0, nJ = rng.int(2, 4); j < nJ; j++) {
+          const px = px0 + rng.int(-1, 1), py = py0 + rng.int(-1, 1)
+          if (px >= 0 && py >= 0 && px < CS && py < CS) tint[li(px, py)] = 11
+        }
+      }
+      for (let i = 0, n = rng.int(3, 5); i < n; i++) placeFree('scaffold', 2, 1, true)
+      for (let i = 0, n = rng.int(4, 6); i < n; i++) placeFree('roadblock', 1, 1, true)
+      for (let i = 0, n = rng.int(2, 3); i < n; i++) placeWallHug('pipes') // 红色管道（裸露管线）
+      for (let i = 0, n = rng.int(1, 3); i < n; i++) placeFree('debrispile', 1, 1, false) // 建材碎料堆
       for (let i = 0, n = rng.int(2, 4); i < n; i++) {
         const bw = rng.int(2, 4)
         const bx = rng.int(5, CS - 6 - bw), by = rng.int(5, CS - 7)
@@ -313,6 +354,29 @@ export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
       }
       if (rng.chance(0.5)) placeFree('crate', 1, 1, true, true, { loot: 1 })
       if (rng.chance(0.5)) placeFree('toolbox', 1, 1, false, true, { loot: 1 })
+      // v39：BRC 员工 1~2 名——锚定在工作点（面向脚手架/路障/墙），永不游荡（见 npcs.ts）
+      const anchorAt = (): { x: number; y: number; face: number } | null => {
+        const DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1]] as const
+        for (let t = 0; t < 120; t++) {
+          const x = rng.int(2, CS - 3), y = rng.int(2, CS - 3)
+          if (!isF(x, y) || solidAtL(x, y)) continue
+          if (npcs.some((n2) => Math.abs(n2.x - (WX + x + 0.5)) < 1 && Math.abs(n2.y - (WY + y + 0.5)) < 1)) continue
+          const opts: number[] = []
+          for (let d = 0; d < 4; d++) {
+            const nx = x + DIRS[d][0], ny = y + DIRS[d][1]
+            if (!isF(nx, ny) || solidAtL(nx, ny)) opts.push(d) // 邻墙/邻实心结构 = 工作面
+          }
+          if (!opts.length) continue
+          const d = opts[rng.int(0, opts.length - 1)]
+          return { x, y, face: Math.atan2(DIRS[d][1], DIRS[d][0]) }
+        }
+        return null
+      }
+      for (let i = 0, n = rng.int(1, 2); i < n; i++) {
+        const p = anchorAt()
+        if (!p) break
+        npcs.push({ def: brcWorkerDef(seed, cx, cy, i), x: WX + p.x + 0.5, y: WY + p.y + 0.5, facing: p.face })
+      }
       break
     }
     case 'garden': {
@@ -334,6 +398,66 @@ export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
       placeWallHug('pipes')
       if (rng.chance(0.6)) placeWallHug('vent')
       placeWallHug('graffiti', true, { lore: rng.int(0, 5) })
+      // v35：小径侧室（wikidot：小径里并非没有房间——只是这些房间和宜居地带其他区域相同，
+      // 它们的存在毫无意义，既无价值也不合常理）：小型办公室/砖围狭室/大型医务室/橡胶房间/画作宽房
+      if (rng.chance(0.45)) {
+        const type = rng.pick(['office', 'cell', 'sickbay', 'rubber', 'gallery'] as const)
+        const [rw, rh] = type === 'office' ? [6, 5] : type === 'cell' ? [4, 4] : type === 'sickbay' ? [8, 6] : type === 'rubber' ? [5, 5] : [9, 7]
+        for (let tr = 0; tr < 20; tr++) {
+          const rx = rng.int(3, CS - 4 - rw), ry = rng.int(3, CS - 4 - rh)
+          // 矩形内部必须全是未雕的墙（不破坏既有走廊）
+          let solidAll = true
+          for (let y = ry; y < ry + rh && solidAll; y++)
+            for (let x = rx; x < rx + rw && solidAll; x++)
+              if (tiles[li(x, y)] !== 2) solidAll = false
+          if (!solidAll) continue
+          // 至少一条边外有走廊地板可开门
+          let door: [number, number] | null = null
+          for (let x = rx; x < rx + rw && !door; x++) {
+            if (isF(x, ry - 1)) door = [x, ry]
+            else if (isF(x, ry + rh)) door = [x, ry + rh - 1]
+          }
+          for (let y = ry; y < ry + rh && !door; y++) {
+            if (isF(rx - 1, y)) door = [rx, y]
+            else if (isF(rx + rw, y)) door = [rx + rw - 1, y]
+          }
+          if (!door) continue
+          carve(rx, ry, rx + rw - 1, ry + rh - 1)
+          tiles[li(door[0], door[1])] = 1
+          const cxx = rx + (rw >> 1), cyy = ry + (rh >> 1)
+          if (type === 'office') {
+            // 小型办公室：办公桌一张 + 老旧电脑一台；天花仅悬一盏灯泡，显得昏暗
+            pushStruct('desk', cxx, cyy, 1, 1, true)
+            pushStruct('copier', cxx, cyy - 1, 1, 1, true)
+            pushStruct('officechair', cxx, cyy + 1, 1, 1, false)
+            pushLight(cxx, cyy, 2.2, '#d9c39a', true)
+          } else if (type === 'cell') {
+            // 四周被墙围绕的狭小空间：空室
+            pushLight(cxx, cyy, 2.5, '#e8e8e0', true)
+          } else if (type === 'sickbay') {
+            // 大型医务室：中间一张病床，周围几张桌子
+            pushStruct('bed', cxx, cyy, 1, 1, true)
+            pushStruct('table', cxx - 2, cyy, 1, 1, true)
+            pushStruct('table', cxx + 2, cyy, 1, 1, true)
+            pushStruct('table', cxx, cyy + 2, 1, 1, true)
+            pushLight(cxx - 1, cyy, 3, '#e8e8e0', true)
+            pushLight(cxx + 1, cyy, 3, '#e8e8e0', true)
+          } else if (type === 'rubber') {
+            // 橡胶房间：中间一把椅子（有时嵌入地板——低模简化为中心转椅）
+            pushStruct('officechair', cxx, cyy, 1, 1, false)
+            pushLight(cxx, cyy, 3, '#e8e8e0', true)
+          } else {
+            // 宽敞房间：墙上和地板上都挂着画作（贴房间边缘墙位，门所在边改放对边）
+            const doorSouth = door[1] === ry + rh - 1
+            const py = doorSouth ? ry : ry + rh - 1
+            pushStruct('photo', rx + 1, py, 1, 1, false)
+            pushStruct('photo', rx + rw - 2, py, 1, 1, false)
+            pushStruct('photo', cxx, cyy + 1, 1, 1, false, false, { flat: 1 })
+            pushLight(cxx, cyy, 4, '#e8e8e0', true)
+          }
+          break
+        }
+      }
       break
     }
   }
@@ -422,22 +546,47 @@ export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
     }
   }
 
-  // ---- 实体（栖息地过滤；v29b：L1 实体极少——wikidot Class 1「安全稳定」，仅停电区/黑暗处较多）----
+  // ---- v33：少量自天花板向下伸出的通风管道（「手臂」巢位；维护通廊/花园段不出现）----
+  // 层级灯光熄灭（「闪烁」停电）时，手臂从管内伸出猎捕——见 engine.updateEntities 的 arms 分支
+  if (variant !== 'maintenance' && variant !== 'garden' && rng.chance(0.06)) {
+    for (let t = 0; t < 40; t++) {
+      const x = rng.int(3, CS - 4), y = rng.int(3, CS - 4)
+      if (!isF(x, y) || solidAtL(x, y)) continue
+      pushStruct('ceilvent', x, y, 1, 1, false)
+      entities.push({ type: 'arms', x: WX + x + 0.5, y: WY + y + 0.5 })
+      break
+    }
+  }
+
+  // ---- 实体（栖息地过滤，与有限层/infinite.ts 同一契约；v29b：L1 实体极少——
+  // wikidot Class 1「安全稳定」，仅停电区/黑暗处较多）----
+  // L1 chunk 窗口缝合时 outdoor 恒为 0（全室内；花园段为室内园艺造景而非室外瓦片），
+  // 故 outdoor 栖息地实体（如 carrier 运输车）在无符合瓦片时降级 any 并计数告警。
+  const habFallback: Record<string, number> = {}
   if (def.entities.length > 0) {
     const nE = variant === 'maintenance' || variant === 'garden' ? (rng.chance(0.05) ? 1 : 0) // 维护通廊/花园段几无可遇
       : rng.chance(0.15) ? 1 : 0 // 常规区段：稀疏偶遇
     for (let i = 0; i < nE; i++) {
       const type = rng.weighted(def.entities.map((e) => ({ v: e.type, w: e.w })))
-      for (let t = 0; t < 40; t++) {
-        const x = rng.int(2, CS - 3), y = rng.int(2, CS - 3)
-        if (!isF(x, y) || solidAtL(x, y)) continue
-        entities.push({ type, x: WX + x + 0.5, y: WY + y + 0.5 })
-        break
+      const hab = ENTITIES[type]?.habitat ?? 'any'
+      const tryPick = (want: 'indoor' | 'outdoor' | 'any'): { x: number; y: number } | null => {
+        for (let t = 0; t < 40; t++) {
+          const x = rng.int(2, CS - 3), y = rng.int(2, CS - 3)
+          if (!isF(x, y) || solidAtL(x, y)) continue
+          if (want === 'outdoor') continue // L1 chunk 无室外瓦片（全室内）
+          return { x, y }
+        }
+        return null
       }
+      let p = tryPick(hab)
+      if (!p && hab !== 'any') { habFallback[`${type}:${hab}`] = (habFallback[`${type}:${hab}`] ?? 0) + 1; p = tryPick('any') }
+      if (p) entities.push({ type, x: WX + p.x + 0.5, y: WY + p.y + 0.5 })
     }
+    const habMiss = Object.values(habFallback).reduce((a, b) => a + b, 0)
+    if (habMiss > 0) console.warn(`[habitat] L1 无限 chunk(${cx},${cy}) 无符合瓦片，降级 any ×${habMiss}`)
   }
 
-  return { variant, tiles, wet, elev, step, tint, structures, items, lights, exits, entities }
+  return { variant, tiles, wet, elev, step, tint, crawl, structures, items, lights, exits, entities, npcs, habFallback }
 }
 
 // ---------- 注册（mapgen generateLevel → generateInfinite 经注册表分派）----------

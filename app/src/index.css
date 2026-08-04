@@ -42,6 +42,29 @@
   .font-mono2 {
     font-family: 'JetBrains Mono', monospace;
   }
+
+  /* 全局滚动条（适配琥珀暗色 UI：细条 + 琥珀滑块 + 深色轨道） */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(232, 185, 60, 0.42) rgba(20, 18, 12, 0.65);
+  }
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  *::-webkit-scrollbar-track {
+    background: rgba(20, 18, 12, 0.65);
+  }
+  *::-webkit-scrollbar-thumb {
+    background: rgba(232, 185, 60, 0.32);
+    border: 2px solid rgba(20, 18, 12, 0.65);
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background: rgba(232, 185, 60, 0.58);
+  }
+  *::-webkit-scrollbar-corner {
+    background: transparent;
+  }
 }
 
 @layer components {
@@ -202,3 +225,5 @@
 .anim-barPulse { animation: barPulse 1s ease-in-out infinite; }
 .anim-glitch { animation: glitchJitter 0.09s linear infinite; }
 .anim-toast { animation: toastUp 1.6s ease-out both; }
+/* v28：像素画物品图标锐利渲染（背包/图鉴等小格子不糊） */
+img.pixel-icon { image-rendering: pixelated; image-rendering: crisp-edges; }

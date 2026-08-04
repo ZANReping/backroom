@@ -17,6 +17,10 @@ export const BIND_ACTIONS: BindActionDef[] = [
   { id: 'flashlight', label: '手电' },
   { id: 'inventory', label: '背包' },
   { id: 'map', label: '地图' },
+  { id: 'codex', label: '图鉴' },
+  { id: 'quest', label: '任务' },
+  { id: 'status', label: '状态' },
+  { id: 'log', label: '日志' },
   { id: 'sprint', label: '冲刺' },
   { id: 'quickuse', label: '快捷使用' },
   { id: 'quickdrop', label: '快捷丢弃' },
@@ -31,12 +35,14 @@ export const BIND_ACTIONS: BindActionDef[] = [
 
 export type KeyBindMap = Record<string, string>
 
-// 默认值与历史键位一致（WASD/空格跳/C蹲/左键攻击/E交互/F手电/I背包/Shift冲刺/右键使用/1-8快捷栏）
+// 默认值与历史键位一致（WASD/空格跳/C蹲/左键攻击/E交互/F手电/I背包/M地图/Shift冲刺/右键使用/1-8快捷栏；
+// v41 新增：G图鉴/J任务/U状态/L日志）
 export const DEFAULT_KEYBINDS: KeyBindMap = {
   forward: 'KeyW', back: 'KeyS', left: 'KeyA', right: 'KeyD',
   jump: 'Space', crouch: 'KeyC',
   attack: 'Mouse0', interact: 'KeyE', flashlight: 'KeyF',
   inventory: 'KeyI', map: 'KeyM', sprint: 'ShiftLeft', quickuse: 'Mouse2', quickdrop: 'KeyQ',
+  codex: 'KeyG', quest: 'KeyJ', status: 'KeyU', log: 'KeyL',
   slot1: 'Digit1', slot2: 'Digit2', slot3: 'Digit3', slot4: 'Digit4',
   slot5: 'Digit5', slot6: 'Digit6', slot7: 'Digit7',
 }

@@ -9,7 +9,7 @@ export interface ItemDef {
   name: string
   desc: string
   stack: number
-  use?: 'eat' | 'heal' | 'sanity' | 'battery' | 'stamina' | 'bigsanity' | 'light' | 'none'
+  use?: 'eat' | 'heal' | 'sanity' | 'battery' | 'stamina' | 'bigsanity' | 'light' | 'none' | 'cure'
   value?: number
   weapon?: number // 近战伤害
   passive?: string
@@ -28,6 +28,7 @@ export const ITEMS: Record<string, ItemDef> = {
   almond: { type: 'almond', name: '杏仁水', desc: '甜腻的液体，后室里最受欢迎的补给。', stack: 3, use: 'sanity', value: 30, anomalous: true, rarity: 'uncommon', glyph: 'bottle' },
   canned: { type: 'canned', name: '罐装食品', desc: '标签已经脱落的罐头。', stack: 3, use: 'eat', value: 35, rarity: 'common', glyph: 'can' },
   bandage: { type: 'bandage', name: '绷带', desc: '还算干净的一卷绷带。', stack: 3, use: 'heal', value: 30, rarity: 'common', glyph: 'bandage' },
+  disinfectant: { type: 'disinfectant', name: '消毒液', desc: '希波克拉底团队标准配发的医用消毒液，气味刺鼻。可消去疫疾（疫疾尚未实装——目前使用仅作预防性消毒）。', stack: 3, use: 'cure', value: 25, rarity: 'uncommon', glyph: 'bottle' },
   battery: { type: 'battery', name: '手电筒电池', desc: '为手电筒充能的电池。', stack: 3, use: 'battery', value: 50, rarity: 'common', glyph: 'battery' },
   flashlight: { type: 'flashlight', name: '手电筒', desc: '可靠的老式手电。装在副手提供主光源，按 F 开关，耗电。', stack: 1, passive: '主光源', equip: 'offhand', rarity: 'uncommon', glyph: 'flashlight' },
   crowbar: { type: 'crowbar', name: '撬棍', desc: '沉重的撬棍。可当作武器，也能撬开补给箱。', stack: 1, weapon: 25, rarity: 'uncommon', glyph: 'crowbar' },
@@ -38,6 +39,8 @@ export const ITEMS: Record<string, ItemDef> = {
   glowstick: { type: 'glowstick', name: '荧光棒', desc: '掰亮后能照亮周围一小片区域，持续很久。', stack: 3, unique: 0, use: 'light', value: 1, rarity: 'common', glyph: 'stick' },
   carkey: { type: 'carkey', name: '车钥匙', desc: '停车场的车钥匙。可以打开废弃汽车的后备箱。', stack: 2, unique: 1, equip: 'pocket', rarity: 'uncommon', glyph: 'key' },
   gas: { type: 'gas', name: '汽油罐', desc: '半罐汽油。也许能点燃什么……', stack: 2, unique: 1, use: 'none', throw: 'explode', rarity: 'common', glyph: 'gas' },
+  // 首次进入 Level 1 时出生点旁的纸条（wikidot Level 1：探险者总署附在杏仁水瓶上的留言；查看即收录图鉴「文档」）
+  welcomenote: { type: 'welcomenote', name: '致新流浪者的纸条', desc: '一张折起的横线纸，字迹工整。是探险者总署留给新流浪者的。', stack: 1, unique: 1, use: 'none', rarity: 'rare', glyph: 'scrap' },
   wrench: { type: 'wrench', name: '扳手', desc: '沉重的管钳。可以封住泄漏的蒸汽阀门，也可当武器。', stack: 1, unique: 2, weapon: 20, rarity: 'uncommon', glyph: 'wrench' },
   gloves: { type: 'gloves', name: '隔热手套', desc: '厚重的石棉手套。装备后免疫蒸汽与热管道的伤害。', stack: 1, unique: 2, passive: '隔热', equip: 'gloves', rarity: 'uncommon', glyph: 'gloves' },
   suit: { type: 'suit', name: '绝缘服', desc: '橡胶绝缘服。装备后免疫电弧伤害。', stack: 1, unique: 3, passive: '绝缘', equip: 'body', rarity: 'uncommon', glyph: 'suit' },
@@ -78,9 +81,11 @@ export const ITEMS: Record<string, ItemDef> = {
   timber: { type: 'timber', name: '木板', desc: '从棚屋上拆下来的木板。挥起来沉得很，也能拿来封门。', stack: 2, unique: 10, weapon: 22, rarity: 'common', glyph: 'timber' },
 
   // Level 11「The City That Never Sleeps」
-  presses: { type: 'presses', name: 'presses（压印币）', desc: 'B.N.T.G. 在 New Times Square 使用的专属货币。对不知情的访客，市场会给交易豁免——但有它总归方便。', stack: 6, unique: 11, anomalous: true, rarity: 'rare', glyph: 'coin' },
+  presses: { type: 'presses', name: 'B.N.T.G.压印币', desc: 'B.N.T.G. 在新时代广场与商人之家通用的压印币。「繁荣缔造和平」——一瓶杏仁水可兑两枚。', stack: 60, unique: 11, anomalous: true, rarity: 'rare', glyph: 'coin' },
   pamphlet: { type: 'pamphlet', name: '宣传册', desc: '在 Level 11 买到、在别处才用得上的东西。纸页上印着一座你没去过的层级。', stack: 2, unique: 11, use: 'sanity', value: 20, anomalous: true, rarity: 'rare', glyph: 'book' },
   citywater: { type: 'citywater', name: '市政自来水', desc: '这座城市自行发电、供水、回收废物、生产食物。水龙头是真的能出水的——只是一个人也没有。', stack: 3, unique: 11, use: 'sanity', value: 25, anomalous: true, rarity: 'common', glyph: 'bottle' },
+  // v43：办公区EL3A 物流任务——缠满胶带的密封包裹，面单写着收件人（目的地见委托详情；不可堆叠，每件占一格）
+  parcel: { type: 'parcel', name: '物流包裹', desc: '办公区EL3A 分拣队打包的标准物流包裹，胶带缠了三圈，面单上盖着 B.N.T.G. 天平章。收件人写在委托详情里——当面交付，别弄丢了。', stack: 1, use: 'none', rarity: 'uncommon', glyph: 'box' },
 
   // Level 601「The End」
   endnote: { type: 'endnote', name: '烧焦的字条', desc: '「别信那扇门。我数过了，我家的走廊没有这么长。—— 第 7 次」。理智 −（真相从来不让人好受），但你会记住它。', stack: 3, unique: 12, rarity: 'rare', glyph: 'scrap' },
@@ -94,7 +99,22 @@ export const ITEMS: Record<string, ItemDef> = {
   fuyouyu: { type: 'fuyouyu', name: '福友玉', desc: '一块温润的玉佩，贴着皮肤时，能感到它细微的暖意变化。', stack: 1, equip: 'pocket', passive: '实体感应', anomalous: true, rarity: 'rare', glyph: 'jade' },
   squirtgun: { type: 'squirtgun', name: '滋水枪', desc: '造型过分鲜艳的玩具水枪。在右侧信息栏可以为储罐装入液体。', stack: 1, use: 'none', anomalous: true, rarity: 'rare', glyph: 'watergun' },
   warpberry: { type: 'warpberry', name: '迁跃浆果', desc: '表皮泛着空间涟漪的浆果——据说它认得「家」的方向。', stack: 2, use: 'eat', value: 15, anomalous: true, rarity: 'epic', glyph: 'berry' },
-  royalration: { type: 'royalration', name: '皇家口粮', desc: '传说中的甘美之物，一口便足以忘记饥饿与恐惧。只是从没有人能只吃一口。', stack: 3, use: 'eat', value: 100, anomalous: true, rarity: 'epic', glyph: 'ration' },
+  royalration: { type: 'royalration', name: '皇家口粮', desc: '传说中的甘美之物，一口便足以忘记饥饿与恐惧。只是从没有人能只吃一口。', stack: 1, use: 'eat', value: 100, anomalous: true, rarity: 'epic', glyph: 'ration' },
+  // M.E.G. Alpha 基地通用货币（仅限 Alpha 基地内交易使用；与杏仁水 1:1 互换）
+  eaglecoin: { type: 'eaglecoin', name: '天鹰币', desc: 'M.E.G. 在天鹰段发行的铜黄色硬币，铸有展翅的雄鹰。Alpha 基地的硬通货——仅限基地内使用。', stack: 30, anomalous: true, rarity: 'uncommon', glyph: 'coin' },
+
+  // ===== v38：Tom 的餐馆菜肴（仅 Tom 处以物易物可得，无层级掉落；设定：wikidot 汤姆餐厅）=====
+  tomatosoup: { type: 'tomatosoup', name: '番茄浓汤', desc: 'Tom 的拿手汤——慢炖三个小时的番茄，酸甜里带一点罗勒香。在后室喝到热汤本身就像个奇迹。', stack: 2, use: 'eat', value: 45, rarity: 'common', glyph: 'bowl' },
+  gardensalad: { type: 'gardensalad', name: '田园沙拉', desc: '干果干菜重新焕发出生机的一盘——爱子坚持要在上面摆一片完整的叶子。', stack: 2, use: 'stamina', value: 40, rarity: 'uncommon', glyph: 'bowl' },
+  garlicbread: { type: 'garlicbread', name: '蒜香烤面包', desc: '炉边现烤，蒜香黄油渗进每一道切缝。「小心，「幸运」最怕切大蒜。」——爱子语。', stack: 2, use: 'eat', value: 40, rarity: 'common', glyph: 'bread' },
+  pasta: { type: 'pasta', name: '番茄意面', desc: '正经的意大利做法：番茄酱汁收得浓稠，面条弹牙。Tom 会说「Al dente！」然后盯着看你第一口的表情。', stack: 2, use: 'eat', value: 65, rarity: 'uncommon', glyph: 'plate' },
+  meatstew: { type: 'meatstew', name: '炖肉煲', desc: '巨兽之肉炖到酥烂，硫磺味全化成浓郁肉香。吃完感觉伤口都好得快了些。', stack: 2, use: 'heal', value: 70, rarity: 'uncommon', glyph: 'bowl' },
+  pizza: { type: 'pizza', name: '意式披萨', desc: '薄底、焦边、番茄与融化的奶酪。在后室，这是接近「正常生活」的最短路径。', stack: 2, use: 'eat', value: 70, rarity: 'uncommon', glyph: 'plate' },
+  lasagna: { type: 'lasagna', name: '千层面', desc: '一层肉酱一层白酱，烤到表面金黄。一口下去的满足感，足以让人暂时忘记自己迷失在哪一层。', stack: 1, use: 'bigsanity', value: 85, rarity: 'uncommon', glyph: 'plate' },
+  tomsspecial: { type: 'tomsspecial', name: 'Tom 招牌炖菜', desc: '菜单上没有、只换给识货人的一锅——配方是 Esposito 家三代人的秘密。吃完你会明白为什么这家小餐馆从不缺客人。', stack: 1, use: 'eat', value: 130, rarity: 'rare', glyph: 'bowl' },
+  // 来料加工（爱子经手）：玩家自带食材，餐馆代做
+  grilledsteak: { type: 'grilledsteak', name: '烤兽肉排', desc: '来料加工：巨兽之肉烤得外焦里嫩。档案警告生食才安全——但吃过这口的人都不打算回头。', stack: 2, use: 'eat', value: 85, rarity: 'uncommon', glyph: 'meat' },
+  jambread: { type: 'jambread', name: '果酱面包', desc: '来料加工：干果与干菜熬成果酱，厚厚地抹在新烤的面包上。', stack: 2, use: 'eat', value: 45, rarity: 'common', glyph: 'bread' },
 }
 
 // 通用物品掉落权重

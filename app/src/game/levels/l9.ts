@@ -25,7 +25,7 @@ export const L9: LevelDef = {
     { type: 'hound', w: 12, min: 1, max: 3 },
     { type: 'deathmoth', w: 8, min: 0, max: 2 },
     { type: 'wretch', w: 9, min: 1, max: 2 },
-    { type: 'deathrat', w: 8, min: 0, max: 3 },
+    { type: 'corpserat', w: 8, min: 0, max: 3 }, // v42：死亡鼠并入尸鼠
     { type: 'faceling', w: 6, min: 0, max: 2 },
   ],
   items: [

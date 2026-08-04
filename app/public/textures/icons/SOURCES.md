@@ -39,3 +39,18 @@
 - capacitor.png（电容器）← 无标题48_20260726181646.png — 用户提供
 - glowstick.png（荧光棒）← 无标题49_20260726181850.png — 用户提供
 - wallpaper.png（壁纸碎片）← 无标题50_20260726183136.png — 用户提供
+
+## v28 原创像素画图标（pixel/，全部 53 件物品）
+
+`pixel/item_<id>.png`：128×128 RGBA（32×32 像素原稿最近邻放大 4 倍），**全部为本项目内部原创像素画**，
+仅参照后室 Wikidot/Fandom 物品设定描述设计造型，**无外部素材、无外部版权来源**，随项目同许可发布。
+运行时优先加载像素贴图，404/加载失败依次回退上方 v14/v21 旧贴图 → 手绘 SVG 兜底；
+渲染使用 `image-rendering: pixelated` 保持小格子内像素锐利。
+
+覆盖物品（53 件，按 id 字母序）：
+almond, axe, bandage, battery, canned, capacitor, carkey, cashew, cavingsuit, chalkstub,
+citywater, coffee, crowbar, divemask, driedfruit, endnote, flashlight, fuse, fuyouyu, gas,
+gloves, glowstick, headlamp, housekey, keycard, knife, lighter, megfolder, nails, notebook,
+oddbook, pamphlet, pockets, presses, rabbit, rope, royalration, sedative, silverware, skeleton,
+squirtgun, stapler, stonekazoo, suit, tape, thingmeat, timber, uvlamp, wallpaper, warpberry,
+wheatgrain, wrench, xenonmarble

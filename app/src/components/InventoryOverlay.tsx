@@ -1,19 +1,24 @@
 // 背包/图鉴/状态/地图 覆盖层
 import { useEffect, useRef, useState } from 'react'
+import { npcPortrait } from './npcPortrait'
 import type { Engine, SlotRef, SlotWhere } from '@/game/engine'
 import { ITEMS } from '@/game/items'
 import { storage } from '@/game/storage'
-import { ENTITIES, unlockTier, loadSeen } from '@/game/entities'
-import { WIN_TAPES, LEVELS, levelNo } from '@/game/levels'
+import { ENTITIES, unlockTier, loadSeen, entitySpawnLevels, entityThreat, entityRarity, type EntityRarity } from '@/game/entities'
+import { WIN_TAPES, LEVELS, levelNo, levelLabel, levelDefOf } from '@/game/levels'
 import { prefabsForLevel } from '@/game/prefabs'
 import { infiniteImplFor } from '@/game/infinite'
-import { CONTAINER_KINDS } from '@/game/mapgen'
+import { CONTAINER_KINDS } from '@/game/containers'
 import { ItemGlyph } from './HUD'
 import AvatarPreview from './AvatarPreview'
 import { loadAvatar } from '@/game/avatar'
 import { audio } from '@/game/audio'
 import { getKeybinds } from '@/game/keybinds'
 import { DOCS } from '@/game/docs'
+import { OUTPOSTS } from '@/game/outposts'
+import { NPCS, npcAvatar } from '@/game/npcs'
+import { loadChat } from '@/game/llm'
+import { FACTIONS } from '@/game/factions'
 import DocOverlay from './DocOverlay'
 import { ITEM_RARITY_LABEL, ITEM_RARITY_COLOR, type ItemRarity } from '@/game/items'
 import { PHENOMENA, rarityText } from '@/game/phenomena'
@@ -22,7 +27,23 @@ import { IconIsolation, IconPlant, IconStamina } from './icons'
 // 现象图标映射（phenomena.ts 中 def.icon → 具体 SVG 组件）
 const PHEN_ICON = { isolation: IconIsolation, plant: IconPlant, flicker: IconStamina } as const
 
-const ALL_TABS = ['背包', '图鉴', '状态', '地图', '日志'] as const
+// v41：团体标志水印（介绍框背景居中、低透明度、max 尺寸约束不溢出框；加载失败静默隐藏）
+function FactionLogo({ file, name }: { file: string; name: string }) {
+  const [err, setErr] = useState(false)
+  const base = (import.meta.env.BASE_URL ?? '/').replace(/\/?$/, '/')
+  if (err) return null
+  return (
+    <img
+      src={`${base}textures/${file}`}
+      alt={name} draggable={false}
+      onError={() => setErr(true)}
+      className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 select-none"
+      style={{ maxWidth: '72%', maxHeight: '88%', objectFit: 'contain', opacity: 0.15 }}
+    />
+  )
+}
+
+const ALL_TABS = ['背包', '图鉴', '状态', '地图', '日志', '任务'] as const
 type InvTab = (typeof ALL_TABS)[number]
 
 // 图鉴发现记录（持久化）
@@ -35,6 +56,8 @@ export function saveCodex(c: Record<string, boolean>) {
 export function discoverFromEngine(eng: Engine) {
   const c = loadCodex()
   c[`level_${eng.player.level}`] = true
+  // v35：身处据点即解锁图鉴「据点」存档
+  for (const o of Object.values(OUTPOSTS)) if (o.levelId === eng.player.level) c[`outpost_${o.id}`] = true
   if (eng.map) {
     for (const e of eng.map.entities) c[e.def.type] = true
     for (const it of eng.map.items) c[it.type] = true
@@ -46,12 +69,42 @@ export function discoverFromEngine(eng: Engine) {
 function BigMap({ engine }: { engine: Engine }) {
   const ref = useRef<HTMLCanvasElement>(null)
   const [zoom, setZoom] = useState(4)
+  // v35：拖动平移（指针拖动，单位=瓦片；「回正」复位到玩家居中）
+  const [pan, setPan] = useState({ x: 0, y: 0 })
+  const drag = useRef<{ px: number; py: number; ox: number; oy: number } | null>(null)
+  // v36：PC 滚轮缩放（以光标所指瓦片为锚点——缩放前后光标下的地图内容不动；原生监听以便 preventDefault）
+  useEffect(() => {
+    const c = ref.current
+    if (!c) return
+    const onWheelNative = (e: WheelEvent) => {
+      e.preventDefault()
+      const rect = c.getBoundingClientRect()
+      const cx = e.clientX - rect.left, cy = e.clientY - rect.top
+      const size = rect.width
+      setZoom((z0) => {
+        const z1 = Math.min(10, Math.max(2, z0 + (e.deltaY < 0 ? 1 : -1)))
+        if (z1 !== z0) setPan((pan0) => {
+          const wx = engine.player.x + pan0.x + (cx - size / 2) / z0
+          const wy = engine.player.y + pan0.y + (cy - size / 2) / z0
+          return { x: wx - (cx - size / 2) / z1 - engine.player.x, y: wy - (cy - size / 2) / z1 - engine.player.y }
+        })
+        return z1
+      })
+    }
+    c.addEventListener('wheel', onWheelNative, { passive: false })
+    return () => c.removeEventListener('wheel', onWheelNative)
+  }, [engine])
   // v13 楼层契约（防御性读取，缺省不显示）
   const pf = (engine.player as unknown as { floor?: unknown }).floor
   const mf = (engine.map as unknown as { floors?: unknown } | null)?.floors
   const floorText = typeof pf === 'number' && Number.isFinite(pf) && typeof mf === 'number' && mf > 1
     ? `当前 ${Math.max(0, Math.floor(pf)) + 1}F / 共${Math.floor(mf)}层`
     : null
+  // v43：多层地图——默认跟随玩家所在层，可手动切换（仅多层时显示按钮）
+  const floors = typeof mf === 'number' && mf > 1 ? Math.floor(mf) : 1
+  const playerBand = typeof pf === 'number' && Number.isFinite(pf) ? Math.max(0, Math.floor(pf)) : 0
+  const [floorSel, setFloorSel] = useState<0 | 1 | null>(null)
+  const viewFloor = floors > 1 ? Math.min(floors - 1, floorSel ?? playerBand) : 0
   useEffect(() => {
     const c = ref.current
     const m = engine.map
@@ -61,35 +114,75 @@ function BigMap({ engine }: { engine: Engine }) {
     const g = c.getContext('2d')!
     g.fillStyle = '#0a0908'; g.fillRect(0, 0, size, size)
     const s = zoom
-    const px = engine.player.x, py = engine.player.y
+    const px = engine.player.x + pan.x, py = engine.player.y + pan.y
     g.save()
     g.translate(size / 2 - px * s, size / 2 - py * s)
     for (let y = 0; y < m.h; y++)
-      for (let x = 0; x < m.w; x++)
-        if (engine.explored[y * m.w + x] && m.tiles[y * m.w + x] === 1) {
+      for (let x = 0; x < m.w; x++) {
+        const i = y * m.w + x
+        if (!engine.explored[i]) continue
+        // v43：多层按层过滤——上层画 up 楼板（灰绿底色区分），主层画 tiles
+        if (floors > 1 && viewFloor === 1) {
+          if (m.up[i] !== 1) continue
+          g.fillStyle = '#31423a'
+        } else {
+          if (m.tiles[i] !== 1) continue
           g.fillStyle = '#3a3423'
-          g.fillRect(x * s, y * s, s, s)
         }
+        g.fillRect(x * s, y * s, s, s)
+      }
     // ---- 标注（v32）：已探索区域内的容器 / 地面物品 / 出口（含名称）----
-    // 容器：方框（亮=未搜刮，暗=已搜刮）
+    // 容器：方框（亮=未搜刮，暗=已搜刮）；v43：按结构的所属楼层过滤
     for (const st of m.structures) {
       if (!CONTAINER_KINDS.includes(st.kind)) continue
+      if (floors > 1 && (st.floor ?? 0) !== viewFloor) continue
       const idx = Math.floor(st.y + st.h / 2) * m.w + Math.floor(st.x + st.w / 2)
       if (idx < 0 || idx >= m.w * m.h || !engine.explored[idx]) continue
       g.fillStyle = st.looted ? 'rgba(160,140,90,0.35)' : '#c9a03a'
       g.fillRect((st.x + st.w / 2) * s - 2.5, (st.y + st.h / 2) * s - 2.5, 5, 5)
     }
-    // 地面物品：小青点
+    // 地面物品：小青点（v43：按物品高度带过滤）
     for (const it of m.items) {
+      if (floors > 1 && ((it.z ?? 0) >= 1.5 ? 1 : 0) !== viewFloor) continue
       const idx = Math.floor(it.y) * m.w + Math.floor(it.x)
       if (idx < 0 || idx >= m.w * m.h || !engine.explored[idx]) continue
       g.fillStyle = '#6ad9c9'
       g.fillRect(it.x * s - 1, it.y * s - 1, 2.5, 2.5)
     }
-    // 出口：金点 + 名称（楼梯类出口始终可见，其余需已发现）
+    // 定居点地标：鲜黄三角 + 名称（v35；地标都在主层）
+    for (const st of m.structures) {
+      if (st.kind !== 'landmark') continue
+      if (floors > 1 && viewFloor !== 0) continue
+      const idx = Math.floor(st.y + st.h / 2) * m.w + Math.floor(st.x + st.w / 2)
+      if (idx < 0 || idx >= m.w * m.h || !engine.explored[idx]) continue
+      const lx = (st.x + st.w / 2) * s, ly = (st.y + st.h / 2) * s
+      g.fillStyle = '#ffd94d'
+      g.beginPath()
+      g.moveTo(lx, ly - 4); g.lineTo(lx + 3.5, ly + 2.5); g.lineTo(lx - 3.5, ly + 2.5)
+      g.closePath(); g.fill()
+      g.fillText('定居点地标', lx + 5, ly + 3)
+    }
+    // 区域名称（据点大地图标注；v43：带 z 的标注只出现在对应楼层视图）
+    if (m.zones) {
+      g.font = '10px monospace'
+      g.fillStyle = 'rgba(232,185,60,0.55)'
+      for (const z of m.zones) {
+        if (floors > 1 && (z.z ?? 0) !== viewFloor) continue
+        g.fillText(z.name, z.x * s + 3, z.y * s + 3)
+      }
+    }
+    // NPC：软绿点 + 姓名（据点居民；v46：多层按 NPC 所在楼层带过滤——夹楼居民只在 2F 视图显示）
+    for (const n of engine.npcs) {
+      if (floors > 1 && (n.floor ?? 0) !== viewFloor) continue
+      const nx = n.x * s, ny = n.y * s
+      g.fillStyle = '#7ac97a'
+      g.beginPath(); g.arc(nx, ny, 2.5, 0, 7); g.fill()
+      g.fillText(n.def.name, nx + 4, ny + 3)
+    }
+    // 出口：金点 + 名称（楼梯类出口始终可见，其余需已发现；出口都在主层）
     g.font = '9px monospace'
     g.textAlign = 'left'
-    for (const e of m.exits) {
+    if (viewFloor === 0) for (const e of m.exits) {
       const isStairs = e.def.kind === 'graystairs' || e.def.kind === 'graystairsup' || e.def.kind === 'stairs'
       if (!e.discovered && !isStairs) continue
       const ex = (e.x + 0.5) * s, ey = (e.y + 0.5) * s
@@ -97,17 +190,56 @@ function BigMap({ engine }: { engine: Engine }) {
       g.beginPath(); g.arc(ex, ey, 3, 0, 7); g.fill()
       g.fillText(e.def.name, ex + 5, ey + 3)
     }
-    g.fillStyle = '#e8b93c'
-    g.beginPath(); g.arc(px * s, py * s, 4, 0, 7); g.fill()
+    // 玩家：画在真实地图坐标（随内容平移——拖远可出画面；「回正」按钮归位到玩家居中），
+    // 本层高亮，另一层淡显（多层时提示玩家不在当前视图层）
+    g.fillStyle = viewFloor === playerBand ? '#e8b93c' : 'rgba(232,185,60,0.3)'
+    g.beginPath(); g.arc(engine.player.x * s, engine.player.y * s, 4, 0, 7); g.fill()
     g.restore()
-  }, [engine, zoom])
+  }, [engine, zoom, pan, viewFloor, floors, playerBand])
   return (
     <div className="flex flex-col items-center gap-2">
-      <canvas ref={ref} style={{ imageRendering: 'pixelated', border: '1px solid var(--panel-edge)' }} />
+      {/* v46：画布与侧缘切层按钮的相对定位容器（1F/2F 按钮移到地图右侧缘竖排） */}
+      <div className="relative">
+        <canvas
+          ref={ref}
+          style={{ imageRendering: 'pixelated', border: '1px solid var(--panel-edge)', touchAction: 'none', cursor: drag.current ? 'grabbing' : 'grab' }}
+          onPointerDown={(e) => {
+            e.currentTarget.setPointerCapture(e.pointerId)
+            drag.current = { px: e.clientX, py: e.clientY, ox: pan.x, oy: pan.y }
+          }}
+          onPointerMove={(e) => {
+            const d = drag.current
+            if (!d) return
+            // 拖动方向与地图平移一致（向右拖 = 视野向左移 → 中心点左移）
+            setPan({ x: d.ox - (e.clientX - d.px) / zoom, y: d.oy - (e.clientY - d.py) / zoom })
+          }}
+          onPointerUp={() => { drag.current = null }}
+          onPointerCancel={() => { drag.current = null }}
+        />
+        {floors > 1 && (
+          <div className="absolute right-1 top-1/2 flex -translate-y-1/2 flex-col gap-1">
+            {([0, 1] as const).map((f) => (
+              <button
+                key={f}
+                className="menu-btn px-2 py-1 text-[11px]"
+                style={viewFloor === f ? { borderColor: 'var(--amber)', color: 'var(--amber)' } : { opacity: 0.55 }}
+                title={`查看 ${f + 1}F`}
+                onClick={() => { setFloorSel(f === playerBand ? null : f); audio.uiTick() }}
+              >{f + 1}F{f === playerBand ? '·' : ''}</button>
+            ))}
+          </div>
+        )}
+      </div>
       {floorText && <div className="font-mono2 text-[12px]" style={{ color: 'var(--amber)' }}>{floorText}</div>}
       <div className="flex gap-2">
         <button className="menu-btn px-4 py-1" onClick={() => setZoom((z) => Math.max(2, z - 1))}>－</button>
         <button className="menu-btn px-4 py-1" onClick={() => setZoom((z) => Math.min(10, z + 1))}>＋</button>
+        <button
+          className="menu-btn px-4 py-1"
+          style={{ opacity: pan.x || pan.y ? 1 : 0.45 }}
+          title="回到玩家居中"
+          onClick={() => { setPan({ x: 0, y: 0 }); audio.uiTick() }}
+        >回正</button>
       </div>
       {/* 图例（v32） */}
       <div className="font-mono2 grid grid-cols-2 gap-x-5 gap-y-0.5 self-center text-[10px] md:grid-cols-3" style={{ color: 'var(--text-dim)' }}>
@@ -117,6 +249,7 @@ function BigMap({ engine }: { engine: Engine }) {
         <span><span style={{ color: 'rgba(160,140,90,0.5)' }}>■</span> 容器（已搜刮）</span>
         <span><span style={{ color: '#6ad9c9' }}>·</span> 地面物品</span>
         <span><span style={{ color: '#3a3423' }}>■</span> 已探索地板</span>
+        {floors > 1 && <span><span style={{ color: '#31423a' }}>■</span> 上层楼板（{viewFloor + 1}F 视图）</span>}
       </div>
     </div>
   )
@@ -217,7 +350,9 @@ function CodexDetail({ detail, onBack }: { detail: { kind: 'entity' | 'item' | '
         )
       })()}
       {detail.kind === 'level' && (() => {
-        const lv = LEVELS[Number(detail.id)]
+        // v47：levelDefOf 解析——Level 274 等独立编号层级（OUTPOST_LEVEL_DEFS 空间）也能打开详情
+        const lv = levelDefOf(Number(detail.id)) ?? LEVELS[Number(detail.id)]
+        if (!lv) return null
         // 该层曾经有的固定结构（prefab）与变种房间（无限层 chunk 变体，按层级取注册表）
         const fixed = lv.infinite ? [] : prefabsForLevel(lv.id).map((x) => x.name)
         const vimpl = lv.infinite ? infiniteImplFor(lv.id) : null
@@ -284,19 +419,32 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
   const [tab, setTab] = useState<InvTab>(codexOnly ? '图鉴' : (initialTab ?? '背包'))
   const [sel, setSel] = useState<SlotRef | null>(null)
   const [detail, setDetail] = useState<{ kind: 'entity' | 'item' | 'level'; id: string } | null>(null)
-  // 图鉴分类子页面（实体/层级/物品/现象/文档）
-  const [codexCat, setCodexCat] = useState<'实体' | '层级' | '物品' | '现象' | '文档'>('实体')
+  // 图鉴分类子页面（v41 排序：层级/实体/物品/现象/团体/据点/人士/文档）
+  const [codexCat, setCodexCat] = useState<'层级' | '实体' | '物品' | '现象' | '团体' | '据点' | '人士' | '文档'>('层级')
   // 图鉴「文档」分类的阅读视图（已解锁文档可重读）
   const [readingDoc, setReadingDoc] = useState<string | null>(null)
+  // 图鉴「人士」展开的聊天记录（npc id）
+  const [chatView, setChatView] = useState<string | null>(null)
   // 图鉴物品筛选：类别（后室/普通）/ 来源（通用或 B 层特有）/ 用途 / 稀有度
   const [fAnom, setFAnom] = useState<'all' | 'anom' | 'norm'>('all')
   const [fSrc, setFSrc] = useState<string>('all')
   const [fUse, setFUse] = useState<'all' | 'use' | 'throw' | 'equip' | 'other'>('all')
   const [fRar, setFRar] = useState<'all' | ItemRarity>('all')
+  // 图鉴实体筛选：层级（生成池）/ 威胁程度 / 稀有度
+  const [fLvl, setFLvl] = useState<string>('all')
+  const [fThr, setFThr] = useState<string>('all')
+  const [fERar, setFERar] = useState<'all' | EntityRarity>('all')
+  // 图鉴据点/人士筛选：所属团体（共用）
+  const [codexFac, setCodexFac] = useState<string>('all')
   const [, force] = useState(0)
   const p = engine.player
   const codex = loadCodex()
   const seen = loadSeen()
+  // 实体筛选结果（层级=自然生成池归属；event=不在任何生成池的事件生成实体）
+  const entFiltered = Object.values(ENTITIES).filter((e) =>
+    (fLvl === 'all' || (fLvl === 'event' ? entitySpawnLevels(e.type).length === 0 : entitySpawnLevels(e.type).some((s) => s.id === Number(fLvl)))) &&
+    (fThr === 'all' || entityThreat(e) === Number(fThr)) &&
+    (fERar === 'all' || entityRarity(e.type) === fERar))
   const refresh = () => force((n) => n + 1)
 
   // ---- v13：拖拽交换（桌面鼠标 + 移动端触摸，统一走 Pointer Events）----
@@ -438,98 +586,15 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
 
   const selSlot = sel ? getSlot(sel.w, sel.i) : null
   const selDef = selSlot ? ITEMS[selSlot.type] : null
+  // v29b：手机端判定（与 App 一致：粗指针/触屏）。仅手机端改变背包布局——
+  // 选中物品时左侧（原装备栏区域）显示物品信息面板；未选中或拖动中恢复显示装备栏。桌面端行为不变。
+  const isMobile = typeof window !== 'undefined' && (window.matchMedia?.('(pointer: coarse)').matches || 'ontouchstart' in window)
+  const mobileShowInfo = isMobile && !!sel && !!selDef && !drag
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3" style={{ background: 'rgba(10,9,8,0.7)', backdropFilter: 'blur(4px)' }} onClick={() => { if (!clickSuppressed()) onClose() }}>
-      {/* 拖拽浮动图标：跟随指针，半透明放大，不拦截命中检测 */}
-      {drag && (
-        <div
-          className="pointer-events-none fixed z-[70] flex items-center justify-center"
-          style={{
-            left: drag.x, top: drag.y,
-            transform: 'translate(-50%, -50%) scale(1.25)',
-            opacity: 0.85,
-            filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.7))',
-          }}
-        >
-          <div className="relative flex items-center justify-center border" style={{ width: 52, height: 52, borderColor: 'var(--amber)', background: 'rgba(20,17,12,0.85)' }}>
-            <ItemGlyph type={drag.type} size={30} />
-            {drag.count > 1 && <span className="font-mono2 absolute bottom-0.5 right-1 text-[10px]" style={{ color: 'var(--amber)' }}>{drag.count}</span>}
-          </div>
-        </div>
-      )}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-10">
-        <span className="font-mono2 text-[40px]" style={{ color: 'var(--text)' }}>PAUSED</span>
-      </div>
-      <div
-        className="hud-panel anim-slideUp max-h-[88dvh] w-full max-w-[720px] overflow-y-auto p-4 lg:max-w-[1024px] max-md:fixed max-md:inset-x-0 max-md:bottom-0 max-md:max-h-[85dvh] max-md:max-w-none"
-        style={{ background: 'var(--panel)', minHeight: 320 }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="mb-3 flex items-center justify-between">
-          <div className="flex gap-4">
-            {TABS.map((t) => (
-              <button
-                key={t}
-                className="pb-1 text-[15px]"
-                style={{ color: tab === t ? 'var(--amber)' : 'var(--text-dim)', borderBottom: tab === t ? '2px solid var(--amber)' : '2px solid transparent' }}
-                onClick={() => { setTab(t); audio.uiTick() }}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
-          <button className="font-mono2 border px-3 py-1 text-[12px]" style={{ borderColor: 'var(--panel-edge)', color: 'var(--text-dim)' }} onClick={onClose}>关闭</button>
-        </div>
-
-        {tab === '背包' && (
-          // v20 修复：三栏仅在 lg（≥1024px）启用——720px 面板下中栏仅 ~226px，背包 8 列（476px）严重挤压重叠；
-          // md 改两栏（详情面板下移整行），lg 面板加宽到 1024 后中栏 ~506px 才容得下 8×56px 格
-          <div className="grid gap-4 md:grid-cols-[190px_1fr] lg:grid-cols-[200px_1fr_230px]">
-            {/* 左栏：装备可视化（玩家模型实时反映手套/服饰；拖拽到装备位穿戴） */}
-            <div className="hud-panel flex flex-col items-center gap-1 p-2">
-              <div className="font-mono2 text-[11px]" style={{ color: 'var(--amber)' }}>装备</div>
-              <AvatarPreview avatar={loadAvatar()} gloves={p.hasGloves} suit={p.hasSuit} divemask={p.equip.head?.type === 'divemask'} size={132} />
-              <div className="mt-1 grid grid-cols-2 gap-1.5">
-                {/* 主手：展示快捷栏当前选中项（非独立槽位，不可拖放） */}
-                <div className="flex flex-col items-center gap-0.5">
-                  <div
-                    className="relative flex items-center justify-center border"
-                    style={{ width: 56, height: 56, borderColor: 'var(--amber)', background: 'rgba(232,185,60,0.10)' }}
-                    title="主手 = 快捷栏当前选中物品（数字键/滚轮切换）"
-                  >
-                    {p.hotbar[p.selected] && (
-                      <>
-                        <ItemGlyph type={p.hotbar[p.selected]!.type} size={28} />
-                        {p.hotbar[p.selected]!.count > 1 && <span className="font-mono2 absolute bottom-0.5 right-1 text-[10px]" style={{ color: 'var(--amber)' }}>{p.hotbar[p.selected]!.count}</span>}
-                      </>
-                    )}
-                  </div>
-                  <span className="font-mono2 text-[9px]" style={{ color: 'var(--amber)' }}>主手</span>
-                </div>
-                {(['head', 'offhand', 'body', 'gloves'] as const).map((w) => (
-                  <div key={w} className="flex flex-col items-center gap-0.5">
-                    {slotBtn(getSlot(w, 0), w, 0)}
-                    <span className="font-mono2 text-[9px]" style={{ color: 'var(--text-dim)' }}>{EQUIP_W_LABEL[w]}</span>
-                  </div>
-                ))}
-                {p.equip.pockets.map((s, i) => (
-                  <div key={`pk${i}`} className="flex flex-col items-center gap-0.5">
-                    {slotBtn(s, 'pocket', i)}
-                    <span className="font-mono2 text-[9px]" style={{ color: 'var(--text-dim)' }}>口袋{i + 1}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div>
-              <div className="font-mono2 mb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>快捷栏</div>
-              <div className="mb-3 flex flex-wrap gap-1.5">{p.hotbar.map((s, i) => slotBtn(s, 'hotbar', i))}</div>
-              <div className="font-mono2 mb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>背包</div>
-              {/* v20：移动端 4 列（242px 适配 390px 屏；原 6 列 366px 溢出），md 起 8 列×2 行 */}
-              <div className="grid grid-cols-4 gap-1.5 md:grid-cols-8">{p.backpack.map((s, i) => slotBtn(s, 'backpack', i))}</div>
-            </div>
-            <div className="hud-panel p-3 md:col-span-2 lg:col-span-1">
-              {selDef && selSlot && sel ? (
+  // 物品详情面板主体（桌面右栏 / 手机端选中时移到左栏原装备区域）
+  const detailBody = (
+    <>
+      {selDef && selSlot && sel ? (
                 <div className="flex flex-col gap-2">
                   <div className="flex justify-center" style={{ color: 'var(--amber)' }}><ItemGlyph type={selSlot.type} size={64} /></div>
                   <div className="font-title text-center text-[18px]" style={{ color: 'var(--text)' }}>{selDef.name}</div>
@@ -596,9 +661,112 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                   点击物品查看详情<br />（拖拽物品到另一格可交换位置）
                 </div>
               )}
+    </>
+  )
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3" style={{ background: 'rgba(10,9,8,0.7)', backdropFilter: 'blur(4px)' }} onClick={() => { if (!clickSuppressed()) onClose() }}>
+      {/* 拖拽浮动图标：跟随指针，半透明放大，不拦截命中检测 */}
+      {drag && (
+        <div
+          className="pointer-events-none fixed z-[70] flex items-center justify-center"
+          style={{
+            left: drag.x, top: drag.y,
+            transform: 'translate(-50%, -50%) scale(1.25)',
+            opacity: 0.85,
+            filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.7))',
+          }}
+        >
+          <div className="relative flex items-center justify-center border" style={{ width: 52, height: 52, borderColor: 'var(--amber)', background: 'rgba(20,17,12,0.85)' }}>
+            <ItemGlyph type={drag.type} size={30} />
+            {drag.count > 1 && <span className="font-mono2 absolute bottom-0.5 right-1 text-[10px]" style={{ color: 'var(--amber)' }}>{drag.count}</span>}
+          </div>
+        </div>
+      )}
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-10">
+        <span className="font-mono2 text-[40px]" style={{ color: 'var(--text)' }}>PAUSED</span>
+      </div>
+      <div
+        className="hud-panel anim-slideUp max-h-[88dvh] w-full max-w-[720px] overflow-y-auto p-4 lg:max-w-[1024px] max-md:fixed max-md:inset-x-0 max-md:bottom-0 max-md:max-h-[85dvh] max-md:max-w-none"
+        style={{ background: 'var(--panel)', minHeight: 320 }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="mb-3 flex items-center justify-between">
+          <div className="flex gap-4">
+            {TABS.map((t) => (
+              <button
+                key={t}
+                className="pb-1 text-[15px]"
+                style={{ color: tab === t ? 'var(--amber)' : 'var(--text-dim)', borderBottom: tab === t ? '2px solid var(--amber)' : '2px solid transparent' }}
+                onClick={() => { setTab(t); audio.uiTick() }}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+          <button className="font-mono2 border px-3 py-1 text-[12px]" style={{ borderColor: 'var(--panel-edge)', color: 'var(--text-dim)' }} onClick={onClose}>关闭</button>
+        </div>
+
+        {tab === '背包' && (
+          // v20 修复：三栏仅在 lg（≥1024px）启用——720px 面板下中栏仅 ~226px，背包 8 列（476px）严重挤压重叠；
+          // md 改两栏（详情面板下移整行），lg 面板加宽到 1024 后中栏 ~506px 才容得下 8×56px 格
+          <div className="grid gap-4 md:grid-cols-[190px_1fr] lg:grid-cols-[200px_1fr_230px]">
+            {/* 左栏：装备可视化（玩家模型实时反映手套/服饰；拖拽到装备位穿戴）
+                v29b：手机端选中物品且未拖动时，本区域改为显示该物品信息面板 */}
+            {mobileShowInfo ? (
+              <div className="hud-panel max-h-[46dvh] overflow-y-auto p-3">{detailBody}</div>
+            ) : (
+            <div className="hud-panel flex flex-col items-center gap-1 p-2">
+              <div className="font-mono2 text-[11px]" style={{ color: 'var(--amber)' }}>装备</div>
+              <AvatarPreview avatar={loadAvatar()} gloves={p.hasGloves} suit={p.hasSuit} cavingsuit={p.equip.body?.type === 'cavingsuit'} divemask={p.equip.head?.type === 'divemask'} headlamp={p.equip.head?.type === 'headlamp'} size={132} />
+              <div className="mt-1 grid grid-cols-2 gap-1.5">
+                {/* 主手：展示快捷栏当前选中项（非独立槽位，不可拖放） */}
+                <div className="flex flex-col items-center gap-0.5">
+                  <div
+                    className="relative flex items-center justify-center border"
+                    style={{ width: 56, height: 56, borderColor: 'var(--amber)', background: 'rgba(232,185,60,0.10)' }}
+                    title="主手 = 快捷栏当前选中物品（数字键/滚轮切换）"
+                  >
+                    {p.hotbar[p.selected] && (
+                      <>
+                        <ItemGlyph type={p.hotbar[p.selected]!.type} size={28} />
+                        {p.hotbar[p.selected]!.count > 1 && <span className="font-mono2 absolute bottom-0.5 right-1 text-[10px]" style={{ color: 'var(--amber)' }}>{p.hotbar[p.selected]!.count}</span>}
+                      </>
+                    )}
+                  </div>
+                  <span className="font-mono2 text-[9px]" style={{ color: 'var(--amber)' }}>主手</span>
+                </div>
+                {(['head', 'offhand', 'body', 'gloves'] as const).map((w) => (
+                  <div key={w} className="flex flex-col items-center gap-0.5">
+                    {slotBtn(getSlot(w, 0), w, 0)}
+                    <span className="font-mono2 text-[9px]" style={{ color: 'var(--text-dim)' }}>{EQUIP_W_LABEL[w]}</span>
+                  </div>
+                ))}
+                {p.equip.pockets.map((s, i) => (
+                  <div key={`pk${i}`} className="flex flex-col items-center gap-0.5">
+                    {slotBtn(s, 'pocket', i)}
+                    <span className="font-mono2 text-[9px]" style={{ color: 'var(--text-dim)' }}>口袋{i + 1}</span>
+                  </div>
+                ))}
+              </div>
             </div>
+            )}
+            <div>
+              <div className="font-mono2 mb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>快捷栏</div>
+              <div className="mb-3 flex flex-wrap gap-1.5">{p.hotbar.map((s, i) => slotBtn(s, 'hotbar', i))}</div>
+              <div className="font-mono2 mb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>背包</div>
+              {/* v20：移动端 4 列（242px 适配 390px 屏；原 6 列 366px 溢出），md 起 8 列×2 行 */}
+              <div className="grid grid-cols-4 gap-1.5 md:grid-cols-8">{p.backpack.map((s, i) => slotBtn(s, 'backpack', i))}</div>
+            </div>
+            {/* 右栏：物品详情（v29b：手机端隐藏本栏——详情已移至左栏原装备区域显示；桌面端不变） */}
+            {!isMobile && (
+            <div className="hud-panel p-3 md:col-span-2 lg:col-span-1">
+              {detailBody}
+            </div>
+            )}
           </div>
         )}
+
 
         {tab === '图鉴' && (
           detail ? (
@@ -607,7 +775,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
           <div>
             {/* 分类子页面切换：实体 / 层级 / 物品 / 现象 */}
             <div className="font-mono2 mb-2 flex gap-1 text-[11px]">
-              {(['实体', '层级', '物品', '现象', '文档'] as const).map((c) => (
+              {(['层级', '实体', '物品', '现象', '团体', '据点', '人士', '文档'] as const).map((c) => (
                 <button
                   key={c}
                   className="border px-3 py-1"
@@ -626,9 +794,30 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
               </span>
             </div>
             {codexCat === '实体' && (<>
-            <div className="font-mono2 mb-1 text-[11px]" style={{ color: 'var(--amber)' }}>实体（按遭遇次数解锁档案）</div>
+            <div className="font-mono2 mb-2 flex flex-wrap items-center gap-1.5 text-[11px]">
+              <span style={{ color: 'var(--amber)' }}>实体</span>
+              <select value={fLvl} onChange={(e) => setFLvl(e.target.value)} style={FILTER_SEL_STYLE}>
+                <option value="all">全部层级</option>
+                {LEVELS.filter((lv) => lv.entities.length > 0).map((lv) => (
+                  <option key={lv.id} value={String(lv.id)}>{levelLabel(lv.id)} · {lv.name}</option>
+                ))}
+                <option value="event">其他（事件生成）</option>
+              </select>
+              <select value={fThr} onChange={(e) => setFThr(e.target.value)} style={FILTER_SEL_STYLE}>
+                <option value="all">全部威胁</option>
+                {[0, 1, 2, 3, 4, 5].map((t) => <option key={t} value={String(t)}>威胁 {t} 级</option>)}
+              </select>
+              <select value={fERar} onChange={(e) => setFERar(e.target.value as typeof fERar)} style={FILTER_SEL_STYLE}>
+                <option value="all">全部稀有度</option>
+                <option value="common">常见</option>
+                <option value="uncommon">少见</option>
+                <option value="rare">稀有</option>
+                <option value="event">特殊（事件）</option>
+              </select>
+              <span className="text-[10px]" style={{ color: 'var(--text-dim)' }}>按遭遇次数解锁档案</span>
+            </div>
             <div className="mb-3 grid grid-cols-2 gap-2 md:grid-cols-3">
-              {Object.values(ENTITIES).map((e) => {
+              {entFiltered.map((e) => {
                 const tier = unlockTier(e.type)
                 const n = seen[e.type] ?? 0
                 return (
@@ -656,6 +845,9 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                 )
               })}
             </div>
+            {entFiltered.length === 0 && (
+              <div className="font-mono2 py-4 text-center text-[11px]" style={{ color: 'var(--text-dim)' }}>没有符合筛选条件的实体</div>
+            )}
             </>)}
             {codexCat === '层级' && (<>
             <div className="font-mono2 mb-1 text-[11px]" style={{ color: 'var(--amber)' }}>层级档案</div>
@@ -675,6 +867,30 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                   </button>
                 )
               })}
+              {/* v47：Level 274「杰瑞的房间」——独立层级（不走 LEVELS 下标，也不与据点页重复计数）；
+                  层级页卡片应用 jerry 团体主题色规则（边框 #4142a5 / 标题副主题色 #0071c9 / 标志水印，同据点卡片） */}
+              {(() => {
+                const lv274 = levelDefOf(274)!
+                const jf = FACTIONS.jerry
+                const unlocked = p.level === 274 || !!codex['level_274'] || !!codex['outpost_jerry']
+                return (
+                  <button
+                    className="hud-panel relative overflow-hidden p-2 text-left transition-transform active:scale-95"
+                    style={{ opacity: unlocked ? 1 : 0.55, borderColor: unlocked ? jf.color : undefined }}
+                    onClick={() => { if (unlocked) { setDetail({ kind: 'level', id: '274' }); audio.uiTick() } }}
+                  >
+                    {unlocked && jf.logo && <FactionLogo file={jf.logo} name={jf.name} />}
+                    <div className="relative">
+                    <div className="font-title text-[15px]" style={{ color: unlocked ? (jf.sub ?? jf.color) : 'var(--amber)' }}>
+                      {unlocked ? `Level ${levelNo(274)} · ${lv274.name}` : '？？？'}
+                    </div>
+                    <div className="text-[11px] leading-snug" style={{ color: 'var(--text-dim)' }}>
+                      {unlocked ? (lv274.lore ?? lv274.flavor) : '尚未发现这层层级（经杰瑞的信众引路抵达）'}
+                    </div>
+                    </div>
+                  </button>
+                )
+              })()}
             </div>
             </>)}
             {codexCat === '物品' && (<>
@@ -768,6 +984,8 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                     className="hud-panel p-2 text-left transition-transform active:scale-95"
                     style={{ opacity: unlocked ? 1 : 0.45, cursor: unlocked ? 'pointer' : 'default' }}
                     onClick={() => { if (unlocked) { setReadingDoc(d.id); audio.uiTick() } }}
+                    // v29b：移动端正常点按即阅读（touchstart 直触，修复需长按才触发；合成 click 重复设置同值幂等无害）
+                    onTouchStart={() => { if (!unlocked) return; setReadingDoc(d.id); audio.uiTick() }}
                   >
                     <div className="flex items-baseline justify-between">
                       <div className="font-title text-[15px]" style={{ color: unlocked ? 'var(--amber)' : 'var(--text-dim)' }}>
@@ -783,6 +1001,142 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
               })}
             </div>
             )}
+            {codexCat === '据点' && (
+            <div className="grid gap-2">
+              <div className="font-mono2 mb-1 flex items-center gap-1.5 text-[11px]">
+                <span style={{ color: 'var(--amber)' }}>据点（人类抱团建立的定居点——经定居点地标抵达）</span>
+                <select value={codexFac} onChange={(e) => setCodexFac(e.target.value)} style={FILTER_SEL_STYLE}>
+                  <option value="all">全部团体</option>
+                  {Object.values(FACTIONS).map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
+                </select>
+              </div>
+              {Object.values(OUTPOSTS).filter((o) => codexFac === 'all' || o.faction === codexFac).map((o) => {
+                const unlocked = !!codex[`outpost_${o.id}`]
+                const fac = FACTIONS[o.faction]
+                const facColor = fac?.color ?? 'var(--amber)' // v41：据点卡片应用所属团体主题色
+                const facSub = fac?.sub ?? fac?.color ?? 'var(--amber)' // 副主题色（标题文字）
+                return (
+                  <div key={o.id} className="hud-panel relative overflow-hidden p-3" style={{ opacity: unlocked ? 1 : 0.5, borderColor: unlocked ? facColor : undefined }}>
+                    {unlocked && fac?.logo && <FactionLogo file={fac.logo} name={fac.name} />}
+                    <div className="relative">
+                    <div className="font-title text-[16px]" style={{ color: unlocked ? facSub : 'var(--text-dim)' }}>
+                      {unlocked ? o.name : '？？？'}
+                    </div>
+                    {unlocked ? (
+                      o.intro.map((para, i) => (
+                        <p key={i} className="mt-1.5 text-[12px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>{para}</p>
+                      ))
+                    ) : (
+                      <div className="mt-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>尚未发现这处据点（在 Level 1 寻找定居点地标）</div>
+                    )}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+            )}
+            {codexCat === '人士' && (
+            <div className="grid gap-2">
+              <div className="font-mono2 mb-1 flex items-center gap-1.5 text-[11px]">
+                <span style={{ color: 'var(--amber)' }}>人士（据点居民——只记录你遇见过的）</span>
+                <select value={codexFac} onChange={(e) => setCodexFac(e.target.value)} style={FILTER_SEL_STYLE}>
+                  <option value="all">全部团体</option>
+                  {Object.values(FACTIONS).map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
+                </select>
+              </div>
+              {(() => {
+                // 静态注册表 + 本局遇见的随机 NPC（图鉴只显示已解锁的）
+                const allNpcs = [...Object.values(NPCS), ...engine.knownNpcs.filter((k) => !NPCS[k.id])]
+                const met = allNpcs.filter((n) => codex[`npc_${n.id}`] && (codexFac === 'all' || (n.faction ?? 'meg') === codexFac))
+                return (<>
+                  {met.length === 0 && (
+                    <div className="font-mono2 py-4 text-center text-[11px]" style={{ color: 'var(--text-dim)' }}>尚未遇见任何人士</div>
+                  )}
+                  {met.map((n) => (
+                <div key={n.id} className="hud-panel relative overflow-hidden p-3" style={{ borderColor: FACTIONS[n.faction ?? 'meg']?.color }}>
+                  {FACTIONS[n.faction ?? 'meg']?.logo && <FactionLogo file={FACTIONS[n.faction ?? 'meg']!.logo!} name={FACTIONS[n.faction ?? 'meg']!.name} />}
+                  <div className="relative flex gap-3">
+                  <div className="shrink-0">
+                    {/* v41：静态肖像（共享渲染器出图）——替代每卡一个实时上下文（爆 WebGL 上下文上限的崩溃）；
+                        配饰仍走 npcGear 同一通道（厨师帽/护士帽/听诊器等可见） */}
+                    <img src={npcPortrait(npcAvatar(n), n.id, n)} alt={n.name} style={{ width: 64, height: 93 }} />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-baseline gap-2">
+                      <span className="font-title text-[16px]" style={{ color: 'var(--amber)' }}>{n.name}</span>
+                      <span className="font-mono2 text-[10px]" style={{ color: 'var(--text-dim)' }}>{n.role}</span>
+                      {loadChat(n.id).length > 0 && (
+                        <button
+                          className="font-mono2 ml-auto border px-2 text-[10px]"
+                          style={{ borderColor: 'var(--panel-edge)', color: chatView === n.id ? 'var(--amber)' : 'var(--text-dim)' }}
+                          onClick={() => { setChatView(chatView === n.id ? null : n.id); audio.uiTick() }}
+                        >聊天记录（{loadChat(n.id).length}）</button>
+                      )}
+                    </div>
+                    <div className="mt-1 text-[11.5px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>
+                      <span style={{ color: 'var(--amber)' }}>性格：</span>{n.personality}
+                    </div>
+                    <div className="mt-0.5 text-[11.5px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>
+                      <span style={{ color: 'var(--amber)' }}>经历：</span>{n.background}
+                    </div>
+                    {chatView === n.id && (
+                      <div className="mt-2 max-h-[20dvh] overflow-y-auto border p-1.5 pr-1" style={{ borderColor: 'var(--panel-edge)', background: 'rgba(0,0,0,0.25)' }}>
+                        {loadChat(n.id).map((m, i) => (
+                          <div key={i} className={`mb-1 flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                            <div
+                              className="max-w-[85%] px-1.5 py-0.5 text-[11px] leading-relaxed"
+                              style={m.role === 'user'
+                                ? { background: 'rgba(232,185,60,0.15)', border: '1px solid rgba(232,185,60,0.4)', color: 'var(--text)' }
+                                : { background: 'rgba(255,255,255,0.05)', border: '1px solid var(--panel-edge)', color: 'var(--text-dim)' }}
+                            >
+                              {m.role !== 'user' && <span className="font-mono2 mr-1 text-[9px]" style={{ color: 'var(--amber)' }}>{n.name}</span>}
+                              {m.content}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  </div>
+                </div>
+                  ))}
+                </>)
+              })()}
+            </div>
+            )}
+            {codexCat === '团体' && (
+            <div className="grid gap-2">
+              <div className="font-mono2 mb-1 text-[11px]" style={{ color: 'var(--amber)' }}>团体（后室中的人类组织与你和它们的声望）</div>
+              {Object.values(FACTIONS).sort((a) => (a.id === 'wanderer' ? -1 : 1)).map((f) => {
+                const rep = engine.rep[f.id] ?? 0
+                return (
+                  <div key={f.id} className="hud-panel relative overflow-hidden p-3" style={{ borderColor: f.color }}>
+                    {f.logo && <FactionLogo file={f.logo} name={f.name} />}
+                    <div className="relative">
+                    <div className="flex items-center gap-2">
+                      <span className="font-title text-[16px]" style={{ color: f.sub ?? f.color }}>{f.name}</span>
+                      <span className="font-mono2 text-[10px]" style={{ color: 'var(--text-dim)' }}>{f.en}</span>
+                      {f.hasRep ? (
+                        <span
+                          className="font-mono2 ml-auto text-[12px]"
+                          style={{ color: rep >= 80 ? 'var(--exit)' : rep <= -30 ? 'var(--blood)' : 'var(--amber)' }}
+                        >声望 {rep > 0 ? '+' : ''}{rep}</span>
+                      ) : (
+                        <span className="font-mono2 ml-auto text-[10px]" style={{ color: 'var(--text-dim)' }}>---</span>
+                      )}
+                    </div>
+                    <p className="mt-1 text-[12px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>{f.desc}</p>
+                    {f.hasRep && (
+                      <div className="font-mono2 mt-1.5 text-[10px]" style={{ color: 'var(--text-dim)' }}>
+                        声望 ≥80 交易八折 · ≤-30 拒绝交易 · ≤-60 拒绝交谈 · ≤-90 禁止进入其据点
+                      </div>
+                    )}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+            )}
           </div>
           )
         )}
@@ -793,7 +1147,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
             <div className="flex justify-between"><span style={{ color: 'var(--text-dim)' }}>体力</span><span>{Math.round(p.stamina)}/100</span></div>
             <div className="flex justify-between"><span style={{ color: 'var(--text-dim)' }}>饥饿</span><span>{Math.round(p.hunger)}/100</span></div>
             <div className="flex justify-between"><span style={{ color: 'var(--text-dim)' }}>理智</span><span>{Math.round(p.sanity)}/100</span></div>
-            <div className="flex justify-between"><span style={{ color: 'var(--text-dim)' }}>深度</span><span>Level {levelNo(p.level)} · {LEVELS[p.level].name}</span></div>
+            <div className="flex justify-between"><span style={{ color: 'var(--text-dim)' }}>深度</span><span>{levelLabel(p.level)} · {levelDefOf(p.level)?.name}</span></div>
             <div className="flex justify-between"><span style={{ color: 'var(--text-dim)' }}>击杀数</span><span>{p.kills}</span></div>
             <div className="flex justify-between"><span style={{ color: 'var(--text-dim)' }}>行走距离</span><span>{Math.round(p.steps)} 步</span></div>
             <div className="flex justify-between"><span style={{ color: 'var(--text-dim)' }}>存活时间</span><span>{Math.floor(p.aliveTime / 60)}分{Math.floor(p.aliveTime % 60)}秒</span></div>
@@ -833,6 +1187,44 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
         {tab === '地图' && <BigMap engine={engine} />}
 
         {tab === '日志' && <LogTab engine={engine} />}
+
+        {tab === '任务' && (
+          <div className="grid gap-2">
+            <div className="font-mono2 mb-1 text-[11px]" style={{ color: 'var(--amber)' }}>委托（探险署中控室 / 商人之家 / 希波克拉底 - 1 / Level 274 侍立信众处接取与交付）</div>
+            {engine.quests.length === 0 && (
+              <div className="font-mono2 py-4 text-center text-[11px]" style={{ color: 'var(--text-dim)' }}>
+                还没有接取委托——去 Alpha 基地中控室找「夜莺」。
+              </div>
+            )}
+            {engine.quests.map((q) => {
+              const d = q.def
+              const prog = d.kind === 'item'
+                ? `${Math.min(engine.countItem(d.target), d.n)}/${d.n} 件`
+                : d.kind === 'preach'
+                  ? q.done ? '已布道' : '未布道'
+                : d.unit === 'time'
+                  ? `${Math.min(Math.floor(q.progress), d.n)}/${d.n} 秒`
+                  : d.unit === 'dist'
+                    ? `${Math.min(Math.floor(q.progress), d.n)}/${d.n} 米`
+                    : q.done ? '已遭遇' : '未遭遇'
+              return (
+                <div key={d.id} className="hud-panel p-2" style={{ borderColor: q.done ? 'var(--exit)' : undefined }}>
+                  <div className="flex items-baseline justify-between">
+                    <span className="font-title text-[14px]" style={{ color: q.done ? 'var(--exit)' : 'var(--amber)' }}>{d.title}</span>
+                    <span className="font-mono2 text-[10px]" style={{ color: 'var(--text-dim)' }}>{q.done ? '待交付' : prog}</span>
+                  </div>
+                  <div className="text-[11px] leading-snug" style={{ color: 'var(--text-dim)' }}>{d.desc}</div>
+                  <div className="font-mono2 mt-1 text-[10px]" style={{ color: 'var(--text-dim)' }}>
+                    奖励：声望 +{d.rewardRep}{d.rewardCoin > 0 ? ` · ${d.faction === 'bntg' ? '压印币' : '天鹰币'} ×${d.rewardCoin}` : ''}
+                    {d.rewardItems.length ? ` · ${d.rewardItems.map((t) => ITEMS[t]?.name ?? t).join('、')}` : ''}
+                    {d.hard ? ' · 困难（接取已赠迁跃浆果）' : ''}
+                  </div>
+                  {q.done && <div className="font-mono2 mt-0.5 text-[10px]" style={{ color: 'var(--exit)' }}>{d.faction === 'jerry' ? '目标达成——回 Level 274 向侍立信众交付' : '目标达成——回探险署中控室交付'}</div>}
+                </div>
+              )
+            })}
+          </div>
+        )}
       </div>
       {/* 图鉴「文档」阅读视图（盖在覆盖层之上；阻止点击冒泡误关背包） */}
       {readingDoc && (

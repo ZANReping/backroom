@@ -1,5 +1,6 @@
-// 生成器冒烟测试：13 个层级 × 多种子，校验可生成、出生点合法、出口/物品/实体落点合法
-import { generateLevel, tileAt, CONTAINER_KINDS } from '../src/game/mapgen.ts'
+// 生成器冒烟测试：13 个层级（据点走独立 id 空间，另有 outpost-smoke 覆盖）× 多种子，校验可生成、出生点合法、出口/物品/实体落点合法
+import { generateLevel, tileAt } from '../src/game/mapgen.ts'
+import { CONTAINER_KINDS } from '../src/game/containers.ts'
 import { LEVELS, levelNo } from '../src/game/levels/index.ts'
 import { ITEMS } from '../src/game/items.ts'
 import { ENTITIES } from '../src/game/entities/index.ts'

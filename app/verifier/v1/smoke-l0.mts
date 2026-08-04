@@ -22,7 +22,9 @@ console.log('== v17 L0 无限生成冒烟 ==')
 ok(L0.name === '教学关卡', `L0 显示名「教学关卡」（内部 id=${L0.id} 不变）`)
 ok(L0.infinite === true, 'L0 infinite=true（无限 chunk 模式）')
 ok(L0.entities.length === 0, 'L0 定义零实体（实体绝迹）')
-ok(L0.exits.length === 1 && L0.exits[0].kind === 'flickerdoor' && L0.exits[0].dest === 1, 'L0 唯一出口=闪烁门→L1')
+// v29：新增罕见出口「向下的灰色阶梯」（每 2×2 超区域 1 个，→L1），主出口仍为闪烁门
+ok(L0.exits.length === 2 && L0.exits[0].kind === 'flickerdoor' && L0.exits[0].dest === 1, 'L0 主出口=闪烁门→L1')
+ok(L0.exits[1]?.kind === 'graystairs' && L0.exits[1]?.dest === 1, 'L0 罕见出口=向下的灰色阶梯→L1')
 
 // ---- 1. 同种子同 chunk 生成一致（确定性）----
 {
@@ -103,14 +105,16 @@ ok(L0.exits.length === 1 && L0.exits[0].kind === 'flickerdoor' && L0.exits[0].de
   const rng = (() => { let s = 12345; return () => (s = (s * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff })()
   for (let i = 0; i < 140; i++) {
     const ang = Math.floor(rng() * 4) * Math.PI / 2
-    px += Math.round(Math.cos(ang)) * CS
-    py += Math.round(Math.sin(ang)) * CS
+    const mx = Math.round(Math.cos(ang)) * CS, my = Math.round(Math.sin(ang)) * CS
+    px += mx; py += my
     const sh = updateInfinite(m, L0, px, py, explored)
     if (sh) { shifts++; px -= sh.dx; py -= sh.dy }
     if (tileAt(m, Math.floor(px), Math.floor(py)) !== 1) {
-      // 玩家应始终站在地板上（平移保持相对世界一致）
-      ok(false, `第 ${i} 步后玩家瓦片非地板`)
-      break
+      // v27 起 maze 内嵌马尼拉室厚墙/变体房间墙体：随机行程撞上墙体属正常（真实玩家绕行），撤销该步继续
+      px -= mx; py -= my
+      const back = updateInfinite(m, L0, px, py, explored)
+      if (back) { shifts--; px -= back.dx; py -= back.dy }
+      continue
     }
   }
   const inf = m.inf as InfiniteState

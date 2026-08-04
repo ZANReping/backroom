@@ -6,7 +6,7 @@ import type { JSX } from 'react'
 import { audio } from '@/game/audio'
 
 export type CutKind = 'bloom' | 'shutter' | 'iris' | 'glitch' | 'fall' | 'noclip' | 'collapse' | 'sink' | 'dawn'
-export type CutIn = 'fall' | 'collapse' | 'wade' | 'crawl' | 'step' | 'surface' | 'dark'
+export type CutIn = 'fall' | 'collapse' | 'wade' | 'crawl' | 'step' | 'surface' | 'dark' | 'outpost'
 
 type Ctx = CanvasRenderingContext2D
 
@@ -30,6 +30,7 @@ const IN_DUR: Record<CutIn, number> = {
   step: 0.7,
   surface: 0.9,
   dark: 0.85,
+  outpost: 1.2,
 }
 const CARD_DUR = 0.72
 const MONO = "'JetBrains Mono', ui-monospace, monospace"
@@ -466,6 +467,41 @@ const drawIn = (g: Ctx, kind: CutIn, p: number, tt: number, W: number, H: number
       }
       break
     }
+    // v35 抵达据点：黑暗中一串鲜黄路标向中心汇拢，暖光亮起后淡开（你跟着路标到达了）
+    case 'outpost': {
+      const cx = W / 2, cy = H / 2
+      // 暖光自中心亮起
+      const gw = smooth(Math.max(0, p - 0.3) / 0.7)
+      g.fillStyle = '#060607'
+      g.fillRect(0, 0, W, H)
+      if (gw > 0.01) {
+        const r = Math.max(W, H) * 0.75 * gw
+        const gr = g.createRadialGradient(cx, cy, 1, cx, cy, r)
+        gr.addColorStop(0, `rgba(255,242,216,${0.9 * gw})`)
+        gr.addColorStop(0.45, `rgba(240,220,170,${0.32 * gw})`)
+        gr.addColorStop(1, 'rgba(240,220,170,0)')
+        g.fillStyle = gr
+        g.fillRect(0, 0, W, H)
+      }
+      // 路标三角：从两侧向中心汇拢（随暖光渐隐）
+      const n = 7
+      for (let i = 0; i < n; i++) {
+        const k = clamp01(p * 1.3 - i * 0.07)
+        if (k <= 0) continue
+        const side = i % 2 === 0 ? -1 : 1
+        const x = cx + side * (1 - k) * W * 0.38 + side * k * (i - n / 2) * 16
+        const y = cy + (1 - k) * (hash(i, 21) - 0.5) * H * 0.4 + k * (i - n / 2) * 7
+        const s2 = 9 + k * 9
+        g.fillStyle = `rgba(255,217,77,${(0.25 + 0.75 * k) * (1 - gw * 0.7)})`
+        g.beginPath()
+        g.moveTo(x, y - s2)
+        g.lineTo(x + s2 * 0.8, y + s2 * 0.7)
+        g.lineTo(x - s2 * 0.8, y + s2 * 0.7)
+        g.closePath()
+        g.fill()
+      }
+      break
+    }
   }
 }
 
@@ -555,6 +591,7 @@ export default function Cutscene(props: {
           setPhase('in')
           if (inKind === 'wade') audio.swim()
           else if (inKind === 'surface') audio.splash(0.6)
+          else if (inKind === 'outpost') audio.exitChime(4)
         }
         if ((inKind === 'fall' || inKind === 'collapse') && p > 0.6) once('land', () => audio.hurt())
       }

@@ -1,16 +1,23 @@
 // 游戏引擎：玩家/实体AI/生存系统/交互/出入口/事件派发
 import { generateLevel, tileAt, tileH, groundHeightAt, solidStructAtFloor, bandOfZ, FLOOR_H, POOL_DEPTH, structStandTopAt, ceilingHeightAt, type GameMap } from './mapgen'
 import { WALL_H } from './renderer/shared'
-import { LEVELS, LEVEL_EVENTS, WIN_TAPES, NORMAL_LEVELS, levelLabel } from './levels'
+import { LEVELS, LEVEL_EVENTS, WIN_TAPES, NORMAL_LEVELS, levelLabel, levelDefOf } from './levels'
 import { ITEMS, itemName } from './items'
-import { recordEncounter, makeEntity, ENTITIES, type Entity } from './entities'
+import { recordEncounter, makeEntity, ENTITIES, loadSeen, type Entity } from './entities'
 import { canOccupy, createIntegrator, integrateMove, PLAYER_RADIUS, type MoveIntegrator } from './player'
 import { look } from './renderer3d'
 import type { ExitDef, ExitInstance, LightSource, Structure } from './types'
 import { audio } from './audio'
+import { storage } from './storage'
 import { seedString, RNG, randomSeed } from './rng'
 import { updateInfinite, l0NearestExit, findNearestVariant, CS, chunkKey, applyRedPlague, infiniteImplFor, restitch } from './infinite'
 import { prefabsForLevel, placePrefabForced } from './prefabs'
+import { CONTAINERS, CONTAINER_KINDS, CONTAINER_RARE } from './containers'
+import { DECOR_VIEWS, GRAFFITI_LORE, GRAFFITI_LORE_KIND, BRAILLE_MARKS, GLASSWIN_TEXT } from './decorations'
+import { NPCS, JERRY_PREACH_LINES, JERRY_CHANT_LINES, type NpcState, type NpcDef } from './npcs'
+import { OUTPOSTS } from './outposts'
+import { FACTIONS, REP_START, REP_TIER, genQuest, genBntgQuest, genArianeQuest, genEl3aQuest, genJerryQuest, type QuestDef, type QuestFaction } from './factions'
+import { l2JerryRoomRectAt } from './infiniteL2' // v45：信众宣传间领地矩形（HUD 声望显示）
 
 export interface InvSlot { type: string; count: number }
 // 装备槽位标识：hotbar/backpack 为背包格；offhand/body/gloves/pocket 为装备位（主手=快捷栏选中项，不是独立槽位）
@@ -34,7 +41,7 @@ export interface Projectile {
   done?: boolean
 }
 export interface HudEvent {
-  kind: 'msg' | 'toast' | 'damage' | 'sanityhit' | 'transition' | 'dead' | 'victory' | 'levelchange' | 'lootpanel' | 'notebook' | 'doc'
+  kind: 'msg' | 'toast' | 'damage' | 'sanityhit' | 'transition' | 'dead' | 'victory' | 'levelchange' | 'lootpanel' | 'notebook' | 'doc' | 'landmark' | 'dialog'
   cutIn?: string
   dest?: number | 'random' | 'win'
   text?: string
@@ -79,27 +86,42 @@ export interface InputState {
 export type Difficulty = 'easy' | 'normal' | 'hard'
 const DIFF = { easy: { dmg: 0.6, drain: 0.6 }, normal: { dmg: 1, drain: 1 }, hard: { dmg: 1.5, drain: 1.4 } }
 
-// v23：可搜索容器统一表（名称 / 搜索时长 / 掉落池 / 件数 / 前置条件）
-// 物品生成容器化后，多数补给需要开箱才能拿到；掉落池按容器语义分化。
-export const CONTAINERS: Record<string, { label: string; dur: number; pool: string[]; n: number; gate?: 'carkey' | 'crowbar' }> = {
-  crate:    { label: '补给箱',        dur: 1.8, n: 2, pool: ['almond', 'canned', 'bandage', 'battery', 'tape', 'glowstick'] },
-  corpse:   { label: '尸体',          dur: 1.2, n: 1, pool: ['bandage', 'almond', 'battery', 'tape', 'wallpaper'] },
-  car:      { label: '后备箱',        dur: 1.8, n: 2, pool: ['gas', 'almond', 'canned', 'battery', 'tape'], gate: 'carkey' },
-  cabinet:  { label: '配电柜',        dur: 1.8, n: 2, pool: ['battery', 'fuse', 'capacitor', 'tape'] },
-  dresser:  { label: '柜子',          dur: 1.6, n: 2, pool: ['silverware', 'sedative', 'almond', 'bandage', 'tape'] },
-  megcrate: { label: 'M.E.G. 补给箱', dur: 2.0, n: 3, pool: ['almond', 'almond', 'bandage', 'battery', 'megfolder', 'tape'] },
-  // v23 新增容器
-  locker:   { label: '储物柜',        dur: 1.6, n: 2, pool: ['battery', 'bandage', 'canned', 'flashlight', 'housekey', 'tape'] },
-  toolbox:  { label: '工具箱',        dur: 1.4, n: 2, pool: ['crowbar', 'wrench', 'nails', 'battery', 'timber', 'tape'] },
-  suitcase: { label: '行李箱',        dur: 1.6, n: 2, pool: ['bandage', 'almond', 'lighter', 'rabbit', 'pamphlet', 'tape'] },
-  fridge:   { label: '冰箱',          dur: 1.5, n: 2, pool: ['canned', 'almond', 'citywater', 'driedfruit', 'thingmeat'] },
-  safebox:  { label: '保险箱',        dur: 2.4, n: 3, pool: ['presses', 'sedative', 'keycard', 'skeleton', 'rabbit', 'tape'], gate: 'crowbar' },
-  mailbox:  { label: '信箱',          dur: 1.1, n: 1, pool: ['housekey', 'pamphlet', 'wallpaper', 'endnote', 'tape'] },
-  barrel:   { label: '木桶',          dur: 1.5, n: 2, pool: ['almond', 'almond', 'oddbook', 'rope', 'tape'] },
-  bookcase: { label: '书柜',          dur: 1.6, n: 2, pool: ['oddbook', 'oddbook', 'pamphlet', 'megfolder', 'tape'] },
-  bonepile: { label: '骨堆',          dur: 1.4, n: 1, pool: ['bandage', 'divemask', 'rope', 'wallpaper', 'tape'] },
-  campstall:{ label: '营地摊位',      dur: 2.0, n: 3, pool: ['driedfruit', 'cavingsuit', 'uvlamp', 'almond', 'battery', 'xenonmarble'] },
+// ===== v29a：存档/读档 =====
+// br_save（App.tsx 写入）仅存 seed+difficulty 供主界面「继续游戏」取种子；
+// br_save_state（引擎自动维护）存全量快照——继续游戏时凭种子匹配恢复进度。
+export const SAVE_KEY = 'br_save_state'
+export interface SaveSnapshot {
+  v: 1
+  seed: number
+  difficulty: Difficulty
+  time: number // 游戏内时间（地图种子派生依赖它）
+  mapSeed: number // 当前层级地图生成种子（读档需复现同一张图）
+  mapFirstVisit: boolean // 生成该图时的 firstVisit 标记（影响初始物资刷新）
+  level: number
+  visited: number[] // 已到过的层级（初始物资仅首访刷新）
+  outpostReturn?: number | null // v35：进入据点前的层级（据点返程落点）
+  rep?: Record<string, number> // v35：团体声望
+  quests?: { def: QuestDef; progress: number; baseline: number; done: boolean }[] // v35：委托任务
+  brcSin?: { hurt: number; killed: number } // v39：BRC 未告发的伤害/杀死计数
+  brcMimicCd?: number // v39：BRC 模仿装修冷却剩余秒数
+  indoctrination?: number // v45：教化值 0~100（接触杰瑞积累；驯服清零；随存档持久）
+  jerryTamed?: boolean // v45：鹉主已被杏仁水驯服（教化不再积累）
+  jerryAgreed?: string[] // v45：已对其「认同杰瑞」的信众 NPC id（引路选项按此显示；v49 起每局至多一名——见 jerryOath）
+  jerryOath?: boolean // v49：本局已宣誓认同杰瑞（+10 每局仅首次；之后任何信众处认同选项不再出现）
+  // v47：传教使命已标准委托化（kind 'preach' 进 quests，随 quests 持久）；旧档 jerryPreach 字段废弃不再读取
+  player: PlayerState
 }
+export function loadSaveSnapshot(): SaveSnapshot | null {
+  try {
+    const raw = storage.get(SAVE_KEY)
+    if (!raw) return null
+    const s = JSON.parse(raw) as SaveSnapshot
+    if (!s || s.v !== 1 || typeof s.seed !== 'number' || !s.player) return null
+    if (!Array.isArray(s.player.hotbar) || !Array.isArray(s.player.backpack)) return null
+    return s
+  } catch { return null }
+}
+export function clearSaveSnapshot() { storage.remove(SAVE_KEY) }
 
 export class Engine {
   map: GameMap | null = null
@@ -109,11 +131,17 @@ export class Engine {
   difficulty: Difficulty = 'normal'
   seed = 1
   noise = 0 // 当前噪音值 0-1（HUD 显示）
+  private playerNoiseT = 0 // 玩家噪音残余时间（>0 = 正在/刚刚制造噪音；猎犬威慑判定，noiseEvent 刷新）
   camShake = 0
   time = 0
   paused = false
   over = false
   victory = false
+  // v29a：存档/读档状态
+  private mapSeed = 0 // 当前层级地图生成种子（loadLevel 记录，读档恢复同一张图用）
+  private mapFirstVisit = true // 当前地图生成时的 firstVisit 标记
+  private autosaveT = 0 // 周期自动存档计时（秒）
+  private idleSaved = false // 暂停/结束后已落盘一次（避免每帧重复写存储）
   /** v23：本层内是否主动挑衅过实体（解除 Level 11 Effect 的被动状态） */
   provoked = false
   /** v23：在 Level 601 走进过多少次「你家的前门」 */
@@ -137,12 +165,11 @@ export class Engine {
   climb: { baseX: number; baseY: number; topX: number; topY: number; dir: 1 | -1 } | null = null
   private climbCd = 0 // 攀爬送达后的再触发冷却（防止到顶立即又爬下）
   private stepAcc = 0
-  private chimeT = 0
   // v12：interactTarget 携带目标引用（结构/物品/出口），HUD 提示与 doInteract 执行
   // 共用 scanInteract 的同一选择结果，杜绝「提示普通门却触发相邻上锁门」的目标漂移。
-  private interactTarget: { kind: string; label: string; s?: Structure; it?: GameMap['items'][number]; e?: GameMap['exits'][number] } | null = null
+  private interactTarget: { kind: string; label: string; s?: Structure; it?: GameMap['items'][number]; e?: GameMap['exits'][number]; npc?: NpcState; ent?: Entity } | null = null
   // 开发者模式（v8 扩展：statLock=每帧锁满状态，oneHit=一击必杀，invisible=实体不追击，frozenAI=冻结实体）
-  dev = { god: false, noclip: false, speed: false, statLock: true, oneHit: false, invisible: false, frozenAI: false, phenOn: new Set<string>(), phenOff: new Set<string>() }
+  dev = { god: false, noclip: false, speed: false, statLock: true, oneHit: false, invisible: false, frozenAI: false, bright: false, phenOn: new Set<string>(), phenOff: new Set<string>(), hintDist: 30 }
   // 地图就地修改版本号（开发者强制生成固定结构时 +1；渲染层据此重建有限层静态几何）
   mapRev = 0
   // 开场爬起动画计时（>0 时锁定移动/攻击/跳跃，渲染层相机从贴地侧躺缓慢起身）
@@ -152,6 +179,7 @@ export class Engine {
   lootPanel: { sid: number; label: string; items: string[] } | null = null
   private statusMsgT = { hunger: 0, battery: 0, stamina: 0 }
   private seenThisLevel = new Set<string>() // 本层已记录遭遇的实体类型
+  private redAnnounced = new Set<string>() // 本层已播报预警的红室 chunk（chunkKey）
   // 固定子步移动积分器（帧间保留时间余数，保证高低帧率位移一致）
   private moveIt: MoveIntegrator = createIntegrator()
   // 攻击挥动动画计时（渲染层读取做手部挥砍/准心收缩）
@@ -176,6 +204,29 @@ export class Engine {
   private bonusExit: { def: ExitDef; wx: number; wy: number } | null = null
   // v29：本局已到过的层级（初始物资仅首次进 L0 刷新）
   private visitedLevels = new Set<number>()
+  // v35：据点——进入据点前的层级（据点出口 dest:'back' 的返程落点；随存档持久）
+  outpostReturn: number | null = null
+  el3aReliefClaimed = false // v43：本次进入 EL3A 是否已领过免费补给包（每次进入重置）
+  // v35：本层 NPC（据点居民；不是实体——不进 m.entities，不可被 dev 召唤，换层重建）
+  npcs: NpcState[] = []
+  // v35：本局已遇见的 NPC 定义（图鉴「人士」页数据源；随机 NPC 在同局内跨层保留）
+  knownNpcs: NpcDef[] = []
+  // v35：团体声望（factions.ts；流浪者不参与声望；MEG 默认 30 友好）与委托任务
+  rep: Record<string, number> = { meg: REP_START }
+  quests: { def: QuestDef; progress: number; baseline: number; done: boolean }[] = []
+  // v39：BRC（后室装修公司）——未告发的伤害/杀死计数（攻击/杀死员工不立即降声望，
+  // 与员工对话「坦白」时按 伤害-10/人、杀死-30/人 结清；随存档持久）与模仿装修冷却
+  brcSin = { hurt: 0, killed: 0 }
+  brcMimicCd = 0 // 模仿装修全局冷却剩余秒数（~90s 防连点）
+  private brcMimicPending = 0 // 模仿动作进行中（挥臂动画播完后结算 +2 声望）
+  // ===== v45：杰瑞的信众 / Level 274 教化系统（随存档持久）=====
+  indoctrination = 0 // 教化值 0~100（接触杰瑞 +25；≥100 成为信众一员，无法主动离开 L274）
+  jerryTamed = false // 鹉主已被杏仁水驯服（教化清零且此后接触不再积累）
+  jerryAgreed = new Set<string>() // 已「认同杰瑞」的信众 NPC id（引路选项按此显示；v49 起每局至多一名）
+  jerryOath = false // v49：本局已宣誓认同杰瑞（+10 每局仅首次有效——宣誓一次，全鹦鹉门下皆知）
+  jerryContactCd = 0 // v47：接触杰瑞冷却剩余秒数（20s 防连点刷声望/教化；HUD 交互提示显示剩余）
+  jerryTerritory = false // 玩家身处信众宣传间矩形内（HUD 显示 jerry 声望；引擎每帧维护）
+  private chantT = 0 // 诵咏计时（L274 内被教化后周期性咏出崇拜词）
   // v29：玩家当前在可行走阶梯上（碰撞 z 按地面处理、跳过重力贴地；由 updateStairs 每帧维护）
   private onStairs = false
 
@@ -243,24 +294,109 @@ export class Engine {
     this.difficulty = difficulty
     this.player = this.freshPlayer()
     this.over = false; this.victory = false; this.transition = null
+    this.idleSaved = false
+    this.autosaveT = 0
     this.time = 0
     this.msgLog = [] // 新一局清空播报历史
     this.visitedLevels.clear() // 新一局重置到层记录（初始物资首访刷新用）
+    this.outpostReturn = null // 新一局清空据点返程记录（读档时由快照恢复）
+    this.knownNpcs = [] // 新一局清空随机 NPC 记录（静态 NPC 由注册表恒定提供）
+    this.rep = { meg: REP_START } // 新一局声望重置（MEG 默认友好；读档时由快照恢复）
+    this.quests = []
+    this.brcSin = { hurt: 0, killed: 0 } // v39：BRC 未告发记录清空（读档时由快照恢复）
+    this.brcMimicCd = 0
+    this.brcMimicPending = 0
+    // v45：教化系统重置（读档时由快照恢复）
+    this.indoctrination = 0
+    this.jerryTamed = false
+    this.jerryAgreed = new Set()
+    this.jerryOath = false
+    this.jerryContactCd = 0
+    this.jerryTerritory = false
+    this.chantT = 0
+    // v29a：主界面「继续游戏」用存档种子重进 newRun——存在同种子快照时恢复进度而不是重开新游戏。
+    // （「开始新游戏」的种子是随机新生成的，与快照种子不同，自然走全新开局路径。）
+    const snap = loadSaveSnapshot()
+    if (snap && snap.seed === seed) {
+      this.difficulty = snap.difficulty ?? difficulty
+      this.time = snap.time
+      for (const id of snap.visited ?? []) this.visitedLevels.add(id)
+      this.outpostReturn = snap.outpostReturn ?? null
+      this.rep = snap.rep ?? { meg: REP_START }
+      this.quests = snap.quests ?? []
+      this.brcSin = snap.brcSin ?? { hurt: 0, killed: 0 } // v39：恢复 BRC 未告发记录
+      this.brcMimicCd = snap.brcMimicCd ?? 0
+      // v45：恢复教化系统状态
+      this.indoctrination = snap.indoctrination ?? 0
+      this.jerryTamed = snap.jerryTamed ?? false
+      this.jerryAgreed = new Set(snap.jerryAgreed ?? [])
+      // v49：恢复宣誓标记；旧档无此字段时按「已认同过任一信众」迁移（每局仅首次认同有效）
+      this.jerryOath = snap.jerryOath ?? ((snap.jerryAgreed ?? []).length > 0)
+      this.loadLevel(snap.level, { mapSeed: snap.mapSeed, firstVisit: snap.mapFirstVisit })
+      // loadLevel 已把 player 放到出生点；此处整体恢复为存档时的玩家状态
+      const fresh = this.freshPlayer()
+      this.player = {
+        ...fresh,
+        ...snap.player,
+        equip: { ...fresh.equip, ...(snap.player.equip ?? {}), pockets: snap.player.equip?.pockets ?? fresh.equip.pockets },
+      }
+      this.player.level = snap.level
+      // aliveTime 由 (Date.now()-startTime) 推导：平移 startTime 保持存活时长连续
+      this.player.startTime = Date.now() - (snap.player.aliveTime ?? 0) * 1000
+      this.introT = 0 // 读档不播摔落爬起动画
+      this.msg(`读档成功——回到 ${levelLabel(snap.level)}。`, 'system')
+      return
+    }
     this.loadLevel(0)
     this.introT = 3.2 // 开场：摔到 L0 地面后缓慢爬起
     this.msg(`你坠入了后室。种子 ${seedString(seed)}`, 'system')
     this.msg('找到每层的出口，向下探索。收集 6 盘磁带。', 'lore')
+    this.persist() // v29a：新开局立即覆盖旧快照，保证 br_save 种子与快照始终同局
   }
 
-  loadLevel(id: number) {
-    const def = LEVELS[id]
+  // v29a：当前进度快照（纯 JSON 可序列化）
+  snapshot(): SaveSnapshot {
+    return {
+      v: 1,
+      seed: this.seed,
+      difficulty: this.difficulty,
+      time: this.time,
+      mapSeed: this.mapSeed,
+      mapFirstVisit: this.mapFirstVisit,
+      level: this.player.level,
+      visited: [...this.visitedLevels],
+      outpostReturn: this.outpostReturn,
+      rep: this.rep,
+      quests: this.quests,
+      brcSin: this.brcSin,
+      brcMimicCd: this.brcMimicCd,
+      indoctrination: this.indoctrination,
+      jerryTamed: this.jerryTamed,
+      jerryAgreed: [...this.jerryAgreed],
+      jerryOath: this.jerryOath,
+      player: JSON.parse(JSON.stringify(this.player)),
+    }
+  }
+  /** 立即写盘（暂停/退回主界面/周期自动存档共用入口；死亡与胜利后不再覆盖存档） */
+  persist() {
+    if (!this.map || this.player.hp <= 0 || this.victory) return
+    storage.set(SAVE_KEY, JSON.stringify(this.snapshot()))
+  }
+
+  loadLevel(id: number, restore?: { mapSeed: number; firstVisit: boolean }) {
+    const def = levelDefOf(id)!
     // v29：初始物资仅首次到层刷新（重访 L0 不再白嫖出生点补给）
     const firstVisit = !this.visitedLevels.has(id)
     this.visitedLevels.add(id)
     // v29：经 L0 灰色阶梯下行 → L1 出生点附近生成返程阶梯（在换图前取走标记）
     const viaStairs = this.arriveStairs
     this.arriveStairs = false
-    this.map = generateLevel(def, this.seed + this.time * 7 + id * 131, firstVisit)
+    // v29a：读档恢复时复用存档记录的地图种子与首访标记，保证复现同一张图
+    const mapSeed = restore?.mapSeed ?? (this.seed + this.time * 7 + id * 131)
+    const fv = restore?.firstVisit ?? firstVisit
+    this.map = generateLevel(def, mapSeed, fv)
+    this.mapSeed = mapSeed
+    this.mapFirstVisit = fv
     this.bonusExit = null
     this.wallMarks = [] // 地图重新生成，旧粉笔记号随之失效
     this.player.level = id
@@ -280,11 +416,30 @@ export class Engine {
     audio.setUnderwater(false)
     this.explored = new Uint8Array(this.map.w * this.map.h)
     this.visible = new Uint8Array(this.map.w * this.map.h)
+    if (def.fullMap) this.explored.fill(1) // v35：据点——进入即获得完整地图
+    if (id === 105) this.el3aReliefClaimed = false // v43：每次进入 EL3A 可领一次免费补给包
     this.fakes = []
     this.particles = []
     this.searching = null
     this.lootPanel = null
     this.seenThisLevel = new Set()
+    this.redAnnounced = new Set()
+    // v35：NPC 实例化（据点居民；不是实体；定义 = 静态注册表 + 本图随机生成）
+    const npcDefMap = new Map<string, NpcDef>()
+    for (const d of Object.values(NPCS)) npcDefMap.set(d.id, d)
+    for (const d of this.map.npcDefs ?? []) npcDefMap.set(d.id, d)
+    this.npcs = (this.map.npcs ?? [])
+      .filter((sp) => npcDefMap.has(sp.id))
+      .map((sp) => ({
+        id: sp.id, def: npcDefMap.get(sp.id)!,
+        x: sp.x, y: sp.y, facing: sp.facing ?? Math.random() * Math.PI * 2,
+        floor: sp.floor ?? 0, // v46：多层据点——上层居民（EL3A 夹楼办公区 NPC 在 2F 游荡/交互）
+        homeX: sp.x, homeY: sp.y, tx: sp.x, ty: sp.y,
+        moveT: 1 + Math.random() * 5, bubbleText: '', bubbleT: 0,
+      }))
+    for (const n of this.npcs) if (!this.knownNpcs.some((k) => k.id === n.id)) this.knownNpcs.push(n.def)
+    // v39：无限层级的 chunk NPC（衔尾段 BRC 员工）——活体对象由 LiveChunk 持有，这里收集为工作列表
+    if (this.map.inf) this.syncInfNpcs()
     this.blackoutT = 0
     this.blackoutWarnT = 0
     this.provoked = false
@@ -368,6 +523,10 @@ export class Engine {
     } finally {
       this.unwindInput()
     }
+    // v29a：暂停（暂停菜单）或退回主界面（over=true 且存活）时落盘一次
+    if (this.paused || this.over) {
+      if (!this.idleSaved) { this.idleSaved = true; this.persist() }
+    } else this.idleSaved = false
   }
 
   // applyView 旋转的逆变换（R^-1 = R^T）
@@ -384,6 +543,9 @@ export class Engine {
     if (!this.map || this.paused || this.over) return
     dt = Math.min(dt, 0.05)
     this.time += dt
+    // v29a：每 3 秒自动存档（退回主界面后「继续游戏」恢复进度用）
+    this.autosaveT += dt
+    if (this.autosaveT >= 3) { this.autosaveT = 0; this.persist() }
     const p = this.player
     const m = this.map
     const dm = DIFF[this.difficulty]
@@ -396,6 +558,7 @@ export class Engine {
         this.transition = null
         if (t.dest === 'win') {
           this.victory = true; this.over = true
+          clearSaveSnapshot() // v29a：通关后旧进度存档失效
           this.emit({ kind: 'victory' })
           audio.stopHum(); audio.stopBGM(); audio.setHeartbeat(false, 0)
         } else {
@@ -542,7 +705,7 @@ export class Engine {
         else audio.footstep(g0 === 'garage' || g0 === 'grid' ? 'concrete' : g0 === 'pipes' ? 'metal' : 'carpet')
         this.noise = Math.min(1, this.noise + (wantSprint ? 0.5 : 0.15))
         if (wantSprint) this.noiseEvent(p.x, p.y, 10, true)
-        else this.noiseEvent(p.x, p.y, 4, false)
+        else this.noiseEvent(p.x, p.y, p.crouching ? 1 : 4, false) // 蹲行近乎无声（肢团听不见）
       }
       // v13：移动涟漪（浅水与水面）
       if (lq !== 0 && movedDist > 0.01) {
@@ -551,20 +714,29 @@ export class Engine {
       }
     }
     this.noise = Math.max(0, this.noise - dt * 1.2)
+    this.playerNoiseT = Math.max(0, this.playerNoiseT - dt)
 
     // ---- v17：无限模式（L0）——玩家跨出中心 chunk 时流式平移窗口 ----
     if (m.inf) {
       this.updateInfiniteWindow()
-      // 红室蔓延：玩家身处红室 → 周围所有房间与即将生成的新区域全部变成红室（不再产物资）
+      // 红室（v34）：到达刷新红室的区块先播报预警；玩家真正走进红厅（瓦片 tint=2）才触发蔓延
       const inf = m.inf
       if (!inf.plague) {
-        const c = inf.chunks.get(chunkKey(Math.floor((inf.ox + p.x) / CS), Math.floor((inf.oy + p.y) / CS)))
+        const ck = chunkKey(Math.floor((inf.ox + p.x) / CS), Math.floor((inf.oy + p.y) / CS))
+        const c = inf.chunks.get(ck)
         if (c?.variant === 'red') {
-          applyRedPlague(m)
-          p.sanity = Math.max(0, p.sanity - 15)
-          this.camShake = Math.min(1, this.camShake + 0.5)
-          audio.whisper(1)
-          this.msg('红色漫过了你的脚踝——墙纸、地毯、灯光，一切都在变红。档案说得对：已经来不及了。', 'lore')
+          if (!this.redAnnounced.has(ck)) {
+            this.redAnnounced.add(ck)
+            this.msg('空气里多了一股铁锈味。前方有个房间透着不祥的红光——档案里管那种地方叫「红室」，别久留。', 'lore')
+          }
+          if (m.tint[Math.floor(p.y) * m.w + Math.floor(p.x)] === 2) {
+            // 红室蔓延：周围所有房间与即将生成的新区域全部变成红室（不再产物资）
+            applyRedPlague(m)
+            p.sanity = Math.max(0, p.sanity - 15)
+            this.camShake = Math.min(1, this.camShake + 0.5)
+            audio.whisper(1)
+            this.msg('红色漫过了你的脚踝——墙纸、地毯、灯光，一切都在变红。档案说得对：已经来不及了。', 'lore')
+          }
         }
       }
     }
@@ -601,7 +773,7 @@ export class Engine {
         if (p.hp <= 0) { this.die('绊线'); return }
         const td = Math.floor(Math.random() * NORMAL_LEVELS)
         this.transition = { anim: 'noclip', t: 0, dest: td }
-        this.emit({ kind: 'transition', anim: 'noclip', cutIn: LEVELS[td]?.entryAnim ?? 'dark', dest: td })
+        this.emit({ kind: 'transition', anim: 'noclip', cutIn: levelDefOf(td)?.entryAnim ?? 'dark', dest: td })
       }
     }
 
@@ -794,6 +966,119 @@ export class Engine {
 
     // ---- 实体 AI ----
     this.updateEntities(dt, dm.dmg)
+    this.trackQuests(dt) // v35：委托进度追踪
+
+    // ---- v45：信众领地判定（HUD 声望显示，仿衔尾段 ouroboros：记下房间矩形，玩家在矩形内即显示）----
+    this.jerryTerritory = p.level === 2 && !!m.inf && l2JerryRoomRectAt(m.inf.seed, m.inf.ox + p.x, m.inf.oy + p.y) !== null
+    // ---- v45：教化诵咏——在 Level 274 内被教化（教化值 >0 且鹉主未被驯服）的玩家周期性不受控咏出崇拜词；离开即停 ----
+    if (p.level === 274 && this.indoctrination > 0 && !this.jerryTamed) {
+      this.chantT -= dt
+      if (this.chantT <= 0) {
+        this.chantT = 7 + Math.random() * 6
+        this.msg(`你不受控地诵咏：「${JERRY_CHANT_LINES[Math.floor(Math.random() * JERRY_CHANT_LINES.length)]}」`, 'lore')
+      }
+    } else this.chantT = 0
+    // v47：接触杰瑞冷却（20s 防连点刷声望/教化；HUD 交互提示显示剩余秒数）
+    if (this.jerryContactCd > 0) this.jerryContactCd = Math.max(0, this.jerryContactCd - dt)
+
+    // ---- v35：NPC（据点居民：岗位附近缓慢游荡 + 偶尔自言自语）----
+    // v39：BRC 模仿装修（挥臂动画播完才结算 +2 声望——动作即「短暂延迟」；冷却全局 ~90s）
+    if (this.brcMimicCd > 0) this.brcMimicCd = Math.max(0, this.brcMimicCd - dt)
+    if (this.brcMimicPending > 0) {
+      this.brcMimicPending -= dt
+      if (this.brcMimicPending <= 0) {
+        this.changeRep('brc', 2)
+        this.msg('你学着他们的动作挥臂敲打了一阵。附近的员工似乎朝你点了点头。（后室装修公司 声望 +2）', 'loot')
+      }
+    }
+    for (const n of this.npcs) {
+      n.bubbleT = Math.max(0, n.bubbleT - dt)
+      // v46：NPC 楼层带感知的可行走判定（上层居民走 up 楼板避开上层墙/上层实心家具；主层居民走地板）
+      const walkOk = (nx: number, ny: number): boolean => {
+        if ((n.floor ?? 0) === 1) {
+          const ti = Math.floor(ny) * m.w + Math.floor(nx)
+          return m.up[ti] === 1 && m.upWall[ti] !== 1 && !solidStructAtFloor(m, nx, ny, 1)
+        }
+        return tileAt(m, Math.floor(nx), Math.floor(ny)) === 1 && !solidStructAtFloor(m, nx, ny, 0)
+      }
+      // v39：死亡动画计时（尸体由渲染层倒地/下沉，计时归零后在循环尾移除）
+      if (n.dead) { n.deathT = (n.deathT ?? 0) - dt; continue }
+      // v45：杰瑞的信众敌意规则（全团体通用）——jerry 声望 ≤ -10 转敌对（主动攻击玩家），恢复后放下敌意
+      if (n.def.faction === 'jerry') n.hostile = (this.rep.jerry ?? 0) <= -10 ? true : undefined
+      // v39：敌对（被当面坦白的 BRC 员工）：追击玩家 + 近战；玩家可反击杀死
+      if (n.hostile) {
+        const hdx = p.x - n.x, hdy = p.y - n.y, hdd = Math.hypot(hdx, hdy)
+        n.atkT = Math.max(0, (n.atkT ?? 0) - dt)
+        if (hdd > 1.15) {
+          const sp = 2.3 * dt
+          const nx2 = n.x + (hdx / hdd) * sp, ny2 = n.y + (hdy / hdd) * sp
+          if (walkOk(nx2, ny2)) { n.x = nx2; n.y = ny2 }
+          n.tx = p.x; n.ty = p.y // 渲染层据此播步态
+        } else {
+          n.tx = n.x; n.ty = n.y
+          if (n.atkT <= 0) { n.atkT = 1.3; this.hurtPlayer(9, `${FACTIONS[n.def.faction ?? 'meg']?.name ?? 'NPC'} ${n.def.name}`); audio.swing() }
+        }
+        n.facing = Math.atan2(hdy, hdx)
+        continue
+      }
+      // v45：杰瑞的信众——看见玩家（~8m）主动靠近（approach 走向玩家），到 ~2.5m 停下后高频自言自语传教；
+      // 不追出领地（玩家离岗位锚点 >10m 即放弃，回默认游荡）；
+      // v47：仅野外随机信众（L2 宣传间）主动传教——L274 内的信众不主动靠近，需玩家主动交谈
+      if (n.def.faction === 'jerry' && p.level !== 274) {
+        const jdx = p.x - n.x, jdy = p.y - n.y, jdd = Math.hypot(jdx, jdy)
+        if (jdd < 8 && Math.hypot(p.x - n.homeX, p.y - n.homeY) < 10) {
+          if (jdd > 2.5) {
+            const sp = 1.7 * dt
+            const nx2 = n.x + (jdx / jdd) * sp, ny2 = n.y + (jdy / jdd) * sp
+            if (walkOk(nx2, ny2)) { n.x = nx2; n.y = ny2 }
+            n.tx = p.x; n.ty = p.y // 渲染层据此播步态
+          } else {
+            n.tx = n.x; n.ty = n.y // 停下：面向玩家高频传教
+            n.moveT -= dt
+            if (n.moveT <= 0) {
+              n.bubbleText = JERRY_PREACH_LINES[Math.floor(Math.random() * JERRY_PREACH_LINES.length)]
+              n.bubbleT = 2.8
+              n.moveT = 2.5 + Math.random() * 2
+            }
+          }
+          n.facing = Math.atan2(jdy, jdx)
+          continue
+        }
+      }
+      // v39：工作循环（BRC 员工）：锚定在工作点不游荡，始终面向工作面（墙/脚手架）
+      if (n.def.workLoop) {
+        n.tx = n.homeX; n.ty = n.homeY
+        if (n.homeFacing !== undefined) n.facing = n.homeFacing
+        continue
+      }
+      n.moveT -= dt
+      if (n.moveT <= 0) {
+        if (Math.random() < 0.3 && n.def.idle.length > 0) { // 驻足自语
+          n.bubbleText = n.def.idle[Math.floor(Math.random() * n.def.idle.length)]
+          n.bubbleT = 3
+          n.moveT = 4 + Math.random() * 5
+        } else { // 新挪动目标（岗位半径 3 内）
+          const a = Math.random() * Math.PI * 2, r = 0.5 + Math.random() * 2.5
+          n.tx = n.homeX + Math.cos(a) * r
+          n.ty = n.homeY + Math.sin(a) * r
+          n.moveT = 5 + Math.random() * 7
+        }
+      }
+      const ndx = n.tx - n.x, ndy = n.ty - n.y, ndd = Math.hypot(ndx, ndy)
+      if (ndd > 0.15) {
+        const sp = 0.7 * dt
+        const nx = n.x + (ndx / ndd) * sp, ny = n.y + (ndy / ndd) * sp
+        if (walkOk(nx, ny)) { n.x = nx; n.y = ny }
+        else { n.tx = n.homeX; n.ty = n.homeY } // 受阻回岗位
+        n.facing = Math.atan2(ndy, ndx)
+      }
+    }
+    // v39：尸体清理（引擎列表与所属 chunk 一并移除，防止窗口重缝合/重访时复活）
+    if (this.npcs.some((n) => n.dead && (n.deathT ?? 0) <= 0)) {
+      const gone = this.npcs.filter((n) => n.dead && (n.deathT ?? 0) <= 0)
+      this.npcs = this.npcs.filter((n) => !(n.dead && (n.deathT ?? 0) <= 0))
+      if (m.inf) for (const c of m.inf.chunks.values()) c.npcs = c.npcs.filter((n) => !gone.includes(n))
+    }
 
     // ---- 交互检测 ----
     this.scanInteract()
@@ -894,14 +1179,6 @@ export class Engine {
     // ---- 视野 ----
     this.computeVisibility()
 
-    // 出口提示音
-    this.chimeT -= dt
-    if (this.chimeT <= 0) {
-      this.chimeT = 2.2
-      const e = this.nearestExit()
-      if (e) audio.exitChime(Math.hypot(e.x + 0.5 - p.x, e.y + 0.5 - p.y))
-    }
-
     this.camShake = Math.max(0, this.camShake - dt * 2.2)
   }
 
@@ -943,6 +1220,26 @@ export class Engine {
     this.blackoutT = this.blackoutPendingDur
     this.msg('灯光一排排熄灭——停电了。黑暗里有什么开始移动。', 'damage')
     audio.spark()
+    // L1「闪烁」：笑魇在黑暗中倾巢而出（灯光恢复时消散）
+    if (this.player.level === 1) this.spawnBlackoutSmilers()
+  }
+
+  // 停电专属：在玩家周围的黑暗瓦片生成 2~3 只笑魇（打标 blackoutSpawn，电力恢复即退散）
+  private spawnBlackoutSmilers() {
+    const m = this.map!, p = this.player
+    const n = 2 + Math.floor(Math.random() * 2)
+    for (let i = 0; i < n; i++) {
+      for (let t = 0; t < 30; t++) {
+        const ang = Math.random() * Math.PI * 2
+        const r = 8 + Math.random() * 10
+        const tx = Math.floor(p.x + Math.cos(ang) * r), ty = Math.floor(p.y + Math.sin(ang) * r)
+        if (this.entityWalkH(m, tx, ty, 0) === null) continue
+        const e = makeEntity('smiler', tx + 0.5, ty + 0.5)
+        e.blackoutSpawn = true
+        m.entities.push(e)
+        break
+      }
+    }
   }
 
   private endBlackout() {
@@ -956,6 +1253,14 @@ export class Engine {
     }
     this.blackoutBackup = null
     this.blackoutT = 0
+    // 停电生成的笑魇随灯光恢复退散（其他层级的常驻笑魇无标记，不受影响）
+    if (this.map) {
+      const fleeing = this.map.entities.filter((e) => e.blackoutSpawn && !e.dead)
+      if (fleeing.length > 0) {
+        for (const e of fleeing) { e.dead = true; e.deathT = 0.6 }
+        this.msg('灯光亮起，笑魇退回了黑暗。', 'system')
+      }
+    }
     this.msg('电流声重新响起，灯光逐一恢复。', 'system')
   }
 
@@ -966,14 +1271,33 @@ export class Engine {
   }
 
   private noiseEvent(x: number, y: number, radius: number, sprint: boolean) {
+    this.playerNoiseT = 0.8 // 玩家噪音残余计时（猎犬威慑「持续发声」判定；脚步/挥击/搜索等都会刷新）
     for (const e of this.map!.entities) {
       if (e.dead || e.def.stationary) continue
+      if (e.def.passive) continue // 被动实体（无面灵）不循声索敌——只有被攻击才反击
       const d = Math.hypot(e.x - x, e.y - y)
       const hearR = sprint && e.def.hearsSprint ? e.def.hearing * 1.6 : e.def.hearing
-      if (d < Math.max(radius, hearR) && e.state !== 'chase' && e.state !== 'attack') {
-        e.state = 'investigate'; e.targetX = x; e.targetY = y; e.stateT = 6
+      // 失明实体（肢团）只按「响度半径」听觉——蹲行/慢走的小声响不会被顺风耳放大
+      const effR = e.def.blind ? radius : Math.max(radius, hearR)
+      if (d >= effR) continue
+      if (e.state === 'chase' || e.state === 'attack') continue
+      // 肢团（失明）：听见声音即高速径直冲撞声源
+      if (e.def.blind) {
+        e.state = 'chase'; e.targetX = x; e.targetY = y; e.stateT = 8
+        continue
       }
+      e.state = 'investigate'; e.targetX = x; e.targetY = y; e.stateT = 6
     }
+  }
+
+  // 玩家是否正「直视」实体（视角锥 ±0.4 rad 内且有视线）——猎犬威慑判定
+  private lookingAt(e: Entity): boolean {
+    const p = this.player
+    const ang = Math.atan2(e.y - p.y, e.x - p.x)
+    const fwd = Math.atan2(-Math.sin(look.yaw), -Math.cos(look.yaw)) // 与 renderer3d 视线前向一致
+    let diff = Math.abs(ang - fwd)
+    if (diff > Math.PI) diff = Math.PI * 2 - diff
+    return diff < 0.4 && this.los(p.x, p.y, e.x, e.y)
   }
 
   private los(x0: number, y0: number, x1: number, y1: number): boolean {
@@ -999,10 +1323,26 @@ export class Engine {
       // 死亡动画计时（倒地/消散后移除）
       if (e.dead) { e.deathT -= dt; continue }
       e.stateT -= dt; e.attackCd -= dt
-      if (e.stunT > 0) { e.stunT -= dt; continue }
       // 开发者模式：隐形——所有距离判定视为无穷远，实体永不索敌/攻击/特殊触发
       const d = this.dev.invisible ? 1e9 : Math.hypot(e.x - p.x, e.y - p.y)
       const def = e.def
+      // 猎犬威慑：玩家「实时直视 + 持续制造噪音」才定身——逐帧刷新 stunT，
+      // 停止发声或移开视线即不再刷新，猎犬在 0.25s 内恢复行动（对已在追击的猎犬同样有效）
+      if (def.intimidatable) {
+        const held = d < 10 && this.playerNoiseT > 0 && this.lookingAt(e)
+        if (held) {
+          e.stunT = Math.max(e.stunT, 0.25)
+          if (!e.intimidated) {
+            e.intimidated = true
+            this.msg('你直视着猎犬的眼睛发出巨响——它被震慑住了！', 'system')
+            audio.aggro()
+          }
+        } else if (e.intimidated) {
+          e.intimidated = undefined
+          this.msg('猎犬摆脱了震慑，重新扑来！', 'damage')
+        }
+      }
+      if (e.stunT > 0) { e.stunT -= dt; continue }
 
       // 遭遇记录（图鉴渐进解锁）：进入视野范围且有视线
       if (d < def.sight && !this.seenThisLevel.has(def.type) && this.los(p.x, p.y, e.x, e.y)) {
@@ -1019,6 +1359,26 @@ export class Engine {
           e.state = 'chase'
         } else continue
       }
+      // 手臂：蛰伏于天花板通风管（hidden=缩回管内）；层级灯光熄灭时伸出猎捕
+      if (def.type === 'arms') {
+        const darkOut = (m.inf?.blackout ?? false) || this.blackoutT > 0
+        if (e.hidden) {
+          if (darkOut && d < 5) {
+            e.hidden = undefined
+            this.msg('头顶的通风管里伸出了一只手臂！', 'damage')
+            audio.aggro()
+          } else continue
+        }
+        if (!darkOut || d > 7) { e.hidden = true; continue } // 灯光恢复或玩家远离：缩回管内
+        if (d < 2.2 && e.attackCd <= 0) {
+          e.attackCd = 1.6
+          this.hurtPlayer(def.damage * dmgMult, def.name)
+          p.slowT = Math.max(p.slowT, 1.5)
+          this.msg('通风管的手臂抓住了你！', 'damage')
+        }
+        e.animT += dt
+        continue
+      }
       // 管道蠕虫埋伏：近身破土
       if (e.hidden) {
         if (d < 3.2) {
@@ -1032,7 +1392,7 @@ export class Engine {
 
       if (def.stationary) {
         // 久坐者：看见玩家就尖叫
-        if (!e.screamed && d < def.sight && this.los(e.x, e.y, p.x, p.y)) {
+        if (def.type === 'seated' && !e.screamed && d < def.sight && this.los(e.x, e.y, p.x, p.y)) {
           e.screamed = true
           this.msg('久坐者发出了刺耳的尖叫！', 'damage')
           audio.aggro()
@@ -1040,7 +1400,7 @@ export class Engine {
           p.sanity = Math.max(0, p.sanity - 10)
           this.emit({ kind: 'sanityhit' })
         }
-        if (d < 1.2 && e.attackCd <= 0 && this.meleeZOk(e)) { e.attackCd = 1.2; this.hurtPlayer(def.damage * dmgMult, def.name) }
+        if (def.damage > 0 && d < 1.2 && e.attackCd <= 0 && this.meleeZOk(e)) { e.attackCd = 1.2; this.hurtPlayer(def.damage * dmgMult, def.name) }
         continue
       }
 
@@ -1061,6 +1421,15 @@ export class Engine {
         this.msg('电磁脉冲——手电瘫痪了！', 'damage')
         audio.spark()
       }
+      // 笑魇听觉通道：手电熄灭但玩家在听觉半径内持续制造噪音（noiseEvent 刷新的残余计时），同样会被察觉
+      const hearP = !!def.lightHunter && this.playerNoiseT > 0 && d < def.hearing && this.los(e.x, e.y, p.x, p.y)
+      // 笑魇：趋光猎手——玩家手电熄灭时不再靠近，并缓慢退开（听见噪音除外：循声追击）
+      if (def.lightHunter && !lightOn && !hearP && d < 6) {
+        if (e.state === 'chase' || e.state === 'investigate') { e.state = 'wander'; this.wanderTarget(e) }
+        if (e.state === 'wander') {
+          e.targetX = e.x + (e.x - p.x); e.targetY = e.y + (e.y - p.y); e.stateT = 1
+        }
+      }
       // 死亡飞蛾：扑灯耗电
       if (def.drainsLight && d < 1.4 && p.flashlight) {
         p.battery = Math.max(0, p.battery - 4 * dt)
@@ -1076,9 +1445,9 @@ export class Engine {
         }
       }
 
-      // 视野追击
+      // 视野追击（趋光猎手仅在玩家手电亮时能看见目标；关灯后可靠听觉察觉噪音）
       const darkBonus = def.darkAmbusher && !lightOn ? 4 : 0
-      const canSee = d < def.sight + darkBonus && this.los(e.x, e.y, p.x, p.y)
+      const canSee = hearP || (d < def.sight + darkBonus && (!def.lightHunter || lightOn) && this.los(e.x, e.y, p.x, p.y))
       const feigning = def.feignNeutral && d > 2.4 && e.state !== 'chase' && e.state !== 'attack' // 侍者装中立
       // v23「Level 11 Effect」：本层敌对实体更不倾向于攻击——但主动挑衅（攻击过任何实体）会解除
       const pacified = !this.provoked && (this.levelDef.pacify ?? 0) > 0 && Math.random() < (this.levelDef.pacify ?? 0)
@@ -1092,16 +1461,47 @@ export class Engine {
         this.msg('侍者不笑了。', 'damage')
         audio.aggro()
       }
-      if (def.passive && e.state === 'chase' && e.stateT < -8) { e.state = 'wander' }
-      // 无面灵：贴身冲撞激怒
-      if (def.passive && d < 0.6) {
-        e.state = 'chase'; e.stateT = 0
-        this.msg('你碰到了无面灵——它记住你了。', 'damage')
-        audio.aggro()
-      }
+      // 被动实体（无面灵）：脱战 8 秒后平息（不再反击）；无视线/听觉/贴身索敌——只有被打才反击。
+      // v42：grudge（尸鼠=合并死亡鼠）记仇不放——激怒后持续仇恨，永不平息
+      if (def.passive && !def.grudge && e.state === 'chase' && e.stateT < -8) { e.state = 'wander'; e.provoked = false; e.targetEnt = undefined }
       // 趋光实体（死亡飞蛾）：被手电光吸引
       if (def.lightLure && lightOn && d < 11 && (e.state === 'wander' || e.state === 'idle')) {
         e.state = 'investigate'; e.targetX = p.x; e.targetY = p.y; e.stateT = 4
+      }
+      // v44：尸鼠群体激怒（加入围殴）——注意到 4m 内有同伴处于激怒状态时一同激怒，攻击同一目标
+      if (def.type === 'corpserat' && !e.provoked) {
+        for (const q of m.entities) {
+          if (q === e || q.dead || q.def.type !== 'corpserat' || !q.provoked) continue
+          if (Math.hypot(q.x - e.x, q.y - e.y) < 4) { e.provoked = true; e.state = 'chase'; e.stateT = 0; break }
+        }
+      }
+      // v41：尸鼠（hunts）——实体对实体仇恨：主动猎杀附近的死亡飞蛾；
+      // 被玩家激怒（provoked）时优先反击玩家（走下方正常状态机）
+      if (def.hunts && !e.provoked && e.state !== 'attack') {
+        let prey: Entity | null = null, pd = 1e9
+        for (const q of m.entities) {
+          if (q === e || q.dead || q.hidden || q.disguised) continue
+          if (!def.hunts.includes(q.def.type)) continue
+          const qd = Math.hypot(q.x - e.x, q.y - e.y)
+          if (qd < 9 && qd < pd && this.los(e.x, e.y, q.x, q.y)) { prey = q; pd = qd }
+        }
+        if (prey) {
+          if (pd < 1.0 && e.attackCd <= 0) {
+            e.attackCd = 1.1
+            prey.hp -= def.damage
+            prey.stunT = Math.max(prey.stunT, 0.3)
+            this.bloodParticles(prey.x, prey.y)
+            if (prey.hp <= 0 && !prey.dead) {
+              prey.dead = true; prey.deathT = 1.4
+              if (d < 9) this.msg(`尸鼠扑翻了那只${prey.def.name}，几下撕碎拖进了墙缝。`, 'system')
+            } else if (!prey.def.noRetaliate) {
+              // 实体对实体仇恨：被尸鼠攻击的飞蛾反击该尸鼠（仇恨目标转为伤害者本人）
+              prey.provoked = true; prey.targetEnt = e; prey.state = 'chase'; prey.stateT = 0
+            }
+          } else {
+            e.state = 'investigate'; e.targetX = prey.x; e.targetY = prey.y; e.stateT = 2
+          }
+        }
       }
 
       switch (e.state) {
@@ -1109,18 +1509,33 @@ export class Engine {
           if (e.stateT <= 0) { e.state = 'wander'; this.wanderTarget(e) }
           break
         case 'wander': {
-          if (this.stepEntity(e, def.speed * 0.45, dt)) this.wanderTarget(e)
+          if (this.stepEntity(e, def.speed * 0.45, dt)) {
+            // 撞墙卡住（未到达目标）：被动实体在当前目标方向上偏转 ±60°~120° 另选目标，
+            // 不再顶着同一面墙蹭（Ferren 保留专属小半径逻辑；其余实体维持随机重选）
+            if (def.passive && def.type !== 'ferren' && Math.hypot(e.targetX - e.x, e.targetY - e.y) > 0.35) this.wanderDeflect(e)
+            else this.wanderTarget(e)
+          }
           e.animT += dt * def.speed * 0.45
           break
         }
         case 'investigate': {
-          if (this.stepEntity(e, def.speed * 0.7, dt) || e.stateT <= 0) { e.state = 'wander'; this.wanderTarget(e) }
-          this.faceToward(e, p.x, p.y, dt, 5) // 调查中面向玩家方向
+          if (def.grudge && e.provoked) {
+            // v42：记仇（尸鼠=合并死亡鼠）——调查中持续追踪玩家本人，超时转回追击而非放弃
+            e.targetX = p.x; e.targetY = p.y
+            this.stepEntity(e, def.speed * 0.7, dt)
+            if (e.stateT <= 0 || d < def.sight) e.state = 'chase'
+          } else if (this.stepEntity(e, def.speed * 0.7, dt) || e.stateT <= 0) { e.state = 'wander'; this.wanderTarget(e) }
+          // v41：hunts 实体（尸鼠）调查中面向猎物目标；其余实体面向玩家方向
+          this.faceToward(e, def.hunts ? e.targetX : p.x, def.hunts ? e.targetY : p.y, dt, 5)
           e.animT += dt * def.speed * 0.7
           break
         }
         case 'chase': {
-          if (def.passive) { e.state = 'wander'; break }
+          if (def.passive && (def.noRetaliate || !e.provoked) ) { e.state = 'wander'; break } // 被动实体未被激怒：撤销追击（被攻击后由 provoked 放行；Ferren 绝不反击）
+          if (e.targetEnt?.dead) { // 反击目标已死亡：仇恨解除（被动实体回到漫游，不迁怒玩家）
+            e.targetEnt = undefined
+            if (def.passive) { e.provoked = false; e.state = 'wander'; this.wanderTarget(e); break }
+          }
           if (def.mirrorMove) {
             // 镜中人：以玩家为镜面做镜像移动（保持距离对称）
             const mx = e.x + (e.x - p.x), my = e.y + (e.y - p.y)
@@ -1141,15 +1556,34 @@ export class Engine {
             }
             e.animT += dt * def.speed
             break
+          } else if (def.blind) {
+            // 肢团（失明）：径直冲向最后听见的声音点；冲达后无处可依则回游荡
+            const arrived = this.stepEntity(e, def.speed, dt)
+            this.faceToward(e, e.targetX, e.targetY, dt, 9)
+            if (arrived) { e.state = 'wander'; this.wanderTarget(e) }
+          } else if (e.targetEnt) {
+            // 实体对实体反击（死亡飞蛾反击尸鼠）：追击伤害者本人
+            const tgt = e.targetEnt
+            e.targetX = tgt.x; e.targetY = tgt.y
+            this.stepEntity(e, def.speed, dt)
+            this.faceToward(e, tgt.x, tgt.y, dt, 9)
+            const td = Math.hypot(tgt.x - e.x, tgt.y - e.y)
+            if (td < 1.0 && e.attackCd <= 0) {
+              e.attackCd = 1.2
+              tgt.hp -= def.damage
+              tgt.stunT = Math.max(tgt.stunT, 0.3)
+              this.bloodParticles(tgt.x, tgt.y)
+              if (tgt.hp <= 0 && !tgt.dead) { tgt.dead = true; tgt.deathT = 1.4 }
+            }
           } else {
             e.targetX = p.x; e.targetY = p.y
             this.stepEntity(e, def.speed, dt)
             this.faceToward(e, p.x, p.y, dt, 9) // 追击时平滑转向面向玩家
           }
           e.animT += dt * def.speed
-          if (d < 0.85 && e.attackCd <= 0) {
+          if (!e.targetEnt && d < 0.85 && e.attackCd <= 0) {
             e.state = 'attack'; e.lungeT = 0.32; e.attackCd = 1.4
-          } else if (!canSee && d > def.sight * 1.4 && !def.mirrorMove) {
+          } else if (!e.targetEnt && !canSee && d > def.sight * 1.4 && !def.mirrorMove && !def.blind && !(def.grudge && e.provoked)) {
             e.state = 'investigate'; e.stateT = 5
           }
           break
@@ -1173,6 +1607,16 @@ export class Engine {
             e.state = 'chase'
           }
           break
+        }
+      }
+
+      // 穿墙实体（钝人）：行动时发出刺耳的沙沙声，隔着墙也能听见
+      if (def.phases && (e.state === 'wander' || e.state === 'investigate' || e.state === 'chase') && d < 14) {
+        e.scrapeT = (e.scrapeT ?? Math.random() * 0.7) - dt
+        if (e.scrapeT <= 0) {
+          e.scrapeT = 0.7
+          const inWall = tileAt(m, Math.floor(e.x), Math.floor(e.y)) !== 1
+          audio.scrape(Math.min(1, (1 - d / 14) * (inWall ? 1.3 : 1)))
         }
       }
 
@@ -1202,6 +1646,23 @@ export class Engine {
   private wanderTarget(e: Entity) {
     const m = this.map!
     const band = bandOfZ(e.z)
+    // Ferren（雪貂笼宠物）：小半径就近游荡 + 直线路径可走校验——不再隔着笼墙选点往墙上蹭；
+    // 偶尔趴下歇一会儿（宠物漫游节奏）
+    if (e.def.type === 'ferren') {
+      if (Math.random() < 0.3) { e.state = 'idle'; e.stateT = 1.2 + Math.random() * 2.2; e.targetX = e.x; e.targetY = e.y; return }
+      for (let t = 0; t < 12; t++) {
+        const a = Math.random() * Math.PI * 2, r = 1 + Math.random() * 1.8
+        const tx = e.x + Math.cos(a) * r, ty = e.y + Math.sin(a) * r
+        let clear = true
+        for (let k = 1; k <= 4 && clear; k++) {
+          const sx = e.x + (tx - e.x) * (k / 4), sy = e.y + (ty - e.y) * (k / 4)
+          if (!canOccupy(m, sx, sy, 0.2, { z: e.z, band })) clear = false
+        }
+        if (clear) { e.targetX = tx; e.targetY = ty; e.stateT = 3; return }
+      }
+      e.state = 'idle'; e.stateT = 1.5; e.targetX = e.x; e.targetY = e.y
+      return
+    }
     for (let t = 0; t < 20; t++) {
       const a = Math.random() * Math.PI * 2
       const tx = e.x + Math.cos(a) * 5, ty = e.y + Math.sin(a) * 5
@@ -1215,6 +1676,34 @@ export class Engine {
       }
     }
     e.targetX = e.x; e.targetY = e.y; e.stateT = 2
+  }
+
+  // 被动漫游撞墙转向：在当前目标方向基础上偏转 ±60°~120° 另选可走目标（两侧交替试），
+  // 找不到才回退到随机重选——解决顶着同一面墙反复蹭的问题
+  private wanderDeflect(e: Entity) {
+    const m = this.map!
+    const band = bandOfZ(e.z)
+    const base = Math.atan2(e.targetY - e.y, e.targetX - e.x)
+    const s0 = Math.random() < 0.5 ? 1 : -1
+    for (let t = 0; t < 6; t++) {
+      const s = t % 2 === 0 ? s0 : -s0
+      const a = base + s * (60 + Math.random() * 60) * Math.PI / 180
+      const tx = e.x + Math.cos(a) * 4, ty = e.y + Math.sin(a) * 4
+      const fx = Math.floor(tx), fy = Math.floor(ty)
+      if (fx < 0 || fy < 0 || fx >= m.w || fy >= m.h) continue
+      if (this.entityWalkH(m, fx, fy, band) === null) continue
+      if (band === 0 && m.liquid[fy * m.w + fx] === 1) continue // 实体不主动下水（与 wanderTarget 一致）
+      e.targetX = tx; e.targetY = ty; e.stateT = 4; return
+    }
+    this.wanderTarget(e)
+  }
+
+  // v44：尸鼠群体激怒——一只被激怒时，周围 ~6m 的同伴一同被激怒（攻击同一目标：玩家）
+  private provokeRatPack(e: Entity) {
+    for (const q of this.map!.entities) {
+      if (q === e || q.dead || q.def.type !== 'corpserat' || q.provoked) continue
+      if (Math.hypot(q.x - e.x, q.y - e.y) < 6) { q.provoked = true; q.state = 'chase'; q.stateT = 0 }
+    }
   }
 
   // 平滑转向（最短弧 lerp yaw）面向目标点
@@ -1332,6 +1821,15 @@ export class Engine {
     let ny = e.y + (dy / d) * speed * dt
     // v7：实体不追入高差 >0.4m 的区域；v13：楼层带感知 + 可走楼梯跨层（坡道高差 ≤0.75）
     const band = bandOfZ(e.z)
+    // 穿墙实体（钝人/缠斗者）：无视墙体与实心结构，径直穿行——仅钳制在地图边界内
+    if (e.def.phases) {
+      nx = Math.max(0.2, Math.min(m.w - 0.2, nx))
+      ny = Math.max(0.2, Math.min(m.h - 0.2, ny))
+      e.facing = Math.atan2(dy, dx)
+      e.x = nx; e.y = ny
+      if (tileAt(m, Math.floor(nx), Math.floor(ny)) === 1) e.z = groundHeightAt(m, nx, ny, band)
+      return false
+    }
     const curStair = m.stair[Math.floor(e.y) * m.w + Math.floor(e.x)] & 7
     const h0 = curStair ? tileH(m, Math.floor(e.x), Math.floor(e.y)) : (band === 1 ? FLOOR_H : tileH(m, Math.floor(e.x), Math.floor(e.y)))
     const canGo = (px: number, py: number): boolean => {
@@ -1345,6 +1843,7 @@ export class Engine {
     if (!canGo(nx, ny)) ny = e.y
     if (nx === e.x && ny === e.y) return true // 卡住
     e.facing = Math.atan2(dy, dx)
+    const ox = e.x, oy = e.y
     e.x = nx; e.y = ny
     // v26：实体半径防穿模——把半径 0.24m 的「圆」从相邻阻挡瓦片（墙/实心结构/不可达高差）中推出，
     // 实体不再半身卡进桌柜/墙体（此前实体为零半径质点，贴墙移动时模型穿进实心结构）
@@ -1371,6 +1870,9 @@ export class Engine {
     if (m.elev[Math.floor(e.y) * m.w + Math.floor(e.x)] === 4 && !e.dead) {
       e.hp = 0; e.dead = true; e.deathT = 1.4
     }
+    // 卡住判定（v44 补）：防穿模推挤把本步位移完全抵消——顶着墙原地蹭也算卡住，
+    // 漫游状态据此偏转另选目标（见 wanderDeflect），不再顶着同一面墙蹭
+    if (Math.hypot(e.x - ox, e.y - oy) < 1e-3) return true
     return false
   }
 
@@ -1395,6 +1897,7 @@ export class Engine {
     if (this.dev.god && !force) { this.player.hp = Math.max(this.player.hp, 20); return }
     this.over = true
     this.player.hp = 0
+    clearSaveSnapshot() // v29a：死亡后旧进度存档失效（继续游戏将开新局）
     audio.stopHum(); audio.stopBGM(); audio.setHeartbeat(false, 0)
     this.emit({ kind: 'dead', text: cause })
   }
@@ -1439,6 +1942,17 @@ export class Engine {
     const p = this.player, m = this.map!
     e.dead = true; e.deathT = 1.4
     p.kills++
+    // v35：杀死 Ferren——BNTG 声望大跌（它是商人之家的吉祥物）
+    if (e.def.type === 'ferren') {
+      this.changeRep('bntg', -50)
+      this.msg('整个市场安静了一秒。你意识到自己干了什么。（B.N.T.G. 声望大跌）', 'damage')
+    }
+    // v47：杀死鹉主杰瑞——信众永远不会原谅：jerry 声望直接跌至 -100（彻底敌对）
+    if (e.def.type === 'jerry') {
+      this.rep.jerry = -100
+      audio.aggro()
+      this.msg('鹉主从栖木上坠落。穹顶的圣辉摇晃了一瞬——信众的哭喊与怒吼同时炸开。（杰瑞的信众 声望 → -100）', 'damage')
+    }
     this.msg(`击杀了 ${e.def.name}`, 'loot')
     if (Math.random() < (p.hasRabbit ? 0.6 : 0.35)) {
       const drops = ['bandage', 'almond', 'canned', 'battery']
@@ -1461,24 +1975,98 @@ export class Engine {
     // 开发者模式：一击必杀
     const dmg = this.dev.oneHit ? 99999 : held ? (ITEMS[held.type].weapon ?? 8) : 8
     let hit = false
+    let blockedJerry = false // v47：教化约束——被拦下的对鹉主挥击（提示「你下不去手」）
     for (const e of m.entities) {
       if (!this.canHit(e)) continue
+      // v47：教化约束——教化值 >0 后无法再对鹉主出手（驯服清零后解除约束）
+      if (e.def.type === 'jerry' && this.indoctrination > 0) { blockedJerry = true; continue }
       const ang = Math.atan2(e.y - p.y, e.x - p.x)
       // 绝缘猎手：近战伤害减半
       const eff = e.def.type === 'insulator' ? dmg * 0.5 : dmg
       e.hp -= eff
       e.stunT = 0.35
-      e.x += Math.cos(ang) * 0.4; e.y += Math.sin(ang) * 0.4
+      // v47：伤害鹉主杰瑞——信众哗然：jerry 声望立即 -50（每次）
+      if (e.def.type === 'jerry') this.hurtJerryRep()
+      // 击退位移做墙体校验：落点不可走（墙/实心结构/不可达高差）则不位移——
+      // 击杀后的尸体同样不会被钉进墙里（尸体落点即击退落点）
+      const kx = e.x + Math.cos(ang) * 0.4, ky = e.y + Math.sin(ang) * 0.4
+      if (this.entityWalkH(m, Math.floor(kx), Math.floor(ky), bandOfZ(e.z)) !== null) { e.x = kx; e.y = ky }
       hit = true
       this.bloodParticles(e.x, e.y)
       if (e.def.type === 'insulator' && Math.random() < 0.4) this.msg('攻击被绝缘服缓冲了。', 'system')
       this.provoked = true // v23：主动挑衅解除「Level 11 Effect」的被动状态
-      if (e.def.passive) { e.state = 'chase'; e.stateT = 0 } // 激怒无面灵
+      if (e.def.type === 'ferren') this.changeRep('bntg', -15) // v35：攻击 Ferren 惹恼 B.N.T.G.（杀死罚更重，见 killCheck）
+      if (e.def.passive && !e.def.noRetaliate) { e.provoked = true; e.targetEnt = undefined; e.state = 'chase'; e.stateT = 0 } // 激怒无面灵（被攻击才反击；Ferren 绝不反击不进 chase）
+      if (e.def.type === 'corpserat' && e.provoked) this.provokeRatPack(e) // v44：尸鼠群体激怒——周围同伴一同反击同一目标
       this.killCheck(e)
     }
     if (hit) { audio.hit(); this.camShake = Math.min(1, this.camShake + 0.15) }
-    // 空手/武器挥击也产生噪音
-    this.noiseEvent(p.x, p.y, 5, false)
+    else if (blockedJerry) this.msg('你下不去手——鹉主的蓝羽在你眼中只剩神圣。（教化约束：驯服祂才能解除）', 'system')
+    // v35：挥击波及 NPC——降低其所属团体声望（NPC 是居民不是实体：不会受伤、不会死亡）
+    let blockedFollower = false // v47：教化约束——被拦下的对信众挥击
+    for (const n of this.npcs) {
+      if (n.dead) continue
+      if ((n.floor ?? 0) !== bandOfZ(p.z)) continue // v46：隔层打不到（夹楼 NPC 不会被穿楼板挥中）
+      const d = Math.hypot(n.x - p.x, n.y - p.y)
+      if (d > 1.8) continue
+      const ang = Math.atan2(n.y - p.y, n.x - p.x)
+      let ndiff = Math.abs(ang - p.facing)
+      if (ndiff > Math.PI) ndiff = Math.PI * 2 - ndiff
+      if (ndiff > 0.7) continue
+      // v39：BRC 员工——跳过 changeRep(-15)：不立即降声望，改记未告发次数（坦白时结清）。
+      // 员工不受攻击影响（不逃跑/不反击/不停手），但可被杀死；敌对员工被杀死不另记罪（已坦白结清）
+      if (n.def.faction === 'brc') {
+        const dmg2 = this.dev.oneHit ? 99999 : held ? (ITEMS[held.type].weapon ?? 8) : 8
+        n.hp = (n.hp ?? 55) - dmg2
+        this.bloodParticles(n.x, n.y)
+        audio.hit()
+        this.camShake = Math.min(1, this.camShake + 0.15)
+        if (n.hp <= 0) {
+          n.dead = true; n.deathT = 1.4
+          p.kills++
+          if (!n.hostile) {
+            this.brcSin.killed++
+            this.msg(`${n.def.name} 一声不响地倒下了——周围的员工没有一个人停下手里的活。（未告发的杀死 ×${this.brcSin.killed}）`, 'damage')
+          } else this.msg(`${n.def.name} 倒下了。`, 'loot')
+        } else if (!n.hostile) {
+          this.brcSin.hurt++
+          this.msg(`你攻击了 ${n.def.name}——对方没有任何反应，继续手中的活。（未告发的伤害 ×${this.brcSin.hurt}）`, 'damage')
+        }
+        break
+      }
+      // v45：信众 NPC——与 BRC 员工同契约：可伤害/可杀死；非敌对时攻击会重降声望（并立即招致敌意）
+      if (n.def.faction === 'jerry') {
+        // v47：教化约束——教化值 ≥50 后无法再攻击信众 NPC（他们是你的兄弟姐妹；驯服清零后解除）
+        if (this.indoctrination >= 50) { blockedFollower = true; continue }
+        const dmg2 = this.dev.oneHit ? 99999 : held ? (ITEMS[held.type].weapon ?? 8) : 8
+        n.hp = (n.hp ?? 45) - dmg2
+        this.bloodParticles(n.x, n.y)
+        audio.hit()
+        this.camShake = Math.min(1, this.camShake + 0.15)
+        if (n.hp <= 0) {
+          n.dead = true; n.deathT = 1.4
+          p.kills++
+          if (!n.hostile) {
+            this.changeRep('jerry', -30) // 杀死信众：信众永远不会原谅
+            this.msg(`${n.def.name} 倒下了——满墙海报上的鹉主仿佛在看着你。`, 'damage')
+          } else this.msg(`${n.def.name} 倒下了。`, 'loot')
+        } else if (!n.hostile) {
+          this.changeRep('jerry', -15)
+          this.msg(`你攻击了 ${n.def.name}——信众视此为宣战。`, 'damage')
+          audio.aggro()
+        }
+        break
+      }
+      this.changeRep(n.def.faction ?? 'meg', -15)
+      n.bubbleText = '你在干什么？！'
+      n.bubbleT = 3
+      this.msg(`你攻击了 ${n.def.name}——周围的人都看见了。（声望下降）`, 'damage')
+      audio.aggro()
+      break // 一次挥击只结算一名 NPC
+    }
+    if (blockedFollower) this.msg('你下不去手——他们是你的兄弟姐妹。（教化约束：驯服鹉主才能解除）', 'system')
+    // 空手/武器挥击也产生噪音（可主动威慑猎犬）
+    this.noiseEvent(p.x, p.y, 8, false)
   }
 
   // ---------- v28：可投掷道具 ----------
@@ -1536,35 +2124,52 @@ export class Engine {
     this.attackAnimKind = 'spray' // 滋水枪专属喷射动画
     const dmg = this.squirtTank === 'cashew' ? 20 : 8
     const pc = this.squirtTank === 'cashew' ? '#c9a05a' : this.squirtTank === 'almond' ? '#c9e8a0' : '#9adfff'
-    for (let i = 0; i < 10; i++) {
-      const a = p.facing + (Math.random() - 0.5) * 0.5
-      const sp = 4 + Math.random() * 2
-      this.particles.push({
-        x: p.x + Math.cos(p.facing) * 0.5, y: p.y + Math.sin(p.facing) * 0.5,
-        vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, t: 0, life: 0.4,
-        color: pc, size: 1.5,
-      })
-    }
-    if (this.squirtTank !== 'water') {
-      let hit = false
+    // v34：线性水线——沿视线射线步进（射程 4.5m，撞墙即停，顺带修复隔墙命中）；水线碰到首个实体才触发液体效果
+    const dx = Math.cos(p.facing), dy = Math.sin(p.facing)
+    const RANGE = 4.5, STEP = 0.2
+    let hitEnt: Entity | null = null
+    let travel = RANGE
+    for (let s = 0.6; s <= RANGE; s += STEP) {
+      const rx = p.x + dx * s, ry = p.y + dy * s
+      if (tileAt(m, Math.floor(rx), Math.floor(ry)) !== 1) { travel = s - STEP; break } // 撞墙
       for (const e of m.entities) {
         if (e.dead || e.hidden) continue
-        const d = Math.hypot(e.x - p.x, e.y - p.y)
-        if (d > 3.5) continue
-        const ang = Math.atan2(e.y - p.y, e.x - p.x)
-        let diff = Math.abs(ang - p.facing)
-        if (diff > Math.PI) diff = Math.PI * 2 - diff
-        if (diff > 0.6) continue
+        if (Math.hypot(e.x - rx, e.y - ry) < 0.45) { hitEnt = e; travel = s; break }
+      }
+      if (hitEnt) break
+    }
+    // 水线视觉：沿射线等距布粒子（同速前飞保持线形），末端溅射
+    for (let s = 0.5; s <= travel; s += 0.28) {
+      this.particles.push({
+        x: p.x + dx * s, y: p.y + dy * s,
+        vx: dx * 5, vy: dy * 5, t: 0, life: 0.28 + (s / RANGE) * 0.12,
+        color: pc, size: 1.6, z: 1.15,
+      })
+    }
+    for (let i = 0; i < 6; i++) {
+      const a = p.facing + (Math.random() - 0.5) * 1.2
+      this.particles.push({
+        x: p.x + dx * travel, y: p.y + dy * travel,
+        vx: Math.cos(a) * (1 + Math.random() * 2), vy: Math.sin(a) * (1 + Math.random() * 2),
+        t: 0, life: 0.3, color: pc, size: 1.4, z: 1.1,
+      })
+    }
+    if (hitEnt) {
+      const e = hitEnt
+      if (this.squirtTank !== 'water') {
         e.hp -= dmg
         e.stunT = 0.4
-        hit = true
-        this.provoked = true
+        this.provoked = true // v23：主动挑衅解除「Level 11 Effect」的被动状态
+        if (e.def.passive) { e.provoked = true; e.targetEnt = undefined; e.state = 'chase'; e.stateT = 0 } // 激怒无面灵（与近战受击一致）
+        if (e.def.type === 'corpserat' && e.provoked) this.provokeRatPack(e) // v44：尸鼠群体激怒（与近战受击一致）
         this.killCheck(e)
+        audio.hit()
+        this.msg(this.squirtTank === 'cashew' ? `水线正中${e.def.name}——苦涩的腰果水把它灼得发颤。` : `水线正中${e.def.name}，甜腻的杏仁水四溅。`, 'system')
+      } else {
+        this.msg(`水线滋了${e.def.name}一身清水——什么效果也没有。`, 'system')
       }
-      if (hit) audio.hit()
-      this.msg(this.squirtTank === 'cashew' ? '你喷出一道苦涩的腰果水雾——实体被灼得发颤。' : '你喷出一道甜腻的杏仁水雾。', 'system')
     } else {
-      this.msg('你喷出一道清水——什么效果也没有。', 'system')
+      this.msg(this.squirtTank === 'water' ? '你喷出一道清水——什么效果也没有。' : this.squirtTank === 'cashew' ? '你喷出一道苦涩的腰果水线。' : '你喷出一道甜腻的杏仁水线。', 'system')
     }
     if (this.squirtAmmo <= 0) {
       this.squirtTank = 'none'
@@ -1615,9 +2220,11 @@ export class Engine {
           if (e.dead || e.disguised) continue
           const d = Math.hypot(e.x - x, e.y - y)
           if (d > 3.2 || Math.abs(e.z - pr.floorZ) >= 1) continue
+          if (e.def.type === 'jerry' && this.indoctrination > 0) continue // v47：教化约束——投掷波及对鹉主无效
           e.hp -= d < 2.2 ? 45 : 20
           e.stunT = Math.max(e.stunT, 0.6)
           this.bloodParticles(e.x, e.y)
+          if (e.def.type === 'jerry') this.hurtJerryRep() // v47：伤害鹉主 → 信众哗然 -50
           n++
           this.killCheck(e)
         }
@@ -1636,8 +2243,10 @@ export class Engine {
           if (e.dead || e.disguised) continue
           const d = Math.hypot(e.x - x, e.y - y)
           if (d > 2.8 || Math.abs(e.z - pr.floorZ) >= 1) continue
+          if (e.def.type === 'jerry' && this.indoctrination > 0) continue // v47：教化约束——投掷波及对鹉主无效
           e.hp -= 20
           e.stunT = Math.max(e.stunT, 2.5)
+          if (e.def.type === 'jerry') this.hurtJerryRep() // v47：伤害鹉主 → 信众哗然 -50
           n++
           this.killCheck(e)
         }
@@ -1678,6 +2287,16 @@ export class Engine {
   // ---------- v17：无限窗口平移 ----------
   // chunk 以世界种子+坐标确定性生成，窗口平移后相对世界完全一致；
   // 玩家/幻影/粒子等动态坐标随窗口反向平移，玩家无感。
+  /** v39：无限层级 NPC 同步——从已加载 LiveChunk 收集活体 NPC（窗口平移后重收集：
+   *  新 chunk 的员工加入、卸载 chunk 的员工消失；对象身份跨平移保持，状态不丢） */
+  private syncInfNpcs() {
+    const m = this.map
+    if (!m?.inf) return
+    this.npcs = []
+    for (const c of m.inf.chunks.values()) for (const n of c.npcs) this.npcs.push(n)
+    for (const n of this.npcs) if (!this.knownNpcs.some((k) => k.id === n.id)) this.knownNpcs.push(n.def)
+  }
+
   private updateInfiniteWindow() {
     const m = this.map!
     const shift = updateInfinite(m, this.levelDef, this.player.x, this.player.y, this.explored)
@@ -1694,6 +2313,7 @@ export class Engine {
     this.interactTarget = null
     this.ride = null
     this.climb = null
+    this.syncInfNpcs() // v39：窗口平移后重收集 chunk NPC（卸载消失/新载加入）
     // v29：返程阶梯（世界坐标固定；stitch 重建 m.exits 后重新注入，并同步所属 chunk 供渲染）
     if (this.bonusExit && m.inf && !m.exits.some((e) => e.def === this.bonusExit!.def)) {
       const inf = m.inf
@@ -1727,6 +2347,19 @@ export class Engine {
       if (d < bd) { bd = d; best = e }
     }
     return best ? { x: best.x, y: best.y, d: bd } as { x: number; y: number; d: number } | null : null
+  }
+
+  /** v35：最近的定居点地标（出口提示的替代目标——附近无出口时指向它） */
+  nearestLandmark(): { x: number; y: number; d: number } | null {
+    const p = this.player, m = this.map
+    if (!m) return null
+    let best: { x: number; y: number } | null = null, bd = 1e9
+    for (const s of m.structures) {
+      if (s.kind !== 'landmark') continue
+      const d = Math.hypot(s.x + s.w / 2 - p.x, s.y + s.h / 2 - p.y)
+      if (d < bd) { bd = d; best = { x: s.x + s.w / 2, y: s.y + s.h / 2 } }
+    }
+    return best ? { ...best, d: bd } : null
   }
 
   getInteract(): { kind: string; label: string } | null { return this.interactTarget }
@@ -1787,7 +2420,7 @@ export class Engine {
         const a = this.viewAngle(it.x, it.y)
         if (a < ba - 1e-6 || (Math.abs(a - ba) <= 1e-6 && d < bd - 1e-6)) { ba = a; bd = d; bi = it }
       }
-      if (bi) { this.interactTarget = { kind: 'item', label: `拾取 ${itemName(bi.type)}`, it: bi }; return }
+      if (bi) { this.interactTarget = { kind: 'item', label: bi.type === 'welcomenote' ? `查看 ${itemName(bi.type)}` : `拾取 ${itemName(bi.type)}`, it: bi }; return }
     }
     // 结构（半径 2.2m，含容器）
     let best: { kind: string; label: string; s: Structure; a: number; d: number; can: boolean } | null = null
@@ -1819,14 +2452,15 @@ export class Engine {
         consider(s.kind, label, s, d, s.looted ? true : gate)
       }
       else if (s.kind === 'lightswitch') consider('lightswitch', s.data?.flipped ? '电灯开关（已经拨过了）' : '拨动 电灯开关', s, d, true)
-      else if (s.kind === 'roadsign' || s.kind === 'megsign') consider('roadsign', '查看 路标', s, d, true)
-      else if (s.kind === 'braille') consider('braille', '摸读 墙上的刻痕', s, d, true)
+      else if (s.kind === 'roadsign' || s.kind === 'megsign') consider('roadsign', DECOR_VIEWS.roadsign.label, s, d, true)
+      else if (s.kind === 'braille') consider('braille', DECOR_VIEWS.braille.label, s, d, true)
       else if (s.kind === 'arcadecab') consider('arcadecab', '投币 街机', s, d, true)
-      else if (s.kind === 'endletters') consider('endletters', '走近 金属字母', s, d, true)
-      else if (s.kind === 'clipfuse') consider('clipfuse', '查看 卡在一起的两栋房子', s, d, true)
-      else if (s.kind === 'handspike') consider('handspike', '触摸 石头做的手', s, d, true)
+      else if (s.kind === 'endletters') consider('endletters', DECOR_VIEWS.endletters.label, s, d, true)
+      else if (s.kind === 'clipfuse') consider('clipfuse', DECOR_VIEWS.clipfuse.label, s, d, true)
+      else if (s.kind === 'handspike') consider('handspike', DECOR_VIEWS.handspike.label, s, d, true)
       else if (s.kind === 'hoteldoor') {
-        if (s.data?.locked) {
+        if (s.data?.sealed) consider('hoteldoor', '锁死的门（锁的结构闻所未闻）', s, d, true) // v41：L2 特殊锁死门——任何方式都打不开
+        else if (s.data?.locked) {
           const canAxe = this.hasItem('axe') && this.axeDur > 0
           const can = this.hasItem('crowbar') || this.hasPocket('skeleton') || canAxe
           const label = canAxe ? `劈开 上锁的房门（斧头耐久 ${this.axeDur}/5）`
@@ -1834,14 +2468,18 @@ export class Engine {
           consider('hoteldoor', label, s, d, can)
         } else consider('hoteldoor', s.data?.open ? '关上 房门' : '打开 房门', s, d, true)
       }
-      else if (s.kind === 'rollerdoor') consider('rollerdoor', s.data?.open ? '放下 卷帘门' : '升起 卷帘门', s, d, true)
+      else if (s.kind === 'rollerdoor') {
+        if (s.data?.locked) consider('rollerdoor', '卷帘门锁死了', s, d, false)
+        else consider('rollerdoor', s.data?.open ? '放下 卷帘门' : '升起 卷帘门', s, d, true)
+      }
       else if (s.kind === 'glassdoor') consider('glassdoor', s.data?.open ? '关上 玻璃门' : '推开 玻璃门', s, d, true)
       else if (s.kind === 'inkdoor') consider('inkdoor', s.data?.open ? '关上 墨黑色金属门' : '打开 墨黑色金属门', s, d, true)
-      else if (s.kind === 'glasswin') consider('glasswin', '眺望 窗外', s, d, true)
+      else if (s.kind === 'glasswin') consider('glasswin', DECOR_VIEWS.glasswin.label, s, d, true)
       else if (s.kind === 'windowtrap') consider('windowtrap', s.data?.triggered ? '查看 窗户（已无异常）' : '查看 未涂黑的窗户', s, d, true)
-      else if (s.kind === 'windowblack') consider('windowblack', '查看 涂黑的窗户', s, d, true)
-      else if (s.kind === 'graffiti') consider('graffiti', '查看 涂鸦', s, d, true)
+      else if (s.kind === 'windowblack') consider('windowblack', DECOR_VIEWS.windowblack.label, s, d, true)
+      else if (s.kind === 'graffiti') consider('graffiti', DECOR_VIEWS.graffiti.label, s, d, true)
       else if (s.kind === 'megdoc') consider('megdoc', '阅读 M.E.G. 文档', s, d, true)
+      else if (s.kind === 'landmark') consider('landmark', '查看 定居点地标', s, d, true)
       else if (s.kind === 'valve') consider('valve', s.data?.on ? '关闭 蒸汽阀门' : '打开 蒸汽阀门', s, d, true)
       else if (s.kind === 'booth' && !this.player.leverPulled) consider('lever', '扳动 电源拉杆', s, d, true)
       else if (s.kind === 'server' && s.locked) consider('server', '刷门禁卡 进入', s, d, this.hasPocket('keycard'))
@@ -1851,6 +2489,35 @@ export class Engine {
     //（闭包内赋值 TS 无法跟踪，显式还原声明类型）
     const picked = best as { kind: string; label: string; s: Structure } | null
     this.interactTarget = picked ? { kind: picked.kind, label: picked.label, s: picked.s } : null
+    // v35：NPC 交谈（据点；优先级最低——出口/物品/结构都未选中时才考虑）
+    if (!this.interactTarget) {
+      let bn: NpcState | null = null, ba = 1e9, bd = 1e9
+      for (const n of this.npcs) {
+        if (n.dead || n.hostile) continue // v39：尸体与敌对员工不可交谈
+        if ((n.floor ?? 0) !== bandOfZ(p.z)) continue // v46：隔层不可交谈（夹楼 NPC 须上到 2F）
+        const d = Math.hypot(n.x - p.x, n.y - p.y)
+        if (d > 2.2 || !this.inView(n.x, n.y, 2.2)) continue
+        const a = this.viewAngle(n.x, n.y)
+        if (a < ba - 1e-6 || (Math.abs(a - ba) <= 1e-6 && d < bd)) { ba = a; bd = d; bn = n }
+      }
+      if (bn) this.interactTarget = { kind: 'npc', label: `与 ${bn.def.name} 交谈`, npc: bn }
+    }
+    // v45：实体「杰瑞」——接触杰瑞（与 NPC 同级最低优先级；驯服提示随状态变化；v47：冷却剩余在提示中显示）
+    if (!this.interactTarget) {
+      for (const e of m.entities) {
+        if (e.dead || e.def.type !== 'jerry') continue
+        const d = Math.hypot(e.x - p.x, e.y - p.y)
+        if (d > 2.2 || !this.inView(e.x, e.y, 2.2)) continue
+        this.interactTarget = {
+          kind: 'jerry',
+          label: this.jerryContactCd > 0
+            ? `接触 鹉主杰瑞（冷却 ${Math.ceil(this.jerryContactCd)}s）`
+            : this.jerryTamed ? '接触 鹉主杰瑞（已驯服）' : '接触 鹉主杰瑞（教化 +25 · 对其使用杏仁水可驯服）',
+          ent: e,
+        }
+        break
+      }
+    }
   }
 
   private doInteract() {
@@ -1870,6 +2537,15 @@ export class Engine {
         const bi = t.it && m.items.includes(t.it) ? t.it : null
         if (bi) {
           if (bi.fake) { m.items = m.items.filter((i) => i !== bi); if (m.inf) m.inf.taken.add(bi.id); return }
+          // v34：致新流浪者的纸条——查看即收录图鉴「文档」（不入背包，归宿是文档存档）
+          if (bi.type === 'welcomenote') {
+            m.items = m.items.filter((i) => i !== bi)
+            if (m.inf) m.inf.taken.add(bi.id)
+            audio.pickup()
+            this.emit({ kind: 'doc', text: 'welcome_note' })
+            this.msg('纸条已存档到图鉴 ·「文档」。', 'system')
+            break
+          }
           // 手电筒：副手空着时拾取即自动装备（开局引导）
           if (bi.type === 'flashlight' && !p.equip.offhand) {
             m.items = m.items.filter((i) => i !== bi)
@@ -1882,12 +2558,20 @@ export class Engine {
             this.emit({ kind: 'toast', text: '+1 手电筒（副手）' })
             break
           }
-          if (this.addItem(bi.type)) {
-            m.items = m.items.filter((i) => i !== bi)
-            if (m.inf) m.inf.taken.add(bi.id) // v17：防止窗口重载后物品复活
+          const n = bi.count ?? 1 // 整叠丢弃的地面物品带堆叠数量
+          let got = 0
+          for (let k = 0; k < n; k++) if (this.addItem(bi.type)) got++
+          if (got > 0) {
+            if (got >= n) {
+              m.items = m.items.filter((i) => i !== bi)
+              if (m.inf) m.inf.taken.add(bi.id) // v17：防止窗口重载后物品复活
+            } else {
+              bi.count = n - got // 背包装不下：剩余的留在原地
+              this.msg(`背包已满，${n - got} 个 ${itemName(bi.type)} 留在地上。`, 'system')
+            }
             audio.pickup(bi.type === 'tape')
-            if (bi.type === 'tape') { p.tapes++; this.msg(`拾取 磁带（${p.tapes}/${WIN_TAPES}）`, 'lore') }
-            this.emit({ kind: 'toast', text: `+1 ${itemName(bi.type)}` })
+            if (bi.type === 'tape') { p.tapes += got; this.msg(`拾取 磁带（${p.tapes}/${WIN_TAPES}）`, 'lore') }
+            this.emit({ kind: 'toast', text: `+${got} ${itemName(bi.type)}` })
           } else this.msg('背包已满。', 'system')
         }
         break
@@ -1923,6 +2607,7 @@ export class Engine {
         if (!Array.isArray(s.data?.lootItems)) s.data = { ...s.data, lootItems: this.rollLoot(kind) }
         this.searching = { sid: s.data.sid as number, t: 0, dur: C.dur, label }
         audio.searchStart()
+        this.noiseEvent(p.x, p.y, 6, false) // 翻找容器的声音会被听见（肢团）
         break
       }
       // ============ v23：新层级的可交互物 ============
@@ -1945,15 +2630,15 @@ export class Engine {
       }
       case 'roadsign': {
         const ex = this.nearestExit()
-        this.msg('路标上有 M.E.G. 的标志，还有一个箭头。', 'lore')
-        if (ex) { for (const e2 of m.exits) e2.discovered = true; this.msg('你记下了方向——出口的位置标在了地图上。', 'loot') }
+        const R = DECOR_VIEWS.roadsign.msgs!
+        this.msg(R[0].text, R[0].type)
+        if (ex) { for (const e2 of m.exits) e2.discovered = true; this.msg(R[1].text, R[1].type) }
         audio.uiTick()
         break
       }
       case 'braille': {
-        const marks = ['「往回走」', '「这边死路」', '「第 3 次经过这里」', '「别应声」']
-        this.msg(`指尖摸到一行刻痕：${marks[Math.floor(Math.random() * marks.length)]}`, 'lore')
-        p.sanity = Math.min(100, p.sanity + 4)
+        this.msg(`指尖摸到一行刻痕：${BRAILLE_MARKS[Math.floor(Math.random() * BRAILLE_MARKS.length)]}`, 'lore')
+        p.sanity = Math.min(100, p.sanity + DECOR_VIEWS.braille.sanity)
         audio.uiTick()
         break
       }
@@ -1962,25 +2647,23 @@ export class Engine {
         this.msg('屏幕亮了。它没有投币口，但它开始运行了。', 'lore')
         const ad = Math.floor(Math.random() * NORMAL_LEVELS)
         this.transition = { anim: 'glitch', t: 0, dest: ad }
-        this.emit({ kind: 'transition', anim: 'glitch', cutIn: LEVELS[ad]?.entryAnim, dest: ad })
+        this.emit({ kind: 'transition', anim: 'glitch', cutIn: levelDefOf(ad)?.entryAnim, dest: ad })
         break
       }
       case 'endletters': {
-        this.msg('金属字母底下积了一层灰：the end is near。', 'lore')
-        this.msg('落款没有日期。你数了数字母之间的间距——它们是均匀的，均匀得像印刷。', 'system')
-        p.sanity = Math.max(0, p.sanity - 6)
+        for (const dm of DECOR_VIEWS.endletters.msgs!) this.msg(dm.text, dm.type)
+        p.sanity = Math.max(0, p.sanity + DECOR_VIEWS.endletters.sanity)
         break
       }
       case 'clipfuse': {
-        this.msg('一间卧室的墙，从另一间的餐桌中央穿了出来。两栋房子都完好，只是它们同时占着这一块地方。', 'lore')
-        p.sanity = Math.max(0, p.sanity - 10)
+        for (const dm of DECOR_VIEWS.clipfuse.msgs!) this.msg(dm.text, dm.type)
+        p.sanity = Math.max(0, p.sanity + DECOR_VIEWS.clipfuse.sanity)
         this.emit({ kind: 'sanityhit' })
         break
       }
       case 'handspike': {
-        this.msg('石头做的手。指节分明，掌纹清晰——上面有指纹，而且和你见过的任何一枚都不一样。', 'lore')
-        this.msg('化学检测证实它纯属天然矿物，没有任何人工雕刻的证据。', 'system')
-        p.sanity = Math.max(0, p.sanity - 8)
+        for (const dm of DECOR_VIEWS.handspike.msgs!) this.msg(dm.text, dm.type)
+        p.sanity = Math.max(0, p.sanity + DECOR_VIEWS.handspike.sanity)
         break
       }
       case 'hoteldoor': {
@@ -1988,6 +2671,12 @@ export class Engine {
         // 上锁门与普通门相邻时提示「打开 房门」却触发上锁门）
         const s = t.s && t.s.kind === 'hoteldoor' && Math.hypot(t.s.x + 0.5 - p.x, t.s.y + 0.5 - p.y) < 2.6 ? t.s : null
         if (!s) return
+        if (s.data?.sealed) {
+          // v41：L2 特殊锁死门——撬棍/万能钥匙/斧头全部无效（锁的结构闻所未闻）
+          this.msg('这扇门纹丝不动，锁的结构闻所未闻。', 'system')
+          audio.uiTick()
+          return
+        }
         if (s.data?.locked) {
           if (this.hasItem('axe') && this.axeDur > 0) {
             // v32：斧头破门——消耗 1 点耐久（共 5 点，耗尽斧头报废）
@@ -2022,6 +2711,25 @@ export class Engine {
         const open = s.data?.open ? 0 : 1
         s.data = { ...s.data, open }
         s.solid = !open
+        if (!open) {
+          // v41：关门时玩家站在门洞——把玩家推到最近的可走一侧（否则嵌进实心门体卡死）
+          const m = this.map!
+          const r = PLAYER_RADIUS
+          if (p.x > s.x - r && p.x < s.x + s.w + r && p.y > s.y - r && p.y < s.y + s.h + r) {
+            const f = (x: number, y: number) => x >= 0 && y >= 0 && x < m.w && y < m.h && m.tiles[y * m.w + x] === 1
+            const ax = Math.floor(s.x + s.w / 2), ay = Math.floor(s.y + s.h / 2)
+            const alongY = !f(ax - 1, ay) && !f(ax + 1, ay) // 门两侧是墙 ⇒ 通行沿 y 轴
+            const cand = alongY
+              ? [{ x: p.x, y: s.y - r - 0.12 }, { x: p.x, y: s.y + s.h + r + 0.12 }]
+              : [{ x: s.x - r - 0.12, y: p.y }, { x: s.x + s.w + r + 0.12, y: p.y }]
+            const ok = (c: { x: number; y: number }) => canOccupy(m, c.x, c.y, r, { z: p.z, crouch: p.crouching })
+            const d0 = Math.hypot(cand[0].x - p.x, cand[0].y - p.y)
+            const d1 = Math.hypot(cand[1].x - p.x, cand[1].y - p.y)
+            const [near, far] = d0 <= d1 ? [cand[0], cand[1]] : [cand[1], cand[0]]
+            if (ok(near)) { p.x = near.x; p.y = near.y }
+            else if (ok(far)) { p.x = far.x; p.y = far.y }
+          }
+        }
         this.msg(open ? '门吱呀一声开了。' : '你轻轻带上了门。', 'system')
         audio.uiTick()
         break
@@ -2041,6 +2749,10 @@ export class Engine {
       case 'rollerdoor': case 'glassdoor': {
         const s = t.s && t.s.kind === t.kind && Math.hypot(t.s.x + 0.5 - p.x, t.s.y + 0.5 - p.y) < 2.6 ? t.s : null
         if (!s) return
+        if (t.kind === 'rollerdoor' && s.data?.locked) {
+          this.msg('卷帘门锁死了，纹丝不动。门缝里黑漆漆的，看不清里面堆了什么。', 'system')
+          break
+        }
         const open = s.data?.open ? 0 : 1
         s.data = { ...s.data, open }
         s.solid = !open
@@ -2072,15 +2784,33 @@ export class Engine {
         this.emit({ kind: 'doc', text: (s.data?.doc as string) ?? 'meg_levels' })
         break
       }
+      case 'landmark': {
+        // v35：定居点地标——打开地标卡（据点介绍 + 前往/离开）
+        const s = t.s && t.s.kind === 'landmark' ? t.s : null
+        if (!s) return
+        audio.uiTick()
+        this.emit({ kind: 'landmark', text: (s.data?.outpost as string) ?? 'alpha' })
+        break
+      }
+      case 'npc': {
+        // v35：与 NPC 交谈（App 打开对话窗并记录图鉴「NPC」分类）
+        const n = t.npc
+        if (!n) return
+        // NPC 转身面向玩家（v39：工作循环的 BRC 员工不转身——他们从不停手）
+        if (!n.def.workLoop) n.facing = Math.atan2(p.y - n.y, p.x - n.x)
+        audio.uiTick()
+        this.emit({ kind: 'dialog', text: n.id })
+        break
+      }
+      case 'jerry': {
+        // v45：接触杰瑞——声望 +5（每次）+ 教化 +25 + 触发诵咏（驯服后不再积累教化）
+        this.contactJerry(t.ent)
+        break
+      }
       case 'glasswin': {
         const lvl = p.level
-        this.msg(
-          lvl === 4
-            ? '玻璃外是雾。楼群的剪影在灰白里沉浮，像沉船的桅杆。没有一条路通向那里。'
-            : '窗外是凝固的夜景：霓虹在远处明灭，街道上空无一人。玻璃纹丝不动。',
-          'lore',
-        )
-        p.sanity = Math.min(100, p.sanity + 1)
+        this.msg(lvl === 4 ? GLASSWIN_TEXT.l4 : GLASSWIN_TEXT.other, 'lore')
+        p.sanity = Math.min(100, p.sanity + DECOR_VIEWS.glasswin.sanity)
         break
       }
       case 'windowtrap': {
@@ -2096,65 +2826,23 @@ export class Engine {
         break
       }
       case 'windowblack': {
-        this.msg('窗户被从里面涂死了。档案说：涂黑的是安全的，没涂黑的才是陷阱。', 'lore')
-        p.sanity = Math.min(100, p.sanity + 1)
+        for (const dm of DECOR_VIEWS.windowblack.msgs!) this.msg(dm.text, dm.type)
+        p.sanity = Math.min(100, p.sanity + DECOR_VIEWS.windowblack.sanity)
         break
       }
       case 'graffiti': {
         // v17：变体房间专属 lore（涂鸦/文档，按 data.loreKind；同处再读顺延下一条）
         const s2g = t.s && t.s.kind === 'graffiti' ? t.s : null
         const loreKind = s2g?.data?.loreKind as string | undefined
-        const LOREKIND: Record<string, string[]> = {
-          arch: [
-            '墙上刻着：「拱门房的拱门从不动。档案说这里是全层最稳定的地方——可以喘息，但别过夜。」',
-            '「穿过第七个拱门时别回头。它们喜欢数拱门。」',
-          ],
-          pillarhall: [
-            '「柱子比昨天多了两根。别数。数了就会一直数下去。」',
-            'M.E.G. 标记：「柱厅——视线受阻，记路用喷漆，别用声音。」',
-          ],
-          pit: [
-            '坑边的刻字：「别往下看太久。坑底也在看你。」',
-            '「坑是方的。所有天然的东西都不是方的。」',
-          ],
-          blackout: [
-            '「停电区的灯不是坏了——是被『关掉』的。开着手电，别停。」',
-            '「黑暗里没有东西。官方说的。你信官方吗？」',
-          ],
-          manila: [
-            '一份泛黄的文档：「马尼拉室——给还能读到这句话的人。床是干净的，水在柜子里。别把这里的事告诉墙纸。」',
-            '文档第二页：「……在这里睡了一晚，嗡鸣声远了。如果你找到那面闪烁的墙，别犹豫。——K.」',
-          ],
-          red: [
-            '「红房间里待太久的人，出来时都不说话。」',
-            '「红色不是灯光的颜色，是这里『空气』的颜色。数到十，离开。」',
-          ],
-          exitguide: [
-            '涂鸦箭头指向一侧：「闪烁的墙在这边——跟着电流声。」',
-            '「门在闪。灯闪三下停一下的就是真的，别信常亮的。」',
-          ],
-        }
-        if (loreKind && LOREKIND[loreKind] && s2g) {
-          const pool2 = LOREKIND[loreKind]
+        if (loreKind && GRAFFITI_LORE_KIND[loreKind] && s2g) {
+          const pool2 = GRAFFITI_LORE_KIND[loreKind]
           const li2 = ((s2g.data?.loreIdx as number | undefined) ?? -1) + 1
           s2g.data = { ...s2g.data, loreIdx: li2 }
           this.msg(pool2[li2 % pool2.length], 'lore')
-          p.sanity = Math.min(100, p.sanity + 2)
+          p.sanity = Math.min(100, p.sanity + DECOR_VIEWS.graffiti.sanity)
           break
         }
-        const lore = [
-          '墙上写着：「别停下。它们在听。」',
-          '潦草的字迹：「磁带……集齐六盘……门就会开。」',
-          '有人刻下：「 Level 5 的旋转门是唯一的出路。」',
-          '「黑暗里别关灯。不，还是关上吧。」——逻辑已无法辨认。',
-          '「如果你看到另一个你，跑。」',
-          '「无面的人不记得自己是谁。别提醒他们。」',
-          'M.E.G. 告示：「不要喝地毯里的水，无论它看起来多像杏仁水。」',
-          '「停电区里没有灯，但灯里有东西。」',
-          '「电梯按钮有 382 层。别按 13 层以上的。」',
-          '「红房间里待太久的人，出来时都不说话。」',
-        ]
-        this.msg(lore[Math.floor(Math.random() * lore.length)], 'lore')
+        this.msg(GRAFFITI_LORE[Math.floor(Math.random() * GRAFFITI_LORE.length)], 'lore')
         // 出口方位涂鸦线索（按真实方位生成；v12：用选中的同一涂鸦）
         const s2 = t.s && t.s.kind === 'graffiti' ? t.s : null
         const ex = m.exits[0]
@@ -2167,7 +2855,7 @@ export class Engine {
           const w = words[Math.floor(Math.random() * words.length)]
           this.msg(`下面还有一行小字：「${w}在${dir8[idx]}边，别回头。」`, 'lore')
         }
-        p.sanity = Math.min(100, p.sanity + 2)
+        p.sanity = Math.min(100, p.sanity + DECOR_VIEWS.graffiti.sanity)
         break
       }
       case 'valve': {
@@ -2230,12 +2918,8 @@ export class Engine {
       const cap = lucky ? loot.length : loot.length - 1 // 非幸运不出磁带
       items.push(loot[Math.floor(Math.random() * cap)])
     }
-    // v32：小概率稀有掉落（onceOwned=玩家已拥有一个后不再生成）
-    const RARE: Record<string, { type: string; p: number; onceOwned?: boolean }[]> = {
-      crate: [{ type: 'knife', p: 0.1 }, { type: 'axe', p: 0.08 }, { type: 'headlamp', p: 0.06 }],
-      dresser: [{ type: 'notebook', p: 0.12, onceOwned: true }],
-    }
-    for (const r of RARE[kind] ?? []) {
+    // v32：小概率稀有掉落（表在 containers.ts；onceOwned=玩家已拥有一个后不再生成）
+    for (const r of CONTAINER_RARE[kind] ?? []) {
       if (Math.random() >= r.p) continue
       if (r.onceOwned && this.hasItem(r.type)) continue
       items.push(r.type)
@@ -2300,6 +2984,20 @@ export class Engine {
 
   private takeExit(def: ExitDef) {
     const p = this.player
+    // v45：Level 274 教化规则——教化满（≥100）成为信众一员：无法主动离开（开发者传送除外）；
+    // 未满时主动离开 → jerry 声望 -5；有进行中的传教委托（v47 标准委托化）离开不受声望惩罚
+    if (p.level === 274 && def.dest === 'back') {
+      if (this.indoctrination >= 100) {
+        this.msg('你属于这里。鹉主还需要你。', 'lore')
+        audio.uiTick()
+        return
+      }
+      if (this.quests.some((q) => q.def.kind === 'preach' && !q.done)) this.msg('你肩负传教使命离开圣地——鹉主允许你为祂远行。（免于声望惩罚）', 'system')
+      else {
+        this.changeRep('jerry', -5)
+        this.msg('你转身离开了圣地。信众的目光在你背后发凉。（杰瑞的信众 声望 -5）', 'damage')
+      }
+    }
     if (def.req) {
       if (def.req.tapes && p.tapes < def.req.tapes) {
         this.msg(`${def.name}没有反应。${def.reqText ?? ''}（当前 ${p.tapes}/${def.req.tapes}）`, 'system')
@@ -2333,7 +3031,7 @@ export class Engine {
       this.emit({ kind: 'sanityhit' })
       if (this.fakeEnds >= 2) this.msg('中央那排金属字母底下还有一扇门。没有装饰，也没有灯。', 'system')
       audio.pickup()
-      this.transition = { anim: 'bloom', t: 0, dest: def.dest }
+      this.transition = { anim: 'bloom', t: 0, dest: def.dest as number } // homedoor 的 dest 恒为数字（Level 601 假门循环）
       this.emit({ kind: 'transition', anim: 'bloom' })
       return
     }
@@ -2341,8 +3039,11 @@ export class Engine {
     // v29：经 L0「向下的灰色阶梯」下行 → 在 L1 出生点附近生成返程阶梯
     if (def.kind === 'graystairs' && def.dest === 1) this.arriveStairs = true
     // v23：立刻解析 random 目标——过场演出需要知道「切入」的是哪一层
-    const dest: number | 'win' = def.dest === 'random' ? Math.floor(Math.random() * NORMAL_LEVELS) : def.dest
-    const cutIn = dest === 'win' ? undefined : (def.cutIn ?? LEVELS[dest]?.entryAnim)
+    // v35：'back' 解析为进入据点前的层级（据点入口的返程）
+    const resolved = def.dest === 'back' ? (this.outpostReturn ?? 1) : def.dest
+    const dest: number | 'win' = resolved === 'random' ? Math.floor(Math.random() * NORMAL_LEVELS) : resolved
+    if (def.dest === 'back') this.outpostReturn = null // 返程后清空（下次进据点重新记录）
+    const cutIn = dest === 'win' ? undefined : (def.cutIn ?? levelDefOf(dest)?.entryAnim)
     this.transition = { anim: def.anim, t: 0, dest, fallDamage: def.fallDamage }
     this.emit({ kind: 'transition', anim: def.anim, fallDamage: def.fallDamage, cutIn, dest })
   }
@@ -2382,8 +3083,11 @@ export class Engine {
       const targetZ = (up ? 3.2 : -3.2) * t
       p.z += (targetZ - p.z) * Math.min(1, dt * 12)
       p.vz = 0
-      if (s > -0.1 && Math.abs(latS) > 0.55) {
-        const over = Math.abs(latS) - 0.55, sgn = latS > 0 ? 1 : -1
+      // v29a 碰撞修正：横向限位对齐护栏碰撞盒——护栏内沿 |lat|=0.56，减去玩家半径 0.32 → 0.24
+      // （旧值 0.55 让玩家身体直接穿进护栏模型）；入口处（s≤0.4，脚底未低于地面）保持开阔不夹挤
+      const latLimit = s > 0.4 ? 0.24 : 0.55
+      if (s > -0.1 && Math.abs(latS) > latLimit) {
+        const over = Math.abs(latS) - latLimit, sgn = latS > 0 ? 1 : -1
         p.x -= dy * over * sgn
         p.y += dx * over * sgn
       }
@@ -2497,6 +3201,11 @@ export class Engine {
       return
     }
     const p = this.player
+    // v45：对杰瑞给予杏仁水（Level 274 视线内 2.5m）→ 驯服鹉主，而不是自己喝掉
+    if (s.type === 'almond' && p.level === 274 && !this.jerryTamed && this.aimJerry()) {
+      this.tameJerry()
+      return
+    }
     switch (def.use) {
       case 'eat': {
         // v32：皇家口粮——饥饿全满 + 理智下限锁定 + 成瘾机制（可多次食用，逐次加长成瘾）
@@ -2528,6 +3237,11 @@ export class Engine {
         break
       }
       case 'heal': p.hp = Math.min(100, p.hp + (def.value ?? 30)); break
+      case 'cure': {
+        // 消毒液：消去疫疾——疫疾尚未实装，无感染时仅作预防性消毒（仍消耗 1 瓶）
+        this.msg('你仔细地做了一遍预防性消毒。目前没有感染疫疾。', 'loot')
+        break
+      }
       case 'sanity': p.sanity = Math.min(100, p.sanity + (def.value ?? 30)); break
       case 'bigsanity': p.sanity = Math.min(100, p.sanity + (def.value ?? 60)); break
       case 'battery': p.battery = Math.min(100, p.battery + (def.value ?? 50)); break
@@ -2539,7 +3253,8 @@ export class Engine {
     }
     audio.pickup()
     this.emit({ kind: 'toast', text: `使用了 ${def.name}` })
-    this.consumeItem(s.type)
+    // v35：皇家口粮不是消耗品——使用不会吃掉它（仅「全部吃光」触发时才被消耗）
+    if (s.type !== 'royalration') this.consumeItem(s.type)
   }
   // ---------- 粉笔头：在墙上画白色记号 ----------
   /** 手持粉笔头右键：在面前墙上画记号（消耗 1 支；同一墙面不重复消耗） */
@@ -2625,10 +3340,10 @@ export class Engine {
     const r = { w: where, i }
     const s = this.slotGet(r)
     if (!s || !this.map) return
-    this.map.items.push({ id: Math.random(), type: s.type, x: p.x + 0.3, y: p.y + 0.3 })
+    this.map.items.push({ id: Math.random(), type: s.type, count: s.count, x: p.x + 0.3, y: p.y + 0.3 })
     this.slotSet(r, null)
     this.syncPassives()
-    this.msg(`丢下了 ${itemName(s.type)}`, 'system')
+    this.msg(s.count > 1 ? `丢下了 ${itemName(s.type)} ×${s.count}` : `丢下了 ${itemName(s.type)}`, 'system')
   }
   // 卸下装备位物品到第一个空背包格（背包满则失败）
   unequipSlot(where: SlotWhere, i: number): boolean {
@@ -2731,7 +3446,7 @@ export class Engine {
     }
   }
 
-  get levelDef() { return LEVELS[this.player.level] }
+  get levelDef() { return levelDefOf(this.player.level)! }
 
   // 开发者模式：层级跳转
   devJump(id: number) {
@@ -2739,6 +3454,397 @@ export class Engine {
     this.transition = null
     this.loadLevel(id)
     this.emit({ kind: 'transition', anim: 'intro' })
+  }
+
+  /** v35：前往据点（地标弹窗「前往」/DevPanel 据点跳转共用）：记录返程层级后切入 */
+  enterOutpost(outpostId: string): boolean {
+    const o = OUTPOSTS[outpostId]
+    if (!o || !this.map) return false
+    // v35：声望过低被其团体禁止进入据点（<=-90）
+    const rep = this.rep[o.faction] ?? 0
+    if (FACTIONS[o.faction]?.hasRep && rep <= REP_TIER.banned) {
+      this.msg(`守卫拦下了你——${FACTIONS[o.faction]!.name}拒绝你进入。（声望 ${rep}）`, 'damage')
+      return false
+    }
+    this.outpostReturn = this.player.level
+    this.transition = { anim: 'bloom', t: 0, dest: o.levelId }
+    this.emit({ kind: 'transition', anim: 'bloom', cutIn: 'outpost', dest: o.levelId })
+    return true
+  }
+  /** [DEV] 据点跳转（与 enterOutpost 同路径） */
+  devJumpOutpost(outpostId: string): boolean {
+    const ok = this.enterOutpost(outpostId)
+    if (ok) this.msg(`[DEV] 已跳转到据点「${OUTPOSTS[outpostId]?.name}」`, 'system')
+    return ok
+  }
+
+  // ---------- v35：团体声望与委托任务 ----------
+  /** 调整某团体声望（clamp ±100；流浪者等无声望团体直接忽略） */
+  changeRep(factionId: string, delta: number) {
+    const f = FACTIONS[factionId]
+    if (!f?.hasRep || delta === 0) return
+    const cur = this.rep[factionId] ?? 0
+    const next = Math.max(-100, Math.min(100, cur + delta))
+    this.rep[factionId] = next
+    this.msg(`与${f.name}的声望 ${cur > 0 ? '+' : ''}${cur} → ${next > 0 ? '+' : ''}${next}`, delta > 0 ? 'loot' : 'damage')
+  }
+
+  // ---------- v39：BRC（后室装修公司）模仿装修 / 坦白 ----------
+  static readonly BRC_MIMIC_CD = 90 // 模仿装修全局冷却（秒，防连点）
+  /** 模仿 BRC 员工的动作进行装修：播放挥臂动画，动作播完 +2 声望；全局冷却 ~90s（冷却中返回 false） */
+  mimicBrc(): boolean {
+    if (this.brcMimicCd > 0) {
+      this.msg(`手臂还酸着——先歇 ${Math.ceil(this.brcMimicCd)} 秒再学。`, 'system')
+      return false
+    }
+    this.brcMimicCd = Engine.BRC_MIMIC_CD
+    this.brcMimicPending = 0.9 // 挥臂动画播完结算（引擎主循环倒数）
+    this.attackAnimT = 0.5
+    this.attackAnimKind = 'swing'
+    audio.swing()
+    this.msg('你学着他们的动作，对着墙面挥臂敲打起来……', 'system')
+    return true
+  }
+
+  /** 向 BRC 员工坦白你伤害/杀死了他们的同事：结清未告发记录（伤害 -10/人、杀死 -30/人），
+   *  且当前对话的这名员工转为敌对（追击 + 近战；可被反击杀死）。无未告发记录返回 false */
+  confessBrc(npcId: string): boolean {
+    const n = this.npcs.find((x) => x.id === npcId)
+    const { hurt, killed } = this.brcSin
+    if (!n || n.def.faction !== 'brc' || n.dead || hurt + killed === 0) return false
+    const pen = hurt * 10 + killed * 30
+    this.brcSin = { hurt: 0, killed: 0 }
+    n.hostile = true
+    n.atkT = 0.9 // 坦白后短暂停顿（「困惑与不舒适」），随即追击
+    n.bubbleT = 0
+    this.changeRep('brc', -pen)
+    audio.aggro()
+    this.msg(`你坦白了。${n.def.name} 停下手里的活，缓缓转向你——贝雷帽下的黑脸没有任何表情。`, 'damage')
+    return true
+  }
+
+  // ---------- v45：杰瑞的信众 / Level 274 教化系统 ----------
+  /** 视线内 2.5m 内的活体杰瑞实体（接触/驯服判定共用） */
+  private aimJerry(): Entity | null {
+    const p = this.player
+    for (const e of this.map?.entities ?? []) {
+      if (e.dead || e.def.type !== 'jerry') continue
+      const d = Math.hypot(e.x - p.x, e.y - p.y)
+      if (d <= 2.5 && this.inView(e.x, e.y, 2.5)) return e
+    }
+    return null
+  }
+
+  /** 对话「认同：杰瑞是最伟大的」是否可选（DialogOverlay 显示条件与引擎判定同一口径）：
+   *  v48 仅野外信众（L274 内他们已认可你才带你来）；v49 每局仅首次——已宣誓后任何信众处不再出现 */
+  canAgreeJerry(npcId: string): boolean {
+    const n = this.npcs.find((x) => x.id === npcId)
+    return !!n && n.def.faction === 'jerry' && !n.dead && this.player.level !== 274 && !this.jerryOath
+  }
+
+  /** 对话「认同：杰瑞是最伟大的」——jerry 声望 +10（v49：每局游戏仅首次有效——宣誓一次，
+   *  全鹦鹉门下皆知；之后任何信众处该选项不再出现，引擎层同样拒绝）；
+   *  v48：仅野外信众（L2 宣传间）可表达——L274 内的信众已认可你才带你来，不提供认同选项 */
+  agreeJerry(npcId: string): boolean {
+    const n = this.npcs.find((x) => x.id === npcId)
+    if (!n || n.def.faction !== 'jerry' || n.dead) return false
+    if (this.player.level === 274) {
+      this.msg(`${n.def.name}微笑着按住你的手：「无需多言——你能站在圣地，便是鹉主对你的认可。」`, 'system')
+      return false
+    }
+    if (this.jerryOath) {
+      this.msg(`${n.def.name}颔首：「你已宣誓过了，兄弟姐妹——鹉主记得每一句誓言。」（每局仅首次认同有效）`, 'system')
+      return false
+    }
+    this.jerryOath = true
+    this.jerryAgreed.add(npcId)
+    this.changeRep('jerry', 10)
+    this.msg(`${n.def.name}眼中亮起光：「鹉主听见了！欢迎你，兄弟姐妹。」`, 'loot')
+    return true
+  }
+
+  /** 对话「带我去杰瑞的房间」（表达认同后出现）——jerry 声望 ≥10 才引路，否则拒绝 */
+  gotoJerryRoom(npcId: string): boolean {
+    const n = this.npcs.find((x) => x.id === npcId)
+    if (!n || n.def.faction !== 'jerry' || n.dead) return false
+    const rep = this.rep.jerry ?? 0
+    if (rep < 10) {
+      this.msg(`${n.def.name}摇了摇头：「你还不够虔诚。」（需要杰瑞的信众声望 ≥10，当前 ${rep}）`, 'system')
+      return false
+    }
+    this.outpostReturn = this.player.level
+    this.transition = { anim: 'bloom', t: 0, dest: 274 }
+    this.emit({ kind: 'transition', anim: 'bloom', cutIn: 'outpost', dest: 274 })
+    this.msg(`${n.def.name}虔诚地低下头：「随我来——鹉主在穹顶之下等你。」`, 'lore')
+    return true
+  }
+
+  /** 对话「非议杰瑞」（作死选项）——jerry 声望 -10（≤-10 时信众立即转敌对） */
+  slanderJerry(npcId: string): boolean {
+    const n = this.npcs.find((x) => x.id === npcId)
+    if (!n || n.def.faction !== 'jerry' || n.dead) return false
+    this.changeRep('jerry', -10)
+    this.msg(`${n.def.name}的笑容凝固了：「……你刚才，是在非议鹉主吗？」`, 'damage')
+    return true
+  }
+
+  /** v47：伤害鹉主杰瑞——信众哗然：jerry 声望立即 -50（每次伤害；挥击/投掷波及均走此通道） */
+  private hurtJerryRep() {
+    this.changeRep('jerry', -50)
+    audio.aggro()
+    this.msg('你伤害了鹉主——信众哗然！怒喝与哭喊响彻穹顶。（杰瑞的信众 声望 -50）', 'damage')
+  }
+
+  /** 接触杰瑞：jerry 声望 +5（每次）+ 教化 +25 + 触发诵咏；驯服后接触不再积累教化；
+   *  v47：内置 20s 冷却（防连点刷声望/教化；冷却剩余在 HUD 交互提示显示） */
+  contactJerry(ent?: Entity): boolean {
+    const p = this.player
+    const j = ent && !ent.dead && ent.def.type === 'jerry' && Math.hypot(ent.x - p.x, ent.y - p.y) < 2.6 ? ent : this.aimJerry()
+    if (!j) return false
+    if (this.jerryContactCd > 0) {
+      this.msg(`鹉主刚刚赐福过你——先消化这份恩典。（接触冷却 ${Math.ceil(this.jerryContactCd)}s）`, 'system')
+      return false
+    }
+    this.jerryContactCd = 20
+    recordEncounter('jerry')
+    audio.pickup()
+    this.changeRep('jerry', 5) // 每次接触 +5
+    if (this.jerryTamed) {
+      this.msg('你抚摸着鹉主的羽毛。它温顺地蹭了蹭你的手——驯服之后，它的凝视不再触及你的灵魂。（声望 +5）', 'loot')
+      return true
+    }
+    const before = this.indoctrination
+    this.indoctrination = Math.min(100, this.indoctrination + 25)
+    this.msg('你触碰了鹉主。一股温热的蓝意在脑海深处散开——词语开始自己涌上舌尖。（声望 +5 · 教化 +25）', 'lore')
+    if (before === 0) this.chantT = 3 // 首次接触后很快开始诵咏
+    if (before < 100 && this.indoctrination >= 100)
+      this.msg('教化完成了。你望着穹顶下的蓝色身影，忽然明白：你属于这里。鹉主还需要你。', 'lore')
+    return true
+  }
+
+  /** 驯服：对杰瑞给予杏仁水（消耗 1 瓶）——教化清零且此后接触不再积累；
+   *  但若被信众 NPC 看见（~8m 内有信众）→ 视为亵渎：jerry 声望 -10 */
+  tameJerry(): boolean {
+    if (this.jerryTamed) { this.msg('鹉主已经被你驯服了——它安静地看着你。', 'system'); return false }
+    if (!this.aimJerry()) { this.msg('这里没有鹉主的身影。', 'system'); return false }
+    if (!this.hasItem('almond')) { this.msg('需要一瓶杏仁水。', 'system'); return false }
+    this.consumeItem('almond')
+    this.jerryTamed = true
+    this.indoctrination = 0
+    audio.pickup()
+    const p = this.player
+    const witnessed = this.npcs.some((n) => !n.dead && n.def.faction === 'jerry' && Math.hypot(n.x - p.x, n.y - p.y) <= 8)
+    if (witnessed) {
+      // 被信众看见：亵渎
+      this.changeRep('jerry', -10)
+      audio.aggro()
+      this.msg('「亵渎者！！」信众的怒喝响彻穹顶——你当着他们的面驯服了鹉主。（杰瑞的信众 声望 -10）', 'damage')
+    } else {
+      this.msg('鹉主啄食了杏仁水，满足地抖了抖羽毛。它不再凝视你的灵魂——教化消退了。（教化值清零）', 'loot')
+    }
+    this.emit({ kind: 'toast', text: '鹉主已被驯服（教化清零）' })
+    return true
+  }
+
+  /** v47：传教使命已标准委托化（QuestDef kind 'preach'，三选一接取/交付；jerry 声望 ≥30 才显示入口）。
+   *  进行中的传教委托（未完成）可让玩家离开 L274 时免于声望惩罚（takeExit）。 */
+  preachQuest(): { def: QuestDef; progress: number; baseline: number; done: boolean } | undefined {
+    return this.quests.find((q) => q.def.kind === 'preach')
+  }
+
+  /** 传教目标是否有效（对话「传教」选项显示条件）：指定据点的任意 NPC / 任意地点的其他团体 NPC */
+  preachTargetOk(npcId: string): boolean {
+    const q = this.quests.find((q) => q.def.kind === 'preach' && !q.done)
+    if (!q) return false
+    const def = this.npcs.find((x) => x.id === npcId)?.def ?? NPCS[npcId]
+    if (!def || def.faction === 'jerry') return false
+    if (this.player.level === OUTPOSTS[q.def.target]?.levelId) return true // 指定据点的任意 NPC
+    const f = def.faction ?? 'meg'
+    return f !== 'wanderer' && !!FACTIONS[f]?.hasRep // 任意地点的其他团体 NPC
+  }
+
+  /** 对目标 NPC 传教——委托目标达成（回 L274 侍立信众处交付领赏）；代价：目标 NPC 所属团体声望 -5（布道惹人嫌） */
+  preachTo(npcId: string): boolean {
+    const q = this.quests.find((q) => q.def.kind === 'preach' && !q.done)
+    if (!q) return false
+    const def = this.npcs.find((x) => x.id === npcId)?.def ?? NPCS[npcId]
+    if (!def) return false
+    if (!this.preachTargetOk(npcId)) { this.msg('他不是合适的传教对象。', 'system'); return false }
+    const o = OUTPOSTS[q.def.target]
+    q.progress = 1
+    q.done = true
+    const f = def.faction ?? 'meg'
+    if (f !== 'jerry' && FACTIONS[f]?.hasRep) this.changeRep(f, -5)
+    else if (o && FACTIONS[o.faction]?.hasRep) this.changeRep(o.faction, -5) // 无团体者：记在其所在据点头上
+    audio.pickup()
+    this.emit({ kind: 'toast', text: '传教目标达成——回 Level 274 向侍立信众复命' })
+    this.msg(`${def.name}礼貌地听你讲完，表情微妙。教义已传播——总会有人记住鹉主之名。`, 'loot')
+    this.msg('传教目标达成——回 Level 274 向侍立信众复命，信众自会记你的好。', 'system')
+    return true
+  }
+
+  /** 三个候选委托（类型/目标互不相同，也不与手上委托重复；供玩家三选一；按发放团体分题库） */
+  questOffers(faction: QuestFaction = 'meg'): QuestDef[] {
+    // v47：传教使命（jerry）声望 ≥30 才提供（与 DialogOverlay 的入口显示门槛一致）
+    if (faction === 'jerry' && (this.rep.jerry ?? 0) < 30) return []
+    const out: QuestDef[] = []
+    const seen = new Set<string>(this.quests.map((q) => `${q.def.kind}:${q.def.target}`))
+    const gen = faction === 'bntg' ? genBntgQuest : faction === 'ariane' ? genArianeQuest : faction === 'jerry' ? genJerryQuest : genQuest
+    for (let tries = 0; tries < 40 && out.length < 3; tries++) {
+      const def = gen(Math.random)
+      const key = `${def.kind}:${def.target}`
+      if (seen.has(key)) continue
+      seen.add(key)
+      out.push(def)
+    }
+    return out
+  }
+
+  /** 接取 MEG 委托（探险署；同类同目标不重复；困难任务赠迁跃浆果） */
+  acceptQuest(def?: QuestDef): boolean {
+    if (this.quests.filter((q) => !q.done).length >= 3) { this.msg('手上的委托太多了——先完成一个再说。', 'system'); return false }
+    for (let tries = 0; tries < 8; tries++) {
+      const q = def ?? genQuest(Math.random)
+      if (this.quests.some((x) => x.def.kind === q.kind && x.def.target === q.target)) {
+        if (def) { this.msg('同样的委托已经在手上了。', 'system'); return false }
+        continue
+      }
+      const baseline = q.kind === 'entity' ? (loadSeen()[q.target] ?? 0) : q.unit === 'dist' ? this.player.steps : 0
+      // v43：物流委托——接取即得实体「物流包裹」（占背包格；背包满则接取失败）
+      if (q.kind === 'deliverGoods' && !this.addItem('parcel')) { this.msg('背包满了，腾不出放包裹的格子。', 'system'); return false }
+      this.quests.push({ def: q, progress: 0, baseline, done: false })
+      this.msg(`接取委托：「${q.title}」——${q.desc}`, 'loot')
+      if (q.hard) {
+        this.addItem('warpberry')
+        this.msg('困难委托：探险署额外发了一枚迁跃浆果（食用可返回接取该任务的据点）。', 'loot')
+      }
+      return true
+    }
+    this.msg('暂时没有合适的委托。', 'system')
+    return false
+  }
+
+  /** 交付委托（按委托方过滤；物品类现场扣除；按委托方发放声望/货币/物资奖励） */
+  turnInQuest(faction: QuestFaction = 'meg'): boolean {
+    const q = this.quests.find((q) => q.done && q.def.faction === faction)
+    if (!q) { this.msg('还没有已完成的委托。', 'system'); return false }
+    if (q.def.kind === 'item') {
+      if (this.countItem(q.def.target) < q.def.n) { this.msg(`物资不够：还差 ${q.def.n - this.countItem(q.def.target)} 个。`, 'system'); return false }
+      for (let i = 0; i < q.def.n; i++) this.consumeItem(q.def.target)
+    }
+    this.quests = this.quests.filter((x) => x !== q)
+    const coin = q.def.faction === 'bntg' ? 'presses' : 'eaglecoin'
+    const coinName = q.def.faction === 'bntg' ? '压印币' : '天鹰币'
+    this.changeRep(q.def.faction, q.def.rewardRep)
+    for (let i = 0; i < q.def.rewardCoin; i++) this.addItem(coin)
+    for (const t of q.def.rewardItems) this.addItem(t)
+    audio.pickup()
+    // 阿丽亚娜无货币（rewardCoin=0）：toast 只显示声望 + 物资
+    const rewardText = q.def.rewardCoin > 0
+      ? `+${q.def.rewardRep} 声望 · ${coinName}×${q.def.rewardCoin}`
+      : `+${q.def.rewardRep} 声望${q.def.rewardItems.length ? ` · ${q.def.rewardItems.map((t) => itemName(t)).join('、')}` : ''}`
+    this.emit({ kind: 'toast', text: `委托交付：${rewardText}` })
+    this.msg(`委托「${q.def.title}」交付完成。${FACTIONS[q.def.faction]?.name ?? '对方'}记下了你的贡献。`, 'loot')
+    return true
+  }
+
+  /** 押运交付：与押运目标 NPC 交谈时当面交付（BNTG 委托；立即结算奖励） */
+  deliverQuestTo(npcId: string): boolean {
+    const q = this.quests.find((q) => q.def.kind === 'deliver' && q.def.target === npcId && !q.done)
+    if (!q) return false
+    q.done = true
+    this.quests = this.quests.filter((x) => x !== q)
+    this.changeRep('bntg', q.def.rewardRep)
+    for (let i = 0; i < q.def.rewardCoin; i++) this.addItem('presses')
+    for (const t of q.def.rewardItems) this.addItem(t)
+    audio.pickup()
+    this.emit({ kind: 'toast', text: `押运交付：+${q.def.rewardRep} BNTG 声望 · 压印币×${q.def.rewardCoin}` })
+    this.msg(`包裹当面交付完成。商人之家记下了你的可靠。`, 'loot')
+    return true
+  }
+
+  /** v43：EL3A 物流委托候选（三个目标互不相同的 deliverGoods；供物流主管处三选一） */
+  goodsQuestOffers(): QuestDef[] {
+    const out: QuestDef[] = []
+    const seen = new Set<string>(this.quests.map((q) => `${q.def.kind}:${q.def.target}`))
+    for (let tries = 0; tries < 40 && out.length < 3; tries++) {
+      const def = genEl3aQuest(Math.random)
+      const key = `${def.kind}:${def.target}`
+      if (seen.has(key)) continue
+      seen.add(key)
+      out.push(def)
+    }
+    return out
+  }
+
+  /** v43：物流交付——与收件 NPC 交谈时当面交付（须带着物流包裹；立即结算压印币 + BNTG 声望） */
+  deliverGoodsTo(npcId: string): boolean {
+    const q = this.quests.find((q) => q.def.kind === 'deliverGoods' && q.def.target === npcId && !q.done)
+    if (!q) return false
+    if (!this.hasItem('parcel')) { this.msg('包裹不在身上——你不会把它弄丢了吧？回 EL3A 找物流主管说明情况。', 'system'); return false }
+    this.consumeItem('parcel')
+    q.done = true
+    this.quests = this.quests.filter((x) => x !== q)
+    this.changeRep('bntg', q.def.rewardRep)
+    for (let i = 0; i < q.def.rewardCoin; i++) this.addItem('presses')
+    for (const t of q.def.rewardItems) this.addItem(t)
+    audio.pickup()
+    this.emit({ kind: 'toast', text: `物流交付：+${q.def.rewardRep} BNTG 声望 · 压印币×${q.def.rewardCoin}` })
+    this.msg(`包裹当面签收。办公区EL3A 的补给线又顺了一程。`, 'loot')
+    return true
+  }
+
+  /** v43：物流失败认定——包裹不在身上时回 EL3A 向物流主管认栽（任务移除，BNTG 声望 -3） */
+  failGoodsQuest(): boolean {
+    const q = this.quests.find((q) => q.def.kind === 'deliverGoods' && !q.done)
+    if (!q) { this.msg('手上没有进行中的物流委托。', 'system'); return false }
+    if (this.hasItem('parcel')) { this.msg('包裹不是还在你背包里吗？别自己吓自己。', 'system'); return false }
+    this.quests = this.quests.filter((x) => x !== q)
+    this.changeRep('bntg', -3)
+    this.emit({ kind: 'toast', text: `委托失败：「${q.def.title}」——BNTG 声望 -3` })
+    this.msg(`你向麦考利主管认栽了。他在登记簿上画了一道黑杠：「下次看紧点。」`, 'system')
+    return true
+  }
+
+  /** v43：玩家身上基础物资（杏仁水/罐装食品/绷带/电池）总数——免费救济判定用 */
+  basicSupplyCount(): number {
+    return this.countItem('almond') + this.countItem('canned') + this.countItem('bandage') + this.countItem('battery')
+  }
+  /** v43：免费补给包可领条件（物资匮乏：基础物资 <2；每次进入 EL3A 限领一次） */
+  canClaimEl3aRelief(): boolean {
+    return !this.el3aReliefClaimed && this.basicSupplyCount() < 2
+  }
+  /** v43：领取免费补给包（杏仁水×1 + 罐装食品×1） */
+  claimEl3aRelief(): boolean {
+    if (this.el3aReliefClaimed) { this.msg('这趟你已经领过补给包了——下次进仓再来吧。', 'system'); return false }
+    if (this.basicSupplyCount() >= 2) { this.msg('你身上的物资还够——补给包留给更需要的人。', 'system'); return false }
+    if (!this.addItem('almond') || !this.addItem('canned')) { this.msg('背包满了，腾不出放补给包的格子。', 'system'); return false }
+    this.el3aReliefClaimed = true
+    audio.pickup()
+    this.emit({ kind: 'toast', text: '领取补给包：杏仁水×1 · 罐装食品×1' })
+    this.msg('维斯珀从柜台下取出一个补给包塞给你：「先顶着，别客气。」', 'loot')
+    return true
+  }
+
+  /** 委托进度追踪（每帧 step 调用；完成即提示回探险署交付） */
+  private trackQuests(dt: number) {
+    const p = this.player
+    for (const q of this.quests) {
+      if (q.done) continue
+      const d = q.def
+      if (d.kind === 'level' && p.level === Number(d.target)) {
+        q.progress = d.unit === 'time' ? q.progress + dt : p.steps - q.baseline
+      } else if (d.kind === 'phen' && this.activePhenomena.includes(d.target)) {
+        q.progress = 1
+      } else if (d.kind === 'entity' && (loadSeen()[d.target] ?? 0) > q.baseline) {
+        q.progress = 1
+      } else continue
+      if (q.progress >= d.n) {
+        q.done = true
+        audio.pickup()
+        this.msg(`委托目标达成：「${d.title}」——回探险署（中控室）交付。`, 'loot')
+      }
+    }
   }
 
   // ================= 开发者模式 API（v8 大扩展） =================
@@ -2913,8 +4019,8 @@ export class Engine {
     return true
   }
 
-  /** 传送：exit=最近出口 / entity=最近实体 / container=最近未搜容器 / spawn=出生点 */
-  devTeleport(target: 'exit' | 'entity' | 'container' | 'spawn'): boolean {
+  /** 传送：exit=最近出口 / entity=最近实体 / container=最近未搜容器 / spawn=出生点 / landmark=最近定居点地标 */
+  devTeleport(target: 'exit' | 'entity' | 'container' | 'spawn' | 'landmark'): boolean {
     const m = this.map
     if (!m) return false
     const p = this.player
@@ -2926,6 +4032,16 @@ export class Engine {
       return true
     }
     if (target === 'spawn') return go(m.spawn.x, m.spawn.y, '出生点')
+    if (target === 'landmark') {
+      let bl: import('./types').Structure | null = null, bd = 1e9
+      for (const s of m.structures) {
+        if (s.kind !== 'landmark') continue
+        const d = Math.hypot(s.x + 0.5 - p.x, s.y + 0.5 - p.y)
+        if (d < bd) { bd = d; bl = s }
+      }
+      if (!bl) { this.msg('[DEV] 本层没有定居点地标。', 'system'); return false }
+      return go(bl.x + 0.5, bl.y + 1, `最近定居点地标（${bd.toFixed(1)}m）`)
+    }
     if (target === 'exit') {
       const e = this.nearestExit()
       if (!e) { this.msg('[DEV] 本层没有出口。', 'system'); return false }
@@ -2941,16 +4057,29 @@ export class Engine {
       if (!best) { this.msg('[DEV] 本层没有存活实体。', 'system'); return false }
       return go(best.x + 1, best.y + 1, `最近实体（${best.def.name}，${bd.toFixed(1)}m）`)
     }
-    // container
-    const kinds = ['crate', 'corpse', 'car', 'cabinet', 'dresser', 'megcrate']
+    // container（kind 统一走 containers.ts 注册表）
     let bs: import('./types').Structure | null = null, bd = 1e9
     for (const s of m.structures) {
-      if (!kinds.includes(s.kind) || s.looted) continue
+      if (!CONTAINER_KINDS.includes(s.kind) || s.looted) continue
       const d = Math.hypot(s.x + s.w / 2 - p.x, s.y + s.h / 2 - p.y)
       if (d < bd) { bd = d; bs = s }
     }
     if (!bs) { this.msg('[DEV] 本层没有未搜索的容器。', 'system'); return false }
     return go(bs.x + bs.w / 2, bs.y + bs.h / 2 + 1, `最近容器（${bd.toFixed(1)}m）`)
+  }
+
+  /** 开发者：传送到本层指定 NPC 身旁（DevPanel 传送页 NPC 列表） */
+  devGotoNpc(id: string): boolean {
+    const m = this.map
+    if (!m) return false
+    const n = this.npcs.find((x) => x.id === id)
+    if (!n) { this.msg('[DEV] 没有找到这名 NPC。', 'system'); return false }
+    const p = this.player
+    const spot = this.devFindSpot(n.x, n.y, 3)
+    if (!spot) { this.msg(`[DEV] ${n.def.name} 附近没有落脚点。`, 'system'); return false }
+    p.x = spot.x; p.y = spot.y; p.z = 0; p.vz = 0
+    this.msg(`[DEV] 已传送到 ${n.def.name}（${n.def.role}）身旁`, 'system')
+    return true
   }
 
   /** 时间快进：模拟 sec 秒的生存消耗（饥饿/理智/电池），不触发伤害死亡 */
@@ -2998,7 +4127,7 @@ export class Engine {
       return true
     }
     // 未生成：搜索最近的目标变体 chunk 并传送（窗口平移即强制生成该新区域）
-    const hit = findNearestVariant(inf.seed, inf.ox + p.x, inf.oy + p.y, kind, 60, impl.variantOf)
+    const hit = findNearestVariant(inf.seed, inf.ox + p.x, inf.oy + p.y, kind, 120, impl.variantOf)
     if (!hit) { this.msg(`[DEV] 附近没有变体 ${name}。`, 'system'); return false }
     // 世界坐标目标（chunk 中心）；直接改写玩家窗口坐标，由窗口平移完成流式加载
     const wcx = hit.cx * CS + CS / 2, wcy = hit.cy * CS + CS / 2
@@ -3199,7 +4328,7 @@ export class Engine {
         hp: e.hp,
       }))
       .sort((a, b) => a.d - b.d)
-    const containers = (m?.structures ?? []).filter((s) => ['crate', 'corpse', 'car', 'cabinet', 'dresser', 'megcrate'].includes(s.kind))
+    const containers = (m?.structures ?? []).filter((s) => CONTAINER_KINDS.includes(s.kind))
     return {
       x: p.x, y: p.y, z: p.z, tx, ty, elev, outdoor,
       level: p.level, seed: this.seed, time: this.time,

@@ -112,25 +112,8 @@ export const DEEP_ENTITIES: Record<string, EntityDef> = {
     },
     aggroStinger: false,
   },
-  deathrat: {
-    type: 'deathrat', name: '死亡鼠', hp: 26, speed: 3.1, damage: 9, sight: 5, hearing: 8,
-    color: '#3e3630', habitat: 'any',
-    desc: '成群出没的原生啮齿实体。它们在具有双向重力的洞穴天顶筑巢，靠通风管道往返 Level 2。',
-    codex: {
-      no: 'Death Rats（Level 8 原生种）', danger: '2 级（低威胁·成群时 3 级）', habitat: 'Level 8 · Rottnest Jungle 天顶',
-      behavior: '单只几乎不构成威胁，成群时会把人逼进死路。它们沿着连通 Level 2 的通风管道两头跑。',
-      counter: '它们怕光也怕响动。一次踢击、一支荧光棒，通常足够让整群散开。',
-      lore: [
-        'Rottnest Jungle 是一个拥有独特双向重力的巨大洞厅，死亡鼠群落就栖息在它的「天顶」上——从下往上看，那是一整片倒挂的巢。',
-        '鼠类排泄物形成的肥沃土壤，支撑起了洞厅里那片多彩的生物发光蘑菇森林，部分能长到小树那么大。整个生态系统的底座，是老鼠拉的屎。',
-        '经 Rottnest Jungle 天顶的通风口可以离开 Level 8 前往 Level 2——但因死亡鼠数量太多，M.E.G. 不建议这条路。',
-      ],
-      sighting: '「抬头的时候我以为洞顶在动。洞顶确实在动。」',
-    },
-    aggroStinger: false,
-  },
   wretch: {
-    type: 'wretch', name: '可怜虫', hp: 75, speed: 1.8, damage: 20, sight: 6, hearing: 6,
+    type: 'wretch', name: '悲尸', hp: 75, speed: 1.8, damage: 20, sight: 6, hearing: 6,
     color: '#8a4a3a', habitat: 'any',
     desc: '红棕色、干燥剥落的皮肤，布满孔洞与脓疱；骷髅般消瘦，眼睑已经溶解——它的眼睛永远闭不上。',
     codex: {

@@ -1,12 +1,12 @@
 // 地形几何：地面/台阶坡道/高差接缝/天花板/风道/多层楼板/墙体（静态合并 + 顶点色）
 import * as THREE from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
-import { ELEV_H, type GameMap } from '../mapgen'
+import { ELEV_H, FLOOR_H, tallCeilH, wallBaseTopAt, ceilingSteps, type GameMap } from '../mapgen'
 import type { LevelDef } from '../types'
 import { col, rampGeo, levelTexture, noiseTexture, OUTDOOR_FLOOR, manilaWallTexture, makeCanvasCtx, toTex } from './shared'
 
 // v17：range 限定构建范围（无限模式按 chunk 构建；坐标读取全图，跨 chunk 接缝一致）
-export interface TerrainRange { x0: number; y0: number; x1: number; y1: number }
+export interface TerrainRange { x0: number; y0: number; x1: number; y1: number; variant?: string }
 // 确定性瓦片哈希噪声（替代 Math.random：同瓦片重建着色一致）
 const hv = (x: number, y: number, s: number) => {
   let h = (Math.imul(x, 0x27d4eb2d) ^ Math.imul(y, 0x165667b1) ^ Math.imul(s, 0x9e3779b9)) >>> 0
@@ -17,9 +17,13 @@ const hv = (x: number, y: number, s: number) => {
 // v17：tint 着色（1=马尼拉米色墙纸 2=红室 3=熄灯区仅雾/无灯 5=维护通廊白 6=花园段青翠 7=跃金段高饱和金）
 // v20：马尼拉墙面色改为确定的马尼拉文件夹暖米色 #e5c88f，且墙面走独立无纹理网格
 // （顶点色 × L0 黄色墙纸纹理永远发黄——v19 的蓝通道补偿也无法把黄纸变成米色）
-const TINT_FLOOR: Record<number, string> = { 1: '#c9ad74', 2: '#8a1e14', 5: '#8a887e', 6: '#5a7a44', 7: '#8a6d24' }
-const TINT_WALL: Record<number, string> = { 1: '#e5c88f', 2: '#a82318', 5: '#b8b4a8', 6: '#8fae7a', 7: '#c99a2e' }
-const TINT_CEIL: Record<number, string> = { 1: '#c9b185', 2: '#5e120b', 5: '#c8c4b8', 6: '#c4d9ae', 7: '#a8842a' }
+// v17：tint 着色（1=马尼拉米色墙纸 2=红室 3=熄灯区仅雾/无灯 5=维护通廊白 6=花园段青翠 7=跃金段高饱和金 8=民居木墙暖棕）
+// v39：衔尾段施工化——10=毛坯混凝土（灰地表/铲到一半的墙/深色裸露吊顶） 11=施工补丁（地面新浇水泥/墙面残存粉刷补丁）
+const TINT_FLOOR: Record<number, string> = { 1: '#c9ad74', 2: '#8a1e14', 5: '#8a887e', 6: '#5a7a44', 7: '#8a6d24', 8: '#6a5340', 9: '#787c78', 10: '#6f6f6b', 11: '#5b5b57', 12: '#463227', 13: '#3a3a38', 14: '#34302b', 15: '#3c3a2e', 16: '#5c5548', 17: '#aab2d8' }
+const TINT_WALL: Record<number, string> = { 1: '#e5c88f', 2: '#a82318', 5: '#b8b4a8', 6: '#8fae7a', 7: '#c99a2e', 8: '#9a7048', 9: '#c4c7c2', 10: '#8b887f', 11: '#a8a294', 12: '#6e4630', 13: '#555552', 14: '#544a40', 15: '#565244', 16: '#8f8a7c', 17: '#ccd2ee' }
+const TINT_CEIL: Record<number, string> = { 1: '#c9b185', 2: '#5e120b', 5: '#c8c4b8', 6: '#c4d9ae', 7: '#a8842a', 8: '#6a4e38', 9: '#b2b6b0', 10: '#3a3b3e', 11: '#3a3b3e', 12: '#3a2a20', 13: '#2e2e2c', 14: '#332d26', 15: '#2e2c24', 16: '#6e6a5c', 17: '#8a92c8' }
+// v41：12=L2 肮脏的廊道（锈橙棕）13=晦暗的廊道（积灰灰暗）14=整洁的廊道（洁净深色）
+//     15=扭曲的廊道（病绿灰）16=办公走廊（L4 废弃办公室风）
 export function buildTerrain(m: GameMap, def: LevelDef, wallH: number, g: THREE.Group, range?: TerrainRange) {
   const pal = def.palette
   const H = wallH
@@ -30,6 +34,7 @@ const TEX2: Partial<Record<number, { wall?: string; floor?: string }>> = {
   0: { wall: 'l0_wall2' }, 1: { wall: 'l1_wall2' }, 2: { floor: 'l2_floor2' },
   3: { wall: 'l3_wall2' }, 4: { wall: 'l4_wall2', floor: 'l4_floor2' },
   5: { wall: 'l5_wall2', floor: 'l5_floor2' },
+  101: { wall: 'l101_wall2' }, // v35：Alpha 基地（据点）
 }
 // v16：L0 墙纸改为**世界空间 UV**——UV 由世界坐标推导（侧面 u=x+z、v=y，顶/底面 u=x、v=z），
 // 图案跨 1m 墙盒连续流动，盒间几何接缝处纹理相位无跳变、接缝不可见；
@@ -76,15 +81,46 @@ for (let y = RY0; y < RY1; y++) {
     const isOut = m.outdoor[ti] === 1
     const tnt = m.tint[ti]
     const tBase = tnt && TINT_FLOOR[tnt] ? col(TINT_FLOOR[tnt]) : null
+    // v34：L0 与 L1 天鹰段取消规律棋盘格（统一底色 + 保留随机明暗噪点）
+    const flatFloor = def.id === 0 || (def.id === 1 && range?.variant === 'parking')
     const c = isWet && !isOut ? wetC : isOut
       ? (isWet ? poolC : outC).clone().multiplyScalar(0.9 + hv(x, y, 1) * 0.2)
-      : (tBase ?? ((x + y) % 2 === 0 ? fB : fA)).clone().multiplyScalar(0.92 + hv(x, y, 2) * 0.16)
+      : (tBase ?? (flatFloor || (x + y) % 2 === 0 ? fB : fA)).clone().multiplyScalar(0.92 + hv(x, y, 2) * 0.16)
     const st = m.step[ti]
     const s2 = m.stair[ti]
     if (s2 & 7) {
       // v13 楼梯坡道：任意高度连续爬升，实心到地面（侧面不穿帮）
       const lo = ((s2 >> 3) & 0x3fff) / 100, hi = ((s2 >> 17) & 0x3fff) / 100
-      wedgeGeos.push(rampGeo(s2 & 7, lo, hi, x, y, c, 0))
+      const dir = s2 & 7
+      // v46：同向连续坡道格的相邻侧面跳过——此前两格在接缝处各画一面全高侧墙（同面片叠色闪）；
+      // 外侧与首末端的侧面保留：阶梯下方仍是平滑完整斜面 + 落地侧墙
+      const stAt = (tx2: number, ty2: number) => (tx2 < 0 || ty2 < 0 || tx2 >= m.w || ty2 >= m.h ? 0 : m.stair[ty2 * m.w + tx2])
+      const skip = {
+        px: dir <= 2 && (stAt(x + 1, y) & 7) === dir,
+        nx: dir <= 2 && (stAt(x - 1, y) & 7) === dir,
+        pz: dir >= 3 && (stAt(x, y + 1) & 7) === dir,
+        nz: dir >= 3 && (stAt(x, y - 1) & 7) === dir,
+      }
+      wedgeGeos.push(rampGeo(dir, lo, hi, x, y, c, 0, skip))
+      // v46 真阶梯：每格坡道加三级薄踏步（顶面微凸坡面、侧缘沉入坡体——侧看是台阶轮廓，碰撞仍走平滑坡道）
+      for (let k = 0; k < 3; k++) {
+        const t0 = k / 3, t1 = (k + 1) / 3
+        const hTop = lo + (hi - lo) * t1 + 0.015
+        const tread = new THREE.BoxGeometry(dir <= 2 ? t1 - t0 + 0.02 : 1, hTop, dir <= 2 ? 1 : t1 - t0 + 0.02).toNonIndexed() // 必须与 rampGeo/seamQuad 同为非索引（真实 three 索引混并 mergeGeometries 返回 null，Mesh(null) 直接抛异常——整层渲染崩）
+        const tcx = dir === 1 ? x + (t0 + t1) / 2 : dir === 2 ? x + 1 - (t0 + t1) / 2 : x + 0.5
+        const tcz = dir === 3 ? y + (t0 + t1) / 2 : dir === 4 ? y + 1 - (t0 + t1) / 2 : y + 0.5
+        tread.translate(tcx, hTop / 2, tcz)
+        const tn = tread.attributes.position.count
+        const tcarr = new Float32Array(tn * 3)
+        const topC = c.clone().multiplyScalar(0.82), sideC = c.clone().multiplyScalar(0.5) // 踏面略暗（防滑条观感）
+        const tpos = tread.attributes.position
+        for (let vi = 0; vi < tn; vi++) {
+          const cc3 = tpos.getY(vi) > hTop - 0.001 ? topC : sideC
+          tcarr[vi * 3] = cc3.r; tcarr[vi * 3 + 1] = cc3.g; tcarr[vi * 3 + 2] = cc3.b
+        }
+        tread.setAttribute('color', new THREE.BufferAttribute(tcarr, 3))
+        wedgeGeos.push(tread)
+      }
       continue
     }
     if (st & 7) {
@@ -212,7 +248,7 @@ for (let y = RY0; y < RY1; y++) {
     const ti = y * m.w + x
     if (m.tiles[ti] !== 1 || m.outdoor[ti] === 1) continue
     if (m.up[ti] === 1) continue // v13：上层楼板底面即本层天花板（楼板盒自带底面）
-    const ch = m.ceiling[ti] === 1 ? H * 1.75 : H
+    const ch = m.ceiling[ti] === 1 ? tallCeilH(m, H) : H // v46：多层挑高与上层天花拉平（消除漂浮错层）
     const tnt = m.tint[ti]
     const ccTile = tnt && TINT_CEIL[tnt] ? col(TINT_CEIL[tnt]).multiplyScalar(0.85) : cc
     const geo = new THREE.PlaneGeometry(1, 1)
@@ -254,10 +290,10 @@ if (ductGeos.length) {
 
 // ---- v13 多层：上层楼板（兼作下层天花板）/ 上层墙 / 上层天花板 / 临边栏杆 ----
 if (m.floors > 1) {
-  const FLOOR_H = 3.0
   const liftTiles = new Set<number>()
   for (const s of m.structures) if (s.kind === 'lift') liftTiles.add(Math.floor(s.y) * m.w + Math.floor(s.x))
   const slabGeos: THREE.BufferGeometry[] = []
+  const slabBotGeos: THREE.BufferGeometry[] = [] // v46：楼板底面独立几何（统一吊顶贴图，不随地板纹理）
   const upWallGeos: THREE.BufferGeometry[] = []
   const upCeilGeos: THREE.BufferGeometry[] = []
   const railGeos: THREE.BufferGeometry[] = []
@@ -270,12 +306,53 @@ if (m.floors > 1) {
     const uv = new Float32Array(pos.count * 2)
     geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2))
   }
+  // v46：只写顶点色、保留原 UV（楼板底面需要盒面原 UV 平铺吊顶贴图）
+  const setVCKeepUV = (geo: THREE.BufferGeometry, cFn: (py: number) => THREE.Color) => {
+    const pos = geo.attributes.position
+    const carr = new Float32Array(pos.count * 3)
+    for (let i = 0; i < pos.count; i++) { const cc2 = cFn(pos.getY(i)); carr[i * 3] = cc2.r; carr[i * 3 + 1] = cc2.g; carr[i * 3 + 2] = cc2.b }
+    geo.setAttribute('color', new THREE.BufferAttribute(carr, 3))
+  }
+  // v46：把楼板盒按面法线拆成「非底面」与「底面」两份（底面独立走吊顶贴图网格）
+  const splitSlabBottom = (geo: THREE.BufferGeometry): [THREE.BufferGeometry | null, THREE.BufferGeometry | null] => {
+    const pos = geo.attributes.position, uv = geo.attributes.uv
+    const rest: number[] = [], restUV: number[] = [], bot: number[] = [], botUV: number[] = []
+    const a = new THREE.Vector3(), b2 = new THREE.Vector3(), c3 = new THREE.Vector3(), n = new THREE.Vector3(), e1 = new THREE.Vector3(), e2 = new THREE.Vector3()
+    for (let i = 0; i < pos.count; i += 3) {
+      a.fromBufferAttribute(pos, i); b2.fromBufferAttribute(pos, i + 1); c3.fromBufferAttribute(pos, i + 2)
+      n.copy(e1.subVectors(b2, a).cross(e2.subVectors(c3, a)))
+      const isBot = n.y < -0.5
+      const P = isBot ? bot : rest, U = isBot ? botUV : restUV
+      for (const v of [a, b2, c3]) P.push(v.x, v.y, v.z)
+      for (let k = 0; k < 3; k++) U.push(uv.getX(i + k), uv.getY(i + k))
+    }
+    const mk = (P: number[], U: number[]): THREE.BufferGeometry | null => {
+      if (!P.length) return null
+      const g2 = new THREE.BufferGeometry()
+      g2.setAttribute('position', new THREE.BufferAttribute(new Float32Array(P), 3))
+      g2.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(U), 2))
+      g2.computeVertexNormals()
+      return g2
+    }
+    return [mk(rest, restUV), mk(bot, botUV)]
+  }
   for (let y = RY0; y < RY1; y++) {
     for (let x = RX0; x < RX1; x++) {
       const ti = y * m.w + x
       if (m.up[ti] !== 1) continue
-      if (m.stair[ti] & 7) continue // 楼梯坡道由楔形渲染
-      const uwTop = m.ceiling[ti] === 1 ? H * 1.75 : FLOOR_H + 2.6
+      const uwTop = m.ceiling[ti] === 1 ? tallCeilH(m, H) : FLOOR_H + 2.6 // v46：挑高与上层天花拉平
+      if (m.stair[ti] & 7) {
+        // v46：楼梯坡道格——坡道由楔形渲染（无楼板盒/栏杆），但楼梯口正上方的上层天花板仍要画
+        // （此前直接跳过：从一层沿楼梯往上看是贯穿到虚空的黑洞——真多层不该有这层洞）
+        if (m.outdoor[ti] !== 1) {
+          const cg = new THREE.PlaneGeometry(1, 1)
+          cg.rotateX(Math.PI / 2)
+          cg.translate(x + 0.5, uwTop, y + 0.5)
+          setVC(cg, () => cc)
+          upCeilGeos.push(cg)
+        }
+        continue
+      }
       if (m.upWall[ti] === 1) {
         // 上层墙：从楼板底下沿到上层天花板（覆盖与下层墙顶之间的缝）
         const geo = new THREE.BoxGeometry(1, uwTop - (FLOOR_H - 0.35), 1)
@@ -287,12 +364,15 @@ if (m.floors > 1) {
       }
       if (!liftTiles.has(ti)) {
         // 上层楼板盒（顶面=上层地板 z=3.0；底面 z=2.65=下层天花板）
-        const geo = new THREE.BoxGeometry(1, 0.35, 1)
+        const geo = new THREE.BoxGeometry(1, 0.35, 1).toNonIndexed()
         geo.translate(x + 0.5, FLOOR_H - 0.175, y + 0.5)
         const fc = ((x + y) % 2 === 0 ? fB : fA).clone().multiplyScalar(0.9 + ((x * 7 + y * 13) % 5) * 0.03)
         const fSide = fc.clone().multiplyScalar(0.45)
-        setVC(geo, (py) => py > FLOOR_H - 0.01 ? fc : fSide)
-        slabGeos.push(geo)
+        // v46：底面拆出独立几何——统一吊顶贴图（l{id}_ceil），不再随地板贴图（此前底面即地板纹理，
+        // 从一层抬头看楼板底像「地板铺在天上」）
+        const [rest, bot] = splitSlabBottom(geo)
+        if (rest) { setVCKeepUV(rest, (py) => py > FLOOR_H - 0.01 ? fc : fSide); slabGeos.push(rest) }
+        if (bot) { setVCKeepUV(bot, () => cc); slabBotGeos.push(bot) }
         // 上层天花板（室外上空无顶）
         if (m.outdoor[ti] !== 1) {
           const cg = new THREE.PlaneGeometry(1, 1)
@@ -320,6 +400,10 @@ if (m.floors > 1) {
   if (slabGeos.length) {
     g.add(new THREE.Mesh(mergeGeometries(slabGeos)!, new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_floor`, () => noiseTexture(pal.floor, pal.floorAlt)) })))
   }
+  if (slabBotGeos.length) {
+    // v46：楼板底面=一层天花（2.65）——独立统一吊顶贴图（与挑高/普通天花同族，不随地板纹理变化）
+    g.add(new THREE.Mesh(mergeGeometries(slabBotGeos)!, new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_ceil`, () => noiseTexture(pal.wallTop, pal.wallTop)) })))
+  }
   if (upWallGeos.length) {
     g.add(new THREE.Mesh(mergeGeometries(upWallGeos)!, new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_wall`, () => noiseTexture(pal.wall, pal.wallTop)) })))
   }
@@ -339,7 +423,8 @@ const manilaWallGeos: THREE.BufferGeometry[] = [] // v20/v26：马尼拉室墙�
 const wSide = col(WALL_TINT[def.id] ?? pal.wall), wTop = col(pal.wallTop)
 const isFloor = (x: number, y: number) => x >= 0 && y >= 0 && x < m.w && y < m.h && m.tiles[y * m.w + x] === 1
 // v30：门类出口（楼梯井/未上锁的门）在墙上开门洞——记录墙格 → 门洞朝向（优先级同渲染层 orientDoor）
-const DOOR_EXIT_KINDS = ['stairs', 'unlockeddoor']
+// v41：L2 消防出口/办公走廊尽头同走门洞通道
+const DOOR_EXIT_KINDS = ['stairs', 'unlockeddoor', 'fireexit', 'officedoor']
 const holeMap = new Map<number, number>() // 墙格 index → 门洞朝向（0=+x 1=-x 2=+y 3=-y，指向出口格）
 for (const e of m.exits ?? []) {
   if (!DOOR_EXIT_KINDS.includes(e.def.kind)) continue
@@ -356,26 +441,11 @@ for (const e of m.exits ?? []) {
 }
 for (let y = RY0; y < RY1; y++) {
   for (let x = RX0; x < RX1; x++) {
-    if (m.tiles[y * m.w + x] === 1) continue
-    if (!(isFloor(x + 1, y) || isFloor(x - 1, y) || isFloor(x, y + 1) || isFloor(x, y - 1) || isFloor(x + 1, y + 1) || isFloor(x - 1, y - 1) || isFloor(x + 1, y - 1) || isFloor(x - 1, y + 1))) continue
-    // 相邻地板决定墙体底/顶；只邻室外地板的外墙降为 1.1m 护墙（露出天空与远景剪影）
-    let base = 0, top = H
-    let nearIndoor = false, nearOutdoor = false
-    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, -1], [1, -1], [-1, 1]] as const) {
-      const nx = x + dx, ny = y + dy
-      if (!isFloor(nx, ny)) continue
-      const ni = ny * m.w + nx
-      if (m.outdoor[ni] === 1) nearOutdoor = true; else nearIndoor = true
-      const st = m.step[ni]
-      const s2 = m.stair[ni]
-      const nh = (s2 & 7) ? ((s2 >> 3) & 0x3fff) / 100
-        : (st & 7) ? Math.min(ELEV_H[(st >> 3) & 3], ELEV_H[(st >> 5) & 3])
-          : m.liquid[ni] === 1 ? -1.7 : m.liquid[ni] === 2 ? -0.25 : ELEV_H[m.elev[ni]]
-      base = Math.min(base, nh)
-      if (m.ceiling[ni] === 1 && m.outdoor[ni] !== 1) top = Math.max(top, H * 1.75)
-      if (m.up[ni] === 1 && m.outdoor[ni] !== 1) top = Math.max(top, 3 + 2.6) // v13：邻上层楼板→墙体接到上层天花板
-    }
-    if (nearOutdoor && !nearIndoor) top = Math.min(top, 1.1) // 室外护墙/围栏
+    // 墙体底/顶（v49 起由 mapgen.wallBaseTopAt 统一计算——相邻地板决定：低洼下探 / 邻挑高→挑高顶 /
+    // 邻上层楼板→上层天花；只邻室外地板的外墙降为 1.1m 护墙，露出天空与远景剪影）
+    const bt = wallBaseTopAt(m, x, y, H)
+    if (!bt) continue
+    const base = bt.base, top = bt.top
     const tnt = m.tint[y * m.w + x]
     const wSideT = tnt && TINT_WALL[tnt] ? col(TINT_WALL[tnt]) : wSide
     const wTopT = tnt && TINT_CEIL[tnt] ? col(TINT_CEIL[tnt]) : wTop
@@ -417,7 +487,68 @@ for (let y = RY0; y < RY1; y++) {
     const geo = new THREE.BoxGeometry(1, top - base, 1)
     geo.translate(x + 0.5, (top + base) / 2, y + 0.5)
     pushWallGeo(geo)
+    // v35：踢脚线（L0 与据点墙面：墙根深色饰条，门洞墙不加；v46：EL3A 加入）
+    if (def.id === 0 || def.id === 101 || def.id === 102 || def.id === 103 || def.id === 104 || def.id === 105) {
+      const bb = wSideT.clone().multiplyScalar(0.45)
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
+        if (!isFloor(x + dx, y + dy)) continue
+        const bd = 0.05, bw = 0.16
+        const bg = dx !== 0
+          ? new THREE.BoxGeometry(bd, bw, 1)
+          : new THREE.BoxGeometry(1, bw, bd)
+        bg.translate(x + 0.5 + dx * 0.5, base + bw / 2, y + 0.5 + dy * 0.5)
+        const pos2 = bg.attributes.position
+        const carr2 = new Float32Array(pos2.count * 3)
+        for (let i = 0; i < pos2.count; i++) { carr2[i * 3] = bb.r; carr2[i * 3 + 1] = bb.g; carr2[i * 3 + 2] = bb.b }
+        bg.setAttribute('color', new THREE.BufferAttribute(carr2, 3))
+        ;(tex2.wall && zoneB(x, y) ? wallGeos2 : wallGeos).push(bg)
+      }
+    }
+    // v38：希波克拉底 - 1 墙面扶手带（仅 103——医院走廊参考图：腰高主扶手带[白-蓝-白三层，
+    // 蓝色微凸出墙面] + 下方辅助细条[同蓝白]；与踢脚线同处追加，门洞墙随上方 continue 跳过）
+    if (def.id === 103) {
+      const HR_W = col('#f2f2f4'), HR_B = col('#3a6ab0')
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
+        if (!isFloor(x + dx, y + dy)) continue
+        // 主扶手带 y 0.86~0.96（白 0.86-0.88 / 蓝 0.88-0.94 凸出 0.06m / 白 0.94-0.96）+ 辅助细条 y≈0.30
+        const strips: [number, number, number, THREE.Color][] = [
+          [0.86, 0.02, 0.03, HR_W], [0.88, 0.06, 0.06, HR_B], [0.94, 0.02, 0.03, HR_W], // 主扶手带
+          [0.28, 0.015, 0.025, HR_W], [0.295, 0.03, 0.045, HR_B], [0.325, 0.015, 0.025, HR_W], // 辅助细条
+        ]
+        for (const [sy, sh, dep, cc] of strips) {
+          const sg = dx !== 0
+            ? new THREE.BoxGeometry(dep, sh, 1)
+            : new THREE.BoxGeometry(1, sh, dep)
+          sg.translate(x + 0.5 + dx * (0.5 + dep / 2 - 0.025), base + sy + sh / 2, y + 0.5 + dy * (0.5 + dep / 2 - 0.025))
+          const pos3 = sg.attributes.position
+          const carr3 = new Float32Array(pos3.count * 3)
+          for (let i = 0; i < pos3.count; i++) { carr3[i * 3] = cc.r; carr3[i * 3 + 1] = cc.g; carr3[i * 3 + 2] = cc.b }
+          sg.setAttribute('color', new THREE.BufferAttribute(carr3, 3))
+          ;(tex2.wall && zoneB(x, y) ? wallGeos2 : wallGeos).push(sg)
+        }
+      }
+    }
   }
+}
+// ---- v49 檐口填墙：低顶地板与挑高（ceiling=1）地板直接相邻的边界（廊口/门廊口——低层屋顶
+//      到挑高顶之间原本是虚空，从挑高侧能看见低顶房间/走廊屋顶上方的黑洞），
+//      在分界线上从低顶到挑高顶填一段薄墙（墙色/墙贴图，并入墙体合并网格；全层级通用规则）----
+for (const cs of ceilingSteps(m, H)) {
+  if (cs.x < RX0 || cs.x >= RX1 || cs.y < RY0 || cs.y >= RY1) continue // 无限模式按 chunk 过滤（低顶格归属块）
+  const t = 0.14 // 薄墙厚（跨分界线，两侧各探 0.07 防缝）
+  const vert = cs.dir === 1 || cs.dir === 3 // 挑高侧在东/西 → 墙沿 z 向
+  const geo = new THREE.BoxGeometry(vert ? t : 1.02, cs.hi - cs.lo, vert ? 1.02 : t)
+  const ex = cs.x + 0.5 + (cs.dir === 1 ? 0.5 : cs.dir === 3 ? -0.5 : 0)
+  const ez = cs.y + 0.5 + (cs.dir === 2 ? 0.5 : cs.dir === 0 ? -0.5 : 0)
+  geo.translate(ex, (cs.lo + cs.hi) / 2, ez)
+  const pos = geo.attributes.position
+  const carr = new Float32Array(pos.count * 3)
+  for (let i = 0; i < pos.count; i++) {
+    const c = pos.getY(i) > cs.hi - 0.01 ? wTop : wSide
+    carr[i * 3] = c.r; carr[i * 3 + 1] = c.g; carr[i * 3 + 2] = c.b
+  }
+  geo.setAttribute('color', new THREE.BufferAttribute(carr, 3))
+  ;(tex2.wall && zoneB(cs.x, cs.y) ? wallGeos2 : wallGeos).push(geo)
 }
 // v26：马尼拉室墙面——v29 起换用真实米色锦缎墙纸贴图（public/textures/manila_wallpaper.png，
 // 加载失败回退程序化米色竖纹）。贴图本身已是马尼拉文件夹暖米色 → 不再叠乘顶点色；
@@ -468,7 +599,7 @@ if (wallGeos2.length) {
 
 // 草叶程序纹理：透明底 + 带渐变的弯曲草茎笔触（alphaTest 剪出草形；levelTexture 全局缓存）
 function grassTexture(): THREE.Texture {
-  return levelTexture('grass_tuft_v1', () => {
+  return levelTexture('grass_tuft_v1.png', () => {
     const [cv, c] = makeCanvasCtx(64, 64)
     c.clearRect(0, 0, 64, 64)
     let s = 7

@@ -23,6 +23,7 @@ export class GameAudio {
   private bgmFilter: BiquadFilterNode | null = null
   private bgmLayer: BgmLayer | null = null
   private bgmTimer: ReturnType<typeof setInterval> | null = null
+  private melIdx = 2 // 据点曲旋律随机漫步位置（五声音阶音级 0..4）
   private distort = 0 // 理智扭曲 0..1
   private uwFilter: BiquadFilterNode | null = null // v13：水下低通（全局闷化）
   private underwater = false
@@ -79,7 +80,7 @@ export class GameAudio {
     this.ensure()
     if (!this.ctx || !this.ambient) return
     this.stopHum()
-    const base = 50 + levelId * 6
+    const base = levelId >= 100 ? 56 : 50 + levelId * 6 // v36：据点 id≥100——别让 id 直接乘出刺耳高频哼声
     for (const [mult, gain] of [[1, 0.035], [2, 0.018], [3, 0.008]] as const) {
       const o = this.ctx.createOscillator()
       o.type = 'sine'
@@ -216,6 +217,7 @@ export class GameAudio {
     }
   }
 
+  // 双音钟声（一次性，用于据点抵达切入等过场；旧的「每 2.2s 出口提示音」循环播放已删除——太刺耳）
   exitChime(dist: number) {
     if (!this.ctx || !this.sfx || dist > 8) return
     const t = this.ctx.currentTime
@@ -325,6 +327,31 @@ export class GameAudio {
   searchStart() { this.searchTick(); this.searchTick() }
   searchDone() { this.pickup(false) }
 
+  // 穿墙实体的刺耳沙沙声（钝人行动；vol 按距离衰减）
+  scrape(vol: number) {
+    if (!this.ctx || !this.sfx || vol <= 0.01) return
+    const t = this.ctx.currentTime
+    const n = this.noiseSrc()
+    const f = this.ctx.createBiquadFilter()
+    f.type = 'bandpass'; f.frequency.setValueAtTime(900 + Math.random() * 600, t)
+    f.frequency.linearRampToValueAtTime(500 + Math.random() * 300, t + 0.5)
+    f.Q.value = 2.5
+    const g = this.ctx.createGain()
+    const v = 0.1 * vol
+    g.gain.setValueAtTime(0.0001, t)
+    g.gain.exponentialRampToValueAtTime(v, t + 0.08)
+    g.gain.setValueAtTime(v, t + 0.3)
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.55)
+    // 颤动：让沙沙声有「刮擦-停顿-刮擦」的不规则节奏
+    const lfo = this.ctx.createOscillator()
+    lfo.type = 'square'; lfo.frequency.value = 7 + Math.random() * 4
+    const lg = this.ctx.createGain(); lg.gain.value = v * 0.6
+    lfo.connect(lg).connect(g.gain)
+    n.connect(f).connect(g).connect(this.sfx)
+    n.start(); n.stop(t + 0.6)
+    lfo.start(); lfo.stop(t + 0.6)
+  }
+
   uiTick() {
     if (!this.ctx || !this.sfx) return
     const o = this.ctx.createOscillator()
@@ -400,7 +427,7 @@ export class GameAudio {
       level, gain, echo,
       drones: [], step: 0,
       nextT: t + 0.1,
-      stepDur: [0.5, 0.6, 0.42, 0.24, 0.7, 0.62][level] ?? 0.5,
+      stepDur: level >= 100 ? 0.62 : [0.5, 0.6, 0.42, 0.24, 0.7, 0.62][level] ?? 0.5, // 据点曲放慢（16 步 ≈ 10s 一轮）
       steps: [16, 16, 16, 16, 12, 12][level] ?? 16,
       dead: false,
     }
@@ -455,6 +482,11 @@ export class GameAudio {
       case 10: drone(72, 'sine', 0.022, 0.05, 12); drone(108.4, 'sine', 0.014, 0.08, 17); break // L10 麦田：阴天下的开阔静默
       case 11: drone(58, 'triangle', 0.032, 0.06, 13); drone(116.5, 'sine', 0.02, 0.1, 18); drone(87.3, 'sine', 0.012, 0.14, 24); break // L11 城市：整座城市的空转嗡鸣
       case 12: drone(63, 'sine', 0.03, 0.05, 11); drone(126.4, 'sine', 0.018, 0.09, 15); drone(94.6, 'triangle', 0.012, 0.13, 20); break // L601 图书馆：纸与灰尘的高频静电
+      // v36：据点（温暖软垫和声底，旋律走 tickLayer——与外部层级的阴冷 drone 形成「到家了」的对照）
+      case 101: drone(130.8, 'sine', 0.02, 0.06, 7); drone(196, 'sine', 0.013, 0.09, 9); drone(65.4, 'sine', 0.018, 0.04, 5); break // Alpha 基地：C 大三和弦软垫
+      case 102: drone(146.8, 'sine', 0.018, 0.07, 8); drone(220, 'sine', 0.011, 0.1, 10); drone(73.4, 'triangle', 0.014, 0.05, 6); break // 商人之家：D 暖商场软垫
+      case 103: drone(164.8, 'sine', 0.016, 0.06, 8); drone(246.9, 'sine', 0.01, 0.09, 11); drone(82.4, 'sine', 0.013, 0.04, 6); break // 希波克拉底 - 1：E 安静病房软垫
+      case 104: drone(174.6, 'sine', 0.018, 0.07, 8); drone(261.6, 'sine', 0.011, 0.1, 10); drone(87.3, 'triangle', 0.015, 0.05, 6); break // Tom 的餐馆：F 大三和弦暖垫
     }
   }
 
@@ -573,6 +605,24 @@ export class GameAudio {
         // 唱机底噪/刷片
         if (rnd() < 0.5) hiss(0.22, 0.012, 'highpass', 6000, 1, false)
         if (step === 0 && rnd() < 0.4) hiss(1.8, 0.02, 'bandpass', 3200, 2) // 远处派对喧闹残响
+        break
+      }
+      case 101: case 102: case 103: case 104: {
+        // 据点：舒缓轻松的安全区小曲——C 大调五声音阶随机漫步分解（软三角音+回声）+ 暖低音 + 偶发音乐盒泛音
+        const PENT = [261.6, 293.7, 329.6, 392, 440] // C4 D4 E4 G4 A4
+        const BASS = [130.8, 98, 110, 87.3] // C3 G2 A2 F2（I→V→vi→IV 慢和声）
+        if (step % 4 === 0) note(BASS[(step / 4) % 4], 3.4, 0.034, 'sine', true)
+        if (step % 2 === 1 && rnd() < 0.6) {
+          this.melIdx = Math.max(0, Math.min(4, this.melIdx + (rnd() < 0.5 ? -1 : 1)))
+          const f = PENT[this.melIdx] * (rnd() < 0.18 ? 2 : 1)
+          note(f, 2.4, 0.04, 'triangle', true, 6)
+          note(f * 2, 1.7, 0.011, 'sine', true) // 泛音微光
+        }
+        if (step % 8 === 6 && rnd() < 0.3) {
+          const f = PENT[Math.floor(rnd() * 5)] * 2
+          note(f, 0.9, 0.015, 'sine', true)
+          note(f * 1.5, 0.7, 0.009, 'sine', true) // 音乐盒双音
+        }
         break
       }
     }
