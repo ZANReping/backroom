@@ -76,9 +76,24 @@ export function buildItemMesh(type: string): THREE.Group {
       em(0.26, 0.3, 0.1, '#3a5a3a'); em(0.16, 0.12, 0.1, '#2e4a2e', 0, 0.2, 0); break
     case 'fuse': // 保险丝：陶瓷身 + 双金属帽
       cm(0.05, 0.05, 0.16, '#d9cfb0'); cm(0.06, 0.06, 0.04, '#d9b13b', 0, 0.09, 0, 6); cm(0.06, 0.06, 0.04, '#d9b13b', 0, -0.09, 0, 6); break
-    case 'capacitor': // 电容器：蓝壳 + 银顶 + 双引脚
-      cm(0.08, 0.08, 0.16, '#3a6a8a'); cm(0.082, 0.082, 0.02, '#c0c0c0', 0, 0.08, 0)
-      em(0.02, 0.08, 0.02, '#c0c0c0', -0.03, -0.12, 0); em(0.02, 0.08, 0.02, '#c0c0c0', 0.03, -0.12, 0); break
+    case 'capacitor': { // 电容器「瓶装闪电」（参考 Object 42）：玻璃烧瓶 + 软木塞 + 瓶中疾走的蓝色电荷
+      const glass = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.095, 0.17, 8),
+        new THREE.MeshLambertMaterial({ color: '#9fd8e8', transparent: true, opacity: 0.35, emissive: '#3a8ab0', emissiveIntensity: 0.3 }))
+      glass.position.y = -0.03; grp.add(glass)
+      const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.05, 0.06, 8),
+        new THREE.MeshLambertMaterial({ color: '#9fd8e8', transparent: true, opacity: 0.35, emissive: '#3a8ab0', emissiveIntensity: 0.3 }))
+      neck.position.y = 0.075; grp.add(neck)
+      cm(0.03, 0.034, 0.05, '#a8865a', 0, 0.125, 0, 8) // 软木塞
+      // 瓶中闪电：自发光芯 + 两道折线
+      const core = new THREE.Mesh(new THREE.IcosahedronGeometry(0.04, 0), new THREE.MeshBasicMaterial({ color: '#8fd4ff' }))
+      core.position.y = -0.03; core.scale.y = 1.7; grp.add(core)
+      const bolt = (w: number, h: number, color: string, x: number, y: number, z: number, rz: number) => {
+        const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.014), new THREE.MeshBasicMaterial({ color }))
+        m.position.set(x, y, z); m.rotation.z = rz; grp.add(m)
+      }
+      bolt(0.014, 0.1, '#eaf7ff', 0.022, -0.02, 0.01, 0.5)
+      bolt(0.014, 0.08, '#8fd4ff', -0.022, -0.05, -0.012, -0.55)
+      break }
     case 'coffee': // 咖啡：纸杯 + 盖 + 套
       cm(0.07, 0.055, 0.18, '#d8cfc0', 0, 0, 0, 8); cm(0.075, 0.075, 0.03, '#6a4a2e', 0, 0.1, 0, 8)
       cm(0.072, 0.068, 0.06, '#8a6a42', 0, -0.01, 0, 8); break
@@ -172,6 +187,59 @@ export function buildItemMesh(type: string): THREE.Group {
       em(0.24, 0.18, 0.2, '#a08653'); em(0.245, 0.02, 0.06, '#d8cfb0', 0, 0.08, 0)
       em(0.06, 0.02, 0.205, '#d8cfb0', 0, 0.081, 0); em(0.07, 0.05, 0.002, '#f0e6c0', 0.06, 0.02, 0.102)
       em(0.03, 0.03, 0.002, '#566c5a', -0.06, 0.03, 0.102); break
+    case 'dryshrimp': { // 旱虾：分节橙褐躯体 + 鳍叶 + 扇尾（同实体造型的静物版）
+      em(0.1, 0.06, 0.16, '#b3612e', 0.06, 0.03, 0); em(0.09, 0.055, 0.14, '#8f4a22', -0.03, 0.025, 0); em(0.08, 0.05, 0.12, '#b3612e', -0.11, 0.02, 0)
+      em(0.13, 0.012, 0.05, '#d9a86a', 0.02, 0.01, 0.1, 0, 0.5); em(0.13, 0.012, 0.05, '#d9a86a', 0.02, 0.01, -0.1, 0, -0.5)
+      em(0.02, 0.02, 0.02, '#101216', 0.12, 0.07, 0.03); em(0.02, 0.02, 0.02, '#101216', 0.12, 0.07, -0.03)
+      em(0.1, 0.012, 0.04, '#d9a86a', -0.2, 0.03, 0.04, 0, 0.3); em(0.1, 0.012, 0.04, '#d9a86a', -0.2, 0.03, -0.04, 0, -0.3)
+      break }
+    case 'friedshrimp': { // 酥炸旱虾：金黄炸衣 + 露出的虾尾
+      em(0.1, 0.07, 0.16, '#d99a3a', 0.05, 0.035, 0); em(0.09, 0.065, 0.14, '#e8b04a', -0.04, 0.03, 0)
+      em(0.08, 0.05, 0.12, '#b3612e', -0.12, 0.02, 0)
+      em(0.1, 0.012, 0.04, '#d9a86a', -0.21, 0.03, 0.04, 0, 0.3); em(0.1, 0.012, 0.04, '#d9a86a', -0.21, 0.03, -0.04, 0, -0.3)
+      em(0.03, 0.015, 0.015, '#f5d88a', 0.05, 0.08, 0.05); em(0.025, 0.012, 0.012, '#f5d88a', 0, 0.085, -0.04)
+      break }
+    case 'firesalt': { // 火盐晶体：三枚橙色碎晶（自带余烬微光）
+      em(0.07, 0.09, 0.06, '#e8823c', -0.05, 0.02, 0, 0, 0.4)
+      em(0.05, 0.07, 0.05, '#f59a4a', 0.04, 0.02, -0.03, 0, -0.3)
+      em(0.04, 0.05, 0.04, '#d96a2a', 0.02, 0.02, 0.06, 0, 0.2)
+      break }
+    case 'liquidpain': { // 液态痛苦：杏仁水瓶型 + 淡红液体
+      em(0.14, 0.26, 0.14, '#d8cfc0'); em(0.08, 0.07, 0.08, '#c94a3a', 0, 0.17, 0)
+      em(0.145, 0.12, 0.145, '#d94a3a', 0, -0.04, 0); break }
+    case 'candysilver': { // 银舌头：舌头形金属糖（扁圆盘 + 中缝凸起）
+      em(0.14, 0.05, 0.1, '#c9c9d4'); em(0.05, 0.03, 0.08, '#e8e8f0', 0, 0.035, 0)
+      break }
+    case 'candybullet': { // 咀嚼子弹：银箔子弹（竖立弹头）
+      cm(0.035, 0.035, 0.09, '#9a9aa8', 0, 0.045, 0, 8); cm(0.012, 0.035, 0.05, '#8a8a98', 0, 0.115, 0, 8)
+      cm(0.037, 0.037, 0.03, '#6a6a76', 0, 0.005, 0, 8)
+      break }
+    case 'candygun': { // 枪糖：金属小手枪
+      em(0.14, 0.04, 0.05, '#5a5a64', 0.01, 0.08, 0); em(0.05, 0.035, 0.045, '#4a4a54', 0.09, 0.08, 0)
+      em(0.045, 0.09, 0.045, '#6a4a3a', -0.03, 0.02, 0, 0, 0.3)
+      break }
+    case 'candystanley': { // 纸片人斯坦利：扁平人形糖纸（薄板身 + 头 + 双臂）
+      em(0.08, 0.14, 0.012, '#d0d0c0', 0, 0.07, 0); cm(0.035, 0.035, 0.012, '#d0d0c0', 0, 0.16, 0, 8, Math.PI / 2)
+      em(0.14, 0.03, 0.012, '#d0d0c0', 0, 0.09, 0, 0, 0)
+      break }
+    case 'candywaste': { // 危害废料：迷你危废桶
+      cm(0.055, 0.055, 0.12, '#d9c93a', 0, 0.06, 0, 10)
+      cm(0.057, 0.057, 0.025, '#3a3a30', 0, 0.035, 0, 10); cm(0.057, 0.057, 0.025, '#3a3a30', 0, 0.095, 0, 10)
+      break }
+    case 'candygenius': { // 天才糖：粉色威化（分层夹心）
+      em(0.14, 0.05, 0.09, '#e8a0b8', 0, 0.025, 0)
+      em(0.14, 0.012, 0.09, '#f4d0dc', 0, 0.012, 0); em(0.14, 0.012, 0.09, '#f4d0dc', 0, 0.038, 0)
+      break }
+    case 'candymint': { // 杏仁薄荷糖：O 形薄荷圈
+      const mint = new THREE.Mesh(new THREE.TorusGeometry(0.055, 0.022, 8, 14),
+        new THREE.MeshLambertMaterial({ color: '#a0d0b0', emissive: '#a0d0b0', emissiveIntensity: 0.25 }))
+      mint.position.y = 0.035; mint.rotation.x = Math.PI / 2
+      grp.add(mint)
+      break }
+    case 'manmade': { // 人制品：糖果纸包裹的肉色方块
+      em(0.14, 0.06, 0.1, '#8a4a3a')
+      em(0.15, 0.02, 0.11, '#d8cfc0', 0, 0.04, 0)
+      em(0.03, 0.03, 0.03, '#c9a0a0', 0.06, 0.05, 0.03); break }
     case 'endnote': // 烧焦的字条：纸片 + 焦边 + 墨迹
       em(0.2, 0.01, 0.14, '#d8cfae'); em(0.2, 0.012, 0.04, '#3a2a1e', 0, 0.001, -0.052)
       em(0.12, 0.012, 0.01, '#2a2620', -0.01, 0.008, 0.02); break
@@ -281,7 +349,7 @@ export function buildItemMesh(type: string): THREE.Group {
     tape: '#ffd94d', // 胜利物品：金
     almond: '#8fd98f', canned: '#8fd98f', coffee: '#8fd98f', // 补给：绿
     bandage: '#e8e2d2', sedative: '#9adfff', // 医疗：白/蓝
-    battery: '#e8b93c', fuse: '#e8b93c', capacitor: '#e8b93c', glowstick: '#a8e0a0', flashlight: '#e8b93c', // 电气：琥珀
+    battery: '#e8b93c', fuse: '#e8b93c', capacitor: '#6abfff', glowstick: '#a8e0a0', flashlight: '#e8b93c', // 电气：琥珀（电容器=瓶装闪电：蓝）
     crowbar: '#d96a4a', wrench: '#d96a4a', gas: '#d96a4a', stapler: '#d96a4a', // 武器/工具：红
     keycard: '#7fb0c9', carkey: '#7fb0c9', skeleton: '#7fb0c9', // 钥匙：冰蓝
     suit: '#9a8fd0', gloves: '#9a8fd0', rabbit: '#c9a0d0', lighter: '#c9a0d0', // 装备：紫
@@ -296,6 +364,11 @@ export function buildItemMesh(type: string): THREE.Group {
     stonekazoo: '#a8a294', presses: '#e8b93c',
     // v32 新增
     cashew: '#c9a05a', // 腰果水：褐
+    candysilver: '#c9c9d4', candybullet: '#9a9aa8', candygun: '#5a5a64', candystanley: '#d0d0c0',
+    candywaste: '#d9c93a', candygenius: '#e8a0b8', candymint: '#a0d0b0', // Object 5 糖果
+    manmade: '#c9a0a0', // 人制品：粉白
+    firesalt: '#e8823c', liquidpain: '#d94a3a', // 火盐：橙 / 液态痛苦：红
+    dryshrimp: '#b3612e', friedshrimp: '#d99a3a', // 旱虾：橙褐 / 酥炸：金黄
     knife: '#d96a4a', axe: '#d96a4a', // 武器：红
     headlamp: '#e8b93c', // 电气：琥珀
     notebook: '#c9b458', // 纸物

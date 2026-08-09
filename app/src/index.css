@@ -3,7 +3,9 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
+  /* 默认主题「经典琥珀」（data-theme="amber"） */
+  :root,
+  [data-theme='amber'] {
     --ink: #0a0908;
     --panel: #14120c;
     --panel-edge: #3a3423;
@@ -15,6 +17,25 @@
     --stamina: #6f9a55;
     --hunger: #c98a3d;
     --exit: #f5e37a;
+    --quote-shadow: none;
+  }
+
+  /* 「阈限」主题（data-theme="liminal"）：参考 Backrooms 中文维基「阈限」版式
+     （github.backroomswiki.cn/New_BHL/css/liminal.css）——纸面底、灰褐描边、
+     红色强调（pale-accent）、橙色 alt-accent、点阵背景 */
+  [data-theme='liminal'] {
+    --ink: #e3ded2; /* very-light-gray monochrome */
+    --panel: #ede9df; /* pale-gray monochrome（纸面） */
+    --panel-edge: #8c887e; /* bright-accent */
+    --text-dim: #48453c; /* gray monochrome */
+    --text: #191410; /* black monochrome */
+    --amber: #e61744; /* pale-accent（阈限红，作为界面主强调色） */
+    --blood: #9e2b25;
+    --sanity: #6a5fb8;
+    --stamina: #5d8147;
+    --hunger: #dd6611; /* alt-accent */
+    --exit: #8f730f; /* 纸面上可读的暗金 */
+    --quote-shadow: 0 2px 4px rgba(25, 20, 16, 0.25);
   }
 
   html,
@@ -43,27 +64,57 @@
     font-family: 'JetBrains Mono', monospace;
   }
 
-  /* 全局滚动条（适配琥珀暗色 UI：细条 + 琥珀滑块 + 深色轨道） */
+  /* 全局滚动条（细条 + 主题强调色滑块 + 面板色轨道，随主题切换） */
   * {
     scrollbar-width: thin;
-    scrollbar-color: rgba(232, 185, 60, 0.42) rgba(20, 18, 12, 0.65);
+    scrollbar-color: color-mix(in srgb, var(--amber) 42%, transparent) color-mix(in srgb, var(--panel) 65%, transparent);
   }
   *::-webkit-scrollbar {
     width: 8px;
     height: 8px;
   }
   *::-webkit-scrollbar-track {
-    background: rgba(20, 18, 12, 0.65);
+    background: color-mix(in srgb, var(--panel) 65%, transparent);
   }
   *::-webkit-scrollbar-thumb {
-    background: rgba(232, 185, 60, 0.32);
-    border: 2px solid rgba(20, 18, 12, 0.65);
+    background: color-mix(in srgb, var(--amber) 32%, transparent);
+    border: 2px solid color-mix(in srgb, var(--panel) 65%, transparent);
   }
   *::-webkit-scrollbar-thumb:hover {
-    background: rgba(232, 185, 60, 0.58);
+    background: color-mix(in srgb, var(--amber) 58%, transparent);
   }
   *::-webkit-scrollbar-corner {
     background: transparent;
+  }
+
+  /* ---- 阈限主题差异化：字体 / 形状 / 阴影 / 动画 / 点阵背景 ---- */
+  [data-theme='liminal'] body {
+    font-family: Inter, 'Noto Sans SC', system-ui, sans-serif;
+  }
+  [data-theme='liminal'] .font-title {
+    font-family: Inter, 'Noto Sans SC', sans-serif;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+  }
+  [data-theme='liminal'] .font-mono2 {
+    font-family: Recursive, 'Noto Serif SC', 'JetBrains Mono', monospace;
+  }
+  /* 阈限签名点阵（维基版头圆点纹理）；.br-app 内联了背景色，需 !important 叠加图案 */
+  [data-theme='liminal'] .br-app {
+    background-image: radial-gradient(circle, rgba(72, 69, 60, 0.13) 1px, transparent 1.4px) !important;
+    background-size: 16px 16px !important;
+  }
+  /* 悬浮在场景上的日志/提示文字：阈限下改为「纸签」样式保证可读 */
+  [data-theme='liminal'] .hud-log-line,
+  [data-theme='liminal'] .anim-toast {
+    width: fit-content;
+    max-width: 100%;
+    padding: 0 6px;
+    border: 1px solid var(--panel-edge);
+    border-radius: 2px;
+    background: color-mix(in srgb, var(--panel) 88%, transparent);
+    box-shadow: var(--quote-shadow);
+    text-shadow: none !important;
   }
 }
 
@@ -99,6 +150,17 @@
     border: 1px solid var(--panel-edge);
     background: color-mix(in srgb, var(--panel) 85%, transparent);
     border-radius: 4px;
+  }
+  /* 阈限：直角 + 纸面投影（quote-shadow）；菜单悬停由「缩进」改为「上浮」（阈限版头悬停效果） */
+  [data-theme='liminal'] .hud-panel,
+  [data-theme='liminal'] .menu-btn {
+    border-radius: 2px;
+    box-shadow: var(--quote-shadow);
+  }
+  [data-theme='liminal'] .menu-btn:hover,
+  [data-theme='liminal'] .menu-btn:active {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 8px rgba(25, 20, 16, 0.3);
   }
   /* 自定义触屏布局：暂停键被移出时，隐藏 HUD 右上角默认暂停键（由 TouchControls 按自定义位置渲染） */
   .br-hide-hud-pause .absolute.right-3.top-3 > .flex.gap-2 > button:last-of-type {
@@ -143,8 +205,8 @@
   100% { opacity: 1; }
 }
 @keyframes pulseAmber {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(232, 185, 60, 0.5); }
-  50% { box-shadow: 0 0 12px 2px rgba(232, 185, 60, 0.35); }
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--amber) 50%, transparent); }
+  50% { box-shadow: 0 0 12px 2px color-mix(in srgb, var(--amber) 35%, transparent); }
 }
 @keyframes barPulse {
   0%, 100% { opacity: 1; }
@@ -227,3 +289,340 @@
 .anim-toast { animation: toastUp 1.6s ease-out both; }
 /* v28：像素画物品图标锐利渲染（背包/图鉴等小格子不糊） */
 img.pixel-icon { image-rendering: pixelated; image-rendering: crisp-edges; }
+
+/* 阈限覆盖（不设层：.anim-flickerIn 与 .scanlines::after 的原始规则分别在无层与 components 层，
+   层叠层级高于 base 层，放这里才能稳定生效） */
+[data-theme='liminal'] .anim-flickerIn {
+  animation: slideUp 0.5s ease-out both; /* 标题入场：平稳上浮替换故障闪烁 */
+}
+[data-theme='liminal'] .scanlines::after {
+  opacity: 0.22; /* 扫描线在纸面主题下大幅减弱 */
+}
+
+/* 阈限：标题屏主标题/副标题叠在 3D 场景上，改为「纸签」保证可读（textShadow 色差描边需压掉） */
+[data-theme='liminal'] .title-hero {
+  width: fit-content;
+  padding: 2px 10px;
+  border: 1px solid var(--panel-edge);
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--panel) 85%, transparent);
+  box-shadow: var(--quote-shadow);
+  text-shadow: none !important;
+}
+
+/* ---- 阈限：图鉴页「维基条目」化 ---- */
+/* 条目卡：不透明纸面 + styled-quote 式左边条 */
+[data-theme='liminal'] .codex-list .hud-panel {
+  background: var(--panel);
+  border-left: 4px solid var(--panel-edge);
+}
+[data-theme='liminal'] .codex-list button.hud-panel {
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+[data-theme='liminal'] .codex-list button.hud-panel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 8px rgba(25, 20, 16, 0.28);
+}
+/* 分类分页：选中态 = 深灰褐填充 + 纸面字（维基 tab 选中样式）；内联样式需 !important 覆盖 */
+[data-theme='liminal'] .codex-cat {
+  border-radius: 2px;
+}
+[data-theme='liminal'] .codex-cat[aria-pressed='true'] {
+  background: var(--text-dim) !important;
+  color: var(--panel) !important;
+  border-color: var(--text-dim) !important;
+}
+/* 档案引用：阈限 styled-quote（宽左边条 + 浅底 + 去斜体） */
+[data-theme='liminal'] .codex-quote {
+  border-left-width: 6px !important;
+  border-color: var(--panel-edge) !important;
+  background: color-mix(in srgb, var(--panel-edge) 12%, transparent);
+  padding: 4px 8px;
+  font-style: normal;
+}
+
+/* ================= 维基版式主题：玄武岩 / 暗色阈限 / 灰色阈限 / 数据库 / Fandom 阈限 / M.E.G. =================
+   色板取自后室中文维基各版式官方 CSS 变量（github.backroomswiki.cn / LupusCaeruleus/CSS_BRWK 备份库） */
+
+[data-theme='basalt'] {
+  --ink: #e8e8ee;
+  --panel: #fcfcfc;
+  --panel-edge: #d0d0d8;
+  --text-dim: #8a8992;
+  --text: #232326;
+  --amber: #96182b; /* 绯红点睛 */
+  --blood: #d02030;
+  --sanity: #6a5fb8;
+  --stamina: #5d8147;
+  --hunger: #dd7711; /* basalt alternate 橙 */
+  --exit: #8f730f;
+  --quote-shadow: 0 2px 6px rgba(10, 10, 11, 0.12);
+}
+[data-theme='dark-liminal'] {
+  --ink: #00040f;
+  --panel: #121620;
+  --panel-edge: #4a5160;
+  --text-dim: #a6abb5;
+  --text: #e6ebef;
+  --amber: #e61744;
+  --blood: #ff5964;
+  --sanity: #8a7fe0;
+  --stamina: #6f9a55;
+  --hunger: #c98a3d;
+  --exit: #f5e37a;
+  --quote-shadow: 0 3px 5px rgba(0, 0, 0, 0.35);
+}
+[data-theme='greyspace'] {
+  --ink: #1b1a18;
+  --panel: #23201e;
+  --panel-edge: #42403c;
+  --text-dim: #9d9b95;
+  --text: #e6ebef;
+  --amber: #d92e53; /* 玫红链接 */
+  --blood: #d65a4a;
+  --sanity: #8a7fe0;
+  --stamina: #6f9a55;
+  --hunger: #c98a3d;
+  --exit: #f5e37a;
+  --quote-shadow: 0 3px 5px rgba(0, 0, 0, 0.35);
+}
+[data-theme='database'] {
+  --ink: #0a0a0a;
+  --panel: #171410;
+  --panel-edge: #5c4218;
+  --text-dim: #7d5a26;
+  --text: #af641e;
+  --amber: #e58c24; /* 琥珀磷光 */
+  --blood: #ff4d3a;
+  --sanity: #8f7fe0;
+  --stamina: #7fb35a;
+  --hunger: #d97b2b;
+  --exit: #ffd75e;
+  --quote-shadow: 0 0 8px rgba(229, 140, 36, 0.18);
+}
+[data-theme='fandom'] {
+  --ink: #e8cf96;
+  --panel: #fbe7b5; /* 做旧纸张黄 */
+  --panel-edge: #c36d2f;
+  --text-dim: #8a6224;
+  --text: #0c0c0c;
+  --amber: #c36d2f; /* Fandom 橙棕 */
+  --blood: #b03a1e;
+  --sanity: #6a5fb8;
+  --stamina: #5d8147;
+  --hunger: #dd6611;
+  --exit: #8f730f;
+  --quote-shadow: 0 2px 4px rgba(60, 40, 10, 0.25);
+}
+[data-theme='meg'] {
+  --ink: #b8ba96;
+  --panel: #f5edab; /* 荧光灯浅黄 */
+  --panel-edge: #a8a24f;
+  --text-dim: #6b6740;
+  --text: #363415;
+  --amber: #8a7d1a; /* 深橄榄黄 */
+  --blood: #a5382a;
+  --sanity: #6a5fb8;
+  --stamina: #5d8147;
+  --hunger: #c97b1e;
+  --exit: #6e6408;
+  --quote-shadow: 2px 3px 0 rgba(54, 52, 21, 0.18);
+}
+
+/* ---- 字体与形状 ---- */
+/* 玄武岩：Sofia Sans 标题（800 字重负字距）+ 8px 圆角 + 柔和投影 */
+[data-theme='basalt'] body { font-family: Inter, 'Noto Sans SC', system-ui, sans-serif; }
+[data-theme='basalt'] .font-title { font-family: 'Sofia Sans', Inter, 'Noto Sans SC', sans-serif; font-weight: 800; letter-spacing: -0.02em; }
+[data-theme='basalt'] .hud-panel,
+[data-theme='basalt'] .menu-btn { border-radius: 8px; box-shadow: var(--quote-shadow); }
+[data-theme='basalt'] .menu-btn:hover,
+[data-theme='basalt'] .menu-btn:active { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(10, 10, 11, 0.16); }
+
+/* 暗色阈限 / 灰色阈限：Inter + 衬线等宽 + 全直角 + 半调点阵 */
+[data-theme='dark-liminal'] body,
+[data-theme='greyspace'] body { font-family: Inter, 'Noto Sans SC', system-ui, sans-serif; }
+[data-theme='dark-liminal'] .font-title,
+[data-theme='greyspace'] .font-title { font-family: Inter, 'Noto Sans SC', sans-serif; font-weight: 800; letter-spacing: 0.05em; }
+[data-theme='dark-liminal'] .font-mono2,
+[data-theme='greyspace'] .font-mono2 { font-family: Recursive, 'Noto Serif SC', 'JetBrains Mono', monospace; }
+[data-theme='dark-liminal'] .hud-panel, [data-theme='dark-liminal'] .menu-btn,
+[data-theme='greyspace'] .hud-panel, [data-theme='greyspace'] .menu-btn,
+[data-theme='fandom'] .hud-panel, [data-theme='fandom'] .menu-btn,
+[data-theme='database'] .hud-panel, [data-theme='database'] .menu-btn { border-radius: 0; box-shadow: var(--quote-shadow); }
+[data-theme='dark-liminal'] .br-app { background-image: radial-gradient(circle, rgba(140, 150, 170, 0.07) 1px, transparent 1.4px) !important; background-size: 14px 14px !important; }
+[data-theme='greyspace'] .br-app { background-image: radial-gradient(circle, rgba(110, 100, 80, 0.18) 1px, transparent 1.4px) !important; background-size: 14px 14px !important; }
+[data-theme='meg'] .br-app { background-image: radial-gradient(circle, rgba(54, 52, 21, 0.10) 1px, transparent 1.4px) !important; background-size: 14px 14px !important; }
+[data-theme='database'] .br-app { background-image: radial-gradient(circle, rgba(229, 140, 36, 0.10) 1px, transparent 1.4px) !important; background-size: 12px 12px !important; }
+
+/* 数据库：全等宽 + CRT（琥珀硬投影文字 + 加强扫描线） */
+[data-theme='database'] body { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; }
+[data-theme='database'] .font-title { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-weight: 700; letter-spacing: 0.08em; }
+[data-theme='database'] .br-app { text-shadow: 1px 1px 0 rgba(201, 120, 30, 0.35); }
+[data-theme='database'] .scanlines::after { opacity: 0.5; }
+[data-theme='database'] .anim-flickerIn { animation: slideUp 0.5s ease-out both; }
+
+/* Fandom 阈限：Rubik 圆体 */
+[data-theme='fandom'] body { font-family: Rubik, 'Noto Sans SC', system-ui, sans-serif; }
+[data-theme='fandom'] .font-title { font-family: Rubik, 'Noto Sans SC', sans-serif; font-weight: 700; letter-spacing: 0.03em; }
+
+/* M.E.G.：全等宽终端字 + 圆角档案盒（直角按钮） */
+[data-theme='meg'] body { font-family: 'Overpass Mono', 'PT Mono', 'JetBrains Mono', 'Noto Sans SC', monospace; }
+[data-theme='meg'] .font-title { font-family: 'Overpass Mono', 'PT Mono', 'JetBrains Mono', 'Noto Sans SC', monospace; font-weight: 700; letter-spacing: 0.04em; }
+[data-theme='meg'] .hud-panel { border-radius: 6px; box-shadow: var(--quote-shadow); }
+[data-theme='meg'] .menu-btn { border-radius: 0; box-shadow: var(--quote-shadow); }
+
+/* ---- 亮色纸面主题共用（玄武岩 / Fandom 阈限 / M.E.G.）：扫描线减弱 + 标题/日志纸签 ---- */
+[data-theme='basalt'] .scanlines::after,
+[data-theme='fandom'] .scanlines::after,
+[data-theme='meg'] .scanlines::after { opacity: 0.22; }
+[data-theme='basalt'] .title-hero,
+[data-theme='fandom'] .title-hero,
+[data-theme='meg'] .title-hero,
+[data-theme='database'] .title-hero {
+  width: fit-content;
+  padding: 2px 10px;
+  border: 1px solid var(--panel-edge);
+  background: color-mix(in srgb, var(--panel) 85%, transparent);
+  box-shadow: var(--quote-shadow);
+  text-shadow: none !important;
+}
+[data-theme='basalt'] .hud-log-line, [data-theme='basalt'] .anim-toast,
+[data-theme='fandom'] .hud-log-line, [data-theme='fandom'] .anim-toast,
+[data-theme='meg'] .hud-log-line, [data-theme='meg'] .anim-toast {
+  width: fit-content;
+  max-width: 100%;
+  padding: 0 6px;
+  border: 1px solid var(--panel-edge);
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+  box-shadow: var(--quote-shadow);
+  text-shadow: none !important;
+}
+
+/* ---- 图鉴页维基化扩展到新主题 ---- */
+[data-theme='fandom'] .codex-list .hud-panel,
+[data-theme='meg'] .codex-list .hud-panel,
+[data-theme='dark-liminal'] .codex-list .hud-panel,
+[data-theme='greyspace'] .codex-list .hud-panel {
+  background: var(--panel);
+  border-left: 4px solid var(--panel-edge);
+}
+[data-theme='basalt'] .codex-list .hud-panel,
+[data-theme='database'] .codex-list .hud-panel { background: var(--panel); }
+[data-theme='basalt'] .codex-list button.hud-panel,
+[data-theme='dark-liminal'] .codex-list button.hud-panel,
+[data-theme='greyspace'] .codex-list button.hud-panel,
+[data-theme='database'] .codex-list button.hud-panel,
+[data-theme='fandom'] .codex-list button.hud-panel,
+[data-theme='meg'] .codex-list button.hud-panel { transition: transform 0.15s, box-shadow 0.15s; }
+[data-theme='basalt'] .codex-list button.hud-panel:hover,
+[data-theme='dark-liminal'] .codex-list button.hud-panel:hover,
+[data-theme='greyspace'] .codex-list button.hud-panel:hover,
+[data-theme='database'] .codex-list button.hud-panel:hover,
+[data-theme='fandom'] .codex-list button.hud-panel:hover,
+[data-theme='meg'] .codex-list button.hud-panel:hover { transform: translateY(-2px); box-shadow: 0 5px 8px rgba(0, 0, 0, 0.3); }
+[data-theme='basalt'] .codex-cat[aria-pressed='true'],
+[data-theme='dark-liminal'] .codex-cat[aria-pressed='true'],
+[data-theme='greyspace'] .codex-cat[aria-pressed='true'],
+[data-theme='database'] .codex-cat[aria-pressed='true'],
+[data-theme='fandom'] .codex-cat[aria-pressed='true'],
+[data-theme='meg'] .codex-cat[aria-pressed='true'] {
+  background: var(--text-dim) !important;
+  color: var(--panel) !important;
+  border-color: var(--text-dim) !important;
+}
+[data-theme='fandom'] .codex-quote,
+[data-theme='meg'] .codex-quote,
+[data-theme='dark-liminal'] .codex-quote,
+[data-theme='greyspace'] .codex-quote {
+  border-left-width: 6px !important;
+  border-color: var(--panel-edge) !important;
+  background: color-mix(in srgb, var(--panel-edge) 12%, transparent);
+  padding: 4px 8px;
+  font-style: normal;
+}
+
+/* ---- CECS 统合实体分类系统（仿维基 component:cecs） ---- */
+.cecs-box {
+  border-top: 3px solid var(--amber); /* 顶边 accent 粗描边 */
+}
+/* 分级横幅：深色底 + clip-path 切角 */
+.cecs-class-banner {
+  background: color-mix(in srgb, var(--text) 88%, var(--panel));
+  color: var(--panel);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 0.5em), calc(100% - 0.5em) 100%, 0 100%);
+}
+
+/* ---- nulevelclass 层级等级横幅（仿维基 component:nulevelclass 排版 + animation 组件入场动效） ---- */
+.nlc {
+  display: grid;
+  grid-template-columns: 8rem 6px 1fr 1fr;
+  grid-template-areas:
+    'number border class exit'
+    'number border environment entity';
+  gap: 10px;
+  border: 1px solid var(--panel-edge);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: var(--panel);
+  box-shadow: var(--quote-shadow);
+  padding: 10px;
+  font-family: Recursive, 'Noto Sans SC', Verdana, sans-serif;
+  color: var(--text);
+}
+.nlc-number {
+  grid-area: number;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  animation: nlc-in 0.5s ease-out both;
+}
+.nlc-level-label { font-size: 0.8rem; letter-spacing: 0.3rem; color: var(--text-dim); }
+.nlc-no { font-size: 3rem; line-height: 1.1; font-weight: 700; }
+.nlc-lines {
+  margin-top: auto;
+  width: 80%;
+  /* 5 条 7px 高、间隔 3px 的横纹（repeating 渐变模拟），容器高度按等级截断 */
+  -webkit-mask-image: repeating-linear-gradient(to top, #000 0 7px, transparent 7px 10px);
+  mask-image: repeating-linear-gradient(to top, #000 0 7px, transparent 7px 10px);
+}
+.nlc-border { grid-area: border; background: var(--panel-edge); }
+.nlc-class {
+  grid-area: class;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  animation: nlc-in 0.5s ease-out both;
+}
+.nlc-class strong { font-size: 1.7rem; line-height: 1.2; }
+.nlc-sd { font-size: 0.8rem; letter-spacing: 0.1rem; color: var(--text-dim); }
+.nlc-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 4px 8px;
+  animation: nlc-in 0.5s ease-out both;
+}
+.nlc-indicator:nth-of-type(4) { grid-area: exit; }
+.nlc-indicator:nth-of-type(5) { grid-area: environment; }
+.nlc-indicator:nth-of-type(6) { grid-area: entity; }
+.nlc-ind-text { display: flex; flex-direction: column; }
+.nlc-ind-text strong { font-size: 1.05rem; line-height: 1.2; }
+.nlc-ind-text span { font-size: 0.8rem; letter-spacing: 0.05rem; color: var(--text-dim); }
+.nlc-indicator svg { flex-shrink: 0; }
+@keyframes nlc-in {
+  0% { transform: translateX(-1rem); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+/* 窄容器：编号区顶置，三行指标整行排（对应维基 ≤620px 布局） */
+@container (max-width: 620px) {
+  .nlc {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: 'number class' 'exit exit' 'environment environment' 'entity entity';
+  }
+  .nlc-border { display: none; }
+}
+
+/* 容器查询宿主：图鉴详情页（nulevelclass 横幅窄态布局依赖） */
+.cq { container-type: inline-size; }

@@ -28,9 +28,11 @@ export const L4: LevelDef = {
     { kind: 'stafflift', name: '员工电梯', dest: 5, anim: 'shutter', req: { keycard: true }, reqText: '需要门禁卡' },
     { kind: 'window', name: '落地窗', dest: 'random', anim: 'fall', fallDamage: 30 },
     { kind: 'fireexit', name: '消防通道', dest: 5, anim: 'bloom' },
+    // v51：L3↔L4 电梯双向联通——回程电梯（→L3，免保险丝；mapgen 作为额外出口放置，不占正常名额）
+    { kind: 'elevatorshaft', name: '电梯', dest: 3, anim: 'shutter' },
   ],
   entrance: '应急楼梯',
-  exitDesc: '出口：员工电梯（需门禁卡→B5）、消防通道（→B5）、落地窗（坠落→随机层级，重伤）。',
+  exitDesc: '出口：员工电梯（需门禁卡→B5）、消防通道（→B5）、落地窗（坠落→随机层级，重伤）、电梯（→B3 回程）。',
   lightDensity: 0.008,
   darkness: 0.65,
 }

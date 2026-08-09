@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import type { GameMap } from '../mapgen'
 import type { LevelDef } from '../types'
-import { col, SKY } from './shared'
+import { col, SKY, litMaterial, noiseTexture } from './shared'
 import { makeSkyMesh, SKY_PROFILES } from './skybox'
 
 export function buildSkyAndLiquids(m: GameMap, def: LevelDef, g: THREE.Group) {
@@ -97,13 +97,21 @@ export function buildSkyAndLiquids(m: GameMap, def: LevelDef, g: THREE.Group) {
   if (waterGeos.length) {
     g.add(new THREE.Mesh(
       mergeGeometries(waterGeos)!,
-      new THREE.MeshLambertMaterial({ color: '#2a6fd8', transparent: true, opacity: 0.66, emissive: '#10355e', side: THREE.DoubleSide }),
+      // realistic：低粗糙度 + 强环境反射（物理反射真实天空）+ 噪声法线波光
+      litMaterial({
+        color: '#2a6fd8', transparent: true, opacity: 0.66, emissive: '#10355e', side: THREE.DoubleSide,
+        roughness: 0.12, metalness: 0.05, envBase: 0.9,
+        normalMap: noiseTexture('#7a8a92', '#5a6a72'), normalScale: new THREE.Vector2(0.35, 0.35),
+      } as THREE.MeshLambertMaterialParameters & { roughness?: number; metalness?: number; envBase?: number }),
     ))
   }
   if (shallowGeos.length) {
     g.add(new THREE.Mesh(
       mergeGeometries(shallowGeos)!,
-      new THREE.MeshLambertMaterial({ color: '#28424e', transparent: true, opacity: 0.55, emissive: '#0c1c24', side: THREE.DoubleSide }),
+      litMaterial({
+        color: '#28424e', transparent: true, opacity: 0.55, emissive: '#0c1c24', side: THREE.DoubleSide,
+        roughness: 0.15, metalness: 0.05, envBase: 0.7,
+      }),
     ))
   }
 }

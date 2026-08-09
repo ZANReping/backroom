@@ -29,6 +29,8 @@ export const CONTAINERS: Record<string, ContainerDef> = {
   bookcase: { label: '书柜',          dur: 1.6, n: 2, pool: ['oddbook', 'oddbook', 'pamphlet', 'megfolder', 'tape'] },
   bonepile: { label: '骨堆',          dur: 1.4, n: 1, pool: ['bandage', 'divemask', 'rope', 'wallpaper', 'tape'] },
   campstall:{ label: '营地摊位',      dur: 2.0, n: 3, pool: ['driedfruit', 'cavingsuit', 'uvlamp', 'almond', 'battery', 'xenonmarble'] },
+  // v51：Level 3 发电站——壁挂配电箱（电气材料池）
+  elecbox:  { label: '配电箱',        dur: 1.6, n: 2, pool: ['battery', 'fuse', 'capacitor'] },
 }
 
 // v23：可搜索容器 kind 列表（派生自 CONTAINERS，单一事实源；

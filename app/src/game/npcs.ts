@@ -583,6 +583,41 @@ export const NPCS: Record<string, NpcDef> = {
     ],
     idle: ['东线的商队该回来了……', '迎新手册又该加一页。', '汇率稳定，天下太平。'],
   },
+  candyman: {
+    id: 'candyman', name: '「糖佬」希德', role: '雇员 · 糖果贩', faction: 'bntg',
+    personality: '笑眯眯的瘦高个，围裙上永远沾着糖渍，见谁都先递一颗试吃装。',
+    background: '原 B.N.T.G. 糖果矿的打包工，如今在市场街支起糖果摊。关于糖果从哪儿来，他只说「矿上见」三个字，再笑。',
+    uniform: { top: '#c9a0b8', topStyle: 1, badge: '#e8b93c' }, // 粉色围裙 + 糖果金徽章
+    avatar: { gender: 0, hair: 4, hairColor: '#5a4a2a', skin: '#e8b890', pants: '#3a352e', pantsStyle: 0, face: 1 },
+    currency: 'presses',
+    barter: [
+      { give: 'presses', giveN: 5, get: 'candysilver', getN: 8 },
+      { give: 'presses', giveN: 5, get: 'candybullet', getN: 8 },
+      { give: 'presses', giveN: 5, get: 'candygun', getN: 8 },
+      { give: 'presses', giveN: 5, get: 'candystanley', getN: 8 },
+      { give: 'presses', giveN: 5, get: 'candywaste', getN: 8 },
+      { give: 'presses', giveN: 5, get: 'candygenius', getN: 8 },
+      { give: 'presses', giveN: 5, get: 'candymint', getN: 8 },
+    ],
+    lines: [
+      {
+        npc: '要点糖吗？B.N.T.G. 最新产品，独立包装，一包一磅。5 枚压印币一组，七种口味——银舌头、咀嚼子弹、枪糖、纸片人、危害废料、天才糖、杏仁薄荷。自己挑。',
+        opts: [
+          { text: '看看货。', action: 'trade' },
+          { text: '这糖吃了真的没事吗？', next: 1 },
+          { text: '先不了。', action: 'leave' },
+        ],
+      },
+      {
+        npc: '官方说法是「轻微超自然效果，持续数小时」。我的建议是别一次吞一整包——上一个这么干的哥们，现在见谁都推销危害废料。要货就说。',
+        opts: [
+          { text: '看看货。', action: 'trade' },
+          { text: '先不了。', action: 'leave' },
+        ],
+      },
+    ],
+    idle: ['来点糖吧，新到的货。', '糖渍洗都洗不掉……算了，也算招牌。', '万圣节那阵子才真叫忙。'],
+  },
   laozhangfang: {
     id: 'laozhangfang', name: '奥托·格雷', role: '主管 · 保险库总账', faction: 'bntg',
     personality: '慢条斯理，算盘珠子比枪子儿还准；见钱眼开，但开的每一眼都有账本。',
@@ -1026,9 +1061,10 @@ export const NPCS: Record<string, NpcDef> = {
       { give: 'canned', giveN: 1, get: 'tomatosoup', getN: 1 },
       { give: 'canned', giveN: 1, get: 'garlicbread', getN: 1 },
       { give: 'driedfruit', giveN: 1, get: 'gardensalad', getN: 1 },
-      // 中等（罐装×2 / 巨兽之肉×1 / 杏仁水×1+罐装×1）
+      // 中等（罐装×2 / 巨兽之肉×1 / 旱虾×1 / 杏仁水×1+罐装×1）
       { give: 'canned', giveN: 2, get: 'pasta', getN: 1 },
       { give: 'thingmeat', giveN: 1, get: 'meatstew', getN: 1 },
+      { give: 'dryshrimp', giveN: 1, get: 'friedshrimp', getN: 1 },
       { give: 'almond', giveN: 1, give2: 'canned', give2N: 1, get: 'pizza', getN: 1 },
       // 复杂（巨兽之肉×2 / 皇家口粮×1 / 杏仁水×2+罐装×2）
       { give: 'thingmeat', giveN: 2, get: 'lasagna', getN: 1 },

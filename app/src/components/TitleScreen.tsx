@@ -104,15 +104,15 @@ export default function TitleScreen({ hasSave, onStart, onContinue, onSettings, 
         <div className="flex h-full w-full flex-row items-center justify-between gap-4 px-8">
           <div className="flex min-w-0 flex-col items-start gap-2" style={{ maxWidth: '48%' }}>
             <h1
-              className="font-title anim-flickerIn"
+              className="title-hero font-title anim-flickerIn"
               style={{ fontSize: 'clamp(32px, 14vh, 58px)', lineHeight: 1.1, color: 'var(--text)', textShadow: '2px 0 rgba(179,53,43,0.4), -2px 0 rgba(122,111,208,0.4)' }}
             >
               {title}
             </h1>
-            <div className="font-mono2 text-[11px]" style={{ color: 'var(--text-dim)', letterSpacing: '0.4em' }}>
+            <div className="title-hero font-mono2 text-[11px]" style={{ color: 'var(--text-dim)', letterSpacing: '0.4em' }}>
               BACKROOMS : DESCENT
             </div>
-            <div className="font-mono2 mt-1 text-[10px]" style={{ color: 'var(--text-dim)', opacity: 0.8 }}>
+            <div className="title-hero font-mono2 mt-1 text-[10px]" style={{ color: 'var(--text-dim)', opacity: 0.8 }}>
               v1.0 · 所有层级均为程序生成 · 戴上耳机体验更佳
             </div>
           </div>
@@ -129,19 +129,19 @@ export default function TitleScreen({ hasSave, onStart, onContinue, onSettings, 
           <div className="flex w-full max-w-[560px] flex-col items-center gap-6 px-6">
             <div className="text-center">
               <h1
-                className="font-title anim-flickerIn"
+                className="title-hero font-title anim-flickerIn"
                 style={{ fontSize: 'clamp(44px, 10vw, 72px)', color: 'var(--text)', textShadow: '2px 0 rgba(179,53,43,0.4), -2px 0 rgba(122,111,208,0.4)' }}
               >
                 {title}
               </h1>
-              <div className="font-mono2 mt-2 text-[13px]" style={{ color: 'var(--text-dim)', letterSpacing: '0.4em' }}>
+              <div className="title-hero font-mono2 mt-2 text-[13px]" style={{ color: 'var(--text-dim)', letterSpacing: '0.4em' }}>
                 BACKROOMS : DESCENT
               </div>
             </div>
             <div className="flex flex-col gap-3" style={{ opacity: entered ? 1 : 0, transition: 'opacity 0.5s' }}>
               {buttons}
             </div>
-            <div className="font-mono2 text-[11px]" style={{ color: 'var(--text-dim)' }}>
+            <div className="title-hero font-mono2 text-[11px]" style={{ color: 'var(--text-dim)' }}>
               v1.0 · 所有层级均为程序生成 · 戴上耳机体验更佳
             </div>
           </div>

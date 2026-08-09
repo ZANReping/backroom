@@ -12,7 +12,7 @@ import { LEVELS, levelLabel, levelNo, levelDefOf } from '@/game/levels'
 import { generateLevel } from '@/game/mapgen'
 import type { HudEvent } from '@/game/engine'
 import TitleScreen from '@/components/TitleScreen'
-import SettingsModal, { defaultSettings, type GameSettings } from '@/components/SettingsModal'
+import SettingsModal, { defaultSettings, THEMES, type GameSettings } from '@/components/SettingsModal'
 import HowToPlay from '@/components/HowToPlay'
 import LevelIntro from '@/components/LevelIntro'
 import FallIntro from '@/components/FallIntro'
@@ -126,6 +126,9 @@ function Game() {
     audio.setMuted(settings.muted)
     audio.setVolume(settings.volume / 100)
     engine.dev.god = settings.devMode // 开发者模式：无敌
+    // 界面主题：挂到 <html data-theme>，CSS 变量随之整体切换（见 index.css）
+    document.documentElement.dataset.theme = settings.theme
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', THEMES.find((t) => t.id === settings.theme)?.bg ?? '#0a0908')
   }, [settings])
 
   // 准心兜底隐藏（死亡/胜利/回标题/任意覆盖层时；渲染层缓存偶发不同步的保险）
@@ -496,6 +499,25 @@ function Game() {
     rendererRef.current?.setFarLights(settings.farLights)
   }, [settings.farLights])
 
+  // 画面设置：VCR 滤镜（默认关）
+  useEffect(() => {
+    rendererRef.current?.setVcrFx(settings.vcrFx)
+  }, [settings.vcrFx])
+
+  // 画面设置：光影模式与细分项（v50；realistic 细项在 classic 下推送也无效，渲染器内自守门）
+  useEffect(() => {
+    const r = rendererRef.current
+    if (!r) return
+    r.setLightMode(settings.lightMode)
+    r.setShadowQuality(settings.shadowQuality)
+    r.setSunShadows(settings.sunShadows)
+    r.setLightShadows(settings.lightShadows)
+    r.setReflectivity(settings.reflectivity)
+    r.setBloomFx(settings.bloomFx)
+    r.setBloomStrength(settings.bloomStrength)
+    r.setExposure(settings.exposure)
+  }, [settings.lightMode, settings.shadowQuality, settings.sunShadows, settings.lightShadows, settings.reflectivity, settings.bloomFx, settings.bloomStrength, settings.exposure])
+
   const quitToTitle = () => {
     engine.over = true
     audio.stopHum()
@@ -513,7 +535,7 @@ function Game() {
     : undefined
 
   return (
-    <div className={`fixed inset-0 overflow-hidden ${settings.grain ? 'vhs-grain scanlines' : 'scanlines'} ${customPause ? 'br-hide-hud-pause' : ''}`} style={{ background: 'var(--ink)' }}>
+    <div className={`br-app fixed inset-0 overflow-hidden ${settings.grain ? 'vhs-grain scanlines' : 'scanlines'} ${customPause ? 'br-hide-hud-pause' : ''}`} style={{ background: 'var(--ink)' }}>
       <canvas ref={canvasRef} style={{ position: 'fixed', top: 0, left: 0, zIndex: 1, filter: gradeFilter }} />
 
       {/* 受伤闪屏 */}

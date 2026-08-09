@@ -341,7 +341,7 @@ function genBntgOutpost(m: GameMap, rng: RNG, def: LevelDef): { cx: number; cy: 
   shop(11, 30, 17, 35, [[17, 32]], null, 'bntg_poster.png') // 西三（随机 NPC 看摊）
   shop(47, 16, 53, 21, [[47, 18]], null, 'bntg_poster.png') // 东一（随机 NPC 看摊）
   shop(47, 23, 53, 28, [[47, 25]], null, 'bntg_poster.png') // 东二（随机 NPC 看摊）
-  shop(47, 30, 53, 35, [[47, 32]], null, 'bntg_poster.png') // 东三（随机 NPC 看摊）
+  shop(47, 30, 53, 35, [[47, 32]], 'candyman', 'bntg_poster.png') // 东三：糖果贩「糖佬」希德（Object 5，替换原随机 NPC 摊位）
   // 南二店南北贯通（北门朝大厅 + 南门朝南连廊）——生活区经店铺与大厅相连（否则整片南区成孤岛被回填）
   shop(20, 41, 26, 46, [[23, 41], [23, 46]], null, 'bntg_poster.png') // 南一（随机 NPC 看摊）
   shop(28, 41, 34, 46, [[31, 41], [31, 46]], null, 'bntg_poster.png') // 南二（随机 NPC 看摊）

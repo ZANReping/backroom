@@ -284,9 +284,9 @@ export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
         }
       }
       // v35：定居点地标——天鹰段小概率出现（wikidot：M.E.G. 罗经点小队放置的引路标志）
-      if (rng.chance(0.04)) placeFree('landmark', 1, 1, false, false, { outpost: 'alpha' })
+      if (rng.chance(0.06)) placeFree('landmark', 1, 1, false, false, { outpost: 'alpha' })
       // v38：Tom 的餐馆地标——天鹰段更小概率出现（与 alpha 独立判定，暖红布料）
-      if (rng.chance(0.015)) placeFree('landmark', 1, 1, false, false, { outpost: 'tom' })
+      if (rng.chance(0.025)) placeFree('landmark', 1, 1, false, false, { outpost: 'tom' })
       break
     }
     case 'storage': {
@@ -298,7 +298,7 @@ export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
       if (rng.chance(0.6)) placeFree('locker', 1, 1, true, true, { loot: 1 })
       if (rng.chance(0.4)) placeFree('suitcase', 1, 1, false, true, { loot: 1 })
       // v35：BNTG 商人之家地标——跃金段小概率出现（深绿天平布料 + 压印币）
-      if (rng.chance(0.04)) placeFree('landmark', 1, 1, false, false, { outpost: 'bntg' })
+      if (rng.chance(0.06)) placeFree('landmark', 1, 1, false, false, { outpost: 'bntg' })
       break
     }
     case 'gothic': {
@@ -324,7 +324,7 @@ export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
         }
       }
       // v37：阿丽亚娜集团地标——哥特段小概率出现（紫环布料 + 消毒液）
-      if (rng.chance(0.04)) placeFree('landmark', 1, 1, false, false, { outpost: 'ariane' })
+      if (rng.chance(0.06)) placeFree('landmark', 1, 1, false, false, { outpost: 'ariane' })
       break
     }
     case 'ouroboros': {
@@ -584,6 +584,36 @@ export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
     }
     const habMiss = Object.values(habFallback).reduce((a, b) => a + b, 0)
     if (habMiss > 0) console.warn(`[habitat] L1 无限 chunk(${cx},${cy}) 无符合瓦片，降级 any ×${habMiss}`)
+  }
+
+  // 旱虾（Entity 20）：约 1/4 的 chunk 在潮湿地面上生成 1–2 只（无害游荡；L0 不生成）
+  if (rng.chance(0.25)) {
+    const wets: number[] = []
+    for (let i = 0; i < CS * CS; i++) if (wet[i] === 1 && tiles[i] === 1) wets.push(i)
+    for (let k = 0, n = Math.min(wets.length, rng.int(1, 2)); k < n; k++) {
+      const i = wets[rng.int(0, wets.length - 1)]
+      entities.push({ type: 'dryshrimp', x: WX + (i % CS) + 0.5, y: WY + ((i / CS) | 0) + 0.5 })
+    }
+  }
+  // Nguithr'xurh（Entity 16）：约 4% 的 chunk 在天花板上结一球状网囊
+  if (rng.chance(0.04)) {
+    for (let t = 0; t < 30; t++) {
+      const x = rng.int(2, CS - 3), y = rng.int(2, CS - 3)
+      if (!isF(x, y) || solidAtL(x, y)) continue
+      entities.push({ type: 'nguithr', x: WX + x + 0.5, y: WY + y + 0.5 })
+      break
+    }
+  }
+  // 火盐晶体（Object 15）：前五个层级的角落产生（约 18% chunk 一枚）
+  if (rng.chance(0.18)) {
+    for (let t = 0; t < 40; t++) {
+      const x = rng.int(2, CS - 3), y = rng.int(2, CS - 3)
+      if (!isF(x, y) || solidAtL(x, y)) continue
+      const walls = (!isF(x + 1, y) ? 1 : 0) + (!isF(x - 1, y) ? 1 : 0) + (!isF(x, y + 1) ? 1 : 0) + (!isF(x, y - 1) ? 1 : 0)
+      if (walls < 2) continue
+      pushItem('firesalt', x, y)
+      break
+    }
   }
 
   return { variant, tiles, wet, elev, step, tint, crawl, structures, items, lights, exits, entities, npcs, habFallback }

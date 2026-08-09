@@ -17,7 +17,7 @@ export interface GenChunk {
   exits: ExitInstance[]
   // v41：calm=实例级被动（L2 死亡飞蛾通常不主动攻击玩家）——instantiate 浅拷贝 def 置 passive
   // v44：scale=实例级体型缩放（L2 温顺死亡飞蛾 0.6）——instantiate 一并浅拷贝带入 def
-  entities: { type: string; x: number; y: number; calm?: boolean; scale?: number }[]
+  entities: { type: string; x: number; y: number; calm?: boolean; scale?: number; facing?: number }[]
   // v39：chunk 生成 NPC（BRC 员工随衔尾段 chunk 生成；定义完整内嵌，按 chunk 确定性生成）
   npcs?: { def: NpcDef; x: number; y: number; facing?: number }[]
   // v27：栖息地降级计数（`${type}:${habitat}` → 次数，与有限层 GameMap.habitatFallback 同契约）；

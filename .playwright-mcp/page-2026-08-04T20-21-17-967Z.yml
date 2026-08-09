@@ -1,0 +1,21 @@
+- generic [active] [ref=f4e1]:
+  - generic [ref=f4e5]:
+    - generic:
+      - generic: SECTOR 0.7.13
+      - generic: NOCLIP DETECTED
+      - generic: "HUM: 50Hz"
+      - generic: CAM_04 OFFLINE
+      - generic: "DEPTH: ??"
+      - generic: SIGNAL LOST
+    - generic [ref=f4e7]:
+      - generic [ref=f4e8]:
+        - heading "后 室" [level=1] [ref=f4e9]
+        - generic [ref=f4e10]: "BACKROOMS : DESCENT"
+      - generic [ref=f4e11]:
+        - button "▸ 开始游戏" [ref=f4e12] [cursor=pointer]
+        - button "▸ 图鉴档案" [ref=f4e13] [cursor=pointer]
+        - button "▸ 形象编辑" [ref=f4e14] [cursor=pointer]
+        - button "▸ 设置" [ref=f4e15] [cursor=pointer]
+        - button "▸ 操作说明" [ref=f4e16] [cursor=pointer]
+      - generic [ref=f4e17]: v1.0 · 所有层级均为程序生成 · 戴上耳机体验更佳
+  - button "进入全屏" [ref=f4e18] [cursor=pointer]

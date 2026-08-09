@@ -83,6 +83,9 @@ export interface Entity {
   animT: number // 步态相位
   hidden?: boolean // 埋伏中（管道蠕虫）
   screamed?: boolean // 久坐者
+  activated?: boolean // 人制品售货机：已被激活（背对触发，长出骷髅手腿追击玩家）
+  webX?: number // Nguithr'xurh：陷阱（结囊）位置 x/y
+  webY?: number
   disguised?: string // 窃皮者伪装成的物品类型
   fakeT?: number // 复印机幽灵幻影计时
   scrapeT?: number // 穿墙沙沙声计时（钝人）

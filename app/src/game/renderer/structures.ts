@@ -108,6 +108,17 @@ function faceOutward(o: THREE.Object3D, s: Structure, m: GameMap) {
   o.rotation.y = f === 0 ? Math.PI : f === 1 ? Math.PI / 2 : f === 2 ? 0 : -Math.PI / 2
 }
 
+// v51：柜类贴墙——faceOutward 只旋转不位移，柜子停在瓦片中央离墙一截；
+// flushToWall 在旋正后把已建内容整体移向墙面（背面贴墙、正面朝室内，附近无墙则不动）
+function flushToWall(grp: THREE.Group, s: Structure, m: GameMap, depth: number) {
+  if (!wallDirs(s, m).length) return
+  faceOutward(grp, s, m)
+  const inner = new THREE.Group()
+  inner.position.z = -(0.5 - depth / 2 - 0.02)
+  for (const k of [...grp.children]) inner.add(k) // 快照遍历再转移（真实 three 的 add 自动脱离旧父级）
+  grp.add(inner)
+}
+
 // 强制贴墙（墙面装饰）：朝向并贴上最近的实心瓦片（砌墙或虚空皆可——渲染层虚空同样立墙盒）。
 // 四邻优先；四邻全空则沿四方向各搜至 3 格取最近墙面，把装饰整体平移过去——彻底消除「浮空」。
 // （取代旧 faceOutward+hugWall 组合：旧实现只认砌墙 tile===2，虚空旁装饰停留在瓦片中心悬浮）
@@ -418,6 +429,13 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       const wheel = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.05, 6, 10), new THREE.MeshLambertMaterial({ color: '#a63a2e' }))
       wheel.position.set(0, 1.1, 0.18)
       grp.add(wheel)
+      // v51 细化：手轮辐条（两轮梁十字）
+      for (const a of [0, Math.PI / 2]) {
+        const spoke = box(0.4, 0.035, 0.035, '#a63a2e', 0, 1.1, 0.18)
+        spoke.rotation.z = a
+        grp.add(spoke)
+      }
+      grp.add(cyl(0.06, 0.06, 0.1, '#8a4526', 0, 1.1, 0.12, 8).rotateX(Math.PI / 2)) // 轮毂
       break
     }
     case 'gauge': {
@@ -431,6 +449,16 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       grp.add(cyl(1.3, 1.4, 2.6, dead ? '#332c26' : '#4a3f35', 0, 1.3, 0, 12))
       grp.add(cyl(0.2, 0.2, 1.5, dead ? '#6e3428' : '#a63a2e', 0.9, 2.6, 0))
       if (!dead) grp.add(glow(0.5, 0.3, 0.05, '#ff6a3a', 0, 0.9, s.h / 2 - 0.3))
+      // v51 细化：铆钉环行 + 压力表微光 + 底部炉栅（ footprint/实心不变，L2 共用同样受益）
+      for (const ry of [0.7, 1.9]) {
+        const rr = ry < 1.3 ? 1.36 - (1.3 - ry) * 0.1 : 1.36 - (ry - 1.3) * 0.1 // 罐体近似半径
+        for (let i = 0; i < 10; i++) {
+          const a = (i / 10) * Math.PI * 2
+          grp.add(box(0.05, 0.05, 0.05, dead ? '#2a241e' : '#5a4a3a', Math.cos(a) * rr, ry, Math.sin(a) * rr))
+        }
+      }
+      if (!dead) grp.add(glow(0.1, 0.1, 0.03, '#e8b93c', -0.55, 1.85, s.h / 2 - 0.62)) // 压力表
+      grp.add(box(0.6, 0.22, 0.05, '#1c1e22', 0, 0.28, s.h / 2 - 0.28)) // 底部炉栅
       break
     }
     case 'generator': {
@@ -440,6 +468,14 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       drum.rotation.z = Math.PI / 2
       grp.add(drum)
       if (!dead) grp.add(glow(0.2, 0.1, 0.05, '#9adfff', s.w * 0.3, 1.0, s.h * 0.43))
+      // v51 细化：底部槽钢轨 + 顶部排气管 + 侧面控制面板（2~3 微光表盘）
+      for (const pz of [-s.h * 0.32, s.h * 0.32]) grp.add(box(s.w * 0.95, 0.08, 0.08, '#26282c', 0, 0.04, pz)) // 底轨
+      grp.add(cyl(0.07, 0.07, 0.6, dead ? '#22252a' : '#4a4f56', -s.w * 0.25, 1.9, 0, 8)) // 排气管
+      if (!dead) {
+        grp.add(box(0.3, 0.24, 0.03, '#2e3238', s.w * 0.26, 1.15, s.h * 0.44)) // 控制面板
+        for (let i = 0; i < 3; i++)
+          grp.add(glow(0.04, 0.04, 0.02, ['#9adfff', '#6f9a55', '#e8b93c'][i], s.w * 0.26 - 0.08 + i * 0.08, 1.15, s.h * 0.44 + 0.02))
+      }
       break
     }
     case 'cabinet': {
@@ -452,9 +488,9 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       door.position.set(0.44, 0.2, -0.22)
       door.userData.lid = 1
       grp.add(door)
-      // v48 缺省朝向：背贴最近墙、正面（+Z）朝外；data.deg 可显式覆盖
+      // v48 缺省朝向：背贴最近墙、正面（+Z）朝外；data.deg 可显式覆盖；v51 贴墙位移
       if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
-      else faceOutward(grp, s, m)
+      else flushToWall(grp, s, m, 0.5)
       break
     }
     case 'trench': {
@@ -848,9 +884,9 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       dd.position.set(0.44, 0.1, -0.23)
       dd.userData.lid = 1
       grp.add(dd)
-      // v48 缺省朝向：背贴最近墙、抽屉面（+Z）朝外；data.deg 可显式覆盖
+      // v48 缺省朝向：背贴最近墙、抽屉面（+Z）朝外；data.deg 可显式覆盖；v51 贴墙位移
       if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
-      else faceOutward(grp, s, m)
+      else flushToWall(grp, s, m, 0.5)
       break
     }
     case 'arch': {
@@ -1008,6 +1044,477 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       housing.add(glow(0.52, 0.03, 0.26, '#fff2d8', 0, -0.165, 0)) // 斜向下灯板
       inner.add(housing)
       mountOnWall(inner, grp, s, m) // 强制贴最近墙（含虚空墙），不浮空
+      break
+    }
+    // ===== v51：Level 3 发电站无限化重制 =====
+    case 'barfence': {
+      // 铁栅栏（封死整段廊道：无门、不可破坏、不可通行；栅栏另一侧可见不可达）——
+      // 竖条 + 三条横档 + 上下框，暗锈金属，满墙高
+      const bw = s.w, bars = '#3a332c', rails = '#57483a'
+      const n = Math.max(2, Math.round(bw / 0.13))
+      for (let i = 0; i <= n; i++) {
+        const bx = -bw / 2 + (i * bw) / n
+        grp.add(box(0.032, H, 0.032, bars, bx, H / 2, 0))
+      }
+      for (const ry of [H * 0.22, H * 0.52, H * 0.82])
+        grp.add(box(bw, 0.07, 0.05, rails, 0, ry, 0))
+      grp.add(box(bw, 0.12, 0.09, '#4a3f34', 0, H - 0.06, 0)) // 上框
+      grp.add(box(bw, 0.12, 0.09, '#4a3f34', 0, 0.06, 0)) // 下框
+      break
+    }
+    case 'bargate': {
+      // 栅栏门（铁栅栏中的可交互门扇）：门框 + 铰链栏栅门扇（userData.lid 由 updateStructs 驱动旋开）
+      const bars = '#3a332c', rails = '#57483a'
+      grp.add(box(0.12, H, 0.14, '#4a3f34', -0.44, H / 2, 0)) // 门柱
+      grp.add(box(0.12, H, 0.14, '#4a3f34', 0.44, H / 2, 0))
+      grp.add(box(1.0, 0.12, 0.14, '#4a3f34', 0, H - 0.06, 0)) // 门楣
+      grp.add(box(1.0, 0.1, 0.12, '#4a3f34', 0, 0.05, 0)) // 门槛
+      // 门扇：铰链在局部 -X 缘（子件按 +0.40 偏移排布，旋开时绕铰链缘转动）
+      const leaf = new THREE.Group()
+      leaf.position.set(-0.40, 0, 0)
+      leaf.userData.lid = 1
+      for (let i = 0; i < 7; i++)
+        leaf.add(box(0.03, H - 0.3, 0.03, bars, 0.07 + i * 0.11, (H - 0.3) / 2 + 0.08, 0))
+      leaf.add(box(0.78, 0.07, 0.05, rails, 0.40, H * 0.3, 0)) // 门扇横档
+      leaf.add(box(0.78, 0.07, 0.05, rails, 0.40, H * 0.75, 0))
+      leaf.add(box(0.05, 0.16, 0.08, '#8a9098', 0.72, 1.05, 0.04)) // 门把手
+      grp.add(leaf)
+      if (s.data?.rot) grp.rotation.y = Math.PI / 2 // v51：东西墙门洞（通行沿 local Z，房间门洞用）
+      break
+    }
+    case 'elecbox': {
+      // 配电箱（壁挂灰绿金属箱，可搜索容器；引擎按距离驱动电流嗡鸣）——强制贴最近墙，不浮空
+      const inner = new THREE.Group()
+      grp.add(inner)
+      inner.add(box(0.62, 0.9, 0.18, '#5a6258', 0, 1.1, 0)) // 箱体
+      inner.add(box(0.56, 0.84, 0.012, '#4a5248', 0, 1.1, 0.095)) // 箱门（缝隙色差）
+      inner.add(box(0.03, 0.12, 0.03, '#2e3430', 0.24, 1.1, 0.1)) // 把手
+      inner.add(glow(0.03, 0.03, 0.02, '#7ac97a', -0.18, 1.42, 0.1)) // 指示灯（绿）
+      inner.add(glow(0.03, 0.03, 0.02, '#c94a3a', -0.1, 1.42, 0.1)) // 指示灯（红）
+      // 顶部出线导管：自箱顶沿墙上行，到顶弯 90° 拐上天花板底面
+      const mrand = mulberry(s.x * 57 + s.y * 91)
+      const np = 2 + Math.floor(mrand() * 2)
+      for (let i = 0; i < np; i++) {
+        const px = -0.18 + i * 0.16
+        inner.add(cyl(0.022, 0.022, H - 1.55, '#3a3f3a', px, (1.55 + H) / 2, -0.04, 6))
+        const bend = cyl(0.022, 0.022, 0.5, '#3a3f3a', px, H - 0.05, 0.16, 6)
+        bend.rotation.x = Math.PI / 2
+        inner.add(bend)
+      }
+      mountOnWall(inner, grp, s, m)
+      break
+    }
+    case 'cables': {
+      // 电缆线束：横贯瓦片的水平缆——贴墙顶横缆 + 拐上天花板底面向室内横伸的顶缆；
+      // 生成器按连续瓦片成排布置，首尾相接成贯通长缆；仅少量瓦片带竖向弯头/下垂环（避免梯子感）。
+      // v51 修复「从墙面插出」：cgrp 不再整体平移到墙缘（旧版缆线相对坐标又带 -0.44 偏移，
+      // 双重偏移使横缆嵌进墙内不可见、只剩顶缆垂直穿出墙面）——统一在瓦片中心坐标系按墙侧取偏移。
+      const opts: number[] = []
+      for (const [dx, dy, dd] of [[0, -1, 0], [1, 0, 1], [0, 1, 2], [-1, 0, 3]] as const) {
+        const nx = s.x + dx, ny = s.y + dy
+        if (nx < 0 || ny < 0 || nx >= m.w || ny >= m.h) continue
+        if (m.tiles[ny * m.w + nx] !== 1) opts.push(dd)
+      }
+      if (!opts.length) return null
+      const d = opts[(s.x * 7 + s.y * 13) % opts.length] // 确定性选墙（wallDir 的 Math.random 会导致重建后换墙）
+      const cgrp = new THREE.Group()
+      const cols = ['#1c1a18', '#1c1a18', '#6a2a22', '#24323e']
+      const mrand = mulberry(s.x * 73 + s.y * 131)
+      const nc = 3 + Math.floor(mrand() * 3)
+      const zw = -0.465 // 贴墙面（房间侧，local -z 朝墙）
+      for (let i = 0; i < nc; i++) {
+        const cc = cols[i % cols.length]
+        const cx = 0.3 - i * 0.12
+        const cy = H - 0.36 - i * 0.05
+        cgrp.add(box(1.0, 0.026, 0.026, cc, 0, cy, zw)) // 墙面水平横缆（沿 local X 横贯整瓦片）
+        cgrp.add(box(0.026, 0.026, 0.62, cc, cx, H - 0.06, zw + 0.33)) // 天花板横缆（自墙面拐上顶，向室内横伸）
+        if (mrand() < 0.35) // 竖向弯头（墙缆→顶缆的 90° 连接），仅少量瓦片带
+          cgrp.add(box(0.026, H - 0.06 - cy, 0.026, cc, cx, (cy + H - 0.06) / 2, zw))
+        else if (i === 1 && mrand() < 0.3) { // 偶发下垂环（同 pipes 天花板线束惯例）
+          const loop = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.014, 5, 8, Math.PI), new THREE.MeshLambertMaterial({ color: '#1c1a18' }))
+          loop.geometry.rotateX(Math.PI)
+          loop.position.set((mrand() - 0.5) * 0.6, cy, zw)
+          cgrp.add(loop)
+        }
+      }
+      if (d === 2) cgrp.rotation.y = Math.PI
+      else if (d === 3) cgrp.rotation.y = Math.PI / 2
+      else if (d === 1) cgrp.rotation.y = -Math.PI / 2
+      grp.add(cgrp)
+      break
+    }
+    case 'statue': {
+      // 风化的希腊女像（wikidot L3 雕像照片：铁栅栏后的砖砌区段，白色大理石长袍女像立于深色基座）
+      // data.dmg 残缺变体：0 双臂残桩 / 1 单臂残桩+斜首侵蚀 / 2 无头颈桩（多数明显残损）
+      const dmg = Number(s.data?.dmg ?? 0)
+      const marble = '#d8d4c8', weather = '#9a968c', grime = '#7a8272', ped = '#2e2c2a'
+      grp.add(box(0.7, 0.4, 0.7, ped, 0, 0.2, 0)) // 深色石基座
+      grp.add(box(0.6, 0.06, 0.6, '#3a3835', 0, 0.43, 0)) // 基座顶板
+      grp.add(box(0.62, 0.08, 0.62, grime, 0, 0.06, 0)) // 底座青灰积垢
+      // 长袍下身（锥筒 + 褶裥竖棱）
+      grp.add(cyl(0.16, 0.25, 0.85, marble, 0, 0.88, 0, 8))
+      for (let i = 0; i < 5; i++) {
+        const a = (i / 5) * Math.PI * 2 + 0.3
+        grp.add(box(0.035, 0.78, 0.035, i % 2 ? weather : marble, Math.cos(a) * 0.2, 0.86, Math.sin(a) * 0.2))
+      }
+      // 躯干 + 斜披带（sash）
+      grp.add(box(0.3, 0.55, 0.2, marble, 0, 1.55, 0))
+      const sash = box(0.07, 0.56, 0.22, weather, 0, 1.55, 0)
+      sash.rotation.z = 0.5
+      grp.add(sash)
+      grp.add(box(0.36, 0.1, 0.18, marble, 0, 1.85, 0)) // 肩
+      if (dmg === 0) {
+        // 双臂自肩部断失，仅余残桩
+        grp.add(cyl(0.045, 0.05, 0.12, marble, -0.2, 1.81, 0, 6).rotateZ(0.5))
+        grp.add(cyl(0.045, 0.05, 0.12, marble, 0.2, 1.81, 0, 6).rotateZ(-0.5))
+        grp.add(box(0.16, 0.2, 0.16, marble, 0, 2.0, 0)) // 头（风化无面）
+        grp.add(box(0.17, 0.05, 0.17, weather, 0, 2.11, 0)) // 侵蚀发顶
+      } else if (dmg === 1) {
+        // 单臂残桩 + 头部斜倾侵蚀
+        grp.add(cyl(0.045, 0.05, 0.12, marble, -0.2, 1.81, 0, 6).rotateZ(0.5))
+        const head = box(0.15, 0.19, 0.15, marble, 0.03, 1.99, 0)
+        head.rotation.z = 0.28
+        grp.add(head)
+        grp.add(box(0.1, 0.06, 0.1, weather, 0.08, 2.07, 0)) // 侵蚀缺角
+      } else {
+        // 无头：颈桩 + 断裂面
+        grp.add(cyl(0.05, 0.06, 0.1, marble, 0, 1.9, 0, 6))
+        grp.add(box(0.12, 0.04, 0.12, weather, 0, 1.95, 0))
+      }
+      // 风化斑驳（灰色侵蚀块/条痕）
+      grp.add(box(0.08, 0.2, 0.02, weather, 0.08, 1.5, 0.11))
+      grp.add(box(0.02, 0.3, 0.06, weather, -0.12, 1.1, 0.14))
+      grp.add(box(0.26, 0.06, 0.26, grime, 0, 0.5, 0)) // 像足积垢环
+      break
+    }
+    case 'conveyor': {
+      // 装配线传送带台（沿 local X，长度取 s.w；data.rot 纵向模式长度取 s.h）：深色金属脚架 + 侧轨
+      // + 橡胶带面 + 两端滚筒 + 带上散件
+      const L = Math.max(s.w, s.h) // v51 修复：纵向（rot）排长度在 s.h——旧版恒取 s.w=1，长排只剩 1m 残段
+      const frame = '#3a3a40', belt = '#26262a'
+      const legs = L > 3 ? [-L / 2 + 0.2, 0, L / 2 - 0.2] : [-L / 2 + 0.2, L / 2 - 0.2]
+      for (const lx of legs) {
+        grp.add(box(0.08, 0.62, 0.08, frame, lx, 0.31, -0.22))
+        grp.add(box(0.08, 0.62, 0.08, frame, lx, 0.31, 0.22))
+      }
+      grp.add(box(L, 0.08, 0.62, frame, 0, 0.66, 0)) // 台面框
+      grp.add(box(L, 0.05, 0.5, belt, 0, 0.73, 0)) // 橡胶带面（微亮）
+      grp.add(box(L, 0.07, 0.04, '#4a4a52', 0, 0.76, -0.28)) // 侧轨
+      grp.add(box(L, 0.07, 0.04, '#4a4a52', 0, 0.76, 0.28))
+      for (const ex of [-L / 2 + 0.08, L / 2 - 0.08]) { // 两端滚筒
+        const drum = cyl(0.09, 0.09, 0.52, '#55555e', ex, 0.7, 0, 10)
+        drum.rotation.x = Math.PI / 2
+        grp.add(drum)
+      }
+      // 带上散件（按瓦片哈希 1~2 件：小盒 / 零件箱 / 板材叠）
+      const crand = mulberry(s.x * 37 + s.y * 53)
+      for (let i = 0, n = 1 + Math.floor(crand() * 2); i < n; i++) {
+        const px = (crand() - 0.5) * Math.max(0.4, L - 0.6), pz = (crand() - 0.5) * 0.3
+        if (crand() < 0.35) { // 板材叠（2~3 层薄板；底面贴带面 0.755）
+          for (let b = 0, bn = 2 + Math.floor(crand() * 2); b < bn; b++)
+            grp.add(box(0.3, 0.02, 0.24, '#a89263', px, 0.765 + b * 0.025, pz))
+        } else grp.add(box(0.16, 0.12, 0.14, ['#6a5a42', '#4a525a', '#7a6a4a'][Math.floor(crand() * 3)], px, 0.82, pz))
+      }
+      if (s.data?.rot) grp.rotation.y = Math.PI / 2 // v51：纵向传送带（沿 local Z，房间装配线长排）
+      break
+    }
+    case 'angelstatue': {
+      // 圣所大型天使像（青铜深色带铜绿）：深色石圆柱基座 + 长袍立像 + 后掠双翼 + 高举长号角
+      // data.plinth=祭坛垫高（尽端石台底座，wikidot：或以祭坛形式抬高置于基座）
+      const bronze = '#4a4438', patina = '#5a6a5a', stone = '#3a3632'
+      if (s.data?.plinth) grp.add(box(0.95, 0.14, 0.95, '#46403a', 0, 0.07, 0)) // 祭坛石台
+      grp.add(cyl(0.42, 0.46, 0.1, '#2e2a26', 0, 0.05, 0, 12)) // 基座底盘
+      grp.add(cyl(0.34, 0.4, 0.5, stone, 0, 0.3, 0, 12)) // 圆柱基座
+      // 长袍身躯（锥筒 + 褶裥竖棱）
+      grp.add(cyl(0.18, 0.3, 1.1, bronze, 0, 1.1, 0, 8))
+      for (let i = 0; i < 4; i++) {
+        const a = (i / 4) * Math.PI * 2 + 0.4
+        grp.add(box(0.04, 1.0, 0.04, i % 2 ? patina : bronze, Math.cos(a) * 0.24, 1.05, Math.sin(a) * 0.24))
+      }
+      grp.add(box(0.34, 0.5, 0.22, bronze, 0, 1.9, 0)) // 胸肩
+      grp.add(box(0.16, 0.2, 0.16, bronze, 0, 2.25, 0)) // 头
+      // 双翼（大幅后掠斜板，青铜 + 铜绿条痕——剪影优先，远处可辨）
+      for (const sd of [-1, 1]) {
+        const wing = box(0.07, 1.35, 0.5, bronze, sd * 0.38, 2.15, -0.24)
+        wing.rotation.z = sd * 0.72
+        wing.rotation.x = -0.28
+        grp.add(wing)
+        const streak = box(0.025, 1.0, 0.36, patina, sd * 0.43, 2.1, -0.22)
+        streak.rotation.z = sd * 0.72
+        streak.rotation.x = -0.28
+        grp.add(streak)
+      }
+      // 高举的手臂 + 长号角（斜向上，加长号角强化剪影）
+      const arm = cyl(0.04, 0.045, 0.5, bronze, 0.24, 2.2, 0.05, 6)
+      arm.rotation.z = -0.7
+      grp.add(arm)
+      const horn = cyl(0.02, 0.07, 1.15, bronze, 0.5, 2.75, 0.1, 6)
+      horn.rotation.z = -0.5
+      grp.add(horn)
+      break
+    }
+    case 'fallencolumn': {
+      // 倒塌的大理石柱残件（非实心瓦砾）：整根卧倒柱身 + 柱头/柱础碎块 + 偶发站立残桩
+      const mc = '#c8c2b2', weather = '#9a968c'
+      const L = Math.max(s.w, s.h)
+      const frag = new THREE.Group()
+      const shaft = cyl(0.22, 0.24, Math.max(0.5, L - 0.3), mc, 0, 0.24, 0, 10)
+      shaft.rotation.z = Math.PI / 2 // 卧倒（沿 local X）
+      frag.add(shaft)
+      frag.add(cyl(0.28, 0.3, 0.2, weather, -L / 2 + 0.2, 0.2, 0.1, 8)) // 柱础碎块
+      frag.add(box(0.3, 0.18, 0.26, mc, L / 2 - 0.25, 0.12, -0.12)) // 柱头碎块
+      frag.add(box(0.2, 0.12, 0.18, weather, 0.1, 0.08, 0.3)) // 散碎块
+      if (s.h > s.w) frag.rotation.y = Math.PI / 2 // 长边沿 Z 时整体旋转
+      grp.add(frag)
+      if (mulberry(s.x * 41 + s.y * 67)() < 0.4) grp.add(cyl(0.24, 0.28, 0.7, mc, 0.3, 0.35, -0.25, 10)) // 站立残桩
+      break
+    }
+    case 'busbar': {
+      // 发电室母线龙门架（沿 local X，长度取 s.w）：绿灰钢 H 型立柱×2 + 顶横梁 + 铜母线排
+      // + 垂挂绝缘子串（叠片）+ 横梁垂下粗缆环（同 pipes 下垂环惯例）
+      const L = s.w, steel = '#4a5a4a', copper = '#8a5a3a', ins = '#c8c2b2', insG = '#7a8a7a'
+      const by = 2.6 // 横梁高
+      for (const px of [-L / 2 + 0.15, L / 2 - 0.15]) { // H 型立柱（腹板 + 翼缘）
+        grp.add(box(0.08, by, 0.3, steel, px, by / 2, 0))
+        grp.add(box(0.2, by, 0.08, steel, px, by / 2, 0))
+      }
+      grp.add(box(L, 0.12, 0.3, steel, 0, by + 0.06, 0)) // 顶横梁
+      for (let i = 0; i < 3; i++) grp.add(box(L - 0.3, 0.03, 0.05, copper, 0, by - 0.06 - i * 0.09, -0.09 + i * 0.09)) // 铜母线排
+      const brand = mulberry(s.x * 47 + s.y * 29)
+      const ns = 3 + Math.floor(brand() * 3) // 3~5 串绝缘子
+      for (let i = 0; i < ns; i++) {
+        const px = -L / 2 + 0.4 + (i + 0.5) * ((L - 0.8) / ns)
+        const discs = 3 + Math.floor(brand() * 2)
+        for (let d2 = 0; d2 < discs; d2++)
+          grp.add(cyl(0.05, 0.05, 0.03, d2 % 2 ? insG : ins, px, by - 0.14 - d2 * 0.055, 0, 6))
+      }
+      for (let i = 0, n = 1 + Math.floor(brand() * 2); i < n; i++) { // 粗缆环
+        const loop = new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.03, 5, 8, Math.PI), new THREE.MeshLambertMaterial({ color: '#1c1a18' }))
+        loop.geometry.rotateX(Math.PI)
+        loop.position.set((brand() - 0.5) * (L - 0.6), by - 0.05, 0.1)
+        grp.add(loop)
+      }
+      break
+    }
+    case 'warningsign': {
+      // 高压警示牌（贴墙，强制贴最近墙不浮空）：黄白牌 + 黑色闪电折线 + 编号小牌；data.tilt 微倾
+      const inner = new THREE.Group()
+      grp.add(inner)
+      inner.add(box(0.4, 0.5, 0.02, '#d8c94a', 0, 1.6, 0)) // 黄牌
+      const boltA = box(0.045, 0.2, 0.014, '#16161a', 0.04, 1.74, 0.014)
+      boltA.rotation.z = 0.5
+      inner.add(boltA)
+      const boltB = box(0.045, 0.2, 0.014, '#16161a', -0.04, 1.58, 0.014)
+      boltB.rotation.z = 0.5
+      inner.add(boltB)
+      inner.add(box(0.3, 0.03, 0.014, '#16161a', 0, 1.46, 0.014)) // 三角底边
+      inner.add(box(0.2, 0.09, 0.015, '#e8e4da', 0, 1.32, 0.012)) // 编号牌
+      inner.add(box(0.14, 0.02, 0.017, '#16161a', 0, 1.32, 0.013))
+      const tilt = Number(s.data?.tilt ?? 0)
+      if (tilt) inner.rotation.z = (tilt - 1.5) * 0.06 // 微倾变体
+      mountOnWall(inner, grp, s, m)
+      break
+    }
+    case 'worktable': {
+      // 装配线工作台（黄褐钢架 + 0.9 高台面；data.vise=台虎钳，否则台面材料板叠 2~3 层）
+      const L = s.w, frame = '#6a5a34', top = '#8a7a52'
+      for (const px of [-L / 2 + 0.08, L / 2 - 0.08])
+        for (const pz of [-0.18, 0.18]) grp.add(box(0.06, 0.86, 0.06, frame, px, 0.43, pz))
+      grp.add(box(L, 0.05, 0.5, top, 0, 0.9, 0)) // 台面
+      grp.add(box(L - 0.1, 0.04, 0.4, frame, 0, 0.3, 0)) // 底层搁板
+      if (s.data?.vise) {
+        grp.add(box(0.14, 0.12, 0.12, '#2e3238', L / 4, 0.99, -0.12)) // 台虎钳钳身
+        grp.add(box(0.04, 0.08, 0.16, '#3a3f46', L / 4 + 0.09, 1.0, -0.12)) // 钳口
+      } else {
+        const wrand = mulberry(s.x * 13 + s.y * 7)
+        for (let i = 0, n = 2 + Math.floor(wrand() * 2); i < n; i++)
+          grp.add(box(0.4, 0.025, 0.3, '#b09a6a', -L / 6, 0.94 + i * 0.03, 0.02)) // 材料板叠
+      }
+      break
+    }
+    case 'factlamp': {
+      // 吊装长条荧光灯（沿 local X 1.2m 灯管，吊杆自天花板垂下）——配套光源由生成器同瓦片 pushLight(noFix)
+      const hy = H - 0.55 // 灯管高度
+      for (const px of [-0.45, 0.45]) grp.add(cyl(0.015, 0.015, H - hy, '#3a3f3a', px, (hy + H) / 2, 0, 5)) // 吊杆
+      grp.add(box(1.2, 0.06, 0.12, '#4a4f46', 0, hy + 0.045, 0)) // 灯槽
+      grp.add(glow(1.1, 0.04, 0.08, '#e8e4da', 0, hy, 0)) // 自发光灯管
+      if (s.data?.rot) grp.rotation.y = Math.PI / 2 // v51：纵向吊装（沿 local Z）
+      break
+    }
+    case 'sphboiler': {
+      // 大型铆接球形黄铜锅炉（2×2）：砖石基座 + 低段黄铜球罐 + 铆钉环行 + 侧管短节 + 顶部阀轮 + 熏黑罐顶
+      const brass = '#8a6a3a', brassD = '#6a4e28', soot = '#2a241e'
+      grp.add(box(1.7, 0.5, 1.7, '#5a5148', 0, 0.25, 0)) // 砖石基座
+      const sph = new THREE.Mesh(new THREE.SphereGeometry(0.85, 10, 7), new THREE.MeshLambertMaterial({ color: brass }))
+      sph.position.set(0, 1.35, 0)
+      grp.add(sph)
+      const cap = new THREE.Mesh(
+        new THREE.SphereGeometry(0.86, 10, 4, 0, Math.PI * 2, 0, 0.7),
+        new THREE.MeshLambertMaterial({ color: soot }),
+      ) // 熏黑顶冠
+      cap.position.set(0, 1.36, 0)
+      grp.add(cap)
+      for (const ry of [1.05, 1.35, 1.65]) { // 铆钉环行
+        const rr = Math.sqrt(Math.max(0.04, 0.85 * 0.85 - (ry - 1.35) ** 2)) + 0.02
+        for (let i = 0; i < 10; i++) {
+          const a = (i / 10) * Math.PI * 2
+          grp.add(box(0.04, 0.04, 0.04, brassD, Math.cos(a) * rr, ry, Math.sin(a) * rr))
+        }
+      }
+      const stub = cyl(0.09, 0.09, 0.5, '#6a5a42', 0.9, 1.2, 0, 8) // 侧管短节
+      stub.rotation.z = Math.PI / 2
+      grp.add(stub)
+      grp.add(cyl(0.07, 0.07, 0.35, '#6a5a42', 0, 2.32, 0, 8)) // 顶管
+      const wheel = new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.035, 6, 10), new THREE.MeshLambertMaterial({ color: '#a63a2e' }))
+      wheel.position.set(0, 2.52, 0)
+      wheel.rotation.x = Math.PI / 2 // 水平阀轮
+      grp.add(wheel)
+      for (const a of [0, Math.PI / 2]) { // 阀轮辐条
+        const spoke = box(0.3, 0.025, 0.025, '#a63a2e', 0, 2.52, 0)
+        spoke.rotation.y = a
+        grp.add(spoke)
+      }
+      break
+    }
+    case 'floordrain': {
+      // 地面排水格栅（非实心）：暗色浅坑 + 4 根平行细栅条
+      grp.add(box(0.5, 0.02, 0.5, '#101215', 0, 0.01, 0))
+      for (let i = 0; i < 4; i++) grp.add(box(0.46, 0.015, 0.05, '#3a3f3a', 0, 0.025, -0.18 + i * 0.12))
+      break
+    }
+    case 'turbinegen': {
+      // 汽轮发电机组（1×3 沿 local X，实心）：混凝土基座 + 环筋长筒发电机 + 汽轮机端罩 + 励磁箱
+      const L = s.w, steel = '#5a6a72', dark = '#3a444a', plinth = '#6a665e'
+      grp.add(box(L * 0.94, 0.22, 0.8, plinth, 0, 0.11, 0)) // 混凝土基座
+      const barrel = cyl(0.34, 0.34, L * 0.52, steel, -L * 0.12, 0.62, 0, 12) // 长筒发电机
+      barrel.rotation.z = Math.PI / 2
+      grp.add(barrel)
+      for (const rx of [-L * 0.3, -L * 0.12, L * 0.06]) { // 环筋机壳
+        const rib = cyl(0.37, 0.37, 0.06, dark, rx, 0.62, 0, 12)
+        rib.rotation.z = Math.PI / 2
+        grp.add(rib)
+      }
+      const turbo = cyl(0.46, 0.5, 0.62, dark, L * 0.28, 0.66, 0, 12) // 汽轮机端罩（更大圆壳）
+      turbo.rotation.z = Math.PI / 2
+      grp.add(turbo)
+      grp.add(box(0.34, 0.4, 0.5, '#4a5248', -L * 0.44, 0.46, 0)) // 励磁箱
+      grp.add(cyl(0.16, 0.16, 0.18, '#6a5a3a', L * 0.06, 0.5, 0, 10).rotateZ(Math.PI / 2)) // 联轴器护罩
+      for (let i = 0; i < 3; i++) grp.add(glow(0.05, 0.05, 0.02, ['#9adfff', '#6f9a55', '#e8b93c'][i], -L * 0.2 + i * 0.12, 1.02, 0.36)) // 微光表盘
+      grp.add(cyl(0.04, 0.04, 0.3, '#8a5a3a', L * 0.2, 0.3, 0.3, 6).rotateX(0.9)) // 润滑油管短节
+      break
+    }
+    case 'switchboard': {
+      // 配电盘柜（1×1 竖柜，并排成列）：灰绿高柜 + 表计行 + 指示灯列 + 断路器手柄 + 顶部导管入顶
+      const cab = '#4a5248', darkC = '#2e3430'
+      grp.add(box(0.9, 2.2, 0.35, cab, 0, 1.1, 0))
+      grp.add(box(0.92, 0.08, 0.38, darkC, 0, 0.04, 0)) // 底座
+      for (let i = 0; i < 3; i++) { // 表计行
+        const dial = cyl(0.055, 0.055, 0.02, '#d8d2c2', -0.24 + i * 0.24, 1.86, 0.19, 10)
+        dial.rotation.x = Math.PI / 2
+        grp.add(dial)
+        grp.add(glow(0.02, 0.02, 0.012, '#e8b93c', -0.24 + i * 0.24, 1.86, 0.2))
+      }
+      for (let i = 0; i < 4; i++) grp.add(glow(0.03, 0.03, 0.015, i % 2 ? '#7ac97a' : '#c94a3a', -0.3, 1.55 - i * 0.12, 0.19)) // 指示灯列
+      for (let i = 0; i < 3; i++) grp.add(box(0.05, 0.14, 0.05, '#16181a', 0.02 + i * 0.16, 1.3, 0.19)) // 断路器手柄
+      grp.add(cyl(0.035, 0.035, H - 2.2, darkC, 0.2, (2.2 + H) / 2, 0.05, 6)) // 顶部导管入顶
+      if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180 // 朝向（排面朝向房内）
+      break
+    }
+    case 'transformer': {
+      // 油浸式变压器（2×2，实心）：铆接油罐 + 两侧散热片排 + 顶部瓷套管 + 底轨 + 地面油渍
+      const tank = '#5a5a46', darkC = '#3a3a2e', por = '#c8c2b2'
+      grp.add(box(1.8, 0.04, 1.8, '#2a2620', 0, 0.02, 0)) // 油渍
+      for (const pz of [-0.5, 0.5]) grp.add(box(1.5, 0.1, 0.14, '#26282c', 0, 0.09, pz)) // 底轨
+      grp.add(box(1.3, 1.15, 1.1, tank, 0, 0.72, 0)) // 油罐
+      grp.add(box(1.34, 0.08, 1.14, darkC, 0, 1.32, 0)) // 罐盖
+      for (const sx of [-0.72, 0.72]) // 两侧散热片排
+        for (let i = 0; i < 5; i++) grp.add(box(0.05, 0.9, 0.14, darkC, sx, 0.68, -0.44 + i * 0.22))
+      for (let i = 0; i < 3; i++) { // 顶部瓷套管（叠片绝缘子 + 接线端）
+        const px = -0.36 + i * 0.36
+        grp.add(cyl(0.05, 0.05, 0.1, darkC, px, 1.4, 0, 6))
+        for (let d2 = 0; d2 < 3; d2++) grp.add(cyl(0.055, 0.055, 0.025, por, px, 1.48 + d2 * 0.05, 0, 6))
+        grp.add(cyl(0.02, 0.02, 0.08, '#8a5a3a', px, 1.66, 0, 5))
+      }
+      break
+    }
+    case 'pressmachine': {
+      // 冲压工位（1×1 C 型冲床，实心）：铸铁机身 + 上滑块 + 模具台 + 侧飞轮 + 脚踏 + 工位小灯
+      const body = '#4a4a44', darkC = '#2e2e2a'
+      grp.add(box(0.5, 0.14, 0.5, darkC, 0, 0.07, 0)) // 底座
+      grp.add(box(0.42, 0.72, 0.34, body, 0, 0.5, -0.05)) // 下身（模座）
+      grp.add(box(0.46, 0.06, 0.44, darkC, 0, 0.85, 0.02)) // 模具台
+      grp.add(box(0.42, 0.5, 0.34, body, 0, 1.6, -0.08)) // C 型上臂
+      grp.add(box(0.2, 0.34, 0.2, darkC, 0, 1.14, 0.05)) // 滑块
+      const fly = cyl(0.17, 0.17, 0.06, '#3a3f3a', 0.27, 1.62, -0.08, 12) // 侧飞轮
+      fly.rotation.z = Math.PI / 2
+      grp.add(fly)
+      grp.add(box(0.16, 0.04, 0.1, '#26282c', 0.1, 0.03, 0.3)) // 脚踏
+      grp.add(glow(0.1, 0.03, 0.03, '#fff2d8', 0, 1.38, 0.1)) // 工位小灯
+      if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180 // 朝向传送带
+      break
+    }
+    case 'feedpump': {
+      // 电动给水泵（1×1，实心）：同座电机 + 泵蜗壳 + 联轴护罩 + 入地水管 + 压力表微光
+      const motor = '#3a4a3a', pump = '#4a4440'
+      grp.add(box(0.6, 0.08, 0.4, '#2a2d30', 0, 0.04, 0)) // 共用底座
+      grp.add(cyl(0.14, 0.14, 0.34, motor, -0.12, 0.22, 0, 10).rotateZ(Math.PI / 2)) // 电机
+      grp.add(cyl(0.06, 0.06, 0.1, '#6a5a3a', 0.07, 0.22, 0, 8).rotateZ(Math.PI / 2)) // 联轴护罩
+      grp.add(cyl(0.17, 0.19, 0.16, pump, 0.2, 0.22, 0, 10).rotateZ(Math.PI / 2)) // 泵蜗壳
+      grp.add(cyl(0.04, 0.04, 0.24, '#3a3f3a', 0.2, 0.2, 0.16, 6).rotateX(0.7)) // 出水管
+      grp.add(cyl(0.045, 0.045, 0.2, '#3a3f3a', 0.3, 0.1, -0.1, 6)) // 进水管（入地）
+      grp.add(glow(0.05, 0.05, 0.02, '#e8b93c', 0.2, 0.42, 0.1)) // 压力表
+      break
+    }
+    case 'manifold': {
+      // 蒸汽集箱（1×N 沿 local X，实心）：鞍座×2 + 高位卧式铆接长筒 + 上升管入顶 + 下降管 + 端部主阀轮
+      const L = s.w, drum = '#6a4a34', lag = '#b8b0a0'
+      for (const px of [-L / 2 + 0.3, L / 2 - 0.3]) grp.add(box(0.16, 1.35, 0.4, '#3a3f3a', px, 0.68, 0)) // 鞍座
+      const d = cyl(0.26, 0.26, L - 0.2, drum, 0, 1.6, 0, 12) // 长筒
+      d.rotation.z = Math.PI / 2
+      grp.add(d)
+      const lag2 = cyl(0.28, 0.28, L * 0.3, lag, -L * 0.2, 1.6, 0, 12) // 保温套段
+      lag2.rotation.z = Math.PI / 2
+      grp.add(lag2)
+      const ns = Math.max(2, Math.round(L / 1.5))
+      for (let i = 0; i < ns; i++) { // 上升管短节入顶
+        const px = -L / 2 + 0.5 + (i * (L - 1)) / Math.max(1, ns - 1)
+        grp.add(cyl(0.05, 0.05, H - 1.85, '#3a3f3a', px, (1.85 + H) / 2, 0, 6))
+      }
+      grp.add(cyl(0.06, 0.06, 1.1, drum, L * 0.3, 0.75, 0.1, 6)) // 下降管短节
+      const wheel = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.03, 6, 10), new THREE.MeshLambertMaterial({ color: '#a63a2e' })) // 端部主阀轮
+      wheel.position.set(L / 2 - 0.05, 1.6, 0)
+      wheel.rotation.y = Math.PI / 2
+      grp.add(wheel)
+      break
+    }
+    case 'piperack': {
+      // 有序管架（1×1 格构，实心）：钢支架 + 三层平行直管（0.6/1.1/1.6，中层蒸汽管保温浅色）；
+      // data.valve=下吊阀轮变体；data.rot 转向（默认管道沿 local Z）
+      const steel = '#3a3f3a'
+      for (const px of [-0.32, 0.32]) grp.add(box(0.06, 1.75, 0.06, steel, px, 0.88, 0)) // 支架立柱
+      for (const ty of [0.62, 1.12, 1.62]) grp.add(box(0.8, 0.05, 0.08, steel, 0, ty, 0)) // 横担
+      const tiers: [number, string][] = [[0.68, '#4a4440'], [1.18, '#b8b0a0'], [1.68, '#3a3f3a']]
+      for (const [ty, cc] of tiers) {
+        const p = cyl(0.055, 0.055, 1.0, cc, 0, ty, 0, 8)
+        p.rotation.x = Math.PI / 2
+        grp.add(p)
+      }
+      if (Number(s.data?.valve)) { // 下吊阀轮
+        grp.add(cyl(0.04, 0.04, 0.5, '#4a4440', 0.1, 1.35, 0.12, 6))
+        const wheel = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.028, 6, 10), new THREE.MeshLambertMaterial({ color: '#a63a2e' }))
+        wheel.position.set(0.1, 1.1, 0.12)
+        grp.add(wheel)
+      }
+      if (s.data?.rot) grp.rotation.y = Math.PI / 2
+      break
+    }
+    case 'cabletray': {
+      // 穿孔电缆桥架（非实心，高位顺墙；默认沿 local Z，data.rot 转向）：梯形架 + 架内线缆
+      const tray = '#4a4f46'
+      grp.add(box(0.26, 0.04, 1.0, tray, 0, H - 0.5, 0)) // 桥架底板
+      for (const sx of [-0.13, 0.13]) grp.add(box(0.03, 0.08, 1.0, tray, sx, H - 0.45, 0)) // 侧帮
+      for (let i = 0; i < 3; i++) grp.add(box(0.04, 0.025, 1.0, ['#1c1a18', '#6a2a22', '#24323e'][i], -0.06 + i * 0.06, H - 0.46, 0)) // 架内线缆
+      if (s.data?.rot) grp.rotation.y = Math.PI / 2
       break
     }
     case 'megcrate': {
@@ -1790,9 +2297,9 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       }
       grp.add(mergedMesh(parts))
       // v48 缺省朝向：背贴最近墙、架面朝外（双面书架）；L601 阵列排（data.row）保持阵列朝向不转，
-      // data.deg 可显式覆盖
+      // data.deg 可显式覆盖；v51 贴墙位移
       if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
-      else if (!s.data?.row) faceOutward(grp, s, m)
+      else if (!s.data?.row) flushToWall(grp, s, m, 0.58)
       break
     }
     case 'endletters': {
@@ -1848,7 +2355,7 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       grp.add(door)
       for (let i = 0; i < 4; i++) door.add(box(0.3, 0.022, 0.02, '#394046', 0.29, 1.44 + i * 0.08, 0.032)) // 百叶
       door.add(box(0.05, 0.2, 0.045, '#c9c2a8', 0.51, 0.9, 0.04)) // 把手
-      faceOutward(grp, s, m)
+      flushToWall(grp, s, m, 0.46) // v51 贴墙位移
       break
     }
     case 'toolbox': {
@@ -1861,6 +2368,7 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       grp.add(box(0.6, 0.03, 0.32, '#3a3d42', 0, 0.26, 0))
       grp.add(box(0.2, 0.03, 0.03, '#c9c2a8', 0, 0.47, 0))       // 提手
       for (const px of [-0.08, 0.08]) grp.add(box(0.03, 0.1, 0.03, '#c9c2a8', px, 0.43, 0))
+      flushToWall(grp, s, m, 0.3) // v51 贴墙位移
       break
     }
     case 'suitcase': {
@@ -1914,15 +2422,28 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       door.add(box(0.05, 0.18, 0.06, '#8a9098', -0.31 + 0.24, -0.02, 0.05)) // 拉手
       for (const hy of [-0.22, 0.22]) grp.add(box(0.06, 0.1, 0.1, '#22252a', 0.33, 0.4 + hy, 0.3)) // 铰链
       if (s.looted) grp.add(box(0.56, 0.6, 0.5, '#141618', 0, 0.4, 0.02))
+      flushToWall(grp, s, m, 0.66) // v51 贴墙位移
       break
     }
 
     // ===== v30：Level 1 区段扩展 =====
     case 'column': {
-      // 哥特段圆柱：圆形石柱 + 柱础 + 柱头
-      grp.add(cyl(0.34, 0.38, H, '#7e7a74', 0, H / 2, 0, 14))
-      grp.add(cyl(0.48, 0.52, 0.22, '#6a665f', 0, 0.11, 0, 14))
-      grp.add(cyl(0.46, 0.36, 0.3, '#6a665f', 0, H - 0.15, 0, 14))
+      // 哥特段圆柱：圆形石柱 + 柱础 + 柱头（v51：data.pale=L3 圣所大理石浅色变体——凹槽棱条 + 柱头重建）
+      const stoneC = s.data?.pale ? '#c8c2b2' : '#7e7a74', darkC = s.data?.pale ? '#a8a294' : '#6a665f'
+      grp.add(cyl(0.34, 0.38, H, stoneC, 0, H / 2, 0, 14))
+      grp.add(cyl(0.48, 0.52, 0.22, darkC, 0, 0.11, 0, 14))
+      if (s.data?.pale) {
+        // 圣所大理石柱：四道凹槽棱条（起于柱础顶、止于钟形圆饰底）+
+        // 柱头重建：echinus 钟形圆饰（外展）+ abacus 顶板——与柱顶齐平贴天花板，无缝不悬空
+        for (let i = 0; i < 4; i++) {
+          const a = (i / 4) * Math.PI * 2 + Math.PI / 4
+          grp.add(box(0.05, H - 0.54, 0.05, '#b2aa9a', Math.cos(a) * 0.35, H / 2 - 0.05, Math.sin(a) * 0.35))
+        }
+        grp.add(cyl(0.36, 0.5, 0.22, stoneC, 0, H - 0.21, 0, 14)) // echinus（H-0.32..H-0.10，外展覆住柱身顶）
+        grp.add(box(0.8, 0.12, 0.8, darkC, 0, H - 0.05, 0)) // abacus 顶板（H-0.11..H+0.01，与圆饰咬合贴顶）
+      } else {
+        grp.add(cyl(0.46, 0.36, 0.3, darkC, 0, H - 0.15, 0, 14))
+      }
       break
     }
     case 'roundarch': {
@@ -2179,9 +2700,9 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
           grp.add(box(0.12, 0.09, 0.012, '#f0f0ea', bx0, sy + 0.02, 0.19)) // 白色标签
         }
       }
-      // v48 缺省朝向：背贴最近墙、标签面（+Z）朝外；data.deg 可显式覆盖
+      // v48 缺省朝向：背贴最近墙、标签面（+Z）朝外；data.deg 可显式覆盖；v51 贴墙位移
       if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
-      else faceOutward(grp, s, m)
+      else flushToWall(grp, s, m, 0.42)
       break
     }
     case 'bunkbed': {
@@ -2232,7 +2753,8 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
         grp.add(panel)
         break
       }
-      const w = s.kind === 'photo' ? 0.62 : 0.92, h = s.kind === 'photo' ? 0.5 : 0.72
+      const tall = s.kind === 'megposter' && !!s.data?.tall // v51：竖幅画布（L3 天使宗教画 512×640 竖版）
+      const w = s.kind === 'photo' ? 0.62 : tall ? 0.66 : 0.92, h = s.kind === 'photo' ? 0.5 : tall ? 0.88 : 0.72
       const inner = new THREE.Group()
       grp.add(inner)
       inner.add(box(w + 0.06, h + 0.06, 0.03, '#4a4038', 0, 1.3, 0)) // 背框
@@ -2647,8 +3169,11 @@ export function buildExit(kind: string, def: LevelDef): THREE.Group {
       break
     }
     case 'freight': case 'elevatorshaft': case 'stafflift': case 'servicelift': {
-      // 金属电梯门 + 指示灯
-      grp.add(box(1.6, 2.4, 0.15, '#4a4d52', 0, 1.2, -0.3))
+      // 金属电梯门 + 指示灯（v51：门框 + 门扇凹进框面 0.12——L3 嵌墙电梯观感）
+      grp.add(box(0.2, 2.5, 0.2, '#2f3236', -0.78, 1.25, -0.18)) // 门框立柱
+      grp.add(box(0.2, 2.5, 0.2, '#2f3236', 0.78, 1.25, -0.18))
+      grp.add(box(1.76, 0.2, 0.2, '#2f3236', 0, 2.55, -0.18)) // 门楣
+      grp.add(box(1.6, 2.4, 0.15, '#4a4d52', 0, 1.2, -0.3)) // 门扇（凹入框面 0.12）
       grp.add(box(0.06, 2.2, 0.18, '#2a2d30', 0, 1.1, -0.3))
       const ind = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.1, 0.06), pulseMat())
       ind.position.set(0, 2.55, -0.28)

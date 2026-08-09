@@ -3,6 +3,24 @@ import type { EntityDef } from './types'
 
 // 兽形/载具/虫形实体（猎犬/团块/死亡飞蛾/运输车/管道蠕虫）
 export const CRITTER_ENTITIES: Record<string, EntityDef> = {
+  dryshrimp: {
+    // Entity 20「旱虾」：善意无害的小型甲壳类（外观近似前厅已灭绝的奇虾科）
+    type: 'dryshrimp', name: '旱虾', hp: 10, speed: 0.8, damage: 0, sight: 3, hearing: 2,
+    passive: true, noRetaliate: true, color: '#b3612e', habitat: 'any',
+    desc: '一只小型甲壳动物，背部分节、两侧生着扇状鳍叶。它缓慢地爬来爬去，似乎没有任何目的。',
+    codex: {
+      no: 'Entity 20「Scits」', danger: '0 级（无害）', habitat: '全境（潮湿地带尤为常见）',
+      behavior: '对其他实体与流浪者完全无害，漫无目的地游荡，不需要任何能量摄入。死亡飞蛾与钝人对它表现出极端攻击性，往往会将之吞噬。',
+      counter: '没有所谓的「应当」与「不应」——生吃旱虾完全安全。带上它，毕竟随身携带一份应急口粮总是不错的选择。',
+      lore: [
+        '旱虾的外观与约 4.48 亿年前在前厅灭绝的奇虾科动物别无二致，但两者在智力上处于两个极端：奇虾是最早的顶级捕食者，而旱虾毫无猎手可言——很多人甚至怀疑这种生物是否有智能。',
+        '旱虾不需要食物、水以及任何其他形式的能量，也从不繁殖——它们通过类似有丝分裂的过程创造出与自己完全相同的个体，这被认为是它们遍布后室的主要原因。目前唯一确认不存在旱虾的层级是 Level 6。',
+        '由于分布广泛、便于食用且生吃完全安全，旱虾已成为后室中主要的营养来源之一。最早一例报告出现于 2013 年，一名流浪者在 Level 5 的贝弗莉室发现了三只旱虾。',
+      ],
+      sighting: '「它看起来像某种虾，但两侧长着一些鳞片之类的玩意。有三只这样的东西在贝弗莉室里爬来爬去。」——Elena Keller 致 M.E.G. 的邮件，2013。',
+    },
+    aggroStinger: false,
+  },
   hound: {
     type: 'hound', name: '猎犬', hp: 35, speed: 3.4, damage: 18, sight: 6, hearing: 12, hearsSprint: true, intimidatable: true, color: '#7e6c58', habitat: 'any',
     desc: '四肢着地的人形掠食者，听觉极其灵敏，速度全实体中最快。',
@@ -36,7 +54,7 @@ export const CRITTER_ENTITIES: Record<string, EntityDef> = {
     aggroStinger: true,
   },
   deathmoth: {
-    type: 'deathmoth', name: '死亡飞蛾', hp: 15, speed: 3.2, damage: 8, sight: 5, hearing: 2, lightLure: true, drainsLight: true, color: '#8a7a5a', habitat: 'any', // 随意偏室内（主巢在 L5 酒店客房/走廊，亦可扑向室外灯源）
+    type: 'deathmoth', name: '死亡飞蛾', hp: 15, speed: 3.2, damage: 8, sight: 5, hearing: 2, lightLure: true, drainsLight: true, hunts: ['dryshrimp'], color: '#8a7a5a', habitat: 'any', // 随意偏室内（主巢在 L5 酒店客房/走廊，亦可扑向室外灯源）
     desc: '趋光的巨型蛾群，翼展接近半米。你的手电光对它们而言就是邀请函。',
     codex: {
       no: 'Entity 4「Deathmoths」', danger: '2 级（低威胁，集群时升 4 级）', habitat: 'Level 5 恐怖酒店（主巢）、Level 1、Level 8、Level 9',
@@ -55,7 +73,7 @@ export const CRITTER_ENTITIES: Record<string, EntityDef> = {
     type: 'carrier', name: '运输车', hp: 90, speed: 2.0, damage: 30, sight: 9, hearing: 2, charger: true, color: '#d9c39a', habitat: 'outdoor', // 卷帘门外小巷/装卸区车道巡逻
     desc: '在车道上巡逻的无人运输车，车灯是它唯一的眼睛。',
     codex: {
-      no: '未编号（Level 1 特有）', danger: '4 级（高威胁）', habitat: 'Level 1 停车场车道',
+      no: '未编号「Carrier」', danger: '4 级（高威胁）', habitat: 'Level 1 停车场车道',
       behavior: '沿直线巡逻，发现目标后鸣笛并全速直线冲撞，无法急转弯。',
       counter: '听到鸣笛立刻横向往柱后躲——它刹不住也转不过弯。绕到它身后就是安全的。',
       lore: [
@@ -71,7 +89,7 @@ export const CRITTER_ENTITIES: Record<string, EntityDef> = {
     type: 'pipeworm', name: '管道蠕虫', hp: 45, speed: 2.8, damage: 20, sight: 5, hearing: 8, ambusher: true, color: '#7a4a2e', habitat: 'any',
     desc: '从管道里破墙而出的蠕虫。压力表剧烈抖动时，快跑。',
     codex: {
-      no: '未编号（Level 2 特有）', danger: '4 级（高威胁）', habitat: 'Level 2 废弃公共带',
+      no: '未编号「Pipeworm」', danger: '4 级（高威胁）', habitat: 'Level 2 废弃公共带',
       behavior: '潜伏在管道网络中，只在猎物靠近时破墙而出；附近压力表会提前剧烈抖动。',
       counter: '看到疯狂抖动的压力表就放慢脚步准备后撤；它破土后的前两三秒最危险，拉开距离后它反而笨拙。',
       lore: [
@@ -88,7 +106,7 @@ export const CRITTER_ENTITIES: Record<string, EntityDef> = {
     passive: true, hunts: ['deathmoth'], grudge: true, color: '#8a8078', habitat: 'any',
     desc: '成群出没的灰白巨鼠，以腐肉与死亡飞蛾为食。不惹它，它就不惹你；惹了它，整群都会记住你。',
     codex: {
-      no: '未编号（Level 2 / Level 8 共有种）', danger: '1 级（中立，激怒后 3 级·成群记仇）', habitat: 'Level 2 废弃公共带 · Level 8 Rottnest Jungle 天顶（经通风管道往返）· Level 9 郊区',
+      no: 'Entity 24「Death Rats」', danger: '1 级（中立，激怒后 3 级·成群记仇）', habitat: 'Level 2 废弃公共带 · Level 8 Rottnest Jungle 天顶（经通风管道往返）· Level 9 郊区',
       behavior: '以 2~3 只小群活动，常年在廊道里翻找腐肉，不主动攻击玩家。它对死亡飞蛾有强烈的捕食欲——附近出现飞蛾时总会优先扑上去撕碎。未被攻击时温驯避人；一旦被攻击，整群转为凶猛反击且记仇不放——这股狠劲与 Level 8 天顶巢群如出一辙。',
       counter: '互不打扰即可。若在黑暗里听见细碎的抓挠与扑翼声，多半是它们在替你清理飞蛾——别插手，更别踩到它。若已激怒鼠群，拉开距离没有意义：它们不会消气，只能全部解决或立刻离层。',
       lore: [

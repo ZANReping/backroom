@@ -31,6 +31,12 @@ export const DECOR_VIEWS: Record<string, DecorViewDef> = {
     { text: '窗户被从里面涂死了。档案说：涂黑的是安全的，没涂黑的才是陷阱。', type: 'lore' },
   ] },
   glasswin:    { label: '眺望 窗外',                 sanity: +1 }, // 文案见 GLASSWIN_TEXT（按层级二选一）
+  // v51：L3 铁栅栏后的风化希腊女像
+  statue:      { label: '查看 风化的雕像',           sanity: -2, msgs: [
+    { text: '一尊风化的希腊式女像。白大理石上布满侵蚀的斑痕，残缺处不是新的——它在被放进这里之前就已经残破了。', type: 'lore' },
+    { text: '基座上没有铭文。石料比这座电站古老得多——它不属于这里。', type: 'lore' },
+    { text: '你隔着铁栏与它对视。你总觉得它的站姿和你上次经过时不太一样。', type: 'system' },
+  ] },
 }
 
 // v17：变体房间专属 lore（涂鸦/文档，按结构 data.loreKind；同处再读顺延下一条）

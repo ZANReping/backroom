@@ -119,7 +119,25 @@ BNTG 绿底定居点海报（天平徽记 + 仓库/办公楼图案 + 「办公�
   CC BY-SA 3.0；`_src_jerry.png` 为原图）——彩色原图（蓝鹉+金太阳），洪水填充去白底、保留原色、裁剪至 512。
 - `jerry_poster.png`（v45）：PIL 程序绘制（`scripts/gen-jerry-poster.py` 可复现）——信众宣传海报：
   蓝底 + 圣辉 + 鹉主剪影 + 「鹉主杰瑞伟大」字样；L2 信众宣传间与 Level 274 墙面装饰（megposter data.tex）用。
+- `angel_fresco.png`（v51）：PIL 程序绘制（`scripts/gen-angel-fresco.py` 可复现）——圣所宗教画作：
+  512×640 竖幅旧画布 + 天使神祇剪影（展翼长袍立像 + 光环 + 圣光晕）+ 水渍流痕/边缘磨损风化；
+  L3 圣所墙面与栅栏后墙面装饰（megposter data.tex + data.tall 竖幅，wikidot L3 设定画作大多位于栅栏之后）。
 - 上述 `_src_*` 为脚本输入原图（wikidot 内容 CC BY-SA 3.0）；处理规则：纯色标志重着色为主题色、
   有色标志（BRC / 杰瑞的信众）保留原色；水印以低透明度居中于介绍框背景，不溢出框。
+
+## v51：Level 3「发电站」重制贴图（砖墙 + 积灰混凝土地板 + 积灰白天花板）
+
+墙面为 ambientCG 直下载（本机 TLS 被截断，curl 需 `--tlsv1.2 -k`；缓存 `scripts/.cache-l3/`）；
+地板/天花板为离线再加工（基于库内已有 CC0 派生素材二次处理，一次性生成已入库即定稿）：
+
+| 文件 | 素材 | 用途 | 处理 |
+|---|---|---|---|
+| l3_wall.jpg | **Bricks051 废弃 → ambientCG Bricks059**（CC0 真实砖墙照片，~4.2 砖×~16 层/1024） | 砖墙（默认墙面） | 去色 + 均值归一 0.72 + 轻积灰；配世界空间 UV（WALL_UV_PER_M[3]=1，1 重复=1m，砖约 24×6.4cm 横砌）；早期摄影砖图留存 `_src_l3_brick.jpg`，程序生成版留 `gen_brick()` 作离线回退 |
+| l3_wall2.jpg | 放大后砖图派生 | 深色积灰砖（TEX2 变体区） | 去色 0.55 + 压暗 0.68 + 积灰斑块 + 细颗粒 |
+| l3_floor.jpg | 既有混凝土贴图派生 | 布满灰尘的混凝土地板 | 去色 0.8 + 双层积灰斑块（浅灰白/暗灰）+ 细颗粒（一次性生成，已入库即定稿） |
+| l3_ceil.jpg | l103_wall.jpg（Plaster006 洁白粉刷，CC0）派生 | 布满灰尘的白色天花板 | 去色 0.7 + 亮度 0.97 + 积灰斑块 + 细颗粒 |
+| l3_marble.jpg | Marble012（灰白大理石，CC0） | 圣所地板（tint 20 瓦片单独走本贴图，墙壁维持砖砌） | 去色 + 均值归一 0.78 + 极轻积灰 |
+
+处理脚本：`scripts/gen-l3-textures.py` 可复现。
 
 下载地址形如 `https://ambientcg.com/get?file=<ID>_1K-JPG.zip`。

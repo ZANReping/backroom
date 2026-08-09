@@ -5,6 +5,8 @@ import type { Engine, SlotRef, SlotWhere } from '@/game/engine'
 import { ITEMS } from '@/game/items'
 import { storage } from '@/game/storage'
 import { ENTITIES, unlockTier, loadSeen, entitySpawnLevels, entityThreat, entityRarity, type EntityRarity } from '@/game/entities'
+import { LevelClassBanner, CecsBox } from './CodexWidgets'
+import { ENTITY_FACTION, FACTION_FONTS, IOTS_FREQ_COLORS, IOTS_FREQ_VALUES, IOTS_ORIGIN_VALUES, IOTS_UTIL_VALUES, itemIOTS, itemIOTSLevel } from '@/game/codexScores'
 import { WIN_TAPES, LEVELS, levelNo, levelLabel, levelDefOf } from '@/game/levels'
 import { prefabsForLevel } from '@/game/prefabs'
 import { infiniteImplFor } from '@/game/infinite'
@@ -20,7 +22,7 @@ import { NPCS, npcAvatar } from '@/game/npcs'
 import { loadChat } from '@/game/llm'
 import { FACTIONS } from '@/game/factions'
 import DocOverlay from './DocOverlay'
-import { ITEM_RARITY_LABEL, ITEM_RARITY_COLOR, type ItemRarity } from '@/game/items'
+// （物品显示稀有度已由 IOTS 罕见度取代，见 codexScores.ITEM_IOTS / IOTS_FREQ_COLORS）
 import { PHENOMENA, rarityText } from '@/game/phenomena'
 import { IconIsolation, IconPlant, IconStamina } from './icons'
 
@@ -243,7 +245,7 @@ function BigMap({ engine }: { engine: Engine }) {
       </div>
       {/* 图例（v32） */}
       <div className="font-mono2 grid grid-cols-2 gap-x-5 gap-y-0.5 self-center text-[10px] md:grid-cols-3" style={{ color: 'var(--text-dim)' }}>
-        <span><span style={{ color: '#e8b93c' }}>●</span> 玩家</span>
+        <span><span style={{ color: 'var(--amber)' }}>●</span> 玩家</span>
         <span><span style={{ color: '#f5e37a' }}>●</span> 出口（亮=已发现）</span>
         <span><span style={{ color: '#c9a03a' }}>■</span> 容器（未搜刮）</span>
         <span><span style={{ color: 'rgba(160,140,90,0.5)' }}>■</span> 容器（已搜刮）</span>
@@ -260,10 +262,10 @@ const usageOf = (it: (typeof ITEMS)[string]): 'throw' | 'equip' | 'use' | 'other
   it.throw ? 'throw' : it.equip ? 'equip' : it.use && it.use !== 'none' ? 'use' : 'other'
 
 // 物品数值/属性/实际效果芯片（物品信息页专用 UI 元素，与描述文本分离）
-function itemStatChips(it: (typeof ITEMS)[string], engine?: Engine): string[] {
+function itemStatChips(it: (typeof ITEMS)[string], engine?: Engine, berryDest?: string): string[] {
   const chips: string[] = []
   if (it.weapon) chips.push(`近战伤害 ${it.weapon}`)
-  if (it.use && it.use !== 'none') {
+  if (it.use && it.use !== 'none' && it.type !== 'liquidpain') {
     const v = it.value ?? 0
     if (it.use === 'eat') chips.push(`饥饿 +${v}`)
     else if (it.use === 'heal') chips.push(`生命 +${v}`)
@@ -273,6 +275,8 @@ function itemStatChips(it: (typeof ITEMS)[string], engine?: Engine): string[] {
     else if (it.use === 'stamina') chips.push('体力回满 · 恢复翻倍 60s')
     else if (it.use === 'light') chips.push('放置临时光源')
   }
+  // 液态痛苦（Object 48）：危险消耗品——自饮重创，装枪高伤
+  if (it.type === 'liquidpain') chips.push('饮用：生命 -35 · 理智 -55', '装入滋水枪：腐蚀水线 60 伤害', '⚠ 切勿饮用')
   if (it.throw) chips.push(`投掷：${{ explode: '范围伤害', shock: '电击+眩晕', noise: '声响引怪', lure: '引路者诱饵' }[it.throw]}`)
   if (it.passive) chips.push(`被动：${it.passive}`)
   if (it.equip) chips.push(`装备位：${{ offhand: '副手', body: '身体', gloves: '手套', head: '头饰', pocket: '口袋' }[it.equip]}`)
@@ -280,13 +284,17 @@ function itemStatChips(it: (typeof ITEMS)[string], engine?: Engine): string[] {
   if (it.type === 'axe' && engine) chips.push(`耐久 ${engine.axeDur}/5`)
   if (it.type === 'squirtgun' && engine) chips.push(`储罐 ${engine.squirtAmmo}/27`)
   if (it.type === 'royalration') chips.push('成瘾 +180s/次', '25% 触发「全部吃光」：理智急速崩塌')
-  if (it.type === 'warpberry') chips.push('食用后传送：首次发现层级')
+  if (it.type === 'warpberry') chips.push(`使用后传送：${berryDest ?? '发现它的层级'}`)
   if (it.type === 'notebook') chips.push('使用：打开书写')
   chips.push(`堆叠 ×${it.stack}`)
   return chips
 }
 
 const FILTER_SEL_STYLE = { background: 'var(--panel)', color: 'var(--text)', border: '1px solid var(--panel-edge)', padding: '2px 4px' } as const
+
+/** 全部物品的 IOTS 分类缓存（静态数据，模块级计算一次） */
+const ITEM_IOTS: Record<string, { frequency: string; utility: string; origin: string }> =
+  Object.fromEntries(Object.values(ITEMS).map((it) => [it.type, itemIOTS(it)]))
 
 // 图鉴详情卡（实体渐进解锁 / 物品 / 层级）
 function CodexDetail({ detail, onBack }: { detail: { kind: 'entity' | 'item' | 'level'; id: string }; onBack: () => void }) {
@@ -297,22 +305,29 @@ function CodexDetail({ detail, onBack }: { detail: { kind: 'entity' | 'item' | '
     </div>
   )
   return (
-    <div className="anim-slideUp">
+    <div className="cq anim-slideUp">
       <button className="font-mono2 mb-3 border px-3 py-1 text-[12px]" style={{ borderColor: 'var(--panel-edge)', color: 'var(--text-dim)' }} onClick={onBack}>← 返回图鉴</button>
       {detail.kind === 'entity' && (() => {
         const e = ENTITIES[detail.id]
         const tier = unlockTier(detail.id)
         const n = loadSeen()[detail.id] ?? 0
+        // 阵营主题实体（杰瑞→信众 / Ferren→BNTG）：边框/标题用阵营色，配阵营字体与标志水印
+        const fac = ENTITY_FACTION[e.type] ? FACTIONS[ENTITY_FACTION[e.type]] : null
+        const facFonts = fac ? FACTION_FONTS[fac.id] : undefined
         return (
-          <div className="hud-panel p-4">
+          <div className="hud-panel relative overflow-hidden p-4" style={fac ? { borderColor: fac.color } : undefined}>
+            {fac?.logo && <FactionLogo file={fac.logo} name={fac.name} />}
+            <div className="relative" style={facFonts?.body ? { fontFamily: facFonts.body } : undefined}>
             <div className="mb-1 flex items-baseline justify-between">
-              <span className="font-title text-[22px]" style={{ color: 'var(--blood)' }}>{e.name}</span>
-              <span className="font-mono2 text-[11px]" style={{ color: 'var(--text-dim)' }}>{e.codex.no} · 遭遇 {n} 次</span>
+              <span className="font-title text-[22px]" style={{ color: fac ? (fac.sub ?? fac.color) : 'var(--blood)', fontFamily: facFonts?.title }}>{e.name}</span>
+              <span className="font-mono2 text-[11px]" style={{ color: 'var(--text-dim)', fontFamily: facFonts?.mono }}>{e.codex.no} · 遭遇 {n} 次</span>
             </div>
+            {fac && (
+              <div className="font-mono2 mb-1 text-[10px]" style={{ color: fac.sub ?? fac.color, fontFamily: facFonts?.mono }}>所属团体：{fac.name}</div>
+            )}
             <div className="mb-3 text-[13px] leading-relaxed" style={{ color: 'var(--text)' }}>{e.desc}</div>
+            <CecsBox entityType={e.type} no={e.codex.no} habitat={e.codex.habitat} danger={entityThreat(e)} />
             <div className="grid gap-2">
-              <Row k="危害等级" v={e.codex.danger} />
-              <Row k="栖息地" v={e.codex.habitat} />
               <Row k="行为" v={tier >= 2 ? e.codex.behavior : `【未解锁：再遭遇 ${3 - n} 次】`} />
               <Row k="应对方法" v={tier >= 3 ? e.codex.counter : `【未解锁：再遭遇 ${6 - n} 次】`} />
             </div>
@@ -321,13 +336,15 @@ function CodexDetail({ detail, onBack }: { detail: { kind: 'entity' | 'item' | '
               {e.codex.lore.map((para, i) => (
                 <p key={i} className="mb-2 text-[12px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>{para}</p>
               ))}
-              <p className="mt-2 border-l-2 pl-2 text-[12px] italic" style={{ borderColor: 'var(--blood)', color: 'var(--text)' }}>{e.codex.sighting}</p>
+              <p className="codex-quote mt-2 border-l-2 pl-2 text-[12px] italic" style={{ borderColor: 'var(--blood)', color: 'var(--text)' }}>{e.codex.sighting}</p>
+            </div>
             </div>
           </div>
         )
       })()}
       {detail.kind === 'item' && (() => {
         const it = ITEMS[detail.id]
+        const iots = itemIOTS(it)
         return (
           <div className="hud-panel p-4">
             <div className="mb-2 flex justify-center" style={{ color: 'var(--amber)' }}><ItemGlyph type={it.type} size={72} /></div>
@@ -336,13 +353,20 @@ function CodexDetail({ detail, onBack }: { detail: { kind: 'entity' | 'item' | '
               <span style={{ color: it.anomalous ? 'var(--sanity)' : undefined }}>
                 {it.anomalous ? '后室物品' : '普通物品'}
               </span>
-              {' · '}<span style={{ color: ITEM_RARITY_COLOR[it.rarity ?? 'common'] }}>{ITEM_RARITY_LABEL[it.rarity ?? 'common']}</span>
+              {' · '}<span style={{ color: IOTS_FREQ_COLORS[iots.frequency] }}>{iots.frequency}</span>
               {' · '}{it.unique !== undefined ? `B${it.unique} 特有物品` : '通用补给'}
+            </div>
+            {/* IOTS 分类（统合物品分类系统标准用语 + 点数表定级） */}
+            <div className="mb-3 grid gap-1.5 border-y py-2" style={{ borderColor: 'var(--panel-edge)' }}>
+              <Row k="罕见度" v={iots.frequency} />
+              <Row k="实用性" v={iots.utility} />
+              <Row k="产地来源" v={iots.origin} />
+              <Row k="IOTS 等级" v={`${itemIOTSLevel(it)} 级`} />
             </div>
             {/* 数值/属性/实际效果芯片（与描述分离） */}
             <div className="mb-3 flex flex-wrap justify-center gap-1">
               {itemStatChips(it).map((c) => (
-                <span key={c} className="font-mono2 border px-1.5 py-0.5 text-[10px]" style={{ borderColor: 'var(--panel-edge)', color: 'var(--amber)', background: 'rgba(0,0,0,0.3)' }}>{c}</span>
+                <span key={c} className="font-mono2 border px-1.5 py-0.5 text-[10px]" style={{ borderColor: 'var(--panel-edge)', color: 'var(--amber)', background: 'color-mix(in srgb, var(--text-dim) 12%, transparent)' }}>{c}</span>
               ))}
             </div>
             <p className="text-[13px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>{it.desc}</p>
@@ -360,6 +384,7 @@ function CodexDetail({ detail, onBack }: { detail: { kind: 'entity' | 'item' | '
         return (
           <div className="hud-panel p-4">
             <div className="font-title mb-1 text-[22px]" style={{ color: 'var(--amber)' }}>Level {levelNo(lv.id)} · {lv.name}</div>
+            <LevelClassBanner levelNo={levelNo(lv.id)} />
             <p className="mb-3 text-[13px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>{lv.lore ?? lv.flavor}</p>
             <div className="grid gap-2">
               <Row k="入口" v={lv.entrance} />
@@ -425,11 +450,14 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
   const [readingDoc, setReadingDoc] = useState<string | null>(null)
   // 图鉴「人士」展开的聊天记录（npc id）
   const [chatView, setChatView] = useState<string | null>(null)
-  // 图鉴物品筛选：类别（后室/普通）/ 来源（通用或 B 层特有）/ 用途 / 稀有度
+  // 图鉴物品筛选（IOTS 统合物品分类系统）：类别（后室/普通）与用途为原有维度；
+  // 罕见度 / 实用性 / 产地来源为 IOTS 标准维度（取代旧的 稀有度 / 来源 筛选）
   const [fAnom, setFAnom] = useState<'all' | 'anom' | 'norm'>('all')
-  const [fSrc, setFSrc] = useState<string>('all')
   const [fUse, setFUse] = useState<'all' | 'use' | 'throw' | 'equip' | 'other'>('all')
-  const [fRar, setFRar] = useState<'all' | ItemRarity>('all')
+  const [fFreq, setFFreq] = useState<string>('all')
+  const [fUtil, setFUtil] = useState<string>('all')
+  const [fOrigin, setFOrigin] = useState<string>('all')
+  const [fUnique, setFUnique] = useState<string>('all') // 产地=层级限定时的二级筛选（具体 B 层）
   // 图鉴实体筛选：层级（生成池）/ 威胁程度 / 稀有度
   const [fLvl, setFLvl] = useState<string>('all')
   const [fThr, setFThr] = useState<string>('all')
@@ -440,11 +468,19 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
   const p = engine.player
   const codex = loadCodex()
   const seen = loadSeen()
-  // 实体筛选结果（层级=自然生成池归属；event=不在任何生成池的事件生成实体）
-  const entFiltered = Object.values(ENTITIES).filter((e) =>
-    (fLvl === 'all' || (fLvl === 'event' ? entitySpawnLevels(e.type).length === 0 : entitySpawnLevels(e.type).some((s) => s.id === Number(fLvl)))) &&
-    (fThr === 'all' || entityThreat(e) === Number(fThr)) &&
-    (fERar === 'all' || entityRarity(e.type) === fERar))
+  // 实体筛选结果（层级=自然生成池归属；event=不在任何生成池的事件生成实体）；
+  // 按档案编号排序（Entity N 的 N 升序；无编号实体排在最后）
+  const entNo = (e: (typeof ENTITIES)[string]): number => {
+    const m = /Entity\s*(\d+)/.exec(e.codex.no)
+    return m ? Number(m[1]) : Number.MAX_SAFE_INTEGER
+  }
+  const entFiltered = Object.values(ENTITIES)
+    .filter((e) =>
+      e.type !== 'vmad' && // v51：vmad 为内部激活形态，不进图鉴
+      (fLvl === 'all' || (fLvl === 'event' ? entitySpawnLevels(e.type).length === 0 : entitySpawnLevels(e.type).some((s) => s.id === Number(fLvl)))) &&
+      (fThr === 'all' || entityThreat(e) === Number(fThr)) &&
+      (fERar === 'all' || entityRarity(e.type) === fERar))
+    .sort((a, b) => entNo(a) - entNo(b))
   const refresh = () => force((n) => n + 1)
 
   // ---- v13：拖拽交换（桌面鼠标 + 移动端触摸，统一走 Pointer Events）----
@@ -575,7 +611,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
       >
         {s && !isSource && (
           <>
-            <ItemGlyph type={s.type} size={28} />
+            <ItemGlyph type={s.type} size={28} count={s.count} />
             {s.count > 1 && <span className="font-mono2 absolute bottom-0.5 right-1 text-[10px]" style={{ color: 'var(--amber)' }}>{s.count}</span>}
             {isLocked && <span className="font-mono2 absolute right-0.5 top-0 text-[9px]" style={{ color: 'var(--amber)' }}>◈</span>}
           </>
@@ -596,15 +632,21 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
     <>
       {selDef && selSlot && sel ? (
                 <div className="flex flex-col gap-2">
-                  <div className="flex justify-center" style={{ color: 'var(--amber)' }}><ItemGlyph type={selSlot.type} size={64} /></div>
+                  <div className="flex justify-center" style={{ color: 'var(--amber)' }}><ItemGlyph type={selSlot.type} size={64} count={selSlot.count} /></div>
                   <div className="font-title text-center text-[18px]" style={{ color: 'var(--text)' }}>{selDef.name}</div>
                   <div className="font-mono2 text-center text-[10px]" style={{ color: selDef.anomalous ? 'var(--sanity)' : 'var(--text-dim)' }}>
-                    {selDef.anomalous ? '后室物品' : '普通物品'} · <span style={{ color: ITEM_RARITY_COLOR[selDef.rarity ?? 'common'] }}>{ITEM_RARITY_LABEL[selDef.rarity ?? 'common']}</span>
+                    {selDef.anomalous ? '后室物品' : '普通物品'} · <span style={{ color: IOTS_FREQ_COLORS[ITEM_IOTS[selSlot.type].frequency] }}>{ITEM_IOTS[selSlot.type].frequency}</span>
                   </div>
+                  {/* 来源层级标签（迁跃浆果：食用传送回标签记录的层级；不同标签不混堆） */}
+                  {selSlot.tag !== undefined && (
+                    <div className="font-mono2 text-center text-[10px]" style={{ color: 'var(--exit)' }}>
+                      标签：发现于 {levelLabel(selSlot.tag)}{selSlot.type === 'warpberry' ? ' · 食用后传送回该层' : ''}
+                    </div>
+                  )}
                   {/* 数值/属性/实际效果芯片（与描述分离） */}
                   <div className="flex flex-wrap justify-center gap-1">
-                    {itemStatChips(selDef, engine).map((c) => (
-                      <span key={c} className="font-mono2 border px-1.5 py-0.5 text-[10px]" style={{ borderColor: 'var(--panel-edge)', color: 'var(--amber)', background: 'rgba(0,0,0,0.3)' }}>{c}</span>
+                    {itemStatChips(selDef, engine, selSlot.tag !== undefined ? levelLabel(selSlot.tag) : undefined).map((c) => (
+                      <span key={c} className="font-mono2 border px-1.5 py-0.5 text-[10px]" style={{ borderColor: 'var(--panel-edge)', color: 'var(--amber)', background: 'color-mix(in srgb, var(--text-dim) 12%, transparent)' }}>{c}</span>
                     ))}
                   </div>
                   <div className="text-[13px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>{selDef.desc}</div>
@@ -614,24 +656,33 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                       <div className="font-mono2 text-center text-[11px]" style={{ color: 'var(--amber)' }}>
                         储罐：{engine.squirtTank === 'none'
                           ? '空（0/27）'
-                          : `${{ water: '清水', almond: '杏仁水', cashew: '腰果水' }[engine.squirtTank as 'water' | 'almond' | 'cashew']} ${engine.squirtAmmo}/27（约 ${Math.ceil(engine.squirtAmmo / 3)} 瓶）`}
+                          : `${{ water: '清水', almond: '杏仁水', cashew: '腰果水', liquidpain: '液态痛苦' }[engine.squirtTank as 'water' | 'almond' | 'cashew' | 'liquidpain']} ${engine.squirtAmmo}/27（约 ${Math.ceil(engine.squirtAmmo / 3)} 瓶）`}
                       </div>
                       <div className="font-mono2 text-center text-[10px]" style={{ color: 'var(--text-dim)' }}>
                         装入 1 瓶 = 3 份喷射 · 储罐只能装一种液体 · 右键/使用 = 自己喝一口
                       </div>
                       <div className="flex gap-1">
                         <button className="menu-btn flex-1 py-1 text-center text-[11px]" onClick={() => { engine.loadSquirt('water'); refresh() }}>装清水</button>
-                        <button
-                          className="menu-btn flex-1 py-1 text-center text-[11px]"
-                          style={{ opacity: engine.hasItem('almond') ? 1 : 0.4 }}
-                          onClick={() => { engine.loadSquirt('almond'); refresh() }}
-                        >装杏仁水×{engine.countItem('almond')}</button>
-                        <button
-                          className="menu-btn flex-1 py-1 text-center text-[11px]"
-                          style={{ opacity: engine.hasItem('cashew') ? 1 : 0.4 }}
-                          onClick={() => { engine.loadSquirt('cashew'); refresh() }}
-                        >装腰果水×{engine.countItem('cashew')}</button>
+                        {/* 仅背包中存在该液体时才显示对应装入按钮 */}
+                        {engine.hasItem('almond') && (
+                          <button className="menu-btn flex-1 py-1 text-center text-[11px]" onClick={() => { engine.loadSquirt('almond'); refresh() }}>装杏仁水×{engine.countItem('almond')}</button>
+                        )}
+                        {engine.hasItem('cashew') && (
+                          <button className="menu-btn flex-1 py-1 text-center text-[11px]" onClick={() => { engine.loadSquirt('cashew'); refresh() }}>装腰果水×{engine.countItem('cashew')}</button>
+                        )}
+                        {engine.hasItem('liquidpain') && (
+                          <button
+                            className="menu-btn flex-1 py-1 text-center text-[11px]"
+                            style={{ borderColor: 'var(--blood)', color: 'var(--blood)' }}
+                            onClick={() => { engine.loadSquirt('liquidpain'); refresh() }}
+                          >装液态痛苦×{engine.countItem('liquidpain')}</button>
+                        )}
                       </div>
+                      {engine.squirtTank !== 'none' && (
+                        <button className="menu-btn mt-1 w-full py-1 text-center text-[11px]" onClick={() => { engine.clearSquirt(); refresh() }}>
+                          清空储罐（倒掉残液）
+                        </button>
+                      )}
                     </div>
                   )}
                   {isEquipW(sel.w) && (
@@ -772,13 +823,14 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
           detail ? (
             <CodexDetail detail={detail} onBack={() => setDetail(null)} />
           ) : (
-          <div>
+          <div className="codex-list">
             {/* 分类子页面切换：实体 / 层级 / 物品 / 现象 */}
             <div className="font-mono2 mb-2 flex gap-1 text-[11px]">
               {(['层级', '实体', '物品', '现象', '团体', '据点', '人士', '文档'] as const).map((c) => (
                 <button
                   key={c}
-                  className="border px-3 py-1"
+                  className="codex-cat border px-3 py-1"
+                  aria-pressed={codexCat === c}
                   style={{
                     borderColor: codexCat === c ? 'var(--amber)' : 'var(--panel-edge)',
                     color: codexCat === c ? 'var(--amber)' : 'var(--text-dim)',
@@ -820,18 +872,21 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
               {entFiltered.map((e) => {
                 const tier = unlockTier(e.type)
                 const n = seen[e.type] ?? 0
+                // 带阵营的实体（杰瑞→信众 / Ferren→BNTG）：列表卡同样应用阵营主题
+                const efac = ENTITY_FACTION[e.type] ? FACTIONS[ENTITY_FACTION[e.type]] : null
+                const ef = efac ? FACTION_FONTS[efac.id] : undefined
                 return (
                   <button
                     key={e.type}
                     className="hud-panel p-2 text-left transition-transform active:scale-95"
-                    style={{ opacity: tier >= 1 ? 1 : 0.45, cursor: tier >= 1 ? 'pointer' : 'default' }}
+                    style={{ opacity: tier >= 1 ? 1 : 0.45, cursor: tier >= 1 ? 'pointer' : 'default', borderColor: tier >= 1 && efac ? efac.color : undefined }}
                     onClick={() => { if (tier >= 1) { setDetail({ kind: 'entity', id: e.type }); audio.uiTick() } }}
                   >
                     <div className="flex items-center justify-between">
-                      <div className="font-title text-[15px]" style={{ color: tier >= 1 ? 'var(--blood)' : 'var(--text-dim)' }}>{tier >= 1 ? e.name : '？？？'}</div>
+                      <div className="font-title text-[15px]" style={{ color: tier >= 1 ? (efac ? (efac.sub ?? efac.color) : 'var(--blood)') : 'var(--text-dim)', fontFamily: tier >= 1 && ef ? ef.title : undefined }}>{tier >= 1 ? e.name : '？？？'}</div>
                       {tier >= 1 && <span className="font-mono2 text-[9px]" style={{ color: 'var(--text-dim)' }}>遭遇 {n}</span>}
                     </div>
-                    <div className="text-[11px] leading-snug" style={{ color: 'var(--text-dim)' }}>
+                    <div className="text-[11px] leading-snug" style={{ color: 'var(--text-dim)', fontFamily: tier >= 1 && ef ? ef.body : undefined }}>
                       {tier >= 1 ? e.desc : '尚未遭遇'}
                     </div>
                     {tier >= 1 && (
@@ -901,13 +956,6 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                 <option value="anom">后室物品</option>
                 <option value="norm">普通物品</option>
               </select>
-              <select value={fSrc} onChange={(e) => setFSrc(e.target.value)} style={FILTER_SEL_STYLE}>
-                <option value="all">全部来源</option>
-                <option value="generic">通用</option>
-                {[...new Set(Object.values(ITEMS).map((i) => i.unique).filter((u): u is number => u !== undefined))].sort((a, b) => a - b).map((u) => (
-                  <option key={u} value={String(u)}>B{u} 特有</option>
-                ))}
-              </select>
               <select value={fUse} onChange={(e) => setFUse(e.target.value as typeof fUse)} style={FILTER_SEL_STYLE}>
                 <option value="all">全部用途</option>
                 <option value="use">消耗品</option>
@@ -915,41 +963,60 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                 <option value="equip">装备</option>
                 <option value="other">其他</option>
               </select>
-              <select value={fRar} onChange={(e) => setFRar(e.target.value as typeof fRar)} style={FILTER_SEL_STYLE}>
-                <option value="all">全部稀有度</option>
-                <option value="common">常见</option>
-                <option value="uncommon">少见</option>
-                <option value="rare">稀有</option>
-                <option value="epic">珍稀</option>
+              {/* IOTS 三维筛选（统合物品分类系统标准用语） */}
+              <select value={fFreq} onChange={(e) => setFFreq(e.target.value)} style={FILTER_SEL_STYLE} title="IOTS 罕见度">
+                <option value="all">罕见度：全部</option>
+                {IOTS_FREQ_VALUES.map((v) => <option key={v} value={v}>{v}</option>)}
               </select>
+              <select value={fUtil} onChange={(e) => setFUtil(e.target.value)} style={FILTER_SEL_STYLE} title="IOTS 实用性">
+                <option value="all">实用性：全部</option>
+                {IOTS_UTIL_VALUES.map((v) => <option key={v} value={v}>{v}</option>)}
+              </select>
+              <select value={fOrigin} onChange={(e) => { setFOrigin(e.target.value); setFUnique('all') }} style={FILTER_SEL_STYLE} title="IOTS 产地来源">
+                <option value="all">产地：全部</option>
+                {IOTS_ORIGIN_VALUES.map((v) => <option key={v} value={v}>{v}</option>)}
+              </select>
+              {/* 选定「层级限定」后细分到具体层级（沿用旧版 B 层筛选） */}
+              {fOrigin === '层级限定' && (
+                <select value={fUnique} onChange={(e) => setFUnique(e.target.value)} style={FILTER_SEL_STYLE} title="限定层级">
+                  <option value="all">全部限定层</option>
+                  {[...new Set(Object.values(ITEMS).map((i) => i.unique).filter((u): u is number => u !== undefined))].sort((a, b) => a - b).map((u) => (
+                    <option key={u} value={String(u)}>B{u} 特有</option>
+                  ))}
+                </select>
+              )}
             </div>
             <div className="grid grid-cols-3 gap-2 md:grid-cols-5">
               {Object.values(ITEMS)
                 .filter((it) =>
                   (fAnom === 'all' || (fAnom === 'anom') === !!it.anomalous) &&
-                  (fSrc === 'all' || (fSrc === 'generic' ? it.unique === undefined : it.unique === Number(fSrc))) &&
                   (fUse === 'all' || usageOf(it) === fUse) &&
-                  (fRar === 'all' || (it.rarity ?? 'common') === fRar))
+                  (fFreq === 'all' || ITEM_IOTS[it.type].frequency === fFreq) &&
+                  (fUtil === 'all' || ITEM_IOTS[it.type].utility === fUtil) &&
+                  (fOrigin === 'all' || ITEM_IOTS[it.type].origin === fOrigin) &&
+                  (fOrigin !== '层级限定' || fUnique === 'all' || it.unique === Number(fUnique)))
                 .map((it) => (
                 <button
                   key={it.type}
                   className="hud-panel flex flex-col items-center gap-1 p-2 transition-transform active:scale-95"
-                  style={{ opacity: codex[it.type] ? 1 : 0.45, borderColor: codex[it.type] ? ITEM_RARITY_COLOR[it.rarity ?? 'common'] : undefined }}
+                  style={{ opacity: codex[it.type] ? 1 : 0.45, borderColor: codex[it.type] ? IOTS_FREQ_COLORS[ITEM_IOTS[it.type].frequency] : undefined }}
                   onClick={() => { if (codex[it.type]) { setDetail({ kind: 'item', id: it.type }); audio.uiTick() } }}
                 >
                   <ItemGlyph type={it.type} size={24} />
                   <div className="text-[11px]" style={{ color: 'var(--text)' }}>{codex[it.type] ? it.name : '？？？'}</div>
                   {codex[it.type] && (
-                    <div className="font-mono2 text-[9px]" style={{ color: ITEM_RARITY_COLOR[it.rarity ?? 'common'] }}>{ITEM_RARITY_LABEL[it.rarity ?? 'common']}</div>
+                    <div className="font-mono2 text-[9px]" style={{ color: IOTS_FREQ_COLORS[ITEM_IOTS[it.type].frequency] }}>{ITEM_IOTS[it.type].frequency}</div>
                   )}
                 </button>
               ))}
             </div>
             {Object.values(ITEMS).filter((it) =>
               (fAnom === 'all' || (fAnom === 'anom') === !!it.anomalous) &&
-              (fSrc === 'all' || (fSrc === 'generic' ? it.unique === undefined : it.unique === Number(fSrc))) &&
               (fUse === 'all' || usageOf(it) === fUse) &&
-              (fRar === 'all' || (it.rarity ?? 'common') === fRar)).length === 0 && (
+              (fFreq === 'all' || ITEM_IOTS[it.type].frequency === fFreq) &&
+              (fUtil === 'all' || ITEM_IOTS[it.type].utility === fUtil) &&
+              (fOrigin === 'all' || ITEM_IOTS[it.type].origin === fOrigin) &&
+              (fOrigin !== '层级限定' || fUnique === 'all' || it.unique === Number(fUnique))).length === 0 && (
               <div className="font-mono2 py-4 text-center text-[11px]" style={{ color: 'var(--text-dim)' }}>没有符合筛选条件的物品</div>
             )}
             </>)}
@@ -1019,12 +1086,12 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                   <div key={o.id} className="hud-panel relative overflow-hidden p-3" style={{ opacity: unlocked ? 1 : 0.5, borderColor: unlocked ? facColor : undefined }}>
                     {unlocked && fac?.logo && <FactionLogo file={fac.logo} name={fac.name} />}
                     <div className="relative">
-                    <div className="font-title text-[16px]" style={{ color: unlocked ? facSub : 'var(--text-dim)' }}>
+                    <div className="font-title text-[16px]" style={{ color: unlocked ? facSub : 'var(--text-dim)', fontFamily: fac ? (FACTION_FONTS[fac.id]?.header ?? FACTION_FONTS[fac.id]?.title) : undefined }}>
                       {unlocked ? o.name : '？？？'}
                     </div>
                     {unlocked ? (
                       o.intro.map((para, i) => (
-                        <p key={i} className="mt-1.5 text-[12px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>{para}</p>
+                        <p key={i} className="mt-1.5 text-[12px] leading-relaxed" style={{ color: 'var(--text-dim)', fontFamily: fac ? FACTION_FONTS[fac.id]?.body : undefined }}>{para}</p>
                       ))
                     ) : (
                       <div className="mt-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>尚未发现这处据点（在 Level 1 寻找定居点地标）</div>
@@ -1063,8 +1130,8 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-baseline gap-2">
-                      <span className="font-title text-[16px]" style={{ color: 'var(--amber)' }}>{n.name}</span>
-                      <span className="font-mono2 text-[10px]" style={{ color: 'var(--text-dim)' }}>{n.role}</span>
+                      <span className="font-title text-[16px]" style={{ color: 'var(--amber)', fontFamily: (FACTION_FONTS[n.faction ?? 'meg']?.header ?? FACTION_FONTS[n.faction ?? 'meg']?.title) }}>{n.name}</span>
+                      <span className="font-mono2 text-[10px]" style={{ color: 'var(--text-dim)', fontFamily: FACTION_FONTS[n.faction ?? 'meg']?.mono }}>{n.role}</span>
                       {loadChat(n.id).length > 0 && (
                         <button
                           className="font-mono2 ml-auto border px-2 text-[10px]"
@@ -1073,10 +1140,10 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                         >聊天记录（{loadChat(n.id).length}）</button>
                       )}
                     </div>
-                    <div className="mt-1 text-[11.5px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>
+                    <div className="mt-1 text-[11.5px] leading-relaxed" style={{ color: 'var(--text-dim)', fontFamily: FACTION_FONTS[n.faction ?? 'meg']?.body }}>
                       <span style={{ color: 'var(--amber)' }}>性格：</span>{n.personality}
                     </div>
-                    <div className="mt-0.5 text-[11.5px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>
+                    <div className="mt-0.5 text-[11.5px] leading-relaxed" style={{ color: 'var(--text-dim)', fontFamily: FACTION_FONTS[n.faction ?? 'meg']?.body }}>
                       <span style={{ color: 'var(--amber)' }}>经历：</span>{n.background}
                     </div>
                     {chatView === n.id && (
@@ -1114,8 +1181,8 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                     {f.logo && <FactionLogo file={f.logo} name={f.name} />}
                     <div className="relative">
                     <div className="flex items-center gap-2">
-                      <span className="font-title text-[16px]" style={{ color: f.sub ?? f.color }}>{f.name}</span>
-                      <span className="font-mono2 text-[10px]" style={{ color: 'var(--text-dim)' }}>{f.en}</span>
+                      <span className="font-title text-[16px]" style={{ color: f.sub ?? f.color, fontFamily: FACTION_FONTS[f.id]?.header ?? FACTION_FONTS[f.id]?.title }}>{f.name}</span>
+                      <span className="font-mono2 text-[10px]" style={{ color: 'var(--text-dim)', fontFamily: FACTION_FONTS[f.id]?.mono }}>{f.en}</span>
                       {f.hasRep ? (
                         <span
                           className="font-mono2 ml-auto text-[12px]"
@@ -1125,7 +1192,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                         <span className="font-mono2 ml-auto text-[10px]" style={{ color: 'var(--text-dim)' }}>---</span>
                       )}
                     </div>
-                    <p className="mt-1 text-[12px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>{f.desc}</p>
+                    <p className="mt-1 text-[12px] leading-relaxed" style={{ color: 'var(--text-dim)', fontFamily: FACTION_FONTS[f.id]?.body }}>{f.desc}</p>
                     {f.hasRep && (
                       <div className="font-mono2 mt-1.5 text-[10px]" style={{ color: 'var(--text-dim)' }}>
                         声望 ≥80 交易八折 · ≤-30 拒绝交易 · ≤-60 拒绝交谈 · ≤-90 禁止进入其据点

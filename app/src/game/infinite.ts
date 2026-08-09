@@ -20,13 +20,13 @@ export const GEN_ITEM_BASE = 0x200000 // 生成器固有物品 id 起点（玩�
 
 export type L0Variant =
   | 'maze' | 'pillars' | 'open' // 常规：迷宫 / 柱群 / 开阔区
-  | 'arch' | 'pillarhall' | 'pit' // 较稀有：拱门大厅 / 柱厅 / 深坑
+  | 'arch' | 'pillarhall' | 'pit' // 较稀有：拱厅 / 柱厅 / 深坑
   | 'blackout' | 'manila' // 稀有：熄灯区 / 马尼拉室
   | 'red' // 极稀有：红室
 
 export const VARIANT_NAMES: Record<L0Variant, string> = {
   maze: '迷宫', pillars: '柱群', open: '开阔区',
-  arch: '拱门大厅', pillarhall: '柱厅', pit: '深坑',
+  arch: '拱厅', pillarhall: '柱厅', pit: '深坑',
   blackout: '熄灯区', manila: '马尼拉室', red: '红室',
 }
 // 变种房间（开发者面板/图鉴档案展示用；常规地形 maze/pillars/open 不计入）
@@ -36,7 +36,7 @@ export const RARE_VARIANTS: readonly L0Variant[] = ['arch', 'pillarhall', 'pit',
 export const VARIANT_LORE: Record<string, string[]> = {
   arch: [
     '苍白墙壁上点缀着连续的拱形孔洞，地毯明显增厚，拱洞宽度恰好可供体型较小者倚坐片刻，暂时摆脱湿润的地面。',
-    '拱门大厅是 Level 0 中稳定性最佳的区域：身后的空间既不会移动，也不会发生形变，是流浪者辨认方向、喘息休整的锚点。档案建议：可以喘息，但别过夜——稳定不代表安全。',
+    '拱厅是 Level 0 中稳定性最佳的区域：身后的空间既不会移动，也不会发生形变，是流浪者辨认方向、喘息休整的锚点。档案建议：可以喘息，但别过夜——稳定不代表安全。',
   ],
   pillarhall: [
     '纵横交错、棋盘状排列的巨大立柱房间，有时绵延数英里。地毯绒毛较浅、地面相对干燥，是本层少数适合入睡的区域。',
@@ -297,7 +297,7 @@ function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: number, forc
       break
     }
     case 'arch': {
-      // 拱门大厅：中央大厅 + 两排连续拱门柱廊
+      // 拱厅：中央大厅 + 两排连续拱门柱廊
       carve(7, 10, 24, 21)
       for (const ay of [12, 19])
         for (let ax = 8; ax <= 23; ax += 3) pushStruct('arch', ax, ay, 1, 1, true)
@@ -452,7 +452,8 @@ function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: number, forc
       for (let t = 0; t < 30; t++) {
         const x = rng.int(2, CS - 3), y = rng.int(2, CS - 3)
         if (!isF(x, y) || holeAt(x, y)) continue
-        pushLight(x, y, rng.range(3, 5.5), def.palette.light)
+        // v50：L0 灯光位置对齐 4 格网（排列整齐）；半径加大=大范围柔光
+        pushLight(Math.round(x / 4) * 4, Math.round(y / 4) * 4, 9, def.palette.light)
         break
       }
     }
@@ -461,19 +462,14 @@ function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: number, forc
     if (variant !== 'red') {
       for (let gy = 0; gy < 4; gy++)
         for (let gx = 0; gx < 4; gx++) {
-          let done = false
-          for (let t = 0; t < 20 && !done; t++) {
-            const x = gx * 8 + rng.int(1, 7), y = gy * 8 + rng.int(1, 7)
-            if (!isF(x, y) || holeAt(x, y)) continue
-            pushLight(x, y, rng.range(5, 7.5), def.palette.light)
-            done = true
-          }
-          // 兜底：随机尝试全落空（格内地板稀少）时，确定性扫描格内第一块可用地板
-          if (!done)
-            outer: for (let y = gy * 8; y < gy * 8 + 8; y++)
-              for (let x = gx * 8; x < gx * 8 + 8; x++) {
-                if (!isF(x, y) || holeAt(x, y)) continue
-                pushLight(x, y, rng.range(5, 7.5), def.palette.light)
+          // v50：L0 灯阵改格心定点（整齐排列）+ 大范围柔光（r=9，衰减覆盖约 23m）
+          const x = gx * 8 + 4, y = gy * 8 + 4
+          if (isF(x, y) && !holeAt(x, y)) pushLight(x, y, 9, def.palette.light)
+          else
+            outer: for (let y2 = gy * 8; y2 < gy * 8 + 8; y2++)
+              for (let x2 = gx * 8; x2 < gx * 8 + 8; x2++) {
+                if (!isF(x2, y2) || holeAt(x2, y2)) continue
+                pushLight(x2, y2, 9, def.palette.light)
                 break outer
               }
         }
@@ -487,6 +483,17 @@ function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: number, forc
     for (let j = 0; j < 5; j++) {
       const x = x0 + rng.int(-1, 1), y = y0 + rng.int(-1, 1)
       if (isF(x, y) && !holeAt(x, y)) wet[li(x, y)] = 1
+    }
+  }
+  // 火盐晶体（Object 15）：前五个层级的角落产生，L0 尤其中罕见（约 6% chunk 一枚）
+  if (variant !== 'red' && rng.chance(0.06)) {
+    for (let t = 0; t < 40; t++) {
+      const x = rng.int(2, CS - 3), y = rng.int(2, CS - 3)
+      if (!isF(x, y) || solidAtL(x, y) || holeAt(x, y)) continue
+      const walls = (!isF(x + 1, y) ? 1 : 0) + (!isF(x - 1, y) ? 1 : 0) + (!isF(x, y + 1) ? 1 : 0) + (!isF(x, y - 1) ? 1 : 0)
+      if (walls < 2) continue
+      pushItem('firesalt', x, y)
+      break
     }
   }
   // 容器 / 通风口 / 插板（wiki：L0 无尸体与梯子，不再生成；红室不产任何物资）
@@ -648,7 +655,8 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
         live.data = { ...live.data, ...saved.data }
         // v31：可交互门（维护通廊墨黑金属门）——恢复 open 时同步 solid（开门不阻挡）
         // v41：hoteldoor 同样恢复（L2 废弃公共带的房间门）
-        if ((live.kind === 'inkdoor' || live.kind === 'hoteldoor') && saved.data.open !== undefined) live.solid = !saved.data.open
+        // v51：bargate 同样恢复（L3 发电站铁栅栏门）
+        if ((live.kind === 'inkdoor' || live.kind === 'hoteldoor' || live.kind === 'bargate') && saved.data.open !== undefined) live.solid = !saved.data.open
       }
     }
     return live
@@ -669,6 +677,7 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
   const entities: Entity[] = raw.entities.map((e) => {
     const ent = makeEntity(e.type, e.x - ox, e.y - oy)
     if (e.calm || e.scale !== undefined) ent.def = { ...ent.def, ...(e.calm ? { passive: true } : {}), ...(e.scale !== undefined ? { scale: e.scale } : {}) }
+    if (e.facing !== undefined) ent.facing = e.facing // v51：人制品售货机等生成时指定朝向
     return ent
   })
   // v39：chunk NPC（BRC 员工；定义由 raw 内嵌，工作点即岗位锚点，面向工作面）

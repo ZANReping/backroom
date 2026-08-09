@@ -20,6 +20,8 @@ export const ENTITY_EVENT_SPAWNS: Record<string, number[]> = {
   jerry: [274], // 鹉主杰瑞：仅 Level 274 主间栖木（生成器定点放置）
   pipeworm: [2],
   windowent: [2],
+  vendingmachine: [2], // 人制品售货机：L2 走廊尽头（生成器定点放置）
+  nguithr: [1, 2], // Nguithr'xurh：L1/L2 天花板结囊（生成器定点放置）
 }
 
 let cache: Record<string, EntitySpawn[]> | null = null

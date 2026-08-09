@@ -62,11 +62,11 @@ export const DEEP_ENTITIES: Record<string, EntityDef> = {
 
   // ==================== Level 8「Cave Systems」 ====================
   wrangler: {
-    type: 'wrangler', name: '缠斗者', hp: 200, speed: 2.2, damage: 40, sight: 8, hearing: 9,
+    type: 'wrangler', name: '牧蛇', hp: 200, speed: 2.2, damage: 40, sight: 8, hearing: 9,
     phases: true, huge: 1.9, color: '#4a3c34', habitat: 'any',
     desc: '蛇形巨型捕食者，长度以英里计。成体有一颗类人的头，白色发光的眼睛；雄性永远挂着令人不安的宽阔笑容。',
     codex: {
-      no: 'Wrangler（Level 8 顶级掠食者）', danger: '5 级（极端威胁）', habitat: 'Level 8 全境',
+      no: 'Entity 75「Wrangler」', danger: '5 级（极端威胁）', habitat: 'Level 8 全境',
       behavior: '能钻穿岩石，或直接 no-clip 穿过表面进行捕猎——墙壁与岩层拦不住它。追击时靠震动而非视线。',
       counter: '没有任何有效的正面手段。留在「第九之路」的稳定之岛之间，跟着 M.E.G. 路标走；离开标记路径就等于把自己交出去。',
       lore: [
@@ -83,7 +83,7 @@ export const DEEP_ENTITIES: Record<string, EntityDef> = {
     blind: true, throws: true, hearsSprint: true, color: '#5c5a4a', habitat: 'any',
     desc: '失明，靠回声定位。四条手臂，其中一对专门用来抬起并投掷巨石。领地性极强。',
     codex: {
-      no: 'Camo Crawler', danger: '4 级（高威胁）', habitat: 'Level 8 · Handyland 及周边洞系',
+      no: 'Entity 31「Camo Crawler」', danger: '4 级（高威胁）', habitat: 'Level 8 · Handyland 及周边洞系',
       behavior: '完全失明，用回声定位锁定目标；一旦锁定，会用四条手臂中的一对抬起巨石远距离投掷。对闯入领地的反应极其激烈。',
       counter: '它听不见「安静」。蹲行、避免奔跑、别在开阔洞厅里被它对上——石头的射程比你以为的远。',
       lore: [
@@ -96,7 +96,7 @@ export const DEEP_ENTITIES: Record<string, EntityDef> = {
     aggroStinger: true,
   },
   lightguide: {
-    type: 'lightguide', name: '引路者', hp: 30, speed: 1.4, damage: 0, sight: 8, hearing: 6,
+    type: 'lightguide', name: '微光向导', hp: 30, speed: 1.4, damage: 0, sight: 8, hearing: 6,
     passive: true, friendly: true, color: '#66e0d0', habitat: 'any',
     desc: '生物发光的小生物，外观像一颗缀满宝石的星星，发出蓝绿色的辉光。它不靠近，也不远离——它在等你跟上来。',
     codex: {
@@ -149,7 +149,7 @@ export const DEEP_ENTITIES: Record<string, EntityDef> = {
     aggroStinger: true,
   },
   strider: {
-    type: 'strider', name: '阔步者', hp: 150, speed: 2.9, damage: 38, sight: 10, hearing: 7,
+    type: 'strider', name: '挺进者', hp: 150, speed: 2.9, damage: 38, sight: 10, hearing: 7,
     charger: true, huge: 1.6, color: '#c8b9a4', habitat: 'outdoor', // L9 街道巡逻
     desc: '中央一颗眼球，下方六条约 2.4 米长的附肢——由脉络膜、神经与血管构成。体积约一辆汽车大小。',
     codex: {
@@ -166,7 +166,7 @@ export const DEEP_ENTITIES: Record<string, EntityDef> = {
     aggroStinger: true,
   },
   mangled: {
-    type: 'mangled', name: '残破者', hp: 320, speed: 1.5, damage: 50, sight: 9, hearing: 10,
+    type: 'mangled', name: '残缺者', hp: 320, speed: 1.5, damage: 50, sight: 9, hearing: 10,
     voiceLure: true, smokeShroud: true, huge: 3.2, color: '#4a4048', habitat: 'outdoor', // L9 PA3 区及周边山口
     desc: '体量巨大、形态不定，目击描述多为「蜘蛛状、约一栋房子大小」。它自身生成浓密翻涌的烟雾遮蔽真身——烟雾之下，是无数张人脸融合成的单一团块。',
     codex: {
@@ -204,7 +204,7 @@ export const DEEP_ENTITIES: Record<string, EntityDef> = {
 
   // ==================== Level 601「The End」 ====================
   partygoer: {
-    type: 'partygoer', name: '派对客', hp: 130, speed: 2.5, damage: 34, sight: 8, hearing: 7,
+    type: 'partygoer', name: '派对客 =)', hp: 130, speed: 2.5, damage: 34, sight: 8, hearing: 7,
     feignNeutral: true, secondArms: true, color: '#e8c93c', habitat: 'indoor',
     desc: '高大的两足噩梦，光滑的皮革质感皮肤，通体鲜黄。脸上刻着一个涂满血的笑脸符号「=)」。长而软的面条状手臂，末端不是手，而是环着倒钩牙的吸盘状的口。',
     codex: {

@@ -480,7 +480,8 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
               <div className="mb-2 grid gap-1">
                 {def.trade!.map((t) => {
                   const it = ITEMS[t.item]
-                  const price = Math.max(1, discount ? Math.floor(t.price * 0.8) : t.price)
+                  // v51：银舌头（Object 5）——生效中交易再享 95 折
+                  const price = Math.max(1, Math.floor((discount ? t.price * 0.8 : t.price) * (engine.silverTongueT > 0 ? 0.95 : 1)))
                   const afford = engine.countItem(coinItem) >= price
                   return (
                     <button

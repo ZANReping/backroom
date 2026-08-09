@@ -7,6 +7,7 @@ import { placePrefabs, scatterFeatures } from './prefabs'
 import { generateInfinite, type InfiniteState } from './infinite'
 import './infiniteL1' // v29：注册 Level 1 无限 chunk 生成器（副作用导入）
 import './infiniteL2' // v41：注册 Level 2 无限 chunk 生成器（副作用导入）
+import './infiniteL3' // v51：注册 Level 3 无限 chunk 生成器（副作用导入）
 import { genDeep } from './mapgenDeep'
 import { genOutpost } from './mapgenOutpost'
 import { CONTAINER_KINDS } from './containers'
@@ -145,7 +146,7 @@ export const FULL_BLOCK = 9e9
 // - frontdesk 前台：视觉仅 s.w×0.7m 台面（原 w×h=4×2 外接方块 → 空气墙）→ 真实轮廓全高阻挡
 // - ladder 装饰梯：双立柱+横档仅 0.56×0.14m 薄片（原 1×2 整瓦阻挡 → 空气墙）→ 细柱不挡路
 // - desk 书桌：顶板 s.w*0.9×0.7 @0.77m；crate 木箱：0.84×0.84 @0.70m
-export function structColliders(s: Structure): ColliderBox[] {
+export function structColliders(s: Structure, m?: GameMap): ColliderBox[] {
   const cx = s.x + s.w / 2, cy = s.y + s.h / 2
   switch (s.kind) {
     case 'table':
@@ -161,6 +162,37 @@ export function structColliders(s: Structure): ColliderBox[] {
       return [{ x0: cx - s.w * 0.45, y0: cy - 0.35, x1: cx + s.w * 0.45, y1: cy + 0.35, top: 0.77, stand: true }]
     case 'crate':
       return [{ x0: cx - 0.42, y0: cy - 0.42, x1: cx + 0.42, y1: cy + 0.42, top: 0.7, stand: true }]
+    // v51：容器柜类精确碰撞（模型比整瓦小；flushToWall 贴墙位移——碰撞盒同向贴墙，消除空气墙）。
+    // 尺寸逐一核对 structures.ts 模型；贴墙方向镜像渲染层 wallDirs（NB4 序第一面非地板邻墙），
+    // 位移量 = 0.5 − 深/2 − 0.02（同 flushToWall）；贴东西墙时模型旋 90°，碰撞盒宽高互换；
+    // data.deg/data.row 显式朝向（渲染层不位移）：仅按朝向换轴、居中；megcrate 无贴墙位移。
+    case 'cabinet': case 'locker': case 'dresser': case 'safebox':
+    case 'toolbox': case 'megcrate': case 'binshelf': case 'libshelf': {
+      const dims: Record<string, [number, number]> = { // [宽(模型局部 X)，深]
+        cabinet: [0.85, 0.5], locker: [0.64, 0.46], dresser: [0.85, 0.5], safebox: [0.72, 0.66],
+        toolbox: [0.58, 0.3], megcrate: [0.85, 0.85], binshelf: [s.w, 0.42], libshelf: [1.0, 0.58],
+      }
+      const [bw, bd] = dims[s.kind]
+      let ox = cx, oy = cy, swap = false
+      const deg = s.data?.deg !== undefined ? (((Number(s.data.deg) || 0) % 360) + 360) % 360 : -1
+      if (deg >= 0 || s.data?.row) swap = deg === 90 || deg === 270
+      else if (m && s.kind !== 'megcrate') {
+        const tx = Math.floor(s.x + s.w / 2), ty = Math.floor(s.y + s.h / 2)
+        const NB: [number, number][] = [[0, -1], [1, 0], [0, 1], [-1, 0]]
+        for (const [dx, dy] of NB) {
+          const nx = tx + dx, ny = ty + dy
+          if (nx < 0 || ny < 0 || nx >= m.w || ny >= m.h) continue
+          if (m.tiles[ny * m.w + nx] !== 1) {
+            const off = 0.5 - bd / 2 - 0.02
+            ox = cx + dx * off; oy = cy + dy * off
+            swap = dx !== 0
+            break
+          }
+        }
+      }
+      const hw = (swap ? bd : bw) / 2, hd = (swap ? bw : bd) / 2
+      return [{ x0: ox - hw, y0: oy - hd, x1: ox + hw, y1: oy + hd, top: FULL_BLOCK, stand: false }]
+    }
     case 'handrail': {
       // v46 扶手实心化：细条碰撞盒贴模型横杆一侧（deg 0=+z 90=+x 180=-z 270=-x；全高阻挡不可跨越）
       const deg = (((Number(s.data?.deg) || 0) % 360) + 360) % 360
@@ -180,7 +212,7 @@ export function structBlocksPoint(m: GameMap, x: number, y: number, z: number, b
   for (const s of m.structures) {
     if (!s.solid || (s.floor ?? 0) !== band) continue
     if (x < s.x - 0.6 || x > s.x + s.w + 0.6 || y < s.y - 0.6 || y > s.y + s.h + 0.6) continue
-    for (const b of structColliders(s)) {
+    for (const b of structColliders(s, m)) {
       if (x < b.x0 || x > b.x1 || y < b.y0 || y > b.y1) continue
       // 顶面高差超过步行可踏上的 STEP_UP 才阻挡（跳跃抬高 z 后可通过低矮家具）
       if (b.top - z > STEP_UP) return true
@@ -196,7 +228,7 @@ export function structStandTopAt(m: GameMap, x: number, y: number, z: number, ba
   for (const s of m.structures) {
     if (!s.solid || (s.floor ?? 0) !== band) continue
     if (x < s.x - 0.6 || x > s.x + s.w + 0.6 || y < s.y - 0.6 || y > s.y + s.h + 0.6) continue
-    for (const b of structColliders(s)) {
+    for (const b of structColliders(s, m)) {
       if (!b.stand) continue
       if (x < b.x0 || x > b.x1 || y < b.y0 || y > b.y1) continue
       if (b.top <= z + STEP_UP - 0.1) best = Math.max(best, b.top)
@@ -473,7 +505,7 @@ function placeWallHug(m: GameMap, rng: RNG, kind: Structure['kind'], data?: Stru
 // 双开门相邻的另一扇门视作墙。返回应施加在门组上的 rotation.y（0 或 π/2）。
 export function doorNeedsRotate(m: GameMap, s: Structure): number {
   const f = (x: number, y: number) => x >= 0 && y >= 0 && x < m.w && y < m.h && m.tiles[y * m.w + x] === 1
-  const DOORS: readonly string[] = ['hoteldoor', 'rollerdoor', 'glassdoor']
+  const DOORS: readonly string[] = ['hoteldoor', 'rollerdoor', 'glassdoor', 'bargate'] // v51：bargate 栅栏门
   const ax = Math.floor(s.x + s.w / 2), ay = Math.floor(s.y + s.h / 2)
   const doorAt = (x: number, y: number) =>
     m.structures.some((o) => o !== s && DOORS.includes(o.kind) && Math.floor(o.x + o.w / 2) === x && Math.floor(o.y + o.h / 2) === y)
@@ -1011,6 +1043,42 @@ function genOnce(def: LevelDef, seed: number): GameMap {
       }
     }
   }
+  // 旱虾（Entity 20）：仅在 L1–L5 的潮湿地板上概率生成（L0 不生成）；
+  // L3/L4 原本无湿区——各补 1–2 块湿地供其栖息
+  if (def.id >= 3 && def.id <= 5) {
+    if (def.id !== 5) {
+      for (let i = 0, n = rng.int(1, 2); i < n; i++) {
+        const p = randomFloor(m, rng)
+        for (let j = 0; j < 5; j++) {
+          const wx = p.x + rng.int(-1, 1), wy = p.y + rng.int(-1, 1)
+          if (m.tiles[idx(m, wx, wy)] === 1) m.wet[idx(m, wx, wy)] = 1
+        }
+      }
+    }
+    if (rng.chance(0.6)) {
+      const wets: { x: number; y: number }[] = []
+      for (let y = 0; y < m.h; y++)
+        for (let x = 0; x < m.w; x++)
+          if (m.tiles[idx(m, x, y)] === 1 && m.wet[idx(m, x, y)] === 1) wets.push({ x, y })
+      for (let k = 0, n = Math.min(wets.length, rng.int(1, 2)); k < n; k++) {
+        const s = wets[rng.int(0, wets.length - 1)]
+        m.entities.push(makeEntity('dryshrimp', s.x + 0.5, s.y + 0.5))
+      }
+    }
+  }
+  // 火盐晶体（Object 15）：前五个层级（L0–L4）的角落产生；有限层 L3/L4 在此放置（L0–L2 由各自无限生成器负责）
+  if (def.id >= 3 && def.id <= 4 && rng.chance(0.35)) {
+    for (let t = 0; t < 40; t++) {
+      const x = rng.int(2, m.w - 3), y = rng.int(2, m.h - 3)
+      if (m.tiles[idx(m, x, y)] !== 1) continue
+      const walls =
+        (m.tiles[idx(m, x + 1, y)] !== 1 ? 1 : 0) + (m.tiles[idx(m, x - 1, y)] !== 1 ? 1 : 0) +
+        (m.tiles[idx(m, x, y + 1)] !== 1 ? 1 : 0) + (m.tiles[idx(m, x, y - 1)] !== 1 ? 1 : 0)
+      if (walls < 2) continue
+      m.items.push({ id: Date.now() % 100000 + rng.next(), type: 'firesalt', x: x + 0.5, y: y + 0.5 })
+      break
+    }
+  }
 
   // 出生点（强制正常高度室内可达区）
   const sp = rooms.length ? { x: rooms[0].cx, y: rooms[0].cy } : randomFloor(m, rng)
@@ -1038,7 +1106,7 @@ function genOnce(def: LevelDef, seed: number): GameMap {
   }
 
   // 可交互门（BFS 视为可通行：开门后可达）
-  const OPENABLE: readonly string[] = ['hoteldoor', 'rollerdoor', 'glassdoor']
+  const OPENABLE: readonly string[] = ['hoteldoor', 'rollerdoor', 'glassdoor', 'bargate'] // v51：bargate 栅栏门
   const openableAt = (x: number, y: number) =>
     m.structures.some((s) => s.solid && OPENABLE.includes(s.kind) && x >= s.x && x < s.x + s.w && y >= s.y && y < s.y + s.h)
   const passFloor = (x: number, y: number): boolean => {
@@ -1128,13 +1196,21 @@ function genOnce(def: LevelDef, seed: number): GameMap {
   const aquaticLv = def.aquatic === true
 
   // 出口（随机选 1 个主要出口 + 偶尔第二个；据点跳过——出口由生成器手工布置）
-  const exitDefs = def.allExits ? [...def.exits] : rng.shuffle([...def.exits])
+  // v51：回程电梯（elevatorshaft →L3）从正常掷骰中剔除，作为额外出口单独放置——绝不挤占进程出口
+  const liftBack = def.exits.filter((e) => e.kind === 'elevatorshaft' && e.dest === 3)
+  const normalExitDefs = def.exits.filter((e) => !(e.kind === 'elevatorshaft' && e.dest === 3))
+  const exitDefs = def.allExits ? [...normalExitDefs] : rng.shuffle([...normalExitDefs])
   // v23：结局层（Level 601）必须真假两扇门同时存在
-  const nExits = def.gen === 'outpost' ? 0 : def.allExits ? def.exits.length : (rng.chance(0.35) ? 2 : 1)
+  const nExits = def.gen === 'outpost' ? 0 : def.allExits ? exitDefs.length : (rng.chance(0.35) ? 2 : 1)
   for (let i = 0; i < nExits; i++) {
     const p = reachFloor(12, { indoor: true, waterOk: aquaticLv }) // 出口强制正常高度室内可达区（水生层可落于开阔海面）
     m.exits.push({ def: exitDefs[i], x: p.x, y: p.y, discovered: false })
   }
+  if (def.gen !== 'outpost') // v51：额外回程电梯（普通地面放置，L4/L5 侧无嵌墙要求）
+    for (const elev of liftBack) {
+      const p = reachFloor(12, { indoor: true, waterOk: aquaticLv })
+      m.exits.push({ def: elev, x: p.x, y: p.y, discovered: false })
+    }
 
   // 光源
   const lightCount = Math.floor(size * size * def.lightDensity * (1 + rng.next()))
@@ -1739,7 +1815,7 @@ function addShallowPuddles(m: GameMap, rng: RNG) {
 export function bfs3D(m: GameMap): Uint8Array {
   const W = m.w, H = m.h
   const reach = new Uint8Array(W * H * 2)
-  const OPENABLE: readonly string[] = ['hoteldoor', 'rollerdoor', 'glassdoor']
+  const OPENABLE: readonly string[] = ['hoteldoor', 'rollerdoor', 'glassdoor', 'bargate'] // v51：bargate 栅栏门
   const openable = (x: number, y: number, floor: 0 | 1) =>
     m.structures.some((s) => s.solid && OPENABLE.includes(s.kind) && (s.floor ?? 0) === floor && x >= s.x && x < s.x + s.w && y >= s.y && y < s.y + s.h)
   // 行走高度（null=该层带不可站立）

@@ -27,6 +27,8 @@ export class GameAudio {
   private distort = 0 // 理智扭曲 0..1
   private uwFilter: BiquadFilterNode | null = null // v13：水下低通（全局闷化）
   private underwater = false
+  // v51：L3 配电箱电流嗡鸣（定位音频：引擎按距离逐帧调音量；节点链懒创建常驻）
+  private elecHumGain: GainNode | null = null
   muted = false
   volume = 0.8
 
@@ -103,6 +105,32 @@ export class GameAudio {
   stopHum() {
     for (const o of this.humOsc) { try { o.stop() } catch { /* */ } }
     this.humOsc = []
+  }
+
+  // v51：配电箱电流嗡鸣（L3 定位音频惯例——无定位音频系统，引擎按距离逐帧 setElecHum(vol)）
+  // vol 0=静默；节点链（100Hz 正弦 + 200Hz 谐波 + ~3kHz 带通电流噪）懒创建后常驻，只调音量
+  setElecHum(vol: number) {
+    if (!this.ctx || !this.sfx) return // AudioContext 未解锁前安全空转
+    if (!this.elecHumGain) {
+      const g = this.ctx.createGain()
+      g.gain.value = 0
+      g.connect(this.sfx)
+      const o1 = this.ctx.createOscillator()
+      o1.type = 'sine'; o1.frequency.value = 100
+      const g1 = this.ctx.createGain(); g1.gain.value = 1
+      o1.connect(g1).connect(g); o1.start()
+      const o2 = this.ctx.createOscillator() // 二次谐波（更弱的电气泛音）
+      o2.type = 'sine'; o2.frequency.value = 200
+      const g2 = this.ctx.createGain(); g2.gain.value = 0.35
+      o2.connect(g2).connect(g); o2.start()
+      const n = this.noiseSrc() // 电流噼啪（带通噪声）
+      const bp = this.ctx.createBiquadFilter()
+      bp.type = 'bandpass'; bp.frequency.value = 3000; bp.Q.value = 4
+      const gn = this.ctx.createGain(); gn.gain.value = 0.18
+      n.connect(bp).connect(gn).connect(g); n.start()
+      this.elecHumGain = g // 振荡器/噪声节点由音频图持有常驻，只调增益
+    }
+    this.elecHumGain.gain.setTargetAtTime(Math.min(1, vol) * 0.13, this.ctx.currentTime, 0.1)
   }
 
   private noiseBuf(): AudioBuffer {

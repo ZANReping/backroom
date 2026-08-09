@@ -145,6 +145,132 @@ def draw_jambread(d):
     d.rectangle([18, 18, 19, 21], fill='#b03048')
     d.point([(11, 13), (16, 14), (20, 13)], fill='#e06a80')   # 果酱高光
 
+def draw_capacitor(d):
+    # 电容器「瓶装闪电」（Object 42）：玻璃烧瓶 + 软木塞 + 瓶中疾走的蓝色闪电
+    obox(d, [13, 2, 18, 6], '#a8865a')                             # 软木塞
+    obox(d, [14, 6, 17, 9], '#b8e2ee')                             # 瓶颈玻璃
+    d.polygon([(11, 9), (20, 9), (24, 28), (7, 28)], fill='#c8e8f2', outline=INK)   # 梯形瓶身
+    d.polygon([(13, 13), (19, 13), (21, 26), (10, 26)], fill='#2a6a9a')             # 瓶内电荷光晕（深蓝）
+    d.line([(16, 11), (13, 18), (16, 18), (12, 26)], fill='#eaf7ff', width=1)       # 闪电折线
+    d.point([(15, 11), (14, 12), (17, 15)], fill='#ffffff')                         # 闪电高光
+    d.point([(9, 12), (8, 13)], fill='#e8f4f8')                                     # 瓶身玻璃反光
+
+def draw_parcel(d):
+    # 物流包裹（v43）：牛皮纸箱 + 十字胶带 + 面单 + BNTG 天平章
+    obox(d, [5, 8, 26, 27], '#a08653')                 # 箱体
+    d.rectangle([5, 12, 26, 15], fill='#d8cfb0')       # 横向胶带
+    d.rectangle([14, 8, 17, 27], fill='#d8cfb0')       # 纵向胶带
+    d.line([(5, 8), (26, 8)], fill='#7a6a42')          # 箱顶棱线
+    obox(d, [18, 17, 25, 24], '#f0e6c0')               # 面单
+    for y in (19, 21, 23):                             # 面单文字行
+        d.line([(19, y), (24, y)], fill='#8a8474')
+    obox(d, [7, 18, 12, 25], '#566c5a')                # BNTG 天平章（绿方章）
+    d.line([(9, 20), (10, 20)], fill='#d8cfb0')        # 天平横杆
+    d.point([(9, 21), (8, 22), (11, 22)], fill='#d8cfb0')
+
+def draw_shrimp(d):
+    # 旱虾（Entity 20）：分节橙褐躯体 + 两侧鳍叶 + 黑眼 + 扇尾
+    d.polygon([(20, 12), (10, 10), (4, 16), (10, 21), (20, 19)], fill='#b3612e', outline=INK)  # 躯体
+    for x in (9, 12, 15, 18):                            # 分节线
+        d.line([(x, 11), (x - 2, 20)], fill='#8f4a22')
+    d.polygon([(4, 16), (1, 12), (1, 20)], fill='#d9a86a', outline=INK)  # 扇尾
+    for z in (0, 1):                                     # 两侧鳍叶
+        d.polygon([(10 + z * 4, 21), (6 + z * 4, 26), (13 + z * 4, 22)], fill='#d9a86a', outline=INK)
+        d.polygon([(10 + z * 4, 10), (6 + z * 4, 5), (13 + z * 4, 9)], fill='#d9a86a', outline=INK)
+    d.point([(21, 13), (22, 13), (21, 14)], fill='#101216')  # 黑眼
+    d.line([(22, 11), (26, 6)], fill='#d9a86a')          # 触须
+    d.line([(22, 12), (27, 10)], fill='#d9a86a')
+
+def draw_friedshrimp(d):
+    # 酥炸旱虾：金黄炸衣（裹粉颗粒）+ 露出的虾尾
+    d.polygon([(20, 12), (10, 10), (4, 16), (10, 21), (20, 19)], fill='#e8b04a', outline=INK)
+    d.polygon([(4, 16), (1, 12), (1, 20)], fill='#d9a86a', outline=INK)  # 扇尾（未裹粉）
+    for (x, y) in ((10, 13), (14, 16), (17, 12), (12, 18), (18, 17), (8, 15)):
+        d.point([(x, y), (x + 1, y)], fill='#c9862e')    # 炸衣颗粒
+    d.point([(21, 13)], fill='#101216')
+
+def draw_firesalt(d):
+    # 火盐晶体（Object 15）：三枚橙色半透明碎晶
+    d.polygon([(8, 10), (13, 6), (16, 12), (12, 17)], fill='#e8823c', outline=INK)
+    d.polygon([(17, 15), (23, 11), (26, 17), (21, 22)], fill='#f59a4a', outline=INK)
+    d.polygon([(9, 20), (14, 17), (17, 23), (12, 26)], fill='#d96a2a', outline=INK)
+    d.point([(10, 9), (11, 10), (19, 15), (20, 16), (11, 21)], fill='#ffd9a0')  # 高光
+
+def draw_liquidpain(d):
+    # 液态痛苦（Object 48）：杏仁水瓶型 + 淡红液体（危险红盖）
+    obox(d, [13, 2, 18, 5], '#c94a3a')                     # 红盖
+    obox(d, [14, 5, 17, 8], '#d8d4c8')                     # 瓶颈
+    obox(d, [10, 8, 21, 28], '#e8e2d8')                    # 瓶身
+    d.rectangle([11, 14, 20, 27], fill='#d94a3a')          # 淡红液体
+    d.rectangle([11, 14, 20, 15], fill='#e87a6a')          # 液面
+    d.point([(12, 10), (13, 10), (12, 11)], fill='#f4f6f0')  # 玻璃反光
+
+# ---------- Object 5 糖果（散装=糖纸包裹单颗；袋装=一包八颗） ----------
+def candy_loose(body_fn):
+    return body_fn
+
+def draw_candysilver(d):
+    # 银舌头：舌头形金属糖
+    d.pieslice([8, 8, 24, 26], 0, 180, fill='#c9c9d4', outline=INK)
+    d.pieslice([13, 12, 19, 24], 0, 180, fill='#e8e8f0')
+    d.point([(11, 11), (12, 12)], fill='#f4f4f8')
+
+def draw_candybullet(d):
+    # 咀嚼子弹：银箔子弹巧克力
+    d.polygon([(16, 4), (20, 10), (20, 24), (16, 28), (12, 24), (12, 10)], fill='#9a9aa8', outline=INK)
+    d.rectangle([12, 18, 20, 22], fill='#6a6a76', outline=INK)
+    d.point([(17, 7), (18, 8)], fill='#e8e8f0')
+
+def draw_candygun(d):
+    # 枪糖：金属小手枪
+    d.rectangle([6, 10, 24, 16], fill='#5a5a64', outline=INK)      # 滑套
+    d.rectangle([24, 12, 27, 15], fill='#4a4a54', outline=INK)     # 枪口
+    d.polygon([(10, 16), (16, 16), (14, 27), (8, 27)], fill='#6a4a3a', outline=INK)  # 握把
+    d.point([(8, 12), (9, 12)], fill='#b8b8c8')
+
+def draw_candystanley(d):
+    # 纸片人斯坦利：扁平人形糖纸
+    d.ellipse([12, 3, 20, 11], fill='#d0d0c0', outline=INK)        # 头
+    d.polygon([(16, 11), (8, 27), (24, 27)], fill='#d0d0c0', outline=INK)  # 身
+    d.line([(9, 16), (4, 21)], fill=INK); d.line([(23, 16), (28, 21)], fill=INK)  # 手臂
+    d.point([(14, 7), (18, 7)], fill=INK)
+
+def draw_candywaste(d):
+    # 危害废料：迷你危废桶硬糖
+    obox(d, [10, 8, 22, 27], '#d9c93a')
+    d.rectangle([10, 12, 22, 15], fill='#3a3a30')
+    d.rectangle([10, 20, 22, 23], fill='#3a3a30')
+    d.point([(15, 17), (16, 17), (16, 18)], fill='#3a3a30')
+
+def draw_candygenius(d):
+    # 天才糖：粉色威化
+    obox(d, [7, 10, 25, 23], '#e8a0b8')
+    for y in (13, 16, 19):
+        d.line([(9, y), (23, y)], fill='#c97a92')
+    d.point([(11, 12), (20, 15), (13, 18), (19, 21)], fill='#f4d0dc')
+
+def draw_candymint(d):
+    # 杏仁薄荷糖：O 形薄荷
+    d.ellipse([7, 8, 25, 26], fill='#a0d0b0', outline=INK)
+    d.ellipse([12, 13, 20, 21], fill='#f4f6f0', outline=INK)
+    d.arc([8, 9, 24, 25], 200, 340, fill='#6aa880', width=2)
+
+def draw_manmade(d):
+    # 人制品：糖果纸包裹的肉块（粉白油纸 + 肉色方块）
+    d.polygon([(8, 12), (24, 12), (24, 22), (8, 22)], fill='#d8cfc0', outline=INK)  # 油纸
+    d.polygon([(8, 12), (4, 9), (4, 25)], fill='#d8cfc0', outline=INK)              # 左拧口
+    d.polygon([(24, 12), (28, 9), (28, 25)], fill='#d8cfc0', outline=INK)           # 右拧口
+    d.rectangle([12, 14, 20, 20], fill='#8a4a3a', outline=INK)                       # 肉块
+    d.point([(14, 16), (17, 18)], fill='#c9a0a0')
+
+def candy_bag(label):
+    def fn(d):
+        d.polygon([(9, 9), (23, 9), (26, 27), (6, 27)], fill='#e8e0cc', outline=INK)  # 袋身
+        d.rectangle([12, 5, 20, 9], fill='#c9b890', outline=INK)                      # 扎口
+        d.rectangle([11, 14, 21, 21], fill=label, outline=INK)                        # 口味标签
+        d.point([(10, 23), (13, 24), (18, 24), (22, 23)], fill='#c9b890')             # 袋底褶皱
+    return fn
+
 DRAW = {
     'disinfectant': draw_disinfectant,
     'welcomenote': draw_welcomenote,
@@ -158,6 +284,27 @@ DRAW = {
     'tomsspecial': draw_tomsspecial,
     'grilledsteak': draw_grilledsteak,
     'jambread': draw_jambread,
+    'capacitor': draw_capacitor,
+    'parcel': draw_parcel,
+    'dryshrimp': draw_shrimp,
+    'friedshrimp': draw_friedshrimp,
+    'firesalt': draw_firesalt,
+    'liquidpain': draw_liquidpain,
+    'candysilver': draw_candysilver,
+    'candybullet': draw_candybullet,
+    'candygun': draw_candygun,
+    'candystanley': draw_candystanley,
+    'candywaste': draw_candywaste,
+    'candygenius': draw_candygenius,
+    'candymint': draw_candymint,
+    'manmade': draw_manmade,
+    'candysilver_bag': candy_bag('#c9c9d4'),
+    'candybullet_bag': candy_bag('#9a9aa8'),
+    'candygun_bag': candy_bag('#5a5a64'),
+    'candystanley_bag': candy_bag('#d0d0c0'),
+    'candywaste_bag': candy_bag('#d9c93a'),
+    'candygenius_bag': candy_bag('#e8a0b8'),
+    'candymint_bag': candy_bag('#a0d0b0'),
 }
 
 # ---------- 物品清单：直接解析 items.ts ----------
@@ -187,6 +334,17 @@ for t in types:
 
 for t in gen:
     print(f'  生成 {t}')
+# Object 5 糖果：袋装版本（堆叠 ≥4 时显示）——非真实物品类型，按糖果类型单独生成
+for t in ['candysilver', 'candybullet', 'candygun', 'candystanley', 'candywaste', 'candygenius', 'candymint']:
+    fn = DRAW.get(f'{t}_bag')
+    path = f'{DIR}/item_{t}_bag.png'
+    if not fn or os.path.exists(path):
+        continue
+    img = canvas()
+    fn(ImageDraw.Draw(img))
+    img = img.resize((OUT, OUT), Image.NEAREST)
+    img.save(path)
+    print(f'  生成 {t}_bag')
 if skip:
     print(f'跳过（已有 png）：{len(skip)} 件')
 if missing_draw:

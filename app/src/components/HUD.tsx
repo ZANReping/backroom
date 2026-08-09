@@ -322,7 +322,7 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
           style={{
             width: isMobile ? 40 : 44, height: isMobile ? 40 : 44,
             borderColor: p.selected === i ? 'var(--amber)' : 'var(--panel-edge)',
-            boxShadow: p.selected === i ? 'inset 0 0 6px rgba(232,185,60,0.5)' : 'none',
+            boxShadow: p.selected === i ? 'inset 0 0 6px color-mix(in srgb, var(--amber) 50%, transparent)' : 'none',
             background: 'color-mix(in srgb, var(--panel) 85%, transparent)',
             // v29b：多点触控下快捷栏必须可点——touchstart 直触（合成 click 用时间戳抑制），
             // touchAction:none 防止浏览器把第二指触摸当作手势吃掉；摇杆/视角层不覆盖此热区（HUD z-30 在上）
@@ -337,7 +337,7 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
           <span className="font-mono2 absolute left-0.5 top-0 text-[8px]" style={{ color: 'var(--text-dim)' }}>{i + 1}</span>
           {s && (
             <>
-              <ItemGlyph type={s.type} />
+              <ItemGlyph type={s.type} count={s.count} />
               {s.count > 1 && <span className="font-mono2 absolute bottom-0 right-0.5 text-[9px]" style={{ color: 'var(--amber)' }}>{s.count}</span>}
             </>
           )}
@@ -413,7 +413,7 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
         {isMobile && (
           <div className="pointer-events-none mx-auto mt-1 max-h-[3.6em] space-y-0.5 overflow-hidden" style={{ maxWidth: '100%' }}>
             {log.slice(-2).map((l) => (
-              <div key={l.id} className="font-mono2 truncate text-[11px]" style={{ color: l.kind === 'loot' ? 'var(--amber)' : l.kind === 'damage' ? 'var(--blood)' : l.kind === 'lore' ? 'var(--sanity)' : 'var(--text-dim)', opacity: Math.min(1, (now - l.t) / 4000 > 1 ? 0.4 : 1), textShadow: '0 1px 3px rgba(0,0,0,0.9)' }}>
+              <div key={l.id} className="hud-log-line font-mono2 truncate text-[11px]" style={{ color: l.kind === 'loot' ? 'var(--amber)' : l.kind === 'damage' ? 'var(--blood)' : l.kind === 'lore' ? 'var(--sanity)' : 'var(--text-dim)', opacity: Math.min(1, (now - l.t) / 4000 > 1 ? 0.4 : 1), textShadow: '0 1px 3px rgba(0,0,0,0.9)' }}>
                 {l.text}
               </div>
             ))}
@@ -467,7 +467,7 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
       {!isMobile && (
         <div className="pointer-events-none absolute bottom-3 max-w-[320px] space-y-0.5" style={{ left: devMode ? 384 : 12 }}>
           {log.slice(-4).map((l) => (
-            <div key={l.id} className="font-mono2 truncate text-[12px]" style={{ color: l.kind === 'loot' ? 'var(--amber)' : l.kind === 'damage' ? 'var(--blood)' : l.kind === 'lore' ? 'var(--sanity)' : 'var(--text-dim)', opacity: now - l.t > 4000 ? 0.4 : 1, textShadow: '0 1px 3px rgba(0,0,0,0.9)' }}>
+            <div key={l.id} className="hud-log-line font-mono2 truncate text-[12px]" style={{ color: l.kind === 'loot' ? 'var(--amber)' : l.kind === 'damage' ? 'var(--blood)' : l.kind === 'lore' ? 'var(--sanity)' : 'var(--text-dim)', opacity: now - l.t > 4000 ? 0.4 : 1, textShadow: '0 1px 3px rgba(0,0,0,0.9)' }}>
               {l.text}
             </div>
           ))}
@@ -505,7 +505,8 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
 
       {/* ---- 状态低下画面效果（受减闪烁设置缩放）---- */}
       {/* 饥饿 ≤25：边缘发黄收缩脉冲 */}
-      {p.hunger <= 25 && (
+      {/* v51：人制品效应中始终显示饥饿画面特效（哪怕刚吃饱） */}
+      {(p.hunger <= 25 || engine.manmadeT > 0) && (
         <div className="pointer-events-none fixed inset-0 z-[31] anim-hungerPulse" style={{ boxShadow: `inset 0 0 ${90 + 60 * fxScale}px 30px rgba(201,138,61,${0.35 + 0.3 * fxScale})` }} />
       )}
       {/* 理智 ≤40：紫边呼吸扭曲；≤20 加强 + 角落黑影 */}
@@ -529,6 +530,10 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
       {/* 手电瘫痪提示 */}
       {p.flashJamT > 0 && (
         <div className="hud-panel font-mono2 absolute left-1/2 top-14 -translate-x-1/2 px-3 py-1 text-[11px]" style={{ color: 'var(--sanity)' }}>⚡ 手电瘫痪 {p.flashJamT.toFixed(1)}s</div>
+      )}
+      {/* v51：Nguithr'xurh 镇静剂麻痹——视野模糊（毛玻璃覆盖层） */}
+      {engine.webbedT > 0 && (
+        <div className="pointer-events-none fixed inset-0 z-[30]" style={{ backdropFilter: 'blur(3px) brightness(0.92)', WebkitBackdropFilter: 'blur(3px) brightness(0.92)' }} />
       )}
 
       {/* 出口方向指引（蓝色=定居点地标） */}
@@ -852,7 +857,7 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
                       <span className="w-8 shrink-0" style={{ color: s.color }}>{s.label}</span>
                       <input
                         type="range" min={0} max={100} value={Math.round(p[s.key])}
-                        className="min-w-0 flex-1 accent-[#e8b93c]"
+                        className="min-w-0 flex-1 accent-[var(--amber)]"
                         style={{ height: 28 }}
                         onChange={(e) => engine.devSetStat(s.key, Number(e.target.value))}
                       />
@@ -909,11 +914,16 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
                   </DevSection>
                 )}
                 {info && (
-                  <DevSection label="出口方位">
+                  <DevSection label="出口与地标方位">
                     {info.exits.length === 0 && <div style={{ color: 'var(--text-dim)' }}>本层无出口</div>}
                     {info.exits.map((e, i) => (
                       <div key={i} style={{ color: e.discovered ? 'var(--exit)' : 'var(--text-dim)' }}>
                         {e.name} · {e.d.toFixed(1)}m {e.discovered ? '（已发现）' : ''}
+                      </div>
+                    ))}
+                    {info.landmarks.map((l, i) => (
+                      <div key={`lm${i}`} style={{ color: '#6abfff' }}>
+                        🚩 {l.name} · {l.d.toFixed(1)}m
                       </div>
                     ))}
                   </DevSection>
@@ -1135,6 +1145,15 @@ const PIXEL_ICON: Record<string, true> = {
   disinfectant: true, welcomenote: true,
   tomatosoup: true, gardensalad: true, garlicbread: true, pasta: true, meatstew: true,
   pizza: true, lasagna: true, tomsspecial: true, grilledsteak: true, jambread: true,
+  parcel: true, // v43 物流包裹（像素手绘纸箱）
+  dryshrimp: true, friedshrimp: true, // v50 旱虾 / 酥炸旱虾
+  firesalt: true, liquidpain: true, // v50 火盐晶体 / 液态痛苦
+  // v51：Object 5 糖果（散装 + 袋装）
+  candysilver: true, candybullet: true, candygun: true, candystanley: true,
+  candywaste: true, candygenius: true, candymint: true,
+  candysilver_bag: true, candybullet_bag: true, candygun_bag: true, candystanley_bag: true,
+  candywaste_bag: true, candygenius_bag: true, candymint_bag: true,
+  manmade: true, // v51 人制品
 }
 // v14：网络素材贴图图标（game-icons.net，CC BY 3.0，见 public/textures/icons/SOURCES.md）；
 // 不在表内或加载失败的物品回退手绘 SVG。
@@ -1145,19 +1164,23 @@ const ICON_IMG: Record<string, true> = {
   flashlight: true, // v20：game-icons.net Delapouite flashlight（替换手绘 SVG）
   canned: true, stapler: true, capacitor: true, glowstick: true, wallpaper: true, // v21：用户提供图标素材
 }
-export function ItemGlyph({ type, size = 24 }: { type: string; size?: number }) {
+export function ItemGlyph({ type, size = 24, count }: { type: string; size?: number; count?: number }) {
   const [imgErr, setImgErr] = useState(false)
   const [pixelErr, setPixelErr] = useState(false)
   const def = ITEMS[type]
   const g = def?.glyph ?? 'box'
   const color = GLYPH_COLOR[type] ?? 'var(--text)'
   const base = (import.meta.env.BASE_URL ?? '/').replace(/\/?$/, '/')
+  // v51：糖果堆叠 ≥4 显示袋装版本（糖果贩/图鉴等无 count 场景默认袋装）；<4 散装单颗
+  const key = `${type}_bag`
+  const bagged = (count ?? 8) >= 4 && PIXEL_ICON[key]
   // v28：原创像素画贴图优先；imageRendering: pixelated 保证小格子内像素锐利不糊
-  if (PIXEL_ICON[type] && !pixelErr) {
+  const iconKey = bagged ? key : type
+  if (PIXEL_ICON[iconKey] && !pixelErr) {
     return (
       <img
         className="pixel-icon"
-        src={`${base}textures/icons/pixel/item_${type}.png`}
+        src={`${base}textures/icons/pixel/item_${iconKey}.png`}
         width={size} height={size} alt={def?.name ?? type}
         draggable={false}
         onError={() => setPixelErr(true)}

@@ -31,6 +31,30 @@ export const OUTDOOR_FLOOR: Record<string, string> = {
 
 export function col(hex: string): THREE.Color { return new THREE.Color(hex) }
 
+// ---------- 光影模式（classic=现状 Lambert；realistic=物理光照 Standard + 环境反射）----------
+export type MaterialMode = 'classic' | 'realistic'
+let materialMode: MaterialMode = 'classic'
+let reflectK = 1 // 反射强度倍率（设置 0–100 → k=0–1.67，默认 60→1）
+export function setMaterialMode(m: MaterialMode) { materialMode = m }
+export function getMaterialMode(): MaterialMode { return materialMode }
+export function setReflectK(k: number) { reflectK = k }
+export function getReflectK(): number { return reflectK }
+
+/**
+ * 受光材质工厂：classic 一律 MeshLambertMaterial（与现状一致）；
+ * realistic 换 MeshStandardMaterial 以获得 PBR 环境反射（envMapIntensity = envBase × 全局反射倍率）。
+ * envBase 记录在 userData.envBase，供「反射强度」设置即时调整（renderer.setReflectivity 遍历应用）。
+ */
+export function litMaterial(params: THREE.MeshLambertMaterialParameters & { roughness?: number; metalness?: number; envBase?: number }): THREE.MeshLambertMaterial | THREE.MeshStandardMaterial {
+  const { roughness, metalness, envBase, ...rest } = params
+  if (materialMode !== 'realistic') return new THREE.MeshLambertMaterial(rest)
+  const mat = new THREE.MeshStandardMaterial({ ...rest, roughness: roughness ?? 0.85, metalness: metalness ?? 0 })
+  const base = envBase ?? 0.18
+  mat.envMapIntensity = base * reflectK
+  mat.userData.envBase = base
+  return mat
+}
+
 // 台阶/坡道楔形几何（封闭棱柱：顶面斜坡 + 四个侧面到底边，消除侧缝）
 // v46：skip 可按边跳过侧面——同向连续楼梯坡道的相邻侧面在接缝处完全重叠（同面片闪色），由调用方跳过
 export function rampGeo(dir: number, low: number, high: number, tx: number, tz: number, cTop: THREE.Color, base?: number, skip?: { px?: boolean; nx?: boolean; pz?: boolean; nz?: boolean }): THREE.BufferGeometry {

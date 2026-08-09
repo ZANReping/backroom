@@ -23,7 +23,7 @@ export const SPECIAL_ENTITIES: Record<string, EntityDef> = {
     type: 'arms', name: '手臂', hp: 30, speed: 0, damage: 16, sight: 0, hearing: 0, stationary: true, color: '#c9a684', habitat: 'indoor',
     desc: '自天花板通风管内垂下的苍白长臂，指节反曲。层级灯光熄灭时，它会伸下来猎捕。',
     codex: {
-      no: '未编号（Level 1 特有）', danger: '3 级（中威胁）', habitat: 'Level 1 的天花板通风管道',
+      no: '未编号「Arms」', danger: '3 级（中威胁）', habitat: 'Level 1 的天花板通风管道',
       behavior: '平时蜷缩在通风管深处，无法观测。层级灯光熄灭时从管内垂下，在管道下方挥抓任何经过的活物；灯光恢复后立即缩回。',
       counter: '停电时远离通风管下方，绕开管道投影区域。它可以被武器击中——但更值得做的是退进维护通廊的灯火里等停电结束。',
       lore: [
@@ -39,7 +39,7 @@ export const SPECIAL_ENTITIES: Record<string, EntityDef> = {
     type: 'arcwraith', name: '电弧体', hp: 40, speed: 3.0, damage: 24, sight: 8, hearing: 2, jamsLight: true, color: '#9adfff', habitat: 'any',
     desc: '沿电缆沟游走的蓝色电弧，靠近时你的手电会失灵。',
     codex: {
-      no: '未编号（Level 3 特有）', danger: '4 级（高威胁）', habitat: 'Level 3 电站电缆沟与配电区',
+      no: '未编号「Arcwraith」', danger: '4 级（高威胁）', habitat: 'Level 3 电站电缆沟与配电区',
       behavior: '由电流构成的飘浮实体，靠近时释放电磁脉冲：手电瘫痪、电池快速漏电，然后趁黑发动攻击。',
       counter: '保持三米以上距离，别让它贴上来。手电被瘫痪时立刻后撤到灯光下，等脉冲过去再重新点亮。',
       lore: [
@@ -48,6 +48,54 @@ export const SPECIAL_ENTITIES: Record<string, EntityDef> = {
         '绝缘服可以提供对放电攻击的完全防护，但对电磁脉冲无效——它瘫痪的是设备，不是人。',
       ],
       sighting: '「灯灭的那两秒里，我看见它在我脸前。灯亮了，它在十米外。它在玩我。」——Gamma 基地外勤录音。',
+    },
+    aggroStinger: true,
+  },
+  vendingmachine: {
+    // Entity 36「人制品售货机」：休眠态——不会主动行动；背面查看标语 / 正面取出人制品；背对后激活
+    type: 'vendingmachine', name: '人制品售货机', hp: 200, speed: 0, damage: 0, sight: 0, hearing: 0,
+    stationary: true, passive: true, noRetaliate: true, color: '#4a5a66', habitat: 'indoor',
+    desc: '一台前厅品牌的自动售货机，立在走廊尽头。里面的「产品」装在印着字母和数字的格子里。',
+    codex: {
+      no: 'Entity 36「人制品售货机」', danger: '2 级（低威胁；活化后升 4 级）', habitat: 'Level 2 / Level 13 等缺少食物资源的层级的走廊尽头',
+      behavior: '外观与普通售货机无异，背面印着「人制品售货机 · 艾里克家族出品 · 2019，亚利桑那」。从正面取货无需支付——产品由一只白骨化的人手推出。查看过它的背面之后，千万别背对它。',
+      counter: '远离，不要取货，也不要检查它的背面。万一它长出骷髅手开始移动——它不快，拉开距离，绕开走廊拐角。',
+      lore: [
+        '「人制品售货机」高约 1.8 米，外观为各种前厅品牌的售货机。背面的标语写着：「人制品售货机 · 艾里克家族出品 · 它于人人，人人为它，它为人人 · 2019，亚利桑那」。没有任何关于「艾里克家族」的记录。',
+        '它出售的产品全部由人体组织制成，且含有高浓度多巴胺：食用者会迅速成瘾、拒绝进食其他食物、无论吃多少都感到饥饿，最终不肯离开售货机半步。每隔约 12 小时，机器内的产品会在一瞬间全部补齐。',
+        '实验记录显示其外壳抗性极强，大多数武器几乎无效，唯独电流（如瓶装闪电）能造成显著伤害。部分受害者声称在补货时听见机器里传出亲人的啜泣声。',
+      ],
+      sighting: '「我只是想看看它背后写了什么。看完我往前走，背后响起指甲刮地的声音。我没敢回头。」——Level 2 幸存者访谈。',
+    },
+    aggroStinger: false,
+  },
+  nguithr: {
+    // Entity 16「Nguithr'xurh」：避日目蛛形实体——天花板结球状网囊，滴镇静剂捕食
+    type: 'nguithr', name: "Nguithr'xurh", hp: 30, speed: 1.2, damage: 8, sight: 4, hearing: 2, color: '#5a4a3a', habitat: 'indoor',
+    desc: '天花板垂下的球状网囊。别从它正下方走过。',
+    codex: {
+      no: 'Entity 16「Nguithr\'xurh」', danger: '3 级（中威胁）', habitat: 'Level 1 / Level 2 / Level 3 的天花板',
+      behavior: '在天花板上织出球状网囊并注入镇静剂。有猎物从正下方经过时切下一个球——球爆开后镇静剂生效，它便顺着丝降到猎物旁边开始进食。它很慢，也不爱追远。',
+      counter: '留意天花板上的球状网囊并绕开走。若已被洒中：麻痹感退去前立刻离开那一格，它就不会下来；若它已经下来了，拉开距离——它不会追远。',
+      lore: [
+        'Nguithr\'xurh 是避日目的大型蛛形生物，具 16 只附肢。它会把充满镇静剂的球状网囊悬挂在天花板下，猎物经过正下方时切球洒药，待猎物感知下降后一次性放下全部球，再垂降进食。',
+        '其名称本应是「麻痹蜘蛛」，但初版条目是撰稿人在镇静剂作用下写就的，拼写错误「Nguithr\'xurh」被保留下来，以警示其镇静效果之强。',
+        '它的分泌物即使大剂量也相对无害，M.E.G. 正在研究以其制造止痛药与抗抑郁药物。它的伤害通常可以治愈——只要你还能注意到它，就还有救。',
+      ],
+      sighting: '「头顶\'啪\'的一声，像有人捏爆了一个水球。等我脑子清醒过来，它已经在我肩膀上了。」——Level 2 探索队记录。',
+    },
+    aggroStinger: true,
+  },
+  vmad: {
+    // 激活态（内部类型，不进图鉴）：长出骷髅手腿的人制品售货机
+    type: 'vmad', name: '活化的人制品售货机', hp: 200, speed: 1.4, damage: 14, sight: 10, hearing: 10, color: '#4a5a66', habitat: 'indoor',
+    desc: '长出骷髅手作为腿的人制品售货机——它知道你看过它的背面。',
+    codex: {
+      no: 'Entity 36「人制品售货机」', danger: '4 级（高威胁）', habitat: 'Level 2 的走廊尽头',
+      behavior: '追逐并攻击背对过它的人。',
+      counter: '它不快，拉开距离绕开走廊拐角。',
+      lore: ['它知道你看过它的背面。'],
+      sighting: '「我没敢回头。」',
     },
     aggroStinger: true,
   },

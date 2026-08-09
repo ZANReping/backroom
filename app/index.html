@@ -9,9 +9,26 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+HuangYou&family=JetBrains+Mono:wght@400;700&family=Noto+Sans+SC:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+HuangYou&family=JetBrains+Mono:wght@400;700&family=Noto+Sans+SC:wght@400;500&family=Inter:wght@400;700;900&family=Recursive:wght@400;700&family=Noto+Serif+SC:wght@700;900&family=Sofia+Sans:wght@400;800&family=Rubik:wght@400;700&family=Overpass+Mono:wght@400;700&family=PT+Mono&family=Share+Tech+Mono&family=Anonymous+Pro:wght@400;700&family=Staatliches&family=PT+Serif:wght@400;700&display=swap"
       rel="stylesheet"
     />
+    <style>
+      /* 本地打包的免费商用字体（Google Fonts 不可得）：
+         Fantasque Sans Mono（杰瑞的信众标题）、未来荧黑 Extended（后室装修公司标题/正文）、
+         Metropolis（信众正文，Proxima Nova 的免费替代）、字魂扁桃体（装修公司版头，若文件存在）。
+         用相对路径 ./fonts/ 以适配子路径部署；浏览器仅在实际渲染到该字体时才下载。 */
+      @font-face { font-family: 'Fantasque Sans Mono'; font-style: normal; font-weight: 400; font-display: swap; src: url('./fonts/fantasque-sans-mono-400.woff2') format('woff2'); }
+      @font-face { font-family: 'Fantasque Sans Mono'; font-style: normal; font-weight: 700; font-display: swap; src: url('./fonts/fantasque-sans-mono-700.woff2') format('woff2'); }
+      @font-face { font-family: '未来荧黑 Extended'; font-style: normal; font-weight: 400; font-display: swap; src: url('./fonts/glow-sans-sc-ext-400.woff2') format('woff2'); }
+      @font-face { font-family: '未来荧黑 Extended'; font-style: normal; font-weight: 700; font-display: swap; src: url('./fonts/glow-sans-sc-ext-700.woff2') format('woff2'); }
+      /* Metropolis（SIL OFL）：Proxima Nova 的免费替代，杰瑞的信众正文字体 */
+      @font-face { font-family: 'Metropolis'; font-style: normal; font-weight: 400; font-display: swap; src: url('./fonts/metropolis-400.woff2') format('woff2'); }
+      @font-face { font-family: 'Metropolis'; font-style: normal; font-weight: 700; font-display: swap; src: url('./fonts/metropolis-700.woff2') format('woff2'); }
+      /* 字魂扁桃体（SIL OFL 1.1，免费商用）：后室装修公司版头字体 */
+      @font-face { font-family: '字魂扁桃体'; font-style: normal; font-weight: 400; font-display: swap; src: url('./fonts/zihunbiantaoti.woff2') format('woff2'); }
+      /* ChillGSans 寒蝉高黑体（SIL OFL 1.1，Chill Type，思源黑体衍生）：BNTG 标题/版头中文字体 */
+      @font-face { font-family: 'ChillGSans'; font-style: normal; font-weight: 400 700; font-display: swap; src: url('./fonts/chillgsans.woff2') format('woff2'); }
+    </style>
   </head>
   <body>
     <div id="root"></div>

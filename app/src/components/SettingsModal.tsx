@@ -4,10 +4,13 @@ import { audio } from '@/game/audio'
 import type { Difficulty } from '@/game/engine'
 import { BIND_ACTIONS, bindLabel, conflictOf, actionLabel, getKeybinds, setKeybind, resetKeybinds } from '@/game/keybinds'
 
+export type UiTheme = 'amber' | 'liminal' | 'basalt' | 'dark-liminal' | 'greyspace' | 'database' | 'fandom' | 'meg'
+
 export interface GameSettings {
   difficulty: Difficulty
   autoSprint: boolean
   grain: boolean
+  vcrFx: boolean // VCR 滤镜（扫描线/色差/噪点/跟踪失真后处理；默认关闭）
   dust: boolean // 漂浮尘埃粒子（默认关闭）
   shake: boolean
   flicker: number // 0-100
@@ -16,6 +19,14 @@ export interface GameSettings {
   fogOfWar: boolean // 战争迷雾（距离雾）：关闭后远处不再被雾遮蔽
   fogScale: number // 距离雾远近（%：50=更近更浓 … 100=默认 … 200=更远更淡）
   farLights: boolean // 远处灯光全开（默认关闭=灯光点亮距离与雾可视距离一致；开启后灯光池 48→96 全场景点亮，性能开销略增）
+  lightMode: 'classic' | 'realistic' // 光影模式：classic=经典（当前版本）/ realistic=真实物理光照（默认 classic，可随时退回）
+  shadowQuality: number // 阴影质量 0=低 1=中 2=高（手电/太阳 shadow map 尺寸与软影半径；仅 realistic）
+  sunShadows: boolean // 自然光投影（室外太阳/月亮；仅 realistic）
+  lightShadows: number // 场景灯投影盏数：0=关，1/2/4 盏最近荧光灯立方体阴影（开销随盏数增加；仅 realistic）
+  bloomStrength: number // 泛光程度 0–100（仅 realistic 且泛光开启时生效）
+  reflectivity: number // 反射强度 0–100（环境反射/水面反射；仅 realistic）
+  bloomFx: boolean // 泛光（辉光后处理；仅 realistic）
+  exposure: number // 曝光 %：50–200，100=默认 1.45
   volume: number
   ambient: number
   sfx: number
@@ -25,6 +36,7 @@ export interface GameSettings {
   btnOpacity: number
   sensitivity: number // 视角灵敏度 0.2–3.0 倍
   devMode: boolean // 开发者模式：无敌 + 层级跳转面板
+  theme: UiTheme // 界面主题：amber=经典琥珀 / liminal=阈限（仿 Backrooms 中文维基版式）
   llmEndpoint: string // LLM API 端点（OpenAI 兼容，如 https://api.openai.com/v1；空=未接入）
   llmApiKey: string // API 密钥（明文存本机 localStorage）
   llmModel: string // 模型名（如 gpt-4o-mini）
@@ -33,14 +45,31 @@ export interface GameSettings {
 export const defaultSettings: GameSettings = {
   difficulty: 'normal', autoSprint: false,
   grain: true, dust: false, shake: true, flicker: 70, dynamicRes: true, shadows: true, fogOfWar: true,
+  vcrFx: false,
   fogScale: 100, farLights: false,
+  lightMode: 'classic', shadowQuality: 1, sunShadows: true, lightShadows: 0,
+  reflectivity: 60, bloomFx: true, bloomStrength: 35, exposure: 100,
   volume: 80, ambient: 50, sfx: 90, muted: false,
   leftHanded: false, stickSize: 120, btnOpacity: 70,
   sensitivity: 1.0, devMode: false,
+  theme: 'amber',
   llmEndpoint: '', llmApiKey: '', llmModel: '',
 }
 
-const TABS = ['游戏', '画面', '音频', '操作', 'API'] as const
+const TABS = ['游戏', '画面', '音频', '操作', '主题', 'API'] as const
+
+// 主题选项（主题页预览卡的色板取自各主题实际变量值；bg 同时用作 meta theme-color；
+// fonts 为该主题实际使用的字体栈，卡片即以这些字体渲染自身预览）
+export const THEMES: { id: UiTheme; name: string; desc: string; bg: string; fg: string; dim: string; accent: string; accent2: string; fonts: { title: string; titleWeight: number; body: string; mono: string } }[] = [
+  { id: 'amber', name: '经典琥珀', desc: '默认暗色：琥珀荧光、VHS 扫描线、故障抖动', bg: '#14120c', fg: '#d6cfae', dim: '#8a8266', accent: '#e8b93c', accent2: '#3a3423', fonts: { title: "'ZCOOL QingKe HuangYou', 'Noto Sans SC', sans-serif", titleWeight: 400, body: "'Noto Sans SC', system-ui, sans-serif", mono: "'JetBrains Mono', monospace" } },
+  { id: 'liminal', name: '阈限', desc: '仿维基版式：纸面底色、灰褐描边、红色强调、衬线等宽字体、点阵背景', bg: '#ede9df', fg: '#191410', dim: '#48453c', accent: '#e61744', accent2: '#8c887e', fonts: { title: "Inter, 'Noto Sans SC', sans-serif", titleWeight: 900, body: "Inter, 'Noto Sans SC', sans-serif", mono: "Recursive, 'Noto Serif SC', 'JetBrains Mono', monospace" } },
+  { id: 'basalt', name: '玄武岩', desc: '近白纸面、浅灰分层、绯红点睛，8px 圆角的干净档案排版', bg: '#fcfcfc', fg: '#232326', dim: '#8a8992', accent: '#96182b', accent2: '#d0d0d8', fonts: { title: "'Sofia Sans', Inter, 'Noto Sans SC', sans-serif", titleWeight: 800, body: "Inter, 'Noto Sans SC', sans-serif", mono: "'JetBrains Mono', monospace" } },
+  { id: 'dark-liminal', name: '暗色阈限', desc: '深蓝黑单色、点阵噪点、直角硬边，一点猩红', bg: '#121620', fg: '#e6ebef', dim: '#a6abb5', accent: '#e61744', accent2: '#4a5160', fonts: { title: "Inter, 'Noto Sans SC', sans-serif", titleWeight: 800, body: "Inter, 'Noto Sans SC', sans-serif", mono: "Recursive, 'Noto Serif SC', 'JetBrains Mono', monospace" } },
+  { id: 'greyspace', name: '灰色阈限', desc: '暖调深灰档案卡、玫红链接跳色、半调网点', bg: '#23201e', fg: '#e6ebef', dim: '#9d9b95', accent: '#d92e53', accent2: '#42403c', fonts: { title: "Inter, 'Noto Sans SC', sans-serif", titleWeight: 800, body: "Inter, 'Noto Sans SC', sans-serif", mono: "Recursive, 'Noto Serif SC', 'JetBrains Mono', monospace" } },
+  { id: 'database', name: '数据库', desc: '老式 CRT 终端：黑底琥珀磷光、全等宽字、扫描线', bg: '#0a0a0a', fg: '#af641e', dim: '#7d5a26', accent: '#e58c24', accent2: '#5c4218', fonts: { title: "'JetBrains Mono', 'Noto Sans SC', monospace", titleWeight: 700, body: "'JetBrains Mono', 'Noto Sans SC', monospace", mono: "'JetBrains Mono', 'Noto Sans SC', monospace" } },
+  { id: 'fandom', name: 'Fandom 阈限', desc: '仿 Fandom 维基：做旧黄纸、橙色 UI、Rubik 圆体', bg: '#fbe7b5', fg: '#0c0c0c', dim: '#8a6224', accent: '#c36d2f', accent2: '#c36d2f', fonts: { title: "Rubik, 'Noto Sans SC', sans-serif", titleWeight: 700, body: "Rubik, 'Noto Sans SC', sans-serif", mono: "'JetBrains Mono', monospace" } },
+  { id: 'meg', name: 'M.E.G.', desc: '探险者总署档案：荧光灯黄、全等宽终端字、圆角档案盒', bg: '#f5edab', fg: '#363415', dim: '#6b6740', accent: '#8a7d1a', accent2: '#a8a24f', fonts: { title: "'Overpass Mono', 'PT Mono', 'JetBrains Mono', 'Noto Sans SC', monospace", titleWeight: 700, body: "'Overpass Mono', 'PT Mono', 'JetBrains Mono', 'Noto Sans SC', monospace", mono: "'Overpass Mono', 'PT Mono', 'JetBrains Mono', 'Noto Sans SC', monospace" } },
+]
 
 // 开关/滑块必须定义在组件外——组件内定义会在每次父渲染时生成新组件类型，React 因此反复
 // 卸载重挂按钮；本游戏 HUD 每 0.12s 一跳，按钮常在 mousedown 与 mouseup 之间被销毁，
@@ -68,7 +97,7 @@ function Slider({ k, label, value, onSet }: { k: keyof GameSettings; label: stri
       <input
         type="range" min={0} max={100} value={value}
         onChange={(e) => onSet(k, Number(e.target.value))}
-        className="w-full accent-[#e8b93c]"
+        className="w-full accent-[var(--amber)]"
       />
     </label>
   )
@@ -141,6 +170,7 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
           {tab === '画面' && (
             <div>
               <Toggle k="grain" label="VHS 颗粒" value={settings.grain as boolean} onSet={setBool} />
+              <Toggle k="vcrFx" label="VCR 滤镜（录像带效果）" value={settings.vcrFx as boolean} onSet={setBool} />
               <Toggle k="dust" label="漂浮尘埃粒子" value={settings.dust as boolean} onSet={setBool} />
               <Toggle k="shake" label="屏幕震动" value={settings.shake as boolean} onSet={setBool} />
               <Slider k="flicker" label="灯光闪烁强度" value={settings.flicker as number} onSet={setNum} />
@@ -152,11 +182,73 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
                 <input
                   type="range" min={50} max={200} step={5} value={settings.fogScale}
                   onChange={(e) => set('fogScale', Number(e.target.value))}
-                  className="w-full accent-[#e8b93c]"
+                  className="w-full accent-[var(--amber)]"
                 />
                 <span className="text-[11px]" style={{ color: 'var(--text-dim)' }}>50% = 更近更浓 · 100% = 默认 · 200% = 更远更淡（未开「远处灯光全开」时，灯光点亮距离自动与雾可视距离一致）</span>
               </label>
               <Toggle k="farLights" label="远处灯光全开（性能开销略增）" value={settings.farLights as boolean} onSet={setBool} />
+              {/* ---- 光影模式（v50：物理光照/反射，可一键退回经典） ---- */}
+              <div className="mt-3 border-t pt-2" style={{ borderColor: 'var(--panel-edge)' }}>
+                <div className="py-2 text-[14px]" style={{ color: 'var(--text)' }}>光影模式</div>
+                <div className="flex gap-2">
+                  {([['classic', '经典'], ['realistic', '真实']] as const).map(([v, l]) => (
+                    <button
+                      key={v}
+                      className="flex-1 border px-3 py-2 text-[14px]"
+                      style={{ borderColor: settings.lightMode === v ? 'var(--amber)' : 'var(--panel-edge)', color: settings.lightMode === v ? 'var(--amber)' : 'var(--text-dim)', background: 'var(--panel)' }}
+                      onClick={() => set('lightMode', v)}
+                    >
+                      {l}
+                    </button>
+                  ))}
+                </div>
+                <div className="pt-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>
+                  「经典」即当前版本。「真实」启用物理光照：环境反射、自然光投影、软阴影与泛光——性能开销更高（移动端建议经典），随时可退回经典。
+                </div>
+                {settings.lightMode === 'realistic' && (
+                  <div className="mt-1">
+                    <div className="py-2 text-[14px]" style={{ color: 'var(--text)' }}>阴影质量</div>
+                    <div className="flex gap-2">
+                      {([[0, '低'], [1, '中'], [2, '高']] as const).map(([v, l]) => (
+                        <button
+                          key={v}
+                          className="flex-1 border px-3 py-2 text-[14px]"
+                          style={{ borderColor: settings.shadowQuality === v ? 'var(--amber)' : 'var(--panel-edge)', color: settings.shadowQuality === v ? 'var(--amber)' : 'var(--text-dim)', background: 'var(--panel)' }}
+                          onClick={() => set('shadowQuality', v)}
+                        >
+                          {l}
+                        </button>
+                      ))}
+                    </div>
+                    <Toggle k="sunShadows" label="自然光投影（室外太阳/月亮）" value={settings.sunShadows as boolean} onSet={setBool} />
+                    <div className="py-2 text-[14px]" style={{ color: 'var(--text)' }}>场景灯投影（开销随盏数增加）</div>
+                    <div className="flex gap-2">
+                      {([[0, '关'], [1, '1 盏'], [2, '2 盏'], [4, '4 盏']] as const).map(([v, l]) => (
+                        <button
+                          key={v}
+                          className="flex-1 border px-2 py-2 text-[13px]"
+                          style={{ borderColor: settings.lightShadows === v ? 'var(--amber)' : 'var(--panel-edge)', color: settings.lightShadows === v ? 'var(--amber)' : 'var(--text-dim)', background: 'var(--panel)' }}
+                          onClick={() => set('lightShadows', v)}
+                        >
+                          {l}
+                        </button>
+                      ))}
+                    </div>
+                    <Slider k="reflectivity" label="反射强度（环境/水面反射）" value={settings.reflectivity as number} onSet={setNum} />
+                    <Toggle k="bloomFx" label="泛光（辉光后处理）" value={settings.bloomFx as boolean} onSet={setBool} />
+                    {settings.bloomFx && <Slider k="bloomStrength" label="泛光程度" value={settings.bloomStrength as number} onSet={setNum} />}
+                    <label className="block py-2 text-[14px]" style={{ color: 'var(--text)' }}>
+                      <span className="mb-1 flex justify-between"><span>曝光</span><span className="font-mono2 text-[12px]" style={{ color: 'var(--amber)' }}>{settings.exposure}%</span></span>
+                      <input
+                        type="range" min={50} max={200} step={5} value={settings.exposure}
+                        onChange={(e) => set('exposure', Number(e.target.value))}
+                        className="w-full accent-[var(--amber)]"
+                      />
+                      <span className="text-[11px]" style={{ color: 'var(--text-dim)' }}>100% = 默认曝光；调高更亮、调低更暗</span>
+                    </label>
+                  </div>
+                )}
+              </div>
             </div>
           )}
           {tab === '音频' && (
@@ -165,6 +257,41 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
               <Slider k="volume" label="主音量" value={settings.volume as number} onSet={setNum} />
               <Slider k="ambient" label="环境音" value={settings.ambient as number} onSet={setNum} />
               <Slider k="sfx" label="音效" value={settings.sfx as number} onSet={setNum} />
+            </div>
+          )}
+          {tab === '主题' && (
+            <div>
+              <div className="grid grid-cols-2 gap-2 max-md:grid-cols-1">
+                {THEMES.map((t) => (
+                  <button
+                    key={t.id}
+                    className="border p-3 text-left transition-transform"
+                    style={{
+                      borderColor: settings.theme === t.id ? 'var(--amber)' : 'var(--panel-edge)',
+                      background: t.bg,
+                      color: t.fg,
+                      boxShadow: settings.theme === t.id ? '0 0 0 1px var(--amber), var(--quote-shadow)' : 'var(--quote-shadow)',
+                    }}
+                    onClick={() => { set('theme', t.id); audio.uiTick() }}
+                  >
+                    <div className="flex items-center justify-between" style={{ fontFamily: t.fonts.title }}>
+                      <span className="text-[14px]" style={{ color: t.accent, fontWeight: t.fonts.titleWeight }}>{t.name}</span>
+                      <span className="flex gap-1">
+                        {[t.bg, t.accent2, t.accent].map((c) => (
+                          <span key={c} className="block h-3 w-3 rounded-[2px] border" style={{ background: c, borderColor: t.dim }} />
+                        ))}
+                      </span>
+                    </div>
+                    <div className="mt-1.5 text-[11px] leading-relaxed" style={{ color: t.dim, fontFamily: t.fonts.body }}>{t.desc}</div>
+                    <div className="mt-1.5 text-[10px]" style={{ color: t.dim, fontFamily: t.fonts.mono }}>
+                      {settings.theme === t.id ? '● 使用中' : '○ 点击切换'}
+                    </div>
+                  </button>
+                ))}
+              </div>
+              <div className="mt-3 text-[12px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>
+                各主题灵感均来自 <b style={{ color: 'var(--text)' }}>Backrooms 中文维基</b>的同名版式（阈限 / 玄武岩 / 暗色阈限 / 灰色阈限 / 数据库 / Fandom 阈限 / M.E.G.）。主题只改变界面外观（配色 / 字体 / 形状 / 动效），不影响 3D 场景渲染与游戏机制，即时生效并自动保存。
+              </div>
             </div>
           )}
           {tab === 'API' && (
@@ -197,7 +324,7 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
                 <input
                   type="range" min={20} max={300} step={10} value={Math.round(settings.sensitivity * 100)}
                   onChange={(e) => set('sensitivity', Number(e.target.value) / 100)}
-                  className="w-full accent-[#e8b93c]"
+                  className="w-full accent-[var(--amber)]"
                 />
                 <span className="text-[11px]" style={{ color: 'var(--text-dim)' }}>同时作用于桌面鼠标与移动端拖动转视角（0.2× – 3.0×）</span>
               </label>
@@ -284,7 +411,7 @@ function KeybindSection() {
               style={{
                 borderColor: listening === a.id ? 'var(--amber)' : 'var(--panel-edge)',
                 color: listening === a.id ? 'var(--amber)' : 'var(--text-dim)',
-                background: listening === a.id ? 'rgba(232,185,60,0.12)' : 'var(--panel)',
+                background: listening === a.id ? 'color-mix(in srgb, var(--amber) 12%, transparent)' : 'var(--panel)',
               }}
               onClick={() => { setListening(listening === a.id ? null : a.id); setConflictMsg(''); audio.uiTick() }}
             >

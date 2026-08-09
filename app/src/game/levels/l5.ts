@@ -32,9 +32,11 @@ export const L5: LevelDef = {
     { kind: 'boilerdeep', name: '锅炉房深处', dest: 6, anim: 'iris', cutIn: 'dark' },
     { kind: 'servicelift', name: '货运梯', dest: 'random', anim: 'shutter' },
     { kind: 'mirror', name: '镜子切出', dest: 'random', anim: 'glitch' },
+    // v51：L3↔L5 电梯双向联通——回程电梯（→L3，免保险丝；mapgen 作为额外出口放置，不占正常名额）
+    { kind: 'elevatorshaft', name: '电梯', dest: 3, anim: 'shutter' },
   ],
   entrance: '消防通道',
-  exitDesc: '出口：锅炉房深处（→ Level 6「Lights Out」，Wikidot 推荐的建基路线）、货运梯（随机层级）、镜子切出（随机层级）。大堂旋转门推不动——它从来就不通向外面。',
+  exitDesc: '出口：锅炉房深处（→ Level 6「Lights Out」，Wikidot 推荐的建基路线）、货运梯（随机层级）、镜子切出（随机层级）、电梯（→B3 回程）。大堂旋转门推不动——它从来就不通向外面。',
   lightDensity: 0.009,
   darkness: 0.6,
 }

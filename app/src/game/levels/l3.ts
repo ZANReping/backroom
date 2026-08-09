@@ -1,14 +1,16 @@
-// Level 3「电站」层级定义（严格按设计文档 §3/§6）
+// Level 3「电站」层级定义（严格按设计文档 §3/§6；v51：无限化重制——不规则廊道网 + 铁栅栏 + 双照明变体）
 import type { LevelDef } from '../types'
 
 export const L3: LevelDef = {
   id: 3,
   name: '电站',
-  flavor: '砖墙、积灰混凝土与噼啪电流。极度危险，但资源是全后室最丰富的——高智能实体也明白这一点。',
-  lore: 'Level 3「Electrical Station」。老旧砖砌电站，墙上密布电缆与输送黑色液体的管道；生存难度 4，实体密度高且存在高智能独占敌对实体，但稀有材料与电气设备（保险丝/电池/门禁卡）刷新率全后室最高。M.E.G. Base Gamma 驻于巨大机房。——据 Backrooms Wikidot 整理',
-  palette: { floor: '#26282c', floorAlt: '#212327', wall: '#3a3f46', wallTop: '#2e3238', accent: '#d9b13b', light: '#9adfff', decal: '#1c1e22' },
-  gen: 'grid',
-  size: 72,
+  flavor: '砖墙、积灰混凝土与噼啪电流。无限延伸的廊道被铁栅栏截断又接续。极度危险，但资源是全后室最丰富的——高智能实体也明白这一点。',
+  lore: 'Level 3「Electrical Station」。老旧砖砌电站，无限延伸的不规则廊道两侧密布电缆与配电箱，部分廊道被铁栅栏封死——另一侧可见而不可达；生存难度 4，实体密度高且存在高智能独占敌对实体，但稀有材料与电气设备（保险丝/电池/门禁卡）刷新率全后室最高。M.E.G. Base Gamma 驻于巨大机房。——据 Backrooms Wikidot 整理',
+  // v51：砖墙/积灰混凝土贴图叠乘用暖灰顶点色（旧冷灰蓝会把砖墙叠得发蓝发暗）
+  palette: { floor: '#5e5c58', floorAlt: '#565450', wall: '#8c7f72', wallTop: '#6b6057', accent: '#d9b13b', light: '#cfd6dd', decal: '#26241f' },
+  gen: 'grid', // 保留：墙高 WALL_H.grid=4.2 / 电火花粒子 keyed on 'grid'（实际生成走 infinite chunk）
+  infinite: true,
+  size: 72, // 兼容占位（无限模式不使用）
   entities: [
     { type: 'arcwraith', w: 16, min: 2, max: 3 },
     { type: 'insulator', w: 14, min: 2, max: 3 },
@@ -27,14 +29,14 @@ export const L3: LevelDef = {
   containerBias: 0.55,
   sd: 'Survival Difficulty: Class 3 · 电弧危险 · 输送黑色液体的管道',
   itemCount: [14, 18],
-  structures: ['generator', 'cabinet', 'trench', 'graffiti', 'crate', 'vent', 'toolbox', 'safebox', 'locker'],
+  structures: ['generator', 'cabinet', 'trench', 'graffiti', 'crate', 'vent', 'toolbox', 'safebox', 'locker', 'elecbox', 'cables', 'barfence', 'bargate', 'pipes', 'valve', 'boiler', 'debrispile', 'scrap', 'megcrate', 'statue', 'conveyor', 'angelstatue', 'fallencolumn', 'column', 'maingen', 'busbar', 'warningsign', 'worktable', 'factlamp', 'sphboiler', 'floordrain', 'turbinegen', 'switchboard', 'transformer', 'pressmachine', 'feedpump', 'manifold', 'piperack', 'cabletray'],
   exits: [
-    { kind: 'elevatorshaft', name: '电梯井', dest: 4, anim: 'shutter', req: { fuses: 2 }, reqText: '需要 2 枚保险丝' },
-    { kind: 'emergstairs', name: '应急楼梯', dest: 4, anim: 'bloom' },
-    { kind: 'arcflash', name: '短路切出', dest: 'random', anim: 'glitch' },
+    // v51：电梯唯二出口——电梯井嵌墙，随机下行 L4/L5（保险丝机制保留；电梯双向联通：L4/L5 有免费回程梯）
+    { kind: 'elevatorshaft', name: '电梯', dest: 4, anim: 'shutter', req: { fuses: 2 }, reqText: '需要 2 枚保险丝' },
+    { kind: 'elevatorshaft', name: '电梯', dest: 5, anim: 'shutter', req: { fuses: 2 }, reqText: '需要 2 枚保险丝' },
   ],
   entrance: '主电闸门 / 竖井',
-  exitDesc: '出口：电梯井（需 2 枚保险丝→B4）、应急楼梯（→B4）、短路切出（随机层级）。跟随标识可至更深层。',
+  exitDesc: '出口：电梯（需 2 枚保险丝→随机 B4/B5；L4/L5 侧有免费回程电梯）。',
   lightDensity: 0.007,
   darkness: 0.72,
 }

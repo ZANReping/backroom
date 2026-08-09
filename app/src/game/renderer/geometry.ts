@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { ELEV_H, FLOOR_H, tallCeilH, wallBaseTopAt, ceilingSteps, type GameMap } from '../mapgen'
 import type { LevelDef } from '../types'
-import { col, rampGeo, levelTexture, noiseTexture, OUTDOOR_FLOOR, manilaWallTexture, makeCanvasCtx, toTex } from './shared'
+import { col, rampGeo, levelTexture, noiseTexture, OUTDOOR_FLOOR, manilaWallTexture, makeCanvasCtx, toTex, litMaterial } from './shared'
 
 // v17：range 限定构建范围（无限模式按 chunk 构建；坐标读取全图，跨 chunk 接缝一致）
 export interface TerrainRange { x0: number; y0: number; x1: number; y1: number; variant?: string }
@@ -19,11 +19,12 @@ const hv = (x: number, y: number, s: number) => {
 // （顶点色 × L0 黄色墙纸纹理永远发黄——v19 的蓝通道补偿也无法把黄纸变成米色）
 // v17：tint 着色（1=马尼拉米色墙纸 2=红室 3=熄灯区仅雾/无灯 5=维护通廊白 6=花园段青翠 7=跃金段高饱和金 8=民居木墙暖棕）
 // v39：衔尾段施工化——10=毛坯混凝土（灰地表/铲到一半的墙/深色裸露吊顶） 11=施工补丁（地面新浇水泥/墙面残存粉刷补丁）
-const TINT_FLOOR: Record<number, string> = { 1: '#c9ad74', 2: '#8a1e14', 5: '#8a887e', 6: '#5a7a44', 7: '#8a6d24', 8: '#6a5340', 9: '#787c78', 10: '#6f6f6b', 11: '#5b5b57', 12: '#463227', 13: '#3a3a38', 14: '#34302b', 15: '#3c3a2e', 16: '#5c5548', 17: '#aab2d8' }
-const TINT_WALL: Record<number, string> = { 1: '#e5c88f', 2: '#a82318', 5: '#b8b4a8', 6: '#8fae7a', 7: '#c99a2e', 8: '#9a7048', 9: '#c4c7c2', 10: '#8b887f', 11: '#a8a294', 12: '#6e4630', 13: '#555552', 14: '#544a40', 15: '#565244', 16: '#8f8a7c', 17: '#ccd2ee' }
-const TINT_CEIL: Record<number, string> = { 1: '#c9b185', 2: '#5e120b', 5: '#c8c4b8', 6: '#c4d9ae', 7: '#a8842a', 8: '#6a4e38', 9: '#b2b6b0', 10: '#3a3b3e', 11: '#3a3b3e', 12: '#3a2a20', 13: '#2e2e2c', 14: '#332d26', 15: '#2e2c24', 16: '#6e6a5c', 17: '#8a92c8' }
+const TINT_FLOOR: Record<number, string> = { 1: '#c9ad74', 2: '#8a1e14', 5: '#8a887e', 6: '#5a7a44', 7: '#8a6d24', 8: '#6a5340', 9: '#787c78', 10: '#6f6f6b', 11: '#5b5b57', 12: '#463227', 13: '#3a3a38', 14: '#34302b', 15: '#3c3a2e', 16: '#5c5548', 17: '#aab2d8', 18: '#565450', 19: '#403e3a', 20: '#6e6a5e' }
+const TINT_WALL: Record<number, string> = { 1: '#e5c88f', 2: '#a82318', 5: '#b8b4a8', 6: '#8fae7a', 7: '#c99a2e', 8: '#9a7048', 9: '#c4c7c2', 10: '#8b887f', 11: '#a8a294', 12: '#6e4630', 13: '#555552', 14: '#544a40', 15: '#565244', 16: '#8f8a7c', 17: '#ccd2ee', 18: '#7d7166', 19: '#564d44', 20: '#7a7264' }
+const TINT_CEIL: Record<number, string> = { 1: '#c9b185', 2: '#5e120b', 5: '#c8c4b8', 6: '#c4d9ae', 7: '#a8842a', 8: '#6a4e38', 9: '#b2b6b0', 10: '#3a3b3e', 11: '#3a3b3e', 12: '#3a2a20', 13: '#2e2e2c', 14: '#332d26', 15: '#2e2c24', 16: '#6e6a5c', 17: '#8a92c8', 18: '#8a8880', 19: '#5a5852', 20: '#5e5a50' }
 // v41：12=L2 肮脏的廊道（锈橙棕）13=晦暗的廊道（积灰灰暗）14=整洁的廊道（洁净深色）
 //     15=扭曲的廊道（病绿灰）16=办公走廊（L4 废弃办公室风）
+// v51：18=L3 照明廊道（砖墙暖灰）19=L3 晦暗廊道（积灰暗棕）20=L3 圣所（苍白圣石；实体畏惧不入）
 export function buildTerrain(m: GameMap, def: LevelDef, wallH: number, g: THREE.Group, range?: TerrainRange) {
   const pal = def.palette
   const H = wallH
@@ -42,7 +43,7 @@ const TEX2: Partial<Record<number, { wall?: string; floor?: string }>> = {
 // v=y 使竖条纹始终竖直；per = 每米平铺次数（一图覆盖 1/per 米）。
 // v16 任务3：玩家要求图案更大——一图覆盖 0.5m→1.0m（源图≈13 列条纹，列宽 3.8cm→7.7cm，
 // 更接近经典后室照片近距观感）；世界空间 UV 下任意比例均无缝。
-const WALL_UV_PER_M: Partial<Record<number, number>> = { 0: 1 }
+const WALL_UV_PER_M: Partial<Record<number, number>> = { 0: 1, 3: 1 } // v51：L3 砖墙同走世界 UV——贴图按实测砖周期裁剪（4 砖×12 层/重复），1 重复=1m，砖约 25×8.3cm 横砌
 const worldWallUV = (geo: THREE.BufferGeometry, per: number) => {
   const pos = geo.attributes.position, nor = geo.attributes.normal, uv = geo.attributes.uv as THREE.BufferAttribute
   for (let i = 0; i < pos.count; i++) {
@@ -64,10 +65,13 @@ const zoneB = (x: number, y: number) => (((x >> 2) * 31 + (y >> 2) * 17 + def.id
 // ---- 地面（合并 + 顶点色 + 噪点纹理；v7：高度档分档地面 + 坡道楔形）----
 const floorGeos: THREE.BufferGeometry[] = []
 const floorGeos2: THREE.BufferGeometry[] = []
+const marbleGeos: THREE.BufferGeometry[] = [] // v51：圣所大理石地面（tint 20，独立材质网格）
 const wedgeGeos: THREE.BufferGeometry[] = [] // 台阶/坡道（双面材质）
 const riserGeos: THREE.BufferGeometry[] = [] // 高差侧壁
 const abyssGeos: THREE.BufferGeometry[] = [] // 深坑洞底（纯黑无光照，望不见底）
-const fB = col(pal.floor), fA = col(pal.floorAlt), wetC = col('#3a4a3a')
+const fB = col(pal.floor), fA = col(pal.floorAlt)
+// v50：湿地毯=地板色的暗化版（0.62）——保留「浸水变深」的辨识度但大幅收敛与干地的色差（原独立灰绿 #3a4a3a）
+const wetC = fB.clone().multiplyScalar(0.62)
 const outC = col(OUTDOOR_FLOOR[def.gen] ?? '#333638')
 const poolC = col('#6e8a96') // v12：泳池底浅色池砖（半透明水面下可辨，不再像深渊）
 // v12：室外地面独立合并网格（自带「夜空环境光」自发光材质，黑暗中也可辨，
@@ -145,25 +149,34 @@ for (let y = RY0; y < RY1; y++) {
     const carr = new Float32Array(n * 3)
     for (let i = 0; i < n; i++) { carr[i * 3] = c.r; carr[i * 3 + 1] = c.g; carr[i * 3 + 2] = c.b }
     geo.setAttribute('color', new THREE.BufferAttribute(carr, 3))
-    ;(isOut ? outFloorGeos : tex2.floor && !isWet && zoneB(x, y) ? floorGeos2 : floorGeos).push(geo)
+    ;(isOut ? outFloorGeos : tnt === 20 ? marbleGeos : tex2.floor && !isWet && zoneB(x, y) ? floorGeos2 : floorGeos).push(geo)
   }
 }
 if (floorGeos.length) {
-  const floorMat = new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_floor`, () => noiseTexture(pal.floor, pal.floorAlt)) })
+  const floorMat = litMaterial({ vertexColors: true, envBase: 0.35, roughness: 0.8, map: levelTexture(`l${def.id}_floor`, () => noiseTexture(pal.floor, pal.floorAlt)) })
+  // v50：L0 地板略提亮（自发光微调，纹理不变）
+  if (def.id === 0) floorMat.emissive = col(pal.floor).multiplyScalar(0.10)
   g.add(new THREE.Mesh(mergeGeometries(floorGeos)!, floorMat))
 }
 if (abyssGeos.length) {
   g.add(new THREE.Mesh(mergeGeometries(abyssGeos)!, new THREE.MeshBasicMaterial({ color: '#000000' })))
 }
 if (floorGeos2.length) {
-  const floorMat2 = new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(tex2.floor!, () => noiseTexture(pal.floor, pal.floorAlt)) })
+  const floorMat2 = litMaterial({ vertexColors: true, envBase: 0.35, roughness: 0.8, map: levelTexture(tex2.floor!, () => noiseTexture(pal.floor, pal.floorAlt)) })
+  // v50：L0 地板略提亮（自发光微调，纹理不变）
+  if (def.id === 0) floorMat2.emissive = col(pal.floor).multiplyScalar(0.10)
   g.add(new THREE.Mesh(mergeGeometries(floorGeos2)!, floorMat2))
+}
+// v51：圣所大理石地面（tint 20，l3_marble 贴图；顶点色 TINT_FLOOR[20] 叠乘保持与砖墙/环境协调）
+if (marbleGeos.length) {
+  const marbleMat = litMaterial({ vertexColors: true, envBase: 0.38, roughness: 0.55, map: levelTexture('l3_marble', () => noiseTexture('#c8c4bc', '#b0aca4')) })
+  g.add(new THREE.Mesh(mergeGeometries(marbleGeos)!, marbleMat))
 }
 // v12：室外地面材质——较高自发光模拟夜空环境光（月光/城市光污染），
 // 保证黑暗层级中室外地板始终可辨，不再被误认成虚空；不受雾影响程度与室内一致。
 if (outFloorGeos.length) {
-  const outFloorMat = new THREE.MeshLambertMaterial({
-    vertexColors: true,
+  const outFloorMat = litMaterial({
+    vertexColors: true, envBase: 0.45, roughness: 0.7,
     map: levelTexture(`l${def.id}_floor`, () => noiseTexture(pal.floor, pal.floorAlt)),
     emissive: outC.clone().multiplyScalar(0.38),
   })
@@ -235,7 +248,7 @@ for (let y = RY0; y < RY1; y++) {
 {
   const slopeGeos = [...wedgeGeos, ...riserGeos]
   if (slopeGeos.length) {
-    const slopeMat = new THREE.MeshLambertMaterial({ vertexColors: true, side: THREE.DoubleSide, map: levelTexture(`l${def.id}_floor`, () => noiseTexture(pal.floor, pal.floorAlt)) })
+    const slopeMat = litMaterial({ vertexColors: true, side: THREE.DoubleSide, map: levelTexture(`l${def.id}_floor`, () => noiseTexture(pal.floor, pal.floorAlt)) })
     g.add(new THREE.Mesh(mergeGeometries(slopeGeos)!, slopeMat))
   }
 }
@@ -262,7 +275,9 @@ for (let y = RY0; y < RY1; y++) {
   }
 }
 if (ceilGeos.length) {
-  const ceilMat = new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_ceil`, () => noiseTexture(pal.wallTop, pal.wallTop)) })
+  const ceilMat = litMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_ceil`, () => noiseTexture(pal.wallTop, pal.wallTop)) })
+  // v50：L0 天花板略提亮（自发光微调，纹理不变）
+  if (def.id === 0) ceilMat.emissive = col(pal.wallTop).multiplyScalar(0.10)
   g.add(new THREE.Mesh(mergeGeometries(ceilGeos)!, ceilMat))
 }
 
@@ -285,7 +300,7 @@ for (let y = RY0; y < RY1; y++) {
   }
 }
 if (ductGeos.length) {
-  g.add(new THREE.Mesh(mergeGeometries(ductGeos)!, new THREE.MeshLambertMaterial({ vertexColors: true })))
+  g.add(new THREE.Mesh(mergeGeometries(ductGeos)!, litMaterial({ vertexColors: true })))
 }
 
 // ---- v13 多层：上层楼板（兼作下层天花板）/ 上层墙 / 上层天花板 / 临边栏杆 ----
@@ -398,20 +413,20 @@ if (m.floors > 1) {
     }
   }
   if (slabGeos.length) {
-    g.add(new THREE.Mesh(mergeGeometries(slabGeos)!, new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_floor`, () => noiseTexture(pal.floor, pal.floorAlt)) })))
+    g.add(new THREE.Mesh(mergeGeometries(slabGeos)!, litMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_floor`, () => noiseTexture(pal.floor, pal.floorAlt)) })))
   }
   if (slabBotGeos.length) {
     // v46：楼板底面=一层天花（2.65）——独立统一吊顶贴图（与挑高/普通天花同族，不随地板纹理变化）
-    g.add(new THREE.Mesh(mergeGeometries(slabBotGeos)!, new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_ceil`, () => noiseTexture(pal.wallTop, pal.wallTop)) })))
+    g.add(new THREE.Mesh(mergeGeometries(slabBotGeos)!, litMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_ceil`, () => noiseTexture(pal.wallTop, pal.wallTop)) })))
   }
   if (upWallGeos.length) {
-    g.add(new THREE.Mesh(mergeGeometries(upWallGeos)!, new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_wall`, () => noiseTexture(pal.wall, pal.wallTop)) })))
+    g.add(new THREE.Mesh(mergeGeometries(upWallGeos)!, litMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_wall`, () => noiseTexture(pal.wall, pal.wallTop)) })))
   }
   if (upCeilGeos.length) {
-    g.add(new THREE.Mesh(mergeGeometries(upCeilGeos)!, new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_ceil`, () => noiseTexture(pal.wallTop, pal.wallTop)) })))
+    g.add(new THREE.Mesh(mergeGeometries(upCeilGeos)!, litMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_ceil`, () => noiseTexture(pal.wallTop, pal.wallTop)) })))
   }
   if (railGeos.length) {
-    g.add(new THREE.Mesh(mergeGeometries(railGeos)!, new THREE.MeshLambertMaterial({ color: '#43484f' })))
+    g.add(new THREE.Mesh(mergeGeometries(railGeos)!, litMaterial({ color: '#43484f' })))
   }
 }
 
@@ -424,7 +439,7 @@ const wSide = col(WALL_TINT[def.id] ?? pal.wall), wTop = col(pal.wallTop)
 const isFloor = (x: number, y: number) => x >= 0 && y >= 0 && x < m.w && y < m.h && m.tiles[y * m.w + x] === 1
 // v30：门类出口（楼梯井/未上锁的门）在墙上开门洞——记录墙格 → 门洞朝向（优先级同渲染层 orientDoor）
 // v41：L2 消防出口/办公走廊尽头同走门洞通道
-const DOOR_EXIT_KINDS = ['stairs', 'unlockeddoor', 'fireexit', 'officedoor']
+const DOOR_EXIT_KINDS = ['stairs', 'unlockeddoor', 'fireexit', 'officedoor', 'elevatorshaft'] // v51：电梯井嵌墙门洞（L3）
 const holeMap = new Map<number, number>() // 墙格 index → 门洞朝向（0=+x 1=-x 2=+y 3=-y，指向出口格）
 for (const e of m.exits ?? []) {
   if (!DOOR_EXIT_KINDS.includes(e.def.kind)) continue
@@ -489,7 +504,7 @@ for (let y = RY0; y < RY1; y++) {
     pushWallGeo(geo)
     // v35：踢脚线（L0 与据点墙面：墙根深色饰条，门洞墙不加；v46：EL3A 加入）
     if (def.id === 0 || def.id === 101 || def.id === 102 || def.id === 103 || def.id === 104 || def.id === 105) {
-      const bb = wSideT.clone().multiplyScalar(0.45)
+      const bb = wSideT.clone().multiplyScalar(def.id === 0 ? 0.62 : 0.45) // v50：L0 踢脚线提亮（0.45→0.62）
       for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
         if (!isFloor(x + dx, y + dy)) continue
         const bd = 0.05, bw = 0.16
@@ -556,15 +571,15 @@ for (const cs of ceilingSteps(m, H)) {
 if (manilaWallGeos.length) {
   const manilaTex = levelTexture('manila_wallpaper.png', manilaWallTexture)
   manilaTex.repeat.set(0.67, 0.67)
-  const manilaMat = new THREE.MeshLambertMaterial({ map: manilaTex })
+  const manilaMat = litMaterial({ map: manilaTex })
   g.add(new THREE.Mesh(mergeGeometries(manilaWallGeos)!, manilaMat))
 }
 if (wallGeos.length) {
-  const wallMat = new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_wall`, () => noiseTexture(pal.wall, pal.wallTop)) })
+  const wallMat = litMaterial({ vertexColors: true, map: levelTexture(`l${def.id}_wall`, () => noiseTexture(pal.wall, pal.wallTop)) })
   g.add(new THREE.Mesh(mergeGeometries(wallGeos)!, wallMat))
 }
 if (wallGeos2.length) {
-  const wallMat2 = new THREE.MeshLambertMaterial({ vertexColors: true, map: levelTexture(tex2.wall!, () => noiseTexture(pal.wall, pal.wallTop)) })
+  const wallMat2 = litMaterial({ vertexColors: true, map: levelTexture(tex2.wall!, () => noiseTexture(pal.wall, pal.wallTop)) })
   g.add(new THREE.Mesh(mergeGeometries(wallGeos2)!, wallMat2))
 }
 // ---- v31：花园段（tint=6）立体草地——每瓦片 2 丛交叉面片草叶（程序纹理 + alphaTest 剪裁），
@@ -590,7 +605,7 @@ if (wallGeos2.length) {
       }
     }
   if (grassGeos.length) {
-    g.add(new THREE.Mesh(mergeGeometries(grassGeos)!, new THREE.MeshLambertMaterial({
+    g.add(new THREE.Mesh(mergeGeometries(grassGeos)!, litMaterial({
       map: grassTexture(), alphaTest: 0.35, side: THREE.DoubleSide, color: '#7fae5a',
     })))
   }

@@ -464,6 +464,35 @@ export function buildEntityMesh(type: string): THREE.Group {
       tag(sheet, 'sheet'); grp.add(sheet)
       break
     }
+    case 'vendingmachine': case 'vmad': { // 人制品售货机（Entity 36）：前厅品牌售货机；活化后底部长出骷髅手腿
+      const mad = type === 'vmad'
+      const bodyC = mad ? '#5a3a3a' : '#4a5a66', trimC = '#2a3038'
+      // 机身（1.8m 高柜体）
+      grp.add(box(0.8, 1.8, 0.6, bodyC, 0, 0.9, 0))
+      grp.add(box(0.82, 0.06, 0.62, trimC, 0, 1.78, 0)) // 顶檐
+      // 正面展示窗（字母数字格，发光产品格）
+      grp.add(box(0.6, 0.9, 0.04, '#1a2028', -0.06, 1.15, 0.29))
+      for (let r = 0; r < 3; r++)
+        for (let c2 = 0; c2 < 3; c2++)
+          grp.add(glow(0.1, 0.1, 0.02, ['#c9a03a', '#8fd98f', '#c94a3a'][(r + c2) % 3], -0.24 + c2 * 0.18, 0.9 + r * 0.28, 0.32))
+      // 取货口 + 按键区
+      grp.add(box(0.5, 0.16, 0.06, trimC, -0.05, 0.35, 0.3))
+      grp.add(box(0.12, 0.2, 0.03, '#c9cdd4', 0.3, 1.3, 0.3))
+      grp.add(box(0.06, 0.06, 0.03, '#c94a3a', 0.3, 1.16, 0.3))
+      // 骷髅手腿（活化才显示）：四只白骨手臂撑地
+      const legs = new THREE.Group()
+      for (const [lx, lz, rz] of [[-0.28, 0.2, 0.35], [0.28, 0.2, -0.35], [-0.28, -0.2, 0.3], [0.28, -0.2, -0.3]] as const) {
+        const upper = box(0.05, 0.55, 0.05, '#d8d4c4', lx, 0.28, lz)
+        upper.rotation.z = rz * 0.4
+        legs.add(upper)
+        const fore = box(0.04, 0.3, 0.04, '#c9c4b4', lx + rz * 0.12, 0.08, lz)
+        fore.rotation.z = rz * 0.9
+        legs.add(fore)
+        for (let f = 0; f < 3; f++) legs.add(box(0.015, 0.09, 0.015, '#d8d4c4', lx + rz * 0.2 - 0.02 + f * 0.02, 0.01, lz + 0.02))
+      }
+      legs.visible = mad
+      tag(legs, 'skLegs')
+      break }
     case 'seated': { // 久坐者：瘫坐办公椅（坐姿腿 + 扶手 + 五星椅脚）
       // 修复 v15：v14 的 torso/head 从未挂入场景（只剩一把空椅 + 悬浮四肢）；
       // 小腿悬空离地 0.11 无脚；手臂下垂整根穿过扶手。
@@ -907,6 +936,107 @@ export function buildEntityMesh(type: string): THREE.Group {
       }
       break
     }
+    case 'nguithr': { // Nguithr'xurh（Entity 16）：十二条附肢的大蜘蛛——头胸 + 分节花腹 + 复眼 + 螯牙；恐怖节肢造型
+      const cephC = '#3a332c', abdC = '#57503f', abdDark = '#332d24', band1 = '#2e2820', band2 = '#8a8272'
+      const spider = new THREE.Group()
+      // 头胸部（前方，低伏）
+      const ceph = new THREE.Group()
+      ceph.position.set(0.14, 0.1, 0)
+      ceph.add(box(0.2, 0.13, 0.18, cephC, 0, 0, 0))
+      ceph.add(box(0.1, 0.08, 0.12, abdDark, 0.08, -0.02, 0)) // 吻部前伸
+      spider.add(ceph); tag(ceph, 'ceph')
+      // 复眼群（两列暗红小点，恐怖感）
+      for (const [ey, ez] of [[0.03, -0.05], [0.03, 0.05], [0.06, -0.03], [0.06, 0.03], [0.045, -0.07], [0.045, 0.07]] as const)
+        ceph.add(face(glow(0.016, 0.016, 0.016, '#7a1a12', 0.09, ey, ez)))
+      // 螯牙（向下钩）
+      for (const z of [-0.04, 0.04]) {
+        const fang = box(0.02, 0.07, 0.02, band1, 0.14, -0.06, z)
+        fang.rotation.z = 0.5
+        ceph.add(fang)
+      }
+      // 分节腹部（后拖，四节渐大，背斑花纹）
+      const abd = new THREE.Group()
+      abd.position.set(-0.02, 0.12, 0)
+      const segs: [number, number, number][] = [[-0.08, 0.16, 0.14], [-0.2, 0.2, 0.18], [-0.32, 0.22, 0.2], [-0.44, 0.18, 0.16]]
+      for (let i = 0; i < segs.length; i++) {
+        const [sx, sw, sd] = segs[i]
+        abd.add(box(sw, 0.14, sd, i % 2 ? abdDark : abdC, sx, 0, 0))
+        abd.add(box(sw * 0.7, 0.02, sd * 0.5, band1, sx, 0.08, 0)) // 背部斑纹条
+      }
+      abd.add(glow(0.04, 0.02, 0.04, '#c9b98a', -0.26, 0.09, 0)) // 背斑亮点
+      spider.add(abd); tag(abd, 'abdomen')
+      // 12 条双节附肢（每侧 6：股节上挑外展 + 胫节下垂，深浅环带相间）
+      for (let side = -1; side <= 1; side += 2) {
+        for (let i = 0; i < 6; i++) {
+          const leg = new THREE.Group()
+          const hipX = 0.14 - i * 0.075, spread = 0.12 + (i % 3) * 0.02
+          leg.position.set(hipX, 0.12, side * spread)
+          // 股节（向外上方挑）
+          const femur = box(0.02, 0.02, 0.16, i % 2 ? band1 : band2, -0.02, 0.05, side * 0.08)
+          femur.rotation.x = side * 0.55
+          leg.add(femur)
+          // 胫节（折向下垂）
+          const tibia = box(0.015, 0.18, 0.015, i % 2 ? band2 : band1, -0.02, -0.04, side * 0.17)
+          tibia.rotation.x = side * -0.15
+          leg.add(tibia)
+          leg.rotation.y = side * (0.35 - i * 0.12) // 前后展开角
+          leg.userData.baseRy = leg.rotation.y // 供动画在每帧重建摆动时保留展开角
+          spider.add(leg); tag(leg, side < 0 ? `legL${i}` : `legR${i}`)
+        }
+      }
+      tag(spider, 'spiderBody')
+      // 球状网囊（半透白网纹球 + 一根悬丝）
+      const sac = new THREE.Group()
+      sac.add(box(0.3, 0.3, 0.3, '#e8e4d8', 0, 0, 0))
+      sac.add(box(0.34, 0.02, 0.02, '#c9c4b4', 0, 0.06, 0))
+      sac.add(box(0.02, 0.02, 0.34, '#c9c4b4', 0, -0.04, 0))
+      sac.add(box(0.012, 1.2, 0.012, '#d8d4c4', 0, 0.75, 0)) // 悬丝向上
+      tag(sac, 'sacGrp')
+      break }
+    case 'dryshrimp': { // 旱虾（Entity 20）：分节橙褐色躯体 + 两侧扇状鳍叶 + 柄眼与触须 + 扇尾（奇虾科造型）
+      const shell = '#b3612e', shellD = '#8f4a22', fin = '#d9a86a', belly = '#c97a45'
+      const body = new THREE.Group()
+      body.position.set(0, 0.12, 0)
+      // 分节躯体（头→尾渐窄，逐节微降）
+      for (let i = 0; i < 5; i++) {
+        const w = 0.1 - i * 0.008, x = 0.12 - i * 0.09
+        body.add(box(0.1, 0.075, w * 2, i % 2 ? shell : shellD, x, -i * 0.004, 0))
+        // 每节两侧扇状鳍叶（薄片外翻）
+        for (const z of [-1, 1]) {
+          const f = box(0.11, 0.012, 0.055, fin, x - 0.01, -0.02, z * (w + 0.04))
+          f.rotation.x = z > 0 ? 0.5 : -0.5
+          f.rotation.z = -0.15
+          body.add(f)
+        }
+      }
+      body.add(box(0.22, 0.04, 0.14, belly, 0, -0.045, 0)) // 腹甲
+      tag(body, 'torso')
+      // 头部：柄眼（黑珠）+ 前附肢 + 触须
+      const hg = new THREE.Group()
+      hg.position.set(0.2, 0.15, 0)
+      hg.add(box(0.09, 0.07, 0.1, shell, 0, 0, 0))
+      for (const z of [-0.05, 0.05]) {
+        hg.add(box(0.035, 0.015, 0.015, shellD, 0.04, 0.045, z)) // 眼柄
+        hg.add(glow(0.022, 0.022, 0.022, '#101216', 0.065, 0.055, z)) // 黑眼
+        // 奇虾标志性前附肢（向下弯的须爪）
+        const cl = box(0.02, 0.1, 0.02, shellD, 0.05, -0.06, z)
+        cl.rotation.z = 0.5
+        hg.add(cl)
+        const at = box(0.12, 0.008, 0.008, fin, 0.1, 0.02, z)
+        at.rotation.y = z > 0 ? -0.35 : 0.35 // 触须前伸外撇
+        hg.add(at)
+      }
+      tag(hg, 'head')
+      // 扇尾（三片尾鳍展开）
+      const tail = new THREE.Group()
+      tail.position.set(-0.34, 0.11, 0)
+      for (const [ry, z] of [[-0.5, -0.05], [0, 0], [0.5, 0.05]] as const) {
+        const t = box(0.14, 0.012, 0.05, fin, -0.05, 0, z)
+        t.rotation.y = ry
+        tail.add(t)
+      }
+      tag(tail, 'tail')
+      break }
     case 'corpserat': { // 尸鼠（v42 合并死亡鼠，只保留一名）：两种形态随机变种——
       // 灰白癞斑（L2 廊道种群）/ 深褐竖耳（L8 天顶种群，旧档「死亡鼠」）。同一物种，行为一致。（原生 +X）
       if (Math.random() < 0.5) {
@@ -1315,6 +1445,7 @@ export function buildEntityMesh(type: string): THREE.Group {
   const facesX = type === 'hound' || type === 'carrier' || type === 'pipeworm' || type === 'arcwraith' || type === 'deathmoth'
     || type === 'tiny' || type === 'thething' || type === 'wrangler' || type === 'camocrawler' || type === 'lightguide'
     || type === 'corpserat' || type === 'watcher' || type === 'strider' || type === 'mangled' || type === 'soilworm'
+    || type === 'nguithr' || type === 'dryshrimp'
   if (!facesX) {
     const inner = new THREE.Group()
     inner.rotation.y = Math.PI / 2

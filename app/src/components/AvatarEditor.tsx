@@ -20,7 +20,7 @@ function Swatches({ options, cur, onPick }: { options: string[]; cur: string; on
           style={{
             width: 26, height: 26, background: c,
             borderColor: cur === c ? 'var(--amber)' : 'var(--panel-edge)',
-            boxShadow: cur === c ? '0 0 6px rgba(232,185,60,0.6)' : 'none',
+            boxShadow: cur === c ? '0 0 6px color-mix(in srgb, var(--amber) 60%, transparent)' : 'none',
           }}
           onClick={() => onPick(c)}
           aria-label={c}
@@ -41,17 +41,19 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
 
 // 枚举循环选择器（←/→）
 function Cycler({ names, cur, onChange }: { names: readonly string[]; cur: number; onChange: (i: number) => void }) {
+  const arrow = { borderColor: 'var(--panel-edge)', color: 'var(--text)', background: 'color-mix(in srgb, var(--panel) 80%, transparent)' }
   return (
     <div className="flex items-center gap-2">
-      <button className="menu-btn px-3 py-1" onClick={() => onChange((cur + names.length - 1) % names.length)}>←</button>
-      <span className="font-mono2 text-[13px]" style={{ color: 'var(--text)' }}>{names[cur]}</span>
-      <button className="menu-btn px-3 py-1" onClick={() => onChange((cur + 1) % names.length)}>→</button>
+      <button className="shrink-0 border px-3 py-1" style={arrow} onClick={() => onChange((cur + names.length - 1) % names.length)}>←</button>
+      <span className="font-mono2 whitespace-nowrap text-[13px]" style={{ color: 'var(--text)' }}>{names[cur]}</span>
+      <button className="shrink-0 border px-3 py-1" style={arrow} onClick={() => onChange((cur + 1) % names.length)}>→</button>
     </div>
   )
 }
 
 export default function AvatarEditor({ onClose }: { onClose: () => void }) {
   const [cfg, setCfg] = useState<AvatarCfg>(() => loadAvatar())
+  const isMobile = typeof window !== 'undefined' && (window.matchMedia?.('(pointer: coarse)').matches || 'ontouchstart' in window)
   const set = (patch: Partial<AvatarCfg>) => {
     const next = { ...cfg, ...patch }
     setCfg(next)
@@ -60,16 +62,22 @@ export default function AvatarEditor({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3" style={{ background: 'rgba(10,9,8,0.7)', backdropFilter: 'blur(4px)' }} onClick={onClose}>
-      <div className="hud-panel anim-slideUp w-full max-w-[520px] p-4" style={{ background: 'var(--panel)' }} onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 max-md:p-0" style={{ background: 'rgba(10,9,8,0.7)', backdropFilter: 'blur(4px)' }} onClick={onClose}>
+      {/* 移动端：底部弹出面板（同设置面板），高度受限可滚动；桌面：居中小窗 */}
+      <div
+        className="hud-panel anim-slideUp flex max-h-[92dvh] w-full max-w-[520px] flex-col p-4 max-md:fixed max-md:inset-x-0 max-md:bottom-0 max-md:max-w-none max-md:rounded-t-xl"
+        style={{ background: 'var(--panel)' }}
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="mb-3 flex items-center justify-between">
           <span className="font-title text-[18px]" style={{ color: 'var(--amber)' }}>形象编辑</span>
           <button className="font-mono2 border px-3 py-1 text-[12px]" style={{ borderColor: 'var(--panel-edge)', color: 'var(--text-dim)' }} onClick={onClose}>完成</button>
         </div>
-        <div className="flex gap-4 max-md:flex-col">
-          <div className="flex shrink-0 flex-col items-center">
-            <AvatarPreview avatar={cfg} size={150} />
-            <div className="font-mono2 mt-1 text-center text-[10px]" style={{ color: 'var(--text-dim)' }}>
+        {/* 内容区整体滚动；移动端横屏保持左右分栏（预览左/选项右），竖屏上下排布 */}
+        <div className="flex min-h-0 flex-1 gap-4 overflow-y-auto max-md:flex-col max-md:landscape:flex-row">
+          <div className="flex shrink-0 flex-col items-center max-md:landscape:sticky max-md:landscape:top-0">
+            <AvatarPreview avatar={cfg} size={isMobile ? 110 : 150} />
+            <div className="font-mono2 mt-1 text-center text-[10px] max-md:landscape:hidden" style={{ color: 'var(--text-dim)' }}>
               身高与体型固定<br />（与碰撞体积一致，不可编辑）
             </div>
           </div>

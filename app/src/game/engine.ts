@@ -19,7 +19,7 @@ import { OUTPOSTS } from './outposts'
 import { FACTIONS, REP_START, REP_TIER, genQuest, genBntgQuest, genArianeQuest, genEl3aQuest, genJerryQuest, type QuestDef, type QuestFaction } from './factions'
 import { l2JerryRoomRectAt } from './infiniteL2' // v45：信众宣传间领地矩形（HUD 声望显示）
 
-export interface InvSlot { type: string; count: number }
+export interface InvSlot { type: string; count: number; tag?: number } // tag：来源层级标签（迁跃浆果=发现它的层级；不同标签不堆叠）
 // 装备槽位标识：hotbar/backpack 为背包格；offhand/body/gloves/pocket 为装备位（主手=快捷栏选中项，不是独立槽位）
 export type SlotWhere = 'hotbar' | 'backpack' | 'offhand' | 'body' | 'gloves' | 'head' | 'pocket'
 export interface SlotRef { w: SlotWhere; i: number }
@@ -85,6 +85,17 @@ export interface InputState {
 
 export type Difficulty = 'easy' | 'normal' | 'hard'
 const DIFF = { easy: { dmg: 0.6, drain: 0.6 }, normal: { dmg: 1, drain: 1 }, hard: { dmg: 1.5, drain: 1.4 } }
+
+// v51：天才糖的「冷知识」（简单但常被人认错）
+const GENIUS_FACTS = [
+  '土耳其的首都是安卡拉，不是伊斯坦布尔',
+  '拿破仑并不矮，他大约有 170 厘米',
+  '从太空里肉眼是看不见长城的',
+  '金鱼的记忆远不止七秒',
+  '蝙蝠并不是瞎子',
+  '地球自转一周其实不足 24 小时',
+  '指南针指的并不是真正的北极',
+]
 
 // ===== v29a：存档/读档 =====
 // br_save（App.tsx 写入）仅存 seed+difficulty 供主界面「继续游戏」取种子；
@@ -167,7 +178,7 @@ export class Engine {
   private stepAcc = 0
   // v12：interactTarget 携带目标引用（结构/物品/出口），HUD 提示与 doInteract 执行
   // 共用 scanInteract 的同一选择结果，杜绝「提示普通门却触发相邻上锁门」的目标漂移。
-  private interactTarget: { kind: string; label: string; s?: Structure; it?: GameMap['items'][number]; e?: GameMap['exits'][number]; npc?: NpcState; ent?: Entity } | null = null
+  private interactTarget: { kind: string; label: string; s?: Structure; it?: GameMap['items'][number]; e?: GameMap['exits'][number]; npc?: NpcState; ent?: Entity; vmBack?: boolean } | null = null
   // 开发者模式（v8 扩展：statLock=每帧锁满状态，oneHit=一击必杀，invisible=实体不追击，frozenAI=冻结实体）
   dev = { god: false, noclip: false, speed: false, statLock: true, oneHit: false, invisible: false, frozenAI: false, bright: false, phenOn: new Set<string>(), phenOff: new Set<string>(), hintDist: 30 }
   // 地图就地修改版本号（开发者强制生成固定结构时 +1；渲染层据此重建有限层静态几何）
@@ -200,6 +211,8 @@ export class Engine {
 
   // v29：经 L0「向下的灰色阶梯」进入 L1 的标记（下一次 loadLevel(1) 时在出生点附近生成返程阶梯）
   private arriveStairs = false
+  // v51：乘电梯（elevatorshaft）抵达的标记——下一次 loadLevel 把出生点改到本层电梯旁（内存标记，不入存档）
+  private arriveElevator = false
   // v29：返程「向上的灰色阶梯」（世界坐标固定；窗口平移 stitch 后重新注入）
   private bonusExit: { def: ExitDef; wx: number; wy: number } | null = null
   // v29：本局已到过的层级（初始物资仅首次进 L0 刷新）
@@ -242,7 +255,19 @@ export class Engine {
   private inGardenEff = false // 本帧植殖癌是否生效（含开发者强制开/关），供现象列表读取
   // ===== v32：新物品机制状态 =====
   axeDur = 0 // 斧头耐久（获得时重置为 5；破门 -1，耗尽报废）
-  squirtTank: 'none' | 'water' | 'almond' | 'cashew' = 'none' // 滋水枪储罐液体（单一种类）
+  squirtTank: 'none' | 'water' | 'almond' | 'cashew' | 'liquidpain' = 'none' // 滋水枪储罐液体（单一种类）
+  // v51：Object 5 糖果效果计时器
+  candyAddictT = 0 // 糖瘾：吃糖后 60s 内需再吃，否则理智 -10
+  silverTongueT = 0 // 银舌头：交易 95 折（秒）
+  slipperyT = 0 // 咀嚼子弹：脚滑（秒）
+  gunCandyT = 0 // 枪糖：右手变枪（秒）
+  private slipVx = 0
+  private slipVy = 0
+  private chocoCd = 0 // 巧克力子弹射速冷却
+  manmadeT = 0 // v51：人制品效应剩余秒数（5 分钟：拒食他物/治疗减半/恒显饥饿特效/体力恢复减半消耗加倍/受伤 -10%）
+  webbedT = 0 // v51：Nguithr'xurh 镇静剂麻痹剩余秒数（视野模糊 + 移动迟缓）
+  /** 当前是否身处据点（饥饿减速/体力加速的判定依据） */
+  get inOutpost(): boolean { return Object.values(OUTPOSTS).some((o) => o.levelId === this.player.level) }
   squirtAmmo = 0 // 储罐剩余喷射份数（1 瓶 = 3 份，上限 9 瓶 = 27 份）
   warpBerryLevel: number | null = null // 迁跃浆果：首次获得时所在层级（食用传送目标）
   royalAddictT = 0 // 皇家口粮成瘾剩余秒数（期间其他食物不回饥饿）
@@ -391,6 +416,9 @@ export class Engine {
     // v29：经 L0 灰色阶梯下行 → L1 出生点附近生成返程阶梯（在换图前取走标记）
     const viaStairs = this.arriveStairs
     this.arriveStairs = false
+    // v51：乘电梯抵达（在换图前取走标记；读档恢复 restore 路径不套用电梯落点——存档以原出生点为准）
+    const viaElevator = this.arriveElevator && !restore
+    this.arriveElevator = false
     // v29a：读档恢复时复用存档记录的地图种子与首访标记，保证复现同一张图
     const mapSeed = restore?.mapSeed ?? (this.seed + this.time * 7 + id * 131)
     const fv = restore?.firstVisit ?? firstVisit
@@ -402,6 +430,22 @@ export class Engine {
     this.player.level = id
     this.player.x = this.map.spawn.x + 0.5
     this.player.y = this.map.spawn.y + 0.5
+    // v51：乘电梯抵达——出生点改到本层电梯（elevatorshaft 出口）邻格；找不到可站邻格则保留默认出生点
+    if (viaElevator) {
+      const elev = this.map.exits.find((e) => e.def.kind === 'elevatorshaft')
+      if (elev) {
+        const m = this.map
+        outer: for (let rad = 1; rad <= 4; rad++)
+          for (let dy = -rad; dy <= rad; dy++)
+            for (let dx = -rad; dx <= rad; dx++) {
+              if (Math.max(Math.abs(dx), Math.abs(dy)) !== rad) continue
+              const nx = Math.floor(elev.x) + dx, ny = Math.floor(elev.y) + dy
+              if (!canOccupy(m, nx + 0.5, ny + 0.5, PLAYER_RADIUS, { z: 0 })) continue
+              this.player.x = nx + 0.5; this.player.y = ny + 0.5
+              break outer
+            }
+      }
+    }
     this.player.z = 0
     this.player.vz = 0
     this.player.crouching = false
@@ -549,6 +593,41 @@ export class Engine {
     const p = this.player
     const m = this.map
     const dm = DIFF[this.difficulty]
+    // v51：糖果效果计时器
+    if (this.candyAddictT > 0) {
+      this.candyAddictT -= dt
+      if (this.candyAddictT <= 0) {
+        p.sanity = Math.max(0, p.sanity - 10)
+        this.msg('糖瘾发作——你需要再来一颗糖。（理智 -10）', 'damage')
+      }
+    }
+    if (this.silverTongueT > 0) this.silverTongueT -= dt
+    if (this.gunCandyT > 0) {
+      this.gunCandyT -= dt
+      if (this.gunCandyT <= 0) this.msg('右手的枪感褪去了——它重新变回了手。', 'lore')
+    }
+    if (this.chocoCd > 0) this.chocoCd -= dt
+    // v51：人制品售货机——看过背面后，玩家背对它（视线锥外且 10m 内）即活化追击；受到攻击也会活化
+    for (const e of m.entities) {
+      if (e.dead || e.def.type !== 'vendingmachine') continue
+      const d = Math.hypot(e.x - p.x, e.y - p.y)
+      const provoked = e.hp < e.def.hp // 受到攻击
+      const turnedBack = !!e.activated && d <= 10 && this.viewAngle(e.x, e.y) > 1.7 // 看过背面后背对它
+      if (provoked || turnedBack) {
+        e.activated = false
+        e.def = ENTITIES.vmad
+        e.state = 'chase'; e.stateT = 0; e.targetX = p.x; e.targetY = p.y
+        audio.aggro()
+        this.msg('背后传来白骨摩擦地面的声响——人制品售货机站起来了。', 'damage')
+      }
+    }
+    // v51：人制品效应计时（5 分钟）
+    if (this.manmadeT > 0) this.manmadeT -= dt
+    // v51：Nguithr'xurh 镇静剂麻痹计时
+    if (this.webbedT > 0) this.webbedT -= dt
+    // v51：玩家朝向每帧跟随视角——此前仅在移动时按移动方向赋值，
+    // 原地转身后攻击判定锥/投掷物/滋水枪水线仍朝旧方向（与 renderer3d 视线前向一致）
+    p.facing = Math.atan2(-Math.sin(look.yaw), -Math.cos(look.yaw))
 
     // 过渡动画中
     if (this.transition) {
@@ -613,12 +692,13 @@ export class Engine {
       // 体力耗尽提示（节流 4 秒）
       if (this.statusMsgT.stamina <= 0) { this.msg('体力耗尽——喘口气再跑。', 'system'); this.statusMsgT.stamina = 4 }
     }
-    if (wantSprint) { speed = 6.0; p.stamina = Math.max(0, p.stamina - 22 * dt) }
-    else p.stamina = Math.min(100, p.stamina + (p.coffeeT > 0 ? 24 : 12) * dt)
+    if (wantSprint) { speed = 6.0; p.stamina = Math.max(0, p.stamina - 22 * (this.manmadeT > 0 ? 2 : 1) * dt) } // v51：人制品效应中体力消耗 ×2
+    else p.stamina = Math.min(100, p.stamina + (p.coffeeT > 0 ? 24 : 12) * (this.inOutpost ? 2 : 1) * (this.manmadeT > 0 ? 0.5 : 1) * dt) // v51：人制品效应中体力恢复 ×0.5
     if (p.crouching) speed *= 0.5 // 蹲伏减速
     if (wet && lq === 0) speed *= 0.55
     if (lq !== 0) speed *= 0.5 // v13：液体中移动减速
     if (p.slowT > 0) { p.slowT -= dt; speed *= 0.5 }
+    if (this.webbedT > 0) speed *= 0.5 // v51：镇静剂麻痹——移动迟缓
     if (p.flashJamT > 0) p.flashJamT -= dt
     if (this.dev.speed) speed *= 1.8
     if (this.plantK > 0) speed *= 1 - 0.55 * Math.min(1, this.plantK) // v30 植殖癌：行为逐渐僵硬
@@ -689,13 +769,24 @@ export class Engine {
     }
     this.statusMsgT.battery -= dt
     // v13：电梯乘降 / 梯子攀爬进行中：锁定水平移动（垂直由对应逻辑驱动）
-    if (mag > 0.1 && !this.ride && !this.climb && !introLock) {
+    // v51：脚滑漂移量足够时，即使松开方向键也会继续滑动
+    const slipDrift = Math.hypot(this.slipVx, this.slipVy)
+    if ((mag > 0.1 || (this.slipperyT > 0 && slipDrift > 0.05)) && !this.ride && !this.climb && !introLock) {
       // 固定子步积分：dt 先入累加器，按 FIXED_STEP 切分子步逐次「移动→解碰撞」。
       // 高帧率不会积分抖动，低帧率不会大步长穿墙弹回；脚步声/噪音按实际位移计。
-      const scale = Math.min(mag, 1) / mag
-      const moved = integrateMove(m, p, this.input.mx * scale, this.input.my * scale, speed, dt, this.moveIt, { noclip: this.dev.noclip, z: this.onStairs ? 0 : p.z, crouch: p.crouching, band: this.onStairs ? 0 : band })
+      const scale = mag > 0.1 ? Math.min(mag, 1) / mag : 0
+      // v51：咀嚼子弹脚滑——输入叠加衰减的惯性漂移，停步后仍会向前滑出
+      if (this.slipperyT > 0) {
+        this.slipperyT -= dt
+        this.slipVx += this.input.mx * dt * 3
+        this.slipVy += this.input.my * dt * 3
+        this.slipVx *= Math.max(0, 1 - dt * 1.8)
+        this.slipVy *= Math.max(0, 1 - dt * 1.8)
+      } else { this.slipVx = 0; this.slipVy = 0 }
+      const moved = integrateMove(m, p, this.input.mx * scale + this.slipVx, this.input.my * scale + this.slipVy, speed, dt, this.moveIt, { noclip: this.dev.noclip, z: this.onStairs ? 0 : p.z, crouch: p.crouching, band: this.onStairs ? 0 : band })
       const movedDist = Math.hypot(moved.x, moved.y)
-      p.facing = Math.atan2(this.input.my, this.input.mx)
+      // v51 修复：删除移动方向覆写 p.facing 的旧行——facing 由 609 行每帧锁定为视角方向；
+      // 移动中（尤其侧移/后退）被覆写成移动方向，导致 inView 视锥错位、交互提示一会有一会无
       this.stepAcc += movedDist
       p.steps += movedDist
       if (this.stepAcc > 0.9) {
@@ -866,8 +957,9 @@ export class Engine {
       audio.setUnderwater(false)
     }
 
-    // ---- 生存消耗 ----
-    p.hunger = Math.max(0, p.hunger - 0.28 * dm.drain * (this.levelDef.entropy ?? 1) * dt)
+    // ---- 生存消耗（v51：据点中饥饿下降 ×1/3；玩家不动时 ×1/2，可叠加）----
+    const hungerK = (this.inOutpost ? 1 / 3 : 1) * (mag > 0.1 ? 1 : 0.5)
+    p.hunger = Math.max(0, p.hunger - 0.28 * dm.drain * (this.levelDef.entropy ?? 1) * hungerK * dt)
     if (p.hunger <= 25 && this.statusMsgT.hunger <= 0) {
       this.statusMsgT.hunger = 8
       this.msg('你饿得头晕。', 'damage')
@@ -1079,6 +1171,17 @@ export class Engine {
       this.npcs = this.npcs.filter((n) => !(n.dead && (n.deathT ?? 0) <= 0))
       if (m.inf) for (const c of m.inf.chunks.values()) c.npcs = c.npcs.filter((n) => !gone.includes(n))
     }
+
+    // ---- v51：L3 配电箱电流嗡鸣（定位音频惯例：按最近配电箱距离逐帧调音量）----
+    if (this.levelDef.id === 3) {
+      let dh = 1e9
+      for (const s of m.structures) {
+        if (s.kind !== 'elecbox') continue
+        const dd = Math.hypot(s.x + 0.5 - p.x, s.y + 0.5 - p.y)
+        if (dd < dh) dh = dd
+      }
+      audio.setElecHum(dh < 9 ? 1 - dh / 9 : 0)
+    } else audio.setElecHum(0)
 
     // ---- 交互检测 ----
     this.scanInteract()
@@ -1313,6 +1416,14 @@ export class Engine {
   private updateEntities(dt: number, dmgMult: number) {
     const m = this.map!, p = this.player
     const lightOn = p.flashlight && p.battery > 0 && p.flashJamT <= 0
+    // v51：L3 圣所邻域 chunk 集（圣所 chunk + 八邻——wikidot：实体甚至不会进入包含圣所入口的走廊）
+    let sanctChunks: Set<string> | null = null
+    if (this.levelDef.id === 3 && m.inf) {
+      sanctChunks = new Set()
+      for (const c of m.inf.chunks.values())
+        if (c.variant === 'sanct')
+          for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) sanctChunks.add(chunkKey(c.cx + dx, c.cy + dy))
+    }
     // 开发者模式：冻结实体 AI（仅保留死亡动画消散，便于截图/观察）
     if (this.dev.frozenAI) {
       for (const e of m.entities) if (e.dead) e.deathT -= dt
@@ -1326,6 +1437,8 @@ export class Engine {
       // 开发者模式：隐形——所有距离判定视为无穷远，实体永不索敌/攻击/特殊触发
       const d = this.dev.invisible ? 1e9 : Math.hypot(e.x - p.x, e.y - p.y)
       const def = e.def
+      // v51：Nguithr'xurh（Entity 16）——天花板网囊陷阱专属状态机
+      if (def.type === 'nguithr') { this.updateNguithr(e, d, dt); continue }
       // 猎犬威慑：玩家「实时直视 + 持续制造噪音」才定身——逐帧刷新 stunT，
       // 停止发声或移开视线即不再刷新，猎犬在 0.25s 内恢复行动（对已在追击的猎犬同样有效）
       if (def.intimidatable) {
@@ -1343,6 +1456,38 @@ export class Engine {
         }
       }
       if (e.stunT > 0) { e.stunT -= dt; continue }
+
+      // v51：L3 圣所威慑——实体畏惧天使雕像：不进入圣所 chunk 及其八邻（含入口走廊）。
+      // 踏上圣所邻域/tint 20 瓦片的实体立刻以 ×1.4 速度逃向最近的非圣所可走瓦片，
+      // 该 tick 跳过索敌/攻击/特殊行为（wanderTarget 同样拒绝这些瓦片）
+      {
+        const etx = Math.floor(e.x), ety = Math.floor(e.y)
+        let holy = false
+        if (etx >= 0 && ety >= 0 && etx < m.w && ety < m.h) {
+          if (m.tint[ety * m.w + etx] === 20) holy = true
+          else if (sanctChunks && m.inf)
+            holy = sanctChunks.has(chunkKey(Math.floor((m.inf.ox + e.x) / CS), Math.floor((m.inf.oy + e.y) / CS)))
+        }
+        if (holy) {
+          let fx = -1, fy = -1
+          outer: for (let rad = 1; rad <= 16; rad++)
+            for (let dy = -rad; dy <= rad; dy++)
+              for (let dx = -rad; dx <= rad; dx++) {
+                if (Math.max(Math.abs(dx), Math.abs(dy)) !== rad) continue
+                const nx = etx + dx, ny = ety + dy
+                if (nx < 0 || ny < 0 || nx >= m.w || ny >= m.h) continue
+                const ni = ny * m.w + nx
+                if (m.tint[ni] === 20 || tileAt(m, nx, ny) !== 1) continue
+                if (sanctChunks && m.inf && sanctChunks.has(chunkKey(Math.floor((m.inf.ox + nx) / CS), Math.floor((m.inf.oy + ny) / CS)))) continue
+                fx = nx; fy = ny; break outer
+              }
+          if (fx >= 0) {
+            e.state = 'wander'; e.targetX = fx + 0.5; e.targetY = fy + 0.5; e.stateT = 4
+            this.stepEntity(e, def.speed * 1.4, dt)
+          }
+          continue
+        }
+      }
 
       // 遭遇记录（图鉴渐进解锁）：进入视野范围且有视线
       if (d < def.sight && !this.seenThisLevel.has(def.type) && this.los(p.x, p.y, e.x, e.y)) {
@@ -1670,6 +1815,15 @@ export class Engine {
       if (Math.floor(tx) < 0 || Math.floor(ty) < 0 || Math.floor(tx) >= m.w || Math.floor(ty) >= m.h) continue
       // v13：按所在楼层高度带选游荡目标（上层实体不下楼闲逛；楼梯口允许上下）
       if (m.stair[ti] & 7) { e.targetX = tx; e.targetY = ty; e.stateT = 4; return }
+      if (m.tint[ti] === 20) continue // v51：实体不主动进入圣所（tint 20）
+      // v51：圣所邻域 chunk 同样不选为游荡目标（实体不进入包含圣所入口的走廊）
+      if (this.levelDef.id === 3 && m.inf) {
+        const wcx = Math.floor((m.inf.ox + tx) / CS), wcy = Math.floor((m.inf.oy + ty) / CS)
+        let holy = false
+        for (const c of m.inf.chunks.values())
+          if (c.variant === 'sanct' && Math.abs(c.cx - wcx) <= 1 && Math.abs(c.cy - wcy) <= 1) { holy = true; break }
+        if (holy) continue
+      }
       if (band === 1 ? (m.up[ti] === 1 && m.upWall[ti] !== 1) : tileAt(m, Math.floor(tx), Math.floor(ty)) === 1) {
         if (band === 0 && m.liquid[ti] === 1) continue // 实体不主动下水
         e.targetX = tx; e.targetY = ty; e.stateT = 4; return
@@ -1706,9 +1860,76 @@ export class Engine {
     }
   }
 
+  /** Nguithr'xurh（Entity 16）：网囊（hidden）→ 玩家经过正下方爆开（麻痹）→ 未离开即降下攻击 → 逃脱则回巢结囊 */
+  private updateNguithr(e: Entity, d: number, dt: number) {
+    const p = this.player, m = this.map!
+    const ceilZ = (WALL_H[this.levelDef.gen] ?? 3) - 0.55
+    // 陷阱点初始化（生成位置即结囊处）
+    if (e.webX === undefined) { e.webX = e.x; e.webY = e.y; e.hidden = true }
+    if (e.hidden) {
+      // 网囊形态：挂顶不动，缓缓升到天花板
+      e.z += (ceilZ - e.z) * Math.min(1, dt * 3)
+      if (d < 1.3 && this.webbedT <= 0 && !this.dev.invisible) {
+        // 爆开：镇静剂洒落——视野模糊 + 移动迟缓 4 秒
+        this.webbedT = 4
+        e.hidden = false
+        e.state = 'idle'; e.stateT = 4 // 等待麻痹期（与 webbedT 同步）
+        this.camShake = Math.min(1, this.camShake + 0.4)
+        audio.aggro()
+        this.msg('头顶的球状网囊突然爆开——镇静剂洒了你一身。（视线模糊 · 移动迟缓）', 'damage')
+      }
+      return
+    }
+    if (e.state === 'idle') {
+      // 麻痹等待期：玩家仍停留在那一格 → 垂降进食；已离开 → 回巢重新结囊
+      e.z += (ceilZ - e.z) * Math.min(1, dt * 3)
+      if (e.stateT <= 0) {
+        const sameTile = Math.floor(p.x) === Math.floor(e.webX!) && Math.floor(p.y) === Math.floor(e.webY!)
+        if (sameTile) {
+          e.state = 'chase'; e.stateT = 0
+          audio.aggro()
+          this.msg('有什么东西顺着丝从天花板降了下来——', 'damage')
+        } else {
+          e.hidden = true; e.stateT = 0 // 猎物已离开：重新结囊
+        }
+      }
+      return
+    }
+    // 地面态：慢速逼近玩家；玩家逃出 8m（且未杀死它）→ 回到陷阱点重新结囊
+    if (d > 8) {
+      const tx = e.webX, ty = e.webY!
+      const dd = Math.hypot(tx - e.x, ty - e.y)
+      if (dd < 0.4) { e.hidden = true; e.stateT = 0; return }
+      this.faceToward(e, tx, ty, dt, 6)
+      e.targetX = tx; e.targetY = ty
+      this.stepEntity(e, e.def.speed, dt)
+      e.animT += dt
+      return
+    }
+    // 落地（z 降到地面）
+    const gz = groundHeightAt(m, e.x, e.y)
+    e.z += (gz - e.z) * Math.min(1, dt * 6)
+    // 攻击前摇：原地停步、抬起前身（节肢式蓄力），随后下扑
+    if (e.lungeT > 0) {
+      e.lungeT -= dt
+      if (e.lungeT <= 0 && d < 1.3 && this.meleeZOk(e)) {
+        e.attackCd = 1.4
+        this.hurtPlayer(e.def.damage, e.def.name)
+        // 每次遭到 Nguithr'xurh 攻击 → 麻痹 1 秒（模糊+迟缓）
+        this.webbedT = Math.max(this.webbedT, 1)
+        this.msg('镇静剂的余效让你浑身发麻。（麻痹 1 秒）', 'damage')
+      }
+      return
+    }
+    this.faceToward(e, p.x, p.y, dt, 5)
+    e.targetX = p.x; e.targetY = p.y
+    this.stepEntity(e, e.def.speed, dt)
+    e.animT += dt
+    if (d < 1.3 && e.attackCd <= 0 && this.meleeZOk(e)) e.lungeT = 0.45 // 进入前摇
+  }
+
   // 平滑转向（最短弧 lerp yaw）面向目标点
-  private faceToward(e: Entity, tx: number, ty: number, dt: number, rate: number) {
-    const want = Math.atan2(ty - e.y, tx - e.x)
+  private faceToward(e: Entity, tx: number, ty: number, dt: number, rate: number) {    const want = Math.atan2(ty - e.y, tx - e.x)
     let diff = want - e.facing
     while (diff > Math.PI) diff -= Math.PI * 2
     while (diff < -Math.PI) diff += Math.PI * 2
@@ -1884,7 +2105,7 @@ export class Engine {
   hurtPlayer(dmg: number, source: string) {
     if (this.dev.god) return
     const p = this.player
-    p.hp -= dmg
+    p.hp -= dmg * (this.manmadeT > 0 ? 0.9 : 1) // v51：人制品效应中受到的伤害 -10%
     p.sanity = Math.max(0, p.sanity - 4)
     this.camShake = Math.min(1, this.camShake + 0.6)
     audio.hurt()
@@ -1954,6 +2175,11 @@ export class Engine {
       this.msg('鹉主从栖木上坠落。穹顶的圣辉摇晃了一瞬——信众的哭喊与怒吼同时炸开。（杰瑞的信众 声望 → -100）', 'damage')
     }
     this.msg(`击杀了 ${e.def.name}`, 'loot')
+    // 旱虾（Entity 20）：被玩家击杀必掉可食用的「旱虾」——被敌方实体捕食不经由本函数，不掉落物品
+    if (e.def.type === 'dryshrimp') {
+      m.items.push({ id: Date.now() % 100000 + Math.random(), type: 'dryshrimp', x: e.x, y: e.y })
+      return
+    }
     if (Math.random() < (p.hasRabbit ? 0.6 : 0.35)) {
       const drops = ['bandage', 'almond', 'canned', 'battery']
       const t0 = drops[Math.floor(Math.random() * drops.length)]
@@ -1965,6 +2191,8 @@ export class Engine {
   private attack() {
     const p = this.player, m = this.map!
     const held = p.hotbar[p.selected]
+    // v51：枪糖生效中——无论当前持有什么，右手都是枪（左键发射巧克力子弹）
+    if (this.gunCandyT > 0) { this.shootChocolate(); return }
     // 可投掷道具：左键掷出而非近战
     if (held && ITEMS[held.type]?.throw) { this.throwHeld(held.type); return }
     // v32：滋水枪——左键喷射储罐液体
@@ -2095,8 +2323,8 @@ export class Engine {
   /** 滋水枪储罐容量（份数）：9 瓶 × 每瓶 3 份 = 27 */
   static readonly SQUIRT_CAP = 27
   /** 往滋水枪储罐装入 1 瓶液体（3 份喷射量；储罐只能装一种液体，清水无需对应物品） */
-  loadSquirt(liquid: 'water' | 'almond' | 'cashew'): boolean {
-    const NAME = { water: '清水', almond: '杏仁水', cashew: '腰果水' } as const
+  loadSquirt(liquid: 'water' | 'almond' | 'cashew' | 'liquidpain'): boolean {
+    const NAME = { water: '清水', almond: '杏仁水', cashew: '腰果水', liquidpain: '液态痛苦' } as const
     if (this.squirtTank !== 'none' && this.squirtTank !== liquid) {
       this.msg(`储罐里还有别的液体——喷完或喝完才能换。`, 'system')
       return false
@@ -2111,6 +2339,89 @@ export class Engine {
     return true
   }
 
+  /** 清空储罐（把残液倒掉，换液体免喷完） */
+  clearSquirt() {
+    if (this.squirtTank === 'none') { this.msg('储罐本来就是空的。', 'system'); return }
+    const NAME = { water: '清水', almond: '杏仁水', cashew: '腰果水', liquidpain: '液态痛苦' } as const
+    this.msg(`倒空了储罐里的${NAME[this.squirtTank]}（${this.squirtAmmo} 份残液）。`, 'system')
+    this.squirtTank = 'none'
+    this.squirtAmmo = 0
+  }
+
+  // ---------- v51：Object 5 糖果效果 ----------
+
+  /** 纸片人斯坦利：瞬移到最近的「无阻挡开阔墙面」（贴墙地板且无实心结构遮挡） */
+  private stanleyTeleport() {
+    const p = this.player, m = this.map!
+    let best: { x: number; y: number; d: number } | null = null
+    for (let y = 1; y < m.h - 1; y++) {
+      for (let x = 1; x < m.w - 1; x++) {
+        const i = y * m.w + x
+        if (m.tiles[i] !== 1) continue
+        const wall = m.tiles[i + 1] !== 1 || m.tiles[i - 1] !== 1 || m.tiles[i + m.w] !== 1 || m.tiles[i - m.w] !== 1
+        if (!wall) continue
+        if (m.structures.some((s) => s.solid && x >= s.x && x < s.x + s.w && y >= s.y && y < s.y + s.h)) continue
+        const d = Math.hypot(x + 0.5 - p.x, y + 0.5 - p.y)
+        if (d < 1.5) continue // 不落在脚下
+        if (!best || d < best.d) best = { x, y, d }
+      }
+    }
+    if (best) {
+      p.x = best.x + 0.5; p.y = best.y + 0.5
+      p.z = groundHeightAt(m, p.x, p.y)
+      this.camShake = Math.min(1, this.camShake + 0.3)
+      this.msg('你突然扁成了一张纸——再展开时，已经贴在了最近的墙面上。（饥饿+5 理智+5）', 'lore')
+    } else {
+      this.msg('你扁了一瞬又弹了回来——附近没有可以贴上去的开阔墙面。（饥饿+5 理智+5）', 'lore')
+    }
+  }
+
+  /** 枪糖：左键发射巧克力子弹（直线 12m，1 点伤害，命中也只是糊一脸） */
+  private shootChocolate() {
+    const p = this.player, m = this.map!
+    if (this.chocoCd > 0) return
+    this.chocoCd = 0.22
+    audio.swing()
+    this.attackAnimT = 0.2
+    this.attackAnimKind = 'spray'
+    const dx = Math.cos(p.facing), dy = Math.sin(p.facing)
+    const pc = '#7a4a2a' // 巧克力色
+    let hitEnt: Entity | null = null
+    let travel = 12
+    for (let s = 0.5; s <= 12; s += 0.2) {
+      const rx = p.x + dx * s, ry = p.y + dy * s
+      if (tileAt(m, Math.floor(rx), Math.floor(ry)) !== 1) { travel = s - 0.2; break }
+      for (const e of m.entities) {
+        if (e.dead || e.hidden) continue
+        if (Math.hypot(e.x - rx, e.y - ry) < 0.45) { hitEnt = e; travel = s; break }
+      }
+      if (hitEnt) break
+    }
+    // 弹道视觉（同滋水枪：枪口→准星点）
+    const rfx = -Math.sin(p.facing), rfy = Math.cos(p.facing)
+    const cp = Math.cos(look.pitch)
+    const tx = p.x + dx * travel * cp, ty = p.y + dy * travel * cp
+    const tz = p.z + 1.55 + Math.sin(look.pitch) * travel
+    const mx = p.x + dx * 0.5 + rfx * 0.25, my = p.y + dy * 0.5 + rfy * 0.25, mz = p.z + 1.25
+    const dist = Math.max(0.5, Math.hypot(tx - mx, ty - my, tz - mz))
+    for (let s = 0.3; s < dist; s += 0.3) {
+      const k = s / dist
+      this.particles.push({
+        x: mx + (tx - mx) * k, y: my + (ty - my) * k,
+        vx: ((tx - mx) / dist) * 9, vy: ((ty - my) / dist) * 9,
+        t: 0, life: 0.22, color: pc, size: 1.2, z: mz + (tz - mz) * k, vz: ((tz - mz) / dist) * 9,
+      })
+    }
+    if (hitEnt) {
+      const e = hitEnt
+      e.hp -= 1
+      e.stunT = Math.max(e.stunT, 0.1)
+      this.killCheck(e)
+      audio.hit()
+      this.msg(`巧克力子弹啪叽糊在${e.def.name}身上。（1 点伤害）`, 'system')
+    }
+  }
+
   /** 滋水枪喷射：清水无效果；杏仁水雾轻伤实体，腰果水雾造成更大伤害 */
   private squirt() {
     const p = this.player, m = this.map!
@@ -2122,8 +2433,8 @@ export class Engine {
     audio.swing()
     this.attackAnimT = 0.35
     this.attackAnimKind = 'spray' // 滋水枪专属喷射动画
-    const dmg = this.squirtTank === 'cashew' ? 20 : 8
-    const pc = this.squirtTank === 'cashew' ? '#c9a05a' : this.squirtTank === 'almond' ? '#c9e8a0' : '#9adfff'
+    const dmg = this.squirtTank === 'liquidpain' ? 60 : this.squirtTank === 'cashew' ? 20 : 8 // 液态痛苦：腐蚀性高伤
+    const pc = this.squirtTank === 'liquidpain' ? '#d94a3a' : this.squirtTank === 'cashew' ? '#c9a05a' : this.squirtTank === 'almond' ? '#c9e8a0' : '#9adfff'
     // v34：线性水线——沿视线射线步进（射程 4.5m，撞墙即停，顺带修复隔墙命中）；水线碰到首个实体才触发液体效果
     const dx = Math.cos(p.facing), dy = Math.sin(p.facing)
     const RANGE = 4.5, STEP = 0.2
@@ -2138,12 +2449,20 @@ export class Engine {
       }
       if (hitEnt) break
     }
-    // 水线视觉：沿射线等距布粒子（同速前飞保持线形），末端溅射
-    for (let s = 0.5; s <= travel; s += 0.28) {
+    // 水线视觉：从右手枪模口射出、笔直射向准星所指点（枪口=右手下前方；目标=视线射线末端，含俯仰）
+    const rfx = -Math.sin(p.facing), rfy = Math.cos(p.facing) // 右手方向（与视角模型右手位一致）
+    const cp = Math.cos(look.pitch)
+    const tx = p.x + dx * travel * cp, ty = p.y + dy * travel * cp // 准星目标点
+    const tz = p.z + 1.55 + Math.sin(look.pitch) * travel
+    const mx = p.x + dx * 0.5 + rfx * 0.25, my = p.y + dy * 0.5 + rfy * 0.25, mz = p.z + 1.25 // 枪口（右手下前方）
+    const dist = Math.max(0.5, Math.hypot(tx - mx, ty - my, tz - mz))
+    for (let s = 0.26; s < dist; s += 0.26) {
+      const k = s / dist
       this.particles.push({
-        x: p.x + dx * s, y: p.y + dy * s,
-        vx: dx * 5, vy: dy * 5, t: 0, life: 0.28 + (s / RANGE) * 0.12,
-        color: pc, size: 1.6, z: 1.15,
+        x: mx + (tx - mx) * k, y: my + (ty - my) * k,
+        vx: ((tx - mx) / dist) * 5, vy: ((ty - my) / dist) * 5,
+        t: 0, life: 0.3,
+        color: pc, size: 1.6, z: mz + (tz - mz) * k, vz: ((tz - mz) / dist) * 5,
       })
     }
     for (let i = 0; i < 6; i++) {
@@ -2164,12 +2483,12 @@ export class Engine {
         if (e.def.type === 'corpserat' && e.provoked) this.provokeRatPack(e) // v44：尸鼠群体激怒（与近战受击一致）
         this.killCheck(e)
         audio.hit()
-        this.msg(this.squirtTank === 'cashew' ? `水线正中${e.def.name}——苦涩的腰果水把它灼得发颤。` : `水线正中${e.def.name}，甜腻的杏仁水四溅。`, 'system')
+        this.msg(this.squirtTank === 'liquidpain' ? `水线正中${e.def.name}——液态痛苦嘶嘶地腐蚀着它的表皮。` : this.squirtTank === 'cashew' ? `水线正中${e.def.name}——苦涩的腰果水把它灼得发颤。` : `水线正中${e.def.name}，甜腻的杏仁水四溅。`, 'system')
       } else {
         this.msg(`水线滋了${e.def.name}一身清水——什么效果也没有。`, 'system')
       }
     } else {
-      this.msg(this.squirtTank === 'water' ? '你喷出一道清水——什么效果也没有。' : this.squirtTank === 'cashew' ? '你喷出一道苦涩的腰果水线。' : '你喷出一道甜腻的杏仁水线。', 'system')
+      this.msg(this.squirtTank === 'water' ? '你喷出一道清水——什么效果也没有。' : this.squirtTank === 'liquidpain' ? '你喷出一道淡红色的腐蚀水线。' : this.squirtTank === 'cashew' ? '你喷出一道苦涩的腰果水线。' : '你喷出一道甜腻的杏仁水线。', 'system')
     }
     if (this.squirtAmmo <= 0) {
       this.squirtTank = 'none'
@@ -2178,8 +2497,7 @@ export class Engine {
   }
 
   /** 迁跃浆果：传送回首次发现这种浆果的层级 */
-  private warpToBerryLevel() {
-    const dest = this.warpBerryLevel
+  private warpToBerryLevel(tag?: number) {    const dest = tag ?? this.warpBerryLevel // 格子标签优先；无标签的旧档浆果回退到首次获得层级
     if (dest === null || dest === this.player.level) {
       this.msg('浆果的空间涟漪荡开——但你已经在这里了。', 'lore')
       return
@@ -2231,7 +2549,7 @@ export class Engine {
         this.msg(n > 0 ? `汽油罐轰然炸开——火焰吞没了 ${n} 个实体。` : '汽油罐轰然炸开，火焰很快熄灭了。', n > 0 ? 'damage' : 'system')
         break
       }
-      case 'shock': { // 电容器：电击 + 长眩晕
+      case 'shock': { // 瓶装闪电：电击 + 长眩晕
         this.noiseEvent(x, y, 12, true)
         audio.spark()
         for (let i = 0; i < 10; i++) {
@@ -2250,7 +2568,7 @@ export class Engine {
           n++
           this.killCheck(e)
         }
-        this.msg(n > 0 ? `电容器炸开一团电火花——${n} 个实体被电得僵直。` : '电容器炸开一团电火花，什么也没电到。', n > 0 ? 'damage' : 'system')
+        this.msg(n > 0 ? `瓶装闪电炸开一团电火花——${n} 个实体被电得僵直。` : '瓶装闪电炸开一团电火花，什么也没电到。', n > 0 ? 'damage' : 'system')
         break
       }
       case 'noise': { // 订书机：落地脆响引怪（可捡回）
@@ -2435,13 +2753,17 @@ export class Engine {
     for (const s of m.structures) {
       const cx = s.x + s.w / 2, cy = s.y + s.h / 2
       const d = Math.hypot(cx - p.x, cy - p.y)
-      if (d > 2.2 || !this.inView(cx, cy, 2.2)) continue
+      const maxD = CONTAINERS[s.kind] ? 2.7 : 2.2 // v51：容器交互距离放宽（十字锥选取保留，不再要贴着才能搜）
+      if (d > maxD || !this.inView(cx, cy, maxD)) continue
       // v13：结构按楼层过滤（楼上楼下同名容器互不干扰）；lift 跨层服务
       if (s.kind !== 'lift' && (s.floor ?? 0) !== band) continue
       if (s.kind === 'lift') { consider('lift', band === 0 ? '乘电梯 上楼' : '乘电梯 下楼', s, d, !this.ride); continue }
       // v18：已搜空容器仍可选中（交互时提示「容器是空的」），未搜空的正常提示
       // v23：全部容器走统一表（含新增的储物柜/工具箱/行李箱/冰箱/保险箱/信箱/木桶/书柜/骨堆/营地摊位）
       if (CONTAINERS[s.kind]) {
+        // v51：容器要求准星近似对准（~26° 半锥）——86° 宽容锥下余光里的容器会抢占交互位，
+        // 挡住玩家正对其他目标的交互；对准才可选中，不对准时完全不影响其他交互
+        if (this.viewAngle(cx, cy) > 0.45) continue
         const C = CONTAINERS[s.kind]
         const gate = !C.gate || (C.gate === 'carkey' ? this.hasPocket('carkey') : this.hasItem('crowbar'))
         const gateText = C.gate === 'carkey' ? '（需要车钥匙）' : '（需要撬棍）'
@@ -2474,10 +2796,12 @@ export class Engine {
       }
       else if (s.kind === 'glassdoor') consider('glassdoor', s.data?.open ? '关上 玻璃门' : '推开 玻璃门', s, d, true)
       else if (s.kind === 'inkdoor') consider('inkdoor', s.data?.open ? '关上 墨黑色金属门' : '打开 墨黑色金属门', s, d, true)
+      else if (s.kind === 'bargate') consider('bargate', s.data?.open ? '关上 栅栏门' : '打开 栅栏门', s, d, true)
       else if (s.kind === 'glasswin') consider('glasswin', DECOR_VIEWS.glasswin.label, s, d, true)
       else if (s.kind === 'windowtrap') consider('windowtrap', s.data?.triggered ? '查看 窗户（已无异常）' : '查看 未涂黑的窗户', s, d, true)
       else if (s.kind === 'windowblack') consider('windowblack', DECOR_VIEWS.windowblack.label, s, d, true)
       else if (s.kind === 'graffiti') consider('graffiti', DECOR_VIEWS.graffiti.label, s, d, true)
+      else if (s.kind === 'statue') consider('statue', DECOR_VIEWS.statue.label, s, d, true)
       else if (s.kind === 'megdoc') consider('megdoc', '阅读 M.E.G. 文档', s, d, true)
       else if (s.kind === 'landmark') consider('landmark', '查看 定居点地标', s, d, true)
       else if (s.kind === 'valve') consider('valve', s.data?.on ? '关闭 蒸汽阀门' : '打开 蒸汽阀门', s, d, true)
@@ -2514,6 +2838,22 @@ export class Engine {
             ? `接触 鹉主杰瑞（冷却 ${Math.ceil(this.jerryContactCd)}s）`
             : this.jerryTamed ? '接触 鹉主杰瑞（已驯服）' : '接触 鹉主杰瑞（教化 +25 · 对其使用杏仁水可驯服）',
           ent: e,
+        }
+        break
+      }
+    }
+    // v51：人制品售货机（Entity 36）——正面取货 / 背面看标语（与杰瑞同级最低优先级）
+    if (!this.interactTarget) {
+      for (const e of m.entities) {
+        if (e.dead || e.def.type !== 'vendingmachine' || e.activated) continue
+        const d = Math.hypot(e.x - p.x, e.y - p.y)
+        if (d > 2.2 || !this.inView(e.x, e.y, 2.2)) continue
+        // 正/背面：玩家在机器朝向的一侧为正面
+        const behind = Math.cos(e.facing) * (p.x - e.x) + Math.sin(e.facing) * (p.y - e.y) < 0
+        this.interactTarget = {
+          kind: 'vendingmachine',
+          label: behind ? '查看 人制品售货机（背面）' : '取出 人制品',
+          ent: e, vmBack: behind,
         }
         break
       }
@@ -2578,10 +2918,12 @@ export class Engine {
       }
       case 'crate': case 'corpse': case 'car': case 'cabinet': case 'dresser': case 'megcrate':
       case 'locker': case 'toolbox': case 'suitcase': case 'fridge': case 'safebox':
-      case 'mailbox': case 'barrel': case 'bookcase': case 'bonepile': case 'campstall': {
+      case 'mailbox': case 'barrel': case 'bookcase': case 'bonepile': case 'campstall':
+      case 'elecbox': { // v51：L3 配电箱（统一容器表成员，漏登记会导致显示可交互但按键无响应）
         const kind = t.kind
         // v12：搜索 scanInteract 选中的同一容器（不再是数组序第一个同类容器）
-        const s = t.s && t.s.kind === kind && Math.hypot(t.s.x + t.s.w / 2 - p.x, t.s.y + t.s.h / 2 - p.y) < 2.6 ? t.s : null
+        // v51：容器交互距离 2.8（与 scanInteract 的 2.7 选取门限对齐，不再脱节）
+        const s = t.s && t.s.kind === kind && Math.hypot(t.s.x + t.s.w / 2 - p.x, t.s.y + t.s.h / 2 - p.y) < 2.8 ? t.s : null
         if (!s) return
         // v18：空容器直接提示（不出面板、不出进度条）
         const leftover = s.data?.lootItems as string[] | undefined
@@ -2658,6 +3000,13 @@ export class Engine {
       case 'clipfuse': {
         for (const dm of DECOR_VIEWS.clipfuse.msgs!) this.msg(dm.text, dm.type)
         p.sanity = Math.max(0, p.sanity + DECOR_VIEWS.clipfuse.sanity)
+        this.emit({ kind: 'sanityhit' })
+        break
+      }
+      case 'statue': {
+        // v51：L3 铁栅栏后的风化希腊女像（纯氛围查看，同 clipfuse/endletters 惯例）
+        for (const dm of DECOR_VIEWS.statue.msgs!) this.msg(dm.text, dm.type)
+        p.sanity = Math.max(0, p.sanity + DECOR_VIEWS.statue.sanity)
         this.emit({ kind: 'sanityhit' })
         break
       }
@@ -2776,6 +3125,35 @@ export class Engine {
         audio.uiTick()
         break
       }
+      case 'bargate': {
+        // v51：L3 铁栅栏门（交互开/关；关门时实心阻挡，玩家站门洞则推到最近可走一侧——同 hoteldoor）
+        const s = t.s && t.s.kind === 'bargate' && Math.hypot(t.s.x + t.s.w / 2 - p.x, t.s.y + t.s.h / 2 - p.y) < 2.6 ? t.s : null
+        if (!s) return
+        const open = s.data?.open ? 0 : 1
+        s.data = { ...s.data, open }
+        s.solid = !open
+        if (!open) {
+          const m = this.map!
+          const r = PLAYER_RADIUS
+          if (p.x > s.x - r && p.x < s.x + s.w + r && p.y > s.y - r && p.y < s.y + s.h + r) {
+            const f = (x: number, y: number) => x >= 0 && y >= 0 && x < m.w && y < m.h && m.tiles[y * m.w + x] === 1
+            const ax = Math.floor(s.x + s.w / 2), ay = Math.floor(s.y + s.h / 2)
+            const alongY = !f(ax - 1, ay) && !f(ax + 1, ay) // 门两侧是墙 ⇒ 通行沿 y 轴
+            const cand = alongY
+              ? [{ x: p.x, y: s.y - r - 0.12 }, { x: p.x, y: s.y + s.h + r + 0.12 }]
+              : [{ x: s.x - r - 0.12, y: p.y }, { x: s.x + s.w + r + 0.12, y: p.y }]
+            const ok = (c: { x: number; y: number }) => canOccupy(m, c.x, c.y, r, { z: p.z, crouch: p.crouching })
+            const d0 = Math.hypot(cand[0].x - p.x, cand[0].y - p.y)
+            const d1 = Math.hypot(cand[1].x - p.x, cand[1].y - p.y)
+            const [near, far] = d0 <= d1 ? [cand[0], cand[1]] : [cand[1], cand[0]]
+            if (ok(near)) { p.x = near.x; p.y = near.y }
+            else if (ok(far)) { p.x = far.x; p.y = far.y }
+          }
+        }
+        this.msg(open ? '栅栏门哐当一声开了。' : '你带上了栅栏门，铁栏撞出一声闷响。', 'system')
+        audio.uiTick()
+        break
+      }
       case 'megdoc': {
         // M.E.G. 文档：打开文档视图（App 侧记录到图鉴「文档」分类）
         const s = t.s && t.s.kind === 'megdoc' ? t.s : null
@@ -2805,6 +3183,20 @@ export class Engine {
       case 'jerry': {
         // v45：接触杰瑞——声望 +5（每次）+ 教化 +25 + 触发诵咏（驯服后不再积累教化）
         this.contactJerry(t.ent)
+        break
+      }
+      case 'vendingmachine': {
+        // v51：人制品售货机——背面看标语（此后背对它即激活）；正面取一份人制品
+        const e = t.ent
+        if (!e || e.dead || e.def.type !== 'vendingmachine') return
+        if (t.vmBack) {
+          this.msg('人制品售货机 · 艾里克家族出品 ——「它于人人，人人为它，它为人人。」· 2019，亚利桑那', 'lore')
+          e.activated = true // 标记：玩家已看过背面——背对它时激活
+          this.msg('看完最好也别背对它。', 'system')
+        } else {
+          this.msg('格子里的金属线没有转动——一只白骨化的人手把产品推到了取货口。（获得 人制品 ×1）', 'lore')
+          if (!this.addItem('manmade')) this.msg('背包已满，取不走这份产品。', 'system')
+        }
         break
       }
       case 'glasswin': {
@@ -3038,6 +3430,8 @@ export class Engine {
     audio.pickup()
     // v29：经 L0「向下的灰色阶梯」下行 → 在 L1 出生点附近生成返程阶梯
     if (def.kind === 'graystairs' && def.dest === 1) this.arriveStairs = true
+    // v51：乘电梯 → 抵达层出生点改到该层电梯旁（L3↔L4/L5 双向）
+    if (def.kind === 'elevatorshaft') this.arriveElevator = true
     // v23：立刻解析 random 目标——过场演出需要知道「切入」的是哪一层
     // v35：'back' 解析为进入据点前的层级（据点入口的返程）
     const resolved = def.dest === 'back' ? (this.outpostReturn ?? 1) : def.dest
@@ -3134,14 +3528,15 @@ export class Engine {
   addItem(type: string): boolean {
     const p = this.player
     const def = ITEMS[type]
+    const tag = type === 'warpberry' ? p.level : undefined // 迁跃浆果：获得时打上当前层级标签
     const all = [...p.hotbar, ...p.backpack]
     let ok = false
-    for (const s of all) if (!ok && s && s.type === type && s.count < def.stack) { s.count++; ok = true }
-    for (let i = 0; !ok && i < p.hotbar.length; i++) if (!p.hotbar[i]) { p.hotbar[i] = { type, count: 1 }; ok = true }
-    for (let i = 0; !ok && i < p.backpack.length; i++) if (!p.backpack[i]) { p.backpack[i] = { type, count: 1 }; ok = true }
+    for (const s of all) if (!ok && s && s.type === type && s.tag === tag && s.count < def.stack) { s.count++; ok = true }
+    for (let i = 0; !ok && i < p.hotbar.length; i++) if (!p.hotbar[i]) { p.hotbar[i] = { type, count: 1, ...(tag !== undefined ? { tag } : {}) }; ok = true }
+    for (let i = 0; !ok && i < p.backpack.length; i++) if (!p.backpack[i]) { p.backpack[i] = { type, count: 1, ...(tag !== undefined ? { tag } : {}) }; ok = true }
     if (ok) {
       this.syncPassives()
-      // v32：迁跃浆果——首次获得时记录所在层级（食用后传送回这里）
+      // v32：迁跃浆果——首次获得时记录所在层级（旧存档无标签浆果的回退传送目标；新档按格子标签传送）
       if (type === 'warpberry' && this.warpBerryLevel === null) this.warpBerryLevel = p.level
       // v32：斧头——获得时重置耐久（5 点，破门消耗）
       if (type === 'axe' && this.axeDur <= 0) this.axeDur = 5
@@ -3193,6 +3588,12 @@ export class Engine {
         audio.pickup()
         if (this.squirtTank === 'almond') { this.player.sanity = Math.min(100, this.player.sanity + 10); this.msg('你就着储罐喝了一口杏仁水——甜腻。（理智 +10）', 'loot') }
         else if (this.squirtTank === 'cashew') { this.player.sanity = Math.max(0, this.player.sanity - 10); this.msg('你就着储罐喝了一口腰果水——苦涩烧喉。（理智 -10）', 'damage') }
+        else if (this.squirtTank === 'liquidpain') {
+          // 液态痛苦（Object 48）：腐蚀性酸液——自饮重创
+          this.player.hp = Math.max(1, this.player.hp - 35)
+          this.player.sanity = Math.max(0, this.player.sanity - 55)
+          this.msg('你就着储罐喝了一口液态痛苦——喉咙和胃像被烧穿了一样。千万别再这么干。（生命 -35 · 理智 -55）', 'damage')
+        }
         else this.msg('你就着储罐喝了一口清水。', 'system')
         if (this.squirtAmmo <= 0) { this.squirtTank = 'none'; this.msg('储罐空了。', 'system') }
         return
@@ -3201,6 +3602,7 @@ export class Engine {
       return
     }
     const p = this.player
+    let noConsume = false // v51：人制品效应拒食——效果门控时不消耗物品
     // v45：对杰瑞给予杏仁水（Level 274 视线内 2.5m）→ 驯服鹉主，而不是自己喝掉
     if (s.type === 'almond' && p.level === 274 && !this.jerryTamed && this.aimJerry()) {
       this.tameJerry()
@@ -3208,6 +3610,53 @@ export class Engine {
     }
     switch (def.use) {
       case 'eat': {
+        // v51：人制品——5 分钟效应（拒食他物/治疗减半/恒显饥饿特效/体力恢复减半消耗加倍/受伤 -10%）
+        if (s.type === 'manmade') {
+          this.manmadeT = 300
+          p.hunger = Math.min(100, p.hunger + (def.value ?? 15))
+          this.msg('甜得发腻，胃里却更空了——你还想要更多。（人制品效应 5 分钟 · 饥饿+15）', 'lore')
+          break
+        }
+        // v51：人制品效应中——拒绝进食其他食物（不消耗物品）
+        if (this.manmadeT > 0) {
+          this.msg('你的胃拒绝接受别的食物——你满脑子只有那台售货机。（人制品效应）', 'damage')
+          noConsume = true
+          break
+        }
+        // v51：Object 5 糖果——统一 饥饿+5 理智+5 + 糖瘾计时 + 各自超自然效果
+        if (s.type.startsWith('candy')) {
+          p.hunger = Math.min(100, p.hunger + 5)
+          p.sanity = Math.min(100, p.sanity + 5)
+          this.candyAddictT = 60
+          if (s.type === 'candysilver') {
+            this.silverTongueT = 300
+            this.msg('银舌头在口中化开，一股金属凉意——说话突然顺溜了。（交易 95 折 · 5 分钟 · 饥饿+5 理智+5）', 'lore')
+          } else if (s.type === 'candybullet') {
+            this.slipperyT = 10
+            this.msg('子弹巧克力滑下喉咙——脚底有点抹了油。（脚滑 10 秒 · 饥饿+5 理智+5）', 'lore')
+          } else if (s.type === 'candygun') {
+            this.gunCandyT = 10
+            this.msg('你感觉右手一阵酥麻——它变成了一把枪。（10 秒 · 左键发射巧克力子弹 · 饥饿+5 理智+5）', 'lore')
+          } else if (s.type === 'candystanley') {
+            this.stanleyTeleport()
+          } else if (s.type === 'candywaste') {
+            p.hp = Math.max(1, p.hp - 5)
+            this.msg('酸！唾液烧得口腔发疼。（生命 -5 · 饥饿+5 理智+5）', 'damage')
+          } else if (s.type === 'candygenius') {
+            const fact = GENIUS_FACTS[Math.floor(Math.random() * GENIUS_FACTS.length)]
+            this.msg(`「${fact}」——你好像知道了什么。（饥饿+5 理智+5）`, 'lore')
+          } else {
+            this.msg('薄荷混着杏仁的清凉在口中散开——口气清新了。（饥饿+5 理智+5）', 'lore')
+          }
+          break
+        }
+        // v50：液态痛苦（Object 48）——饮用 = 腐蚀自身（生命/理智双损）
+        if (s.type === 'liquidpain') {
+          p.hp = Math.max(1, p.hp - 35)
+          p.sanity = Math.max(0, p.sanity - 55)
+          this.msg('你喝下了液态痛苦——盐酸般的灼烧从喉咙一路烧进胃里，眼前一阵发黑。（生命 -35 · 理智 -55）', 'damage')
+          break
+        }
         // v32：皇家口粮——饥饿全满 + 理智下限锁定 + 成瘾机制（可多次食用，逐次加长成瘾）
         if (s.type === 'royalration') {
           p.hunger = 100
@@ -3232,11 +3681,11 @@ export class Engine {
           break
         }
         p.hunger = Math.min(100, p.hunger + (def.value ?? 30))
-        // v32：迁跃浆果——食用后传送回首次发现这种浆果的层级
-        if (s.type === 'warpberry') this.warpToBerryLevel()
+        // v32：迁跃浆果——食用后传送回该颗浆果标签记录的层级（不同标签不混堆）
+        if (s.type === 'warpberry') this.warpToBerryLevel(s.tag)
         break
       }
-      case 'heal': p.hp = Math.min(100, p.hp + (def.value ?? 30)); break
+      case 'heal': p.hp = Math.min(100, p.hp + (def.value ?? 30) * (this.manmadeT > 0 ? 0.5 : 1)); break // v51：人制品效应中治疗减半
       case 'cure': {
         // 消毒液：消去疫疾——疫疾尚未实装，无感染时仅作预防性消毒（仍消耗 1 瓶）
         this.msg('你仔细地做了一遍预防性消毒。目前没有感染疫疾。', 'loot')
@@ -3253,8 +3702,9 @@ export class Engine {
     }
     audio.pickup()
     this.emit({ kind: 'toast', text: `使用了 ${def.name}` })
-    // v35：皇家口粮不是消耗品——使用不会吃掉它（仅「全部吃光」触发时才被消耗）
-    if (s.type !== 'royalration') this.consumeItem(s.type)
+    // v35：皇家口粮不是消耗品——使用不会吃掉它（仅「全部吃光」触发时才被消耗）；
+    // v51：人制品效应拒食时不消耗
+    if (s.type !== 'royalration' && !noConsume) this.consumeItem(s.type)
   }
   // ---------- 粉笔头：在墙上画白色记号 ----------
   /** 手持粉笔头右键：在面前墙上画记号（消耗 1 支；同一墙面不重复消耗） */
@@ -3387,6 +3837,17 @@ export class Engine {
     const fs = this.slotGet(from)
     if (!fs) return false
     const ts = this.slotGet(to)
+    // v51：同类可堆叠物品拖到同一格——合并为一摞（合计不超过堆叠上限时优先于交换）
+    if (ts && ts.type === fs.type && ts.tag === fs.tag) {
+      const lim = ITEMS[fs.type]?.stack ?? 1
+      if (lim > 1 && fs.count + ts.count <= lim) {
+        if (to.w !== 'hotbar' && to.w !== 'backpack') return false // 装备位不合摞
+        this.slotSet(to, { ...ts, count: ts.count + fs.count })
+        this.slotSet(from, null)
+        this.syncPassives()
+        return true
+      }
+    }
     const fits = (r: SlotRef, s: InvSlot | null): boolean => {
       if (!s) return true
       if (r.w === 'hotbar' || r.w === 'backpack') return true
@@ -4335,6 +4796,9 @@ export class Engine {
       entities: ents,
       containers: { total: containers.length, unlooted: containers.filter((s) => !s.looted).length },
       exits: (m?.exits ?? []).map((e) => ({ name: e.def.name, d: Math.hypot(e.x + 0.5 - p.x, e.y + 0.5 - p.y), discovered: e.discovered })),
+      landmarks: (m?.structures ?? [])
+        .filter((s) => s.kind === 'landmark')
+        .map((s) => ({ name: OUTPOSTS[(s.data?.outpost as string) ?? '']?.name ?? '定居点地标', d: Math.hypot(s.x + 0.5 - p.x, s.y + 0.5 - p.y) })),
       blackout: this.blackoutT > 0 ? this.blackoutT : 0,
     }
   }

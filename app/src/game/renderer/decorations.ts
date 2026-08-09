@@ -157,10 +157,10 @@ range?: { x0: number; y0: number; x1: number; y1: number; variant?: string }, //
         g.add(wire)
         glowBox('#e8e2c8', 0.9, 0.06, 0.18, x, H - 0.52, z, rf(0, 3), tilt, true)
       }
-      // 远处假门（贴墙平面）
-      for (let i = 0; i < ri(2, 3); i++) {
+      // 远处假门（贴墙平面；约四成区块出现 1–2 扇，降低存在感）
+      if (rng() < 0.45) for (let i = 0; i < ri(1, 2); i++) {
         const s = pickWall(); if (!s) break
-        wallDecal(s, texFakeDoor(ns()), 0.85, 1.9, 0.97, 0.96)
+        wallDecal(s, texFakeDoor(ns()), 0.85, 1.9, 0.97, 0.68)
       }
       break
     }

@@ -38,14 +38,27 @@ export const ITEMS: Record<string, ItemDef> = {
   wallpaper: { type: 'wallpaper', name: '壁纸碎片', desc: '从墙上剥落的黄色壁纸。似乎没有任何用处，但你还是收了起来。', stack: 5, unique: 0, rarity: 'common', glyph: 'scrap' },
   glowstick: { type: 'glowstick', name: '荧光棒', desc: '掰亮后能照亮周围一小片区域，持续很久。', stack: 3, unique: 0, use: 'light', value: 1, rarity: 'common', glyph: 'stick' },
   carkey: { type: 'carkey', name: '车钥匙', desc: '停车场的车钥匙。可以打开废弃汽车的后备箱。', stack: 2, unique: 1, equip: 'pocket', rarity: 'uncommon', glyph: 'key' },
-  gas: { type: 'gas', name: '汽油罐', desc: '半罐汽油。也许能点燃什么……', stack: 2, unique: 1, use: 'none', throw: 'explode', rarity: 'common', glyph: 'gas' },
+  gas: { type: 'gas', name: '火油桶', desc: '半桶火油——熔化的火盐制成的易燃液体，熏香味。也许能点燃什么……', stack: 2, unique: 1, use: 'none', throw: 'explode', rarity: 'rare', glyph: 'gas' },
+  firesalt: { type: 'firesalt', name: '火盐晶体', desc: '一小撮橙色半透明晶体碎片，受冲击即爆裂出炽热的火花——后室探险者的首选自卫武器。（Object 15）', stack: 3, use: 'none', throw: 'explode', rarity: 'uncommon', anomalous: true, glyph: 'firesalt' },
+  liquidpain: { type: 'liquidpain', name: '液态痛苦', desc: '半透明的淡红色液体——杏仁水的致命变种。绝不能喝。但装进滋水枪，它就是武器。（Object 48）', stack: 1, use: 'eat', anomalous: true, rarity: 'epic', glyph: 'pain' },
+  manmade: { type: 'manmade', name: '人制品', desc: '一包用糖果纸简单包裹的「产品」，散发着不正常的甜香。吃下后的 5 分钟内：无法进食其他食物、治疗减半、始终感到饥饿、体力恢复减半消耗加倍，但受伤略轻。（Entity 36 的产品）', stack: 1, use: 'eat', value: 15, anomalous: true, rarity: 'uncommon', glyph: 'meat' },
+  // ---------- Object 5：B.N.T.G. 糖果（商人之家糖果贩兑换，统一 饥饿+5 理智+5，糖瘾 60s）----------
+  candysilver: { type: 'candysilver', name: '银舌头', desc: '舌头形状的金属质感糖果，只在口中融化——吃下去说话都顺了几分。（Object 5）', stack: 8, use: 'eat', value: 5, anomalous: true, rarity: 'uncommon', glyph: 'candy' },
+  candybullet: { type: 'candybullet', name: '咀嚼子弹', desc: '银箔包裹的子弹形巧克力，硬得硌牙。（Object 5）', stack: 8, use: 'eat', value: 5, anomalous: true, rarity: 'uncommon', glyph: 'candy' },
+  candygun: { type: 'candygun', name: '枪糖', desc: '金属仿真枪造型的糖。直接吞食有窒息风险——但有人会为那只「枪」冒险。（Object 5）', stack: 8, use: 'eat', value: 5, anomalous: true, rarity: 'uncommon', glyph: 'candy' },
+  candystanley: { type: 'candystanley', name: '纸片人斯坦利', desc: '人形扁平糖纸，放在舌头上会迅速融化。（Object 5）', stack: 8, use: 'eat', value: 5, anomalous: true, rarity: 'uncommon', glyph: 'candy' },
+  candywaste: { type: 'candywaste', name: '危害废料', desc: '极酸的硬糖，形似迷你危险废物桶。（Object 5）', stack: 8, use: 'eat', value: 5, anomalous: true, rarity: 'uncommon', glyph: 'candy' },
+  candygenius: { type: 'candygenius', name: '天才糖', desc: '粉色威化糖，上面印着「2+2=4」「土耳其的首都是安卡拉」「E=MC2」。（Object 5）', stack: 8, use: 'eat', value: 5, anomalous: true, rarity: 'uncommon', glyph: 'candy' },
+  candymint: { type: 'candymint', name: '杏仁薄荷糖', desc: 'O 形薄荷糖，薄荷混着杏仁味。（Object 5）', stack: 8, use: 'eat', value: 5, anomalous: true, rarity: 'uncommon', glyph: 'candy' },
   // 首次进入 Level 1 时出生点旁的纸条（wikidot Level 1：探险者总署附在杏仁水瓶上的留言；查看即收录图鉴「文档」）
   welcomenote: { type: 'welcomenote', name: '致新流浪者的纸条', desc: '一张折起的横线纸，字迹工整。是探险者总署留给新流浪者的。', stack: 1, unique: 1, use: 'none', rarity: 'rare', glyph: 'scrap' },
   wrench: { type: 'wrench', name: '扳手', desc: '沉重的管钳。可以封住泄漏的蒸汽阀门，也可当武器。', stack: 1, unique: 2, weapon: 20, rarity: 'uncommon', glyph: 'wrench' },
   gloves: { type: 'gloves', name: '隔热手套', desc: '厚重的石棉手套。装备后免疫蒸汽与热管道的伤害。', stack: 1, unique: 2, passive: '隔热', equip: 'gloves', rarity: 'uncommon', glyph: 'gloves' },
   suit: { type: 'suit', name: '绝缘服', desc: '橡胶绝缘服。装备后免疫电弧伤害。', stack: 1, unique: 3, passive: '绝缘', equip: 'body', rarity: 'uncommon', glyph: 'suit' },
   fuse: { type: 'fuse', name: '保险丝', desc: '粗大的工业保险丝。电梯井需要 2 枚才能启动。', stack: 4, unique: 3, rarity: 'common', glyph: 'fuse' },
-  capacitor: { type: 'capacitor', name: '电容器', desc: '充满电荷的电容器。', stack: 2, unique: 3, use: 'none', throw: 'shock', rarity: 'uncommon', glyph: 'cap' },
+  capacitor: { type: 'capacitor', name: '瓶装闪电', desc: '一只塞着软木塞的玻璃烧瓶，瓶内一道蓝色闪电疾走不休——封存着约十亿焦耳的电荷。（即 Object 42「瓶装闪电」）', stack: 2, unique: 3, use: 'none', throw: 'shock', rarity: 'uncommon', anomalous: true, glyph: 'cap' },
+  dryshrimp: { type: 'dryshrimp', name: '旱虾', desc: '一只完整的旱虾——生吃也完全安全，是后室里最受欢迎的应急口粮。也可以带给 Tom 加工成菜。', stack: 2, use: 'eat', value: 25, anomalous: true, rarity: 'common', glyph: 'shrimp' },
+  friedshrimp: { type: 'friedshrimp', name: '酥炸旱虾', desc: 'Tom 的招牌小手笔：整虾裹粉酥炸，壳都炸得焦香——「连壳吃，钙质满满！」', stack: 2, use: 'eat', value: 45, rarity: 'uncommon', glyph: 'shrimp' },
   coffee: { type: 'coffee', name: '咖啡', desc: '自动售货机里的罐装咖啡。', stack: 3, unique: 4, use: 'stamina', value: 1, rarity: 'common', glyph: 'coffee' },
   stapler: { type: 'stapler', name: '订书机', desc: '沉重的订书机，掷出去足以吸引注意。', stack: 2, unique: 4, use: 'none', throw: 'noise', rarity: 'common', glyph: 'stapler' },
   keycard: { type: 'keycard', name: '门禁卡', desc: '一张员工门禁卡。可以打开员工电梯与服务器机房。', stack: 1, unique: 4, equip: 'pocket', rarity: 'uncommon', glyph: 'card' },
@@ -98,7 +111,7 @@ export const ITEMS: Record<string, ItemDef> = {
   notebook: { type: 'notebook', name: '笔记本和笔', desc: '一本皮面笔记本，笔还插在书脊上。', stack: 1, use: 'none', rarity: 'uncommon', glyph: 'notebook' },
   fuyouyu: { type: 'fuyouyu', name: '福友玉', desc: '一块温润的玉佩，贴着皮肤时，能感到它细微的暖意变化。', stack: 1, equip: 'pocket', passive: '实体感应', anomalous: true, rarity: 'rare', glyph: 'jade' },
   squirtgun: { type: 'squirtgun', name: '滋水枪', desc: '造型过分鲜艳的玩具水枪。在右侧信息栏可以为储罐装入液体。', stack: 1, use: 'none', anomalous: true, rarity: 'rare', glyph: 'watergun' },
-  warpberry: { type: 'warpberry', name: '迁跃浆果', desc: '表皮泛着空间涟漪的浆果——据说它认得「家」的方向。', stack: 2, use: 'eat', value: 15, anomalous: true, rarity: 'epic', glyph: 'berry' },
+  warpberry: { type: 'warpberry', name: '迁跃浆果', desc: '表皮泛着空间涟漪的浆果——据说它认得「家」的方向。每颗都记得自己被发现的地方。', stack: 2, use: 'eat', value: 15, anomalous: true, rarity: 'epic', glyph: 'berry' },
   royalration: { type: 'royalration', name: '皇家口粮', desc: '传说中的甘美之物，一口便足以忘记饥饿与恐惧。只是从没有人能只吃一口。', stack: 1, use: 'eat', value: 100, anomalous: true, rarity: 'epic', glyph: 'ration' },
   // M.E.G. Alpha 基地通用货币（仅限 Alpha 基地内交易使用；与杏仁水 1:1 互换）
   eaglecoin: { type: 'eaglecoin', name: '天鹰币', desc: 'M.E.G. 在天鹰段发行的铜黄色硬币，铸有展翅的雄鹰。Alpha 基地的硬通货——仅限基地内使用。', stack: 30, anomalous: true, rarity: 'uncommon', glyph: 'coin' },
@@ -129,6 +142,7 @@ export const UNIVERSAL_ITEMS: { type: string; w: number }[] = [
   { type: 'rabbit', w: 3 },
   { type: 'warpberry', w: 1 }, // 迁跃浆果：十分稀有，混在食物产地
   { type: 'royalration', w: 0.3 }, // 皇家口粮：极其极其稀有
+  { type: 'liquidpain', w: 0.25 }, // 液态痛苦：极其稀有，任意层级任何时间都可能找到
 ]
 
 export function itemName(t: string): string {

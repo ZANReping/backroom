@@ -132,6 +132,11 @@ const KINDS: StructKind[] = [
   'domering','perch',
   'pulpit','candlestand','holyfont', // v47：L274 教堂细化（讲坛/烛台/圣水盆）
   'walllamp', // v46：EL3A 壁挂斜照大灯
+  'elecbox','cables','barfence','bargate', // v51：L3 发电站无限化重制
+  'statue', // v51：L3 栅栏后的风化希腊女像
+  'conveyor','angelstatue','fallencolumn', // v51：L3 大房间（装配线传送带/圣所天使像/倒塌石柱）
+  'busbar','warningsign','worktable','factlamp','sphboiler','floordrain', // v51：L3 大房间细化结构
+  'turbinegen','switchboard','transformer','pressmachine','feedpump','manifold','piperack','cabletray', // v51：L3 房间专用大型机器
 ]
 const DEF = LEVELS[11]
 const MAP = generateLevel(LEVELS[11], 4242)

@@ -4,7 +4,7 @@ import type { EntityDef } from './types'
 // 人形/类人实体（钝人/窃皮者/无面灵/绝缘猎手/复印机幽灵/久坐者/侍者/镜中人）
 export const HUMANOID_ENTITIES: Record<string, EntityDef> = {
   duller: {
-    type: 'duller', name: '钝人', hp: 70, speed: 1.3, damage: 15, sight: 6, hearing: 5, phases: true, color: '#2f2f36', habitat: 'indoor',
+    type: 'duller', name: '钝人', hp: 70, speed: 1.3, damage: 15, sight: 6, hearing: 5, phases: true, hunts: ['dryshrimp'], color: '#2f2f36', habitat: 'indoor',
     desc: '约两米高的深灰人形，接近黑但仍能分辨。没有面部，也没有耳朵。手臂长得不成比例，还能继续伸长。站姿摇晃，走法不像人。',
     codex: {
       no: 'Entity 6「Dullers」', danger: '3 级（中威胁）', habitat: 'Level 1 / Level 4',
@@ -55,7 +55,7 @@ export const HUMANOID_ENTITIES: Record<string, EntityDef> = {
     type: 'insulator', name: '绝缘猎手', hp: 80, speed: 1.6, damage: 28, sight: 7, hearing: 4, color: '#d9b13b', habitat: 'indoor',
     desc: '穿着破损绝缘服的猎手，懂得利用带电的配电柜伏击流浪者。',
     codex: {
-      no: '未编号（Level 3 特有）', danger: '4 级（高威胁）', habitat: 'Level 3 配电柜密集区',
+      no: '未编号「Insulator」', danger: '4 级（高威胁）', habitat: 'Level 3 配电柜密集区',
       behavior: '厚重的绝缘服使近战伤害减半。它习惯守在配电柜之间，等你走近才扑出。',
       counter: '别和它硬拼——伤害减半意味着缠斗必然吃亏。绕着配电柜拉开距离，用速度甩掉它。',
       lore: [
@@ -71,7 +71,7 @@ export const HUMANOID_ENTITIES: Record<string, EntityDef> = {
     type: 'copierwraith', name: '复印机幽灵', hp: 45, speed: 2.2, damage: 16, sight: 7, hearing: 5, spawnsFakes: true, color: '#7fb0c9', habitat: 'indoor',
     desc: '半透明的人形残影，会复制出你的幻影来迷惑你。',
     codex: {
-      no: '未编号（Level 4 特有）', danger: '3 级（中威胁）', habitat: 'Level 4 废弃办公室',
+      no: '未编号「Copier Wraith」', danger: '3 级（中威胁）', habitat: 'Level 4 废弃办公室',
       behavior: '接近你时会在周围生成数个与你身形相似的半透明幻影，混淆你的方向感，本体趁机接近。',
       counter: '幻影静止不动且半透明发蓝光——盯住最先动的那个，那就是本体。别被数量吓住，幻影没有伤害。',
       lore: [
@@ -87,7 +87,7 @@ export const HUMANOID_ENTITIES: Record<string, EntityDef> = {
     type: 'seated', name: '久坐者', hp: 60, speed: 0, damage: 12, sight: 6, hearing: 0, stationary: true, color: '#8f8a7c', habitat: 'indoor',
     desc: '坐在工位上一动不动的人影。看到你会尖叫，引来其他东西。',
     codex: {
-      no: '未编号（Level 4 特有）', danger: '3 级（警报源）', habitat: 'Level 4 隔间区',
+      no: '未编号「Seated」', danger: '3 级（警报源）', habitat: 'Level 4 隔间区',
       behavior: '无法移动。一旦看见你就会发出全层可闻的尖叫，大幅削减你的理智并把附近所有实体引到你的位置。',
       counter: '远远发现就绕行；来不及的话优先击杀——它的叫声只发一次。被尖叫后立刻转移位置，别留在原地。',
       lore: [
@@ -103,7 +103,7 @@ export const HUMANOID_ENTITIES: Record<string, EntityDef> = {
     type: 'bellhop', name: '侍者', hp: 70, speed: 2.5, damage: 26, sight: 8, hearing: 6, feignNeutral: true, color: '#b08d46', habitat: 'indoor',
     desc: '提着行李车的侍者，制服笔挺。它微笑着……直到它不笑了。',
     codex: {
-      no: '未编号（Level 5 特有）', danger: '4 级（高威胁）', habitat: 'Level 5 恐怖酒店主厅与客房走廊',
+      no: '未编号「Bellhop」', danger: '4 级（高威胁）', habitat: 'Level 5 恐怖酒店主厅与客房走廊',
       behavior: '远距离时表现得温顺无害，甚至会对你「点头致意」；一旦你放松警惕靠近，它会瞬间暴起，速度极快。',
       counter: '永远不要主动接近它，保持四米以上。它「微笑」的阶段就是给你离开的时间——用它走开，而不是打招呼。',
       lore: [
@@ -119,7 +119,7 @@ export const HUMANOID_ENTITIES: Record<string, EntityDef> = {
     type: 'mirrorself', name: '镜中人', hp: 50, speed: 2.4, damage: 20, sight: 8, hearing: 3, mirrorMove: true, color: '#e8d8c8', habitat: 'indoor',
     desc: '镜子里走出来的「你」，动作与你完全镜像。',
     codex: {
-      no: '未编号（Level 5 特有）', danger: '4 级（高威胁）', habitat: 'Level 5 客房镜子附近',
+      no: '未编号「Mirror Self」', danger: '4 级（高威胁）', habitat: 'Level 5 客房镜子附近',
       behavior: '以你为中心做镜像移动：你进它退、你退它进，始终保持与你对称。你试图绕开它时，它恰恰封住你的路。',
       counter: '反直觉应对：直接朝它冲过去，它会被迫后退让路；或者原地不动，等它自己失去兴趣。别试图绕——绕等于被堵。',
       lore: [

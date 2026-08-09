@@ -91,7 +91,7 @@ function placeOne(m: GameMap, rng: RNG, def: PrefabDef, frontier: { x: number; y
       if (nx >= placed.x && nx < placed.x + def.w && ny >= placed.y && ny < placed.y + def.h) { innerX = nx; innerY = ny; break }
     }
     if (innerX >= 0) {
-      const OPENABLE: readonly string[] = ['hoteldoor', 'rollerdoor', 'glassdoor']
+      const OPENABLE: readonly string[] = ['hoteldoor', 'rollerdoor', 'glassdoor', 'bargate'] // v51：bargate 栅栏门
       m.structures = m.structures.filter((s) => {
         if (!s.solid || OPENABLE.includes(s.kind)) return true
         const onInner = innerX >= s.x && innerX < s.x + s.w && innerY >= s.y && innerY < s.y + s.h

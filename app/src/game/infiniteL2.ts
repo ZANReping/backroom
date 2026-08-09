@@ -817,7 +817,7 @@ export function genL2ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
   if (rng.chance(0.1)) placeOnFloor('corpse', false, true, { loot: 1 })
   // v46：办公区EL3A 地标改为贴墙海报——整洁的廊道小概率出现（BNTG 绿底海报「办公区EL3A 存储与分配」，
   // 贴在廊道墙上（placeWallHug 保证有墙可贴）；data.outpost='el3a' + data.poster=1，交互/标注/前往不变）
-  if (variant === 'tidy' && rng.chance(0.02)) placeWallHug('landmark', false, { outpost: 'el3a', poster: 1, tex: 'el3a_poster.png' })
+  if (variant === 'tidy' && rng.chance(0.03)) placeWallHug('landmark', false, { outpost: 'el3a', poster: 1, tex: 'el3a_poster.png' })
 
   // ---- 物品（补给极度匮乏：0~1 地面物品；磁带低频保底）----
   if (rng.chance(0.5)) {
@@ -884,6 +884,54 @@ export function genL2ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
         pushStruct('pipes', p.x, p.y, 1, 1, false, false, { rust: machineDead })
         entities.push({ type: 'pipeworm', x: p.x + 0.5, y: p.y + 0.5 })
       }
+    }
+  }
+  // 旱虾（Entity 20）：约 1/4 的 chunk 在潮湿地面上生成 1–2 只（无害游荡；L0 不生成）
+  if (rng.chance(0.25)) {
+    const wets: number[] = []
+    for (let i = 0; i < CS * CS; i++) if (wet[i] === 1 && tiles[i] === 1) wets.push(i)
+    for (let k = 0, n = Math.min(wets.length, rng.int(1, 2)); k < n; k++) {
+      const i = wets[rng.int(0, wets.length - 1)]
+      entities.push({ type: 'dryshrimp', x: WX + (i % CS) + 0.5, y: WY + ((i / CS) | 0) + 0.5 })
+    }
+  }
+  // Nguithr'xurh（Entity 16）：约 4% 的 chunk 在天花板上结一球状网囊
+  if (rng.chance(0.04)) {
+    for (let t = 0; t < 30; t++) {
+      const x = rng.int(2, CS - 3), y = rng.int(2, CS - 3)
+      if (!isF(x, y) || solidAtL(WX + x, WY + y)) continue
+      entities.push({ type: 'nguithr', x: WX + x + 0.5, y: WY + y + 0.5 })
+      break
+    }
+  }
+  // 火盐晶体（Object 15）：前五个层级的角落产生（约 18% chunk 一枚）
+  if (rng.chance(0.18)) {
+    for (let t = 0; t < 40; t++) {
+      const x = rng.int(2, CS - 3), y = rng.int(2, CS - 3)
+      if (!isF(x, y) || solidAtL(WX + x, WY + y)) continue
+      const walls = (!isF(x + 1, y) ? 1 : 0) + (!isF(x - 1, y) ? 1 : 0) + (!isF(x, y + 1) ? 1 : 0) + (!isF(x, y - 1) ? 1 : 0)
+      if (walls < 2) continue
+      pushItem('firesalt', WX + x, WY + y)
+      break
+    }
+  }
+  // 人制品售货机（Entity 36）：约 10% 的 chunk 在走廊尽头（三面墙的死胡同）生成一台休眠售货机
+  if (rng.chance(0.1)) {
+    outer: for (let t = 0; t < 40; t++) {
+      const x = rng.int(2, CS - 3), y = rng.int(2, CS - 3)
+      if (!isF(x, y) || solidAtL(WX + x, WY + y)) continue
+      const walls: [number, number][] = []
+      if (!isF(x + 1, y)) walls.push([1, 0])
+      if (!isF(x - 1, y)) walls.push([-1, 0])
+      if (!isF(x, y + 1)) walls.push([0, 1])
+      if (!isF(x, y - 1)) walls.push([0, -1])
+      if (walls.length !== 3) continue // 走廊尽头=恰好三面墙
+      const dirs: [number, number][] = [[1, 0], [-1, 0], [0, 1], [0, -1]]
+      const open = dirs.find(([dx, dy]) => !walls.some(([wx, wy]) => wx === dx && wy === dy))!
+      const e = { type: 'vendingmachine', x: WX + x + 0.5, y: WY + y + 0.5 } as { type: string; x: number; y: number; facing?: number }
+      e.facing = Math.atan2(open[1], open[0]) // 正面朝走廊
+      entities.push(e)
+      break outer
     }
   }
 
