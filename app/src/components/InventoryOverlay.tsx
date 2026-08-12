@@ -18,7 +18,7 @@ import { loadAvatar } from '@/game/core/avatar'
 import { audio } from '@/game/core/audio'
 import { getKeybinds } from '@/game/core/keybinds'
 import { DOCS } from '@/game/content/docs'
-import { OUTPOSTS } from '@/game/content/outposts'
+import { OUTPOSTS, isLandmarkStruct } from '@/game/content/outposts'
 import { NPCS, npcAvatar } from '@/game/content/npcs'
 import { loadChat } from '@/game/core/llm'
 import { FACTIONS } from '@/game/content/factions'
@@ -180,9 +180,9 @@ function BigMap({ engine }: { engine: Engine }) {
       g.fillStyle = '#6ad9c9'
       g.fillRect(it.x * s - 1, it.y * s - 1, 2.5, 2.5)
     }
-    // 定居点地标：鲜黄三角 + 名称（v35；地标都在主层）
+    // 定居点地标：鲜黄三角 + 名称（v35；地标都在主层；v55c 通用地标判定——含邀请函等 data.outpost 形态）
     for (const st of m.structures) {
-      if (st.kind !== 'landmark') continue
+      if (!isLandmarkStruct(st)) continue
       if (floors > 1 && viewFloor !== 0) continue
       const idx = Math.floor(st.y + st.h / 2) * m.w + Math.floor(st.x + st.w / 2)
       if (idx < 0 || idx >= m.w * m.h || !engine.explored[idx]) continue

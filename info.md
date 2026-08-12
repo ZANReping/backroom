@@ -1646,3 +1646,12 @@ outpost-smoke（37 张床）与 l5inf-smoke（181 张客房床）断言。**杂�
   点缀色保留辨识（110 MEG 黄/111 酒店青灰/112 L5 金）。
 - 墙壁装饰统一：踢脚线白名单（主层+SKIRT 两处）加 110/111/112；L5 墙裙分色（奶白下板+金色腰线）
   判定由 def.id===5 改为 texLevelId(def.id)===5——与贴图别名共用同一映射表，三据点自动同享。
+
+**v55 批次·九（邀请函地标待遇修复）**
+
+- 地标判定通用化：content/outposts.ts 新增 `isLandmarkStruct(s)`（kind==='landmark' || data.outpost 存在），
+  替换全部 5 处按 kind 过滤的判定（nearestLandmark 蓝色地标指引 / dev.ts 最近地标传送与 landmarks 列表 /
+  HUD 小地图三角 / InventoryOverlay 大地图标注）——invitation 享全部定居点地标待遇；下一种带
+  data.outpost 的地标形态自动全路径生效。
+- 弹卡解析链加固：outpost-smoke 新增桩测断言（doInteract(invitation) → 事件必须 landmark/originals，
+  兜底到 alpha 即红）——锁定 scanInteract → doInteract → emit → LandmarkOverlay 全链。

@@ -13,7 +13,7 @@ import { l5RegionAt } from '@/game/world/infiniteL5' // v55：L5 区域名按大
 import { stairServesBand } from '@/game/world/mapgen'
 import { CONTAINER_KINDS } from '@/game/decorations/containers'
 import { DOCS } from '@/game/content/docs'
-import { OUTPOSTS } from '@/game/content/outposts'
+import { OUTPOSTS, isLandmarkStruct } from '@/game/content/outposts'
 import { NPCS } from '@/game/content/npcs'
 import { FACTIONS } from '@/game/content/factions'
 import { DECOR_REGISTRY, DECOR_LEVEL_ORDER } from '@/game/content/decorRegistry'
@@ -137,9 +137,9 @@ function Minimap({ engine, size }: { engine: Engine; size: number }) {
         g.fillStyle = st.looted ? 'rgba(160,140,90,0.35)' : '#c9a03a'
         g.fillRect(sx - 1.5 * k, sy - 1.5 * k, 3 * k, 3 * k)
       }
-      // 定居点地标：鲜黄三角（v35，探索过即显示）
+      // 定居点地标：鲜黄三角（v35，探索过即显示；v55c 通用地标判定——含邀请函等 data.outpost 形态）
       for (const st of m.structures) {
-        if (st.kind !== 'landmark') continue
+        if (!isLandmarkStruct(st)) continue
         const idx = Math.floor(st.y + st.h / 2) * m.w + Math.floor(st.x + st.w / 2)
         if (idx < 0 || idx >= m.w * m.h || !engine.explored[idx]) continue
         const sx = (st.x + st.w / 2 - px + half) * s, sy = (st.y + st.h / 2 - py + half) * s

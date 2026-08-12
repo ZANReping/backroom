@@ -11,6 +11,11 @@ export interface OutpostDef {
   landmarkText: string[] // 地标纸条内容（图一风格：布料+物资+指引）
 }
 
+// v55c：通用地标判定——data.outpost 存在即视为定居点地标（海报/布料形 landmark、贝弗莉室邀请函 invitation 等）。
+// 小地图/大地图标注、地标指引、DevPanel 传送等所有判定处统一走这里：新地标形态不再漏判。
+export const isLandmarkStruct = (s: { kind: string; data?: Record<string, number | string | boolean | string[]> } | null | undefined): boolean =>
+  !!s && (s.kind === 'landmark' || s.data?.outpost !== undefined)
+
 export const OUTPOSTS: Record<string, OutpostDef> = {
   alpha: {
     id: 'alpha',

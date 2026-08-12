@@ -10,7 +10,7 @@ import { RNG, randomSeed, seedString } from '../core/rng'
 import { infiniteImplFor, findNearestVariant, l0NearestExit, chunkKey, CS } from '../world/infinite'
 import { l5RegionAt } from '../world/infiniteL5' // v55：L5 区域矩形判定（DevPanel 传送落点）
 import { CONTAINER_KINDS } from '../decorations/containers'
-import { OUTPOSTS } from '../content/outposts'
+import { OUTPOSTS, isLandmarkStruct } from '../content/outposts'
 import { DECOR_REGISTRY } from '../content/decorRegistry'
 import { DIFF } from './shared'
 import type { ExitInstance, Structure, StructKind } from '../core/types'
@@ -266,7 +266,7 @@ export function devTeleport(eng: Engine, target: 'exit' | 'entity' | 'container'
   if (target === 'landmark') {
     let bl: import('../core/types').Structure | null = null, bd = 1e9
     for (const s of m.structures) {
-      if (s.kind !== 'landmark') continue
+      if (!isLandmarkStruct(s)) continue // v55c：通用地标判定（含邀请函）
       const d = Math.hypot(s.x + 0.5 - p.x, s.y + 0.5 - p.y)
       if (d < bd) { bd = d; bl = s }
     }
@@ -581,7 +581,7 @@ export function devInfo(eng: Engine) {
     containers: { total: containers.length, unlooted: containers.filter((s) => !s.looted).length },
     exits: (m?.exits ?? []).map((e) => ({ name: e.def.name, d: Math.hypot(e.x + 0.5 - p.x, e.y + 0.5 - p.y), discovered: e.discovered })),
     landmarks: (m?.structures ?? [])
-      .filter((s) => s.kind === 'landmark')
+      .filter((s) => isLandmarkStruct(s)) // v55c：通用地标判定（含邀请函）
       .map((s) => ({ name: OUTPOSTS[(s.data?.outpost as string) ?? '']?.name ?? '定居点地标', d: Math.hypot(s.x + 0.5 - p.x, s.y + 0.5 - p.y) })),
     blackout: eng.blackoutT > 0 ? eng.blackoutT : 0,
   }

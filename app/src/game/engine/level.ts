@@ -5,7 +5,7 @@ import { levelDefOf, levelLabel, NORMAL_LEVELS } from '../levels'
 import { canOccupy, PLAYER_RADIUS } from '../core/player'
 import { audio } from '../core/audio'
 import { NPCS, type NpcDef } from '../content/npcs'
-import { OUTPOSTS } from '../content/outposts'
+import { OUTPOSTS, isLandmarkStruct } from '../content/outposts'
 import { FACTIONS, REP_TIER } from '../content/factions'
 import { updateInfinite, l0NearestExit, chunkKey, CS } from '../world/infinite'
 import type { ExitDef, ExitInstance } from '../core/types'
@@ -246,7 +246,7 @@ export function nearestLandmark(eng: Engine): { x: number; y: number; d: number 
   if (!m) return null
   let best: { x: number; y: number } | null = null, bd = 1e9
   for (const s of m.structures) {
-    if (s.kind !== 'landmark') continue
+    if (!isLandmarkStruct(s)) continue // v55c：通用地标判定（含邀请函）
     const d = Math.hypot(s.x + s.w / 2 - p.x, s.y + s.h / 2 - p.y)
     if (d < bd) { bd = d; best = { x: s.x + s.w / 2, y: s.y + s.h / 2 } }
   }
