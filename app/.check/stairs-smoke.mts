@@ -15,8 +15,8 @@
 
 const { engine } = await import('../src/game/engine.ts')
 const { LEVELS } = await import('../src/game/levels/index.ts')
-const { regionHost, CS, RS, h32, GEN_ITEM_BASE } = await import('../src/game/infinite.ts')
-const { infiniteImplFor } = await import('../src/game/infiniteRegistry.ts')
+const { regionHost, CS, RS, h32, GEN_ITEM_BASE } = await import('../src/game/world/infinite.ts')
+const { infiniteImplFor } = await import('../src/game/world/infiniteRegistry.ts')
 
 let fail = 0
 const bad = (m: string) => { console.log('  ✗ ' + m); fail++ }

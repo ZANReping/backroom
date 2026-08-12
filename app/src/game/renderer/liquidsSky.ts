@@ -1,8 +1,8 @@
 // 室外天空盒/远景剪影 + 液体水面（深水泳池/浅水洼）
 import * as THREE from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
-import type { GameMap } from '../mapgen'
-import type { LevelDef } from '../types'
+import type { GameMap } from '../world/mapgen'
+import type { LevelDef } from '../core/types'
 import { col, SKY, litMaterial, noiseTexture } from './shared'
 import { makeSkyMesh, SKY_PROFILES } from './skybox'
 

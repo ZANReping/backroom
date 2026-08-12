@@ -251,6 +251,13 @@ export function buildItemMesh(type: string): THREE.Group {
     case 'cashew': // 腰果水：与杏仁水几乎一样的瓶子——但液体发褐，别搞混
       em(0.14, 0.26, 0.14, '#d8cfc0'); em(0.08, 0.07, 0.08, '#8a6a3a', 0, 0.17, 0)
       em(0.145, 0.07, 0.145, '#c9a05a', 0, -0.02, 0); break
+    case 'luckymilk': { // v54：幸运豆奶（Object 28）：豆奶纸盒 + 四叶草标 + 顶折封口
+      em(0.15, 0.24, 0.11, '#eef0e8') // 纸盒身（乳白）
+      em(0.15, 0.05, 0.11, '#7ab06a', 0, 0.145, 0) // 顶折封口（绿）
+      em(0.152, 0.08, 0.112, '#a8d89a', 0, -0.04, 0) // 四叶草标带（浅绿横带）
+      em(0.04, 0.04, 0.01, '#4a8a3e', 0, -0.04, 0.06) // 四叶草（正面深绿点）
+      break
+    }
     case 'knife': // 刀：刀刃 + 护手 + 柄
       em(0.22, 0.012, 0.035, '#c9cdd4', 0.03, 0, 0)
       em(0.018, 0.04, 0.06, '#8a8a8a', -0.09, 0, 0)
@@ -364,6 +371,7 @@ export function buildItemMesh(type: string): THREE.Group {
     stonekazoo: '#a8a294', presses: '#e8b93c',
     // v32 新增
     cashew: '#c9a05a', // 腰果水：褐
+    luckymilk: '#a8d89a', // v54 幸运豆奶：浅绿（补给系）
     candysilver: '#c9c9d4', candybullet: '#9a9aa8', candygun: '#5a5a64', candystanley: '#d0d0c0',
     candywaste: '#d9c93a', candygenius: '#e8a0b8', candymint: '#a0d0b0', // Object 5 糖果
     manmade: '#c9a0a0', // 人制品：粉白

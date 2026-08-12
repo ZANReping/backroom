@@ -1,7 +1,7 @@
 // Level 10「Bumper Crop / 丰收」层级定义
 // 设定依据：The Backrooms Wiki（Wikidot）Level 10。全 wiki 少见的 Class 1 安全层，
 // 本作把它设计成 L8/L9 高压之后的喘息层。
-import type { LevelDef } from '../types'
+import type { LevelDef } from '../core/types'
 
 export const L10: LevelDef = {
   id: 10,

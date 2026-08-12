@@ -4,14 +4,15 @@ import {
   CECS_CLASS_INFO, CECS_HAZARD, CECS_NAMES, CECS_ORDER, ENTITY_CECS, ENTITY_CECS_CLASS,
   ENTITY_INTEL, IETS_CLASS_COLORS, LEVEL_SCORES, NLC_CLASS_COLORS,
   NLC_ENT_LABELS, NLC_ENV_LABELS, NLC_EXT_LABELS, levelClassText,
-} from '@/game/codexScores'
+  type LevelScores,
+} from '@/game/content/codexScores'
 
 /** 层级等级横幅：完全复刻维基 component:nulevelclass 的排版——
  *  左编号区（LEVEL + 大编号 + 按等级截断的条纹指示条）+ 灰色分隔条 + 等级区 +
  *  三行指标（左侧色条 + 30% 同色底 + 右端随分数变化的动态图标）；
  *  入场动效复刻 nulevelclass-animation（阶梯延迟滑入）。 */
-export function LevelClassBanner({ levelNo }: { levelNo: number }) {
-  const sc = LEVEL_SCORES[levelNo]
+export function LevelClassBanner({ levelNo, override }: { levelNo: number; override?: LevelScores }) {
+  const sc = override ?? LEVEL_SCORES[levelNo] // v54：设计模式编辑预览传 override；游戏内调用不传，行为不变
   if (!sc) return null
   const rows: [string, number, string[], 'exit' | 'env' | 'ent'][] = [
     ['逃离', sc.ext, NLC_EXT_LABELS, 'exit'],
@@ -89,12 +90,15 @@ function NlcIcon({ kind, score, color }: { kind: 'exit' | 'env' | 'ent'; score: 
 
 /** CECS 统合实体分类系统（仿维基 component:cecs）：标题 + 左侧编号/栖息地 + 右侧放大 IETS +
  *  带图标的形态分级横幅（clip-path 切角）+ 性质标签矩阵（命中高亮、危害类区别配色、悬停显示中文名）。 */
-export function CecsBox({ entityType, no, habitat, danger }: { entityType: string; no: string; habitat: string; danger: number }) {
+export function CecsBox({ entityType, no, habitat, danger, override }: {
+  entityType: string; no: string; habitat: string; danger: number
+  override?: { class?: string; intel?: string; props?: string[] } // v54：设计模式编辑预览；游戏内不传，行为不变
+}) {
   const d = Math.max(0, Math.min(5, danger))
-  const cls = ENTITY_CECS_CLASS[entityType] ?? 'Enigmatic'
+  const cls = override?.class ?? ENTITY_CECS_CLASS[entityType] ?? 'Enigmatic'
   const info = CECS_CLASS_INFO[cls] ?? CECS_CLASS_INFO.Enigmatic
-  const intel = ENTITY_INTEL[entityType] ?? 'C'
-  const props = new Set(ENTITY_CECS[entityType] ?? [])
+  const intel = override?.intel ?? ENTITY_INTEL[entityType] ?? 'C'
+  const props = new Set(override?.props ?? ENTITY_CECS[entityType] ?? [])
   return (
     <div className="cecs-box hud-panel mb-3 overflow-hidden p-3 text-[12px]">
       <div className="flex items-baseline gap-2">

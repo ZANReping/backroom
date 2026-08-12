@@ -3,7 +3,7 @@
 // 用法：<Cutscene kind="noclip" cutIn="fall" toName="Level 1 · 车库" caption="你剪辑出去了" onDone={...} />
 import { useEffect, useRef, useState } from 'react'
 import type { JSX } from 'react'
-import { audio } from '@/game/audio'
+import { audio } from '@/game/core/audio'
 
 export type CutKind = 'bloom' | 'shutter' | 'iris' | 'glitch' | 'fall' | 'noclip' | 'collapse' | 'sink' | 'dawn'
 export type CutIn = 'fall' | 'collapse' | 'wade' | 'crawl' | 'step' | 'surface' | 'dark' | 'outpost'

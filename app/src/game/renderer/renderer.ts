@@ -1,12 +1,12 @@
 // Three.js 第一人称低多边形渲染器：主循环（静态几何/灯光池/实体动画编排，构建逻辑见同级模块）
 import * as THREE from 'three'
 import type { Engine } from '../engine'
-import { tileH, groundHeightAt, FLOOR_H, tallCeilH, type GameMap } from '../mapgen'
-import type { LevelDef, Structure } from '../types'
+import { tileH, groundHeightAt, FLOOR_H, tallCeilH, type GameMap } from '../world/mapgen'
+import type { LevelDef, Structure, LightSource } from '../core/types'
 import { levelDefOf } from '../levels'
-import { WALL_H, SKY, col, box, glow, look, type RenderOpts } from './shared'
+import { WALL_H, SKY, col, box, glow, look, mulberry, type RenderOpts } from './shared'
 import { buildTerrain } from './geometry'
-import { CS, WIN_CHUNKS, type LiveChunk } from '../infinite'
+import { CS, WIN_CHUNKS, type LiveChunk } from '../world/infinite'
 import { buildSkyAndLiquids } from './liquidsSky'
 import { SKY_PROFILES, skyLightDir } from './skybox'
 import { buildStructure, buildExit } from './structures'
@@ -14,9 +14,9 @@ import { buildDecorations } from './decorations'
 import { buildEntityMesh } from './entitiesMesh'
 import { buildItemMesh } from './itemsMesh'
 import { buildViewmodel, buildHeldItem, buildCrosshair, vmat } from './viewmodel'
-import { getAvatar } from '../avatar'
+import { getAvatar, randomAvatar } from '../core/avatar'
 import { buildPlayerModel } from './playerModel'
-import { npcAvatar } from '../npcs'
+import { npcAvatar } from '../content/npcs'
 import { applyNpcGear } from './npcGear'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
@@ -26,8 +26,37 @@ import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js'
 import { envProbe, disposeEnvProbes } from './envProbe'
 import { setMaterialMode, setReflectK, getReflectK } from './shared'
 
+// v53：L3 高智能窃皮者「伪装成流浪者」模型——随机人类形象（按实体 id 确定性），
+// 与 entitiesMesh 的 +Z 模型同一约定包 π/2 内层组把正面旋到 +X；
+// v55：L5 伪装用酒店侍者形象（酒红制服夹克 + 黑裤 + 皮靴，按实体 id 确定性）
+function humanDisguiseMesh(id: number, levelId = 3): THREE.Group {
+  const grp = new THREE.Group()
+  const inner = new THREE.Group()
+  inner.rotation.y = Math.PI / 2
+  const av = randomAvatar(mulberry((id * 2654435761) >>> 0))
+  if (levelId === 5) Object.assign(av, { top: '#6e2a2e', topStyle: 3, pants: '#1c1a1e', pantsStyle: 0, shoes: 2 }) // 侍者制服
+  inner.add(buildPlayerModel(av, {}))
+  grp.add(inner)
+  grp.userData.facesZ = 1
+  return grp
+}
+
 // ---------- v50：光影模式（realistic=物理光照/反射；classic=现状，可一键退回）----------
 export type LightMode = 'classic' | 'realistic'
+
+// v54：容器开启动画注册表——key=kind 白名单，value=open 进度 lerp 速率
+// （locker 薄钢门快脆 11 / safebox 厚重门迟缓 2.6 / mailbox 小门轻快 8；binshelf 非搜索容器，仅预留动画约定）
+const CONTAINER_ANIM: Record<string, number> = {
+  crate: 6, corpse: 6, car: 6, cabinet: 6, dresser: 6, megcrate: 6,
+  locker: 11, toolbox: 6, suitcase: 6, fridge: 5, safebox: 2.6, mailbox: 8,
+  barrel: 6, bookcase: 6, bonepile: 5, campstall: 6, elecbox: 6, binshelf: 6,
+}
+// v55c（任务3 性能）：结构动画登记——只有含可动件的结构进 updateStructs 每帧循环
+// （门类/容器/电梯轿厢/留声机唱盘/饮料桌）；L5 单窗数百件地毯/灯带/贴墙件的逐帧过滤收敛为一次 userData 读
+const ANIM_STRUCT = (s: Structure) =>
+  s.kind === 'lift' || s.kind === 'phonograph' || s.kind in CONTAINER_ANIM
+  || s.kind === 'hoteldoor' || s.kind === 'rollerdoor' || s.kind === 'glassdoor' || s.kind === 'inkdoor' || s.kind === 'bargate'
+  || (s.kind === 'table' && !!s.data?.drink)
 
 // VCR 滤镜着色器：扫描线 + 行跟踪失真带 + 色差串扰 + 隔行微闪 + 噪点 + 抬黑降饱和 + 暗角
 const VcrShader = {
@@ -135,18 +164,34 @@ export class Renderer3D {
   private structMeshes = new Map<Structure, THREE.Group>()
   private exitMeshes: { mesh: THREE.Object3D; mat: THREE.MeshBasicMaterial }[] = []
   // v17：无限模式（L0）按 chunk 构建的几何组（进入视野构建、远离卸载、平移只动 position）
-  private chunkGroups = new Map<string, { group: THREE.Group; wx: number; wy: number; structs: Structure[]; fixtures: { mat: THREE.MeshBasicMaterial; seed: number }[]; exitMeshes: { mesh: THREE.Object3D; mat: THREE.MeshBasicMaterial }[] }>()
+  private chunkGroups = new Map<string, { group: THREE.Group; wx: number; wy: number; structs: Structure[]; fixtures: { mat: THREE.MeshBasicMaterial; seed: number; src?: LightSource }[]; exitMeshes: { mesh: THREE.Object3D; mat: THREE.MeshBasicMaterial }[] }>()
   private chunkRedo = -1 // 已同步的 inf.redo（红室蔓延等全图变化时全部重建）
   // v17：tint 氛围雾（红室红雾/熄灯区近黑/马尼拉暖调）平滑混合
   private tintK = 0
   private tintC = new THREE.Color('#3a0a08')
   private fakeMeshes: THREE.Group[] = []
-  private fixtures: { mat: THREE.MeshBasicMaterial; seed: number }[] = []
+  private fixtures: { mat: THREE.MeshBasicMaterial; seed: number; src?: LightSource }[] = []
   private particlesPts!: THREE.Points
   private particlesGeo!: THREE.BufferGeometry
   private dust!: THREE.Points
+  // v54：L4 窗景区虚空雨雾（懒初始化——仅 L4 且玩家附近有 outdoor 虚空格时可见）
+  private voidRain: THREE.LineSegments | null = null
+  private voidRainState: Float32Array | null = null // 每雨丝 (x,y,z,fallSpeed,slant,tileX,tileZ)——钳制在归属瓦片内（不漏进窗内）
+  private voidFog: THREE.Mesh[] = []
+  private voidTiles: number[] = [] // 玩家附近虚空瓦片索引（窗口局部 ti；雨丝锚点）
+  private voidFogTiles: number[] = [] // 非边界虚空瓦片（四邻无室内地板——雾片锚点，保证不越过窗玻璃）
+  private voidScanT = 0
   private steamT = 0
   private bobPhase = 0
+  // v54：真实视角摇晃（设置开关，默认关闭=保持基础 bob）——幅度平滑/落地下沉回弹状态
+  private headBobReal = false
+  private bobAmp = 0
+  private landT = 0
+  private landAmp = 0
+  private prevVz = 0
+  // v55：空中系数（离地暂停侧摆/roll）与起跳蓄力微沉计时
+  private airK = 0
+  private jumpDipT = -1
   private time = 0
   private wallH = 3
   private levelCfg: LevelDef | null = null
@@ -302,7 +347,7 @@ export class Renderer3D {
 
   private updateViewmodel(engine: Engine, dt: number) {
     const p = engine.player
-    const show = !engine.paused && !engine.over && !!engine.map
+    const show = !engine.paused && !engine.over && !!engine.map && !engine.handsHidden // v54：F1 全沉浸隐藏手部建模（F2 半沉浸保留）
     this.vm.visible = show
     this.vmFlash.visible = show && p.equip.offhand?.type === 'flashlight' && p.flashlight && p.battery > 0 && p.flashJamT <= 0 // v32：手部模型仅手电（头灯戴在头上，无手部模型）
     // 副手打火机：装备即常显（火苗随时间跳动）
@@ -319,7 +364,7 @@ export class Renderer3D {
       const sleeveC = p.hasSuit ? '#3a5a3a' : p.equip.body?.type === 'cavingsuit' ? '#8a7a5c' : av.top
       for (const [mesh, c] of [[this.vmParts.hand, handC], [this.vmParts.lhand, handC], [this.vmParts.sleeve, sleeveC], [this.vmLighterHand, handC]] as const) {
         const m = mesh.material as THREE.MeshLambertMaterial
-        if (m.color.getHexString() !== c.slice(1)) { m.color.set(c); m.emissive.set(c) }
+        if (m.color.getHexString() !== c.slice(1)) m.color.set(c) // v53：不再同步 emissive——衣物/肤色在黑暗中不自发光
       }
     }
     if (!show) return
@@ -387,7 +432,7 @@ export class Renderer3D {
 
   private updateCrosshair(engine: Engine) {
     const el = this.cross
-    const show = !engine.paused && !engine.over && !!engine.map
+    const show = !engine.paused && !engine.over && !!engine.map && !engine.handsHidden // v54：F1 全沉浸隐藏准星（F2 半沉浸保留）
     const interact = show ? engine.getInteract() : null
     const atk = engine.attackAnimT > 0
     const aim = show ? engine.aimEntity() : null // 攻击可命中目标：准星变红放大
@@ -445,24 +490,63 @@ export class Renderer3D {
     const mag = Math.hypot(engine.input.mx, engine.input.my)
     const speed = mag > 0.1 ? (engine.input.sprint ? 6 : 3.4) : 0
     this.bobPhase += dt * (speed > 0 ? (engine.input.sprint ? 11 : 7.5) : 2)
-    const bob = speed > 0 ? Math.sin(this.bobPhase) * (engine.input.sprint ? 0.055 : 0.035) : Math.sin(this.bobPhase) * 0.008
+    let bob = speed > 0 ? Math.sin(this.bobPhase) * (engine.input.sprint ? 0.055 : 0.035) : Math.sin(this.bobPhase) * 0.008
+    let swayX = 0, bobRoll = 0, bobPitch = 0
+    if (this.headBobReal) {
+      // 真实视角摇晃——幅度平滑趋近目标（冲刺 ×1.5 / 蹲行 ×0.45 / 静止归 0，平滑过渡不跳变）
+      const target = speed > 0 ? (engine.input.sprint ? 1.5 : p.crouching ? 0.45 : 1) : 0
+      this.bobAmp += (target - this.bobAmp) * Math.min(1, dt * 5)
+      const a = this.bobAmp
+      // v55：整体烈度调低 ~35%；空中（离地/抛物）暂停水平侧摆与 roll，仅保留极轻微垂直浮动
+      const air = Math.abs(p.vz) > 0.25
+      this.airK += ((air ? 1 : 0) - this.airK) * Math.min(1, dt * 10)
+      const g = 1 - this.airK // 空中侧摆/roll 平滑趋零
+      bob = Math.sin(this.bobPhase * 2) * 0.026 * a * (1 - this.airK * 0.85) // 垂直起伏（2 倍步频；空中仅余 15% 微浮）
+      swayX = Math.sin(this.bobPhase) * 0.021 * a * g // 水平侧摆（沿视线右向施加）
+      bobRoll = Math.sin(this.bobPhase) * 0.009 * a * g // 轻微 roll 侧倾
+      // v55：起跳蓄力微沉（~60ms 快沉随即上提，~0.14s 单峰）
+      if (this.prevVz <= 0.2 && p.vz > 2) this.jumpDipT = 0
+      if (this.jumpDipT >= 0) {
+        this.jumpDipT += dt
+        const k = this.jumpDipT / 0.14
+        if (k >= 1) this.jumpDipT = -1
+        else bob -= 0.032 * Math.sin(k * Math.PI)
+      }
+      // v55：抛物手感——上升段相机滞后微沉 + 视线微仰；下坠段随下落速度下沉 + 视野微前倾（均封顶克制；
+      // 顶点 vz≈0 时偏移自然消退，漂浮感减弱）
+      if (p.vz > 0) bob -= Math.min(0.05, p.vz * 0.012)
+      else bob -= Math.min(0.09, -p.vz * 0.016)
+      bobPitch = Math.max(-0.05, Math.min(0.05, p.vz * 0.008))
+      // 落地/跳跃落地：小段下沉回弹（下落末速越大下沉越深，~0.3s 单峰回弹）
+      if (this.prevVz < -3 && p.vz >= 0) { this.landT = 0; this.landAmp = Math.min(0.14, -this.prevVz * 0.018) }
+      if (this.landAmp > 0) {
+        this.landT += dt
+        const k = this.landT / 0.3
+        if (k >= 1) this.landAmp = 0
+        else bob -= this.landAmp * Math.sin(k * Math.PI)
+      }
+    }
+    this.prevVz = p.vz
 
-    // 相机震动（受伤震屏 + HP≤30 持续轻微晃动）
+    // 相机震动（受伤震屏 + HP≤30 持续轻微晃动）——与 bob 叠加共存
     const lowHp = p.hp <= 30 && p.hp > 0 ? 0.05 + Math.sin(this.time * 7) * 0.02 : 0
     const sh = opts.shake ? engine.camShake + lowHp : 0
     this.camShakeX = (Math.random() - 0.5) * sh * 0.1
     this.camShakeY = (Math.random() - 0.5) * sh * 0.1
 
     // 相机高度 = 眼高 + 玩家脚底高度(p.z) - 蹲伏下沉量（平滑），蹲伏时摆动减半
+    // （真实摇晃模式蹲行幅度已按 ×0.45 计入 bobAmp，不再重复减半）
     const crouchTarget = p.crouching ? 0.55 : 0
     this.crouchDrop += (crouchTarget - this.crouchDrop) * Math.min(1, dt * 8)
-    const eye = 1.55 + bob * (p.crouching ? 0.5 : 1) + p.z - this.crouchDrop
-    this.camera.position.set(p.x + this.camShakeX, eye, p.y + this.camShakeY)
-    // 低理智畸变：FOV 呼吸 + 侧倾
+    const eye = 1.55 + bob * (p.crouching && !this.headBobReal ? 0.5 : 1) + p.z - this.crouchDrop
+    // 水平侧摆沿视线右向（forward=(-cos,-sin)，右向=(-sin,cos)）
+    const rightX = -Math.sin(look.yaw), rightZ = Math.cos(look.yaw)
+    this.camera.position.set(p.x + rightX * swayX + this.camShakeX, eye, p.y + rightZ * swayX + this.camShakeY)
+    // 低理智畸变：FOV 呼吸 + 侧倾（与摇晃 roll 叠加）
     const insanity = 1 - p.sanity / 100
     this.camera.rotation.y = look.yaw + this.camShakeX * 2
-    this.camera.rotation.x = look.pitch + this.camShakeY * 2
-    this.camera.rotation.z = Math.sin(this.time * 0.7) * 0.05 * insanity
+    this.camera.rotation.x = look.pitch + this.camShakeY * 2 + bobPitch // v55：真实摇晃的抛物俯仰（上升微仰/下坠前倾）
+    this.camera.rotation.z = Math.sin(this.time * 0.7) * 0.05 * insanity + bobRoll
     // 开场爬起：introT 3.2→0，相机从贴地侧躺缓慢起身、视线从地面抬起
     {
       const it = Math.max(0, Math.min(1, engine.introT / 3.2))
@@ -576,7 +660,7 @@ export class Renderer3D {
     }
     // v35：天空球跟随玩家头顶（球半径恒定 42 < far 60，大地图球面不再被远平面裁成黑圆盖）
     if (this.skyMesh) this.skyMesh.position.set(this.camera.position.x, 5.5, this.camera.position.z)
-    // v17：tint 氛围（红室=红雾 / 熄灯区=近黑短视距 / 马尼拉=暖调 / v29 浓雾区=灰白短视距 / v30 花园段=青翠阳光），按玩家所在瓦片平滑混合
+    // v17：tint 氛围（红室=红雾 / 熄灯区=近黑雾 / 马尼拉=暖调 / v29 浓雾区=灰白短视距 / v30 花园段=青翠阳光），按玩家所在瓦片平滑混合
     const bright = engine.dev.bright // v34：一键照明——层级全局增亮
     {
       const pi2 = Math.floor(p.y) * m.w + Math.floor(p.x)
@@ -588,10 +672,10 @@ export class Renderer3D {
       if (tk > 0.01) {
         const fog = this.scene.fog as THREE.Fog | null
         if (fog) {
-          // 一键照明：熄灯区不再向黑雾/短视距过渡（保持常规雾距，全局可见）
+          // 一键照明：熄灯区不再向黑雾过渡（保持常规雾色，全局可见）
           fog.color.lerp(this.tintC, (tnt === 3 && bright) ? 0 : tk * (tnt === 2 ? 0.95 : 0.9)) // 红室：雾气几乎全红
+          // v53：熄灯区视距压缩已删除（应要求）——只保留近黑雾色与环境光熄灭，不再压缩 fog.far
           if (tnt === 3) {
-            if (!bright) fog.far = Math.max(3.5, fog.far * (1 - tk * 0.7)) // 熄灯区：视距大幅压缩
             if (!bright) {
               // 熄灯区：环境光/半球光近乎完全熄灭（v28b：0.85→0.97——原保留 15% 环境光，
               // 黄色墙纸在高曝光下仍清晰可见；熄灯区应当伸手不见五指，手电成为唯一可靠光源）
@@ -640,6 +724,7 @@ export class Renderer3D {
     const synthRing = bright && sorted.length < 16
     const pool = this.farLights ? [...this.lightPool, ...this.lightPoolExtra] : this.lightPool
     const fogFarNow = (this.scene.fog as THREE.Fog | null)?.far ?? 24
+    const lightPow = new Map<LightSource, number>() // v53：本帧各光源实际强度——灯具自发光盒据此跟随点亮状态
     for (let i = 0; i < pool.length; i++) {
       const pl = pool[i]
       let L = sorted[i]
@@ -661,6 +746,7 @@ export class Renderer3D {
       else if (L.fixZ !== undefined) ptY = L.fixZ - 0.2
       else if (m.outdoor[li] === 1) ptY = 2.7
       else if (m.up[li] === 1) ptY = FLOOR_H - 0.35 - 0.25 // 上层楼板底
+      else if (m.up2[li] === 1 || m.upWall2[li] === 1) ptY = 2 * FLOOR_H - 0.35 - 0.25 // v54c：3F 板/屋面板墙底（2F 挑空处——中庭灯光贴 5.65 而非 1F 顶）
       else if (m.ceiling[li] === 1) ptY = tallCeilH(m, this.wallH) - 0.25 // 挑高真实顶（单/多层一致）
       else ptY = this.wallH - 0.25
       pl.position.set(L.x, ptY, L.y)
@@ -678,6 +764,7 @@ export class Renderer3D {
       // v34 一键照明：无视闪烁/停电预警/层级光照系数/黑暗度，强度与射程直接拉满
       pl.intensity = bright ? 14 * rankFade : 12 * flick * warnF * rankFade * (1 - (this.levelCfg?.darkness ?? 0.6) * 0.35) * lm * (this.levelCfg?.lightSoft ?? 1)
       pl.distance = bright ? Math.max(L.r * 2.6 * 1.6, 11) : L.r * 2.6 * (lm > 0 ? Math.max(0.35, lm) : 1)
+      lightPow.set(L, pl.intensity)
       // v50：场景灯投影（realistic 可选，最近 N 盏；PointLight 立方体阴影开销随盏数增加）
       const cast = this.lightMode === 'realistic' && i < this.lightShadowCount && pl.intensity > 0.01
       if (cast !== pl.castShadow) {
@@ -688,10 +775,13 @@ export class Renderer3D {
       }
     }
     // 灯具 flicker（自发光强度）
+    // v53：带 src 的灯具自发光盒亮度跟随其点光源本帧实际强度（/8 归一）——停电（光源被剔除）/
+    // 超出灯池未点亮/光照系数为 0（L6）时灯具不再发亮，闪烁与停电预警和点光源同步；
+    // 无 src 的装饰性自发光件（出口牌等）保持原闪烁逻辑
     for (const f of this.fixtures) {
       const fl1 = Math.sin(this.time * 13 + f.seed * 17) * Math.sin(this.time * 7.3 + f.seed)
-      f.mat.color.setScalar(0)
-      f.mat.color.copy(f.mat.userData.base as THREE.Color).multiplyScalar(1 - opts.flicker * Math.max(0, fl1) * 0.8)
+      const k = f.src ? Math.min(1, (lightPow.get(f.src) ?? 0) / 8) : 1 - opts.flicker * Math.max(0, fl1) * 0.8
+      f.mat.color.copy(f.mat.userData.base as THREE.Color).multiplyScalar(k)
     }
     // 出口脉动（闪烁的墙壁 strobe：规律明灭，约 1.2s 周期；其余出口为柔和呼吸）
     for (const e of this.exitMeshes) {
@@ -779,6 +869,8 @@ export class Renderer3D {
 
   /** 设置开关：战争迷雾（距离雾）。关闭时每帧把雾推到可视范围外 */
   setFog(on: boolean) { this.fogEnabled = on }
+  /** v54：真实视角摇晃开关（默认关——保持基础 bob；开启=垂直起伏+水平侧摆+roll 侧倾+落地回弹） */
+  setHeadBob(on: boolean) { this.headBobReal = on }
 
   /** 设置：距离雾远近倍率（1=默认；帧内对雾 near/far 缩放） */
   setFogScale(k: number) { this.fogScale = Math.max(0.2, Math.min(4, k)) }
@@ -985,7 +1077,9 @@ export class Renderer3D {
   }
 
   // v29：闪烁的墙壁——出口面片贴到相邻墙面（面向出口所在地板格；无相邻墙时保持居中）
-  private orientExitToWall(m: GameMap, grp: THREE.Group, e: { x: number; y: number }) {
+  // v55c：dist 可调——boilerdeep 黑门门框在模型局部 -0.42，dist 0.93 使门框前缘微凸墙面 1cm
+  // （0.48 的旧值让门框浮在墙前 0.44m/门牌半嵌墙盒内——墙面无门洞开凿[非 DOOR_EXIT_KINDS]，门体须贴在墙面外）
+  private orientExitToWall(m: GameMap, grp: THREE.Group, e: { x: number; y: number }, dist = 0.48) {
     const tx = Math.floor(e.x), ty = Math.floor(e.y)
     const at = (x: number, y: number) => (x < 0 || y < 0 || x >= m.w || y >= m.h ? 0 : m.tiles[y * m.w + x])
     const dirs = [
@@ -997,7 +1091,7 @@ export class Renderer3D {
     for (const d of dirs) {
       if (at(tx + d.dx, ty + d.dy) === 1) continue // 该侧不是墙
       grp.rotation.y = d.rot
-      grp.position.set(e.x + 0.5 + d.dx * 0.48, 0, e.y + 0.5 + d.dy * 0.48)
+      grp.position.set(e.x + 0.5 + d.dx * dist, 0, e.y + 0.5 + d.dy * dist)
       return
     }
     grp.position.set(e.x + 0.5, 0, e.y + 0.5)
@@ -1033,15 +1127,23 @@ export class Renderer3D {
     grp.position.set(e.x + 0.5, 0, e.y + 0.5)
   }
 
-  // v51：电梯井出口朝向——门面（局部 -z 侧）转向最近地板邻格（嵌墙时=走廊侧；平地时=最近可走侧）
+  // v51：电梯井出口朝向——门面（局部 -z 侧）转向走廊开口方向（嵌墙壁龛的贯穿轴：
+  // 邻格为地板 + 其反向非地板 + 垂直向两邻皆非地板；v54b 修复——旧实现取第一个地板邻格，
+  // 壁龛侧邻有开阔地（如出生广场）时门脸朝侧面/与墙垂直）
   private orientExitFaceFloor(m: GameMap, grp: THREE.Group, e: { x: number; y: number }) {
     const tx = Math.floor(e.x), ty = Math.floor(e.y)
     const at = (x: number, y: number) => (x < 0 || y < 0 || x >= m.w || y >= m.h ? 0 : m.tiles[y * m.w + x])
+    let fallback: [number, number] | null = null
     for (const [wx, wy] of [[0, 1], [0, -1], [1, 0], [-1, 0]] as const) {
       if (at(tx + wx, ty + wy) !== 1) continue
-      grp.rotation.y = Math.atan2(-wx, -wy) // 局部 -z（门面）转向地板格
-      break
+      if (!fallback) fallback = [wx, wy]
+      if (at(tx - wx, ty - wy) === 1) continue // 背面必须非地板（壁龛）
+      if (at(tx + wy, ty + wx) === 1 || at(tx - wy, ty - wx) === 1) continue // 垂直向必须皆墙（墙线贯穿轴）
+      grp.rotation.y = Math.atan2(-wx, -wy) // 局部 -z（门面）转向走廊开口
+      grp.position.set(e.x + 0.5, 0, e.y + 0.5)
+      return
     }
+    if (fallback) grp.rotation.y = Math.atan2(-fallback[0], -fallback[1])
     grp.position.set(e.x + 0.5, 0, e.y + 0.5)
   }
 
@@ -1061,27 +1163,32 @@ export class Renderer3D {
         ;(mesh as THREE.Group).position.y += gy
         g.add(mesh as THREE.Group)
         this.structMeshes.set(s, mesh as THREE.Group)
+        if (ANIM_STRUCT(s)) (mesh as THREE.Group).userData.animTrack = 1 // v55c：动画登记（updateStructs 每帧只处理登记件）
         structs.push(s)
       }
     }
-    // 灯具（L0 全室内：自发光盒）
-    const fixtures: { mat: THREE.MeshBasicMaterial; seed: number }[] = []
+    // 灯具（L0 全室内：自发光盒；v53：src 记录光源，亮度随其点亮状态）
+    const fixtures: { mat: THREE.MeshBasicMaterial; seed: number; src?: LightSource }[] = []
     for (const L of c.lights) {
       const mat = new THREE.MeshBasicMaterial({ color: L.color })
       mat.userData.base = col(L.color)
       const fix = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.08, 0.25), mat)
-      fix.position.set(L.x, L.z !== undefined ? L.z + 2.55 : H - 0.05, L.y)
+      // v55：无限 chunk 灯具贴附与有限层/光源点（ptY）对齐——挑高区贴 tallCeilH 真实顶（L5 主厅等）
+      const li2 = Math.floor(L.y) * m.w + Math.floor(L.x)
+      const fixY = L.z !== undefined ? L.z + 2.55
+        : m.ceiling[li2] === 1 && m.outdoor[li2] !== 1 ? tallCeilH(m, H) - 0.05 : H - 0.05
+      fix.position.set(L.x, fixY, L.y)
       g.add(fix)
-      fixtures.push({ mat, seed: L.flickerSeed })
+      fixtures.push({ mat, seed: L.flickerSeed, src: L })
     }
     // 出口（闪烁的墙壁：strobe 规律明灭材质）
     const exitMeshes: { mesh: THREE.Object3D; mat: THREE.MeshBasicMaterial }[] = []
     for (const e of c.exits) {
       const grp = buildExit(e.def.kind, def)
       if (e.def.kind === 'flickerdoor') this.orientExitToWall(m, grp, e)
-      else if (e.def.kind === 'graystairs' || e.def.kind === 'graystairsup') this.orientStairs(m, grp, e)
-      else if (e.def.kind === 'stairs' || e.def.kind === 'unlockeddoor' || e.def.kind === 'fireexit' || e.def.kind === 'officedoor') this.orientDoor(m, grp, e)
-      else if (e.def.kind === 'elevatorshaft') this.orientExitFaceFloor(m, grp, e) // v51：嵌墙电梯门面朝走廊
+      else if (e.def.kind === 'graystairs' || e.def.kind === 'graystairsup' || e.def.kind === 'oldstairs') this.orientStairs(m, grp, e) // v54：L4 古典楼梯同为可行走阶梯
+      else if (e.def.kind === 'stairs' || e.def.kind === 'unlockeddoor' || e.def.kind === 'fireexit' || e.def.kind === 'officedoor' || e.def.kind === 'boilerdeep') this.orientDoor(m, grp, e) // v55d：L5 黑门纳入门洞类出口（模型嵌门洞格贴墙）
+      else if (e.def.kind === 'elevatorshaft' || e.def.kind === 'darkwooddoor') this.orientExitFaceFloor(m, grp, e) // v51：嵌墙电梯门面朝走廊；v54：L5 深色木门沿客房门洞贯穿轴定向
       else grp.position.set(e.x + 0.5, 0, e.y + 0.5)
       g.add(grp)
       grp.traverse((o) => {
@@ -1143,12 +1250,13 @@ export class Renderer3D {
     for (const s of m.structures) {
       const mesh = buildStructure(s, def, m, H)
       if (mesh) {
-        // v7：结构模型按所在地面高度偏移（高台/低洼上的家具贴合地面）；v13：上层结构抬升 FLOOR_H
-        const gy = s.floor === 1 ? 3.0
+        // v7：结构模型按所在地面高度偏移（高台/低洼上的家具贴合地面）；v13：上层结构抬升 FLOOR_H；v54：三层结构抬升 2×FLOOR_H
+        const gy = (s.floor ?? 0) >= 1 ? (s.floor ?? 0) * 3.0
           : tileH(m, Math.min(m.w - 1, Math.max(0, Math.floor(s.x + s.w / 2))), Math.min(m.h - 1, Math.max(0, Math.floor(s.y + s.h / 2))))
         ;(mesh as THREE.Group).position.y += gy
         g.add(mesh as THREE.Group)
         this.structMeshes.set(s, mesh as THREE.Group)
+        if (ANIM_STRUCT(s)) (mesh as THREE.Group).userData.animTrack = 1 // v55c：动画登记（updateStructs 每帧只处理登记件）
       }
     }
 
@@ -1170,7 +1278,7 @@ export class Renderer3D {
         const head = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.12, 0.22), mat)
         head.position.set(L.x, 2.84, L.y)
         g.add(head)
-        this.fixtures.push({ mat, seed: L.flickerSeed })
+        this.fixtures.push({ mat, seed: L.flickerSeed, src: L })
         continue
       }
       if (L.noFix === 1) continue // 灯具模型由结构提供（不渲染默认自发光盒）
@@ -1178,20 +1286,21 @@ export class Renderer3D {
       if (L.z !== undefined) fixY = L.z + 2.55
       else if (L.fixZ !== undefined) fixY = L.fixZ
       else if (m.up[li] === 1) fixY = FLOOR_H - 0.35 - 0.05 // 上层楼板底
+      else if (m.up2[li] === 1 || m.upWall2[li] === 1) fixY = 2 * FLOOR_H - 0.35 - 0.05 // v54c：3F 板/屋面板墙底（中庭等 2F 挑空处）
       else if (m.ceiling[li] === 1) fixY = tallCeilH(m, H) - 0.05 // 挑高真实顶（单/多层一致）
       const fix = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.08, 0.25), mat)
       fix.position.set(L.x, fixY, L.y)
       g.add(fix)
-      this.fixtures.push({ mat, seed: L.flickerSeed })
+      this.fixtures.push({ mat, seed: L.flickerSeed, src: L })
     }
 
     // ---- 出口 ----
     for (const e of m.exits) {
       const grp = buildExit(e.def.kind, def)
       if (e.def.kind === 'flickerdoor') this.orientExitToWall(m, grp, e)
-      else if (e.def.kind === 'graystairs' || e.def.kind === 'graystairsup') this.orientStairs(m, grp, e)
-      else if (e.def.kind === 'stairs' || e.def.kind === 'unlockeddoor' || e.def.kind === 'fireexit' || e.def.kind === 'officedoor') this.orientDoor(m, grp, e)
-      else if (e.def.kind === 'elevatorshaft') this.orientExitFaceFloor(m, grp, e) // v51：嵌墙电梯门面朝走廊
+      else if (e.def.kind === 'graystairs' || e.def.kind === 'graystairsup' || e.def.kind === 'oldstairs') this.orientStairs(m, grp, e) // v54：L4 古典楼梯同为可行走阶梯
+      else if (e.def.kind === 'stairs' || e.def.kind === 'unlockeddoor' || e.def.kind === 'fireexit' || e.def.kind === 'officedoor' || e.def.kind === 'boilerdeep') this.orientDoor(m, grp, e) // v55d：L5 黑门纳入门洞类出口（模型嵌门洞格贴墙）
+      else if (e.def.kind === 'elevatorshaft' || e.def.kind === 'darkwooddoor') this.orientExitFaceFloor(m, grp, e) // v51：嵌墙电梯门面朝走廊；v54：L5 深色木门沿客房门洞贯穿轴定向
       else grp.position.set(e.x + 0.5, 0, e.y + 0.5)
       g.add(grp)
       grp.traverse((o) => {
@@ -1226,8 +1335,14 @@ export class Renderer3D {
     for (const e of m.entities) {
       seen.add(e.id)
       let grp = this.entityMeshes.get(e.id)
+      // v53：L3 高智能实体建模变体（无面灵错位器官/石器、水豚尸鼠；seed=实体 id 保证重建一致）；
+      // 尸鼠形态按层级固定：L2 灰白廊道种群 / L3 水豚 / 其余深褐（v53，替代原随机二选一）
+      const eOpts = (e.def.l3face || e.def.tool || e.def.capybara || e.def.type === 'corpserat')
+        ? { l3face: e.def.l3face, tool: e.def.tool, capybara: e.def.capybara, ratMorph: (engine.levelDef.id === 2 ? 'gray' : engine.levelDef.id === 5 ? 'hotel' : 'brown') as 'gray' | 'brown' | 'hotel', seed: e.id } : undefined // v55：L5 尸鼠=酒店正装变种
       if (!grp) {
-        grp = e.disguised ? buildItemMesh(e.disguised) : buildEntityMesh(e.def.type)
+        grp = e.disguised
+          ? (e.disguised === 'human' ? humanDisguiseMesh(e.id, engine.levelDef.id) : buildItemMesh(e.disguised))
+          : buildEntityMesh(e.def.type, eOpts)
         grp.userData.wasDisguised = !!e.disguised
         grp.userData.entType = e.def.type
         this.enableShadows(grp)
@@ -1237,7 +1352,7 @@ export class Renderer3D {
       if (!e.disguised && grp.userData.wasDisguised) {
         // 现形
         this.scene.remove(grp)
-        grp = buildEntityMesh(e.def.type)
+        grp = buildEntityMesh(e.def.type, eOpts)
         grp.userData.wasDisguised = false
         grp.userData.entType = e.def.type
         this.entityMeshes.set(e.id, grp)
@@ -1246,7 +1361,7 @@ export class Renderer3D {
       // v51：人制品售货机活化——def 切换（vendingmachine→vmad）时重建模型（含骷髅手腿）
       if (grp.userData.entType !== e.def.type) {
         this.scene.remove(grp)
-        grp = buildEntityMesh(e.def.type)
+        grp = buildEntityMesh(e.def.type, eOpts)
         grp.userData.entType = e.def.type
         this.enableShadows(grp)
         this.entityMeshes.set(e.id, grp)
@@ -1629,8 +1744,8 @@ export class Renderer3D {
         }
         this.npcMeshes.set(n.id, rec)
       }
-      // 位置（贴地；v46：按其所在楼层带取地面——夹楼 NPC 站在 2F 楼板）与朝向（短弧平滑，与实体同一手感）
-      const gz = groundHeightAt(m, n.x, n.y, (n.floor ?? 0) as 0 | 1)
+      // 位置（贴地；v46：按其所在楼层带取地面——夹楼 NPC 站在 2F 楼板；v54：三层 NPC 站 3F 楼板）与朝向（短弧平滑，与实体同一手感）
+      const gz = groundHeightAt(m, n.x, n.y, (n.floor ?? 0) as 0 | 1 | 2)
       rec.grp.position.set(n.x, gz, n.y)
       const target = -n.facing
       const diff = ((target - rec.facing + Math.PI * 3) % (Math.PI * 2)) - Math.PI
@@ -1812,7 +1927,9 @@ export class Renderer3D {
 
   // ---------- 容器盖板/门开关/状态动画 ----------
   private updateStructs(dt: number) {
+    const c01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
     for (const [s, g] of this.structMeshes) {
+      if (!g.userData.animTrack) continue // v55c：无动画件结构整帧跳过（地毯/灯带/贴墙件等——L5 单窗数百件）
       const k0 = s.kind
       // v13：电梯轿厢平台跟随引擎 carZ 平滑升降
       if (k0 === 'lift') {
@@ -1823,24 +1940,109 @@ export class Renderer3D {
         }
         continue
       }
-      if (k0 !== 'crate' && k0 !== 'car' && k0 !== 'cabinet' && k0 !== 'corpse'
-        && k0 !== 'hoteldoor' && k0 !== 'dresser' && k0 !== 'megcrate'
-        && k0 !== 'rollerdoor' && k0 !== 'glassdoor' && k0 !== 'inkdoor'
-        && k0 !== 'bargate') continue
-      const target = (k0 === 'hoteldoor' || k0 === 'rollerdoor' || k0 === 'glassdoor' || k0 === 'inkdoor' || k0 === 'bargate') ? (s.data?.open ? 1 : 0) : (s.data?.opened ? 1 : 0)
-      g.userData.open = (g.userData.open ?? 0) + (target - (g.userData.open ?? 0)) * Math.min(1, dt * (k0 === 'hoteldoor' ? 4 : 6))
-      const k = g.userData.open as number
-      for (const ch of g.children) {
-        if (!ch.userData.lid) continue
-        if (k0 === 'crate' || k0 === 'car' || k0 === 'megcrate') ch.rotation.x = -k * 1.9
-        else if (k0 === 'cabinet' || k0 === 'dresser') ch.rotation.y = k * 1.9
-        else if (k0 === 'hoteldoor') ch.rotation.y = -k * 1.55 * ((g.userData.swing as number) ?? 1) // v10：铰链门向门洞内侧旋开 ~89°（不穿侧墙；双开门镜像对开）
-        else if (k0 === 'rollerdoor') { ch.position.y = k * 1.85; ch.scale.y = 1 - k * 0.8 } // v10：卷帘收进卷轴盒（不再悬穿门头/天花板）
-        else if (k0 === 'glassdoor') ch.position.x = k * 0.95 // v10：玻璃门侧滑入墙袋（不再悬在半空）
-        else if (k0 === 'inkdoor') ch.rotation.y = k * 1.85 // v31：墨黑色金属门向走廊内侧旋开 ~106°
-        else if (k0 === 'bargate') ch.rotation.y = k * 1.6 // v51：栅栏门扇绕铰链旋开 ~92°
-        else ch.position.x = k * 0.8 // 尸体盖布滑开
+      const isDoor = k0 === 'hoteldoor' || k0 === 'rollerdoor' || k0 === 'glassdoor' || k0 === 'inkdoor' || k0 === 'bargate'
+      // v55：留声机唱盘持续旋转（L5；data.on=0=E 交互停止——停转停播同标记）
+      if (k0 === 'phonograph') {
+        const spin = g.userData.spin as THREE.Group | undefined
+        if (spin && s.data?.on !== 0) spin.rotation.y = ((g.userData.spinAngle as number) ?? 0) + dt * 2.4
+        if (spin) g.userData.spinAngle = spin.rotation.y
+        continue
       }
+      // v55：L5 休息室桌上饮料——取走（data.searched=1）后隐藏瓶组
+      if (k0 === 'table' && s.data?.drink) {
+        const dg = g.userData.drinkGrp as THREE.Group | undefined
+        if (dg) dg.visible = s.data.searched !== 1
+        continue
+      }
+      // v54：白名单扩到全部容器（CONTAINER_ANIM 的 key；值 = open 插值速率——locker 薄钢门快脆 / safebox 厚重门迟缓）
+      if (!isDoor && !(k0 in CONTAINER_ANIM)) continue
+      const target = isDoor ? (s.data?.open ? 1 : 0) : (s.data?.opened || s.looted ? 1 : 0)
+      g.userData.open = (g.userData.open ?? 0) + (target - (g.userData.open ?? 0)) * Math.min(1, dt * (isDoor ? (k0 === 'hoteldoor' ? 4 : 6) : CONTAINER_ANIM[k0]))
+      const k = g.userData.open as number
+      // 逐件插值：traverse 而非只看顶层子节点——flushToWall/mountOnWall 会把可动件包进内层组
+      g.traverse((ch) => {
+        if (!ch.userData.lid) return
+        const part = (ch.userData.part as string | undefined) ?? 'lid'
+        const bx = (ch.userData.bx as number) ?? 0, by = (ch.userData.by as number) ?? 0, bz = (ch.userData.bz as number) ?? 0
+        const brx = (ch.userData.brx as number) ?? 0, brz = (ch.userData.brz as number) ?? 0
+        const idx = (ch.userData.idx as number) ?? 0
+        // 门类（非容器）：维持既有旋/移约定
+        if (k0 === 'hoteldoor') { ch.rotation.y = -k * 1.55 * ((g.userData.swing as number) ?? 1); return } // v10：铰链门向门洞内侧旋开 ~89°（不穿侧墙；双开门镜像对开）
+        if (k0 === 'rollerdoor') { ch.position.y = k * 1.85; ch.scale.y = 1 - k * 0.8; return } // v10：卷帘收进卷轴盒（不再悬穿门头/天花板）
+        if (k0 === 'glassdoor') { ch.position.x = k * 0.95; return } // v10：玻璃门侧滑入墙袋（不再悬在半空）
+        if (k0 === 'inkdoor') { ch.rotation.y = k * 1.85; return } // v31：墨黑色金属门向走廊内侧旋开 ~106°
+        if (k0 === 'bargate') { ch.rotation.y = k * 1.6; return } // v51：栅栏门扇绕铰链旋开 ~92°
+        // v54：容器各按实物的开法（全部「基准 + f(k)」绝对赋值，确定性）
+        switch (k0) {
+          case 'crate': // 箱盖先上翻到底，再整体后滑（v54：滑移收敛 0.34——盖沿贴住箱口后缘即可）
+            ch.rotation.x = -c01(k / 0.55) * 1.9
+            ch.position.z = bz - c01((k - 0.55) / 0.45) * 0.34
+            break
+          case 'car': // 后备箱向上掀起
+            ch.rotation.x = -k * 1.9
+            break
+          case 'corpse': // 盖布侧滑掀开 + 微倾
+            ch.position.x = bx + k * 0.8; ch.rotation.z = brz + k * 0.3
+            break
+          case 'cabinet': // 双开门对称外摆
+            ch.rotation.y = (part === 'doorL' ? -1 : 1) * k * 1.6
+            break
+          case 'dresser': // 抽屉自上而下依次抽出（v54：幅度略收 0.17——抽屉盒体半开悬在柜体前可见）
+            ch.position.z = bz + c01(k * 1.6 - idx * 0.3) * 0.17
+            break
+          case 'megcrate': // 两片上盖先上抬再对滑
+            ch.position.y = by + c01(k / 0.35) * 0.12
+            ch.position.x = bx + (part === 'lidL' ? -1 : 1) * c01((k - 0.35) / 0.65) * 0.5
+            break
+          case 'locker': // 薄钢门快速外摆（速率见 CONTAINER_ANIM）
+            ch.rotation.y = -k * 1.2
+            break
+          case 'toolbox': // 锁扣先弹开，箱盖后翻到底（~126°）
+            if (part === 'latch') { ch.rotation.x = c01(k / 0.25) * 0.9; ch.position.y = by - c01(k / 0.25) * 0.04 }
+            else ch.rotation.x = -c01((k - 0.15) / 0.85) * 2.2
+            break
+          case 'suitcase': // 搭扣先弹开，上盖再翻平
+            if (part === 'latch') { ch.position.z = bz + c01(k / 0.3) * 0.05; ch.rotation.x = c01(k / 0.3) * 0.7 }
+            else ch.rotation.x = -c01((k - 0.2) / 0.8) * 1.5
+            break
+          case 'fridge': // 双门外摆（上门幅度更大）+ 开门灯渐亮（looted 常灭）
+            if (part === 'light') {
+              const lk = s.looted ? 0 : k
+              ;(((ch as THREE.Mesh).material) as THREE.MeshBasicMaterial).color.setRGB(0.29 + 0.71 * lk, 0.29 + 0.62 * lk, 0.26 + 0.44 * lk)
+            } else ch.rotation.y = -k * (part === 'doorT' ? 1.1 : 0.85)
+            break
+          case 'safebox': // 转盘先旋转，厚重门再缓慢外摆（速率见 CONTAINER_ANIM）
+            if (part === 'dial') ch.rotation.y = c01(k / 0.35) * 4.5
+            else ch.rotation.y = c01((k - 0.35) / 0.65) * 1.25
+            break
+          case 'mailbox': // 投递口小门向外垂开 + 小红旗倒下
+            ch.rotation.x = part === 'flag' ? k * 1.2 : -k * 1.3
+            break
+          case 'barrel': // 桶盖向上跳起，翻落到桶边地面
+            ch.position.set(bx + k * 0.34, by + Math.sin(Math.min(k * 1.2, 1) * Math.PI) * 0.4 - k * 0.87, bz + k * 0.26)
+            ch.rotation.z = brz + k * 1.35
+            break
+          case 'bookcase': // 每层被抽出的那本书外移微倾
+            ch.position.z = bz + k * 0.1; ch.rotation.x = brx - k * 0.35
+            break
+          case 'bonepile': // 散骨下沉四散，头骨微沉
+            if (part === 'skull') { ch.position.y = by - k * 0.05; ch.rotation.z = brz + k * 0.12 }
+            else {
+              ch.position.set(bx * (1 + 0.22 * k), by * (1 - 0.5 * k), bz * (1 + 0.22 * k))
+              ch.rotation.z = brz + k * 0.18 * ((idx % 3) - 1)
+            }
+            break
+          case 'campstall': // 摊布前缘掀起
+            ch.rotation.x = brx - k * 0.5
+            break
+          case 'elecbox': // 箱门绕左铰链外摆
+            ch.rotation.y = -k * 1.5
+            break
+          case 'binshelf': // 收纳箱错落抽出（binshelf 非 CONTAINERS 容器，仅作动画约定预留）
+            ch.position.z = bz + k * (0.08 + 0.04 * (idx % 3))
+            break
+        }
+      })
       // 搜空后变暗（状态可见）
       if (s.looted && !g.userData.dimmed) {
         g.userData.dimmed = true
@@ -1876,6 +2078,21 @@ export class Renderer3D {
     colA.needsUpdate = true
   }
 
+  // v54：L4 虚空雨丝重生点（随机附近虚空瓦片；anyY=初始化时全程散布，否则从顶部落入；
+  // 瓦片归属钳制——x/z 永远落在锚定虚空瓦片内，雨丝不漏进窗内）
+  private respawnVoidRain(m: GameMap, i: number, anyY: boolean) {
+    const st = this.voidRainState!
+    const ti = this.voidTiles[(Math.random() * this.voidTiles.length) | 0]
+    const tx = ti % m.w, tz = Math.floor(ti / m.w)
+    st[i * 7] = tx + Math.random() * 0.9
+    st[i * 7 + 1] = anyY ? -2.4 + Math.random() * 6 : 3.2 + Math.random() * 2.4
+    st[i * 7 + 2] = tz + Math.random() * 0.9
+    st[i * 7 + 3] = 6 + Math.random() * 3 // 下落速度
+    st[i * 7 + 4] = 0.35 + Math.random() * 0.3 // 斜落横向漂移
+    st[i * 7 + 5] = tx // 锚定瓦片（x 向钳制上界=tx+0.98）
+    st[i * 7 + 6] = tz
+  }
+
   // ---------- 层级氛围特效 ----------
   private updateAmbientFx(engine: Engine, def: LevelDef, dt: number) {
     const p = engine.player
@@ -1890,6 +2107,86 @@ export class Renderer3D {
       dp.needsUpdate = true
       this.dust.position.set(p.x, 0, p.y)
       ;(this.dust.material as THREE.PointsMaterial).color.set(def.palette.light)
+    }
+
+    // v54：L4 窗景区窗外虚空——雨丝（持续下落、斜落微飘）+ 永不消散的雨雾片（缓慢漂移）；
+    // 只覆盖玩家附近 14m 内的 outdoor 虚空格（每 0.5s 重扫一次瓦片表，开销可控）
+    if (def.id === 4 && engine.map) {
+      const m = engine.map
+      this.voidScanT -= dt
+      if (this.voidScanT <= 0) {
+        this.voidScanT = 0.5
+        this.voidTiles.length = 0
+        this.voidFogTiles.length = 0
+        const R = 14
+        const x0 = Math.max(0, Math.floor(p.x) - R), x1 = Math.min(m.w - 1, Math.floor(p.x) + R)
+        const y0 = Math.max(0, Math.floor(p.y) - R), y1 = Math.min(m.h - 1, Math.floor(p.y) + R)
+        const outAt = (x: number, y: number) => (x < 0 || y < 0 || x >= m.w || y >= m.h ? 0 : m.outdoor[y * m.w + x])
+        const inFloorAt = (x: number, y: number) => // 室内地板（非 outdoor 的可走地板=窗/房间侧）
+          x >= 0 && y >= 0 && x < m.w && y < m.h && m.tiles[y * m.w + x] === 1 && m.outdoor[y * m.w + x] !== 1
+        for (let y = y0; y <= y1; y++)
+          for (let x = x0; x <= x1; x++) {
+            if (outAt(x, y) !== 1) continue
+            this.voidTiles.push(y * m.w + x)
+            // 边界格（四邻有室内地板=贴窗列）不作雾片锚点——雾片半宽+漂移严格小于其到窗玻璃的距离
+            if (!(inFloorAt(x + 1, y) || inFloorAt(x - 1, y) || inFloorAt(x, y + 1) || inFloorAt(x, y - 1))) this.voidFogTiles.push(y * m.w + x)
+          }
+      }
+      if (this.voidTiles.length) {
+        if (!this.voidRain) {
+          // 懒初始化：雨丝线段池（220 根）+ 雾片 ×6（径向渐变程序纹理）
+          const N = 220
+          const geo = new THREE.BufferGeometry()
+          geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(N * 6), 3))
+          this.voidRain = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ color: '#cdd9de', transparent: true, opacity: 0.55, depthWrite: false }))
+          this.voidRain.frustumCulled = false
+          this.scene.add(this.voidRain)
+          this.voidRainState = new Float32Array(N * 7)
+          for (let i = 0; i < N; i++) this.respawnVoidRain(m, i, true)
+          const cv = document.createElement('canvas'); cv.width = cv.height = 128
+          const g2 = cv.getContext('2d')!
+          const rg = g2.createRadialGradient(64, 64, 8, 64, 64, 64)
+          rg.addColorStop(0, 'rgba(170,180,186,0.55)'); rg.addColorStop(1, 'rgba(170,180,186,0)')
+          g2.fillStyle = rg; g2.fillRect(0, 0, 128, 128)
+          const fogTex = new THREE.CanvasTexture(cv)
+          for (let i = 0; i < 6; i++) {
+            const f = new THREE.Mesh(
+              new THREE.PlaneGeometry(1.5, 2.0), // 小型雾片（半宽 0.75 + 漂移 0.15 < 锚格到窗玻璃距离——窗内零穿透）
+              new THREE.MeshBasicMaterial({ map: fogTex, transparent: true, opacity: 0.22, depthWrite: false, side: THREE.DoubleSide, fog: false }),
+            )
+            this.scene.add(f)
+            this.voidFog.push(f)
+          }
+        }
+        this.voidRain!.visible = true
+        const st = this.voidRainState!
+        const posA = this.voidRain!.geometry.attributes.position as THREE.BufferAttribute
+        for (let i = 0; i < posA.count / 2; i++) {
+          st[i * 7 + 1] -= st[i * 7 + 3] * dt // 下落
+          st[i * 7] += st[i * 7 + 4] * dt // 斜落微飘
+          // 瓦片归属钳制：出界（或坠深）即重生——雨丝严格限制在虚空条带一侧，不漏进窗内
+          if (st[i * 7 + 1] < -2.5 || st[i * 7] >= st[i * 7 + 5] + 0.98) this.respawnVoidRain(m, i, false)
+          const x = st[i * 7], y = st[i * 7 + 1], z = st[i * 7 + 2]
+          posA.setXYZ(i * 2, x, y, z)
+          posA.setXYZ(i * 2 + 1, x - st[i * 7 + 4] * 0.055, y + 0.38, z)
+        }
+        posA.needsUpdate = true
+        for (let i = 0; i < this.voidFog.length; i++) {
+          const f = this.voidFog[i]
+          if (!this.voidFogTiles.length) { f.visible = false; continue }
+          f.visible = true
+          const ti = this.voidFogTiles[(i * 97) % this.voidFogTiles.length]
+          const bx = (ti % m.w) + 0.5, bz = Math.floor(ti / m.w) + 0.5
+          f.position.set(bx + Math.sin(this.time * 0.07 + i * 2.1) * 0.15, -0.9 + (i % 3) * 1.1, bz + Math.cos(this.time * 0.05 + i * 1.7) * 0.15)
+          f.rotation.y = Math.atan2(p.x - f.position.x, p.y - f.position.z) // 圆柱广告牌面向玩家
+        }
+      } else if (this.voidRain) {
+        this.voidRain.visible = false
+        for (const f of this.voidFog) f.visible = false
+      }
+    } else if (this.voidRain) {
+      this.voidRain.visible = false
+      for (const f of this.voidFog) f.visible = false
     }
 
     // L2 蒸汽柱 / L3 火花：定期在对应结构处喷粒子

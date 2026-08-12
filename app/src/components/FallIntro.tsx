@@ -5,7 +5,7 @@
 // 纯 Canvas2D 程序化绘制（无素材依赖）；点击或按任意键跳过；
 // onReveal() 在淡出开始时调用一次，onDone() 在结束时调用一次（语义与旧版一致）。
 import { useEffect, useRef } from 'react'
-import { audio } from '@/game/audio'
+import { audio } from '@/game/core/audio'
 
 // ---------------- 时间轴（秒）----------------
 const T_L1 = 0.25 // 字幕第一行开始打字

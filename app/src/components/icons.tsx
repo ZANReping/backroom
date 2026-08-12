@@ -16,6 +16,10 @@ export const IconStamina = (p: SVGProps<SVGSVGElement>) => (
 export const IconHunger = (p: SVGProps<SVGSVGElement>) => (
   <svg {...base(p)}><path d="M8 3v7a4 4 0 0 0 8 0V3" /><path d="M12 14v7" /><path d="M6 3v4M18 3v4" /></svg>
 )
+// v54：口渴（水滴）
+export const IconThirst = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base(p)}><path d="M12 3c3 4.2 6 7.8 6 11.2a6 6 0 0 1-12 0C6 10.8 9 7.2 12 3z" /></svg>
+)
 export const IconSanity = (p: SVGProps<SVGSVGElement>) => (
   <svg {...base(p)}><path d="M9 4a4 4 0 0 0-4 4c0 1 .3 1.8.8 2.5A4 4 0 0 0 5 14a4 4 0 0 0 4 4c.5 0 1-.1 1.5-.3A4 4 0 0 0 12 20a4 4 0 0 0 4-4V8a4 4 0 0 0-7-4z" /><path d="M12 4v16" /></svg>
 )

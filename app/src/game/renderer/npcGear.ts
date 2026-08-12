@@ -5,7 +5,7 @@
 // 配饰统一取 z≈0.135 微浮于表面）、四肢关节局部（原点在肩/髋，手臂下垂手部约 y −0.5）。
 import * as THREE from 'three'
 import { box, cyl } from './shared'
-import type { NpcDef } from '../npcs'
+import type { NpcDef } from '../content/npcs'
 
 export function applyNpcGear(parts: Record<string, THREE.Object3D>, id: string, def?: NpcDef) {
   const { head, armL, armR } = parts
@@ -101,6 +101,86 @@ export function applyNpcGear(parts: Record<string, THREE.Object3D>, id: string, 
       parts.torso.add(box(0.05, 0.05, 0.016, '#f5e3ae', 0, 0.14, 0.14)) // 徽上圣辉
     }
     return
+  }
+  // v55：L5 三处据点 NPC 配饰（家政服务/家常酒店/原住民——各一件标志性小件）
+  switch (id) {
+    case 'barclay': // 哨所长：臂弯登记簿
+      if (armL) {
+        armL.add(box(0.15, 0.025, 0.2, '#3a3f46', 0, -0.5, 0.08))
+        armL.add(box(0.13, 0.012, 0.18, '#e8e4d8', 0, -0.482, 0.08))
+      }
+      return
+    case 'petra': // 补给员：腰间钥匙串 + 手中夹板
+      if (parts.torso) parts.torso.add(box(0.05, 0.1, 0.02, '#b8b46a', 0.16, -0.2, 0.135)) // 钥匙串
+      if (armR) armR.add(box(0.13, 0.02, 0.18, '#8a7a5a', 0, -0.52, 0.08)) // 补给夹板
+      return
+    case 'otis': // 维修工：工具腰带 + 手中扳手
+      if (parts.torso) {
+        parts.torso.add(box(0.4, 0.06, 0.24, '#5a4a2e', 0, -0.22, 0)) // 工具腰带
+        parts.torso.add(box(0.07, 0.1, 0.03, '#8a8f96', -0.14, -0.28, 0.12)) // 挂袋
+      }
+      if (armR) armR.add(box(0.03, 0.16, 0.03, '#b8bcc0', 0, -0.56, 0.04)) // 扳手
+      return
+    case 'vivian': // 前台接待：发箍 + 胸前工牌
+      if (head) head.add(box(0.24, 0.03, 0.22, '#5a8a9a', 0, 0.245, 0))
+      if (parts.torso) parts.torso.add(box(0.07, 0.05, 0.015, '#e2dccf', 0.09, 0.12, 0.135)) // 工牌
+      return
+    case 'margot': // 服务员：手中小托盘
+      if (armR) {
+        armR.add(cyl(0.11, 0.11, 0.015, '#c8ccd0', 0, -0.5, 0.1, 12)) // 托盘
+        armR.add(cyl(0.03, 0.035, 0.06, '#e8e8e0', 0.03, -0.46, 0.08, 8)) // 盘上杯
+      }
+      return
+    case 'harold': // 长住客：圆框眼镜 + 臂弯翻旧的书
+      glasses()
+      if (armL) {
+        armL.add(box(0.14, 0.03, 0.19, '#5a3a2a', 0, -0.49, 0.08))
+        armL.add(box(0.12, 0.018, 0.17, '#d8cfc0', 0, -0.468, 0.08))
+      }
+      return
+    case 'amelia': // 飞行员：飞行皮帽 + 护目镜推上额
+      if (head) {
+        head.add(box(0.26, 0.1, 0.24, '#5a4a36', 0, 0.27, 0)) // 飞行皮帽
+        head.add(box(0.05, 0.05, 0.02, '#8a8f96', -0.055, 0.2, 0.13)) // 护目镜片（推额）
+        head.add(box(0.05, 0.05, 0.02, '#8a8f96', 0.055, 0.2, 0.13))
+      }
+      return
+    case 'dorothy': // 名媛：小礼帽 + 珍珠项链
+      if (head) {
+        head.add(box(0.2, 0.06, 0.2, '#4a3a46', 0.04, 0.3, 0)) // 小礼帽
+        head.add(box(0.22, 0.02, 0.22, '#b8924a', 0.04, 0.27, 0)) // 帽檐金圈
+      }
+      if (parts.torso) parts.torso.add(box(0.16, 0.03, 0.015, '#e8e4da', 0, 0.2, 0.135)) // 珍珠项链
+      return
+    case 'astor': // 实业家：怀表金链 + 前襟方巾
+      if (parts.torso) {
+        parts.torso.add(box(0.14, 0.02, 0.012, '#c9a24a', 0, 0.06, 0.135)) // 怀表链
+        parts.torso.add(box(0.05, 0.07, 0.015, '#e8e4da', -0.1, 0.18, 0.135)) // 袋巾
+      }
+      return
+    case 'smith': // 船长：白色船长帽
+      if (head) {
+        head.add(box(0.26, 0.06, 0.24, '#e8e8e0', 0, 0.28, 0)) // 帽体
+        head.add(box(0.28, 0.025, 0.26, '#22252a', 0, 0.25, 0.02)) // 黑帽檐带
+      }
+      return
+    case 'hoffa': // 工会领袖：雪茄 + 西装翻领巾
+      if (head) head.add(cyl(0.012, 0.012, 0.09, '#5a3a22', 0.1, 0.06, 0.14, 6).rotateZ(1.2)) // 雪茄
+      if (parts.torso) parts.torso.add(box(0.04, 0.05, 0.015, '#8a6d3a', -0.1, 0.17, 0.135)) // 襟巾
+      return
+    case 'white': // 罗阿诺克总督：都铎皱领 + 胸前总督链
+      if (parts.torso) {
+        parts.torso.add(box(0.2, 0.05, 0.03, '#e8e4da', 0, 0.24, 0.12)) // 皱领
+        parts.torso.add(box(0.12, 0.02, 0.015, '#c9a24a', 0, 0.05, 0.135)) // 总督链
+      }
+      return
+    case 'northup': // 作家/琴手：臂弯笔记本 + 胸前领巾
+      if (armL) {
+        armL.add(box(0.13, 0.03, 0.18, '#4a3a2e', 0, -0.49, 0.08))
+        armL.add(box(0.11, 0.016, 0.16, '#e8e0c8', 0, -0.47, 0.08))
+      }
+      if (parts.torso) parts.torso.add(box(0.08, 0.12, 0.015, '#d8cfc0', 0, 0.16, 0.135)) // 领巾
+      return
   }
   switch (id) {
     case 'kat': // 监督者：臂弯文件夹
@@ -337,6 +417,124 @@ export function applyNpcGear(parts: Record<string, THREE.Object3D>, id: string, 
       if (armR) {
         armR.add(box(0.11, 0.03, 0.16, '#2e3236', 0, -0.52, 0.08)) // 计算器机身
         armR.add(box(0.07, 0.012, 0.03, '#7ac97a', 0, -0.5, 0.02)) // 绿色数码屏
+      }
+      break
+
+    // ================= v54：存储设施（BNTG，L3）三名固定 NPC =================
+    case 'dorian': // 仓管主管：臂弯登记簿 + 胸前挂哨
+      if (armL) {
+        armL.add(box(0.15, 0.025, 0.21, '#4a3a2a', 0, -0.5, 0.1)) // 登记簿
+        armL.add(box(0.12, 0.008, 0.17, '#e8e4d8', 0, -0.484, 0.1)) // 账页
+      }
+      if (parts.torso) parts.torso.add(box(0.05, 0.06, 0.02, '#c9a03a', 0.09, 0.1, 0.135)) // 挂哨
+      break
+    case 'gunter': // 守卫：斜挎肩带 + 腰侧警棍（同 TGPF 警备风格）
+      if (parts.torso) {
+        const strap = box(0.07, 0.5, 0.02, '#2a2d33', -0.06, 0.02, 0.135)
+        strap.rotation.z = 0.5 // 斜挎肩带
+        parts.torso.add(strap)
+        parts.torso.add(box(0.05, 0.2, 0.05, '#1a1c20', 0.2, -0.2, 0.1)) // 腰侧警棍
+      }
+      break
+    case 'pippa': // 盘点员：臂弯盘点夹板 + 耳侧记号笔
+      if (armL) {
+        armL.add(box(0.16, 0.02, 0.22, '#5a4a3a', 0, -0.5, 0.1)) // 夹板
+        armL.add(box(0.13, 0.006, 0.18, '#f0e6c0', 0, -0.488, 0.1)) // 盘点表
+      }
+      if (head) head.add(box(0.015, 0.09, 0.015, '#c94a3a', 0.14, 0.14, 0)) // 耳侧记号笔
+      break
+
+    // ================= v54：Gamma 基地（Gemma）三名固定 NPC =================
+    case 'brandt': // 军需官：臂弯配给单夹板 + 腰间钥匙串
+      if (armL) {
+        armL.add(box(0.16, 0.02, 0.22, '#5a4a3a', 0, -0.5, 0.1)) // 夹板
+        armL.add(box(0.14, 0.006, 0.18, '#f0e6c0', 0, -0.488, 0.1)) // 配给单
+      }
+      if (parts.torso) {
+        parts.torso.add(box(0.05, 0.09, 0.02, '#8a8a8e', 0.16, -0.22, 0.13)) // 钥匙串
+        parts.torso.add(box(0.03, 0.03, 0.018, '#c9a03a', 0.16, -0.16, 0.13)) // 库房钥匙牌
+      }
+      break
+    case 'meilin': // 后勤官：手中记事本 + 胸前挂笔
+      if (armR) {
+        armR.add(box(0.12, 0.025, 0.17, '#3a5a4a', 0, -0.52, 0.08)) // 记事本
+        armR.add(box(0.1, 0.008, 0.13, '#f0e6c0', 0, -0.505, 0.08)) // 纸页
+      }
+      if (parts.torso) parts.torso.add(box(0.02, 0.09, 0.016, '#2a2d33', -0.1, 0.16, 0.135)) // 胸前挂笔
+      break
+    case 'harper': // 基地主管：臂弯考察档案夹 + 肩章（主管饰条）
+      if (armL) {
+        armL.add(box(0.17, 0.03, 0.23, '#3a3f46', 0, -0.5, 0.1)) // 档案夹
+        armL.add(box(0.14, 0.008, 0.19, '#e8e4d8', 0, -0.48, 0.1)) // 考察报告页
+      }
+      if (parts.torso) {
+        parts.torso.add(box(0.1, 0.03, 0.2, '#c9a03a', -0.22, 0.28, 0)) // 肩章（左）
+        parts.torso.add(box(0.1, 0.03, 0.2, '#c9a03a', 0.22, 0.28, 0)) // 肩章（右）
+      }
+      break
+    case 'mateo': // v54：住户老兵——手中搪瓷杯
+      if (armR) armR.add(cyl(0.032, 0.028, 0.08, '#e8e8e0', 0, -0.52, 0.08, 8))
+      break
+    case 'isaac': // v54：高智能实体研究员——眼镜 + 手中记录板
+      glasses()
+      if (armL) {
+        armL.add(box(0.14, 0.02, 0.2, '#3a3f46', 0, -0.5, 0.1)) // 记录板
+        armL.add(box(0.11, 0.006, 0.16, '#e8e4d8', 0, -0.488, 0.1)) // 测绘页
+      }
+      break
+    case 'aurora': // v54：档案员——臂弯蓝皮档案册
+      if (armL) {
+        armL.add(box(0.15, 0.04, 0.21, '#4142a5', 0, -0.49, 0.08)) // 蓝皮档案册
+        armL.add(box(0.13, 0.008, 0.17, '#e8e4d8', 0, -0.465, 0.08)) // 书脊页签
+      }
+      break
+
+    // ================= v54：Omega 基地（MEG，L4）六名固定 NPC =================
+    case 'whitaker': // 主管：臂弯签字夹板 + 胸前钢笔
+      if (armL) {
+        armL.add(box(0.16, 0.025, 0.22, '#3a3f46', 0, -0.5, 0.1)) // 签字夹板
+        armL.add(box(0.13, 0.006, 0.18, '#f0f0e8', 0, -0.486, 0.1)) // 记录页
+      }
+      if (parts.torso) parts.torso.add(box(0.02, 0.09, 0.016, '#d9b13b', -0.1, 0.16, 0.135)) // 胸前钢笔（MEG 黄）
+      break
+    case 'irene': // 档案员：眼镜 + 臂弯索引卡盒
+      glasses()
+      if (armL) {
+        armL.add(box(0.15, 0.05, 0.2, '#8a8478', 0, -0.5, 0.08)) // 索引卡盒
+        armL.add(box(0.12, 0.01, 0.16, '#f0ead0', 0, -0.47, 0.08)) // 卡片顶
+      }
+      break
+    case 'grove': // 数据技师：头戴耳机 + 手中螺丝刀
+      if (head) {
+        head.add(box(0.03, 0.09, 0.09, '#2a2d33', -0.16, 0.1, 0)) // 耳罩（左）
+        head.add(box(0.03, 0.09, 0.09, '#2a2d33', 0.16, 0.1, 0)) // 耳罩（右）
+        head.add(box(0.3, 0.02, 0.03, '#2a2d33', 0, 0.32, -0.02)) // 头梁
+      }
+      if (armR) armR.add(box(0.03, 0.14, 0.03, '#c94a3a', 0, -0.55, 0.08)) // 螺丝刀
+      break
+    case 'hobbs': // 仓管：臂弯库存单 + 腰间卷尺
+      if (armL) {
+        armL.add(box(0.15, 0.02, 0.2, '#5a4a3a', 0, -0.5, 0.1)) // 库存单夹板
+        armL.add(box(0.12, 0.006, 0.16, '#f0e6c0', 0, -0.488, 0.1)) // 库存单
+      }
+      if (parts.torso) parts.torso.add(box(0.06, 0.05, 0.03, '#d9b13b', 0.17, -0.2, 0.12)) // 腰间卷尺
+      break
+    case 'saira': // 医护：胸前红十字徽 + 臂弯病历夹
+      if (parts.torso) {
+        parts.torso.add(box(0.06, 0.02, 0.016, '#c94a3a', 0.1, 0.1, 0.135)) // 十字横
+        parts.torso.add(box(0.02, 0.06, 0.016, '#c94a3a', 0.1, 0.1, 0.135)) // 十字竖
+      }
+      if (armL) {
+        armL.add(box(0.14, 0.025, 0.2, '#e8e8e0', 0, -0.5, 0.08)) // 病历夹
+        armL.add(box(0.11, 0.006, 0.16, '#c9c2ae', 0, -0.484, 0.08)) // 病历页
+      }
+      break
+    case 'voss': // 守卫：斜挎肩带 + 腰侧登记牌
+      if (parts.torso) {
+        const strap = box(0.07, 0.5, 0.02, '#2a2d33', -0.06, 0.02, 0.135)
+        strap.rotation.z = 0.5 // 斜挎肩带
+        parts.torso.add(strap)
+        parts.torso.add(box(0.08, 0.06, 0.02, '#d9b13b', 0.18, -0.18, 0.12)) // 腰侧登记牌（MEG 黄）
       }
       break
   }

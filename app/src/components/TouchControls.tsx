@@ -1,8 +1,8 @@
 // 移动端虚拟摇杆 + 动作按钮组（浮点摇杆，≥48px 触摸目标，safe-area 适配；支持自定义按键布局）
 import { useRef, useState, useCallback, useEffect } from 'react'
 import type { Engine } from '@/game/engine'
-import { look } from '@/game/renderer3d'
-import { audio } from '@/game/audio'
+import { look } from '@/game/core/renderer3d'
+import { audio } from '@/game/core/audio'
 import type { GameSettings } from './SettingsModal'
 import { IconFlashlight, IconBackpack, IconSprint, IconInteract, IconAttack, IconPause, IconJump, IconCrouch, IconQuickUse, IconWheelUp, IconWheelDown } from './icons'
 import { CONTROL_SIZES, clampLayoutItem, type TouchControlId, type TouchLayoutMap } from './LayoutEditor'

@@ -1,6 +1,6 @@
 // 操作说明面板
-import { audio } from '@/game/audio'
-import { bindLabelFor } from '@/game/keybinds'
+import { audio } from '@/game/core/audio'
+import { bindLabelFor } from '@/game/core/keybinds'
 
 export default function HowToPlay({ onClose }: { onClose: () => void }) {
   const b = bindLabelFor
@@ -25,7 +25,7 @@ export default function HowToPlay({ onClose }: { onClose: () => void }) {
           {col('操作', [
             `桌面：${b('forward')}${b('left')}${b('back')}${b('right')} 移动（或方向键）/ 点击画面锁定鼠标转视角 / ${b('sprint')} 冲刺`,
             `${b('attack')} 攻击 / ${b('jump')} 跳跃 / ${b('crouch')} 或 Ctrl 蹲伏 / ${b('quickuse')} 快捷使用持有物品 / ${b('quickdrop')} 快捷丢弃手持物品`,
-            `${b('interact')} 互动（面板打开时=全部拿取）/ ${b('flashlight')} 手电 / ${b('inventory')} 或 Tab 背包 / ${b('map')} 地图 / ${b('codex')} 图鉴 / ${b('quest')} 任务 / ${b('status')} 状态 / ${b('log')} 日志 / ${b('slot1')}-${b('slot7')} 或滚轮 快捷栏 / Esc 暂停`,
+            `${b('interact')} 互动（面板打开时=全部拿取）/ ${b('flashlight')} 手电 / ${b('inventory')} 或 Tab 背包 / ${b('map')} 地图 / ${b('codex')} 图鉴 / ${b('quest')} 任务 / ${b('status')} 状态 / ${b('log')} 日志 / ${b('slot1')}-${b('slot7')} 或滚轮 快捷栏 / ${b('hidehud')} 沉浸模式（隐藏 HUD 与手部）/ ${b('hidehud2')} 半沉浸（隐藏 HUD 保留手部）/ Esc 暂停`,
             '以上键位均可在 设置 → 操作 → 键位绑定 中自定义',
             '移动端：左侧虚拟摇杆移动 / 右半屏拖动转视角', '推到摇杆边缘或按住冲刺键奔跑；攻击键旁有跳跃按钮与蹲伏按钮（蹲伏点按切换）', '点按主按钮 攻击/互动，长按快捷栏使用物品',
           ])}

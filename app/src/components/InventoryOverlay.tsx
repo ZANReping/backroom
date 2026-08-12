@@ -2,28 +2,29 @@
 import { useEffect, useRef, useState } from 'react'
 import { npcPortrait } from './npcPortrait'
 import type { Engine, SlotRef, SlotWhere } from '@/game/engine'
-import { ITEMS } from '@/game/items'
-import { storage } from '@/game/storage'
+import { ITEMS } from '@/game/content/items'
+import { storage } from '@/game/core/storage'
 import { ENTITIES, unlockTier, loadSeen, entitySpawnLevels, entityThreat, entityRarity, type EntityRarity } from '@/game/entities'
 import { LevelClassBanner, CecsBox } from './CodexWidgets'
-import { ENTITY_FACTION, FACTION_FONTS, IOTS_FREQ_COLORS, IOTS_FREQ_VALUES, IOTS_ORIGIN_VALUES, IOTS_UTIL_VALUES, itemIOTS, itemIOTSLevel } from '@/game/codexScores'
+import { ENTITY_FACTION, FACTION_FONTS, IOTS_FREQ_COLORS, IOTS_FREQ_VALUES, IOTS_ORIGIN_VALUES, IOTS_UTIL_VALUES, itemIOTS, itemIOTSLevel } from '@/game/content/codexScores'
 import { WIN_TAPES, LEVELS, levelNo, levelLabel, levelDefOf } from '@/game/levels'
 import { prefabsForLevel } from '@/game/prefabs'
-import { infiniteImplFor } from '@/game/infinite'
-import { CONTAINER_KINDS } from '@/game/containers'
+import { infiniteImplFor } from '@/game/world/infinite'
+import { stairServesBand } from '@/game/world/mapgen'
+import { CONTAINER_KINDS } from '@/game/decorations/containers'
 import { ItemGlyph } from './HUD'
 import AvatarPreview from './AvatarPreview'
-import { loadAvatar } from '@/game/avatar'
-import { audio } from '@/game/audio'
-import { getKeybinds } from '@/game/keybinds'
-import { DOCS } from '@/game/docs'
-import { OUTPOSTS } from '@/game/outposts'
-import { NPCS, npcAvatar } from '@/game/npcs'
-import { loadChat } from '@/game/llm'
-import { FACTIONS } from '@/game/factions'
+import { loadAvatar } from '@/game/core/avatar'
+import { audio } from '@/game/core/audio'
+import { getKeybinds } from '@/game/core/keybinds'
+import { DOCS } from '@/game/content/docs'
+import { OUTPOSTS } from '@/game/content/outposts'
+import { NPCS, npcAvatar } from '@/game/content/npcs'
+import { loadChat } from '@/game/core/llm'
+import { FACTIONS } from '@/game/content/factions'
 import DocOverlay from './DocOverlay'
 // （物品显示稀有度已由 IOTS 罕见度取代，见 codexScores.ITEM_IOTS / IOTS_FREQ_COLORS）
-import { PHENOMENA, rarityText } from '@/game/phenomena'
+import { PHENOMENA, rarityText } from '@/game/content/phenomena'
 import { IconIsolation, IconPlant, IconStamina } from './icons'
 
 // 现象图标映射（phenomena.ts 中 def.icon → 具体 SVG 组件）
@@ -102,10 +103,10 @@ function BigMap({ engine }: { engine: Engine }) {
   const floorText = typeof pf === 'number' && Number.isFinite(pf) && typeof mf === 'number' && mf > 1
     ? `当前 ${Math.max(0, Math.floor(pf)) + 1}F / 共${Math.floor(mf)}层`
     : null
-  // v43：多层地图——默认跟随玩家所在层，可手动切换（仅多层时显示按钮）
+  // v43：多层地图——默认跟随玩家所在层，可手动切换（仅多层时显示按钮；v54：支持三层 1F/2F/3F）
   const floors = typeof mf === 'number' && mf > 1 ? Math.floor(mf) : 1
   const playerBand = typeof pf === 'number' && Number.isFinite(pf) ? Math.max(0, Math.floor(pf)) : 0
-  const [floorSel, setFloorSel] = useState<0 | 1 | null>(null)
+  const [floorSel, setFloorSel] = useState<0 | 1 | 2 | null>(null)
   const viewFloor = floors > 1 ? Math.min(floors - 1, floorSel ?? playerBand) : 0
   useEffect(() => {
     const c = ref.current
@@ -119,20 +120,48 @@ function BigMap({ engine }: { engine: Engine }) {
     const px = engine.player.x + pan.x, py = engine.player.y + pan.y
     g.save()
     g.translate(size / 2 - px * s, size / 2 - py * s)
+    // v54c：wallwindow 格按墙绘制（瓦片虽雕成地板，渲染/碰撞均为整格墙）
+    const wwSet = new Set<number>()
+    for (const st of m.structures) if (st.kind === 'wallwindow') wwSet.add(Math.floor(st.y + st.h / 2) * m.w + Math.floor(st.x + st.w / 2))
     for (let y = 0; y < m.h; y++)
       for (let x = 0; x < m.w; x++) {
         const i = y * m.w + x
         if (!engine.explored[i]) continue
-        // v43：多层按层过滤——上层画 up 楼板（灰绿底色区分），主层画 tiles
-        if (floors > 1 && viewFloor === 1) {
-          if (m.up[i] !== 1) continue
-          g.fillStyle = '#31423a'
+        // v43：多层按层过滤——上层画 up 楼板（灰绿底色区分），主层画 tiles；v54：三层视图画 up2 楼板
+        if (floors > 1 && viewFloor >= 1) {
+          const upA = viewFloor === 2 ? m.up2 : m.up
+          const wallA = viewFloor === 2 ? m.upWall2 : m.upWall
+          if (upA[i] !== 1 && wallA[i] !== 1) continue
+          // v54：该层内部墙格画墙体色（楼板色深一档）——2F/3F 房间隔墙清晰可读
+          g.fillStyle = wallA[i] === 1 ? '#1d2b25' : '#31423a'
         } else {
-          if (m.tiles[i] !== 1) continue
+          if (m.tiles[i] !== 1 || wwSet.has(i)) continue
           g.fillStyle = '#3a3423'
         }
         g.fillRect(x * s, y * s, s, s)
       }
+    // v54：楼梯坡道标记（仅多层地图）——亮青三角指向上行方向（dir 1+x 2-x 3+y 4-y），与出口金点/地标黄三角区分；
+    // 按视图楼层过滤：坡道格在该层有地面/楼板才显示（1F 看 tiles，2F 看 up，3F 看 up2），未探索不显示
+    if (floors > 1) {
+      g.fillStyle = '#4de3ff'
+      for (let y = 0; y < m.h; y++)
+        for (let x = 0; x < m.w; x++) {
+          const i = y * m.w + x
+          const sv = m.stair[i]
+          if ((sv & 7) === 0 || !engine.explored[i]) continue
+          // v54c：按服务楼层带过滤（stairServesBand）——2F→3F 坡道不再出现在 1F 视图，1F→2F 不出现在 3F
+          if (!stairServesBand(sv, viewFloor as 0 | 1 | 2)) continue
+          if ((viewFloor === 2 ? m.up2[i] : viewFloor === 1 ? m.up[i] : m.tiles[i]) !== 1) continue
+          const cx = (x + 0.5) * s, cy = (y + 0.5) * s, r = Math.max(1.6, s * 0.38)
+          const d = sv & 7
+          g.beginPath()
+          if (d === 1) { g.moveTo(cx + r, cy); g.lineTo(cx - r, cy - r); g.lineTo(cx - r, cy + r) }
+          else if (d === 2) { g.moveTo(cx - r, cy); g.lineTo(cx + r, cy - r); g.lineTo(cx + r, cy + r) }
+          else if (d === 3) { g.moveTo(cx, cy + r); g.lineTo(cx - r, cy - r); g.lineTo(cx + r, cy - r) }
+          else { g.moveTo(cx, cy - r); g.lineTo(cx - r, cy + r); g.lineTo(cx + r, cy + r) }
+          g.closePath(); g.fill()
+        }
+    }
     // ---- 标注（v32）：已探索区域内的容器 / 地面物品 / 出口（含名称）----
     // 容器：方框（亮=未搜刮，暗=已搜刮）；v43：按结构的所属楼层过滤
     for (const st of m.structures) {
@@ -143,9 +172,9 @@ function BigMap({ engine }: { engine: Engine }) {
       g.fillStyle = st.looted ? 'rgba(160,140,90,0.35)' : '#c9a03a'
       g.fillRect((st.x + st.w / 2) * s - 2.5, (st.y + st.h / 2) * s - 2.5, 5, 5)
     }
-    // 地面物品：小青点（v43：按物品高度带过滤）
+    // 地面物品：小青点（v43：按物品高度带过滤；v54：三层高度带）
     for (const it of m.items) {
-      if (floors > 1 && ((it.z ?? 0) >= 1.5 ? 1 : 0) !== viewFloor) continue
+      if (floors > 1 && ((it.z ?? 0) >= 4.5 ? 2 : (it.z ?? 0) >= 1.5 ? 1 : 0) !== viewFloor) continue
       const idx = Math.floor(it.y) * m.w + Math.floor(it.x)
       if (idx < 0 || idx >= m.w * m.h || !engine.explored[idx]) continue
       g.fillStyle = '#6ad9c9'
@@ -186,6 +215,7 @@ function BigMap({ engine }: { engine: Engine }) {
     g.textAlign = 'left'
     if (viewFloor === 0) for (const e of m.exits) {
       const isStairs = e.def.kind === 'graystairs' || e.def.kind === 'graystairsup' || e.def.kind === 'stairs'
+        || e.def.kind === 'oldstairs' // v54：L4 古典楼梯小地图常显
       if (!e.discovered && !isStairs) continue
       const ex = (e.x + 0.5) * s, ey = (e.y + 0.5) * s
       g.fillStyle = e.discovered ? '#f5e37a' : 'rgba(245,227,122,0.45)'
@@ -220,13 +250,13 @@ function BigMap({ engine }: { engine: Engine }) {
         />
         {floors > 1 && (
           <div className="absolute right-1 top-1/2 flex -translate-y-1/2 flex-col gap-1">
-            {([0, 1] as const).map((f) => (
+            {Array.from({ length: floors }, (_, f) => f).map((f) => ( // v54：按楼层数动态生成（1F/2F/3F）
               <button
                 key={f}
                 className="menu-btn px-2 py-1 text-[11px]"
                 style={viewFloor === f ? { borderColor: 'var(--amber)', color: 'var(--amber)' } : { opacity: 0.55 }}
                 title={`查看 ${f + 1}F`}
-                onClick={() => { setFloorSel(f === playerBand ? null : f); audio.uiTick() }}
+                onClick={() => { setFloorSel(f === playerBand ? null : (f as 0 | 1 | 2)); audio.uiTick() }}
               >{f + 1}F{f === playerBand ? '·' : ''}</button>
             ))}
           </div>
@@ -252,6 +282,8 @@ function BigMap({ engine }: { engine: Engine }) {
         <span><span style={{ color: '#6ad9c9' }}>·</span> 地面物品</span>
         <span><span style={{ color: '#3a3423' }}>■</span> 已探索地板</span>
         {floors > 1 && <span><span style={{ color: '#31423a' }}>■</span> 上层楼板（{viewFloor + 1}F 视图）</span>}
+        {floors > 1 && <span><span style={{ color: '#1d2b25' }}>■</span> 上层墙体（{viewFloor + 1}F 视图）</span>}
+        {floors > 1 && <span><span style={{ color: '#4de3ff' }}>▲</span> 楼梯（指向上行方向）</span>}
       </div>
     </div>
   )
@@ -270,13 +302,16 @@ function itemStatChips(it: (typeof ITEMS)[string], engine?: Engine, berryDest?: 
     if (it.use === 'eat') chips.push(`饥饿 +${v}`)
     else if (it.use === 'heal') chips.push(`生命 +${v}`)
     else if (it.use === 'sanity') chips.push(`理智 ${v >= 0 ? '+' : ''}${v}`)
+    else if (it.use === 'sanityeat') chips.push(`理智 +${v}`, `饥饿 +${it.value2 ?? 0}`)
     else if (it.use === 'bigsanity') chips.push(`理智 +${v}`)
     else if (it.use === 'battery') chips.push(`电池 +${v}%`)
     else if (it.use === 'stamina') chips.push('体力回满 · 恢复翻倍 60s')
     else if (it.use === 'light') chips.push('放置临时光源')
   }
+  // v54：口渴效果（饮用/汤类；正负均可）
+  if (it.value3) chips.push(`口渴 ${it.value3 >= 0 ? '+' : ''}${it.value3}`)
   // 液态痛苦（Object 48）：危险消耗品——自饮重创，装枪高伤
-  if (it.type === 'liquidpain') chips.push('饮用：生命 -35 · 理智 -55', '装入滋水枪：腐蚀水线 60 伤害', '⚠ 切勿饮用')
+  if (it.type === 'liquidpain') chips.push('饮用：生命 -35 · 理智 -55 · 口渴 -30', '装入滋水枪：腐蚀水线 60 伤害', '⚠ 切勿饮用')
   if (it.throw) chips.push(`投掷：${{ explode: '范围伤害', shock: '电击+眩晕', noise: '声响引怪', lure: '引路者诱饵' }[it.throw]}`)
   if (it.passive) chips.push(`被动：${it.passive}`)
   if (it.equip) chips.push(`装备位：${{ offhand: '副手', body: '身体', gloves: '手套', head: '头饰', pocket: '口袋' }[it.equip]}`)
@@ -1213,6 +1248,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
             <div className="flex justify-between"><span style={{ color: 'var(--text-dim)' }}>生命</span><span>{Math.round(p.hp)}/100</span></div>
             <div className="flex justify-between"><span style={{ color: 'var(--text-dim)' }}>体力</span><span>{Math.round(p.stamina)}/100</span></div>
             <div className="flex justify-between"><span style={{ color: 'var(--text-dim)' }}>饥饿</span><span>{Math.round(p.hunger)}/100</span></div>
+            <div className="flex justify-between"><span style={{ color: 'var(--text-dim)' }}>口渴</span><span>{Math.round(p.thirst)}/100</span></div>
             <div className="flex justify-between"><span style={{ color: 'var(--text-dim)' }}>理智</span><span>{Math.round(p.sanity)}/100</span></div>
             <div className="flex justify-between"><span style={{ color: 'var(--text-dim)' }}>深度</span><span>{levelLabel(p.level)} · {levelDefOf(p.level)?.name}</span></div>
             <div className="flex justify-between"><span style={{ color: 'var(--text-dim)' }}>击杀数</span><span>{p.kills}</span></div>

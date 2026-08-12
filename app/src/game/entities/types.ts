@@ -52,6 +52,10 @@ export interface EntityDef {
   hunts?: string[] // 实体对实体仇恨：主动猎杀附近的指定类型实体（尸鼠猎杀死亡飞蛾）；被玩家激怒时优先反击玩家
   // ===== v42：尸鼠（合并死亡鼠）特性 =====
   grudge?: boolean // 记仇：被动实体被激怒后持续仇恨，脱战 8 秒也不平息（死亡鼠的凶猛反击血统）
+  // ===== v53：L3 高智能实体实例变体（chunk raw 标记经 instantiate 浅拷贝带入）=====
+  l3face?: boolean // L3 无面灵：面部长出位置/数量错误的眼耳鼻口器官
+  tool?: boolean // L3 无面灵：使用石器工具（伤害上调，手部建模持有石器）
+  capybara?: boolean // L3 尸鼠：水豚形态（体型变大）
   // ===== v25：栖息地（生成位置过滤）=====
   // indoor=仅室内瓦片（m.outdoor=0）；outdoor=仅室外瓦片（m.outdoor=1，如小巷/街道/田野/海面）；
   // any（缺省）=随意。生成时无符合瓦片则降级 any 并计数告警。
@@ -92,5 +96,6 @@ export interface Entity {
   intimidated?: boolean // 猎犬：正处于「直视+噪音」威慑中（播报去抖）
   provoked?: boolean // 被动实体（无面灵）：被玩家攻击后激怒，持续反击直到脱战平息
   targetEnt?: Entity // 实体对实体仇恨目标（被其他实体攻击后反击伤害者——死亡飞蛾反击尸鼠）
+  encountered?: boolean // v54：图鉴遭遇已计数（按个体去重——看见/索敌/攻击命中/特殊交互，每只只计一次）
   blackoutSpawn?: boolean // 停电期间生成（笑魇）：灯光恢复时消散
 }

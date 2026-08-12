@@ -2,9 +2,9 @@
 ;(globalThis as unknown as Record<string, unknown>).window = { addEventListener() {}, removeEventListener() {}, matchMedia: () => ({ matches: false }) }
 ;(globalThis as unknown as Record<string, unknown>).document = { createElement: () => ({ getContext: () => null, style: {} }), getElementById: () => null, addEventListener() {}, removeEventListener() {}, body: { appendChild() {} } }
 const { engine } = await import('../src/game/engine.ts')
-const { CONTAINERS } = await import('../src/game/containers.ts')
+const { CONTAINERS } = await import('../src/game/decorations/containers.ts')
 const { LEVELS } = await import('../src/game/levels/index.ts')
-const { tileAt } = await import('../src/game/mapgen.ts')
+const { tileAt } = await import('../src/game/world/mapgen.ts')
 
 let fail = 0
 const bad = (m: string) => { console.log('  ✗ ' + m); fail++ }

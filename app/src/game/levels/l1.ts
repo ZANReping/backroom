@@ -1,5 +1,5 @@
 // Level 1「宜居地带」层级定义（v29：无限 chunk 生成；设定对齐 wikidot「宜居地带」与 Fandom）
-import type { LevelDef } from '../types'
+import type { LevelDef } from '../core/types'
 
 export const L1: LevelDef = {
   id: 1,

@@ -103,6 +103,109 @@ BNTG 绿底定居点海报（天平徽记 + 仓库/办公楼图案 + 「办公�
 - `brc_logo.png`：PIL 程序绘制（`scripts/gen-brc-logo.py` 可复现）——后室装修公司标志：
   淡紫房屋形盾 + 深描边 + 黄色绶带（B.R.C. 字样）+ 红门 + 山墙交叉锯/锤，图鉴「团体」页用。
 - `icons/pixel/item_eaglecoin.png`：32×32 像素手绘天鹰币（128×128 最近邻放大），随项目同许可发布。
+- `photo_mountain.png` / `photo_lake.png` / `photo_forest.png` / `photo_house.png` / `photo_street.png` /
+  `photo_still.png`（v54）：PIL 程序绘制
+  （`scripts/gen-photos.py` 可复现）——photo 结构变种贴图池：山景/湖泊/森林风景、
+  房屋/街道、咖啡杯静物（256×192 含白边，统一做旧：降饱和 + 暖色偏移 + 高斯羽化暗角）。
+  无显式 data.tex 的 photo 按瓦片坐标哈希从本池选一张。
+
+## v53：Level 0 地板/天花板「仅贴图」烘焙（渲染层不再叠乘底色）
+
+| 文件 | 素材 | 用途 | 处理 |
+|---|---|---|---|
+| l0_floor.jpg | 既有 L0 地毯贴图（`_src_l0_floor_prebake.jpg` 为改造前备份） | L0 地面 | 线性空间 × pal.floor #b8a548 烘焙 |
+| l0_ceil.jpg | 既有 L0 天花板贴图（`_src_l0_ceil_prebake.jpg` 为改造前备份） | L0 天花板 | 线性空间 × (pal.wallTop #8a7a33 × 0.55) 烘焙 |
+
+处理脚本：`scripts/gen-l0-bake.py` 可复现（幂等，从 `_src_` 备份重新生成）。
+渲染侧：顶点色只保留调制因子（明暗噪点/湿地 ×0.62/tint 折算），且 v50 的自发光提亮已删除，
+除该自发光外输出与改造前逐点一致。
+
+## v53：Level 6~11 地形贴图 + 房顶/楼体贴图 + EL3A 二层贴图
+
+全部 ambientCG CC0 直下载（curl 需 `--tlsv1.2 -k`，缓存 `scripts/.cache-l6-l11/`），
+处理：居中裁方 512×512 → 去色至近中性灰 → 亮度归一 → JPEG q86。
+地形贴图由渲染器按 `l{层级id}_wall|floor|ceil` 自动加载，加载失败回退程序噪点；
+房顶/楼体贴图 tint = 原纯色 ÷ 0.72（贴图均值）折算，保持原有明度观感。
+
+| 文件 | 素材 | 用途 | 处理 |
+|---|---|---|---|
+| l6_wall.jpg | Concrete033 | L6 熄灯：深色混凝土墙 | 去色 + 亮度归一 0.74 |
+| l6_floor.jpg | Concrete026 | L6 地面（旧混凝土） | 去色 + 亮度归一 0.68 |
+| l6_ceil.jpg | Concrete032 | L6 天花板 | 去色 + 亮度归一 0.78 |
+| l7_wall.jpg | Concrete035 | L7 深海恐惧：水渍感混凝土墙 | 去色 + 亮度归一 0.72 |
+| l7_floor.jpg | Concrete038 | L7 地面（被淹混凝土） | 去色 + 亮度归一 0.66 |
+| l7_ceil.jpg | Concrete031 | L7 天花板 | 去色 + 亮度归一 0.78 |
+| l8_wall.jpg | Rock035 | L8 洞穴：岩壁 | 去色 + 亮度归一 0.74 |
+| l8_floor.jpg | Rock022 | L8 洞底 | 去色 + 亮度归一 0.68 |
+| l8_ceil.jpg | Rock045 | L8 洞顶 | 去色 + 亮度归一 0.76 |
+| l9_wall.jpg | WoodSiding010 | L9 郊区：房屋木挂板外墙 | 去色 + 亮度归一 0.74 |
+| l9_floor.jpg | Asphalt022 | L9 街道沥青地面 | 去色 + 亮度归一 0.66 |
+| l9_ceil.jpg | Plaster007 | L9 室内粉刷天花 | 去色 + 亮度归一 0.80 |
+| l10_wall.jpg | Planks003 | L10 丰收：谷仓木板墙 | 去色 + 亮度归一 0.74 |
+| l10_floor.jpg | Ground054 | L10 泥土地面 | 去色 + 亮度归一 0.64 |
+| l10_ceil.jpg | Planks005 | L10 谷仓内顶（木板） | 去色 + 亮度归一 0.78 |
+| l11_wall.jpg | Bricks042 | L11 不夜城：临街砖墙 | 去色 + 亮度归一 0.74 |
+| l11_floor.jpg | Asphalt019 | L11 街道沥青地面 | 去色 + 亮度归一 0.66 |
+| l11_ceil.jpg | OfficeCeiling006 | L11 室内办公吊顶 | 去色 + 亮度归一 0.80 |
+| l9_roof.jpg | RoofingTiles002 | L9 房屋双坡瓦顶 + 檐口（structures house） | 去色 + 亮度归一 0.72；tint #403d43/#514b43 |
+| l10_roof.jpg | CorrugatedSteel005 | L10 谷仓金属屋顶 + 檐口（structures barn） | 去色 + 亮度归一 0.72；tint #a95140/#c25e47/#833d31 |
+| l11_tower.jpg | Concrete039 | L11 楼体混凝土立面（towerblock，程序 towerFacade 留作回退） | 去色 + 亮度归一 0.72；tint #93979e |
+| l11_roof.jpg | Concrete045 | L11 屋顶板/女儿墙（平板混凝土） | 去色 + 亮度归一 0.72；tint #777d84 |
+| l105_upwall.jpg | Plaster001 | EL3A 二层办公区隔墙 | 去色 + 亮度归一 0.78 |
+| l105_upceil.jpg | OfficeCeiling005 | EL3A 二层办公吊顶 | 去色 + 亮度归一 0.82 |
+| l105_upfloor.jpg | Carpet002 | EL3A 二层办公地毯（夹楼板上表面；底面仍 l105_ceil） | 去色 + 亮度归一 0.72 |
+
+处理脚本：`scripts/gen-l6-l11-textures.py` 可复现（缓存目录 `scripts/.cache-l6-l11/`）。
+
+## v54：Gamma 基地（M.E.G. 三层据点，id 106）贴图（浅色涂装粉刷 + 办公地砖 + 涂装粉刷吊顶）
+
+全新下载（不复用既有素材；本机 TLS 需 `curl --tlsv1.2 -k -L`，缓存 `scripts/.cache-l106/`）：
+
+| 文件 | 素材 | 用途 | 处理 |
+|---|---|---|---|
+| l106_wall.jpg | PaintedPlaster017 | Gamma 基地墙面（浅色涂装粉刷，MEG 公共/行政风） | 去色 + 亮度归一 0.78 |
+| l106_floor.jpg | Tiles006 | 办公地砖地面（含 2F/3F 楼板顶面——geometry 多层楼板顶面走 l{id}_floor） | 去色 + 亮度归一 0.74 |
+| l106_ceil.jpg | PaintedPlaster015 | 涂装粉刷吊顶（OfficeCeiling 001-006 均被占；兼作上层楼板底面） | 去色 + 亮度归一 0.84 |
+
+处理脚本：`scripts/gen-l106-textures.py` 可复现。palette（`levels/lgamma.ts`）按贴图效果微调
+（地砖带深色圆点胶粒，地板/墙面较 Alpha 略提亮半档；贴图去色归一后 palette 负责色调，同 l274/l105 先例）。
+
+## v54：存储设施（B.N.T.G. 据点，id 107）贴图（波纹钢工业墙 + 仓库混凝土 + 涂装粉刷吊顶）
+
+全新下载（不复用既有素材；缓存 `scripts/.cache-l107/`）：
+
+| 文件 | 素材 | 用途 | 处理 |
+|---|---|---|---|
+| l107_wall.jpg | CorrugatedSteel003 | 存储设施墙面（波纹钢工业墙，与 EL3A 的 009 不同款） | 去色 + 亮度归一 0.72 |
+| l107_floor.jpg | Concrete028 | 仓库混凝土地面 | 去色 + 亮度归一 0.66 |
+| l107_ceil.jpg | PaintedPlaster016 | 涂装粉刷吊顶 | 去色 + 亮度归一 0.80 |
+
+处理脚本：`scripts/gen-l107-textures.py` 可复现。
+
+## v54：蓝色救赎（杰瑞的信众圣所据点，id 108）贴图（蓝灰石墙/石板/蓝色吊顶）
+
+全新下载（缓存 `scripts/.cache-l108/`；蓝乘色处理同 l274 先例——去色后蓝移、归一补偿压暗）：
+
+| 文件 | 素材 | 用途 | 处理 |
+|---|---|---|---|
+| l108_wall.jpg | Bricks060 | 圣所石墙（蓝灰） | 去色 + 蓝乘色 #a2aad6 + 亮度归一 0.74 |
+| l108_floor.jpg | PavingStones142 | 圣所石板地面（蓝灰） | 去色 + 蓝乘色 #8a92c8 + 亮度归一 0.70 |
+| l108_ceil.jpg | PaintedPlaster013 | 蓝色吊顶 | 去色 + 蓝乘色 #8a92c8 + 亮度归一 0.80 |
+
+处理脚本：`scripts/gen-l108-textures.py` 可复现。
+
+## v54：M.E.G. Omega 基地（id 109，Level 4 子层级据点）贴图（浅色涂装粉刷墙/办公地毯/粉刷吊顶）
+
+全新下载（缓存 `scripts/.cache-l109/`；占用避让——Carpet002、OfficeCeiling 001-006、PaintedPlaster013/015/016/017 均被占）：
+
+| 文件 | 素材 | 用途 | 处理 |
+|---|---|---|---|
+| l109_wall.jpg | PaintedPlaster004 | 平整净白粉刷墙（现代办公室风；003/008 弃用） | 去色 + 亮度归一 0.86 |
+| l109_floor.jpg | Carpet014 | 整洁浅灰方块地毯（007/013 弃用） | 去色 + 亮度归一 0.72 |
+| l109_ceil.jpg | PaintedPlaster010 | 粉刷吊顶 | 去色 + 亮度归一 0.84 |
+
+处理脚本：`scripts/gen-l109-textures.py` 可复现。海报 `omega_poster.png` 为 PIL 程序绘制
+（`scripts/gen-l109-poster.py` 可复现；鹰徽 + 档案柜图案，风格同 gen-l3-posters.py）。
 
 ## v41：团体标志（图鉴「团体」页介绍框水印，`scripts/gen-faction-logos.py` 可复现）
 
@@ -122,6 +225,13 @@ BNTG 绿底定居点海报（天平徽记 + 仓库/办公楼图案 + 「办公�
 - `angel_fresco.png`（v51）：PIL 程序绘制（`scripts/gen-angel-fresco.py` 可复现）——圣所宗教画作：
   512×640 竖幅旧画布 + 天使神祇剪影（展翼长袍立像 + 光环 + 圣光晕）+ 水渍流痕/边缘磨损风化；
   L3 圣所墙面与栅栏后墙面装饰（megposter data.tex + data.tall 竖幅，wikidot L3 设定画作大多位于栅栏之后）。
+- `l3_art_angel.png` / `l3_art_skeleton.png` / `l3_art_sketch.png`（v53）：PIL 程序绘制
+  （`scripts/gen-l3-artworks.py` 可复现）——L3 廊道砖墙大幅艺术品（bigpainting 结构，wikidot L3
+  「艺术品」：砖墙上覆盖白色画布状材质，绘有来历不明的画作/素描）：吹号天使（面部涂抹）/
+  带翅膀的骷髅（桌案烛台）/ 狂乱素描笔迹。
+- `l3_glass_scales.png` / `l3_glass_trumpets.png` / `l3_glass_heart.png`（v53b）：PIL 程序绘制
+  （`scripts/gen-l3-stainedglass.py` 可复现）——L3 圣所彩色玻璃花窗（stainedglass 结构，
+  512×768 尖拱竖窗：铅条分格 + 彩玻碎块 + 天使剪影）：红翼持天平 / 三天使吹号 / 金翼持心。
 - 上述 `_src_*` 为脚本输入原图（wikidot 内容 CC BY-SA 3.0）；处理规则：纯色标志重着色为主题色、
   有色标志（BRC / 杰瑞的信众）保留原色；水印以低透明度居中于介绍框背景，不溢出框。
 
@@ -141,3 +251,25 @@ BNTG 绿底定居点海报（天平徽记 + 仓库/办公楼图案 + 「办公�
 处理脚本：`scripts/gen-l3-textures.py` 可复现。
 
 下载地址形如 `https://ambientcg.com/get?file=<ID>_1K-JPG.zip`。
+
+## v55：Level 5 无限化（纯 PIL 程序绘制，`scripts/gen-l5-textures.py` 可复现）
+
+| 文件 | 用途 |
+|---|---|
+| l5_carpet.png | 红金华丽地毯（深红底 + 金色回纹边框 + 菱形团花）——走廊地面（tint 21）与 rug 结构缺省贴图 |
+| l5_carpet_blue.png | 蓝金华丽地毯变体（藏青底 + 金纹）——大厅/房间地毯块（rug data.tex） |
+| l5_tile.png | 泳池瓷砖（奶白偏青小方砖 + 灰青砖缝）——游泳池地面（tint 23） |
+
+| l5_portrait1.png | 古典肖像·贵族（程序剪影，暗色古典配色 + 暗角）——主厅/走廊墙 bigpainting |
+| l5_portrait2.png | 古典肖像·夫妇像（同上） |
+| l5_portrait3.png | 古典肖像·骑马像（同上） |
+
+肖像画处理脚本：`scripts/gen-l5-portraits.py` 可复现（512×640 竖幅，纯 PIL）。
+
+| l5_notice.png | M.E.G. 哨所「家政服务」告示（程序绘制：鲜黄饰带/鹰徽/指路箭头）——infiniteL5 走廊 landmark |
+| l5_homelysign.png | 家常酒店标志牌（程序绘制：青灰底/烫银边/酒店剪影）——infiniteL5 主厅 landmark |
+
+地标贴图脚本：`scripts/gen-l5-notice.py` 可复现（512×640 竖幅，纯 PIL）。
+
+### v55：L5 据点贴图沿用
+据点 110/111/112（家政服务哨所/家常酒店/原住民）不制新贴图——经 `shared.ts` 的 `LEVEL_TEX_ALIAS` 直接沿用 L5 主层级 l5_wall/l5_floor/l5_ceil 与 TEX2 变体（l5_wall2/l5_floor2）。

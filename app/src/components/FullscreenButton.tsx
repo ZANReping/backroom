@@ -1,7 +1,7 @@
 // 标题界面全屏按钮：PC 直接全屏；移动端全屏后尝试锁定横屏；iOS 不支持时提示兜底
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { audio } from '@/game/audio'
+import { audio } from '@/game/core/audio'
 import { IconFullscreen, IconFullscreenExit } from './icons'
 
 function isIOS(): boolean {

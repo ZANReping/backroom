@@ -1,6 +1,6 @@
 // Tom 的餐馆（不属于任何团体的独立餐馆据点：家庭餐馆式手工布局，见 mapgenOutpost.ts genTomOutpost；
 // 设定依据 wikidot 佐藤爱子——汤姆餐厅：Tom 主厨、爱子跑堂，食客来自各团体与散人）
-import type { LevelDef } from '../types'
+import type { LevelDef } from '../core/types'
 
 export const LTOM: LevelDef = {
   id: 104, // 据点独立 id 空间（100+）：Level 1 天鹰段的子层级，不占 LEVELS 数字下标

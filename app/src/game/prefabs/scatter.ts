@@ -1,7 +1,7 @@
 // 层级特色散点生成物（门/窗/桌/吊灯/柜等，贴墙或空地）
-import { RNG } from '../rng'
-import type { GameMap } from '../mapgen'
-import type { Structure, StructKind } from '../types'
+import { RNG } from '../core/rng'
+import type { GameMap } from '../world/mapgen'
+import type { Structure, StructKind } from '../core/types'
 import { idx, isFloor } from './shared'
 
 // ---------- 层级特色散点生成物（门/窗/桌/吊灯/柜等，贴墙或空地） ----------

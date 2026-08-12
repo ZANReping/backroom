@@ -104,8 +104,11 @@ function textureUrl(name: string): string {
   const base = ((import.meta.env?.BASE_URL as string | undefined) ?? '/').replace(/\/?$/, '/')
   return `${base}textures/${file}`
 }
-export function levelTexture(name: string, fallback: () => THREE.Texture): THREE.Texture {
-  const cached = texCache.get(name)
+// v55：层级贴图别名——L5 三处据点（110/111/112）直接沿用主层级 L5 贴图（l5_wall/floor/ceil 等）
+export const LEVEL_TEX_ALIAS: Partial<Record<number, number>> = { 110: 5, 111: 5, 112: 5 }
+export const texLevelId = (id: number) => LEVEL_TEX_ALIAS[id] ?? id
+
+export function levelTexture(name: string, fallback: () => THREE.Texture): THREE.Texture {  const cached = texCache.get(name)
   if (cached) return cached
   const ph = fallback()
   // v15：L0 墙纸等贴图按 UV>1 平铺（墙盒 UV 按墙高放大），需要重复环绕；

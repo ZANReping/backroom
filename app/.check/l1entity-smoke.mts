@@ -4,7 +4,7 @@
 ;(globalThis as unknown as Record<string, unknown>).document = { createElement: () => ({ getContext: () => null, style: {} }), getElementById: () => null, addEventListener() {}, removeEventListener() {}, body: { appendChild() {} } }
 const { engine } = await import('../src/game/engine.ts')
 const { makeEntity } = await import('../src/game/entities/index.ts')
-const { tileAt } = await import('../src/game/mapgen.ts')
+const { tileAt } = await import('../src/game/world/mapgen.ts')
 const { look } = await import('../src/game/renderer/shared.ts')
 
 let fail = 0

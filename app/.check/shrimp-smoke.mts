@@ -11,9 +11,9 @@
 
 const { engine } = await import('../src/game/engine.ts')
 const { ENTITIES } = await import('../src/game/entities/index.ts')
-const { generateInfinite, CS } = await import('../src/game/infinite.ts')
+const { generateInfinite, CS } = await import('../src/game/world/infinite.ts')
 const { LEVELS } = await import('../src/game/levels/index.ts')
-const { ITEMS } = await import('../src/game/items.ts')
+const { ITEMS } = await import('../src/game/content/items.ts')
 
 let fail = 0
 const ok = (c: boolean, m: string) => { console.log((c ? '  ✓ ' : '  ✗ ') + m); if (!c) fail++ }

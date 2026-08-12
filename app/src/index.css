@@ -16,6 +16,7 @@
     --sanity: #7a6fd0;
     --stamina: #6f9a55;
     --hunger: #c98a3d;
+    --thirst: #3d9fc9;
     --exit: #f5e37a;
     --quote-shadow: none;
   }
@@ -34,6 +35,7 @@
     --sanity: #6a5fb8;
     --stamina: #5d8147;
     --hunger: #dd6611; /* alt-accent */
+    --thirst: #2b7fb8; /* 纸面上可读的青蓝 */
     --exit: #8f730f; /* 纸面上可读的暗金 */
     --quote-shadow: 0 2px 4px rgba(25, 20, 16, 0.25);
   }
@@ -247,6 +249,10 @@
   0%, 100% { opacity: 0.55; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.015); }
 }
+@keyframes thirstPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
 @keyframes sanityBreathe {
   0%, 100% { opacity: 0.5; filter: blur(0px); }
   50% { opacity: 1; filter: blur(2px); }
@@ -273,6 +279,7 @@
   to { transform: scale(1); opacity: 1; }
 }
 .anim-hungerPulse { animation: hungerPulse 2.2s ease-in-out infinite; }
+.anim-thirstPulse { animation: thirstPulse 2.8s ease-in-out infinite; }
 .anim-sanityBreathe { animation: sanityBreathe 3.2s ease-in-out infinite; }
 .anim-hpPulse { animation: hpPulse 1s ease-in-out infinite; }
 .anim-cornerShadow { animation: cornerShadow 5s linear infinite; }
@@ -355,6 +362,7 @@ img.pixel-icon { image-rendering: pixelated; image-rendering: crisp-edges; }
   --sanity: #6a5fb8;
   --stamina: #5d8147;
   --hunger: #dd7711; /* basalt alternate 橙 */
+  --thirst: #2f7fd0;
   --exit: #8f730f;
   --quote-shadow: 0 2px 6px rgba(10, 10, 11, 0.12);
 }
@@ -369,6 +377,7 @@ img.pixel-icon { image-rendering: pixelated; image-rendering: crisp-edges; }
   --sanity: #8a7fe0;
   --stamina: #6f9a55;
   --hunger: #c98a3d;
+  --thirst: #4aa8d8;
   --exit: #f5e37a;
   --quote-shadow: 0 3px 5px rgba(0, 0, 0, 0.35);
 }
@@ -383,6 +392,7 @@ img.pixel-icon { image-rendering: pixelated; image-rendering: crisp-edges; }
   --sanity: #8a7fe0;
   --stamina: #6f9a55;
   --hunger: #c98a3d;
+  --thirst: #4aa8d8;
   --exit: #f5e37a;
   --quote-shadow: 0 3px 5px rgba(0, 0, 0, 0.35);
 }
@@ -397,6 +407,7 @@ img.pixel-icon { image-rendering: pixelated; image-rendering: crisp-edges; }
   --sanity: #8f7fe0;
   --stamina: #7fb35a;
   --hunger: #d97b2b;
+  --thirst: #2f9fd8;
   --exit: #ffd75e;
   --quote-shadow: 0 0 8px rgba(229, 140, 36, 0.18);
 }
@@ -411,6 +422,7 @@ img.pixel-icon { image-rendering: pixelated; image-rendering: crisp-edges; }
   --sanity: #6a5fb8;
   --stamina: #5d8147;
   --hunger: #dd6611;
+  --thirst: #2b7fb8;
   --exit: #8f730f;
   --quote-shadow: 0 2px 4px rgba(60, 40, 10, 0.25);
 }
@@ -425,6 +437,7 @@ img.pixel-icon { image-rendering: pixelated; image-rendering: crisp-edges; }
   --sanity: #6a5fb8;
   --stamina: #5d8147;
   --hunger: #c97b1e;
+  --thirst: #3d8fc9;
   --exit: #6e6408;
   --quote-shadow: 2px 3px 0 rgba(54, 52, 21, 0.18);
 }

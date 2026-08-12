@@ -1,6 +1,6 @@
 // 预制件放置器：在「纯墙/虚空」区域开洞造房 / 植入既有开阔区域
-import { RNG } from '../rng'
-import type { GameMap } from '../mapgen'
+import { RNG } from '../core/rng'
+import type { GameMap } from '../world/mapgen'
 import { idx, isFloor, type PrefabDef } from './shared'
 import { PREFABS, levelOf } from './all'
 

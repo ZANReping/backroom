@@ -1,7 +1,7 @@
 # 生成物品像素图标（PIL 程序绘制，无外部素材，随项目同许可发布）
 # 风格：32×32 原稿、深色描边、有限调色板、透明背景，最近邻放大 4 倍至 128×128
 # （与既有 item_eaglecoin.png 等 54 张同一规格，显示层见 HUD.tsx ItemGlyph 的 PIXEL_ICON 表）。
-# 物品清单直接读 src/game/items.ts；已有 png 的跳过（eaglecoin 等旧图不覆盖）；
+# 物品清单直接读 src/game/content/items.ts；已有 png 的跳过（eaglecoin 等旧图不覆盖）；
 # 若某件物品缺图且本脚本没有它的画法 → 报错退出（强制全覆盖）。
 # 用法：cd app && python scripts/gen-item-icons.py
 import os
@@ -37,6 +37,16 @@ def draw_disinfectant(d):
     d.rectangle([10, 12, 21, 17], fill='#f4f6f0')          # 标签带
     d.rectangle([14, 13, 17, 16], fill='#8676e2')          # 紫十字（横竖两笔）
     d.rectangle([15, 12, 16, 17], fill='#8676e2')
+
+
+def draw_luckymilk(d):
+    # 幸运豆奶（v54，Object 28）：豆奶纸盒——乳白盒身 + 绿顶折封口 + 四叶草标
+    obox(d, [10, 6, 22, 28], '#eef0e8')                     # 盒身
+    d.polygon([(10, 6), (16, 2), (22, 6)], fill='#7ab06a', outline=INK)  # 顶折（屋顶形）
+    d.rectangle([15, 2, 17, 6], fill='#5a8a4e')             # 顶折脊
+    d.rectangle([10, 15, 22, 21], fill='#a8d89a')           # 标带（浅绿）
+    d.point([(14, 17), (16, 17), (15, 16), (15, 18), (17, 18)], fill='#3a7a2e')  # 四叶草
+    d.point([(11, 24), (20, 24), (11, 25), (20, 25)], fill='#c9d4c0')   # 盒身细字线
 
 def draw_welcomenote(d):
     # 致新流浪者的纸条：折起的横线纸（干净米色，区别于烧焦字条）
@@ -273,6 +283,7 @@ def candy_bag(label):
 
 DRAW = {
     'disinfectant': draw_disinfectant,
+    'luckymilk': draw_luckymilk,  # v54
     'welcomenote': draw_welcomenote,
     'tomatosoup': draw_tomatosoup,
     'gardensalad': draw_gardensalad,
@@ -308,7 +319,7 @@ DRAW = {
 }
 
 # ---------- 物品清单：直接解析 items.ts ----------
-src = open('src/game/items.ts', encoding='utf-8').read()
+src = open('src/game/content/items.ts', encoding='utf-8').read()  # v54：items.ts 移至 content/（此前路径必崩）
 types = re.findall(r"^  (\w+): \{ type: '", src, re.M)
 if not types:
     sys.exit('未能从 items.ts 解析到物品清单')

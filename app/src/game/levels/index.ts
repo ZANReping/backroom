@@ -2,7 +2,7 @@
 // 索引 0–11 = Level 0–11；索引 12 = Level 601「The End」结局层（displayId 601）。
 // 据点（outpost 层级）不占本数组下标——它们是入口层级的子层级，走独立 id 空间（100+），
 // 经 levelDefOf 解析（OUTPOST_LEVEL_DEFS）。
-import type { LevelDef } from '../types'
+import type { LevelDef } from '../core/types'
 import { L0 } from './l0'
 import { L1 } from './l1'
 import { L2 } from './l2'
@@ -22,11 +22,18 @@ import { LARIANE } from './lariane'
 import { LTOM } from './ltom'
 import { LEL3A } from './lel3a'
 import { L274 } from './l274'
+import { LGAMMA } from './lgamma'
+import { LSTORAGE } from './l107'
+import { LBLUE } from './l108'
+import { LOMEGA } from './l109'
+import { LHOUSEKEEPING } from './l110' // v55
+import { LHOMELY } from './l111'
+import { LORIGINALS } from './l112'
 
 export const LEVELS: LevelDef[] = [L0, L1, L2, L3, L4, L5, L6, L7, L8, L9, L10, L11, L601]
 
 /** 据点层级定义（独立 id 空间 100+，不占 LEVELS 下标；v45：Level 274 亦走此空间） */
-const OUTPOST_LEVEL_DEFS: Record<number, LevelDef> = { [LALPHA.id]: LALPHA, [LBNTG.id]: LBNTG, [LARIANE.id]: LARIANE, [LTOM.id]: LTOM, [LEL3A.id]: LEL3A, [L274.id]: L274 }
+const OUTPOST_LEVEL_DEFS: Record<number, LevelDef> = { [LALPHA.id]: LALPHA, [LBNTG.id]: LBNTG, [LARIANE.id]: LARIANE, [LTOM.id]: LTOM, [LEL3A.id]: LEL3A, [L274.id]: L274, [LGAMMA.id]: LGAMMA, [LSTORAGE.id]: LSTORAGE, [LBLUE.id]: LBLUE, [LOMEGA.id]: LOMEGA, [LHOUSEKEEPING.id]: LHOUSEKEEPING, [LHOMELY.id]: LHOMELY, [LORIGINALS.id]: LORIGINALS }
 
 /** 按 id 解析层级定义（普通层级走 LEVELS 下标；据点走独立 id 空间） */
 export function levelDefOf(id: number): LevelDef | undefined {

@@ -14,7 +14,7 @@ const ctx2d = new Proxy({}, { get: (_t, k) => {
   getElementById: () => null, addEventListener() {}, removeEventListener() {}, body: { appendChild() {} },
 }
 const { LEVELS, levelDefOf } = await import('../src/game/levels/index.ts')
-const { generateLevel } = await import('../src/game/mapgen.ts')
+const { generateLevel } = await import('../src/game/world/mapgen.ts')
 const THREE = await import('three')
 const { buildTerrain } = await import('../src/game/renderer/geometry.ts')
 if (!THREE.REVISION) { console.log('✗ three 是桩而非真实 three——请用 tsconfig.real.json 运行'); process.exit(1) }
@@ -23,8 +23,8 @@ let fail = 0
 const bad = (m: string) => { console.log('  ✗ ' + m); fail++ }
 const ok = (m: string) => console.log('  ✓ ' + m)
 
-// 全层级 + 全部据点（含多层 L4/L5/L274/EL3A）
-const defs = [...LEVELS, ...[101, 102, 103, 104, 105, 274].map((id) => levelDefOf(id)!)]
+// 全层级 + 全部据点（含多层 L4/L5/L274/EL3A/Gemma；v54：存储设施 107 / 蓝色救赎 108）
+const defs = [...LEVELS, ...[101, 102, 103, 104, 105, 274, 106, 107, 108, 109, 110, 111, 112].map((id) => levelDefOf(id)!)]
 for (const def of defs) {
   for (const seed of [424242, 1337]) {
     try {

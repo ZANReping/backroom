@@ -279,8 +279,8 @@ export function texWhiteboard(seed: number): THREE.CanvasTexture {
 export function texPainting(seed: number): THREE.CanvasTexture {
   const rng = mulberry(seed)
   const [c, g] = makeCanvasCtx(192, 144)
-  const skies = ['#2a3542', '#3a2f3d', '#24352e']
-  g.fillStyle = skies[Math.floor(rng() * 3)]; g.fillRect(0, 0, 192, 144)
+  const skies = ['#2a3542', '#3a2f3d', '#24352e', '#3d3430', '#26303a'] // v55：增两个变体天色（暖灰暮/冷夜蓝）
+  g.fillStyle = skies[Math.floor(rng() * skies.length)]; g.fillRect(0, 0, 192, 144)
   // 远山
   g.fillStyle = 'rgba(20,22,18,0.8)'
   g.beginPath(); g.moveTo(0, 100)
@@ -289,6 +289,20 @@ export function texPainting(seed: number): THREE.CanvasTexture {
   // 月亮/落日
   g.fillStyle = rng() < 0.5 ? '#c9b458' : '#b8632e'
   g.beginPath(); g.arc(40 + rng() * 110, 30 + rng() * 26, 10 + rng() * 8, 0, 7); g.fill()
+  // v55：变体内容——湖面反光（1/3）/ 庄园剪影（1/3）/ 纯风景（其余）
+  const motif = rng()
+  if (motif < 0.34) {
+    g.fillStyle = 'rgba(60,80,92,0.55)' // 湖面
+    g.fillRect(0, 112, 192, 32)
+    g.fillStyle = 'rgba(201,180,88,0.35)' // 月色倒影
+    g.fillRect(60 + rng() * 60, 114, 14, 26)
+  } else if (motif < 0.67) {
+    g.fillStyle = 'rgba(14,12,10,0.9)' // 庄园剪影（主楼 + 双塔）
+    g.fillRect(70, 76, 52, 30)
+    g.fillRect(60, 64, 14, 42); g.fillRect(124, 64, 14, 42)
+    g.fillStyle = 'rgba(201,180,88,0.75)' // 两点窗火
+    g.fillRect(86, 88, 4, 5); g.fillRect(104, 88, 4, 5)
+  }
   // 前景笔触
   for (let i = 0; i < 26; i++) {
     g.strokeStyle = `rgba(${40 + rng() * 60 | 0},${36 + rng() * 50 | 0},${26 + rng() * 30 | 0},0.6)`

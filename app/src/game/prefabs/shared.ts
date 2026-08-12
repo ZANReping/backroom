@@ -1,7 +1,7 @@
 // 预制件公共类型与内容辅助（墙壁/装饰/实体/物品位置固定设计）
-import { RNG } from '../rng'
-import type { GameMap } from '../mapgen'
-import type { Structure, StructKind } from '../types'
+import { RNG } from '../core/rng'
+import type { GameMap } from '../world/mapgen'
+import type { Structure, StructKind } from '../core/types'
 
 export const idx = (m: { w: number }, x: number, y: number) => y * m.w + x
 export const isFloor = (m: GameMap, x: number, y: number) =>

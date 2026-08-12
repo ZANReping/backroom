@@ -1,7 +1,7 @@
 // Level 6「Lights Out / 熄灯」层级定义
 // 设定依据：The Backrooms Wiki（Wikidot）Level 6 为主结构；Fandom 版的加热液体金属管道
 // 作为本层唯一的触觉导航线索被吸收进来（见 lore 标注）。
-import type { LevelDef } from '../types'
+import type { LevelDef } from '../core/types'
 
 export const L6: LevelDef = {
   id: 6,

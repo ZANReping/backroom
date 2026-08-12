@@ -2,10 +2,10 @@
 // 替代「每卡一个 AvatarPreview 实时上下文」：遇见的 NPC 一多就爆浏览器 WebGL 上下文上限，
 // 主游戏画面上下文被挤掉（视角变纯色、无法行动）；配饰与游戏内走同一 npcGear 通道。
 import * as THREE from 'three'
-import type { AvatarCfg } from '@/game/avatar'
+import type { AvatarCfg } from '@/game/core/avatar'
 import { buildPlayerModel } from '@/game/renderer/playerModel'
 import { applyNpcGear } from '@/game/renderer/npcGear'
-import type { NpcDef } from '@/game/npcs'
+import type { NpcDef } from '@/game/content/npcs'
 
 let renderer: THREE.WebGLRenderer | null = null
 const cache = new Map<string, string>()

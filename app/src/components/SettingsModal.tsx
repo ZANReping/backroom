@@ -1,8 +1,8 @@
 // 设置面板（标题/暂停共用）
 import { useEffect, useState } from 'react'
-import { audio } from '@/game/audio'
+import { audio } from '@/game/core/audio'
 import type { Difficulty } from '@/game/engine'
-import { BIND_ACTIONS, bindLabel, conflictOf, actionLabel, getKeybinds, setKeybind, resetKeybinds } from '@/game/keybinds'
+import { BIND_ACTIONS, bindLabel, conflictOf, actionLabel, getKeybinds, setKeybind, resetKeybinds } from '@/game/core/keybinds'
 
 export type UiTheme = 'amber' | 'liminal' | 'basalt' | 'dark-liminal' | 'greyspace' | 'database' | 'fandom' | 'meg'
 
@@ -13,6 +13,7 @@ export interface GameSettings {
   vcrFx: boolean // VCR 滤镜（扫描线/色差/噪点/跟踪失真后处理；默认关闭）
   dust: boolean // 漂浮尘埃粒子（默认关闭）
   shake: boolean
+  headBob: boolean // v54：真实视角摇晃（垂直起伏+水平侧摆+roll 侧倾+落地回弹；默认关闭=基础 bob）
   flicker: number // 0-100
   dynamicRes: boolean
   shadows: boolean // 手电实时阴影（移动端强制关闭）
@@ -28,8 +29,9 @@ export interface GameSettings {
   bloomFx: boolean // 泛光（辉光后处理；仅 realistic）
   exposure: number // 曝光 %：50–200，100=默认 1.45
   volume: number
-  ambient: number
-  sfx: number
+  ambient: number // 环境音（荧光灯嗡鸣 / L4 雨声）0-100
+  bgm: number // v54：音乐（每层 BGM）0-100
+  sfx: number // 音效（攻击/拾取/UI/实体叫声等全部单发）0-100
   muted: boolean
   leftHanded: boolean
   stickSize: number
@@ -44,12 +46,12 @@ export interface GameSettings {
 
 export const defaultSettings: GameSettings = {
   difficulty: 'normal', autoSprint: false,
-  grain: true, dust: false, shake: true, flicker: 70, dynamicRes: true, shadows: true, fogOfWar: true,
+  grain: true, dust: false, shake: true, headBob: false, flicker: 70, dynamicRes: true, shadows: true, fogOfWar: true,
   vcrFx: false,
   fogScale: 100, farLights: false,
   lightMode: 'classic', shadowQuality: 1, sunShadows: true, lightShadows: 0,
   reflectivity: 60, bloomFx: true, bloomStrength: 35, exposure: 100,
-  volume: 80, ambient: 50, sfx: 90, muted: false,
+  volume: 80, ambient: 50, bgm: 100, sfx: 90, muted: false,
   leftHanded: false, stickSize: 120, btnOpacity: 70,
   sensitivity: 1.0, devMode: false,
   theme: 'amber',
@@ -111,6 +113,9 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
     onChange(ns)
     if (k === 'muted') audio.setMuted(v as boolean)
     if (k === 'volume') audio.setVolume((v as number) / 100)
+    if (k === 'ambient') audio.setAmbVolume((v as number) / 100)
+    if (k === 'bgm') audio.setBgmVolume((v as number) / 100)
+    if (k === 'sfx') audio.setSfxVolume((v as number) / 100)
   }
 
   const setBool = (k: keyof GameSettings, v: boolean) => set(k, v as GameSettings[typeof k])
@@ -173,6 +178,7 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
               <Toggle k="vcrFx" label="VCR 滤镜（录像带效果）" value={settings.vcrFx as boolean} onSet={setBool} />
               <Toggle k="dust" label="漂浮尘埃粒子" value={settings.dust as boolean} onSet={setBool} />
               <Toggle k="shake" label="屏幕震动" value={settings.shake as boolean} onSet={setBool} />
+              <Toggle k="headBob" label="真实视角摇晃（行走起伏/侧摆/落地回弹）" value={settings.headBob as boolean} onSet={setBool} />
               <Slider k="flicker" label="灯光闪烁强度" value={settings.flicker as number} onSet={setNum} />
               <Toggle k="dynamicRes" label="动态分辨率" value={settings.dynamicRes as boolean} onSet={setBool} />
               <Toggle k="shadows" label="实时阴影（手电）" value={settings.shadows as boolean} onSet={setBool} />
@@ -255,8 +261,9 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
             <div>
               <Toggle k="muted" label="静音" value={settings.muted as boolean} onSet={setBool} />
               <Slider k="volume" label="主音量" value={settings.volume as number} onSet={setNum} />
-              <Slider k="ambient" label="环境音" value={settings.ambient as number} onSet={setNum} />
-              <Slider k="sfx" label="音效" value={settings.sfx as number} onSet={setNum} />
+              <Slider k="bgm" label="音乐（BGM）" value={settings.bgm as number} onSet={setNum} />
+              <Slider k="ambient" label="环境音（嗡鸣/雨声）" value={settings.ambient as number} onSet={setNum} />
+              <Slider k="sfx" label="音效（攻击/拾取/UI/实体叫声）" value={settings.sfx as number} onSet={setNum} />
             </div>
           )}
           {tab === '主题' && (

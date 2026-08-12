@@ -2,14 +2,16 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Routes, Route } from 'react-router'
 import { engine } from '@/game/engine'
-import { storage } from '@/game/storage'
-import { getRenderer, look, type Renderer3D } from '@/game/renderer3d'
+import type { SaveSlotId, SlotInfo } from '@/game/engine'
+import { listSaveSlots, readSaveSlot, clearSaveSnapshot } from '@/game/engine/save'
+import { storage } from '@/game/core/storage'
+import { getRenderer, look, type Renderer3D } from '@/game/core/renderer3d'
 import * as THREE from 'three'
-import { audio } from '@/game/audio'
-import { randomSeed } from '@/game/rng'
-import { getKeybinds, type KeyBindMap } from '@/game/keybinds'
+import { audio } from '@/game/core/audio'
+import { randomSeed } from '@/game/core/rng'
+import { getKeybinds, type KeyBindMap } from '@/game/core/keybinds'
 import { LEVELS, levelLabel, levelNo, levelDefOf } from '@/game/levels'
-import { generateLevel } from '@/game/mapgen'
+import { generateLevel } from '@/game/world/mapgen'
 import type { HudEvent } from '@/game/engine'
 import TitleScreen from '@/components/TitleScreen'
 import SettingsModal, { defaultSettings, THEMES, type GameSettings } from '@/components/SettingsModal'
@@ -31,8 +33,9 @@ import LootPanel from '@/components/LootPanel'
 import FullscreenHint from '@/components/FullscreenHint'
 import LayoutEditor, { loadTouchLayout, type TouchLayoutStore } from '@/components/LayoutEditor'
 import Cutscene, { type CutKind, type CutIn } from '@/components/Cutscene'
+import DesignMode from '@/components/DesignMode' // v54：设计模式（开发者模式入口在标题屏）
 
-type Screen = 'title' | 'intro' | 'game' | 'fall'
+type Screen = 'title' | 'intro' | 'game' | 'fall' | 'design'
 type Overlay = 'none' | 'settings' | 'howto' | 'pause' | 'inventory' | 'codex' | 'death' | 'victory' | 'avatar' | 'notebook' | 'doc' | 'landmark' | 'dialog'
 
 // 冒烟测试钩子（Playwright page.evaluate 用）
@@ -80,6 +83,10 @@ function Game() {
   const [toasts, setToasts] = useState<Toast[]>([])
   const [damageFlash, setDamageFlash] = useState(0)
   const [sanityFlash, setSanityFlash] = useState(0)
+  // v54：沉浸模式——F1 全沉浸（隐藏 HUD 层 + 手部建模/准星）；F2 半沉浸（仅隐藏 HUD 铬件，
+  // 保留手部建模与准星）。两者互斥不叠加：按当前生效的键恢复，按另一个键直接切换模式。
+  // 背包/图鉴/设置/战利品面板等覆盖层不受影响（只隐藏 HUD 铬件，面板类 UI 按现有逻辑正常显示）
+  const [hudHidden, setHudHidden] = useState(false)
   // v23：切入切出过场（替代旧的简易 TransitionOverlay）
   const [cut, setCut] = useState<{ kind: CutKind; cutIn?: CutIn; toName?: string; caption?: string } | null>(null)
   const cutRef = useRef<typeof cut>(null)
@@ -91,7 +98,9 @@ function Game() {
   const [landmarkId, setLandmarkId] = useState('alpha')
   const [dialogId, setDialogId] = useState('kat')
   const [invTab, setInvTab] = useState<'背包' | '图鉴' | '状态' | '地图' | '日志' | '任务'>('背包')
-  const [hasSave, setHasSave] = useState(() => !!storage.get('br_save'))
+  // v54：存档槽位列表（标题屏展示；回标题时刷新）
+  const [slots, setSlots] = useState<SlotInfo[]>(() => listSaveSlots())
+  const refreshSlots = useCallback(() => setSlots(listSaveSlots()), [])
   const [, setTick] = useState(0)
   const overlayRef = useRef(overlay)
   overlayRef.current = overlay
@@ -125,6 +134,9 @@ function Game() {
     storage.set('br_settings', JSON.stringify(settings))
     audio.setMuted(settings.muted)
     audio.setVolume(settings.volume / 100)
+    audio.setBgmVolume(settings.bgm / 100) // v54：分项音量（BGM/环境/音效）
+    audio.setAmbVolume(settings.ambient / 100)
+    audio.setSfxVolume(settings.sfx / 100)
     engine.dev.god = settings.devMode // 开发者模式：无敌
     // 界面主题：挂到 <html data-theme>，CSS 变量随之整体切换（见 index.css）
     document.documentElement.dataset.theme = settings.theme
@@ -226,8 +238,9 @@ function Game() {
   }, [addLog])
 
   // 开始新一局（先播开场坠落动画 FallIntro，淡出时进入游戏并播爬起动画）
+  // v54：slot=绑定的存档槽（新游戏只能绑手动槽；继续游戏沿用所读槽位）
   const [fallPlaying, setFallPlaying] = useState(false)
-  const startRun = useCallback((seed?: number) => {
+  const startRun = useCallback((seed?: number, slot: SaveSlotId = 'slot1') => {
     audio.resume()
     look.yaw = 0; look.pitch = 0
     const s = seed ?? randomSeed()
@@ -239,7 +252,10 @@ function Game() {
       for (const k of Object.keys(c)) if (k.startsWith('npc_rand_')) { delete c[k]; cleared = true }
       if (cleared) saveCodex(c)
     }
-    engine.newRun(s, settings.difficulty)
+    engine.newRun(s, settings.difficulty, slot)
+    engine.hudHidden = false // v54：新一局退出沉浸模式
+    engine.handsHidden = false
+    setHudHidden(false)
     setLog([])
     setOverlay('none')
     if (seed !== undefined) {
@@ -251,9 +267,15 @@ function Game() {
       setFallPlaying(true)
       setScreen('fall')
     }
-    storage.set('br_save', JSON.stringify({ seed: s, difficulty: settings.difficulty }))
-    setHasSave(true)
-  }, [settings.difficulty])
+    refreshSlots()
+  }, [settings.difficulty, refreshSlots])
+
+  // v54：从槽位继续（读快照取种子）；空槽回退为新游戏
+  const continueSlot = useCallback((slot: SaveSlotId) => {
+    const snap = readSaveSlot(slot)
+    if (snap) startRun(snap.seed, slot)
+    else startRun(undefined, slot === 'auto' ? 'slot1' : slot)
+  }, [startRun])
 
   // 键盘输入（v18：全部键位读自定义绑定表 getKeybinds()，方向键/Ctrl/Tab 为始终生效的辅助键）
   useEffect(() => {
@@ -265,6 +287,8 @@ function Game() {
     ]
     const openTab = (t: typeof invTab) => { discoverFromEngine(engine); setInvTab(t); setOverlay('inventory') }
     const down = (e: KeyboardEvent) => {
+      // v54：F1 防呆——浏览器「帮助」默认键，任意界面一律拦截默认行为
+      if (e.code === 'F1') e.preventDefault()
       if (screenRef.current !== 'game' || overlayRef.current !== 'none') {
         const kb = getKeybinds()
         if (overlayRef.current === 'inventory') {
@@ -297,6 +321,16 @@ function Game() {
         } else engine.input.interact = true
       }
       if (c === b.flashlight) engine.input.toggleLight = true
+      // v54：沉浸模式切换——F1 全沉浸（HUD+手部）/ F2 半沉浸（仅 HUD）；互斥切换，按当前生效键恢复
+      if (c === b.hidehud || c === b.hidehud2) {
+        const full = c === b.hidehud
+        if (engine.hudHidden && engine.handsHidden === full) {
+          engine.hudHidden = false; engine.handsHidden = false // 再按当前模式键：恢复
+        } else {
+          engine.hudHidden = true; engine.handsHidden = full // 切换/进入模式
+        }
+        setHudHidden(engine.hudHidden) // 手部显隐由 renderer 每帧读 engine.handsHidden，无需 React 状态
+      }
       if (c === b.jump) { engine.input.jump = true; e.preventDefault() }
       if (c === b.inventory || c === 'Tab') { e.preventDefault(); openTab('背包') }
       if (c === b.map) openTab('地图')
@@ -442,8 +476,8 @@ function Game() {
       const cine = cutRef.current !== null && engine.transition === null
       engine.paused = paused || screenRef.current !== 'game' || cine
 
-      if (screenRef.current === 'title') {
-        // 吸引模式：L0 出生点缓慢环视
+      if (screenRef.current === 'title' || screenRef.current === 'design') {
+        // 吸引模式：L0 出生点缓慢环视（v54：设计模式全屏覆盖，背景同走吸引模式，引擎保持暂停）
         if (!attractMap) attractMap = generateLevel(LEVELS[0], 1337)
         look.yaw += dt * 0.18
         look.pitch = Math.sin(now / 4000) * 0.08
@@ -491,6 +525,11 @@ function Game() {
     rendererRef.current?.setFog(settings.fogOfWar)
   }, [settings.fogOfWar])
 
+  // 画面设置：真实视角摇晃（v54；默认关闭=基础 bob）
+  useEffect(() => {
+    rendererRef.current?.setHeadBob(settings.headBob)
+  }, [settings.headBob])
+
   // 画面设置：距离雾远近 / 远处灯光全开
   useEffect(() => {
     rendererRef.current?.setFogScale(settings.fogScale / 100)
@@ -521,9 +560,11 @@ function Game() {
   const quitToTitle = () => {
     engine.over = true
     audio.stopHum()
+    audio.stopRain() // v54：L4 雨声随退出停止
     audio.stopBGM()
     setOverlay('none')
     setScreen('title')
+    refreshSlots() // v54：回标题刷新槽位列表（暂停落盘在引擎 idleSaved 路径已完成）
   }
 
   const levelDef = engine.levelDef
@@ -592,8 +633,8 @@ function Game() {
         />
       )}
 
-      {/* HUD */}
-      {screen === 'game' && overlay !== 'death' && overlay !== 'victory' && (
+      {/* HUD（v54：沉浸模式 F1 隐藏整层；战利品面板等覆盖 UI 不受影响） */}
+      {screen === 'game' && overlay !== 'death' && overlay !== 'victory' && !hudHidden && (
         <HUD
           engine={engine}
           isMobile={isMobile}
@@ -624,7 +665,7 @@ function Game() {
         <DialogOverlay npcId={dialogId} onClose={() => setOverlay('none')} />
       )}
       <FullscreenHint />
-      {screen === 'game' && isMobile && overlay === 'none' && (
+      {screen === 'game' && isMobile && overlay === 'none' && !hudHidden && (
         <TouchControls
           engine={engine}
           settings={settings}
@@ -649,19 +690,22 @@ function Game() {
       {/* 标题 */}
       {screen === 'title' && overlay === 'none' && (
         <TitleScreen
-          hasSave={hasSave}
-          onStart={() => startRun()}
-          onContinue={() => {
-            try {
-              const s = JSON.parse(storage.get('br_save') ?? '{}')
-              startRun(s.seed)
-            } catch { startRun() }
-          }}
+          slots={slots}
+          onNewGame={(slot) => startRun(undefined, slot)}
+          onContinueSlot={continueSlot}
+          onDeleteSlot={(slot) => { clearSaveSnapshot(slot); refreshSlots() }}
           onSettings={() => setOverlay('settings')}
           onHowTo={() => setOverlay('howto')}
           onCodex={() => setOverlay('codex')}
           onAvatar={() => setOverlay('avatar')}
+          devMode={settings.devMode}
+          onDesign={() => setScreen('design')}
         />
+      )}
+
+      {/* v54：设计模式（全屏覆盖；只读提取 + 内存编辑 + 导出 JSON，不回写游戏） */}
+      {screen === 'design' && (
+        <DesignMode onBack={() => setScreen('title')} />
       )}
 
       {/* 覆盖层 */}
@@ -689,14 +733,14 @@ function Game() {
         <DeathScreen
           engine={engine}
           cause={deathCause}
-          onRetry={() => startRun()}
+          onRetry={() => startRun(undefined, engine.saveSlot === 'auto' ? 'slot1' : engine.saveSlot)}
           onTitle={quitToTitle}
         />
       )}
       {overlay === 'victory' && (
         <VictoryScreen
           engine={engine}
-          onNG={() => startRun()}
+          onNG={() => startRun(undefined, engine.saveSlot === 'auto' ? 'slot1' : engine.saveSlot)}
           onTitle={quitToTitle}
         />
       )}

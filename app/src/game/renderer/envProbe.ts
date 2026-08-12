@@ -2,7 +2,7 @@
 // 室外层：直接对该层程序化天空盒贴图做 PMREM（水面/地面反射的是真实天空）；
 // 室内层：按层级 palette 生成 64×32 渐变 equirect（上=灯光色 / 中=墙色 / 下=地板色）再 PMREM。
 import * as THREE from 'three'
-import type { LevelDef } from '../types'
+import type { LevelDef } from '../core/types'
 import { col } from './shared'
 
 let pmrem: THREE.PMREMGenerator | null = null

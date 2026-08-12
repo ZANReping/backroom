@@ -1,38 +1,42 @@
-// Level 4「废弃办公室」层级定义（严格按设计文档 §3/§6）
-import type { LevelDef } from '../types'
+// Level 4「废弃办公室」层级定义（v54：无限 chunk 生成；无限化重制见 infiniteL4.ts）
+import type { LevelDef } from '../core/types'
 
 export const L4: LevelDef = {
   id: 4,
   name: '废弃办公室',
-  flavor: '空旷的办公大楼，杏仁水出现频率全后室最高。官方仅确认猎犬与钝人出没——囤积补给，准备去更深层。',
-  lore: 'Level 4「Abandoned Office」。空旷办公大楼，大多数窗户被涂黑（未涂黑的是陷阱，必须避开）；杏仁水出现频率全后室最高，是流浪者的补给与聚集枢纽。官方仅确认实体：猎犬与钝人。M.E.G. Base Omega 重兵把守于此。——据 Backrooms Wikidot 整理',
-  palette: { floor: '#5c5548', floorAlt: '#524b40', wall: '#8f8a7c', wallTop: '#6e6a5c', accent: '#7fb0c9', light: '#ffe9b0', decal: '#463f35' },
+  flavor: '无限延伸的办公楼楼层：办公间、空旷大厅、雨雾笼罩的窗景区与小房间。杏仁水出现频率全后室最高，实体几乎绝迹。真正的出口是嵌墙电梯、年久失修的古典楼梯与活板门。',
+  lore: 'Level 4「废弃办公室」（Abandoned Office）。无限延伸的办公楼楼层：开阔办公大厅两侧整齐排着隔间；空旷区只剩立柱与门框；窗景区整排玻璃外是永不散去的雾与永不止歇的大雨；小房间里还亮着微光的台式电脑。杏仁水出现频率全后室最高，是流浪者最重要的补给枢纽。官方仅确认实体：猎犬与钝人，且踪迹极其罕见。出口稀少而隐蔽：嵌墙电梯可折返 Level 3；年久失修的古典楼梯下行至 Level 5；年久失修的活板门坠入 Level 6。——据 Backrooms Fandom/Wikidot 整理',
+  palette: { floor: '#6e6258', floorAlt: '#655a50', wall: '#b8b2a4', wallTop: '#8e887a', accent: '#7fb0c9', light: '#f2ead8', decal: '#4a443c' },
   gen: 'office',
-  size: 70,
+  size: 70, // 有限模式忽略；无限模式仅作兼容占位
+  infinite: true, // v54：无边界无限 chunk 流式生成（infiniteL4.ts）；有限 office 生成分支留作死代码（同 L2/L3 先例）
   entities: [
-    { type: 'hound', w: 12, min: 1, max: 2 },
-    { type: 'duller', w: 12, min: 1, max: 2 },
+    // v54：实体几乎不生成——池里只有猎犬/钝人，生成器 ~1.5%/chunk 一只（官方仅确认的两种实体）
+    { type: 'hound', w: 12, min: 0, max: 1 },
+    { type: 'duller', w: 12, min: 0, max: 1 },
   ],
   items: [
-    // wiki：杏仁水出现频率全后室最高（饮水机/售货机/喷泉）→ 额外高权重
-    { type: 'almond', w: 30 },
+    // wiki：杏仁水出现频率全后室最高 → 权重显著最高（40；v54b 再上调，对比 UNIVERSAL 杏仁水 18、其余层特色池均 ≤18）
+    { type: 'almond', w: 40 },
     { type: 'coffee', w: 12 },
     { type: 'stapler', w: 8 },
     { type: 'keycard', w: 6 },
   ],
   containerBias: 0.5,
-  sd: 'Survival Difficulty: Class 2 · 杏仁水全后室最富集 · 未涂黑的窗户是陷阱',
-  itemCount: [12, 16],
+  sd: 'Survival Difficulty: Class 1 · 杏仁水全后室最富集 · 实体几乎绝迹',
+  itemCount: [12, 16], // 有限模式忽略（无限由生成器按 chunk 投放）
   structures: ['cubicle', 'copier', 'server', 'vending', 'desk', 'crate', 'corpse', 'locker', 'fridge', 'safebox'],
   exits: [
-    { kind: 'stafflift', name: '员工电梯', dest: 5, anim: 'shutter', req: { keycard: true }, reqText: '需要门禁卡' },
-    { kind: 'window', name: '落地窗', dest: 'random', anim: 'fall', fallDamage: 30 },
-    { kind: 'fireexit', name: '消防通道', dest: 5, anim: 'bloom' },
-    // v51：L3↔L4 电梯双向联通——回程电梯（→L3，免保险丝；mapgen 作为额外出口放置，不占正常名额）
+    // v54 无限化出口链——电梯：regionHost 超区域保底 + 出生 chunk 保底，免费折返 Level 3（嵌墙壁龛同 L3）；
+    // 古典楼梯：8×8 超区域 ~40% 宿主 1 部（小概率），年久失修的深色木楼梯，通往 Level 5（v54b：假楼梯已删除）；
+    // 活板门：小房间 ~1.5%，年久失修的木框铁环盖板，坠入 Level 6
     { kind: 'elevatorshaft', name: '电梯', dest: 3, anim: 'shutter' },
+    { kind: 'oldstairs', name: '年久失修的古典楼梯', dest: 5, anim: 'bloom' },
+    { kind: 'trapdoor', name: '年久失修的活板门', dest: 6, anim: 'fall', fallDamage: 10 },
   ],
-  entrance: '应急楼梯',
-  exitDesc: '出口：员工电梯（需门禁卡→B5）、消防通道（→B5）、落地窗（坠落→随机层级，重伤）、电梯（→B3 回程）。',
+  entrance: '办公走廊尽头',
+  exitDesc: '出口：电梯（→B3 回程，超区域保底嵌墙）；年久失修的古典楼梯（深色木扶手雕花栏杆，罕见，→B5）；年久失修的活板门（小房间极小概率，→B6）。',
   lightDensity: 0.008,
-  darkness: 0.65,
+  darkness: 0.55,
+  lightSoft: 1.3, // v54：无限化后灯网按区段布置 + 亮调调色板补偿（同 L1/L2 思路）
 }

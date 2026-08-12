@@ -1,5 +1,5 @@
 // M.E.G. Alpha 基地（据点层级：完全手工布局，见 mapgenOutpost.ts；设定依据 wikidot Base Alpha）
-import type { LevelDef } from '../types'
+import type { LevelDef } from '../core/types'
 
 export const LALPHA: LevelDef = {
   id: 101, // 据点独立 id 空间（100+）：Level 1 的子层级，不占 LEVELS 数字下标

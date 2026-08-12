@@ -1,7 +1,7 @@
 // 文档视图（M.E.G. 文档）：仿真纸质文档 UI——米白纸张、红头文件式抬头、编号、落款。
 // 数据来源 game/docs.ts 的 DOCS 注册表；场景交互与图鉴「文档」分类共用本组件。
-import { DOCS } from '@/game/docs'
-import { audio } from '@/game/audio'
+import { DOCS } from '@/game/content/docs'
+import { audio } from '@/game/core/audio'
 
 const SERIF = "'SimSun','Songti SC',serif"
 
@@ -29,11 +29,11 @@ export default function DocOverlay({ docId, onClose }: { docId: string; onClose:
           }}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="overflow-y-auto px-8 pb-2 pt-6" style={{ fontFamily: SERIF }}>
+          <div className="overflow-y-auto px-8 pb-2 pt-6" style={{ fontFamily: doc.font === 'zhimangxing' ? "'Zhi Mang Xing',cursive" : SERIF }}>
             {doc.body.map((sec, i) => (
               <section key={i}>
                 {sec.paras.map((para, j) => (
-                  <p key={j} className="text-justify" style={{ color: '#4d4331', fontSize: 15, lineHeight: '28px', fontStyle: 'italic', margin: 0, marginBottom: 28 }}>
+                  <p key={j} className="text-justify" style={{ color: '#4d4331', fontSize: doc.font === 'zhimangxing' ? 19 : 15, lineHeight: '28px', fontStyle: doc.font === 'zhimangxing' ? 'normal' : 'italic', margin: 0, marginBottom: 28 }}>
                     {para}
                   </p>
                 ))}

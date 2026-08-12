@@ -1,8 +1,8 @@
 // 生成器冒烟测试：13 个层级（据点走独立 id 空间，另有 outpost-smoke 覆盖）× 多种子，校验可生成、出生点合法、出口/物品/实体落点合法
-import { generateLevel, tileAt } from '../src/game/mapgen.ts'
-import { CONTAINER_KINDS } from '../src/game/containers.ts'
+import { generateLevel, tileAt } from '../src/game/world/mapgen.ts'
+import { CONTAINER_KINDS } from '../src/game/decorations/containers.ts'
 import { LEVELS, levelNo } from '../src/game/levels/index.ts'
-import { ITEMS } from '../src/game/items.ts'
+import { ITEMS } from '../src/game/content/items.ts'
 import { ENTITIES } from '../src/game/entities/index.ts'
 
 let fail = 0
@@ -35,7 +35,8 @@ for (const def of LEVELS) {
     // L0 为无限 chunk 模式：出口按窗口流式生成，不在此校验
     if (!def.infinite && !m.exits.length) bad(`L${levelNo(def.id)} seed=${seed} 没有生成出口`)
     if (def.allExits && m.exits.length !== def.exits.length) bad(`L${levelNo(def.id)} seed=${seed} 结局层出口数 ${m.exits.length} ≠ ${def.exits.length}`)
-    for (const e of m.exits) if (tileAt(m, e.x, e.y) !== 1) bad(`L${levelNo(def.id)} seed=${seed} 出口落在非地板`)
+    // v55：darkwooddoor（L5 深色木门）出口格带 darkdoorblock 实心碰撞（关闭时不可穿为设定）——豁免「出口落在非地板」
+    for (const e of m.exits) if (e.def.kind !== 'darkwooddoor' && tileAt(m, e.x, e.y) !== 1) bad(`L${levelNo(def.id)} seed=${seed} 出口落在非地板`)
     for (const it of m.items) if (!ITEMS[it.type]) bad(`L${levelNo(def.id)} seed=${seed} 地面物品未知类型 ${it.type}`)
     for (const e of m.entities) if (!ENTITIES[e.def.type]) bad(`L${levelNo(def.id)} seed=${seed} 未知实体`)
     let floorN = 0

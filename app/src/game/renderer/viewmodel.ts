@@ -3,8 +3,10 @@ import * as THREE from 'three'
 import { buildItemMesh } from './itemsMesh'
 
 // ---------- 第一人称手部/手持物品 ----------
+// v53：去掉自发光（原 emissiveIntensity 0.25）——手部/袖管/手持物在黑暗中不再自发光，
+// 只受场景光照（手电 SpotLight 照亮时依然清晰可见）
 export function vmat(color: string | number) {
-  return new THREE.MeshLambertMaterial({ color, emissive: color as number, emissiveIntensity: 0.25 })
+  return new THREE.MeshLambertMaterial({ color })
 }
 
 export function buildViewmodel(vm: THREE.Group, vmFlash: THREE.Group, camera: THREE.Camera): { hand: THREE.Mesh; lhand: THREE.Mesh; sleeve: THREE.Mesh } {

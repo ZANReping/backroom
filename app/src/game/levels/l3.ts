@@ -1,11 +1,11 @@
 // Level 3「电站」层级定义（严格按设计文档 §3/§6；v51：无限化重制——不规则廊道网 + 铁栅栏 + 双照明变体）
-import type { LevelDef } from '../types'
+import type { LevelDef } from '../core/types'
 
 export const L3: LevelDef = {
   id: 3,
   name: '电站',
   flavor: '砖墙、积灰混凝土与噼啪电流。无限延伸的廊道被铁栅栏截断又接续。极度危险，但资源是全后室最丰富的——高智能实体也明白这一点。',
-  lore: 'Level 3「Electrical Station」。老旧砖砌电站，无限延伸的不规则廊道两侧密布电缆与配电箱，部分廊道被铁栅栏封死——另一侧可见而不可达；生存难度 4，实体密度高且存在高智能独占敌对实体，但稀有材料与电气设备（保险丝/电池/门禁卡）刷新率全后室最高。M.E.G. Base Gamma 驻于巨大机房。——据 Backrooms Wikidot 整理',
+  lore: 'Level 3「Electrical Station」。老旧砖砌电站，无限延伸的不规则廊道两侧密布电缆与配电箱，部分廊道被铁栅栏封死——另一侧可见而不可达；生存难度 4，实体密度高且存在高智能独占敌对实体，但稀有材料与电气设备（保险丝/电池/门禁卡）刷新率全后室最高。M.E.G. Base Gemma 驻于巨大机房。——据 Backrooms Wikidot 整理',
   // v51：砖墙/积灰混凝土贴图叠乘用暖灰顶点色（旧冷灰蓝会把砖墙叠得发蓝发暗）
   palette: { floor: '#5e5c58', floorAlt: '#565450', wall: '#8c7f72', wallTop: '#6b6057', accent: '#d9b13b', light: '#cfd6dd', decal: '#26241f' },
   gen: 'grid', // 保留：墙高 WALL_H.grid=4.2 / 电火花粒子 keyed on 'grid'（实际生成走 infinite chunk）
@@ -13,9 +13,16 @@ export const L3: LevelDef = {
   size: 72, // 兼容占位（无限模式不使用）
   entities: [
     { type: 'arcwraith', w: 16, min: 2, max: 3 },
-    { type: 'insulator', w: 14, min: 2, max: 3 },
     { type: 'smiler', w: 12, min: 2, max: 4 },
     { type: 'clump', w: 10, min: 1, max: 3 },
+    // v53：L3 高智能实体（wikidot Level 3 条目）——伏击猎犬 / 敌意无面灵（部分持石器）/
+    // 伪装成流浪者的窃皮者 / 水豚形尸鼠（设陷阱）/ 集群死亡飞蛾 / 极其罕见的悲尸
+    { type: 'hound', w: 8, min: 1, max: 2 },
+    { type: 'faceling', w: 7, min: 1, max: 2 },
+    { type: 'deathmoth', w: 6, min: 2, max: 4 },
+    { type: 'skinstealer', w: 5, min: 1, max: 1 },
+    { type: 'corpserat', w: 5, min: 1, max: 2 },
+    { type: 'wretch', w: 1, min: 1, max: 1 }, // 极其罕见
   ],
   items: [
     // wiki：稀有材料与电气设备刷新率全后室最高（保险丝/电池/门禁卡）

@@ -1,9 +1,9 @@
 // 死亡结算
 import { useEffect, useState } from 'react'
 import type { Engine } from '@/game/engine'
-import { seedString } from '@/game/rng'
+import { seedString } from '@/game/core/rng'
 import { WIN_TAPES } from '@/game/levels'
-import { audio } from '@/game/audio'
+import { audio } from '@/game/core/audio'
 
 export default function DeathScreen({ engine, cause, onRetry, onTitle }: { engine: Engine; cause: string; onRetry: () => void; onTitle: () => void }) {
   const p = engine.player

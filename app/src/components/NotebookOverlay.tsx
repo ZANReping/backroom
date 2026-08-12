@@ -1,8 +1,8 @@
 // 笔记本（物品「笔记本和笔」打开的书写界面）：
 // 真实笔记本风格——横线纸 + 左侧红边线 + 手写体；内容自动本地持久化（br_notebook）。
 import { useEffect, useState } from 'react'
-import { storage } from '@/game/storage'
-import { audio } from '@/game/audio'
+import { storage } from '@/game/core/storage'
+import { audio } from '@/game/core/audio'
 
 const KEY = 'br_notebook'
 const HAND_FONT = "'Segoe Script','Comic Sans MS','Ma Shan Zheng',cursive"

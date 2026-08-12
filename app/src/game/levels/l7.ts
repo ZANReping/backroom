@@ -1,7 +1,7 @@
 // Level 7「Thalassophobia / 深海恐惧」层级定义
 // 设定依据：Wikidot 版结构（入口房间 + 四个深度带的无限海洋）为主；
 // Fandom 版的骨粉浓雾与非标准重力朝向作为氛围/事件层吸收。
-import type { LevelDef } from '../types'
+import type { LevelDef } from '../core/types'
 
 export const L7: LevelDef = {
   id: 7,

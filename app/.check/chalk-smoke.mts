@@ -13,7 +13,7 @@
 ;(globalThis as unknown as Record<string, unknown>).performance = globalThis.performance ?? { now: () => Date.now() }
 
 const { engine } = await import('../src/game/engine.ts')
-const { tileAt } = await import('../src/game/mapgen.ts')
+const { tileAt } = await import('../src/game/world/mapgen.ts')
 
 let fail = 0
 const bad = (m: string) => { console.log('  ✗ ' + m); fail++ }

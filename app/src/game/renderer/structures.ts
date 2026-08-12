@@ -1,9 +1,9 @@
 // 结构/出口低模（按 StructKind 建造，含可动盖板/门铰链 userData 约定）
 import * as THREE from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
-import { doorNeedsRotate, tallCeilH, type GameMap } from '../mapgen'
-import type { LevelDef, Structure } from '../types'
-import { box, cyl, glow, col, mulberry, levelTexture, noiseTexture, makeCanvasCtx, toTex } from './shared'
+import { doorNeedsRotate, tallCeilH, type GameMap } from '../world/mapgen'
+import type { LevelDef, Structure } from '../core/types'
+import { box, cyl, glow, col, mulberry, levelTexture, noiseTexture, makeCanvasCtx, toTex, texLevelId } from './shared'
 
 // 墙纸贴图盒（柱厅立柱用：UV 按面宽/柱高放大，与墙面 1m 一循环的世界空间密度一致）
 function wallpaperBox(w: number, h: number, d: number, def: LevelDef, x = 0, y = 0, z = 0): THREE.Mesh {
@@ -16,8 +16,22 @@ function wallpaperBox(w: number, h: number, d: number, def: LevelDef, x = 0, y =
     else uv.setXY(i, uv.getX(i) * w, uv.getY(i) * h) // 侧面：条纹保持竖直、密度与墙面一致
   }
   const m = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({
-    color: def.id === 0 ? '#d8cbab' : '#e8e8e8', // L0 暖白叠乘黄墙纸；其余层级中性白（防灰墙贴图被叠暖）
-    map: levelTexture(`l${def.id}_wall`, () => noiseTexture(def.palette.wall, def.palette.wallTop)),
+    // v53：柱面叠乘色与墙面顶点色对齐（geometry.ts 墙面 wSide：WALL_TINT[0]=#d8cbab，其余=pal.wall）——
+    // 原先非 L0 恒近白 #e8e8e8，反照率远高于两侧墙面，昏暗/无光环境下柱子像自发光一样亮起
+    color: def.id === 0 ? '#d8cbab' : def.palette.wall,
+    map: levelTexture(`l${texLevelId(def.id)}_wall`, () => noiseTexture(def.palette.wall, def.palette.wallTop)),
+  }))
+  m.position.set(x, y, z)
+  return m
+}
+// v54b：与主墙循环完全一致的墙盒（wallwindow 用）——geometry.ts 主层墙是「默认盒 UV（每面整张贴图）+
+// 顶点色 WALL_TINT[id] ?? pal.wall × l{id}_wall 贴图」；wallpaperBox 的 UV 按尺寸放大，贴图密度与邻墙
+// 不一致（窗口上下墙段/收边墙板与旁边墙面有色差）。tintK 供踢脚线压暗（×0.45，L0 ×0.62 同主层）
+function wallMatchBox(w: number, h: number, d: number, def: LevelDef, tintK = 1, x = 0, y = 0, z = 0): THREE.Mesh {
+  const c = col(def.id === 0 ? '#d8cbab' : def.palette.wall).multiplyScalar(tintK)
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), new THREE.MeshLambertMaterial({
+    color: c,
+    map: levelTexture(`l${texLevelId(def.id)}_wall`, () => noiseTexture(def.palette.wall, def.palette.wallTop)),
   }))
   m.position.set(x, y, z)
   return m
@@ -29,6 +43,38 @@ import { graffitiTextures } from './textures'
 function texLambert(name: string, fbBase: string, fbAlt: string, tint: string | number = '#e8e2d2'): THREE.MeshLambertMaterial {
   return new THREE.MeshLambertMaterial({ color: tint, map: levelTexture(name, () => noiseTexture(fbBase, fbAlt)) })
 }
+
+// v53：带贴图的盒体（房顶檐口/屋顶板用）——UV 按各面世界尺寸放大避免拉伸（同 wallpaperBox 思路），
+// per 为多少米一个贴图重复；离线回退 fbBase/fbAlt 程序噪点
+function texBox(w: number, h: number, d: number, name: string, fbBase: string, fbAlt: string, tint: string, per = 2.5, x = 0, y = 0, z = 0): THREE.Mesh {
+  const geo = new THREE.BoxGeometry(w, h, d)
+  const uv = geo.attributes.uv as THREE.BufferAttribute
+  const nor = geo.attributes.normal
+  for (let i = 0; i < uv.count; i++) {
+    const nx = Math.abs(nor.getX(i)), ny = Math.abs(nor.getY(i))
+    if (ny > 0.5) uv.setXY(i, uv.getX(i) * w / per, uv.getY(i) * d / per)
+    else if (nx > 0.5) uv.setXY(i, uv.getX(i) * d / per, uv.getY(i) * h / per)
+    else uv.setXY(i, uv.getX(i) * w / per, uv.getY(i) * h / per)
+  }
+  const m = new THREE.Mesh(geo, texLambert(name, fbBase, fbAlt, tint))
+  m.position.set(x, y, z)
+  return m
+}
+
+// v54：容器可动件登记——part 供 updateStructs 按 kind 分支逐件插值（lid 标记保留兼容门扇白名单）；
+// bx/by/bz/brx/bry/brz 记录构建基准位姿，动画逐帧「基准 + f(open)」绝对赋值：确定性、同结构重开同动画、无累积漂移
+function movable<T extends THREE.Object3D>(o: T, part: string, idx = 0): T {
+  o.userData.part = part
+  o.userData.lid = 1
+  o.userData.idx = idx
+  o.userData.bx = o.position.x; o.userData.by = o.position.y; o.userData.bz = o.position.z
+  o.userData.brx = o.rotation.x; o.userData.bry = o.rotation.y; o.userData.brz = o.rotation.z
+  return o
+}
+
+// v54：photo 变种贴图池（scripts/gen-photos.py 生成，public/textures/ 下；无 data.tex 时按瓦片哈希选取）
+const PHOTO_POOL = ['photo_mountain.png', 'photo_lake.png', 'photo_forest.png',
+  'photo_house.png', 'photo_street.png', 'photo_still.png']
 
 // 贴墙方向：返回随机一个相邻非地板方向（0北 1东 2南 3西），无墙返回 null
 export function wallDir(s: Structure, m: GameMap): number | null {
@@ -88,15 +134,26 @@ function faceMount(o: THREE.Object3D, d: number, off: number, y: number, lat = 0
   else { o.position.set(e, y, lat); o.rotation.y = -Math.PI / 2 + turn }
 }
 
+// v54：楼层带墙体判定（f = s.floor ?? 0）——floor 0 看主层瓦片（≠1 即墙：砌墙或虚空，虚空渲染层同样立墙盒）；
+// floor 1 看 m.upWall、floor 2 看 m.upWall2（多层内部墙）。越界由调用方 continue/break（与旧 floor0 行为一致）。
+function bandWall(m: GameMap, x: number, y: number, f: number): boolean {
+  const i = y * m.w + x
+  if (f === 1) return m.upWall?.[i] === 1
+  if (f >= 2) return m.upWall2?.[i] === 1
+  return m.tiles[i] !== 1
+}
+
 // 让家具正面（局部 +Z）背对最近的墙
 // 实心面即墙（tile!==1：砌墙或虚空——虚空在渲染层同样立起墙盒，装饰贴上不算浮空）
+// v54：按结构楼层带判定（floor≥1 认对应层 upWall/upWall2，多层内部墙不再漏判）
 function wallDirs(s: Structure, m: GameMap): number[] {
   const tx = Math.floor(s.x + s.w / 2), ty = Math.floor(s.y + s.h / 2)
+  const f = s.floor ?? 0
   const out: number[] = []
   for (const [dx, dy, d] of NB4) {
     const nx = tx + dx, ny = ty + dy
     if (nx < 0 || ny < 0 || nx >= m.w || ny >= m.h) continue
-    if (m.tiles[ny * m.w + nx] !== 1) out.push(d)
+    if (bandWall(m, nx, ny, f)) out.push(d)
   }
   return out
 }
@@ -122,13 +179,15 @@ function flushToWall(grp: THREE.Group, s: Structure, m: GameMap, depth: number) 
 // 强制贴墙（墙面装饰）：朝向并贴上最近的实心瓦片（砌墙或虚空皆可——渲染层虚空同样立墙盒）。
 // 四邻优先；四邻全空则沿四方向各搜至 3 格取最近墙面，把装饰整体平移过去——彻底消除「浮空」。
 // （取代旧 faceOutward+hugWall 组合：旧实现只认砌墙 tile===2，虚空旁装饰停留在瓦片中心悬浮）
+// v54：按结构楼层带判定（bandWall）——floor 1/2 认 upWall/upWall2，2F/3F 贴墙装饰不再浮空/错贴主层
 function mountOnWall(o: THREE.Object3D, parent: THREE.Object3D, s: Structure, m: GameMap, dist = 0.42) {
   const tx = Math.floor(s.x + s.w / 2), ty = Math.floor(s.y + s.h / 2)
+  const bf = s.floor ?? 0
   let dir = -1, r = 1
   for (const [dx, dy, d] of NB4) {
     const nx = tx + dx, ny = ty + dy
     if (nx < 0 || ny < 0 || nx >= m.w || ny >= m.h) continue
-    if (m.tiles[ny * m.w + nx] !== 1) { dir = d; break }
+    if (bandWall(m, nx, ny, bf)) { dir = d; break }
   }
   if (dir < 0) {
     let best = Infinity
@@ -136,7 +195,7 @@ function mountOnWall(o: THREE.Object3D, parent: THREE.Object3D, s: Structure, m:
       for (let rr = 2; rr <= 3; rr++) {
         const nx = tx + dx * rr, ny = ty + dy * rr
         if (nx < 0 || ny < 0 || nx >= m.w || ny >= m.h) break
-        if (m.tiles[ny * m.w + nx] !== 1) {
+        if (bandWall(m, nx, ny, bf)) {
           if (rr < best) { best = rr; dir = d; r = rr }
           break
         }
@@ -191,7 +250,10 @@ function triGeo(w: number, h: number): THREE.BufferGeometry {
 }
 
 // 双坡人字屋顶（house / barn 共用）：脊沿长边，两块斜板 + 两端山墙
-function gableRoof(w: number, d: number, rise: number, tile: string, gable: string): THREE.Group {
+// v53：tex 提供时坡面改贴图（texLambert，离线回退 tile 纯色噪点），UV 按坡面世界尺寸放大避免拉伸；
+//      山墙三角仍用纯色（gable，已按贴图均值折算）
+function gableRoof(w: number, d: number, rise: number, tile: string, gable: string,
+  tex?: { name: string; tint: string }): THREE.Group {
   const g = new THREE.Group()
   const alongX = w >= d
   const ridge = alongX ? w : d      // 屋脊长度
@@ -199,7 +261,9 @@ function gableRoof(w: number, d: number, rise: number, tile: string, gable: stri
   const slope = Math.hypot(span / 2, rise)
   const ang = Math.atan2(rise, span / 2)
   for (const sgn of [-1, 1]) {
-    const pan = box(ridge + 0.5, 0.14, slope + 0.12, tile, 0, rise / 2, sgn * span / 4)
+    const pan = tex
+      ? texBox(ridge + 0.5, 0.14, slope + 0.12, tex.name, tile, tile, tex.tint, 2.0, 0, rise / 2, sgn * span / 4)
+      : box(ridge + 0.5, 0.14, slope + 0.12, tile, 0, rise / 2, sgn * span / 4)
     pan.rotation.x = sgn * ang
     g.add(pan)
   }
@@ -244,7 +308,8 @@ function towerFacade(): THREE.CanvasTexture {
 }
 
 // 楼体大盒：UV 按各面的世界尺寸放大（一格窗 ≈ 3.2m），保证 1 个 mesh 就有规则窗格
-function towerBox(w: number, h: number, d: number, color: string): THREE.Mesh {
+// v53：texName 提供时立面改用下载贴图（levelTexture 缓存，离线回退 towerFacade 程序纹理）
+function towerBox(w: number, h: number, d: number, color: string, texName?: string): THREE.Mesh {
   const geo = new THREE.BoxGeometry(w, h, d)
   const uv = geo.attributes.uv as THREE.BufferAttribute
   const nor = geo.attributes.normal
@@ -255,7 +320,10 @@ function towerBox(w: number, h: number, d: number, color: string): THREE.Mesh {
     else if (nx > 0.5) uv.setXY(i, uv.getX(i) * d / U, uv.getY(i) * h / U)
     else uv.setXY(i, uv.getX(i) * w / U, uv.getY(i) * h / U)
   }
-  return new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color, map: towerFacade() }))
+  return new THREE.Mesh(geo, new THREE.MeshLambertMaterial({
+    color,
+    map: texName ? levelTexture(texName, towerFacade) : towerFacade(),
+  }))
 }
 
 // 给 Lambert 件加自发光（暗层里的微光/苔藓/焦油余温）
@@ -281,6 +349,29 @@ function exitSignTexture(): THREE.Texture {
     c.fillText('EXIT', 48, 17)
     return toTex(cv)
   })
+}
+
+// v55：墙面字牌程序纹理（wallsign 用——房号/「员工专用」/「Beverly Room」等；gold=金底描金酒店牌）。
+// 动态文本无磁盘贴图——走独立缓存（levelTexture 会先尝试纹理文件、动态名必然 404）
+const signTexCache = new Map<string, THREE.Texture>()
+function signTexture(text: string, gold: boolean): THREE.Texture {
+  const key = `${text}|${gold ? 'g' : 'd'}`
+  const hit = signTexCache.get(key)
+  if (hit) return hit
+  const [cv, c] = makeCanvasCtx(128, 40)
+  c.fillStyle = gold ? '#3a2c12' : '#22252a'
+  c.fillRect(0, 0, 128, 40)
+  c.strokeStyle = gold ? '#c9a24a' : '#6a7076'
+  c.strokeRect(2, 2, 124, 36)
+  c.strokeRect(4.5, 4.5, 119, 31)
+  c.fillStyle = gold ? '#e8c86a' : '#c8ccd0'
+  c.font = `${text.length > 8 ? 13 : 17}px monospace`
+  c.textAlign = 'center'
+  c.textBaseline = 'middle'
+  c.fillText(text, 64, 21)
+  const t = toTex(cv)
+  signTexCache.set(key, t)
+  return t
 }
 
 // v26：悬挂物贴合天花板底面——按所在瓦片的实际顶高（挑高=H*1.75 / 上层楼板底 2.65 / 普通=H），
@@ -312,15 +403,36 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       break
     }
     case 'car': {
-      const cc = ['#5a4a42', '#445055', '#555048', '#4a3a3a'][Math.floor(Math.random() * 4)]
+      const cc = ['#5a4a42', '#445055', '#555048', '#4a3a3a'][Math.floor(mulberry(s.x * 37 + s.y * 11)() * 4)] // v54：坐标哈希替代 Math.random（同车同色）
       grp.add(box(s.w * 0.92, 0.55, s.h * 0.88, cc, 0, 0.42, 0))
       grp.add(box(s.w * 0.5, 0.4, s.h * 0.7, '#2a2d30', 0, 0.85, 0))
-      // 后备箱盖（搜索后掀起）
+      // 后备箱盖（搜索后掀起；v54：加内衬与两侧液压杆，随盖同翻）
       const trunk = box(s.w * 0.4, 0.05, s.h * 0.85, cc, -s.w * 0.26, 0.72, 0)
       trunk.geometry.translate(-s.w * 0.2, 0, 0)
       trunk.position.set(s.w * 0.05, 0.72, 0)
-      trunk.userData.lid = 1
+      trunk.add(box(s.w * 0.36, 0.02, s.h * 0.78, '#1e2124', -s.w * 0.2, -0.035, 0)) // 内衬
+      for (const pz of [-s.h * 0.3, s.h * 0.3]) { // 液压杆
+        const strut = cyl(0.014, 0.014, 0.3, '#7a7f85', -s.w * 0.06, -0.13, pz, 6)
+        strut.rotation.z = 0.55
+        trunk.add(strut)
+      }
+      movable(trunk, 'lid')
       grp.add(trunk)
+      // v54：车窗玻璃带 + 四轮（含轮毂）+ 前后灯（不动后备箱盖动画件；细节收在原轮廓 ±0.02 内）
+      grp.add(box(s.w * 0.52, 0.2, s.h * 0.72, '#26323a', 0, 0.88, 0)) // 车窗玻璃带（环座舱）
+      for (const wx of [-s.w * 0.3, s.w * 0.3]) for (const wz of [-s.h * 0.4, s.h * 0.4]) {
+        const wheel = cyl(0.16, 0.16, 0.1, '#15171a', wx, 0.16, wz, 10)
+        wheel.rotation.x = Math.PI / 2
+        grp.add(wheel)
+        const hub = cyl(0.07, 0.07, 0.12, '#4a4f56', wx, 0.16, wz, 8)
+        hub.rotation.x = Math.PI / 2
+        grp.add(hub)
+      }
+      for (const lz of [-s.h * 0.26, s.h * 0.26]) {
+        grp.add(glow(0.04, 0.09, 0.14, '#e8e2c8', s.w * 0.46, 0.52, lz))  // 前灯（+x 车头）
+        grp.add(glow(0.04, 0.08, 0.14, '#c93a2e', -s.w * 0.46, 0.52, lz)) // 尾灯（后备箱侧）
+      }
+      if (s.looted) grp.userData.open = 1
       break
     }
     case 'booth': {
@@ -476,40 +588,175 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
         for (let i = 0; i < 3; i++)
           grp.add(glow(0.04, 0.04, 0.02, ['#9adfff', '#6f9a55', '#e8b93c'][i], s.w * 0.26 - 0.08 + i * 0.08, 1.15, s.h * 0.44 + 0.02))
       }
+      // v54：端面风扇罩（环 + 十字条 + 叶毂）+ 前壁管线 + 仪表（表盘 + 指针）
+      const fanZ = s.h * 0.43
+      const fan = new THREE.Mesh(new THREE.TorusGeometry(0.28, 0.035, 6, 14), new THREE.MeshLambertMaterial({ color: dead ? '#22252a' : '#4a4f56' }))
+      fan.position.set(-s.w * 0.2, 0.7, fanZ + 0.02)
+      grp.add(fan)
+      for (const a of [0, Math.PI / 2]) {
+        const bar = box(0.56, 0.04, 0.02, dead ? '#22252a' : '#454a51', -s.w * 0.2, 0.7, fanZ + 0.02)
+        bar.rotation.z = a
+        grp.add(bar)
+      }
+      grp.add(cyl(0.1, 0.1, 0.03, '#1c1e22', -s.w * 0.2, 0.7, fanZ + 0.01, 10).rotateX(Math.PI / 2)) // 扇叶毂
+      for (const py of [0.22, 0.34]) // 前壁管线（横向双管）
+        grp.add(cyl(0.035, 0.035, s.w * 0.55, dead ? '#22252a' : '#5a5f66', s.w * 0.05, py, fanZ + 0.02, 6).rotateZ(Math.PI / 2))
+      const gauge = cyl(0.09, 0.09, 0.03, '#d8d2c2', s.w * 0.05, 1.15, fanZ + 0.02, 12) // 仪表表盘
+      gauge.rotation.x = Math.PI / 2
+      grp.add(gauge)
+      if (!dead) grp.add(glow(0.02, 0.07, 0.01, '#c94a3a', s.w * 0.05, 1.16, fanZ + 0.04)) // 仪表指针
       break
     }
     case 'cabinet': {
       grp.add(box(0.85, 1.9, 0.5, '#3a3f46', 0, 0.95, 0))
       grp.add(box(0.87, 0.18, 0.52, '#d9b13b', 0, 1.45, 0))
       grp.add(glow(0.08, 0.08, 0.03, '#9adfff', 0.2, 1.7, 0.26))
-      // 柜门（可开启）：铰链在后缘（几何平移到边缘，绕边旋转而非绕中心打转）
-      const door = box(0.04, 1.5, 0.44, '#2e3238', 0, 0, 0)
-      door.geometry.translate(0, 0.75, 0.22)
-      door.position.set(0.44, 0.2, -0.22)
-      door.userData.lid = 1
-      grp.add(door)
+      // v54：台面 + 柜脚
+      grp.add(box(0.9, 0.05, 0.55, '#2a2e34', 0, 1.93, 0))
+      for (const px of [-0.36, 0.36]) for (const pz of [-0.18, 0.18]) grp.add(box(0.07, 0.09, 0.07, '#22262b', px, 0.045, pz))
+      // v54：柜内构（门关时收在柜体轮廓内，双开门外摆后可见）：两块隔板 + 顶层浅抽屉
+      grp.add(box(0.78, 0.04, 0.44, '#2e3238', 0, 1.05, 0)) // 中隔板
+      grp.add(box(0.78, 0.04, 0.44, '#2e3238', 0, 0.55, 0)) // 下隔板
+      grp.add(box(0.6, 0.12, 0.34, '#8a6a1e', 0, 1.26, 0.02)) // 顶层浅抽屉
+      grp.add(box(0.2, 0.03, 0.03, '#c9c2a8', 0, 1.26, 0.2)) // 浅抽屉拉手
+      // 柜门（可开启）：v54 改双开门——两扇铰链各在外侧缘，对称外摆（几何平移到铰链边，绕边旋转而非绕中心打转）
+      for (const sgn of [-1, 1]) {
+        const door = box(0.42, 1.5, 0.04, '#2e3238', 0, 0, 0)
+        door.geometry.translate(-sgn * 0.21, 0.75, 0)
+        door.position.set(sgn * 0.42, 0.2, 0.26)
+        door.add(box(0.04, 0.14, 0.03, '#c9c2a8', -sgn * 0.36, 0.75, 0.035)) // 拉手（近中缝）
+        movable(door, sgn < 0 ? 'doorL' : 'doorR')
+        grp.add(door)
+      }
+      if (s.looted) grp.userData.open = 1
       // v48 缺省朝向：背贴最近墙、正面（+Z）朝外；data.deg 可显式覆盖；v51 贴墙位移
       if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
       else flushToWall(grp, s, m, 0.5)
       break
     }
     case 'trench': {
-      grp.add(box(1, 0.06, 1, '#101215', 0, 0.03, 0))
-      grp.add(box(0.9, 0.04, 0.12, '#a63a2e', 0, 0.07, -0.2))
-      grp.add(box(0.9, 0.04, 0.12, '#d9b13b', 0, 0.07, 0.2))
+      // v54：电缆沟细化 + 连接——扫 m.structures 找同 kind 四邻 trench，连成连续沟：
+      // 端头封闭板只在非连接端出现；沟沿包边/线缆按连接轴定向（横沟/竖沟，转角/T 型双轴组合）；
+      // 部分瓦片带格栅盖板（mulberry 瓦片哈希确定性）。全部收在原 1×1 平板轮廓内
+      const tx = Math.floor(s.x + s.w / 2), ty = Math.floor(s.y + s.h / 2)
+      const isTrenchAt = (x: number, y: number) =>
+        m.structures.some((o) => o !== s && o.kind === 'trench'
+          && Math.floor(o.x + o.w / 2) === x && Math.floor(o.y + o.h / 2) === y)
+      const cn = isTrenchAt(tx, ty - 1), ce = isTrenchAt(tx + 1, ty)
+      const cs = isTrenchAt(tx, ty + 1), cw = isTrenchAt(tx - 1, ty)
+      let runX = ce || cw, runZ = cn || cs // 连接轴：有横邻→横沟，有纵邻→竖沟，转角/T 型两轴皆真
+      if (!runX && !runZ) runX = true // 孤立沟：默认横沟
+      grp.add(box(1, 0.06, 1, '#101215', 0, 0.03, 0)) // 沟底
+      const cableC = ['#a63a2e', '#d9b13b', '#3a5ad9', '#3a3f46']
+      for (const alongX of [runX, runZ]) {
+        if (!alongX) continue
+        // 沟沿金属包边（两侧）
+        for (const sd of [-1, 1])
+          grp.add(alongX ? box(1.0, 0.05, 0.07, '#3a3f46', 0, 0.06, sd * 0.32) : box(0.07, 0.05, 1.0, '#3a3f46', sd * 0.32, 0.06, 0))
+        // 沟内线缆分层（4 根异色/两档高度，走向与连接轴对齐）
+        for (let i = 0; i < 4; i++) {
+          const off = -0.18 + i * 0.12, yy = 0.05 + (i % 2) * 0.035
+          const cb = cyl(0.028, 0.028, 0.98, cableC[i], alongX ? 0 : off, yy, alongX ? off : 0, 6)
+          if (alongX) cb.rotation.z = Math.PI / 2
+          else cb.rotation.x = Math.PI / 2
+          grp.add(cb)
+        }
+      }
+      // 端头封闭板：只在非连接端出现（逐轴逐端判断）
+      const cap = (alongX: boolean, sd: number) => {
+        const c = alongX ? box(0.04, 0.12, 0.6, '#2e3238', sd * 0.47, 0.08, 0) : box(0.6, 0.12, 0.04, '#2e3238', 0, 0.08, sd * 0.47)
+        c.userData.trenchCap = 1
+        grp.add(c)
+      }
+      if (runX) { if (!ce) cap(true, 1); if (!cw) cap(true, -1) }
+      if (runZ) { if (!cn) cap(false, -1); if (!cs) cap(false, 1) }
+      // 格栅盖板段（瓦片哈希 ~45%）：盖板框 + 三根格栅条，板下透出缆线
+      if (mulberry(tx * 73 + ty * 37)() < 0.45) {
+        grp.add(runX ? box(0.46, 0.025, 0.6, '#4a4f56', 0, 0.105, 0) : box(0.6, 0.025, 0.46, '#4a4f56', 0, 0.105, 0))
+        for (let i = 0; i < 3; i++)
+          grp.add(runX ? box(0.06, 0.03, 0.6, '#2e3238', -0.14 + i * 0.14, 0.11, 0) : box(0.6, 0.03, 0.06, '#2e3238', 0, 0.11, -0.14 + i * 0.14))
+      }
       break
     }
     case 'cubicle': {
-      grp.add(box(s.w, 1.35, 0.08, '#6e6a5c', 0, 0.68, -s.h / 2 + 0.04))
-      grp.add(box(0.08, 1.35, s.h, '#6e6a5c', -s.w / 2 + 0.04, 0.68, 0))
-      grp.add(box(s.w * 0.8, 0.06, 0.5, '#8f8a7c', 0, 0.75, -s.h / 2 + 0.3))
-      grp.add(glow(0.35, 0.25, 0.03, '#7fb0c9', 0, 1.0, -s.h / 2 + 0.22))
+      // v54c 精细化：金属收边（顶条/转角立柱）+ 底部走线槽 + 屏风脚垫（轮廓不变）；
+      // 朝向：面向最近的办公转椅（与 officechair 邻桌朝桌互为对位；无椅则保持默认）
+      const pw = s.w, ph = s.h
+      const panelC = (s.data?.color as string | undefined) ?? '#6e6a5c' // v54c：data.color 实例配色（娱乐室彩色隔断）
+      grp.add(box(pw, 1.35, 0.08, panelC, 0, 0.68, -ph / 2 + 0.04)) // 后板
+      grp.add(box(0.08, 1.35, ph, panelC, -pw / 2 + 0.04, 0.68, 0)) // 侧板
+      grp.add(box(pw, 0.05, 0.11, '#4a4e54', 0, 1.375, -ph / 2 + 0.04)) // 后板金属顶条
+      grp.add(box(0.11, 0.05, ph, '#4a4e54', -pw / 2 + 0.04, 1.375, 0)) // 侧板金属顶条
+      grp.add(box(0.09, 1.42, 0.09, '#4a4e54', -pw / 2 + 0.04, 0.71, -ph / 2 + 0.04)) // 转角立柱
+      grp.add(box(pw - 0.06, 0.14, 0.11, '#5a5e64', 0, 0.1, -ph / 2 + 0.04)) // 后板底部走线槽
+      grp.add(box(0.11, 0.14, ph - 0.06, '#5a5e64', -pw / 2 + 0.04, 0.1, 0)) // 侧板底部走线槽
+      for (const [fx, fz] of [[pw / 2 - 0.08, -ph / 2 + 0.04], [-pw / 2 + 0.04, ph / 2 - 0.08]] as const)
+        grp.add(cyl(0.035, 0.045, 0.06, '#3a3e44', fx, 0.03, fz, 8)) // 屏风脚垫
+      grp.add(box(pw * 0.8, 0.06, 0.5, '#8f8a7c', 0, 0.75, -ph / 2 + 0.3)) // 桌板
+      grp.add(box(pw * 0.8, 0.03, 0.06, '#7a7568', 0, 0.72, -0.02)) // 桌板前缘档条
+      grp.add(glow(0.35, 0.25, 0.03, '#7fb0c9', 0, 1.0, -ph / 2 + 0.22)) // 屏
+      // v54：桌面办公小件——mulberry 瓦片哈希出 4 种组合变体（v0 键盘+笔筒+便签板 /
+      // v1 电话+文件托架 / v2 文件托架+笔筒+便签板 / v3 键盘+电话+笔筒+便签板），避免千桌一面；
+      // 全部落在桌板上方与隔间内（轮廓/碰撞不变），挂在 grp 上随朝向（data.deg/邻椅）整体旋转
+      {
+        const dz = -ph / 2 + 0.3 // 桌板中心 z（顶面 y=0.78）
+        const vr = Math.floor(mulberry(s.x * 83 + s.y * 29)() * 4)
+        // 显示器支架（底座落在桌板上 + 立柱托住既有屏——屏不再浮空）
+        grp.add(box(0.2, 0.02, 0.14, '#2e3238', 0, 0.79, -ph / 2 + 0.22))
+        grp.add(box(0.045, 0.12, 0.045, '#2e3238', 0, 0.85, -ph / 2 + 0.22))
+        if (vr !== 2) { // 键盘 + 鼠标
+          grp.add(box(0.32, 0.02, 0.12, '#3a3e44', 0, 0.79, dz + 0.14))
+          grp.add(box(0.06, 0.025, 0.09, '#2e2e33', 0.24, 0.79, dz + 0.14))
+        }
+        if (vr === 1 || vr === 3) { // 电话（基座 + 听筒）
+          grp.add(box(0.16, 0.05, 0.2, '#26282c', -pw * 0.26, 0.805, dz))
+          grp.add(box(0.05, 0.04, 0.18, '#1c1e22', -pw * 0.26, 0.85, dz))
+        }
+        if (vr === 1 || vr === 2) { // 文件托架（L 形架 + 文件堆）
+          grp.add(box(0.24, 0.02, 0.3, '#8a8578', pw * 0.26, 0.79, dz))
+          grp.add(box(0.24, 0.12, 0.02, '#8a8578', pw * 0.26, 0.85, dz - 0.14))
+          grp.add(box(0.2, 0.04, 0.22, '#d8d2c0', pw * 0.26, 0.83, dz + 0.02))
+        }
+        if (vr !== 1) { // 笔筒 + 笔
+          grp.add(cyl(0.032, 0.032, 0.09, '#5a6a4a', pw * 0.3, 0.825, dz - 0.12, 8))
+          grp.add(cyl(0.005, 0.005, 0.1, '#c9a24a', pw * 0.31, 0.88, dz - 0.11, 6))
+        }
+        if (vr !== 1) { // 便签板（挂后板内侧）+ 两张便签
+          grp.add(box(0.26, 0.2, 0.015, '#a8946a', -pw * 0.22, 1.05, -ph / 2 + 0.09))
+          grp.add(box(0.06, 0.06, 0.005, '#f0e6c0', -pw * 0.26, 1.06, -ph / 2 + 0.1))
+          grp.add(box(0.05, 0.07, 0.005, '#e8b93c', -pw * 0.17, 1.03, -ph / 2 + 0.1))
+        }
+      }
+      {
+        const cx = s.x + s.w / 2, cy = s.y + s.h / 2
+        // v54：自动朝向只看 3×3——椅瓦片与自身瓦片 |dx|≤1 且 |dy|≤1 才算邻椅
+        // （旧版半径 2.5 格会隔着屏风板吸到邻间隔间的椅子）
+        const tx = Math.floor(cx), ty = Math.floor(cy)
+        let bc: { x: number; y: number } | null = null, bd = 1e9
+        for (const o of m.structures) {
+          if (o === s || o.kind !== 'officechair') continue
+          if (Math.abs(Math.floor(o.x + o.w / 2) - tx) > 1 || Math.abs(Math.floor(o.y + o.h / 2) - ty) > 1) continue
+          const d = Math.hypot(o.x + o.w / 2 - cx, o.y + o.h / 2 - cy)
+          if (d < bd) { bd = d; bc = { x: o.x + o.w / 2, y: o.y + o.h / 2 } }
+        }
+        if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180 // 显式朝向（隔断等）优先
+        else if (bc) grp.rotation.y = Math.atan2(bc.x - cx, bc.y - cy) // 开口（+Z）指向转椅
+      }
       break
     }
     case 'copier': {
       grp.add(box(1.6, 1.0, 1.4, '#7a766a', 0, 0.5, 0))
       grp.add(box(1.5, 0.15, 1.2, '#8f8a7c', 0, 1.08, 0))
       grp.add(glow(0.3, 0.06, 0.06, '#7fb0c9', 0.4, 1.1, 0.5))
+      // v54：稿台盖板 + 出纸托盘 + 操作面板（微仰，按钮随板）
+      grp.add(box(1.1, 0.06, 0.85, '#84806f', -0.1, 1.19, -0.12)) // 稿台盖板
+      grp.add(box(1.1, 0.05, 0.08, '#6e6a5c', -0.1, 1.17, -0.55)) // 盖板铰链边
+      grp.add(box(0.5, 0.04, 0.28, '#8f8a7c', -0.3, 0.66, 0.76)) // 出纸托盘（前侧伸出小件）
+      grp.add(box(0.5, 0.1, 0.03, '#6e6a5c', -0.3, 0.6, 0.63)) // 出纸口挡板
+      const cpanel = box(0.44, 0.03, 0.26, '#3a3e44', 0.55, 1.19, 0.45) // 操作面板
+      cpanel.rotation.x = -0.35
+      for (let i = 0; i < 3; i++) cpanel.add(glow(0.04, 0.015, 0.04, ['#6f9a55', '#e8b93c', '#9adfff'][i], -0.12 + i * 0.12, 0.02, 0))
+      grp.add(cpanel)
       break
     }
     case 'server': {
@@ -539,16 +786,54 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
     case 'vending': {
       grp.add(box(0.95, 2.0, 0.7, '#5a3a3a', 0, 1.0, 0))
       grp.add(glow(0.7, 1.2, 0.04, '#ffe9b0', 0, 1.2, 0.36))
-      // v46：data.deg 指定朝向（缺省朝南 +z；EL3A 休息室售货机面朝公共区，不再背朝外）
+      // v54：陈列窗分层货品（3 层板 × 5 件色块，透窗可见）+ 取货口 + 投币区
+      const goods = ['#c94a3a', '#d9b13b', '#6f9a55', '#3a5ad9', '#c9c4b8']
+      for (let sh = 0; sh < 3; sh++) {
+        const gy = 0.86 + sh * 0.36
+        grp.add(box(0.66, 0.02, 0.05, '#3a2a2a', 0, gy - 0.09, 0.38)) // 层板
+        for (let i = 0; i < 5; i++)
+          grp.add(box(0.09, 0.13, 0.04, goods[(sh * 2 + i) % goods.length], -0.26 + i * 0.13, gy, 0.385)) // 货品
+      }
+      grp.add(box(0.56, 0.28, 0.05, '#2a1e1e', 0, 0.32, 0.36)) // 取货口（凹槽）
+      grp.add(box(0.5, 0.2, 0.02, '#1c1515', 0, 0.3, 0.385)) // 取货口翻板
+      grp.add(box(0.14, 0.44, 0.04, '#3a2a2a', 0.39, 1.2, 0.36)) // 投币区面板
+      grp.add(box(0.03, 0.08, 0.02, '#c9c4b8', 0.39, 1.32, 0.385)) // 投币口
+      grp.add(glow(0.05, 0.05, 0.02, '#e8b93c', 0.39, 1.12, 0.385)) // 退币钮
+      // v46：data.deg 指定朝向（EL3A 休息室售货机面朝公共区，不再背朝外）；
+      // v54 缺省朝向与柜类 v48 约定一致：背贴最近墙、正面（+Z 灯板）朝房间内部（faceOutward+flushToWall 贴墙位移）
       if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
+      else flushToWall(grp, s, m, 0.7)
       break
     }
     case 'desk': {
-      grp.add(box(s.w * 0.9, 0.06, 0.7, '#8f8a7c', 0, 0.74, 0))
-      grp.add(box(0.08, 0.74, 0.6, '#6e6a5c', -s.w * 0.4, 0.37, 0))
-      grp.add(box(0.08, 0.74, 0.6, '#6e6a5c', s.w * 0.4, 0.37, 0))
-      grp.add(glow(0.4, 0.3, 0.04, '#7fb0c9', 0.2, 1.0, -0.2))
-      grp.add(box(0.35, 0.06, 0.45, '#3a352e', -0.3, 0.78, 0))
+      // v54c 精细化（轮廓不变：顶板 s.w*0.9×0.7 @0.74、支撑 ±s.w*0.4——structColliders 不动）：
+      // 抽屉柜单元（右侧吊抽×2 + 拉手）+ 桌面板边沿 + 桌下挡板 + 键盘/鼠标/便签/笔筒小件
+      const dw = s.w * 0.9
+      grp.add(box(dw, 0.06, 0.7, '#8f8a7c', 0, 0.74, 0)) // 桌面板
+      grp.add(box(dw + 0.04, 0.025, 0.74, '#7d786c', 0, 0.775, 0)) // 板面边沿（略大一圈、深一档）
+      grp.add(box(0.08, 0.74, 0.6, '#6e6a5c', -s.w * 0.4, 0.37, 0)) // 左侧板
+      const cabX = s.w * 0.4 - 0.15
+      grp.add(box(0.38, 0.68, 0.6, '#6e6a5c', cabX, 0.34, 0)) // 抽屉柜单元（右侧吊抽）
+      for (const [dy, hh] of [[0.52, 0.3], [0.22, 0.34]] as const) {
+        grp.add(box(0.34, hh, 0.02, '#7a7568', cabX, dy, 0.31)) // 抽面
+        grp.add(box(0.12, 0.025, 0.03, '#3a352e', cabX, dy, 0.33)) // 拉手
+      }
+      grp.add(box(dw * 0.72, 0.42, 0.04, '#7a7568', -0.04, 0.5, -0.31)) // 桌下挡板（靠后缘）
+      // v54c：屏幕总成（底座贴桌面 + 支架 + 边框 + 微亮屏面微后倾——不再浮空）
+      grp.add(box(0.22, 0.02, 0.16, '#2e3238', 0.2, 0.79, -0.18)) // 底座
+      grp.add(box(0.05, 0.2, 0.05, '#2e3238', 0.2, 0.9, -0.18)) // 支架
+      const scrG = new THREE.Group()
+      scrG.position.set(0.2, 1.08, -0.18)
+      scrG.rotation.x = -0.08
+      scrG.add(box(0.46, 0.34, 0.03, '#1c1e22', 0, 0, 0)) // 边框
+      scrG.add(glow(0.4, 0.28, 0.015, '#7fb0c9', 0, 0, 0.014)) // 屏面（微亮淡蓝）
+      grp.add(scrG)
+      grp.add(box(0.35, 0.06, 0.45, '#3a352e', -0.3, 0.78, 0)) // 文件堆/主机块（保留）
+      grp.add(box(0.34, 0.025, 0.13, '#c9c4b8', 0.12, 0.79, 0.24)) // 键盘
+      grp.add(box(0.06, 0.03, 0.09, '#2e2e33', 0.36, 0.79, 0.24)) // 鼠标
+      grp.add(box(0.16, 0.012, 0.12, '#f0e6c0', -0.12, 0.785, 0.2)) // 便签
+      grp.add(cyl(0.035, 0.035, 0.09, '#8a4a3a', -0.42, 0.83, -0.18, 8)) // 笔筒
+      grp.add(cyl(0.006, 0.006, 0.1, '#2e3238', -0.43, 0.9, -0.17, 6)) // 笔
       break
     }
     case 'door': {
@@ -577,13 +862,39 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       break
     }
     case 'bed': {
+      // v54：床架（床头/床尾板 + 床腿）+ 被子与褶皱（矮盒错落拼，mulberry 瓦片哈希确定性）
       grp.add(box(s.w * 0.95, 0.3, s.h * 0.95, '#3a1e20', 0, 0.15, 0))
       grp.add(box(s.w * 0.9, 0.18, s.h * 0.9, '#d8cfc0', 0, 0.38, 0))
       grp.add(box(s.w * 0.8, 0.12, 0.4, '#a03a3a', 0, 0.45, -s.h * 0.3))
+      grp.add(box(s.w * 0.95, 0.72, 0.06, '#2a1516', 0, 0.5, -s.h * 0.48)) // 床头板
+      grp.add(box(s.w * 0.95, 0.36, 0.05, '#2a1516', 0, 0.3, s.h * 0.48))  // 床尾板
+      for (const lx of [-s.w * 0.42, s.w * 0.42]) for (const lz of [-s.h * 0.42, s.h * 0.42])
+        grp.add(box(0.07, 0.12, 0.07, '#241215', lx, 0.06, lz)) // 床腿
+      grp.add(box(s.w * 0.88, 0.07, s.h * 0.5, '#6a4a4a', 0, 0.47, s.h * 0.16)) // 被子（避开枕头）
+      const br = mulberry(s.x * 47 + s.y * 23)
+      for (let i = 0; i < 5; i++) { // 被面褶皱（错落矮盒）
+        const wr = box(0.24 + br() * 0.2, 0.03, 0.08 + br() * 0.06, '#5c3f3f',
+          (br() - 0.5) * s.w * 0.6, 0.515, s.h * (-0.05 + br() * 0.4))
+        wr.rotation.y = (br() - 0.5) * 0.6
+        grp.add(wr)
+      }
+      // v55（任务8）：床头靠墙朝向——data.deg=床头朝向（0=南 90=东 180=北 270=西）；模型床头建在局部 -z
+      if (s.data?.deg !== undefined) grp.rotation.y = (((Number(s.data.deg) || 0) + 180) * Math.PI) / 180
       break
     }
     case 'sconce': {
-      grp.add(glow(0.15, 0.25, 0.15, '#ffd9a0', 0, 1.9, 0))
+      // 烛台壁灯（v55 细化：壁挂托座 + 双烛枝 + 蜡烛 + 分层火苗 glow[内芯亮白/外焰暖橙]，贴墙）
+      grp.add(box(0.16, 0.1, 0.08, '#6a541f', 0, 1.62, 0.02)) // 壁挂托座
+      grp.add(cyl(0.02, 0.03, 0.14, '#8a6d2e', 0, 1.72, 0.04, 8)) // 主枝
+      for (const sx of [-0.09, 0.09]) { // 双烛枝（外弯）
+        const arm = box(0.16, 0.025, 0.025, '#8a6d2e', sx / 2, 1.78, 0.04)
+        arm.rotation.z = sx > 0 ? -0.35 : 0.35
+        grp.add(arm)
+        grp.add(cyl(0.025, 0.02, 0.14, '#e8e0c8', sx, 1.88, 0.04, 6)) // 蜡烛
+        grp.add(glow(0.03, 0.07, 0.03, '#ffd9a0', sx, 1.99, 0.04)) // 外焰（暖橙）
+        grp.add(glow(0.014, 0.035, 0.014, '#fff4d8', sx, 1.985, 0.04)) // 内芯（亮白）
+      }
+      flushToWall(grp, s, m, 0.1) // 贴墙（壁挂托座贴墙面；无邻墙则仅旋正）
       break
     }
     case 'graffiti': {
@@ -606,29 +917,35 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       break
     }
     case 'crate': {
-      // 木箱：板条（木纹贴图）+ 可开盖板
+      // 木箱：板条（木纹贴图）+ 可开盖板（v54：上翻后后滑两段开启；箱体加钉带/角铁）
       const crateMat = texLambert('crate_wood', '#6a5a40', '#554730')
       const body = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.62, 0.8), crateMat)
       body.position.set(0, 0.31, 0)
       grp.add(body)
       for (let i = 0; i < 3; i++) grp.add(box(0.84, 0.06, 0.84, '#554730', 0, 0.12 + i * 0.22, 0))
+      for (const pz of [-0.3, 0.3]) grp.add(box(0.86, 0.05, 0.08, '#3a3630', 0, 0.42, pz)) // 钉带
+      for (const px of [-0.38, 0.38]) for (const pz of [-0.38, 0.38]) grp.add(box(0.07, 0.66, 0.07, '#4a4438', px, 0.33, pz)) // 角铁
       const lid = new THREE.Mesh(new THREE.BoxGeometry(0.84, 0.08, 0.84), crateMat)
       lid.geometry.translate(0, 0, 0.42) // 铰链在后缘
       lid.position.set(0, 0.66, -0.42)
-      lid.userData.lid = 1
+      movable(lid, 'lid')
       grp.add(lid)
+      if (s.looted) grp.userData.open = 1
       break
     }
     case 'corpse': {
       grp.add(box(0.5, 0.18, 1.2, '#4a4038', 0, 0.09, 0))
       grp.add(box(0.3, 0.14, 0.3, '#8a8078', 0, 0.12, -0.6))
       grp.add(box(0.2, 0.1, 0.5, '#3a332c', 0.15, 0.08, 0.3)) // 伸出的腿
-      // 盖布（搜索后掀开）
+      // 盖布（搜索后掀开：侧滑 + 微倾）
       const sheet = box(0.56, 0.06, 1.0, '#5a5348', 0, 0.2, 0.1)
-      sheet.userData.lid = 1
+      movable(sheet, 'lid')
       grp.add(sheet)
+      if (s.looted) grp.userData.open = 1
       break
     }
+    case 'stairrail':
+      return null // v54：oldstairs 井口护栏——仅碰撞（structColliders），可见护栏在出口模型里
     case 'ladder': {
       // v13：攀爬梯直达上层（3.5m 高）；装饰梯保持原样
       const lh = s.data?.climb ? 3.5 : s.h * 1.2
@@ -785,8 +1102,14 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       const knob = glow(0.06, 0.06, 0.1, sealed ? '#3a3f46' : s.data?.locked ? '#c93a2e' : '#b08d46', 0, 0, 0)
       knob.position.set(hingeOff + (mirror ? -0.3 : 0.3), 1.02, 0.05)
       panel.add(knob)
+      const knobB = glow(0.06, 0.06, 0.1, sealed ? '#3a3f46' : s.data?.locked ? '#c93a2e' : '#b08d46', 0, 0, 0)
+      knobB.position.set(hingeOff + (mirror ? -0.3 : 0.3), 1.02, -0.05) // v54：背面把手（双面可见/可辨）
+      panel.add(knobB)
       panel.add(box(0.6, 0.8, 0.02, hue.inset, hingeOff, 1.55, 0.045))
       panel.add(box(0.6, 0.5, 0.02, hue.inset, hingeOff, 0.5, 0.045))
+      // v54：背面嵌板对称——门板正反两面一致（把手此前已双面）
+      panel.add(box(0.6, 0.8, 0.02, hue.inset, hingeOff, 1.55, -0.045))
+      panel.add(box(0.6, 0.5, 0.02, hue.inset, hingeOff, 0.5, -0.045))
       if (sealed) {
         // 锁死的门（L2：锁的结构闻所未闻）——门扇焊死：交叉钢条 + 铆钉 + 门缝灌铅
         const bar1 = box(1.0, 0.09, 0.03, '#22252a', hingeOff, 1.05, 0.06)
@@ -797,6 +1120,15 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
         panel.add(bar2)
         for (const [rx, ry] of [[-0.28, 1.7], [0.28, 1.7], [-0.28, 0.4], [0.28, 0.4]] as const)
           panel.add(glow(0.04, 0.04, 0.02, '#4a4f56', hingeOff + rx, ry, 0.06))
+      }
+      // v55（任务4）：门楣封墙到顶——门框上沿（2.27m）到本瓦片天花板底面（CH，挑高自适应）之间
+      // 补门楣薄墙（墙色 + 顶部暗线），消除门洞上方与天花之间的缺口（多层/挑高区同规则）
+      {
+        const lintelH = Math.max(0, CH - 2.27)
+        if (lintelH > 0.01) {
+          grp.add(box(1.06, lintelH, 0.24, _def.palette.wall, 0, 2.27 + lintelH / 2, 0))
+          grp.add(box(1.06, 0.05, 0.26, _def.palette.wallTop, 0, CH - 0.03, 0)) // 顶线
+        }
       }
       break
     }
@@ -844,6 +1176,41 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       grp.add(box(s.w * 0.85, 0.06, s.h * 0.8, '#4a3a2a', 0, 0.72, 0))
       for (const [sx, sz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]] as const)
         grp.add(box(0.07, 0.72, 0.07, '#3a2e22', sx * (s.w * 0.38), 0.36, sz * (s.h * 0.32)))
+      if (_def.id === 5 && !s.data?.manila) {
+        // v55（任务7）：L5 古典雕花木桌——深色胡桃木 + 弯腿（外撇）+ 雕花桌沿 + 金色束线（观感替换，轮廓/碰撞不变）
+        const wood = '#3e2418', woodD = '#2a1610', gold = '#b8924a'
+        grp.add(box(s.w * 0.88, 0.05, s.h * 0.84, woodD, 0, 0.68, 0)) // 雕花桌沿（略大于桌面）
+        grp.add(box(s.w * 0.86, 0.02, s.h * 0.82, gold, 0, 0.755, 0)) // 桌面金线沿
+        for (const [sx, sz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]] as const) {
+          const leg = box(0.08, 0.5, 0.08, wood, sx * (s.w * 0.36), 0.44, sz * (s.h * 0.3))
+          leg.rotation.z = -sx * 0.12 // 弯腿外撇
+          leg.rotation.x = sz * 0.12
+          grp.add(leg)
+          grp.add(box(0.1, 0.06, 0.1, woodD, sx * (s.w * 0.4), 0.1, sz * (s.h * 0.34))) // 蹄形脚
+        }
+        grp.add(box(s.w * 0.6, 0.08, 0.04, wood, 0, 0.3, s.h * 0.3)) // 横枨（前后）
+        grp.add(box(s.w * 0.6, 0.08, 0.04, wood, 0, 0.3, -s.h * 0.3))
+        if (s.data?.vase) { // 桌上花瓶（任务9：主厅小件装饰——细颈瓶 + 两枝斜出花枝）
+          grp.add(cyl(0.05, 0.08, 0.2, '#8a4a52', 0.18, 0.85, -0.1, 10)) // 瓶身
+          grp.add(cyl(0.02, 0.04, 0.1, '#9a5a62', 0.18, 1.0, -0.1, 8)) // 细颈
+          for (const [fa, fl] of [[0.5, 0.34], [-0.9, 0.28]] as const) {
+            const stem = box(0.015, fl, 0.015, '#3e5a2a', 0.18 + Math.sin(fa) * 0.08, 1.05 + fl / 2, -0.1 + Math.cos(fa) * 0.06)
+            stem.rotation.z = Math.sin(fa) * 0.5
+            grp.add(stem)
+            grp.add(box(0.06, 0.05, 0.06, '#c98a92', 0.18 + Math.sin(fa) * 0.17, 1.08 + fl, -0.1 + Math.cos(fa) * 0.12)) // 花
+          }
+        }
+        if (s.data?.drink) { // 桌上饮料（任务20：休息室茶几——取走[data.searched]后渲染层隐藏）
+          const dg = new THREE.Group()
+          dg.add(cyl(0.04, 0.05, 0.22, '#7a5a2a', -0.16, 0.87, 0.08, 8)) // 琥珀瓶
+          dg.add(cyl(0.014, 0.02, 0.07, '#7a5a2a', -0.16, 1.01, 0.08, 6))
+          dg.add(cyl(0.035, 0.045, 0.18, '#3a5a3a', 0.14, 0.85, -0.12, 8)) // 绿瓶
+          dg.add(cyl(0.012, 0.018, 0.06, '#3a5a3a', 0.14, 0.97, -0.12, 6))
+          dg.visible = s.data?.searched !== 1
+          grp.add(dg)
+          grp.userData.drinkGrp = dg
+        }
+      }
       if (s.data?.manila) {
         grp.add(box(0.3, 0.03, 0.22, '#e5c88f', -0.08, 0.765, 0.04))      // M.E.G. 文件夹（马尼拉纸）
         grp.add(box(0.3, 0.02, 0.22, '#dcbd7e', 0.06, 0.79, -0.05))
@@ -852,15 +1219,28 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       break
     }
     case 'chandelier': {
-      // L5 水晶吊灯：吊链 + 金环 + 水晶挂坠（自发光）（v26：吊链顶端贴合本瓦片天花板底面）
-      grp.add(cyl(0.03, 0.03, CH - 2.1, '#8a6d2e', 0, CH - (CH - 2.1) / 2, 0))
-      grp.add(cyl(0.5, 0.62, 0.22, '#b08d46', 0, 2.0, 0, 10))
-      grp.add(cyl(0.3, 0.42, 0.18, '#b08d46', 0, 1.8, 0, 8))
-      for (let i = 0; i < 8; i++) {
-        const a = (i / 8) * Math.PI * 2
-        grp.add(glow(0.05, 0.14, 0.05, '#ffe9c0', Math.cos(a) * 0.55, 1.85, Math.sin(a) * 0.55))
+      // L5 水晶吊灯（v55 细化：三层金环塔身 + 双层水晶挂坠 + 垂珠链 + 中央水晶球；
+      // v55b：吊链收短——灯具主体上移贴近顶面[挑高区贴 tallCeilH]，三层金环/挂坠相对顶面定位）
+      const gold = '#b08d46', crys = '#ffe9c0'
+      const y0 = CH - 0.55 // 顶层金环高度（主体贴顶）
+      grp.add(cyl(0.03, 0.03, 0.34, '#8a6d2e', 0, CH - 0.17, 0)) // 短吊链
+      grp.add(cyl(0.06, 0.1, 0.16, gold, 0, CH - 0.08, 0, 8)) // 链脚钟罩
+      grp.add(cyl(0.05, 0.05, 0.7, gold, 0, y0 - 0.15, 0, 8)) // 中柱
+      grp.add(cyl(0.5, 0.62, 0.22, gold, 0, y0, 0, 12)) // 顶层金环（大）
+      grp.add(cyl(0.3, 0.42, 0.18, gold, 0, y0 - 0.2, 0, 10)) // 中层金环
+      grp.add(cyl(0.14, 0.24, 0.12, gold, 0, y0 - 0.38, 0, 8)) // 底层金环（小）
+      for (let i = 0; i < 10; i++) { // 外层水晶挂坠（垂链 + 坠珠）
+        const a = (i / 10) * Math.PI * 2
+        const px = Math.cos(a) * 0.56, pz = Math.sin(a) * 0.56
+        grp.add(box(0.012, 0.12, 0.012, gold, px, y0 - 0.18, pz))
+        grp.add(glow(0.05, 0.14, 0.05, crys, px, y0 - 0.3, pz))
       }
-      grp.add(glow(0.36, 0.16, 0.36, '#ffd9a0', 0, 1.68, 0))
+      for (let i = 0; i < 6; i++) { // 内层水晶挂坠
+        const a = (i / 6) * Math.PI * 2 + 0.3
+        grp.add(glow(0.04, 0.11, 0.04, crys, Math.cos(a) * 0.33, y0 - 0.42, Math.sin(a) * 0.33))
+      }
+      grp.add(glow(0.36, 0.16, 0.36, '#ffd9a0', 0, y0 - 0.32, 0)) // 中央灯盘
+      grp.add(glow(0.09, 0.14, 0.09, crys, 0, y0 - 0.58, 0)) // 底部垂珠
       break
     }
     case 'hanglight': {
@@ -873,17 +1253,21 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       break
     }
     case 'dresser': {
-      // 柜子（可搜索容器）：抽屉柜 + 可开柜门
+      // 柜子（可搜索容器）：抽屉柜（v54：三层抽屉依次抽出，替代旧侧门旋开）
       grp.add(box(0.85, 1.15, 0.5, '#4a2e22', 0, 0.58, 0))
       for (let i = 0; i < 3; i++) {
-        grp.add(box(0.7, 0.26, 0.03, '#5a3a2a', 0, 0.25 + i * 0.32, 0.26))
-        grp.add(glow(0.08, 0.03, 0.02, '#b08d46', 0, 0.25 + i * 0.32, 0.28))
+        const drawer = box(0.7, 0.26, 0.06, '#5a3a2a', 0, 0.25 + i * 0.32, 0.25)
+        drawer.add(glow(0.08, 0.03, 0.02, '#b08d46', 0, 0, 0.04)) // 拉手（随抽屉）
+        // v54：抽屉盒体（五面浅盒 + 内衬色）——随抽面一起滑出，半开位悬在柜体前可见；关闭时收在柜体轮廓内
+        drawer.add(box(0.64, 0.03, 0.36, '#4a3020', 0, -0.1, -0.2))  // 底板
+        drawer.add(box(0.03, 0.15, 0.36, '#4a3020', -0.32, -0.03, -0.2)) // 侧板
+        drawer.add(box(0.03, 0.15, 0.36, '#4a3020', 0.32, -0.03, -0.2))
+        drawer.add(box(0.64, 0.15, 0.03, '#4a3020', 0, -0.03, -0.37)) // 背板
+        drawer.add(box(0.58, 0.02, 0.3, '#8a5a3a', 0, -0.08, -0.2))  // 内衬
+        movable(drawer, 'drawer', i)
+        grp.add(drawer)
       }
-      const dd = box(0.04, 1.0, 0.46, '#3a241c', 0, 0, 0)
-      dd.geometry.translate(0, 0.5, 0.23) // 铰链在后缘（绕边旋转而非绕中心打转）
-      dd.position.set(0.44, 0.1, -0.23)
-      dd.userData.lid = 1
-      grp.add(dd)
+      if (s.looted) grp.userData.open = 1
       // v48 缺省朝向：背贴最近墙、抽屉面（+Z）朝外；data.deg 可显式覆盖；v51 贴墙位移
       if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
       else flushToWall(grp, s, m, 0.5)
@@ -911,6 +1295,16 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
         for (let i = 0; i < 4; i++)
           grp.add(glow(0.12, 0.08, 0.04, i % 2 ? '#6f9a55' : '#9adfff', -s.w * 0.3 + i * 0.3, 1.0, s.h * 0.46))
       grp.add(glow(0.3, 0.14, 0.05, '#d9b13b', s.w * 0.32, 1.3, s.h * 0.46))
+      // v54：机组结构补全——主转鼓散热片组 + 双鼓联轴节 + 侧挂控制箱（含指示灯/垂线）
+      for (let i = 0; i < 6; i++)
+        grp.add(box(0.05, 1.24, 1.24, dead ? '#2b2e33' : '#454a51', -s.w * 0.43 + i * s.w * 0.1, 1.7, 0)) // 散热片
+      const coup = cyl(0.16, 0.16, 0.24, dead ? '#1c1e22' : '#2a2d33', s.w * 0.08, 1.62, 0.28, 10) // 联轴节
+      coup.rotation.z = Math.PI / 2
+      grp.add(coup)
+      grp.add(box(0.5, 0.7, 0.3, dead ? '#22252a' : '#26282c', s.w * 0.38, 0.95, -s.h * 0.3)) // 控制箱
+      if (!dead) for (let i = 0; i < 2; i++)
+        grp.add(glow(0.05, 0.05, 0.03, i ? '#e8b93c' : '#6f9a55', s.w * 0.38 - 0.06 + i * 0.12, 1.1, -s.h * 0.3 + 0.16))
+      grp.add(cyl(0.03, 0.03, 0.9, '#15181c', s.w * 0.38, 0.45, -s.h * 0.3, 6)) // 控制箱垂线
       break
     }
     case 'machinewall': {
@@ -1060,6 +1454,7 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
         grp.add(box(bw, 0.07, 0.05, rails, 0, ry, 0))
       grp.add(box(bw, 0.12, 0.09, '#4a3f34', 0, H - 0.06, 0)) // 上框
       grp.add(box(bw, 0.12, 0.09, '#4a3f34', 0, 0.06, 0)) // 下框
+      if (s.data?.rot) grp.rotation.y = Math.PI / 2 // v53b：东西墙向（房间门洞封边）
       break
     }
     case 'bargate': {
@@ -1078,6 +1473,7 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       leaf.add(box(0.78, 0.07, 0.05, rails, 0.40, H * 0.3, 0)) // 门扇横档
       leaf.add(box(0.78, 0.07, 0.05, rails, 0.40, H * 0.75, 0))
       leaf.add(box(0.05, 0.16, 0.08, '#8a9098', 0.72, 1.05, 0.04)) // 门把手
+      leaf.add(box(0.05, 0.16, 0.08, '#8a9098', 0.72, 1.05, -0.04)) // v54：背面把手（双面）
       grp.add(leaf)
       if (s.data?.rot) grp.rotation.y = Math.PI / 2 // v51：东西墙门洞（通行沿 local Z，房间门洞用）
       break
@@ -1087,10 +1483,18 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       const inner = new THREE.Group()
       grp.add(inner)
       inner.add(box(0.62, 0.9, 0.18, '#5a6258', 0, 1.1, 0)) // 箱体
-      inner.add(box(0.56, 0.84, 0.012, '#4a5248', 0, 1.1, 0.095)) // 箱门（缝隙色差）
-      inner.add(box(0.03, 0.12, 0.03, '#2e3430', 0.24, 1.1, 0.1)) // 把手
-      inner.add(glow(0.03, 0.03, 0.02, '#7ac97a', -0.18, 1.42, 0.1)) // 指示灯（绿）
-      inner.add(glow(0.03, 0.03, 0.02, '#c94a3a', -0.1, 1.42, 0.1)) // 指示灯（红）
+      // v54：开门可见内胆（底板 + 熔断器排）
+      inner.add(box(0.52, 0.8, 0.04, '#20241f', 0, 1.1, 0.04))
+      for (let i = 0; i < 3; i++) inner.add(box(0.09, 0.14, 0.05, i === 1 ? '#8a4a3a' : '#4a5248', -0.14 + i * 0.14, 1.16, 0.06))
+      // v54：箱门可外摆（铰链在左缘，把手随门）
+      const edoor = box(0.56, 0.84, 0.025, '#4a5248', 0, 0, 0)
+      edoor.geometry.translate(0.28, 0, 0)
+      edoor.position.set(-0.28, 1.1, 0.1)
+      edoor.add(box(0.03, 0.12, 0.03, '#2e3430', 0.52, 0, 0.03)) // 把手
+      movable(edoor, 'lid')
+      inner.add(edoor)
+      inner.add(glow(0.03, 0.03, 0.02, '#7ac97a', -0.18, 1.42, 0.12)) // 指示灯（绿，门上沿）
+      inner.add(glow(0.03, 0.03, 0.02, '#c94a3a', -0.1, 1.42, 0.12)) // 指示灯（红）
       // 顶部出线导管：自箱顶沿墙上行，到顶弯 90° 拐上天花板底面
       const mrand = mulberry(s.x * 57 + s.y * 91)
       const np = 2 + Math.floor(mrand() * 2)
@@ -1102,6 +1506,7 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
         inner.add(bend)
       }
       mountOnWall(inner, grp, s, m)
+      if (s.looted) grp.userData.open = 1
       break
     }
     case 'cables': {
@@ -1518,15 +1923,25 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       break
     }
     case 'megcrate': {
-      // M.E.G. 补给箱：军绿箱 + 白色标记 + 可开盖
+      // M.E.G. 补给箱：军绿箱 + 印刷标记（canvas 贴图）+ 两片式上盖（v54：先上抬再对滑）
       grp.add(box(0.85, 0.6, 0.85, '#3d4a2a', 0, 0.3, 0))
-      grp.add(box(0.5, 0.06, 0.14, '#d8d2c0', 0, 0.62, 0))
-      grp.add(box(0.14, 0.06, 0.5, '#d8d2c0', 0, 0.62, 0))
-      const lid2 = box(0.88, 0.08, 0.88, '#46543a', 0, 0, 0)
-      lid2.geometry.translate(0, 0, 0.44)
-      lid2.position.set(0, 0.64, -0.44)
-      lid2.userData.lid = 1
-      grp.add(lid2)
+      const [cv, cg] = makeCanvasCtx(128, 64)
+      cg.fillStyle = '#3d4a2a'; cg.fillRect(0, 0, 128, 64)
+      cg.fillStyle = '#d8d2c0'
+      cg.font = 'bold 26px monospace'
+      cg.textAlign = 'center'
+      cg.fillText('M.E.G.', 64, 32)
+      cg.fillRect(24, 44, 80, 6)
+      const mark = new THREE.Mesh(new THREE.PlaneGeometry(0.6, 0.3), new THREE.MeshLambertMaterial({ map: toTex(cv) }))
+      mark.position.set(0, 0.32, 0.431)
+      grp.add(mark)
+      for (const sgn of [-1, 1]) {
+        const lid = box(0.44, 0.08, 0.88, '#46543a', sgn * 0.22, 0.64, 0)
+        lid.add(box(0.06, 0.03, 0.3, '#d8d2c0', -sgn * 0.16, 0.055, 0)) // 近中缝提把（随盖）
+        movable(lid, sgn < 0 ? 'lidL' : 'lidR')
+        grp.add(lid)
+      }
+      if (s.looted) grp.userData.open = 1
       break
     }
     case 'glasswin': {
@@ -1534,7 +1949,8 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       // v48 缺省朝向：强制贴最近墙（含虚空墙）、玻璃面（+Z）朝室内，不再立在瓦片中央
       const inner = new THREE.Group()
       grp.add(inner)
-      const frame = '#3a352e'
+      // v54b：L4 雨窗（data.rain）框体提亮至近墙色（受光与邻墙一致，不再明显偏暗）；其余维持深木框
+      const frame = s.data?.rain ? '#9a948a' : '#3a352e'
       if (s.data?.stain === 'blue') {
         // v47：蓝色彩玻窗（Level 274 教堂花窗）——石框尖拱 + 蓝白彩玻格 + 圣辉
         const sf = '#c8ccd8' // 石框
@@ -1564,15 +1980,45 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
         inner.add(box(0.08, 1.25, 0.22, frame, 0.46, 1.475, 0))
         const glass = new THREE.Mesh(
           new THREE.PlaneGeometry(0.88, 1.25),
-          new THREE.MeshLambertMaterial({ color: '#93a7b8', transparent: true, opacity: 0.24, side: THREE.DoubleSide, depthWrite: false }),
+          new THREE.MeshLambertMaterial({ color: '#93a7b8', transparent: true, opacity: 0.12, side: THREE.DoubleSide, depthWrite: false }), // v54：更透——窗外虚空清晰可见
         )
         glass.position.set(0, 1.475, 0)
         inner.add(glass)
+        // v54：雨痕（L4 窗景区 data.rain——纯透明底 + 稀疏细亮痕，只留一点点雨痕、不挡视线）
+        if (s.data?.rain) {
+          const streaks = new THREE.Mesh(
+            new THREE.PlaneGeometry(0.88, 1.25),
+            new THREE.MeshBasicMaterial({
+              map: levelTexture('rain_streaks', () => {
+                const [cv, g] = makeCanvasCtx(64, 128)
+                g.clearRect(0, 0, 64, 128) // 纯透明底（无雾灰底色——透过窗户看清虚空）
+                let s2 = 1337
+                const rnd = () => ((s2 = (s2 * 1664525 + 1013904223) >>> 0) / 4294967296)
+                for (let i = 0; i < 22; i++) { // 稀疏竖直雨痕：细亮痕下滑拖尾 + 端点水珠
+                  const x = rnd() * 64, y0 = rnd() * 128, len = 14 + rnd() * 46
+                  g.strokeStyle = `rgba(200,212,218,${0.3 + rnd() * 0.4})`
+                  g.lineWidth = rnd() < 0.25 ? 1.4 : 0.7
+                  g.beginPath(); g.moveTo(x, y0); g.lineTo(x + (rnd() - 0.5) * 2, y0 + len); g.stroke()
+                  g.fillStyle = 'rgba(215,226,230,0.75)'
+                  g.fillRect(x - 0.7, y0 + len, 1.5, 1.5)
+                }
+                return toTex(cv)
+              }),
+              transparent: true, opacity: 0.3, side: THREE.DoubleSide, depthWrite: false,
+            }),
+          )
+          streaks.position.set(0, 1.475, -0.04) // 玻璃外侧（雨在窗外）
+          inner.add(streaks)
+        }
         // 窗棂十字
         inner.add(box(0.88, 0.03, 0.03, frame, 0, 1.475, 0.01))
         inner.add(box(0.03, 1.25, 0.03, frame, 0, 1.475, 0.01))
       }
-      mountOnWall(inner, grp, s, m) // 强制贴最近墙（含虚空墙），玻璃面朝室内
+      // v54：显式朝向（data.deg——无限 L4 窗列：窗格即窗洞、四邻无墙可依，框贴 data.deg 所指侧瓦片缘）
+      if (s.data?.deg !== undefined) {
+        grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
+        inner.position.z = 0.39 // 贴瓦片外侧缘（+z 侧=窗外虚空条带方向）
+      } else mountOnWall(inner, grp, s, m) // 强制贴最近墙（含虚空墙），玻璃面朝室内
       break
     }
     case 'rollerdoor': {
@@ -1645,6 +2091,28 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       grp.rotation.y = r() < 0.5 ? 0 : Math.PI / 2
       break
     }
+    case 'rattrap': {
+      // v53：尸鼠陷阱（L3 高智能尸鼠设置）——贴地小型捕兽夹：锈铁底板 + 张开的一对锯齿夹颚 + 中央诱饵踏板；
+      // 玩家/实体踩上即触发（data.sprung=1，一次性；触发判定在 engine/movement.ts 与 entityAI.ts，模型保持不变）
+      const r = mulberry(s.x * 131 + s.y * 67)
+      const rusty = '#4a3c30', iron = '#3a3d40'
+      grp.add(box(0.34, 0.02, 0.26, rusty, 0, 0.012, 0)) // 底板
+      grp.add(box(0.1, 0.015, 0.12, '#5e5142', 0, 0.03, 0)) // 中央诱饵踏板
+      for (const sgn of [-1, 1]) { // 一对张开的夹颚（斜立半框 + 锯齿）
+        const jaw = new THREE.Group()
+        jaw.add(box(0.3, 0.014, 0.02, iron, 0, 0, 0.09))
+        jaw.add(box(0.3, 0.014, 0.02, iron, 0, 0, -0.09))
+        jaw.add(box(0.02, 0.014, 0.18, iron, 0.14, 0, 0))
+        for (let k = 0; k < 5; k++) jaw.add(box(0.016, 0.03, 0.014, iron, -0.11 + k * 0.055, 0.014, 0.09))
+        for (let k = 0; k < 5; k++) jaw.add(box(0.016, 0.03, 0.014, iron, -0.11 + k * 0.055, 0.014, -0.09))
+        jaw.position.set(sgn * 0.02, 0.035, 0)
+        jaw.rotation.z = sgn * 1.15 // 向外张开
+        grp.add(jaw)
+      }
+      grp.add(cyl(0.02, 0.02, 0.3, '#2e3134', 0, 0.03, -0.14, 6).rotateZ(Math.PI / 2)) // 尾部弹簧销
+      grp.rotation.y = r() * Math.PI * 2 // 随机朝向（确定性）
+      break
+    }
     case 'braille': {
       // 前人刻在墙上的方向记号：一排小凹块，比墙略深
       const d = wallDir(s, m)
@@ -1678,17 +2146,21 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
         grp.add(box(len - 0.06, 0.05, 0.44, '#6a4a2e', 0, sy, 0.01)) // 隔板
         if (s.looted) continue // 已搜刮：书没了，只剩空隔板
         const nb = Math.max(3, Math.round(len / 0.36))
+        const pick = Math.floor(r() * nb) // v54：确定性挑一本——搜刮时抽出微倾
         for (let i = 0; i < nb; i++) {
           const bw = (len - 0.12) / nb
-          grp.add(box(bw * 0.85, 0.3 + r() * 0.12, 0.26, spineC[Math.floor(r() * spineC.length)],
-            -len / 2 + 0.06 + bw * (i + 0.5), sy + 0.2, 0.09))
+          const bk = box(bw * 0.85, 0.3 + r() * 0.12, 0.26, spineC[Math.floor(r() * spineC.length)],
+            -len / 2 + 0.06 + bw * (i + 0.5), sy + 0.2, 0.09)
+          if (i === pick) movable(bk, 'book', sh)
+          grp.add(bk)
         }
       }
+      if (s.looted) grp.userData.open = 1
       faceOutward(grp, s, m)
       break
     }
     case 'barrel': {
-      // 木桶（装杏仁水）：竖立圆柱（竖纹木板贴图，looted 变暗）+ 两道桶箍
+      // 木桶（装杏仁水）：竖立圆柱（竖纹木板贴图，looted 变暗）+ 三道铁箍（v54 加顶箍）+ 桶盖跳开翻落桶边
       const body = new THREE.Mesh(
         new THREE.CylinderGeometry(0.3, 0.34, 0.88, 10),
         texLambert('barrel_wood', s.looted ? '#4a3420' : '#6a4a2e', '#3a2a18', s.looted ? '#8a7a68' : '#e8e2d2'),
@@ -1701,9 +2173,14 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
         hoop.position.y = hy
         grp.add(hoop)
       }
+      const hoopT = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.028, 5, 12), new THREE.MeshLambertMaterial({ color: '#3a3a3c' }))
+      hoopT.rotation.x = Math.PI / 2
+      hoopT.position.y = 0.83
+      grp.add(hoopT)
       const lid = cyl(0.29, 0.29, 0.05, '#5a3e26', 0, 0.9, 0, 10)
-      if (s.looted) { lid.position.set(0.34, 0.03, 0.26); lid.rotation.z = 1.35 } // 已搜刮：桶盖掀在一旁
+      movable(lid, 'lid') // 开启：向上跳起翻落到桶边地面
       grp.add(lid)
+      if (s.looted) grp.userData.open = 1
       break
     }
     case 'rockisle': {
@@ -1719,12 +2196,13 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       break
     }
     case 'bonepile': {
-      // 骨堆：散骨 + 一具「下颌异常增大、腿末端成鳍」的类人骨架
+      // 骨堆：散骨 + 一具「下颌异常增大、腿末端成鳍」的类人骨架（v54：搜刮时散骨下沉四散、头骨微沉）
       const r = mulberry(s.x * 61 + s.y * 23)
       const bone = s.looted ? '#8c8a80' : '#cfcabb'
       for (let i = 0; i < 7; i++) {
         const b = box(0.05, 0.05, 0.26 + r() * 0.3, bone, (r() - 0.5) * 0.8, 0.05, (r() - 0.5) * 0.8)
         b.rotation.set(0, r() * Math.PI, (r() - 0.5) * 0.5)
+        movable(b, 'bone', i)
         grp.add(b)
       }
       const sk = new THREE.Group()
@@ -1738,7 +2216,9 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
         sk.add(box(0.05, 0.05, 0.42, bone, sgn * 0.13, 0.05, -0.36))   // 腿骨
         sk.add(box(0.24, 0.03, 0.18, bone, sgn * 0.15, 0.03, -0.65))   // 末端成鳍
       }
+      movable(sk, 'skull')
       grp.add(sk)
+      if (s.looted) grp.userData.open = 1
       break
     }
     case 'fishbones': {
@@ -1990,21 +2470,25 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       )
       canopy.rotation.x = -Math.PI / 2 + 0.3
       canopy.position.set(0, 1.86, 0.02)
+      movable(canopy, 'lid') // v54：搜刮时摊布前缘掀起
       grp.add(canopy)
       grp.add(box(0.32, 0.28, 0.3, s.looted ? '#3a4429' : '#4d5a33', -w2 * 0.26, 1.04, 0))
       grp.add(box(0.26, 0.24, 0.26, '#5a4030', w2 * 0.22, 1.02, -0.06))
       grp.add(box(0.2, 0.07, 0.28, '#8a8578', w2 * 0.02, 0.94, d2 * 0.22))
       grp.add(glow(0.11, 0.11, 0.11, '#ffcf8a', 0, 1.66, d2 * 0.3))
+      if (s.looted) grp.userData.open = 1
       break
     }
 
     // ===================== v23：Level 9「The Suburbs」 =====================
     case 'house': {
       // 郊区房屋标记（非实心）：只补一个双坡屋顶，房屋主体由地图的墙构成
-      const roof = gableRoof(s.w, s.h, Math.min(1.9, Math.min(s.w, s.h) * 0.3), '#2e2c30', '#3a3630')
+      // v53：坡面/檐口换 RoofingTiles 贴图（l9_roof.jpg）——贴图均值归一 0.72，
+      //      tint=原纯色÷0.72（#2e2c30→#403d43 / #3a3630→#514b43）保持原有明度观感，离线回退原纯色噪点
+      const roof = gableRoof(s.w, s.h, Math.min(1.9, Math.min(s.w, s.h) * 0.3), '#2e2c30', '#514b43', { name: 'l9_roof', tint: '#403d43' })
       roof.position.y = H
       grp.add(roof)
-      grp.add(box(s.w + 0.35, 0.16, s.h + 0.35, '#3a3630', 0, H - 0.06, 0)) // 檐口
+      grp.add(texBox(s.w + 0.35, 0.16, s.h + 0.35, 'l9_roof', '#3a3630', '#3a3630', '#514b43', 2.0, 0, H - 0.06, 0)) // 檐口
       break
     }
     case 'streetlamp': {
@@ -2018,18 +2502,25 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       break
     }
     case 'mailbox': {
-      // 信箱：立柱 + 圆顶盒 + 小红旗
+      // 信箱：立柱 + 圆顶盒 + 小红旗（v54：投递口小门垂开 + 红旗倒下）
       const body = s.looted ? '#454b51' : '#5d6167'
       grp.add(box(0.09, 0.95, 0.09, '#4a3a2a', 0, 0.48, 0))
       const dome = cyl(0.16, 0.16, 0.44, body, 0, 1.09, 0, 10)
       dome.rotation.x = Math.PI / 2 // 圆顶沿前后方向躺倒
       grp.add(dome)
       grp.add(box(0.31, 0.14, 0.44, body, 0, 1.0, 0))
-      const door = box(0.29, 0.2, 0.03, '#6a6f76', 0, 1.04, 0.22)
-      if (s.looted) { door.position.set(0, 0.95, 0.34); door.rotation.x = 1.3 } // 已搜刮：箱门垂开
+      const door = box(0.29, 0.2, 0.03, '#6a6f76', 0, 0, 0)
+      door.geometry.translate(0, -0.1, 0) // 铰链在下缘（向外垂开）
+      door.position.set(0, 1.14, 0.22)
+      movable(door, 'lid')
       grp.add(door)
       grp.add(box(0.022, 0.24, 0.022, '#8a8a8a', 0.18, 1.2, -0.06)) // 旗杆
-      grp.add(box(0.02, 0.12, 0.14, '#c0231c', 0.18, 1.26, 0.02))   // 小红旗
+      const flag = box(0.02, 0.12, 0.14, '#c0231c', 0, 0, 0)
+      flag.geometry.translate(0, 0, 0.07) // 铰链在旗杆侧
+      flag.position.set(0.18, 1.26, -0.05)
+      movable(flag, 'flag')
+      grp.add(flag)
+      if (s.looted) grp.userData.open = 1
       break
     }
     case 'picketfence': {
@@ -2133,10 +2624,12 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
     }
     case 'barn': {
       // 谷仓标记（非实心）：双坡红色屋顶 + 山墙面
-      const roof = gableRoof(s.w, s.h, Math.min(2.2, Math.min(s.w, s.h) * 0.34), '#7a3a2e', '#8c4433')
+      // v53：坡面/檐口换波纹钢贴图（l10_roof.jpg）——贴图均值归一 0.72，
+      //      tint=原纯色÷0.72 保持红色调（#7a3a2e→#a95140 / #8c4433→#c25e47 / #5e2c23→#833d31），离线回退原纯色噪点
+      const roof = gableRoof(s.w, s.h, Math.min(2.2, Math.min(s.w, s.h) * 0.34), '#7a3a2e', '#c25e47', { name: 'l10_roof', tint: '#a95140' })
       roof.position.y = H
       grp.add(roof)
-      grp.add(box(s.w + 0.3, 0.18, s.h + 0.3, '#5e2c23', 0, H - 0.07, 0))
+      grp.add(texBox(s.w + 0.3, 0.18, s.h + 0.3, 'l10_roof', '#5e2c23', '#5e2c23', '#833d31', 2.0, 0, H - 0.07, 0))
       break
     }
     case 'canolaplot': {
@@ -2158,12 +2651,14 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
     case 'towerblock': {
       // 混凝土峭壁般的楼体（非实心标记，体量极大 → 只用 2 个 mesh：立面盒 + 屋顶板）。
       // 从墙顶 H 起算，底层由地图墙体本身构成，可进入的街区不会被这块体量堵死。
+      // v53：立面换下载混凝土贴图 l11_tower.jpg（towerFacade 程序纹理留作离线回退）、
+      //      屋顶板换 l11_roof.jpg——贴图均值归一 0.72，tint=原纯色÷0.72（#6a6d72→#93979e / #565a5f→#777d84）
       const floors = (s.data?.floors as number | undefined) ?? 4
       const top = Math.max(H + 3, floors * 3)
-      const body = towerBox(s.w + 0.1, top - H, s.h + 0.1, '#6a6d72')
+      const body = towerBox(s.w + 0.1, top - H, s.h + 0.1, '#93979e', 'l11_tower')
       body.position.y = H + (top - H) / 2
       grp.add(body)
-      grp.add(box(s.w + 0.4, 0.45, s.h + 0.4, '#565a5f', 0, top + 0.2, 0)) // 女儿墙/屋顶板
+      grp.add(texBox(s.w + 0.4, 0.45, s.h + 0.4, 'l11_roof', '#565a5f', '#565a5f', '#777d84', 3.2, 0, top + 0.2, 0)) // 女儿墙/屋顶板
       break
     }
     case 'blackwindow': {
@@ -2328,7 +2823,10 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       grp.add(box(0.98, 2.1, 0.09, '#6a4326', 0, 1.05, 0))      // 木门板
       grp.add(box(0.62, 0.72, 0.02, '#553318', 0, 1.55, 0.055)) // 门芯嵌板
       grp.add(box(0.62, 0.52, 0.02, '#553318', 0, 0.72, 0.055))
+      grp.add(box(0.62, 0.72, 0.02, '#553318', 0, 1.55, -0.055)) // v54：背面嵌板（正反一致）
+      grp.add(box(0.62, 0.52, 0.02, '#553318', 0, 0.72, -0.055))
       grp.add(glow(0.06, 0.06, 0.06, '#c9a24a', 0.34, 1.05, 0.09)) // 门把手
+      grp.add(glow(0.06, 0.06, 0.06, '#c9a24a', 0.34, 1.05, -0.09)) // v54：背面把手
       const transom = new THREE.Mesh(
         new THREE.CircleGeometry(0.46, 12, 0, Math.PI),
         new THREE.MeshBasicMaterial({ color: '#ffcf8a', side: THREE.DoubleSide }),
@@ -2342,7 +2840,7 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
 
     // ===================== v23：通用新容器（均带「已搜刮」视觉变化）=====================
     case 'locker': {
-      // 储物柜：竖直金属柜（金属贴图，looted 变暗）+ 通风百叶 + 把手
+      // 储物柜：竖直金属柜（金属贴图，looted 变暗）+ 通风百叶 + 把手 + 编号牌（v54：薄钢门快速外摆）
       const metalMat = texLambert('locker_metal', s.looted ? '#3f464b' : '#5a636a', '#394046', s.looted ? '#7a8288' : '#e8eaec')
       const body = new THREE.Mesh(new THREE.BoxGeometry(0.64, 1.9, 0.46), metalMat)
       body.position.set(0, 0.95, 0)
@@ -2351,42 +2849,55 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       const door = new THREE.Mesh(new THREE.BoxGeometry(0.58, 1.82, 0.05), texLambert('locker_metal', s.looted ? '#485057' : '#646d75', '#394046', s.looted ? '#868e94' : '#f0f2f4'))
       door.geometry.translate(0.29, 0.95, 0) // 铰链在左缘
       door.position.set(-0.29, 0.02, 0.235)
-      if (s.looted) door.rotation.y = -1.2 // 已搜刮：柜门半开
+      movable(door, 'lid')
       grp.add(door)
       for (let i = 0; i < 4; i++) door.add(box(0.3, 0.022, 0.02, '#394046', 0.29, 1.44 + i * 0.08, 0.032)) // 百叶
+      door.add(box(0.16, 0.08, 0.015, '#d8d2c0', 0.29, 1.64, 0.033)) // v54：编号牌
       door.add(box(0.05, 0.2, 0.045, '#c9c2a8', 0.51, 0.9, 0.04)) // 把手
+      if (s.looted) grp.userData.open = 1
       flushToWall(grp, s, m, 0.46) // v51 贴墙位移
       break
     }
     case 'toolbox': {
-      // 工具箱：红色金属箱 + 提手
+      // 工具箱：红色金属箱 + 提手（v54：锁扣先弹开，箱盖后翻到底 >120°；提手随盖）
       const red = s.looted ? '#6f2a22' : '#a63a2e'
       grp.add(box(0.58, 0.26, 0.3, red, 0, 0.13, 0))
-      const lid = box(0.58, 0.16, 0.3, s.looted ? '#7d2f26' : '#b84434', 0, 0.34, 0)
-      if (s.looted) { lid.position.set(0, 0.3, -0.26); lid.rotation.x = -1.1 } // 已搜刮：箱盖后翻
+      const lid = box(0.58, 0.16, 0.3, s.looted ? '#7d2f26' : '#b84434', 0, 0, 0)
+      lid.geometry.translate(0, 0.08, 0.15) // 铰链在后上缘
+      lid.position.set(0, 0.26, -0.15)
+      lid.add(box(0.2, 0.03, 0.03, '#c9c2a8', 0, 0.19, 0.15))       // 提手
+      for (const px of [-0.08, 0.08]) lid.add(box(0.03, 0.1, 0.03, '#c9c2a8', px, 0.15, 0.15))
+      movable(lid, 'lid')
       grp.add(lid)
       grp.add(box(0.6, 0.03, 0.32, '#3a3d42', 0, 0.26, 0))
-      grp.add(box(0.2, 0.03, 0.03, '#c9c2a8', 0, 0.47, 0))       // 提手
-      for (const px of [-0.08, 0.08]) grp.add(box(0.03, 0.1, 0.03, '#c9c2a8', px, 0.43, 0))
+      const latch = box(0.08, 0.07, 0.03, '#c9c2a8', 0, 0.3, 0.16)  // 前锁扣
+      movable(latch, 'latch')
+      grp.add(latch)
+      if (s.looted) grp.userData.open = 1
       flushToWall(grp, s, m, 0.3) // v51 贴墙位移
       break
     }
     case 'suitcase': {
-      // 行李箱：卧倒的皮箱 + 两条搭扣带
+      // 行李箱：卧倒的皮箱 + 两条搭扣带（v54：搭扣先弹开，上盖再翻平；提把随盖）
       const skin = s.looted ? '#3e2b20' : '#5a4030'
       grp.add(box(0.74, 0.2, 0.5, skin, 0, 0.1, 0))
-      const lid = box(0.74, 0.14, 0.5, s.looted ? '#4a3426' : '#6a4c38', 0, 0.27, 0)
-      if (s.looted) { lid.geometry.translate(0, 0, 0.25); lid.position.set(0, 0.2, -0.25); lid.rotation.x = -1.5 }
+      const lid = box(0.74, 0.14, 0.5, s.looted ? '#4a3426' : '#6a4c38', 0, 0, 0)
+      lid.geometry.translate(0, 0.07, 0.25) // 铰链在后缘
+      lid.position.set(0, 0.2, -0.25)
+      lid.add(box(0.22, 0.05, 0.05, '#3a2a1e', 0, 0.15, 0.25))        // 提把
+      movable(lid, 'lid')
       grp.add(lid)
       for (const px of [-0.2, 0.2]) {
         grp.add(box(0.08, 0.22, 0.52, '#3a2a1e', px, 0.11, 0))     // 搭扣带
-        grp.add(box(0.1, 0.06, 0.06, '#c9a24a', px, 0.14, 0.26))   // 扣件
+        const buckle = box(0.1, 0.06, 0.06, '#c9a24a', px, 0.14, 0.26) // 扣件
+        movable(buckle, 'latch', px < 0 ? 0 : 1)
+        grp.add(buckle)
       }
-      grp.add(box(0.22, 0.05, 0.05, '#3a2a1e', 0, 0.36, 0))        // 提把
+      if (s.looted) grp.userData.open = 1
       break
     }
     case 'fridge': {
-      // 冰箱：白色双门（上小下大）+ 竖直把手
+      // 冰箱：白色双门（上小下大）+ 竖直把手（v54：门内密封条 + 开门灯亮 + 底部散热栅）
       const body = s.looted ? '#9a9a95' : '#c9c9c4'
       grp.add(box(0.8, 1.75, 0.7, body, 0, 0.875, 0))
       const top = box(0.76, 0.52, 0.06, s.looted ? '#a8a8a2' : '#d6d6d0', 0, 0, 0)
@@ -2395,33 +2906,51 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       const low = box(0.76, 1.14, 0.06, s.looted ? '#a8a8a2' : '#d6d6d0', 0, 0, 0)
       low.geometry.translate(0.38, 0, 0)
       low.position.set(-0.38, 0.6, 0.36)
-      if (s.looted) { top.rotation.y = -1.1; low.rotation.y = -0.85 } // 已搜刮：双门敞着
+      top.add(box(0.7, 0.46, 0.02, '#3a3d40', 0.38, 0, -0.035)) // 密封条（随门）
+      low.add(box(0.7, 1.08, 0.02, '#3a3d40', 0.38, 0, -0.035))
+      movable(top, 'doorT'); movable(low, 'doorL')
       grp.add(top); grp.add(low)
       top.add(box(0.04, 0.3, 0.04, '#8a8f94', 0.68, 0, 0.05))
       low.add(box(0.04, 0.6, 0.04, '#8a8f94', 0.68, 0.2, 0.05))
       grp.add(box(0.78, 0.04, 0.68, '#8a8f94', 0, 1.16, 0.01)) // 上下门分缝
+      // 开门灯：门内顶部小灯片（updateStructs 随开度点亮；looted 常灭）
+      const lamp = glow(0.3, 0.04, 0.1, '#4a4a42', 0, 1.62, 0.28)
+      movable(lamp, 'light')
+      grp.add(lamp)
+      // 底部散热栅
+      grp.add(box(0.6, 0.12, 0.02, '#7a7f84', 0, 0.09, 0.36))
+      for (let i = 0; i < 4; i++) grp.add(box(0.56, 0.015, 0.01, '#3a3d40', 0, 0.05 + i * 0.028, 0.371))
       if (s.looted) grp.add(box(0.7, 1.6, 0.6, '#2a2d30', 0, 0.85, 0.02)) // 空掉的内胆
+      if (s.looted) grp.userData.open = 1
       faceOutward(grp, s, m)
       break
     }
     case 'safebox': {
-      // 保险箱：厚重方箱 + 圆形转盘锁 + 铰链
+      // 保险箱：厚重方箱 + 圆形转盘锁 + 铰链（v54：转盘先旋转、厚重门再缓慢外摆；铆钉/刻度环细化）
       const body = s.looted ? '#2c2f33' : '#3a3d42'
       grp.add(box(0.72, 0.76, 0.66, body, 0, 0.38, 0))
       grp.add(box(0.76, 0.06, 0.7, '#2a2d31', 0, 0.03, 0)) // 底座
       const door = box(0.62, 0.66, 0.07, s.looted ? '#33373b' : '#454a50', 0, 0, 0)
       door.geometry.translate(-0.31, 0, 0) // 铰链在右缘
       door.position.set(0.31, 0.4, 0.33)
-      if (s.looted) door.rotation.y = 1.25 // 已搜刮：箱门敞开
-      grp.add(door)
+      // 门面铆钉（上下两排）
+      for (const rx of [-0.58, -0.31, -0.04]) for (const ry of [-0.28, 0.28]) door.add(box(0.03, 0.03, 0.02, '#5a6068', rx, ry, 0.045))
+      // 刻度环（静止）+ 转盘（先转；偏心手柄随转盘公转）
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.015, 5, 16), new THREE.MeshLambertMaterial({ color: '#6a7078' }))
+      ring.position.set(-0.25, 0, 0.04)
+      door.add(ring)
       const dial = cyl(0.11, 0.11, 0.04, '#8a9098', 0, 0, 0, 12)
       dial.rotation.x = Math.PI / 2
-      dial.position.set(-0.31 + 0.06, 0, 0.055)
+      dial.position.set(-0.25, 0, 0.055)
+      dial.add(box(0.04, 0.04, 0.05, '#c9c2a8', 0.06, 0.04, 0)) // 转盘手柄
+      movable(dial, 'dial')
       door.add(dial)
-      door.add(box(0.05, 0.05, 0.06, '#c9c2a8', -0.31 + 0.06, 0, 0.08))     // 转盘手柄
-      door.add(box(0.05, 0.18, 0.06, '#8a9098', -0.31 + 0.24, -0.02, 0.05)) // 拉手
+      door.add(box(0.05, 0.18, 0.06, '#8a9098', -0.07, -0.02, 0.05)) // 拉手
+      movable(door, 'lid')
+      grp.add(door)
       for (const hy of [-0.22, 0.22]) grp.add(box(0.06, 0.1, 0.1, '#22252a', 0.33, 0.4 + hy, 0.3)) // 铰链
       if (s.looted) grp.add(box(0.56, 0.6, 0.5, '#141618', 0, 0.4, 0.02))
+      if (s.looted) grp.userData.open = 1
       flushToWall(grp, s, m, 0.66) // v51 贴墙位移
       break
     }
@@ -2577,6 +3106,9 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       leaf.position.set(0.06, doorH / 2, 0.86)
       leaf.userData.lid = 1
       leaf.add(box(0.06, 0.08, 0.14, '#8a9098', 0.07, 0, -1.48)) // 门把手（随门扇）
+      leaf.add(box(0.06, 0.08, 0.14, '#8a9098', -0.07, 0, -1.48)) // v54：背面把手（双面）
+      for (const sd of [-1, 1]) for (const ry of [-doorH * 0.22, doorH * 0.22]) // v54：门扇两面加强肋（正反一致）
+        leaf.add(box(0.02, 0.12, 1.5, ink2, sd * 0.05, ry, -0.85))
       grp.add(leaf)
       // 门楣两端的冷白描边灯（黑暗中也能认出这是一扇门）
       grp.add(glow(0.1, 0.04, 0.1, '#e8e8e0', 0.26, doorH + 0.04, -0.95))
@@ -2651,6 +3183,12 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       for (let i = 0; i < 5; i++) grp.add(box(0.06, 0.02, 0.02, '#c94a3a', -0.15 + i * 0.075, 1.06, 0.21)) // 红色接线排
       for (let i = 0; i < 3; i++) grp.add(box(0.015, 0.5, 0.015, '#15181c', -0.24 + i * 0.05, 0.55, 0.21)) // 垂下线缆
       grp.add(box(0.6, 0.06, 0.34, '#15181c', 0, 0.16, 0.02)) // 底部线槽
+      // v54：机架单元分层缝 + 右侧指示灯列 + 背部走线束
+      for (let i = 0; i < 5; i++) grp.add(box(0.64, 0.02, 0.02, '#15181c', 0, 0.5 + i * 0.28, 0.205)) // 单元分层
+      for (let i = 0; i < 9; i++)
+        grp.add(glow(0.018, 0.018, 0.012, i % 3 === 0 ? '#e8b93c' : '#6f9a55', 0.29, 0.42 + i * 0.15, 0.205)) // 指示灯列
+      for (let i = 0; i < 3; i++)
+        grp.add(cyl(0.018, 0.018, 1.5, ['#3a3f46', '#5a3a3a', '#2e3238'][i], -0.2 + i * 0.2, 0.9, -0.21, 6)) // 背部走线
       break
     }
     case 'officechair': {
@@ -2668,12 +3206,13 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       grp.add(back)
       grp.add(box(0.05, 0.05, 0.3, '#4a4a50', -0.2, 0.56, -0.02)) // 扶手（左）
       grp.add(box(0.05, 0.05, 0.3, '#4a4a50', 0.2, 0.56, -0.02)) // 扶手（右）
-      // v35：朝向机制——正对最近的桌子（桌/书桌，2.5 格内）；附近没有桌子则背向最近的墙
+      // v35：朝向机制——正对最近的桌子（桌/书桌/隔间工位，2.5 格内）；附近没有桌子则背向最近的墙
+      // v54c：cubicle 纳入「桌」类（L4 办公间区工位——转椅面向隔间桌板，不再椅背对桌）
       {
         const cx = s.x + s.w / 2, cy = s.y + s.h / 2
         let bt: { x: number; y: number } | null = null, bd = 1e9
         for (const o of m.structures) {
-          if (o === s || (o.kind !== 'table' && o.kind !== 'desk' && o.kind !== 'dtable')) continue
+          if (o === s || (o.kind !== 'table' && o.kind !== 'desk' && o.kind !== 'dtable' && o.kind !== 'cubicle')) continue
           const ox = o.x + o.w / 2, oy = o.y + o.h / 2
           const d = Math.hypot(ox - cx, oy - cy)
           if (d < bd) { bd = d; bt = { x: ox, y: oy } }
@@ -2695,11 +3234,15 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       let bi = 0
       for (const sy of [0.44, 0.99, 1.54]) {
         for (let bx0 = -hw + 0.24; bx0 <= hw - 0.2; bx0 += 0.46) {
-          const bc = binC[bi++ % binC.length]
-          grp.add(box(0.4, 0.26, 0.36, bc, bx0, sy, 0)) // 收纳箱
-          grp.add(box(0.12, 0.09, 0.012, '#f0f0ea', bx0, sy + 0.02, 0.19)) // 白色标签
+          const bc = binC[bi % binC.length]
+          const bm = box(0.4, 0.26, 0.36, bc, bx0, sy, 0) // 收纳箱
+          bm.add(box(0.12, 0.09, 0.012, '#f0f0ea', 0, 0.02, 0.19)) // 白色标签（随箱）
+          movable(bm, 'bin', bi) // v54：搜刮时收纳箱逐个错落地抽出
+          grp.add(bm)
+          bi++
         }
       }
+      if (s.looted) grp.userData.open = 1
       // v48 缺省朝向：背贴最近墙、标签面（+Z）朝外；data.deg 可显式覆盖；v51 贴墙位移
       if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
       else flushToWall(grp, s, m, 0.42)
@@ -2707,17 +3250,25 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
     }
     case 'bunkbed': {
       // 双层床：木框架 + 上下铺 + 床梯 + 床垫枕头（沿本地 z 纵放，占地 1×2）
+      // v54：四柱贯通上下铺 + 上铺双侧护栏与短边端栏（床尾留爬梯口）+ 床单分层（微垂边/上下铺色差）
       const wood = '#7a5a34', mat = '#e8e4d8'
-      for (const px of [-0.4, 0.4]) for (const pz of [-0.92, 0.92]) grp.add(box(0.08, 1.6, 0.08, wood, px, 0.8, pz)) // 四柱
-      for (const dy of [0.5, 1.2]) { // 两层床板 + 床垫 + 枕头
+      for (const px of [-0.4, 0.4]) for (const pz of [-0.92, 0.92]) grp.add(box(0.08, 1.6, 0.08, wood, px, 0.8, pz)) // 四柱（贯通上下铺）
+      for (const dy of [0.5, 1.2]) { // 两层床板 + 床垫 + 床单 + 枕头
+        const sheet = dy > 1 ? '#c8b8a8' : '#a8b8c8' // 上下铺床单色差
         grp.add(box(0.86, 0.07, 1.9, wood, 0, dy, 0))
         grp.add(box(0.78, 0.12, 1.8, mat, 0, dy + 0.09, 0))
-        grp.add(box(0.5, 0.1, 0.3, '#f0ede0', 0, dy + 0.16, -0.7))
+        grp.add(box(0.82, 0.03, 1.84, sheet, 0, dy + 0.165, 0)) // 床单（略大床垫一圈）
+        for (const px of [-0.4, 0.4]) grp.add(box(0.03, 0.1, 1.84, sheet, px, dy + 0.1, 0)) // 床单垂边
+        grp.add(box(0.5, 0.1, 0.3, '#f0ede0', 0, dy + 0.2, -0.7)) // 枕头
       }
-      for (const dx of [-0.32, 0.32]) grp.add(box(0.05, 1.3, 0.05, wood, dx, 0.75, 0.98)) // 床梯立杆
-      for (let i = 0; i < 4; i++) grp.add(box(0.68, 0.04, 0.04, wood, 0, 0.3 + i * 0.32, 0.98)) // 梯档
-      grp.add(box(0.86, 0.3, 0.06, wood, 0, 1.5, -0.92)) // 上铺护栏（床头）
-      grp.add(box(0.06, 0.24, 1.8, wood, -0.4, 1.42, 0)) // 上铺侧护栏
+      for (const dx of [-0.17, 0.17]) grp.add(box(0.05, 1.3, 0.05, wood, dx, 0.75, 0.98)) // 床梯立杆（端部）
+      for (let i = 0; i < 4; i++) grp.add(box(0.38, 0.04, 0.04, wood, 0, 0.3 + i * 0.32, 0.98)) // 梯档
+      grp.add(box(0.86, 0.3, 0.06, wood, 0, 1.5, -0.92)) // 上铺端栏（床头）
+      grp.add(box(0.06, 0.24, 1.8, wood, -0.4, 1.42, 0)) // 上铺侧护栏（长边）
+      grp.add(box(0.06, 0.24, 1.8, wood, 0.4, 1.42, 0)) // 上铺侧护栏（另一侧长边）
+      for (const px of [-0.32, 0.32]) grp.add(box(0.22, 0.24, 0.06, wood, px, 1.42, 0.92)) // 床尾端栏两段（中间 0.42 爬梯口）
+      // v55（任务8）：床头靠墙朝向（同 bed 约定：data.deg=床头朝向，模型床头在局部 -z）
+      if (s.data?.deg !== undefined) grp.rotation.y = (((Number(s.data.deg) || 0) + 180) * Math.PI) / 180
       break
     }
     case 'screenboard': {
@@ -2737,7 +3288,9 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
     case 'noticeboard': case 'megposter': case 'photo': {
       // 据点墙面装饰：贴图画板（公告栏/标语海报/相片，磁盘贴图 + 程序兜底，背板贴墙面）
       // data.tex 可指定替代贴图（如 bntg_poster.png）
-      const tex = (s.data?.tex as string | undefined) ?? (s.kind === 'noticeboard' ? 'noticeboard.png' : s.kind === 'megposter' ? 'poster_slogan.png' : 'photo.png')
+      // v54：photo 无显式 data.tex 时按瓦片坐标哈希从照片贴图池选一张（同位置重建不变）
+      const tex = (s.data?.tex as string | undefined) ?? (s.kind === 'noticeboard' ? 'noticeboard.png' : s.kind === 'megposter' ? 'poster_slogan.png'
+        : PHOTO_POOL[Math.floor(mulberry(s.x * 97 + s.y * 53)() * PHOTO_POOL.length)])
       const fb = s.kind === 'noticeboard' ? '#8a6a42' : s.kind === 'megposter' ? '#efe8d2' : '#c9b87a'
       if (s.data?.flat) {
         // 躺在地板上的画作/地面导引贴花（data.flat：小径画廊；data.tex 可换贴图，如 mall_arrow.png）
@@ -2757,14 +3310,81 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       const w = s.kind === 'photo' ? 0.62 : tall ? 0.66 : 0.92, h = s.kind === 'photo' ? 0.5 : tall ? 0.88 : 0.72
       const inner = new THREE.Group()
       grp.add(inner)
-      inner.add(box(w + 0.06, h + 0.06, 0.03, '#4a4038', 0, 1.3, 0)) // 背框
+      if (s.kind === 'photo') {
+        // v54：相框细化——木质/金属双色变体（瓦片哈希第二位流）+ 背板 + 玻璃微反光面
+        const frameC = mulberry(s.x * 31 + s.y * 71)() < 0.5 ? '#6a4a2e' : '#8a8f94'
+        inner.add(box(w + 0.02, h + 0.02, 0.02, '#2e2a24', 0, 1.3, 0)) // 背板
+        inner.add(box(w + 0.09, 0.045, 0.032, frameC, 0, 1.3 + h / 2 + 0.022, 0.008)) // 框条（上下左右）
+        inner.add(box(w + 0.09, 0.045, 0.032, frameC, 0, 1.3 - h / 2 - 0.022, 0.008))
+        inner.add(box(0.045, h + 0.05, 0.032, frameC, -w / 2 - 0.022, 1.3, 0.008))
+        inner.add(box(0.045, h + 0.05, 0.032, frameC, w / 2 + 0.022, 1.3, 0.008))
+      } else {
+        inner.add(box(w + 0.06, h + 0.06, 0.03, '#4a4038', 0, 1.3, 0)) // 背框
+      }
       const panel = new THREE.Mesh(
         new THREE.PlaneGeometry(w, h),
         new THREE.MeshLambertMaterial({ map: levelTexture(tex, () => noiseTexture(fb, '#5a4e34')) }),
       )
       panel.position.set(0, 1.3, 0.021)
       inner.add(panel)
+      if (s.kind === 'photo') {
+        // 玻璃微反光面（半透明薄面片，写法同 graffiti 的 transparent Lambert）
+        const glass = new THREE.Mesh(
+          new THREE.PlaneGeometry(w + 0.04, h + 0.04),
+          new THREE.MeshLambertMaterial({ color: '#cfe0e8', transparent: true, opacity: 0.16 }),
+        )
+        glass.position.set(0, 1.3, 0.027)
+        inner.add(glass)
+      }
       mountOnWall(inner, grp, s, m) // 强制贴最近墙（含虚空墙），不浮空
+      break
+    }
+    case 'bigpainting': {
+      // v53：大幅画作（L3 砖墙艺术品）——类似标语海报但贴图与尺寸均可自定义：
+      // data.tex 画作贴图；data.pw/data.ph 画布宽/高（米）。白色画布状材质 + 细木框背板。
+      // 放置合法性（墙面连续、宽度足够、不卡进墙）由生成器保证（infiniteL3 校验），建模层只负责贴墙渲染
+      const tex = (s.data?.tex as string | undefined) ?? 'l3_art_angel.png'
+      const pw = Math.min(3.2, Math.max(0.8, (s.data?.pw as number | undefined) ?? 1.8))
+      const ph = Math.min(2.6, Math.max(0.8, (s.data?.ph as number | undefined) ?? 1.3))
+      const pcy = Math.min(H - ph / 2 - 0.1, 0.9 + ph / 2) // 底边 ~0.9m，且不超出墙顶
+      const inner = new THREE.Group()
+      grp.add(inner)
+      inner.add(box(pw + 0.07, ph + 0.07, 0.03, '#3a322a', 0, pcy, 0)) // 细木框背板
+      const panel = new THREE.Mesh(
+        new THREE.PlaneGeometry(pw, ph),
+        new THREE.MeshLambertMaterial({ map: levelTexture(tex, () => noiseTexture('#c4bcac', '#a89c84')) }),
+      )
+      panel.position.set(0, pcy, 0.021)
+      inner.add(panel)
+      mountOnWall(inner, grp, s, m)
+      break
+    }
+    case 'stainedglass': {
+      // v53b：彩色玻璃花窗（L3 圣所）——石框尖拱 + 彩玻贴图（data.tex/pw/ph 自定义，贴图宽高比 512:768）；
+      // 玻璃轻微自发光模拟背光；放置跨度校验同大幅画作（infiniteL3）
+      const tex = (s.data?.tex as string | undefined) ?? 'l3_glass_scales.png'
+      const pw = Math.min(2.2, Math.max(0.7, (s.data?.pw as number | undefined) ?? 1.2))
+      const ph = Math.min(2.6, Math.max(1.0, (s.data?.ph as number | undefined) ?? pw / 0.667))
+      const sf = '#8a8578' // 风化白石框
+      const y0 = 0.55 // 窗台高
+      const cy = y0 + ph / 2
+      const inner = new THREE.Group()
+      grp.add(inner)
+      inner.add(box(pw + 0.24, 0.24, 0.24, sf, 0, y0 - 0.1, 0)) // 窗台
+      inner.add(box(0.1, ph + 0.3, 0.24, sf, -(pw / 2 + 0.05), cy, 0)) // 侧框（左）
+      inner.add(box(0.1, ph + 0.3, 0.24, sf, pw / 2 + 0.05, cy, 0)) // 侧框（右）
+      inner.add(box(pw + 0.24, 0.12, 0.24, sf, 0, y0 + ph + 0.06, 0)) // 上梁
+      inner.add(box(pw * 0.62, 0.12, 0.24, sf, 0, y0 + ph + 0.18, 0)) // 尖拱顶（收分）
+      const pane = new THREE.Mesh(
+        new THREE.PlaneGeometry(pw, ph),
+        new THREE.MeshLambertMaterial({
+          map: levelTexture(tex, () => noiseTexture('#3a4a44', '#242e2a')),
+          emissive: new THREE.Color('#5a5648'), emissiveIntensity: 0.42, // 彩玻背光微亮
+        }),
+      )
+      pane.position.set(0, cy, 0.021)
+      inner.add(pane)
+      mountOnWall(inner, grp, s, m)
       break
     }
     case 'ventgrate': {
@@ -2789,13 +3409,27 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       break
     }
     case 'planter': {
-      // 花坛：矮石框 + 泥土 + 三株绿植
-      grp.add(box(1.08, 0.4, 0.58, '#9a958c', 0, 0.2, 0)) // 石框
-      grp.add(box(0.96, 0.05, 0.46, '#41321f', 0, 0.41, 0)) // 泥土
-      for (const [px, pz, ph] of [[-0.3, 0.04, 0.34], [0.06, -0.08, 0.5], [0.34, 0.06, 0.28]] as const) {
-        grp.add(box(0.05, ph, 0.05, '#3e5a2a', px, 0.42 + ph / 2, pz)) // 茎
-        grp.add(box(0.22, 0.18, 0.22, '#4e7a34', px, 0.44 + ph, pz)) // 叶冠
+      // 花坛（v55 优化：盆体收分上宽下窄 + 泥土层 + 多片交叉叶层次）
+      grp.add(box(0.78, 0.34, 0.5, '#9a958c', 0, 0.17, 0)) // 盆体下段（窄）
+      grp.add(box(1.02, 0.22, 0.6, '#a49f96', 0, 0.44, 0)) // 盆体上段（宽——收分）
+      grp.add(box(1.08, 0.06, 0.64, '#8f8a82', 0, 0.56, 0)) // 盆沿
+      grp.add(box(0.94, 0.05, 0.5, '#41321f', 0, 0.58, 0)) // 泥土层
+      // 多片交叉叶（三层：外层低垂大叶 / 中层斜出 / 顶心生叶）
+      const leaf = '#4e7a34', leafD = '#3e5a2a'
+      for (let i = 0; i < 6; i++) {
+        const a = (i / 6) * Math.PI * 2
+        const l1 = box(0.06, 0.5, 0.22, leafD, Math.cos(a) * 0.3, 0.78, Math.sin(a) * 0.3)
+        l1.rotation.set(Math.sin(a) * 0.7, 0, -Math.cos(a) * 0.7)
+        grp.add(l1)
       }
+      for (let i = 0; i < 5; i++) {
+        const a = (i / 5) * Math.PI * 2 + 0.5
+        const l2 = box(0.05, 0.42, 0.16, leaf, Math.cos(a) * 0.16, 0.92, Math.sin(a) * 0.16)
+        l2.rotation.set(Math.sin(a) * 0.45, 0, -Math.cos(a) * 0.45)
+        grp.add(l2)
+      }
+      grp.add(box(0.08, 0.5, 0.08, leaf, 0, 0.98, 0)) // 顶心生叶
+      grp.add(box(0.16, 0.22, 0.16, '#5a8a40', 0, 1.2, 0)) // 顶芽
       break
     }
     case 'trashbin': {
@@ -2803,6 +3437,150 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       grp.add(cyl(0.24, 0.21, 0.7, '#7d8489', 0, 0.37, 0, 12)) // 筒身
       grp.add(cyl(0.22, 0.22, 0.04, '#2c2f33', 0, 0.72, 0, 12)) // 投口
       grp.add(cyl(0.25, 0.25, 0.05, '#5a6165', 0, 0.045, 0, 12)) // 底座圈
+      break
+    }
+    case 'sofa': {
+      // v54：双人沙发（据点休息区）：底座 + 靠背 + 双扶手 + 双坐垫分块；data.color 实例配色
+      const cc = typeof s.data?.color === 'string' ? (s.data.color as string) : '#5a76b8' // 缺省蓝
+      // 实例配色变体（离线 three 桩无 getHexString——手动缩放 hex）
+      const scale = (hex: string, k: number) => '#' + [1, 3, 5].map((i) => Math.min(255, Math.round(parseInt(hex.slice(i, i + 2), 16) * k)).toString(16).padStart(2, '0')).join('')
+      const dark = scale(cc, 0.72), darker = scale(cc, 0.5)
+      grp.add(box(1.56, 0.3, 0.78, darker, 0, 0.19, 0)) // 底框
+      grp.add(box(1.56, 0.16, 0.72, cc, 0, 0.4, 0.02)) // 座体
+      grp.add(box(1.56, 0.62, 0.2, cc, 0, 0.72, -0.31)) // 靠背
+      grp.add(box(1.5, 0.1, 0.16, dark, 0, 1.05, -0.31)) // 靠背顶垫
+      for (const sx of [-0.72, 0.72]) {
+        grp.add(box(0.16, 0.62, 0.78, cc, sx, 0.55, 0)) // 扶手
+        grp.add(box(0.18, 0.08, 0.8, dark, sx, 0.9, 0)) // 扶手顶
+      }
+      for (const sx of [-0.37, 0.37]) {
+        grp.add(box(0.7, 0.12, 0.62, dark, sx, 0.52, 0.04)) // 坐垫（分块）
+        grp.add(box(0.7, 0.34, 0.1, dark, sx, 0.72, -0.24)) // 靠垫
+      }
+      for (const [fx, fz] of [[-0.68, 0.32], [0.68, 0.32], [-0.68, -0.32], [0.68, -0.32]] as const)
+        grp.add(cyl(0.025, 0.035, 0.1, '#3a3f46', fx, 0.05, fz, 6)) // 短脚
+      // 朝向约定同柜类（v48）：data.deg 显式覆盖；缺省背贴最近墙、正面（+Z）朝房间内部
+      if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
+      else flushToWall(grp, s, m, 0.78)
+      break
+    }
+    case 'servercase': {
+      // v54：塔式服务器机箱（机房沿墙成排）：立式黑钢箱体 + 前面板指示灯点阵 + 顶部散热栅
+      grp.add(box(0.55, 1.7, 0.6, '#23262b', 0, 0.85, 0)) // 箱体
+      grp.add(box(0.5, 1.6, 0.03, '#17191d', 0, 0.85, 0.3)) // 前面板（深色网孔）
+      for (let i = 0; i < 6; i++) // 指示灯点阵（绿/琥珀交替，一列状态灯 + 两列小点）
+        grp.add(glow(0.05, 0.03, 0.02, i % 3 === 2 ? '#e8a83a' : '#6fae5a', 0.18, 0.5 + i * 0.2, 0.32))
+      for (let i = 0; i < 4; i++)
+        grp.add(glow(0.025, 0.025, 0.02, '#6fae5a', -0.16 + (i % 2) * 0.08, 0.62 + Math.floor(i / 2) * 0.5, 0.32))
+      for (let i = 0; i < 5; i++) // 顶部散热栅
+        grp.add(box(0.44, 0.02, 0.06, '#3a3f46', 0, 1.72, -0.2 + i * 0.1))
+      grp.add(box(0.58, 0.06, 0.64, '#2e3238', 0, 0.03, 0)) // 底座
+      // 朝向约定同柜类（v48）：data.deg 显式覆盖；缺省背贴最近墙、正面朝室内（贴墙位移）
+      if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
+      else flushToWall(grp, s, m, 0.6)
+      break
+    }
+    case 'walltv': {
+      // v54：挂式平板电视（休息/娱乐区墙面）：黑框 + 微亮淡蓝灰屏幕（强制贴最近墙，不浮空）
+      const inner = new THREE.Group()
+      grp.add(inner)
+      inner.add(box(1.04, 0.62, 0.05, '#17191d', 0, 1.55, 0)) // 黑框背板
+      inner.add(box(0.96, 0.54, 0.02, '#0c0e12', 0, 1.55, 0.02)) // 屏幕底色（关机黑）
+      const scr = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.9, 0.48),
+        new THREE.MeshBasicMaterial({ color: '#93a8bc' }), // 微亮屏幕（淡蓝灰）
+      )
+      scr.position.set(0, 1.55, 0.036)
+      inner.add(scr)
+      inner.add(box(0.2, 0.04, 0.03, '#2e3238', 0, 1.22, 0)) // 下方挂架
+      // v54c：data.deg 显式朝向（上层贴面等——mountOnWall 只认主层墙格，2F 隔间南墙贴不上时用它）；
+      // 机体贴朝向反侧瓦片缘（正面 +Z=屏面朝向）
+      if (s.data?.deg !== undefined) {
+        grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
+        inner.position.z = -0.46
+      } else mountOnWall(inner, grp, s, m)
+      break
+    }
+    case 'tvset': {
+      // v54：立式大电视（电视娱乐室隔断间）：深色机身 + 底座支脚 + 微亮屏（区别于挂墙 walltv）；
+      // 正面=局部 +Z（屏面朝向）；data.deg 显式朝向，缺省背贴最近墙正面朝室内
+      grp.add(box(0.5, 0.06, 0.34, '#23262b', 0, 0.03, 0)) // 底座板
+      for (const fx of [-0.18, 0.18]) grp.add(cyl(0.02, 0.03, 0.16, '#3a3f46', fx, 0.11, 0, 6)) // 支脚 ×2
+      grp.add(box(0.1, 0.2, 0.08, '#23262b', 0, 0.22, 0)) // 中柱
+      grp.add(box(1.06, 0.68, 0.07, '#17191d', 0, 0.62, 0)) // 机身（黑框）
+      grp.add(box(0.98, 0.6, 0.02, '#0c0e12', 0, 0.62, 0.045)) // 屏幕底色
+      const scr = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.92, 0.54),
+        new THREE.MeshBasicMaterial({ color: '#9ab0c4' }), // 微亮屏（淡蓝灰，比挂墙款略亮——娱乐室氛围）
+      )
+      scr.position.set(0, 0.62, 0.058)
+      grp.add(scr)
+      grp.add(glow(0.06, 0.02, 0.02, '#6fae5a', 0.42, 0.3, 0.041)) // 电源指示灯
+      if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
+      else flushToWall(grp, s, m, 0.6)
+      break
+    }
+    case 'loungechair': {
+      // v54：弧形塑料休闲椅（参考图一体成型弧面 + 四条细腿；data.color 实例配色，缺省暖白；非实心）
+      const cc = (s.data?.color as string | undefined) ?? '#d8d2c4'
+      const legC = '#3a3e44'
+      for (const [fx, fz] of [[-0.19, 0.17], [0.19, 0.17], [-0.19, -0.17], [0.19, -0.17]] as const)
+        grp.add(cyl(0.014, 0.02, 0.3, legC, fx, 0.15, fz, 6)) // 细腿 ×4
+      grp.add(box(0.44, 0.05, 0.4, cc, 0, 0.33, 0)) // 座面（弧面底部）
+      const scoop = box(0.44, 0.1, 0.34, cc, 0, 0.4, -0.03) // 弧面中段（前翘）
+      scoop.rotation.x = -0.28
+      grp.add(scoop)
+      const back = box(0.44, 0.34, 0.06, cc, 0, 0.56, -0.2) // 弧面靠背（顺势后仰）
+      back.rotation.x = -0.35
+      grp.add(back)
+      const lip = box(0.44, 0.05, 0.12, cc, 0, 0.72, -0.26) // 顶缘卷边
+      lip.rotation.x = -0.5
+      grp.add(lip)
+      break
+    }
+    case 'wallwindow': {
+      // v54：墙体窗（代替整格内隔墙，整格 solid 不可通行——两房间互相可见）：
+      // 下段约 1/3 与墙同材质（整格厚，与两侧墙盒齐平）+ 中段大面积透明玻璃（细框）+ 上段墙体接顶。
+      // 生成器按 machinewall 代墙模式：墙瓦片雕成地板 + 本实心结构补位；
+      // data.topH=墙顶高（缺省层高 H）；默认墙面沿 z（面朝 ±x），data.deg=90 转为沿 x
+      const topH = Math.max(2.2, Number(s.data?.topH ?? H))
+      // v54b/c：墙段/收边/踢脚线一律走 wallMatchBox（默认盒 UV + 顶点色×墙贴图，与主墙循环完全一致——
+      // 修复 wallpaperBox 的 UV 放大导致的贴图密度差与无贴图踢脚线的色差）；窗框全部收进瓦片内（齐平或略凹）
+      const deg90 = Math.round((Number(s.data?.deg) || 0) / 90) % 2 !== 0
+      const wtx = Math.floor(s.x + s.w / 2), wty = Math.floor(s.y + s.h / 2)
+      const sideIsWall = (sgn: number) => {
+        const nx = wtx + (deg90 ? sgn : 0), ny = wty + (deg90 ? 0 : sgn)
+        return nx < 0 || ny < 0 || nx >= m.w || ny >= m.h || m.tiles[ny * m.w + nx] !== 1
+      }
+      // v54c 收边重做：无墙侧窗体让出 0.1 格，收边薄墙板补齐到瓦片缘——与墙面齐平共面、不凸出不穿插；
+      // 窗框/玻璃/窗棂随窗体缩短，黑框边条端头埋进收边板内侧（不外露）
+      const wW = sideIsWall(-1), eW = sideIsWall(1)
+      const z0 = wW ? -0.5 : -0.4, z1 = eW ? 0.5 : 0.4
+      const zL = z1 - z0, zC = (z0 + z1) / 2
+      grp.add(wallMatchBox(1.0, 0.95, zL, _def, 1, 0, 0.475, zC)) // 下段墙体（0..0.95）
+      grp.add(wallMatchBox(1.0, Math.max(0.05, topH - 2.1), zL, _def, 1, 0, 2.1 + Math.max(0.05, topH - 2.1) / 2, zC)) // 上段接顶
+      const pane = new THREE.Mesh(
+        new THREE.PlaneGeometry(zL - 0.06, 1.05),
+        new THREE.MeshLambertMaterial({ color: '#5f82a2', transparent: true, opacity: 0.6, side: THREE.DoubleSide }), // 半透蓝灰——亮室对亮室也读得出玻璃
+      )
+      pane.rotation.y = Math.PI / 2 // 默认墙面沿 z（面朝 ±x）
+      pane.position.set(0, 1.575, zC)
+      grp.add(pane)
+      for (const my of [1.31, 1.575, 1.84]) grp.add(box(0.04, 0.05, zL - 0.1, '#2e3238', 0, my, zC)) // 横向窗棂（正视读得出分格）
+      grp.add(box(0.12, 0.1, zL - 0.06, '#1c1e22', 0, 1.0, zC)) // 下槛（两端埋进邻墙/收边板，不外露）
+      grp.add(box(0.12, 0.1, zL - 0.06, '#1c1e22', 0, 2.15, zC)) // 上槛
+      grp.add(box(0.12, 1.05, 0.09, '#1c1e22', 0, 1.575, zC)) // 中梃
+      // v54：侧框只咬进邻墙一侧；邻格非墙（窗端悬空）时改用一小段薄墙板收边
+      for (const [sgn, ez] of [[-1, -0.46], [1, 0.46]] as const) {
+        if (sideIsWall(sgn)) grp.add(box(0.13, 1.05, 0.11, '#1c1e22', 0, 1.575, ez)) // 侧框（咬进邻墙）
+        else grp.add(wallMatchBox(1.0, topH, 0.1, _def, 1, 0, topH / 2, sgn * 0.45)) // 无墙侧：薄墙板收边（与墙面齐平共面）
+      }
+      // v54：踢脚线继承（白名单同 geometry.ts 主层：L0 与据点多层）——窗体下段两面贴墙根饰条
+      if (_def.id === 0 || (_def.id >= 101 && _def.id <= 106)) {
+        const skirtK = _def.id === 0 ? 0.62 : 0.45
+        for (const fx of [-0.5, 0.5]) grp.add(wallMatchBox(0.05, 0.16, zL, _def, skirtK, fx, 0.08, zC)) // 踢脚线（同主层墙规格：0.05 厚 0.16 高、墙色×0.45、贴图同主墙）
+      }
+      if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
       break
     }
     case 'shopsign': {
@@ -2832,6 +3610,8 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       for (const px of [-hw, hw]) for (const pz of [-hl, hl]) grp.add(box(0.06, 0.5, 0.06, metal, px, 0.25, pz)) // 床腿
       grp.add(box(s.w - 0.06, 0.08, s.h - 0.12, metal, 0, 0.48, 0)) // 床框
       grp.add(box(s.w - 0.16, 0.12, s.h * 0.58, mat, 0, 0.58, s.h * 0.17)) // 床垫平段（床尾侧）
+      grp.add(box(s.w - 0.14, 0.02, s.h * 0.6, '#fafaf8', 0, 0.648, s.h * 0.16)) // v54：床单分层（白，毯子下、头端露出）
+      for (const px of [-(s.w / 2 - 0.09), s.w / 2 - 0.09]) grp.add(box(0.02, 0.09, s.h * 0.52, '#eaeaec', px, 0.6, s.h * 0.16)) // v54：床单垂边
       grp.add(box(s.w - 0.18, 0.05, s.h * 0.46, blanket, 0, 0.665, s.h * 0.22)) // 毯子（三色轮换）
       const head = box(s.w - 0.16, 0.1, s.h * 0.36, mat, 0, 0.7, -s.h * 0.24) // 床头摇起段
       head.rotation.x = -0.44
@@ -2843,6 +3623,12 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       grp.add(box(s.w - 0.06, 0.34, 0.05, metal, 0, 0.52, hl)) // 床尾板
       grp.add(box(0.04, 0.16, s.h * 0.4, metal, -hw, 0.72, s.h * 0.12)) // 侧护栏（左）
       grp.add(box(0.04, 0.16, s.h * 0.4, metal, hw, 0.72, s.h * 0.12)) // 侧护栏（右）
+      for (const px of [-hw, hw]) for (const pz of [-hl, hl]) { // v54：床脚轮（轮叉 + 小轮）
+        grp.add(box(0.05, 0.07, 0.03, '#8a8f96', px, 0.075, pz)) // 轮叉
+        grp.add(cyl(0.045, 0.045, 0.03, '#3a3d42', px, 0.045, pz, 8).rotateZ(Math.PI / 2)) // 小轮
+      }
+      // v55（任务8）：床头靠墙朝向（同 bed 约定：data.deg=床头朝向，模型床头在局部 -z）
+      if (s.data?.deg !== undefined) grp.rotation.y = (((Number(s.data.deg) || 0) + 180) * Math.PI) / 180
       break
     }
     case 'ivstand': {
@@ -3099,6 +3885,305 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       grp.add(cyl(0.32, 0.32, 0.03, '#d4af37', 0, 0.68, 0, 12)) // 金饰盆沿
       break
     }
+    // ===================== v54：Level 5「恐怖酒店」无限化 =====================
+    case 'phonograph': {
+      // 留声机（L5 休息室；v55 深化：收分木柜座 + 黑胶唱盘[持续旋转，updateStructs 驱动] +
+      // 唱臂 + 曲柄 + 黄铜大喇叭[锥形多节]；data.off=1 时停转停播[E 交互切换]）
+      const wood = '#4a3226', woodD = '#38241a', brass = '#b8924a', brassD = '#8a6d2e'
+      grp.add(box(0.6, 0.6, 0.5, wood, 0, 0.3, 0)) // 木柜座
+      grp.add(box(0.64, 0.06, 0.54, woodD, 0, 0.06, 0)) // 底座踢脚
+      grp.add(box(0.56, 0.04, 0.46, woodD, 0, 0.62, 0)) // 顶板
+      grp.add(box(0.5, 0.03, 0.4, brassD, 0, 0.645, 0)) // 机芯金属衬板
+      // 唱盘组（旋转件：userData.spin——黑胶唱片 + 中心轴 + 标签）
+      const spin = new THREE.Group()
+      spin.position.set(-0.08, 0.67, 0)
+      spin.add(cyl(0.17, 0.17, 0.025, '#1a1a1c', 0, 0, 0, 20)) // 黑胶唱片
+      spin.add(cyl(0.05, 0.05, 0.028, '#a03a3a', 0, 0.002, 0, 12)) // 唱片标签
+      spin.add(cyl(0.012, 0.012, 0.06, brass, 0, 0.02, 0, 6)) // 中心轴
+      spin.add(box(0.3, 0.004, 0.02, '#2a2a2e', 0.02, 0.014, 0)) // 唱片纹（旋转可辨）
+      grp.add(spin)
+      grp.userData.spin = spin
+      // 唱臂（S 形近似：立柱 + 横臂 + 唱头）
+      grp.add(cyl(0.02, 0.025, 0.12, brass, 0.18, 0.72, -0.16, 8))
+      const arm = box(0.02, 0.02, 0.3, brass, 0.1, 0.76, -0.05)
+      arm.rotation.y = 0.5
+      grp.add(arm)
+      grp.add(box(0.045, 0.03, 0.05, brassD, -0.03, 0.745, 0.03)) // 唱头（搭在盘缘）
+      // 曲柄（侧面摇把）
+      grp.add(cyl(0.015, 0.015, 0.1, brassD, 0.31, 0.4, 0.1, 6).rotateZ(Math.PI / 2))
+      grp.add(box(0.02, 0.1, 0.02, wood, 0.37, 0.35, 0.1))
+      grp.add(cyl(0.018, 0.018, 0.05, woodD, 0.37, 0.28, 0.1, 6))
+      // 黄铜大喇叭（v55d 重做：4 段圆台沿「前+上」轴堆叠成整体闭合漏斗——轴向 rotation.x=0.58
+      // （轴 = +y 前倾向 +z 抬升 33°）；尾径 0.045 与曲颈前端口相接，段间 15% 重叠防裂缝；
+      // 段对象入 userData.hornSegs（离线 AABB 自检用）
+      grp.add(cyl(0.025, 0.035, 0.3, brass, 0.2, 0.82, -0.14, 8)) // 喇叭支柱（柜座后角竖立）
+      const neck = cyl(0.045, 0.032, 0.2, brassD, 0.2, 1.04, -0.11, 10) // 曲颈（前弯，接喇叭尾端）
+      neck.rotation.x = 0.5
+      grp.add(neck)
+      const hornGrp = new THREE.Group()
+      const ay = Math.cos(0.58), az = Math.sin(0.58) // 喇叭轴方向（0, ay, az）
+      let hy = 1.1, hz = -0.07 // 喇叭尾端（与曲颈前端口相接）
+      const hornSegs: THREE.Object3D[] = []
+      for (const [r0, r1, len] of [[0.045, 0.07, 0.1], [0.07, 0.12, 0.12], [0.12, 0.2, 0.14], [0.2, 0.3, 0.16]] as const) {
+        const seg = cyl(r1, r0, len * 1.15, brass, 0.2, hy + (ay * len) / 2, hz + (az * len) / 2, 14)
+        seg.rotation.x = 0.58
+        hornGrp.add(seg)
+        hornSegs.push(seg)
+        hy += ay * len; hz += az * len
+      }
+      const lip = cyl(0.33, 0.3, 0.04, '#c9a24a', 0.2, hy + ay * 0.02, hz + az * 0.02, 16) // 口沿外翻唇
+      lip.rotation.x = 0.58
+      hornGrp.add(lip)
+      hornSegs.push(lip)
+      grp.add(hornGrp)
+      grp.userData.hornSegs = hornSegs
+      if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
+      else flushToWall(grp, s, m, 0.5)
+      break
+    }
+    case 'poolladder': {
+      // 泳池扶梯（L5 泳池池缘）：双弯管扶手——立杆升出池缘再弯向水面 + 横档（非实心）
+      const steel = '#c8ccd2'
+      for (const fx of [-0.22, 0.22]) {
+        grp.add(cyl(0.025, 0.025, 0.9, steel, fx, 0.45, 0.1, 8)) // 立杆（池缘上段）
+        const bend = cyl(0.025, 0.025, 0.5, steel, fx, 0.82, -0.18, 8) // 弯向池面的斜段
+        bend.rotation.x = 0.9
+        grp.add(bend)
+      }
+      for (let i = 0; i < 3; i++) grp.add(box(0.44, 0.03, 0.03, steel, 0, 0.28 + i * 0.26, 0.1)) // 横档 ×3
+      if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
+      break
+    }
+    case 'divingboard': {
+      // 跳台（L5 泳池深水端）：短柱 + 悬挑跳板（板面朝池心悬出）+ 防滑面
+      grp.add(box(0.34, 0.8, 0.34, '#8a9098', 0, 0.4, -0.22)) // 支座短柱
+      grp.add(box(0.5, 0.06, 1.16, '#d8dce0', 0, 0.83, 0.08)) // 悬挑跳板（向 +z 池心伸出）
+      grp.add(box(0.46, 0.015, 1.1, '#4a5a66', 0, 0.87, 0.08)) // 防滑面（深色）
+      grp.add(box(0.5, 0.1, 0.06, '#8a9098', 0, 0.9, -0.46)) // 尾端挡边
+      if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
+      break
+    }
+    case 'gymbench': {
+      // 健身卧推凳（L5 健身房，现代风）：凳面 + 钢架腿 + 杠铃架立柱 + 杠铃杆与杠铃片组
+      const pad = '#2e3238', steel = '#7d848c', plate = '#3a3f46'
+      grp.add(box(0.4, 0.08, 1.1, pad, 0, 0.42, 0)) // 凳面
+      for (const fz of [-0.4, 0.4]) grp.add(box(0.34, 0.38, 0.06, steel, 0, 0.19, fz)) // 凳腿（横向板）
+      for (const fx of [-0.3, 0.3]) grp.add(box(0.05, 0.95, 0.05, steel, fx, 0.48, -0.52)) // 杠铃架立柱 ×2
+      grp.add(cyl(0.02, 0.02, 1.5, '#b8bec6', 0, 0.93, -0.52, 8).rotateZ(Math.PI / 2)) // 杠铃杆（横架）
+      for (const fx of [-0.62, 0.62]) {
+        grp.add(cyl(0.19, 0.19, 0.05, plate, fx, 0.93, -0.52, 12).rotateZ(Math.PI / 2)) // 大片
+        grp.add(cyl(0.13, 0.13, 0.05, plate, fx * 1.08, 0.93, -0.52, 12).rotateZ(Math.PI / 2)) // 小片
+      }
+      if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
+      break
+    }
+
+    // ===================== v55：Level 5 走廊/主厅精致化 =====================
+    case 'rug': {
+      // 华丽地毯（地面平铺贴花）：整幅贴图平面贴地（data.layer 多层叠放微抬高，主厅红毯上叠蓝金小块）
+      const tex = (s.data?.tex as string | undefined) ?? 'l5_carpet.png'
+      const layer = Number(s.data?.layer) || 0
+      const panel = new THREE.Mesh(
+        new THREE.PlaneGeometry(s.w, s.h),
+        new THREE.MeshLambertMaterial({ map: levelTexture(tex, () => noiseTexture('#7a2a2e', '#5e1f24')) }),
+      )
+      panel.rotation.x = -Math.PI / 2
+      panel.position.set(0, 0.012 + layer * 0.008, 0)
+      grp.add(panel)
+      break
+    }
+    case 'redpillar': {
+      // 红木纹方柱（L5 主厅）：红色大理石观感柱身（红棕竖纹叠金线）+ 金色柱头（叠涩方板）+ 金色柱础；
+      // 挑高自适应（ceiling=1 → tallCeilH，同 pillar 的顶到实际顶面约定；无限层 m.floors=1 也认 ceiling）
+      const pti = Math.floor(cz) * m.w + Math.floor(cx)
+      const ph = m.up?.[pti] === 1 ? 2.65 : m.ceiling?.[pti] === 1 ? tallCeilH(m, H) : H
+      const marble = '#6e2a2c', marbleD = '#521e20', gold = '#c9a24a'
+      grp.add(box(0.62, ph - 0.5, 0.62, marble, 0, (ph - 0.5) / 2 + 0.22, 0)) // 柱身
+      for (let i = 0; i < 4; i++) { // 柱身竖棱（深色凹槽 + 金线交替）
+        const a = (i / 4) * Math.PI * 2
+        grp.add(box(0.05, ph - 0.6, 0.05, marbleD, Math.cos(a) * 0.3, ph / 2 + 0.05, Math.sin(a) * 0.3))
+      }
+      grp.add(box(0.7, 0.06, 0.7, gold, 0, 0.75, 0)) // 柱身金线（束腰）
+      grp.add(box(0.78, 0.14, 0.78, marbleD, 0, 0.29, 0)) // 柱础座
+      grp.add(box(0.86, 0.08, 0.86, gold, 0, 0.18, 0)) // 柱础金沿
+      grp.add(box(0.72, 0.1, 0.72, gold, 0, ph - 0.28, 0)) // 柱头下板（echinus）
+      grp.add(box(0.86, 0.12, 0.86, gold, 0, ph - 0.16, 0)) // 柱头方板（abacus）
+      grp.add(box(0.66, 0.06, 0.66, marbleD, 0, ph - 0.06, 0)) // 柱头顶板
+      break
+    }
+    case 'ceilingbeam': {
+      // 装饰横梁（L5 主厅吊顶格）：深色木梁沿 local X 横跨 s.w 瓦片 + 金线沿 + 两端垂花托；
+      // 贴本瓦片天花板底面（挑高区=挑高顶；同 chandelier 的 CH 约定——CH 见函数顶部 ceilingHeightAt）
+      const bw = s.w, wood = '#3a2420', gold = '#b8924a'
+      grp.add(box(bw, 0.32, 0.42, wood, 0, CH - 0.16, 0)) // 主梁
+      grp.add(box(bw, 0.05, 0.46, gold, 0, CH - 0.34, 0)) // 梁底金线沿
+      grp.add(box(bw, 0.06, 0.5, wood, 0, CH - 0.03, 0)) // 梁顶压板
+      for (const ex of [-bw / 2 + 0.4, bw / 2 - 0.4]) // 梁下垂花托（靠近两端）
+        grp.add(box(0.24, 0.2, 0.46, gold, ex, CH - 0.46, 0))
+      break
+    }
+    // ===================== v55 第二批：L5 房间充实 =====================
+    case 'oddtable': {
+      // 异形小桌（L5 贝弗莉室正中；v55b 放大：更大桌面 + 更多饮料与麻将规模）：不规则歪腿怪异造型
+      const wood = '#2e1c14', woodD = '#1e100a'
+      grp.add(box(1.3, 0.06, 1.05, wood, 0, 0.66, 0)) // 大桌面（略微歪斜的不规则形）
+      grp.children[0].rotation.y = 0.08
+      grp.add(box(1.36, 0.03, 1.1, woodD, 0, 0.63, 0)) // 桌沿
+      for (const [lx, lz, tl, tr] of [[-0.52, -0.4, 0.62, 0.14], [0.55, -0.36, 0.66, -0.1], [-0.46, 0.44, 0.58, -0.16], [0.5, 0.4, 0.7, 0.2]] as const) {
+        const leg = box(0.08, tl, 0.08, woodD, lx, tl / 2, lz) // 四条腿高低不一、歪扭
+        leg.rotation.z = tr; leg.rotation.x = tr * 0.6
+        grp.add(leg)
+      }
+      // 饮料瓶群（两簇高矮错落的玻璃小瓶，琥珀/绿/透明）
+      const bottles: [number, number, number, string][] = [
+        [-0.44, -0.2, 0.24, '#7a5a2a'], [-0.3, 0.14, 0.3, '#3a5a3a'], [-0.14, -0.1, 0.2, '#8a8a7a'],
+        [0.02, 0.18, 0.26, '#6a4a2a'], [0.14, -0.22, 0.22, '#4a6a5a'], [-0.38, 0.32, 0.18, '#7a5a2a'],
+        [0.3, 0.3, 0.28, '#3a5a3a'],
+      ]
+      for (const [bx, bz, bh, bc] of bottles) {
+        grp.add(cyl(0.035, 0.045, bh, bc, bx, 0.69 + bh / 2, bz, 8)) // 瓶身
+        grp.add(cyl(0.012, 0.02, 0.06, bc, bx, 0.71 + bh, bz, 6)) // 瓶颈
+      }
+      // 未打完的麻将：两侧牌墙（两层小牌墩）+ 中央舍牌堆（散落小牌）
+      for (let i = 0; i < 8; i++) {
+        grp.add(box(0.045, 0.06, 0.03, '#e8e2d0', -0.5 + i * 0.05, 0.72, 0.4)) // 牌墙下层（北）
+        if (i < 7) grp.add(box(0.045, 0.06, 0.03, '#ded8c4', -0.48 + i * 0.05, 0.78, 0.4)) // 牌墙上层
+      }
+      for (let i = 0; i < 6; i++)
+        grp.add(box(0.045, 0.06, 0.03, '#e2dccc', 0.12 + i * 0.05, 0.72, -0.42)) // 牌墙（南，单层）
+      for (let i = 0; i < 8; i++) {
+        const t = box(0.045, 0.02, 0.03, i % 2 ? '#e8e2d0' : '#d8d2c0', -0.05 + (i % 4) * 0.07, 0.7, -0.02 + Math.floor(i / 4) * 0.1)
+        t.rotation.y = (i * 0.7) % 0.9 - 0.45 // 舍牌散乱
+        grp.add(t)
+      }
+      break
+    }
+    case 'furnace': {
+      // 熔炉（L5 锅炉房）：砖砌炉体 + 炉膛口（橙红微光 + 炉栅）+ 顶部烟道 + 加料斗
+      const brick = '#4a3630', brickD = '#382823', iron = '#2a2d30'
+      grp.add(box(0.9, 1.5, 0.8, brick, 0, 0.75, 0)) // 炉体
+      grp.add(box(0.98, 0.12, 0.88, brickD, 0, 0.06, 0)) // 炉基
+      grp.add(box(0.5, 0.44, 0.06, iron, 0, 0.62, 0.39)) // 炉膛门框
+      grp.add(glow(0.36, 0.3, 0.03, '#e8782a', 0, 0.62, 0.4)) // 炉膛口微光（橙红）
+      for (let i = 0; i < 4; i++) grp.add(box(0.04, 0.3, 0.02, '#1c1e22', -0.12 + i * 0.08, 0.62, 0.42)) // 炉栅条
+      grp.add(box(0.34, 0.2, 0.05, iron, 0, 1.14, 0.39)) // 观察口盖
+      grp.add(cyl(0.14, 0.18, 1.1, iron, 0.2, 2.05, -0.1, 10)) // 烟道（贴顶）
+      grp.add(box(0.4, 0.24, 0.3, brickD, -0.24, 1.6, 0.05)) // 加料斗
+      break
+    }
+    case 'treadmill': {
+      // 跑步机（L5 健身房）：跑带台 + 斜立柱 + 表头横杆
+      const frame = '#3a3f46', belt = '#1c1e22'
+      grp.add(box(0.62, 0.14, 1.5, frame, 0, 0.16, 0)) // 跑台
+      grp.add(box(0.5, 0.03, 1.3, belt, 0, 0.25, 0)) // 跑带面
+      grp.add(box(0.56, 0.05, 0.06, frame, 0, 0.28, 0.72)) // 前滚筒罩
+      for (const sx of [-0.26, 0.26]) {
+        const post = box(0.05, 0.85, 0.05, frame, sx, 0.65, 0.6) // 斜立柱
+        post.rotation.x = -0.2
+        grp.add(post)
+      }
+      grp.add(box(0.6, 0.06, 0.05, frame, 0, 1.05, 0.68)) // 扶手横杆
+      grp.add(box(0.34, 0.2, 0.06, '#22262c', 0, 1.18, 0.7)) // 表头
+      grp.add(glow(0.2, 0.08, 0.02, '#5a7a8a', 0, 1.2, 0.73)) // 表头微光屏
+      if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
+      break
+    }
+    case 'dumbbellrack': {
+      // 哑铃架（L5 健身房）：双层斜架 + 成排大小哑铃
+      const steel = '#4a4f56', iron = '#2a2d30'
+      for (const lvl of [0.35, 0.75]) { // 双层
+        grp.add(box(1.2, 0.05, 0.3, steel, 0, lvl, 0))
+        for (const sx of [-0.55, 0.55]) grp.add(box(0.05, lvl, 0.3, steel, sx, lvl / 2, 0)) // 架腿
+        for (let i = 0; i < 5; i++) { // 成排哑铃（两头圆片 + 握杆）
+          const dx = -0.44 + i * 0.22, r = 0.05 + i * 0.008
+          grp.add(cyl(r, r, 0.04, iron, dx - 0.05, lvl + 0.08, 0, 8).rotateX(Math.PI / 2))
+          grp.add(cyl(r, r, 0.04, iron, dx + 0.05, lvl + 0.08, 0, 8).rotateX(Math.PI / 2))
+          grp.add(box(0.1, 0.025, 0.025, steel, dx, lvl + 0.08, 0))
+        }
+      }
+      if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
+      break
+    }
+    case 'spinbike': {
+      // 动感单车（L5 健身房）：大飞轮 + 车架 + 弯把 + 座垫 + 脚踏
+      const frame = '#3a3f46', pad = '#22262c'
+      grp.add(cyl(0.3, 0.3, 0.08, '#5a6068', 0, 0.32, 0.32, 16).rotateZ(Math.PI / 2)) // 前置大飞轮
+      grp.add(box(0.08, 0.06, 0.9, frame, 0, 0.42, -0.05)) // 车架主梁
+      grp.add(box(0.06, 0.5, 0.06, frame, 0, 0.66, -0.38)) // 座管
+      grp.add(box(0.24, 0.07, 0.26, pad, 0, 0.94, -0.4)) // 座垫
+      const hbar = box(0.06, 0.55, 0.06, frame, 0, 0.72, 0.28) // 把立管（前倾）
+      hbar.rotation.x = 0.3
+      grp.add(hbar)
+      grp.add(box(0.44, 0.05, 0.05, pad, 0, 1.02, 0.36)) // 弯把
+      for (const sx of [-0.14, 0.14]) grp.add(box(0.12, 0.04, 0.1, pad, sx, 0.42, 0.05)) // 脚踏
+      for (const [fx, fz] of [[-0.25, 0.4], [0.25, 0.4], [-0.25, -0.45], [0.25, -0.45]] as const)
+        grp.add(box(0.06, 0.08, 0.14, frame, fx, 0.04, fz)) // 地支脚
+      if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
+      break
+    }
+    case 'wallsign': {
+      // 墙面字牌（程序贴图小牌：data.text 文字、data.gold 金底描金变体——门牌号/员工专用/Beverly Room）
+      const txt = (s.data?.text as string | undefined) ?? ''
+      const gold = !!s.data?.gold
+      const inner = new THREE.Group()
+      grp.add(inner)
+      inner.add(box(0.56, 0.2, 0.02, gold ? '#8a6d2e' : '#3a3d42', 0, 1.6, 0)) // 牌板
+      inner.add(box(0.6, 0.03, 0.025, gold ? '#6a541f' : '#2a2d30', 0, 1.71, 0)) // 牌框上沿
+      inner.add(box(0.6, 0.03, 0.025, gold ? '#6a541f' : '#2a2d30', 0, 1.49, 0)) // 牌框下沿
+      const panel = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.52, 0.16),
+        new THREE.MeshBasicMaterial({ map: signTexture(txt, gold), transparent: true }),
+      )
+      panel.position.set(0, 1.6, 0.013)
+      inner.add(panel)
+      mountOnWall(inner, grp, s, m)
+      break
+    }
+    case 'foldladder': {      // 人字折叠梯（L5 锅炉房/维修大厅装饰，纯装饰非攀爬；v55d 重做——标准人字梯）：
+      // 前架两斜杆（下端外张、上端收拢）+ 4 级水平踏板嵌于两杆之间；后架反向对称 + 2 根横撑；
+      // 顶部铰链连接两架顶端；顶台贴铰链下沿。四足齐地。部件登记 userData.chk（离线 AABB 自检用）
+      const alum = '#8a8f96', step = '#6a7076', hinge = '#4a4f56'
+      const chk: { rails: THREE.Object3D[]; steps: THREE.Object3D[]; hinge?: THREE.Object3D; deck?: THREE.Object3D } = { rails: [], steps: [] }
+      const H2 = 1.56, LEAN = 0.3 // 架高、下端外张量
+      const tilt = Math.atan(LEAN / H2) // 斜杆倾角（顶端 z≈0，底端 z=±0.3）
+      for (const sx of [-0.24, 0.24]) {
+        const fr = box(0.05, Math.hypot(H2, LEAN), 0.05, alum, sx, H2 / 2, LEAN / 2) // 前斜杆（底 +z 外张）
+        fr.rotation.x = tilt
+        grp.add(fr); chk.rails.push(fr)
+        const br = box(0.05, Math.hypot(H2, LEAN), 0.05, alum, sx, H2 / 2, -LEAN / 2) // 后斜杆（底 -z 外张）
+        br.rotation.x = -tilt
+        grp.add(br); chk.rails.push(br)
+      }
+      for (let i = 0; i < 4; i++) { // 4 级水平踏板（等距、无倾角；z 随前架斜线收拢，两端搭进斜杆）
+        const sy = 0.35 + i * 0.33
+        const sz = LEAN - (LEAN / H2) * sy // 前架斜线上的 z
+        const st = box(0.54, 0.035, 0.15, step, 0, sy, sz)
+        grp.add(st); chk.steps.push(st)
+      }
+      for (const by of [0.55, 1.05]) // 后架横撑（连接两后斜杆）
+        grp.add(box(0.48, 0.04, 0.04, step, 0, by, -(LEAN / H2) * by))
+      const hg = cyl(0.045, 0.045, 0.56, hinge, 0, H2 + 0.02, 0, 10).rotateZ(Math.PI / 2) // 顶部铰链（沿 x）
+      grp.add(hg); chk.hinge = hg
+      const deck = box(0.52, 0.045, 0.3, step, 0, H2 + 0.09, 0) // 顶台（底面贴铰链顶——不悬空不穿模）
+      grp.add(deck); chk.deck = deck
+      grp.userData.chk = chk
+      if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
+      break
+    }
+    case 'invitation': {
+      // 烫金邀请函（L5 贝弗莉室地面；v55b 可交互装饰物——交互走定居点地标链路前往原住民）：
+      // 奶白信封贴地平放 + 烫金边 + 暗红火漆印（非实心、不挡路）
+      const paper = '#f2ecd8', gold = '#c9a24a', wax = '#7a1e24'
+      grp.add(box(0.34, 0.012, 0.24, paper, 0, 0.012, 0)) // 信封
+      grp.add(box(0.34, 0.014, 0.045, gold, 0, 0.013, -0.098)) // 烫金边（上）
+      grp.add(box(0.34, 0.014, 0.045, gold, 0, 0.013, 0.098)) // 烫金边（下）
+      grp.add(box(0.045, 0.014, 0.24, gold, -0.148, 0.013, 0)) // 烫金边（左）
+      grp.add(box(0.045, 0.014, 0.24, gold, 0.148, 0.013, 0)) // 烫金边（右）
+      grp.add(box(0.2, 0.014, 0.1, '#e8dfc2', 0, 0.016, -0.05)) // 封口折盖
+      grp.add(cyl(0.038, 0.038, 0.014, wax, 0.06, 0.02, 0.01, 10)) // 火漆印
+      grp.add(cyl(0.02, 0.02, 0.016, '#96602a', 0.06, 0.022, 0.01, 8)) // 火漆压纹
+      break
+    }
 
     case 'prefabmark': return null
     case 'wet': return null
@@ -3128,7 +4213,8 @@ export function buildExit(kind: string, def: LevelDef): THREE.Group {
   const levelFloorQuad = (w: number, d: number, x: number, y: number, z: number) => {
     const m = new THREE.Mesh(
       new THREE.PlaneGeometry(w, d),
-      new THREE.MeshLambertMaterial({ color: def.palette.floor, map: levelTexture(`l${def.id}_floor`, () => noiseTexture(def.palette.floor, def.palette.floorAlt)) }),
+      // v53：L0 地板贴图已烘焙底色（仅贴图）——洞口地板顶点色改白，避免底色二次叠乘
+      new THREE.MeshLambertMaterial({ color: def.id === 0 ? '#ffffff' : def.palette.floor, map: levelTexture(`l${texLevelId(def.id)}_floor`, () => noiseTexture(def.palette.floor, def.palette.floorAlt)) }),
     )
     m.rotation.x = -Math.PI / 2
     m.position.set(x, y, z)
@@ -3237,6 +4323,54 @@ export function buildExit(kind: string, def: LevelDef): THREE.Group {
       grp.add(dark)
       break
     }
+    case 'oldstairs': {
+      // v54：年久失修的古典楼梯（L4 → Level 5 唯一楼梯出口；可行走下行，坡道对齐同灰色阶梯）——
+      // v54b：踏步自井口缘（局部 z=-0.45，洞口从 z=-0.5 起）才出现——楼板实体段内不再有踏步/平台
+      // （此前第一级从 z=+0.1 起坡，顶面低于地板的踏步整段卡进楼板）；
+      // 护栏改为井口地板高度围合（两侧扶手+雕花栏杆柱+尽头横栏，入梯口留缺）——
+      // 此前顺坡斜置扶手在井口上方横穿错位
+      const wood = '#4a3524', wood2 = '#5a3f2a'
+      for (let i = 0; i < 11; i++) {
+        const z = -0.45 - i * 0.22
+        grp.add(box(1.1, 0.1, 0.26, i === 6 ? '#2e2118' : wood, 0, 1.2308 * z - 0.06, z)) // 第 7 级朽坏发暗
+      }
+      for (const sx of [-0.55, 0.55]) {
+        grp.add(box(0.07, 0.06, 2.95, wood2, sx, 0.86, -1.975)) // 侧扶手（z -0.5..-3.45 井口段，地板高度围合）
+        for (let i = 0; i < 8; i++) { // 雕花栏杆柱（第 4 根缺失=朽坏断缺）
+          if (i === 3) continue
+          grp.add(box(0.05, 0.86, 0.05, wood2, sx, 0.43, -0.55 - i * 0.41))
+        }
+        grp.add(box(0.12, 0.95, 0.12, wood2, sx, 0.475, -0.55)) // 井口转角端柱（入梯口留在楼梯格两侧）
+        grp.add(cyl(0.02, 0.07, 0.1, '#7a5a34', sx, 1.0, -0.55, 8)) // 端柱车木圆头
+      }
+      grp.add(box(1.17, 0.06, 0.07, wood2, 0, 0.86, -3.45)) // 井口尽头横栏
+      for (const px of [-0.28, 0, 0.28]) grp.add(box(0.05, 0.86, 0.05, wood2, px, 0.43, -3.45)) // 尽头栏杆柱
+      const dark = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 3.6), new THREE.MeshBasicMaterial({ color: '#000000' }))
+      dark.rotation.x = -Math.PI / 2
+      dark.position.set(0, -3.45, -1.4)
+      grp.add(dark)
+      break
+    }
+    case 'trapdoor': {
+      // v54：年久失修的活板门（L4 小房间 → Level 6；落地式，不嵌墙——勿入 DOOR_EXIT_KINDS）：
+      // 地板上的旧木框 + 微翘盖板（朽木色差）+ 铁环拉手 + 缝隙漆黑
+      const wood = '#5a4630', woodD = '#463826'
+      grp.add(box(1.0, 0.05, 0.1, woodD, 0, 0.025, -0.45)) // 框（北）
+      grp.add(box(1.0, 0.05, 0.1, woodD, 0, 0.025, 0.45)) // 框（南）
+      grp.add(box(0.1, 0.05, 0.8, woodD, -0.45, 0.025, 0)) // 框（西）
+      grp.add(box(0.1, 0.05, 0.8, woodD, 0.45, 0.025, 0)) // 框（东）
+      grp.add(box(0.78, 0.03, 0.78, '#0a0806', 0, 0.02, 0)) // 盖板下漆黑
+      const lid = box(0.76, 0.04, 0.76, wood, 0, 0, 0)
+      lid.geometry.translate(0, 0, -0.38) // 铰链在北缘
+      lid.position.set(0, 0.05, 0.38)
+      lid.rotation.x = 0.16 // 微翘（年久变形，盖不严）
+      grp.add(lid)
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.018, 6, 12), new THREE.MeshLambertMaterial({ color: '#3a3a3e' }))
+      ring.position.set(0, 0.1, 0.18) // 铁环拉手（躺在微翘的盖板上）
+      ring.rotation.x = Math.PI / 2 - 0.16
+      grp.add(ring)
+      break
+    }
     case 'stairs': {
       // 楼梯井（独特模型·嵌墙镂空）：墙体开洞内的楼梯井道——内侧壁 + 下探踏步没入黑暗 + 绿色出口灯牌 + 扶手
       // 朝向约定：开口朝 -z（出口格/房间侧），组中心 = 墙格中心（geometry 已在该墙格开门洞）
@@ -3279,6 +4413,7 @@ export function buildExit(kind: string, def: LevelDef): THREE.Group {
       panel.rotation.y = 0.55
       const handle = box(0.03, 0.14, 0.045, '#c9a03a', 0.68, -0.02, 0.04)
       panel.add(handle)
+      panel.add(box(0.03, 0.14, 0.045, '#c9a03a', 0.68, -0.02, -0.04)) // v54：背面把手（双面）
       grp.add(panel)
       grp.add(box(0.24, 0.1, 0.02, '#c9c4b0', 0.44, 1.68, -0.48))
       break
@@ -3327,8 +4462,52 @@ export function buildExit(kind: string, def: LevelDef): THREE.Group {
       panel.rotation.y = 0.5
       panel.add(box(0.56, 0.7, 0.02, '#c4c7c2', 0.4, 0.55, 0.035)) // 毛玻璃上板
       panel.add(box(0.03, 0.14, 0.045, '#c9a03a', 0.68, -0.02, 0.04)) // 黄铜把手
+      panel.add(box(0.03, 0.14, 0.045, '#c9a03a', 0.68, -0.02, -0.04)) // v54：背面把手（双面）
       grp.add(panel)
       grp.add(box(0.3, 0.12, 0.02, '#e8e4da', 0.44, 1.7, -0.48)) // 门牌
+      break
+    }
+    case 'boilerdeep': {
+      // v54：锅炉房深处完全黑暗的门（L5 → Level 6）——焦黑门框 + 门板位一片漆黑（无灯无发光件：
+      // 不用 pulse 材质——「完全黑暗」是设定本体，渲染层 orientExitToWall 贴墙）
+      grp.add(box(0.1, 2.3, 0.14, '#14100c', -0.45, 1.15, -0.4)) // 焦黑门框立柱
+      grp.add(box(0.1, 2.3, 0.14, '#14100c', 0.45, 1.15, -0.4))
+      grp.add(box(1.0, 0.12, 0.14, '#1a1510', 0, 2.32, -0.4)) // 门楣
+      const dark = new THREE.Mesh(new THREE.PlaneGeometry(0.86, 2.24), new THREE.MeshBasicMaterial({ color: '#000000', side: THREE.DoubleSide }))
+      dark.position.set(0, 1.12, -0.4) // 门洞位纯黑（不透对面——后面没有锅炉）
+      grp.add(dark)
+      grp.add(box(0.82, 2.2, 0.04, '#0c0a08', 0, 1.1, -0.46)) // 半掩黑门板（微开一线仍不见光）
+      grp.rotation.y = 0 // 朝向由 orientExitToWall 决定
+      break
+    }
+    case 'darkwooddoor': {
+      // v54：深色木门（L5 客房门 ~0.3% 替代 → Level 9）——近乎黑色的木门虚掩在客房门洞里；
+      // v55（任务8）：专属建模深化——深黑无反射门板（近黑低反）+ 边缘虚化（门框外缘半透明暗晕面片，
+      // 轮廓模糊）+ 背面封墙（从门后看是一堵墙；出口格另有 darkdoorblock 实心碰撞——关闭时不可穿）
+      grp.add(box(0.08, 2.2, 0.1, '#120c08', -0.44, 1.1, -0.42)) // 深黑门框
+      grp.add(box(0.08, 2.2, 0.1, '#120c08', 0.44, 1.1, -0.42))
+      grp.add(box(0.96, 0.1, 0.1, '#171009', 0, 2.26, -0.42))
+      const dk = new THREE.Mesh(new THREE.PlaneGeometry(0.84, 2.1), new THREE.MeshBasicMaterial({ color: '#000000', side: THREE.DoubleSide }))
+      dk.position.set(0, 1.05, 0.5)
+      grp.add(dk)
+      grp.add(levelFloorQuad(1, 1, 0, 0.005, 0)) // 洞口地面与本层地板一致
+      const panel = box(0.8, 2.05, 0.05, '#0d0906') // 深黑无反射门板（比正常客房门黑得多）
+      panel.geometry.translate(0.4, 0, 0)
+      panel.position.set(-0.4, 1.04, -0.42)
+      panel.rotation.y = 0.32 // 虚掩
+      panel.add(box(0.03, 0.14, 0.045, '#4a3d20', 0.68, -0.02, 0.04)) // 暗铜把手（无光）
+      panel.add(box(0.03, 0.14, 0.045, '#4a3d20', 0.68, -0.02, -0.04))
+      grp.add(panel)
+      // 边缘虚化：门框外缘的半透明暗晕（轮廓模糊——「看着就不对劲」）
+      const haze = new THREE.Mesh(
+        new THREE.PlaneGeometry(1.24, 2.5),
+        new THREE.MeshBasicMaterial({ color: '#050403', transparent: true, opacity: 0.42, side: THREE.DoubleSide }),
+      )
+      haze.position.set(0, 1.2, -0.36)
+      grp.add(haze)
+      // 背面封墙：整格墙面盖板（本层墙色，带踢脚线深色根）——从门后看是一堵墙
+      grp.add(box(0.96, 2.3, 0.06, def.palette.wall, 0, 1.15, 0.44))
+      grp.add(box(0.96, 0.16, 0.08, def.palette.wallTop, 0, 0.08, 0.44))
       break
     }
     default: {

@@ -14,9 +14,9 @@
 ;(globalThis as unknown as Record<string, unknown>).performance = globalThis.performance ?? { now: () => Date.now() }
 
 const { LEVELS } = await import('../src/game/levels/index.ts')
-const { generateLevel } = await import('../src/game/mapgen.ts')
-const { genL1ChunkRaw, l1VariantOf } = await import('../src/game/infiniteL1.ts')
-const { regionHost, CS, RS, GEN_ITEM_BASE } = await import('../src/game/infinite.ts')
+const { generateLevel } = await import('../src/game/world/mapgen.ts')
+const { genL1ChunkRaw, l1VariantOf } = await import('../src/game/world/infiniteL1.ts')
+const { regionHost, CS, RS, GEN_ITEM_BASE } = await import('../src/game/world/infinite.ts')
 
 let fail = 0
 const bad = (m: string) => { console.log('  ✗ ' + m); fail++ }
@@ -116,7 +116,7 @@ const def = LEVELS[1]
   const total = m.lights.length
   m.inf.blackout = true
   // 触发一次窗口平移强制 stitch：直接调用导出的 restitch
-  const { restitch } = await import('../src/game/infinite.ts')
+  const { restitch } = await import('../src/game/world/infinite.ts')
   restitch(m)
   const left = m.lights.length
   const keeps = m.lights.filter((l) => l.keep === 1).length
@@ -188,7 +188,7 @@ const def = LEVELS[1]
 
 // 6) v39：衔尾段 BRC 员工——确定性生成 1~2 名、名称来自家用物品池、faction='brc'、workLoop 存在、落点在地板
 {
-  const { BRC_WORKER_NAMES, BRC_WORK_LOOPS } = await import('../src/game/npcs.ts')
+  const { BRC_WORKER_NAMES, BRC_WORK_LOOPS } = await import('../src/game/content/npcs.ts')
   let chunks = 0, workers = 0, badN = 0, detBad = 0
   const names = new Set<string>()
   for (let cy = -40; cy <= 40; cy++)

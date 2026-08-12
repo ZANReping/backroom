@@ -1,6 +1,6 @@
 // 办公区EL3A（BNTG 据点层级：Level 2 的子层级——大开间仓库 + 南侧整片夹楼办公区的双层手工布局，
 // 见 mapgenOutpost.ts genEl3aOutpost；设定：B.N.T.G. 存储/分配从 L2/L3 搜刮的物资，转运其他层级的居住地）
-import type { LevelDef } from '../types'
+import type { LevelDef } from '../core/types'
 
 export const LEL3A: LevelDef = {
   id: 105, // 据点独立 id 空间（100+）：Level 2 的子层级，不占 LEVELS 数字下标

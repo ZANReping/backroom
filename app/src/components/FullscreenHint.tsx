@@ -1,6 +1,6 @@
 // 手机横屏全屏提示：一键 requestFullscreen（需用户手势）；iOS 兜底提示
 import { useEffect, useState } from 'react'
-import { storage } from '@/game/storage'
+import { storage } from '@/game/core/storage'
 
 function isIOS(): boolean {
   return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)

@@ -1,6 +1,6 @@
 // 层级进入卡片（打字机 + 扫描线 + 故障）
 import { useEffect, useState } from 'react'
-import { seedString } from '@/game/rng'
+import { seedString } from '@/game/core/rng'
 
 interface Props {
   level: number

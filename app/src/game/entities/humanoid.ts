@@ -1,7 +1,7 @@
 // 实体定义（设定依据 Backrooms Wikidot / Fandom 官方条目，M.E.G. 档案风格）
 import type { EntityDef } from './types'
 
-// 人形/类人实体（钝人/窃皮者/无面灵/绝缘猎手/复印机幽灵/久坐者/侍者/镜中人）
+// 人形/类人实体（钝人/窃皮者/无面灵/复印机幽灵/久坐者/侍者/镜中人）
 export const HUMANOID_ENTITIES: Record<string, EntityDef> = {
   duller: {
     type: 'duller', name: '钝人', hp: 70, speed: 1.3, damage: 15, sight: 6, hearing: 5, phases: true, hunts: ['dryshrimp'], color: '#2f2f36', habitat: 'indoor',
@@ -24,7 +24,7 @@ export const HUMANOID_ENTITIES: Record<string, EntityDef> = {
     desc: '真身是高大的苍黄色人形，眼窝深凹、眼球纯白。体表布满微观凸起，像章鱼触手上的吸盘。它的血是半透明的。',
     codex: {
       no: 'Entity 10「Skin-Stealer」', danger: '4 级（高威胁）', habitat: '主要分布于前三层 · Level 2 / Level 5',
-      behavior: '静止伪装成一件不起眼的补给品（绷带、罐头），等你靠近到拾取距离才现出原形暴起攻击。',
+      behavior: '静止伪装成一件不起眼的补给品（绷带、罐头），等你靠近到拾取距离才现出原形暴起攻击。Level 3 的个体更进一步：伪装成流浪者的模样径直走向你，近身才剥皮暴起。',
       counter: '观察不自然的物品：位置突兀、方向不对、与周围环境格格不入的补给很可能是它。绕开，或先远远扔出声响引它现形。',
       lore: [
         '窃皮者的本体被描述为「由筋膜与增生组织构成的高大人形」。它会剥下受害者的皮肤披在身上，在一段时间内维持近似人类的外形——直到皮肤腐烂脱落。',
@@ -40,7 +40,7 @@ export const HUMANOID_ENTITIES: Record<string, EntityDef> = {
     desc: '与人类高度相似的人形，头发完好，唯独整张脸是一片光滑的空白——没有眼、没有鼻、没有嘴。它们没有眼睛，却「像看得见一样」地移动。',
     codex: {
       no: 'Entity 9「Facelings」', danger: '1 级（中立，激怒后 3 级）', habitat: 'Level 0 / Level 1 / Level 11（数量最多）',
-      behavior: '漫无目的地游荡，无视你的一切行为——除非你攻击它或贴身冲撞。激怒后穷追不舍。',
+      behavior: '漫无目的地游荡，无视你的一切行为——除非你攻击它或贴身冲撞。激怒后穷追不舍。Level 3 的无面灵对流浪者抱有敌意：部分个体使用石器工具，面部会长出类似眼、耳、鼻、口的器官——但位置和数量通常不对。',
       counter: '不要触碰、不要攻击、保持一米以上距离。它不记得仇恨，拉开距离一段时间后会重新平静下来。',
       lore: [
         '无面灵是后室中数量最多的实体，外形为没有面部特征的人形。它们多数时间表现出类似「梦游者」的行为模式，对流浪者完全无视。',
@@ -50,22 +50,6 @@ export const HUMANOID_ENTITIES: Record<string, EntityDef> = {
       sighting: '「它站在饮水机前面排队。我也排了。我们都活下来了。」——Level 4 轶闻记录。',
     },
     aggroStinger: false,
-  },
-  insulator: {
-    type: 'insulator', name: '绝缘猎手', hp: 80, speed: 1.6, damage: 28, sight: 7, hearing: 4, color: '#d9b13b', habitat: 'indoor',
-    desc: '穿着破损绝缘服的猎手，懂得利用带电的配电柜伏击流浪者。',
-    codex: {
-      no: '未编号「Insulator」', danger: '4 级（高威胁）', habitat: 'Level 3 配电柜密集区',
-      behavior: '厚重的绝缘服使近战伤害减半。它习惯守在配电柜之间，等你走近才扑出。',
-      counter: '别和它硬拼——伤害减半意味着缠斗必然吃亏。绕着配电柜拉开距离，用速度甩掉它。',
-      lore: [
-        '该实体身穿一整套老旧的橡胶绝缘服，面部被面罩完全遮盖。没有报告见过它脱下服装，也没有报告确认过面罩下面是什么。',
-        '它表现出工具使用级别的智力：会有意识地切断目标退路、利用带电环境逼迫流浪者进入伏击圈。',
-        'M.E.G. Gamma 基地的驻防手册用一句话总结它：「它曾经是电工。现在它还在工作。」',
-      ],
-      sighting: '「它先拉了闸，灯一排排灭掉，然后才朝我走过来。它有计划。」——Gamma 基地幸存外勤。',
-    },
-    aggroStinger: true,
   },
   copierwraith: {
     type: 'copierwraith', name: '复印机幽灵', hp: 45, speed: 2.2, damage: 16, sight: 7, hearing: 5, spawnsFakes: true, color: '#7fb0c9', habitat: 'indoor',

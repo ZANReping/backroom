@@ -3,7 +3,7 @@
 ;(globalThis as any).window = { addEventListener() {}, removeEventListener() {}, matchMedia: () => ({ matches: false }) }
 ;(globalThis as any).document = { createElement: () => ({ getContext: () => null, style: {} }), getElementById: () => null, addEventListener() {}, removeEventListener() {}, body: { appendChild() {} } }
 ;(globalThis as any).localStorage = undefined
-const { generateInfinite, CS } = await import('../src/game/infinite.ts')
+const { generateInfinite, CS } = await import('../src/game/world/infinite.ts')
 const { LEVELS } = await import('../src/game/levels/index.ts')
 
 let fail = 0

@@ -4,7 +4,7 @@
 // 同时仍显示在据点图鉴（outposts.ts 短名「杰瑞的房间」）；两边各出现一次、无重复计数；
 // 设定：wikidot Level 274——鹉主杰瑞（Entity 7）的居所，信众的圣地；
 // 布局：前厅 + 教堂风巨大穹顶主间，杰瑞栖木居中立 perch；仅经信众引路进入，进入门槛 jerry 声望 ≥10）
-import type { LevelDef } from '../types'
+import type { LevelDef } from '../core/types'
 
 export const L274: LevelDef = {
   id: 274, // 独立层级编号（OUTPOST_LEVEL_DEFS 空间；玩家可见编号即 274）

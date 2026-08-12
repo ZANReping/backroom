@@ -13,7 +13,7 @@ import * as THREE from 'three'
 import { ENTITIES } from '../entities'
 import { box, cyl, glow, mulberry } from './shared'
 import { buildPlayerModel } from './playerModel'
-import { randomAvatar } from '../avatar'
+import { randomAvatar } from '../core/avatar'
 
 // ---------- 实体低模（骨骼式分组：四肢/头独立 pivot，可程序化动画）----------
 // 朝向约定：模型正面 = +X（updateEntities 用 rotation.y = -e.facing 对齐移动/玩家方向）。
@@ -22,7 +22,10 @@ import { randomAvatar } from '../avatar'
 // 面部特征（眼/牙/灯/面罩）统一打 userData.face=1，供朝向验收。
 type PartMap = Record<string, THREE.Object3D>
 
-export function buildEntityMesh(type: string): THREE.Group {
+// v53：实体建模变体（L3 高智能实体：无面灵错位面部器官/石器工具、尸鼠水豚形态；seed=实体 id，保证重建一致）
+// ratMorph：尸鼠按层级固定形态——L2 灰白廊道种群 / L3 水豚（capybara 优先）/ L5 酒店正装（小西装+领结）/ 其余层级深褐（旧档「死亡鼠」）
+export interface EntityMeshOpts { l3face?: boolean; tool?: boolean; capybara?: boolean; ratMorph?: 'gray' | 'brown' | 'hotel'; seed?: number }
+export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Group {
   const grp = new THREE.Group()
   grp.userData.entityType = type
   const def = ENTITIES[type]
@@ -161,6 +164,40 @@ export function buildEntityMesh(type: string): THREE.Group {
       const pmParts = pm.userData.parts as Record<string, THREE.Object3D>
       // 注册骨骼部件（步态/待机敲键动画沿用现有驱动）
       for (const k of ['torso', 'head', 'armL', 'armR', 'legL', 'legR']) tag(pmParts[k], k)
+      // v53：L3 高智能无面灵——面部长出类似眼/耳/鼻/口的器官，但位置与数量通常不对（按实体 id 确定性）
+      if (opts?.l3face && pmParts.head) {
+        const r = mulberry(((opts.seed ?? 1) * 7919 + 13) >>> 0)
+        const dark = '#3a2e28', flesh = '#6a5040'
+        const head = pmParts.head
+        const eyeN = 1 + Math.floor(r() * 3) // 1~3 只眼（数量不对）
+        for (let i = 0; i < eyeN; i++) {
+          const eye = new THREE.Mesh(new THREE.BoxGeometry(0.032, 0.04, 0.014), lam(dark))
+          eye.position.set((r() - 0.5) * 0.16, 0.06 + r() * 0.16, 0.121) // 位置随机错位：可能居中/斜排/跑到额头
+          head.add(eye)
+        }
+        const nose = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.05, 0.03), lam(flesh)) // 鼻：长错位置的凸起
+        nose.position.set((r() - 0.5) * 0.14, 0.05 + r() * 0.14, 0.135)
+        head.add(nose)
+        const mouth = new THREE.Mesh(new THREE.BoxGeometry(0.014, 0.07, 0.012), lam(dark)) // 口：竖过来的嘴缝
+        mouth.position.set((r() - 0.5) * 0.12, 0.04 + r() * 0.08, 0.121)
+        head.add(mouth)
+        if (r() < 0.6) { // 耳：贴在正面的耳朵（本该长在两侧）
+          const ear = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.06, 0.014), lam(flesh))
+          ear.position.set((r() - 0.5) * 0.16, 0.1 + r() * 0.12, 0.118)
+          head.add(ear)
+        }
+      }
+      // v53：L3 部分无面灵使用石器工具（石锤握在右手）
+      if (opts?.tool && pmParts.armR) {
+        const tool = new THREE.Group()
+        tool.add(new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.22, 0.03), lam('#6a4e30'))) // 木柄
+        const stone = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.06, 0.05), lam('#7a7a76')) // 石锤头
+        stone.position.set(0, 0.13, 0)
+        tool.add(stone)
+        tool.position.set(0, -0.66, 0.06)
+        tool.rotation.x = -0.5
+        pmParts.armR.add(tool)
+      }
       grp.add(pm)
       break
     }
@@ -439,19 +476,6 @@ export function buildEntityMesh(type: string): THREE.Group {
       }
       const spark = face(glow(0.05, 0.05, 0.05, '#ffffff', 0.42, 1.28, 0)) // 前向电弧（定义正面）
       tag(spark, 'spark'); grp.add(spark)
-      break
-    }
-    case 'insulator': { // 绝缘猎手：厚重橡胶绝缘服 + 面罩视窗 + 背部气瓶
-      humanoid(1.85, 1.35, '#b89a2e', { limbs: '#a88a26' })
-      grp.add(box(0.34, 0.28, 0.3, '#c9a83e', 0, 1.74, 0)) // 头盔
-      const visor = face(glow(0.26, 0.08, 0.02, '#9adfff', 0, 1.74, 0.16)) // 面罩视窗
-      grp.add(visor)
-      grp.add(box(0.28, 0.5, 0.16, '#8a7226', 0, 1.2, -0.24)) // 背瓶
-      grp.add(box(0.5, 0.06, 0.34, '#6a5a1e', 0, 0.95, 0)) // 腰带
-      tip(parts.armL, 0.14, 0.12, 0.16, '#6a5a1e', -0.85) // 厚手套
-      tip(parts.armR, 0.14, 0.12, 0.16, '#6a5a1e', -0.85)
-      tip(parts.legL, 0.17, 0.1, 0.18, '#5a4c1a', -0.68) // 厚靴
-      tip(parts.legR, 0.17, 0.1, 0.18, '#5a4c1a', -0.68)
       break
     }
     case 'copierwraith': { // 复印机幽灵：通体半透明蓝人形 + 漂浮复印纸
@@ -1037,9 +1061,33 @@ export function buildEntityMesh(type: string): THREE.Group {
       }
       tag(tail, 'tail')
       break }
-    case 'corpserat': { // 尸鼠（v42 合并死亡鼠，只保留一名）：两种形态随机变种——
-      // 灰白癞斑（L2 廊道种群）/ 深褐竖耳（L8 天顶种群，旧档「死亡鼠」）。同一物种，行为一致。（原生 +X）
-      if (Math.random() < 0.5) {
+    case 'corpserat': { // 尸鼠（v42 合并死亡鼠，只保留一名）：形态按层级固定（v53）——
+      // L2=灰白癞斑（廊道种群）/ L3=水豚形态（高智能变种，设陷阱）/ 其余=深褐竖耳（L8 天顶种群，旧档「死亡鼠」）。（原生 +X）
+      // v53：L3 高智能尸鼠——水豚形态：桶状躯干、钝方吻、头顶小圆耳、几乎无尾，体型明显更大
+      if (opts?.capybara) {
+        const cc = '#6a563f', cd = '#584631', cl = '#7a6650'
+        const body = new THREE.Group()
+        body.position.set(0, 0.22, 0)
+        body.add(box(0.42, 0.24, 0.24, cc, 0, 0, 0)) // 桶状躯干
+        body.add(box(0.2, 0.2, 0.22, cd, -0.2, -0.02, 0)) // 后臀
+        body.add(box(0.3, 0.04, 0.22, cd, 0.02, 0.13, 0)) // 背毛
+        tag(body, 'torso')
+        const hg = new THREE.Group()
+        hg.position.set(0.28, 0.3, 0)
+        hg.add(box(0.16, 0.15, 0.16, cl, 0, 0, 0))
+        hg.add(box(0.12, 0.1, 0.12, cl, 0.12, -0.03, 0)) // 钝方吻
+        hg.add(box(0.03, 0.03, 0.03, '#1a1412', 0.19, -0.01, 0)) // 鼻
+        for (const z of [-0.05, 0.05]) hg.add(face(glow(0.024, 0.024, 0.024, '#241f1a', 0.088, 0.05, z))) // 眼（头盒前表面 x=0.08 之外，避免埋进头内）
+        for (const z of [-0.05, 0.05]) hg.add(box(0.035, 0.045, 0.035, cd, -0.02, 0.09, z)) // 头顶小圆耳
+        tag(hg, 'head')
+        jointX(0.05, 0.15, 0.05, cd, 0.15, 0.16, -0.08, 'armL')
+        jointX(0.05, 0.15, 0.05, cd, 0.15, 0.16, 0.08, 'armR')
+        jointX(0.055, 0.15, 0.055, cd, -0.16, 0.16, -0.08, 'legL')
+        jointX(0.055, 0.15, 0.055, cd, -0.16, 0.16, 0.08, 'legR')
+        for (const l of [parts.armL, parts.armR, parts.legL, parts.legR]) tip(l, 0.055, 0.03, 0.07, '#241f1b', -0.15, 0.01)
+        break
+      }
+      if (opts?.ratMorph !== 'gray') {
         // 深褐形态（旧死亡鼠）：小型四足啮齿——尖吻、长尾、竖耳，深褐色，体长约 0.4m
         const rc = '#3e3630', rd = '#332c27', rl = '#4c433b'
         const body = new THREE.Group()
@@ -1072,6 +1120,12 @@ export function buildEntityMesh(type: string): THREE.Group {
         jointX(0.05, 0.13, 0.05, rd, -0.12, 0.13, -0.06, 'legL')
         jointX(0.05, 0.13, 0.05, rd, -0.12, 0.13, 0.06, 'legR')
         for (const l of [parts.armL, parts.armR, parts.legL, parts.legR]) tip(l, 0.05, 0.03, 0.06, '#241f1b', -0.13, 0.01)
+        if (opts?.ratMorph === 'hotel') { // v55：L5 酒店正装变种——小西装黑马甲 + 白衬衫襟 + 酒红领结
+          body.add(box(0.28, 0.12, 0.17, '#1c1a1e', 0.01, -0.02, 0)) // 小西装躯干（马甲）
+          body.add(box(0.1, 0.08, 0.02, '#e8e4da', 0.12, 0.01, 0.08)) // 白衬衫襟（左）
+          body.add(box(0.1, 0.08, 0.02, '#e8e4da', 0.12, 0.01, -0.08)) // 白衬衫襟（右）
+          hg.add(box(0.04, 0.03, 0.07, '#7a1e24', 0.08, -0.055, 0)) // 酒红领结
+        }
       } else {
         // 灰白形态（原尸鼠）：灰白近腐的大型啮齿——癞斑脱毛、尖吻、裸尾，口边沾着飞蛾翅粉
         const rc = '#8a8078', rd = '#6e665e', rl = '#9a928a', bare = '#a08a80'

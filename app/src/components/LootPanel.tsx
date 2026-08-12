@@ -1,9 +1,9 @@
 // 容器战利品面板（三角洲行动式摸金：逐件拿取 / 全部拿取）
 import type { Engine } from '@/game/engine'
-import { ITEMS } from '@/game/items'
+import { ITEMS } from '@/game/content/items'
 import { ItemGlyph } from './HUD'
-import { audio } from '@/game/audio'
-import { bindLabelFor } from '@/game/keybinds'
+import { audio } from '@/game/core/audio'
+import { bindLabelFor } from '@/game/core/keybinds'
 
 export default function LootPanel({ engine, onClose }: { engine: Engine; onClose: () => void }) {
   const lp = engine.lootPanel

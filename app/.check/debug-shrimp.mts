@@ -5,7 +5,7 @@
 ;(globalThis as unknown as Record<string, unknown>).localStorage = undefined
 ;(globalThis as unknown as Record<string, unknown>).__shrimpDbg = true
 const { engine } = await import('../src/game/engine.ts')
-const { generateInfinite, CS } = await import('../src/game/infinite.ts')
+const { generateInfinite, CS } = await import('../src/game/world/infinite.ts')
 const { LEVELS } = await import('../src/game/levels/index.ts')
 const m = generateInfinite(LEVELS[0], 1)
 const variants: Record<string, number> = {}

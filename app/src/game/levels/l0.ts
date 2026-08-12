@@ -1,5 +1,5 @@
 // Level 0「教学关卡」层级定义（v17：无限 chunk 生成；内部 id 仍为 0）
-import type { LevelDef } from '../types'
+import type { LevelDef } from '../core/types'
 
 export const L0: LevelDef = {
   id: 0,

@@ -7,7 +7,7 @@
 // 注：Wikidot FAQ 明确「离开后室是一个敏感话题」，且本站不以某一种唯一正典解释运作；
 // 《Basics of the Backrooms》的口径是「从未有过任何有记录的逃脱」。
 // 本作据此把「回家」处理成假结局，把「看穿它」处理成真结局。
-import type { LevelDef } from '../types'
+import type { LevelDef } from '../core/types'
 
 export const L601: LevelDef = {
   id: 12,

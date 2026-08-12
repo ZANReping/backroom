@@ -1,8 +1,8 @@
 // 胜利结算（亮色对比）
 import { useEffect, useState } from 'react'
 import type { Engine } from '@/game/engine'
-import { seedString } from '@/game/rng'
-import { audio } from '@/game/audio'
+import { seedString } from '@/game/core/rng'
+import { audio } from '@/game/core/audio'
 
 export default function VictoryScreen({ engine, onNG, onTitle }: { engine: Engine; onNG: () => void; onTitle: () => void }) {
   const p = engine.player

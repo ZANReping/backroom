@@ -1,5 +1,5 @@
 // Level 2「废弃公共带」层级定义（v41：无限 chunk 生成；原名「管道走廊」，设定对齐 wikidot/Fandom Level 2）
-import type { LevelDef } from '../types'
+import type { LevelDef } from '../core/types'
 
 export const L2: LevelDef = {
   id: 2,

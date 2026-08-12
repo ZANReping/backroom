@@ -1,6 +1,6 @@
 // 商人之家（B.N.T.G. 据点层级：商场式手工布局，见 mapgenOutpost.ts genBntgOutpost；
 // 设定依据 wikidot The B.N.T.G. / 商人之家 / 交易保险库）
-import type { LevelDef } from '../types'
+import type { LevelDef } from '../core/types'
 
 export const LBNTG: LevelDef = {
   id: 102, // 据点独立 id 空间（100+）：Level 1 跃金段的子层级，不占 LEVELS 数字下标

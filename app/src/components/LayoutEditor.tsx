@@ -1,6 +1,6 @@
 // 触屏按键布局编辑器：拖拽移动控件、双指缩放（0.8–1.5×），按竖屏/横屏分别存 localStorage
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { storage } from '@/game/storage'
+import { storage } from '@/game/core/storage'
 import { IconFlashlight, IconBackpack, IconSprint, IconAttack, IconPause, IconJump, IconCrouch } from './icons'
 
 export type TouchControlId = 'stick' | 'attack' | 'sprint' | 'flashlight' | 'backpack' | 'pause' | 'jump' | 'crouch'

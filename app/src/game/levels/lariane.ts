@@ -1,6 +1,6 @@
 // 希波克拉底 - 1（阿丽亚娜集团据点层级：大型医药研究所/生物实验室式手工布局，见 mapgenOutpost.ts genArianeOutpost；
 // 设定依据 wikidot 阿丽亚娜集团 The Ariane Circle / 希波克拉底团队——外科医师与医学/生物学研究人员）
-import type { LevelDef } from '../types'
+import type { LevelDef } from '../core/types'
 
 export const LARIANE: LevelDef = {
   id: 103, // 据点独立 id 空间（100+）：Level 1 哥特段的子层级，不占 LEVELS 数字下标

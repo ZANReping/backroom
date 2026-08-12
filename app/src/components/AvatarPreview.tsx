@@ -2,10 +2,10 @@
 // v40：可选 npcId/npcDef——图鉴「人士」页按 NPC id 附加标志性配饰（与游戏内 renderer 同一 npcGear 通道）
 import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
-import type { AvatarCfg } from '@/game/avatar'
+import type { AvatarCfg } from '@/game/core/avatar'
 import { buildPlayerModel } from '@/game/renderer/playerModel'
 import { applyNpcGear } from '@/game/renderer/npcGear'
-import type { NpcDef } from '@/game/npcs'
+import type { NpcDef } from '@/game/content/npcs'
 
 interface Props {
   avatar: AvatarCfg

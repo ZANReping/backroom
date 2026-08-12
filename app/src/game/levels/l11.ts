@@ -1,7 +1,7 @@
 // Level 11「The City That Never Sleeps / 不夜城」层级定义
 // 设定依据：The Backrooms Wiki（Wikidot）现行版 Level 11（Class 2 / Safe / 约 129,500 人）。
 // ⚠ 与已归档旧版「The Endless City」（Class 1、约 12,000 人）区分；本作采用现行版。
-import type { LevelDef } from '../types'
+import type { LevelDef } from '../core/types'
 
 export const L11: LevelDef = {
   id: 11,

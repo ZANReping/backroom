@@ -1,6 +1,6 @@
 // Level 9「The Suburbs / 郊区」层级定义
 // 设定依据：The Backrooms Wiki（Wikidot）Level 9 + Entity 96 / Entity 63 条目。
-import type { LevelDef } from '../types'
+import type { LevelDef } from '../core/types'
 
 export const L9: LevelDef = {
   id: 9,

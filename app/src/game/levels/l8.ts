@@ -1,7 +1,7 @@
 // Level 8「Cave Systems / 洞穴系统」层级定义
 // 设定依据：The Backrooms Wiki（Wikidot）Level 8——该条目为 rewritten + featured，
 // 拥有完整生态系统、5 个命名地标与 9 个组织，是本作 L6–L11 中素材最充足的一层。
-import type { LevelDef } from '../types'
+import type { LevelDef } from '../core/types'
 
 export const L8: LevelDef = {
   id: 8,

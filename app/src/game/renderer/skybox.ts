@@ -7,8 +7,8 @@
 //   · 地平辉光带沿方位起伏（霓虹/工业光），亮度噪声调制
 //   · 全图抖动去色带；逐层确定性生成（同层恒定），CanvasTexture 按层缓存
 import * as THREE from 'three'
-import type { GameMap } from '../mapgen'
-import type { LevelDef } from '../types'
+import type { GameMap } from '../world/mapgen'
+import type { LevelDef } from '../core/types'
 
 export interface SkyProfile {
   zenith: string

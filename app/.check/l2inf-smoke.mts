@@ -30,9 +30,9 @@ const ctx2d = new Proxy({}, { get: (_t, k) => {
 ;(globalThis as unknown as Record<string, unknown>).performance = globalThis.performance ?? { now: () => Date.now() }
 
 const { LEVELS } = await import('../src/game/levels/index.ts')
-const { generateLevel } = await import('../src/game/mapgen.ts')
-const { genL2ChunkRaw, l2VariantOf, l2CorrX, l2RowY, l2CorridorFloorAt, l2WallSegsAt } = await import('../src/game/infiniteL2.ts')
-const { CS } = await import('../src/game/infinite.ts')
+const { generateLevel } = await import('../src/game/world/mapgen.ts')
+const { genL2ChunkRaw, l2VariantOf, l2CorrX, l2RowY, l2CorridorFloorAt, l2WallSegsAt } = await import('../src/game/world/infiniteL2.ts')
+const { CS } = await import('../src/game/world/infinite.ts')
 const THREE = await import('three')
 
 let fail = 0
@@ -653,7 +653,7 @@ const def = LEVELS[2]
 
 // 14) v45：信众宣传间（卧室房型 ~8% 改生成：无无面灵 / 1 名信众 NPC / 满墙海报 / 领地矩形）
 {
-  const { l2IsJerryRoom, l2JerryRoomRectAt, l2RoomLayoutAt } = await import('../src/game/infiniteL2.ts')
+  const { l2IsJerryRoom, l2JerryRoomRectAt, l2RoomLayoutAt } = await import('../src/game/world/infiniteL2.ts')
   let bedrooms = 0, jerryRooms = 0, posterBad = 0, npcBad = 0
   for (const seed of [424242, 1, 7, 13, 99, 20260804, 55, 777]) {
     for (let k = -6; k <= 6; k++)
