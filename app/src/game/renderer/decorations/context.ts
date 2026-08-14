@@ -4,7 +4,7 @@
 // 否则同一种子摆位变化（纯视觉，但仍视为生成结果）。
 import * as THREE from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
-import type { GameMap } from '../../world/mapgen'
+import { UNDER_FLOOR, type GameMap } from '../../world/mapgen'
 import type { LevelDef, LightSource } from '../../core/types'
 import { col, mulberry } from '../shared'
 
@@ -46,9 +46,18 @@ export function createDecorCtx(
   const rf = (a: number, b: number) => a + rng() * (b - a)
   const RX0 = range?.x0 ?? 1, RY0 = range?.y0 ?? 1
   const RX1 = range?.x1 ?? m.w - 1, RY1 = range?.y1 ?? m.h - 1
+  // L6 的 darkhall 装饰属于 -1F 廊道。此前仍从地表 tiles 取点且使用 y=0，
+  // 于是废弃手电等小物会悬在起伏苔原和区块接缝上。
+  const underground = def.id === 6 && m.hasUnderground
+  const baseY = underground ? UNDER_FLOOR : 0
+  const walkableAt = (x: number, y: number) => {
+    if (x < 0 || y < 0 || x >= m.w || y >= m.h) return false
+    const i = y * m.w + x
+    return underground ? m.dn[i] === 1 && m.dnWall[i] !== 1 : m.tiles[i] === 1
+  }
 
   // 占用：实体/物品/出口/出生点附近不摆
-  const solidAt = (x: number, y: number) => m.structures.some((s) => s.solid && x >= s.x && x < s.x + s.w && y >= s.y && y < s.y + s.h)
+  const solidAt = (x: number, y: number) => m.structures.some((s) => s.solid && (s.floor ?? 0) === (underground ? -1 : 0) && x >= s.x && x < s.x + s.w && y >= s.y && y < s.y + s.h)
   const nearImportant = (x: number, y: number) => {
     if (Math.hypot(x - m.spawn.x, y - m.spawn.y) < 2) return true
     for (const it of m.items) if (Math.abs(it.x - x - 0.5) < 0.8 && Math.abs(it.y - y - 0.5) < 0.8) return true
@@ -59,12 +68,12 @@ export function createDecorCtx(
   const wallSpots: WSpot[] = []
   const floorTiles: { x: number; y: number }[] = []
   for (let y = RY0; y < RY1; y++) for (let x = RX0; x < RX1; x++) {
-    if (m.tiles[y * m.w + x] !== 1 || solidAt(x, y)) continue
+    if (!walkableAt(x, y) || solidAt(x, y)) continue
     floorTiles.push({ x, y })
-    if (m.tiles[(y - 1) * m.w + x] !== 1) wallSpots.push({ x, y, d: 0 })
-    if (m.tiles[y * m.w + x + 1] !== 1) wallSpots.push({ x, y, d: 1 })
-    if (m.tiles[(y + 1) * m.w + x] !== 1) wallSpots.push({ x, y, d: 2 })
-    if (m.tiles[y * m.w + x - 1] !== 1) wallSpots.push({ x, y, d: 3 })
+    if (!walkableAt(x, y - 1)) wallSpots.push({ x, y, d: 0 })
+    if (!walkableAt(x + 1, y)) wallSpots.push({ x, y, d: 1 })
+    if (!walkableAt(x, y + 1)) wallSpots.push({ x, y, d: 2 })
+    if (!walkableAt(x - 1, y)) wallSpots.push({ x, y, d: 3 })
   }
   const usedWall = new Set<string>()
   const usedFloor = new Set<string>()
@@ -96,10 +105,10 @@ export function createDecorCtx(
     const mat = new THREE.MeshLambertMaterial({ map: tex, transparent: true, depthWrite: false, opacity })
     const p = new THREE.Mesh(new THREE.PlaneGeometry(w, h), mat)
     const off = 0.02, cx = spot.x + 0.5, cz = spot.y + 0.5
-    if (spot.d === 0) p.position.set(cx, cy, spot.y + off)
-    else if (spot.d === 2) { p.position.set(cx, cy, spot.y + 1 - off); p.rotation.y = Math.PI }
-    else if (spot.d === 3) { p.position.set(spot.x + off, cy, cz); p.rotation.y = Math.PI / 2 }
-    else { p.position.set(spot.x + 1 - off, cy, cz); p.rotation.y = -Math.PI / 2 }
+    if (spot.d === 0) p.position.set(cx, baseY + cy, spot.y + off)
+    else if (spot.d === 2) { p.position.set(cx, baseY + cy, spot.y + 1 - off); p.rotation.y = Math.PI }
+    else if (spot.d === 3) { p.position.set(spot.x + off, baseY + cy, cz); p.rotation.y = Math.PI / 2 }
+    else { p.position.set(spot.x + 1 - off, baseY + cy, cz); p.rotation.y = -Math.PI / 2 }
     g.add(p)
     return p
   }
@@ -109,7 +118,7 @@ export function createDecorCtx(
     const geo = new THREE.PlaneGeometry(size, size)
     geo.rotateX(-Math.PI / 2)
     if (rot) geo.rotateY(rot)
-    geo.translate(fx, 0.012 + rng() * 0.004, fz)
+    geo.translate(fx, baseY + 0.012 + rng() * 0.004, fz)
     if (!floorBuckets.has(tex)) floorBuckets.set(tex, [])
     floorBuckets.get(tex)!.push(geo)
   }
@@ -120,7 +129,7 @@ export function createDecorCtx(
     if (rz) geo.rotateZ(rz)
     if (rx) geo.rotateX(rx)
     if (ry) geo.rotateY(ry)
-    geo.translate(x, y, z)
+    geo.translate(x, baseY + y, z)
     if (!propBuckets.has(color)) propBuckets.set(color, [])
     propBuckets.get(color)!.push(geo)
   }
@@ -128,7 +137,7 @@ export function createDecorCtx(
     const geo = new THREE.CylinderGeometry(rt, rb, h, seg)
     if (rz) geo.rotateZ(rz)
     if (ry) geo.rotateY(ry)
-    geo.translate(x, y, z)
+    geo.translate(x, baseY + y, z)
     if (!propBuckets.has(color)) propBuckets.set(color, [])
     propBuckets.get(color)!.push(geo)
   }
@@ -137,7 +146,7 @@ export function createDecorCtx(
     const mat = new THREE.MeshBasicMaterial({ color })
     mat.userData.base = col(color)
     const mm = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat)
-    mm.position.set(x, y, z)
+    mm.position.set(x, baseY + y, z)
     if (ry) mm.rotation.y = ry
     if (rz) mm.rotation.z = rz
     g.add(mm)

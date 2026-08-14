@@ -102,6 +102,37 @@ export function applyNpcGear(parts: Record<string, THREE.Object3D>, id: string, 
     }
     return
   }
+  // v56：Tom 餐馆驻店乐手乔伊——背后斜挎电吉他（樱桃红琴身+琴颈探出左肩）+ 墨镜 + 右手拨片
+  // 吉他整体装入带 userData.joeyGuitar 标记的组——渲染层演奏时把它挪到身前（弹奏动画）
+  if (id === 'joey') {
+    if (parts.torso) {
+      const gtr = new THREE.Group()
+      gtr.userData.joeyGuitar = 1
+      gtr.add(box(0.2, 0.34, 0.06, '#b04030', 0, 0, 0)) // 琴身（樱桃红）
+      gtr.add(box(0.16, 0.22, 0.02, '#f0e8d8', 0.02, -0.02, 0.036)) // 白色护板
+      const neck = box(0.05, 0.52, 0.05, '#3a2a18', -0.13, 0.38, 0) // 琴颈（斜向左上）
+      neck.rotation.z = 0.75
+      gtr.add(neck)
+      const head = box(0.07, 0.14, 0.05, '#2a1d10', -0.24, 0.64, 0) // 琴头
+      head.rotation.z = 0.75
+      gtr.add(head)
+      gtr.add(box(0.045, 0.09, 0.06, '#8a8f96', -0.23, 0.68, 0.04)) // 弦钮排（银）
+      // 背姿（平时）：斜背在背后，琴颈探出左肩
+      gtr.position.set(-0.1, 0.06, -0.2)
+      gtr.rotation.z = 0.3
+      parts.torso.add(gtr)
+      const strap = box(0.06, 0.52, 0.02, '#17171a', 0.04, 0.02, 0.125) // 斜挎背带（胸前，演奏时同持）
+      strap.rotation.z = 0.5
+      parts.torso.add(strap)
+    }
+    if (head) {
+      head.add(box(0.06, 0.045, 0.012, '#101114', -0.06, 0.15, 0.126)) // 墨镜（左）
+      head.add(box(0.06, 0.045, 0.012, '#101114', 0.06, 0.15, 0.126)) // 墨镜（右）
+      head.add(box(0.024, 0.01, 0.012, '#101114', 0, 0.15, 0.126)) // 鼻梁
+    }
+    if (armR) armR.add(box(0.024, 0.034, 0.004, '#e8c94a', 0, -0.53, 0.05)) // 右手拨片
+    return
+  }
   // v55：L5 三处据点 NPC 配饰（家政服务/家常酒店/原住民——各一件标志性小件）
   switch (id) {
     case 'barclay': // 哨所长：臂弯登记簿
@@ -358,6 +389,15 @@ export function applyNpcGear(parts: Record<string, THREE.Object3D>, id: string, 
         parts.torso.add(strap)
         parts.torso.add(box(0.045, 0.28, 0.045, '#23262a', 0.2, -0.32, 0.06)) // 警棍
         parts.torso.add(box(0.05, 0.06, 0.05, '#3a3d42', 0.2, -0.17, 0.06)) // 棍柄护手
+      }
+      break
+    case 'candyman': // 糖佬：手中糖果罐（玻璃罐 + 罐内彩色糖果，试吃装随手递）
+      if (armR) {
+        armR.add(cyl(0.045, 0.038, 0.09, '#cfe8f0', 0, -0.53, 0.07, 8)) // 玻璃罐身
+        armR.add(cyl(0.05, 0.05, 0.014, '#e8b93c', 0, -0.475, 0.07, 8)) // 糖果金罐盖
+        armR.add(box(0.02, 0.02, 0.02, '#e05a6a', -0.014, -0.53, 0.07)) // 罐内糖果（红）
+        armR.add(box(0.02, 0.02, 0.02, '#7ac96a', 0.015, -0.55, 0.07)) // 罐内糖果（绿）
+        armR.add(box(0.02, 0.02, 0.02, '#e8c94a', 0, -0.51, 0.07)) // 罐内糖果（金）
       }
       break
     // ===== v43：办公区EL3A（BNTG 物流中转站） =====

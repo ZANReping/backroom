@@ -6,8 +6,8 @@ export const L3: LevelDef = {
   name: '电站',
   flavor: '砖墙、积灰混凝土与噼啪电流。无限延伸的廊道被铁栅栏截断又接续。极度危险，但资源是全后室最丰富的——高智能实体也明白这一点。',
   lore: 'Level 3「Electrical Station」。老旧砖砌电站，无限延伸的不规则廊道两侧密布电缆与配电箱，部分廊道被铁栅栏封死——另一侧可见而不可达；生存难度 4，实体密度高且存在高智能独占敌对实体，但稀有材料与电气设备（保险丝/电池/门禁卡）刷新率全后室最高。M.E.G. Base Gemma 驻于巨大机房。——据 Backrooms Wikidot 整理',
-  // v51：砖墙/积灰混凝土贴图叠乘用暖灰顶点色（旧冷灰蓝会把砖墙叠得发蓝发暗）
-  palette: { floor: '#5e5c58', floorAlt: '#565450', wall: '#8c7f72', wallTop: '#6b6057', accent: '#d9b13b', light: '#cfd6dd', decal: '#26241f' },
+  // 红黄烧结砖颜色图使用浅暖陶土乘色，保留红/赭黄差异；旧暖灰乘色会把新砖再次压回灰褐。
+  palette: { floor: '#5e5c58', floorAlt: '#565450', wall: '#f0cfad', wallTop: '#b89068', accent: '#d9b13b', light: '#cfd6dd', decal: '#26241f' },
   gen: 'grid', // 保留：墙高 WALL_H.grid=4.2 / 电火花粒子 keyed on 'grid'（实际生成走 infinite chunk）
   infinite: true,
   size: 72, // 兼容占位（无限模式不使用）

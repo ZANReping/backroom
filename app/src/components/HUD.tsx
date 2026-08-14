@@ -19,6 +19,7 @@ import { FACTIONS } from '@/game/content/factions'
 import { DECOR_REGISTRY, DECOR_LEVEL_ORDER } from '@/game/content/decorRegistry'
 import { storage } from '@/game/core/storage'
 import { audio } from '@/game/core/audio'
+import { MUSIC_LIBRARY } from '@/game/core/midi' // v56 六轮：图鉴全开同步解锁电台音乐
 import { bindLabelFor } from '@/game/core/keybinds'
 import { IconHP, IconStamina, IconHunger, IconThirst, IconSanity, IconBattery, IconPause, IconMap, IconInteract, IconCrouch, IconIsolation, IconPlant } from './icons'
 import { PHENOMENA, rarityText } from '@/game/content/phenomena'
@@ -90,6 +91,7 @@ function Minimap({ engine, size }: { engine: Engine; size: number }) {
       const span = 80, half = span / 2
       const s = size / span
       const px = engine.player.x, py = engine.player.y
+      const pBand = engine.player.floor
       const wx0 = Math.floor(inf.ox + px), wy0 = Math.floor(inf.oy + py)
       const mod = (v: number, n: number) => ((v % n) + n) % n
       g.fillStyle = '#0a0908'; g.fillRect(0, 0, size, size)
@@ -100,7 +102,8 @@ function Minimap({ engine, size }: { engine: Engine; size: number }) {
           let ex = 0, el = 0, tnt = 0, floor = false
           if (vx >= 0 && vy >= 0 && vx < m.w && vy < m.h) {
             const idx = vy * m.w + vx
-            ex = engine.explored[idx]; floor = m.tiles[idx] === 1 && !wwSet.has(idx)
+            ex = engine.explored[idx]
+            floor = pBand === -1 ? m.dn[idx] === 1 && m.dnWall[idx] !== 1 : m.tiles[idx] === 1 && !wwSet.has(idx)
             el = m.elev[idx]; tnt = m.tint[idx]
           } else {
             const bm = inf.explored.get(`${Math.floor(wx / CS)},${Math.floor(wy / CS)}`)
@@ -119,7 +122,7 @@ function Minimap({ engine, size }: { engine: Engine; size: number }) {
         if (mod(wy0 + i, CS) === 0) { g.beginPath(); g.moveTo(0, (i + half) * s); g.lineTo(size, (i + half) * s); g.stroke() }
       }
       for (const e of m.exits) {
-        if (!e.discovered) continue
+        if (!e.discovered || (e.floor ?? 0) !== pBand) continue
         const ex2 = (e.x + 0.5 - px + half) * s, ey2 = (e.y + 0.5 - py + half) * s
         if (ex2 < 0 || ey2 < 0 || ex2 > size || ey2 > size) continue
         g.fillStyle = '#f5e37a'
@@ -129,6 +132,7 @@ function Minimap({ engine, size }: { engine: Engine; size: number }) {
       }
       // 标注（v32）：已探索区域内的容器（亮=未搜刮 暗=已搜刮）与地面物品
       for (const st of m.structures) {
+        if ((st.floor ?? 0) !== pBand) continue
         if (!CONTAINER_KINDS.includes(st.kind)) continue
         const idx = Math.floor(st.y + st.h / 2) * m.w + Math.floor(st.x + st.w / 2)
         if (idx < 0 || idx >= m.w * m.h || !engine.explored[idx]) continue
@@ -334,10 +338,10 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
   // v13 楼层契约（防御性读取：另一 agent 实现中——player.floor 0 起始 / map.floors 总层数，缺省或多层数据不存在则不显示）
   const pf = (p as unknown as { floor?: unknown }).floor
   const mf = (engine.map as unknown as { floors?: unknown } | null)?.floors
-  const floorInfo = typeof pf === 'number' && Number.isFinite(pf) && typeof mf === 'number' && mf > 1
-    ? { cur: Math.max(0, Math.floor(pf)), total: Math.floor(mf) }
+  const floorInfo = typeof pf === 'number' && Number.isFinite(pf) && (engine.map?.hasUnderground || (typeof mf === 'number' && mf > 1))
+    ? { cur: Math.floor(pf), total: Math.floor(typeof mf === 'number' ? mf : 1), underground: !!engine.map?.hasUnderground }
     : null
-  const floorText = floorInfo ? `${floorInfo.cur + 1}F/共${floorInfo.total}层` : null
+  const floorText = floorInfo ? (floorInfo.underground ? (floorInfo.cur === -1 ? '地下层' : '地表') : `${floorInfo.cur + 1}F/共${floorInfo.total}层`) : null
 
   // 当前生效的现象（engine.step 每帧重算；本组件由 App 的 0.12s tick 驱动重渲染）
   const phenomena = engine.activePhenomena.map((id) => PHENOMENA[id]).filter(Boolean)
@@ -836,6 +840,8 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
       const seen: Record<string, number> = {}
       for (const t of Object.keys(ENTITIES)) seen[t] = 6
       storage.set('br_codex_seen', JSON.stringify(seen))
+      // v56 六轮：图鉴全开同时解锁全部电台音乐（heardSongs 补全，随存档持久）
+      engine.heardSongs = MUSIC_LIBRARY.map((e) => e.id)
       setCodexAll(true)
     } else {
       const bak = storage.get('br_codex_devbak')
@@ -1295,7 +1301,7 @@ const GLYPH_COLOR: Record<string, string> = {
   presses: '#cfa12e', pamphlet: '#7ac9b0', citywater: '#3aa0d8', endnote: '#8a7a6a',
   // ===== v32：后室扩展物品 =====
   cashew: '#c9a05a',
-  knife: '#c9cdd4', axe: '#d96a3a', headlamp: '#f0d060', notebook: '#8a6a4a',
+  knife: '#c9cdd4', axe: '#d96a3a', headlamp: '#f0d060', nightvision: '#78b886', notebook: '#8a6a4a',
   fuyouyu: '#6ad9a8', squirtgun: '#4ac9e8', warpberry: '#b06ae0', royalration: '#e8c93d',
   // ===== v38：Tom 的餐馆菜肴 =====
   tomatosoup: '#d95a3a', gardensalad: '#7ac97a', garlicbread: '#d9a85a', pasta: '#e8b93c',
@@ -1312,7 +1318,7 @@ const PIXEL_ICON: Record<string, true> = {
   almond: true, axe: true, bandage: true, battery: true, canned: true, capacitor: true,
   carkey: true, cashew: true, cavingsuit: true, chalkstub: true, citywater: true, coffee: true,
   crowbar: true, divemask: true, driedfruit: true, endnote: true, flashlight: true, fuse: true,
-  fuyouyu: true, gas: true, gloves: true, glowstick: true, headlamp: true, housekey: true,
+  fuyouyu: true, gas: true, gloves: true, glowstick: true, headlamp: true, nightvision: true, housekey: true,
   keycard: true, knife: true, lighter: true, megfolder: true, nails: true, notebook: true,
   oddbook: true, pamphlet: true, pockets: true, presses: true, rabbit: true, rope: true,
   royalration: true, sedative: true, silverware: true, skeleton: true, squirtgun: true,

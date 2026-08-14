@@ -213,7 +213,9 @@ export function useSlot(eng: Engine, where: SlotWhere, i: number) {
     case 'battery': p.battery = Math.min(100, p.battery + (def.value ?? 50)); break
     case 'stamina': p.coffeeT = 60; p.stamina = 100; applyThirst(def.value3); break // v54：咖啡解渴 +10
     case 'light': {
-      if (eng.map) eng.map.lights.push({ x: p.x, y: p.y, r: 2.5, color: '#a8e0a0', flickerSeed: Math.random() * 100 })
+      if (eng.levelDef.noFlashlight) {
+        eng.msg('你启动了它。开关有反馈，但没有任何光出现。', 'lore')
+      } else if (eng.map) eng.map.lights.push({ x: p.x, y: p.y, r: 2.5, color: '#a8e0a0', flickerSeed: Math.random() * 100 })
       break
     }
   }

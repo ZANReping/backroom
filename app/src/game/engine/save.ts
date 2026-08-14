@@ -35,6 +35,8 @@ export interface SaveSnapshot {
   time: number // 游戏内时间（地图种子派生依赖它）
   mapSeed: number // 当前层级地图生成种子（读档需复现同一张图）
   mapFirstVisit: boolean // 生成该图时的 firstVisit 标记（影响初始物资刷新）
+  /** 无限层玩家的绝对世界坐标；局部 x/y 会随流式窗口平移，不能单独用于跨会话恢复 */
+  worldPos?: { x: number; y: number }
   level: number
   visited: number[] // 已到过的层级（初始物资仅首访刷新）
   savedAt?: number // v54：落盘时间戳（槽位列表显示；旧档缺省）
@@ -49,6 +51,8 @@ export interface SaveSnapshot {
   jerryAgreed?: string[] // v45：已对其「认同杰瑞」的信众 NPC id（引路选项按此显示；v49 起每局至多一名——见 jerryOath）
   jerryOath?: boolean // v49：本局已宣誓认同杰瑞（+10 每局仅首次；之后任何信众处认同选项不再出现）
   homelyApplied?: boolean // v55：家常酒店入住申请已提交（L5 据点 111 准入）
+  radio?: { mode: 'follow' | 'fixed'; fixed: string | null; perLevel: Record<number, string> } // v56：电台配置（随层级变化/固定音乐 + 单层覆盖）
+  heardSongs?: string[] // v56：已收听曲目 id（电台可选前提；乐手演奏解锁摇滚曲目）
   // v47：传教使命已标准委托化（kind 'preach' 进 quests，随 quests 持久）；旧档 jerryPreach 字段废弃不再读取
   player: PlayerState
 }
@@ -106,6 +110,7 @@ export function clearRunSlots(eng: Engine) {
 
 // v29a：当前进度快照（纯 JSON 可序列化）
 export function snapshot(eng: Engine): SaveSnapshot {
+  const inf = eng.map?.inf
   return {
     v: 1,
     seed: eng.seed,
@@ -113,6 +118,7 @@ export function snapshot(eng: Engine): SaveSnapshot {
     time: eng.time,
     mapSeed: eng.mapSeed,
     mapFirstVisit: eng.mapFirstVisit,
+    worldPos: inf ? { x: inf.ox + eng.player.x, y: inf.oy + eng.player.y } : undefined,
     level: eng.player.level,
     visited: [...eng.visitedLevels],
     outpostReturn: eng.outpostReturn,
@@ -126,6 +132,8 @@ export function snapshot(eng: Engine): SaveSnapshot {
     jerryAgreed: [...eng.jerryAgreed],
     jerryOath: eng.jerryOath,
     homelyApplied: eng.homelyApplied, // v55：家常酒店入住申请（L5 据点 111 准入）
+    radio: eng.radio, // v56：电台配置
+    heardSongs: [...eng.heardSongs], // v56：已收听曲目
     player: JSON.parse(JSON.stringify(eng.player)),
   }
 }

@@ -1,6 +1,7 @@
 // 第一人称手部/手持物品 viewmodel + 屏幕中心准心（DOM 注入）
 import * as THREE from 'three'
 import { buildItemMesh } from './itemsMesh'
+import { buildFlashlightMesh } from './flashlightMesh'
 
 // ---------- 第一人称手部/手持物品 ----------
 // v53：去掉自发光（原 emissiveIntensity 0.25）——手部/袖管/手持物在黑暗中不再自发光，
@@ -20,19 +21,11 @@ export function buildViewmodel(vm: THREE.Group, vmFlash: THREE.Group, camera: TH
   vm.add(hand)
   vm.position.set(0.27, -0.3, -0.55)
   camera.add(vm)
-  // 左手手电（手电开启时可见，已有 SpotLight 光效）
-  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.038, 0.2, 8), vmat('#2a2d30'))
-  body.rotation.x = Math.PI / 2
-  body.position.z = -0.08
-  vmFlash.add(body)
-  const head = new THREE.Mesh(new THREE.CylinderGeometry(0.052, 0.045, 0.07, 8), vmat('#4a4d52'))
-  head.rotation.x = Math.PI / 2
-  head.position.z = -0.2
-  vmFlash.add(head)
-  const lens = new THREE.Mesh(new THREE.CylinderGeometry(0.042, 0.042, 0.012, 8), new THREE.MeshBasicMaterial({ color: '#fff2d0' }))
-  lens.rotation.x = Math.PI / 2
-  lens.position.z = -0.24
-  vmFlash.add(lens)
+  // 左手手电：细分灯头/反光杯/镜片/防滑握纹/尾盖/开关，金属与橡胶走真实 UV 图集。
+  const flashlight = buildFlashlightMesh({ lit: true })
+  flashlight.scale.setScalar(0.9)
+  flashlight.position.z = 0.015
+  vmFlash.add(flashlight)
   const lhand = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.055, 0.1), vmat('#c9a58a'))
   lhand.position.set(0, -0.045, -0.06)
   vmFlash.add(lhand)

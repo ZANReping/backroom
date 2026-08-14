@@ -1,10 +1,32 @@
 // 渲染器公共工具：常量/调色/几何与程序化纹理基础
 import * as THREE from 'three'
+import type { GroundItem, Structure } from '../core/types'
 
 export interface RenderOpts { grain: boolean; flicker: number; shake: boolean; dust: boolean }
 
-// 视角共享状态（桌面 Pointer Lock / 移动端右半屏拖动写入）
-export const look = { yaw: 0, pitch: 0, locked: false }
+interface VisualInteractionHitBase {
+  x: number
+  y: number
+  z: number
+  rayT: number
+  yaw: number
+  pitch: number
+  playerX: number
+  playerY: number
+  playerZ: number
+  at: number
+}
+
+export type VisualInteractionHit = VisualInteractionHitBase & (
+  | { kind: 'structure'; structure: Structure }
+  | { kind: 'item'; item: GroundItem }
+)
+
+// 视角共享状态（桌面 Pointer Lock / 移动端右半屏拖动写入）。visualHit 由真实 Three.js 相机射线逐帧写入，
+// 引擎只把它当成候选命中，仍会重新验证距离、楼层与三维 LOS。
+export const look: { yaw: number; pitch: number; locked: boolean; visualHit: VisualInteractionHit | null } = {
+  yaw: 0, pitch: 0, locked: false, visualHit: null,
+}
 
 // v23 新增：darkhall 极其狭窄的走廊 / ocean 高悬的混凝土天花板 / caves 洞穴净空 /
 // suburb 郊区层高 / field 谷仓与田野 / city 大都会临街层高 / library 图书馆挑高
@@ -16,7 +38,7 @@ export const WALL_H: Record<string, number> = {
 // v7 室外：层级异色天空（L1 灰黄霾 / L2 昏灰 / L4 雾灰 / L5 夜蓝霓虹）
 // v23：L7 无源昏暗自然光 / L9 午夜 / L10 阴沉铅灰 / L11 恒定白昼
 export const SKY: Record<number, string> = {
-  1: '#6e6748', 2: '#4a5157', 4: '#677075', 5: '#16264e',
+  1: '#6e6748', 2: '#4a5157', 4: '#677075', 5: '#16264e', 6: '#03050a',
   7: '#3f5a66', 9: '#05070f', 10: '#8d9195', 11: '#9aa2ab',
 }
 // v7 室外地面配色（沥青/天台/庭院）
@@ -26,7 +48,7 @@ export const SKY: Record<number, string> = {
 // v23：suburb 湿沥青 / field 土路与田地 / city 混凝土路面 / ocean 海面之下的岩床
 export const OUTDOOR_FLOOR: Record<string, string> = {
   garage: '#45423a', pipes: '#4a5256', grid: '#42454b', office: '#5c666d', hotel: '#5b5348', rooms: '#504c3e',
-  suburb: '#1b1d22', field: '#6b5c34', city: '#4a4d52', ocean: '#2b3b44',
+  darkhall: '#17191c', suburb: '#1b1d22', field: '#6b5c34', city: '#4a4d52', ocean: '#2b3b44',
 }
 
 export function col(hex: string): THREE.Color { return new THREE.Color(hex) }
@@ -45,10 +67,10 @@ export function getReflectK(): number { return reflectK }
  * realistic 换 MeshStandardMaterial 以获得 PBR 环境反射（envMapIntensity = envBase × 全局反射倍率）。
  * envBase 记录在 userData.envBase，供「反射强度」设置即时调整（renderer.setReflectivity 遍历应用）。
  */
-export function litMaterial(params: THREE.MeshLambertMaterialParameters & { roughness?: number; metalness?: number; envBase?: number }): THREE.MeshLambertMaterial | THREE.MeshStandardMaterial {
-  const { roughness, metalness, envBase, ...rest } = params
+export function litMaterial(params: THREE.MeshLambertMaterialParameters & { roughness?: number; roughnessMap?: THREE.Texture; metalness?: number; envBase?: number }): THREE.MeshLambertMaterial | THREE.MeshStandardMaterial {
+  const { roughness, roughnessMap, metalness, envBase, ...rest } = params
   if (materialMode !== 'realistic') return new THREE.MeshLambertMaterial(rest)
-  const mat = new THREE.MeshStandardMaterial({ ...rest, roughness: roughness ?? 0.85, metalness: metalness ?? 0 })
+  const mat = new THREE.MeshStandardMaterial({ ...rest, roughness: roughness ?? 0.85, roughnessMap, metalness: metalness ?? 0 })
   const base = envBase ?? 0.18
   mat.envMapIntensity = base * reflectK
   mat.userData.envBase = base
@@ -270,4 +292,3 @@ export function glow(w: number, h: number, d: number, color: string | number, x 
   m.position.set(x, y, z)
   return m
 }
-

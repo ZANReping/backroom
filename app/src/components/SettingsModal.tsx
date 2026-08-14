@@ -31,6 +31,7 @@ export interface GameSettings {
   volume: number
   ambient: number // 环境音（荧光灯嗡鸣 / L4 雨声）0-100
   bgm: number // v54：音乐（每层 BGM）0-100
+  bgmStyle: 'procedural' | 'midi' // v56：BGM 曲风——procedural=随机程序化 / midi=MIDI 音符序列（按 Wikidot 各层风格重制）
   sfx: number // 音效（攻击/拾取/UI/实体叫声等全部单发）0-100
   muted: boolean
   leftHanded: boolean
@@ -52,6 +53,7 @@ export const defaultSettings: GameSettings = {
   lightMode: 'classic', shadowQuality: 1, sunShadows: true, lightShadows: 0,
   reflectivity: 60, bloomFx: true, bloomStrength: 35, exposure: 100,
   volume: 80, ambient: 50, bgm: 100, sfx: 90, muted: false,
+  bgmStyle: 'procedural',
   leftHanded: false, stickSize: 120, btnOpacity: 70,
   sensitivity: 1.0, devMode: false,
   theme: 'amber',
@@ -115,11 +117,32 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
     if (k === 'volume') audio.setVolume((v as number) / 100)
     if (k === 'ambient') audio.setAmbVolume((v as number) / 100)
     if (k === 'bgm') audio.setBgmVolume((v as number) / 100)
+    if (k === 'bgmStyle') audio.setBgmStyle(v as 'procedural' | 'midi')
     if (k === 'sfx') audio.setSfxVolume((v as number) / 100)
   }
 
   const setBool = (k: keyof GameSettings, v: boolean) => set(k, v as GameSettings[typeof k])
   const setNum = (k: keyof GameSettings, v: number) => set(k, v as GameSettings[typeof k])
+  const highPerformanceActive = settings.dynamicRes && !settings.grain && !settings.vcrFx && !settings.dust
+    && !settings.headBob && !settings.shadows && !settings.farLights && settings.lightMode === 'classic'
+    && !settings.sunShadows && settings.lightShadows === 0 && !settings.bloomFx
+  const applyHighPerformancePreset = () => {
+    onChange({
+      ...settings,
+      grain: false,
+      vcrFx: false,
+      dust: false,
+      headBob: false,
+      dynamicRes: true,
+      shadows: false,
+      farLights: false,
+      lightMode: 'classic',
+      sunShadows: false,
+      lightShadows: 0,
+      bloomFx: false,
+    })
+    audio.uiTick()
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" onClick={onClose}>
@@ -174,6 +197,23 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
           )}
           {tab === '画面' && (
             <div>
+              <div className="mb-3 border p-3" style={{ borderColor: 'var(--panel-edge)', background: 'color-mix(in srgb, var(--amber) 5%, var(--panel))' }}>
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <div className="text-[14px]" style={{ color: 'var(--text)' }}>高性能预设</div>
+                    <div className="mt-1 text-[11px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>
+                      开启动态分辨率并关闭高开销阴影、远处灯光与后处理。浏览器会请求高性能 GPU，但系统功耗与频率仍由设备决定。
+                    </div>
+                  </div>
+                  <button
+                    className="shrink-0 border px-3 py-2 text-[12px]"
+                    style={{ borderColor: highPerformanceActive ? 'var(--amber)' : 'var(--panel-edge)', color: highPerformanceActive ? 'var(--amber)' : 'var(--text)', background: 'var(--panel)' }}
+                    onClick={applyHighPerformancePreset}
+                  >
+                    {highPerformanceActive ? '已启用' : '立即启用'}
+                  </button>
+                </div>
+              </div>
               <Toggle k="grain" label="VHS 颗粒" value={settings.grain as boolean} onSet={setBool} />
               <Toggle k="vcrFx" label="VCR 滤镜（录像带效果）" value={settings.vcrFx as boolean} onSet={setBool} />
               <Toggle k="dust" label="漂浮尘埃粒子" value={settings.dust as boolean} onSet={setBool} />
@@ -262,6 +302,22 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
               <Toggle k="muted" label="静音" value={settings.muted as boolean} onSet={setBool} />
               <Slider k="volume" label="主音量" value={settings.volume as number} onSet={setNum} />
               <Slider k="bgm" label="音乐（BGM）" value={settings.bgm as number} onSet={setNum} />
+              <div className="py-2 text-[14px]" style={{ color: 'var(--text)' }}>BGM 曲风</div>
+              <div className="flex gap-2">
+                {([['procedural', '程序化'], ['midi', 'MIDI']] as const).map(([v, l]) => (
+                  <button
+                    key={v}
+                    className="flex-1 border px-3 py-2 text-[14px]"
+                    style={{ borderColor: settings.bgmStyle === v ? 'var(--amber)' : 'var(--panel-edge)', color: settings.bgmStyle === v ? 'var(--amber)' : 'var(--text-dim)', background: 'var(--panel)' }}
+                    onClick={() => set('bgmStyle', v)}
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
+              <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>
+                「程序化」为当前随机合成的梦核 BGM；「MIDI」直接播放 public/music 下的 .mid 音频——每层与每个团体（据点）各有独立曲目，进入不同团体的据点会换对应团体的曲子。切换后当前层级 BGM 会立即换曲。
+              </div>
               <Slider k="ambient" label="环境音（嗡鸣/雨声）" value={settings.ambient as number} onSet={setNum} />
               <Slider k="sfx" label="音效（攻击/拾取/UI/实体叫声）" value={settings.sfx as number} onSet={setNum} />
             </div>

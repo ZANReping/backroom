@@ -14,6 +14,9 @@ export interface GenChunk {
   outdoor?: Uint8Array // v54：室外瓦片（L4 窗景区窗外虚空条带；其余层级缺省=全室内）
   ceiling?: Uint8Array // v54：挑高瓦片（L5 主厅 ceiling=1；缺省=全部正常层高）
   liquid?: Uint8Array // v54：液体瓦片（L5 室内泳池 1=深水/2=浅水，同有限层 m.liquid 契约；缺省=无液体）
+  dn?: Uint8Array // v56 九轮：地下可走地板瓦片（L6 -1F 走廊；缺省=全 0）
+  dnWall?: Uint8Array // v56 九轮：地下墙体瓦片（L6 -1F；缺省=全 0）
+  terrain?: Float32Array // 室外自然地形微起伏（米；缺省=0）
   structures: Structure[]
   items: GroundItem[]
   lights: LightSource[]

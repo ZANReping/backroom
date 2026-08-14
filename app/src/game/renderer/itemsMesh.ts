@@ -1,6 +1,7 @@
 // 物品低模（自包含，仅依赖 three）——地面/投掷物/手持展示用的小模型 + 稀有度光环底座。
 // 实体模型在 entitiesMesh.ts。
 import * as THREE from 'three'
+import { buildFlashlightMesh } from './flashlightMesh'
 
 // ---------- 物品低模 ----------
 export function buildItemMesh(type: string): THREE.Group {
@@ -51,14 +52,12 @@ export function buildItemMesh(type: string): THREE.Group {
       const gs = cm(0.03, 0.03, 0.3, '#a8e0a0', 0, 0, 0, 6, 0, 0.5)
       gs.material = new THREE.MeshBasicMaterial({ color: '#a8e0a0' })
       em(0.05, 0.03, 0.05, '#6a9a6a', -0.08, 0.1, 0); break }
-    case 'flashlight': { // 手电筒：筒身 + 灯头 + 镜片（整体沿 +X 横放）
-      // 修复 v20：原用 rx=π/2 把圆柱放到 Z 轴，灯头/镜片却沿 X 偏移 → 头部与筒身垂直脱节；
-      // 改 rz=π/2（柱轴 +Y→-X：rt=尾部/-X，rb=前端/+X），灯头前口外扩、镜片贴前口
-      cm(0.05, 0.06, 0.24, '#2a2d30', 0, 0, 0, 8, 0, Math.PI / 2)
-      cm(0.06, 0.078, 0.09, '#4a4d52', 0.15, 0, 0, 8, 0, Math.PI / 2)
-      const lens = cm(0.062, 0.062, 0.015, '#fff2d0', 0.2, 0, 0, 8, 0, Math.PI / 2)
-      lens.material = new THREE.MeshBasicMaterial({ color: '#fff2d0' })
-      em(0.04, 0.02, 0.02, '#c94a3a', -0.04, 0.06, 0); break }
+    case 'flashlight': { // 手电筒：与第一人称手持模型共用真实 UV 细化模型，地面版镜片不自发光
+      const flashlight = buildFlashlightMesh({ orientation: 'ground', lit: false })
+      flashlight.scale.setScalar(1.08)
+      grp.add(flashlight)
+      break
+    }
     case 'carkey': // 车钥匙：遥控柄 + 按键 + 钥匙片
       em(0.07, 0.12, 0.03, '#2a2d30'); em(0.02, 0.02, 0.035, '#c94a3a', 0, 0.03, 0)
       em(0.03, 0.1, 0.015, '#b0b0b0', 0, 0.11, 0); break
@@ -270,6 +269,13 @@ export function buildItemMesh(type: string): THREE.Group {
       em(0.26, 0.035, 0.03, '#2a2d30')
       em(0.09, 0.08, 0.07, '#3a3d42', 0, 0, 0.05)
       em(0.06, 0.05, 0.015, '#fff2d0', 0, 0, 0.09); break
+    case 'nightvision': // 夜视眼镜：双目镜筒 + 鼻梁 + 头带
+      cm(0.05, 0.06, 0.12, '#26322b', -0.07, 0, 0.04, 8, Math.PI / 2)
+      cm(0.05, 0.06, 0.12, '#26322b', 0.07, 0, 0.04, 8, Math.PI / 2)
+      em(0.05, 0.025, 0.025, '#1b211d', 0, 0, 0.02)
+      em(0.25, 0.025, 0.025, '#343b37', 0, 0, -0.055)
+      em(0.035, 0.035, 0.012, '#78b886', -0.07, 0, 0.105)
+      em(0.035, 0.035, 0.012, '#78b886', 0.07, 0, 0.105); break
     case 'notebook': // 笔记本和笔：皮面本 + 书页 + 笔
       em(0.2, 0.03, 0.26, '#5a3a2a')
       em(0.18, 0.025, 0.24, '#e8e2d2', 0.012, 0.026, 0)
@@ -378,7 +384,7 @@ export function buildItemMesh(type: string): THREE.Group {
     firesalt: '#e8823c', liquidpain: '#d94a3a', // 火盐：橙 / 液态痛苦：红
     dryshrimp: '#b3612e', friedshrimp: '#d99a3a', // 旱虾：橙褐 / 酥炸：金黄
     knife: '#d96a4a', axe: '#d96a4a', // 武器：红
-    headlamp: '#e8b93c', // 电气：琥珀
+    headlamp: '#e8b93c', nightvision: '#78b886', // 电气 / 低照度光学
     notebook: '#c9b458', // 纸物
     fuyouyu: '#6ad9a8', squirtgun: '#4ac9e8', // 后室异物：玉绿 / 水蓝
     warpberry: '#b06ae0', royalration: '#ffd94d', // 珍稀：紫 / 金

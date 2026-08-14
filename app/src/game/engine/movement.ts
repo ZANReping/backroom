@@ -1,6 +1,6 @@
 // v53：移动/输入积分 + 垂直物理（固定子步积分主段、液体浮沉、跳跃重力、梯子攀爬）——
 // 自 engine.ts step 内联段拆分，逻辑逐语句搬运；updateMovement 返回 null 表示本帧已死亡/终止（原 step 的 return）。
-import { bandOfZ, groundHeightAt, structStandTopAt, ceilingHeightAt, POOL_DEPTH, FLOOR_H } from '../world/mapgen'
+import { bandOfZ, bandOfPlayerZ, groundHeightAt, structStandTopAt, ceilingHeightAt, POOL_DEPTH, FLOOR_H } from '../world/mapgen'
 import { integrateMove } from '../core/player'
 import { WALL_H } from '../renderer/shared'
 import { levelDefOf, NORMAL_LEVELS } from '../levels'
@@ -15,10 +15,13 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   const p = eng.player, m = eng.map!
   // ---- 移动 ----
   const mag = Math.hypot(eng.input.mx, eng.input.my)
-  const tileI = Math.floor(p.y) * m.w + Math.floor(p.x)
+  let tileI = Math.floor(p.y) * m.w + Math.floor(p.x)
   const wet = m.wet[tileI] === 1
   // v13：楼层高度带（供 HUD/小地图与碰撞）
-  const band = bandOfZ(p.z)
+  // v56 七轮：band 按实际楼层数钳制——单层图站家具起跳越过 1.5m（BAND_MID）时 bandOfZ 翻到
+  // 不存在的「上层带」：groundHeightAt(band=1)=FLOOR_H 会把玩家吸到 3.0m 并卡在天花板上方/
+  // 嵌进楼板；钳制后单层恒为 0、双层 ≤1、三层 ≤2
+  const band = bandOfPlayerZ(m, p.z)
   p.floor = band
   // v54e：带界误吸修复——band 随 z 即时翻转，z 刚过带界（1.5/4.5）但仍在上层板底之下时，
   // band 地面=上层板面（3.0/6.0），贴地跟随会把人直接吸穿楼板（2F 高柜顶/掉落穿 3F 板）。
@@ -170,6 +173,8 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   // ---- v17：无限模式（L0）——玩家跨出中心 chunk 时流式平移窗口 ----
   if (m.inf) {
     eng.updateInfiniteWindow()
+    // 窗口平移会同步改写玩家局部坐标并重缝 m 数组；后续深坑/液体/离水判定必须使用新索引。
+    tileI = Math.floor(p.y) * m.w + Math.floor(p.x)
     // 红室（v34）：到达刷新红室的区块先播报预警；玩家真正走进红厅（瓦片 tint=2）才触发蔓延
     const inf = m.inf
     if (!inf.plague) {
@@ -333,8 +338,16 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   }
   // v29：可行走灰色阶梯——走下去/走上去自动换层（覆盖本帧重力贴地结果）
   eng.updateStairs(dt)
-  // 深坑坠落：跌入深渊（elev=4，洞底 -10m）持续下坠，超过 -4.5m 即死（环境抹除，无视无敌）
-  if (!eng.ride && !eng.climb && p.z < -4.5 && !eng.dev.noclip) { eng.die('坠入深坑', true); return null }
+  // L6 地表塌陷坑不致死：落到阈值后切入同一无限地图的地下 FloorBand。
+  if (eng.levelDef.id === 6 && m.elev[tileI] === 4 && p.z < -3.6 && p.vz < -0.1 && !eng.dev.noclip) {
+    if (eng.switchL6Floor(-1, 'pit')) return mag
+    // 极端情况下附近地下廊道没有安全落点，仍按真正坠入虚空处理，避免无限下坠。
+    eng.die('坠入深坑', true)
+    return null
+  }
+  // 普通层跌到 -4.5m 以下才死亡。L6 的合法地下层地面就在 -5m，不能套用这条规则；
+  // L6 地表深坑已在上方完成“切到地下/失败才死亡”的完整分派。
+  if (!m.hasUnderground && !eng.ride && !eng.climb && p.z < -4.5 && !eng.dev.noclip) { eng.die('坠入深坑', true); return null }
   // 离水判定（走出液体格）
   if (eng.inLiquid !== 0 && m.liquid[tileI] === 0) {
     eng.inLiquid = 0
@@ -373,7 +386,7 @@ export function updateClimb(eng: Engine, dt: number, mag: number) {
   for (const s of m.structures) {
     if (s.kind !== 'ladder' || !s.data?.climb) continue
     const tx = s.data.tx as number, ty = s.data.ty as number
-    const band = bandOfZ(p.z)
+    const band = bandOfPlayerZ(m, p.z)
     if (band === 0) {
       const cx = s.x + 0.5, cy = s.y + 0.5
       const dx = cx - p.x, dy = cy - p.y

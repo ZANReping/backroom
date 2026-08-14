@@ -9,8 +9,9 @@ import { NORMAL_LEVELS, levelLabel, levelDefOf } from './levels'
 import { type Entity } from './entities'
 import { createIntegrator, type MoveIntegrator } from './core/player'
 import { look } from './core/renderer3d'
-import type { ExitDef, LightSource, Structure } from './core/types'
+import type { ExitDef, FloorBand, LightSource, Structure } from './core/types'
 import { audio } from './core/audio'
+import { ROCK_SONG_IDS, musicName, setRadioCfg } from './core/midi'
 import { seedString } from './core/rng'
 import { type NpcState, type NpcDef } from './content/npcs'
 import { OUTPOSTS } from './content/outposts'
@@ -29,6 +30,7 @@ import * as inventory from './engine/inventory'
 import * as warehouse from './engine/warehouse'
 import * as ambient from './engine/ambient'
 import * as dev from './engine/dev'
+import * as unstuck from './engine/unstuck'
 import { loadSaveSnapshot, type SaveSnapshot } from './engine/save'
 
 // v53：对外契约再导出（原 engine.ts 直接导出的符号保持不变）
@@ -59,13 +61,14 @@ export interface Projectile {
   done?: boolean
 }
 export interface HudEvent {
-  kind: 'msg' | 'toast' | 'damage' | 'sanityhit' | 'transition' | 'dead' | 'victory' | 'levelchange' | 'lootpanel' | 'notebook' | 'doc' | 'landmark' | 'dialog'
+  kind: 'msg' | 'toast' | 'damage' | 'sanityhit' | 'transition' | 'floorchange' | 'dead' | 'victory' | 'levelchange' | 'lootpanel' | 'notebook' | 'doc' | 'landmark' | 'dialog' | 'radioheard'
   cutIn?: string
   dest?: number | 'random' | 'win'
   text?: string
   msgKind?: MsgKind
   anim?: string
   fallDamage?: number
+  song?: string // v56：radioheard——新收听的曲目 id
 }
 
 export interface PlayerState {
@@ -74,7 +77,7 @@ export interface PlayerState {
   z: number // 脚底高度（米，随地面高度档/坡道/跳跃变化）
   vz: number // 垂直速度（重力积分）
   crouching: boolean // 蹲伏（减速、过低通道）
-  floor: number // v13：当前楼层（0=主层 1=上层，按 z 高度带推断；HUD/小地图读取）
+  floor: FloorBand
   hp: number; sanity: number; hunger: number; stamina: number
   thirst: number // v54：口渴值（0-100；与饥饿同率流失，归零持续扣血）
   infection: number // v55：疫疾感染值（0+，隐藏数值——游戏内无数值/提示文本，仅风味特效；每 100 点进一阶）
@@ -128,6 +131,8 @@ export class Engine {
   mapFirstVisit = true // 当前地图生成时的 firstVisit 标记
   autosaveT = 0 // 周期自动存档计时（秒）
   idleSaved = false // 暂停/结束后已落盘一次（避免每帧重复写存储）
+  // 暂停页脱困检测（仅内存态；3 秒内观测移动后自动清除）
+  unstuckCheck: unstuck.UnstuckCheckState | null = null
   // v54：本局绑定的存档槽（slot1/2/3=手动槽，暂停/退标题落盘写入；auto=从自动槽继续的局）
   saveSlot: save.SaveSlotId = 'slot1'
   /** v23：本层内是否主动挑衅过实体（解除 Level 11 Effect 的被动状态） */
@@ -192,6 +197,7 @@ export class Engine {
   // v54：经古典楼梯（oldstairs）抵达的标记——下一次 loadLevel(5) 把出生点改到 L5 保底楼梯 2 格外的空旷地板
   // （内存标记，不入存档；仅 L5 消费——L4 的古典楼梯落点维持默认出生点不变）
   arriveOldstairs = false
+  arriveL6Band: FloorBand | null = null // L5 黑门=-1；L4/Omega 活板门=0
   // v29：返程「向上的灰色阶梯」（世界坐标固定；窗口平移 stitch 后重新注入）
   bonusExit: { def: ExitDef; wx: number; wy: number } | null = null
   // v29：本局已到过的层级（初始物资仅首次进 L0 刷新）
@@ -221,6 +227,12 @@ export class Engine {
   jerryAgreed = new Set<string>() // 已「认同杰瑞」的信众 NPC id（引路选项按此显示；v49 起每局至多一名）
   jerryOath = false // v49：本局已宣誓认同杰瑞（+10 每局仅首次有效——宣誓一次，全鹦鹉门下皆知）
   homelyApplied = false // v55：家常酒店（L5 据点 111）入住申请已提交（地标卡办理；随存档持久）
+  // v56：电台（MIDI 曲风下暂停页电台管理）——随层级变化/固定音乐 + 单层覆盖；随存档持久
+  radio: { mode: 'follow' | 'fixed'; fixed: string | null; perLevel: Record<number, string> } = { mode: 'follow', fixed: null, perLevel: {} }
+  // v56：已收听曲目 id 列表（电台可选的前提；乐手演奏后解锁摇滚曲目；随存档持久）
+  heardSongs: string[] = []
+  // v56：乐手（乔伊）演奏中标记（渲染层弹奏动画 + 对话「停下」选项；播完/叫停/切层自动清除）
+  joeyPlaying = false
   jerryContactCd = 0 // v47：接触杰瑞冷却剩余秒数（20s 防连点刷声望/教化；HUD 交互提示显示剩余）
   jerryTerritory = false // 玩家身处信众宣传间矩形内（HUD 显示 jerry 声望；引擎每帧维护）
   chantT = 0 // 诵咏计时（L274 内被教化后周期性咏出崇拜词）
@@ -267,6 +279,43 @@ export class Engine {
 
   constructor() {
     this.player = this.freshPlayer()
+    // v56：BGM 曲目播放回调 → 电台收听记录（heardSongs 持久，电台管理可选范围）
+    audio.onSongPlayed = (id: string) => { this.markSongHeard(id) }
+    // v56：乐手演奏结束（播完/被叫停/切层）→ 清除演奏标记（渲染层弹奏动画随止）
+    audio.onOneshotEnd = () => { this.joeyPlaying = false }
+  }
+
+  // ===== v56：电台（音乐库收听 + 配置） =====
+  /** 标记已收听曲目（去重；随存档持久；乐手摇滚曲目播报「已加入电台」） */
+  markSongHeard(id: string) {
+    if (this.heardSongs.includes(id)) return
+    this.heardSongs.push(id)
+    this.emit({ kind: 'radioheard', song: id })
+    if (id.startsWith('rock_')) this.msg(`♪ 已收听新曲目「${musicName(id)}」——已加入电台（暂停页 → 电台管理）。`, 'lore')
+  }
+  /** 电台配置变更：同步解析器 + 立即重开当前 BGM + 落盘 */
+  setRadio(cfg: { mode: 'follow' | 'fixed'; fixed: string | null; perLevel: Record<number, string> }) {
+    this.radio = { mode: cfg.mode, fixed: cfg.fixed, perLevel: { ...cfg.perLevel } }
+    setRadioCfg(this.radio)
+    audio.startBGM(this.player.level) // 立即换曲
+    this.persist()
+  }
+  /** v56：乐手演奏——MIDI 曲风下随机一首摇滚风格（收听解锁电台），程序化曲风下普通摇滚 */
+  musicianPlay(): string {
+    this.joeyPlaying = true
+    if (audio.midiEnabled) {
+      const pool = ROCK_SONG_IDS.filter((id) => id !== audio.currentSong) // 尽量不重上一首
+      const id = (pool.length ? pool : ROCK_SONG_IDS)[Math.floor(Math.random() * (pool.length ? pool.length : ROCK_SONG_IDS.length))]
+      audio.playMusicianSong(id)
+      return musicName(id)
+    }
+    audio.playProceduralRock()
+    return '一首老式摇滚'
+  }
+  /** v56：乐手停止演奏（对话「停下」）——淡出演奏并恢复 BGM */
+  musicianStop() {
+    this.joeyPlaying = false
+    audio.stopMusician()
   }
 
   private freshPlayer(): PlayerState {
@@ -313,6 +362,7 @@ export class Engine {
     this.saveSlot = slot
     this.player = this.freshPlayer()
     this.over = false; this.victory = false; this.transition = null
+    this.unstuckCheck = null
     this.idleSaved = false
     this.autosaveT = 0
     this.time = 0
@@ -323,6 +373,10 @@ export class Engine {
     this.rep = { meg: REP_START } // 新一局声望重置（MEG 默认友好；读档时由快照恢复）
     this.quests = []
     this.warehouseTempUnlock.clear() // v54：新一局清空仓库付费临时解锁
+    // v56：电台重置（随层级变化 + 无收听记录；读档时由快照恢复）
+    this.radio = { mode: 'follow', fixed: null, perLevel: {} }
+    this.heardSongs = []
+    setRadioCfg(this.radio)
     // v39/v45/v47 等持续性效果状态清空（EFFECTS 注册表 newRun 组：BRC 未告发记录与模仿冷却、
     // 教化系统/宣誓/接触冷却/诵咏——逐字段语义与原显式赋值一致；读档时由快照恢复）
     resetEffects(this, 'newRun')
@@ -347,6 +401,11 @@ export class Engine {
       // v49：恢复宣誓标记；旧档无此字段时按「已认同过任一信众」迁移（每局仅首次认同有效）
       this.jerryOath = snap.jerryOath ?? ((snap.jerryAgreed ?? []).length > 0)
       this.homelyApplied = snap.homelyApplied ?? false // v55：家常酒店入住申请
+      // v56：恢复电台配置与收听记录（旧档缺省=随层级变化/空）
+      this.radio = snap.radio ?? { mode: 'follow', fixed: null, perLevel: {} }
+      this.radio.perLevel = this.radio.perLevel ?? {}
+      this.heardSongs = snap.heardSongs ?? []
+      setRadioCfg(this.radio)
       this.loadLevel(snap.level, { mapSeed: snap.mapSeed, firstVisit: snap.mapFirstVisit })
       // loadLevel 已把 player 放到出生点；此处整体恢复为存档时的玩家状态
       const fresh = this.freshPlayer()
@@ -356,11 +415,14 @@ export class Engine {
         equip: { ...fresh.equip, ...(snap.player.equip ?? {}), pockets: snap.player.equip?.pockets ?? fresh.equip.pockets },
       }
       this.player.level = snap.level
+      const placement = level.restoreSavedPlayerPosition(this, snap.worldPos)
       // v55：感染阶段从存档感染值推导（升阶遭遇计数的基准）
       this.infectionStage = Math.min(4, Math.floor((this.player.infection ?? 0) / 100))
       // aliveTime 由 (Date.now()-startTime) 推导：平移 startTime 保持存活时长连续
       this.player.startTime = Date.now() - (snap.player.aliveTime ?? 0) * 1000
       this.introT = 0 // 读档不播摔落爬起动画
+      if (placement === 'legacy-spawn') this.msg('旧版无限层存档缺少世界坐标，已移至本层安全入口。', 'system')
+      else if (placement !== 'exact') this.msg('原存档落点已被地形占用，已移至附近安全位置。', 'system')
       this.msg(`读档成功——回到 ${levelLabel(snap.level)}。`, 'system')
       return
     }
@@ -387,6 +449,7 @@ export class Engine {
   nearestLandmark() { return level.nearestLandmark(this) }
   takeExit(def: ExitDef) { level.takeExit(this, def) }
   updateStairs(dt: number) { level.updateStairs(this, dt) }
+  switchL6Floor(target: -1 | 0, reason: 'stairs' | 'pit' = 'stairs') { return level.switchL6Floor(this, target, reason) }
   placeBonusStairs() { level.placeBonusStairs(this) }
   /** v35：前往据点（地标弹窗「前往」/DevPanel 据点跳转共用）：记录返程层级后切入 */
   enterOutpost(outpostId: string, dev = false): boolean { return level.enterOutpost(this, outpostId, dev) } // v54：dev=DevPanel 跳转绕过准入门槛
@@ -412,7 +475,7 @@ export class Engine {
   provokeRatPack(e: Entity) { entityAI.provokeRatPack(this, e) }
   updateNguithr(e: Entity, d: number, dt: number) { entityAI.updateNguithr(this, e, d, dt) }
   faceToward(e: Entity, tx: number, ty: number, dt: number, rate: number) { entityAI.faceToward(this, e, tx, ty, dt, rate) }
-  entityWalkH(m: GameMap, tx: number, ty: number, band: 0 | 1 | 2): number | null { return entityAI.entityWalkH(this, m, tx, ty, band) }
+  entityWalkH(m: GameMap, tx: number, ty: number, band: FloorBand): number | null { return entityAI.entityWalkH(this, m, tx, ty, band) }
   stepEntity(e: Entity, speed: number, dt: number): boolean { return entityAI.stepEntity(this, e, speed, dt) }
   meleeZOk(e: Entity): boolean { return entityAI.meleeZOk(this, e) }
 
@@ -448,6 +511,12 @@ export class Engine {
   triggerStructs(dt: number, dm: (typeof DIFF)[Difficulty]): boolean { return interact.triggerStructs(this, dt, dm) }
   inView(x: number, y: number, radius: number): boolean { return interact.inView(this, x, y, radius) }
   viewAngle(x: number, y: number): number { return interact.viewAngle(this, x, y) }
+  interactionProbe(
+    x: number, y: number, z: number, band: FloorBand, maxDistance: number, radius = 0.25,
+    volume?: interact.InteractionVolume,
+  ) {
+    return interact.interactionProbe(this, x, y, z, band, maxDistance, radius, volume)
+  }
   scanInteract() { interact.scanInteract(this) }
   doInteract() { interact.doInteract(this) }
   rollLoot(kind: string): string[] { return interact.rollLoot(this, kind) }
@@ -544,6 +613,7 @@ export class Engine {
     } finally {
       this.unwindInput()
     }
+    unstuck.updateUnstuckCheck(this, dt)
     // v29a：暂停（暂停菜单）或退回主界面（over=true 且存活）时落盘一次
     if (this.paused || this.over) {
       if (!this.idleSaved) { this.idleSaved = true; this.persist() }
@@ -561,6 +631,13 @@ export class Engine {
   }
 
   getInteract(): { kind: string; label: string } | null { return this.interactTarget }
+
+  /** 暂停页脱困：开始 3 秒真实移动检测；成功后由引擎自动传送到安全连通地块。 */
+  startUnstuckCheck(): boolean { return unstuck.startUnstuckCheck(this) }
+  /** 暴露给冒烟测试/诊断：当前位置是否存在连续逃生路径。 */
+  canEscapeCurrentPosition(): boolean { return unstuck.canEscapeCurrentPosition(this) }
+  /** 暴露给冒烟测试/诊断：计算最近的开阔连通安全落点。 */
+  findUnstuckDestination(): unstuck.UnstuckDestination | null { return unstuck.findUnstuckDestination(this) }
 
   private step(dt: number) {
     if (!this.map || this.paused || this.over) return

@@ -1,6 +1,7 @@
 // v53：实体 AI 步进（状态机/游荡/撞墙偏转/hunts 猎杀/provoked 激怒/群体激怒/圣所威慑/售货机活化）
 // + 感知判定（los/视线锥/噪音事件/光照）——自 engine.ts 拆分，逻辑逐语句搬运。
-import { tileAt, tileH, groundHeightAt, solidStructAtFloor, bandOfZ, stairServesBand, upAt, upWallAt, FLOOR_H, JUMP_REACH, type GameMap } from '../world/mapgen'
+import { floorHeight, tileAt, tileH, walkableAt, wallAt, solidStructAtFloor, bandOfZ, bandOfPlayerZ, stairServesBand, upAt, upWallAt, FLOOR_H, JUMP_REACH, UNDER_FLOOR, type GameMap } from '../world/mapgen'
+import type { FloorBand } from '../core/types'
 import { canOccupy, PLAYER_RADIUS } from '../core/player'
 import { WALL_H } from '../renderer/shared'
 import { look } from '../core/renderer3d'
@@ -29,6 +30,7 @@ export function updateVendingMachines(eng: Engine) {
   }
 }
 export function isLit(eng: Engine, x: number, y: number): boolean {
+  if (eng.levelDef.noFlashlight) return false
   const m = eng.map!
   for (const l of m.lights) if (Math.hypot(l.x - x, l.y - y) < l.r * 0.7) return true
   return false
@@ -66,10 +68,12 @@ export function lookingAt(eng: Engine, e: Entity): boolean {
 
 export function los(eng: Engine, x0: number, y0: number, x1: number, y1: number): boolean {
   const m = eng.map!
+  const band = bandOfPlayerZ(m, eng.player.z)
   const steps = Math.ceil(Math.hypot(x1 - x0, y1 - y0) * 2)
   for (let i = 1; i < steps; i++) {
     const t = i / steps
-    if (tileAt(m, Math.floor(x0 + (x1 - x0) * t), Math.floor(y0 + (y1 - y0) * t)) !== 1) return false
+    const tx = Math.floor(x0 + (x1 - x0) * t), ty = Math.floor(y0 + (y1 - y0) * t)
+    if (wallAt(m, tx, ty, band) || solidStructAtFloor(m, tx + 0.5, ty + 0.5, band)) return false
   }
   return true
 }
@@ -499,7 +503,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
         // 玩家侧退剩余部分（碰撞校验，贴墙时不强推）
         const k = def.stationary ? 1 : 0.4
         const px2 = p.x - ux * push * k, py2 = p.y - uy * push * k
-        if (canOccupy(m, px2, py2, PLAYER_RADIUS, { z: p.z, crouch: p.crouching, band: bandOfZ(p.z) })) { p.x = px2; p.y = py2 }
+        if (canOccupy(m, px2, py2, PLAYER_RADIUS, { z: p.z, crouch: p.crouching, band: bandOfPlayerZ(m, p.z) })) { p.x = px2; p.y = py2 }
       }
     }
   }
@@ -541,7 +545,7 @@ export function wanderTarget(eng: Engine, e: Entity) {
         if (c.variant === 'sanct' && Math.abs(c.cx - wcx) <= 1 && Math.abs(c.cy - wcy) <= 1) { holy = true; break }
       if (holy) continue
     }
-    if (band >= 1 ? (upAt(m, band as 1 | 2)[ti] === 1 && upWallAt(m, band as 1 | 2)[ti] !== 1) : tileAt(m, Math.floor(tx), Math.floor(ty)) === 1) {
+    if (band === 0 ? tileAt(m, Math.floor(tx), Math.floor(ty)) === 1 : walkableAt(m, Math.floor(tx), Math.floor(ty), band)) {
       if (band === 0 && m.liquid[ti] === 1) continue // 实体不主动下水
       e.targetX = tx; e.targetY = ty; e.stateT = 4; return
     }
@@ -624,7 +628,7 @@ export function updateNguithr(eng: Engine, e: Entity, d: number, dt: number) {
     return
   }
   // 落地（z 降到地面）
-  const gz = groundHeightAt(m, e.x, e.y)
+  const gz = floorHeight(m, e.x, e.y, bandOfZ(e.z))
   e.z += (gz - e.z) * Math.min(1, dt * 6)
   // 攻击前摇：原地停步、抬起前身（节肢式蓄力），随后下扑
   if (e.lungeT > 0) {
@@ -654,7 +658,7 @@ export function faceToward(_eng: Engine, e: Entity, tx: number, ty: number, dt: 
   e.facing += diff * t
 }
 // 实体行走高度（v13 楼层带感知；楼梯坡道取中位连续高度；深水不可进入；v54：band2 走 up2 楼板）
-export function entityWalkH(_eng: Engine, m: GameMap, tx: number, ty: number, band: 0 | 1 | 2): number | null {
+export function entityWalkH(_eng: Engine, m: GameMap, tx: number, ty: number, band: FloorBand): number | null {
   if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return null
   const i = ty * m.w + tx
   if (m.stair[i] & 7) { // 楼梯：坡道到达的楼层带都可走（连续坡道上下；v54 带守卫，JUMP_REACH 宽松容差保旧行为）
@@ -667,6 +671,10 @@ export function entityWalkH(_eng: Engine, m: GameMap, tx: number, ty: number, ba
     if (upAt(m, b)[i] !== 1 || upWallAt(m, b)[i] === 1) return null
     if (solidStructAtFloor(m, tx, ty, band)) return null
     return band * FLOOR_H
+  }
+  if (band === -1) {
+    if (!walkableAt(m, tx, ty, -1) || solidStructAtFloor(m, tx, ty, -1)) return null
+    return UNDER_FLOOR
   }
   if (tileAt(m, tx, ty) !== 1) return null
   if (m.crawl[i] === 1) return null
@@ -690,7 +698,7 @@ export function stepEntity(eng: Engine, e: Entity, speed: number, dt: number): b
     ny = Math.max(0.2, Math.min(m.h - 0.2, ny))
     e.facing = Math.atan2(dy, dx)
     e.x = nx; e.y = ny
-    if (tileAt(m, Math.floor(nx), Math.floor(ny)) === 1) e.z = groundHeightAt(m, nx, ny, band)
+    if (walkableAt(m, Math.floor(nx), Math.floor(ny), band)) e.z = floorHeight(m, nx, ny, band)
     return false
   }
   const curStair = m.stair[Math.floor(e.y) * m.w + Math.floor(e.x)] & 7
@@ -728,7 +736,7 @@ export function stepEntity(eng: Engine, e: Entity, speed: number, dt: number): b
     }
   }
   // v13：跟随地面（楼梯坡道连续爬升；上下层带随 z 自动切换）
-  e.z = groundHeightAt(m, e.x, e.y, bandOfZ(e.z))
+  e.z = floorHeight(m, e.x, e.y, bandOfZ(e.z))
   // 深坑：实体坠入后死亡（无血花，直坠深渊消散）
   if (m.elev[Math.floor(e.y) * m.w + Math.floor(e.x)] === 4 && !e.dead) {
     e.hp = 0; e.dead = true; e.deathT = 1.4

@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { doorNeedsRotate, tallCeilH, type GameMap } from '../world/mapgen'
 import type { LevelDef, Structure } from '../core/types'
-import { box, cyl, glow, col, mulberry, levelTexture, noiseTexture, makeCanvasCtx, toTex, texLevelId } from './shared'
+import { box, cyl, glow, col, mulberry, levelTexture, noiseTexture, makeCanvasCtx, toTex, texLevelId, litMaterial } from './shared'
 
 // 墙纸贴图盒（柱厅立柱用：UV 按面宽/柱高放大，与墙面 1m 一循环的世界空间密度一致）
 function wallpaperBox(w: number, h: number, d: number, def: LevelDef, x = 0, y = 0, z = 0): THREE.Mesh {
@@ -83,7 +83,8 @@ export function wallDir(s: Structure, m: GameMap): number | null {
   for (const [dx, dy, d] of nb) {
     const nx = s.x + dx, ny = s.y + dy
     if (nx < 0 || ny < 0 || nx >= m.w || ny >= m.h) continue
-    if (m.tiles[ny * m.w + nx] !== 1) opts.push(d)
+    const floor = (s.floor ?? 0) === -1 ? (m.dn[ny * m.w + nx] === 1 && m.dnWall[ny * m.w + nx] !== 1) : m.tiles[ny * m.w + nx] === 1
+    if (!floor) opts.push(d)
   }
   return opts.length ? opts[Math.floor(Math.random() * opts.length)] : null
 }
@@ -2072,6 +2073,98 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       grp.add(pg)
       break
     }
+    case 'deadshrub': {
+      const sc = Number(s.data?.scale ?? 1)
+      if (s.data?.tree) {
+        // 大型枯木：整棵树合并成一个网格，扩大枯林规模时仍控制 draw call。
+        const rand = mulberry(Number(s.data?.sid ?? 6) ^ 0x6d330d)
+        const geos: THREE.BufferGeometry[] = []
+        const trunkH = (3.7 + rand() * 0.8) * sc
+        const trunk = new THREE.CylinderGeometry(0.11 * sc, 0.25 * sc, trunkH, 7)
+        trunk.translate(0, trunkH / 2 - 0.12, 0); geos.push(trunk)
+        const addLimb = (baseY: number, len: number, radius: number, az: number, tilt: number) => {
+          const geo = new THREE.CylinderGeometry(radius * 0.55, radius, len, 6)
+          geo.rotateZ(tilt); geo.rotateY(az)
+          const dx = -Math.sin(tilt) * Math.cos(az), dy = Math.cos(tilt), dz = Math.sin(tilt) * Math.sin(az)
+          geo.translate(dx * len / 2, baseY + dy * len / 2, dz * len / 2)
+          geos.push(geo)
+        }
+        for (let i = 0; i < 8; i++) {
+          const baseY = trunkH * (0.38 + rand() * 0.53)
+          addLimb(baseY, (0.75 + rand() * 1.15) * sc, (0.055 + rand() * 0.05) * sc, rand() * Math.PI * 2, 0.68 + rand() * 0.55)
+        }
+        for (let i = 0; i < 4; i++) addLimb(0.06, (0.55 + rand() * 0.5) * sc, 0.07 * sc, i * Math.PI / 2 + rand() * 0.4, 1.42)
+        const tree = new THREE.Mesh(mergeGeometries(geos)!, litMaterial({ color: '#32271f', roughness: 1, envBase: 0.025 }))
+        tree.rotation.y = Number(s.data?.rot ?? 0)
+        grp.add(tree)
+        break
+      }
+      for (let i = 0; i < 7; i++) {
+        const stem = cyl(0.018 * sc, 0.035 * sc, (0.45 + i * 0.055) * sc, '#251e19', 0, 0.2 * sc, 0, 5)
+        stem.rotation.z = (i - 3) * 0.23; stem.rotation.y = i * 1.91
+        grp.add(stem)
+      }
+      grp.rotation.y = Number(s.data?.rot ?? 0)
+      break
+    }
+    case 'tundrarock': {
+      const geo = new THREE.DodecahedronGeometry(Math.max(0.42, Math.min(s.w, s.h) * 0.48), 0)
+      geo.scale(1.25, 0.7, 0.95)
+      const rock = new THREE.Mesh(geo, litMaterial({ color: '#202326', roughness: 1, envBase: 0.04 }))
+      rock.position.y = Math.max(0.28, s.w * 0.25); rock.rotation.set(0.12, Number(s.data?.rot ?? 0), -0.08); grp.add(rock)
+      break
+    }
+    case 'crystalcluster': {
+      const cc = s.data?.blue ? '#53677c' : '#594b68'
+      for (let i = 0; i < 6; i++) {
+        const h = 0.35 + (i % 3) * 0.18
+        const shard = new THREE.Mesh(new THREE.ConeGeometry(0.09 + (i % 2) * 0.035, h, 5), litMaterial({ color: cc, roughness: 0.42, envBase: 0.28 }))
+        shard.position.set((i % 3 - 1) * 0.16, h / 2, (Math.floor(i / 3) - 0.5) * 0.22); shard.rotation.z = (i - 2.5) * 0.055; grp.add(shard)
+      }
+      break
+    }
+    case 'stinkgrass': {
+      const rand = mulberry(Number(s.data?.sid ?? 6) ^ 0x6a551a)
+      const density = Number(s.data?.density ?? 1)
+      const count = Math.min(96, Math.max(24, Math.round(s.w * s.h * 5.2 * density)))
+      const buckets: [THREE.BufferGeometry[], THREE.BufferGeometry[]] = [[], []]
+      for (let i = 0; i < count; i++) {
+        const h = 0.22 + rand() * 0.42
+        const geo = new THREE.BoxGeometry(0.025 + rand() * 0.025, h, 0.035)
+        geo.rotateZ((rand() - 0.5) * 0.58); geo.rotateY(rand() * Math.PI)
+        // 根部略埋入地面，即使大草斑跨过微小地形起伏也不会显得浮空。
+        geo.translate((rand() - 0.5) * s.w, h / 2 - 0.09, (rand() - 0.5) * s.h)
+        buckets[i & 1].push(geo)
+      }
+      const colors = ['#4b4e2c', '#676438']
+      for (let i = 0; i < 2; i++) if (buckets[i].length) grp.add(new THREE.Mesh(
+        mergeGeometries(buckets[i])!, litMaterial({ color: colors[i], roughness: 1, envBase: 0.02 }),
+      ))
+      grp.rotation.y = Number(s.data?.rot ?? 0)
+      break
+    }
+    case 'obelisk': {
+      const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.48, 6.3, 4), litMaterial({ color: '#171a1d', roughness: 0.84, envBase: 0.12 }))
+      shaft.position.y = 3.15; shaft.rotation.y = Math.PI / 4; grp.add(shaft)
+      grp.add(box(1.45, 0.28, 1.45, '#202328', 0, 0.14, 0))
+      for (let i = 0; i < 5; i++) grp.add(box(0.34, 0.025, 0.012, '#6a6252', 0, 2.25 + i * 0.29, -0.39))
+      break
+    }
+    case 'l6stairwell': {
+      const underground = (s.floor ?? 0) === -1
+      grp.add(box(1.1, 0.16, 1.1, '#282725', 0, 0.08, 0))
+      grp.add(box(0.9, 0.08, 0.9, '#493426', 0, underground ? 0.12 : 0.22, 0))
+      for (const q of [-0.42, 0.42]) { grp.add(cyl(0.035, 0.035, 0.85, '#5b3b2c', q, 0.48, -0.45, 7)); grp.add(cyl(0.035, 0.035, 0.85, '#5b3b2c', q, 0.48, 0.45, 7)) }
+      break
+    }
+    case 'l6cave': {
+      for (let i = 0; i < 8; i++) {
+        const a = (i / 8) * Math.PI * 2
+        const stone = new THREE.Mesh(new THREE.DodecahedronGeometry(0.26, 0), litMaterial({ color: '#1b1d1a', roughness: 1 }))
+        stone.position.set(Math.cos(a) * 0.46, 0.42 + Math.sin(a) * 0.32, Math.sin(a) * 0.18); grp.add(stone)
+      }
+      break
+    }
     case 'lightswitch': {
       // 「世界最安静的房间」墙上的电灯开关（官方警告：不要拨）——极小，0.16m 见方
       const d = wallDir(s, m)
@@ -3980,12 +4073,29 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
 
     // ===================== v55：Level 5 走廊/主厅精致化 =====================
     case 'rug': {
-      // 华丽地毯（地面平铺贴花）：整幅贴图平面贴地（data.layer 多层叠放微抬高，主厅红毯上叠蓝金小块）
-      const tex = (s.data?.tex as string | undefined) ?? 'l5_carpet.png'
+      // 独立地毯块：无缝真实织物按物理尺度重复，避免把整幅方图强行拉伸到任意长宽比。
+      // data.layer 仅用于主厅刻意叠放的地毯，普通走廊不再生成 rug，杜绝交叉口共面穿模。
+      const requested = (s.data?.tex as string | undefined) ?? 'l5_carpet.jpg'
+      // 旧存档/旧生成数据里的蓝毯别名也统一迁移到当前金红款。
+      const tex = requested === 'l5_carpet.png' || requested === 'l5_carpet_blue.png' || requested === 'l5_carpet_blue.jpg'
+        ? 'l5_carpet.jpg' : requested
       const layer = Number(s.data?.layer) || 0
+      const geo = new THREE.PlaneGeometry(s.w, s.h)
+      const uv = geo.attributes.uv as THREE.BufferAttribute
+      for (let i = 0; i < uv.count; i++) {
+        const u = uv.getX(i), v = uv.getY(i)
+        // 绝对世界相位：pushClipped 把跨 chunk 地毯切成多片时，各片仍在切口处无缝衔接。
+        uv.setXY(i, (s.x + u * s.w) / 0.75, (s.y + (1 - v) * s.h) / 0.75)
+      }
       const panel = new THREE.Mesh(
-        new THREE.PlaneGeometry(s.w, s.h),
-        new THREE.MeshLambertMaterial({ map: levelTexture(tex, () => noiseTexture('#7a2a2e', '#5e1f24')) }),
+        geo,
+        litMaterial({
+          // 独立地毯同样保持零环境反射；颜色轻压暗，避免在酒店密集灯光下比硬地面更亮。
+          color: '#9a817c',
+          envBase: 0,
+          roughness: 1,
+          map: levelTexture(tex, () => noiseTexture('#7a2a2e', '#5e1f24')),
+        }),
       )
       panel.rotation.x = -Math.PI / 2
       panel.position.set(0, 0.012 + layer * 0.008, 0)
@@ -4369,6 +4479,26 @@ export function buildExit(kind: string, def: LevelDef): THREE.Group {
       ring.position.set(0, 0.1, 0.18) // 铁环拉手（躺在微翘的盖板上）
       ring.rotation.x = Math.PI / 2 - 0.16
       grp.add(ring)
+      break
+    }
+    case 'seahatch': {
+      // L6 → L7：深海锈蚀风格活板门；无自发光，仅靠极弱天然天光辨认。
+      const rust = '#493328', rustD = '#241c19'
+      grp.add(box(1.2, 0.12, 1.2, rustD, 0, 0.06, 0))
+      grp.add(box(0.94, 0.08, 0.94, rust, 0, 0.12, 0))
+      for (const q of [-0.39, 0.39]) for (const z of [-0.39, 0.39]) grp.add(cyl(0.035, 0.035, 0.09, '#16191a', q, 0.18, z, 7))
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.024, 6, 14), new THREE.MeshLambertMaterial({ color: '#2d302f' }))
+      ring.rotation.x = Math.PI / 2; ring.position.set(0, 0.2, 0.12); grp.add(ring)
+      break
+    }
+    case 'cave8': {
+      const dark = new THREE.Mesh(new THREE.CircleGeometry(0.52, 18), new THREE.MeshBasicMaterial({ color: '#000000', side: THREE.DoubleSide }))
+      dark.position.set(0, 0.58, 0); grp.add(dark)
+      for (let i = 0; i < 10; i++) {
+        const a = i / 10 * Math.PI * 2
+        const stone = new THREE.Mesh(new THREE.DodecahedronGeometry(0.25, 0), new THREE.MeshLambertMaterial({ color: '#20231f' }))
+        stone.position.set(Math.cos(a) * 0.51, 0.58 + Math.sin(a) * 0.51, -0.04); grp.add(stone)
+      }
       break
     }
     case 'stairs': {

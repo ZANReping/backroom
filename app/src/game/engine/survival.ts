@@ -88,8 +88,9 @@ export function updateSurvival(eng: Engine, dt: number, dm: DiffMult, mag: numbe
     if (isolation) {
       // 孤立效应：缓慢失去理智；红室内流失速率加倍
       p.sanity -= 0.25 * dm.drain * (pTint === 2 ? 2 : 1) * dt
-    } else if (!lit && !p.flashlight) p.sanity -= 1.5 * dm.drain * dt
-    else if (!lit) p.sanity -= 0.5 * dm.drain * dt
+    } else if (!lit && eng.levelDef.id === 6) p.sanity -= 0.1 * dm.drain * dt
+    else if (!lit && !p.flashlight) p.sanity -= 0.75 * dm.drain * dt
+    else if (!lit) p.sanity -= 0.25 * dm.drain * dt
     else p.sanity = Math.min(100, p.sanity + 0.4 * dt)
     // 附近实体压迫感
     for (const e of m.entities) {
@@ -112,18 +113,22 @@ export function updateSurvival(eng: Engine, dt: number, dm: DiffMult, mag: numbe
     eng.statusMsgT.battery = 14
     eng.msg('手电亮着，灯头在发烫——但你的视野里什么都没有改变。', 'lore')
   }
-  if (p.flashlight) {
-    // v23：Level 8 的熵效应——电池飞快耗尽
-    p.battery = Math.max(0, p.battery - 0.5 * (eng.levelDef.entropy ?? 1) * dt)
-    if (p.battery <= 0) { p.flashlight = false; eng.msg('手电筒没电了。', 'system') }
+  const nightVisionActive = p.equip.head?.type === 'nightvision' && p.battery > 0
+  const batteryDrain = (p.flashlight ? 0.5 * (eng.levelDef.entropy ?? 1) : 0) + (nightVisionActive ? 0.25 : 0)
+  if (batteryDrain > 0) {
+    p.battery = Math.max(0, p.battery - batteryDrain * dt)
+    if (p.battery <= 0) {
+      p.flashlight = false
+      eng.msg(nightVisionActive ? '电池耗尽，夜视眼镜停止工作。' : '手电筒没电了。', 'system')
+    }
     else if (p.battery <= 15 && eng.statusMsgT.battery <= 0) {
       eng.statusMsgT.battery = 10
-      eng.msg('手电电池快耗尽了，光开始闪烁。', 'system')
+      eng.msg(nightVisionActive ? '夜视眼镜电量不足，增像画面开始衰减。' : '手电电池快耗尽了，光开始闪烁。', 'system')
     }
   }
   // 开发者模式：状态锁定（devSetStat 会暂时解除锁定以便手动调整）
   // v55：infection 一并锁定——语义取「锁满=健康满状态」，即每帧锁回 0（永不染病；与锁满 HP/饥饿同类）
-  if (eng.dev.god && eng.dev.statLock) { p.hp = 100; p.sanity = 100; p.hunger = 100; p.thirst = 100; p.stamina = 100; p.infection = 0; if (p.flashlight) p.battery = 100 }
+  if (eng.dev.god && eng.dev.statLock) { p.hp = 100; p.sanity = 100; p.hunger = 100; p.thirst = 100; p.stamina = 100; p.infection = 0; if (p.flashlight || p.equip.head?.type === 'nightvision') p.battery = 100 }
 
   audio.updateHeartbeat(p.hp)
   audio.updateWhispers(dt, p.sanity)

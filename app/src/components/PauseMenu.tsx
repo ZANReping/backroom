@@ -1,6 +1,6 @@
 // 暂停菜单
 // v54：「保存游戏」——展开手动槽位选择（3 个手动槽；自动槽不可手选），保存到所选槽并绑定为当前槽
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { audio } from '@/game/core/audio'
 import { engine } from '@/game/engine'
 import { listSaveSlots, SAVE_SLOT_LABELS, type SaveSlotId } from '@/game/engine/save'
@@ -17,10 +17,13 @@ interface Props {
   onResume: () => void
   onSettings: () => void
   onHowTo: () => void
+  onRadio: () => void // v56：电台管理（仅 MIDI 曲风下显示入口）
+  showRadio: boolean
+  onUnstuck: () => void
   onQuit: () => void
 }
 
-export default function PauseMenu({ onResume, onSettings, onHowTo, onQuit }: Props) {
+export default function PauseMenu({ onResume, onSettings, onHowTo, onRadio, showRadio, onUnstuck, onQuit }: Props) {
   const [picking, setPicking] = useState(false)
   const [savedTo, setSavedTo] = useState<SaveSlotId | null>(null)
   const [confirmOverwrite, setConfirmOverwrite] = useState<SaveSlotId | null>(null) // v54：覆盖已有存档前确认
@@ -43,15 +46,18 @@ export default function PauseMenu({ onResume, onSettings, onHowTo, onQuit }: Pro
 
   const items: [string, () => void][] = [
     ['继续', onResume],
+    ['脱离卡死', onUnstuck],
     ['保存游戏', () => { setPicking(true); setSavedTo(null) }],
     ['设置', onSettings],
     ['操作说明', onHowTo],
     ['保存并退出到标题', onQuit],
   ]
+  // v56：电台管理入口（MIDI 曲风下显示，插在设置之后）
+  const radioItem: [string, () => void] = ['电台管理', onRadio]
   const confirmSnap = confirmOverwrite ? slots.find((s) => s.id === confirmOverwrite)?.snap : null
   return (
     <div className="fixed inset-0 z-50 flex items-center bg-black/60 backdrop-saturate-[0.6]">
-      <div className="hud-panel anim-slideUp ml-0 flex w-[280px] flex-col gap-3 p-6 max-md:mx-auto" style={{ background: 'var(--panel)' }}>
+      <div className="hud-panel anim-slideUp ml-0 flex max-h-[calc(100vh-16px)] w-[280px] flex-col gap-3 overflow-y-auto p-6 max-md:mx-auto" style={{ background: 'var(--panel)' }}>
         <h2 className="font-title mb-2 text-[26px]" style={{ color: 'var(--amber)' }}>已暂停</h2>
         {confirmOverwrite && confirmSnap ? (
           <>
@@ -92,14 +98,30 @@ export default function PauseMenu({ onResume, onSettings, onHowTo, onQuit }: Pro
         ) : (
           <>
             {items.map(([label, fn], i) => (
-              <button
-                key={label}
-                className="menu-btn anim-slideUp"
-                style={{ animationDelay: `${i * 40}ms` }}
-                onClick={() => { audio.uiTick(); fn() }}
-              >
-                {label}
-              </button>
+              <Fragment key={label}>
+                <button
+                  className="menu-btn anim-slideUp"
+                  style={{ animationDelay: `${i * 40}ms` }}
+                  onClick={() => { audio.uiTick(); fn() }}
+                >
+                  {label}
+                </button>
+                {label === '脱离卡死' && (
+                  <div className="font-mono2 -mt-2 px-1 text-[10px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>
+                    返回游戏检测 3 秒；仅确认无法移动后传送
+                  </div>
+                )}
+                {/* v56：电台管理入口（MIDI 曲风下显示） */}
+                {label === '设置' && showRadio && (
+                  <button
+                    className="menu-btn anim-slideUp"
+                    style={{ animationDelay: `${i * 40}ms`, borderColor: 'var(--exit)' }}
+                    onClick={() => { audio.uiTick(); onRadio() }}
+                  >
+                    {radioItem[0]}
+                  </button>
+                )}
+              </Fragment>
             ))}
             {savedTo && (
               <div className="font-mono2 text-[11px]" style={{ color: 'var(--exit)' }}>

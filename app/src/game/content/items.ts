@@ -112,6 +112,7 @@ export const ITEMS: Record<string, ItemDef> = {
   knife: { type: 'knife', name: '刀', desc: '一把还算锋利的刀。', stack: 1, weapon: 30, rarity: 'uncommon', glyph: 'knife' },
   axe: { type: 'axe', name: '斧头', desc: '沉重的消防斧。也能劈开上锁的门——但斧刃经不起太多次硬碰。', stack: 1, weapon: 45, rarity: 'rare', glyph: 'axe' },
   headlamp: { type: 'headlamp', name: '头灯', desc: '戴在头上的探照灯，与手电筒共用电池。', stack: 1, equip: 'head', passive: '头灯光源（共用电池）', rarity: 'uncommon', glyph: 'headlamp' },
+  nightvision: { type: 'nightvision', name: '夜视眼镜', desc: '“家政服务”哨所改装的低照度夜视镜。不会照亮环境，但能显著放大仅存的微光；佩戴启用时持续消耗通用电池。', stack: 1, equip: 'head', passive: '增强夜视（每秒消耗 0.25 电量）', rarity: 'rare', glyph: 'mask' },
   notebook: { type: 'notebook', name: '笔记本和笔', desc: '一本皮面笔记本，笔还插在书脊上。', stack: 1, use: 'none', rarity: 'uncommon', glyph: 'notebook' },
   fuyouyu: { type: 'fuyouyu', name: '福友玉', desc: '一块温润的玉佩，贴着皮肤时，能感到它细微的暖意变化。', stack: 1, equip: 'pocket', passive: '实体感应', anomalous: true, rarity: 'rare', glyph: 'jade' },
   squirtgun: { type: 'squirtgun', name: '滋水枪', desc: '造型过分鲜艳的玩具水枪。在右侧信息栏可以为储罐装入液体。', stack: 1, use: 'none', anomalous: true, rarity: 'rare', glyph: 'watergun' },
@@ -139,11 +140,12 @@ export const UNIVERSAL_ITEMS: { type: string; w: number }[] = [
   { type: 'almond', w: 18 },
   { type: 'canned', w: 18 },
   { type: 'bandage', w: 14 },
+  { type: 'disinfectant', w: 5 },
   { type: 'battery', w: 14 },
   { type: 'crowbar', w: 5 },
-  { type: 'tape', w: 10 },
+  { type: 'tape', w: 2 },
   { type: 'lighter', w: 5 },
-  { type: 'rabbit', w: 3 },
+  { type: 'rabbit', w: 2 },
   { type: 'warpberry', w: 1 }, // 迁跃浆果：十分稀有，混在食物产地
   { type: 'royalration', w: 0.3 }, // 皇家口粮：极其极其稀有
   { type: 'liquidpain', w: 0.25 }, // 液态痛苦：极其稀有，任意层级任何时间都可能找到

@@ -1,6 +1,6 @@
 // v53：交互（scanInteract/doInteract/容器搜索/战利品面板/结构触发伤害/配电箱嗡鸣）——
 // 自 engine.ts 拆分，逻辑逐语句搬运；triggerStructs 返回 true 表示本帧已死亡（原 step 的 return）。
-import { bandOfZ, groundHeightAt, FLOOR_H } from '../world/mapgen'
+import { bandOfZ, bandOfPlayerZ, floorHeight, groundHeightAt, structBlocksSight, structColliders, wallAt, FLOOR_H } from '../world/mapgen'
 import { canOccupy, PLAYER_RADIUS } from '../core/player'
 import { CONTAINERS, CONTAINER_RARE } from '../decorations/containers'
 import { DECOR_VIEWS, GRAFFITI_LORE, GRAFFITI_LORE_KIND, BRAILLE_MARKS, GLASSWIN_TEXT } from '../decorations/lore'
@@ -8,11 +8,27 @@ import { L3_NOTE_IDS } from '../content/docs'
 import { itemName } from '../content/items'
 import { WIN_TAPES, NORMAL_LEVELS, levelDefOf } from '../levels'
 import { audio } from '../core/audio'
-import type { Structure } from '../core/types'
-import type { NpcState } from '../content/npcs'
+import { look } from '../renderer/shared'
+import type { FloorBand, Structure } from '../core/types'
 import type { Engine } from '../engine'
 
 type DiffMult = { dmg: number; drain: number }
+
+/** 结构交互按玩家到占地矩形最近表面计算；同时返回准星应瞄向的表面点。 */
+export function structureSurfacePoint(s: Structure, x: number, y: number): { x: number; y: number; d: number } {
+  let sx = Math.max(s.x, Math.min(x, s.x + s.w))
+  let sy = Math.max(s.y, Math.min(y, s.y + s.h))
+  const d = Math.hypot(sx - x, sy - y)
+  // 玩家位于非实心结构占地区域内时没有唯一最近边，瞄准点回退到中心，但表面距离仍为 0。
+  if (d < 0.02) { sx = s.x + s.w / 2; sy = s.y + s.h / 2 }
+  return { x: sx, y: sy, d }
+}
+
+export function structureSurfaceDistance(s: Structure, x: number, y: number): number {
+  const sx = Math.max(s.x, Math.min(x, s.x + s.w))
+  const sy = Math.max(s.y, Math.min(y, s.y + s.h))
+  return Math.hypot(sx - x, sy - y)
+}
 
 // ---- v51：L3 配电箱电流嗡鸣（定位音频惯例：按最近配电箱距离逐帧调音量）----
 // （原 step 内联段，逐语句搬运）
@@ -48,7 +64,7 @@ export function updateContainerSearch(eng: Engine, dt: number) {
   if (eng.searching) {
     const s = eng.searching
     const st = m.structures.find((x) => x.data?.sid === s.sid)
-    const near = st && Math.hypot(st.x + st.w / 2 - p.x, st.y + st.h / 2 - p.y) < 2.4
+    const near = st && structureSurfaceDistance(st, p.x, p.y) < 2.4
     if (!st || !near || st.looted) {
       eng.searching = null // 离开或已空，取消
     } else {
@@ -65,7 +81,7 @@ export function updateContainerSearch(eng: Engine, dt: number) {
   if (eng.lootPanel) {
     const lp = eng.lootPanel
     const st = m.structures.find((x) => x.data?.sid === lp.sid)
-    if (!st || Math.hypot(st.x + st.w / 2 - p.x, st.y + st.h / 2 - p.y) > 2.5) {
+    if (!st || structureSurfaceDistance(st, p.x, p.y) > 2.5) {
       eng.closeLootPanel()
     }
   }
@@ -112,87 +128,343 @@ export function triggerStructs(eng: Engine, dt: number, dm: DiffMult): boolean {
   }
   return false
 }
-// 交互判定：3D 距离 + 视线角 + LOS（不依赖瓦片对齐）
+export const INTERACT_RANGE = { object: 2.2, item: 2.0, npc: 2.5 } as const
+const AIM_NORMAL = 15 * Math.PI / 180
+const AIM_NEAR = 20 * Math.PI / 180
+const AIM_TOUCHING = 28 * Math.PI / 180
+
+const angleDiff = (a: number, b: number) => {
+  let d = Math.abs(a - b)
+  if (d > Math.PI) d = Math.PI * 2 - d
+  return d
+}
+
+export interface StructureInteractionProfile {
+  /** 相对本层地面的交互体积下沿。 */
+  minZ: number
+  /** 相对本层地面的交互体积上沿。 */
+  maxZ: number
+  /** 相对本层地面的交互体积中心高度。 */
+  centerZ: number
+  /** 交互体积的垂直半径；准星落在可见模型高度内时不产生俯仰误差。 */
+  verticalRadius: number
+  /** 水平模型半径；与占地表面距离分离，避免细长/宽幅模型共用一个球形容差。 */
+  horizontalRadius: number
+}
+
+/**
+ * 可交互结构的可见高度体积。
+ * 渲染模型高度差异很大（地面文件、桌面文件、布面地标、2.6m 路牌等），不能再用统一的 0.73m 目标点。
+ */
+export function structureInteractionProfile(s: Structure): StructureInteractionProfile {
+  let lo = 0.1, hi = Math.min(2.3, Math.max(0.8, 0.5 + Math.max(s.w, s.h) * 0.35))
+  let horizontalRadius = Math.min(0.55, 0.24 + Math.min(s.w, s.h) * 0.16)
+  switch (s.kind) {
+    case 'landmark':
+      lo = s.data?.poster ? 0.68 : 0.78; hi = s.data?.poster ? 2.08 : 1.84
+      horizontalRadius = s.data?.poster ? 0.49 : 0.32
+      break
+    case 'roadsign': lo = 0.2; hi = 2.02; horizontalRadius = 0.36; break
+    case 'megsign': lo = 0.2; hi = 2.55; horizontalRadius = 0.52; break
+    case 'megdoc': lo = s.data?.ontable ? 0.75 : 0; hi = s.data?.ontable ? 0.84 : 0.1; horizontalRadius = 0.2; break
+    case 'invitation': lo = 0; hi = 0.14; horizontalRadius = 0.25; break
+    case 'lightswitch': lo = 1.05; hi = 1.55; horizontalRadius = 0.22; break
+    case 'braille': lo = 1.2; hi = 1.44; horizontalRadius = 0.22; break
+    case 'graffiti': lo = 0.45; hi = 2.35; horizontalRadius = 0.52; break
+    case 'bigpainting': {
+      const ph = Math.min(2.6, Math.max(0.8, Number(s.data?.ph) || 1.3))
+      lo = 0.86; hi = Math.min(2.85, lo + ph)
+      horizontalRadius = Math.min(1.65, Math.max(0.42, (Number(s.data?.pw) || 1.8) / 2))
+      break
+    }
+    case 'windowblack': case 'windowtrap': case 'glasswin': lo = 0.55; hi = 2.2; horizontalRadius = 0.5; break
+    case 'statue': lo = 0.15; hi = 2.65; horizontalRadius = 0.48; break
+    case 'handspike': lo = 0; hi = 1.25; horizontalRadius = 0.38; break
+    case 'clipfuse': lo = 0; hi = 2.8; horizontalRadius = Math.min(1.2, Math.max(s.w, s.h) / 2); break
+    case 'endletters': lo = 0; hi = 1.7; horizontalRadius = Math.min(1.4, Math.max(0.45, s.w / 2)); break
+    case 'arcadecab': lo = 0.15; hi = 1.65; horizontalRadius = 0.36; break
+    case 'hoteldoor': case 'rollerdoor': case 'glassdoor': case 'inkdoor': case 'bargate': case 'lift':
+      lo = 0.1; hi = 2.45; horizontalRadius = Math.min(0.65, Math.max(0.42, Math.min(s.w, s.h) / 2)); break
+    case 'frontdesk': lo = 0.15; hi = 1.32; horizontalRadius = Math.min(1.2, Math.max(0.45, s.w / 2)); break
+    case 'table': lo = 0.55; hi = 0.88; horizontalRadius = Math.min(0.75, Math.max(0.35, Math.min(s.w, s.h) / 2)); break
+    case 'valve': lo = 0.15; hi = 1.38; horizontalRadius = 0.3; break
+    case 'phonograph': lo = 0.08; hi = 1.62; horizontalRadius = 0.34; break
+    case 'booth': lo = 0.1; hi = 2.05; horizontalRadius = Math.min(0.7, Math.max(0.45, Math.min(s.w, s.h) / 2)); break
+    case 'server': lo = 0.1; hi = 2.22; horizontalRadius = Math.min(0.8, Math.max(0.45, Math.min(s.w, s.h) / 2)); break
+    case 'vending': lo = 0.08; hi = 2.02; horizontalRadius = 0.5; break
+    case 'l6stairwell': lo = 0; hi = 1.5; horizontalRadius = 0.6; break
+    case 'obelisk': lo = 0.1; hi = 2.85; horizontalRadius = Math.min(0.8, Math.max(0.45, Math.min(s.w, s.h) / 2)); break
+    case 'corpse': lo = 0; hi = 0.28; horizontalRadius = 0.38; break
+    case 'crate': case 'megcrate': lo = 0; hi = 0.76; horizontalRadius = 0.45; break
+    case 'car': lo = 0.1; hi = 1.25; horizontalRadius = Math.min(0.9, Math.max(0.5, Math.min(s.w, s.h) / 2)); break
+    case 'cabinet': case 'dresser': case 'safebox': lo = 0.05; hi = s.kind === 'dresser' ? 1.15 : s.kind === 'safebox' ? 0.9 : 1.85; horizontalRadius = 0.45; break
+    case 'locker': case 'fridge': lo = 0.05; hi = 2.02; horizontalRadius = 0.4; break
+    case 'toolbox': case 'suitcase': lo = 0; hi = 0.5; horizontalRadius = 0.35; break
+    case 'mailbox': lo = 0.45; hi = 1.35; horizontalRadius = 0.38; break
+    case 'barrel': lo = 0; hi = 1.02; horizontalRadius = 0.45; break
+    case 'bookcase': lo = 0.05; hi = 2.05; horizontalRadius = Math.min(0.75, Math.max(0.45, Math.min(s.w, s.h) / 2)); break
+    case 'bonepile': lo = 0; hi = 0.55; horizontalRadius = 0.45; break
+    case 'campstall': lo = 0.2; hi = 2.1; horizontalRadius = Math.min(0.9, Math.max(0.5, Math.min(s.w, s.h) / 2)); break
+    case 'elecbox': lo = 0.45; hi = 1.65; horizontalRadius = 0.38; break
+    default: break
+  }
+  return { minZ: lo, maxZ: hi, centerZ: (lo + hi) / 2, verticalRadius: Math.max(0.05, (hi - lo) / 2), horizontalRadius }
+}
+
+/** 交互目标的世界坐标轴对齐体积；准星直接命中它时优先于角度辅助。 */
+export interface InteractionVolume {
+  minX: number
+  minY: number
+  minZ: number
+  maxX: number
+  maxY: number
+  maxZ: number
+}
+
+interface InteractionRay {
+  ox: number
+  oy: number
+  oz: number
+  dx: number
+  dy: number
+  dz: number
+}
+
+/** 交互使用的眼高与蹲伏相机保持一致；摇头/震屏只作视觉效果，不改变操作瞄准。 */
+export function interactionEyeZ(eng: Engine): number {
+  return eng.player.z + (eng.player.crouching ? 1.0 : 1.55)
+}
+
+/** 从屏幕中央准星发出的世界空间射线，与 renderer/combat 的朝向约定一致。 */
+export function crosshairRay(eng: Engine): InteractionRay {
+  const p = eng.player
+  const cp = Math.cos(look.pitch)
+  return {
+    ox: p.x,
+    oy: p.y,
+    oz: interactionEyeZ(eng),
+    dx: Math.cos(p.facing) * cp,
+    dy: Math.sin(p.facing) * cp,
+    dz: Math.sin(look.pitch),
+  }
+}
+
+/** 射线首次进入 AABB 的距离；射线起点已在体积内时返回 0。 */
+export function rayInteractionVolume(ray: InteractionRay, box: InteractionVolume, maxT = 12): number | null {
+  let near = 0
+  let far = maxT
+  const axes = [
+    [ray.ox, ray.dx, box.minX, box.maxX],
+    [ray.oy, ray.dy, box.minY, box.maxY],
+    [ray.oz, ray.dz, box.minZ, box.maxZ],
+  ] as const
+  for (const [origin, direction, min, max] of axes) {
+    if (Math.abs(direction) < 1e-7) {
+      if (origin < min || origin > max) return null
+      continue
+    }
+    let a = (min - origin) / direction
+    let b = (max - origin) / direction
+    if (a > b) [a, b] = [b, a]
+    near = Math.max(near, a)
+    far = Math.min(far, b)
+    if (near > far) return null
+  }
+  return far >= 0 && near <= maxT ? Math.max(0, near) : null
+}
+
+/** 结构交互体积：水平面复用物理碰撞的精确轮廓，垂直面复用可见模型高度。 */
+export function structureInteractionVolume(eng: Engine, s: Structure, band: FloorBand): InteractionVolume {
+  const m = eng.map!
+  const boxes = structColliders(s, m)
+  const profile = structureInteractionProfile(s)
+  const base = floorHeight(m, s.x + s.w / 2, s.y + s.h / 2, band)
+  return {
+    minX: Math.min(...boxes.map((b) => b.x0)),
+    minY: Math.min(...boxes.map((b) => b.y0)),
+    minZ: base + profile.minZ,
+    maxX: Math.max(...boxes.map((b) => b.x1)),
+    maxY: Math.max(...boxes.map((b) => b.y1)),
+    maxZ: base + profile.maxZ,
+  }
+}
+
+/** 当前楼层带的三维交互 LOS：墙体、地板高度与精细实心结构碰撞盒均参与。 */
+export function interactionLos3D(eng: Engine, x: number, y: number, z: number, band: FloorBand, target?: Structure): boolean {
+  const p = eng.player, m = eng.map
+  if (!m || bandOfPlayerZ(m, p.z) !== band) return false
+  const x0 = p.x, y0 = p.y, z0 = interactionEyeZ(eng)
+  const dx = x - x0, dy = y - y0, dz = z - z0
+  const steps = Math.max(2, Math.ceil(Math.hypot(dx, dy, dz) / 0.12))
+  for (let i = 1; i < steps; i++) {
+    const t = i / steps
+    const sx = x0 + dx * t, sy = y0 + dy * t, sz = z0 + dz * t
+    const tx = Math.floor(sx), ty = Math.floor(sy)
+    if (wallAt(m, tx, ty, band)) return false
+    if (sz < floorHeight(m, sx, sy, band) + 0.035) return false
+    if (structBlocksSight(m, sx, sy, sz, band, target)) return false
+  }
+  return true
+}
+
+/** 距离、俯仰/准星硬门槛与三维 LOS 的统一探针；返回值同时作为多目标排序分数。 */
+export function interactionProbe(
+  eng: Engine, x: number, y: number, z: number, band: FloorBand, maxDistance: number,
+  radius = 0.25, volume?: InteractionVolume, target?: Structure, surfaceDistance?: number, verticalRadius = radius,
+): { a: number; d: number; direct: boolean; rayT: number } | null {
+  const p = eng.player
+  const dx = x - p.x, dy = y - p.y
+  const aimD = Math.hypot(dx, dy)
+  const d = surfaceDistance ?? aimD
+  if (d > maxDistance) return null
+
+  // 视觉命中是首要入口：玩家准星真正落在木箱顶面、柜门或大型结构边缘时，
+  // 不再因为代表点位于模型中心/背面而丢失提示。
+  if (volume) {
+    const ray = crosshairRay(eng)
+    const rayT = rayInteractionVolume(ray, volume)
+    if (rayT !== null) {
+      const hx = ray.ox + ray.dx * rayT
+      const hy = ray.oy + ray.dy * rayT
+      const hz = ray.oz + ray.dz * rayT
+      if (interactionLos3D(eng, hx, hy, hz, band, target)) {
+        return { a: -1 + Math.min(10, rayT) * 1e-3, d, direct: true, rayT }
+      }
+    }
+  }
+
+  const yawErr = aimD < 0.02 ? 0 : angleDiff(Math.atan2(dy, dx), p.facing)
+  const pitchTo = Math.atan2(z - interactionEyeZ(eng), Math.max(0.05, aimD))
+  // 水平与垂直体积分别扣除角半径：高路牌不会把巨大高度容差错误地扩张到左右方向，
+  // 地面文档也不会再沿用高柜的俯仰容差。
+  const yawMiss = Math.max(0, yawErr - Math.atan2(radius, Math.max(0.05, aimD)))
+  const pitchMiss = Math.max(0, Math.abs(pitchTo - look.pitch) - Math.atan2(verticalRadius, Math.max(0.05, aimD)))
+  const a = Math.hypot(yawMiss, pitchMiss)
+  const hardLimit = d < 0.75 ? AIM_TOUCHING : d < 1.2 ? AIM_NEAR : AIM_NORMAL
+  if (a > hardLimit || !interactionLos3D(eng, x, y, z, band, target)) return null
+  return { a, d, direct: false, rayT: Number.POSITIVE_INFINITY }
+}
+
+// 兼容 AI/旧调用的水平视锥：贴身可放宽方向，但任何距离都必须保持无遮挡。
 export function inView(eng: Engine, x: number, y: number, radius: number): boolean {
   const p = eng.player
   const dx = x - p.x, dy = y - p.y
   const d = Math.hypot(dx, dy)
   if (d > radius) return false
-  // 贴身目标无视线角要求
-  if (d < 0.9) return true
   const ang = Math.atan2(dy, dx)
-  let diff = Math.abs(ang - p.facing)
-  if (diff > Math.PI) diff = Math.PI * 2 - diff
-  if (diff > 1.5) return false // ~86° 半锥，宽容
+  const diff = angleDiff(ang, p.facing)
+  if (d >= 0.9 && diff > 1.5) return false // 贴身只放宽方向，不跳过 LOS
   // 目标点向玩家回拉，避免实心容器/结构自身遮挡 LOS
+  if (d < 0.02) return true
   const pull = Math.min(0.65, d * 0.5)
   const tx = x - (dx / d) * pull, ty = y - (dy / d) * pull
   return eng.los(p.x, p.y, tx, ty)
 }
 
-// 目标与视线朝向的角差（弧度；贴身目标视为 0）——v12 统一目标选择的主排序键
+// 目标与视线朝向的水平角差（弧度）——贴身目标仍计算真实方向，避免近处余光目标被伪装成准星正中。
 export function viewAngle(eng: Engine, x: number, y: number): number {
   const p = eng.player
   const dx = x - p.x, dy = y - p.y
-  if (Math.hypot(dx, dy) < 0.9) return 0
+  if (Math.hypot(dx, dy) < 0.02) return 0
   const ang = Math.atan2(dy, dx)
-  let diff = Math.abs(ang - p.facing)
-  if (diff > Math.PI) diff = Math.PI * 2 - diff
-  return diff
+  return angleDiff(ang, p.facing)
 }
-// v12：统一可交互目标选择（HUD 提示与 interact() 执行共用本函数结果）。
-// 优先级：视线角最小（正对）> 距离最近 > 同角同距时可执行优先于不可执行
-// （如上锁但无撬棍/万能钥匙的房门、无车钥匙的后备箱）。
+// 统一可交互目标选择（HUD 提示与 doInteract 执行共用本函数结果）。
+// v57：出口/物品/结构/NPC/特殊实体全部进入同一个准星评分器，避免旧版“数组类别先返回”让
+// 身旁出口或地面物品抢走玩家正对目标。优先级：准星实际覆盖 > 3D 角误差 > 距离 > 可执行性。
 export function scanInteract(eng: Engine) {
   const p = eng.player, m = eng.map!
   eng.interactTarget = null
-  const band = bandOfZ(p.z)
-  // 出口（进入判定仍用近距离，不挡拾取；v13：出口都在主层，上层不触发）
-  if (band === 0) for (const e of m.exits) {
-    if (e.def.kind === 'graystairs' || e.def.kind === 'graystairsup' || e.def.kind === 'oldstairs') continue // v29/v54：可行走阶梯——直接走上去/走下去，无 E 交互
-    if (Math.hypot(e.x + 0.5 - p.x, e.y + 0.5 - p.y) < 1.6) {
-      e.discovered = true
-      eng.interactTarget = { kind: 'exit', label: `进入 ${e.def.name}`, e }
-      return
+  const band = bandOfPlayerZ(m, p.z)
+  type Target = NonNullable<Engine['interactTarget']>
+  type Candidate = { target: Target; a: number; d: number; can: boolean }
+  const choice: { current: Candidate | null } = { current: null }
+  const commitCandidate = (target: Target, a: number, d: number, can: boolean) => {
+    const old = choice.current
+    if (!old || a < old.a - 1e-4
+      || (Math.abs(a - old.a) <= 1e-4 && d < old.d - 1e-4)
+      || (Math.abs(a - old.a) <= 1e-4 && Math.abs(d - old.d) <= 1e-4 && can && !old.can)) {
+      choice.current = { target, a, d, can }
     }
   }
-  // 地面物品（同一优先级：视线角 > 距离，半径 2.0m；v13：按物品所在高度过滤楼层）
-  {
-    let bi: (typeof m.items)[0] | null = null, ba = 1e9, bd = 1e9
-    for (const it of m.items) {
-      const d = Math.hypot(it.x - p.x, it.y - p.y)
-      if (d >= 2.0 || !eng.inView(it.x, it.y, 2.0)) continue
-      const iz = it.z ?? groundHeightAt(m, it.x, it.y)
-      if (Math.abs(iz - p.z) > 1.4) continue
-      const a = eng.viewAngle(it.x, it.y)
-      if (a < ba - 1e-6 || (Math.abs(a - ba) <= 1e-6 && d < bd - 1e-6)) { ba = a; bd = d; bi = it }
+  const vh = look.visualHit
+  const visualHit = vh
+    && Date.now() - vh.at < 250
+    && angleDiff(vh.yaw, look.yaw) < 0.045
+    && Math.abs(vh.pitch - look.pitch) < 0.045
+    && Math.hypot(vh.playerX - p.x, vh.playerY - p.y, vh.playerZ - p.z) < 0.18
+    ? vh : null
+  const volumeAt = (x: number, y: number, z0: number, radius: number, height: number): InteractionVolume => ({
+    minX: x - radius, minY: y - radius, minZ: z0,
+    maxX: x + radius, maxY: y + radius, maxZ: z0 + height,
+  })
+  const considerTarget = (
+    target: Target, x: number, y: number, z: number, targetBand: FloorBand, maxDistance: number,
+    can = true, radius = 0.25, volume?: InteractionVolume, surfaceDistance?: number,
+    structure?: Structure, verticalRadius = radius,
+  ) => {
+    const probe = interactionProbe(eng, x, y, z, targetBand, maxDistance, radius, volume, structure, surfaceDistance, verticalRadius)
+    if (!probe) return
+    const { a, d } = probe
+    commitCandidate(target, a, d, can)
+  }
+  // 出口按 FloorBand 过滤；缺省仍在主层。
+  for (const e of m.exits) {
+    if ((e.floor ?? 0) !== band) continue
+    if (e.def.kind === 'graystairs' || e.def.kind === 'graystairsup' || e.def.kind === 'oldstairs') continue // v29/v54：可行走阶梯——直接走上去/走下去，无 E 交互
+    const ex = e.x + 0.5, ey = e.y + 0.5
+    const d = Math.hypot(ex - p.x, ey - p.y)
+    if (d < 1.6) {
+      e.discovered = true
+      const exitBase = floorHeight(m, ex, ey, e.floor ?? 0)
+      const ez = exitBase + 0.95
+      considerTarget({ kind: 'exit', label: `进入 ${e.def.name}`, e }, ex, ey, ez, e.floor ?? 0, 1.6, true, 0.48,
+        volumeAt(ex, ey, exitBase, 0.5, 1.95))
     }
-    if (bi) { eng.interactTarget = { kind: 'item', label: bi.type === 'welcomenote' ? `查看 ${itemName(bi.type)}` : `拾取 ${itemName(bi.type)}`, it: bi }; return }
+  }
+  // 地面物品（半径 2.0m；v13：按物品所在高度过滤楼层）
+  for (const it of m.items) {
+    const iz = it.z ?? groundHeightAt(m, it.x, it.y)
+    const itemBand = bandOfPlayerZ(m, iz)
+    if (itemBand !== band) continue
+    const target: Target = {
+      kind: 'item', label: it.type === 'welcomenote' ? `查看 ${itemName(it.type)}` : `拾取 ${itemName(it.type)}`, it,
+    }
+    const d = Math.hypot(it.x - p.x, it.y - p.y)
+    if (visualHit?.kind === 'item' && visualHit.item === it && d <= INTERACT_RANGE.item
+      && interactionLos3D(eng, visualHit.x, visualHit.y, visualHit.z, itemBand)) {
+      commitCandidate(target, -2 + Math.min(10, visualHit.rayT) * 1e-3, d, true)
+    }
+    considerTarget(
+      target,
+      it.x, it.y, iz + 0.22, itemBand, INTERACT_RANGE.item, true, 0.2, volumeAt(it.x, it.y, iz, 0.22, 0.44),
+    )
   }
   // 结构（半径 2.2m，含容器）
-  let best: { kind: string; label: string; s: Structure; a: number; d: number; can: boolean } | null = null
   const consider = (kind: string, label: string, s: Structure, d: number, can: boolean) => {
-    const a = eng.viewAngle(s.x + s.w / 2, s.y + s.h / 2)
-    if (!best || a < best.a - 1e-6
-      || (Math.abs(a - best.a) <= 1e-6 && d < best.d - 1e-6)
-      || (Math.abs(a - best.a) <= 1e-6 && Math.abs(d - best.d) <= 1e-6 && can && !best.can)) {
-      best = { kind, label, s, a, d, can }
+    const surface = structureSurfacePoint(s, p.x, p.y)
+    const sx = surface.x, sy = surface.y
+    const targetBand = s.kind === 'lift' ? band : (s.floor ?? 0)
+    const profile = structureInteractionProfile(s)
+    const sz = floorHeight(m, sx, sy, targetBand) + profile.centerZ
+    const volume = structureInteractionVolume(eng, s, targetBand)
+    const target: Target = { kind, label, s }
+    if (visualHit?.kind === 'structure' && visualHit.structure === s
+      && interactionLos3D(eng, visualHit.x, visualHit.y, visualHit.z, targetBand, s)) {
+      commitCandidate(target, -2 + Math.min(10, visualHit.rayT) * 1e-3, d, can)
     }
+    considerTarget(target, sx, sy, sz, targetBand, INTERACT_RANGE.object, can,
+      profile.horizontalRadius, volume, d, s, profile.verticalRadius)
   }
   for (const s of m.structures) {
-    const cx = s.x + s.w / 2, cy = s.y + s.h / 2
-    const d = Math.hypot(cx - p.x, cy - p.y)
-    const maxD = CONTAINERS[s.kind] ? 2.7 : 2.2 // v51：容器交互距离放宽（十字锥选取保留，不再要贴着才能搜）
-    if (d > maxD || !eng.inView(cx, cy, maxD)) continue
     // v13：结构按楼层过滤（楼上楼下同名容器互不干扰）；lift 跨层服务
     if (s.kind !== 'lift' && (s.floor ?? 0) !== band) continue
+    const d = structureSurfaceDistance(s, p.x, p.y) // 大结构按最近表面，而非中心计交互距离
+    if (d > INTERACT_RANGE.object) continue
     if (s.kind === 'lift') { consider('lift', band === 0 ? '乘电梯 上楼' : '乘电梯 下楼', s, d, !eng.ride); continue }
     // v18：已搜空容器仍可选中（交互时提示「容器是空的」），未搜空的正常提示
     // v23：全部容器走统一表（含新增的储物柜/工具箱/行李箱/冰箱/保险箱/信箱/木桶/书柜/骨堆/营地摊位）
     if (CONTAINERS[s.kind]) {
-      // v51：容器要求准星近似对准（~26° 半锥）——86° 宽容锥下余光里的容器会抢占交互位，
-      // 挡住玩家正对其他目标的交互；对准才可选中，不对准时完全不影响其他交互
-      if (eng.viewAngle(cx, cy) > 0.45) continue
       const C = CONTAINERS[s.kind]
       const gate = !C.gate || (C.gate === 'carkey' ? eng.hasPocket('carkey') : eng.hasItem('crowbar'))
       const gateText = C.gate === 'carkey' ? '（需要车钥匙）' : '（需要撬棍）'
@@ -242,66 +514,74 @@ export function scanInteract(eng: Engine) {
     else if (s.kind === 'server' && s.locked) consider('server', '刷门禁卡 进入', s, d, eng.hasPocket('keycard'))
     else if (s.kind === 'vending') consider('vending', '使用 自动售货机', s, d, true)
     else if (s.kind === 'frontdesk') consider('frontdesk', '与前台交易', s, d, true)
+    else if (s.kind === 'l6stairwell') consider('l6stairwell', band === 0 ? '沿废弃楼梯井下行' : '沿废弃楼梯井返回地表', s, d, true)
+    else if (s.kind === 'obelisk') consider('obelisk', '辨认 方尖碑上的字迹', s, d, true)
   }
-  //（闭包内赋值 TS 无法跟踪，显式还原声明类型）
-  const picked = best as { kind: string; label: string; s: Structure } | null
-  eng.interactTarget = picked ? { kind: picked.kind, label: picked.label, s: picked.s } : null
-  // v35：NPC 交谈（据点；优先级最低——出口/物品/结构都未选中时才考虑）
-  if (!eng.interactTarget) {
-    let bn: NpcState | null = null, ba = 1e9, bd = 1e9
-    for (const n of eng.npcs) {
-      if (n.dead || n.hostile) continue // v39：尸体与敌对员工不可交谈
-      if ((n.floor ?? 0) !== bandOfZ(p.z)) continue // v46：隔层不可交谈（夹楼 NPC 须上到 2F）
-      const d = Math.hypot(n.x - p.x, n.y - p.y)
-      if (d > 2.2 || !eng.inView(n.x, n.y, 2.2)) continue
-      const a = eng.viewAngle(n.x, n.y)
-      if (a < ba - 1e-6 || (Math.abs(a - ba) <= 1e-6 && d < bd)) { ba = a; bd = d; bn = n }
-    }
-    if (bn) eng.interactTarget = { kind: 'npc', label: `与 ${bn.def.name} 交谈`, npc: bn }
+  // v35：NPC 与其他类别统一竞争，玩家正对 NPC 时不再被附近容器/出口抢走交互。
+  for (const n of eng.npcs) {
+    if (n.dead || n.hostile) continue // v39：尸体与敌对员工不可交谈
+    if ((n.floor ?? 0) !== band) continue // v46：隔层不可交谈（夹楼 NPC 须上到 2F）
+    const npcBase = floorHeight(m, n.x, n.y, n.floor ?? band)
+    const nz = npcBase + 1.0
+    considerTarget({ kind: 'npc', label: `与 ${n.def.name} 交谈`, npc: n }, n.x, n.y, nz, n.floor ?? band,
+      INTERACT_RANGE.npc, true, 0.42, volumeAt(n.x, n.y, npcBase, 0.42, 1.9))
   }
-  // v45：实体「杰瑞」——接触杰瑞（与 NPC 同级最低优先级；驯服提示随状态变化；v47：冷却剩余在提示中显示）
-  if (!eng.interactTarget) {
-    for (const e of m.entities) {
-      if (e.dead || e.def.type !== 'jerry') continue
-      const d = Math.hypot(e.x - p.x, e.y - p.y)
-      if (d > 2.2 || !eng.inView(e.x, e.y, 2.2)) continue
-      eng.interactTarget = {
+  // v45：实体「杰瑞」——驯服提示随状态变化；v47：冷却剩余在提示中显示。
+  for (const e of m.entities) {
+    if (e.dead || e.def.type !== 'jerry') continue
+    const entityBand = bandOfZ(e.z)
+    if (entityBand !== band) continue
+    considerTarget({
         kind: 'jerry',
         label: eng.jerryContactCd > 0
           ? `接触 鹉主杰瑞（冷却 ${Math.ceil(eng.jerryContactCd)}s）`
           : eng.jerryTamed ? '接触 鹉主杰瑞（已驯服）' : '接触 鹉主杰瑞（教化 +25 · 对其使用杏仁水可驯服）',
         ent: e,
-      }
-      break
-    }
+      }, e.x, e.y, e.z + 0.8, entityBand, INTERACT_RANGE.npc, true, 0.4,
+      volumeAt(e.x, e.y, e.z, 0.42, 1.6))
   }
-  // v51：人制品售货机（Entity 36）——正面取货 / 背面看标语（与杰瑞同级最低优先级）
-  if (!eng.interactTarget) {
-    for (const e of m.entities) {
-      if (e.dead || e.def.type !== 'vendingmachine' || e.activated) continue
-      const d = Math.hypot(e.x - p.x, e.y - p.y)
-      if (d > 2.2 || !eng.inView(e.x, e.y, 2.2)) continue
-      // 正/背面：玩家在机器朝向的一侧为正面
-      const behind = Math.cos(e.facing) * (p.x - e.x) + Math.sin(e.facing) * (p.y - e.y) < 0
-      eng.interactTarget = {
+  // v51：人制品售货机（Entity 36）——正面取货 / 背面看标语。
+  for (const e of m.entities) {
+    if (e.dead || e.def.type !== 'vendingmachine' || e.activated) continue
+    const entityBand = bandOfZ(e.z)
+    if (entityBand !== band) continue
+    // 正/背面：玩家在机器朝向的一侧为正面
+    const behind = Math.cos(e.facing) * (p.x - e.x) + Math.sin(e.facing) * (p.y - e.y) < 0
+    considerTarget({
         kind: 'vendingmachine',
         label: behind ? '查看 人制品售货机（背面）' : '取出 人制品',
         ent: e, vmBack: behind,
-      }
-      break
-    }
+      }, e.x, e.y, e.z + 0.95, entityBand, INTERACT_RANGE.object, true, 0.5,
+      volumeAt(e.x, e.y, e.z, 0.5, 1.9))
   }
+  eng.interactTarget = choice.current?.target ?? null
 }
+
+function sameInteractionTarget(a: Engine['interactTarget'], b: Engine['interactTarget']): boolean {
+  if (!a || !b || a.kind !== b.kind) return false
+  return a.s === b.s && a.it === b.it && a.e === b.e && a.npc === b.npc && a.ent === b.ent
+}
+
 export function doInteract(eng: Engine) {
+  const scanned = eng.interactTarget
+  if (!scanned || !eng.map) return
+  // 输入到真正执行之间再次跑同一套距离、楼层带、硬准星与三维 LOS；目标发生变化则本次按键作废。
+  scanInteract(eng)
   const t = eng.interactTarget
-  if (!t || !eng.map) return
+  if (!sameInteractionTarget(scanned, t) || !t) return
   const p = eng.player, m = eng.map
   switch (t.kind) {
     case 'exit': {
-      // v12：执行 scanInteract 选中的同一出口（距离兜底校验）
-      const e = t.e && Math.hypot(t.e.x + 0.5 - p.x, t.e.y + 0.5 - p.y) < 1.6 ? t.e
-        : m.exits.find((x) => Math.hypot(x.x + 0.5 - p.x, x.y + 0.5 - p.y) < 1.6)
+      const e = t.e
       if (e) eng.takeExit(e.def)
+      break
+    }
+    case 'l6stairwell': {
+      eng.switchL6Floor(bandOfPlayerZ(m, p.z) === 0 ? -1 : 0, 'stairs')
+      break
+    }
+    case 'obelisk': {
+      eng.msg('方尖碑高得没入黑暗。刻痕像文字，又像某种从未属于人类的坐标。', 'lore')
       break
     }
     case 'item': {
@@ -354,8 +634,8 @@ export function doInteract(eng: Engine) {
     case 'elecbox': { // v51：L3 配电箱（统一容器表成员，漏登记会导致显示可交互但按键无响应）
       const kind = t.kind
       // v12：搜索 scanInteract 选中的同一容器（不再是数组序第一个同类容器）
-      // v51：容器交互距离 2.8（与 scanInteract 的 2.7 选取门限对齐，不再脱节）
-      const s = t.s && t.s.kind === kind && Math.hypot(t.s.x + t.s.w / 2 - p.x, t.s.y + t.s.h / 2 - p.y) < 2.8 ? t.s : null
+      // 距离、楼层、准星与 LOS 已由执行前的统一重扫校验；此处只验证目标身份。
+      const s = t.s && t.s.kind === kind ? t.s : null
       if (!s) return
       // v18：空容器直接提示（不出面板、不出进度条）
       const leftover = s.data?.lootItems as string[] | undefined
@@ -487,7 +767,7 @@ export function doInteract(eng: Engine) {
     case 'hoteldoor': {
       // v12：开/关/撬 scanInteract 选中的同一扇门（根因修复：旧版按数组序找第一扇门，
       // 上锁门与普通门相邻时提示「打开 房门」却触发上锁门）
-      const s = t.s && t.s.kind === 'hoteldoor' && Math.hypot(t.s.x + 0.5 - p.x, t.s.y + 0.5 - p.y) < 2.6 ? t.s : null
+      const s = t.s && t.s.kind === 'hoteldoor' ? t.s : null
       if (!s) return
       if (s.data?.sealed) {
         // v41：L2 特殊锁死门——撬棍/万能钥匙/斧头全部无效（锁的结构闻所未闻）
@@ -554,7 +834,7 @@ export function doInteract(eng: Engine) {
     }
     case 'lift': {
       // v13：电梯——交互后轿厢垂直送达另一层（脚本化乘降，期间锁定移动）
-      const s = t.s && t.s.kind === 'lift' && Math.hypot(t.s.x + 0.5 - p.x, t.s.y + 0.5 - p.y) < 2.6 ? t.s : null
+      const s = t.s && t.s.kind === 'lift' ? t.s : null
       if (!s || eng.ride) return
       const from = bandOfZ(p.z) === 1 ? FLOOR_H : 0
       const to = from === 0 ? FLOOR_H : 0
@@ -565,7 +845,7 @@ export function doInteract(eng: Engine) {
       break
     }
     case 'rollerdoor': case 'glassdoor': {
-      const s = t.s && t.s.kind === t.kind && Math.hypot(t.s.x + 0.5 - p.x, t.s.y + 0.5 - p.y) < 2.6 ? t.s : null
+      const s = t.s && t.s.kind === t.kind ? t.s : null
       if (!s) return
       if (t.kind === 'rollerdoor' && s.data?.locked) {
         eng.msg('卷帘门锁死了，纹丝不动。门缝里黑漆漆的，看不清里面堆了什么。', 'system')
@@ -585,7 +865,7 @@ export function doInteract(eng: Engine) {
     }
     case 'inkdoor': {
       // 维护通廊墨黑色金属门（横跨 2 格门洞，交互开/关；关门时实心阻挡）
-      const s = t.s && t.s.kind === 'inkdoor' && Math.hypot(t.s.x + t.s.w / 2 - p.x, t.s.y + t.s.h / 2 - p.y) < 2.6 ? t.s : null
+      const s = t.s && t.s.kind === 'inkdoor' ? t.s : null
       if (!s) return
       const open = s.data?.open ? 0 : 1
       s.data = { ...s.data, open }
@@ -596,7 +876,7 @@ export function doInteract(eng: Engine) {
     }
     case 'bargate': {
       // v51：L3 铁栅栏门（交互开/关；关门时实心阻挡，玩家站门洞则推到最近可走一侧——同 hoteldoor）
-      const s = t.s && t.s.kind === 'bargate' && Math.hypot(t.s.x + t.s.w / 2 - p.x, t.s.y + t.s.h / 2 - p.y) < 2.6 ? t.s : null
+      const s = t.s && t.s.kind === 'bargate' ? t.s : null
       if (!s) return
       const open = s.data?.open ? 0 : 1
       s.data = { ...s.data, open }
@@ -721,7 +1001,7 @@ export function doInteract(eng: Engine) {
       break
     }
     case 'valve': {
-      const s = t.s && t.s.kind === 'valve' && Math.hypot(t.s.x + 0.5 - p.x, t.s.y + 0.5 - p.y) < 2.6 ? t.s : null
+      const s = t.s && t.s.kind === 'valve' ? t.s : null
       if (!s) return
       if (s.data?.on && !p.hasGloves && !eng.hasItem('wrench')) {
         p.hp -= 6; eng.emit({ kind: 'damage' })
@@ -736,7 +1016,7 @@ export function doInteract(eng: Engine) {
     }
     case 'phonograph': {
       // v55：L5 留声机启停——data.on=0 停播停转（唱盘动画/音乐同标记；持久化走 ChunkDynState 的 on 键）
-      const s = t.s && t.s.kind === 'phonograph' && Math.hypot(t.s.x + 0.5 - p.x, t.s.y + 0.5 - p.y) < 2.6 ? t.s : null
+      const s = t.s && t.s.kind === 'phonograph' ? t.s : null
       if (!s) return
       const off = s.data?.on === 0
       s.data = { ...s.data, on: off ? 1 : 0 }
@@ -746,7 +1026,7 @@ export function doInteract(eng: Engine) {
     }
     case 'drinktable': {
       // v55：L5 休息室桌上饮料——随机一瓶（五种风味文本各异；一次性，data.searched 持久化记态）
-      const s = t.s && t.s.kind === 'table' && Math.hypot(t.s.x + 0.5 - p.x, t.s.y + 0.5 - p.y) < 2.6 ? t.s : null
+      const s = t.s && t.s.kind === 'table' ? t.s : null
       if (!s || s.data?.searched === 1) return
       const roll = Math.random()
       const [type, flavor] = roll < 0.3 ? ['almond', '瓶身还带着冷凝水——杏仁水。甜腻的香气让你安下心来。']
@@ -768,7 +1048,7 @@ export function doInteract(eng: Engine) {
     }
     case 'server': {
       if (eng.hasPocket('keycard')) {
-        const s = t.s && t.s.kind === 'server' && t.s.locked ? t.s : m.structures.find((x) => x.kind === 'server' && x.locked)
+        const s = t.s && t.s.kind === 'server' && t.s.locked ? t.s : null
         if (s) { s.locked = false; s.solid = false; eng.msg('服务器机房解锁了。里面有些设备。', 'loot'); eng.addItem('battery'); eng.addItem('capacitor') }
       } else eng.msg('需要门禁卡（放在口袋栏生效）。', 'system')
       break

@@ -14,12 +14,13 @@ interface Props {
   cavingsuit?: boolean // 身体栏装备保温服（与绝缘服互斥）
   divemask?: boolean // 头饰栏装备潜水面罩
   headlamp?: boolean // 头饰栏装备头灯
+  nightvision?: boolean // 头饰栏装备夜视眼镜
   npcId?: string // NPC 档案：按 id 附加标志性配饰（npcGear.ts）
   npcDef?: NpcDef // NPC 定义（BRC 级别徽章色/工作循环工具用）
   size?: number
 }
 
-export default function AvatarPreview({ avatar, gloves, suit, cavingsuit, divemask, headlamp, npcId, npcDef, size = 150 }: Props) {
+export default function AvatarPreview({ avatar, gloves, suit, cavingsuit, divemask, headlamp, nightvision, npcId, npcDef, size = 150 }: Props) {
   const ref = useRef<HTMLCanvasElement>(null)
   const key = JSON.stringify(avatar)
   useEffect(() => {
@@ -39,7 +40,7 @@ export default function AvatarPreview({ avatar, gloves, suit, cavingsuit, divema
     const rim = new THREE.DirectionalLight(0x9ab0d0, 0.55)
     rim.position.set(-2, 1.4, -1.6)
     scene.add(rim)
-    const model = buildPlayerModel(JSON.parse(key) as AvatarCfg, { gloves, suit, cavingsuit, divemask, headlamp })
+    const model = buildPlayerModel(JSON.parse(key) as AvatarCfg, { gloves, suit, cavingsuit, divemask, headlamp, nightvision })
     // NPC 档案：制服徽章（胸口小色块，同 renderer）+ 标志性配饰
     if (npcId) {
       if (npcDef?.faction === 'brc') {
@@ -71,6 +72,6 @@ export default function AvatarPreview({ avatar, gloves, suit, cavingsuit, divema
       model.traverse((o) => { const m = o as THREE.Mesh; if (m.geometry) m.geometry.dispose() })
       r.dispose()
     }
-  }, [key, gloves, suit, cavingsuit, divemask, headlamp, npcId, npcDef, size])
+  }, [key, gloves, suit, cavingsuit, divemask, headlamp, nightvision, npcId, npcDef, size])
   return <canvas ref={ref} style={{ width: size, height: Math.round(size * 1.45), imageRendering: 'auto' }} />
 }

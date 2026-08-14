@@ -331,7 +331,7 @@ export function genL5ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
   const kMin = Math.floor((WX - CS - 13) / VSP) - 1, kMax = Math.ceil((WX + 2 * CS - 13) / VSP) + 1
   const rMin = Math.floor((WY - CS - 13) / HSP) - 1, rMax = Math.ceil((WY + 2 * CS - 13) / HSP) + 1
 
-  // ---- 走廊网（全部贯穿：横廊接通所有竖廊 → 天然全连通；tint 21=红金华丽地毯贴图走廊）----
+  // ---- 走廊网（全部贯穿：横廊接通所有竖廊 → 天然全连通；tint 21=无缝酒红锦缎地毯走廊）----
   for (let r = rMin; r <= rMax; r++) {
     const ry = l5RowY(seed, r)
     if (ry + 1 < WY - CS || ry > WY + 2 * CS) continue
@@ -496,7 +496,7 @@ export function genL5ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
           }
         // 多层地毯：中央红金大地毯 + 上叠蓝金小块（data.layer 抬高防 z-fight；跨 chunk 切片推送）
         pushClipped('rug', bcx - 3, bcy - 4, 6, 8)
-        pushClipped('rug', bcx - 2, bcy - 2, 4, 5, { tex: 'l5_carpet_blue.png', layer: 1 })
+        pushClipped('rug', bcx - 2, bcy - 2, 4, 5, { tex: 'l5_carpet.jpg', layer: 1 })
         for (const [px2, py2] of [[x0, y0], [x1, y0], [x0, y1], [x1, y1]] as const)
           if (!backSet.has(`${px2},${py2}`) && !solidAtL(px2, py2)) pushStruct('planter', px2, py2, 1, 1, true)
         // v55（任务8）：挑高不昏暗——补充灯网加密（4 格，暖金）+ 吊灯大半径主光（见上）
@@ -507,7 +507,7 @@ export function genL5ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
         ceilRectW(x0, y0, x1, y1)
         pushStruct('chandelier', bcx, bcy, 1, 1, false)
         pushLight(bcx, bcy, 8.5, '#ffe3b0', { fixZ: 5.22, noFix: 1 }) // 巨吊灯——全厅最亮（模型即灯具，光源点同位贴挑高灯位）
-        pushClipped('rug', bcx - 3, bcy - 3, 7, 7, { tex: 'l5_carpet_blue.png' }) // 中央蓝金大地毯（跨 chunk 切片推送）
+        pushClipped('rug', bcx - 3, bcy - 3, 7, 7, { tex: 'l5_carpet.jpg' }) // 中央金红大地毯（跨 chunk 切片推送）
         if (!solidAtL(bcx, bcy) && !backSet.has(`${bcx},${bcy}`))
           pushStruct('oddtable', bcx, bcy, 1, 1, true) // 房间矩形几何中心（取整）
         // 邀请函（原住民准入）：贝弗莉室地毯上 ~30%/厅 散落一封——v55b 起为可交互装饰结构（阅读即弹地标卡可前往）
@@ -533,7 +533,7 @@ export function genL5ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
       } else {
         // 餐厅：挑高（ceiling=1，任务3）+ 白桌布餐桌阵列 + 吊灯 ×3 + 蓝金中央长毯 + 舞台角（东南角台口两张桌 + 角上烛台；桌子不压角格邻位——防 1 格孤岛）
         ceilRectW(x0, y0, x1, y1)
-        pushClipped('rug', bcx - 1, y0 + 2, 3, y1 - y0 - 3, { tex: 'l5_carpet_blue.png' })
+        pushClipped('rug', bcx - 1, y0 + 2, 3, y1 - y0 - 3, { tex: 'l5_carpet.jpg' })
         for (let x = x0 + 2; x <= x1 - 2; x += 3)
           for (let y = y0 + 2; y <= y1 - 2; y += 3)
             if (!nearSpawn(x, y) && !backSet.has(`${x},${y}`)) pushStruct('dtable', x, y, 1, 1, true)
@@ -733,8 +733,8 @@ export function genL5ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
   }
 
   // ---- 走廊灯网（暖金，竖廊/横廊每 7 格一盏；落在大厅内腔的跳过——大厅有自己的灯网）----
-  // v55：走廊精致化——红金长条地毯 runner（竖廊 3×8 / 横廊 8×2 段，首尾相接整齐排列）+
-  // 顶部灯带（lightgrid 每 4 格，同避让大厅/房间内腔）
+  // 走廊地毯由 tint 21 地形网格以世界 UV 连续渲染；不再叠加 rug runner，避免横竖交汇处
+  // 两个共面平面 z-fighting 和不同长宽比造成的纹样拉伸。顶部灯带仍每 4 格排列。
   for (let k = kMin; k <= kMax; k++) {
     const kx = l5CorrX(seed, k), off = h32(seed, 0x5c11, k) % 7
     if (kx + 1 < WX || kx + 1 > WX + CS - 1) continue
@@ -743,7 +743,6 @@ export function genL5ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
     const roff = h32(seed, 0x5c13, k) % 8
     for (let y = WY - (WY % 8) + roff; y < WY + CS; y += 8) {
       if (l5RegionAt(seed, kx + 1, y + 3)?.variant != null || l5RegionAt(seed, kx + 1, y)?.variant != null) continue
-      pushClipped('rug', kx, y, 3, 8) // 竖廊 runner（满宽 3，段长 8 首尾相接；跨 chunk 切片推送）
       if (((y >> 3) & 1) === 0) pushStruct('lightgrid', kx + 1, y + 4, 1, 1, false) // 顶部灯带
     }
   }
@@ -755,7 +754,6 @@ export function genL5ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
     const roff = h32(seed, 0x5c14, r) % 8
     for (let x = WX - (WX % 8) + roff; x < WX + CS; x += 8) {
       if (l5RegionAt(seed, x + 3, ry)?.variant != null || l5RegionAt(seed, x, ry)?.variant != null) continue
-      pushClipped('rug', x, ry, 8, 2) // 横廊 runner（段长 8 × 高 2 满高；跨 chunk 切片推送）
       if (((x >> 3) & 1) === 0) pushStruct('lightgrid', x + 4, ry, 1, 1, false)
     }
   }

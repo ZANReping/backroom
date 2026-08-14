@@ -1,6 +1,6 @@
 // v53：NPC/对话/委托/声望（游荡步进、杰瑞教化、BRC 模仿/坦白、传教、EL3A 物流与补给）——
 // 自 engine.ts 拆分，逻辑逐语句搬运。
-import { tileAt, solidStructAtFloor, upAt, upWallAt } from '../world/mapgen'
+import { bandOfPlayerZ, bandOfZ, tileAt, solidStructAtFloor, upAt, upWallAt } from '../world/mapgen'
 import { NPCS, JERRY_PREACH_LINES, JERRY_CHANT_LINES } from '../content/npcs'
 import { OUTPOSTS } from '../content/outposts'
 import { FACTIONS, genQuest, genBntgQuest, genArianeQuest, genEl3aQuest, genJerryQuest, type QuestDef, type QuestFaction } from '../content/factions'
@@ -181,13 +181,24 @@ export function confessBrc(eng: Engine, npcId: string): boolean {
 // ---------- v45：杰瑞的信众 / Level 274 教化系统 ----------
 /** 视线内 2.5m 内的活体杰瑞实体（接触/驯服判定共用） */
 export function aimJerry(eng: Engine): Entity | null {
-  const p = eng.player
+  const p = eng.player, m = eng.map
+  if (!m) return null
+  const band = bandOfPlayerZ(m, p.z)
+  let best: { e: Entity; a: number; d: number } | null = null
   for (const e of eng.map?.entities ?? []) {
     if (e.dead || e.def.type !== 'jerry') continue
-    const d = Math.hypot(e.x - p.x, e.y - p.y)
-    if (d <= 2.5 && eng.inView(e.x, e.y, 2.5)) return e
+    const entityBand = bandOfZ(e.z)
+    if (entityBand !== band) continue
+    const probe = eng.interactionProbe(e.x, e.y, e.z + 0.8, entityBand, 2.5, 0.4, {
+      minX: e.x - 0.42, minY: e.y - 0.42, minZ: e.z,
+      maxX: e.x + 0.42, maxY: e.y + 0.42, maxZ: e.z + 1.6,
+    })
+    if (!probe) continue
+    if (!best || probe.a < best.a - 1e-4 || (Math.abs(probe.a - best.a) <= 1e-4 && probe.d < best.d)) {
+      best = { e, ...probe }
+    }
   }
-  return null
+  return best?.e ?? null
 }
 
 /** 对话「认同：杰瑞是最伟大的」是否可选（DialogOverlay 显示条件与引擎判定同一口径）：
@@ -254,8 +265,8 @@ export function hurtJerryRep(eng: Engine) {
 /** 接触杰瑞：jerry 声望 +5（每次）+ 教化 +25 + 触发诵咏；驯服后接触不再积累教化；
  *  v47：内置 20s 冷却（防连点刷声望/教化；冷却剩余在 HUD 交互提示显示） */
 export function contactJerry(eng: Engine, ent?: Entity): boolean {
-  const p = eng.player
-  const j = ent && !ent.dead && ent.def.type === 'jerry' && Math.hypot(ent.x - p.x, ent.y - p.y) < 2.6 ? ent : eng.aimJerry()
+  const aimed = eng.aimJerry()
+  const j = ent ? (aimed === ent ? ent : null) : aimed
   if (!j) return false
   if (eng.jerryContactCd > 0) {
     eng.msg(`鹉主刚刚赐福过你——先消化这份恩典。（接触冷却 ${Math.ceil(eng.jerryContactCd)}s）`, 'system')

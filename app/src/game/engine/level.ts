@@ -1,6 +1,6 @@
 // v53：层级切换与出口（loadLevel/takeExit/可行走灰色阶梯/据点往返/无限窗口平移）——
 // 自 engine.ts 拆分，逻辑逐语句搬运；eng 参数即 Engine 实例（公共 API 门面仍在 engine.ts）。
-import { generateLevel } from '../world/mapgen'
+import { bandOfPlayerZ, floorHeight, generateLevel } from '../world/mapgen'
 import { levelDefOf, levelLabel, NORMAL_LEVELS } from '../levels'
 import { canOccupy, PLAYER_RADIUS } from '../core/player'
 import { audio } from '../core/audio'
@@ -8,7 +8,7 @@ import { NPCS, type NpcDef } from '../content/npcs'
 import { OUTPOSTS, isLandmarkStruct } from '../content/outposts'
 import { FACTIONS, REP_TIER } from '../content/factions'
 import { updateInfinite, l0NearestExit, chunkKey, CS } from '../world/infinite'
-import type { ExitDef, ExitInstance } from '../core/types'
+import type { ExitDef, ExitInstance, FloorBand } from '../core/types'
 import type { Engine } from '../engine'
 import { resetEffects } from './effects'
 import { persist as persistSave } from './save'
@@ -27,6 +27,8 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   // v54：经古典楼梯抵达（同上取走标记；仅 L5 消费——L4→L5 落楼梯 2 格外空旷地板）
   const viaOldstairs = eng.arriveOldstairs && !restore
   eng.arriveOldstairs = false
+  const l6Band = id === 6 && !restore ? (eng.arriveL6Band ?? 0) : null
+  eng.arriveL6Band = null
   // v29a：读档恢复时复用存档记录的地图种子与首访标记，保证复现同一张图
   const mapSeed = restore?.mapSeed ?? (eng.seed + eng.time * 7 + id * 131)
   const fv = restore?.firstVisit ?? firstVisit
@@ -75,6 +77,25 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   eng.player.vz = 0
   eng.player.crouching = false
   eng.player.floor = 0
+  if (id === 6 && l6Band !== null) {
+    const target = l6Band
+    const stair = eng.map.structures.find((s) => s.kind === 'l6stairwell' && (s.floor ?? 0) === target)
+    const cx = stair ? stair.x + 0.5 : eng.map.spawn.x + 0.5
+    const cy = stair ? stair.y + 0.5 : eng.map.spawn.y + 0.5
+    let placed = false
+    outer: for (let r = 1; r <= 10; r++) for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) {
+      if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue
+      const x = Math.floor(cx) + dx + 0.5, y = Math.floor(cy) + dy + 0.5
+      const z = floorHeight(eng.map, x, y, target)
+      if (!canOccupy(eng.map, x, y, PLAYER_RADIUS, { z, band: target })) continue
+      eng.player.x = x; eng.player.y = y; eng.player.z = z; eng.player.floor = target; placed = true
+      break outer
+    }
+    if (!placed && target === -1) {
+      eng.player.z = floorHeight(eng.map, eng.player.x, eng.player.y, -1)
+      eng.player.floor = -1
+    }
+  }
   eng.introT = 0 // 层级切换不播爬起动画
   eng.inLiquid = 0
   eng.submerged = false
@@ -123,6 +144,7 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   eng.ambientT = 10 + Math.random() * 8
   audio.startHum(id)
   audio.startBGM(id)
+  if (id === 6) audio.stopBGM() // L6 除罕见幻听外保持寂静
   if (id === 4) audio.startRain() // v54：L4 常驻雨声（永不止歇的大雨）；离层即停
   else audio.stopRain()
   eng.emit({ kind: 'levelchange' })
@@ -155,6 +177,8 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
     boilerdeep: '锅炉房深处的管道后面有一道下行的口子。据说从那里能到 Level 6。',
     darkwooddoor: '某间客房的门颜色深得不对劲——那不是客房门。',
     seastairs: '往下走，仔细听——某个方向传来极微弱的海浪声。',
+    seahatch: '苔原某处的井盖下传来极微弱的海浪声。',
+    cave8: '地下廊道深处，有一段墙面坍成了天然洞穴。',
     coldgate: '你摸到一扇金属门，冰得手指发麻。',
     wiretrip: '脚踝高度有一根绷紧的细线。别绊到——除非你想去 Level 6.1。',
     seacave: '入口正下方那座海山的侧面，有一个黑色的洞口。',
@@ -216,6 +240,84 @@ export function updateInfiniteWindow(eng: Engine) {
     if (c && !c.exits.some((e) => e.def === eng.bonusExit!.def)) c.exits.push(exit)
   }
 }
+
+export type RestorePlacementResult = 'exact' | 'nearby' | 'spawn' | 'legacy-spawn'
+
+/**
+ * 恢复存档落点。
+ *
+ * 无限层的 player.x/y 是流式窗口局部坐标，窗口平移后不能跨会话直接复用；新存档先用
+ * worldPos 把窗口移回对应世界区块，再验证碰撞。旧存档没有绝对坐标，安全回退到入口。
+ * 有限层也做碰撞校验，以兼容地图更新后原落点被新墙体/家具占用的存档。
+ */
+export function restoreSavedPlayerPosition(
+  eng: Engine,
+  worldPos?: { x: number; y: number },
+): RestorePlacementResult {
+  const m = eng.map!
+  const p = eng.player
+
+  const findSafe = (cx: number, cy: number, band: FloorBand, maxR: number) => {
+    for (let r = 0; r <= maxR; r++) {
+      for (let dy = -r; dy <= r; dy++) {
+        for (let dx = -r; dx <= r; dx++) {
+          if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue
+          const x = Math.floor(cx) + dx + 0.5
+          const y = Math.floor(cy) + dy + 0.5
+          const tx = Math.floor(x), ty = Math.floor(y)
+          if (tx < 1 || ty < 1 || tx >= m.w - 1 || ty >= m.h - 1) continue
+          const i = ty * m.w + tx
+          // 自动挪位不把玩家放进深坑、深水或楼梯半坡；这些位置虽可能可通行，但不是稳定读档点。
+          if (m.elev[i] === 4 || m.liquid[i] === 1 || (m.stair[i] & 7) !== 0) continue
+          const z = floorHeight(m, x, y, band)
+          if (!canOccupy(m, x, y, PLAYER_RADIUS, { z, crouch: false, band })) continue
+          return { x, y, z, band }
+        }
+      }
+    }
+    return null
+  }
+
+  const place = (spot: { x: number; y: number; z: number; band: FloorBand }) => {
+    p.x = spot.x
+    p.y = spot.y
+    p.z = spot.z
+    p.vz = 0
+    p.floor = spot.band
+    p.crouching = false
+  }
+
+  if (m.inf) {
+    const validWorld = worldPos && Number.isFinite(worldPos.x) && Number.isFinite(worldPos.y)
+    if (!validWorld) {
+      const spawn = findSafe(m.spawn.x + 0.5, m.spawn.y + 0.5, 0, 12)
+        ?? findSafe(m.w / 2, m.h / 2, 0, Math.floor(m.w / 2) - 2)
+      if (spawn) place(spawn)
+      else { p.x = m.spawn.x + 0.5; p.y = m.spawn.y + 0.5; p.z = 0; p.vz = 0; p.floor = 0; p.crouching = false }
+      return 'legacy-spawn'
+    }
+
+    // 先把绝对坐标换算到初始窗口，再复用正常流式平移逻辑加载正确的世界区块。
+    p.x = worldPos.x - m.inf.ox
+    p.y = worldPos.y - m.inf.oy
+    updateInfiniteWindow(eng)
+  }
+
+  const finitePosition = Number.isFinite(p.x) && Number.isFinite(p.y) && Number.isFinite(p.z)
+  const band = finitePosition ? bandOfPlayerZ(m, p.z) : 0
+  p.floor = band
+  p.vz = 0 // 不恢复暂停瞬间的下落速度，避免载入首帧再次穿入地面/楼板。
+  if (finitePosition && canOccupy(m, p.x, p.y, PLAYER_RADIUS, { z: p.z, crouch: p.crouching, band })) return 'exact'
+
+  const nearby = Number.isFinite(p.x) && Number.isFinite(p.y) ? findSafe(p.x, p.y, band, 16) : null
+  if (nearby) { place(nearby); return 'nearby' }
+
+  // 上层附近若已无有效楼板，回到本地图（或当前无限窗口）中心附近的主层安全地面。
+  const spawn = findSafe(m.inf ? m.w / 2 : m.spawn.x + 0.5, m.inf ? m.h / 2 : m.spawn.y + 0.5, 0, Math.floor(Math.max(m.w, m.h) / 2) - 2)
+  if (spawn) place(spawn)
+  else { p.x = m.spawn.x + 0.5; p.y = m.spawn.y + 0.5; p.z = 0; p.vz = 0; p.floor = 0; p.crouching = false }
+  return 'spawn'
+}
 export function nearestExit(eng: Engine) {
   const p = eng.player, m = eng.map!
   // v17 无限模式：解析式最近保底出口（窗口外也可指向，适配出口提示/气流/音效）
@@ -224,16 +326,18 @@ export function nearestExit(eng: Engine) {
     // 优先窗口内已加载出口（可交互实例）
     let best: { x: number; y: number } | null = null, bd = 1e9
     for (const e of m.exits) {
+      if ((e.floor ?? 0) !== bandOfPlayerZ(m, p.z)) continue
       const d = Math.hypot(e.x + 0.5 - p.x, e.y + 0.5 - p.y)
       if (d < bd) { bd = d; best = e }
     }
     if (best && bd < 40) return { x: best.x, y: best.y, d: bd }
-    const w = l0NearestExit(m, eng.levelDef, inf.ox + p.x, inf.oy + p.y)
+    const w = l0NearestExit(m, eng.levelDef, inf.ox + p.x, inf.oy + p.y, bandOfPlayerZ(m, p.z))
     if (w && (!best || w.d < bd)) return w
     return best ? { x: best.x, y: best.y, d: bd } : w
   }
   let best: { x: number; y: number } | null = null, bd = 1e9
   for (const e of m.exits) {
+    if ((e.floor ?? 0) !== bandOfPlayerZ(m, p.z)) continue
     const d = Math.hypot(e.x + 0.5 - p.x, e.y + 0.5 - p.y)
     if (d < bd) { bd = d; best = e }
   }
@@ -312,6 +416,7 @@ export function takeExit(eng: Engine, def: ExitDef) {
   if (def.kind === 'elevatorshaft') eng.arriveElevator = true
   // v54：经古典楼梯 → 抵达 L5 时出生点改到该层保底楼梯 2 格外空旷地板（L4↔L5 双向链）
   if (def.kind === 'oldstairs') eng.arriveOldstairs = true
+  if (def.dest === 6) eng.arriveL6Band = p.level === 5 && def.kind === 'boilerdeep' ? -1 : 0
   // v23：立刻解析 random 目标——过场演出需要知道「切入」的是哪一层
   // v35：'back' 解析为进入据点前的层级（据点入口的返程）
   const resolved = def.dest === 'back' ? (eng.outpostReturn ?? 1) : def.dest
@@ -320,6 +425,27 @@ export function takeExit(eng: Engine, def: ExitDef) {
   const cutIn = dest === 'win' ? undefined : (def.cutIn ?? levelDefOf(dest)?.entryAnim)
   eng.transition = { anim: def.anim, t: 0, dest, fallDamage: def.fallDamage }
   eng.emit({ kind: 'transition', anim: def.anim, fallDamage: def.fallDamage, cutIn, dest })
+}
+
+/** Level 6 内部换层：楼梯井双向，地表塌陷坑仅向下。 */
+export function switchL6Floor(eng: Engine, target: -1 | 0, reason: 'stairs' | 'pit' = 'stairs'): boolean {
+  if (!eng.map || eng.levelDef.id !== 6) return false
+  const m = eng.map, p = eng.player
+  let best: { x: number; y: number; z: number } | null = null
+  for (let r = 0; r <= (reason === 'pit' ? 18 : 8) && !best; r++) {
+    for (let dy = -r; dy <= r && !best; dy++) for (let dx = -r; dx <= r; dx++) {
+      if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue
+      const x = Math.floor(p.x) + dx + 0.5, y = Math.floor(p.y) + dy + 0.5
+      const z = floorHeight(m, x, y, target)
+      if (canOccupy(m, x, y, PLAYER_RADIUS, { z, band: target, crouch: false })) best = { x, y, z }
+    }
+  }
+  if (!best) return false
+  p.x = best.x; p.y = best.y; p.z = best.z; p.vz = 0; p.floor = target; p.crouching = false
+  eng.inLiquid = 0; eng.submerged = false
+  eng.emit({ kind: 'floorchange', text: reason === 'pit' ? '冻土崩塌——你坠入地下廊道' : target === -1 ? '沿废弃楼梯井进入地下' : '你重新推开通往苔原的井盖' })
+  eng.msg(reason === 'pit' ? '地面在脚下塌陷。短暂失重后，你撞进一条发霉的地下廊道。' : target === -1 ? '你沿着生锈的楼梯下行。最后一点天光消失了。' : '井盖被推开，近黑天空的微光重新落在冻土上。', 'lore')
+  return true
 }
 // ---------- v29：可行走灰色阶梯（走下去→L1 / 走上去→L0，自动换层，无需按 E）----------
 export function updateStairs(eng: Engine, dt: number) {

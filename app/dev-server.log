@@ -1,0 +1,688 @@
+
+  [32m[1mVITE[22m v7.3.0[39m  [2mready in [0m[1m583[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m3000[22m/[39m
+[2m  [32m➜[39m  [1mNetwork[22m[2m: use [22m[1m--host[22m[2m to expose[22m
+[2m[32m  ➜[39m[22m[2m  press [22m[1mh + enter[22m[2m to show help[22m
+Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+
+A PostCSS plugin did not pass the `from` option to `postcss.parse`. This may cause imported assets to be incorrectly transformed. If you've recently added a PostCSS plugin that raised this warning, please contact the package author to fix the issue.
+[2m02:13:50[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/TouchControls.tsx, /src/components/HUD.tsx, /src/components/AvatarPreview.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m02:13:51[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m02:13:51[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m02:13:51[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/InventoryOverlay.tsx[22m Could not Fast Refresh ("discoverFromEngine" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m02:13:51[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx[22m
+[2m02:13:51[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/TouchControls.tsx, /src/components/HUD.tsx[22m
+[2m02:13:52[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m02:13:52[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m02:14:17[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/TouchControls.tsx, /src/components/HUD.tsx[22m
+[2m02:14:18[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/HUD.tsx, /src/components/InventoryOverlay.tsx, /src/components/DesignMode.tsx, /src/components/TouchControls.tsx[22m
+[2m02:14:19[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m02:14:19[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m02:14:50[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/HUD.tsx, /src/components/DesignMode.tsx[22m
+[2m02:14:50[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m02:14:50[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m02:14:50[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css[22m
+[2m02:16:47[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/HUD.tsx, /src/components/InventoryOverlay.tsx, /src/components/DesignMode.tsx, /src/components/TouchControls.tsx[22m
+[2m02:16:48[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m02:16:48[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m02:16:48[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/InventoryOverlay.tsx[22m Could not Fast Refresh ("discoverFromEngine" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m02:16:48[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx[22m
+[2m02:16:48[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/HUD.tsx, /src/components/InventoryOverlay.tsx, /src/components/DesignMode.tsx, /src/components/TouchControls.tsx[22m
+[2m02:16:48[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m02:16:48[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m02:16:48[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/InventoryOverlay.tsx[22m Could not Fast Refresh ("discoverFromEngine" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m02:16:48[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx[22m
+[2m02:21:56[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/TouchControls.tsx, /src/components/HUD.tsx[22m
+[2m02:21:57[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/HUD.tsx, /src/components/InventoryOverlay.tsx, /src/components/DesignMode.tsx, /src/components/TouchControls.tsx[22m
+[2m02:21:57[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/TouchControls.tsx, /src/components/HUD.tsx[22m
+[2m02:21:57[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m02:21:57[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m02:39:27[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/TouchControls.tsx, /src/components/HUD.tsx[22m
+[2m02:39:28[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/SettingsModal.tsx, /src/index.css[22m
+[2m02:39:28[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m02:39:28[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m02:39:28[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/SettingsModal.tsx[22m Could not Fast Refresh ("THEMES" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m02:39:28[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx[22m
+[2m02:39:28[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/index.css[22m
+[2m02:39:29[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/HUD.tsx, /src/components/InventoryOverlay.tsx, /src/components/DesignMode.tsx, /src/components/TouchControls.tsx[22m
+[2m02:39:30[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/HUD.tsx, /src/components/InventoryOverlay.tsx, /src/components/DesignMode.tsx, /src/components/TouchControls.tsx[22m
+[2m02:39:30[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/TouchControls.tsx, /src/components/HUD.tsx[22m
+[2m02:39:31[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m02:39:31[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m02:39:31[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/TouchControls.tsx, /src/components/HUD.tsx[22m
+[2m02:39:32[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m02:39:32[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m02:43:39[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/SettingsModal.tsx, /src/index.css[22m
+[2m02:43:39[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/SettingsModal.tsx[22m Could not Fast Refresh ("THEMES" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m02:43:39[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx[22m
+[2m02:43:40[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/TouchControls.tsx, /src/components/HUD.tsx[22m
+[2m02:43:40[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m02:43:40[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m02:49:18[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/TouchControls.tsx, /src/components/HUD.tsx[22m
+[2m02:49:19[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/TouchControls.tsx, /src/components/HUD.tsx[22m
+[2m02:49:19[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m02:49:19[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m03:03:41[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/TouchControls.tsx, /src/components/HUD.tsx[22m
+[2m03:03:41[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m03:03:41[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m03:03:41[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/DeathScreen.tsx, /src/components/HUD.tsx, /src/components/InventoryOverlay.tsx, /src/components/DesignMode.tsx, /src/components/TouchControls.tsx[22m
+[2m03:03:42[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m03:03:42[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m03:03:42[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/InventoryOverlay.tsx[22m Could not Fast Refresh ("discoverFromEngine" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m03:03:42[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx[22m
+[2m03:08:23[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/TouchControls.tsx, /src/components/HUD.tsx[22m
+[2m03:08:24[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m03:08:24[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m03:08:24[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/DeathScreen.tsx, /src/components/HUD.tsx, /src/components/InventoryOverlay.tsx, /src/components/DesignMode.tsx, /src/components/TouchControls.tsx[22m
+[2m03:08:25[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m03:08:25[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m03:08:25[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/InventoryOverlay.tsx[22m Could not Fast Refresh ("discoverFromEngine" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m03:08:25[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx[22m
+[2m03:23:17[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/index.css[22m
+[2m03:23:18[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx[22m
+[2m03:23:18[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/index.css[22m
+[2m03:23:19[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/index.css[22m
+[2m03:25:24[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx[22m
+[2m03:38:48[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/index.css[22m
+[2m03:39:11[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/PauseMenu.tsx, /src/index.css[22m
+[2m03:39:12[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/index.css[22m
+[2m03:44:28[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/PauseMenu.tsx, /src/index.css[22m
+[2m04:01:04[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css[22m
+[2m04:01:05[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/HUD.tsx, /src/components/InventoryOverlay.tsx, /src/components/DesignMode.tsx, /src/components/TouchControls.tsx, /src/index.css[22m
+[2m04:01:05[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:05[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:05[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:05[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:05[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:05[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:05[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:05[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:05[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:05[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:05[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:05[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:05[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:05[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:05[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:05[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:05[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:05[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:05[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:05[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:05[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:05[22m [31m[1m[vite][22m[39m [31mInternal server error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+      at TransformPluginContext._formatLog (file:///C:/Users/ZANRe/Documents/Default%20Project/backroom/app/node_modules/vite/dist/node/chunks/config.js:28998:43)
+      at TransformPluginContext.error (file:///C:/Users/ZANRe/Documents/Default%20Project/backroom/app/node_modules/vite/dist/node/chunks/config.js:28995:14)
+      at normalizeUrl (file:///C:/Users/ZANRe/Documents/Default%20Project/backroom/app/node_modules/vite/dist/node/chunks/config.js:27118:18)
+      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+      at async file:///C:/Users/ZANRe/Documents/Default%20Project/backroom/app/node_modules/vite/dist/node/chunks/config.js:27176:32
+      at async Promise.all (index 11)
+      at async TransformPluginContext.transform (file:///C:/Users/ZANRe/Documents/Default%20Project/backroom/app/node_modules/vite/dist/node/chunks/config.js:27144:4)
+      at async EnvironmentPluginContainer.transform (file:///C:/Users/ZANRe/Documents/Default%20Project/backroom/app/node_modules/vite/dist/node/chunks/config.js:28796:14)
+      at async loadAndTransform (file:///C:/Users/ZANRe/Documents/Default%20Project/backroom/app/node_modules/vite/dist/node/chunks/config.js:22669:26)
+      at async viteTransformMiddleware (file:///C:/Users/ZANRe/Documents/Default%20Project/backroom/app/node_modules/vite/dist/node/chunks/config.js:24541:20)
+[2m04:01:05[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx[22m
+[2m04:01:06[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:06[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:06[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:06[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:06[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:06[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:06[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:01:06[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:03:07[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css[22m
+[2m04:03:08[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/HUD.tsx, /src/components/InventoryOverlay.tsx, /src/components/DesignMode.tsx, /src/components/TouchControls.tsx[22m
+[2m04:03:08[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:03:08[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:03:08[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:03:08[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:03:08[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:03:08[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:03:08[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:03:08[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:03:08[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:03:08[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:03:08[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:03:08[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:03:08[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:03:08[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:03:08[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:03:08[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:03:08[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:03:08[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:03:08[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:03:08[22m [31m[1m[vite][22m[39m [31mInternal server error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+      at TransformPluginContext._formatLog (file:///C:/Users/ZANRe/Documents/Default%20Project/backroom/app/node_modules/vite/dist/node/chunks/config.js:28998:43)
+      at TransformPluginContext.error (file:///C:/Users/ZANRe/Documents/Default%20Project/backroom/app/node_modules/vite/dist/node/chunks/config.js:28995:14)
+      at normalizeUrl (file:///C:/Users/ZANRe/Documents/Default%20Project/backroom/app/node_modules/vite/dist/node/chunks/config.js:27118:18)
+      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+      at async file:///C:/Users/ZANRe/Documents/Default%20Project/backroom/app/node_modules/vite/dist/node/chunks/config.js:27176:32
+      at async Promise.all (index 11)
+      at async TransformPluginContext.transform (file:///C:/Users/ZANRe/Documents/Default%20Project/backroom/app/node_modules/vite/dist/node/chunks/config.js:27144:4)
+      at async EnvironmentPluginContainer.transform (file:///C:/Users/ZANRe/Documents/Default%20Project/backroom/app/node_modules/vite/dist/node/chunks/config.js:28796:14)
+      at async loadAndTransform (file:///C:/Users/ZANRe/Documents/Default%20Project/backroom/app/node_modules/vite/dist/node/chunks/config.js:22669:26)
+[2m04:03:08[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:03:08[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "./infiniteL6" from "src/game/world/mapgen.ts". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/ZANRe/Documents/Default Project/backroom/app/src/game/world/mapgen.ts[39m:14:7
+[33m  10 |  import "./infiniteL4";
+  11 |  import "./infiniteL5";
+  12 |  import "./infiniteL6";
+     |          ^
+  13 |  import { genDeep } from "./mapgenDeep";
+  14 |  import { genOutpost } from "./mapgenOutpost";[39m
+[2m04:03:09[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/HUD.tsx, /src/components/InventoryOverlay.tsx, /src/components/DesignMode.tsx, /src/components/TouchControls.tsx[22m
+[2m04:03:09[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:03:09[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m04:03:09[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/InventoryOverlay.tsx[22m Could not Fast Refresh ("discoverFromEngine" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:03:09[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx[22m
+[2m04:03:21[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/HUD.tsx, /src/components/InventoryOverlay.tsx, /src/components/DesignMode.tsx, /src/components/TouchControls.tsx[22m
+[2m04:03:21[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:03:21[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m04:03:21[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/InventoryOverlay.tsx[22m Could not Fast Refresh ("discoverFromEngine" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:03:21[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx[22m
+[2m04:05:27[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/index.css[22m
+[2m04:05:59[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx[22m
+[2m04:06:14[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx[22m
+[2m04:06:15[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx[22m
+[2m04:06:54[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/DeathScreen.tsx, /src/components/HUD.tsx, /src/components/InventoryOverlay.tsx, /src/components/DesignMode.tsx, /src/components/TouchControls.tsx[22m
+[2m04:06:54[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:06:54[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m04:06:54[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/InventoryOverlay.tsx[22m Could not Fast Refresh ("discoverFromEngine" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:06:54[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx[22m
+[2m04:06:54[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx[22m
+[2m04:08:31[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/TouchControls.tsx, /src/components/HUD.tsx[22m
+[2m04:08:31[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:08:31[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m04:08:31[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/TouchControls.tsx, /src/components/HUD.tsx[22m
+[2m04:08:32[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/TouchControls.tsx, /src/components/HUD.tsx[22m
+[2m04:08:33[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:08:33[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m04:09:02[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/TouchControls.tsx, /src/components/HUD.tsx[22m
+[2m04:09:03[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:09:03[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m04:09:03[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/TouchControls.tsx, /src/components/HUD.tsx[22m
+[2m04:09:05[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:09:05[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m04:09:19[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/index.css[22m
+[2m04:09:20[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css[22m
+[2m04:10:59[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx[22m
+[2m04:11:00[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/index.css[22m
+[2m04:11:00[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx[22m
+[2m04:11:01[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/HUD.tsx, /src/components/DesignMode.tsx, /src/components/InventoryOverlay.tsx, /src/components/TouchControls.tsx[22m
+[2m04:11:02[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/index.css[22m
+[2m04:11:02[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:11:02[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m04:11:02[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/InventoryOverlay.tsx[22m Could not Fast Refresh ("discoverFromEngine" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:11:02[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx[22m
+[2m04:11:32[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx[22m
+[2m04:13:09[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/VictoryScreen.tsx, /src/components/LootPanel.tsx, /src/components/NotebookOverlay.tsx, /src/components/HowToPlay.tsx, /src/components/AvatarEditor.tsx, /src/components/Cutscene.tsx, /src/components/TouchControls.tsx, /src/components/DeathScreen.tsx, /src/components/DocOverlay.tsx, /src/components/SettingsModal.tsx, /src/components/FallIntro.tsx, /src/components/HUD.tsx, /src/components/InventoryOverlay.tsx, /src/components/FullscreenButton.tsx, /src/index.css[22m
+[2m04:13:10[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/SettingsModal.tsx[22m Could not Fast Refresh ("THEMES" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:13:10[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx[22m
+[2m04:13:10[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:13:10[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m04:13:10[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/InventoryOverlay.tsx[22m Could not Fast Refresh ("discoverFromEngine" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:13:10[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx[22m
+[2m04:13:10[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx[22m
+[2m04:13:11[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx[22m
+[2m04:13:11[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/TouchControls.tsx, /src/components/HUD.tsx[22m
+[2m04:15:19[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/HUD.tsx, /src/components/InventoryOverlay.tsx, /src/components/DesignMode.tsx, /src/components/TouchControls.tsx, /src/index.css[22m
+[2m04:15:19[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:15:19[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m04:15:19[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/InventoryOverlay.tsx[22m Could not Fast Refresh ("discoverFromEngine" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:15:19[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx[22m
+[2m04:15:20[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/HUD.tsx, /src/components/InventoryOverlay.tsx, /src/components/DesignMode.tsx, /src/components/TouchControls.tsx[22m
+[2m04:15:21[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/HUD.tsx, /src/components/InventoryOverlay.tsx, /src/components/DesignMode.tsx, /src/components/TouchControls.tsx[22m
+[2m04:15:21[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/HUD.tsx, /src/components/InventoryOverlay.tsx, /src/components/DesignMode.tsx, /src/components/TouchControls.tsx, /src/index.css[22m
+[2m04:15:56[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/TouchControls.tsx, /src/components/HUD.tsx[22m
+[2m04:15:56[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:15:56[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m04:15:57[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/TouchControls.tsx, /src/components/HUD.tsx[22m
+[2m04:15:58[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx[22m
+[2m04:15:58[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:15:58[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m04:15:59[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx[22m
+[2m04:15:59[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx[22m
+[2m04:16:59[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx[22m
+[2m04:17:00[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx[22m
+[2m04:17:01[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/HUD.tsx, /src/index.css[22m
+[2m04:17:02[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:17:02[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m04:17:02[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/InventoryOverlay.tsx[22m Could not Fast Refresh ("discoverFromEngine" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:17:02[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx[22m
+[2m04:18:35[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/InventoryOverlay.tsx, /src/index.css[22m
+[2m04:18:35[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/InventoryOverlay.tsx[22m Could not Fast Refresh ("discoverFromEngine" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:18:35[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx[22m
+[2m04:18:36[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/HUD.tsx, /src/index.css[22m
+[2m04:18:36[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:18:36[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m04:18:37[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/InventoryOverlay.tsx[22m Could not Fast Refresh ("discoverFromEngine" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:18:37[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx[22m
+[2m04:19:16[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx[22m
+[2m04:19:17[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/TouchControls.tsx, /src/components/HUD.tsx[22m
+[2m04:19:17[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:19:17[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m04:19:18[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx[22m
+[2m04:19:18[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/DeathScreen.tsx, /src/components/HUD.tsx, /src/components/InventoryOverlay.tsx, /src/components/DesignMode.tsx, /src/components/TouchControls.tsx[22m
+[2m04:20:13[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/HUD.tsx, /src/components/InventoryOverlay.tsx, /src/components/DesignMode.tsx, /src/components/TouchControls.tsx, /src/index.css[22m
+[2m04:20:14[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:20:14[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m04:20:14[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/InventoryOverlay.tsx[22m Could not Fast Refresh ("discoverFromEngine" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:20:14[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx[22m
+[2m04:20:14[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/TouchControls.tsx, /src/components/HUD.tsx[22m
+[2m04:20:16[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:20:16[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m
+[2m04:27:12[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/index.css, /src/App.tsx, /src/components/LandmarkOverlay.tsx, /src/components/PauseMenu.tsx, /src/components/TitleScreen.tsx, /src/components/RadioOverlay.tsx, /src/components/DialogOverlay.tsx, /src/components/HUD.tsx, /src/components/DesignMode.tsx[22m
+[2m04:27:12[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/components/HUD.tsx[22m Could not Fast Refresh ("MINIMAP_COLORS" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m04:27:12[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/components/LootPanel.tsx, /src/components/DialogOverlay.tsx, /src/components/InventoryOverlay.tsx[22m

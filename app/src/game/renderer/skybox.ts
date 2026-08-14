@@ -63,6 +63,16 @@ export const SKY_PROFILES: Record<number, SkyProfile> = {
     ],
     sunLight: 0.08, sunColor: '#9fb0d8',
   },
+  // L6：近乎无光的苔原夜空。低空小月亮藏在厚云后，云层只保留冷灰轮廓；
+  // 实际可见度由 renderer 的暗适应曲线逐渐抬升，而不是把天空/地面做成自发光。
+  6: {
+    zenith: '#010208', zenithMid: '#030610', horizon: '#080b12', haze: '#010207',
+    stars: 0.025,
+    clouds: { density: 0.72, color: '#101722', alpha: 0.42, cirrus: 0.34 },
+    moon: { az: 252, elv: 14, size: 7, color: '#c4ccd8' },
+    horizonGlow: [{ color: '#263044', alpha: 0.025 }],
+    sunLight: 0.045, sunColor: '#75849a',
+  },
   7: {
     zenith: '#41545f', zenithMid: '#465c68', horizon: '#4b6572', haze: '#2e3d46',
     clouds: { density: 0.5, color: '#5c6f76', alpha: 0.26, cirrus: 0.1 },

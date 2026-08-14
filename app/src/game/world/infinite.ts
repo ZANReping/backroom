@@ -9,7 +9,7 @@ import { makeEntity, ENTITIES, type Entity } from '../entities'
 import type { NpcState } from '../content/npcs'
 import type { GameMap } from './mapgen'
 import { fixHanging, HANGING_KINDS } from './mapgen'
-import type { ExitInstance, GroundItem, LevelDef, LightSource, Structure } from '../core/types'
+import type { ExitInstance, FloorBand, GroundItem, LevelDef, LightSource, Structure } from '../core/types'
 
 export const CS = 32 // chunk 边长（瓦片）
 export const WIN_R = 2 // 窗口半径（chunk）：5×5 chunk = 160×160 瓦片
@@ -75,6 +75,9 @@ export interface LiveChunk {
   outdoor?: Uint8Array // v54：室外瓦片（L4 窗景区窗外虚空；缺省=全室内，stitch 补 0）
   ceiling?: Uint8Array // v54：挑高瓦片（L5 主厅；缺省=正常层高，stitch 补 0）
   liquid?: Uint8Array // v54：液体瓦片（L5 室内泳池；缺省=无液体，stitch 补 0）
+  dn?: Uint8Array // v56 九轮：地下可走地板瓦片（Level 6 -1F；缺省=全 0）
+  dnWall?: Uint8Array // v56 九轮：地下墙体瓦片（Level 6 -1F；缺省=全 0）
+  terrain?: Float32Array
   // 以下为「活体」对象（窗口坐标，随窗口平移；跨平移保持对象身份与状态）
   structures: Structure[]
   items: GroundItem[]
@@ -674,7 +677,7 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
   }
   const lights: LightSource[] = raw.lights.map((l) => ({ ...l, x: l.x - ox, y: l.y - oy }))
   for (const e of st?.extraLights ?? []) lights.push({ ...e, x: e.x - ox, y: e.y - oy })
-  const exits: ExitInstance[] = raw.exits.map((e) => ({ def: e.def, x: e.x - ox, y: e.y - oy, discovered: st?.exitDisc ?? false }))
+  const exits: ExitInstance[] = raw.exits.map((e) => ({ def: e.def, x: e.x - ox, y: e.y - oy, floor: e.floor, discovered: st?.exitDisc ?? false }))
   // v25：chunk 实体（栖息地过滤结果，世界坐标 → 窗口坐标）
   // v41：calm 实例标记（L2 被动死亡飞蛾）——浅拷贝 def 置被动语义，不污染共享实体定义
   // v44：scale 实例标记（L2 温顺死亡飞蛾体型 0.6）——与 calm 一并浅拷贝带入
@@ -697,7 +700,7 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
     moveT: 1 + Math.random() * 5, bubbleText: '', bubbleT: 0,
     hp: sp.def.faction === 'brc' ? 55 : sp.def.faction === 'jerry' ? 45 : undefined, // BRC 员工/信众可伤害可杀死；其余 NPC 无敌（据点居民契约）
   }))
-  return { key, cx, cy, variant: raw.variant, tiles: raw.tiles, wet: raw.wet, elev: raw.elev, tint: raw.tint, crawl: raw.crawl, outdoor: raw.outdoor, ceiling: raw.ceiling, liquid: raw.liquid, structures, items, lights, exits, entities, npcs, habFallback: raw.habFallback }
+  return { key, cx, cy, variant: raw.variant, tiles: raw.tiles, wet: raw.wet, elev: raw.elev, tint: raw.tint, crawl: raw.crawl, outdoor: raw.outdoor, ceiling: raw.ceiling, liquid: raw.liquid, dn: raw.dn, dnWall: raw.dnWall, terrain: raw.terrain, structures, items, lights, exits, entities, npcs, habFallback: raw.habFallback }
 }
 
 // 把已加载 chunk 内容缝合进窗口数组与对象列表
@@ -709,6 +712,8 @@ function stitch(m: GameMap, explored?: Uint8Array) {
   m.crawl.fill(0); m.ceiling.fill(0); m.up.fill(0); m.upWall.fill(0)
   m.up2.fill(0); m.upWall2.fill(0) // v54：三层数组同步清空
   m.stair.fill(0); m.liquid.fill(0); m.tint.fill(0)
+  m.dn.fill(0); m.dnWall.fill(0) // v56 九轮：地下平面数组同步清除
+  m.terrain?.fill(0)
   if (explored) explored.fill(0)
   m.structures = []; m.items = []; m.lights = []; m.exits = []
   const habFb: Record<string, number> = {}
@@ -728,6 +733,9 @@ function stitch(m: GameMap, explored?: Uint8Array) {
         if (c.outdoor) m.outdoor[di] = c.outdoor[si] // v54：室外瓦片随窗口缝合（L4 窗景区窗外虚空）
         if (c.ceiling) m.ceiling[di] = c.ceiling[si] // v54：挑高瓦片随窗口缝合（L5 主厅挑高）
         if (c.liquid) m.liquid[di] = c.liquid[si] // v54：液体瓦片随窗口缝合（L5 室内泳池）
+        if (c.dn) m.dn[di] = c.dn[si] // v56 九轮：地下可走地板随窗口缝合（L6 -1F 走廊）
+        if (c.dnWall) m.dnWall[di] = c.dnWall[si] // v56 九轮：地下墙体随窗口缝合（L6 -1F）
+        if (c.terrain && m.terrain) m.terrain[di] = c.terrain[si]
       }
     }
     // 台阶：raw 的 step 未存进 LiveChunk（pit 台阶由 elev 派生重建）——这里按 elev 边重建
@@ -843,6 +851,10 @@ export function generateInfinite(def: LevelDef, seed: number, firstVisit = true)
     liquid: new Uint8Array(W * W),
     floors: 1,
     tint: new Uint8Array(W * W),
+    dn: new Uint8Array(W * W), // v56 九轮：地下平面（Level 6 -1F；其余层级全 0）
+    dnWall: new Uint8Array(W * W), // v56 九轮：地下墙体（Level 6 -1F；其余层级全 0）
+    hasUnderground: def.id === 6,
+    terrain: new Float32Array(W * W),
     inf: {
       seed, ox: -WIN_R * CS, oy: -WIN_R * CS,
       chunks: new Map(), explored: new Map(), state: new Map(),
@@ -1009,14 +1021,14 @@ export function applyRedPlague(m: GameMap) {
 }
 
 // ---------- 无限模式出口定位（解析式：无需加载 chunk，超区域出口世界坐标缓存）----------
-export function l0RegionExitPos(m: GameMap, rx: number, ry: number, def: LevelDef): { x: number; y: number } | null {
+export function l0RegionExitPos(m: GameMap, rx: number, ry: number, def: LevelDef, floor?: FloorBand): { x: number; y: number } | null {
   const inf = m.inf!
-  const key = `${rx},${ry}`
+  const key = `${rx},${ry},${floor ?? '*'}`
   const hit = inf.regionExits.get(key)
   if (hit) return hit
   const host = regionHost(inf.seed, rx, ry)
   const raw = infiniteImplFor(def.id).genRaw(def, inf.seed, host.cx, host.cy, inf.plague ? 'red' : undefined)
-  const e = raw.exits[0]
+  const e = raw.exits.find((q) => floor === undefined || (q.floor ?? 0) === floor)
   if (!e) return null
   const pos = { x: e.x + 0.5, y: e.y + 0.5 }
   mapSetCapped(inf.regionExits, key, pos, 256)
@@ -1024,14 +1036,14 @@ export function l0RegionExitPos(m: GameMap, rx: number, ry: number, def: LevelDe
 }
 
 // 距世界点 (wx, wy) 最近的保底出口（返回窗口坐标 + 距离）
-export function l0NearestExit(m: GameMap, def: LevelDef, wx: number, wy: number): { x: number; y: number; d: number } | null {
+export function l0NearestExit(m: GameMap, def: LevelDef, wx: number, wy: number, floor?: FloorBand): { x: number; y: number; d: number } | null {
   const inf = m.inf
   if (!inf) return null
   const rx = Math.floor(wx / (CS * RS)), ry = Math.floor(wy / (CS * RS))
   let best: { x: number; y: number } | null = null, bd = 1e9
   for (let j = ry - 1; j <= ry + 1; j++)
     for (let i = rx - 1; i <= rx + 1; i++) {
-      const p = l0RegionExitPos(m, i, j, def)
+      const p = l0RegionExitPos(m, i, j, def, floor)
       if (!p) continue
       const d = Math.hypot(p.x - wx, p.y - wy)
       if (d < bd) { bd = d; best = p }

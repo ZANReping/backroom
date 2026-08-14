@@ -7,9 +7,10 @@
 //   interactive=scanInteract 可交互（聚合 decorations/lore.ts 的 DECOR_VIEWS + engine 交互 case）。
 // 生成层级按生成器实际摆放审计填写（依据写在各条 note；labels 见 DECOR_LEVEL_ORDER）：
 //   infinite.ts(L0) / infiniteL1.ts(L1) / infiniteL2.ts(L2) / infiniteL3.ts(L3) / infiniteL4.ts(L4，v54) /
-//   mapgen.ts + mapgenDeep.ts + prefabs/(L5–L11/L601) / mapgenOutpost.ts(据点 101–105 与 L274)。
+//   infiniteL5.ts(L5) / infiniteL6.ts(L6) / mapgen.ts + mapgenDeep.ts + prefabs/(L7–L11/L601) /
+//   mapgenOutpost.ts(据点 101–109 与 L274)。
 // 注意：LevelDef.structures 列表目前无任何消费者（纯文档，与生成器可能脱节），本表以生成器代码为准；
-//   L0–L4 已无限化（def.infinite），mapgen 的 rooms/garage/pipes/grid/office 有限分支与 L0–L3 prefab 为死代码。
+//   L0–L6 已无限化（def.infinite），mapgen 的旧有限分支及 mapgenDeep L6 分支为死代码。
 import { CONTAINERS } from '../decorations/containers'
 import { DECOR_VIEWS } from '../decorations/lore'
 
@@ -94,10 +95,15 @@ const RAW: RawEntry[] = [
   S('glassdoor', '玻璃门', 'solid', [], '有限 mapgen hotel 庭院泳池门——L5 已无限化（新 L5 单层无户外庭院），当前实际不到达（死代码）'),
   S('lift', '载客电梯', 'nonsolid', ['L4'], 'mapgen office 夹层电梯（轿厢垂直送达上层）'),
   // ===== L6–L11 / L601 =====
-  S('hotpipe', '热管道', 'nonsolid', ['L6'], 'mapgenDeep L6 贴墙（黑暗中的触觉导航）'),
-  S('lightswitch', '电灯开关', 'nonsolid', ['L6'], 'mapgenDeep L6 固定点（官方警告：不要拨）'),
-  S('tripwire', '绊线', 'nonsolid', ['L6'], 'mapgenDeep L6；触碰触发切出（引擎接近判定，非 scanInteract）'),
-  S('braille', '墙面刻痕/盲文', 'nonsolid', ['L6'], 'mapgenDeep L6 贴墙'),
+  S('hotpipe', '锈蚀管道网', 'nonsolid', ['L6'], 'infiniteL6 地下廊道贴墙；旧 mapgenDeep L6 分支为死代码'),
+  S('braille', '墙面刻痕/盲文', 'nonsolid', ['L6'], 'infiniteL6 地下廊道贴墙'),
+  S('deadshrub', '枯灌木', 'nonsolid', ['L6'], 'infiniteL6 地表苔原散点'),
+  S('tundrarock', '苔原巨石', 'solid', ['L6'], 'infiniteL6 地表稀疏巨石'),
+  S('crystalcluster', '晶簇', 'solid', ['L6'], 'infiniteL6 地表稀有晶簇'),
+  S('stinkgrass', '恶臭草地', 'nonsolid', ['L6'], 'infiniteL6 地表森林间草地'),
+  S('obelisk', '方尖碑', 'solid', ['L6'], 'infiniteL6 地表稀有地标，可阅读模糊刻字'),
+  S('l6stairwell', '废弃楼梯井', 'nonsolid', ['L6'], 'infiniteL6 地表/地下同坐标双向切层入口'),
+  S('l6cave', '天然洞口', 'nonsolid', ['L6'], 'infiniteL6 地下稀有出口，通往 L8'),
   S('bookcase', '书柜', 'solid', ['L7'], 'mapgenDeep L7 入口房间'),
   S('barrel', '木桶', 'solid', ['L7'], 'mapgenDeep L7 海床散点'),
   S('rockisle', '岩石小岛', 'nonsolid', ['L7'], 'mapgenDeep L7'),
@@ -194,7 +200,7 @@ const RAW: RawEntry[] = [
   S('divingboard', '跳台', 'solid', ['L5'], 'v54：infiniteL5 游泳池深水端（短柱+悬挑跳板，板面可站上；data.deg 朝向）'),
   S('gymbench', '健身卧推凳', 'solid', ['L5'], 'v54：infiniteL5 健身房（凳面+杠铃架+杠铃片组；data.deg 朝向）'),
   S('darkdoorblock', '深色木门碰撞块（仅碰撞）', 'solid', ['L5'], 'v55：infiniteL5 darkwooddoor 出口格——无模型（可见门在出口模型里），整格实心碰撞（关闭时不可穿）'),
-  S('rug', '华丽地毯', 'nonsolid', ['L5'], 'v55：infiniteL5 走廊 runner（3×8/8×2 段首尾相接）+ 大厅/房间地毯块（data.tex 红金/蓝金、data.layer 多层叠放）'),
+  S('rug', '华丽地毯', 'nonsolid', ['L5'], 'L5 大厅/房间独立地毯块（CC0 真实织物 PBR，data.tex 红/蓝、data.layer 多层叠放）；走廊直接使用连续世界 UV 地毯地形'),
   S('redpillar', '红木纹方柱', 'solid', ['L5'], 'v55：infiniteL5 主厅柱阵（红色大理石观感 + 金色柱头/柱础；挑高自适应）'),
   S('ceilingbeam', '装饰横梁', 'nonsolid', ['L5'], 'v55：infiniteL5 主厅吊顶格横梁（沿 local X 横跨全厅；贴挑高顶）'),
   S('oddtable', '异形小桌', 'solid', ['L5'], 'v55：infiniteL5 贝弗莉室中央（不规则歪腿 + 桌面饮料瓶群 + 未打完的麻将）'),

@@ -7,7 +7,8 @@
 // v7：z 轴高度系统——canOccupy 增加 z/crouch 选项：
 //   - 高差 > STEP_UP(0.65m) 的瓦片不可直接踏上（跳跃滞空时 p.z 抬高后可通过）；
 //   - 蹲伏低通道（crawl=1）未蹲伏不可进入。
-import { groundHeightAt, structBlocksPoint, bandOfZ, stairServesBand, upAt, upWallAt, STEP_UP, type GameMap } from '../world/mapgen'
+import { floorHeight, structBlocksPoint, bandOfZ, stairServesBand, walkableAt, STEP_UP, type GameMap } from '../world/mapgen'
+import type { FloorBand } from './types'
 
 export const PLAYER_RADIUS = 0.32
 export const FIXED_STEP = 1 / 120 // 固定物理子步（秒）
@@ -18,13 +19,13 @@ export interface Vec2 { x: number; y: number }
 export interface OccupyOpts {
   z?: number // 脚底当前高度（米）
   crouch?: boolean // 是否蹲伏（低通道必需）
-  band?: 0 | 1 | 2 // v13：所在楼层高度带（缺省按 z 推断）；1=上层走 up 楼板，0=主层走 tiles；v54：2=三层走 up2 楼板
+  band?: FloorBand
 }
 
 // 8 点采样（四角 + 四边中点）判断半径 r 的圆能否位于 (x,y)，防止角落穿透
 export function canOccupy(m: GameMap, x: number, y: number, r = PLAYER_RADIUS, opts: OccupyOpts = {}): boolean {
   const z = opts.z ?? 0
-  const band: 0 | 1 | 2 = opts.band ?? bandOfZ(z)
+  const band: FloorBand = opts.band ?? bandOfZ(z)
   // v46：中心格是否为楼梯坡道（爬楼梯途中 z≥1.5 换带时，身体悬出坡道边缘属正常，见下方溢出放行）
   const ctx = Math.floor(x), cty = Math.floor(y)
   const centerStair = ctx >= 0 && cty >= 0 && ctx < m.w && cty < m.h && (m.stair[cty * m.w + ctx] & 7) !== 0
@@ -45,8 +46,7 @@ export function canOccupy(m: GameMap, x: number, y: number, r = PLAYER_RADIUS, o
       if (!centerStair && !stairServesBand(m.stair[i], band)) return false
       if (structBlocksPoint(m, sx, sy, z, band)) return false
     } else if (band >= 1) {
-      const b = band as 1 | 2 // 已排除 band 0（TS 不按 >= 收窄字面量联合）
-      if (upAt(m, b)[i] !== 1 || upWallAt(m, b)[i] === 1) {
+      if (!walkableAt(m, tx, ty, band)) {
         // v46 楼梯溢出放行：中心在坡道、采样格是普通主层地板（上空无物）→ 放行
         // （此前一律按「上层无楼板」拦截——爬坡到 z≥1.5 换带瞬间，半径采样扫到坡道旁的
         // 一层地板即卡死，是「阶梯边缘移动卡死 / 多层交界处无法跳跃」的根因）；
@@ -56,14 +56,14 @@ export function canOccupy(m: GameMap, x: number, y: number, r = PLAYER_RADIUS, o
         spill = true
       } else if (structBlocksPoint(m, sx, sy, z, band)) return false
     } else {
-      if (m.tiles[i] !== 1) return false
-      if (structBlocksPoint(m, sx, sy, z, 0)) return false
+      if (!walkableAt(m, tx, ty, band)) return false
+      if (structBlocksPoint(m, sx, sy, z, band)) return false
       // 蹲伏低通道：头顶风道，未蹲伏不可进入
-      if (m.crawl && m.crawl[i] === 1 && !opts.crouch) return false
+      if (band === 0 && m.crawl && m.crawl[i] === 1 && !opts.crouch) return false
     }
     // 高度档：目标地面高于脚底 STEP_UP 以上不可直接踏上（跳跃抬高 z 后放行）
     // （溢出格按主层地面计——悬在一层上空时一层地面远低于脚底，不再误拦）
-    const g = groundHeightAt(m, sx, sy, spill ? 0 : band)
+    const g = floorHeight(m, sx, sy, spill ? 0 : band)
     if (g - z > STEP_UP) return false
   }
   return true
@@ -95,7 +95,7 @@ export function integrateMove(
   speed: number,
   frameDt: number,
   it: MoveIntegrator,
-  opts: { noclip?: boolean; radius?: number; z?: number; crouch?: boolean; band?: 0 | 1 | 2 } = {},
+  opts: { noclip?: boolean; radius?: number; z?: number; crouch?: boolean; band?: FloorBand } = {},
 ): Vec2 {
   const r = opts.radius ?? PLAYER_RADIUS
   it.acc = Math.min(it.acc + frameDt, FIXED_STEP * MAX_SUBSTEPS)

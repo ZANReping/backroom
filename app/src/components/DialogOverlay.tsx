@@ -16,6 +16,8 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
   const def = NPCS[npcId] ?? engine.npcs.find((n) => n.id === npcId)?.def ?? engine.knownNpcs.find((n) => n.id === npcId)
   const [node, setNode] = useState(0)
   const [mode, setMode] = useState<'chat' | 'trade' | 'chatpage' | 'quest' | 'warehouse'>('chat')
+  // v56：乐手演奏反馈（演奏中的曲名提示）
+  const [playNote, setPlayNote] = useState('')
   // 委托三选一（生成 → 选择 → 确认接取）
   const [offers, setOffers] = useState<import('@/game/content/factions').QuestDef[]>([])
   const [selOffer, setSelOffer] = useState(0)
@@ -61,10 +63,16 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
   const isRand = npcId.startsWith('rand_')
   const [smallTalk, setSmallTalk] = useState<string>(() => def.idle[Math.floor(Math.random() * def.idle.length)] ?? '')
 
-  const pick = (next?: number, action?: 'trade' | 'leave') => {
+  const pick = (next?: number, action?: 'trade' | 'leave' | 'play') => {
     audio.uiTick()
     if (action === 'trade') { setMode('trade'); return }
     if (action === 'leave') { onClose(); return }
+    if (action === 'play') {
+      // v56：乐手演奏——MIDI 曲风下随机摇滚风格（收听后进电台），程序化曲风下普通摇滚
+      const name = engine.musicianPlay()
+      setPlayNote(`${def.name}弹起了「${name}」……`)
+      return
+    }
     setNode(next ?? 0)
   }
   const openChatPage = () => {
@@ -121,6 +129,11 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
               >
                 {noTalk ? `「……我跟你没什么好说的。」（与${fac!.name}的声望过低）` : isRand && !useLlm ? smallTalk : line}
               </div>
+              {playNote && (
+                <div className="mb-2 border p-1.5 text-[12px]" style={{ borderColor: 'var(--panel-edge)', color: 'var(--amber)' }}>
+                  ♪ {playNote}
+                </div>
+              )}
               {noTalk ? (
                 <div className="mb-2 flex flex-col gap-1">
                   <button className="menu-btn px-3 py-1.5 text-left text-[12px]" onClick={() => { audio.uiTick(); onClose() }}>告辞。</button>
@@ -281,6 +294,13 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
                       >包裹弄丢了……认栽（委托失败，声望 -3）</button>
                     )}
                   </>
+                )}
+                {/* v56：乐手乔伊——演奏中可叫停（停下后吉他收起、背景音乐恢复） */}
+                {def.id === 'joey' && engine.joeyPlaying && (
+                  <button
+                    className="menu-btn px-3 py-1.5 text-left text-[12px]"
+                    onClick={() => { engine.musicianStop(); setPlayNote(''); audio.uiTick() }}
+                  >先停一下，别弹了。</button>
                 )}
                 {def.id === 'vesper' && engine.canClaimEl3aRelief() && (
                   <button
@@ -485,7 +505,9 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
                 <div className="mb-3 border p-3 text-[13px] leading-relaxed" style={{ borderColor: 'var(--panel-edge)', color: 'var(--text)' }}>
                   「生意？免谈。」（与{fac!.name}的声望过低，交易被拒绝）
                 </div>
-              ) : def.barter ? (
+              ) : (
+              <>
+              {def.barter && (
               <>
               {/* 以物易物（阿丽亚娜医疗品↔物资 / Tom 的餐馆食材↔菜肴：无货币，可含第二种食材 give2） */}
               <div className="mb-2 text-[12px]" style={{ color: 'var(--text-dim)' }}>
@@ -520,9 +542,9 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
                   )
                 })}
               </div>
-              <button className="menu-btn px-3 py-1.5 text-[12px]" onClick={() => { audio.uiTick(); setMode('chat') }}>返回交谈</button>
               </>
-              ) : (
+              )}
+              {def.trade && (
               <>
               <div className="mb-2 text-[12px]" style={{ color: 'var(--text-dim)' }}>
                 {coinName}结账，概不赊欠。（{coinName}：{engine.countItem(coinItem)} {coinUnit}
@@ -573,6 +595,8 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
                   )
                 })}
               </div>
+              </>
+              )}
               <button className="menu-btn px-3 py-1.5 text-[12px]" onClick={() => { audio.uiTick(); setMode('chat') }}>返回交谈</button>
               </>
               )}

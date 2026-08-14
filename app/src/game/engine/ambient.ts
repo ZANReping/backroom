@@ -34,6 +34,15 @@ export function updateAmbient(eng: Engine, dt: number) {
 // ---------- 层级氛围事件（wiki 设定播报）----------
 export function rollAmbientEvent(eng: Engine) {
   const lvl = eng.player.level
+  if (lvl === 6) {
+    // 只有地表会出现极远的自然声幻听；大多数轮次维持彻底寂静。
+    if (eng.player.floor === 0 && Math.random() < 0.18) {
+      const bird = Math.random() < 0.36
+      audio.tundraHallucination(bird)
+      eng.msg(bird ? '极远处传来两三声鸟鸣。你抬头时，天空仍旧空无一物。' : '一阵很远的风声擦过地平线；身边的枯枝却没有动。', 'lore')
+    }
+    return
+  }
   // L1「闪烁」现象（Fandom：停电数分钟到数天，实体倾巢而出）——低频率随机发生
   if (lvl === 1 && eng.blackoutT <= 0 && eng.blackoutWarnT <= 0 && !eng.dev.phenOff.has('flicker') && Math.random() < 0.12) {
     eng.startBlackout(14 + Math.random() * 10)

@@ -15,6 +15,7 @@ export interface EquipVisual {
   cavingsuit?: boolean // 保温服：棕褐棉衣 + 反光条
   divemask?: boolean // 潜水面罩：镜框 + 视窗玻璃 + 头带
   headlamp?: boolean // 头灯：头带 + 额前灯体
+  nightvision?: boolean // 夜视眼镜：双目镜片 + 头带
 }
 
 // 颜色按系数压暗（手动 hex 运算，离线桩环境无 THREE.Color 全套 API）
@@ -428,6 +429,15 @@ export function buildPlayerModel(cfg: AvatarCfg, ev: EquipVisual = {}): THREE.Gr
     bx(headG, 0.27, 0.035, 0.25, '#3a3a3e', 0, 0.2, 0)
     bx(headG, 0.08, 0.06, 0.04, '#2a2d30', 0, 0.2, 0.14)
     bx(headG, 0.05, 0.04, 0.012, '#fff2c0', 0, 0.2, 0.165)
+  }
+  // 夜视眼镜（头饰栏）：暗绿双目镜片、鼻梁与环绕头带
+  if (ev.nightvision) {
+    bx(headG, 0.11, 0.075, 0.035, '#26322b', -0.07, 0.145, 0.145)
+    bx(headG, 0.11, 0.075, 0.035, '#26322b', 0.07, 0.145, 0.145)
+    bx(headG, 0.075, 0.025, 0.03, '#1b211d', 0, 0.145, 0.145)
+    bx(headG, 0.075, 0.045, 0.012, '#78b886', -0.07, 0.145, 0.166)
+    bx(headG, 0.075, 0.045, 0.012, '#78b886', 0.07, 0.145, 0.166)
+    bx(headG, 0.28, 0.03, 0.02, '#343b37', 0, 0.155, -0.13)
   }
 
   g.userData.parts = { torso, head: headG, armL, armR, legL, legR }

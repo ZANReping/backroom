@@ -10,7 +10,8 @@ import { ENTITY_FACTION, FACTION_FONTS, IOTS_FREQ_COLORS, IOTS_FREQ_VALUES, IOTS
 import { WIN_TAPES, LEVELS, levelNo, levelLabel, levelDefOf } from '@/game/levels'
 import { prefabsForLevel } from '@/game/prefabs'
 import { infiniteImplFor } from '@/game/world/infinite'
-import { stairServesBand } from '@/game/world/mapgen'
+import { bandOfZ, stairServesBand } from '@/game/world/mapgen'
+import type { FloorBand } from '@/game/core/types'
 import { CONTAINER_KINDS } from '@/game/decorations/containers'
 import { ItemGlyph } from './HUD'
 import AvatarPreview from './AvatarPreview'
@@ -100,14 +101,15 @@ function BigMap({ engine }: { engine: Engine }) {
   // v13 楼层契约（防御性读取，缺省不显示）
   const pf = (engine.player as unknown as { floor?: unknown }).floor
   const mf = (engine.map as unknown as { floors?: unknown } | null)?.floors
-  const floorText = typeof pf === 'number' && Number.isFinite(pf) && typeof mf === 'number' && mf > 1
-    ? `当前 ${Math.max(0, Math.floor(pf)) + 1}F / 共${Math.floor(mf)}层`
+  const hasDn = !!engine.map?.hasUnderground
+  const floorText = typeof pf === 'number' && Number.isFinite(pf) && (hasDn || (typeof mf === 'number' && mf > 1))
+    ? `当前 ${pf === -1 ? '地下层' : `${Math.floor(pf) + 1}F`}${hasDn ? ' / 地表+地下' : ` / 共${Math.floor(mf as number)}层`}`
     : null
   // v43：多层地图——默认跟随玩家所在层，可手动切换（仅多层时显示按钮；v54：支持三层 1F/2F/3F）
   const floors = typeof mf === 'number' && mf > 1 ? Math.floor(mf) : 1
-  const playerBand = typeof pf === 'number' && Number.isFinite(pf) ? Math.max(0, Math.floor(pf)) : 0
-  const [floorSel, setFloorSel] = useState<0 | 1 | 2 | null>(null)
-  const viewFloor = floors > 1 ? Math.min(floors - 1, floorSel ?? playerBand) : 0
+  const playerBand = (typeof pf === 'number' && Number.isFinite(pf) ? Math.max(-1, Math.min(2, Math.floor(pf))) : 0) as FloorBand
+  const [floorSel, setFloorSel] = useState<FloorBand | null>(null)
+  const viewFloor: FloorBand = floorSel ?? playerBand
   useEffect(() => {
     const c = ref.current
     const m = engine.map
@@ -128,7 +130,10 @@ function BigMap({ engine }: { engine: Engine }) {
         const i = y * m.w + x
         if (!engine.explored[i]) continue
         // v43：多层按层过滤——上层画 up 楼板（灰绿底色区分），主层画 tiles；v54：三层视图画 up2 楼板
-        if (floors > 1 && viewFloor >= 1) {
+        if (viewFloor === -1) {
+          if (m.dn[i] !== 1 && m.dnWall[i] !== 1) continue
+          g.fillStyle = m.dnWall[i] === 1 ? '#141713' : '#2a3027'
+        } else if (floors > 1 && viewFloor >= 1) {
           const upA = viewFloor === 2 ? m.up2 : m.up
           const wallA = viewFloor === 2 ? m.upWall2 : m.upWall
           if (upA[i] !== 1 && wallA[i] !== 1) continue
@@ -166,7 +171,7 @@ function BigMap({ engine }: { engine: Engine }) {
     // 容器：方框（亮=未搜刮，暗=已搜刮）；v43：按结构的所属楼层过滤
     for (const st of m.structures) {
       if (!CONTAINER_KINDS.includes(st.kind)) continue
-      if (floors > 1 && (st.floor ?? 0) !== viewFloor) continue
+      if ((hasDn || floors > 1) && (st.floor ?? 0) !== viewFloor) continue
       const idx = Math.floor(st.y + st.h / 2) * m.w + Math.floor(st.x + st.w / 2)
       if (idx < 0 || idx >= m.w * m.h || !engine.explored[idx]) continue
       g.fillStyle = st.looted ? 'rgba(160,140,90,0.35)' : '#c9a03a'
@@ -174,7 +179,7 @@ function BigMap({ engine }: { engine: Engine }) {
     }
     // 地面物品：小青点（v43：按物品高度带过滤；v54：三层高度带）
     for (const it of m.items) {
-      if (floors > 1 && ((it.z ?? 0) >= 4.5 ? 2 : (it.z ?? 0) >= 1.5 ? 1 : 0) !== viewFloor) continue
+      if ((hasDn || floors > 1) && bandOfZ(it.z ?? 0) !== viewFloor) continue
       const idx = Math.floor(it.y) * m.w + Math.floor(it.x)
       if (idx < 0 || idx >= m.w * m.h || !engine.explored[idx]) continue
       g.fillStyle = '#6ad9c9'
@@ -213,7 +218,8 @@ function BigMap({ engine }: { engine: Engine }) {
     // 出口：金点 + 名称（楼梯类出口始终可见，其余需已发现；出口都在主层）
     g.font = '9px monospace'
     g.textAlign = 'left'
-    if (viewFloor === 0) for (const e of m.exits) {
+    for (const e of m.exits) {
+      if ((e.floor ?? 0) !== viewFloor) continue
       const isStairs = e.def.kind === 'graystairs' || e.def.kind === 'graystairsup' || e.def.kind === 'stairs'
         || e.def.kind === 'oldstairs' // v54：L4 古典楼梯小地图常显
       if (!e.discovered && !isStairs) continue
@@ -248,16 +254,16 @@ function BigMap({ engine }: { engine: Engine }) {
           onPointerUp={() => { drag.current = null }}
           onPointerCancel={() => { drag.current = null }}
         />
-        {floors > 1 && (
+        {(hasDn || floors > 1) && (
           <div className="absolute right-1 top-1/2 flex -translate-y-1/2 flex-col gap-1">
-            {Array.from({ length: floors }, (_, f) => f).map((f) => ( // v54：按楼层数动态生成（1F/2F/3F）
+            {(hasDn ? [-1, 0] : Array.from({ length: floors }, (_, f) => f)).map((f) => (
               <button
                 key={f}
                 className="menu-btn px-2 py-1 text-[11px]"
                 style={viewFloor === f ? { borderColor: 'var(--amber)', color: 'var(--amber)' } : { opacity: 0.55 }}
                 title={`查看 ${f + 1}F`}
-                onClick={() => { setFloorSel(f === playerBand ? null : (f as 0 | 1 | 2)); audio.uiTick() }}
-              >{f + 1}F{f === playerBand ? '·' : ''}</button>
+                onClick={() => { setFloorSel(f === playerBand ? null : (f as FloorBand)); audio.uiTick() }}
+              >{f === -1 ? '地下' : `${f + 1}F`}{f === playerBand ? '·' : ''}</button>
             ))}
           </div>
         )}
@@ -804,7 +810,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
             ) : (
             <div className="hud-panel flex flex-col items-center gap-1 p-2">
               <div className="font-mono2 text-[11px]" style={{ color: 'var(--amber)' }}>装备</div>
-              <AvatarPreview avatar={loadAvatar()} gloves={p.hasGloves} suit={p.hasSuit} cavingsuit={p.equip.body?.type === 'cavingsuit'} divemask={p.equip.head?.type === 'divemask'} headlamp={p.equip.head?.type === 'headlamp'} size={132} />
+              <AvatarPreview avatar={loadAvatar()} gloves={p.hasGloves} suit={p.hasSuit} cavingsuit={p.equip.body?.type === 'cavingsuit'} divemask={p.equip.head?.type === 'divemask'} headlamp={p.equip.head?.type === 'headlamp'} nightvision={p.equip.head?.type === 'nightvision'} size={132} />
               <div className="mt-1 grid grid-cols-2 gap-1.5">
                 {/* 主手：展示快捷栏当前选中项（非独立槽位，不可拖放） */}
                 <div className="flex flex-col items-center gap-0.5">

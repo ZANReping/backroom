@@ -1,4 +1,5 @@
 // WebAudio 程序合成音频：荧光灯嗡鸣/脚步/受击/拾取/出口/低语/UI + 每层梦核BGM
+import { isAudioSong, loadMidi, musicAudioUrl, musicUrl, resolveMidiSong, type MidiNoteEv, type MidiSongParsed } from './midi'
 interface BgmLayer {
   level: number
   gain: GainNode
@@ -8,6 +9,33 @@ interface BgmLayer {
   nextT: number
   stepDur: number
   steps: number
+  dead: boolean
+}
+// v56：MIDI 播放层（.mid 文件解析出的音符事件 + 循环步进）
+type MidiVoice = 'piano' | 'epiano' | 'bell' | 'bass' | 'strings' | 'choir' | 'brass' | 'flute' | 'lead' | 'pad' | 'guitar'
+// 危险层级（Class 3+ / 高实体密度 / 极端环境）保留较锐利的原音色；其余层级改用舒缓音色
+const HARSH_LEVELS = new Set([2, 3, 6, 7, 8, 9])
+function isHarshLevel(level: number): boolean { return HARSH_LEVELS.has(level) }
+interface MidiLayer {
+  level: number
+  gain: GainNode
+  echo: DelayNode | null
+  song: MidiSongParsed
+  noteIdx: number
+  loopStart: number
+  harsh: boolean
+  oneshot?: boolean // v56：乐手演奏的一次性曲目（播完恢复 BGM，不循环）
+  dead: boolean
+}
+// v56：乐手程序化摇滚层（鼓/贝斯/强力和弦步进序列，播完恢复 BGM）
+interface RockLayer {
+  gain: GainNode
+  echo: DelayNode | null
+  harsh: boolean
+  step: number
+  nextT: number
+  stepDur: number
+  total: number
   dead: boolean
 }
 
@@ -24,6 +52,42 @@ export class GameAudio {
   private bgmLayer: BgmLayer | null = null
   private bgmTimer: ReturnType<typeof setInterval> | null = null
   private melIdx = 2 // 据点曲旋律随机漫步位置（五声音阶音级 0..4）
+  // v56：MIDI BGM（可切换曲风——以音符事件序列播放，与随机程序化 BGM 并存）
+  private bgmStyle: 'procedural' | 'midi' = 'procedural'
+  private bgmLevel = -1 // 当前 BGM 层级（切换曲风时用它重开）
+  private midiLayer: MidiLayer | null = null
+  private midiTimer: ReturnType<typeof setInterval> | null = null
+  private midiSongId = '' // 当前 MIDI BGM 曲目 id（电台收听记录用）
+  // v56：乐手演奏（一次性曲目，播完恢复 BGM）
+  private oneshot: MidiLayer | null = null
+  private rockLayer: RockLayer | null = null
+  // v56 三轮：离线渲染音频曲目（rock_*.mp3，FluidR3 真实音色）——循环 BGM 层与一次性演奏层
+  // v56 八轮：bufLayer 支持暂停/续播（电台播放时暂停原 BGM，停止后从暂停处续播）
+  private bufLayer: { gain: GainNode; src: AudioBufferSourceNode; buf: AudioBuffer; songId: string; startAt: number; offset: number; paused: boolean; dead: boolean } | null = null
+  private oneshotBuf: { gain: GainNode; src: AudioBufferSourceNode; dead: boolean } | null = null
+  private songBufCache = new Map<string, AudioBuffer>()
+  // v56 四轮：电台试听层（电台管理页预览曲目——循环/单次播放，支持暂停恢复；试听期间暂停 BGM）
+  private preview: {
+    songId: string
+    gain: GainNode
+    src: AudioBufferSourceNode | null
+    midi: MidiLayer | null
+    buf: AudioBuffer | null
+    loop: boolean
+    startAt: number
+    offset: number
+    paused: boolean
+    dead: boolean
+  } | null = null
+  // v56 八轮：电台播放期间被暂停的合成 BGM 层（缓冲层走 bufLayer.paused；合成层记增益静音）
+  private radioPausedSynth: { g: GainNode; v: number }[] = []
+  /** v56：曲目开始播放回调（引擎标记「已收听」→ 电台解锁；id 如 'l0'/'meg'/'rock_stones'） */
+  onSongPlayed: ((id: string) => void) | null = null
+
+  /** v56：当前 MIDI 曲风是否启用（暂停页电台管理按钮显示条件） */
+  get midiEnabled(): boolean { return this.bgmStyle === 'midi' }
+  /** v56：当前正在播放的曲目 id（乐手随机摇滚时避免重上一首） */
+  get currentSong(): string { return this.midiSongId }
   private distort = 0 // 理智扭曲 0..1
   private uwFilter: BiquadFilterNode | null = null // v13：水下低通（全局闷化）
   private underwater = false
@@ -84,6 +148,13 @@ export class GameAudio {
   setAmbVolume(v: number) { this.ambVol = v; if (this.ambient) this.ambient.gain.value = 0.5 * v }
   setSfxVolume(v: number) { this.sfxVol = v; if (this.sfx) this.sfx.gain.value = 0.9 * v }
   setBgmVolume(v: number) { this.bgmVol = v; if (this.bgmBus) this.bgmBus.gain.value = 0.55 * v }
+
+  // v56：BGM 曲风切换（procedural=随机程序化 / midi=音符序列）——切换即重开当前层级 BGM
+  setBgmStyle(style: 'procedural' | 'midi') {
+    if (style === this.bgmStyle) return
+    this.bgmStyle = style
+    if (this.bgmLevel >= 0) this.startBGM(this.bgmLevel)
+  }
 
   // 荧光灯嗡鸣（每层音高不同）
   startHum(levelId: number) {
@@ -180,8 +251,14 @@ export class GameAudio {
   private phonoTimer: ReturnType<typeof setInterval> | null = null
   private phonoNext = 0
   private phonoStep = 0
+  // v56 六轮：MIDI 曲风下留声机播放渲染版圆舞曲（phono.mp3 循环，距离衰减）
+  private phonoBuf: { src: AudioBufferSourceNode; gain: GainNode } | null = null
   setPhono(vol: number) {
     if (!this.ctx || !this.bgmBus) return
+    if (this.midiEnabled) {
+      this.setPhonoBuf(vol)
+      return
+    }
     if (!this.phonoGain) {
       const g = this.ctx.createGain()
       g.gain.value = 0
@@ -197,9 +274,50 @@ export class GameAudio {
       if (!this.phonoTimer) this.phonoTimer = setInterval(() => this.schedulePhono(), 110)
     }
     this.phonoGain.gain.setTargetAtTime(Math.min(1, vol) * 0.42, this.ctx.currentTime, 0.12)
-    // BGM 闪避（近场压低 75%；vol=0 即恢复）
-    if (this.bgmLayer && !this.bgmLayer.dead)
-      this.bgmLayer.gain.gain.setTargetAtTime(0.9 * (1 - Math.min(1, vol) * 0.75), this.ctx.currentTime, 0.3)
+    this.duckBgm(vol)
+  }
+
+  /** v56 六轮：渲染版留声机圆舞曲（MIDI 曲风）——近场开始播放即记收听（存入电台） */
+  private setPhonoBuf(vol: number) {
+    if (!this.ctx || !this.bgmBus) return
+    if (vol > 0.02 && !this.phonoBuf) {
+      void this.loadSongBuf('phono').then((buf) => {
+        if (!this.ctx || !this.bgmBus) return
+        const src = this.ctx.createBufferSource()
+        src.buffer = buf
+        src.loop = true
+        const g = this.ctx.createGain()
+        g.gain.setValueAtTime(0, this.ctx.currentTime)
+        g.gain.setTargetAtTime(0.42, this.ctx.currentTime, 0.5)
+        src.connect(g)
+        g.connect(this.bgmBus)
+        src.start()
+        this.phonoBuf = { src, gain: g }
+        this.onSongPlayed?.('phono') // v56 六轮：收听留声机 MIDI 版 → 电台解锁
+      })
+      return
+    }
+    if (this.phonoBuf) {
+      if (vol <= 0.02) {
+        const pb = this.phonoBuf
+        this.phonoBuf = null
+        pb.gain.gain.setTargetAtTime(0, this.ctx.currentTime, 0.4)
+        try { pb.src.stop(this.ctx.currentTime + 1.6) } catch { /* */ }
+      } else {
+        this.phonoBuf.gain.gain.setTargetAtTime(Math.min(1, vol) * 0.42, this.ctx.currentTime, 0.12)
+      }
+    }
+    this.duckBgm(vol)
+  }
+
+  // v56 六轮：留声机近场闪避 BGM（vol=0 即恢复；两种留声机共用）
+  private duckBgm(vol: number) {
+    if (!this.ctx) return
+    const ctk = this.ctx.currentTime
+    const duck = (g: GainNode | null) => { if (g) g.gain.setTargetAtTime(0.9 * (1 - Math.min(1, vol) * 0.75), ctk, 0.3) }
+    if (this.bgmLayer && !this.bgmLayer.dead) duck(this.bgmLayer.gain)
+    if (this.midiLayer && !this.midiLayer.dead) duck(this.midiLayer.gain)
+    if (this.bufLayer && !this.bufLayer.dead) duck(this.bufLayer.gain)
   }
   // 小调圆舞曲旋律（A 小调 3/4；每步一个八分音符，lookahead 调度；失谐量按步微漂=走调唱机）
   private schedulePhono() {
@@ -375,6 +493,26 @@ export class GameAudio {
     n.start(); n.stop(t + 0.85)
   }
 
+  /** L6 苔原的低概率幻听：极远风声或两三声无法定位的鸟鸣。 */
+  tundraHallucination(bird = false) {
+    if (!this.ctx || !this.sfx) return
+    const t = this.ctx.currentTime
+    const pan = this.ctx.createStereoPanner(); pan.pan.value = Math.random() * 1.8 - 0.9
+    const g = this.ctx.createGain(); g.gain.setValueAtTime(0.0001, t)
+    if (bird) {
+      g.gain.exponentialRampToValueAtTime(0.012, t + 0.22); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.8)
+      for (const [i, fq] of [1480, 1820, 1320].entries()) {
+        const o = this.ctx.createOscillator(); o.type = 'sine'; o.frequency.setValueAtTime(fq, t + i * 0.42); o.frequency.exponentialRampToValueAtTime(fq * 1.18, t + i * 0.42 + 0.16)
+        o.connect(pan); o.start(t + i * 0.42); o.stop(t + i * 0.42 + 0.24)
+      }
+      pan.connect(g).connect(this.sfx)
+    } else {
+      const n = this.noiseSrc(), lp = this.ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 430
+      g.gain.exponentialRampToValueAtTime(0.018, t + 1.2); g.gain.exponentialRampToValueAtTime(0.0001, t + 4.2)
+      n.connect(lp).connect(pan).connect(g).connect(this.sfx); n.start(t); n.stop(t + 4.3)
+    }
+  }
+
   swing() {
     if (!this.ctx || !this.sfx) return
     const n = this.noiseSrc()
@@ -527,6 +665,220 @@ export class GameAudio {
   startBGM(level: number) {
     this.ensure()
     if (!this.ctx || !this.bgmBus) return
+    this.bgmLevel = level
+    this.killOneshot() // v56：切层/换曲时终止乐手演奏（引擎清除演奏标记）
+    // v56：MIDI 曲风——直接加载播放 .mid 文件（与程序化层互斥，切换时先淡出对方）
+    if (this.bgmStyle === 'midi') {
+      this.startMidiBGM(level)
+      return
+    }
+    // 程序化曲风：淡出 MIDI 层后走 drone 随机层
+    this.fadeMidiLayer(this.ctx.currentTime, 0.8, 3200)
+    this.startProcedural(level)
+  }
+
+  stopBGM() {
+    const t = this.ctx ? this.ctx.currentTime : 0
+    this.bgmLevel = -1
+    if (this.bgmLayer && this.ctx) {
+      const old = this.bgmLayer
+      old.dead = true
+      old.gain.gain.setTargetAtTime(0, t, 0.5)
+      setTimeout(() => { for (const n of old.drones) { try { (n as OscillatorNode).stop() } catch { /* */ } } }, 2200)
+      this.bgmLayer = null
+    }
+    // v56：同时停止 MIDI 层
+    this.fadeMidiLayer(t, 0.5, 2200)
+    this.midiLayer = null
+    // v56 八轮：停掉渲染音频 BGM 层与乐手演奏/电台试听（退回标题不再有残留音乐）
+    if (this.bufLayer) {
+      const bl = this.bufLayer
+      bl.dead = true
+      bl.gain.gain.setTargetAtTime(0, t, 0.5)
+      try { bl.src.stop(t + 2.0) } catch { /* */ }
+      this.bufLayer = null
+    }
+    this.stopPreview(false)
+    this.radioPausedSynth = []
+    if (this.oneshotBuf) {
+      const ob = this.oneshotBuf
+      ob.dead = true
+      ob.gain.gain.setTargetAtTime(0, t, 0.4)
+      try { ob.src.stop(t + 1.2) } catch { /* */ }
+      this.oneshotBuf = null
+    }
+    if (this.oneshot) {
+      const o = this.oneshot
+      o.dead = true
+      o.gain.gain.setTargetAtTime(0, t, 0.4)
+      setTimeout(() => { o.gain.disconnect() }, 1200)
+      this.oneshot = null
+    }
+  }
+
+  // ================= v56：MIDI BGM 播放器（音符事件序列合成） =================
+
+  private startMidiBGM(level: number) {
+    if (!this.ctx || !this.bgmBus) return
+    // v56：电台配置解析（随层级/单层覆盖/固定曲目）
+    const songId = resolveMidiSong(level)
+    // v56 五轮：全部曲目优先走渲染音频（FluidR3 真实音色）；加载失败回退 WebAudio 合成
+    this.startBufferBGM(songId, level)
+  }
+
+  /** v56 三轮：加载并解码渲染音频（MP3 → AudioBuffer，模块级缓存） */
+  private loadSongBuf(songId: string): Promise<AudioBuffer> {
+    const cached = this.songBufCache.get(songId)
+    if (cached) return Promise.resolve(cached)
+    return fetch(musicAudioUrl(songId)).then((res) => {
+      if (!res.ok) throw new Error(`loadSongBuf ${songId}: ${res.status}`)
+      return res.arrayBuffer()
+    }).then((ab) => {
+      if (!this.ctx) throw new Error('no audio context')
+      return this.ctx.decodeAudioData(ab)
+    }).then((buf) => {
+      this.songBufCache.set(songId, buf)
+      return buf
+    })
+  }
+
+  /** v56 五轮：渲染音频循环 BGM（全部曲目；加载失败回退合成器） */
+  private startBufferBGM(songId: string, level: number) {
+    if (!this.ctx || !this.bgmBus) return
+    if (this.bufLayer && this.bufLayer.songId === songId && !this.bufLayer.dead) return
+    void this.loadSongBuf(songId).then((buf) => {
+      if (!this.ctx || !this.bgmBus || this.bgmStyle !== 'midi') return
+      if (this.bufLayer && this.bufLayer.songId === songId && !this.bufLayer.dead) return
+      const t = this.ctx.currentTime
+      // 淡出其他层（程序化 / MIDI 合成 / 旧音频层）
+      if (this.bufLayer && !this.bufLayer.dead) {
+        const old = this.bufLayer
+        old.dead = true
+        old.gain.gain.setTargetAtTime(0, t, 0.6)
+        try { old.src.stop(t + 2.6) } catch { /* */ }
+      }
+      if (this.bgmLayer && !this.bgmLayer.dead) {
+        const old = this.bgmLayer
+        old.dead = true
+        old.gain.gain.setTargetAtTime(0, t, 0.8)
+        setTimeout(() => { for (const n of old.drones) { try { (n as OscillatorNode).stop() } catch { /* */ } } }, 3200)
+      }
+      this.fadeMidiLayer(t, 0.8, 3200)
+      const src = this.ctx.createBufferSource()
+      src.buffer = buf
+      src.loop = true
+      const gain = this.ctx.createGain()
+      gain.gain.setValueAtTime(0, t)
+      gain.gain.setTargetAtTime(0.9, t, 1.0)
+      src.connect(gain)
+      gain.connect(this.bgmBus)
+      src.start()
+      this.bufLayer = { gain, src, buf, songId, startAt: t, offset: 0, paused: false, dead: false }
+      this.midiSongId = songId
+      this.onSongPlayed?.(songId)
+    }).catch((e) => {
+      console.warn(`[audio] 加载渲染音频失败: ${songId}，回退 WebAudio 合成`, e)
+      if (this.bgmStyle === 'midi') this.startMidiSynth(songId, level)
+    })
+  }
+
+  /** WebAudio 合成 MIDI 播放（渲染音频缺失时的回退） */
+  private startMidiSynth(songId: string, level: number) {
+    if (!this.ctx || !this.bgmBus) return
+    if (this.midiLayer && this.midiLayer.level === level && !this.midiLayer.dead && this.midiSongId === songId) return
+    const url = musicUrl(songId)
+    void loadMidi(url).then((song) => {
+      if (this.bgmStyle !== 'midi' || this.bgmLevel !== level) return // 曲风/层级已切换，丢弃
+      this.playMidiLayer(song, level, songId)
+    }).catch(() => {
+      // .mid 加载失败回退程序化 BGM（保持可玩）
+      if (this.bgmStyle === 'midi' && this.bgmLevel === level) {
+        console.warn(`[audio] 加载 ${url} 失败，回退程序化 BGM`)
+        this.startProcedural(level)
+      }
+    })
+  }
+
+  /** v56 三轮：渲染音频一次性播放（乐手演奏；播完恢复 BGM） */
+  private playBufferOnce(songId: string) {
+    if (!this.ctx || !this.bgmBus) return
+    this.stopBgmLayersForOneshot()
+    void this.loadSongBuf(songId).then((buf) => {
+      if (!this.ctx || !this.bgmBus) return
+      const t = this.ctx.currentTime
+      if (this.oneshotBuf && !this.oneshotBuf.dead) {
+        const old = this.oneshotBuf
+        old.dead = true
+        old.gain.gain.setTargetAtTime(0, t, 0.4)
+        try { old.src.stop(t + 1.2) } catch { /* */ }
+      }
+      if (this.oneshot && !this.oneshot.dead) {
+        const old = this.oneshot
+        old.dead = true
+        old.gain.gain.setTargetAtTime(0, t, 0.4)
+        setTimeout(() => { old.gain.disconnect() }, 1200)
+      }
+      const src = this.ctx.createBufferSource()
+      src.buffer = buf
+      src.loop = false
+      const gain = this.ctx.createGain()
+      gain.gain.setValueAtTime(0, t)
+      gain.gain.setTargetAtTime(0.95, t, 0.4)
+      src.connect(gain)
+      gain.connect(this.bgmBus)
+      src.onended = () => {
+        if (this.oneshotBuf?.src === src) this.oneshotBuf = null
+        this.finishMusician()
+      }
+      src.start()
+      this.oneshotBuf = { gain, src, dead: false }
+      this.onSongPlayed?.(songId) // v56：收听记录 → 电台解锁
+    }).catch(() => {
+      console.warn(`[audio] 乐手曲目加载失败: ${songId}`)
+      this.finishMusician()
+    })
+  }
+
+  private playMidiLayer(song: MidiSongParsed, level: number, songId: string) {
+    if (!this.ctx || !this.bgmBus) return
+    const t = this.ctx.currentTime
+    // 淡出程序化层（若正在播）
+    if (this.bgmLayer && !this.bgmLayer.dead) {
+      const old = this.bgmLayer
+      old.dead = true
+      old.gain.gain.setTargetAtTime(0, t, 0.8)
+      setTimeout(() => { for (const n of old.drones) { try { (n as OscillatorNode).stop() } catch { /* */ } } }, 3200)
+    }
+    this.fadeMidiLayer(t, 0.8, 3200)
+    const gain = this.ctx.createGain()
+    gain.gain.setValueAtTime(0, t)
+    gain.gain.setTargetAtTime(0.9, t, 1.0)
+    gain.connect(this.bgmBus)
+    const echo = this.ctx.createDelay(1)
+    echo.delayTime.value = 0.28
+    const fb = this.ctx.createGain(); fb.gain.value = 0.32
+    const wet = this.ctx.createGain(); wet.gain.value = 0.42
+    echo.connect(fb).connect(echo)
+    echo.connect(wet).connect(gain)
+    this.midiLayer = { level, gain, echo, song, noteIdx: 0, loopStart: t + 0.15, harsh: isHarshLevel(level), dead: false }
+    this.midiSongId = songId
+    this.onSongPlayed?.(songId) // v56：电台收听记录
+    if (!this.midiTimer) this.midiTimer = setInterval(() => this.scheduleMidi(), 80)
+  }
+
+  private fadeMidiLayer(t: number, tau: number, delay: number) {
+    if (this.midiLayer && !this.midiLayer.dead) {
+      const old = this.midiLayer
+      old.dead = true
+      old.gain.gain.setTargetAtTime(0, t, tau)
+      setTimeout(() => { old.gain.disconnect() }, delay)
+    }
+  }
+
+  // 程序化 BGM 启动（供 MIDI 加载失败回退复用——不分支曲风）
+  private startProcedural(level: number) {
+    this.ensure()
+    if (!this.ctx || !this.bgmBus) return
     if (this.bgmLayer && this.bgmLayer.level === level && !this.bgmLayer.dead) return
     const t = this.ctx.currentTime
     // 旧层淡出 2.5s
@@ -536,12 +888,10 @@ export class GameAudio {
       old.gain.gain.setTargetAtTime(0, t, 0.8)
       setTimeout(() => { for (const n of old.drones) { try { (n as OscillatorNode).stop() } catch { /* */ } } }, 3200)
     }
-    // 新层
     const gain = this.ctx.createGain()
     gain.gain.setValueAtTime(0, t)
-    gain.gain.setTargetAtTime(0.9, t, 1.0) // 淡入 ~2.5s
+    gain.gain.setTargetAtTime(0.9, t, 1.0)
     gain.connect(this.bgmBus)
-    // 空间回声总线
     const echo = this.ctx.createDelay(1)
     echo.delayTime.value = 0.31
     const fb = this.ctx.createGain(); fb.gain.value = 0.35
@@ -552,7 +902,7 @@ export class GameAudio {
       level, gain, echo,
       drones: [], step: 0,
       nextT: t + 0.1,
-      stepDur: level >= 100 ? 0.62 : [0.5, 0.6, 0.42, 0.24, 0.7, 0.62][level] ?? 0.5, // 据点曲放慢（16 步 ≈ 10s 一轮）
+      stepDur: level >= 100 ? 0.62 : [0.5, 0.6, 0.42, 0.24, 0.7, 0.62][level] ?? 0.5,
       steps: [16, 16, 16, 16, 12, 12][level] ?? 16,
       dead: false,
     }
@@ -561,13 +911,682 @@ export class GameAudio {
     if (!this.bgmTimer) this.bgmTimer = setInterval(() => this.scheduleBGM(), 90)
   }
 
-  stopBGM() {
-    if (this.bgmLayer && this.ctx) {
+  private scheduleMidi() {
+    if (!this.ctx) return
+    const ahead = this.ctx.currentTime + 0.6
+    // 主 BGM 层 / 一次性演奏层 / 电台试听层
+    for (const L of [this.midiLayer, this.oneshot, this.preview?.midi ?? null]) {
+      if (!L || L.dead || L.song.notes.length === 0) continue
+      let guard = 0
+      while (guard++ < 256) {
+        const n = L.song.notes[L.noteIdx]
+        const at = L.loopStart + n.t
+        if (at >= ahead) break
+        if (at + 0.001 >= this.ctx.currentTime) this.playMidiNote(n, at, L)
+        L.noteIdx++
+        if (L.noteIdx >= L.song.notes.length) {
+          if (L.oneshot) {
+            // v56：一次性演奏完毕——淡出并恢复 BGM
+            L.dead = true
+            L.gain.gain.setTargetAtTime(0, this.ctx.currentTime, 0.9)
+            setTimeout(() => { L.gain.disconnect(); if (this.oneshot === L) this.oneshot = null }, 2200)
+            this.finishMusician()
+            break
+          }
+          L.noteIdx = 0
+          L.loopStart += L.song.duration
+        }
+      }
+    }
+    // 乐手程序化摇滚层
+    const R = this.rockLayer
+    if (R && !R.dead) {
+      let guard = 0
+      while (R.nextT < ahead && guard++ < 256) {
+        this.tickRock(R, R.step, R.nextT)
+        R.step++
+        R.nextT += R.stepDur
+        if (R.step >= R.total) {
+          R.dead = true
+          R.gain.gain.setTargetAtTime(0, this.ctx.currentTime, 0.9)
+          setTimeout(() => { R.gain.disconnect(); if (this.rockLayer === R) this.rockLayer = null }, 2200)
+          this.finishMusician()
+          break
+        }
+      }
+    }
+  }
+
+  // v56：乐手演奏结束——恢复背景音乐 + 通知引擎（清除演奏标记）
+  private finishMusician() {
+    this.onOneshotEnd?.()
+    this.resumeBgm()
+  }
+
+  // v56：乐手演奏结束——恢复背景音乐
+  private resumeBgm() {
+    const lv = this.bgmLevel
+    if (lv >= 0) this.startBGM(lv)
+  }
+
+  // ================= v56：乐手演奏（一次性曲目，播完恢复 BGM） =================
+
+  /** v56：演奏结束/被停止回调（引擎清除 joeyPlaying 标记） */
+  onOneshotEnd: (() => void) | null = null
+
+  /** v56：停止乐手演奏（玩家对话要求停下）——淡出一次性曲目并恢复 BGM */
+  stopMusician() {
+    if (!this.ctx) { this.onOneshotEnd?.(); return }
+    const t = this.ctx.currentTime
+    const fade = (L: { gain: GainNode; dead: boolean } | null, clear: () => void) => {
+      if (L && !L.dead) {
+        L.dead = true
+        L.gain.gain.setTargetAtTime(0, t, 0.35)
+        setTimeout(() => { L.gain.disconnect(); clear() }, 1000)
+      }
+    }
+    fade(this.oneshot, () => { if (this.oneshot) this.oneshot = null })
+    fade(this.rockLayer, () => { if (this.rockLayer) this.rockLayer = null })
+    // v56 三轮：渲染音频一次性演奏层
+    if (this.oneshotBuf && !this.oneshotBuf.dead) {
+      const ob = this.oneshotBuf
+      ob.dead = true
+      ob.gain.gain.setTargetAtTime(0, t, 0.3)
+      try { ob.src.stop(t + 0.9) } catch { /* */ }
+      this.oneshotBuf = null
+    }
+    this.finishMusician()
+  }
+
+  /** v56：切层/停止 BGM 时静默终止乐手演奏（不恢复 BGM——调用方正在起新的） */
+  private killOneshot() {
+    if (!this.ctx) return
+    const t = this.ctx.currentTime
+    const fade = (L: { gain: GainNode; dead: boolean } | null, clear: () => void) => {
+      if (L && !L.dead) {
+        L.dead = true
+        L.gain.gain.setTargetAtTime(0, t, 0.35)
+        setTimeout(() => { L.gain.disconnect(); clear() }, 1000)
+      }
+    }
+    fade(this.oneshot, () => { if (this.oneshot) this.oneshot = null })
+    fade(this.rockLayer, () => { if (this.rockLayer) this.rockLayer = null })
+    if (this.oneshotBuf && !this.oneshotBuf.dead) {
+      const ob = this.oneshotBuf
+      ob.dead = true
+      ob.gain.gain.setTargetAtTime(0, t, 0.3)
+      try { ob.src.stop(t + 0.9) } catch { /* */ }
+      this.oneshotBuf = null
+    }
+    // v56 三轮：渲染音频循环 BGM 层（rock_* 固定音乐）随切层终止
+    if (this.bufLayer && !this.bufLayer.dead) {
+      const bl = this.bufLayer
+      bl.dead = true
+      bl.gain.gain.setTargetAtTime(0, t, 0.4)
+      try { bl.src.stop(t + 1.4) } catch { /* */ }
+      this.bufLayer = null
+    }
+    // v56 四轮：电台试听层随切层/停止 BGM 终止（不回听，BGM 层正被换新）
+    if (this.preview && !this.preview.dead) {
+      const pv = this.preview
+      pv.dead = true
+      pv.gain.gain.setTargetAtTime(0, t, 0.3)
+      if (pv.src) { try { pv.src.stop(t + 1.0) } catch { /* */ } }
+      setTimeout(() => { pv.gain.disconnect(); if (this.preview === pv) this.preview = null }, 1100)
+    }
+    this.radioPausedSynth = [] // v56 八轮：切层即丢弃电台暂停记录（BGM 层正被换新）
+    this.onOneshotEnd?.()
+  }
+
+  /** v56：暂停游戏时挂起全部音频（乐手演奏/BGM/环境音一起暂停） */
+  suspendAll() {
+    if (this.ctx && this.ctx.state === 'running') void this.ctx.suspend()
+  }
+  /** v56：恢复暂停的音频 */
+  resumeAll() {
+    if (this.ctx && this.ctx.state === 'suspended') void this.ctx.resume()
+  }
+
+  // ================= v56 四轮：电台试听 / 六轮：电台播放器 =================
+
+  /** v56 六轮：试听结束回调（非循环播放自然播完——电台播放器顺序/随机模式自动切下一首） */
+  onPreviewEnd: (() => void) | null = null
+
+  /** 电台试听：播放一首曲目（loop=true 循环试听 / false 播一遍；v56 八轮：播放期间暂停原 BGM） */
+  previewPlay(songId: string, loop = true) {
+    if (!this.ctx || !this.bgmBus) return
+    this.stopPreview(false) // 停旧试听（不恢复 BGM——马上接着播）
+    this.pauseBgmForRadio() // v56 八轮：暂停原 BGM（缓冲层记位停止/合成层静音）
+    void this.loadSongBuf(songId).then((buf) => {
+      if (!this.ctx || !this.bgmBus) return
+      const t2 = this.ctx.currentTime
+      const gain = this.ctx.createGain()
+      gain.gain.setValueAtTime(0, t2)
+      gain.gain.setTargetAtTime(0.9, t2, 0.4)
+      gain.connect(this.bgmBus)
+      const src = this.ctx.createBufferSource()
+      src.buffer = buf
+      src.loop = loop
+      src.connect(gain)
+      src.onended = () => {
+        if (this.preview && this.preview.src === src && !this.preview.paused && !this.preview.dead && !loop) {
+          this.preview.dead = true
+          this.onPreviewEnd?.()
+        }
+      }
+      src.start()
+      this.preview = { songId, gain, src, midi: null, buf, loop, startAt: t2, offset: 0, paused: false, dead: false }
+    }).catch(() => this.previewSynth(songId, loop))
+  }
+
+  /** 试听暂停（缓冲路径：记下已播秒数停源；恢复时接着播） */
+  previewPause() {
+    if (!this.ctx || !this.preview || this.preview.dead) return
+    const p = this.preview
+    if (p.paused) return
+    if (p.src) {
+      p.offset = Math.min(p.offset + (this.ctx.currentTime - p.startAt), p.buf ? p.buf.duration : 0)
+      try { p.src.stop() } catch { /* */ }
+      p.paused = true
+    } else {
+      // 合成回退不支持暂停——直接停止
+      p.dead = true
+      p.gain.gain.setTargetAtTime(0, this.ctx.currentTime, 0.3)
+      setTimeout(() => { p.gain.disconnect(); if (this.preview === p) this.preview = null }, 1100)
+    }
+  }
+
+  /** 试听恢复（从暂停处接着播） */
+  previewResume() {
+    if (!this.ctx || !this.bgmBus || !this.preview || this.preview.dead) return
+    const p = this.preview
+    if (!p.paused) return
+    if (p.src && p.buf) {
+      const src = this.ctx.createBufferSource()
+      src.buffer = p.buf
+      src.loop = p.loop
+      src.connect(p.gain)
+      src.onended = () => {
+        if (this.preview === p && !p.paused && !p.dead && !p.loop) {
+          p.dead = true
+          this.onPreviewEnd?.()
+        }
+      }
+      src.start(0, p.offset % p.buf.duration)
+      p.src = src
+      p.startAt = this.ctx.currentTime
+      p.paused = false
+    } else {
+      this.previewPlay(p.songId, p.loop) // 合成回退：从头重播
+    }
+  }
+
+  /** v56 六轮：试听进度（id/已播秒数/总秒数/是否暂停）——电台播放器进度条 */
+  previewInfo(): { id: string; pos: number; dur: number; paused: boolean } | null {
+    if (!this.ctx || !this.preview || this.preview.dead) return null
+    const p = this.preview
+    if (p.buf) {
+      const dur = p.buf.duration
+      let pos = p.paused ? p.offset : p.offset + (this.ctx.currentTime - p.startAt)
+      if (p.loop) pos = pos % dur
+      else pos = Math.min(pos, dur)
+      return { id: p.songId, pos, dur, paused: p.paused }
+    }
+    if (p.midi) {
+      const dur = p.midi.song.duration
+      const pos = ((this.ctx.currentTime - p.midi.loopStart) % dur + dur) % dur
+      return { id: p.songId, pos, dur, paused: false }
+    }
+    return null
+  }
+
+  /** 试听回退：WebAudio 合成播放（不支持暂停/单次——始终循环） */
+  private previewSynth(songId: string, _loop: boolean) {
+    if (!this.ctx || !this.bgmBus) return
+    void loadMidi(musicUrl(songId)).then((song) => {
+      if (!this.ctx || !this.bgmBus) return
+      const t2 = this.ctx.currentTime
+      const gain = this.ctx.createGain()
+      gain.gain.setValueAtTime(0, t2)
+      gain.gain.setTargetAtTime(0.9, t2, 0.5)
+      gain.connect(this.bgmBus)
+      const echo = this.ctx.createDelay(1)
+      echo.delayTime.value = 0.28
+      const fb = this.ctx.createGain(); fb.gain.value = 0.32
+      const wet = this.ctx.createGain(); wet.gain.value = 0.42
+      echo.connect(fb).connect(echo)
+      echo.connect(wet).connect(gain)
+      const midi: MidiLayer = { level: -1, gain, echo, song, noteIdx: 0, loopStart: t2 + 0.15, harsh: false, dead: false }
+      this.preview = { songId, gain, src: null, midi, buf: null, loop: true, startAt: t2, offset: 0, paused: false, dead: false }
+      if (!this.midiTimer) this.midiTimer = setInterval(() => this.scheduleMidi(), 80)
+    }).catch(() => this.resumeBgmForRadio())
+  }
+
+  /** 停止试听（restore=true 时恢复 BGM 播放） */
+  stopPreview(restore = true) {
+    if (!this.ctx) return
+    const t = this.ctx.currentTime
+    if (this.preview && !this.preview.dead) {
+      const p = this.preview
+      p.dead = true
+      p.gain.gain.setTargetAtTime(0, t, 0.3)
+      if (p.src) { try { p.src.stop(t + 1.0) } catch { /* */ } }
+      setTimeout(() => { p.gain.disconnect(); if (this.preview === p) this.preview = null }, 1100)
+    }
+    if (restore) this.resumeBgmForRadio()
+  }
+
+  // ================= v56 八轮：电台播放暂停/恢复原 BGM =================
+
+  /** 电台开始播放：暂停原 BGM（缓冲层记位停止；合成层静音） */
+  private pauseBgmForRadio() {
+    if (!this.ctx) return
+    const t = this.ctx.currentTime
+    if (this.bufLayer && !this.bufLayer.dead && !this.bufLayer.paused) {
+      const L = this.bufLayer
+      L.offset = (L.offset + (t - L.startAt)) % L.buf.duration
+      try { L.src.stop() } catch { /* */ }
+      L.paused = true
+    }
+    // 合成层（程序化 / 合成回退）：静音（无法真暂停，恢复时拉回音量）
+    this.radioPausedSynth = []
+    for (const L of [this.bgmLayer, this.midiLayer]) {
+      if (L && !L.dead) {
+        this.radioPausedSynth.push({ g: L.gain, v: 0.9 })
+        L.gain.gain.setTargetAtTime(0.001, t, 0.4)
+      }
+    }
+  }
+
+  /** 电台停止播放：从暂停处恢复原 BGM */
+  private resumeBgmForRadio() {
+    if (!this.ctx || !this.bgmBus) return
+    const t = this.ctx.currentTime
+    if (this.bufLayer && !this.bufLayer.dead && this.bufLayer.paused) {
+      const L = this.bufLayer
+      const src = this.ctx.createBufferSource()
+      src.buffer = L.buf
+      src.loop = true
+      src.connect(L.gain)
+      src.start(0, L.offset)
+      L.src = src
+      L.startAt = t
+      L.paused = false
+    }
+    for (const { g, v } of this.radioPausedSynth) g.gain.setTargetAtTime(v, t, 0.8)
+    this.radioPausedSynth = []
+  }
+
+  private stopBgmLayersForOneshot() {
+    if (!this.ctx) return
+    const t = this.ctx.currentTime
+    if (this.bgmLayer && !this.bgmLayer.dead) {
       const old = this.bgmLayer
       old.dead = true
+      old.gain.gain.setTargetAtTime(0, t, 0.6)
+      setTimeout(() => { for (const n of old.drones) { try { (n as OscillatorNode).stop() } catch { /* */ } } }, 2600)
+    }
+    this.fadeMidiLayer(t, 0.6, 2600)
+    if (this.bufLayer && !this.bufLayer.dead) {
+      const old = this.bufLayer
+      old.dead = true
+      old.gain.gain.setTargetAtTime(0, t, 0.6)
+      try { old.src.stop(t + 2.6) } catch { /* */ }
+    }
+  }
+
+  /** 乐手演奏（一次性；v56 三轮：rock_* 走离线渲染音频真实音色，播完自动恢复 BGM） */
+  playMusicianSong(songId: string) {
+    if (!this.ctx || !this.bgmBus) return
+    if (isAudioSong(songId)) {
+      this.playBufferOnce(songId)
+      return
+    }
+    this.stopBgmLayersForOneshot()
+    void loadMidi(musicUrl(songId)).then((song) => {
+      if (!this.ctx || !this.bgmBus) return
+      const t = this.ctx.currentTime
+      if (this.oneshot && !this.oneshot.dead) {
+        const old = this.oneshot
+        old.dead = true
+        old.gain.gain.setTargetAtTime(0, t, 0.5)
+        setTimeout(() => { old.gain.disconnect() }, 1600)
+      }
+      const gain = this.ctx.createGain()
+      gain.gain.setValueAtTime(0, t)
+      gain.gain.setTargetAtTime(0.95, t, 0.5)
+      gain.connect(this.bgmBus)
+      const echo = this.ctx.createDelay(1)
+      echo.delayTime.value = 0.24
+      const fb = this.ctx.createGain(); fb.gain.value = 0.28
+      const wet = this.ctx.createGain(); wet.gain.value = 0.34
+      echo.connect(fb).connect(echo)
+      echo.connect(wet).connect(gain)
+      // 乐手摇滚：锐利音色（sawtooth），不受层级音色分级影响
+      this.oneshot = { level: -1, gain, echo, song, noteIdx: 0, loopStart: t + 0.12, harsh: true, oneshot: true, dead: false }
+      this.onSongPlayed?.(songId) // v56：收听记录 → 电台解锁
+      if (!this.midiTimer) this.midiTimer = setInterval(() => this.scheduleMidi(), 80)
+    }).catch(() => {
+      console.warn(`[audio] 乐手曲目加载失败: ${songId}`)
+      this.resumeBgm()
+    })
+  }
+
+  /** 乐手演奏程序化摇滚（普通摇滚——v56 三轮：直接播放离线渲染的 rock_generic 音频；
+   *  加载失败回退旧的实时合成摇滚） */
+  playProceduralRock() {
+    if (!this.ctx || !this.bgmBus) return
+    this.stopBgmLayersForOneshot()
+    void this.loadSongBuf('rock_generic').then((buf) => {
+      if (!this.ctx || !this.bgmBus) return
+      const t = this.ctx.currentTime
+      if (this.oneshotBuf && !this.oneshotBuf.dead) {
+        const old = this.oneshotBuf
+        old.dead = true
+        old.gain.gain.setTargetAtTime(0, t, 0.4)
+        try { old.src.stop(t + 1.2) } catch { /* */ }
+      }
+      const src = this.ctx.createBufferSource()
+      src.buffer = buf
+      src.loop = false
+      const gain = this.ctx.createGain()
+      gain.gain.setValueAtTime(0, t)
+      gain.gain.setTargetAtTime(0.92, t, 0.4)
+      src.connect(gain)
+      gain.connect(this.bgmBus)
+      src.onended = () => {
+        if (this.oneshotBuf?.src === src) this.oneshotBuf = null
+        this.finishMusician()
+      }
+      src.start()
+      this.oneshotBuf = { gain, src, dead: false }
+    }).catch(() => {
+      // 回退：旧实时合成摇滚
+      console.warn('[audio] rock_generic 加载失败，回退实时合成摇滚')
+      this.startRockSynth()
+    })
+  }
+
+  /** 旧实时合成摇滚（rock_generic 音频不可用时的回退） */
+  private startRockSynth() {
+    if (!this.ctx || !this.bgmBus) return
+    if (this.rockLayer && !this.rockLayer.dead) {
+      const old = this.rockLayer
+      old.dead = true
       old.gain.gain.setTargetAtTime(0, this.ctx.currentTime, 0.5)
-      setTimeout(() => { for (const n of old.drones) { try { (n as OscillatorNode).stop() } catch { /* */ } } }, 2200)
-      this.bgmLayer = null
+      setTimeout(() => { old.gain.disconnect() }, 1600)
+    }
+    const t = this.ctx.currentTime
+    const gain = this.ctx.createGain()
+    gain.gain.setValueAtTime(0, t)
+    gain.gain.setTargetAtTime(0.9, t, 0.4)
+    gain.connect(this.bgmBus)
+    const echo = this.ctx.createDelay(1)
+    echo.delayTime.value = 0.2
+    const fb = this.ctx.createGain(); fb.gain.value = 0.25
+    const wet = this.ctx.createGain(); wet.gain.value = 0.3
+    echo.connect(fb).connect(echo)
+    echo.connect(wet).connect(gain)
+    this.rockLayer = { gain, echo, harsh: true, step: 0, nextT: t + 0.1, stepDur: 60 / 130 / 4, total: 8 * 16, dead: false }
+    if (!this.midiTimer) this.midiTimer = setInterval(() => this.scheduleMidi(), 80)
+  }
+
+  // 程序化摇滚单步（16 分音符步进；130 BPM 8 小节：鼓 + 贝斯 + 强力和弦）
+  private tickRock(R: RockLayer, step: number, t: number) {
+    const stepDur = R.stepDur
+    const bar = Math.floor(step / 16)
+    const s16 = step % 16
+    const ROOTS = [45, 45, 41, 43, 45, 45, 38, 40] // A A F G A A D E
+    const r = ROOTS[bar % 8]
+    // 鼓组（底鼓 1/3 拍、军鼓 2/4 拍、8 分踩镲）
+    if (s16 === 0 || s16 === 8) this.drum(36, t, 0.52, R)
+    if (s16 === 4 || s16 === 12) this.drum(38, t, 0.46, R)
+    if (s16 % 2 === 0) this.drum(42, t, 0.2, R)
+    if (s16 === 14) this.drum(36, t, 0.4, R) // 加花底鼓
+    // 贝斯 8 分
+    if (s16 % 2 === 0) {
+      const f = 440 * Math.pow(2, ((s16 % 8 === 6 ? r + 7 : r) - 69) / 12)
+      this.midiVoice('bass', f, t, stepDur * 1.7, 0.16, R, 0)
+    }
+    // 吉他强力和弦（每小节开始，根音+五度+八度——KS 拨弦扫弦：三根弦依次拨响）
+    if (s16 === 0) {
+      for (const [i, n] of [r + 12, r + 19, r + 24].entries()) {
+        const f = 440 * Math.pow(2, (n - 69) / 12)
+        this.midiVoice('guitar', f, t + i * 0.016, stepDur * 14, 0.1, R, 0)
+      }
+    }
+    // 吉他 riff 点缀（小节末）
+    if (s16 === 10) {
+      const f = 440 * Math.pow(2, (r + 24 - 69) / 12)
+      this.midiVoice('guitar', f, t, stepDur * 3, 0.08, R, 0)
+    }
+  }
+
+  private playMidiNote(n: MidiNoteEv, t: number, L: MidiLayer) {
+    const drift = (Math.random() - 0.5) * this.distort * 60
+    const peak = Math.max(0.004, Math.min(0.42, n.v * 0.55))
+    if (n.ch === 9) { this.drum(n.p, t, peak, L); return }
+    const freq = 440 * Math.pow(2, (n.p - 69) / 12)
+    this.midiVoice(this.progVoice(n.prog), freq, t, n.d, peak, L, drift)
+  }
+
+  // GM 音色号 → 合成音色族
+  private progVoice(prog: number): MidiVoice {
+    if (prog <= 3) return 'piano'
+    if (prog <= 7) return 'epiano'
+    if (prog <= 15) return 'bell'
+    if (prog >= 16 && prog <= 23) return 'pad' // 风琴类 → pad（持续）
+    if (prog >= 24 && prog <= 31) return 'guitar' // 吉他类（含 30 失真吉他）→ Karplus-Strong 拨弦（乐手摇滚用）
+    if (prog >= 32 && prog <= 39) return 'bass'
+    if (prog >= 48 && prog <= 51) return 'strings'
+    if (prog >= 52 && prog <= 55) return 'choir'
+    if (prog >= 56 && prog <= 63) return 'brass'
+    if (prog >= 72 && prog <= 79) return 'flute'
+    if (prog >= 80 && prog <= 87) return 'lead'
+    if (prog >= 88 && prog <= 103) return 'pad'
+    return 'piano'
+  }
+
+  // 合成音色（GM 音色族 → 振荡器 + 包络；走层 gain 与空间回声）
+  private midiVoice(inst: MidiVoice, freq: number, t: number, dur: number, peak: number, L: { gain: GainNode; echo: DelayNode | null; harsh: boolean }, drift: number) {
+    const ctx = this.ctx!
+    const osc = (type: OscillatorType, mult = 1, det = 0) => {
+      const o = ctx.createOscillator()
+      o.type = type
+      o.frequency.value = freq * mult
+      o.detune.value = det + drift
+      return o
+    }
+    const env = (o: OscillatorNode, attack: number, mult = 1) => {
+      const gn = ctx.createGain()
+      gn.gain.setValueAtTime(0.0001, t)
+      gn.gain.exponentialRampToValueAtTime(peak * mult, t + attack)
+      gn.gain.exponentialRampToValueAtTime(0.0001, t + dur)
+      o.connect(gn)
+      gn.connect(L.gain)
+      if (L.echo) gn.connect(L.echo)
+      o.start(t); o.stop(t + dur + 0.08)
+    }
+    const filtered = (o: OscillatorNode, freqCut: number, attack: number, mult = 1, release = dur) => {
+      const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = freqCut
+      const gn = ctx.createGain()
+      gn.gain.setValueAtTime(0.0001, t)
+      gn.gain.exponentialRampToValueAtTime(peak * mult, t + attack)
+      gn.gain.exponentialRampToValueAtTime(0.0001, t + release)
+      o.connect(lp).connect(gn).connect(L.gain)
+      if (L.echo) gn.connect(L.echo)
+      o.start(t); o.stop(t + release + 0.1)
+    }
+    switch (inst) {
+      case 'piano':
+        env(osc('triangle', 1, 6), 0.02, 0.85)
+        env(osc('triangle', 1.004, -6), 0.02, 0.55)
+        break
+      case 'epiano':
+        env(osc('sine', 1, 3), 0.015, 0.75)
+        env(osc('sine', 2, 2), 0.015, 0.2)
+        break
+      case 'bell':
+        env(osc('sine', 1), 0.006, 0.7)
+        env(osc('sine', 2, 4), 0.006, 0.24)
+        env(osc('sine', 3, -3), 0.006, 0.1)
+        break
+      case 'bass':
+        // 贝斯：基波 + 二次谐波（更接近真实电贝斯质感）
+        env(osc('sine', 1), 0.02, 0.9)
+        env(osc('sine', 2), 0.02, 0.24)
+        break
+      case 'guitar':
+        // v56：Karplus-Strong 物理拨弦 + 软削波失真（真实电吉他音色）
+        this.ksPluck(freq * Math.pow(2, drift / 1200), t, dur, peak, L)
+        break
+      case 'strings':
+        if (L.harsh) {
+          filtered(osc('sawtooth', 1, 3), 1300, Math.min(0.3, dur * 0.3), 0.7)
+          filtered(osc('sawtooth', 1.003, -3), 1300, Math.min(0.3, dur * 0.3), 0.4)
+        } else {
+          filtered(osc('triangle', 1, 3), 1000, Math.min(0.35, dur * 0.35), 0.7)
+          filtered(osc('triangle', 1.004, -3), 1000, Math.min(0.35, dur * 0.35), 0.4)
+        }
+        break
+      case 'choir':
+        filtered(osc('triangle', 1, 4), 1000, Math.min(0.4, dur * 0.35), 0.7)
+        filtered(osc('triangle', 1.005, -4), 1000, Math.min(0.4, dur * 0.35), 0.4)
+        break
+      case 'brass':
+        if (L.harsh) {
+          filtered(osc('sawtooth', 1, 2), 1800, 0.08, 0.7)
+          filtered(osc('sawtooth', 1.002, -2), 1800, 0.08, 0.35)
+        } else {
+          filtered(osc('triangle', 1, 2), 1200, 0.1, 0.65)
+          filtered(osc('triangle', 1.003, -2), 1200, 0.1, 0.3)
+        }
+        break
+      case 'flute':
+        env(osc('sine', 1, 2), 0.05, 0.7)
+        env(osc('sine', 2, 3), 0.05, 0.16)
+        break
+      case 'lead':
+        if (L.harsh) {
+          filtered(osc('sawtooth', 1, 4), 2400, 0.03, 0.6)
+        } else {
+          filtered(osc('triangle', 1, 3), 1600, 0.03, 0.55)
+        }
+        break
+      case 'pad':
+        filtered(osc('triangle', 1, 2), 1100, Math.min(0.5, dur * 0.4), 0.75)
+        break
+    }
+  }
+
+  // v56：Karplus-Strong 拨弦合成（物理建模吉他）——噪声激励 → 延迟线反馈（弦振动）→
+  // 阻尼低通（按弦长）→ 软削波失真 + 音色低通。比锯齿波更接近真实电吉他。
+  private guitarShaperCurve: Float32Array<ArrayBuffer> | null = null
+  private ksPluck(freq: number, t: number, dur: number, peak: number, L: { gain: GainNode; echo: DelayNode | null }) {
+    const ctx = this.ctx!
+    const f = Math.max(40, Math.min(2000, freq))
+    // 激励：短促噪声爆发（模拟拨片刮弦）
+    const excLen = Math.max(2, Math.min(Math.floor(ctx.sampleRate * 0.05), Math.floor((ctx.sampleRate / f) * 1.5)))
+    const exc = ctx.createBuffer(1, excLen, ctx.sampleRate)
+    const ed = exc.getChannelData(0)
+    for (let i = 0; i < excLen; i++) ed[i] = (Math.random() * 2 - 1) * (1 - i / excLen)
+    const src = ctx.createBufferSource()
+    src.buffer = exc
+    // 延迟线 = 弦长；反馈 + 阻尼 = 弦振动衰减
+    const delay = ctx.createDelay(1)
+    delay.delayTime.value = 1 / f
+    const damp = ctx.createBiquadFilter()
+    damp.type = 'lowpass'
+    damp.frequency.value = Math.min(6500, Math.max(900, f * 7))
+    const fb = ctx.createGain()
+    fb.gain.value = 0.985 - Math.min(0.1, f / 5000) // 高音弦衰减更快（更真实）
+    src.connect(delay)
+    delay.connect(damp)
+    damp.connect(fb)
+    fb.connect(delay)
+    // 包络（拨弦自然衰减 + 上限截断）
+    const env = ctx.createGain()
+    env.gain.setValueAtTime(0.0001, t)
+    env.gain.exponentialRampToValueAtTime(Math.min(0.6, peak * 0.9), t + 0.004)
+    env.gain.exponentialRampToValueAtTime(0.0001, t + Math.min(dur, 2.6))
+    damp.connect(env)
+    // 软削波失真（tanh 曲线）+ 失真后音色低通
+    if (!this.guitarShaperCurve) {
+      const c = new Float32Array(512)
+      for (let i = 0; i < 512; i++) {
+        const x = (i / 255.5) - 1
+        c[i] = Math.tanh(x * 4.5) / Math.tanh(4.5)
+      }
+      this.guitarShaperCurve = c
+    }
+    const shaper = ctx.createWaveShaper()
+    shaper.curve = this.guitarShaperCurve
+    const tone = ctx.createBiquadFilter()
+    tone.type = 'lowpass'
+    tone.frequency.value = 3400
+    env.connect(shaper)
+    shaper.connect(tone)
+    tone.connect(L.gain)
+    if (L.echo) env.connect(L.echo)
+    src.start(t)
+    src.stop(t + dur + 0.12)
+  }
+
+  private drum(pitch: number, t: number, vel: number, L: { gain: GainNode }) {
+    const ctx = this.ctx!
+    const out = L.gain
+    if (pitch === 35 || pitch === 36) { // 底鼓：低频扫频 + 鼓皮冲击
+      const o = ctx.createOscillator()
+      o.type = 'sine'
+      o.frequency.setValueAtTime(140, t)
+      o.frequency.exponentialRampToValueAtTime(40, t + 0.12)
+      const g = ctx.createGain()
+      g.gain.setValueAtTime(vel * 0.9, t)
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.18)
+      o.connect(g).connect(out); o.start(t); o.stop(t + 0.2)
+      const c = ctx.createOscillator()
+      c.type = 'sine'
+      c.frequency.setValueAtTime(2400, t)
+      c.frequency.exponentialRampToValueAtTime(320, t + 0.022)
+      const cg = ctx.createGain()
+      cg.gain.setValueAtTime(vel * 0.22, t)
+      cg.gain.exponentialRampToValueAtTime(0.0001, t + 0.028)
+      c.connect(cg).connect(out); c.start(t); c.stop(t + 0.03)
+    } else if (pitch === 38 || pitch === 40) { // 军鼓：噪声 + 鼓身音（双要素更真实）
+      const n = this.noiseSrc()
+      const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1800; bp.Q.value = 0.7
+      const g = ctx.createGain()
+      g.gain.setValueAtTime(vel * 0.5, t)
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.16)
+      n.connect(bp).connect(g).connect(out); n.start(t); n.stop(t + 0.18)
+      const o = ctx.createOscillator() // 鼓身音（190→120Hz 短三角）
+      o.type = 'triangle'
+      o.frequency.setValueAtTime(190, t)
+      o.frequency.exponentialRampToValueAtTime(120, t + 0.08)
+      const og = ctx.createGain()
+      og.gain.setValueAtTime(vel * 0.42, t)
+      og.gain.exponentialRampToValueAtTime(0.0001, t + 0.1)
+      o.connect(og).connect(out); o.start(t); o.stop(t + 0.12)
+    } else if (pitch === 42 || pitch === 44 || pitch === 46) { // 踩镲：高频噪声 + 金属共鸣带（双带通更像真镲）
+      const n = this.noiseSrc()
+      const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 7000
+      const g = ctx.createGain()
+      g.gain.setValueAtTime(vel * 0.22, t)
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.05)
+      n.connect(hp).connect(g).connect(out); n.start(t); n.stop(t + 0.06)
+      const n2 = this.noiseSrc()
+      const bp2 = ctx.createBiquadFilter(); bp2.type = 'bandpass'; bp2.frequency.value = 11000; bp2.Q.value = 1.2
+      const g2 = ctx.createGain()
+      g2.gain.setValueAtTime(vel * 0.1, t)
+      g2.gain.exponentialRampToValueAtTime(0.0001, t + 0.04)
+      n2.connect(bp2).connect(g2).connect(out); n2.start(t); n2.stop(t + 0.05)
+    } else { // 镲片/其他
+      const n = this.noiseSrc()
+      const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 5000
+      const g = ctx.createGain()
+      g.gain.setValueAtTime(vel * 0.3, t)
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.5)
+      n.connect(hp).connect(g).connect(out); n.start(t); n.stop(t + 0.52)
     }
   }
 

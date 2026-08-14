@@ -1,6 +1,9 @@
 // 共享类型定义
 export const TILE = 32
 
+/** 统一楼层带：-1=地下，0=地表/主层，1=二层，2=三层。 */
+export type FloorBand = -1 | 0 | 1 | 2
+
 export type TileType = 0 | 1 | 2 // 0=虚空 1=地板 2=墙
 
 export interface Palette {
@@ -99,6 +102,7 @@ export interface ExitInstance {
   def: ExitDef
   x: number
   y: number
+  floor?: FloorBand
   discovered: boolean
 }
 
@@ -134,6 +138,13 @@ export type StructKind =
 
   // ===== v23：Level 6「Lights Out」 =====
   | 'hotpipe'      // 输送加热液体的金属管道（Fandom L6；黑暗中唯一的触觉导航线索）
+  | 'deadshrub'    // L6 地表枯灌木
+  | 'tundrarock'   // L6 地表黑色巨石
+  | 'crystalcluster' // L6 地表晶簇
+  | 'stinkgrass'   // L6 散发恶臭的草地
+  | 'obelisk'      // L6 空地中的巨型方尖碑
+  | 'l6stairwell'  // L6 地表/地下双向废弃楼梯井
+  | 'l6cave'       // L6 地下通往 Level 8 的自然洞口
   | 'lightswitch'  // 「世界最安静的房间」里的电灯开关——官方警告：不要拨
   | 'tripwire'     // 绊线（绊到即切出 Level 6.1）
   | 'braille'      // 墙面刻痕/盲文路标（前人留下的方向记号）
@@ -276,7 +287,7 @@ export type StructKind =
   | 'divingboard'  // 跳台（L5 游泳池深水端：短柱 + 悬挑跳板；实心矮台可站上）
   | 'gymbench'     // 健身卧推凳（L5 健身房：凳面 + 杠铃架 + 杠铃片组；实心）
   | 'darkdoorblock' // 深色木门碰撞块（v55：L5 darkwooddoor 出口格——仅碰撞无模型[可见门在出口模型]，关闭时不可穿）
-  | 'rug'          // 华丽地毯（v55，L5：地面平铺贴花——红金/蓝金花纹；data.tex 贴图[l5_carpet.png 缺省 / l5_carpet_blue.png]、data.layer 多层叠放抬高；非实心）
+  | 'rug'          // 华丽地毯（L5 大厅/房间独立地毯块；data.tex 红/蓝真实织物 PBR、data.layer 多层叠放抬高；非实心）
   | 'redpillar'    // 红木纹方柱（v55，L5 主厅：红色大理石观感柱身 + 金色柱头/柱础；实心，挑高自适应顶到挑高顶）
   | 'ceilingbeam'  // 装饰横梁（v55，L5 主厅：深色木梁 + 金线沿，沿 local X 横跨 s.w 瓦片，贴本瓦片天花板底面；非实心）
   | 'oddtable'     // 异形小桌（v55，L5 贝弗莉室中央：不规则歪腿怪异造型 + 桌面多瓶饮料 + 未打完的麻将牌墙/舍牌堆；实心）
@@ -297,7 +308,7 @@ export interface Structure {
   solid: boolean
   looted?: boolean
   locked?: boolean
-  floor?: number // v13：所属楼层（0=主层，1=上层；缺省 0）。lift 跨层不设
+  floor?: FloorBand // 所属楼层带；缺省 0。lift 等跨层结构不设
   data?: Record<string, number | string | boolean | string[]>
 }
 

@@ -48,6 +48,20 @@ def draw_luckymilk(d):
     d.point([(14, 17), (16, 17), (15, 16), (15, 18), (17, 18)], fill='#3a7a2e')  # 四叶草
     d.point([(11, 24), (20, 24), (11, 25), (20, 25)], fill='#c9d4c0')   # 盒身细字线
 
+def draw_nightvision(d):
+    # 夜视眼镜：厚实橄榄色头带、双目增像筒、青绿镜片与中央鼻梁。
+    d.line([(4, 10), (8, 6), (24, 6), (28, 10)], fill='#343c32', width=3)
+    d.rectangle([7, 9, 14, 20], fill='#4f5c4e', outline=INK)
+    d.rectangle([18, 9, 25, 20], fill='#4f5c4e', outline=INK)
+    d.rectangle([9, 18, 14, 25], fill='#303a32', outline=INK)
+    d.rectangle([18, 18, 23, 25], fill='#303a32', outline=INK)
+    d.rectangle([14, 12, 18, 16], fill='#3a453a', outline=INK)
+    d.rectangle([10, 20, 13, 23], fill='#78c98a', outline='#b9efbd')
+    d.rectangle([19, 20, 22, 23], fill='#78c98a', outline='#b9efbd')
+    d.point([(10, 20), (19, 20)], fill='#e0ffe2')
+    d.rectangle([14, 7, 18, 10], fill='#687366', outline=INK)
+    d.point([(6, 12), (26, 12), (16, 8)], fill='#899382')
+
 def draw_welcomenote(d):
     # 致新流浪者的纸条：折起的横线纸（干净米色，区别于烧焦字条）
     obox(d, [8, 3, 23, 28], '#f0e6c0')                     # 纸
@@ -284,6 +298,7 @@ def candy_bag(label):
 DRAW = {
     'disinfectant': draw_disinfectant,
     'luckymilk': draw_luckymilk,  # v54
+    'nightvision': draw_nightvision,
     'welcomenote': draw_welcomenote,
     'tomatosoup': draw_tomatosoup,
     'gardensalad': draw_gardensalad,

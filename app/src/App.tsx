@@ -21,6 +21,7 @@ import FallIntro from '@/components/FallIntro'
 import HUD, { type LogEntry, type Toast } from '@/components/HUD'
 import TouchControls from '@/components/TouchControls'
 import PauseMenu from '@/components/PauseMenu'
+import RadioOverlay from '@/components/RadioOverlay'
 import InventoryOverlay, { discoverFromEngine, loadCodex, saveCodex } from '@/components/InventoryOverlay'
 import DocOverlay from '@/components/DocOverlay'
 import LandmarkOverlay from '@/components/LandmarkOverlay'
@@ -36,7 +37,7 @@ import Cutscene, { type CutKind, type CutIn } from '@/components/Cutscene'
 import DesignMode from '@/components/DesignMode' // v54：设计模式（开发者模式入口在标题屏）
 
 type Screen = 'title' | 'intro' | 'game' | 'fall' | 'design'
-type Overlay = 'none' | 'settings' | 'howto' | 'pause' | 'inventory' | 'codex' | 'death' | 'victory' | 'avatar' | 'notebook' | 'doc' | 'landmark' | 'dialog'
+type Overlay = 'none' | 'settings' | 'howto' | 'pause' | 'radio' | 'inventory' | 'codex' | 'death' | 'victory' | 'avatar' | 'notebook' | 'doc' | 'landmark' | 'dialog'
 
 // 冒烟测试钩子（Playwright page.evaluate 用）
 if (typeof window !== 'undefined') {
@@ -83,6 +84,7 @@ function Game() {
   const [toasts, setToasts] = useState<Toast[]>([])
   const [damageFlash, setDamageFlash] = useState(0)
   const [sanityFlash, setSanityFlash] = useState(0)
+  const [floorShift, setFloorShift] = useState<{ id: number; text: string } | null>(null)
   // v54：沉浸模式——F1 全沉浸（隐藏 HUD 层 + 手部建模/准星）；F2 半沉浸（仅隐藏 HUD 铬件，
   // 保留手部建模与准星）。两者互斥不叠加：按当前生效的键恢复，按另一个键直接切换模式。
   // 背包/图鉴/设置/战利品面板等覆盖层不受影响（只隐藏 HUD 铬件，面板类 UI 按现有逻辑正常显示）
@@ -135,6 +137,7 @@ function Game() {
     audio.setMuted(settings.muted)
     audio.setVolume(settings.volume / 100)
     audio.setBgmVolume(settings.bgm / 100) // v54：分项音量（BGM/环境/音效）
+    audio.setBgmStyle(settings.bgmStyle) // v56：BGM 曲风（程序化 / MIDI）
     audio.setAmbVolume(settings.ambient / 100)
     audio.setSfxVolume(settings.sfx / 100)
     engine.dev.god = settings.devMode // 开发者模式：无敌
@@ -155,6 +158,14 @@ function Game() {
   useEffect(() => {
     if (overlay !== 'none') document.exitPointerLock?.()
   }, [overlay])
+
+  // v56：暂停（暂停菜单及其子页）时挂起全部音频——乐手演奏/BGM/环境音一起暂停，恢复后接着播。
+  // 电台管理页除外：它是音乐播放器（试听/BGM 照常播放），关回暂停菜单再挂起
+  useEffect(() => {
+    const pausedUi = screen === 'game' && (overlay === 'pause' || overlay === 'settings' || overlay === 'howto')
+    if (pausedUi) audio.suspendAll()
+    else audio.resumeAll()
+  }, [overlay, screen])
 
   const addLog = useCallback((text: string, kind: string) => {
     setLog((l) => [...l.slice(-20), { id: logId++, text, kind, t: Date.now() }])
@@ -177,6 +188,12 @@ function Game() {
         case 'sanityhit':
           setSanityFlash((n) => n + 1)
           break
+        case 'floorchange': {
+          const id = Date.now()
+          setFloorShift({ id, text: e.text ?? '楼层正在变化' })
+          setTimeout(() => setFloorShift((v) => v?.id === id ? null : v), 1300)
+          break
+        }
         case 'transition':
           if (e.anim && e.anim !== 'intro') {
             const d = typeof e.dest === 'number' ? e.dest : undefined
@@ -464,8 +481,9 @@ function Game() {
       if (settings.dynamicRes) {
         frameTimes.push(now)
         if (frameTimes.length > 30) {
-          const avg = (frameTimes[frameTimes.length - 1] - frameTimes[0]) / frameTimes.length
-          if (avg > 20 && resScale > 0.6) { resScale -= 0.1; resize() }
+          const avg = (frameTimes[frameTimes.length - 1] - frameTimes[0]) / (frameTimes.length - 1)
+          const minScale = engine.player.level === 5 ? 0.5 : 0.6
+          if (avg > 20 && resScale > minScale) { resScale = Math.max(minScale, resScale - 0.1); resize() }
           else if (avg < 14 && resScale < 1) { resScale += 0.05; resize() }
           frameTimes = []
         }
@@ -558,6 +576,8 @@ function Game() {
   }, [settings.lightMode, settings.shadowQuality, settings.sunShadows, settings.lightShadows, settings.reflectivity, settings.bloomFx, settings.bloomStrength, settings.exposure])
 
   const quitToTitle = () => {
+    // 「保存并退出」必须在 over 置位前同步落盘，不能依赖暂停菜单打开后的下一帧自动保存。
+    engine.persist()
     engine.over = true
     audio.stopHum()
     audio.stopRain() // v54：L4 雨声随退出停止
@@ -585,6 +605,11 @@ function Game() {
       )}
       {sanityFlash > 0 && (
         <div key={sanityFlash} className="pointer-events-none fixed inset-0 z-40" style={{ boxShadow: 'inset 0 0 120px 40px rgba(122,111,208,0.6)', animation: 'damageFlash 0.3s ease-out both' }} />
+      )}
+      {floorShift && (
+        <div key={floorShift.id} className="pointer-events-none fixed inset-0 z-[90] flex items-center justify-center bg-black text-sm tracking-[0.32em] text-stone-400" style={{ animation: 'floorShift 1.3s ease-in-out both' }}>
+          {floorShift.text}
+        </div>
       )}
       {/* v30 植殖癌：视野逐渐变绿（绿色浸染 + 绿植色 vignette，随 engine.plantK 渐变） */}
       {engine.plantK > 0.01 && (
@@ -724,9 +749,13 @@ function Game() {
           onResume={() => setOverlay('none')}
           onSettings={() => setOverlay('settings')}
           onHowTo={() => setOverlay('howto')}
+          onRadio={() => setOverlay('radio')}
+          showRadio={settings.bgmStyle === 'midi'}
+          onUnstuck={() => { if (engine.startUnstuckCheck()) setOverlay('none') }}
           onQuit={quitToTitle}
         />
       )}
+      {overlay === 'radio' && <RadioOverlay onClose={() => setOverlay('pause')} />}
       {overlay === 'inventory' && <InventoryOverlay engine={engine} onClose={() => setOverlay('none')} initialTab={invTab} />}
       {overlay === 'codex' && <InventoryOverlay engine={engine} onClose={() => setOverlay('none')} codexOnly />}
       {overlay === 'death' && (

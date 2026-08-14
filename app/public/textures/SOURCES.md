@@ -103,6 +103,7 @@ BNTG 绿底定居点海报（天平徽记 + 仓库/办公楼图案 + 「办公�
 - `brc_logo.png`：PIL 程序绘制（`scripts/gen-brc-logo.py` 可复现）——后室装修公司标志：
   淡紫房屋形盾 + 深描边 + 黄色绶带（B.R.C. 字样）+ 红门 + 山墙交叉锯/锤，图鉴「团体」页用。
 - `icons/pixel/item_eaglecoin.png`：32×32 像素手绘天鹰币（128×128 最近邻放大），随项目同许可发布。
+- `icons/pixel/item_nightvision.png`：`scripts/gen-item-icons.py` 程序绘制的 32×32 夜视眼镜原稿（双目增像筒、头带与青绿镜片），128×128 最近邻放大；无外部素材。
 - `photo_mountain.png` / `photo_lake.png` / `photo_forest.png` / `photo_house.png` / `photo_street.png` /
   `photo_still.png`（v54）：PIL 程序绘制
   （`scripts/gen-photos.py` 可复现）——photo 结构变种贴图池：山景/湖泊/森林风景、
@@ -242,8 +243,11 @@ BNTG 绿底定居点海报（天平徽记 + 仓库/办公楼图案 + 「办公�
 
 | 文件 | 素材 | 用途 | 处理 |
 |---|---|---|---|
-| l3_wall.jpg | **Bricks051 废弃 → ambientCG Bricks059**（CC0 真实砖墙照片，~4.2 砖×~16 层/1024） | 砖墙（默认墙面） | 去色 + 均值归一 0.72 + 轻积灰；配世界空间 UV（WALL_UV_PER_M[3]=1，1 重复=1m，砖约 24×6.4cm 横砌）；早期摄影砖图留存 `_src_l3_brick.jpg`，程序生成版留 `gen_brick()` 作离线回退 |
-| l3_wall2.jpg | 放大后砖图派生 | 深色积灰砖（TEX2 变体区） | 去色 0.55 + 压暗 0.68 + 积灰斑块 + 细颗粒 |
+| l3_wall.jpg | OpenAI 图像生成；暗砖红/陶土橙/赭黄烧结砖，暖灰棕灰浆；镜像周期化为 1K JPEG | L3 默认砖墙颜色图 | 世界空间 UV（0.45 重复/m，砖约 22cm 宽）；无缝、偏红黄 |
+| `art-source/l3_red_yellow_brick_source.png` | 上述生成结果的原始 1254×1254 PNG | 可追溯源图，不打包进运行时 |
+| l3_wall2.jpg | `scripts/gen-l3-brick-pbr.py` 从 l3_wall 派生 | 深色积灰砖（TEX2 变体区） | 饱和度 0.84 + 亮度 0.78，保持同一红黄砖色族与相位 |
+| l3_wall_normal.jpg | `scripts/gen-l3-brick-pbr.py` 从颜色图亮度高度场派生 | L3 砖体/凹灰浆 OpenGL 法线 | 周期中心差分，严格对齐世界 UV |
+| l3_wall_roughness.jpg | 同上 | L3 砖墙粗糙度 | 砖体约 0.68–0.88，灰浆接近 0.98；只产生柔和砖棱高光 |
 | l3_floor.jpg | 既有混凝土贴图派生 | 布满灰尘的混凝土地板 | 去色 0.8 + 双层积灰斑块（浅灰白/暗灰）+ 细颗粒（一次性生成，已入库即定稿） |
 | l3_ceil.jpg | l103_wall.jpg（Plaster006 洁白粉刷，CC0）派生 | 布满灰尘的白色天花板 | 去色 0.7 + 亮度 0.97 + 积灰斑块 + 细颗粒 |
 | l3_marble.jpg | Marble012（灰白大理石，CC0） | 圣所地板（tint 20 瓦片单独走本贴图，墙壁维持砖砌） | 去色 + 均值归一 0.78 + 极轻积灰 |
@@ -252,19 +256,23 @@ BNTG 绿底定居点海报（天平徽记 + 仓库/办公楼图案 + 「办公�
 
 下载地址形如 `https://ambientcg.com/get?file=<ID>_1K-JPG.zip`。
 
-## v55：Level 5 无限化（纯 PIL 程序绘制，`scripts/gen-l5-textures.py` 可复现）
+## Level 5 无限化材质
 
 | 文件 | 用途 |
 |---|---|
-| l5_carpet.png | 红金华丽地毯（深红底 + 金色回纹边框 + 菱形团花）——走廊地面（tint 21）与 rug 结构缺省贴图 |
-| l5_carpet_blue.png | 蓝金华丽地毯变体（藏青底 + 金纹）——大厅/房间地毯块（rug data.tex） |
+| l5_carpet.jpg | OpenAI 图像生成；以用户提供的酒店走廊照片为配色/风格参考，生成深酒红底、古金卷草纹的顶视织毯；镜像周期化后缩放为 1K JPEG | L5 走廊、主厅与房间独立地毯的无缝金红颜色贴图 |
+| `art-source/l5_carpet_gold_red_source.png` | 上述生成结果的原始 1254×1254 PNG（未做周期化） | 可追溯源图，不打包进运行时 |
+| l5_carpet_blue.jpg | 旧版藏青色地毯（当前 L5 不再引用） | 保留用于旧存档/回退兼容 |
+| l5_carpet_normal.jpg | [Poly Haven — Quatrefoil Jacquard Fabric](https://polyhaven.com/a/quatrefoil_jacquard_fabric)，CC0；1K OpenGL normal | 旧版锦缎织纹法线（当前 L5 不再引用） |
+| l5_carpet_fiber_normal.jpg | [ambientCG — Carpet015](https://ambientcg.com/view?id=Carpet015)，CC0；1K OpenGL normal | 旧版实拍纤维法线；当前金红地毯为纯哑光，不再引用 |
+| l5_carpet_roughness.jpg | 同 Carpet015，CC0；1K roughness | 旧版纤维粗糙度；当前金红地毯不再引用 |
 | l5_tile.png | 泳池瓷砖（奶白偏青小方砖 + 灰青砖缝）——游泳池地面（tint 23） |
 
 | l5_portrait1.png | 古典肖像·贵族（程序剪影，暗色古典配色 + 暗角）——主厅/走廊墙 bigpainting |
 | l5_portrait2.png | 古典肖像·夫妇像（同上） |
 | l5_portrait3.png | 古典肖像·骑马像（同上） |
 
-肖像画处理脚本：`scripts/gen-l5-portraits.py` 可复现（512×640 竖幅，纯 PIL）。
+泳池瓷砖仍由 `scripts/gen-l5-textures.py` 可复现；肖像画处理脚本为 `scripts/gen-l5-portraits.py`（512×640 竖幅，纯 PIL）。
 
 | l5_notice.png | M.E.G. 哨所「家政服务」告示（程序绘制：鲜黄饰带/鹰徽/指路箭头）——infiniteL5 走廊 landmark |
 | l5_homelysign.png | 家常酒店标志牌（程序绘制：青灰底/烫银边/酒店剪影）——infiniteL5 主厅 landmark |
@@ -273,3 +281,44 @@ BNTG 绿底定居点海报（天平徽记 + 仓库/办公楼图案 + 「办公�
 
 ### v55：L5 据点贴图沿用
 据点 110/111/112（家政服务哨所/家常酒店/原住民）不制新贴图——经 `shared.ts` 的 `LEVEL_TEX_ALIAS` 直接沿用 L5 主层级 l5_wall/l5_floor/l5_ceil 与 TEX2 变体（l5_wall2/l5_floor2）。
+
+## Level 6 地下破败廊道材质
+
+以下文件均为 [Poly Haven](https://polyhaven.com/) CC0 1K JPG，颜色、OpenGL 法线与粗糙度贴图成套接入真实光影材质：
+
+| 文件 | 来源 | 作者 | 用途 |
+|---|---|---|---|
+| `l6_dn_wall.jpg` / `l6_dn_wall_normal.jpg` / `l6_dn_wall_roughness.jpg` | [Worn Plaster Wall](https://polyhaven.com/a/worn_plaster_wall) | Dimitrios Savva | L6 地下墙壁与低顶；剥落、开裂、污损的旧灰泥，经灰绿色材质调制表现霉变 |
+| `l6_dn_floor.jpg` / `l6_dn_floor_normal.jpg` / `l6_dn_floor_roughness.jpg` | [Concrete Floor 02](https://polyhaven.com/a/concrete_floor_02) | Rob Tuytel | L6 地下积垢混凝土地面 |
+
+许可：CC0，可自由使用、修改和再分发；下载自 Poly Haven 官方 1K JPG 端点。
+
+## v56：摇滚曲目渲染音色（public/music/rock_*.mp3）
+
+| 素材 | 来源 | 许可 |
+|---|---|---|
+| FluidR3_GM.sf2（Frank Wen，2000-2008） | Debian fluid-soundfont 3.1（cdn-fastly.deb.debian.org/debian/pool/main/f/fluid-soundfont/） | MIT（COPYING 随包分发） |
+
+处理：乐手摇滚曲目（rock_stones/beatles/floyd/blues/velvet/garage/postpunk + rock_generic 共 8 首）
+由 FluidSynth 2.6.0（MIT）离线渲染为 44.1kHz 立体声 WAV，再 ffmpeg 转 MP3 128kbps
+（按各曲末音符取整到小节边界的循环长度裁剪 + 末尾 50ms 淡出），脚本：C:\Users\ZANRe\Documents\Default Project\midi\render_rock.py。
+
+## v56 五轮：全曲目渲染音色（public/music/*.mp3）
+
+| 素材 | 来源 | 许可 |
+|---|---|---|
+| FluidR3_GM.sf2（Frank Wen，2000-2008） | Debian fluid-soundfont 3.1（cdn-fastly.deb.debian.org/debian/pool/main/f/fluid-soundfont/） | MIT（COPYING 随包分发） |
+
+处理：public/music/ 下全部 30 首 MIDI（层级 13 + 团体 8 + Tom 1 + 摇滚 8）由 FluidSynth 2.6.0
+（MIT）离线渲染为 44.1kHz 立体声 WAV，再 ffmpeg 转 MP3 128kbps（按各曲末音符取整到小节边界的
+循环长度裁剪 + 末尾 50ms 淡出），脚本：C:\Users\ZANRe\Documents\Default Project\midi\render_all.py。
+原 .mid 备份在 app/music-backup-v56/。
+
+## v57：手电筒 UV 材质
+
+| 文件 | 来源 | 用途 |
+|---|---|---|
+| `flashlight_uv_atlas.png` | OpenAI 内置图像生成（2026-08-14）；均匀漫射光下的双区材质图集，左半为磨损黑色阳极氧化铝，右半为菱形滚花黑橡胶；无文字/标志 | 第一人称手持手电与地面/投掷手电共用的颜色与凹凸 UV；几何 UV 分别压入左右半区并保留 mipmap 防串色边距 |
+
+生成提示重点：正交平面材质、精确 50/50 竖向分区、金属细拉丝/浅划痕、橡胶密集小菱形防滑纹、
+均匀无方向光、无物体透视、无文字/标志/水印。运行时文件保留生成原始分辨率，由 GPU mipmap 缩小采样。

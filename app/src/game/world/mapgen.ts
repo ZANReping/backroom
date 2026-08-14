@@ -1,6 +1,6 @@
 // 程序化地图生成：房间+走廊/迷宫混合，按层级 motif 放置结构
 import { RNG } from '../core/rng'
-import type { LevelDef, Structure, GroundItem, LightSource, ExitInstance } from '../core/types'
+import type { LevelDef, Structure, GroundItem, LightSource, ExitInstance, FloorBand } from '../core/types'
 import { UNIVERSAL_ITEMS } from '../content/items'
 import { makeEntity, ENTITIES, type Entity } from '../entities'
 import { placePrefabs, scatterFeatures } from '../prefabs'
@@ -11,6 +11,7 @@ import './infiniteL2' // v41：注册 Level 2 无限 chunk 生成器（副作用
 import './infiniteL3' // v51：注册 Level 3 无限 chunk 生成器（副作用导入）
 import './infiniteL4' // v54：注册 Level 4 无限 chunk 生成器（副作用导入）
 import './infiniteL5' // v54：注册 Level 5 无限 chunk 生成器（副作用导入）
+import './infiniteL6' // v56：注册 Level 6 地表/地下双层无限生成器（副作用导入）
 import { genDeep } from './mapgenDeep'
 import { genOutpost } from './mapgenOutpost'
 import { CONTAINER_KINDS } from '../decorations/containers'
@@ -25,7 +26,7 @@ export interface GameMap {
   exits: ExitInstance[]
   entities: Entity[]
   spawn: { x: number; y: number }
-  npcs?: { id: string; x: number; y: number; facing?: number; floor?: 0 | 1 | 2 }[] // 据点 NPC 落位（引擎在 loadLevel 时实例化为运行时 NPC；v46：floor=所在楼层带 0主层/1上层，缺省 0；v54：2=第三层）
+  npcs?: { id: string; x: number; y: number; facing?: number; floor?: FloorBand }[] // NPC 所在楼层带，缺省 0
   npcDefs?: import('../content/npcs').NpcDef[] // 随机 NPC 定义（mapgenOutpost 生成；静态 NPC 走 npcs.ts 注册表）
   zones?: { name: string; x: number; y: number; z?: number; x0?: number; y0?: number; x1?: number; y1?: number }[] // 区域名称标注（据点大地图用；x,y=标注中心；v43：z=楼层带 0主层/1上层，缺省 0；v54：可选矩形范围 x0/y0/x1/y1——HUD 区域名矩形内优先，缺省=点标注）
   wet: Uint8Array // 减速区
@@ -43,6 +44,11 @@ export interface GameMap {
   stair: Int32Array // 楼梯坡道：0=无；否则 dir(低3位:1+x 2-x 3+y 4-y) | loCm<<3 | hiCm<<17（任意高度连续爬升）
   liquid: Uint8Array // 0=无 1=深水（下沉至 -POOL_DEPTH，可游泳） 2=浅水（仅减速+涟漪）
   floors: number // 可行走楼层总数（1=单层，2=双层，3=三层[v54]）
+  // ---- v56 九轮：地下平面（Level 6 双层结构：1F 苔原 + -1F 地下走廊）----
+  dn: Uint8Array // 1=地下可走地板瓦片（z=UNDER_FLOOR）；0=地下墙体/土层（阻挡地下通行；地表不受影响）
+  dnWall: Uint8Array // 1=地下墙体/土层（阻挡地下通行；地表不受影响）
+  hasUnderground?: boolean // O(1) 地下层能力标志，避免热路径扫描 dn 数组
+  terrain?: Float32Array // 室外自然地形微起伏（米；L6 由世界坐标低频噪声生成）
   // ---- v17 数据契约：无限模式（L0）与墙面/地面 tint ----
   tint: Uint8Array // 0=无 1=马尼拉墙纸 2=红室 3=熄灯区（几何着色/雾氛围用）
   inf?: InfiniteState // 无限 chunk 模式状态（仅 L0；有限层级缺省）
@@ -60,6 +66,10 @@ export const FLOOR_H = 3.0 // 上层地板高度（米）
 export const BAND_MID = FLOOR_H / 2 // 楼层高度带分界：z ≥ 1.5 视为上层
 export const POOL_DEPTH = 1.7 // 深水池深（玩家沉入水下，眼高没入水面）
 export const SHALLOW_DEPTH = 0.25 // 浅水洼深（仅减速，不沉没）
+// v56 九轮：地下平面（Level 6：1F 苔原之下数米，-1F 地下走廊）
+export const UNDER_FLOOR = -5.0 // 地下走廊地面高度（米）
+export const UNDER_CEIL = -2.0 // 地下走廊天花板高度（米，层高 3.0）
+export const UNDER_MID = -1.0 // 地下带分界：z < UNDER_MID 视为身处地下平面
 
 // v29a：液体水面高度（= liquid 水位；深水≈所在 elev 地面 +0.03，浅水洼 -0.17），供漂浮物贴水面
 export function liquidSurfaceH(m: GameMap, tx: number, ty: number): number | null {
@@ -78,15 +88,25 @@ function waterItemZ(m: GameMap, tx: number, ty: number, type: string): number | 
   if (m.liquid[ty * m.w + tx] === 1 && WATER_SINK.has(type)) return ELEV_H[m.elev[ty * m.w + tx]] - POOL_DEPTH
   return surface
 }
-// v54：三层高度带——z ≥ 4.5（FLOOR_H+BAND_MID）为第三层，z ≥ 1.5 为第二层，否则主层
-export const bandOfZ = (z: number): 0 | 1 | 2 => (z >= FLOOR_H + BAND_MID ? 2 : z >= BAND_MID ? 1 : 0)
+// 统一楼层带：地下 / 地表 / 二层 / 三层。
+export const bandOfZ = (z: number): FloorBand => z < UNDER_MID ? -1 : (z >= FLOOR_H + BAND_MID ? 2 : z >= BAND_MID ? 1 : 0)
+/** v56 七轮：玩家高度带按实际楼层数钳制——单层图跳跃越过 1.5m 时 bandOfZ 会翻到不存在的
+ *  「上层带」（groundHeightAt(band=1)=FLOOR_H 把玩家吸到 3.0m 卡到天花板上方）；玩家相关判断
+ *  （移动/交互/隔层过滤/击退落点）一律用本函数，实体用 bandOfZ（实体 z 不叠家具不会越带）
+ */
+export const bandOfPlayerZ = (m: GameMap, z: number): FloorBand => {
+  const band = bandOfZ(z)
+  if (band === -1) return m.hasUnderground ? -1 : 0
+  return Math.min(band, Math.max(0, (m.floors ?? 1) - 1)) as FloorBand
+}
 /** v54：楼层带 f（1|2）的楼板/墙体数组（up/up2 的泛化访问——侵入最小，旧读取点语义不变） */
 export const upAt = (m: GameMap, f: 1 | 2): Uint8Array => (f === 2 ? m.up2 : m.up)
 export const upWallAt = (m: GameMap, f: 1 | 2): Uint8Array => (f === 2 ? m.upWall2 : m.upWall)
 /** v54：坡道高度段 [lo,hi] 是否服务楼层带 band（坡道到达/经过该层地面 ±tol 才可在该带行走——
  *  3F 不会踩进 1F→2F 坡道的天井，1F 也不会走上悬空的 2F→3F 坡道段）；
  *  tol：canOccupy 用 STEP_UP（严格，防跌井）；bfs3D/entityWalkH 用 JUMP_REACH（宽松，保旧行为） */
-export const stairServesBand = (s2: number, band: 0 | 1 | 2, tol = STEP_UP): boolean => {
+export const stairServesBand = (s2: number, band: FloorBand, tol = STEP_UP): boolean => {
+  if (band === -1) return false
   const lo = ((s2 >> 3) & 0x3fff) / 100, hi = ((s2 >> 17) & 0x3fff) / 100
   return lo <= band * FLOOR_H + tol && hi >= band * FLOOR_H - tol
 }
@@ -106,15 +126,35 @@ export function tileH(m: GameMap, tx: number, ty: number): number {
   if (st & 7) return (ELEV_H[(st >> 3) & 3] + ELEV_H[(st >> 5) & 3]) / 2
   if (m.liquid[i] === 1) return -POOL_DEPTH
   if (m.liquid[i] === 2) return -SHALLOW_DEPTH
-  return ELEV_H[m.elev[i]]
+  return ELEV_H[m.elev[i]] + (m.elev[i] === 3 ? (m.terrain?.[i] ?? 0) : 0)
+}
+
+function terrainCorner(m: GameMap, vx: number, vy: number): number {
+  if (!m.terrain) return 0
+  let sum = 0, n = 0
+  for (let y = vy - 1; y <= vy; y++) for (let x = vx - 1; x <= vx; x++) {
+    if (x < 0 || y < 0 || x >= m.w || y >= m.h) continue
+    sum += m.terrain[y * m.w + x]; n++
+  }
+  return n ? sum / n : 0
+}
+
+/** 自然地形连续高度：对共享瓦片角高双线性插值，chunk 接缝与碰撞/渲染完全一致。 */
+export function surfaceUndulationAt(m: GameMap, x: number, y: number): number {
+  if (!m.terrain) return 0
+  const tx = Math.floor(x), ty = Math.floor(y), fx = x - tx, fy = y - ty
+  const a = terrainCorner(m, tx, ty), b = terrainCorner(m, tx + 1, ty)
+  const c = terrainCorner(m, tx, ty + 1), d = terrainCorner(m, tx + 1, ty + 1)
+  return (a + (b - a) * fx) * (1 - fy) + (c + (d - c) * fx) * fy
 }
 
 // 连续地面高度（世界坐标，坡道 smoothstep 平滑插值；玩家脚底/相机/实体站立用）
 // band：楼层高度带（0=主层 1=上层 2=第三层[v54]），上层非楼梯瓦片地面=band×FLOOR_H
-export function groundHeightAt(m: GameMap, x: number, y: number, band?: 0 | 1 | 2): number {
+export function floorHeight(m: GameMap, x: number, y: number, band: FloorBand = bandOfZ(0)): number {
   const tx = Math.floor(x), ty = Math.floor(y)
   if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return 0
   const i = ty * m.w + tx
+  if (band === -1) return UNDER_FLOOR
   const s2 = m.stair[i]
   if (s2 & 7) { // 楼梯：跨层连续坡道（与 band 无关）
     const dir = s2 & 7
@@ -137,7 +177,24 @@ export function groundHeightAt(m: GameMap, x: number, y: number, band?: 0 | 1 | 
   }
   if (m.liquid[i] === 1) return -POOL_DEPTH
   if (m.liquid[i] === 2) return -SHALLOW_DEPTH
-  return ELEV_H[m.elev[i]]
+  return ELEV_H[m.elev[i]] + (m.elev[i] === 3 ? surfaceUndulationAt(m, x, y) : 0)
+}
+
+/** 兼容旧调用；新代码应使用 floorHeight。 */
+export const groundHeightAt = floorHeight
+
+/** 指定楼层带的墙/不可达地形判定。越界恒视为墙。 */
+export function wallAt(m: GameMap, tx: number, ty: number, band: FloorBand): boolean {
+  if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return true
+  const i = ty * m.w + tx
+  if (band === -1) return m.dn[i] !== 1 || m.dnWall[i] === 1
+  if (band === 0) return m.tiles[i] !== 1
+  return upAt(m, band)[i] !== 1 || upWallAt(m, band)[i] === 1
+}
+
+/** 指定楼层带是否存在可走地面；结构碰撞由 structBlocksPoint 统一叠加。 */
+export function walkableAt(m: GameMap, tx: number, ty: number, band: FloorBand): boolean {
+  return !wallAt(m, tx, ty, band)
 }
 
 const idx = (m: { w: number }, x: number, y: number) => y * m.w + x
@@ -147,8 +204,8 @@ function isSolidStruct(m: GameMap, x: number, y: number): boolean {
 }
 
 // v13：楼层过滤的实心结构判定（碰撞/AI 按所在楼层高度带过滤；lift 跨层不算实心）
-export function solidStructAtFloor(m: GameMap, x: number, y: number, floor: 0 | 1 | 2): boolean {
-  return structsNear(m, x, y).some((s) => s.solid && (s.floor ?? 0) === floor && x >= s.x && x < s.x + s.w && y >= s.y && y < s.y + s.h)
+export function solidStructAtFloor(m: GameMap, x: number, y: number, floor: FloorBand, ignore?: Structure): boolean {
+  return structsNear(m, x, y).some((s) => s !== ignore && s.solid && (s.floor ?? 0) === floor && x >= s.x && x < s.x + s.w && y >= s.y && y < s.y + s.h)
 }
 
 // v55c（任务3 性能）：结构碰撞空间索引——仅无限层运行时启用（m.inf 存在：单窗千级结构 × 每帧
@@ -343,7 +400,7 @@ export function structColliders(s: Structure, m?: GameMap): ColliderBox[] {
 }
 
 // 世界点 (x,y) 在脚底高度 z 处是否被实心结构碰撞盒阻挡（精细亚瓦片判定）
-export function structBlocksPoint(m: GameMap, x: number, y: number, z: number, band: 0 | 1 | 2): boolean {
+export function structBlocksPoint(m: GameMap, x: number, y: number, z: number, band: FloorBand): boolean {
   const arr = structsNear(m, Math.floor(x), Math.floor(y)) // v55c：无限层瓦片桶；有限层全表
   for (const s of arr) {
     if (!s.solid || (s.floor ?? 0) !== band) continue
@@ -357,9 +414,24 @@ export function structBlocksPoint(m: GameMap, x: number, y: number, z: number, b
   return false
 }
 
+/** 三维视线是否被指定楼层带的精细结构碰撞盒截断；target 可忽略目标自身，避免柜体遮住自己的交互面。 */
+export function structBlocksSight(m: GameMap, x: number, y: number, z: number, band: FloorBand, target?: Structure): boolean {
+  const arr = structsNear(m, Math.floor(x), Math.floor(y))
+  for (const s of arr) {
+    if (s === target || !s.solid || (s.floor ?? 0) !== band) continue
+    if (x < s.x - 0.6 || x > s.x + s.w + 0.6 || y < s.y - 0.6 || y > s.y + s.h + 0.6) continue
+    const base = floorHeight(m, s.x + s.w / 2, s.y + s.h / 2, band)
+    for (const b of structColliders(s, m)) {
+      if (x < b.x0 || x > b.x1 || y < b.y0 || y > b.y1) continue
+      if (z >= base - 0.04 && z <= base + b.top + 0.04) return true
+    }
+  }
+  return false
+}
+
 // 世界点 (x,y) 处可站立的结构顶面高度（无则 -Infinity；仅当玩家 z 已接近/高于顶面时生效，
 // 与 structBlocksPoint 的放行条件衔接：能进入 footprint 即可落在顶面上，不会卡进家具内部）
-export function structStandTopAt(m: GameMap, x: number, y: number, z: number, band: 0 | 1 | 2): number {
+export function structStandTopAt(m: GameMap, x: number, y: number, z: number, band: FloorBand): number {
   let best = -Infinity
   const arr = structsNear(m, Math.floor(x), Math.floor(y)) // v55c：无限层瓦片桶；有限层全表
   for (const s of arr) {
@@ -460,10 +532,12 @@ export function ceilingSteps(m: GameMap, wallH: number): CeilStep[] {
 // band1 上方有三层楼板时=三层楼板底 2×FLOOR_H-0.35）；
 // v46：楼梯坡道格=楼梯口上空（无楼板——坡道上段 up=1 是「上层可站」标记而非有楼板），
 // 顶高取上层天花（此前误取楼板底 2.65，坡道中段起跳被看不见的「楼板」拦截——多层交界处无法跳跃）
-export function ceilingHeightAt(m: GameMap, x: number, y: number, wallH: number, band: 0 | 1 | 2 = 0): number {
+export function ceilingHeightAt(m: GameMap, x: number, y: number, wallH: number, band: FloorBand = 0): number {
   const tx = Math.floor(x), ty = Math.floor(y)
-  if (!hasCeiling(m, tx, ty)) return Infinity
+  if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return Infinity
   const i = ty * m.w + tx
+  if (band === -1) return m.dn[i] === 1 ? UNDER_CEIL : Infinity
+  if (!hasCeiling(m, tx, ty)) return Infinity
   if (band === 2) return m.ceiling[i] === 1 ? tallCeilH(m, wallH) : 2 * FLOOR_H + 2.6 // v54：三层天花
   if (band === 1) {
     if (m.ceiling[i] === 1) return tallCeilH(m, wallH)
@@ -853,6 +927,10 @@ function genOnce(def: LevelDef, seed: number): GameMap {
     liquid: new Uint8Array(size * size),
     floors: 1,
     tint: new Uint8Array(size * size),
+    dn: new Uint8Array(size * size), // v56 九轮：地下平面（Level 6 -1F；其余层级全 0）
+    dnWall: new Uint8Array(size * size), // v56 九轮：地下墙体（Level 6 -1F；其余层级全 0）
+    hasUnderground: false,
+    terrain: new Float32Array(size * size),
   }
   // 初始化为墙
   m.tiles.fill(2)

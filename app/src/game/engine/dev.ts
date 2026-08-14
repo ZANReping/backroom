@@ -1,6 +1,6 @@
 // v53：开发者模式 API（召唤/传送/状态控制/层级重建/调试信息）——
 // 自 engine.ts 拆分，逻辑逐语句搬运；仅供开发者面板/冒烟测试调用，不改变正常游戏流程。
-import { tileAt } from '../world/mapgen'
+import { bandOfPlayerZ, floorHeight, tileAt, walkableAt } from '../world/mapgen'
 import { LEVELS } from '../levels'
 import { ENTITIES, makeEntity, applyL3Variant, type Entity } from '../entities'
 import { ITEMS, itemName } from '../content/items'
@@ -506,19 +506,20 @@ export function devGotoExit(eng: Engine): boolean {
   if (!m?.inf) return eng.devTeleport('exit')
   const inf = m.inf
   const p = eng.player
-  const w = l0NearestExit(m, eng.levelDef, inf.ox + p.x, inf.oy + p.y)
+  const band = bandOfPlayerZ(m, p.z)
+  const w = l0NearestExit(m, eng.levelDef, inf.ox + p.x, inf.oy + p.y, band)
   if (!w) { eng.msg('[DEV] 未找到保底出口。', 'system'); return false }
   // 出口世界坐标 → 站到出口旁 1 格
   const wex = w.x + inf.ox + 0.5, wey = w.y + inf.oy + 0.5
-  p.x = wex - inf.ox + 1; p.y = wey - inf.oy; p.z = 0; p.vz = 0
+  p.x = wex - inf.ox + 1; p.y = wey - inf.oy; p.vz = 0
   eng.updateInfiniteWindow()
   // 平移后精确站在出口相邻地板瓦片上（交互半径内）
-  const e = m.exits[0]
+  const e = m.exits.find((q) => (q.floor ?? 0) === band)
   if (e) {
     let placed = false
     for (const [dx, dy] of [[0, 1], [0, -1], [1, 0], [-1, 0]] as const) {
       const tx = Math.floor(e.x) + dx, ty = Math.floor(e.y) + dy
-      if (tx >= 0 && ty >= 0 && tx < m.w && ty < m.h && m.tiles[ty * m.w + tx] === 1) {
+      if (walkableAt(m, tx, ty, band)) {
         p.x = tx + 0.5; p.y = ty + 0.5; placed = true; break
       }
     }
@@ -527,6 +528,8 @@ export function devGotoExit(eng: Engine): boolean {
       if (spot) { p.x = spot.x; p.y = spot.y }
     }
   }
+  p.z = floorHeight(m, p.x, p.y, band)
+  p.floor = band
   eng.msg(`[DEV] 已传送到出口「闪烁的墙壁」（约 ${w.d.toFixed(0)}m 外）`, 'system')
   return true
 }

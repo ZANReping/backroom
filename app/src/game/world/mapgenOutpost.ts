@@ -933,6 +933,7 @@ function genTomOutpost(m: GameMap, rng: RNG, def: LevelDef): { cx: number; cy: n
   deco('noticeboard', 11, 22, 'tom_menu.png') // 餐厅西墙菜单黑板
   deco('megposter', 38, 24, 'tom_poster.png'); deco('photo', 11, 30); deco('photo', 38, 28)
   L(16, 23, 5.5); L(28, 23, 5.5); L(22, 28, 5.5); L(34, 28, 5.5); L(16, 31, 5.5)
+  NPC('joey', 37, 24) // v56：驻店乐手乔伊（餐厅东墙边，弹吉他）
 
   // ---- 厨房（东北翼：灶台排 + 料理台岛 + 水槽；Tom 掌勺） ----
   room(42, 10, 52, 19, [[46, 10], [46, 19]]) // 北门接北横廊、南门接冷库
@@ -2374,11 +2375,11 @@ function genHomelyHotel(m: GameMap, rng: RNG, def: LevelDef): { cx: number; cy: 
   carve(12, 8, 13.5, 15.5) // 西翼走廊（竖向，连接两客房门洞与大堂西门洞）
   room(4, 6, 12, 11, [[12, 8]])
   S('bed', 5, 7, 1, 2, true, { deg: 270 }); S('table', 10, 7) // 床头桌（非容器）
-  S('rug', 6, 8, 2, 2, false, { tex: 'l5_carpet.png' })
+  S('rug', 6, 8, 2, 2, false, { tex: 'l5_carpet.jpg' })
   roomLights(4, 6, 12, 11)
   room(4, 13, 12, 18, [[12, 15]])
   S('bed', 5, 17, 1, 2, true, { deg: 0 }); S('table', 10, 16) // 床贴南墙（床头朝南）+ 床头桌（非容器）
-  S('rug', 6, 14, 2, 2, false, { tex: 'l5_carpet_blue.png' })
+  S('rug', 6, 14, 2, 2, false, { tex: 'l5_carpet.jpg' })
   roomLights(4, 13, 12, 18)
   for (const [lx, ly] of [[21, 4], [13, 11], [31, 11]] as const) L(lx, ly)
   // 随机住客 ×2（mixed 风味，大堂/餐厅角）
@@ -2436,7 +2437,7 @@ function genOriginalsParlor(m: GameMap, rng: RNG, def: LevelDef): { cx: number; 
   carve(31, 11, 33, 13) // 客厅东墙门廊（穿墙接卧室门洞外凿段）
   S('bed', 41, 7, 1, 2, true, { deg: 180 }); S('table', 35, 7) // 床头桌（非容器）
   S('candlestand', 41, 16, 1, 1, false)
-  S('rug', 37, 13, 3, 3, false, { tex: 'l5_carpet.png' })
+  S('rug', 37, 13, 3, 3, false, { tex: 'l5_carpet.jpg' })
   NPC('hoffa', 37, 10) // 霍法（配给桌旁）
   S('table', 37, 8) // 配给桌
   roomLights(34, 6, 42, 18)

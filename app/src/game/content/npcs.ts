@@ -5,11 +5,12 @@
 // 对话：lines 为预制对话树（未接入 LLM API 时玩家只能选预制回复）；
 // 接入 API 后可在 DialogOverlay 自由输入（人设由 personality/background 组装 system prompt）。
 import type { AvatarCfg } from '../core/avatar'
+import type { FloorBand } from '../core/types'
 import { DEFAULT_AVATAR } from '../core/avatar'
 
 export interface DialogueNode {
   npc: string // NPC 台词
-  opts: { text: string; next?: number; action?: 'trade' | 'leave' }[] // 玩家回复选项
+  opts: { text: string; next?: number; action?: 'trade' | 'leave' | 'play' }[] // 玩家回复选项（play=v56 乐手演奏）
 }
 
 export interface NpcDef {
@@ -23,7 +24,7 @@ export interface NpcDef {
   avatar: Partial<AvatarCfg> // 形象（手工定制的固定配置：性别/发型/发色/肤色/裤色/表情；上衣由制服覆盖）
   currency?: 'eaglecoin' | 'presses' | 'almond' // 交易货币（缺省天鹰币；BNTG 系为压印币；v54：'almond'=直接以杏仁水计价为 Gamma 基地军需官所用——wikidot 惯例杏仁水是通用等价物）
   trade?: { item: string; price: number }[] // 商品（按 currency 货币定价）
-  barter?: { give: string; giveN: number; get: string; getN: number; give2?: string; give2N?: number }[] // 以物易物（玩家给 give×giveN[ + give2×give2N]、换得 get×getN；阿丽亚娜/Tom 的餐馆无货币专用，与 trade 互斥）
+  barter?: { give: string; giveN: number; get: string; getN: number; give2?: string; give2N?: number }[] // 以物易物（玩家给 give×giveN[ + give2×give2N]、换得 get×getN；可与普通 trade 并存）
   workLoop?: 'hammer' | 'saw' | 'paint' | 'mop' // v39：装修工作循环动作（BRC 员工：锚定工作点不游荡，渲染层 procedual 驱动手臂+工具）
   warehouse?: 'meg' | 'bntg' // v54：寄存仓库 NPC——声望 ≥10（或 BNTG 付 5 压印币临时）时对话出现「寄存物品/取回物品」（阵营互通仓库，48 栏位）
   medic?: boolean // v55：医疗身份 NPC（杜邦/马丁/莫雷尔/萨伊拉）——疫疾三阶以上对话出现「求治感染」（清除感染值）
@@ -237,7 +238,7 @@ export interface NpcState {
   id: string
   def: NpcDef
   x: number; y: number; facing: number
-  floor?: 0 | 1 | 2 // v46：所在楼层带（0=主层 1=上层；缺省 0）——多层据点的上层居民（EL3A 夹楼办公区）；v54：2=第三层（Gamma 基地行政部）
+  floor?: FloorBand
   homeX: number; homeY: number // 岗位锚点（游荡不远离）
   homeFacing?: number // v39：工作点朝向（BRC 员工锚定面向墙/脚手架；普通 NPC 不设）
   tx: number; ty: number // 当前挪动目标
@@ -1136,6 +1137,41 @@ export const NPCS: Record<string, NpcDef> = {
     ],
     idle: ['……三号桌的汤好了。', '（她在轻轻擦拭一把金色的斧头）', '今天的客人……有点多。', '番茄酱在第二个柜子。', '……别看我。'],
   },
+  // v56：Tom 的餐馆驻店乐手——前厅摇滚乐手，切进后室时连人带吉他一起掉进天鹰段
+  joey: {
+    id: 'joey', name: '乔伊·巴蒂斯塔', role: '驻店乐手', faction: 'wanderer',
+    personality: '嗓门大、手势多，谈起音乐像谈起老朋友；坚信一把吉他比一罐杏仁水更能安抚人心。',
+    background: '布鲁克林出生的意大利裔摇滚乐手。七十年代巡演途中切进后室，连人带吉他一起掉进天鹰段——Tom 的餐馆收留了他，代价是每晚给食客弹几首。他什么都弹：滚石、披头士、迷幻、蓝调，还有那些没人听过的车库小调。',
+    uniform: { top: '#3a3f46', topStyle: 2, badge: '#c9a03a' }, // 旧皮夹克风
+    avatar: { gender: 0, hair: 4, hairColor: '#2a2a2c', skin: '#d8a878', pants: '#26262c', pantsStyle: 0, face: 0 },
+    lines: [
+      {
+        npc: '（他拨了一下琴弦，抬头冲你咧嘴一笑）嘿，朋友！Tom 的汤配上我的吉他——后室最接近天堂的地方。想听点什么？',
+        opts: [
+          { text: '弹一首吧。', action: 'play' },
+          { text: '你怎么来后室的？', next: 1 },
+          { text: '你的吉他是从哪来的？', next: 2 },
+          { text: '先吃饭。', action: 'leave' },
+        ],
+      },
+      {
+        npc: '（他耸耸肩，指节敲了敲琴箱）巡演大巴，午夜，I-95。一睁眼，黄墙、黄灯、嗡嗡响的荧光灯——Mamma mia，我第一反应是：舞台特效是不是坏了。后来才知道，这叫切出。',
+        opts: [
+          { text: '再弹一首。', action: 'play' },
+          { text: '后来呢？', next: 2 },
+          { text: '回见。', action: 'leave' },
+        ],
+      },
+      {
+        npc: '这把老伙计跟了我半辈子。掉下来的时候，它就在我背上——琴没摔坏，我摔坏了。Tom 给我一碗汤，我给他弹了一晚上。就这么定下来的：我弹琴，他掌勺，谁也不欠谁。',
+        opts: [
+          { text: '再来一首。', action: 'play' },
+          { text: '好故事。', action: 'leave' },
+        ],
+      },
+    ],
+    idle: ['（轻轻拨弦试音）', '……这段还差一个音。', '（哼着一段七十年代的旋律）', '拨片呢？刚还在手里。', '今晚演点什么好……'],
+  },
 
   // ================= v53b：M.E.G. Gamma 基地（Level 3 子层级，三层结构 106/107/108）=================
   brandt: {
@@ -1564,6 +1600,9 @@ export const NPCS: Record<string, NpcDef> = {
     trade: [
       { item: 'canned', price: 1 }, { item: 'bandage', price: 1 }, { item: 'coffee', price: 2 },
       { item: 'sedative', price: 2 }, { item: 'glowstick', price: 1 },
+    ],
+    barter: [
+      { give: 'royalration', giveN: 2, get: 'nightvision', getN: 1 },
     ],
     lines: [
       {

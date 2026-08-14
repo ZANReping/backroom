@@ -1,6 +1,6 @@
 // v53：战斗/投掷/击退 + 伤害/死亡结算 + 粒子生成 —— 自 engine.ts 拆分，逻辑逐语句搬运。
 import { ITEMS } from '../content/items'
-import { tileAt, bandOfZ, groundHeightAt } from '../world/mapgen'
+import { tileAt, bandOfZ, bandOfPlayerZ, groundHeightAt } from '../world/mapgen'
 import { look } from '../core/renderer3d'
 import { audio } from '../core/audio'
 import { recordEntityEncounter, type Entity } from '../entities'
@@ -137,7 +137,7 @@ export function attack(eng: Engine) {
   let blockedFollower = false // v47：教化约束——被拦下的对信众挥击
   for (const n of eng.npcs) {
     if (n.dead) continue
-    if ((n.floor ?? 0) !== bandOfZ(p.z)) continue // v46：隔层打不到（夹楼 NPC 不会被穿楼板挥中）
+    if ((n.floor ?? 0) !== bandOfPlayerZ(m, p.z)) continue // v46：隔层打不到（夹楼 NPC 不会被穿楼板挥中；v56 七轮：玩家带按实际楼层钳制）
     const d = Math.hypot(n.x - p.x, n.y - p.y)
     if (d > 1.8) continue
     const ang = Math.atan2(n.y - p.y, n.x - p.x)
