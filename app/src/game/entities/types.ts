@@ -95,7 +95,14 @@ export interface Entity {
   scrapeT?: number // 穿墙沙沙声计时（钝人）
   intimidated?: boolean // 猎犬：正处于「直视+噪音」威慑中（播报去抖）
   provoked?: boolean // 被动实体（无面灵）：被玩家攻击后激怒，持续反击直到脱战平息
+  turnSlowT?: number // v58：七层之物——体节被击后转头迟滞的剩余时间
   targetEnt?: Entity // 实体对实体仇恨目标（被其他实体攻击后反击伤害者——死亡飞蛾反击尸鼠）
   encountered?: boolean // v54：图鉴遭遇已计数（按个体去重——看见/索敌/攻击命中/特殊交互，每只只计一次）
   blackoutSpawn?: boolean // 停电期间生成（笑魇）：灯光恢复时消散
+  // ===== 联机同步（房主权威实体快照）=====
+  netId?: number // 房主分配的联机 id；客人端带此字段即为「提线木偶」（位置/状态由快照驱动，本地 AI 挂起）
+  netX?: number // 快照目标位置（窗口坐标，本地插值趋近）
+  netY?: number
+  netZ?: number
+  netT?: number // 最近一次快照时间戳（ms；>8s 未刷新即移除）
 }

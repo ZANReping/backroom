@@ -16,7 +16,10 @@ export interface GenChunk {
   liquid?: Uint8Array // v54：液体瓦片（L5 室内泳池 1=深水/2=浅水，同有限层 m.liquid 契约；缺省=无液体）
   dn?: Uint8Array // v56 九轮：地下可走地板瓦片（L6 -1F 走廊；缺省=全 0）
   dnWall?: Uint8Array // v56 九轮：地下墙体瓦片（L6 -1F；缺省=全 0）
+  up?: Uint8Array // v57m：上层楼板瓦片（L7 入口舱体位于 2F；其余层级缺省）
+  upWall?: Uint8Array // v57m：上层墙体瓦片（L7 入口舱体墙壁；缺省=全 0）
   terrain?: Float32Array // 室外自然地形微起伏（米；缺省=0）
+  seaFloor?: Float32Array // v57o：每瓦片海床深度（米，水面以下；L7 垂直深度轴；缺省=1.7）
   structures: Structure[]
   items: GroundItem[]
   lights: LightSource[]
@@ -37,6 +40,12 @@ export interface InfiniteLevelImpl {
   rareVariants: readonly string[]
   variantNames: Record<string, string>
   variantLore: Record<string, string[]>
+  /** 固定出生点（世界瓦片坐标；缺省=世界原点 chunk 中心 15,15）。Level 7 用它把出生点锁在入口房间内。 */
+  spawnWorld?: { x: number; y: number }
+  /** 固定出生楼层带（缺省 0=主层）。Level 7 入口舱体位于 2F，设为 1。 */
+  spawnFloor?: -1 | 0 | 1 | 2
+  /** v57t：轻量解析式区域出口锚点（不生成完整 chunk；L7 稀有出口用，避免 HUD 出口指引每次全量生成宿主 chunk）。 */
+  regionExitPos?: (seed: number, rx: number, ry: number) => { x: number; y: number; z?: number } | null
 }
 
 const implRegistry = new Map<number, InfiniteLevelImpl>()

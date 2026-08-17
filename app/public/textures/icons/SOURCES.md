@@ -8,7 +8,7 @@
 |---|---|---|---|---|
 | 杏仁水 almond | almond.png | beer-bottle | Delapouite | https://game-icons.net/1x1/delapouite/beer-bottle.html |
 | 绷带 bandage | bandage.png | bandage-roll（绷带卷，v15 由 bandaged 更换） | Lorc | https://game-icons.net/1x1/lorc/bandage-roll.html |
-| 手电筒电池 battery | battery.png | batteries（柱状电池组，v15 由 car-battery 更换） | Lorc | https://game-icons.net/1x1/lorc/batteries.html |
+| 电池 battery | battery.png | batteries（柱状电池组，v15 由 car-battery 更换） | Lorc | https://game-icons.net/1x1/lorc/batteries.html |
 | 撬棍 crowbar | crowbar.png | crowbar | Delapouite | https://game-icons.net/1x1/delapouite/crowbar.html |
 | 磁带 tape | tape.png | audio-cassette | Delapouite | https://game-icons.net/1x1/delapouite/audio-cassette.html |
 | 打火机 lighter | lighter.png | lighter | Delapouite | https://game-icons.net/1x1/delapouite/lighter.html |

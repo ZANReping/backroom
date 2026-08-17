@@ -204,7 +204,7 @@ export function genArianeQuest(rand: () => number): QuestDef {
   const id = `qa${questSeq++}`
   const hard = rand() < 0.35
   const pool: [string, number, boolean][] = [
-    ['almond', 2, false], ['oddbook', 1, false], ['xenonmarble', 2, false], ['cashew', 1, false],
+    ['almond', 2, false], ['xenonmarble', 2, false], ['cashew', 1, false],
     ['rabbit', 1, true], ['skeleton', 1, true], ['fuyouyu', 1, true], ['warpberry', 1, true], ['thingmeat', 1, true],
   ]
   const [target, n, isHard] = pool[Math.floor(rand() * pool.length)]

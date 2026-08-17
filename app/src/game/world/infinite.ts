@@ -8,7 +8,8 @@ import { UNIVERSAL_ITEMS } from '../content/items'
 import { makeEntity, ENTITIES, type Entity } from '../entities'
 import type { NpcState } from '../content/npcs'
 import type { GameMap } from './mapgen'
-import { fixHanging, HANGING_KINDS } from './mapgen'
+import { fixHanging, HANGING_KINDS, waterItemZForTile } from './mapgen'
+export { waterItemZForTile } // Level 7 无限生成器：chunk raw 阶段计算水面漂浮/水底沉没物品高度
 import type { ExitInstance, FloorBand, GroundItem, LevelDef, LightSource, Structure } from '../core/types'
 
 export const CS = 32 // chunk 边长（瓦片）
@@ -51,7 +52,7 @@ export const VARIANT_LORE: Record<string, string[]> = {
     '在低可见度的掩映下，熄灯区会不断变动，极难穿行。档案建议：一旦误入，立刻向视线中的第一缕微光狂奔，或循着任意嗡鸣声前行，直至找到出口。',
   ],
   manila: [
-    'The Manila Room（马尼拉室）。Level 0 中罕见出现的一间孤立的正方形厚墙房间，因其独特的米黄色壁纸而得名。陈设极少，且每次出现略有不同——通常不超过一张桌子和一把椅子，入口数量在 1 到 4 个之间浮动。生存难度 0，无敌对实体。',
+    'The Manila Room（马尼拉室）。Level 0 中罕见出现的一间孤立的正方形厚墙房间，因其独特的米黄色壁纸而得名。陈设极少，通常不超过一张桌子和一把椅子；扩建后的房间在四面各保留一处宽入口并接回外围迷宫。生存难度 0，无敌对实体。',
     '它是 Level 0「孤立效应」唯一已知的例外：这是全层唯一一个人们能够看见彼此的房间，且对所有人都出现在同一位置，因此成为流浪者约定的会合点。副作用：他人进入时会「淡入现形」，故须避免多人同时从同一个入口进入。',
     '桌上通常放着盖有 M.E.G. 徽记的文件夹，内容涵盖剪辑（no-clip）说明、最常见与最危险实体的图鉴，以及重要层级指南。约 36% 的新流浪者反映这些文件对逃出 Level 0 起了关键作用；文件会随房间的正常变化偶尔消失，报告缺失后需补放。',
     '⚠ 它并不安静。灯光与 Level 0 几乎完全相同，并发出同样恼人的嗡鸣；墙内会传出敲击声与砰砰声，被认为可能有实体存在于墙体之内——这些声音在灯灭期间最响。灯的亮度剧烈波动，会周期性地完全熄灭陷入全黑。',
@@ -77,6 +78,9 @@ export interface LiveChunk {
   liquid?: Uint8Array // v54：液体瓦片（L5 室内泳池；缺省=无液体，stitch 补 0）
   dn?: Uint8Array // v56 九轮：地下可走地板瓦片（Level 6 -1F；缺省=全 0）
   dnWall?: Uint8Array // v56 九轮：地下墙体瓦片（Level 6 -1F；缺省=全 0）
+  up?: Uint8Array // v57m：上层楼板瓦片（L7 入口舱体 2F）
+  upWall?: Uint8Array // v57m：上层墙体瓦片（L7 入口舱体墙壁）
+  seaFloor?: Float32Array // v57o：海床深度（L7 垂直深度轴）
   terrain?: Float32Array
   // 以下为「活体」对象（窗口坐标，随窗口平移；跨平移保持对象身份与状态）
   structures: Structure[]
@@ -105,6 +109,7 @@ export interface InfiniteState {
   state: Map<string, ChunkDynState> // 已卸载 chunk 动态状态（有界 LRU）
   taken: Set<number> // 已拾取的生成器固有物品 id
   regionExits: Map<string, { x: number; y: number }> // 超区域出口世界坐标缓存
+  regionExitMiss: Set<string> // v57t：无出口区域的负缓存（L7 稀有出口——避免 HUD 每次全量生成宿主 chunk）
   rev: number // 窗口版本号（每次平移 +1，渲染层同步用）
   redo?: number // chunk 几何强制重建计数（红室蔓延等全图着色变化时 +1，渲染层据此重建全部已构建 chunk）
   plague?: boolean // 红室蔓延：玩家进入红室后，全部区域（含新生成）强制红室化且不产物资
@@ -132,6 +137,8 @@ const itemIdOf = (cx: number, cy: number, n: number) => GEN_ITEM_BASE + ((cx & 0
 
 // ---------- 变体判定（独立哈希流，不消耗布局 RNG）----------
 export function variantOf(seed: number, cx: number, cy: number): L0Variant {
+  // Level 0 的固定出生 chunk 始终使用开阔区；标题背景同样从该地图出生点取景。
+  if (cx === 0 && cy === 0) return 'open'
   if (Math.abs(cx) <= 1 && Math.abs(cy) <= 1) {
     // 出生安全区：常规迷宫/开阔
     return h01(seed, 0xb10, cx, cy) < 0.7 ? 'maze' : 'open'
@@ -219,6 +226,8 @@ export function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
     structures.some((s) => s.solid && WX + x >= s.x && WX + x < s.x + s.w && WY + y >= s.y && WY + y < s.y + s.h)
   // 深坑洞（elev=4）：放置类逻辑一律避开（物品/结构/出口不得生成在洞口上）
   const holeAt = (x: number, y: number) => x >= 0 && y >= 0 && x < CS && y < CS && elev[li(x, y)] === 4
+  // 马尼拉室内部只保留条目明确描述的家具与补给，通用随机装饰/掉落不得挤入。
+  const manilaReserved = (x: number, y: number) => variant === 'manila' && x >= 9 && x <= 22 && y >= 9 && y <= 22
   // 空地放置（本chunk 2..29 区域，需外圈全地板）
   const placeFree = (kind: Structure['kind'], w: number, h: number, solid: boolean, withSid = false, data?: Structure['data']): boolean => {
     for (let t = 0; t < 80; t++) {
@@ -226,7 +235,7 @@ export function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
       let ok = true
       for (let j = y - 1; j <= y + h && ok; j++)
         for (let i = x - 1; i <= x + w && ok; i++)
-          if (!isF(i, j) || solidAtL(i, j) || holeAt(i, j)) ok = false
+          if (!isF(i, j) || solidAtL(i, j) || holeAt(i, j) || manilaReserved(i, j)) ok = false
       if (!ok) continue
       pushStruct(kind, x, y, w, h, solid, withSid, data)
       return true
@@ -238,7 +247,7 @@ export function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
     const a = area ?? { x0: 2, y0: 2, x1: CS - 3, y1: CS - 3 }
     for (let t = 0; t < 120; t++) {
       const x = rng.int(a.x0, a.x1), y = rng.int(a.y0, a.y1)
-      if (!isF(x, y) || solidAtL(x, y) || holeAt(x, y)) continue
+      if (!isF(x, y) || solidAtL(x, y) || holeAt(x, y) || manilaReserved(x, y)) continue
       if (!(isF(x + 1, y) && isF(x - 1, y) && isF(x, y + 1) && isF(x, y - 1))) {
         pushStruct(kind, x, y, 1, 1, false, withSid, data)
         return true
@@ -297,17 +306,21 @@ export function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
     }
     case 'open': {
       carve(3, 3, CS - 4, CS - 4)
-      for (let t = 0; t < 5; t++) { // 少量墙块孤岛
+      let placed = 0
+      for (let attempt = 0; attempt < 24 && placed < 5; attempt++) { // 少量墙块孤岛
         const bx = rng.int(6, CS - 10), by = rng.int(6, CS - 10)
+        // 原点 chunk 中心保留 10×10m 无障碍出生广场，避免初始视角贴墙或卡入孤岛。
+        if (cx === 0 && cy === 0 && bx <= 20 && bx + 1 >= 11 && by <= 20 && by + 1 >= 11) continue
         for (let j = 0; j < 2; j++) for (let i = 0; i < 2; i++) tiles[li(by + j, bx + i)] = 2
+        placed++
       }
       break
     }
     case 'arch': {
-      // 拱厅：中央大厅 + 两排连续拱门柱廊
-      carve(7, 10, 24, 21)
-      for (const ay of [12, 19])
-        for (let ax = 8; ax <= 23; ax += 3) pushStruct('arch', ax, ay, 1, 1, true)
+      // 拱厅：扩大开放大厅，并用连续 3m 拱廊形成两道半高分隔墙。
+      carve(4, 7, 27, 24)
+      for (const ay of [11, 20])
+        for (let ax = 6; ax <= 24; ax += 3) pushStruct('arch', ax, ay, 3, 1, true)
       break
     }
     case 'pillarhall': {
@@ -365,10 +378,11 @@ export function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
   }
   switch (variant) {
     case 'arch':
-      for (const [lx, ly] of [[10, 15], [16, 11], [21, 16], [14, 20]] as const) pushLight(lx, ly, 4.2, def.palette.light)
-      placeWallHug('graffiti', true, { loreKind: 'arch' }, { x0: 8, y0: 11, x1: 23, y1: 20 })
+      for (const [lx, ly] of [[7, 9], [13, 9], [19, 9], [25, 9], [9, 16], [16, 16], [23, 16], [9, 23], [16, 23], [23, 23]] as const)
+        pushLight(lx, ly, 4.8, def.palette.light)
+      placeWallHug('graffiti', true, { loreKind: 'arch' }, { x0: 5, y0: 8, x1: 26, y1: 23 })
       // v32：滋水枪——很小概率出现在拱门区域
-      if (rng.chance(0.05)) pushItem('squirtgun', rng.int(10, 21), rng.int(10, 21))
+      if (rng.chance(0.05)) pushItem('squirtgun', rng.int(7, 24), rng.int(13, 18))
       break
     case 'pillarhall':
       for (const [lx, ly] of [[9, 9], [22, 9], [15, 15], [9, 22], [22, 22]] as const) pushLight(lx, ly, 4, def.palette.light)
@@ -395,50 +409,56 @@ export function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
       //   color of its wallpaper. It has minimal furnishings which vary slightly between
       //   appearances, usually no more than a table and chair as well as anywhere from
       //   1 to 4 entrances.」
-      const R = 8                       // 正方形（square）
-      const rx0 = 12, ry0 = 12
+      const R = 14                      // 扩大后的正方形会合室
+      const rx0 = 9, ry0 = 9
       const rx1 = rx0 + R - 1, ry1 = ry0 + R - 1
       // 厚墙（thick walls）：房间外再包一圈实墙，房间与迷宫之间隔着两格厚的墙体
       for (let y = ry0 - 2; y <= ry1 + 2; y++)
         for (let x = rx0 - 2; x <= rx1 + 2; x++)
           if (x > 0 && y > 0 && x < CS - 1 && y < CS - 1) tiles[li(x, y)] = 2
       carve(rx0 + 1, ry0 + 1, rx1 - 1, ry1 - 1)
-      // 1–4 个入口：每次出现数量与朝向都可能不同
-      const sides = rng.shuffle([0, 1, 2, 3])
-      const nDoors = rng.int(1, 4)
+      // Wikidot 描述为四面各一扇木门：四条单格走廊穿过厚墙，并继续接回外围迷宫。
       const midX = (rx0 + rx1) >> 1, midY = (ry0 + ry1) >> 1
-      for (let d = 0; d < nDoors; d++) {
-        switch (sides[d]) {
-          case 0: for (let y = ry0 - 2; y <= ry0; y++) tiles[li(midX, y)] = 1; break // 北
-          case 1: for (let y = ry1; y <= ry1 + 2; y++) tiles[li(midX, y)] = 1; break // 南
-          case 2: for (let x = rx0 - 2; x <= rx0; x++) tiles[li(x, midY)] = 1; break // 西
-          case 3: for (let x = rx1; x <= rx1 + 2; x++) tiles[li(x, midY)] = 1; break // 东
+      // 独特米黄色壁纸；同一 tint 的地面在渲染层改走独立木地板材质。
+      const connectDoor = (sx: number, sy: number, dx: number, dy: number) => {
+        let x = sx, y = sy
+        for (let step = 0; step < CS; step++) {
+          if (x <= 0 || y <= 0 || x >= CS - 1 || y >= CS - 1) break
+          const joinedExistingFloor = tiles[li(x, y)] === 1
+          tiles[li(x, y)] = 1
+          if (step >= 4 && joinedExistingFloor) break
+          x += dx; y += dy
         }
       }
-      // 独特的米黄色壁纸（tint=1 → 渲染层走无纹理纯色 #e5c88f 的马尼拉文件夹暖米色）
+      connectDoor(midX, ry0, 0, -1)
+      connectDoor(midX, ry1, 0, 1)
+      connectDoor(rx0, midY, -1, 0)
+      connectDoor(rx1, midY, 1, 0)
       roomTint(rx0 - 2, ry0 - 2, rx1 + 2, ry1 + 2, 1)
-      // 陈设极少，且每次出现略有不同——通常不超过一张桌子和一把椅子
-      const tx = rx0 + 2 + rng.int(0, 1), ty = ry0 + 2 + rng.int(0, 1)
-      pushStruct('table', tx, ty, 1, 1, true, false, { manila: 1 })
-      pushStruct('table', tx + (rng.chance(0.5) ? 1 : -1), ty + 1, 1, 1, true, false, { chair: 1 })
-      // 桌上：盖着 M.E.G. 徽记的文件夹（剪辑说明 / 实体图鉴 / 重要层级指南）
-      pushItem('megfolder', tx, ty - 1)
-      // 文件会随房间的正常变化偶尔消失——报告缺失后需补放
-      if (rng.chance(0.75)) pushItem('megfolder', tx + 1, ty - 1)
-      // 桌面文档：M.E.G.「后室重要层级」文档（可交互阅读，查看后存入图鉴）
-      pushStruct('megdoc', tx, ty, 1, 1, false, false, { manila: 1, ontable: 1, doc: 'meg_levels' })
-      // 会合点性质：前人留下的少量补给与字条（不属于 wiki 明文陈设，作为可玩性保留且刻意稀疏）
-      if (rng.chance(0.55)) pushStruct('crate', rx1 - 2, ry1 - 2, 1, 1, true, true, { loot: 1 })
-      if (rng.chance(0.7)) pushItem('almond', rx0 + 2, ry1 - 2)
-      pushStruct('graffiti', midX, ry1 - 1, 1, 1, false, true, { loreKind: 'manila' })
+      // 四面入口均为深色橡木门，门本身可正常开合并持久保存状态。
+      pushStruct('hoteldoor', midX, ry0, 1, 1, true, true, { open: 0, manila: 1 })
+      pushStruct('hoteldoor', midX, ry1, 1, 1, true, true, { open: 0, manila: 1 })
+      pushStruct('hoteldoor', rx0, midY, 1, 1, true, true, { open: 0, manila: 1 })
+      pushStruct('hoteldoor', rx1, midY, 1, 1, true, true, { open: 0, manila: 1 })
+      // 中央八角桌由桌下橱柜承重；橱柜可搜索且固定装有食物与水。
+      const tx = midX - 1, ty = midY - 1
+      pushStruct('dresser', tx, ty, 3, 3, true, true, {
+        manilaTable: 1, loot: 1, lootItems: ['canned', 'canned', 'almond', 'almond'],
+      })
+      // 两把木椅，一把保持直立，另一把侧翻在地。
+      pushStruct('table', midX - 2, midY + 2, 1, 1, true, false, { chair: 1, manila: 1, deg: 18 })
+      pushStruct('table', midX + 2, midY - 2, 1, 1, true, false, { chair: 1, manila: 1, fallen: 1, deg: 208 })
+      // 桌面文档并排摆放：重要层级资料 + 基本生存指南（可交互阅读，查看后存入图鉴）。
+      pushStruct('megdoc', midX - 0.25, midY, 1, 1, false, false, { manila: 1, ontable: 1, doc: 'meg_levels' })
+      pushStruct('megdoc', midX + 0.25, midY, 1, 1, false, false, { manila: 1, ontable: 1, doc: 'backrooms_basics' })
       // 灯光与 Level 0 几乎完全相同，并发出同样恼人的噪音；亮度剧烈波动、会周期性完全熄灭
       pushStruct('hanglight', midX, midY, 1, 1, false, false, { manila: 1 })
       pushLight(midX, midY, 5.0, '#e5c88f')
-      // v29：马尼拉室固定生成一个「闪烁的墙壁」（房间西北角 (13,13) 的西墙——入口只开在
-      // 四边中点，角部墙体恒完整；与超区域保底出口并存，均通往 Level 1）
+      // 固定出口：室内西墙上一块门形区域与原墙纸融为一体并异常闪烁，保证每次都可找到。
       if (def.exits.length > 0) {
-        exits.push({ def: def.exits[0], x: WX + 13, y: WY + 13, discovered: false })
-        pushLight(13, 13, 2.5, '#f5e37a')
+        const exitX = rx0 + 1, exitY = ry0 + 3
+        exits.push({ def: def.exits[0], x: WX + exitX, y: WY + exitY, discovered: false })
+        pushLight(exitX, exitY, 2.5, '#f5e37a')
       }
       break
     }
@@ -489,14 +509,14 @@ export function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
     const x0 = rng.int(3, CS - 4), y0 = rng.int(3, CS - 4)
     for (let j = 0; j < 5; j++) {
       const x = x0 + rng.int(-1, 1), y = y0 + rng.int(-1, 1)
-      if (isF(x, y) && !holeAt(x, y)) wet[li(x, y)] = 1
+      if (isF(x, y) && !holeAt(x, y) && !manilaReserved(x, y)) wet[li(x, y)] = 1
     }
   }
   // 火盐晶体（Object 15）：前五个层级的角落产生，L0 尤其中罕见（约 6% chunk 一枚）
   if (variant !== 'red' && rng.chance(0.06)) {
     for (let t = 0; t < 40; t++) {
       const x = rng.int(2, CS - 3), y = rng.int(2, CS - 3)
-      if (!isF(x, y) || solidAtL(x, y) || holeAt(x, y)) continue
+      if (!isF(x, y) || solidAtL(x, y) || holeAt(x, y) || manilaReserved(x, y)) continue
       const walls = (!isF(x + 1, y) ? 1 : 0) + (!isF(x - 1, y) ? 1 : 0) + (!isF(x, y + 1) ? 1 : 0) + (!isF(x, y - 1) ? 1 : 0)
       if (walls < 2) continue
       pushItem('firesalt', x, y)
@@ -515,7 +535,7 @@ export function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
     const t = t0 === 'almond' && rng.chance(0.1) ? 'cashew' : t0 // v32：腰果水 1/10 概率替代杏仁水
     for (let tr = 0; tr < 30; tr++) {
       const x = rng.int(2, CS - 3), y = rng.int(2, CS - 3)
-      if (!isF(x, y) || solidAtL(x, y) || holeAt(x, y)) continue
+      if (!isF(x, y) || solidAtL(x, y) || holeAt(x, y) || manilaReserved(x, y)) continue
       pushItem(t, x, y)
       break
     }
@@ -523,7 +543,7 @@ export function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
   if (variant !== 'red' && h01(seed, 0x7a9e, cx, cy) < 0.1) {
     for (let tr = 0; tr < 40; tr++) {
       const x = rng.int(2, CS - 3), y = rng.int(2, CS - 3)
-      if (!isF(x, y) || solidAtL(x, y) || holeAt(x, y)) continue
+      if (!isF(x, y) || solidAtL(x, y) || holeAt(x, y) || manilaReserved(x, y)) continue
       pushItem('tape', x, y)
       break
     }
@@ -532,7 +552,7 @@ export function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
   // ---- 出口（本 chunk 为所在超区域宿主 → 放置唯一「闪烁的墙壁」）----
   const rx = Math.floor(cx / RS), ry = Math.floor(cy / RS)
   const host = regionHost(seed, rx, ry)
-  if (host.cx === cx && host.cy === cy && def.exits.length > 0) {
+  if (variant !== 'manila' && host.cx === cx && host.cy === cy && def.exits.length > 0) {
     const tgt = exitTarget(seed, cx, cy)
     let best = -1, bd = 1e9
     for (let y = 1; y < CS - 1; y++)
@@ -677,7 +697,7 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
   }
   const lights: LightSource[] = raw.lights.map((l) => ({ ...l, x: l.x - ox, y: l.y - oy }))
   for (const e of st?.extraLights ?? []) lights.push({ ...e, x: e.x - ox, y: e.y - oy })
-  const exits: ExitInstance[] = raw.exits.map((e) => ({ def: e.def, x: e.x - ox, y: e.y - oy, floor: e.floor, discovered: st?.exitDisc ?? false }))
+  const exits: ExitInstance[] = raw.exits.map((e) => ({ def: e.def, x: e.x - ox, y: e.y - oy, floor: e.floor, z: e.z, discovered: st?.exitDisc ?? false }))
   // v25：chunk 实体（栖息地过滤结果，世界坐标 → 窗口坐标）
   // v41：calm 实例标记（L2 被动死亡飞蛾）——浅拷贝 def 置被动语义，不污染共享实体定义
   // v44：scale 实例标记（L2 温顺死亡飞蛾体型 0.6）——与 calm 一并浅拷贝带入
@@ -690,6 +710,9 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
     if (e.human) ent.disguised = 'human'
     if (e.facing !== undefined) ent.facing = e.facing // v51：人制品售货机等生成时指定朝向
     return ent
+  }).filter((e) => {
+    // v58：「7 层之物」全窗口唯一——已有活体在载时，新 chunk 的个体不再挂载（本层同时只存在一只）
+    return !(e.def.type === 'thething' && [...inf.chunks.values()].some((c) => c.entities.some((q) => q.def.type === 'thething' && !q.dead)))
   })
   // v39：chunk NPC（BRC 员工；定义由 raw 内嵌，工作点即岗位锚点，面向工作面）
   const npcs: NpcState[] = (raw.npcs ?? []).map((sp) => ({
@@ -700,7 +723,7 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
     moveT: 1 + Math.random() * 5, bubbleText: '', bubbleT: 0,
     hp: sp.def.faction === 'brc' ? 55 : sp.def.faction === 'jerry' ? 45 : undefined, // BRC 员工/信众可伤害可杀死；其余 NPC 无敌（据点居民契约）
   }))
-  return { key, cx, cy, variant: raw.variant, tiles: raw.tiles, wet: raw.wet, elev: raw.elev, tint: raw.tint, crawl: raw.crawl, outdoor: raw.outdoor, ceiling: raw.ceiling, liquid: raw.liquid, dn: raw.dn, dnWall: raw.dnWall, terrain: raw.terrain, structures, items, lights, exits, entities, npcs, habFallback: raw.habFallback }
+  return { key, cx, cy, variant: raw.variant, tiles: raw.tiles, wet: raw.wet, elev: raw.elev, tint: raw.tint, crawl: raw.crawl, outdoor: raw.outdoor, ceiling: raw.ceiling, liquid: raw.liquid, dn: raw.dn, dnWall: raw.dnWall, up: raw.up, upWall: raw.upWall, seaFloor: raw.seaFloor, terrain: raw.terrain, structures, items, lights, exits, entities, npcs, habFallback: raw.habFallback }
 }
 
 // 把已加载 chunk 内容缝合进窗口数组与对象列表
@@ -712,6 +735,7 @@ function stitch(m: GameMap, explored?: Uint8Array) {
   m.crawl.fill(0); m.ceiling.fill(0); m.up.fill(0); m.upWall.fill(0)
   m.up2.fill(0); m.upWall2.fill(0) // v54：三层数组同步清空
   m.stair.fill(0); m.liquid.fill(0); m.tint.fill(0)
+  m.seaFloor.fill(1.7) // v57o：非 L7 chunk 回落到标准池深
   m.dn.fill(0); m.dnWall.fill(0) // v56 九轮：地下平面数组同步清除
   m.terrain?.fill(0)
   if (explored) explored.fill(0)
@@ -734,7 +758,10 @@ function stitch(m: GameMap, explored?: Uint8Array) {
         if (c.ceiling) m.ceiling[di] = c.ceiling[si] // v54：挑高瓦片随窗口缝合（L5 主厅挑高）
         if (c.liquid) m.liquid[di] = c.liquid[si] // v54：液体瓦片随窗口缝合（L5 室内泳池）
         if (c.dn) m.dn[di] = c.dn[si] // v56 九轮：地下可走地板随窗口缝合（L6 -1F 走廊）
+        if (c.seaFloor) m.seaFloor[di] = c.seaFloor[si] // v57o：海床深度随窗口缝合（L7 垂直深度轴）
         if (c.dnWall) m.dnWall[di] = c.dnWall[si] // v56 九轮：地下墙体随窗口缝合（L6 -1F）
+        if (c.up) m.up[di] = c.up[si] // v57m：上层楼板随窗口缝合（L7 入口舱体 2F）
+        if (c.upWall) m.upWall[di] = c.upWall[si] // v57m：上层墙体随窗口缝合
         if (c.terrain && m.terrain) m.terrain[di] = c.terrain[si]
       }
     }
@@ -752,6 +779,8 @@ function stitch(m: GameMap, explored?: Uint8Array) {
           for (let x = 0; x < CS; x++) if (bm[y * CS + x]) explored[(y0 + y) * W + x0 + x] = 1
     }
   }
+  // v57m：窗口内任一 chunk 提供上层楼板时，本层按 2F 图处理（L7 入口舱体）
+  m.floors = [...inf.chunks.values()].some((c) => c.up?.some((v) => v === 1)) ? 2 : 1
   // v27：栖息地降级计数并入（与有限层 GameMap.habitatFallback 同契约，供验证器/调试面板读取）
   m.habitatFallback = habFb
   // v29：L1 停电事件——剔除层级固有灯（维护通廊 keep 灯与玩家追加灯保留）
@@ -805,7 +834,7 @@ function evictChunk(m: GameMap, c: LiveChunk) {
     const d = s.data
     if (d) {
       const dyn: Record<string, number | string | boolean | string[]> = {}
-      for (const k of ['open', 'locked', 'opened', 'triggered', 'readHint', 'loreIdx', 'on', 'car', 'carZ', 'searched'] as const) {
+      for (const k of ['open', 'locked', 'opened', 'triggered', 'readHint', 'loreIdx', 'on', 'car', 'carZ', 'searched', 'deployed', 'forced'] as const) {
         const v = d[k]
         if (typeof v === 'number' || typeof v === 'string' || typeof v === 'boolean') dyn[k] = v
       }
@@ -849,16 +878,18 @@ export function generateInfinite(def: LevelDef, seed: number, firstVisit = true)
     upWall2: new Uint8Array(W * W),
     stair: new Int32Array(W * W),
     liquid: new Uint8Array(W * W),
+    seaFloor: new Float32Array(W * W).fill(1.7),
     floors: 1,
     tint: new Uint8Array(W * W),
     dn: new Uint8Array(W * W), // v56 九轮：地下平面（Level 6 -1F；其余层级全 0）
     dnWall: new Uint8Array(W * W), // v56 九轮：地下墙体（Level 6 -1F；其余层级全 0）
     hasUnderground: def.id === 6,
     terrain: new Float32Array(W * W),
+    l7SeaTerrain: def.id === 7,
     inf: {
       seed, ox: -WIN_R * CS, oy: -WIN_R * CS,
       chunks: new Map(), explored: new Map(), state: new Map(),
-      taken: new Set(), regionExits: new Map(), rev: 0,
+      taken: new Set(), regionExits: new Map(), regionExitMiss: new Set(), rev: 0,
     },
   }
   const inf = m.inf!
@@ -866,12 +897,22 @@ export function generateInfinite(def: LevelDef, seed: number, firstVisit = true)
     for (let cx = -WIN_R; cx <= WIN_R; cx++)
       inf.chunks.set(chunkKey(cx, cy), instantiate(def, inf, cx, cy, inf.ox, inf.oy))
   stitch(m)
-  // 出生点：世界原点 chunk 中心（局部 15,15）；兜底螺旋找「地板且无实心结构遮挡」的落点
-  const spx = WIN_R * CS + 15, spy = WIN_R * CS + 15
+  // 出生点：缺省=世界原点 chunk 中心（局部 15,15）；无限层级可用 spawnWorld 指定固定出生点
+  // （Level 7 入口房间——进入 L7 固定出生在 2F 舱体里）。兜底螺旋找「该楼层带地板且无实心结构遮挡」的落点。
+  const spawnW = infiniteImplFor(def.id).spawnWorld ?? { x: 15, y: 15 }
+  const spawnFloor = infiniteImplFor(def.id).spawnFloor ?? 0
+  const spx = spawnW.x - inf.ox, spy = spawnW.y - inf.oy
   m.spawn = { x: spx, y: spy }
-  const spawnBlocked = (x: number, y: number) =>
-    x < 0 || y < 0 || x >= W || y >= W || m.tiles[y * W + x] !== 1 ||
-    m.structures.some((s) => s.solid && x >= s.x && x < s.x + s.w && y >= s.y && y < s.y + s.h)
+  const spawnBlocked = (x: number, y: number) => {
+    if (x < 0 || y < 0 || x >= W || y >= W) return true
+    const i = y * W + x
+    if (spawnFloor === 1) {
+      if (m.up[i] !== 1 || m.upWall[i] === 1) return true
+      return m.structures.some((s) => s.solid && (s.floor ?? 0) === 1 && x >= s.x && x < s.x + s.w && y >= s.y && y < s.y + s.h)
+    }
+    if (m.tiles[i] !== 1) return true
+    return m.structures.some((s) => s.solid && (s.floor ?? 0) === 0 && x >= s.x && x < s.x + s.w && y >= s.y && y < s.y + s.h)
+  }
   if (spawnBlocked(spx, spy)) {
     outer: for (let r = 1; r < 10; r++)
       for (let j = -r; j <= r; j++)
@@ -1026,11 +1067,22 @@ export function l0RegionExitPos(m: GameMap, rx: number, ry: number, def: LevelDe
   const key = `${rx},${ry},${floor ?? '*'}`
   const hit = inf.regionExits.get(key)
   if (hit) return hit
+  if (inf.regionExitMiss.has(key)) return null // v57t：无出口区域不再重复生成宿主 chunk
+  const impl = infiniteImplFor(def.id)
   const host = regionHost(inf.seed, rx, ry)
-  const raw = infiniteImplFor(def.id).genRaw(def, inf.seed, host.cx, host.cy, inf.plague ? 'red' : undefined)
-  const e = raw.exits.find((q) => floor === undefined || (q.floor ?? 0) === floor)
-  if (!e) return null
-  const pos = { x: e.x + 0.5, y: e.y + 0.5 }
+  // v57t：L7 用轻量解析式锚点（完整 chunk 生成只为拿一个出口位置太贵；HUD 每帧都会调用最近出口）
+  const light = impl.regionExitPos?.(inf.seed, rx, ry)
+  const e = light ?? (() => {
+    const raw = impl.genRaw(def, inf.seed, host.cx, host.cy, inf.plague ? 'red' : undefined)
+    const found = raw.exits.find((q) => floor === undefined || (q.floor ?? 0) === floor)
+    return found ? { x: found.x + 0.5, y: found.y + 0.5, z: found.z } : null
+  })()
+  if (!e) {
+    if (inf.regionExitMiss.size < 2048) inf.regionExitMiss.add(key)
+    return null
+  }
+  // light 锚点返回瓦片坐标（与 raw exits.x 同约定），统一转瓦片中心
+  const pos = light ? { x: e.x + 0.5, y: e.y + 0.5 } : { x: e.x, y: e.y }
   mapSetCapped(inf.regionExits, key, pos, 256)
   return pos
 }
@@ -1041,13 +1093,20 @@ export function l0NearestExit(m: GameMap, def: LevelDef, wx: number, wy: number,
   if (!inf) return null
   const rx = Math.floor(wx / (CS * RS)), ry = Math.floor(wy / (CS * RS))
   let best: { x: number; y: number } | null = null, bd = 1e9
-  for (let j = ry - 1; j <= ry + 1; j++)
-    for (let i = rx - 1; i <= rx + 1; i++) {
-      const p = l0RegionExitPos(m, i, j, def, floor)
-      if (!p) continue
-      const d = Math.hypot(p.x - wx, p.y - wy)
-      if (d < bd) { bd = d; best = p }
+  // v57t：L7 的新出口（午夜岩洞/深水浮门）按概率稀疏分布——按区域环逐圈外扩搜索，
+  // 找到当前最近环中的出口即可停止（更外环的距离必然更远）。
+  const maxRing = def.id === 7 ? 5 : 1
+  for (let r = 0; r <= maxRing && !best; r++) {
+    for (let j = ry - r; j <= ry + r; j++) {
+      for (let i = rx - r; i <= rx + r; i++) {
+        if (Math.max(Math.abs(i - rx), Math.abs(j - ry)) !== r) continue
+        const p = l0RegionExitPos(m, i, j, def, floor)
+        if (!p) continue
+        const d = Math.hypot(p.x - wx, p.y - wy)
+        if (d < bd) { bd = d; best = p }
+      }
     }
+  }
   if (!best) return null
   return { x: best.x - inf.ox - 0.5, y: best.y - inf.oy - 0.5, d: bd }
 }

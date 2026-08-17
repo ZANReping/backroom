@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { audio } from '@/game/core/audio'
 import type { Difficulty } from '@/game/engine'
+import type { RenderResolutionMode } from '@/game/renderer/shared'
 import { BIND_ACTIONS, bindLabel, conflictOf, actionLabel, getKeybinds, setKeybind, resetKeybinds } from '@/game/core/keybinds'
 
 export type UiTheme = 'amber' | 'liminal' | 'basalt' | 'dark-liminal' | 'greyspace' | 'database' | 'fandom' | 'meg'
@@ -13,8 +14,10 @@ export interface GameSettings {
   vcrFx: boolean // VCR 滤镜（扫描线/色差/噪点/跟踪失真后处理；默认关闭）
   dust: boolean // 漂浮尘埃粒子（默认关闭）
   shake: boolean
-  headBob: boolean // v54：真实视角摇晃（垂直起伏+水平侧摆+roll 侧倾+落地回弹；默认关闭=基础 bob）
+  headBob: boolean // v54：真实视角摇晃
+  realWater: boolean // v57t：真实水体效果（海面涌浪起伏+程序化波光/天空反射；默认关闭=纯色平水面）
   flicker: number // 0-100
+  renderResolution: RenderResolutionMode // 固定硬件光栅化分辨率；native 时才允许动态分辨率接管
   dynamicRes: boolean
   shadows: boolean // 手电实时阴影（移动端强制关闭）
   fogOfWar: boolean // 战争迷雾（距离雾）：关闭后远处不再被雾遮蔽
@@ -47,7 +50,7 @@ export interface GameSettings {
 
 export const defaultSettings: GameSettings = {
   difficulty: 'normal', autoSprint: false,
-  grain: true, dust: false, shake: true, headBob: false, flicker: 70, dynamicRes: true, shadows: true, fogOfWar: true,
+  grain: true, dust: false, shake: true, headBob: false, realWater: false, flicker: 70, renderResolution: 'native', dynamicRes: true, shadows: true, fogOfWar: true,
   vcrFx: false,
   fogScale: 100, farLights: false,
   lightMode: 'classic', shadowQuality: 1, sunShadows: true, lightShadows: 0,
@@ -61,6 +64,13 @@ export const defaultSettings: GameSettings = {
 }
 
 const TABS = ['游戏', '画面', '音频', '操作', '主题', 'API'] as const
+
+const RESOLUTION_MODES: { id: RenderResolutionMode; label: string; sub: string; note: string }[] = [
+  { id: 'native', label: '原生高分辨率', sub: 'Native Clear', note: '设备原生像素与动态缩放' },
+  { id: '720p', label: '720P 平衡档', sub: '720p Raster', note: '平滑放大，兼顾清晰与帧率' },
+  { id: '480p_retro', label: '480P 真实锯齿', sub: '480p Jagged', note: '360 行光栅，最近邻阶梯边缘' },
+  { id: '320p_ps1', label: '320P PS1 极度复古', sub: '320p Retro', note: '180 行光栅、有限色阶抖动' },
+]
 
 // 主题选项（主题页预览卡的色板取自各主题实际变量值；bg 同时用作 meta theme-color；
 // fonts 为该主题实际使用的字体栈，卡片即以这些字体渲染自身预览）
@@ -123,7 +133,7 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
 
   const setBool = (k: keyof GameSettings, v: boolean) => set(k, v as GameSettings[typeof k])
   const setNum = (k: keyof GameSettings, v: number) => set(k, v as GameSettings[typeof k])
-  const highPerformanceActive = settings.dynamicRes && !settings.grain && !settings.vcrFx && !settings.dust
+  const highPerformanceActive = settings.renderResolution === 'native' && settings.dynamicRes && !settings.grain && !settings.vcrFx && !settings.dust
     && !settings.headBob && !settings.shadows && !settings.farLights && settings.lightMode === 'classic'
     && !settings.sunShadows && settings.lightShadows === 0 && !settings.bloomFx
   const applyHighPerformancePreset = () => {
@@ -133,6 +143,7 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
       vcrFx: false,
       dust: false,
       headBob: false,
+      renderResolution: 'native',
       dynamicRes: true,
       shadows: false,
       farLights: false,
@@ -140,6 +151,15 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
       sunShadows: false,
       lightShadows: 0,
       bloomFx: false,
+    })
+    audio.uiTick()
+  }
+  const setRenderResolution = (mode: RenderResolutionMode) => {
+    onChange({
+      ...settings,
+      renderResolution: mode,
+      // 固定帧缓冲与动态 DPR 不能同时控制同一分辨率；回到原生档时保留“关闭”状态。
+      dynamicRes: mode === 'native' ? settings.dynamicRes : false,
     })
     audio.uiTick()
   }
@@ -214,13 +234,50 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
                   </button>
                 </div>
               </div>
+              <div className="mb-3 border p-3" style={{ borderColor: 'var(--panel-edge)', background: 'color-mix(in srgb, var(--amber) 3%, var(--panel))' }}>
+                <div className="mb-2 text-[13px] font-semibold" style={{ color: 'var(--amber)' }}>
+                  3D 硬件光栅化分辨率与阶梯锯齿
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {RESOLUTION_MODES.map((mode) => {
+                    const active = settings.renderResolution === mode.id
+                    return (
+                      <button
+                        key={mode.id}
+                        className="min-h-[68px] border p-2 text-left"
+                        style={{
+                          borderColor: active ? 'var(--amber)' : 'var(--panel-edge)',
+                          color: active ? 'var(--amber)' : 'var(--text)',
+                          background: active ? 'color-mix(in srgb, var(--amber) 15%, var(--panel))' : 'var(--panel)',
+                          boxShadow: active ? 'inset 3px 0 0 var(--amber)' : undefined,
+                        }}
+                        onClick={() => setRenderResolution(mode.id)}
+                        aria-pressed={active}
+                      >
+                        <div className="text-[12px] font-semibold">{mode.label}</div>
+                        <div className="font-mono2 text-[10px]" style={{ color: active ? 'var(--amber)' : 'var(--text-dim)' }}>{mode.sub}</div>
+                        <div className="mt-1 text-[10px] leading-tight" style={{ color: 'var(--text-dim)' }}>{mode.note}</div>
+                      </button>
+                    )
+                  })}
+                </div>
+                <div className="mt-2 text-[10px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>
+                  480P/320P 会让 GPU 直接以低分辨率光栅化 3D 几何，再按最近邻放大；不是覆盖在画面上的 CSS 模糊滤镜。
+                </div>
+              </div>
               <Toggle k="grain" label="VHS 颗粒" value={settings.grain as boolean} onSet={setBool} />
               <Toggle k="vcrFx" label="VCR 滤镜（录像带效果）" value={settings.vcrFx as boolean} onSet={setBool} />
               <Toggle k="dust" label="漂浮尘埃粒子" value={settings.dust as boolean} onSet={setBool} />
               <Toggle k="shake" label="屏幕震动" value={settings.shake as boolean} onSet={setBool} />
               <Toggle k="headBob" label="真实视角摇晃（行走起伏/侧摆/落地回弹）" value={settings.headBob as boolean} onSet={setBool} />
+              <Toggle k="realWater" label="真实水体效果（海面涌浪+波光反射；默认关闭）" value={settings.realWater as boolean} onSet={setBool} />
+              <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>开启后水面随涌浪起伏，并程序化生成浪面法线、天空反射与波光闪点（仅视觉，无真实物理）；关闭时为平面纯色水体（性能更好）。</div>
               <Slider k="flicker" label="灯光闪烁强度" value={settings.flicker as number} onSet={setNum} />
-              <Toggle k="dynamicRes" label="动态分辨率" value={settings.dynamicRes as boolean} onSet={setBool} />
+              {settings.renderResolution === 'native' ? (
+                <Toggle k="dynamicRes" label="动态分辨率" value={settings.dynamicRes as boolean} onSet={setBool} />
+              ) : (
+                <div className="py-2 text-[11px]" style={{ color: 'var(--text-dim)' }}>固定光栅档位已接管分辨率，动态分辨率自动关闭。</div>
+              )}
               <Toggle k="shadows" label="实时阴影（手电）" value={settings.shadows as boolean} onSet={setBool} />
               <Toggle k="fogOfWar" label="战争迷雾（距离雾）" value={settings.fogOfWar as boolean} onSet={setBool} />
               <label className="block py-2 text-[14px]" style={{ color: 'var(--text)' }}>

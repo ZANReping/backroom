@@ -9,6 +9,7 @@ import { getRenderer, look, type Renderer3D } from '@/game/core/renderer3d'
 import * as THREE from 'three'
 import { audio } from '@/game/core/audio'
 import { randomSeed } from '@/game/core/rng'
+import { preloadGameResources } from '@/game/core/preload'
 import { getKeybinds, type KeyBindMap } from '@/game/core/keybinds'
 import { LEVELS, levelLabel, levelNo, levelDefOf } from '@/game/levels'
 import { generateLevel } from '@/game/world/mapgen'
@@ -18,6 +19,7 @@ import SettingsModal, { defaultSettings, THEMES, type GameSettings } from '@/com
 import HowToPlay from '@/components/HowToPlay'
 import LevelIntro from '@/components/LevelIntro'
 import FallIntro from '@/components/FallIntro'
+import LoadingScreen from '@/components/LoadingScreen'
 import HUD, { type LogEntry, type Toast } from '@/components/HUD'
 import TouchControls from '@/components/TouchControls'
 import PauseMenu from '@/components/PauseMenu'
@@ -35,9 +37,12 @@ import FullscreenHint from '@/components/FullscreenHint'
 import LayoutEditor, { loadTouchLayout, type TouchLayoutStore } from '@/components/LayoutEditor'
 import Cutscene, { type CutKind, type CutIn } from '@/components/Cutscene'
 import DesignMode from '@/components/DesignMode' // v54：设计模式（开发者模式入口在标题屏）
+import LobbyOverlay from '@/components/LobbyOverlay' // v58：联机大厅
+import { MpSession } from '@/game/net/session'
+import { applyMpEvent } from '@/game/net/apply'
 
-type Screen = 'title' | 'intro' | 'game' | 'fall' | 'design'
-type Overlay = 'none' | 'settings' | 'howto' | 'pause' | 'radio' | 'inventory' | 'codex' | 'death' | 'victory' | 'avatar' | 'notebook' | 'doc' | 'landmark' | 'dialog'
+type Screen = 'title' | 'loading' | 'intro' | 'game' | 'fall' | 'design'
+type Overlay = 'none' | 'settings' | 'howto' | 'pause' | 'radio' | 'inventory' | 'codex' | 'death' | 'victory' | 'avatar' | 'notebook' | 'doc' | 'landmark' | 'dialog' | 'lobby'
 
 // 冒烟测试钩子（Playwright page.evaluate 用）
 if (typeof window !== 'undefined') {
@@ -103,6 +108,9 @@ function Game() {
   // v54：存档槽位列表（标题屏展示；回标题时刷新）
   const [slots, setSlots] = useState<SlotInfo[]>(() => listSaveSlots())
   const refreshSlots = useCallback(() => setSlots(listSaveSlots()), [])
+  // v57：开始游戏加载界面状态（进度 + 当前资源 + 已完成内容）
+  const [loadState, setLoadState] = useState({ progress: 0, label: '初始化加载器', detail: '准备预载资源', history: [] as string[] })
+  const loadingRef = useRef(false)
   const [, setTick] = useState(0)
   const overlayRef = useRef(overlay)
   overlayRef.current = overlay
@@ -174,6 +182,9 @@ function Game() {
   // 引擎事件
   useEffect(() => {
     const handler = (e: HudEvent) => {
+      // v58：联机事件转发（世界事件广播 + 死亡播报）
+      if (e.kind === 'mpevent' && e.mp) { mpSessionRef.current?.sendEvent(e.mp); return }
+      if (e.kind === 'dead') mpSessionRef.current?.sendEvent({ t: 'died', text: e.text ?? '' })
       switch (e.kind) {
         case 'msg':
           addLog(e.text ?? '', e.msgKind ?? 'system')
@@ -254,14 +265,26 @@ function Game() {
     return engine.on(handler)
   }, [addLog])
 
-  // 开始新一局（先播开场坠落动画 FallIntro，淡出时进入游戏并播爬起动画）
+  // 开始新一局的最终提交：先播开场坠落动画 FallIntro（新游戏），或直接进入存档层级（继续游戏）
   // v54：slot=绑定的存档槽（新游戏只能绑手动槽；继续游戏沿用所读槽位）
   const [fallPlaying, setFallPlaying] = useState(false)
-  const startRun = useCallback((seed?: number, slot: SaveSlotId = 'slot1') => {
+  // v58：联机会话（非空=联机局进行中）
+  const mpSessionRef = useRef<MpSession | null>(null)
+  const onMpStart = useCallback((session: MpSession, seed: number) => {
+    mpSessionRef.current = session
+    ;(window as unknown as { __mpSession: MpSession }).__mpSession = session // 调试/联机冒烟读取点
+    engine.mpSession = session
+    engine.mpMapSeed = (id: number) => (seed ^ Math.imul(id, 2654435761)) >>> 0 // 全房间同图（先到先得=同布局）
+    engine.mpSpawnSlot = session.mySlot()
+    session.onLocalEvent = (e) => applyMpEvent(engine, e)
+    requestStart(seed, 'slot1', 0, true) // 强制新开局 + 播入场动画
+  }, [])
+  const commitStart = useCallback((seed?: number, slot: SaveSlotId = 'slot1', forceFresh = false) => {
     audio.resume()
     look.yaw = 0; look.pitch = 0
     const s = seed ?? randomSeed()
-    if (seed === undefined) {
+    const fresh = seed === undefined || forceFresh // v58：联机开局强制新游戏（跳过读档恢复 + 播入场动画）
+    if (fresh) {
       // 全新开局（非「继续游戏」）：清空 NPC 聊天记录与随机 NPC 图鉴记录
       storage.remove('br_npc_chat')
       const c = loadCodex()
@@ -275,7 +298,7 @@ function Game() {
     setHudHidden(false)
     setLog([])
     setOverlay('none')
-    if (seed !== undefined) {
+    if (!fresh) {
       // 继续游戏：跳过开场坠落动画，直接进入游戏（引擎读档恢复到存档层级）
       setScreen('game')
       engine.paused = false
@@ -287,12 +310,51 @@ function Game() {
     refreshSlots()
   }, [settings.difficulty, refreshSlots])
 
-  // v54：从槽位继续（读快照取种子）；空槽回退为新游戏
+  // 点击「开始游戏/继续游戏」后：显示加载界面 → 预载贴图/BGM 资源并回报进度 → 再进入游戏。
+  // 预载失败一律降级放行（渲染层/音频层均有程序化兜底）。
+  const requestStart = useCallback((seed?: number, slot: SaveSlotId = 'slot1', targetLevel = seed !== undefined ? engine.player.level : 0, forceFresh = false) => {
+    if (loadingRef.current) return
+    loadingRef.current = true
+    audio.resume() // 用户手势内解锁 WebAudio
+    const startedAt = performance.now()
+    setLog([])
+    setOverlay('none')
+    setLoadState({ progress: 2, label: '初始化加载器', detail: '正在准备资源清单', history: [] })
+    setScreen('loading')
+    void preloadGameResources({ targetLevel, bgmStyle: settings.bgmStyle }, (u) => {
+      setLoadState((prev) => ({
+        progress: Math.max(prev.progress, u.progress),
+        label: u.label,
+        detail: u.detail,
+        history: u.log ? [...prev.history.slice(-7), u.log] : prev.history,
+      }))
+    }).catch(() => undefined).then(async () => {
+      // 保证加载界面至少可见约 1.1s：资源全命中缓存时也不闪屏
+      const rest = Math.max(0, 1100 - (performance.now() - startedAt))
+      if (rest > 0) {
+        setLoadState((prev) => ({ ...prev, progress: 88, label: '资源预载完成', detail: '正在稳定渲染管线' }))
+        await new Promise<void>((r) => setTimeout(r, rest))
+      }
+      setLoadState((prev) => ({ ...prev, progress: 92, label: '生成初始地图', detail: `正在生成 Level ${targetLevel} 的程序化世界`, history: [...prev.history.slice(-7), `生成初始地图：Level ${targetLevel}`] }))
+      await new Promise<void>((r) => setTimeout(r, 220))
+      setLoadState((prev) => ({ ...prev, progress: 100, label: '进入后室', detail: '初始化完成', history: [...prev.history.slice(-7), '资源与地图就绪'] }))
+      await new Promise<void>((r) => setTimeout(r, 90))
+      loadingRef.current = false
+      try { commitStart(seed, slot, forceFresh) }
+      catch (err) {
+        console.error('[loading] 进入游戏失败，返回标题', err)
+        setScreen('title')
+        refreshSlots()
+      }
+    })
+  }, [settings.bgmStyle, commitStart, refreshSlots])
+
+  // v54：从槽位继续（读快照取种子与层级）；空槽回退为新游戏
   const continueSlot = useCallback((slot: SaveSlotId) => {
     const snap = readSaveSlot(slot)
-    if (snap) startRun(snap.seed, slot)
-    else startRun(undefined, slot === 'auto' ? 'slot1' : slot)
-  }, [startRun])
+    if (snap) requestStart(snap.seed, slot, snap.level)
+    else requestStart(undefined, slot === 'auto' ? 'slot1' : slot, 0)
+  }, [requestStart])
 
   // 键盘输入（v18：全部键位读自定义绑定表 getKeybinds()，方向键/Ctrl/Tab 为始终生效的辅助键）
   useEffect(() => {
@@ -362,6 +424,8 @@ function Game() {
     }
     const up = (e: KeyboardEvent) => {
       keys[e.code] = false
+      const b = getKeybinds()
+      if (e.code === b.jump) engine.input.jump = false // v57t：松键即停止持续上浮（深水跳跃是长按态，不能永远锁存）
       updateMove()
     }
     const updateMove = () => {
@@ -397,6 +461,7 @@ function Game() {
     const canvas = canvasRef.current!
     const renderer = getRenderer(canvas)
     rendererRef.current = renderer
+    renderer.setResolutionMode(settings.renderResolution)
     // 诊断钩子（自动化测试用）：暴露渲染器与 THREE 构造器
     ;(window as unknown as { __renderer: typeof renderer }).__renderer = renderer
     ;(window as unknown as { __THREE: typeof THREE }).__THREE = THREE
@@ -408,10 +473,18 @@ function Game() {
     const mobileDprCap = 1.5
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? mobileDprCap : 2) * resScale
+      const nativeDpr = Math.min(window.devicePixelRatio || 1, isMobile ? mobileDprCap : 2)
+      const targetHeight = settings.renderResolution === '720p' ? 720
+        : settings.renderResolution === '480p_retro' ? 360
+          : settings.renderResolution === '320p_ps1' ? 180
+            : 0
+      const dpr = targetHeight > 0
+        ? Math.max(0.05, Math.min(nativeDpr, targetHeight / Math.max(1, window.innerHeight)))
+        : nativeDpr * resScale
       renderer.resize(window.innerWidth, window.innerHeight, dpr)
       canvas.style.width = '100%'
       canvas.style.height = '100%'
+      canvas.style.imageRendering = settings.renderResolution === '480p_retro' || settings.renderResolution === '320p_ps1' ? 'pixelated' : 'auto'
     }
     resize()
     window.addEventListener('resize', resize)
@@ -478,7 +551,7 @@ function Game() {
       const dt = (now - last) / 1000
       last = now
       // 动态分辨率
-      if (settings.dynamicRes) {
+      if (settings.renderResolution === 'native' && settings.dynamicRes) {
         frameTimes.push(now)
         if (frameTimes.length > 30) {
           const avg = (frameTimes[frameTimes.length - 1] - frameTimes[0]) / (frameTimes.length - 1)
@@ -513,6 +586,7 @@ function Game() {
       } else {
         renderer.applyView(engine)
         engine.update(dt)
+        mpSessionRef.current?.tick(engine, dt) // v58：联机状态同步（12Hz）
         renderer.render(canvas, engine, { grain: settings.grain, flicker: settings.flicker / 100, shake: settings.shake, dust: settings.dust }, dt)
       }
 
@@ -531,7 +605,7 @@ function Game() {
       window.removeEventListener('wheel', onWheel)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [settings.grain, settings.dust, settings.flicker, settings.shake, settings.dynamicRes])
+  }, [settings.grain, settings.dust, settings.flicker, settings.shake, settings.dynamicRes, settings.renderResolution])
 
   // 画面设置：手电实时阴影（移动端强制关闭）
   useEffect(() => {
@@ -566,6 +640,7 @@ function Game() {
     const r = rendererRef.current
     if (!r) return
     r.setLightMode(settings.lightMode)
+    r.setRealWater(settings.realWater)
     r.setShadowQuality(settings.shadowQuality)
     r.setSunShadows(settings.sunShadows)
     r.setLightShadows(settings.lightShadows)
@@ -573,11 +648,17 @@ function Game() {
     r.setBloomFx(settings.bloomFx)
     r.setBloomStrength(settings.bloomStrength)
     r.setExposure(settings.exposure)
-  }, [settings.lightMode, settings.shadowQuality, settings.sunShadows, settings.lightShadows, settings.reflectivity, settings.bloomFx, settings.bloomStrength, settings.exposure])
+  }, [settings.lightMode, settings.realWater, settings.shadowQuality, settings.sunShadows, settings.lightShadows, settings.reflectivity, settings.bloomFx, settings.bloomStrength, settings.exposure])
 
   const quitToTitle = () => {
     // 「保存并退出」必须在 over 置位前同步落盘，不能依赖暂停菜单打开后的下一帧自动保存。
     engine.persist()
+    // v58：离开联机局——解散/断开并还原引擎联机字段
+    mpSessionRef.current?.leave()
+    mpSessionRef.current = null
+    engine.mpSession = null
+    engine.mpMapSeed = null
+    engine.mpSpawnSlot = null
     engine.over = true
     audio.stopHum()
     audio.stopRain() // v54：L4 雨声随退出停止
@@ -597,7 +678,13 @@ function Game() {
 
   return (
     <div className={`br-app fixed inset-0 overflow-hidden ${settings.grain ? 'vhs-grain scanlines' : 'scanlines'} ${customPause ? 'br-hide-hud-pause' : ''}`} style={{ background: 'var(--ink)' }}>
-      <canvas ref={canvasRef} style={{ position: 'fixed', top: 0, left: 0, zIndex: 1, filter: gradeFilter }} />
+      <canvas
+        ref={canvasRef}
+        style={{
+          position: 'fixed', top: 0, left: 0, zIndex: 1, filter: gradeFilter,
+          imageRendering: settings.renderResolution === '480p_retro' || settings.renderResolution === '320p_ps1' ? 'pixelated' : 'auto',
+        }}
+      />
 
       {/* 受伤闪屏 */}
       {damageFlash > 0 && (
@@ -637,6 +724,16 @@ function Game() {
       )}
       {fallDmg !== null && !cut && (
         <div className="font-mono2 pointer-events-none fixed left-1/2 top-1/3 z-50 -translate-x-1/2 text-[20px]" style={{ color: 'var(--blood)' }}>-{fallDmg} HP</div>
+      )}
+
+      {/* 开始游戏加载界面（点击开始/继续后，进入游戏前） */}
+      {screen === 'loading' && (
+        <LoadingScreen
+          progress={loadState.progress}
+          label={loadState.label}
+          detail={loadState.detail}
+          history={loadState.history}
+        />
       )}
 
       {/* 层级进入卡 */}
@@ -716,13 +813,14 @@ function Game() {
       {screen === 'title' && overlay === 'none' && (
         <TitleScreen
           slots={slots}
-          onNewGame={(slot) => startRun(undefined, slot)}
+          onNewGame={(slot) => requestStart(undefined, slot, 0)}
           onContinueSlot={continueSlot}
           onDeleteSlot={(slot) => { clearSaveSnapshot(slot); refreshSlots() }}
           onSettings={() => setOverlay('settings')}
           onHowTo={() => setOverlay('howto')}
           onCodex={() => setOverlay('codex')}
           onAvatar={() => setOverlay('avatar')}
+          onMultiplayer={() => setOverlay('lobby')}
           devMode={settings.devMode}
           onDesign={() => setScreen('design')}
         />
@@ -734,6 +832,7 @@ function Game() {
       )}
 
       {/* 覆盖层 */}
+      {overlay === 'lobby' && <LobbyOverlay onClose={() => setOverlay('none')} onStart={onMpStart} />}
       {overlay === 'avatar' && <AvatarEditor onClose={() => setOverlay('none')} />}
       {overlay === 'settings' && (
         <SettingsModal
@@ -762,14 +861,14 @@ function Game() {
         <DeathScreen
           engine={engine}
           cause={deathCause}
-          onRetry={() => startRun(undefined, engine.saveSlot === 'auto' ? 'slot1' : engine.saveSlot)}
+          onRetry={() => requestStart(undefined, engine.saveSlot === 'auto' ? 'slot1' : engine.saveSlot, engine.player.level)}
           onTitle={quitToTitle}
         />
       )}
       {overlay === 'victory' && (
         <VictoryScreen
           engine={engine}
-          onNG={() => startRun(undefined, engine.saveSlot === 'auto' ? 'slot1' : engine.saveSlot)}
+          onNG={() => requestStart(undefined, engine.saveSlot === 'auto' ? 'slot1' : engine.saveSlot, engine.player.level)}
           onTitle={quitToTitle}
         />
       )}

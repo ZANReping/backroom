@@ -9,6 +9,7 @@ import { prefabsForLevel, placePrefabForced } from '../prefabs'
 import { RNG, randomSeed, seedString } from '../core/rng'
 import { infiniteImplFor, findNearestVariant, l0NearestExit, chunkKey, CS } from '../world/infinite'
 import { l5RegionAt } from '../world/infiniteL5' // v55：L5 区域矩形判定（DevPanel 传送落点）
+import { l7NearestIsland } from '../world/infiniteL7' // v57t：开发者面板「传送到最近岛屿」
 import { CONTAINER_KINDS } from '../decorations/containers'
 import { OUTPOSTS, isLandmarkStruct } from '../content/outposts'
 import { DECOR_REGISTRY } from '../content/decorRegistry'
@@ -70,6 +71,8 @@ export function devSpawnEntity(eng: Engine, type: string, dist = 3): boolean {
   if (!spot) { eng.msg('附近没有可召唤的空位。', 'system'); return false }
   const ent = makeEntity(type, spot.x, spot.y)
   if (eng.levelDef.id === 3) applyL3Variant(ent) // v53：L3 召唤应用高智能变体（同 chunk raw 标记）
+  // v58fix：水生实体召唤到玩家所在水深（否则 z=0 浮在海面，深水玩家看不见）
+  if (ent.def.aquatic) ent.z = p.z
   m.entities.push(ent)
   eng.msg(`[DEV] 召唤了 ${ENTITIES[type].name}（${spot.x.toFixed(0)}, ${spot.y.toFixed(0)}）`, 'system')
   return true
@@ -86,6 +89,7 @@ export function devSpawnAllEntities(eng: Engine): number {
     if (spot && eng.map) {
       const ent = makeEntity(t, spot.x, spot.y)
       if (eng.levelDef.id === 3) applyL3Variant(ent) // v53：L3 召唤应用高智能变体
+      if (ent.def.aquatic) ent.z = p.z // v58fix：水生实体生成在玩家水深
       eng.map.entities.push(ent); n++
     }
   })
@@ -245,24 +249,65 @@ export function devGotoExitKind(eng: Engine, kind: string): boolean {
   const p = eng.player
   const spot = eng.devFindSpot(e.x, e.y, 3)
   if (!spot) { eng.msg('[DEV] 该出口附近没有落脚点。', 'system'); return false }
-  p.x = spot.x; p.y = spot.y; p.z = 0; p.vz = 0
+  const band = (e.floor ?? 0) as 0 | 1 | 2
+  p.x = spot.x; p.y = spot.y; p.z = (e.z ?? floorHeight(m, p.x, p.y, band)) + 0.02; p.vz = 0; p.floor = band // v57t：传送带 z 轴
   eng.msg(`[DEV] 已传送到出口「${e.def.name}」`, 'system')
   return true
 }
 
+/** v57t：传送到最近的 L7 荒岛（窗口内已有则直达；否则用解析式岛核搜索窗口外的最近岛屿并流式生成） */
+export function devGotoIsland(eng: Engine): boolean {
+  const m = eng.map
+  if (!m?.inf || eng.levelDef.id !== 7) { eng.msg('[DEV] 最近岛屿传送仅在 Level 7 开放海洋可用。', 'system'); return false }
+  const inf = m.inf
+  const p = eng.player
+  let tx = -1, ty = -1, td = 1e9
+  for (let y = 1; y < m.h - 1; y++) {
+    for (let x = 1; x < m.w - 1; x++) {
+      const i = y * m.w + x
+      if (m.tiles[i] !== 1 || m.liquid[i] !== 0 || m.outdoor[i] !== 1 || (m.seaFloor?.[i] ?? 1) > 0.01) continue
+      const d = Math.hypot(x + 0.5 - p.x, y + 0.5 - p.y)
+      if (d < td) { td = d; tx = x; ty = y }
+    }
+  }
+  if (tx < 0) {
+    const w = l7NearestIsland(inf.seed, inf.ox + p.x, inf.oy + p.y)
+    if (!w) { eng.msg('[DEV] 附近没有找到荒岛（稀有海床抬升点）。', 'system'); return false }
+    p.x = w.x - inf.ox + 0.5
+    p.y = w.y - inf.oy + 0.5
+    p.vz = 0
+    eng.updateInfiniteWindow()
+    td = 1e9
+    for (let y = Math.max(0, Math.floor(p.y) - 8); y <= Math.min(m.h - 1, Math.floor(p.y) + 8); y++) {
+      for (let x = Math.max(0, Math.floor(p.x) - 8); x <= Math.min(m.w - 1, Math.floor(p.x) + 8); x++) {
+        const i = y * m.w + x
+        if (m.tiles[i] !== 1 || m.liquid[i] !== 0 || m.outdoor[i] !== 1 || (m.seaFloor?.[i] ?? 1) > 0.01) continue
+        const d = Math.hypot(x + 0.5 - p.x, y + 0.5 - p.y)
+        if (d < td) { td = d; tx = x; ty = y }
+      }
+    }
+    if (tx < 0) { eng.msg('[DEV] 荒岛生成失败。', 'system'); return false }
+  }
+  p.x = tx + 0.5; p.y = ty + 0.5; p.vz = 0; p.floor = 0
+  p.z = floorHeight(m, p.x, p.y, 0) + 0.05
+  eng.msg(`[DEV] 已传送到最近荒岛（${(p.z > 0.5 ? '岛心高地' : '岸线')}，z=${p.z.toFixed(2)}m）`, 'system')
+  return true
+}
+
 /** 传送：exit=最近出口 / entity=最近实体 / container=最近未搜容器 / spawn=出生点 / landmark=最近定居点地标 */
-export function devTeleport(eng: Engine, target: 'exit' | 'entity' | 'container' | 'spawn' | 'landmark'): boolean {
+export function devTeleport(eng: Engine, target: 'exit' | 'entity' | 'container' | 'spawn' | 'landmark' | 'island'): boolean {
   const m = eng.map
   if (!m) return false
   const p = eng.player
-  const go = (x: number, y: number, label: string) => {
+  const go = (x: number, y: number, label: string, z?: number, band: 0 | 1 | 2 = 0) => {
     const spot = eng.devFindSpot(x, y, 3)
     if (!spot) { eng.msg(`[DEV] ${label}附近没有落脚点。`, 'system'); return false }
-    p.x = spot.x; p.y = spot.y; p.z = 0; p.vz = 0
+    p.x = spot.x; p.y = spot.y; p.z = (z ?? floorHeight(m, p.x, p.y, band)) + 0.02; p.vz = 0; p.floor = band // v57t：全部 dev 传送都落到目标高度带的地面上
     eng.msg(`[DEV] 已传送到${label}`, 'system')
     return true
   }
-  if (target === 'spawn') return go(m.spawn.x, m.spawn.y, '出生点')
+  if (target === 'island') return devGotoIsland(eng)
+  if (target === 'spawn') return go(m.spawn.x, m.spawn.y, '出生点', undefined, eng.levelDef.id === 7 ? 1 : 0)
   if (target === 'landmark') {
     let bl: import('../core/types').Structure | null = null, bd = 1e9
     for (const s of m.structures) {
@@ -271,12 +316,13 @@ export function devTeleport(eng: Engine, target: 'exit' | 'entity' | 'container'
       if (d < bd) { bd = d; bl = s }
     }
     if (!bl) { eng.msg('[DEV] 本层没有定居点地标。', 'system'); return false }
-    return go(bl.x + 0.5, bl.y + 1, `最近定居点地标（${bd.toFixed(1)}m）`)
+    return go(bl.x + 0.5, bl.y + 1, `最近定居点地标（${bd.toFixed(1)}m）`, undefined, (bl.floor ?? 0) as 0 | 1 | 2)
   }
   if (target === 'exit') {
-    const e = eng.nearestExit()
-    if (!e) { eng.msg('[DEV] 本层没有出口。', 'system'); return false }
-    return go(e.x, e.y, '出口')
+    const n = eng.nearestExit()
+    if (!n) { eng.msg('[DEV] 本层没有出口。', 'system'); return false }
+    const cand = m.exits.find((q) => Math.abs(q.x - n.x) < 1 && Math.abs(q.y - n.y) < 1)
+    return go(n.x + 0.5, n.y + 0.5, '出口', cand ? cand.z ?? floorHeight(m, cand.x + 0.5, cand.y + 0.5, cand.floor ?? 0) : undefined)
   }
   if (target === 'entity') {
     let best: Entity | null = null, bd = 1e9
@@ -362,7 +408,8 @@ export function devGotoVariant(eng: Engine, kind: string): boolean {
     const cx = tx - inf.ox, cy = ty - inf.oy
     const spot = eng.devFindSpot(cx, cy, 14)
     if (!spot) { eng.msg(`[DEV] 变种房间「${name}」附近没有落脚点。`, 'system'); return false }
-    p.x = spot.x; p.y = spot.y; p.z = 0; p.vz = 0
+    const band = eng.levelDef.id === 7 && kind === 'entry' ? 1 : 0 // L7 入口区域=2F 舱室
+    p.x = spot.x; p.y = spot.y; p.z = floorHeight(m, p.x, p.y, band) + 0.02; p.vz = 0; p.floor = band // v57t：区域传送也带 z 轴
     eng.msg(`[DEV] 已传送到变种房间「${name}」（已在生成区域内）`, 'system')
     return true
   }
@@ -379,6 +426,8 @@ export function devGotoVariant(eng: Engine, kind: string): boolean {
   eng.updateInfiniteWindow()
   const spot = eng.devFindSpot(p.x, p.y, 12)
   if (spot) { p.x = spot.x; p.y = spot.y }
+  const band = eng.levelDef.id === 7 && kind === 'entry' ? 1 : 0
+  p.z = floorHeight(m, p.x, p.y, band) + 0.02; p.floor = band // v57t：区域传送也带 z 轴（L7 入口=2F；ocean=海床/荒岛表面）
   eng.msg(`[DEV] 已传送到变种房间「${name}」（已生成新区域，chunk ${hit.cx},${hit.cy}）`, 'system')
   return true
 }
@@ -528,7 +577,7 @@ export function devGotoExit(eng: Engine): boolean {
       if (spot) { p.x = spot.x; p.y = spot.y }
     }
   }
-  p.z = floorHeight(m, p.x, p.y, band)
+  p.z = (e?.z ?? floorHeight(m, p.x, p.y, band)) + 0.02 // v57t：漂浮门等出口用自身 z
   p.floor = band
   eng.msg(`[DEV] 已传送到出口「闪烁的墙壁」（约 ${w.d.toFixed(0)}m 外）`, 'system')
   return true

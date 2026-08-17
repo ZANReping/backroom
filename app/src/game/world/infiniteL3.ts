@@ -1158,6 +1158,10 @@ export function genL3ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
     }
   }
 
+  // v58：电梯门碰撞体积——每个电梯出口壁龛格补一个仅碰撞结构（玩家/实体不再嵌进门扇平面；
+  // 放在全部生成决策之后，避免影响 solidAtL 等放置判定）
+  for (const e of exits) if (e.def.kind === 'elevatorshaft') pushStruct('elevdoor', e.x, e.y, 1, 1, true, false, { noSight: 1 })
+
   return { variant, tiles, wet, elev, step, tint, crawl, structures, items, lights, exits, entities }
 }
 

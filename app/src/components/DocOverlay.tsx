@@ -1,5 +1,6 @@
 // 文档视图（M.E.G. 文档）：仿真纸质文档 UI——米白纸张、红头文件式抬头、编号、落款。
-// 数据来源 game/docs.ts 的 DOCS 注册表；场景交互与图鉴「文档」分类共用本组件。
+// v57t：新增 book 风格——散落已久的旧书页（深棕皮壳 + 泛黄纸张 + 旧照片式配图）。
+import { useState } from 'react'
 import { DOCS } from '@/game/content/docs'
 import { audio } from '@/game/core/audio'
 
@@ -7,6 +8,7 @@ const SERIF = "'SimSun','Songti SC',serif"
 
 export default function DocOverlay({ docId, onClose }: { docId: string; onClose: () => void }) {
   const doc = DOCS[docId]
+  const [imgErr, setImgErr] = useState(false)
   if (!doc) return null
   return (
     <div
@@ -48,6 +50,93 @@ export default function DocOverlay({ docId, onClose }: { docId: string; onClose:
               onTouchStart={() => { audio.uiTick(); onClose() }}
             >
               放回（Esc）
+            </button>
+          </div>
+        </div>
+      ) : doc.style === 'book' ? (
+        /* v57t：旧书风格——深棕皮壳、左侧书脊、泛黄厚纸，配图像夹在书页里的旧照片 */
+        <div
+          className="anim-slideUp relative w-full max-w-[760px]"
+          style={{ transform: 'rotate(-0.6deg)' }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div
+            className="relative flex max-h-[86dvh] flex-col overflow-hidden"
+            style={{
+              background: '#4a3322',
+              padding: '14px 16px 16px 22px',
+              borderRadius: '4px 18px 18px 4px',
+              boxShadow: '0 18px 60px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,235,190,0.12), inset 0 -1px 0 rgba(0,0,0,0.5)',
+            }}
+          >
+            {/* 左侧书脊 */}
+            <div className="pointer-events-none absolute inset-y-0 left-0 w-[14px]" style={{ background: 'linear-gradient(to right, #241710 0%, #3a2517 45%, #5a3d22 80%, #2c1b12 100%)' }} />
+            <div className="pointer-events-none absolute inset-y-0 left-[14px] w-[2px]" style={{ background: 'rgba(0,0,0,0.55)' }} />
+            <div
+              className="no-scrollbar min-h-0 flex-1 overflow-y-auto pl-7 pr-5"
+              style={{
+                background: '#e8d6a6',
+                backgroundImage:
+                  'radial-gradient(ellipse at 20% 12%, rgba(120,90,50,0.14) 0 22%, transparent 38%), radial-gradient(ellipse at 85% 88%, rgba(110,80,40,0.16) 0 18%, transparent 32%), repeating-linear-gradient(0deg, rgba(90,64,34,0.045) 0 2px, transparent 2px 4px)',
+                color: '#3f2f1d',
+                boxShadow: 'inset 0 0 40px rgba(120,88,44,0.28)',
+              }}
+            >
+              {/* 页眉：页码像旧打字机敲的 */}
+              <div className="flex items-start justify-between pt-5" style={{ fontFamily: SERIF }}>
+                <div className="text-[11px] tracking-[0.35em]" style={{ color: '#6a5232' }}>{doc.no}</div>
+                <div className="font-mono2 text-[11px]" style={{ color: '#7a6240' }}>LEVEL 7 · 手记残页</div>
+              </div>
+              <h2 className="mb-1 mt-3 text-center" style={{ color: '#332414', fontSize: 26, fontWeight: 700, letterSpacing: 6, textShadow: '0 1px 0 rgba(255,244,214,0.55)' }}>
+                {doc.title}
+              </h2>
+              <div className="mx-auto mb-3 mt-1 h-px w-2/3" style={{ background: 'linear-gradient(to right, transparent, rgba(74,52,26,0.6), transparent)' }} />
+              {/* 配图：像一张夹在书页里的旧照片 */}
+              {doc.image && !imgErr && (
+                <figure className="mb-4 mt-2" style={{ textAlign: 'center' }}>
+                  <img
+                    src={doc.image}
+                    alt={doc.title}
+                    referrerPolicy="no-referrer"
+                    loading="lazy"
+                    onError={() => setImgErr(true)}
+                    style={{
+                      maxWidth: '100%',
+                      maxHeight: 300,
+                      margin: '0 auto',
+                      border: '10px solid rgba(255,250,235,0.55)',
+                      outline: '1px solid rgba(74,52,26,0.45)',
+                      boxShadow: '0 6px 18px rgba(40,26,12,0.42), inset 0 0 24px rgba(255,248,224,0.25)',
+                      filter: 'sepia(0.28) contrast(1.05) brightness(0.96)',
+                      transform: 'rotate(0.8deg)',
+                    }}
+                  />
+                  <figcaption className="mt-2 font-mono2 text-[10px]" style={{ color: '#6a5232', letterSpacing: 1 }}>
+                    夹在书页间的照片——背面写着「The Thing On Level 7」
+                  </figcaption>
+                </figure>
+              )}
+              {doc.body.map((sec, i) => (
+                <section key={i}>
+                  {sec.head && <h3 style={{ color: '#332414', fontSize: 16, fontWeight: 700 }}>{sec.head}</h3>}
+                  {sec.paras.map((para, j) => (
+                    <p key={j} className="mb-4 text-justify" style={{ fontFamily: SERIF, fontSize: 15.5, lineHeight: 1.95, textIndent: '2em' }}>
+                      {para}
+                    </p>
+                  ))}
+                </section>
+              ))}
+              <div className="pb-5 pt-1 text-right text-[11px] italic" style={{ fontFamily: SERIF, color: '#6a5232' }}>—— 书页到此为止，后面被海水泡烂了。</div>
+            </div>
+          </div>
+          <div className="mt-2 flex justify-end">
+            <button
+              className="font-mono2 px-4 py-1 text-[12px]"
+              style={{ color: '#e8d6a6', border: '1px solid rgba(232,214,166,0.5)', background: 'rgba(20,12,8,0.55)' }}
+              onClick={() => { audio.uiTick(); onClose() }}
+              onTouchStart={() => { audio.uiTick(); onClose() }}
+            >
+              合上（Esc）
             </button>
           </div>
         </div>

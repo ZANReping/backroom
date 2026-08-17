@@ -22,6 +22,7 @@ export const ENTITY_EVENT_SPAWNS: Record<string, number[]> = {
   windowent: [2],
   vendingmachine: [2], // 人制品售货机：L2 走廊尽头（生成器定点放置）
   nguithr: [1, 2], // Nguithr'xurh：L1/L2 天花板结囊（生成器定点放置）
+  tiny: [7], // v58：小小——仅 L7 环形场定点生成（唯一可对话个体；生成池保留 w 仅为图鉴归属）
 }
 
 let cache: Record<string, EntitySpawn[]> | null = null

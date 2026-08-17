@@ -12,6 +12,7 @@ import './infiniteL3' // v51：注册 Level 3 无限 chunk 生成器（副作用
 import './infiniteL4' // v54：注册 Level 4 无限 chunk 生成器（副作用导入）
 import './infiniteL5' // v54：注册 Level 5 无限 chunk 生成器（副作用导入）
 import './infiniteL6' // v56：注册 Level 6 地表/地下双层无限生成器（副作用导入）
+import './infiniteL7' // v57：注册 Level 7 入口房间 + 四深度带无限海洋生成器（副作用导入）
 import { genDeep } from './mapgenDeep'
 import { genOutpost } from './mapgenOutpost'
 import { CONTAINER_KINDS } from '../decorations/containers'
@@ -42,13 +43,15 @@ export interface GameMap {
   up2: Uint8Array // v54：1=该瓦片存在第三层地板（z=2×FLOOR_H）；先例=Gamma 基地真三层
   upWall2: Uint8Array // v54：1=第三层墙体（仅阻挡第三层通行）
   stair: Int32Array // 楼梯坡道：0=无；否则 dir(低3位:1+x 2-x 3+y 4-y) | loCm<<3 | hiCm<<17（任意高度连续爬升）
-  liquid: Uint8Array // 0=无 1=深水（下沉至 -POOL_DEPTH，可游泳） 2=浅水（仅减速+涟漪）
+  liquid: Uint8Array // 0=无 1=深水（下沉至 -seaFloor，可游泳） 2=浅水（仅减速+涟漪）
+  seaFloor: Float32Array // 每瓦片海床深度（米，水面以下，正数；深水=该深度，非深水缺省 POOL_DEPTH）——v57o L7 垂直深度轴
   floors: number // 可行走楼层总数（1=单层，2=双层，3=三层[v54]）
   // ---- v56 九轮：地下平面（Level 6 双层结构：1F 苔原 + -1F 地下走廊）----
   dn: Uint8Array // 1=地下可走地板瓦片（z=UNDER_FLOOR）；0=地下墙体/土层（阻挡地下通行；地表不受影响）
   dnWall: Uint8Array // 1=地下墙体/土层（阻挡地下通行；地表不受影响）
   hasUnderground?: boolean // O(1) 地下层能力标志，避免热路径扫描 dn 数组
   terrain?: Float32Array // 室外自然地形微起伏（米；L6 由世界坐标低频噪声生成）
+  l7SeaTerrain?: boolean // v57t：L7 室外海床/荒岛连续高度场（碰撞与渲染共用一套平滑斜面）
   // ---- v17 数据契约：无限模式（L0）与墙面/地面 tint ----
   tint: Uint8Array // 0=无 1=马尼拉墙纸 2=红室 3=熄灯区（几何着色/雾氛围用）
   inf?: InfiniteState // 无限 chunk 模式状态（仅 L0；有限层级缺省）
@@ -81,12 +84,18 @@ export function liquidSurfaceH(m: GameMap, tx: number, ty: number): number | nul
 }
 // v29a：金属/肉类/玻璃罐等致密物品落水沉底（-POOL_DEPTH），其余（塑料瓶/绳索/纸张/木制品等）贴水面漂浮
 const WATER_SINK = new Set(['canned', 'thingmeat', 'battery', 'wrench', 'crowbar', 'silverware', 'skeleton', 'housekey', 'gas', 'nails', 'presses', 'uvlamp', 'stapler'])
-/** 物品落在液体瓦片上时的生成高度：沉底物→水底，漂浮物→水面；非液体瓦片→undefined（默认地面高度） */
-function waterItemZ(m: GameMap, tx: number, ty: number, type: string): number | undefined {
-  const surface = liquidSurfaceH(m, tx, ty)
-  if (surface === null) return undefined
-  if (m.liquid[ty * m.w + tx] === 1 && WATER_SINK.has(type)) return ELEV_H[m.elev[ty * m.w + tx]] - POOL_DEPTH
+/** 液态瓦片物品生成高度（纯数据版）：沉底物→水底，漂浮物→水面；liquid=0→undefined（默认地面高度）。
+ *  Level 7 无限生成器在 chunk raw 阶段没有 GameMap，用本函数计算漂浮/沉底高度。 */
+export function waterItemZForTile(liquid: number, elev: number, type: string, depth = POOL_DEPTH): number | undefined {
+  if (liquid === 0) return undefined
+  const surface = liquid === 1 ? ELEV_H[elev] + 0.03 : ELEV_H[elev] - 0.17
+  if (liquid === 1 && WATER_SINK.has(type)) return ELEV_H[elev] - Math.max(0.3, depth)
   return surface
+}
+/** 物品落在液体瓦片上时的生成高度：沉底物→水底，漂浮物→水面；非液体瓦片→undefined（默认地面高度） */
+export function waterItemZ(m: GameMap, tx: number, ty: number, type: string): number | undefined {
+  if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return undefined
+  return waterItemZForTile(m.liquid[ty * m.w + tx], m.elev[ty * m.w + tx], type, m.seaFloor?.[ty * m.w + tx] ?? POOL_DEPTH)
 }
 // 统一楼层带：地下 / 地表 / 二层 / 三层。
 export const bandOfZ = (z: number): FloorBand => z < UNDER_MID ? -1 : (z >= FLOOR_H + BAND_MID ? 2 : z >= BAND_MID ? 1 : 0)
@@ -124,8 +133,8 @@ export function tileH(m: GameMap, tx: number, ty: number): number {
   if (s2 & 7) return (stairLo(s2) + stairHi(s2)) / 2
   const st = m.step[i]
   if (st & 7) return (ELEV_H[(st >> 3) & 3] + ELEV_H[(st >> 5) & 3]) / 2
-  if (m.liquid[i] === 1) return -POOL_DEPTH
-  if (m.liquid[i] === 2) return -SHALLOW_DEPTH
+  if (m.liquid[i] === 1) return -(m.seaFloor[i] || POOL_DEPTH)
+  if (m.liquid[i] === 2) return ELEV_H[m.elev[i]] - SHALLOW_DEPTH
   return ELEV_H[m.elev[i]] + (m.elev[i] === 3 ? (m.terrain?.[i] ?? 0) : 0)
 }
 
@@ -147,6 +156,57 @@ export function surfaceUndulationAt(m: GameMap, x: number, y: number): number {
   const c = terrainCorner(m, tx, ty + 1), d = terrainCorner(m, tx + 1, ty + 1)
   return (a + (b - a) * fx) * (1 - fy) + (c + (d - c) * fx) * fy
 }
+
+// v57t：L7 室外海床/荒岛连续高度场。
+// 每个参与瓦片取 3×3 网格：中心=本瓦片代表高度；边中点=本瓦片与相邻瓦片中心的均值；
+// 四角=共享该角的参与瓦片中心均值。相邻瓦片在边/角上取到完全相同的顶点高度，
+// 因此 chunk 接缝处几何无缝，瓦片之间由四个小斜面连接，而非垂直台阶。
+export function l7SeaTile(m: GameMap, tx: number, ty: number): boolean {
+  if (!m.l7SeaTerrain || tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return false
+  const i = ty * m.w + tx
+  if (m.tiles[i] !== 1 || m.outdoor[i] !== 1) return false
+  if (m.liquid[i] === 1) return true
+  return m.liquid[i] === 0 && (m.seaFloor?.[i] ?? POOL_DEPTH) <= 0.01 // 抬升到海面的荒岛
+}
+/** L7 室外连续地形瓦片代表高度（海床=-seaFloor；荒岛=ELEV_H[elev]）。 */
+export function l7SeaTileH(m: GameMap, tx: number, ty: number): number {
+  const i = ty * m.w + tx
+  return m.liquid[i] === 1 ? -(m.seaFloor?.[i] ?? POOL_DEPTH) : ELEV_H[m.elev[i]]
+}
+/** L7 室外连续地形任意世界点高度：瓦片内 2×2 分段双线性，中心恰为瓦片代表高度。 */
+export function l7SeaHAt(m: GameMap, x: number, y: number): number {
+  // 窗口边缘 chunk 的最外侧顶点会落在 x/y = m.w/m.h 上：把采样钳制到最后一个瓦片的
+  // 外缘（fx/fy=1），避免用越界瓦片中心参与插值产生 NaN。
+  let tx = Math.floor(x), ty = Math.floor(y)
+  if (tx < 0) tx = 0; else if (tx >= m.w) tx = m.w - 1
+  if (ty < 0) ty = 0; else if (ty >= m.h) ty = m.h - 1
+  const fx = Math.max(0, Math.min(1, x - tx)), fy = Math.max(0, Math.min(1, y - ty))
+  const gx = fx * 2, gy = fy * 2
+  const qx = Math.min(1, Math.floor(gx + 1e-6)), qy = Math.min(1, Math.floor(gy + 1e-6))
+  const ux = gx - qx, uy = gy - qy
+  const node = (px: number, py: number): number => {
+    if (px === 1 && py === 1) return l7SeaTileH(m, tx, ty)
+    if (py === 1) {
+      const nx = tx + (px === 2 ? 1 : -1)
+      return l7SeaTile(m, nx, ty) ? (l7SeaTileH(m, tx, ty) + l7SeaTileH(m, nx, ty)) / 2 : l7SeaTileH(m, tx, ty)
+    }
+    if (px === 1) {
+      const ny = ty + (py === 2 ? 1 : -1)
+      return l7SeaTile(m, tx, ny) ? (l7SeaTileH(m, tx, ty) + l7SeaTileH(m, tx, ny)) / 2 : l7SeaTileH(m, tx, ty)
+    }
+    // 四角：共享该角的四个参与瓦片取均值；角落无邻接时退回本瓦片高度，边缘保持封闭
+    const ax = px === 2 ? tx : tx - 1, ay = py === 2 ? ty : ty - 1
+    let sum = 0, n = 0
+    for (let dy = 0; dy <= 1; dy++) for (let dx = 0; dx <= 1; dx++) {
+      if (!l7SeaTile(m, ax + dx, ay + dy)) continue
+      sum += l7SeaTileH(m, ax + dx, ay + dy); n++
+    }
+    return n ? sum / n : l7SeaTileH(m, tx, ty)
+  }
+  const a = node(qx, qy), b = node(qx + 1, qy), c = node(qx, qy + 1), d = node(qx + 1, qy + 1)
+  return (a + (b - a) * ux) * (1 - uy) + (c + (d - c) * ux) * uy
+}
+
 
 // 连续地面高度（世界坐标，坡道 smoothstep 平滑插值；玩家脚底/相机/实体站立用）
 // band：楼层高度带（0=主层 1=上层 2=第三层[v54]），上层非楼梯瓦片地面=band×FLOOR_H
@@ -175,8 +235,9 @@ export function floorHeight(m: GameMap, x: number, y: number, band: FloorBand = 
     const t = t0 * t0 * (3 - 2 * t0)
     return low + (high - low) * t
   }
-  if (m.liquid[i] === 1) return -POOL_DEPTH
-  if (m.liquid[i] === 2) return -SHALLOW_DEPTH
+  if (l7SeaTile(m, tx, ty)) return l7SeaHAt(m, x, y) // v57t：L7 室外海床/荒岛=连续平滑斜面（碰撞与渲染共用）
+  if (m.liquid[i] === 1) return -(m.seaFloor[i] || POOL_DEPTH)
+  if (m.liquid[i] === 2) return ELEV_H[m.elev[i]] - SHALLOW_DEPTH // 浅水洼：以所在高度档为基准
   return ELEV_H[m.elev[i]] + (m.elev[i] === 3 ? surfaceUndulationAt(m, x, y) : 0)
 }
 
@@ -266,6 +327,18 @@ export function structColliders(s: Structure, m?: GameMap): ColliderBox[] {
       return [{ x0: cx - s.w * 0.45, y0: cy - 0.35, x1: cx + s.w * 0.45, y1: cy + 0.35, top: 0.77, stand: true }]
     case 'crate':
       return [{ x0: cx - 0.42, y0: cy - 0.42, x1: cx + 0.42, y1: cy + 0.42, top: 0.7, stand: true }]
+    case 'barrel':
+      // v57t：木桶按真实圆柱半径/高度给碰撞——深海底的桶只占据海床以上 0.9m，不再把整条水柱堵死
+      return [{ x0: cx - 0.34, y0: cy - 0.34, x1: cx + 0.34, y1: cy + 0.34, top: 0.9, stand: false }]
+    case 'arch': {
+      // 拱廊只由薄墙、两侧窄立柱与低窗台占据；旧版整块 3×1 碰撞会堵死整个拱洞。
+      const halfD = 0.14, pier = 0.22
+      return [
+        { x0: s.x, y0: cy - halfD, x1: s.x + s.w, y1: cy + halfD, top: 0.86, stand: true },
+        { x0: s.x, y0: cy - halfD, x1: s.x + pier, y1: cy + halfD, top: FULL_BLOCK, stand: false },
+        { x0: s.x + s.w - pier, y0: cy - halfD, x1: s.x + s.w, y1: cy + halfD, top: FULL_BLOCK, stand: false },
+      ]
+    }
     case 'boiler': {
       // v54：圆柱罐体（底 r1.4/顶 r1.3，高 2.6；玩家身高处 r≈1.36）→ 盒半宽 1.2 贴合罐体，
       // 钳制不超出自身 footprint（1×1 据点锅炉不外扩）；罐顶 2.6m 不可站
@@ -282,6 +355,9 @@ export function structColliders(s: Structure, m?: GameMap): ColliderBox[] {
     case 'cabinet': case 'locker': case 'dresser': case 'safebox':
     case 'toolbox': case 'megcrate': case 'binshelf': case 'libshelf': case 'vending':
     case 'sofa': case 'servercase': case 'phonograph': { // v54：双人沙发/塔式服务器机箱（同柜类贴墙碰撞约定）；v55：留声机同（修复模型 flushToWall 贴墙而碰撞盒居中的错位）
+      if (s.kind === 'dresser' && s.data?.manilaTable) {
+        return [{ x0: cx - 0.84, y0: cy - 0.84, x1: cx + 0.84, y1: cy + 0.84, top: 0.88, stand: true }]
+      }
       const dims: Record<string, [number, number]> = { // [宽(模型局部 X)，深]
         cabinet: [0.85, 0.5], locker: [0.64, 0.46], dresser: [0.85, 0.5], safebox: [0.72, 0.66],
         toolbox: [0.58, 0.3], megcrate: [0.85, 0.85], binshelf: [s.w, 0.42], libshelf: [1.0, 0.58],
@@ -394,6 +470,16 @@ export function structColliders(s: Structure, m?: GameMap): ColliderBox[] {
       const swap = deg === 90 || deg === 270
       return [{ x0: cx - (swap ? hd : hw), y0: cy - (swap ? hw : hd), x1: cx + (swap ? hd : hw), y1: cy + (swap ? hw : hd), top: FULL_BLOCK, stand: false }]
     }
+    case 'seadais': // v58：环形石台——0.42m 低台可踏上（stand），台面嵌木门出口
+      return [{ x0: s.x + 0.12, y0: s.y + 0.12, x1: s.x + s.w - 0.12, y1: s.y + s.h - 0.12, top: 0.42, stand: true }]
+    case 'seapipe': { // v58：水下管道——管身抬空，低矮碰撞条（不挡上方水层）
+      const deg = (((Number(s.data?.deg) || 0) % 360) + 360) % 360
+      const hw = 1.0, hd = 0.34
+      const swap = deg === 90 || deg === 270
+      return [{ x0: cx - (swap ? hd : hw), y0: cy - (swap ? hw : hd), x1: cx + (swap ? hd : hw), y1: cy + (swap ? hw : hd), top: 0.85, stand: false }]
+    }
+    case 'seapillar': // v58：水下石柱——居中 0.62 见方全高阻挡
+      return [{ x0: cx - 0.31, y0: cy - 0.31, x1: cx + 0.31, y1: cy + 0.31, top: FULL_BLOCK, stand: false }]
     default:
       return [{ x0: s.x, y0: s.y, x1: s.x + s.w, y1: s.y + s.h, top: FULL_BLOCK, stand: false }]
   }
@@ -405,10 +491,11 @@ export function structBlocksPoint(m: GameMap, x: number, y: number, z: number, b
   for (const s of arr) {
     if (!s.solid || (s.floor ?? 0) !== band) continue
     if (x < s.x - 0.6 || x > s.x + s.w + 0.6 || y < s.y - 0.6 || y > s.y + s.h + 0.6) continue
+    const base = floorHeight(m, s.x + s.w / 2, s.y + s.h / 2, band) // v57t：碰撞盒以结构所在地面为基——深海底的桶不再堵住上方整条水柱
     for (const b of structColliders(s, m)) {
       if (x < b.x0 || x > b.x1 || y < b.y0 || y > b.y1) continue
-      // 顶面高差超过步行可踏上的 STEP_UP 才阻挡（跳跃抬高 z 后可通过低矮家具）
-      if (b.top - z > STEP_UP) return true
+      // 顶面绝对高度超过步行可踏上的 STEP_UP 才阻挡（跳跃抬高 z 后可通过低矮家具）
+      if (base + b.top - z > STEP_UP) return true
     }
   }
   return false
@@ -418,7 +505,7 @@ export function structBlocksPoint(m: GameMap, x: number, y: number, z: number, b
 export function structBlocksSight(m: GameMap, x: number, y: number, z: number, band: FloorBand, target?: Structure): boolean {
   const arr = structsNear(m, Math.floor(x), Math.floor(y))
   for (const s of arr) {
-    if (s === target || !s.solid || (s.floor ?? 0) !== band) continue
+    if (s === target || !s.solid || s.data?.noSight === 1 || (s.floor ?? 0) !== band) continue // v58：noSight=仅碰撞结构（电梯门挡块）不遮交互视线
     if (x < s.x - 0.6 || x > s.x + s.w + 0.6 || y < s.y - 0.6 || y > s.y + s.h + 0.6) continue
     const base = floorHeight(m, s.x + s.w / 2, s.y + s.h / 2, band)
     for (const b of structColliders(s, m)) {
@@ -437,10 +524,11 @@ export function structStandTopAt(m: GameMap, x: number, y: number, z: number, ba
   for (const s of arr) {
     if (!s.solid || (s.floor ?? 0) !== band) continue
     if (x < s.x - 0.6 || x > s.x + s.w + 0.6 || y < s.y - 0.6 || y > s.y + s.h + 0.6) continue
+    const base = floorHeight(m, s.x + s.w / 2, s.y + s.h / 2, band) // v57t：可站立顶面同样以结构地面为基准
     for (const b of structColliders(s, m)) {
       if (!b.stand) continue
       if (x < b.x0 || x > b.x1 || y < b.y0 || y > b.y1) continue
-      if (b.top <= z + STEP_UP - 0.1) best = Math.max(best, b.top)
+      if (base + b.top <= z + STEP_UP - 0.1) best = Math.max(best, base + b.top)
     }
   }
   return best
@@ -484,7 +572,7 @@ export function wallBaseTopAt(m: GameMap, x: number, y: number, wallH: number): 
     const s2 = m.stair[ni]
     const nh = (s2 & 7) ? ((s2 >> 3) & 0x3fff) / 100
       : (st & 7) ? Math.min(ELEV_H[(st >> 3) & 3], ELEV_H[(st >> 5) & 3])
-        : m.liquid[ni] === 1 ? -1.7 : m.liquid[ni] === 2 ? -0.25 : ELEV_H[m.elev[ni]]
+        : m.liquid[ni] === 1 ? -(m.seaFloor[ni] || 1.7) : m.liquid[ni] === 2 ? ELEV_H[m.elev[ni]] - 0.25 : ELEV_H[m.elev[ni]]
     base = Math.min(base, nh)
     if (m.ceiling[ni] === 1 && m.outdoor[ni] !== 1) top = Math.max(top, tallCeilH(m, wallH)) // 邻挑高地板→顶=挑高顶
     if (m.up[ni] === 1 && m.outdoor[ni] !== 1) top = Math.max(top, FLOOR_H + 2.6) // 邻上层楼板→墙体接到上层天花板
@@ -731,11 +819,18 @@ function placeWallHug(m: GameMap, rng: RNG, kind: Structure['kind'], data?: Stru
 // 垂直墙线（南北走向，N/S 邻为墙）→ 整体旋转 90°（门板跨 Z、面朝东西）。
 // 双开门相邻的另一扇门视作墙。返回应施加在门组上的 rotation.y（0 或 π/2）。
 export function doorNeedsRotate(m: GameMap, s: Structure): number {
-  const f = (x: number, y: number) => x >= 0 && y >= 0 && x < m.w && y < m.h && m.tiles[y * m.w + x] === 1
+  // v57m：多层门按所在楼层带读 up/upWall，否则 L7 2F 舱门会按一层全水面误判为侧向门
+  const band = s.floor ?? 0
+  const f = (x: number, y: number) => {
+    if (x < 0 || y < 0 || x >= m.w || y >= m.h) return false
+    const i = y * m.w + x
+    if (band === 1) return m.up[i] === 1 && m.upWall[i] !== 1
+    return m.tiles[i] === 1
+  }
   const DOORS: readonly string[] = ['hoteldoor', 'rollerdoor', 'glassdoor', 'bargate'] // v51：bargate 栅栏门
   const ax = Math.floor(s.x + s.w / 2), ay = Math.floor(s.y + s.h / 2)
   const doorAt = (x: number, y: number) =>
-    m.structures.some((o) => o !== s && DOORS.includes(o.kind) && Math.floor(o.x + o.w / 2) === x && Math.floor(o.y + o.h / 2) === y)
+    m.structures.some((o) => o !== s && DOORS.includes(o.kind) && (o.floor ?? 0) === band && Math.floor(o.x + o.w / 2) === x && Math.floor(o.y + o.h / 2) === y)
   const wallish = (x: number, y: number) => !f(x, y) || doorAt(x, y)
   const we = wallish(ax - 1, ay) && wallish(ax + 1, ay)
   const ns = wallish(ax, ay - 1) && wallish(ax, ay + 1)
@@ -925,12 +1020,14 @@ function genOnce(def: LevelDef, seed: number): GameMap {
     upWall2: new Uint8Array(size * size),
     stair: new Int32Array(size * size),
     liquid: new Uint8Array(size * size),
+    seaFloor: new Float32Array(size * size).fill(POOL_DEPTH),
     floors: 1,
     tint: new Uint8Array(size * size),
     dn: new Uint8Array(size * size), // v56 九轮：地下平面（Level 6 -1F；其余层级全 0）
     dnWall: new Uint8Array(size * size), // v56 九轮：地下墙体（Level 6 -1F；其余层级全 0）
     hasUnderground: false,
     terrain: new Float32Array(size * size),
+    l7SeaTerrain: def.id === 7,
   }
   // 初始化为墙
   m.tiles.fill(2)

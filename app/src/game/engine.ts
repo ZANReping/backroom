@@ -61,7 +61,7 @@ export interface Projectile {
   done?: boolean
 }
 export interface HudEvent {
-  kind: 'msg' | 'toast' | 'damage' | 'sanityhit' | 'transition' | 'floorchange' | 'dead' | 'victory' | 'levelchange' | 'lootpanel' | 'notebook' | 'doc' | 'landmark' | 'dialog' | 'radioheard'
+  kind: 'msg' | 'toast' | 'damage' | 'sanityhit' | 'transition' | 'floorchange' | 'dead' | 'victory' | 'levelchange' | 'lootpanel' | 'notebook' | 'doc' | 'landmark' | 'dialog' | 'radioheard' | 'mpevent'
   cutIn?: string
   dest?: number | 'random' | 'win'
   text?: string
@@ -69,6 +69,7 @@ export interface HudEvent {
   anim?: string
   fallDamage?: number
   song?: string // v56：radioheard——新收听的曲目 id
+  mp?: import('./net/protocol').MpEvent // v58：联机世界事件（session 订阅转发）
 }
 
 export interface PlayerState {
@@ -129,6 +130,12 @@ export class Engine {
   // v29a：存档/读档状态
   mapSeed = 0 // 当前层级地图生成种子（loadLevel 记录，读档恢复同一张图用）
   mapFirstVisit = true // 当前地图生成时的 firstVisit 标记
+  // v58：联机状态——会话引用（App 注入）；mpMapSeed 覆盖 loadLevel 种子算法（全房间同图）；
+  // mpSpawnSlot 为本次开局的出生槽位（0=默认出生点）
+  mpSession: import('./net/session').MpSession | null = null
+  mpMapSeed: ((id: number) => number) | null = null
+  mpSpawnSlot: number | null = null
+  applyingNet = false // v59：正在应用远端联机事件（applyMpEvent）——此期间引擎函数不再广播，防回环
   autosaveT = 0 // 周期自动存档计时（秒）
   idleSaved = false // 暂停/结束后已落盘一次（避免每帧重复写存储）
   // 暂停页脱困检测（仅内存态；3 秒内观测移动后自动清除）
@@ -155,8 +162,10 @@ export class Engine {
   rippleT = 0
   // v13：电梯乘降 / 梯子攀爬（脚本化垂直移动，期间锁定水平移动与重力）
   ride: { sx: number; sy: number; from: number; to: number; t: number } | null = null
-  climb: { baseX: number; baseY: number; topX: number; topY: number; dir: 1 | -1 } | null = null
+  climb: { baseX: number; baseY: number; topX: number; topY: number; dir: 1 | -1; zBase?: number; zTop?: number; rope?: 1 } | null = null
   climbCd = 0 // 攀爬送达后的再触发冷却（防止到顶立即又爬下）
+  // v58：L7 门廊舱门异常重力拖拽演出——非空即进行中（t 秒；sx/sy/sz 起点 → dx/dy 落海点）
+  porchDrop: { t: number; sx: number; sy: number; sz: number; dx: number; dy: number } | null = null
   stepAcc = 0
   // v12：interactTarget 携带目标引用（结构/物品/出口），HUD 提示与 doInteract 执行
   // 共用 scanInteract 的同一选择结果，杜绝「提示普通门却触发相邻上锁门」的目标漂移。
@@ -382,8 +391,8 @@ export class Engine {
     resetEffects(this, 'newRun')
     // v29a：主界面「继续游戏」用存档种子重进 newRun——存在同种子快照时恢复进度而不是重开新游戏。
     // （「开始新游戏」的种子是随机新生成的，与快照种子不同，自然走全新开局路径。）
-    // v54：从绑定的存档槽读取快照（slot1/2/3/auto）
-    const snap = loadSaveSnapshot(slot)
+    // v54：从绑定的存档槽读取快照（slot1/2/3/auto）；v58：联机开局一律全新（不读档）
+    const snap = this.mpSession ? null : loadSaveSnapshot(slot)
     if (snap && snap.seed === seed) {
       this.difficulty = snap.difficulty ?? difficulty
       this.time = snap.time
@@ -427,6 +436,7 @@ export class Engine {
       return
     }
     this.loadLevel(0)
+    if (this.mpSpawnSlot !== null) level.applyMpSpawn(this, this.mpSpawnSlot) // v58：联机槽位出生 + 全槽位物资
     this.introT = 3.2 // 开场：摔到 L0 地面后缓慢爬起
     this.msg(`你坠入了后室。种子 ${seedString(seed)}`, 'system')
     this.msg('找到每层的出口，向下探索。收集 6 盘磁带。', 'lore')
@@ -447,6 +457,14 @@ export class Engine {
   nearestExit() { return level.nearestExit(this) }
   /** v35：最近的定居点地标（出口提示的替代目标——附近无出口时指向它） */
   nearestLandmark() { return level.nearestLandmark(this) }
+  /** v57o：游泳信息（HUD 水深/氧气显示；仅在深水中非 null） */
+  swimInfo() {
+    const p = this.player, m = this.map
+    if (!m || this.inLiquid !== 1) return null
+    const i = Math.floor(p.y) * m.w + Math.floor(p.x)
+    const depth = this.levelDef.id === 7 ? Math.max(0, -p.z) : (m.seaFloor?.[i] ?? 1.7)
+    return { depth, breath: this.breathT, limit: movement.breathLimit(this), submerged: this.submerged }
+  }
   takeExit(def: ExitDef) { level.takeExit(this, def) }
   updateStairs(dt: number) { level.updateStairs(this, dt) }
   switchL6Floor(target: -1 | 0, reason: 'stairs' | 'pit' = 'stairs') { return level.switchL6Floor(this, target, reason) }
@@ -475,7 +493,7 @@ export class Engine {
   provokeRatPack(e: Entity) { entityAI.provokeRatPack(this, e) }
   updateNguithr(e: Entity, d: number, dt: number) { entityAI.updateNguithr(this, e, d, dt) }
   faceToward(e: Entity, tx: number, ty: number, dt: number, rate: number) { entityAI.faceToward(this, e, tx, ty, dt, rate) }
-  entityWalkH(m: GameMap, tx: number, ty: number, band: FloorBand): number | null { return entityAI.entityWalkH(this, m, tx, ty, band) }
+  entityWalkH(m: GameMap, tx: number, ty: number, band: FloorBand, aquatic = false): number | null { return entityAI.entityWalkH(this, m, tx, ty, band, aquatic) }
   stepEntity(e: Entity, speed: number, dt: number): boolean { return entityAI.stepEntity(this, e, speed, dt) }
   meleeZOk(e: Entity): boolean { return entityAI.meleeZOk(this, e) }
 
@@ -785,7 +803,9 @@ export class Engine {
   /** v54：召唤装饰物（decorRegistry 结构类条目；落位面前 1 格，无限层同步写 LiveChunk） */
   devSpawnDecor(kind: string): boolean { return dev.devSpawnDecor(this, kind) }
   /** 传送：exit=最近出口 / entity=最近实体 / container=最近未搜容器 / spawn=出生点 / landmark=最近定居点地标 */
-  devTeleport(target: 'exit' | 'entity' | 'container' | 'spawn' | 'landmark'): boolean { return dev.devTeleport(this, target) }
+  devTeleport(target: 'exit' | 'entity' | 'container' | 'spawn' | 'landmark' | 'island'): boolean { return dev.devTeleport(this, target) }
+  /** v57t：传送到最近的 L7 荒岛 */
+  devGotoIsland(): boolean { return dev.devGotoIsland(this) }
   /** 开发者：传送到本层指定 NPC 身旁（DevPanel 传送页 NPC 列表） */
   devGotoNpc(id: string): boolean { return dev.devGotoNpc(this, id) }
   /** 时间快进：模拟 sec 秒的生存消耗（饥饿/理智/电池），不触发伤害死亡 */

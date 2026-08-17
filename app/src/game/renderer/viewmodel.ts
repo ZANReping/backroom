@@ -2,6 +2,7 @@
 import * as THREE from 'three'
 import { buildItemMesh } from './itemsMesh'
 import { buildFlashlightMesh } from './flashlightMesh'
+import { buildDetailedItemMesh } from './detailItemsMesh'
 
 // ---------- 第一人称手部/手持物品 ----------
 // v53：去掉自发光（原 emissiveIntensity 0.25）——手部/袖管/手持物在黑暗中不再自发光，
@@ -48,12 +49,15 @@ export function buildHeldItem(type: string): THREE.Group {
     g.add(m); return m
   }
   switch (type) {
-    case 'crowbar': // 竖持弯曲铁棍：主杆竖直朝上，顶端鹅颈前弯 + 叉头，尾端下钩
-      vc(0.016, 0.016, 0.42, '#a63a2e', 0, 0.13, -0.05)
-      vb(0.03, 0.03, 0.09, '#a63a2e', 0, 0.36, -0.07, 0.55)
-      vb(0.04, 0.02, 0.06, '#7a2a1e', 0, 0.41, -0.1, 0.95)
-      vb(0.028, 0.028, 0.05, '#a63a2e', 0, -0.09, -0.06, -0.7)
+    case 'crowbar': { // 参考《半条命》：主杆竖持，顶部羊角向视线前方弯曲
+      const detail = buildDetailedItemMesh('crowbar')
+      const pose = new THREE.Group()
+      pose.rotation.z = Math.PI / 2 // 模型 +X（羊角端）竖直转到屏幕上方 +Y
+      pose.scale.setScalar(.82)
+      pose.position.set(.015, .09, -.08)
+      pose.add(detail); g.add(pose)
       break
+    }
     case 'wrench': // 竖持管钳：手柄竖直，顶端开口钳头
       vb(0.035, 0.3, 0.03, '#8a8a8a', 0, 0.1, -0.05)
       vb(0.075, 0.07, 0.035, '#8a8a8a', -0.028, 0.28, -0.05, 0, 0.5)
@@ -64,20 +68,33 @@ export function buildHeldItem(type: string): THREE.Group {
       vb(0.02, 0.42, 0.006, '#6a4e30', 0.03, 0.12, -0.027)
       vb(0.022, 0.022, 0.012, '#a8a8a8', -0.03, 0.26, -0.026)
       break
-    case 'lighter':
-      vb(0.05, 0.09, 0.04, '#c9c2a8', 0, 0, -0.1)
-      vb(0.02, 0.03, 0.02, '#8a8a8a', 0, 0.06, -0.1)
+    case 'lighter': {
+      const detail = buildDetailedItemMesh('lighter')
+      detail.scale.setScalar(.75)
+      detail.position.set(0, .015, -.1)
+      g.add(detail)
       break
-    case 'knife': // 竖持短刀：刀刃朝上 + 护手 + 柄
-      vb(0.02, 0.3, 0.045, '#c9cdd4', 0, 0.22, -0.05)
-      vb(0.025, 0.04, 0.06, '#8a8a8a', 0, 0.05, -0.05)
-      vb(0.035, 0.11, 0.04, '#3a2e22', 0, -0.03, -0.05)
+    }
+    case 'knife': { // 竖持细化短刀
+      const detail = buildDetailedItemMesh('knife')
+      detail.rotation.z = Math.PI / 2
+      detail.scale.setScalar(.92)
+      detail.position.set(0, .14, -.065)
+      g.add(detail)
       break
-    case 'axe': // 竖持斧头：长柄竖直，斧刃朝前（刃口向前伸出）
-      vb(0.035, 0.5, 0.035, '#8a6a42', 0, 0.08, -0.05)
-      vb(0.03, 0.11, 0.14, '#9aa0a8', 0, 0.33, -0.13)
-      vb(0.035, 0.06, 0.04, '#7a8288', 0, 0.33, -0.03)
+    }
+    case 'axe': { // 消防斧竖持；刃口严格朝镜头前方 -Z
+      const detail = buildDetailedItemMesh('axe')
+      const upright = new THREE.Group()
+      upright.rotation.z = Math.PI / 2 // 模型 +X（斧头端）竖直转到屏幕上方 +Y
+      upright.add(detail)
+      const pose = new THREE.Group()
+      pose.rotation.y = Math.PI // +Z 斧刃精确翻转到镜头前方 -Z，不再保留横向夹角
+      pose.scale.setScalar(.82)
+      pose.position.set(.018, .1, -.085)
+      pose.add(upright); g.add(pose)
       break
+    }
     case 'squirtgun': // 前持滋水枪：枪身朝前 + 顶部储水罐 + 握把 + 枪口
       vb(0.05, 0.06, 0.24, '#e86a3a', 0, 0.02, -0.16)
       vc(0.045, 0.045, 0.09, '#4ac9e8', 0, 0.1, -0.14)
@@ -90,9 +107,14 @@ export function buildHeldItem(type: string): THREE.Group {
       vb(0.04, 0.1, 0.05, '#4a3a2e', 0, -0.03, -0.03) // 握把
       vb(0.008, 0.03, 0.01, '#2a2d30', 0, 0.005, -0.07) // 扳机
       break
-    case 'glowstick':
-      vc(0.018, 0.018, 0.24, '#a8e0a0', 0, 0, -0.14, Math.PI / 2)
+    case 'glowstick': {
+      const detail = buildDetailedItemMesh('glowstick')
+      detail.rotation.z = Math.PI / 2
+      detail.scale.setScalar(.9)
+      detail.position.set(0, .08, -.11)
+      g.add(detail)
       break
+    }
     default: {
       // 复用物品低模（去掉地面光环）
       const src = buildItemMesh(type)

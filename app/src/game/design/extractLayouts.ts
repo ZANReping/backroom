@@ -364,7 +364,7 @@ function blankMap(w: number, h: number): GameMap {
     step: new Uint8Array(w * h), crawl: new Uint8Array(w * h), ceiling: new Uint8Array(w * h),
     up: new Uint8Array(w * h), upWall: new Uint8Array(w * h),
     up2: new Uint8Array(w * h), upWall2: new Uint8Array(w * h),
-    stair: new Int32Array(w * h), liquid: new Uint8Array(w * h),
+    stair: new Int32Array(w * h), liquid: new Uint8Array(w * h), seaFloor: new Float32Array(w * h).fill(1.7),
     floors: 1, tint: new Uint8Array(w * h),
     dn: new Uint8Array(w * h), dnWall: new Uint8Array(w * h), // v56：地下平面数组（L6 -1F；其余层级全 0）
   }

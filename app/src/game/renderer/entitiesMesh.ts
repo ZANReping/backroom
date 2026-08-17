@@ -767,84 +767,215 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
       grp.add(box(0.27, 0.022, 0.03, '#14171c', 0, 1.56, 0.135)) // 下唇
       break
     }
-    case 'tiny': { // 小不点（Entity 720）：海洋捕食者——流线型鱼雷状躯体 + 巨大的侧向听觉耳廓 + 小眼。（原生 +X）
-      const bc = '#5a7a86', bd = '#44606b', bl = '#7d9aa4'
-      const body = new THREE.Group()
-      body.position.set(0, 0.9, 0)
-      const hull = sph(0.34, bc, 10)
-      hull.scale.set(2.1, 0.92, 0.9) // 鱼雷形
-      body.add(hull)
-      body.add(box(0.34, 0.2, 0.04, bd, -0.1, 0.3, 0)) // 背鳍
-      body.add(box(0.24, 0.04, 0.16, bd, 0.12, -0.12, -0.26)) // 胸鳍
-      body.add(box(0.24, 0.04, 0.16, bd, 0.12, -0.12, 0.26))
-      body.add(box(0.26, 0.1, 0.1, bd, -0.72, 0.02, 0)) // 尾柄
-      body.add(box(0.06, 0.52, 0.04, bd, -0.86, 0.04, 0)) // 尾鳍
-      tag(body, 'torso')
-      const hg = new THREE.Group()
-      hg.position.set(0.62, 0.94, 0)
-      const snout = cyl(0.03, 0.18, 0.3, bl, 0.06, -0.02, 0, 8) // 尖吻
-      snout.rotation.z = -Math.PI / 2
-      hg.add(snout)
-      for (const z of [-0.2, 0.2]) { // 巨大的侧向耳廓/听觉器官
-        const ear = box(0.26, 0.36, 0.03, bd, -0.08, 0.06, z)
-        ear.rotation.y = z > 0 ? -0.55 : 0.55
-        ear.rotation.z = 0.25
-        hg.add(ear)
-        hg.add(box(0.06, 0.14, 0.06, bl, -0.04, 0.02, z * 0.55)) // 耳基
+    case 'tiny': { // 小小（v58 重制 · Entity 720 参照 backrooms-wiki-cn）：巨型类人形——
+      // 厚焦油罩袍 + 焦油层下两栖式生物荧光斑点 + 橡胶质坚韧皮肤 + 面部甲壳（终段张开露尖牙巨口）
+      // + 巨物尸骨长矛 + 利爪。原生 +X；眼在暗处变亮、近水面暗淡（renderer 按深度驱动 eyeMats）。
+      const skin = '#6f7d6b', skinD = '#525f4e', tar = '#14171c', tarL = '#232b34'
+      const bone = '#d8cdb4', boneD = '#b0a586', faceC = '#d8c9a8', cara = '#39404a'
+      // 眼睛材质（自发光强度由 renderer 按水深/光照写入——暗处亮、水面几乎无光）
+      const eyeMat = emat('#9fd8e8', 0.25)
+      const spotMat = emat('#7fd8e8', 0.5)
+      grp.userData.eyeMats = [eyeMat]
+      grp.userData.spotMat = spotMat
+      // ---- 腿（髋部 pivot；泳姿由 renderer 驱动） ----
+      for (const zs of [-1, 1]) {
+        const leg = jointX(0.11, 0.52, 0.13, skin, 0, 1.06, zs * 0.1, zs < 0 ? 'legL' : 'legR', zs * 0.06)
+        const shin = tip(leg, 0.09, 0.5, 0.11, skinD, -0.5)
+        tip(shin, 0.05, 0.3, 0.02, tar, -0.22, 0.07) // 小腿后侧蹼刃
+        for (let c = 0; c < 3; c++) tip(shin, 0.05, 0.1, 0.03, tar, -0.52, (c - 1) * 0.05) // 爪趾
+        if (zs > 0) tip(leg, 0.03, 0.06, 0.03, '#7fd8e8', -0.3, 0.08).material = spotMat // 大腿荧光斑
       }
-      for (const z of [-0.1, 0.1]) hg.add(face(glow(0.035, 0.035, 0.035, '#1a1214', 0.06, 0.06, z))) // 小眼
-      hg.add(box(0.14, 0.05, 0.16, '#241a1c', 0.15, -0.09, 0)) // 口裂
-      for (let i = 0; i < 5; i++) hg.add(face(glow(0.02, 0.04, 0.02, '#e8e2d2', 0.19, -0.09, (i / 4 - 0.5) * 0.13))) // 齿
+      // ---- 躯干（焦油罩袍） ----
+      const torso = new THREE.Group()
+      torso.position.set(0, 1.42, 0)
+      torso.add(new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.62, 0.24), lam(skin))) // 精瘦胸廓
+      const waist = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.16, 0.2), lam(skinD)) // 腰
+      waist.position.set(0, -0.42, 0)
+      torso.add(waist)
+      const cowl = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.3, 0.34), lam(tar)) // 焦油罩肩
+      cowl.position.set(-0.05, 0.22, 0)
+      torso.add(cowl)
+      for (let i = 0; i < 4; i++) { // 罩袍下垂的焦油条
+        const strip = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.5 + (i % 2) * 0.18, 0.07), lam(i % 2 ? tar : tarL))
+        strip.position.set(-0.16 - (i % 2) * 0.04, -0.28 - (i % 2) * 0.08, (i - 1.5) * 0.09)
+        strip.rotation.z = 0.12
+        torso.add(strip)
+      }
+      // 荧光斑点（焦油层下，躯干 +X 侧与两侧）
+      const spotPos: [number, number, number][] = [[0.16, 0.12, 0.07], [0.16, -0.08, -0.06], [0.15, -0.26, 0.04], [0.02, 0.2, 0.18], [-0.02, -0.16, 0.16], [0.02, 0.02, -0.17]]
+      for (const [sx, sy, sz] of spotPos) {
+        const sp = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.05, 0.035), spotMat)
+        sp.position.set(sx, sy, sz)
+        torso.add(sp)
+      }
+      tag(torso, 'torso')
+      // ---- 手臂（肩部 pivot；利爪；右臂持骨矛） ----
+      for (const zs of [-1, 1]) {
+        const arm = jointX(0.1, 0.46, 0.11, skin, 0.02, 1.92, zs * 0.26, zs < 0 ? 'armL' : 'armR', zs * 0.1)
+        const fore = tip(arm, 0.09, 0.44, 0.1, skinD, -0.44)
+        for (let c = 0; c < 3; c++) tip(fore, 0.03, 0.16, 0.03, boneD, -0.52, (c - 1) * 0.045) // 利爪
+        tip(arm, 0.03, 0.06, 0.03, '#7fd8e8', -0.2, 0.07).material = spotMat // 手臂荧光斑
+      }
+      // ---- 骨矛（挂 armR 末端；随攻击前刺） ----
+      const spear = new THREE.Group()
+      spear.position.set(0.1, -0.8, 0.02)
+      spear.rotation.z = -1.35 // 近乎持平前指
+      const shaft = cyl(0.022, 0.028, 2.7, bone, 0, 0.6, 0, 6)
+      spear.add(shaft)
+      spear.add(cyl(0.05, 0.012, 0.5, boneD, 0, 2.05, 0, 5)) // 骨刃尖
+      for (const wy of [-0.2, 0.05]) spear.add(cyl(0.045, 0.045, 0.06, tar, 0, wy, 0, 6)) // 缠柄焦油箍
+      parts.armR!.add(spear)
+      tag(spear, 'spear')
+      // ---- 头（面部甲壳 + 眼 + 甲壳下尖牙巨口 + 焦油头冠） ----
+      const hg = new THREE.Group()
+      hg.position.set(0.04, 2.34, 0)
+      hg.add(cyl(0.07, 0.09, 0.18, skinD, 0, -0.14, 0, 6)) // 颈
+      const skull = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.3, 0.24), lam(skin))
+      hg.add(skull)
+      const faceplate = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.24, 0.18), lam(faceC)) // 面部浅色壳底
+      faceplate.position.set(0.13, 0.01, 0)
+      hg.add(faceplate)
+      for (const zs of [-1, 1]) { // 双眼（+X 面）
+        const eye = face(new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.055, 0.05), eyeMat))
+        eye.position.set(0.165, 0.05, zs * 0.055)
+        hg.add(eye)
+      }
+      // 尖牙巨口（甲壳下；终段张口时可见）
+      const mouth = new THREE.Group()
+      mouth.position.set(0.14, -0.07, 0)
+      mouth.add(new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.09, 0.13), lam('#1c1016')))
+      for (let i = 0; i < 6; i++) {
+        const f1 = face(glow(0.02, 0.045, 0.02, '#e8e2d2', 0.03, 0.045, (i / 5 - 0.5) * 0.11))
+        const f2 = face(glow(0.02, 0.045, 0.02, '#e8e2d2', 0.03, -0.045, (i / 5 - 0.5) * 0.11))
+        mouth.add(f1, f2)
+      }
+      mouth.scale.setScalar(0.01) // 平时收起
+      hg.add(mouth)
+      tag(mouth, 'mouth')
+      // 面部甲壳（左右两片；终段向两侧张开）
+      for (const zs of [-1, 1]) {
+        const plate = new THREE.Group()
+        plate.position.set(0.1, 0.02, zs * 0.1)
+        const pl = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.3, 0.06), lam(cara))
+        pl.position.set(0.02, 0, -zs * 0.055)
+        plate.add(pl)
+        hg.add(plate)
+        tag(plate, zs < 0 ? 'carL' : 'carR')
+      }
+      // 焦油头冠（向后上方扫出的标志性罩冠）
+      const fin = new THREE.Group()
+      fin.position.set(-0.1, 0.12, 0)
+      for (let i = 0; i < 3; i++) {
+        const seg = new THREE.Mesh(new THREE.BoxGeometry(0.34 - i * 0.07, 0.1, 0.2 - i * 0.04), lam(i === 1 ? tarL : tar))
+        seg.position.set(-0.12 - i * 0.16, 0.1 + i * 0.09, 0)
+        seg.rotation.z = 0.5 + i * 0.25
+        fin.add(seg)
+      }
+      hg.add(fin)
+      tag(fin, 'tarfin')
       tag(hg, 'head')
       break
     }
-    case 'thething': { // 7 层之物：巨兽（约 4.6m 长）。器官长在不该长的位置——鳍与鳃错位生长、
-      //                 器官呈堆叠状；体表覆一层与雾几乎相同的细白粉尘。（原生 +X）
-      const dark = '#2e3a40', dk2 = '#263136', organ = '#3f4a44'
-      const rng = mulberry(0x7107)
-      const body = new THREE.Group()
-      body.position.set(0, 1.5, 0)
-      const mass = (r: number, sx: number, sy: number, sz: number, x: number, y: number, cc: string) => {
-        const m = sph(r, cc, 9)
-        m.scale.set(sx, sy, sz); m.position.set(x, y, 0)
-        body.add(m)
+    case 'thething': { // 7 层之物（v58 重制 · Entity 20 Fandom；v58fix3 竖扁写实化）：巨鳗——
+      // 竖直侧扁的缎带形巨躯（非圆滚）、烂革质斑驳皮、占头部三分之一的海口、针齿、红鳃丝、
+      // 连续背鳍膜；个别体节「故障」般视觉扭曲。原生 +X；体节链 seg0..8 由 renderer 拖链驱动。
+      const hide = '#211d18', hideD = '#17140f', flank = '#2a261f', belly = '#3a382e'
+      const gill = '#6e2a2e', fin = '#15120e', scar = '#5c5f52', mottle = '#4a4a3c'
+      // ---- 头（tag 'head'；下颚 tag 'jaw'——口裂占头长 1/3，攻击时大张） ----
+      const hg = new THREE.Group()
+      hg.position.set(1.2, 1.42, 0)
+      hg.scale.setScalar(1.28) // v58fix4：头部整体放大（配合更大的躯体）
+      const cranium = sph(0.55, hide, 12) // 颅骨：长、低、侧扁
+      cranium.scale.set(1.5, 0.62, 0.42)
+      hg.add(cranium)
+      const upper = box(1.0, 0.13, 0.26, hideD, 0.75, -0.06, 0) // 上颌长吻（前伸微沉）
+      upper.rotation.z = -0.06
+      hg.add(upper)
+      hg.add(box(0.72, 0.07, 0.2, '#3a1418', 0.72, -0.2, 0)) // 上腭暗红
+      for (let i = 0; i < 10; i++) // 上颌针齿（前缘一排，参差）
+        hg.add(face(glow(0.026, 0.1 + (i % 3) * 0.03, 0.026, '#d5cdb6', 0.36 + i * 0.085, -0.16 - (i % 2) * 0.02, (i / 9 - 0.5) * 0.24)))
+      const jaw = new THREE.Group() // 下颚：后缘 pivot；口裂自吻尖裂到头长 1/3 处
+      jaw.position.set(0.05, -0.26, 0)
+      const jawM = box(1.45, 0.12, 0.22, flank, 0.55, -0.05, 0)
+      jaw.add(jawM)
+      jaw.add(box(1.0, 0.05, 0.16, '#3a1418', 0.6, 0.02, 0)) // 下口腔暗红
+      for (let i = 0; i < 9; i++) // 下颌针齿
+        jaw.add(face(glow(0.024, 0.09 + (i % 2) * 0.04, 0.024, '#c9c0a8', 0.02 + i * 0.14, 0.05, (i / 8 - 0.5) * 0.18)))
+      hg.add(jaw)
+      tag(jaw, 'jaw')
+      for (const zs of [-1, 1]) { // 小而浊的侧眼（写实的阴冷小眼）
+        const eye = face(sph(0.075, '#b9c4c2', 8))
+        eye.position.set(0.42, 0.1, zs * 0.23)
+        hg.add(eye)
+        const pupil = face(glow(0.03, 0.04, 0.02, '#0a0c0a', 0.46, 0.1, zs * 0.24))
+        hg.add(pupil)
       }
-      mass(0.8, 1.15, 0.95, 1.0, 0.5, 0, dark) // 胸腔
-      mass(0.72, 1.35, 0.9, 0.85, -0.9, -0.08, dk2) // 中段
-      mass(0.5, 1.25, 0.75, 0.62, -2.0, -0.12, dark) // 尾段
-      mass(0.24, 1.3, 0.6, 0.4, -2.9, -0.1, dk2) // 尾根
-      for (let i = 0; i < 5; i++) { // 堆叠错位的器官团
-        const o = sph(0.2 + rng() * 0.16, organ, 7)
-        o.position.set(1.0 - i * 0.75, 0.3 + rng() * 0.5, (rng() - 0.5) * 1.0)
-        body.add(o)
+      for (const zs of [-1, 1]) { // 红色鳃丝扇（头后两侧）
+        for (let i = 0; i < 5; i++) {
+          const gf = box(0.025, 0.34, 0.015, gill, -0.32 - i * 0.05, -0.06, zs * (0.2 + i * 0.02))
+          gf.rotation.x = zs * (0.5 + i * 0.12)
+          hg.add(gf)
+        }
+        for (let i = 0; i < 3; i++) hg.add(box(0.5, 0.025, 0.012, hideD, 0.1 - i * 0.28, 0.16 - i * 0.12, zs * 0.24)) // 侧皮褶
       }
-      tag(body, 'torso')
-      for (let i = 0; i < 9; i++) { // 错位生长的鳍：随机贴在背/腹/侧面，方向各异
-        const fin = box(0.5 + rng() * 0.4, 0.5 + rng() * 0.45, 0.06, i % 2 ? dk2 : dark,
-          1.0 - i * 0.5, 1.5 + (rng() - 0.5) * 1.5, (rng() - 0.5) * 1.5)
-        fin.rotation.set(rng() * 2.4, rng() * 3, rng() * 2.4)
-        grp.add(fin)
-      }
-      for (let i = 0; i < 4; i++) { // 错位的鳃裂（多数已不具功能）
-        const gx = 0.9 - i * 0.9, gy = 1.2 + (rng() - 0.5) * 1.2, gz = (rng() < 0.5 ? -1 : 1) * (0.5 + rng() * 0.5)
-        for (let k = 0; k < 4; k++) grp.add(box(0.05, 0.34 - k * 0.04, 0.1, '#1a2226', gx - k * 0.09, gy, gz))
-      }
-      for (let i = 0; i < 7; i++) { // 体表覆盖的细白粉尘层
-        const d = new THREE.Mesh(new THREE.BoxGeometry(0.7 + rng() * 0.7, 0.16, 0.6 + rng() * 0.6), emat('#c9cec8', 0.1, 0.5))
-        d.position.set(1.0 - i * 0.62, 2.0 + (rng() - 0.5) * 0.7, (rng() - 0.5) * 0.9)
-        d.rotation.set((rng() - 0.5) * 0.5, rng() * 3, (rng() - 0.5) * 0.5)
-        grp.add(d)
-      }
-      const hg = new THREE.Group() // 前端：巨口（它杀光了这片海里的一切）
-      hg.position.set(1.55, 1.4, 0)
-      hg.add(box(0.7, 0.85, 0.95, dark, 0, 0, 0))
-      hg.add(box(0.3, 0.4, 0.8, '#0e1416', 0.4, -0.12, 0)) // 口腔深处
-      for (let i = 0; i < 7; i++) {
-        const z = (i / 6 - 0.5) * 0.72
-        hg.add(face(glow(0.07, 0.19, 0.06, '#e0dccc', 0.42, 0.08, z))) // 上排巨齿
-        hg.add(face(glow(0.06, 0.15, 0.05, '#cfc9b8', 0.4, -0.34, z))) // 下排
-      }
+      hg.add(box(0.4, 0.025, 0.04, scar, 0.3, 0.28, 0.1)) // 旧疤
+      hg.add(box(0.26, 0.025, 0.04, scar, 0.7, 0.16, -0.12))
       tag(hg, 'head')
+      // ---- 体节链 seg0..seg8（竖扁缎带形；renderer 拖链每帧覆写位置） ----
+      const glitchMat = emat('#8fd8d0', 0.0) // 「故障」斑块——renderer 无规则闪烁
+      grp.userData.glitchMat = glitchMat
+      for (let i = 0; i < 9; i++) {
+        const seg = new THREE.Group()
+        seg.position.set(0.3 - (i + 1) * 1.35, 1.45, 0)
+        const t9 = i / 8
+        const rr = 0.8 * (1 - t9 * 0.45) // v58fix4：整体增粗（向后渐细）
+        const sb = sph(rr, i % 2 ? hide : hideD, 10)
+        sb.scale.set(1.7, 1.55, 0.5) // 竖直侧扁（高而薄）——缎带形横截面
+        seg.add(sb)
+        const ub = sph(rr * 0.8, belly, 8) // 腹部浅色斑驳
+        ub.scale.set(1.3, 1.15, 0.45)
+        ub.position.y = -rr * 0.42
+        seg.add(ub)
+        // 连续背鳍膜（顶缘薄而高，后段渐低）
+        const df = box(1.1, (0.62 - t9 * 0.34) * rr + 0.12, 0.045, fin, 0, rr * 1.35, 0)
+        df.rotation.z = 0.08
+        seg.add(df)
+        if (i >= 5) { // 臀鳍膜（尾段腹缘）
+          const af = box(0.95, 0.3 * (1 - (t9 - 0.6)), 0.04, fin, 0, -rr * 1.28, 0)
+          af.rotation.z = -0.1
+          seg.add(af)
+        }
+        if (i === 0) for (const zs of [-1, 1]) { // 胸鳍（头后第一节）
+          const pf = box(0.3, 0.08, 0.02, fin, -0.1, -0.1, zs * (rr * 0.48 + 0.06))
+          pf.rotation.x = zs * 0.6
+          pf.rotation.z = -0.4
+          seg.add(pf)
+        }
+        if (i < 3) { // 头后鳃裂（前三节侧面）
+          for (let g = 0; g < 3; g++) seg.add(box(0.035, 0.42, 0.015, gill, -0.32 + g * 0.26, 0.05, rr * 0.5 + 0.01))
+        }
+        if (i % 2 === 0) { // 皮革质斑驳（侧腹不规则浅斑）
+          seg.add(box(0.6, 0.16, 0.02, mottle, 0.1, rr * 0.42, rr * 0.5 + 0.01))
+          seg.add(box(0.42, 0.13, 0.02, mottle, -0.3, -rr * 0.25, -(rr * 0.5 + 0.01)))
+        }
+        if (i === 2 || i === 5) { // 伤疤
+          seg.add(box(0.55, 0.045, 0.03, scar, 0.1, rr * 0.66, rr * 0.34))
+          seg.add(box(0.38, 0.045, 0.03, scar, -0.25, -rr * 0.42, -(rr * 0.38)))
+        }
+        if (i === 3 || i === 6) { // 「故障」体节：视觉扭曲斑块（renderer 闪烁抖动）
+          for (let g = 0; g < 4; g++) {
+            const gp = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.18 + (g % 2) * 0.12, 0.06), glitchMat)
+            gp.position.set((g - 1.5) * 0.3, rr * 0.7 * (g % 2 ? 1 : -0.5), (g % 2 ? 1 : -1) * (rr * 0.52 + 0.01))
+            seg.add(gp)
+          }
+        }
+        if (i === 8) { // 尾鳍（竖扁上翘）
+          const tf = box(0.6, 1.15, 0.05, fin, -0.55, 0.15, 0)
+          tf.rotation.z = 0.25
+          seg.add(tf)
+        }
+        tag(seg, `seg${i}`)
+      }
       break
     }
     case 'wrangler': { // 缠斗者：蛇形巨躯——10 节递减圆柱蜿蜒；前端是一颗类人的头，

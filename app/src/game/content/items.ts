@@ -9,7 +9,7 @@ export interface ItemDef {
   name: string
   desc: string
   stack: number
-  use?: 'eat' | 'heal' | 'sanity' | 'battery' | 'stamina' | 'bigsanity' | 'light' | 'none' | 'cure' | 'sanityeat' // v54：sanityeat=理智+饥饿双恢复（幸运豆奶）
+  use?: 'eat' | 'heal' | 'sanity' | 'battery' | 'stamina' | 'bigsanity' | 'light' | 'none' | 'cure' | 'sanityeat' | 'doc' // v57t：doc=阅读文档（来源不明的书）
   value?: number
   value2?: number // v54：第二效果量（sanityeat 的饥饿恢复量）
   value3?: number // v54：口渴效果量（正负均可；饮用类物品——杏仁水/咖啡/幸运豆奶/市政自来水/番茄浓汤为正，液态痛苦/腰果水为负）
@@ -31,7 +31,7 @@ export const ITEMS: Record<string, ItemDef> = {
   canned: { type: 'canned', name: '罐装食品', desc: '标签已经脱落的罐头。', stack: 3, use: 'eat', value: 35, rarity: 'common', glyph: 'can' },
   bandage: { type: 'bandage', name: '绷带', desc: '还算干净的一卷绷带。', stack: 3, use: 'heal', value: 30, rarity: 'common', glyph: 'bandage' },
   disinfectant: { type: 'disinfectant', name: '消毒液', desc: '希波克拉底团队标准配发的医用消毒液，气味刺鼻。早期感染能彻底消杀，病入肌理就无能为力了。', stack: 3, use: 'cure', value: 25, rarity: 'uncommon', glyph: 'bottle' },
-  battery: { type: 'battery', name: '手电筒电池', desc: '为手电筒充能的电池。', stack: 3, use: 'battery', value: 50, rarity: 'common', glyph: 'battery' },
+  battery: { type: 'battery', name: '电池', desc: '通用碱性电池，可为手电筒和夜视眼镜补充电量。', stack: 3, use: 'battery', value: 50, rarity: 'common', glyph: 'battery' },
   flashlight: { type: 'flashlight', name: '手电筒', desc: '可靠的老式手电。装在副手提供主光源，按 F 开关，耗电。', stack: 1, passive: '主光源', equip: 'offhand', rarity: 'uncommon', glyph: 'flashlight' },
   crowbar: { type: 'crowbar', name: '撬棍', desc: '沉重的撬棍。可当作武器，也能撬开补给箱。', stack: 1, weapon: 25, rarity: 'uncommon', glyph: 'crowbar' },
   tape: { type: 'tape', name: '磁带', desc: '一盘标着编号的磁带。集齐 6 盘，也许能揭开真相……（胜利条件）', stack: 6, rarity: 'epic', glyph: 'tape' },
@@ -77,7 +77,7 @@ export const ITEMS: Record<string, ItemDef> = {
   rope: { type: 'rope', name: '尼龙绳', desc: '一卷结实的尼龙绳。Wikidot 明确建议进入 Level 7 前携带绳索或梯子——否则掉进水里就再也爬不回入口房间。', stack: 1, unique: 7, equip: 'pocket', passive: '可攀回高处', rarity: 'uncommon', glyph: 'rope' },
   divemask: { type: 'divemask', name: '潜水面罩', desc: '海面上方的空气有种未知性质，能让人屏息约三十分钟。有了它，还能更久一点。', stack: 1, unique: 7, equip: 'head', passive: '延长屏息', rarity: 'uncommon', glyph: 'mask' },
   thingmeat: { type: 'thingmeat', name: '巨兽之肉', desc: '油腻、富脂、黏滑，强烈的硫磺味。档案强调：必须生食——加热会唤醒里面休眠的寄生虫。', stack: 2, unique: 7, use: 'eat', value: 55, anomalous: true, rarity: 'rare', glyph: 'meat' },
-  oddbook: { type: 'oddbook', name: '来源不明的书', desc: '入口房间书柜上的一本书。没有作者，没有出版信息，翻开却读得下去。', stack: 2, unique: 7, use: 'sanity', value: 25, anomalous: true, rarity: 'rare', glyph: 'book' },
+  oddbook: { type: 'oddbook', name: '来源不明的书', desc: '入口房间书柜上的一本旧书。没有作者，没有出版信息。翻开，是一个在 Level 7 待过的人留下的记录。', stack: 1, unique: 7, use: 'doc', anomalous: true, rarity: 'rare', glyph: 'book' },
 
   // Level 8「Cave Systems」
   cavingsuit: { type: 'cavingsuit', name: '洞穴保温服', desc: '内层抓绒、外层防水聚酯纤维，缝满实用口袋。Harmouth 洞穴学会的标准配发。装备后抵御洞内 10–15°C 的长期失温。', stack: 1, unique: 8, equip: 'body', passive: '保温', rarity: 'uncommon', glyph: 'suit' },
@@ -106,7 +106,7 @@ export const ITEMS: Record<string, ItemDef> = {
   endnote: { type: 'endnote', name: '烧焦的字条', desc: '「别信那扇门。我数过了，我家的走廊没有这么长。—— 第 7 次」。理智 −（真相从来不让人好受），但你会记住它。', stack: 3, unique: 12, rarity: 'rare', glyph: 'scrap' },
 
   // ===== v32：后室扩展物品 =====
-  cashew: { type: 'cashew', name: '腰果水', desc: '看起来和杏仁水几乎一模一样——但千万别搞混。', stack: 3, use: 'sanity', value: -30, value3: -10, anomalous: true, rarity: 'uncommon', glyph: 'bottle' },
+  cashew: { type: 'cashew', name: '腰果水', desc: '看起来和杏仁水几乎一模一样——但标签只剩乱码，千万别搞混。', stack: 3, use: 'sanity', value: -30, value3: -10, anomalous: true, rarity: 'uncommon', glyph: 'bottle' },
   // v54：幸运豆奶（wikidot Object 28）——理智+40、饥饿+20、口渴+30
   luckymilk: { type: 'luckymilk', name: '幸运豆奶', desc: '纸盒包装上印着一只微笑的四叶草奶牛。喝下去的人说会交好运——至少他们是这么声称的。', stack: 3, use: 'sanityeat', value: 40, value2: 20, value3: 30, anomalous: true, rarity: 'rare', glyph: 'milk' },
   knife: { type: 'knife', name: '刀', desc: '一把还算锋利的刀。', stack: 1, weapon: 30, rarity: 'uncommon', glyph: 'knife' },

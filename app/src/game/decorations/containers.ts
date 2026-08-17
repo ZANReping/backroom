@@ -28,8 +28,8 @@ export const CONTAINERS: Record<string, ContainerDef> = {
   fridge:   { label: '冰箱',          dur: 1.5, n: 2, pool: ['canned', 'almond', 'citywater', 'driedfruit', 'thingmeat'] },
   safebox:  { label: '保险箱',        dur: 2.4, n: 3, pool: ['presses', 'sedative', 'keycard', 'skeleton', 'rabbit', 'tape'], gate: 'crowbar' },
   mailbox:  { label: '信箱',          dur: 1.1, n: 1, pool: ['housekey', 'pamphlet', 'wallpaper', 'endnote', 'tape'] },
-  barrel:   { label: '木桶',          dur: 1.5, n: 2, pool: ['almond', 'almond', 'oddbook', 'rope', 'tape'] },
-  bookcase: { label: '书柜',          dur: 1.6, n: 2, pool: ['oddbook', 'oddbook', 'pamphlet', 'megfolder', 'tape'] },
+  barrel:   { label: '木桶',          dur: 1.5, n: 2, pool: ['almond', 'almond', 'rope', 'tape'] },
+  bookcase: { label: '书柜',          dur: 1.6, n: 2, pool: ['pamphlet', 'megfolder', 'tape'] },
   bonepile: { label: '骨堆',          dur: 1.4, n: 1, pool: ['bandage', 'divemask', 'rope', 'wallpaper', 'tape'] },
   campstall:{ label: '营地摊位',      dur: 2.0, n: 3, pool: ['driedfruit', 'cavingsuit', 'uvlamp', 'almond', 'battery', 'xenonmarble'] },
   // v51：Level 3 发电站——壁挂配电箱（电气材料池）

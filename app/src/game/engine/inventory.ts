@@ -68,6 +68,13 @@ export function useSlot(eng: Engine, where: SlotWhere, i: number) {
   const s = eng.slotGet({ w: where, i })
   if (!s) return
   const def = ITEMS[s.type]
+  // v57t：来源不明的书——翻开记录「七层之物」的旧书页（不消耗，读过的内容已存进图鉴文档）
+  if (s.type === 'oddbook') {
+    audio.uiTick()
+    eng.emit({ kind: 'doc', text: 'l7_thing_journal' })
+    eng.msg('书页已经脆得发黄。你翻到了那张关于「七层之物」的记录。', 'lore')
+    return
+  }
   // 装备类物品：主手使用无效果 → 提示其作用与应在的装备位
   if (def.equip) {
     const slotName = { offhand: '副手', body: '身体', gloves: '手套', head: '头饰', pocket: '口袋' }[def.equip]

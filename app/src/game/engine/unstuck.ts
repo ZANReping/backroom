@@ -216,7 +216,7 @@ export function updateUnstuckCheck(eng: Engine, frameDt: number) {
   eng.onStairs = false
   eng.inLiquid = 0; eng.submerged = false; eng.wasSubmerged = false; eng.breathT = 0
   eng.searching = null; eng.lootPanel = null; eng.interactTarget = null
-  eng.ride = null; eng.climb = null
+  eng.ride = null; eng.climb = null; eng.porchDrop = null // v58
   eng.updateInfiniteWindow()
   eng.persist() // 立即覆盖卡死坐标，重新进入游戏也会从安全点恢复。
   eng.msg(`已确认无法移动，已脱困至最近的开阔连通地块（${distance.toFixed(1)} 米）。`, 'system')

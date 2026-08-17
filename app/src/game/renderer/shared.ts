@@ -1,8 +1,9 @@
 // 渲染器公共工具：常量/调色/几何与程序化纹理基础
 import * as THREE from 'three'
-import type { GroundItem, Structure } from '../core/types'
+import type { ExitInstance, GroundItem, Structure } from '../core/types'
 
 export interface RenderOpts { grain: boolean; flicker: number; shake: boolean; dust: boolean }
+export type RenderResolutionMode = 'native' | '720p' | '480p_retro' | '320p_ps1'
 
 interface VisualInteractionHitBase {
   x: number
@@ -20,6 +21,7 @@ interface VisualInteractionHitBase {
 export type VisualInteractionHit = VisualInteractionHitBase & (
   | { kind: 'structure'; structure: Structure }
   | { kind: 'item'; item: GroundItem }
+  | { kind: 'exit'; exit: ExitInstance } // v58：出口模型（电梯门等）也进准星射线
 )
 
 // 视角共享状态（桌面 Pointer Lock / 移动端右半屏拖动写入）。visualHit 由真实 Three.js 相机射线逐帧写入，
@@ -39,7 +41,7 @@ export const WALL_H: Record<string, number> = {
 // v23：L7 无源昏暗自然光 / L9 午夜 / L10 阴沉铅灰 / L11 恒定白昼
 export const SKY: Record<number, string> = {
   1: '#6e6748', 2: '#4a5157', 4: '#677075', 5: '#16264e', 6: '#03050a',
-  7: '#3f5a66', 9: '#05070f', 10: '#8d9195', 11: '#9aa2ab',
+  7: '#4a5e64', 9: '#05070f', 10: '#8d9195', 11: '#9aa2ab', // v58：L7 雾色对齐迷雾天空盒地平霾色
 }
 // v7 室外地面配色（沥青/天台/庭院）
 // v12 修复：全面提亮并与各层天空/水面拉开色相——旧版 hotel '#233048' 藏青与
@@ -117,7 +119,7 @@ const texCache = new Map<string, THREE.Texture>()
 // v16 修复：部署域（子路径/无尾斜杠/iframe 重写）下 BASE_URL='./' 相对页面 URL 解析会 404，
 // 导致墙纸静默退化为纯色噪点兜底。构建产物的 JS 模块一定位于 <base>assets/ 下，
 // 用 import.meta.url 向上推导 <base>textures/ 与页面路径完全解耦；dev 下回退 BASE_URL。
-function textureUrl(name: string): string {
+export function textureUrl(name: string): string {
   const file = name.includes('.') ? name : `${name}.jpg` // 允许显式带扩展名（如 manila_wallpaper.png）
   try {
     const mod = import.meta.url
@@ -143,7 +145,19 @@ export function levelTexture(name: string, fallback: () => THREE.Texture): THREE
     new THREE.TextureLoader().load(
       url,
       (t) => {
+        // DataTexture 兜底成功换入浏览器图片时，必须同时退出 DataTexture 上传路径。
+        // Three.js 会对 isDataTexture 对象固定读取 image.data；若这里只替换 image，HTMLImageElement
+        // 没有 data 字段，WebGL 会静默上传一张全黑纹理（不会触发 TextureLoader/控制台错误）。
+        if ((ph as unknown as { isDataTexture?: boolean }).isDataTexture) {
+          (ph as unknown as { isDataTexture: boolean }).isDataTexture = false
+        }
         ph.image = t.image
+        ph.flipY = t.flipY
+        ph.premultiplyAlpha = t.premultiplyAlpha
+        ph.unpackAlignment = t.unpackAlignment
+        ph.format = t.format
+        ph.type = t.type
+        ph.internalFormat = t.internalFormat
         ph.magFilter = THREE.LinearFilter
         ph.minFilter = THREE.LinearMipmapLinearFilter
         ph.generateMipmaps = true

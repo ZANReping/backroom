@@ -1,11 +1,12 @@
 // v53：移动/输入积分 + 垂直物理（固定子步积分主段、液体浮沉、跳跃重力、梯子攀爬）——
 // 自 engine.ts step 内联段拆分，逻辑逐语句搬运；updateMovement 返回 null 表示本帧已死亡/终止（原 step 的 return）。
-import { bandOfZ, bandOfPlayerZ, groundHeightAt, structStandTopAt, ceilingHeightAt, POOL_DEPTH, FLOOR_H } from '../world/mapgen'
+import { bandOfZ, bandOfPlayerZ, groundHeightAt, structStandTopAt, ceilingHeightAt, floorHeight, liquidSurfaceH, POOL_DEPTH, FLOOR_H } from '../world/mapgen'
 import { integrateMove } from '../core/player'
-import { WALL_H } from '../renderer/shared'
+import { WALL_H, look } from '../renderer/shared'
 import { levelDefOf, NORMAL_LEVELS } from '../levels'
 import { audio } from '../core/audio'
 import { chunkKey, CS, applyRedPlague } from '../world/infinite'
+import { RemotePlayerViews } from '../renderer/remotePlayers' // v58：联机玩家碰撞查询
 import type { Engine } from '../engine'
 
 type DiffMult = { dmg: number; drain: number }
@@ -34,7 +35,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   // v13：液体状态（深水=可沉没游泳；浅水=减速涟漪）
   const lq = band === 0 ? m.liquid[tileI] : 0
   if (lq !== eng.inLiquid) {
-    if (lq === 1 && eng.inLiquid === 0) { // 入水扑通
+    if (lq === 1 && eng.inLiquid !== 1) { // 入水扑通（无液/浅水→深水；L7 入口房间浅水洼走出门廊即触发）
       audio.splash()
       eng.splashParticles(p.x, p.y, 0)
       eng.msg('你跌进了水里——冰冷刺骨。', 'system')
@@ -45,19 +46,49 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
     }
     eng.inLiquid = lq
   }
+  // v58：L7 门廊舱门异常重力拖拽演出——脚本化把玩家加速拖向落海点（期间锁定移动与垂直物理）
+  if (eng.porchDrop) {
+    const gd = eng.porchDrop
+    gd.t += dt
+    const k = Math.min(1, gd.t / 0.62)
+    p.x = gd.sx + (gd.dx - gd.sx) * k * k // 加速曲线：起步缓慢、末尾猛冲——重力拖拽感
+    p.y = gd.sy + (gd.dy - gd.sy) * k * k
+    // 越过门洞后被异常重力往下拽：z 压向海面（修复：若保持 2F 高度，楼层带把落点判定为
+    // 「上层板面 FLOOR_H」，玩家会悬在门口半空落不下去）；kd 末段才下沉，避免穿门廊地板
+    const kd = Math.max(0, (k - 0.65) / 0.35)
+    p.z = gd.sz + (0.6 - gd.sz) * kd * kd
+    p.vz = 0
+    if (k >= 1) {
+      eng.porchDrop = null
+      p.vz = -2.2 // 抛出门廊——之后由正常重力坠落入海（入水 splash 由液体状态切换触发）
+    }
+    eng.noise = Math.min(1, eng.noise + dt * 2) // 拖拽动静不小
+    return mag
+  }
+  // v58：舱门已开时再度靠近门口即被自动拖出（无需交互）；刚沿绳爬回的冷却内不误触发
+  if (eng.levelDef.id === 7 && eng.inLiquid !== 1 && !eng.climb && !eng.ride && eng.climbCd <= 0 && !introLock) {
+    const door = m.structures.find((s) => s.kind === 'hoteldoor' && s.data?.l7porch === 1)
+    if (door && !door.solid && door.data?.open === 1) {
+      const inMouth = Math.abs(p.x - (door.x + door.w / 2)) <= 0.9 && p.y > door.y - 1.4 && p.y <= door.y + door.h + 0.05
+      if (inMouth) forceL7PorchDrop(eng)
+    }
+  }
   // 蹲伏状态：按住蹲伏键，或身处低通道被风道强制压低头
   p.crouching = eng.input.crouch || m.crawl[tileI] === 1
+  const l7Swim = lq === 1 && eng.levelDef.id === 7
   let speed = 3.4
-  const wantSprint = eng.input.sprint && !p.crouching && mag > 0.1 && p.stamina > 1 && lq !== 1
+  // v57o：L7 深水允许快速游泳（消耗体力，噪音更大——会吸引 tiny）
+  const wantSprint = eng.input.sprint && (!p.crouching || l7Swim) && mag > 0.1 && p.stamina > 1 && (lq !== 1 || l7Swim)
   if (eng.input.sprint && mag > 0.1 && p.stamina <= 1) {
     // 体力耗尽提示（节流 4 秒）
-    if (eng.statusMsgT.stamina <= 0) { eng.msg('体力耗尽——喘口气再跑。', 'system'); eng.statusMsgT.stamina = 4 }
+    if (eng.statusMsgT.stamina <= 0) { eng.msg('体力耗尽——喘口气再游。', 'system'); eng.statusMsgT.stamina = 4 }
   }
-  if (wantSprint) { speed = 6.0; p.stamina = Math.max(0, p.stamina - 22 * (eng.manmadeT > 0 ? 2 : 1) * dt) } // v51：人制品效应中体力消耗 ×2
+  if (wantSprint) { speed = 6.0; p.stamina = Math.max(0, p.stamina - (l7Swim ? 16 : 22) * (eng.manmadeT > 0 ? 2 : 1) * dt) } // v51：人制品效应中体力消耗 ×2
   else p.stamina = Math.min(100, p.stamina + (p.coffeeT > 0 ? 24 : 12) * (eng.inOutpost ? 2 : 1) * (eng.manmadeT > 0 ? 0.5 : 1) * (p.infection >= 100 ? 0.9 : 1) * dt) // v51：人制品效应中体力恢复 ×0.5；v55：疫疾一阶起 ×0.9
-  if (p.crouching) speed *= 0.5 // 蹲伏减速
+  if (p.crouching && !l7Swim) speed *= 0.5 // 蹲伏减速（L7 潜泳由下潜逻辑负责，不再额外砍半）
   if (wet && lq === 0) speed *= 0.55
-  if (lq !== 0) speed *= 0.5 // v13：液体中移动减速
+  if (lq === 1 && l7Swim) speed *= 0.72 // v57o：开放水域游泳比室内水池更快
+  else if (lq !== 0) speed *= 0.5 // v13：液体中移动减速
   if (p.slowT > 0) { p.slowT -= dt; speed *= 0.5 }
   if (eng.webbedT > 0) speed *= 0.5 // v51：镇静剂麻痹——移动迟缓
   if (p.flashJamT > 0) p.flashJamT -= dt
@@ -146,8 +177,26 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
       eng.slipVx *= Math.max(0, 1 - dt * 1.8)
       eng.slipVy *= Math.max(0, 1 - dt * 1.8)
     } else { eng.slipVx = 0; eng.slipVy = 0 }
-    const moved = integrateMove(m, p, eng.input.mx * scale + eng.slipVx, eng.input.my * scale + eng.slipVy, speed, dt, eng.moveIt, { noclip: eng.dev.noclip, z: eng.onStairs ? 0 : p.z, crouch: p.crouching, band: eng.onStairs ? 0 : band })
+    // v57t：L7 快速游泳严格朝准星 3D 方向冲刺（WASD 只负责是否冲刺，不再决定方向）；
+    // 水平位移按 cos(pitch) 投影，垂直分量由下方按 sin(pitch) 驱动。
+    const fastSwim = wantSprint && l7Swim
+    const fastPitch = fastSwim ? Math.cos(look.pitch) : 1
+    const dirX = fastSwim ? -Math.sin(look.yaw) * fastPitch : eng.input.mx * scale + eng.slipVx
+    const dirY = fastSwim ? -Math.cos(look.yaw) * fastPitch : eng.input.my * scale + eng.slipVy
+    const moved = integrateMove(m, p, dirX, dirY, speed, dt, eng.moveIt, { noclip: eng.dev.noclip, z: eng.onStairs ? 0 : p.z, crouch: p.crouching, band: eng.onStairs ? 0 : band })
     const movedDist = Math.hypot(moved.x, moved.y)
+    // v58：联机玩家碰撞体积——与同层远端玩家软推挤，双方不可重叠
+    if (eng.mpSession?.started) {
+      for (const rp of RemotePlayerViews.nearby(eng, eng.mpSession)) {
+        const ddx = p.x - rp.x, ddy = p.y - rp.y
+        const dd = Math.hypot(ddx, ddy)
+        if (dd > 1e-4 && dd < 0.64 && Math.abs(rp.z - p.z) < 1.6) {
+          const push = 0.64 - dd
+          p.x += (ddx / dd) * push
+          p.y += (ddy / dd) * push
+        }
+      }
+    }
     // v51 修复：删除移动方向覆写 p.facing 的旧行——facing 由 609 行每帧锁定为视角方向；
     // 移动中（尤其侧移/后退）被覆写成移动方向，导致 inView 视锥错位、交互提示一会有一会无
     eng.stepAcc += movedDist
@@ -259,19 +308,46 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   if (eng.ride || eng.climb || eng.onStairs) {
     // 垂直位置由电梯/梯子/可行走阶梯脚本驱动（onStairs 时由 updateStairs 绑定坡道高度）
   } else if (lq === 1) {
-    // 深水中：下沉→池底；跳跃=向上划水；浮力趋向水面
-    const FLOAT_Z = -0.5 // 浮起时水面下的平衡高度（头露出水面）
-    if (eng.input.jump) {
-      eng.input.jump = false
-      p.vz = 2.6 // 划水上浮
+    // v57o 细化游泳：不按方向键时浮向水面（浮力平衡在 FLOAT_Z）；
+    // 跳跃/上浮键=向上划水，下蹲键=主动下潜；非 L7 的小水池仍可下潜到池底。
+    const l7Water = eng.levelDef.id === 7
+    const upMax = l7Water ? 5.0 : 2.6
+    const sinkMax = l7Water ? -6.5 : -1.5
+    const waterG = l7Water ? 7.0 : 5.0
+    const floorZ = m.l7SeaTerrain ? floorHeight(m, p.x, p.y, 0) : -(m.seaFloor?.[tileI] || POOL_DEPTH)
+    const fastSwimVertical = wantSprint && l7Swim && mag > 0.1
+    // v57q：取消被动浮力——只有主动操作才会改变深度。
+    // v57t 优先级：快速游泳（严格按准星俯仰）> 蹲伏下潜 > 跳跃上浮 > 中性悬浮。
+    if (fastSwimVertical) {
+      // 准星所指方向即完整 3D 方向：水平分量已按 cos(pitch)，垂直分量严格等于 speed·sin(pitch)。
+      p.vz = speed * Math.sin(look.pitch)
+      eng.rippleT = 0
+    } else if (eng.input.crouch && p.z > floorZ + 0.08) {
+      // 长按下蹲=持续垂直下潜（非冲刺状态）；先清掉残余上浮速度，避免「按下潜却仍在上升」
+      if (p.vz > 0) p.vz = 0
+      p.vz -= waterG * 1.25 * dt
+      eng.rippleT = 0
+    } else if (eng.input.jump) {
+      // 长按跳跃=持续垂直上浮（非冲刺状态；不消费跳跃输入，松开才停止）
+      p.vz = upMax
+      eng.rippleT = 0
       audio.swim()
+    } else {
+      // v57r：无任何主动输入=完全中性悬浮。直接清零垂直速度，杜绝残余动量造成的自动上浮/下沉。
+      p.vz = 0
     }
-    p.vz -= 5.0 * dt // 水中重力（缓沉）
-    if (p.z > FLOAT_Z && p.vz > 0) p.vz -= 9 * dt // 水面附近压回
-    p.vz = Math.max(-1.5, Math.min(2.6, p.vz))
+    p.vz = Math.max(sinkMax, Math.min(upMax, p.vz))
     p.z += p.vz * dt
-    if (p.z <= -POOL_DEPTH) { p.z = -POOL_DEPTH; p.vz = 0 } // 池底
+    if (p.z <= floorZ) { p.z = floorZ; p.vz = 0 } // 池底/海床（v57o：L7 按瓦片深度）
     if (p.z > 0.1) { p.z = 0.1; p.vz = 0 } // 不越出水面
+    // v57t：水面的自然漂浮起伏——无垂直输入时身体随波浪在 -0.1~0.1m 间浮动，
+    // 而不是固定在 0.1m 像踩在固体平面上。
+    if (l7Water && !eng.input.jump && !eng.input.crouch && !fastSwimVertical && p.z > -0.12) {
+      p.z = Math.max(-0.1, Math.min(0.1,
+        Math.sin(eng.time * 1.35 + p.x * 0.7 + p.y * 0.55) * 0.09
+        + Math.sin(eng.time * 2.3 + p.y * 1.1) * 0.04))
+      p.vz = 0
+    }
     // 水下状态：屏气 + 低通滤波 + 气泡
     const sub = p.z + 1.55 < 0
     if (sub && !eng.wasSubmerged) eng.msg('水没过了头顶——视野变成浑浊的蓝。', 'system')
@@ -279,15 +355,30 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
     eng.wasSubmerged = sub
     audio.setUnderwater(sub)
     if (sub) {
-      eng.breathT += dt
+      // v57p：开发者状态锁定=氧气永远保持满
+      if (eng.dev.statLock) eng.breathT = 0
+      else eng.breathT += dt
       eng.bubbleT -= dt
       if (eng.bubbleT <= 0) { eng.bubbleT = 0.5; eng.bubbleParticles(p.x, p.y, p.z + 1.3) }
-      if (eng.breathT > 8 && !eng.dev.god) {
+      // v57o：L7 真实水深压力——超过 150m 后开始持续伤害，越深越快（深渊带是真正死区）
+      if (l7Water && !eng.dev.god) {
+        const depth = -p.z
+        if (depth > 150) {
+          p.hp -= Math.min(3, (depth - 150) * 0.008) * dt * dm.dmg
+          if (eng.statusMsgT.hunger <= 0) {
+            eng.statusMsgT.hunger = 6
+            eng.msg(`水压碾得你全身作响——这里已经有 ${Math.round(depth)} 米深了。`, 'damage')
+          }
+          if (p.hp <= 0) { eng.die('被深海的水压碾碎'); return null }
+        }
+      }
+      const limit = breathLimit(eng)
+      if (eng.breathT > limit && !eng.dev.god) {
         p.hp -= 2.5 * dt * dm.dmg
         if (eng.statusMsgT.hunger <= 0) { eng.statusMsgT.hunger = 5; eng.msg('你快喘不上气了——快浮上去！', 'damage') }
-        if (p.hp <= 0) { eng.die('溺亡在泳池里'); return null }
+        if (p.hp <= 0) { eng.die('溺亡在水中'); return null }
       }
-    } else eng.breathT = Math.max(0, eng.breathT - dt * 2)
+    } else eng.breathT = Math.max(0, eng.breathT - dt * 3) // 浮出水面快速恢复
   } else {
     // v26：地面高度 = 地形地面 与 可站立结构顶面（桌/床/箱等低矮家具）取高者
     const g = Math.max(groundHeightAt(m, p.x, p.y, gBand), structStandTopAt(m, p.x, p.y, p.z, gBand))
@@ -347,7 +438,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   }
   // 普通层跌到 -4.5m 以下才死亡。L6 的合法地下层地面就在 -5m，不能套用这条规则；
   // L6 地表深坑已在上方完成“切到地下/失败才死亡”的完整分派。
-  if (!m.hasUnderground && !eng.ride && !eng.climb && p.z < -4.5 && !eng.dev.noclip) { eng.die('坠入深坑', true); return null }
+  if (!m.hasUnderground && !eng.ride && !eng.climb && p.z < -4.5 && !eng.dev.noclip && !(eng.levelDef.id === 7 && m.liquid[tileI] === 1)) { eng.die('坠入深坑', true); return null }
   // 离水判定（走出液体格）
   if (eng.inLiquid !== 0 && m.liquid[tileI] === 0) {
     eng.inLiquid = 0
@@ -358,22 +449,58 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   }
   return mag
 }
+/** v57o：水下屏气上限（秒）。L7 海面空气可让人长时屏息；潜水面罩进一步延长。 */
+export function breathLimit(eng: Engine): number {
+  const base = eng.levelDef.id === 7 ? 35 : 8
+  return eng.player.equip.head?.type === 'divemask' ? base + 25 : base
+}
+
+// ---- v57m：L7 门廊舱门开启后的强制落海 ----
+// 舱门一旦打开，门边的人会立刻被海侧重力捕获；连续检测保证「后来靠近」的玩家同样会被推出去。
+// v58：不再瞬间传送——进入 porchDrop 拖拽演出（updateMovement 推进：加速拖向舱门落点再抛下）。
+export function forceL7PorchDrop(eng: Engine): boolean {
+  if (eng.levelDef.id !== 7) return false
+  const p = eng.player, m = eng.map!
+  const door = m.structures.find((s) => s.kind === 'hoteldoor' && s.data?.l7porch === 1)
+  if (!door || door.solid || !door.data?.open) return false
+  if (eng.inLiquid === 1 || eng.porchDrop || eng.climb || eng.ride) return false // 已在海中/演出中/脚本移动中
+  const dx = p.x - (door.x + door.w / 2)
+  const dy = p.y - (door.y + door.h / 2)
+  // 只捕获舱门北侧门廊里足够近的人；房内远处开门不会隔空被拽走
+  if (Math.hypot(dx, dy) > 2.6 || p.y > door.y + door.h - 0.2) return false
+  eng.porchDrop = {
+    t: 0, sx: p.x, sy: p.y, sz: p.z,
+    dx: door.x + Number(door.data?.dropDX ?? 0) + 0.5,
+    dy: door.y + Number(door.data?.dropDY ?? 1) + 0.5,
+  }
+  audio.swing() // 拖拽风声
+  if (!door.data?.forced) {
+    door.data = { ...door.data, forced: 1 }
+    eng.msg('门刚开了一条缝，海侧的重力就抓住了你——你被甩出了门廊！', 'damage')
+  } else {
+    eng.msg('海侧的重力再次抓住了你。', 'damage') // v58：已开过的舱门，靠近即被拖出（无需交互）
+  }
+  return true
+}
+
 // ---- v13：梯子攀爬 ----
 // 贴近攀爬梯（base 在主层 / top 在上层），按住前进且面朝梯子即开始竖直攀爬，脚本化送达
 export function updateClimb(eng: Engine, dt: number, mag: number) {
   const p = eng.player, m = eng.map!
   if (eng.climb) {
     const c = eng.climb
+    const z0 = c.zBase ?? 0
+    const z1 = c.zTop ?? FLOOR_H
     p.z += c.dir * 1.9 * dt
     p.vz = 0
-    if (c.dir === 1 && p.z >= FLOOR_H) {
-      p.x = c.topX + 0.5; p.y = c.topY + 0.5; p.z = FLOOR_H
+    if (c.dir === 1 && p.z >= z1) {
+      p.x = c.topX + 0.5; p.y = c.topY + 0.5; p.z = z1
       eng.climb = null
       eng.climbCd = 0.9
       audio.footstep('metal')
-      eng.msg('你爬上梯子，翻上了高处。', 'system')
-    } else if (c.dir === -1 && p.z <= 0) {
-      p.x = c.baseX + 0.5; p.y = c.baseY + 0.5; p.z = 0
+      eng.msg(c.rope ? '你顺着尼龙绳爬回了门廊。' : '你爬上梯子，翻上了高处。', 'system')
+    } else if (c.dir === -1 && p.z <= z0) {
+      p.x = c.baseX + 0.5; p.y = c.baseY + 0.5; p.z = z0
       eng.climb = null
       eng.climbCd = 0.9
       audio.footstep('metal')
@@ -383,6 +510,8 @@ export function updateClimb(eng: Engine, dt: number, mag: number) {
   if (eng.climbCd > 0) { eng.climbCd -= dt; return }
   if (mag < 0.1) return
   const fx = Math.cos(p.facing), fy = Math.sin(p.facing)
+
+  // 常规攀爬梯（主层 ↔ 上层）
   for (const s of m.structures) {
     if (s.kind !== 'ladder' || !s.data?.climb) continue
     const tx = s.data.tx as number, ty = s.data.ty as number
@@ -407,6 +536,41 @@ export function updateClimb(eng: Engine, dt: number, mag: number) {
       const bd = Math.hypot(bx, by) || 1
       if (d < 1.0 && (bx / bd) * fx + (by / bd) * fy > 0.5) {
         eng.climb = { baseX: Math.floor(s.x), baseY: Math.floor(s.y), topX: tx, topY: ty, dir: -1 }
+        audio.footstep('metal')
+        return
+      }
+    }
+  }
+
+  // v57m：L7 门廊尼龙绳——部署后可从海面沿绳爬回门廊出口，也可从门廊沿绳下降
+  for (const s of m.structures) {
+    if (s.kind !== 'ropeanchor' || s.data?.deployed !== 1) continue
+    const topX = s.x + Number(s.data.ropeDX ?? 0)
+    const topY = s.y + Number(s.data.ropeDY ?? 0)
+    const baseX = s.x + Number(s.data.baseDX ?? 0)
+    const baseY = s.y + Number(s.data.baseDY ?? 1)
+    const zTop = floorHeight(m, topX + 0.5, topY + 0.5, 1) // v57m：L7 门廊出口位于 2F
+    const zBase = Math.max(0.03, liquidSurfaceH(m, baseX, baseY) ?? 0.03)
+    const band = bandOfPlayerZ(m, p.z)
+    if (band === 0 && eng.inLiquid === 1) {
+      // 水中：靠近绳底并面朝顶部绳口 → 向上攀
+      const cx = baseX + 0.5, cy = baseY + 0.5
+      const dx = cx - p.x, dy = cy - p.y
+      const d = Math.hypot(dx, dy)
+      if (d > 0.15 && d < 1.4 && (dx / d) * fx + (dy / d) * fy > 0.35) {
+        eng.climb = { baseX, baseY, topX, topY, dir: 1, zBase, zTop, rope: 1 }
+        audio.footstep('metal')
+        return
+      }
+    } else if (band === 1 && p.z >= zTop - 0.3) {
+      // 2F 门廊上：靠近顶部绳口并面朝绳底 → 向下攀
+      const cx = topX + 0.5, cy = topY + 0.5
+      const dx = cx - p.x, dy = cy - p.y
+      const d = Math.hypot(dx, dy)
+      const bx = baseX + 0.5 - cx, by = baseY + 0.5 - cy
+      const bd = Math.hypot(bx, by) || 1
+      if (d < 1.2 && (bx / bd) * fx + (by / bd) * fy > 0.5) {
+        eng.climb = { baseX, baseY, topX, topY, dir: -1, zBase, zTop, rope: 1 }
         audio.footstep('metal')
         return
       }

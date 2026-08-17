@@ -8,6 +8,7 @@ import { L3_NOTE_IDS } from '../content/docs'
 import { itemName } from '../content/items'
 import { WIN_TAPES, NORMAL_LEVELS, levelDefOf } from '../levels'
 import { audio } from '../core/audio'
+import { forceL7PorchDrop } from './movement'
 import { look } from '../renderer/shared'
 import type { FloorBand, Structure } from '../core/types'
 import type { Engine } from '../engine'
@@ -129,6 +130,7 @@ export function triggerStructs(eng: Engine, dt: number, dm: DiffMult): boolean {
   return false
 }
 export const INTERACT_RANGE = { object: 2.2, item: 2.0, npc: 2.5 } as const
+export const INTERACT_Z_RANGE = 3.0 // v57t：交互目标必须位于玩家眼高 ±3m 内（海面不能隔几十米抓到海床上的物品/容器）
 const AIM_NORMAL = 15 * Math.PI / 180
 const AIM_NEAR = 20 * Math.PI / 180
 const AIM_TOUCHING = 28 * Math.PI / 180
@@ -166,7 +168,7 @@ export function structureInteractionProfile(s: Structure): StructureInteractionP
       break
     case 'roadsign': lo = 0.2; hi = 2.02; horizontalRadius = 0.36; break
     case 'megsign': lo = 0.2; hi = 2.55; horizontalRadius = 0.52; break
-    case 'megdoc': lo = s.data?.ontable ? 0.75 : 0; hi = s.data?.ontable ? 0.84 : 0.1; horizontalRadius = 0.2; break
+    case 'megdoc': lo = s.data?.ontable ? (s.data?.manila ? 0.87 : 0.75) : 0; hi = s.data?.ontable ? (s.data?.manila ? 0.97 : 0.84) : 0.1; horizontalRadius = 0.2; break
     case 'invitation': lo = 0; hi = 0.14; horizontalRadius = 0.25; break
     case 'lightswitch': lo = 1.05; hi = 1.55; horizontalRadius = 0.22; break
     case 'braille': lo = 1.2; hi = 1.44; horizontalRadius = 0.22; break
@@ -197,12 +199,16 @@ export function structureInteractionProfile(s: Structure): StructureInteractionP
     case 'corpse': lo = 0; hi = 0.28; horizontalRadius = 0.38; break
     case 'crate': case 'megcrate': lo = 0; hi = 0.76; horizontalRadius = 0.45; break
     case 'car': lo = 0.1; hi = 1.25; horizontalRadius = Math.min(0.9, Math.max(0.5, Math.min(s.w, s.h) / 2)); break
-    case 'cabinet': case 'dresser': case 'safebox': lo = 0.05; hi = s.kind === 'dresser' ? 1.15 : s.kind === 'safebox' ? 0.9 : 1.85; horizontalRadius = 0.45; break
+    case 'cabinet': case 'dresser': case 'safebox':
+      if (s.kind === 'dresser' && s.data?.manilaTable) { lo = 0.05; hi = 0.9; horizontalRadius = 0.9 }
+      else { lo = 0.05; hi = s.kind === 'dresser' ? 1.15 : s.kind === 'safebox' ? 0.9 : 1.85; horizontalRadius = 0.45 }
+      break
     case 'locker': case 'fridge': lo = 0.05; hi = 2.02; horizontalRadius = 0.4; break
     case 'toolbox': case 'suitcase': lo = 0; hi = 0.5; horizontalRadius = 0.35; break
     case 'mailbox': lo = 0.45; hi = 1.35; horizontalRadius = 0.38; break
     case 'barrel': lo = 0; hi = 1.02; horizontalRadius = 0.45; break
     case 'bookcase': lo = 0.05; hi = 2.05; horizontalRadius = Math.min(0.75, Math.max(0.45, Math.min(s.w, s.h) / 2)); break
+    case 'ropeanchor': lo = 0.5; hi = 1.4; horizontalRadius = 0.5; break
     case 'bonepile': lo = 0; hi = 0.55; horizontalRadius = 0.45; break
     case 'campstall': lo = 0.2; hi = 2.1; horizontalRadius = Math.min(0.9, Math.max(0.5, Math.min(s.w, s.h) / 2)); break
     case 'elecbox': lo = 0.45; hi = 1.65; horizontalRadius = 0.38; break
@@ -317,6 +323,9 @@ export function interactionProbe(
   const aimD = Math.hypot(dx, dy)
   const d = surfaceDistance ?? aimD
   if (d > maxDistance) return null
+  // v57t：交互判断的 z 轴硬门槛——玩家眼高与目标中心超过 3m 直接不可交互
+  const eyeZ = interactionEyeZ(eng)
+  if (Math.abs(z - eyeZ) > INTERACT_Z_RANGE) return null
 
   // 视觉命中是首要入口：玩家准星真正落在木箱顶面、柜门或大型结构边缘时，
   // 不再因为代表点位于模型中心/背面而丢失提示。
@@ -327,7 +336,7 @@ export function interactionProbe(
       const hx = ray.ox + ray.dx * rayT
       const hy = ray.oy + ray.dy * rayT
       const hz = ray.oz + ray.dz * rayT
-      if (interactionLos3D(eng, hx, hy, hz, band, target)) {
+      if (Math.abs(hz - eyeZ) <= INTERACT_Z_RANGE && interactionLos3D(eng, hx, hy, hz, band, target)) {
         return { a: -1 + Math.min(10, rayT) * 1e-3, d, direct: true, rayT }
       }
     }
@@ -414,12 +423,24 @@ export function scanInteract(eng: Engine) {
     if (e.def.kind === 'graystairs' || e.def.kind === 'graystairsup' || e.def.kind === 'oldstairs') continue // v29/v54：可行走阶梯——直接走上去/走下去，无 E 交互
     const ex = e.x + 0.5, ey = e.y + 0.5
     const d = Math.hypot(ex - p.x, ey - p.y)
-    if (d < 1.6) {
+    const exitTarget: Target = { kind: 'exit', label: `进入 ${e.def.name}`, e }
+    // v58：准星真实命中出口模型（电梯门等）——与结构/物品共用视觉命中通道，直指即达
+    if (visualHit?.kind === 'exit' && visualHit.exit === e
+      && interactionLos3D(eng, visualHit.x, visualHit.y, visualHit.z, e.floor ?? 0)) {
       e.discovered = true
-      const exitBase = floorHeight(m, ex, ey, e.floor ?? 0)
+      commitCandidate(exitTarget, -2 + Math.min(10, visualHit.rayT) * 1e-3, d, true)
+      continue
+    }
+    // v58：电梯交互距离放宽（1.6→2.2m）且交互体加大——壁龛格已有门扇碰撞进不去，
+    // 站在门扇正前/侧前舒适距离内即可唤起「进入 电梯」
+    const range = e.def.kind === 'elevatorshaft' ? 2.2 : 1.6
+    if (d < range) {
+      e.discovered = true
+      const exitBase = e.z ?? floorHeight(m, ex, ey, e.floor ?? 0) // v57t：漂浮门等出口自带 z 高度
       const ez = exitBase + 0.95
-      considerTarget({ kind: 'exit', label: `进入 ${e.def.name}`, e }, ex, ey, ez, e.floor ?? 0, 1.6, true, 0.48,
-        volumeAt(ex, ey, exitBase, 0.5, 1.95))
+      const big = e.def.kind === 'elevatorshaft'
+      considerTarget(exitTarget, ex, ey, ez, e.floor ?? 0, range, true, big ? 0.62 : 0.48,
+        volumeAt(ex, ey, exitBase, big ? 0.75 : 0.5, 1.95))
     }
   }
   // 地面物品（半径 2.0m；v13：按物品所在高度过滤楼层）
@@ -466,12 +487,13 @@ export function scanInteract(eng: Engine) {
     // v23：全部容器走统一表（含新增的储物柜/工具箱/行李箱/冰箱/保险箱/信箱/木桶/书柜/骨堆/营地摊位）
     if (CONTAINERS[s.kind]) {
       const C = CONTAINERS[s.kind]
+      const containerLabel = s.data?.manilaTable ? '桌下橱柜' : C.label
       const gate = !C.gate || (C.gate === 'carkey' ? eng.hasPocket('carkey') : eng.hasItem('crowbar'))
       const gateText = C.gate === 'carkey' ? '（需要车钥匙）' : '（需要撬棍）'
-      const label = s.looted ? `${C.label}（空）`
-        : !gate ? `${C.label}${gateText}`
-        : s.data?.searched ? `查看 ${C.label}（剩余物品）`
-        : `搜索 ${C.label}`
+      const label = s.looted ? `${containerLabel}（空）`
+        : !gate ? `${containerLabel}${gateText}`
+        : s.data?.searched ? `查看 ${containerLabel}（剩余物品）`
+        : `搜索 ${containerLabel}`
       consider(s.kind, label, s, d, s.looted ? true : gate)
     }
     else if (s.kind === 'lightswitch') consider('lightswitch', s.data?.flipped ? '电灯开关（已经拨过了）' : '拨动 电灯开关', s, d, true)
@@ -490,6 +512,10 @@ export function scanInteract(eng: Engine) {
           : can ? '撬开 上锁的房门' : '上锁的房门（需要撬棍/万能钥匙/斧头）'
         consider('hoteldoor', label, s, d, can)
       } else consider('hoteldoor', s.data?.open ? '关上 房门' : '打开 房门', s, d, true)
+    }
+    else if (s.kind === 'ropeanchor') {
+      const deployed = s.data?.deployed === 1
+      consider('ropeanchor', deployed ? '尼龙绳（已系好，可靠近攀爬）' : '系上 尼龙绳', s, d, true)
     }
     else if (s.kind === 'rollerdoor') {
       if (s.data?.locked) consider('rollerdoor', '卷帘门锁死了', s, d, false)
@@ -540,6 +566,18 @@ export function scanInteract(eng: Engine) {
       }, e.x, e.y, e.z + 0.8, entityBand, INTERACT_RANGE.npc, true, 0.4,
       volumeAt(e.x, e.y, e.z, 0.42, 1.6))
   }
+  // v58：小小（L7 环形场的可对话实体）——未被激怒时可交谈；激怒后仍可选中但拒绝对话
+  for (const e of m.entities) {
+    if (e.dead || e.def.type !== 'tiny') continue
+    const entityBand = bandOfZ(e.z)
+    if (entityBand !== band) continue
+    considerTarget({
+        kind: 'tiny',
+        label: e.provoked ? '小小（已被激怒，不再对话）' : '与 小小 交谈',
+        ent: e,
+      }, e.x, e.y, e.z + 0.8, entityBand, INTERACT_RANGE.npc, !e.provoked, 0.4,
+      volumeAt(e.x, e.y, e.z, 0.42, 1.6))
+  }
   // v51：人制品售货机（Entity 36）——正面取货 / 背面看标语。
   for (const e of m.entities) {
     if (e.dead || e.def.type !== 'vendingmachine' || e.activated) continue
@@ -588,11 +626,13 @@ export function doInteract(eng: Engine) {
       // v12：拾取 scanInteract 选中的同一物品（仍在地上才有效）
       const bi = t.it && m.items.includes(t.it) ? t.it : null
       if (bi) {
-        if (bi.fake) { m.items = m.items.filter((i) => i !== bi); if (m.inf) m.inf.taken.add(bi.id); return }
+        const mpTake = () => eng.emit({ kind: 'mpevent', mp: { t: 'takeItem', id: bi.id } }) // v58：联机——先到先得共享物资（广播移除）
+        if (bi.fake) { m.items = m.items.filter((i) => i !== bi); if (m.inf) m.inf.taken.add(bi.id); mpTake(); return }
         // v34：致新流浪者的纸条——查看即收录图鉴「文档」（不入背包，归宿是文档存档）
         if (bi.type === 'welcomenote') {
           m.items = m.items.filter((i) => i !== bi)
           if (m.inf) m.inf.taken.add(bi.id)
+          mpTake()
           audio.pickup()
           eng.emit({ kind: 'doc', text: 'welcome_note' })
           eng.msg('纸条已存档到图鉴 ·「文档」。', 'system')
@@ -602,6 +642,7 @@ export function doInteract(eng: Engine) {
         if (bi.type === 'flashlight' && !p.equip.offhand) {
           m.items = m.items.filter((i) => i !== bi)
           if (m.inf) m.inf.taken.add(bi.id)
+          mpTake()
           p.equip.offhand = { type: 'flashlight', count: 1 }
           p.flashlight = true
           eng.syncPassives()
@@ -617,6 +658,7 @@ export function doInteract(eng: Engine) {
           if (got >= n) {
             m.items = m.items.filter((i) => i !== bi)
             if (m.inf) m.inf.taken.add(bi.id) // v17：防止窗口重载后物品复活
+            mpTake()
           } else {
             bi.count = n - got // 背包装不下：剩余的留在原地
             eng.msg(`背包已满，${n - got} 个 ${itemName(bi.type)} 留在地上。`, 'system')
@@ -646,7 +688,7 @@ export function doInteract(eng: Engine) {
       }
       if (!s.data?.sid) s.data = { ...s.data, sid: Math.floor(Math.random() * 1e9) }
       const C = CONTAINERS[kind] ?? CONTAINERS.crate
-      const label = C.label
+      const label = s.data?.manilaTable ? '桌下橱柜' : C.label
       // v18：已搜索过且仍有剩余物品 → 免进度条，直接打开面板显示之前没拿完的物品
       if (s.data?.searched && leftover && leftover.length > 0) {
         eng.lootPanel = { sid: s.data.sid as number, label, items: leftover }
@@ -809,6 +851,10 @@ export function doInteract(eng: Engine) {
       const open = s.data?.open ? 0 : 1
       s.data = { ...s.data, open }
       s.solid = !open
+      // v58：联机——门开合状态同步（先到先得共享世界；坐标转世界系，跨端窗口无关）
+      eng.emit({ kind: 'mpevent', mp: { t: 'door', x: s.x + (m.inf?.ox ?? 0), y: s.y + (m.inf?.oy ?? 0), open: open === 1 } })
+      // v57m：L7 门廊尽头舱门——开门瞬间海侧重力捕获门边玩家，直接甩出舱门落入海中
+      if (open && s.data?.l7porch === 1) forceL7PorchDrop(eng)
       if (!open) {
         // v41：关门时玩家站在门洞——把玩家推到最近的可走一侧（否则嵌进实心门体卡死）
         const m = eng.map!
@@ -830,6 +876,26 @@ export function doInteract(eng: Engine) {
       }
       eng.msg(open ? '门吱呀一声开了。' : '你轻轻带上了门。', 'system')
       audio.uiTick()
+      break
+    }
+    case 'ropeanchor': {
+      // v57m：L7 门廊入口系缆桩——使用尼龙绳固定，绳索从门廊出口垂到海面，之后可攀爬返回
+      const s = t.s && t.s.kind === 'ropeanchor' ? t.s : null
+      if (!s) return
+      if (s.data?.deployed === 1) {
+        eng.msg('尼龙绳已经系好了。走到海面上的绳底，按住前进即可攀回门廊。', 'system')
+        audio.uiTick()
+        return
+      }
+      if (!eng.hasItem('rope')) {
+        eng.msg('这里有一个生锈的系缆桩。要回到门廊，你得先有一卷尼龙绳。', 'system')
+        audio.uiTick()
+        return
+      }
+      eng.consumeItem('rope')
+      s.data = { ...s.data, deployed: 1 }
+      eng.msg('你把尼龙绳牢牢系在系缆桩上。绳索从门廊出口垂向海面，像一条勉强可攀的路。', 'lore')
+      audio.pickup()
       break
     }
     case 'lift': {
@@ -881,6 +947,10 @@ export function doInteract(eng: Engine) {
       const open = s.data?.open ? 0 : 1
       s.data = { ...s.data, open }
       s.solid = !open
+      // v58：联机——门开合状态同步（先到先得共享世界；坐标转世界系，跨端窗口无关）
+      eng.emit({ kind: 'mpevent', mp: { t: 'door', x: s.x + (m.inf?.ox ?? 0), y: s.y + (m.inf?.oy ?? 0), open: open === 1 } })
+      // v57m：L7 门廊尽头舱门——开门瞬间海侧重力捕获门边玩家，直接甩出舱门落入海中
+      if (open && s.data?.l7porch === 1) forceL7PorchDrop(eng)
       if (!open) {
         const m = eng.map!
         const r = PLAYER_RADIUS
@@ -933,6 +1003,19 @@ export function doInteract(eng: Engine) {
     case 'jerry': {
       // v45：接触杰瑞——声望 +5（每次）+ 教化 +25 + 触发诵咏（驯服后不再积累教化）
       eng.contactJerry(t.ent)
+      break
+    }
+    case 'tiny': {
+      // v58：与小小对话——被激怒（噪音/肢体接触）后拒绝一切对话
+      const e = t.ent
+      if (!e || e.dead || e.def.type !== 'tiny') return
+      if (e.provoked) {
+        eng.msg('它不再回答。焦油层下的荧光斑冷冷地亮着，只剩毫不掩饰的恶意。', 'system')
+        return
+      }
+      e.facing = Math.atan2(p.y - e.y, p.x - e.x) // 转身面向玩家
+      audio.uiTick()
+      eng.emit({ kind: 'dialog', text: 'tiny' })
       break
     }
     case 'vendingmachine': {
@@ -1122,7 +1205,7 @@ export function finishSearch(eng: Engine, s: import('../core/types').Structure) 
   s.data = { ...s.data, opened: 1, searched: 1 }
   const items = (s.data.lootItems as string[] | undefined) ?? []
   const kind = s.kind
-  const label = CONTAINERS[kind]?.label ?? '容器'
+  const label = s.data?.manilaTable ? '桌下橱柜' : CONTAINERS[kind]?.label ?? '容器'
   if (items.length === 0) {
     s.looted = true
     eng.msg('容器是空的。', 'system')
@@ -1167,6 +1250,9 @@ export function afterLootChange(eng: Engine) {
   if (lp && lp.items.length === 0) {
     // 容器搜空：状态可见
     const s = eng.map?.structures.find((x) => x.data?.sid === lp.sid)
-    if (s) s.looted = true
+    if (s && !s.looted) {
+      s.looted = true
+      eng.emit({ kind: 'mpevent', mp: { t: 'loot', sid: lp.sid } }) // v58：联机——容器搜空同步（先到先得）
+    }
   }
 }

@@ -128,7 +128,7 @@ export function updateSurvival(eng: Engine, dt: number, dm: DiffMult, mag: numbe
   }
   // 开发者模式：状态锁定（devSetStat 会暂时解除锁定以便手动调整）
   // v55：infection 一并锁定——语义取「锁满=健康满状态」，即每帧锁回 0（永不染病；与锁满 HP/饥饿同类）
-  if (eng.dev.god && eng.dev.statLock) { p.hp = 100; p.sanity = 100; p.hunger = 100; p.thirst = 100; p.stamina = 100; p.infection = 0; if (p.flashlight || p.equip.head?.type === 'nightvision') p.battery = 100 }
+  if (eng.dev.god && eng.dev.statLock) { p.hp = 100; p.sanity = 100; p.hunger = 100; p.thirst = 100; p.stamina = 100; p.infection = 0; eng.breathT = 0; if (p.flashlight || p.equip.head?.type === 'nightvision') p.battery = 100 }
 
   audio.updateHeartbeat(p.hp)
   audio.updateWhispers(dt, p.sanity)

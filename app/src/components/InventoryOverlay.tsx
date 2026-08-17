@@ -313,6 +313,7 @@ function itemStatChips(it: (typeof ITEMS)[string], engine?: Engine, berryDest?: 
     else if (it.use === 'battery') chips.push(`电池 +${v}%`)
     else if (it.use === 'stamina') chips.push('体力回满 · 恢复翻倍 60s')
     else if (it.use === 'light') chips.push('放置临时光源')
+    else if (it.use === 'doc') chips.push('阅读文档')
   }
   // v54：口渴效果（饮用/汤类；正负均可）
   if (it.value3) chips.push(`口渴 ${it.value3 >= 0 ? '+' : ''}${it.value3}`)
@@ -733,7 +734,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                   )}
                   <div className="mt-auto flex gap-2">
                     {selDef.use && selDef.use !== 'none' && !isEquipW(sel.w) && (
-                      <button className="menu-btn flex-1 py-1.5 text-center text-[13px]" onClick={() => { engine.useSlot(sel.w, sel.i); refresh() }}>使用</button>
+                      <button className="menu-btn flex-1 py-1.5 text-center text-[13px]" onClick={() => { engine.useSlot(sel.w, sel.i); refresh() }}>{selDef.use === 'doc' ? '阅读' : '使用'}</button>
                     )}
                     {isEquipW(sel.w) ? (
                       <button className="menu-btn flex-1 py-1.5 text-center text-[13px]" onClick={() => { engine.unequipSlot(sel.w, sel.i); setSel(null); refresh() }}>卸下</button>

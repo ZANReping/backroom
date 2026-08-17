@@ -374,6 +374,74 @@ export function jerryFollowerDef(...nums: number[]): NpcDef {
 }
 
 export const NPCS: Record<string, NpcDef> = {
+  // v58：小小（Entity 720）——L7 环形场的可对话实体；傲慢、恶意毫不掩饰、隐瞒 L9 出口。
+  // 非人形实体走实体交互通道（interact.ts case 'tiny'），此处仅承载对话树与人设；被激怒后由交互层拒绝对话。
+  tiny: {
+    id: 'tiny', name: '小小', role: 'Entity 720',
+    faction: 'wanderer', // 无声望体系（hasRep=false——不会触发拒谈门槛，拒谈由 provoked 走交互层）
+    personality: '极端傲慢、自信，恶意毫不掩饰；高智商家伙，讨厌听别人讲道理，毫无同理心。',
+    background: '盘踞在 Level 7 暮色带环形场的巨大类人形实体。焦油外壳、荧光斑点、面部甲壳与一具巨物尸骨磨成的长矛。',
+    avatar: { gender: 0, hair: 0, hairColor: '#0e1216', skin: '#10151a', pants: '#0c1013', pantsStyle: 0, face: 2 }, // 剪影式（非人形实体无对应头像）
+    lines: [
+      {
+        npc: '哦？一个活人。游到我这里来，是想被记住——还是想被吃掉？',
+        opts: [
+          { text: '你是什么东西？', next: 1 },
+          { text: '我在找出路。', next: 2 },
+          { text: '（退开）', action: 'leave' },
+        ],
+      },
+      {
+        npc: '「东西」？（它笑了，水面起了一圈细纹）我是小小。这片水里唯一还愿意同你说话的。你该荣幸。',
+        opts: [
+          { text: '荣幸？你刚才是不是想攻击我？', next: 3 },
+          { text: '这附近有什么特别的吗？', next: 4 },
+          { text: '先这样吧。', action: 'leave' },
+        ],
+      },
+      {
+        npc: '出路？没有出路。（它用骨矛慢条斯理地敲着石台）西边是水，东边是水，上面是雾，下面是黑的。你就待在这儿陪我——或者陪到你不愿待为止。',
+        opts: [
+          { text: '这座石台中央的台面上，明明嵌着一扇门。', next: 5 },
+          { text: '那我走了。', action: 'leave' },
+        ],
+      },
+      {
+        npc: '想。现在也想。你说话时肌肉的动静、血液的味道，都在求我动手。（它歪了歪头）但你说话还算有趣——再多说两句。',
+        opts: [
+          { text: '你为什么待在这儿？', next: 4 },
+          { text: '……我还是走吧。', action: 'leave' },
+        ],
+      },
+      {
+        npc: '这儿是我的。环是我的椅子，台子是我的桌子。以前水里有过很多声音，后来都安静了——你猜是谁让它们安静的。',
+        opts: [
+          { text: '这些骨头都是你留下的？', next: 6 },
+          { text: '（看向石台中央）', next: 5 },
+          { text: '告辞。', action: 'leave' },
+        ],
+      },
+      {
+        npc: '门？（它的眼睛亮了一瞬，又暗下去）你看错了，那是石头。别再跟我提门——我最讨厌别人跟我讲道理。',
+        opts: [
+          { text: '你隐瞒不了。那扇门通向 Level 9。', next: 7 },
+          { text: '好，不提了。', next: 0 },
+        ],
+      },
+      {
+        npc: '它们只是坐得比我矮了。（它拨弄长矛）别紧张——你现在还不是骨头。你还「有趣」着。',
+        opts: [
+          { text: '（看向石台中央）', next: 5 },
+          { text: '我该走了。', action: 'leave' },
+        ],
+      },
+      {
+        npc: '（它沉默了很久，面部的甲壳微微张开一线，露出里面的尖牙）知道太多的人类，在我这儿从来不长寿。滚。趁我还想听你下次来说点什么。',
+        opts: [{ text: '（离开）', action: 'leave' }],
+      },
+    ],
+    idle: ['（它用骨矛敲着石台，一圈，又一圈。）', '（荧光斑点在焦油下一明一灭。）', '（它哼着不成调的曲子，像从谁那儿学来的。）'],
+  },
   kat: {
     id: 'kat', name: 'Kat', role: '监督者',
     personality: '严厉务实，话里不留情面，但心里装着基地里的每一个人。',
@@ -694,7 +762,6 @@ export const NPCS: Record<string, NpcDef> = {
       { item: 'notebook', price: 16 },
       { item: 'uvlamp', price: 34 },
       { item: 'stonekazoo', price: 20 },
-      { item: 'oddbook', price: 12 },
     ],
     lines: [
       {

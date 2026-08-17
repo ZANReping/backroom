@@ -1,14 +1,15 @@
 // Three.js 第一人称低多边形渲染器：主循环（静态几何/灯光池/实体动画编排，构建逻辑见同级模块）
 import * as THREE from 'three'
 import type { Engine } from '../engine'
-import { bandOfPlayerZ, floorHeight, FLOOR_H, tallCeilH, type GameMap } from '../world/mapgen'
+import { bandOfPlayerZ, floorHeight, l7SeaHAt, FLOOR_H, tallCeilH, type GameMap } from '../world/mapgen'
 import type { GroundItem, LevelDef, Structure, LightSource } from '../core/types'
 import { levelDefOf } from '../levels'
-import { WALL_H, SKY, col, box, glow, look, mulberry, type RenderOpts } from './shared'
+import { WALL_H, SKY, col, box, glow, look, mulberry, type RenderOpts, type RenderResolutionMode } from './shared'
 import { buildTerrain } from './geometry'
 import { CS, type LiveChunk } from '../world/infinite'
-import { buildSkyAndLiquids } from './liquidsSky'
-import { SKY_PROFILES, skyLightDir } from './skybox'
+import { buildSkyAndLiquids, buildLiquidSurfaces, updateLiquidTime, resetLiquidWaves } from './liquidsSky'
+import { RemotePlayerViews } from './remotePlayers' // v58：联机远端玩家渲染
+import { SKY_PROFILES, skyLightDir, makeSkyMesh, makeMirageFleet, updateMirageFleet, type MirageFleet } from './skybox'
 import { buildStructure, buildExit } from './structures'
 import { buildDecorations } from './decorations'
 import { buildEntityMesh } from './entitiesMesh'
@@ -56,7 +57,7 @@ const CONTAINER_ANIM: Record<string, number> = {
 const ANIM_STRUCT = (s: Structure) =>
   s.kind === 'lift' || s.kind === 'phonograph' || s.kind in CONTAINER_ANIM
   || s.kind === 'hoteldoor' || s.kind === 'rollerdoor' || s.kind === 'glassdoor' || s.kind === 'inkdoor' || s.kind === 'bargate'
-  || (s.kind === 'table' && !!s.data?.drink)
+  || (s.kind === 'table' && !!s.data?.drink) || s.kind === 'ropeanchor'
 
 // VCR 滤镜着色器：扫描线 + 行跟踪失真带 + 色差串扰 + 隔行微闪 + 噪点 + 抬黑降饱和 + 暗角
 const VcrShader = {
@@ -123,6 +124,87 @@ const VcrShader = {
   `,
 }
 
+// PS1 档后处理：低分辨率本身负责真实几何锯齿，这里只补有限色阶与有序抖动，
+// 避免用模糊/噪声覆盖画面而失去硬件光栅化的清晰像素边缘。
+const Ps1Shader = {
+  uniforms: {
+    tDiffuse: { value: null as THREE.Texture | null },
+    resolution: { value: new THREE.Vector2(1, 1) },
+  },
+  vertexShader: /* glsl */ `
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  fragmentShader: /* glsl */ `
+    uniform sampler2D tDiffuse;
+    uniform vec2 resolution;
+    varying vec2 vUv;
+
+    float bayer4(vec2 p) {
+      vec2 q = mod(floor(p), 4.0);
+      float x = q.x;
+      float y = q.y;
+      if (y < 1.0) return x < 1.0 ? 0.0 : x < 2.0 ? 8.0 : x < 3.0 ? 2.0 : 10.0;
+      if (y < 2.0) return x < 1.0 ? 12.0 : x < 2.0 ? 4.0 : x < 3.0 ? 14.0 : 6.0;
+      if (y < 3.0) return x < 1.0 ? 3.0 : x < 2.0 ? 11.0 : x < 3.0 ? 1.0 : 9.0;
+      return x < 1.0 ? 15.0 : x < 2.0 ? 7.0 : x < 3.0 ? 13.0 : 5.0;
+    }
+
+    void main() {
+      vec3 c = texture2D(tDiffuse, vUv).rgb;
+      float d = (bayer4(vUv * resolution) / 16.0 - 0.46875) / 31.0;
+      c = floor(clamp(c + d, 0.0, 1.0) * 31.0 + 0.5) / 31.0;
+      gl_FragColor = vec4(c, 1.0);
+    }
+  `,
+}
+
+// v58：夜视眼镜滤镜——绿磷 monochrome + 动态噪点 + 细扫描线 + 镜筒暗角。
+// 贴图不再被光源染绿：夜视的绿色只来自这层后处理（光源保持白色增像）。
+const NightVisionShader = {
+  uniforms: {
+    tDiffuse: { value: null as THREE.Texture | null },
+    time: { value: 0 },
+    resolution: { value: new THREE.Vector2(1, 1) },
+  },
+  vertexShader: /* glsl */ `
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  fragmentShader: /* glsl */ `
+    uniform sampler2D tDiffuse;
+    uniform float time;
+    uniform vec2 resolution;
+    varying vec2 vUv;
+
+    float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+
+    void main() {
+      vec3 c = texture2D(tDiffuse, vUv).rgb;
+      // 绿磷 monochrome：亮度映射为绿色调，暗部轻抬（增像管特性）
+      float lum = dot(c, vec3(0.299, 0.587, 0.114));
+      lum = pow(lum, 0.85);
+      vec3 nv = vec3(lum * 0.28, lum, lum * 0.38);
+      // 动态噪点（暗部更明显——低照下增像噪声大）
+      float n = hash(vUv * resolution + fract(time) * 173.0);
+      nv += (n - 0.5) * (0.04 + 0.10 * (1.0 - lum));
+      // 细扫描线
+      nv *= 1.0 + 0.035 * cos(vUv.y * resolution.y * 6.28318);
+      // 镜筒暗角（柔和，不遮视野）
+      vec2 d = vUv - 0.5;
+      float vig = smoothstep(0.72, 0.28, length(d) * 1.35);
+      nv *= 0.25 + 0.75 * vig;
+      gl_FragColor = vec4(nv, 1.0);
+    }
+  `,
+}
+
 // v35：NPC 渲染记录（据点居民；玩家模型 + 制服徽章 + 头顶气泡）
 interface NpcMeshRec {
   grp: THREE.Group
@@ -142,6 +224,8 @@ export class Renderer3D {
   private camera: THREE.PerspectiveCamera
   private levelGroup: THREE.Group | null = null
   private skyMesh: THREE.Mesh | null = null // v35：跟随玩家的天空球（buildSkyAndLiquids 内命名 'skybox'）
+  private mirageFleet: MirageFleet | null = null // v58：L7 蜃楼船队（迷雾中无法靠近的幽灵船）
+  private remoteViews = new RemotePlayerViews() // v58：联机远端玩家
   private builtMap: GameMap | null = null
   private builtRev = -1 // 已构建地图的 engine.mapRev（开发者就地改图时触发重建）
   private lightPool: THREE.PointLight[] = []
@@ -171,9 +255,10 @@ export class Renderer3D {
   private lightSortScratch: LightSource[] = []
   private lightPowerScratch = new Map<LightSource, number>()
   private fullLightPool: THREE.PointLight[] = []
-  private exitMeshes: { mesh: THREE.Object3D; mat: THREE.MeshBasicMaterial }[] = []
+  private exitMeshes: { mesh: THREE.Object3D; mat?: THREE.MeshBasicMaterial; bob?: { baseY: number; amp: number; phase: number } }[] = []
   // v17：无限模式（L0）按 chunk 构建的几何组（进入视野构建、远离卸载、平移只动 position）
-  private chunkGroups = new Map<string, { group: THREE.Group; wx: number; wy: number; structs: Structure[]; fixtures: { mat: THREE.MeshBasicMaterial; seed: number; src?: LightSource }[]; exitMeshes: { mesh: THREE.Object3D; mat: THREE.MeshBasicMaterial }[] }>()
+  private chunkGroups = new Map<string, { group: THREE.Group; wx: number; wy: number; structs: Structure[]; fixtures: { mat: THREE.MeshBasicMaterial; seed: number; src?: LightSource }[]; exitMeshes: { mesh: THREE.Object3D; mat?: THREE.MeshBasicMaterial; bob?: { baseY: number; amp: number; phase: number } }[]; exitRoots: THREE.Object3D[] }>()
+  private levelExitRoots: THREE.Object3D[] = [] // v58：有限层出口根组（准星射线候选；无限层走 chunkGroups[].exitRoots）
   private chunkRedo = -1 // 已同步的 inf.redo（红室蔓延等全图变化时全部重建）
   // v17：tint 氛围雾（红室红雾/熄灯区近黑/马尼拉暖调）平滑混合
   private tintK = 0
@@ -195,6 +280,7 @@ export class Renderer3D {
   // v54：真实视角摇晃（设置开关，默认关闭=保持基础 bob）——幅度平滑/落地下沉回弹状态
   private headBobReal = false
   private bobAmp = 0
+  private surfaceFloatK = 0 // v57t：水面漂浮感（相机随浪起伏）
   private landT = 0
   private landAmp = 0
   private prevVz = 0
@@ -222,11 +308,22 @@ export class Renderer3D {
   private l6WasActive = false
   private userExposure = 1.45
   private uwK = 0 // v13：水下视野混合（0=水上 1=水下：蓝绿浑浊短视距）
+  private l7LightKeep = 1 // v58：L7 自然光深度衰减因子（定向阳光随深度变暗；水上=1）
   // v50：光影设置项
   private lightMode: LightMode = 'classic'
   private shadowQuality = 1 // 0=低 1=中 2=高（手电/太阳 shadow map 尺寸与软影半径）
+  private flashShadowsOn = true
+  private realWaterOn = false // v57t：真实水体效果（默认关闭；开启后水面顶点随波浪起伏）
   private sunShadowsOn = true
   private lightShadowCount = 0 // 场景灯投影盏数（最近 N 盏池灯，开销随盏数增加）
+  private frameTick = 0 // v57o：手电阴影隔帧更新计数
+  // v58：手电阴影按需更新状态（上次阴影渲染时的光源姿态与场景内容签名）
+  private flashShadowPose = { px: 0, py: 0, pz: 0, tx: 0, ty: 0, tz: 0, valid: false }
+  private flashShadowBuiltRev = -2
+  private flashShadowRedo = -2
+  private flashShadowChunks = -1
+  private flashShadowMap: GameMap | null = null
+  private flashWasOn = false
   private bloomOn = true
   private bloomStrength = 35 // 泛光程度 0–100
   private composer: EffectComposer | null = null
@@ -234,6 +331,9 @@ export class Renderer3D {
   private composerKey = '' // 已构建 composer 的通道组合（泛光/VCR 开关变化时重建）
   private vcrOn = false // 设置项：VCR 滤镜（默认关）
   private vcrPass: ShaderPass | null = null
+  private nvPass: ShaderPass | null = null // v58：夜视眼镜滤镜（佩戴+有电时启用）
+  private resolutionMode: RenderResolutionMode = 'native'
+  private retroPass: ShaderPass | null = null
   // 第一人称手部 viewmodel（挂相机）
   private vm = new THREE.Group()
   private vmItem: THREE.Group | null = null
@@ -286,9 +386,11 @@ export class Renderer3D {
     // 手电（v28：decay=1.8 近似平方反比 + 更柔和的边缘半影；略降衰减让光斑更柔、射程更自然）
     this.flash = new THREE.SpotLight(0xfff2d0, 0, 18, 0.55, 0.6, 1.8)
     this.flash.castShadow = true
-    this.flash.shadow.mapSize.set(1024, 1024)
+    this.flash.shadow.mapSize.set(512, 512) // v57o：1024→512，手电阴影开销显著下降
+    this.flash.shadow.autoUpdate = false // v57o：手电阴影隔帧更新，消除开灯掉帧
+    this.flash.shadow.needsUpdate = true
     this.flash.shadow.camera.near = 0.3
-    this.flash.shadow.camera.far = 20
+    this.flash.shadow.camera.far = 16
     this.flash.shadow.bias = -0.0005
     this.flash.shadow.normalBias = 0.03
     this.scene.add(this.flash)
@@ -309,6 +411,7 @@ export class Renderer3D {
       this.lightPoolExtra.push(l)
     }
     this.fullLightPool = [...this.lightPool, ...this.lightPoolExtra]
+    this.applyShadowQuality()
     // 引擎粒子（血/蒸汽）
     this.particlesGeo = new THREE.BufferGeometry()
     this.particlesGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(120 * 3), 3))
@@ -471,6 +574,13 @@ export class Renderer3D {
     this.camera.updateProjectionMatrix()
   }
 
+  /** 固定光栅化档位由 App 计算 DPR；渲染器只负责相应的复古后处理通道。 */
+  setResolutionMode(mode: RenderResolutionMode) {
+    if (mode === this.resolutionMode) return
+    this.resolutionMode = mode
+    this.composerKey = ''
+  }
+
   // 将屏幕系输入旋转到世界系（第一人称）
   applyView(engine: Engine) {
     const inp = engine.input
@@ -483,6 +593,7 @@ export class Renderer3D {
 
   render(_canvas: HTMLCanvasElement, engine: Engine, opts: RenderOpts, dt: number) {
     this.time += dt
+    updateLiquidTime(this.time) // v57t：推进真实水体波浪统一时间
     const m = engine.map
     if (!m) { // 无地图（标题/菜单间隙）：准心同步隐藏，不等到下一帧状态变化
       this.cross.style.display = 'none'
@@ -500,11 +611,12 @@ export class Renderer3D {
       // 开发者“一键照明”绕过 L6 曝光压制；有电的夜视镜提供更强低照增像。
       this.three.toneMappingExposure = engine.dev.bright
         ? this.userExposure
-        : this.userExposure * (nightVision ? (0.68 + 0.56 * a) : (0.18 + 0.7 * a))
+        : this.userExposure * (nightVision ? (0.85 + 0.6 * a) : (0.18 + 0.7 * a)) // v58：夜视曝光 0.68→0.85 起，暗纹理地形可辨
     } else {
       this.l6WasActive = false
       this.l6DarkAdapt = 0
-      this.three.toneMappingExposure = this.userExposure
+      // L0 保留旧相机照片般的柔和高光，不让奶油黄材质再次曝成饱和亮黄。
+      this.three.toneMappingExposure = this.userExposure * (def.id === 0 ? 0.94 : 1)
     }
     if (m.inf) {
       // v17：无限模式（L0）——chunk 几何按视野流式构建/卸载
@@ -557,7 +669,27 @@ export class Renderer3D {
         else bob -= this.landAmp * Math.sin(k * Math.PI)
       }
     }
+    // v57t：水面的相机随浪起伏——避免像踩在固体平面上；离开水面后平滑归零
+    {
+      const target = def.id === 7 && engine.inLiquid === 1
+        ? Math.max(0, 1 - Math.max(0, -p.z) / 1.0)
+        : 0
+      this.surfaceFloatK += (target - this.surfaceFloatK) * Math.min(1, dt * 5)
+      const fk = this.surfaceFloatK
+      bob += Math.sin(this.time * 1.35 + this.bobPhase * 0.25) * 0.095 * fk
+      bobRoll += Math.sin(this.time * 0.83 + 0.6) * 0.028 * fk
+      bobPitch += Math.sin(this.time * 1.07 + 1.1) * 0.018 * fk
+    }
     this.prevVz = p.vz
+
+    // v58：L7 门廊舱门异常重力拖拽——视角猛沉前倾 + 轻微横滚抖动 + FOV 扩张（被非人重力拽向海面）
+    let dropFov = 0
+    if (engine.porchDrop) {
+      const k = Math.min(1, engine.porchDrop.t / 0.62)
+      bobPitch += k * k * 0.5
+      bobRoll += Math.sin(engine.porchDrop.t * 26) * 0.035 * k
+      dropFov = k * 8
+    }
 
     // 相机震动（受伤震屏 + HP≤30 持续轻微晃动）——与 bob 叠加共存
     const lowHp = p.hp <= 30 && p.hp > 0 ? 0.05 + Math.sin(this.time * 7) * 0.02 : 0
@@ -569,7 +701,8 @@ export class Renderer3D {
     // （真实摇晃模式蹲行幅度已按 ×0.45 计入 bobAmp，不再重复减半）
     const crouchTarget = p.crouching ? 0.55 : 0
     this.crouchDrop += (crouchTarget - this.crouchDrop) * Math.min(1, dt * 8)
-    const eye = 1.55 + bob * (p.crouching && !this.headBobReal ? 0.5 : 1) + p.z - this.crouchDrop
+    const swimEyeDrop = def.id === 7 ? 0.92 * this.surfaceFloatK : 0 // v57t：水面时眼高贴近水线（约 0.7m），不再是岸上站立视角
+    const eye = 1.55 + bob * (p.crouching && !this.headBobReal ? 0.5 : 1) + p.z - this.crouchDrop - swimEyeDrop
     // 水平侧摆沿视线右向（forward=(-cos,-sin)，右向=(-sin,cos)）
     const rightX = -Math.sin(look.yaw), rightZ = Math.cos(look.yaw)
     this.camera.position.set(p.x + rightX * swayX + this.camShakeX, eye, p.y + rightZ * swayX + this.camShakeY)
@@ -588,7 +721,7 @@ export class Renderer3D {
         this.camera.rotation.x += (1 - ease) * 0.3
       }
     }
-    const fov = this.fovBase + Math.sin(this.time * 1.8) * 7 * insanity + (engine.input.sprint && mag > 0.1 ? 5 : 0)
+    const fov = this.fovBase + Math.sin(this.time * 1.8) * 7 * insanity + (engine.input.sprint && mag > 0.1 ? 5 : 0) + dropFov // v58：拖拽演出 FOV 扩张
     if (Math.abs(fov - this.camera.fov) > 0.05) { this.camera.fov = fov; this.camera.updateProjectionMatrix() }
 
     // 手电（低电量闪烁警告 / 电弧体瘫痪抖动）
@@ -610,6 +743,7 @@ export class Renderer3D {
       flI *= Math.min(1, Math.max(0.18, wallD / 3))
     }
     this.flash.intensity = flI
+    this.frameTick++
     // 光照来源按装备区分（v32）：
     // 头灯（头饰栏）——光心放额头正中（视线正前方、略高，阴影自然且左右对称）；
     // 手电筒（副手）——光心放左手位且略超前（与手电视图模型一致；光与视线错开产生可见阴影）
@@ -624,6 +758,37 @@ export class Renderer3D {
       this.flash.position.y -= 0.1
     }
     this.flash.target.position.copy(this.camera.position).addScaledVector(dir, 6)
+    // v58：手电阴影按需更新，修复持手电帧率骤降——
+    //   阴影贴图内容只取决于「光源姿态 + 场景内容」：光源随相机，姿态未变则阴影不变，
+    //   静止时完全不重渲（20 帧心跳兜底门/实体等动态投影体）；移动中 classic 每 6 帧、
+    //   realistic 每 2 帧（v57t 为每 4 帧）；开灯瞬间与层级重建/chunk 流式变化时立即刷新。
+    let shadowWanted = fl && this.flashShadowsOn
+    if (shadowWanted) {
+      const sp = this.flashShadowPose
+      const lp = this.flash.position, lt = this.flash.target.position
+      const poseMoved = !sp.valid
+        || Math.abs(lp.x - sp.px) + Math.abs(lp.y - sp.py) + Math.abs(lp.z - sp.pz) > 0.03
+        || Math.abs(lt.x - sp.tx) + Math.abs(lt.y - sp.ty) + Math.abs(lt.z - sp.tz) > 0.15
+      const contentChanged = this.builtRev !== this.flashShadowBuiltRev
+        || this.chunkRedo !== this.flashShadowRedo
+        || this.chunkGroups.size !== this.flashShadowChunks
+        || this.builtMap !== this.flashShadowMap
+      shadowWanted = !this.flashWasOn
+        || contentChanged
+        || (poseMoved && this.frameTick % (this.lightMode === 'realistic' ? 2 : 6) === 0)
+        || this.frameTick % 20 === 0
+      if (shadowWanted) {
+        sp.px = lp.x; sp.py = lp.y; sp.pz = lp.z
+        sp.tx = lt.x; sp.ty = lt.y; sp.tz = lt.z
+        sp.valid = true
+        this.flashShadowBuiltRev = this.builtRev
+        this.flashShadowRedo = this.chunkRedo
+        this.flashShadowChunks = this.chunkGroups.size
+        this.flashShadowMap = this.builtMap
+      }
+    }
+    this.flashWasOn = fl
+    this.flash.shadow.needsUpdate = shadowWanted
     // v7 室外氛围混合：玩家身处室外时雾更远、背景过渡到层级天空色、环境光提高
     {
       const pi = Math.floor(p.y) * m.w + Math.floor(p.x)
@@ -632,8 +797,12 @@ export class Renderer3D {
       const k = this.outK
       const fog = this.scene.fog as THREE.Fog | null
       if (fog) {
-        fog.near = this.fogNear + (5 - this.fogNear) * k
-        fog.far = this.fogFar + (48 - this.fogFar) * k
+        // v58：L7 海面户外改为浅距离雾——旧版户外统一把雾推到 48m，海平面上几乎看不见雾；
+        // L7 户外只小幅放宽（near 3.5 / far 29），海面始终笼在可见的迷雾里
+        const outNear = def.id === 7 ? 3.5 : 5
+        const outFar = def.id === 7 ? 29 : 48
+        fog.near = this.fogNear + (outNear - this.fogNear) * k
+        fog.far = this.fogFar + (outFar - this.fogFar) * k
         fog.color.copy(this.fogC).lerp(this.skyC, k)
         if (this.scene.background instanceof THREE.Color) this.scene.background.copy(fog.color)
       }
@@ -644,9 +813,11 @@ export class Renderer3D {
         : (this.ambientBase + (p.hasLighter ? 0.03 : 0)) * (1 - k) + 0.38 * k
       if (this.levelCfg?.id === 6 && nightVision && !engine.dev.bright) {
         // 夜视不制造定向光，只放大环境微光；电池耗尽后立即回落到自然暗适应。
-        this.ambient.intensity += (0.06 + 0.024 * l6a) * (1 - k) + (0.085 + 0.03 * l6a) * k
-        this.ambient.color.set('#a5d5ad')
-      } else this.ambient.color.set('#ffffff')
+        // v58：增像加强约 5 倍（墙/地/顶深暗纹理可辨，仍低于开发者照明 ambient 1.1）；
+        // 绿调改由夜视滤镜承担——光源保持白色，贴图本身不再被染绿
+        this.ambient.intensity += (0.34 + 0.1 * l6a) * (1 - k) + (0.42 + 0.12 * l6a) * k
+      }
+      this.ambient.color.set('#ffffff')
       // v22：打火机装备效果——玩家周围一圈暖橙小火光（火苗闪烁、水下/室外减弱）
       if (p.hasLighter) {
         const fl = 0.75 + Math.sin(this.time * 11) * 0.12 + Math.sin(this.time * 23.7) * 0.08 + Math.random() * 0.05
@@ -659,35 +830,53 @@ export class Renderer3D {
         ? (0.002 + 0.014 * l6a) * (1 - k) + (0.003 + 0.042 * l6a) * k
         : this.hemiBase * (1 - k) + 0.3 * k
       if (this.levelCfg?.id === 6 && nightVision && !engine.dev.bright) {
-        this.hemi.intensity += (0.022 + 0.008 * l6a) * (1 - k) + (0.032 + 0.012 * l6a) * k
-        this.hemi.color.set('#a8c8b0')
-        this.hemi.groundColor.set('#26362b')
-      } else {
-        this.hemi.color.set('#9aa2b0')
-        this.hemi.groundColor.set('#3a342c')
+        this.hemi.intensity += (0.12 + 0.04 * l6a) * (1 - k) + (0.16 + 0.05 * l6a) * k // v58：随环境光同步加强
       }
+      this.hemi.color.set('#9aa2b0')
+      this.hemi.groundColor.set('#3a342c')
       // v13：水下视野——眼高没入深水面则蓝绿浑浊、视距骤减、环境光转冷
+      // v57o：L7 按真实下潜深度进一步衰减——越深越黑、视距越短（日光带→深渊带）
       const eyeZ = p.z + 1.55
       const under = m.liquid[pi] === 1 && eyeZ < 0.05
       this.uwK += ((under ? 1 : 0) - this.uwK) * Math.min(1, dt * 6)
+      this.l7LightKeep = 1 // v58：默认无衰减；水下 L7 分支按深度写入
       if (this.uwK > 0.01) {
         const uk = this.uwK
-        const uwC = new THREE.Color('#0d3548')
+        const below = under ? Math.max(0, -(p.z - 0.06)) : 0
+        const depthK = def.id === 7 ? Math.min(1, below / 230) : 0
+        if (def.id === 7) this.l7LightKeep = 1 - depthK * 0.985
+        const uwC = new THREE.Color('#0d3548').lerp(new THREE.Color('#020a12'), depthK)
         if (fog) {
+          const far = 16 - 10.5 * depthK
           fog.near = fog.near * (1 - uk) + 0.15 * uk
-          fog.far = fog.far * (1 - uk) + 7.5 * uk
+          fog.far = fog.far * (1 - uk) + far * uk
           fog.color.lerp(uwC, uk)
           if (this.scene.background instanceof THREE.Color) this.scene.background.copy(fog.color)
         }
-        this.ambient.intensity += 0.25 * uk
-        this.hemi.intensity += 0.12 * uk // 水下微亮（能看清池壁）
+        if (def.id === 7) {
+          // v57p：自然光按实际深度指数衰减——水面=白天，深渊带=几乎无光
+          const keep = 1 - depthK * 0.985
+          this.ambient.intensity = this.ambient.intensity * keep + 0.015 * uk
+          this.hemi.intensity = this.hemi.intensity * keep + 0.008 * uk
+          // 手电在水下散射成冷色光柱，深度越大照得越近、越暗
+          this.flash.intensity *= 1 - depthK * 0.72
+          this.flash.color.set('#bfe0ff')
+          this.flash.distance = 18 * (1 - depthK * 0.55)
+        } else {
+          this.ambient.intensity += 0.25 * uk
+          this.hemi.intensity += 0.12 * uk // 水下微亮（能看清池壁）
+        }
+      } else if (def.id === 7) {
+        this.flash.color.set('#fff2d0')
+        this.flash.distance = 18
       }
     }
     // v34：日月定向光——室外时按天空盒日月方位给场景真实方向光照（无阴影），随室外混合系数淡入
     const sp = SKY_PROFILES[def.id]
     const sunActive = !!(sp && (sp.sunLight ?? 0) > 0 && this.outK > 0.01)
     if (sunActive) {
-      this.sunDir.intensity = this.outK * (sp!.sunLight ?? 0) * (def.id === 6 ? this.l6DarkAdapt : 1)
+      // v58：L7 定向阳光按深度衰减（l7LightKeep）——修复海床与生成物在深水仍然全亮的问题
+      this.sunDir.intensity = this.outK * (sp!.sunLight ?? 0) * (def.id === 6 ? this.l6DarkAdapt : 1) * (def.id === 7 ? this.l7LightKeep : 1)
       this.sunDir.color.set(sp!.sunColor ?? '#ffffff')
       const d = skyLightDir(def.id)
       // v50：realistic 自然光投影——阴影相机跟随玩家（按 texel 对齐防边缘闪烁）
@@ -708,7 +897,11 @@ export class Renderer3D {
       if (this.sunDir.castShadow) this.sunDir.castShadow = false
     }
     // v35：天空球跟随玩家头顶（球半径恒定 42 < far 60，大地图球面不再被远平面裁成黑圆盖）
-    if (this.skyMesh) this.skyMesh.position.set(this.camera.position.x, 5.5, this.camera.position.z)
+    // v58：L7 球心压到水线（0.2）——旧 5.5 的球底缘悬在半空，海平面尽端与天空地平线之间
+    // 露出一圈背景色「间距带」；压到水线后球底缘沉入海面之下，海天在雾里无缝相接
+    if (this.skyMesh) this.skyMesh.position.set(this.camera.position.x, this.levelCfg?.id === 7 ? 0.2 : 5.5, this.camera.position.z)
+    // v58：蜃楼船队以玩家为锚（永远无法靠近），水下时隐没
+    if (this.mirageFleet) updateMirageFleet(this.mirageFleet, this.time, this.camera.position, this.uwK)
     // v17：tint 氛围（红室=红雾 / 熄灯区=近黑雾 / 马尼拉=暖调 / v29 浓雾区=灰白短视距 / v30 花园段=青翠阳光），按玩家所在瓦片平滑混合
     const bright = engine.dev.bright // v34：一键照明——层级全局增亮
     {
@@ -783,6 +976,7 @@ export class Renderer3D {
     const fogFarNow = (this.scene.fog as THREE.Fog | null)?.far ?? 24
     const lightPow = this.lightPowerScratch // v53：本帧各光源实际强度——灯具自发光盒据此跟随点亮状态
     lightPow.clear()
+    let nearbyBouncePower = 0
     for (let i = 0; i < pool.length; i++) {
       const pl = pool[i]
       let L = sorted[i]
@@ -822,15 +1016,28 @@ export class Renderer3D {
       // v34 一键照明：无视闪烁/停电预警/层级光照系数/黑暗度，强度与射程直接拉满
       pl.intensity = bright ? 14 * rankFade : 12 * flick * warnF * rankFade * (1 - (this.levelCfg?.darkness ?? 0.6) * 0.35) * lm * (this.levelCfg?.lightSoft ?? 1)
       pl.distance = bright ? Math.max(L.r * 2.6 * 1.6, 11) : L.r * 2.6 * (lm > 0 ? Math.max(0.35, lm) : 1)
+      if (!bright && pl.intensity > 0.01) {
+        const coverage = Math.max(0, 1 - dL / Math.max(1, pl.distance))
+        nearbyBouncePower += pl.intensity * coverage * coverage
+      }
       lightPow.set(L, pl.intensity)
       // v50：场景灯投影（realistic 可选，最近 N 盏；PointLight 立方体阴影开销随盏数增加）
       const cast = this.lightMode === 'realistic' && i < this.lightShadowCount && pl.intensity > 0.01
-      if (cast !== pl.castShadow) {
-        pl.castShadow = cast
-        if (cast && pl.shadow.mapSize.x !== 512) pl.shadow.mapSize.set(512, 512)
-        pl.shadow.camera.near = 0.3
-        pl.shadow.bias = -0.001
+      if (cast !== pl.castShadow) pl.castShadow = cast
+      if (cast) {
+        const shadowFar = Math.max(6, Math.min(30, pl.distance + 1))
+        if (Math.abs(pl.shadow.camera.far - shadowFar) > 0.5) {
+          pl.shadow.camera.near = 0.25
+          pl.shadow.camera.far = shadowFar
+          pl.shadow.camera.updateProjectionMatrix()
+        }
       }
+    }
+    // 点光负责直接光；按玩家附近实际点亮的灯估算低成本漫反射回弹。
+    // 它会柔和天花板与墙角的死黑，但停电区没有能量，L6 的禁用灯光也不会被照亮。
+    if (!bright && this.levelCfg?.id !== 6) {
+      this.ambient.intensity += Math.min(0.055, nearbyBouncePower * 0.0035)
+      this.hemi.intensity += Math.min(0.065, nearbyBouncePower * 0.004)
     }
     // 灯具 flicker（自发光强度）
     // v53：带 src 的灯具自发光盒亮度跟随其点光源本帧实际强度（/8 归一）——停电（光源被剔除）/
@@ -841,18 +1048,26 @@ export class Renderer3D {
       const k = f.src ? Math.min(1, (lightPow.get(f.src) ?? 0) / 8) : 1 - opts.flicker * Math.max(0, fl1) * 0.8
       f.mat.color.copy(f.mat.userData.base as THREE.Color).multiplyScalar(k)
     }
-    // 出口脉动（闪烁的墙壁 strobe：规律明灭，约 1.2s 周期；其余出口为柔和呼吸）
+    // 出口脉动：闪烁墙以不规则电压波动替代硬二值开关，墙纸轮廓始终保留。
     for (const e of this.exitMeshes) {
+      if (e.bob) e.mesh.position.y = e.bob.baseY + Math.sin(this.time * 1.4 + e.bob.phase) * e.bob.amp
+      if (!e.mat) continue
       const base = e.mat.userData.base as THREE.Color
       if (e.mat.userData.strobe) {
-        const on = Math.sin(this.time * Math.PI * 2 * 0.85 + e.mesh.id * 0.7) > -0.1
-        e.mat.color.copy(base).multiplyScalar(on ? 1.9 : 0.35) // 灭相位保留淡淡门形轮廓
+        const phase = Number(e.mat.userData.phase ?? e.mesh.id * 0.7)
+        const main = Math.sin(this.time * Math.PI * 2 * 0.78 + phase)
+        const jitter = Math.sin(this.time * 17.3 + phase * 2.1) * Math.sin(this.time * 6.7 + phase)
+        const on = main + jitter * 0.28 > -0.18
+        const power = on ? 1.15 + Math.max(0, jitter) * 0.7 : 0.16
+        e.mat.color.copy(base).multiplyScalar(power)
+        if (e.mat.transparent) e.mat.opacity = Number(e.mat.userData.opacityBase ?? 0.2) * (on ? 0.7 + Math.max(0, jitter) * 0.3 : 0.1)
       } else {
         e.mat.color.copy(base).multiplyScalar(1.1 + Math.sin(this.time * 3) * 0.5)
       }
     }
 
     this.updateEntities(engine, dt)
+    this.remoteViews.update(this.scene, engine, engine.mpSession, this.time, dt) // v58：联机远端玩家
     this.updateNpcs(engine, dt)
     this.updateItems(engine, dt)
     this.updateProjectiles(engine)
@@ -864,9 +1079,12 @@ export class Renderer3D {
     this.updateViewmodel(engine, dt)
     this.updateCrosshair(engine)
 
-    // v50：realistic && 泛光开启时走 EffectComposer（辉光后处理）；VCR 滤镜开启时同样需要 composer；其余直渲（classic 完全一致）
+    // realistic 泛光、VCR、PS1 色阶抖动或夜视滤镜开启时走 EffectComposer；其余保持直接渲染。
     const wantBloom = this.lightMode === 'realistic' && this.bloomOn
-    const key = `${wantBloom ? 'b' : ''}${this.vcrOn ? 'v' : ''}`
+    const wantPs1 = this.resolutionMode === '320p_ps1'
+    // v58：夜视滤镜——佩戴+有电即启用（开发者照明下让位）；贴图不染绿，绿色只来自滤镜
+    const wantNv = nightVision && !engine.dev.bright
+    const key = `${wantBloom ? 'b' : ''}${this.vcrOn ? 'v' : ''}${wantPs1 ? 'p' : ''}${wantNv ? 'n' : ''}`
     if (key) {
       if (!this.composer || this.composerKey !== key) {
         this.composer?.dispose()
@@ -874,6 +1092,8 @@ export class Renderer3D {
         this.composer.addPass(new RenderPass(this.scene, this.camera))
         this.bloomPass = null
         this.vcrPass = null
+        this.retroPass = null
+        this.nvPass = null
         if (wantBloom) {
           this.bloomPass = new UnrealBloomPass(new THREE.Vector2(this.three.domElement.width, this.three.domElement.height), this.bloomStrength / 100, 0.5, 0.85)
           this.composer.addPass(this.bloomPass)
@@ -883,6 +1103,14 @@ export class Renderer3D {
         if (this.vcrOn) {
           this.vcrPass = new ShaderPass(VcrShader)
           this.composer.addPass(this.vcrPass)
+        }
+        if (wantPs1) {
+          this.retroPass = new ShaderPass(Ps1Shader)
+          this.composer.addPass(this.retroPass)
+        }
+        if (wantNv) {
+          this.nvPass = new ShaderPass(NightVisionShader)
+          this.composer.addPass(this.nvPass) // 最末级：绿色夜视是镜前光学效果
         }
         const size = new THREE.Vector2()
         this.three.getSize(size)
@@ -896,8 +1124,29 @@ export class Renderer3D {
         this.three.getDrawingBufferSize(dbSize)
         ;(this.vcrPass.uniforms.resolution.value as THREE.Vector2).copy(dbSize)
       }
+      if (this.retroPass) {
+        const dbSize = new THREE.Vector2()
+        this.three.getDrawingBufferSize(dbSize)
+        ;(this.retroPass.uniforms.resolution.value as THREE.Vector2).copy(dbSize)
+      }
+      if (this.nvPass) {
+        this.nvPass.uniforms.time.value = this.time
+        const dbSize = new THREE.Vector2()
+        this.three.getDrawingBufferSize(dbSize)
+        ;(this.nvPass.uniforms.resolution.value as THREE.Vector2).copy(dbSize)
+      }
       this.composer.render()
     } else {
+      // 所有后处理关闭后立即释放中间帧缓冲，避免原生/720P 档仍占着上一档的显存。
+      if (this.composer) {
+        this.composer.dispose()
+        this.composer = null
+        this.bloomPass = null
+        this.vcrPass = null
+        this.retroPass = null
+        this.nvPass = null
+        this.composerKey = ''
+      }
       this.three.render(this.scene, this.camera)
     }
   }
@@ -933,6 +1182,18 @@ export class Renderer3D {
       grp.updateWorldMatrix(true, true)
       targets.push(grp)
     }
+    // v58：出口模型（电梯门等）同样进准星射线——准星指到电梯门必然可交互
+    {
+      const pushExitRoot = (grp: THREE.Object3D) => {
+        const e = grp.userData.exitRef as GameMap['exits'][number] | undefined
+        if (!e || (e.floor ?? 0) !== band) return
+        if (Math.hypot(e.x + 0.5 - p.x, e.y + 0.5 - p.y) > 2.7) return
+        grp.updateWorldMatrix(true, true)
+        targets.push(grp)
+      }
+      if (this.levelGroup) for (const grp of this.levelExitRoots) pushExitRoot(grp)
+      else for (const [, cg] of this.chunkGroups) for (const grp of cg.exitRoots) pushExitRoot(grp)
+    }
     if (!targets.length) return
     this.interactRaycaster.near = 0.02
     this.interactRaycaster.far = 6
@@ -944,6 +1205,7 @@ export class Renderer3D {
     const target = root?.userData.interactionTarget as
       | { kind: 'structure'; structure: Structure }
       | { kind: 'item'; item: GroundItem }
+      | { kind: 'exit'; exit: GameMap['exits'][number] }
       | undefined
     if (!target) return
     look.visualHit = {
@@ -962,27 +1224,30 @@ export class Renderer3D {
   }
 
   // ---------- v17：公共拆卸（有限/无限层级切换时调用）----------
-  // v28：为子树开启手电阴影（自发光 Basic 材质不投影——灯具/天空/出口辉光；其余既投也接）
+  // 为子树开启阴影：自发光材质不参与；透明玻璃/液体可以接收光影，但不再投出整块黑影。
   private enableShadows(root: THREE.Object3D) {
     root.traverse((o) => {
       const mm = o as THREE.Mesh
       if (!mm.isMesh) return
-      const mat = mm.material as THREE.Material
-      if ((mat as THREE.MeshBasicMaterial).isMeshBasicMaterial) return
-      mm.castShadow = true
+      if (mm.userData.noCastShadow) { // 显式标记的非遮光体（水面等）：只接收、不投影
+        mm.receiveShadow = true
+        mm.castShadow = false
+        return
+      }
+      const mats = (Array.isArray(mm.material) ? mm.material : [mm.material]) as THREE.Material[]
+      const lit = mats.filter((mat) => !(mat as THREE.MeshBasicMaterial).isMeshBasicMaterial)
+      if (!lit.length) return
       mm.receiveShadow = true
+      mm.castShadow = lit.some((mat) => !mat.transparent || mat.opacity >= 0.75 || mat.alphaTest > 0)
     })
   }
 
-  /** 设置开关：手电实时阴影（移动端默认关）。切换需刷新材质编译 */
+  /** 设置开关：只控制手电阴影，不再连带关闭 realistic 的日光/场景灯阴影。 */
   setShadows(on: boolean) {
-    if (this.three.shadowMap.enabled === on && this.flash.castShadow === on) return
-    this.three.shadowMap.enabled = on
+    if (this.flashShadowsOn === on && this.flash.castShadow === on) return
+    this.flashShadowsOn = on
     this.flash.castShadow = on
-    this.scene.traverse((o) => {
-      const mm = o as THREE.Mesh
-      if (mm.material) (mm.material as THREE.Material).needsUpdate = true
-    })
+    this.syncShadowMapEnabled()
   }
 
   /** 设置开关：战争迷雾（距离雾）。关闭时每帧把雾推到可视范围外 */
@@ -1012,12 +1277,23 @@ export class Renderer3D {
 
   /** 光影模式：classic=当前版本 / realistic=物理光照（Standard 材质 + 环境反射 + 软阴影）。
    *  切换 = 材质拓扑变化：重编译 + 重建本层（classic 完整退回现状）。 */
+  /** v57t：真实水体效果——开启后重建本层水面（顶点波浪），关闭回到纯色分界膜平水面。 */
+  setRealWater(on: boolean) {
+    if (on === this.realWaterOn) return
+    this.realWaterOn = on
+    this.teardown()
+    this.builtMap = null
+    this.builtRev = -1
+    this.chunkRedo = -1
+  }
+
   setLightMode(mode: LightMode) {
     if (mode === this.lightMode) return
     this.lightMode = mode
     setMaterialMode(mode)
     this.three.shadowMap.type = mode === 'realistic' ? THREE.PCFSoftShadowMap : THREE.PCFShadowMap
-    this.applyFlashQuality()
+    this.applyShadowQuality()
+    this.syncShadowMapEnabled()
     if (mode !== 'realistic') this.scene.environment = null
     this.scene.traverse((o) => {
       const mm = o as THREE.Mesh
@@ -1031,29 +1307,62 @@ export class Renderer3D {
 
   /** 阴影质量：0=低 1=中 2=高（手电/太阳 shadow map 尺寸与软影半径） */
   setShadowQuality(q: number) {
-    if (q === this.shadowQuality) return
-    this.shadowQuality = q
-    this.applyFlashQuality()
-    const size = [1024, 2048, 4096][q] ?? 2048
-    this.sunDir.shadow.mapSize.set(size, size)
-    this.sunDir.shadow.map?.dispose()
-    ;(this.sunDir.shadow as unknown as { map: THREE.Texture | null }).map = null
+    const next = Math.max(0, Math.min(2, Math.round(q)))
+    if (next === this.shadowQuality) return
+    this.shadowQuality = next
+    this.applyShadowQuality()
   }
 
-  private applyFlashQuality() {
+  private setShadowMapSize(shadow: THREE.LightShadow, size: number) {
+    if (shadow.mapSize.x === size && shadow.mapSize.y === size) return
+    shadow.mapSize.set(size, size)
+    shadow.map?.dispose()
+    ;(shadow as unknown as { map: THREE.WebGLRenderTarget | null }).map = null
+  }
+
+  private applyShadowQuality() {
     const realistic = this.lightMode === 'realistic'
-    const size = realistic ? ([1024, 2048, 4096][this.shadowQuality] ?? 2048) : 1024
-    this.flash.shadow.mapSize.set(size, size)
-    this.flash.shadow.map?.dispose()
-    ;(this.flash.shadow as unknown as { map: THREE.Texture | null }).map = null
-    this.flash.shadow.radius = realistic ? ([2, 4, 6][this.shadowQuality] ?? 4) : 1
+    const flashSize = realistic ? ([512, 1024, 2048][this.shadowQuality] ?? 1024) : ([256, 512, 1024][this.shadowQuality] ?? 512) // v57t：classic 默认 512，避免 1024 手电阴影掉帧
+    const sunSize = [1024, 2048, 4096][this.shadowQuality] ?? 2048
+    const pointSize = [256, 512, 1024][this.shadowQuality] ?? 512
+    this.setShadowMapSize(this.flash.shadow, flashSize)
+    this.setShadowMapSize(this.sunDir.shadow, sunSize)
+    this.flash.shadow.radius = realistic ? ([2, 3.5, 5][this.shadowQuality] ?? 3.5) : 1
+    this.flash.shadow.bias = realistic ? -0.00035 : -0.0005
+    this.flash.shadow.normalBias = realistic ? ([0.045, 0.032, 0.022][this.shadowQuality] ?? 0.032) : 0.03
+    this.sunDir.shadow.radius = [2, 3, 4][this.shadowQuality] ?? 3
+    this.sunDir.shadow.bias = -0.00035
+    this.sunDir.shadow.normalBias = [0.035, 0.025, 0.018][this.shadowQuality] ?? 0.025
+    for (const light of this.fullLightPool) {
+      this.setShadowMapSize(light.shadow, pointSize)
+      light.shadow.bias = -0.0007
+      light.shadow.normalBias = [0.055, 0.04, 0.028][this.shadowQuality] ?? 0.04
+      light.shadow.radius = [1, 2, 3][this.shadowQuality] ?? 2
+    }
+  }
+
+  private syncShadowMapEnabled() {
+    const next = this.flashShadowsOn || (this.lightMode === 'realistic' && (this.sunShadowsOn || this.lightShadowCount > 0))
+    if (next === this.three.shadowMap.enabled) return
+    this.three.shadowMap.enabled = next
+    this.scene.traverse((o) => {
+      const mm = o as THREE.Mesh
+      const mats = Array.isArray(mm.material) ? mm.material : [mm.material]
+      for (const mat of mats) if (mat) mat.needsUpdate = true
+    })
   }
 
   /** 自然光投影开关（realistic 且室外时生效） */
-  setSunShadows(on: boolean) { this.sunShadowsOn = on }
+  setSunShadows(on: boolean) {
+    this.sunShadowsOn = on
+    this.syncShadowMapEnabled()
+  }
 
   /** 场景灯投影盏数（最近 N 盏池灯；兼容旧档 boolean：true→2） */
-  setLightShadows(n: number | boolean) { this.lightShadowCount = typeof n === 'boolean' ? (n ? 2 : 0) : Math.max(0, Math.min(4, n)) }
+  setLightShadows(n: number | boolean) {
+    this.lightShadowCount = typeof n === 'boolean' ? (n ? 2 : 0) : Math.max(0, Math.min(4, n))
+    this.syncShadowMapEnabled()
+  }
 
   /** 泛光开关（realistic 时走 EffectComposer 辉光后处理） */
   setBloomFx(on: boolean) { this.bloomOn = on }
@@ -1088,6 +1397,10 @@ export class Renderer3D {
   dispose() { disposeEnvProbes() }
 
   private teardown() {
+    resetLiquidWaves() // v57t：旧水面波浪 uniform 随几何一并失效
+    // v58：无限模式 L7 挂到场景的天空球/蜃楼船队随层级拆卸（有限层天空球在 levelGroup 内一并移除）
+    if (this.skyMesh) { this.scene.remove(this.skyMesh); this.skyMesh = null }
+    if (this.mirageFleet) { this.scene.remove(this.mirageFleet.group); this.mirageFleet = null }
     if (this.levelGroup) {
       this.scene.remove(this.levelGroup)
       this.levelGroup.traverse((o) => {
@@ -1117,6 +1430,7 @@ export class Renderer3D {
     this.structMeshes.clear()
     this.animatedStructMeshes.clear()
     this.exitMeshes = []
+    this.levelExitRoots = [] // v58
     this.fixtures = []
   }
 
@@ -1128,8 +1442,10 @@ export class Renderer3D {
     this.wallH = WALL_H[def.gen] ?? 3
     const pal = def.palette
     const fogC = col(pal.floor).multiplyScalar(0.12)
-    const fogFar = 19 - def.darkness * 6
-    this.scene.fog = new THREE.Fog(fogC, 2.0, fogFar)
+    // v57p：L7 日光带像白天一样亮且看得远；雾与照度随后按实际下潜深度逐帧衰减
+    // v58：巨大迷雾——视距 34→27m，海面更快没入雾墙（蜃楼船 fog:false 不受影响）
+    const fogFar = def.id === 7 ? 27 : 19 - def.darkness * 6
+    this.scene.fog = new THREE.Fog(fogC, def.id === 7 ? 3.0 : 2.0, fogFar)
     this.scene.background = new THREE.Color().copy(fogC)
     this.fogC.copy(fogC)
     this.fogNear = 2.0
@@ -1137,10 +1453,18 @@ export class Renderer3D {
     this.skyC.set(SKY[def.id] ?? '#0a0a0c')
     this.outK = 0
     this.tintK = 0
-    this.ambientBase = def.id === 6 ? 0.012 : 0.09 + def.darkness * 0.06
-    this.hemiBase = def.id === 6 ? 0.018 : 0.12 + def.darkness * 0.06
+    this.ambientBase = def.id === 6 ? 0.012 : def.id === 7 ? 0.55 : def.id === 0 ? 0.15 : 0.09 + def.darkness * 0.06
+    this.hemiBase = def.id === 6 ? 0.018 : def.id === 7 ? 0.6 : def.id === 0 ? 0.19 : 0.12 + def.darkness * 0.06
     this.hemi.color.set(col(pal.wallTop).lerp(col('#9aa2b0'), 0.5))
     this.hemi.groundColor.set(col(pal.floor).multiplyScalar(0.8))
+    // v58：L7 巨大迷雾 + 蜃楼船队——无限模式此前没有天空球（仅背景色/雾）；
+    // 挂到场景而非 chunk 组（chunk 流式重建不受影响），球心/船位每帧跟随玩家
+    if (def.id === 7) {
+      this.skyMesh = makeSkyMesh(m, def)
+      if (this.skyMesh) this.scene.add(this.skyMesh)
+      this.mirageFleet = makeMirageFleet(def.id)
+      if (this.mirageFleet) this.scene.add(this.mirageFleet.group)
+    }
     this.applyEnvProbe(def)
   }
 
@@ -1201,7 +1525,7 @@ export class Renderer3D {
     queue.sort((a, b) =>
       (Math.abs(a.cx * CS - inf.ox - p.x) + Math.abs(a.cy * CS - inf.oy - p.y)) -
       (Math.abs(b.cx * CS - inf.ox - p.x) + Math.abs(b.cy * CS - inf.oy - p.y)))
-    const budget = def.id === 5 ? 1 : (this.chunkGroups.size === 0 ? queue.length : 2)
+    const budget = def.id === 5 || def.id === 7 ? 1 : (this.chunkGroups.size === 0 ? queue.length : 2) // v57t：L7 分帧构建，避免入口首次进入时集中烘焙全部 25 个海床 chunk 造成卡顿
     for (const c of queue.slice(0, budget)) this.buildInfiniteChunk(m, def, c)
   }
 
@@ -1283,6 +1607,12 @@ export class Renderer3D {
     const wx = c.cx * CS - inf.ox, wy = c.cy * CS - inf.oy
     const range = { x0: wx, y0: wy, x1: wx + CS, y1: wy + CS, variant: c.variant }
     buildTerrain(m, def, H, g, range)
+    // v57t：无限 L7 的海面/水面分界膜逐 chunk 构建（有限层走 buildSkyAndLiquids 全图一次）
+    if (def.id === 7) {
+      const liquids = new THREE.Group()
+      buildLiquidSurfaces(m, def, liquids, range, this.realWaterOn)
+      if (liquids.children.length) g.add(liquids)
+    }
     // 结构（对象身份跨平移保持，structMeshes 引用稳定）
     const structs: Structure[] = []
     for (const s of c.structures) {
@@ -1298,28 +1628,48 @@ export class Renderer3D {
     }
     // 灯具（L0 全室内：自发光盒；v53：src 记录光源，亮度随其点亮状态）
     const fixtures: { mat: THREE.MeshBasicMaterial; seed: number; src?: LightSource }[] = []
+    const l0FixtureFrameMat = def.id === 0 ? new THREE.MeshLambertMaterial({ color: '#8d8875' }) : null
     for (const L of c.lights) {
       const mat = new THREE.MeshBasicMaterial({ color: L.color })
       mat.userData.base = col(L.color)
-      const fix = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.08, 0.25), mat)
+      const fix = new THREE.Mesh(new THREE.BoxGeometry(def.id === 0 ? 1.08 : 0.7, def.id === 0 ? 0.035 : 0.08, def.id === 0 ? 0.31 : 0.25), mat)
       // v55：无限 chunk 灯具贴附与有限层/光源点（ptY）对齐——挑高区贴 tallCeilH 真实顶（L5 主厅等）
       const li2 = Math.floor(L.y) * m.w + Math.floor(L.x)
       const fixY = L.z !== undefined ? L.z + 2.55
         : m.ceiling[li2] === 1 && m.outdoor[li2] !== 1 ? tallCeilH(m, H) - 0.05 : H - 0.05
-      fix.position.set(L.x, fixY, L.y)
+      fix.position.set(L.x, def.id === 0 ? fixY - 0.012 : fixY, L.y)
+      if (l0FixtureFrameMat) {
+        const frame = new THREE.Mesh(new THREE.BoxGeometry(1.16, 0.028, 0.39), l0FixtureFrameMat)
+        frame.position.set(L.x, fixY + 0.018, L.y)
+        g.add(frame)
+      }
       g.add(fix)
       fixtures.push({ mat, seed: L.flickerSeed, src: L })
     }
     // 出口（闪烁的墙壁：strobe 规律明灭材质）
-    const exitMeshes: { mesh: THREE.Object3D; mat: THREE.MeshBasicMaterial }[] = []
+    const exitMeshes: { mesh: THREE.Object3D; mat?: THREE.MeshBasicMaterial; bob?: { baseY: number; amp: number; phase: number } }[] = []
+    const exitRoots: THREE.Object3D[] = [] // v58：出口根组（准星射线候选）
     for (const e of c.exits) {
       const grp = buildExit(e.def.kind, def)
+      grp.userData.exitRef = e // v58：准星射线命中时回溯出口实例
+      grp.userData.interactionTarget = { kind: 'exit', exit: e }
       if (e.def.kind === 'flickerdoor') this.orientExitToWall(m, grp, e)
       else if (e.def.kind === 'graystairs' || e.def.kind === 'graystairsup' || e.def.kind === 'oldstairs') this.orientStairs(m, grp, e) // v54：L4 古典楼梯同为可行走阶梯
       else if (e.def.kind === 'stairs' || e.def.kind === 'unlockeddoor' || e.def.kind === 'fireexit' || e.def.kind === 'officedoor' || e.def.kind === 'boilerdeep') this.orientDoor(m, grp, e) // v55d：L5 黑门纳入门洞类出口（模型嵌门洞格贴墙）
       else if (e.def.kind === 'elevatorshaft' || e.def.kind === 'darkwooddoor') this.orientExitFaceFloor(m, grp, e) // v51：嵌墙电梯门面朝走廊；v54：L5 深色木门沿客房门洞贯穿轴定向
-      else grp.position.set(e.x + 0.5, floorHeight(m, e.x, e.y, e.floor ?? 0), e.y + 0.5)
+      else grp.position.set(e.x + 0.5, e.z ?? floorHeight(m, e.x, e.y, e.floor ?? 0), e.y + 0.5)
+      // v58：岩洞洞口贴海床斜面摆放——洞口平面（+Y 朝上建模）法线对齐连续地形法线，微沉贴合
+      if (e.def.kind === 'l7cave') {
+        const ex = e.x + 0.5, ey = e.y + 0.5
+        const h0 = l7SeaHAt(m, ex, ey)
+        const ngx = (l7SeaHAt(m, ex + 0.5, ey) - h0) * 2
+        const ngz = (l7SeaHAt(m, ex, ey + 0.5) - h0) * 2
+        grp.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(-ngx, 1, -ngz).normalize())
+        grp.position.y -= 0.03
+      }
       g.add(grp)
+      exitRoots.push(grp)
+      if (grp.userData.bob) exitMeshes.push({ mesh: grp, bob: { baseY: e.z ?? floorHeight(m, e.x, e.y, e.floor ?? 0), amp: Number(grp.userData.bob.amp) || 0, phase: Number(grp.userData.bob.phase) || 0 } })
       grp.traverse((o) => {
         const mm = o as THREE.Mesh
         const mat = mm.material as THREE.MeshBasicMaterial
@@ -1330,7 +1680,7 @@ export class Renderer3D {
     buildDecorations(m, def, H, g, fixtures, range)
     this.enableShadows(g)
     this.scene.add(g)
-    this.chunkGroups.set(c.key, { group: g, wx, wy, structs, fixtures, exitMeshes })
+    this.chunkGroups.set(c.key, { group: g, wx, wy, structs, fixtures, exitMeshes, exitRoots })
     this.fixtures.push(...fixtures)
     this.exitMeshes.push(...exitMeshes)
   }
@@ -1359,8 +1709,8 @@ export class Renderer3D {
     this.skyC.set(SKY[def.id] ?? '#0a0a0c')
     this.outK = 0
     // v10：层级最低环境光/半球光基准（darkness 越高兜底越亮，保证 10m 内结构轮廓可辨）
-    this.ambientBase = 0.09 + def.darkness * 0.06
-    this.hemiBase = 0.12 + def.darkness * 0.06
+    this.ambientBase = def.id === 0 ? 0.15 : 0.09 + def.darkness * 0.06
+    this.hemiBase = def.id === 0 ? 0.19 : 0.12 + def.darkness * 0.06
     this.hemi.color.set(col(pal.wallTop).lerp(col('#9aa2b0'), 0.5))
     this.hemi.groundColor.set(col(pal.floor).multiplyScalar(0.8))
 
@@ -1370,7 +1720,7 @@ export class Renderer3D {
 
 
     // ---- 室外天空/远景剪影 + 液体水面（见 liquidsSky.ts）----
-    buildSkyAndLiquids(m, def, g)
+    buildSkyAndLiquids(m, def, g, this.realWaterOn)
     this.skyMesh = (g.getObjectByName('skybox') as THREE.Mesh | undefined) ?? null
 
 
@@ -1395,6 +1745,7 @@ export class Renderer3D {
     // 缺省贴所在瓦片真实顶面——楼板底下=2.65、挑高=挑高顶、普通=层高；
     // v47：挑高贴附不再限于多层——单层挑高（L274 教堂穹顶主间等）同样贴挑高顶；
     // noFix=不画默认灯盒（实体灯具由结构模型提供，如 walllamp 壁挂斜照灯）
+    const l0FixtureFrameMat = def.id === 0 ? new THREE.MeshLambertMaterial({ color: '#8d8875' }) : null
     for (const L of m.lights) {
       const mat = new THREE.MeshBasicMaterial({ color: L.color })
       mat.userData.base = col(L.color)
@@ -1417,25 +1768,35 @@ export class Renderer3D {
       else if (m.up[li] === 1) fixY = FLOOR_H - 0.35 - 0.05 // 上层楼板底
       else if (m.up2[li] === 1 || m.upWall2[li] === 1) fixY = 2 * FLOOR_H - 0.35 - 0.05 // v54c：3F 板/屋面板墙底（中庭等 2F 挑空处）
       else if (m.ceiling[li] === 1) fixY = tallCeilH(m, H) - 0.05 // 挑高真实顶（单/多层一致）
-      const fix = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.08, 0.25), mat)
-      fix.position.set(L.x, fixY, L.y)
+      const fix = new THREE.Mesh(new THREE.BoxGeometry(def.id === 0 ? 1.08 : 0.7, def.id === 0 ? 0.035 : 0.08, def.id === 0 ? 0.31 : 0.25), mat)
+      fix.position.set(L.x, def.id === 0 ? fixY - 0.012 : fixY, L.y)
+      if (l0FixtureFrameMat) {
+        const frame = new THREE.Mesh(new THREE.BoxGeometry(1.16, 0.028, 0.39), l0FixtureFrameMat)
+        frame.position.set(L.x, fixY + 0.018, L.y)
+        g.add(frame)
+      }
       g.add(fix)
       this.fixtures.push({ mat, seed: L.flickerSeed, src: L })
     }
 
     // ---- 出口 ----
+    this.levelExitRoots = []
     for (const e of m.exits) {
       const grp = buildExit(e.def.kind, def)
+      grp.userData.exitRef = e // v58：准星射线命中时回溯出口实例
+      grp.userData.interactionTarget = { kind: 'exit', exit: e }
       if (e.def.kind === 'flickerdoor') this.orientExitToWall(m, grp, e)
       else if (e.def.kind === 'graystairs' || e.def.kind === 'graystairsup' || e.def.kind === 'oldstairs') this.orientStairs(m, grp, e) // v54：L4 古典楼梯同为可行走阶梯
       else if (e.def.kind === 'stairs' || e.def.kind === 'unlockeddoor' || e.def.kind === 'fireexit' || e.def.kind === 'officedoor' || e.def.kind === 'boilerdeep') this.orientDoor(m, grp, e) // v55d：L5 黑门纳入门洞类出口（模型嵌门洞格贴墙）
       else if (e.def.kind === 'elevatorshaft' || e.def.kind === 'darkwooddoor') this.orientExitFaceFloor(m, grp, e) // v51：嵌墙电梯门面朝走廊；v54：L5 深色木门沿客房门洞贯穿轴定向
-      else grp.position.set(e.x + 0.5, floorHeight(m, e.x, e.y, e.floor ?? 0), e.y + 0.5)
+      else grp.position.set(e.x + 0.5, e.z ?? floorHeight(m, e.x, e.y, e.floor ?? 0), e.y + 0.5)
       g.add(grp)
+      this.levelExitRoots.push(grp)
+      if (grp.userData.bob) this.exitMeshes.push({ mesh: grp, bob: { baseY: e.z ?? floorHeight(m, e.x, e.y, e.floor ?? 0), amp: Number(grp.userData.bob.amp) || 0, phase: Number(grp.userData.bob.phase) || 0 } })
       grp.traverse((o) => {
         const mm = o as THREE.Mesh
         const mat = mm.material as THREE.MeshBasicMaterial
-        if (mat && mat.userData && mat.userData.pulse) this.exitMeshes.push({ mesh: mm, mat })
+        if (mat && mat.userData && (mat.userData.pulse || mat.userData.strobe)) this.exitMeshes.push({ mesh: mm, mat })
       })
     }
 
@@ -1537,11 +1898,13 @@ export class Renderer3D {
         grp.position.y = gz + 0.9 * esc + Math.sin(t * 3.1) * 0.25 * esc // 飞行悬停（攻击俯冲在下方攻击分支叠加）
       } else if (et === 'smiler' || et === 'arcwraith') {
         grp.position.y = gz + 0.15 + Math.sin(t * 2.2) * 0.12
+      } else if (et === 'tiny') {
+        grp.position.y = gz + Math.sin(t * 1.9) * 0.1 // v58：水中悬浮微沉浮（不走陆地颠簸）
       } else if (!e.def.stationary) {
         grp.position.y = gz + Math.abs(Math.sin(gait)) * gaitAmp * 0.12
       }
       if (parts) {
-        // 四肢摆动（行走循环）：双足左右交替；猎犬四足对角步态
+        // 四肢摆动（行走循环）：双足左右交替；猎犬四足对角步态；v58：小小走专属泳姿（下方分支）
         if (et === 'hound') {
           const g2 = e.animT * 7 // 猎犬步频更快
           parts.legL!.rotation.z = Math.sin(g2) * gaitAmp * 0.9 // 后左 + 前右
@@ -1549,7 +1912,7 @@ export class Renderer3D {
           parts.legR!.rotation.z = -Math.sin(g2) * gaitAmp * 0.9 // 后右 + 前左
           parts.armL!.rotation.z = -Math.sin(g2) * gaitAmp * 0.9
           if (parts.tail) parts.tail.rotation.y = Math.sin(t * (chase ? 9 : 4)) * 0.5 // 摆尾
-        } else {
+        } else if (et !== 'tiny') {
           if (parts.legL) parts.legL.rotation.x = Math.sin(gait) * gaitAmp
           if (parts.legR) parts.legR.rotation.x = -Math.sin(gait) * gaitAmp
           if (parts.armL && e.state !== 'attack' && et !== 'clump') parts.armL.rotation.x = -Math.sin(gait) * gaitAmp * 0.8
@@ -1647,16 +2010,95 @@ export class Renderer3D {
             if (parts.ceph) parts.ceph.rotation.y = Math.sin(t * 0.5) * 0.25 // 缓慢张望
           }
         }
-        // 蠕虫：分节蠕动
-        for (let i = 0; i < 6; i++) {
+        // 蠕虫：分节蠕动（v58：七层之物体节由拖链驱动，不走此路）
+        if (et !== 'thething') for (let i = 0; i < 6; i++) {
           const seg = parts[`seg${i}`]
           if (seg) seg.position.y = 0.35 + Math.sin(t * 6 - i * 0.9) * 0.12
         }
         // 追击：躯干前倾。朝向约定：模型正面=+X；facesZ 模型（原 +Z 建造、外包旋转层）
         // 的躯干在模型空间内前倾=绕本地 x 正转，+X 模型前倾=绕本地 z 负转
-        if (parts.torso && et !== 'carrier' && et !== 'bellhop') {
+        if (parts.torso && et !== 'carrier' && et !== 'bellhop' && et !== 'tiny') {
           if (grp.userData.facesZ) { parts.torso.rotation.x = chase ? 0.16 : 0; parts.torso.rotation.z = 0 }
           else parts.torso.rotation.z = chase ? -0.16 : 0
+        }
+        // v58：小小——泳姿（常泳/速游平滑过渡）+ 甲壳终段张开 + 暗处亮眼/荧光斑
+        if (et === 'tiny') {          const pd = Math.hypot(e.x - engine.player.x, e.y - engine.player.y)
+          const swimK = (grp.userData.swimK = THREE.MathUtils.lerp(Number(grp.userData.swimK ?? 0.15), chase ? 1 : e.state === 'idle' ? 0.12 : 0.4, Math.min(1, dt * 3.5)))
+          const openK = (grp.userData.openK = THREE.MathUtils.lerp(Number(grp.userData.openK ?? 0), e.state === 'attack' || (chase && pd < 3.2) ? 1 : 0, Math.min(1, dt * 5)))
+          const wf = 2.2 + swimK * 4.2 // 摆动频率随泳速
+          if (parts.torso) {
+            parts.torso.rotation.z = -(0.28 + swimK * 0.5) // 俯身前探（+X 模型前倾=本地 z 负转）
+            parts.torso.rotation.x = Math.sin(t * wf) * 0.05 * (0.4 + swimK)
+          }
+          if (parts.tarfin) parts.tarfin.rotation.x = Math.sin(t * wf * 0.8) * 0.12 * (0.5 + swimK)
+          if (parts.armL && e.state !== 'attack') parts.armL.rotation.x = 0.55 * swimK + Math.sin(t * wf) * 0.22 * (1 - swimK * 0.4)
+          if (parts.armR && e.state !== 'attack') parts.armR.rotation.x = 0.55 * swimK + Math.sin(t * wf + 1.3) * 0.22 * (1 - swimK * 0.4)
+          if (parts.legL) parts.legL.rotation.x = Math.sin(t * wf * 1.1) * (0.12 + swimK * 0.45)
+          if (parts.legR) parts.legR.rotation.x = Math.sin(t * wf * 1.1 + Math.PI) * (0.12 + swimK * 0.45)
+          if (parts.carL) parts.carL.rotation.y = openK * 1.15
+          if (parts.carR) parts.carR.rotation.y = -openK * 1.15
+          if (parts.mouth) parts.mouth.scale.setScalar(0.01 + openK * 0.99)
+          const eyeMat = (grp.userData.eyeMats as THREE.MeshLambertMaterial[] | undefined)?.[0]
+          if (eyeMat) eyeMat.emissiveIntensity = (0.12 + Math.min(1, Math.max(0, -e.z) / 35) * 1.5) * (0.85 + Math.sin(t * 2.3) * 0.15)
+          const spotMat = grp.userData.spotMat as THREE.MeshLambertMaterial | undefined
+          if (spotMat) spotMat.emissiveIntensity = 0.35 + Math.min(1, Math.max(0, -e.z) / 40) * 0.6 + Math.sin(t * 3.1) * 0.12
+        }
+        // v58：七层之物——多体节拖链：头领着身体走，体节迟滞跟随 + 无规律摆动；故障节视觉扭曲
+        if (et === 'thething') {
+          interface ChainNode { x: number; y: number; z: number }
+          if (!grp.userData.chain) {
+            grp.userData.chain = Array.from({ length: 9 }, (_, i) => ({
+              x: grp.position.x - Math.cos(e.facing) * (1.3 + i * 1.35), // v58fix4：体节加长加密后的新节距
+              y: grp.position.y,
+              z: grp.position.z + Math.sin(e.facing) * (1.3 + i * 1.35),
+            }))
+          }
+          const chain = grp.userData.chain as ChainNode[]
+          const ry = grp.rotation.y, cs = Math.cos(ry), sn = Math.sin(ry)
+          let px = grp.position.x, pz = grp.position.z
+          for (let i = 0; i < 9; i++) {
+            const seg = parts[`seg${i}`]
+            const c = chain[i]
+            if (!seg) { px = c.x; pz = c.z; continue }
+            // 期望位置：上一节后方 1.35m（拖链；v58fix4 节距与加长体节匹配，衔接更紧）
+            const dx = c.x - px, dz = c.z - pz
+            const dd = Math.hypot(dx, dz) || 1
+            const lag = Math.min(1, dt * (3.4 - i * 0.16)) // 越靠后越拖
+            c.x += (px + (dx / dd) * 1.35 - c.x) * lag
+            c.z += (pz + (dz / dd) * 1.35 - c.z) * lag
+            c.y += (grp.position.y - c.y) * Math.min(1, dt * 2.5)
+            // 无规律摆动：多个不可约频率正弦叠加，越往尾端幅度越大
+            const sway = (Math.sin(t * 1.7 + i * 0.9) * 0.16 + Math.sin(t * 0.47 + i * 1.3) * 0.26) * (0.4 + i * 0.12)
+            const swayY = Math.sin(t * 1.13 + i * 0.7) * 0.1 * (0.3 + i * 0.1)
+            const perpX = -Math.sin(e.facing), perpZ = -Math.cos(e.facing) // 世界系垂直于面向（x,z）
+            const wx = c.x + perpX * sway, wz = c.z + perpZ * sway, wy = c.y + swayY
+            // 世界 → grp 局部（grp 仅平移 + 绕 y 转 ry）：local = R_y(-ry)·(world-pos)
+            const ox = wx - grp.position.x, oz = wz - grp.position.z
+            seg.position.set(ox * cs - oz * sn, wy - grp.position.y, ox * sn + oz * cs)
+            // 体节朝向：指向前一节（朝头方向），局部系换算
+            const fx0 = px - wx, fz0 = pz - wz
+            const fd = Math.hypot(fx0, fz0) || 1
+            const worldYaw = Math.atan2(-(fz0 / fd), fx0 / fd) // +X 模型：rotation.y = atan2(-dz, dx)
+            let rel = worldYaw - ry
+            rel = ((rel + Math.PI * 3) % (Math.PI * 2)) - Math.PI
+            seg.rotation.y = rel
+            px = c.x; pz = c.z
+          }
+          // 「故障」斑：无规则闪烁 + 所在体节轻微错位抖动
+          const glitchMat = grp.userData.glitchMat as THREE.MeshLambertMaterial | undefined
+          if (glitchMat) {
+            const fl = Math.sin(t * 29) * Math.sin(t * 7.3) + Math.sin(t * 47) * 0.6
+            glitchMat.emissiveIntensity = fl > 0.55 ? 1.4 : fl > 0.1 ? 0.4 : 0.04
+            for (const gi of [3, 6]) {
+              const gs = parts[`seg${gi}`]
+              if (gs && fl > 0.55) {
+                gs.position.x += (Math.random() - 0.5) * 0.05
+                gs.position.z += (Math.random() - 0.5) * 0.05
+              }
+            }
+          }
+          // 下颚收拢（非攻击时保持微张）
+          if (parts.jaw && e.state !== 'attack') parts.jaw.rotation.z += (-0.06 - parts.jaw.rotation.z) * Math.min(1, dt * 4)
         }
         // 猎犬：追击时压低身位（爬行姿态）
         if (et === 'hound' && parts.torso) parts.torso.position.y = chase ? 0.45 : 0.55
@@ -1670,7 +2112,18 @@ export class Renderer3D {
         if (e.state === 'attack') {
           const wind = lk > 0.45 ? (1 - lk) / 0.55 : 0 // 蓄力 0→1
           const strike = lk <= 0.45 ? 1 - lk / 0.45 : 0 // 出手 0→1
-          if (et === 'hound') {
+          if (et === 'tiny') {
+            // v58：骨矛后收蓄力 → 拧身前刺（甲壳由 openK 分支同步张开）
+            if (parts.armR) parts.armR.rotation.x = -wind * 0.9 + strike * 1.3
+            if (parts.spear) parts.spear.position.x = 0.1 - wind * 0.3 + strike * 0.6
+            grp.position.x += Math.cos(e.facing) * strike * 0.4
+            grp.position.z += -Math.sin(e.facing) * strike * 0.4
+          } else if (et === 'thething') {
+            // v58：血盆大口——下颚猛张 + 整体前扑（体节拖链惯性跟随）
+            if (parts.jaw) parts.jaw.rotation.z = -(0.12 + wind * 0.2 + strike * 0.9)
+            grp.position.x += Math.cos(e.facing) * strike * 0.5
+            grp.position.z += -Math.sin(e.facing) * strike * 0.5
+          } else if (et === 'hound') {
             // 后坐蓄力 → 前扑：躯干俯仰 + 前肢扬起 + 整体前冲
             if (parts.torso) parts.torso.rotation.z = wind * 0.35 - strike * 0.4
             if (parts.armL) parts.armL.rotation.z = -wind * 1.2 + strike * 0.6
@@ -2113,6 +2566,12 @@ export class Renderer3D {
         if (spin) g.userData.spinAngle = spin.rotation.y
         continue
       }
+      // v57m：L7 尼龙绳部署后立即显示/收起绳索模型
+      if (k0 === 'ropeanchor') {
+        const rg = g.userData.ropeGrp as THREE.Group | undefined
+        if (rg) rg.visible = s.data?.deployed === 1
+        continue
+      }
       // v55：L5 休息室桌上饮料——取走（data.searched=1）后隐藏瓶组
       if (k0 === 'table' && s.data?.drink) {
         const dg = g.userData.drinkGrp as THREE.Group | undefined
@@ -2139,10 +2598,15 @@ export class Renderer3D {
         if (k0 === 'bargate') { ch.rotation.y = k * 1.6; return } // v51：栅栏门扇绕铰链旋开 ~92°
         // v54：容器各按实物的开法（全部「基准 + f(k)」绝对赋值，确定性）
         switch (k0) {
-          case 'crate': // 箱盖先上翻到底，再整体后滑（v54：滑移收敛 0.34——盖沿贴住箱口后缘即可）
-            ch.rotation.x = -c01(k / 0.55) * 1.9
-            ch.position.z = bz - c01((k - 0.55) / 0.45) * 0.34
+          case 'crate': { // 箱盖先翻过后缘，再落到地面，以顶部靠住箱体背面
+            const lift = c01(k / 0.42)
+            const settle0 = c01((k - 0.42) / 0.58)
+            const settle = settle0 * settle0 * (3 - 2 * settle0)
+            ch.rotation.x = -lift * 1.65 + settle * 0.47
+            ch.position.y = by - settle * 0.64
+            ch.position.z = bz - settle * 0.35
             break
+          }
           case 'car': // 后备箱向上掀起
             ch.rotation.x = -k * 1.9
             break
@@ -2153,7 +2617,8 @@ export class Renderer3D {
             ch.rotation.y = (part === 'doorL' ? -1 : 1) * k * 1.6
             break
           case 'dresser': // 抽屉自上而下依次抽出（v54：幅度略收 0.17——抽屉盒体半开悬在柜体前可见）
-            ch.position.z = bz + c01(k * 1.6 - idx * 0.3) * 0.17
+            if (s.data?.manilaTable) ch.rotation.y = (part === 'doorL' ? -1 : 1) * k * 1.5
+            else ch.position.z = bz + c01(k * 1.6 - idx * 0.3) * 0.17
             break
           case 'megcrate': // 两片上盖先上抬再对滑
             ch.position.y = by + c01(k / 0.35) * 0.12
@@ -2208,15 +2673,6 @@ export class Renderer3D {
             break
         }
       })
-      // 搜空后变暗（状态可见）
-      if (s.looted && !g.userData.dimmed) {
-        g.userData.dimmed = true
-        g.traverse((o) => {
-          const mm = o as THREE.Mesh
-          const mat = mm.material as THREE.MeshLambertMaterial
-          if (mat && mat.color) mat.color.multiplyScalar(0.55)
-        })
-      }
     }
   }
 

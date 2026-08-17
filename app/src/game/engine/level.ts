@@ -1,13 +1,13 @@
 // v53：层级切换与出口（loadLevel/takeExit/可行走灰色阶梯/据点往返/无限窗口平移）——
 // 自 engine.ts 拆分，逻辑逐语句搬运；eng 参数即 Engine 实例（公共 API 门面仍在 engine.ts）。
-import { bandOfPlayerZ, floorHeight, generateLevel } from '../world/mapgen'
+import { bandOfPlayerZ, floorHeight, generateLevel, tileAt } from '../world/mapgen'
 import { levelDefOf, levelLabel, NORMAL_LEVELS } from '../levels'
 import { canOccupy, PLAYER_RADIUS } from '../core/player'
 import { audio } from '../core/audio'
 import { NPCS, type NpcDef } from '../content/npcs'
 import { OUTPOSTS, isLandmarkStruct } from '../content/outposts'
 import { FACTIONS, REP_TIER } from '../content/factions'
-import { updateInfinite, l0NearestExit, chunkKey, CS } from '../world/infinite'
+import { updateInfinite, l0NearestExit, chunkKey, CS, infiniteImplFor, h32 } from '../world/infinite'
 import type { ExitDef, ExitInstance, FloorBand } from '../core/types'
 import type { Engine } from '../engine'
 import { resetEffects } from './effects'
@@ -30,7 +30,7 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   const l6Band = id === 6 && !restore ? (eng.arriveL6Band ?? 0) : null
   eng.arriveL6Band = null
   // v29a：读档恢复时复用存档记录的地图种子与首访标记，保证复现同一张图
-  const mapSeed = restore?.mapSeed ?? (eng.seed + eng.time * 7 + id * 131)
+  const mapSeed = restore?.mapSeed ?? eng.mpMapSeed?.(id) ?? (eng.seed + eng.time * 7 + id * 131) // v58：联机——确定性层级种子（全房间同图，先到先得即同布局）
   const fv = restore?.firstVisit ?? firstVisit
   eng.map = generateLevel(def, mapSeed, fv)
   eng.mapSeed = mapSeed
@@ -77,6 +77,15 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   eng.player.vz = 0
   eng.player.crouching = false
   eng.player.floor = 0
+  // v57m：L7 入口舱体位于 2F——出生点按注册的 spawnFloor 落在上层楼板
+  if (eng.map.inf) {
+    const m2 = eng.map
+    const spawnBand = infiniteImplFor(id).spawnFloor ?? 0
+    if (spawnBand === 1 && m2.up[Math.floor(eng.player.y) * m2.w + Math.floor(eng.player.x)] === 1) {
+      eng.player.z = floorHeight(m2, eng.player.x, eng.player.y, 1)
+      eng.player.floor = 1
+    }
+  }
   if (id === 6 && l6Band !== null) {
     const target = l6Band
     const stair = eng.map.structures.find((s) => s.kind === 'l6stairwell' && (s.floor ?? 0) === target)
@@ -103,6 +112,7 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   eng.wasSubmerged = false
   eng.ride = null
   eng.climb = null
+  eng.porchDrop = null // v58：换层中止门廊拖拽演出
   audio.setUnderwater(false)
   eng.explored = new Uint8Array(eng.map.w * eng.map.h)
   eng.visible = new Uint8Array(eng.map.w * eng.map.h)
@@ -181,9 +191,8 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
     cave8: '地下廊道深处，有一段墙面坍成了天然洞穴。',
     coldgate: '你摸到一扇金属门，冰得手指发麻。',
     wiretrip: '脚踝高度有一根绷紧的细线。别绊到——除非你想去 Level 6.1。',
-    seacave: '入口正下方那座海山的侧面，有一个黑色的洞口。',
-    pipering: '西边约一百五十米、水下一百五十米，有一圈巨大的管道与石柱围成的环。里面立着一扇木门。',
-    abyss: '七公里以下什么都没有，只有焦油堆和不停冒出的气泡。在那儿失去意识的人会在别处醒来。',
+    l7cave: '午夜带的海床上偶尔会露出一个岩洞洞口。里面很深，深得不像海。',
+    notexit: '深水里漂着一扇门，门牌写着「不是出口」。没有墙，也没有门框后面该有的房间。',
     ninthroad: '第九之路的路标每五十米一个，牌子上有 M.E.G. 的标志。跟着走。',
     tarpool: '前面有一池冒着热气的黑色焦油。幸存者说他们在 Level 41 或 91 醒来。',
     ceilclip: '洞顶某处的岩层薄得不正常——可以刻意向上剪辑出去。',
@@ -230,6 +239,7 @@ export function updateInfiniteWindow(eng: Engine) {
   eng.interactTarget = null
   eng.ride = null
   eng.climb = null
+  eng.porchDrop = null // v58：换层中止门廊拖拽演出
   eng.syncInfNpcs() // v39：窗口平移后重收集 chunk NPC（卸载消失/新载加入）
   // v29：返程阶梯（世界坐标固定；stitch 重建 m.exits 后重新注入，并同步所属 chunk 供渲染）
   if (eng.bonusExit && m.inf && !m.exits.some((e) => e.def === eng.bonusExit!.def)) {
@@ -356,8 +366,57 @@ export function nearestLandmark(eng: Engine): { x: number; y: number; d: number 
   }
   return best ? { ...best, d: bd } : null
 }
-export function takeExit(eng: Engine, def: ExitDef) {
-  const p = eng.player
+// ---------- v58：联机出生（槽位偏移 + 全槽位确定性物资散射） ----------
+/** 槽位出生点（窗口坐标，确定性）：默认出生点以东/西 40、南北交错——初始 5×5 chunk 窗口内 */
+export function mpSlotPoint(eng: Engine, slot: number): { x: number; y: number } {
+  const m = eng.map!
+  const ox = [0, 40, -40, 40][slot % 4], oy = [0, -32, 32, 32][slot % 4]
+  const cx = m.spawn.x + ox, cy = m.spawn.y + oy
+  // 就近螺旋找可走地板（确定性扫描，各端同图同解）
+  for (let rad = 0; rad <= 24; rad++)
+    for (let dy = -rad; dy <= rad; dy++)
+      for (let dx = -rad; dx <= rad; dx++) {
+        if (Math.max(Math.abs(dx), Math.abs(dy)) !== rad) continue
+        const x = Math.floor(cx + dx), y = Math.floor(cy + dy)
+        if (x < 1 || y < 1 || x >= m.w - 1 || y >= m.h - 1) continue
+        if (tileAt(m, x, y) !== 1) continue
+        if (!canOccupy(m, x + 0.5, y + 0.5, PLAYER_RADIUS, { z: 0 })) continue
+        return { x, y }
+      }
+  return { x: m.spawn.x, y: m.spawn.y }
+}
+
+/** 联机开局：把玩家放到自己槽位出生点，并按 4 个槽位各撒一份初始物资（id 确定性——各端一致，先到先得共享） */
+export function applyMpSpawn(eng: Engine, slot: number) {
+  const m = eng.map
+  if (!m || !m.inf) return
+  const inf = m.inf
+  // 物资散射到「拥有该瓦片的 LiveChunk」的 items（窗口坐标；随窗口平移/缝合/卸载持久化）
+  const pool = ['almond', 'canned', 'bandage', 'battery', 'glowstick']
+  for (let s = 0; s < 4; s++) {
+    const base = mpSlotPoint(eng, s)
+    let placed = 0
+    for (let k = 0; placed < 5 && k < 40; k++) {
+      const a = (h32(eng.seed, 0x5eed, s, k) / 4294967296) * Math.PI * 2
+      const r = 1.3 + (h32(eng.seed, 0x5eee, s, k) / 4294967296) * 1.8
+      const x = base.x + 0.5 + Math.cos(a) * r, y = base.y + 0.5 + Math.sin(a) * r
+      if (tileAt(m, Math.floor(x), Math.floor(y)) !== 1) continue
+      const ccx = Math.floor((x + inf.ox) / CS), ccy = Math.floor((y + inf.oy) / CS)
+      const chunk = inf.chunks.get(chunkKey(ccx, ccy))
+      if (!chunk) continue
+      chunk.items.push({ id: 700000000 + s * 1000 + k, type: pool[(s + k) % pool.length], x, y })
+      placed++
+    }
+  }
+  if (slot > 0) {
+    const spot = mpSlotPoint(eng, slot)
+    eng.player.x = spot.x + 0.5
+    eng.player.y = spot.y + 0.5
+    eng.msg('孤立效应把你们冲散了——其他人应该也在这一层某处。', 'lore')
+  }
+}
+
+export function takeExit(eng: Engine, def: ExitDef) {  const p = eng.player
   // v45：Level 274 教化规则——教化满（≥100）成为信众一员：无法主动离开（开发者传送除外）；
   // 未满时主动离开 → jerry 声望 -5；有进行中的传教委托（v47 标准委托化）离开不受声望惩罚
   if (p.level === 274 && def.dest === 'back') {
@@ -425,6 +484,8 @@ export function takeExit(eng: Engine, def: ExitDef) {
   const cutIn = dest === 'win' ? undefined : (def.cutIn ?? levelDefOf(dest)?.entryAnim)
   eng.transition = { anim: def.anim, t: 0, dest, fallDamage: def.fallDamage }
   eng.emit({ kind: 'transition', anim: def.anim, fallDamage: def.fallDamage, cutIn, dest })
+  // v58：联机——出口使用广播（其他玩家收到提示并各自独立换层）
+  if (typeof dest === 'number') eng.emit({ kind: 'mpevent', mp: { t: 'exit', dest } })
 }
 
 /** Level 6 内部换层：楼梯井双向，地表塌陷坑仅向下。 */

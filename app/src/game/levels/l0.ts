@@ -6,7 +6,8 @@ export const L0: LevelDef = {
   name: '教学关卡',
   flavor: '病态黄的墙纸，潮湿地毯，荧光灯持续嗡鸣。这里一望无际、没有实体——学会活下去，然后找到那面闪烁的墙壁。',
   lore: 'Level 0「Threshold」。无限延伸的办公后间式迷宫：黄色墙纸、浸水的 Berber 地毯与嗡鸣荧光灯。存在拱门房、柱厅、深坑、停电区、马尼拉室与红房间等异常区域；「孤立效应」使同行者失散。实体未经官方确认——本层绝迹。出口只有一面罕见的闪烁的墙壁。——据 Backrooms Wikidot/Fandom 整理',
-  palette: { floor: '#b8a548', floorAlt: '#a9973f', wall: '#c9b458', wallTop: '#8a7a33', accent: '#8a7a33', light: '#fff6d8', decal: '#9c8c3c' },
+  // 经典 Level 0：墙纸是褪色奶油黄，地毯偏灰褐，避免整层被橄榄黄覆盖。
+  palette: { floor: '#a49a61', floorAlt: '#938953', wall: '#c4bd6c', wallTop: '#b7af82', accent: '#827a45', light: '#f3efd6', decal: '#91894f' },
   gen: 'rooms',
   size: 64, // 有限模式忽略；无限模式仅作兼容占位
   infinite: true, // v17：无边界无限 chunk 流式生成
@@ -29,6 +30,6 @@ export const L0: LevelDef = {
   entrance: '天花板坠落',
   exitDesc: '出口：一面罕见的「闪烁的墙壁」——墙上一片门形区域规律地闪烁光芒，穿过去即达 Level 1。在无限迷宫中它以较大区域为保底稀有刷新；远处跟着电流声与气流走。马尼拉室常在出口附近作为喘息点。',
   lightDensity: 0.012,
-  darkness: 0.55,
-  lightSoft: 0.7, // v29：保底密排灯光（8 格间距）+ 单灯更柔和、范围更广
+  darkness: 0.42,
+  lightSoft: 0.56, // 降低单灯刺眼热点，配合渲染器的邻近灯光漫反射补光获得更均匀的旧办公区照明
 }

@@ -121,6 +121,7 @@ function genDarkhall(m: GameMap, rng: RNG, H: GenHelpers): Room[] {
 // Wikidot：入口房间侧向嵌在海洋空间的天花板里（书柜/咖啡桌/椅子/荧光吸顶灯/地毯积水），
 // 站到门前重力会被强制切换，直接坠落约 4.5 米到水面；海洋无限延伸，上方高悬混凝土天花板；
 // 没有固定光源却有弥漫的昏暗自然光；散布着未知岩石构成的岛，多数无人。
+// v57：Level 7 已切换为 infiniteL7.ts 无限生成；本函数仅保留为有限 genOcean 的旧路径/死代码。
 // ============================================================================
 function genOcean(m: GameMap, rng: RNG, H: GenHelpers): Room[] {
   const { idx } = H

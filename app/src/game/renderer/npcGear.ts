@@ -214,6 +214,28 @@ export function applyNpcGear(parts: Record<string, THREE.Object3D>, id: string, 
       return
   }
   switch (id) {
+    case 'tiny': // v58：小小（Entity 720）——非人形实体的剪影式配饰：焦油罩冠 + 荧光斑 + 白骨矛
+      if (head) {
+        head.add(box(0.3, 0.1, 0.26, '#14171c', 0, 0.27, 0)) // 罩冠前檐
+        head.add(box(0.24, 0.16, 0.2, '#14171c', 0, 0.36, -0.04)) // 罩冠顶
+        head.add(box(0.1, 0.2, 0.24, '#1d232b', 0, 0.16, -0.1)) // 后扫冠羽
+        // 甲壳下的一线眼亮（暗处明亮、水面暗淡的意象）
+        head.add(box(0.04, 0.02, 0.014, '#9fd8e8', -0.055, 0.14, 0.126))
+        head.add(box(0.04, 0.02, 0.014, '#9fd8e8', 0.055, 0.14, 0.126))
+      }
+      if (parts.torso) {
+        parts.torso.add(box(0.05, 0.05, 0.02, '#7fd8e8', -0.08, 0.1, 0.135)) // 荧光斑
+        parts.torso.add(box(0.04, 0.04, 0.02, '#7fd8e8', 0.1, -0.08, 0.135))
+      }
+      if (armR) { // 手中骨矛（斜持）
+        const sp = cyl(0.014, 0.018, 1.1, '#d8cdb4', 0, -0.6, 0.1, 5)
+        sp.rotation.x = 0.5
+        armR.add(sp)
+        const spTip = cyl(0.03, 0.006, 0.22, '#b0a586', 0, -1.16, 0.24, 5)
+        spTip.rotation.x = 0.5 // 骨刃尖
+        armR.add(spTip)
+      }
+      break
     case 'kat': // 监督者：臂弯文件夹
       if (armL) {
         armL.add(box(0.16, 0.02, 0.22, '#5a4a3a', 0, -0.5, 0.1))

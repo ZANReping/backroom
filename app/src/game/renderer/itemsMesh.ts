@@ -2,9 +2,13 @@
 // 实体模型在 entitiesMesh.ts。
 import * as THREE from 'three'
 import { buildFlashlightMesh } from './flashlightMesh'
+import { buildBandageMesh, buildCannedFoodMesh } from './supplyMesh'
+import { buildBatteryMesh, buildWaterThermosMesh } from './provisionsMesh'
+import { buildDetailedItemMesh } from './detailItemsMesh'
 
 // ---------- 物品低模 ----------
-export function buildItemMesh(type: string): THREE.Group {
+// v59：halo 选项——联机远端玩家的手持物品不显示脚底稀有度光圈（地面掉落物保留）
+export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Group {
   const grp = new THREE.Group()
   grp.userData.itemType = type
   const em = (w: number, h: number, d: number, color: string | number, x = 0, y = 0, z = 0, rx = 0, rz = 0) => {
@@ -22,36 +26,23 @@ export function buildItemMesh(type: string): THREE.Group {
     return m
   }
   switch (type) {
-    case 'almond': // 杏仁水：乳白瓶身 + 绿盖 + 标签带
-      em(0.14, 0.26, 0.14, '#d8cfc0'); em(0.08, 0.07, 0.08, '#7a9a5a', 0, 0.17, 0)
-      em(0.145, 0.07, 0.145, '#a8c9a0', 0, -0.02, 0); break
-    case 'canned': // 罐头：铁罐 + 顶盖 + 标签
-      cm(0.1, 0.1, 0.2, '#8a8a8a'); cm(0.105, 0.105, 0.02, '#a8a8a8', 0, 0.1, 0)
-      em(0.21, 0.09, 0.21, '#b8a05a', 0, -0.02, 0); break
-    case 'bandage': // 绷带卷：布卷 + 垂下布条 + 红十字
-      cm(0.09, 0.09, 0.14, '#e8e2d2', 0, 0, 0, 10, Math.PI / 2)
-      em(0.1, 0.02, 0.16, '#ddd6c4', 0, -0.07, 0.06)
-      em(0.05, 0.015, 0.05, '#c94a3a', 0, 0.09, 0); break
-    case 'battery': // 电池：金身 + 正极 + 黑负极环
-      cm(0.07, 0.07, 0.2, '#c9a03a'); em(0.05, 0.04, 0.05, '#c0c0c0', 0, 0.12, 0)
-      cm(0.072, 0.072, 0.04, '#3a3a3a', 0, -0.06, 0); break
-    case 'crowbar': // 撬棍：主杆 + 鹅颈弯 + 分叉头
-      em(0.46, 0.05, 0.05, '#a63a2e'); em(0.05, 0.12, 0.05, '#a63a2e', 0.22, 0.05, 0)
-      em(0.1, 0.04, 0.05, '#8a2e22', 0.26, 0.12, 0); em(0.05, 0.09, 0.05, '#a63a2e', -0.24, 0.02, 0, 0, 0.5); break
-    case 'tape': // 磁带：黑盒 + 双卷轴 + 标签窗
-      em(0.26, 0.17, 0.05, '#2a2a2e'); em(0.07, 0.07, 0.06, '#d6cfae', -0.06, 0.01, 0); em(0.07, 0.07, 0.06, '#d6cfae', 0.06, 0.01, 0)
-      em(0.2, 0.06, 0.052, '#8a2e22', 0, -0.05, 0); break
-    case 'lighter': // 打火机：机身 + 铰链盖 + 火轮
-      em(0.09, 0.13, 0.06, '#c9c2a8'); em(0.09, 0.05, 0.06, '#b0a890', 0, 0.08, 0)
-      em(0.03, 0.03, 0.065, '#6a6a6a', 0.02, 0.05, 0); break
+    case 'almond': // 杏仁水：不锈钢保温杯轮廓 +「杏仁水」真实环绕 UV
+      grp.add(buildWaterThermosMesh('almond')); break
+    case 'canned': // 罐头：真实 UV 纸标签 + 金属卷边端盖/压槽/易拉环
+      grp.add(buildCannedFoodMesh()); break
+    case 'bandage': // 绷带卷：真实 UV 棉纱 + 同心卷层/纸芯/弯曲垂带/散纱
+      grp.add(buildBandageMesh()); break
+    case 'battery': // 电池：钢壳/绝缘环/正负极 + 做旧包装 UV
+      grp.add(buildBatteryMesh()); break
+    case 'crowbar': // 撬棍：弯曲管身、开叉撬头、磨损喷漆 UV
+    case 'tape': // 磁带：透明卷轴窗、螺丝、纸质标签 UV
+    case 'lighter': // 打火机：拉丝钢壳、铰链、风罩与火轮
+      grp.add(buildDetailedItemMesh(type)); break
     case 'rabbit': // 幸运兔脚：腿骨 + 毛爪
       em(0.06, 0.14, 0.06, '#d8cfc0', 0, 0.05, 0); em(0.1, 0.1, 0.08, '#b8a890', 0, -0.08, 0); break
-    case 'wallpaper': // 壁纸碎片：两片卷曲黄纸
-      em(0.22, 0.02, 0.16, '#c9b458'); em(0.1, 0.02, 0.16, '#b8a448', 0.1, 0.03, 0, 0, 0.5); break
-    case 'glowstick': { // 荧光棒：通体发光
-      const gs = cm(0.03, 0.03, 0.3, '#a8e0a0', 0, 0, 0, 6, 0, 0.5)
-      gs.material = new THREE.MeshBasicMaterial({ color: '#a8e0a0' })
-      em(0.05, 0.03, 0.05, '#6a9a6a', -0.08, 0.1, 0); break }
+    case 'wallpaper': // 壁纸碎片：不规则断边、卷边与 Level 0 墙纸 UV
+    case 'glowstick': // 荧光棒：透明外壳、发光液芯、端盖与挂环
+      grp.add(buildDetailedItemMesh(type)); break
     case 'flashlight': { // 手电筒：与第一人称手持模型共用真实 UV 细化模型，地面版镜片不自发光
       const flashlight = buildFlashlightMesh({ orientation: 'ground', lit: false })
       flashlight.scale.setScalar(1.08)
@@ -93,9 +84,8 @@ export function buildItemMesh(type: string): THREE.Group {
       bolt(0.014, 0.1, '#eaf7ff', 0.022, -0.02, 0.01, 0.5)
       bolt(0.014, 0.08, '#8fd4ff', -0.022, -0.05, -0.012, -0.55)
       break }
-    case 'coffee': // 咖啡：纸杯 + 盖 + 套
-      cm(0.07, 0.055, 0.18, '#d8cfc0', 0, 0, 0, 8); cm(0.075, 0.075, 0.03, '#6a4a2e', 0, 0.1, 0, 8)
-      cm(0.072, 0.068, 0.06, '#8a6a42', 0, -0.01, 0, 8); break
+    case 'coffee': // 咖啡：锥形纸杯、瓦楞杯套、杯盖、饮口与印刷 UV
+      grp.add(buildDetailedItemMesh(type)); break
     case 'stapler': // 订书机：底座 + 上臂
       em(0.22, 0.03, 0.06, '#3a3d42'); em(0.2, 0.05, 0.05, '#4a4d52', -0.01, 0.05, 0, 0, 0.12); break
     case 'keycard': // 门禁卡：卡 + 磁条 + 芯片
@@ -247,9 +237,8 @@ export function buildItemMesh(type: string): THREE.Group {
       em(0.12, 0.012, 0.01, '#8a8474', -0.01, 0.008, 0.02); break
 
     // ---------- v32：后室扩展物品 ----------
-    case 'cashew': // 腰果水：与杏仁水几乎一样的瓶子——但液体发褐，别搞混
-      em(0.14, 0.26, 0.14, '#d8cfc0'); em(0.08, 0.07, 0.08, '#8a6a3a', 0, 0.17, 0)
-      em(0.145, 0.07, 0.145, '#c9a05a', 0, -0.02, 0); break
+    case 'cashew': // 腰果水：同型保温杯，但使用歪斜乱码标签与污损暖褐配色
+      grp.add(buildWaterThermosMesh('cashew')); break
     case 'luckymilk': { // v54：幸运豆奶（Object 28）：豆奶纸盒 + 四叶草标 + 顶折封口
       em(0.15, 0.24, 0.11, '#eef0e8') // 纸盒身（乳白）
       em(0.15, 0.05, 0.11, '#7ab06a', 0, 0.145, 0) // 顶折封口（绿）
@@ -257,14 +246,9 @@ export function buildItemMesh(type: string): THREE.Group {
       em(0.04, 0.04, 0.01, '#4a8a3e', 0, -0.04, 0.06) // 四叶草（正面深绿点）
       break
     }
-    case 'knife': // 刀：刀刃 + 护手 + 柄
-      em(0.22, 0.012, 0.035, '#c9cdd4', 0.03, 0, 0)
-      em(0.018, 0.04, 0.06, '#8a8a8a', -0.09, 0, 0)
-      em(0.09, 0.025, 0.03, '#3a2e22', -0.15, 0, 0); break
-    case 'axe': // 斧头：长柄 + 斧刃 + 斧楔
-      cm(0.016, 0.02, 0.34, '#8a6a42', 0, 0, 0, 6, 0, Math.PI / 2)
-      em(0.07, 0.1, 0.025, '#9aa0a8', 0.16, 0.02, 0)
-      em(0.03, 0.05, 0.032, '#7a8288', 0.1, 0.02, 0); break
+    case 'knife': // 刀：带刃线的钢刃、护手、铆钉与防滑柄 UV
+    case 'axe': // 斧头：楔形斧刃、斧楔、木纹柄与包覆握把
+      grp.add(buildDetailedItemMesh(type)); break
     case 'headlamp': // 头灯：头带 + 灯体 + 灯杯
       em(0.26, 0.035, 0.03, '#2a2d30')
       em(0.09, 0.08, 0.07, '#3a3d42', 0, 0, 0.05)
@@ -306,11 +290,8 @@ export function buildItemMesh(type: string): THREE.Group {
       em(0.05, 0.03, 0.05, '#e8c93d', 0, 0.05, 0); break
 
     // ---------- v40：此前走通用 fallback 的 12 件补齐 ----------
-    case 'disinfectant': // 消毒液：白瓶 + 浅蓝药液 + 紫十字标签（阿丽亚娜紫）
-      em(0.14, 0.24, 0.14, '#e8f0f2'); em(0.13, 0.1, 0.13, '#9fd0d8', 0, -0.05, 0)
-      em(0.07, 0.07, 0.07, '#d8d4c8', 0, 0.155, 0)
-      em(0.145, 0.08, 0.145, '#f4f6f0', 0, 0.01, 0)
-      em(0.06, 0.02, 0.02, '#8676e2', 0, 0.01, 0.074); em(0.02, 0.06, 0.02, '#8676e2', 0, 0.01, 0.074); break
+    case 'disinfectant': // 消毒液：泵头瓶、可见液体与英文医用标签 UV
+      grp.add(buildDetailedItemMesh(type)); break
     case 'eaglecoin': // 天鹰币：两枚铜黄硬币叠放 + 顶面展翅雄鹰压印（区别于压印币的三枚薄币）
       cm(0.08, 0.08, 0.02, '#c9862e'); cm(0.08, 0.08, 0.02, '#b8752a', 0.012, 0.022, 0.006)
       em(0.07, 0.005, 0.016, '#8a5a1e', 0.012, 0.034, 0.006); em(0.016, 0.005, 0.05, '#8a5a1e', 0.012, 0.034, 0.006); break
@@ -396,9 +377,11 @@ export function buildItemMesh(type: string): THREE.Group {
     grilledsteak: '#8fd98f', jambread: '#8fd98f', // 菜肴：补给绿
   }
   const gc = ITEM_GLOW[type] ?? '#e8b93c'
-  const halo = new THREE.Mesh(new THREE.RingGeometry(0.18, 0.26, 10), new THREE.MeshBasicMaterial({ color: gc, transparent: true, opacity: 0.45, side: THREE.DoubleSide }))
-  halo.rotation.x = -Math.PI / 2
-  halo.position.y = -0.28
-  grp.add(halo)
+  if (opts?.halo !== false) {
+    const halo = new THREE.Mesh(new THREE.RingGeometry(0.18, 0.26, 10), new THREE.MeshBasicMaterial({ color: gc, transparent: true, opacity: 0.45, side: THREE.DoubleSide }))
+    halo.rotation.x = -Math.PI / 2
+    halo.position.y = -0.28
+    grp.add(halo)
+  }
   return grp
 }

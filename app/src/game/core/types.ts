@@ -103,6 +103,7 @@ export interface ExitInstance {
   x: number
   y: number
   floor?: FloorBand
+  z?: number // v57t：出口自身所在高度（如 L7 深水中漂浮的门）；缺省按所在地面高度
   discovered: boolean
 }
 
@@ -129,6 +130,10 @@ export type StructKind =
   // v7 新增：室外场景门窗
   | 'glasswin' // 半透玻璃窗（实心，仅观察不可达：L4 雾中城市 / L5 客房夜景）
   | 'stairrail' // 井口护栏（仅碰撞，无模型——v54：oldstairs 古典楼梯的可见护栏在出口模型里；data.deg 朝向 + data.end 尽头横栏）
+  | 'elevdoor' // 电梯门扇碰撞（仅碰撞，无模型——v58：L3/L4/L5 嵌墙电梯出口的门扇/门框阻挡，可见门体在出口模型里）
+  | 'seapillar' // 水下石柱（v58：L7「小小的谎言」环形场；三款变体 data.v）
+  | 'seapipe' // 水下管道（v58：环形场环切向管段；data.deg 走向）
+  | 'seadais' // 环形石台（v58：环形场中心，可踏上的 0.42m 低台；台面嵌木门出口）
   | 'tvset'        // 立式大电视（v54：深色机身 + 底座支脚 + 微亮屏；区别于挂墙 walltv；Gemma 2F 电视娱乐室）
   | 'loungechair'  // 弧形塑料休闲椅（v54：一体成型弧面 + 四条细腿；data.color 实例配色；非实心）
   | 'rollerdoor' // 卷帘门（可交互开关，L1 通室外小巷）
@@ -155,6 +160,7 @@ export type StructKind =
   | 'bonepile'     // 骨堆（容器；下颌增大、腿末端成鳍的类人骨架）
   | 'fishbones'    // 不可理解的巨鱼骨架（Midnight Zone）
   | 'seatarpit'    // 深渊焦油与岩石堆（持续冒泡）
+  | 'ropeanchor'   // L7 入口房间门廊系缆桩：使用尼龙绳后 data.deployed=1，绳索自门廊出口垂至海面，可攀爬返回
   // ===== v23：Level 8「Cave Systems」 =====
   | 'stalagspike'  // 岩刺：各角度混乱突出、打结/锯齿/分叉
   | 'handspike'    // Handyland 手形岩刺（带指纹）+ 血红色发光苔藓

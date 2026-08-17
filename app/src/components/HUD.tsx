@@ -10,7 +10,8 @@ import { look } from '@/game/core/renderer3d'
 import { exitArrowRotation } from '@/game/content/guide'
 import { CS, infiniteImplFor } from '@/game/world/infinite'
 import { l5RegionAt } from '@/game/world/infiniteL5' // v55：L5 区域名按大厅/房间矩形判定
-import { stairServesBand } from '@/game/world/mapgen'
+import { l7ZoneOfDepth } from '@/game/world/infiniteL7' // v57q：L7 深度带按玩家当前下潜深度显示
+import { stairServesBand, bandOfPlayerZ } from '@/game/world/mapgen'
 import { CONTAINER_KINDS } from '@/game/decorations/containers'
 import { DOCS } from '@/game/content/docs'
 import { OUTPOSTS, isLandmarkStruct } from '@/game/content/outposts'
@@ -274,6 +275,7 @@ function Minimap({ engine, size }: { engine: Engine; size: number }) {
 export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, onPause, onInventory, onSelectSlot, onUseSlot }: Props) {
   const p = engine.player
   const def = engine.levelDef
+  const swim = engine.swimInfo()
   // v40：据点是主层级的子层级——顶部信息栏的层级号显示主层级（如 Alpha 基地显示 LEVEL 1 而非 LEVEL 101）
   const outpostDef = Object.values(OUTPOSTS).find((o) => o.levelId === p.level)
   const dispId = outpostDef?.parent ?? def.id
@@ -292,11 +294,20 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
   const infMap = engine.map?.inf
   if (infMap) {
     const impl = infiniteImplFor(engine.levelDef.id)
-    if (engine.levelDef.id === 5) {
+    if (engine.levelDef.id === 7) {
+      // v57q：光带只由玩家当前下潜深度决定，与水平位置/海床位置无关
+      const z = p.z >= 3 ? 'entry' : l7ZoneOfDepth(Math.max(0, -p.z))
+      curVariant = z
+      areaName = z === 'entry' ? '入口房间' : impl.variantNames?.[z] ?? null
+    } else if (engine.levelDef.id === 5) {
       // v55：L5 区域名按大厅/房间矩形判定（l5RegionAt——区域间以走廊为界；走廊瓦片显示「红地毯走廊」）
       const reg = l5RegionAt(infMap.seed, Math.floor(infMap.ox + p.x), Math.floor(infMap.oy + p.y))
       curVariant = reg?.variant ?? null
       areaName = reg?.variant ? (impl.variantNames?.[reg.variant] ?? null) : '红地毯走廊'
+    } else if (engine.levelDef.id === 6 && bandOfPlayerZ(engine.map!, p.z) === -1) {
+      // v58：L6 地下层（FloorBand -1）全部统一显示为「地下廊道」区域，不再跟随地表变体名
+      curVariant = 'underground'
+      areaName = '地下廊道'
     } else if (impl?.variantOf) {
       const v = impl.variantOf(infMap.seed, Math.floor((infMap.ox + p.x) / CS), Math.floor((infMap.oy + p.y) / CS))
       curVariant = v
@@ -406,6 +417,31 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
       <div className="absolute left-3 top-3 flex flex-col items-start gap-1.5">
         <div className="hud-panel pointer-events-auto p-2">
           {vitals}
+          {swim && (
+            <div className="mt-2 border-t pt-1.5" style={{ borderColor: 'var(--panel-edge)' }}>
+              <div className="flex items-center justify-between gap-3 text-[11px]">
+                <span style={{ color: swim.submerged ? '#79b8d8' : 'var(--text-dim)' }}>
+                  {swim.submerged ? '水下' : '水面'} · 水深 {swim.depth.toFixed(1)}m
+                </span>
+                <span style={{ color: swim.breath > swim.limit * 0.25 ? 'var(--amber)' : 'var(--blood)' }}>
+                  氧气 {Math.max(0, swim.limit - swim.breath).toFixed(0)}s
+                </span>
+              </div>
+              <div className="mt-1 h-[4px] w-full overflow-hidden" style={{ background: 'color-mix(in srgb, var(--ink) 80%, transparent)' }}>
+                <div style={{
+                  width: `${Math.max(0, Math.min(100, ((swim.limit - swim.breath) / swim.limit) * 100))}%`,
+                  height: '100%',
+                  background: swim.breath > swim.limit * 0.6 ? 'var(--blood)' : 'var(--amber)',
+                  transition: 'width 0.12s linear',
+                }} />
+              </div>
+              {def.id === 7 && (
+                <div className="mt-0.5 text-[9px]" style={{ color: 'var(--text-dim)' }}>
+                  [蹲伏] 下潜　[跳跃] 上浮　[冲刺] 快速游
+                </div>
+              )}
+            </div>
+          )}
           {/* 福友玉（口袋栏）：实体感应——随最近实体距离改变温度提示 */}
           {p.equip.pockets.some((s) => s?.type === 'fuyouyu') && (() => {
             let best = Infinity
@@ -556,6 +592,10 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
         </div>
       )}
 
+      {/* v57o：水下视野额外蓝绿晕影（与渲染层雾/低通叠加） */}
+      {swim?.submerged && (
+        <div className="pointer-events-none fixed inset-0 z-[31]" style={{ boxShadow: 'inset 0 0 140px 34px rgba(13,74,110,0.32)' }} />
+      )}
       {/* ---- 状态低下画面效果（受减闪烁设置缩放）---- */}
       {/* 饥饿 ≤25：边缘发黄收缩脉冲 */}
       {/* v51：人制品效应中始终显示饥饿画面特效（哪怕刚吃饱） */}
@@ -1052,6 +1092,7 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
                     <DevBtn onClick={() => engine.devTeleport('entity')}>👁 最近实体</DevBtn>
                     <DevBtn onClick={() => engine.devTeleport('container')}>📦 最近容器</DevBtn>
                     <DevBtn onClick={() => engine.devTeleport('landmark')}>🚩 最近地标</DevBtn>
+                    {engine.levelDef.id === 7 && <DevBtn onClick={() => engine.devGotoIsland()}>🏝 最近岛屿</DevBtn>}
                     <DevBtn onClick={() => engine.devTeleport('spawn')}>⌂ 出生点</DevBtn>
                     {engine.levelDef.id === 0 && (
                       <DevBtn onClick={() => engine.devTestField()} title="仅教学关卡：生成 80×80 无墙空旷测试场地并传送（不会自然生成）">⬜ 测试场地（L0）</DevBtn>

@@ -10,13 +10,13 @@ import { texStain } from '../textures'
 // 歪斜荧光灯（天花吊挂，闪烁）
 export function roomsTiltedLamps(c: DecorCtx) {
   const { ri, rf, pickFloor, glowBox, g, H } = c
-  for (let i = 0; i < ri(3, 5); i++) {
+  for (let i = 0; i < ri(1, 2); i++) {
     const s = pickFloor(); if (!s) break
-    const x = s.x + 0.5, z = s.y + 0.5, tilt = rf(-0.3, 0.3)
-    const wire = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.5, 0.02), new THREE.MeshLambertMaterial({ color: '#3a3630' }))
-    wire.position.set(x, H - 0.28, z)
+    const x = s.x + 0.5, z = s.y + 0.5, tilt = rf(-0.12, 0.12)
+    const wire = new THREE.Mesh(new THREE.BoxGeometry(0.015, 0.16, 0.015), new THREE.MeshLambertMaterial({ color: '#5b574c' }))
+    wire.position.set(x, H - 0.09, z)
     g.add(wire)
-    glowBox('#e8e2c8', 0.9, 0.06, 0.18, x, H - 0.52, z, rf(0, 3), tilt, true)
+    glowBox('#eee9d2', 1.02, 0.045, 0.28, x, H - 0.18, z, rf(0, 3), tilt, true)
   }
 }
 

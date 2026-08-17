@@ -33,6 +33,21 @@ export function attackReach(_eng: Engine, e: Entity): number {
   return 1.9 + Math.max(0, (e.def.huge ?? 1) - 1) * 0.6
 }
 
+/** v59 联机：客人攻击房主权威实体（带 netId）——伤害改报房主结算（快照回同步 hp/死亡/激怒），
+ *  返回 true 表示已走联机通道（调用方跳过本地扣血/killCheck，只做打击反馈，防两端分叉） */
+export function mpHurtEntity(eng: Engine, e: Entity, dmg: number): boolean {
+  if (e.netId === undefined || !eng.mpSession || eng.mpSession.isHost || eng.applyingNet) return false
+  eng.emit({ kind: 'mpevent', mp: { t: 'entHit', nid: e.netId, dmg } })
+  return true
+}
+
+/** v59 联机：房主击杀掉落物广播（客人端窗口内落地；takeItem 事件按同 id 同步拾取） */
+function mpDrop(eng: Engine, id: number, it: string, x: number, y: number) {
+  const mp = eng.mpSession, m = eng.map
+  if (mp?.started && mp.isHost && m && !eng.applyingNet)
+    eng.emit({ kind: 'mpevent', mp: { t: 'dropItem', id, it, x: x + (m.inf?.ox ?? 0), y: y + (m.inf?.oy ?? 0) } })
+}
+
 /** 当前攻击能否命中该实体：距离 + 高差 + 朝向锥（贴脸 <0.9m 免除朝向判定——
  *  实体与玩家几乎重合时 atan2 方向退化，旧判定会永远 miss，这就是"近身打不到"的根因） */
 export function canHit(eng: Engine, e: Entity): boolean {
@@ -82,14 +97,18 @@ export function killCheck(eng: Engine, e: Entity) {
   eng.msg(`击杀了 ${e.def.name}`, 'loot')
   // 旱虾（Entity 20）：被玩家击杀必掉可食用的「旱虾」——被敌方实体捕食不经由本函数，不掉落物品
   if (e.def.type === 'dryshrimp') {
-    m.items.push({ id: Date.now() % 100000 + Math.random(), type: 'dryshrimp', x: e.x, y: e.y })
+    const id = Date.now() % 100000 + Math.random()
+    m.items.push({ id, type: 'dryshrimp', x: e.x, y: e.y })
+    mpDrop(eng, id, 'dryshrimp', e.x, e.y) // v59：联机掉落同步
     return
   }
   if (Math.random() < (p.hasRabbit ? 0.6 : 0.35)) {
     const drops = ['bandage', 'almond', 'canned', 'battery']
     const t0 = drops[Math.floor(Math.random() * drops.length)]
     const t = t0 === 'almond' && Math.random() < 0.1 ? 'cashew' : t0 // v32：腰果水 1/10 替代
-    m.items.push({ id: Date.now() % 100000 + Math.random(), type: t, x: e.x, y: e.y })
+    const id = Date.now() % 100000 + Math.random()
+    m.items.push({ id, type: t, x: e.x, y: e.y })
+    mpDrop(eng, id, t, e.x, e.y) // v59：联机掉落同步
   }
 }
 
@@ -110,19 +129,52 @@ export function attack(eng: Engine) {
   let hit = false
   let blockedJerry = false // v47：教化约束——被拦下的对鹉主挥击（提示「你下不去手」）
   for (const e of m.entities) {
-    if (!eng.canHit(e)) continue
+    // v58：七层之物——头部之后的体节可被击中：伤害大减，但能迟滞它转头/转身
+    let thingBody = false
+    if (e.def.type === 'thething' && !e.dead && !e.disguised && !eng.canHit(e)) {
+      const reach = eng.attackReach(e)
+      for (let i = 0; i < 8 && !thingBody; i++) { // 近似体节链：头后 2.2m 起每 1.35m 一节（v58fix4 随体型增大同步）
+        const bx = e.x - Math.cos(e.facing) * (2.2 + i * 1.35), by = e.y - Math.sin(e.facing) * (2.2 + i * 1.35)
+        const bd = Math.hypot(bx - p.x, by - p.y)
+        if (bd > reach || Math.abs(e.z - p.z) >= 1.2) continue
+        if (bd >= 0.9) {
+          const ang2 = Math.atan2(by - p.y, bx - p.x)
+          let diff2 = Math.abs(ang2 - p.facing)
+          if (diff2 > Math.PI) diff2 = Math.PI * 2 - diff2
+          if (diff2 > 1.1) continue
+        }
+        thingBody = true
+      }
+      if (!thingBody) continue
+    } else if (!eng.canHit(e)) continue
     recordEntityEncounter(e) // v54：攻击命中计一次遭遇（按个体去重）
     // v47：教化约束——教化值 >0 后无法再对鹉主出手（驯服清零后解除约束）
     if (e.def.type === 'jerry' && eng.indoctrination > 0) { blockedJerry = true; continue }
     const ang = Math.atan2(e.y - p.y, e.x - p.x)
-    e.hp -= dmg
+    // v59 联机：客人挥中房主权威实体——伤害上报房主结算（快照回同步 hp/死亡/激怒），
+    // 本地只做打击反馈（血迹/挥中音效），不扣血不击杀（防两端状态与掉落分叉）
+    if (mpHurtEntity(eng, e, thingBody ? dmg * 0.25 : dmg)) {
+      if (thingBody && (e.turnSlowT ?? 0) <= 0) eng.msg('刀刃没入它皮革般的身体——伤害甚微，但它转头的动作滞涩了一瞬。', 'system')
+      hit = true
+      eng.bloodParticles(e.x, e.y)
+      eng.provoked = true
+      continue
+    }
+    if (thingBody) {
+      // v58：体节命中——伤害大减，但让它转头迟滞 3 秒；巨躯不被击退
+      e.hp -= dmg * 0.25
+      if ((e.turnSlowT ?? 0) <= 0) eng.msg('刀刃没入它皮革般的身体——伤害甚微，但它转头的动作滞涩了一瞬。', 'system')
+      e.turnSlowT = 3
+    } else {
+      e.hp -= dmg
+      // 击退位移做墙体校验：落点不可走（墙/实心结构/不可达高差）则不位移——
+      // 击杀后的尸体同样不会被钉进墙里（尸体落点即击退落点）
+      const kx = e.x + Math.cos(ang) * 0.4, ky = e.y + Math.sin(ang) * 0.4
+      if (eng.entityWalkH(m, Math.floor(kx), Math.floor(ky), bandOfZ(e.z)) !== null) { e.x = kx; e.y = ky }
+    }
     e.stunT = 0.35
     // v47：伤害鹉主杰瑞——信众哗然：jerry 声望立即 -50（每次）
     if (e.def.type === 'jerry') eng.hurtJerryRep()
-    // 击退位移做墙体校验：落点不可走（墙/实心结构/不可达高差）则不位移——
-    // 击杀后的尸体同样不会被钉进墙里（尸体落点即击退落点）
-    const kx = e.x + Math.cos(ang) * 0.4, ky = e.y + Math.sin(ang) * 0.4
-    if (eng.entityWalkH(m, Math.floor(kx), Math.floor(ky), bandOfZ(e.z)) !== null) { e.x = kx; e.y = ky }
     hit = true
     eng.bloodParticles(e.x, e.y)
     eng.provoked = true // v23：主动挑衅解除「Level 11 Effect」的被动状态
@@ -316,9 +368,8 @@ export function shootChocolate(eng: Engine) {
   }
   if (hitEnt) {
     const e = hitEnt
-    e.hp -= 1
+    if (!mpHurtEntity(eng, e, 1)) { e.hp -= 1; eng.killCheck(e) } // v59：联机实体伤害走房主结算
     e.stunT = Math.max(e.stunT, 0.1)
-    eng.killCheck(e)
     audio.hit()
     eng.msg(`巧克力子弹啪叽糊在${e.def.name}身上。（1 点伤害）`, 'system')
   }
@@ -378,12 +429,14 @@ export function squirt(eng: Engine) {
   if (hitEnt) {
     const e = hitEnt
     if (eng.squirtTank !== 'water') {
-      e.hp -= dmg
-      e.stunT = 0.4
       eng.provoked = true // v23：主动挑衅解除「Level 11 Effect」的被动状态
-      if (e.def.passive) { e.provoked = true; e.targetEnt = undefined; e.state = 'chase'; e.stateT = 0 } // 激怒无面灵（与近战受击一致）
-      if (e.def.type === 'corpserat' && e.provoked) eng.provokeRatPack(e) // v44：尸鼠群体激怒（与近战受击一致）
-      eng.killCheck(e)
+      if (!mpHurtEntity(eng, e, dmg)) { // v59：联机实体伤害走房主结算
+        e.hp -= dmg
+        if (e.def.passive) { e.provoked = true; e.targetEnt = undefined; e.state = 'chase'; e.stateT = 0 } // 激怒无面灵（与近战受击一致）
+        if (e.def.type === 'corpserat' && e.provoked) eng.provokeRatPack(e) // v44：尸鼠群体激怒（与近战受击一致）
+        eng.killCheck(e)
+      }
+      e.stunT = 0.4
       audio.hit()
       eng.msg(eng.squirtTank === 'liquidpain' ? `水线正中${e.def.name}——液态痛苦嘶嘶地腐蚀着它的表皮。` : eng.squirtTank === 'cashew' ? `水线正中${e.def.name}——苦涩的腰果水把它灼得发颤。` : `水线正中${e.def.name}，甜腻的杏仁水四溅。`, 'system')
     } else {
@@ -429,12 +482,11 @@ export function landProjectile(eng: Engine, pr: Projectile, x: number, y: number
         const d = Math.hypot(e.x - x, e.y - y)
         if (d > 3.2 || Math.abs(e.z - pr.floorZ) >= 1) continue
         if (e.def.type === 'jerry' && eng.indoctrination > 0) continue // v47：教化约束——投掷波及对鹉主无效
-        e.hp -= d < 2.2 ? 45 : 20
+        if (!mpHurtEntity(eng, e, d < 2.2 ? 45 : 20)) { e.hp -= d < 2.2 ? 45 : 20; eng.killCheck(e) } // v59：联机走房主结算
         e.stunT = Math.max(e.stunT, 0.6)
         eng.bloodParticles(e.x, e.y)
         if (e.def.type === 'jerry') eng.hurtJerryRep() // v47：伤害鹉主 → 信众哗然 -50
         n++
-        eng.killCheck(e)
       }
       eng.msg(n > 0 ? `汽油罐轰然炸开——火焰吞没了 ${n} 个实体。` : '汽油罐轰然炸开，火焰很快熄灭了。', n > 0 ? 'damage' : 'system')
       break
@@ -452,11 +504,10 @@ export function landProjectile(eng: Engine, pr: Projectile, x: number, y: number
         const d = Math.hypot(e.x - x, e.y - y)
         if (d > 2.8 || Math.abs(e.z - pr.floorZ) >= 1) continue
         if (e.def.type === 'jerry' && eng.indoctrination > 0) continue // v47：教化约束——投掷波及对鹉主无效
-        e.hp -= 20
+        if (!mpHurtEntity(eng, e, 20)) { e.hp -= 20; eng.killCheck(e) } // v59：联机走房主结算
         e.stunT = Math.max(e.stunT, 2.5)
         if (e.def.type === 'jerry') eng.hurtJerryRep() // v47：伤害鹉主 → 信众哗然 -50
         n++
-        eng.killCheck(e)
       }
       eng.msg(n > 0 ? `瓶装闪电炸开一团电火花——${n} 个实体被电得僵直。` : '瓶装闪电炸开一团电火花，什么也没电到。', n > 0 ? 'damage' : 'system')
       break

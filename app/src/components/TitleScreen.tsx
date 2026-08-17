@@ -16,6 +16,7 @@ interface Props {
   onHowTo: () => void
   onCodex: () => void
   onAvatar: () => void
+  onMultiplayer?: () => void // v58：联机模式（P2P 房间）
   devMode?: boolean // v54：开发者模式（HUD DevPanel 同一开关）——显示「设计模式」入口
   onDesign?: () => void
 }
@@ -49,7 +50,7 @@ function slotTime(t?: number): string {
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`
 }
 
-export default function TitleScreen({ slots, onNewGame, onContinueSlot, onDeleteSlot, onSettings, onHowTo, onCodex, onAvatar, devMode, onDesign }: Props) {
+export default function TitleScreen({ slots, onNewGame, onContinueSlot, onDeleteSlot, onSettings, onHowTo, onCodex, onAvatar, onMultiplayer, devMode, onDesign }: Props) {
   const [title, setTitle] = useState('后 室')
   const [entered, setEntered] = useState(false)
   const [view, setView] = useState<'main' | 'slots'>('main') // v54：main=主按钮 / slots=存档槽位页（「继续游戏」进入）
@@ -160,6 +161,7 @@ export default function TitleScreen({ slots, onNewGame, onContinueSlot, onDelete
       {btn('图鉴档案', onCodex, 260)}
       {btn('形象编辑', onAvatar, 300)}
       {btn('设置', onSettings, 340)}
+      {onMultiplayer && btn('联机模式', onMultiplayer, 380)}
       {btn('操作说明', onHowTo, 420)}
       {devMode && onDesign && btn('设计模式', onDesign, 500)}
     </>

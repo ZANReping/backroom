@@ -32,6 +32,17 @@ export function updateAmbient(eng: Engine, dt: number) {
   }
 }
 // ---------- 层级氛围事件（wiki 设定播报）----------
+/** v59 联机：房主是否与本端同层——同层时全局事件/停电生成由房主权威驱动，客人不本地掷骰 */
+function hostHere(eng: Engine): boolean {
+  const mp = eng.mpSession
+  return !!(mp?.started && !mp.isHost && mp.remotes.get('HOST')?.s.level === eng.player.level)
+}
+/** 房主广播全局事件（应用远端事件期间不再广播，防回环） */
+function bcast(eng: Engine, e: Parameters<NonNullable<Engine['mpSession']>['sendEvent']>[0]) {
+  const mp = eng.mpSession
+  if (mp?.started && mp.isHost && !eng.applyingNet) eng.emit({ kind: 'mpevent', mp: e })
+}
+
 export function rollAmbientEvent(eng: Engine) {
   const lvl = eng.player.level
   if (lvl === 6) {
@@ -44,7 +55,8 @@ export function rollAmbientEvent(eng: Engine) {
     return
   }
   // L1「闪烁」现象（Fandom：停电数分钟到数天，实体倾巢而出）——低频率随机发生
-  if (lvl === 1 && eng.blackoutT <= 0 && eng.blackoutWarnT <= 0 && !eng.dev.phenOff.has('flicker') && Math.random() < 0.12) {
+  // v59 联机：房主在同层时由房主统一掷骰并广播，客人跳过本地随机（两端同步停/来电）
+  if (lvl === 1 && eng.blackoutT <= 0 && eng.blackoutWarnT <= 0 && !eng.dev.phenOff.has('flicker') && !hostHere(eng) && Math.random() < 0.12) {
     eng.startBlackout(14 + Math.random() * 10)
     return
   }
@@ -61,11 +73,13 @@ export function startBlackout(eng: Engine, dur: number) {
   eng.blackoutPendingDur = dur
   eng.msg('灯光开始剧烈闪烁，电流声忽高忽低——', 'damage')
   audio.spark()
+  bcast(eng, { t: 'blackout', ph: 'warn', dur }) // v59：联机同步
 }
 
 export function applyBlackout(eng: Engine) {
   const m = eng.map
   if (!m) return
+  if (eng.blackoutT > 0 || m.inf?.blackout) return // v59：幂等守卫（联机下本地预警计时与房主 start 事件会先后到达）
   if (m.inf) {
     // 无限模式：stitch 会重建 m.lights，数组置换会被冲掉——改走 inf.blackout 标志
     // （stitch 据此剔除层级固有灯；维护通廊 keep 灯与玩家追加灯保留）
@@ -80,10 +94,13 @@ export function applyBlackout(eng: Engine) {
   audio.spark()
   // L1「闪烁」：笑魇在黑暗中倾巢而出（灯光恢复时消散）
   if (eng.player.level === 1) eng.spawnBlackoutSmilers()
+  bcast(eng, { t: 'blackout', ph: 'start' }) // v59：联机同步
 }
 
 // 停电专属：在玩家周围的黑暗瓦片生成 2~3 只笑魇（打标 blackoutSpawn，电力恢复即退散）
 export function spawnBlackoutSmilers(eng: Engine) {
+  // v59 联机：房主在同层时客人不本地生成——房主的个体会经实体快照同步过来（避免两端各刷一份）
+  if (hostHere(eng)) return
   const m = eng.map!, p = eng.player
   const n = 2 + Math.floor(Math.random() * 2)
   for (let i = 0; i < n; i++) {
@@ -101,6 +118,7 @@ export function spawnBlackoutSmilers(eng: Engine) {
 }
 
 export function endBlackout(eng: Engine) {
+  if (eng.blackoutT <= 0 && !eng.map?.inf?.blackout && !eng.blackoutBackup) return // v59：幂等守卫（未在停电则无操作）
   if (eng.map?.inf) {
     eng.map.inf.blackout = false
     restitch(eng.map) // 立即按 chunk 重建窗口数组，灯光恢复
@@ -120,6 +138,7 @@ export function endBlackout(eng: Engine) {
     }
   }
   eng.msg('电流声重新响起，灯光逐一恢复。', 'system')
+  bcast(eng, { t: 'blackout', ph: 'end' }) // v59：联机同步
 }
 // ---------- 视野 ----------
 export function computeVisibility(eng: Engine) {

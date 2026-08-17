@@ -32,7 +32,6 @@ export const L601: LevelDef = {
   ],
   items: [
     { type: 'endnote', w: 18 },
-    { type: 'oddbook', w: 12 },
   ],
   itemCount: [9, 13],
   structures: ['libshelf', 'endletters', 'homedoor', 'table', 'sconce', 'corpse', 'crate', 'locker'],
