@@ -35,7 +35,7 @@ _structures.ts 低模 + solid=true，进 structColliders 真实阻挡_
 | 代墙大型机器 | `machinewall` |  |  | L2 |
 | 发电机 | `generator` |  |  | L2、L3 |
 | 锅炉 | `boiler` |  |  | L2、L3、L5、据点101、据点102、据点106 |
-| 客房门 | `hoteldoor` | ✓ |  | L2、L4、L5、L9、L11 |
+| 客房门 | `hoteldoor` | ✓ |  | L2、L4、L5、L7、L9、L11 |
 | 配电柜 | `cabinet` | ✓ | ✓ | L2、L3、L4、L5 |
 | 主发电机 | `maingen` |  |  | L2 |
 | M.E.G. 补给箱 | `megcrate` | ✓ | ✓ | L2、L3、L4 |
@@ -120,9 +120,9 @@ _m.structures solid=false 结构 + renderer/decorations/props.ts 道具（prop:*
 
 | 名称 | id | 交互 | 容器 | 生成层级 |
 |---|---|---|---|---|
-| 吊线荧光灯 | `hanglight` |  |  | L0、L1、据点103 |
+| 吊线荧光灯 | `hanglight` |  |  | L0、L1、L7、据点103 |
 | 墙上插板 | `socket` |  |  | L0、L1、L2 |
-| 通风口 | `vent` |  |  | L0、L1、L2、L4、L5 |
+| 通风口 | `vent` |  |  | L0、L1、L2、L4、L5、L7 |
 | 涂鸦 | `graffiti` | ✓ |  | L0、L1、L2、L3、L4、L5、L6、L7、L8、L9、L10、L11、L601 |
 | 歪斜荧光灯 | `prop:l0_tiltlamp` |  |  | L0 |
 | 荧光灯阵列 | `lightgrid` |  |  | L0、L1、L5、L7 |
@@ -188,6 +188,7 @@ _m.structures solid=false 结构 + renderer/decorations/props.ts 道具（prop:*
 | 巨鱼骨架 | `fishbones` |  |  | L7 |
 | 散落骨头 | `prop:l7_bones` |  |  | L7 |
 | 深渊焦油岩堆 | `seatarpit` |  |  | L7 |
+| 系缆桩（尼龙绳锚点） | `ropeanchor` | ✓ |  | L7 |
 | 锈蚀金属碎片 | `prop:l7_rustscrap` |  |  | L7 |
 | 岩石小岛 | `rockisle` |  |  | L7 |
 | 第九之路路标 | `roadsign` | ✓ |  | L8 |

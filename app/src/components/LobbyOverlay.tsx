@@ -70,8 +70,8 @@ export default function LobbyOverlay({ onClose, onStart }: Props) {
       attach(s)
       setPhase('room')
       audio.uiTick()
-    } catch {
-      setError('加入失败：房间不存在或信令服务不可达')
+    } catch (e) {
+      setError(`加入失败：${(e as Error)?.message ?? '房间不存在或信令服务不可达'}`)
     } finally { setBusy(false) }
   }
 
