@@ -1,6 +1,6 @@
 // v53：实体 AI 步进（状态机/游荡/撞墙偏转/hunts 猎杀/provoked 激怒/群体激怒/圣所威慑/售货机活化）
 // + 感知判定（los/视线锥/噪音事件/光照）——自 engine.ts 拆分，逻辑逐语句搬运。
-import { caveCeilingAt, floorHeight, structBlocksCircle, tileAt, tileH, walkableAt, wallAt, solidStructAtFloor, bandOfZ, bandOfPlayerZ, stairServesBand, upAt, upWallAt, FLOOR_H, JUMP_REACH, UNDER_FLOOR, type GameMap } from '../world/mapgen'
+import { caveCeilingAt, floorHeight, structBlocksPoint, tileAt, tileH, walkableAt, wallAt, solidStructAtFloor, bandOfZ, bandOfPlayerZ, stairServesBand, upAt, upWallAt, FLOOR_H, JUMP_REACH, UNDER_FLOOR, type GameMap } from '../world/mapgen'
 import type { FloorBand } from '../core/types'
 import { canOccupy, PLAYER_RADIUS } from '../core/player'
 import { WALL_H } from '../renderer/shared'
@@ -734,7 +734,7 @@ export function wanderTarget(eng: Engine, e: Entity) {
       if (holy) continue
     }
     if (eng.entityWalkH(m, Math.floor(tx), Math.floor(ty), band, e.def.aquatic === true, e.def.flying === true) !== null
-      && !structBlocksCircle(m, tx, ty, .24, e.z, band)) {
+      && !structBlocksPoint(m, tx, ty, e.z, band)) {
       if (band === 0 && m.liquid[ti] === 1 && !e.def.aquatic) continue // 陆生实体不主动下水；水生实体可巡游
       e.targetX = tx; e.targetY = ty; e.stateT = 4; return
     }
@@ -914,7 +914,7 @@ export function stepEntity(eng: Engine, e: Entity, speed: number, dt: number): b
     if (nh === null) return false
     // tileAt 的旧语义会把结构声明的整格占地视为墙；运行时改为在实体真实位置
     // 查询模型派生体积，允许绕过桌腿、树冠与异形装饰周围的可见空隙。
-    if (structBlocksCircle(m, px, py, .24, e.z, band)) return false
+    if (structBlocksPoint(m, px, py, e.z, band)) return false
     if (e.def.flying) {
       // 飞行只要求横向仍在可用空间且洞顶净空足够；地面高差、浅水与深坑不再当台阶拦住。
       if (m.organicCave) {

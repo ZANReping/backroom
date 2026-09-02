@@ -1,7 +1,7 @@
 // Three.js 第一人称低多边形渲染器：主循环（静态几何/灯光池/实体动画编排，构建逻辑见同级模块）
 import * as THREE from 'three'
 import type { Engine } from '../engine'
-import { bandOfPlayerZ, caveCeilingAt, floorHeight, l7SeaHAt, setStructModelColliders, FLOOR_H, tallCeilH, type GameMap, type ModelColliderBox } from '../world/mapgen'
+import { bandOfPlayerZ, caveCeilingAt, enableRuntimeStructCollisionIndex, floorHeight, l7SeaHAt, setStructModelColliders, FLOOR_H, tallCeilH, type GameMap, type ModelColliderBox } from '../world/mapgen'
 import type { GroundItem, LevelDef, Structure, LightSource } from '../core/types'
 import { levelDefOf } from '../levels'
 import { WALL_H, SKY, col, box, glow, look, mulberry, type RenderOpts, type RenderResolutionMode } from './shared'
@@ -2259,6 +2259,9 @@ export class Renderer3D {
         if (ANIM_STRUCT(s)) this.animatedStructMeshes.set(s, mesh as THREE.Group)
       }
     }
+    // 有限层级生成至此已经结束，结构列表稳定；据点也可开始使用瓦片空间索引，
+    // 避免小地图视线/玩家碰撞每次扫描整座据点的全部结构。
+    enableRuntimeStructCollisionIndex(m)
 
     // ---- 灯具（自发光盒；室外=路灯杆）----
     // v46 灯具贴附规则（真多层，杜绝悬空灯/嵌楼板灯）：

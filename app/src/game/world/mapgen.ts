@@ -323,12 +323,23 @@ export function solidStructAtFloor(m: GameMap, x: number, y: number, floor: Floo
 
 // v55c（任务3 性能）：结构碰撞空间索引——仅无限层运行时启用（m.inf 存在：单窗千级结构 × 每帧
 // 数十次查询；rev 随窗口平移失效重建）。有限层生成期会反复增删结构（BFS 回填/修正），线性扫描保正确性。
-const structGridCache = new WeakMap<GameMap, { rev: number; modelRev: number; grid: Map<number, Structure[]> }>()
+const runtimeStructGridMaps = new WeakSet<GameMap>()
+const structGridCache = new WeakMap<GameMap, {
+  rev: number; modelRev: number; structures: Structure[]; count: number; grid: Map<number, Structure[]>
+}>()
+
+/** 地图渲染构建完成后启用结构空间索引；生成阶段继续使用实时线性扫描。 */
+export function enableRuntimeStructCollisionIndex(m: GameMap): void {
+  runtimeStructGridMaps.add(m)
+  structGridCache.delete(m)
+}
+
 function structGrid(m: GameMap): Map<number, Structure[]> | null {
-  if (!m.inf) return null
-  const rev = m.inf.rev
+  if (!m.inf && !runtimeStructGridMaps.has(m)) return null
+  const rev = m.inf?.rev ?? 0
   const hit = structGridCache.get(m)
-  if (hit && hit.rev === rev && hit.modelRev === modelColliderSpatialRev) return hit.grid
+  if (hit && hit.rev === rev && hit.modelRev === modelColliderSpatialRev
+    && hit.structures === m.structures && hit.count === m.structures.length) return hit.grid
   const grid = new Map<number, Structure[]>()
   for (const s of m.structures) {
     if (!s.solid) continue
@@ -342,7 +353,9 @@ function structGrid(m: GameMap): Map<number, Structure[]> | null {
         if (arr) arr.push(s); else grid.set(k, [s])
       }
   }
-  structGridCache.set(m, { rev, modelRev: modelColliderSpatialRev, grid })
+  structGridCache.set(m, {
+    rev, modelRev: modelColliderSpatialRev, structures: m.structures, count: m.structures.length, grid,
+  })
   return grid
 }
 const structsNear = (m: GameMap, x: number, y: number): readonly Structure[] => {
@@ -374,7 +387,13 @@ export interface ModelColliderBox {
   x0: number; y0: number; x1: number; y1: number
   bottom: number; top: number; stand: boolean
 }
-const modelColliderCache = new WeakMap<Structure, ModelColliderBox[]>()
+type ModelColliderEntry = {
+  local: ModelColliderBox[]
+  world: ColliderBox[] | null
+  x: number
+  y: number
+}
+const modelColliderCache = new WeakMap<Structure, ModelColliderEntry>()
 let modelColliderSpatialRev = 0
 const modelFootprint = (boxes: readonly ModelColliderBox[]) => ({
   x0: Math.min(...boxes.map((b) => b.x0)), y0: Math.min(...boxes.map((b) => b.y0)),
@@ -390,21 +409,27 @@ export function setStructModelColliders(s: Structure, boxes: readonly ModelColli
     if (old) { modelColliderCache.delete(s); modelColliderSpatialRev++ }
     return
   }
-  const prev = old?.length ? modelFootprint(old) : null
+  const prev = old?.local.length ? modelFootprint(old.local) : null
   const next = modelFootprint(clean)
-  modelColliderCache.set(s, clean.map((b) => ({ ...b })))
+  modelColliderCache.set(s, {
+    local: clean.map((b) => ({ ...b })), world: null, x: Number.NaN, y: Number.NaN,
+  })
   if (!prev || Math.abs(prev.x0 - next.x0) > .015 || Math.abs(prev.y0 - next.y0) > .015
     || Math.abs(prev.x1 - next.x1) > .015 || Math.abs(prev.y1 - next.y1) > .015) modelColliderSpatialRev++
 }
 
 const modelCollidersFor = (s: Structure): ColliderBox[] | null => {
-  const local = modelColliderCache.get(s)
-  if (!local?.length) return null
+  const entry = modelColliderCache.get(s)
+  if (!entry?.local.length) return null
+  if (entry.world && entry.x === s.x && entry.y === s.y) return entry.world
   const cx = s.x + s.w / 2, cy = s.y + s.h / 2
-  return local.map((b) => ({
+  entry.world = entry.local.map((b) => ({
     x0: cx + b.x0, y0: cy + b.y0, x1: cx + b.x1, y1: cy + b.y1,
     ...(b.bottom > .08 ? { bottom: b.bottom } : {}), top: b.top, stand: b.stand,
   }))
+  entry.x = s.x
+  entry.y = s.y
+  return entry.world
 }
 
 // 按类型定义精确碰撞（与 renderer/structures.ts 的低模外观尺寸逐一核对）：

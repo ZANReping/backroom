@@ -243,6 +243,12 @@ export function endBlackout(eng: Engine) {
 // ---------- 视野 ----------
 export function computeVisibility(eng: Engine) {
   const m = eng.map!, p = eng.player
+  // 据点进入时已经解锁完整地图（level.ts 会把 explored 填满）。继续每帧向数百格
+  // 发射视线没有任何可见结果，却会重复触发数万次结构碰撞查询。
+  if (eng.levelDef.fullMap) {
+    eng.visible.fill(1)
+    return
+  }
   eng.visible.fill(0)
   const r = 8
   const px = Math.floor(p.x), py = Math.floor(p.y)

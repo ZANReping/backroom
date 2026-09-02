@@ -1,6 +1,6 @@
 // v53：NPC/对话/委托/声望（游荡步进、杰瑞教化、BRC 模仿/坦白、传教、EL3A 物流与补给）——
 // 自 engine.ts 拆分，逻辑逐语句搬运。
-import { bandOfPlayerZ, bandOfZ, floorHeight, structBlocksCircle, walkableAt } from '../world/mapgen'
+import { bandOfPlayerZ, bandOfZ, floorHeight, structBlocksPoint, walkableAt } from '../world/mapgen'
 import { NPCS, JERRY_PREACH_LINES, JERRY_CHANT_LINES } from '../content/npcs'
 import { OUTPOSTS } from '../content/outposts'
 import { FACTIONS, genQuest, genBntgQuest, genArianeQuest, genEl3aQuest, genJerryQuest, type QuestDef, type QuestFaction } from '../content/factions'
@@ -49,7 +49,7 @@ export function updateNpcs(eng: Engine, dt: number) {
       const nf = n.floor ?? 0
       const tx = Math.floor(nx), ty = Math.floor(ny)
       if (!walkableAt(m, tx, ty, nf)) return false
-      return !structBlocksCircle(m, nx, ny, .22, floorHeight(m, nx, ny, nf), nf)
+      return !structBlocksPoint(m, nx, ny, floorHeight(m, nx, ny, nf), nf)
     }
     // v39：死亡动画计时（尸体由渲染层倒地/下沉，计时归零后在循环尾移除）
     if (n.dead) { n.deathT = (n.deathT ?? 0) - dt; continue }
