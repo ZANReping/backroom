@@ -246,8 +246,6 @@ _renderer/decorations/decals.ts 贴墙/地面平面（decal:*），无几何体�
 | 油画（含金框边条） | `decal:l5_painting` |  |  | L5 |
 | 墙上划痕与手印 | `decal:l6_scratch` |  |  | L6 |
 | 海床地毯碎片 | `decal:l7_carpet` |  |  | L7 |
-| 风化旧路标贴画 | `decal:l8_roadsign` |  |  | L8 |
-| 岩壁风化痕 | `decal:l8_rockwear` |  |  | L8 |
 | 湿沥青水洼 | `decal:l9_puddle` |  |  | L9 |
 | 车辙 | `decal:l10_ruts` |  |  | L10 |
 | 街道标识 | `decal:l11_streetsign` |  |  | L11 |
@@ -255,5 +253,5 @@ _renderer/decorations/decals.ts 贴墙/地面平面（decal:*），无几何体�
 
 ## 统计
 
-- 条目总数 218：结构类 172 / 贴花 19 / 低模道具 27
+- 条目总数 216：结构类 172 / 贴花 17 / 低模道具 27
 - 可交互 43（其中容器 17）

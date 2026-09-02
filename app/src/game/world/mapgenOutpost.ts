@@ -27,6 +27,8 @@ export function genOutpost(m: GameMap, rng: RNG, def: LevelDef): { cx: number; c
   if (def.id === 110) return genHousekeepingPost(m, rng, def) // v55：M.E.G. 哨所「家政服务」（L5）
   if (def.id === 111) return genHomelyHotel(m, rng, def) // v55：家常酒店（L5）
   if (def.id === 112) return genOriginalsParlor(m, rng, def) // v55：原住民（L5）
+  if (def.id === 113) return genEmptyNestPost(m, rng, def) // Level 8：M.E.G.“空巢”前哨站
+  if (def.id === 114) return genHammozCommunity(m, rng, def) // Level 8：哈莫兹洞穴社群
   return genAlphaOutpost(m, rng, def)
 }
 
@@ -2343,6 +2345,129 @@ function genHousekeepingPost(m: GameMap, rng: RNG, def: LevelDef): { cx: number;
     { name: '补给间', x: X(35), y: X(11) },
     { name: '宿舍', x: X(9), y: X(11) },
     { name: '门房', x: X(9), y: X(20) },
+  ]
+  return [{ cx: X(21), cy: X(3) }]
+}
+
+// ---- M.E.G.“空巢”前哨站（id 113）：第九大道庇护厅 + 路线室 + 小宿营区 ----
+// 与大型基地不同，这里不做平整的办公盒子：少量隔断嵌在裸露岩层里，L8 材质别名负责让
+// 地面、墙和洞顶继续使用主层级的岩石纹理；岩块/石笋保留在房间边缘作为原生洞体。
+function genEmptyNestPost(m: GameMap, rng: RNG, def: LevelDef): { cx: number; cy: number }[] {
+  const { X, carve, room, S, L, NPC } = mkL5Helpers(m, rng, def)
+  carve(20, 1, 23, 5)
+  m.exits.push({ def: def.exits[0], x: X(21), y: X(1), discovered: true })
+  m.spawn = { x: X(21), y: X(3) }
+
+  // 中央庇护厅：登记、路线讲解和临时休息都集中在这一间，缩短前哨动线。
+  room(13, 6, 31, 16, [[21, 6], [13, 11], [31, 11], [22, 16]])
+  S('frontdesk', 16, 8, 2, 1, true, { cavepost: 1 })
+  S('noticeboard', 29, 7, 1, 1, false, { cavepost: 1 })
+  S('megposter', 14, 7, 1, 1, false)
+  S('table', 21, 11, 2, 1)
+  S('officechair', 20, 13, 1, 1, false, { color: '#4f554d' })
+  S('officechair', 23, 13, 1, 1, false, { color: '#4f554d' })
+  S('sofa', 27, 14, 1, 1, true, { deg: 270, color: '#55584e' })
+  S('caveboulder', 14, 15, 1, 1, true, { scale: 0.72, tex: 'vadose' })
+  S('stalagspike', 30, 15, 1, 1, true, { scale: 0.66, tex: 'vadose' })
+  NPC('nestwarden', 18, 11)
+  NPC('nestmedic', 27, 11)
+
+  // 西侧宿营洞：只有四张床位和防潮托盘，规模刻意小于普通据点宿舍。
+  room(4, 7, 11, 17, [[11, 11]])
+  S('bunkbed', 5, 8, 1, 2, true, { deg: 180, cavepost: 1 })
+  S('bunkbed', 8, 8, 1, 2, true, { deg: 180, cavepost: 1 })
+  S('pallet', 5, 15, 1, 1, false)
+  S('medcabinet', 10, 15, 1, 1, true, { cavepost: 1 })
+  S('caveboulder', 10, 8, 1, 1, true, { scale: 0.6, tex: 'vadose' })
+
+  // 东侧路线室：第九大道测绘板、绳具与简易维修台；哈莫兹联络员在这里轮值。
+  room(33, 7, 42, 17, [[33, 11]])
+  S('screenboard', 37, 8, 1, 1, false, { cavepost: 1 })
+  S('worktable', 35, 14, 2, 1, true, { vise: 1 })
+  S('binshelf', 40, 9, 1, 1, true)
+  S('foldladder', 41, 15, 1, 1, false, { deg: 90 })
+  S('stalagspike', 34, 16, 1, 1, true, { scale: 0.55, tex: 'vadose' })
+  NPC('hammozliaison', 37, 11)
+
+  // 南侧补给/净水角，不设置 loot 容器；一切物资由前哨人员管理。
+  room(15, 18, 29, 24, [[22, 18]])
+  S('binshelf', 16, 20); S('binshelf', 18, 20); S('binshelf', 20, 20)
+  S('worktable', 25, 20, 2, 1, true, { cavepost: 1 })
+  S('medcabinet', 28, 22, 1, 1, true, { cavepost: 1 })
+  S('caveboulder', 16, 23, 1, 1, true, { scale: 0.68, tex: 'phreatic' })
+
+  // 低功率便携灯：保持洞穴阴暗感，但关键工作区能看清路线图与伤口。
+  for (const [lx, ly, r] of [[21, 4, 4.2], [21, 10, 5.3], [8, 12, 4.2], [37, 12, 4.6], [22, 21, 4.3]] as const) {
+    S('hanglight', lx, ly, 1, 1, false, { cavepost: 1 })
+    L(lx, ly, r, '#d8bb78')
+  }
+  m.zones = [
+    { name: '第九大道入口', x: X(21), y: X(2) },
+    { name: '庇护与登记厅', x: X(22), y: X(11) },
+    { name: '临时宿营洞', x: X(8), y: X(12) },
+    { name: '第九大道路线室', x: X(37), y: X(12) },
+    { name: '补给与净水角', x: X(22), y: X(21) },
+  ]
+  return [{ cx: X(21), cy: X(3) }]
+}
+
+// ---- 哈莫兹洞穴社群（id 114）：向导厅 + 样本间 + Level 8 先进实验室 ----
+function genHammozCommunity(m: GameMap, rng: RNG, def: LevelDef): { cx: number; cy: number }[] {
+  const { X, carve, room, S, L, NPC } = mkL5Helpers(m, rng, def)
+  carve(20, 1, 23, 5)
+  m.exits.push({ def: def.exits[0], x: X(21), y: X(1), discovered: true })
+  m.spawn = { x: X(21), y: X(3) }
+
+  // 向导厅保留不规则岩角，维多利亚式考察桌与现代测绘设备并置。
+  room(12, 6, 31, 16, [[21, 6], [12, 11], [31, 11], [22, 16]])
+  S('frontdesk', 15, 8, 2, 1, true, { hammoz: 1 })
+  S('screenboard', 27, 7, 1, 1, false, { hammoz: 1 })
+  S('table', 20, 11, 3, 1, true, { hammoz: 1 })
+  for (const [x, y] of [[19, 13], [21, 13], [23, 13]] as const) S('officechair', x, y, 1, 1, false, { color: '#59645b' })
+  S('libshelf', 13, 14)
+  S('caveboulder', 30, 14, 1, 1, true, { scale: 0.78, tex: 'breakdown' })
+  S('stalagspike', 13, 7, 1, 1, true, { scale: 0.62, tex: 'vadose' })
+  NPC('reginaldhammoz', 17, 11)
+  NPC('hammozguide', 26, 12)
+
+  // 西侧小宿营洞兼绳具间。
+  room(4, 7, 10, 17, [[10, 11]])
+  S('bunkbed', 5, 8, 1, 2, true, { deg: 180, hammoz: 1 })
+  S('pallet', 8, 8); S('binshelf', 9, 14)
+  S('foldladder', 5, 15, 1, 1, false, { deg: 90 })
+  S('caveboulder', 9, 16, 1, 1, true, { scale: 0.58, tex: 'vadose' })
+
+  // 东侧样本预处理间，以物理隔断把潮湿洞体与精密实验区分开。
+  room(33, 7, 42, 17, [[33, 11]])
+  S('worktable', 34, 9, 2, 1, true, { vise: 1, hammoz: 1 })
+  S('medcabinet', 40, 9, 1, 1, true, { hammoz: 1 })
+  S('specimentank', 35, 14, 1, 1, true, { hammoz: 1 })
+  S('specimentank', 38, 14, 1, 1, true, { hammoz: 1 })
+  S('binshelf', 41, 15)
+  S('stalagspike', 34, 16, 1, 1, true, { scale: 0.5, tex: 'phreatic' })
+
+  // 南侧实验室占据全据点最大的单间，但总尺度仍显著小于 L1/大型基地。
+  room(13, 18, 32, 29, [[22, 18]])
+  S('labbench', 15, 20, 2, 1, true, { hammoz: 1, assay: 'gas' })
+  S('labbench', 15, 25, 2, 1, true, { hammoz: 1, assay: 'water' })
+  S('labbench', 23, 20, 2, 1, true, { hammoz: 1, assay: 'mineral' })
+  S('serverrack', 30, 20, 1, 1, true, { hammoz: 1 })
+  S('bigcomputer', 29, 25, 1, 1, true, { hammoz: 1 })
+  S('specimentank', 20, 27, 1, 1, true, { hammoz: 1 })
+  S('specimentank', 23, 27, 1, 1, true, { hammoz: 1 })
+  S('medcabinet', 31, 27, 1, 1, true, { hammoz: 1 })
+  NPC('hammozscientist', 21, 23)
+
+  for (const [lx, ly, r] of [[21, 4, 4.1], [21, 10, 5.1], [7, 12, 4], [37, 12, 4.2], [18, 23, 4.8], [27, 23, 4.8]] as const) {
+    S('hanglight', lx, ly, 1, 1, false, { hammoz: 1 })
+    L(lx, ly, r, '#bdc6a5')
+  }
+  m.zones = [
+    { name: '洞穴社群入口', x: X(21), y: X(2) },
+    { name: '向导与测绘厅', x: X(22), y: X(11) },
+    { name: '绳具宿营洞', x: X(7), y: X(12) },
+    { name: '样本预处理间', x: X(37), y: X(12) },
+    { name: 'Level 8 洞穴实验室', x: X(22), y: X(23) },
   ]
   return [{ cx: X(21), cy: X(3) }]
 }

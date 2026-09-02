@@ -153,24 +153,6 @@ export function oceanCarpetShreds(c: DecorCtx) {
   }
 }
 
-// ---- L8「Cave Systems」 ----
-// 岩壁风化痕（贴墙贴花）
-export function cavesRockWear(c: DecorCtx) {
-  const { ri, rf, ns, pickWall, wallDecal } = c
-  for (let i = 0; i < ri(10, 16); i++) {
-    const s = pickWall(); if (!s) break
-    wallDecal(s, texPeel(ns()), rf(0.5, 1.1), rf(0.5, 1.0), rf(0.8, 2.4), 0.7)
-  }
-}
-// 已经风化开裂的旧路标（熵效应：路标以极快的速度降解）
-export function cavesOldRoadsigns(c: DecorCtx) {
-  const { ri, rf, ns, pickWall, wallDecal } = c
-  for (let i = 0; i < ri(2, 4); i++) {
-    const s = pickWall(); if (!s) break
-    wallDecal(s, texSign(ns(), ['9TH RD', 'M.E.G.']), 0.55, 0.4, rf(1.4, 1.9), 0.6)
-  }
-}
-
 // ---- L9「The Suburbs」 ----
 // 湿沥青水洼（地面贴花）
 export function suburbPuddles(c: DecorCtx) {

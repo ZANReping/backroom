@@ -218,6 +218,41 @@ export class GameAudio {
     this.rainNodes = []
   }
 
+  // L8 巨臂林地高洞厅的局部风雨：节点只懒创建一次，进入/离开天气区块时平滑调节总增益。
+  // 低频带通噪声模拟洞穴穿堂风，高频噪声模拟雨幕；不复用 L4 常驻雨声，避免离开生态区后仍持续播放。
+  private caveWeatherGain: GainNode | null = null
+  setCaveWeather(vol: number) {
+    if (!this.ctx || !this.ambient) return
+    if (!this.caveWeatherGain) {
+      const bus = this.ctx.createGain(); bus.gain.value = 0; bus.connect(this.ambient)
+      const wind = this.noiseSrc()
+      const windFilter = this.ctx.createBiquadFilter(); windFilter.type = 'bandpass'; windFilter.frequency.value = 310; windFilter.Q.value = 0.45
+      const windGain = this.ctx.createGain(); windGain.gain.value = 0.92
+      wind.connect(windFilter).connect(windGain).connect(bus); wind.start()
+      const rain = this.noiseSrc()
+      const rainFilter = this.ctx.createBiquadFilter(); rainFilter.type = 'highpass'; rainFilter.frequency.value = 1550
+      const rainGain = this.ctx.createGain(); rainGain.gain.value = 0.32
+      rain.connect(rainFilter).connect(rainGain).connect(bus); rain.start()
+      this.caveWeatherGain = bus
+    }
+    this.caveWeatherGain.gain.setTargetAtTime(Math.max(0, Math.min(1, vol)) * 0.13, this.ctx.currentTime, 0.28)
+  }
+  stopCaveWeather() {
+    if (this.caveWeatherGain && this.ctx) this.caveWeatherGain.gain.setTargetAtTime(0, this.ctx.currentTime, 0.06)
+  }
+
+  caveThunder(strength = 1) {
+    if (!this.ctx || !this.ambient) return
+    const t = this.ctx.currentTime, k = Math.max(0.25, Math.min(1, strength))
+    const n = this.noiseSrc()
+    const lp = this.ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.setValueAtTime(420, t); lp.frequency.exponentialRampToValueAtTime(90, t + 1.7)
+    const ng = this.ctx.createGain(); ng.gain.setValueAtTime(0.0001, t); ng.gain.exponentialRampToValueAtTime(0.22 * k, t + 0.025); ng.gain.exponentialRampToValueAtTime(0.0001, t + 2.2)
+    n.connect(lp).connect(ng).connect(this.ambient); n.start(t); n.stop(t + 2.25)
+    const rumble = this.ctx.createOscillator(); rumble.type = 'sine'; rumble.frequency.setValueAtTime(48, t); rumble.frequency.exponentialRampToValueAtTime(31, t + 1.25)
+    const rg = this.ctx.createGain(); rg.gain.setValueAtTime(0.0001, t); rg.gain.exponentialRampToValueAtTime(0.12 * k, t + 0.04); rg.gain.exponentialRampToValueAtTime(0.0001, t + 1.65)
+    rumble.connect(rg).connect(this.ambient); rumble.start(t); rumble.stop(t + 1.7)
+  }
+
   // v51：配电箱电流嗡鸣（L3 定位音频惯例——无定位音频系统，引擎按距离逐帧 setElecHum(vol)）
   // vol 0=静默；节点链（100Hz 正弦 + 200Hz 谐波 + ~3kHz 带通电流噪）懒创建后常驻，只调音量
   setElecHum(vol: number) {

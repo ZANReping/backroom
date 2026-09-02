@@ -44,24 +44,24 @@ export const DEEP_ENTITIES: Record<string, EntityDef> = {
     aggroStinger: true,
   },
   thething: {
-    type: 'thething', name: '7 层之物', hp: 260, speed: 1.7, damage: 45, sight: 9, hearing: 8,
-    lightAverse: true, huge: 2.6, color: '#2e3a40', habitat: 'outdoor', aquatic: true, // L7 开放水域（午夜区/深渊上部）
-    desc: '巨大的鳗形实体，身躯长到一望无际。腐烂、厚实、皮革质感的皮肤布满伤疤；巨嘴与尖牙之后是成排的鳃与鳍——它的身体有些部分仿佛出了「故障」般扭曲闪烁。',
+    type: 'thething', name: '7 层之物', hp: 320, speed: 2.15, damage: 52, sight: 10, hearing: 12,
+    lightAverse: true, huge: 3.4, color: '#50534a', habitat: 'outdoor', aquatic: true, // L7 开放水域（午夜区/深渊上部）
+    desc: '一条尺寸无法完整测量的鳗形巨物。厚实的皮革状皮肤正在腐烂，盐渍、坏死洞与隆起旧疤遍布全身；血盆巨口后方排列着仍在呼吸的鳃裂、破损鳍膜与无法稳定成像的躯体。',
     codex: {
       no: 'The Thing On Level 7（Entity 20）', danger: '5 级（极端威胁）', habitat: 'Level 7 · Midnight Zone 与 Abyss 上部',
-      behavior: '栖息于午夜带以下。对光极度敏感——任何主动照明都等于在向它报到。它把庞大的头转向猎物需要可观的时间；击打它头部之后的体节虽几乎不伤它分毫，却能明显迟滞它的转头。张口的那一刻就是终结。',
-      counter: '关灯。这不是建议，是唯一的建议。绕到它身侧，朝头后的长躯下手拖慢它，再从它来不及转过的反方向游走。',
+      behavior: '栖息于午夜带以下，会从很远处循水中扰动靠近。强光直射会使它先收鳃、偏头退避；若仍不移开光束，刺激会越过阈值并触发暴怒。它把庞大的头转向猎物需要可观的时间，但一旦对准，速度与体型完全不相称。',
+      counter: '发现那点肮脏黄光时立刻关灯并停止划水。若已惊动它，绕到身侧攻击头后的长躯只能暂时拖慢转头；不要把“畏光”误解为可以一直拿手电压制。',
       lore: [
         'Wikidot 的记载只有两条：它杀光了这片海里的一切，以及它怕光。没有外观描述——这也是该条目被判定 outdated 的原因之一。',
         '外观参照 Fandom 的 Entity 20 条目与那张著名的蓝图标本照（「THE THING ON LEVEL 7. 1/99999 NATURAL SIZE.」）：鳗形巨躯、巨嘴尖牙、皮革质疤痕皮与众多鳃鳍；照片中它的部分身体呈现无法解释的扭曲，如同「出了故障」。',
-        '渔民式的传闻称，它的身体长到「没有尽头」——从未有人同时观测到它的头与尾。也有人说那只是雾。',
+        '首份目击把它估为约一千米长。游戏中的四十余米连续模型只代表能被水下短视距同时照见的前段；末端保持粗壮并没入雾中，从未有人同时观测到头与尾。',
       ],
       sighting: '「探照灯扫过去的那一秒，四百米开外的水整个鼓了起来。我们关了灯，然后再没有人说话。」',
     },
     aggroStinger: true,
   },
 
-  // ==================== Level 8「Cave Systems」 ====================
+  // ==================== Level 8「洞穴系统」 ====================
   wrangler: {
     type: 'wrangler', name: '牧蛇', hp: 200, speed: 2.2, damage: 40, sight: 8, hearing: 9,
     phases: true, huge: 1.9, color: '#4a3c34', habitat: 'any',
@@ -69,7 +69,7 @@ export const DEEP_ENTITIES: Record<string, EntityDef> = {
     codex: {
       no: 'Entity 75「Wrangler」', danger: '5 级（极端威胁）', habitat: 'Level 8 全境',
       behavior: '能钻穿岩石，或直接 no-clip 穿过表面进行捕猎——墙壁与岩层拦不住它。追击时靠震动而非视线。',
-      counter: '没有任何有效的正面手段。留在「第九之路」的稳定之岛之间，跟着 M.E.G. 路标走；离开标记路径就等于把自己交出去。',
+      counter: '没有任何有效的正面手段。留在「第九大道」的稳定通道内，跟着 M.E.G. 路标走；离开标记路径就等于把自己交出去。',
       lore: [
         '成体拥有类人的头部与白色发光的眼睛。雄性面部永远保持着一个宽阔的笑容；雌性面部则呈节肢动物状，下颚长出钳肢。',
         '「Level 8 事件」中的那一只长达七十英里，M.E.G. 与联合部队消耗了数百吨 pyroil 才把它焚毁。事件后的结构位移，反而让 Kavragost 废墟第一次变得可以进入。',
@@ -84,13 +84,13 @@ export const DEEP_ENTITIES: Record<string, EntityDef> = {
     blind: true, throws: true, hearsSprint: true, color: '#5c5a4a', habitat: 'any',
     desc: '失明，靠回声定位。四条手臂，其中一对专门用来抬起并投掷巨石。领地性极强。',
     codex: {
-      no: 'Entity 31「Camo Crawler」', danger: '4 级（高威胁）', habitat: 'Level 8 · Handyland 及周边洞系',
+      no: 'Entity 31「Camo Crawler」', danger: '4 级（高威胁）', habitat: 'Level 8 · 巨臂林地及周边洞系',
       behavior: '完全失明，用回声定位锁定目标；一旦锁定，会用四条手臂中的一对抬起巨石远距离投掷。对闯入领地的反应极其激烈。',
       counter: '它听不见「安静」。蹲行、避免奔跑、别在开阔洞厅里被它对上——石头的射程比你以为的远。',
       lore: [
         '本层特征性地黑暗，而且会主动削弱光：一支 100 流明的标准手电在这里只发出约 12 流明。对一个失明的猎手来说，这是主场。',
         '它的四条手臂分工明确：前一对负责移动与攀附，后一对专职投掷。M.E.G. 记录过一次超过三十米的命中。',
-        '与 Handyland 的 Smilers、Nguithr\'xhurs 共享领地，但彼此从不冲突——原因未知。',
+        '与巨臂林地的笑魇、努伊斯尔共享领地，但彼此从不冲突——原因未知。',
       ],
       sighting: '「它先是不动。你以为它没发现你。它是在听你还会不会再迈一步。」',
     },
@@ -98,18 +98,38 @@ export const DEEP_ENTITIES: Record<string, EntityDef> = {
   },
   lightguide: {
     type: 'lightguide', name: '微光向导', hp: 30, speed: 1.4, damage: 0, sight: 8, hearing: 6,
-    passive: true, friendly: true, color: '#66e0d0', habitat: 'any',
+    passive: true, friendly: true, flying: true, flightMin: 0.22, flightMax: 0.9, flightClimb: 1.15, flightHeadroom: 1.45,
+    color: '#66e0d0', habitat: 'any',
     desc: '生物发光的小生物，外观像一颗缀满宝石的星星，发出蓝绿色的辉光。它不靠近，也不远离——它在等你跟上来。',
     codex: {
-      no: 'Entity 35「Light Guides」', danger: '0 级（无害·友善）', habitat: 'Level 8 · Hyperspace Lane',
+      no: 'Entity 35「Light Guides」', danger: '0 级（无害·友善）', habitat: 'Level 8 · 多维之路',
       behavior: '会主动协助流浪者穿过某些通道。它们在淡水溪流底部用氙气玻璃珠筑巢——把玻璃珠扔出去，它们通常会过来。',
       counter: '不需要应对。真要说的话：不要抢它们的玻璃珠，也不要在它们带路时掉队。',
       lore: [
-        '后室中屈指可数的友善实体之一。栖息于 Hyperspace Lane——那是由 23 条狭窄通道构成的网络，通道内的发光细菌与真菌以杏仁水沉积物为食，提供着微弱的自然照明。',
+        '后室中屈指可数的友善实体之一。栖息于多维之路——那是由 23 条狭窄通道构成的网络，通道内的发光细菌与真菌以杏仁水沉积物为食，提供着微弱的自然照明。',
         '同一水系里还有无眼的鱼、虾和蝾螈。溪底能找到氙气玻璃珠，那是引路者的筑巢材料。',
         '没有人知道它们为什么帮忙。Harmouth 洞穴学会的说法是：「在这种地方，愿意等你的东西就值得跟着。」',
       ],
       sighting: '「洞顶飘着几点蓝绿色的光。它们没有靠近，也没有远离。我跟了三个小时，出来了。」',
+    },
+    aggroStinger: false,
+  },
+  curabitur: {
+    type: 'curabitur', name: '受眷鸟', hp: 42, speed: 3.8, damage: 12, sight: 8, hearing: 10,
+    passive: true, avoidsHumans: true, hunts: ['deathmoth'],
+    flying: true, flightMin: 0.52, flightMax: 1.18, flightClimb: 2.65, flightHeadroom: 1.95,
+    color: '#8a745c', habitat: 'any',
+    desc: '一只依靠浮力缓慢巡游、捕食时却会骤然加速的悬浮鸟类：萎缩的翅膀托着褐色躯体，背上巨大的半透明荧光囊使它比空气更轻，喙下垂着末端发光的黏性长舌。',
+    codex: {
+      no: 'Entity 37「Curabitur Birds」', danger: '1 级（通常无害）', habitat: 'Level 8 · 新莫维勒窟',
+      behavior: '长时间悬浮休眠，以舌尖微光诱引死亡飞蛾；锁定猎物后会以快于飞蛾的速度持续追逐，再用长而黏的舌头卷住吞食。它不会主动袭击人类，未捕食时会避开人类。',
+      counter: '给它留出退路，不要围堵或攻击。受眷鸟虽然行动迟缓，但被逼入死角时仍会用喙和爪反击。',
+      lore: [
+        '这种实体只会在具有足够开阔空间、并能持续提供死亡飞蛾的区域形成稳定种群。新莫维勒窟的巨型洞厅恰好同时满足两个条件。',
+        '背部巨囊充满会生物发光的胶状物质；它的密度低于空气，使几乎退化的翅膀仍足以调整悬浮方向。囊体看似柔软，但不要试图触碰。',
+        '垂在喙下的长舌具有很强黏性，末端的暖色微光会吸引飞蛾靠近。受眷鸟通常只捕食较小的死亡飞蛾，面对人类和大型实体则会退避。',
+      ],
+      sighting: '「那团绿色的光在洞顶停了两天。第三天，一只飞蛾扑过去，光下面忽然伸出了一条舌头。」——新莫维勒窟勘探记录。',
     },
     aggroStinger: false,
   },

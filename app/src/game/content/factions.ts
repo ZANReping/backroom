@@ -59,6 +59,11 @@ export const FACTIONS: Record<string, FactionDef> = {
     desc: '一群在各自时代「失踪」的人——飞行员、船长、名媛与工会领袖。他们在 Level 5 的居所里继续着 1937 年的生活，不接受新成员、也无人可加入（无声望——他们不与外界计分）。凭烫金邀请函方可拜访。',
     hasRep: false, color: '#8a6d3a',
   },
+  hammoz: {
+    id: 'hammoz', name: '哈莫兹洞穴社群', en: 'The Hammoz Caving Community',
+    desc: '由维多利亚时期英国岩洞学家瑞金纳·哈莫兹爵士三世建立并统领的小型洞穴探索团体。成员多为经验丰富的洞穴探索者，参与 Level 8 的测绘与第九大道铺设；其邻近“空巢”的基地拥有先进的洞穴科学实验室，并向友好据点派驻向导与研究人员。',
+    hasRep: false, color: '#64756a', sub: '#c3aa72',
+  },
 }
 
 /** MEG 对玩家的初始声望（默认友好） */

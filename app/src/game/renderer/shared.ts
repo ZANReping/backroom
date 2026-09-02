@@ -26,8 +26,11 @@ export type VisualInteractionHit = VisualInteractionHitBase & (
 
 // 视角共享状态（桌面 Pointer Lock / 移动端右半屏拖动写入）。visualHit 由真实 Three.js 相机射线逐帧写入，
 // 引擎只把它当成候选命中，仍会重新验证距离、楼层与三维 LOS。
-export const look: { yaw: number; pitch: number; locked: boolean; visualHit: VisualInteractionHit | null } = {
-  yaw: 0, pitch: 0, locked: false, visualHit: null,
+export const look: { yaw: number; pitch: number; locked: boolean; rayX: number; rayY: number; rayZ: number; visualHit: VisualInteractionHit | null } = {
+  yaw: 0, pitch: 0, locked: false,
+  // 相机中心射线的游戏世界分量（rayY 对应 Three.js Z，rayZ 是垂直轴）。
+  rayX: 0, rayY: -1, rayZ: 0,
+  visualHit: null,
 }
 
 // v23 新增：darkhall 极其狭窄的走廊 / ocean 高悬的混凝土天花板 / caves 洞穴净空 /
@@ -71,12 +74,44 @@ export function getReflectK(): number { return reflectK }
  */
 export function litMaterial(params: THREE.MeshLambertMaterialParameters & { roughness?: number; roughnessMap?: THREE.Texture; metalness?: number; envBase?: number }): THREE.MeshLambertMaterial | THREE.MeshStandardMaterial {
   const { roughness, roughnessMap, metalness, envBase, ...rest } = params
-  if (materialMode !== 'realistic') return new THREE.MeshLambertMaterial(rest)
-  const mat = new THREE.MeshStandardMaterial({ ...rest, roughness: roughness ?? 0.85, roughnessMap, metalness: metalness ?? 0 })
+  // 暗处保底自发光也必须经过颜色贴图。否则有 map 的材质在无直接光时只剩一层
+  // 均匀 emissive 颜色，开灯后才突然出现纹理，视觉上会像整套材质被瞬间替换。
+  // 这里仅自动补齐缺失的 emissiveMap；显式提供的专用发光图仍然优先。
+  const shaded = { ...rest }
+  if (shaded.map && shaded.emissive && !shaded.emissiveMap) shaded.emissiveMap = shaded.map
+  if (materialMode !== 'realistic') return new THREE.MeshLambertMaterial(shaded)
+  const mat = new THREE.MeshStandardMaterial({ ...shaded, roughness: roughness ?? 0.85, roughnessMap, metalness: metalness ?? 0 })
   const base = envBase ?? 0.18
   mat.envMapIntensity = base * reflectK
   mat.userData.envBase = base
   return mat
+}
+
+// 通用建筑玻璃。它不使用 emissive，也不以高 transmission 直接吞入整片天空亮度；
+// 因此夜景中的窗户仍有可辨认的冷色反射与高光，但不会变成均匀发白的“光门”。
+// 材质全局共享，街区内数百扇窗不会重复分配 shader/material。
+let architecturalGlass: THREE.MeshPhysicalMaterial | null = null
+export function architecturalGlassMaterial(): THREE.MeshPhysicalMaterial {
+  if (architecturalGlass) return architecturalGlass
+  const envBase = 0.32
+  architecturalGlass = new THREE.MeshPhysicalMaterial({
+    color: '#263942',
+    transparent: true,
+    opacity: 0.68,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+    roughness: 0.18,
+    metalness: 0.015,
+    transmission: 0,
+    ior: 1.46,
+    clearcoat: 0.72,
+    clearcoatRoughness: 0.16,
+    specularIntensity: 0.48,
+    envMapIntensity: envBase * reflectK,
+  })
+  architecturalGlass.userData.envBase = envBase
+  architecturalGlass.userData.sharedArchitecturalGlass = 1
+  return architecturalGlass
 }
 
 // 台阶/坡道楔形几何（封闭棱柱：顶面斜坡 + 四个侧面到底边，消除侧缝）
@@ -128,8 +163,8 @@ export function textureUrl(name: string): string {
   const base = ((import.meta.env?.BASE_URL as string | undefined) ?? '/').replace(/\/?$/, '/')
   return `${base}textures/${file}`
 }
-// v55：层级贴图别名——L5 三处据点（110/111/112）直接沿用主层级 L5 贴图（l5_wall/floor/ceil 等）
-export const LEVEL_TEX_ALIAS: Partial<Record<number, number>> = { 110: 5, 111: 5, 112: 5 }
+// 层级贴图别名：L5 三处据点沿用酒店材质；L8 两处洞穴前哨沿用岩层颜色/法线/粗糙度材质。
+export const LEVEL_TEX_ALIAS: Partial<Record<number, number>> = { 110: 5, 111: 5, 112: 5, 113: 8, 114: 8 }
 export const texLevelId = (id: number) => LEVEL_TEX_ALIAS[id] ?? id
 
 export function levelTexture(name: string, fallback: () => THREE.Texture): THREE.Texture {  const cached = texCache.get(name)
@@ -145,13 +180,22 @@ export function levelTexture(name: string, fallback: () => THREE.Texture): THREE
     new THREE.TextureLoader().load(
       url,
       (t) => {
-        // DataTexture 兜底成功换入浏览器图片时，必须同时退出 DataTexture 上传路径。
-        // Three.js 会对 isDataTexture 对象固定读取 image.data；若这里只替换 image，HTMLImageElement
-        // 没有 data 字段，WebGL 会静默上传一张全黑纹理（不会触发 TextureLoader/控制台错误）。
-        if ((ph as unknown as { isDataTexture?: boolean }).isDataTexture) {
-          (ph as unknown as { isDataTexture: boolean }).isDataTexture = false
+        // 兜底可能是 DataTexture/CanvasTexture。只改 image 会让旧纹理对象继续带着
+        // 原子类的上传标记，部分 WebGL 路径会按旧数据布局读取新图片，结果是“加载成功但纯黑”。
+        // 换入 TextureLoader 创建的完整 Source，并清除所有互斥的特殊纹理标记。
+        ph.source = t.source
+        const flags = ph as unknown as {
+          isDataTexture?: boolean
+          isCanvasTexture?: boolean
+          isCompressedTexture?: boolean
+          isVideoTexture?: boolean
+          isFramebufferTexture?: boolean
         }
-        ph.image = t.image
+        flags.isDataTexture = false
+        flags.isCanvasTexture = false
+        flags.isCompressedTexture = false
+        flags.isVideoTexture = false
+        flags.isFramebufferTexture = false
         ph.flipY = t.flipY
         ph.premultiplyAlpha = t.premultiplyAlpha
         ph.unpackAlignment = t.unpackAlignment
@@ -161,6 +205,7 @@ export function levelTexture(name: string, fallback: () => THREE.Texture): THREE
         ph.magFilter = THREE.LinearFilter
         ph.minFilter = THREE.LinearMipmapLinearFilter
         ph.generateMipmaps = true
+        ph.userData.loadedImage = 1
         ph.needsUpdate = true
       },
       undefined,

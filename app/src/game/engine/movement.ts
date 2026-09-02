@@ -8,6 +8,8 @@ import { audio } from '../core/audio'
 import { chunkKey, CS, applyRedPlague } from '../world/infinite'
 import { RemotePlayerViews } from '../renderer/remotePlayers' // v58：联机玩家碰撞查询
 import type { Engine } from '../engine'
+import { l8AvenuePortalContact } from '../world/infiniteL8'
+import { makeEntity } from '../entities'
 
 type DiffMult = { dmg: number; drain: number }
 
@@ -158,6 +160,21 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
       if (n) {
         eng.msg('背包里的 Pockets 在发烫。街区尽头，有什么东西同时转了过来。', 'damage')
         audio.aggro()
+      } else {
+        // 当前窗口没有邻里守望时也必须真正“引来”观察者/挺进者，而不是静默失效。
+        for (let a = 0; a < 48; a++) {
+          const ang = Math.random() * Math.PI * 2, r = 11 + Math.random() * 8
+          const tx = Math.floor(p.x + Math.cos(ang) * r), ty = Math.floor(p.y + Math.sin(ang) * r)
+          if (tx < 1 || ty < 1 || tx >= m.w - 1 || ty >= m.h - 1) continue
+          const ii = ty * m.w + tx
+          if (m.outdoor[ii] !== 1 || eng.entityWalkH(m, tx, ty, 0) === null) continue
+          const e = makeEntity(Math.random() < 0.52 ? 'watcher' : 'strider', tx + 0.5, ty + 0.5)
+          e.state = 'chase'; e.targetX = p.x; e.targetY = p.y; e.stateT = 0
+          m.entities.push(e)
+          eng.msg('背包里的 Pockets 突然发烫。一个属于“邻里守望”的轮廓出现在街角。', 'damage')
+          audio.aggro()
+          break
+        }
       }
     }
   }
@@ -429,6 +446,19 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   }
   // v29：可行走灰色阶梯——走下去/走上去自动换层（覆盖本帧重力贴地结果）
   eng.updateStairs(dt)
+  // L8 第九大道末端是可穿行的狭窄洞口：玩家身体碰到洞口平面即自动前往 L9，
+  // 不再需要对着一块隐形交互点按 E。判定沿大道末段切线展开，并与真实洞颈宽度一致。
+  if (eng.levelDef.id === 8 && m.inf && !eng.transition) {
+    const avenueExit = m.exits.find((e) => e.def.kind === 'ninthroad')
+    if (avenueExit) {
+      const wx = p.x + m.inf.ox, wy = p.y + m.inf.oy
+      if (l8AvenuePortalContact(m.inf.seed, wx, wy)) {
+        avenueExit.discovered = true
+        eng.takeExit(avenueExit.def)
+        return mag
+      }
+    }
+  }
   // L6 地表塌陷坑不致死：落到阈值后切入同一无限地图的地下 FloorBand。
   if (eng.levelDef.id === 6 && m.elev[tileI] === 4 && p.z < -3.6 && p.vz < -0.1 && !eng.dev.noclip) {
     if (eng.switchL6Floor(-1, 'pit')) return mag
@@ -438,7 +468,8 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   }
   // 普通层跌到 -4.5m 以下才死亡。L6 的合法地下层地面就在 -5m，不能套用这条规则；
   // L6 地表深坑已在上方完成“切到地下/失败才死亡”的完整分派。
-  if (!m.hasUnderground && !eng.ride && !eng.climb && p.z < -4.5 && !eng.dev.noclip && !(eng.levelDef.id === 7 && m.liquid[tileI] === 1)) { eng.die('坠入深坑', true); return null }
+  // 任何合法深水体都由游泳/溺水规则接管；不能把 L8 地下湖等深于 4.5m 的池底误判成虚空坠落。
+  if (!m.hasUnderground && !eng.ride && !eng.climb && p.z < -4.5 && !eng.dev.noclip && m.liquid[tileI] !== 1) { eng.die('坠入深坑', true); return null }
   // 离水判定（走出液体格）
   if (eng.inLiquid !== 0 && m.liquid[tileI] === 0) {
     eng.inLiquid = 0

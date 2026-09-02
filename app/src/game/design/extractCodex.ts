@@ -8,7 +8,7 @@
 // v54 起开放编辑——落地映射见 DESIGN-GUIDE §3 附表。
 import { ENTITIES } from '../entities'
 import { ITEMS } from '../content/items'
-import { LEVELS, levelDefOf, levelNo } from '../levels'
+import { ALL_LEVEL_DEFS, levelNo } from '../levels'
 import { PHENOMENA } from '../content/phenomena'
 import { FACTIONS } from '../content/factions'
 import { OUTPOSTS } from '../content/outposts'
@@ -68,13 +68,9 @@ export function extractCodex(): CodexEntry[] {
     })
   }
 
-  // ---- level：levels/ 全部（13 常规含 601 结局层 + 7 据点层级含 274）----
-  const OUTPOST_LEVEL_IDS = [101, 102, 103, 104, 105, 106, 274] // levels/index.ts 的 OUTPOST_LEVEL_DEFS
-  for (const def of LEVELS) out.push(levelEntry(def))
-  for (const id of OUTPOST_LEVEL_IDS) {
-    const def = levelDefOf(id)
-    if (def) out.push(levelEntry(def))
-  }
+  // ---- level：levels/ 全部（常规层 + 动态注册的所有据点层级）----
+  // 直接读取完整注册表，避免新增据点后还要维护一份容易漏项的硬编码 id 列表。
+  for (const def of ALL_LEVEL_DEFS) out.push(levelEntry(def))
 
   // ---- phenomenon：content/phenomena.ts（name / desc）----
   for (const def of Object.values(PHENOMENA))

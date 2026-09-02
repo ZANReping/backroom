@@ -74,6 +74,7 @@ export const ENTITY_INTEL: Record<string, string> = {
   wrangler: 'D', // 缠斗者
   camocrawler: 'D', // 迷彩爬行者
   lightguide: 'B', // 引路者（友善引路）
+  curabitur: 'D', // 受眷鸟（诱捕飞蛾、趋避大型生物）
   wretch: 'C', // 残破者
   watcher: 'B', // 邻里守望·观察者
   strider: 'D', // 高个
@@ -82,6 +83,7 @@ export const ENTITY_INTEL: Record<string, string> = {
   windowent: 'D', // 窗口实体
   arcwraith: 'D', // 电弧体
   dryshrimp: 'E', // 旱虾（是否有智能可言都存疑）
+  arachnid: 'E', // 蛛形纲：本能生态型
   vendingmachine: 'C-', vmad: 'C-', // 人制品售货机
   nguithr: 'C', // Nguithr'xurh（精巧织网布陷阱）
   malady: 'E', // 疫疾（细菌本能传播，无智能可言）
@@ -237,7 +239,7 @@ export const CECS_HAZARD = new Set(['RAD', 'NRO', 'TXC', 'PYR'])
 export const ENTITY_CECS_CLASS: Record<string, string> = {
   hound: 'Anthropoid', deathmoth: 'Zoophoid', corpserat: 'Zoophoid', pipeworm: 'Zoophoid',
   soilworm: 'Zoophoid', tiny: 'Zoophoid', camocrawler: 'Zoophoid', ferren: 'Zoophoid', jerry: 'Zoophoid',
-  dryshrimp: 'Zoophoid',
+  dryshrimp: 'Zoophoid', arachnid: 'Zoophoid', curabitur: 'Zoophoid',
   faceling: 'Anthropoid', duller: 'Anthropoid', skinstealer: 'Anthropoid', bellhop: 'Anthropoid',
   mimicry: 'Anthropoid', seated: 'Anthropoid', wretch: 'Anthropoid', strider: 'Anthropoid',
   mangled: 'Anthropoid', partygoer: 'Anthropoid', wrangler: 'Anthropoid',
@@ -254,10 +256,10 @@ export const ENTITY_CECS_CLASS: Record<string, string> = {
 export const ENTITY_CECS: Record<string, string[]> = {
   faceling: ['BNV'], smiler: ['AGR'], hound: ['AGR'], deathmoth: ['AGR', 'HVM'], corpserat: ['NCR', 'AGR'],
   clump: ['AGR'], carrier: ['AGR'], pipeworm: ['AGR'], soilworm: ['AGR'], arms: ['AGR'],
-  ferren: ['BNV'], jerry: ['PSY', 'DMN'], dryshrimp: ['BNV'], duller: ['AGR'], skinstealer: ['AGR'],
+  ferren: ['BNV'], jerry: ['PSY', 'DMN'], dryshrimp: ['BNV'], arachnid: ['AGR'], duller: ['AGR'], skinstealer: ['AGR'],
   copierwraith: ['AGR'], seated: ['BNV'], bellhop: ['AGR'],
   mirrorself: ['AGR', 'RLA'], mimicry: ['AGR', 'PSY'], tiny: ['AGR'], thething: ['AGR'],
-  wrangler: ['AGR', 'RLA'], camocrawler: ['AGR'], lightguide: ['BNV'], wretch: ['AGR'],
+  wrangler: ['AGR', 'RLA'], camocrawler: ['AGR'], lightguide: ['BNV'], curabitur: ['BNV'], wretch: ['AGR'],
   watcher: ['AGR'], strider: ['AGR'], mangled: ['AGR'], partygoer: ['AGR', 'VRL-A'],
   windowent: ['AGR'], arcwraith: ['AGR'],
   vendingmachine: ['NCR', 'MCH', 'NRO'], vmad: ['NCR', 'MCH', 'NRO'],

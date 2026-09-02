@@ -14,6 +14,7 @@ import { audio } from './core/audio'
 import { ROCK_SONG_IDS, musicName, setRadioCfg } from './core/midi'
 import { seedString } from './core/rng'
 import { type NpcState, type NpcDef } from './content/npcs'
+import type { ItemUseAnim } from './content/items'
 import { OUTPOSTS } from './content/outposts'
 import { REP_START, type QuestDef, type QuestFaction } from './content/factions'
 import { DIFF, type Difficulty } from './engine/shared'
@@ -97,6 +98,14 @@ export interface PlayerState {
   flashJamT: number // 手电被电弧体瘫痪
 }
 
+/** L8 第九大道的已揭示地图标记；坐标始终使用无限层世界坐标。 */
+export interface AvenueMapMark {
+  seq: number
+  wx: number
+  wy: number
+  kind: 'sign' | 'exit'
+}
+
 export interface InputState {
   mx: number; my: number // 移动向量（-1..1）
   sprint: boolean
@@ -127,6 +136,8 @@ export class Engine {
   // F1 全沉浸（hudHidden+handsHidden）/ F2 半沉浸（仅 hudHidden，保留手部建模与准星）；
   // 按当前生效的键恢复，按另一个键直接切换到另一种模式（互不叠加）。
   handsHidden = false
+  // 主手检视只驱动第一人称模型姿态，不参与移动、攻击、交互或物品使用判定。
+  inspectHeld = false
   // v29a：存档/读档状态
   mapSeed = 0 // 当前层级地图生成种子（loadLevel 记录，读档恢复同一张图用）
   mapFirstVisit = true // 当前地图生成时的 firstVisit 标记
@@ -170,14 +181,16 @@ export class Engine {
   // v12：interactTarget 携带目标引用（结构/物品/出口），HUD 提示与 doInteract 执行
   // 共用 scanInteract 的同一选择结果，杜绝「提示普通门却触发相邻上锁门」的目标漂移。
   interactTarget: { kind: string; label: string; s?: Structure; it?: GameMap['items'][number]; e?: GameMap['exits'][number]; npc?: NpcState; ent?: Entity; vmBack?: boolean } | null = null
-  // 开发者模式（v8 扩展：statLock=每帧锁满状态，oneHit=一击必杀，invisible=实体不追击，frozenAI=冻结实体）
-  dev = { god: false, noclip: false, speed: false, statLock: true, oneHit: false, invisible: false, frozenAI: false, bright: false, phenOn: new Set<string>(), phenOff: new Set<string>(), hintDist: 30 }
+  // 开发者模式（noAttackCooldown=true 时仅绕过攻击间隔；体力消耗仍保留，便于单独调试战斗节奏）
+  dev = { god: false, noclip: false, speed: false, statLock: true, oneHit: false, invisible: false, frozenAI: false, bright: false, noAttackCooldown: false, phenOn: new Set<string>(), phenOff: new Set<string>(), hintDist: 30 }
   // 地图就地修改版本号（开发者强制生成固定结构时 +1；渲染层据此重建有限层静态几何）
   mapRev = 0
   // 开场爬起动画计时（>0 时锁定移动/攻击/跳跃，渲染层相机从贴地侧躺缓慢起身）
   introT = 0
   // 容器搜索（按住交互 → 进度 → 战利品面板）
   searching: { sid: number; t: number; dur: number; label: string } | null = null
+  // 消耗品使用：动作完成前不结算效果/扣除物品；槽位内容变化会安全取消。
+  usingItem: { where: SlotWhere; i: number; type: string; tag?: number; t: number; dur: number; anim: ItemUseAnim; label: string; targetJerry?: boolean } | null = null
   lootPanel: { sid: number; label: string; items: string[] } | null = null
   statusMsgT = { hunger: 0, thirst: 0, battery: 0, stamina: 0 }
   redAnnounced = new Set<string>() // 本层已播报预警的红室 chunk（chunkKey）
@@ -185,6 +198,11 @@ export class Engine {
   moveIt: MoveIntegrator = createIntegrator()
   // 攻击挥动动画计时（渲染层读取做手部挥砍/准心收缩）
   attackAnimT = 0
+  // 当前攻击动画的完整时长；动画与攻击间隔共用同一节奏。
+  attackAnimDur = 0.35
+  // 玩家攻击间隔及本次间隔总长（冷却条以二者的比值显示）。
+  attackCooldownT = 0
+  attackCooldownDur = 0
   // 攻击动画种类（渲染层据此切换动作）：punch=空手出拳 swing=武器挥舞 throw=投掷
   attackAnimKind: 'punch' | 'swing' | 'throw' | 'spray' | 'drink' = 'punch'
   // 飞行中的投掷物（订书机/汽油罐等；落地触发效果，见 landProjectile）
@@ -192,6 +210,10 @@ export class Engine {
   projId = 1
   // 层级氛围事件（wiki 设定播报）计时
   ambientT = 14
+  // L9 罕见浓雾事件：renderer 读取 l9FogK 平滑压缩视距；阶段推进与残缺者生成在 ambient.ts。
+  l9FogPhase: 'idle' | 'warning' | 'active' | 'fade' = 'idle'
+  l9FogT = 240
+  l9FogK = 0
   // L1 停电事件：剩余时间 + 被移除光源的备份
   blackoutT = 0
   // v31：「闪烁」预警期（完全停电前灯光快速闪烁的秒数；渲染层据此做灯光快闪）
@@ -207,6 +229,8 @@ export class Engine {
   // （内存标记，不入存档；仅 L5 消费——L4 的古典楼梯落点维持默认出生点不变）
   arriveOldstairs = false
   arriveL6Band: FloorBand | null = null // L5 黑门=-1；L4/Omega 活板门=0
+  arriveL9From: number | null = null // L5=住宅门口；L7=后院泳池；L8=道路尽头石洞
+  arriveL8AvenueEnd = false // 从 L9 石洞返回 L8 第九大道最终洞口
   // v29：返程「向上的灰色阶梯」（世界坐标固定；窗口平移 stitch 后重新注入）
   bonusExit: { def: ExitDef; wx: number; wy: number } | null = null
   // v29：本局已到过的层级（初始物资仅首次进 L0 刷新）
@@ -261,6 +285,8 @@ export class Engine {
   // ===== v32：新物品机制状态 =====
   axeDur = 0 // 斧头耐久（获得时重置为 5；破门 -1，耗尽报废）
   squirtTank: 'none' | 'water' | 'almond' | 'cashew' | 'liquidpain' = 'none' // 滋水枪储罐液体（单一种类）
+  // R 短按快速装填使用的液体；长按轮盘选中液体后更新。清水无需背包物品，因此作为初始回退。
+  squirtQuickLiquid: 'water' | 'almond' | 'cashew' | 'liquidpain' = 'water'
   // v51：Object 5 糖果效果计时器
   candyAddictT = 0 // 糖瘾：吃糖后 60s 内需再吃，否则理智 -10
   silverTongueT = 0 // 银舌头：交易 95 折（秒）
@@ -352,6 +378,9 @@ export class Engine {
 
   // 粉笔头画在墙上的记号（level + 世界坐标 + 墙面朝向；换层重新生成地图时清空）
   wallMarks: { level: number; wx: number; wy: number; dir: number }[] = []
+  // 第九大道：历史标记全部保留，但 HUD 方向提示只跟随 avenueHintSeq 指向的最新一枚。
+  avenueMarks: AvenueMapMark[] = []
+  avenueHintSeq: number | null = null
 
   /** 订阅引擎事件；返回取消订阅函数（调用方必须在卸载时取消，否则监听器累积会导致播报重复） */
   on(fn: (e: HudEvent) => void): () => void {
@@ -371,11 +400,27 @@ export class Engine {
     this.saveSlot = slot
     this.player = this.freshPlayer()
     this.over = false; this.victory = false; this.transition = null
+    this.usingItem = null
+    this.attackAnimT = 0
+    this.attackAnimDur = 0.35
+    this.attackCooldownT = 0
+    this.attackCooldownDur = 0
+    this.inspectHeld = false
+    this.squirtTank = 'none'
+    this.squirtAmmo = 0
+    this.squirtQuickLiquid = 'water'
     this.unstuckCheck = null
     this.idleSaved = false
     this.autosaveT = 0
     this.time = 0
     this.msgLog = [] // 新一局清空播报历史
+    this.avenueMarks = []
+    this.avenueHintSeq = null
+    this.arriveL9From = null
+    this.arriveL8AvenueEnd = false
+    this.l9FogPhase = 'idle'
+    this.l9FogT = 240
+    this.l9FogK = 0
     this.visitedLevels.clear() // 新一局重置到层记录（初始物资首访刷新用）
     this.outpostReturn = null // 新一局清空据点返程记录（读档时由快照恢复）
     this.knownNpcs = [] // 新一局清空随机 NPC 记录（静态 NPC 由注册表恒定提供）
@@ -425,6 +470,17 @@ export class Engine {
       }
       this.player.level = snap.level
       const placement = level.restoreSavedPlayerPosition(this, snap.worldPos)
+      if (snap.level === 8 && Array.isArray(snap.avenueMarks) && snap.avenueMarks.length > 0) {
+        const restored = snap.avenueMarks.filter((mk) =>
+          Number.isFinite(mk.seq) && Number.isFinite(mk.wx) && Number.isFinite(mk.wy)
+          && (mk.kind === 'sign' || mk.kind === 'exit'))
+        if (restored.length > 0) {
+          this.avenueMarks = restored.map((mk) => ({ ...mk }))
+          // 旧版可能因后来交互了低序号路标而把提示目标倒退。
+          // 恢复时以已记录的最大序号为准，自动修正这类存档。
+          this.avenueHintSeq = restored.reduce((max, mk) => Math.max(max, mk.seq), -1)
+        }
+      }
       // v55：感染阶段从存档感染值推导（升阶遭遇计数的基准）
       this.infectionStage = Math.min(4, Math.floor((this.player.infection ?? 0) / 100))
       // aliveTime 由 (Date.now()-startTime) 推导：平移 startTime 保持存活时长连续
@@ -457,6 +513,25 @@ export class Engine {
   nearestExit() { return level.nearestExit(this) }
   /** v35：最近的定居点地标（出口提示的替代目标——附近无出口时指向它） */
   nearestLandmark() { return level.nearestLandmark(this) }
+  /** 将一枚第九大道地标记入地图；路线进度只前进，后补的低序号标记不会抢走 HUD 目标。 */
+  markAvenueLandmark(seq: number, wx: number, wy: number, kind: AvenueMapMark['kind'] = 'sign') {
+    if (this.player.level !== 8 || !Number.isFinite(seq) || !Number.isFinite(wx) || !Number.isFinite(wy)) return
+    const mark: AvenueMapMark = { seq: Math.max(0, Math.floor(seq)), wx, wy, kind }
+    const old = this.avenueMarks.findIndex((mk) => mk.seq === mark.seq)
+    if (old >= 0) this.avenueMarks[old] = mark
+    else this.avenueMarks.push(mark)
+    this.avenueMarks.sort((a, b) => a.seq - b.seq)
+    if (this.avenueHintSeq === null || mark.seq > this.avenueHintSeq) this.avenueHintSeq = mark.seq
+  }
+  /** 无限窗口内的当前第九大道提示目标；旧标记不参与方向选择。 */
+  avenueHintTarget(): { x: number; y: number; d: number; mark: AvenueMapMark } | null {
+    const m = this.map
+    if (this.player.level !== 8 || !m?.inf || this.avenueHintSeq === null) return null
+    const mark = this.avenueMarks.find((mk) => mk.seq === this.avenueHintSeq)
+    if (!mark) return null
+    const x = mark.wx - m.inf.ox, y = mark.wy - m.inf.oy
+    return { x, y, d: Math.hypot(x - this.player.x, y - this.player.y), mark }
+  }
   /** v57o：游泳信息（HUD 水深/氧气显示；仅在深水中非 null） */
   swimInfo() {
     const p = this.player, m = this.map
@@ -466,6 +541,7 @@ export class Engine {
     return { depth, breath: this.breathT, limit: movement.breathLimit(this), submerged: this.submerged }
   }
   takeExit(def: ExitDef) { level.takeExit(this, def) }
+  tinyBlocksLittleDoor(exit?: GameMap['exits'][number]): boolean { return level.tinyBlocksLittleDoor(this, exit) }
   updateStairs(dt: number) { level.updateStairs(this, dt) }
   switchL6Floor(target: -1 | 0, reason: 'stairs' | 'pit' = 'stairs') { return level.switchL6Floor(this, target, reason) }
   placeBonusStairs() { level.placeBonusStairs(this) }
@@ -493,7 +569,7 @@ export class Engine {
   provokeRatPack(e: Entity) { entityAI.provokeRatPack(this, e) }
   updateNguithr(e: Entity, d: number, dt: number) { entityAI.updateNguithr(this, e, d, dt) }
   faceToward(e: Entity, tx: number, ty: number, dt: number, rate: number) { entityAI.faceToward(this, e, tx, ty, dt, rate) }
-  entityWalkH(m: GameMap, tx: number, ty: number, band: FloorBand, aquatic = false): number | null { return entityAI.entityWalkH(this, m, tx, ty, band, aquatic) }
+  entityWalkH(m: GameMap, tx: number, ty: number, band: FloorBand, aquatic = false, flying = false): number | null { return entityAI.entityWalkH(this, m, tx, ty, band, aquatic, flying) }
   stepEntity(e: Entity, speed: number, dt: number): boolean { return entityAI.stepEntity(this, e, speed, dt) }
   meleeZOk(e: Entity): boolean { return entityAI.meleeZOk(this, e) }
 
@@ -531,9 +607,9 @@ export class Engine {
   viewAngle(x: number, y: number): number { return interact.viewAngle(this, x, y) }
   interactionProbe(
     x: number, y: number, z: number, band: FloorBand, maxDistance: number, radius = 0.25,
-    volume?: interact.InteractionVolume,
+    volume?: interact.InteractionVolume, surfaceDistance?: number, verticalRadius = radius,
   ) {
-    return interact.interactionProbe(this, x, y, z, band, maxDistance, radius, volume)
+    return interact.interactionProbe(this, x, y, z, band, maxDistance, radius, volume, undefined, surfaceDistance, verticalRadius)
   }
   scanInteract() { interact.scanInteract(this) }
   doInteract() { interact.doInteract(this) }
@@ -584,7 +660,8 @@ export class Engine {
   hasItem(type: string): boolean { return inventory.hasItem(this, type) }
   countItem(type: string): number { return inventory.countItem(this, type) }
   consumeItem(type: string): boolean { return inventory.consumeItem(this, type) }
-  useSlot(where: SlotWhere, i: number) { inventory.useSlot(this, where, i) }
+  useSlot(where: SlotWhere, i: number): boolean { return inventory.useSlot(this, where, i) }
+  updateItemUse(dt: number) { inventory.updateItemUse(this, dt) }
   drawChalk() { inventory.drawChalk(this) }
   quickUse() { inventory.quickUse(this) }
   quickDrop() { inventory.quickDrop(this) }
@@ -673,9 +750,9 @@ export class Engine {
     this.updateVendingMachines()
     // v51：人制品效应计时（5 分钟）+ Nguithr'xurh 镇静剂麻痹计时（EFFECTS 注册表 post 组）
     runEffectTicks(this, dt, 'post')
-    // v51：玩家朝向每帧跟随视角——此前仅在移动时按移动方向赋值，
-    // 原地转身后攻击判定锥/投掷物/滋水枪水线仍朝旧方向（与 renderer3d 视线前向一致）
-    p.facing = Math.atan2(-Math.sin(look.yaw), -Math.cos(look.yaw))
+    // Three.js 相机前方在游戏平面中为 (-sin(yaw), -cos(yaw))；atan2 的参数必须是 (dy, dx)。
+    // 旧实现交换了二者，使逻辑朝向相对画面准星恒偏约 90°。
+    p.facing = Math.atan2(-Math.cos(look.yaw), -Math.sin(look.yaw))
 
     // 过渡动画中
     if (this.transition) {
@@ -687,7 +764,7 @@ export class Engine {
           this.victory = true; this.over = true
           save.clearRunSlots(this) // v29a/v54：通关后本局进度的存档槽失效（绑定槽 + 自动槽）
           this.emit({ kind: 'victory' })
-          audio.stopHum(); audio.stopBGM(); audio.stopRain(); audio.setHeartbeat(false, 0) // v54：雨声随通关停止
+          audio.stopHum(); audio.stopBGM(); audio.stopRain(); audio.stopCaveWeather(); audio.setHeartbeat(false, 0) // v54：雨声随通关停止
         } else {
           const dest = t.dest === 'random' ? Math.floor(Math.random() * NORMAL_LEVELS) : t.dest
           if (t.fallDamage) {
@@ -701,6 +778,8 @@ export class Engine {
       }
       return
     }
+
+    this.updateItemUse(dt)
 
     p.aliveTime = (Date.now() - p.startTime) / 1000
 
@@ -720,9 +799,10 @@ export class Engine {
 
     // ---- 攻击 ----
     if (this.attackAnimT > 0) this.attackAnimT -= dt
+    if (this.attackCooldownT > 0) this.attackCooldownT = Math.max(0, this.attackCooldownT - dt)
     if (this.input.attack) {
       this.input.attack = false
-      if (!introLock) this.attack()
+      if (!introLock && !this.usingItem) this.attack()
     }
     this.updateProjectiles(dt)
     if (this.input.toggleLight) {
@@ -781,7 +861,7 @@ export class Engine {
   devJump(id: number) { dev.devJump(this, id) }
   devJumpOutpost(outpostId: string): boolean { return dev.devJumpOutpost(this, outpostId) }
   devForward(): { fx: number; fy: number } { return dev.devForward(this) }
-  devFindSpot(cx: number, cy: number, maxR = 6): { x: number; y: number } | null { return dev.devFindSpot(this, cx, cy, maxR) }
+  devFindSpot(cx: number, cy: number, maxR = 6, band: FloorBand = this.player.floor): { x: number; y: number } | null { return dev.devFindSpot(this, cx, cy, maxR, band) }
   /** 召唤实体：在玩家前方 dist 格（默认 3）生成指定类型实体 */
   devSpawnEntity(type: string, dist = 3): boolean { return dev.devSpawnEntity(this, type, dist) }
   /** 每种实体各召唤一只，环绕玩家排开 */

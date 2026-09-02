@@ -7,7 +7,7 @@ export const SPECIAL_ENTITIES: Record<string, EntityDef> = {
     type: 'smiler', name: '笑魇', hp: 40, speed: 2.4, damage: 22, sight: 7, hearing: 4, lightHunter: true, color: '#e8e8e0', habitat: 'any',
     desc: '黑暗中浮现的反光笑脸与齿列，身形近乎不可见。停电时倾巢而出。',
     codex: {
-      no: 'Entity 3「Smilers」', danger: '4 级（高威胁）', habitat: 'Level 1 停电区 / Level 2 / Level 3 的无光角落 · Level 8 Handyland',
+      no: 'Entity 3「Smilers」', danger: '4 级（高威胁）', habitat: 'Level 1 停电区 / Level 2 / Level 3 的无光角落 · Level 8 巨臂林地',
       behavior: '在层级灯光熄灭时生成。具有趋光性——会被你的手电光吸引并径直扑来；关掉手电，它便失去目标、不再靠近。灯光恢复的瞬间，它退回黑暗。Level 3 的笑魇不再受制于光照条件——在任何情况下都会主动发起攻击。',
       counter: '停电时关掉手电、摸黑绕行，它不会接近无光的目标；若已被盯上，照亮它并拉开距离，或熄灭光源趁其迷失时脱身。',
       lore: [
@@ -74,7 +74,7 @@ export const SPECIAL_ENTITIES: Record<string, EntityDef> = {
     type: 'nguithr', name: "Nguithr'xurh", hp: 30, speed: 1.2, damage: 8, sight: 4, hearing: 2, color: '#5a4a3a', habitat: 'indoor',
     desc: '天花板垂下的球状网囊。别从它正下方走过。',
     codex: {
-      no: 'Entity 16「Nguithr\'xurh」', danger: '3 级（中威胁）', habitat: 'Level 1 / Level 2 / Level 3 的天花板',
+      no: 'Entity 16「Nguithr\'xurh」', danger: '3 级（中威胁）', habitat: 'Level 1 / Level 2 / Level 3 的天花板 · Level 8 巨臂林地高洞厅',
       behavior: '在天花板上织出球状网囊并注入镇静剂。有猎物从正下方经过时切下一个球——球爆开后镇静剂生效，它便顺着丝降到猎物旁边开始进食。它很慢，也不爱追远。',
       counter: '留意天花板上的球状网囊并绕开走。若已被洒中：麻痹感退去前立刻离开那一格，它就不会下来；若它已经下来了，拉开距离——它不会追远。',
       lore: [

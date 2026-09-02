@@ -74,7 +74,7 @@ export interface LevelDef {
   fullMap?: boolean
   /** 官方生存难度分级（Survival Difficulty，wiki 卡片） */
   sd?: string
-  /** 光照系数：所有光源半径/强度倍率。L6=0（外带光源完全失效）、L8=0.12（100 流明只剩 12 流明） */
+  /** 光照系数：所有光源半径/强度倍率。L6=0（外带光源完全失效）；L8 保持正常照明。 */
   lightMul?: number
   /** 灯光柔和度：点光源强度倍率（<1 更柔和；配合更密的保底光源让照度更均匀）。L0=0.7 */
   lightSoft?: number
@@ -161,13 +161,25 @@ export type StructKind =
   | 'fishbones'    // 不可理解的巨鱼骨架（Midnight Zone）
   | 'seatarpit'    // 深渊焦油与岩石堆（持续冒泡）
   | 'ropeanchor'   // L7 入口房间门廊系缆桩：使用尼龙绳后 data.deployed=1，绳索自门廊出口垂至海面，可攀爬返回
-  // ===== v23：Level 8「Cave Systems」 =====
-  | 'stalagspike'  // 岩刺：各角度混乱突出、打结/锯齿/分叉
-  | 'handspike'    // Handyland 手形岩刺（带指纹）+ 血红色发光苔藓
-  | 'glowshroom'   // Rottnest Jungle 多彩生物发光蘑菇（可长到小树大小）
+  // ===== v23：Level 8「洞穴系统」 =====
+  | 'stalagspike'  // L8 钟乳石/石笋簇：真实洞底/洞顶锚定 + PBR 岩石 + 精细碰撞
+  | 'handspike'    // 巨臂林地手形岩刺（带指纹）+ 血红色发光苔藓
+  | 'bloodmoss'    // 巨臂林地地面/洞壁血红色生物发光苔藓（区块合批贴花）
+  | 'handweather'  // 巨臂林地高洞厅云雾、风雨、雷电与极光天气层
+  | 'glowshroom'   // 罗特尼斯大丛林多彩生物发光蘑菇（可长到小树大小）
   | 'tarhands'     // 焦油之手（95°C 焦油池，伸出覆满焦油的手臂拖人）
-  | 'roadsign'     // 第九之路路标（每 50 米一个，带 M.E.G. 标志）
+  | 'roadsign'     // 第九大道路标（每 50 米一个，带 M.E.G. 标志）
   | 'campstall'    // Hollow Nest / Harmouth 营地摊位（补给与向导）
+  | 'cavefloat'    // L8 断层室中不受重力影响的悬浮岩块
+  | 'caveboulder'  // L8 各生态带突兀裸岩/崩落巨石（真实岩石 PBR）
+  | 'cavebank'     // L8 固定地下湖侵蚀石岸/分层岩棚
+  | 'caveglowpoints' // L8 多维之路洞顶蓝色生物荧光点群（GPU 粒子自由漂移）
+  | 'cavebacteria' // L8 多维之路溪流中的微光细菌群
+  | 'cavefern'     // L8 罗特尼斯大丛林的小型蕨类
+  | 'cavemoss'     // L8 罗特尼斯大丛林的贴地苔藓斑
+  | 'fungalmat'    // L8 新莫维勒窟的化能合成菌毯
+  | 'l8dryentry'   // L8 来自 Level 6 的干燥坍塌入口
+  | 'l8poolentry'  // L8 来自 Level 7 的积水入口池
   // ===== v23：Level 9「The Suburbs」 =====
   | 'house'        // 郊区房屋（有家具、但没有电）
   | 'streetlamp'   // 路灯（多数熄灭，少数闪烁/常亮）
@@ -175,6 +187,15 @@ export type StructKind =
   | 'picketfence'  // 白色栅栏
   | 'clipfuse'     // 两栋"卡模"嵌套在一起的房子（空间异常地标）
   | 'playpipe'     // 游乐场管道结构（内部发白光）
+  | 'l9arrowsign'  // L9 第九大道中继箭头牌（交互提示下一块路牌）
+  | 'l9stair'      // L9 住宅二层楼梯（首阶段锁死，仅显示提示）
+  | 'l9fireplace' | 'l9coffeetable' | 'l9bookshelf' | 'l9floorlamp'
+  | 'l9toilet' | 'l9bathtub' | 'l9diningtable'
+  | 'l9poolfilter' | 'l9patiochair' | 'l9barbecue'
+  | 'l9swing' | 'l9slide' | 'l9powerpole' | 'l9fieldgate'
+  | 'l9leafpile' | 'l9trashbag' | 'l9tree' | 'l9shrub'
+  | 'l9watchsign' | 'l9directionsign'
+  | 'l9window' | 'l9tvconsole' | 'l9planter' | 'l9vegbed'
   // ===== v23：Level 10「Bumper Crop」 =====
   | 'wheatpatch'   // 小麦/大麦丛
   | 'hedgerow'     // 分隔地块的树篱（永远同一高度）
@@ -339,6 +360,10 @@ export interface LightSource {
   noFix?: 1 // v46：不渲染默认自发光灯具盒（实体灯具由结构模型提供——walllamp/立灯，杜绝悬空灯）
   gen?: number // v17：无限模式标记——1=chunk 生成器固有灯（窗口迁移不需另存）；缺省=玩家/事件追加
   keep?: 1 // v29：停电保留灯（L1 维护通廊：永远灯火通明，停电事件/熄灯 stitch 均不熄灭）
+  intensityMul?: number // 生物荧光等弱光源的强度倍率；缺省 1
+  natural?: 1 // 自然/生物自发光代理：参与低成本间接光，让凹凸与粗糙度在暗处仍有层次
+  occluded?: 1 // 必须被实体结构遮挡的局部灯（如 L9 路灯），即使经典光照也启用近距投影
+  outdoorOnly?: 1 // 只为室外估算间接回弹，玩家位于室内时不抬高全局环境光
 }
 
 // v7 数据契约：GameMap 含 elev（0正常/1低洼-1.2m/2高台+1.2m/3室外地面）与 outdoor（0室内/1室外），

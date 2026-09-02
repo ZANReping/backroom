@@ -250,7 +250,7 @@ export function oceanScatteredBones(c: DecorCtx) {
   }
 }
 
-// ---- L8「Cave Systems」——岩壁、苔藓、被风化的路标 ----
+// ---- L8「洞穴系统」——岩壁、苔藓、被风化的路标 ----
 // 碎石堆
 export function cavesRubble(c: DecorCtx) {
   const { ri, rf, rng, pickFloor, pBox } = c

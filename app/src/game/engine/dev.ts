@@ -10,12 +10,14 @@ import { RNG, randomSeed, seedString } from '../core/rng'
 import { infiniteImplFor, findNearestVariant, l0NearestExit, chunkKey, CS } from '../world/infinite'
 import { l5RegionAt } from '../world/infiniteL5' // v55：L5 区域矩形判定（DevPanel 传送落点）
 import { l7NearestIsland } from '../world/infiniteL7' // v57t：开发者面板「传送到最近岛屿」
+import { L8_ORIGIN, l8AvenuePoint } from '../world/infiniteL8'
 import { CONTAINER_KINDS } from '../decorations/containers'
 import { OUTPOSTS, isLandmarkStruct } from '../content/outposts'
 import { DECOR_REGISTRY } from '../content/decorRegistry'
 import { DIFF } from './shared'
-import type { ExitInstance, Structure, StructKind } from '../core/types'
+import type { ExitInstance, FloorBand, Structure, StructKind } from '../core/types'
 import type { Engine } from '../engine'
+import { canOccupy, PLAYER_RADIUS } from '../core/player'
 
 // 开发者模式：层级跳转
 export function devJump(eng: Engine, id: number) {
@@ -35,13 +37,13 @@ export function devJumpOutpost(eng: Engine, outpostId: string): boolean {
 
 // 玩家视线正前方（世界系），与渲染层 look.yaw 保持一致
 export function devForward(eng: Engine): { fx: number; fy: number } {
-  const fx = -Math.cos(look.yaw), fy = -Math.sin(look.yaw)
+  const fx = -Math.sin(look.yaw), fy = -Math.cos(look.yaw)
   if (Math.abs(fx) < 1e-6 && Math.abs(fy) < 1e-6) return { fx: Math.cos(eng.player.facing), fy: Math.sin(eng.player.facing) }
   return { fx, fy }
 }
 
-// 以 (cx,cy) 为中心螺旋搜索最近的可站立点（地板且无实心结构）
-export function devFindSpot(eng: Engine, cx: number, cy: number, maxR = 6): { x: number; y: number } | null {
+// 以 (cx,cy) 为中心螺旋搜索最近的完整玩家体积可站立点。
+export function devFindSpot(eng: Engine, cx: number, cy: number, maxR = 6, band: FloorBand = eng.player.floor): { x: number; y: number } | null {
   const m = eng.map
   if (!m) return null
   const solidAt = (x: number, y: number) =>
@@ -54,7 +56,11 @@ export function devFindSpot(eng: Engine, cx: number, cy: number, maxR = 6): { x:
         if (x < 1 || y < 1 || x >= m.w - 1 || y >= m.h - 1) continue
         if (tileAt(m, x, y) !== 1 || solidAt(x, y)) continue
         if (m.elev[y * m.w + x] === 4) continue // 深坑洞口不可落脚
-        return { x: x + 0.5, y: y + 0.5 }
+        if (m.liquid[y * m.w + x] === 1) continue // 开发者传送不把玩家直接扔进深水
+        const px = x + 0.5, py = y + 0.5
+        const z = floorHeight(m, px, py, band) + 0.02
+        if (!canOccupy(m, px, py, PLAYER_RADIUS, { z, band })) continue
+        return { x: px, y: py }
       }
     }
   }
@@ -247,9 +253,9 @@ export function devGotoExitKind(eng: Engine, kind: string): boolean {
   const e = m.exits.find((x) => x.def.kind === kind)
   if (!e) return false
   const p = eng.player
-  const spot = eng.devFindSpot(e.x, e.y, 3)
+  const band = (e.floor ?? 0) as FloorBand
+  const spot = eng.devFindSpot(e.x, e.y, 3, band)
   if (!spot) { eng.msg('[DEV] 该出口附近没有落脚点。', 'system'); return false }
-  const band = (e.floor ?? 0) as 0 | 1 | 2
   p.x = spot.x; p.y = spot.y; p.z = (e.z ?? floorHeight(m, p.x, p.y, band)) + 0.02; p.vz = 0; p.floor = band // v57t：传送带 z 轴
   eng.msg(`[DEV] 已传送到出口「${e.def.name}」`, 'system')
   return true
@@ -299,8 +305,8 @@ export function devTeleport(eng: Engine, target: 'exit' | 'entity' | 'container'
   const m = eng.map
   if (!m) return false
   const p = eng.player
-  const go = (x: number, y: number, label: string, z?: number, band: 0 | 1 | 2 = 0) => {
-    const spot = eng.devFindSpot(x, y, 3)
+  const go = (x: number, y: number, label: string, z?: number, band: FloorBand = 0) => {
+    const spot = eng.devFindSpot(x, y, 3, band)
     if (!spot) { eng.msg(`[DEV] ${label}附近没有落脚点。`, 'system'); return false }
     p.x = spot.x; p.y = spot.y; p.z = (z ?? floorHeight(m, p.x, p.y, band)) + 0.02; p.vz = 0; p.floor = band // v57t：全部 dev 传送都落到目标高度带的地面上
     eng.msg(`[DEV] 已传送到${label}`, 'system')
@@ -322,7 +328,8 @@ export function devTeleport(eng: Engine, target: 'exit' | 'entity' | 'container'
     const n = eng.nearestExit()
     if (!n) { eng.msg('[DEV] 本层没有出口。', 'system'); return false }
     const cand = m.exits.find((q) => Math.abs(q.x - n.x) < 1 && Math.abs(q.y - n.y) < 1)
-    return go(n.x + 0.5, n.y + 0.5, '出口', cand ? cand.z ?? floorHeight(m, cand.x + 0.5, cand.y + 0.5, cand.floor ?? 0) : undefined)
+    const exitBand = (cand?.floor ?? 0) as FloorBand
+    return go(n.x + 0.5, n.y + 0.5, '出口', cand ? cand.z ?? floorHeight(m, cand.x + 0.5, cand.y + 0.5, exitBand) : undefined, exitBand)
   }
   if (target === 'entity') {
     let best: Entity | null = null, bd = 1e9
@@ -352,11 +359,11 @@ export function devGotoNpc(eng: Engine, id: string): boolean {
   const n = eng.npcs.find((x) => x.id === id)
   if (!n) { eng.msg('[DEV] 没有找到这名 NPC。', 'system'); return false }
   const p = eng.player
-  const spot = eng.devFindSpot(n.x, n.y, 3)
+  const fl = (n.floor ?? 0) as FloorBand
+  const spot = eng.devFindSpot(n.x, n.y, 3, fl)
   if (!spot) { eng.msg(`[DEV] ${n.def.name} 附近没有落脚点。`, 'system'); return false }
   // v54：多层据点修复——按 NPC 所在楼层带设置玩家 z 与 floor（此前只设 x/y，传到 2F/3F NPC 会落在 1F）
-  const fl = (n.floor ?? 0) as 0 | 1 | 2
-  p.x = spot.x; p.y = spot.y; p.z = fl * 3.0 + 0.05; p.vz = 0; p.floor = fl
+  p.x = spot.x; p.y = spot.y; p.z = floorHeight(m, spot.x, spot.y, fl) + 0.05; p.vz = 0; p.floor = fl
   eng.msg(`[DEV] 已传送到 ${n.def.name}（${n.def.role}）身旁${fl > 0 ? `（${fl + 1}F）` : ''}`, 'system')
   return true
 }
@@ -396,6 +403,19 @@ export function devGotoVariant(eng: Engine, kind: string): boolean {
   const p = eng.player
   const impl = infiniteImplFor(eng.levelDef.id)
   const name = impl.variantNames[kind] ?? kind
+  // L8 两处固定自然地形不是随机 chunk 变体：直接按世界坐标流式定位，再做完整碰撞体积落点搜索。
+  if (eng.levelDef.id === 8 && (kind === 'undergroundlake' || kind === 'ninthavenue')) {
+    const target = kind === 'undergroundlake' ? L8_ORIGIN : l8AvenuePoint(inf.seed, 1)
+    p.x = target.x - inf.ox
+    p.y = target.y - inf.oy
+    p.z = 0; p.vz = 0; p.floor = 0
+    eng.updateInfiniteWindow()
+    const spot = eng.devFindSpot(p.x, p.y, kind === 'undergroundlake' ? 8 : 12, 0)
+    if (!spot) { eng.msg(`[DEV] 固定自然地形「${kind === 'undergroundlake' ? '地下湖与侵蚀石岸' : '第九大道'}」附近没有安全落脚点。`, 'system'); return false }
+    p.x = spot.x; p.y = spot.y; p.z = floorHeight(m, p.x, p.y, 0) + 0.02; p.vz = 0; p.floor = 0
+    eng.msg(`[DEV] 已安全传送到「${kind === 'undergroundlake' ? '地下湖与侵蚀石岸' : '第九大道'}」`, 'system')
+    return true
+  }
   // 已生成区域内已有该变体 → 直接传送（同一窗口内无需流式加载）
   const loaded = [...inf.chunks.values()].find((c) => c.variant === kind)
   if (loaded) {
@@ -406,9 +426,9 @@ export function devGotoVariant(eng: Engine, kind: string): boolean {
       if (reg?.variant === kind) { tx = (reg.x0 + reg.x1) / 2; ty = (reg.y0 + reg.y1) / 2 }
     }
     const cx = tx - inf.ox, cy = ty - inf.oy
-    const spot = eng.devFindSpot(cx, cy, 14)
-    if (!spot) { eng.msg(`[DEV] 变种房间「${name}」附近没有落脚点。`, 'system'); return false }
     const band = eng.levelDef.id === 7 && kind === 'entry' ? 1 : 0 // L7 入口区域=2F 舱室
+    const spot = eng.devFindSpot(cx, cy, 14, band)
+    if (!spot) { eng.msg(`[DEV] 变种房间「${name}」附近没有落脚点。`, 'system'); return false }
     p.x = spot.x; p.y = spot.y; p.z = floorHeight(m, p.x, p.y, band) + 0.02; p.vz = 0; p.floor = band // v57t：区域传送也带 z 轴
     eng.msg(`[DEV] 已传送到变种房间「${name}」（已在生成区域内）`, 'system')
     return true
@@ -424,9 +444,9 @@ export function devGotoVariant(eng: Engine, kind: string): boolean {
   }
   p.x = wcx - inf.ox; p.y = wcy - inf.oy; p.z = 0; p.vz = 0
   eng.updateInfiniteWindow()
-  const spot = eng.devFindSpot(p.x, p.y, 12)
-  if (spot) { p.x = spot.x; p.y = spot.y }
   const band = eng.levelDef.id === 7 && kind === 'entry' ? 1 : 0
+  const spot = eng.devFindSpot(p.x, p.y, 12, band)
+  if (spot) { p.x = spot.x; p.y = spot.y }
   p.z = floorHeight(m, p.x, p.y, band) + 0.02; p.floor = band // v57t：区域传送也带 z 轴（L7 入口=2F；ocean=海床/荒岛表面）
   eng.msg(`[DEV] 已传送到变种房间「${name}」（已生成新区域，chunk ${hit.cx},${hit.cy}）`, 'system')
   return true
@@ -450,7 +470,10 @@ export function devLevelStructures(eng: Engine): {
         id: v,
         name: infiniteImplFor(def.id).variantNames[v] ?? v,
         found: [...m.inf!.chunks.values()].some((c) => c.variant === v),
-      }))
+      })).concat(def.id === 8 ? [
+        { id: 'undergroundlake', name: '地下湖与侵蚀石岸', found: true },
+        { id: 'ninthavenue', name: '第九大道', found: true },
+      ] : [])
     : []
   return { prefabs, variants }
 }
@@ -573,7 +596,7 @@ export function devGotoExit(eng: Engine): boolean {
       }
     }
     if (!placed) {
-      const spot = eng.devFindSpot(e.x + 0.5, e.y + 1.5, 4)
+      const spot = eng.devFindSpot(e.x + 0.5, e.y + 1.5, 4, band)
       if (spot) { p.x = spot.x; p.y = spot.y }
     }
   }

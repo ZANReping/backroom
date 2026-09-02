@@ -24,6 +24,8 @@ export const BIND_ACTIONS: BindActionDef[] = [
   { id: 'sprint', label: '冲刺' },
   { id: 'quickuse', label: '快捷使用' },
   { id: 'quickdrop', label: '快捷丢弃' },
+  { id: 'reload', label: '装填 / 液体轮盘（按住）' },
+  { id: 'inspect', label: '检视主手（按住）' },
   { id: 'hidehud', label: '沉浸模式（隐藏 HUD）' },
   { id: 'hidehud2', label: '半沉浸模式（隐藏 HUD，保留手部）' },
   { id: 'slot1', label: '快捷栏 1' },
@@ -44,6 +46,7 @@ export const DEFAULT_KEYBINDS: KeyBindMap = {
   jump: 'Space', crouch: 'KeyC',
   attack: 'Mouse0', interact: 'KeyE', flashlight: 'KeyF',
   inventory: 'KeyI', map: 'KeyM', sprint: 'ShiftLeft', quickuse: 'Mouse2', quickdrop: 'KeyQ',
+  reload: 'KeyR', inspect: 'KeyV',
   codex: 'KeyG', quest: 'KeyJ', status: 'KeyU', log: 'KeyL',
   hidehud: 'F1', // v54：沉浸模式（F1 是浏览器「帮助」默认键，keydown 处 preventDefault）
   hidehud2: 'F2', // v54：半沉浸模式（隐藏 HUD 铬件，保留手部建模与准星）

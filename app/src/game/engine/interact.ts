@@ -9,6 +9,7 @@ import { itemName } from '../content/items'
 import { WIN_TAPES, NORMAL_LEVELS, levelDefOf } from '../levels'
 import { audio } from '../core/audio'
 import { forceL7PorchDrop } from './movement'
+import { entityBand as entityFloorBand } from './entityAI'
 import { look } from '../renderer/shared'
 import type { FloorBand, Structure } from '../core/types'
 import type { Engine } from '../engine'
@@ -130,6 +131,10 @@ export function triggerStructs(eng: Engine, dt: number, dm: DiffMult): boolean {
   return false
 }
 export const INTERACT_RANGE = { object: 2.2, item: 2.0, npc: 2.5 } as const
+// NPC 的交互距离以可见身体表面为起点，而不是以脚下坐标/模型中心为起点。
+// 低模角色连同自然下垂的手臂约 0.5m 宽；略留一点配饰余量，避免准星已经落在
+// 背包、吉他或外套边缘时仍判定为没有指向角色。
+export const NPC_INTERACTION_BODY = { radius: 0.52, height: 1.94 } as const
 export const INTERACT_Z_RANGE = 3.0 // v57t：交互目标必须位于玩家眼高 ±3m 内（海面不能隔几十米抓到海床上的物品/容器）
 const AIM_NORMAL = 15 * Math.PI / 180
 const AIM_NEAR = 20 * Math.PI / 180
@@ -167,6 +172,8 @@ export function structureInteractionProfile(s: Structure): StructureInteractionP
       horizontalRadius = s.data?.poster ? 0.49 : 0.32
       break
     case 'roadsign': lo = 0.2; hi = 2.02; horizontalRadius = 0.36; break
+    case 'l9arrowsign': lo = 0.15; hi = 2.12; horizontalRadius = 0.42; break
+    case 'l9stair': lo = 0.05; hi = 2.75; horizontalRadius = Math.min(0.85, Math.max(0.5, s.w / 2)); break
     case 'megsign': lo = 0.2; hi = 2.55; horizontalRadius = 0.52; break
     case 'megdoc': lo = s.data?.ontable ? (s.data?.manila ? 0.87 : 0.75) : 0; hi = s.data?.ontable ? (s.data?.manila ? 0.97 : 0.84) : 0.1; horizontalRadius = 0.2; break
     case 'invitation': lo = 0; hi = 0.14; horizontalRadius = 0.25; break
@@ -244,14 +251,14 @@ export function interactionEyeZ(eng: Engine): number {
 /** 从屏幕中央准星发出的世界空间射线，与 renderer/combat 的朝向约定一致。 */
 export function crosshairRay(eng: Engine): InteractionRay {
   const p = eng.player
-  const cp = Math.cos(look.pitch)
+  const n = Math.hypot(look.rayX, look.rayY, look.rayZ) || 1
   return {
     ox: p.x,
     oy: p.y,
     oz: interactionEyeZ(eng),
-    dx: Math.cos(p.facing) * cp,
-    dy: Math.sin(p.facing) * cp,
-    dz: Math.sin(look.pitch),
+    dx: look.rayX / n,
+    dy: look.rayY / n,
+    dz: look.rayZ / n,
   }
 }
 
@@ -421,9 +428,11 @@ export function scanInteract(eng: Engine) {
   for (const e of m.exits) {
     if ((e.floor ?? 0) !== band) continue
     if (e.def.kind === 'graystairs' || e.def.kind === 'graystairsup' || e.def.kind === 'oldstairs') continue // v29/v54：可行走阶梯——直接走上去/走下去，无 E 交互
+    if (e.def.kind === 'ninthroad') continue // L8 第九大道狭窄洞口由移动碰触自动进入，不显示 E 交互提示
     const ex = e.x + 0.5, ey = e.y + 0.5
     const d = Math.hypot(ex - p.x, ey - p.y)
-    const exitTarget: Target = { kind: 'exit', label: `进入 ${e.def.name}`, e }
+    const tinyBlocked = e.def.kind === 'littledoor' && eng.tinyBlocksLittleDoor(e)
+    const exitTarget: Target = { kind: 'exit', label: tinyBlocked ? '小小盘踞在门上方（暂时无法进入）' : `进入 ${e.def.name}`, e }
     // v58：准星真实命中出口模型（电梯门等）——与结构/物品共用视觉命中通道，直指即达
     if (visualHit?.kind === 'exit' && visualHit.exit === e
       && interactionLos3D(eng, visualHit.x, visualHit.y, visualHit.z, e.floor ?? 0)) {
@@ -433,14 +442,18 @@ export function scanInteract(eng: Engine) {
     }
     // v58：电梯交互距离放宽（1.6→2.2m）且交互体加大——壁龛格已有门扇碰撞进不去，
     // 站在门扇正前/侧前舒适距离内即可唤起「进入 电梯」
-    const range = e.def.kind === 'elevatorshaft' ? 2.2 : 1.6
+    const avenueMouth = e.def.kind === 'ninthroad'
+    const ceilingVent = e.def.kind === 'l8vent'
+    const l9OutdoorExit = e.def.kind === 'arrowsign' || e.def.kind === 'grasspath' || e.def.kind === 'l9caveback'
+    const range = e.def.kind === 'elevatorshaft' ? 2.2 : ceilingVent ? 3.0 : avenueMouth ? 3.2 : l9OutdoorExit ? 2.2 : 1.6
     if (d < range) {
       e.discovered = true
       const exitBase = e.z ?? floorHeight(m, ex, ey, e.floor ?? 0) // v57t：漂浮门等出口自带 z 高度
-      const ez = exitBase + 0.95
+      const ez = ceilingVent ? exitBase : exitBase + 0.95
       const big = e.def.kind === 'elevatorshaft'
-      considerTarget(exitTarget, ex, ey, ez, e.floor ?? 0, range, true, big ? 0.62 : 0.48,
-        volumeAt(ex, ey, exitBase, big ? 0.75 : 0.5, 1.95))
+      considerTarget(exitTarget, ex, ey, avenueMouth ? exitBase + 2.2 : ez, e.floor ?? 0, range, true,
+        avenueMouth ? 2.35 : ceilingVent ? 0.68 : big ? 0.62 : 0.48,
+        volumeAt(ex, ey, ceilingVent ? exitBase - 0.12 : exitBase, avenueMouth ? 2.55 : ceilingVent ? 0.7 : big ? 0.75 : 0.5, avenueMouth ? 4.7 : ceilingVent ? 0.86 : 1.95))
     }
   }
   // 地面物品（半径 2.0m；v13：按物品所在高度过滤楼层）
@@ -498,6 +511,8 @@ export function scanInteract(eng: Engine) {
     }
     else if (s.kind === 'lightswitch') consider('lightswitch', s.data?.flipped ? '电灯开关（已经拨过了）' : '拨动 电灯开关', s, d, true)
     else if (s.kind === 'roadsign' || s.kind === 'megsign') consider('roadsign', DECOR_VIEWS.roadsign.label, s, d, true)
+    else if (s.kind === 'l9arrowsign') consider('l9arrowsign', `查看 第 ${Number(s.data?.seq ?? 1)} 块箭头路牌`, s, d, true)
+    else if (s.kind === 'l9stair') consider('l9stair', '查看 通往二层的楼梯', s, d, true)
     else if (s.kind === 'braille') consider('braille', DECOR_VIEWS.braille.label, s, d, true)
     else if (s.kind === 'arcadecab') consider('arcadecab', '投币 街机', s, d, true)
     else if (s.kind === 'endletters') consider('endletters', DECOR_VIEWS.endletters.label, s, d, true)
@@ -548,35 +563,48 @@ export function scanInteract(eng: Engine) {
     if (n.dead || n.hostile) continue // v39：尸体与敌对员工不可交谈
     if ((n.floor ?? 0) !== band) continue // v46：隔层不可交谈（夹楼 NPC 须上到 2F）
     const npcBase = floorHeight(m, n.x, n.y, n.floor ?? band)
-    const nz = npcBase + 1.0
+    const { radius: bodyRadius, height: bodyHeight } = NPC_INTERACTION_BODY
+    const surfaceDistance = Math.max(0, Math.hypot(n.x - p.x, n.y - p.y) - bodyRadius)
+    const nz = npcBase + bodyHeight * 0.5
     considerTarget({ kind: 'npc', label: `与 ${n.def.name} 交谈`, npc: n }, n.x, n.y, nz, n.floor ?? band,
-      INTERACT_RANGE.npc, true, 0.42, volumeAt(n.x, n.y, npcBase, 0.42, 1.9))
+      INTERACT_RANGE.npc, true, bodyRadius,
+      volumeAt(n.x, n.y, npcBase - 0.03, bodyRadius, bodyHeight + 0.06),
+      surfaceDistance, undefined, bodyHeight * 0.5)
   }
   // v45：实体「杰瑞」——驯服提示随状态变化；v47：冷却剩余在提示中显示。
   for (const e of m.entities) {
     if (e.dead || e.def.type !== 'jerry') continue
     const entityBand = bandOfZ(e.z)
     if (entityBand !== band) continue
+    const bodyRadius = 0.42
+    const bodyHeight = 1.6
+    const surfaceDistance = Math.max(0, Math.hypot(e.x - p.x, e.y - p.y) - bodyRadius)
     considerTarget({
         kind: 'jerry',
         label: eng.jerryContactCd > 0
           ? `接触 鹉主杰瑞（冷却 ${Math.ceil(eng.jerryContactCd)}s）`
           : eng.jerryTamed ? '接触 鹉主杰瑞（已驯服）' : '接触 鹉主杰瑞（教化 +25 · 对其使用杏仁水可驯服）',
         ent: e,
-      }, e.x, e.y, e.z + 0.8, entityBand, INTERACT_RANGE.npc, true, 0.4,
-      volumeAt(e.x, e.y, e.z, 0.42, 1.6))
+      }, e.x, e.y, e.z + bodyHeight * 0.5, entityBand, INTERACT_RANGE.npc, true, bodyRadius,
+      volumeAt(e.x, e.y, e.z, bodyRadius, bodyHeight), surfaceDistance, undefined, bodyHeight * 0.5)
   }
   // v58：小小（L7 环形场的可对话实体）——未被激怒时可交谈；激怒后仍可选中但拒绝对话
   for (const e of m.entities) {
     if (e.dead || e.def.type !== 'tiny') continue
-    const entityBand = bandOfZ(e.z)
+    // 水生实体的 z 是真实水深，不能直接用 bandOfZ：L7 深水中的负高度会被误判为
+    // L6 式地下层，导致同处水中的玩家永远无法选中小小。
+    const entityBand = entityFloorBand(m, e)
     if (entityBand !== band) continue
+    const scale = e.def.scale ?? 1
+    const bodyRadius = 0.62 * scale
+    const bodyHeight = 2.82 * scale
+    const surfaceDistance = Math.max(0, Math.hypot(e.x - p.x, e.y - p.y) - bodyRadius)
     considerTarget({
         kind: 'tiny',
         label: e.provoked ? '小小（已被激怒，不再对话）' : '与 小小 交谈',
         ent: e,
-      }, e.x, e.y, e.z + 0.8, entityBand, INTERACT_RANGE.npc, !e.provoked, 0.4,
-      volumeAt(e.x, e.y, e.z, 0.42, 1.6))
+      }, e.x, e.y, e.z + bodyHeight * 0.48, entityBand, INTERACT_RANGE.npc, true, bodyRadius,
+      volumeAt(e.x, e.y, e.z - 0.18 * scale, bodyRadius, bodyHeight), surfaceDistance, undefined, bodyHeight * 0.48)
   }
   // v51：人制品售货机（Entity 36）——正面取货 / 背面看标语。
   for (const e of m.entities) {
@@ -725,10 +753,57 @@ export function doInteract(eng: Engine) {
       break
     }
     case 'roadsign': {
-      const ex = eng.nearestExit()
-      const R = DECOR_VIEWS.roadsign.msgs!
-      eng.msg(R[0].text, R[0].type)
-      if (ex) { for (const e2 of m.exits) e2.discovered = true; eng.msg(R[1].text, R[1].type) }
+      const sign = t.s
+        if (sign?.data?.avenue === 1) {
+          const inf = m.inf
+          const currentSeq = Number(sign.data.seq ?? 0)
+          const nextWorldX = Number(sign.data.nextX)
+          const nextWorldY = Number(sign.data.nextY)
+        const playerWorldX = p.x + (inf?.ox ?? 0)
+        const playerWorldY = p.y + (inf?.oy ?? 0)
+        const dx = nextWorldX - playerWorldX, dy = nextWorldY - playerWorldY
+        const distance = Math.max(0, Math.round(Math.hypot(dx, dy)))
+        // 地图坐标 +y 朝南；将角度量化为玩家容易理解的八方位。
+          const dirs = ['东', '东南', '南', '西南', '西', '西北', '北', '东北']
+          const dirIndex = Math.round((Math.atan2(dy, dx) + Math.PI * 2) / (Math.PI / 4)) % 8
+          const nextName = sign.data.final === 1 ? '“第九大道”洞口' : '下一块“第九大道”路标'
+          // 先把玩家正在查看的路标登记为已知，再登记下一站。
+          // markAvenueLandmark 内部使序号单调递增：跳过 4 号先交互 5 号时，4/5 号都是旧标记，6 号仍是当前目标。
+          eng.markAvenueLandmark(currentSeq, sign.x + sign.w / 2 + (inf?.ox ?? 0), sign.y + sign.h / 2 + (inf?.oy ?? 0), 'sign')
+          eng.markAvenueLandmark(currentSeq + 1, nextWorldX, nextWorldY, sign.data.final === 1 ? 'exit' : 'sign')
+          eng.msg(`第九大道 · ${currentSeq + 1}号路标`, 'lore')
+          eng.msg(`${nextName}已标记在地图上，位于${dirs[dirIndex]}方向，约 ${distance} 米。`, 'system')
+        if (sign.data.final === 1) {
+          const avenueExit = m.exits.find(e2 => e2.def.kind === 'ninthroad')
+          if (avenueExit) avenueExit.discovered = true
+        }
+      } else {
+        const ex = eng.nearestExit()
+        const R = DECOR_VIEWS.roadsign.msgs!
+        eng.msg(R[0].text, R[0].type)
+        if (ex) { for (const e2 of m.exits) e2.discovered = true; eng.msg(R[1].text, R[1].type) }
+      }
+      audio.uiTick()
+      break
+    }
+    case 'l9arrowsign': {
+      const sign = t.s && t.s.kind === 'l9arrowsign' ? t.s : null
+      if (!sign) return
+      const inf = m.inf
+      const nextX = Number(sign.data?.nextX ?? 0), nextY = Number(sign.data?.nextY ?? 0)
+      const px = p.x + (inf?.ox ?? 0), py = p.y + (inf?.oy ?? 0)
+      const dx = nextX - px, dy = nextY - py
+      const dirs = ['东', '东南', '南', '西南', '西', '西北', '北', '东北']
+      const di = Math.round((Math.atan2(dy, dx) + Math.PI * 2) / (Math.PI / 4)) % 8
+      const seq = Number(sign.data?.seq ?? 1), total = Number(sign.data?.total ?? 6)
+      eng.msg(`箭头路牌 ${seq}/${total}：箭头指向${dirs[di]}。`, 'lore')
+      eng.msg(`下一块路牌约在 ${Math.round(Math.hypot(dx, dy))} 米外；道路会继续变宽、变得更像城市。`, 'system')
+      audio.uiTick()
+      break
+    }
+    case 'l9stair': {
+      eng.msg('楼梯本身很完整，但通往二层的入口被厚木板和一把没有锁孔的挂锁封死了。', 'lore')
+      eng.msg('二层目前无法进入。', 'system')
       audio.uiTick()
       break
     }

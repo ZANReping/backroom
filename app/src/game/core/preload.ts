@@ -14,6 +14,7 @@ export interface PreloadUpdate {
 export interface PreloadRequest {
   targetLevel: number
   bgmStyle: 'procedural' | 'midi'
+  allLevels?: boolean
 }
 
 interface Asset {
@@ -60,6 +61,29 @@ function levelCoreAssets(level: number): Asset[] {
     out.push(T('l7_carpet.jpg', `Level ${level}`, 'Level 7 · 入口房间湿毯'))
     out.push(T('l7_cabin_wood.jpg', `Level ${level}`, 'Level 7 · 入口房间漆木墙板'))
     out.push(T('l7_cabin_ceil.jpg', `Level ${level}`, 'Level 7 · 入口房间吊顶木板'))
+    out.push(T('l7_seabed_sand_gravel.png', `Level ${level}`, 'Level 7 · 沙质细砾海床', 2))
+    out.push(T('l7_seabed_rock_gravel.png', `Level ${level}`, 'Level 7 · 石质粗砾海床', 2))
+  } else if (id === 8) {
+    out.push(T('l8_wall_normal.jpg', `Level ${level}`, 'Level 8 · 岩壁法线'))
+    out.push(T('l8_wall_roughness.jpg', `Level ${level}`, 'Level 8 · 岩壁粗糙度'))
+    out.push(T('l8_floor_normal.jpg', `Level ${level}`, 'Level 8 · 洞底法线'))
+    out.push(T('l8_floor_roughness.jpg', `Level ${level}`, 'Level 8 · 洞底粗糙度'))
+    out.push(T('l8_ceil_normal.jpg', `Level ${level}`, 'Level 8 · 洞顶法线'))
+    out.push(T('l8_ceil_roughness.jpg', `Level ${level}`, 'Level 8 · 洞顶粗糙度'))
+    out.push(T('l8_movile_fungalmat.png', `Level ${level}`, 'Level 8 · 新莫维勒菌毯', 2))
+    out.push(T('l8_rottnest_moss.png', `Level ${level}`, 'Level 8 · 罗特尼斯苔藓湿土', 2))
+  } else if (id === 9) {
+    for (const [base, label] of [
+      ['l9_asphalt', '道路沥青'], ['l9_sidewalk', '人行道'], ['l9_grass', '草坪'],
+      ['l9_driveway', '车道'], ['l9_path', '土径'], ['l9_pool_deck', '泳池岸砖'],
+      ['l9_wood_floor', '住宅木地板'], ['l9_plaster', '粉刷墙'], ['l9_siding', '外墙挂板'],
+      ['l9_brick', '外墙砖'], ['l9_roof_slate', '板岩屋顶'], ['l9_roof_tile', '瓦片屋顶'],
+      ['l9_furniture_wood', '住宅家具木材'],
+    ] as const) {
+      out.push(T(`${base}_diff.jpg`, `Level ${level}`, `Level 9 · ${label}颜色`))
+      out.push(T(`${base}_normal.jpg`, `Level ${level}`, `Level 9 · ${label}法线`))
+      out.push(T(`${base}_rough.jpg`, `Level ${level}`, `Level 9 · ${label}粗糙度`))
+    }
   }
   return out
 }
@@ -75,6 +99,7 @@ function commonAssets(): Asset[] {
     T('item_almond_thermos_uv.png', '装备与补给', '杏仁水保温壶贴图'),
     T('item_canned_label_uv.png', '装备与补给', '罐头食品标签'),
     T('item_bandage_gauze_uv.png', '装备与补给', '绷带纱布贴图'),
+    T('item_firesalt_crystal_uv.png', '装备与补给', '火盐结晶 UV 贴图'),
   ]
 }
 
@@ -100,12 +125,16 @@ function warmAudio(url: string): Promise<void> {
 const pause = (ms: number) => new Promise<void>((r) => setTimeout(r, ms))
 
 export async function preloadGameResources(req: PreloadRequest, onUpdate: (u: PreloadUpdate) => void): Promise<void> {
-  const groups: { name: string; assets: Asset[] }[] = [
-    { name: '通用资源', assets: commonAssets() },
-    { name: `Level ${req.targetLevel}`, assets: levelCoreAssets(req.targetLevel) },
-  ]
-  const next = req.targetLevel === 0 ? 1 : req.targetLevel === 11 ? 601 : req.targetLevel === 601 ? -1 : req.targetLevel + 1
-  if (next >= 0) groups.push({ name: `Level ${next} 预载`, assets: levelCoreAssets(next) })
+  const groups: { name: string; assets: Asset[] }[] = [{ name: '通用资源', assets: commonAssets() }]
+  if (req.allLevels !== false) {
+    // 常规层、结局层和全部据点层统一预载；相同 URL 去重，避免据点材质别名重复请求。
+    const ids = [...Array.from({ length: 12 }, (_, i) => i), 601, ...Array.from({ length: 14 }, (_, i) => 101 + i), 274]
+    const seen = new Set<string>()
+    const assets = ids.flatMap(levelCoreAssets).filter((a) => !seen.has(a.url) && !!seen.add(a.url))
+    groups.push({ name: '全部层级资产', assets })
+  } else {
+    groups.push({ name: `Level ${req.targetLevel}`, assets: levelCoreAssets(req.targetLevel) })
+  }
   groups.push({ name: '音频资源', assets: req.bgmStyle === 'midi' ? [{
     url: musicAudioUrl(resolveMidiSong(req.targetLevel)),
     label: '音频资源',

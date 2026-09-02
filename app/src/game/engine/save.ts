@@ -7,7 +7,7 @@ import { storage } from '../core/storage'
 import type { QuestDef } from '../content/factions'
 import type { Difficulty } from './shared'
 import type { WarehouseState } from './warehouse'
-import type { Engine, PlayerState } from '../engine'
+import type { AvenueMapMark, Engine, PlayerState } from '../engine'
 
 // ===== v29a：存档/读档 =====
 // v54 起：各槽位自持全量快照（含 seed/difficulty），继续游戏时凭种子匹配恢复进度。
@@ -53,6 +53,8 @@ export interface SaveSnapshot {
   homelyApplied?: boolean // v55：家常酒店入住申请已提交（L5 据点 111 准入）
   radio?: { mode: 'follow' | 'fixed'; fixed: string | null; perLevel: Record<number, string> } // v56：电台配置（随层级变化/固定音乐 + 单层覆盖）
   heardSongs?: string[] // v56：已收听曲目 id（电台可选前提；乐手演奏解锁摇滚曲目）
+  avenueMarks?: AvenueMapMark[] // L8 第九大道已揭示的全部地图标记
+  avenueHintSeq?: number | null // 当前 HUD 应指向的最新标记（旧标记仅留在地图）
   // v47：传教使命已标准委托化（kind 'preach' 进 quests，随 quests 持久）；旧档 jerryPreach 字段废弃不再读取
   player: PlayerState
 }
@@ -134,6 +136,8 @@ export function snapshot(eng: Engine): SaveSnapshot {
     homelyApplied: eng.homelyApplied, // v55：家常酒店入住申请（L5 据点 111 准入）
     radio: eng.radio, // v56：电台配置
     heardSongs: [...eng.heardSongs], // v56：已收听曲目
+    avenueMarks: eng.player.level === 8 ? eng.avenueMarks.map((mk) => ({ ...mk })) : undefined,
+    avenueHintSeq: eng.player.level === 8 ? eng.avenueHintSeq : undefined,
     player: JSON.parse(JSON.stringify(eng.player)),
   }
 }

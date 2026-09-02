@@ -5,6 +5,7 @@ import * as THREE from 'three'
 import type { AvatarCfg } from '@/game/core/avatar'
 import { buildPlayerModel } from '@/game/renderer/playerModel'
 import { applyNpcGear } from '@/game/renderer/npcGear'
+import { buildNpcEntityPreview } from '@/game/renderer/npcEntityPreview'
 import type { NpcDef } from '@/game/content/npcs'
 
 interface Props {
@@ -40,9 +41,10 @@ export default function AvatarPreview({ avatar, gloves, suit, cavingsuit, divema
     const rim = new THREE.DirectionalLight(0x9ab0d0, 0.55)
     rim.position.set(-2, 1.4, -1.6)
     scene.add(rim)
-    const model = buildPlayerModel(JSON.parse(key) as AvatarCfg, { gloves, suit, cavingsuit, divemask, headlamp, nightvision })
+    const entityPreview = buildNpcEntityPreview(npcId)
+    const model = entityPreview ?? buildPlayerModel(JSON.parse(key) as AvatarCfg, { gloves, suit, cavingsuit, divemask, headlamp, nightvision })
     // NPC 档案：制服徽章（胸口小色块，同 renderer）+ 标志性配饰
-    if (npcId) {
+    if (npcId && !entityPreview) {
       if (npcDef?.faction === 'brc') {
         // BRC 黑影无脸——摘除全部面部件（与 renderer 同一 userData.face 摘除约定）
         const hd = (model.userData.parts as Record<string, THREE.Object3D>).head
@@ -69,7 +71,11 @@ export default function AvatarPreview({ avatar, gloves, suit, cavingsuit, divema
     raf = requestAnimationFrame(loop)
     return () => {
       cancelAnimationFrame(raf)
-      model.traverse((o) => { const m = o as THREE.Mesh; if (m.geometry) m.geometry.dispose() })
+      model.traverse((o) => {
+        const m = o as THREE.Mesh
+        if (m.geometry) m.geometry.dispose()
+        if (m.material) for (const mat of Array.isArray(m.material) ? m.material : [m.material]) mat.dispose()
+      })
       r.dispose()
     }
   }, [key, gloves, suit, cavingsuit, divemask, headlamp, nightvision, npcId, npcDef, size])

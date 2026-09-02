@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import { buildItemMesh } from './itemsMesh'
 import { buildFlashlightMesh } from './flashlightMesh'
 import { buildDetailedItemMesh } from './detailItemsMesh'
+import { buildSquirtGunMesh } from './squirtGunMesh'
 
 // ---------- 第一人称手部/手持物品 ----------
 // v53：去掉自发光（原 emissiveIntensity 0.25）——手部/袖管/手持物在黑暗中不再自发光，
@@ -95,12 +96,14 @@ export function buildHeldItem(type: string): THREE.Group {
       pose.add(upright); g.add(pose)
       break
     }
-    case 'squirtgun': // 前持滋水枪：枪身朝前 + 顶部储水罐 + 握把 + 枪口
-      vb(0.05, 0.06, 0.24, '#e86a3a', 0, 0.02, -0.16)
-      vc(0.045, 0.045, 0.09, '#4ac9e8', 0, 0.1, -0.14)
-      vb(0.04, 0.1, 0.05, '#e8b93c', 0, -0.05, -0.06)
-      vb(0.045, 0.045, 0.06, '#e86a3a', 0, 0.02, -0.3)
+    case 'squirtgun': { // 共享世界模型；本地 +X 枪口旋转到相机正前方 -Z
+      const gun = buildSquirtGunMesh()
+      gun.rotation.y = Math.PI / 2
+      gun.scale.setScalar(.82)
+      gun.position.set(0, .015, -.18)
+      g.add(gun)
       break
+    }
     case 'guncandy': // 枪糖（Object 5）：枪糖生效时的手枪模型——滑套 + 枪管 + 握把
       vb(0.045, 0.05, 0.2, '#3a3d42', 0, 0.05, -0.12) // 滑套
       vc(0.014, 0.014, 0.08, '#2a2d30', 0, 0.055, -0.24, Math.PI / 2) // 枪管
@@ -131,14 +134,15 @@ export function buildHeldItem(type: string): THREE.Group {
 
 // ---------- 屏幕中心准心（DOM 注入，桌面/移动端均显示）----------
 export function buildCrosshair(): HTMLDivElement {
-  // 复用既有元素（渲染器实例重建/HMR 时避免残留多个准心导致旧准心永不隐藏）
+  // 渲染器实例重建/HMR 时先移除旧节点，确保新增的冷却条结构同步升级。
   const old = document.getElementById('br-crosshair') as HTMLDivElement | null
-  if (old) { old.style.display = 'none'; return old }
+  old?.remove()
   const el = document.createElement('div')
   el.id = 'br-crosshair'
   el.style.cssText = 'position:fixed;left:50%;top:50%;width:26px;height:26px;z-index:40;pointer-events:none;transform:translate(-50%,-50%);transition:transform 90ms ease-out;display:none;'
   const mk = (w: string, h: string, x: string, y: string) => {
     const b = document.createElement('div')
+    b.dataset.crosshairMark = '1'
     b.style.cssText = `position:absolute;width:${w};height:${h};left:${x};top:${y};background:#e8e2d2;opacity:0.85;box-shadow:0 0 2px rgba(0,0,0,0.8);`
     el.appendChild(b)
   }
@@ -147,6 +151,14 @@ export function buildCrosshair(): HTMLDivElement {
   mk('2px', '7px', '12px', '19px') // 下
   mk('7px', '2px', '0', '12px') // 左
   mk('7px', '2px', '19px', '12px') // 右
+  const cooldown = document.createElement('div')
+  cooldown.dataset.attackCooldown = '1'
+  cooldown.style.cssText = 'position:absolute;left:-4px;top:32px;width:34px;height:3px;background:rgba(0,0,0,.58);box-shadow:0 0 2px rgba(0,0,0,.9);display:none;overflow:hidden;'
+  const fill = document.createElement('div')
+  fill.dataset.attackCooldownFill = '1'
+  fill.style.cssText = 'height:100%;width:100%;background:#e8e2d2;transform-origin:left center;'
+  cooldown.appendChild(fill)
+  el.appendChild(cooldown)
   document.body.appendChild(el)
   return el
 }

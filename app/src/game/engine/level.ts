@@ -8,6 +8,8 @@ import { NPCS, type NpcDef } from '../content/npcs'
 import { OUTPOSTS, isLandmarkStruct } from '../content/outposts'
 import { FACTIONS, REP_TIER } from '../content/factions'
 import { updateInfinite, l0NearestExit, chunkKey, CS, infiniteImplFor, h32 } from '../world/infinite'
+import { L8_AVENUE_SEGMENTS, l8AvenuePoint } from '../world/infiniteL8'
+import { L9_CAVE_SPAWN, L9_L5_DOOR_SPAWN, L9_POOL_SPAWN } from '../world/infiniteL9'
 import type { ExitDef, ExitInstance, FloorBand } from '../core/types'
 import type { Engine } from '../engine'
 import { resetEffects } from './effects'
@@ -29,6 +31,10 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   eng.arriveOldstairs = false
   const l6Band = id === 6 && !restore ? (eng.arriveL6Band ?? 0) : null
   eng.arriveL6Band = null
+  const l9From = id === 9 && !restore ? eng.arriveL9From : null
+  eng.arriveL9From = null
+  const l8AvenueEnd = id === 8 && !restore && eng.arriveL8AvenueEnd
+  eng.arriveL8AvenueEnd = false
   // v29a：读档恢复时复用存档记录的地图种子与首访标记，保证复现同一张图
   const mapSeed = restore?.mapSeed ?? eng.mpMapSeed?.(id) ?? (eng.seed + eng.time * 7 + id * 131) // v58：联机——确定性层级种子（全房间同图，先到先得即同布局）
   const fv = restore?.firstVisit ?? firstVisit
@@ -37,6 +43,8 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   eng.mapFirstVisit = fv
   eng.bonusExit = null
   eng.wallMarks = [] // 地图重新生成，旧粉笔记号随之失效
+  eng.avenueMarks = []
+  eng.avenueHintSeq = null
   eng.player.level = id
   eng.player.x = eng.map.spawn.x + 0.5
   eng.player.y = eng.map.spawn.y + 0.5
@@ -77,6 +85,11 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   eng.player.vz = 0
   eng.player.crouching = false
   eng.player.floor = 0
+  if (id === 9 && eng.map.inf && l9From !== null) {
+    const anchor = l9From === 5 ? L9_L5_DOOR_SPAWN : l9From === 7 ? L9_POOL_SPAWN : L9_CAVE_SPAWN
+    eng.player.x = anchor.x - eng.map.inf.ox
+    eng.player.y = anchor.y - eng.map.inf.oy
+  }
   // v57m：L7 入口舱体位于 2F——出生点按注册的 spawnFloor 落在上层楼板
   if (eng.map.inf) {
     const m2 = eng.map
@@ -85,6 +98,31 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
       eng.player.z = floorHeight(m2, eng.player.x, eng.player.y, 1)
       eng.player.floor = 1
     }
+  }
+  if (id === 8 && eng.map.organicCave) eng.player.z = floorHeight(eng.map, eng.player.x, eng.player.y, 0)
+  if (id === 8 && eng.map.inf && l8AvenueEnd) {
+    const end = l8AvenuePoint(mapSeed, L8_AVENUE_SEGMENTS)
+    const prev = l8AvenuePoint(mapSeed, Math.max(0, L8_AVENUE_SEGMENTS - 1))
+    const len = Math.hypot(end.x - prev.x, end.y - prev.y) || 1
+    // 从洞口内侧退到可站的第九大道路面，避免回程后立刻再次触发出口。
+    const wx = end.x - (end.x - prev.x) / len * 3.2
+    const wy = end.y - (end.y - prev.y) / len * 3.2
+    eng.player.x = wx - eng.map.inf.ox
+    eng.player.y = wy - eng.map.inf.oy
+    updateInfiniteWindow(eng)
+    eng.player.z = floorHeight(eng.map, eng.player.x, eng.player.y, 0)
+  }
+  // L8 的所有入口统一抵达固定地下湖的南岸石滩；spawnWorld 已给出无水、宽敞、与第九大道连通的落点。
+  if (id === 8 && eng.map.inf) {
+    const wx = eng.map.inf.ox + eng.player.x, wy = eng.map.inf.oy + eng.player.y
+    let nearestSeq = 0, nearestDist = Infinity
+    for (let seq = 0; seq < L8_AVENUE_SEGMENTS; seq++) {
+      const q = l8AvenuePoint(mapSeed, seq)
+      const d = Math.hypot(q.x - wx, q.y - wy)
+      if (d < nearestDist) { nearestDist = d; nearestSeq = seq }
+    }
+    const nearest = l8AvenuePoint(mapSeed, nearestSeq)
+    eng.markAvenueLandmark(nearestSeq, nearest.x, nearest.y, 'sign')
   }
   if (id === 6 && l6Band !== null) {
     const target = l6Band
@@ -121,6 +159,11 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   eng.fakes = []
   eng.particles = []
   eng.searching = null
+  eng.usingItem = null
+  eng.attackAnimT = 0
+  eng.attackAnimDur = 0.35
+  eng.attackCooldownT = 0
+  eng.attackCooldownDur = 0
   eng.lootPanel = null
   eng.redAnnounced = new Set()
   // v35：NPC 实例化（据点居民；不是实体；定义 = 静态注册表 + 本图随机生成）
@@ -152,6 +195,10 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
     : { hue: 0, sat: 1, con: 1, bri: 1 }
   if (id === 1 && viaStairs && eng.map.inf) eng.placeBonusStairs() // v29：返程「向上的灰色阶梯」
   eng.ambientT = 10 + Math.random() * 8
+  eng.l9FogPhase = 'idle'
+  eng.l9FogK = 0
+  eng.l9FogT = id === 9 ? 230 + Math.random() * 360 : 240
+  audio.stopCaveWeather()
   audio.startHum(id)
   audio.startBGM(id)
   if (id === 6) audio.stopBGM() // L6 除罕见幻听外保持寂静
@@ -193,11 +240,13 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
     wiretrip: '脚踝高度有一根绷紧的细线。别绊到——除非你想去 Level 6.1。',
     l7cave: '午夜带的海床上偶尔会露出一个岩洞洞口。里面很深，深得不像海。',
     notexit: '深水里漂着一扇门，门牌写着「不是出口」。没有墙，也没有门框后面该有的房间。',
-    ninthroad: '第九之路的路标每五十米一个，牌子上有 M.E.G. 的标志。跟着走。',
+    ninthroad: '第九大道的路标每五十米一个，牌子上有 M.E.G. 的标志。跟着走。',
+    l8vent: '发光蘑菇林的洞顶嵌着一道锈蚀通风格栅，后面传来 Level 2 的管道回声。',
     tarpool: '前面有一池冒着热气的黑色焦油。幸存者说他们在 Level 41 或 91 醒来。',
     ceilclip: '洞顶某处的岩层薄得不正常——可以刻意向上剪辑出去。',
     arrowsign: '路口立着带箭头的路牌。沿着它走一百到两百英里，会到一座城市。',
     grasspath: '街区之间有一条通往草地的步道。',
+    l9caveback: '道路尽头嵌着一座潮湿的石质洞口，里面仍是 Level 8 的岩层。',
     streetclip: '这段街面的沥青摸上去是软的。',
     longroad: '双车辙的土路笔直伸向地平线。它通向一座城市。',
     canola: '远处一片刺眼的黄——那是油菜地。它不属于这里的调色板。',
@@ -416,7 +465,22 @@ export function applyMpSpawn(eng: Engine, slot: number) {
   }
 }
 
+/** “小小的谎言”门区：活着的小小横向距门心 5m 内时，门无法进入。 */
+export function tinyBlocksLittleDoor(eng: Engine, exit?: ExitInstance): boolean {
+  const m = eng.map
+  if (!m) return false
+  const door = exit ?? m.exits.find((e) => e.def.kind === 'littledoor')
+  if (!door || door.def.kind !== 'littledoor') return false
+  const dx = door.x + 0.5, dy = door.y + 0.5
+  return m.entities.some((e) => !e.dead && e.def.type === 'tiny' && Math.hypot(e.x - dx, e.y - dy) <= 5)
+}
+
 export function takeExit(eng: Engine, def: ExitDef) {  const p = eng.player
+  if (def.kind === 'littledoor' && tinyBlocksLittleDoor(eng)) {
+    eng.msg('小小正盘踞在门扇上方。只要它还在附近，你就不可能掀开「小小的谎言」。', 'system')
+    audio.uiTick()
+    return
+  }
   // v45：Level 274 教化规则——教化满（≥100）成为信众一员：无法主动离开（开发者传送除外）；
   // 未满时主动离开 → jerry 声望 -5；有进行中的传教委托（v47 标准委托化）离开不受声望惩罚
   if (p.level === 274 && def.dest === 'back') {
@@ -476,6 +540,14 @@ export function takeExit(eng: Engine, def: ExitDef) {  const p = eng.player
   // v54：经古典楼梯 → 抵达 L5 时出生点改到该层保底楼梯 2 格外空旷地板（L4↔L5 双向链）
   if (def.kind === 'oldstairs') eng.arriveOldstairs = true
   if (def.dest === 6) eng.arriveL6Band = p.level === 5 && def.kind === 'boilerdeep' ? -1 : 0
+  if (def.dest === 9) eng.arriveL9From = p.level
+  if (p.level === 9 && def.kind === 'l9caveback' && def.dest === 8) eng.arriveL8AvenueEnd = true
+  if (p.level === 9 && def.kind === 'arrowsign' && def.dest === 11) {
+    p.hunger = Math.max(10, p.hunger - 30)
+    p.thirst = Math.max(10, p.thirst - 30)
+    p.stamina = Math.max(10, p.stamina - 30)
+    eng.msg('漫长跋涉耗尽了储备。（饥饿、口渴、体力各 -30，最低保留 10）', 'damage')
+  }
   // v23：立刻解析 random 目标——过场演出需要知道「切入」的是哪一层
   // v35：'back' 解析为进入据点前的层级（据点入口的返程）
   const resolved = def.dest === 'back' ? (eng.outpostReturn ?? 1) : def.dest

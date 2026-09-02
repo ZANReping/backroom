@@ -108,14 +108,22 @@ export function buildFlashlightMesh(options: FlashlightMeshOptions = {}): THREE.
     color: '#d5d7d8', roughness: 0.14, metalness: 0.92, side: THREE.DoubleSide,
   })
   add(new THREE.RingGeometry(0.019, 0.069, 32), reflector, 'reflector-cup', 0, 0, -0.359)
-  const lens = new THREE.MeshPhysicalMaterial({
+  // 不使用 MeshPhysicalMaterial.transmission：即使镜片只占十几个像素，Three.js 也会为透射材质
+  // 额外渲染一次整张场景；手电进入第一人称画面时会因此把 L0 帧率近乎砍半。
+  // 普通透明 Standard 材质 + 独立高光弧保留玻璃观感，但不再创建 transmission 预通道。
+  const lens = new THREE.MeshStandardMaterial({
     color: options.lit ? '#fff5d8' : '#b8c6c6',
     emissive: options.lit ? '#ffe9ad' : '#000000',
     emissiveIntensity: options.lit ? 0.7 : 0,
-    transparent: true, opacity: 0.48, transmission: 0.18,
-    roughness: 0.08, metalness: 0, side: THREE.DoubleSide, depthWrite: false,
+    transparent: true, opacity: 0.42,
+    roughness: 0.1, metalness: 0, side: THREE.DoubleSide, depthWrite: false,
   })
   add(new THREE.CircleGeometry(0.069, 32), lens, 'glass-lens', 0, 0, -0.362)
+  const lensGlint = new THREE.MeshBasicMaterial({
+    color: options.lit ? '#fff8df' : '#dce9e8', transparent: true,
+    opacity: options.lit ? 0.32 : 0.2, side: THREE.DoubleSide, depthWrite: false,
+  })
+  add(new THREE.RingGeometry(0.047, 0.061, 24, 1, 0.35, 0.9), lensGlint, 'lens-glint', 0, 0, -0.363)
   const emitter = new THREE.MeshBasicMaterial({ color: options.lit ? '#fff0bd' : '#acaeaa', side: THREE.DoubleSide })
   add(new THREE.CircleGeometry(0.017, 20), emitter, 'led-emitter', 0, 0, -0.364)
 

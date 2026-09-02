@@ -17,7 +17,14 @@ export interface SkyProfile {
   haze: string
   stars?: number // 星野密度 0..1
   milkyWay?: number // 银河光带强度 0..1（仅夜空层）
-  clouds?: { density: number; color: string; alpha: number; cirrus?: number }
+  clouds?: {
+    density: number
+    color: string
+    alpha: number
+    cirrus?: number
+    overcast?: number // 0..1：加入连续低云底层，避免高密度噪声被压成一整块纯色
+    moonVeil?: number // 0..1：厚云后仍可见的月盘与散射光晕
+  }
   sun?: { az: number; elv: number; size: number; color: string; glow: string }
   moon?: { az: number; elv: number; size: number; color: string }
   horizonGlow?: { color: string; alpha: number }[] // 低角度地平光晕（霓虹/工业光）
@@ -84,15 +91,16 @@ export const SKY_PROFILES: Record<number, SkyProfile> = {
     mirages: true,
   },
   9: {
-    zenith: '#070b18', zenithMid: '#111832', horizon: '#27314f', haze: '#0a0f1e',
-    stars: 1, milkyWay: 0.85,
-    clouds: { density: 0.08, color: '#101828', alpha: 0.16 },
-    moon: { az: 60, elv: 48, size: 20, color: '#f2f5fb' },
+    zenith: '#050a11', zenithMid: '#0d141c', horizon: '#1b2229', haze: '#0b0e12',
+    // 无星阴天：低层大片雨云保留清晰团块和层次，较高月盘从云后透出冷色散射光。
+    stars: 0,
+    clouds: { density: 0.88, color: '#283139', alpha: 0.78, cirrus: 0.2, overcast: 0.9, moonVeil: 0.68 },
+    moon: { az: 67, elv: 29, size: 4.3, color: '#d9dde2' },
     horizonGlow: [
-      { color: '#6a5a9a', alpha: 0.12 },
-      { color: '#3a4a7a', alpha: 0.08 },
+      { color: '#59636d', alpha: 0.035 },
+      { color: '#332f3d', alpha: 0.025 },
     ],
-    sunLight: 0.12, sunColor: '#b8c6e0',
+    sunLight: 0.085, sunColor: '#aab7c7',
   },
   10: {
     zenith: '#9ea2a6', zenithMid: '#8f9398', horizon: '#83878b', haze: '#5c6165',
@@ -405,13 +413,18 @@ function renderSky(ctx: CanvasRenderingContext2D, p: SkyProfile, seed: number) {
     const clRGB = rgb(cl.color)
     const sunU = sun ? sun.az / 360 : moon ? moon.az / 360 : 0.5
     const GW = 1024, GH = 288, Y_TOP = 24, Y_BOT = CH - 6
+    const overcast = clamp01(cl.overcast ?? 0)
     const cA = new Float32Array(GW * GH) // 积云覆盖度
     const cL = new Float32Array(GW * GH) // 向阳侧亮度差（银边）
     for (let gy = 0; gy < GH; gy++) {
       const v = (((Y_TOP + (gy / (GH - 1)) * (Y_BOT - Y_TOP)) / CH) * 13)
       for (let gx = 0; gx < GW; gx++) {
         const u = (gx / GW) * 12
-        const f = noise.fbm(u, v, 12, 4)
+        const detail = noise.fbm(u, v, 12, 4)
+        // 阴云同时包含宽阔云团和细部褶皱。旧版 density=0.9 时阈值仅 0.1，几乎
+        // 所有像素都达到最大透明度，结果反而是一块没有云形的暗色平面。
+        const macro = noise.fbm(u * 0.42 + 17.3, v * 0.34 + 5.7, 53, 4)
+        const f = detail * (1 - overcast * 0.46) + macro * overcast * 0.46
         cA[gy * GW + gx] = f
         // 向阳偏移采样：f 与偏移样本之差 → 朝阳边缘提亮
         const du = (u / 12 - sunU + 1.5) % 1 - 0.5
@@ -419,7 +432,9 @@ function renderSky(ctx: CanvasRenderingContext2D, p: SkyProfile, seed: number) {
         cL[gy * GW + gx] = f2 - f
       }
     }
-    const cov = 1 - cl.density
+    const cov = overcast > 0
+      ? 0.47 - cl.density * 0.17
+      : 1 - cl.density
     const cir = cl.cirrus ?? 0
     const lin = sun ? rgb(sun.glow) : moonGlow // 银边光色（日光色 / 月冷色）
     for (let y = Y_TOP; y < Y_BOT; y++) {
@@ -429,7 +444,9 @@ function renderSky(ctx: CanvasRenderingContext2D, p: SkyProfile, seed: number) {
       for (let x = 0; x < CW; x++) {
         const gx = (x / CW) * (GW - 1)
         const f = sampleGrid(cA, GW, GH, gx, gy)
-        let a = smoothstep(cov, cov + 0.32, f) * cl.alpha * (0.35 + 0.65 * horizFade)
+        const shaped = smoothstep(cov, cov + (overcast > 0 ? 0.38 : 0.32), f)
+        const cloudMass = overcast > 0 ? Math.min(1, overcast * 0.16 + shaped * 0.84) : shaped
+        let a = cloudMass * cl.alpha * (0.35 + 0.65 * horizFade)
         // 卷云：强拉伸细丝，仅高空
         if (cir > 0 && y < CH * 0.72) {
           const uc = (x / CW) * 7, vc = (y / CH) * 45
@@ -442,13 +459,50 @@ function renderSky(ctx: CanvasRenderingContext2D, p: SkyProfile, seed: number) {
         const i = (y * CW + x) * 4
         // 云色：近地平线混入霾色；向阳边缘混入光色（银边）
         const hm = 1 - horizFade * 0.85
-        const cr = clRGB[0] * hm + haze[0] * (1 - hm) + lin[0] * silver * 0.45
-        const cg = clRGB[1] * hm + haze[1] * (1 - hm) + lin[1] * silver * 0.45
-        const cb = clRGB[2] * hm + haze[2] * (1 - hm) + lin[2] * silver * 0.45
+        const relief = overcast > 0 ? 0.76 + shaped * 0.3 + Math.max(-0.12, Math.min(0.12, lit * 0.9)) : 1
+        const cr = clRGB[0] * hm * relief + haze[0] * (1 - hm) + lin[0] * silver * 0.45
+        const cg = clRGB[1] * hm * relief + haze[1] * (1 - hm) + lin[1] * silver * 0.45
+        const cb = clRGB[2] * hm * relief + haze[2] * (1 - hm) + lin[2] * silver * 0.45
         d[i] += (Math.min(255, cr) - d[i]) * a
         d[i + 1] += (Math.min(255, cg) - d[i + 1]) * a
         d[i + 2] += (Math.min(255, cb) - d[i + 2]) * a
       }
+    }
+  }
+
+  // 厚云层应遮住月面细节，但不能把整个月亮彻底擦除。重绘一层低透明度月盘，并添加
+  // 比实体月面宽得多的冷色米氏散射晕，得到“月亮藏在阴云后”的可辨轮廓。
+  if (moon && (p.clouds?.moonVeil ?? 0) > 0) {
+    const veil = clamp01(p.clouds!.moonVeil!)
+    const cx = (moon.az / 360) * CW, cy = (1 - moon.elv / 90) * CH
+    const R = moon.size * (CW / 512)
+    const haloR = Math.ceil(R * 13)
+    for (let oy = -haloR; oy <= haloR; oy++) {
+      const py = cy + oy
+      if (py < 0 || py >= CH) continue
+      for (let ox = -haloR; ox <= haloR; ox++) {
+        const dd = Math.sqrt(ox * ox + oy * oy) / R
+        if (dd > 13) continue
+        const k = Math.exp(-dd * dd * 0.045) * 0.075 * veil
+        if (k < 0.002) continue
+        const px = cx + ox
+        splat.add(px, py, moonGlow, k)
+        if (px < haloR) splat.add(px + CW, py, moonGlow, k)
+        else if (px > CW - haloR) splat.add(px - CW, py, moonGlow, k)
+      }
+    }
+    const ri = Math.ceil(R * 1.08)
+    const moonRGB = rgb(moon.color)
+    for (let oy = -ri; oy <= ri; oy++) for (let ox = -ri; ox <= ri; ox++) {
+      const py = cy + oy
+      if (py < 0 || py >= CH) continue
+      const dd = Math.sqrt(ox * ox + oy * oy) / R
+      if (dd > 1.06) continue
+      const a = (1 - smoothstep(0.78, 1.04, dd)) * 0.34 * veil
+      const px = cx + ox
+      splat.over(px, py, moonRGB, a)
+      if (px < ri) splat.over(px + CW, py, moonRGB, a)
+      else if (px > CW - ri) splat.over(px - CW, py, moonRGB, a)
     }
   }
 
@@ -482,6 +536,107 @@ export function skyTexture(defId: number): THREE.CanvasTexture {
 export function makeSkyMesh(m: GameMap, def: LevelDef): THREE.Mesh | null {
   const prof = SKY_PROFILES[def.id]
   if (!prof) return null
+  if (def.id === 9) {
+    // L9 使用完整球壳上的方向采样，并叠加两层连续三维噪声阴云。旧立方体即使按方向
+    // 采样，低亮度时六个盒面和每面的三角对角线仍会被辨认成“贴图接缝”。
+    const body = prof.moon
+    const phi = body ? (body.az / 360 - .5) * Math.PI * 2 : 0
+    const elv = body ? body.elv * Math.PI / 180 : Math.PI / 4
+    const moonDir = new THREE.Vector3(Math.cos(phi) * Math.cos(elv), Math.sin(elv), Math.sin(phi) * Math.cos(elv))
+    const mat = new THREE.ShaderMaterial({
+      uniforms: {
+        uTime: { value: 0 },
+        uMoonDir: { value: moonDir },
+        uFogMix: { value: 0 },
+        uFogColor: { value: new THREE.Color('#697278') },
+      },
+      vertexShader: `
+        varying vec3 vSkyDir;
+        void main() {
+          vSkyDir = normalize(position);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform float uTime;
+        uniform vec3 uMoonDir;
+        uniform float uFogMix;
+        uniform vec3 uFogColor;
+        varying vec3 vSkyDir;
+        float hash31(vec3 p) {
+          p = fract(p * 0.1031);
+          p += dot(p, p.yzx + 33.33);
+          return fract((p.x + p.y) * p.z);
+        }
+        float noise3(vec3 p) {
+          vec3 i = floor(p), f = fract(p);
+          f = f * f * (3.0 - 2.0 * f);
+          float n000 = hash31(i + vec3(0.0,0.0,0.0));
+          float n100 = hash31(i + vec3(1.0,0.0,0.0));
+          float n010 = hash31(i + vec3(0.0,1.0,0.0));
+          float n110 = hash31(i + vec3(1.0,1.0,0.0));
+          float n001 = hash31(i + vec3(0.0,0.0,1.0));
+          float n101 = hash31(i + vec3(1.0,0.0,1.0));
+          float n011 = hash31(i + vec3(0.0,1.0,1.0));
+          float n111 = hash31(i + vec3(1.0,1.0,1.0));
+          return mix(mix(mix(n000,n100,f.x),mix(n010,n110,f.x),f.y),
+                     mix(mix(n001,n101,f.x),mix(n011,n111,f.x),f.y),f.z);
+        }
+        void main() {
+          vec3 d = normalize(vSkyDir);
+          // L9 不再读取 skyTexture(9) 的旧等距柱状画布。底色直接按真实仰角生成，
+          // 地平线、低云与天顶之间没有任何图片边界或旧月盘残留。
+          float height = clamp(d.y, 0.0, 1.0);
+          float vertical = smoothstep(0.0, 0.82, pow(height, .62));
+          vec3 horizonColor = vec3(.066, .079, .088);
+          vec3 zenithColor = vec3(.012, .022, .032);
+          vec3 sky = mix(horizonColor, zenithColor, vertical);
+          sky += vec3(.035, .039, .043) * exp(-height * 9.0);
+          // 球面方向上的噪声没有经纬接缝；两层以不同速度/高度漂移，产生真实的云层视差。
+          float upper = smoothstep(-0.04, 0.22, d.y);
+          // 每像素只进行一次三维 value-noise；细节层用连续方向波补足，避免天空着色器
+          // 在高分辨率下成为新的性能瓶颈。
+          float slow = noise3(d * 3.8 + vec3(uTime * .005, .7, -uTime * .002));
+          float fast = .5 + .5 * sin(d.x * 17.0 + sin(d.z * 11.0 - uTime * .013) + d.y * 8.0 + uTime * .009);
+          float cloud = smoothstep(.35, .73, slow * .74 + fast * .26) * upper;
+          vec3 cloudDark = vec3(.055, .066, .074);
+          vec3 cloudSilver = vec3(.145, .158, .166);
+          vec3 cloudColor = mix(cloudDark, cloudSilver, smoothstep(.35, .82, fast));
+
+          // 月盘在着色器中按真实天空方向重建，带柔边、冷晕与粗糙环形山明暗；
+          // 它不是一张永远正对镜头的白色圆片。
+          vec3 md = normalize(uMoonDir);
+          vec3 mr = normalize(cross(vec3(0.0,1.0,0.0), md));
+          vec3 mu = normalize(cross(md, mr));
+          float moonRad = .040;
+          float moonDot = dot(d, md);
+          vec2 mp = vec2(dot(d, mr), dot(d, mu)) / sin(moonRad);
+          float disc = 1.0 - smoothstep(.91, 1.045, length(mp));
+          float crater = .5;
+          if (disc > .001) crater = noise3(vec3(mp * 3.6, 11.0));
+          vec3 moonColor = mix(vec3(.56,.59,.62), vec3(.86,.88,.90), smoothstep(.24,.78,crater));
+          float halo = pow(max(moonDot, 0.0), 170.0) * .2 + pow(max(moonDot, 0.0), 620.0) * .34;
+          sky += vec3(.43,.50,.57) * halo;
+          sky = mix(sky, moonColor, disc * .86);
+          // 阴云在月盘之前，月亮可被不同厚度的云层局部遮蔽。
+          sky = mix(sky, cloudColor, cloud * (.34 + .28 * slow));
+          // 浓雾事件直接作用于天空本身；否则 fog:false 的远景会永远清晰地浮在雾墙后。
+          float fk = smoothstep(0.02, 0.96, uFogMix);
+          sky = mix(sky, uFogColor, fk);
+          gl_FragColor = vec4(sky, 1.0);
+        }
+      `,
+      side: THREE.BackSide,
+      depthWrite: false,
+      depthTest: true,
+      fog: false,
+    })
+    const mesh = new THREE.Mesh(new THREE.SphereGeometry(42, 64, 32), mat)
+    mesh.name = 'skybox'
+    mesh.frustumCulled = false
+    mesh.position.set(m.w / 2, 1.65, m.h / 2)
+    return mesh
+  }
   const geo = new THREE.SphereGeometry(42, 48, 24, 0, Math.PI * 2, 0, Math.PI / 2)
   const mat = new THREE.MeshBasicMaterial({ map: skyTexture(def.id), side: THREE.BackSide, fog: false, depthWrite: false })
   const mesh = new THREE.Mesh(geo, mat)

@@ -38,6 +38,7 @@ import LayoutEditor, { loadTouchLayout, type TouchLayoutStore } from '@/componen
 import Cutscene, { type CutKind, type CutIn } from '@/components/Cutscene'
 import DesignMode from '@/components/DesignMode' // v54：设计模式（开发者模式入口在标题屏）
 import LobbyOverlay from '@/components/LobbyOverlay' // v58：联机大厅
+import SquirtRadial, { type SquirtWheelAction, type SquirtWheelOption, type SquirtWheelState } from '@/components/SquirtRadial'
 import { MpSession } from '@/game/net/session'
 import { applyMpEvent } from '@/game/net/apply'
 
@@ -94,6 +95,9 @@ function Game() {
   // 保留手部建模与准星）。两者互斥不叠加：按当前生效的键恢复，按另一个键直接切换模式。
   // 背包/图鉴/设置/战利品面板等覆盖层不受影响（只隐藏 HUD 铬件，面板类 UI 按现有逻辑正常显示）
   const [hudHidden, setHudHidden] = useState(false)
+  const [squirtWheel, setSquirtWheel] = useState<SquirtWheelState | null>(null)
+  // 指针锁定下鼠标移动与 keyup 都发生在 React 渲染之外，ref 保证它们读取同一帧的轮盘选择。
+  const squirtWheelRef = useRef<SquirtWheelState | null>(null)
   // v23：切入切出过场（替代旧的简易 TransitionOverlay）
   const [cut, setCut] = useState<{ kind: CutKind; cutIn?: CutIn; toName?: string; caption?: string } | null>(null)
   const cutRef = useRef<typeof cut>(null)
@@ -120,6 +124,16 @@ function Game() {
   screenRef.current = screen
   const sensRef = useRef(settings.sensitivity)
   sensRef.current = settings.sensitivity
+
+  useEffect(() => {
+    if (screen !== 'game' || overlay !== 'none') {
+      if (squirtWheelRef.current) {
+        squirtWheelRef.current = null
+        setSquirtWheel(null)
+      }
+      engine.inspectHeld = false
+    }
+  }, [screen, overlay])
 
   const isMobile = typeof window !== 'undefined' && (window.matchMedia?.('(pointer: coarse)').matches || 'ontouchstart' in window)
 
@@ -321,7 +335,7 @@ function Game() {
     setOverlay('none')
     setLoadState({ progress: 2, label: '初始化加载器', detail: '正在准备资源清单', history: [] })
     setScreen('loading')
-    void preloadGameResources({ targetLevel, bgmStyle: settings.bgmStyle }, (u) => {
+    void preloadGameResources({ targetLevel, bgmStyle: settings.bgmStyle, allLevels: settings.preloadAllLevels }, (u) => {
       setLoadState((prev) => ({
         progress: Math.max(prev.progress, u.progress),
         label: u.label,
@@ -347,7 +361,7 @@ function Game() {
         refreshSlots()
       }
     })
-  }, [settings.bgmStyle, commitStart, refreshSlots])
+  }, [settings.bgmStyle, settings.preloadAllLevels, commitStart, refreshSlots])
 
   // v54：从槽位继续（读快照取种子与层级）；空槽回退为新游戏
   const continueSlot = useCallback((slot: SaveSlotId) => {
@@ -359,6 +373,41 @@ function Game() {
   // 键盘输入（v18：全部键位读自定义绑定表 getKeybinds()，方向键/Ctrl/Tab 为始终生效的辅助键）
   useEffect(() => {
     const keys: Record<string, boolean> = {}
+    type ReloadHold = { timer: number; wheelOpened: boolean }
+    let reloadHold: ReloadHold | null = null
+    const heldSquirtGun = () => engine.player.hotbar[engine.player.selected]?.type === 'squirtgun'
+    const publishWheel = (wheel: SquirtWheelState | null) => {
+      squirtWheelRef.current = wheel
+      setSquirtWheel(wheel)
+    }
+    const openSquirtWheel = () => {
+      if (!heldSquirtGun() || screenRef.current !== 'game' || overlayRef.current !== 'none') return false
+      const options: SquirtWheelOption[] = engine.squirtTank === 'none'
+        ? [
+            { action: 'water', label: '清水', detail: '无需物品', color: '#79cde8' },
+            ...(engine.countItem('almond') > 0 ? [{ action: 'almond', label: '杏仁水', detail: `背包 ×${engine.countItem('almond')}`, color: '#a7d982' }] as SquirtWheelOption[] : []),
+            ...(engine.countItem('cashew') > 0 ? [{ action: 'cashew', label: '腰果水', detail: `背包 ×${engine.countItem('cashew')}`, color: '#c59a57' }] as SquirtWheelOption[] : []),
+            ...(engine.countItem('liquidpain') > 0 ? [{ action: 'liquidpain', label: '液态痛苦', detail: `背包 ×${engine.countItem('liquidpain')}`, color: '#d65343' }] as SquirtWheelOption[] : []),
+          ]
+        : [{ action: 'clear', label: '清空储罐', detail: `${engine.squirtAmmo} 份残液`, color: '#d06a55' }]
+      publishWheel({ options, selected: 'cancel', cursorX: 0, cursorY: 0 })
+      audio.uiTick()
+      return true
+    }
+    const executeWheelAction = (action: SquirtWheelAction) => {
+      if (action === 'cancel') return
+      if (action === 'clear') {
+        if (engine.squirtTank !== 'none') engine.squirtQuickLiquid = engine.squirtTank
+        engine.clearSquirt()
+        return
+      }
+      engine.squirtQuickLiquid = action
+      engine.loadSquirt(action)
+    }
+    const quickReloadSquirt = () => {
+      const liquid = engine.squirtTank === 'none' ? engine.squirtQuickLiquid : engine.squirtTank
+      engine.loadSquirt(liquid)
+    }
     // 页签键：背包/地图/图鉴/任务/状态/日志——游戏中直开对应页签；背包打开时切换页签，再按当前页签键关闭
     const tabKeys = (kb: KeyBindMap): [string, typeof invTab][] => [
       [kb.inventory, '背包'], ['Tab', '背包'], [kb.map, '地图'],
@@ -400,6 +449,18 @@ function Game() {
         } else engine.input.interact = true
       }
       if (c === b.flashlight) engine.input.toggleLight = true
+      if (c === b.inspect) engine.inspectHeld = true
+      if (c === b.reload && !e.repeat && heldSquirtGun()) {
+        e.preventDefault()
+        if (!reloadHold) {
+          const hold: ReloadHold = { timer: 0, wheelOpened: false }
+          reloadHold = hold
+          hold.timer = window.setTimeout(() => {
+            if (reloadHold !== hold) return
+            hold.wheelOpened = openSquirtWheel()
+          }, 300)
+        }
+      }
       // v54：沉浸模式切换——F1 全沉浸（HUD+手部）/ F2 半沉浸（仅 HUD）；互斥切换，按当前生效键恢复
       if (c === b.hidehud || c === b.hidehud2) {
         const full = c === b.hidehud
@@ -426,6 +487,18 @@ function Game() {
       keys[e.code] = false
       const b = getKeybinds()
       if (e.code === b.jump) engine.input.jump = false // v57t：松键即停止持续上浮（深水跳跃是长按态，不能永远锁存）
+      if (e.code === b.inspect) engine.inspectHeld = false
+      if (e.code === b.reload && reloadHold) {
+        const hold = reloadHold
+        reloadHold = null
+        window.clearTimeout(hold.timer)
+        const action = squirtWheelRef.current?.selected ?? 'cancel'
+        publishWheel(null)
+        if (screenRef.current === 'game' && overlayRef.current === 'none' && heldSquirtGun()) {
+          if (hold.wheelOpened) executeWheelAction(action)
+          else quickReloadSquirt()
+        }
+      }
       updateMove()
     }
     const updateMove = () => {
@@ -442,6 +515,10 @@ function Game() {
     window.addEventListener('keydown', down)
     window.addEventListener('keyup', up)
     return () => {
+      if (reloadHold) window.clearTimeout(reloadHold.timer)
+      reloadHold = null
+      publishWheel(null)
+      engine.inspectHeld = false
       window.removeEventListener('keydown', down)
       window.removeEventListener('keyup', up)
     }
@@ -498,6 +575,28 @@ function Game() {
     }
     const onLockChange = () => { look.locked = document.pointerLockElement === canvas }
     const onMouseMove = (e: MouseEvent) => {
+      const wheel = squirtWheelRef.current
+      if (wheel) {
+        const nextX = wheel.cursorX + e.movementX
+        const nextY = wheel.cursorY + e.movementY
+        const length = Math.hypot(nextX, nextY)
+        const maxRadius = 108
+        const scale = length > maxRadius ? maxRadius / length : 1
+        const cursorX = nextX * scale
+        const cursorY = nextY * scale
+        let selected: SquirtWheelAction = 'cancel'
+        if (Math.hypot(cursorX, cursorY) >= 30 && wheel.options.length > 0) {
+          const raw = Math.atan2(cursorY, cursorX) + Math.PI / 2
+          const normalized = (raw + Math.PI * 2) % (Math.PI * 2)
+          const index = Math.round(normalized / (Math.PI * 2 / wheel.options.length)) % wheel.options.length
+          selected = wheel.options[index].action
+        }
+        const next = { ...wheel, selected, cursorX, cursorY }
+        squirtWheelRef.current = next
+        setSquirtWheel(next)
+        if (selected !== wheel.selected) audio.uiTick()
+        return
+      }
       if (!look.locked) return
       look.yaw -= e.movementX * 0.0024 * sensRef.current
       look.pitch = Math.max(-1.2, Math.min(1.2, look.pitch - e.movementY * 0.0022 * sensRef.current))
@@ -626,6 +725,9 @@ function Game() {
   useEffect(() => {
     rendererRef.current?.setFogScale(settings.fogScale / 100)
   }, [settings.fogScale])
+  useEffect(() => {
+    rendererRef.current?.setDarknessBoost(settings.darknessBoost / 100)
+  }, [settings.darknessBoost])
   useEffect(() => {
     rendererRef.current?.setFarLights(settings.farLights)
   }, [settings.farLights])
@@ -770,6 +872,7 @@ function Game() {
           onUseSlot={(i) => engine.useSlot('hotbar', i)}
         />
       )}
+      {screen === 'game' && overlay === 'none' && squirtWheel && <SquirtRadial wheel={squirtWheel} />}
       {/* 战利品面板（容器搜索）*/}
       {screen === 'game' && overlay === 'none' && engine.lootPanel && (
         <LootPanel engine={engine} onClose={() => { engine.closeLootPanel(); setTick((n) => n + 1) }} />

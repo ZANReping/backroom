@@ -22,6 +22,7 @@ export interface GameSettings {
   shadows: boolean // 手电实时阴影（移动端强制关闭）
   fogOfWar: boolean // 战争迷雾（距离雾）：关闭后远处不再被雾遮蔽
   fogScale: number // 距离雾远近（%：50=更近更浓 … 100=默认 … 200=更远更淡）
+  darknessBoost: number // 额外暗度 0–100：叠加到当前层级 darkness 的 +0.00…+1.00，默认不加暗度
   farLights: boolean // 远处灯光全开（默认关闭=灯光点亮距离与雾可视距离一致；开启后灯光池 48→96 全场景点亮，性能开销略增）
   lightMode: 'classic' | 'realistic' // 光影模式：classic=经典（当前版本）/ realistic=真实物理光照（默认 classic，可随时退回）
   shadowQuality: number // 阴影质量 0=低 1=中 2=高（手电/太阳 shadow map 尺寸与软影半径；仅 realistic）
@@ -35,6 +36,7 @@ export interface GameSettings {
   ambient: number // 环境音（荧光灯嗡鸣 / L4 雨声）0-100
   bgm: number // v54：音乐（每层 BGM）0-100
   bgmStyle: 'procedural' | 'midi' // v56：BGM 曲风——procedural=随机程序化 / midi=MIDI 音符序列（按 Wikidot 各层风格重制）
+  preloadAllLevels: boolean // 开始游戏时预载全部层级资产；关闭后仅在进入具体层级时按需加载
   sfx: number // 音效（攻击/拾取/UI/实体叫声等全部单发）0-100
   muted: boolean
   leftHanded: boolean
@@ -52,11 +54,12 @@ export const defaultSettings: GameSettings = {
   difficulty: 'normal', autoSprint: false,
   grain: true, dust: false, shake: true, headBob: false, realWater: false, flicker: 70, renderResolution: 'native', dynamicRes: true, shadows: true, fogOfWar: true,
   vcrFx: false,
-  fogScale: 100, farLights: false,
+  fogScale: 100, darknessBoost: 0, farLights: false,
   lightMode: 'classic', shadowQuality: 1, sunShadows: true, lightShadows: 0,
   reflectivity: 60, bloomFx: true, bloomStrength: 35, exposure: 100,
   volume: 80, ambient: 50, bgm: 100, sfx: 90, muted: false,
   bgmStyle: 'procedural',
+  preloadAllLevels: true,
   leftHanded: false, stickSize: 120, btnOpacity: 70,
   sensitivity: 1.0, devMode: false,
   theme: 'amber',
@@ -204,6 +207,10 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
                 ))}
               </div>
               <Toggle k="autoSprint" label="自动冲刺" value={settings.autoSprint as boolean} onSet={setBool} />
+              <Toggle k="preloadAllLevels" label="启动时预载全部层级资产" value={settings.preloadAllLevels as boolean} onSet={setBool} />
+              <div className="pb-2 text-[11px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>
+                关闭后只预载即将进入的层级；其余层级会在首次进入时按需加载，可缩短首次启动等待时间。
+              </div>
               <div className="py-2 text-[13px]" style={{ color: 'var(--text-dim)' }}>语言：简体中文（固定）</div>
               <div className="mt-4 border-t pt-2" style={{ borderColor: 'var(--panel-edge)' }}>
                 <Toggle k="devMode" label="开发者模式（调试面板）" value={settings.devMode as boolean} onSet={setBool} />
@@ -288,6 +295,15 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
                   className="w-full accent-[var(--amber)]"
                 />
                 <span className="text-[11px]" style={{ color: 'var(--text-dim)' }}>50% = 更近更浓 · 100% = 默认 · 200% = 更远更淡（未开「远处灯光全开」时，灯光点亮距离自动与雾可视距离一致）</span>
+              </label>
+              <label className="block py-2 text-[14px]" style={{ color: 'var(--text)' }}>
+                <span className="mb-1 flex justify-between"><span>额外暗度</span><span className="font-mono2 text-[12px]" style={{ color: 'var(--amber)' }}>+{(settings.darknessBoost / 100).toFixed(2)}</span></span>
+                <input
+                  type="range" min={0} max={100} step={5} value={settings.darknessBoost}
+                  onChange={(e) => set('darknessBoost', Number(e.target.value))}
+                  className="w-full accent-[var(--amber)]"
+                />
+                <span className="text-[11px]" style={{ color: 'var(--text-dim)' }}>在当前层级自身 darkness 上额外叠加；0 = 原始画面，100 = +1.00 暗度。只压低暗部与层级照明，不削弱手电筒和开发者一键照明。</span>
               </label>
               <Toggle k="farLights" label="远处灯光全开（性能开销略增）" value={settings.farLights as boolean} onSet={setBool} />
               {/* ---- 光影模式（v50：物理光照/反射，可一键退回经典） ---- */}

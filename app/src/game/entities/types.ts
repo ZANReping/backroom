@@ -50,17 +50,28 @@ export interface EntityDef {
   intimidatable?: boolean // 可被「直视眼睛 + 制造噪声」威慑定身（猎犬）
   // ===== v41：Level 2 实体特性 =====
   hunts?: string[] // 实体对实体仇恨：主动猎杀附近的指定类型实体（尸鼠猎杀死亡飞蛾）；被玩家激怒时优先反击玩家
+  avoidsHumans?: boolean // 中立野生实体：人类靠近时主动拉开距离
   // ===== v42：尸鼠（合并死亡鼠）特性 =====
   grudge?: boolean // 记仇：被动实体被激怒后持续仇恨，脱战 8 秒也不平息（死亡鼠的凶猛反击血统）
   // ===== v53：L3 高智能实体实例变体（chunk raw 标记经 instantiate 浅拷贝带入）=====
   l3face?: boolean // L3 无面灵：面部长出位置/数量错误的眼耳鼻口器官
   tool?: boolean // L3 无面灵：使用石器工具（伤害上调，手部建模持有石器）
   capybara?: boolean // L3 尸鼠：水豚形态（体型变大）
+  // ===== v60：Level 8 生态实例变体 =====
+  ceilingCrawler?: boolean // 罗特尼斯尸鼠：受反向重力影响，在洞顶爬行
+  arachnidMorph?: 'spider' | 'scorpion' | 'tick' | 'mite' // 蛛形纲外形
+  arachnidBreed?: number // 蜘蛛/蝎/蜱/螨的花纹与体态亚种
+  herbivore?: boolean // 被动食草型；受击后仍可防卫
   // ===== v25：栖息地（生成位置过滤）=====
   // indoor=仅室内瓦片（m.outdoor=0）；outdoor=仅室外瓦片（m.outdoor=1，如小巷/街道/田野/海面）；
   // any（缺省）=随意。生成时无符合瓦片则降级 any 并计数告警。
   habitat?: 'indoor' | 'outdoor' | 'any'
   aquatic?: boolean // 水生：outdoor 栖息地额外接受水域瓦片（liquid≠0，如 L7 海面）
+  flying?: boolean // 飞行实体：z 是真实飞行根高度，不再由渲染器伪造上下摆动
+  flightMin?: number // 相对当地地面的最低巡航根高度（米）
+  flightMax?: number // 相对当地地面的最高巡航根高度（米）
+  flightClimb?: number // 最大垂直速度（米/秒）
+  flightHeadroom?: number // 模型根节点以上必须保留的洞顶净空（米）
   color: string
   desc: string // 图鉴外形简述（初见解锁）
   codex: EntityCodex
@@ -96,9 +107,17 @@ export interface Entity {
   intimidated?: boolean // 猎犬：正处于「直视+噪音」威慑中（播报去抖）
   provoked?: boolean // 被动实体（无面灵）：被玩家攻击后激怒，持续反击直到脱战平息
   turnSlowT?: number // v58：七层之物——体节被击后转头迟滞的剩余时间
+  lightStressT?: number // 七层之物被手电持续直射的累计刺激：先避光，超过阈值后暴怒
+  lightRecoilT?: number // 畏光退避窗口；窗口内普通视野不会立刻把退避状态覆盖成追击
+  lightWarned?: boolean // 首次直射的畏光反馈去抖
   targetEnt?: Entity // 实体对实体仇恨目标（被其他实体攻击后反击伤害者——死亡飞蛾反击尸鼠）
+  huntScanT?: number // 群落捕食目标扫描节流；避免高密度生态每帧进行实体数平方级 LOS 检查
   encountered?: boolean // v54：图鉴遭遇已计数（按个体去重——看见/索敌/攻击命中/特殊交互，每只只计一次）
   blackoutSpawn?: boolean // 停电期间生成（笑魇）：灯光恢复时消散
+  l9FogSpawn?: boolean // L9 罕见浓雾期间生成的残缺者；雾散后随之退散
+  flightBand?: import('../core/types').FloorBand // 飞行所依附楼层；避免高度越过 band 中线后误判跨层
+  flightT?: number // 垂直巡航相位
+  flightReady?: boolean // 首帧已放到可飞净空，之后才平滑升降
   // ===== 联机同步（房主权威实体快照）=====
   netId?: number // 房主分配的联机 id；客人端带此字段即为「提线木偶」（位置/状态由快照驱动，本地 AI 挂起）
   netX?: number // 快照目标位置（窗口坐标，本地插值趋近）

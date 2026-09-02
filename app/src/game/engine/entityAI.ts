@@ -1,6 +1,6 @@
 // v53：实体 AI 步进（状态机/游荡/撞墙偏转/hunts 猎杀/provoked 激怒/群体激怒/圣所威慑/售货机活化）
 // + 感知判定（los/视线锥/噪音事件/光照）——自 engine.ts 拆分，逻辑逐语句搬运。
-import { floorHeight, tileAt, tileH, walkableAt, wallAt, solidStructAtFloor, bandOfZ, bandOfPlayerZ, stairServesBand, upAt, upWallAt, FLOOR_H, JUMP_REACH, UNDER_FLOOR, type GameMap } from '../world/mapgen'
+import { caveCeilingAt, floorHeight, structBlocksCircle, tileAt, tileH, walkableAt, wallAt, solidStructAtFloor, bandOfZ, bandOfPlayerZ, stairServesBand, upAt, upWallAt, FLOOR_H, JUMP_REACH, UNDER_FLOOR, type GameMap } from '../world/mapgen'
 import type { FloorBand } from '../core/types'
 import { canOccupy, PLAYER_RADIUS } from '../core/player'
 import { WALL_H } from '../renderer/shared'
@@ -43,6 +43,9 @@ export function noiseEvent(eng: Engine, x: number, y: number, radius: number, sp
     // v58：小小（可对话被动个体）极其厌恶噪音——首次近处巨响先退避低鸣，再次被吵则彻底激怒
     if (e.def.type === 'tiny' && e.def.passive) {
       if (e.provoked) continue
+      // 普通走路/蹲行也会周期性调用 noiseEvent；若把听觉半径直接用于所有脚步，玩家尚未
+      // 接近对话距离便会在数帧内必然激怒小小。这里只把奔跑、攻击、破门等明显响动计入恼怒。
+      if (!sprint && radius < 8) continue
       const d0 = Math.hypot(e.x - x, e.y - y)
       if (d0 >= Math.max(radius, e.def.hearing * 2.4)) continue
       e.scrapeT = (e.scrapeT ?? 0) + 1 // 借用 scrapeT 作恼怒计数
@@ -62,7 +65,9 @@ export function noiseEvent(eng: Engine, x: number, y: number, radius: number, sp
     if (e.def.passive) continue // 被动实体（无面灵）不循声索敌——只有被攻击才反击
     const d = Math.hypot(e.x - x, e.y - y)
     // v57o：tiny 对水下/水面噪音极敏感——投掷物落水、爆炸与游泳声都能从更远处把它引开
-    const hearR = e.def.type === 'tiny' ? e.def.hearing * 2.4 : sprint && e.def.hearsSprint ? e.def.hearing * 1.6 : e.def.hearing
+    const hearR = e.def.type === 'tiny' ? e.def.hearing * 2.4
+      : e.def.type === 'thething' ? e.def.hearing * 2.2 // 维基：会被水中扰动吸引；在黑水里先“听”见玩家
+      : sprint && e.def.hearsSprint ? e.def.hearing * 1.6 : e.def.hearing
     // 失明实体（肢团）只按「响度半径」听觉——蹲行/慢走的小声响不会被顺风耳放大
     const effR = e.def.blind ? radius : Math.max(radius, hearR)
     if (d >= effR) continue
@@ -80,7 +85,7 @@ export function noiseEvent(eng: Engine, x: number, y: number, radius: number, sp
 export function lookingAt(eng: Engine, e: Entity): boolean {
   const p = eng.player
   const ang = Math.atan2(e.y - p.y, e.x - p.x)
-  const fwd = Math.atan2(-Math.sin(look.yaw), -Math.cos(look.yaw)) // 与 renderer3d 视线前向一致
+  const fwd = Math.atan2(-Math.cos(look.yaw), -Math.sin(look.yaw)) // Three.js 前向映射到游戏 x/y
   let diff = Math.abs(ang - fwd)
   if (diff > Math.PI) diff = Math.PI * 2 - diff
   return diff < 0.4 && eng.los(p.x, p.y, e.x, e.y)
@@ -101,6 +106,12 @@ export function los(eng: Engine, x0: number, y0: number, x1: number, y1: number)
 export function entityBand(m: GameMap, e: Entity): FloorBand {
   const ti = Math.floor(e.y) * m.w + Math.floor(e.x)
   if (e.def.aquatic && m.liquid?.[ti] === 1) return 0
+  // 飞行高度属于同一空间内的垂直运动，不是换楼层。L8 洞穴固定主层；普通建筑则在
+  // 首次起飞前记住出生楼层，避免飞过 BAND_MID 后突然使用二层墙体/地板寻路。
+  if (e.def.flying) {
+    if (e.flightBand === undefined) e.flightBand = m.organicCave ? 0 : bandOfZ(e.z)
+    return e.flightBand
+  }
   return bandOfZ(e.z)
 }
 
@@ -130,6 +141,34 @@ export function updateAquaticDepth(eng: Engine, e: Entity, dt: number) {
   e.z += Math.max(-maxStep, Math.min(maxStep, target - e.z))
 }
 
+/** 真正的空中飞行：AI/联机/近战共享同一个 z，而不是只在渲染器里上下摆模型。 */
+export function updateFlyingAltitude(eng: Engine, e: Entity, dt: number) {
+  if (!e.def.flying) return
+  const m = eng.map!, p = eng.player
+  const band = entityBand(m, e)
+  const ground = floorHeight(m, e.x, e.y, band)
+  const roof = m.organicCave ? caveCeilingAt(m, e.x, e.y) : ground + (WALL_H[eng.levelDef.gen] ?? 3)
+  const lo = ground + (e.def.flightMin ?? 0.45)
+  const rawHi = ground + (e.def.flightMax ?? 1.25)
+  const hi = Math.max(lo, Math.min(rawHi, roof - (e.def.flightHeadroom ?? 0.55)))
+  e.flightT = (e.flightT ?? ((e.id * 0.754877666) % 6.283)) + dt
+  const wave = 0.5 + Math.sin(e.flightT * (e.def.type === 'curabitur' ? 0.58 : 1.15) + e.id * 0.37) * 0.5
+  let target = lo + (hi - lo) * wave
+  if (e.targetEnt && !e.targetEnt.dead) target = e.targetEnt.z
+  else if (e.state === 'chase' || e.state === 'attack' || (e.def.lightLure && e.state === 'investigate')) {
+    // 扑向人时对齐玩家上身，而非仍沿固定高度横移；最终攻击仍需通过 meleeZOk。
+    target = p.z + (e.def.type === 'deathmoth' ? 0.78 : 0.62)
+  }
+  target = Math.max(lo, Math.min(hi, target))
+  if (!e.flightReady || e.z < ground - 0.15 || e.z > roof) {
+    e.z = target
+    e.flightReady = true
+    return
+  }
+  const maxStep = (e.def.flightClimb ?? 1.5) * dt
+  e.z += Math.max(-maxStep, Math.min(maxStep, target - e.z))
+}
+
 export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
   const m = eng.map!, p = eng.player
   const l3 = eng.levelDef.id === 3 // v53：L3 高智能实体行为开关（wikidot Level 3 条目）
@@ -154,7 +193,9 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
     // 死亡动画计时（倒地/消散后移除）
     if (e.dead) { e.deathT -= dt; continue }
     e.stateT -= dt; e.attackCd -= dt
+    if (e.huntScanT !== undefined) e.huntScanT -= dt
     if (e.turnSlowT !== undefined && e.turnSlowT > 0) e.turnSlowT -= dt // v58：七层之物转头迟滞计时
+    if (e.lightRecoilT !== undefined && e.lightRecoilT > 0) e.lightRecoilT -= dt
     // v59 联机：客人端「提线木偶」实体（带 netId）——位置/状态由房主快照驱动，本地 AI 挂起；
     // 同步来的追击/攻击状态对本地玩家同样致命（各端本地结算接触伤害）；>8s 未刷新即移除
     if (e.netId !== undefined && eng.mpSession && !eng.mpSession.isHost) {
@@ -175,7 +216,9 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
     // 开发者模式：隐形——所有距离判定视为无穷远，实体永不索敌/攻击/特殊触发
     const d = eng.dev.invisible ? 1e9 : Math.hypot(e.x - p.x, e.y - p.y)
     const def = e.def
+    if (e.targetEnt?.dead) e.targetEnt = undefined
     if (def.aquatic) updateAquaticDepth(eng, e, dt)
+    if (def.flying) updateFlyingAltitude(eng, e, dt)
     // v51：Nguithr'xurh（Entity 16）——天花板网囊陷阱专属状态机
     if (def.type === 'nguithr') { eng.updateNguithr(e, d, dt); continue }
     // 猎犬威慑：玩家「实时直视 + 持续制造噪音」才定身——逐帧刷新 stunT，
@@ -376,18 +419,45 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
       }
     }
 
-    // v57o：thething 畏光但会被光激怒——手电照亮它时立即进入追击（而不是被光驱离）
-    if (def.type === 'thething' && lightOn && d < def.sight && eng.los(e.x, e.y, p.x, p.y) && e.state !== 'chase' && e.state !== 'attack') {
-      e.state = 'chase'; e.stateT = 0
-      if (!e.activated) {
-        e.activated = true
-        eng.msg('手电光扫过黑暗——七层之物被激怒了！', 'damage')
+    // 七层之物的畏光分两段：短暂直射会让它收鳃、偏头退入黑水；持续盯住才把防御反应
+    // 推过阈值，转为高速攻击。必须真的把手电朝向它，单纯开灯不再隔着背后“激怒”巨物。
+    const thingLit = def.type === 'thething' && lightOn && d < 14 && Math.abs(e.z - p.z) < 7 && lookingAt(eng, e)
+    if (def.type === 'thething') {
+      if (thingLit) e.lightStressT = Math.min(2.4, (e.lightStressT ?? 0) + dt)
+      else e.lightStressT = Math.max(0, (e.lightStressT ?? 0) - dt * 0.42)
+      if (thingLit && !e.activated && (e.lightStressT ?? 0) < 1.15 && e.state !== 'attack') {
+        const away = Math.max(0.01, d)
+        e.state = 'investigate'
+        e.targetX = e.x + ((e.x - p.x) / away) * 8
+        e.targetY = e.y + ((e.y - p.y) / away) * 8
+        e.stateT = 0.55
+        e.lightRecoilT = 0.42
+        if (!e.lightWarned) {
+          e.lightWarned = true
+          eng.msg('光束扫中那层腐烂厚皮——巨物闭眼偏头，鳃盖猛地收紧。', 'system')
+        }
+      } else if (thingLit && !e.activated && (e.lightStressT ?? 0) >= 1.15) {
+        e.activated = true; e.lightRecoilT = 0; e.state = 'chase'; e.stateT = 0
+        eng.msg('你没有移开光束。黑水被一张骤然张开的巨口推向四周。', 'damage')
         audio.aggro()
       }
     }
     // 视野追击（趋光猎手仅在玩家手电亮时能看见目标；关灯后可靠听觉察觉噪音；v53：L3 笑魇无视光照恒可索敌）
     const darkBonus = def.darkAmbusher && !lightOn ? 4 : 0
-    const canSee = hearP || (d < def.sight + darkBonus && (!def.lightHunter || lightOn || l3) && eng.los(e.x, e.y, p.x, p.y))
+    const lightRecoiling = def.type === 'thething' && (e.lightRecoilT ?? 0) > 0 && !e.activated
+    // 受眷鸟等中立野生实体不会把玩家当猎物：未被挑衅时，玩家靠近便优先拉开距离。
+    // 这仍然经过正常 stepEntity 碰撞，避免“逃跑”把实体送进岩壁。
+    // 已锁定自然猎物时保持捕食优先；只在没有猎物的状态下避让人类，避免玩家靠近便清空受眷鸟目标。
+    const avoidingHuman = !!def.avoidsHumans && !e.provoked && !e.targetEnt && d < 4.8
+    if (avoidingHuman) {
+      const away = Math.max(0.1, d)
+      e.state = 'investigate'
+      e.targetX = e.x + ((e.x - p.x) / away) * 5.5
+      e.targetY = e.y + ((e.y - p.y) / away) * 5.5
+      e.targetEnt = undefined
+      e.stateT = 0.8
+    }
+    const canSee = !lightRecoiling && (hearP || (d < def.sight + darkBonus && (!def.lightHunter || lightOn || l3) && eng.los(e.x, e.y, p.x, p.y)))
     const feigning = def.feignNeutral && d > 2.4 && e.state !== 'chase' && e.state !== 'attack' // 侍者装中立
     // v23「Level 11 Effect」：本层敌对实体更不倾向于攻击——但主动挑衅（攻击过任何实体）会解除
     const pacified = !eng.provoked && (eng.levelDef.pacify ?? 0) > 0 && Math.random() < (eng.levelDef.pacify ?? 0)
@@ -417,23 +487,36 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
     }
     // v41：尸鼠（hunts）——实体对实体仇恨：主动猎杀附近的死亡飞蛾；
     // 被玩家激怒（provoked）时优先反击玩家（走下方正常状态机）
-    if (def.hunts && !e.provoked && e.state !== 'attack') {
+    if (def.hunts && !e.provoked && !avoidingHuman && e.state !== 'attack' && (e.huntScanT ?? 0) <= 0) {
+      // 罗特尼斯尸鼠群会令逐帧猎物搜索退化为 O(n²)。每只实体错峰到约 4–5 次/秒，
+      // investigate 会在两次扫描之间继续朝最近目标点移动，视觉上无顿挫，但大群落 CPU 峰值显著下降。
+      e.huntScanT = 0.18 + (e.id % 5) * 0.018
       let prey: Entity | null = null, pd = 1e9
-      for (const q of m.entities) {
+      // 捕食目标一旦取得便持续追踪到猎物死亡或离开活动窗口；旧逻辑每次都限定 9m+LOS，
+      // 飞蛾跑出扫描圈后鸟会停在旧坐标。
+      const retained = e.targetEnt
+      if (retained && !retained.dead && m.entities.includes(retained) && def.hunts.includes(retained.def.type)) {
+        const rd = Math.hypot(retained.x - e.x, retained.y - e.y, (retained.z - e.z) * 0.8)
+        prey = retained; pd = rd
+      } else if (retained) e.targetEnt = undefined
+      if (!prey) for (const q of m.entities) {
         if (q === e || q.dead || q.hidden || q.disguised) continue
         if (!def.hunts.includes(q.def.type)) continue
-        const qd = Math.hypot(q.x - e.x, q.y - e.y)
-        if (qd < 9 && qd < pd && eng.los(e.x, e.y, q.x, q.y)) { prey = q; pd = qd }
+        const qd = Math.hypot(q.x - e.x, q.y - e.y, (q.z - e.z) * 0.8)
+        if (qd < 15 && qd < pd && eng.los(e.x, e.y, q.x, q.y)) { prey = q; pd = qd }
       }
       if (prey) {
-        if (pd < 1.0 && e.attackCd <= 0) {
+        if (e.def.flying) e.targetEnt = prey
+        if (pd < 1.05 && Math.abs(prey.z - e.z) < 0.82 && e.attackCd <= 0) {
           e.attackCd = 1.1
           prey.hp -= def.damage
           prey.stunT = Math.max(prey.stunT, 0.3)
           eng.bloodParticles(prey.x, prey.y)
           if (prey.hp <= 0 && !prey.dead) {
             prey.dead = true; prey.deathT = 1.4
-            if (d < 9) eng.msg(`尸鼠扑翻了那只${prey.def.name}，几下撕碎拖进了墙缝。`, 'system')
+            if (d < 9) eng.msg(def.type === 'curabitur'
+              ? `受眷鸟舌尖的微光骤然一收，黏性长舌把${prey.def.name}卷进了黑色的喙。`
+              : `尸鼠扑翻了那只${prey.def.name}，几下撕碎拖进了墙缝。`, 'system')
           } else if (!prey.def.noRetaliate) {
             // 实体对实体仇恨：被尸鼠攻击的飞蛾反击该尸鼠（仇恨目标转为伤害者本人）
             prey.provoked = true; prey.targetEnt = e; prey.state = 'chase'; prey.stateT = 0
@@ -459,14 +542,20 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
         break
       }
       case 'investigate': {
-        if (def.grudge && e.provoked) {
+        const huntingPrey = e.targetEnt && !e.targetEnt.dead && def.hunts?.includes(e.targetEnt.def.type)
+        if (huntingPrey) {
+          // 活体猎物的位置每帧刷新，且不受 investigate 的两秒超时影响；受眷鸟以完整定义速度捕食。
+          e.targetX = e.targetEnt!.x; e.targetY = e.targetEnt!.y
+          eng.stepEntity(e, def.speed * (def.type === 'curabitur' ? 1 : 0.82), dt)
+        } else if (def.grudge && e.provoked) {
           // v42：记仇（尸鼠=合并死亡鼠）——调查中持续追踪玩家本人，超时转回追击而非放弃
           e.targetX = p.x; e.targetY = p.y
           eng.stepEntity(e, def.speed * 0.7, dt)
           if (e.stateT <= 0 || d < def.sight) e.state = 'chase'
         } else if (eng.stepEntity(e, def.speed * 0.7, dt) || e.stateT <= 0) { e.state = 'wander'; eng.wanderTarget(e) }
         // v41：hunts 实体（尸鼠）调查中面向猎物目标；其余实体面向玩家方向
-        eng.faceToward(e, def.hunts ? e.targetX : p.x, def.hunts ? e.targetY : p.y, dt, 5)
+        const faceTarget = def.hunts || (def.type === 'thething' && (e.lightRecoilT ?? 0) > 0)
+        eng.faceToward(e, faceTarget ? e.targetX : p.x, faceTarget ? e.targetY : p.y, dt, def.type === 'thething' ? 1.1 : 5)
         e.animT += dt * def.speed * 0.7
         break
       }
@@ -515,8 +604,8 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
           e.targetX = tgt.x; e.targetY = tgt.y
           eng.stepEntity(e, def.speed, dt)
           eng.faceToward(e, tgt.x, tgt.y, dt, 9)
-          const td = Math.hypot(tgt.x - e.x, tgt.y - e.y)
-          if (td < 1.0 && e.attackCd <= 0) {
+          const td = Math.hypot(tgt.x - e.x, tgt.y - e.y, (tgt.z - e.z) * 0.8)
+          if (td < 1.0 && Math.abs(tgt.z - e.z) < 0.82 && e.attackCd <= 0) {
             e.attackCd = 1.2
             tgt.hp -= def.damage
             tgt.stunT = Math.max(tgt.stunT, 0.3)
@@ -536,7 +625,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
           eng.faceToward(e, p.x, p.y, dt, 9) // 追击时平滑转向面向玩家
         }
         e.animT += dt * def.speed
-        const meleeReach = def.type === 'thething' ? 2.0 : 0.85 // v58：七层之物巨口攻击距离更大
+        const meleeReach = def.type === 'thething' ? 3.05 : 0.85 // 近四米长头颅的巨口攻击距离
         if (!e.targetEnt && d < meleeReach && e.attackCd <= 0) {
           e.state = 'attack'; e.lungeT = 0.32; e.attackCd = 1.4
         } else if (!e.targetEnt && !canSee && d > def.sight * 1.4 && !def.mirrorMove && !def.blind && !(def.grudge && e.provoked)) {
@@ -554,7 +643,9 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
           let diff = Math.abs(want - e.facing)
           if (diff > Math.PI) diff = Math.PI * 2 - diff
           if (diff > 0.7) { e.lungeT = 0.1; break }
-          if (d < (def.grabs ? 1.8 : 1.2) && eng.meleeZOk(e)) {
+          const hitReach = def.type === 'thething' ? 3.15 : def.grabs ? 1.8 : 1.2
+          const hitZ = def.type === 'thething' ? Math.abs(e.z - p.z) < 2.8 : eng.meleeZOk(e)
+          if (d < hitReach && hitZ) {
             eng.hurtPlayer(def.damage * dmgMult, def.name)
             if (def.grabs) {
               p.slowT = 2.5; p.stamina = 0
@@ -588,7 +679,11 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
         if (!def.stationary) {
           // 实体侧退 60%（目标瓦片可站才移动，防止被推进墙里）
           const ex = e.x + ux * push * 0.6, ey = e.y + uy * push * 0.6
-          if (eng.entityWalkH(m, Math.floor(ex), Math.floor(ey), entityBand(m, e), e.def.aquatic === true) !== null) { e.x = ex; e.y = ey }
+          const etx = Math.floor(ex), ety = Math.floor(ey)
+          const l9StreetBound = eng.levelDef.id === 9
+            && (e.def.type === 'watcher' || e.def.type === 'strider' || e.def.type === 'mangled')
+          if (eng.entityWalkH(m, etx, ety, entityBand(m, e), e.def.aquatic === true, e.def.flying === true) !== null
+            && (!l9StreetBound || m.outdoor[ety * m.w + etx] === 1)) { e.x = ex; e.y = ey }
         }
         // 玩家侧退剩余部分（碰撞校验，贴墙时不强推）
         const k = def.stationary ? 1 : 0.4
@@ -602,6 +697,8 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
 export function wanderTarget(eng: Engine, e: Entity) {
   const m = eng.map!
   const band = entityBand(m, e)
+  const l9StreetBound = eng.levelDef.id === 9
+    && (e.def.type === 'watcher' || e.def.type === 'strider' || e.def.type === 'mangled')
   // Ferren（雪貂笼宠物）：小半径就近游荡 + 直线路径可走校验——不再隔着笼墙选点往墙上蹭；
   // 偶尔趴下歇一会儿（宠物漫游节奏）
   if (e.def.type === 'ferren') {
@@ -624,6 +721,7 @@ export function wanderTarget(eng: Engine, e: Entity) {
     const tx = e.x + Math.cos(a) * 5, ty = e.y + Math.sin(a) * 5
     const ti = Math.floor(ty) * m.w + Math.floor(tx)
     if (Math.floor(tx) < 0 || Math.floor(ty) < 0 || Math.floor(tx) >= m.w || Math.floor(ty) >= m.h) continue
+    if (l9StreetBound && m.outdoor[ti] !== 1) continue
     // v13：按所在楼层高度带选游荡目标（上层实体不下楼闲逛；楼梯口允许上下）
     if (m.stair[ti] & 7) { e.targetX = tx; e.targetY = ty; e.stateT = 4; return }
     if (m.tint[ti] === 20) continue // v51：实体不主动进入圣所（tint 20）
@@ -635,7 +733,8 @@ export function wanderTarget(eng: Engine, e: Entity) {
         if (c.variant === 'sanct' && Math.abs(c.cx - wcx) <= 1 && Math.abs(c.cy - wcy) <= 1) { holy = true; break }
       if (holy) continue
     }
-    if (band === 0 ? tileAt(m, Math.floor(tx), Math.floor(ty)) === 1 : walkableAt(m, Math.floor(tx), Math.floor(ty), band)) {
+    if (eng.entityWalkH(m, Math.floor(tx), Math.floor(ty), band, e.def.aquatic === true, e.def.flying === true) !== null
+      && !structBlocksCircle(m, tx, ty, .24, e.z, band)) {
       if (band === 0 && m.liquid[ti] === 1 && !e.def.aquatic) continue // 陆生实体不主动下水；水生实体可巡游
       e.targetX = tx; e.targetY = ty; e.stateT = 4; return
     }
@@ -648,6 +747,8 @@ export function wanderTarget(eng: Engine, e: Entity) {
 export function wanderDeflect(eng: Engine, e: Entity) {
   const m = eng.map!
   const band = entityBand(m, e)
+  const l9StreetBound = eng.levelDef.id === 9
+    && (e.def.type === 'watcher' || e.def.type === 'strider' || e.def.type === 'mangled')
   const base = Math.atan2(e.targetY - e.y, e.targetX - e.x)
   const s0 = Math.random() < 0.5 ? 1 : -1
   for (let t = 0; t < 6; t++) {
@@ -656,8 +757,9 @@ export function wanderDeflect(eng: Engine, e: Entity) {
     const tx = e.x + Math.cos(a) * 4, ty = e.y + Math.sin(a) * 4
     const fx = Math.floor(tx), fy = Math.floor(ty)
     if (fx < 0 || fy < 0 || fx >= m.w || fy >= m.h) continue
-    if (eng.entityWalkH(m, fx, fy, band, e.def.aquatic === true) === null) continue
-    if (band === 0 && m.liquid[fy * m.w + fx] === 1 && !e.def.aquatic) continue // 陆生实体不主动下水；水生实体可巡游
+    if (l9StreetBound && m.outdoor[fy * m.w + fx] !== 1) continue
+    if (eng.entityWalkH(m, fx, fy, band, e.def.aquatic === true, e.def.flying === true) === null) continue
+    if (band === 0 && m.liquid[fy * m.w + fx] === 1 && !e.def.aquatic && !e.def.flying) continue // 陆生实体不主动下水；飞行实体可越过水面
     e.targetX = tx; e.targetY = ty; e.stateT = 4; return
   }
   eng.wanderTarget(e)
@@ -748,27 +850,30 @@ export function faceToward(_eng: Engine, e: Entity, tx: number, ty: number, dt: 
   e.facing += diff * t
 }
 // 实体行走高度（v13 楼层带感知；楼梯坡道取中位连续高度；深水不可进入；v54：band2 走 up2 楼板）
-export function entityWalkH(_eng: Engine, m: GameMap, tx: number, ty: number, band: FloorBand, aquatic = false): number | null {
+export function entityWalkH(_eng: Engine, m: GameMap, tx: number, ty: number, band: FloorBand, aquatic = false, flying = false): number | null {
   if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return null
   const i = ty * m.w + tx
   if (m.stair[i] & 7) { // 楼梯：坡道到达的楼层带都可走（连续坡道上下；v54 带守卫，JUMP_REACH 宽松容差保旧行为）
     if (band >= 1 && (!stairServesBand(m.stair[i], band, JUMP_REACH) || upAt(m, band as 1 | 2)[i] !== 1)) return null
-    if (solidStructAtFloor(m, tx, ty, band)) return null
+    if (solidStructAtFloor(m, tx + .5, ty + .5, band)) return null
     return tileH(m, tx, ty)
   }
   if (band >= 1) {
     const b = band as 1 | 2 // 已排除 band 0
     if (upAt(m, b)[i] !== 1 || upWallAt(m, b)[i] === 1) return null
-    if (solidStructAtFloor(m, tx, ty, band)) return null
+    if (solidStructAtFloor(m, tx + .5, ty + .5, band)) return null
     return band * FLOOR_H
   }
   if (band === -1) {
-    if (!walkableAt(m, tx, ty, -1) || solidStructAtFloor(m, tx, ty, -1)) return null
+    if (!walkableAt(m, tx, ty, -1) || solidStructAtFloor(m, tx + .5, ty + .5, -1)) return null
     return UNDER_FLOOR
   }
-  if (tileAt(m, tx, ty) !== 1) return null
-  if (m.crawl[i] === 1) return null
+  if (!walkableAt(m, tx, ty, 0)) return null
+  // 路径格只按中心做粗筛，实际移动在 stepEntity.canGo 中按模型体积连续校验。
+  if (solidStructAtFloor(m, tx + .5, ty + .5, 0)) return null
+  if (m.crawl[i] === 1 && !flying) return null
   if (m.liquid[i] === 1) {
+    if (flying) return tileH(m, tx, ty) // 飞行实体越过水面，不被海床深度吸下去
     if (!aquatic) return null // 陆生实体不进入深水
     return -(m.seaFloor?.[i] || 1.7) // v57o：水生实体可进入水体，按海床深度寻路
   }
@@ -782,6 +887,10 @@ export function stepEntity(eng: Engine, e: Entity, speed: number, dt: number): b
   const d = Math.hypot(dx, dy)
   if (d < 0.3) return true
   const m = eng.map!
+  // 邻里守望与残缺者只属于 L9 的街道/庭院空间。即使玩家躲进住宅、目标点仍在
+  // 室内，它们也只能停在门窗外，不能借着追击状态穿过门洞进入房屋。
+  const l9StreetBound = eng.levelDef.id === 9
+    && (e.def.type === 'watcher' || e.def.type === 'strider' || e.def.type === 'mangled')
   let nx = e.x + (dx / d) * speed * dt
   let ny = e.y + (dy / d) * speed * dt
   // v7：实体不追入高差 >0.4m 的区域；v13：楼层带感知 + 可走楼梯跨层（坡道高差 ≤0.75）
@@ -792,15 +901,28 @@ export function stepEntity(eng: Engine, e: Entity, speed: number, dt: number): b
     ny = Math.max(0.2, Math.min(m.h - 0.2, ny))
     e.facing = Math.atan2(dy, dx)
     e.x = nx; e.y = ny
-    if (walkableAt(m, Math.floor(nx), Math.floor(ny), band)) e.z = floorHeight(m, nx, ny, band)
+    if (!e.def.flying && walkableAt(m, Math.floor(nx), Math.floor(ny), band)) e.z = floorHeight(m, nx, ny, band)
     return false
   }
   const curStair = m.stair[Math.floor(e.y) * m.w + Math.floor(e.x)] & 7
   const h0 = curStair ? tileH(m, Math.floor(e.x), Math.floor(e.y)) : (band >= 1 ? band * FLOOR_H : tileH(m, Math.floor(e.x), Math.floor(e.y)))
   const canGo = (px: number, py: number): boolean => {
     const tx = Math.floor(px), ty = Math.floor(py)
-    const nh = eng.entityWalkH(m, tx, ty, band, e.def.aquatic === true)
+    if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return false
+    if (l9StreetBound && m.outdoor[ty * m.w + tx] !== 1) return false
+    const nh = eng.entityWalkH(m, tx, ty, band, e.def.aquatic === true, e.def.flying === true)
     if (nh === null) return false
+    // tileAt 的旧语义会把结构声明的整格占地视为墙；运行时改为在实体真实位置
+    // 查询模型派生体积，允许绕过桌腿、树冠与异形装饰周围的可见空隙。
+    if (structBlocksCircle(m, px, py, .24, e.z, band)) return false
+    if (e.def.flying) {
+      // 飞行只要求横向仍在可用空间且洞顶净空足够；地面高差、浅水与深坑不再当台阶拦住。
+      if (m.organicCave) {
+        const ground = floorHeight(m, px, py, band)
+        if (caveCeilingAt(m, px, py) - ground < (e.def.flightMin ?? 0.45) + (e.def.flightHeadroom ?? 0.55) + 0.08) return false
+      }
+      return true
+    }
     // v58fix：水生实体在水体瓦片间游动不看海床高差——v58 海床真实起伏让相邻格底高差常超 0.4m，
     // 否则它们会永久卡死在海床洼地（「七层之物卡在海床下面」的根因）；垂直位置由 updateAquaticDepth 管
     if (e.def.aquatic && m.liquid[Math.floor(e.y) * m.w + Math.floor(e.x)] === 1 && m.liquid[ty * m.w + tx] === 1) return true
@@ -821,7 +943,7 @@ export function stepEntity(eng: Engine, e: Entity, speed: number, dt: number): b
     for (let ty2 = ety - 1; ty2 <= ety + 1; ty2++) {
       for (let tx2 = etx - 1; tx2 <= etx + 1; tx2++) {
         if (tx2 === etx && ty2 === ety) continue
-        if (eng.entityWalkH(m, tx2, ty2, band, e.def.aquatic === true) !== null) continue
+        if (eng.entityWalkH(m, tx2, ty2, band, e.def.aquatic === true, e.def.flying === true) !== null) continue
         const cx2 = Math.max(tx2, Math.min(tx2 + 1, e.x))
         const cy2 = Math.max(ty2, Math.min(ty2 + 1, e.y))
         const ddx = e.x - cx2, ddy = e.y - cy2
@@ -834,11 +956,11 @@ export function stepEntity(eng: Engine, e: Entity, speed: number, dt: number): b
   }
   // v13：跟随地面（楼梯坡道连续爬升；上下层带随 z 自动切换）
   // v57o：水生实体不吸到海床——垂直深度由 updateAquaticDepth 每帧驱动（可悬停/追击）
-  if (!(e.def.aquatic && m.liquid[Math.floor(e.y) * m.w + Math.floor(e.x)] === 1)) {
+  if (!e.def.flying && !(e.def.aquatic && m.liquid[Math.floor(e.y) * m.w + Math.floor(e.x)] === 1)) {
     e.z = floorHeight(m, e.x, e.y, entityBand(m, e))
   }
   // 深坑：实体坠入后死亡（无血花，直坠深渊消散）
-  if (m.elev[Math.floor(e.y) * m.w + Math.floor(e.x)] === 4 && !e.dead) {
+  if (!e.def.flying && m.elev[Math.floor(e.y) * m.w + Math.floor(e.x)] === 4 && !e.dead) {
     e.hp = 0; e.dead = true; e.deathT = 1.4
   }
   // 卡住判定（v44 补）：防穿模推挤把本步位移完全抵消——顶着墙原地蹭也算卡住，

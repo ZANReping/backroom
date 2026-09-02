@@ -82,6 +82,7 @@ export interface LiveChunk {
   upWall?: Uint8Array // v57m：上层墙体瓦片（L7 入口舱体墙壁）
   seaFloor?: Float32Array // v57o：海床深度（L7 垂直深度轴）
   terrain?: Float32Array
+  caveCeil?: Float32Array // L8 有机洞穴绝对洞顶高度
   // 以下为「活体」对象（窗口坐标，随窗口平移；跨平移保持对象身份与状态）
   structures: Structure[]
   items: GroundItem[]
@@ -702,11 +703,18 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
   // v41：calm 实例标记（L2 被动死亡飞蛾）——浅拷贝 def 置被动语义，不污染共享实体定义
   // v44：scale 实例标记（L2 温顺死亡飞蛾体型 0.6）——与 calm 一并浅拷贝带入
   const entities: Entity[] = raw.entities.map((e) => {
-    const ent = makeEntity(e.type, e.x - ox, e.y - oy)
+    const ent = makeEntity(e.type, e.x - ox, e.y - oy, e.z ?? 0)
     if (e.calm || e.scale !== undefined) ent.def = { ...ent.def, ...(e.calm ? { passive: true } : {}), ...(e.scale !== undefined ? { scale: e.scale } : {}) }
     // v53：L3 高智能实体标记——hostile 剥除被动（无面灵转敌意）；tool 石器（伤害 +6）；
     // l3face/capybara 形态变体；human 窃皮者伪装成流浪者（接近后暴起，见 entityAI）
     if (e.hostile || e.tool || e.l3face || e.capybara) ent.def = { ...ent.def, ...(e.hostile ? { passive: false } : {}), ...(e.tool ? { tool: true, damage: ent.def.damage + 6 } : {}), ...(e.l3face ? { l3face: true } : {}), ...(e.capybara ? { capybara: true } : {}) }
+    if (e.ceilingCrawler || e.arachnidMorph || e.arachnidBreed !== undefined || e.herbivore) ent.def = {
+      ...ent.def,
+      ...(e.ceilingCrawler ? { ceilingCrawler: true } : {}),
+      ...(e.arachnidMorph ? { arachnidMorph: e.arachnidMorph } : {}),
+      ...(e.arachnidBreed !== undefined ? { arachnidBreed: e.arachnidBreed } : {}),
+      ...(e.herbivore ? { herbivore: true, passive: true } : {}),
+    }
     if (e.human) ent.disguised = 'human'
     if (e.facing !== undefined) ent.facing = e.facing // v51：人制品售货机等生成时指定朝向
     return ent
@@ -723,7 +731,7 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
     moveT: 1 + Math.random() * 5, bubbleText: '', bubbleT: 0,
     hp: sp.def.faction === 'brc' ? 55 : sp.def.faction === 'jerry' ? 45 : undefined, // BRC 员工/信众可伤害可杀死；其余 NPC 无敌（据点居民契约）
   }))
-  return { key, cx, cy, variant: raw.variant, tiles: raw.tiles, wet: raw.wet, elev: raw.elev, tint: raw.tint, crawl: raw.crawl, outdoor: raw.outdoor, ceiling: raw.ceiling, liquid: raw.liquid, dn: raw.dn, dnWall: raw.dnWall, up: raw.up, upWall: raw.upWall, seaFloor: raw.seaFloor, terrain: raw.terrain, structures, items, lights, exits, entities, npcs, habFallback: raw.habFallback }
+  return { key, cx, cy, variant: raw.variant, tiles: raw.tiles, wet: raw.wet, elev: raw.elev, tint: raw.tint, crawl: raw.crawl, outdoor: raw.outdoor, ceiling: raw.ceiling, liquid: raw.liquid, dn: raw.dn, dnWall: raw.dnWall, up: raw.up, upWall: raw.upWall, seaFloor: raw.seaFloor, terrain: raw.terrain, caveCeil: raw.caveCeil, structures, items, lights, exits, entities, npcs, habFallback: raw.habFallback }
 }
 
 // 把已加载 chunk 内容缝合进窗口数组与对象列表
@@ -738,6 +746,7 @@ function stitch(m: GameMap, explored?: Uint8Array) {
   m.seaFloor.fill(1.7) // v57o：非 L7 chunk 回落到标准池深
   m.dn.fill(0); m.dnWall.fill(0) // v56 九轮：地下平面数组同步清除
   m.terrain?.fill(0)
+  m.caveCeil?.fill(0)
   if (explored) explored.fill(0)
   m.structures = []; m.items = []; m.lights = []; m.exits = []
   const habFb: Record<string, number> = {}
@@ -763,6 +772,7 @@ function stitch(m: GameMap, explored?: Uint8Array) {
         if (c.up) m.up[di] = c.up[si] // v57m：上层楼板随窗口缝合（L7 入口舱体 2F）
         if (c.upWall) m.upWall[di] = c.upWall[si] // v57m：上层墙体随窗口缝合
         if (c.terrain && m.terrain) m.terrain[di] = c.terrain[si]
+        if (c.caveCeil && m.caveCeil) m.caveCeil[di] = c.caveCeil[si]
       }
     }
     // 台阶：raw 的 step 未存进 LiveChunk（pit 台阶由 elev 派生重建）——这里按 elev 边重建
@@ -861,6 +871,7 @@ function evictChunk(m: GameMap, c: LiveChunk) {
 // v29：firstVisit=false 时跳过出生点物资散落（初始物资仅首次到层刷新，杜绝往返刷物资）
 export function generateInfinite(def: LevelDef, seed: number, firstVisit = true): GameMap {
   const W = WIN_TILES
+  const impl = infiniteImplFor(def.id)
   const m: GameMap = {
     w: W, h: W,
     tiles: new Uint8Array(W * W),
@@ -885,6 +896,9 @@ export function generateInfinite(def: LevelDef, seed: number, firstVisit = true)
     dnWall: new Uint8Array(W * W), // v56 九轮：地下墙体（Level 6 -1F；其余层级全 0）
     hasUnderground: def.id === 6,
     terrain: new Float32Array(W * W),
+    caveCeil: new Float32Array(W * W),
+    organicCave: impl.caveVolume !== undefined,
+    caveVolumeId: impl.caveVolume ? def.id : undefined,
     l7SeaTerrain: def.id === 7,
     inf: {
       seed, ox: -WIN_R * CS, oy: -WIN_R * CS,
@@ -899,8 +913,8 @@ export function generateInfinite(def: LevelDef, seed: number, firstVisit = true)
   stitch(m)
   // 出生点：缺省=世界原点 chunk 中心（局部 15,15）；无限层级可用 spawnWorld 指定固定出生点
   // （Level 7 入口房间——进入 L7 固定出生在 2F 舱体里）。兜底螺旋找「该楼层带地板且无实心结构遮挡」的落点。
-  const spawnW = infiniteImplFor(def.id).spawnWorld ?? { x: 15, y: 15 }
-  const spawnFloor = infiniteImplFor(def.id).spawnFloor ?? 0
+  const spawnW = impl.spawnWorld ?? { x: 15, y: 15 }
+  const spawnFloor = impl.spawnFloor ?? 0
   const spx = spawnW.x - inf.ox, spy = spawnW.y - inf.oy
   m.spawn = { x: spx, y: spy }
   const spawnBlocked = (x: number, y: number) => {

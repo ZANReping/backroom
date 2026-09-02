@@ -73,6 +73,15 @@ export const PHENOMENA: Record<string, PhenomenonDef> = {
     desc: 'Level 1 的天鹰段、跃金段与哥特段会不定期发生「闪烁」：所有灯光先剧烈闪烁数秒，随即一排排熄灭，主区域陷入完全黑暗，实体在黑暗中肆意孳生。花园段、衔尾段与维护通廊的电源独立，永不熄灭——停电期间，退入白墙的维护通廊是唯一安全的避难方式。',
     icon: 'flicker',
   },
+  l9fog: {
+    id: 'l9fog',
+    name: '残缺之雾',
+    rarity: 'rare',
+    rarityNote: 'Level 9',
+    levels: [9],
+    desc: 'Level 9 极罕见的浓雾事件。能见度会在短暂预警后急剧下降，Entity 63「残缺者」随雾成形；雾散后，它也会一并退去。',
+    icon: 'flicker',
+  },
 }
 
 // 罕见度展示文本（含楼层/主要发生地补充）

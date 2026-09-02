@@ -381,7 +381,8 @@ export const NPCS: Record<string, NpcDef> = {
     faction: 'wanderer', // 无声望体系（hasRep=false——不会触发拒谈门槛，拒谈由 provoked 走交互层）
     personality: '极端傲慢、自信，恶意毫不掩饰；高智商家伙，讨厌听别人讲道理，毫无同理心。',
     background: '盘踞在 Level 7 暮色带环形场的巨大类人形实体。焦油外壳、荧光斑点、面部甲壳与一具巨物尸骨磨成的长矛。',
-    avatar: { gender: 0, hair: 0, hairColor: '#0e1216', skin: '#10151a', pants: '#0c1013', pantsStyle: 0, face: 2 }, // 剪影式（非人形实体无对应头像）
+    // avatar 仅为 NpcDef 的兼容字段；档案与对话框会直接复用 entitiesMesh 中的小小实体模型。
+    avatar: { gender: 0, hair: 0, hairColor: '#0e1216', skin: '#10151a', pants: '#0c1013', pantsStyle: 0, face: 2 },
     lines: [
       {
         npc: '哦？一个活人。游到我这里来，是想被记住——还是想被吃掉？',
@@ -1970,6 +1971,169 @@ export const NPCS: Record<string, NpcDef> = {
       },
     ],
     idle: ['今天这一页，很平静。', '琴声在心里。', '自由要写下来。'],
+  },
+
+  // ================= Level 8：第九大道小型前哨与哈莫兹洞穴社群 =================
+  nestwarden: {
+    id: 'nestwarden', name: '伊莱亚斯·沃德', role: '“空巢”前哨协调员', faction: 'meg',
+    personality: '沉稳、直接，习惯先确认退路再谈目的地；面对受惊的新人时格外有耐心。',
+    background: '曾在第九大道铺设队负责路线复核，亲眼见过一次突发涨水冲走整段标记。此后他调任“空巢”，把每一名来客的下一段路线亲手画在防水卡上。',
+    uniform: { top: '#4b504a', topStyle: 3, badge: '#d5ad36' },
+    avatar: { gender: 0, hair: 2, hairColor: '#51473e', skin: '#c99373', pants: '#30342f', pantsStyle: 0, face: 2, beard: 1 },
+    lines: [
+      {
+        npc: '欢迎来到“空巢”。这里不大，但岩层稳定、灯还有电。要走第九大道，先记住一件事：路标告诉你方向，不保证两块路标之间没有水、落石或缺氧。',
+        opts: [
+          { text: '怎样沿第九大道行动？', next: 1 },
+          { text: '附近还有别的据点吗？', next: 2 },
+          { text: '我先休息一下。', action: 'leave' },
+        ],
+      },
+      {
+        npc: '每到一块牌子先确认下一块的位置，再回头认清旧牌。能见度差就贴着同一侧岩壁走，绝不追逐掉进岔洞的装备。听见水声突然变近，马上往高处退；头晕、耳鸣或火焰变色时，原路返回。',
+        opts: [{ text: '记住了。', action: 'leave' }],
+      },
+      {
+        npc: '黄旗另一侧就是哈莫兹洞穴社群。他们有最好的测绘员和实验室，也有人在我们这里轮值。想问岩层、气体或绳索技术，去找他们；受伤、迷路或只想睡一觉，就回来找我们。',
+        opts: [{ text: '我会去看看。', action: 'leave' }],
+      },
+    ],
+    idle: ['下一块牌子的位置，画清楚再走。', '水位刻度比昨天高了一指。', '黄旗不要挪，那是回来的方向。'],
+  },
+  nestmedic: {
+    id: 'nestmedic', name: '米拉·陈', role: '“空巢”前哨医护员', faction: 'meg',
+    personality: '语速很快、检查伤口却极细致；不接受“只是有点头晕”这种含糊说法。',
+    background: '从 Omega 基地的医护班转入外勤，在 Level 8 专门处理摔伤、失温、吸入性中毒与浸水感染。她把前哨唯一一张干燥长椅称作“豪华病房”。',
+    uniform: { top: '#59615c', topStyle: 3, badge: '#d5ad36' },
+    avatar: { gender: 1, hair: 1, hairColor: '#211c1a', skin: '#d5a181', pants: '#343a36', pantsStyle: 0, face: 1 },
+    medic: true,
+    lines: [
+      {
+        npc: '先别逞强。摔伤、发冷、头痛、恶心、闻到臭鸡蛋味——有哪一项就告诉我。Level 8 最危险的东西经常看不见。',
+        opts: [
+          { text: '在洞穴里该怎么防护？', next: 1 },
+          { text: '我目前没事。', action: 'leave' },
+        ],
+      },
+      {
+        npc: '保持干燥，分段喝水，不在未知积水里处理伤口。呼吸变快却没有剧烈运动，多半不是“紧张”——立刻撤回通风处。单人下洞前把去向留在登记板上，这是规矩，也是别人找到你的唯一线索。',
+        opts: [{ text: '明白。', action: 'leave' }],
+      },
+    ],
+    idle: ['湿袜子也会要命，换掉。', '头晕不是小事。', '绷带用完记得登记。'],
+  },
+  hammozliaison: {
+    id: 'hammozliaison', name: '艾达·芬奇', role: '哈莫兹联络员 · 洞穴向导', faction: 'hammoz',
+    personality: '冷静敏锐，习惯用回声、气流和水痕判断洞穴；讲解时喜欢让对方先给出自己的判断。',
+    background: '哈莫兹洞穴社群的外驻向导，在“空巢”轮值。她负责把实验室得到的气体与水位结论翻译成流浪者真正用得上的路线建议，也证明社群成员并不只待在自己的基地。',
+    uniform: { top: '#566459', topStyle: 1, badge: '#c3aa72' },
+    avatar: { gender: 1, hair: 3, hairColor: '#6e4b32', skin: '#e0b18e', pants: '#32372f', pantsStyle: 0, face: 0, glasses: 1 },
+    lines: [
+      {
+        npc: '哈莫兹洞穴社群，艾达·芬奇。先做个练习：你站在岔洞口，一侧有凉风，一侧地面潮湿发亮，你选哪边？',
+        opts: [
+          { text: '选有凉风的一侧。', next: 1 },
+          { text: '选潮湿的一侧。', next: 2 },
+          { text: '先不进入，记录后返回。', next: 3 },
+        ],
+      },
+      {
+        npc: '可能正确。持续气流通常意味着连通空间，但也可能把有毒气体带向你。先测气体，再固定返程绳；判断从来不是只看一个迹象。',
+        opts: [{ text: '受教了。', action: 'leave' }],
+      },
+      {
+        npc: '风险最高的选择。新鲜水痕可能是刚退去的洪水，也可能是下一次涨水的通道。没有水位记录和高处退路，不要进去。',
+        opts: [{ text: '记住了。', action: 'leave' }],
+      },
+      {
+        npc: '这是单独行动时最可靠的答案。洞穴会诱使人把好奇误当成进展；能平安返回并把未知留给装备齐全的小队，也是一种专业。',
+        opts: [{ text: '谢谢。', action: 'leave' }],
+      },
+    ],
+    idle: ['听回声，别只看眼前。', '这股气流来自东侧。', '返程绳要高于水痕。'],
+  },
+  reginaldhammoz: {
+    id: 'reginaldhammoz', name: '瑞金纳·哈莫兹爵士三世', role: '社群创立者 · 首席岩洞学家', faction: 'hammoz',
+    personality: '保留着维多利亚时代的礼节与措辞，却绝不轻视现代仪器；对无准备的冒险会露出毫不掩饰的不赞同。',
+    background: '来自维多利亚时期的英国岩洞学家，建立并统领哈莫兹洞穴社群。他把不同年代抵达的探索者组织成测绘队，协助勘察 Level 8、铺设第九大道，并把一座小洞室发展成该层最先进的科学实验室。',
+    uniform: { top: '#39433d', topStyle: 7, badge: '#c3aa72' },
+    avatar: { gender: 0, hair: 2, hairColor: '#a6a099', skin: '#d6ad8d', pants: '#292d2a', pantsStyle: 0, face: 2, beard: 2, glasses: 1 },
+    lines: [
+      {
+        npc: '瑞金纳·哈莫兹爵士三世，谨候指教。请原谅这里同时摆着黄铜罗盘与气相分析仪——年代不同，并不妨碍它们共同纠正人的自负。',
+        opts: [
+          { text: '您为什么建立这个社群？', next: 1 },
+          { text: '怎样成为可靠的洞穴探索者？', next: 2 },
+          { text: '实验室在研究什么？', next: 3 },
+          { text: '很荣幸见到您。', action: 'leave' },
+        ],
+      },
+      {
+        npc: '因为 Level 8 不奖励孤胆英雄。一个人会漏听落石，漏看水痕，也无法在断腿后把自己拖回来。我们把经验、仪器和人手放在一起；第九大道不是一条漂亮的路线，而是一条由许多人反复确认过的生路。',
+        opts: [{ text: '确实如此。', action: 'leave' }],
+      },
+      {
+        npc: '先学会拒绝一次没有把握的深入，再学绳结、测绘、气体检测与伤员转运。优秀的探索者不是走得最远的人，而是能带着准确记录和全部队员回来的人。',
+        opts: [{ text: '我会牢记。', action: 'leave' }],
+      },
+      {
+        npc: '岩样的异常生长、水体不受常理支配的涨落、局部热洞与有毒气体，还有依赖黑暗生态的生物。答案尚少，数据倒越来越多——这通常是科学正在开始发挥作用的样子。',
+        opts: [{ text: '祝研究顺利。', action: 'leave' }],
+      },
+    ],
+    idle: ['路线必须能复测。', '经验若不能传授，便只是侥幸。', '请把岩样编号写在盒盖与盒底。'],
+  },
+  hammozguide: {
+    id: 'hammozguide', name: '乔纳·里德', role: '首席路线测绘员', faction: 'hammoz',
+    personality: '健谈而务实，能把复杂的洞穴判断压缩成几条容易记住的动作。',
+    background: '参与过第九大道前半段的复测与补标，现在负责训练新向导。他常在“空巢”、本社群基地和其他友好前哨之间往返。',
+    uniform: { top: '#4c5b50', topStyle: 1, badge: '#c3aa72' },
+    avatar: { gender: 0, hair: 0, hairColor: '#29251f', skin: '#b98265', pants: '#2d322d', pantsStyle: 0, face: 1 },
+    lines: [
+      {
+        npc: '看地图前先看洞：新鲜断面颜色浅，松动碎屑边缘尖，水线以上的枯枝说明这里曾经整段被淹。地图告诉你上次发生了什么，岩壁告诉你现在发生什么。',
+        opts: [
+          { text: '怎样避免迷路？', next: 1 },
+          { text: '第九大道安全吗？', next: 2 },
+          { text: '谢谢提醒。', action: 'leave' },
+        ],
+      },
+      {
+        npc: '把路线拆成短段：地标、岔洞、明显岩形，一段一段复述。每次转向都回头看返程视角；你来时看见的尖石，回去时可能只是黑影。不要留下会被水冲走的临时记号。',
+        opts: [{ text: '我会练习。', action: 'leave' }],
+      },
+      {
+        npc: '比无标记洞系安全，但绝不是走廊。它会经过活跃水道、落石区和空气糟糕的洞段。每块牌子都是确认点，不是保护罩；状态不好就在前哨停下。',
+        opts: [{ text: '明白。', action: 'leave' }],
+      },
+    ],
+    idle: ['返程视角也要画。', '绳结尾端再留一掌。', '地图和岩壁不一致时，信岩壁。'],
+  },
+  hammozscientist: {
+    id: 'hammozscientist', name: '萨米拉·欧文', role: '洞穴实验室主任', faction: 'hammoz',
+    personality: '专注而克制，谈论样本时条理清晰；最厌恶没有位置、时间与环境记录的“纪念品”。',
+    background: '负责哈莫兹基地的气体、水质、矿物与生物样本分析。她把来自现代层级的设备与社群历年手绘记录并列保存，使实验室既能快速预警，也能比较长期变化。',
+    uniform: { top: '#657269', topStyle: 3, badge: '#c3aa72' },
+    avatar: { gender: 1, hair: 2, hairColor: '#302621', skin: '#9f6e55', pants: '#303530', pantsStyle: 0, face: 0, glasses: 2 },
+    lines: [
+      {
+        npc: '请停在线外。这里每份样本都带有地点、深度、温度和采集时间；缺少这些信息的石头再漂亮，也只配拿去压纸。',
+        opts: [
+          { text: '实验室能怎样帮助探索？', next: 1 },
+          { text: '我能带样本回来吗？', next: 2 },
+          { text: '我不打扰了。', action: 'leave' },
+        ],
+      },
+      {
+        npc: '我们绘制有毒气体和水位的变化，判断哪条洞系正在升温，并分析新生矿物与生物膜。结论会送到“空巢”和其他友好据点，最后变成一句简单的警告：某条路今天不要走。',
+        opts: [{ text: '这很重要。', action: 'leave' }],
+      },
+      {
+        npc: '可以，但先问向导要样本袋。不要徒手刮菌毯，不要从承重岩层敲块，也别把不同水体装在同一瓶里。记录不完整就不要冒险采集——人的安全优先于样本。',
+        opts: [{ text: '按规程来。', action: 'leave' }],
+      },
+    ],
+    idle: ['这个水样的矿化度又变了。', '编号、地点、时间，缺一不可。', '先关样本柜，再开离心机。'],
   },
 
   // ================= v45/v47：杰瑞的信众（The Followers Of Jerry）——Level 274 固定 NPC =================

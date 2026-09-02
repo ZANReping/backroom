@@ -6,6 +6,8 @@ import { restitch } from '../world/infinite'
 import { audio } from '../core/audio'
 import type { Engine } from '../engine'
 
+const handWeatherThunder = new WeakMap<Engine, string>()
+
 // ---- 层级氛围事件（wiki 设定播报）+ L1 停电预警/恢复 + 开发者现象开关 ----
 // （原 step 内联段，逐语句搬运）
 export function updateAmbient(eng: Engine, dt: number) {
@@ -24,12 +26,97 @@ export function updateAmbient(eng: Engine, dt: number) {
     eng.blackoutT -= dt
     if (eng.blackoutT <= 0) eng.endBlackout()
   }
+  updateL9Fog(eng, dt)
   // 开发者现象开关：强制触发/屏蔽「闪烁」
   if (eng.dev.phenOn.has('flicker') && eng.levelDef.id === 1 && eng.blackoutT <= 0 && eng.blackoutWarnT <= 0) eng.startBlackout(20)
   if (eng.dev.phenOff.has('flicker')) {
     if (eng.blackoutWarnT > 0) eng.blackoutWarnT = 0
     else if (eng.blackoutT > 0) eng.endBlackout()
   }
+  // L8 巨臂林地天气只影响玩家当前所在的高洞厅。周期与渲染端一致，因此雨声和闪电画面同步。
+  const hw = eng.levelDef.id === 8
+    ? eng.map?.structures.find((s) => s.kind === 'handweather'
+      && eng.player.x >= s.x && eng.player.x < s.x + s.w
+      && eng.player.y >= s.y && eng.player.y < s.y + s.h)
+    : undefined
+  if (hw?.data?.storm) {
+    const phase = Number(hw.data.phase ?? 0), period = Math.max(8, Number(hw.data.period ?? 24))
+    const t = eng.time + phase
+    const cycleIndex = Math.floor(t / period)
+    const cycle = ((t % period) + period) % period / period
+    const storm = cycle > 0.12 && cycle < 0.4
+      ? Math.min(1, (cycle - 0.12) / 0.06, (0.4 - cycle) / 0.075)
+      : 0
+    audio.setCaveWeather(storm)
+    if (cycle > 0.25 && cycle < 0.271) {
+      const strikeId = `${String(hw.data.sid ?? 0)}:${cycleIndex}`
+      if (handWeatherThunder.get(eng) !== strikeId) {
+        handWeatherThunder.set(eng, strikeId)
+        audio.caveThunder(0.72 + Math.random() * 0.28)
+      }
+    }
+  } else audio.stopCaveWeather()
+}
+
+function spawnL9FogMangled(eng: Engine) {
+  if (hostHere(eng)) return
+  const m = eng.map, p = eng.player
+  if (!m || m.entities.some(e => !e.dead && e.l9FogSpawn)) return
+  for (let a = 0; a < 60; a++) {
+    const ang = Math.random() * Math.PI * 2
+    const r = 10 + Math.random() * 8
+    const tx = Math.floor(p.x + Math.cos(ang) * r), ty = Math.floor(p.y + Math.sin(ang) * r)
+    if (tx < 1 || ty < 1 || tx >= m.w - 1 || ty >= m.h - 1) continue
+    const i = ty * m.w + tx
+    if (m.outdoor[i] !== 1 || eng.entityWalkH(m, tx, ty, 0) === null) continue
+    const e = makeEntity('mangled', tx + 0.5, ty + 0.5)
+    e.l9FogSpawn = true
+    e.state = 'chase'; e.targetX = p.x; e.targetY = p.y; e.stateT = 0
+    m.entities.push(e)
+    return
+  }
+}
+
+/** L9 黑雾是非常罕见的完整事件链，而不是常驻随机实体池的一部分。 */
+function updateL9Fog(eng: Engine, dt: number) {
+  if (eng.levelDef.id !== 9 || !eng.map) {
+    eng.l9FogK = 0
+    return
+  }
+  if (eng.dev.phenOff.has('l9fog')) {
+    for (const e of eng.map.entities) if (e.l9FogSpawn && !e.dead) { e.dead = true; e.deathT = 0.35 }
+    eng.l9FogPhase = 'idle'; eng.l9FogK = 0; eng.l9FogT = 300
+    return
+  }
+  if (eng.dev.phenOn.has('l9fog') && eng.l9FogPhase === 'idle') eng.l9FogT = 0
+  eng.l9FogT -= dt
+  if (eng.l9FogPhase === 'idle') {
+    eng.l9FogK = 0
+    if (eng.l9FogT > 0 || hostHere(eng)) return
+    eng.l9FogPhase = 'warning'; eng.l9FogT = 18
+    eng.msg('街区尽头涌来一层不自然的浓雾。空气里传出湿布拖过柏油的声音。', 'damage')
+    audio.aggro()
+    return
+  }
+  if (eng.l9FogPhase === 'warning') {
+    eng.l9FogK = Math.max(0, Math.min(1, 1 - eng.l9FogT / 18))
+    if (eng.l9FogT > 0) return
+    eng.l9FogPhase = 'active'; eng.l9FogT = 34 + Math.random() * 12; eng.l9FogK = 1
+    spawnL9FogMangled(eng)
+    eng.msg('浓雾吞没了整条街。有什么残缺的轮廓正在雾里拼起自己。', 'damage')
+    return
+  }
+  if (eng.l9FogPhase === 'active') {
+    eng.l9FogK = 1
+    if (eng.l9FogT > 0) return
+    eng.l9FogPhase = 'fade'; eng.l9FogT = 14
+    eng.msg('雾层开始变薄，扭曲的脚步声也在后退。', 'system')
+    return
+  }
+  eng.l9FogK = Math.max(0, Math.min(1, eng.l9FogT / 14))
+  if (eng.l9FogT > 0) return
+  for (const e of eng.map.entities) if (e.l9FogSpawn && !e.dead) { e.dead = true; e.deathT = 0.6 }
+  eng.l9FogPhase = 'idle'; eng.l9FogK = 0; eng.l9FogT = 320 + Math.random() * 520
 }
 // ---------- 层级氛围事件（wiki 设定播报）----------
 /** v59 联机：房主是否与本端同层——同层时全局事件/停电生成由房主权威驱动，客人不本地掷骰 */
@@ -53,6 +140,19 @@ export function rollAmbientEvent(eng: Engine) {
       eng.msg(bird ? '极远处传来两三声鸟鸣。你抬头时，天空仍旧空无一物。' : '一阵很远的风声擦过地平线；身边的枯枝却没有动。', 'lore')
     }
     return
+  }
+  if (lvl === 9) {
+    // 邻里守望是观察者/挺进者的统称：电子设备只会惊动或引来这两类个体。
+    const p = eng.player
+    const electronic = p.flashlight || (p.equip.head?.type === 'nightvision' && p.battery > 0)
+    if (electronic && Math.random() < 0.09) {
+      let n = 0
+      for (const e of eng.map?.entities ?? []) {
+        if (e.dead || (e.def.type !== 'watcher' && e.def.type !== 'strider')) continue
+        e.state = 'chase'; e.targetX = p.x; e.targetY = p.y; e.stateT = 0; n++
+      }
+      if (n) { eng.msg('电子设备发出一声短促杂音。远处的邻里守望改变了巡行方向。', 'damage'); audio.aggro() }
+    }
   }
   // L1「闪烁」现象（Fandom：停电数分钟到数天，实体倾巢而出）——低频率随机发生
   // v59 联机：房主在同层时由房主统一掷骰并广播，客人跳过本地随机（两端同步停/来电）

@@ -418,8 +418,8 @@ export function genL7ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
         // 台心表面嵌一扇木门——「小小的谎言」→ Level 9
         const doorDef = def.exits.find((e) => e.kind === 'littledoor')
         if (doorDef) exits.push({ def: doorDef, x: A.x, y: A.y, z: -L7_ARENA.depth + 0.42, discovered: false })
-        // 「小小」固定生成于场心（calm=可对话被动个体；被激怒前不主动攻击）
-        entities.push({ type: 'tiny', x: A.x + 0.5, y: A.y + 0.5, calm: true })
+        // 「小小」的三维出生点固定在门扇正上方；玩家必须先把它引离门区（或击杀）才能进入。
+        entities.push({ type: 'tiny', x: A.x + 0.5, y: A.y + 0.5, z: -A.depth + 1.05, calm: true })
       }
       // 环外骸骨带：骨堆（1/3 可搜刮）与巨鱼骨碎片，确定性散点
       for (let i = 0; i < 9; i++) {

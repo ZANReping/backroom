@@ -131,6 +131,29 @@ function Minimap({ engine, size }: { engine: Engine; size: number }) {
         g.beginPath(); g.arc(ex2, ey2, 2.5 * k, 0, 7); g.fill()
         g.shadowBlur = 0
       }
+      // L8 第九大道地图标记：只要被路标揭示就显示，不受当前视野/探索位图限制。
+      // 历史标记保留为暗金菱形；最新标记为青蓝发光菱形，且是 HUD 唯一会指向的路线点。
+      if (engine.player.level === 8) for (const mark of engine.avenueMarks) {
+        const sx = (mark.wx - (inf.ox + px) + half) * s
+        const sy = (mark.wy - (inf.oy + py) + half) * s
+        if (sx < -6 || sy < -6 || sx > size + 6 || sy > size + 6) continue
+        const active = mark.seq === engine.avenueHintSeq
+        const r = (active ? 3.8 : 2.6) * k
+        g.save()
+        g.fillStyle = active ? '#55e6ff' : 'rgba(232,185,60,0.68)'
+        if (active) { g.shadowColor = '#55e6ff'; g.shadowBlur = (5.5 + Math.sin(engine.time * 4) * 1.5) * k }
+        g.beginPath()
+        g.moveTo(sx, sy - r); g.lineTo(sx + r, sy); g.lineTo(sx, sy + r); g.lineTo(sx - r, sy)
+        g.closePath(); g.fill()
+        if (size >= 120) {
+          g.shadowBlur = 0
+          g.font = `${Math.max(7, Math.round(8 * k))}px monospace`
+          g.textAlign = 'center'
+          g.fillStyle = active ? '#bdf8ff' : '#d8b85b'
+          g.fillText(mark.kind === 'exit' ? '出' : String(mark.seq + 1), sx, sy - r - 2 * k)
+        }
+        g.restore()
+      }
       // 标注（v32）：已探索区域内的容器（亮=未搜刮 暗=已搜刮）与地面物品
       for (const st of m.structures) {
         if ((st.floor ?? 0) !== pBand) continue
@@ -336,13 +359,22 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
   // 出口方向指引（默认 30m 内，DevPanel 可增大；附近无出口但有定居点地标时改为蓝色地标指引）
   const exit = engine.nearestExit()
   const hintDist = engine.dev.hintDist
-  let exitArrow: { rel: number; d: number; landmark?: boolean } | null = null
+  let exitArrow: { rel: number; d: number; target?: 'landmark' | 'avenue' } | null = null
   if (exit && exit.d <= hintDist) {
     exitArrow = { rel: exitArrowRotation(p.x, p.y, look.yaw, exit.x + 0.5, exit.y + 0.5), d: exit.d }
   } else {
     const lm = engine.nearestLandmark()
     if (lm && lm.d <= hintDist) {
-      exitArrow = { rel: exitArrowRotation(p.x, p.y, look.yaw, lm.x, lm.y), d: lm.d, landmark: true }
+      exitArrow = { rel: exitArrowRotation(p.x, p.y, look.yaw, lm.x, lm.y), d: lm.d, target: 'landmark' }
+    } else {
+      // 附近无出口/定居点时，第九大道的最新地图标记接管提示；
+      // 与出口/定居点共用同一个 hintDist 门槛（默认 30m，开发者面板可调）。
+      const avenue = engine.avenueHintTarget()
+      if (avenue && avenue.d <= hintDist) exitArrow = {
+        rel: exitArrowRotation(p.x, p.y, look.yaw, avenue.x, avenue.y),
+        d: avenue.d,
+        target: 'avenue',
+      }
     }
   }
 
@@ -582,7 +614,8 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
             </div>
           )}
           <div className="hud-panel font-mono2 block px-3 py-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>
-            [{bindLabelFor('attack')}] 攻击　[{bindLabelFor('jump')}] 跳跃　[{bindLabelFor('crouch')}] 蹲伏　[{bindLabelFor('flashlight')}] 手电 {Math.round(p.battery)}%　[{bindLabelFor('quickuse')}] 使用　[{bindLabelFor('quickdrop')}] 丢弃
+            [{bindLabelFor('attack')}] 攻击　[{bindLabelFor('jump')}] 跳跃　[{bindLabelFor('crouch')}] 蹲伏　[{bindLabelFor('flashlight')}] 手电 {Math.round(p.battery)}%　[{bindLabelFor('quickuse')}] 使用　[{bindLabelFor('quickdrop')}] 丢弃　[{bindLabelFor('inspect')}] 检视
+            {p.hotbar[p.selected]?.type === 'squirtgun' ? `　[${bindLabelFor('reload')}] 装填 / 按住轮盘` : ''}
           </div>
         </div>
       )}
@@ -671,20 +704,22 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
         <div
           className="pointer-events-none fixed z-[31] font-mono2 flex flex-col items-center text-[12px]"
           style={{
-            color: exitArrow.landmark ? '#6abfff' : 'var(--exit)',
+            color: exitArrow.target === 'avenue' ? '#55e6ff' : exitArrow.target === 'landmark' ? '#6abfff' : 'var(--exit)',
             left: '50%', top: '18%',
             transform: `translateX(-50%) rotate(${exitArrow.rel}rad)`,
             opacity: 0.75,
           }}
         >
-          <div style={{ fontSize: 26, textShadow: exitArrow.landmark ? '0 0 8px #6abfff' : '0 0 8px var(--exit)' }}>➤</div>
+          <div style={{ fontSize: 26, textShadow: exitArrow.target === 'avenue' ? '0 0 8px #55e6ff' : exitArrow.target === 'landmark' ? '0 0 8px #6abfff' : '0 0 8px var(--exit)' }}>➤</div>
         </div>
       )}
       {exitArrow && (
-        <div className="pointer-events-none fixed left-1/2 top-[24%] z-[31] -translate-x-1/2 font-mono2 text-[11px]" style={{ color: exitArrow.landmark ? '#6abfff' : 'var(--exit)', opacity: 0.7 }}>
-          {exitArrow.landmark
-            ? `你瞥见一抹鲜亮的颜色——那是定居点地标的方向（${Math.round(exitArrow.d)}m）`
-            : `你感觉到${exitArrow.d < 8 ? '明显的' : exitArrow.d > 60 ? '一丝遥远的' : '一丝'}气流（${Math.round(exitArrow.d)}m）`}
+        <div className="pointer-events-none fixed left-1/2 top-[24%] z-[31] -translate-x-1/2 font-mono2 text-[11px]" style={{ color: exitArrow.target === 'avenue' ? '#55e6ff' : exitArrow.target === 'landmark' ? '#6abfff' : 'var(--exit)', opacity: 0.7 }}>
+          {exitArrow.target === 'avenue'
+            ? `地图上最新的第九大道地标（${Math.round(exitArrow.d)}m）`
+            : exitArrow.target === 'landmark'
+              ? `你瞥见一抹鲜亮的颜色——那是定居点地标的方向（${Math.round(exitArrow.d)}m）`
+              : `你感觉到${exitArrow.d < 8 ? '明显的' : exitArrow.d > 60 ? '一丝遥远的' : '一丝'}气流（${Math.round(exitArrow.d)}m）`}
         </div>
       )}
 
@@ -695,6 +730,20 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
             <div className="font-mono2 mb-1 text-[12px]" style={{ color: 'var(--amber)' }}>搜索{engine.searching.label}中…</div>
             <div className="h-[8px] w-full overflow-hidden rounded-sm" style={{ background: 'rgba(0,0,0,0.6)' }}>
               <div className="h-full" style={{ width: `${(engine.searching.t / engine.searching.dur) * 100}%`, background: 'var(--amber)', transition: 'width 0.1s linear' }} />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 消耗品使用进度：效果与扣除只在进度完整结束时发生 */}
+      {engine.usingItem && (
+        <div className="pointer-events-none fixed left-1/2 top-1/2 z-[35] w-[240px] -translate-x-1/2 translate-y-10">
+          <div className="hud-panel p-2 text-center">
+            <div className="font-mono2 mb-1 text-[12px]" style={{ color: 'var(--amber)' }}>
+              {engine.usingItem.label}{ITEMS[engine.usingItem.type]?.name ?? engine.usingItem.type}中…
+            </div>
+            <div className="h-[8px] w-full overflow-hidden rounded-sm" style={{ background: 'rgba(0,0,0,0.6)' }}>
+              <div className="h-full" style={{ width: `${Math.min(100, engine.usingItem.t / engine.usingItem.dur * 100)}%`, background: 'var(--amber)', transition: 'width 0.08s linear' }} />
             </div>
           </div>
         </div>
@@ -1152,7 +1201,7 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
                   const ls = engine.devLevelStructures()
                   if (!ls.prefabs.length && !ls.variants.length) return null
                   return (
-                    <DevSection label="本层固定结构 / 变种房间（●已生成 ○未生成→强制生成）">
+                    <DevSection label="本层固定结构 / 变种房间 / 自然地形（●已生成 ○未生成→流式定位）">
                       <div className="grid grid-cols-2 gap-1">
                         {ls.prefabs.map((f) => (
                           <DevBtn
@@ -1166,7 +1215,7 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
                         {ls.variants.map((v) => (
                           <DevBtn
                             key={v.id}
-                            title={v.found ? '已生成：传送到该变种房间' : '已生成区域中没有：点击生成新区域并传送'}
+                            title={v.found ? '传送到该变种房间或固定自然地形' : '已生成区域中没有：点击生成新区域并安全传送'}
                             onClick={() => engine.devGotoVariant(v.id)}
                           >
                             {v.found ? '●' : '○'} {v.name}
@@ -1232,6 +1281,7 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
                     <DevBtn active={engine.dev.frozenAI} onClick={() => { engine.dev.frozenAI = !engine.dev.frozenAI }} title="实体 AI 完全冻结">冻结AI</DevBtn>
                     <DevBtn active={engine.dev.god} onClick={() => { engine.dev.god = !engine.dev.god }} title="无敌（默认随开发者模式开启）">无敌</DevBtn>
                     <DevBtn active={engine.dev.bright} onClick={() => { engine.dev.bright = !engine.dev.bright }} title="一键照明：层级全局增亮——灯光强度拉满、环境光常亮，无视停电/熄灯区/层级光照系数">一键照明</DevBtn>
+                    <DevBtn active={engine.dev.noAttackCooldown} onClick={() => { engine.dev.noAttackCooldown = !engine.dev.noAttackCooldown; engine.attackCooldownT = 0 }} title="关闭所有武器与空手攻击间隔；体力消耗仍然保留">攻击无冷却</DevBtn>
                     <DevBtn active={codexAll} onClick={toggleCodexAll} title="图鉴全开：实体/物品/层级/文档全部解锁（关闭后恢复到开启前的图鉴进度）">图鉴全开</DevBtn>
                   </div>
                 </DevSection>

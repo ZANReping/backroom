@@ -5,7 +5,7 @@ import { UNIVERSAL_ITEMS } from '../content/items'
 import { makeEntity, ENTITIES, type Entity } from '../entities'
 import { placePrefabs, scatterFeatures } from '../prefabs'
 import { generateInfinite, type InfiniteState } from './infinite'
-import { bedHeadDeg } from './infiniteRegistry' // v55：床类床头靠墙朝向助手
+import { bedHeadDeg, infiniteImplFor, type CaveVolumeDef } from './infiniteRegistry' // v55：床类床头靠墙朝向助手
 import './infiniteL1' // v29：注册 Level 1 无限 chunk 生成器（副作用导入）
 import './infiniteL2' // v41：注册 Level 2 无限 chunk 生成器（副作用导入）
 import './infiniteL3' // v51：注册 Level 3 无限 chunk 生成器（副作用导入）
@@ -13,6 +13,8 @@ import './infiniteL4' // v54：注册 Level 4 无限 chunk 生成器（副作用
 import './infiniteL5' // v54：注册 Level 5 无限 chunk 生成器（副作用导入）
 import './infiniteL6' // v56：注册 Level 6 地表/地下双层无限生成器（副作用导入）
 import './infiniteL7' // v57：注册 Level 7 入口房间 + 四深度带无限海洋生成器（副作用导入）
+import './infiniteL8' // v59：注册 Level 8 无限有机洞穴与生态分区生成器（副作用导入）
+import './infiniteL9' // v61：注册 Level 9 无限郊区、住宅街与第九大道引导路线生成器
 import { genDeep } from './mapgenDeep'
 import { genOutpost } from './mapgenOutpost'
 import { CONTAINER_KINDS } from '../decorations/containers'
@@ -51,6 +53,9 @@ export interface GameMap {
   dnWall: Uint8Array // 1=地下墙体/土层（阻挡地下通行；地表不受影响）
   hasUnderground?: boolean // O(1) 地下层能力标志，避免热路径扫描 dn 数组
   terrain?: Float32Array // 室外自然地形微起伏（米；L6 由世界坐标低频噪声生成）
+  caveCeil?: Float32Array // L8 有机洞穴绝对洞顶高度（与 terrain 同坐标连续采样）
+  organicCave?: boolean // L8：渲染/碰撞统一使用有机洞穴曲面
+  caveVolumeId?: number // 新洞穴类模式：指向 InfiniteLevelImpl.caveVolume，避免硬编码 L8
   l7SeaTerrain?: boolean // v57t：L7 室外海床/荒岛连续高度场（碰撞与渲染共用一套平滑斜面）
   // ---- v17 数据契约：无限模式（L0）与墙面/地面 tint ----
   tint: Uint8Array // 0=无 1=马尼拉墙纸 2=红室 3=熄灯区（几何着色/雾氛围用）
@@ -79,7 +84,7 @@ export function liquidSurfaceH(m: GameMap, tx: number, ty: number): number | nul
   if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return null
   const i = ty * m.w + tx
   if (m.liquid[i] === 1) return ELEV_H[m.elev[i]] + 0.03
-  if (m.liquid[i] === 2) return ELEV_H[m.elev[i]] - 0.17
+  if (m.liquid[i] === 2) return m.organicCave ? surfaceUndulationAt(m, tx + 0.5, ty + 0.5) + 0.035 : ELEV_H[m.elev[i]] - 0.17
   return null
 }
 // v29a：金属/肉类/玻璃罐等致密物品落水沉底（-POOL_DEPTH），其余（塑料瓶/绳索/纸张/木制品等）贴水面漂浮
@@ -133,6 +138,7 @@ export function tileH(m: GameMap, tx: number, ty: number): number {
   if (s2 & 7) return (stairLo(s2) + stairHi(s2)) / 2
   const st = m.step[i]
   if (st & 7) return (ELEV_H[(st >> 3) & 3] + ELEV_H[(st >> 5) & 3]) / 2
+  if (m.organicCave && m.elev[i] === 3) return m.terrain?.[i] ?? 0
   if (m.liquid[i] === 1) return -(m.seaFloor[i] || POOL_DEPTH)
   if (m.liquid[i] === 2) return ELEV_H[m.elev[i]] - SHALLOW_DEPTH
   return ELEV_H[m.elev[i]] + (m.elev[i] === 3 ? (m.terrain?.[i] ?? 0) : 0)
@@ -148,12 +154,56 @@ function terrainCorner(m: GameMap, vx: number, vy: number): number {
   return n ? sum / n : 0
 }
 
+function caveVolumeDefFor(m: GameMap): CaveVolumeDef | null {
+  if (m.caveVolumeId === undefined || !m.inf) return null
+  return infiniteImplFor(m.caveVolumeId).caveVolume ?? null
+}
+
+const caveWorldXZ = (m: GameMap, x: number, y: number): [number, number] => [x + (m.inf?.ox ?? 0), y + (m.inf?.oy ?? 0)]
+
+/** 体积洞穴的真实三维场值：正数为空气、负数为岩体。 */
+export function caveVolumeFieldAt(m: GameMap, x: number, worldY: number, y: number): number {
+  const volume = caveVolumeDefFor(m)
+  if (!volume || !m.inf) return Infinity
+  const [wx, wz] = caveWorldXZ(m, x, y)
+  return volume.field(m.inf.seed, wx, worldY, wz)
+}
+
 /** 自然地形连续高度：对共享瓦片角高双线性插值，chunk 接缝与碰撞/渲染完全一致。 */
 export function surfaceUndulationAt(m: GameMap, x: number, y: number): number {
+  const volume = caveVolumeDefFor(m)
+  if (volume && m.inf) {
+    const [wx, wz] = caveWorldXZ(m, x, y)
+    return volume.ground(m.inf.seed, wx, wz)
+  }
   if (!m.terrain) return 0
   const tx = Math.floor(x), ty = Math.floor(y), fx = x - tx, fy = y - ty
   const a = terrainCorner(m, tx, ty), b = terrainCorner(m, tx + 1, ty)
   const c = terrainCorner(m, tx, ty + 1), d = terrainCorner(m, tx + 1, ty + 1)
+  return (a + (b - a) * fx) * (1 - fy) + (c + (d - c) * fx) * fy
+}
+
+function caveCeilCorner(m: GameMap, vx: number, vy: number): number {
+  if (!m.caveCeil) return 3
+  let sum = 0, n = 0
+  for (let y = vy - 1; y <= vy; y++) for (let x = vx - 1; x <= vx; x++) {
+    if (x < 0 || y < 0 || x >= m.w || y >= m.h) continue
+    sum += m.caveCeil[y * m.w + x]; n++
+  }
+  return n ? sum / n : 3
+}
+
+/** L8 连续洞顶高度；和地面一样对共享角点插值，渲染与头部碰撞完全一致。 */
+export function caveCeilingAt(m: GameMap, x: number, y: number): number {
+  const volume = caveVolumeDefFor(m)
+  if (volume && m.inf) {
+    const [wx, wz] = caveWorldXZ(m, x, y)
+    return volume.roof(m.inf.seed, wx, wz)
+  }
+  if (!m.caveCeil) return 3
+  const tx = Math.floor(x), ty = Math.floor(y), fx = x - tx, fy = y - ty
+  const a = caveCeilCorner(m, tx, ty), b = caveCeilCorner(m, tx + 1, ty)
+  const c = caveCeilCorner(m, tx, ty + 1), d = caveCeilCorner(m, tx + 1, ty + 1)
   return (a + (b - a) * fx) * (1 - fy) + (c + (d - c) * fx) * fy
 }
 
@@ -226,6 +276,7 @@ export function floorHeight(m: GameMap, x: number, y: number, band: FloorBand = 
   }
   if (band === 1) return FLOOR_H // 上层：楼板高度（无楼板格由碰撞层拦截）
   if (band === 2) return 2 * FLOOR_H // v54：第三层
+  if (m.organicCave && m.elev[i] === 3) return surfaceUndulationAt(m, x, y)
   const st = m.step[i]
   if (st & 7) {
     const dir = st & 7
@@ -266,41 +317,95 @@ function isSolidStruct(m: GameMap, x: number, y: number): boolean {
 
 // v13：楼层过滤的实心结构判定（碰撞/AI 按所在楼层高度带过滤；lift 跨层不算实心）
 export function solidStructAtFloor(m: GameMap, x: number, y: number, floor: FloorBand, ignore?: Structure): boolean {
-  return structsNear(m, x, y).some((s) => s !== ignore && s.solid && (s.floor ?? 0) === floor && x >= s.x && x < s.x + s.w && y >= s.y && y < s.y + s.h)
+  return structsNear(m, x, y).some((s) => s !== ignore && s.solid && (s.floor ?? 0) === floor
+    && structColliders(s, m).some((b) => x >= b.x0 && x <= b.x1 && y >= b.y0 && y <= b.y1))
 }
 
 // v55c（任务3 性能）：结构碰撞空间索引——仅无限层运行时启用（m.inf 存在：单窗千级结构 × 每帧
 // 数十次查询；rev 随窗口平移失效重建）。有限层生成期会反复增删结构（BFS 回填/修正），线性扫描保正确性。
-const structGridCache = new WeakMap<GameMap, { rev: number; grid: Map<number, Structure[]> }>()
+const structGridCache = new WeakMap<GameMap, { rev: number; modelRev: number; grid: Map<number, Structure[]> }>()
 function structGrid(m: GameMap): Map<number, Structure[]> | null {
   if (!m.inf) return null
   const rev = m.inf.rev
   const hit = structGridCache.get(m)
-  if (hit && hit.rev === rev) return hit.grid
+  if (hit && hit.rev === rev && hit.modelRev === modelColliderSpatialRev) return hit.grid
   const grid = new Map<number, Structure[]>()
   for (const s of m.structures) {
     if (!s.solid) continue
-    for (let ty = Math.max(0, Math.floor(s.y - 0.6)); ty <= Math.min(m.h - 1, Math.floor(s.y + s.h - 1e-6 + 0.6)); ty++)
-      for (let tx = Math.max(0, Math.floor(s.x - 0.6)); tx <= Math.min(m.w - 1, Math.floor(s.x + s.w - 1e-6 + 0.6)); tx++) {
+    const boxes = structColliders(s, m)
+    const x0 = Math.min(...boxes.map((b) => b.x0)), y0 = Math.min(...boxes.map((b) => b.y0))
+    const x1 = Math.max(...boxes.map((b) => b.x1)), y1 = Math.max(...boxes.map((b) => b.y1))
+    for (let ty = Math.max(0, Math.floor(y0)); ty <= Math.min(m.h - 1, Math.floor(y1 - 1e-6)); ty++)
+      for (let tx = Math.max(0, Math.floor(x0)); tx <= Math.min(m.w - 1, Math.floor(x1 - 1e-6)); tx++) {
         const k = ty * m.w + tx
         const arr = grid.get(k)
         if (arr) arr.push(s); else grid.set(k, [s])
       }
   }
-  structGridCache.set(m, { rev, grid })
+  structGridCache.set(m, { rev, modelRev: modelColliderSpatialRev, grid })
   return grid
 }
 const structsNear = (m: GameMap, x: number, y: number): readonly Structure[] => {
   const g = structGrid(m)
   if (!g) return m.structures // 有限层回退全表（生成期正确性）
-  return g.get(y * m.w + x) ?? [] // 桶缺失=附近无实心结构
+  const tx = Math.floor(x), ty = Math.floor(y)
+  if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return []
+  return g.get(ty * m.w + tx) ?? [] // 桶缺失=附近无实心结构
 }
 
 // ================= v26：精细碰撞体积 =================
 // 结构碰撞盒（世界坐标 AABB）。top=碰撞顶面高度；stand=true 时顶面可作为站立平台（接入 z 物理）。
 // FULL_BLOCK 表示全高阻挡（不可跳上/翻越）；缺省类型 = 整个 w×h 外接范围全高阻挡（旧行为）。
-export interface ColliderBox { x0: number; y0: number; x1: number; y1: number; top: number; stand: boolean }
+export interface ColliderBox {
+  x0: number; y0: number; x1: number; y1: number
+  /** 相对结构所在地面的碰撞上沿。 */
+  top: number
+  /** 相对结构所在地面的可选碰撞下沿；仅悬挂结构需要。 */
+  bottom?: number
+  stand: boolean
+}
 export const FULL_BLOCK = 9e9
+
+/**
+ * 渲染模型派生的局部碰撞盒。横轴相对结构中心，竖轴相对结构所在地面；使用
+ * WeakMap 避免把运行时数据写进存档，也让无限区块平移时无需逐盒改坐标。
+ */
+export interface ModelColliderBox {
+  x0: number; y0: number; x1: number; y1: number
+  bottom: number; top: number; stand: boolean
+}
+const modelColliderCache = new WeakMap<Structure, ModelColliderBox[]>()
+let modelColliderSpatialRev = 0
+const modelFootprint = (boxes: readonly ModelColliderBox[]) => ({
+  x0: Math.min(...boxes.map((b) => b.x0)), y0: Math.min(...boxes.map((b) => b.y0)),
+  x1: Math.max(...boxes.map((b) => b.x1)), y1: Math.max(...boxes.map((b) => b.y1)),
+})
+
+/** 由渲染器在模型创建或姿态变化后登记；无有效网格时删除并回退旧占地。 */
+export function setStructModelColliders(s: Structure, boxes: readonly ModelColliderBox[]): void {
+  const clean = boxes.filter((b) => Number.isFinite(b.x0 + b.y0 + b.x1 + b.y1 + b.bottom + b.top)
+    && b.x1 > b.x0 && b.y1 > b.y0 && b.top > b.bottom)
+  const old = modelColliderCache.get(s)
+  if (!clean.length) {
+    if (old) { modelColliderCache.delete(s); modelColliderSpatialRev++ }
+    return
+  }
+  const prev = old?.length ? modelFootprint(old) : null
+  const next = modelFootprint(clean)
+  modelColliderCache.set(s, clean.map((b) => ({ ...b })))
+  if (!prev || Math.abs(prev.x0 - next.x0) > .015 || Math.abs(prev.y0 - next.y0) > .015
+    || Math.abs(prev.x1 - next.x1) > .015 || Math.abs(prev.y1 - next.y1) > .015) modelColliderSpatialRev++
+}
+
+const modelCollidersFor = (s: Structure): ColliderBox[] | null => {
+  const local = modelColliderCache.get(s)
+  if (!local?.length) return null
+  const cx = s.x + s.w / 2, cy = s.y + s.h / 2
+  return local.map((b) => ({
+    x0: cx + b.x0, y0: cy + b.y0, x1: cx + b.x1, y1: cy + b.y1,
+    ...(b.bottom > .08 ? { bottom: b.bottom } : {}), top: b.top, stand: b.stand,
+  }))
+}
 
 // 按类型定义精确碰撞（与 renderer/structures.ts 的低模外观尺寸逐一核对）：
 // - table 桌：顶板 s.w*0.85 × s.h*0.8 @0.75m → 桌面可跳上；chair 椅：座面 0.42×0.42 @0.45m
@@ -313,7 +418,35 @@ export const FULL_BLOCK = 9e9
 // - sphboiler 球罐：砖石基座 1.7×1.7 + 球罐 r0.85 @顶 ~2.2m → 盒 ±0.85；球顶不可站
 export function structColliders(s: Structure, m?: GameMap): ColliderBox[] {
   const cx = s.x + s.w / 2, cy = s.y + s.h / 2
+  // 运行时模型一旦完成构建，所有可见实心结构统一以真实子网格包围盒为准。
+  // 下方逐类型定义只负责无渲染器的地图生成阶段，以及纯逻辑/隐形碰撞结构的回退。
+  const modeled = modelCollidersFor(s)
+  if (modeled) return modeled
   switch (s.kind) {
+    case 'stalagspike': {
+      // L8 钟乳石/石笋：碰撞体随模型缩放，并对洞顶钟乳石使用悬挂高度带。
+      // 半径略小于可见簇，既能阻挡穿模，也允许玩家从零碎尖刺之间擦身通过。
+      const requested = Math.max(0.4, Number(s.data?.scale ?? 1))
+      let scale = requested
+      let span = 4.2
+      if (m) {
+        const base = floorHeight(m, cx, cy, 0)
+        span = Math.max(1.1, caveCeilingAt(m, cx, cy) - base)
+        scale = Math.min(requested, Math.max(0.5, (span - 0.35) / 2.35))
+      }
+      const radius = Math.min(0.37, 0.22 + scale * 0.075)
+      const reach = Math.min(span - 0.12, 2.04 * scale)
+      if (s.data?.ceiling === 1) {
+        return [{ x0: cx - radius, y0: cy - radius, x1: cx + radius, y1: cy + radius, bottom: Math.max(0, span - reach), top: span, stand: false }]
+      }
+      return [{ x0: cx - radius, y0: cy - radius, x1: cx + radius, y1: cy + radius, top: reach, stand: false }]
+    }
+    case 'caveboulder': {
+      // 突兀岩块不再占满整格；碰撞近似模型主体，周边碎石保留可跨越空间。
+      const scale = Math.max(0.45, Number(s.data?.scale ?? 1))
+      const radius = Math.min(0.46, 0.29 + scale * 0.08)
+      return [{ x0: cx - radius, y0: cy - radius, x1: cx + radius, y1: cy + radius, top: Math.max(0.58, scale * 0.94), stand: false }]
+    }
     case 'table':
       if (s.data?.chair) return [{ x0: cx - 0.23, y0: cy - 0.23, x1: cx + 0.23, y1: cy + 0.23, top: 0.47, stand: true }]
       return [{ x0: cx - s.w * 0.425, y0: cy - s.h * 0.4, x1: cx + s.w * 0.425, y1: cy + s.h * 0.4, top: 0.75, stand: true }]
@@ -485,18 +618,58 @@ export function structColliders(s: Structure, m?: GameMap): ColliderBox[] {
   }
 }
 
+/** 碰撞盒在脚底高度 z 处是否会阻挡直立角色；与点/圆检测共用同一套高度规则。 */
+const colliderBlocksBody = (base: number, b: ColliderBox, z: number): boolean => {
+  if (b.bottom !== undefined) {
+    const playerTop = z + 1.48
+    // 已站到可站立顶面后，不能让同一个盒把角色判定在自身内部。
+    if (b.stand && z >= base + b.top - .06) return false
+    return playerTop >= base + b.bottom && z <= base + b.top
+  }
+  // 接地低物件可直接踏上；超过台阶高度的部分才横向阻挡。
+  return base + b.top - z > STEP_UP
+}
+
 // 世界点 (x,y) 在脚底高度 z 处是否被实心结构碰撞盒阻挡（精细亚瓦片判定）
 export function structBlocksPoint(m: GameMap, x: number, y: number, z: number, band: FloorBand): boolean {
   const arr = structsNear(m, Math.floor(x), Math.floor(y)) // v55c：无限层瓦片桶；有限层全表
   for (const s of arr) {
     if (!s.solid || (s.floor ?? 0) !== band) continue
-    if (x < s.x - 0.6 || x > s.x + s.w + 0.6 || y < s.y - 0.6 || y > s.y + s.h + 0.6) continue
     const base = floorHeight(m, s.x + s.w / 2, s.y + s.h / 2, band) // v57t：碰撞盒以结构所在地面为基——深海底的桶不再堵住上方整条水柱
     for (const b of structColliders(s, m)) {
       if (x < b.x0 || x > b.x1 || y < b.y0 || y > b.y1) continue
-      // 顶面绝对高度超过步行可踏上的 STEP_UP 才阻挡（跳跃抬高 z 后可通过低矮家具）
-      if (base + b.top - z > STEP_UP) return true
+      if (colliderBlocksBody(base, b, z)) return true
     }
+  }
+  return false
+}
+
+/**
+ * 圆形角色碰撞体与结构模型盒的精确二维相交检测。旧的 8 点圆周采样会在路灯杆、
+ * 栏杆柱等细模型完全落入角色圆内部时漏检；圆心到 AABB 最近点检测不会产生该盲区。
+ */
+export function structBlocksCircle(m: GameMap, x: number, y: number, radius: number, z: number, band: FloorBand): boolean {
+  const r = Math.max(0, radius)
+  const hits = (s: Structure): boolean => {
+    if (!s.solid || (s.floor ?? 0) !== band) return false
+    const base = floorHeight(m, s.x + s.w / 2, s.y + s.h / 2, band)
+    for (const b of structColliders(s, m)) {
+      const qx = Math.max(b.x0, Math.min(b.x1, x))
+      const qy = Math.max(b.y0, Math.min(b.y1, y))
+      const dx = x - qx, dy = y - qy
+      if (dx * dx + dy * dy > r * r + 1e-9) continue
+      if (colliderBlocksBody(base, b, z)) return true
+    }
+    return false
+  }
+  const g = structGrid(m)
+  if (!g) return m.structures.some(hits)
+  const minX = Math.max(0, Math.floor(x - r)), minY = Math.max(0, Math.floor(y - r))
+  const maxX = Math.min(m.w - 1, Math.floor(x + r)), maxY = Math.min(m.h - 1, Math.floor(y + r))
+  // 玩家半径只覆盖至多四个桶；允许同一结构被重复检查，比每个物理子步创建 Set 更省 GC。
+  for (let ty = minY; ty <= maxY; ty++) for (let tx = minX; tx <= maxX; tx++) {
+    const bucket = g.get(ty * m.w + tx)
+    if (bucket?.some(hits)) return true
   }
   return false
 }
@@ -506,11 +679,14 @@ export function structBlocksSight(m: GameMap, x: number, y: number, z: number, b
   const arr = structsNear(m, Math.floor(x), Math.floor(y))
   for (const s of arr) {
     if (s === target || !s.solid || s.data?.noSight === 1 || (s.floor ?? 0) !== band) continue // v58：noSight=仅碰撞结构（电梯门挡块）不遮交互视线
-    if (x < s.x - 0.6 || x > s.x + s.w + 0.6 || y < s.y - 0.6 || y > s.y + s.h + 0.6) continue
     const base = floorHeight(m, s.x + s.w / 2, s.y + s.h / 2, band)
     for (const b of structColliders(s, m)) {
       if (x < b.x0 || x > b.x1 || y < b.y0 || y > b.y1) continue
-      if (z >= base - 0.04 && z <= base + b.top + 0.04) return true
+      const bottom = b.bottom === undefined ? base : base + b.bottom
+      // 前台的物理碰撞仍保持不可翻越，但它的可见模型最高仅约 1.22m；
+      // 视线不应把柜台当成一堵通到天花板的墙，否则柜台后的 NPC 只有绕到侧面/贴脸才可交谈。
+      const sightTop = s.kind === 'frontdesk' ? 1.24 : b.top
+      if (z >= bottom - 0.04 && z <= base + sightTop + 0.04) return true
     }
   }
   return false
@@ -523,7 +699,6 @@ export function structStandTopAt(m: GameMap, x: number, y: number, z: number, ba
   const arr = structsNear(m, Math.floor(x), Math.floor(y)) // v55c：无限层瓦片桶；有限层全表
   for (const s of arr) {
     if (!s.solid || (s.floor ?? 0) !== band) continue
-    if (x < s.x - 0.6 || x > s.x + s.w + 0.6 || y < s.y - 0.6 || y > s.y + s.h + 0.6) continue
     const base = floorHeight(m, s.x + s.w / 2, s.y + s.h / 2, band) // v57t：可站立顶面同样以结构地面为基准
     for (const b of structColliders(s, m)) {
       if (!b.stand) continue
@@ -625,7 +800,10 @@ export function ceilingHeightAt(m: GameMap, x: number, y: number, wallH: number,
   if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return Infinity
   const i = ty * m.w + tx
   if (band === -1) return m.dn[i] === 1 ? UNDER_CEIL : Infinity
+  // 洞穴边界是连续体积，不服从「该瓦片中心是否为地板」；先取真实洞顶再走旧瓦片逻辑。
+  if (band === 0 && m.caveVolumeId !== undefined) return caveCeilingAt(m, x, y)
   if (!hasCeiling(m, tx, ty)) return Infinity
+  if (band === 0 && m.organicCave && m.caveCeil) return caveCeilingAt(m, x, y)
   if (band === 2) return m.ceiling[i] === 1 ? tallCeilH(m, wallH) : 2 * FLOOR_H + 2.6 // v54：三层天花
   if (band === 1) {
     if (m.ceiling[i] === 1) return tallCeilH(m, wallH)
@@ -1352,7 +1530,7 @@ function genOnce(def: LevelDef, seed: number): GameMap {
   const uniCount = def.gen === 'outpost'
     ? { graffiti: 0, crate: 0, corpse: 0, vent: 0 } // 据点：一切结构设计好，不走通用散点
     : DEEP_GENS.includes(def.gen)
-    ? { graffiti: 5, crate: 0, corpse: 0, vent: 0 }
+    ? { graffiti: def.id === 8 ? 0 : 5, crate: 0, corpse: 0, vent: 0 }
     : { graffiti: 8, crate: 4, corpse: 3, vent: 3 }
   for (const [k, n] of Object.entries(uniCount)) {
     for (let i = 0; i < n; i++) {

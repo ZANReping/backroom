@@ -79,10 +79,12 @@ export function updateSurvival(eng: Engine, dt: number, dm: DiffMult, mag: numbe
   if (eng.dev.phenOff.has('isolation')) isolation = false
   const flickerActive = eng.levelDef.id === 1 &&
     (eng.dev.phenOn.has('flicker') || (!eng.dev.phenOff.has('flicker') && (eng.blackoutWarnT > 0 || eng.blackoutT > 0)))
+  const l9FogActive = eng.levelDef.id === 9 && eng.l9FogPhase !== 'idle' && !eng.dev.phenOff.has('l9fog')
   eng.activePhenomena = [
     ...(isolation ? ['isolation'] : []),
     ...(eng.inGardenEff || eng.plantK > 0.01 ? ['plantcancer'] : []),
     ...(flickerActive ? ['flicker'] : []),
+    ...(l9FogActive ? ['l9fog'] : []),
   ]
   if (!eng.dev.god) {
     if (isolation) {

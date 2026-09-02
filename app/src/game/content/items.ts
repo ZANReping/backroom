@@ -4,6 +4,14 @@ export const ITEM_RARITY_LABEL: Record<ItemRarity, string> = { common: '常见',
 export const ITEM_RARITY_COLOR: Record<ItemRarity, string> = { common: 'var(--text-dim)', uncommon: '#8fd98f', rare: '#6fa8ff', epic: 'var(--amber)' }
 
 export type EquipSlot = 'offhand' | 'body' | 'gloves' | 'head' | 'pocket'
+export type ItemUseAnim = 'bottleDrink' | 'drink' | 'eat' | 'medical' | 'inject' | 'battery' | 'activate' | 'read'
+export interface ItemUseProfile {
+  /** 从开始动作到效果结算、物品扣除的完整秒数。 */
+  duration: number
+  anim: ItemUseAnim
+  /** HUD 进度条使用的动词。 */
+  label: string
+}
 export interface ItemDef {
   type: string
   name: string
@@ -14,6 +22,8 @@ export interface ItemDef {
   value2?: number // v54：第二效果量（sanityeat 的饥饿恢复量）
   value3?: number // v54：口渴效果量（正负均可；饮用类物品——杏仁水/咖啡/幸运豆奶/市政自来水/番茄浓汤为正，液态痛苦/腰果水为负）
   weapon?: number // 近战伤害
+  attackInterval?: number // 近战攻击间隔（秒）
+  attackStamina?: number // 每次挥击体力消耗
   passive?: string
   equip?: EquipSlot // 装备位：offhand=副手（打火机）body=身体（服饰）gloves=手套 pocket=口袋（护符/钥匙类）
   unique?: number // 所属层级（undefined=通用）
@@ -26,6 +36,33 @@ export interface ItemDef {
   glyph: string // 绘制用
 }
 
+const BOTTLED_DRINK_ITEMS = new Set(['almond', 'liquidpain', 'coffee', 'citywater', 'cashew', 'luckymilk'])
+const QUICK_FOOD_ITEMS = new Set(['warpberry', 'wheatgrain', 'driedfruit'])
+const MEAL_ITEMS = new Set(['tomatosoup', 'gardensalad', 'garlicbread', 'pasta', 'meatstew', 'pizza', 'lasagna', 'tomsspecial', 'grilledsteak', 'jambread'])
+const READ_ITEMS = new Set(['megfolder', 'pamphlet'])
+
+/**
+ * 消耗品统一使用模板。相同形态复用同一动作，且只有动作完整结束后才结算效果与扣除物品。
+ * 未返回模板的物品（装备、武器、文档等）仍走原来的即时交互。
+ */
+export function itemUseProfile(def: ItemDef): ItemUseProfile | null {
+  if (!def.use || def.use === 'none' || def.use === 'doc') return null
+  if (BOTTLED_DRINK_ITEMS.has(def.type)) return { duration: 1.65, anim: 'bottleDrink', label: '饮用' }
+  if (def.type.startsWith('candy')) return { duration: 0.8, anim: 'eat', label: '食用' }
+  if (QUICK_FOOD_ITEMS.has(def.type)) return { duration: 1.15, anim: 'eat', label: '食用' }
+  if (MEAL_ITEMS.has(def.type)) return { duration: 2.35, anim: 'eat', label: '进食' }
+  if (def.type === 'bandage') return { duration: 2.8, anim: 'medical', label: '包扎' }
+  if (def.type === 'disinfectant') return { duration: 2.2, anim: 'medical', label: '消毒' }
+  if (def.type === 'sedative') return { duration: 1.55, anim: 'inject', label: '注射' }
+  if (def.use === 'battery') return { duration: 1.6, anim: 'battery', label: '更换电池' }
+  if (def.use === 'light') return { duration: 0.9, anim: 'activate', label: '启动' }
+  if (READ_ITEMS.has(def.type)) return { duration: 1.5, anim: 'read', label: '阅读' }
+  if (def.use === 'eat') return { duration: 1.65, anim: 'eat', label: '食用' }
+  if (def.use === 'heal' || def.use === 'cure') return { duration: 2.2, anim: 'medical', label: '处理' }
+  if (def.use === 'sanityeat') return { duration: 1.65, anim: 'bottleDrink', label: '饮用' }
+  return { duration: 1.5, anim: 'eat', label: '使用' }
+}
+
 export const ITEMS: Record<string, ItemDef> = {
   almond: { type: 'almond', name: '杏仁水', desc: '甜腻的液体，后室里最受欢迎的补给。', stack: 3, use: 'sanity', value: 30, value3: 30, anomalous: true, rarity: 'uncommon', glyph: 'bottle' },
   canned: { type: 'canned', name: '罐装食品', desc: '标签已经脱落的罐头。', stack: 3, use: 'eat', value: 35, rarity: 'common', glyph: 'can' },
@@ -33,7 +70,7 @@ export const ITEMS: Record<string, ItemDef> = {
   disinfectant: { type: 'disinfectant', name: '消毒液', desc: '希波克拉底团队标准配发的医用消毒液，气味刺鼻。早期感染能彻底消杀，病入肌理就无能为力了。', stack: 3, use: 'cure', value: 25, rarity: 'uncommon', glyph: 'bottle' },
   battery: { type: 'battery', name: '电池', desc: '通用碱性电池，可为手电筒和夜视眼镜补充电量。', stack: 3, use: 'battery', value: 50, rarity: 'common', glyph: 'battery' },
   flashlight: { type: 'flashlight', name: '手电筒', desc: '可靠的老式手电。装在副手提供主光源，按 F 开关，耗电。', stack: 1, passive: '主光源', equip: 'offhand', rarity: 'uncommon', glyph: 'flashlight' },
-  crowbar: { type: 'crowbar', name: '撬棍', desc: '沉重的撬棍。可当作武器，也能撬开补给箱。', stack: 1, weapon: 25, rarity: 'uncommon', glyph: 'crowbar' },
+  crowbar: { type: 'crowbar', name: '撬棍', desc: '沉重的撬棍。可当作武器，也能撬开补给箱。', stack: 1, weapon: 25, attackInterval: 0.85, attackStamina: 10, rarity: 'uncommon', glyph: 'crowbar' },
   tape: { type: 'tape', name: '磁带', desc: '一盘标着编号的磁带。集齐 6 盘，也许能揭开真相……（胜利条件）', stack: 6, rarity: 'epic', glyph: 'tape' },
   lighter: { type: 'lighter', name: '打火机', desc: '微弱的火苗。装备后提供一小圈额外的光。', stack: 1, passive: '微光照明', equip: 'offhand', rarity: 'uncommon', glyph: 'lighter' },
   rabbit: { type: 'rabbit', name: '幸运兔脚', desc: '毛茸茸的护符。携带时提升稀有物品掉落。', stack: 1, passive: '幸运提升', equip: 'pocket', anomalous: true, rarity: 'rare', glyph: 'rabbit' },
@@ -54,7 +91,7 @@ export const ITEMS: Record<string, ItemDef> = {
   candymint: { type: 'candymint', name: '杏仁薄荷糖', desc: 'O 形薄荷糖，薄荷混着杏仁味。（Object 5）', stack: 8, use: 'eat', value: 5, anomalous: true, rarity: 'uncommon', glyph: 'candy' },
   // 首次进入 Level 1 时出生点旁的纸条（wikidot Level 1：探险者总署附在杏仁水瓶上的留言；查看即收录图鉴「文档」）
   welcomenote: { type: 'welcomenote', name: '致新流浪者的纸条', desc: '一张折起的横线纸，字迹工整。是探险者总署留给新流浪者的。', stack: 1, unique: 1, use: 'none', rarity: 'rare', glyph: 'scrap' },
-  wrench: { type: 'wrench', name: '扳手', desc: '沉重的管钳。可以封住泄漏的蒸汽阀门，也可当武器。', stack: 1, unique: 2, weapon: 20, rarity: 'uncommon', glyph: 'wrench' },
+  wrench: { type: 'wrench', name: '扳手', desc: '沉重的管钳。可以封住泄漏的蒸汽阀门，也可当武器。', stack: 1, unique: 2, weapon: 20, attackInterval: 0.78, attackStamina: 9, rarity: 'uncommon', glyph: 'wrench' },
   gloves: { type: 'gloves', name: '隔热手套', desc: '厚重的石棉手套。装备后免疫蒸汽与热管道的伤害。', stack: 1, unique: 2, passive: '隔热', equip: 'gloves', rarity: 'uncommon', glyph: 'gloves' },
   suit: { type: 'suit', name: '绝缘服', desc: '橡胶绝缘服。装备后免疫电弧伤害。', stack: 1, unique: 3, passive: '绝缘', equip: 'body', rarity: 'uncommon', glyph: 'suit' },
   fuse: { type: 'fuse', name: '保险丝', desc: '粗大的工业保险丝。电梯井需要 2 枚才能启动。', stack: 4, unique: 3, rarity: 'common', glyph: 'fuse' },
@@ -79,9 +116,9 @@ export const ITEMS: Record<string, ItemDef> = {
   thingmeat: { type: 'thingmeat', name: '巨兽之肉', desc: '油腻、富脂、黏滑，强烈的硫磺味。档案强调：必须生食——加热会唤醒里面休眠的寄生虫。', stack: 2, unique: 7, use: 'eat', value: 55, anomalous: true, rarity: 'rare', glyph: 'meat' },
   oddbook: { type: 'oddbook', name: '来源不明的书', desc: '入口房间书柜上的一本旧书。没有作者，没有出版信息。翻开，是一个在 Level 7 待过的人留下的记录。', stack: 1, unique: 7, use: 'doc', anomalous: true, rarity: 'rare', glyph: 'book' },
 
-  // Level 8「Cave Systems」
+  // Level 8「洞穴系统」
   cavingsuit: { type: 'cavingsuit', name: '洞穴保温服', desc: '内层抓绒、外层防水聚酯纤维，缝满实用口袋。Harmouth 洞穴学会的标准配发。装备后抵御洞内 10–15°C 的长期失温。', stack: 1, unique: 8, equip: 'body', passive: '保温', rarity: 'uncommon', glyph: 'suit' },
-  xenonmarble: { type: 'xenonmarble', name: '氙气玻璃珠', desc: '在淡水溪底捞到的。这是引路者（Entity 35）的筑巢材料——那些蓝绿色的「宝石星星」也许会感兴趣。', stack: 3, unique: 8, use: 'none', throw: 'lure', anomalous: true, rarity: 'rare', glyph: 'marble' },
+  xenonmarble: { type: 'xenonmarble', name: '氙弹珠', desc: '在多维之路的淡水溪底捞到的发光弹珠。这是微光向导的筑巢材料——那些蓝绿色的「宝石星星」会被它吸引。', stack: 3, unique: 8, use: 'none', throw: 'lure', anomalous: true, rarity: 'rare', glyph: 'marble' },
   driedfruit: { type: 'driedfruit', name: '干果与干菜', desc: '洞穴聚落配发的维生素 C 来源。长期不见天日的人格外需要它。', stack: 3, unique: 8, use: 'eat', value: 30, rarity: 'common', glyph: 'fruit' },
   uvlamp: { type: 'uvlamp', name: '人工紫外灯', desc: '不见日照的日子太久了。这盏灯补的不是照明，是维生素 D。', stack: 2, unique: 8, use: 'light', value: 2, rarity: 'uncommon', glyph: 'uv' },
   stonekazoo: { type: 'stonekazoo', name: '石卡祖笛', desc: '天然形成的岩刺，形状恰好是一支卡祖笛，检测证实没有任何人工雕刻痕迹。吹一声，回声会比你预想的更响——足以把实体引往别处。', stack: 1, unique: 8, use: 'none', anomalous: true, rarity: 'rare', glyph: 'kazoo' },
@@ -93,7 +130,7 @@ export const ITEMS: Record<string, ItemDef> = {
   // Level 10「Bumper Crop」
   wheatgrain: { type: 'wheatgrain', name: '割下的小麦', desc: '可安全食用，磨成面粉还能当增稠剂。M.E.G. 已停止在此收割——他们对它的营养价值存疑。', stack: 4, unique: 10, use: 'eat', value: 20, rarity: 'common', glyph: 'wheat' },
   nails: { type: 'nails', name: '一把钉子', desc: '谷仓里到处都是。配上木材，能把一扇门钉死一会儿。', stack: 4, unique: 10, use: 'none', rarity: 'common', glyph: 'nails' },
-  timber: { type: 'timber', name: '木板', desc: '从棚屋上拆下来的木板。挥起来沉得很，也能拿来封门。', stack: 2, unique: 10, weapon: 22, rarity: 'common', glyph: 'timber' },
+  timber: { type: 'timber', name: '木板', desc: '从棚屋上拆下来的木板。挥起来沉得很，也能拿来封门。', stack: 2, unique: 10, weapon: 22, attackInterval: 0.94, attackStamina: 11, rarity: 'common', glyph: 'timber' },
 
   // Level 11「The City That Never Sleeps」
   presses: { type: 'presses', name: 'B.N.T.G.压印币', desc: 'B.N.T.G. 在新时代广场与商人之家通用的压印币。「繁荣缔造和平」——一瓶杏仁水可兑两枚。', stack: 60, unique: 11, anomalous: true, rarity: 'rare', glyph: 'coin' },
@@ -109,8 +146,8 @@ export const ITEMS: Record<string, ItemDef> = {
   cashew: { type: 'cashew', name: '腰果水', desc: '看起来和杏仁水几乎一模一样——但标签只剩乱码，千万别搞混。', stack: 3, use: 'sanity', value: -30, value3: -10, anomalous: true, rarity: 'uncommon', glyph: 'bottle' },
   // v54：幸运豆奶（wikidot Object 28）——理智+40、饥饿+20、口渴+30
   luckymilk: { type: 'luckymilk', name: '幸运豆奶', desc: '纸盒包装上印着一只微笑的四叶草奶牛。喝下去的人说会交好运——至少他们是这么声称的。', stack: 3, use: 'sanityeat', value: 40, value2: 20, value3: 30, anomalous: true, rarity: 'rare', glyph: 'milk' },
-  knife: { type: 'knife', name: '刀', desc: '一把还算锋利的刀。', stack: 1, weapon: 30, rarity: 'uncommon', glyph: 'knife' },
-  axe: { type: 'axe', name: '斧头', desc: '沉重的消防斧。也能劈开上锁的门——但斧刃经不起太多次硬碰。', stack: 1, weapon: 45, rarity: 'rare', glyph: 'axe' },
+  knife: { type: 'knife', name: '刀', desc: '一把还算锋利的刀。', stack: 1, weapon: 30, attackInterval: 0.42, attackStamina: 6, rarity: 'uncommon', glyph: 'knife' },
+  axe: { type: 'axe', name: '斧头', desc: '沉重的消防斧。也能劈开上锁的门——但斧刃经不起太多次硬碰。', stack: 1, weapon: 45, attackInterval: 1.12, attackStamina: 16, rarity: 'rare', glyph: 'axe' },
   headlamp: { type: 'headlamp', name: '头灯', desc: '戴在头上的探照灯，与手电筒共用电池。', stack: 1, equip: 'head', passive: '头灯光源（共用电池）', rarity: 'uncommon', glyph: 'headlamp' },
   nightvision: { type: 'nightvision', name: '夜视眼镜', desc: '“家政服务”哨所改装的低照度夜视镜。不会照亮环境，但能显著放大仅存的微光；佩戴启用时持续消耗通用电池。', stack: 1, equip: 'head', passive: '增强夜视（每秒消耗 0.25 电量）', rarity: 'rare', glyph: 'mask' },
   notebook: { type: 'notebook', name: '笔记本和笔', desc: '一本皮面笔记本，笔还插在书脊上。', stack: 1, use: 'none', rarity: 'uncommon', glyph: 'notebook' },

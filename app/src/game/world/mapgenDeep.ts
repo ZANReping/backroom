@@ -195,7 +195,7 @@ function genOcean(m: GameMap, rng: RNG, H: GenHelpers): Room[] {
 }
 
 // ============================================================================
-// Level 8「Cave Systems」——喀斯特洞穴网络（元胞自动机）
+// Level 8「洞穴系统」——旧版喀斯特洞穴网络（元胞自动机）
 // Wikidot：纯天然喀斯特结构，没有任何人工工程痕迹；岩刺从墙壁各角度混乱突出；
 // 杏仁水自由流淌并混乱涨落；本层特征性地黑暗且会主动削弱光。
 // ============================================================================
@@ -275,7 +275,7 @@ function genCaves(m: GameMap, rng: RNG, H: GenHelpers): Room[] {
   S(m, 'roadsign', hub.x + 2, hub.y + 1, 1, 1, false, { meg: 1 })
   m.lights.push({ x: hub.x + 0.5, y: hub.y + 0.5, r: 5, color: '#ffd9a0', flickerSeed: rng.next() * 100 })
 
-  // Handyland：手形岩刺群 + 血红色生物发光苔藓（官方定级：最应回避）
+  // 巨臂林地：手形岩刺群 + 血红色生物发光苔藓（官方定级：最应回避）
   const hand = findHall(4)
   if (hand) {
     rooms.push({ x: hand.x - 4, y: hand.y - 4, w: 9, h: 9, cx: hand.x, cy: hand.y })
@@ -286,7 +286,7 @@ function genCaves(m: GameMap, rng: RNG, H: GenHelpers): Room[] {
     }
     m.lights.push({ x: hand.x + 0.5, y: hand.y + 0.5, r: 6, color: '#c0231c', flickerSeed: rng.next() * 100 })
   }
-  // Rottnest Jungle：多彩生物发光蘑菇森林（部分能长到小树大小）
+  // 罗特尼斯大丛林：多彩生物发光蘑菇森林（部分能长到小树大小）
   const jungle = findHall(4)
   if (jungle) {
     rooms.push({ x: jungle.x - 4, y: jungle.y - 4, w: 9, h: 9, cx: jungle.x, cy: jungle.y })
@@ -298,7 +298,7 @@ function genCaves(m: GameMap, rng: RNG, H: GenHelpers): Room[] {
       if (rng.chance(0.35)) m.lights.push({ x: x + 0.5, y: y + 0.5, r: 3, color: ['#66e0d0', '#e066c8', '#c8e066', '#66a8e0'][rng.int(0, 3)], flickerSeed: rng.next() * 100 })
     }
   }
-  // Hyperspace Lane：发光细菌照亮的窄道 + 淡水溪（浅水）+ 溪底的氙气玻璃珠
+  // 多维之路：发光细菌照亮的窄道 + 淡水溪（浅水）+ 溪底的氙气玻璃珠
   const lane = findHall(2)
   if (lane) {
     for (let t = -6; t <= 6; t++) {
@@ -310,14 +310,13 @@ function genCaves(m: GameMap, rng: RNG, H: GenHelpers): Room[] {
     }
     m.items.push({ id: 870000 + rng.int(1, 999), type: 'xenonmarble', x: lane.x + 0.5, y: lane.y + 0.5 })
   }
-  // New Movile Cave：硫化氢洞厅（微生物席）
+  // 新莫维勒窟：硫化氢洞厅（微生物席）
   const movile = findHall(3)
   if (movile) {
     for (let j = -3; j <= 3; j++) for (let i = -3; i <= 3; i++) {
       const x = movile.x + i, y = movile.y + j
       if (m.tiles[idx(m, x, y)] === 1) m.wet[idx(m, x, y)] = 1
     }
-    S(m, 'graffiti', movile.x, movile.y, 1, 1, false, { lore: 2 })
     m.lights.push({ x: movile.x + 0.5, y: movile.y + 0.5, r: 4, color: '#b8d84a', flickerSeed: rng.next() * 100 })
   }
 
@@ -326,7 +325,7 @@ function genCaves(m: GameMap, rng: RNG, H: GenHelpers): Room[] {
   for (let t = 0; t < 22; t++) H.place(m, rng, 'stalagspike', 1, 1, rng.chance(0.35), { knot: rng.int(0, 3) })
   // --- 焦油之手：靠近就会有覆满焦油的手臂伸出来 ---
   for (let t = 0; t < 6; t++) H.place(m, rng, 'tarhands', 2, 2, false, { hot: 1 })
-  // --- 第九之路路标：每约 50 米一个，带 M.E.G. 标志 ---
+  // --- 第九大道路标：每约 50 米一个，带 M.E.G. 标志 ---
   for (let t = 0; t < 12; t++) H.place(m, rng, 'roadsign', 1, 1, false, { meg: 1 })
   // --- 杏仁水在洞穴中自由流淌 ---
   for (let t = 0; t < 10; t++) {

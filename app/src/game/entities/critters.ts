@@ -21,6 +21,23 @@ export const CRITTER_ENTITIES: Record<string, EntityDef> = {
     },
     aggroStinger: false,
   },
+  arachnid: {
+    type: 'arachnid', name: '蛛形纲', hp: 22, speed: 2.45, damage: 8, sight: 5, hearing: 5,
+    color: '#45372c', habitat: 'any',
+    desc: 'L8 洞穴生态中的蛛形纲总称。蝎子、蜱虫、螨虫与众多蜘蛛亚种共享一套异常多变的体态。',
+    codex: {
+      no: '未编号「Arachnida」', danger: '2 级（食草亚种中立，食肉亚种具攻击性）', habitat: 'Level 8 罗特尼斯大丛林、新莫维勒窟与巨臂林地',
+      behavior: '个体外形与食性差异极大。苔食、菌食亚种缓慢觅食，通常不会主动接近流浪者；食肉亚种会借岩缝和植被掩护快速扑击。',
+      counter: '先观察其螯肢与尾部姿态：持续抬高前足或竖起尾针的个体通常正在警戒。不要踩入蛛网密集区，也不要把被动个体逼进死角。',
+      lore: [
+        '“蛛形纲”并非单一物种，而是 M.E.G. 对 Level 8 数十种相似节肢实体的临时合称。记录包括蝎形、蜱形、螨形以及大小、花纹均不相同的蜘蛛形个体。',
+        '罗特尼斯样本多以苔藓、蕨类与菌丝为食；巨臂林地样本则更常表现出捕食行为。同一窝内甚至可能同时存在两种食性。',
+        '尸检显示它们的外骨骼含有当地岩层中的矿物颗粒。部分研究员据此认为，这些生物不是迁入洞穴，而是洞穴生态本身“长”出来的。',
+      ],
+      sighting: '「我以为泥上是一块石头。它先长出八条腿，然后第二块、第三块也站了起来。」——L8 勘探记录。',
+    },
+    aggroStinger: true,
+  },
   hound: {
     type: 'hound', name: '猎犬', hp: 35, speed: 3.4, damage: 18, sight: 6, hearing: 12, hearsSprint: true, intimidatable: true, color: '#7e6c58', habitat: 'any',
     desc: '四肢着地的人形掠食者，听觉极其灵敏，速度全实体中最快。',
@@ -54,7 +71,9 @@ export const CRITTER_ENTITIES: Record<string, EntityDef> = {
     aggroStinger: true,
   },
   deathmoth: {
-    type: 'deathmoth', name: '死亡飞蛾', hp: 15, speed: 3.2, damage: 8, sight: 5, hearing: 2, lightLure: true, drainsLight: true, hunts: ['dryshrimp'], color: '#8a7a5a', habitat: 'any', // 随意偏室内（主巢在 L5 酒店客房/走廊，亦可扑向室外灯源）
+    type: 'deathmoth', name: '死亡飞蛾', hp: 15, speed: 3.2, damage: 8, sight: 5, hearing: 2, lightLure: true, drainsLight: true, hunts: ['dryshrimp'],
+    flying: true, flightMin: 0.72, flightMax: 1.28, flightClimb: 2.1, flightHeadroom: 0.48,
+    color: '#8a7a5a', habitat: 'any', // 随意偏室内（主巢在 L5 酒店客房/走廊，亦可扑向室外灯源）
     desc: '趋光的巨型蛾群，翼展接近半米。你的手电光对它们而言就是邀请函。',
     codex: {
       no: 'Entity 4「Deathmoths」', danger: '2 级（低威胁，集群时升 4 级）', habitat: 'Level 5 恐怖酒店（主巢）、Level 1、Level 8、Level 9',
@@ -106,13 +125,13 @@ export const CRITTER_ENTITIES: Record<string, EntityDef> = {
     passive: true, hunts: ['deathmoth'], grudge: true, color: '#8a8078', habitat: 'any',
     desc: '成群出没的灰白巨鼠，以腐肉与死亡飞蛾为食。不惹它，它就不惹你；惹了它，整群都会记住你。',
     codex: {
-      no: 'Entity 24「Death Rats」', danger: '1 级（中立，激怒后 3 级·成群记仇）', habitat: 'Level 2 废弃公共带 · Level 8 Rottnest Jungle 天顶（经通风管道往返）· Level 9 郊区',
+      no: 'Entity 24「Death Rats」', danger: '1 级（中立，激怒后 3 级·成群记仇）', habitat: 'Level 2 废弃公共带 · Level 8 罗特尼斯大丛林天顶（经通风管道往返）· Level 9 郊区',
       behavior: '以 2~3 只小群活动，常年在廊道里翻找腐肉，不主动攻击玩家。它对死亡飞蛾有强烈的捕食欲——附近出现飞蛾时总会优先扑上去撕碎。未被攻击时温驯避人；一旦被攻击，整群转为凶猛反击且记仇不放——这股狠劲与 Level 8 天顶巢群如出一辙。Level 3 的个体呈水豚形态、体型明显更大，还会在地面设置捕兽夹——踩上陷阱的活物会被整群视为猎物。',
       counter: '互不打扰即可。若在黑暗里听见细碎的抓挠与扑翼声，多半是它们在替你清理飞蛾——别插手，更别踩到它。若已激怒鼠群，拉开距离没有意义：它们不会消气，只能全部解决或立刻离层。',
       lore: [
-        '尸鼠是废弃公共带最常见的原生小型实体，体长约半米，毛色灰白近腐；Level 8 Rottnest Jungle 天顶的深褐色巢群（旧档称「死亡鼠」）经基因比对确认为同一物种——它们沿着连通两层的通风管道往返迁徙，毛色随栖息地的管道积灰与洞顶菌光分化。',
+        '尸鼠是废弃公共带最常见的原生小型实体，体长约半米，毛色灰白近腐；Level 8 罗特尼斯大丛林天顶的深褐色巢群（旧档称「死亡鼠」）经基因比对确认为同一物种——它们沿着连通两层的通风管道往返迁徙，毛色随栖息地的管道积灰与洞顶菌光分化。',
         '观察记录：尸鼠会在死亡飞蛾落地或扑灯时从管道阴影里窜出，精准咬断飞蛾的头部后拖回墙缝。M.E.G. 外勤戏称它们为「免费的驱虫服务」。',
-        'Rottnest Jungle 是一个拥有独特双向重力的巨大洞厅，天顶上的尸鼠巢群从下往上看是一整片倒挂的巢。鼠类排泄物形成的肥沃土壤支撑起了洞厅里那片多彩的生物发光蘑菇森林——整个生态系统的底座，是老鼠拉的屎。',
+        '罗特尼斯大丛林是一个拥有独特双向重力的巨大洞厅，天顶上的尸鼠巢群从下往上看是一整片倒挂的巢。鼠类排泄物形成的肥沃土壤支撑起了洞厅里那片多彩的生物发光蘑菇森林——整个生态系统的底座，是老鼠拉的屎。',
         '「大停电」事件后，Level 2 的窃皮者销声匿迹，尸鼠的数量却明显增加。一种假说认为：窃皮者曾是尸鼠唯一的天敌。',
       ],
       sighting: '「手电扫过去的时候，一团灰白的东西正把一只飞蛾往墙缝里拖。它看了我一眼，继续拖。我队友踢了它一脚——我们跑了三条廊道才甩掉那一整群。」——Level 2 流浪者。',

@@ -8,9 +8,23 @@ import type { MpMsg } from './protocol'
 
 export const MP_PREFIX = 'backroom-v1-'
 
-/** ICE 服务（STUN 多源 + 公共 TURN 兜底；不可达项浏览器会自动跳过） */
+/** ICE 服务（STUN 多源 + 公共 TURN 兜底；不可达项浏览器会自动跳过）。
+ *  也可用环境变量注入自建/付费 TURN（构建时内联，Vercel 项目环境变量里设置后重新部署即可）：
+ *  VITE_TURN_URL（如 turn:1.2.3.4:3478，多个用英文逗号分隔）/ VITE_TURN_USER / VITE_TURN_PASS——
+ *  设置后置于最前优先走中继，打洞失败率的兜底方案。 */
+const ENV_TURN: RTCIceServer | null = (() => {
+  const url = (import.meta.env.VITE_TURN_URL as string | undefined)?.trim()
+  if (!url) return null
+  return {
+    urls: url.split(',').map((s) => s.trim()).filter(Boolean),
+    username: import.meta.env.VITE_TURN_USER as string | undefined,
+    credential: import.meta.env.VITE_TURN_PASS as string | undefined,
+  }
+})()
+
 const ICE_CONFIG: RTCConfiguration = {
   iceServers: [
+    ...(ENV_TURN ? [ENV_TURN] : []), // 自建 TURN 优先
     { urls: 'stun:stun.l.google.com:19302' },
     { urls: 'stun:stun.miwifi.com:3478' }, // 国内可达
     { urls: 'stun:stun.qq.com:3478' },

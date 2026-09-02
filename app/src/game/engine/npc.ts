@@ -1,6 +1,6 @@
 // v53：NPC/对话/委托/声望（游荡步进、杰瑞教化、BRC 模仿/坦白、传教、EL3A 物流与补给）——
 // 自 engine.ts 拆分，逻辑逐语句搬运。
-import { bandOfPlayerZ, bandOfZ, tileAt, solidStructAtFloor, upAt, upWallAt } from '../world/mapgen'
+import { bandOfPlayerZ, bandOfZ, floorHeight, structBlocksCircle, walkableAt } from '../world/mapgen'
 import { NPCS, JERRY_PREACH_LINES, JERRY_CHANT_LINES } from '../content/npcs'
 import { OUTPOSTS } from '../content/outposts'
 import { FACTIONS, genQuest, genBntgQuest, genArianeQuest, genEl3aQuest, genJerryQuest, type QuestDef, type QuestFaction } from '../content/factions'
@@ -47,11 +47,9 @@ export function updateNpcs(eng: Engine, dt: number) {
     // v54：三层泛化——floor=2 的三层居民走 up2 楼板/upWall2 三层墙（Gamma 基地行政部）
     const walkOk = (nx: number, ny: number): boolean => {
       const nf = n.floor ?? 0
-      if (nf >= 1) {
-        const ti = Math.floor(ny) * m.w + Math.floor(nx)
-        return upAt(m, nf as 1 | 2)[ti] === 1 && upWallAt(m, nf as 1 | 2)[ti] !== 1 && !solidStructAtFloor(m, nx, ny, nf)
-      }
-      return tileAt(m, Math.floor(nx), Math.floor(ny)) === 1 && !solidStructAtFloor(m, nx, ny, 0)
+      const tx = Math.floor(nx), ty = Math.floor(ny)
+      if (!walkableAt(m, tx, ty, nf)) return false
+      return !structBlocksCircle(m, nx, ny, .22, floorHeight(m, nx, ny, nf), nf)
     }
     // v39：死亡动画计时（尸体由渲染层倒地/下沉，计时归零后在循环尾移除）
     if (n.dead) { n.deathT = (n.deathT ?? 0) - dt; continue }
@@ -155,6 +153,7 @@ export function mimicBrc(eng: Engine): boolean {
   eng.brcMimicCd = BRC_MIMIC_CD
   eng.brcMimicPending = 0.9 // 挥臂动画播完结算（引擎主循环倒数）
   eng.attackAnimT = 0.5
+  eng.attackAnimDur = 0.5
   eng.attackAnimKind = 'swing'
   audio.swing()
   eng.msg('你学着他们的动作，对着墙面挥臂敲打起来……', 'system')
@@ -189,10 +188,13 @@ export function aimJerry(eng: Engine): Entity | null {
     if (e.dead || e.def.type !== 'jerry') continue
     const entityBand = bandOfZ(e.z)
     if (entityBand !== band) continue
-    const probe = eng.interactionProbe(e.x, e.y, e.z + 0.8, entityBand, 2.5, 0.4, {
-      minX: e.x - 0.42, minY: e.y - 0.42, minZ: e.z,
-      maxX: e.x + 0.42, maxY: e.y + 0.42, maxZ: e.z + 1.6,
-    })
+    const bodyRadius = 0.42
+    const bodyHeight = 1.6
+    const surfaceDistance = Math.max(0, Math.hypot(e.x - p.x, e.y - p.y) - bodyRadius)
+    const probe = eng.interactionProbe(e.x, e.y, e.z + bodyHeight * 0.5, entityBand, 2.5, bodyRadius, {
+      minX: e.x - bodyRadius, minY: e.y - bodyRadius, minZ: e.z,
+      maxX: e.x + bodyRadius, maxY: e.y + bodyRadius, maxZ: e.z + bodyHeight,
+    }, surfaceDistance, bodyHeight * 0.5)
     if (!probe) continue
     if (!best || probe.a < best.a - 1e-4 || (Math.abs(probe.a - best.a) <= 1e-4 && probe.d < best.d)) {
       best = { e, ...probe }

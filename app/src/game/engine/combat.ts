@@ -1,6 +1,6 @@
 // v53：战斗/投掷/击退 + 伤害/死亡结算 + 粒子生成 —— 自 engine.ts 拆分，逻辑逐语句搬运。
 import { ITEMS } from '../content/items'
-import { tileAt, bandOfZ, bandOfPlayerZ, groundHeightAt } from '../world/mapgen'
+import { bandOfZ, bandOfPlayerZ, groundHeightAt, wallAt, structBlocksSight } from '../world/mapgen'
 import { look } from '../core/renderer3d'
 import { audio } from '../core/audio'
 import { recordEntityEncounter, type Entity } from '../entities'
@@ -23,8 +23,9 @@ export function die(eng: Engine, cause: string, force = false) {
   if (eng.dev.god && !force) { eng.player.hp = Math.max(eng.player.hp, 20); return }
   eng.over = true
   eng.player.hp = 0
+  eng.usingItem = null
   clearRunSlots(eng) // v29a/v54：死亡后本局进度存档失效（绑定槽 + 自动槽；继续游戏将开新局）
-  audio.stopHum(); audio.stopBGM(); audio.stopRain(); audio.setHeartbeat(false, 0) // v54：雨声随死亡停止
+  audio.stopHum(); audio.stopBGM(); audio.stopRain(); audio.stopCaveWeather(); audio.setHeartbeat(false, 0) // v54：雨声随死亡停止
   eng.emit({ kind: 'dead', text: cause })
 }
 
@@ -78,6 +79,52 @@ export function aimEntity(eng: Engine): Entity | null {
   return best
 }
 
+/** 相机中心准星的三维世界方向。所有远程/投掷行为必须共用它，避免俯仰只影响特效、不影响命中。 */
+function crosshairDirection() {
+  const n = Math.hypot(look.rayX, look.rayY, look.rayZ)
+  if (n > 0.5) return { x: look.rayX / n, y: look.rayY / n, z: look.rayZ / n }
+  const cp = Math.cos(look.pitch)
+  return {
+    x: -Math.sin(look.yaw) * cp,
+    y: -Math.cos(look.yaw) * cp,
+    z: Math.sin(look.pitch),
+  }
+}
+
+/** 从眼睛沿准星做简洁的三维射线步进，返回墙、地面或首个实体处的真实终点。 */
+function traceCrosshair(eng: Engine, range: number): { x: number; y: number; z: number; travel: number; entity: Entity | null } {
+  const p = eng.player, m = eng.map!
+  const dir = crosshairDirection()
+  const oz = p.z + 1.55
+  const band = bandOfPlayerZ(m, p.z)
+  let end = { x: p.x + dir.x * range, y: p.y + dir.y * range, z: oz + dir.z * range, travel: range, entity: null as Entity | null }
+  for (let s = 0.15; s <= range; s += 0.12) {
+    const x = p.x + dir.x * s, y = p.y + dir.y * s, z = oz + dir.z * s
+    const tx = Math.floor(x), ty = Math.floor(y)
+    if (wallAt(m, tx, ty, band) || structBlocksSight(m, x, y, z, band) || z <= groundHeightAt(m, x, y, band) + 0.025) {
+      end = { x: p.x + dir.x * Math.max(0, s - 0.12), y: p.y + dir.y * Math.max(0, s - 0.12), z: oz + dir.z * Math.max(0, s - 0.12), travel: Math.max(0, s - 0.12), entity: null }
+      break
+    }
+    for (const e of m.entities) {
+      if (e.dead || e.hidden || e.disguised) continue
+      const scale = (e.def.scale ?? 1) * Math.min(2.5, e.def.huge ?? 1)
+      const radius = Math.max(0.3, Math.min(1.35, 0.42 * scale))
+      const bottom = e.z - (e.def.flying ? 0.38 * scale : 0.05)
+      const top = e.z + Math.max(0.8, 1.6 * scale)
+      if (Math.hypot(e.x - x, e.y - y) <= radius && z >= bottom && z <= top) {
+        return { x, y, z, travel: s, entity: e }
+      }
+    }
+  }
+  return end
+}
+
+function startAttackAnimation(eng: Engine, kind: Engine['attackAnimKind'], duration: number) {
+  eng.attackAnimKind = kind
+  eng.attackAnimDur = Math.max(0.01, duration)
+  eng.attackAnimT = eng.attackAnimDur
+}
+
 export function killCheck(eng: Engine, e: Entity) {
   if (e.hp > 0 || e.dead) return
   const p = eng.player, m = eng.map!
@@ -100,21 +147,46 @@ export function killCheck(eng: Engine, e: Entity) {
     const id = Date.now() % 100000 + Math.random()
     m.items.push({ id, type: 'dryshrimp', x: e.x, y: e.y })
     mpDrop(eng, id, 'dryshrimp', e.x, e.y) // v59：联机掉落同步
-    return
-  }
-  if (Math.random() < (p.hasRabbit ? 0.6 : 0.35)) {
-    const drops = ['bandage', 'almond', 'canned', 'battery']
-    const t0 = drops[Math.floor(Math.random() * drops.length)]
-    const t = t0 === 'almond' && Math.random() < 0.1 ? 'cashew' : t0 // v32：腰果水 1/10 替代
-    const id = Date.now() % 100000 + Math.random()
-    m.items.push({ id, type: t, x: e.x, y: e.y })
-    mpDrop(eng, id, t, e.x, e.y) // v59：联机掉落同步
   }
 }
 
 export function attack(eng: Engine) {
   const p = eng.player, m = eng.map!
   const held = p.hotbar[p.selected]
+  // An empty squirt gun is not an attack: keep its existing feedback, but do
+  // not spend stamina or start the shared attack cooldown.
+  if (held?.type === 'squirtgun' && (eng.squirtAmmo <= 0 || eng.squirtTank === 'none')) {
+    eng.squirt()
+    return
+  }
+  if (!eng.dev.noAttackCooldown && eng.attackCooldownT > 0) return
+  const def = held ? ITEMS[held.type] : undefined
+  // 所有左键攻击共用冷却入口；近战武器从物品定义读取独立间隔/体力，特殊攻击使用轻量模板。
+  const interval = eng.gunCandyT > 0 ? 0.24
+    : def?.throw ? 0.72
+      : held?.type === 'squirtgun' ? 0.3
+        : def?.weapon ? (def.attackInterval ?? 0.65)
+          : 0.58
+  const staminaCost = eng.gunCandyT > 0 ? 2
+    : def?.throw ? 5
+      : held?.type === 'squirtgun' ? 2
+        : def?.weapon ? (def.attackStamina ?? 8)
+          : 7
+  p.stamina = Math.max(0, p.stamina - staminaCost)
+  const exhausted = p.stamina <= 0.01
+  const duration = exhausted ? Math.max(3.1, interval * 4.5) : interval
+  eng.attackCooldownDur = eng.dev.noAttackCooldown ? 0 : duration
+  eng.attackCooldownT = eng.attackCooldownDur
+  startAttackAnimation(eng,
+    eng.gunCandyT > 0 || held?.type === 'squirtgun' ? 'spray'
+      : def?.throw ? 'throw'
+        : def?.weapon ? 'swing' : 'punch',
+    duration,
+  )
+  if (exhausted && eng.statusMsgT.stamina <= 0) {
+    eng.msg('体力已经耗尽——手臂沉得抬不起来，下一次攻击需要很久。', 'system')
+    eng.statusMsgT.stamina = 2.5
+  }
   // v51：枪糖生效中——无论当前持有什么，右手都是枪（左键发射巧克力子弹）
   if (eng.gunCandyT > 0) { eng.shootChocolate(); return }
   // 可投掷道具：左键掷出而非近战
@@ -122,8 +194,6 @@ export function attack(eng: Engine) {
   // v32：滋水枪——左键喷射储罐液体
   if (held?.type === 'squirtgun') { eng.squirt(); return }
   audio.swing()
-  eng.attackAnimT = 0.35 // 手部挥砍动画/准心收缩反馈
-  eng.attackAnimKind = held && ITEMS[held.type]?.weapon ? 'swing' : 'punch'
   // 开发者模式：一击必杀
   const dmg = eng.dev.oneHit ? 99999 : held ? (ITEMS[held.type].weapon ?? 8) : 8
   let hit = false
@@ -133,10 +203,10 @@ export function attack(eng: Engine) {
     let thingBody = false
     if (e.def.type === 'thething' && !e.dead && !e.disguised && !eng.canHit(e)) {
       const reach = eng.attackReach(e)
-      for (let i = 0; i < 8 && !thingBody; i++) { // 近似体节链：头后 2.2m 起每 1.35m 一节（v58fix4 随体型增大同步）
-        const bx = e.x - Math.cos(e.facing) * (2.2 + i * 1.35), by = e.y - Math.sin(e.facing) * (2.2 + i * 1.35)
+      for (let i = 0; i < 18 && !thingBody; i++) { // 与渲染侧 18 节、2.16m 节距一致（转弯时仍用直链作保守命中近似）
+        const bx = e.x - Math.cos(e.facing) * (2.2 + i * 2.16), by = e.y - Math.sin(e.facing) * (2.2 + i * 2.16)
         const bd = Math.hypot(bx - p.x, by - p.y)
-        if (bd > reach || Math.abs(e.z - p.z) >= 1.2) continue
+        if (bd > reach || Math.abs(e.z - p.z) >= 2.2) continue
         if (bd >= 0.9) {
           const ang2 = Math.atan2(by - p.y, bx - p.x)
           let diff2 = Math.abs(ang2 - p.facing)
@@ -170,7 +240,11 @@ export function attack(eng: Engine) {
       // 击退位移做墙体校验：落点不可走（墙/实心结构/不可达高差）则不位移——
       // 击杀后的尸体同样不会被钉进墙里（尸体落点即击退落点）
       const kx = e.x + Math.cos(ang) * 0.4, ky = e.y + Math.sin(ang) * 0.4
-      if (eng.entityWalkH(m, Math.floor(kx), Math.floor(ky), bandOfZ(e.z)) !== null) { e.x = kx; e.y = ky }
+      const ktx = Math.floor(kx), kty = Math.floor(ky)
+      const l9StreetBound = eng.levelDef.id === 9
+        && (e.def.type === 'watcher' || e.def.type === 'strider' || e.def.type === 'mangled')
+      if (eng.entityWalkH(m, ktx, kty, bandOfZ(e.z)) !== null
+        && (!l9StreetBound || m.outdoor[kty * m.w + ktx] === 1)) { e.x = kx; e.y = ky }
     }
     e.stunT = 0.35
     // v47：伤害鹉主杰瑞——信众哗然：jerry 声望立即 -50（每次）
@@ -261,14 +335,14 @@ export function throwHeld(eng: Engine, type: string) {
   slot.count--
   if (slot.count <= 0) p.hotbar[p.selected] = null
   audio.swing()
-  eng.attackAnimT = 0.35
-  eng.attackAnimKind = 'throw'
   const speed = 9
+  const dir = crosshairDirection()
+  const lead = 0.38
   eng.projectiles.push({
     id: eng.projId++, type,
-    x: p.x + Math.cos(p.facing) * 0.4, y: p.y + Math.sin(p.facing) * 0.4,
-    z: p.z + 1.4, floorZ: p.z,
-    vx: Math.cos(p.facing) * speed, vy: Math.sin(p.facing) * speed, vz: 2.6,
+    x: p.x + dir.x * lead, y: p.y + dir.y * lead,
+    z: p.z + 1.55 + dir.z * lead, floorZ: p.z,
+    vx: dir.x * speed, vy: dir.y * speed, vz: dir.z * speed,
   })
   eng.msg(`你掷出了${ITEMS[type].name}。`, 'system')
   eng.noiseEvent(p.x, p.y, 4, false)
@@ -332,30 +406,19 @@ export function stanleyTeleport(eng: Engine) {
 
 /** 枪糖：左键发射巧克力子弹（直线 12m，1 点伤害，命中也只是糊一脸） */
 export function shootChocolate(eng: Engine) {
-  const p = eng.player, m = eng.map!
-  if (eng.chocoCd > 0) return
-  eng.chocoCd = 0.22
+  const p = eng.player
+  if (!eng.dev.noAttackCooldown && eng.chocoCd > 0) return
+  eng.chocoCd = eng.dev.noAttackCooldown ? 0 : 0.22
   audio.swing()
-  eng.attackAnimT = 0.2
-  eng.attackAnimKind = 'spray'
-  const dx = Math.cos(p.facing), dy = Math.sin(p.facing)
+  const aim = crosshairDirection()
+  const flat = Math.hypot(aim.x, aim.y) || 1
+  const dx = aim.x / flat, dy = aim.y / flat
   const pc = '#7a4a2a' // 巧克力色
-  let hitEnt: Entity | null = null
-  let travel = 12
-  for (let s = 0.5; s <= 12; s += 0.2) {
-    const rx = p.x + dx * s, ry = p.y + dy * s
-    if (tileAt(m, Math.floor(rx), Math.floor(ry)) !== 1) { travel = s - 0.2; break }
-    for (const e of m.entities) {
-      if (e.dead || e.hidden) continue
-      if (Math.hypot(e.x - rx, e.y - ry) < 0.45) { hitEnt = e; travel = s; break }
-    }
-    if (hitEnt) break
-  }
+  const ray = traceCrosshair(eng, 12)
+  const hitEnt = ray.entity
   // 弹道视觉（同滋水枪：枪口→准星点）
-  const rfx = -Math.sin(p.facing), rfy = Math.cos(p.facing)
-  const cp = Math.cos(look.pitch)
-  const tx = p.x + dx * travel * cp, ty = p.y + dy * travel * cp
-  const tz = p.z + 1.55 + Math.sin(look.pitch) * travel
+  const rfx = -dy, rfy = dx
+  const tx = ray.x, ty = ray.y, tz = ray.z
   const mx = p.x + dx * 0.5 + rfx * 0.25, my = p.y + dy * 0.5 + rfy * 0.25, mz = p.z + 1.25
   const dist = Math.max(0.5, Math.hypot(tx - mx, ty - my, tz - mz))
   for (let s = 0.3; s < dist; s += 0.3) {
@@ -377,36 +440,25 @@ export function shootChocolate(eng: Engine) {
 
 /** 滋水枪喷射：清水无效果；杏仁水雾轻伤实体，腰果水雾造成更大伤害 */
 export function squirt(eng: Engine) {
-  const p = eng.player, m = eng.map!
+  const p = eng.player
   if (eng.squirtAmmo <= 0 || eng.squirtTank === 'none') {
     eng.msg('储罐是空的——先装入液体。', 'system')
     return
   }
   eng.squirtAmmo--
   audio.swing()
-  eng.attackAnimT = 0.35
-  eng.attackAnimKind = 'spray' // 滋水枪专属喷射动画
   const dmg = eng.squirtTank === 'liquidpain' ? 60 : eng.squirtTank === 'cashew' ? 20 : 8 // 液态痛苦：腐蚀性高伤
   const pc = eng.squirtTank === 'liquidpain' ? '#d94a3a' : eng.squirtTank === 'cashew' ? '#c9a05a' : eng.squirtTank === 'almond' ? '#c9e8a0' : '#9adfff'
-  // v34：线性水线——沿视线射线步进（射程 4.5m，撞墙即停，顺带修复隔墙命中）；水线碰到首个实体才触发液体效果
-  const dx = Math.cos(p.facing), dy = Math.sin(p.facing)
-  const RANGE = 4.5, STEP = 0.2
-  let hitEnt: Entity | null = null
-  let travel = RANGE
-  for (let s = 0.6; s <= RANGE; s += STEP) {
-    const rx = p.x + dx * s, ry = p.y + dy * s
-    if (tileAt(m, Math.floor(rx), Math.floor(ry)) !== 1) { travel = s - STEP; break } // 撞墙
-    for (const e of m.entities) {
-      if (e.dead || e.hidden) continue
-      if (Math.hypot(e.x - rx, e.y - ry) < 0.45) { hitEnt = e; travel = s; break }
-    }
-    if (hitEnt) break
-  }
+  // 三维水线：实际命中、墙地遮挡与画面特效全部沿同一条准星射线。
+  const aim = crosshairDirection()
+  const flat = Math.hypot(aim.x, aim.y) || 1
+  const dx = aim.x / flat, dy = aim.y / flat
+  const facing = Math.atan2(dy, dx)
+  const ray = traceCrosshair(eng, 4.5)
+  const hitEnt = ray.entity
   // 水线视觉：从右手枪模口射出、笔直射向准星所指点（枪口=右手下前方；目标=视线射线末端，含俯仰）
-  const rfx = -Math.sin(p.facing), rfy = Math.cos(p.facing) // 右手方向（与视角模型右手位一致）
-  const cp = Math.cos(look.pitch)
-  const tx = p.x + dx * travel * cp, ty = p.y + dy * travel * cp // 准星目标点
-  const tz = p.z + 1.55 + Math.sin(look.pitch) * travel
+  const rfx = -dy, rfy = dx // 右手方向（由实际准星射线水平投影求得）
+  const tx = ray.x, ty = ray.y, tz = ray.z // 准星目标点
   const mx = p.x + dx * 0.5 + rfx * 0.25, my = p.y + dy * 0.5 + rfy * 0.25, mz = p.z + 1.25 // 枪口（右手下前方）
   const dist = Math.max(0.5, Math.hypot(tx - mx, ty - my, tz - mz))
   for (let s = 0.26; s < dist; s += 0.26) {
@@ -419,11 +471,11 @@ export function squirt(eng: Engine) {
     })
   }
   for (let i = 0; i < 6; i++) {
-    const a = p.facing + (Math.random() - 0.5) * 1.2
+    const a = facing + (Math.random() - 0.5) * 1.2
     eng.particles.push({
-      x: p.x + dx * travel, y: p.y + dy * travel,
+      x: tx, y: ty,
       vx: Math.cos(a) * (1 + Math.random() * 2), vy: Math.sin(a) * (1 + Math.random() * 2),
-      t: 0, life: 0.3, color: pc, size: 1.4, z: 1.1,
+      t: 0, life: 0.3, color: pc, size: 1.4, z: tz,
     })
   }
   if (hitEnt) {
@@ -454,12 +506,23 @@ export function updateProjectiles(eng: Engine, dt: number) {
   const m = eng.map!
   for (const pr of eng.projectiles) {
     const nx = pr.x + pr.vx * dt, ny = pr.y + pr.vy * dt
+    const oldZ = pr.z
     pr.vz -= 9.8 * dt
-    pr.z += pr.vz * dt
-    if (pr.z <= pr.floorZ) { pr.done = true; eng.landProjectile(pr, pr.x, pr.y); continue }
-    // 撞墙：在原地提前落地
-    if (tileAt(m, Math.floor(nx), Math.floor(ny)) !== 1) { pr.done = true; eng.landProjectile(pr, pr.x, pr.y); continue }
-    pr.x = nx; pr.y = ny
+    const nz = oldZ + pr.vz * dt
+    if (nz <= pr.floorZ) { pr.done = true; eng.landProjectile(pr, pr.x, pr.y); continue }
+    // 用短射线段而非旧 tileAt 整格占地判定，防止快速投掷物穿过薄模型，
+    // 也不会在异形装饰的透明空隙外凭空撞停。
+    const band = bandOfPlayerZ(m, pr.floorZ)
+    const dist = Math.hypot(nx - pr.x, ny - pr.y, nz - oldZ)
+    const steps = Math.max(1, Math.ceil(dist / .08))
+    let blocked = false
+    for (let i = 1; i <= steps; i++) {
+      const t = i / steps
+      const sx = pr.x + (nx - pr.x) * t, sy = pr.y + (ny - pr.y) * t, sz = oldZ + (nz - oldZ) * t
+      if (wallAt(m, Math.floor(sx), Math.floor(sy), band) || structBlocksSight(m, sx, sy, sz, band)) { blocked = true; break }
+    }
+    if (blocked) { pr.done = true; eng.landProjectile(pr, pr.x, pr.y); continue }
+    pr.x = nx; pr.y = ny; pr.z = nz
   }
   eng.projectiles = eng.projectiles.filter((pr) => !pr.done)
 }

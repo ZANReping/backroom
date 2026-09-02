@@ -1,9 +1,9 @@
 // 结构/出口低模（按 StructKind 建造，含可动盖板/门铰链 userData 约定）
 import * as THREE from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
-import { doorNeedsRotate, floorHeight, tallCeilH, type GameMap } from '../world/mapgen'
+import { caveCeilingAt, doorNeedsRotate, floorHeight, tallCeilH, type GameMap } from '../world/mapgen'
 import type { LevelDef, Structure } from '../core/types'
-import { box, cyl, glow, col, mulberry, levelTexture, noiseTexture, makeCanvasCtx, toTex, texLevelId, litMaterial } from './shared'
+import { box, cyl, glow, col, mulberry, levelTexture, noiseTexture, makeCanvasCtx, toTex, texLevelId, litMaterial, getMaterialMode, WALL_H, architecturalGlassMaterial } from './shared'
 
 // 墙纸贴图盒（柱厅立柱用：UV 按面宽/柱高放大，与墙面 1m 一循环的世界空间密度一致）
 function wallpaperBox(w: number, h: number, d: number, def: LevelDef, x = 0, y = 0, z = 0): THREE.Mesh {
@@ -50,6 +50,264 @@ function texLambert(name: string, fbBase: string, fbAlt: string, tint: string | 
   return new THREE.MeshLambertMaterial({ color: tint, map: levelTexture(name, () => noiseTexture(fbBase, fbAlt)) })
 }
 
+// L8 自然岩体统一 PBR：钟乳石、石笋、岸石、突岩和悬浮岩共用生态带的颜色/法线/粗糙度来源。
+function caveRockMaterial(variant0: unknown, normalStrength = 0.88) {
+  const variant = String(variant0 ?? 'phreatic')
+  const terrain = variant === 'breakdown' || variant === 'rottnest' ? 'floor'
+    : variant === 'vadose' || variant === 'movile' ? 'ceil' : 'wall'
+  const tint = variant === 'rottnest' ? '#aeb7a1' : variant === 'movile' ? '#bbb994'
+    : variant === 'handyland' ? '#bd968e' : variant === 'hyperspace' ? '#aec5bd' : '#c5beb0'
+  const base = `l8_${terrain}`
+  return litMaterial({
+    color: tint,
+    map: levelTexture(`${base}.jpg`, () => noiseTexture('#645d51', '#817665')),
+    normalMap: levelTexture(`${base}_normal.jpg`, () => noiseTexture('#8080ff', '#7f7fff')),
+    normalScale: new THREE.Vector2(normalStrength, normalStrength),
+    roughnessMap: levelTexture(`${base}_roughness.jpg`, () => noiseTexture('#dedede', '#c8c8c8')),
+    roughness: 0.97,
+    envBase: terrain === 'wall' ? 0.18 : 0.13,
+  })
+}
+
+/** 洞穴装饰用的瓦片中心场快速插值。碰撞仍走精确零等值面；云雨/贴花无需为每个视觉采样重复 14 次求根。 */
+function sampleCaveVisualField(m: GameMap, field: Float32Array | undefined, x: number, y: number, fallback: () => number): number {
+  if (!field || field.length < m.w * m.h) return fallback()
+  const gx = Math.max(0, Math.min(m.w - 1, x - 0.5)), gy = Math.max(0, Math.min(m.h - 1, y - 0.5))
+  const x0 = Math.floor(gx), y0 = Math.floor(gy), x1 = Math.min(m.w - 1, x0 + 1), y1 = Math.min(m.h - 1, y0 + 1)
+  const fx = gx - x0, fy = gy - y0
+  const a = field[y0 * m.w + x0], b = field[y0 * m.w + x1], c = field[y1 * m.w + x0], d = field[y1 * m.w + x1]
+  return (a + (b - a) * fx) * (1 - fy) + (c + (d - c) * fx) * fy
+}
+const visualCaveFloor = (m: GameMap, x: number, y: number) => sampleCaveVisualField(m, m.terrain, x, y, () => floorHeight(m, x, y, 0))
+const visualCaveRoof = (m: GameMap, x: number, y: number) => sampleCaveVisualField(m, m.caveCeil, x, y, () => caveCeilingAt(m, x, y))
+
+let handSpikePlainMat: THREE.MeshLambertMaterial | THREE.MeshStandardMaterial | null = null
+let handSpikeMossMat: THREE.MeshLambertMaterial | THREE.MeshStandardMaterial | null = null
+function handSpikeMaterial(moss: boolean): THREE.MeshLambertMaterial | THREE.MeshStandardMaterial {
+  if (moss && handSpikeMossMat) return handSpikeMossMat
+  if (!moss && handSpikePlainMat) return handSpikePlainMat
+  const mat = caveRockMaterial('handyland', 0.86) as THREE.MeshLambertMaterial | THREE.MeshStandardMaterial
+  if (moss) {
+    mat.emissive.set('#9f1518'); mat.emissiveIntensity = 0.52
+    mat.emissiveMap = mat.map
+    handSpikeMossMat = mat
+  } else handSpikePlainMat = mat
+  return mat
+}
+
+const handSpikeGeometries: Array<THREE.BufferGeometry | undefined> = []
+/** 五种石臂手势只构造一次共享几何；统一转成非索引几何后再合并，避免 Box 与 Dodecahedron 索引格式不同导致 merge 返回 null。 */
+function handSpikeGeometry(pose0: number): THREE.BufferGeometry {
+  const pose = Math.max(0, Math.min(4, pose0 | 0))
+  const cached = handSpikeGeometries[pose]
+  if (cached) return cached
+  const part = (w: number, h: number, d: number, x: number, y: number, z: number) => {
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d, 1, Math.max(1, Math.round(h * 3)), 1))
+    mesh.position.set(x, y, z)
+    return mesh
+  }
+  const hand = new THREE.Group()
+  hand.add(part(0.18, 0.72, 0.18, 0, 0.34, 0), part(0.32, 0.35, 0.15, 0, 0.81, 0))
+  for (let f = 0; f < 4; f++) {
+    const fx = -0.105 + f * 0.07
+    const l1 = f === 1 || f === 2 ? 0.19 : 0.15
+    const finger = new THREE.Group(); finger.position.set(fx, 0.95, 0.006)
+    const pointing = pose === 4 && f === 1
+    const curl = pointing ? 0.05 : pose === 0 ? 0.08 : pose === 1 ? 0.5 : pose === 2 ? 0.22 : pose === 3 ? 1.0 : 0.82
+    finger.rotation.z = pose === 2 ? (f - 1.5) * 0.2 : pose === 1 ? (f - 1.5) * 0.08 : 0
+    finger.add(part(0.055, l1, 0.062, 0, l1 / 2, 0))
+    const tip = new THREE.Group(); tip.position.y = l1; tip.rotation.x = -curl
+    tip.rotation.z = pose === 3 ? (f - 1.5) * 0.07 : 0
+    tip.add(part(0.048, l1 * 0.82, 0.056, 0, l1 * 0.41, 0.012))
+    finger.add(tip); hand.add(finger)
+  }
+  const thumb = new THREE.Group(); thumb.position.set(0.17, 0.82, 0.02)
+  thumb.rotation.z = pose === 3 ? -0.48 : -0.95
+  thumb.rotation.x = pose === 1 || pose === 3 ? -0.62 : -0.12
+  thumb.add(part(0.058, 0.16, 0.062, 0, 0.08, 0), part(0.05, 0.13, 0.056, 0, 0.22, 0.01))
+  hand.add(thumb)
+  const root = new THREE.Mesh(new THREE.DodecahedronGeometry(0.27, 1))
+  root.scale.set(1.15, 0.42, 1); root.position.y = 0.07
+  const assembly = new THREE.Group(); assembly.add(hand, root); assembly.updateMatrixWorld(true)
+  const parts: THREE.BufferGeometry[] = []
+  assembly.traverse((ch) => {
+    if (!(ch instanceof THREE.Mesh)) return
+    const geo = ch.geometry.index ? ch.geometry.toNonIndexed() : ch.geometry.clone()
+    parts.push(geo.applyMatrix4(ch.matrixWorld))
+  })
+  const merged = mergeGeometries(parts, false) ?? new THREE.BoxGeometry(0.32, 1.1, 0.18).toNonIndexed()
+  merged.computeVertexNormals(); merged.computeBoundingBox(); merged.computeBoundingSphere()
+  handSpikeGeometries[pose] = merged
+  return merged
+}
+
+let bloodMossTex: THREE.CanvasTexture | null = null
+/** 巨臂林地血红苔藓：透明底上的团簇、细枝与孢子点，可同时用于颜色/发光/凹凸。 */
+function bloodMossTexture(): THREE.CanvasTexture {
+  if (bloodMossTex) return bloodMossTex
+  const [cv, g] = makeCanvasCtx(256, 256)
+  const rr = mulberry(0xb100d055)
+  g.clearRect(0, 0, 256, 256)
+  for (let c = 0; c < 34; c++) {
+    const x = rr() * 256, y = rr() * 256, r = 5 + rr() * 18
+    const grad = g.createRadialGradient(x, y, 0, x, y, r)
+    grad.addColorStop(0, `rgba(${150 + Math.floor(rr() * 70)},18,22,.92)`)
+    grad.addColorStop(0.55, 'rgba(116,8,18,.72)')
+    grad.addColorStop(1, 'rgba(72,2,12,0)')
+    g.fillStyle = grad; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill()
+    g.strokeStyle = `rgba(225,38,35,${(0.3 + rr() * 0.42).toFixed(2)})`
+    g.lineWidth = 0.6 + rr() * 1.5
+    for (let b = 0; b < 3; b++) {
+      g.beginPath(); g.moveTo(x, y)
+      let px = x, py = y
+      for (let k = 0; k < 5; k++) {
+        px += (rr() - 0.5) * r * 0.7; py += (rr() - 0.5) * r * 0.7
+        g.lineTo(px, py)
+      }
+      g.stroke()
+    }
+  }
+  bloodMossTex = toTex(cv)
+  bloodMossTex.colorSpace = THREE.SRGBColorSpace
+  bloodMossTex.wrapS = bloodMossTex.wrapT = THREE.RepeatWrapping
+  return bloodMossTex
+}
+
+let caveCloudTex: THREE.CanvasTexture | null = null
+function caveCloudTexture(): THREE.CanvasTexture {
+  if (caveCloudTex) return caveCloudTex
+  const [cv, g] = makeCanvasCtx(128, 128)
+  const grad = g.createRadialGradient(64, 64, 4, 64, 64, 62)
+  grad.addColorStop(0, 'rgba(190,198,205,.58)')
+  grad.addColorStop(0.35, 'rgba(142,151,163,.34)')
+  grad.addColorStop(1, 'rgba(74,81,94,0)')
+  g.fillStyle = grad; g.fillRect(0, 0, 128, 128)
+  caveCloudTex = toTex(cv)
+  return caveCloudTex
+}
+
+interface BioGlowPoint {
+  x: number; y: number; z: number
+  color: THREE.Color
+  size: number
+  phase: number
+  speed: number
+  drift: number
+}
+
+/** 单次 draw call 的柔光生物粒子；位移与脉冲在 GPU 完成，数百点不会逐个创建灯光/网格。 */
+function bioGlowField(src: BioGlowPoint[], verticalDrift = 0.12): THREE.Points {
+  const geo = new THREE.BufferGeometry()
+  const pos = new Float32Array(src.length * 3), color = new Float32Array(src.length * 3)
+  const motion = new Float32Array(src.length * 4), size = new Float32Array(src.length)
+  src.forEach((p, i) => {
+    pos.set([p.x, p.y, p.z], i * 3)
+    color.set([p.color.r, p.color.g, p.color.b], i * 3)
+    motion.set([p.phase, p.speed, p.drift, verticalDrift], i * 4)
+    size[i] = p.size
+  })
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3))
+  geo.setAttribute('aGlowColor', new THREE.BufferAttribute(color, 3))
+  geo.setAttribute('aMotion', new THREE.BufferAttribute(motion, 4))
+  geo.setAttribute('aSize', new THREE.BufferAttribute(size, 1))
+  const mat = new THREE.ShaderMaterial({
+    uniforms: { uTime: { value: 0 } },
+    vertexShader: `
+      attribute vec3 aGlowColor;
+      attribute vec4 aMotion;
+      attribute float aSize;
+      varying vec3 vGlowColor;
+      varying float vPulse;
+      uniform float uTime;
+      void main() {
+        float t = uTime * aMotion.y + aMotion.x;
+        vec3 p = position;
+        p.x += sin(t * 1.17) * aMotion.z;
+        p.z += cos(t * 0.83 + aMotion.x * 1.71) * aMotion.z;
+        p.y += sin(t * 1.43 + aMotion.x) * aMotion.w;
+        vec4 mv = modelViewMatrix * vec4(p, 1.0);
+        gl_Position = projectionMatrix * mv;
+        // 严格按透视距离缩小：旧系数 190 令 40–60m 外仍有十余像素光斑，像贴在镜头上。
+        gl_PointSize = clamp(aSize * (42.0 / max(1.0, -mv.z)), 0.65, 7.5);
+        vGlowColor = aGlowColor;
+        vPulse = 0.72 + 0.28 * sin(t * 2.1);
+      }
+    `,
+    fragmentShader: `
+      varying vec3 vGlowColor;
+      varying float vPulse;
+      void main() {
+        float d = length(gl_PointCoord - vec2(0.5)) * 2.0;
+        if (d > 1.0) discard;
+        float core = 1.0 - smoothstep(0.0, 0.24, d);
+        float halo = pow(max(0.0, 1.0 - d), 2.8);
+        gl_FragColor = vec4(vGlowColor * (1.05 + core * 0.95), (core * 0.82 + halo * 0.24) * vPulse);
+      }
+    `,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    toneMapped: false,
+  })
+  const points = new THREE.Points(geo, mat)
+  points.frustumCulled = false
+  points.userData.noCastShadow = 1
+  points.onBeforeRender = () => { mat.uniforms.uTime.value = Date.now() * 0.001 }
+  return points
+}
+
+let l9CavePreview: THREE.CanvasTexture | null = null
+/** 第九大道洞口内的 Level 9 午夜郊区预览；使用自发光画布，L8 黑暗中仍能辨认湿路、住宅与路灯。 */
+function l9CavePreviewTexture(): THREE.CanvasTexture {
+  if (l9CavePreview) return l9CavePreview
+  const [cv, g] = makeCanvasCtx(768, 448)
+  const sky = g.createLinearGradient(0, 0, 0, 320)
+  sky.addColorStop(0, '#030812'); sky.addColorStop(0.55, '#0a1320'); sky.addColorStop(1, '#18202a')
+  g.fillStyle = sky; g.fillRect(0, 0, cv.width, cv.height)
+  const rr = mulberry(909009)
+  for (let i = 0; i < 70; i++) {
+    const a = 0.12 + rr() * 0.45
+    g.fillStyle = `rgba(190,210,220,${a.toFixed(2)})`
+    g.fillRect(rr() * cv.width, rr() * 205, rr() < 0.88 ? 1 : 2, 1)
+  }
+  // 远处屋脊与两侧住宅，中央留出湿沥青道路。
+  const house = (x: number, y: number, w: number, h: number, flip: boolean) => {
+    g.fillStyle = flip ? '#111821' : '#151b22'; g.fillRect(x, y, w, h)
+    g.beginPath(); g.moveTo(x - 8, y); g.lineTo(x + w * 0.5, y - h * 0.42); g.lineTo(x + w + 8, y); g.closePath(); g.fill()
+    g.fillStyle = '#8e7740'
+    for (let wx = x + 15; wx < x + w - 8; wx += 34) if (rr() > 0.48) g.fillRect(wx, y + 18, 11, 15)
+  }
+  house(20, 234, 152, 92, false); house(596, 230, 150, 96, true)
+  house(174, 259, 94, 59, true); house(500, 257, 96, 61, false)
+  g.fillStyle = '#1f252b'; g.fillRect(0, 316, cv.width, 132)
+  // 道路透视、潮湿反光和中央消失点。
+  g.fillStyle = '#0b0e13'; g.beginPath(); g.moveTo(300, 304); g.lineTo(468, 304); g.lineTo(650, 448); g.lineTo(118, 448); g.closePath(); g.fill()
+  const roadGlow = g.createLinearGradient(0, 304, 0, 448)
+  roadGlow.addColorStop(0, 'rgba(96,112,122,.10)'); roadGlow.addColorStop(1, 'rgba(113,137,151,.28)')
+  g.fillStyle = roadGlow; g.beginPath(); g.moveTo(345, 304); g.lineTo(420, 304); g.lineTo(520, 448); g.lineTo(244, 448); g.closePath(); g.fill()
+  g.strokeStyle = 'rgba(160,174,180,.2)'; g.lineWidth = 2
+  for (let i = 0; i < 9; i++) {
+    const y = 325 + i * 15, half = 24 + i * 12
+    g.beginPath(); g.moveTo(384 - half, y); g.lineTo(384 + half, y + 2); g.stroke()
+  }
+  // 熄灭为主、仅两盏残亮的郊区路灯。
+  for (const [x, y, lit] of [[280, 268, 1], [488, 256, 0], [214, 282, 0], [548, 274, 1]] as const) {
+    g.strokeStyle = '#252b30'; g.lineWidth = 5; g.beginPath(); g.moveTo(x, 326); g.lineTo(x, y); g.lineTo(x + (x < 384 ? 16 : -16), y); g.stroke()
+    if (lit) {
+      const glow = g.createRadialGradient(x + (x < 384 ? 16 : -16), y, 1, x + (x < 384 ? 16 : -16), y, 35)
+      glow.addColorStop(0, 'rgba(255,233,163,.88)'); glow.addColorStop(1, 'rgba(255,222,142,0)')
+      g.fillStyle = glow; g.fillRect(x - 25, y - 35, 75, 75)
+    }
+  }
+  // 洞内向外看时的冷雾层，保留 Level 9“刚下过雨”的朦胧感。
+  const fog = g.createLinearGradient(0, 205, 0, 365)
+  fog.addColorStop(0, 'rgba(72,85,96,0)'); fog.addColorStop(1, 'rgba(74,86,94,.14)')
+  g.fillStyle = fog; g.fillRect(0, 190, cv.width, 190)
+  l9CavePreview = toTex(cv)
+  l9CavePreview.colorSpace = THREE.SRGBColorSpace
+  return l9CavePreview
+}
+
 // v53：带贴图的盒体（房顶檐口/屋顶板用）——UV 按各面世界尺寸放大避免拉伸（同 wallpaperBox 思路），
 // per 为多少米一个贴图重复；离线回退 fbBase/fbAlt 程序噪点
 function texBox(w: number, h: number, d: number, name: string, fbBase: string, fbAlt: string, tint: string, per = 2.5, x = 0, y = 0, z = 0): THREE.Mesh {
@@ -65,6 +323,88 @@ function texBox(w: number, h: number, d: number, name: string, fbBase: string, f
   const m = new THREE.Mesh(geo, texLambert(name, fbBase, fbAlt, tint))
   m.position.set(x, y, z)
   return m
+}
+
+let l9CleanTileTex: THREE.CanvasTexture | null = null
+function cleanModernTileTexture(): THREE.CanvasTexture {
+  if (l9CleanTileTex) return l9CleanTileTex
+  const [cv, g] = makeCanvasCtx(256, 256)
+  g.fillStyle = '#ecefed'; g.fillRect(0, 0, 256, 256)
+  const rr = mulberry(0x1909c1ad)
+  for (let y = 0; y < 256; y += 64) for (let x = 0; x < 256; x += 64) {
+    const k = Math.floor(rr() * 8)
+    g.fillStyle = `rgb(${232 + k},${234 + k},${232 + k})`
+    g.fillRect(x + 2, y + 2, 60, 60)
+  }
+  g.strokeStyle = '#c8cdca'; g.lineWidth = 3
+  for (let i = 0; i <= 256; i += 64) { g.beginPath(); g.moveTo(i, 0); g.lineTo(i, 256); g.stroke(); g.beginPath(); g.moveTo(0, i); g.lineTo(256, i); g.stroke() }
+  l9CleanTileTex = toTex(cv); l9CleanTileTex.wrapS = l9CleanTileTex.wrapT = THREE.RepeatWrapping
+  return l9CleanTileTex
+}
+
+// L9 专用 PBR 盒体：颜色/法线/粗糙度三图成套加载，且按世界尺寸平铺。
+// 材质缓存避免一条街数十栋住宅为同一组贴图反复创建 material。
+const l9PbrMaterialCache = new Map<string, THREE.Material>()
+function l9PbrMaterial(prefix: string, tint: string, fbBase: string, fbAlt: string, roughness: number, envBase: number, normalStrength = .65): THREE.Material {
+  const key = `${getMaterialMode()}|${prefix}|${tint}|${roughness}|${envBase}|${normalStrength}`
+  const cached = l9PbrMaterialCache.get(key)
+  if (cached) return cached
+  const cleanTile = prefix === 'l9_clean_tile'
+  // 浅色灰泥也使用真实的 CC0 PBR 三图；仅现代瓷砖保留程序生成回退。
+  const map = cleanTile ? cleanModernTileTexture()
+    : levelTexture(`${prefix}_diff.jpg`, () => noiseTexture(fbBase, fbAlt))
+  const normal = cleanTile ? noiseTexture('#8080ff', '#8080ff')
+    : levelTexture(`${prefix}_normal.jpg`, () => noiseTexture('#8080ff', '#7f7fff'))
+  const rough = cleanTile ? noiseTexture('#b0b0b0', '#989898')
+    : levelTexture(`${prefix}_rough.jpg`, () => noiseTexture('#d8d8d8', '#adadad'))
+  map.colorSpace = THREE.SRGBColorSpace
+  normal.colorSpace = THREE.NoColorSpace
+  rough.colorSpace = THREE.NoColorSpace
+  for (const t of [map, normal, rough]) { t.anisotropy = Math.max(t.anisotropy, 4); t.needsUpdate = true }
+  const mat = litMaterial({
+    color: tint, map, normalMap: normal, normalScale: new THREE.Vector2(normalStrength, normalStrength),
+    roughnessMap: rough, roughness, envBase,
+  })
+  l9PbrMaterialCache.set(key, mat)
+  return mat
+}
+function l9PbrBox(w: number, h: number, d: number, prefix: string, tint: string, fbBase: string, fbAlt: string,
+  per = 2.2, roughness = .82, envBase = .12, normalStrength = .65, x = 0, y = 0, z = 0): THREE.Mesh {
+  const geo = new THREE.BoxGeometry(w, h, d)
+  const uv = geo.attributes.uv as THREE.BufferAttribute
+  const nor = geo.attributes.normal
+  for (let i = 0; i < uv.count; i++) {
+    const nx = Math.abs(nor.getX(i)), ny = Math.abs(nor.getY(i))
+    if (ny > .5) uv.setXY(i, uv.getX(i) * w / per, uv.getY(i) * d / per)
+    else if (nx > .5) uv.setXY(i, uv.getX(i) * d / per, uv.getY(i) * h / per)
+    else uv.setXY(i, uv.getX(i) * w / per, uv.getY(i) * h / per)
+  }
+  const mesh = new THREE.Mesh(geo, l9PbrMaterial(prefix, tint, fbBase, fbAlt, roughness, envBase, normalStrength))
+  mesh.position.set(x, y, z)
+  return mesh
+}
+
+function l9GableRoof(w: number, d: number, rise: number, prefix: string, tint: string,
+  ridgeAlong: 'auto' | 'x' | 'z' = 'auto', gableTint = '#d5c9b6'): THREE.Group {
+  const g = new THREE.Group()
+  const alongX = ridgeAlong === 'x' || (ridgeAlong === 'auto' && w >= d)
+  const ridge = alongX ? w : d, span = alongX ? d : w
+  const slope = Math.hypot(span / 2, rise), angle = Math.atan2(rise, span / 2)
+  for (const sign of [-1, 1]) {
+    const panel = l9PbrBox(ridge + .65, .14, slope + .18, prefix, tint, '#45464a', '#27292d', 1.45, .78, .18, .7, 0, rise / 2, sign * span / 4)
+    panel.rotation.x = sign * angle
+    g.add(panel)
+  }
+  for (const sign of [-1, 1]) {
+    const tri = new THREE.Mesh(triGeo(span, rise), l9PbrMaterial('l9_siding', gableTint, '#b5aa96', '#786f62', .86, .08, .45))
+    tri.position.set(sign * ridge / 2, 0, 0)
+    // 两端山墙必须分别朝向各自外侧。旧逻辑两块都朝 +X，强制旋转为正面山墙后，
+    // 临街一面正好被背面剔除，只剩黑色屋顶内侧。
+    tri.rotation.y = sign > 0 ? Math.PI / 2 : -Math.PI / 2
+    g.add(tri)
+  }
+  if (!alongX) g.rotation.y = Math.PI / 2
+  return g
 }
 
 // v54：容器可动件登记——part 供 updateStructs 按 kind 分支逐件插值（lid 标记保留兼容门扇白名单）；
@@ -385,6 +725,33 @@ function signTexture(text: string, gold: boolean): THREE.Texture {
   return t
 }
 
+let l9WatchSignTex: THREE.Texture | null = null
+function l9WatchSignTexture(): THREE.Texture {
+  if (l9WatchSignTex) return l9WatchSignTex
+  const [cv, c] = makeCanvasCtx(192, 256)
+  c.fillStyle = '#ecebe5'; c.fillRect(0, 0, 192, 256)
+  c.strokeStyle = '#111315'; c.lineWidth = 9; c.strokeRect(6, 6, 180, 244)
+  c.fillStyle = '#101214'; c.fillRect(14, 16, 164, 43)
+  c.fillStyle = '#f3f1e9'; c.textAlign = 'center'; c.textBaseline = 'middle'
+  c.font = 'bold 25px monospace'; c.fillText('WARNING', 96, 39)
+  c.fillStyle = '#111315'; c.font = 'bold 13px monospace'; c.fillText('PROTECTED BY', 96, 76)
+  c.font = 'bold 14px monospace'; c.fillText('NEIGHBORHOOD', 96, 94); c.fillText('WATCH', 96, 112)
+  c.beginPath(); c.ellipse(96, 163, 57, 30, 0, 0, Math.PI * 2); c.fill()
+  c.fillStyle = '#ecebe5'; c.beginPath(); c.ellipse(96, 163, 45, 21, 0, 0, Math.PI * 2); c.fill()
+  c.fillStyle = '#111315'; c.beginPath(); c.arc(96, 163, 18, 0, Math.PI * 2); c.fill()
+  c.fillStyle = '#ecebe5'; c.beginPath(); c.arc(102, 156, 5, 0, Math.PI * 2); c.fill()
+  c.fillStyle = '#111315'; c.font = 'bold 12px monospace'; c.fillText('24 HOUR', 96, 211); c.fillText('SURVEILLANCE', 96, 228)
+  c.globalAlpha = .42; c.fillStyle = '#6c685e'
+  for (let i = 0; i < 34; i++) {
+    const x = (i * 53 + 17) % 176 + 8, y = (i * 97 + 31) % 238 + 9
+    c.fillRect(x, y, 2 + (i % 4), 1 + (i % 3))
+  }
+  c.globalAlpha = 1
+  l9WatchSignTex = toTex(cv)
+  l9WatchSignTex.colorSpace = THREE.SRGBColorSpace
+  return l9WatchSignTex
+}
+
 // v26：悬挂物贴合天花板底面——按所在瓦片的实际顶高（挑高=H*1.75 / 上层楼板底 2.65 / 普通=H），
 // 取代旧版一律用层高 H（挑高区吊灯悬空在半天、楼板下的灯嵌进楼板底）
 function hangingCeil(s: Structure, m: GameMap, H: number): number {
@@ -404,6 +771,15 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
   const cx = s.x + s.w / 2, cz = s.y + s.h / 2
   const H = wallH
   const CH = hangingCeil(s, m, H) // v26：本瓦片天花板底面高度（悬挂物专用）
+  // 大部分早期 L9 街景模型仍由出口构件工厂提供；较新的建筑组件在本函数自己的
+  // switch 中实现，不能被 startsWith('l9') 提前截走。旧路由会让 l9window 返回空组，
+  // 实际画面只剩整格墙洞后的明亮室内，看上去就像一排“发光门”。
+  const localL9Component = s.kind === 'l9window' || s.kind === 'l9tvconsole' || s.kind === 'l9planter' || s.kind === 'l9vegbed'
+  if (s.kind.startsWith('l9') && !localL9Component) {
+    const l9 = buildExit(s.kind, _def, s)
+    l9.position.set(cx, 0, cz)
+    return l9
+  }
   switch (s.kind) {
     case 'pillar': {
       // v34：立柱默认使用该层级的墙纸（与墙面同材质观感；无磁盘贴图的层级经 levelTexture 回退程序噪点）
@@ -1147,12 +1523,15 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       const sealed = !!s.data?.sealed
       const hue = sealed ? { panel: '#2e3238', frame: '#1c1e22', inset: '#26282c' } // 锁死：冷灰钢门
         : s.data?.manila ? { panel: '#5a3b25', frame: '#28170e', inset: '#3a2417' }
+          : s.data?.l9 ? { panel: '#5b3b26', frame: '#281b13', inset: '#3c2619' }
           : HUES[typeof s.data?.hue === 'number' ? s.data.hue % HUES.length : 0]
       grp.add(box(0.14, 2.15, 0.24, hue.frame, -0.46, 1.07, 0))
       grp.add(box(0.14, 2.15, 0.24, hue.frame, 0.46, 1.07, 0))
       grp.add(box(1.06, 0.14, 0.24, hue.frame, 0, 2.2, 0))
-      const panel = s.data?.manila
-        ? texBox(0.88, 2.1, 0.07, 'crate_wood.jpg', '#624126', '#3b2517', '#806044', 0.72)
+      const panel = s.data?.manila || s.data?.l9
+        ? s.data?.l9
+          ? l9PbrBox(.88, 2.1, .07, 'l9_furniture_wood', '#85654c', '#806248', '#433326', .72, .62, .2, .42)
+          : texBox(0.88, 2.1, 0.07, 'crate_wood.jpg', '#624126', '#3b2517', '#806044', 0.72)
         : box(0.88, 2.1, 0.07, hue.panel, 0, 0, 0)
       panel.geometry.translate(mirror ? -0.44 : 0.44, 1.05, 0) // 铰链在左缘（镜像=右缘）
       panel.position.set(mirror ? 0.44 : -0.44, 0, 0)
@@ -2634,100 +3013,211 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       break
     }
 
-    // ===================== v23：Level 8「Cave Systems」 ====================
+    // ===================== v23：Level 8「洞穴系统」 ====================
     case 'stalagspike': {
-      // 岩刺：3–5 根圆锥从各个角度混乱地向外突出；knot 决定形状
-      const knot = (s.data?.knot as number | undefined) ?? 0
-      const r = mulberry(s.x * 113 + s.y * 67)
-      const rock = '#6a6250'
+      // 钟乳石/石笋簇：每根由连续收尖、轻微弯折的三段岩柱组成；所有根部都从 y=0 起，
+      // 再由整簇锚定真实洞底或翻转到真实洞顶，彻底避免旧模型根部悬空。
+      const knot = Number(s.data?.knot ?? 0)
+      const r = mulberry(Number(s.data?.sid ?? 0) ^ Math.floor(s.x * 113 + s.y * 67))
+      const rock = caveRockMaterial(s.data?.tex, 0.94)
       const n = 3 + Math.floor(r() * 3)
-      for (let i = 0; i < n; i++) {
-        const len = 0.45 + r() * 0.8
-        const rad = 0.06 + r() * 0.07
-        const sp = new THREE.Group()
-        if (knot === 1) {
-          // 打结：两段折角
-          const seg = len * 0.55
-          sp.add(cyl(rad * 0.62, rad, seg, rock, 0, seg / 2, 0, 6))
-          const bend = new THREE.Group()
-          bend.position.y = seg
-          bend.rotation.z = 0.9 + r() * 0.7
-          bend.add(cyl(0.004, rad * 0.62, seg, rock, 0, seg / 2, 0, 6))
-          sp.add(bend)
-        } else if (knot === 2) {
-          // 锯齿：多段递减
-          let y = 0, rr = rad
-          for (let k = 0; k < 4; k++) {
-            const sl = len * (0.34 - k * 0.06)
-            sp.add(cyl(rr * 0.55, rr, sl, rock, 0, y + sl / 2, 0, 6))
-            y += sl * 0.92
-            rr *= 0.66
-          }
-          const tip = new THREE.Mesh(new THREE.ConeGeometry(rr, len * 0.2, 5), new THREE.MeshLambertMaterial({ color: rock }))
-          tip.position.y = y + len * 0.1
-          sp.add(tip)
-        } else if (knot === 3) {
-          // 末端分叉成多个尖点
-          const stem = len * 0.55
-          sp.add(cyl(rad * 0.7, rad, stem, rock, 0, stem / 2, 0, 6))
-          for (let k = 0; k < 3; k++) {
-            const fork = new THREE.Group()
-            fork.position.y = stem
-            fork.rotation.y = (k / 3) * Math.PI * 2 + r()
-            fork.rotation.z = 0.4 + r() * 0.25
-            const fc = new THREE.Mesh(new THREE.ConeGeometry(rad * 0.5, len * 0.55, 5), new THREE.MeshLambertMaterial({ color: rock }))
-            fc.position.y = len * 0.28
-            fork.add(fc)
-            sp.add(fork)
-          }
-        } else {
-          // 直刺
-          const c = new THREE.Mesh(new THREE.ConeGeometry(rad, len, 6), new THREE.MeshLambertMaterial({ color: rock }))
-          c.position.y = len / 2
-          sp.add(c)
+      const formation = new THREE.Group()
+      const up = new THREE.Vector3(0, 1, 0)
+      const ground = floorHeight(m, cx, cz, 0)
+      const roof = caveCeilingAt(m, cx, cz)
+      const requestedScale = Number(s.data?.scale ?? 1)
+      const safeScale = Math.min(requestedScale, Math.max(0.5, (roof - ground - 0.35) / 2.35))
+      const addSpike = (rx: number, rz: number, height: number, radius: number, leanX: number, leanZ: number) => {
+        // 每根根部都读取它实际占据位置的零等值面，而不是让整簇共用中心高度；坡面上也会逐根咬入岩面。
+        // 洞顶簇经 rotation.z 翻转会镜像局部 X，因此顶面采样同步使用镜像后的世界坐标。
+        const rootY = s.data?.ceiling === 1
+          ? (roof - caveCeilingAt(m, cx - rx * safeScale, cz + rz * safeScale)) / safeScale
+          : (floorHeight(m, cx + rx * safeScale, cz + rz * safeScale, 0) - ground) / safeScale
+        // 根部宽大的方解石沉积裙边把模型压进曲面几厘米，任何坡度下都不会露缝。
+        const skirt = new THREE.Mesh(new THREE.DodecahedronGeometry(radius * 1.75, 1), rock)
+        skirt.scale.set(1.25, 0.32, 1.1)
+        skirt.position.set(rx, rootY + radius * 0.12 - 0.025, rz)
+        skirt.rotation.y = r() * Math.PI
+        formation.add(skirt)
+        let pos = new THREE.Vector3(rx, rootY, rz)
+        let dir = new THREE.Vector3(leanX, 1, leanZ).normalize()
+        let lower = radius
+        const portions = knot === 2 ? [0.34, 0.28, 0.22, 0.16] : [0.43, 0.34, 0.23]
+        for (let k = 0; k < portions.length; k++) {
+          const len = height * portions[k]
+          const upper = k === portions.length - 1 ? 0.006 : lower * (0.58 + r() * 0.08)
+          const geo = new THREE.CylinderGeometry(upper, lower, len, 8, 2, false)
+          const seg = new THREE.Mesh(geo, rock)
+          seg.quaternion.setFromUnitVectors(up, dir)
+          seg.position.copy(pos).addScaledVector(dir, len * 0.5)
+          seg.rotation.y += r() * 0.35
+          formation.add(seg)
+          pos = pos.clone().addScaledVector(dir, len * 0.96)
+          const bend = knot === 1 ? 0.18 : knot === 3 ? 0.11 : 0.055
+          dir = dir.clone().add(new THREE.Vector3((r() - 0.5) * bend, -0.015, (r() - 0.5) * bend)).normalize()
+          lower = upper * 1.06
         }
-        // 混乱朝向：绕 Y 随机转向 + 绕 Z 倾斜（部分从高处的洞壁横着长出来）
-        const dir = new THREE.Group()
-        dir.rotation.y = r() * Math.PI * 2
-        sp.rotation.z = 0.15 + r() * 1.4
-        dir.add(sp)
-        dir.position.set((r() - 0.5) * 0.7, r() < 0.5 ? 0.02 : 0.3 + r() * 1.5, (r() - 0.5) * 0.7)
-        grp.add(dir)
       }
+      for (let i = 0; i < n; i++) {
+        const a = r() * Math.PI * 2, spread = i === 0 ? 0 : 0.1 + r() * 0.27
+        const height = 0.72 + r() * 0.92 + (i === 0 ? 0.32 : 0)
+        const radius = 0.085 + r() * 0.075 + (i === 0 ? 0.035 : 0)
+        const lean = 0.025 + r() * (knot === 1 ? 0.2 : 0.11)
+        addSpike(Math.cos(a) * spread, Math.sin(a) * spread, height, radius, Math.cos(a) * lean, Math.sin(a) * lean)
+      }
+      formation.scale.setScalar(safeScale)
+      formation.rotation.y = Number(s.data?.rot ?? 0)
+      if (s.data?.ceiling === 1) {
+        // 同一簇模型翻转并锚定到体积洞顶，根部裙边与平滑等值面相交约 2.5cm。
+        formation.position.y = roof - ground
+        formation.rotation.z = Math.PI
+      }
+      grp.add(formation)
       break
     }
     case 'handspike': {
-      // Handyland 的手形岩刺：一只石质人手从地面伸出；moss 时包一层血红色发光苔藓
+      // 巨臂林地手形岩刺：体型、倾斜和手势由区块实例决定；moss 个体沿岩纹发红光。
       const moss = !!s.data?.moss
-      const stone = moss ? '#6a4a46' : '#6a6250'
-      const part = (w2: number, h2: number, d2: number, x: number, y: number, z: number) => {
-        const b = box(w2, h2, d2, stone, x, y, z)
-        if (moss) emit(b, '#c0231c', 0.7)
-        return b
+      const scale = Math.max(0.42, Math.min(2.5, Number(s.data?.scale ?? 1)))
+      const pose = Math.max(0, Math.min(4, Number(s.data?.pose ?? 0) | 0))
+      // 几何与材质均按五种手势/苔藓状态共享；单个实例只需创建 Mesh 并写入变换。
+      const mesh = new THREE.Mesh(handSpikeGeometry(pose), handSpikeMaterial(moss))
+      mesh.rotation.set(Number(s.data?.leanX ?? 0), Number(s.data?.rot ?? 0), Number(s.data?.leanZ ?? 0))
+      mesh.scale.setScalar(scale)
+      grp.add(mesh)
+      break
+    }
+    case 'bloodmoss': {
+      const rr = mulberry(Number(s.data?.sid ?? 0) ^ 0xb100d)
+      const tex = bloodMossTexture()
+      const mat = litMaterial({
+        // Canvas 透明度直接作为轮廓；不要把偏红纹理同时塞进 alphaMap（其绿色通道会把血苔错误压暗）。
+        color: '#f2b0aa', map: tex, transparent: true, alphaTest: 0.06,
+        depthWrite: false, side: THREE.DoubleSide, bumpMap: tex, bumpScale: 0.026,
+        roughness: 0.72, envBase: 0.18, emissive: '#b3131b', emissiveMap: tex, emissiveIntensity: 0.78,
+        polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1,
+      })
+      const count = Math.max(24, Math.min(130, Number(s.data?.count ?? 72)))
+      const baseGround = floorHeight(m, cx, cz, 0)
+      const baseVisualGround = visualCaveFloor(m, cx, cz)
+      const patchGround = (x: number, z: number) => baseGround + visualCaveFloor(m, x, z) - baseVisualGround
+      const groundGeo = new THREE.CircleGeometry(1, 10); groundGeo.rotateX(-Math.PI / 2)
+      const wallGeo = new THREE.PlaneGeometry(1, 1)
+      const groundMoss = new THREE.InstancedMesh(groundGeo, mat, count)
+      const wallMoss = new THREE.InstancedMesh(wallGeo, mat, count)
+      const dummy = new THREE.Object3D(), up = new THREE.Vector3(0, 1, 0), normal = new THREE.Vector3()
+      let groundCount = 0, wallCount = 0
+      for (let tries = 0; tries < count * 7 && groundCount + wallCount < count; tries++) {
+        const ox = (rr() - 0.5) * (s.w - 1), oz = (rr() - 0.5) * (s.h - 1)
+        const px = cx + ox, pz = cz + oz, tx = Math.floor(px), tz = Math.floor(pz)
+        if (tx < 1 || tz < 1 || tx >= m.w - 1 || tz >= m.h - 1 || m.tiles[tz * m.w + tx] !== 1) continue
+        const wallDirs = ([[1, 0], [-1, 0], [0, 1], [0, -1]] as const).filter(([dx, dz]) => m.tiles[(tz + dz) * m.w + tx + dx] !== 1)
+        if (wallDirs.length && rr() < 0.4) {
+          const [dx, dz] = wallDirs[Math.floor(rr() * wallDirs.length)]
+          const w = 0.65 + rr() * 1.35, h = 0.42 + rr() * 1.2
+          const wx = tx + 0.5 + dx * 0.505, wz = tz + 0.5 + dz * 0.505
+          dummy.position.set(wx - cx, patchGround(tx + 0.5, tz + 0.5) - baseGround + 0.3 + h * 0.5, wz - cz)
+          dummy.rotation.set(0, dx !== 0 ? Math.PI / 2 : 0, 0); dummy.scale.set(w, h, 1); dummy.updateMatrix()
+          wallMoss.setMatrixAt(wallCount++, dummy.matrix)
+        } else {
+          const eps = 0.24
+          const hL = patchGround(px - eps, pz), hR = patchGround(px + eps, pz)
+          const hD = patchGround(px, pz - eps), hU = patchGround(px, pz + eps)
+          normal.set(hL - hR, eps * 2, hD - hU).normalize()
+          dummy.position.set(ox, patchGround(px, pz) - baseGround + 0.028, oz)
+          dummy.quaternion.setFromUnitVectors(up, normal); dummy.rotateY(rr() * Math.PI * 2)
+          dummy.scale.set(0.35 + rr() * 0.82, 1, 0.28 + rr() * 0.65); dummy.updateMatrix()
+          groundMoss.setMatrixAt(groundCount++, dummy.matrix)
+        }
       }
-      const hand = new THREE.Group()
-      hand.rotation.y = mulberry(s.x * 149 + s.y * 31)() * Math.PI * 2
-      hand.add(part(0.17, 0.52, 0.17, 0, 0.26, 0))   // 从地里伸出的腕/前臂
-      hand.add(part(0.3, 0.34, 0.14, 0, 0.66, 0))    // 掌
-      for (let f = 0; f < 4; f++) {                  // 四指，指节分明（两节）
-        const fx = -0.105 + f * 0.07
-        const l1 = f === 1 || f === 2 ? 0.19 : 0.15
-        hand.add(part(0.055, l1, 0.062, fx, 0.83 + l1 / 2, 0.008))
-        hand.add(part(0.048, l1 * 0.8, 0.056, fx, 0.85 + l1 * 1.4, 0.028))
+      for (const [mesh, n] of [[groundMoss, groundCount], [wallMoss, wallCount]] as const) if (n > 0) {
+        mesh.count = n; mesh.instanceMatrix.needsUpdate = true; mesh.instanceMatrix.setUsage(THREE.StaticDrawUsage)
+        mesh.renderOrder = 2; mesh.frustumCulled = false; mesh.userData.noCastShadow = 1; grp.add(mesh)
       }
-      const thumb = new THREE.Group()                // 拇指斜向外
-      thumb.position.set(0.16, 0.7, 0.02)
-      thumb.rotation.z = -0.95
-      thumb.add(part(0.058, 0.16, 0.062, 0, 0.08, 0))
-      thumb.add(part(0.05, 0.13, 0.056, 0, 0.22, 0.01))
-      hand.add(thumb)
-      grp.add(hand)
-      // 手根部的岩基
-      grp.add(box(0.42, 0.16, 0.38, '#5c5546', 0, 0.07, 0))
+      break
+    }
+    case 'handweather': {
+      const rr = mulberry(Number(s.data?.sid ?? 0) ^ 0x5702e7)
+      const baseGround = floorHeight(m, cx, cz, 0)
+      const anchorX = Number(s.data?.anchorX ?? 0), anchorZ = Number(s.data?.anchorY ?? 0)
+      const cloudPos: number[] = []
+      for (let i = 0; i < 74; i++) {
+        const ox = (rr() - 0.5) * (s.w - 2), oz = (rr() - 0.5) * (s.h - 2)
+        const px = cx + ox, pz = cz + oz
+        const roof = visualCaveRoof(m, px, pz), ground = visualCaveFloor(m, px, pz)
+        if (roof - ground < 6.5) continue
+        cloudPos.push(ox, roof - baseGround - 0.35 - rr() * 0.8, oz)
+      }
+      const cloudGeo = new THREE.BufferGeometry()
+      cloudGeo.setAttribute('position', new THREE.Float32BufferAttribute(cloudPos, 3))
+      const clouds = new THREE.Points(cloudGeo, new THREE.PointsMaterial({
+        color: '#8390a1', map: caveCloudTexture(), size: 3.4, transparent: true, opacity: 0.24,
+        alphaTest: 0.015, depthWrite: false, sizeAttenuation: true, fog: true,
+      }))
+      clouds.frustumCulled = false; clouds.userData.noCastShadow = 1; grp.add(clouds)
+
+      const rainCount = Math.max(80, Math.min(260, Number(s.data?.count ?? 180)))
+      const rainPos = new Float32Array(rainCount * 6), rainBase = new Float32Array(rainCount * 2)
+      const rainBounds = new Float32Array(rainCount * 3)
+      for (let i = 0; i < rainCount; i++) {
+        let ox = 0, oz = 0, ground = -100, roof = -99, valid = false
+        // 只把雨线落在真实的高净空洞内，避免穿过低隧道、岩柱或封闭岩体。
+        for (let attempt = 0; attempt < 12; attempt++) {
+          ox = (rr() - 0.5) * (s.w - 2); oz = (rr() - 0.5) * (s.h - 2)
+          const tx = Math.floor(cx + ox), tz = Math.floor(cz + oz)
+          if (tx < 0 || tz < 0 || tx >= m.w || tz >= m.h || m.tiles[tz * m.w + tx] !== 1) continue
+          ground = visualCaveFloor(m, cx + ox, cz + oz) - baseGround + 0.12
+          roof = visualCaveRoof(m, cx + ox, cz + oz) - baseGround - 0.7
+          if (roof - ground > 4.2) { valid = true; break }
+        }
+        if (!valid) { ox = -999; oz = -999; ground = -100; roof = -99 }
+        const y = ground + rr() * Math.max(0.4, roof - ground)
+        rainPos.set([ox, y, oz, ox + 0.12, y - 0.52, oz + 0.025], i * 6)
+        rainBase.set([ox, oz], i * 2); rainBounds.set([ground, roof, 3.8 + rr() * 4.7], i * 3)
+      }
+      const rainGeo = new THREE.BufferGeometry(); rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPos, 3))
+      const rainMat = new THREE.LineBasicMaterial({ color: '#a9bfd0', transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending })
+      const rain = new THREE.LineSegments(rainGeo, rainMat); rain.frustumCulled = false; rain.userData.noCastShadow = 1; grp.add(rain)
+
+      const auroras: THREE.Mesh[] = []
+      if (s.data?.aurora) for (let a = 0; a < 3; a++) {
+        const geo = new THREE.PlaneGeometry(8 + rr() * 5, 2.4 + rr() * 1.8, 18, 3)
+        const pos = geo.attributes.position as THREE.BufferAttribute
+        for (let i = 0; i < pos.count; i++) pos.setZ(i, Math.sin(pos.getX(i) * 0.7 + a * 1.9) * 0.32)
+        pos.needsUpdate = true; geo.computeVertexNormals()
+        const am = new THREE.MeshBasicMaterial({
+          color: a === 1 ? '#55c9c0' : a === 2 ? '#8e6fd3' : '#69d890', side: THREE.DoubleSide,
+          transparent: true, opacity: 0.055, blending: THREE.AdditiveBlending, depthWrite: false, fog: true,
+        })
+        const curtain = new THREE.Mesh(geo, am)
+        curtain.position.set(anchorX + (rr() - 0.5) * 4.5, visualCaveRoof(m, cx + anchorX, cz + anchorZ) - baseGround - 2.3 - a * 0.45, anchorZ + (rr() - 0.5) * 4.5)
+        curtain.rotation.y = rr() * Math.PI; curtain.userData.noCastShadow = 1; auroras.push(curtain); grp.add(curtain)
+      }
+
+      const boltPos: number[] = []
+      let bx = anchorX + (rr() - 0.5) * 3.6, bz = anchorZ + (rr() - 0.5) * 3.6
+      let by = visualCaveRoof(m, cx + bx, cz + bz) - baseGround - 0.8
+      const bottom = visualCaveFloor(m, cx + bx, cz + bz) - baseGround + 0.45
+      for (let i = 0; i < 12; i++) {
+        const nx = bx + (rr() - 0.5) * 0.7, nz = bz + (rr() - 0.5) * 0.7
+        const ny = by + (bottom - by) / (12 - i)
+        boltPos.push(bx, by, bz, nx, ny, nz)
+        if (i > 2 && i < 9 && rr() < 0.38) boltPos.push(nx, ny, nz, nx + (rr() - 0.5) * 1.6, ny - 0.45 - rr(), nz + (rr() - 0.5) * 1.6)
+        bx = nx; by = ny; bz = nz
+      }
+      const boltGeo = new THREE.BufferGeometry(); boltGeo.setAttribute('position', new THREE.Float32BufferAttribute(boltPos, 3))
+      const boltMat = new THREE.LineBasicMaterial({ color: '#d8e9ff', transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false })
+      const bolt = new THREE.LineSegments(boltGeo, boltMat); bolt.visible = false; bolt.userData.noCastShadow = 1; grp.add(bolt)
+      const flash = new THREE.PointLight('#b8d6ff', 0, 19, 2)
+      flash.position.set(boltPos[0] ?? 0, (boltPos[1] ?? 5) - 1.2, boltPos[2] ?? 0); flash.castShadow = false; flash.visible = false; grp.add(flash)
+      grp.userData.handWeather = {
+        clouds, rain, rainBase, rainBounds, rainMat, auroras, bolt, boltMat, flash,
+        storm: !!s.data?.storm, phase: Number(s.data?.phase ?? 0), period: Number(s.data?.period ?? 24),
+      }
       break
     }
     case 'glowshroom': {
-      // Rottnest Jungle 的生物发光蘑菇：tall 时能长到小树大小
+      // 罗特尼斯大丛林的生物发光蘑菇：tall 时能长到小树大小
       const hues = ['#66e0d0', '#e066c8', '#c8e066', '#66a8e0', '#e0a066', '#a066e0']
       const hue = hues[Math.min(hues.length - 1, Math.max(0, (s.data?.hue as number | undefined) ?? 0))]
       const tall = !!s.data?.tall
@@ -2743,6 +3233,11 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       cap.position.y = hgt - 0.02
       cap.scale.y = 0.8
       grp.add(cap)
+      const aura = new THREE.Mesh(
+        new THREE.SphereGeometry(capR * 1.18, 10, 6),
+        new THREE.MeshBasicMaterial({ color: hue, transparent: true, opacity: 0.1, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }),
+      )
+      aura.position.y = hgt - 0.01; aura.scale.y = 0.72; aura.userData.noCastShadow = 1; grp.add(aura)
       grp.add(cyl(capR * 0.92, capR * 0.55, 0.07, '#8a8272', 0, hgt - 0.05, 0, 10)) // 菌褶
       if (tall) for (let i = 0; i < 2; i++) { // 大株带几朵小的
         const sm = new THREE.Mesh(new THREE.SphereGeometry(0.13, 8, 4, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshBasicMaterial({ color: hue }))
@@ -2795,7 +3290,7 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       break
     }
     case 'roadsign': {
-      // 第九之路路标：杆 + 方牌 + M.E.G. 标志
+      // 第九大道路标：杆 + 方牌 + M.E.G. 标志
       grp.add(cyl(0.035, 0.045, 2.0, '#7a7570', 0, 1.0, 0, 6))
       const bd = new THREE.Group()
       bd.position.y = 1.72
@@ -2838,16 +3333,550 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       if (s.looted) grp.userData.open = 1
       break
     }
+    case 'cavemoss': {
+      const rr = mulberry(Number(s.data?.sid ?? 0) ^ 0x6a113)
+      const colors = ['#a6b58c', '#b2bc91', '#9daa7b', '#93a68b']
+      const mossTex = levelTexture('l8_rottnest_moss.png', () => noiseTexture('#38593a', '#596b3f'))
+      if (!mossTex.userData.rottnestConfigured) {
+        mossTex.colorSpace = THREE.SRGBColorSpace
+        mossTex.anisotropy = Math.max(mossTex.anisotropy, 4)
+        mossTex.needsUpdate = true
+        mossTex.userData.rottnestConfigured = 1
+      }
+      const mat = litMaterial({
+        color: colors[Number(s.data?.hue ?? 0) % colors.length], map: mossTex,
+        bumpMap: mossTex, bumpScale: 0.032, roughness: 0.68, envBase: 0.24,
+      })
+      const wanted = Math.max(8, Math.min(220, Number(s.data?.count ?? 80)))
+      const mesh = new THREE.InstancedMesh(new THREE.CircleGeometry(0.22, 8), mat, wanted)
+      const dummy = new THREE.Object3D(), baseGround = floorHeight(m, cx, cz, 0)
+      let emitted = 0
+      for (let tries = 0; tries < wanted * 8 && emitted < wanted; tries++) {
+        const ox = (rr() - 0.5) * (s.w - 1), oz = (rr() - 0.5) * (s.h - 1)
+        const px = cx + ox, pz = cz + oz, tx = Math.floor(px), tz = Math.floor(pz)
+        if (tx < 0 || tz < 0 || tx >= m.w || tz >= m.h || m.tiles[tz * m.w + tx] !== 1 || m.liquid[tz * m.w + tx] === 1) continue
+        dummy.position.set(ox, floorHeight(m, px, pz, 0) - baseGround + 0.012, oz)
+        dummy.rotation.set(-Math.PI / 2, 0, rr() * Math.PI * 2)
+        dummy.scale.set(0.65 + rr() * 1.7, 0.55 + rr() * 1.35, 1)
+        dummy.updateMatrix(); mesh.setMatrixAt(emitted++, dummy.matrix)
+      }
+      mesh.count = emitted; mesh.instanceMatrix.needsUpdate = true; mesh.userData.noCastShadow = 1; grp.add(mesh)
+      break
+    }
+    case 'cavefern': {
+      const rr = mulberry(Number(s.data?.sid ?? 0) ^ 0xf311)
+      const shades = ['#476c43', '#5d7747', '#36583c', '#6d7d4e']
+      const mat = new THREE.MeshLambertMaterial({ color: shades[Number(s.data?.hue ?? 0) % shades.length], side: THREE.DoubleSide })
+      const leafGeos: THREE.BufferGeometry[] = []
+      for (let f = 0; f < 6; f++) {
+        const a = f / 6 * Math.PI * 2
+        const stem = new THREE.PlaneGeometry(0.018, 0.48)
+        stem.translate(0, 0.24, 0); stem.rotateZ((f % 2 ? 1 : -1) * 0.38); stem.rotateY(a); leafGeos.push(stem)
+        for (let j = 1; j <= 4; j++) for (const side of [-1, 1]) {
+          const leaf = new THREE.PlaneGeometry(0.11 - j * 0.011, 0.04)
+          leaf.rotateZ(side * (0.72 + j * 0.06))
+          leaf.translate(side * (0.035 + j * 0.009), 0.07 + j * 0.085, 0.002)
+          leaf.rotateY(a); leafGeos.push(leaf)
+        }
+      }
+      const fernGeo = mergeGeometries(leafGeos, false) ?? new THREE.PlaneGeometry(0.28, 0.48)
+      const wanted = Math.max(8, Math.min(180, Number(s.data?.count ?? 70)))
+      const mesh = new THREE.InstancedMesh(fernGeo, mat, wanted)
+      const dummy = new THREE.Object3D(), baseGround = floorHeight(m, cx, cz, 0)
+      let emitted = 0
+      for (let tries = 0; tries < wanted * 8 && emitted < wanted; tries++) {
+        const ox = (rr() - 0.5) * (s.w - 1), oz = (rr() - 0.5) * (s.h - 1)
+        const px = cx + ox, pz = cz + oz, tx = Math.floor(px), tz = Math.floor(pz)
+        if (tx < 0 || tz < 0 || tx >= m.w || tz >= m.h || m.tiles[tz * m.w + tx] !== 1 || m.liquid[tz * m.w + tx] === 1) continue
+        const scale = 0.62 + rr() * 0.78
+        dummy.position.set(ox, floorHeight(m, px, pz, 0) - baseGround + 0.01, oz)
+        dummy.rotation.set(0, rr() * Math.PI * 2, 0); dummy.scale.set(scale, scale, scale)
+        dummy.updateMatrix(); mesh.setMatrixAt(emitted++, dummy.matrix)
+      }
+      mesh.count = emitted; mesh.instanceMatrix.needsUpdate = true; mesh.userData.noCastShadow = 1; grp.add(mesh)
+      break
+    }
+    case 'fungalmat': {
+      const rr = mulberry(Number(s.data?.sid ?? 0) ^ 0x45f6a)
+      const wanted = Math.max(12, Math.min(260, Number(s.data?.count ?? 140)))
+      const fungalTex = levelTexture('l8_movile_fungalmat.png', () => noiseTexture('#68704a', '#949064'))
+      if (!fungalTex.userData.movileConfigured) {
+        fungalTex.colorSpace = THREE.SRGBColorSpace
+        fungalTex.anisotropy = Math.max(fungalTex.anisotropy, 4)
+        fungalTex.needsUpdate = true
+        fungalTex.userData.movileConfigured = 1
+      }
+      // 同一张独特菌毯图既提供颜色，也以低强度 bump 表现菌丝/菌落起伏；中等粗糙度和
+      // 环境反射呈现潮湿膜层，但保持非金属，避免像塑料地板。
+      const mat = litMaterial({
+        color: '#ffffff', map: fungalTex, bumpMap: fungalTex, bumpScale: 0.045,
+        roughness: 0.58, metalness: 0, envBase: 0.34, side: THREE.DoubleSide,
+        polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1,
+        // 极弱的菌膜自发光只负责保留暗部色彩；真实高光/凹凸仍由菌盖弱点光与环境反射产生。
+        emissive: '#48543b', emissiveMap: fungalTex, emissiveIntensity: 0.2,
+      })
+      // 体积洞穴的地面不是平面。旧实现只按每片菌毯中心取一次高度，再放一张水平
+      // CircleGeometry；在新莫维勒的起伏洞底，大部分圆片会被岩面盖住，玩家看到的其实是
+      // 下方的黑色岩石。这里把每个扇形顶点逐一投到真实洞底，既贴合坡面，也保留完整 UV。
+      const positions: number[] = [], uvs: number[] = []
+      const baseGround = floorHeight(m, cx, cz, 0)
+      let emitted = 0
+      for (let tries = 0; tries < wanted * 9 && emitted < wanted; tries++) {
+        const ox = (rr() - 0.5) * (s.w - 0.6), oz = (rr() - 0.5) * (s.h - 0.6)
+        const px = cx + ox, pz = cz + oz, tx = Math.floor(px), tz = Math.floor(pz)
+        if (tx < 0 || tz < 0 || tx >= m.w || tz >= m.h || m.tiles[tz * m.w + tx] !== 1 || m.liquid[tz * m.w + tx] === 1) continue
+        const rx = 0.34 + rr() * 0.62, rz = 0.28 + rr() * 0.5
+        const rot = rr() * Math.PI * 2, lift = 0.028 + rr() * 0.008, seg = 12
+        const ring: { x: number; y: number; z: number; u: number; v: number }[] = []
+        let fits = true
+        for (let j = 0; j < seg; j++) {
+          const a = rot + j / seg * Math.PI * 2
+          const lx = ox + Math.cos(a) * rx, lz = oz + Math.sin(a) * rz
+          const wx = cx + lx, wz = cz + lz, qx = Math.floor(wx), qz = Math.floor(wz)
+          if (qx < 0 || qz < 0 || qx >= m.w || qz >= m.h || m.tiles[qz * m.w + qx] !== 1 || m.liquid[qz * m.w + qx] === 1) { fits = false; break }
+          ring.push({
+            x: lx, y: floorHeight(m, wx, wz, 0) - baseGround + lift, z: lz,
+            u: 0.5 + Math.cos(a - rot) * 0.5, v: 0.5 + Math.sin(a - rot) * 0.5,
+          })
+        }
+        if (!fits) continue
+        const cy = floorHeight(m, px, pz, 0) - baseGround + lift
+        for (let j = 0; j < seg; j++) {
+          const cur = ring[j], next = ring[(j + 1) % seg]
+          // center→next→current：从上方观察为逆时针，法线朝向洞内。
+          positions.push(ox, cy, oz, next.x, next.y, next.z, cur.x, cur.y, cur.z)
+          uvs.push(0.5, 0.5, next.u, next.v, cur.u, cur.v)
+        }
+        emitted++
+      }
+      if (positions.length) {
+        const geo = new THREE.BufferGeometry()
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
+        geo.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2))
+        geo.computeVertexNormals(); geo.computeBoundingBox(); geo.computeBoundingSphere()
+        const mesh = new THREE.Mesh(geo, mat)
+        mesh.renderOrder = 1
+        mesh.userData.noCastShadow = 1
+        grp.add(mesh)
+      }
+      break
+    }
+    case 'cavefloat': {
+      // 断层室里的重力异常碎岩：破碎主岩、断面副块和碎屑共用真实 PBR 岩性。
+      const rr = mulberry(s.x * 181 + s.y * 97)
+      const z = Number(s.data?.z ?? 1.8), sc = Number(s.data?.scale ?? 1)
+      const rockMat = caveRockMaterial('breakdown', 1.02)
+      const mainGeo = new THREE.DodecahedronGeometry(0.39 * sc, 2)
+      const pos = mainGeo.attributes.position as THREE.BufferAttribute
+      for (let i = 0; i < pos.count; i++) {
+        const k = 0.84 + rr() * 0.3
+        pos.setXYZ(i, pos.getX(i) * k * 1.3, pos.getY(i) * (0.62 + rr() * 0.18), pos.getZ(i) * k)
+      }
+      mainGeo.computeVertexNormals()
+      const main = new THREE.Mesh(mainGeo, rockMat)
+      main.position.y = z; main.rotation.set(rr() * 2, rr() * 2, rr() * 2); grp.add(main)
+      // 两块仍贴在主体上的断面，使轮廓不再像规则十二面体。
+      for (let i = 0; i < 2; i++) {
+        const slab = new THREE.Mesh(new THREE.DodecahedronGeometry((0.2 + rr() * 0.11) * sc, 1), rockMat)
+        slab.position.set((rr() - 0.5) * 0.54 * sc, z + (rr() - 0.5) * 0.34 * sc, (rr() - 0.5) * 0.5 * sc)
+        slab.scale.set(1.35, 0.45, 0.82); slab.rotation.set(rr() * 3, rr() * 3, rr() * 3); grp.add(slab)
+      }
+      for (let i = 0; i < 5; i++) {
+        const chip = new THREE.Mesh(new THREE.DodecahedronGeometry((0.06 + rr() * 0.09) * sc, 0), rockMat)
+        const a = rr() * Math.PI * 2
+        chip.position.set(Math.cos(a) * (0.45 + rr() * 0.42) * sc, z + (rr() - 0.5) * 0.62 * sc, Math.sin(a) * (0.45 + rr() * 0.42) * sc)
+        chip.rotation.set(rr() * 3, rr() * 3, rr() * 3)
+        grp.add(chip)
+      }
+      grp.userData.bob = { amp: 0.065, phase: rr() * 6.28 }
+      break
+    }
+    case 'cavebank': {
+      // 地下湖侵蚀石岸：沿岸切线铺一组高低错落的扁平岩棚，每块按自身世界点读取洞底高度。
+      const rr = mulberry(Number(s.data?.sid ?? 0) ^ Math.floor(s.x * 211 + s.y * 127))
+      const mat = caveRockMaterial(s.data?.tex ?? 'phreatic', 0.98)
+      const baseY = floorHeight(m, cx, cz, 0)
+      const a = Number(s.data?.rot ?? 0), scale = Number(s.data?.scale ?? 1)
+      const ax = Math.cos(a), az = Math.sin(a), bx = -az, bz = ax
+      for (let i = 0; i < 9; i++) {
+        const along = (i / 8 - 0.5) * s.w * (0.85 + rr() * 0.12)
+        const across = (rr() - 0.5) * s.h * 0.74
+        const lx = ax * along + bx * across, lz = az * along + bz * across
+        const rad = (0.2 + rr() * 0.19) * scale
+        const stone = new THREE.Mesh(new THREE.DodecahedronGeometry(rad, i % 3 ? 1 : 0), mat)
+        stone.scale.set(1.3 + rr() * 0.5, 0.34 + rr() * 0.22, 0.9 + rr() * 0.4)
+        stone.position.set(lx, floorHeight(m, cx + lx, cz + lz, 0) - baseY + rad * 0.12 - 0.04, lz)
+        stone.rotation.set((rr() - 0.5) * 0.35, a + (rr() - 0.5) * 0.5, (rr() - 0.5) * 0.28)
+        grp.add(stone)
+      }
+      // 平行细槽表现长期水位变化留下的侵蚀层理。
+      for (let i = 0; i < 3; i++) {
+        const shelf = new THREE.Mesh(new THREE.BoxGeometry(s.w * (0.55 + i * 0.1), 0.035, 0.09), mat)
+        shelf.position.set(bx * (i - 1) * 0.13, 0.08 + i * 0.055, bz * (i - 1) * 0.13)
+        shelf.rotation.y = -a
+        grp.add(shelf)
+      }
+      break
+    }
+    case 'caveglowpoints': {
+      // 多维之路洞顶荧光群：自由漂移、柔光脉冲均在 GPU 完成。
+      const rr = mulberry(Number(s.data?.sid ?? 0) ^ 0x8b1e)
+      const requested = Math.max(160, Math.min(1200, Number(s.data?.count ?? 850)))
+      const spread = Math.max(2, Number(s.data?.spread ?? 14))
+      const baseGround = floorHeight(m, cx, cz, 0)
+      const hues = ['#55d9ff', '#72b7ff', '#8beaff', '#397cff']
+      const points: BioGlowPoint[] = []
+      for (let i = 0; i < requested; i++) {
+        // 三次随机取均值会自然形成成团的密集星点，而不是规整点阵。
+        const ox = ((rr() + rr() + rr()) / 3 - 0.5) * spread * 2
+        const oz = ((rr() + rr() + rr()) / 3 - 0.5) * spread * 2
+        const px = cx + ox, pz = cz + oz
+        const tx = Math.floor(px), tz = Math.floor(pz)
+        if (tx < 0 || tz < 0 || tx >= m.w || tz >= m.h || m.tiles[tz * m.w + tx] !== 1) continue
+        const roof = caveCeilingAt(m, px, pz)
+        const ground = floorHeight(m, px, pz, 0)
+        if (roof - ground < 2.25) continue
+        points.push({
+          x: ox, y: roof - baseGround - 0.055 - rr() * 0.11, z: oz,
+          color: new THREE.Color(hues[(i + Number(s.data?.hue ?? 0)) % hues.length]).multiplyScalar(1.3 + rr() * 0.45),
+          size: 0.9 + rr() * 2.3, phase: rr() * Math.PI * 2, speed: 0.18 + rr() * 0.42, drift: 0.035 + rr() * 0.13,
+        })
+      }
+      grp.add(bioGlowField(points, 0.06))
+      break
+    }
+    case 'cavebacteria': {
+      // 仅从当前 chunk 的浅溪采样，避免微光细菌漂到干燥岩面上。
+      const rr = mulberry(Number(s.data?.sid ?? 0) ^ 0xbae7)
+      const requested = Math.max(40, Math.min(420, Number(s.data?.count ?? 220)))
+      const baseGround = floorHeight(m, cx, cz, 0)
+      const hues = ['#4debd3', '#64cfff', '#86f4d6']
+      const points: BioGlowPoint[] = []
+      for (let tries = 0; tries < requested * 8 && points.length < requested; tries++) {
+        const ox = (rr() - 0.5) * s.w, oz = (rr() - 0.5) * s.h
+        const px = cx + ox, pz = cz + oz, tx = Math.floor(px), tz = Math.floor(pz)
+        if (tx < 0 || tz < 0 || tx >= m.w || tz >= m.h || m.liquid[tz * m.w + tx] !== 2) continue
+        points.push({
+          x: ox, y: floorHeight(m, px, pz, 0) - baseGround + 0.045 + rr() * 0.065, z: oz,
+          color: new THREE.Color(hues[(points.length + Number(s.data?.hue ?? 0)) % hues.length]).multiplyScalar(1.25),
+          size: 0.6 + rr() * 1.35, phase: rr() * Math.PI * 2, speed: 0.35 + rr() * 0.7, drift: 0.025 + rr() * 0.075,
+        })
+      }
+      grp.add(bioGlowField(points, 0.025))
+      break
+    }
+    case 'caveboulder': {
+      // 各生态带的突兀裸岩：低面数轮廓配真实岩石法线/粗糙度，避免纯色塑料石块。
+      const variant = String(s.data?.tex ?? 'phreatic')
+      const mat = caveRockMaterial(variant, 0.92)
+      const rr = mulberry(s.x * 193 + s.y * 109)
+      const scale = Number(s.data?.scale ?? 1), squash = Number(s.data?.squash ?? 0.8)
+      const main = new THREE.Mesh(new THREE.DodecahedronGeometry(0.48, 1), mat)
+      main.scale.set(scale * (0.86 + rr() * 0.35), scale * squash, scale * (0.82 + rr() * 0.38))
+      main.position.y = 0.34 * scale * squash
+      main.rotation.set(rr() * 1.2, Number(s.data?.rot ?? 0), rr() * 0.45)
+      grp.add(main)
+      for (let i = 0; i < 2; i++) {
+        const chip = new THREE.Mesh(new THREE.DodecahedronGeometry(0.13 + rr() * 0.1, 0), mat)
+        chip.position.set((rr() - 0.5) * scale, 0.08 + rr() * 0.15, (rr() - 0.5) * scale)
+        chip.rotation.set(rr() * 2, rr() * 2, rr() * 2)
+        grp.add(chip)
+      }
+      break
+    }
+    case 'l8dryentry': {
+      // 来自 L6 的坍塌隧道：不规则竖向岩洞、断裂岩檐与向后收窄的纯黑通道。
+      const dark = new THREE.Mesh(new THREE.CircleGeometry(0.92, 18), new THREE.MeshBasicMaterial({ color: '#010101', side: THREE.DoubleSide }))
+      dark.scale.set(0.72, 1.2, 1); dark.position.set(0, 1.05, 0.12); grp.add(dark)
+      const rr = mulberry(608)
+      for (let i = 0; i < 15; i++) {
+        const a = i / 15 * Math.PI * 2
+        const stone = new THREE.Mesh(new THREE.DodecahedronGeometry(0.2 + rr() * 0.22, 0), new THREE.MeshLambertMaterial({ color: i % 3 === 0 ? '#746b5c' : '#5b554b' }))
+        stone.position.set(Math.cos(a) * 0.73, 1.05 + Math.sin(a) * 1.08, 0); stone.scale.set(1.15, 0.8, 0.7); stone.rotation.set(rr() * 3, rr() * 3, rr() * 3); grp.add(stone)
+      }
+      for (let i = 0; i < 5; i++) grp.add(box(0.28 + rr() * 0.3, 0.15 + rr() * 0.18, 0.35, '#554f47', -0.72 + i * 0.35, 0.08, 0.28 + rr() * 0.35))
+      break
+    }
+    case 'l8poolentry': {
+      // 来自 L7 的水下洞口：低矮岩拱围着持续渗水的深色池面，青色只来自湿岩反光。
+      const pool = new THREE.Mesh(new THREE.CircleGeometry(0.92, 22), new THREE.MeshLambertMaterial({ color: '#173540', transparent: true, opacity: 0.76, roughness: 0.16 } as THREE.MeshLambertMaterialParameters))
+      pool.rotation.x = -Math.PI / 2; pool.position.y = 0.045; pool.scale.set(1.25, 0.8, 1); grp.add(pool)
+      const rr = mulberry(708)
+      for (let i = 0; i < 16; i++) {
+        const a = i / 16 * Math.PI * 2
+        const stone = new THREE.Mesh(new THREE.DodecahedronGeometry(0.18 + rr() * 0.2, 0), new THREE.MeshLambertMaterial({ color: i % 4 === 0 ? '#526864' : '#4c5550' }))
+        stone.position.set(Math.cos(a) * 1.05, 0.12 + Math.max(0, Math.sin(a)) * 0.58, Math.sin(a) * 0.73); stone.scale.y = 0.72; grp.add(stone)
+      }
+      const throat = new THREE.Mesh(new THREE.CircleGeometry(0.5, 16), new THREE.MeshBasicMaterial({ color: '#000407', side: THREE.DoubleSide }))
+      throat.position.set(0, 0.55, 0.56); throat.scale.set(1.2, 0.72, 1); grp.add(throat)
+      break
+    }
 
     // ===================== v23：Level 9「The Suburbs」 =====================
     case 'house': {
-      // 郊区房屋标记（非实心）：只补一个双坡屋顶，房屋主体由地图的墙构成
-      // v53：坡面/檐口换 RoofingTiles 贴图（l9_roof.jpg）——贴图均值归一 0.72，
-      //      tint=原纯色÷0.72（#2e2c30→#403d43 / #3a3630→#514b43）保持原有明度观感，离线回退原纯色噪点
-      const roof = gableRoof(s.w, s.h, Math.min(1.9, Math.min(s.w, s.h) * 0.3), '#2e2c30', '#514b43', { name: 'l9_roof', tint: '#403d43' })
-      roof.position.y = H
-      grp.add(roof)
-      grp.add(texBox(s.w + 0.35, 0.16, s.h + 0.35, 'l9_roof', '#3a3630', '#3a3630', '#514b43', 2.0, 0, H - 0.06, 0)) // 檐口
+      // 20 种真实比例住宅：一层外墙由地图墙（含真实窗洞）承担，上层外壳独立建造。
+      // 局部 +Z 永远是正门方向，东西向地块只需旋转整个模型，不会再发生门与墙错向。
+      const style = Number(s.data?.style ?? 0) % 20
+      const aFrame = style >= 16
+      const frontKey = String(s.data?.front ?? 's')
+      const sideFront = frontKey === 'e' || frontKey === 'w'
+      const faceW = sideFront ? s.h : s.w, faceD = sideFront ? s.w : s.h
+      grp.rotation.y = frontKey === 'n' ? Math.PI : frontKey === 'e' ? Math.PI / 2 : frontKey === 'w' ? -Math.PI / 2 : 0
+      // 已经写入存档的旧 A 字住宅可能仍带 stories=1；渲染端强制升级为两层，
+      // 无需玩家重开存档或等待旧区块重新生成。
+      const stories = aFrame ? 2 : Math.max(1, Math.min(3, Number(s.data?.stories ?? 2)))
+      // 一层高度必须与地图实际 suburb 墙高一致；旧 2.78m 模型比 3.2m 墙体矮了 42cm，
+      // 窗洞上方会残留一条没有被任何结构封住的亮缝。
+      const storyH = WALL_H[_def.gen] ?? 3.2, wallH = storyH * stories
+      const doorOffset = Number(s.data?.doorOffset ?? 0)
+      // 住宅主墙只使用现代灰泥与整洁砖墙；旧木板外墙保留给车库门等局部构件，
+      // 避免大面积风化木板让整条郊区街道显得破败。
+      const facadePrefix = style === 3 || style === 6 ? 'l9_brick' : 'l9_modern_plaster'
+      const facadeTints = ['#f3f1eb','#dce4e4','#ece8df','#cbb3a3','#e0e5df','#f7f7f3','#cab5a6','#f0ebe3','#d8e0e2','#efede7','#e7ebea','#f4f0e8','#faf9f4','#dde5e6','#edeae3','#f3f3ef','#e5e1d7','#d5ddd9','#eee8dc','#d9d5cb']
+      const facadeTint = facadeTints[style]
+      const shell = (w: number, h: number, d: number, x: number, y: number, z: number, prefix = facadePrefix, tint = facadeTint) => {
+        const plaster = prefix === 'l9_modern_plaster'
+        const fb: [string, string] = prefix === 'l9_brick' ? ['#9d7867','#684d42'] : plaster ? ['#f4f2ed','#deddd7'] : ['#c8c2b5','#8f897e']
+        grp.add(l9PbrBox(w, h, d, prefix, tint, fb[0], fb[1], prefix === 'l9_brick' ? 1.35 : 1.8, plaster ? .84 : .88, plaster ? .16 : .12, plaster ? .34 : .52, x, y, z))
+      }
+
+      const fz = faceD / 2 + .035, bz = -faceD / 2 - .035
+      // 一层完整墙面来自地图几何，不能再叠一层不透明立面，否则真实窗洞仍会被堵死。
+      // 这里只补门洞上方的门楣，并从二层起构建独立楼体。
+      shell(1.18, storyH - 2.28, .07, doorOffset, 2.28 + (storyH - 2.28) / 2, fz, 'l9_modern_plaster', '#f1eee7')
+      const stepped = stories > 1 && (style === 5 || (style >= 12 && style <= 15))
+      const upperW = stepped ? faceW * ([.66, .78, .58, .72][Math.max(0, style - 12)] ?? .62) : faceW
+      const upperD = stepped ? faceD * ([.72, .61, .76, .56][Math.max(0, style - 12)] ?? .68) : faceD
+      const upperX = stepped ? (style % 2 ? -faceW * .1 : faceW * .12) : 0
+      const upperZ = stepped ? (style === 13 || style === 15 ? -faceD * .12 : faceD * .06) : 0
+      if (stories > 1) {
+        const uh = wallH - storyH, uy = storyH + uh / 2
+        shell(upperW, uh, .07, upperX, uy, upperZ + upperD / 2 + .035)
+        shell(upperW, uh, .07, upperX, uy, upperZ - upperD / 2 - .035)
+        shell(.07, uh, upperD, upperX - upperW / 2 - .035, uy, upperZ)
+        shell(.07, uh, upperD, upperX + upperW / 2 + .035, uy, upperZ)
+
+        // 首层屋面与顶层屋面分开建造。首层使用四块互不重叠的环形屋面，中间严格
+        // 留出二层楼体占地；即使二层与首层同宽，也保留一圈真实檐口而不是整块实心板。
+        const outerW = faceW + .5, outerD = faceD + .5
+        const ox0 = -outerW / 2, ox1 = outerW / 2, oz0 = -outerD / 2, oz1 = outerD / 2
+        const ix0 = upperX - upperW / 2, ix1 = upperX + upperW / 2
+        const iz0 = upperZ - upperD / 2, iz1 = upperZ + upperD / 2
+        const roofStrip = (w: number, d: number, x: number, z: number) => {
+          if (w < .04 || d < .04) return
+          grp.add(l9PbrBox(w, .14, d, 'l9_clean_tile', '#ecefed', '#ecefed', '#c8cdca', .75, .5, .2, .16, x, storyH + .035, z))
+        }
+        roofStrip(ix0 - ox0, outerD, (ox0 + ix0) / 2, 0)
+        roofStrip(ox1 - ix1, outerD, (ix1 + ox1) / 2, 0)
+        roofStrip(upperW, iz0 - oz0, upperX, (oz0 + iz0) / 2)
+        roofStrip(upperW, oz1 - iz1, upperX, (iz1 + oz1) / 2)
+      }
+      // 基础勒脚与转角饰条让楼体不再像无厚度的贴片。错层住宅的一楼外角只到
+      // storyH 为止；二楼沿缩进后的 upper 轮廓另起饰条，不能把一楼角线悬空拉到屋顶。
+      for (const z of [fz + .045, bz - .045]) grp.add(box(faceW + .16, .24, .12, '#5f5b54', 0, .12, z))
+      const lowerTrimH = stepped ? storyH : wallH
+      for (const x of [-faceW / 2 - .07, faceW / 2 + .07]) for (const z of [fz, bz]) {
+        grp.add(box(.16, lowerTrimH, .13, '#d7d0c1', x, lowerTrimH / 2, z))
+      }
+      if (stepped) {
+        const upperTrimH = wallH - storyH
+        const upperY = storyH + upperTrimH / 2
+        const upperFront = upperZ + upperD / 2 + .035
+        const upperBack = upperZ - upperD / 2 - .035
+        for (const x of [upperX - upperW / 2 - .07, upperX + upperW / 2 + .07]) for (const z of [upperFront, upperBack]) {
+          grp.add(box(.16, upperTrimH, .13, '#d7d0c1', x, upperY, z))
+        }
+      }
+
+      const glassMat = architecturalGlassMaterial()
+      const windowUnit = (ww = 1.22, wh = 1.08) => {
+        const wg = new THREE.Group()
+        const frameParts: { g: THREE.BufferGeometry; c: string }[] = []
+        const wp = (w: number, h: number, d: number, c: string, x = 0, y = 0, z = 0) =>
+          frameParts.push({ g: new THREE.BoxGeometry(w, h, d).translate(x, y, z), c })
+        const pane = new THREE.Mesh(new THREE.PlaneGeometry(ww, wh), glassMat); pane.position.z = .012; wg.add(pane)
+        // 半开的窗帘位于玻璃后方，既能透光又不会像纯黑贴片。
+        wp(ww * .18, wh * .9, .025, '#6d655b', -ww * .38, 0, -.005)
+        wp(ww * .18, wh * .9, .025, '#6d655b', ww * .38, 0, -.005)
+        const frame = '#e0ddd2'
+        wp(.055, wh + .12, .055, frame, 0, 0, .04); wp(ww + .12, .055, .055, frame, 0, 0, .04)
+        wp(ww + .18, .08, .17, '#c5c0b3', 0, -wh / 2 - .07, .02)
+        wg.add(mergedMesh(frameParts))
+        return wg
+      }
+      const addWindow = (x: number, y: number, z: number, ry = 0, ww = 1.22, wh = 1.08) => {
+        const wg = windowUnit(ww, wh); wg.position.set(x, y, z); wg.rotation.y = ry; grp.add(wg)
+      }
+      // 一层窗由 l9window 结构提供；这里只画不可进入楼层的真实比例上层窗。
+      for (let floor = 1; floor < stories; floor++) {
+        const wy = floor * storyH + 1.5
+        for (const x of [upperX - upperW * .28, upperX + upperW * .28]) addWindow(x, wy, upperZ + upperD / 2 + .075)
+      }
+      for (const sign of [-1, 1]) for (let floor = 1; floor < stories; floor++) {
+        const wy = floor * storyH + 1.5
+        const z = upperZ + (style % 2 ? -.12 : .12) * upperD
+        addWindow(upperX + sign * (upperW / 2 + .075), wy, z, sign > 0 ? Math.PI / 2 : -Math.PI / 2, 1.0, .96)
+      }
+      if (stories > 1) for (const x of [upperX - upperW * .27, upperX + upperW * .27]) addWindow(x, storyH + 1.5, upperZ - upperD / 2 - .075, Math.PI)
+
+      // 门廊、车库和挑出体决定一眼可见的建筑风格，而不仅是换一种墙色。
+      const porchW = style === 2 || style === 8 || style === 9 ? Math.min(faceW * .68, 9.5) : 3.1
+      const porchZ = faceD / 2 + .72
+      grp.add(l9PbrBox(porchW, .13, 1.45, 'l9_furniture_wood', '#ddd3c1', '#8e765c', '#493a2d', 1.2, .58, .23, .45, doorOffset, .09, porchZ))
+      const postCount = porchW > 5 ? 4 : 2
+      for (let i = 0; i < postCount; i++) {
+        const px = doorOffset - porchW / 2 + .2 + i * (porchW - .4) / (postCount - 1)
+        grp.add(box(.16, 2.3, .16, '#d8d1c2', px, 1.17, porchZ + .46))
+        grp.add(box(.3, .12, .3, '#8f8779', px, .07, porchZ + .46))
+      }
+      grp.add(box(porchW + .28, .16, 1.38, style === 7 ? '#8b5f4c' : '#4b4a4a', doorOffset, 2.34, porchZ + .08))
+      for (let i = 0; i < 2; i++) grp.add(box(porchW * (1 - i * .16), .09, .36, '#81745f', doorOffset, .045 + i * .075, porchZ + .92 + i * .24))
+
+      if (style === 0 || style === 10 || style === 11) {
+        const garageW = Math.min(4.6, faceW * .36), gx = -faceW * .27
+        grp.add(l9PbrBox(garageW, 2.12, .09, 'l9_siding', '#b9b6ad', '#aaa498', '#77736b', 1.5, .92, .06, .38, gx, 1.08, fz + .105))
+        for (let yy = .32; yy < 2.05; yy += .34) grp.add(box(garageW - .18, .032, .1, '#777872', gx, yy, fz + .16))
+        for (const xx of [-garageW * .26, 0, garageW * .26]) grp.add(box(.025, 1.82, .1, '#8a8982', gx + xx, 1.05, fz + .16))
+      }
+      if (style === 5 || (style >= 12 && style <= 15)) {
+        // 现代洋楼：缩进/偏置的上层、宽水平窗、露台压顶与一层落地窗形成明显错层。
+        addWindow(upperX, storyH + 1.45, upperZ + upperD / 2 + .09, 0, Math.min(3.8, upperW * .55), .86)
+        // 局部浅色瓷砖饰面打破整栋住宅一种旧墙皮的观感。
+        grp.add(l9PbrBox(Math.min(2.1, upperW * .28), Math.min(2.15, wallH - storyH - .25), .085,
+          'l9_clean_tile', '#edf0ee', '#ecefed', '#c8cdca', .72, .5, .2, .14,
+          upperX + upperW * .3, storyH + Math.min(2.15, wallH - storyH - .25) / 2 + .12, upperZ + upperD / 2 + .08))
+        const terraceZ = upperZ + upperD / 2 + .72
+        grp.add(l9PbrBox(Math.max(2.4, upperW * .7), .13, 1.25, 'l9_furniture_wood', '#9c856b', '#8e765c', '#493a2d', 1.2, .62, .18, .4, upperX, storyH + .08, terraceZ))
+        for (const xx of [upperX - upperW * .31, upperX + upperW * .31]) grp.add(box(.055, .72, .055, '#586266', xx, storyH + .48, terraceZ + .5))
+        grp.add(box(Math.max(2.5, upperW * .72), .055, .055, '#586266', upperX, storyH + .82, terraceZ + .5))
+      } else if (style === 6) {
+        // 维多利亚式三层角塔。
+        const tx = faceW * .34
+        shell(3.2, wallH + .8, 3.0, tx, (wallH + .8) / 2, faceD / 2 - 1.05, 'l9_modern_plaster', '#e1ddd3')
+        const towerRoof = l9GableRoof(3.65, 3.5, 1.65, 'l9_roof_slate', '#62636a'); towerRoof.position.set(tx, wallH + .8, faceD / 2 - 1.05); grp.add(towerRoof)
+      } else if (style === 3 || style === 4) {
+        for (const x of [-faceW * .23, faceW * .23]) {
+          shell(1.5, .82, 1.0, x, wallH + .38, .1, 'l9_siding', facadeTint)
+          const dormer = l9GableRoof(1.75, 1.25, .7, 'l9_roof_slate', '#4b4b50'); dormer.position.set(x, wallH + .78, .1); grp.add(dormer)
+          addWindow(x, wallH + .4, .64, 0, .62, .48)
+        }
+      }
+
+      const roofPrefix = style === 7 ? 'l9_roof_tile' : 'l9_roof_slate'
+      const roofTint = style === 7 ? '#a56c52' : ['#55565c','#43484f','#5b514a','#48464c'][style % 4]
+      if (aFrame) {
+        // 参考郊区洋楼：完整两层墙体上先放正常横向主屋顶，再从正面局部挑出
+        // 一个或两个交叉山墙。三角形不再覆盖整栋楼，也不会像巨型帐篷悬在一楼上。
+        const aFrameRise = style === 17 || style === 19 ? 1.9 : 1.55
+        const mainRoof = l9GableRoof(upperW + .8, upperD + .9, aFrameRise, roofPrefix, roofTint, 'x', facadeTint)
+        mainRoof.position.set(upperX, wallH, upperZ); grp.add(mainRoof)
+
+        const frontGable = (gx: number, gw: number, rise: number, depth: number, windowW = 1.05) => {
+          const gz = upperZ + upperD / 2 - depth / 2 + .72
+          const roof = l9GableRoof(gw, depth, rise, roofPrefix, roofTint, 'z', facadeTint)
+          roof.position.set(gx, wallH - .08, gz); grp.add(roof)
+          addWindow(gx, wallH + rise * .38, gz + depth / 2 + .035, 0, windowW, .82)
+        }
+        if (style === 16) {
+          frontGable(upperX, Math.min(6.2, upperW * .42), 2.45, 4.0, 1.28)
+        } else if (style === 17) {
+          frontGable(upperX - upperW * .23, Math.min(4.7, upperW * .3), 2.2, 3.7)
+          frontGable(upperX + upperW * .24, Math.min(4.2, upperW * .27), 1.85, 3.35, .9)
+        } else if (style === 18) {
+          frontGable(upperX - upperW * .14, Math.min(6.5, upperW * .44), 2.7, 4.25, 1.35)
+        } else {
+          frontGable(upperX + upperW * .13, Math.min(5.8, upperW * .39), 2.55, 4.15, 1.2)
+          frontGable(upperX - upperW * .3, Math.min(3.5, upperW * .22), 1.55, 3.05, .78)
+        }
+      } else if (style === 5 || style === 12 || style === 15) {
+        grp.add(l9PbrBox(upperW + .65, .24, upperD + .65, 'l9_roof_slate', '#353a3f', '#4b4b4d', '#28292b', 1.4, .7, .22, .5, upperX, wallH + .08, upperZ))
+        for (const z of [upperZ - upperD / 2 - .28, upperZ + upperD / 2 + .28]) grp.add(box(upperW + .7, .34, .16, '#4d5456', upperX, wallH + .28, z))
+      } else {
+        const roofRise = style === 0 || style === 8 ? 1.05 : style === 3 || style === 6 ? 2.45 : style === 7 ? 1.15 : 1.72
+        const roof = l9GableRoof(upperW + .6, upperD + .65, roofRise, roofPrefix, roofTint); roof.position.set(upperX, wallH, upperZ); grp.add(roof)
+      }
+      // 砖烟囱与屋檐排水管提供屋顶尺度参照。
+      const chimneyBase = wallH
+      grp.add(l9PbrBox(.68, 1.7, .68, 'l9_brick', '#9a7968', '#8b6653', '#4e3a31', 1.15, .9, .08, .65, upperX + upperW * .29, chimneyBase + .72, upperZ - upperD * .18))
+      for (const x of [-faceW / 2 - .12, faceW / 2 + .12]) grp.add(cyl(.035, .035, wallH - .25, '#575b5b', x, wallH / 2, fz + .03, 8))
+      break
+    }
+    case 'l9window': {
+      // 标准建筑窗组件：整格墙洞由组件自己补齐上下墙段，不再依赖一张透明平面遮住
+      // 3.2m 高的空洞。统一窗台/窗楣比例让它在任何立面都只会被读成窗，而不是门。
+      // 一层主体墙由地图几何统一生成，因此窗洞补墙必须使用完全相同的灰泥、色调与
+      // 1.8m 世界平铺尺度；房屋 style 只作用于二层以上的独立外立面。
+      const deg = Number(s.data?.deg ?? 0) * Math.PI / 180
+      const wallBox = (w:number,h:number,x:number,y:number) => {
+        const mesh = l9PbrBox(w, h, .12, 'l9_modern_plaster', '#f1eee7', '#f4f2ed', '#deddd7', 1.8, .86, .16, .34, x, y, 0)
+        // 地图墙使用 u=(worldX+worldZ)*.55 / v=worldY*.55。这里直接把同一公式烘进
+        // 窗洞补墙 UV，既统一缩放也统一相位，窗台上下不再像贴了另一块墙纸。
+        const pos = mesh.geometry.attributes.position as THREE.BufferAttribute
+        const uv = mesh.geometry.attributes.uv as THREE.BufferAttribute
+        const cs = Math.cos(deg), sn = Math.sin(deg)
+        for (let i = 0; i < uv.count; i++) {
+          const lx = pos.getX(i) + x, lz = pos.getZ(i)
+          const wx = cx + cs * lx + sn * lz
+          const wz = cz - sn * lx + cs * lz
+          uv.setXY(i, (wx + wz) * .55, (pos.getY(i) + y) * .55)
+        }
+        uv.needsUpdate = true
+        grp.add(mesh)
+      }
+      const topH = WALL_H[_def.gen] ?? 3.2
+      const sill = .84, head = Math.min(topH - .62, 2.18)
+      const paneH = head - sill
+      wallBox(1, sill, 0, sill / 2)
+      wallBox(1, topH - head, 0, head + (topH - head) / 2)
+
+      // 玻璃使用有真实厚度的薄盒而不是单面贴片，从斜角也能看到边缘；通用材质没有
+      // 自发光，且以较深透明度压住室内白墙，不会再呈现整块米白色。
+      const glass = new THREE.Mesh(new THREE.BoxGeometry(.76, paneH - .13, .026), architecturalGlassMaterial())
+      glass.position.set(0, sill + paneH / 2, .012)
+      glass.userData.noCastShadow = 1
+      grp.add(glass)
+
+      const frame = '#c8ccca', seal = '#30383c'
+      for (const x of [-.43, .43]) {
+        grp.add(box(.1, paneH + .04, .16, frame, x, sill + paneH / 2, .02))
+        grp.add(box(.026, paneH - .08, .17, seal, x * .9, sill + paneH / 2, .025))
+      }
+      for (const y of [sill, head]) grp.add(box(1, .1, .16, frame, 0, y, .02))
+      grp.add(box(.055, paneH - .16, .12, frame, 0, sill + paneH / 2, .045))
+      grp.add(box(.78, .055, .12, frame, 0, sill + paneH * .52, .045))
+      // 外侧窗台略微挑出墙面，同时遮住玻璃底边与下补墙的接缝。
+      grp.add(l9PbrBox(1.08, .09, .24, 'l9_clean_tile', '#dfe3e1', '#ecefed', '#c8cdca', .7, .5, .18, .12, 0, sill - .035, .075))
+      // 窗洞所在格没有地图墙体，室内侧的踢脚线必须由窗组件补上；local -Z 恒朝住宅内。
+      grp.add(l9PbrBox(1, .14, .055, 'l9_furniture_wood', '#c5b5a4', '#8e765c', '#493a2d', 1.34, .68, .18, .34, 0, .07, -.095))
+      grp.rotation.y=deg
+      break
+    }
+    case 'l9tvconsole': {
+      // 电视放在有离地支脚的矮柜上，屏幕中心达到正常坐姿视线高度。
+      const wood=l9PbrMaterial('l9_furniture_wood','#80664e','#8e765c','#493a2d',.62,.24,.42)
+      const body=new THREE.MeshStandardMaterial({color:'#17191b',roughness:.48,metalness:.18})
+      for(const x of [-.38,.38]) for(const z of [-.18,.18]) grp.add(cyl(.025,.035,.28,'#39322b',x,.14,z,7))
+      const cabinet=new THREE.Mesh(new THREE.BoxGeometry(.96,.42,.44),wood);cabinet.position.y=.49;grp.add(cabinet)
+      grp.add(box(.018,.31,.03,'#4a3d31',0,.49,.235))
+      const tv=new THREE.Mesh(new THREE.BoxGeometry(.9,.58,.12),body);tv.position.set(0,1.02,0);grp.add(tv)
+      const screen=new THREE.Mesh(new THREE.PlaneGeometry(.78,.45),new THREE.MeshPhysicalMaterial({color:'#1d252b',roughness:.16,metalness:.12,envMapIntensity:.7}));screen.position.set(0,1.03,.061);grp.add(screen)
+      grp.rotation.y=Number(s.data?.deg??0)*Math.PI/180
+      break
+    }
+    case 'l9planter': {
+      const wood=l9PbrMaterial('l9_furniture_wood','#9a7653','#8e765c','#493a2d',.68,.12,.4)
+      const trough=new THREE.Mesh(new THREE.BoxGeometry(Math.max(.7,s.w*.82),.42,Math.max(.42,s.h*.7)),wood);trough.position.y=.25;grp.add(trough)
+      const soil=new THREE.Mesh(new THREE.BoxGeometry(Math.max(.58,s.w*.7),.06,Math.max(.32,s.h*.58)),new THREE.MeshStandardMaterial({color:'#2c2118',roughness:1}));soil.position.y=.49;grp.add(soil)
+      for(let i=0;i<5;i++){const x=-s.w*.27+i*s.w*.135;grp.add(cyl(.025,.04,.28,'#365235',x,.64,(i%2-.5)*.12,6));const leaf=new THREE.Mesh(new THREE.SphereGeometry(.1,6,4),new THREE.MeshLambertMaterial({color:i%2?'#486943':'#39583a'}));leaf.scale.set(1.4,.55,.8);leaf.position.set(x,.77,(i%2-.5)*.12);grp.add(leaf)}
+      grp.rotation.y=Number(s.data?.deg??0)*Math.PI/180
+      break
+    }
+    case 'l9vegbed': {
+      const soil=new THREE.Mesh(new THREE.BoxGeometry(Math.max(.7,s.w*.9),.13,Math.max(.7,s.h*.9)),new THREE.MeshStandardMaterial({color:'#2b2118',roughness:1}));soil.position.y=.08;grp.add(soil)
+      const ww=Math.max(.7,s.w*.9),dd=Math.max(.7,s.h*.9)
+      for(const z of [-dd/2,dd/2]) grp.add(box(ww+.12,.16,.09,'#765739',0,.11,z));for(const x of [-ww/2,ww/2]) grp.add(box(.09,.16,dd,'#765739',x,.11,0))
+      const rows=Math.max(2,Math.floor(ww/.5));for(let i=0;i<rows;i++){const x=-ww*.4+(i/(rows-1))*ww*.8;for(const z of [-dd*.22,dd*.22]){const leaf=new THREE.Mesh(new THREE.SphereGeometry(.11,6,4),new THREE.MeshLambertMaterial({color:(i&1)?'#41663a':'#557743'}));leaf.scale.set(1.35,.62,1);leaf.position.set(x,.25,z);grp.add(leaf)}}
+      grp.rotation.y=Number(s.data?.deg??0)*Math.PI/180
       break
     }
     case 'streetlamp': {
@@ -2858,6 +3887,8 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       grp.add(cyl(0.13, 0.24, 0.17, '#4a4d50', 0.46, 3.86, 0, 8)) // 灯罩
       if (mode === 0) grp.add(box(0.21, 0.04, 0.21, '#33342f', 0.46, 3.77, 0))
       else grp.add(glow(0.22, 0.05, 0.22, mode === 2 ? '#ffcf8a' : '#96703c', 0.46, 3.76, 0))
+      // 模型灯臂沿局部 +X；生成器传入的 deg 保证灯头始终伸向相邻道路。
+      grp.rotation.y = Number(s.data?.deg ?? 0) * Math.PI / 180
       break
     }
     case 'mailbox': {
@@ -2880,6 +3911,7 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       movable(flag, 'flag')
       grp.add(flag)
       if (s.looted) grp.userData.open = 1
+      if (s.data?.deg !== undefined) grp.rotation.y = Number(s.data.deg) * Math.PI / 180
       break
     }
     case 'picketfence': {
@@ -2894,6 +3926,7 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       parts.push({ g: new THREE.BoxGeometry(1.0, 0.07, 0.03).translate(0, 0.34, 0.01), c: '#cbc5b6' })
       parts.push({ g: new THREE.BoxGeometry(1.0, 0.07, 0.03).translate(0, 0.72, 0.01), c: '#cbc5b6' })
       grp.add(mergedMesh(parts))
+      if (s.data?.deg !== undefined) grp.rotation.y = Number(s.data.deg) * Math.PI / 180
       break
     }
     case 'clipfuse': {
@@ -3498,8 +4531,9 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       const ariane = s.data?.outpost === 'ariane'
       const tom = s.data?.outpost === 'tom'
       const el3a = s.data?.outpost === 'el3a' // v43：办公区EL3A——BNTG 灰绿变体布料
-      const clothC = ariane ? '#8676e2' : el3a ? '#5f7a62' : bntg ? '#3a5a44' : tom ? '#b04030' : '#d9b13b' // 阿丽亚娜紫 / EL3A 灰绿 / BNTG 深绿 / Tom 暖红 / M.E.G. 鲜黄
-      const markC = ariane ? '#f0eefc' : bntg || el3a ? '#e8e8e0' : tom ? '#f8ecd8' : '#3a332c'
+      const hammoz = s.data?.outpost === 'hammoz'
+      const clothC = ariane ? '#8676e2' : hammoz ? '#61766a' : el3a ? '#5f7a62' : bntg ? '#3a5a44' : tom ? '#b04030' : '#d9b13b' // 阿丽亚娜紫 / 哈莫兹岩绿 / EL3A 灰绿 / BNTG 深绿 / Tom 暖红 / M.E.G. 鲜黄
+      const markC = ariane ? '#f0eefc' : hammoz ? '#d5c18e' : bntg || el3a ? '#e8e8e0' : tom ? '#f8ecd8' : '#3a332c'
       grp.add(cyl(0.03, 0.05, 1.7, '#4a4038', 0, 0.85, 0, 6)) // 立杆
       grp.add(box(0.56, 0.72, 0.03, clothC, 0, 1.22, 0.02)) // 团队色布料
       if (ariane) {
@@ -3507,6 +4541,17 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
         const ring = new THREE.Mesh(new THREE.RingGeometry(0.07, 0.1, 16), new THREE.MeshLambertMaterial({ color: markC, side: THREE.DoubleSide }))
         ring.position.set(0, 1.3, 0.045)
         grp.add(ring)
+      } else if (hammoz) {
+        // 哈莫兹徽记：洞穴等高线圆环 + 交叉的测绘绳/岩锤。
+        const ring = new THREE.Mesh(new THREE.RingGeometry(0.075, 0.105, 18), new THREE.MeshLambertMaterial({ color: markC, side: THREE.DoubleSide }))
+        ring.position.set(0, 1.31, 0.045)
+        grp.add(ring)
+        const rope = box(0.025, 0.25, 0.012, markC, 0, 1.3, 0.047)
+        rope.rotation.z = 0.64
+        grp.add(rope)
+        const hammer = box(0.025, 0.23, 0.012, markC, 0, 1.29, 0.048)
+        hammer.rotation.z = -0.64
+        grp.add(hammer)
       } else {
         // 徽记（深色方块拼的展翅/天平标）
         grp.add(box(0.06, 0.2, 0.012, markC, 0, 1.3, 0.045))
@@ -4570,8 +5615,10 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
 }
 
 // ---------- 出口低模 ----------
-export function buildExit(kind: string, def: LevelDef): THREE.Group {
+export function buildExit(kind: string, def: LevelDef, structure?: Structure): THREE.Group {
   const grp = new THREE.Group()
+  // 仅 L9 的新结构分支读取该值；标准出口调用不传 structure。
+  const s = structure ?? ({ kind: 'l9arrowsign', x: 0, y: 0, w: 1, h: 1, solid: false, data: {} } as Structure)
   const pulseMat = () => {
     const mat = new THREE.MeshBasicMaterial({ color: '#f5e37a' })
     mat.userData.pulse = true
@@ -4945,6 +5992,324 @@ export function buildExit(kind: string, def: LevelDef): THREE.Group {
       pulse.rotation.x = -Math.PI / 2
       pulse.position.y = 0.055
       grp.add(pulse)
+      break
+    }
+    case 'l9arrowsign': {
+      // 中继牌只提示下一路牌，终点牌由出口模型负责。
+      const n = Number(s.data?.seq ?? 1), total = Number(s.data?.total ?? 6)
+      grp.add(cyl(0.045, 0.055, 2.05, '#5d6265', 0, 1.02, 0, 8))
+      const board = box(1.08, 0.48, 0.075, '#304239', 0, 1.78, 0)
+      grp.add(board)
+      const panel = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 0.4), new THREE.MeshBasicMaterial({ map: signTexture(`${n}/${total}  →`, false), side: THREE.DoubleSide }))
+      panel.position.set(0, 1.78, 0.041); grp.add(panel)
+      grp.add(box(0.42, 0.07, 0.07, '#b9c1b8', 0.22, 1.47, 0))
+      if (s.data?.deg !== undefined) grp.rotation.y = Number(s.data.deg) * Math.PI / 180
+      break
+    }
+    case 'l9stair': {
+      // 首阶段仅开放一层：楼梯是完整模型，但顶部用木板和挂锁封死。
+      const wood = '#6b4b33', dark = '#39281e'
+      for (let i = 0; i < 8; i++) {
+        const z = -1.05 + i * 0.27, y = 0.11 + i * 0.22
+        grp.add(l9PbrBox(1.1, .16, .32, 'l9_furniture_wood', '#a18467', wood, dark, .7, .62, .19, .42, 0, y, z))
+      }
+      for (const x of [-0.57, 0.57]) {
+        const rail = box(0.055, 2.05, 0.055, dark, x, 1.05, 0); rail.rotation.x = -0.68; grp.add(rail)
+        for (let i = 0; i < 5; i++) grp.add(box(0.04, 0.75, 0.04, '#493326', x, 0.55 + i * 0.28, -0.75 + i * 0.34))
+      }
+      grp.add(l9PbrBox(1.35, .78, .12, 'l9_furniture_wood', '#9b795a', '#563d2c', '#2b211a', .75, .66, .16, .42, 0, 2.0, 1.2))
+      grp.add(box(0.22, 0.28, 0.08, '#8e825d', 0, 1.95, 1.27))
+      if (s.data?.deg !== undefined) grp.rotation.y = Number(s.data.deg) * Math.PI / 180
+      break
+    }
+    case 'l9coffeetable': {
+      const wood = '#76543a'
+      grp.add(l9PbrBox(1.45, .12, .72, 'l9_furniture_wood', '#a17b59', wood, '#39271d', .8, .56, .24, .4, 0, .48, 0))
+      for (const [x, z] of [[-.58, -.25], [.58, -.25], [-.58, .25], [.58, .25]] as const) grp.add(box(.08, .45, .08, '#402d22', x, .23, z))
+      grp.add(box(.32, .025, .22, '#d6cfb9', -.25, .56, .03)); grp.add(cyl(.09, .08, .14, '#6b756f', .32, .62, -.05, 12))
+      break
+    }
+    case 'l9fireplace': {
+      grp.add(l9PbrBox(1.12, 1.75, .42, 'l9_brick', '#a89a87', '#796b5d', '#403832', .8, .91, .08, .58, 0, .88, -.2))
+      grp.add(box(.72, .7, .18, '#11100f', 0, .48, .03))
+      grp.add(box(1.32, .14, .58, '#594a3d', 0, 1.35, 0)); grp.add(box(1.25, .12, .65, '#4b4037', 0, .08, 0))
+      if (s.data?.deg !== undefined) grp.rotation.y = Number(s.data.deg) * Math.PI / 180
+      break
+    }
+    case 'l9bookshelf': {
+      grp.add(l9PbrBox(.78, 2.05, .3, 'l9_furniture_wood', '#8c6748', '#583b28', '#2b1d16', .75, .65, .18, .42, 0, 1.03, 0))
+      for (let y = .28; y < 1.95; y += .43) grp.add(box(.68, .055, .34, '#3b281d', 0, y, .02))
+      const colors = ['#6c3d35', '#364d5e', '#68704a', '#83714c']
+      for (let r = 0; r < 4; r++) for (let b = 0; b < 5; b++) grp.add(box(.105, .28 + ((r + b) % 2) * .05, .17, colors[(r + b) % colors.length], -.28 + b * .14, .42 + r * .43, .16))
+      if (s.data?.deg !== undefined) grp.rotation.y = Number(s.data.deg) * Math.PI / 180
+      break
+    }
+    case 'l9floorlamp': {
+      grp.add(cyl(.17, .2, .07, '#3e3c39', 0, .04, 0, 12)); grp.add(cyl(.025, .025, 1.35, '#696963', 0, .72, 0, 8))
+      grp.add(cyl(.28, .16, .42, '#8b806c', 0, 1.45, 0, 14)); grp.add(box(.05, .13, .03, '#452f28', .3, 1.15, 0))
+      break
+    }
+    case 'l9toilet': {
+      grp.add(cyl(.29, .24, .34, '#dddcd5', 0, .23, .06, 14)); grp.add(cyl(.27, .27, .06, '#eceae2', 0, .43, .06, 14))
+      grp.add(box(.48, .58, .22, '#d7d6cf', 0, .55, -.27)); grp.add(box(.5, .06, .24, '#eceae2', 0, .86, -.27))
+      break
+    }
+    case 'l9bathtub': {
+      grp.add(box(1.45, .54, .68, '#d8d8d2', 0, .29, 0)); grp.add(box(1.18, .4, .5, '#809499', 0, .42, 0))
+      grp.add(box(1.05, .42, .43, '#24292b', 0, .42, 0)); grp.add(cyl(.018, .018, .36, '#aeb4b5', -.52, .83, -.18, 8)); grp.add(cyl(.08, .06, .16, '#aeb4b5', -.52, .91, -.05, 10))
+      if (s.data?.deg !== undefined) grp.rotation.y = Number(s.data.deg) * Math.PI / 180
+      break
+    }
+    case 'l9diningtable': {
+      grp.add(l9PbrBox(1.45, .12, 1.45, 'l9_furniture_wood', '#916b4c', '#694831', '#342319', .8, .58, .23, .42, 0, .78, 0))
+      grp.add(box(.22, .74, .22, '#442e22', 0, .38, 0)); grp.add(box(.82, .08, .82, '#442e22', 0, .08, 0))
+      for (const [x, z, rot] of [[-.95, 0, Math.PI/2], [.95, 0, -Math.PI/2], [0, -.95, 0], [0, .95, Math.PI]] as const) {
+        const ch = new THREE.Group()
+        ch.add(box(.48, .08, .48, '#76543b', 0, .48, 0)); ch.add(box(.48, .75, .08, '#5b3e2d', 0, .72, -.2))
+        for (const lx of [-.19, .19]) for (const lz of [-.18, .18]) ch.add(box(.055, .46, .055, '#493226', lx, .23, lz))
+        for (const lx of [-.19, .19]) ch.add(box(.045, .46, .045, '#493226', lx, .82, -.2))
+        ch.position.set(x, 0, z); ch.rotation.y = rot; grp.add(ch)
+      }
+      break
+    }
+    case 'l9poolfilter': {
+      grp.add(cyl(.32, .32, .72, '#728187', 0, .39, 0, 14)); grp.add(cyl(.28, .28, .08, '#424a4e', 0, .78, 0, 14))
+      grp.add(box(.48, .35, .38, '#394044', .5, .22, 0)); for (const x of [-.28, .28]) grp.add(cyl(.035, .035, .65, '#9aa1a2', x, .34, .34, 8))
+      break
+    }
+    case 'l9patiochair': {
+      const cc = typeof s.data?.color === 'string' ? s.data.color : '#cbc8ba'
+      grp.add(box(.62, .08, .64, cc, 0, .48, 0)); grp.add(box(.62, .72, .08, cc, 0, .79, -.28))
+      for (const x of [-.27, .27]) for (const z of [-.26, .26]) { const leg = box(.045, .52, .045, '#666965', x, .26, z); leg.rotation.x = z * .25; grp.add(leg) }
+      if (s.data?.deg !== undefined) grp.rotation.y = Number(s.data.deg) * Math.PI / 180
+      break
+    }
+    case 'l9barbecue': {
+      grp.add(cyl(.42, .37, .42, '#25282a', 0, .75, 0, 16)); grp.add(cyl(.43, .24, .28, '#313538', 0, 1.08, 0, 16))
+      grp.add(box(.06, .68, .06, '#696d6d', -.26, .34, -.22)); grp.add(box(.06, .68, .06, '#696d6d', .26, .34, -.22))
+      for (let x = -.28; x <= .28; x += .1) grp.add(box(.025, .02, .58, '#777c7d', x, .97, 0))
+      break
+    }
+    case 'l9swing': {
+      const metal = '#596169'
+      for (const x of [-1.5, 1.5]) for (const z of [-.42,.42]) {
+        const a = box(.08, 2.4, .08, metal, x, 1.15, z); a.rotation.z = x < 0 ? -.2 : .2; a.rotation.x = z < 0 ? -.12 : .12; grp.add(a)
+      }
+      grp.add(box(3.2, .1, .1, metal, 0, 2.25, 0))
+      for (const x of [-.65, .65]) { for (const dx of [-.23, .23]) grp.add(box(.018, 1.25, .018, '#786b56', x + dx, 1.56, 0)); grp.add(box(.58, .07, .27, '#805243', x, .93, 0)) }
+      break
+    }
+    case 'l9slide': {
+      grp.add(box(1.2, .12, 1.1, '#4e6b7f', 0, 1.65, -.95))
+      for (const x of [-.45,.45]) for (const z of [-1.24,-.68]) grp.add(box(.08, 1.6, .08, '#596169', x, .8, z))
+      // 背面梯架与横档从地面连续接到平台，不再只有一块悬空的踏板。
+      for (const x of [-.42,.42]) { const ladder=box(.07,1.75,.07,'#596169',x,.83,-1.42); ladder.rotation.x=-.12; grp.add(ladder) }
+      for(let y=.22;y<1.55;y+=.27) grp.add(box(.86,.045,.07,'#788088',0,y,-1.48+.08*y))
+      const slide = box(1.0, .1, 2.8, '#9a5140', 0, .85, .45); slide.rotation.x = .48; grp.add(slide)
+      for (const x of [-.53,.53]) { const rail = box(.07, .32, 2.8, '#c28448', x, 1.02, .45); rail.rotation.x = .48; grp.add(rail) }
+      grp.add(box(1.04,.09,.48,'#884638',0,.08,1.78))
+      break
+    }
+    case 'l9powerpole': {
+      grp.add(cyl(.12, .17, 5.8, '#4b3828', 0, 2.9, 0, 10)); grp.add(box(2.25, .14, .16, '#49372a', 0, 5.18, 0))
+      for (const x of [-.86, 0, .86]) { grp.add(cyl(.1, .08, .24, '#676b68', x, 5.4, 0, 10)); grp.add(cyl(.035, .035, 2.0, '#181a1d', x, 5.46, 0, 6).rotateX(Math.PI/2)) }
+      break
+    }
+    case 'l9fieldgate': {
+      for (const z of [-1.7,1.7]) grp.add(box(.15, 1.35, .15, '#4c3828', 0, .68, z))
+      for (const y of [.36,.78,1.18]) grp.add(l9PbrBox(.12, .1, 3.25, 'l9_furniture_wood', '#8a694a', '#684a31', '#332419', .8, .72, .12, .46, 0, y, 0))
+      if (s.data?.deg !== undefined) grp.rotation.y = Number(s.data.deg) * Math.PI / 180
+      break
+    }
+    case 'l9leafpile': {
+      const rr = mulberry(s.x * 97 + s.y * 31); const cs = ['#5f3d24','#79502b','#493727','#786044']
+      for (let i=0;i<18;i++) { const leaf=box(.18+rr()*.25,.018,.08+rr()*.12,cs[i%cs.length],(rr()-.5)*1.5,.02+rr()*.09,(rr()-.5)*.7); leaf.rotation.y=rr()*Math.PI; grp.add(leaf) }
+      break
+    }
+    case 'l9trashbag': {
+      const n = Number(s.data?.count ?? 2); for(let i=0;i<n;i++){const bag=new THREE.Mesh(new THREE.DodecahedronGeometry(.28+i*.03,0),new THREE.MeshLambertMaterial({color:i%2?'#17191b':'#25272a'}));bag.scale.set(.9,1.25,.85);bag.position.set((i-(n-1)/2)*.33,.33,(i%2)*.12);grp.add(bag);grp.add(cyl(.045,.02,.12,'#2d3032',bag.position.x,.68,bag.position.z,6))}
+      break
+    }
+    case 'l9tree': {
+      const style = Number(s.data?.style ?? 0) % 5, sc = Number(s.data?.scale ?? 100) / 100
+      const trunk = ['#4c392b','#44352a','#56402d','#3e332b','#514235'][style]
+      const leaf = [['#263a2d','#344b35'],['#3b432c','#51563a'],['#2b3f38','#36534b'],['#443b2b','#5b4a30'],['#25342a','#314632']][style]
+      grp.add(cyl(.17,.25,3.5,trunk,0,1.75,0,10))
+      for (const [ry,rz,rr] of [[2.1,-.35,-.65],[2.45,.28,.72],[2.78,-.12,-.5]] as const) {
+        const branch=cyl(.055,.1,1.4,trunk,0,ry,rz,7); branch.rotation.z=rr; grp.add(branch)
+      }
+      const crowns: [number,number,number,number][] = [[0,3.65,0,1.05],[-.7,3.35,.12,.76],[.68,3.45,-.2,.82],[.15,4.32,.08,.72],[-.2,3.72,.68,.7]]
+      for (let i=0;i<crowns.length;i++){const [x,y,z,r]=crowns[i];const crown=new THREE.Mesh(new THREE.DodecahedronGeometry(r,1),new THREE.MeshLambertMaterial({color:leaf[i%2]}));crown.position.set(x,y,z);crown.scale.set(1.18,.86,1.05);grp.add(crown)}
+      grp.scale.setScalar(sc)
+      break
+    }
+    case 'l9shrub': {
+      const style=Number(s.data?.style??0)%4, sc=Number(s.data?.scale??100)/100
+      const colors=[['#31412f','#42543a'],['#3c442f','#515a3b'],['#273b34','#395047'],['#443b2d','#584a34']][style]
+      for(const [x,y,z,r,c] of [[-.28,.34,0,.42,0],[.24,.37,.08,.48,1],[0,.47,-.23,.43,0]] as const){const bush=new THREE.Mesh(new THREE.DodecahedronGeometry(r,1),new THREE.MeshLambertMaterial({color:colors[c]}));bush.position.set(x,y,z);bush.scale.set(1.15,.82,1);grp.add(bush)}
+      grp.add(cyl(.035,.06,.48,'#4b3929',0,.24,0,7)); grp.scale.setScalar(sc)
+      break
+    }
+    case 'l9watchsign': {
+      // 反光但不自发光的铝制牌；只有路灯或手电照到时，巨眼与文字才会完整显现。
+      grp.add(cyl(.045, .065, 2.65, '#4b4f50', 0, 1.325, 0, 8))
+      // 牌板安装在立杆前方并留出间隙。旧版两者共面相交，合批后立杆会穿出
+      // 正面，正好遮住警告图案中央。
+      const boardZ = .09
+      grp.add(box(.78, 1.05, .055, '#d4d3cc', 0, 2.16, boardZ))
+      const face = new THREE.Mesh(new THREE.PlaneGeometry(.72, .96), new THREE.MeshStandardMaterial({
+        map: l9WatchSignTexture(), color: '#ffffff', roughness: .46, metalness: .08, side: THREE.DoubleSide,
+      }))
+      face.position.set(0, 2.16, boardZ + .031); grp.add(face)
+      for (const y of [1.84, 2.48]) {
+        const bolt = cyl(.018, .018, .025, '#73797b', 0, y, boardZ + .048, 8); bolt.rotation.x = Math.PI / 2; grp.add(bolt)
+      }
+      grp.rotation.y = Number(s.data?.deg ?? 0) * Math.PI / 180
+      grp.rotation.z = (Number(s.data?.style ?? 0) - 1) * .014
+      break
+    }
+    case 'l9directionsign': {
+      // 多块有真实厚度的旧木箭头围绕同一根柱，各自朝向不同的黑暗街区。
+      const wood = l9PbrMaterial('l9_furniture_wood', '#7e6448', '#8e765c', '#493a2d', .78, .1, .52)
+      grp.add(cyl(.09, .13, 3.25, '#4c3828', 0, 1.625, 0, 9))
+      const count = 6 + (Number(s.data?.style ?? 0) & 1)
+      for (let i = 0; i < count; i++) {
+        const board = new THREE.Group()
+        const flip = i % 3 === 1
+        const sh = new THREE.Shape()
+        sh.moveTo(-.66, -.13); sh.lineTo(.42, -.13); sh.lineTo(.72, 0)
+        sh.lineTo(.42, .13); sh.lineTo(-.66, .13); sh.closePath()
+        const plank = new THREE.Mesh(new THREE.ExtrudeGeometry(sh, {
+          depth: .065, bevelEnabled: true, bevelSegments: 1, bevelSize: .012, bevelThickness: .012,
+        }), wood)
+        plank.scale.x = flip ? -1 : 1; board.add(plank)
+        const nail = cyl(.018, .018, .082, '#55595a', flip ? .38 : -.38, 0, .08, 8)
+        nail.rotation.x = Math.PI / 2; board.add(nail)
+        board.position.y = 1.05 + i * .31
+        board.rotation.y = (i * 1.73 + Number(s.data?.style ?? 0) * .47) % (Math.PI * 2)
+        board.rotation.z = ((i % 3) - 1) * .045
+        grp.add(board)
+      }
+      grp.rotation.y = Number(s.data?.deg ?? 0) * Math.PI / 180
+      break
+    }
+    case 'arrowsign': {
+      // 第九大道最后一块路牌：更宽的城市道路从牌后消失在灰蓝天际。
+      grp.add(cyl(.075, .09, 2.45, '#62686b', -.42, 1.22, 0, 10))
+      grp.add(cyl(.075, .09, 2.45, '#62686b', .42, 1.22, 0, 10))
+      grp.add(box(2.15, .74, .11, '#263b34', 0, 2.05, 0))
+      const panel = new THREE.Mesh(new THREE.PlaneGeometry(2.02, .62), new THREE.MeshBasicMaterial({ map: signTexture('LEVEL 11  →', false), side: THREE.DoubleSide }))
+      panel.position.set(0, 2.05, .061); grp.add(panel)
+      const road = new THREE.Mesh(new THREE.PlaneGeometry(4.4, 7.5), l9PbrMaterial('l9_asphalt', '#778087', '#3a3e43', '#202328', .52, .28, .55))
+      road.rotation.x = -Math.PI / 2; road.position.set(0, .012, 3.2); grp.add(road)
+      for (const x of [-1.82,1.82]) for (let z=.2;z<6.8;z+=1.2) grp.add(box(.08,.04,.62,'#a8a99e',x,.035,z))
+      break
+    }
+    case 'grasspath': {
+      const path = new THREE.Mesh(new THREE.PlaneGeometry(1.65, 6.8), l9PbrMaterial('l9_path', '#c7b18c', '#6f5a3d', '#3b3025', .99, .018, .75))
+      path.rotation.x = -Math.PI/2; path.position.set(0,.025,2.9); grp.add(path)
+      for (const x of [-1.1,1.1]) for(let z=0;z<6;z+=.65){const tuft=box(.06,.22+.12*Math.sin(z),.04,'#495038',x+.12*Math.sin(z*3),.12,z);tuft.rotation.z=x*.16;grp.add(tuft)}
+      grp.add(box(1.4,.42,.08,'#6c5539',0,1.55,.25)); grp.add(cyl(.055,.07,1.55,'#4b3828',-.55,.77,.25,8)); grp.add(cyl(.055,.07,1.55,'#4b3828',.55,.77,.25,8))
+      break
+    }
+    case 'l9caveback': {
+      // 从郊区回看 Level 8：洞口嵌进贴地石丘，不再由一圈石头悬浮在道路尽头。
+      const rr=mulberry(9098), rock=caveRockMaterial('phreatic',.9)
+      const mound=new THREE.Mesh(new THREE.SphereGeometry(2.9,24,12,0,Math.PI*2,0,Math.PI/2),rock)
+      mound.scale.set(1.15,1,.66);mound.position.set(0,-.06,-1.72);mound.rotation.y=.18;grp.add(mound)
+      // 两翼与丘脚用不规则巨石把球面轮廓打散，并保证视觉上真正接触草地/路肩。
+      for(let i=0;i<22;i++){
+        const a=(i/21)*Math.PI
+        const x=Math.cos(a)*2.65+(rr()-.5)*.34
+        const y=.16+Math.sin(a)*1.15+rr()*.35
+        const st=new THREE.Mesh(new THREE.DodecahedronGeometry(.28+rr()*.34,1),rock)
+        st.position.set(x,y,-.35-rr()*.7);st.scale.set(.9+rr()*.8,.55+rr()*.65,.8+rr()*.75);st.rotation.set(rr()*2,rr()*2,rr()*2);grp.add(st)
+      }
+      const cave = new THREE.Mesh(new THREE.CircleGeometry(1.02, 32), new THREE.MeshBasicMaterial({ color: '#131b1c', side: THREE.DoubleSide }))
+      cave.scale.set(1.18, 1.35, 1); cave.position.set(0,1.35,.18); grp.add(cave)
+      for(let i=0;i<19;i++){const a=i/19*Math.PI*2;const st=new THREE.Mesh(new THREE.DodecahedronGeometry(.19+rr()*.22,1),rock);st.position.set(Math.cos(a)*1.28,1.35+Math.sin(a)*1.42,0);st.scale.set(.8+rr()*.7,.65+rr()*.65,.7+rr()*.6);st.rotation.set(rr()*2,rr()*2,rr()*2);grp.add(st)}
+      const damp=new THREE.Mesh(new THREE.PlaneGeometry(1.55,2.8),new THREE.MeshBasicMaterial({color:'#29434a',transparent:true,opacity:.22,blending:THREE.AdditiveBlending,depthWrite:false}));damp.position.set(0,1.34,.2);grp.add(damp)
+      break
+    }
+    case 'ninthroad': {
+      // 第九大道尽头收束成嵌在岩层中的狭窄天然洞口；洞内直接显示 Level 9
+      // 午夜郊区的湿路、住宅和残亮路灯，不再用纯黑圆片遮挡。
+      const preview = new THREE.Mesh(
+        new THREE.CircleGeometry(1, 40),
+        new THREE.MeshBasicMaterial({ map: l9CavePreviewTexture(), color: '#bdc9d0', side: THREE.DoubleSide, fog: true }),
+      )
+      preview.scale.set(1.34, 1.3, 1); preview.position.set(0, 1.47, 0.14); grp.add(preview)
+      const rr = mulberry(9008)
+      const rock = caveRockMaterial('phreatic', 0.96)
+      for (let i = 0; i < 20; i++) {
+        const a = i / 20 * Math.PI * 2
+        const radius = 0.19 + rr() * 0.26
+        const stone = new THREE.Mesh(new THREE.DodecahedronGeometry(radius, 1), rock)
+        stone.position.set(Math.cos(a) * 1.53, 1.47 + Math.sin(a) * 1.42, 0)
+        stone.scale.set(0.85 + rr() * 0.8, 0.62 + rr() * 0.75, 0.72 + rr() * 0.9)
+        stone.rotation.set(rr() * Math.PI, rr() * Math.PI, rr() * Math.PI)
+        grp.add(stone)
+      }
+      // 路标贴着洞颈左壁设置，不侵占中央可通行宽度。
+      grp.add(cyl(0.04, 0.05, 1.42, '#6e6961', -1.15, 0.71, 0.2, 8))
+      grp.add(box(0.72, 0.36, 0.07, '#d8d2c4', -1.15, 1.22, 0.2))
+      const mark = megEmblem(0.13, '#263f5b'); mark.position.set(-1.35, 1.22, 0.241); grp.add(mark)
+      break
+    }
+    case 'l8vent': {
+      // 罗特尼斯大丛林天顶通风口：顶端法兰嵌入真实洞顶，下方是一截短方管。
+      // 模型顶面固定为 2.42m，renderer 会将它精确对齐 caveCeilingAt。
+      const rust = litMaterial({ color: '#493428', roughness: 0.88, metalness: 0.5, envBase: 0.18 })
+      const rustDark = litMaterial({ color: '#2b211c', roughness: 0.94, metalness: 0.38, envBase: 0.1 })
+      const metalBox = (w: number, h: number, d: number, mat: THREE.Material, x: number, y: number, z: number) => {
+        const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat)
+        mesh.position.set(x, y, z); grp.add(mesh); return mesh
+      }
+      // 岩面下的四边法兰（中央真正中空，不再用整块方盒伪装洞口）。
+      metalBox(1.44, 0.08, 0.16, rustDark, 0, 2.38, -0.64)
+      metalBox(1.44, 0.08, 0.16, rustDark, 0, 2.38, 0.64)
+      metalBox(0.16, 0.08, 1.12, rustDark, -0.64, 2.38, 0)
+      metalBox(0.16, 0.08, 1.12, rustDark, 0.64, 2.38, 0)
+      // 0.68m 短方管，内径约 1.02m，外壁深浅交替表现锈蚀钣接钢板。
+      metalBox(0.09, 0.68, 1.08, rust, -0.555, 2.04, 0)
+      metalBox(0.09, 0.68, 1.08, rust, 0.555, 2.04, 0)
+      metalBox(1.02, 0.68, 0.09, rustDark, 0, 2.04, -0.555)
+      metalBox(1.02, 0.68, 0.09, rust, 0, 2.04, 0.555)
+      // 两道外露加强箍使方管不像四块悬空板。
+      for (const yy of [1.77, 2.29]) {
+        metalBox(1.2, 0.045, 0.055, rustDark, 0, yy, -0.59)
+        metalBox(1.2, 0.045, 0.055, rustDark, 0, yy, 0.59)
+        metalBox(0.055, 0.045, 1.08, rustDark, -0.59, yy, 0)
+        metalBox(0.055, 0.045, 1.08, rustDark, 0.59, yy, 0)
+      }
+      const hole = new THREE.Mesh(new THREE.PlaneGeometry(1.02, 1.02), new THREE.MeshBasicMaterial({ color: '#010306', side: THREE.DoubleSide }))
+      hole.rotation.x = Math.PI / 2; hole.position.y = 1.685; grp.add(hole)
+      for (let i = -2; i <= 2; i++) {
+        metalBox(0.05, 0.045, 1.02, i % 2 ? rust : rustDark, i * 0.2, 1.655, 0)
+        metalBox(1.02, 0.045, 0.05, i % 2 ? rustDark : rust, 0, 1.65, i * 0.2)
+      }
+      for (let i = 0; i < 5; i++) {
+        const cap = new THREE.Mesh(new THREE.SphereGeometry(0.09, 7, 4, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshBasicMaterial({ color: i % 2 ? '#66e0d0' : '#c8e066' }))
+        cap.position.set(-0.52 + i * 0.26, 1.62, i % 2 ? 0.59 : -0.59); grp.add(cap)
+      }
+      break
+    }
+    case 'tarpool': {
+      const tar = new THREE.Mesh(new THREE.CircleGeometry(0.86, 24), new THREE.MeshLambertMaterial({ color: '#090809', emissive: '#2a0d04', emissiveIntensity: 0.35, side: THREE.DoubleSide }))
+      tar.rotation.x = -Math.PI / 2; tar.position.y = 0.035; tar.scale.set(1.3, 0.82, 1); grp.add(tar)
+      const rim = new THREE.Mesh(new THREE.TorusGeometry(0.82, 0.12, 7, 22), new THREE.MeshLambertMaterial({ color: '#493b32' }))
+      rim.rotation.x = -Math.PI / 2; rim.position.y = 0.07; rim.scale.set(1.3, 0.82, 1); grp.add(rim)
+      for (const [x, z, h] of [[-0.28, 0.05, 0.72], [0.3, -0.18, 0.5]] as const) {
+        const arm = cyl(0.05, 0.09, h, '#0a090a', x, h / 2, z, 7); arm.rotation.z = x * 0.8; grp.add(arm)
+      }
+      break
+    }
+    case 'ceilclip': {
+      // 看似与普通岩层一致、却以不自然频率明灭的天顶裂隙。
+      for (let i = 0; i < 5; i++) {
+        const slit = new THREE.Mesh(new THREE.PlaneGeometry(0.12 + i * 0.08, 0.035), strobeMat(i * 0.77, 0.09))
+        slit.rotation.x = Math.PI / 2; slit.rotation.z = -0.65 + i * 0.31; slit.position.set((i - 2) * 0.17, 2.42 + (i % 2) * 0.035, (i % 3 - 1) * 0.16); grp.add(slit)
+      }
       break
     }
     case 'notexit': {

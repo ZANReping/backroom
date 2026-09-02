@@ -79,17 +79,19 @@ range?: { x0: number; y0: number; x1: number; y1: number; variant?: string }, //
       prop.oceanScatteredBones(c)   // 散落骨头
       break
     }
-    case 'caves': { // L8「Cave Systems」——岩壁、苔藓、被风化的路标
-      decal.cavesRockWear(c)      // 岩壁风化痕
+    case 'caves': { // L8「洞穴系统」——只保留立体地面装饰，不再生成墙面贴花
       prop.cavesRubble(c)         // 碎石堆
       prop.cavesGlowMoss(c)       // 发光苔藓斑
-      decal.cavesOldRoadsigns(c)  // 风化旧路标
       break
     }
     case 'suburb': { // L9「The Suburbs」——湿沥青、落叶、水洼
-      decal.suburbPuddles(c)    // 水洼
-      prop.suburbLeaves(c)      // 落叶
-      prop.suburbTrashcans(c)   // 垃圾桶
+      // 无限 L9 的湿地/落叶堆/垃圾袋已由 chunk 生成器按道路材质摆放；跳过旧版随机满地散布，
+      // 避免装饰落进住宅室内，并省去每个已加载 chunk 数十块临时几何。
+      if (!m.inf) {
+        decal.suburbPuddles(c)
+        prop.suburbLeaves(c)
+        prop.suburbTrashcans(c)
+      }
       break
     }
     case 'field': { // L10「Bumper Crop」——车辙、干草、木料

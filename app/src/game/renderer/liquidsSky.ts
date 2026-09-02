@@ -1,10 +1,11 @@
 // 室外天空盒/远景剪影 + 液体水面（深水泳池/浅水洼）
 import * as THREE from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
-import { ELEV_H, type GameMap } from '../world/mapgen'
+import { ELEV_H, floorHeight, type GameMap } from '../world/mapgen'
 import type { LevelDef } from '../core/types'
 import { col, SKY, litMaterial, noiseTexture } from './shared'
 import { makeSkyMesh, SKY_PROFILES } from './skybox'
+import { L8_LAKE_CENTER, L8_LAKE_WATER_RADIUS, l8GroundAt, l8LakeDistanceAt } from '../world/infiniteL8'
 
 // v57t：真实水体——给水面材质注入「顶点涌浪 + 程序化波光」着色器；renderer 每帧推进统一时间。
 // 不做真实流体物理：多组方向正弦波叠加出浪面法线（低频涌浪+高频碎波随距离淡出防混叠），
@@ -14,23 +15,23 @@ export function updateLiquidTime(t: number) {
   for (const u of liquidWaveUniforms) u.value = t
 }
 export function resetLiquidWaves() { liquidWaveUniforms.length = 0 }
-function addRealWaterFX(mat: THREE.Material, sea: boolean) {
+function addRealWaterFX(mat: THREE.Material, sea: boolean, nightPool = false) {
   if (mat.userData.liquidWave) return
   mat.userData.liquidWave = 1
   const u = { value: 0 }
   liquidWaveUniforms.push(u)
   // 深海↔天空反射的配色：L7 海面取阴天灰蓝海，室内泳池取更暗的室内水光
-  const deep = col(sea ? '#12262e' : '#101d24')
-  const skyc = col(sea ? '#5d7683' : '#26333a')
-  const body = col(sea ? '#0d303d' : '#0c2733') // v58：水体本色——视线穿水被吸收后呈现的暗青水色
+  const deep = col(sea ? '#12262e' : nightPool ? '#071117' : '#101d24')
+  const skyc = col(sea ? '#5d7683' : nightPool ? '#151f26' : '#26333a')
+  const body = col(sea ? '#0d303d' : nightPool ? '#06151d' : '#0c2733') // 夜间泳池不再继承白昼亮蓝反射
   const c3 = (c: THREE.Color) => `vec3(${c.r.toFixed(4)}, ${c.g.toFixed(4)}, ${c.b.toFixed(4)})`
   const swellK = sea ? 1 : 0.05 // 顶点涌浪幅度：海面 ±0.15m 可见起伏；泳池仅微波纹防溢出池岸
   const normalAmp = sea ? 1.6 : 0.7 // 波面法线强度（艺术化夸大坡度，出碎浪明暗）
-  const reflMix = sea ? 0.62 : 0.35 // 菲涅尔反射混入比（保留部分受光，手电照水面仍可见）
-  const sheenK = sea ? 0.20 : 0.10 // 天光宽高光强度
-  const glintK = sea ? 1.3 : 0.5 // 细闪波光强度
+  const reflMix = sea ? 0.62 : nightPool ? 0.2 : 0.35 // 菲涅尔反射混入比（保留部分受光，手电照水面仍可见）
+  const sheenK = sea ? 0.20 : nightPool ? 0.035 : 0.10 // 天光宽高光强度
+  const glintK = sea ? 1.3 : nightPool ? 0.16 : 0.5 // 细闪波光强度
   const absorbSig = sea ? 0.25 : 0.4 // v58：水体吸收系数——海 24m+ 俯视即近全浓；泳池 1.7m 半浓见底
-  mat.customProgramCacheKey = () => (sea ? 'realWaterSea' : 'realWaterPool')
+  mat.customProgramCacheKey = () => (sea ? 'realWaterSea' : nightPool ? 'realWaterNightPool' : 'realWaterPool')
   mat.onBeforeCompile = (shader) => {
     shader.uniforms.uLiquidTime = u
     shader.vertexShader = shader.vertexShader
@@ -185,12 +186,40 @@ export function buildLiquidSurfaces(m: GameMap, def: LevelDef, g: THREE.Group, r
   // v13 液体水面：深水（泳池，可沉没游泳）+ 浅水洼（室内减速涟漪）
   const waterGeos: THREE.BufferGeometry[] = []
   const shallowGeos: THREE.BufferGeometry[] = []
+  const dampGeos: THREE.BufferGeometry[] = []
   // v57t：真实水体下 L7 海面每瓦片 2×2 细分（0.5m 网格），顶点涌浪轮廓更平滑
-  const seg = realWater && def.id === 7 ? 2 : 1
+  const seg = realWater && (def.id === 7 || def.id === 8) ? 2 : 1
+  const isShallow = (tx: number, ty: number) => tx >= 0 && ty >= 0 && tx < m.w && ty < m.h
+    && m.tiles[ty * m.w + tx] === 1 && m.liquid[ty * m.w + tx] === 2
   for (let y = RY0; y < RY1; y++)
     for (let x = RX0; x < RX1; x++) {
       const ii = y * m.w + x
-      if (m.tiles[ii] !== 1 || m.liquid[ii] === 0) continue
+      if (m.tiles[ii] !== 1) continue
+      // L8 岸外不再铺“浅水格”。水线外 1.35m 是贴着真实曲面的低反射潮湿岩面，不影响移动速度。
+      const worldX = x + 0.5 + (m.inf?.ox ?? 0), worldY = y + 0.5 + (m.inf?.oy ?? 0)
+      const dampLakeShore = def.id === 8 && m.inf !== undefined && m.liquid[ii] === 0
+        && l8LakeDistanceAt(worldX, worldY) >= L8_LAKE_WATER_RADIUS
+        && l8LakeDistanceAt(worldX, worldY) < L8_LAKE_WATER_RADIUS + 1.35
+      // 浅溪旁的干地不再以“另一格水”铺平；只在临水侧叠一块圆润潮湿岩面。
+      // 圆片略微跨过水线，会遮掉正方形的干/湿分界。
+      const wetDirs = m.liquid[ii] === 0 && def.id === 8
+        ? [[-1, 0], [1, 0], [0, -1], [0, 1]].filter(([dx, dy]) => isShallow(x + dx, y + dy))
+        : []
+      const nearShallow = wetDirs.length > 0
+      if (dampLakeShore || nearShallow) {
+        const damp = nearShallow ? new THREE.CircleGeometry(0.78, 18) : new THREE.PlaneGeometry(1.04, 1.04, 2, 2)
+        damp.rotateX(-Math.PI / 2)
+        const pos = damp.attributes.position as THREE.BufferAttribute
+        const dirX = nearShallow ? wetDirs.reduce((sum, q) => sum + q[0], 0) / wetDirs.length : 0
+        const dirY = nearShallow ? wetDirs.reduce((sum, q) => sum + q[1], 0) / wetDirs.length : 0
+        for (let v = 0; v < pos.count; v++) {
+          const px = x + 0.5 + dirX * 0.22 + pos.getX(v), py = y + 0.5 + dirY * 0.22 + pos.getZ(v)
+          pos.setXYZ(v, px, floorHeight(m, px, py, 0) + 0.012, py)
+        }
+        damp.computeVertexNormals()
+        dampGeos.push(damp)
+      }
+      if (m.liquid[ii] === 0) continue
       const geo = new THREE.PlaneGeometry(1, 1, seg, seg)
       geo.rotateX(-Math.PI / 2)
       // v58：真实水体按瓦片烘焙水深顶点属性——着色器据此计算视线穿水路径的吸收（深水浓、浅滩清）
@@ -200,12 +229,45 @@ export function buildLiquidSurfaces(m: GameMap, def: LevelDef, g: THREE.Group, r
         gg.setAttribute('aDepth', new THREE.BufferAttribute(new Float32Array(gg.attributes.position.count).fill(d), 1))
       }
       if (m.liquid[ii] === 1) {
-        geo.translate(x + 0.5, 0.03, y + 0.5) // 深水水面≈岸边地面
-        bakeDepth(geo)
-        waterGeos.push(geo)
+        // L8 地下湖由下方一张精确圆形水面统一生成；跳过按瓦片的方形水面，消除岸边方块溢水。
+        if (def.id !== 8) {
+          geo.translate(x + 0.5, 0.03, y + 0.5) // 深水水面≈岸边地面
+          bakeDepth(geo)
+          waterGeos.push(geo)
+        }
       } else {
-        geo.translate(x + 0.5, ELEV_H[m.elev[ii]] - 0.17, y + 0.5) // 浅水水面（洼底=所在高度档 -0.25；L7 入口房间高台湿毯）
-        shallowGeos.push(geo)
+        if (def.id === 8 && m.organicCave) {
+          // L8 浅水使用 2×2 细分：每个边界顶点都从同一个连续洞底高度场采样，
+          // 所以水-水相邻时共边的高度和法线完全一致，不再出现方格裂缝/阴影棋盘。
+          const smoothGeo = new THREE.PlaneGeometry(1, 1, 2, 2)
+          smoothGeo.rotateX(-Math.PI / 2)
+          const pos = smoothGeo.attributes.position as THREE.BufferAttribute
+          const normals = new Float32Array(pos.count * 3)
+          for (let v = 0; v < pos.count; v++) {
+            let lx = pos.getX(v), lz = pos.getZ(v)
+            const edgeNoise = (axis: number) => 0.055 + (Math.sin((axis + x * 3.17 + y * 5.31) * 7.1) * 0.5 + 0.5) * 0.035
+            // 只在水-地边缘小幅内收并打破笔直方格轮廓；水-水共边不内收，保证无缝。
+            if (lx < -0.49 && !isShallow(x - 1, y)) lx += edgeNoise(lz)
+            if (lx > 0.49 && !isShallow(x + 1, y)) lx -= edgeNoise(lz)
+            if (lz < -0.49 && !isShallow(x, y - 1)) lz += edgeNoise(lx + 11)
+            if (lz > 0.49 && !isShallow(x, y + 1)) lz -= edgeNoise(lx + 23)
+            const px = x + 0.5 + lx, py = y + 0.5 + lz
+            const h = floorHeight(m, px, py, 0) + 0.022
+            pos.setXYZ(v, px, h, py)
+            // 中心差分法线在所有瓦片共用同一公式，合并后不会在格边突变。
+            const eps = 0.18
+            const nx = floorHeight(m, px - eps, py, 0) - floorHeight(m, px + eps, py, 0)
+            const nz = floorHeight(m, px, py - eps, 0) - floorHeight(m, px, py + eps, 0)
+            const inv = 1 / Math.max(1e-5, Math.hypot(nx, eps * 2, nz))
+            normals[v * 3] = nx * inv; normals[v * 3 + 1] = eps * 2 * inv; normals[v * 3 + 2] = nz * inv
+          }
+          smoothGeo.setAttribute('normal', new THREE.BufferAttribute(normals, 3))
+          shallowGeos.push(smoothGeo)
+          geo.dispose()
+        } else {
+          geo.translate(x + 0.5, m.organicCave ? floorHeight(m, x + 0.5, y + 0.5, 0) + 0.018 : ELEV_H[m.elev[ii]] - 0.17, y + 0.5)
+          shallowGeos.push(geo)
+        }
         // v57m：L7 悬浮舱体下方是镂空的海面——同一瓦片在 0.03m 再铺一层海洋水面，
         // 从下方看舱底悬于海上；从舱内地板以上看它被地板遮挡。
         if (def.id === 7 && m.tint[ii] === 33) {
@@ -217,6 +279,26 @@ export function buildLiquidSurfaces(m: GameMap, def: LevelDef, g: THREE.Group, r
         }
       }
     }
+  // 固定地下湖由洞心所属 chunk 独占一张圆形面：轮廓与解析水域半径完全一致，不再越过石岸。
+  if (def.id === 8 && m.inf) {
+    const lakeX = L8_LAKE_CENTER.x - m.inf.ox, lakeY = L8_LAKE_CENTER.y - m.inf.oy
+    const ownsCenter = !range || (lakeX >= RX0 && lakeX < RX1 && lakeY >= RY0 && lakeY < RY1)
+    if (ownsCenter) {
+      const lake = new THREE.CircleGeometry(L8_LAKE_WATER_RADIUS, 96)
+      lake.rotateX(-Math.PI / 2)
+      if (realWater) {
+        const pos = lake.attributes.position as THREE.BufferAttribute
+        const depths = new Float32Array(pos.count)
+        for (let v = 0; v < pos.count; v++) {
+          const wx = L8_LAKE_CENTER.x + pos.getX(v), wy = L8_LAKE_CENTER.y + pos.getZ(v)
+          depths[v] = Math.max(0.25, 0.03 - l8GroundAt(m.inf.seed, wx, wy))
+        }
+        lake.setAttribute('aDepth', new THREE.BufferAttribute(depths, 1))
+      }
+      lake.translate(lakeX, 0.03, lakeY)
+      waterGeos.push(lake)
+    }
+  }
   if (waterGeos.length) {
     g.add(new THREE.Mesh(
       mergeGeometries(waterGeos)!,
@@ -224,25 +306,28 @@ export function buildLiquidSurfaces(m: GameMap, def: LevelDef, g: THREE.Group, r
       // v57m：L7 海面提高不透明度与自发光，修复纯黑/看不见水面，并作为普遍自然光来源
       (() => {
         const sea = def.id === 7
+        const caveLake = def.id === 8
+        const nightPool = def.id === 9
         // v57t：不使用任何水面贴图——纯色海面；真实水体改由着色器程序化生成浪面法线/反射/波光
         // v58：真实水体基础不透明度大幅降低（0.94→0.42）——透明感由着色器按穿水路径吸收重建：
         //      深水俯视呈暗色水体（非清晰透视），浅滩/泳池保持清澈
         const params = {
-          color: sea ? '#1b5a76' : '#2a6fd8',
+          color: sea ? '#1b5a76' : caveLake ? '#173b40' : nightPool ? '#0b2430' : '#2a6fd8',
           transparent: true,
-          opacity: realWater ? (sea ? 0.42 : 0.45) : (sea ? 0.94 : 0.66),
-          emissive: sea ? '#0d2e3e' : '#10355e',
+          opacity: realWater ? (sea ? 0.42 : caveLake ? 0.5 : nightPool ? 0.34 : 0.45) : (sea ? 0.94 : caveLake ? 0.76 : nightPool ? 0.48 : 0.66),
+          emissive: sea ? '#0d2e3e' : caveLake ? '#07191c' : nightPool ? '#010407' : '#10355e',
           side: THREE.DoubleSide,
-          roughness: sea ? 0.08 : 0.12,
+          roughness: sea ? 0.08 : caveLake ? 0.1 : nightPool ? 0.2 : 0.12,
           metalness: 0.06,
-          envBase: sea ? 0.95 : 0.9,
+          envBase: sea ? 0.95 : caveLake ? 0.72 : nightPool ? 0.42 : 0.9,
         } as THREE.MeshLambertMaterialParameters & { roughness?: number; metalness?: number; envBase?: number }
         if (!realWater) { // 真实水体的浪面法线由着色器程序化生成，不再叠噪声法线贴图
           params.normalMap = noiseTexture('#7a8a92', '#5a6a72')
-          params.normalScale = new THREE.Vector2(sea ? 0.46 : 0.35, sea ? 0.46 : 0.35)
+          const normalStrength = sea ? 0.46 : caveLake ? 0.3 : 0.35
+          params.normalScale = new THREE.Vector2(normalStrength, normalStrength)
         }
         const mat = litMaterial(params)
-        if (realWater) addRealWaterFX(mat, sea)
+        if (realWater) addRealWaterFX(mat, sea, nightPool)
         return mat
       })(),
     ))
@@ -255,10 +340,22 @@ export function buildLiquidSurfaces(m: GameMap, def: LevelDef, g: THREE.Group, r
     g.add(new THREE.Mesh(
       mergeGeometries(shallowGeos)!,
       litMaterial({
-        color: '#28424e', transparent: true, opacity: 0.55, emissive: '#0c1c24', side: THREE.DoubleSide,
-        roughness: 0.15, metalness: 0.05, envBase: 0.7,
+        color: def.id === 8 ? '#183a3e' : '#28424e', transparent: true, opacity: def.id === 8 ? 0.43 : 0.55,
+        emissive: def.id === 8 ? '#061315' : '#0c1c24', side: THREE.DoubleSide,
+        roughness: def.id === 8 ? 0.3 : 0.15, metalness: def.id === 8 ? 0.02 : 0.05, envBase: def.id === 8 ? 0.42 : 0.7,
       }),
     ))
     ;(g.children[g.children.length - 1] as THREE.Mesh).userData.noCastShadow = 1 // v58：浅洼同理不投影
+  }
+  if (dampGeos.length) {
+    const dampMesh = new THREE.Mesh(
+      mergeGeometries(dampGeos)!,
+      litMaterial({
+        color: '#343d39', transparent: true, opacity: 0.24, emissive: '#050807', side: THREE.DoubleSide,
+        roughness: 0.2, metalness: 0.02, envBase: 0.48,
+      }),
+    )
+    dampMesh.userData.noCastShadow = 1
+    g.add(dampMesh)
   }
 }

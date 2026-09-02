@@ -1,6 +1,6 @@
 // ================= v54：设计模式数据提取——布局条目（DESIGN-GUIDE.md §2）=================
 // 覆盖三大类布局，全部以固定种子确定性生成代表性实例后逐字段提取：
-//   据点（outposts.ts 注册表 ×7，含多层 EL3A/Gamma）——generateLevel(levelDefOf(levelId), seed, true)
+//   据点（outposts.ts 完整注册表，含多层 EL3A/Gamma 与 L8 两处洞穴前哨）——generateLevel(levelDefOf(levelId), seed, true)
 //   无限层变体（L0 9 变体 / L1 7 区段 / L2 4 廊道变体 / L3 2 灯光变体 + 4 特征房间）——各层 genL*ChunkRaw
 //   预制件（prefabs/ 注册表 ×11）——合成 w×h 全墙 GameMap 上直接调用 fill 回调
 // 概率类数值（变体概率/地标/陷阱/画作等）从生成器源码读出实际值，写入 spawnRules

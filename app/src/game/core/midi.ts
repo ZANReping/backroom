@@ -184,6 +184,8 @@ export function defaultSongId(level: number): string {
   // v56：Tom 的餐馆（104）为不属于任何团体的独立餐馆——专属曲，不走 wanderer 团体曲
   if (level === 104) return 'tom'
   const faction = factionOfLevel(level)
+  // 哈莫兹据点仍属于 Level 8 洞穴声场；暂不伪造一份不存在的团体 MIDI 资源。
+  if (faction === 'hammoz') return 'l8'
   if (faction) return faction
   return 'l0'
 }

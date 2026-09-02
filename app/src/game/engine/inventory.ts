@@ -1,6 +1,6 @@
 // v53：背包/装备/物品使用（槽位读写、快捷使用/丢弃、粉笔头、迁跃浆果）——
 // 自 engine.ts 拆分，逻辑逐语句搬运。
-import { ITEMS, itemName } from '../content/items'
+import { ITEMS, itemName, itemUseProfile, type ItemUseProfile } from '../content/items'
 import { tileAt } from '../world/mapgen'
 import { audio } from '../core/audio'
 import type { Engine, InvSlot, SlotRef, SlotWhere } from '../engine'
@@ -64,7 +64,51 @@ export function consumeItem(eng: Engine, type: string): boolean {
   }
   return false
 }
-export function useSlot(eng: Engine, where: SlotWhere, i: number) {
+/** 开始使用物品。返回 true 表示进入了需要回到游戏画面播放的计时动作。 */
+export function useSlot(eng: Engine, where: SlotWhere, i: number): boolean {
+  const s = eng.slotGet({ w: where, i })
+  if (!s) return false
+  const def = ITEMS[s.type]
+  if (eng.usingItem) {
+    eng.msg(`正在${eng.usingItem.label}${itemName(eng.usingItem.type)}。`, 'system')
+    return false
+  }
+  let profile: ItemUseProfile | null = itemUseProfile(def)
+  // 滋水枪自饮虽不扣除枪本体，但同样需要完成举枪饮用动作后才消耗储液。
+  if (s.type === 'squirtgun' && eng.squirtAmmo > 0 && eng.squirtTank !== 'none') {
+    profile = { duration: 1.35, anim: 'drink', label: '饮用' }
+  }
+  if (!profile) {
+    finishUseSlot(eng, where, i)
+    return false
+  }
+  eng.searching = null
+  eng.usingItem = {
+    where, i, type: s.type, tag: s.tag, t: 0, dur: profile.duration,
+    anim: profile.anim, label: profile.label,
+    targetJerry: !!(s.type === 'almond' && eng.player.level === 274 && !eng.jerryTamed && eng.aimJerry()),
+  }
+  audio.uiTick()
+  return true
+}
+
+/** 主循环推进消耗品动作；只有完整结束且原槽位仍是同一件物品时才结算。 */
+export function updateItemUse(eng: Engine, dt: number) {
+  const u = eng.usingItem
+  if (!u) return
+  const s = eng.slotGet({ w: u.where, i: u.i })
+  if (!s || s.type !== u.type || s.tag !== u.tag) {
+    eng.usingItem = null
+    eng.msg('使用动作中断了。', 'system')
+    return
+  }
+  u.t = Math.min(u.dur, u.t + dt)
+  if (u.t < u.dur) return
+  eng.usingItem = null
+  finishUseSlot(eng, u.where, u.i, !!u.targetJerry)
+}
+
+function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = false) {
   const s = eng.slotGet({ w: where, i })
   if (!s) return
   const def = ITEMS[s.type]
@@ -91,8 +135,6 @@ export function useSlot(eng: Engine, where: SlotWhere, i: number) {
         return
       }
       eng.squirtAmmo--
-      eng.attackAnimT = 0.35
-      eng.attackAnimKind = 'drink' // 举到嘴边的饮用动画
       audio.pickup()
       if (eng.squirtTank === 'almond') { eng.player.sanity = Math.min(100, eng.player.sanity + 10); eng.msg('你就着储罐喝了一口杏仁水——甜腻。（理智 +10）', 'loot') }
       else if (eng.squirtTank === 'cashew') { eng.player.sanity = Math.max(0, eng.player.sanity - 10); eng.msg('你就着储罐喝了一口腰果水——苦涩烧喉。（理智 -10）', 'damage') }
@@ -114,7 +156,7 @@ export function useSlot(eng: Engine, where: SlotWhere, i: number) {
   const applyThirst = (v?: number) => { if (v) p.thirst = Math.max(0, Math.min(100, p.thirst + v)) }
   let noConsume = false // v51：人制品效应拒食——效果门控时不消耗物品
   // v45：对杰瑞给予杏仁水（Level 274 视线内 2.5m）→ 驯服鹉主，而不是自己喝掉
-  if (s.type === 'almond' && p.level === 274 && !eng.jerryTamed && eng.aimJerry()) {
+  if (s.type === 'almond' && p.level === 274 && !eng.jerryTamed && targetJerry) {
     eng.tameJerry()
     return
   }
@@ -230,7 +272,15 @@ export function useSlot(eng: Engine, where: SlotWhere, i: number) {
   eng.emit({ kind: 'toast', text: `使用了 ${def.name}` })
   // v35：皇家口粮不是消耗品——使用不会吃掉它（仅「全部吃光」触发时才被消耗）；
   // v51：人制品效应拒食时不消耗
-  if (s.type !== 'royalration' && !noConsume) eng.consumeItem(s.type)
+  if (s.type !== 'royalration' && !noConsume) {
+    // 精确扣除动作开始时的槽位，避免同类物品较多时扣到另一个格子。
+    const current = eng.slotGet({ w: where, i })
+    if (current && current.type === s.type && current.tag === s.tag) {
+      current.count--
+      if (current.count <= 0) eng.slotSet({ w: where, i }, null)
+      eng.syncPassives()
+    }
+  }
 }
 // ---------- 粉笔头：在墙上画白色记号 ----------
 /** 手持粉笔头右键：在面前墙上画记号（消耗 1 支；同一墙面不重复消耗） */

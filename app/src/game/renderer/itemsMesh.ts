@@ -5,6 +5,9 @@ import { buildFlashlightMesh } from './flashlightMesh'
 import { buildBandageMesh, buildCannedFoodMesh } from './supplyMesh'
 import { buildBatteryMesh, buildWaterThermosMesh } from './provisionsMesh'
 import { buildDetailedItemMesh } from './detailItemsMesh'
+import { buildFiresaltMesh } from './firesaltMesh'
+import { buildSquirtGunMesh } from './squirtGunMesh'
+import { buildLiquidPainMesh, buildRoyalRationMesh, buildWarpberryMesh } from './anomalousProvisionMesh'
 
 // ---------- 物品低模 ----------
 // v59：halo 选项——联机远端玩家的手持物品不显示脚底稀有度光圈（地面掉落物保留）
@@ -188,14 +191,10 @@ export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Gr
       em(0.1, 0.012, 0.04, '#d9a86a', -0.21, 0.03, 0.04, 0, 0.3); em(0.1, 0.012, 0.04, '#d9a86a', -0.21, 0.03, -0.04, 0, -0.3)
       em(0.03, 0.015, 0.015, '#f5d88a', 0.05, 0.08, 0.05); em(0.025, 0.012, 0.012, '#f5d88a', 0, 0.085, -0.04)
       break }
-    case 'firesalt': { // 火盐晶体：三枚橙色碎晶（自带余烬微光）
-      em(0.07, 0.09, 0.06, '#e8823c', -0.05, 0.02, 0, 0, 0.4)
-      em(0.05, 0.07, 0.05, '#f59a4a', 0.04, 0.02, -0.03, 0, -0.3)
-      em(0.04, 0.05, 0.04, '#d96a2a', 0.02, 0.02, 0.06, 0, 0.2)
-      break }
-    case 'liquidpain': { // 液态痛苦：杏仁水瓶型 + 淡红液体
-      em(0.14, 0.26, 0.14, '#d8cfc0'); em(0.08, 0.07, 0.08, '#c94a3a', 0, 0.17, 0)
-      em(0.145, 0.12, 0.145, '#d94a3a', 0, -0.04, 0); break }
+    case 'firesalt': // 火盐：带 UV 的六棱主晶、伴生晶、断晶和矿物基质
+      grp.add(buildFiresaltMesh()); break
+    case 'liquidpain': // 液态痛苦：实验玻璃瓶、可见液体、警告标签与防拆盖 UV
+      grp.add(buildLiquidPainMesh()); break
     case 'candysilver': { // 银舌头：舌头形金属糖（扁圆盘 + 中缝凸起）
       em(0.14, 0.05, 0.1, '#c9c9d4'); em(0.05, 0.03, 0.08, '#e8e8f0', 0, 0.035, 0)
       break }
@@ -271,23 +270,16 @@ export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Gr
       grp.add(ring)
       cm(0.006, 0.006, 0.16, '#8a3a3a', 0, 0.1, 0, 5)
       em(0.03, 0.01, 0.03, '#3a8a68', 0, -0.075, 0); break }
-    case 'squirtgun': // 滋水枪：枪身 + 储水罐 + 扳机 + 枪口
-      em(0.2, 0.06, 0.05, '#e86a3a')
-      cm(0.045, 0.045, 0.09, '#4ac9e8', -0.03, 0.075, 0, 8)
-      em(0.04, 0.07, 0.03, '#e8b93c', 0.03, -0.06, 0)
-      em(0.06, 0.03, 0.03, '#e86a3a', 0.12, 0.005, 0); break
-    case 'warpberry': { // 迁跃浆果：双果 + 空间涟漪环
-      cm(0.05, 0.06, 0.06, '#8a4ae0', -0.03, 0, 0, 8)
-      cm(0.04, 0.05, 0.05, '#b06ae0', 0.04, 0, 0.02, 8)
-      const ripple = new THREE.Mesh(new THREE.TorusGeometry(0.09, 0.006, 6, 16),
-        new THREE.MeshBasicMaterial({ color: '#c9a0ff', transparent: true, opacity: 0.6 }))
-      ripple.rotation.x = Math.PI / 2
-      grp.add(ripple)
-      break }
-    case 'royalration': // 皇家口粮：金色餐盒 + 红缎带 + 小冠饰
-      em(0.18, 0.06, 0.12, '#d9b13b')
-      em(0.18, 0.015, 0.03, '#a8283a', 0, 0.035, 0)
-      em(0.05, 0.03, 0.05, '#e8c93d', 0, 0.05, 0); break
+    case 'squirtgun': { // 滋水枪：共享成型枪壳、透明刻度罐、泵筒、供液管与三套 UV
+      const gun = buildSquirtGunMesh()
+      gun.scale.setScalar(.82)
+      grp.add(gun)
+      break
+    }
+    case 'warpberry': // 迁跃浆果：多果粒、枝叶、凹点和空间涟漪 UV
+      grp.add(buildWarpberryMesh()); break
+    case 'royalration': // 皇家口粮：金属口粮盒、缎带、搭扣、皇冠与印刷 UV
+      grp.add(buildRoyalRationMesh()); break
 
     // ---------- v40：此前走通用 fallback 的 12 件补齐 ----------
     case 'disinfectant': // 消毒液：泵头瓶、可见液体与英文医用标签 UV

@@ -2,16 +2,16 @@
 import { useEffect, useRef, useState } from 'react'
 import { npcPortrait } from './npcPortrait'
 import type { Engine, SlotRef, SlotWhere } from '@/game/engine'
-import { ITEMS } from '@/game/content/items'
+import { ITEMS, itemUseProfile } from '@/game/content/items'
 import { storage } from '@/game/core/storage'
 import { ENTITIES, unlockTier, loadSeen, entitySpawnLevels, entityThreat, entityRarity, type EntityRarity } from '@/game/entities'
 import { LevelClassBanner, CecsBox } from './CodexWidgets'
 import { ENTITY_FACTION, FACTION_FONTS, IOTS_FREQ_COLORS, IOTS_FREQ_VALUES, IOTS_ORIGIN_VALUES, IOTS_UTIL_VALUES, itemIOTS, itemIOTSLevel } from '@/game/content/codexScores'
-import { WIN_TAPES, LEVELS, levelNo, levelLabel, levelDefOf } from '@/game/levels'
+import { WIN_TAPES, LEVELS, ALL_LEVEL_DEFS, levelNo, levelLabel, levelDefOf } from '@/game/levels'
 import { prefabsForLevel } from '@/game/prefabs'
 import { infiniteImplFor } from '@/game/world/infinite'
 import { bandOfZ, stairServesBand } from '@/game/world/mapgen'
-import type { FloorBand } from '@/game/core/types'
+import type { FloorBand, LevelDef } from '@/game/core/types'
 import { CONTAINER_KINDS } from '@/game/decorations/containers'
 import { ItemGlyph } from './HUD'
 import AvatarPreview from './AvatarPreview'
@@ -198,6 +198,28 @@ function BigMap({ engine }: { engine: Engine }) {
       g.closePath(); g.fill()
       g.fillText('定居点地标', lx + 5, ly + 3)
     }
+    // L8 第九大道：大地图与 HUD 小地图共用同一组世界坐标标记。
+    // 无限地图滑动窗口会改变局部原点，因此每帧先转回当前窗口坐标；旧标记保留为暗金色，当前提示目标为青蓝色。
+    if (engine.player.level === 8 && viewFloor === 0) {
+      const ox = m.inf?.ox ?? 0, oy = m.inf?.oy ?? 0
+      g.font = '9px monospace'
+      g.textAlign = 'left'
+      for (const mark of engine.avenueMarks) {
+        const mx = (mark.wx - ox) * s, my = (mark.wy - oy) * s
+        const active = mark.seq === engine.avenueHintSeq
+        const r = active ? 5 : 3.6
+        g.save()
+        g.fillStyle = active ? '#55e6ff' : 'rgba(232,185,60,0.72)'
+        if (active) { g.shadowColor = '#55e6ff'; g.shadowBlur = 7 }
+        g.beginPath()
+        g.moveTo(mx, my - r); g.lineTo(mx + r, my); g.lineTo(mx, my + r); g.lineTo(mx - r, my)
+        g.closePath(); g.fill()
+        g.shadowBlur = 0
+        g.fillStyle = active ? '#bdf8ff' : '#d8b85b'
+        g.fillText(mark.kind === 'exit' ? '第九大道出口' : `第九大道 ${mark.seq + 1}号路标`, mx + r + 3, my + 3)
+        g.restore()
+      }
+    }
     // 区域名称（据点大地图标注；v43：带 z 的标注只出现在对应楼层视图）
     if (m.zones) {
       g.font = '10px monospace'
@@ -302,7 +324,11 @@ const usageOf = (it: (typeof ITEMS)[string]): 'throw' | 'equip' | 'use' | 'other
 // 物品数值/属性/实际效果芯片（物品信息页专用 UI 元素，与描述文本分离）
 function itemStatChips(it: (typeof ITEMS)[string], engine?: Engine, berryDest?: string): string[] {
   const chips: string[] = []
-  if (it.weapon) chips.push(`近战伤害 ${it.weapon}`)
+  if (it.weapon) {
+    chips.push(`近战伤害 ${it.weapon}`)
+    chips.push(`攻击间隔 ${(it.attackInterval ?? 0.6).toFixed(2)}s`)
+    chips.push(`挥击体力 -${it.attackStamina ?? 8}`)
+  }
   if (it.use && it.use !== 'none' && it.type !== 'liquidpain') {
     const v = it.value ?? 0
     if (it.use === 'eat') chips.push(`饥饿 +${v}`)
@@ -328,6 +354,8 @@ function itemStatChips(it: (typeof ITEMS)[string], engine?: Engine, berryDest?: 
   if (it.type === 'royalration') chips.push('成瘾 +180s/次', '25% 触发「全部吃光」：理智急速崩塌')
   if (it.type === 'warpberry') chips.push(`使用后传送：${berryDest ?? '发现它的层级'}`)
   if (it.type === 'notebook') chips.push('使用：打开书写')
+  const useProfile = itemUseProfile(it)
+  if (useProfile) chips.push(`使用耗时 ${useProfile.duration.toFixed(1)}s · ${useProfile.label}动作`)
   chips.push(`堆叠 ×${it.stack}`)
   return chips
 }
@@ -337,6 +365,50 @@ const FILTER_SEL_STYLE = { background: 'var(--panel)', color: 'var(--text)', bor
 /** 全部物品的 IOTS 分类缓存（静态数据，模块级计算一次） */
 const ITEM_IOTS: Record<string, { frequency: string; utility: string; origin: string }> =
   Object.fromEntries(Object.values(ITEMS).map((it) => [it.type, itemIOTS(it)]))
+
+/** 层级路线芯片：把长篇入口/出口设定与游戏里真正配置的可达层级分开显示。 */
+function RouteChip({ children, tone }: { children: React.ReactNode; tone: 'in' | 'out' | 'special' }) {
+  const colors = tone === 'in'
+    ? { border: '#4f96a8', text: '#9bd8df', bg: 'rgba(42,112,128,.16)' }
+    : tone === 'out'
+      ? { border: '#a98a42', text: '#f1d681', bg: 'rgba(151,111,27,.16)' }
+      : { border: '#755da0', text: '#c6afe8', bg: 'rgba(94,65,130,.17)' }
+  return (
+    <span className="font-mono2 inline-flex items-center border px-2 py-0.5 text-[10px] tracking-wide"
+      style={{ borderColor: colors.border, color: colors.text, background: colors.bg }}>
+      {children}
+    </span>
+  )
+}
+
+function LevelRoutes({ level, direction }: { level: LevelDef; direction: 'in' | 'out' }) {
+  if (direction === 'out') {
+    if (!level.exits.length) return <RouteChip tone="special">未配置可用出口</RouteChip>
+    return (
+      <div className="mt-1.5 flex flex-wrap gap-1">
+        {level.exits.map((exit, i) => {
+          const target = typeof exit.dest === 'number' ? levelLabel(exit.dest)
+            : exit.dest === 'random' ? '随机常规层级'
+              : exit.dest === 'back' ? '进入据点前的层级' : '离开后室'
+          return <RouteChip key={`${exit.kind}:${i}`} tone={typeof exit.dest === 'number' ? 'out' : 'special'}>{exit.name} → {target}</RouteChip>
+        })}
+      </div>
+    )
+  }
+  const exactRoutes = ALL_LEVEL_DEFS.flatMap((source) => source.exits
+    .filter((exit) => exit.dest === level.id)
+    .map((exit) => ({ key: `${source.id}:${exit.kind}`, sourceId: source.id, entranceName: exit.name })))
+  const outpost = Object.values(OUTPOSTS).find((o) => o.levelId === level.id)
+  const routes = [...new Map(exactRoutes.map((route) => [route.key, route])).values()]
+  return (
+    <div className="mt-1.5 flex flex-wrap gap-1">
+      {level.id === 0 && <RouteChip tone="special">游戏开始 初始入口</RouteChip>}
+      {routes.map((route) => <RouteChip key={route.key} tone="in">{levelLabel(route.sourceId)} {route.entranceName}</RouteChip>)}
+      {outpost && <RouteChip tone="in">{levelLabel(outpost.parent)} {outpost.name}入口</RouteChip>}
+      {level.id !== 0 && routes.length === 0 && !outpost && <RouteChip tone="special">未知／随机切入</RouteChip>}
+    </div>
+  )
+}
 
 // 图鉴详情卡（实体渐进解锁 / 物品 / 层级）
 function CodexDetail({ detail, onBack }: { detail: { kind: 'entity' | 'item' | 'level'; id: string }; onBack: () => void }) {
@@ -429,8 +501,8 @@ function CodexDetail({ detail, onBack }: { detail: { kind: 'entity' | 'item' | '
             <LevelClassBanner levelNo={levelNo(lv.id)} />
             <p className="mb-3 text-[13px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>{lv.lore ?? lv.flavor}</p>
             <div className="grid gap-2">
-              <Row k="入口" v={lv.entrance} />
-              {lv.exitDesc && <Row k="出口" v={<span style={{ color: 'var(--exit)' }}>{lv.exitDesc}</span>} />}
+              <Row k="入口" v={<><div>{lv.entrance}</div><LevelRoutes level={lv} direction="in" /></>} />
+              <Row k="出口" v={<><div style={{ color: 'var(--exit)' }}>{lv.exitDesc || '以本层实际出口配置为准。'}</div><LevelRoutes level={lv} direction="out" /></>} />
               <Row k="实体" v={lv.entities.map((e) => ENTITIES[e.type]?.name ?? e.type).join('、') || '官方未确认'} />
               {fixed.length > 0 && <Row k="固定结构" v={fixed.join('、')} />}
               {variants.length > 0 && <Row k="变种房间" v={variants.map((v) => vimpl!.variantNames[v] ?? v).join('、')} />}
@@ -524,6 +596,11 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
       (fERar === 'all' || entityRarity(e.type) === fERar))
     .sort((a, b) => entNo(a) - entNo(b))
   const refresh = () => force((n) => n + 1)
+  const startUseAndResume = (w: SlotWhere, i: number) => {
+    const timed = engine.useSlot(w, i)
+    refresh()
+    if (timed) onClose() // 物品栏会暂停引擎；回到游戏后计时和第一人称动作才能同步播放。
+  }
 
   // ---- v13：拖拽交换（桌面鼠标 + 移动端触摸，统一走 Pointer Events）----
   // 点击判定：按下 <200ms 且位移 <10px 视为点击（保留原选中/使用逻辑），否则进入拖拽。
@@ -555,9 +632,8 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
         refresh()
       } else if (e.code === binds.quickuse || e.code === binds.interact) {
         e.preventDefault()
-        engine.useSlot(h.w, h.i)
+        startUseAndResume(h.w, h.i)
         audio.uiTick()
-        refresh()
       }
     }
     window.addEventListener('keydown', kd)
@@ -640,7 +716,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
         onContextMenu={(e) => {
           e.preventDefault() // 移动端长按禁出系统菜单
           // PC：快捷使用键（默认右键）悬浮点击即快速使用该物品
-          if (s && getKeybinds().quickuse === 'Mouse2') { engine.useSlot(w, i); audio.uiTick(); refresh() }
+          if (s && getKeybinds().quickuse === 'Mouse2') { startUseAndResume(w, i); audio.uiTick() }
         }}
         onClick={() => {
           if (clickSuppressed()) return
@@ -734,7 +810,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                   )}
                   <div className="mt-auto flex gap-2">
                     {selDef.use && selDef.use !== 'none' && !isEquipW(sel.w) && (
-                      <button className="menu-btn flex-1 py-1.5 text-center text-[13px]" onClick={() => { engine.useSlot(sel.w, sel.i); refresh() }}>{selDef.use === 'doc' ? '阅读' : '使用'}</button>
+                      <button className="menu-btn flex-1 py-1.5 text-center text-[13px]" onClick={() => startUseAndResume(sel.w, sel.i)}>{selDef.use === 'doc' ? '阅读' : '使用'}</button>
                     )}
                     {isEquipW(sel.w) ? (
                       <button className="menu-btn flex-1 py-1.5 text-center text-[13px]" onClick={() => { engine.unequipSlot(sel.w, sel.i); setSel(null); refresh() }}>卸下</button>

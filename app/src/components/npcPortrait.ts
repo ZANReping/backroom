@@ -5,6 +5,7 @@ import * as THREE from 'three'
 import type { AvatarCfg } from '@/game/core/avatar'
 import { buildPlayerModel } from '@/game/renderer/playerModel'
 import { applyNpcGear } from '@/game/renderer/npcGear'
+import { buildNpcEntityPreview } from '@/game/renderer/npcEntityPreview'
 import type { NpcDef } from '@/game/content/npcs'
 
 let renderer: THREE.WebGLRenderer | null = null
@@ -31,9 +32,10 @@ export function npcPortrait(cfg: AvatarCfg, npcId?: string, npcDef?: NpcDef, siz
   const rim = new THREE.DirectionalLight(0x9ab0d0, 0.55)
   rim.position.set(-2, 1.4, -1.6)
   scene.add(rim)
-  const model = buildPlayerModel(cfg, {})
+  const entityPreview = buildNpcEntityPreview(npcId)
+  const model = entityPreview ?? buildPlayerModel(cfg, {})
   // NPC 档案：BRC 黑影摘脸 / 制服徽章 + 标志性配饰（与游戏内 renderer 同一约定）
-  if (npcId) {
+  if (npcId && !entityPreview) {
     if (npcDef?.faction === 'brc') {
       const hd = (model.userData.parts as Record<string, THREE.Object3D>).head
       const faceParts: THREE.Object3D[] = []
@@ -54,7 +56,11 @@ export function npcPortrait(cfg: AvatarCfg, npcId?: string, npcDef?: NpcDef, siz
   renderer.render(scene, cam)
   const url = renderer.domElement.toDataURL('image/png')
   scene.remove(model)
-  model.traverse((o) => { const m = o as THREE.Mesh; if (m.geometry) m.geometry.dispose() })
+  model.traverse((o) => {
+    const m = o as THREE.Mesh
+    if (m.geometry) m.geometry.dispose()
+    if (m.material) for (const mat of Array.isArray(m.material) ? m.material : [m.material]) mat.dispose()
+  })
   cache.set(key, url)
   return url
 }

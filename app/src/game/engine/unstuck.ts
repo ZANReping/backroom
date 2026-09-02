@@ -215,7 +215,7 @@ export function updateUnstuckCheck(eng: Engine, frameDt: number) {
   eng.slipVx = 0; eng.slipVy = 0
   eng.onStairs = false
   eng.inLiquid = 0; eng.submerged = false; eng.wasSubmerged = false; eng.breathT = 0
-  eng.searching = null; eng.lootPanel = null; eng.interactTarget = null
+  eng.searching = null; eng.usingItem = null; eng.lootPanel = null; eng.interactTarget = null
   eng.ride = null; eng.climb = null; eng.porchDrop = null // v58
   eng.updateInfiniteWindow()
   eng.persist() // 立即覆盖卡死坐标，重新进入游戏也会从安全点恢复。

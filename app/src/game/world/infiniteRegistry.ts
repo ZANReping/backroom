@@ -19,6 +19,8 @@ export interface GenChunk {
   up?: Uint8Array // v57m：上层楼板瓦片（L7 入口舱体位于 2F；其余层级缺省）
   upWall?: Uint8Array // v57m：上层墙体瓦片（L7 入口舱体墙壁；缺省=全 0）
   terrain?: Float32Array // 室外自然地形微起伏（米；缺省=0）
+  /** L8 有机洞穴的绝对洞顶高度；与 terrain 共用世界坐标连续采样。 */
+  caveCeil?: Float32Array
   seaFloor?: Float32Array // v57o：每瓦片海床深度（米，水面以下；L7 垂直深度轴；缺省=1.7）
   structures: Structure[]
   items: GroundItem[]
@@ -26,12 +28,60 @@ export interface GenChunk {
   exits: ExitInstance[]
   // v41：calm=实例级被动（L2 死亡飞蛾通常不主动攻击玩家）——instantiate 浅拷贝 def 置 passive
   // v44：scale=实例级体型缩放（L2 温顺死亡飞蛾 0.6）——instantiate 一并浅拷贝带入 def
-  entities: { type: string; x: number; y: number; calm?: boolean; scale?: number; facing?: number; hostile?: 1; tool?: 1; l3face?: 1; human?: 1; capybara?: 1 }[] // v53 增：L3 高智能实体 raw 标记（hostile 剥除被动 / tool 石器 / l3face 错位器官 / human 伪装流浪者 / capybara 水豚形态）
+  entities: {
+    type: string; x: number; y: number; z?: number; calm?: boolean; scale?: number; facing?: number
+    hostile?: 1; tool?: 1; l3face?: 1; human?: 1; capybara?: 1
+    ceilingCrawler?: 1
+    arachnidMorph?: 'spider' | 'scorpion' | 'tick' | 'mite'
+    arachnidBreed?: number
+    herbivore?: 1
+  }[] // v60：L8 增加洞顶尸鼠与蛛形纲实例生态变体
   // v39：chunk 生成 NPC（BRC 员工随衔尾段 chunk 生成；定义完整内嵌，按 chunk 确定性生成）
   npcs?: { def: NpcDef; x: number; y: number; facing?: number }[]
   // v27：栖息地降级计数（`${type}:${habitat}` → 次数，与有限层 GameMap.habitatFallback 同契约）；
   // 无符合瓦片时降级 any 并在此计数，缝合进窗口时并入 m.habitatFallback
   habFallback?: Record<string, number>
+}
+
+/**
+ * 体积洞穴的一根世界坐标采样柱。margin 是未计圆角/三维岩面噪声前的水平净空，
+ * floor/ceiling 是洞底与洞顶的基准包络；真正可见边界由 field=0 唯一决定。
+ */
+export interface CaveVolumeColumn {
+  floor: number
+  ceiling: number
+  margin: number
+  rounding?: number
+}
+
+export interface CaveVolumeMaterialDef {
+  texture: string
+  normalTexture?: string
+  roughnessTexture?: string
+  color?: string
+  textureScale?: number
+  normalStrength?: number
+  roughness?: number
+  envBase?: number
+}
+
+/**
+ * 可复用的洞穴类层级契约：正场值为空气，负场值为岩体。
+ * 渲染器、脚底/洞顶高度和玩家三维碰撞必须读取同一套函数，禁止再拆成地板/墙/顶三套几何。
+ */
+export interface CaveVolumeDef {
+  column: (seed: number, worldX: number, worldZ: number) => CaveVolumeColumn
+  field: (seed: number, worldX: number, worldY: number, worldZ: number, column?: CaveVolumeColumn) => number
+  ground: (seed: number, worldX: number, worldZ: number) => number
+  roof: (seed: number, worldX: number, worldZ: number) => number
+  horizontalSegments?: number
+  verticalMin?: number
+  verticalMax?: number
+  verticalStep?: number
+  texture?: string
+  color?: string
+  /** 生态/地质带专属 PBR 岩石；键与 chunk variant 一致。 */
+  materials?: Record<string, CaveVolumeMaterialDef>
 }
 
 export interface InfiniteLevelImpl {
@@ -46,6 +96,8 @@ export interface InfiniteLevelImpl {
   spawnFloor?: -1 | 0 | 1 | 2
   /** v57t：轻量解析式区域出口锚点（不生成完整 chunk；L7 稀有出口用，避免 HUD 出口指引每次全量生成宿主 chunk）。 */
   regionExitPos?: (seed: number, rx: number, ry: number) => { x: number; y: number; z?: number } | null
+  /** 新洞穴类层级模式：三维隐式场一次生成洞底、侧壁和洞顶。 */
+  caveVolume?: CaveVolumeDef
 }
 
 const implRegistry = new Map<number, InfiniteLevelImpl>()
