@@ -383,6 +383,12 @@ function RouteChip({ children, tone }: { children: React.ReactNode; tone: 'in' |
 
 function LevelRoutes({ level, direction }: { level: LevelDef; direction: 'in' | 'out' }) {
   if (direction === 'out') {
+    if (level.id === 10) return (
+      <div className="mt-1.5 flex flex-wrap gap-1">
+        <RouteChip tone="out">Level 11 双车辙土路尽头</RouteChip>
+        <RouteChip tone="out">Level 7 深湖下潜</RouteChip>
+      </div>
+    )
     if (!level.exits.length) return <RouteChip tone="special">未配置可用出口</RouteChip>
     return (
       <div className="mt-1.5 flex flex-wrap gap-1">
@@ -403,7 +409,12 @@ function LevelRoutes({ level, direction }: { level: LevelDef; direction: 'in' | 
   return (
     <div className="mt-1.5 flex flex-wrap gap-1">
       {level.id === 0 && <RouteChip tone="special">游戏开始 初始入口</RouteChip>}
-      {routes.map((route) => <RouteChip key={route.key} tone="in">{levelLabel(route.sourceId)} {route.entranceName}</RouteChip>)}
+      {level.id === 10
+        ? <>
+          <RouteChip tone="in">Level 9 田野边缘步道</RouteChip>
+          <RouteChip tone="in">Level 11 乡间小路</RouteChip>
+        </>
+        : routes.map((route) => <RouteChip key={route.key} tone="in">{levelLabel(route.sourceId)} {route.entranceName}</RouteChip>)}
       {outpost && <RouteChip tone="in">{levelLabel(outpost.parent)} {outpost.name}入口</RouteChip>}
       {level.id !== 0 && routes.length === 0 && !outpost && <RouteChip tone="special">未知／随机切入</RouteChip>}
     </div>

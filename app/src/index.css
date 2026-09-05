@@ -190,7 +190,7 @@
       transparent 0 2px,
       rgba(0, 0, 0, 0.18) 2px 3px
     );
-    opacity: 0.6;
+    opacity: var(--scanline-opacity, 0.6);
   }
   .vhs-grain::before {
     content: '';
@@ -199,7 +199,7 @@
     pointer-events: none;
     z-index: 59;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
-    opacity: 0.06;
+    opacity: var(--grain-opacity, 0.06);
     animation: grain 0.45s steps(4) infinite;
   }
 }
@@ -321,7 +321,7 @@ img.pixel-icon { image-rendering: pixelated; image-rendering: crisp-edges; }
   animation: slideUp 0.5s ease-out both; /* 标题入场：平稳上浮替换故障闪烁 */
 }
 [data-theme='liminal'] .scanlines::after {
-  opacity: 0.22; /* 扫描线在纸面主题下大幅减弱 */
+  opacity: var(--scanline-opacity, 0.22); /* 扫描线在纸面主题下大幅减弱，并允许画面设置覆盖 */
 }
 
 /* 阈限：标题屏主标题/副标题叠在 3D 场景上，改为「纸签」保证可读（textShadow 色差描边需压掉） */
@@ -489,7 +489,7 @@ img.pixel-icon { image-rendering: pixelated; image-rendering: crisp-edges; }
 [data-theme='database'] body { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; }
 [data-theme='database'] .font-title { font-family: 'JetBrains Mono', 'Noto Sans SC', monospace; font-weight: 700; letter-spacing: 0.08em; }
 [data-theme='database'] .br-app { text-shadow: 1px 1px 0 rgba(201, 120, 30, 0.35); }
-[data-theme='database'] .scanlines::after { opacity: 0.5; }
+[data-theme='database'] .scanlines::after { opacity: var(--scanline-opacity, 0.5); }
 [data-theme='database'] .anim-flickerIn { animation: slideUp 0.5s ease-out both; }
 
 /* Fandom 阈限：Rubik 圆体 */
@@ -505,7 +505,7 @@ img.pixel-icon { image-rendering: pixelated; image-rendering: crisp-edges; }
 /* ---- 亮色纸面主题共用（玄武岩 / Fandom 阈限 / M.E.G.）：扫描线减弱 + 标题/日志纸签 ---- */
 [data-theme='basalt'] .scanlines::after,
 [data-theme='fandom'] .scanlines::after,
-[data-theme='meg'] .scanlines::after { opacity: 0.22; }
+[data-theme='meg'] .scanlines::after { opacity: var(--scanline-opacity, 0.22); }
 [data-theme='basalt'] .title-hero,
 [data-theme='fandom'] .title-hero,
 [data-theme='meg'] .title-hero,

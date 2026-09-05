@@ -1,5 +1,5 @@
 // 应用状态机：标题 → 层级进入 → 游戏（HUD）→ 暂停/背包/死亡/胜利
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
 import { Routes, Route } from 'react-router'
 import { engine } from '@/game/engine'
 import type { SaveSlotId, SlotInfo } from '@/game/engine'
@@ -555,9 +555,10 @@ function Game() {
         : settings.renderResolution === '480p_retro' ? 360
           : settings.renderResolution === '320p_ps1' ? 180
             : 0
+      const baseScale = Math.max(0.5, Math.min(1, settings.renderScale / 100))
       const dpr = targetHeight > 0
         ? Math.max(0.05, Math.min(nativeDpr, targetHeight / Math.max(1, window.innerHeight)))
-        : nativeDpr * resScale
+        : nativeDpr * baseScale * resScale
       renderer.resize(window.innerWidth, window.innerHeight, dpr)
       canvas.style.width = '100%'
       canvas.style.height = '100%'
@@ -655,8 +656,9 @@ function Game() {
         if (frameTimes.length > 30) {
           const avg = (frameTimes[frameTimes.length - 1] - frameTimes[0]) / (frameTimes.length - 1)
           const minScale = engine.player.level === 5 ? 0.5 : 0.6
-          if (avg > 20 && resScale > minScale) { resScale = Math.max(minScale, resScale - 0.1); resize() }
-          else if (avg < 14 && resScale < 1) { resScale += 0.05; resize() }
+          const frameBudget = 1000 / settings.dynamicResTarget
+          if (avg > frameBudget * 1.12 && resScale > minScale) { resScale = Math.max(minScale, resScale - 0.1); resize() }
+          else if (avg < frameBudget * 0.84 && resScale < 1) { resScale = Math.min(1, resScale + 0.05); resize() }
           frameTimes = []
         }
       }
@@ -704,7 +706,7 @@ function Game() {
       window.removeEventListener('wheel', onWheel)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [settings.grain, settings.dust, settings.flicker, settings.shake, settings.dynamicRes, settings.renderResolution])
+  }, [settings.grain, settings.dust, settings.flicker, settings.shake, settings.dynamicRes, settings.dynamicResTarget, settings.renderResolution, settings.renderScale])
 
   // 画面设置：手电实时阴影（移动端强制关闭）
   useEffect(() => {
@@ -720,6 +722,17 @@ function Game() {
   useEffect(() => {
     rendererRef.current?.setHeadBob(settings.headBob)
   }, [settings.headBob])
+
+  // 画面设置：不重建关卡即可即时调整的渲染负载与相机参数。
+  useEffect(() => {
+    const r = rendererRef.current
+    if (!r) return
+    r.setFov(settings.cameraFov)
+    r.setTextureQuality(settings.textureQuality)
+    r.setDetailDistance(settings.detailDistance / 100)
+    r.setParticleDensity(settings.particleDensity / 100)
+    r.setShadowUpdateRate(settings.shadowUpdateRate)
+  }, [settings.cameraFov, settings.textureQuality, settings.detailDistance, settings.particleDensity, settings.shadowUpdateRate])
 
   // 画面设置：距离雾远近 / 远处灯光全开
   useEffect(() => {
@@ -774,12 +787,26 @@ function Game() {
 
   // 现象「孤立效应」附加表现：Level 0 内对画布施加极轻微的画面微调色（每次进层重新随机）
   const cg = engine.colorGrade
-  const gradeFilter = engine.player.level === 0 && (cg.hue !== 0 || cg.sat !== 1 || cg.con !== 1 || cg.bri !== 1)
+  const phenomenonGradeFilter = engine.player.level === 0 && (cg.hue !== 0 || cg.sat !== 1 || cg.con !== 1 || cg.bri !== 1)
     ? `hue-rotate(${cg.hue.toFixed(2)}deg) saturate(${cg.sat.toFixed(3)}) contrast(${cg.con.toFixed(3)}) brightness(${cg.bri.toFixed(3)})`
-    : undefined
+    : ''
+  const atmosphereGradeFilter = settings.colorGrade === 'liminal'
+    ? 'sepia(0.12) saturate(0.84) hue-rotate(-7deg) contrast(1.06)'
+    : settings.colorGrade === 'cold'
+      ? 'saturate(0.76) hue-rotate(8deg) contrast(1.08) brightness(0.96)'
+      : settings.colorGrade === 'bleached'
+        ? 'saturate(0.58) contrast(1.15) brightness(1.03)'
+        : ''
+  const gradeFilter = [phenomenonGradeFilter, atmosphereGradeFilter].filter(Boolean).join(' ') || undefined
+  const scanlineBase = settings.theme === 'database' ? 0.5 : ['liminal', 'basalt', 'fandom', 'meg'].includes(settings.theme) ? 0.22 : 0.6
+  const appStyle = {
+    background: 'var(--ink)',
+    '--scanline-opacity': String(Math.min(1, scanlineBase * settings.scanlineStrength / 60)),
+    '--grain-opacity': String(0.12 * settings.grainStrength / 100),
+  } as CSSProperties
 
   return (
-    <div className={`br-app fixed inset-0 overflow-hidden ${settings.grain ? 'vhs-grain scanlines' : 'scanlines'} ${customPause ? 'br-hide-hud-pause' : ''}`} style={{ background: 'var(--ink)' }}>
+    <div className={`br-app fixed inset-0 overflow-hidden ${settings.grain ? 'vhs-grain scanlines' : 'scanlines'} ${customPause ? 'br-hide-hud-pause' : ''}`} style={appStyle}>
       <canvas
         ref={canvasRef}
         style={{
@@ -787,6 +814,14 @@ function Game() {
           imageRendering: settings.renderResolution === '480p_retro' || settings.renderResolution === '320p_ps1' ? 'pixelated' : 'auto',
         }}
       />
+
+      {settings.vignetteStrength > 0 && (
+        <div
+          className="pointer-events-none fixed inset-0 z-[2]"
+          style={{ background: `radial-gradient(ellipse at center, transparent 43%, rgba(0,0,0,${(settings.vignetteStrength * 0.008).toFixed(3)}) 100%)` }}
+          aria-hidden="true"
+        />
+      )}
 
       {/* 受伤闪屏 */}
       {damageFlash > 0 && (

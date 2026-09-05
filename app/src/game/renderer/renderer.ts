@@ -10,7 +10,7 @@ import { CS, type LiveChunk } from '../world/infinite'
 import { buildSkyAndLiquids, buildLiquidSurfaces, updateLiquidTime, resetLiquidWaves } from './liquidsSky'
 import { RemotePlayerViews } from './remotePlayers' // v58：联机远端玩家渲染
 import { SKY_PROFILES, skyLightDir, makeSkyMesh, makeMirageFleet, updateMirageFleet, type MirageFleet } from './skybox'
-import { buildStructure, buildExit } from './structures'
+import { buildStructure, buildExit, buildL10CropLod, updateL10Wind } from './structures'
 import { buildDecorations } from './decorations'
 import { buildEntityMesh } from './entitiesMesh'
 import { buildItemMesh } from './itemsMesh'
@@ -29,6 +29,7 @@ import { envProbe, disposeEnvProbes } from './envProbe'
 import { setMaterialMode, setReflectK, getReflectK } from './shared'
 import { L8_AVENUE_SEGMENTS, l8AvenuePoint } from '../world/infiniteL8'
 import { l9ArrowCount, l9ArrowPoint } from '../world/infiniteL9'
+import { l10MainRoadY } from '../world/infiniteL10'
 import { setSquirtGunLiquid } from './squirtGunMesh'
 
 /**
@@ -489,6 +490,9 @@ export class Renderer3D {
   private particlesPts!: THREE.Points
   private particlesGeo!: THREE.BufferGeometry
   private dust!: THREE.Points
+  // L10 小雨是跟随相机的共享雨丝，不随区块复制，也不为每滴雨创建对象。
+  private l10Rain!: THREE.LineSegments
+  private l10RainState!: Float32Array // 每条雨丝：局部 x/z、相位、速度
   // v54：L4 窗景区虚空雨雾（懒初始化——仅 L4 且玩家附近有 outdoor 虚空格时可见）
   private voidRain: THREE.LineSegments | null = null
   private voidRainState: Float32Array | null = null // 每雨丝 (x,y,z,fallSpeed,slant,tileX,tileZ)——钳制在归属瓦片内（不漏进窗内）
@@ -512,6 +516,9 @@ export class Renderer3D {
   private wallH = 3
   private levelCfg: LevelDef | null = null
   private fovBase = 72
+  private textureQuality = 1
+  private detailDistanceScale = 1
+  private particleDensity = 1
   private camShakeX = 0
   private camShakeY = 0
   // v7：蹲伏相机下沉量（平滑）+ 室外雾/天空混合系数 + 室内雾基准
@@ -528,12 +535,15 @@ export class Renderer3D {
   // L6 暗适应：进入时几乎全黑，视杆细胞逐渐恢复后才获得微弱轮廓感。
   private l6DarkAdapt = 0
   private l6WasActive = false
+  private l10WetApplied = -1
+  private l10WetUpdateT = 0
   private userExposure = 1.45
   private uwK = 0 // v13：水下视野混合（0=水上 1=水下：蓝绿浑浊短视距）
   private l7LightKeep = 1 // v58：L7 自然光深度衰减因子（定向阳光随深度变暗；水上=1）
   // v50：光影设置项
   private lightMode: LightMode = 'classic'
   private shadowQuality = 1 // 0=低 1=中 2=高（手电/太阳 shadow map 尺寸与软影半径）
+  private shadowUpdateRate = 1 // 0=性能 1=平衡 2=每帧优先
   private flashShadowsOn = true
   private realWaterOn = false // v57t：真实水体效果（默认关闭；开启后水面顶点随波浪起伏）
   private sunShadowsOn = true
@@ -578,6 +588,7 @@ export class Renderer3D {
   private crossState = ''
   // L9 室内只在住宅附近或玩家所在住宅内显示；低频更新避免每帧遍历全部家具。
   private l9InteriorCullT = 1
+  private l10InteriorCullT = 1
   // 材质预编译做节流并带层级世代号：区块连续挂载时合并请求，切层后旧 Promise 不再回调新场景。
   private precompileTimer: ReturnType<typeof setTimeout> | null = null
   private precompileRunning = false
@@ -661,6 +672,20 @@ export class Renderer3D {
     this.dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({ size: 0.03, color: 0xbfb598, transparent: true, opacity: 0.5, depthWrite: false }))
     this.dust.frustumCulled = false
     this.scene.add(this.dust)
+    {
+      const count = 150
+      this.l10RainState = new Float32Array(count * 4)
+      const rr = mulberry(0x10a11e)
+      for (let i = 0; i < count; i++)
+        this.l10RainState.set([(rr() - .5) * 24, (rr() - .5) * 24, rr() * 11, 7 + rr() * 5], i * 4)
+      const geo = new THREE.BufferGeometry()
+      geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(count * 6), 3))
+      const mat = new THREE.LineBasicMaterial({ color: '#a9b6b8', transparent: true, opacity: 0, depthWrite: false })
+      this.l10Rain = new THREE.LineSegments(geo, mat)
+      this.l10Rain.frustumCulled = false
+      this.l10Rain.visible = false
+      this.scene.add(this.l10Rain)
+    }
     // 手部 viewmodel 挂相机（相机须入场景才渲染子节点）
     this.scene.add(this.camera)
     this.vmParts = buildViewmodel(this.vm, this.vmFlash, this.camera)
@@ -693,6 +718,7 @@ export class Renderer3D {
     this.vmHeld = type
     if (type) {
       this.vmItem = buildHeldItem(type)
+      this.applyTextureQuality(this.vmItem)
       this.vmItem.userData.inspectBase = {
         x: this.vmItem.position.x, y: this.vmItem.position.y, z: this.vmItem.position.z,
         rx: this.vmItem.rotation.x, ry: this.vmItem.rotation.y, rz: this.vmItem.rotation.z,
@@ -900,6 +926,7 @@ export class Renderer3D {
       return
     }
     const def = levelDefOf(engine.player.level)!
+    updateL10Wind(this.time * (def.id === 10 ? 1 + engine.l10Weather.k * (engine.l10Weather.kind === 'gust' ? 1.35 : .45) : 1))
     const nightVision = engine.player.equip.head?.type === 'nightvision' && engine.player.battery > 0
     if (def.id === 6) {
       if (!this.l6WasActive) this.l6DarkAdapt = 0
@@ -1005,7 +1032,9 @@ export class Renderer3D {
     // 水平侧摆沿视线右向：forward=(-sin,-cos)，right=(cos,-sin)。
     const rightX = Math.cos(look.yaw), rightZ = -Math.sin(look.yaw)
     this.camera.position.set(p.x + rightX * swayX + this.camShakeX, eye, p.y + rightZ * swayX + this.camShakeY)
+    this.updateL10Rain(def.id, engine.l10Weather.kind, engine.l10Weather.k)
     this.updateL9InteriorVisibility(def.id, p.x, p.y, dt)
+    this.updateL10InteriorVisibility(def.id, p.x, p.y, dt)
     // 低理智畸变：FOV 呼吸 + 侧倾（与摇晃 roll 叠加）
     const insanity = 1 - p.sanity / 100
     this.camera.rotation.y = look.yaw + this.camShakeX * 2
@@ -1074,10 +1103,14 @@ export class Renderer3D {
         || this.chunkRedo !== this.flashShadowRedo
         || this.chunkGroups.size !== this.flashShadowChunks
         || this.builtMap !== this.flashShadowMap
+      const movingIntervals = this.lightMode === 'realistic' ? [4, 2, 1] : [10, 6, 2]
+      const heartbeatIntervals = [32, 20, 12]
+      const movingInterval = movingIntervals[this.shadowUpdateRate] ?? movingIntervals[1]
+      const heartbeatInterval = heartbeatIntervals[this.shadowUpdateRate] ?? heartbeatIntervals[1]
       shadowWanted = !this.flashWasOn
         || contentChanged
-        || (poseMoved && this.frameTick % (this.lightMode === 'realistic' ? 2 : 6) === 0)
-        || this.frameTick % 20 === 0
+        || (poseMoved && this.frameTick % movingInterval === 0)
+        || this.frameTick % heartbeatInterval === 0
       if (shadowWanted) {
         sp.px = lp.x; sp.py = lp.y; sp.pz = lp.z
         sp.tx = lt.x; sp.ty = lt.y; sp.tz = lt.z
@@ -1184,7 +1217,11 @@ export class Renderer3D {
     const sunActive = !!(sp && (sp.sunLight ?? 0) > 0 && this.outK > 0.01)
     if (sunActive) {
       // v58：L7 定向阳光按深度衰减（l7LightKeep）——修复海床与生成物在深水仍然全亮的问题
-      this.sunDir.intensity = this.outK * (sp!.sunLight ?? 0) * (def.id === 6 ? this.l6DarkAdapt : 1) * (def.id === 7 ? this.l7LightKeep : 1)
+      const l10CloudKeep = def.id !== 10 ? 1
+        : engine.l10Weather.kind === 'rain' ? .42
+          : engine.l10Weather.kind === 'mist' ? .58
+            : engine.l10Weather.kind === 'gust' ? .82 : .72
+      this.sunDir.intensity = this.outK * (sp!.sunLight ?? 0) * (def.id === 6 ? this.l6DarkAdapt : 1) * (def.id === 7 ? this.l7LightKeep : 1) * l10CloudKeep
       this.sunDir.color.set(sp!.sunColor ?? '#ffffff')
       const d = skyLightDir(def.id)
       // v50：realistic 自然光投影——阴影相机跟随玩家（按 texel 对齐防边缘闪烁）
@@ -1209,7 +1246,7 @@ export class Renderer3D {
     // 露出一圈背景色「间距带」；压到水线后球底缘沉入海面之下，海天在雾里无缝相接
     if (this.skyMesh) this.skyMesh.position.set(
       this.camera.position.x,
-      this.levelCfg?.id === 7 ? 0.2 : this.levelCfg?.id === 9 ? this.camera.position.y : 5.5,
+      this.levelCfg?.id === 7 ? 0.2 : (this.levelCfg?.id === 9 || this.levelCfg?.id === 10) ? this.camera.position.y : 5.5,
       this.camera.position.z,
     )
     // v58：蜃楼船队以玩家为锚（永远无法靠近），水下时隐没
@@ -1387,11 +1424,30 @@ export class Renderer3D {
       this.ambient.intensity *= 1 - fk * 0.22
       this.hemi.intensity *= 1 - fk * 0.28
     }
-    if (def.id === 9 && this.skyMesh) {
+    if (def.id === 10 && !bright) {
+      const w = engine.l10Weather
+      const fog = this.scene.fog as THREE.Fog | null
+      if (fog && w.kind === 'mist') {
+        const fk = Math.max(0, Math.min(1, w.k))
+        fog.near += (.55 - fog.near) * fk
+        fog.far += (14 - fog.far) * fk
+        fog.color.lerp(new THREE.Color('#8d9494'), fk * .72)
+        if (this.scene.background instanceof THREE.Color) this.scene.background.copy(fog.color)
+      } else if (fog && w.kind === 'rain') {
+        const rk = Math.max(0, Math.min(1, w.k))
+        fog.far += (31 - fog.far) * rk * .55
+        fog.color.lerp(new THREE.Color('#71797b'), rk * .25)
+      }
+      this.updateL10WetMaterials(w.wetness, dt)
+    }
+    if ((def.id === 9 || def.id === 10) && this.skyMesh) {
       const sm = this.skyMesh.material as THREE.ShaderMaterial
       if (sm.uniforms?.uTime) sm.uniforms.uTime.value = engine.time
-      if (sm.uniforms?.uFogMix) sm.uniforms.uFogMix.value = bright ? 0 : Math.max(0, Math.min(1, engine.l9FogK))
-      if (sm.uniforms?.uFogColor) sm.uniforms.uFogColor.value.set('#697278')
+      if (sm.uniforms?.uFogMix) sm.uniforms.uFogMix.value = bright ? 0 : def.id === 9
+        ? Math.max(0, Math.min(1, engine.l9FogK))
+        : engine.l10Weather.kind === 'mist' ? Math.max(0, Math.min(.72, engine.l10Weather.k * .72))
+          : engine.l10Weather.kind === 'rain' ? Math.max(0, Math.min(.18, engine.l10Weather.k * .18)) : 0
+      if (sm.uniforms?.uFogColor) sm.uniforms.uFogColor.value.set(def.id === 9 ? '#697278' : '#8d9494')
     }
     // 「额外暗度」只压低无方向的环境底光，让黑角更深；手电、打火机和开发者
     // 一键照明保持原强度。点光源与雾距则走上方 effectiveDarkness，等价于提高层级 darkness。
@@ -1587,6 +1643,7 @@ export class Renderer3D {
   // ---------- v17：公共拆卸（有限/无限层级切换时调用）----------
   // 为子树开启阴影：自发光材质不参与；透明玻璃/液体可以接收光影，但不再投出整块黑影。
   private enableShadows(root: THREE.Object3D) {
+    this.applyTextureQuality(root)
     root.traverse((o) => {
       const mm = o as THREE.Mesh
       if (!mm.isMesh) return
@@ -1660,10 +1717,65 @@ export class Renderer3D {
       const inside = px >= h.x && px <= h.x + h.w && py >= h.y && py <= h.y + h.h
       const nx = Math.max(h.x, Math.min(px, h.x + h.w))
       const ny = Math.max(h.y, Math.min(py, h.y + h.h))
-      const visible = inside || Math.hypot(nx - px, ny - py) <= (insideAny ? 10 : 18)
+      const visible = inside || Math.hypot(nx - px, ny - py) <= (insideAny ? 10 : 18) * this.detailDistanceScale
       if (rec.group.visible !== visible) { rec.group.visible = visible; changed = true }
     }
     if (changed) this.flashShadowPose.valid = false
+  }
+
+  /** L10 农舍内部的稀疏陈设只在 35 米内保留，室外作业点不受影响。 */
+  private updateL10InteriorVisibility(levelId: number, px: number, py: number, dt: number) {
+    if (levelId !== 10) { this.l10InteriorCullT = 1; return }
+    this.l10InteriorCullT += dt
+    if (this.l10InteriorCullT < .2) return
+    this.l10InteriorCullT = 0
+    for (const [s, group] of this.structMeshes) {
+      if (s.data?.l10Interior !== 1) continue
+      const nx = Math.max(s.x, Math.min(px, s.x + s.w))
+      const ny = Math.max(s.y, Math.min(py, s.y + s.h))
+      group.visible = Math.hypot(nx - px, ny - py) <= 35 * this.detailDistanceScale
+    }
+  }
+
+  /** 雨后仅低频更新 L10 的已合批 PBR 材质；不逐麦秆或逐装饰遍历。 */
+  private updateL10WetMaterials(wetness: number, dt: number) {
+    this.l10WetUpdateT += dt
+    if (this.l10WetUpdateT < .35 && Math.abs(wetness - this.l10WetApplied) < .08) return
+    this.l10WetUpdateT = 0
+    this.l10WetApplied = wetness
+    const apply = (root: THREE.Object3D) => root.traverse((o) => {
+      const mesh = o as THREE.Mesh
+      const mats = Array.isArray(mesh.material) ? mesh.material : mesh.material ? [mesh.material] : []
+      for (const mat of mats) {
+        if (!mat.userData?.l10Wettable || !(mat instanceof THREE.MeshStandardMaterial)) continue
+        const rough = Number(mat.userData.l10BaseRoughness ?? .9)
+        const env = Number(mat.userData.l10BaseEnv ?? .05)
+        mat.roughness = Math.max(.2, rough * (1 - wetness * .5))
+        mat.envMapIntensity = env * (1 + wetness * 2.2) * getReflectK()
+      }
+    })
+    for (const cg of this.chunkGroups.values()) apply(cg.group)
+  }
+
+  /** L10 稀有小雨：固定 150 条动态线段循环，成本与已加载区块和麦秆数量无关。 */
+  private updateL10Rain(levelId: number, kind: string, strength: number) {
+    const k = levelId === 10 && kind === 'rain' ? Math.max(0, Math.min(1, strength)) : 0
+    this.l10Rain.visible = k > .015
+    if (!this.l10Rain.visible) return
+    ;(this.l10Rain.material as THREE.LineBasicMaterial).opacity = .08 + k * .24
+    const attr = this.l10Rain.geometry.getAttribute('position') as THREE.BufferAttribute
+    const a = attr.array as Float32Array
+    const n = Math.floor(this.l10RainState.length / 4 * this.particleDensity)
+    this.l10Rain.geometry.setDrawRange(0, n * 2)
+    for (let i = 0; i < n; i++) {
+      const ox = this.l10RainState[i * 4], oz = this.l10RainState[i * 4 + 1]
+      const phase = this.l10RainState[i * 4 + 2], speed = this.l10RainState[i * 4 + 3]
+      const y = this.camera.position.y + 5.5 - (this.time * speed + phase) % 11
+      const j = i * 6
+      a[j] = this.camera.position.x + ox; a[j + 1] = y; a[j + 2] = this.camera.position.z + oz
+      a[j + 3] = a[j] + .13; a[j + 4] = y - .62; a[j + 5] = a[j + 2] + .035
+    }
+    attr.needsUpdate = true
   }
 
   /** 设置开关：只控制手电阴影，不再连带关闭 realistic 的日光/场景灯阴影。 */
@@ -1678,6 +1790,60 @@ export class Renderer3D {
   setFog(on: boolean) { this.fogEnabled = on }
   /** v54：真实视角摇晃开关（默认关——保持基础 bob；开启=垂直起伏+水平侧摆+roll 侧倾+落地回弹） */
   setHeadBob(on: boolean) { this.headBobReal = on }
+
+  /** 基础视野角；冲刺、低理智与过场的临时 FOV 仍在此基础上叠加。 */
+  setFov(degrees: number) {
+    this.fovBase = Math.max(60, Math.min(90, degrees))
+  }
+
+  /** 纹理质量使用各向异性过滤实现，避免切换时重载或复制贴图。 */
+  setTextureQuality(q: number) {
+    const next = Math.max(0, Math.min(2, Math.round(q)))
+    this.textureQuality = next
+    this.applyTextureQuality(this.scene)
+  }
+
+  private applyTextureQuality(root: THREE.Object3D) {
+    const maxAnisotropy = this.three.capabilities.getMaxAnisotropy()
+    const wanted = Math.min(maxAnisotropy, this.textureQuality === 0 ? 1 : this.textureQuality === 1 ? 4 : 12)
+    const seen = new Set<THREE.Texture>()
+    root.traverse((o) => {
+      const mesh = o as THREE.Mesh
+      if (!mesh.material) return
+      const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
+      for (const material of materials) {
+        for (const value of Object.values(material)) {
+          const texture = value as THREE.Texture | undefined
+          if (!texture?.isTexture || seen.has(texture)) continue
+          seen.add(texture)
+          if (texture.anisotropy !== wanted) {
+            texture.anisotropy = wanted
+            texture.needsUpdate = true
+          }
+        }
+      }
+    })
+  }
+
+  /** 调整已有 L9/L10 内饰的距离裁剪阈值，不改变区块生成范围。 */
+  setDetailDistance(scale: number) {
+    this.detailDistanceScale = Math.max(0.5, Math.min(1.5, scale))
+    this.l9InteriorCullT = 1
+    this.l10InteriorCullT = 1
+  }
+
+  /** 环境粒子密度会同时减少灰尘更新量与 L10 雨丝绘制量。 */
+  setParticleDensity(scale: number) {
+    this.particleDensity = Math.max(0, Math.min(1, scale))
+    const count = Math.floor(160 * this.particleDensity)
+    this.dust.geometry.setDrawRange(0, count)
+    this.l10Rain.geometry.setDrawRange(0, Math.floor(150 * this.particleDensity) * 2)
+  }
+
+  setShadowUpdateRate(rate: number) {
+    this.shadowUpdateRate = Math.max(0, Math.min(2, Math.round(rate)))
+    this.flashShadowPose.valid = false
+  }
 
   /** 设置：距离雾远近倍率（1=默认；帧内对雾 near/far 缩放） */
   setFogScale(k: number) { this.fogScale = Math.max(0.2, Math.min(4, k)) }
@@ -1835,7 +2001,12 @@ export class Renderer3D {
   }
 
   /** 释放环境探针缓存（关闭渲染器时调用） */
-  dispose() { this.cancelMaterialPrecompile(); disposeEnvProbes() }
+  dispose() {
+    this.cancelMaterialPrecompile()
+    this.l10Rain.geometry.dispose()
+    ;(this.l10Rain.material as THREE.Material).dispose()
+    disposeEnvProbes()
+  }
 
   private teardown() {
     this.cancelMaterialPrecompile()
@@ -1896,13 +2067,13 @@ export class Renderer3D {
     this.skyC.set(SKY[def.id] ?? '#0a0a0c')
     this.outK = 0
     this.tintK = 0
-    this.ambientBase = def.id === 6 ? 0.012 : def.id === 7 ? 0.55 : def.id === 9 ? 0.045 : def.id === 0 ? 0.15 : 0.09 + def.darkness * 0.06
-    this.hemiBase = def.id === 6 ? 0.018 : def.id === 7 ? 0.6 : def.id === 9 ? 0.055 : def.id === 0 ? 0.19 : 0.12 + def.darkness * 0.06
+    this.ambientBase = def.id === 6 ? 0.012 : def.id === 7 ? 0.55 : def.id === 9 ? 0.045 : def.id === 10 ? 0.38 : def.id === 0 ? 0.15 : 0.09 + def.darkness * 0.06
+    this.hemiBase = def.id === 6 ? 0.018 : def.id === 7 ? 0.6 : def.id === 9 ? 0.055 : def.id === 10 ? 0.46 : def.id === 0 ? 0.19 : 0.12 + def.darkness * 0.06
     this.hemi.color.set(col(pal.wallTop).lerp(col('#9aa2b0'), 0.5))
     this.hemi.groundColor.set(col(pal.floor).multiplyScalar(0.8))
     // v58：L7 巨大迷雾 + 蜃楼船队——无限模式此前没有天空球（仅背景色/雾）；
     // 挂到场景而非 chunk 组（chunk 流式重建不受影响），球心/船位每帧跟随玩家
-    if (def.id === 7 || def.id === 8 || def.id === 9) {
+    if (def.id === 7 || def.id === 8 || def.id === 9 || def.id === 10) {
       this.skyMesh = makeSkyMesh(m, def)
       if (this.skyMesh) this.scene.add(this.skyMesh)
       this.mirageFleet = makeMirageFleet(def.id)
@@ -1972,7 +2143,7 @@ export class Renderer3D {
     queue.sort((a, b) =>
       (Math.abs(a.cx * CS - inf.ox - p.x) + Math.abs(a.cy * CS - inf.oy - p.y)) -
       (Math.abs(b.cx * CS - inf.ox - p.x) + Math.abs(b.cy * CS - inf.oy - p.y)))
-    const budget = def.id === 5 || def.id === 7 || def.id === 8 || def.id === 9 ? 1 : (this.chunkGroups.size === 0 ? queue.length : 2) // L9 住宅模型同样逐帧构建，避免首帧挂载 25 个精装街区
+    const budget = def.id === 5 || def.id === 7 || def.id === 8 || def.id === 9 || def.id === 10 ? 1 : (this.chunkGroups.size === 0 ? queue.length : 2) // L9/L10 重型室外区块逐帧构建
     for (const c of queue.slice(0, budget)) this.buildInfiniteChunk(m, def, c)
   }
 
@@ -2082,8 +2253,8 @@ export class Renderer3D {
     const wx = c.cx * CS - inf.ox, wy = c.cy * CS - inf.oy
     const range = { x0: wx, y0: wy, x1: wx + CS, y1: wy + CS, variant: c.variant }
     buildTerrain(m, def, H, g, range)
-    // 无限 L7 海洋、L8 地下湖与 L9 后院泳池随 chunk 构建水面。
-    if (def.id === 7 || def.id === 8 || def.id === 9) {
+    // 无限 L7 海洋、L8 地下湖、L9 后院泳池与 L10 连续湖泊随 chunk 构建水面。
+    if (def.id === 7 || def.id === 8 || def.id === 9 || def.id === 10) {
       const liquids = new THREE.Group()
       buildLiquidSurfaces(m, def, liquids, range, this.realWaterOn)
       if (liquids.children.length) g.add(liquids)
@@ -2102,12 +2273,18 @@ export class Renderer3D {
     const interiorStatic = new Map<THREE.Group, THREE.Object3D[]>()
     for (const rec of l9Interiors) interiorStatic.set(rec.group, [])
     const exteriorStatic: THREE.Object3D[] = []
+    const l10Static: THREE.Object3D[] = []
+    if (def.id === 10) {
+      const cropLod = buildL10CropLod(c.structures.filter(s => s.kind === 'wheatpatch'), m)
+      if (cropLod) g.add(cropLod)
+    }
     const interiorFor = (s: Structure) => {
       if (def.id !== 9 || L9_INTERIOR_EXCLUDE.has(s.kind)) return undefined
       const x = s.x + s.w / 2, y = s.y + s.h / 2
       return l9Interiors.find(({ house: h }) => x > h.x + .5 && x < h.x + h.w - .5 && y > h.y + .5 && y < h.y + h.h - .5)
     }
     for (const s of c.structures) {
+      if (def.id === 10 && s.kind === 'wheatpatch') { structs.push(s); continue }
       const mesh = buildStructure(s, def, m, H)
       if (mesh) {
         const gy = floorHeight(m, s.x + s.w / 2, s.y + s.h / 2, s.floor ?? 0)
@@ -2117,6 +2294,8 @@ export class Renderer3D {
         if (def.id === 9 && !l9KeepIndividual(s)) {
           if (interior) interiorStatic.get(interior.group)!.push(mesh)
           else exteriorStatic.push(mesh)
+        } else if (def.id === 10 && !ANIM_STRUCT(s) && s.data?.sid === undefined) {
+          l10Static.push(mesh)
         } else {
           ;(interior?.group ?? g).add(mesh as THREE.Group)
           this.structMeshes.set(s, mesh as THREE.Group)
@@ -2135,6 +2314,12 @@ export class Renderer3D {
       for (const rec of l9Interiors) batchL9StaticRoots(rec.group, interiorStatic.get(rec.group)!)
       // 新区块在本帧相机落位后立即做一次裁剪，不让远处内饰闪现一帧。
       this.l9InteriorCullT = 1
+    }
+    if (def.id === 10 && l10Static.length) {
+      const batch = new THREE.Group()
+      batch.name = 'l10-static-field-batch'
+      batchL9StaticRoots(batch, l10Static)
+      g.add(batch)
     }
     // 灯具（L0 全室内：自发光盒；v53：src 记录光源，亮度随其点亮状态）
     const fixtures: { mat: THREE.MeshBasicMaterial; seed: number; src?: LightSource }[] = []
@@ -2175,6 +2360,12 @@ export class Renderer3D {
         grp.rotation.y = Math.PI / 2 // 洞口朝向街区内部（+X），石丘背面贴在区块边缘
       }
       else if (def.id === 9 && (e.def.kind === 'arrowsign' || e.def.kind === 'grasspath')) this.orientL9Path(m, grp, e, e.def.kind)
+      else if (def.id === 10 && e.def.kind === 'longroad') {
+        const wx = e.x + (m.inf?.ox ?? 0), seed = m.inf?.seed ?? 0
+        const dy = l10MainRoadY(seed, wx + 2) - l10MainRoadY(seed, wx - 2)
+        grp.rotation.y = Math.atan2(4, dy)
+        grp.position.set(e.x + .5, e.z ?? floorHeight(m, e.x, e.y, e.floor ?? 0), e.y + .5)
+      }
       else grp.position.set(e.x + 0.5, e.z ?? floorHeight(m, e.x, e.y, e.floor ?? 0), e.y + 0.5)
       // v58：岩洞洞口贴海床斜面摆放——洞口平面（+Y 朝上建模）法线对齐连续地形法线，微沉贴合
       if (e.def.kind === 'l7cave') {
@@ -3478,7 +3669,8 @@ export class Renderer3D {
     // 灰尘围绕玩家漂浮（设置项 dust 关闭时整体隐藏，不再更新）
     if (this.dust.visible) {
       const dp = this.dust.geometry.attributes.position as THREE.BufferAttribute
-      for (let i = 0; i < dp.count; i++) {
+      const activeCount = Math.min(dp.count, Math.floor(160 * this.particleDensity))
+      for (let i = 0; i < activeCount; i++) {
         let y = dp.getY(i) + Math.sin(this.time * 0.5 + i) * 0.001
         if (y < 0) y = 3
         dp.setY(i, y > 3 ? 0 : y)

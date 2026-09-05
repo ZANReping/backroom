@@ -15,6 +15,7 @@ import './infiniteL6' // v56：注册 Level 6 地表/地下双层无限生成器
 import './infiniteL7' // v57：注册 Level 7 入口房间 + 四深度带无限海洋生成器（副作用导入）
 import './infiniteL8' // v59：注册 Level 8 无限有机洞穴与生态分区生成器（副作用导入）
 import './infiniteL9' // v61：注册 Level 9 无限郊区、住宅街与第九大道引导路线生成器
+import './infiniteL10' // v62：注册 Level 10 无限农田、连续道路与湖泊生成器
 import { genDeep } from './mapgenDeep'
 import { genOutpost } from './mapgenOutpost'
 import { CONTAINER_KINDS } from '../decorations/containers'
@@ -57,6 +58,7 @@ export interface GameMap {
   organicCave?: boolean // L8：渲染/碰撞统一使用有机洞穴曲面
   caveVolumeId?: number // 新洞穴类模式：指向 InfiniteLevelImpl.caveVolume，避免硬编码 L8
   l7SeaTerrain?: boolean // v57t：L7 室外海床/荒岛连续高度场（碰撞与渲染共用一套平滑斜面）
+  l10LakeTerrain?: boolean // L10：岸坡与湖底共用 terrain 连续高度场，水面固定在地表水位
   // ---- v17 数据契约：无限模式（L0）与墙面/地面 tint ----
   tint: Uint8Array // 0=无 1=马尼拉墙纸 2=红室 3=熄灯区（几何着色/雾氛围用）
   inf?: InfiniteState // 无限 chunk 模式状态（仅 L0；有限层级缺省）
@@ -83,7 +85,7 @@ export const UNDER_MID = -1.0 // 地下带分界：z < UNDER_MID 视为身处地
 export function liquidSurfaceH(m: GameMap, tx: number, ty: number): number | null {
   if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return null
   const i = ty * m.w + tx
-  if (m.liquid[i] === 1) return ELEV_H[m.elev[i]] + 0.03
+  if (m.liquid[i] === 1) return m.l10LakeTerrain ? 0.015 : ELEV_H[m.elev[i]] + 0.03
   if (m.liquid[i] === 2) return m.organicCave ? surfaceUndulationAt(m, tx + 0.5, ty + 0.5) + 0.035 : ELEV_H[m.elev[i]] - 0.17
   return null
 }
@@ -139,6 +141,7 @@ export function tileH(m: GameMap, tx: number, ty: number): number {
   const st = m.step[i]
   if (st & 7) return (ELEV_H[(st >> 3) & 3] + ELEV_H[(st >> 5) & 3]) / 2
   if (m.organicCave && m.elev[i] === 3) return m.terrain?.[i] ?? 0
+  if (m.l10LakeTerrain && m.elev[i] === 3) return m.terrain?.[i] ?? 0
   if (m.liquid[i] === 1) return -(m.seaFloor[i] || POOL_DEPTH)
   if (m.liquid[i] === 2) return ELEV_H[m.elev[i]] - SHALLOW_DEPTH
   return ELEV_H[m.elev[i]] + (m.elev[i] === 3 ? (m.terrain?.[i] ?? 0) : 0)
@@ -287,6 +290,7 @@ export function floorHeight(m: GameMap, x: number, y: number, band: FloorBand = 
     return low + (high - low) * t
   }
   if (l7SeaTile(m, tx, ty)) return l7SeaHAt(m, x, y) // v57t：L7 室外海床/荒岛=连续平滑斜面（碰撞与渲染共用）
+  if (m.l10LakeTerrain && m.elev[i] === 3) return surfaceUndulationAt(m, x, y)
   if (m.liquid[i] === 1) return -(m.seaFloor[i] || POOL_DEPTH)
   if (m.liquid[i] === 2) return ELEV_H[m.elev[i]] - SHALLOW_DEPTH // 浅水洼：以所在高度档为基准
   return ELEV_H[m.elev[i]] + (m.elev[i] === 3 ? surfaceUndulationAt(m, x, y) : 0)
@@ -485,6 +489,18 @@ export function structColliders(s: Structure, m?: GameMap): ColliderBox[] {
       return [{ x0: cx - s.w * 0.45, y0: cy - 0.35, x1: cx + s.w * 0.45, y1: cy + 0.35, top: 0.77, stand: true }]
     case 'crate':
       return [{ x0: cx - 0.42, y0: cy - 0.42, x1: cx + 0.42, y1: cy + 0.42, top: 0.7, stand: true }]
+    case 'l10haybale': {
+      // 渲染器尚未建立模型碰撞时的确定性回退。按实际摆放角度求旋转长方体的平面 AABB；
+      // 加载完成后会自动切换为 RoundedBoxGeometry 的模型包围盒。
+      const a = Number(s.data?.deg ?? 0) * Math.PI / 180
+      const ca = Math.abs(Math.cos(a)), sa = Math.abs(Math.sin(a))
+      const ex = ca * s.w * .5 + sa * s.h * .5
+      const ey = sa * s.w * .5 + ca * s.h * .5
+      return [{
+        x0: cx - ex, y0: cy - ey, x1: cx + ex, y1: cy + ey,
+        top: Math.max(.42, Number(s.data?.height ?? .64)) - .025, stand: true,
+      }]
+    }
     case 'barrel':
       // v57t：木桶按真实圆柱半径/高度给碰撞——深海底的桶只占据海床以上 0.9m，不再把整条水柱堵死
       return [{ x0: cx - 0.34, y0: cy - 0.34, x1: cx + 0.34, y1: cy + 0.34, top: 0.9, stand: false }]
@@ -1231,6 +1247,7 @@ function genOnce(def: LevelDef, seed: number): GameMap {
     hasUnderground: false,
     terrain: new Float32Array(size * size),
     l7SeaTerrain: def.id === 7,
+    l10LakeTerrain: def.id === 10,
   }
   // 初始化为墙
   m.tiles.fill(2)
@@ -1747,13 +1764,31 @@ function genOnce(def: LevelDef, seed: number): GameMap {
   // 出口（随机选 1 个主要出口 + 偶尔第二个；据点跳过——出口由生成器手工布置）
   // v51：回程电梯（elevatorshaft →L3）从正常掷骰中剔除，作为额外出口单独放置——绝不挤占进程出口
   const liftBack = def.exits.filter((e) => e.kind === 'elevatorshaft' && e.dest === 3)
-  const normalExitDefs = def.exits.filter((e) => !(e.kind === 'elevatorshaft' && e.dest === 3))
+  // L11 的乡间小路是确定性的边缘入口，不参与普通出口抽签；下方会在城市南缘雕出实际小径。
+  const normalExitDefs = def.exits.filter((e) =>
+    !(e.kind === 'elevatorshaft' && e.dest === 3)
+    && !(def.id === 11 && e.kind === 'countrypath'))
   const exitDefs = def.allExits ? [...normalExitDefs] : rng.shuffle([...normalExitDefs])
   // v23：结局层（Level 601）必须真假两扇门同时存在
   const nExits = def.gen === 'outpost' ? 0 : def.allExits ? exitDefs.length : (rng.chance(0.35) ? 2 : 1)
   for (let i = 0; i < nExits; i++) {
     const p = reachFloor(12, { indoor: true, waterOk: aquaticLv }) // 出口强制正常高度室内可达区（水生层可落于开阔海面）
     m.exits.push({ def: exitDefs[i], x: p.x, y: p.y, discovered: false })
+  }
+  if (def.id === 11) {
+    const country = def.exits.find((e) => e.kind === 'countrypath')
+    if (country) {
+      // genCity 的最后一排建筑止于 y=74；在南缘清出一条真正连到地图边界的 5m 宽乡间小径。
+      const px = Math.floor(size / 2), y0 = size - 13, y1 = size - 3
+      m.structures = m.structures.filter((s) =>
+        s.x + s.w <= px - 2 || s.x >= px + 3 || s.y + s.h <= y0 || s.y >= size)
+      for (let y = y0; y <= y1; y++) for (let x = px - 2; x <= px + 2; x++) {
+        const ii = y * size + x
+        m.tiles[ii] = 1; m.outdoor[ii] = 1; m.elev[ii] = 3
+        m.wet[ii] = 0; m.liquid[ii] = 0; m.step[ii] = 0; m.crawl[ii] = 0
+      }
+      m.exits.push({ def: country, x: px, y: y1, discovered: false })
+    }
   }
   if (def.gen !== 'outpost') // v51：额外回程电梯（普通地面放置，L4/L5 侧无嵌墙要求）
     for (const elev of liftBack) {

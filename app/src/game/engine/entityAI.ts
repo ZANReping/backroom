@@ -192,6 +192,10 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
   for (const e of m.entities) {
     // 死亡动画计时（倒地/消散后移除）
     if (e.dead) { e.deathT -= dt; continue }
+    if (e.l10BurrowT !== undefined) {
+      e.l10BurrowT -= dt
+      if (e.l10BurrowT <= 0) { e.hidden = true; e.dead = true; e.deathT = .45; continue }
+    }
     e.stateT -= dt; e.attackCd -= dt
     if (e.huntScanT !== undefined) e.huntScanT -= dt
     if (e.turnSlowT !== undefined && e.turnSlowT > 0) e.turnSlowT -= dt // v58：七层之物转头迟滞计时

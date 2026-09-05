@@ -10,6 +10,7 @@ import { FACTIONS, REP_TIER } from '../content/factions'
 import { updateInfinite, l0NearestExit, chunkKey, CS, infiniteImplFor, h32 } from '../world/infinite'
 import { L8_AVENUE_SEGMENTS, l8AvenuePoint } from '../world/infiniteL8'
 import { L9_CAVE_SPAWN, L9_L5_DOOR_SPAWN, L9_POOL_SPAWN } from '../world/infiniteL9'
+import { L10_L11_SPAWN, L10_L9_SPAWN } from '../world/infiniteL10'
 import type { ExitDef, ExitInstance, FloorBand } from '../core/types'
 import type { Engine } from '../engine'
 import { resetEffects } from './effects'
@@ -33,6 +34,10 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   eng.arriveL6Band = null
   const l9From = id === 9 && !restore ? eng.arriveL9From : null
   eng.arriveL9From = null
+  const l10From = id === 10 && !restore ? eng.arriveL10From : null
+  eng.arriveL10From = null
+  const l7SafeWater = id === 7 && !restore && eng.arriveL7SafeWater
+  eng.arriveL7SafeWater = false
   const l8AvenueEnd = id === 8 && !restore && eng.arriveL8AvenueEnd
   eng.arriveL8AvenueEnd = false
   // v29a：读档恢复时复用存档记录的地图种子与首访标记，保证复现同一张图
@@ -90,6 +95,26 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
     eng.player.x = anchor.x - eng.map.inf.ox
     eng.player.y = anchor.y - eng.map.inf.oy
   }
+  if (id === 10 && eng.map.inf && l10From !== null) {
+    const anchor = l10From === 11 ? L10_L11_SPAWN : L10_L9_SPAWN
+    eng.player.x = anchor.x - eng.map.inf.ox
+    eng.player.y = anchor.y - eng.map.inf.oy
+    // 世界种子可能让树篱或树干恰好压住入口锚点；只在入口附近做一次确定性安全落点修正。
+    if (!canOccupy(eng.map, eng.player.x, eng.player.y, PLAYER_RADIUS, { z: 0 })) {
+      outer: for (let r = 1; r <= 8; r++)
+        for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) {
+          if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue
+          const x: number = anchor.x - eng.map.inf.ox + dx
+          const y: number = anchor.y - eng.map.inf.oy + dy
+          const ii = Math.floor(y) * eng.map.w + Math.floor(x)
+          if (ii < 0 || ii >= eng.map.liquid.length || eng.map.liquid[ii] !== 0) continue
+          if (!canOccupy(eng.map, x, y, PLAYER_RADIUS, { z: 0 })) continue
+          eng.player.x = x; eng.player.y = y
+          break outer
+        }
+    }
+    eng.player.z = floorHeight(eng.map, eng.player.x, eng.player.y, 0)
+  }
   // v57m：L7 入口舱体位于 2F——出生点按注册的 spawnFloor 落在上层楼板
   if (eng.map.inf) {
     const m2 = eng.map
@@ -97,6 +122,23 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
     if (spawnBand === 1 && m2.up[Math.floor(eng.player.y) * m2.w + Math.floor(eng.player.x)] === 1) {
       eng.player.z = floorHeight(m2, eng.player.x, eng.player.y, 1)
       eng.player.floor = 1
+    }
+  }
+  if (id === 7 && l7SafeWater) {
+    const m2 = eng.map
+    let found: { x: number; y: number } | null = null
+    const cx = Math.floor(m2.w / 2), cy = Math.floor(m2.h / 2)
+    outer: for (let r = 8; r < Math.min(55, m2.w / 2); r++)
+      for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) {
+        if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue
+        const x = cx + dx, y = cy + dy, i = y * m2.w + x
+        if (x < 2 || y < 2 || x >= m2.w - 2 || y >= m2.h - 2 || m2.liquid[i] !== 1 || m2.seaFloor[i] < 2.2) continue
+        if (m2.structures.some(s => s.solid && x + .5 >= s.x && x + .5 <= s.x + s.w && y + .5 >= s.y && y + .5 <= s.y + s.h)) continue
+        found = { x: x + .5, y: y + .5 }; break outer
+      }
+    if (found) {
+      eng.player.x = found.x; eng.player.y = found.y; eng.player.z = -.32; eng.player.vz = 0; eng.player.floor = 0
+      eng.inLiquid = 1; eng.submerged = true; eng.wasSubmerged = false; eng.breathT = 0
     }
   }
   if (id === 8 && eng.map.organicCave) eng.player.z = floorHeight(eng.map, eng.player.x, eng.player.y, 0)
@@ -249,7 +291,7 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
     l9caveback: '道路尽头嵌着一座潮湿的石质洞口，里面仍是 Level 8 的岩层。',
     streetclip: '这段街面的沥青摸上去是软的。',
     longroad: '双车辙的土路笔直伸向地平线。它通向一座城市。',
-    canola: '远处一片刺眼的黄——那是油菜地。它不属于这里的调色板。',
+    countrypath: '城市边缘分出一条乡间小路，沿着它可以回到 Level 10。',
     lakeswim: '湖水清澈见底，底下却没有底。',
     basebeta: 'M.E.G. Base Beta 的档案室在城里。档案员要看齐六盘磁带才肯开门。',
     shopsign: '街上有一排陌生的店招。每一块牌子后面都是另一层。',
@@ -541,6 +583,8 @@ export function takeExit(eng: Engine, def: ExitDef) {  const p = eng.player
   if (def.kind === 'oldstairs') eng.arriveOldstairs = true
   if (def.dest === 6) eng.arriveL6Band = p.level === 5 && def.kind === 'boilerdeep' ? -1 : 0
   if (def.dest === 9) eng.arriveL9From = p.level
+  if (def.dest === 10) eng.arriveL10From = p.level
+  if (p.level === 10 && def.kind === 'lakeswim' && def.dest === 7) eng.arriveL7SafeWater = true
   if (p.level === 9 && def.kind === 'l9caveback' && def.dest === 8) eng.arriveL8AvenueEnd = true
   if (p.level === 9 && def.kind === 'arrowsign' && def.dest === 11) {
     p.hunger = Math.max(10, p.hunger - 30)

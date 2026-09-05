@@ -735,6 +735,20 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
         </div>
       )}
 
+      {/* Level 10 持续交互：饮水、局部挖掘、深湖下潜。 */}
+      {engine.l10Action && (
+        <div className="pointer-events-none fixed left-1/2 top-1/2 z-[35] w-[240px] -translate-x-1/2 translate-y-10">
+          <div className="hud-panel p-2 text-center">
+            <div className="font-mono2 mb-1 text-[12px]" style={{ color: 'var(--amber)' }}>
+              {engine.l10Action.kind === 'drink' ? '饮用湖水中…' : engine.l10Action.kind === 'dig' ? '挖掘旧土坑中…' : '向深湖中心下潜中…'}
+            </div>
+            <div className="h-[8px] w-full overflow-hidden rounded-sm" style={{ background: 'rgba(0,0,0,0.6)' }}>
+              <div className="h-full" style={{ width: `${Math.min(100, engine.l10Action.t / engine.l10Action.dur * 100)}%`, background: 'var(--amber)', transition: 'width 0.08s linear' }} />
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 消耗品使用进度：效果与扣除只在进度完整结束时发生 */}
       {engine.usingItem && (
         <div className="pointer-events-none fixed left-1/2 top-1/2 z-[35] w-[240px] -translate-x-1/2 translate-y-10">

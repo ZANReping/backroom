@@ -128,7 +128,7 @@ export const ITEMS: Record<string, ItemDef> = {
   housekey: { type: 'housekey', name: '门廊钥匙', desc: '从某户人家的门垫下摸出来的。郊区的房子看上去有人住，只是永远没有电。', stack: 2, unique: 9, equip: 'pocket', rarity: 'uncommon', glyph: 'key' },
 
   // Level 10「Bumper Crop」
-  wheatgrain: { type: 'wheatgrain', name: '割下的小麦', desc: '可安全食用，磨成面粉还能当增稠剂。M.E.G. 已停止在此收割——他们对它的营养价值存疑。', stack: 4, unique: 10, use: 'eat', value: 20, rarity: 'common', glyph: 'wheat' },
+  wheatgrain: { type: 'wheatgrain', name: '割下的小麦', desc: '可安全食用，磨成面粉还能当增稠剂，但营养价值很低，不能作为可靠主食。M.E.G. 已停止在此收割。', stack: 4, unique: 10, use: 'eat', value: 6, rarity: 'common', glyph: 'wheat' },
   nails: { type: 'nails', name: '一把钉子', desc: '谷仓里到处都是。配上木材，能把一扇门钉死一会儿。', stack: 4, unique: 10, use: 'none', rarity: 'common', glyph: 'nails' },
   timber: { type: 'timber', name: '木板', desc: '从棚屋上拆下来的木板。挥起来沉得很，也能拿来封门。', stack: 2, unique: 10, weapon: 22, attackInterval: 0.94, attackStamina: 11, rarity: 'common', glyph: 'timber' },
 

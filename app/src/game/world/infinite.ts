@@ -900,6 +900,7 @@ export function generateInfinite(def: LevelDef, seed: number, firstVisit = true)
     organicCave: impl.caveVolume !== undefined,
     caveVolumeId: impl.caveVolume ? def.id : undefined,
     l7SeaTerrain: def.id === 7,
+    l10LakeTerrain: def.id === 10,
     inf: {
       seed, ox: -WIN_R * CS, oy: -WIN_R * CS,
       chunks: new Map(), explored: new Map(), state: new Map(),

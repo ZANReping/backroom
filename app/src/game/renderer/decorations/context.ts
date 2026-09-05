@@ -4,7 +4,7 @@
 // 否则同一种子摆位变化（纯视觉，但仍视为生成结果）。
 import * as THREE from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
-import { UNDER_FLOOR, type GameMap } from '../../world/mapgen'
+import { floorHeight, UNDER_FLOOR, type GameMap } from '../../world/mapgen'
 import type { LevelDef, LightSource } from '../../core/types'
 import { col, mulberry } from '../shared'
 
@@ -50,6 +50,17 @@ export function createDecorCtx(
   // 于是废弃手电等小物会悬在起伏苔原和区块接缝上。
   const underground = def.id === 6 && m.hasUnderground
   const baseY = underground ? UNDER_FLOOR : 0
+  // L10 使用连续起伏高度场。装饰物过去仍以 y=0 为基准，因此在坡面上会悬空或埋地。
+  // 只对 L10 采样真实脚下高度，避免改变其他层级既有的平面摆放结果。
+  const groundY = (x: number, z: number) => def.id === 10 ? floorHeight(m, x, z, 0) : baseY
+  const alignToL10Ground = (geo: THREE.BufferGeometry, x: number, z: number) => {
+    if (def.id !== 10) return
+    const e = .35
+    const dx = (groundY(x + e, z) - groundY(x - e, z)) / (e * 2)
+    const dz = (groundY(x, z + e) - groundY(x, z - e)) / (e * 2)
+    const normal = new THREE.Vector3(-dx, 1, -dz).normalize()
+    geo.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), normal))
+  }
   const walkableAt = (x: number, y: number) => {
     if (x < 0 || y < 0 || x >= m.w || y >= m.h) return false
     const i = y * m.w + x
@@ -115,10 +126,16 @@ export function createDecorCtx(
   // 地面贴花（同贴图合并，控制 drawcall）
   const floorBuckets = new Map<THREE.Texture, THREE.BufferGeometry[]>()
   const floorDecal = (fx: number, fz: number, tex: THREE.Texture, size: number, rot = 0) => {
-    const geo = new THREE.PlaneGeometry(size, size)
+    // 3×3 顶点足以贴合 L10 的柔和起伏，同时不会明显增加贴花批次的成本。
+    const geo = new THREE.PlaneGeometry(size, size, def.id === 10 ? 2 : 1, def.id === 10 ? 2 : 1)
     geo.rotateX(-Math.PI / 2)
     if (rot) geo.rotateY(rot)
-    geo.translate(fx, baseY + 0.012 + rng() * 0.004, fz)
+    geo.translate(fx, 0, fz)
+    const pos = geo.attributes.position as THREE.BufferAttribute
+    const lift = 0.012 + rng() * 0.004
+    for (let i = 0; i < pos.count; i++) pos.setY(i, groundY(pos.getX(i), pos.getZ(i)) + lift)
+    pos.needsUpdate = true
+    geo.computeVertexNormals()
     if (!floorBuckets.has(tex)) floorBuckets.set(tex, [])
     floorBuckets.get(tex)!.push(geo)
   }
@@ -129,7 +146,8 @@ export function createDecorCtx(
     if (rz) geo.rotateZ(rz)
     if (rx) geo.rotateX(rx)
     if (ry) geo.rotateY(ry)
-    geo.translate(x, baseY + y, z)
+    alignToL10Ground(geo, x, z)
+    geo.translate(x, groundY(x, z) + y, z)
     if (!propBuckets.has(color)) propBuckets.set(color, [])
     propBuckets.get(color)!.push(geo)
   }
@@ -137,7 +155,8 @@ export function createDecorCtx(
     const geo = new THREE.CylinderGeometry(rt, rb, h, seg)
     if (rz) geo.rotateZ(rz)
     if (ry) geo.rotateY(ry)
-    geo.translate(x, baseY + y, z)
+    alignToL10Ground(geo, x, z)
+    geo.translate(x, groundY(x, z) + y, z)
     if (!propBuckets.has(color)) propBuckets.set(color, [])
     propBuckets.get(color)!.push(geo)
   }
@@ -146,7 +165,7 @@ export function createDecorCtx(
     const mat = new THREE.MeshBasicMaterial({ color })
     mat.userData.base = col(color)
     const mm = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat)
-    mm.position.set(x, baseY + y, z)
+    mm.position.set(x, groundY(x, z) + y, z)
     if (ry) mm.rotation.y = ry
     if (rz) mm.rotation.z = rz
     g.add(mm)

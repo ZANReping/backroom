@@ -20,9 +20,9 @@ const hv = (x: number, y: number, s: number) => {
 // （顶点色 × L0 黄色墙纸纹理永远发黄——v19 的蓝通道补偿也无法把黄纸变成米色）
 // v17：tint 着色（1=马尼拉米色墙纸 2=红室 3=熄灯区仅雾/无灯 5=维护通廊白 6=花园段青翠 7=跃金段高饱和金 8=民居木墙暖棕）
 // v39：衔尾段施工化——10=毛坯混凝土（灰地表/铲到一半的墙/深色裸露吊顶） 11=施工补丁（地面新浇水泥/墙面残存粉刷补丁）
-const TINT_FLOOR: Record<number, string> = { 1: '#c9ad74', 2: '#8a1e14', 5: '#8a887e', 6: '#5a7a44', 7: '#8a6d24', 8: '#6a5340', 9: '#787c78', 10: '#6f6f6b', 11: '#5b5b57', 12: '#463227', 13: '#3a3a38', 14: '#34302b', 15: '#3c3a2e', 16: '#5c5548', 17: '#aab2d8', 18: '#565450', 19: '#403e3a', 20: '#6e6a5e', 21: '#9a817c', 22: '#7a3a36', 23: '#e8f0ee', 24: '#45423d', 25: '#6e7272', 26: '#4a5560', 27: '#37332e', 28: '#4a4c2f', 29: '#2e4b56', 30: '#263e49', 31: '#1b2d38', 32: '#0f1822', 33: '#5c6268', 34: '#d9dce0', 35: '#e9e9e5', 36: '#d7dfcf', 37: '#efe7dd', 38: '#edf3f1', 39: '#e6e8ea', 40: '#e7e3dc', 41: '#eeeae2', 43: '#d8c7a9' }
-const TINT_WALL: Record<number, string> = { 1: '#e5c88f', 2: '#a82318', 5: '#b8b4a8', 6: '#8fae7a', 7: '#c99a2e', 8: '#9a7048', 9: '#c4c7c2', 10: '#8b887f', 11: '#a8a294', 12: '#6e4630', 13: '#555552', 14: '#544a40', 15: '#565244', 16: '#8f8a7c', 17: '#ccd2ee', 18: '#7d7166', 19: '#564d44', 20: '#7a7264', 29: '#5b6a70', 30: '#4f5d63', 31: '#414d53', 32: '#2e363b', 33: '#6a6e72', 41: '#f1eee7' }
-const TINT_CEIL: Record<number, string> = { 1: '#c9b185', 2: '#5e120b', 5: '#c8c4b8', 6: '#c4d9ae', 7: '#a8842a', 8: '#6a4e38', 9: '#b2b6b0', 10: '#3a3b3e', 11: '#3a3b3e', 12: '#3a2a20', 13: '#2e2e2c', 14: '#332d26', 15: '#2e2c24', 16: '#6e6a5c', 17: '#8a92c8', 18: '#8a8880', 19: '#5a5852', 20: '#5e5a50', 21: '#4a3230', 22: '#4a3632', 23: '#5a6a6c', 24: '#2e2a26', 25: '#5a5e60', 26: '#3c4650', 29: '#4d5f67', 30: '#40525a', 31: '#2c3b44', 32: '#151f28', 33: '#55595d' }
+const TINT_FLOOR: Record<number, string> = { 1: '#c9ad74', 2: '#8a1e14', 5: '#8a887e', 6: '#5a7a44', 7: '#8a6d24', 8: '#6a5340', 9: '#787c78', 10: '#6f6f6b', 11: '#5b5b57', 12: '#463227', 13: '#3a3a38', 14: '#34302b', 15: '#3c3a2e', 16: '#5c5548', 17: '#aab2d8', 18: '#565450', 19: '#403e3a', 20: '#6e6a5e', 21: '#9a817c', 22: '#7a3a36', 23: '#e8f0ee', 24: '#45423d', 25: '#6e7272', 26: '#4a5560', 27: '#37332e', 28: '#4a4c2f', 29: '#2e4b56', 30: '#263e49', 31: '#1b2d38', 32: '#0f1822', 33: '#5c6268', 34: '#d9dce0', 35: '#e9e9e5', 36: '#d7dfcf', 37: '#efe7dd', 38: '#edf3f1', 39: '#e6e8ea', 40: '#e7e3dc', 41: '#eeeae2', 43: '#d8c7a9', 44: '#d7c6a3', 45: '#c8d1ad', 46: '#aa9680', 47: '#c4b398', 48: '#b4ae98', 49: '#d2ba91', 50: '#f7ebcb' }
+const TINT_WALL: Record<number, string> = { 1: '#e5c88f', 2: '#a82318', 5: '#b8b4a8', 6: '#8fae7a', 7: '#c99a2e', 8: '#9a7048', 9: '#c4c7c2', 10: '#8b887f', 11: '#a8a294', 12: '#6e4630', 13: '#555552', 14: '#544a40', 15: '#565244', 16: '#8f8a7c', 17: '#ccd2ee', 18: '#7d7166', 19: '#564d44', 20: '#7a7264', 29: '#5b6a70', 30: '#4f5d63', 31: '#414d53', 32: '#2e363b', 33: '#6a6e72', 41: '#f1eee7', 49: '#bda884' }
+const TINT_CEIL: Record<number, string> = { 1: '#c9b185', 2: '#5e120b', 5: '#c8c4b8', 6: '#c4d9ae', 7: '#a8842a', 8: '#6a4e38', 9: '#b2b6b0', 10: '#3a3b3e', 11: '#3a3b3e', 12: '#3a2a20', 13: '#2e2e2c', 14: '#332d26', 15: '#2e2c24', 16: '#6e6a5c', 17: '#8a92c8', 18: '#8a8880', 19: '#5a5852', 20: '#5e5a50', 21: '#4a3230', 22: '#4a3632', 23: '#5a6a6c', 24: '#2e2a26', 25: '#5a5e60', 26: '#3c4650', 29: '#4d5f67', 30: '#40525a', 31: '#2c3b44', 32: '#151f28', 33: '#55595d', 49: '#8b7d66' }
 // v41：12=L2 肮脏的廊道（锈橙棕）13=晦暗的廊道（积灰灰暗）14=整洁的廊道（洁净深色）
 //     15=扭曲的廊道（病绿灰）16=办公走廊（L4 废弃办公室风）
 // v51：18=L3 照明廊道（砖墙暖灰）19=L3 晦暗廊道（积灰暗棕）20=L3 圣所（苍白圣石；实体畏惧不入）
@@ -152,6 +152,14 @@ const l9WoodGeos: THREE.BufferGeometry[] = []
 const l9PoolDeckGeos: THREE.BufferGeometry[] = []
 const l9DrivewayGeos: THREE.BufferGeometry[] = []
 const l9DirtPathGeos: THREE.BufferGeometry[] = []
+// L10 每种地表独立材质，避免湿车辙、草地和干土共享同一反射参数。
+const l10DrySoilGeos: THREE.BufferGeometry[] = []
+const l10GrassGeos: THREE.BufferGeometry[] = []
+const l10WetRutGeos: THREE.BufferGeometry[] = []
+const l10PackedDirtGeos: THREE.BufferGeometry[] = []
+const l10DampShoreGeos: THREE.BufferGeometry[] = []
+const l10WoodFloorGeos: THREE.BufferGeometry[] = []
+const l10CropGroundGeos: THREE.BufferGeometry[] = []
 
 let l9PuddleNormalTex: THREE.CanvasTexture | null = null
 let l9PuddleMat: THREE.MeshPhysicalMaterial | null = null
@@ -313,7 +321,7 @@ for (let y = RY0; y < RY1; y++) {
     // v34：L0 与 L1 天鹰段取消规律棋盘格（统一底色 + 保留随机明暗噪点）
     const flatFloor = def.id === 0 || (def.id === 1 && range?.variant === 'parking')
     const c = isWet && !isOut ? (bakeL0 ? grayC(0.62) : wetC) : isOut
-      ? (isWet && def.id !== 9 ? poolC : (def.id === 6 || def.id === 9) && tBase ? tBase : outC).clone().multiplyScalar(0.9 + hv(x, y, 1) * 0.2)
+      ? (isWet && def.id !== 9 && def.id !== 10 ? poolC : (def.id === 6 || def.id === 9 || def.id === 10) && tBase ? tBase : outC).clone().multiplyScalar(0.9 + hv(x, y, 1) * 0.2)
       : bakeL0 // v53：L0 仅贴图——tint 折算相对底色因子，普通瓦片只留明暗噪点
         ? (tnt === 1 ? grayC(0.9 + hv(x, y, 2) * 0.12) : tBase ? tBase.clone().multiply(fBinv) : grayC(0.92 + hv(x, y, 2) * 0.16))
         : (tBase ?? (flatFloor || (x + y) % 2 === 0 ? fB : fA)).clone().multiplyScalar(0.92 + hv(x, y, 2) * 0.16)
@@ -375,12 +383,14 @@ for (let y = RY0; y < RY1; y++) {
     // v13：深水池底=-seaFloor / 浅水洼 -0.25m；v57o：L7 每瓦片海床深度
     const l7Smooth = def.id === 7 && l7SeaTile(m, x, y)
     const l7Seabed = l7Smooth && m.liquid[ti] === 1
+    const l10Smooth = def.id === 10 && m.elev[ti] === 3 && !!m.l10LakeTerrain
+    const smoothOutdoor = l7Smooth || l10Smooth
     // v57t：L7 室外海床/荒岛按连续高度场构建 2×2 分段斜面——相邻瓦片在共享边/角取同高顶点，
     // 不再由逐瓦片平板 + 垂直接缝墙拼成台阶；瓦片中心仍准确落在 -seaFloor / ELEV_H。
     const fh = m.liquid[ti] === 1 ? -(m.seaFloor[ti] || 1.7) : m.liquid[ti] === 2 ? ELEV_H[m.elev[ti]] - 0.25 : ELEV_H[m.elev[ti]]
-    const geo = new THREE.PlaneGeometry(1, 1, l7Smooth ? 2 : 1, l7Smooth ? 2 : 1)
+    const geo = new THREE.PlaneGeometry(1, 1, smoothOutdoor ? 2 : 1, smoothOutdoor ? 2 : 1)
     geo.rotateX(-Math.PI / 2)
-    geo.translate(x + 0.5, l7Smooth ? 0 : fh, y + 0.5)
+    geo.translate(x + 0.5, smoothOutdoor ? 0 : fh, y + 0.5)
     if (l7Smooth) {
       // v57t：位置与法线都从同一个连续高度场解析求取——相邻 chunk 在共享边/角上的重复顶点
       // 取到完全相同的法线，接缝处不再有光照棱线；瓦片内同样随斜面连续变化。
@@ -394,7 +404,7 @@ for (let y = RY0; y < RY1; y++) {
       }
       pos.needsUpdate = true
       nor.needsUpdate = true
-    } else if (def.id === 6 && m.elev[ti] === 3) {
+    } else if ((def.id === 6 || def.id === 10) && m.elev[ti] === 3) {
       const pos = geo.attributes.position as THREE.BufferAttribute
       for (let vi = 0; vi < pos.count; vi++) pos.setY(vi, surfaceUndulationAt(m, pos.getX(vi), pos.getZ(vi)))
       pos.needsUpdate = true; geo.computeVertexNormals()
@@ -406,6 +416,7 @@ for (let y = RY0; y < RY1; y++) {
     // 横竖走廊交汇和 chunk 边界共用同一世界相位，不再需要叠加 runner 平面。
     if (def.id === 5 && (tnt === 21 || tnt === 23)) worldWallUV(geo, tnt === 21 ? 1 / 0.75 : 0.5)
     if (def.id === 9) worldWallUV(geo, tnt === 37 ? 0.82 : tnt === 38 ? 0.55 : 0.42)
+    if (def.id === 10) worldWallUV(geo, tnt === 45 ? 0.48 : tnt === 46 ? 0.62 : tnt === 50 ? 0.7 : 0.55)
     // 海床也使用世界相位，纹理跨瓦片/chunk 连续；约 1.6m 覆盖一张材质，砾石尺度不会过密。
     if (l7Seabed) worldWallUV(geo, 0.62)
     const n = geo.attributes.position.count
@@ -428,6 +439,13 @@ for (let y = RY0; y < RY1; y++) {
       : def.id === 9 && tnt === 38 ? l9PoolDeckGeos
       : def.id === 9 && tnt === 40 ? l9DrivewayGeos
       : def.id === 9 && tnt === 43 ? l9DirtPathGeos
+      : def.id === 10 && tnt === 44 ? l10DrySoilGeos
+      : def.id === 10 && tnt === 45 ? l10GrassGeos
+      : def.id === 10 && tnt === 46 ? l10WetRutGeos
+      : def.id === 10 && tnt === 47 ? l10PackedDirtGeos
+      : def.id === 10 && tnt === 48 ? l10DampShoreGeos
+      : def.id === 10 && tnt === 49 ? l10WoodFloorGeos
+      : def.id === 10 && tnt === 50 ? l10CropGroundGeos
       : isOut ? outFloorGeos : def.id === 0 && tnt === 1 ? manilaFloorGeos : tnt === 20 ? marbleGeos : def.id === 7 && tnt === 33 ? cabinFloorGeos : def.id === 5 && tnt === 21 ? carpetGeos : def.id === 5 && tnt === 23 ? poolTileGeos : tex2.floor && !isWet && zoneB(x, y) ? floorGeos2 : floorGeos).push(geo)
   }
 }
@@ -569,6 +587,38 @@ if (l9DirtPathGeos.length) {
   const rough = l9PbrTex('l9_path_rough.jpg', '#eeeeee', '#d0d0d0')
   g.add(new THREE.Mesh(mergeGeometries(l9DirtPathGeos)!, litMaterial({ vertexColors: true, map: dirt, normalMap: normal, normalScale: new THREE.Vector2(.8, .8), roughnessMap: rough, roughness: .99, envBase: .018 })))
 }
+const l10PbrTex = (name: string, fbBase: string, fbAlt: string, colorMap = false) => {
+  const t = levelTexture(name, () => noiseTexture(fbBase, fbAlt))
+  t.colorSpace = colorMap ? THREE.SRGBColorSpace : THREE.NoColorSpace
+  t.anisotropy = Math.max(t.anisotropy, 4); t.needsUpdate = true
+  return t
+}
+const addL10Surface = (
+  geos: THREE.BufferGeometry[], prefix: string, fb: [string, string], roughness: number,
+  envBase: number, normalStrength: number, wet = false,
+) => {
+  if (!geos.length) return
+  const map = l10PbrTex(`${prefix}_diff.jpg`, fb[0], fb[1], true)
+  const normal = l10PbrTex(`${prefix}_normal.jpg`, '#8080ff', '#7f7fff')
+  const rough = l10PbrTex(`${prefix}_rough.jpg`, wet ? '#777777' : '#dddddd', wet ? '#999999' : '#c2c2c2')
+  const mat = litMaterial({
+    color: '#ffffff', vertexColors: true, map, normalMap: normal,
+    normalScale: new THREE.Vector2(normalStrength, normalStrength),
+    roughnessMap: rough, roughness, envBase,
+    ...(wet ? { metalness: .02 } : {}),
+  })
+  mat.userData.l10Wettable = 1
+  mat.userData.l10BaseRoughness = roughness
+  mat.userData.l10BaseEnv = envBase
+  g.add(new THREE.Mesh(mergeGeometries(geos)!, mat))
+}
+addL10Surface(l10DrySoilGeos, 'l10_dry_soil', ['#79684d', '#ad9870'], .93, .045, .72)
+addL10Surface(l10GrassGeos, 'l10_grass', ['#6a7350', '#39442d'], .98, .025, .68)
+addL10Surface(l10WetRutGeos, 'l10_wet_rut', ['#44372a', '#69533b'], .28, .42, .84, true)
+addL10Surface(l10PackedDirtGeos, 'l10_packed_dirt', ['#746148', '#9d8664'], .82, .11, .58)
+addL10Surface(l10DampShoreGeos, 'l10_damp_shore', ['#5d5746', '#89806a'], .46, .28, .76, true)
+addL10Surface(l10WoodFloorGeos, 'l10_wood', ['#806545', '#b09166'], .76, .14, .55)
+addL10Surface(l10CropGroundGeos, 'l10_wheat', ['#b9974b', '#d3b969'], .91, .055, .48)
 // v12：室外地面材质。一般层级保留旧的夜空环境光兜底；L6 明确禁止地面自发光，
 // 只能依靠月光、环境光与人眼暗适应逐渐辨认轮廓。
 if (outFloorGeos.length) {
@@ -625,6 +675,7 @@ if (bakeL0) riserC.multiply(fBinv) // v53：高差侧壁走（已烘焙底色的
 const hAtTile = (tx: number, ty: number, fx: number, fy: number): number => {
   const i = ty * m.w + tx
   if (def.id === 7 && l7SeaTile(m, tx, ty)) return l7GridSample(tx + fx, ty + fy) // v57t：室外海床/荒岛用连续高度场（预烘焙网格）
+  if (def.id === 10 && m.l10LakeTerrain && m.elev[i] === 3) return surfaceUndulationAt(m, tx + fx, ty + fy)
   const s2 = m.stair[i]
   if (s2 & 7) {
     const dir = s2 & 7, lo = ((s2 >> 3) & 0x3fff) / 100, hi = ((s2 >> 17) & 0x3fff) / 100

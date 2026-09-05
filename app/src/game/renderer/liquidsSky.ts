@@ -188,7 +188,7 @@ export function buildLiquidSurfaces(m: GameMap, def: LevelDef, g: THREE.Group, r
   const shallowGeos: THREE.BufferGeometry[] = []
   const dampGeos: THREE.BufferGeometry[] = []
   // v57t：真实水体下 L7 海面每瓦片 2×2 细分（0.5m 网格），顶点涌浪轮廓更平滑
-  const seg = realWater && (def.id === 7 || def.id === 8) ? 2 : 1
+  const seg = realWater && (def.id === 7 || def.id === 8 || def.id === 10) ? 2 : 1
   const isShallow = (tx: number, ty: number) => tx >= 0 && ty >= 0 && tx < m.w && ty < m.h
     && m.tiles[ty * m.w + tx] === 1 && m.liquid[ty * m.w + tx] === 2
   for (let y = RY0; y < RY1; y++)
@@ -231,7 +231,8 @@ export function buildLiquidSurfaces(m: GameMap, def: LevelDef, g: THREE.Group, r
       if (m.liquid[ii] === 1) {
         // L8 地下湖由下方一张精确圆形水面统一生成；跳过按瓦片的方形水面，消除岸边方块溢水。
         if (def.id !== 8) {
-          geo.translate(x + 0.5, 0.03, y + 0.5) // 深水水面≈岸边地面
+          // L10 岸线 terrain 精确收束到 y=0；只留 1.5cm 防止共面闪烁，不再把湖面架高在地面上。
+          geo.translate(x + 0.5, def.id === 10 ? 0.015 : 0.03, y + 0.5)
           bakeDepth(geo)
           waterGeos.push(geo)
         }
@@ -308,18 +309,19 @@ export function buildLiquidSurfaces(m: GameMap, def: LevelDef, g: THREE.Group, r
         const sea = def.id === 7
         const caveLake = def.id === 8
         const nightPool = def.id === 9
+        const farmLake = def.id === 10
         // v57t：不使用任何水面贴图——纯色海面；真实水体改由着色器程序化生成浪面法线/反射/波光
         // v58：真实水体基础不透明度大幅降低（0.94→0.42）——透明感由着色器按穿水路径吸收重建：
         //      深水俯视呈暗色水体（非清晰透视），浅滩/泳池保持清澈
         const params = {
-          color: sea ? '#1b5a76' : caveLake ? '#173b40' : nightPool ? '#0b2430' : '#2a6fd8',
+          color: sea ? '#1b5a76' : caveLake ? '#173b40' : nightPool ? '#0b2430' : farmLake ? '#526b62' : '#2a6fd8',
           transparent: true,
           opacity: realWater ? (sea ? 0.42 : caveLake ? 0.5 : nightPool ? 0.34 : 0.45) : (sea ? 0.94 : caveLake ? 0.76 : nightPool ? 0.48 : 0.66),
-          emissive: sea ? '#0d2e3e' : caveLake ? '#07191c' : nightPool ? '#010407' : '#10355e',
+          emissive: sea ? '#0d2e3e' : caveLake ? '#07191c' : nightPool ? '#010407' : farmLake ? '#121a17' : '#10355e',
           side: THREE.DoubleSide,
-          roughness: sea ? 0.08 : caveLake ? 0.1 : nightPool ? 0.2 : 0.12,
+          roughness: sea ? 0.08 : caveLake ? 0.1 : nightPool ? 0.2 : farmLake ? 0.16 : 0.12,
           metalness: 0.06,
-          envBase: sea ? 0.95 : caveLake ? 0.72 : nightPool ? 0.42 : 0.9,
+          envBase: sea ? 0.95 : caveLake ? 0.72 : nightPool ? 0.42 : farmLake ? 0.76 : 0.9,
         } as THREE.MeshLambertMaterialParameters & { roughness?: number; metalness?: number; envBase?: number }
         if (!realWater) { // 真实水体的浪面法线由着色器程序化生成，不再叠噪声法线贴图
           params.normalMap = noiseTexture('#7a8a92', '#5a6a72')

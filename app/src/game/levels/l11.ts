@@ -34,6 +34,7 @@ export const L11: LevelDef = {
   itemCount: [14, 19],
   structures: ['towerblock', 'blackwindow', 'shopfront', 'subwayent', 'arcadecab', 'megsign', 'streetlamp', 'car', 'vending', 'locker', 'crate', 'suitcase'],
   exits: [
+    { kind: 'countrypath', name: '通往乡野的小路', dest: 10, anim: 'bloom', cutIn: 'step' },
     // 终局：把六盘磁带交给 Base Beta 的档案员 → 进入 Level 601
     {
       kind: 'basebeta', name: 'M.E.G. Base Beta（档案室）', dest: 12, anim: 'dawn', cutIn: 'step',
@@ -43,7 +44,7 @@ export const L11: LevelDef = {
     { kind: 'groundclip', name: 'no-clip 穿过地面', dest: 'random', anim: 'noclip' },
   ],
   entrance: 'Level 9 的箭头路牌 / Level 10 的土路尽头',
-  exitDesc: '出口密度接近无穷——原文称「清点无穷是不可能的任务」。可用：M.E.G. 标记与路牌的建筑（→ Level 115 / Base Beta 档案室）；各类店招（Mr. Holloway\'s Grand Exhibit → 126、Frivolous Frank\'s Fabulous Frozen Food → 55、Fun Zone → 20、Caspian\'s Antiques → 232、Papa Pedro\'s Pizza Palace of Pleasantries → 458）；霓虹密布的脏乱小巷（→ 138）；地面 no-clip（→ 178，常见）；街机柜（任何交互 → Level 25）；像窗户实体的窗户（→ Level 12）。',
+  exitDesc: '出口密度接近无穷——原文称「清点无穷是不可能的任务」。可用：M.E.G. 标记与路牌的建筑（→ Level 115 / Base Beta 档案室）；各类店招（Mr. Holloway\'s Grand Exhibit → 126、Frivolous Frank\'s Fabulous Frozen Food → 55、Fun Zone → 20、Caspian\'s Antiques → 232、Papa Pedro\'s Pizza Palace of Pleasantries → 458）；霓虹密布的脏乱小巷（→ 138）；地面 no-clip（→ 178，常见）；街机柜（任何交互 → Level 25）；像窗户实体的窗户（→ Level 12）；偏僻的乡间小路（→ Level 10）。',
   lightDensity: 0.012,
   darkness: 0.22,
 }

@@ -230,7 +230,11 @@ export class Engine {
   arriveOldstairs = false
   arriveL6Band: FloorBand | null = null // L5 黑门=-1；L4/Omega 活板门=0
   arriveL9From: number | null = null // L5=住宅门口；L7=后院泳池；L8=道路尽头石洞
+  arriveL10From: number | null = null // L9=田野边缘步道；L11=乡间主路旁
+  arriveL7SafeWater = false // L10 深湖抵达：落在安全水域并重置呼吸
   arriveL8AvenueEnd = false // 从 L9 石洞返回 L8 第九大道最终洞口
+  l10Weather: { kind: 'calm' | 'gust' | 'rain' | 'mist'; t: number; k: number; wetness: number } = { kind: 'calm', t: 80, k: 0, wetness: 0 }
+  l10Action: { kind: 'drink' | 'dig' | 'dive'; t: number; dur: number; sid?: number; x: number; y: number } | null = null
   // v29：返程「向上的灰色阶梯」（世界坐标固定；窗口平移 stitch 后重新注入）
   bonusExit: { def: ExitDef; wx: number; wy: number } | null = null
   // v29：本局已到过的层级（初始物资仅首次进 L0 刷新）
@@ -417,7 +421,11 @@ export class Engine {
     this.avenueMarks = []
     this.avenueHintSeq = null
     this.arriveL9From = null
+    this.arriveL10From = null
+    this.arriveL7SafeWater = false
     this.arriveL8AvenueEnd = false
+    this.l10Weather = { kind: 'calm', t: 80, k: 0, wetness: 0 }
+    this.l10Action = null
     this.l9FogPhase = 'idle'
     this.l9FogT = 240
     this.l9FogK = 0
@@ -459,6 +467,7 @@ export class Engine {
       this.radio = snap.radio ?? { mode: 'follow', fixed: null, perLevel: {} }
       this.radio.perLevel = this.radio.perLevel ?? {}
       this.heardSongs = snap.heardSongs ?? []
+      this.l10Weather = snap.l10Weather ?? { kind: 'calm', t: 80, k: 0, wetness: 0 }
       setRadioCfg(this.radio)
       this.loadLevel(snap.level, { mapSeed: snap.mapSeed, firstVisit: snap.mapFirstVisit })
       // loadLevel 已把 player 放到出生点；此处整体恢复为存档时的玩家状态
@@ -602,6 +611,7 @@ export class Engine {
   // ---------- 交互/容器/结构触发（engine/interact.ts）----------
   updateElecHum() { interact.updateElecHum(this) }
   updateContainerSearch(dt: number) { interact.updateContainerSearch(this, dt) }
+  updateL10Actions(dt: number) { interact.updateL10Actions(this, dt) }
   triggerStructs(dt: number, dm: (typeof DIFF)[Difficulty]): boolean { return interact.triggerStructs(this, dt, dm) }
   inView(x: number, y: number, radius: number): boolean { return interact.inView(this, x, y, radius) }
   viewAngle(x: number, y: number): number { return interact.viewAngle(this, x, y) }
@@ -839,6 +849,7 @@ export class Engine {
 
     // ---- 容器搜索进度 / 战利品面板自动关闭（engine/interact.ts）----
     this.updateContainerSearch(dt)
+    this.updateL10Actions(dt)
 
     // ---- 粒子 ----
     this.updateParticles(dt)

@@ -38,6 +38,7 @@ export type MpEvent =
   | { t: 'exit'; dest: number } // 有玩家经出口换层（仅播报提示）
   | { t: 'died'; text: string } // 玩家死亡（播报）
   | { t: 'blackout'; ph: 'warn' | 'start' | 'end'; dur?: number } // L1「闪烁」停电链（房主权威）
+  | { t: 'l10weather'; kind: 'calm' | 'gust' | 'rain' | 'mist'; time: number; k: number; wetness: number }
   | { t: 'entHit'; nid: number; dmg: number } // 客人上报对联机实体的伤害（仅房主结算）
 
 export interface MpLobbyPlayer extends MpIdentity { id: string; slot: number; ready: boolean }

@@ -442,7 +442,7 @@ function genSuburb(m: GameMap, rng: RNG, H: GenHelpers): Room[] {
 }
 
 // ============================================================================
-// Level 10「Bumper Crop」——无限麦田
+// Level 10「丰裕」——无限农田（旧有限生成器，仅保留兼容入口）
 // Wikidot：小麦与大麦田向四面八方无限延伸，由成行的树木与灌木分割成一块块地块；
 // 阴沉铅灰的天空，没有明显的昼夜循环；土路由两道车辙组成，中间夹一条草带。
 // ============================================================================
@@ -543,15 +543,7 @@ function genField(m: GameMap, rng: RNG, H: GenHelpers): Room[] {
     m.structures = m.structures.filter((s) => !(s.kind === 'wheatpatch' && Math.hypot(s.x - cx, s.y - cy) <= r))
   }
 
-  // 罕见的油菜地块（刺眼的黄——它不属于这里的调色板，它是一扇门）
-  for (let t = 0; t < 260; t++) {
-    const x = rng.int(6, size - 8), y = rng.int(6, size - 8)
-    if (m.tiles[idx(m, x, y)] !== 1 || m.liquid[idx(m, x, y)]) continue
-    for (let j = 0; j < 3; j++) for (let i = 0; i < 3; i++) S(m, 'canolaplot', x + i, y + j, 1, 1, false)
-    break
-  }
   for (let t = 0; t < 6; t++) H.place(m, rng, 'crate', 1, 1, true, { loot: 1 })
-  for (let t = 0; t < 3; t++) H.place(m, rng, 'corpse', 1, 1, false, { loot: 1 })
   return rooms
 }
 

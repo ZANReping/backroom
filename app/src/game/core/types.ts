@@ -200,7 +200,13 @@ export type StructKind =
   | 'wheatpatch'   // 小麦/大麦丛
   | 'hedgerow'     // 分隔地块的树篱（永远同一高度）
   | 'barn'         // 谷仓 / 马厩（木材与钉子）
-  | 'canolaplot'   // 罕见的油菜地块（刺眼的黄，是一扇门）
+  | 'l10tree'      // L10 田间树列
+  | 'l10shed'      // L10 田间棚屋
+  | 'l10stable'    // L10 马厩
+  | 'l10outhouse'  // L10 户外厕所
+  | 'l10worksite'  // L10 M.E.G. 临时作业点
+  | 'l10digsite'   // L10 旧挖掘点
+  | 'l10haybale'   // L10 压缩干草块（贴地实体结构）
   // ===== v23：Level 11「The City That Never Sleeps」 =====
   | 'towerblock'   // 混凝土峭壁般的楼体
   | 'blackwindow'  // 暗淡的黑色镀膜镜面窗（只反射，看不到室内）

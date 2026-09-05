@@ -57,6 +57,16 @@ export function applyMpEvent(eng: Engine, e: MpEvent) {
         else eng.endBlackout()
         break
       }
+      case 'l10weather': {
+        if (eng.player.level !== 10 || eng.mpSession?.isHost) break
+        eng.l10Weather = {
+          kind: e.kind,
+          t: Math.max(0, e.time),
+          k: Math.max(0, Math.min(1, e.k)),
+          wetness: Math.max(0, Math.min(1, e.wetness)),
+        }
+        break
+      }
       case 'entHit': {
         // 客人上报的伤害仅房主结算（快照随后把 hp/死亡同步回各端）
         if (!eng.mpSession?.isHost) break

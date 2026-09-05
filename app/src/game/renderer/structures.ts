@@ -1,6 +1,7 @@
 // 结构/出口低模（按 StructKind 建造，含可动盖板/门铰链 userData 约定）
 import * as THREE from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
+import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js'
 import { caveCeilingAt, doorNeedsRotate, floorHeight, tallCeilH, type GameMap } from '../world/mapgen'
 import type { LevelDef, Structure } from '../core/types'
 import { box, cyl, glow, col, mulberry, levelTexture, noiseTexture, makeCanvasCtx, toTex, texLevelId, litMaterial, getMaterialMode, WALL_H, architecturalGlassMaterial } from './shared'
@@ -566,6 +567,199 @@ function mountOnWall(o: THREE.Object3D, parent: THREE.Object3D, s: Structure, m:
 // 顶点色共享材质：合并网格用（麦丛/树篱/书架等高频结构统一走这两个材质，避免上千份材质）
 let vcLambertMat: THREE.MeshLambertMaterial | null = null
 let vcBasicMat: THREE.MeshBasicMaterial | null = null
+const l10WindUniform = { value: 0 }
+let l10CropMat: THREE.MeshLambertMaterial | THREE.MeshStandardMaterial | null = null
+const l10CropCardMat = new Map<'wheat' | 'barley', THREE.MeshLambertMaterial | THREE.MeshStandardMaterial>()
+let l10CropCardGeo: THREE.BufferGeometry | null = null
+let l10CropCanopyMat: THREE.MeshLambertMaterial | THREE.MeshStandardMaterial | null = null
+let l10LeafMat: THREE.MeshLambertMaterial | THREE.MeshStandardMaterial | null = null
+let l10MetalMat: THREE.MeshLambertMaterial | THREE.MeshStandardMaterial | null = null
+let l10HayMat: THREE.MeshLambertMaterial | THREE.MeshStandardMaterial | null = null
+
+function l10Wettable<T extends THREE.Material>(mat: T, roughness: number, envBase: number): T {
+  mat.userData.l10Wettable = 1
+  mat.userData.l10BaseRoughness = roughness
+  mat.userData.l10BaseEnv = envBase
+  return mat
+}
+
+export function updateL10Wind(time: number) { l10WindUniform.value = time }
+
+function withL10Wind<T extends THREE.Material>(mat: T, strength: number): T {
+  mat.onBeforeCompile = (shader) => {
+    shader.uniforms.uL10WindTime = l10WindUniform
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <common>', '#include <common>\nuniform float uL10WindTime;')
+      .replace('#include <begin_vertex>', `#include <begin_vertex>
+        vec4 l10WindPos = vec4(position, 1.0);
+        #ifdef USE_INSTANCING
+          l10WindPos = instanceMatrix * l10WindPos;
+        #endif
+        vec3 l10World = (modelMatrix * l10WindPos).xyz;
+        float l10Tip = smoothstep(0.12, 1.3, position.y);
+        float l10Gust = 0.62 + 0.38 * sin(l10World.x * 0.021 + l10World.z * 0.017 + uL10WindTime * 0.43);
+        float l10Wave = sin(l10World.x * 0.31 + l10World.z * 0.19 + uL10WindTime * 1.8)
+          + sin(l10World.z * 0.47 - uL10WindTime * 1.13) * 0.45;
+        transformed.x += l10Wave * l10Gust * ${strength.toFixed(3)} * l10Tip;
+        transformed.z += sin(l10World.x * 0.23 - l10World.z * 0.29 + uL10WindTime * 1.37)
+          * l10Gust * ${(.58 * strength).toFixed(3)} * l10Tip;
+      `)
+  }
+  mat.customProgramCacheKey = () => `l10-wind-${strength}`
+  return mat
+}
+
+function l10CropMaterial() {
+  if (l10CropMat) return l10CropMat
+  l10CropMat = withL10Wind(litMaterial({
+    color: '#ffffff', vertexColors: true,
+    map: levelTexture('l10_wheat_diff.jpg', () => noiseTexture('#c5aa50', '#e1ce79')),
+    normalMap: levelTexture('l10_wheat_normal.jpg', () => noiseTexture('#8080ff', '#7f7fff')),
+    normalScale: new THREE.Vector2(.36, .36),
+    roughnessMap: levelTexture('l10_wheat_rough.jpg', () => noiseTexture('#eeeeee', '#d8d8d8')),
+    roughness: .94, envBase: .025,
+  }), .075)
+  return l10CropMat
+}
+
+/**
+ * 麦簇 PNG 无法加载时的透明程序化兜底。正式运行走生成的透明植物图集；兜底仍保持
+ * Alpha 镂空，避免网络/缓存异常时整片农田退化成不透明矩形。
+ */
+function l10CropSpriteFallback(barley: boolean): THREE.CanvasTexture {
+  const [canvas, g] = makeCanvasCtx(256, 384)
+  g.clearRect(0, 0, canvas.width, canvas.height)
+  const rng = mulberry(barley ? 0x10ba71 : 0x10a117)
+  g.lineCap = 'round'
+  for (let i = 0; i < 9; i++) {
+    const x0 = 98 + i * 7 + (rng() - .5) * 8
+    const lean = (rng() - .5) * 34
+    const top = 54 + rng() * 54
+    const grad = g.createLinearGradient(x0, 354, x0 + lean, top)
+    grad.addColorStop(0, '#806a31'); grad.addColorStop(.55, '#bda654'); grad.addColorStop(1, '#dec878')
+    g.strokeStyle = grad; g.lineWidth = 2.4 + rng() * 1.1
+    g.beginPath(); g.moveTo(x0, 360); g.quadraticCurveTo(x0 + lean * .35, 225, x0 + lean, top + 38); g.stroke()
+    const hx = x0 + lean, hy = top + 26
+    g.strokeStyle = barley ? '#decf8e' : '#d7bd63'; g.lineWidth = barley ? 4.2 : 5.8
+    g.beginPath(); g.moveTo(hx, hy + 33); g.quadraticCurveTo(hx + lean * .08, hy + 12, hx, hy - 17); g.stroke()
+    g.lineWidth = .75; g.strokeStyle = '#e9d89c'
+    for (let k = -3; k <= 3; k++) {
+      const yy = hy + k * 6
+      const awn = barley ? 26 : 14
+      g.beginPath(); g.moveTo(hx, yy); g.lineTo(hx - awn - rng() * 6, yy - 15); g.stroke()
+      g.beginPath(); g.moveTo(hx, yy); g.lineTo(hx + awn + rng() * 6, yy - 15); g.stroke()
+    }
+  }
+  return toTex(canvas)
+}
+
+function l10CropCardGeometry(): THREE.BufferGeometry {
+  if (l10CropCardGeo) return l10CropCardGeo
+  const h = 1.18, w = .72
+  const a = new THREE.PlaneGeometry(w, h, 1, 3).translate(0, h / 2, 0)
+  const b = a.clone().rotateY(Math.PI / 2)
+  // 两张交叉卡片共享一个小几何；单簇只有 16 个三角形，密度提升不会造成 CPU Mesh 爆炸。
+  l10CropCardGeo = mergeGeometries([a, b])!
+  a.dispose(); b.dispose()
+  l10CropCardGeo.computeBoundingSphere()
+  return l10CropCardGeo
+}
+
+function l10CropCardMaterial(barley: boolean) {
+  const key = barley ? 'barley' : 'wheat'
+  const cached = l10CropCardMat.get(key)
+  if (cached) return cached
+  const map = levelTexture(barley ? 'l10_barley_clump.png' : 'l10_wheat_clump.png', () => l10CropSpriteFallback(barley))
+  map.colorSpace = THREE.SRGBColorSpace
+  map.wrapS = map.wrapT = THREE.ClampToEdgeWrapping
+  map.magFilter = THREE.LinearFilter
+  map.minFilter = THREE.LinearMipmapLinearFilter
+  map.generateMipmaps = true
+  map.anisotropy = Math.max(map.anisotropy, 4)
+  map.premultiplyAlpha = false
+  map.needsUpdate = true
+  const made = withL10Wind(litMaterial({
+    // 透明卡片不再叠乘 instanceColor。图集本身已有完整麦色；此前 albedo × 顶点色 ×
+    // 垂直卡片的低角度受光在复古滤镜下会被压成纯黑，只留下 Alpha 轮廓。
+    color: '#ffffff', map,
+    side: THREE.DoubleSide, alphaTest: .18,
+    // 模拟阴云天空对细叶片的透射/散射，仍保留所有真实直射光和手电光响应。
+    // emissiveMap 必须使用同一张颜色图，暗部保底也不会退化成均匀色块。
+    emissive: '#fff0c4', emissiveMap: map, emissiveIntensity: .28,
+    roughness: .88, envBase: .06,
+  }), barley ? .125 : .115)
+  made.userData.sharedL10CropCard = 1
+  l10CropCardMat.set(key, made)
+  return made
+}
+
+function l10CropCanopyMaterial() {
+  if (l10CropCanopyMat) return l10CropCanopyMat
+  const map = levelTexture('l10_wheat_diff.jpg', () => noiseTexture('#b59645', '#dcc473'))
+  const normal = levelTexture('l10_wheat_normal.jpg', () => noiseTexture('#8080ff', '#7f7fff'))
+  const rough = levelTexture('l10_wheat_rough.jpg', () => noiseTexture('#eeeeee', '#d8d8d8'))
+  for (const tex of [map, normal, rough]) {
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping
+    tex.anisotropy = Math.max(tex.anisotropy, 4)
+    tex.needsUpdate = true
+  }
+  map.colorSpace = THREE.SRGBColorSpace
+  l10CropCanopyMat = withL10Wind(litMaterial({
+    color: '#ffffff', map, normalMap: normal, roughnessMap: rough,
+    emissive: '#f3d98d', emissiveMap: map, emissiveIntensity: .16,
+    normalScale: new THREE.Vector2(.32, .32), roughness: .92, envBase: .045,
+    side: THREE.DoubleSide,
+  }), .085)
+  return l10CropCanopyMat
+}
+
+function l10LeafMaterial() {
+  if (l10LeafMat) return l10LeafMat
+  const leafMap = levelTexture('l10_foliage_diff.jpg', () => noiseTexture('#34432c', '#687452'))
+  const leafNormal = levelTexture('l10_foliage_normal.jpg', () => noiseTexture('#8080ff', '#7f7fff'))
+  const leafRough = levelTexture('l10_foliage_rough.jpg', () => noiseTexture('#eeeeee', '#d4d4d4'))
+  leafMap.colorSpace = THREE.SRGBColorSpace
+  leafMap.anisotropy = Math.max(leafMap.anisotropy, 4)
+  leafNormal.anisotropy = Math.max(leafNormal.anisotropy, 4)
+  leafRough.anisotropy = Math.max(leafRough.anisotropy, 4)
+  l10LeafMat = withL10Wind(litMaterial({
+    // 外部叶片底色本身较暗；近白绿色只做色相统一，让 Hemisphere/Directional
+    // 自然光仍有足够反照率可塑造叶簇，而不是靠 emissive 假亮。
+    color: '#c4d0b7', map: leafMap,
+    normalMap: leafNormal,
+    roughnessMap: leafRough,
+    normalScale: new THREE.Vector2(.78, .78), roughness: .86, envBase: .095,
+  }), .045)
+  return l10LeafMat
+}
+function l10MetalMaterial(): THREE.MeshLambertMaterial | THREE.MeshStandardMaterial {
+  if (l10MetalMat) return l10MetalMat
+  const made = l10Wettable(litMaterial({
+    color: '#8f8a7c', map: levelTexture('l10_metal_diff.jpg', () => noiseTexture('#555550', '#8f897a')),
+    normalMap: levelTexture('l10_metal_normal.jpg', () => noiseTexture('#8080ff', '#7f7fff')),
+    roughnessMap: levelTexture('l10_metal_rough.jpg', () => noiseTexture('#d2d2d2', '#a8a8a8')),
+    normalScale: new THREE.Vector2(.48, .48), roughness: .66, metalness: .38, envBase: .2,
+  }), .66, .2)
+  l10MetalMat = made
+  return made
+}
+function l10HayMaterial(): THREE.MeshLambertMaterial | THREE.MeshStandardMaterial {
+  if (l10HayMat) return l10HayMat
+  const map = levelTexture('l10_hay_diff.jpg', () => noiseTexture('#9b762c', '#d8b95f'))
+  const normal = levelTexture('l10_hay_normal.jpg', () => noiseTexture('#8080ff', '#7f7fff'))
+  const rough = levelTexture('l10_hay_rough.jpg', () => noiseTexture('#f4f4f4', '#dddddd'))
+  for (const tex of [map, normal, rough]) {
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping
+    tex.anisotropy = Math.max(tex.anisotropy, 4)
+    tex.needsUpdate = true
+  }
+  map.colorSpace = THREE.SRGBColorSpace
+  l10HayMat = l10Wettable(litMaterial({
+    color: '#fff4d0', map, normalMap: normal, roughnessMap: rough,
+    normalScale: new THREE.Vector2(.82, .82), roughness: .96, envBase: .025,
+  }), .96, .025)
+  return l10HayMat
+}
 function vcMat(basic: boolean): THREE.MeshLambertMaterial | THREE.MeshBasicMaterial {
   if (basic) {
     if (!vcBasicMat) vcBasicMat = new THREE.MeshBasicMaterial({ vertexColors: true })
@@ -723,6 +917,156 @@ function signTexture(text: string, gold: boolean): THREE.Texture {
   const t = toTex(cv)
   signTexCache.set(key, t)
   return t
+}
+
+function mergedL10Crop(parts: { g: THREE.BufferGeometry; c: string }[]): THREE.Mesh {
+  for (const { g, c } of parts) {
+    const cc = col(c), n = g.attributes.position.count, arr = new Float32Array(n * 3)
+    for (let i = 0; i < n; i++) { arr[i * 3] = cc.r; arr[i * 3 + 1] = cc.g; arr[i * 3 + 2] = cc.b }
+    g.setAttribute('color', new THREE.BufferAttribute(arr, 3))
+  }
+  const geos = parts.map(p => p.g), merged = mergeGeometries(geos)!
+  for (const g of geos) g.dispose()
+  return new THREE.Mesh(merged, l10CropMaterial())
+}
+
+type L10CropCell = { cx: number; cy: number; patches: Structure[] }
+
+const l10PatchSeed = (s: Structure, m: GameMap, barley: boolean) => {
+  const wx = Math.round((s.x + (m.inf?.ox ?? 0)) * 4)
+  const wy = Math.round((s.y + (m.inf?.oy ?? 0)) * 4)
+  return (Math.imul(wx, 73856093) ^ Math.imul(wy, 19349663) ^ (barley ? 0x6ba71e : 0x5a117e)) >>> 0
+}
+
+/** 一个 16×16m 单元的近/中景麦簇。只创建每个品种一个 InstancedMesh。 */
+function buildL10CropCards(cell: L10CropCell, m: GameMap, perSquareMetre: number): THREE.Group {
+  const group = new THREE.Group()
+  const counts = [0, 0]
+  for (const s of cell.patches) {
+    const species = s.data?.barley ? 1 : 0
+    const density = Math.max(.12, Math.min(1.08, Number(s.data?.density ?? .94) / .94))
+    counts[species] += Math.max(1, Math.floor(s.w * s.h * perSquareMetre * density))
+  }
+  const meshes: (THREE.InstancedMesh | null)[] = [0, 1].map((species) => counts[species]
+    ? new THREE.InstancedMesh(l10CropCardGeometry(), l10CropCardMaterial(species === 1), counts[species])
+    : null)
+  const offsets = [0, 0]
+  const dummy = new THREE.Object3D()
+  for (const s of cell.patches) {
+    const barley = !!s.data?.barley, species = barley ? 1 : 0
+    const mesh = meshes[species]!
+    const density = Math.max(.12, Math.min(1.08, Number(s.data?.density ?? .94) / .94))
+    const n = Math.max(1, Math.floor(s.w * s.h * perSquareMetre * density))
+    const r = mulberry(l10PatchSeed(s, m, barley))
+    for (let i = 0; i < n; i++) {
+      // 4m 逻辑块之间不保留裸地边距；随机分布和透明枝叶会自然互相交叠遮住块缝。
+      const px = s.x + .015 + r() * Math.max(.03, s.w - .03)
+      const pz = s.y + .015 + r() * Math.max(.03, s.h - .03)
+      const width = .72 + r() * .25
+      const height = (.78 + r() * .24) * (barley ? 1.035 : 1)
+      dummy.position.set(px - cell.cx, floorHeight(m, px, pz, s.floor ?? 0), pz - cell.cy)
+      // 交叉卡片本身已覆盖四个观察方向。保持统一世界朝向，GPU 风弯曲才不会被
+      // 随机实例旋转带到各自的局部方向，整片麦浪因此能够同向传播。
+      dummy.rotation.set(0, 0, 0)
+      dummy.scale.set(width, height, width)
+      dummy.updateMatrix()
+      const at = offsets[species]++
+      mesh.setMatrixAt(at, dummy.matrix)
+    }
+  }
+  for (let species = 0; species < meshes.length; species++) {
+    const mesh = meshes[species]
+    if (!mesh) continue
+    mesh.name = species ? 'l10-barley-cards' : 'l10-wheat-cards'
+    mesh.instanceMatrix.setUsage(THREE.StaticDrawUsage)
+    mesh.instanceMatrix.needsUpdate = true
+    mesh.computeBoundingBox(); mesh.computeBoundingSphere()
+    mesh.frustumCulled = true
+    mesh.userData.noCollision = 1
+    mesh.userData.noCastShadow = 1
+    group.add(mesh)
+  }
+  group.userData.noCollision = 1
+  return group
+}
+
+/** 远景密集区使用连续冠层；稀疏过渡区交给远景卡片，避免低密度边缘仍像整齐方毯。 */
+function buildL10CropCanopy(cell: L10CropCell, m: GameMap): THREE.Mesh | null {
+  const geos: THREE.BufferGeometry[] = []
+  for (const s of cell.patches) {
+    const barley = !!s.data?.barley
+    const density = Math.max(.12, Math.min(1.08, Number(s.data?.density ?? .94) / .94))
+    if (density < .48) continue
+    const blend = Math.max(0, Math.min(1, (density - .42) / .58))
+    const extent = .70 + blend * .30
+    const r = mulberry(l10PatchSeed(s, m, barley) ^ 0x10ca90)
+    const ox = (r() - .5) * s.w * (1 - extent) * .42
+    const oz = (r() - .5) * s.h * (1 - extent) * .42
+    const g = new THREE.PlaneGeometry(s.w * extent + .06, s.h * extent + .06, 2, 2)
+    g.rotateX(-Math.PI / 2)
+    g.translate(s.x + s.w / 2 + ox - cell.cx, 0, s.y + s.h / 2 + oz - cell.cy)
+    const pos = g.attributes.position as THREE.BufferAttribute
+    const uv = g.attributes.uv as THREE.BufferAttribute
+    for (let i = 0; i < pos.count; i++) {
+      const wx = pos.getX(i) + cell.cx, wz = pos.getZ(i) + cell.cy
+      const ripple = Math.sin((wx + (m.inf?.ox ?? 0)) * .29 + (wz + (m.inf?.oy ?? 0)) * .17) * .018
+      pos.setY(i, floorHeight(m, wx, wz, s.floor ?? 0) + (barley ? .94 : 1.02) + ripple)
+      uv.setXY(i, (wx + (m.inf?.ox ?? 0)) * .48, (wz + (m.inf?.oy ?? 0)) * .48)
+    }
+    pos.needsUpdate = true; uv.needsUpdate = true
+    g.computeVertexNormals()
+    geos.push(g)
+  }
+  if (!geos.length) return null
+  const merged = mergeGeometries(geos)!
+  for (const g of geos) g.dispose()
+  const mesh = new THREE.Mesh(merged, l10CropCanopyMaterial())
+  mesh.name = 'l10-crop-canopy'
+  mesh.frustumCulled = true
+  mesh.userData.noCollision = 1
+  mesh.userData.noCastShadow = 1
+  return mesh
+}
+
+/**
+ * L10 作物以 16×16m 单元分别切换 LOD：近景 8.6 簇/m²、中景 2.8 簇/m²、远景冠层
+ * 加 0.55 簇/m² 的轮廓代理。过渡带的 density 同时驱动三档，不会在 LOD 切换后突然变满。
+ * 区块不再按中心一次切换整片农田，玩家移动时不会看见 32m 方块整体“跳变”。
+ */
+export function buildL10CropLod(patches: Structure[], m: GameMap): THREE.Group | null {
+  if (!patches.length) return null
+  const byCell = new Map<string, L10CropCell>()
+  for (const s of patches) {
+    const cellX = Math.floor(s.x / 16) * 16 + 8
+    const cellY = Math.floor(s.y / 16) * 16 + 8
+    const key = `${cellX},${cellY}`
+    let cell = byCell.get(key)
+    if (!cell) { cell = { cx: cellX, cy: cellY, patches: [] }; byCell.set(key, cell) }
+    cell.patches.push(s)
+  }
+  const root = new THREE.Group()
+  root.name = 'l10-crop-lod-cells'
+  let nearInstances = 0, midInstances = 0
+  for (const cell of byCell.values()) {
+    const lod = new THREE.LOD()
+    lod.position.set(cell.cx, 0, cell.cy)
+    const near = buildL10CropCards(cell, m, 8.6)
+    const mid = buildL10CropCards(cell, m, 2.8)
+    const far = new THREE.Group()
+    const canopy = buildL10CropCanopy(cell, m)
+    if (canopy) far.add(canopy)
+    far.add(buildL10CropCards(cell, m, .55))
+    lod.addLevel(near, 0, .18)
+    lod.addLevel(mid, 24, .18)
+    lod.addLevel(far, 58, .18)
+    lod.userData.noCollision = 1
+    root.add(lod)
+    near.traverse(o => { if ((o as THREE.InstancedMesh).isInstancedMesh) nearInstances += (o as THREE.InstancedMesh).count })
+    mid.traverse(o => { if ((o as THREE.InstancedMesh).isInstancedMesh) midInstances += (o as THREE.InstancedMesh).count })
+  }
+  root.userData.noCollision = 1
+  root.userData.l10CropStats = { cells: byCell.size, nearInstances, midInstances }
+  return root
 }
 
 let l9WatchSignTex: THREE.Texture | null = null
@@ -3975,43 +4319,58 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
 
     // ===================== v23：Level 10「Bumper Crop」 =====================
     case 'wheatpatch': {
-      // 麦丛：一束略微随机倾斜的麦秆 + 穗头（barley 偏浅）
+      // 4×4m 作物块：由区块级结构合批；共享顶点着色器完成风摆，不逐株跑 CPU 动画。
       const r = mulberry(s.x * 29 + s.y * 131)
       const barley = !!s.data?.barley
       const stalkC = barley ? '#d8c87a' : '#c8b45a'
       const headC = barley ? '#e6dca4' : '#d6bf62'
       const parts: { g: THREE.BufferGeometry; c: string }[] = []
-      const n = 5 + Math.floor(r() * 4)
+      const density = Number(s.data?.density ?? .86)
+      const n = Math.max(9, Math.floor(s.w * s.h * density * 1.15))
       for (let i = 0; i < n; i++) {
-        const hgt = 0.82 + r() * 0.34
-        const px = (r() - 0.5) * 0.78, pz = (r() - 0.5) * 0.78
+        const hgt = (barley ? .72 : .82) + r() * 0.32
+        const px = (r() - 0.5) * Math.max(.7, s.w - .18), pz = (r() - 0.5) * Math.max(.7, s.h - .18)
         const tz = (r() - 0.5) * 0.28, tx = (r() - 0.5) * 0.28
-        const st = new THREE.BoxGeometry(0.032, hgt, 0.032).translate(0, hgt / 2, 0)
+        const st = new THREE.BoxGeometry(0.025, hgt, 0.025).translate(0, hgt / 2, 0)
         st.rotateZ(tz); st.rotateX(tx); st.translate(px, 0, pz)
         parts.push({ g: st, c: stalkC })
-        const hd = new THREE.BoxGeometry(0.072, 0.24, 0.072).translate(0, hgt + 0.09, 0)
+        const hd = new THREE.BoxGeometry(barley ? .055 : .068, barley ? .29 : .23, barley ? .055 : .068).translate(0, hgt + (barley ? .12 : .09), 0)
         hd.rotateZ(tz); hd.rotateX(tx); hd.translate(px, 0, pz)
         parts.push({ g: hd, c: headC })
       }
-      grp.add(mergedMesh(parts))
+      grp.add(mergedL10Crop(parts))
       break
     }
     case 'hedgerow': {
-      // 树篱：高度恒定 1.6m（设定：树木与灌木始终保持同一高度），表面做一点凹凸
-      const r = mulberry(s.x * 53 + s.y * 97)
-      const parts: { g: THREE.BufferGeometry; c: string }[] = [
-        { g: new THREE.BoxGeometry(1.0, 1.6, 0.92).translate(0, 0.8, 0), c: '#34432c' },
-      ]
-      for (let i = 0; i < 5; i++) {
-        const sz = 0.22 + r() * 0.26
-        parts.push({
-          g: new THREE.BoxGeometry(sz, sz, sz)
-            .rotateY(r() * Math.PI)
-            .translate((r() - 0.5) * 0.9, 0.3 + r() * 1.35, (r() - 0.5) * 0.85),
-          c: i % 2 ? '#3d4d33' : '#2b3824',
-        })
+      // 长段树篱：尺寸直接读取 s.w/s.h，按段合并碰撞；叶片只由 GPU 风摆。
+      // UV 按约 0.7m 的真实叶簇尺度平铺，避免把一整张叶片素材拉伸到四米长。
+      // RoundedBoxGeometry 自带跨边缘连续的圆角法线；轮廓扰动由世界坐标纯函数决定，
+      // 相同位置的重复 UV 顶点取得同一偏移，不再出现各面随机错位形成的裂缝。
+      const body = new THREE.Mesh(new RoundedBoxGeometry(s.w, 1.55, s.h, 3, Math.min(.18, s.h * .22)), l10LeafMaterial())
+      body.position.y = .775
+      const pos = body.geometry.attributes.position as THREE.BufferAttribute
+      const baseGround = floorHeight(m, cx, cz, s.floor ?? 0)
+      for (let i = 0; i < pos.count; i++) {
+        const px = pos.getX(i), py = pos.getY(i), pz = pos.getZ(i)
+        const topK = Math.max(0, Math.min(1, (py + .775) / 1.55))
+        const ripple = Math.sin((px + s.x) * 4.17 + (pz + s.y) * 2.31) * .5
+          + Math.sin((px + s.x) * 1.73 - (pz + s.y) * 5.07) * .5
+        const sideScale = 1 + ripple * .012 * topK
+        const groundDelta = floorHeight(m, cx + px, cz + pz, s.floor ?? 0) - baseGround
+        pos.setXYZ(i, px * sideScale, py + groundDelta + ripple * .045 * (.25 + topK * .75), pz * sideScale)
       }
-      grp.add(mergedMesh(parts))
+      const uv = body.geometry.attributes.uv as THREE.BufferAttribute
+      const nor = body.geometry.attributes.normal as THREE.BufferAttribute
+      for (let i = 0; i < uv.count; i++) {
+        const nx = Math.abs(nor.getX(i)), ny = Math.abs(nor.getY(i)), nz = Math.abs(nor.getZ(i))
+        if (ny > nx && ny > nz) uv.setXY(i, pos.getX(i) * 1.45, pos.getZ(i) * 1.45)
+        else if (nx > nz) uv.setXY(i, pos.getZ(i) * 1.45, pos.getY(i) * 1.45)
+        else uv.setXY(i, pos.getX(i) * 1.45, pos.getY(i) * 1.45)
+      }
+      // 保留 RoundedBoxGeometry 的解析圆角法线；重算非索引法线会重新制造硬边。
+      pos.needsUpdate = true
+      uv.needsUpdate = true
+      grp.add(body)
       break
     }
     case 'barn': {
@@ -4024,21 +4383,96 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       grp.add(texBox(s.w + 0.3, 0.18, s.h + 0.3, 'l10_roof', '#5e2c23', '#5e2c23', '#833d31', 2.0, 0, H - 0.07, 0))
       break
     }
-    case 'canolaplot': {
-      // 油菜地块：刺眼的亮黄花丛（自发光材质，在阴天铅灰里格外扎眼）
-      const r = mulberry(s.x * 197 + s.y * 41)
-      const parts: { g: THREE.BufferGeometry; c: string }[] = []
-      const n = 9
-      for (let i = 0; i < n; i++) {
-        const hgt = 0.5 + r() * 0.22
-        const px = (r() - 0.5) * 0.86, pz = (r() - 0.5) * 0.86
-        parts.push({ g: new THREE.BoxGeometry(0.03, hgt, 0.03).translate(px, hgt / 2, pz), c: '#8a9a3a' })
-        parts.push({ g: new THREE.BoxGeometry(0.15, 0.16, 0.15).translate(px, hgt + 0.06, pz), c: '#e8d34a' })
+    case 'l10tree': {
+      const rr = mulberry(s.x * 137 + s.y * 61)
+      const wood = l10Wettable(litMaterial({ color: '#8b7354', map: levelTexture('l10_wood_diff.jpg', () => noiseTexture('#6c5136', '#947653')), normalMap: levelTexture('l10_wood_normal.jpg', () => noiseTexture('#8080ff', '#7f7fff')), roughnessMap: levelTexture('l10_wood_rough.jpg', () => noiseTexture('#eeeeee', '#d0d0d0')), normalScale: new THREE.Vector2(.5, .5), roughness: .92, envBase: .035 }), .92, .035)
+      const trunk = new THREE.Mesh(new THREE.CylinderGeometry(.22, .34, 3.5, 9), wood)
+      trunk.position.y = 1.75; grp.add(trunk)
+      for (let i = 0; i < 5; i++) {
+        const crownGeo = new THREE.DodecahedronGeometry(.78 + rr() * .35, 1)
+        const crownUv = crownGeo.attributes.uv as THREE.BufferAttribute
+        for (let u = 0; u < crownUv.count; u++) crownUv.setXY(u, crownUv.getX(u) * 1.65, crownUv.getY(u) * 1.65)
+        crownUv.needsUpdate = true
+        const crown = new THREE.Mesh(crownGeo, l10LeafMaterial())
+        crown.scale.set(1 + rr() * .45, .72 + rr() * .35, 1 + rr() * .42)
+        crown.position.set((rr() - .5) * 1.35, 3.1 + rr() * 1.1, (rr() - .5) * 1.2)
+        crown.userData.noCollision = 1
+        grp.add(crown)
       }
-      grp.add(mergedMesh(parts, true))
       break
     }
+    case 'l10haybale': {
+      const height = Math.max(.42, Number(s.data?.height ?? .64))
+      const radius = Math.min(.085, s.w * .08, s.h * .08, height * .12)
+      const geo = new RoundedBoxGeometry(s.w, height, s.h, 4, radius)
+      const pos = geo.attributes.position as THREE.BufferAttribute
+      const uv = geo.attributes.uv as THREE.BufferAttribute
+      const nor = geo.attributes.normal as THREE.BufferAttribute
+      // 三向投影让压缩纤维在顶面、端面与侧面保持相近密度，不被长方体 UV 拉伸。
+      for (let i = 0; i < uv.count; i++) {
+        const nx = Math.abs(nor.getX(i)), ny = Math.abs(nor.getY(i)), nz = Math.abs(nor.getZ(i))
+        if (ny >= nx && ny >= nz) uv.setXY(i, pos.getX(i) * 2.7, pos.getZ(i) * 2.7)
+        else if (nx >= nz) uv.setXY(i, pos.getZ(i) * 2.7, pos.getY(i) * 2.7)
+        else uv.setXY(i, pos.getX(i) * 2.7, pos.getY(i) * 2.7)
+      }
+      uv.needsUpdate = true
+      const body = new THREE.Mesh(geo, l10HayMaterial())
+      body.position.y = height / 2 - .025 // 轻微压入平台，斜视角也不会露出底缝
+      grp.add(body)
 
+      // 两道麻绳完整绕过顶面和前后侧；仅干草主体参与碰撞，细绳不会制造碎小碰撞盒。
+      const twine = litMaterial({ color: '#6b4925', roughness: .98, envBase: .01 })
+      for (const x of [-s.w * .24, s.w * .24]) {
+        const top = new THREE.Mesh(new THREE.BoxGeometry(.022, .014, s.h + .018), twine)
+        top.position.set(x, height - .018, 0); top.userData.noCollision = 1; grp.add(top)
+        for (const z of [-s.h / 2 - .004, s.h / 2 + .004]) {
+          const side = new THREE.Mesh(new THREE.BoxGeometry(.022, height * .9, .012), twine)
+          side.position.set(x, height * .5 - .018, z); side.userData.noCollision = 1; grp.add(side)
+        }
+      }
+      grp.rotation.y = Number(s.data?.deg ?? 0) * Math.PI / 180
+      break
+    }
+    case 'l10shed': case 'l10stable': case 'l10outhouse': {
+      const stable = s.kind === 'l10stable', outhouse = s.kind === 'l10outhouse'
+      const bh = outhouse ? 2.25 : stable ? 3.0 : 2.65
+      const woodMat = l10Wettable(litMaterial({ color: outhouse ? '#9b896d' : '#b5a17d', map: levelTexture('l10_wood_diff.jpg', () => noiseTexture('#806545', '#b09166')), normalMap: levelTexture('l10_wood_normal.jpg', () => noiseTexture('#8080ff', '#7f7fff')), roughnessMap: levelTexture('l10_wood_rough.jpg', () => noiseTexture('#eeeeee', '#cccccc')), normalScale: new THREE.Vector2(.62, .62), roughness: .91, envBase: .045 }), .91, .045)
+      const panel = (w: number, h: number, d: number, x: number, y: number, z: number) => { const q = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), woodMat); q.position.set(x, y, z); grp.add(q) }
+      const doorW = outhouse ? .78 : stable ? 2.3 : 1.2
+      panel((s.w - doorW) / 2, bh, .14, -(s.w + doorW) / 4, bh / 2, s.h / 2)
+      panel((s.w - doorW) / 2, bh, .14, (s.w + doorW) / 4, bh / 2, s.h / 2)
+      panel(s.w, bh, .14, 0, bh / 2, -s.h / 2)
+      panel(.14, bh, s.h, -s.w / 2, bh / 2, 0); panel(.14, bh, s.h, s.w / 2, bh / 2, 0)
+      const roof = gableRoof(s.w + .35, s.h + .35, Math.min(1.35, s.h * .28), '#55483a', '#8b7659', { name: 'l10_roof', tint: '#8c7a61' })
+      roof.position.y = bh; grp.add(roof)
+      if (outhouse) { const moon = new THREE.Mesh(new THREE.CircleGeometry(.13, 18), new THREE.MeshBasicMaterial({ color: '#1c211f' })); moon.position.set(0, 1.65, s.h / 2 + .076); grp.add(moon) }
+      if (stable) for (let i = 1; i < 3; i++) panel(.09, 1.15, s.h - .5, -s.w / 2 + i * s.w / 3, .58, 0)
+      break
+    }
+    case 'l10worksite': {
+      const canvas = '#77775f', marker = '#d7a23b', metal = l10MetalMaterial()
+      grp.add(box(2.2, .08, 1.05, '#8b775a', 0, .78, 0))
+      for (const x of [-.85, .85]) for (const z of [-.35, .35]) {
+        const leg = new THREE.Mesh(new THREE.BoxGeometry(.055, .76, .055), metal)
+        leg.position.set(x, .38, z); leg.rotation.z = x * .08; grp.add(leg)
+      }
+      grp.add(box(.9, .025, .62, '#d8d2bb', -.15, .84, -.05))
+      for (let i = 0; i < 3; i++) {
+        const post = new THREE.Mesh(new THREE.CylinderGeometry(.025, .035, 1.65, 7), metal)
+        post.position.set(2, .82, .25); post.rotation.z = (i - 1) * .22; grp.add(post)
+      }
+      grp.add(box(.42, .28, .28, canvas, 2.0, 1.62, .25)); grp.add(glow(.08, .08, .02, marker, 2.0, 1.64, .4))
+      break
+    }
+    case 'l10digsite': {
+      const soil = litMaterial({ color: '#80674a', map: levelTexture('l10_dry_soil_diff.jpg', () => noiseTexture('#66513b', '#9a7d59')), normalMap: levelTexture('l10_dry_soil_normal.jpg', () => noiseTexture('#8080ff', '#7f7fff')), roughnessMap: levelTexture('l10_dry_soil_rough.jpg', () => noiseTexture('#eeeeee', '#d2d2d2')), roughness: .98, envBase: .01 })
+      const rim = new THREE.Mesh(new THREE.TorusGeometry(.78, .16, 6, 20), soil); rim.rotation.x = Math.PI / 2; rim.position.y = .05; grp.add(rim)
+      const pit = new THREE.Mesh(new THREE.CircleGeometry(.66, 20), new THREE.MeshLambertMaterial({ color: '#392b20' })); pit.rotation.x = -Math.PI / 2; pit.position.y = .012; grp.add(pit)
+      const shovel = box(.055, 1.25, .055, '#755332', .72, .58, .18); shovel.rotation.z = -.35; grp.add(shovel)
+      const blade = new THREE.Mesh(new THREE.BoxGeometry(.23, .32, .055), l10MetalMaterial())
+      blade.position.set(1.02, .09, .18); blade.rotation.z = -.35; grp.add(blade)
+      break
+    }
     // ===================== v23：Level 11「The City That Never Sleeps」 =====================
     case 'towerblock': {
       // 混凝土峭壁般的楼体（非实心标记，体量极大 → 只用 2 个 mesh：立面盒 + 屋顶板）。
@@ -5649,6 +6083,43 @@ export function buildExit(kind: string, def: LevelDef, structure?: Structure): T
     return m
   }
   switch (kind) {
+    case 'longroad': {
+      // Level 10 → Level 11 不再凭空生成硬化路面、建筑阴影或城市轮廓；出口本体只是
+      // 插在右侧车辙上的旧金属路牌，玩家直接注视并与牌面交互。
+      const metal = l10MetalMaterial()
+      const postX = 1.12
+      const post = new THREE.Mesh(new THREE.CylinderGeometry(.045, .06, 1.42, 8), metal)
+      post.position.set(postX, .71, .035); grp.add(post)
+      const board = new THREE.Mesh(new THREE.BoxGeometry(1.34, .54, .075), metal)
+      board.position.set(postX, 1.46, 0); grp.add(board)
+      const face = new THREE.Mesh(
+        new THREE.PlaneGeometry(1.24, .44),
+        new THREE.MeshLambertMaterial({ map: signTexture('LEVEL 11', false), side: THREE.DoubleSide }),
+      )
+      face.position.set(postX, 1.46, -.039); grp.add(face)
+      // 小型方向箭头沿模型局部 +z；renderer 会让整个路牌随真实车辙切线旋转。
+      const arrow = new THREE.Mesh(
+        new THREE.ConeGeometry(.11, .3, 3),
+        new THREE.MeshLambertMaterial({ color: '#d8d8d2', side: THREE.DoubleSide }),
+      )
+      arrow.rotation.x = Math.PI / 2; arrow.position.set(postX + .49, 1.46, -.045); grp.add(arrow)
+      break
+    }
+    case 'lakeswim': {
+      // 深湖出口没有“门”；仅以水下极弱的散射环帮助代码/开发者定位。
+      const ring = new THREE.Mesh(new THREE.RingGeometry(.55, .82, 32), new THREE.MeshBasicMaterial({ color: '#9eb9ad', transparent: true, opacity: .055, depthWrite: false, side: THREE.DoubleSide }))
+      ring.rotation.x = -Math.PI / 2; grp.add(ring)
+      break
+    }
+    case 'countrypath': {
+      const path = new THREE.Mesh(new THREE.PlaneGeometry(2.8, 8), litMaterial({ color: '#8d7756', map: levelTexture('l10_packed_dirt_diff.jpg', () => noiseTexture('#6c573f', '#9c835e')), roughness: .94, envBase: .025 }))
+      path.rotation.x = -Math.PI / 2; path.position.set(0, .025, 3.2); grp.add(path)
+      for (const x of [-1.65, 1.65]) {
+        grp.add(cyl(.075, .1, 1.35, '#776146', x, .675, 0, 8))
+        grp.add(box(.12, 1.05, .1, '#8b7454', x, .76, .72))
+      }
+      break
+    }
     case 'flickerdoor': {
       // 门形异常并非实体门框，而是原墙纸本身被分区照亮：底层大面保留墙纹，细条以不同相位闪烁。
       const glow = new THREE.Mesh(new THREE.PlaneGeometry(1.14, 2.18), strobeMat(0, 0.22))

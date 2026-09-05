@@ -115,6 +115,7 @@ export interface Entity {
   encountered?: boolean // v54：图鉴遭遇已计数（按个体去重——看见/索敌/攻击命中/特殊交互，每只只计一次）
   blackoutSpawn?: boolean // 停电期间生成（笑魇）：灯光恢复时消散
   l9FogSpawn?: boolean // L9 罕见浓雾期间生成的残缺者；雾散后随之退散
+  l10BurrowT?: number // L10 旧挖掘点事件蠕虫：离开现场后在 15～25 秒内退回地下
   flightBand?: import('../core/types').FloorBand // 飞行所依附楼层；避免高度越过 band 中线后误判跨层
   flightT?: number // 垂直巡航相位
   flightReady?: boolean // 首帧已放到可飞净空，之后才平滑升降

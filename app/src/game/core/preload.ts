@@ -84,6 +84,19 @@ function levelCoreAssets(level: number): Asset[] {
       out.push(T(`${base}_normal.jpg`, `Level ${level}`, `Level 9 · ${label}法线`))
       out.push(T(`${base}_rough.jpg`, `Level ${level}`, `Level 9 · ${label}粗糙度`))
     }
+  } else if (id === 10) {
+    for (const [base, label] of [
+      ['l10_dry_soil', '干燥土壤'], ['l10_wet_rut', '湿车辙'], ['l10_grass', '草地'],
+      ['l10_packed_dirt', '夯实泥土'], ['l10_damp_shore', '潮湿湖岸'], ['l10_wood', '木材'],
+      ['l10_metal', '金属'], ['l10_wheat', '小麦'], ['l10_hedge', '树篱'],
+      ['l10_foliage', '树篱与树冠叶片'], ['l10_hay', '压缩干草块'],
+    ] as const) {
+      out.push(T(`${base}_diff.jpg`, `Level ${level}`, `Level 10 · ${label}颜色`))
+      out.push(T(`${base}_normal.jpg`, `Level ${level}`, `Level 10 · ${label}法线`))
+      out.push(T(`${base}_rough.jpg`, `Level ${level}`, `Level 10 · ${label}粗糙度`))
+    }
+    out.push(T('l10_wheat_clump.png', `Level ${level}`, 'Level 10 · 近中景透明小麦簇', 2))
+    out.push(T('l10_barley_clump.png', `Level ${level}`, 'Level 10 · 近中景透明大麦簇', 2))
   }
   return out
 }

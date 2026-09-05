@@ -10,6 +10,7 @@ import { WIN_TAPES, NORMAL_LEVELS, levelDefOf } from '../levels'
 import { audio } from '../core/audio'
 import { forceL7PorchDrop } from './movement'
 import { entityBand as entityFloorBand } from './entityAI'
+import { makeEntity } from '../entities'
 import { look } from '../renderer/shared'
 import type { FloorBand, Structure } from '../core/types'
 import type { Engine } from '../engine'
@@ -262,6 +263,78 @@ export function crosshairRay(eng: Engine): InteractionRay {
   }
 }
 
+/** Level 10 的持续交互。饮水、挖掘和深湖下潜都必须完整保持到进度结束。 */
+export function updateL10Actions(eng: Engine, dt: number) {
+  const m = eng.map
+  if (!m || eng.levelDef.id !== 10 || eng.transition) { eng.l10Action = null; return }
+  const p = eng.player
+  const deepExit = m.exits.find((e) => e.def.kind === 'lakeswim')
+  const atDeepCenter = !!deepExit
+    && Math.hypot(p.x - deepExit.x, p.y - deepExit.y) <= 2.35
+    && eng.inLiquid === 1 && eng.submerged && p.z < -1.5
+
+  if (!eng.l10Action && atDeepCenter && deepExit) {
+    eng.l10Action = { kind: 'dive', t: 0, dur: 3, x: deepExit.x, y: deepExit.y }
+    eng.msg('湖心之下没有可见湖底。继续下潜……', 'lore')
+  }
+
+  const a = eng.l10Action
+  if (!a) return
+  if (a.kind === 'drink') {
+    let stillNearWater = eng.inLiquid !== 1
+    if (stillNearWater) {
+      stillNearWater = false
+      const minX = Math.max(0, Math.floor(p.x - 2.4)), maxX = Math.min(m.w - 1, Math.floor(p.x + 2.4))
+      const minY = Math.max(0, Math.floor(p.y - 2.4)), maxY = Math.min(m.h - 1, Math.floor(p.y + 2.4))
+      for (let y = minY; y <= maxY && !stillNearWater; y++) for (let x = minX; x <= maxX; x++) {
+        if (m.liquid[y * m.w + x] === 1 && Math.hypot(x + .5 - p.x, y + .5 - p.y) <= 2.4) { stillNearWater = true; break }
+      }
+    }
+    if (!stillNearWater) { eng.l10Action = null; return }
+  } else if (a.kind === 'dig') {
+    const st = m.structures.find((s) => s.data?.sid === a.sid && s.kind === 'l10digsite')
+    if (!st || st.data?.dug || structureSurfaceDistance(st, p.x, p.y) > 2.4) { eng.l10Action = null; return }
+  } else if (!atDeepCenter) {
+    eng.l10Action = null
+    return
+  }
+
+  a.t += dt
+  if (a.t < a.dur) return
+  eng.l10Action = null
+
+  if (a.kind === 'drink') {
+    p.thirst = Math.min(100, p.thirst + 18)
+    eng.msg('你喝下湖水。（口渴 +18）水能入口，但留下很重的泥土余味。', 'loot')
+    audio.pickup()
+    return
+  }
+  if (a.kind === 'dive') {
+    if (deepExit) eng.takeExit(deepExit.def)
+    return
+  }
+
+  const st = m.structures.find((s) => s.data?.sid === a.sid && s.kind === 'l10digsite')
+  if (!st || st.data?.dug) return
+  st.data = { ...st.data, dug: 1 }
+  const count = 6 + Math.floor(Math.random() * 5)
+  for (let i = 0; i < count; i++) {
+    const ang = (i / count) * Math.PI * 2 + Math.random() * .45
+    const r = .55 + Math.random() * 1.35
+    const x = st.x + st.w / 2 + Math.cos(ang) * r
+    const y = st.y + st.h / 2 + Math.sin(ang) * r
+    const worm = makeEntity('soilworm', x, y, groundHeightAt(m, x, y))
+    worm.hidden = false
+    worm.state = 'chase'
+    worm.targetX = p.x; worm.targetY = p.y
+    worm.l10BurrowT = 15 + Math.random() * 10
+    m.entities.push(worm)
+  }
+  eng.msg(`土层突然涌动——${count} 条土壤蠕虫从挖掘点附近钻了出来！离开现场，它们很快会退回地下。`, 'damage')
+  audio.aggro()
+  eng.camShake = Math.min(1, eng.camShake + .5)
+}
+
 /** 射线首次进入 AABB 的距离；射线起点已在体积内时返回 0。 */
 export function rayInteractionVolume(ray: InteractionRay, box: InteractionVolume, maxT = 12): number | null {
   let near = 0
@@ -429,6 +502,7 @@ export function scanInteract(eng: Engine) {
     if ((e.floor ?? 0) !== band) continue
     if (e.def.kind === 'graystairs' || e.def.kind === 'graystairsup' || e.def.kind === 'oldstairs') continue // v29/v54：可行走阶梯——直接走上去/走下去，无 E 交互
     if (e.def.kind === 'ninthroad') continue // L8 第九大道狭窄洞口由移动碰触自动进入，不显示 E 交互提示
+    if (e.def.kind === 'lakeswim') continue // L10 深湖仅在湖心持续下潜约 3 秒后自动触发
     const ex = e.x + 0.5, ey = e.y + 0.5
     const d = Math.hypot(ex - p.x, ey - p.y)
     const tinyBlocked = e.def.kind === 'littledoor' && eng.tinyBlocksLittleDoor(e)
@@ -454,6 +528,18 @@ export function scanInteract(eng: Engine) {
       considerTarget(exitTarget, ex, ey, avenueMouth ? exitBase + 2.2 : ez, e.floor ?? 0, range, true,
         avenueMouth ? 2.35 : ceilingVent ? 0.68 : big ? 0.62 : 0.48,
         volumeAt(ex, ey, ceilingVent ? exitBase - 0.12 : exitBase, avenueMouth ? 2.55 : ceilingVent ? 0.7 : big ? 0.75 : 0.5, avenueMouth ? 4.7 : ceilingVent ? 0.86 : 1.95))
+    }
+  }
+  // L10 普通湖泊：只允许站在岸边对着水面持续饮用；深湖下潜由自动判定处理。
+  if (eng.levelDef.id === 10 && eng.inLiquid !== 1) {
+    const minX = Math.max(0, Math.floor(p.x - 2)), maxX = Math.min(m.w - 1, Math.floor(p.x + 2))
+    const minY = Math.max(0, Math.floor(p.y - 2)), maxY = Math.min(m.h - 1, Math.floor(p.y + 2))
+    for (let y = minY; y <= maxY; y++) for (let x = minX; x <= maxX; x++) {
+      if (m.liquid[y * m.w + x] !== 1) continue
+      const wx = x + .5, wy = y + .5, d = Math.hypot(wx - p.x, wy - p.y)
+      if (d > 1.9) continue
+      considerTarget({ kind: 'l10drink', label: '饮用 湖水（2 秒）' }, wx, wy, .03, band, 1.9, true,
+        .42, volumeAt(wx, wy, -.06, .45, .16), d)
     }
   }
   // 地面物品（半径 2.0m；v13：按物品所在高度过滤楼层）
@@ -557,6 +643,7 @@ export function scanInteract(eng: Engine) {
     else if (s.kind === 'frontdesk') consider('frontdesk', '与前台交易', s, d, true)
     else if (s.kind === 'l6stairwell') consider('l6stairwell', band === 0 ? '沿废弃楼梯井下行' : '沿废弃楼梯井返回地表', s, d, true)
     else if (s.kind === 'obelisk') consider('obelisk', '辨认 方尖碑上的字迹', s, d, true)
+    else if (s.kind === 'l10digsite') consider('l10digsite', s.data?.dug ? '旧挖掘点（已经被惊动）' : '挖掘 旧挖掘点（3 秒）', s, d, true)
   }
   // v35：NPC 与其他类别统一竞争，玩家正对 NPC 时不再被附近容器/出口抢走交互。
   for (const n of eng.npcs) {
@@ -640,6 +727,18 @@ export function doInteract(eng: Engine) {
     case 'exit': {
       const e = t.e
       if (e) eng.takeExit(e.def)
+      break
+    }
+    case 'l10drink': {
+      if (!eng.l10Action) eng.l10Action = { kind: 'drink', t: 0, dur: 2, x: p.x, y: p.y }
+      break
+    }
+    case 'l10digsite': {
+      const s = t.s
+      if (!s || s.data?.dug) { eng.msg('坑边的土已经塌回去了。下面重新归于安静。', 'system'); break }
+      if (!s.data?.sid) s.data = { ...s.data, sid: Math.floor(Math.random() * 1e9) }
+      eng.l10Action = { kind: 'dig', t: 0, dur: 3, sid: Number(s.data.sid), x: s.x + s.w / 2, y: s.y + s.h / 2 }
+      eng.noiseEvent(p.x, p.y, 7, false)
       break
     }
     case 'l6stairwell': {

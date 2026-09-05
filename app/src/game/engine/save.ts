@@ -55,6 +55,8 @@ export interface SaveSnapshot {
   heardSongs?: string[] // v56：已收听曲目 id（电台可选前提；乐手演奏解锁摇滚曲目）
   avenueMarks?: AvenueMapMark[] // L8 第九大道已揭示的全部地图标记
   avenueHintSeq?: number | null // 当前 HUD 应指向的最新标记（旧标记仅留在地图）
+  /** L10 阴云天气；可选以兼容重制前的旧存档。 */
+  l10Weather?: { kind: 'calm' | 'gust' | 'rain' | 'mist'; t: number; k: number; wetness: number }
   // v47：传教使命已标准委托化（kind 'preach' 进 quests，随 quests 持久）；旧档 jerryPreach 字段废弃不再读取
   player: PlayerState
 }
@@ -138,6 +140,7 @@ export function snapshot(eng: Engine): SaveSnapshot {
     heardSongs: [...eng.heardSongs], // v56：已收听曲目
     avenueMarks: eng.player.level === 8 ? eng.avenueMarks.map((mk) => ({ ...mk })) : undefined,
     avenueHintSeq: eng.player.level === 8 ? eng.avenueHintSeq : undefined,
+    l10Weather: eng.player.level === 10 ? { ...eng.l10Weather } : undefined,
     player: JSON.parse(JSON.stringify(eng.player)),
   }
 }

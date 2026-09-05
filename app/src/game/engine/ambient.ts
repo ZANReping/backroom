@@ -7,6 +7,8 @@ import { audio } from '../core/audio'
 import type { Engine } from '../engine'
 
 const handWeatherThunder = new WeakMap<Engine, string>()
+const l10WeatherAudio = new WeakMap<Engine, string>()
+const l10WeatherSyncT = new WeakMap<Engine, number>()
 
 // ---- 层级氛围事件（wiki 设定播报）+ L1 停电预警/恢复 + 开发者现象开关 ----
 // （原 step 内联段，逐语句搬运）
@@ -27,6 +29,7 @@ export function updateAmbient(eng: Engine, dt: number) {
     if (eng.blackoutT <= 0) eng.endBlackout()
   }
   updateL9Fog(eng, dt)
+  updateL10Weather(eng, dt)
   // 开发者现象开关：强制触发/屏蔽「闪烁」
   if (eng.dev.phenOn.has('flicker') && eng.levelDef.id === 1 && eng.blackoutT <= 0 && eng.blackoutWarnT <= 0) eng.startBlackout(20)
   if (eng.dev.phenOff.has('flicker')) {
@@ -56,6 +59,51 @@ export function updateAmbient(eng: Engine, dt: number) {
       }
     }
   } else audio.stopCaveWeather()
+}
+
+/** L10 短阵风、稀有小雨与薄雾；天气不降低环境光，只改变风、湿润度与可见距离。 */
+function updateL10Weather(eng: Engine, dt: number) {
+  if (eng.levelDef.id !== 10 || !eng.map) return
+  const w = eng.l10Weather
+  w.t = Math.max(0, w.t - dt)
+  const target = w.kind === 'calm' ? 0 : 1
+  w.k += (target - w.k) * Math.min(1, dt * (target > w.k ? .7 : .28))
+  w.wetness = Math.max(0, Math.min(1, w.wetness + (w.kind === 'rain' ? dt * .045 : -dt * .0025)))
+
+  const audioKind = w.kind === 'rain' && w.k > .08 ? 'rain' : 'dry'
+  if (l10WeatherAudio.get(eng) !== audioKind) {
+    l10WeatherAudio.set(eng, audioKind)
+    if (audioKind === 'rain') audio.startRain()
+    else audio.stopRain()
+  }
+
+  // 房主每 5 秒广播一次状态，迟加入的客人也能追上相同天气；客人同层时不自行掷骰。
+  if (eng.mpSession?.started && eng.mpSession.isHost) {
+    const next = (l10WeatherSyncT.get(eng) ?? 0) - dt
+    if (next <= 0) {
+      l10WeatherSyncT.set(eng, 5)
+      bcast(eng, { t: 'l10weather', kind: w.kind, time: w.t, k: w.k, wetness: w.wetness })
+    } else l10WeatherSyncT.set(eng, next)
+  }
+  if (w.t > 0 || hostHere(eng)) return
+
+  if (w.kind !== 'calm') {
+    w.kind = 'calm'; w.t = 65 + Math.random() * 100
+    bcast(eng, { t: 'l10weather', kind: w.kind, time: w.t, k: w.k, wetness: w.wetness })
+    return
+  }
+  const r = Math.random()
+  if (r < .72) {
+    w.kind = 'gust'; w.t = 10 + Math.random() * 16
+    eng.msg('一阵短促的风压过麦田，麦浪从视野一端追向另一端。', 'lore')
+  } else if (r < .91) {
+    w.kind = 'rain'; w.t = 24 + Math.random() * 34
+    eng.msg('细雨从连续的阴云中落下，车辙和木板很快泛起湿亮。', 'lore')
+  } else {
+    w.kind = 'mist'; w.t = 30 + Math.random() * 45
+    eng.msg('一层薄雾沿低洼地漫过来，天空和远处田埂一起失去轮廓。', 'lore')
+  }
+  bcast(eng, { t: 'l10weather', kind: w.kind, time: w.t, k: w.k, wetness: w.wetness })
 }
 
 function spawnL9FogMangled(eng: Engine) {

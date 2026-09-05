@@ -96,7 +96,8 @@ range?: { x0: number; y0: number; x1: number; y1: number; variant?: string }, //
     }
     case 'field': { // L10「Bumper Crop」——车辙、干草、木料
       decal.fieldRuts(c)      // 车辙
-      prop.fieldHayBales(c)   // 干草堆
+      // 无限 L10 的干草块已经是具有贴图与碰撞的正式结构；旧有限地图才保留低模视觉占位。
+      if (!m.inf) prop.fieldHayBales(c)
       prop.fieldTimber(c)     // 木料
       break
     }
