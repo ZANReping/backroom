@@ -29,6 +29,7 @@ export function updateJerry(eng: Engine, dt: number) {
 }
 
 /** NPC 主循环（原 step「---- v35：NPC ----」内联段，逐语句搬运） */
+const cityNpcTicks=new WeakMap<object,number>()
 export function updateNpcs(eng: Engine, dt: number) {
   const p = eng.player, m = eng.map!
   // ---- v35：NPC（据点居民：岗位附近缓慢游荡 + 偶尔自言自语）----
@@ -41,7 +42,14 @@ export function updateNpcs(eng: Engine, dt: number) {
       eng.msg('你学着他们的动作挥臂敲打了一阵。附近的员工似乎朝你点了点头。（后室装修公司 声望 +2）', 'loot')
     }
   }
+  const frameDt=dt
   for (const n of eng.npcs) {
+    let dt=frameDt
+    if(p.level===11&&!n.hostile){
+      const elapsed=(cityNpcTicks.get(n)??0)+frameDt,interval=Math.hypot(n.x-p.x,n.y-p.y)>55?.5:.1
+      if(elapsed<interval){cityNpcTicks.set(n,elapsed);continue}
+      dt=Math.min(.5,elapsed);cityNpcTicks.set(n,0)
+    }
     n.bubbleT = Math.max(0, n.bubbleT - dt)
     // v46：NPC 楼层带感知的可行走判定（上层居民走 up 楼板避开上层墙/上层实心家具；主层居民走地板）
     // v54：三层泛化——floor=2 的三层居民走 up2 楼板/upWall2 三层墙（Gamma 基地行政部）

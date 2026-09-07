@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import type { Engine } from '@/game/engine'
+import { l11MapMarks } from '@/game/engine/l11State'
 import { ITEMS } from '@/game/content/items'
 import { ENTITIES, entitySpawnLevels } from '@/game/entities'
 import { WIN_TAPES, LEVELS, levelNo, levelLabel } from '@/game/levels'
@@ -132,6 +133,10 @@ function Minimap({ engine, size }: { engine: Engine; size: number }) {
         g.shadowBlur = 0
       }
       // L8 第九大道地图标记：只要被路标揭示就显示，不受当前视野/探索位图限制。
+      for(const mark of l11MapMarks(engine)){
+        const sx=Math.max(5,Math.min(size-5,(mark.x-inf.ox-px+half)*s)),sy=Math.max(5,Math.min(size-5,(mark.y-inf.oy-py+half)*s))
+        g.save();g.fillStyle='#b7d2c6';g.fillRect(sx-2,sy-2,4,4);g.font='8px monospace';g.textAlign='center';g.fillText(mark.name,sx,sy-5);g.restore()
+      }
       // 历史标记保留为暗金菱形；最新标记为青蓝发光菱形，且是 HUD 唯一会指向的路线点。
       if (engine.player.level === 8) for (const mark of engine.avenueMarks) {
         const sx = (mark.wx - (inf.ox + px) + half) * s
@@ -444,9 +449,9 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
   )
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-30" style={{ padding: 'calc(env(safe-area-inset-top) + 8px) calc(env(safe-area-inset-right) + 8px) calc(env(safe-area-inset-bottom) + 8px) calc(env(safe-area-inset-left) + 8px)' }}>
+    <div className="game-hud pointer-events-none fixed inset-0 z-30" style={{ padding: 'calc(env(safe-area-inset-top) + 8px) calc(env(safe-area-inset-right) + 8px) calc(env(safe-area-inset-bottom) + 8px) calc(env(safe-area-inset-left) + 8px)' }}>
       {/* 左上：状态 + 当前现象 */}
-      <div className="absolute left-3 top-3 flex flex-col items-start gap-1.5">
+      <div className="hud-vitals-cluster absolute left-3 top-3 flex flex-col items-start gap-1.5">
         <div className="hud-panel pointer-events-auto p-2">
           {vitals}
           {swim && (
@@ -523,7 +528,7 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
       {/* 顶部中央：位置 + 消息（移动端；v10 修复与状态栏/开发者面板重叠——
           移动端改为左右留白锚定，为左上状态条与右上按钮让位，日志限宽限高且纯展示） */}
       <div
-        className={isMobile ? 'absolute top-3 text-center' : 'absolute left-1/2 top-3 -translate-x-1/2 text-center'}
+        className={`hud-location-cluster ${isMobile ? 'absolute top-3 text-center' : 'absolute left-1/2 top-3 -translate-x-1/2 text-center'}`}
         style={isMobile ? { left: landscape ? 378 : 156, right: landscape ? 118 : 110, pointerEvents: 'none' } : undefined}
       >
         <div className="hud-panel font-mono2 inline-block max-w-full truncate px-3 py-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>
@@ -543,7 +548,7 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
       </div>
 
       {/* 右上 */}
-      <div className="absolute right-3 top-3 flex flex-col items-end gap-2">
+      <div className="hud-navigation-cluster absolute right-3 top-3 flex flex-col items-end gap-2">
         {isMobile ? (
           <>
             {/* 横屏：折叠小地图，点击展开大地图浮层（竖屏保持现状） */}
@@ -596,7 +601,7 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
       )}
 
       {/* 底部中央：快捷栏 + 拾取提示 */}
-      <div className={`absolute left-1/2 -translate-x-1/2 ${isMobile ? 'bottom-[8px] max-md:landscape:bottom-2' : 'bottom-3'} flex flex-col items-center gap-2`}>
+      <div className={`hud-hotbar-cluster absolute left-1/2 -translate-x-1/2 ${isMobile ? 'bottom-[8px] max-md:landscape:bottom-2' : 'bottom-3'} flex flex-col items-center gap-2`}>
         <div className="relative h-6">
           {toasts.map((t) => (
             <div key={t.id} className="anim-toast font-mono2 whitespace-nowrap text-[12px]" style={{ color: 'var(--amber)' }}>{t.text}</div>
@@ -607,7 +612,7 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
 
       {/* 右下：情境提示（桌面） */}
       {!isMobile && (
-        <div className="absolute bottom-3 right-3 space-y-1 text-right">
+        <div className="hud-context-cluster absolute bottom-3 right-3 space-y-1 text-right">
           {interact && (
             <div className="hud-panel anim-slideUp font-mono2 inline-block px-3 py-1.5 text-[12px]" style={{ color: 'var(--amber)' }}>
               [{bindLabelFor('interact')}] {interact.label}

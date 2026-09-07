@@ -33,6 +33,7 @@ import * as ambient from './engine/ambient'
 import * as dev from './engine/dev'
 import * as unstuck from './engine/unstuck'
 import { loadSaveSnapshot, type SaveSnapshot } from './engine/save'
+import type { L11WorldSave } from './engine/l11State'
 
 // v53：对外契约再导出（原 engine.ts 直接导出的符号保持不变）
 export { SAVE_KEY, loadSaveSnapshot, clearSaveSnapshot, listSaveSlots, readSaveSlot, SAVE_SLOT_KEYS, SAVE_SLOT_LABELS } from './engine/save'
@@ -231,6 +232,9 @@ export class Engine {
   arriveL6Band: FloorBand | null = null // L5 黑门=-1；L4/Omega 活板门=0
   arriveL9From: number | null = null // L5=住宅门口；L7=后院泳池；L8=道路尽头石洞
   arriveL10From: number | null = null // L9=田野边缘步道；L11=乡间主路旁
+  arriveL11From: number | null = null
+  l11World?: L11WorldSave
+  l11Weather: {kind:'calm'|'gust'|'rain'|'mist';t:number;k:number;wetness:number} = {kind:'calm',t:120,k:0,wetness:0}
   arriveL7SafeWater = false // L10 深湖抵达：落在安全水域并重置呼吸
   arriveL8AvenueEnd = false // 从 L9 石洞返回 L8 第九大道最终洞口
   l10Weather: { kind: 'calm' | 'gust' | 'rain' | 'mist'; t: number; k: number; wetness: number } = { kind: 'calm', t: 80, k: 0, wetness: 0 }
@@ -425,6 +429,8 @@ export class Engine {
     this.arriveL7SafeWater = false
     this.arriveL8AvenueEnd = false
     this.l10Weather = { kind: 'calm', t: 80, k: 0, wetness: 0 }
+    this.l11World = undefined
+    this.l11Weather = {kind:'calm',t:120,k:0,wetness:0}
     this.l10Action = null
     this.l9FogPhase = 'idle'
     this.l9FogT = 240
@@ -468,6 +474,8 @@ export class Engine {
       this.radio.perLevel = this.radio.perLevel ?? {}
       this.heardSongs = snap.heardSongs ?? []
       this.l10Weather = snap.l10Weather ?? { kind: 'calm', t: 80, k: 0, wetness: 0 }
+      this.l11World = snap.l11World
+      this.l11Weather = snap.l11Weather ?? {kind:'calm',t:120,k:0,wetness:0}
       setRadioCfg(this.radio)
       this.loadLevel(snap.level, { mapSeed: snap.mapSeed, firstVisit: snap.mapFirstVisit })
       // loadLevel 已把 player 放到出生点；此处整体恢复为存档时的玩家状态

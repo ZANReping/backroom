@@ -7,6 +7,7 @@
 import type { AvatarCfg } from '../core/avatar'
 import type { FloorBand } from '../core/types'
 import { DEFAULT_AVATAR } from '../core/avatar'
+import { L11_PEOPLE } from './l11People'
 
 export interface DialogueNode {
   npc: string // NPC 台词
@@ -374,6 +375,7 @@ export function jerryFollowerDef(...nums: number[]): NpcDef {
 }
 
 export const NPCS: Record<string, NpcDef> = {
+  ...Object.fromEntries(L11_PEOPLE.map((npc) => [npc.id, npc])),
   // v58：小小（Entity 720）——L7 环形场的可对话实体；傲慢、恶意毫不掩饰、隐瞒 L9 出口。
   // 非人形实体走实体交互通道（interact.ts case 'tiny'），此处仅承载对话树与人设；被激怒后由交互层拒绝对话。
   tiny: {

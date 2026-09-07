@@ -2,7 +2,7 @@
 import * as THREE from 'three'
 import type { ExitInstance, GroundItem, Structure } from '../core/types'
 
-export interface RenderOpts { grain: boolean; flicker: number; shake: boolean; dust: boolean }
+export interface RenderOpts { grain: boolean; flicker: number; shake: boolean }
 export type RenderResolutionMode = 'native' | '720p' | '480p_retro' | '320p_ps1'
 
 interface VisualInteractionHitBase {

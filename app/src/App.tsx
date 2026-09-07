@@ -84,7 +84,11 @@ function Game() {
   const [screen, setScreen] = useState<Screen>('title')
   const [overlay, setOverlay] = useState<Overlay>('none')
   const [settings, setSettings] = useState<GameSettings>(() => {
-    try { return { ...defaultSettings, ...JSON.parse(storage.get('br_settings') ?? '{}') } } catch { return defaultSettings }
+    try {
+      const stored = JSON.parse(storage.get('br_settings') ?? '{}') as Record<string, unknown>
+      delete stored.dust // 已移除的旧版漂浮尘埃设置不再继续写回存档。
+      return { ...defaultSettings, ...stored } as GameSettings
+    } catch { return defaultSettings }
   })
   const [log, setLog] = useState<LogEntry[]>([])
   const [toasts, setToasts] = useState<Toast[]>([])
@@ -165,6 +169,8 @@ function Game() {
     engine.dev.god = settings.devMode // 开发者模式：无敌
     // 界面主题：挂到 <html data-theme>，CSS 变量随之整体切换（见 index.css）
     document.documentElement.dataset.theme = settings.theme
+    // 界面呈现与配色主题相互独立；挂到 html 后也能覆盖 createPortal 到 body 的地图等 UI。
+    document.documentElement.dataset.ui = settings.uiPresentation
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', THEMES.find((t) => t.id === settings.theme)?.bg ?? '#0a0908')
   }, [settings])
 
@@ -680,7 +686,7 @@ function Game() {
         engine.player.x = attractMap.spawn.x + 0.5
         engine.player.y = attractMap.spawn.y + 0.5
         engine.player.flashlight = true
-        renderer.render(canvas, engine, { grain: settings.grain, flicker: settings.flicker / 100, shake: false, dust: settings.dust }, dt)
+        renderer.render(canvas, engine, { grain: settings.grain, flicker: settings.flicker / 100, shake: false }, dt)
         engine.player.x = px; engine.player.y = py
         engine.player.flashlight = fl
         engine.map = savedMap
@@ -688,7 +694,7 @@ function Game() {
         renderer.applyView(engine)
         engine.update(dt)
         mpSessionRef.current?.tick(engine, dt) // v58：联机状态同步（12Hz）
-        renderer.render(canvas, engine, { grain: settings.grain, flicker: settings.flicker / 100, shake: settings.shake, dust: settings.dust }, dt)
+        renderer.render(canvas, engine, { grain: settings.grain, flicker: settings.flicker / 100, shake: settings.shake }, dt)
       }
 
       hudAcc += dt
@@ -706,7 +712,7 @@ function Game() {
       window.removeEventListener('wheel', onWheel)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [settings.grain, settings.dust, settings.flicker, settings.shake, settings.dynamicRes, settings.dynamicResTarget, settings.renderResolution, settings.renderScale])
+  }, [settings.grain, settings.flicker, settings.shake, settings.dynamicRes, settings.dynamicResTarget, settings.renderResolution, settings.renderScale])
 
   // 画面设置：手电实时阴影（移动端强制关闭）
   useEffect(() => {
@@ -745,10 +751,14 @@ function Game() {
     rendererRef.current?.setFarLights(settings.farLights)
   }, [settings.farLights])
 
-  // 画面设置：VCR 滤镜（默认关）
+  // 画面设置：VCR 色差/跟踪失真、强度与动态扫描线可分别控制。
   useEffect(() => {
-    rendererRef.current?.setVcrFx(settings.vcrFx)
-  }, [settings.vcrFx])
+    const r = rendererRef.current
+    if (!r) return
+    r.setVcrFx(settings.vcrFx)
+    r.setVcrStrength(settings.vcrStrength)
+    r.setVcrScanlines(settings.vcrScanlines)
+  }, [settings.vcrFx, settings.vcrStrength, settings.vcrScanlines])
 
   // 画面设置：光影模式与细分项（v50；realistic 细项在 classic 下推送也无效，渲染器内自守门）
   useEffect(() => {
@@ -806,7 +816,7 @@ function Game() {
   } as CSSProperties
 
   return (
-    <div className={`br-app fixed inset-0 overflow-hidden ${settings.grain ? 'vhs-grain scanlines' : 'scanlines'} ${customPause ? 'br-hide-hud-pause' : ''}`} style={appStyle}>
+    <div data-ui={settings.uiPresentation} className={`br-app fixed inset-0 overflow-hidden ${settings.grain ? 'vhs-grain scanlines' : 'scanlines'} ${customPause ? 'br-hide-hud-pause' : ''}`} style={appStyle}>
       <canvas
         ref={canvasRef}
         style={{
@@ -822,6 +832,16 @@ function Game() {
           aria-hidden="true"
         />
       )}
+
+      {/* 沉浸式 UI 的低存在感取景框；纯装饰，不参与命中测试，也不增加逐帧状态。 */}
+      <div className="immersive-ui-frame" aria-hidden="true">
+        <i className="immersive-corner immersive-corner-tl" />
+        <i className="immersive-corner immersive-corner-tr" />
+        <i className="immersive-corner immersive-corner-bl" />
+        <i className="immersive-corner immersive-corner-br" />
+        <span className="immersive-frame-id">REC // BRC-09</span>
+        <span className="immersive-frame-signal">FIELD ARCHIVE · SIGNAL LIVE</span>
+      </div>
 
       {/* 受伤闪屏 */}
       {damageFlash > 0 && (

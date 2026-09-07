@@ -29,6 +29,8 @@ const T = (name: string, label: string, detail: string, weight = 1): Asset =>
 
 function levelCoreAssets(level: number): Asset[] {
   const id = texLevelId(level)
+  if(id===11 || level===115)return ['concrete','asphalt','brick','plaster','tiles','metal','wood'].flatMap(kind=>
+    ['', '_normal', '_roughness'].map(suffix=>T(`l11_${kind}${suffix}.jpg`,'Level 11',`城市 PBR · ${kind}${suffix}`)))
   if (id === 0) {
     return [
       T('l0_wall_classic_v2.png', '出生层级', 'Level 0 · 淡黄单色墙纸'),
@@ -141,7 +143,7 @@ export async function preloadGameResources(req: PreloadRequest, onUpdate: (u: Pr
   const groups: { name: string; assets: Asset[] }[] = [{ name: '通用资源', assets: commonAssets() }]
   if (req.allLevels !== false) {
     // 常规层、结局层和全部据点层统一预载；相同 URL 去重，避免据点材质别名重复请求。
-    const ids = [...Array.from({ length: 12 }, (_, i) => i), 601, ...Array.from({ length: 14 }, (_, i) => 101 + i), 274]
+    const ids = [...Array.from({ length: 12 }, (_, i) => i), 601, ...Array.from({ length: 15 }, (_, i) => 101 + i), 274]
     const seen = new Set<string>()
     const assets = ids.flatMap(levelCoreAssets).filter((a) => !seen.has(a.url) && !!seen.add(a.url))
     groups.push({ name: '全部层级资产', assets })
@@ -173,6 +175,11 @@ export async function preloadGameResources(req: PreloadRequest, onUpdate: (u: Pr
       done += a.weight ?? 1
       await pause(8) // 让进度条/内容行有时间渲染，避免缓存命中时一闪而过
     }
+  }
+  if(req.allLevels!==false||req.targetLevel===11||req.targetLevel===115){
+    const {l11Material}=await import('../renderer/l11Materials')
+    for(const kind of ['concrete','asphalt','brick','plaster','tile','metal','wood','grass','glass','sealedglass'] as const){l11Material(kind);await pause(0)}
+    for(const [kind,tint] of [['concrete','#d9dad3'],['metal','#657171']] as const){l11Material(kind,tint);await pause(0)}
   }
   emit('资源预载完成', '所有请求均已处理（失败项已自动跳过）', '预载流程结束')
 }

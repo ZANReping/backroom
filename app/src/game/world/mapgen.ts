@@ -16,6 +16,8 @@ import './infiniteL7' // v57：注册 Level 7 入口房间 + 四深度带无限�
 import './infiniteL8' // v59：注册 Level 8 无限有机洞穴与生态分区生成器（副作用导入）
 import './infiniteL9' // v61：注册 Level 9 无限郊区、住宅街与第九大道引导路线生成器
 import './infiniteL10' // v62：注册 Level 10 无限农田、连续道路与湖泊生成器
+import './infiniteL11'
+import { l11MetroRamp } from './l11Layout'
 import { genDeep } from './mapgenDeep'
 import { genOutpost } from './mapgenOutpost'
 import { CONTAINER_KINDS } from '../decorations/containers'
@@ -267,6 +269,10 @@ export function floorHeight(m: GameMap, x: number, y: number, band: FloorBand = 
   const tx = Math.floor(x), ty = Math.floor(y)
   if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return 0
   const i = ty * m.w + tx
+  if (m.tint[i] === 58 && m.inf) {
+    const ramp = l11MetroRamp(x + m.inf.ox, y + m.inf.oy)
+    if (ramp !== null) return ramp
+  }
   if (band === -1) return UNDER_FLOOR
   const s2 = m.stair[i]
   if (s2 & 7) { // 楼梯：跨层连续坡道（与 band 无关）
@@ -447,6 +453,9 @@ const modelCollidersFor = (s: Structure): ColliderBox[] | null => {
 // - sphboiler 球罐：砖石基座 1.7×1.7 + 球罐 r0.85 @顶 ~2.2m → 盒 ±0.85；球顶不可站
 export function structColliders(s: Structure, m?: GameMap): ColliderBox[] {
   const cx = s.x + s.w / 2, cy = s.y + s.h / 2
+  if (s.kind === 'l11building') return s.solid ? [{ x0:s.x,y0:s.y,x1:s.x+s.w,y1:s.y+s.h,top:Number(s.data?.floors??10)*3,stand:false }] : []
+  if (s.kind === 'l11window') return [{ x0:s.data?.axis?cx-.05:s.x,y0:s.data?.axis?s.y:cy-.05,x1:s.data?.axis?cx+.05:s.x+s.w,y1:s.data?.axis?s.y+s.h:cy+.05,top:3,stand:false }]
+  if (s.kind === 'l11prop' && s.data?.prop === 'tree') return [{ x0:cx-.2,y0:cy-.2,x1:cx+.2,y1:cy+.2,top:3.5,stand:false }]
   // 运行时模型一旦完成构建，所有可见实心结构统一以真实子网格包围盒为准。
   // 下方逐类型定义只负责无渲染器的地图生成阶段，以及纯逻辑/隐形碰撞结构的回退。
   const modeled = modelCollidersFor(s)

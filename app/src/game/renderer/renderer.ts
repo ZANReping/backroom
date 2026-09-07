@@ -30,6 +30,7 @@ import { setMaterialMode, setReflectK, getReflectK } from './shared'
 import { L8_AVENUE_SEGMENTS, l8AvenuePoint } from '../world/infiniteL8'
 import { l9ArrowCount, l9ArrowPoint } from '../world/infiniteL9'
 import { l10MainRoadY } from '../world/infiniteL10'
+import { buildL11DistantCity, buildL11Building, buildL11TerrainJob } from './l11Meshes'
 import { setSquirtGunLiquid } from './squirtGunMesh'
 
 /**
@@ -38,6 +39,7 @@ import { setSquirtGunLiquid } from './squirtGunMesh'
  */
 function syncStructureModelColliders(s: Structure, root: THREE.Object3D, groundY: number): void {
   if (!s.solid) return
+  if (s.kind === 'l11building' || s.kind === 'l11window' || (s.kind === 'l11prop' && s.data?.prop === 'tree')) return
   root.updateWorldMatrix(true, true)
   const cx = s.x + s.w / 2, cy = s.y + s.h / 2
   const boxes: ModelColliderBox[] = []
@@ -281,12 +283,14 @@ function batchL9StaticRoots(target: THREE.Group, roots: THREE.Object3D[]) {
   }
 }
 
-// VCR 滤镜着色器：扫描线 + 行跟踪失真带 + 色差串扰 + 隔行微闪 + 噪点 + 抬黑降饱和 + 暗角
+// VCR 滤镜着色器：色差/跟踪失真强度与动态扫描线分别由 uniform 控制，不必重建 composer。
 const VcrShader = {
   uniforms: {
     tDiffuse: { value: null as THREE.Texture | null },
     time: { value: 0 },
     resolution: { value: new THREE.Vector2(1, 1) },
+    strength: { value: 1 },
+    scanlinesOn: { value: 1 },
   },
   vertexShader: /* glsl */ `
     varying vec2 vUv;
@@ -299,6 +303,8 @@ const VcrShader = {
     uniform sampler2D tDiffuse;
     uniform float time;
     uniform vec2 resolution;
+    uniform float strength;
+    uniform float scanlinesOn;
     varying vec2 vUv;
 
     float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
@@ -311,14 +317,14 @@ const VcrShader = {
       float bandGate = step(0.82, hash(vec2(bandSeed, 3.7)));
       float bandY = fract(time * 0.22 + hash(vec2(bandSeed, 9.1)));
       float band = bandGate * smoothstep(0.06, 0.0, abs(uv.y - bandY));
-      uv.x += band * (hash(vec2(floor(uv.y * resolution.y), bandSeed)) - 0.5) * 0.06;
+      uv.x += band * (hash(vec2(floor(uv.y * resolution.y), bandSeed)) - 0.5) * 0.06 * strength;
 
       // 行同步误差：整行细微波形 + 逐行随机抖动
-      uv.x += sin(uv.y * resolution.y * 0.8 + time * 8.0) * 0.0006;
-      uv.x += (hash(vec2(floor(uv.y * resolution.y), floor(time * 24.0))) - 0.5) * 0.0012;
+      uv.x += sin(uv.y * resolution.y * 0.8 + time * 8.0) * 0.0006 * strength;
+      uv.x += (hash(vec2(floor(uv.y * resolution.y), floor(time * 24.0))) - 0.5) * 0.0012 * strength;
 
       // 色差（磁带色彩串扰），带轻微时间摆动；失真带内加剧
-      float ab = 0.0018 + 0.0008 * sin(time * 0.9) + band * 0.004;
+      float ab = (0.0018 + 0.0008 * sin(time * 0.9) + band * 0.004) * strength;
       vec3 col;
       col.r = texture2D(tDiffuse, uv + vec2(ab, 0.0)).r;
       col.g = texture2D(tDiffuse, uv).g;
@@ -326,20 +332,20 @@ const VcrShader = {
 
       // 隔行扫描微闪（奇偶行交替 ±1%，净亮度不变）
       float field = mod(floor(uv.y * resolution.y) + floor(time * 60.0), 2.0);
-      col *= 0.99 + 0.02 * field;
+      col *= mix(1.0, 0.99 + 0.02 * field, scanlinesOn);
 
       // 扫描线（明暗相间、平均为零的波纹——保留纹理但不压暗画面）
-      col *= 1.0 + 0.05 * cos(uv.y * resolution.y * 6.28318);
+      col *= 1.0 + scanlinesOn * 0.05 * cos(uv.y * resolution.y * 6.28318);
 
       // 磁带色彩：轻度降饱和 + 轻微抬黑（不压暗）
       float lum = dot(col, vec3(0.299, 0.587, 0.114));
-      col = mix(col, vec3(lum), 0.12);
-      col = col + 0.02;
+      col = mix(col, vec3(lum), 0.12 * strength);
+      col = col + 0.02 * strength;
 
       // 噪点（暗部更明显）+ 失真带内混入白噪条纹
       float n = hash(uv * resolution + fract(time) * 100.0);
-      col += (n - 0.5) * (0.05 + 0.08 * (1.0 - lum));
-      col = mix(col, vec3(n), band * 0.25);
+      col += (n - 0.5) * (0.05 + 0.08 * (1.0 - lum)) * strength;
+      col = mix(col, vec3(n), band * 0.25 * strength);
 
       gl_FragColor = vec4(col, 1.0);
     }
@@ -489,7 +495,6 @@ export class Renderer3D {
   private fixtures: { mat: THREE.MeshBasicMaterial; seed: number; src?: LightSource }[] = []
   private particlesPts!: THREE.Points
   private particlesGeo!: THREE.BufferGeometry
-  private dust!: THREE.Points
   // L10 小雨是跟随相机的共享雨丝，不随区块复制，也不为每滴雨创建对象。
   private l10Rain!: THREE.LineSegments
   private l10RainState!: Float32Array // 每条雨丝：局部 x/z、相位、速度
@@ -562,6 +567,8 @@ export class Renderer3D {
   private bloomPass: UnrealBloomPass | null = null
   private composerKey = '' // 已构建 composer 的通道组合（泛光/VCR 开关变化时重建）
   private vcrOn = false // 设置项：VCR 滤镜（默认关）
+  private vcrStrength = 1
+  private vcrScanlinesOn = true
   private vcrPass: ShaderPass | null = null
   private nvPass: ShaderPass | null = null // v58：夜视眼镜滤镜（佩戴+有电时启用）
   private resolutionMode: RenderResolutionMode = 'native'
@@ -588,6 +595,10 @@ export class Renderer3D {
   private crossState = ''
   // L9 室内只在住宅附近或玩家所在住宅内显示；低频更新避免每帧遍历全部家具。
   private l9InteriorCullT = 1
+  private cityChunkTask: {map:GameMap;rev:number;key:string;iter:Generator<void,void,unknown>} | null = null
+  private cityDistant:THREE.Group|null=null
+  private cityDistantKey=''
+  private cityDistantTask:Generator<void,THREE.Group,unknown>|null=null
   private l10InteriorCullT = 1
   // 材质预编译做节流并带层级世代号：区块连续挂载时合并请求，切层后旧 Promise 不再回调新场景。
   private precompileTimer: ReturnType<typeof setTimeout> | null = null
@@ -663,15 +674,6 @@ export class Renderer3D {
     this.particlesPts = new THREE.Points(this.particlesGeo, new THREE.PointsMaterial({ size: 0.14, vertexColors: true, transparent: true, opacity: 0.9, depthWrite: false }))
     this.particlesPts.frustumCulled = false
     this.scene.add(this.particlesPts)
-    // 灰尘
-    const dustGeo = new THREE.BufferGeometry()
-    const dn = 160
-    const dp = new Float32Array(dn * 3)
-    for (let i = 0; i < dn; i++) { dp[i * 3] = (Math.random() - 0.5) * 14; dp[i * 3 + 1] = Math.random() * 3; dp[i * 3 + 2] = (Math.random() - 0.5) * 14 }
-    dustGeo.setAttribute('position', new THREE.BufferAttribute(dp, 3))
-    this.dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({ size: 0.03, color: 0xbfb598, transparent: true, opacity: 0.5, depthWrite: false }))
-    this.dust.frustumCulled = false
-    this.scene.add(this.dust)
     {
       const count = 150
       this.l10RainState = new Float32Array(count * 4)
@@ -926,6 +928,10 @@ export class Renderer3D {
       return
     }
     const def = levelDefOf(engine.player.level)!
+    const weather=def.id===11?engine.l11Weather:engine.l10Weather
+    this.updateL11Distant(m,def.id)
+    const far=def.id===11?560:60
+    if(this.camera.far!==far){this.camera.far=far;this.camera.updateProjectionMatrix()}
     updateL10Wind(this.time * (def.id === 10 ? 1 + engine.l10Weather.k * (engine.l10Weather.kind === 'gust' ? 1.35 : .45) : 1))
     const nightVision = engine.player.equip.head?.type === 'nightvision' && engine.player.battery > 0
     if (def.id === 6) {
@@ -1032,7 +1038,7 @@ export class Renderer3D {
     // 水平侧摆沿视线右向：forward=(-sin,-cos)，right=(cos,-sin)。
     const rightX = Math.cos(look.yaw), rightZ = -Math.sin(look.yaw)
     this.camera.position.set(p.x + rightX * swayX + this.camShakeX, eye, p.y + rightZ * swayX + this.camShakeY)
-    this.updateL10Rain(def.id, engine.l10Weather.kind, engine.l10Weather.k)
+    this.updateL10Rain(def.id===11?10:def.id, weather.kind, weather.k)
     this.updateL9InteriorVisibility(def.id, p.x, p.y, dt)
     this.updateL10InteriorVisibility(def.id, p.x, p.y, dt)
     // 低理智畸变：FOV 呼吸 + 侧倾（与摇晃 roll 叠加）
@@ -1134,7 +1140,7 @@ export class Renderer3D {
         // v58：L7 海面户外改为浅距离雾——旧版户外统一把雾推到 48m，海平面上几乎看不见雾；
         // L7 户外只小幅放宽（near 3.5 / far 29），海面始终笼在可见的迷雾里
         const outNear = def.id === 7 ? 3.5 : def.id === 9 ? 2.8 : 5
-        const outFar = def.id === 7 ? 29 : def.id === 9 ? 38 : 48
+        const outFar = def.id === 11 ? 320 : def.id === 7 ? 29 : def.id === 9 ? 38 : 48
         fog.near = this.fogNear + (outNear - this.fogNear) * k
         fog.far = this.fogFar + (outFar - this.fogFar) * k
         fog.color.copy(this.fogC).lerp(this.skyC, k)
@@ -1305,9 +1311,6 @@ export class Renderer3D {
       if (fog && fog.far < 9000) { fog.near *= this.fogScale; fog.far *= this.fogScale }
     }
 
-    // 设置项：漂浮尘埃粒子开关（默认关闭）
-    this.dust.visible = opts.dust
-
     // 灯光池：默认最近 48 盏，且点亮距离与当前雾可视距离一致（雾内全亮、雾外渐隐）——
     // 看见的地方必有光、看不见的地方不浪费；「远处灯光全开」时 96 盏全场景点亮（前 88 全亮、末 8 渐隐）
     // 复用排序缓冲，且比较平方距离：避免 L5 密集灯光每帧分配数组并在比较器内反复开平方。
@@ -1424,29 +1427,29 @@ export class Renderer3D {
       this.ambient.intensity *= 1 - fk * 0.22
       this.hemi.intensity *= 1 - fk * 0.28
     }
-    if (def.id === 10 && !bright) {
-      const w = engine.l10Weather
+    if ((def.id === 10 || def.id === 11) && !bright) {
+      const w = weather
       const fog = this.scene.fog as THREE.Fog | null
       if (fog && w.kind === 'mist') {
         const fk = Math.max(0, Math.min(1, w.k))
         fog.near += (.55 - fog.near) * fk
-        fog.far += (14 - fog.far) * fk
+        fog.far += ((def.id===11?95:14) - fog.far) * fk
         fog.color.lerp(new THREE.Color('#8d9494'), fk * .72)
         if (this.scene.background instanceof THREE.Color) this.scene.background.copy(fog.color)
       } else if (fog && w.kind === 'rain') {
         const rk = Math.max(0, Math.min(1, w.k))
-        fog.far += (31 - fog.far) * rk * .55
+        fog.far += ((def.id===11?200:31) - fog.far) * rk * .55
         fog.color.lerp(new THREE.Color('#71797b'), rk * .25)
       }
       this.updateL10WetMaterials(w.wetness, dt)
     }
-    if ((def.id === 9 || def.id === 10) && this.skyMesh) {
+    if ((def.id === 9 || def.id === 10 || def.id===11) && this.skyMesh) {
       const sm = this.skyMesh.material as THREE.ShaderMaterial
       if (sm.uniforms?.uTime) sm.uniforms.uTime.value = engine.time
       if (sm.uniforms?.uFogMix) sm.uniforms.uFogMix.value = bright ? 0 : def.id === 9
         ? Math.max(0, Math.min(1, engine.l9FogK))
-        : engine.l10Weather.kind === 'mist' ? Math.max(0, Math.min(.72, engine.l10Weather.k * .72))
-          : engine.l10Weather.kind === 'rain' ? Math.max(0, Math.min(.18, engine.l10Weather.k * .18)) : 0
+        : weather.kind === 'mist' ? Math.max(0, Math.min(.72, weather.k * .72))
+          : weather.kind === 'rain' ? Math.max(0, Math.min(.18, weather.k * .18)) : 0
       if (sm.uniforms?.uFogColor) sm.uniforms.uFogColor.value.set(def.id === 9 ? '#697278' : '#8d9494')
     }
     // 「额外暗度」只压低无方向的环境底光，让黑角更深；手电、打火机和开发者
@@ -1537,6 +1540,8 @@ export class Renderer3D {
       }
       if (this.vcrPass) {
         this.vcrPass.uniforms.time.value = this.time
+        this.vcrPass.uniforms.strength.value = this.vcrStrength
+        this.vcrPass.uniforms.scanlinesOn.value = this.vcrScanlinesOn ? 1 : 0
         const dbSize = new THREE.Vector2()
         this.three.getDrawingBufferSize(dbSize)
         ;(this.vcrPass.uniforms.resolution.value as THREE.Vector2).copy(dbSize)
@@ -1700,7 +1705,7 @@ export class Renderer3D {
    * 玩家进入任意住宅时仅无条件保留当前住宅，邻屋阈值进一步收紧。
    */
   private updateL9InteriorVisibility(levelId: number, px: number, py: number, dt: number) {
-    if (levelId !== 9) { this.l9InteriorCullT = 1; return }
+    if (levelId !== 9 && levelId !== 11) { this.l9InteriorCullT = 1; return }
     this.l9InteriorCullT += dt
     if (this.l9InteriorCullT < 0.12) return
     this.l9InteriorCullT = 0
@@ -1717,7 +1722,8 @@ export class Renderer3D {
       const inside = px >= h.x && px <= h.x + h.w && py >= h.y && py <= h.y + h.h
       const nx = Math.max(h.x, Math.min(px, h.x + h.w))
       const ny = Math.max(h.y, Math.min(py, h.y + h.h))
-      const visible = inside || Math.hypot(nx - px, ny - py) <= (insideAny ? 10 : 18) * this.detailDistanceScale
+      const threshold = levelId === 11 ? (rec.group.visible ? 45 : 35) : insideAny ? 10 : 18
+      const visible = inside || Math.hypot(nx - px, ny - py) <= threshold * this.detailDistanceScale
       if (rec.group.visible !== visible) { rec.group.visible = visible; changed = true }
     }
     if (changed) this.flashShadowPose.valid = false
@@ -1832,11 +1838,9 @@ export class Renderer3D {
     this.l10InteriorCullT = 1
   }
 
-  /** 环境粒子密度会同时减少灰尘更新量与 L10 雨丝绘制量。 */
+  /** 环境粒子密度用于天气与层级粒子；已删除的旧版全局漂浮尘埃不再参与。 */
   setParticleDensity(scale: number) {
     this.particleDensity = Math.max(0, Math.min(1, scale))
-    const count = Math.floor(160 * this.particleDensity)
-    this.dust.geometry.setDrawRange(0, count)
     this.l10Rain.geometry.setDrawRange(0, Math.floor(150 * this.particleDensity) * 2)
   }
 
@@ -1859,8 +1863,19 @@ export class Renderer3D {
   }
 
   private levelFogFar(def: LevelDef) {
+    if (def.id === 11) return Math.max(95, 260 - this.darknessBoost * 80)
     // L7 的 27m 水面雾基线是独立设计；额外暗度仍会缩短它，但默认 0 时完全保持旧画面。
     return Math.max(5, (def.id === 7 ? 27 : 19 - def.darkness * 6) - this.darknessBoost * 6)
+  }
+
+  private updateL11Distant(m:GameMap,level:number){
+    const dispose=()=>{if(this.cityDistant){this.scene.remove(this.cityDistant);this.cityDistant.traverse(o=>(o as THREE.Mesh).geometry?.dispose());this.cityDistant=null}}
+    if(level!==11||!m.inf){dispose();this.cityDistantTask?.return(new THREE.Group());this.cityDistantTask=null;this.cityDistantKey='';return}
+    const {seed,ox,oy}=m.inf,key=`${seed}:${ox}:${oy}`
+    if(this.cityDistant){this.cityDistant.position.set(Number(this.cityDistant.userData.ox)-ox,0,Number(this.cityDistant.userData.oy)-oy)}
+    if(key!==this.cityDistantKey){this.cityDistantTask?.return(new THREE.Group());this.cityDistantTask=buildL11DistantCity(seed,ox,oy);this.cityDistantKey=key}
+    const deadline=performance.now()+2
+    while(this.cityDistantTask&&performance.now()<deadline){const r=this.cityDistantTask.next();if(r.done){dispose();this.cityDistant=r.value;this.scene.add(r.value);this.cityDistantTask=null;this.queueMaterialPrecompile()}}
   }
 
   /** 设置开关：远处灯光全开——扩展灯光池 48→96 盏进场景（全场景点亮；关闭即移除，恢复零开销） */
@@ -1974,8 +1989,18 @@ export class Renderer3D {
   /** 泛光开关（realistic 时走 EffectComposer 辉光后处理） */
   setBloomFx(on: boolean) { this.bloomOn = on }
 
-  /** VCR 滤镜开关（扫描线/色差/噪点/跟踪失真后处理；默认关，两种光影模式均生效） */
+  /** VCR 色差/噪点/跟踪失真后处理总开关；两种光影模式均生效。 */
   setVcrFx(on: boolean) { this.vcrOn = on }
+
+  setVcrStrength(value: number) {
+    this.vcrStrength = Math.max(0, Math.min(1, value / 100))
+    if (this.vcrPass) this.vcrPass.uniforms.strength.value = this.vcrStrength
+  }
+
+  setVcrScanlines(on: boolean) {
+    this.vcrScanlinesOn = on
+    if (this.vcrPass) this.vcrPass.uniforms.scanlinesOn.value = on ? 1 : 0
+  }
 
   /** 泛光程度（0–100 → strength 0–1；composer 未建时存值待建时应用） */
   setBloomStrength(v: number) {
@@ -2067,13 +2092,13 @@ export class Renderer3D {
     this.skyC.set(SKY[def.id] ?? '#0a0a0c')
     this.outK = 0
     this.tintK = 0
-    this.ambientBase = def.id === 6 ? 0.012 : def.id === 7 ? 0.55 : def.id === 9 ? 0.045 : def.id === 10 ? 0.38 : def.id === 0 ? 0.15 : 0.09 + def.darkness * 0.06
-    this.hemiBase = def.id === 6 ? 0.018 : def.id === 7 ? 0.6 : def.id === 9 ? 0.055 : def.id === 10 ? 0.46 : def.id === 0 ? 0.19 : 0.12 + def.darkness * 0.06
+    this.ambientBase = def.id === 11 ? .48 : def.id === 6 ? 0.012 : def.id === 7 ? 0.55 : def.id === 9 ? 0.045 : def.id === 10 ? 0.38 : def.id === 0 ? 0.15 : 0.09 + def.darkness * 0.06
+    this.hemiBase = def.id === 11 ? .62 : def.id === 6 ? 0.018 : def.id === 7 ? 0.6 : def.id === 9 ? 0.055 : def.id === 10 ? 0.46 : def.id === 0 ? 0.19 : 0.12 + def.darkness * 0.06
     this.hemi.color.set(col(pal.wallTop).lerp(col('#9aa2b0'), 0.5))
     this.hemi.groundColor.set(col(pal.floor).multiplyScalar(0.8))
     // v58：L7 巨大迷雾 + 蜃楼船队——无限模式此前没有天空球（仅背景色/雾）；
     // 挂到场景而非 chunk 组（chunk 流式重建不受影响），球心/船位每帧跟随玩家
-    if (def.id === 7 || def.id === 8 || def.id === 9 || def.id === 10) {
+    if (def.id === 7 || def.id === 8 || def.id === 9 || def.id === 10 || def.id === 11) {
       this.skyMesh = makeSkyMesh(m, def)
       if (this.skyMesh) this.scene.add(this.skyMesh)
       this.mirageFleet = makeMirageFleet(def.id)
@@ -2143,8 +2168,16 @@ export class Renderer3D {
     queue.sort((a, b) =>
       (Math.abs(a.cx * CS - inf.ox - p.x) + Math.abs(a.cy * CS - inf.oy - p.y)) -
       (Math.abs(b.cx * CS - inf.ox - p.x) + Math.abs(b.cy * CS - inf.oy - p.y)))
-    const budget = def.id === 5 || def.id === 7 || def.id === 8 || def.id === 9 || def.id === 10 ? 1 : (this.chunkGroups.size === 0 ? queue.length : 2) // L9/L10 重型室外区块逐帧构建
-    for (const c of queue.slice(0, budget)) this.buildInfiniteChunk(m, def, c)
+    const budget = def.id === 5 || def.id === 7 || def.id === 8 || def.id === 9 || def.id === 10 || def.id === 11 ? 1 : (this.chunkGroups.size === 0 ? queue.length : 2)
+    if (def.id === 11) {
+      if(this.cityChunkTask && (this.cityChunkTask.map!==m || this.cityChunkTask.rev!==inf.rev || !want.has(this.cityChunkTask.key))){this.cityChunkTask.iter.return();this.cityChunkTask=null}
+      if(!this.cityChunkTask && queue[0])this.cityChunkTask={map:m,rev:inf.rev,key:queue[0].key,iter:this.buildInfiniteChunk(m,def,queue[0])}
+      const deadline=performance.now()+3
+      while(this.cityChunkTask && performance.now()<deadline){if(this.cityChunkTask.iter.next().done)this.cityChunkTask=null}
+    } else {
+      if(this.cityChunkTask){this.cityChunkTask.iter.return();this.cityChunkTask=null}
+      for(const c of queue.slice(0,budget)){const iter=this.buildInfiniteChunk(m,def,c);while(!iter.next().done){/* legacy synchronous path */}}
+    }
   }
 
   // v29：闪烁的墙壁——出口面片贴到相邻墙面（面向出口所在地板格；无相邻墙时保持居中）
@@ -2246,15 +2279,19 @@ export class Renderer3D {
     grp.position.set(ex, caveCeilingAt(m, ex, ey) - 2.42, ey)
   }
 
-  private buildInfiniteChunk(m: GameMap, def: LevelDef, c: LiveChunk) {
+  private *buildInfiniteChunk(m: GameMap, def: LevelDef, c: LiveChunk): Generator<void,void,unknown> {
     const inf = m.inf!
     const H = this.wallH
     const g = new THREE.Group()
+    let completed=false
+    try {
     const wx = c.cx * CS - inf.ox, wy = c.cy * CS - inf.oy
     const range = { x0: wx, y0: wy, x1: wx + CS, y1: wy + CS, variant: c.variant }
-    buildTerrain(m, def, H, g, range)
+    if(def.id===11)yield* buildL11TerrainJob(m,g,range)
+    else buildTerrain(m, def, H, g, range)
+    if(def.id===11)yield
     // 无限 L7 海洋、L8 地下湖、L9 后院泳池与 L10 连续湖泊随 chunk 构建水面。
-    if (def.id === 7 || def.id === 8 || def.id === 9 || def.id === 10) {
+    if (def.id === 7 || def.id === 8 || def.id === 9 || def.id === 10 || def.id === 11) {
       const liquids = new THREE.Group()
       buildLiquidSurfaces(m, def, liquids, range, this.realWaterOn)
       if (liquids.children.length) g.add(liquids)
@@ -2262,8 +2299,8 @@ export class Renderer3D {
     // 结构（对象身份跨平移保持，structMeshes 引用稳定）。L9 先按住宅划分室内组：
     // 可交互物保留独立模型，不可交互静态件在循环结束后按住宅/室外分别合批。
     const structs: Structure[] = []
-    const l9Interiors: L9InteriorRender[] = def.id === 9
-      ? c.structures.filter((s) => s.kind === 'house').map((house) => {
+    const l9Interiors: L9InteriorRender[] = def.id === 9 || def.id === 11
+      ? (def.id===11?m.structures:c.structures).filter((s) => s.kind === 'house' || (s.kind === 'l11building' && !s.solid)).map((house) => {
         const group = new THREE.Group()
         group.name = 'l9-house-interior'
         g.add(group)
@@ -2279,19 +2316,21 @@ export class Renderer3D {
       if (cropLod) g.add(cropLod)
     }
     const interiorFor = (s: Structure) => {
+      if (def.id === 11) return s.data?.l11Interior === 1 ? l9Interiors.find(r => r.house.data?.buildingId === s.data?.buildingId) : undefined
       if (def.id !== 9 || L9_INTERIOR_EXCLUDE.has(s.kind)) return undefined
       const x = s.x + s.w / 2, y = s.y + s.h / 2
       return l9Interiors.find(({ house: h }) => x > h.x + .5 && x < h.x + h.w - .5 && y > h.y + .5 && y < h.y + h.h - .5)
     }
     for (const s of c.structures) {
+      if(def.id===11)yield
       if (def.id === 10 && s.kind === 'wheatpatch') { structs.push(s); continue }
-      const mesh = buildStructure(s, def, m, H)
+      const mesh = def.id===11 && s.kind==='l11building' ? yield* buildL11Building(s) : buildStructure(s, def, m, H)
       if (mesh) {
         const gy = floorHeight(m, s.x + s.w / 2, s.y + s.h / 2, s.floor ?? 0)
         ;(mesh as THREE.Group).position.y += gy
         syncStructureModelColliders(s, mesh, gy)
         const interior = interiorFor(s)
-        if (def.id === 9 && !l9KeepIndividual(s)) {
+        if ((def.id === 9 || (def.id === 11 && s.kind !== 'l11building')) && !l9KeepIndividual(s)) {
           if (interior) interiorStatic.get(interior.group)!.push(mesh)
           else exteriorStatic.push(mesh)
         } else if (def.id === 10 && !ANIM_STRUCT(s) && s.data?.sid === undefined) {
@@ -2304,7 +2343,7 @@ export class Renderer3D {
         structs.push(s)
       }
     }
-    if (def.id === 9) {
+    if (def.id === 9 || def.id === 11) {
       if (exteriorStatic.length) {
         const exteriorBatch = new THREE.Group()
         exteriorBatch.name = 'l9-static-exterior-batch'
@@ -2393,7 +2432,11 @@ export class Renderer3D {
     this.chunkGroups.set(c.key, { group: g, wx, wy, structs, fixtures, exitMeshes, exitRoots, l9Interiors })
     this.fixtures.push(...fixtures)
     this.exitMeshes.push(...exitMeshes)
+    completed=true
     this.queueMaterialPrecompile(firstChunk ? 0 : 80)
+    } finally {
+      if(!completed){g.traverse(o=>{const mesh=o as THREE.Mesh;mesh.geometry?.dispose()});for(const s of c.structures){this.structMeshes.delete(s);this.animatedStructMeshes.delete(s)}}
+    }
   }
 
   // ---------- 构建层级 ----------
@@ -3666,20 +3709,6 @@ export class Renderer3D {
   // ---------- 层级氛围特效 ----------
   private updateAmbientFx(engine: Engine, def: LevelDef, dt: number) {
     const p = engine.player
-    // 灰尘围绕玩家漂浮（设置项 dust 关闭时整体隐藏，不再更新）
-    if (this.dust.visible) {
-      const dp = this.dust.geometry.attributes.position as THREE.BufferAttribute
-      const activeCount = Math.min(dp.count, Math.floor(160 * this.particleDensity))
-      for (let i = 0; i < activeCount; i++) {
-        let y = dp.getY(i) + Math.sin(this.time * 0.5 + i) * 0.001
-        if (y < 0) y = 3
-        dp.setY(i, y > 3 ? 0 : y)
-      }
-      dp.needsUpdate = true
-      this.dust.position.set(p.x, 0, p.y)
-      ;(this.dust.material as THREE.PointsMaterial).color.set(def.palette.light)
-    }
-
     // v54：L4 窗景区窗外虚空——雨丝（持续下落、斜落微飘）+ 永不消散的雨雾片（缓慢漂移）；
     // 只覆盖玩家附近 14m 内的 outdoor 虚空格（每 0.5s 重扫一次瓦片表，开销可控）
     if (def.id === 4 && engine.map) {

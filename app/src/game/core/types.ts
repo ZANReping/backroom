@@ -208,6 +208,7 @@ export type StructKind =
   | 'l10digsite'   // L10 旧挖掘点
   | 'l10haybale'   // L10 压缩干草块（贴地实体结构）
   // ===== v23：Level 11「The City That Never Sleeps」 =====
+  | 'l11building' | 'l11prop' | 'l11landmark' | 'l11window' | 'l11partition' | 'l11stair' | 'l11subway'
   | 'towerblock'   // 混凝土峭壁般的楼体
   | 'blackwindow'  // 暗淡的黑色镀膜镜面窗（只反射，看不到室内）
   | 'shopfront'    // 带招牌的店面（招牌即传送门线索）

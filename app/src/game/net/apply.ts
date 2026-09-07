@@ -57,14 +57,20 @@ export function applyMpEvent(eng: Engine, e: MpEvent) {
         else eng.endBlackout()
         break
       }
-      case 'l10weather': {
-        if (eng.player.level !== 10 || eng.mpSession?.isHost) break
-        eng.l10Weather = {
+      case 'l10weather':
+      case 'l11weather': {
+        if (eng.player.level !== (e.t==='l11weather'?11:10) || eng.mpSession?.isHost) break
+        eng[e.t==='l11weather'?'l11Weather':'l10Weather'] = {
           kind: e.kind,
           t: Math.max(0, e.time),
           k: Math.max(0, Math.min(1, e.k)),
           wetness: Math.max(0, Math.min(1, e.wetness)),
         }
+        break
+      }
+      case 'l11revisions': {
+        if(eng.player.level!==11||eng.mpSession?.isHost||eng.map?.inf?.seed!==e.seed)break
+        eng.map.inf.cityRevisions={...e.revisions}
         break
       }
       case 'entHit': {

@@ -109,11 +109,9 @@ export const SKY_PROFILES: Record<number, SkyProfile> = {
     sunLight: 0.72, sunColor: '#f1eadb',
   },
   11: {
-    zenith: '#3a7abd', zenithMid: '#6fa3cf', horizon: '#b9cbd4', haze: '#7d8a92',
-    clouds: { density: 0.45, color: '#f4f8fa', alpha: 0.55, cirrus: 0.3 },
-    sun: { az: 120, elv: 52, size: 15, color: '#fff8e0', glow: '#ffe9a8' },
-    horizonGlow: [{ color: '#ffd9a0', alpha: 0.06 }],
-    sunLight: 1.15, sunColor: '#ffedc0',
+    zenith: '#9aa3a7', zenithMid: '#a9b0b2', horizon: '#bec2bf', haze: '#a1aaac',
+    clouds: { density: 0.93, color: '#d5d8d5', alpha: 0.75, cirrus: 0.15, overcast: 1 },
+    sunLight: .72, sunColor: '#e8e9e1',
   },
 }
 
@@ -537,7 +535,7 @@ export function skyTexture(defId: number): THREE.CanvasTexture {
 export function makeSkyMesh(m: GameMap, def: LevelDef): THREE.Mesh | null {
   const prof = SKY_PROFILES[def.id]
   if (!prof) return null
-  if (def.id === 9 || def.id === 10) {
+  if (def.id === 9 || def.id === 10 || def.id === 11) {
     // L9 使用完整球壳上的方向采样，并叠加两层连续三维噪声阴云。旧立方体即使按方向
     // 采样，低亮度时六个盒面和每面的三角对角线仍会被辨认成“贴图接缝”。
     const body = prof.moon
@@ -547,8 +545,9 @@ export function makeSkyMesh(m: GameMap, def: LevelDef): THREE.Mesh | null {
     const mat = new THREE.ShaderMaterial({
       uniforms: {
         uTime: { value: 0 },
+        uBody: { value: def.id === 11 ? 0 : 1 },
         uMoonDir: { value: moonDir },
-        uFarm: { value: def.id === 10 ? 1 : 0 },
+        uFarm: { value: def.id === 10 || def.id === 11 ? 1 : 0 },
         uFogMix: { value: 0 },
         uFogColor: { value: new THREE.Color('#697278') },
       },
@@ -561,6 +560,7 @@ export function makeSkyMesh(m: GameMap, def: LevelDef): THREE.Mesh | null {
       `,
       fragmentShader: `
         uniform float uTime;
+        uniform float uBody;
         uniform float uFarm;
         uniform vec3 uMoonDir;
         uniform float uFogMix;
@@ -621,8 +621,8 @@ export function makeSkyMesh(m: GameMap, def: LevelDef): THREE.Mesh | null {
           vec3 sunColor = vec3(1.0, .965, .87);
           float moonHalo = pow(max(moonDot, 0.0), 170.0) * .2 + pow(max(moonDot, 0.0), 620.0) * .34;
           float sunHalo = pow(max(moonDot, 0.0), 38.0) * .23 + pow(max(moonDot, 0.0), 260.0) * .28;
-          sky += mix(vec3(.43,.50,.57) * moonHalo, vec3(.78,.72,.60) * sunHalo, uFarm);
-          sky = mix(sky, mix(moonColor, sunColor, uFarm), disc * mix(.86, .38, uFarm));
+          sky += mix(vec3(.43,.50,.57) * moonHalo, vec3(.78,.72,.60) * sunHalo, uFarm) * uBody;
+          sky = mix(sky, mix(moonColor, sunColor, uFarm), disc * mix(.86, .38, uFarm) * uBody);
           // 阴云最后覆盖天体：L10 太阳会随云层厚度变成真实的漫射亮斑。
           sky = mix(sky, cloudColor, cloud * mix(.34 + .28 * slow, .62 + .24 * slow, uFarm));
           // 浓雾事件直接作用于天空本身；否则 fog:false 的远景会永远清晰地浮在雾墙后。
@@ -638,6 +638,7 @@ export function makeSkyMesh(m: GameMap, def: LevelDef): THREE.Mesh | null {
     })
     const mesh = new THREE.Mesh(new THREE.SphereGeometry(42, 64, 32), mat)
     mesh.name = 'skybox'
+    mesh.renderOrder = -1000
     mesh.frustumCulled = false
     mesh.position.set(m.w / 2, 1.65, m.h / 2)
     return mesh

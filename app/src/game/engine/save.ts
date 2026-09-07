@@ -8,6 +8,7 @@ import type { QuestDef } from '../content/factions'
 import type { Difficulty } from './shared'
 import type { WarehouseState } from './warehouse'
 import type { AvenueMapMark, Engine, PlayerState } from '../engine'
+import { captureL11, type L11WorldSave } from './l11State'
 
 // ===== v29a：存档/读档 =====
 // v54 起：各槽位自持全量快照（含 seed/difficulty），继续游戏时凭种子匹配恢复进度。
@@ -29,6 +30,8 @@ export const SAVE_KEY = 'br_save_state'
 const LEGACY_SEED_KEY = 'br_save'
 
 export interface SaveSnapshot {
+  l11World?: L11WorldSave
+  l11Weather?: {kind:'calm'|'gust'|'rain'|'mist';t:number;k:number;wetness:number}
   v: 1
   seed: number
   difficulty: Difficulty
@@ -117,6 +120,8 @@ export function snapshot(eng: Engine): SaveSnapshot {
   const inf = eng.map?.inf
   return {
     v: 1,
+    l11World: captureL11(eng),
+    l11Weather: {...eng.l11Weather},
     seed: eng.seed,
     difficulty: eng.difficulty,
     time: eng.time,

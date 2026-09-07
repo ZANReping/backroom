@@ -464,7 +464,12 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
     const canSee = !lightRecoiling && (hearP || (d < def.sight + darkBonus && (!def.lightHunter || lightOn || l3) && eng.los(e.x, e.y, p.x, p.y)))
     const feigning = def.feignNeutral && d > 2.4 && e.state !== 'chase' && e.state !== 'attack' // 侍者装中立
     // v23「Level 11 Effect」：本层敌对实体更不倾向于攻击——但主动挑衅（攻击过任何实体）会解除
-    const pacified = !eng.provoked && (eng.levelDef.pacify ?? 0) > 0 && Math.random() < (eng.levelDef.pacify ?? 0)
+    const pacified = eng.levelDef.id === 11
+      ? !e.provoked && !def.ignorePacify && (def.type === 'faceling' || def.type === 'hound')
+      : !eng.provoked && (eng.levelDef.pacify ?? 0) > 0 && Math.random() < (eng.levelDef.pacify ?? 0)
+    if (eng.levelDef.id === 11 && !e.provoked && !def.ignorePacify && m.entities.some(q=>q!==e && q.provoked && q.def.type===def.type && Math.hypot(q.x-e.x,q.y-e.y)<8)) {
+      e.provoked=true;e.state='chase';e.stateT=0
+    }
     if (canSee && !def.passive && !feigning && !pacified && e.state !== 'chase' && e.state !== 'attack') {
       e.state = 'chase'
       if (def.aggroStinger) audio.aggro()

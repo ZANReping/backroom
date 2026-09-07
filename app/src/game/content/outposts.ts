@@ -17,6 +17,15 @@ export const isLandmarkStruct = (s: { kind: string; data?: Record<string, number
   !!s && (s.kind === 'landmark' || s.data?.outpost !== undefined)
 
 export const OUTPOSTS: Record<string, OutpostDef> = {
+  beta: {
+    id: 'beta',
+    levelId: 115,
+    parent: 11,
+    faction: 'meg',
+    name: 'M.E.G. Beta基地与琥珀营地',
+    intro: ['M.E.G. Beta 基地是研究与档案总部，经高架步道连接教学中心 Camp Amber。图书馆保存着六盘磁带相关的路线记录。'],
+    landmarkText: ['沿着标有 M.E.G. 徽记的高架步道前进，便能找到研究与档案总部。'],
+  },
   alpha: {
     id: 'alpha',
     levelId: 101, // 据点独立 id 空间（Level 1 的子层级）

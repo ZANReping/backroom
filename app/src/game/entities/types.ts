@@ -20,6 +20,7 @@ export interface EntityDef {
   sight: number // 视野（瓦片）
   hearing: number // 听觉半径
   passive?: boolean // 不被激怒不攻击
+  ignorePacify?: boolean // 不受 Level 11 城市安抚效应影响
   noRetaliate?: boolean // 无危害：被攻击也绝不反击（Ferren；provoked 对其无效）
   stationary?: boolean
   hearsSprint?: boolean // 对跑步声敏感

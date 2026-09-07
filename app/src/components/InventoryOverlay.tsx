@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { npcPortrait } from './npcPortrait'
 import type { Engine, SlotRef, SlotWhere } from '@/game/engine'
+import { l11MapMarks } from '@/game/engine/l11State'
 import { ITEMS, itemUseProfile } from '@/game/content/items'
 import { storage } from '@/game/core/storage'
 import { ENTITIES, unlockTier, loadSeen, entitySpawnLevels, entityThreat, entityRarity, type EntityRarity } from '@/game/entities'
@@ -221,6 +222,11 @@ function BigMap({ engine }: { engine: Engine }) {
       }
     }
     // 区域名称（据点大地图标注；v43：带 z 的标注只出现在对应楼层视图）
+    if(viewFloor===0)for(const mark of l11MapMarks(engine)){
+      const x=Math.max(8,Math.min(m.w*s-8,(mark.x-(m.inf?.ox??0))*s)),y=Math.max(12,Math.min(m.h*s-8,(mark.y-(m.inf?.oy??0))*s))
+      const distance=Math.round(Math.hypot(mark.x-(m.inf?.ox??0)-engine.player.x,mark.y-(m.inf?.oy??0)-engine.player.y))
+      g.save();g.fillStyle='#b7d2c6';g.fillRect(x-3,y-3,6,6);g.font='10px monospace';g.textAlign=x>m.w*s/2?'right':'left';g.fillText(`${mark.name} · ${distance}m`,x,y-6);g.restore()
+    }
     if (m.zones) {
       g.font = '10px monospace'
       g.fillStyle = 'rgba(232,185,60,0.55)'

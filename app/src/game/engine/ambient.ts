@@ -63,8 +63,13 @@ export function updateAmbient(eng: Engine, dt: number) {
 
 /** L10 短阵风、稀有小雨与薄雾；天气不降低环境光，只改变风、湿润度与可见距离。 */
 function updateL10Weather(eng: Engine, dt: number) {
-  if (eng.levelDef.id !== 10 || !eng.map) return
-  const w = eng.l10Weather
+  if ((eng.levelDef.id !== 10 && eng.levelDef.id !== 11) || !eng.map) return
+  const city=eng.levelDef.id===11
+  const w = city ? eng.l11Weather : eng.l10Weather
+  const sync=()=>{
+    bcast(eng, {t:city?'l11weather':'l10weather',kind:w.kind,time:w.t,k:w.k,wetness:w.wetness})
+    if(city&&eng.map?.inf)bcast(eng,{t:'l11revisions',seed:eng.map.inf.seed,revisions:eng.map.inf.cityRevisions??{}})
+  }
   w.t = Math.max(0, w.t - dt)
   const target = w.kind === 'calm' ? 0 : 1
   w.k += (target - w.k) * Math.min(1, dt * (target > w.k ? .7 : .28))
@@ -82,28 +87,28 @@ function updateL10Weather(eng: Engine, dt: number) {
     const next = (l10WeatherSyncT.get(eng) ?? 0) - dt
     if (next <= 0) {
       l10WeatherSyncT.set(eng, 5)
-      bcast(eng, { t: 'l10weather', kind: w.kind, time: w.t, k: w.k, wetness: w.wetness })
+      sync()
     } else l10WeatherSyncT.set(eng, next)
   }
   if (w.t > 0 || hostHere(eng)) return
 
   if (w.kind !== 'calm') {
-    w.kind = 'calm'; w.t = 65 + Math.random() * 100
-    bcast(eng, { t: 'l10weather', kind: w.kind, time: w.t, k: w.k, wetness: w.wetness })
+    w.kind = 'calm'; w.t = (city?180:65) + Math.random() * 100
+    sync()
     return
   }
   const r = Math.random()
   if (r < .72) {
     w.kind = 'gust'; w.t = 10 + Math.random() * 16
-    eng.msg('一阵短促的风压过麦田，麦浪从视野一端追向另一端。', 'lore')
+    eng.msg(city?'街道间涌来一阵凉风，楼顶的旗帜短暂扬起。':'一阵短促的风压过麦田，麦浪从视野一端追向另一端。', 'lore')
   } else if (r < .91) {
     w.kind = 'rain'; w.t = 24 + Math.random() * 34
-    eng.msg('细雨从连续的阴云中落下，车辙和木板很快泛起湿亮。', 'lore')
+    eng.msg(city?'细雨从连绵灰云中落下，柏油与石材渐渐泛起湿亮。':'细雨从连续的阴云中落下，车辙和木板很快泛起湿亮。', 'lore')
   } else {
     w.kind = 'mist'; w.t = 30 + Math.random() * 45
-    eng.msg('一层薄雾沿低洼地漫过来，天空和远处田埂一起失去轮廓。', 'lore')
+    eng.msg(city?'薄雾沿运河漫过来，远处楼群和云层一起淡入灰白。':'一层薄雾沿低洼地漫过来，天空和远处田埂一起失去轮廓。', 'lore')
   }
-  bcast(eng, { t: 'l10weather', kind: w.kind, time: w.t, k: w.k, wetness: w.wetness })
+  sync()
 }
 
 function spawnL9FogMangled(eng: Engine) {

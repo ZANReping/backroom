@@ -6,13 +6,15 @@ import type { RenderResolutionMode } from '@/game/renderer/shared'
 import { BIND_ACTIONS, bindLabel, conflictOf, actionLabel, getKeybinds, setKeybind, resetKeybinds } from '@/game/core/keybinds'
 
 export type UiTheme = 'amber' | 'liminal' | 'basalt' | 'dark-liminal' | 'greyspace' | 'database' | 'fandom' | 'meg'
+export type UiPresentation = 'classic' | 'immersive'
 
 export interface GameSettings {
   difficulty: Difficulty
   autoSprint: boolean
   grain: boolean
-  vcrFx: boolean // VCR 滤镜（扫描线/色差/噪点/跟踪失真后处理；默认关闭）
-  dust: boolean // 漂浮尘埃粒子（默认关闭）
+  vcrFx: boolean // VCR 色差/噪点/跟踪失真后处理；默认关闭
+  vcrStrength: number // VCR 色差与跟踪失真强度 0–100
+  vcrScanlines: boolean // VCR 后处理中的动态隔行扫描线（独立于静态屏幕扫描线）
   shake: boolean
   headBob: boolean // v54：真实视角摇晃
   realWater: boolean // v57t：真实水体效果（海面涌浪起伏+程序化波光/天空反射；默认关闭=纯色平水面）
@@ -23,7 +25,7 @@ export interface GameSettings {
   dynamicResTarget: 30 | 45 | 60 // 动态分辨率追踪的目标帧率
   textureQuality: 0 | 1 | 2 // 纹理各向异性过滤：低/中/高
   detailDistance: number // 场景细节与室内陈设裁剪距离 50–150%
-  particleDensity: number // 环境粒子密度 0–100%
+  particleDensity: number // 天气与层级环境粒子密度 0–100%
   shadowUpdateRate: 0 | 1 | 2 // 手电阴影刷新率：性能/平衡/流畅
   cameraFov: number // 基础视野角 60–90°
   shadows: boolean // 手电实时阴影（移动端强制关闭）
@@ -56,6 +58,7 @@ export interface GameSettings {
   sensitivity: number // 视角灵敏度 0.2–3.0 倍
   devMode: boolean // 开发者模式：无敌 + 层级跳转面板
   theme: UiTheme // 界面主题：amber=经典琥珀 / liminal=阈限（仿 Backrooms 中文维基版式）
+  uiPresentation: UiPresentation // UI 呈现：classic=原有完整面板 / immersive=低干扰情境化档案界面
   llmEndpoint: string // LLM API 端点（OpenAI 兼容，如 https://api.openai.com/v1；空=未接入）
   llmApiKey: string // API 密钥（明文存本机 localStorage）
   llmModel: string // 模型名（如 gpt-4o-mini）
@@ -63,9 +66,9 @@ export interface GameSettings {
 
 export const defaultSettings: GameSettings = {
   difficulty: 'normal', autoSprint: false,
-  grain: true, dust: false, shake: true, headBob: false, realWater: false, flicker: 70, renderResolution: 'native', renderScale: 100, dynamicRes: true, dynamicResTarget: 60, shadows: true, fogOfWar: true,
+  grain: true, shake: true, headBob: false, realWater: false, flicker: 70, renderResolution: 'native', renderScale: 100, dynamicRes: true, dynamicResTarget: 60, shadows: true, fogOfWar: true,
   textureQuality: 1, detailDistance: 100, particleDensity: 100, shadowUpdateRate: 1, cameraFov: 72,
-  vcrFx: false,
+  vcrFx: false, vcrStrength: 100, vcrScanlines: true,
   fogScale: 100, darknessBoost: 0, farLights: false,
   lightMode: 'classic', shadowQuality: 1, sunShadows: true, lightShadows: 0,
   reflectivity: 60, bloomFx: true, bloomStrength: 35, exposure: 100,
@@ -76,6 +79,7 @@ export const defaultSettings: GameSettings = {
   leftHanded: false, stickSize: 120, btnOpacity: 70,
   sensitivity: 1.0, devMode: false,
   theme: 'amber',
+  uiPresentation: 'classic',
   llmEndpoint: '', llmApiKey: '', llmModel: '',
 }
 
@@ -89,7 +93,7 @@ const GRAPHICS_PRESETS: Record<GraphicsPreset, Partial<GameSettings>> = {
     textureQuality: 0, detailDistance: 65, particleDensity: 25, shadowUpdateRate: 0,
     shadows: false, shadowQuality: 0, farLights: false, lightMode: 'classic', sunShadows: false,
     lightShadows: 0, bloomFx: false, realWater: false, grain: false, vcrFx: false,
-    dust: false, shake: false, headBob: false, vignetteStrength: 0, scanlineStrength: 35,
+    vcrStrength: 60, vcrScanlines: false, shake: false, headBob: false, vignetteStrength: 0, scanlineStrength: 35,
     colorGrade: 'neutral', exposure: 100,
   },
   balanced: {
@@ -97,7 +101,7 @@ const GRAPHICS_PRESETS: Record<GraphicsPreset, Partial<GameSettings>> = {
     textureQuality: 1, detailDistance: 100, particleDensity: 70, shadowUpdateRate: 1,
     shadows: true, shadowQuality: 1, farLights: false, lightMode: 'classic', sunShadows: true,
     lightShadows: 0, bloomFx: true, bloomStrength: 35, reflectivity: 60, realWater: false,
-    grain: true, grainStrength: 50, vcrFx: false, dust: false, shake: true, headBob: false,
+    grain: true, grainStrength: 50, vcrFx: false, vcrStrength: 100, vcrScanlines: true, shake: true, headBob: false,
     flicker: 70, vignetteStrength: 18, scanlineStrength: 60, colorGrade: 'neutral', exposure: 100,
   },
   immersive: {
@@ -105,7 +109,7 @@ const GRAPHICS_PRESETS: Record<GraphicsPreset, Partial<GameSettings>> = {
     textureQuality: 2, detailDistance: 140, particleDensity: 100, shadowUpdateRate: 2,
     shadows: true, farLights: true, lightMode: 'realistic', shadowQuality: 2,
     sunShadows: true, lightShadows: 2, bloomFx: true, bloomStrength: 45, reflectivity: 80,
-    realWater: true, grain: true, grainStrength: 42, vcrFx: false, dust: true, shake: true,
+    realWater: true, grain: true, grainStrength: 42, vcrFx: false, vcrStrength: 100, vcrScanlines: true, shake: true,
     headBob: true, flicker: 70, vignetteStrength: 32, scanlineStrength: 50,
     colorGrade: 'liminal', exposure: 100,
   },
@@ -367,7 +371,8 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
                   <div className="pt-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>控制斜视地面与远处墙面的各向异性过滤，越高越清晰，也会增加显存带宽占用。</div>
                   <Slider k="detailDistance" label="细节裁剪距离" value={settings.detailDistance} onSet={setNum} min={50} max={150} step={5} valueLabel={`${settings.detailDistance}%`} />
                   <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>调整 L9/L10 房屋内饰的显示距离；降低可明显减少郊区与农田建筑附近的绘制量。</div>
-                  <Slider k="particleDensity" label="环境粒子密度" value={settings.particleDensity} onSet={setNum} min={0} max={100} step={10} valueLabel={`${settings.particleDensity}%`} />
+                  <Slider k="particleDensity" label="天气粒子密度" value={settings.particleDensity} onSet={setNum} min={0} max={100} step={10} valueLabel={`${settings.particleDensity}%`} />
+                  <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>控制雨丝等层级天气粒子的数量，不会重新启用已删除的全局漂浮尘埃。</div>
                   <Toggle k="realWater" label="真实水体（涌浪、波光与反射）" value={settings.realWater} onSet={setBool} />
                   <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>关闭后使用低成本平面水体；不影响游泳、出口与其他玩法判定。</div>
                 </div>
@@ -383,10 +388,16 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
                   </div>
                   <Toggle k="grain" label="模拟胶片 / VHS 颗粒" value={settings.grain} onSet={setBool} />
                   {settings.grain && <Slider k="grainStrength" label="颗粒强度" value={settings.grainStrength} onSet={setNum} valueLabel={`${settings.grainStrength}%`} />}
-                  <Slider k="scanlineStrength" label="扫描线强度" value={settings.scanlineStrength} onSet={setNum} valueLabel={`${settings.scanlineStrength}%`} />
+                  <Slider k="scanlineStrength" label="静态屏幕扫描线强度" value={settings.scanlineStrength} onSet={setNum} valueLabel={`${settings.scanlineStrength}%`} />
                   <Slider k="vignetteStrength" label="镜头暗角" value={settings.vignetteStrength} onSet={setNum} valueLabel={`${settings.vignetteStrength}%`} />
                   <Toggle k="vcrFx" label="VCR 色差与跟踪失真" value={settings.vcrFx} onSet={setBool} />
-                  <Toggle k="dust" label="漂浮尘埃粒子" value={settings.dust} onSet={setBool} />
+                  {settings.vcrFx && (
+                    <div className="border-l-2 pl-3" style={{ borderColor: 'var(--panel-edge)' }}>
+                      <Slider k="vcrStrength" label="VCR 失真强度" value={settings.vcrStrength} onSet={setNum} valueLabel={`${settings.vcrStrength}%`} />
+                      <Toggle k="vcrScanlines" label="VCR 动态扫描线" value={settings.vcrScanlines} onSet={setBool} />
+                      <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>动态扫描线只控制隔行微闪与滚动扫描纹；关闭后仍保留所选强度的色差、跟踪漂移和磁带噪声。</div>
+                    </div>
+                  )}
                   <Toggle k="shake" label="受伤与低生命屏幕震动" value={settings.shake} onSet={setBool} />
                   <Toggle k="headBob" label="真实行走视角（起伏、侧摆、落地回弹）" value={settings.headBob} onSet={setBool} />
                   <Slider k="flicker" label="灯光闪烁强度" value={settings.flicker} onSet={setNum} valueLabel={`${settings.flicker}%`} />
@@ -422,6 +433,33 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
           )}
           {tab === '主题' && (
             <div>
+              <div className="mb-2 text-[13px] font-semibold" style={{ color: 'var(--amber)' }}>界面呈现</div>
+              <div className="mb-4 grid grid-cols-2 gap-2" role="group" aria-label="界面呈现模式">
+                {([
+                  ['classic', '经典 UI', '完整游戏面板', '清晰、稳定地显示所有 HUD 与菜单信息。'],
+                  ['immersive', '沉浸式 UI', '随身档案终端', '低干扰情境 HUD、取景框与做旧档案面板。'],
+                ] as const).map(([id, name, tag, desc]) => (
+                  <button
+                    key={id}
+                    className={`ui-presentation-card ${settings.uiPresentation === id ? 'is-active' : ''}`}
+                    onClick={() => { set('uiPresentation', id); audio.uiTick() }}
+                    aria-pressed={settings.uiPresentation === id}
+                  >
+                    <span className="ui-presentation-preview" aria-hidden="true">
+                      <span className="ui-preview-status" />
+                      <span className="ui-preview-focus" />
+                      <span className="ui-preview-slots"><i /><i /><i /><i /></span>
+                    </span>
+                    <span className="mt-2 flex items-center justify-between gap-2">
+                      <strong className="text-[14px]" style={{ color: settings.uiPresentation === id ? 'var(--amber)' : 'var(--text)' }}>{name}</strong>
+                      <span className="font-mono2 text-[9px]" style={{ color: 'var(--text-dim)' }}>{settings.uiPresentation === id ? '● 使用中' : '○ 可切换'}</span>
+                    </span>
+                    <span className="font-mono2 mt-0.5 block text-[10px]" style={{ color: 'var(--amber)' }}>{tag}</span>
+                    <span className="mt-1 block text-[11px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>{desc}</span>
+                  </button>
+                ))}
+              </div>
+              <div className="mb-3 border-t pt-3 text-[13px] font-semibold" style={{ borderColor: 'var(--panel-edge)', color: 'var(--amber)' }}>配色与字体主题</div>
               <div className="grid grid-cols-2 gap-2 max-md:grid-cols-1">
                 {THEMES.map((t) => (
                   <button
@@ -451,7 +489,7 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
                 ))}
               </div>
               <div className="mt-3 text-[12px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>
-                各主题灵感均来自 <b style={{ color: 'var(--text)' }}>Backrooms 中文维基</b>的同名版式（阈限 / 玄武岩 / 暗色阈限 / 灰色阈限 / 数据库 / Fandom 阈限 / M.E.G.）。主题只改变界面外观（配色 / 字体 / 形状 / 动效），不影响 3D 场景渲染与游戏机制，即时生效并自动保存。
+                界面呈现与配色主题彼此独立，可任意组合。各主题灵感均来自 <b style={{ color: 'var(--text)' }}>Backrooms 中文维基</b>的同名版式（阈限 / 玄武岩 / 暗色阈限 / 灰色阈限 / 数据库 / Fandom 阈限 / M.E.G.）。所有切换只改变 UI 外观，不影响 3D 场景、游戏机制和键位，并会即时保存。
               </div>
             </div>
           )}

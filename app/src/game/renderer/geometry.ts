@@ -5,6 +5,7 @@ import { ELEV_H, FLOOR_H, UNDER_CEIL, UNDER_FLOOR, surfaceUndulationAt, tallCeil
 import type { LevelDef } from '../core/types'
 import { col, rampGeo, levelTexture, noiseTexture, OUTDOOR_FLOOR, manilaWallTexture, makeCanvasCtx, toTex, litMaterial, texLevelId, getReflectK } from './shared'
 import { buildCaveVolumeTerrain } from './caveVolume'
+import { buildL11Terrain } from './l11Meshes'
 
 // v17：range 限定构建范围（无限模式按 chunk 构建；坐标读取全图，跨 chunk 接缝一致）
 export interface TerrainRange { x0: number; y0: number; x1: number; y1: number; variant?: string }
@@ -33,6 +34,8 @@ const TINT_CEIL: Record<number, string> = { 1: '#c9b185', 2: '#5e120b', 5: '#c8c
 // v55d：导出供离线断言；boilerdeep = L5 锅炉房黑门嵌墙门洞）
 export const DOOR_EXIT_KINDS = ['stairs', 'unlockeddoor', 'fireexit', 'officedoor', 'elevatorshaft', 'boilerdeep']
 export function buildTerrain(m: GameMap, def: LevelDef, wallH: number, g: THREE.Group, range?: TerrainRange) {
+  if (def.id === 11) return buildL11Terrain(m, g, range)
+  if (def.id === 115) return buildL11Terrain(m, g, range, true)
   const pal = def.palette
   const H = wallH
   const RX0 = range?.x0 ?? 0, RY0 = range?.y0 ?? 0

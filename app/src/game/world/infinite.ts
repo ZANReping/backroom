@@ -4,6 +4,7 @@
 // 缝合：每条 chunk 边界的走廊开口位置由两侧 chunk 用同一哈希计算，墙壁/走廊自然衔接。
 // 迷宫（回溯 DFS，全覆盖连通）+ 柱群 + 开阔区混合；稀有变体房间见 variantOf。
 import { RNG } from '../core/rng'
+import { preparedL11, prefetchL11 } from './l11ChunkCache'
 import { UNIVERSAL_ITEMS } from '../content/items'
 import { makeEntity, ENTITIES, type Entity } from '../entities'
 import type { NpcState } from '../content/npcs'
@@ -64,6 +65,9 @@ export const VARIANT_LORE: Record<string, string[]> = {
 }
 
 export interface LiveChunk {
+  up2?: Uint8Array
+  upWall2?: Uint8Array
+  stair?: Uint32Array
   key: string
   cx: number
   cy: number
@@ -102,6 +106,12 @@ export interface ChunkDynState {
 }
 
 export interface InfiniteState {
+  // Compact permanent inventory ledger, independent of the bounded geometry/chunk cache.
+  cityContainers?: Record<string, { items: string[]; looted?: boolean; searched?: boolean }>
+  cityClock?: number
+  cityMutable?: boolean
+  cityRevisions?: Record<string, number>
+  cityUnloaded?: Record<string, number>
   seed: number
   ox: number // 窗口原点（世界瓦片坐标，chunk 对齐）
   oy: number
@@ -672,7 +682,12 @@ function mapSetCapped<K, V>(map: Map<K, V>, key: K, val: V, cap: number) {
 // 由确定性 raw 数据 + 持久动态状态实例化「活体」chunk（窗口坐标对象）
 function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, ox: number, oy: number): LiveChunk {
   const key = chunkKey(cx, cy)
-  const raw = infiniteImplFor(def.id).genRaw(def, inf.seed, cx, cy, inf.plague ? 'red' : undefined)
+  if (def.id === 11 && inf.cityUnloaded?.[key] !== undefined) {
+    const last=inf.cityUnloaded[key], age=(inf.cityClock??0)-last, revision=inf.cityRevisions?.[key]??0
+    if (inf.cityMutable !== false && age>=180 && h32(inf.seed,cx,cy,revision,Math.floor(last))%100<12) (inf.cityRevisions??={})[key]=revision+1
+    delete inf.cityUnloaded[key]
+  }
+  const raw = def.id === 11 ? preparedL11(def, inf.seed, cx, cy, inf.cityRevisions?.[key] ?? 0) : infiniteImplFor(def.id).genRaw(def, inf.seed, cx, cy, inf.plague ? 'red' : undefined)
   const st = inf.state.get(key)
   const structures: Structure[] = raw.structures.map((s) => {
     const live: Structure = { ...s, x: s.x - ox, y: s.y - oy, data: s.data ? { ...s.data } : undefined }
@@ -680,13 +695,17 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
     if (saved) {
       if (saved.looted) live.looted = true
       if (saved.data) {
-        live.data = { ...live.data, ...saved.data }
+        const dynamic={...saved.data}
+        if(def.id===11){delete dynamic.color;delete dynamic.style;delete dynamic.revision}
+        live.data = { ...live.data, ...dynamic }
         // v31：可交互门（维护通廊墨黑金属门）——恢复 open 时同步 solid（开门不阻挡）
         // v41：hoteldoor 同样恢复（L2 废弃公共带的房间门）
         // v51：bargate 同样恢复（L3 发电站铁栅栏门）
         if ((live.kind === 'inkdoor' || live.kind === 'hoteldoor' || live.kind === 'bargate') && saved.data.open !== undefined) live.solid = !saved.data.open
       }
     }
+    const inventory=def.id===11?inf.cityContainers?.[`${key}:${s.data?.sid}`]:undefined
+    if(inventory){live.looted=inventory.looted;live.data={...live.data,lootItems:[...inventory.items],searched:inventory.searched?1:0}}
     return live
   })
   const items: GroundItem[] = raw.items
@@ -731,7 +750,7 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
     moveT: 1 + Math.random() * 5, bubbleText: '', bubbleT: 0,
     hp: sp.def.faction === 'brc' ? 55 : sp.def.faction === 'jerry' ? 45 : undefined, // BRC 员工/信众可伤害可杀死；其余 NPC 无敌（据点居民契约）
   }))
-  return { key, cx, cy, variant: raw.variant, tiles: raw.tiles, wet: raw.wet, elev: raw.elev, tint: raw.tint, crawl: raw.crawl, outdoor: raw.outdoor, ceiling: raw.ceiling, liquid: raw.liquid, dn: raw.dn, dnWall: raw.dnWall, up: raw.up, upWall: raw.upWall, seaFloor: raw.seaFloor, terrain: raw.terrain, caveCeil: raw.caveCeil, structures, items, lights, exits, entities, npcs, habFallback: raw.habFallback }
+  return { key, cx, cy, variant: raw.variant, tiles: raw.tiles, wet: raw.wet, elev: raw.elev, tint: raw.tint, crawl: raw.crawl, outdoor: raw.outdoor, ceiling: raw.ceiling, liquid: raw.liquid, dn: raw.dn, dnWall: raw.dnWall, up: raw.up, upWall: raw.upWall, up2: raw.up2, upWall2: raw.upWall2, stair: raw.stair, seaFloor: raw.seaFloor, terrain: raw.terrain, caveCeil: raw.caveCeil, structures, items, lights, exits, entities, npcs, habFallback: raw.habFallback }
 }
 
 // 把已加载 chunk 内容缝合进窗口数组与对象列表
@@ -771,6 +790,9 @@ function stitch(m: GameMap, explored?: Uint8Array) {
         if (c.dnWall) m.dnWall[di] = c.dnWall[si] // v56 九轮：地下墙体随窗口缝合（L6 -1F）
         if (c.up) m.up[di] = c.up[si] // v57m：上层楼板随窗口缝合（L7 入口舱体 2F）
         if (c.upWall) m.upWall[di] = c.upWall[si] // v57m：上层墙体随窗口缝合
+        if (c.up2) m.up2[di] = c.up2[si]
+        if (c.upWall2) m.upWall2[di] = c.upWall2[si]
+        if (c.stair) m.stair[di] = c.stair[si]
         if (c.terrain && m.terrain) m.terrain[di] = c.terrain[si]
         if (c.caveCeil && m.caveCeil) m.caveCeil[di] = c.caveCeil[si]
       }
@@ -790,7 +812,8 @@ function stitch(m: GameMap, explored?: Uint8Array) {
     }
   }
   // v57m：窗口内任一 chunk 提供上层楼板时，本层按 2F 图处理（L7 入口舱体）
-  m.floors = [...inf.chunks.values()].some((c) => c.up?.some((v) => v === 1)) ? 2 : 1
+  m.floors = [...inf.chunks.values()].some(c => c.up2?.some(v => v === 1)) ? 3 : [...inf.chunks.values()].some((c) => c.up?.some((v) => v === 1)) ? 2 : 1
+  m.hasUnderground = [...inf.chunks.values()].some(c => c.dn?.some(v => v === 1))
   // v27：栖息地降级计数并入（与有限层 GameMap.habitatFallback 同契约，供验证器/调试面板读取）
   m.habitatFallback = habFb
   // v29：L1 停电事件——剔除层级固有灯（维护通廊 keep 灯与玩家追加灯保留）
@@ -853,6 +876,9 @@ function evictChunk(m: GameMap, c: LiveChunk) {
       if (Object.keys(dyn).length) rec.data = dyn
     }
     if (rec.looted || rec.data) st.structs.push(rec)
+    if(inf.cityClock!==undefined&&Array.isArray(d?.lootItems)&&(s.looted||d.searched||d.opened)){
+      (inf.cityContainers??={})[`${c.key}:${sid}`]={items:[...d.lootItems],looted:s.looted,searched:!!d.searched}
+    }
   }
   for (const it of c.items) {
     if (it.id < GEN_ITEM_BASE && m.items.includes(it)) st.extraItems.push({ ...it, x: it.x + inf.ox, y: it.y + inf.oy })
@@ -865,6 +891,7 @@ function evictChunk(m: GameMap, c: LiveChunk) {
   if (c.entities.length > 0) m.entities = m.entities.filter((e) => !c.entities.includes(e))
   mapSetCapped(inf.state, c.key, st, STATE_CAP)
   inf.chunks.delete(c.key)
+  if (inf.cityClock !== undefined) (inf.cityUnloaded??={})[c.key]=inf.cityClock
 }
 
 // 初始生成（无限层级入口；v29 泛化：按 def.id 经注册表分派 chunk 生成器）
@@ -981,6 +1008,7 @@ export function updateInfinite(m: GameMap, def: LevelDef, px: number, py: number
   if (!inf) return null
   const pcx = Math.floor((inf.ox + px) / CS)
   const pcy = Math.floor((inf.oy + py) / CS)
+  if (def.id === 11) prefetchL11(def, inf.seed, pcx, pcy, inf.cityRevisions)
   const nox = (pcx - WIN_R) * CS
   const noy = (pcy - WIN_R) * CS
   if (nox === inf.ox && noy === inf.oy) return null

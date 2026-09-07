@@ -572,6 +572,287 @@ img.pixel-icon { image-rendering: pixelated; image-rendering: crisp-edges; }
   font-style: normal;
 }
 
+/* ========================================================================== */
+/* 沉浸式 UI：随身档案终端 / 现场摄录界面                                */
+/* 与 data-theme 完全解耦：主题继续决定颜色和字体，data-ui 只决定呈现语言。 */
+/* ========================================================================== */
+[data-ui='immersive'] {
+  --ui-glass: color-mix(in srgb, var(--panel) 68%, transparent);
+  --ui-glass-strong: color-mix(in srgb, var(--panel) 91%, transparent);
+  --ui-line: color-mix(in srgb, var(--text-dim) 58%, transparent);
+  --ui-accent-soft: color-mix(in srgb, var(--amber) 18%, transparent);
+  --ui-shadow: 0 16px 46px rgba(0, 0, 0, 0.32), inset 3px 0 0 var(--ui-accent-soft);
+}
+
+/* 主题页中的两种呈现预览。经典模式是规整面板，沉浸模式展示稀疏取景信息。 */
+.ui-presentation-card {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--panel-edge);
+  padding: 10px;
+  text-align: left;
+  color: var(--text);
+  background: color-mix(in srgb, var(--panel) 92%, transparent);
+  transition: border-color 150ms ease, transform 150ms ease, background 150ms ease;
+}
+.ui-presentation-card:hover {
+  border-color: color-mix(in srgb, var(--amber) 72%, var(--panel-edge));
+  transform: translateY(-1px);
+}
+.ui-presentation-card.is-active {
+  border-color: var(--amber);
+  background: color-mix(in srgb, var(--amber) 7%, var(--panel));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--amber) 24%, transparent);
+}
+.ui-presentation-preview {
+  position: relative;
+  display: block;
+  height: 58px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--panel-edge) 75%, transparent);
+  background:
+    linear-gradient(155deg, color-mix(in srgb, var(--text-dim) 16%, transparent), transparent 48%),
+    repeating-linear-gradient(0deg, transparent 0 4px, rgba(0, 0, 0, 0.12) 4px 5px),
+    color-mix(in srgb, var(--ink) 88%, var(--panel));
+}
+.ui-preview-status,
+.ui-preview-focus,
+.ui-preview-slots {
+  position: absolute;
+  display: block;
+}
+.ui-preview-status {
+  left: 7px;
+  top: 7px;
+  width: 34px;
+  height: 17px;
+  border: 1px solid var(--text-dim);
+  background: color-mix(in srgb, var(--panel) 86%, transparent);
+}
+.ui-preview-focus {
+  left: 50%;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  border: 1px solid color-mix(in srgb, var(--amber) 74%, transparent);
+  transform: translate(-50%, -50%);
+}
+.ui-preview-slots {
+  bottom: 5px;
+  left: 50%;
+  display: flex;
+  gap: 2px;
+  transform: translateX(-50%);
+}
+.ui-preview-slots i {
+  width: 13px;
+  height: 7px;
+  border: 1px solid var(--panel-edge);
+  background: color-mix(in srgb, var(--panel) 84%, transparent);
+}
+.ui-presentation-card:nth-child(2) .ui-presentation-preview {
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+}
+.ui-presentation-card:nth-child(2) .ui-preview-status {
+  border-width: 0 0 1px 2px;
+  background: linear-gradient(90deg, var(--ui-accent-soft, rgba(232, 185, 60, 0.18)), transparent);
+}
+.ui-presentation-card:nth-child(2) .ui-preview-focus {
+  border-color: transparent;
+  background:
+    linear-gradient(var(--amber), var(--amber)) left top / 5px 1px no-repeat,
+    linear-gradient(var(--amber), var(--amber)) left top / 1px 5px no-repeat,
+    linear-gradient(var(--amber), var(--amber)) right top / 5px 1px no-repeat,
+    linear-gradient(var(--amber), var(--amber)) right top / 1px 5px no-repeat,
+    linear-gradient(var(--amber), var(--amber)) left bottom / 5px 1px no-repeat,
+    linear-gradient(var(--amber), var(--amber)) left bottom / 1px 5px no-repeat,
+    linear-gradient(var(--amber), var(--amber)) right bottom / 5px 1px no-repeat,
+    linear-gradient(var(--amber), var(--amber)) right bottom / 1px 5px no-repeat;
+}
+.ui-presentation-card:nth-child(2) .ui-preview-slots i {
+  border-width: 0 0 1px;
+  background: color-mix(in srgb, var(--panel) 52%, transparent);
+}
+
+/* 屏幕边缘只保留四个定位角与微弱现场记录字样，不遮盖场景或交互。 */
+.immersive-ui-frame {
+  display: none;
+  pointer-events: none;
+  position: fixed;
+  inset: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+  z-index: 58;
+  color: color-mix(in srgb, var(--text-dim) 56%, transparent);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.13em;
+  opacity: 0.76;
+}
+[data-ui='immersive'] .immersive-ui-frame { display: block; }
+.immersive-corner {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  opacity: 0.58;
+}
+.immersive-corner-tl { left: 0; top: 0; border-left: 1px solid currentColor; border-top: 1px solid currentColor; }
+.immersive-corner-tr { right: 0; top: 0; border-right: 1px solid currentColor; border-top: 1px solid currentColor; }
+.immersive-corner-bl { left: 0; bottom: 0; border-left: 1px solid currentColor; border-bottom: 1px solid currentColor; }
+.immersive-corner-br { right: 0; bottom: 0; border-right: 1px solid currentColor; border-bottom: 1px solid currentColor; }
+.immersive-frame-id,
+.immersive-frame-signal {
+  position: absolute;
+  top: 6px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+.immersive-frame-id { left: 34px; color: color-mix(in srgb, var(--blood) 76%, var(--text)); }
+.immersive-frame-id::before { content: ''; display: inline-block; width: 5px; height: 5px; margin-right: 5px; border-radius: 50%; background: currentColor; animation: immersive-rec 2.4s steps(1) infinite; }
+.immersive-frame-signal { right: 34px; }
+
+/* 所有菜单和覆盖层共用一套“磨损档案卡”语言，保留主题自己的颜色与字体。 */
+[data-ui='immersive'] .hud-panel {
+  border: 1px solid var(--ui-line) !important;
+  border-left-color: color-mix(in srgb, var(--amber) 62%, var(--ui-line)) !important;
+  border-radius: 1px !important;
+  background:
+    linear-gradient(110deg, var(--ui-accent-soft), transparent 18%),
+    repeating-linear-gradient(0deg, transparent 0 6px, rgba(255, 255, 255, 0.012) 6px 7px),
+    var(--ui-glass-strong) !important;
+  box-shadow: var(--ui-shadow) !important;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+}
+[data-ui='immersive'] .menu-btn {
+  border: 0 !important;
+  border-bottom: 1px solid var(--ui-line) !important;
+  border-left: 2px solid color-mix(in srgb, var(--text-dim) 50%, transparent) !important;
+  border-radius: 0 !important;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--panel) 82%, transparent), color-mix(in srgb, var(--panel) 46%, transparent)) !important;
+  box-shadow: none !important;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+  letter-spacing: 0.04em;
+}
+[data-ui='immersive'] .menu-btn::before {
+  content: '//';
+  left: 9px;
+  opacity: 0.46;
+  color: var(--text-dim);
+}
+[data-ui='immersive'] .menu-btn:hover,
+[data-ui='immersive'] .menu-btn:active {
+  border-left-color: var(--amber) !important;
+  padding-left: 34px;
+  color: var(--amber);
+  transform: translateX(2px);
+  background: linear-gradient(90deg, var(--ui-accent-soft), color-mix(in srgb, var(--panel) 58%, transparent)) !important;
+}
+[data-ui='immersive'] .menu-btn:hover::before { left: 12px; opacity: 0.9; }
+
+/* 游戏 HUD 更透明、更贴边；信息仍完整保留，准星周围尽量让出画面。 */
+[data-ui='immersive'] .game-hud .hud-panel {
+  background:
+    linear-gradient(100deg, var(--ui-accent-soft), transparent 28%),
+    color-mix(in srgb, var(--panel) 60%, transparent) !important;
+  box-shadow: 0 7px 24px rgba(0, 0, 0, 0.2), inset 2px 0 0 var(--ui-accent-soft) !important;
+}
+[data-ui='immersive'] .hud-vitals-cluster > .hud-panel:first-child {
+  border-top-color: transparent !important;
+  border-right-color: transparent !important;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 12px) 100%, 0 100%);
+}
+[data-ui='immersive'] .hud-location-cluster > .hud-panel:first-child {
+  border-width: 0 0 1px !important;
+  border-color: color-mix(in srgb, var(--text-dim) 45%, transparent) !important;
+  padding-inline: 18px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--panel) 62%, transparent) 20% 80%, transparent) !important;
+  box-shadow: none !important;
+  clip-path: none;
+  letter-spacing: 0.08em;
+}
+[data-ui='immersive'] .hud-navigation-cluster > .hud-panel,
+[data-ui='immersive'] .hud-navigation-cluster > div > .hud-panel {
+  border-top-color: transparent !important;
+  border-right-color: transparent !important;
+}
+[data-ui='immersive'] .hud-hotbar-cluster button {
+  border-width: 0 0 1px !important;
+  border-color: color-mix(in srgb, var(--text-dim) 45%, transparent) !important;
+  background: color-mix(in srgb, var(--panel) 48%, transparent) !important;
+  clip-path: polygon(5px 0, 100% 0, calc(100% - 5px) 100%, 0 100%);
+  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+}
+[data-ui='immersive'] .hud-hotbar-cluster button:hover {
+  background: color-mix(in srgb, var(--amber) 13%, var(--panel)) !important;
+  transform: translateY(-2px);
+}
+[data-ui='immersive'] .hud-context-cluster > .hud-panel:last-child {
+  opacity: 0.24;
+  transform: translateY(4px);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+[data-ui='immersive'] .hud-context-cluster:hover > .hud-panel:last-child,
+[data-ui='immersive'] .hud-context-cluster:focus-within > .hud-panel:last-child {
+  opacity: 0.88;
+  transform: translateY(0);
+}
+[data-ui='immersive'] .hud-context-cluster > .anim-slideUp {
+  border-color: color-mix(in srgb, var(--amber) 72%, transparent) !important;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--panel) 72%, transparent), var(--ui-accent-soft)) !important;
+  animation: immersive-prompt 2.8s ease-in-out infinite;
+}
+[data-ui='immersive'] .hud-log-line,
+[data-ui='immersive'] .anim-toast {
+  width: fit-content;
+  max-width: 100%;
+  padding: 1px 7px 1px 9px;
+  border-left: 2px solid color-mix(in srgb, currentColor 70%, transparent);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--panel) 64%, transparent), transparent);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95) !important;
+}
+
+/* 标题像一份刚恢复信号的现场录像；面板仍沿用当前标题和全部入口。 */
+[data-ui='immersive'] .title-hero.font-title {
+  position: relative;
+  width: fit-content;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--amber) 55%, transparent);
+  padding: 0 18px 6px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--panel) 22%, transparent), transparent) !important;
+  box-shadow: none;
+  clip-path: none;
+  text-transform: uppercase;
+}
+[data-ui='immersive'] .codex-list .hud-panel {
+  border-left-width: 2px !important;
+  background: color-mix(in srgb, var(--panel) 94%, transparent) !important;
+}
+[data-ui='immersive'] input,
+[data-ui='immersive'] textarea,
+[data-ui='immersive'] select {
+  border-radius: 0 !important;
+  outline-color: var(--amber);
+}
+
+@keyframes immersive-rec {
+  0%, 58% { opacity: 1; }
+  59%, 100% { opacity: 0.2; }
+}
+@keyframes immersive-prompt {
+  0%, 100% { filter: brightness(0.9); }
+  50% { filter: brightness(1.16); }
+}
+
+@media (max-width: 640px) {
+  .immersive-frame-signal { display: none; }
+  .immersive-ui-frame { inset: max(6px, env(safe-area-inset-top)) max(6px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom)) max(6px, env(safe-area-inset-left)); }
+  [data-ui='immersive'] .hud-context-cluster > .hud-panel:last-child { opacity: 0.5; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .immersive-frame-id::before,
+  [data-ui='immersive'] .hud-context-cluster > .anim-slideUp { animation: none; }
+}
+
 /* ---- CECS 统合实体分类系统（仿维基 component:cecs） ---- */
 .cecs-box {
   border-top: 3px solid var(--amber); /* 顶边 accent 粗描边 */

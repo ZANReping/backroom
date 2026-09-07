@@ -1,5 +1,6 @@
 // 结构/出口低模（按 StructKind 建造，含可动盖板/门铰链 userData 约定）
 import * as THREE from 'three'
+import { buildL11Structure } from './l11Meshes'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js'
 import { caveCeilingAt, doorNeedsRotate, floorHeight, tallCeilH, type GameMap } from '../world/mapgen'
@@ -1111,6 +1112,7 @@ function hangingCeil(s: Structure, m: GameMap, H: number): number {
 
 // ---------- 结构低模 ----------
 export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: number): THREE.Object3D | null {
+  if (s.kind.startsWith('l11')) return buildL11Structure(s)
   const grp = new THREE.Group()
   const cx = s.x + s.w / 2, cz = s.y + s.h / 2
   const H = wallH
@@ -1136,7 +1138,7 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       break
     }
     case 'car': {
-      const cc = ['#5a4a42', '#445055', '#555048', '#4a3a3a'][Math.floor(mulberry(s.x * 37 + s.y * 11)() * 4)] // v54：坐标哈希替代 Math.random（同车同色）
+      const cc = _def.id===11 && typeof s.data?.color==='string' ? s.data.color : ['#5a4a42', '#445055', '#555048', '#4a3a3a'][Math.floor(mulberry(s.x * 37 + s.y * 11)() * 4)]
       grp.add(box(s.w * 0.92, 0.55, s.h * 0.88, cc, 0, 0.42, 0))
       grp.add(box(s.w * 0.5, 0.4, s.h * 0.7, '#2a2d30', 0, 0.85, 0))
       // 后备箱盖（搜索后掀起；v54：加内衬与两侧液压杆，随盖同翻）
@@ -6050,6 +6052,10 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
 
 // ---------- 出口低模 ----------
 export function buildExit(kind: string, def: LevelDef, structure?: Structure): THREE.Group {
+  if (def.id === 11 && (kind === 'l11roadback' || kind === 'countrypath')) {
+    const marker = buildL11Structure({ kind: 'l11landmark', x: -.5, y: -.5, w: 1, h: 1, solid: false, data: { citySite: kind === 'countrypath' ? 'L10' : 'L9' } })!
+    return marker
+  }
   const grp = new THREE.Group()
   // 仅 L9 的新结构分支读取该值；标准出口调用不传 structure。
   const s = structure ?? ({ kind: 'l9arrowsign', x: 0, y: 0, w: 1, h: 1, solid: false, data: {} } as Structure)

@@ -19,6 +19,11 @@ export interface FactionDef {
 }
 
 export const FACTIONS: Record<string, FactionDef> = {
+  capital: {
+    id: 'capital', name: '首都共同体', en: 'The Capital',
+    desc: '城市居民组成的稳定社群，维持住宅、集市与公共服务。',
+    hasRep: false, color: '#8d7861',
+  },
   meg: {
     id: 'meg', name: '探险者总署', en: 'The M.E.G.',
     desc: '后室中最大的人类组织之一，致力于探索、记录与保护。Alpha 基地是其最古老的主要基地——训练新干员、救援新切入的流浪者，并试图找到出口。',

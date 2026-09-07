@@ -584,7 +584,9 @@ export function scanInteract(eng: Engine) {
     if (s.kind === 'lift') { consider('lift', band === 0 ? '乘电梯 上楼' : '乘电梯 下楼', s, d, !eng.ride); continue }
     // v18：已搜空容器仍可选中（交互时提示「容器是空的」），未搜空的正常提示
     // v23：全部容器走统一表（含新增的储物柜/工具箱/行李箱/冰箱/保险箱/信箱/木桶/书柜/骨堆/营地摊位）
-    if (CONTAINERS[s.kind]) {
+    if (s.kind === 'l11landmark') consider(s.data?.outpost ? 'landmark' : 'l11guide', '查看 城市导览牌', s, d, true)
+    else if (s.kind === 'l11prop' && ['sink','lockedlift','anomaly'].includes(String(s.data?.prop))) consider('l11inspect', s.data?.prop === 'sink' ? '使用 饮水设施' : '查看 设施', s, d, true)
+    else if (CONTAINERS[s.kind]) {
       const C = CONTAINERS[s.kind]
       const containerLabel = s.data?.manilaTable ? '桌下橱柜' : C.label
       const gate = !C.gate || (C.gate === 'carkey' ? eng.hasPocket('carkey') : eng.hasItem('crowbar'))
@@ -724,6 +726,18 @@ export function doInteract(eng: Engine) {
   if (!sameInteractionTarget(scanned, t) || !t) return
   const p = eng.player, m = eng.map
   switch (t.kind) {
+    case 'l11guide': {
+      if (eng.l11World) eng.l11World.marks = ['capital','timesquare','beta']
+      eng.msg('已记下首都、新时代广场与 M.E.G. Beta 基地的位置。道路、建筑与地标不会随城市细节变化而移动。','system')
+      break
+    }
+    case 'l11inspect': {
+      const prop=t.s?.data?.prop
+      if (prop === 'sink') { p.thirst=Math.min(100,p.thirst+18);eng.msg('自来水仍在正常供应。你喝下了一些清水。（口渴 +18）','system') }
+      else if (prop === 'lockedlift') eng.msg('这部分楼层暂不开放。电梯已经停用，无法进入。','system')
+      else eng.msg('附近的告示记录着未经确认的空间异常，护栏阻止你继续接近。','lore')
+      break
+    }
     case 'exit': {
       const e = t.e
       if (e) eng.takeExit(e.def)
@@ -1156,6 +1170,7 @@ export function doInteract(eng: Engine) {
       break
     }
     case 'landmark': {
+      if(eng.player.level===11&&eng.l11World)eng.l11World.marks=['capital','timesquare','beta']
       // v35：定居点地标——打开地标卡（据点介绍 + 前往/离开）
       // v55b：邀请函（invitation 结构）同走本链路（data.outpost='originals'）
       const s = t.s && (t.s.kind === 'landmark' || t.s.kind === 'invitation') ? t.s : null

@@ -11,6 +11,7 @@ import type { LevelDef, StructKind, Structure, LightSource } from '../core/types
 import type { RNG } from '../core/rng'
 import { genRandomNpcs, jerryFollowerDef } from '../content/npcs'
 import { makeEntity } from '../entities'
+import { genL11Beta } from './l11Beta'
 
 const K = 1.25 // 区块放大系数（设计坐标 → 地图坐标）
 
@@ -29,6 +30,7 @@ export function genOutpost(m: GameMap, rng: RNG, def: LevelDef): { cx: number; c
   if (def.id === 112) return genOriginalsParlor(m, rng, def) // v55：原住民（L5）
   if (def.id === 113) return genEmptyNestPost(m, rng, def) // Level 8：M.E.G.“空巢”前哨站
   if (def.id === 114) return genHammozCommunity(m, rng, def) // Level 8：哈莫兹洞穴社群
+  if (def.id === 115) return genL11Beta(m, rng, def)
   return genAlphaOutpost(m, rng, def)
 }
 

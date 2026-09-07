@@ -18,6 +18,9 @@ export interface GenChunk {
   dnWall?: Uint8Array // v56 九轮：地下墙体瓦片（L6 -1F；缺省=全 0）
   up?: Uint8Array // v57m：上层楼板瓦片（L7 入口舱体位于 2F；其余层级缺省）
   upWall?: Uint8Array // v57m：上层墙体瓦片（L7 入口舱体墙壁；缺省=全 0）
+  up2?: Uint8Array
+  upWall2?: Uint8Array
+  stair?: Uint32Array
   terrain?: Float32Array // 室外自然地形微起伏（米；缺省=0）
   /** L8 有机洞穴的绝对洞顶高度；与 terrain 共用世界坐标连续采样。 */
   caveCeil?: Float32Array

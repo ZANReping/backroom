@@ -9,14 +9,19 @@ import { OUTPOSTS, isLandmarkStruct } from '../content/outposts'
 import { FACTIONS, REP_TIER } from '../content/factions'
 import { updateInfinite, l0NearestExit, chunkKey, CS, infiniteImplFor, h32 } from '../world/infinite'
 import { L8_AVENUE_SEGMENTS, l8AvenuePoint } from '../world/infiniteL8'
-import { L9_CAVE_SPAWN, L9_L5_DOOR_SPAWN, L9_POOL_SPAWN } from '../world/infiniteL9'
+import { L9_CAVE_SPAWN, L9_L5_DOOR_SPAWN, L9_POOL_SPAWN, l9ArrowCount, l9ArrowPoint } from '../world/infiniteL9'
 import { L10_L11_SPAWN, L10_L9_SPAWN } from '../world/infiniteL10'
+import { L11_SPAWNS } from '../world/l11Layout'
+import { captureL11, restoreL11 } from './l11State'
 import type { ExitDef, ExitInstance, FloorBand } from '../core/types'
 import type { Engine } from '../engine'
 import { resetEffects } from './effects'
 import { persist as persistSave } from './save'
 
 export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; firstVisit: boolean }) {
+  if (!restore && eng.player.level === 11 && eng.map?.inf) eng.l11World = captureL11(eng)
+  const l11From = eng.arriveL11From
+  eng.arriveL11From = null
   const def = levelDefOf(id)!
   // v29：初始物资仅首次到层刷新（重访 L0 不再白嫖出生点补给）
   const firstVisit = !eng.visitedLevels.has(id)
@@ -41,7 +46,7 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   const l8AvenueEnd = id === 8 && !restore && eng.arriveL8AvenueEnd
   eng.arriveL8AvenueEnd = false
   // v29a：读档恢复时复用存档记录的地图种子与首访标记，保证复现同一张图
-  const mapSeed = restore?.mapSeed ?? eng.mpMapSeed?.(id) ?? (eng.seed + eng.time * 7 + id * 131) // v58：联机——确定性层级种子（全房间同图，先到先得即同布局）
+  const mapSeed = restore?.mapSeed ?? eng.mpMapSeed?.(id) ?? (id === 11 ? eng.l11World?.seed ?? (eng.seed + 1441) : eng.seed + eng.time * 7 + id * 131)
   const fv = restore?.firstVisit ?? firstVisit
   eng.map = generateLevel(def, mapSeed, fv)
   eng.mapSeed = mapSeed
@@ -90,10 +95,18 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   eng.player.vz = 0
   eng.player.crouching = false
   eng.player.floor = 0
+  if (id === 11 && eng.map.inf) {
+    if (!eng.l11World) eng.l11World = {version:1,seed:mapSeed,chunks:[],explored:[],taken:[],revisions:{},unloaded:{},marks:[]}
+    eng.map.inf.cityClock=eng.time
+    const anchor=l11From===9?L11_SPAWNS[9]:l11From===10?L11_SPAWNS[10]:l11From===115?L11_SPAWNS.beta:L11_SPAWNS.default
+    eng.player.x=anchor.x-eng.map.inf.ox;eng.player.y=anchor.y-eng.map.inf.oy
+  }
   if (id === 9 && eng.map.inf && l9From !== null) {
-    const anchor = l9From === 5 ? L9_L5_DOOR_SPAWN : l9From === 7 ? L9_POOL_SPAWN : L9_CAVE_SPAWN
+    const end=l9ArrowPoint(mapSeed,l9ArrowCount(mapSeed)-1)
+    const anchor = l9From === 11 ? {x:end.x-3,y:end.y+.5} : l9From === 5 ? L9_L5_DOOR_SPAWN : l9From === 7 ? L9_POOL_SPAWN : L9_CAVE_SPAWN
     eng.player.x = anchor.x - eng.map.inf.ox
     eng.player.y = anchor.y - eng.map.inf.oy
+    if(l9From===11)updateInfiniteWindow(eng)
   }
   if (id === 10 && eng.map.inf && l10From !== null) {
     const anchor = l10From === 11 ? L10_L11_SPAWN : L10_L9_SPAWN
@@ -195,6 +208,7 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   eng.porchDrop = null // v58：换层中止门廊拖拽演出
   audio.setUnderwater(false)
   eng.explored = new Uint8Array(eng.map.w * eng.map.h)
+  if(id===11)restoreL11(eng)
   eng.visible = new Uint8Array(eng.map.w * eng.map.h)
   if (def.fullMap) eng.explored.fill(1) // v35：据点——进入即获得完整地图
   if (id === 105) eng.el3aReliefClaimed = false // v43：每次进入 EL3A 可领一次免费补给包
@@ -311,11 +325,14 @@ export function syncInfNpcs(eng: Engine) {
   if (!m?.inf) return
   eng.npcs = []
   for (const c of m.inf.chunks.values()) for (const n of c.npcs) eng.npcs.push(n)
+  if (eng.player.level===11) eng.npcs=eng.npcs.sort((a,b)=>Math.hypot(a.x-eng.player.x,a.y-eng.player.y)-Math.hypot(b.x-eng.player.x,b.y-eng.player.y)).slice(0,32)
   for (const n of eng.npcs) if (!eng.knownNpcs.some((k) => k.id === n.id)) eng.knownNpcs.push(n.def)
 }
 
 export function updateInfiniteWindow(eng: Engine) {
   const m = eng.map!
+  if (eng.levelDef.id===11 && m.inf) m.inf.cityClock=eng.time
+  if (eng.levelDef.id===11 && m.inf) m.inf.cityMutable=!eng.mpSession?.started || eng.mpSession.isHost
   const shift = updateInfinite(m, eng.levelDef, eng.player.x, eng.player.y, eng.explored)
   if (!shift) return
   const { dx, dy } = shift
@@ -584,6 +601,7 @@ export function takeExit(eng: Engine, def: ExitDef) {  const p = eng.player
   if (def.dest === 6) eng.arriveL6Band = p.level === 5 && def.kind === 'boilerdeep' ? -1 : 0
   if (def.dest === 9) eng.arriveL9From = p.level
   if (def.dest === 10) eng.arriveL10From = p.level
+  if (def.dest === 11 || (p.level === 115 && def.dest === 'back')) eng.arriveL11From = p.level
   if (p.level === 10 && def.kind === 'lakeswim' && def.dest === 7) eng.arriveL7SafeWater = true
   if (p.level === 9 && def.kind === 'l9caveback' && def.dest === 8) eng.arriveL8AvenueEnd = true
   if (p.level === 9 && def.kind === 'arrowsign' && def.dest === 11) {
