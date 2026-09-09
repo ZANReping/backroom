@@ -1,3 +1,4 @@
+import CareerPanel from './CareerPanel'
 // NPC 对话窗（RPG 式）：NPC 名+职业+形象、对话文本、预制回复选项；
 // 设置页接入 LLM API 后出现特殊选项「聊天页面」——类似聊天软件的实时对话，
 // 聊天记录跨局持久化（br_npc_chat）并作为模型上下文（NPC 会「记住」）；「交易」页以天鹰币结算。
@@ -121,6 +122,7 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
           )}
         </div>
         <div className="min-w-0 flex-1">
+          <CareerPanel faction={def.faction ?? 'meg'} />
           {mode === 'chat' && (
             <>
               <div
@@ -608,3 +610,4 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
     </div>
   )
 }
+

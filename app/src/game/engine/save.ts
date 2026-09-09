@@ -1,3 +1,4 @@
+import { captureL1, type L1WorldSave } from './l1State'
 // v53：存档读写（自 engine.ts 拆分；逻辑逐语句搬运，存档格式/字段迁移语义不变）
 // v54：存档槽位——3 个手动槽 + 1 个自动保存槽（localStorage 键 br_save_slot1/2/3 + br_save_auto）。
 // 旧版单存档（br_save 种子键 + br_save_state 快照键）首次读取时迁移为槽 1 并清除旧键。
@@ -30,6 +31,9 @@ export const SAVE_KEY = 'br_save_state'
 const LEGACY_SEED_KEY = 'br_save'
 
 export interface SaveSnapshot {
+  career?: import('./career').CareerSave
+  settlementLayout?: 1
+  l1World?: L1WorldSave
   l11World?: L11WorldSave
   l11Weather?: {kind:'calm'|'gust'|'rain'|'mist';t:number;k:number;wetness:number}
   v: 1
@@ -120,6 +124,7 @@ export function snapshot(eng: Engine): SaveSnapshot {
   const inf = eng.map?.inf
   return {
     v: 1,
+    l1World: captureL1(eng),
     l11World: captureL11(eng),
     l11Weather: {...eng.l11Weather},
     seed: eng.seed,
@@ -130,6 +135,8 @@ export function snapshot(eng: Engine): SaveSnapshot {
     worldPos: inf ? { x: inf.ox + eng.player.x, y: inf.oy + eng.player.y } : undefined,
     level: eng.player.level,
     visited: [...eng.visitedLevels],
+    career: structuredClone(eng.career),
+    settlementLayout: 1,
     outpostReturn: eng.outpostReturn,
     rep: eng.rep,
     quests: eng.quests,
@@ -156,3 +163,4 @@ export function persist(eng: Engine, slot?: SaveSlotId) {
   snap.savedAt = Date.now()
   storage.set(SAVE_SLOT_KEYS[slot ?? eng.saveSlot], JSON.stringify(snap))
 }
+

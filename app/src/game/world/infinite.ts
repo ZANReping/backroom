@@ -1,3 +1,4 @@
+import { newL1Dynamics, restoreL1Container, rememberL1Container, type L1Dynamics } from './l1Dynamics'
 // ================= v17：Level 0「教学关卡」无限 chunk 流式生成 =================
 // 以玩家为中心按 32×32 瓦片 chunk 流式生成/卸载；chunk 用「世界种子+chunk 坐标」
 // 确定性生成（同种子重访同 chunk 内容一致）。chunk 间通过共享边哈希的「边缘开口」
@@ -106,6 +107,7 @@ export interface ChunkDynState {
 }
 
 export interface InfiniteState {
+  l1Dynamics?: L1Dynamics
   // Compact permanent inventory ledger, independent of the bounded geometry/chunk cache.
   cityContainers?: Record<string, { items: string[]; looted?: boolean; searched?: boolean }>
   cityClock?: number
@@ -706,6 +708,7 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
     }
     const inventory=def.id===11?inf.cityContainers?.[`${key}:${s.data?.sid}`]:undefined
     if(inventory){live.looted=inventory.looted;live.data={...live.data,lootItems:[...inventory.items],searched:inventory.searched?1:0}}
+    if(def.id===1)restoreL1Container(inf.l1Dynamics??=newL1Dynamics(),inf.seed,cx,cy,live,ox,oy)
     return live
   })
   const items: GroundItem[] = raw.items
@@ -798,7 +801,7 @@ function stitch(m: GameMap, explored?: Uint8Array) {
       }
     }
     // 台阶：raw 的 step 未存进 LiveChunk（pit 台阶由 elev 派生重建）——这里按 elev 边重建
-    m.structures.push(...c.structures)
+    m.structures.push(...c.structures.filter(s=>!s.data?.l1Hidden))
     m.items.push(...c.items.filter((it) => !inf.taken.has(it.id)))
     m.lights.push(...c.lights)
     m.exits.push(...c.exits)
@@ -834,7 +837,7 @@ function stitch(m: GameMap, explored?: Uint8Array) {
   fixHanging(m)
   for (const c of inf.chunks.values()) {
     if (c.structures.some((s) => HANGING_KINDS.includes(s.kind)))
-      c.structures = c.structures.filter((s) => m.structures.includes(s))
+      c.structures = c.structures.filter((s) => !HANGING_KINDS.includes(s.kind) || m.structures.includes(s))
   }
 }
 
@@ -859,6 +862,7 @@ function evictChunk(m: GameMap, c: LiveChunk) {
   const inf = m.inf!
   const st: ChunkDynState = { structs: [], extraItems: [], extraLights: [], exitDisc: false }
   for (const s of c.structures) {
+    if(m.l1Architecture)rememberL1Container(inf.l1Dynamics??=newL1Dynamics(),c.cx,c.cy,s)
     const sid = s.data?.sid as number | undefined
     if (sid === undefined) continue
     const rec: ChunkDynState['structs'][number] = { sid }
@@ -900,6 +904,7 @@ export function generateInfinite(def: LevelDef, seed: number, firstVisit = true)
   const W = WIN_TILES
   const impl = infiniteImplFor(def.id)
   const m: GameMap = {
+    l1Architecture: def.id === 1,
     w: W, h: W,
     tiles: new Uint8Array(W * W),
     structures: [], items: [], lights: [], exits: [], entities: [],

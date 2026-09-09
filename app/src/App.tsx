@@ -1,3 +1,4 @@
+import CareerTracker from '@/components/CareerTracker'
 // 应用状态机：标题 → 层级进入 → 游戏（HUD）→ 暂停/背包/死亡/胜利
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
 import { Routes, Route } from 'react-router'
@@ -912,6 +913,7 @@ function Game() {
         />
       )}
 
+      {screen === 'game' && overlay === 'none' && !hudHidden && <CareerTracker />}
       {/* HUD（v54：沉浸模式 F1 隐藏整层；战利品面板等覆盖 UI 不受影响） */}
       {screen === 'game' && overlay !== 'death' && overlay !== 'victory' && !hudHidden && (
         <HUD
@@ -1033,3 +1035,4 @@ function Game() {
     </div>
   )
 }
+

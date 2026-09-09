@@ -1,5 +1,8 @@
+import { buildSettlementStation } from './settlementMeshes'
 // 结构/出口低模（按 StructKind 建造，含可动盖板/门铰链 userData 约定）
 import * as THREE from 'three'
+import { buildL1Column } from './l1Architecture'
+import { l1RoofAt } from '../world/l1Architecture'
 import { buildL11Structure } from './l11Meshes'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js'
@@ -1100,6 +1103,7 @@ function l9WatchSignTexture(): THREE.Texture {
 // v26：悬挂物贴合天花板底面——按所在瓦片的实际顶高（挑高=H*1.75 / 上层楼板底 2.65 / 普通=H），
 // 取代旧版一律用层高 H（挑高区吊灯悬空在半天、楼板下的灯嵌进楼板底）
 function hangingCeil(s: Structure, m: GameMap, H: number): number {
+  if(m.l1Architecture)return l1RoofAt(m,s.x+s.w/2,s.y+s.h/2,H,true)
   const tx = Math.floor(s.x + s.w / 2), ty = Math.floor(s.y + s.h / 2)
   if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return H
   const i = ty * m.w + tx
@@ -1112,6 +1116,9 @@ function hangingCeil(s: Structure, m: GameMap, H: number): number {
 
 // ---------- 结构低模 ----------
 export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: number): THREE.Object3D | null {
+  if(s.kind === 'settlementprop') return null
+  if(s.kind === 'settlementstation') return buildSettlementStation(s)
+  if(s.data?.l1Column)return buildL1Column(s)
   if (s.kind.startsWith('l11')) return buildL11Structure(s)
   const grp = new THREE.Group()
   const cx = s.x + s.w / 2, cz = s.y + s.h / 2
@@ -5979,6 +5986,24 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       break
     }
     case 'wallsign': {
+      if(s.data?.l1Waymark){
+        grp.add(box(.08,1.64,.08,'#73766b',0,.82,0))
+        grp.add(box(1.8,.56,.07,'#38493f',0,1.9,0))
+        for(const dir of [-1,1]){
+          const mat=new THREE.MeshBasicMaterial({map:signTexture(String(s.data.text??''),false)});mat.userData.l1Owned=true
+          const face=new THREE.Mesh(new THREE.PlaneGeometry(1.72,.48),mat)
+          face.position.set(0,1.9,dir*.039);face.rotation.y=dir<0?Math.PI:0;grp.add(face)
+        }
+        if(s.data.targetX!==undefined&&s.data.targetY!==undefined){
+          const arrow=new THREE.Group(),dx=Number(s.data.targetX)-s.x-(m.inf?.ox??0)-.5,dz=Number(s.data.targetY)-s.y-(m.inf?.oy??0)-.5
+          arrow.rotation.y=Math.atan2(dx,dz)
+          arrow.add(box(.08,.012,.8,'#d4c998',0,.015,.8))
+          const tip=new THREE.Mesh(new THREE.ConeGeometry(.2,.42,3),new THREE.MeshLambertMaterial({color:'#d4c998'}))
+          ;(tip.material as THREE.Material).userData.l1Owned=true;tip.rotation.x=Math.PI/2;tip.scale.z=.03;tip.position.set(0,.02,1.36);arrow.add(tip);grp.add(arrow)
+        }
+        break
+      }
+
       // 墙面字牌（程序贴图小牌：data.text 文字、data.gold 金底描金变体——门牌号/员工专用/Beverly Room）
       const txt = (s.data?.text as string | undefined) ?? ''
       const gold = !!s.data?.gold
@@ -6863,3 +6888,4 @@ export function buildExit(kind: string, def: LevelDef, structure?: Structure): T
   }
   return grp
 }
+

@@ -7,6 +7,7 @@ import type { MpEntSnap, MpEvent, MpIdentity, MpLobbyPlayer, MpMsg, MpPlayerStat
 import { look } from '../renderer/shared'
 import { applyMpEnts } from './apply'
 import type { Engine } from '../engine'
+import { actualRank } from '../engine/career'
 
 export interface MpRemotePlayer {
   id: string
@@ -30,6 +31,9 @@ export class MpSession {
 
   /** 远端玩家状态表（remotePlayers 渲染读这里） */
   remotes = new Map<string, MpRemotePlayer>()
+  stabilizers:Extract<MpEvent,{t:'stabilizers'}>['devices']=[]
+  private stabilizerEvents=new Set<string>()
+  private stabilizerSequence=0
   /** 本地世界事件出口（App 挂到 engine.emit 链路上） */
   onLocalEvent: ((e: MpEvent) => void) | null = null
 
@@ -105,6 +109,8 @@ export class MpSession {
           break
         }
         case 'event': {
+          if(msg.e.t==='stabilizers')break // only the host can publish world worksite state
+          if(msg.e.t==='stabilizerRequest'){this.acceptStabilizer(from,msg.e.eventId);break}
           // 客户端事件：本地应用 + 转发其他客户端
           this.onLocalEvent?.(msg.e)
           this.peer.broadcast({ k: 'event', id: from, e: msg.e }, from)
@@ -145,7 +151,10 @@ export class MpSession {
           }
           break
         }
-        case 'event': this.onLocalEvent?.(msg.e); break
+        case 'event':
+          if(msg.e.t==='stabilizers'){const at=msg.e.at;this.stabilizers=msg.e.devices.map(d=>({...d,expires:now()+Math.max(0,Math.min(90000,d.expires-at))}))}
+          else if(msg.e.t!=='stabilizerRequest')this.onLocalEvent?.(msg.e)
+          break
         case 'ents': {
           // 房主权威实体快照：仅当客人与房主同层时应用
           if (this.eng && this.eng.player.level === msg.level) applyMpEnts(this.eng, msg.list)
@@ -214,6 +223,31 @@ export class MpSession {
     else this.sendToHost({ k: 'event', id: this.selfId, e })
   }
 
+  requestStabilizer(){
+    const eventId=`${this.selfId}:${++this.stabilizerSequence}`
+    if(this.isHost)return this.acceptStabilizer(this.selfId,eventId)
+    this.sendEvent({t:'stabilizerRequest',eventId});return true
+  }
+
+  private acceptStabilizer(owner:string,eventId:string){
+    const eng=this.eng,m=eng?.map
+    if(!eng||!m||!this.isHost||!this.started||eventId.length>128)return false
+    const key=`${owner}:${eventId}`
+    if(this.stabilizerEvents.has(key))return false
+    const local=this.isSelf(owner),p=local?eng.player:this.remotes.get(owner)?.s
+    if(!p||p.level!==eng.player.level)return false
+    const ox=m.inf?.ox??0,oy=m.inf?.oy??0,x=p.x+(local?ox:0),y=p.y+(local?oy:0)
+    const qualification=local?actualRank(eng,'brc'):this.remotes.get(owner)?.s.brcQualification??0
+    if(qualification<3||!Number.isFinite(x+y))return false
+    const site=m.structures.find(s=>s.kind==='settlementstation'&&s.data?.faction==='brc'&&(s.data.services as string[])?.includes('stabilize')&&Math.hypot(s.x+ox-x,s.y+oy-y)<3)
+    if(!site||!eng.los(x-ox,y-oy,site.x,site.y))return false
+    this.stabilizerEvents.add(key)
+    if(this.stabilizerEvents.size>512)this.stabilizerEvents.delete(this.stabilizerEvents.values().next().value!)
+    this.stabilizers=this.stabilizers.filter(d=>d.owner!==owner&&d.expires>now())
+    this.stabilizers.push({owner,eventId,level:p.level,x,y,expires:now()+90000})
+    this.sendEvent({t:'stabilizers',at:now(),devices:this.stabilizers});return true
+  }
+
   private eng: Engine | null = null
   private netTimer: ReturnType<typeof setInterval> | null = null
   private entTick = 0
@@ -250,8 +284,11 @@ export class MpSession {
       held: p.hotbar[p.selected]?.type ?? null,
       dead: eng.over,
       iso,
+      brcQualification:eng.career?actualRank(eng,'brc'):0,
     }
     if (this.isHost) {
+      this.stabilizers=this.stabilizers.filter(d=>d.expires>now())
+      if(this.stabilizers.length)this.sendEvent({t:'stabilizers',at:now(),devices:this.stabilizers})
       // 房主：写入自身状态 + 聚合广播（剔除超 10s 未见的——后台标签 setInterval 仍约 1Hz 心跳，不会被误删）
       const all: Record<string, MpPlayerState> = { HOST: s }
       for (const [id, r] of this.remotes) {

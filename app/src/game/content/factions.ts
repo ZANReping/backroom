@@ -41,7 +41,7 @@ export const FACTIONS: Record<string, FactionDef> = {
   },
   brc: {
     id: 'brc', name: '后室装修公司', en: 'Backrooms Remodeling Co.',
-    desc: '军事化的筑房/改造公司，员工是浑身漆黑、没有五官的人形实体——淡蓝搭扣风衣、红肩铠、白围裙、深灰军式贝雷帽（金属徽章按级别分铜/银/金）。他们旅行的唯一目的是「重塑」后室中的区域，而这些尝试往往以灾难告终：被「装修」完的部分会从层级上分裂出去成为子层。Level 1 的衔尾段是他们永不停工的施工现场。员工沉默、无害、从不停手——但请不要提醒他们「你的同事受伤了」。',
+    desc: '军事化的筑房/改造公司，员工通常是浑身漆黑、只显露一双白色圆眼的人形实体——淡蓝搭扣风衣、红肩铠、白围裙、深灰军式贝雷帽（金属徽章按级别分铜/银/金）。领班能够沟通并下达清晰指令，普通工人多以简短词句回应。他们旅行的唯一目的是「重塑」后室中的区域，而这些尝试往往以灾难告终：被「装修」完的部分会从层级上分裂出去成为子层。Level 1 的衔尾段是他们永不停工的施工现场。请不要提醒他们「你的同事受伤了」。',
     hasRep: true, color: '#4f4c7a', sub: '#d3ae00', logo: 'faction_brc.png',
   },
   wanderer: {
@@ -63,6 +63,16 @@ export const FACTIONS: Record<string, FactionDef> = {
     id: 'originals', name: '原住民', en: 'The Originals',
     desc: '一群在各自时代「失踪」的人——飞行员、船长、名媛与工会领袖。他们在 Level 5 的居所里继续着 1937 年的生活，不接受新成员、也无人可加入（无声望——他们不与外界计分）。凭烫金邀请函方可拜访。',
     hasRep: false, color: '#8a6d3a',
+  },
+  argos: {
+    id: 'argos', name: '阿尔戈斯之眼', en: 'The Eyes of Argos',
+    desc: '以守望、调查与不同版本的正义维持据点秩序的团体；成员记录证词、保护弱者，也必须面对执法过度的代价。',
+    hasRep: true, color: '#9d9065', sub: '#c7b879',
+  },
+  tom: {
+    id: 'tom', name: 'Tom 餐馆社区', en: "Tom's Diner Community",
+    desc: '围绕 Tom 的餐桌形成的熟客与帮工网络，以食材、热饭和互相照应累积信任。',
+    hasRep: true, color: '#ba8456', sub: '#e0b083',
   },
   hammoz: {
     id: 'hammoz', name: '哈莫兹洞穴社群', en: 'The Hammoz Caving Community',

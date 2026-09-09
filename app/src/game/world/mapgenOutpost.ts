@@ -1,3 +1,5 @@
+import { SETTLEMENTS } from '../content/settlementBlueprints'
+import { genSettlement } from './settlement'
 // 据点生成器（gen='outpost'）：完全手工设计的有限小层级——一切结构/灯光/出口/NPC 落位
 // 都是设计好的，无随机物品与容器（需求：据点不会凭空出现物品）。
 // 当前实现：M.E.G. Alpha 基地（布局参照 wikidot Base Alpha 构成图：
@@ -16,6 +18,7 @@ import { genL11Beta } from './l11Beta'
 const K = 1.25 // 区块放大系数（设计坐标 → 地图坐标）
 
 export function genOutpost(m: GameMap, rng: RNG, def: LevelDef): { cx: number; cy: number }[] {
+  if (SETTLEMENTS[def.id]) return genSettlement(m, def, SETTLEMENTS[def.id])
   if (def.id === 102) return genBntgOutpost(m, rng, def)
   if (def.id === 103) return genArianeOutpost(m, rng, def)
   if (def.id === 104) return genTomOutpost(m, rng, def)
@@ -2577,3 +2580,4 @@ function genOriginalsParlor(m: GameMap, rng: RNG, def: LevelDef): { cx: number; 
   ]
   return [{ cx: X(21), cy: X(3) }]
 }
+

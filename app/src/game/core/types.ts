@@ -107,7 +107,7 @@ export interface ExitInstance {
   discovered: boolean
 }
 
-export type StructKind =
+export type StructKind = 'settlementprop' | 'settlementstation'
   | 'pillar' | 'car' | 'booth' | 'pipes' | 'valve' | 'gauge' | 'boiler'
   | 'generator' | 'cabinet' | 'trench' | 'cubicle' | 'copier' | 'server' | 'vending'
   | 'desk' | 'door' | 'ballroom' | 'lightgrid' | 'wet'   | 'graffiti' | 'crate'
@@ -376,3 +376,5 @@ export interface LightSource {
 // v7 数据契约：GameMap 含 elev（0正常/1低洼-1.2m/2高台+1.2m/3室外地面）与 outdoor（0室内/1室外），
 // 定义于 mapgen.ts，此处类型再导出便于 UI 层统一从 types 引用
 export type { GameMap } from '../world/mapgen'
+
+

@@ -32,10 +32,6 @@ range?: { x0: number; y0: number; x1: number; y1: number; variant?: string }, //
       break
     }
     case 'garage': { // L1 停车场
-      prop.garageWreckCars(c)     // 废弃车（仅天鹰段）
-      decal.garageOilStains(c)    // 油渍
-      decal.garageParkSigns(c)    // 停车编号牌
-      prop.garageTrafficCones(c)  // 交通锥
       break
     }
     case 'pipes': { // L2 管道走廊

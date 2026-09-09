@@ -1,5 +1,9 @@
+import { buildSettlementTerrain } from './settlementMeshes'
 // 地形几何：地面/台阶坡道/高差接缝/天花板/风道/多层楼板/墙体（静态合并 + 顶点色）
 import * as THREE from 'three'
+import { l1RoofAt } from '../world/l1Architecture'
+import { l1Material,l1WorldUV } from './l1Materials'
+import { buildL1RoofClosure } from './l1RoofGeometry'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { ELEV_H, FLOOR_H, UNDER_CEIL, UNDER_FLOOR, surfaceUndulationAt, tallCeilH, wallBaseTopAt, ceilingSteps, l7SeaTile, l7SeaTileH, type GameMap } from '../world/mapgen'
 import type { LevelDef } from '../core/types'
@@ -34,10 +38,13 @@ const TINT_CEIL: Record<number, string> = { 1: '#c9b185', 2: '#5e120b', 5: '#c8c
 // v55d：导出供离线断言；boilerdeep = L5 锅炉房黑门嵌墙门洞）
 export const DOOR_EXIT_KINDS = ['stairs', 'unlockeddoor', 'fireexit', 'officedoor', 'elevatorshaft', 'boilerdeep']
 export function buildTerrain(m: GameMap, def: LevelDef, wallH: number, g: THREE.Group, range?: TerrainRange) {
+  if (m.settlement) return buildSettlementTerrain(m, g)
   if (def.id === 11) return buildL11Terrain(m, g, range)
   if (def.id === 115) return buildL11Terrain(m, g, range, true)
   const pal = def.palette
   const H = wallH
+  const l1 = def.id===1 && !!range && range.variant!=='maintenance' && range.variant!=='aisle'
+  const l1Style=range?.variant??'parking'
   const RX0 = range?.x0 ?? 0, RY0 = range?.y0 ?? 0
   const RX1 = range?.x1 ?? m.w, RY1 = range?.y1 ?? m.h
 // 第二套 CC0 纹理（随机分区增加同层变化；键 = 层级 id，文件需存在于 public/textures/）
@@ -322,7 +329,7 @@ for (let y = RY0; y < RY1; y++) {
     const tnt = m.tint[ti]
     const tBase = tnt && TINT_FLOOR[tnt] ? col(TINT_FLOOR[tnt]) : null
     // v34：L0 与 L1 天鹰段取消规律棋盘格（统一底色 + 保留随机明暗噪点）
-    const flatFloor = def.id === 0 || (def.id === 1 && range?.variant === 'parking')
+    const flatFloor = def.id === 0 || def.id === 1
     const c = isWet && !isOut ? (bakeL0 ? grayC(0.62) : wetC) : isOut
       ? (isWet && def.id !== 9 && def.id !== 10 ? poolC : (def.id === 6 || def.id === 9 || def.id === 10) && tBase ? tBase : outC).clone().multiplyScalar(0.9 + hv(x, y, 1) * 0.2)
       : bakeL0 // v53：L0 仅贴图——tint 折算相对底色因子，普通瓦片只留明暗噪点
@@ -428,9 +435,10 @@ for (let y = RY0; y < RY1; y++) {
     // 只有约 8%～25% 强度，再与贴图相乘会让海床即使受光也近乎纯黑。
     const seabedTint = l7Seabed
       ? col(tnt === 29 ? '#f1eee2' : tnt === 30 ? '#dfe9e3' : tnt === 31 ? '#d8e2e5' : '#d2dcdf')
-      : c
+      : l1 ? col('#ffffff') : c
     for (let i = 0; i < n; i++) { carr[i * 3] = seabedTint.r; carr[i * 3 + 1] = seabedTint.g; carr[i * 3 + 2] = seabedTint.b }
     geo.setAttribute('color', new THREE.BufferAttribute(carr, 3))
+    if(l1)l1WorldUV(geo,m.inf?.ox??0,m.inf?.oy??0,l1Style==='garden'?.65:.3)
     const seabedRock = l7Seabed && hv(Math.floor(x / 5), Math.floor(y / 5), 0x71) > 0.63
     if (def.id === 9 && isWet && (tnt === 34 || tnt === 39)) makeL9Puddle(x, y, tnt === 39)
     ;(l7Seabed ? (seabedRock ? l7RockSeabedGeos : l7SandSeabedGeos)
@@ -486,7 +494,7 @@ if (floorGeos.length) {
     ...(def.id === 0 ? { envBase: 0.025, roughness: 0.98, bumpMap: floorTex, bumpScale: 0.012 } : {}),
     map: floorTex,
   })
-  g.add(new THREE.Mesh(mergeGeometries(floorGeos)!, floorMat))
+  g.add(new THREE.Mesh(mergeGeometries(floorGeos)!, l1?l1Material(l1Style,'floor'):floorMat))
 }
 if (abyssGeos.length) {
   g.add(new THREE.Mesh(mergeGeometries(abyssGeos)!, new THREE.MeshBasicMaterial({ color: '#000000' })))
@@ -750,6 +758,14 @@ for (let y = RY0; y < RY1; y++) {
 }
 
 // ---- 天花板（v7：室外无天花板；挑高区域层高提升）----
+if(m.l1Architecture){
+  const roof=buildL1RoofClosure(m,{x0:RX0,y0:RY0,x1:RX1,y1:RY1},H)
+  if(roof){
+    l1WorldUV(roof,m.inf?.ox??0,m.inf?.oy??0,.35)
+    const mesh=new THREE.Mesh(roof,l1Material(range?.variant??'parking','concrete'))
+    mesh.name='l1-roof-closure';g.add(mesh)
+  }
+}
 const ceilGeos: THREE.BufferGeometry[] = []
 const cc = col(pal.wallTop).multiplyScalar(0.55)
 const ccInv = new THREE.Color(1 / cc.r, 1 / cc.g, 1 / cc.b) // v53：L0 天花板烘焙底色（cc）倒数——tint 瓦片折算相对调制因子
@@ -758,10 +774,12 @@ for (let y = RY0; y < RY1; y++) {
     const ti = y * m.w + x
     if (m.tiles[ti] !== 1 || m.outdoor[ti] === 1) continue
     if (m.up[ti] === 1 || m.up2[ti] === 1) continue // 上层楼板底面即本层天花板（楼板盒自带底面）；v54c：3F 板可独立于 2F 存在（多层解耦——任意上层板/屋面板墙兜底当天花）
-    const ch = m.ceiling[ti] === 1 ? tallCeilH(m, H) : H // v46：多层挑高与上层天花拉平（消除漂浮错层）
+    if(l1&&l1Style==='gothic')continue // Dedicated continuous vault shell replaces the flat ceiling.
+    if(l1&&l1Style==='garden'&&m.lights.some(L=>L.keep===1&&Math.abs(L.x-x-.5)<1.35&&Math.abs(L.y-y-.5)<1.75))continue
+    const ch = m.l1Architecture ? l1RoofAt(m,x+.5,y+.5,H) : m.ceiling[ti] === 1 ? tallCeilH(m, H) : H
     const tnt = m.tint[ti]
     // v53：L0 仅贴图——普通瓦片纯白（底色已烘焙进 l0_ceil.jpg），tint 瓦片折算相对底色因子
-    const ccTile = def.id === 9 ? col('#e5e1d8') : tnt && TINT_CEIL[tnt]
+    const ccTile = l1 ? col('#ffffff') : def.id === 9 ? col('#e5e1d8') : tnt && TINT_CEIL[tnt]
       ? (bakeL0 ? col(TINT_CEIL[tnt]).multiplyScalar(0.85).multiply(ccInv) : col(TINT_CEIL[tnt]).multiplyScalar(0.85))
       : (bakeL0 ? grayC(1) : cc)
     const geo = new THREE.PlaneGeometry(1, 1)
@@ -795,7 +813,7 @@ if (ceilGeos.length) {
     ...l8CeilPbr,
     map: ceilTex,
   })
-  g.add(new THREE.Mesh(mergeGeometries(ceilGeos)!, ceilMat))
+  g.add(new THREE.Mesh(mergeGeometries(ceilGeos)!, l1?l1Material(l1Style,'ceiling'):ceilMat))
 }
 
 // v57m：L7 入口房间/门廊金属舱体材质（地板/天花板）
@@ -1251,7 +1269,7 @@ for (let y = RY0; y < RY1; y++) {
 // ---- v49 檐口填墙：低顶地板与挑高（ceiling=1）地板直接相邻的边界（廊口/门廊口——低层屋顶
 //      到挑高顶之间原本是虚空，从挑高侧能看见低顶房间/走廊屋顶上方的黑洞），
 //      在分界线上从低顶到挑高顶填一段薄墙（墙色/墙贴图，并入墙体合并网格；全层级通用规则）----
-for (const cs of ceilingSteps(m, H)) {
+for (const cs of m.l1Architecture ? [] : ceilingSteps(m, H)) {
   if (cs.x < RX0 || cs.x >= RX1 || cs.y < RY0 || cs.y >= RY1) continue // 无限模式按 chunk 过滤（低顶格归属块）
   const t = 0.14 // 薄墙厚（跨分界线，两侧各探 0.07 防缝）
   const vert = cs.dir === 1 || cs.dir === 3 // 挑高侧在东/西 → 墙沿 z 向
@@ -1308,7 +1326,8 @@ if (wallGeos.length) {
     ...(def.id === 0 ? { envBase: 0.035, roughness: 0.94, bumpMap: wallTex, bumpScale: 0.008 } : {}),
     map: wallTex,
   })
-  g.add(new THREE.Mesh(mergeGeometries(wallGeos)!, wallMat))
+  if(l1)for(const geo of wallGeos){geo.deleteAttribute('color');l1WorldUV(geo,m.inf?.ox??0,m.inf?.oy??0,.35)}
+  g.add(new THREE.Mesh(mergeGeometries(wallGeos)!, l1?l1Material(l1Style,'wall'):wallMat))
 }
 if (wallGeos2.length) {
   const wallTex2 = levelTexture(tex2.wall!, () => noiseTexture(pal.wall, pal.wallTop))
@@ -1319,7 +1338,8 @@ if (wallGeos2.length) {
     ...(def.id === 0 ? { envBase: 0.035, roughness: 0.94, bumpMap: wallTex2, bumpScale: 0.008 } : {}),
     map: wallTex2,
   })
-  g.add(new THREE.Mesh(mergeGeometries(wallGeos2)!, wallMat2))
+  if(l1)for(const geo of wallGeos2){geo.deleteAttribute('color');l1WorldUV(geo,m.inf?.ox??0,m.inf?.oy??0,.35)}
+  g.add(new THREE.Mesh(mergeGeometries(wallGeos2)!, l1?l1Material(l1Style,'wall'):wallMat2))
 }
 // v57m：L7 金属舱体墙面（锈蚀钢板 + 拼板焊缝）
 if (cabinWallGeos.length) {
@@ -1334,7 +1354,7 @@ if (cabinWallGeos.length) {
   for (let y = RY0; y < RY1; y++)
     for (let x = RX0; x < RX1; x++) {
       const ti = y * m.w + x
-      if (m.tiles[ti] !== 1 || m.tint[ti] !== 6) continue
+      if (m.tiles[ti] !== 1 || m.tint[ti] !== 6 || def.id===1) continue
       for (let k = 0; k < 2; k++) {
         const px = x + 0.2 + hv(x, y, 11 + k) * 0.6
         const pz = y + 0.2 + hv(x, y, 21 + k) * 0.6
@@ -1379,3 +1399,4 @@ function grassTexture(): THREE.Texture {
     return toTex(cv)
   })
 }
+

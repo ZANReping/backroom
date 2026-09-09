@@ -1,3 +1,4 @@
+import { syncL1Crates } from '../engine/l1State'
 // v58 联机：远端世界事件应用到本地（先到先得共享物资/容器/门；出口/死亡播报）
 // v59：全局事件（L1「闪烁」停电链）+ 房主权威实体快照应用（提线木偶）+ 联机战斗伤害结算
 import type { Engine } from '../engine'
@@ -49,6 +50,10 @@ export function applyMpEvent(eng: Engine, e: MpEvent) {
       }
       case 'exit': eng.msg('远处传来动静——有同行者进入了别的层级。', 'system'); break
       case 'died': eng.msg(e.text ? `有同行者死去了：${e.text}` : '有同行者死去了。', 'damage'); break
+      case 'l1crates': {
+        if(!eng.mpSession?.isHost&&eng.map?.inf?.seed===e.seed)syncL1Crates(eng,e.epoch,e.hidden)
+        break
+      }
       case 'blackout': {
         // L1「闪烁」：仅同层客人跟随房主节奏（warn 后本地 3.5s 自动 apply；房主 start 事件做幂等兜底）
         if (eng.player.level !== 1 || eng.mpSession?.isHost) break

@@ -1129,7 +1129,7 @@ export const NPCS: Record<string, NpcDef> = {
 
   // ================= Tom 的餐馆（不属于任何团体的独立餐馆；以物易物——食材换菜，无货币） =================
   tom: {
-    id: 'tom', name: 'Tommaso「Tom」Esposito', role: '厨师 · 店主', faction: 'wanderer',
+    id: 'tom', name: 'Tommaso「Tom」Esposito', role: '厨师 · 店主', faction: 'tom',
     personality: '乐观开朗，嗓门和炉火一样旺；坚信好好吃饭的人才有力气找出口。',
     background: '意大利裔美国人，前厅开过半生家庭餐馆。切进后室后做的第一件事不是找出口，而是重新点起炉火——如今这家小餐馆是天鹰段最像「家」的地方。',
     uniform: { top: '#f0eee8', topStyle: 1, badge: '#b04030' }, // 白色厨师服 + 暖红徽章
@@ -1176,7 +1176,7 @@ export const NPCS: Record<string, NpcDef> = {
     idle: ['盐……盐在哪儿？', 'Mamma mia，火又小了。', '今天的面包发得正好！', '番茄要再炖一小时，急不得。', '谁把罗勒碰掉了？'],
   },
   aiko: {
-    id: 'aiko', name: '佐藤爱子', role: '前台 · 跑堂（兼职）', faction: 'wanderer',
+    id: 'aiko', name: '佐藤爱子', role: '前台 · 跑堂（兼职）', faction: 'tom',
     personality: '内向安静，话少但观察力强；只有在这家餐馆里，她才偶尔露出一点自在。',
     background: '25 岁的日裔女性。流浪者口中从实体手里救过三百多人的「撒玛利亚人」——她本人极厌恶这个外号和随之而来的人气，拒绝谈论那把从不离身的金色斧头「幸运」。打工攒补给，只为找到回前厅的路。',
     uniform: { top: '#c97a4a', topStyle: 2, badge: '#f0e6d0' }, // 暖色系跑堂制服
@@ -2302,5 +2302,50 @@ export const NPCS: Record<string, NpcDef> = {
       },
     ],
     idle: ['蓝羽之下，皆是家人。', '愿迷路的，都得着这盏蓝灯。', '这一卷，献给引我的振翅声。'],
+  },
+  argos_clerk: {
+    id: 'argos_clerk', name: '林娜·维尔', role: '接待员 · 案卷登记', faction: 'argos',
+    personality: '耐心而谨慎，相信每个人都应先被听见再被判断。',
+    background: '负责丰饶角入口登记、证物编号和申诉预约；她坚持把每份口述记录成可复核的案卷。',
+    uniform: { top: '#877b5a', topStyle: 1, badge: '#c7b879' },
+    avatar: { gender: 1, hair: 1, hairColor: '#3b2925', skin: '#e6b99b', pants: '#34363a', pantsStyle: 0, face: 1 },
+    lines: [{ npc: '先报名字，再说发生了什么。这里不要求你先证明自己无辜，但每句话都要能找到时间和地点。', opts: [{ text: '我要报案。', next: 1 }, { text: '我想申请听证。', next: 2 }, { text: '我只是路过。', action: 'leave' }] }, { npc: '我会给你一张案卷编号。若还有证物，请不要拆封，直接交给证物登记室。', opts: [{ text: '知道了。', action: 'leave' }] }, { npc: '听证不是赦免，也不是定罪。它只是让另一组人把记录重新看一遍。', opts: [{ text: '我明白。', action: 'leave' }] }],
+    idle: ['案卷先编号，情绪稍后再处理。', '请把时间说清楚。', '没有记录的正义很快会变成传闻。'],
+  },
+  argos_investigator: {
+    id: 'argos_investigator', name: '奥伦·凯', role: '调查员 · 证言核验', faction: 'argos',
+    personality: '冷静多疑，认为证据比善意更可靠，却愿意承认自己判断错误。',
+    background: '巡查 Level 1 各据点的货物纠纷与失踪案件，擅长把互相矛盾的证词拆成可验证的细节。',
+    uniform: { top: '#70684e', topStyle: 2, badge: '#9d9065' },
+    avatar: { gender: 0, hair: 2, hairColor: '#302b27', skin: '#c79472', pants: '#2c3035', pantsStyle: 0, face: 0 },
+    lines: [{ npc: '我不需要你说得动听。我需要知道谁在什么时候看见了什么，以及谁能证明他当时在那里。', opts: [{ text: '怎样协助调查？', next: 1 }, { text: '你已经认定我有罪了吗？', next: 2 }, { text: '暂时没有问题。', action: 'leave' }] }, { npc: '带我去现场，指出你站的位置。路线、门锁和地上的痕迹往往比口供诚实。', opts: [{ text: '我会带路。', action: 'leave' }] }, { npc: '认定需要证据。怀疑只是工作的起点，不是结论。', opts: [{ text: '那就查清楚。', action: 'leave' }] }],
+    idle: ['把两个时间线分开。', '现场不会替自己作证。', '先问一个能被证伪的问题。'],
+  },
+  argos_marshal: {
+    id: 'argos_marshal', name: '赫克托·罗', role: '巡逻官 · 外勤队长', faction: 'argos',
+    personality: '直率果断，优先保护现场和弱者；对拖延和私刑同样反感。',
+    background: '负责丰饶角周边巡逻和危险货物护送，曾因制止未经审理的报复而与同僚争执。',
+    uniform: { top: '#5f5945', topStyle: 3, badge: '#c7b879' },
+    avatar: { gender: 0, hair: 0, hairColor: '#77736b', skin: '#b77f60', pants: '#252a2e', pantsStyle: 0, face: 1 },
+    lines: [{ npc: '巡逻的第一件事是让人活着离开现场。抓人可以等证据，救人不能等。', opts: [{ text: '我能参加巡逻吗？', next: 1 }, { text: '有人正在闹事。', next: 2 }, { text: '我先走了。', action: 'leave' }] }, { npc: '先从护送和封锁开始，别急着追求威风。能把人和证物完整带回来，就是合格的巡逻。', opts: [{ text: '记住了。', action: 'leave' }] }, { npc: '告诉我位置、人数和是否有人受伤。不要自行扩大冲突。', opts: [{ text: '我马上说明。', action: 'leave' }] }],
+    idle: ['巡逻路线改走明亮的一侧。', '先确认伤者，再确认嫌疑人。', '没有听证的惩罚只是报复。'],
+  },
+  argos_reviewer: {
+    id: 'argos_reviewer', name: '玛拉·辛', role: '复核员 · 听证主持', faction: 'argos',
+    personality: '克制而锋利，认为正义必须允许被质疑，也不纵容利用程序逃避责任。',
+    background: '主持丰饶角听证和跨团体复核，专门处理证物不足、证词冲突及巡逻队越权案件。',
+    uniform: { top: '#817451', topStyle: 1, badge: '#e0c980' },
+    avatar: { gender: 1, hair: 2, hairColor: '#3d3330', skin: '#d8a786', pants: '#303238', pantsStyle: 0, face: 0, glasses: 2 },
+    lines: [{ npc: '听证不是一场表演。你可以质疑记录，也必须回答记录中确实存在的问题。', opts: [{ text: '如何申请复核？', next: 1 }, { text: '如果巡逻队错了呢？', next: 2 }, { text: '我没有别的问题。', action: 'leave' }] }, { npc: '提交案卷编号和新的证据。没有新材料的重复申诉只会延迟真正需要帮助的人。', opts: [{ text: '明白。', action: 'leave' }] }, { npc: '错误会被更正，越权也会被记录。但更正错误不等于抹掉造成的损失，赔偿仍然必要。', opts: [{ text: '这很公平。', action: 'leave' }] }],
+    idle: ['每一份结论都要留下理由。', '程序不是墙，是一扇能打开的门。', '复核先看材料，再看立场。'],
+  },
+  argos_medic: {
+    id: 'argos_medic', name: '伊莎·诺瓦', role: '巡逻医护 · 现场救护', faction: 'argos', medic: true,
+    personality: '温和而务实，把救治视为一切问责的前提；不喜欢把伤口解释成道德。',
+    background: '随巡逻队处理冲突和拘留中的伤员，也负责确认现场是否适合继续问询。',
+    uniform: { top: '#b3a987', topStyle: 2, badge: '#e9dba6' },
+    avatar: { gender: 1, hair: 1, hairColor: '#5a4032', skin: '#e7b898', pants: '#384044', pantsStyle: 0, face: 1 },
+    lines: [{ npc: '先坐下，让我看看伤口。问责可以晚一点，失血不会。', opts: [{ text: '我需要治疗。', next: 1 }, { text: '拘留中的人也能接受治疗吗？', next: 2 }, { text: '我没事。', action: 'leave' }] }, { npc: '把手伸出来。这里不问你站哪一边，感染和骨折对所有人都一样。', opts: [{ text: '谢谢。', action: 'leave' }] }, { npc: '当然。治疗不是奖励，保持清醒也不是特权。', opts: [{ text: '知道了。', action: 'leave' }] }],
+    idle: ['先清创，再问话。', '把急救包补回巡逻柜。', '伤口不会替任何阵营说话。'],
   },
 }

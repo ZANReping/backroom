@@ -32,11 +32,12 @@ import { LORIGINALS } from './l112'
 import { LEMPTYNEST } from './l113'
 import { LHAMMOZ } from './l114'
 import { LBETA } from './l115'
+import { LCORNUCOPIA } from './l116'
 
 export const LEVELS: LevelDef[] = [L0, L1, L2, L3, L4, L5, L6, L7, L8, L9, L10, L11, L601]
 
 /** 据点层级定义（独立 id 空间 100+，不占 LEVELS 下标；v45：Level 274 亦走此空间） */
-export const OUTPOST_LEVEL_DEFS: Record<number, LevelDef> = { [LALPHA.id]: LALPHA, [LBNTG.id]: LBNTG, [LARIANE.id]: LARIANE, [LTOM.id]: LTOM, [LEL3A.id]: LEL3A, [L274.id]: L274, [LGAMMA.id]: LGAMMA, [LSTORAGE.id]: LSTORAGE, [LBLUE.id]: LBLUE, [LOMEGA.id]: LOMEGA, [LHOUSEKEEPING.id]: LHOUSEKEEPING, [LHOMELY.id]: LHOMELY, [LORIGINALS.id]: LORIGINALS, [LEMPTYNEST.id]: LEMPTYNEST, [LHAMMOZ.id]: LHAMMOZ, [LBETA.id]: LBETA }
+export const OUTPOST_LEVEL_DEFS: Record<number, LevelDef> = { [LALPHA.id]: LALPHA, [LBNTG.id]: LBNTG, [LARIANE.id]: LARIANE, [LTOM.id]: LTOM, [LCORNUCOPIA.id]: LCORNUCOPIA, [LEL3A.id]: LEL3A, [L274.id]: L274, [LGAMMA.id]: LGAMMA, [LSTORAGE.id]: LSTORAGE, [LBLUE.id]: LBLUE, [LOMEGA.id]: LOMEGA, [LHOUSEKEEPING.id]: LHOUSEKEEPING, [LHOMELY.id]: LHOMELY, [LORIGINALS.id]: LORIGINALS, [LEMPTYNEST.id]: LEMPTYNEST, [LHAMMOZ.id]: LHAMMOZ, [LBETA.id]: LBETA }
 
 /** 图鉴、路线审计等需要遍历的完整层级定义表（常规层 + 独立据点层）。 */
 export const ALL_LEVEL_DEFS: LevelDef[] = [...LEVELS, ...Object.values(OUTPOST_LEVEL_DEFS)]

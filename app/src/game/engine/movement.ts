@@ -1,3 +1,5 @@
+import { stableAt } from './career'
+import { l1DistanceScale } from '../world/l1Layout'
 // v53：移动/输入积分 + 垂直物理（固定子步积分主段、液体浮沉、跳跃重力、梯子攀爬）——
 // 自 engine.ts step 内联段拆分，逻辑逐语句搬运；updateMovement 返回 null 表示本帧已死亡/终止（原 step 的 return）。
 import { bandOfZ, bandOfPlayerZ, groundHeightAt, structStandTopAt, ceilingHeightAt, floorHeight, liquidSurfaceH, POOL_DEPTH, FLOOR_H } from '../world/mapgen'
@@ -200,8 +202,9 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
     const fastPitch = fastSwim ? Math.cos(look.pitch) : 1
     const dirX = fastSwim ? -Math.sin(look.yaw) * fastPitch : eng.input.mx * scale + eng.slipVx
     const dirY = fastSwim ? -Math.cos(look.yaw) * fastPitch : eng.input.my * scale + eng.slipVy
-    const moved = integrateMove(m, p, dirX, dirY, speed, dt, eng.moveIt, { noclip: eng.dev.noclip, z: eng.onStairs ? 0 : p.z, crouch: p.crouching, band: eng.onStairs ? 0 : band })
-    const movedDist = Math.hypot(moved.x, moved.y)
+    const metric=eng.levelDef.id===1&&m.inf&&!eng.dev.noclip&&!stableAt(eng,p.x,p.y)?l1DistanceScale(m.inf.seed,p.x+m.inf.ox,p.y+m.inf.oy):1
+    const moved = integrateMove(m, p, dirX, dirY, speed*metric, dt, eng.moveIt, { noclip: eng.dev.noclip, z: eng.onStairs ? 0 : p.z, crouch: p.crouching, band: eng.onStairs ? 0 : band })
+    const movedDist = Math.hypot(moved.x, moved.y)/metric
     // v58：联机玩家碰撞体积——与同层远端玩家软推挤，双方不可重叠
     if (eng.mpSession?.started) {
       for (const rp of RemotePlayerViews.nearby(eng, eng.mpSession)) {
@@ -608,3 +611,4 @@ export function updateClimb(eng: Engine, dt: number, mag: number) {
     }
   }
 }
+

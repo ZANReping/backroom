@@ -1,8 +1,10 @@
+import { flickerL1Crates } from './l1State'
 // v53：现象与停电（层级氛围事件播报、L1「闪烁」停电链、视野计算）——
 // 自 engine.ts 拆分，逻辑逐语句搬运。
 import { LEVEL_EVENTS } from '../levels'
 import { makeEntity } from '../entities'
 import { restitch } from '../world/infinite'
+import { l1StyleAt } from '../world/l1Architecture'
 import { audio } from '../core/audio'
 import type { Engine } from '../engine'
 
@@ -27,6 +29,9 @@ export function updateAmbient(eng: Engine, dt: number) {
   if (eng.blackoutT > 0) {
     eng.blackoutT -= dt
     if (eng.blackoutT <= 0) eng.endBlackout()
+  }
+  if(eng.player.level===1&&eng.mpSession?.started&&eng.mpSession.isHost&&Math.floor(eng.time/5)!==Math.floor((eng.time-dt)/5)){
+    const inf=eng.map?.inf;if(inf?.l1Dynamics)bcast(eng,{t:'l1crates',seed:inf.seed,epoch:inf.l1Dynamics.epoch,hidden:inf.l1Dynamics.hidden})
   }
   updateL9Fog(eng, dt)
   updateL10Weather(eng, dt)
@@ -261,6 +266,10 @@ export function spawnBlackoutSmilers(eng: Engine) {
       const ang = Math.random() * Math.PI * 2
       const r = 8 + Math.random() * 10
       const tx = Math.floor(p.x + Math.cos(ang) * r), ty = Math.floor(p.y + Math.sin(ang) * r)
+      const style = l1StyleAt(m, tx + 0.5, ty + 0.5)
+      const inf = m.inf
+      const chunk = inf?.chunks.get(`${Math.floor((inf.ox + tx + 0.5) / 32)},${Math.floor((inf.oy + ty + 0.5) / 32)}`)
+      if (style === 'maintenance' || chunk?.variant === 'maintenance') continue
       if (eng.entityWalkH(m, tx, ty, 0) === null) continue
       const e = makeEntity('smiler', tx + 0.5, ty + 0.5)
       e.blackoutSpawn = true
@@ -280,6 +289,7 @@ export function endBlackout(eng: Engine) {
     const added = eng.map.lights.filter((l) => !eng.blackoutBackup!.includes(l))
     eng.map.lights = [...eng.blackoutBackup, ...added]
   }
+  flickerL1Crates(eng)
   eng.blackoutBackup = null
   eng.blackoutT = 0
   // 停电生成的笑魇随灯光恢复退散（其他层级的常驻笑魇无标记，不受影响）
@@ -291,7 +301,8 @@ export function endBlackout(eng: Engine) {
     }
   }
   eng.msg('电流声重新响起，灯光逐一恢复。', 'system')
-  bcast(eng, { t: 'blackout', ph: 'end' }) // v59：联机同步
+  bcast(eng, { t: 'blackout', ph: 'end' })
+  if(eng.map?.inf?.l1Dynamics)bcast(eng,{t:'l1crates',seed:eng.map.inf.seed,epoch:eng.map.inf.l1Dynamics.epoch,hidden:eng.map.inf.l1Dynamics.hidden}) // v59：联机同步
 }
 // ---------- 视野 ----------
 export function computeVisibility(eng: Engine) {

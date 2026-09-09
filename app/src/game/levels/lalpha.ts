@@ -8,7 +8,7 @@ export const LALPHA: LevelDef = {
   flavor: '小径深处的一座城镇。灯光是暖的，门后有说话声——你有多久没听过人说话了？',
   palette: { floor: '#9a968c', floorAlt: '#8f8b82', wall: '#cfc8b8', wallTop: '#ddd6c6', accent: '#c9a03a', light: '#fff2d8', decal: '#6a6258' },
   gen: 'outpost',
-  size: 80, // v35：布局坐标经 K=1.25 放大（见 mapgenOutpost.ts）
+  size: 128, // Alpha 专用大基地布局；四署与五居民片区见 mapgenOutpost.ts
   entities: [], // 据点无敌对实体（居民是 NPC，不是实体）
   items: [],
   itemCount: [0, 0],

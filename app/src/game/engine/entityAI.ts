@@ -1,3 +1,4 @@
+import { stableAt } from './career'
 // v53：实体 AI 步进（状态机/游荡/撞墙偏转/hunts 猎杀/provoked 激怒/群体激怒/圣所威慑/售货机活化）
 // + 感知判定（los/视线锥/噪音事件/光照）——自 engine.ts 拆分，逻辑逐语句搬运。
 import { caveCeilingAt, floorHeight, structBlocksPoint, tileAt, tileH, walkableAt, wallAt, solidStructAtFloor, bandOfZ, bandOfPlayerZ, stairServesBand, upAt, upWallAt, FLOOR_H, JUMP_REACH, UNDER_FLOOR, type GameMap } from '../world/mapgen'
@@ -892,6 +893,7 @@ export function entityWalkH(_eng: Engine, m: GameMap, tx: number, ty: number, ba
 }
 
 export function stepEntity(eng: Engine, e: Entity, speed: number, dt: number): boolean {
+  if (['smiler','duller','hound','skinstealer'].includes(e.def.type) && stableAt(eng,e.x,e.y)) speed *= .55
   const dx = e.targetX - e.x, dy = e.targetY - e.y
   const d = Math.hypot(dx, dy)
   if (d < 0.3) return true
@@ -982,3 +984,4 @@ export function stepEntity(eng: Engine, e: Entity, speed: number, dt: number): b
 export function meleeZOk(eng: Engine, e: Entity): boolean {
   return Math.abs(e.z - eng.player.z) < 1
 }
+

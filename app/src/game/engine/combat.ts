@@ -1,3 +1,4 @@
+import { witnessedOffense } from './career'
 // v53：战斗/投掷/击退 + 伤害/死亡结算 + 粒子生成 —— 自 engine.ts 拆分，逻辑逐语句搬运。
 import { ITEMS } from '../content/items'
 import { bandOfZ, bandOfPlayerZ, groundHeightAt, wallAt, structBlocksSight } from '../world/mapgen'
@@ -270,6 +271,8 @@ export function attack(eng: Engine) {
     let ndiff = Math.abs(ang - p.facing)
     if (ndiff > Math.PI) ndiff = Math.PI * 2 - ndiff
     if (ndiff > 0.7) continue
+    const witness=eng.npcs.find(w=>!w.dead&&w.id!==n.id&&Math.hypot(w.x-p.x,w.y-p.y)<8&&eng.los(w.x,w.y,p.x,p.y))
+    if(witness)witnessedOffense(eng,`assault:${eng.player.level}:${eng.career.clock.toFixed(3)}:${n.id}`,witness.id)
     // v39：BRC 员工——跳过 changeRep(-15)：不立即降声望，改记未告发次数（坦白时结清）。
     // 员工不受攻击影响（不逃跑/不反击/不停手），但可被杀死；敌对员工被杀死不另记罪（已坦白结清）
     if (n.def.faction === 'brc') {
@@ -629,3 +632,4 @@ export function updateParticles(eng: Engine, dt: number) {
   for (const pt of eng.particles) { pt.t += dt; pt.x += pt.vx * dt; pt.y += pt.vy * dt; if (pt.z !== undefined) pt.z += (pt.vz ?? 0) * dt }
   eng.particles = eng.particles.filter((pt) => pt.t < pt.life).slice(-120)
 }
+

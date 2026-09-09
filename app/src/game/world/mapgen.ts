@@ -1,5 +1,7 @@
+import { appendLegacyStations, settlementCeiling } from './settlement'
 // 程序化地图生成：房间+走廊/迷宫混合，按层级 motif 放置结构
 import { RNG } from '../core/rng'
+import { l1RoofAt } from './l1Architecture'
 import type { LevelDef, Structure, GroundItem, LightSource, ExitInstance, FloorBand } from '../core/types'
 import { UNIVERSAL_ITEMS } from '../content/items'
 import { makeEntity, ENTITIES, type Entity } from '../entities'
@@ -23,6 +25,8 @@ import { genOutpost } from './mapgenOutpost'
 import { CONTAINER_KINDS } from '../decorations/containers'
 
 export interface GameMap {
+  settlement?: import('../content/settlementTypes').SettlementMapData
+  l1Architecture?: boolean // Derived Level 1 capability, regenerated on load (no save schema change).
   w: number
   h: number
   tiles: Uint8Array // 0虚空 1地板 2墙
@@ -309,6 +313,7 @@ export const groundHeightAt = floorHeight
 export function wallAt(m: GameMap, tx: number, ty: number, band: FloorBand): boolean {
   if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return true
   const i = ty * m.w + tx
+
   if (band === -1) return m.dn[i] !== 1 || m.dnWall[i] === 1
   if (band === 0) return m.tiles[i] !== 1
   return upAt(m, band)[i] !== 1 || upWallAt(m, band)[i] === 1
@@ -653,6 +658,8 @@ export function structColliders(s: Structure, m?: GameMap): ColliderBox[] {
       const swap = deg === 90 || deg === 270
       return [{ x0: cx - (swap ? hd : hw), y0: cy - (swap ? hw : hd), x1: cx + (swap ? hd : hw), y1: cy + (swap ? hw : hd), top: FULL_BLOCK, stand: false }]
     }
+    case 'settlementprop':
+      return [{x0:s.x,y0:s.y,x1:s.x+s.w,y1:s.y+s.h,top:Number(s.data?.height??1),stand:true}]
     case 'seadais': // v58：环形石台——0.42m 低台可踏上（stand），台面嵌木门出口
       return [{ x0: s.x + 0.12, y0: s.y + 0.12, x1: s.x + s.w - 0.12, y1: s.y + s.h - 0.12, top: 0.42, stand: true }]
     case 'seapipe': { // v58：水下管道——管身抬空，低矮碰撞条（不挡上方水层）
@@ -799,6 +806,7 @@ export function wallBaseTopAt(m: GameMap, x: number, y: number, wallH: number): 
       : (st & 7) ? Math.min(ELEV_H[(st >> 3) & 3], ELEV_H[(st >> 5) & 3])
         : m.liquid[ni] === 1 ? -(m.seaFloor[ni] || 1.7) : m.liquid[ni] === 2 ? ELEV_H[m.elev[ni]] - 0.25 : ELEV_H[m.elev[ni]]
     base = Math.min(base, nh)
+    if (m.l1Architecture) top = Math.max(top, l1RoofAt(m,nx+.5,ny+.5,wallH))
     if (m.ceiling[ni] === 1 && m.outdoor[ni] !== 1) top = Math.max(top, tallCeilH(m, wallH)) // 邻挑高地板→顶=挑高顶
     if (m.up[ni] === 1 && m.outdoor[ni] !== 1) top = Math.max(top, FLOOR_H + 2.6) // 邻上层楼板→墙体接到上层天花板
     if (m.up2[ni] === 1 && m.outdoor[ni] !== 1) top = Math.max(top, 2 * FLOOR_H + 2.6) // v54：邻第三层楼板→接到三层天花
@@ -849,10 +857,12 @@ export function ceilingHeightAt(m: GameMap, x: number, y: number, wallH: number,
   const tx = Math.floor(x), ty = Math.floor(y)
   if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return Infinity
   const i = ty * m.w + tx
+  if (band === 0 && m.settlement) return settlementCeiling(m,x,y)
   if (band === -1) return m.dn[i] === 1 ? UNDER_CEIL : Infinity
   // 洞穴边界是连续体积，不服从「该瓦片中心是否为地板」；先取真实洞顶再走旧瓦片逻辑。
   if (band === 0 && m.caveVolumeId !== undefined) return caveCeilingAt(m, x, y)
   if (!hasCeiling(m, tx, ty)) return Infinity
+  if (band === 0 && m.l1Architecture) return l1RoofAt(m,x,y,wallH,true)
   if (band === 0 && m.organicCave && m.caveCeil) return caveCeilingAt(m, x, y)
   if (band === 2) return m.ceiling[i] === 1 ? tallCeilH(m, wallH) : 2 * FLOOR_H + 2.6 // v54：三层天花
   if (band === 1) {
@@ -1562,6 +1572,10 @@ function genOnce(def: LevelDef, seed: number): GameMap {
     }
   }
 
+  // Authored blueprints already contain every floor, room, fixture and exit. Generic BFS
+  // uses closed-door edge footprints and would incorrectly fill controlled interiors.
+  if (m.settlement) return m
+  if (def.gen === 'outpost') appendLegacyStations(m)
   // ---- 预制结构（固定房间/区域，按层级概率植入；只向墙区开洞，不破坏既有通路）----
   placePrefabs(m, rng, def.id, def.skipPrefabs)
 
@@ -2584,3 +2598,8 @@ function applyMultiFloor(m: GameMap, rng: RNG, def: LevelDef) {
   m.floors = 2
   placeUpperContent(m, rng, def)
 }
+
+
+
+
+

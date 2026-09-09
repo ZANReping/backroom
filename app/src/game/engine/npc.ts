@@ -7,6 +7,8 @@ import { FACTIONS, genQuest, genBntgQuest, genArianeQuest, genEl3aQuest, genJerr
 import { recordEntityEncounter, loadSeen, type Entity } from '../entities'
 import { itemName } from '../content/items'
 import { audio } from '../core/audio'
+import { RNG } from '../core/rng'
+import { reward } from './career'
 import { l2JerryRoomRectAt } from '../world/infiniteL2' // v45：信众宣传间领地矩形（HUD 声望显示）
 import type { Engine } from '../engine'
 
@@ -376,24 +378,34 @@ export function preachTo(eng: Engine, npcId: string): boolean {
 export function questOffers(eng: Engine, faction: QuestFaction = 'meg'): QuestDef[] {
   // v47：传教使命（jerry）声望 ≥30 才提供（与 DialogOverlay 的入口显示门槛一致）
   if (faction === 'jerry' && (eng.rep.jerry ?? 0) < 30) return []
+  const epoch = Math.floor(eng.career.clock / 1800)
+  const offerKey = `quest:${faction}`
+  const cached = eng.career.offers[offerKey]
+  if (cached?.epoch === epoch) return cached.quests.filter(d => !eng.career.settled.includes(`quest:${d.id}`) && !eng.quests.some(q => q.def.id === d.id || (q.def.kind === d.kind && q.def.target === d.target)))
   const out: QuestDef[] = []
   const seen = new Set<string>(eng.quests.map((q) => `${q.def.kind}:${q.def.target}`))
   const gen = faction === 'bntg' ? genBntgQuest : faction === 'ariane' ? genArianeQuest : faction === 'jerry' ? genJerryQuest : genQuest
+  const rng = new RNG((0x51e7 + epoch * 2654435761 + faction.length * 97) >>> 0)
   for (let tries = 0; tries < 40 && out.length < 3; tries++) {
-    const def = gen(Math.random)
+    const def = gen(() => rng.next())
     const key = `${def.kind}:${def.target}`
     if (seen.has(key)) continue
     seen.add(key)
+    def.id = `${offerKey}:${epoch}:${out.length}`
     out.push(def)
   }
+  eng.career.offers[offerKey] = { epoch, quests: out }
   return out
 }
 
 /** 接取 MEG 委托（探险署；同类同目标不重复；困难任务赠迁跃浆果） */
 export function acceptQuest(eng: Engine, def?: QuestDef): boolean {
-  if (eng.quests.filter((q) => !q.done).length >= 3) { eng.msg('手上的委托太多了——先完成一个再说。', 'system'); return false }
+  if (eng.quests.length >= 3) { eng.msg('手上的委托太多了——先完成或交付一个再说。', 'system'); return false }
   for (let tries = 0; tries < 8; tries++) {
-    const q = def ?? genQuest(Math.random)
+    const manualRng = new RNG(eng.seed ^ (eng.career.clock | 0) ^ tries)
+    const q = def ? {...def} : genQuest(() => manualRng.next())
+    if (!def) q.id = `qmanual-${eng.seed}-${eng.career.clock}-${eng.career.settled.length}-${eng.quests.length}-${tries}`
+    if (eng.career.settled.includes(`quest:${q.id}`)) return false
     if (eng.quests.some((x) => x.def.kind === q.kind && x.def.target === q.target)) {
       if (def) { eng.msg('同样的委托已经在手上了。', 'system'); return false }
       continue
@@ -401,10 +413,11 @@ export function acceptQuest(eng: Engine, def?: QuestDef): boolean {
     const baseline = q.kind === 'entity' ? (loadSeen()[q.target] ?? 0) : q.unit === 'dist' ? eng.player.steps : 0
     // v43：物流委托——接取即得实体「物流包裹」（占背包格；背包满则接取失败）
     if (q.kind === 'deliverGoods' && !eng.addItem('parcel')) { eng.msg('背包满了，腾不出放包裹的格子。', 'system'); return false }
+    if (!q.id) q.id = `qmanual-${eng.career.clock}-${eng.quests.length}`
     eng.quests.push({ def: q, progress: 0, baseline, done: false })
     eng.msg(`接取委托：「${q.title}」——${q.desc}`, 'loot')
     if (q.hard) {
-      eng.addItem('warpberry')
+      reward(eng, `accept:${q.id}:warpberry`, ['warpberry'])
       eng.msg('困难委托：探险署额外发了一枚迁跃浆果（食用可返回接取该任务的据点）。', 'loot')
     }
     return true
@@ -425,8 +438,7 @@ export function turnInQuest(eng: Engine, faction: QuestFaction = 'meg'): boolean
   const coin = q.def.faction === 'bntg' ? 'presses' : 'eaglecoin'
   const coinName = q.def.faction === 'bntg' ? '压印币' : '天鹰币'
   eng.changeRep(q.def.faction, q.def.rewardRep)
-  for (let i = 0; i < q.def.rewardCoin; i++) eng.addItem(coin)
-  for (const t of q.def.rewardItems) eng.addItem(t)
+  reward(eng, `quest:${q.def.id}`, [...Array(q.def.rewardCoin).fill(coin), ...q.def.rewardItems])
   audio.pickup()
   // 阿丽亚娜无货币（rewardCoin=0）：toast 只显示声望 + 物资
   const rewardText = q.def.rewardCoin > 0
@@ -444,8 +456,7 @@ export function deliverQuestTo(eng: Engine, npcId: string): boolean {
   q.done = true
   eng.quests = eng.quests.filter((x) => x !== q)
   eng.changeRep('bntg', q.def.rewardRep)
-  for (let i = 0; i < q.def.rewardCoin; i++) eng.addItem('presses')
-  for (const t of q.def.rewardItems) eng.addItem(t)
+  reward(eng, `quest:${q.def.id}`, [...Array(q.def.rewardCoin).fill('presses'), ...q.def.rewardItems])
   audio.pickup()
   eng.emit({ kind: 'toast', text: `押运交付：+${q.def.rewardRep} BNTG 声望 · 压印币×${q.def.rewardCoin}` })
   eng.msg(`包裹当面交付完成。商人之家记下了你的可靠。`, 'loot')
@@ -454,15 +465,22 @@ export function deliverQuestTo(eng: Engine, npcId: string): boolean {
 
 /** v43：EL3A 物流委托候选（三个目标互不相同的 deliverGoods；供物流主管处三选一） */
 export function goodsQuestOffers(eng: Engine): QuestDef[] {
+  const epoch = Math.floor(eng.career.clock / 1800)
+  const offerKey = 'goods'
+  const cached = eng.career.offers.goods
+  if (cached?.epoch === epoch) return cached.quests.filter(d => !eng.career.settled.includes(`quest:${d.id}`) && !eng.quests.some(q => q.def.id === d.id || (q.def.kind === d.kind && q.def.target === d.target)))
   const out: QuestDef[] = []
   const seen = new Set<string>(eng.quests.map((q) => `${q.def.kind}:${q.def.target}`))
+  const rng = new RNG((0x61a3 + epoch * 2654435761) >>> 0)
   for (let tries = 0; tries < 40 && out.length < 3; tries++) {
-    const def = genEl3aQuest(Math.random)
+    const def = genEl3aQuest(() => rng.next())
     const key = `${def.kind}:${def.target}`
     if (seen.has(key)) continue
     seen.add(key)
+    def.id = `${offerKey}:${epoch}:${out.length}`
     out.push(def)
   }
+  eng.career.offers.goods = { epoch, quests: out }
   return out
 }
 
@@ -475,8 +493,7 @@ export function deliverGoodsTo(eng: Engine, npcId: string): boolean {
   q.done = true
   eng.quests = eng.quests.filter((x) => x !== q)
   eng.changeRep('bntg', q.def.rewardRep)
-  for (let i = 0; i < q.def.rewardCoin; i++) eng.addItem('presses')
-  for (const t of q.def.rewardItems) eng.addItem(t)
+  reward(eng, `quest:${q.def.id}`, [...Array(q.def.rewardCoin).fill('presses'), ...q.def.rewardItems])
   audio.pickup()
   eng.emit({ kind: 'toast', text: `物流交付：+${q.def.rewardRep} BNTG 声望 · 压印币×${q.def.rewardCoin}` })
   eng.msg(`包裹当面签收。办公区EL3A 的补给线又顺了一程。`, 'loot')
@@ -534,3 +551,5 @@ export function trackQuests(eng: Engine, dt: number) {
     }
   }
 }
+
+

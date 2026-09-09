@@ -1,9 +1,10 @@
 // ================= v29：Level 1「宜居地带」无限 chunk 生成 =================
-// 布局基调（wikidot/Fandom 共识）：「地下停车场和废弃仓库的无尽缝合体」——
+// 布局基调（wikidot/Fandom 共识）：开阔停车层、工业仓储厅与多个主题区段的无尽缝合体。
 // 开阔大厅 + 墙块孤岛 + 柱阵 + 悬挂荧光灯，而非 L0 的迷宫。
 // v30：区段（Sections）扩展——天鹰段/过道/跃金段/哥特段/衔尾段/花园段/维护通廊/浓雾区/停电区；
 // chunk 边界按共享边哈希 edgeOpen 开 2 宽口打通（原为 28×28 封闭大厅，玩家无法走出出生 chunk）。
 import { RNG } from '../core/rng'
+import { applyL1Architecture } from './l1Architecture'
 import { UNIVERSAL_ITEMS } from '../content/items'
 import { ENTITIES } from '../entities'
 import { brcWorkerDef, type NpcDef } from '../content/npcs'
@@ -25,7 +26,7 @@ export const L1_VARIANT_NAMES: Record<L1Variant, string> = {
 // 区段档案（图鉴；设定依据 wikidot「宜居地带」区段概念与 Fandom 特殊区域条目）
 export const L1_VARIANT_LORE: Record<string, string[]> = {
   parking: [
-    '天鹰段——Level 1 最常见的区段。灰色墙面与地坪，加上巨型混凝土柱子与废弃车辆，最像停车场；新流浪者从黄色厅房切入时总会落在这里。探险者总署在此设立了 Alpha 基地，巡逻队穿着明亮淡黄外套、佩戴雄鹰徽章。',
+    '天鹰段——Level 1 最常见的区段。灰色墙面与地坪，加上巨型混凝土柱子，空旷得像没有车辆的停车层；新流浪者从黄色厅房切入时总会落在这里。探险者总署在此设立了 Alpha 基地，巡逻队穿着明亮淡黄外套、佩戴雄鹰徽章。',
     '天花板上漏水的小管子偶尔滴落水珠，但那些水不适合安全饮用。地面四散的水坑闻起来不甚干净，有种塑料般的死水气息。',
   ],
   aisle: [
@@ -33,7 +34,7 @@ export const L1_VARIANT_LORE: Record<string, string[]> = {
     '宜居地带受非欧几何影响：你感知的距离不过是感官的假象。档案建议用地标导航——彩色的柱子、配电柜、板条箱——行进时保持视线固定。',
   ],
   storage: [
-    '跃金段——比天鹰段更像仓库的区段，照明充足且色彩斑斓：暖金、冰蓝、橘红的灯光交错落在成排的板条箱上。随机出现的板条箱是宜居地带获取资源的唯一途径：杏仁水、罐装食品、武器，有助于求生。',
+    '跃金段——白墙、工业梁架与裸露风管组成挑高仓库，悬吊灯盘照亮灰褐地坪，彩色管线和标识点缀其间。照明充足，板条箱成群，是搜集杏仁水、罐装食品和武器的重要场所。',
     '但有时板条箱会被液态痛苦填满，原因不明。翻翻看不亏，但别在箱子堆里逗留太久。',
   ],
   gothic: [
@@ -57,43 +58,8 @@ export const L1_RARE_VARIANTS: readonly string[] = ['storage', 'gothic', 'ourobo
 
 const h01 = (...n: number[]) => h32(...n) / 4294967296
 
-export function l1VariantOf(seed: number, cx: number, cy: number): L1Variant {
-  if (cx === 0 && cy === 0) return 'parking' // 出生 chunk 恒为天鹰段（从 L0 进入 L1 总会出生在这里）
-  if (Math.abs(cx) <= 1 && Math.abs(cy) <= 1) {
-    // 出生安全区：过道/天鹰段
-    return h01(seed, 0xb111, cx, cy) < 0.6 ? 'aisle' : 'parking'
-  }
-  const pick = (r: number): L1Variant => {
-    if (r < 0.01) return 'garden' // 花园段：极其稀有
-    if (r < 0.035) return 'ouroboros' // 衔尾段：十分稀有
-    if (r < 0.09) return 'maintenance'
-    if (r < 0.16) return 'gothic' // 哥特段：较为稀有
-    if (r < 0.3) return 'storage' // 跃金段：较为稀有
-    if (r < 0.62) return 'parking' // 天鹰段：最常见
-    return 'aisle'
-  }
-  // v34：异质率 15% → 6%（群系更成片）；异质 chunk 不出维护通廊（保持其成块出现）
-  if (h01(seed, 0x1e1f, cx, cy) < 0.06) {
-    const v = pick(h01(seed, 0x1e20, cx, cy))
-    return v === 'maintenance' ? 'aisle' : v
-  }
-  // v34：群系聚集——低频值噪声群系图（取代 v31 的 2×2 方块共享）；
-  // pick() 权重不变（全局频率保持），但相同区段聚成 ~6 chunk 跨度的有机团块，像不同群系
-  return pick(biomeNoise(seed, cx, cy))
-}
-
-// 群系噪声：格点哈希 + smoothstep 双线性插值的低频值噪声（纯函数）
-const BIOME_S = 6 // 群系尺度（chunk）
-const biomeSmooth = (t: number) => t * t * (3 - 2 * t)
-function biomeNoise(seed: number, cx: number, cy: number): number {
-  const fx = cx / BIOME_S, fy = cy / BIOME_S
-  const x0 = Math.floor(fx), y0 = Math.floor(fy)
-  const tx = biomeSmooth(fx - x0), ty = biomeSmooth(fy - y0)
-  const v00 = h01(seed, 0xb100, x0, y0), v10 = h01(seed, 0xb100, x0 + 1, y0)
-  const v01 = h01(seed, 0xb100, x0, y0 + 1), v11 = h01(seed, 0xb100, x0 + 1, y0 + 1)
-  const a = v00 + (v10 - v00) * tx, b = v01 + (v11 - v01) * tx
-  return a + (b - a) * ty
-}
+export { l1LayoutVariant as l1VariantOf } from './l1Layout'
+import { l1LayoutVariant as l1VariantOf } from './l1Layout'
 
 // ---------- chunk 生成（纯函数：同种子同坐标必一致）----------
 export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: number, forceVariant?: string): GenChunk {
@@ -262,14 +228,14 @@ export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
   // ---- 变体内容 ----
   switch (variant) {
     case 'aisle': {
-      // 开阔过道：稀疏立柱 + 偶尔叉车痕（以废弃汽车表达机械设备）
+      // 开阔过道：稀疏立柱，连接相邻区段；空间尺度在此发生收缩或扩张。
       for (let i = 0, n = rng.int(1, 3); i < n; i++) placeFree('pillar', 1, 1, true)
       if (rng.chance(0.2)) placeFree('car', 2, 3, true)
       if (rng.chance(0.4)) placeWallHug('rebar')
       break
     }
     case 'parking': {
-      // 天鹰段：规则柱阵 + 废弃车辆 + 天花板漏水小水管（管下水洼长湿不干）
+      // 天鹰段：规则柱阵与天花板漏水小水管；地面积水由独立的确定性洼地系统表现。
       for (let y = 6; y < CS - 5; y += 6)
         for (let x = 6; x < CS - 5; x += 6)
           if (rng.chance(0.8)) pushStruct('pillar', x + rng.int(-1, 1), y + rng.int(-1, 1), 1, 1, true)
@@ -376,6 +342,7 @@ export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
         const p = anchorAt()
         if (!p) break
         npcs.push({ def: brcWorkerDef(seed, cx, cy, i), x: WX + p.x + 0.5, y: WY + p.y + 0.5, facing: p.face })
+        structures.push({kind:'settlementstation',x:WX+p.x+.8,y:WY+p.y+.6,w:.4,h:.3,solid:false,data:{room:'brc_work',label:'B.R.C. 外部协作工位',faction:'brc',services:['training','inspect','report','dispatch','repair','equipment','stabilize'],access:0}})
       }
       break
     }
@@ -492,7 +459,7 @@ export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
     if (rng.chance(0.45)) placeFree('lightgrid', 2, 1, false)
     if (rng.chance(0.3)) placeFree('hanglight', 1, 1, false)
   }
-  // 杏仁水洼（零星出现；永不干涸的观感以 wet 表达）
+  // 地面湿润标记保留给玩法系统；可见洼地由 renderer 的确定性几何生成。
   for (let i = 0, n = rng.int(0, 2); i < n; i++) {
     const x0 = rng.int(3, CS - 4), y0 = rng.int(3, CS - 4)
     for (let j = 0; j < 5; j++) {
@@ -618,7 +585,7 @@ export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
     }
   }
 
-  return { variant, tiles, wet, elev, step, tint, crawl, structures, items, lights, exits, entities, npcs, habFallback }
+  return applyL1Architecture({ variant, tiles, wet, elev, step, tint, crawl, structures, items, lights, exits, entities, npcs, habFallback }, cx, cy, seed)
 }
 
 // ---------- 注册（mapgen generateLevel → generateInfinite 经注册表分派）----------
@@ -629,3 +596,4 @@ registerInfiniteLevel(1, {
   variantNames: L1_VARIANT_NAMES,
   variantLore: L1_VARIANT_LORE,
 })
+

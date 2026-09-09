@@ -1,3 +1,5 @@
+import { look } from '../renderer/shared'
+import { captureL1,restoreL1 } from './l1State'
 // v53：层级切换与出口（loadLevel/takeExit/可行走灰色阶梯/据点往返/无限窗口平移）——
 // 自 engine.ts 拆分，逻辑逐语句搬运；eng 参数即 Engine 实例（公共 API 门面仍在 engine.ts）。
 import { bandOfPlayerZ, floorHeight, generateLevel, tileAt } from '../world/mapgen'
@@ -19,6 +21,7 @@ import { resetEffects } from './effects'
 import { persist as persistSave } from './save'
 
 export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; firstVisit: boolean }) {
+  if (!restore && eng.player.level === 1 && eng.map?.inf) eng.l1World=captureL1(eng)
   if (!restore && eng.player.level === 11 && eng.map?.inf) eng.l11World = captureL11(eng)
   const l11From = eng.arriveL11From
   eng.arriveL11From = null
@@ -46,7 +49,7 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   const l8AvenueEnd = id === 8 && !restore && eng.arriveL8AvenueEnd
   eng.arriveL8AvenueEnd = false
   // v29a：读档恢复时复用存档记录的地图种子与首访标记，保证复现同一张图
-  const mapSeed = restore?.mapSeed ?? eng.mpMapSeed?.(id) ?? (id === 11 ? eng.l11World?.seed ?? (eng.seed + 1441) : eng.seed + eng.time * 7 + id * 131)
+  const mapSeed = restore?.mapSeed ?? eng.mpMapSeed?.(id) ?? (id === 1 ? eng.l1World?.seed ?? (eng.seed+131) : id === 11 ? eng.l11World?.seed ?? (eng.seed + 1441) : eng.seed + eng.time * 7 + id * 131)
   const fv = restore?.firstVisit ?? firstVisit
   eng.map = generateLevel(def, mapSeed, fv)
   eng.mapSeed = mapSeed
@@ -208,6 +211,7 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   eng.porchDrop = null // v58：换层中止门廊拖拽演出
   audio.setUnderwater(false)
   eng.explored = new Uint8Array(eng.map.w * eng.map.h)
+  if(id===1)restoreL1(eng)
   if(id===11)restoreL11(eng)
   eng.visible = new Uint8Array(eng.map.w * eng.map.h)
   if (def.fullMap) eng.explored.fill(1) // v35：据点——进入即获得完整地图
@@ -260,6 +264,11 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   if (id === 6) audio.stopBGM() // L6 除罕见幻听外保持寂静
   if (id === 4) audio.startRain() // v54：L4 常驻雨声（永不止歇的大雨）；离层即停
   else audio.stopRain()
+  if (!restore && eng.career.returning && eng.career.returnAnchor?.level===id) {
+    const a=eng.career.returnAnchor
+    eng.player.x=a.x; eng.player.y=a.y; restoreSavedPlayerPosition(eng,{x:a.x,y:a.y}); look.yaw=a.yaw
+    eng.career.returning=false
+  }
   eng.emit({ kind: 'levelchange' })
   eng.msg(`${levelLabel(id)}「${def.name}」`, 'lore')
   if (def.sd) eng.msg(def.sd, 'system')
@@ -544,9 +553,7 @@ export function takeExit(eng: Engine, def: ExitDef) {  const p = eng.player
   // 未满时主动离开 → jerry 声望 -5；有进行中的传教委托（v47 标准委托化）离开不受声望惩罚
   if (p.level === 274 && def.dest === 'back') {
     if (eng.indoctrination >= 100) {
-      eng.msg('你属于这里。鹉主还需要你。', 'lore')
-      audio.uiTick()
-      return
+      eng.msg('诵咏的冲动仍在，但出口保持开放。你可以向外界请求帮助。', 'lore')
     }
     if (eng.quests.some((q) => q.def.kind === 'preach' && !q.done)) eng.msg('你肩负传教使命离开圣地——鹉主允许你为祂远行。（免于声望惩罚）', 'system')
     else {
@@ -614,6 +621,7 @@ export function takeExit(eng: Engine, def: ExitDef) {  const p = eng.player
   // v35：'back' 解析为进入据点前的层级（据点入口的返程）
   const resolved = def.dest === 'back' ? (eng.outpostReturn ?? 1) : def.dest
   const dest: number | 'win' = resolved === 'random' ? Math.floor(Math.random() * NORMAL_LEVELS) : resolved
+  if (def.dest === 'back') eng.career.returning = true
   if (def.dest === 'back') eng.outpostReturn = null // 返程后清空（下次进据点重新记录）
   const cutIn = dest === 'win' ? undefined : (def.cutIn ?? levelDefOf(dest)?.entryAnim)
   eng.transition = { anim: def.anim, t: 0, dest, fallDamage: def.fallDamage }
@@ -755,12 +763,14 @@ export function enterOutpost(eng: Engine, outpostId: string, dev = false) {
   // v55b：原住民（L5）邀请函改为地标式可交互装饰——阅读即弹地标卡可「前往拜访」，无物品门槛
   // v35：声望过低被其团体禁止进入据点（<=-90）
   const rep = eng.rep[o.faction] ?? 0
-  if (FACTIONS[o.faction]?.hasRep && rep <= REP_TIER.banned) {
+  if (!['ariane','cornucopia'].includes(outpostId) && FACTIONS[o.faction]?.hasRep && rep <= REP_TIER.banned) {
     eng.msg(`守卫拦下了你——${FACTIONS[o.faction]!.name}拒绝你进入。（声望 ${rep}）`, 'damage')
     return false
   }
+  eng.career.returnAnchor = {level:eng.player.level,x:eng.player.x+(eng.map?.inf?.ox??0),y:eng.player.y+(eng.map?.inf?.oy??0),yaw:look.yaw}
   eng.outpostReturn = eng.player.level
   eng.transition = { anim: 'bloom', t: 0, dest: o.levelId }
   eng.emit({ kind: 'transition', anim: 'bloom', cutIn: 'outpost', dest: o.levelId })
   return true
 }
+

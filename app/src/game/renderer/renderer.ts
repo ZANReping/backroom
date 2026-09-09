@@ -1,5 +1,10 @@
+import { l1Transition } from '../world/l1Layout'
 // Three.js 第一人称低多边形渲染器：主循环（静态几何/灯光池/实体动画编排，构建逻辑见同级模块）
 import * as THREE from 'three'
+import { buildL1Architecture } from './l1Architecture'
+import { l1Profile, l1StyleAt } from '../world/l1Architecture'
+import { L1WaterReflection } from './l1Water'
+import { disposeL1Owned,disposeL1Materials } from './l1Materials'
 import type { Engine } from '../engine'
 import { bandOfPlayerZ, caveCeilingAt, enableRuntimeStructCollisionIndex, floorHeight, l7SeaHAt, setStructModelColliders, FLOOR_H, tallCeilH, type GameMap, type ModelColliderBox } from '../world/mapgen'
 import type { GroundItem, LevelDef, Structure, LightSource } from '../core/types'
@@ -457,6 +462,8 @@ export class Renderer3D {
   private builtMap: GameMap | null = null
   private builtRev = -1 // 已构建地图的 engine.mapRev（开发者就地改图时触发重建）
   private lightPool: THREE.PointLight[] = []
+  private l1Water=new L1WaterReflection()
+  private l1Sun=new THREE.SpotLight('#fff0bb',0,18,.62,.65,2)
   private lightPoolExtra: THREE.PointLight[] = [] // v41「远处灯光全开」扩展池（默认不进场景）
   private flash!: THREE.SpotLight
   private lighterLight!: THREE.PointLight // v22：打火机装备效果——玩家周围小火光
@@ -1041,6 +1048,7 @@ export class Renderer3D {
     this.updateL10Rain(def.id===11?10:def.id, weather.kind, weather.k)
     this.updateL9InteriorVisibility(def.id, p.x, p.y, dt)
     this.updateL10InteriorVisibility(def.id, p.x, p.y, dt)
+    if(m.settlement && this.levelGroup) for(const child of this.levelGroup.children){const b=child.userData.settlementBounds;if(b)child.visible=Math.hypot(Math.max(b.x-p.x,0,p.x-b.x-b.w),Math.max(b.y-p.y,0,p.y-b.y-b.h))<22}
     // 低理智畸变：FOV 呼吸 + 侧倾（与摇晃 roll 叠加）
     const insanity = 1 - p.sanity / 100
     this.camera.rotation.y = look.yaw + this.camShakeX * 2
@@ -1077,6 +1085,8 @@ export class Renderer3D {
       flI *= Math.min(1, Math.max(0.18, wallD / 3))
     }
     this.flash.intensity = flI
+    // An inactive, never-rendered shadow map has no valid projection. Exclude it until enabled.
+    this.flash.castShadow = fl && this.flashShadowsOn
     this.frameTick++
     // 光照来源按装备区分（v32）：
     // 头灯（头饰栏）——光心放额头正中（视线正前方、略高，阴影自然且左右对称）；
@@ -1262,7 +1272,7 @@ export class Renderer3D {
     {
       const pi2 = Math.floor(p.y) * m.w + Math.floor(p.x)
       const tnt = m.tint[pi2]
-      const target = tnt === 2 ? '#4a0503' : tnt === 3 ? '#000000' : tnt === 4 ? '#575b5e' : tnt === 1 ? '#161006' : tnt === 6 ? '#3d5c2f' : null
+      const target = tnt === 2 ? '#4a0503' : tnt === 3 ? '#000000' : tnt === 4 ? '#575b5e' : tnt === 1 ? '#161006' : tnt === 6 && def.id!==1 ? '#3d5c2f' : null
       this.tintK += ((target ? 1 : 0) - this.tintK) * Math.min(1, dt * 2.5)
       if (target) this.tintC.lerp(col(target), Math.min(1, dt * 4))
       const tk = this.tintK
@@ -1282,7 +1292,7 @@ export class Renderer3D {
             }
           }
           if (tnt === 4 && !bright) fog.far = fog.far * (1 - tk * 0.6) // v29 浓雾区（杏仁水洼蒸发）：视距压缩至 ~40%
-          if (tnt === 6) { // v30 花园段：阳光充沛——环境光/半球光上调，青翠明亮（不压缩视距）
+          if (tnt === 6 && def.id!==1) { // L1 garden now uses local skylight sources.
             this.ambient.intensity *= 1 + tk * 0.55
             this.hemi.intensity *= 1 + tk * 0.4
           }
@@ -1413,6 +1423,10 @@ export class Renderer3D {
       // 在黑暗中继续响应；单纯提高 emissive 只会留下没有反射细节的平面颜色。
       this.ambient.intensity += Math.min(0.055, nearbyNaturalPower * 0.01)
       this.hemi.intensity += Math.min(0.14, nearbyNaturalPower * 0.025)
+      if(def.id===1&&(!m.inf?.blackout||['garden','ouroboros','maintenance'].includes(l1StyleAt(m,p.x,p.y)??''))){
+        this.ambient.intensity+=Math.min(.16,nearbyBouncePower*.008)
+        this.hemi.intensity+=Math.min(.09,nearbyBouncePower*.004)
+      }
     }
     // L9 罕见浓雾独立于普通区块 tint：数十秒渐入、短距离维持，再自然散去。
     if (def.id === 9 && engine.l9FogK > 0.001 && !bright) {
@@ -1498,6 +1512,16 @@ export class Renderer3D {
     this.updateAmbientFx(engine, def, dt)
     this.updateViewmodel(engine, dt)
     this.updateCrosshair(engine)
+    if(!this.l1Sun.parent){this.scene.add(this.l1Sun);this.scene.add(this.l1Sun.target);this.l1Sun.shadow.mapSize.set(512,512);this.l1Sun.shadow.bias=-.0005;this.l1Sun.shadow.normalBias=.03}
+    const inGarden=def.id===1&&l1StyleAt(m,p.x,p.y)==='garden'
+    this.l1Sun.intensity=inGarden?70:0
+    this.l1Sun.castShadow=inGarden&&this.lightMode==='realistic'&&this.sunShadowsOn
+    if(inGarden){
+      const source=sorted.find(L=>L.natural&&L.keep)
+      if(source){this.l1Sun.position.set(source.x,6.18,source.y);this.l1Sun.target.position.set(source.x-2.2,.1,source.y+1.4)}
+      else this.l1Sun.intensity=0
+    }
+    this.l1Water.update(this.scene,m,p.x,p.y,def.id===1&&this.lightMode==='realistic',this.time,!!m.inf?.blackout)
 
     // realistic 泛光、VCR、PS1 色阶抖动或夜视滤镜开启时走 EffectComposer；其余保持直接渲染。
     const wantBloom = this.lightMode === 'realistic' && this.bloomOn
@@ -1863,6 +1887,8 @@ export class Renderer3D {
   }
 
   private levelFogFar(def: LevelDef) {
+    if ([101,102,103,104,116].includes(def.id)) return Math.max(32, 85-this.darknessBoost*18)
+    if (def.id === 1) return Math.max(20, 48-this.darknessBoost*14)
     if (def.id === 11) return Math.max(95, 260 - this.darknessBoost * 80)
     // L7 的 27m 水面雾基线是独立设计；额外暗度仍会缩短它，但默认 0 时完全保持旧画面。
     return Math.max(5, (def.id === 7 ? 27 : 19 - def.darkness * 6) - this.darknessBoost * 6)
@@ -2027,6 +2053,8 @@ export class Renderer3D {
 
   /** 释放环境探针缓存（关闭渲染器时调用） */
   dispose() {
+    this.l1Water.clear(this.scene)
+    this.l1Sun.shadow.dispose();disposeL1Materials()
     this.cancelMaterialPrecompile()
     this.l10Rain.geometry.dispose()
     ;(this.l10Rain.material as THREE.Material).dispose()
@@ -2034,6 +2062,7 @@ export class Renderer3D {
   }
 
   private teardown() {
+    this.l1Water.clear(this.scene)
     this.cancelMaterialPrecompile()
     resetLiquidWaves() // v57t：旧水面波浪 uniform 随几何一并失效
     // v58：无限模式 L7 挂到场景的天空球/蜃楼船队随层级拆卸（有限层天空球在 levelGroup 内一并移除）
@@ -2043,7 +2072,7 @@ export class Renderer3D {
       this.scene.remove(this.levelGroup)
       this.levelGroup.traverse((o) => {
         const mm = o as THREE.Mesh
-        if (mm.geometry) mm.geometry.dispose()
+        if (mm.geometry) mm.geometry.dispose(); disposeL1Owned(mm)
       })
       this.levelGroup = null
     }
@@ -2051,12 +2080,12 @@ export class Renderer3D {
       this.scene.remove(cg.group)
       cg.group.traverse((o) => {
         const mm = o as THREE.Mesh
-        if (mm.geometry) mm.geometry.dispose()
+        if (mm.geometry) mm.geometry.dispose(); disposeL1Owned(mm)
       })
     }
     this.chunkGroups.clear()
     for (const g of this.entityMeshes.values()) this.scene.remove(g)
-    for (const rec of this.npcMeshes.values()) { this.scene.remove(rec.grp); this.scene.remove(rec.bubble) }
+    for (const rec of this.npcMeshes.values()) this.disposeNpc(rec)
     this.npcMeshes.clear()
     for (const g of this.itemMeshes.values()) this.scene.remove(g)
     for (const g of this.projMeshes.values()) this.scene.remove(g)
@@ -2087,13 +2116,14 @@ export class Renderer3D {
     this.scene.fog = new THREE.Fog(fogC, def.id === 7 ? 3.0 : 2.0, fogFar)
     this.scene.background = new THREE.Color().copy(fogC)
     this.fogC.copy(fogC)
-    this.fogNear = 2.0
+    this.fogNear = m.settlement ? 12 : 2.0
     this.fogFar = fogFar
     this.skyC.set(SKY[def.id] ?? '#0a0a0c')
     this.outK = 0
     this.tintK = 0
     this.ambientBase = def.id === 11 ? .48 : def.id === 6 ? 0.012 : def.id === 7 ? 0.55 : def.id === 9 ? 0.045 : def.id === 10 ? 0.38 : def.id === 0 ? 0.15 : 0.09 + def.darkness * 0.06
     this.hemiBase = def.id === 11 ? .62 : def.id === 6 ? 0.018 : def.id === 7 ? 0.6 : def.id === 9 ? 0.055 : def.id === 10 ? 0.46 : def.id === 0 ? 0.19 : 0.12 + def.darkness * 0.06
+    if(m.settlement){this.ambientBase=.3;this.hemiBase=.36}
     this.hemi.color.set(col(pal.wallTop).lerp(col('#9aa2b0'), 0.5))
     this.hemi.groundColor.set(col(pal.floor).multiplyScalar(0.8))
     // v58：L7 巨大迷雾 + 蜃楼船队——无限模式此前没有天空球（仅背景色/雾）；
@@ -2118,7 +2148,7 @@ export class Renderer3D {
         this.scene.remove(cg.group)
         cg.group.traverse((o) => {
           const mm = o as THREE.Mesh
-          if (mm.geometry) mm.geometry.dispose()
+          if (mm.geometry) mm.geometry.dispose(); disposeL1Owned(mm)
         })
         for (const s of cg.structs) {
           this.structMeshes.delete(s)
@@ -2153,7 +2183,7 @@ export class Renderer3D {
       this.scene.remove(cg.group)
       cg.group.traverse((o) => {
         const mm = o as THREE.Mesh
-        if (mm.geometry) mm.geometry.dispose()
+        if (mm.geometry) mm.geometry.dispose(); disposeL1Owned(mm)
       })
       for (const s of cg.structs) {
         this.structMeshes.delete(s)
@@ -2169,7 +2199,7 @@ export class Renderer3D {
       (Math.abs(a.cx * CS - inf.ox - p.x) + Math.abs(a.cy * CS - inf.oy - p.y)) -
       (Math.abs(b.cx * CS - inf.ox - p.x) + Math.abs(b.cy * CS - inf.oy - p.y)))
     const budget = def.id === 5 || def.id === 7 || def.id === 8 || def.id === 9 || def.id === 10 || def.id === 11 ? 1 : (this.chunkGroups.size === 0 ? queue.length : 2)
-    if (def.id === 11) {
+    if (def.id === 11 || def.id === 1) {
       if(this.cityChunkTask && (this.cityChunkTask.map!==m || this.cityChunkTask.rev!==inf.rev || !want.has(this.cityChunkTask.key))){this.cityChunkTask.iter.return();this.cityChunkTask=null}
       if(!this.cityChunkTask && queue[0])this.cityChunkTask={map:m,rev:inf.rev,key:queue[0].key,iter:this.buildInfiniteChunk(m,def,queue[0])}
       const deadline=performance.now()+3
@@ -2281,14 +2311,16 @@ export class Renderer3D {
 
   private *buildInfiniteChunk(m: GameMap, def: LevelDef, c: LiveChunk): Generator<void,void,unknown> {
     const inf = m.inf!
-    const H = this.wallH
+    const H = def.id===1?l1Profile(c.variant).height:this.wallH
     const g = new THREE.Group()
     let completed=false
     try {
     const wx = c.cx * CS - inf.ox, wy = c.cy * CS - inf.oy
     const range = { x0: wx, y0: wy, x1: wx + CS, y1: wy + CS, variant: c.variant }
+    const tr=def.id===1&&c.variant==='aisle'?l1Transition(inf.seed,c.cx,c.cy):null
+    const ranges=tr? [ {...range,x1:tr.axis==='x'?wx+16:wx+CS,y1:tr.axis==='y'?wy+16:wy+CS,variant:tr.a}, {...range,x0:tr.axis==='x'?wx+16:wx,y0:tr.axis==='y'?wy+16:wy,variant:tr.b} ]:[range]
     if(def.id===11)yield* buildL11TerrainJob(m,g,range)
-    else buildTerrain(m, def, H, g, range)
+    else for(const r of ranges)buildTerrain(m,def,def.id===1?l1Profile(r.variant).height:H,g,r)
     if(def.id===11)yield
     // 无限 L7 海洋、L8 地下湖、L9 后院泳池与 L10 连续湖泊随 chunk 构建水面。
     if (def.id === 7 || def.id === 8 || def.id === 9 || def.id === 10 || def.id === 11) {
@@ -2322,7 +2354,8 @@ export class Renderer3D {
       return l9Interiors.find(({ house: h }) => x > h.x + .5 && x < h.x + h.w - .5 && y > h.y + .5 && y < h.y + h.h - .5)
     }
     for (const s of c.structures) {
-      if(def.id===11)yield
+      if(s.data?.l1Hidden)continue
+      if(def.id===11||(def.id===1&&structs.length%8===0))yield
       if (def.id === 10 && s.kind === 'wheatpatch') { structs.push(s); continue }
       const mesh = def.id===11 && s.kind==='l11building' ? yield* buildL11Building(s) : buildStructure(s, def, m, H)
       if (mesh) {
@@ -2362,6 +2395,7 @@ export class Renderer3D {
     }
     // 灯具（L0 全室内：自发光盒；v53：src 记录光源，亮度随其点亮状态）
     const fixtures: { mat: THREE.MeshBasicMaterial; seed: number; src?: LightSource }[] = []
+    if(def.id===1)for(const r of ranges)yield* buildL1Architecture(m,r,g,c.lights.filter(l=>l.x>=r.x0&&l.x<r.x1&&l.y>=r.y0&&l.y<r.y1),fixtures)
     const l0FixtureFrameMat = def.id === 0 ? new THREE.MeshLambertMaterial({ color: '#8d8875' }) : null
     for (const L of c.lights) {
       if (L.noFix === 1) continue
@@ -2435,7 +2469,7 @@ export class Renderer3D {
     completed=true
     this.queueMaterialPrecompile(firstChunk ? 0 : 80)
     } finally {
-      if(!completed){g.traverse(o=>{const mesh=o as THREE.Mesh;mesh.geometry?.dispose()});for(const s of c.structures){this.structMeshes.delete(s);this.animatedStructMeshes.delete(s)}}
+      if(!completed){g.traverse(o=>{const mesh=o as THREE.Mesh;mesh.geometry?.dispose();disposeL1Owned(mesh)});for(const s of c.structures){this.structMeshes.delete(s);this.animatedStructMeshes.delete(s)}}
     }
   }
 
@@ -2566,7 +2600,7 @@ export class Renderer3D {
     }
 
     // ---- 层级装饰（纯氛围贴花 + 低模道具）----
-    buildDecorations(m, def, H, g, this.fixtures)
+    if (!m.settlement) buildDecorations(m, def, H, g, this.fixtures)
 
     this.levelGroup = g
     this.enableShadows(g)
@@ -3189,6 +3223,7 @@ export class Renderer3D {
     for (const n of engine.npcs) {
       seen.add(n.id)
       let rec = this.npcMeshes.get(n.id)
+      if(m.settlement&&Math.hypot(n.x-engine.player.x,n.y-engine.player.y)>24){if(rec){rec.grp.visible=false;rec.bubble.visible=false}continue}
       if (!rec) {
         // 随机玩家形象（种子确定）+ 制服徽章（胸口小色块）
         const pm = buildPlayerModel(npcAvatar(n.def), {})
@@ -3235,6 +3270,7 @@ export class Renderer3D {
         }
         this.npcMeshes.set(n.id, rec)
       }
+      rec.grp.visible=true
       // 位置（贴地；v46：按其所在楼层带取地面——夹楼 NPC 站在 2F 楼板；v54：三层 NPC 站 3F 楼板）与朝向（短弧平滑，与实体同一手感）
       const gz = floorHeight(m, n.x, n.y, n.floor ?? 0)
       rec.grp.position.set(n.x, gz, n.y)
@@ -3352,12 +3388,20 @@ export class Renderer3D {
     }
     for (const [id, rec] of this.npcMeshes) {
       if (!seen.has(id)) {
-        this.scene.remove(rec.grp)
-        this.scene.remove(rec.bubble)
-        rec.bubbleTex.dispose()
+        this.disposeNpc(rec)
         this.npcMeshes.delete(id)
       }
     }
+  }
+
+  private disposeNpc(rec:NpcMeshRec){
+    this.scene.remove(rec.grp);this.scene.remove(rec.bubble)
+    const geometries=new Set<THREE.BufferGeometry>(),materials=new Set<THREE.Material>()
+    for(const root of [rec.grp,rec.bubble])root.traverse(o=>{const mesh=o as THREE.Mesh;if(mesh.geometry)geometries.add(mesh.geometry);if(mesh.material)for(const mat of Array.isArray(mesh.material)?mesh.material:[mesh.material])materials.add(mat)})
+    // buildPlayerModel and applyNpcGear allocate private geometries and materials per NPC.
+    for(const geometry of geometries)geometry.dispose()
+    for(const material of materials)material.dispose()
+    rec.bubbleTex.dispose()
   }
 
   private updateItems(engine: Engine, _dt: number) {
@@ -3819,3 +3863,5 @@ export function getRenderer(canvas: HTMLCanvasElement): Renderer3D {
   if (!r) { r = new Renderer3D(canvas); cache.set(canvas, r) }
   return r
 }
+
+

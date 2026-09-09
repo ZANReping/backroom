@@ -6,6 +6,7 @@ export interface MpIdentity { name: string; avatar: Partial<AvatarCfg> }
 
 /** 玩家逐帧状态（12Hz） */
 export interface MpPlayerState {
+  brcQualification?: number // player-owned career; host still validates the physical worksite
   x: number; y: number; z: number // 窗口内坐标 + 脚底高度
   yaw: number; pitch: number
   level: number
@@ -31,6 +32,9 @@ export interface MpEntSnap {
 
 /** 世界事件（折中同步：先到先得共享物资/门/容器/出口/死亡 + 全局现象 + 联机战斗） */
 export type MpEvent =
+  | {t:'stabilizerRequest';eventId:string}
+  | {t:'stabilizers';at:number;devices:{owner:string;eventId:string;level:number;x:number;y:number;expires:number}[]}
+  | {t:'l1crates';seed:number;epoch:number;hidden:Record<string,number>}
   | { t: 'takeItem'; id: number } // 地面物品被捡走（按物品 id 移除）
   | { t: 'dropItem'; id: number; it: string; x: number; y: number } // 房主击杀掉落物生成（世界坐标）
   | { t: 'loot'; sid: number } // 容器被搜空（按结构 sid 标记 looted）

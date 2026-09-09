@@ -1,3 +1,6 @@
+import { actualRank, fieldTargets, recordField } from './career'
+import { CAREERS } from '../content/careers'
+import type { CareerId } from '../content/settlementTypes'
 // v53：交互（scanInteract/doInteract/容器搜索/战利品面板/结构触发伤害/配电箱嗡鸣）——
 // 自 engine.ts 拆分，逻辑逐语句搬运；triggerStructs 返回 true 表示本帧已死亡（原 step 的 return）。
 import { bandOfZ, bandOfPlayerZ, floorHeight, groundHeightAt, structBlocksSight, structColliders, wallAt, FLOOR_H } from '../world/mapgen'
@@ -576,11 +579,13 @@ export function scanInteract(eng: Engine) {
     considerTarget(target, sx, sy, sz, targetBand, INTERACT_RANGE.object, can,
       profile.horizontalRadius, volume, d, s, profile.verticalRadius)
   }
+  for (const marker of fieldTargets(eng)) consider('careerField','记录现场证据',marker,Math.hypot(marker.x-p.x,marker.y-p.y),true)
   for (const s of m.structures) {
     // v13：结构按楼层过滤（楼上楼下同名容器互不干扰）；lift 跨层服务
     if (s.kind !== 'lift' && (s.floor ?? 0) !== band) continue
     const d = structureSurfaceDistance(s, p.x, p.y) // 大结构按最近表面，而非中心计交互距离
     if (d > INTERACT_RANGE.object) continue
+    if (s.kind === 'settlementstation') { consider('settlementstation', String(s.data?.label ?? '工作台'), s, d, true); continue }
     if (s.kind === 'lift') { consider('lift', band === 0 ? '乘电梯 上楼' : '乘电梯 下楼', s, d, !eng.ride); continue }
     // v18：已搜空容器仍可选中（交互时提示「容器是空的」），未搜空的正常提示
     // v23：全部容器走统一表（含新增的储物柜/工具箱/行李箱/冰箱/保险箱/信箱/木桶/书柜/骨堆/营地摊位）
@@ -726,6 +731,15 @@ export function doInteract(eng: Engine) {
   if (!sameInteractionTarget(scanned, t) || !t) return
   const p = eng.player, m = eng.map
   switch (t.kind) {
+    case 'careerField': { recordField(eng,String(t.s?.data?.faction) as CareerId);break }
+    case 'settlementstation': {
+      const id=String(t.s?.data?.faction) as CareerId
+      eng.activeStation=String(t.s?.data?.room ?? '')
+      const npc=CAREERS[id]?.npc
+      const actualNpc=eng.npcs.find(n=>n.def.faction===id)?.id ?? npc
+      if(actualNpc) eng.emit({kind:'dialog',text:actualNpc})
+      break
+    }
     case 'l11guide': {
       if (eng.l11World) eng.l11World.marks = ['capital','timesquare','beta']
       eng.msg('已记下首都、新时代广场与 M.E.G. Beta 基地的位置。道路、建筑与地标不会随城市细节变化而移动。','system')
@@ -999,6 +1013,7 @@ export function doInteract(eng: Engine) {
       // 上锁门与普通门相邻时提示「打开 房门」却触发上锁门）
       const s = t.s && t.s.kind === 'hoteldoor' ? t.s : null
       if (!s) return
+      if (s.data?.careerDoor && Number(s.data.access)>actualRank(eng,String(s.data.faction) as CareerId)) { eng.msg('该房间需要相应的专业资格。公共走廊与出口始终开放。','system'); return }
       if (s.data?.sealed) {
         // v41：L2 特殊锁死门——撬棍/万能钥匙/斧头全部无效（锁的结构闻所未闻）
         eng.msg('这扇门纹丝不动，锁的结构闻所未闻。', 'system')
@@ -1445,3 +1460,6 @@ export function afterLootChange(eng: Engine) {
     }
   }
 }
+
+
+

@@ -1,3 +1,5 @@
+import * as careerSystem from './engine/career'
+import type { L1WorldSave } from './engine/l1State'
 // 游戏引擎：组合根——全部状态字段、主循环 step()、对外公共 API 门面。
 // v53：机制实现按类别拆分到 engine/ 子模块（持续性效果注册表 effects / 存档 save /
 // 层级切换 level / 移动积分 movement / 生存属性 survival / 实体AI entityAI / 战斗投掷 combat /
@@ -233,6 +235,7 @@ export class Engine {
   arriveL9From: number | null = null // L5=住宅门口；L7=后院泳池；L8=道路尽头石洞
   arriveL10From: number | null = null // L9=田野边缘步道；L11=乡间主路旁
   arriveL11From: number | null = null
+  l1World?: L1WorldSave
   l11World?: L11WorldSave
   l11Weather: {kind:'calm'|'gust'|'rain'|'mist';t:number;k:number;wetness:number} = {kind:'calm',t:120,k:0,wetness:0}
   arriveL7SafeWater = false // L10 深湖抵达：落在安全水域并重置呼吸
@@ -244,6 +247,8 @@ export class Engine {
   // v29：本局已到过的层级（初始物资仅首次进 L0 刷新）
   visitedLevels = new Set<number>()
   // v35：据点——进入据点前的层级（据点出口 dest:'back' 的返程落点；随存档持久）
+  career = careerSystem.freshCareer()
+  activeStation: string | null = null
   outpostReturn: number | null = null
   el3aReliefClaimed = false // v43：本次进入 EL3A 是否已领过免费补给包（每次进入重置）
   // v35：本层 NPC（据点居民；不是实体——不进 m.entities，不可被 dev 召唤，换层重建）
@@ -429,6 +434,7 @@ export class Engine {
     this.arriveL7SafeWater = false
     this.arriveL8AvenueEnd = false
     this.l10Weather = { kind: 'calm', t: 80, k: 0, wetness: 0 }
+    this.l1World = undefined
     this.l11World = undefined
     this.l11Weather = {kind:'calm',t:120,k:0,wetness:0}
     this.l10Action = null
@@ -436,6 +442,7 @@ export class Engine {
     this.l9FogT = 240
     this.l9FogK = 0
     this.visitedLevels.clear() // 新一局重置到层记录（初始物资首访刷新用）
+    this.career = careerSystem.freshCareer()
     this.outpostReturn = null // 新一局清空据点返程记录（读档时由快照恢复）
     this.knownNpcs = [] // 新一局清空随机 NPC 记录（静态 NPC 由注册表恒定提供）
     this.rep = { meg: REP_START } // 新一局声望重置（MEG 默认友好；读档时由快照恢复）
@@ -456,6 +463,7 @@ export class Engine {
       this.difficulty = snap.difficulty ?? difficulty
       this.time = snap.time
       for (const id of snap.visited ?? []) this.visitedLevels.add(id)
+      this.career = careerSystem.restoreCareer(snap.career)
       this.outpostReturn = snap.outpostReturn ?? null
       this.rep = snap.rep ?? { meg: REP_START }
       this.quests = snap.quests ?? []
@@ -474,6 +482,7 @@ export class Engine {
       this.radio.perLevel = this.radio.perLevel ?? {}
       this.heardSongs = snap.heardSongs ?? []
       this.l10Weather = snap.l10Weather ?? { kind: 'calm', t: 80, k: 0, wetness: 0 }
+      this.l1World = snap.l1World
       this.l11World = snap.l11World
       this.l11Weather = snap.l11Weather ?? {kind:'calm',t:120,k:0,wetness:0}
       setRadioCfg(this.radio)
@@ -486,6 +495,7 @@ export class Engine {
         equip: { ...fresh.equip, ...(snap.player.equip ?? {}), pockets: snap.player.equip?.pockets ?? fresh.equip.pockets },
       }
       this.player.level = snap.level
+      if (!snap.settlementLayout && [101,102,103,104,116].includes(snap.level)) { this.player.x=this.map!.spawn.x; this.player.y=this.map!.spawn.y; this.player.z=0; this.player.floor=0 }
       const placement = level.restoreSavedPlayerPosition(this, snap.worldPos)
       if (snap.level === 8 && Array.isArray(snap.avenueMarks) && snap.avenueMarks.length > 0) {
         const restored = snap.avenueMarks.filter((mk) =>
@@ -838,6 +848,7 @@ export class Engine {
 
     // ---- 实体 AI ----
     this.updateEntities(dt, dm.dmg)
+    careerSystem.updateCareer(this, dt)
     this.trackQuests(dt) // v35：委托进度追踪
 
     // ---- v45：信众领地判定 / 教化诵咏 / 接触冷却（engine/npc.ts）----
@@ -936,3 +947,4 @@ export class Engine {
 }
 
 export const engine = new Engine()
+
