@@ -23,8 +23,14 @@ export interface GameSettings {
   renderScale: number // 原生分辨率渲染比例 50–100%；固定低分辨率档位不受此项影响
   dynamicRes: boolean
   dynamicResTarget: 30 | 45 | 60 // 动态分辨率追踪的目标帧率
+  maxPixelRatio: number // 最大设备像素比（DPR）
+  sceneLightLimit: 8 | 12 | 16 | 24 | 48 // 附近参与渲染的场景灯数量上限
+  chunkBudgetMs: number // 区块增量构建每帧预算（毫秒）
+  loadingBudgetMs: number // 入场暂停加载时每帧预算（毫秒）
+  hudRefreshRate: 4 | 8 | 12 // HUD 刷新频率（Hz）
   textureQuality: 0 | 1 | 2 // 纹理各向异性过滤：低/中/高
   detailDistance: number // 场景细节与室内陈设裁剪距离 50–150%
+  wallOcclusion: boolean // 室内陈设遮挡剔除
   particleDensity: number // 天气与层级环境粒子密度 0–100%
   shadowUpdateRate: 0 | 1 | 2 // 手电阴影刷新率：性能/平衡/流畅
   cameraFov: number // 基础视野角 60–90°
@@ -36,7 +42,7 @@ export interface GameSettings {
   lightMode: 'classic' | 'realistic' // 光影模式：classic=经典（当前版本）/ realistic=真实物理光照（默认 classic，可随时退回）
   shadowQuality: number // 阴影质量 0=低 1=中 2=高（手电/太阳 shadow map 尺寸与软影半径；仅 realistic）
   sunShadows: boolean // 自然光投影（室外太阳/月亮；仅 realistic）
-  lightShadows: number // 场景灯投影盏数：0=关，1/2/4 盏最近荧光灯立方体阴影（开销随盏数增加；仅 realistic）
+  lightShadows: number // 场景灯投影盏数：0=关，1/2/4 盏最近灯光阴影（经典模式控制 L9 路灯，真实模式控制全层场景灯；开销随盏数增加）
   bloomStrength: number // 泛光程度 0–100（仅 realistic 且泛光开启时生效）
   reflectivity: number // 反射强度 0–100（环境反射/水面反射；仅 realistic）
   bloomFx: boolean // 泛光（辉光后处理；仅 realistic）
@@ -67,7 +73,8 @@ export interface GameSettings {
 export const defaultSettings: GameSettings = {
   difficulty: 'normal', autoSprint: false,
   grain: true, shake: true, headBob: false, realWater: false, flicker: 70, renderResolution: 'native', renderScale: 100, dynamicRes: true, dynamicResTarget: 60, shadows: true, fogOfWar: true,
-  textureQuality: 1, detailDistance: 100, particleDensity: 100, shadowUpdateRate: 1, cameraFov: 72,
+  maxPixelRatio: 2, sceneLightLimit: 24, chunkBudgetMs: 3, loadingBudgetMs: 6, hudRefreshRate: 8,
+  textureQuality: 1, detailDistance: 100, wallOcclusion: true, particleDensity: 100, shadowUpdateRate: 1, cameraFov: 72,
   vcrFx: false, vcrStrength: 100, vcrScanlines: true,
   fogScale: 100, darknessBoost: 0, farLights: false,
   lightMode: 'classic', shadowQuality: 1, sunShadows: true, lightShadows: 0,
@@ -75,7 +82,7 @@ export const defaultSettings: GameSettings = {
   grainStrength: 50, scanlineStrength: 60, vignetteStrength: 18, colorGrade: 'neutral',
   volume: 80, ambient: 50, bgm: 100, sfx: 90, muted: false,
   bgmStyle: 'procedural',
-  preloadAllLevels: true,
+  preloadAllLevels: false,
   leftHanded: false, stickSize: 120, btnOpacity: 70,
   sensitivity: 1.0, devMode: false,
   theme: 'amber',
@@ -85,34 +92,45 @@ export const defaultSettings: GameSettings = {
 
 const TABS = ['游戏', '画面', '音频', '操作', '主题', 'API'] as const
 const GRAPHICS_TABS = ['基础', '光影', '性能', '氛围'] as const
-type GraphicsPreset = 'performance' | 'balanced' | 'immersive'
+type GraphicsPreset = 'performance' | 'balanced' | 'immersive' | 'mobile'
 
-const GRAPHICS_PRESETS: Record<GraphicsPreset, Partial<GameSettings>> = {
+export const GRAPHICS_PRESETS: Record<GraphicsPreset, Partial<GameSettings>> = {
   performance: {
-    renderResolution: 'native', renderScale: 75, dynamicRes: true, dynamicResTarget: 45, cameraFov: 70,
-    textureQuality: 0, detailDistance: 65, particleDensity: 25, shadowUpdateRate: 0,
-    shadows: false, shadowQuality: 0, farLights: false, lightMode: 'classic', sunShadows: false,
+    renderResolution: 'native', renderScale: 85, dynamicRes: true, dynamicResTarget: 60, maxPixelRatio: 1, sceneLightLimit: 12, chunkBudgetMs: 2, loadingBudgetMs: 4, hudRefreshRate: 4, cameraFov: 70,
+    textureQuality: 0, detailDistance: 65, wallOcclusion: true, particleDensity: 25, shadowUpdateRate: 0,
+    shadows: false, shadowQuality: 0, farLights: false, lightMode: 'classic', sunShadows: false, fogOfWar: true, fogScale: 85,
     lightShadows: 0, bloomFx: false, realWater: false, grain: false, vcrFx: false,
     vcrStrength: 60, vcrScanlines: false, shake: false, headBob: false, vignetteStrength: 0, scanlineStrength: 35,
     colorGrade: 'neutral', exposure: 100,
   },
   balanced: {
-    renderResolution: 'native', renderScale: 100, dynamicRes: true, dynamicResTarget: 60, cameraFov: 72,
-    textureQuality: 1, detailDistance: 100, particleDensity: 70, shadowUpdateRate: 1,
+    renderResolution: 'native', renderScale: 100, dynamicRes: true, dynamicResTarget: 60, maxPixelRatio: 1.5, sceneLightLimit: 24, chunkBudgetMs: 3, loadingBudgetMs: 6, hudRefreshRate: 8, fogOfWar: true, fogScale: 100, cameraFov: 72,
+    textureQuality: 1, detailDistance: 100, wallOcclusion: true, particleDensity: 70, shadowUpdateRate: 1,
     shadows: true, shadowQuality: 1, farLights: false, lightMode: 'classic', sunShadows: true,
     lightShadows: 0, bloomFx: true, bloomStrength: 35, reflectivity: 60, realWater: false,
     grain: true, grainStrength: 50, vcrFx: false, vcrStrength: 100, vcrScanlines: true, shake: true, headBob: false,
     flicker: 70, vignetteStrength: 18, scanlineStrength: 60, colorGrade: 'neutral', exposure: 100,
   },
   immersive: {
-    renderResolution: 'native', renderScale: 100, dynamicRes: false, dynamicResTarget: 60, cameraFov: 74,
-    textureQuality: 2, detailDistance: 140, particleDensity: 100, shadowUpdateRate: 2,
+    renderResolution: 'native', renderScale: 100, dynamicRes: false, dynamicResTarget: 60, maxPixelRatio: 2, sceneLightLimit: 48, chunkBudgetMs: 4, loadingBudgetMs: 8, hudRefreshRate: 12, fogOfWar: true, fogScale: 100, cameraFov: 74,
+    textureQuality: 2, detailDistance: 140, wallOcclusion: true, particleDensity: 100, shadowUpdateRate: 2,
     shadows: true, farLights: true, lightMode: 'realistic', shadowQuality: 2,
     sunShadows: true, lightShadows: 2, bloomFx: true, bloomStrength: 45, reflectivity: 80,
     realWater: true, grain: true, grainStrength: 42, vcrFx: false, vcrStrength: 100, vcrScanlines: true, shake: true,
     headBob: true, flicker: 70, vignetteStrength: 32, scanlineStrength: 50,
     colorGrade: 'liminal', exposure: 100,
   },
+  mobile: {
+    renderResolution: 'native', renderScale: 80, dynamicRes: true, dynamicResTarget: 60, maxPixelRatio: 1,
+    sceneLightLimit: 8, chunkBudgetMs: 1.5, loadingBudgetMs: 4, hudRefreshRate: 4, fogOfWar: true, fogScale: 85,
+    detailDistance: 65, wallOcclusion: true, particleDensity: 25, textureQuality: 0, shadows: false, shadowQuality: 0,
+    farLights: false, lightMode: 'classic', sunShadows: false, lightShadows: 0, bloomFx: false,
+    realWater: false, grain: false, vcrFx: false, vcrScanlines: false, shake: false, headBob: false,
+  },
+}
+
+export function createDefaultSettings(mobile = false): GameSettings {
+  return { ...defaultSettings, ...(mobile ? GRAPHICS_PRESETS.mobile : {}) }
 }
 
 const RESOLUTION_MODES: { id: RenderResolutionMode; label: string; sub: string; note: string }[] = [
@@ -276,8 +294,8 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
                 <div role="tabpanel">
                   <div className="mb-3 border p-3" style={{ borderColor: 'var(--panel-edge)', background: 'color-mix(in srgb, var(--amber) 5%, var(--panel))' }}>
                     <div className="mb-2 text-[13px] font-semibold" style={{ color: 'var(--amber)' }}>快捷预设</div>
-                    <div className="grid grid-cols-3 gap-2">
-                      {([['performance', '性能优先', '低负载'], ['balanced', '平衡', '推荐'], ['immersive', '沉浸优先', '高负载']] as const).map(([id, label, note]) => (
+                    <div className="grid grid-cols-4 gap-2">
+                      {([['performance', '性能优先', '低负载'], ['balanced', '平衡', '推荐'], ['immersive', '沉浸优先', '高负载'], ['mobile', '手机流畅', '移动端']] as const).map(([id, label, note]) => (
                         <button key={id} className="border px-2 py-2 text-[12px]" style={{ borderColor: 'var(--panel-edge)', color: 'var(--text)', background: 'var(--panel)' }} onClick={() => applyGraphicsPreset(id)}>
                           <span className="block">{label}</span>
                           <span className="font-mono2 text-[10px]" style={{ color: 'var(--text-dim)' }}>{note}</span>
@@ -338,7 +356,7 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
                       <button key={v} className="border px-2 py-2 text-[12px]" style={{ borderColor: settings.lightShadows === v ? 'var(--amber)' : 'var(--panel-edge)', color: settings.lightShadows === v ? 'var(--amber)' : 'var(--text-dim)', background: 'var(--panel)' }} onClick={() => set('lightShadows', v)}>{l}</button>
                     ))}
                   </div>
-                  {settings.lightMode === 'classic' && <div className="pt-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>自然光投影、场景灯投影、反射与泛光会保留设置值，但仅在真实模式中生效。</div>}
+                  {settings.lightMode === 'classic' && <div className="pt-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>自然光投影、反射与泛光仅在真实模式中生效；经典模式下 L9 路灯投影仍受此项控制。关闭投影可降低开销。</div>}
                   <Toggle k="fogOfWar" label="距离雾" value={settings.fogOfWar} onSet={setBool} />
                   <Slider k="fogScale" label="距离雾远近" value={settings.fogScale} onSet={setNum} min={50} max={200} step={5} valueLabel={`${settings.fogScale}%`} />
                   <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>50% = 更近更浓 · 100% = 默认 · 200% = 更远更淡。</div>
@@ -362,6 +380,22 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
                     ))}
                   </div>
                   <div className="pt-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>帧耗时持续超过目标时降低内部渲染比例，稳定后再逐步恢复。</div>
+                  <Slider k="maxPixelRatio" label="最大设备像素比（DPR）" value={settings.maxPixelRatio} onSet={setNum} min={0.75} max={2} step={0.25} valueLabel={`${settings.maxPixelRatio}×`} />
+                  <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>DPR 越高，GPU 需要绘制的像素越多；移动端可降低以减少发热和卡顿。</div>
+                  <div className="py-2 text-[14px]" style={{ color: 'var(--text)' }}>附近场景灯数量上限</div>
+                  <div className="grid grid-cols-5 gap-2">
+                    {([8, 12, 16, 24, 48] as const).map((v) => <button key={v} className="border px-2 py-2 text-[12px]" style={{ borderColor: settings.sceneLightLimit === v ? 'var(--amber)' : 'var(--panel-edge)', color: settings.sceneLightLimit === v ? 'var(--amber)' : 'var(--text-dim)', background: 'var(--panel)' }} onClick={() => set('sceneLightLimit', v)}>{v} 盏</button>)}
+                  </div>
+                  <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>只改变附近实际绘制的灯光数量，不改变世界生成。</div>
+                  <Slider k="chunkBudgetMs" label="游玩时区块每帧预算" value={settings.chunkBudgetMs} onSet={setNum} min={1} max={6} step={0.5} valueLabel={`${settings.chunkBudgetMs} ms`} />
+                  <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>预算越高区块完成越快，但单帧尖峰也越明显。</div>
+                  <Slider k="loadingBudgetMs" label="入场加载每帧预算" value={settings.loadingBudgetMs} onSet={setNum} min={1} max={8} step={0.5} valueLabel={`${settings.loadingBudgetMs} ms`} />
+                  <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>仅在暂停模拟、等待附近场景就绪时使用。提高可缩短入场等待，单帧耗时也会增加。</div>
+                  <div className="py-2 text-[14px]" style={{ color: 'var(--text)' }}>HUD 刷新频率</div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {([4, 8, 12] as const).map((v) => <button key={v} className="border px-2 py-2 text-[12px]" style={{ borderColor: settings.hudRefreshRate === v ? 'var(--amber)' : 'var(--panel-edge)', color: settings.hudRefreshRate === v ? 'var(--amber)' : 'var(--text-dim)', background: 'var(--panel)' }} onClick={() => set('hudRefreshRate', v)}>{v} Hz</button>)}
+                  </div>
+                  <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>只影响 HUD 刷新，不改变输入和游戏逻辑 tick。</div>
                   <div className="py-2 text-[14px]" style={{ color: 'var(--text)' }}>纹理过滤质量</div>
                   <div className="grid grid-cols-3 gap-2">
                     {([[0, '低'], [1, '中'], [2, '高']] as const).map(([v, l]) => (
@@ -371,7 +405,9 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
                   <div className="pt-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>控制斜视地面与远处墙面的各向异性过滤，越高越清晰，也会增加显存带宽占用。</div>
                   <Slider k="detailDistance" label="细节裁剪距离" value={settings.detailDistance} onSet={setNum} min={50} max={150} step={5} valueLabel={`${settings.detailDistance}%`} />
                   <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>调整 L9/L10 房屋内饰的显示距离；降低可明显减少郊区与农田建筑附近的绘制量。</div>
-                  <Slider k="particleDensity" label="天气粒子密度" value={settings.particleDensity} onSet={setNum} min={0} max={100} step={10} valueLabel={`${settings.particleDensity}%`} />
+                  <Toggle k="wallOcclusion" label="室内遮挡剔除" value={settings.wallOcclusion} onSet={setBool} />
+                  <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>跳过实体墙后完全不可见的陈设；适用于办公室、酒店和据点，开启实时阴影时自动停用。</div>
+                  <Slider k="particleDensity" label="天气粒子密度" value={settings.particleDensity} onSet={setNum} min={0} max={100} step={5} valueLabel={`${settings.particleDensity}%`} />
                   <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>控制雨丝等层级天气粒子的数量，不会重新启用已删除的全局漂浮尘埃。</div>
                   <Toggle k="realWater" label="真实水体（涌浪、波光与反射）" value={settings.realWater} onSet={setBool} />
                   <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>关闭后使用低成本平面水体；不影响游泳、出口与其他玩法判定。</div>

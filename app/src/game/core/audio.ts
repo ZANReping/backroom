@@ -66,6 +66,8 @@ export class GameAudio {
   private bufLayer: { gain: GainNode; src: AudioBufferSourceNode; buf: AudioBuffer; songId: string; startAt: number; offset: number; paused: boolean; dead: boolean } | null = null
   private oneshotBuf: { gain: GainNode; src: AudioBufferSourceNode; dead: boolean } | null = null
   private songBufCache = new Map<string, AudioBuffer>()
+  private noiseBufferCtx: AudioContext | null = null
+  private noiseBuffer: AudioBuffer | null = null
   // v56 四轮：电台试听层（电台管理页预览曲目——循环/单次播放，支持暂停恢复；试听期间暂停 BGM）
   private preview: {
     songId: string
@@ -385,9 +387,12 @@ export class GameAudio {
 
   private noiseBuf(): AudioBuffer {
     const ctx = this.ctx!
+    if (this.noiseBufferCtx === ctx && this.noiseBuffer) return this.noiseBuffer
     const buf = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate)
     const d = buf.getChannelData(0)
     for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1
+    this.noiseBufferCtx = ctx
+    this.noiseBuffer = buf
     return buf
   }
   private noiseSrc(): AudioBufferSourceNode {
@@ -658,6 +663,17 @@ export class GameAudio {
     g.gain.setValueAtTime(0.03, this.ctx.currentTime)
     g.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.03)
     o.connect(g).connect(this.sfx); o.start(); o.stop(this.ctx.currentTime + 0.04)
+  }
+
+  // Dry machinery rumble with a brief pipe-water drip; the room owns its scheduling.
+  boilerPulse(vol=.5) {
+    if(!this.ctx||!this.sfx)return
+    const t=this.ctx.currentTime,n=this.noiseSrc(),f=this.ctx.createBiquadFilter(),g=this.ctx.createGain()
+    f.type='lowpass';f.frequency.value=170;g.gain.setValueAtTime(.001,t);g.gain.linearRampToValueAtTime(.08*vol,t+.2);g.gain.exponentialRampToValueAtTime(.001,t+2.5)
+    n.connect(f).connect(g).connect(this.sfx);n.start();n.stop(t+2.6)
+    const o=this.ctx.createOscillator(),d=this.ctx.createGain();o.type='sine';o.frequency.setValueAtTime(1250,t+.5);o.frequency.exponentialRampToValueAtTime(460,t+.63)
+    d.gain.setValueAtTime(.001,t);d.gain.setValueAtTime(.025*vol,t+.5);d.gain.exponentialRampToValueAtTime(.001,t+.72)
+    o.connect(d).connect(this.sfx);o.start();o.stop(t+.75)
   }
 
   // 心跳（HP<30）

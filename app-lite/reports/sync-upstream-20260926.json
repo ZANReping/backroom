@@ -1,0 +1,1767 @@
+{
+  "generated_at": "2026-09-26",
+  "scope": [
+    "src",
+    "scripts"
+  ],
+  "excluded": [
+    "src/App.tsx",
+    "src/components/HUD.tsx",
+    "src/components/SettingsModal.tsx"
+  ],
+  "added_count": 59,
+  "updated_count": 42,
+  "kept_count": 166,
+  "excluded_count": 0,
+  "files": [
+    {
+      "path": "scripts/.cache-l105/Concrete046.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "72BF4321ACBB39DDBC3B786F5996813B2A3CEDE12EFEFB47955E97EA9668985B",
+      "lite_sha256": "72BF4321ACBB39DDBC3B786F5996813B2A3CEDE12EFEFB47955E97EA9668985B",
+      "baseline_sha256": "72BF4321ACBB39DDBC3B786F5996813B2A3CEDE12EFEFB47955E97EA9668985B"
+    },
+    {
+      "path": "scripts/.cache-l105/CorrugatedSteel009.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "FA917CBA8BBF4CEB645CF27E4C1A4A17621D3B1AD44A4125997CDD05662711FB",
+      "lite_sha256": "FA917CBA8BBF4CEB645CF27E4C1A4A17621D3B1AD44A4125997CDD05662711FB",
+      "baseline_sha256": "FA917CBA8BBF4CEB645CF27E4C1A4A17621D3B1AD44A4125997CDD05662711FB"
+    },
+    {
+      "path": "scripts/.cache-l105/Metal032.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "9E4F363905A647958C273154FA125D2A6440892D0E583F9B3AF24BB08B5AFC3C",
+      "lite_sha256": "9E4F363905A647958C273154FA125D2A6440892D0E583F9B3AF24BB08B5AFC3C",
+      "baseline_sha256": "9E4F363905A647958C273154FA125D2A6440892D0E583F9B3AF24BB08B5AFC3C"
+    },
+    {
+      "path": "scripts/.cache-l105/OfficeCeiling001.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "925EF7003375852B80096A46A9A06DB3EEEE789C99680F789868ACB47386D5BD",
+      "lite_sha256": "925EF7003375852B80096A46A9A06DB3EEEE789C99680F789868ACB47386D5BD",
+      "baseline_sha256": "925EF7003375852B80096A46A9A06DB3EEEE789C99680F789868ACB47386D5BD"
+    },
+    {
+      "path": "scripts/.cache-l105/OfficeCeiling003.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "A111AC029D0D4152DB15E5DBA07391AC96E0A62991D935A52DA7CD1BC3F4F890",
+      "lite_sha256": "A111AC029D0D4152DB15E5DBA07391AC96E0A62991D935A52DA7CD1BC3F4F890",
+      "baseline_sha256": "A111AC029D0D4152DB15E5DBA07391AC96E0A62991D935A52DA7CD1BC3F4F890"
+    },
+    {
+      "path": "scripts/.cache-l105/OfficeCeiling004.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "828036E495DDEE2AFAC8007EB89DB1C006A7B877B20BD9181F4D230ADA65CD3B",
+      "lite_sha256": "828036E495DDEE2AFAC8007EB89DB1C006A7B877B20BD9181F4D230ADA65CD3B",
+      "baseline_sha256": "828036E495DDEE2AFAC8007EB89DB1C006A7B877B20BD9181F4D230ADA65CD3B"
+    },
+    {
+      "path": "scripts/.cache-l105/prev/corr.jpg",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "C18A0600E024AEBE90F5C8844A3EF586329071CBC832F592F9AE29A44823525B",
+      "lite_sha256": "C18A0600E024AEBE90F5C8844A3EF586329071CBC832F592F9AE29A44823525B",
+      "baseline_sha256": "C18A0600E024AEBE90F5C8844A3EF586329071CBC832F592F9AE29A44823525B"
+    },
+    {
+      "path": "scripts/.cache-l105/prev/oc1.jpg",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "36420ADBE3017FBFBD6715C2BDD07F0245EB4179FA51DD4629218F333D7600BC",
+      "lite_sha256": "36420ADBE3017FBFBD6715C2BDD07F0245EB4179FA51DD4629218F333D7600BC",
+      "baseline_sha256": "36420ADBE3017FBFBD6715C2BDD07F0245EB4179FA51DD4629218F333D7600BC"
+    },
+    {
+      "path": "scripts/.cache-l105/prev/oc3.jpg",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "8EBE5E49A4B5F3616894A7721315EA335D765387176BA025A5172C6A9EB78BC2",
+      "lite_sha256": "8EBE5E49A4B5F3616894A7721315EA335D765387176BA025A5172C6A9EB78BC2",
+      "baseline_sha256": "8EBE5E49A4B5F3616894A7721315EA335D765387176BA025A5172C6A9EB78BC2"
+    },
+    {
+      "path": "scripts/.cache-l106/PaintedPlaster015.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "792B97898CD4F583059DE5EAFD62293A11A44834EC9B771BF1A515D98C464D03",
+      "lite_sha256": "792B97898CD4F583059DE5EAFD62293A11A44834EC9B771BF1A515D98C464D03",
+      "baseline_sha256": "792B97898CD4F583059DE5EAFD62293A11A44834EC9B771BF1A515D98C464D03"
+    },
+    {
+      "path": "scripts/.cache-l106/PaintedPlaster017.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "BAE0380D82B6CCAC8943B4980417CB3C9DE5C896218339C108056F1DFB8E886C",
+      "lite_sha256": "BAE0380D82B6CCAC8943B4980417CB3C9DE5C896218339C108056F1DFB8E886C",
+      "baseline_sha256": "BAE0380D82B6CCAC8943B4980417CB3C9DE5C896218339C108056F1DFB8E886C"
+    },
+    {
+      "path": "scripts/.cache-l106/Tiles006.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "157EA1972C6C6BAB52422F374FB5C47DACA8606F56E8694595F531E83082F6DB",
+      "lite_sha256": "157EA1972C6C6BAB52422F374FB5C47DACA8606F56E8694595F531E83082F6DB",
+      "baseline_sha256": "157EA1972C6C6BAB52422F374FB5C47DACA8606F56E8694595F531E83082F6DB"
+    },
+    {
+      "path": "scripts/.cache-l107/Concrete028.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "2066EA54217064847CD0295027106017B7BD290898C384CCB2CBADE4E59DFC45",
+      "lite_sha256": "2066EA54217064847CD0295027106017B7BD290898C384CCB2CBADE4E59DFC45",
+      "baseline_sha256": "2066EA54217064847CD0295027106017B7BD290898C384CCB2CBADE4E59DFC45"
+    },
+    {
+      "path": "scripts/.cache-l107/CorrugatedSteel003.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "0BAD36B34CF9D0E445C06B125FCBB7EA78074505D85051087FABB37ACFA18CA1",
+      "lite_sha256": "0BAD36B34CF9D0E445C06B125FCBB7EA78074505D85051087FABB37ACFA18CA1",
+      "baseline_sha256": "0BAD36B34CF9D0E445C06B125FCBB7EA78074505D85051087FABB37ACFA18CA1"
+    },
+    {
+      "path": "scripts/.cache-l107/PaintedPlaster016.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "7CB21AB2F0DBE7B599BA31C0140C0B85A100E30A0406E66502C18D067EC8F60E",
+      "lite_sha256": "7CB21AB2F0DBE7B599BA31C0140C0B85A100E30A0406E66502C18D067EC8F60E",
+      "baseline_sha256": "7CB21AB2F0DBE7B599BA31C0140C0B85A100E30A0406E66502C18D067EC8F60E"
+    },
+    {
+      "path": "scripts/.cache-l108/Bricks060.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "E8DCE6FD843FCE863BD60AA118AE904D52CEF020B4DB7D343A2E389FC489AC6F",
+      "lite_sha256": "E8DCE6FD843FCE863BD60AA118AE904D52CEF020B4DB7D343A2E389FC489AC6F",
+      "baseline_sha256": "E8DCE6FD843FCE863BD60AA118AE904D52CEF020B4DB7D343A2E389FC489AC6F"
+    },
+    {
+      "path": "scripts/.cache-l108/PaintedPlaster013.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "6AF62729CBEA466D35BD2482D3B20C989518E32D7633928E301CAF423B2795DB",
+      "lite_sha256": "6AF62729CBEA466D35BD2482D3B20C989518E32D7633928E301CAF423B2795DB",
+      "baseline_sha256": "6AF62729CBEA466D35BD2482D3B20C989518E32D7633928E301CAF423B2795DB"
+    },
+    {
+      "path": "scripts/.cache-l108/PavingStones142.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "13F354AFEE9EB22C73257610CA0CF2B4FE24DB97F990B524C36BCDC7202C2EAD",
+      "lite_sha256": "13F354AFEE9EB22C73257610CA0CF2B4FE24DB97F990B524C36BCDC7202C2EAD",
+      "baseline_sha256": "13F354AFEE9EB22C73257610CA0CF2B4FE24DB97F990B524C36BCDC7202C2EAD"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet001.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "BEC873D752D1142271332BC7C1F2B92A98BD1F1B0CFEA122DABECFDA142921E9",
+      "lite_sha256": "BEC873D752D1142271332BC7C1F2B92A98BD1F1B0CFEA122DABECFDA142921E9",
+      "baseline_sha256": "BEC873D752D1142271332BC7C1F2B92A98BD1F1B0CFEA122DABECFDA142921E9"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet003.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "08811E369830A3B62611E08EC1CBFE888B4112B03D60ED81FA497F76235D3D43",
+      "lite_sha256": "08811E369830A3B62611E08EC1CBFE888B4112B03D60ED81FA497F76235D3D43",
+      "baseline_sha256": "08811E369830A3B62611E08EC1CBFE888B4112B03D60ED81FA497F76235D3D43"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet004.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "2FF862BBBE8C2BE927330F1A638B7E00E3FF55DD5F8E0950DCBDFF2927827D8F",
+      "lite_sha256": "2FF862BBBE8C2BE927330F1A638B7E00E3FF55DD5F8E0950DCBDFF2927827D8F",
+      "baseline_sha256": "2FF862BBBE8C2BE927330F1A638B7E00E3FF55DD5F8E0950DCBDFF2927827D8F"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet005.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "7DAC07CA3A470BAA99BACFA5639743D38FF963CB64E13969B4A2D60BBD7E9589",
+      "lite_sha256": "7DAC07CA3A470BAA99BACFA5639743D38FF963CB64E13969B4A2D60BBD7E9589",
+      "baseline_sha256": "7DAC07CA3A470BAA99BACFA5639743D38FF963CB64E13969B4A2D60BBD7E9589"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet006.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "9984D74F4189D3E58A40CD6FED447025DDB8A68C89455F06C129B396B0F76FDD",
+      "lite_sha256": "9984D74F4189D3E58A40CD6FED447025DDB8A68C89455F06C129B396B0F76FDD",
+      "baseline_sha256": "9984D74F4189D3E58A40CD6FED447025DDB8A68C89455F06C129B396B0F76FDD"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet007.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "C71C57E4830DCF93606269F58FE2265F9BEFD1C928FC913A30278A212C87AF39",
+      "lite_sha256": "C71C57E4830DCF93606269F58FE2265F9BEFD1C928FC913A30278A212C87AF39",
+      "baseline_sha256": "C71C57E4830DCF93606269F58FE2265F9BEFD1C928FC913A30278A212C87AF39"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet008.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "D5FC4E9F02160287BDB2825F89E4D17AA71D4BA576113516621F177265796081",
+      "lite_sha256": "D5FC4E9F02160287BDB2825F89E4D17AA71D4BA576113516621F177265796081",
+      "baseline_sha256": "D5FC4E9F02160287BDB2825F89E4D17AA71D4BA576113516621F177265796081"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet009.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "3AE3D89947B1322B7737981A295603704BE803F575E0A7D1EAEBB9A56360FF13",
+      "lite_sha256": "3AE3D89947B1322B7737981A295603704BE803F575E0A7D1EAEBB9A56360FF13",
+      "baseline_sha256": "3AE3D89947B1322B7737981A295603704BE803F575E0A7D1EAEBB9A56360FF13"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet010.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "2B96E4DF92CE72FA9D17AC69CF4D07AE2507E38CBD417C3B6C37EA1786F67F69",
+      "lite_sha256": "2B96E4DF92CE72FA9D17AC69CF4D07AE2507E38CBD417C3B6C37EA1786F67F69",
+      "baseline_sha256": "2B96E4DF92CE72FA9D17AC69CF4D07AE2507E38CBD417C3B6C37EA1786F67F69"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet011.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "17C4FB9A32D07C5FCE60656996FF4D147625DE094CF9EF1EDA3B2EE5B9A55BE5",
+      "lite_sha256": "17C4FB9A32D07C5FCE60656996FF4D147625DE094CF9EF1EDA3B2EE5B9A55BE5",
+      "baseline_sha256": "17C4FB9A32D07C5FCE60656996FF4D147625DE094CF9EF1EDA3B2EE5B9A55BE5"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet012.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "9A9890F944F36FE318E04DBEC09E17DDDFB25AE3DBF5F15A63987303611C65FF",
+      "lite_sha256": "9A9890F944F36FE318E04DBEC09E17DDDFB25AE3DBF5F15A63987303611C65FF",
+      "baseline_sha256": "9A9890F944F36FE318E04DBEC09E17DDDFB25AE3DBF5F15A63987303611C65FF"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet013.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "77254E2877771524423A6EF8CE2E61AA3EC42EE5962D81D9B328A258AFED7E1E",
+      "lite_sha256": "77254E2877771524423A6EF8CE2E61AA3EC42EE5962D81D9B328A258AFED7E1E",
+      "baseline_sha256": "77254E2877771524423A6EF8CE2E61AA3EC42EE5962D81D9B328A258AFED7E1E"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet014.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "D54FAF570621B25BA54969759F89A7406F945FAA986CA96129773CB9A444964C",
+      "lite_sha256": "D54FAF570621B25BA54969759F89A7406F945FAA986CA96129773CB9A444964C",
+      "baseline_sha256": "D54FAF570621B25BA54969759F89A7406F945FAA986CA96129773CB9A444964C"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet016.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "B9E67B5D42CB47CEAD082DEDAE3767AE228175C857B6B3AF6FE7BD4E69237B81",
+      "lite_sha256": "B9E67B5D42CB47CEAD082DEDAE3767AE228175C857B6B3AF6FE7BD4E69237B81",
+      "baseline_sha256": "B9E67B5D42CB47CEAD082DEDAE3767AE228175C857B6B3AF6FE7BD4E69237B81"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet018.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "5A277CD5A8D89EA9E8340E56C2C1D27AF0D2B6085968C3FDA9D0F4B2AD7DFE86",
+      "lite_sha256": "5A277CD5A8D89EA9E8340E56C2C1D27AF0D2B6085968C3FDA9D0F4B2AD7DFE86",
+      "baseline_sha256": "5A277CD5A8D89EA9E8340E56C2C1D27AF0D2B6085968C3FDA9D0F4B2AD7DFE86"
+    },
+    {
+      "path": "scripts/.cache-l109/OfficeCeiling007.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "5A277CD5A8D89EA9E8340E56C2C1D27AF0D2B6085968C3FDA9D0F4B2AD7DFE86",
+      "lite_sha256": "5A277CD5A8D89EA9E8340E56C2C1D27AF0D2B6085968C3FDA9D0F4B2AD7DFE86",
+      "baseline_sha256": "5A277CD5A8D89EA9E8340E56C2C1D27AF0D2B6085968C3FDA9D0F4B2AD7DFE86"
+    },
+    {
+      "path": "scripts/.cache-l109/PaintedPlaster001.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "A5A1F2B9385BCC7CB9EB25A387CA39FD4D779A43B19FCC193136F4685CE5A1A0",
+      "lite_sha256": "A5A1F2B9385BCC7CB9EB25A387CA39FD4D779A43B19FCC193136F4685CE5A1A0",
+      "baseline_sha256": "A5A1F2B9385BCC7CB9EB25A387CA39FD4D779A43B19FCC193136F4685CE5A1A0"
+    },
+    {
+      "path": "scripts/.cache-l109/PaintedPlaster003.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "7D396FB54B4B9B35D7ACAB97BEF0E478F6F60BEC9759203344D1FE8D85FC95DF",
+      "lite_sha256": "7D396FB54B4B9B35D7ACAB97BEF0E478F6F60BEC9759203344D1FE8D85FC95DF",
+      "baseline_sha256": "7D396FB54B4B9B35D7ACAB97BEF0E478F6F60BEC9759203344D1FE8D85FC95DF"
+    },
+    {
+      "path": "scripts/.cache-l109/PaintedPlaster004.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "2C3D1D3985B41541415828E38E08C003C1989C45F92E71D02E97D41E43756D07",
+      "lite_sha256": "2C3D1D3985B41541415828E38E08C003C1989C45F92E71D02E97D41E43756D07",
+      "baseline_sha256": "2C3D1D3985B41541415828E38E08C003C1989C45F92E71D02E97D41E43756D07"
+    },
+    {
+      "path": "scripts/.cache-l109/PaintedPlaster005.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "393EBFEA036711B82665CAFB1813B1A2AA5E75EA8C8C6794619F4322502A4D54",
+      "lite_sha256": "393EBFEA036711B82665CAFB1813B1A2AA5E75EA8C8C6794619F4322502A4D54",
+      "baseline_sha256": "393EBFEA036711B82665CAFB1813B1A2AA5E75EA8C8C6794619F4322502A4D54"
+    },
+    {
+      "path": "scripts/.cache-l109/PaintedPlaster006.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "D892E5E8C5C048FF00018D4C39AD9430187BE5657A482778ADA18C1B623E15B5",
+      "lite_sha256": "D892E5E8C5C048FF00018D4C39AD9430187BE5657A482778ADA18C1B623E15B5",
+      "baseline_sha256": "D892E5E8C5C048FF00018D4C39AD9430187BE5657A482778ADA18C1B623E15B5"
+    },
+    {
+      "path": "scripts/.cache-l109/PaintedPlaster007.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "202D1D62EC4A0AEA3678D77A6A4AE4E9FB1E3A49A64BF53534EDC6104CD8B37D",
+      "lite_sha256": "202D1D62EC4A0AEA3678D77A6A4AE4E9FB1E3A49A64BF53534EDC6104CD8B37D",
+      "baseline_sha256": "202D1D62EC4A0AEA3678D77A6A4AE4E9FB1E3A49A64BF53534EDC6104CD8B37D"
+    },
+    {
+      "path": "scripts/.cache-l109/PaintedPlaster008.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "A7CF13D49143342A385C69D611D656F051628583BE710BEECAA8EB2A74C845F8",
+      "lite_sha256": "A7CF13D49143342A385C69D611D656F051628583BE710BEECAA8EB2A74C845F8",
+      "baseline_sha256": "A7CF13D49143342A385C69D611D656F051628583BE710BEECAA8EB2A74C845F8"
+    },
+    {
+      "path": "scripts/.cache-l109/PaintedPlaster009.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "9883D56972FB1497ACB4BD32209078133EF7CA36639918043C9C2E87B062AE94",
+      "lite_sha256": "9883D56972FB1497ACB4BD32209078133EF7CA36639918043C9C2E87B062AE94",
+      "baseline_sha256": "9883D56972FB1497ACB4BD32209078133EF7CA36639918043C9C2E87B062AE94"
+    },
+    {
+      "path": "scripts/.cache-l109/PaintedPlaster010.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "8755D4560396C038F0E924AD52463CA8830F3F7AC9F6AAFD008FFC96DF6DF5F4",
+      "lite_sha256": "8755D4560396C038F0E924AD52463CA8830F3F7AC9F6AAFD008FFC96DF6DF5F4",
+      "baseline_sha256": "8755D4560396C038F0E924AD52463CA8830F3F7AC9F6AAFD008FFC96DF6DF5F4"
+    },
+    {
+      "path": "scripts/.cache-l109/PaintedPlaster011.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "612809517D7117C147621B7B2EF306CF452F00E0985625266ABFEB8BCBEAF66B",
+      "lite_sha256": "612809517D7117C147621B7B2EF306CF452F00E0985625266ABFEB8BCBEAF66B",
+      "baseline_sha256": "612809517D7117C147621B7B2EF306CF452F00E0985625266ABFEB8BCBEAF66B"
+    },
+    {
+      "path": "scripts/.cache-l109/PaintedPlaster012.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "AC4FC8594DB7FC0123BC6785E6952FEC1BD9E30C81F47E9C5BB9214B975B10D9",
+      "lite_sha256": "AC4FC8594DB7FC0123BC6785E6952FEC1BD9E30C81F47E9C5BB9214B975B10D9",
+      "baseline_sha256": "AC4FC8594DB7FC0123BC6785E6952FEC1BD9E30C81F47E9C5BB9214B975B10D9"
+    },
+    {
+      "path": "scripts/.cache-l109/PaintedPlaster014.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "C774A7D466CAA7D8DBA584B581E9DCF914745BF12F64E78EB848CA89AFEAD6E8",
+      "lite_sha256": "C774A7D466CAA7D8DBA584B581E9DCF914745BF12F64E78EB848CA89AFEAD6E8",
+      "baseline_sha256": "C774A7D466CAA7D8DBA584B581E9DCF914745BF12F64E78EB848CA89AFEAD6E8"
+    },
+    {
+      "path": "scripts/.cache-l109/Plaster008.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "5A277CD5A8D89EA9E8340E56C2C1D27AF0D2B6085968C3FDA9D0F4B2AD7DFE86",
+      "lite_sha256": "5A277CD5A8D89EA9E8340E56C2C1D27AF0D2B6085968C3FDA9D0F4B2AD7DFE86",
+      "baseline_sha256": "5A277CD5A8D89EA9E8340E56C2C1D27AF0D2B6085968C3FDA9D0F4B2AD7DFE86"
+    },
+    {
+      "path": "scripts/.cache-l109/Plaster009.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "5A277CD5A8D89EA9E8340E56C2C1D27AF0D2B6085968C3FDA9D0F4B2AD7DFE86",
+      "lite_sha256": "5A277CD5A8D89EA9E8340E56C2C1D27AF0D2B6085968C3FDA9D0F4B2AD7DFE86",
+      "baseline_sha256": "5A277CD5A8D89EA9E8340E56C2C1D27AF0D2B6085968C3FDA9D0F4B2AD7DFE86"
+    },
+    {
+      "path": "scripts/.cache-l109/Tiles074.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "28A40CB36D3C265F17C798C52AA3EA7CDCB8C949B80C49692B0A855E9637C677",
+      "lite_sha256": "28A40CB36D3C265F17C798C52AA3EA7CDCB8C949B80C49692B0A855E9637C677",
+      "baseline_sha256": "28A40CB36D3C265F17C798C52AA3EA7CDCB8C949B80C49692B0A855E9637C677"
+    },
+    {
+      "path": "scripts/.cache-l109/Tiles075.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "A4BFC4EF65A7A20D6342753DF3AFD8CA98C6D4E7FCB0F937B11D08141BB8735B",
+      "lite_sha256": "A4BFC4EF65A7A20D6342753DF3AFD8CA98C6D4E7FCB0F937B11D08141BB8735B",
+      "baseline_sha256": "A4BFC4EF65A7A20D6342753DF3AFD8CA98C6D4E7FCB0F937B11D08141BB8735B"
+    },
+    {
+      "path": "scripts/.cache-l274/Bricks051.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "C23D3D459E1A73F3D8A0B83606571C6172E485F544FF4605D1CB37EB637BFDFD",
+      "lite_sha256": "C23D3D459E1A73F3D8A0B83606571C6172E485F544FF4605D1CB37EB637BFDFD",
+      "baseline_sha256": "C23D3D459E1A73F3D8A0B83606571C6172E485F544FF4605D1CB37EB637BFDFD"
+    },
+    {
+      "path": "scripts/.cache-l274/OfficeCeiling003.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "A111AC029D0D4152DB15E5DBA07391AC96E0A62991D935A52DA7CD1BC3F4F890",
+      "lite_sha256": "A111AC029D0D4152DB15E5DBA07391AC96E0A62991D935A52DA7CD1BC3F4F890",
+      "baseline_sha256": "A111AC029D0D4152DB15E5DBA07391AC96E0A62991D935A52DA7CD1BC3F4F890"
+    },
+    {
+      "path": "scripts/.cache-l274/PavingStones128.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "0A507F47FA86318DED7C128C1B7548AC5D6A50AE233905C2015DC2F704AC0D35",
+      "lite_sha256": "0A507F47FA86318DED7C128C1B7548AC5D6A50AE233905C2015DC2F704AC0D35",
+      "baseline_sha256": "0A507F47FA86318DED7C128C1B7548AC5D6A50AE233905C2015DC2F704AC0D35"
+    },
+    {
+      "path": "scripts/.cache-l3/bricks059.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "847DD2E4932563BBB67FDC2BAD3CC08DB72D74B3E81D242F31B663D8A3EA744B",
+      "lite_sha256": "847DD2E4932563BBB67FDC2BAD3CC08DB72D74B3E81D242F31B663D8A3EA744B",
+      "baseline_sha256": "847DD2E4932563BBB67FDC2BAD3CC08DB72D74B3E81D242F31B663D8A3EA744B"
+    },
+    {
+      "path": "scripts/.cache-l3/Bricks059_Color.jpg",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "22B53EC9143B348AE26ED958CDFAA8977195C8DAF534DC219F72DD10F2728E7A",
+      "lite_sha256": "22B53EC9143B348AE26ED958CDFAA8977195C8DAF534DC219F72DD10F2728E7A",
+      "baseline_sha256": "22B53EC9143B348AE26ED958CDFAA8977195C8DAF534DC219F72DD10F2728E7A"
+    },
+    {
+      "path": "scripts/.cache-l3/level3.html",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "7ED929471E3109568BC7E971F60CD41DB4215E939C0DFCC7473DD8F41F929363",
+      "lite_sha256": "7ED929471E3109568BC7E971F60CD41DB4215E939C0DFCC7473DD8F41F929363",
+      "baseline_sha256": "7ED929471E3109568BC7E971F60CD41DB4215E939C0DFCC7473DD8F41F929363"
+    },
+    {
+      "path": "scripts/.cache-l3/level3.txt",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "A2E12F7FD7E68B12872157F118475F2DF63ABFB3093D070EDFA538C440E3CDAB",
+      "lite_sha256": "A2E12F7FD7E68B12872157F118475F2DF63ABFB3093D070EDFA538C440E3CDAB",
+      "baseline_sha256": "A2E12F7FD7E68B12872157F118475F2DF63ABFB3093D070EDFA538C440E3CDAB"
+    },
+    {
+      "path": "scripts/.cache-l3/Marble008-prev.jpg",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "54881CFA7277FFE3D7ADB4B4567EA02CFD4183E4914A6AC4FB8385187282732E",
+      "lite_sha256": "54881CFA7277FFE3D7ADB4B4567EA02CFD4183E4914A6AC4FB8385187282732E",
+      "baseline_sha256": "54881CFA7277FFE3D7ADB4B4567EA02CFD4183E4914A6AC4FB8385187282732E"
+    },
+    {
+      "path": "scripts/.cache-l3/Marble008.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "3728A4E51DC7963FEB42F3910FA215B2E78B9D61955BA682EB57CFBF56B8F2C6",
+      "lite_sha256": "3728A4E51DC7963FEB42F3910FA215B2E78B9D61955BA682EB57CFBF56B8F2C6",
+      "baseline_sha256": "3728A4E51DC7963FEB42F3910FA215B2E78B9D61955BA682EB57CFBF56B8F2C6"
+    },
+    {
+      "path": "scripts/.cache-l3/Marble012-prev.jpg",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "21BAB43D2C2D35D14C3A2D6C5BFE7B69C8B97FA1919CB1C570A32412300267FC",
+      "lite_sha256": "21BAB43D2C2D35D14C3A2D6C5BFE7B69C8B97FA1919CB1C570A32412300267FC",
+      "baseline_sha256": "21BAB43D2C2D35D14C3A2D6C5BFE7B69C8B97FA1919CB1C570A32412300267FC"
+    },
+    {
+      "path": "scripts/.cache-l3/Marble012.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "B04384C6D49CE73BAEB70DB7EA4ABFE9948FC9B74B9FD92C3766970662BF2C43",
+      "lite_sha256": "B04384C6D49CE73BAEB70DB7EA4ABFE9948FC9B74B9FD92C3766970662BF2C43",
+      "baseline_sha256": "B04384C6D49CE73BAEB70DB7EA4ABFE9948FC9B74B9FD92C3766970662BF2C43"
+    },
+    {
+      "path": "scripts/.cache-l3/Tiles074-prev.jpg",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "F8BDD56A04E7872066EA08B358BB17D2A065D7D451DA20B05CA74EAEAE26B714",
+      "lite_sha256": "F8BDD56A04E7872066EA08B358BB17D2A065D7D451DA20B05CA74EAEAE26B714",
+      "baseline_sha256": "F8BDD56A04E7872066EA08B358BB17D2A065D7D451DA20B05CA74EAEAE26B714"
+    },
+    {
+      "path": "scripts/.cache-l3/Tiles074.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "28A40CB36D3C265F17C798C52AA3EA7CDCB8C949B80C49692B0A855E9637C677",
+      "lite_sha256": "28A40CB36D3C265F17C798C52AA3EA7CDCB8C949B80C49692B0A855E9637C677",
+      "baseline_sha256": "28A40CB36D3C265F17C798C52AA3EA7CDCB8C949B80C49692B0A855E9637C677"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Asphalt019.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "1C475CB52AE9F3DA03E4EB5BB423C75CA0FABD04E4C94C18CD765851BC532D25",
+      "lite_sha256": "1C475CB52AE9F3DA03E4EB5BB423C75CA0FABD04E4C94C18CD765851BC532D25",
+      "baseline_sha256": "1C475CB52AE9F3DA03E4EB5BB423C75CA0FABD04E4C94C18CD765851BC532D25"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Asphalt022.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "A7909557AFFE02FE6C01892F014AE27EA496768B4EDB1C1186B8349616885E21",
+      "lite_sha256": "A7909557AFFE02FE6C01892F014AE27EA496768B4EDB1C1186B8349616885E21",
+      "baseline_sha256": "A7909557AFFE02FE6C01892F014AE27EA496768B4EDB1C1186B8349616885E21"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Bricks042.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "52EF86CBFA1433B80C746A4EB52456638644B5B72C529C2CC3CA535412B5C35F",
+      "lite_sha256": "52EF86CBFA1433B80C746A4EB52456638644B5B72C529C2CC3CA535412B5C35F",
+      "baseline_sha256": "52EF86CBFA1433B80C746A4EB52456638644B5B72C529C2CC3CA535412B5C35F"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Carpet002.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "ED87DD8885B4D822AFA559165255D9C9B0720077D130A51E4E0A10D906A88820",
+      "lite_sha256": "ED87DD8885B4D822AFA559165255D9C9B0720077D130A51E4E0A10D906A88820",
+      "baseline_sha256": "ED87DD8885B4D822AFA559165255D9C9B0720077D130A51E4E0A10D906A88820"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Carpet008.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "8516BC8F50DDC9AB8A9436DF0332586CF16A93A9B8DEABD01CD65B1FD326076C",
+      "lite_sha256": "8516BC8F50DDC9AB8A9436DF0332586CF16A93A9B8DEABD01CD65B1FD326076C",
+      "baseline_sha256": "8516BC8F50DDC9AB8A9436DF0332586CF16A93A9B8DEABD01CD65B1FD326076C"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Concrete026.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "72AC6B14736920468483B6D5C88C029ADDACA68CB91A5258C5CD91A37BCF0415",
+      "lite_sha256": "72AC6B14736920468483B6D5C88C029ADDACA68CB91A5258C5CD91A37BCF0415",
+      "baseline_sha256": "72AC6B14736920468483B6D5C88C029ADDACA68CB91A5258C5CD91A37BCF0415"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Concrete031.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "3068E551435D3CDAE3942017799D8871B940C88EBFAF5C2B87376972AE448FD6",
+      "lite_sha256": "3068E551435D3CDAE3942017799D8871B940C88EBFAF5C2B87376972AE448FD6",
+      "baseline_sha256": "3068E551435D3CDAE3942017799D8871B940C88EBFAF5C2B87376972AE448FD6"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Concrete032.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "49CE4FE78BF562376A2B5BDD7ECC11A89A433B30194A74722316F880B07D2C2C",
+      "lite_sha256": "49CE4FE78BF562376A2B5BDD7ECC11A89A433B30194A74722316F880B07D2C2C",
+      "baseline_sha256": "49CE4FE78BF562376A2B5BDD7ECC11A89A433B30194A74722316F880B07D2C2C"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Concrete033.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "B1E8B2E6BD2AC02E44081B7351387DDA9212D2B8734E0D3D1A30277D9DC0E96E",
+      "lite_sha256": "B1E8B2E6BD2AC02E44081B7351387DDA9212D2B8734E0D3D1A30277D9DC0E96E",
+      "baseline_sha256": "B1E8B2E6BD2AC02E44081B7351387DDA9212D2B8734E0D3D1A30277D9DC0E96E"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Concrete035.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "7EA46D2C65F82796150A4890B82DA1410D196E72C2C2BE8B7DE6E6490D9752DA",
+      "lite_sha256": "7EA46D2C65F82796150A4890B82DA1410D196E72C2C2BE8B7DE6E6490D9752DA",
+      "baseline_sha256": "7EA46D2C65F82796150A4890B82DA1410D196E72C2C2BE8B7DE6E6490D9752DA"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Concrete038.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "71521614689A676BD2BFA5AA14322DB980D42C65184206CF4939BC44B4CE13DB",
+      "lite_sha256": "71521614689A676BD2BFA5AA14322DB980D42C65184206CF4939BC44B4CE13DB",
+      "baseline_sha256": "71521614689A676BD2BFA5AA14322DB980D42C65184206CF4939BC44B4CE13DB"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Concrete039.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "AE199CE61DFBA22B047D3C2DE8277C0A94BE0D734B9C73BA6644F71FD1B572A9",
+      "lite_sha256": "AE199CE61DFBA22B047D3C2DE8277C0A94BE0D734B9C73BA6644F71FD1B572A9",
+      "baseline_sha256": "AE199CE61DFBA22B047D3C2DE8277C0A94BE0D734B9C73BA6644F71FD1B572A9"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Concrete045.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "D417CC3A2E4FB9064D65729633039B3733D4E436B9C48DD86856ACF042B30632",
+      "lite_sha256": "D417CC3A2E4FB9064D65729633039B3733D4E436B9C48DD86856ACF042B30632",
+      "baseline_sha256": "D417CC3A2E4FB9064D65729633039B3733D4E436B9C48DD86856ACF042B30632"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/CorrugatedSteel005.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "4198FACED790C75C551750D323EF384EA1AB353463B2067F44F8E5F5FF2D1A09",
+      "lite_sha256": "4198FACED790C75C551750D323EF384EA1AB353463B2067F44F8E5F5FF2D1A09",
+      "baseline_sha256": "4198FACED790C75C551750D323EF384EA1AB353463B2067F44F8E5F5FF2D1A09"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Ground054.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "B325EC2F167DCE95A0FABC61A2104641288CF20915419578C3EFDB46200C563E",
+      "lite_sha256": "B325EC2F167DCE95A0FABC61A2104641288CF20915419578C3EFDB46200C563E",
+      "baseline_sha256": "B325EC2F167DCE95A0FABC61A2104641288CF20915419578C3EFDB46200C563E"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/OfficeCeiling005.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "C5E4463B4BD33E649488D2ED5651392F0324C0260CB29D934B3C399681EF6F16",
+      "lite_sha256": "C5E4463B4BD33E649488D2ED5651392F0324C0260CB29D934B3C399681EF6F16",
+      "baseline_sha256": "C5E4463B4BD33E649488D2ED5651392F0324C0260CB29D934B3C399681EF6F16"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/OfficeCeiling006.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "0A35F9BA2D6723C38E9593316B20C3EC96FC77FC346E540BB950F48488F07589",
+      "lite_sha256": "0A35F9BA2D6723C38E9593316B20C3EC96FC77FC346E540BB950F48488F07589",
+      "baseline_sha256": "0A35F9BA2D6723C38E9593316B20C3EC96FC77FC346E540BB950F48488F07589"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Planks003.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "0B924FA3C3158E620FF2DD833DE8BC292DDBD973D1DBBC63066F36095BF22EBB",
+      "lite_sha256": "0B924FA3C3158E620FF2DD833DE8BC292DDBD973D1DBBC63066F36095BF22EBB",
+      "baseline_sha256": "0B924FA3C3158E620FF2DD833DE8BC292DDBD973D1DBBC63066F36095BF22EBB"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Planks005.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "B15D7069DF9F7D064E9D9E9BEB19F5A1B41E0CBC1B2CA94F27F51DE5231B3004",
+      "lite_sha256": "B15D7069DF9F7D064E9D9E9BEB19F5A1B41E0CBC1B2CA94F27F51DE5231B3004",
+      "baseline_sha256": "B15D7069DF9F7D064E9D9E9BEB19F5A1B41E0CBC1B2CA94F27F51DE5231B3004"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Plaster001.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "944B4831016E42ACE4A89422E4E7190912CA2F7FED6F561354C48EC7BB54D3A4",
+      "lite_sha256": "944B4831016E42ACE4A89422E4E7190912CA2F7FED6F561354C48EC7BB54D3A4",
+      "baseline_sha256": "944B4831016E42ACE4A89422E4E7190912CA2F7FED6F561354C48EC7BB54D3A4"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Plaster007.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "75C7D96A8E60C4C5073767508E34E88C73677A3641E40BB8AAA0F1D6674391C0",
+      "lite_sha256": "75C7D96A8E60C4C5073767508E34E88C73677A3641E40BB8AAA0F1D6674391C0",
+      "baseline_sha256": "75C7D96A8E60C4C5073767508E34E88C73677A3641E40BB8AAA0F1D6674391C0"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Rock022.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "126D623F268FA21E7FFF88F9F74D9F0B2F60B5E26029388AA9BFEB29E1AF62BF",
+      "lite_sha256": "126D623F268FA21E7FFF88F9F74D9F0B2F60B5E26029388AA9BFEB29E1AF62BF",
+      "baseline_sha256": "126D623F268FA21E7FFF88F9F74D9F0B2F60B5E26029388AA9BFEB29E1AF62BF"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Rock035.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "C5E4DBD7D5555734498834C1E09B799EF3D1F00C61FE08C0D953B93A8FB1BB95",
+      "lite_sha256": "C5E4DBD7D5555734498834C1E09B799EF3D1F00C61FE08C0D953B93A8FB1BB95",
+      "baseline_sha256": "C5E4DBD7D5555734498834C1E09B799EF3D1F00C61FE08C0D953B93A8FB1BB95"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Rock045.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "424386841E8FBE97879707F82FD370C74A1324A16C4A3B180AFF3CEE438FFA6D",
+      "lite_sha256": "424386841E8FBE97879707F82FD370C74A1324A16C4A3B180AFF3CEE438FFA6D",
+      "baseline_sha256": "424386841E8FBE97879707F82FD370C74A1324A16C4A3B180AFF3CEE438FFA6D"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/RoofingTiles002.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "413310B76053C2DA8F6E9E9830D01779686F64683288E0399D32A6255CE6E6A2",
+      "lite_sha256": "413310B76053C2DA8F6E9E9830D01779686F64683288E0399D32A6255CE6E6A2",
+      "baseline_sha256": "413310B76053C2DA8F6E9E9830D01779686F64683288E0399D32A6255CE6E6A2"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/WoodSiding010.zip",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "F209D206B7A2AE9A7669FA85A55E395E36939962BA0045FC462BA16E6E14A15C",
+      "lite_sha256": "F209D206B7A2AE9A7669FA85A55E395E36939962BA0045FC462BA16E6E14A15C",
+      "baseline_sha256": "F209D206B7A2AE9A7669FA85A55E395E36939962BA0045FC462BA16E6E14A15C"
+    },
+    {
+      "path": "scripts/__pycache__/gen-item-icons.cpython-313.pyc",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "10360E974087DD10FD2D024F521749BAB72F49F472C7EBA945EFB169F142C887",
+      "lite_sha256": "10360E974087DD10FD2D024F521749BAB72F49F472C7EBA945EFB169F142C887",
+      "baseline_sha256": "10360E974087DD10FD2D024F521749BAB72F49F472C7EBA945EFB169F142C887"
+    },
+    {
+      "path": "scripts/__pycache__/gen-l6-l11-textures.cpython-313.pyc",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "05AAF5BCABB69E76BFDC73FF8EBE00E09AE17A9241C41422CAFB2AD924E21C62",
+      "lite_sha256": "05AAF5BCABB69E76BFDC73FF8EBE00E09AE17A9241C41422CAFB2AD924E21C62",
+      "baseline_sha256": "05AAF5BCABB69E76BFDC73FF8EBE00E09AE17A9241C41422CAFB2AD924E21C62"
+    },
+    {
+      "path": "scripts/check-bntg.ts",
+      "action": "updated",
+      "source_sha256": "9EAE8B5B773CC57FF82B89FEB6C28966BA57D464772771982F47DD5B9BB07223",
+      "previous_lite_sha256": "8B815062FFCD1D149480558B3F12D0DC71A7EA02F20937A76914016FF2B3E9FD",
+      "baseline_sha256": "8B815062FFCD1D149480558B3F12D0DC71A7EA02F20937A76914016FF2B3E9FD"
+    },
+    {
+      "path": "scripts/check-career-network.ts",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "12538691215CF231D8AE21E4D7002778E1A76E0D762F0404402A62808872C2A6",
+      "lite_sha256": "12538691215CF231D8AE21E4D7002778E1A76E0D762F0404402A62808872C2A6",
+      "baseline_sha256": "12538691215CF231D8AE21E4D7002778E1A76E0D762F0404402A62808872C2A6"
+    },
+    {
+      "path": "scripts/check-careers.ts",
+      "action": "updated",
+      "source_sha256": "68B14341ABAFCD176F0BFEBA4CD0441F18B6DD8E302384F1AA213581D52152B7",
+      "previous_lite_sha256": "6DAB8472547C851C6447E33B95810C94B9C58E9C3717FFD0014253412F4F258B",
+      "baseline_sha256": "6DAB8472547C851C6447E33B95810C94B9C58E9C3717FFD0014253412F4F258B"
+    },
+    {
+      "path": "scripts/check-l1-architecture.ts",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "4903C3C3D84F25FF39253BEB1345417DA7EE2918B54D31DD6108CA93C71794FD",
+      "lite_sha256": "4903C3C3D84F25FF39253BEB1345417DA7EE2918B54D31DD6108CA93C71794FD",
+      "baseline_sha256": "4903C3C3D84F25FF39253BEB1345417DA7EE2918B54D31DD6108CA93C71794FD"
+    },
+    {
+      "path": "scripts/check-l10-generation.ts",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "B5399B946830FBB70372240EC3D59EE3AF8D840CD95EEB06532FA04F18F9B2E8",
+      "lite_sha256": "B5399B946830FBB70372240EC3D59EE3AF8D840CD95EEB06532FA04F18F9B2E8",
+      "baseline_sha256": "B5399B946830FBB70372240EC3D59EE3AF8D840CD95EEB06532FA04F18F9B2E8"
+    },
+    {
+      "path": "scripts/check-l11-generation.ts",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "73677297CFB6C857BCEFDBEAA8A521C3B50F9743D2CFCAE623084D7B42BC7AE7",
+      "lite_sha256": "73677297CFB6C857BCEFDBEAA8A521C3B50F9743D2CFCAE623084D7B42BC7AE7",
+      "baseline_sha256": "73677297CFB6C857BCEFDBEAA8A521C3B50F9743D2CFCAE623084D7B42BC7AE7"
+    },
+    {
+      "path": "scripts/check-l11-meshes.ts",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "F43880F8EED05D693065AE00F08DDF8712BDC84301D022359C77F58FB95DFFA6",
+      "lite_sha256": "F43880F8EED05D693065AE00F08DDF8712BDC84301D022359C77F58FB95DFFA6",
+      "baseline_sha256": "F43880F8EED05D693065AE00F08DDF8712BDC84301D022359C77F58FB95DFFA6"
+    },
+    {
+      "path": "scripts/check-l2-architecture.ts",
+      "action": "added",
+      "source_sha256": "3C4510689E9CCE031F40CE36F10DEECFA9F97AAE76E535CDAB8683BA5635ED0F"
+    },
+    {
+      "path": "scripts/check-l3-access.ts",
+      "action": "added",
+      "source_sha256": "B2524B3FC1F7405FC4068DC16EF933869BB62557913830F5FF1FC4956A0C7D7B"
+    },
+    {
+      "path": "scripts/check-l3-angel-collision.ts",
+      "action": "added",
+      "source_sha256": "36EC184EE736B2F978506836C2996B5ACCEE22469BEE1D8AA1E899AD3942547F"
+    },
+    {
+      "path": "scripts/check-l3-architecture.ts",
+      "action": "added",
+      "source_sha256": "DFDF9283B4E6670EBD2C9931B053AD33125318A0D12FCB46E8456C09651F3EFD"
+    },
+    {
+      "path": "scripts/check-l3-glass.ts",
+      "action": "added",
+      "source_sha256": "518DF1AB521316F9FF7A601059158F4F26939F34917E01A69D6550CEC2EBAFFA"
+    },
+    {
+      "path": "scripts/check-l3-pipe-corners.ts",
+      "action": "added",
+      "source_sha256": "BBEEB7064EC6074A2916FEEDDB9097F0BFE39B2534DB8528ECF7C912D0944491"
+    },
+    {
+      "path": "scripts/check-l4-collisions.ts",
+      "action": "added",
+      "source_sha256": "81D3955968EC327084EF23A1FE87C44AFCC3A85817DB8463C2AC1DC65872D7FA"
+    },
+    {
+      "path": "scripts/check-l4-details.ts",
+      "action": "added",
+      "source_sha256": "2854A689FDF87D8CD162B39168F16E6A92B1095B9A5E0A1BB7C667DFFFCCDD34"
+    },
+    {
+      "path": "scripts/check-l4-generation.ts",
+      "action": "added",
+      "source_sha256": "55A04D5776037BACEA971FBF1FCAB07575E39A04F7BC8CCBC86B9D1B03B01BB6"
+    },
+    {
+      "path": "scripts/check-mouse-look.ts",
+      "action": "added",
+      "source_sha256": "C40DF9C9A6BB0A48FA9AEC04B35D0EB8D74A5DDB3116269A169F11B2305BC891"
+    },
+    {
+      "path": "scripts/check-settlement-assets.mjs",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "3CE01AA5E3C152EE724A814AC9966EA2F7E48FF8DBDF464DC12F3D99C6FB901A",
+      "lite_sha256": "3CE01AA5E3C152EE724A814AC9966EA2F7E48FF8DBDF464DC12F3D99C6FB901A",
+      "baseline_sha256": "3CE01AA5E3C152EE724A814AC9966EA2F7E48FF8DBDF464DC12F3D99C6FB901A"
+    },
+    {
+      "path": "scripts/check-settlements.ts",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "5000FABA0354998143D7B2786724A1E4C52D2652EB878A964588B29CE38DBFA8",
+      "lite_sha256": "5000FABA0354998143D7B2786724A1E4C52D2652EB878A964588B29CE38DBFA8",
+      "baseline_sha256": "5000FABA0354998143D7B2786724A1E4C52D2652EB878A964588B29CE38DBFA8"
+    },
+    {
+      "path": "scripts/diag-v11-door.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "C20101727A20643EE22A3C2A4B25F64D48D8B6C51F208A07B49F55C07D06FAFF",
+      "lite_sha256": "C20101727A20643EE22A3C2A4B25F64D48D8B6C51F208A07B49F55C07D06FAFF",
+      "baseline_sha256": "C20101727A20643EE22A3C2A4B25F64D48D8B6C51F208A07B49F55C07D06FAFF"
+    },
+    {
+      "path": "scripts/diag-v12-coverage.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "75ADA530BD279AB7846000A8192F66A2EDAFB6102469D5BA4AF441595D53C190",
+      "lite_sha256": "75ADA530BD279AB7846000A8192F66A2EDAFB6102469D5BA4AF441595D53C190",
+      "baseline_sha256": "75ADA530BD279AB7846000A8192F66A2EDAFB6102469D5BA4AF441595D53C190"
+    },
+    {
+      "path": "scripts/diag-v12-floor.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "A3917345689ACBCAD574DF095A04F3EABC764833141F9FF246D4C2CD7B3EEA32",
+      "lite_sha256": "A3917345689ACBCAD574DF095A04F3EABC764833141F9FF246D4C2CD7B3EEA32",
+      "baseline_sha256": "A3917345689ACBCAD574DF095A04F3EABC764833141F9FF246D4C2CD7B3EEA32"
+    },
+    {
+      "path": "scripts/diag-v8.mts",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "A45AEC898BF2871FF8FE1DDCC1013F6883F55195EA3A1D2633214486A38C5C9F",
+      "lite_sha256": "A45AEC898BF2871FF8FE1DDCC1013F6883F55195EA3A1D2633214486A38C5C9F",
+      "baseline_sha256": "A45AEC898BF2871FF8FE1DDCC1013F6883F55195EA3A1D2633214486A38C5C9F"
+    },
+    {
+      "path": "scripts/diag-v9-doors.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "6A62F48BC60C0C88C141E4D57BE7B50F23263B9F4BF07EFD9EB03DC88D938EAC",
+      "lite_sha256": "6A62F48BC60C0C88C141E4D57BE7B50F23263B9F4BF07EFD9EB03DC88D938EAC",
+      "baseline_sha256": "6A62F48BC60C0C88C141E4D57BE7B50F23263B9F4BF07EFD9EB03DC88D938EAC"
+    },
+    {
+      "path": "scripts/diag-v9-fogdecouple.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "BC33D59B5075F9FB75822E98E57EFD3305EBAB72CBF1B74B4AD34D553634D8F4",
+      "lite_sha256": "BC33D59B5075F9FB75822E98E57EFD3305EBAB72CBF1B74B4AD34D553634D8F4",
+      "baseline_sha256": "BC33D59B5075F9FB75822E98E57EFD3305EBAB72CBF1B74B4AD34D553634D8F4"
+    },
+    {
+      "path": "scripts/diag-v9-popin.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "D2558F0D9AD1722B7FFF280CD3948E931C395C871D4725EC579F297E9F00CE07",
+      "lite_sha256": "D2558F0D9AD1722B7FFF280CD3948E931C395C871D4725EC579F297E9F00CE07",
+      "baseline_sha256": "D2558F0D9AD1722B7FFF280CD3948E931C395C871D4725EC579F297E9F00CE07"
+    },
+    {
+      "path": "scripts/export-godot-item-models.ts",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "0D3E8C08C4D618EBDD7F2934225D13F918931DF9904A557102440705D7B82A6A",
+      "lite_sha256": "0D3E8C08C4D618EBDD7F2934225D13F918931DF9904A557102440705D7B82A6A",
+      "baseline_sha256": "0D3E8C08C4D618EBDD7F2934225D13F918931DF9904A557102440705D7B82A6A"
+    },
+    {
+      "path": "scripts/export-godot-reference.ts",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "591445D63FF4D266157B0C0C345702734EE4308862E57E0B1E598402350BBB16",
+      "lite_sha256": "591445D63FF4D266157B0C0C345702734EE4308862E57E0B1E598402350BBB16",
+      "baseline_sha256": "591445D63FF4D266157B0C0C345702734EE4308862E57E0B1E598402350BBB16"
+    },
+    {
+      "path": "scripts/fetch-l11-assets.ps1",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "37ECC32DC4D85DCBA99D44815F8C6DCD2169AE61D7717139EB1E7EB1363B4198",
+      "lite_sha256": "37ECC32DC4D85DCBA99D44815F8C6DCD2169AE61D7717139EB1E7EB1363B4198",
+      "baseline_sha256": "37ECC32DC4D85DCBA99D44815F8C6DCD2169AE61D7717139EB1E7EB1363B4198"
+    },
+    {
+      "path": "scripts/fetch-l4-assets.mjs",
+      "action": "added",
+      "source_sha256": "68151340016C807EBB980026498DEDA08DEEB80CFAD1F79CACD5D3D5E9DF09EF"
+    },
+    {
+      "path": "scripts/fetch-settlement-assets.mjs",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "7617FA4AE905F2B358E87B0F47170A9BC2AF01137233CADCB2C2AAE13A7D287B",
+      "lite_sha256": "7617FA4AE905F2B358E87B0F47170A9BC2AF01137233CADCB2C2AAE13A7D287B",
+      "baseline_sha256": "7617FA4AE905F2B358E87B0F47170A9BC2AF01137233CADCB2C2AAE13A7D287B"
+    },
+    {
+      "path": "scripts/gen-angel-fresco.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "5E2A6FAD70483E079AC0115DDC972170C918511B013352667FF260BA5F7149C5",
+      "lite_sha256": "5E2A6FAD70483E079AC0115DDC972170C918511B013352667FF260BA5F7149C5",
+      "baseline_sha256": "5E2A6FAD70483E079AC0115DDC972170C918511B013352667FF260BA5F7149C5"
+    },
+    {
+      "path": "scripts/gen-ariane-posters.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "BCE96C69B2345F1B3CE8675520EA1016029858098AF8F44D0BCD5F2CF11E4CDF",
+      "lite_sha256": "BCE96C69B2345F1B3CE8675520EA1016029858098AF8F44D0BCD5F2CF11E4CDF",
+      "baseline_sha256": "BCE96C69B2345F1B3CE8675520EA1016029858098AF8F44D0BCD5F2CF11E4CDF"
+    },
+    {
+      "path": "scripts/gen-brc-logo.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "76220F319CE8BB00F4885F1F7DA77BD3CD931ABF24E0EB452DADCE9E81FD220A",
+      "lite_sha256": "76220F319CE8BB00F4885F1F7DA77BD3CD931ABF24E0EB452DADCE9E81FD220A",
+      "baseline_sha256": "76220F319CE8BB00F4885F1F7DA77BD3CD931ABF24E0EB452DADCE9E81FD220A"
+    },
+    {
+      "path": "scripts/gen-el3a-poster.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "554F3631339219D13420DF3EE50DCB39271B7062B9B6B43A44AA2F3ED9D67918",
+      "lite_sha256": "554F3631339219D13420DF3EE50DCB39271B7062B9B6B43A44AA2F3ED9D67918",
+      "baseline_sha256": "554F3631339219D13420DF3EE50DCB39271B7062B9B6B43A44AA2F3ED9D67918"
+    },
+    {
+      "path": "scripts/gen-faction-logos.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "CC6CB1D06120C74054C1C36E517815244D9208A954421A3FF2F0C7DBD1BCECD7",
+      "lite_sha256": "CC6CB1D06120C74054C1C36E517815244D9208A954421A3FF2F0C7DBD1BCECD7",
+      "baseline_sha256": "CC6CB1D06120C74054C1C36E517815244D9208A954421A3FF2F0C7DBD1BCECD7"
+    },
+    {
+      "path": "scripts/gen-item-icons.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "0ADE95486EEA1D486D403DDB4B46198D47A990F2BC5E78CB7E9BF3092CBB99FF",
+      "lite_sha256": "0ADE95486EEA1D486D403DDB4B46198D47A990F2BC5E78CB7E9BF3092CBB99FF",
+      "baseline_sha256": "0ADE95486EEA1D486D403DDB4B46198D47A990F2BC5E78CB7E9BF3092CBB99FF"
+    },
+    {
+      "path": "scripts/gen-jerry-poster.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "60744EC3B9FA0A4612D164AD3A21614E517685EA5B05221DD2E287565F6ECFC9",
+      "lite_sha256": "60744EC3B9FA0A4612D164AD3A21614E517685EA5B05221DD2E287565F6ECFC9",
+      "baseline_sha256": "60744EC3B9FA0A4612D164AD3A21614E517685EA5B05221DD2E287565F6ECFC9"
+    },
+    {
+      "path": "scripts/gen-l0-bake.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "176616A80233276731245E7EA498E1693698848DAF9A2313987390584DCF4E9A",
+      "lite_sha256": "176616A80233276731245E7EA498E1693698848DAF9A2313987390584DCF4E9A",
+      "baseline_sha256": "176616A80233276731245E7EA498E1693698848DAF9A2313987390584DCF4E9A"
+    },
+    {
+      "path": "scripts/gen-l1-materials.mjs",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "AED4A5C386F4B1468A73F1C2F4950529052DA60A2A29B2F7DC2C7D7058D5F6A0",
+      "lite_sha256": "AED4A5C386F4B1468A73F1C2F4950529052DA60A2A29B2F7DC2C7D7058D5F6A0",
+      "baseline_sha256": "AED4A5C386F4B1468A73F1C2F4950529052DA60A2A29B2F7DC2C7D7058D5F6A0"
+    },
+    {
+      "path": "scripts/gen-l10-pbr.ts",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "F3069CD22962A858F21CB559C28A96FE6E0075FD7D7904CD45F4B6C672775B90",
+      "lite_sha256": "F3069CD22962A858F21CB559C28A96FE6E0075FD7D7904CD45F4B6C672775B90",
+      "baseline_sha256": "F3069CD22962A858F21CB559C28A96FE6E0075FD7D7904CD45F4B6C672775B90"
+    },
+    {
+      "path": "scripts/gen-l103-textures.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "CCD319F16DE83FF8780140E0E3BDEF306D276C52D5985F99EAAB3653E9D2B6AD",
+      "lite_sha256": "CCD319F16DE83FF8780140E0E3BDEF306D276C52D5985F99EAAB3653E9D2B6AD",
+      "baseline_sha256": "CCD319F16DE83FF8780140E0E3BDEF306D276C52D5985F99EAAB3653E9D2B6AD"
+    },
+    {
+      "path": "scripts/gen-l104-textures.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "EBF95AD81DD5F3A233058D53F35A4BA9AD953EA4A4EDC9258F5436C537CCA205",
+      "lite_sha256": "EBF95AD81DD5F3A233058D53F35A4BA9AD953EA4A4EDC9258F5436C537CCA205",
+      "baseline_sha256": "EBF95AD81DD5F3A233058D53F35A4BA9AD953EA4A4EDC9258F5436C537CCA205"
+    },
+    {
+      "path": "scripts/gen-l105-textures.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "E5CA95421C0424AFD2414E0D84D1DFF7E8E2F3A4E412E7C5C026AA98015585C6",
+      "lite_sha256": "E5CA95421C0424AFD2414E0D84D1DFF7E8E2F3A4E412E7C5C026AA98015585C6",
+      "baseline_sha256": "E5CA95421C0424AFD2414E0D84D1DFF7E8E2F3A4E412E7C5C026AA98015585C6"
+    },
+    {
+      "path": "scripts/gen-l106-textures.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "72A9C3BDECF2084BCEFBCB078161A825A38F7909916F2576950BFDD3858BA09D",
+      "lite_sha256": "72A9C3BDECF2084BCEFBCB078161A825A38F7909916F2576950BFDD3858BA09D",
+      "baseline_sha256": "72A9C3BDECF2084BCEFBCB078161A825A38F7909916F2576950BFDD3858BA09D"
+    },
+    {
+      "path": "scripts/gen-l107-textures.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "5FAEA96EC9CFFB83D60650E3965970C03A5D2BC15C20F2E6F0C733A3E80F43F4",
+      "lite_sha256": "5FAEA96EC9CFFB83D60650E3965970C03A5D2BC15C20F2E6F0C733A3E80F43F4",
+      "baseline_sha256": "5FAEA96EC9CFFB83D60650E3965970C03A5D2BC15C20F2E6F0C733A3E80F43F4"
+    },
+    {
+      "path": "scripts/gen-l108-textures.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "8080F229E5C564507B1FFEE249869210C549850F8B14D029D40E9F10C287A97E",
+      "lite_sha256": "8080F229E5C564507B1FFEE249869210C549850F8B14D029D40E9F10C287A97E",
+      "baseline_sha256": "8080F229E5C564507B1FFEE249869210C549850F8B14D029D40E9F10C287A97E"
+    },
+    {
+      "path": "scripts/gen-l109-poster.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "91059A5216CA02BD9AD48482601842275154A50AEA157755AB606AC514B43156",
+      "lite_sha256": "91059A5216CA02BD9AD48482601842275154A50AEA157755AB606AC514B43156",
+      "baseline_sha256": "91059A5216CA02BD9AD48482601842275154A50AEA157755AB606AC514B43156"
+    },
+    {
+      "path": "scripts/gen-l109-textures.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "FABF4BED369D21CAFA96AA02116570AEF7CF749DBFA16CABECD25BDE10EE472E",
+      "lite_sha256": "FABF4BED369D21CAFA96AA02116570AEF7CF749DBFA16CABECD25BDE10EE472E",
+      "baseline_sha256": "FABF4BED369D21CAFA96AA02116570AEF7CF749DBFA16CABECD25BDE10EE472E"
+    },
+    {
+      "path": "scripts/gen-l274-textures.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "E87CA33A5B539A4BBE3E9472AF3DA0E535B2F1A89FAA02BFC75882245902589A",
+      "lite_sha256": "E87CA33A5B539A4BBE3E9472AF3DA0E535B2F1A89FAA02BFC75882245902589A",
+      "baseline_sha256": "E87CA33A5B539A4BBE3E9472AF3DA0E535B2F1A89FAA02BFC75882245902589A"
+    },
+    {
+      "path": "scripts/gen-l3-artworks.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "1CE1D1E924C4C3C8FDFD444069A00E5D8D8A64B3B80806BACCB51D90890EC17C",
+      "lite_sha256": "1CE1D1E924C4C3C8FDFD444069A00E5D8D8A64B3B80806BACCB51D90890EC17C",
+      "baseline_sha256": "1CE1D1E924C4C3C8FDFD444069A00E5D8D8A64B3B80806BACCB51D90890EC17C"
+    },
+    {
+      "path": "scripts/gen-l3-brick-pbr.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "D0933512230D6BDD4E364905DB5FD3F088D4245A6F69D8A8B3FB675A832E9D4A",
+      "lite_sha256": "D0933512230D6BDD4E364905DB5FD3F088D4245A6F69D8A8B3FB675A832E9D4A",
+      "baseline_sha256": "D0933512230D6BDD4E364905DB5FD3F088D4245A6F69D8A8B3FB675A832E9D4A"
+    },
+    {
+      "path": "scripts/gen-l3-posters.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "9BD6AD59276DD59EC6A72AAA93F08AFBE027C3E62C382D0EE9133DE509D28D5B",
+      "lite_sha256": "9BD6AD59276DD59EC6A72AAA93F08AFBE027C3E62C382D0EE9133DE509D28D5B",
+      "baseline_sha256": "9BD6AD59276DD59EC6A72AAA93F08AFBE027C3E62C382D0EE9133DE509D28D5B"
+    },
+    {
+      "path": "scripts/gen-l3-stainedglass.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "2974C7C89380EE94EE87317BED42694D053F9FBF80FF3496B32D9EFB62045F7A",
+      "lite_sha256": "2974C7C89380EE94EE87317BED42694D053F9FBF80FF3496B32D9EFB62045F7A",
+      "baseline_sha256": "2974C7C89380EE94EE87317BED42694D053F9FBF80FF3496B32D9EFB62045F7A"
+    },
+    {
+      "path": "scripts/gen-l3-textures.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "7C2DA3AD7E512F871EA5A010DFF756C9BAB203336286A70E7D094423BBBE5762",
+      "lite_sha256": "7C2DA3AD7E512F871EA5A010DFF756C9BAB203336286A70E7D094423BBBE5762",
+      "baseline_sha256": "7C2DA3AD7E512F871EA5A010DFF756C9BAB203336286A70E7D094423BBBE5762"
+    },
+    {
+      "path": "scripts/gen-l5-notice.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "B187F7A6BE8EDC1CF6D11D3FF7F609577CD7673D5071CA70A5CB8450524B8451",
+      "lite_sha256": "B187F7A6BE8EDC1CF6D11D3FF7F609577CD7673D5071CA70A5CB8450524B8451",
+      "baseline_sha256": "B187F7A6BE8EDC1CF6D11D3FF7F609577CD7673D5071CA70A5CB8450524B8451"
+    },
+    {
+      "path": "scripts/gen-l5-portraits.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "E65C23E27A31AEE5696ECD6D507A97052BE1477687CDBF3F18BC7C8211D67BD4",
+      "lite_sha256": "E65C23E27A31AEE5696ECD6D507A97052BE1477687CDBF3F18BC7C8211D67BD4",
+      "baseline_sha256": "E65C23E27A31AEE5696ECD6D507A97052BE1477687CDBF3F18BC7C8211D67BD4"
+    },
+    {
+      "path": "scripts/gen-l5-textures.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "81C8E916CCC9ECE175FBF7B89EA49122E789E0F6F98D0BBE272364DF67AF0A1D",
+      "lite_sha256": "81C8E916CCC9ECE175FBF7B89EA49122E789E0F6F98D0BBE272364DF67AF0A1D",
+      "baseline_sha256": "81C8E916CCC9ECE175FBF7B89EA49122E789E0F6F98D0BBE272364DF67AF0A1D"
+    },
+    {
+      "path": "scripts/gen-l6-l11-textures.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "A96863E7DC2E960BC8FDF9D9664C39C242E6861EC1C11208091401AF96016BFE",
+      "lite_sha256": "A96863E7DC2E960BC8FDF9D9664C39C242E6861EC1C11208091401AF96016BFE",
+      "baseline_sha256": "A96863E7DC2E960BC8FDF9D9664C39C242E6861EC1C11208091401AF96016BFE"
+    },
+    {
+      "path": "scripts/gen-l7-cabin-metal.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "FF0D8125354CA3CF028B8A8026A4E99AA2862C2EA766C99CCE6E8F46C8F0FFE4",
+      "lite_sha256": "FF0D8125354CA3CF028B8A8026A4E99AA2862C2EA766C99CCE6E8F46C8F0FFE4",
+      "baseline_sha256": "FF0D8125354CA3CF028B8A8026A4E99AA2862C2EA766C99CCE6E8F46C8F0FFE4"
+    },
+    {
+      "path": "scripts/gen-l8-pbr-textures.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "4C9DFD4A31B6579D22BF37102DC1C3857401D31613856A1650A2044352C9FDB4",
+      "lite_sha256": "4C9DFD4A31B6579D22BF37102DC1C3857401D31613856A1650A2044352C9FDB4",
+      "baseline_sha256": "4C9DFD4A31B6579D22BF37102DC1C3857401D31613856A1650A2044352C9FDB4"
+    },
+    {
+      "path": "scripts/gen-midi-bgm.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "230498AB828C7862800D09D81D609287EB539E52E7807DB8E50DE75063B94168",
+      "lite_sha256": "230498AB828C7862800D09D81D609287EB539E52E7807DB8E50DE75063B94168",
+      "baseline_sha256": "230498AB828C7862800D09D81D609287EB539E52E7807DB8E50DE75063B94168"
+    },
+    {
+      "path": "scripts/gen-parrot-portraits.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "4543406E09600B9DE4D7B7A369499E395D8CB885D9A876AE7226564ED34619D2",
+      "lite_sha256": "4543406E09600B9DE4D7B7A369499E395D8CB885D9A876AE7226564ED34619D2",
+      "baseline_sha256": "4543406E09600B9DE4D7B7A369499E395D8CB885D9A876AE7226564ED34619D2"
+    },
+    {
+      "path": "scripts/gen-photos.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "1433D20D19C1964C6E32EA848538208C186B01E72A848D16EEF421B5B4C074BA",
+      "lite_sha256": "1433D20D19C1964C6E32EA848538208C186B01E72A848D16EEF421B5B4C074BA",
+      "baseline_sha256": "1433D20D19C1964C6E32EA848538208C186B01E72A848D16EEF421B5B4C074BA"
+    },
+    {
+      "path": "scripts/gen-posters.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "4F48A55EA7897EF84A0D7F6D3499475626099DA4B51A4E79387476AE95BA20E1",
+      "lite_sha256": "4F48A55EA7897EF84A0D7F6D3499475626099DA4B51A4E79387476AE95BA20E1",
+      "baseline_sha256": "4F48A55EA7897EF84A0D7F6D3499475626099DA4B51A4E79387476AE95BA20E1"
+    },
+    {
+      "path": "scripts/gen-tom-posters.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "8C15E0E10B442F24599131ED00B8F6701E0617188CB853C2DF7D01E4875D90DC",
+      "lite_sha256": "8C15E0E10B442F24599131ED00B8F6701E0617188CB853C2DF7D01E4875D90DC",
+      "baseline_sha256": "8C15E0E10B442F24599131ED00B8F6701E0617188CB853C2DF7D01E4875D90DC"
+    },
+    {
+      "path": "scripts/l1-gameplay-snapshot.ts",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "ED9BD4FC27C2C46B1671124B881127222225EFCE08144898F0411BD6FBD7C9BF",
+      "lite_sha256": "ED9BD4FC27C2C46B1671124B881127222225EFCE08144898F0411BD6FBD7C9BF",
+      "baseline_sha256": "ED9BD4FC27C2C46B1671124B881127222225EFCE08144898F0411BD6FBD7C9BF"
+    },
+    {
+      "path": "scripts/settlement-verifier-plugin.ts",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "D9C24B49A9C5D6B23E98A7DB0605407AF9292CCE6BE091DDD2CAB208003230BE",
+      "lite_sha256": "D9C24B49A9C5D6B23E98A7DB0605407AF9292CCE6BE091DDD2CAB208003230BE",
+      "baseline_sha256": "D9C24B49A9C5D6B23E98A7DB0605407AF9292CCE6BE091DDD2CAB208003230BE"
+    },
+    {
+      "path": "scripts/smoke-flashlight.mts",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "1580A5E4142296E43A33ED544A238A9870B83288266D66DFC02D2E14187851B6",
+      "lite_sha256": "1580A5E4142296E43A33ED544A238A9870B83288266D66DFC02D2E14187851B6",
+      "baseline_sha256": "1580A5E4142296E43A33ED544A238A9870B83288266D66DFC02D2E14187851B6"
+    },
+    {
+      "path": "scripts/smoke-interact-strict.mts",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "9841F3CE9E0EEA2FD3C9B052D4050B8D68FD97FEA1A12F5DFDB3F563FC4A3BFF",
+      "lite_sha256": "9841F3CE9E0EEA2FD3C9B052D4050B8D68FD97FEA1A12F5DFDB3F563FC4A3BFF",
+      "baseline_sha256": "9841F3CE9E0EEA2FD3C9B052D4050B8D68FD97FEA1A12F5DFDB3F563FC4A3BFF"
+    },
+    {
+      "path": "scripts/smoke-l6-world.mts",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "8A8B9F9EFBEFAE1DC34F5525F3F21BEC5C92D7212EA8B86124ED275B383441B3",
+      "lite_sha256": "8A8B9F9EFBEFAE1DC34F5525F3F21BEC5C92D7212EA8B86124ED275B383441B3",
+      "baseline_sha256": "8A8B9F9EFBEFAE1DC34F5525F3F21BEC5C92D7212EA8B86124ED275B383441B3"
+    },
+    {
+      "path": "scripts/smoke-l8-ecology.mts",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "BF7C83EE13AB52645E78C8944F6C2114797C6C0C630E7C8914FC50F52F6857ED",
+      "lite_sha256": "BF7C83EE13AB52645E78C8944F6C2114797C6C0C630E7C8914FC50F52F6857ED",
+      "baseline_sha256": "BF7C83EE13AB52645E78C8944F6C2114797C6C0C630E7C8914FC50F52F6857ED"
+    },
+    {
+      "path": "scripts/smoke-pickup.mjs",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "126F86A30F20F827F1C6EC1F526B32903D0FC724C5255D1FDD14990489EFD9C7",
+      "lite_sha256": "126F86A30F20F827F1C6EC1F526B32903D0FC724C5255D1FDD14990489EFD9C7",
+      "baseline_sha256": "126F86A30F20F827F1C6EC1F526B32903D0FC724C5255D1FDD14990489EFD9C7"
+    },
+    {
+      "path": "scripts/smoke-v11-fix.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "C280F7B4D1D36B3DA4CF73529F50167907C42AA58FC040C76D122C4FA5E72536",
+      "lite_sha256": "C280F7B4D1D36B3DA4CF73529F50167907C42AA58FC040C76D122C4FA5E72536",
+      "baseline_sha256": "C280F7B4D1D36B3DA4CF73529F50167907C42AA58FC040C76D122C4FA5E72536"
+    },
+    {
+      "path": "scripts/smoke-v12-floor.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "31D5EBC150EE610F93FFFA14A7C680C5A2D2D29598ACACDF268149F6F8E52858",
+      "lite_sha256": "31D5EBC150EE610F93FFFA14A7C680C5A2D2D29598ACACDF268149F6F8E52858",
+      "baseline_sha256": "31D5EBC150EE610F93FFFA14A7C680C5A2D2D29598ACACDF268149F6F8E52858"
+    },
+    {
+      "path": "scripts/smoke-v12-interact.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "B205A77233A7A24E07D0B45BD7DC5EF1DEA88FCBD62FE1F43ED21945F3A60677",
+      "lite_sha256": "B205A77233A7A24E07D0B45BD7DC5EF1DEA88FCBD62FE1F43ED21945F3A60677",
+      "baseline_sha256": "B205A77233A7A24E07D0B45BD7DC5EF1DEA88FCBD62FE1F43ED21945F3A60677"
+    },
+    {
+      "path": "scripts/smoke-v13-web.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "10276A6E077DCA111B436516FE160F538BE899B909E8BFE1F6572C0833235901",
+      "lite_sha256": "10276A6E077DCA111B436516FE160F538BE899B909E8BFE1F6572C0833235901",
+      "baseline_sha256": "10276A6E077DCA111B436516FE160F538BE899B909E8BFE1F6572C0833235901"
+    },
+    {
+      "path": "scripts/smoke-v13-world.mts",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "0548EB8ECE2EF8BF51964D17DC7ECC0E2B5CA970D1C2C7857DD860FA45FF084D",
+      "lite_sha256": "0548EB8ECE2EF8BF51964D17DC7ECC0E2B5CA970D1C2C7857DD860FA45FF084D",
+      "baseline_sha256": "0548EB8ECE2EF8BF51964D17DC7ECC0E2B5CA970D1C2C7857DD860FA45FF084D"
+    },
+    {
+      "path": "scripts/smoke-v5-core.mts",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "7D7A06A307C50869F3C928DDE8155FD46BE90E598859818393C10D34842F22F1",
+      "lite_sha256": "7D7A06A307C50869F3C928DDE8155FD46BE90E598859818393C10D34842F22F1",
+      "baseline_sha256": "7D7A06A307C50869F3C928DDE8155FD46BE90E598859818393C10D34842F22F1"
+    },
+    {
+      "path": "scripts/smoke-v6-web.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "0F5F7E4FB4022E2F79584BC358618AA57E83EBEDE06CE6D2CD67231F6CBADA8B",
+      "lite_sha256": "0F5F7E4FB4022E2F79584BC358618AA57E83EBEDE06CE6D2CD67231F6CBADA8B",
+      "baseline_sha256": "0F5F7E4FB4022E2F79584BC358618AA57E83EBEDE06CE6D2CD67231F6CBADA8B"
+    },
+    {
+      "path": "scripts/smoke-v6-world.mts",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "038040E2CA5644010EA5682AD1691F5F8177317BD7256D2CA689DB8FEDD2A780",
+      "lite_sha256": "038040E2CA5644010EA5682AD1691F5F8177317BD7256D2CA689DB8FEDD2A780",
+      "baseline_sha256": "038040E2CA5644010EA5682AD1691F5F8177317BD7256D2CA689DB8FEDD2A780"
+    },
+    {
+      "path": "scripts/smoke-v7-web.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "473AF2E09A1FEA4B1F264C3471ADA7D8CAED5A68C0A644E6826DB1921235ECBB",
+      "lite_sha256": "473AF2E09A1FEA4B1F264C3471ADA7D8CAED5A68C0A644E6826DB1921235ECBB",
+      "baseline_sha256": "473AF2E09A1FEA4B1F264C3471ADA7D8CAED5A68C0A644E6826DB1921235ECBB"
+    },
+    {
+      "path": "scripts/smoke-v7-world.mts",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "89D67FAA0748D1B09C0B0F254694F6273D4DA2289A8756C71AA2AC7C6F6937AF",
+      "lite_sha256": "89D67FAA0748D1B09C0B0F254694F6273D4DA2289A8756C71AA2AC7C6F6937AF",
+      "baseline_sha256": "89D67FAA0748D1B09C0B0F254694F6273D4DA2289A8756C71AA2AC7C6F6937AF"
+    },
+    {
+      "path": "scripts/smoke-v8-world.mts",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "B897DFDEBF12F5C12DF91404EA6727E0E6391703C7CC32F4D570C2E9B598E8B8",
+      "lite_sha256": "B897DFDEBF12F5C12DF91404EA6727E0E6391703C7CC32F4D570C2E9B598E8B8",
+      "baseline_sha256": "B897DFDEBF12F5C12DF91404EA6727E0E6391703C7CC32F4D570C2E9B598E8B8"
+    },
+    {
+      "path": "scripts/smoke-v9-fix.mts",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "79CF7D98429FD0A1C17F7B08E4FC6CABB409ABC20C5F98A3C9C98BED8CFB6060",
+      "lite_sha256": "79CF7D98429FD0A1C17F7B08E4FC6CABB409ABC20C5F98A3C9C98BED8CFB6060",
+      "baseline_sha256": "79CF7D98429FD0A1C17F7B08E4FC6CABB409ABC20C5F98A3C9C98BED8CFB6060"
+    },
+    {
+      "path": "scripts/smoke-v9-web.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "0B210543089638A4DA1BD542A787646D05B47AB3BEB8DC04FCAC3FB7AA15F1E7",
+      "lite_sha256": "0B210543089638A4DA1BD542A787646D05B47AB3BEB8DC04FCAC3FB7AA15F1E7",
+      "baseline_sha256": "0B210543089638A4DA1BD542A787646D05B47AB3BEB8DC04FCAC3FB7AA15F1E7"
+    },
+    {
+      "path": "scripts/smoke-web.py",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "BFBBBA1C5D2403A0DF0ADEB28AA10E20D928CC899F68F0BE524D8824B4450C56",
+      "lite_sha256": "BFBBBA1C5D2403A0DF0ADEB28AA10E20D928CC899F68F0BE524D8824B4450C56",
+      "baseline_sha256": "BFBBBA1C5D2403A0DF0ADEB28AA10E20D928CC899F68F0BE524D8824B4450C56"
+    },
+    {
+      "path": "scripts/sync-decorations.ts",
+      "action": "kept",
+      "reason": "lite-only or lite modified or unchanged",
+      "app_sha256": "C3BB62FD3F34E90B02384B0AE074CF4C89F30D3B123437E7EB5EECBBC1AC28F2",
+      "lite_sha256": "C3BB62FD3F34E90B02384B0AE074CF4C89F30D3B123437E7EB5EECBBC1AC28F2",
+      "baseline_sha256": "C3BB62FD3F34E90B02384B0AE074CF4C89F30D3B123437E7EB5EECBBC1AC28F2"
+    },
+    {
+      "path": "src/components/CareerPanel.tsx",
+      "action": "updated"
+    },
+    {
+      "path": "src/components/CareerTracker.tsx",
+      "action": "updated"
+    },
+    {
+      "path": "src/components/DialogOverlay.tsx",
+      "action": "updated"
+    },
+    {
+      "path": "src/components/FacilityPanel.tsx",
+      "action": "updated"
+    },
+    {
+      "path": "src/components/FactionMissions.tsx",
+      "action": "added"
+    },
+    {
+      "path": "src/components/FactionTerminal.css",
+      "action": "added"
+    },
+    {
+      "path": "src/components/FactionTerminal.tsx",
+      "action": "added"
+    },
+    {
+      "path": "src/components/InventoryOverlay.tsx",
+      "action": "updated"
+    },
+    {
+      "path": "src/components/MegContacts.tsx",
+      "action": "added"
+    },
+    {
+      "path": "src/components/MegMissions.tsx",
+      "action": "added"
+    },
+    {
+      "path": "src/components/MegQuestTracker.tsx",
+      "action": "added"
+    },
+    {
+      "path": "src/components/MegTerminal.css",
+      "action": "added"
+    },
+    {
+      "path": "src/components/MegTerminal.tsx",
+      "action": "added"
+    },
+    {
+      "path": "src/components/npcPortrait.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/components/PortraitNotice.tsx",
+      "action": "added"
+    },
+    {
+      "path": "src/game/engine.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/content/arianeMissions.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/content/bntgBlueprint.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/content/bntgMissions.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/content/decorRegistry.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/content/factionMissions.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/content/factionMissionTypes.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/content/factions.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/content/factionTerminals.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/content/jerryMissions.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/content/megMissions.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/content/megTerminal.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/content/settlementBlueprints.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/content/settlementTypes.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/core/mouseLook.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/core/orientation.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/core/player.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/core/playerProfile.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/core/types.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/decorations/lore.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/design/extractLayouts.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/engine/bntg.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/engine/career.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/engine/dev.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/engine/factionMissions.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/engine/interact.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/engine/level.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/engine/megMissions.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/engine/npc.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/engine/save.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/levels/l2.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/levels/l3.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/levels/l4.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/net/session.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/renderer/geometry.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/renderer/l2Architecture.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/renderer/l2Door.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/renderer/l2Materials.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/renderer/l2WallProps.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/renderer/l3Architecture.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/renderer/l3Glass.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/renderer/l3Materials.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/renderer/l3Meshes.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/renderer/l3NarrowPortal.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/renderer/l3PipeRouting.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/renderer/l3Pipes.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/renderer/l3PurpleBrick.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/renderer/l3Sculpture.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/renderer/l4Batch.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/renderer/l4Materials.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/renderer/l4Meshes.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/renderer/l4OfficeDetails.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/renderer/l4OldStairs.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/renderer/l4Terrain.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/renderer/l4VolumeFog.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/renderer/l4WallDecor.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/renderer/renderer.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/renderer/shared.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/renderer/structures.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/world/infinite.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/world/infiniteL2.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/world/infiniteL3.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/world/infiniteL4.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/world/l3AngelCollision.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/world/l3Architecture.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/world/l3NarrowProfile.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/world/l3Variations.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/world/l4Layout.ts",
+      "action": "added"
+    },
+    {
+      "path": "src/game/world/mapgen.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/world/settlement.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/renderer/decorations/context.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/renderer/decorations/index.ts",
+      "action": "updated"
+    },
+    {
+      "path": "src/game/renderer/decorations/props.ts",
+      "action": "updated"
+    }
+  ]
+}

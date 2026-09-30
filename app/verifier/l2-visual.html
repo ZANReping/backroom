@@ -1,0 +1,33 @@
+<!doctype html><html lang="zh"><meta charset="utf-8"><title>Level 2 · Reference study</title>
+<style>html,body{margin:0;overflow:hidden;background:#10120e}canvas{display:block}nav{position:absolute;top:10px;left:10px;background:#111b;color:#ddd;padding:8px;font:13px monospace}button{margin:3px}#status{min-width:150px;display:inline-block}</style>
+<canvas id="scene"></canvas><nav><span id="status">Loading</span><button data-v="tidy">整洁</button><button data-v="dim">晦暗</button><button data-v="dirty">肮脏</button><button data-v="warped">扭曲</button><button data-v="narrow">狭窄</button><button data-v="mixed">交界</button><button id="spawn">出生点</button><button id="mode">光影模式</button><button id="door">门</button><button id="lamp">灯具</button></nav>
+<script type="module">
+import {Engine} from '/src/game/engine.ts';
+import {getRenderer,look} from '/src/game/renderer/index.ts';
+import {genL2ChunkRaw} from '/src/game/world/infiniteL2.ts';
+import {registerInfiniteLevel,infiniteImplFor} from '/src/game/world/infiniteRegistry.ts';
+const engine=new Engine(),renderer=getRenderer(document.querySelector('canvas')),impl=infiniteImplFor(2);
+let variant='tidy',mode='classic',last=performance.now(),frames=0;
+engine.newRun(424242,'normal');engine.dev.god=true;engine.dev.frozenAI=true;engine.dev.statLock=true;engine.paused=true;
+renderer.resize(innerWidth,innerHeight,1);renderer.setTextureQuality(2);renderer.setBloomFx(false);
+const setVariant=v=>{
+  variant=v;
+  // Only this QA page forces biomes, retaining production layout, generation and rendering.
+  const biome=(x,y)=>variant==='mixed'?(y<1?'narrow':'dirty'):variant;
+  registerInfiniteLevel(2,{...impl,variantOf:(s,x,y)=>biome(x,y),genRaw:(d,s,x,y)=>genL2ChunkRaw(d,s,x,y,biome(x,y))});
+  engine.loadLevel(2,{mapSeed:424242,firstVisit:false});engine.introT=0;engine.player.flashlight=false;
+  const inf=engine.map.inf;engine.player.x=13+(v==='dirty'?1.9:v==='narrow'?.9:1.1)-inf.ox;engine.player.y=29-inf.oy;
+  engine.player.z=0;look.yaw=0;look.pitch=.02;frames=0;
+  if(v==='mixed'){engine.player.x=14.44-inf.ox;engine.player.y=35-inf.oy}
+  document.querySelector('#status').textContent=v+' · '+mode;
+  return {variant,services:engine.map.structures.filter(s=>s.data?.l2Service).length,lights:engine.map.lights.filter(l=>l.l2Mount).length};
+};
+const setMode=v=>{mode=v;renderer.setLightMode(v);frames=0;document.querySelector('#status').textContent=variant+' · '+mode};
+window.qa={engine,renderer,look,setVariant,setMode,stats:()=>({variant,mode,frames,draws:renderer.three.info.render.calls,triangles:renderer.three.info.render.triangles,memory:renderer.three.info.memory}),view(v){look.pitch=v==='lamp'?.65:.02},door(){const inf=engine.map.inf;const d=engine.map.structures.filter(s=>s.kind==='hoteldoor').sort((a,b)=>Math.hypot(a.x-engine.player.x,a.y-engine.player.y)-Math.hypot(b.x-engine.player.x,b.y-engine.player.y))[0];if(!d)return;engine.player.x=d.x>13-inf.ox?d.x-1.4:d.x+2;engine.player.y=d.y+1.4;look.yaw=d.x>engine.player.x?-1.2:1.2;look.pitch=-.07;return {x:d.x,y:d.y,sealed:d.data.sealed}}};
+for(const b of document.querySelectorAll('[data-v]'))b.onclick=()=>setVariant(b.dataset.v);
+document.querySelector('#mode').onclick=()=>setMode(mode==='classic'?'realistic':'classic');
+document.querySelector('#spawn').onclick=()=>{engine.player.x=engine.map.spawn.x+.5;engine.player.y=engine.map.spawn.y+.5;engine.player.z=0;look.yaw=0;look.pitch=.02};
+document.querySelector('#door').onclick=()=>qa.door();document.querySelector('#lamp').onclick=()=>qa.view('lamp');
+addEventListener('resize',()=>renderer.resize(innerWidth,innerHeight,1));setVariant(new URLSearchParams(location.search).get('v')||'tidy');
+function frame(now){const dt=Math.min((now-last)/1000,.05);last=now;renderer.applyView(engine);renderer.render(document.querySelector('canvas'),engine,{grain:false,flicker:0,shake:false},dt);frames++;requestAnimationFrame(frame)}requestAnimationFrame(frame);
+</script></html>

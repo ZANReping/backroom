@@ -1,0 +1,3454 @@
+{
+  "generatedAt": "2026-09-30T18:59:54.8654033+08:00",
+  "source": "app",
+  "destination": "app-lite",
+  "baseline": "reports/sync-original-hashes-20260927.json",
+  "excluded": [
+    "src/components/HUD.tsx",
+    "src/game/core/audio.ts",
+    "src/game/renderer/renderer.ts"
+  ],
+  "copied": [
+    {
+      "path": "src/components/DesignMode.tsx",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "72d531e268b28a1ec8e8f87010e64e760eb71646ed98d5b0920144b15b94e6bd",
+      "previousLiteHash": "72d531e268b28a1ec8e8f87010e64e760eb71646ed98d5b0920144b15b94e6bd",
+      "sourceHash": "bbad5ba26c65bb6aa372cf76c8143a4505026a88609065dfbaabf87613404734"
+    },
+    {
+      "path": "src/components/InventoryOverlay.tsx",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "d721380f1da7f35376b242a14d0342e2e4f5f95553f59e1f11b2bde4c3774692",
+      "previousLiteHash": "d721380f1da7f35376b242a14d0342e2e4f5f95553f59e1f11b2bde4c3774692",
+      "sourceHash": "4d51be6c4976f387504e71404f51046132e41e7e0b7798f26912936a8dca951a"
+    },
+    {
+      "path": "src/components/L5DecorPreview.tsx",
+      "action": "copied",
+      "reason": "upstream-new",
+      "sourceHash": "eec38766031ad10c6aba67e0a4218905460f712fd38e29ffd6b1b18e62eb564f"
+    },
+    {
+      "path": "src/game/engine.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "62e0a7141bcfd50c1e465af839f177ea07c29394eca4b12bde60102649bd0500",
+      "previousLiteHash": "62e0a7141bcfd50c1e465af839f177ea07c29394eca4b12bde60102649bd0500",
+      "sourceHash": "b03117b06d0373df47c62835763e1bba0e30f84d74c4ee0086fd5d8a78a574ef"
+    },
+    {
+      "path": "src/game/content/decorRegistry.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "b7ebf1fef6260ec100ffb06b8cc91039225b9f171cf9d48537ac18e0d58423d0",
+      "previousLiteHash": "b7ebf1fef6260ec100ffb06b8cc91039225b9f171cf9d48537ac18e0d58423d0",
+      "sourceHash": "fa9dca27a57b6fc750775e61eb1b4ecbc8c4d812fc72afd2164a1383277dfea3"
+    },
+    {
+      "path": "src/game/content/l5Decor.ts",
+      "action": "copied",
+      "reason": "upstream-new",
+      "sourceHash": "08340123e0cec0ffe059da1dba922cc1780a69c74451827df37f943c45f44332"
+    },
+    {
+      "path": "src/game/core/types.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "0ad852f68874a7b6473ec59967f39978141613d93c872cf4a85a9a4f076a5a09",
+      "previousLiteHash": "0ad852f68874a7b6473ec59967f39978141613d93c872cf4a85a9a4f076a5a09",
+      "sourceHash": "26811bf1399e195f56c68a48d6eaddb7d207b5513770fd884e1115ad3d827144"
+    },
+    {
+      "path": "src/game/design/extractLayouts.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "171f42659b899128c716c8144c9524944864ac6fc17cea5f5d2037c6a66da3ff",
+      "previousLiteHash": "171f42659b899128c716c8144c9524944864ac6fc17cea5f5d2037c6a66da3ff",
+      "sourceHash": "cd667c6a0cee613a2482266635e8bffbe18d41601aa0bfde8cac9e442ec3e62c"
+    },
+    {
+      "path": "src/game/design/types.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "4c902bbe24ec7758b975a105ade18fad8abe0f1e71dc7040af6e39e66bfba3e0",
+      "previousLiteHash": "4c902bbe24ec7758b975a105ade18fad8abe0f1e71dc7040af6e39e66bfba3e0",
+      "sourceHash": "1f23539709bd0e95f72f7745458fab857bf55f27355c5afa1be790675fecff10"
+    },
+    {
+      "path": "src/game/engine/ambient.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "29e856ffa8c5a8bd9c38632ce8d91e675cdecefe5effac9f36ef701febb2f811",
+      "previousLiteHash": "29e856ffa8c5a8bd9c38632ce8d91e675cdecefe5effac9f36ef701febb2f811",
+      "sourceHash": "81b9cb1d6e31c5d0d17a65fcac01f7b3710ac9eca8affc3abfb14c10d4a46fe0"
+    },
+    {
+      "path": "src/game/engine/combat.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "2422a4968003141cdee6937469a2166c148a62ea802ed7b403d7acf0030673d5",
+      "previousLiteHash": "2422a4968003141cdee6937469a2166c148a62ea802ed7b403d7acf0030673d5",
+      "sourceHash": "13c7b81dba8d2e7f4b94850aaefe49100f832e0b14016ed310a15f7d914adb53"
+    },
+    {
+      "path": "src/game/engine/dev.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "c2e1448a7a8de61c999a675d91601b33d885d1a94be13b142eede2fcd5485267",
+      "previousLiteHash": "c2e1448a7a8de61c999a675d91601b33d885d1a94be13b142eede2fcd5485267",
+      "sourceHash": "d78e3fd8fd12c9863ba443ce7f071ddc3957358fc038c1fcedf9c17d3c539743"
+    },
+    {
+      "path": "src/game/engine/entityAI.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "55e430bb360ff10b52bcf7daf51e11aef51a928ee472ca61ac10b62b36511d6b",
+      "previousLiteHash": "55e430bb360ff10b52bcf7daf51e11aef51a928ee472ca61ac10b62b36511d6b",
+      "sourceHash": "33f8835617bb3351d146dc3e2a087641d11d9e1967e34a2c93a7529f38c915ba"
+    },
+    {
+      "path": "src/game/engine/interact.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "65a014fa9c2e4b1149011c883be4aeef8cac6afc6f9b8edbff0bba6ad0168965",
+      "previousLiteHash": "65a014fa9c2e4b1149011c883be4aeef8cac6afc6f9b8edbff0bba6ad0168965",
+      "sourceHash": "a793d44177320d4c66613d36edc6d94ce4c67f243443fe2e11bde577fe65c09b"
+    },
+    {
+      "path": "src/game/engine/level.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "68b6a3d18f20d9ec9d7041d087a0959a1cf4ece87394eb642709833a577061cb",
+      "previousLiteHash": "68b6a3d18f20d9ec9d7041d087a0959a1cf4ece87394eb642709833a577061cb",
+      "sourceHash": "000b53315aafa5cdae2aa27fcf08f1906a88daee31804ff482466ce66b6ffa81"
+    },
+    {
+      "path": "src/game/engine/moths.ts",
+      "action": "copied",
+      "reason": "upstream-new",
+      "sourceHash": "a837d28af195db525082fbb180b4e83a56db58b16007b3e219d4df9ae6822f6e"
+    },
+    {
+      "path": "src/game/engine/save.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "be4a59871de7569930bb6a14a510d38119190cc12c399b3791f4cfbc1d20f0d7",
+      "previousLiteHash": "be4a59871de7569930bb6a14a510d38119190cc12c399b3791f4cfbc1d20f0d7",
+      "sourceHash": "ef74d08f1fbf87f6a4c31da62ac019e8261af374c71617cceb0734e7f028ce5f"
+    },
+    {
+      "path": "src/game/entities/codex.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "0568f891fe38a6f437ad8d3e872c62d6217fc37a2c4b21c3593521fd5d76ab45",
+      "previousLiteHash": "0568f891fe38a6f437ad8d3e872c62d6217fc37a2c4b21c3593521fd5d76ab45",
+      "sourceHash": "66dc5aa02ae3e828566efa981ebb095a9dbe6e9fd919ded493d161552efe9b1f"
+    },
+    {
+      "path": "src/game/entities/critters.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "f87bc0856cff1119d1cd29e3a2cc641dbc8be902cc0a5be35f617e619d7fd6e5",
+      "previousLiteHash": "f87bc0856cff1119d1cd29e3a2cc641dbc8be902cc0a5be35f617e619d7fd6e5",
+      "sourceHash": "636c2aea11cba90514a20302ffbdb02c62e5667d1a0cf3a9d49a2ac0dd4ca88d"
+    },
+    {
+      "path": "src/game/entities/index.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "2563014a8075d26d576155c6cdacc25b302e892775ecd2f94cb75c03837b810c",
+      "previousLiteHash": "2563014a8075d26d576155c6cdacc25b302e892775ecd2f94cb75c03837b810c",
+      "sourceHash": "f092d01243fbf02fbd4c2cc6c78038553732a11360b8837219b9bc6f5ebbfa81"
+    },
+    {
+      "path": "src/game/entities/moths.ts",
+      "action": "copied",
+      "reason": "upstream-new",
+      "sourceHash": "5f10d008c15dea1b61283d91c09790f4a73ed1cdbee30332ee040112293b0ff7"
+    },
+    {
+      "path": "src/game/entities/types.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "8554793e284859a7cba80aeac14f6903323c63e853d72c69e00dbae6647b43c1",
+      "previousLiteHash": "8554793e284859a7cba80aeac14f6903323c63e853d72c69e00dbae6647b43c1",
+      "sourceHash": "974cdbe37d6094a13efa714aece8c59d36f5f2a7256bb047fee0e716263005eb"
+    },
+    {
+      "path": "src/game/net/apply.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "57dd1078113fbfae3da675c577098cd65e3ffd483e6cf2734fad0d0d3e7aab71",
+      "previousLiteHash": "57dd1078113fbfae3da675c577098cd65e3ffd483e6cf2734fad0d0d3e7aab71",
+      "sourceHash": "5b4b24cfd2cd9db967a47032e5b635edd3b03cf73c98e31d1129f051c232e00c"
+    },
+    {
+      "path": "src/game/net/protocol.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "cc729c4eefd1b4acb81c7ebfd454c2ed5b6f0f295aa228cfa249f43e4c25b835",
+      "previousLiteHash": "cc729c4eefd1b4acb81c7ebfd454c2ed5b6f0f295aa228cfa249f43e4c25b835",
+      "sourceHash": "a79c8ee6d2d941ffad9f254f772e7728b295ff3755930bb4286eda64390921f2"
+    },
+    {
+      "path": "src/game/net/session.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "7822b5700ab284e4a26f97ea829f454b3da1cf0f10ce601c2c1e28947cfb104a",
+      "previousLiteHash": "7822b5700ab284e4a26f97ea829f454b3da1cf0f10ce601c2c1e28947cfb104a",
+      "sourceHash": "dd3dfaab65570940d80cb23682abdbb751fc089c96b898596ab0284669c9f31c"
+    },
+    {
+      "path": "src/game/renderer/entitiesMesh.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "fe1492beb39b4369045df1421c1203f0a56069d56141cf303de7208d876ea7ee",
+      "previousLiteHash": "fe1492beb39b4369045df1421c1203f0a56069d56141cf303de7208d876ea7ee",
+      "sourceHash": "5ec0c8efb39d400702df1c3d8261688760309a915340de00ed8e1c598a3938b5"
+    },
+    {
+      "path": "src/game/renderer/geometry.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "c015e80e74dd2dd54d27a8dca75a3469252d5c8eec7df24d1f4e13d2b0051ecd",
+      "previousLiteHash": "c015e80e74dd2dd54d27a8dca75a3469252d5c8eec7df24d1f4e13d2b0051ecd",
+      "sourceHash": "c357de9a654d5b8d848c0084803b524ed47e59bcada630a81c5bb1e5643cb246"
+    },
+    {
+      "path": "src/game/renderer/l5Architecture.ts",
+      "action": "copied",
+      "reason": "upstream-new",
+      "sourceHash": "9a60a8400a1f7f196e949a7ab880a3e2dc641387c434056b70d088c27cc2db51"
+    },
+    {
+      "path": "src/game/renderer/l5Materials.ts",
+      "action": "copied",
+      "reason": "upstream-new",
+      "sourceHash": "af690a065d68090af3727c7fcd69f9b74e3d12ff85da6b61425f75b145eac742"
+    },
+    {
+      "path": "src/game/renderer/l5Meshes.ts",
+      "action": "copied",
+      "reason": "upstream-new",
+      "sourceHash": "95c04e00f53855ef05ab5c2ec1343380c847058be5565d9c89846734c5285960"
+    },
+    {
+      "path": "src/game/renderer/l5NestLighting.ts",
+      "action": "copied",
+      "reason": "upstream-new",
+      "sourceHash": "e3ab2287ce173032a769e093b2fdcee6a2c7c4ad0b6547dbbbdddbd66c390b3b"
+    },
+    {
+      "path": "src/game/renderer/l5PoolMeshes.ts",
+      "action": "copied",
+      "reason": "upstream-new",
+      "sourceHash": "609ce87c8579d0b7581bd509fcb0399a21012a0ed279b51f4835a4ad9c043c86"
+    },
+    {
+      "path": "src/game/renderer/l5RoomMeshes.ts",
+      "action": "copied",
+      "reason": "upstream-new",
+      "sourceHash": "ebf8107e17caef0354fef518072ace17d0188096474fe456849354cb8200220e"
+    },
+    {
+      "path": "src/game/renderer/liquidsSky.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "5f82e435889017549ca2dcbecf565d1427bee1398e9f0498fe48f5a8b7e1c98d",
+      "previousLiteHash": "5f82e435889017549ca2dcbecf565d1427bee1398e9f0498fe48f5a8b7e1c98d",
+      "sourceHash": "a03985940a3d87bc6d982e4b24e0a4f509fc20df68eb26a8bfc38c543d6ccc86"
+    },
+    {
+      "path": "src/game/renderer/mothMeshes.ts",
+      "action": "copied",
+      "reason": "upstream-new",
+      "sourceHash": "3e93c7d3ab80cae404b188ce504bd060d7eb3088ca595d0d79005391bf760570"
+    },
+    {
+      "path": "src/game/renderer/mothTextures.ts",
+      "action": "copied",
+      "reason": "upstream-new",
+      "sourceHash": "b1041b150b0a79e323c58473575c77a542e6c1176a7b5f037f18d8e96c8810d5"
+    },
+    {
+      "path": "src/game/renderer/structures.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "bcf3f515c59d143b5c67b0b287f75c3ab175f2c1108e2faca8addfd87356f4db",
+      "previousLiteHash": "bcf3f515c59d143b5c67b0b287f75c3ab175f2c1108e2faca8addfd87356f4db",
+      "sourceHash": "dd7ac988f6e74a43b1b4d6036a151330c5f1856dcb48b247a65d7960abff84ab"
+    },
+    {
+      "path": "src/game/renderer/decorations/context.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "adbd0b00b2d0dcf53606e17bb3cbb4f211ddaabbbb3087a27daf7b906eb34b6c",
+      "previousLiteHash": "adbd0b00b2d0dcf53606e17bb3cbb4f211ddaabbbb3087a27daf7b906eb34b6c",
+      "sourceHash": "1df01a826949608f8b4c1ee7bb7fe75e33456e873054dcbe955b47263e56a3e1"
+    },
+    {
+      "path": "src/game/renderer/decorations/index.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "99f578ca78922cc18984bc16f5fa7de3e27a392519139930cba4a6fcadeda58b",
+      "previousLiteHash": "99f578ca78922cc18984bc16f5fa7de3e27a392519139930cba4a6fcadeda58b",
+      "sourceHash": "b5d555bdb9fc903c757b36d2964513e598ae94c0e9c39ec2b76297a9feab8f80"
+    },
+    {
+      "path": "src/game/world/infinite.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "2062c932656a47cc78d1c26a981fb3056423d42f0850a4bcf15fedc1fae998f5",
+      "previousLiteHash": "2062c932656a47cc78d1c26a981fb3056423d42f0850a4bcf15fedc1fae998f5",
+      "sourceHash": "c918d4cbf8db51838ebd9042b67e1112aafb5b7792951ca2006cff21a76a6f75"
+    },
+    {
+      "path": "src/game/world/infiniteL5.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "168aa84ca85dffc8075ac39fc1eeb0a914d887e666b664917063e16394fac1c4",
+      "previousLiteHash": "168aa84ca85dffc8075ac39fc1eeb0a914d887e666b664917063e16394fac1c4",
+      "sourceHash": "b5455498f14ce064ad06df6fd59e349736c1ce1967b27afc691fa3684f021531"
+    },
+    {
+      "path": "src/game/world/infiniteRegistry.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "20979c4e57309111c52727f033335a3d71f746683f8a1fae50b43fbb887a0268",
+      "previousLiteHash": "20979c4e57309111c52727f033335a3d71f746683f8a1fae50b43fbb887a0268",
+      "sourceHash": "c21ef39c5ca5c44aa1591473dc5ebca1ccbe0b42b0e4c76e720705364a71b8ef"
+    },
+    {
+      "path": "src/game/world/l5Topology.ts",
+      "action": "copied",
+      "reason": "upstream-new",
+      "sourceHash": "15dddb617791b0118eb4dbd2afea01ee3ebc00b0e4a6effa8a27fdf44b424fba"
+    },
+    {
+      "path": "src/game/world/mapgen.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "57097b321cbdaf9e16b3768de2f55ef2dabdb65f7d9b4922241df0725dbaeee8",
+      "previousLiteHash": "57097b321cbdaf9e16b3768de2f55ef2dabdb65f7d9b4922241df0725dbaeee8",
+      "sourceHash": "e3707a020af8847459e1033191008fcb2475dc32a7d7d22c4147df6ed96b8ef5"
+    },
+    {
+      "path": "scripts/check-l5-exits.ts",
+      "action": "copied",
+      "reason": "upstream-new",
+      "sourceHash": "dd8d4a43d8ceb2ee346d77116146833ea643f25adb87178a95c30243501df659"
+    },
+    {
+      "path": "scripts/check-l5-meshes.ts",
+      "action": "copied",
+      "reason": "upstream-new",
+      "sourceHash": "3bd5e188b16bff6d263695f38856216bf593d975c11b675623df17a7e6957396"
+    },
+    {
+      "path": "scripts/check-l5-moths.ts",
+      "action": "copied",
+      "reason": "upstream-new",
+      "sourceHash": "2c87735625f0b1303f74c0cd02b0ec9af0b5fb82ac67489455ae8969f6e4b29c"
+    },
+    {
+      "path": "scripts/check-l5-nest-lighting.ts",
+      "action": "copied",
+      "reason": "upstream-new",
+      "sourceHash": "70a91c84737a9b2d0a8cd150109cbb28dc051857970f72471a31e48d4314d360"
+    },
+    {
+      "path": "scripts/check-l5-rooms.ts",
+      "action": "copied",
+      "reason": "upstream-new",
+      "sourceHash": "94b0f729aa1bc78e5ea37359a077b0e40a9ea444e50a379950cc64fe8b5eee1e"
+    },
+    {
+      "path": "scripts/check-l5-staff-access.ts",
+      "action": "copied",
+      "reason": "upstream-new",
+      "sourceHash": "3f439188081cb63a6d0e11201b1c2f29b1673fe73528a3d1fa3a9e78a81155c4"
+    },
+    {
+      "path": "scripts/check-moth-meshes.ts",
+      "action": "copied",
+      "reason": "upstream-new",
+      "sourceHash": "bbca0fe9cd756a8f9e020012f41bd5bcced0aed3e5495e52f3a72dd1e90144ee"
+    },
+    {
+      "path": "scripts/check-moth-subvariants.ts",
+      "action": "copied",
+      "reason": "upstream-new",
+      "sourceHash": "854554b3bf0403ad24b95c7ebe3e0170ded32ad0a4170ff4872e3c36d2b75787"
+    },
+    {
+      "path": "scripts/fetch-l5-assets.mjs",
+      "action": "copied",
+      "reason": "upstream-new",
+      "sourceHash": "c8356068c77f7a2637dcf997985a4ccd575488ead713d4a925fdaf0758c07543"
+    },
+    {
+      "path": "scripts/gen-l5-ornament.mjs",
+      "action": "copied",
+      "reason": "upstream-new",
+      "sourceHash": "bb97c66420adacc86eba120dfd1bbb3249366c3147ce27db614f984043752031"
+    },
+    {
+      "path": "scripts/sync-decorations.ts",
+      "action": "copied",
+      "reason": "upstream-changed-lite-unmodified",
+      "baselineHash": "c3bb62fd3f34e90b02384b0ae074cf4c89f30d3b123437e7eb5eecbbc1ac28f2",
+      "previousLiteHash": "c3bb62fd3f34e90b02384b0ae074cf4c89f30d3b123437e7eb5eecbbc1ac28f2",
+      "sourceHash": "96bd5102ef65e60880854a77c27d8828e2bf0c5b9622a6ae5c4776cc36857fb1"
+    }
+  ],
+  "preserved": [
+    {
+      "path": "src/App.tsx",
+      "action": "preserved",
+      "reason": "lite-customized",
+      "baselineHash": "045f9aa5e4afdfa30da8051c5e11be0b9b14888c804598bfa89a4db9c4d5be0c",
+      "liteHash": "e3a67497836f581afe2a64ccf581c9335b94bfabb3356f4a374fb483259b86f3",
+      "sourceHash": "045f9aa5e4afdfa30da8051c5e11be0b9b14888c804598bfa89a4db9c4d5be0c"
+    },
+    {
+      "path": "src/boot.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "921b29655a83edfa0c3a843274f241bc3bff056633c3719e44248da0880fdfb0"
+    },
+    {
+      "path": "src/index.css",
+      "action": "preserved",
+      "reason": "lite-customized",
+      "baselineHash": "30e956f3a0ae49f456def9ac735725499eb2bcec2801cee3894bfd1207bdbf88",
+      "liteHash": "c2f9ba879bd1d7b06711b029ec616015b311fab741652bea63a454b69711b432",
+      "sourceHash": "30e956f3a0ae49f456def9ac735725499eb2bcec2801cee3894bfd1207bdbf88"
+    },
+    {
+      "path": "src/main.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "9bff34f3be0e0e62a198bea2f4c82125e10f8a2e67ec042067937463018e7646"
+    },
+    {
+      "path": "src/assets/title-fonts-LICENSE.txt",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "724cd4a5daf07d2ec6c58f71083abfed3a658d14bd659d410dd3587298cf8c47"
+    },
+    {
+      "path": "src/assets/title-hand.woff2",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "ebf7cf065a7c7cf9ed7f349abd405beafd011491cfa4808c699bde6919ca5770"
+    },
+    {
+      "path": "src/assets/title-wide.woff2",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "2a01df3f3d7c43fd0ef300117a5070f3e9244d304d36698db19dd66e8cb7e6d6"
+    },
+    {
+      "path": "src/components/AvatarEditor.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "eda1a44069a4659ed915cf9b2cb858d9c60d01323d1786e8a42ea984c340f0ea"
+    },
+    {
+      "path": "src/components/AvatarPreview.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "629cda18b5140d8fd2f958997dae6d27cf487e09f011bb1c233d6b46796e832f"
+    },
+    {
+      "path": "src/components/CareerPanel.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "bdc318428556843071b8e98e0217ea1503437e0282ffea166e147411fcb06761"
+    },
+    {
+      "path": "src/components/CareerTracker.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "b49c3e5f7ede7bfd2814a4d60cb24211ee003c40768a15868aeaf3fd984ea444"
+    },
+    {
+      "path": "src/components/CodexWidgets.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "aa64e6157504a6ed207c7ede8fd07ce9ff67b19739e93c9326681f450fb2c24a"
+    },
+    {
+      "path": "src/components/Cutscene.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "1afb7758197a4a072c921d33bc3374224d2c2463a472030d97bf0f0841faba2e"
+    },
+    {
+      "path": "src/components/DeathScreen.tsx",
+      "action": "preserved",
+      "reason": "lite-customized",
+      "baselineHash": "f7eacea78e1a6b0dd5ba5e3f9c870107c6481efea4c6a5520f6acb969ba0b899",
+      "liteHash": "d53c4c1b4a8697202332447e67b7593bfb7c9b8f9870d816c5dc8fd5741ab58c",
+      "sourceHash": "f7eacea78e1a6b0dd5ba5e3f9c870107c6481efea4c6a5520f6acb969ba0b899"
+    },
+    {
+      "path": "src/components/DialogOverlay.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "e121032e02bd90b4504844576edd70a2752eaa9989f671e0a1c0470f041a487c"
+    },
+    {
+      "path": "src/components/DocOverlay.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "70a8a391ff75716652486d20c53cde21f5ff3014f594a44505a61bc620185453"
+    },
+    {
+      "path": "src/components/FacilityPanel.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "2676a4b0465c15c89c418e761c62bfdc32a2443a9be3cd520ec1c6684ac0aad0"
+    },
+    {
+      "path": "src/components/FactionMissions.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "7cee0a061c1efcd15941a8cc5ae768f17ee041d483a2465128ed72a5631e1da6"
+    },
+    {
+      "path": "src/components/FactionTerminal.css",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "a25e3f080b6a391260a66d92d2d5af95c0001e1420177403df2b36b745139b26"
+    },
+    {
+      "path": "src/components/FactionTerminal.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "782f800c432a9b45562d865d0a25c44132141e9e15821dbe3859955c954d8fd5"
+    },
+    {
+      "path": "src/components/FallIntro.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "c05a1e5a4914ad862637f98e7605f3582485f9e19f6a6a25bfde142e1dd8890b"
+    },
+    {
+      "path": "src/components/FullscreenButton.tsx",
+      "action": "preserved",
+      "reason": "lite-customized",
+      "baselineHash": "9a4f8005a6f15ed9030a995e7ece96f97901f0e09c267ae8b596a9d00209fc81",
+      "liteHash": "a51ee7fcb605eb88002a509140ff62ff53254e941ea80fc212fbebeb87507c54",
+      "sourceHash": "9a4f8005a6f15ed9030a995e7ece96f97901f0e09c267ae8b596a9d00209fc81"
+    },
+    {
+      "path": "src/components/FullscreenHint.tsx",
+      "action": "preserved",
+      "reason": "lite-customized",
+      "baselineHash": "5dfea266e3d4cbed26d5406928d12e56a02dc4bf8fcda5507db188eee225e418",
+      "liteHash": "d43c03d6239b4fa3f3df7bede3105f40852f34b45d4dd53a63a43aabfb2cd635",
+      "sourceHash": "5dfea266e3d4cbed26d5406928d12e56a02dc4bf8fcda5507db188eee225e418"
+    },
+    {
+      "path": "src/components/HowToPlay.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "514a02ca5c7f48c418ab6463df1516b60d021d2972ce0e4a100f47994db43b52"
+    },
+    {
+      "path": "src/components/HUD.tsx",
+      "action": "preserved",
+      "reason": "lite-exclusion"
+    },
+    {
+      "path": "src/components/icons.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "d6c2ee1423de9ea12f93a208e11d1c0bb17c48e9a2cd6ed24a8757237536bacf"
+    },
+    {
+      "path": "src/components/LandmarkOverlay.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "b7082072bfb688c59acde58cd970c1d5c03aa5680c72b14e03f8a4be73b9d6c6"
+    },
+    {
+      "path": "src/components/LayoutEditor.tsx",
+      "action": "preserved",
+      "reason": "lite-customized",
+      "baselineHash": "5131a275dc10b83a6ecf7182074d812727055d998b4e531fac48e76291356bae",
+      "liteHash": "af954a4af9ceaac858d6b4e0fde66eeaf627b549ae3cfe3f3ce7dff9a3323548",
+      "sourceHash": "5131a275dc10b83a6ecf7182074d812727055d998b4e531fac48e76291356bae"
+    },
+    {
+      "path": "src/components/LevelIntro.css",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "4578329e63dc1183e5be61f4461eed0b7f833aed52f80c62e3225de696132916"
+    },
+    {
+      "path": "src/components/LevelIntro.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "ca784883bf53c8140709b90c6ca0f12c2bb7992e16e3c43bffa2bc5ba09ed233"
+    },
+    {
+      "path": "src/components/LevelTitleOrnament.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "08189311a09da154fe43dc93d442c23c183b8f110bb248e946b5066b1ad457ac"
+    },
+    {
+      "path": "src/components/LevelTitleTheme.css",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "415649a4fc0a867206f4664721add858be4981337ffc22c03c3a4946baf0f339"
+    },
+    {
+      "path": "src/components/levelTitleTheme.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "47c7b1b7fb556dd1bab012021fbe1dce52623117a692d60a66ef495b4ceb4aa6"
+    },
+    {
+      "path": "src/components/LoadingScreen.tsx",
+      "action": "preserved",
+      "reason": "lite-customized",
+      "baselineHash": "811ce5d0bfb6b8c24d7f9da2ccf81acf451dcd292af0aa17201f71e5fa63efa2",
+      "liteHash": "1559df17cf5e18816e098a336662c3fcf00317227ae340818bfd748a7a5443c9",
+      "sourceHash": "811ce5d0bfb6b8c24d7f9da2ccf81acf451dcd292af0aa17201f71e5fa63efa2"
+    },
+    {
+      "path": "src/components/LobbyOverlay.tsx",
+      "action": "preserved",
+      "reason": "lite-customized",
+      "baselineHash": "e74a834a4264fa43935bf7db9d1c288d004d9657fdbffcec25057ee174e4867e",
+      "liteHash": "60a24fbaa9577630aa888bcbde3f1b986202a980e88b2eadda4bfc1f7c95aac5",
+      "sourceHash": "e74a834a4264fa43935bf7db9d1c288d004d9657fdbffcec25057ee174e4867e"
+    },
+    {
+      "path": "src/components/LootPanel.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "20a940114ebffece7a47bb35d7f20fafcdc0aabbf9690721ec17a47d282cc8f7"
+    },
+    {
+      "path": "src/components/MegContacts.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "f2808c458d15fe3a1ef3aa04ea6d545f11ed81c41e07232a21d58faac97544c8"
+    },
+    {
+      "path": "src/components/MegMissions.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "f2c5af7fdb9132bc51e1e81487bc94ea7c9c22e2dc898e07c09f06d3cecff799"
+    },
+    {
+      "path": "src/components/MegQuestTracker.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "42674a7fdc85c3c88c643cca89c1dbe7b2e351ace608a13cff12efee4528e714"
+    },
+    {
+      "path": "src/components/MegTerminal.css",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "f08c4083f9465d8c0dcb97f55e907ea9f1f4116962f6283ba56eba80caa1d40c"
+    },
+    {
+      "path": "src/components/MegTerminal.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "0718ac4c62bcd79deca80ef26646f018eead863de3b04796271c56695c2f0151"
+    },
+    {
+      "path": "src/components/NotebookOverlay.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "ad3240f72a55ccb9e4c24af3b490436e12bba235f9a7e19f64dcf28a81f2de84"
+    },
+    {
+      "path": "src/components/npcPortrait.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "d76cd996876f4611a56df3e976c39e62247be02cbfbc11fd68c6bbde9e9a2e08"
+    },
+    {
+      "path": "src/components/PauseMenu.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "83f5e6b31a370cdc426a150e0f2be8108970146dacdd7500b90bef6b45bf6163"
+    },
+    {
+      "path": "src/components/PortraitNotice.tsx",
+      "action": "preserved",
+      "reason": "lite-customized",
+      "baselineHash": "fa17a1eb982162ab827a370840cf83c1a421d97628f56c9cb38568a7957d7eeb",
+      "liteHash": "e11cc2f4b59d991711ad8c14e78ef81be0046a781faf0f2d0824d3c8ff73198a",
+      "sourceHash": "fa17a1eb982162ab827a370840cf83c1a421d97628f56c9cb38568a7957d7eeb"
+    },
+    {
+      "path": "src/components/RadioOverlay.tsx",
+      "action": "preserved",
+      "reason": "lite-customized",
+      "baselineHash": "10aa64ffff0bb0dc266ce40b3850de1c9ec01ab02cfd409c5a611f8fdda6efdb",
+      "liteHash": "57d640702895ed9f81f551d1ae09308189f573c06a286b1d28c2b4b392d7e71a",
+      "sourceHash": "10aa64ffff0bb0dc266ce40b3850de1c9ec01ab02cfd409c5a611f8fdda6efdb"
+    },
+    {
+      "path": "src/components/SettingsModal.tsx",
+      "action": "preserved",
+      "reason": "lite-customized",
+      "baselineHash": "12502aee0bb12c8583b41af8b55c7aa8492acd2a56f9b22035e3821b4df7ea22",
+      "liteHash": "c2a7c417f88457fe8174948731d7bf0737f4b779e4c4400392f25ea98e46972d",
+      "sourceHash": "12502aee0bb12c8583b41af8b55c7aa8492acd2a56f9b22035e3821b4df7ea22"
+    },
+    {
+      "path": "src/components/SquirtRadial.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "ac3752d9d9ee793dc8029af34ecab057a277b9c492e4979a3009f256e6151f34"
+    },
+    {
+      "path": "src/components/TitleScreen.tsx",
+      "action": "preserved",
+      "reason": "lite-customized",
+      "baselineHash": "ad0e62278ae8663e2b0a1c1920eb8b609ab20d3428cbf48cb2550523a02d96d6",
+      "liteHash": "4741727182a49cd3a170a7eb9bae19da2f98575395193708b2011315e8b15907",
+      "sourceHash": "ad0e62278ae8663e2b0a1c1920eb8b609ab20d3428cbf48cb2550523a02d96d6"
+    },
+    {
+      "path": "src/components/TouchControls.tsx",
+      "action": "preserved",
+      "reason": "lite-customized",
+      "baselineHash": "d24efb2451eb6447077ee4e7e2d842304fa579d9a9540844db0ae85ab4f96100",
+      "liteHash": "4ce1cce09116cfd5841a3691464d0d058321916b629c673631c4b87f4efe52a0",
+      "sourceHash": "d24efb2451eb6447077ee4e7e2d842304fa579d9a9540844db0ae85ab4f96100"
+    },
+    {
+      "path": "src/components/TradeDecorPreview.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "ec3f18cc2dc3d50bd743ee5d3946d391b00cddd775b2ad4d4b461b6bcd62d5db"
+    },
+    {
+      "path": "src/components/VictoryScreen.tsx",
+      "action": "preserved",
+      "reason": "lite-customized",
+      "baselineHash": "772a2d26349d0d362b2e364eb596d6acae643b0ba2e8e7889931fcc698bf5771",
+      "liteHash": "f2434b10c0753ce6e4a3de74d42318e17e7e4fb8c79c55bff976f9251172a904",
+      "sourceHash": "772a2d26349d0d362b2e364eb596d6acae643b0ba2e8e7889931fcc698bf5771"
+    },
+    {
+      "path": "src/components/ui/accordion.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "1e00288c7eee72380002164ea3ff7589df5d92f2f1b8c7aa5077596ef680acdb"
+    },
+    {
+      "path": "src/components/ui/alert-dialog.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "683cf8b6c3b0c29fb0e31f36e8c7794c63ab5b7ab431f7441ea2d478bbf9fe41"
+    },
+    {
+      "path": "src/components/ui/alert.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "49d8311589b810b106aada8ef7b13f70b2b1f68cfce4e1458b7f31a191f420e9"
+    },
+    {
+      "path": "src/components/ui/aspect-ratio.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "6a75117416aa89200cf31e8d61643b428e812f479caea857c80004b26d893e79"
+    },
+    {
+      "path": "src/components/ui/avatar.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "e637ab3522c01631eac2e456588ef301314e2bb7940ebf7cd96e698a868d47bc"
+    },
+    {
+      "path": "src/components/ui/badge.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "e7455feb113b38c59456ba29a9ec264b5ffa1daae8883866332ad637ffd57c31"
+    },
+    {
+      "path": "src/components/ui/breadcrumb.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "22f3f4c13ed1085c4131379bfccc6fb173a474f861636bc2736506820153aa08"
+    },
+    {
+      "path": "src/components/ui/button-group.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "ccbf09097f5ebf2eec86f1a96cb92e8dd39d251ebb5867394196c8b4fec68a5c"
+    },
+    {
+      "path": "src/components/ui/button.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "5a5c4b8b60a8a80ba7b8b5d0319be2d3c61bfd2ce4fc2a645371dee9f6db0a77"
+    },
+    {
+      "path": "src/components/ui/calendar.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "c8e67d15d8622135b72045d974a3234ea99f5ffcc1b981eafea8847a14ae1f12"
+    },
+    {
+      "path": "src/components/ui/card.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "2040cdff27cd1ed771e0ebbd15abcd73d31f2f1e4be6664bd6816fffd2a87476"
+    },
+    {
+      "path": "src/components/ui/carousel.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "10c5388b66d98f0c555dad2e5b89b9bc846fbc1a3de101ee8b98abc305ec2c51"
+    },
+    {
+      "path": "src/components/ui/chart.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "39a2fde544144e0ed0e3e7f76eb3f3988f570f849f30f62208c6f3e2fc4e3e4f"
+    },
+    {
+      "path": "src/components/ui/checkbox.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "a8292972a5b81eff164f621ac0bb66f4ed4419d1599e2d4901968e216574677f"
+    },
+    {
+      "path": "src/components/ui/collapsible.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "661444318605c90d19e47e4d21289a68b4c5f7f01782be70dafa80d3f7a4cd08"
+    },
+    {
+      "path": "src/components/ui/command.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "416cdc19eb9e7301b51f9665b4f1a797534769a6bb58a563808979f460b0b8a2"
+    },
+    {
+      "path": "src/components/ui/context-menu.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "70e547a9bececcc98adf2fbfb2cae05c99179707ab0edb1ddfb5d2de329dab42"
+    },
+    {
+      "path": "src/components/ui/dialog.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "6333f1124e85ff25bce5061ac9ab5981e5346782d5535c9dfeeb51b2d535a7cc"
+    },
+    {
+      "path": "src/components/ui/drawer.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "0c9464ed4f95207ff6ec0b8f433f550388ea0fe57fecd36bbe100b084ee46a3e"
+    },
+    {
+      "path": "src/components/ui/dropdown-menu.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "ba022169876b487c849d046ac577654ab61a4cfba158305c8790c572b704ed9e"
+    },
+    {
+      "path": "src/components/ui/empty.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "584b491f9eb69f8041b3d3732a4d139f5af01de19a00b7a97656c7af7a78716a"
+    },
+    {
+      "path": "src/components/ui/field.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "e9dcb51b16e5f235bdf23a0b4a092e55c05b2bad08a83126ac675b72aae5380d"
+    },
+    {
+      "path": "src/components/ui/form.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "a12f73507ab613e9d797979b988a15e32d23458fc8dd4ba71b922aeee977a3b6"
+    },
+    {
+      "path": "src/components/ui/hover-card.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "031f6a309d87c8e42a2282fccc277dde75e373de8c93dad881582c9dc13e05d0"
+    },
+    {
+      "path": "src/components/ui/input-group.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "c0df02569e483db8ee86bd51b3b392a1ba62b276604d8c7ea90a9efc5faa9e25"
+    },
+    {
+      "path": "src/components/ui/input-otp.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "7fd7ed5273f849cde558238148ee1bbae729aa1149407c7c732b6c65906933d2"
+    },
+    {
+      "path": "src/components/ui/input.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "56b7fd30208addbcc2468cfda4f5bc0a55342211deaab61ee35b1c352b1622f1"
+    },
+    {
+      "path": "src/components/ui/item.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "6d64b756260749245b3a1f292e2aaf2774d7ec0b8bb99403eb8c1be31bd26900"
+    },
+    {
+      "path": "src/components/ui/kbd.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "886e04c83aaa016dfce924e461aa38aa68a9f5c83bdaedd6209dc358c32a8f22"
+    },
+    {
+      "path": "src/components/ui/label.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "9ec42c8a57e82311118b794318409ee02b2cebfa49ba6cce8457cff6448cd471"
+    },
+    {
+      "path": "src/components/ui/menubar.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "b4be4da586ce1288e8259b1e760a9e317eb0ee9183548c762d8b2a222bbdb3e5"
+    },
+    {
+      "path": "src/components/ui/navigation-menu.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "d71f57fe0f365541fbf5d00196b0b78a461d8c4f38d35293e5754680d93b9245"
+    },
+    {
+      "path": "src/components/ui/pagination.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "374ad135c3d4ff3ec080a0009cd9745cdd0e12faa89d2b0e86074f11e5127fd1"
+    },
+    {
+      "path": "src/components/ui/popover.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "29a217781737bbf5c430859b3de46097a44ada81c4143c2d05543d2167de0ee1"
+    },
+    {
+      "path": "src/components/ui/progress.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "9e36ca3f10bc56b69058d8edd342832b72c8c1b2d36cd142a0decb2445c3b724"
+    },
+    {
+      "path": "src/components/ui/radio-group.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "b12ca5cef859dd75b274337234bae66e413b0f97845243254a1dedcb2d7a7237"
+    },
+    {
+      "path": "src/components/ui/resizable.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "4634b0a700b91e5d422babc1f068b6d145b5f000c8aff62d5cfc9b5711fbff73"
+    },
+    {
+      "path": "src/components/ui/scroll-area.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "1c5d0b242d0513848f4bfa9b57ba7f438d9b1120617029941bfaa137196ecead"
+    },
+    {
+      "path": "src/components/ui/select.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "68fc754d3042f9fec3406895845e6fcc05d44f93a049478a9d3c706919100ebe"
+    },
+    {
+      "path": "src/components/ui/separator.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "e9dddbd8dbbc0eccd683306481b0f0bbc8e2b60ea97817416ebb9fe7fbbbdca8"
+    },
+    {
+      "path": "src/components/ui/sheet.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "fbe9b257fd95b9865e1aba651489899c959ed5c16cb8493fe8c2733f83b92ee1"
+    },
+    {
+      "path": "src/components/ui/sidebar.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "6074d8027b4bc9ea2d5eb1527a8528a7fa69df96f6261b9c6441c3980d41700f"
+    },
+    {
+      "path": "src/components/ui/skeleton.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "f2aea81d8baf2b621945382aabac150e3db40f20d19ac1abea7aff805f1dc33c"
+    },
+    {
+      "path": "src/components/ui/slider.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "640996327017c3977e3c61eee8ec55230fa0bec509d0f4b44bdc9acdd8eca138"
+    },
+    {
+      "path": "src/components/ui/sonner.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "a3868f2a8aafd8e2dc96b7ae145009939e9d8723cbb5a4b61d7b7d9bed9df478"
+    },
+    {
+      "path": "src/components/ui/spinner.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "3e6e6e8d37fb4069f8e43e55318f8db06fbc36e6c8be0096da3c9337c1c798b9"
+    },
+    {
+      "path": "src/components/ui/switch.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "17f2390d98e8ce4d9e90155eac1918266914d6a9ada7c276b5d1c917cef0e969"
+    },
+    {
+      "path": "src/components/ui/table.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "95e3ef5db88b3bbfb68eed12f341fb942e40ca815f4342e1d5dbc8c8d47c783d"
+    },
+    {
+      "path": "src/components/ui/tabs.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "e8469e599381cf021ce751c27cca3d8cb06440a45665ca9c2ef2efb0acef1fd9"
+    },
+    {
+      "path": "src/components/ui/textarea.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "de4e9fb0fd8e8ed10ea2e475ffe202a922ffe77e3f3edb2c517b0781447ad1b4"
+    },
+    {
+      "path": "src/components/ui/toggle-group.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "c63c671fe328f2c1e0d58e3df82a474e73834037c5a39a9ff566a4b3b2cf9010"
+    },
+    {
+      "path": "src/components/ui/toggle.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "ab2e52debb86451889ac9519dfe27daf3a86d70aa2833da8ed8f6cf3146197ff"
+    },
+    {
+      "path": "src/components/ui/tooltip.tsx",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "cbc12f4086448f8a307ed5fbb160f79467c84a44c48ca0dbd2c62e39a2db6f5d"
+    },
+    {
+      "path": "src/game/content/arianeMissions.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "33a136ee12024f591d5552f7970d5c56e9c9890cf9e682f4bcbd06e3a177d5b2"
+    },
+    {
+      "path": "src/game/content/bntgBlueprint.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "b5d9b703aa0535fffc7ab580b681f48ae9cd19025be91d1b0bcdc61745b35b1b"
+    },
+    {
+      "path": "src/game/content/bntgMissions.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "6a8b6516b93d1d69d97d674cb78e7a150ae926598ee021e963666aa5c2725b24"
+    },
+    {
+      "path": "src/game/content/careers.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "4401d8ce36c2a5b93d37b52ebcbd3b8e378ef474eb40f264fe23ee311d465317"
+    },
+    {
+      "path": "src/game/content/codexScores.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "8ff8af2a09bccfc1c7f34b44101c735ee7a9f4b1a0dab6e0109025548b81bdae"
+    },
+    {
+      "path": "src/game/content/docs.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "6d4670a08204287e67ffbd497cfcd0413372105d99bb477589d9a9d7999658c6"
+    },
+    {
+      "path": "src/game/content/factionMissions.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "6a2a85b8ad5b7e8be25ae87d72a3aae8fc714661728a52f43722afc5a59c6fe4"
+    },
+    {
+      "path": "src/game/content/factionMissionTypes.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "06fff8b7fedbb205f7d5ccc179baa48a162e8358e7952dad11ac71e75f64d374"
+    },
+    {
+      "path": "src/game/content/factions.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "ef2d8faa11a87db6077ec6c41caf6c2b555366f173d1a6ba7ba835be4bebc2fa"
+    },
+    {
+      "path": "src/game/content/factionTerminals.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "e2513f55c248f66bf5e14460280086a266bc68f583a6933da14f49e27d399809"
+    },
+    {
+      "path": "src/game/content/guide.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "bcdb417c761e288e7b4ff24cde73f4a7ba924a5b114bd292ffec921448a18ac2"
+    },
+    {
+      "path": "src/game/content/items.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "02cd529731dbab8b96b2d53913315ff448d1ec9fa97d8fc06016646eef2017e7"
+    },
+    {
+      "path": "src/game/content/jerryMissions.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "df95279aa66c4547d8038b87992841bb760d1ad4c3457bc9b0ae919b8a230817"
+    },
+    {
+      "path": "src/game/content/l11People.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "df4f01215fa6354a0c956db9808505c28c8f5d86905fcaff4937b65140adb7f4"
+    },
+    {
+      "path": "src/game/content/megMissions.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "1fbe5e24f2a20de2314bb0574a82993689db661406ade130c52098022675b58b"
+    },
+    {
+      "path": "src/game/content/megTerminal.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "01ee697fe87673ffac730f34e51eaedfb30bc1368fdc3a6973cc18a37240b6b9"
+    },
+    {
+      "path": "src/game/content/npcs.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "bcdbb50491528bbe6b58b2fefa63ac2d9146b2e09da5bcce850db412bf01df1a"
+    },
+    {
+      "path": "src/game/content/outposts.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "c7832c620a154ce80d7bdf474bbcff087e0ca77fae26a21aefc6a8228dbc22f3"
+    },
+    {
+      "path": "src/game/content/phenomena.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "9c468ad06a98c8861e47039e50f5050d08e5c253907613efc1f887bd9d26fd3e"
+    },
+    {
+      "path": "src/game/content/settlementBlueprints.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "e27132e4315b835c52aa5c9b39913f9513218b01c8076add032db6ece9587ac7"
+    },
+    {
+      "path": "src/game/content/settlementTypes.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "6b2b2a84be5781ea0c3d753a181da47008c8134a57c79c91cb1ed6ac2893c906"
+    },
+    {
+      "path": "src/game/content/tradeDecor.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "96780425fcd6f552b37ae0cb03196ea255e90b274146093ca0c3b0f7749997eb"
+    },
+    {
+      "path": "src/game/core/audio.ts",
+      "action": "preserved",
+      "reason": "lite-exclusion"
+    },
+    {
+      "path": "src/game/core/avatar.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "2e021516943f49da23c162c10f142f74c48de1ce389388add431bdaaf26749b1"
+    },
+    {
+      "path": "src/game/core/keybinds.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "7c35708a8536eb7014cf2a2966481483a5392c1713df0961add9d1553c727697"
+    },
+    {
+      "path": "src/game/core/llm.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "29ee402a705820ad9eac57939e7e5abbdef638a84c1b3fee0f6029f382e89583"
+    },
+    {
+      "path": "src/game/core/midi.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "b3666393ae072ee2cdff7bf67de522cd7b1ed0afed68f6c2da913c84021b1399"
+    },
+    {
+      "path": "src/game/core/mouseLook.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "6b8b072fe78ce4ef6691f75193f557eb77012de3608df9a1f896172f8d5f99c2"
+    },
+    {
+      "path": "src/game/core/orientation.ts",
+      "action": "preserved",
+      "reason": "lite-customized",
+      "baselineHash": "83ac6d2527c1cd9bdf6ee08ae22229aeeadc5213c1bc7ccd14b0db7ef4a8337c",
+      "liteHash": "002a25230ec846a68e5199a1920e2c4dc02e70ac4b0c4c8ba37cec05a58a916c",
+      "sourceHash": "83ac6d2527c1cd9bdf6ee08ae22229aeeadc5213c1bc7ccd14b0db7ef4a8337c"
+    },
+    {
+      "path": "src/game/core/player.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "159a9f1b44a1776f7d86f4814b5bc974d678e8455ffd3d8fedd8a04408213d43"
+    },
+    {
+      "path": "src/game/core/playerProfile.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "ac9c31265b5e7476fb611cbe6c22f961603412bfe2ac30307b40e08be50635d6"
+    },
+    {
+      "path": "src/game/core/preload.ts",
+      "action": "preserved",
+      "reason": "lite-customized",
+      "baselineHash": "f6dab24fcd2a250f09e977cb5949941849244e6913030181ea6615549605bb30",
+      "liteHash": "dfa265803b17b548bdcc650594324ac78354706ed2ee90c42a568a9004cd0a70",
+      "sourceHash": "f6dab24fcd2a250f09e977cb5949941849244e6913030181ea6615549605bb30"
+    },
+    {
+      "path": "src/game/core/renderer3d.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "c24dde1779f4eb681c6f90d18166f130095ab9d3b9939ce594e979acd069ae6d"
+    },
+    {
+      "path": "src/game/core/rng.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "059a7660e0f0f0cfe6ccbc21784bd261f9e139b38fb3be1d6c7b518a61c6018c"
+    },
+    {
+      "path": "src/game/core/storage.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "81b6c7024e940fcb85fbc92e27e3b84b32e1353b228fbd993c9a64fa62997c31"
+    },
+    {
+      "path": "src/game/decorations/containers.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "88c227a1f674be81db901ebfd9934753a219993b13029ec5b4ecd2baadbac2c9"
+    },
+    {
+      "path": "src/game/decorations/index.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "0ccdac6f0d64cc7906581e9ef85b31d386903cfae18819ae62d0a53a059a467f"
+    },
+    {
+      "path": "src/game/decorations/lore.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "5aaf592bc10ee8d3ff289753be8748c616028005f51ca019fef4d3dc376964c3"
+    },
+    {
+      "path": "src/game/design/buildDesignFile.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "f18c18557308524d483cf2d4220b5c665b16b038b2a6dc9e4aa16386fbee5e09"
+    },
+    {
+      "path": "src/game/design/extractCodex.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "16e180b093a7d7fa166bf5a9e3c88b4c96744c0dcc9d9cb4854f3fd20d8ea98c"
+    },
+    {
+      "path": "src/game/engine/bntg.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "1e016190859bcd33b8e8df73997e839f18162d17eace85dd7d6b9beabe7a8bbd"
+    },
+    {
+      "path": "src/game/engine/career.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "e779f7a1f70f4a2b9cdaee2d5a2811aede3560572221bdad561886dc18f45ae0"
+    },
+    {
+      "path": "src/game/engine/effects.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "26efa24b0fa5654f3cd32ce4d3fe49cb46e4c2b01a3e6f55971177c8f11e54cd"
+    },
+    {
+      "path": "src/game/engine/facilitySight.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "114d1b4e2b7cdeb8f7668a3354f0f510aee046ce6f73b1721e47627516d0040a"
+    },
+    {
+      "path": "src/game/engine/factionMissions.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "192e34c7db9f4cfd37f5cc0cc47bd36b97e816950350d53f389ce363044d6099"
+    },
+    {
+      "path": "src/game/engine/inventory.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "0916394cade2cc35fa2d0cda81c7afec665713caa3b8f8a91ec80b55203c1037"
+    },
+    {
+      "path": "src/game/engine/l11State.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "a382989cb811b961a935e5a8d798f8a360faa5c0b59840c304771bedbef3335f"
+    },
+    {
+      "path": "src/game/engine/l1State.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "f45a2f23dbe1e414641106c49d5457d1ebee272651d1e5f9a4fa0eb1b86f5c14"
+    },
+    {
+      "path": "src/game/engine/megMissions.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "2bbde6658399697c94ae2cad3b2fbf1642938f62ae47f50ce2f88b6efd7a55ff"
+    },
+    {
+      "path": "src/game/engine/movement.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "947241e3e1ddd87c52e59d206e30269235d8fe8f691a2d2bcd84f6cfa42531cf"
+    },
+    {
+      "path": "src/game/engine/npc.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "fada957caff2602ec395ef3edd6234b9a3a2f0286b6cb62c8471a5d8fc522f98"
+    },
+    {
+      "path": "src/game/engine/shared.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "c3fc2acf2098ccaa0376c109e6aad21344146a47c85ad8bf2f84f87847a87c77"
+    },
+    {
+      "path": "src/game/engine/survival.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "040d02df3c5e4ecd3c35b7d4bbd35af8e1c2ea845aba5bf1621aea17a7b0914d"
+    },
+    {
+      "path": "src/game/engine/unstuck.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "7cf5408ab88cd573669be4af06973de9cf54fe7b141f8e225d86ee8f3c3d6035"
+    },
+    {
+      "path": "src/game/engine/warehouse.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "285ec4de9e4f9e36f0d218925ee3ef04841089ba2c11d60a735f75166ea384b6"
+    },
+    {
+      "path": "src/game/entities/deep.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "28a57dc176c35ee0b26f7e9a00054595b299cd28460a74760e2d14b8a5e212b0"
+    },
+    {
+      "path": "src/game/entities/humanoid.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "f88f29211a8e3683449ed62a3fd1ef63c20a7370f60c09986f0d3cabfdad4a65"
+    },
+    {
+      "path": "src/game/entities/spawns.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "c5b6dd57ecde5f7f9c17da2722831a820638fb40f7deb0f8783bf9d27ca20b59"
+    },
+    {
+      "path": "src/game/entities/special.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "84bb5a4f2e92805945a39d2eb059fcba8db2a68b1895361f6017d5ef61632802"
+    },
+    {
+      "path": "src/game/levels/index.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "68334c02f1aabdf194a77c0b833307589d9a4705ddb611533dd404758cb4e4be"
+    },
+    {
+      "path": "src/game/levels/l0.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "ea347292c2659000ff69fa26507d6ab0fd36008cadd8b1d7e65bf5c27f18adbd"
+    },
+    {
+      "path": "src/game/levels/l1.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "f4c5f23161f2ac3888de205208745b687f013a98616049e31c5af3d0cc9c0fb4"
+    },
+    {
+      "path": "src/game/levels/l10.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "b2240f95d02ba111d124da33b718fbdf84fb87cb07c8ceb63dcb9590c252d852"
+    },
+    {
+      "path": "src/game/levels/l107.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "97455293242a96a570b6c88e81de25b14bb41d358dad3259d35df90e452e8eba"
+    },
+    {
+      "path": "src/game/levels/l108.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "2d229e201d00f4d40dc030fa251ac301544696dbfba00a3545d5a55f835d32d2"
+    },
+    {
+      "path": "src/game/levels/l109.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "17a66f7aeb5d2c2cff63b8332e5577b5bc8701e9fa56b17139776101bf20ae52"
+    },
+    {
+      "path": "src/game/levels/l11.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "bbaf4d08ae655639d995c0ff7cc3ae0b4b08beb4439cdc7915428b49a5d242ce"
+    },
+    {
+      "path": "src/game/levels/l110.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "36616447a769f1f7eaff834f4aaf5e44f939d47ada9fe93d8d8030a6a8531a8f"
+    },
+    {
+      "path": "src/game/levels/l111.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "93222f973d073d4f68efa3dec88a56a6f0159e17fbde16e86c19db2d2ab31b41"
+    },
+    {
+      "path": "src/game/levels/l112.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "85e69d1737c4171a78376a030bee4ec9d8adde788f813716495326c3a4b5bd52"
+    },
+    {
+      "path": "src/game/levels/l113.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "e38c87137d7710876ef5fcce9fc836e0a314e6796e635fa203f30faaffeca3f8"
+    },
+    {
+      "path": "src/game/levels/l114.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "50710f0ba58413351273c291c946b85f5ff47ecffe8750568feb7c610a5aef2f"
+    },
+    {
+      "path": "src/game/levels/l115.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "b5d0b158db147bb7c2898c8097f158edf6f2a2dc83577d321c9d591b677ffafa"
+    },
+    {
+      "path": "src/game/levels/l116.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "a10866a77f4558e302c74a6e960ee3d3e2e2dcb9c948f34ff1ef5e1d31b470bb"
+    },
+    {
+      "path": "src/game/levels/l2.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "18ca2ee796c925fcd76dce8b7e2c06615698737c38a680cb67345828e58755be"
+    },
+    {
+      "path": "src/game/levels/l274.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "de23589757438187f57fa13444cd20b8f510f605db2eff8fd6831d848ca29a2d"
+    },
+    {
+      "path": "src/game/levels/l3.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "5db039fd2da359f9dfc9d8bce68a6179e2161df60facbf76aaa3a51444b63826"
+    },
+    {
+      "path": "src/game/levels/l4.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "6354c764740a68f88e92187138da2b7fa5172e1a9b6e8988daeda716e9168e35"
+    },
+    {
+      "path": "src/game/levels/l5.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "82d5d75d93591eadeb25d3227de735234b6ee8672059b855c87f62dece00d995"
+    },
+    {
+      "path": "src/game/levels/l6.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "b3bcb9414f48382b232faa3df525b07d8d88a0917d89afa3fcad945ddd6b3181"
+    },
+    {
+      "path": "src/game/levels/l601.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "c8cc7b2d1856f909defdc0843cad47d81771bf7ce34faffcf25aa0ab79f6d48e"
+    },
+    {
+      "path": "src/game/levels/l7.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "2ac6092a03d9f6dcf27f603fa6a3686807732901c02de86912c2a4c3e62250ac"
+    },
+    {
+      "path": "src/game/levels/l8.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "64eb59fa804e39e863562362737a6bdf81cba7e87ecb1c2c6153ba8c3bb5ca13"
+    },
+    {
+      "path": "src/game/levels/l9.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "f267a1232fbd5ad254b46033704d26d0803e106557d546fdbc2324008d461b85"
+    },
+    {
+      "path": "src/game/levels/lalpha.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "28cbebcf9ee98b26d5f62ab006d3ab2e3e4f606618163467314033b8d13e61b1"
+    },
+    {
+      "path": "src/game/levels/lariane.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "32fd99d65c3d6a0bfc3d086c19174def6131e2877bd1f79afb19b35af1b9b4a6"
+    },
+    {
+      "path": "src/game/levels/lbntg.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "647e95170fa134346e699c5dde9ccafc2818840cd108fb8728bef9ddb41fa2e2"
+    },
+    {
+      "path": "src/game/levels/lel3a.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "5b2a6819852cb42d6f44c83ae01ef215ea45b693570eccc32d8b7967cb1ad562"
+    },
+    {
+      "path": "src/game/levels/lgamma.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "0d5f77bd18ecd239d3ef9eba46ed319d1bff88a8e5e3375ad401bfbc04fea057"
+    },
+    {
+      "path": "src/game/levels/ltom.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "00312f86f6c46e47b6440dc901fcd6ca8fade0af9c3cd5279cca4c2f294bff43"
+    },
+    {
+      "path": "src/game/levels/shared.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "e284d09388c59589503cac1300f59522f25843df6fb9dbf22160f3de6d45374d"
+    },
+    {
+      "path": "src/game/net/peer.ts",
+      "action": "preserved",
+      "reason": "lite-customized",
+      "baselineHash": "54f5341085742947a73148ca39daa906f9ddb3b2ffbd5306537c93e70964e22d",
+      "liteHash": "83120b1630bec051588a4c97640a6c10c49d932feae6a5f55be73d0d90222ec1",
+      "sourceHash": "54f5341085742947a73148ca39daa906f9ddb3b2ffbd5306537c93e70964e22d"
+    },
+    {
+      "path": "src/game/prefabs/all.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "1870c12462e12e357c3a4a01b007989f0209e29b2fb4126261e81c3430a37634"
+    },
+    {
+      "path": "src/game/prefabs/index.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "07d6ae00c819d3f69650895eb15ecf8e7b09ea31e44fde2934cd7f988f9bf473"
+    },
+    {
+      "path": "src/game/prefabs/l0.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "88d102266f1a6caf8f4383bbb39f71ddcedb01ccdb335fa2552bba64ead917f0"
+    },
+    {
+      "path": "src/game/prefabs/l1.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "8f353c600be3f463f9b3cf4e101d7f4eb4c8b2eeb895f67ae2c885737e71edb2"
+    },
+    {
+      "path": "src/game/prefabs/l2.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "dc048930288df72d2ce02880e51f0cf845c33ec0a1c97bfe73ab3f4a6bbe4280"
+    },
+    {
+      "path": "src/game/prefabs/l3.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "d3a969434f8403760e5380ae628a0dd7a4db3079d28eacda87d4c4567fff11ed"
+    },
+    {
+      "path": "src/game/prefabs/l4.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "a9dec154010481e6012242470d3ae8dd2ab0961239bab191fe3b86bfd7f1ce7a"
+    },
+    {
+      "path": "src/game/prefabs/l5.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "793572de0fb559c9bc15079a995542949d9f97ad03f4cefa5fdedddda41276f8"
+    },
+    {
+      "path": "src/game/prefabs/placement.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "3e03071aa03c5bd9171301de1a30e8cad255a3c4c809996d7c18c7531211347b"
+    },
+    {
+      "path": "src/game/prefabs/scatter.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "6649de1ab2a0909e9f75f215b5a342d8f2b6f577230fc2f868231099913fa39d"
+    },
+    {
+      "path": "src/game/prefabs/shared.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "c741679f40fed6a488e3086528dfcc30b57fdc137ff957c604632e24c4132965"
+    },
+    {
+      "path": "src/game/renderer/anomalousProvisionMesh.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "b92e0d1a064aeb4d23b65843fce03ab70a5bf13c73a8364283c625c6f719099d"
+    },
+    {
+      "path": "src/game/renderer/architecturalGlassPasses.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "d14192568eee2bb812d2dc97af26dd41fe96b4f9ea4faef8feb56558b201d322"
+    },
+    {
+      "path": "src/game/renderer/caveVolume.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "4d9e67de5b17180d6d07d24d83474b8fb2e41de9869cd55cb203cb496ca2fbd9"
+    },
+    {
+      "path": "src/game/renderer/detailItemsMesh.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "ff2fde16e27f2dbb187d4afe339d43c027d4465358b29a5ea4a69c3434bfdad1"
+    },
+    {
+      "path": "src/game/renderer/envProbe.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "03235b2484ec9ed379fa9eaa1f304dc2a634650b4243117a3251720976b5c0ff"
+    },
+    {
+      "path": "src/game/renderer/firesaltMesh.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "0354f231741ccc5ebfbe1ec5b5b4fbd50e279a11569c3e0d904d164df7234de8"
+    },
+    {
+      "path": "src/game/renderer/flashlightMesh.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "b28c4fd00325e4ab0688c716bd8045349d22abda0959b1e5c7736112aec727c6"
+    },
+    {
+      "path": "src/game/renderer/index.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "2cb09f61b9d1e42f29d14e2afae31831ab9003b25048e6d0db0df077b981d7a3"
+    },
+    {
+      "path": "src/game/renderer/instanceColors.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "62af33cdf7c9c96724c805271f8118d9725b5d46297ed3a53f548b5ca299d00a"
+    },
+    {
+      "path": "src/game/renderer/itemBatches.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "8f98e4a66ab148b80e0af7c6b0acd85b57d2bc8ede3c3c18f3b43d9343b2e126"
+    },
+    {
+      "path": "src/game/renderer/itemsMesh.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "6412ed644123078007934cead9003d21204f5a9461f22c3cdce1c15036aae08e"
+    },
+    {
+      "path": "src/game/renderer/l11Materials.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "2c59d657a1cc38badf69c82bd712d37c7b985b9a2a8f8809e36387287694daf2"
+    },
+    {
+      "path": "src/game/renderer/l11Meshes.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "98d847019dbbe56944c970aa5520f8af4338501909ba4b815fabdf9518b5c6a1"
+    },
+    {
+      "path": "src/game/renderer/l1Architecture.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "fb9a8330621d0a31abeb613b97f81df8ace5e6e94f632661e6996e1f4da35b08"
+    },
+    {
+      "path": "src/game/renderer/l1Materials.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "76a7c7cafb48f3df5aa0548da68b2b6f14f235a20ae283db1e75f1ec63e27e12"
+    },
+    {
+      "path": "src/game/renderer/l1RoofGeometry.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "df3f71564a730be068e60421924046fdfd0203323dce6e567b031c31058d9d1c"
+    },
+    {
+      "path": "src/game/renderer/l1Water.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "78cb382e84ba23b6a34b691802c09b9469e1f9e1dfdbec92a62f2486adc70a04"
+    },
+    {
+      "path": "src/game/renderer/l2Architecture.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "eb3517d280f333ea9627ef480242cc51be91afd0c15d6fc19f863080ac307880"
+    },
+    {
+      "path": "src/game/renderer/l2Door.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "a7f75060ed16514a410c21e37274adf71899fb3a5f6cf7fdea0ddc78805e6fa0"
+    },
+    {
+      "path": "src/game/renderer/l2Materials.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "2cd4e64104ad027afc7d269c0a4be045c0f7f54cb3ba3acc8a75c27b5ad1ac98"
+    },
+    {
+      "path": "src/game/renderer/l2WallProps.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "d01ec52fceff3aadff65ab9cee92a77181c00c48282f9a08c3175a0449901281"
+    },
+    {
+      "path": "src/game/renderer/l3Architecture.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "c93f8809cbf90937c119380bf17b85aef186268e7be94e209d434c1a7bd0ba92"
+    },
+    {
+      "path": "src/game/renderer/l3Glass.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "3eac5dbaf3dae76308ea66985bb975f978891708a0a03c308540d228341c9b27"
+    },
+    {
+      "path": "src/game/renderer/l3Materials.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "596df4a173014a7378eccf3d7bd9932dd09fe1aaa0f1649f71909b82d9ea178b"
+    },
+    {
+      "path": "src/game/renderer/l3Meshes.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "79ec175c903f3afb3a9d9e5456cb5f57bbf37f7408fd10b954c3ba1439af975a"
+    },
+    {
+      "path": "src/game/renderer/l3NarrowPortal.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "d36ef57c67d8551217148286a3fea74deba21d281f2e8d6392dc60a0cda32be4"
+    },
+    {
+      "path": "src/game/renderer/l3PipeRouting.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "b37950fa5370fada63bac7ee6c785d7476219df33a3d2e561d41575942893eb7"
+    },
+    {
+      "path": "src/game/renderer/l3Pipes.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "604a2309cbfc32ba1801a20bb3872a0dcc7cb12c70a58204b67faf598cdd248f"
+    },
+    {
+      "path": "src/game/renderer/l3PurpleBrick.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "b2f5dbac8c1273d6afd518ce62415d5434bdceb2949dadb080d227f3507cbdaf"
+    },
+    {
+      "path": "src/game/renderer/l3Sculpture.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "8b07ad219b884c4b098abe148bf75bf4cd60f8236ac27f7259d553c53a9056cb"
+    },
+    {
+      "path": "src/game/renderer/l4Batch.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "cbc0e1e8f663f6e883beb9713a202e3248b8c605e88bfb636442c37552d8d5fc"
+    },
+    {
+      "path": "src/game/renderer/l4Materials.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "e1f055aafc2e59b7c68d84ee2bb245c8376c0c28d4b7eaecf70af353c5e8f11f"
+    },
+    {
+      "path": "src/game/renderer/l4Meshes.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "2b5286e53e194d4a26b337ada27ff18d748263caa3416952b2b612a11d1ae7fa"
+    },
+    {
+      "path": "src/game/renderer/l4OfficeDetails.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "2d41d485c1cfd7b9f4d878d49b277ee115bebb88efdef2f4bf22545e75fbcd3b"
+    },
+    {
+      "path": "src/game/renderer/l4OldStairs.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "746f24b23e907c955b9e36c830a7db178998d6d6f3da0c01b6301dd7c18dfa91"
+    },
+    {
+      "path": "src/game/renderer/l4Terrain.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "332ef2f1f150a65b833e025cfb4a1751d8e255d8ef24f682b7f2cac10a0563ba"
+    },
+    {
+      "path": "src/game/renderer/l4VolumeFog.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "3ec698edb7e2a09e99af6677b2bd029d6085747f1107baac3b80769730d27683"
+    },
+    {
+      "path": "src/game/renderer/l4WallDecor.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "2436575ba58e3ba0542d7b40d3263962c1675bf9359c19194b9b1b84dfbac790"
+    },
+    {
+      "path": "src/game/renderer/materialBatch.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "ee0063ba1952752afd6951a966fc0110668003058023ff054cc2905acf25ed8a"
+    },
+    {
+      "path": "src/game/renderer/modelWarmup.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "1b77933cef386571adad7f2f1010deb7dc41005e259618136276556eb616c7e4"
+    },
+    {
+      "path": "src/game/renderer/movingInstances.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "e0e07c80aa3ff0adea97c0d29e26ba53efc78f7c3542a79faa70b26e5f36614d"
+    },
+    {
+      "path": "src/game/renderer/npcBatches.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "81e1d7fb8d97be466168be75df3d36cf02f61795c3ebdc7f60772c14947a3f60"
+    },
+    {
+      "path": "src/game/renderer/npcEntityPreview.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "0b966ef5a0470088916caf78962978be1b84a993e92ac8c354f38b209ac10a4c"
+    },
+    {
+      "path": "src/game/renderer/npcGear.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "2d94ee8cfc970e36ca5dcce7ed5ffbe6e42de778f029171abe10b46709f81e57"
+    },
+    {
+      "path": "src/game/renderer/occlusion.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "d09d10fd6fe90e484f2d6567d366d236f894bdf49728ea488a3b9d011eb46616"
+    },
+    {
+      "path": "src/game/renderer/playerModel.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "a901a74a30d08c1aa5f9f345c9436f28831892f21ce974edf0012c9618e6807c"
+    },
+    {
+      "path": "src/game/renderer/programCompletion.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "6213a6bae9eef4e878bf79461a1673f0790e4fd6cc6e208481ec9897d80c20a2"
+    },
+    {
+      "path": "src/game/renderer/provisionsMesh.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "16745f3ca86557cd4beff1e13c0310239b4986b31aed5b68f7b4217c721fffeb"
+    },
+    {
+      "path": "src/game/renderer/remotePlayers.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "30d060c8d4832b229d4d773e8cb9710e454081f2400fba7de21ccf95fbe9a328"
+    },
+    {
+      "path": "src/game/renderer/renderer.ts",
+      "action": "preserved",
+      "reason": "lite-exclusion"
+    },
+    {
+      "path": "src/game/renderer/renderGeometry.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "ea0414aeeb0550f16e5e7d9a715ceea4e3f8ed351a326fd9c22c6d3ea93a8351"
+    },
+    {
+      "path": "src/game/renderer/sceneWarmup.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "2aed0a9903e785174ae0cb690b30b58914c150e7d7cad398612b822bda366e0f"
+    },
+    {
+      "path": "src/game/renderer/settlementMeshes.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "aeb90f5d82ad28dd5d8ecc2205d5fc5fedca4d7a12016e8712d0c881959f5e7b"
+    },
+    {
+      "path": "src/game/renderer/shared.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "86af5f20dfdb9438d6e0d3b165da278a195640d904d188717d965b50613d481f"
+    },
+    {
+      "path": "src/game/renderer/skybox.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "8481d968940e7914c9941031645cc06afc226d11bbfcc10a8637696b8de1f073"
+    },
+    {
+      "path": "src/game/renderer/skyPixels.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "39dcad166b3968275b41160c46fdf73fc0591305ee5534e5207cc9b557b496b9"
+    },
+    {
+      "path": "src/game/renderer/skyPixels.worker.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "ef3bf6a4bcb8a83c7ae938bf2bdac1f031a0e6fc01e6c7b429fea9bc204d1ba2"
+    },
+    {
+      "path": "src/game/renderer/skyTextureCache.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "82086b537d9df366535eff3036b2a7ff90a020fc272558a9c52f988b49decd2f"
+    },
+    {
+      "path": "src/game/renderer/squirtGunMesh.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "a1c17dd948f2cefb8f8cbf202a9823183616af40510de716308866549d26b674"
+    },
+    {
+      "path": "src/game/renderer/staticBatch.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "db5d51c4ed0aec7e03d422a4bb5d52e7d6e44e40a2c2369afec67ff7b20c8dd7"
+    },
+    {
+      "path": "src/game/renderer/staticColors.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "61d7edfb86e9b06808cf36412eea9530edbe8002c678b89f014e8f7b3f0b572e"
+    },
+    {
+      "path": "src/game/renderer/staticTransforms.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "a6b9da06ea93b36d21f6558daa984e78078a1dfac59572c69712f9ff4f40ff3e"
+    },
+    {
+      "path": "src/game/renderer/supplyMesh.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "bc2009241f5dda4c017f349f3c1972be1106f4b21864c3b78820928a56360c48"
+    },
+    {
+      "path": "src/game/renderer/textureImages.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "c226de871121ac629b00ebae4d96be40ae2358b840e2161669a2b25391ff0c3d"
+    },
+    {
+      "path": "src/game/renderer/textures.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "efa7d6e1470ebe3cd333143959ac049299d76e42ba3db9f88103c5192cdf4d76"
+    },
+    {
+      "path": "src/game/renderer/tradeMeshes.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "2f43ba29713f30b3f141eab09779a8bf75c657875b8e0a465538888c06dfed48"
+    },
+    {
+      "path": "src/game/renderer/viewmodel.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "23110068727d946625fa4e7fd8218087350186e468acdf0b1eb8df89ae869bc5"
+    },
+    {
+      "path": "src/game/renderer/decorations/decals.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "21c0edec1c2d5e5d6276237210f26bf28262f977ad09fd0f539f9c1c54c295b9"
+    },
+    {
+      "path": "src/game/renderer/decorations/props.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "189a4dba1ed59a724355cf9d4bbb0846dc6dbb10d965c6b499d84adc20dc443a"
+    },
+    {
+      "path": "src/game/world/chunkCache.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "0e8739d03876ea3f83dee9e96ac9fde22549e9174f853ac1b9e2c4b1093c0990"
+    },
+    {
+      "path": "src/game/world/chunks.worker.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "fa75d8e618d488edd58942307b9bbfeedc5fe7d7eef03fd80d1c5eb2ae2c6387"
+    },
+    {
+      "path": "src/game/world/generationObstacles.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "97e4c2c962d4452191209940d731439279f542e6628a5949411bfb7253c215af"
+    },
+    {
+      "path": "src/game/world/infiniteL1.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "737f8d0caea3e2967cf116700c44e65c513c138e16561396a760f5192c063eb3"
+    },
+    {
+      "path": "src/game/world/infiniteL10.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "22bdc07c11918c831383771fd54a800ef7e3213d0870d9095e597123dd6059af"
+    },
+    {
+      "path": "src/game/world/infiniteL11.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "6a3b4d865574f5db59f7ec353f7f1ae53be92961a21fbb0ddcfb9ba1ddc978c0"
+    },
+    {
+      "path": "src/game/world/infiniteL2.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "5610fc0dcdd9611603d760262ac14aae69780142ef5c58bac58458049a703e91"
+    },
+    {
+      "path": "src/game/world/infiniteL3.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "12eef6258c519aad63f85a22a858c49ae35d31dce056e8b5483c229f9a5f1be9"
+    },
+    {
+      "path": "src/game/world/infiniteL4.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "9b36d90dc382092baa063784fc5bef335af3acae31e6be425144b48c245045e7"
+    },
+    {
+      "path": "src/game/world/infiniteL6.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "f12bf5fc35c77c2276ff6e01175f05b159d9d7e7b154de65eff27cd34415d37f"
+    },
+    {
+      "path": "src/game/world/infiniteL7.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "c1684bb05dab90000c876d83598468b0e9d30b7ac81bdfee4e382e0b7f3048ad"
+    },
+    {
+      "path": "src/game/world/infiniteL8.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "f655c998c4ec1b7e7e0042371d65f8643f3a33b7cbb626d1a632b22d335ea9c0"
+    },
+    {
+      "path": "src/game/world/infiniteL9.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "97c2ac8d366280950b578503eed4e16bcc03edaa2e4be98977548bb81011e86c"
+    },
+    {
+      "path": "src/game/world/l11.worker.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "bd26de59e05b5cd2ea673dbac270b145d5a9e45cf87c4f941b2253cee865d198"
+    },
+    {
+      "path": "src/game/world/l11Beta.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "822cc7e2cb256c013db0e8c0ffa460105575b86d15fd1d70fa8847c4f288aac4"
+    },
+    {
+      "path": "src/game/world/l11ChunkCache.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "c7f0528c8d11e1196c5a3a60af0c828b775f5900d3615df07c3f85d0666f8f5f"
+    },
+    {
+      "path": "src/game/world/l11Layout.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "34f90d08aab509f26e0cf98b3c6c585b5ceaf207ff9de8f191333a99edd87082"
+    },
+    {
+      "path": "src/game/world/l11Raw.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "63034453c8a633cbb7507a9dab2618d285fe9c6b27c8c658902392b52f271ea8"
+    },
+    {
+      "path": "src/game/world/l1Architecture.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "0fcdfb6a88f37ee8a1d92749c1f60d2c53fc0821c87779e9d5921b2c242d0ab9"
+    },
+    {
+      "path": "src/game/world/l1Dynamics.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "bc861d7296eddabad59b441402fe67734b79688f39dfd11b2931798290a913fb"
+    },
+    {
+      "path": "src/game/world/l1Layout.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "d633fa6fd57a8a669300c4f30bd6307922498bb426c89cf356df8e18de72ef44"
+    },
+    {
+      "path": "src/game/world/l1Puddles.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "ef2a009fece280681724aeb291e25026c36649ca95c06bdb619ec9992989a7aa"
+    },
+    {
+      "path": "src/game/world/l3AngelCollision.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "5502592fac1d8cfb597cb101c317a57510c89c72543ef0d09e56201b50995cef"
+    },
+    {
+      "path": "src/game/world/l3Architecture.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "c9e42f95aadde9aa3683b3a9461a7ad6338cb0f11bef2c61e5f299683f5f8451"
+    },
+    {
+      "path": "src/game/world/l3NarrowProfile.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "87bd262cd6e30b4fbf6f0a81b5e2a554f880211f68a985d7dc4c774051f7bb1d"
+    },
+    {
+      "path": "src/game/world/l3Variations.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "96f05b69dab578082e4dde3a54899eda6c5548836863a20e848421e70ca0529c"
+    },
+    {
+      "path": "src/game/world/l4Layout.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "614605fe7d650f624bd2f0465b18f4c929ff90a74fa8c5a1f81c0099deab43c4"
+    },
+    {
+      "path": "src/game/world/mapgenDeep.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "6fc6fe85dd421af9dada0c5414895259b9a4b7614eee6f527401356ca4e4e430"
+    },
+    {
+      "path": "src/game/world/mapgenOutpost.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "a7a7cc86e0a6f287b44da8da31eeb61b501608ab535116d66d0b00e5de6d2a32"
+    },
+    {
+      "path": "src/game/world/settlement.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "604263a9c2c35888e030145e692d91cc7425f3fd5fd79fcdb4546f2afa208798"
+    },
+    {
+      "path": "src/hooks/use-mobile.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "ad0936f84f1df79d3697bfbff9c18f8ad58431c1cbaf2359c6a853b0fcc9f28b"
+    },
+    {
+      "path": "src/lib/utils.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "7c8c3dfc0cdd370d44932828eb067ef771c8fe7996693221d5d4b90af6d54f2d"
+    },
+    {
+      "path": "scripts/check-bntg.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "9eae8b5b773cc57ff82b89feb6c28966ba57d464772771982f47dd5b9bb07223"
+    },
+    {
+      "path": "scripts/check-career-network.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "12538691215cf231d8ae21e4d7002778e1a76e0d762f0404402a62808872c2a6"
+    },
+    {
+      "path": "scripts/check-careers.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "68b14341abafcd176f0bfeba4cd0441f18b6dd8e302384f1aa213581d52152b7"
+    },
+    {
+      "path": "scripts/check-generation-obstacles.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "b160c6784cec0551b366760230987ad93bdc0b34872c341a5a5b5e3f4bbb2eeb"
+    },
+    {
+      "path": "scripts/check-instance-colors.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "d7d8575e817e048ac2a4e0e4d022bc21d5e975b98c0cd1be518b503d5b7db928"
+    },
+    {
+      "path": "scripts/check-item-batches.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "4891195eb7f6ea920b2b017740994db8e3f9ef408d5e9ffc0141173cde81cb76"
+    },
+    {
+      "path": "scripts/check-l1-architecture.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "4903c3c3d84f25ff39253beb1345417da7ee2918b54d31dd6108ca93c71794fd"
+    },
+    {
+      "path": "scripts/check-l10-generation.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "b5399b946830fbb70372240ec3d59ee3af8d840cd95eeb06532fa04f18f9b2e8"
+    },
+    {
+      "path": "scripts/check-l11-generation.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "73677297cfb6c857bcefdbeaa8a521c3b50f9743d2cfcae623084d7b42bc7ae7"
+    },
+    {
+      "path": "scripts/check-l11-meshes.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "f43880f8eed05d693065ae00f08ddf8712bdc84301d022359c77f58fb95dffa6"
+    },
+    {
+      "path": "scripts/check-l2-architecture.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "3c4510689e9cce031f40ce36f10deecfa9f97aae76e535cdab8683ba5635ed0f"
+    },
+    {
+      "path": "scripts/check-l3-access.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "b2524b3fc1f7405fc4068dc16ef933869bb62557913830f5ff1fc4956a0c7d7b"
+    },
+    {
+      "path": "scripts/check-l3-angel-collision.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "36ec184ee736b2f978506836c2996b5accee22469bee1d8aa1e899ad3942547f"
+    },
+    {
+      "path": "scripts/check-l3-architecture.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "dfdf9283b4e6670ebd2c9931b053ad33125318a0d12fcb46e8456c09651f3efd"
+    },
+    {
+      "path": "scripts/check-l3-glass.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "518df1ab521316f9ff7a601059158f4f26939f34917e01a69d6550cec2ebaffa"
+    },
+    {
+      "path": "scripts/check-l3-pipe-corners.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "bbeeb7064ec6074a2916feeddb9097f0bfe39b2534db8528ecf7c912d0944491"
+    },
+    {
+      "path": "scripts/check-l4-batch-job.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "2356de725f0c2dc2b6bf0e179bc9d7f11484b92055705e8fdb3d56094eb8aaac"
+    },
+    {
+      "path": "scripts/check-l4-collisions.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "81d3955968ec327084ef23a1fe87c44afcc3a85817db8463c2ac1dc65872d7fa"
+    },
+    {
+      "path": "scripts/check-l4-details.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "2854a689fdf87d8cd162b39168f16e6a92b1095b9a5e0a1bb7c667dfffccdd34"
+    },
+    {
+      "path": "scripts/check-l4-generation.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "55a04d5776037bacea971fbf1fcab07575e39a04f7bc8ccbc86b9d1b03b01bb6"
+    },
+    {
+      "path": "scripts/check-l8-surfaces.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "b0597632de9a5554e4877c34435a3dff79486123b1e9f9034d30fb2301bede26"
+    },
+    {
+      "path": "scripts/check-model-warmup.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "dbbd90d0bdcf21067e8bf4728f09f8c382167ff9cef63bade05c2e6f837b36e1"
+    },
+    {
+      "path": "scripts/check-mouse-look.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "c40df9c9a6bb0a48fa9aec04b35d0eb8d74a5ddb3116269a169f11b2305bc891"
+    },
+    {
+      "path": "scripts/check-npc-material-keys.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "cf40f28eb708d205c7ad618fce1efb5b068a67db52206e54f03b2ebe34efa59a"
+    },
+    {
+      "path": "scripts/check-program-completion.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "70089c132663c7fdeecf4c01540465adbe6484f1e650f9249a817cacfee93ed4"
+    },
+    {
+      "path": "scripts/check-render-geometry.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "4997ee8dc5d0fe6ccb56852e0520c4ab0723fdd1c4c2e9cae1a60466eca93d47"
+    },
+    {
+      "path": "scripts/check-scene-warmup.ts",
+      "action": "preserved",
+      "reason": "lite-customized",
+      "baselineHash": "71b908f3c9e3b1deb50a7c4f0713a2c162971c2a08d28890ea0583002b0b5d6e",
+      "liteHash": "30eb56a5bdd17798f624410a7bac492bb260e57712255fc7d1ecb18d70455134",
+      "sourceHash": "71b908f3c9e3b1deb50a7c4f0713a2c162971c2a08d28890ea0583002b0b5d6e"
+    },
+    {
+      "path": "scripts/check-settlement-assets.mjs",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "3ce01aa5e3c152ee724a814ac9966ea2f7e48ff8dbdf464dc12f3d99c6fb901a"
+    },
+    {
+      "path": "scripts/check-settlements.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "5000faba0354998143d7b2786724a1e4c52d2652eb878a964588b29ce38dbfa8"
+    },
+    {
+      "path": "scripts/check-static-batch-job.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "a65cbb5f425488b6cd1fd1089e536f102bb408f9827772f0562dedcc0a88b80c"
+    },
+    {
+      "path": "scripts/check-static-colors.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "2e79bd7974d8509d0cf6d849ec2471be6a0bdbbde175ad4d212e601352e6c1a0"
+    },
+    {
+      "path": "scripts/check-static-transforms.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "e1ef525c642bf4b3ff745517279f8ab779a5704f7a54ebbb546a7af3d52630fa"
+    },
+    {
+      "path": "scripts/check-texture-images.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "10905e7b692503d5b6f1842a4aa56514f686f31d52fbcdf0c44df525121a6311"
+    },
+    {
+      "path": "scripts/diag-v11-door.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "c20101727a20643ee22a3c2a4b25f64d48d8b6c51f208a07b49f55c07d06faff"
+    },
+    {
+      "path": "scripts/diag-v12-coverage.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "75ada530bd279ab7846000a8192f66a2edafb6102469d5ba4af441595d53c190"
+    },
+    {
+      "path": "scripts/diag-v12-floor.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "a3917345689acbcad574df095a04f3eabc764833141f9ff246d4c2cd7b3eea32"
+    },
+    {
+      "path": "scripts/diag-v8.mts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "a45aec898bf2871ff8fe1ddcc1013f6883f55195ea3a1d2633214486a38c5c9f"
+    },
+    {
+      "path": "scripts/diag-v9-doors.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "6a62f48bc60c0c88c141e4d57be7b50f23263b9f4bf07efd9eb03dc88d938eac"
+    },
+    {
+      "path": "scripts/diag-v9-fogdecouple.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "bc33d59b5075f9fb75822e98e57efd3305ebab72cbf1b74b4ad34d553634d8f4"
+    },
+    {
+      "path": "scripts/diag-v9-popin.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "d2558f0d9ad1722b7fff280cd3948e931c395c871d4725ec579f297e9f00ce07"
+    },
+    {
+      "path": "scripts/export-godot-item-models.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "0d3e8c08c4d618ebdd7f2934225d13f918931df9904a557102440705d7b82a6a"
+    },
+    {
+      "path": "scripts/export-godot-reference.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "591445d63ff4d266157b0c0c345702734ee4308862e57e0b1e598402350bbb16"
+    },
+    {
+      "path": "scripts/fetch-l11-assets.ps1",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "37ecc32dc4d85dcba99d44815f8c6dcd2169ae61d7717139eb1e7eb1363b4198"
+    },
+    {
+      "path": "scripts/fetch-l4-assets.mjs",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "68151340016c807ebb980026498deda08deeb80cfad1f79cacd5d3d5e9df09ef"
+    },
+    {
+      "path": "scripts/fetch-settlement-assets.mjs",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "7617fa4ae905f2b358e87b0f47170a9bc2af01137233cadcb2c2aae13a7d287b"
+    },
+    {
+      "path": "scripts/gen-angel-fresco.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "5e2a6fad70483e079ac0115ddc972170c918511b013352667ff260ba5f7149c5"
+    },
+    {
+      "path": "scripts/gen-ariane-posters.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "bce96c69b2345f1b3ce8675520ea1016029858098af8f44d0bcd5f2cf11e4cdf"
+    },
+    {
+      "path": "scripts/gen-brc-logo.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "76220f319ce8bb00f4885f1f7da77bd3cd931abf24e0eb452dadce9e81fd220a"
+    },
+    {
+      "path": "scripts/gen-el3a-poster.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "554f3631339219d13420df3ee50dcb39271b7062b9b6b43a44aa2f3ed9d67918"
+    },
+    {
+      "path": "scripts/gen-faction-logos.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "cc6cb1d06120c74054c1c36e517815244d9208a954421a3ff2f0c7dbd1bcecd7"
+    },
+    {
+      "path": "scripts/gen-item-icons.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "0ade95486eea1d486d403ddb4b46198d47a990f2bc5e78cb7e9bf3092cbb99ff"
+    },
+    {
+      "path": "scripts/gen-jerry-poster.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "60744ec3b9fa0a4612d164ad3a21614e517685ea5b05221dd2e287565f6ecfc9"
+    },
+    {
+      "path": "scripts/gen-l0-bake.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "176616a80233276731245e7ea498e1693698848daf9a2313987390584dcf4e9a"
+    },
+    {
+      "path": "scripts/gen-l1-materials.mjs",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "aed4a5c386f4b1468a73f1c2f4950529052da60a2a29b2f7dc2c7d7058d5f6a0"
+    },
+    {
+      "path": "scripts/gen-l10-pbr.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "f3069cd22962a858f21cb559c28a96fe6e0075fd7d7904cd45f4b6c672775b90"
+    },
+    {
+      "path": "scripts/gen-l103-textures.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "ccd319f16de83ff8780140e0e3bdef306d276c52d5985f99eaab3653e9d2b6ad"
+    },
+    {
+      "path": "scripts/gen-l104-textures.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "ebf95ad81dd5f3a233058d53f35a4ba9ad953ea4a4edc9258f5436c537cca205"
+    },
+    {
+      "path": "scripts/gen-l105-textures.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "e5ca95421c0424afd2414e0d84d1dff7e8e2f3a4e412e7c5c026aa98015585c6"
+    },
+    {
+      "path": "scripts/gen-l106-textures.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "72a9c3bdecf2084bcefbcb078161a825a38f7909916f2576950bfdd3858ba09d"
+    },
+    {
+      "path": "scripts/gen-l107-textures.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "5faea96ec9cffb83d60650e3965970c03a5d2bc15c20f2e6f0c733a3e80f43f4"
+    },
+    {
+      "path": "scripts/gen-l108-textures.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "8080f229e5c564507b1ffee249869210c549850f8b14d029d40e9f10c287a97e"
+    },
+    {
+      "path": "scripts/gen-l109-poster.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "91059a5216ca02bd9ad48482601842275154a50aea157755ab606ac514b43156"
+    },
+    {
+      "path": "scripts/gen-l109-textures.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "fabf4bed369d21cafa96aa02116570aef7cf749dbfa16cabecd25bde10ee472e"
+    },
+    {
+      "path": "scripts/gen-l274-textures.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "e87ca33a5b539a4bbe3e9472af3da0e535b2f1a89faa02bfc75882245902589a"
+    },
+    {
+      "path": "scripts/gen-l3-artworks.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "1ce1d1e924c4c3c8fdfd444069a00e5d8d8a64b3b80806baccb51d90890ec17c"
+    },
+    {
+      "path": "scripts/gen-l3-brick-pbr.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "d0933512230d6bdd4e364905db5fd3f088d4245a6f69d8a8b3fb675a832e9d4a"
+    },
+    {
+      "path": "scripts/gen-l3-posters.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "9bd6ad59276dd59ec6a72aaa93f08afbe027c3e62c382d0ee9133de509d28d5b"
+    },
+    {
+      "path": "scripts/gen-l3-stainedglass.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "2974c7c89380ee94ee87317bed42694d053f9fbf80ff3496b32d9efb62045f7a"
+    },
+    {
+      "path": "scripts/gen-l3-textures.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "7c2da3ad7e512f871ea5a010dff756c9bab203336286a70e7d094423bbbe5762"
+    },
+    {
+      "path": "scripts/gen-l5-notice.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "b187f7a6be8edc1cf6d11d3ff7f609577cd7673d5071ca70a5cb8450524b8451"
+    },
+    {
+      "path": "scripts/gen-l5-portraits.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "e65c23e27a31aee5696ecd6d507a97052be1477687cdbf3f18bc7c8211d67bd4"
+    },
+    {
+      "path": "scripts/gen-l5-textures.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "81c8e916ccc9ece175fbf7b89ea49122e789e0f6f98d0bbe272364df67af0a1d"
+    },
+    {
+      "path": "scripts/gen-l6-l11-textures.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "a96863e7dc2e960bc8fdf9d9664c39c242e6861ec1c11208091401af96016bfe"
+    },
+    {
+      "path": "scripts/gen-l7-cabin-metal.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "ff0d8125354ca3cf028b8a8026a4e99aa2862c2ea766c99cce6e8f46c8f0ffe4"
+    },
+    {
+      "path": "scripts/gen-l8-pbr-textures.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "4c9dfd4a31b6579d22bf37102dc1c3857401d31613856a1650a2044352c9fdb4"
+    },
+    {
+      "path": "scripts/gen-midi-bgm.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "230498ab828c7862800d09d81d609287eb539e52e7807db8e50de75063b94168"
+    },
+    {
+      "path": "scripts/gen-parrot-portraits.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "4543406e09600b9de4d7b7a369499e395d8cb885d9a876ae7226564ed34619d2"
+    },
+    {
+      "path": "scripts/gen-photos.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "1433d20d19c1964c6e32ea848538208c186b01e72a848d16eef421b5b4c074ba"
+    },
+    {
+      "path": "scripts/gen-posters.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "4f48a55ea7897ef84a0d7f6d3499475626099da4b51a4e79387476ae95ba20e1"
+    },
+    {
+      "path": "scripts/gen-tom-posters.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "8c15e0e10b442f24599131ed00b8f6701e0617188cb853c2df7d01e4875d90dc"
+    },
+    {
+      "path": "scripts/l1-gameplay-snapshot.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "ed9bd4fc27c2c46b1671124b881127222225efce08144898f0411bd6fbd7c9bf"
+    },
+    {
+      "path": "scripts/run-performance-cdp.mjs",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "728abbd451e983b4adeb9d9fa026b92fa7780921c74c03d662ba1b5aaa81dfe7"
+    },
+    {
+      "path": "scripts/settlement-verifier-plugin.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "d9c24b49a9c5d6b23e98a7db0605407af9292cce6be091ddd2cab208003230be"
+    },
+    {
+      "path": "scripts/smoke-flashlight.mts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "1580a5e4142296e43a33ed544a238a9870b83288266d66dfc02d2e14187851b6"
+    },
+    {
+      "path": "scripts/smoke-interact-strict.mts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "9841f3ce9e0eea2fd3c9b052d4050b8d68fd97fea1a12f5dfdb3f563fc4a3bff"
+    },
+    {
+      "path": "scripts/smoke-l6-world.mts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "8a8b9f9efbefae1dc34f5525f3f21bec5c92d7212ea8b86124ed275b383441b3"
+    },
+    {
+      "path": "scripts/smoke-l8-ecology.mts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "bf7c83ee13ab52645e78c8944f6c2114797c6c0c630e7c8914fc50f52f6857ed"
+    },
+    {
+      "path": "scripts/smoke-pickup.mjs",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "126f86a30f20f827f1c6ec1f526b32903d0fc724c5255d1fdd14990489efd9c7"
+    },
+    {
+      "path": "scripts/smoke-v11-fix.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "c280f7b4d1d36b3da4cf73529f50167907c42aa58fc040c76d122c4fa5e72536"
+    },
+    {
+      "path": "scripts/smoke-v12-floor.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "31d5ebc150ee610f93fffa14a7c680c5a2d2d29598acacdf268149f6f8e52858"
+    },
+    {
+      "path": "scripts/smoke-v12-interact.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "b205a77233a7a24e07d0b45bd7dc5ef1dea88fcbd62fe1f43ed21945f3a60677"
+    },
+    {
+      "path": "scripts/smoke-v13-web.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "10276a6e077dca111b436516fe160f538be899b909e8bfe1f6572c0833235901"
+    },
+    {
+      "path": "scripts/smoke-v13-world.mts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "0548eb8ece2ef8bf51964d17dc7ecc0e2b5ca970d1c2c7857dd860fa45ff084d"
+    },
+    {
+      "path": "scripts/smoke-v5-core.mts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "7d7a06a307c50869f3c928dde8155fd46be90e598859818393c10d34842f22f1"
+    },
+    {
+      "path": "scripts/smoke-v6-web.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "0f5f7e4fb4022e2f79584bc358618aa57e83ebede06ce6d2cd67231f6cbada8b"
+    },
+    {
+      "path": "scripts/smoke-v6-world.mts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "038040e2ca5644010ea5682ad1691f5f8177317bd7256d2ca689db8fedd2a780"
+    },
+    {
+      "path": "scripts/smoke-v7-web.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "473af2e09a1fea4b1f264c3471ada7d8caed5a68c0a644e6826db1921235ecbb"
+    },
+    {
+      "path": "scripts/smoke-v7-world.mts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "89d67faa0748d1b09c0b0f254694f6273d4da2289a8756c71aa2ac7c6f6937af"
+    },
+    {
+      "path": "scripts/smoke-v8-world.mts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "b897dfdebf12f5c12df91404ea6727e0e6391703c7cc32f4d570c2e9b598e8b8"
+    },
+    {
+      "path": "scripts/smoke-v9-fix.mts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "79cf7d98429fd0a1c17f7b08e4fc6cabb409abc20c5f98a3c9c98bed8cfb6060"
+    },
+    {
+      "path": "scripts/smoke-v9-web.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "0b210543089638a4da1bd542a787646d05b47ab3beb8dc04fcac3fb7aa15f1e7"
+    },
+    {
+      "path": "scripts/smoke-web.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "bfbbba1c5d2403a0df0adeb28aa10e20d928cc899f68f0be524d8824b4450c56"
+    },
+    {
+      "path": "scripts/subset-title-fonts.py",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "c73f79f9716540f365b3d659c06aa97e286020bb514db624a69d8d081d1d3e87"
+    },
+    {
+      "path": "scripts/.cache-l105/Concrete046.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "72bf4321acbb39ddbc3b786f5996813b2a3cede12efefb47955e97ea9668985b"
+    },
+    {
+      "path": "scripts/.cache-l105/CorrugatedSteel009.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "fa917cba8bbf4ceb645cf27e4c1a4a17621d3b1ad44a4125997cdd05662711fb"
+    },
+    {
+      "path": "scripts/.cache-l105/Metal032.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "9e4f363905a647958c273154fa125d2a6440892d0e583f9b3af24bb08b5afc3c"
+    },
+    {
+      "path": "scripts/.cache-l105/OfficeCeiling001.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "925ef7003375852b80096a46a9a06db3eeee789c99680f789868acb47386d5bd"
+    },
+    {
+      "path": "scripts/.cache-l105/OfficeCeiling003.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "a111ac029d0d4152db15e5dba07391ac96e0a62991d935a52da7cd1bc3f4f890"
+    },
+    {
+      "path": "scripts/.cache-l105/OfficeCeiling004.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "828036e495ddee2afac8007eb89db1c006a7b877b20bd9181f4d230ada65cd3b"
+    },
+    {
+      "path": "scripts/.cache-l105/prev/corr.jpg",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "c18a0600e024aebe90f5c8844a3ef586329071cbc832f592f9ae29a44823525b"
+    },
+    {
+      "path": "scripts/.cache-l105/prev/oc1.jpg",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "36420adbe3017fbfbd6715c2bdd07f0245eb4179fa51dd4629218f333d7600bc"
+    },
+    {
+      "path": "scripts/.cache-l105/prev/oc3.jpg",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "8ebe5e49a4b5f3616894a7721315ea335d765387176ba025a5172c6a9eb78bc2"
+    },
+    {
+      "path": "scripts/.cache-l106/PaintedPlaster015.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "792b97898cd4f583059de5eafd62293a11a44834ec9b771bf1a515d98c464d03"
+    },
+    {
+      "path": "scripts/.cache-l106/PaintedPlaster017.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "bae0380d82b6ccac8943b4980417cb3c9de5c896218339c108056f1dfb8e886c"
+    },
+    {
+      "path": "scripts/.cache-l106/Tiles006.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "157ea1972c6c6bab52422f374fb5c47daca8606f56e8694595f531e83082f6db"
+    },
+    {
+      "path": "scripts/.cache-l107/Concrete028.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "2066ea54217064847cd0295027106017b7bd290898c384ccb2cbade4e59dfc45"
+    },
+    {
+      "path": "scripts/.cache-l107/CorrugatedSteel003.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "0bad36b34cf9d0e445c06b125fcbb7ea78074505d85051087fabb37acfa18ca1"
+    },
+    {
+      "path": "scripts/.cache-l107/PaintedPlaster016.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "7cb21ab2f0dbe7b599ba31c0140c0b85a100e30a0406e66502c18d067ec8f60e"
+    },
+    {
+      "path": "scripts/.cache-l108/Bricks060.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "e8dce6fd843fce863bd60aa118ae904d52cef020b4db7d343a2e389fc489ac6f"
+    },
+    {
+      "path": "scripts/.cache-l108/PaintedPlaster013.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "6af62729cbea466d35bd2482d3b20c989518e32d7633928e301caf423b2795db"
+    },
+    {
+      "path": "scripts/.cache-l108/PavingStones142.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "13f354afee9eb22c73257610ca0cf2b4fe24db97f990b524c36bcdc7202c2ead"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet001.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "bec873d752d1142271332bc7c1f2b92a98bd1f1b0cfea122dabecfda142921e9"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet003.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "08811e369830a3b62611e08ec1cbfe888b4112b03d60ed81fa497f76235d3d43"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet004.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "2ff862bbbe8c2be927330f1a638b7e00e3ff55dd5f8e0950dcbdff2927827d8f"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet005.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "7dac07ca3a470baa99bacfa5639743d38ff963cb64e13969b4a2d60bbd7e9589"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet006.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "9984d74f4189d3e58a40cd6fed447025ddb8a68c89455f06c129b396b0f76fdd"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet007.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "c71c57e4830dcf93606269f58fe2265f9befd1c928fc913a30278a212c87af39"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet008.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "d5fc4e9f02160287bdb2825f89e4d17aa71d4ba576113516621f177265796081"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet009.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "3ae3d89947b1322b7737981a295603704be803f575e0a7d1eaebb9a56360ff13"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet010.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "2b96e4df92ce72fa9d17ac69cf4d07ae2507e38cbd417c3b6c37ea1786f67f69"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet011.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "17c4fb9a32d07c5fce60656996ff4d147625de094cf9ef1eda3b2ee5b9a55be5"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet012.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "9a9890f944f36fe318e04dbec09e17dddfb25ae3dbf5f15a63987303611c65ff"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet013.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "77254e2877771524423a6ef8ce2e61aa3ec42ee5962d81d9b328a258afed7e1e"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet014.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "d54faf570621b25ba54969759f89a7406f945faa986ca96129773cb9a444964c"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet016.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "b9e67b5d42cb47cead082dedae3767ae228175c857b6b3af6fe7bd4e69237b81"
+    },
+    {
+      "path": "scripts/.cache-l109/Carpet018.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "5a277cd5a8d89ea9e8340e56c2c1d27af0d2b6085968c3fda9d0f4b2ad7dfe86"
+    },
+    {
+      "path": "scripts/.cache-l109/OfficeCeiling007.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "5a277cd5a8d89ea9e8340e56c2c1d27af0d2b6085968c3fda9d0f4b2ad7dfe86"
+    },
+    {
+      "path": "scripts/.cache-l109/PaintedPlaster001.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "a5a1f2b9385bcc7cb9eb25a387ca39fd4d779a43b19fcc193136f4685ce5a1a0"
+    },
+    {
+      "path": "scripts/.cache-l109/PaintedPlaster003.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "7d396fb54b4b9b35d7acab97bef0e478f6f60bec9759203344d1fe8d85fc95df"
+    },
+    {
+      "path": "scripts/.cache-l109/PaintedPlaster004.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "2c3d1d3985b41541415828e38e08c003c1989c45f92e71d02e97d41e43756d07"
+    },
+    {
+      "path": "scripts/.cache-l109/PaintedPlaster005.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "393ebfea036711b82665cafb1813b1a2aa5e75ea8c8c6794619f4322502a4d54"
+    },
+    {
+      "path": "scripts/.cache-l109/PaintedPlaster006.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "d892e5e8c5c048ff00018d4c39ad9430187be5657a482778ada18c1b623e15b5"
+    },
+    {
+      "path": "scripts/.cache-l109/PaintedPlaster007.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "202d1d62ec4a0aea3678d77a6a4ae4e9fb1e3a49a64bf53534edc6104cd8b37d"
+    },
+    {
+      "path": "scripts/.cache-l109/PaintedPlaster008.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "a7cf13d49143342a385c69d611d656f051628583be710beecaa8eb2a74c845f8"
+    },
+    {
+      "path": "scripts/.cache-l109/PaintedPlaster009.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "9883d56972fb1497acb4bd32209078133ef7ca36639918043c9c2e87b062ae94"
+    },
+    {
+      "path": "scripts/.cache-l109/PaintedPlaster010.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "8755d4560396c038f0e924ad52463ca8830f3f7ac9f6aafd008ffc96df6df5f4"
+    },
+    {
+      "path": "scripts/.cache-l109/PaintedPlaster011.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "612809517d7117c147621b7b2ef306cf452f00e0985625266abfeb8bcbeaf66b"
+    },
+    {
+      "path": "scripts/.cache-l109/PaintedPlaster012.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "ac4fc8594db7fc0123bc6785e6952fec1bd9e30c81f47e9c5bb9214b975b10d9"
+    },
+    {
+      "path": "scripts/.cache-l109/PaintedPlaster014.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "c774a7d466caa7d8dba584b581e9dcf914745bf12f64e78eb848ca89afead6e8"
+    },
+    {
+      "path": "scripts/.cache-l109/Plaster008.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "5a277cd5a8d89ea9e8340e56c2c1d27af0d2b6085968c3fda9d0f4b2ad7dfe86"
+    },
+    {
+      "path": "scripts/.cache-l109/Plaster009.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "5a277cd5a8d89ea9e8340e56c2c1d27af0d2b6085968c3fda9d0f4b2ad7dfe86"
+    },
+    {
+      "path": "scripts/.cache-l109/Tiles074.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "28a40cb36d3c265f17c798c52aa3ea7cdcb8c949b80c49692b0a855e9637c677"
+    },
+    {
+      "path": "scripts/.cache-l109/Tiles075.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "a4bfc4ef65a7a20d6342753df3afd8ca98c6d4e7fcb0f937b11d08141bb8735b"
+    },
+    {
+      "path": "scripts/.cache-l274/Bricks051.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "c23d3d459e1a73f3d8a0b83606571c6172e485f544ff4605d1cb37eb637bfdfd"
+    },
+    {
+      "path": "scripts/.cache-l274/OfficeCeiling003.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "a111ac029d0d4152db15e5dba07391ac96e0a62991d935a52da7cd1bc3f4f890"
+    },
+    {
+      "path": "scripts/.cache-l274/PavingStones128.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "0a507f47fa86318ded7c128c1b7548ac5d6a50ae233905c2015dc2f704ac0d35"
+    },
+    {
+      "path": "scripts/.cache-l3/Bricks059_Color.jpg",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "22b53ec9143b348ae26ed958cdfaa8977195c8daf534dc219f72dd10f2728e7a"
+    },
+    {
+      "path": "scripts/.cache-l3/bricks059.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "847dd2e4932563bbb67fdc2bad3cc08db72d74b3e81d242f31b663d8a3ea744b"
+    },
+    {
+      "path": "scripts/.cache-l3/level3.html",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "7ed929471e3109568bc7e971f60cd41db4215e939c0dfcc7473dd8f41f929363"
+    },
+    {
+      "path": "scripts/.cache-l3/level3.txt",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "a2e12f7fd7e68b12872157f118475f2df63abfb3093d070edfa538c440e3cdab"
+    },
+    {
+      "path": "scripts/.cache-l3/Marble008-prev.jpg",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "54881cfa7277ffe3d7adb4b4567ea02cfd4183e4914a6ac4fb8385187282732e"
+    },
+    {
+      "path": "scripts/.cache-l3/Marble008.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "3728a4e51dc7963feb42f3910fa215b2e78b9d61955ba682eb57cfbf56b8f2c6"
+    },
+    {
+      "path": "scripts/.cache-l3/Marble012-prev.jpg",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "21bab43d2c2d35d14c3a2d6c5bfe7b69c8b97fa1919cb1c570a32412300267fc"
+    },
+    {
+      "path": "scripts/.cache-l3/Marble012.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "b04384c6d49ce73baeb70db7ea4abfe9948fc9b74b9fd92c3766970662bf2c43"
+    },
+    {
+      "path": "scripts/.cache-l3/Tiles074-prev.jpg",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "f8bdd56a04e7872066ea08b358bb17d2a065d7d451da20b05ca74eaeae26b714"
+    },
+    {
+      "path": "scripts/.cache-l3/Tiles074.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "28a40cb36d3c265f17c798c52aa3ea7cdcb8c949b80c49692b0a855e9637c677"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Asphalt019.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "1c475cb52ae9f3da03e4eb5bb423c75ca0fabd04e4c94c18cd765851bc532d25"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Asphalt022.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "a7909557affe02fe6c01892f014ae27ea496768b4edb1c1186b8349616885e21"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Bricks042.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "52ef86cbfa1433b80c746a4eb52456638644b5b72c529c2cc3ca535412b5c35f"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Carpet002.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "ed87dd8885b4d822afa559165255d9c9b0720077d130a51e4e0a10d906a88820"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Carpet008.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "8516bc8f50ddc9ab8a9436df0332586cf16a93a9b8deabd01cd65b1fd326076c"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Concrete026.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "72ac6b14736920468483b6d5c88c029addaca68cb91a5258c5cd91a37bcf0415"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Concrete031.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "3068e551435d3cdae3942017799d8871b940c88ebfaf5c2b87376972ae448fd6"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Concrete032.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "49ce4fe78bf562376a2b5bdd7ecc11a89a433b30194a74722316f880b07d2c2c"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Concrete033.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "b1e8b2e6bd2ac02e44081b7351387dda9212d2b8734e0d3d1a30277d9dc0e96e"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Concrete035.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "7ea46d2c65f82796150a4890b82da1410d196e72c2c2be8b7de6e6490d9752da"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Concrete038.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "71521614689a676bd2bfa5aa14322db980d42c65184206cf4939bc44b4ce13db"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Concrete039.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "ae199ce61dfba22b047d3c2de8277c0a94be0d734b9c73ba6644f71fd1b572a9"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Concrete045.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "d417cc3a2e4fb9064d65729633039b3733d4e436b9c48dd86856acf042b30632"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/CorrugatedSteel005.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "4198faced790c75c551750d323ef384ea1ab353463b2067f44f8e5f5ff2d1a09"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Ground054.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "b325ec2f167dce95a0fabc61a2104641288cf20915419578c3efdb46200c563e"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/OfficeCeiling005.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "c5e4463b4bd33e649488d2ed5651392f0324c0260cb29d934b3c399681ef6f16"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/OfficeCeiling006.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "0a35f9ba2d6723c38e9593316b20c3ec96fc77fc346e540bb950f48488f07589"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Planks003.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "0b924fa3c3158e620ff2dd833de8bc292ddbd973d1dbbc63066f36095bf22ebb"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Planks005.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "b15d7069df9f7d064e9d9e9beb19f5a1b41e0cbc1b2ca94f27f51de5231b3004"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Plaster001.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "944b4831016e42ace4a89422e4e7190912ca2f7fed6f561354c48ec7bb54d3a4"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Plaster007.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "75c7d96a8e60c4c5073767508e34e88c73677a3641e40bb8aaa0f1d6674391c0"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Rock022.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "126d623f268fa21e7fff88f9f74d9f0b2f60b5e26029388aa9bfeb29e1af62bf"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Rock035.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "c5e4dbd7d5555734498834c1e09b799ef3d1f00c61fe08c0d953b93a8fb1bb95"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/Rock045.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "424386841e8fbe97879707f82fd370c74a1324a16c4a3b180aff3cee438ffa6d"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/RoofingTiles002.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "413310b76053c2da8f6e9e9830d01779686f64683288e0399d32a6255ce6e6a2"
+    },
+    {
+      "path": "scripts/.cache-l6-l11/WoodSiding010.zip",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "f209d206b7a2ae9a7669fa85a55e395e36939962ba0045fc462ba16e6e14a15c"
+    },
+    {
+      "path": "scripts/fixtures/l8-surfaces-baseline.ts",
+      "action": "preserved",
+      "reason": "already-identical",
+      "sourceHash": "22f0b69a7574fa701ef6495511fa92db56131f6ca31ae51efca0119d3c5c3bd1"
+    }
+  ]
+}

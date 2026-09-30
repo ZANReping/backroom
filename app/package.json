@@ -6,8 +6,38 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "check:l4": "esbuild scripts/check-l4-generation.ts --bundle --platform=node --format=esm --outfile=.cache/check-l4-generation.mjs && node .cache/check-l4-generation.mjs",
+    "fetch:l4-assets": "node scripts/fetch-l4-assets.mjs",
+    "fetch:l5-assets": "node scripts/fetch-l5-assets.mjs",
+    "generate:l10-pbr": "esbuild scripts/gen-l10-pbr.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/gen-l10-pbr.mjs && node .cache/gen-l10-pbr.mjs",
+    "check:l10": "esbuild scripts/check-l10-generation.ts --bundle --platform=node --format=esm --outfile=.cache/check-l10-generation.mjs && node .cache/check-l10-generation.mjs",
+    "check:l11": "esbuild scripts/check-l11-generation.ts --bundle --platform=node --format=esm --outfile=.cache/check-l11-generation.mjs && node .cache/check-l11-generation.mjs",
+    "check:l11-meshes": "esbuild scripts/check-l11-meshes.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l11-meshes.mjs && node .cache/check-l11-meshes.mjs",
+    "export:godot-items": "esbuild scripts/export-godot-item-models.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --external:@napi-rs/canvas-* --outfile=.cache/export-godot-item-models.mjs && node .cache/export-godot-item-models.mjs",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check:l2": "esbuild scripts/check-l2-architecture.ts --bundle --platform=node --format=esm --outfile=.cache/check-l2-architecture.mjs && node .cache/check-l2-architecture.mjs",
+    "check:l3": "esbuild scripts/check-l3-architecture.ts --bundle --platform=node --format=esm --outfile=.cache/check-l3-architecture.mjs && node .cache/check-l3-architecture.mjs",
+    "check:l3-glass": "esbuild scripts/check-l3-glass.ts --bundle --platform=node --format=esm --outfile=.cache/check-l3-glass.mjs && node .cache/check-l3-glass.mjs",
+    "check:mouse-look": "esbuild scripts/check-mouse-look.ts --bundle --platform=node --format=esm --outfile=.cache/check-mouse-look.mjs && node .cache/check-mouse-look.mjs",
+    "check:l1": "esbuild scripts/check-l1-architecture.ts --bundle --platform=node --format=esm --outfile=.cache/check-l1-architecture.mjs && node .cache/check-l1-architecture.mjs",
+    "check:settlements": "esbuild scripts/check-settlements.ts --bundle --platform=node --format=esm --outfile=.cache/check-settlements.mjs && node .cache/check-settlements.mjs",
+    "check:careers": "esbuild scripts/check-careers.ts --bundle --platform=node --format=esm --outfile=.cache/check-careers.mjs && node .cache/check-careers.mjs",
+    "check:career-network": "esbuild scripts/check-career-network.ts --bundle --platform=node --format=esm --define:import.meta.env={} --outfile=.cache/check-career-network.mjs && node .cache/check-career-network.mjs",
+    "check:bntg": "esbuild scripts/check-bntg.ts --bundle --platform=node --format=esm --outfile=.cache/check-bntg.mjs && node .cache/check-bntg.mjs",
+    "check:settlement-assets": "node scripts/check-settlement-assets.mjs",
+    "fetch:settlement-assets": "node scripts/fetch-settlement-assets.mjs",
+    "check:generation-obstacles": "esbuild scripts/check-generation-obstacles.ts --bundle --platform=node --format=esm --outfile=.cache/check-generation-obstacles.mjs && node .cache/check-generation-obstacles.mjs",
+    "check:item-batches": "esbuild scripts/check-item-batches.ts --bundle --platform=node --format=esm --outfile=.cache/check-item-batches.mjs && node .cache/check-item-batches.mjs",
+    "check:static-colors": "esbuild scripts/check-static-colors.ts --bundle --platform=node --format=esm --outfile=.cache/check-static-colors.mjs && node .cache/check-static-colors.mjs",
+    "check:instance-colors": "esbuild scripts/check-instance-colors.ts --bundle --platform=node --format=esm --outfile=.cache/check-instance-colors.mjs && node .cache/check-instance-colors.mjs",
+    "check:texture-images": "esbuild scripts/check-texture-images.ts --bundle --platform=node --format=esm --outfile=.cache/check-texture-images.mjs && node .cache/check-texture-images.mjs",
+    "check:model-warmup": "esbuild scripts/check-model-warmup.ts --bundle --platform=node --format=esm --outfile=.cache/check-model-warmup.mjs && node .cache/check-model-warmup.mjs",
+    "check:program-completion": "esbuild scripts/check-program-completion.ts --bundle --platform=node --format=esm --outfile=.cache/check-program-completion.mjs && node .cache/check-program-completion.mjs",
+    "check:l4-batch-job": "esbuild scripts/check-l4-batch-job.ts --bundle --platform=node --format=esm --outfile=.cache/check-l4-batch-job.mjs && node .cache/check-l4-batch-job.mjs",
+    "check:static-batch-job": "esbuild scripts/check-static-batch-job.ts --bundle --platform=node --format=esm --outfile=.cache/check-static-batch-job.mjs && node .cache/check-static-batch-job.mjs",
+    "generate:l1-materials": "node scripts/gen-l1-materials.mjs",
+    "generate:l5-ornament": "node scripts/gen-l5-ornament.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -62,6 +92,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@napi-rs/canvas": "^1.0.8",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
@@ -81,3 +112,4 @@
     "vite": "^7.2.4"
   }
 }
+

@@ -4,13 +4,13 @@ import { createPortal } from 'react-dom'
 import type { Engine } from '@/game/engine'
 import { l11MapMarks } from '@/game/engine/l11State'
 import { ITEMS } from '@/game/content/items'
-import { ENTITIES, entitySpawnLevels } from '@/game/entities'
+import { ENTITIES, MOTH_FORMS, entitySpawnLevels, type MothForm } from '@/game/entities'
 import { WIN_TAPES, LEVELS, levelNo, levelLabel } from '@/game/levels'
 import { seedString } from '@/game/core/rng'
 import { look } from '@/game/core/renderer3d'
 import { exitArrowRotation } from '@/game/content/guide'
 import { CS, infiniteImplFor } from '@/game/world/infinite'
-import { l5RegionAt } from '@/game/world/infiniteL5' // v55：L5 区域名按大厅/房间矩形判定
+import { l5CorridorAt, l5RegionAt } from '@/game/world/infiniteL5' // v55：L5 区域名按大厅/房间矩形判定
 import { l7ZoneOfDepth } from '@/game/world/infiniteL7' // v57q：L7 深度带按玩家当前下潜深度显示
 import { stairServesBand, bandOfPlayerZ } from '@/game/world/mapgen'
 import { CONTAINER_KINDS } from '@/game/decorations/containers'
@@ -25,6 +25,7 @@ import { MUSIC_LIBRARY } from '@/game/core/midi' // v56 六轮：图鉴全开同
 import { bindLabelFor } from '@/game/core/keybinds'
 import { IconHP, IconStamina, IconHunger, IconThirst, IconSanity, IconBattery, IconPause, IconMap, IconInteract, IconCrouch, IconIsolation, IconPlant } from './icons'
 import { PHENOMENA, rarityText } from '@/game/content/phenomena'
+import MegQuestTracker from './MegQuestTracker'
 
 // 现象图标映射（phenomena.ts 中 def.icon → 具体 SVG 组件）
 const PHEN_ICON = { isolation: IconIsolation, plant: IconPlant, flicker: IconStamina } as const
@@ -327,11 +328,14 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
       const z = p.z >= 3 ? 'entry' : l7ZoneOfDepth(Math.max(0, -p.z))
       curVariant = z
       areaName = z === 'entry' ? '入口房间' : impl.variantNames?.[z] ?? null
+    } else if (engine.levelDef.id === 3 && engine.map!.tint[Math.floor(p.y)*engine.map!.w+Math.floor(p.x)]===51) {
+      curVariant='narrow'; areaName='狭窄廊道'
     } else if (engine.levelDef.id === 5) {
-      // v55：L5 区域名按大厅/房间矩形判定（l5RegionAt——区域间以走廊为界；走廊瓦片显示「红地毯走廊」）
+      // v55：L5 区域名按大厅/房间矩形判定；走廊按同一世界坐标取外观变体
       const reg = l5RegionAt(infMap.seed, Math.floor(infMap.ox + p.x), Math.floor(infMap.oy + p.y))
       curVariant = reg?.variant ?? null
-      areaName = reg?.variant ? (impl.variantNames?.[reg.variant] ?? null) : '红地毯走廊'
+      const corridor = l5CorridorAt(infMap.seed, Math.floor(infMap.ox + p.x), Math.floor(infMap.oy + p.y))
+      areaName = reg?.variant ? (impl.variantNames?.[reg.variant] ?? null) : corridor.plain ? '白墙客房走廊' : '红金长廊'
     } else if (engine.levelDef.id === 6 && bandOfPlayerZ(engine.map!, p.z) === -1) {
       // v58：L6 地下层（FloorBand -1）全部统一显示为「地下廊道」区域，不再跟随地表变体名
       curVariant = 'underground'
@@ -587,6 +591,7 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
             ))}
           </span>
         </div>
+        <MegQuestTracker engine={engine} mobileLandscape={isMobile && landscape} />
       </div>
 
       {/* 左下：消息日志（桌面；开发者面板展开时右移让位，v10） */}
@@ -910,6 +915,7 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
   const curEntPage = entPages[Math.min(entPage, entPages.length - 1)]
   // v54：召唤页子页切换（实体 / 物品 / 装饰物）
   const [spawnSub, setSpawnSub] = useState<'entity' | 'item' | 'decor'>('entity')
+  const [selectedMothForm, setSelectedMothForm] = useState<MothForm>('male')
   // v54：召唤装饰物（decorRegistry 结构类条目，按生成层级分页；decal:/prop: 为渲染侧贴花/道具，不可放置；
   // 末页「全部层」=全部层级分组合并一页列出）
   const decorPages = [
@@ -1039,9 +1045,12 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
                   )}
                   <div className="grid grid-cols-3 gap-1">
                     {curEntPage.ents.map((d) => (
-                      <DevBtn key={d.type} title={entitySpawnLevels(d.type).some((s) => s.event) ? `${d.desc}（特殊事件生成）` : d.desc} onClick={() => engine.devSpawnEntity(d.type)}>
-                        <span style={{ color: d.color }}>●</span> {d.name}
-                      </DevBtn>
+                      <div key={d.type} className={d.type === 'deathmoth' ? 'col-span-3 flex items-center gap-2' : 'flex'}>
+                        <DevBtn title={entitySpawnLevels(d.type).some((s) => s.event) ? `${d.desc}（特殊事件生成）` : d.desc} onClick={() => engine.devSpawnEntity(d.type, 3, d.type === 'deathmoth' ? selectedMothForm : undefined)}>
+                          <span style={{ color: d.color }}>●</span> {d.name}
+                        </DevBtn>
+                        {d.type === 'deathmoth' && <select aria-label="死亡飞蛾子变种" value={selectedMothForm} onChange={(e) => setSelectedMothForm(e.target.value as MothForm)} className="max-w-[7rem] border px-1 text-[10px]" style={{ background: 'var(--panel)', color: 'var(--text-dim)', borderColor: 'var(--panel-edge)' }}>{Object.entries(MOTH_FORMS).map(([key, form]) => <option key={key} value={key}>{form.name}</option>)}</select>}
+                      </div>
                     ))}
                   </div>
                   <div className="mt-1">
@@ -1220,7 +1229,7 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
                   const ls = engine.devLevelStructures()
                   if (!ls.prefabs.length && !ls.variants.length) return null
                   return (
-                    <DevSection label="本层固定结构 / 变种房间 / 自然地形（●已生成 ○未生成→流式定位）">
+                    <DevSection label="本层固定结构 / 区域 / 自然地形（●已生成 ○未生成→流式定位）">
                       <div className="grid grid-cols-2 gap-1">
                         {ls.prefabs.map((f) => (
                           <DevBtn
@@ -1234,7 +1243,7 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
                         {ls.variants.map((v) => (
                           <DevBtn
                             key={v.id}
-                            title={v.found ? '传送到该变种房间或固定自然地形' : '已生成区域中没有：点击生成新区域并安全传送'}
+                            title={v.found ? '传送到该区域或固定自然地形' : '已生成区域中没有：点击生成新区域并安全传送'}
                             onClick={() => engine.devGotoVariant(v.id)}
                           >
                             {v.found ? '●' : '○'} {v.name}

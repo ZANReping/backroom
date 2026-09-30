@@ -1,0 +1,663 @@
+// 设置面板（标题/暂停共用）
+import { useEffect, useState } from 'react'
+import { audio } from '@/game/core/audio'
+import type { Difficulty } from '@/game/engine'
+import type { RenderResolutionMode } from '@/game/renderer/shared'
+import { BIND_ACTIONS, bindLabel, conflictOf, actionLabel, getKeybinds, setKeybind, resetKeybinds } from '@/game/core/keybinds'
+
+export type UiTheme = 'amber' | 'liminal' | 'basalt' | 'dark-liminal' | 'greyspace' | 'database' | 'fandom' | 'meg'
+export type UiPresentation = 'classic' | 'immersive'
+
+export interface GameSettings {
+  difficulty: Difficulty
+  autoSprint: boolean
+  grain: boolean
+  vcrFx: boolean // VCR 色差/噪点/跟踪失真后处理；默认关闭
+  vcrStrength: number // VCR 色差与跟踪失真强度 0–100
+  vcrScanlines: boolean // VCR 后处理中的动态隔行扫描线（独立于静态屏幕扫描线）
+  shake: boolean
+  headBob: boolean // v54：真实视角摇晃
+  realWater: boolean // v57t：真实水体效果（海面涌浪起伏+程序化波光/天空反射；默认关闭=纯色平水面）
+  flicker: number // 0-100
+  renderResolution: RenderResolutionMode // 固定硬件光栅化分辨率；native 时才允许动态分辨率接管
+  renderScale: number // 原生分辨率渲染比例 50–100%；固定低分辨率档位不受此项影响
+  dynamicRes: boolean
+  dynamicResTarget: 30 | 45 | 60 // 动态分辨率追踪的目标帧率
+  maxPixelRatio: number // 最大设备像素比（DPR）
+  sceneLightLimit: 8 | 12 | 16 | 24 | 48 // 附近参与渲染的场景灯数量上限
+  chunkBudgetMs: number // 区块增量构建每帧预算（毫秒）
+  loadingBudgetMs: number // 入场暂停加载时每帧预算（毫秒）
+  hudRefreshRate: 4 | 8 | 12 // HUD 刷新频率（Hz）
+  textureQuality: 0 | 1 | 2 // 纹理各向异性过滤：低/中/高
+  detailDistance: number // 场景细节与室内陈设裁剪距离 50–150%
+  wallOcclusion: boolean // 室内陈设遮挡剔除
+  particleDensity: number // 天气与层级环境粒子密度 0–100%
+  shadowUpdateRate: 0 | 1 | 2 // 手电阴影刷新率：性能/平衡/流畅
+  cameraFov: number // 基础视野角 60–90°
+  shadows: boolean // 手电实时阴影（移动端强制关闭）
+  fogOfWar: boolean // 战争迷雾（距离雾）：关闭后远处不再被雾遮蔽
+  fogScale: number // 距离雾远近（%：50=更近更浓 … 100=默认 … 200=更远更淡）
+  darknessBoost: number // 额外暗度 0–100：叠加到当前层级 darkness 的 +0.00…+1.00，默认不加暗度
+  farLights: boolean // 远处灯光全开（默认关闭=灯光点亮距离与雾可视距离一致；开启后灯光池 48→96 全场景点亮，性能开销略增）
+  lightMode: 'classic' | 'realistic' // 光影模式：classic=经典（当前版本）/ realistic=真实物理光照（默认 classic，可随时退回）
+  shadowQuality: number // 阴影质量 0=低 1=中 2=高（手电/太阳 shadow map 尺寸与软影半径；仅 realistic）
+  sunShadows: boolean // 自然光投影（室外太阳/月亮；仅 realistic）
+  lightShadows: number // 场景灯投影盏数：0=关，1/2/4 盏最近灯光阴影（经典模式控制 L9 路灯，真实模式控制全层场景灯；开销随盏数增加）
+  bloomStrength: number // 泛光程度 0–100（仅 realistic 且泛光开启时生效）
+  reflectivity: number // 反射强度 0–100（环境反射/水面反射；仅 realistic）
+  bloomFx: boolean // 泛光（辉光后处理；仅 realistic）
+  exposure: number // 曝光 %：50–200，100=默认 1.45
+  grainStrength: number // CSS 模拟颗粒不透明度 0–100
+  scanlineStrength: number // 扫描线强度 0–100
+  vignetteStrength: number // 镜头暗角强度 0–100
+  colorGrade: 'neutral' | 'liminal' | 'cold' | 'bleached' // 全局氛围调色预设
+  volume: number
+  ambient: number // 环境音（荧光灯嗡鸣 / L4 雨声）0-100
+  bgm: number // v54：音乐（每层 BGM）0-100
+  bgmStyle: 'procedural' | 'midi' // v56：BGM 曲风——procedural=随机程序化 / midi=MIDI 音符序列（按 Wikidot 各层风格重制）
+  preloadAllLevels: boolean // 开始游戏时预载全部层级资产；关闭后仅在进入具体层级时按需加载
+  sfx: number // 音效（攻击/拾取/UI/实体叫声等全部单发）0-100
+  muted: boolean
+  leftHanded: boolean
+  stickSize: number
+  btnOpacity: number
+  sensitivity: number // 视角灵敏度 0.2–3.0 倍
+  devMode: boolean // 开发者模式：无敌 + 层级跳转面板
+  theme: UiTheme // 界面主题：amber=经典琥珀 / liminal=阈限（仿 Backrooms 中文维基版式）
+  uiPresentation: UiPresentation // UI 呈现：classic=原有完整面板 / immersive=低干扰情境化档案界面
+  llmEndpoint: string // LLM API 端点（OpenAI 兼容，如 https://api.openai.com/v1；空=未接入）
+  llmApiKey: string // API 密钥（明文存本机 localStorage）
+  llmModel: string // 模型名（如 gpt-4o-mini）
+}
+
+export const defaultSettings: GameSettings = {
+  difficulty: 'normal', autoSprint: false,
+  grain: true, shake: true, headBob: false, realWater: false, flicker: 70, renderResolution: 'native', renderScale: 100, dynamicRes: true, dynamicResTarget: 60, shadows: true, fogOfWar: true,
+  maxPixelRatio: 2, sceneLightLimit: 24, chunkBudgetMs: 3, loadingBudgetMs: 6, hudRefreshRate: 8,
+  textureQuality: 1, detailDistance: 100, wallOcclusion: true, particleDensity: 100, shadowUpdateRate: 1, cameraFov: 72,
+  vcrFx: false, vcrStrength: 100, vcrScanlines: true,
+  fogScale: 100, darknessBoost: 0, farLights: false,
+  lightMode: 'classic', shadowQuality: 1, sunShadows: true, lightShadows: 0,
+  reflectivity: 60, bloomFx: true, bloomStrength: 35, exposure: 100,
+  grainStrength: 50, scanlineStrength: 60, vignetteStrength: 18, colorGrade: 'neutral',
+  volume: 80, ambient: 50, bgm: 100, sfx: 90, muted: false,
+  bgmStyle: 'procedural',
+  preloadAllLevels: false,
+  leftHanded: false, stickSize: 120, btnOpacity: 70,
+  sensitivity: 1.0, devMode: false,
+  theme: 'amber',
+  uiPresentation: 'classic',
+  llmEndpoint: '', llmApiKey: '', llmModel: '',
+}
+
+const TABS = ['游戏', '画面', '音频', '操作', '主题', 'API'] as const
+const GRAPHICS_TABS = ['基础', '光影', '性能', '氛围'] as const
+type GraphicsPreset = 'performance' | 'balanced' | 'immersive' | 'mobile'
+
+export const GRAPHICS_PRESETS: Record<GraphicsPreset, Partial<GameSettings>> = {
+  performance: {
+    renderResolution: 'native', renderScale: 85, dynamicRes: true, dynamicResTarget: 60, maxPixelRatio: 1, sceneLightLimit: 12, chunkBudgetMs: 2, loadingBudgetMs: 4, hudRefreshRate: 4, cameraFov: 70,
+    textureQuality: 0, detailDistance: 65, wallOcclusion: true, particleDensity: 25, shadowUpdateRate: 0,
+    shadows: false, shadowQuality: 0, farLights: false, lightMode: 'classic', sunShadows: false, fogOfWar: true, fogScale: 85,
+    lightShadows: 0, bloomFx: false, realWater: false, grain: false, vcrFx: false,
+    vcrStrength: 60, vcrScanlines: false, shake: false, headBob: false, vignetteStrength: 0, scanlineStrength: 35,
+    colorGrade: 'neutral', exposure: 100,
+  },
+  balanced: {
+    renderResolution: 'native', renderScale: 100, dynamicRes: true, dynamicResTarget: 60, maxPixelRatio: 1.5, sceneLightLimit: 24, chunkBudgetMs: 3, loadingBudgetMs: 6, hudRefreshRate: 8, fogOfWar: true, fogScale: 100, cameraFov: 72,
+    textureQuality: 1, detailDistance: 100, wallOcclusion: true, particleDensity: 70, shadowUpdateRate: 1,
+    shadows: true, shadowQuality: 1, farLights: false, lightMode: 'classic', sunShadows: true,
+    lightShadows: 0, bloomFx: true, bloomStrength: 35, reflectivity: 60, realWater: false,
+    grain: true, grainStrength: 50, vcrFx: false, vcrStrength: 100, vcrScanlines: true, shake: true, headBob: false,
+    flicker: 70, vignetteStrength: 18, scanlineStrength: 60, colorGrade: 'neutral', exposure: 100,
+  },
+  immersive: {
+    renderResolution: 'native', renderScale: 100, dynamicRes: false, dynamicResTarget: 60, maxPixelRatio: 2, sceneLightLimit: 48, chunkBudgetMs: 4, loadingBudgetMs: 8, hudRefreshRate: 12, fogOfWar: true, fogScale: 100, cameraFov: 74,
+    textureQuality: 2, detailDistance: 140, wallOcclusion: true, particleDensity: 100, shadowUpdateRate: 2,
+    shadows: true, farLights: true, lightMode: 'realistic', shadowQuality: 2,
+    sunShadows: true, lightShadows: 2, bloomFx: true, bloomStrength: 45, reflectivity: 80,
+    realWater: true, grain: true, grainStrength: 42, vcrFx: false, vcrStrength: 100, vcrScanlines: true, shake: true,
+    headBob: true, flicker: 70, vignetteStrength: 32, scanlineStrength: 50,
+    colorGrade: 'liminal', exposure: 100,
+  },
+  mobile: {
+    renderResolution: 'native', renderScale: 80, dynamicRes: true, dynamicResTarget: 60, maxPixelRatio: 1,
+    sceneLightLimit: 8, chunkBudgetMs: 1.5, loadingBudgetMs: 4, hudRefreshRate: 4, fogOfWar: true, fogScale: 85,
+    detailDistance: 65, wallOcclusion: true, particleDensity: 25, textureQuality: 0, shadows: false, shadowQuality: 0,
+    farLights: false, lightMode: 'classic', sunShadows: false, lightShadows: 0, bloomFx: false,
+    realWater: false, grain: false, vcrFx: false, vcrScanlines: false, shake: false, headBob: false,
+  },
+}
+
+export function createDefaultSettings(mobile = false): GameSettings {
+  return { ...defaultSettings, ...(mobile ? GRAPHICS_PRESETS.mobile : {}) }
+}
+
+const RESOLUTION_MODES: { id: RenderResolutionMode; label: string; sub: string; note: string }[] = [
+  { id: 'native', label: '原生高分辨率', sub: 'Native Clear', note: '设备原生像素与动态缩放' },
+  { id: '720p', label: '720P 平衡档', sub: '720p Raster', note: '平滑放大，兼顾清晰与帧率' },
+  { id: '480p_retro', label: '480P 真实锯齿', sub: '480p Jagged', note: '360 行光栅，最近邻阶梯边缘' },
+  { id: '320p_ps1', label: '320P PS1 极度复古', sub: '320p Retro', note: '180 行光栅、有限色阶抖动' },
+]
+
+// 主题选项（主题页预览卡的色板取自各主题实际变量值；bg 同时用作 meta theme-color；
+// fonts 为该主题实际使用的字体栈，卡片即以这些字体渲染自身预览）
+export const THEMES: { id: UiTheme; name: string; desc: string; bg: string; fg: string; dim: string; accent: string; accent2: string; fonts: { title: string; titleWeight: number; body: string; mono: string } }[] = [
+  { id: 'amber', name: '经典琥珀', desc: '默认暗色：琥珀荧光、VHS 扫描线、故障抖动', bg: '#14120c', fg: '#d6cfae', dim: '#8a8266', accent: '#e8b93c', accent2: '#3a3423', fonts: { title: "'ZCOOL QingKe HuangYou', 'Noto Sans SC', sans-serif", titleWeight: 400, body: "'Noto Sans SC', system-ui, sans-serif", mono: "'JetBrains Mono', monospace" } },
+  { id: 'liminal', name: '阈限', desc: '仿维基版式：纸面底色、灰褐描边、红色强调、衬线等宽字体、点阵背景', bg: '#ede9df', fg: '#191410', dim: '#48453c', accent: '#e61744', accent2: '#8c887e', fonts: { title: "Inter, 'Noto Sans SC', sans-serif", titleWeight: 900, body: "Inter, 'Noto Sans SC', sans-serif", mono: "Recursive, 'Noto Serif SC', 'JetBrains Mono', monospace" } },
+  { id: 'basalt', name: '玄武岩', desc: '近白纸面、浅灰分层、绯红点睛，8px 圆角的干净档案排版', bg: '#fcfcfc', fg: '#232326', dim: '#8a8992', accent: '#96182b', accent2: '#d0d0d8', fonts: { title: "'Sofia Sans', Inter, 'Noto Sans SC', sans-serif", titleWeight: 800, body: "Inter, 'Noto Sans SC', sans-serif", mono: "'JetBrains Mono', monospace" } },
+  { id: 'dark-liminal', name: '暗色阈限', desc: '深蓝黑单色、点阵噪点、直角硬边，一点猩红', bg: '#121620', fg: '#e6ebef', dim: '#a6abb5', accent: '#e61744', accent2: '#4a5160', fonts: { title: "Inter, 'Noto Sans SC', sans-serif", titleWeight: 800, body: "Inter, 'Noto Sans SC', sans-serif", mono: "Recursive, 'Noto Serif SC', 'JetBrains Mono', monospace" } },
+  { id: 'greyspace', name: '灰色阈限', desc: '暖调深灰档案卡、玫红链接跳色、半调网点', bg: '#23201e', fg: '#e6ebef', dim: '#9d9b95', accent: '#d92e53', accent2: '#42403c', fonts: { title: "Inter, 'Noto Sans SC', sans-serif", titleWeight: 800, body: "Inter, 'Noto Sans SC', sans-serif", mono: "Recursive, 'Noto Serif SC', 'JetBrains Mono', monospace" } },
+  { id: 'database', name: '数据库', desc: '老式 CRT 终端：黑底琥珀磷光、全等宽字、扫描线', bg: '#0a0a0a', fg: '#af641e', dim: '#7d5a26', accent: '#e58c24', accent2: '#5c4218', fonts: { title: "'JetBrains Mono', 'Noto Sans SC', monospace", titleWeight: 700, body: "'JetBrains Mono', 'Noto Sans SC', monospace", mono: "'JetBrains Mono', 'Noto Sans SC', monospace" } },
+  { id: 'fandom', name: 'Fandom 阈限', desc: '仿 Fandom 维基：做旧黄纸、橙色 UI、Rubik 圆体', bg: '#fbe7b5', fg: '#0c0c0c', dim: '#8a6224', accent: '#c36d2f', accent2: '#c36d2f', fonts: { title: "Rubik, 'Noto Sans SC', sans-serif", titleWeight: 700, body: "Rubik, 'Noto Sans SC', sans-serif", mono: "'JetBrains Mono', monospace" } },
+  { id: 'meg', name: 'M.E.G.', desc: '探险者总署档案：荧光灯黄、全等宽终端字、圆角档案盒', bg: '#f5edab', fg: '#363415', dim: '#6b6740', accent: '#8a7d1a', accent2: '#a8a24f', fonts: { title: "'Overpass Mono', 'PT Mono', 'JetBrains Mono', 'Noto Sans SC', monospace", titleWeight: 700, body: "'Overpass Mono', 'PT Mono', 'JetBrains Mono', 'Noto Sans SC', monospace", mono: "'Overpass Mono', 'PT Mono', 'JetBrains Mono', 'Noto Sans SC', monospace" } },
+]
+
+// 开关/滑块必须定义在组件外——组件内定义会在每次父渲染时生成新组件类型，React 因此反复
+// 卸载重挂按钮；本游戏 HUD 每 0.12s 一跳，按钮常在 mousedown 与 mouseup 之间被销毁，
+// click 事件无法完成（用户体感「开关经常要点好几下」）。
+// （另注：不能用 <label> 包裹 <button>——浏览器会把点击转发给 label 的控件再触发一次。）
+function Toggle({ k, label, value, onSet }: { k: keyof GameSettings; label: string; value: boolean; onSet: (k: keyof GameSettings, v: boolean) => void }) {
+  return (
+    <div className="flex items-center justify-between py-2 text-[14px]" style={{ color: 'var(--text)' }}>
+      <span>{label}</span>
+      <button
+        className="h-6 w-11 rounded-full border transition-colors"
+        style={{ borderColor: 'var(--panel-edge)', background: value ? 'var(--amber)' : 'var(--panel)' }}
+        onClick={() => onSet(k, !value)}
+        aria-pressed={value}
+        aria-label={label}
+      >
+        <span className="block h-4 w-4 rounded-full bg-black/60 transition-transform" style={{ transform: value ? 'translateX(24px)' : 'translateX(4px)' }} />
+      </button>
+    </div>
+  )
+}
+
+function Slider({ k, label, value, onSet, min = 0, max = 100, step = 1, valueLabel }: { k: keyof GameSettings; label: string; value: number; onSet: (k: keyof GameSettings, v: number) => void; min?: number; max?: number; step?: number; valueLabel?: string }) {
+  return (
+    <label className="block py-2 text-[14px]" style={{ color: 'var(--text)' }}>
+      <span className="mb-1 flex justify-between"><span>{label}</span><span className="font-mono2 text-[12px]" style={{ color: 'var(--amber)' }}>{valueLabel ?? value}</span></span>
+      <input
+        type="range" min={min} max={max} step={step} value={value}
+        onChange={(e) => onSet(k, Number(e.target.value))}
+        className="w-full accent-[var(--amber)]"
+      />
+    </label>
+  )
+}
+
+export default function SettingsModal({ settings, onChange, onClose, onOpenLayoutEditor }: { settings: GameSettings; onChange: (s: GameSettings) => void; onClose: () => void; onOpenLayoutEditor?: () => void }) {
+  const [tab, setTab] = useState<(typeof TABS)[number]>('游戏')
+  const [graphicsTab, setGraphicsTab] = useState<(typeof GRAPHICS_TABS)[number]>('基础')
+  const isMobile = typeof window !== 'undefined' && (window.matchMedia?.('(pointer: coarse)').matches || 'ontouchstart' in window)
+  const set = <K extends keyof GameSettings>(k: K, v: GameSettings[K]) => {
+    const ns = { ...settings, [k]: v }
+    onChange(ns)
+    if (k === 'muted') audio.setMuted(v as boolean)
+    if (k === 'volume') audio.setVolume((v as number) / 100)
+    if (k === 'ambient') audio.setAmbVolume((v as number) / 100)
+    if (k === 'bgm') audio.setBgmVolume((v as number) / 100)
+    if (k === 'bgmStyle') audio.setBgmStyle(v as 'procedural' | 'midi')
+    if (k === 'sfx') audio.setSfxVolume((v as number) / 100)
+  }
+
+  const setBool = (k: keyof GameSettings, v: boolean) => set(k, v as GameSettings[typeof k])
+  const setNum = (k: keyof GameSettings, v: number) => set(k, v as GameSettings[typeof k])
+  const applyGraphicsPreset = (preset: GraphicsPreset) => {
+    onChange({ ...settings, ...GRAPHICS_PRESETS[preset] })
+    audio.uiTick()
+  }
+  const setRenderResolution = (mode: RenderResolutionMode) => {
+    onChange({
+      ...settings,
+      renderResolution: mode,
+      // 固定帧缓冲与动态 DPR 不能同时控制同一分辨率；回到原生档时保留“关闭”状态。
+      dynamicRes: mode === 'native' ? settings.dynamicRes : false,
+    })
+    audio.uiTick()
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" onClick={onClose}>
+      <div
+        className="hud-panel anim-slideUp w-full max-w-[620px] p-5 max-md:fixed max-md:inset-x-0 max-md:bottom-0 max-md:max-w-none max-md:rounded-t-xl"
+        style={{ background: 'var(--panel)' }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="font-title text-[22px]" style={{ color: 'var(--amber)' }}>设置</h2>
+          <button className="font-mono2 px-3 py-1 text-[13px] border" style={{ borderColor: 'var(--panel-edge)', color: 'var(--text-dim)' }} onClick={onClose}>关闭</button>
+        </div>
+        <div className="mb-3 flex gap-4 border-b" style={{ borderColor: 'var(--panel-edge)' }}>
+          {TABS.map((t) => (
+            <button
+              key={t}
+              className="pb-2 text-[14px]"
+              style={{ color: tab === t ? 'var(--amber)' : 'var(--text-dim)', borderBottom: tab === t ? '2px solid var(--amber)' : '2px solid transparent' }}
+              onClick={() => { setTab(t); audio.uiTick() }}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+        <div className="max-h-[60dvh] overflow-y-auto pr-1">
+          {tab === '游戏' && (
+            <div>
+              <div className="py-2 text-[14px]" style={{ color: 'var(--text)' }}>难度</div>
+              <div className="flex gap-2">
+                {([['easy', '轻松'], ['normal', '标准'], ['hard', '硬核']] as const).map(([v, l]) => (
+                  <button
+                    key={v}
+                    className="flex-1 border px-3 py-2 text-[14px]"
+                    style={{ borderColor: settings.difficulty === v ? 'var(--amber)' : 'var(--panel-edge)', color: settings.difficulty === v ? 'var(--amber)' : 'var(--text-dim)', background: 'var(--panel)' }}
+                    onClick={() => set('difficulty', v)}
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
+              <Toggle k="autoSprint" label="自动冲刺" value={settings.autoSprint as boolean} onSet={setBool} />
+              <Toggle k="preloadAllLevels" label="启动时预载全部层级资产" value={settings.preloadAllLevels as boolean} onSet={setBool} />
+              <div className="pb-2 text-[11px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>
+                关闭后只预载即将进入的层级；其余层级会在首次进入时按需加载，可缩短首次启动等待时间。
+              </div>
+              <div className="py-2 text-[13px]" style={{ color: 'var(--text-dim)' }}>语言：简体中文（固定）</div>
+              <div className="mt-4 border-t pt-2" style={{ borderColor: 'var(--panel-edge)' }}>
+                <Toggle k="devMode" label="开发者模式（调试面板）" value={settings.devMode as boolean} onSet={setBool} />
+                {settings.devMode && (
+                  <div className="font-mono2 text-[11px]" style={{ color: 'var(--blood)' }}>
+                    已开启：游戏中无敌，HUD 左下角显示开发者面板（召唤实体 / 给予物品 / 状态控制 / 传送 / 世界工具 / 调试信息），画面带「开发者模式」水印。
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          {tab === '画面' && (
+            <div>
+              <div className="mb-3 grid grid-cols-4 gap-1 border-b pb-2" style={{ borderColor: 'var(--panel-edge)' }} role="tablist" aria-label="画面设置分类">
+                {GRAPHICS_TABS.map((t) => (
+                  <button
+                    key={t}
+                    className="border px-2 py-2 text-[12px]"
+                    style={{ borderColor: graphicsTab === t ? 'var(--amber)' : 'var(--panel-edge)', color: graphicsTab === t ? 'var(--amber)' : 'var(--text-dim)', background: graphicsTab === t ? 'color-mix(in srgb, var(--amber) 10%, var(--panel))' : 'var(--panel)' }}
+                    onClick={() => { setGraphicsTab(t); audio.uiTick() }}
+                    role="tab"
+                    aria-selected={graphicsTab === t}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+
+              {graphicsTab === '基础' && (
+                <div role="tabpanel">
+                  <div className="mb-3 border p-3" style={{ borderColor: 'var(--panel-edge)', background: 'color-mix(in srgb, var(--amber) 5%, var(--panel))' }}>
+                    <div className="mb-2 text-[13px] font-semibold" style={{ color: 'var(--amber)' }}>快捷预设</div>
+                    <div className="grid grid-cols-4 gap-2">
+                      {([['performance', '性能优先', '低负载'], ['balanced', '平衡', '推荐'], ['immersive', '沉浸优先', '高负载'], ['mobile', '手机流畅', '移动端']] as const).map(([id, label, note]) => (
+                        <button key={id} className="border px-2 py-2 text-[12px]" style={{ borderColor: 'var(--panel-edge)', color: 'var(--text)', background: 'var(--panel)' }} onClick={() => applyGraphicsPreset(id)}>
+                          <span className="block">{label}</span>
+                          <span className="font-mono2 text-[10px]" style={{ color: 'var(--text-dim)' }}>{note}</span>
+                        </button>
+                      ))}
+                    </div>
+                    <div className="mt-2 text-[10px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>预设只批量修改下方选项；之后仍可逐项微调。沉浸优先会启用真实光影、水面与更远的细节。</div>
+                  </div>
+                  <div className="mb-3 border p-3" style={{ borderColor: 'var(--panel-edge)', background: 'color-mix(in srgb, var(--amber) 3%, var(--panel))' }}>
+                    <div className="mb-2 text-[13px] font-semibold" style={{ color: 'var(--amber)' }}>3D 硬件光栅化分辨率</div>
+                    <div className="grid grid-cols-2 gap-2">
+                      {RESOLUTION_MODES.map((mode) => {
+                        const active = settings.renderResolution === mode.id
+                        return (
+                          <button key={mode.id} className="min-h-[68px] border p-2 text-left" style={{ borderColor: active ? 'var(--amber)' : 'var(--panel-edge)', color: active ? 'var(--amber)' : 'var(--text)', background: active ? 'color-mix(in srgb, var(--amber) 15%, var(--panel))' : 'var(--panel)', boxShadow: active ? 'inset 3px 0 0 var(--amber)' : undefined }} onClick={() => setRenderResolution(mode.id)} aria-pressed={active}>
+                            <div className="text-[12px] font-semibold">{mode.label}</div>
+                            <div className="font-mono2 text-[10px]" style={{ color: active ? 'var(--amber)' : 'var(--text-dim)' }}>{mode.sub}</div>
+                            <div className="mt-1 text-[10px] leading-tight" style={{ color: 'var(--text-dim)' }}>{mode.note}</div>
+                          </button>
+                        )
+                      })}
+                    </div>
+                    <div className="mt-2 text-[10px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>480P/320P 会让 GPU 直接以低分辨率光栅化，再按最近邻放大，并非 CSS 模糊滤镜。</div>
+                  </div>
+                  {settings.renderResolution === 'native' && <Slider k="renderScale" label="原生渲染比例" value={settings.renderScale} onSet={setNum} min={50} max={100} step={5} valueLabel={`${settings.renderScale}%`} />}
+                  <Slider k="cameraFov" label="视野角（FOV）" value={settings.cameraFov} onSet={setNum} min={60} max={90} step={1} valueLabel={`${settings.cameraFov}°`} />
+                  <div className="pb-2 text-[11px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>较高视野能看到更多场景，也会轻微增加 GPU 需要处理的可见物体数量。</div>
+                </div>
+              )}
+
+              {graphicsTab === '光影' && (
+                <div role="tabpanel">
+                  <div className="py-2 text-[14px]" style={{ color: 'var(--text)' }}>光影模式</div>
+                  <div className="flex gap-2">
+                    {([['classic', '经典'], ['realistic', '真实']] as const).map(([v, l]) => (
+                      <button key={v} className="flex-1 border px-3 py-2 text-[14px]" style={{ borderColor: settings.lightMode === v ? 'var(--amber)' : 'var(--panel-edge)', color: settings.lightMode === v ? 'var(--amber)' : 'var(--text-dim)', background: 'var(--panel)' }} onClick={() => set('lightMode', v)}>{l}</button>
+                    ))}
+                  </div>
+                  <div className="pt-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>真实模式启用物理光照、环境反射、软阴影与泛光；可随时切回经典模式。</div>
+                  <Toggle k="shadows" label="手电实时阴影" value={settings.shadows} onSet={setBool} />
+                  <div className="py-2 text-[14px]" style={{ color: 'var(--text)' }}>手电阴影刷新率</div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {([[0, '性能'], [1, '平衡'], [2, '流畅']] as const).map(([v, l]) => (
+                      <button key={v} className="border px-2 py-2 text-[12px]" style={{ borderColor: settings.shadowUpdateRate === v ? 'var(--amber)' : 'var(--panel-edge)', color: settings.shadowUpdateRate === v ? 'var(--amber)' : 'var(--text-dim)', background: 'var(--panel)' }} onClick={() => set('shadowUpdateRate', v)}>{l}</button>
+                    ))}
+                  </div>
+                  <div className="pt-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>只改变移动时阴影贴图的更新频率；流畅档响应最快，性能档最省 GPU。</div>
+                  <div className="py-2 text-[14px]" style={{ color: 'var(--text)' }}>阴影质量</div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {([[0, '低'], [1, '中'], [2, '高']] as const).map(([v, l]) => (
+                      <button key={v} className="border px-3 py-2 text-[13px]" style={{ borderColor: settings.shadowQuality === v ? 'var(--amber)' : 'var(--panel-edge)', color: settings.shadowQuality === v ? 'var(--amber)' : 'var(--text-dim)', background: 'var(--panel)' }} onClick={() => set('shadowQuality', v)}>{l}</button>
+                    ))}
+                  </div>
+                  <Toggle k="sunShadows" label="自然光投影（室外太阳/月亮）" value={settings.sunShadows} onSet={setBool} />
+                  <div className="py-2 text-[14px]" style={{ color: 'var(--text)' }}>场景灯投影（开销随盏数增加）</div>
+                  <div className="grid grid-cols-4 gap-2">
+                    {([[0, '关'], [1, '1 盏'], [2, '2 盏'], [4, '4 盏']] as const).map(([v, l]) => (
+                      <button key={v} className="border px-2 py-2 text-[12px]" style={{ borderColor: settings.lightShadows === v ? 'var(--amber)' : 'var(--panel-edge)', color: settings.lightShadows === v ? 'var(--amber)' : 'var(--text-dim)', background: 'var(--panel)' }} onClick={() => set('lightShadows', v)}>{l}</button>
+                    ))}
+                  </div>
+                  {settings.lightMode === 'classic' && <div className="pt-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>自然光投影、反射与泛光仅在真实模式中生效；经典模式下 L9 路灯投影仍受此项控制。关闭投影可降低开销。</div>}
+                  <Toggle k="fogOfWar" label="距离雾" value={settings.fogOfWar} onSet={setBool} />
+                  <Slider k="fogScale" label="距离雾远近" value={settings.fogScale} onSet={setNum} min={50} max={200} step={5} valueLabel={`${settings.fogScale}%`} />
+                  <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>50% = 更近更浓 · 100% = 默认 · 200% = 更远更淡。</div>
+                  <Slider k="darknessBoost" label="额外暗度" value={settings.darknessBoost} onSet={setNum} min={0} max={100} step={5} valueLabel={`+${(settings.darknessBoost / 100).toFixed(2)}`} />
+                  <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>叠加到层级 darkness；不削弱手电和开发者照明。</div>
+                  <Toggle k="farLights" label="远处灯光全开（增加性能开销）" value={settings.farLights} onSet={setBool} />
+                  <Slider k="reflectivity" label="反射强度（环境/水面反射）" value={settings.reflectivity} onSet={setNum} valueLabel={`${settings.reflectivity}%`} />
+                  <Toggle k="bloomFx" label="泛光（辉光后处理）" value={settings.bloomFx} onSet={setBool} />
+                  {settings.bloomFx && <Slider k="bloomStrength" label="泛光程度" value={settings.bloomStrength} onSet={setNum} valueLabel={`${settings.bloomStrength}%`} />}
+                  <Slider k="exposure" label="曝光" value={settings.exposure} onSet={setNum} min={50} max={200} step={5} valueLabel={`${settings.exposure}%`} />
+                </div>
+              )}
+
+              {graphicsTab === '性能' && (
+                <div role="tabpanel">
+                  {settings.renderResolution === 'native' ? <Toggle k="dynamicRes" label="动态分辨率" value={settings.dynamicRes} onSet={setBool} /> : <div className="py-2 text-[11px]" style={{ color: 'var(--text-dim)' }}>固定光栅档位已接管分辨率，动态分辨率自动关闭。</div>}
+                  <div className="py-2 text-[14px]" style={{ color: 'var(--text)' }}>动态分辨率目标帧率</div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {([30, 45, 60] as const).map((v) => (
+                      <button key={v} disabled={!settings.dynamicRes || settings.renderResolution !== 'native'} className="border px-2 py-2 text-[12px] disabled:opacity-40" style={{ borderColor: settings.dynamicResTarget === v ? 'var(--amber)' : 'var(--panel-edge)', color: settings.dynamicResTarget === v ? 'var(--amber)' : 'var(--text-dim)', background: 'var(--panel)' }} onClick={() => set('dynamicResTarget', v)}>{v} FPS</button>
+                    ))}
+                  </div>
+                  <div className="pt-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>帧耗时持续超过目标时降低内部渲染比例，稳定后再逐步恢复。</div>
+                  <Slider k="maxPixelRatio" label="最大设备像素比（DPR）" value={settings.maxPixelRatio} onSet={setNum} min={0.75} max={2} step={0.25} valueLabel={`${settings.maxPixelRatio}×`} />
+                  <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>DPR 越高，GPU 需要绘制的像素越多；移动端可降低以减少发热和卡顿。</div>
+                  <div className="py-2 text-[14px]" style={{ color: 'var(--text)' }}>附近场景灯数量上限</div>
+                  <div className="grid grid-cols-5 gap-2">
+                    {([8, 12, 16, 24, 48] as const).map((v) => <button key={v} className="border px-2 py-2 text-[12px]" style={{ borderColor: settings.sceneLightLimit === v ? 'var(--amber)' : 'var(--panel-edge)', color: settings.sceneLightLimit === v ? 'var(--amber)' : 'var(--text-dim)', background: 'var(--panel)' }} onClick={() => set('sceneLightLimit', v)}>{v} 盏</button>)}
+                  </div>
+                  <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>只改变附近实际绘制的灯光数量，不改变世界生成。</div>
+                  <Slider k="chunkBudgetMs" label="游玩时区块每帧预算" value={settings.chunkBudgetMs} onSet={setNum} min={1} max={6} step={0.5} valueLabel={`${settings.chunkBudgetMs} ms`} />
+                  <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>预算越高区块完成越快，但单帧尖峰也越明显。</div>
+                  <Slider k="loadingBudgetMs" label="入场加载每帧预算" value={settings.loadingBudgetMs} onSet={setNum} min={1} max={8} step={0.5} valueLabel={`${settings.loadingBudgetMs} ms`} />
+                  <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>仅在暂停模拟、等待附近场景就绪时使用。提高可缩短入场等待，单帧耗时也会增加。</div>
+                  <div className="py-2 text-[14px]" style={{ color: 'var(--text)' }}>HUD 刷新频率</div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {([4, 8, 12] as const).map((v) => <button key={v} className="border px-2 py-2 text-[12px]" style={{ borderColor: settings.hudRefreshRate === v ? 'var(--amber)' : 'var(--panel-edge)', color: settings.hudRefreshRate === v ? 'var(--amber)' : 'var(--text-dim)', background: 'var(--panel)' }} onClick={() => set('hudRefreshRate', v)}>{v} Hz</button>)}
+                  </div>
+                  <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>只影响 HUD 刷新，不改变输入和游戏逻辑 tick。</div>
+                  <div className="py-2 text-[14px]" style={{ color: 'var(--text)' }}>纹理过滤质量</div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {([[0, '低'], [1, '中'], [2, '高']] as const).map(([v, l]) => (
+                      <button key={v} className="border px-2 py-2 text-[12px]" style={{ borderColor: settings.textureQuality === v ? 'var(--amber)' : 'var(--panel-edge)', color: settings.textureQuality === v ? 'var(--amber)' : 'var(--text-dim)', background: 'var(--panel)' }} onClick={() => set('textureQuality', v)}>{l}</button>
+                    ))}
+                  </div>
+                  <div className="pt-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>控制斜视地面与远处墙面的各向异性过滤，越高越清晰，也会增加显存带宽占用。</div>
+                  <Slider k="detailDistance" label="细节裁剪距离" value={settings.detailDistance} onSet={setNum} min={50} max={150} step={5} valueLabel={`${settings.detailDistance}%`} />
+                  <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>调整 L9/L10 房屋内饰的显示距离；降低可明显减少郊区与农田建筑附近的绘制量。</div>
+                  <Toggle k="wallOcclusion" label="室内遮挡剔除" value={settings.wallOcclusion} onSet={setBool} />
+                  <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>跳过实体墙后完全不可见的陈设；适用于办公室、酒店和据点，开启实时阴影时自动停用。</div>
+                  <Slider k="particleDensity" label="天气粒子密度" value={settings.particleDensity} onSet={setNum} min={0} max={100} step={5} valueLabel={`${settings.particleDensity}%`} />
+                  <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>控制雨丝等层级天气粒子的数量，不会重新启用已删除的全局漂浮尘埃。</div>
+                  <Toggle k="realWater" label="真实水体（涌浪、波光与反射）" value={settings.realWater} onSet={setBool} />
+                  <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>关闭后使用低成本平面水体；不影响游泳、出口与其他玩法判定。</div>
+                </div>
+              )}
+
+              {graphicsTab === '氛围' && (
+                <div role="tabpanel">
+                  <div className="py-2 text-[14px]" style={{ color: 'var(--text)' }}>全局色调</div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {([['neutral', '层级原色'], ['liminal', '迷离暖黄'], ['cold', '阴冷蓝灰'], ['bleached', '漂白录像']] as const).map(([v, l]) => (
+                      <button key={v} className="border px-2 py-2 text-[12px]" style={{ borderColor: settings.colorGrade === v ? 'var(--amber)' : 'var(--panel-edge)', color: settings.colorGrade === v ? 'var(--amber)' : 'var(--text-dim)', background: 'var(--panel)' }} onClick={() => set('colorGrade', v)}>{l}</button>
+                    ))}
+                  </div>
+                  <Toggle k="grain" label="模拟胶片 / VHS 颗粒" value={settings.grain} onSet={setBool} />
+                  {settings.grain && <Slider k="grainStrength" label="颗粒强度" value={settings.grainStrength} onSet={setNum} valueLabel={`${settings.grainStrength}%`} />}
+                  <Slider k="scanlineStrength" label="静态屏幕扫描线强度" value={settings.scanlineStrength} onSet={setNum} valueLabel={`${settings.scanlineStrength}%`} />
+                  <Slider k="vignetteStrength" label="镜头暗角" value={settings.vignetteStrength} onSet={setNum} valueLabel={`${settings.vignetteStrength}%`} />
+                  <Toggle k="vcrFx" label="VCR 色差与跟踪失真" value={settings.vcrFx} onSet={setBool} />
+                  {settings.vcrFx && (
+                    <div className="border-l-2 pl-3" style={{ borderColor: 'var(--panel-edge)' }}>
+                      <Slider k="vcrStrength" label="VCR 失真强度" value={settings.vcrStrength} onSet={setNum} valueLabel={`${settings.vcrStrength}%`} />
+                      <Toggle k="vcrScanlines" label="VCR 动态扫描线" value={settings.vcrScanlines} onSet={setBool} />
+                      <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>动态扫描线只控制隔行微闪与滚动扫描纹；关闭后仍保留所选强度的色差、跟踪漂移和磁带噪声。</div>
+                    </div>
+                  )}
+                  <Toggle k="shake" label="受伤与低生命屏幕震动" value={settings.shake} onSet={setBool} />
+                  <Toggle k="headBob" label="真实行走视角（起伏、侧摆、落地回弹）" value={settings.headBob} onSet={setBool} />
+                  <Slider k="flicker" label="灯光闪烁强度" value={settings.flicker} onSet={setNum} valueLabel={`${settings.flicker}%`} />
+                  <div className="mt-2 border-l-2 pl-2 text-[11px] leading-relaxed" style={{ borderColor: 'var(--amber)', color: 'var(--text-dim)' }}>暗角、调色和视角效果只改变视觉呈现；不会改变实体感知、照明范围或游戏难度。</div>
+                </div>
+              )}
+            </div>
+          )}
+          {tab === '音频' && (
+            <div>
+              <Toggle k="muted" label="静音" value={settings.muted as boolean} onSet={setBool} />
+              <Slider k="volume" label="主音量" value={settings.volume as number} onSet={setNum} />
+              <Slider k="bgm" label="音乐（BGM）" value={settings.bgm as number} onSet={setNum} />
+              <div className="py-2 text-[14px]" style={{ color: 'var(--text)' }}>BGM 曲风</div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  className="flex-1 border px-3 py-2 text-[14px]"
+                  style={{ borderColor: 'var(--amber)', color: 'var(--amber)', background: 'var(--panel)', opacity: 0.85 }}
+                  disabled
+                  aria-pressed="true"
+                >
+                  程序化
+                </button>
+              </div>
+              <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>
+                音乐随所在层级实时生成，无需下载曲目。
+              </div>
+              <Slider k="ambient" label="环境音（嗡鸣/雨声）" value={settings.ambient as number} onSet={setNum} />
+              <Slider k="sfx" label="音效（攻击/拾取/UI/实体叫声）" value={settings.sfx as number} onSet={setNum} />
+            </div>
+          )}
+          {tab === '主题' && (
+            <div>
+              <div className="mb-2 text-[13px] font-semibold" style={{ color: 'var(--amber)' }}>界面呈现</div>
+              <div className="mb-4 grid grid-cols-2 gap-2" role="group" aria-label="界面呈现模式">
+                {([
+                  ['classic', '经典 UI', '完整游戏面板', '清晰、稳定地显示所有 HUD 与菜单信息。'],
+                  ['immersive', '沉浸式 UI', '随身档案终端', '低干扰情境 HUD、取景框与做旧档案面板。'],
+                ] as const).map(([id, name, tag, desc]) => (
+                  <button
+                    key={id}
+                    className={`ui-presentation-card ${settings.uiPresentation === id ? 'is-active' : ''}`}
+                    onClick={() => { set('uiPresentation', id); audio.uiTick() }}
+                    aria-pressed={settings.uiPresentation === id}
+                  >
+                    <span className="ui-presentation-preview" aria-hidden="true">
+                      <span className="ui-preview-status" />
+                      <span className="ui-preview-focus" />
+                      <span className="ui-preview-slots"><i /><i /><i /><i /></span>
+                    </span>
+                    <span className="mt-2 flex items-center justify-between gap-2">
+                      <strong className="text-[14px]" style={{ color: settings.uiPresentation === id ? 'var(--amber)' : 'var(--text)' }}>{name}</strong>
+                      <span className="font-mono2 text-[9px]" style={{ color: 'var(--text-dim)' }}>{settings.uiPresentation === id ? '● 使用中' : '○ 可切换'}</span>
+                    </span>
+                    <span className="font-mono2 mt-0.5 block text-[10px]" style={{ color: 'var(--amber)' }}>{tag}</span>
+                    <span className="mt-1 block text-[11px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>{desc}</span>
+                  </button>
+                ))}
+              </div>
+              <div className="mb-3 border-t pt-3 text-[13px] font-semibold" style={{ borderColor: 'var(--panel-edge)', color: 'var(--amber)' }}>配色与字体主题</div>
+              <div className="grid grid-cols-2 gap-2 max-md:grid-cols-1">
+                {THEMES.map((t) => (
+                  <button
+                    key={t.id}
+                    className="border p-3 text-left transition-transform"
+                    style={{
+                      borderColor: settings.theme === t.id ? 'var(--amber)' : 'var(--panel-edge)',
+                      background: t.bg,
+                      color: t.fg,
+                      boxShadow: settings.theme === t.id ? '0 0 0 1px var(--amber), var(--quote-shadow)' : 'var(--quote-shadow)',
+                    }}
+                    onClick={() => { set('theme', t.id); audio.uiTick() }}
+                  >
+                    <div className="flex items-center justify-between" style={{ fontFamily: t.fonts.title }}>
+                      <span className="text-[14px]" style={{ color: t.accent, fontWeight: t.fonts.titleWeight }}>{t.name}</span>
+                      <span className="flex gap-1">
+                        {[t.bg, t.accent2, t.accent].map((c) => (
+                          <span key={c} className="block h-3 w-3 rounded-[2px] border" style={{ background: c, borderColor: t.dim }} />
+                        ))}
+                      </span>
+                    </div>
+                    <div className="mt-1.5 text-[11px] leading-relaxed" style={{ color: t.dim, fontFamily: t.fonts.body }}>{t.desc}</div>
+                    <div className="mt-1.5 text-[10px]" style={{ color: t.dim, fontFamily: t.fonts.mono }}>
+                      {settings.theme === t.id ? '● 使用中' : '○ 点击切换'}
+                    </div>
+                  </button>
+                ))}
+              </div>
+              <div className="mt-3 text-[12px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>
+                界面呈现与配色主题彼此独立，可任意组合。各主题灵感均来自 <b style={{ color: 'var(--text)' }}>Backrooms 中文维基</b>的同名版式（阈限 / 玄武岩 / 暗色阈限 / 灰色阈限 / 数据库 / Fandom 阈限 / M.E.G.）。所有切换只改变 UI 外观，不影响 3D 场景、游戏机制和键位，并会即时保存。
+              </div>
+            </div>
+          )}
+          {tab === 'API' && (
+            <div>
+              <div className="py-2 text-[13px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>
+                接入 OpenAI 兼容的 LLM 端点后，与人士交谈时可<b style={{ color: 'var(--amber)' }}>自由输入对话</b>（由模型按人士人设生成回复）；不接入则只能使用预制对话。密钥以明文保存在本机浏览器存储中，请知悉。
+              </div>
+              {([['llmEndpoint', '端点（Base URL）', 'https://api.openai.com/v1', 'text'], ['llmApiKey', 'API 密钥', 'sk-…', 'password'], ['llmModel', '模型', 'gpt-4o-mini', 'text']] as const).map(([k, label, ph, type]) => (
+                <label key={k} className="block py-2 text-[14px]" style={{ color: 'var(--text)' }}>
+                  <span className="mb-1 block">{label}</span>
+                  <input
+                    type={type}
+                    value={settings[k] as string}
+                    placeholder={ph}
+                    onChange={(e) => set(k, e.target.value as GameSettings[typeof k])}
+                    className="w-full border bg-transparent px-2 py-1.5 font-mono2 text-[12px]"
+                    style={{ borderColor: 'var(--panel-edge)', color: 'var(--text)' }}
+                  />
+                </label>
+              ))}
+              <div className="font-mono2 text-[11px]" style={{ color: settings.llmEndpoint && settings.llmModel ? 'var(--exit)' : 'var(--text-dim)' }}>
+                {settings.llmEndpoint && settings.llmModel ? '● 已接入：人士对话启用自由输入' : '○ 未接入：人士对话使用预制内容'}
+              </div>
+            </div>
+          )}
+          {tab === '操作' && (
+            <div className="font-mono2 text-[12px] leading-7" style={{ color: 'var(--text)' }}>
+              <label className="mb-2 block text-[14px]">
+                <span className="mb-1 flex justify-between"><span>视角灵敏度</span><span className="font-mono2 text-[12px]" style={{ color: 'var(--amber)' }}>{settings.sensitivity.toFixed(1)}×</span></span>
+                <input
+                  type="range" min={20} max={300} step={10} value={Math.round(settings.sensitivity * 100)}
+                  onChange={(e) => set('sensitivity', Number(e.target.value) / 100)}
+                  className="w-full accent-[var(--amber)]"
+                />
+                <span className="text-[11px]" style={{ color: 'var(--text-dim)' }}>同时作用于桌面鼠标与移动端拖动转视角（0.2× – 3.0×）</span>
+              </label>
+              {!isMobile && <KeybindSection />}
+              <div className="mb-1 mt-3 text-[13px]" style={{ color: 'var(--amber)' }}>移动端</div>
+              <Toggle k="leftHanded" label="左撇子镜像布局" value={settings.leftHanded as boolean} onSet={setBool} />
+              <Slider k="stickSize" label="摇杆大小" value={settings.stickSize as number} onSet={setNum} />
+              <Slider k="btnOpacity" label="按钮透明度" value={settings.btnOpacity as number} onSet={setNum} />
+              {onOpenLayoutEditor && (
+                <div className="mt-2">
+                  <button
+                    className="w-full border px-3 py-2 text-[14px]"
+                    style={{ borderColor: 'var(--amber)', color: 'var(--amber)', background: 'var(--panel)' }}
+                    onClick={() => { audio.uiTick(); onOpenLayoutEditor() }}
+                  >
+                    自定义按键布局
+                  </button>
+                  <div className="mt-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>
+                    拖动调整摇杆与按钮位置，双指缩放大小；竖屏 / 横屏分别保存。
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// v18：PC 键位绑定区（仅桌面端渲染；触屏设备不挂载本组件）
+function KeybindSection() {
+  const [binds, setBinds] = useState(() => ({ ...getKeybinds() }))
+  const [listening, setListening] = useState<string | null>(null) // 正在捕获的动作 id
+  const [conflictMsg, setConflictMsg] = useState('')
+
+  // 捕获态：按任意键/鼠标键/滚轮完成绑定（Esc 取消）
+  useEffect(() => {
+    if (!listening) return
+    const finish = (code: string) => {
+      if (code === 'Escape') { setListening(null); setConflictMsg(''); return }
+      const other = conflictOf(listening, code)
+      if (other) {
+        setConflictMsg(`「${bindLabel(code)}」已绑定给「${actionLabel(other)}」——请先改绑它。`)
+      } else {
+        setKeybind(listening, code)
+        setBinds({ ...getKeybinds() })
+        setConflictMsg('')
+        audio.uiTick()
+      }
+      setListening(null)
+    }
+    const kd = (e: KeyboardEvent) => { e.preventDefault(); e.stopPropagation(); finish(e.code) }
+    const md = (e: MouseEvent) => { e.preventDefault(); e.stopPropagation(); finish(`Mouse${e.button}`) }
+    const wh = (e: WheelEvent) => { e.preventDefault(); e.stopPropagation(); finish(e.deltaY < 0 ? 'WheelUp' : 'WheelDown') }
+    window.addEventListener('keydown', kd, true)
+    window.addEventListener('mousedown', md, true)
+    window.addEventListener('wheel', wh, { capture: true, passive: false })
+    return () => {
+      window.removeEventListener('keydown', kd, true)
+      window.removeEventListener('mousedown', md, true)
+      window.removeEventListener('wheel', wh, true)
+    }
+  }, [listening])
+
+  return (
+    <div>
+      <div className="mb-2 flex items-center justify-between">
+        <div className="text-[13px]" style={{ color: 'var(--amber)' }}>键位绑定（PC）</div>
+        <button
+          className="border px-2 py-0.5 text-[11px]"
+          style={{ borderColor: 'var(--panel-edge)', color: 'var(--text-dim)' }}
+          onClick={() => { resetKeybinds(); setBinds({ ...getKeybinds() }); setConflictMsg(''); audio.uiTick() }}
+        >
+          恢复默认
+        </button>
+      </div>
+      <div className="grid grid-cols-2 gap-x-4">
+        {BIND_ACTIONS.map((a) => (
+          <div key={a.id} className="flex items-center justify-between py-0.5">
+            <span style={{ color: 'var(--text)' }}>{a.label}</span>
+            <button
+              className="min-w-[64px] border px-2 py-0.5 text-[11px]"
+              style={{
+                borderColor: listening === a.id ? 'var(--amber)' : 'var(--panel-edge)',
+                color: listening === a.id ? 'var(--amber)' : 'var(--text-dim)',
+                background: listening === a.id ? 'color-mix(in srgb, var(--amber) 12%, transparent)' : 'var(--panel)',
+              }}
+              onClick={() => { setListening(listening === a.id ? null : a.id); setConflictMsg(''); audio.uiTick() }}
+            >
+              {listening === a.id ? '按任意键…' : bindLabel(binds[a.id])}
+            </button>
+          </div>
+        ))}
+      </div>
+      {conflictMsg && <div className="mt-1 text-[11px]" style={{ color: 'var(--blood)' }}>{conflictMsg}</div>}
+      <div className="mt-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>
+        点击绑定框后按下新按键（支持键盘 / 鼠标键 / 滚轮），Esc 取消。方向键移动、Ctrl 蹲伏、Tab 背包为固定辅助键。
+      </div>
+    </div>
+  )
+}

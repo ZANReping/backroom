@@ -1,0 +1,15 @@
+.level-intro { position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; background: #000; transition: opacity 240ms ease; will-change: opacity; }
+.level-intro[data-phase='exiting'] { opacity: 0; }
+.level-intro[data-phase='holding'] { opacity: 1; }
+.level-intro[data-phase='presenting'] { animation: glitchJitter 90ms linear 1600ms 2; }
+.level-intro__char { display: inline-block; opacity: 0; will-change: opacity; animation: levelIntroChar 1ms steps(1, end) forwards; }
+.level-intro:not([data-phase='presenting']) .level-intro__char { opacity: 1; animation: none; will-change: auto; }
+.level-intro__name, .level-intro__flavor { max-width: 680px; }
+.level-intro__name { line-height: 1.35; }
+.level-intro__scan { pointer-events: none; position: absolute; inset-inline: 0; top: 0; height: 2px; background: rgb(255 255 255 / 20%); animation: levelIntroScan 400ms linear 200ms both; }
+.level-intro__status { margin-top: 10px; color: var(--text-dim); }
+.level-intro__signal { width: 48px; height: 1px; margin-top: 14px; background: var(--exit); animation: levelIntroSignal 1.4s ease-in-out infinite alternate; will-change: opacity, transform; }
+@keyframes levelIntroSignal { from { opacity: .3; transform: scaleX(.4); } to { opacity: .8; transform: scaleX(1); } }
+@keyframes levelIntroChar { to { opacity: 1; } }
+@keyframes levelIntroScan { from { transform: translateY(0); } to { transform: translateY(100vh); } }
+@media (prefers-reduced-motion: reduce) { .level-intro__char { opacity: 1; animation: none; } .level-intro__scan { display: none; } .level-intro__signal { animation: none; } .level-intro[data-phase] { transition: none; animation: none; } }

@@ -1,0 +1,57 @@
+{
+  "passed": true,
+  "checks": [
+    "host created room through public PeerJS signaling",
+    "invitation prefill, explicit join, both real clients see each other in lobby",
+    "both clients ready and start with identical world seed",
+    "player state crosses real WebRTC data channel in both directions",
+    "remote avatar models visible outside Level 0 isolation; world event delivery works in both directions",
+    "guest receives host disconnect notification"
+  ],
+  "stage": "complete",
+  "contexts": [
+    {
+      "name": "Toy测试房主",
+      "pageErrors": [],
+      "networkErrors": [],
+      "websocketErrors": [],
+      "rtc": [
+        {
+          "connectionState": "closed",
+          "iceConnectionState": "closed"
+        },
+        {
+          "connectionState": "connected",
+          "iceConnectionState": "connected",
+          "localCandidateType": "host",
+          "remoteCandidateType": "host",
+          "bytesSent": 73638,
+          "bytesReceived": 36988
+        }
+      ]
+    },
+    {
+      "name": "Toy测试客人",
+      "pageErrors": [],
+      "networkErrors": [],
+      "websocketErrors": [],
+      "rtc": [
+        {
+          "connectionState": "closed",
+          "iceConnectionState": "closed"
+        },
+        {
+          "connectionState": "connected",
+          "iceConnectionState": "connected",
+          "localCandidateType": "host",
+          "remoteCandidateType": "host",
+          "bytesSent": 38628,
+          "bytesReceived": 78870
+        }
+      ]
+    }
+  ],
+  "realBilibiliClientTested": false,
+  "forcedRelay": false,
+  "topology": "two isolated browser contexts on one computer; public PeerJS signaling; real WebRTC"
+}

@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "checks": [
+    "host created room through public PeerJS signaling",
+    "invitation prefill, explicit join, both real clients see each other in lobby",
+    "host disconnect during async scene warmup cancels pending start and returns guest to title"
+  ],
+  "stage": "complete",
+  "contexts": [
+    {
+      "name": "Toy测试房主",
+      "pageErrors": [],
+      "networkErrors": [],
+      "websocketErrors": []
+    },
+    {
+      "name": "Toy测试客人",
+      "pageErrors": [],
+      "networkErrors": [],
+      "websocketErrors": []
+    }
+  ],
+  "realBilibiliClientTested": false,
+  "forcedRelay": false,
+  "topology": "two isolated browser contexts on one computer; public PeerJS signaling; real WebRTC",
+  "publishedToyDesktopTested": false,
+  "localAssetOverride": false
+}

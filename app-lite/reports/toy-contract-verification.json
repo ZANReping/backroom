@@ -1,0 +1,32 @@
+{
+  "passed": true,
+  "checks": [
+    "official SDK: actual Web ability flags, 5MB validation, missing platform context gracefully falls back",
+    "home: platform URL copied, QR request deduplicated, QR album/download actions, modal Escape dismissal",
+    "failures: QR retry, denied album permission retains download, hung bridge releases buttons, rate-limit feedback",
+    "invitation: delayed response for previous room cannot overwrite current target",
+    "capability discovery: one rejected/hung ability does not block other supported features",
+    "late SDK: features recover after script arrives beyond initial readiness deadline"
+  ],
+  "realSdkObservation": {
+    "abilities": {
+      "share": false,
+      "getQrCode": true,
+      "saveImageToAlbum": false,
+      "setContainerMode": false
+    },
+    "failures": {
+      "getQrCode": {
+        "type": "timeout",
+        "message": "[ToySDK] handshake with parent timed out"
+      },
+      "saveImageToAlbum": {
+        "type": "invalid_param",
+        "message": "[ToySDK] saveImageToAlbum base64Data exceeds the 5242880 bytes (5MB) limit: 5242881 bytes; use url for larger images"
+      }
+    }
+  },
+  "sdkSHA256": "4dd522d27330e440cb336463265585ce18448ebc00f616b57fa21602b67b7115",
+  "realBilibiliClientTested": false,
+  "originalAppChangedFiles": []
+}

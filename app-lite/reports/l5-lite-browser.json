@@ -1,0 +1,179 @@
+{
+  "passed": true,
+  "checks": [
+    "UI start, default preload off, legacy MIDI normalized, Level 5 playable",
+    "main hall, Beverly room, boiler room, moth nest stream/render; all four moth forms spawn",
+    "all 27 new compressed textures decode at <=512px"
+  ],
+  "regions": [
+    {
+      "kind": "mainhall",
+      "level": 5,
+      "structures": 1935,
+      "entities": 0,
+      "ready": true
+    },
+    {
+      "kind": "beverly",
+      "level": 5,
+      "structures": 1843,
+      "entities": 0,
+      "ready": true
+    },
+    {
+      "kind": "boilerroom",
+      "level": 5,
+      "structures": 1839,
+      "entities": 0,
+      "ready": true
+    },
+    {
+      "kind": "mothnest",
+      "level": 5,
+      "structures": 1694,
+      "entities": 62,
+      "ready": true
+    }
+  ],
+  "errors": [],
+  "missing": [],
+  "musicRequests": [],
+  "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "textures": [
+    {
+      "name": "corridor_carpet.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "damask.jpg",
+      "width": 256,
+      "height": 512
+    },
+    {
+      "name": "fabric_pattern_05_Color.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "fabric_pattern_05_NormalGL.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "fabric_pattern_05_Roughness.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "frieze.jpg",
+      "width": 512,
+      "height": 128
+    },
+    {
+      "name": "lobby_carpet.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "Marble005_Color.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "Marble005_NormalGL.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "Marble005_Roughness.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "Marble022_Color.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "Marble022_NormalGL.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "Marble022_Roughness.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "marble_01_Color.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "marble_01_NormalGL.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "marble_01_Roughness.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "plain_carpet.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "rug_border.jpg",
+      "width": 512,
+      "height": 128
+    },
+    {
+      "name": "Wallpaper001A_Color.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "Wallpaper001A_NormalGL.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "Wallpaper001A_Roughness.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "white_plaster_02_Color.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "white_plaster_02_NormalGL.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "white_plaster_02_Roughness.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "wood_floor_Color.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "wood_floor_NormalGL.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "wood_floor_Roughness.jpg",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

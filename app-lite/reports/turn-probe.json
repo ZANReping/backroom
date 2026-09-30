@@ -1,0 +1,57 @@
+[
+  {
+    "url": "turn:freestun.net:3478",
+    "relay": false,
+    "errors": []
+  },
+  {
+    "url": "turn:openrelay.metered.ca:443?transport=tcp",
+    "relay": false,
+    "errors": [
+      {
+        "code": 701,
+        "text": "Failed to establish connection"
+      },
+      {
+        "code": 701,
+        "text": "Failed to establish connection"
+      }
+    ]
+  },
+  {
+    "url": "turns:openrelay.metered.ca:443?transport=tcp",
+    "relay": false,
+    "errors": [
+      {
+        "code": 701,
+        "text": "Failed to establish connection"
+      },
+      {
+        "code": 701,
+        "text": "Failed to establish connection"
+      }
+    ]
+  },
+  {
+    "url": "turn:eu-0.turn.peerjs.com:3478",
+    "relay": false,
+    "errors": [
+      {
+        "code": 701,
+        "text": "STUN host lookup received error."
+      },
+      {
+        "code": 701,
+        "text": "STUN host lookup received error."
+      },
+      {
+        "code": 701,
+        "text": "TURN host lookup received error."
+      },
+      {
+        "code": 701,
+        "text": "TURN host lookup received error."
+      }
+    ]
+  }
+]

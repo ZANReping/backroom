@@ -1,0 +1,34 @@
+{
+  "productionUrl": "http://127.0.0.1:4177/dist/",
+  "decode": {
+    "images": 424,
+    "fonts": 9,
+    "music": 31,
+    "failures": [
+      {
+        "file": "textures/_src_wiki_logo.svg",
+        "error": "EncodingError: The source image cannot be decoded."
+      }
+    ]
+  },
+  "game": {
+    "level": 0,
+    "canvasCount": 2,
+    "body": "HP\n100/100\n体力\n100/100\n饥饿\n100/100\n口渴\n100/100\n理智\n100/100\n孤立效应\nLEVEL 0 · 教学关卡 · B0 · 磁带 0/6\n开阔区\n100%\n1\n2\n3\n4\n5\n6\n7\n[左键] 攻击　[空格] 跳跃　[C] 蹲伏　[F] 手电 100%　[右键] 使用　[Q] 丢弃　[V] 检视"
+  },
+  "errors": [],
+  "failedLocalRequests": [
+    [
+      "http://127.0.0.1:4177/dist/textures/l601_wall.jpg",
+      404
+    ],
+    [
+      "http://127.0.0.1:4177/dist/textures/l601_floor.jpg",
+      404
+    ],
+    [
+      "http://127.0.0.1:4177/dist/textures/l601_ceil.jpg",
+      404
+    ]
+  ]
+}

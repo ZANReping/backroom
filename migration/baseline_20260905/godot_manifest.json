@@ -1,0 +1,996 @@
+{
+  "created_at": "2026-09-05T04:16:07.846709+00:00",
+  "source": "Godot/backroom",
+  "excluded": [
+    ".godot/",
+    "addons/*/cache/"
+  ],
+  "archive_sha256": "22aa6fbeefdbe69c3ed46d626c50f282cc65a4e662b3099084108f8b977222f1",
+  "files": [
+    {
+      "path": ".editorconfig",
+      "bytes": 33,
+      "sha256": "3b2c749c8a940905a08f727d8be9017c9568a12421c0aee7e37e9543b3751b1b"
+    },
+    {
+      "path": ".gitattributes",
+      "bytes": 80,
+      "sha256": "21b01a606c9f85f18bb9230245f00ab104df7409cbb2fe9423f6751ca72ba754"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 46,
+      "sha256": "de3d98956a47026bd8bda5ff3d683e5cb1a89f64f4393436995e103daea3b8e5"
+    },
+    {
+      "path": "addons/godot_mcp/mcp_client.gd",
+      "bytes": 5515,
+      "sha256": "cab4953ac23f0a68b7b0240c214a5b817b8aaaab60c77a0ba0119d0e0e6881a2"
+    },
+    {
+      "path": "addons/godot_mcp/mcp_client.gd.uid",
+      "bytes": 20,
+      "sha256": "59f58d93470e2ee589a63df021a421cac11a915fd63c0c2c1e02689990d87266"
+    },
+    {
+      "path": "addons/godot_mcp/plugin.cfg",
+      "bytes": 185,
+      "sha256": "5521d1f661b21b50656f79741c1c8fca8d240ab5242c0892f8121be82a3a0e9c"
+    },
+    {
+      "path": "addons/godot_mcp/plugin.gd",
+      "bytes": 6592,
+      "sha256": "374e9592b356bd30e09223342b56673c75b1f6e8ce34dd27fc32d31b34bc3721"
+    },
+    {
+      "path": "addons/godot_mcp/plugin.gd.uid",
+      "bytes": 19,
+      "sha256": "6c8ffced58e45f3ba0035a3f8a449b50eca98a998f8d1c15649522df5914e8f1"
+    },
+    {
+      "path": "addons/godot_mcp/runtime/mcp_runtime.gd",
+      "bytes": 25534,
+      "sha256": "ec1abec471c08315d0445fb48dee6447db6c4729487ea8dd2423c078f1d2b960"
+    },
+    {
+      "path": "addons/godot_mcp/runtime/mcp_runtime.gd.uid",
+      "bytes": 20,
+      "sha256": "0ed17f58d96e333f30f1170dad3ba71d0ff8c347a28f324320325245a55fd35f"
+    },
+    {
+      "path": "addons/godot_mcp/tool_executor.gd",
+      "bytes": 29095,
+      "sha256": "6c08da4bd9960d0d4a5a47f2d7935a5f7938b8a1907aeee38e15912b61c3f161"
+    },
+    {
+      "path": "addons/godot_mcp/tool_executor.gd.uid",
+      "bytes": 19,
+      "sha256": "147c4737600b3b1ff6d8fb7554567d24b304c7fd4401037867f9245d4288eadc"
+    },
+    {
+      "path": "addons/godot_mcp/tools/asset_tools.gd",
+      "bytes": 6205,
+      "sha256": "1b6cba107ede261da820e086977c730c7fa318988b9732b7244c73cad750b755"
+    },
+    {
+      "path": "addons/godot_mcp/tools/asset_tools.gd.uid",
+      "bytes": 20,
+      "sha256": "ffa1f9c6d61909976057a18c29c3c8e41bfc67efe940f601b62df1d4af6059bd"
+    },
+    {
+      "path": "addons/godot_mcp/tools/file_tools.gd",
+      "bytes": 8957,
+      "sha256": "cab75b42b192c7cdb11d0536f520efc7daa8a6ffd239063617c3d75c879682f1"
+    },
+    {
+      "path": "addons/godot_mcp/tools/file_tools.gd.uid",
+      "bytes": 20,
+      "sha256": "c1c178987fb262fb7910b67749a7a4efcae9b2d7163f8916434092980b46d6f6"
+    },
+    {
+      "path": "addons/godot_mcp/tools/project_tools.gd",
+      "bytes": 94663,
+      "sha256": "9936b5215e00c9df3f493e1df1c1aefda5957cba0f7707c10746f7e33146a15b"
+    },
+    {
+      "path": "addons/godot_mcp/tools/project_tools.gd.uid",
+      "bytes": 20,
+      "sha256": "c157155ae093608dc8685dbb5f6f75826650bff6f5fb3f5b275082d56cb110e8"
+    },
+    {
+      "path": "addons/godot_mcp/tools/scene_tools.gd",
+      "bytes": 114686,
+      "sha256": "4665b41b6d71b9edfc4b9005e61a0ecd1ec4ece90e5238ba45e1d2ef87e99970"
+    },
+    {
+      "path": "addons/godot_mcp/tools/scene_tools.gd.uid",
+      "bytes": 20,
+      "sha256": "148be2a0faa71b0b90cfe42e00709775394b26a05aa5f7e6e70806d20ae9f00c"
+    },
+    {
+      "path": "addons/godot_mcp/tools/script_tools.gd",
+      "bytes": 48834,
+      "sha256": "54e09c688dcaff1e02462719acf80071bfd20c6cf303828183acdbf23ab7e676"
+    },
+    {
+      "path": "addons/godot_mcp/tools/script_tools.gd.uid",
+      "bytes": 20,
+      "sha256": "06ed8a708a4c8483c0973db338fea0729463f036a53a5700257ceae6fd1438b9"
+    },
+    {
+      "path": "addons/godot_mcp/tools/visualizer_tools.gd",
+      "bytes": 33235,
+      "sha256": "3e4599bb12796c54cbb88892220aa56f8c06cc7c1f6d04c8c2da9f7542cbd717"
+    },
+    {
+      "path": "addons/godot_mcp/tools/visualizer_tools.gd.uid",
+      "bytes": 19,
+      "sha256": "469ff1708685e73d248a9ee8253f6640c0e8d6579cf04f73a94659bd96b01dd2"
+    },
+    {
+      "path": "addons/godot_mcp/utils/paths.gd",
+      "bytes": 2664,
+      "sha256": "8e32168b9f6666cd0ca8c134437f5b6236c7815fd2512616484da2bab40cfb02"
+    },
+    {
+      "path": "addons/godot_mcp/utils/paths.gd.uid",
+      "bytes": 20,
+      "sha256": "68300a6803899f2896503e58d55ec6832cf0177281a04809149ab1442ca26a7b"
+    },
+    {
+      "path": "addons/godot_mcp/utils/snapshot_store.gd",
+      "bytes": 15657,
+      "sha256": "085397c998ddd7d216e124e3f69b5cf7733890084477e7872b19191aa8ae8a28"
+    },
+    {
+      "path": "addons/godot_mcp/utils/snapshot_store.gd.uid",
+      "bytes": 19,
+      "sha256": "af21a3f8a6b378b79c709cda8bc163ebfbb9427c5d0061e49f7f8d639a9ffcac"
+    },
+    {
+      "path": "addons/godot_mcp/utils/undo_manager.gd",
+      "bytes": 17778,
+      "sha256": "5c319571cb4c2c2171935c2f6141b599483f7693b7fc885810950d137d837cc4"
+    },
+    {
+      "path": "addons/godot_mcp/utils/undo_manager.gd.uid",
+      "bytes": 20,
+      "sha256": "f4640a7abcea222bcb299fd0fe949067c1b25b815fd47042c5acd1b4644b5923"
+    },
+    {
+      "path": "addons/godot_mcp/utils/variant_codec.gd",
+      "bytes": 8380,
+      "sha256": "5e66e24c3098013777ead1e08fb54eec9298c787f0f2741096cdbbf7bd94fc3a"
+    },
+    {
+      "path": "addons/godot_mcp/utils/variant_codec.gd.uid",
+      "bytes": 19,
+      "sha256": "12b5cb5b2b9345aedbaea2ff1743b60cdc2db66d1a13bb3ee2f5370c53499f29"
+    },
+    {
+      "path": "docs/l0_l5_remake_plan.md",
+      "bytes": 34900,
+      "sha256": "881200db71013871516a5498adba1052fa2cfb58933a6372b093453d64b90c57"
+    },
+    {
+      "path": "docs/migration_foundation.md",
+      "bytes": 5563,
+      "sha256": "e2f64d6c3fea5f4bd39729ec40f13369e8c9d86c56a55d998a34633e3fd893f9"
+    },
+    {
+      "path": "features/app/game_root.gd",
+      "bytes": 1703,
+      "sha256": "d2a22b0f370647fce8a62178afc39251d5e5024365624e01e14022375cdf559a"
+    },
+    {
+      "path": "features/app/game_root.gd.uid",
+      "bytes": 20,
+      "sha256": "9c54d9b2b504d3c08f4f0b8b74989cc6adec953956b56d3cebd2d3cebc1af713"
+    },
+    {
+      "path": "features/app/game_root.tscn",
+      "bytes": 1177,
+      "sha256": "a98c105077a5b4807e82028305d4ffb52c1e6bee773b1f767a50ff889f90eb24"
+    },
+    {
+      "path": "features/app/main_menu.gd",
+      "bytes": 510,
+      "sha256": "20e84325a70c88405f28c9f04200996166e494cbb1042d1ad374da82109f51a5"
+    },
+    {
+      "path": "features/app/main_menu.gd.uid",
+      "bytes": 19,
+      "sha256": "efe095ae77219dbaafc8e4578acb1d568764288d1dae98a1cbe4f0c96f8a8a5b"
+    },
+    {
+      "path": "features/app/main_menu.tscn",
+      "bytes": 4382,
+      "sha256": "58cc4041449e1603e722a70ec68089b425489a7b2ac9a055c12e3d22167b6cab"
+    },
+    {
+      "path": "features/app/menu_background.gdshader",
+      "bytes": 838,
+      "sha256": "f2b3cffcf8ead7634b7bd507fde6210eb241987504a5414db08cf951c6bbb9e7"
+    },
+    {
+      "path": "features/app/menu_background.gdshader.uid",
+      "bytes": 19,
+      "sha256": "109b2dc4f7889f9c2593e7d100136e2aaacdeb6972cf2d39999c2ea92ff01c6a"
+    },
+    {
+      "path": "features/items/icons/item_almond.png",
+      "bytes": 652,
+      "sha256": "6cf19b3516caa1fb68ef42a604b661da3247cbe083c73b6b223396eaa333417e"
+    },
+    {
+      "path": "features/items/icons/item_almond.png.import",
+      "bytes": 788,
+      "sha256": "b4da4b2babc2c68a0464b5520c8ae2b411b8fe447081d572a38d729a96091671"
+    },
+    {
+      "path": "features/items/icons/item_bandage.png",
+      "bytes": 727,
+      "sha256": "d4927fc8c5c7959db9009bb6710ef49fd3bfadba45e3aae2748b508fefa69407"
+    },
+    {
+      "path": "features/items/icons/item_bandage.png.import",
+      "bytes": 791,
+      "sha256": "f56a017e263f2cacdf6d1e10e191b2fa480d9c806dc2114662abd0bb1b2d85e4"
+    },
+    {
+      "path": "features/items/icons/item_battery.png",
+      "bytes": 606,
+      "sha256": "ce9091b0c43bd2bf9a222d0b24164da15c3d21d5b10fba00b80597024b48687c"
+    },
+    {
+      "path": "features/items/icons/item_battery.png.import",
+      "bytes": 791,
+      "sha256": "77e4e03ff4e963366231d1be841e0540ee7ffa7e59b899b7611dd050e8a4a8de"
+    },
+    {
+      "path": "features/items/icons/item_canned.png",
+      "bytes": 651,
+      "sha256": "5ea15afc1cdf3e7d2c603293a574b35b8e5ea61e2fb3c4b600845b5d795e5ece"
+    },
+    {
+      "path": "features/items/icons/item_canned.png.import",
+      "bytes": 788,
+      "sha256": "3319df7d65654af9d7723cfcdd779a6211302802e5f853342bb9614d30e02a76"
+    },
+    {
+      "path": "features/items/icons/item_flashlight.png",
+      "bytes": 663,
+      "sha256": "8e1c01941c267bcc3703fc41c5c9bbc1a707870600a533a85f3047716334784d"
+    },
+    {
+      "path": "features/items/icons/item_flashlight.png.import",
+      "bytes": 800,
+      "sha256": "b6cc0aa88a14a1e4fd6a0648bd192911deaecbaa85de2bd1ec17eee6328a7be2"
+    },
+    {
+      "path": "features/items/item_definition.gd",
+      "bytes": 996,
+      "sha256": "2149ba782166c97161198fc0f4e3e87a3703edb501752ff31197376da2bcc2bb"
+    },
+    {
+      "path": "features/items/item_definition.gd.uid",
+      "bytes": 20,
+      "sha256": "fafce7a33986a405462bc5049e8e64724073fc1c1b32e06cfad4044fa5fc9e7c"
+    },
+    {
+      "path": "features/items/models/almond_water_model.tscn",
+      "bytes": 261,
+      "sha256": "61d7665577b1f9cd67800be7bdd490a5d6d990b0dedad6b350dacae8328f1d6e"
+    },
+    {
+      "path": "features/items/models/baked/almond_water.glb",
+      "bytes": 2741384,
+      "sha256": "ea1a82f228f938a0282ae164a84fdf58b6ac24dceb4d1c1f3ffea9d1b1663a5b"
+    },
+    {
+      "path": "features/items/models/baked/almond_water.glb.import",
+      "bytes": 945,
+      "sha256": "5e323c96934621854127db7e17182636c045569dd2ee814d9c4e429da5210e51"
+    },
+    {
+      "path": "features/items/models/baked/almond_water_0.png",
+      "bytes": 2557188,
+      "sha256": "87f3b3902e920ac38f390a6fbf157d5b477ade84df5e1b0d92ffc01fe366fd47"
+    },
+    {
+      "path": "features/items/models/baked/almond_water_0.png.import",
+      "bytes": 919,
+      "sha256": "602b6b226dea480d9fdd7606a9a8d2622073dd9f463dea5a0d35c5400ce47426"
+    },
+    {
+      "path": "features/items/models/baked/bandage.glb",
+      "bytes": 785048,
+      "sha256": "9e45bca2c12664d457439502911c7ed99e9349b0d8c3703ab2cd722f8006b8cc"
+    },
+    {
+      "path": "features/items/models/baked/bandage.glb.import",
+      "bytes": 930,
+      "sha256": "f1ba918918857bf588931610ba6fd8e00a1d729d63b236d036a4f0ed98e6167a"
+    },
+    {
+      "path": "features/items/models/baked/bandage_0.png",
+      "bytes": 722904,
+      "sha256": "dc1a6753356f280aa5e11999cbc9ac70f07af25c22fc284b8818b8e5bb29b8d3"
+    },
+    {
+      "path": "features/items/models/baked/bandage_0.png.import",
+      "bytes": 904,
+      "sha256": "18fed502b8d7b2ac22cf6548476bc93554cd87a33b78f985b0cfa3952d9a7ff3"
+    },
+    {
+      "path": "features/items/models/baked/battery.glb",
+      "bytes": 2877892,
+      "sha256": "163ade42d24d2e5cb8ad13a622403ef6b81dba13017e21c1626535ccecbfdb1c"
+    },
+    {
+      "path": "features/items/models/baked/battery.glb.import",
+      "bytes": 930,
+      "sha256": "2c720c03999772e6b18378d45e388142dc71fc98428f2aefdf4710a36e3b8307"
+    },
+    {
+      "path": "features/items/models/baked/battery_0.png",
+      "bytes": 2810220,
+      "sha256": "ab5c4883dd1dd993a88ad20aba29122d0ad2249401a168c87c802a834797b827"
+    },
+    {
+      "path": "features/items/models/baked/battery_0.png.import",
+      "bytes": 904,
+      "sha256": "2b0aa06c46d2b54ad73d6967c054a3ad69c1f482f6da9e773e07fac02661415b"
+    },
+    {
+      "path": "features/items/models/baked/canned_food.glb",
+      "bytes": 711296,
+      "sha256": "93a6b0bb129a2a0e923f81469766b6130a6c5d5f2ff24e68d3c5ff56a8bf6026"
+    },
+    {
+      "path": "features/items/models/baked/canned_food.glb.import",
+      "bytes": 942,
+      "sha256": "c81913224c72ba0f5dd48c18254bca07391b1e54903da82e7441d564bf79c0a8"
+    },
+    {
+      "path": "features/items/models/baked/canned_food_0.png",
+      "bytes": 644852,
+      "sha256": "e595738780040f6d788220c62089f7dd0270f56c1055124c055a3776406e77c5"
+    },
+    {
+      "path": "features/items/models/baked/canned_food_0.png.import",
+      "bytes": 916,
+      "sha256": "bbbb1b897cc86a9c6f1adee937e91566e28a9c934c17a3afb04dd01a197a69e9"
+    },
+    {
+      "path": "features/items/models/baked/flashlight.glb",
+      "bytes": 3625444,
+      "sha256": "ed52a89ee479634199e4eaf3ee1355fa7647419094d10a917cd7bacfa4521fe5"
+    },
+    {
+      "path": "features/items/models/baked/flashlight.glb.import",
+      "bytes": 939,
+      "sha256": "b520792a20cd2aafa2a72367e89dd332321ea74d04bde06dae3860c52058ae46"
+    },
+    {
+      "path": "features/items/models/baked/flashlight_0.png",
+      "bytes": 3518612,
+      "sha256": "833ad54354125ffd315dc15b637e1aa11a8ba013004a8a08d87d1535d4cf6dcf"
+    },
+    {
+      "path": "features/items/models/baked/flashlight_0.png.import",
+      "bytes": 913,
+      "sha256": "aa92255531baff0c70ee17e1316d8980b387eaf005558a7c88b80c25abeff765"
+    },
+    {
+      "path": "features/items/models/bandage_model.tscn",
+      "bytes": 252,
+      "sha256": "24b393fba133b18d31fbbda1edc0325bcd8eba3dbee6cc32497b2dc9ed9caa86"
+    },
+    {
+      "path": "features/items/models/battery_model.tscn",
+      "bytes": 252,
+      "sha256": "a2edd5435a0081fd8536d98a3a9faa568ec1d9045d56569b11a6ebacec407769"
+    },
+    {
+      "path": "features/items/models/canned_food_model.tscn",
+      "bytes": 259,
+      "sha256": "0892343455c96f75d1c2ab1fd563c44a24458f33a84b81f21ac42b0d23852819"
+    },
+    {
+      "path": "features/items/models/flashlight_model.tscn",
+      "bytes": 258,
+      "sha256": "d8738f09713bc1cfa9ba0da506e848e49b626136fda02b700d1bd9fca8c5025a"
+    },
+    {
+      "path": "features/items/textures/flashlight_uv_atlas.png",
+      "bytes": 3596307,
+      "sha256": "581367e180250a6a5f2e943651634b621d3d2cf6acfa1efd74bd7ac711bfa3f6"
+    },
+    {
+      "path": "features/items/textures/flashlight_uv_atlas.png.import",
+      "bytes": 863,
+      "sha256": "0cb767f51545a497f41b74611a0b4565a32f5ac9c33f9e0c97bc6dc9a01cd08f"
+    },
+    {
+      "path": "features/items/textures/item_almond_thermos_uv.png",
+      "bytes": 2429704,
+      "sha256": "ba990624adb98d9bbd38fad188cc82c8b0d641969cc4fffbba2bcac2399a24ad"
+    },
+    {
+      "path": "features/items/textures/item_almond_thermos_uv.png.import",
+      "bytes": 824,
+      "sha256": "35339a84dd6c19f3b9da822f8fd93b87ca56d5ce6c9436f6318e10c0439ee0c8"
+    },
+    {
+      "path": "features/items/textures/item_bandage_gauze_uv.png",
+      "bytes": 660353,
+      "sha256": "55ff77ac1da318098315323fc600f234846f1232f29f506c8fe02fda2c7fe23e"
+    },
+    {
+      "path": "features/items/textures/item_bandage_gauze_uv.png.import",
+      "bytes": 821,
+      "sha256": "82dacad0f7a8eeadf40956a9c564521a6c8ac013b14c9945d1901bf9660f4077"
+    },
+    {
+      "path": "features/items/textures/item_battery_wrapper_uv.png",
+      "bytes": 2699026,
+      "sha256": "ffc385b7eda22b0bcbdb3d5431fc7c79825c4a6e22cf4142d89b11e907a4863a"
+    },
+    {
+      "path": "features/items/textures/item_battery_wrapper_uv.png.import",
+      "bytes": 827,
+      "sha256": "d07a124fdcb7b65b8c231159abd0714acd428cb27700fca90484e6e5c6624f37"
+    },
+    {
+      "path": "features/items/textures/item_canned_label_uv.png",
+      "bytes": 843480,
+      "sha256": "ae249594427d1e0c1f9be4dafe1eea2e9a9eba154670b9b991c524cfab37284e"
+    },
+    {
+      "path": "features/items/textures/item_canned_label_uv.png.import",
+      "bytes": 818,
+      "sha256": "c929d02fe1224690cfe3921315b049aa6f4ab2e7fe79f72f659debd745962f6b"
+    },
+    {
+      "path": "features/items/world_item_pickup.gd",
+      "bytes": 2124,
+      "sha256": "6e8955a135f1d9a8c2c02b5bbae3cf31e13bc872944a54f9c90f7d2c4672fe71"
+    },
+    {
+      "path": "features/items/world_item_pickup.gd.uid",
+      "bytes": 20,
+      "sha256": "b9ef1bf7b5fafd57cfaa6cdd1aaf557a779bf45f32a6e1157b1a2760196f61cc"
+    },
+    {
+      "path": "features/level_0/generation/level_0_chunk_source.gd",
+      "bytes": 27552,
+      "sha256": "b24e91e7f0464b8c69d3d6b7283fdf69eb15633e56bb5439046a50efd3196f89"
+    },
+    {
+      "path": "features/level_0/generation/level_0_chunk_source.gd.uid",
+      "bytes": 19,
+      "sha256": "f454b02e12c0b31f1d24f8e42a5e2966004b0f455c5178d737df056a9907c683"
+    },
+    {
+      "path": "features/level_0/generation/level_0_chunk_visual.gd",
+      "bytes": 21511,
+      "sha256": "ab733575875f4ca176df2a5331fa44fb15c9cc2936e302fa2602e68cbfb7c0d1"
+    },
+    {
+      "path": "features/level_0/generation/level_0_chunk_visual.gd.uid",
+      "bytes": 19,
+      "sha256": "91f18b6a56ce272c297818a2212e77274bc869618f9fa25933c10727427b0c68"
+    },
+    {
+      "path": "features/level_0/level_0_environment.gd",
+      "bytes": 1387,
+      "sha256": "14e8f80532d694d0e3b6be82805de4461d046d5efde2e1d4a0552c14fceffe4a"
+    },
+    {
+      "path": "features/level_0/level_0_environment.gd.uid",
+      "bytes": 19,
+      "sha256": "9ace18ef9e25eb5a11ae1e052baafe5a657d8eff3d0aaa0965509151a7ccee9e"
+    },
+    {
+      "path": "features/level_0/level_0_fixed.gd",
+      "bytes": 4557,
+      "sha256": "8eeb8d09e22c378df661118bc55f0f64b9e904bc775046fa43ec80135a8a1736"
+    },
+    {
+      "path": "features/level_0/level_0_fixed.gd.uid",
+      "bytes": 20,
+      "sha256": "11417b32b5be4223291f58353f076ccc290292fd75333410db4ad06ecee6fab7"
+    },
+    {
+      "path": "features/level_0/level_0_fixed.tscn",
+      "bytes": 1578,
+      "sha256": "e7e1a27bc154743e111c683d83eed98c391b8be8bc9b08955f904df4d717ac14"
+    },
+    {
+      "path": "features/level_0/level_0_infinite.gd",
+      "bytes": 12663,
+      "sha256": "9cbe4986705f381bd0547678631918c408fb1df52e75208d60c5eee908cfd22b"
+    },
+    {
+      "path": "features/level_0/level_0_infinite.gd.uid",
+      "bytes": 20,
+      "sha256": "9e64d4a8a41fa67f51891bcade575627154b53f8d90aad4dee48c056e1e45ba2"
+    },
+    {
+      "path": "features/level_0/level_0_infinite.tscn",
+      "bytes": 1391,
+      "sha256": "f56f39ba353f5eabe436ceca56af964f1a4baf3726682eaa84a7f07c07e9de7c"
+    },
+    {
+      "path": "features/level_0/materials/carpet_material.tres",
+      "bytes": 371,
+      "sha256": "97612f8cbb2d81d4939557d96cb5436b64f72047d371d93db76f7f05f8282227"
+    },
+    {
+      "path": "features/level_0/materials/ceiling_material.tres",
+      "bytes": 361,
+      "sha256": "c6809b9c76134b26b70e8619034a676a45fe820088a4dd03b0b014b10c957ae6"
+    },
+    {
+      "path": "features/level_0/materials/lamp_material.tres",
+      "bytes": 230,
+      "sha256": "3b2f29488404f199f5b38e982c50772d7b56063483d5a61a804007368fd0c06e"
+    },
+    {
+      "path": "features/level_0/materials/level_0_carpet.gdshader",
+      "bytes": 605,
+      "sha256": "d3d093ec0f895e9e4d95699ffed59d84cb62e923c1b639e40ac110114bee3ce5"
+    },
+    {
+      "path": "features/level_0/materials/level_0_carpet.gdshader.uid",
+      "bytes": 19,
+      "sha256": "43859607624f6d9b887c32b0d2f32e9fcae0b516ff297faa41d37eb9c0ef1307"
+    },
+    {
+      "path": "features/level_0/materials/level_0_ceiling.gdshader",
+      "bytes": 452,
+      "sha256": "f7748c0c0c39406b4f9237dc891b3b1e0bb69a4c4a120ecb8c418e0289e842db"
+    },
+    {
+      "path": "features/level_0/materials/level_0_ceiling.gdshader.uid",
+      "bytes": 20,
+      "sha256": "602e97830b230b4d63e9281512a021da99aa5be0d3eac656c6ea408eef63313a"
+    },
+    {
+      "path": "features/level_0/materials/level_0_lamp.gdshader",
+      "bytes": 235,
+      "sha256": "2ed5db54097840e7a5cfdead9aed65f4af7b0e4f847e21f3839644e691d2ff20"
+    },
+    {
+      "path": "features/level_0/materials/level_0_lamp.gdshader.uid",
+      "bytes": 20,
+      "sha256": "fab8afe621ca23fa36b8cc2da695df7753dd0016e5aac89344378acd9cfafed9"
+    },
+    {
+      "path": "features/level_0/materials/level_0_trim.gdshader",
+      "bytes": 465,
+      "sha256": "cfb8f53c468c6a0d4e0cce91842886f500f5d5f5dc035329fa2123ffe57ee7b6"
+    },
+    {
+      "path": "features/level_0/materials/level_0_trim.gdshader.uid",
+      "bytes": 19,
+      "sha256": "8a75061d111a169dd978e19ac4f4e448b62ac9cc03be5d0ad28ce7b178f0958f"
+    },
+    {
+      "path": "features/level_0/materials/level_0_wallpaper.gdshader",
+      "bytes": 896,
+      "sha256": "9c8ba4c97d0792a02a4a2619249176b32eef13bb1b5007f5d5e4bfe114230986"
+    },
+    {
+      "path": "features/level_0/materials/level_0_wallpaper.gdshader.uid",
+      "bytes": 20,
+      "sha256": "7c3440faed50c53b5a7a79aeca68a08fe15654d15e902ff93508c738b5f348a1"
+    },
+    {
+      "path": "features/level_0/materials/trim_material.tres",
+      "bytes": 230,
+      "sha256": "84271a6066fa2771410d91e7362f6be4f4aa7a380310c0e6215c02cec6f04dd0"
+    },
+    {
+      "path": "features/level_0/materials/wallpaper_material.tres",
+      "bytes": 522,
+      "sha256": "30f5e34d343f729a6e0d0a4dd7c19749ea43e6db468823e451693f4652ba3fa4"
+    },
+    {
+      "path": "features/level_0/props/supply_crate.gd",
+      "bytes": 8160,
+      "sha256": "6331a946107f7a4cd0c51481fc17ac17cee408bc0b9abd4152f6aabe6437700b"
+    },
+    {
+      "path": "features/level_0/props/supply_crate.gd.uid",
+      "bytes": 20,
+      "sha256": "c16862904e479c0e86c5388e5c0232480516b823bd43738d02170929e96a3b8f"
+    },
+    {
+      "path": "features/level_0/textures/crate_wood_pine_v3.png",
+      "bytes": 1905964,
+      "sha256": "7b94bd4f0c635b81fb6c398d0dcca1d338cc4fdd5826dd3be7be25e15fccab47"
+    },
+    {
+      "path": "features/level_0/textures/crate_wood_pine_v3.png.import",
+      "bytes": 813,
+      "sha256": "a7ecabd70de6f68f561ed9d8a441cab2d6c3f2a4e103d6efbb7fe638095e47e1"
+    },
+    {
+      "path": "features/level_0/textures/l0_ceil_classic_v2.png",
+      "bytes": 2967963,
+      "sha256": "5e60bed761485bf35eb6da0a0412a8ca250a0075ecb555b22718c35ea779ec01"
+    },
+    {
+      "path": "features/level_0/textures/l0_ceil_classic_v2.png.import",
+      "bytes": 814,
+      "sha256": "2fc95928ced66041b3875aedda949ed3113ba359b0637fc948ad232852cee82d"
+    },
+    {
+      "path": "features/level_0/textures/l0_floor_classic_v2.png",
+      "bytes": 3302113,
+      "sha256": "1149fa92d22795ec91392a011a839e0dee0b5a91703c4c3c071c0012d6889420"
+    },
+    {
+      "path": "features/level_0/textures/l0_floor_classic_v2.png.import",
+      "bytes": 817,
+      "sha256": "2ce04ad5008f23f3ef834ea9bc8c4610c653dbe00dac72b2a8249596cefcbfee"
+    },
+    {
+      "path": "features/level_0/textures/l0_wall_classic_v2.png",
+      "bytes": 2434546,
+      "sha256": "631332939a651465b272ca7f9d868eb116e7407b6376418a1582a4af29818551"
+    },
+    {
+      "path": "features/level_0/textures/l0_wall_classic_v2.png.import",
+      "bytes": 862,
+      "sha256": "e449f8c489134d7241fa300e0a3638f862a24112fe7ca05fa9c8e1aa4987b7fe"
+    },
+    {
+      "path": "features/player/flashlight/flashlight_component.gd",
+      "bytes": 5403,
+      "sha256": "c0c14116de61d0ab31ffa41d7a785295462e81c84369dadc37b384e4d684a0f7"
+    },
+    {
+      "path": "features/player/flashlight/flashlight_component.gd.uid",
+      "bytes": 20,
+      "sha256": "4cf7a8aa68cbc27addc6d97e39c01cc187318fd731f6e3f92ccd65e6962ea5b4"
+    },
+    {
+      "path": "features/player/flashlight/flashlight_projector.svg",
+      "bytes": 533,
+      "sha256": "62872794b63c854238c6c632a4b87c728dc47c9ce7a071f87620545677945aa6"
+    },
+    {
+      "path": "features/player/flashlight/flashlight_projector.svg.import",
+      "bytes": 917,
+      "sha256": "98b868e3ec459ebb5e7e04df1b457b47016fe454971e6301444eef5fbccb9f5a"
+    },
+    {
+      "path": "features/player/flashlight/viewmodel_shadow_filter.gd",
+      "bytes": 458,
+      "sha256": "ae8dc7a36185f0972c9bffab150b4651f78e8c8f17694cdfc7a85868500b2e65"
+    },
+    {
+      "path": "features/player/flashlight/viewmodel_shadow_filter.gd.uid",
+      "bytes": 20,
+      "sha256": "8664cecd99ac6c1942b2ad0608484c5c7314320eb3d655b8c76d74748a9fabfa"
+    },
+    {
+      "path": "features/player/input/input_defaults.gd",
+      "bytes": 2176,
+      "sha256": "51885cef76977a503965fba04d5f54815ee7bcdc6dd8de2927eb3284962a77d3"
+    },
+    {
+      "path": "features/player/input/input_defaults.gd.uid",
+      "bytes": 20,
+      "sha256": "d6340f9960ae3d18d5ef4b3f4803818d5c378964e9a5ecb22e5ddd7f04ba60fe"
+    },
+    {
+      "path": "features/player/input/local_player_input.gd",
+      "bytes": 2208,
+      "sha256": "14cf8b76de78fe538ff7d85a7adae8d088e5d24ef5598cf6512c554a364ac885"
+    },
+    {
+      "path": "features/player/input/local_player_input.gd.uid",
+      "bytes": 19,
+      "sha256": "a3ffefb1a7e2351b586b0c52aecec601f0df99730428ee3c3a8db6e2c9237589"
+    },
+    {
+      "path": "features/player/input/player_input_frame.gd",
+      "bytes": 2025,
+      "sha256": "9964d02c5473cc160618b51bc2df5a43317a8dffe7dd470f5fed79789b6e561e"
+    },
+    {
+      "path": "features/player/input/player_input_frame.gd.uid",
+      "bytes": 20,
+      "sha256": "37f559106f4a96d363b9f6bc08bb34f742f9cf3589d947c944debb969b188b0b"
+    },
+    {
+      "path": "features/player/input/player_input_source.gd",
+      "bytes": 202,
+      "sha256": "1d209138db92ddaa5adcd59197d69f02fdbeec5dddd13afa259494ca1f2fbc54"
+    },
+    {
+      "path": "features/player/input/player_input_source.gd.uid",
+      "bytes": 20,
+      "sha256": "c6e871412ecae232c90a0d9af838489de101f62c516b923e774fed37be98ee88"
+    },
+    {
+      "path": "features/player/interaction/player_interaction_controller.gd",
+      "bytes": 3104,
+      "sha256": "e3c88124d6e4d4211e53ff920f642a90a7b797128209ad928a0dbfcc0e5a9fa2"
+    },
+    {
+      "path": "features/player/interaction/player_interaction_controller.gd.uid",
+      "bytes": 20,
+      "sha256": "9c77624b4730e517280552601859c89b0848ba006b060f8c53b8c9304388d2b7"
+    },
+    {
+      "path": "features/player/inventory/held_item_view.gd",
+      "bytes": 823,
+      "sha256": "3795ef446f5187a5da2513e80dc9591950962bb0075cd9e3e5a630e0c884b8f7"
+    },
+    {
+      "path": "features/player/inventory/held_item_view.gd.uid",
+      "bytes": 20,
+      "sha256": "f005d8ef89b84e84eafba0ed05fc8eec9d3679a6eff6963ed85ac9c47196b006"
+    },
+    {
+      "path": "features/player/inventory/inventory_component.gd",
+      "bytes": 7277,
+      "sha256": "8b8d28a3030869ca266085a090147bcdb2962682e013ee8509a1a40bd02851b9"
+    },
+    {
+      "path": "features/player/inventory/inventory_component.gd.uid",
+      "bytes": 20,
+      "sha256": "8f9fea245bb33bc068f312d4a6f3e6b0ae2fdeec357f12ae64c293e503802b3a"
+    },
+    {
+      "path": "features/player/inventory/inventory_data.gd",
+      "bytes": 5109,
+      "sha256": "1f7189eb1377dee0b6bb04da5381b183edb4421fdd9ec100bf5dd29f48db2f71"
+    },
+    {
+      "path": "features/player/inventory/inventory_data.gd.uid",
+      "bytes": 19,
+      "sha256": "5556a9cc9e5afccf9d98e4fba770f2edb2c88ba24d17fcc3c3afa04560956ef7"
+    },
+    {
+      "path": "features/player/inventory/inventory_slot.gd",
+      "bytes": 729,
+      "sha256": "22b450db844712540c47e45fcf754232691d5cc5f5a2c815691925aed6e36fa4"
+    },
+    {
+      "path": "features/player/inventory/inventory_slot.gd.uid",
+      "bytes": 20,
+      "sha256": "14f8820dfb99266887743ef002da25e6e5e8dc5e72d25275d11c865d418f3bd5"
+    },
+    {
+      "path": "features/player/inventory/inventory_slot_view.gd",
+      "bytes": 1659,
+      "sha256": "ccf7651f1d67b77a03fae86d89e7e138fa8e0a60e5bdb0ed045c072937c07261"
+    },
+    {
+      "path": "features/player/inventory/inventory_slot_view.gd.uid",
+      "bytes": 19,
+      "sha256": "628df83529e11f9c7261eccfbd84edc070935235a59c3d5f17fee157a8badc07"
+    },
+    {
+      "path": "features/player/inventory/inventory_slot_view.tscn",
+      "bytes": 3354,
+      "sha256": "e5d1b362dfa11cf35c751c37f2c87d7a2fbe577dc51f097304a12cb463b70d4c"
+    },
+    {
+      "path": "features/player/player_controller.gd",
+      "bytes": 10689,
+      "sha256": "7b4e7e8bcea38ab1b77c64af50b85da583c1b27611728c0fd3f8d8fe0766bf9f"
+    },
+    {
+      "path": "features/player/player_controller.gd.uid",
+      "bytes": 20,
+      "sha256": "f98be03f0fa76150c3963d92275cf0900d7e4bb2d495529354ab635f15249959"
+    },
+    {
+      "path": "features/player/player_controller.tscn",
+      "bytes": 5245,
+      "sha256": "22b061926879d3576b65b353b39df575b46ed5f9b57d74b1c2b2ea212a13d9fb"
+    },
+    {
+      "path": "features/player/player_hud.gd",
+      "bytes": 12827,
+      "sha256": "e9e98f0ff8a4cbbebb3de64d2a3083e406387378b1f545147f24833d4abc1978"
+    },
+    {
+      "path": "features/player/player_hud.gd.uid",
+      "bytes": 20,
+      "sha256": "ca19f30725ab1e0aba2f4015bccb1095a0afa69941c15f71b5f94f2379cb1ebb"
+    },
+    {
+      "path": "features/player/player_hud.tscn",
+      "bytes": 18677,
+      "sha256": "23e4dca082adb813cbf1bee0202c173d9624fb96a0d4eb5bf83241dd7627c749"
+    },
+    {
+      "path": "features/player/survival/survival_status.gd",
+      "bytes": 4608,
+      "sha256": "bec9f0c64dbae2cacb65c0576e8a5fb47e0e33f4f98f7bda3a69c3796f601760"
+    },
+    {
+      "path": "features/player/survival/survival_status.gd.uid",
+      "bytes": 19,
+      "sha256": "a5c68baf3f96e370c2949a90831810d694c2f044db417fc4873f247d6120abfa"
+    },
+    {
+      "path": "features/player/ui/icons/status_hunger.png",
+      "bytes": 1241955,
+      "sha256": "46ce68290d5ed67b514ea3df19161a8a5b254ad913ceb45d35090fb5ade4adfd"
+    },
+    {
+      "path": "features/player/ui/icons/status_hunger.png.import",
+      "bytes": 798,
+      "sha256": "1e2f003a9136f19cc37eec83ba28f139810b1a5734e6bd1bee2c6d78d7a52b19"
+    },
+    {
+      "path": "features/player/ui/icons/status_sanity.png",
+      "bytes": 1805778,
+      "sha256": "4fbe07e20b0994474ef146ad481c6767367b3b85a86f63d98886b42723be9a0a"
+    },
+    {
+      "path": "features/player/ui/icons/status_sanity.png.import",
+      "bytes": 798,
+      "sha256": "996df69a9aede12ce0b210763acf5cb767bead48a0b6a0d9f852fc8bb441ee2e"
+    },
+    {
+      "path": "features/player/ui/icons/status_thirst.png",
+      "bytes": 1368764,
+      "sha256": "a3b8059062a5b1b0f643357ed1a57069db36c06697cb8e11bce01cfe3b13815a"
+    },
+    {
+      "path": "features/player/ui/icons/status_thirst.png.import",
+      "bytes": 798,
+      "sha256": "ba5895a85f626adc16bd7614ebc229c00d618eaa83f6b20ba3f0ec6b1cb72941"
+    },
+    {
+      "path": "icon.svg",
+      "bytes": 994,
+      "sha256": "f6369bae7e12e6d16019cd6214cf27a2fdb6f3f6d024bd6f23c322be4804474f"
+    },
+    {
+      "path": "icon.svg.import",
+      "bytes": 842,
+      "sha256": "092517ac29fd9b9e592b098df3832e3d56fbbd42d1e21c24ffdecc7a9362c071"
+    },
+    {
+      "path": "project.godot",
+      "bytes": 871,
+      "sha256": "75d822e4e1901c6864774053ebab7e83fceffce44f0538b27799b0df2aa0f970"
+    },
+    {
+      "path": "README.md",
+      "bytes": 622,
+      "sha256": "0c619b3909831de3151cf291bbbfd1861f3fee7311628becde948e840c60ed1e"
+    },
+    {
+      "path": "tests/foundation_smoke.gd",
+      "bytes": 4167,
+      "sha256": "624fc5a21827b8871d143ed505fa25dbbe363edaebae5a80f61e0b519f4c52b4"
+    },
+    {
+      "path": "tests/foundation_smoke.gd.uid",
+      "bytes": 20,
+      "sha256": "b14013f2e80d1697b7fe5e8ad5b62a61eb88b2a793633af56992edaced8e2e9b"
+    },
+    {
+      "path": "tools/validate_player_hud_and_flashlight.gd.uid",
+      "bytes": 20,
+      "sha256": "874b156b8499f18cc3bb8a85915b863102b763a7f9bc73a2e63b50eed96431ac"
+    },
+    {
+      "path": "ui/fonts/backroom_mono_font.tres",
+      "bytes": 342,
+      "sha256": "9c78a046514e60f0a47b09c3cca2d3a81ad8007653073f765525378ff7caf899"
+    },
+    {
+      "path": "ui/fonts/backroom_title_font.tres",
+      "bytes": 349,
+      "sha256": "558532c5769eeede29026790b794f60c9ac8745e5234cbc388c19944377976f7"
+    },
+    {
+      "path": "ui/fonts/JetBrainsMono-Variable.ttf",
+      "bytes": 187208,
+      "sha256": "48715a42ec242c21e9f02692891e147d022299a52e48d5e413e1a942193ffeda"
+    },
+    {
+      "path": "ui/fonts/JetBrainsMono-Variable.ttf.import",
+      "bytes": 771,
+      "sha256": "370a72aca5a5a82de629b3ae1e30fdcec30e39dbfd0f217814663ca197b2621d"
+    },
+    {
+      "path": "ui/fonts/NotoSansSC-Variable.ttf",
+      "bytes": 17772300,
+      "sha256": "a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da"
+    },
+    {
+      "path": "ui/fonts/NotoSansSC-Variable.ttf.import",
+      "bytes": 762,
+      "sha256": "8dc5adb825b2a558c3953deea41a325ec670650e59da266127de93bdbce74e25"
+    },
+    {
+      "path": "ui/fonts/ZCOOLQingKeHuangYou-Regular.ttf",
+      "bytes": 8328684,
+      "sha256": "54f0c0df4308cd74cd0f2fd3494ae054dbc4a1fd6fa7d71f4807eb4cdd8b4136"
+    },
+    {
+      "path": "ui/fonts/ZCOOLQingKeHuangYou-Regular.ttf.import",
+      "bytes": 786,
+      "sha256": "f388ff1738219cdd231a055a442a48a4e405cae993c8937e312d1332be915765"
+    },
+    {
+      "path": "ui/theme/backroom_theme.tres",
+      "bytes": 3407,
+      "sha256": "ed05e622b9584c083b7e138e1388dfd02f9eece46ea308ac128e92d3e88addcc"
+    },
+    {
+      "path": "world/coordinates/floor_band.gd",
+      "bytes": 575,
+      "sha256": "244f3918bed93e895676cc07fbf4958f383f4e8d5832c2ae8467000c98ece8f4"
+    },
+    {
+      "path": "world/coordinates/floor_band.gd.uid",
+      "bytes": 20,
+      "sha256": "61661df23abdfe7776e4a08f2ffaff1ce3f3a998f2f6091487ecc07a0e989e94"
+    },
+    {
+      "path": "world/coordinates/world_coordinates.gd",
+      "bytes": 1485,
+      "sha256": "06c4a56161acc05a3aa55f0947218134371bb33828c2e9f91e88671881991eb9"
+    },
+    {
+      "path": "world/coordinates/world_coordinates.gd.uid",
+      "bytes": 20,
+      "sha256": "44a1b83e733d1c935e9ed8ac31a1a60d7994b6369a486da3d50f2abfd6ebf04a"
+    },
+    {
+      "path": "world/data/chunk_data.gd",
+      "bytes": 5640,
+      "sha256": "cd382db05bd90f1b14eb39ba2bacb80c6377927f84752fec511d54d171a89783"
+    },
+    {
+      "path": "world/data/chunk_data.gd.uid",
+      "bytes": 20,
+      "sha256": "03ab1e6b679666ebde6120f463d9fab91c8db61d71e922d4da085e086b370775"
+    },
+    {
+      "path": "world/generation/chunk_source.gd",
+      "bytes": 440,
+      "sha256": "4f0171f769dcf116920e17048f8162c8637e6deef690e90d6ccd10a02746441e"
+    },
+    {
+      "path": "world/generation/chunk_source.gd.uid",
+      "bytes": 20,
+      "sha256": "8cd6f258bb58a909c43be7e78e4412d37827db9722bc2bf7eacf4a515158bdd2"
+    },
+    {
+      "path": "world/generation/deterministic_rng.gd",
+      "bytes": 2171,
+      "sha256": "aaad0ed8d17ccfe58ca28f0f94964a875186a370e4fd221f1ae5592abfa8ad93"
+    },
+    {
+      "path": "world/generation/deterministic_rng.gd.uid",
+      "bytes": 20,
+      "sha256": "2d9951dbc599a6eb0f7bc399a9d0f4e2ade91f5665d8b85a8724311f5574b693"
+    },
+    {
+      "path": "world/generation/random_stream.gd",
+      "bytes": 231,
+      "sha256": "9c2b7609673ff26121acb437f2b8ac09b4a9cafc4a531895388de5d6357d06f4"
+    },
+    {
+      "path": "world/generation/random_stream.gd.uid",
+      "bytes": 20,
+      "sha256": "6903a6eb0d823e522cb3429490bf4bee9600684f2ca393f45e9b60c7fa2e5961"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "passed": false,
+  "checks": [
+    "host created room through public PeerJS signaling",
+    "invitation prefill, explicit join, both real clients see each other in lobby",
+    "both clients ready and start with identical world seed",
+    "player state crosses real WebRTC data channel in both directions",
+    "guest receives host disconnect notification"
+  ],
+  "stage": "host-disconnect",
+  "contexts": [
+    {
+      "name": "Toy测试房主",
+      "pageErrors": [],
+      "networkErrors": [],
+      "websocketErrors": [],
+      "rtc": [
+        {
+          "connectionState": "closed",
+          "iceConnectionState": "closed"
+        },
+        {
+          "connectionState": "connected",
+          "iceConnectionState": "connected",
+          "localCandidateType": "host",
+          "remoteCandidateType": "host",
+          "bytesSent": 52060,
+          "bytesReceived": 2452
+        }
+      ],
+      "visibleText": "HP\n100/100\n体力\n100/100\n饥饿\n100/100\n口渴\n100/100\n理智\n100/100\nLEVEL 1 · 宜居地带 · B1 · 磁带 0/6\n天鹰段\n100%\nLevel 1「宜居地带」\nSurvival Difficulty: Class 1 · 安全稳定 · 存在异常资源\n入口：闪烁的墙壁\n出口线索：楼梯井的穿堂风从某个方向吹来。\n1\n2\n3\n4\n5\n6\n7\n[左键] 攻击　[空格] 跳跃　[C] 蹲伏　[F] 手电 100%　[右键] 使用　[Q] 丢弃　[V] 检视"
+    },
+    {
+      "name": "Toy测试客人",
+      "pageErrors": [
+        "TypeError: Cannot read properties of undefined (reading 'isReady')\n    at http://127.0.0.1:4177/dist/assets/index-B2k07FoL.js:4118:32036\n    at Set.forEach (<anonymous>)\n    at wn (http://127.0.0.1:4177/dist/assets/index-B2k07FoL.js:4118:31990)"
+      ],
+      "networkErrors": [],
+      "websocketErrors": [],
+      "rtc": [
+        {
+          "connectionState": "closed",
+          "iceConnectionState": "closed"
+        },
+        {
+          "connectionState": "connected",
+          "iceConnectionState": "connected",
+          "localCandidateType": "host",
+          "remoteCandidateType": "host",
+          "bytesSent": 27854,
+          "bytesReceived": 0
+        }
+      ],
+      "visibleText": "联机已结束：房主解散了房间。已返回首页。关闭\nSECTOR 0.7.13\nNOCLIP DETECTED\nHUM: 50Hz\nCAM_04 OFFLINE\nDEPTH: ??\nSIGNAL LOST\n后 室\nBACKROOMS : DESCENT\n开始游戏\n继续游戏\n图鉴档案\n形象编辑\n设置\n联机模式\n操作说明\n分享游戏 / 跨设备打开\nv1.0 · 所有层级均为程序生成 · 戴上耳机体验更佳"
+    }
+  ],
+  "realBilibiliClientTested": false,
+  "forcedRelay": false,
+  "topology": "two isolated browser contexts on one computer; public PeerJS signaling; real WebRTC",
+  "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(report.contexts.every(c => !c.pageErrors.length))\n"
+}

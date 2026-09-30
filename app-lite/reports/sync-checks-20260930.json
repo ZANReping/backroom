@@ -1,0 +1,42 @@
+[
+  {
+    "check": "l5-exits",
+    "passed": true,
+    "output": "L5 exit checks passed: 64 spawn seeds, elevator/stair lighting and orientation, boiler doors.\n"
+  },
+  {
+    "check": "l5-meshes",
+    "passed": true,
+    "output": "Repeated column/palm/chandelier construction median: uncached 10.81 ms, cached 4.77 ms\nL5 meshes passed: 25 registered models, water, animated interiors, single frames, cut rugs, capped pipes and independent cached buffers\n"
+  },
+  {
+    "check": "l5-moths",
+    "passed": true,
+    "output": "{\"nests\":7,\"beverlys\":48,\"males\":22,\"deepPoolTiles\":6354,\"behavior\":\"door wave, global larva alarm, harmless larvae, guard paralysis passed\"}\n"
+  },
+  {
+    "check": "l5-nest-lighting",
+    "passed": true,
+    "output": "L5 nest lighting checks passed: bounds, animated portal, windowing, shader composition and Basic skip.\n"
+  },
+  {
+    "check": "l5-rooms",
+    "passed": true,
+    "output": "L5 room checks passed: 5 maintenance complexes / 20 staff doors, 16 large boilers, 4/4 plant/gallery rooms, 1686 white junction tiles, 25 reusable decorations.\n"
+  },
+  {
+    "check": "l5-staff-access",
+    "passed": true,
+    "output": "L5 staff access checks passed: keycard unlock, inventory/axe preservation, ordinary-door rejection, sealed-door rejection, and world-space door event.\n"
+  },
+  {
+    "check": "moth-meshes",
+    "passed": true,
+    "output": "[\n  {\n    \"form\": \"male\",\n    \"meshes\": 5,\n    \"triangles\": 12290,\n    \"size\": [\n      0.319,\n      0.152,\n      0.677\n    ],\n    \"templateMs\": 62.8\n  },\n  {\n    \"form\": \"female\",\n    \"meshes\": 5,\n    \"triangles\": 12610,\n    \"size\": [\n      0.419,\n      0.202,\n      0.923\n    ],\n    \"templateMs\": 18.7\n  },\n  {\n    \"form\": \"larva\",\n    \"meshes\": 4,\n    \"triangles\": 9686,\n    \"size\": [\n      0.327,\n      0.146,\n      0.165\n    ],\n    \"templateMs\": 13.7\n  },\n  {\n    \"form\": \"guard\",\n    \"meshes\": 5,\n    \"triangles\": 13474,\n    \"size\": [\n      0.761,\n      1.18,\n      0.922\n    ],\n    \"templateMs\": 25.3\n  }\n]\n"
+  },
+  {
+    "check": "moth-subvariants",
+    "passed": true,
+    "output": "Unified registration, encounter migration/idempotence, no duplicate network adoption, form switching, legacy snapshots and scale sync passed.\n"
+  }
+]

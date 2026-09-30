@@ -1,0 +1,144 @@
+/* Only title glyphs are bundled. The original multi-MB fonts are never requested
+   by these cards; missing/new glyphs fall back to system fonts immediately. */
+@font-face { font-family: 'Backroom Title Wide'; src: url('../assets/title-wide.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Backroom Title Hand'; src: url('../assets/title-hand.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+
+/* The default has NO overrides: Level 0 keeps its original fonts, color, scan,
+   jitter and timings, including the player's selected UI theme. */
+.level-title-themed {
+  --title-accent: #d0d7cc;
+  --title-ink: #e0e4dd;
+  --title-muted: #969e97;
+  --title-font: 'Backroom Title Wide', system-ui, sans-serif;
+  --title-weight: 700;
+  --title-spacing: .14em;
+  --title-motion: titleSettle;
+  --title-duration: 700ms;
+  --title-delay: 0ms;
+  --title-serif: 'Noto Serif SC', 'Songti SC', SimSun, 'Times New Roman', serif;
+  --title-mono: 'Courier New', 'Backroom Title Wide', monospace;
+}
+.level-title-themed.level-intro[data-phase='presenting'] { animation: none; }
+.level-title-themed[data-title-theme] .level-title__name {
+  font-family: var(--title-font);
+  font-weight: var(--title-weight);
+  letter-spacing: var(--title-spacing);
+  line-height: 1.4;
+  max-width: min(680px, 100%);
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+  text-shadow: var(--title-shadow, none);
+}
+.level-title-themed .level-intro__name { font-size: clamp(28px, 5.5vw, 44px); }
+.level-title-themed[data-title-theme] .level-title__eyebrow { font-family: var(--title-mono); font-weight: 400; }
+.level-title-themed .level-intro__flavor { line-height: 1.8; text-wrap: pretty; }
+.level-title-themed .level-intro__status { color: var(--title-muted); }
+.level-title-themed .level-intro__signal { background: var(--title-accent); }
+.level-title-themed .level-intro__scan { display: none; }
+.level-title-themed[data-phase='presenting'] .level-title__name,
+.level-title-themed[data-phase='card'] .level-title__name { animation: var(--title-motion) var(--title-duration) ease-out var(--title-delay) both; }
+.level-title-themed[data-cutscene] { --title-duration: 240ms; }
+.level-title-themed[data-cutscene] .level-title__name { font-size: clamp(23px, 4.5vw, 34px); }
+.level-title-themed[data-cutscene] .level-title__caption { line-height: 1.8; max-width: min(680px, 100%); }
+
+/* Each motif occupies the same small area; only transform/opacity ever animate. */
+.level-title__ornament { display: flex; align-items: center; justify-content: center; gap: 9px; width: 112px; height: 24px; flex: 0 0 24px; margin-bottom: 18px; color: var(--title-accent); opacity: .7; pointer-events: none; }
+.level-title__ornament i { display: block; width: 30px; height: 1px; background: currentColor; }
+.level-title__ornament i:nth-child(2) { width: 5px; height: 5px; transform: rotate(45deg); }
+[data-cutscene] .level-title__ornament { margin-bottom: 4px; }
+
+[data-title-theme='habitat'] { --title-accent: #d2dbcf; --title-ink: #e2e6db; --title-muted: #92998f; --title-spacing: .08em; }
+[data-title-theme='habitat'] .level-title__ornament i { height: 4px; width: 26px; transform: none; }
+[data-title-theme='habitat'] .level-title__ornament i:nth-child(2) { opacity: .4; }
+
+[data-title-theme='pipes'] { --title-accent: #d39a70; --title-ink: #e3c2a2; --title-muted: #ac9380; --title-spacing: .04em; --title-motion: titleSlide; }
+[data-title-theme='pipes'] .level-title__ornament { border-top: 1px solid currentColor; border-bottom: 1px solid currentColor; height: 10px; flex-basis: 10px; }
+[data-title-theme='pipes'] .level-title__ornament i { height: 16px; width: 2px; transform: none; }
+
+[data-title-theme='power'] { --title-accent: #ffd267; --title-ink: #ffe4a0; --title-muted: #afa17e; --title-spacing: .06em; --title-motion: titlePower; --title-shadow: 2px 2px 0 #653d18; }
+[data-title-theme='power'] .level-title__ornament { background: repeating-linear-gradient(120deg, currentColor 0 6px, transparent 6px 13px); height: 7px; flex-basis: 7px; }
+[data-title-theme='power'] .level-title__ornament i { display: none; }
+
+[data-title-theme='office'] { --title-accent: #a4cbd2; --title-ink: #d6e7e7; --title-muted: #8fa6aa; --title-font: system-ui, sans-serif; --title-weight: 300; --title-spacing: .25em; --title-motion: titleOffice; }
+[data-title-theme='office'] .level-title__ornament { width: 94px; background: repeating-linear-gradient(90deg, transparent 0 29px, currentColor 29px 30px); border: 1px solid currentColor; }
+[data-title-theme='office'] .level-title__ornament i { display: none; }
+
+[data-title-theme='hotel'] { --title-accent: #d7b579; --title-ink: #f0dfb9; --title-muted: #ae9980; --title-font: var(--title-serif); --title-spacing: .2em; --title-motion: titleVelvet; --title-shadow: 0 2px 0 #4b282c; }
+[data-title-theme='hotel'] .level-title__ornament { border-top: 1px solid currentColor; border-bottom: 1px solid currentColor; width: 142px; }
+[data-title-theme='hotel'] .level-title__ornament i:nth-child(2) { width: 9px; height: 9px; background: transparent; border: 1px solid currentColor; }
+
+[data-title-theme='dark'] { --title-accent: #929daa; --title-ink: #bdc5cf; --title-muted: #808997; --title-font: system-ui, sans-serif; --title-weight: 300; --title-spacing: .48em; --title-motion: titleDark; }
+[data-title-theme='dark'] .level-title__ornament { opacity: .35; }
+[data-title-theme='dark'] .level-title__ornament i:nth-child(2) { width: 22px; height: 1px; transform: none; opacity: .3; }
+
+[data-title-theme='ocean'] { --title-accent: #69baca; --title-ink: #b6dfeb; --title-muted: #82a5b2; --title-font: var(--title-serif); --title-weight: 400; --title-spacing: .24em; --title-motion: titleSink; --title-shadow: 0 2px 0 #163544; }
+[data-title-theme='ocean'] .level-title__ornament { flex-direction: column; gap: 5px; }
+[data-title-theme='ocean'] .level-title__ornament i { width: 86px; height: 1px; transform: none; animation: titleTide 3.6s ease-in-out infinite alternate; }
+[data-title-theme='ocean'] .level-title__ornament i:nth-child(2) { width: 60px; opacity: .6; animation-delay: -.8s; }
+[data-title-theme='ocean'] .level-title__ornament i:nth-child(3) { width: 34px; opacity: .3; animation: none; }
+
+[data-title-theme='cave'] { --title-accent: #9cae98; --title-ink: #d0d4bd; --title-muted: #959f8b; --title-spacing: .08em; --title-motion: titleStone; --title-shadow: 2px 3px 0 #283027; }
+[data-title-theme='cave'] .level-title__ornament i { width: 22px; height: 15px; background: transparent; border-left: 1px solid currentColor; border-top: 1px solid currentColor; transform: skew(-24deg) rotate(22deg); }
+[data-title-theme='cave'] .level-title__ornament i:nth-child(2) { height: 24px; }
+
+[data-title-theme='suburb'] { --title-accent: #c58c84; --title-ink: #e1beb6; --title-muted: #a88c8c; --title-font: var(--title-serif); --title-spacing: .28em; --title-motion: titleNight; }
+[data-title-theme='suburb'] .level-title__ornament { border-bottom: 1px solid currentColor; }
+[data-title-theme='suburb'] .level-title__ornament i { width: 15px; height: 17px; border: 1px solid currentColor; background: transparent; transform: none; }
+[data-title-theme='suburb'] .level-title__ornament i:nth-child(2) { background: currentColor; width: 7px; height: 7px; opacity: .6; }
+
+[data-title-theme='wheat'] { --title-accent: #d6bd75; --title-ink: #e8d59d; --title-muted: #a99f80; --title-font: 'Backroom Title Hand', KaiTi, cursive; --title-weight: 400; --title-spacing: .12em; --title-motion: titleWind; }
+[data-title-theme='wheat'] .level-title__ornament { gap: 13px; }
+[data-title-theme='wheat'] .level-title__ornament i { width: 5px; height: 24px; border-radius: 70% 0 70% 0; transform: rotate(16deg); }
+[data-title-theme='wheat'] .level-title__ornament i:nth-child(2) { height: 30px; transform: rotate(-12deg); }
+[data-title-theme='wheat'] .level-title__ornament { animation: titleBreeze 4s ease-in-out infinite alternate; transform-origin: bottom; }
+
+[data-title-theme='city'] { --title-accent: #a5c9df; --title-ink: #e1edf2; --title-muted: #8fa8b8; --title-spacing: .18em; --title-motion: titleRise; }
+[data-title-theme='city'] .level-title__ornament { align-items: flex-end; gap: 5px; }
+[data-title-theme='city'] .level-title__ornament i { width: 13px; height: 14px; background: transparent; border: 1px solid currentColor; transform: none; }
+[data-title-theme='city'] .level-title__ornament i:nth-child(2) { height: 25px; }
+[data-title-theme='city'] .level-title__ornament i:nth-child(3) { height: 19px; }
+
+[data-title-theme='end'] { --title-accent: #a8c995; --title-ink: #d2dbc0; --title-muted: #99a08a; --title-font: var(--title-mono); --title-spacing: .18em; --title-motion: titleTerminal; }
+[data-title-theme='end'] .level-title__ornament { justify-content: flex-end; border-bottom: 1px solid currentColor; }
+[data-title-theme='end'] .level-title__ornament i { display: none; }
+[data-title-theme='end'] .level-title__ornament i:last-child { display: block; width: 7px; height: 12px; animation: titleCursor 1.6s steps(2, end) infinite; }
+
+/* Outposts use their faction/material language, rather than a parent's danger. */
+[data-title-theme='meg'] { --title-accent: #e4c369; --title-ink: #e8dfb8; --title-muted: #a8a186; --title-spacing: .06em; --title-motion: titleSlide; }
+[data-title-theme='meg'] .level-title__ornament i:nth-child(2) { width: 13px; height: 16px; background: transparent; border: 1px solid currentColor; border-radius: 0 0 7px 7px; transform: none; }
+[data-title-theme='trade'] { --title-accent: #a7bd9c; --title-ink: #d8ddc5; --title-muted: #99a18c; --title-font: var(--title-mono); --title-spacing: .08em; --title-motion: titleSlide; }
+[data-title-theme='trade'] .level-title__ornament { height: 16px; flex-basis: 16px; background: repeating-linear-gradient(90deg, currentColor 0 2px, transparent 2px 5px, currentColor 5px 6px, transparent 6px 11px); }
+[data-title-theme='trade'] .level-title__ornament i { display: none; }
+[data-title-theme='medical'] { --title-accent: #b5a3e1; --title-ink: #e3daf2; --title-muted: #a69bb9; --title-font: system-ui, sans-serif; --title-weight: 400; --title-motion: titleOffice; }
+[data-title-theme='medical'] .level-title__ornament i:nth-child(2) { width: 15px; height: 15px; transform: none; background: linear-gradient(currentColor, currentColor) center / 5px 15px no-repeat, linear-gradient(currentColor, currentColor) center / 15px 5px no-repeat; }
+[data-title-theme='diner'] { --title-accent: #e9b290; --title-ink: #f1d8b7; --title-muted: #b19a84; --title-font: 'Backroom Title Hand', KaiTi, cursive; --title-weight: 400; --title-motion: titleWind; }
+[data-title-theme='diner'] .level-title__ornament { border-bottom: 2px solid currentColor; border-radius: 50%; width: 70px; }
+[data-title-theme='blue'] { --title-accent: #aabdf5; --title-ink: #d9e3ff; --title-muted: #99a6c9; --title-font: var(--title-serif); --title-spacing: .18em; --title-motion: titleVelvet; }
+[data-title-theme='blue'] .level-title__ornament i:nth-child(2) { width: 20px; height: 24px; border: 1px solid currentColor; background: transparent; border-radius: 50% 50% 0 0; transform: none; }
+
+@keyframes titleSettle { from { opacity: .15; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+@keyframes titleSlide { from { opacity: .15; transform: translateX(-9px); } to { opacity: 1; transform: none; } }
+@keyframes titlePower { 0% { opacity: .15; transform: translateX(-2px); } 38% { opacity: .8; transform: translateX(1px); } 60% { opacity: .6; transform: none; } 100% { opacity: 1; transform: none; } }
+@keyframes titleOffice { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+@keyframes titleVelvet { from { opacity: .15; transform: scale(.96); } to { opacity: 1; transform: none; } }
+@keyframes titleDark { from { opacity: 0; } to { opacity: 1; } }
+@keyframes titleSink { from { opacity: .15; transform: translateY(-10px); } to { opacity: 1; transform: none; } }
+@keyframes titleStone { from { opacity: .2; transform: translateY(-5px) rotate(-1deg); } to { opacity: 1; transform: none; } }
+@keyframes titleNight { from { opacity: 0; transform: scale(1.025); } to { opacity: 1; transform: none; } }
+@keyframes titleWind { from { opacity: .1; transform: translateX(-7px) rotate(-1deg); } to { opacity: 1; transform: none; } }
+@keyframes titleRise { from { opacity: .15; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes titleTerminal { from { opacity: .3; transform: translateX(-3px); } to { opacity: 1; transform: none; } }
+@keyframes titleTide { from { transform: translateX(-5px) scaleX(.94); } to { transform: translateX(5px) scaleX(1.06); } }
+@keyframes titleBreeze { from { transform: rotate(-3deg); } to { transform: rotate(3deg); } }
+@keyframes titleCursor { from { opacity: .25; } to { opacity: .9; } }
+
+@media (max-height: 480px) {
+  .level-title-themed .level-title__ornament { margin-bottom: 8px; }
+  .level-title-themed .level-intro__name { margin-top: 6px; }
+  .level-title-themed .level-intro__flavor { margin-top: 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .level-title-themed .level-title__name,
+  .level-title-themed .level-title__ornament,
+  .level-title-themed .level-title__ornament i { animation: none !important; }
+}

@@ -122,8 +122,18 @@ function commonAssets(): Asset[] {
 function warmImage(url: string): Promise<void> {
   return new Promise((resolve) => {
     const img = new Image()
-    img.onload = () => resolve()
-    img.onerror = () => resolve()
+    let settled = false
+    const timer = window.setTimeout(() => finish(), 10_000)
+    const finish = () => {
+      if (settled) return
+      settled = true
+      window.clearTimeout(timer)
+      img.onload = null
+      img.onerror = null
+      resolve()
+    }
+    img.onload = () => { void img.decode().catch(() => undefined).then(finish) }
+    img.onerror = finish
     img.decoding = 'async'
     img.src = url
   })
@@ -131,10 +141,12 @@ function warmImage(url: string): Promise<void> {
 
 /** 预下载渲染音频文件（仅 MIDI 曲风使用；失败回退程序化 BGM） */
 function warmAudio(url: string): Promise<void> {
-  return fetch(url).then((res) => {
+  const controller = new AbortController()
+  const timer = window.setTimeout(() => controller.abort(), 10_000)
+  return fetch(url, { signal: controller.signal }).then((res) => {
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     return res.arrayBuffer()
-  }).then(() => undefined).catch(() => undefined)
+  }).then(() => undefined).catch(() => undefined).finally(() => window.clearTimeout(timer))
 }
 
 const pause = (ms: number) => new Promise<void>((r) => setTimeout(r, ms))
@@ -168,12 +180,26 @@ export async function preloadGameResources(req: PreloadRequest, onUpdate: (u: Pr
       onUpdate({ progress: Math.min(88, Math.round((done / Math.max(1, total)) * 88)), label: g.name, detail: '程序化合成 · 无需网络预载' })
       continue
     }
-    for (const a of g.assets) {
-      onUpdate({ progress: Math.min(88, Math.round((done / Math.max(1, total)) * 88)), label: g.name, detail: a.detail, log: `预载 ${a.label}：${a.detail}` })
-      if (g.name === '音频资源') await warmAudio(a.url)
-      else await warmImage(a.url)
-      done += a.weight ?? 1
-      await pause(8) // 让进度条/内容行有时间渲染，避免缓存命中时一闪而过
+    if (g.name === '音频资源') {
+      for (const a of g.assets) {
+        onUpdate({ progress: Math.min(88, Math.round((done / Math.max(1, total)) * 88)), label: g.name, detail: a.detail, log: `预载 ${a.label}：${a.detail}` })
+        await warmAudio(a.url)
+        done += a.weight ?? 1
+        await pause(0)
+      }
+    } else {
+      let next = 0
+      const worker = async () => {
+        while (next < g.assets.length) {
+          const a = g.assets[next++]
+          onUpdate({ progress: Math.min(88, Math.round((done / Math.max(1, total)) * 88)), label: g.name, detail: a.detail, log: `预载 ${a.label}：${a.detail}` })
+          await warmImage(a.url)
+          done += a.weight ?? 1
+          emit(g.name, a.detail)
+          await pause(0)
+        }
+      }
+      await Promise.all([worker(), worker(), worker()])
     }
   }
   if(req.allLevels!==false||req.targetLevel===11||req.targetLevel===115){

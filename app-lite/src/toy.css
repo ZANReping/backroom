@@ -1,0 +1,11 @@
+/* Toy reports dimensions in CSS pixels. UI portals share the same containing block. */
+html[data-toy-container='true'] body {
+  width: var(--toy-width);
+  height: var(--toy-height);
+  overflow: hidden;
+  transform: translateZ(0);
+}
+html[data-toy-container='true'] #root {
+  width: var(--toy-width);
+  height: var(--toy-height);
+}

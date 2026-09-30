@@ -1,0 +1,22 @@
+<!doctype html><html lang="zh"><meta charset="utf-8"><title>Level 1 · Visual verification</title>
+<style>html,body{margin:0;overflow:hidden;background:#171a17}canvas{display:block}nav{position:absolute;z-index:10;top:8px;left:8px;background:#151914d9;color:#ddd;padding:8px;font:12px monospace}button{margin:3px}#status{display:inline-block;min-width:200px}</style>
+<canvas id="scene"></canvas><nav><span id="status">Loading</span><button data-v="parking">天鹰</button><button data-v="storage">跃金</button><button data-v="gothic">哥特</button><button data-v="ouroboros">衔尾</button><button data-v="garden">花园</button><button id="mode">光影模式</button></nav>
+<script type="module">
+import { l1District } from '/src/game/world/l1Layout.ts';
+import { Engine } from '/src/game/engine.ts';
+import { getRenderer,look } from '/src/game/renderer/index.ts';
+const canvas=document.querySelector('canvas'),engine=new Engine(),renderer=getRenderer(canvas);
+engine.newRun(424242,'normal');engine.loadLevel(1,{mapSeed:424242,firstVisit:false});engine.dev.god=true;engine.dev.frozenAI=true;engine.dev.statLock=true;engine.paused=true;
+renderer.resize(innerWidth,innerHeight,1);renderer.setTextureQuality(2);renderer.setBloomFx(false);
+let mode='classic',variant='parking',last=performance.now(),times=[],sample=[];
+const setVariant=v=>{engine.devGotoVariant(v);const inf=engine.map.inf,d=l1District(inf.seed,Math.floor((engine.player.x+inf.ox)/32),Math.floor((engine.player.y+inf.oy)/32));if(v!=='aisle'){engine.player.x=d.cx*32+16-inf.ox;engine.player.y=d.cy*32+16-inf.oy;engine.updateInfiniteWindow();const p=engine.devFindSpot(engine.player.x,engine.player.y,8,0);if(p){engine.player.x=p.x;engine.player.y=p.y}}engine.introT=0;engine.plantK=0;engine.player.flashlight=false;variant=v;look.yaw=.55;look.pitch=.06;times=[];document.querySelector('#status').textContent=v+' · '+mode;return {x:engine.player.x,y:engine.player.y,origin:[engine.map.inf.ox,engine.map.inf.oy]}};
+const setMode=v=>{mode=v;renderer.setLightMode(v);document.querySelector('#status').textContent=variant+' · '+mode;times=[]};
+const stats=()=>{const a=[...times].sort((a,b)=>a-b),gl=renderer.three.getContext(),ext=gl.getExtension('WEBGL_debug_renderer_info');return {variant,mode,frames:a.length,medianMs:a[Math.floor(a.length*.5)],p95Ms:a[Math.floor(a.length*.95)],draws:renderer.three.info.render.calls,triangles:renderer.three.info.render.triangles,memory:renderer.three.info.memory,resolution:[canvas.width,canvas.height],gpu:ext?gl.getParameter(ext.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER)}};
+window.qa={engine,renderer,look,setVariant,setMode,stats,view(name){look.pitch=name==='ceiling'?.62:name==='detail'?-.65:.06},measure(n=120){sample=[];return new Promise(resolve=>{window.qa.resolve=()=>{const a=[...sample].sort((a,b)=>a-b);resolve({...stats(),sampleMedianMs:a[Math.floor(a.length*.5)],sampleP95Ms:a[Math.floor(a.length*.95)]})};window.qa.remaining=n})}};
+for(const button of document.querySelectorAll('[data-v]'))button.onclick=()=>setVariant(button.dataset.v);
+document.querySelector('#mode').onclick=()=>setMode(mode==='classic'?'realistic':'classic');
+addEventListener('resize',()=>renderer.resize(innerWidth,innerHeight,1));
+function frame(now){const ms=now-last;last=now;times.push(ms);if(times.length>240)times.shift();if(window.qa.remaining>0){sample.push(ms);if(--window.qa.remaining===0)window.qa.resolve()}
+  renderer.applyView(engine);renderer.render(canvas,engine,{grain:false,flicker:0,shake:false},Math.min(ms/1000,.05));requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+</script></html>

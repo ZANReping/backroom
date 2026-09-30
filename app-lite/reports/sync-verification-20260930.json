@@ -1,0 +1,261 @@
+{
+  "date": "2026-09-30",
+  "originalFilesChecked": 1163,
+  "originalChanges": [],
+  "manualMerges": [
+    "src/components/HUD.tsx",
+    "src/game/core/audio.ts",
+    "src/game/renderer/renderer.ts",
+    "package.json"
+  ],
+  "upstreamSync": "sync-upstream-20260930.json",
+  "newTextures": {
+    "count": 27,
+    "originalBytes": 14858183,
+    "liteBytes": 751194,
+    "maxDimension": 512
+  },
+  "liteFeaturesPreserved": [
+    "Toy platform/share/report/invitation/safe area",
+    "procedural music only",
+    "preloadAllLevels default false",
+    "TURN configuration/diagnostics and loading cancellation"
+  ],
+  "buildPassed": true,
+  "checks": [
+    {
+      "check": "l5-exits",
+      "passed": true,
+      "output": "L5 exit checks passed: 64 spawn seeds, elevator/stair lighting and orientation, boiler doors.\n"
+    },
+    {
+      "check": "l5-meshes",
+      "passed": true,
+      "output": "Repeated column/palm/chandelier construction median: uncached 10.81 ms, cached 4.77 ms\nL5 meshes passed: 25 registered models, water, animated interiors, single frames, cut rugs, capped pipes and independent cached buffers\n"
+    },
+    {
+      "check": "l5-moths",
+      "passed": true,
+      "output": "{\"nests\":7,\"beverlys\":48,\"males\":22,\"deepPoolTiles\":6354,\"behavior\":\"door wave, global larva alarm, harmless larvae, guard paralysis passed\"}\n"
+    },
+    {
+      "check": "l5-nest-lighting",
+      "passed": true,
+      "output": "L5 nest lighting checks passed: bounds, animated portal, windowing, shader composition and Basic skip.\n"
+    },
+    {
+      "check": "l5-rooms",
+      "passed": true,
+      "output": "L5 room checks passed: 5 maintenance complexes / 20 staff doors, 16 large boilers, 4/4 plant/gallery rooms, 1686 white junction tiles, 25 reusable decorations.\n"
+    },
+    {
+      "check": "l5-staff-access",
+      "passed": true,
+      "output": "L5 staff access checks passed: keycard unlock, inventory/axe preservation, ordinary-door rejection, sealed-door rejection, and world-space door event.\n"
+    },
+    {
+      "check": "moth-meshes",
+      "passed": true,
+      "output": "[\n  {\n    \"form\": \"male\",\n    \"meshes\": 5,\n    \"triangles\": 12290,\n    \"size\": [\n      0.319,\n      0.152,\n      0.677\n    ],\n    \"templateMs\": 62.8\n  },\n  {\n    \"form\": \"female\",\n    \"meshes\": 5,\n    \"triangles\": 12610,\n    \"size\": [\n      0.419,\n      0.202,\n      0.923\n    ],\n    \"templateMs\": 18.7\n  },\n  {\n    \"form\": \"larva\",\n    \"meshes\": 4,\n    \"triangles\": 9686,\n    \"size\": [\n      0.327,\n      0.146,\n      0.165\n    ],\n    \"templateMs\": 13.7\n  },\n  {\n    \"form\": \"guard\",\n    \"meshes\": 5,\n    \"triangles\": 13474,\n    \"size\": [\n      0.761,\n      1.18,\n      0.922\n    ],\n    \"templateMs\": 25.3\n  }\n]\n"
+    },
+    {
+      "check": "moth-subvariants",
+      "passed": true,
+      "output": "Unified registration, encounter migration/idempotence, no duplicate network adoption, form switching, legacy snapshots and scale sync passed.\n"
+    }
+  ],
+  "browser": {
+    "passed": true,
+    "checks": [
+      "UI start, default preload off, legacy MIDI normalized, Level 5 playable",
+      "main hall, Beverly room, boiler room, moth nest stream/render; all four moth forms spawn",
+      "all 27 new compressed textures decode at <=512px"
+    ],
+    "regions": [
+      {
+        "kind": "mainhall",
+        "level": 5,
+        "structures": 1935,
+        "entities": 0,
+        "ready": true
+      },
+      {
+        "kind": "beverly",
+        "level": 5,
+        "structures": 1843,
+        "entities": 0,
+        "ready": true
+      },
+      {
+        "kind": "boilerroom",
+        "level": 5,
+        "structures": 1839,
+        "entities": 0,
+        "ready": true
+      },
+      {
+        "kind": "mothnest",
+        "level": 5,
+        "structures": 1694,
+        "entities": 62,
+        "ready": true
+      }
+    ],
+    "errors": [],
+    "missing": [],
+    "musicRequests": [],
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "textures": [
+      {
+        "name": "corridor_carpet.jpg",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "name": "damask.jpg",
+        "width": 256,
+        "height": 512
+      },
+      {
+        "name": "fabric_pattern_05_Color.jpg",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "name": "fabric_pattern_05_NormalGL.jpg",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "name": "fabric_pattern_05_Roughness.jpg",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "name": "frieze.jpg",
+        "width": 512,
+        "height": 128
+      },
+      {
+        "name": "lobby_carpet.jpg",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "name": "Marble005_Color.jpg",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "name": "Marble005_NormalGL.jpg",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "name": "Marble005_Roughness.jpg",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "name": "Marble022_Color.jpg",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "name": "Marble022_NormalGL.jpg",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "name": "Marble022_Roughness.jpg",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "name": "marble_01_Color.jpg",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "name": "marble_01_NormalGL.jpg",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "name": "marble_01_Roughness.jpg",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "name": "plain_carpet.jpg",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "name": "rug_border.jpg",
+        "width": 512,
+        "height": 128
+      },
+      {
+        "name": "Wallpaper001A_Color.jpg",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "name": "Wallpaper001A_NormalGL.jpg",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "name": "Wallpaper001A_Roughness.jpg",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "name": "white_plaster_02_Color.jpg",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "name": "white_plaster_02_NormalGL.jpg",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "name": "white_plaster_02_Roughness.jpg",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "name": "wood_floor_Color.jpg",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "name": "wood_floor_NormalGL.jpg",
+        "width": 512,
+        "height": 512
+      },
+      {
+        "name": "wood_floor_Roughness.jpg",
+        "width": 512,
+        "height": 512
+      }
+    ]
+  },
+  "package": {
+    "limitBytes": 50000000,
+    "originalPublicBytes": 317182637,
+    "litePublicBytes": 21539574,
+    "distBytes": 25808941,
+    "zipBytes": 22272516,
+    "distFiles": 534,
+    "remainingUnpackedBytes": 24191059,
+    "zipSHA256": "787346c4359a1fbc89e3ec4add6e1f05ba55af8cddc093926700046fc717f490"
+  },
+  "testLimitations": [
+    "SwiftShader software renderer exceeded initial 120-second scene warmup deadline; chunks continued progressing. Final integration pass uses hardware-accelerated D3D11 Chromium on RTX 4060.",
+    "Real Bilibili App and phone performance not measured in this update.",
+    "No deployment performed; cross-network multiplayer still needs configured usable TURN."
+  ]
+}

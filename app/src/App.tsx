@@ -6,7 +6,9 @@ import { engine } from '@/game/engine'
 import type { SaveSlotId, SlotInfo } from '@/game/engine'
 import { listSaveSlots, readSaveSlot, clearSaveSnapshot } from '@/game/engine/save'
 import { storage } from '@/game/core/storage'
+import { isPortraitOrientation } from '@/game/core/orientation'
 import { getRenderer, look, type Renderer3D } from '@/game/core/renderer3d'
+import { MouseLookInput, requestMouseCapture } from '@/game/core/mouseLook'
 import * as THREE from 'three'
 import { audio } from '@/game/core/audio'
 import { randomSeed } from '@/game/core/rng'
@@ -14,9 +16,11 @@ import { preloadGameResources } from '@/game/core/preload'
 import { getKeybinds, type KeyBindMap } from '@/game/core/keybinds'
 import { LEVELS, levelLabel, levelNo, levelDefOf } from '@/game/levels'
 import { generateLevel } from '@/game/world/mapgen'
+import { prepareChunkWindow } from '@/game/world/chunkCache'
+import { CS } from '@/game/world/infinite'
 import type { HudEvent } from '@/game/engine'
 import TitleScreen from '@/components/TitleScreen'
-import SettingsModal, { defaultSettings, THEMES, type GameSettings } from '@/components/SettingsModal'
+import SettingsModal, { createDefaultSettings, THEMES, type GameSettings } from '@/components/SettingsModal'
 import HowToPlay from '@/components/HowToPlay'
 import LevelIntro from '@/components/LevelIntro'
 import FallIntro from '@/components/FallIntro'
@@ -29,12 +33,14 @@ import InventoryOverlay, { discoverFromEngine, loadCodex, saveCodex } from '@/co
 import DocOverlay from '@/components/DocOverlay'
 import LandmarkOverlay from '@/components/LandmarkOverlay'
 import DialogOverlay from '@/components/DialogOverlay'
+import FacilityPanel from '@/components/FacilityPanel'
 import AvatarEditor from '@/components/AvatarEditor'
 import DeathScreen from '@/components/DeathScreen'
 import NotebookOverlay from '@/components/NotebookOverlay'
 import VictoryScreen from '@/components/VictoryScreen'
 import LootPanel from '@/components/LootPanel'
 import FullscreenHint from '@/components/FullscreenHint'
+import PortraitNotice from '@/components/PortraitNotice'
 import LayoutEditor, { loadTouchLayout, type TouchLayoutStore } from '@/components/LayoutEditor'
 import Cutscene, { type CutKind, type CutIn } from '@/components/Cutscene'
 import DesignMode from '@/components/DesignMode' // v54：设计模式（开发者模式入口在标题屏）
@@ -44,7 +50,7 @@ import { MpSession } from '@/game/net/session'
 import { applyMpEvent } from '@/game/net/apply'
 
 type Screen = 'title' | 'loading' | 'intro' | 'game' | 'fall' | 'design'
-type Overlay = 'none' | 'settings' | 'howto' | 'pause' | 'radio' | 'inventory' | 'codex' | 'death' | 'victory' | 'avatar' | 'notebook' | 'doc' | 'landmark' | 'dialog' | 'lobby'
+type Overlay = 'none' | 'settings' | 'howto' | 'pause' | 'radio' | 'inventory' | 'codex' | 'death' | 'victory' | 'avatar' | 'notebook' | 'doc' | 'landmark' | 'dialog' | 'lobby' | 'facility'
 
 // 冒烟测试钩子（Playwright page.evaluate 用）
 if (typeof window !== 'undefined') {
@@ -84,13 +90,23 @@ function Game() {
   const rendererRef = useRef<Renderer3D | null>(null)
   const [screen, setScreen] = useState<Screen>('title')
   const [overlay, setOverlay] = useState<Overlay>('none')
+  const [worldLoading, setWorldLoading] = useState(false)
+  const worldLoadingRef = useRef(false)
+  const updateWorldLoading = useCallback((loading: boolean) => {
+    if (worldLoadingRef.current === loading) return
+    worldLoadingRef.current = loading
+    setWorldLoading(loading)
+  }, [])
   const [settings, setSettings] = useState<GameSettings>(() => {
+    const defaults = createDefaultSettings(typeof window !== 'undefined' && (window.matchMedia?.('(pointer: coarse)').matches || 'ontouchstart' in window))
     try {
       const stored = JSON.parse(storage.get('br_settings') ?? '{}') as Record<string, unknown>
       delete stored.dust // 已移除的旧版漂浮尘埃设置不再继续写回存档。
-      return { ...defaultSettings, ...stored } as GameSettings
-    } catch { return defaultSettings }
+      return { ...defaults, ...stored } as GameSettings
+    } catch { return defaults }
   })
+  const settingsRef = useRef(settings)
+  settingsRef.current = settings
   const [log, setLog] = useState<LogEntry[]>([])
   const [toasts, setToasts] = useState<Toast[]>([])
   const [damageFlash, setDamageFlash] = useState(0)
@@ -104,15 +120,20 @@ function Game() {
   // 指针锁定下鼠标移动与 keyup 都发生在 React 渲染之外，ref 保证它们读取同一帧的轮盘选择。
   const squirtWheelRef = useRef<SquirtWheelState | null>(null)
   // v23：切入切出过场（替代旧的简易 TransitionOverlay）
-  const [cut, setCut] = useState<{ kind: CutKind; cutIn?: CutIn; toName?: string; caption?: string } | null>(null)
+  const [cut, setCut] = useState<{ id: number; kind: CutKind; levelId?: number; cutIn?: CutIn; toName?: string; caption?: string } | null>(null)
+  const cutSequence = useRef(0)
   const cutRef = useRef<typeof cut>(null)
   cutRef.current = cut
+  const cutStageRef = useRef<'out' | 'loading' | 'in'>('out')
+  const introPhaseRef = useRef<'presenting' | 'holding' | 'exiting'>('presenting')
   const pendingIntro = useRef(false)
   const [fallDmg, setFallDmg] = useState<number | null>(null)
   const [deathCause, setDeathCause] = useState('')
   const [docId, setDocId] = useState('meg_levels')
   const [landmarkId, setLandmarkId] = useState('alpha')
   const [dialogId, setDialogId] = useState('kat')
+  const [factionPage,setFactionPage]=useState<string|undefined>()
+  const [facilityFaction,setFacilityFaction]=useState('meg')
   const [invTab, setInvTab] = useState<'背包' | '图鉴' | '状态' | '地图' | '日志' | '任务'>('背包')
   // v54：存档槽位列表（标题屏展示；回标题时刷新）
   const [slots, setSlots] = useState<SlotInfo[]>(() => listSaveSlots())
@@ -145,17 +166,34 @@ function Game() {
   // 自定义触屏按键布局（竖屏/横屏分开保存）
   const [touchLayout, setTouchLayout] = useState<TouchLayoutStore>(() => loadTouchLayout())
   const [layoutEditorOpen, setLayoutEditorOpen] = useState(false)
+  // “无视”只对当前竖屏阶段生效；横屏后重新启用下次竖屏提示。
+  const [portraitDismissed, setPortraitDismissed] = useState(false)
   const [, setOrientTick] = useState(0)
   useEffect(() => {
-    const fn = () => setOrientTick((n) => n + 1)
+    const fn = () => {
+      setOrientTick((n) => n + 1)
+      if (!isPortraitOrientation()) setPortraitDismissed(false)
+    }
     window.addEventListener('resize', fn)
     window.addEventListener('orientationchange', fn)
+    window.screen.orientation?.addEventListener('change', fn)
     return () => {
       window.removeEventListener('resize', fn)
       window.removeEventListener('orientationchange', fn)
+      window.screen.orientation?.removeEventListener('change', fn)
     }
   }, [])
   const landscapeNow = typeof window !== 'undefined' && window.innerWidth > window.innerHeight
+  const portraitBlocked = isMobile && isPortraitOrientation() && !portraitDismissed
+  const portraitBlockedRef = useRef(portraitBlocked)
+  portraitBlockedRef.current = portraitBlocked
+  useEffect(() => {
+    if (!portraitBlocked) return
+    engine.paused = true
+    Object.assign(engine.input, { mx: 0, my: 0, sprint: false, crouch: false, jump: false, attack: false, interact: false, toggleLight: false })
+    engine.inspectHeld = false
+    if (document.pointerLockElement) document.exitPointerLock()
+  }, [portraitBlocked])
   const activeTouchLayout = touchLayout[landscapeNow ? 'landscape' : 'portrait'] ?? {}
   const customPause = isMobile && !!activeTouchLayout.pause
 
@@ -191,10 +229,10 @@ function Game() {
   // v56：暂停（暂停菜单及其子页）时挂起全部音频——乐手演奏/BGM/环境音一起暂停，恢复后接着播。
   // 电台管理页除外：它是音乐播放器（试听/BGM 照常播放），关回暂停菜单再挂起
   useEffect(() => {
-    const pausedUi = screen === 'game' && (overlay === 'pause' || overlay === 'settings' || overlay === 'howto')
+    const pausedUi = portraitBlocked || (screen === 'game' && (overlay === 'pause' || overlay === 'settings' || overlay === 'howto'))
     if (pausedUi) audio.suspendAll()
     else audio.resumeAll()
-  }, [overlay, screen])
+  }, [overlay, screen, portraitBlocked])
 
   const addLog = useCallback((text: string, kind: string) => {
     setLog((l) => [...l.slice(-20), { id: logId++, text, kind, t: Date.now() }])
@@ -229,18 +267,37 @@ function Game() {
         case 'transition':
           if (e.anim && e.anim !== 'intro') {
             const d = typeof e.dest === 'number' ? e.dest : undefined
-            setCut({
+            cutStageRef.current = 'out'
+            pendingIntro.current = false
+            screenRef.current = 'game'
+            setScreen('game')
+            updateWorldLoading(true)
+            const nextCut = {
+              id: ++cutSequence.current,
               kind: e.anim as CutKind,
+              levelId: d,
               cutIn: e.cutIn as CutIn | undefined,
               toName: d !== undefined ? (levelDefOf(d)?.label ?? `${levelLabel(d)} · ${levelDefOf(d)?.name ?? ''}`) : e.dest === 'win' ? undefined : '未知层级',
               caption: e.cutIn === 'outpost' ? '你跟着鲜黄色地标指示的路线，成功抵达了' : CUT_CAPTION[e.anim] ?? '你换了一层',
-            })
+            }
+            cutRef.current = nextCut
+            setCut(nextCut)
             if (e.fallDamage) setTimeout(() => setFallDmg(e.fallDamage!), 900)
           } else if (e.anim === 'intro') {
+            introPhaseRef.current = 'presenting'
+            updateWorldLoading(!rendererRef.current?.isNearWorldReady(engine))
+            if (cutRef.current && cutRef.current.levelId === undefined) {
+              const levelId = engine.player.level
+              const destination = levelDefOf(levelId)
+              const toName = destination?.label ?? `${levelLabel(levelId)} · ${destination?.name ?? ''}`
+              const completedCut = { ...cutRef.current, levelId, toName }
+              cutRef.current = completedCut
+              setCut(completedCut)
+            }
             // 层级已载入：据点跳过层级卡（专属切入动画后直接进入）；其余若过场还在播，等过场结束再出层级卡
             if (levelDefOf(engine.player.level)?.gen === 'outpost') setScreen('game')
             else if (cutRef.current) pendingIntro.current = true
-            else setScreen('intro')
+            else { screenRef.current = 'intro'; setScreen('intro') }
           }
           break
         case 'dead':
@@ -253,6 +310,7 @@ function Game() {
           break
         case 'levelchange':
           setFallDmg(null)
+          updateWorldLoading(true)
           break
         case 'notebook':
           setOverlay('notebook')
@@ -271,6 +329,12 @@ function Game() {
           setLandmarkId(e.text ?? 'alpha')
           setOverlay('landmark')
           break
+        case 'faction':
+          if(screenRef.current!=='game')break
+          setFactionPage(e.text??'meg');setInvTab('图鉴');setOverlay('inventory');break
+        case 'facility':
+          if(screenRef.current!=='game')break
+          setFacilityFaction(e.text??'meg');setOverlay('facility');break
         case 'dialog': {
           // v35：与 NPC 交谈——打开对话窗，并解锁图鉴「NPC」存档（只显示遇见过的 NPC）
           const id = e.text ?? 'kat'
@@ -284,7 +348,7 @@ function Game() {
     }
     // 返回取消订阅函数作为清理：StrictMode 双调用/HMR 重挂载时不再累积监听器（播报重复好几遍的根因）
     return engine.on(handler)
-  }, [addLog])
+  }, [addLog, updateWorldLoading])
 
   // 开始新一局的最终提交：先播开场坠落动画 FallIntro（新游戏），或直接进入存档层级（继续游戏）
   // v54：slot=绑定的存档槽（新游戏只能绑手动槽；继续游戏沿用所读槽位）
@@ -300,7 +364,7 @@ function Game() {
     session.onLocalEvent = (e) => applyMpEvent(engine, e)
     requestStart(seed, 'slot1', 0, true) // 强制新开局 + 播入场动画
   }, [])
-  const commitStart = useCallback((seed?: number, slot: SaveSlotId = 'slot1', forceFresh = false) => {
+  const commitStart = useCallback(async (seed?: number, slot: SaveSlotId = 'slot1', forceFresh = false) => {
     audio.resume()
     look.yaw = 0; look.pitch = 0
     const s = seed ?? randomSeed()
@@ -314,6 +378,20 @@ function Game() {
       if (cleared) saveCodex(c)
     }
     engine.newRun(s, settings.difficulty, slot)
+    engine.paused = true
+    setLoadState(prev => ({ ...prev, progress: 96, label: '准备附近场景', detail: '正在分帧构建入口并预热渲染', history: [...prev.history.slice(-7), '地图数据就绪，正在构建入口场景'] }))
+    // The animation loop keeps rendering under LoadingScreen. Do not dismiss it
+    // before the actual world exists (the old 100% was shown before newRun()).
+    let preparationTime = 0, previousFrame = performance.now()
+    while (!rendererRef.current?.isNearWorldReady(engine)) {
+      await new Promise<void>(resolve => requestAnimationFrame(() => resolve()))
+      const now = performance.now()
+      // Background tabs suspend animation frames; only count active wait time.
+      preparationTime += Math.min(100, now - previousFrame); previousFrame = now
+      if (preparationTime > 120_000) throw new Error('入口场景准备超时')
+    }
+    await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))
+    setLoadState(prev => ({ ...prev, progress: 100, label: '进入后室', detail: '入口场景就绪' }))
     engine.hudHidden = false // v54：新一局退出沉浸模式
     engine.handsHidden = false
     setHudHidden(false)
@@ -336,8 +414,9 @@ function Game() {
   const requestStart = useCallback((seed?: number, slot: SaveSlotId = 'slot1', targetLevel = seed !== undefined ? engine.player.level : 0, forceFresh = false) => {
     if (loadingRef.current) return
     loadingRef.current = true
+    if (seed === undefined || forceFresh) targetLevel = 0
     audio.resume() // 用户手势内解锁 WebAudio
-    const startedAt = performance.now()
+    const runSeed = seed ?? randomSeed()
     setLog([])
     setOverlay('none')
     setLoadState({ progress: 2, label: '初始化加载器', detail: '正在准备资源清单', history: [] })
@@ -350,23 +429,28 @@ function Game() {
         history: u.log ? [...prev.history.slice(-7), u.log] : prev.history,
       }))
     }).catch(() => undefined).then(async () => {
-      // 保证加载界面至少可见约 1.1s：资源全命中缓存时也不闪屏
-      const rest = Math.max(0, 1100 - (performance.now() - startedAt))
-      if (rest > 0) {
-        setLoadState((prev) => ({ ...prev, progress: 88, label: '资源预载完成', detail: '正在稳定渲染管线' }))
-        await new Promise<void>((r) => setTimeout(r, rest))
+      try {
+        const snap = seed !== undefined && !forceFresh ? readSaveSlot(slot) : null
+        const def = levelDefOf(targetLevel)!
+        const mapSeed = snap?.mapSeed ?? engine.mpMapSeed?.(targetLevel) ?? runSeed
+        await prepareChunkWindow(def, mapSeed, 0, 0, progress => {
+          setLoadState(prev => ({ ...prev, progress: Math.max(prev.progress, 88 + Math.floor(progress*7)), label: '生成初始地图', detail: `Level ${targetLevel} · 后台准备区块 ${Math.round(progress*100)}%` }))
+        })
+        if (def.infinite && snap?.worldPos && Number.isFinite(snap.worldPos.x) && Number.isFinite(snap.worldPos.y)) {
+          const cx = Math.floor(snap.worldPos.x / CS), cy = Math.floor(snap.worldPos.y / CS)
+          if (cx !== 0 || cy !== 0) {
+            setLoadState(prev => ({ ...prev, label: '恢复存档附近场景', detail: '正在准备上次离开的位置' }))
+            await prepareChunkWindow(def, mapSeed, cx, cy)
+          }
+        }
+        await commitStart(runSeed, slot, seed === undefined || forceFresh)
       }
-      setLoadState((prev) => ({ ...prev, progress: 92, label: '生成初始地图', detail: `正在生成 Level ${targetLevel} 的程序化世界`, history: [...prev.history.slice(-7), `生成初始地图：Level ${targetLevel}`] }))
-      await new Promise<void>((r) => setTimeout(r, 220))
-      setLoadState((prev) => ({ ...prev, progress: 100, label: '进入后室', detail: '初始化完成', history: [...prev.history.slice(-7), '资源与地图就绪'] }))
-      await new Promise<void>((r) => setTimeout(r, 90))
-      loadingRef.current = false
-      try { commitStart(seed, slot, forceFresh) }
       catch (err) {
         console.error('[loading] 进入游戏失败，返回标题', err)
         setScreen('title')
         refreshSlots()
       }
+      finally { loadingRef.current = false }
     })
   }, [settings.bgmStyle, settings.preloadAllLevels, commitStart, refreshSlots])
 
@@ -388,7 +472,7 @@ function Game() {
       setSquirtWheel(wheel)
     }
     const openSquirtWheel = () => {
-      if (!heldSquirtGun() || screenRef.current !== 'game' || overlayRef.current !== 'none') return false
+      if (portraitBlockedRef.current || !heldSquirtGun() || screenRef.current !== 'game' || overlayRef.current !== 'none') return false
       const options: SquirtWheelOption[] = engine.squirtTank === 'none'
         ? [
             { action: 'water', label: '清水', detail: '无需物品', color: '#79cde8' },
@@ -420,8 +504,9 @@ function Game() {
       [kb.inventory, '背包'], ['Tab', '背包'], [kb.map, '地图'],
       [kb.codex, '图鉴'], [kb.quest, '任务'], [kb.status, '状态'], [kb.log, '日志'],
     ]
-    const openTab = (t: typeof invTab) => { discoverFromEngine(engine); setInvTab(t); setOverlay('inventory') }
+    const openTab = (t: typeof invTab) => { discoverFromEngine(engine);setFactionPage(undefined); setInvTab(t); setOverlay('inventory') }
     const down = (e: KeyboardEvent) => {
+      if (portraitBlockedRef.current) return
       // v54：F1 防呆——浏览器「帮助」默认键，任意界面一律拦截默认行为
       if (e.code === 'F1') e.preventDefault()
       if (screenRef.current !== 'game' || overlayRef.current !== 'none') {
@@ -501,7 +586,7 @@ function Game() {
         window.clearTimeout(hold.timer)
         const action = squirtWheelRef.current?.selected ?? 'cancel'
         publishWheel(null)
-        if (screenRef.current === 'game' && overlayRef.current === 'none' && heldSquirtGun()) {
+        if (!portraitBlockedRef.current && screenRef.current === 'game' && overlayRef.current === 'none' && heldSquirtGun()) {
           if (hold.wheelOpened) executeWheelAction(action)
           else quickReloadSquirt()
         }
@@ -509,6 +594,12 @@ function Game() {
       updateMove()
     }
     const updateMove = () => {
+      if (portraitBlockedRef.current) {
+        for (const key of Object.keys(keys)) delete keys[key]
+        engine.input.mx = 0; engine.input.my = 0
+        engine.input.sprint = false; engine.input.crouch = false
+        return
+      }
       const b = getKeybinds()
       let x = 0, y = 0
       if (keys[b.forward] || keys['ArrowUp']) y -= 1
@@ -529,7 +620,7 @@ function Game() {
       window.removeEventListener('keydown', down)
       window.removeEventListener('keyup', up)
     }
-  }, [])
+  }, [portraitBlocked])
 
   // 标签页隐藏自动暂停
   useEffect(() => {
@@ -540,53 +631,70 @@ function Game() {
     return () => document.removeEventListener('visibilitychange', fn)
   }, [])
 
-  // 主循环（Three.js 第一人称渲染）
+  // 鼠标捕获的生命周期独立于画面设置，避免重建渲染循环时撤销正在建立的锁定。
   useEffect(() => {
     const canvas = canvasRef.current!
-    const renderer = getRenderer(canvas)
-    rendererRef.current = renderer
-    renderer.setResolutionMode(settings.renderResolution)
-    // 诊断钩子（自动化测试用）：暴露渲染器与 THREE 构造器
-    ;(window as unknown as { __renderer: typeof renderer }).__renderer = renderer
-    ;(window as unknown as { __THREE: typeof THREE }).__THREE = THREE
-    let raf = 0
-    let last = performance.now()
-    let hudAcc = 0
-    let frameTimes: number[] = []
-    let resScale = 1
-    const mobileDprCap = 1.5
-
-    const resize = () => {
-      const nativeDpr = Math.min(window.devicePixelRatio || 1, isMobile ? mobileDprCap : 2)
-      const targetHeight = settings.renderResolution === '720p' ? 720
-        : settings.renderResolution === '480p_retro' ? 360
-          : settings.renderResolution === '320p_ps1' ? 180
-            : 0
-      const baseScale = Math.max(0.5, Math.min(1, settings.renderScale / 100))
-      const dpr = targetHeight > 0
-        ? Math.max(0.05, Math.min(nativeDpr, targetHeight / Math.max(1, window.innerHeight)))
-        : nativeDpr * baseScale * resScale
-      renderer.resize(window.innerWidth, window.innerHeight, dpr)
-      canvas.style.width = '100%'
-      canvas.style.height = '100%'
-      canvas.style.imageRendering = settings.renderResolution === '480p_retro' || settings.renderResolution === '320p_ps1' ? 'pixelated' : 'auto'
-    }
-    resize()
-    window.addEventListener('resize', resize)
-
     // 桌面 Pointer Lock 鼠标视角
+    let capturePending = false
+    let rawRequestAccepted = false
+    // Owning the element alone does not prove raw capture has completed (for
+    // example an old lock can survive HMR). Keep input closed until both agree.
+    let rawCaptureReady = false
+    let disposed = false
+    const canCapture = () => !disposed && !portraitBlockedRef.current && screenRef.current === 'game' && overlayRef.current === 'none' && document.hasFocus() && !document.hidden
     const onClick = () => {
       if (isMobile) return
-      if (screenRef.current === 'game' && overlayRef.current === 'none' && document.pointerLockElement !== canvas) {
-        canvas.requestPointerLock?.()
+      if (canCapture() && (!rawCaptureReady || document.pointerLockElement !== canvas) && !capturePending && typeof canvas.requestPointerLock === 'function') {
+        capturePending = true
+        rawRequestAccepted = false
+        rawCaptureReady = false
+        look.locked = false
+        canvas.dataset.mouseInput = 'pending'
+        void requestMouseCapture(canvas).then(() => {
+          // Permission UI can transiently change focus. Only a real screen/menu
+          // change cancels an acquired lock; the browser handles focus loss.
+          if (disposed || portraitBlockedRef.current || screenRef.current !== 'game' || overlayRef.current !== 'none') {
+            if (document.pointerLockElement === canvas) document.exitPointerLock()
+            return
+          }
+          rawRequestAccepted = true
+          rawCaptureReady = document.pointerLockElement === canvas
+          canvas.dataset.mouseInput = rawCaptureReady ? 'raw' : 'unlocked'
+          onFocusChange()
+        }).catch(() => {
+          // Escape, focus loss, or a denied capture leave the camera inactive.
+          rawRequestAccepted = false
+          rawCaptureReady = false
+          canvas.dataset.mouseInput = 'unlocked'
+          if (document.pointerLockElement === canvas) document.exitPointerLock()
+          look.locked = false
+        }).finally(() => { capturePending = false })
       }
     }
-    const onLockChange = () => { look.locked = document.pointerLockElement === canvas }
+    const mouseLook = new MouseLookInput()
+    const onLockChange = () => {
+      if (document.pointerLockElement !== canvas) rawRequestAccepted = false
+      rawCaptureReady = rawRequestAccepted && document.pointerLockElement === canvas
+      canvas.dataset.mouseInput = rawCaptureReady ? 'raw' : capturePending ? 'pending' : 'unlocked'
+      look.locked = rawCaptureReady && document.pointerLockElement === canvas
+      mouseLook.reset(performance.now())
+    }
+    const onFocusChange = () => { mouseLook.reset(performance.now());look.locked=rawCaptureReady&&document.hasFocus()&&!document.hidden&&document.pointerLockElement===canvas }
+    // Pointer Lock's mousemove is the authoritative relative-motion stream.
+    // Do not also consume pointermove/coalesced events or reconstruct movement
+    // from screen coordinates: the browser can recenter its hidden OS cursor.
+    const motionEvent = 'mousemove'
     const onMouseMove = (e: MouseEvent) => {
+      if ('pointerType' in e && e.pointerType !== 'mouse') return
+      look.locked=rawCaptureReady&&document.pointerLockElement===canvas
+      const active=!isMobile&&look.locked&&document.hasFocus()&&!document.hidden&&
+        screenRef.current==='game'&&overlayRef.current==='none'&&!engine.paused&&cutRef.current===null
+      const delta=mouseLook.read(e,active)
+      if(!delta)return
       const wheel = squirtWheelRef.current
       if (wheel) {
-        const nextX = wheel.cursorX + e.movementX
-        const nextY = wheel.cursorY + e.movementY
+        const nextX = wheel.cursorX + delta.x
+        const nextY = wheel.cursorY + delta.y
         const length = Math.hypot(nextX, nextY)
         const maxRadius = 108
         const scale = length > maxRadius ? maxRadius / length : 1
@@ -605,9 +713,8 @@ function Game() {
         if (selected !== wheel.selected) audio.uiTick()
         return
       }
-      if (!look.locked) return
-      look.yaw -= e.movementX * 0.0024 * sensRef.current
-      look.pitch = Math.max(-1.2, Math.min(1.2, look.pitch - e.movementY * 0.0022 * sensRef.current))
+      look.yaw -= delta.x * 0.0024 * sensRef.current
+      look.pitch = Math.max(-1.2, Math.min(1.2, look.pitch - delta.y * 0.0022 * sensRef.current))
     }
     // v18：离散动作（攻击/快捷使用/交互/手电/跳跃）按绑定码触发，鼠标与滚轮共用
     const fireDiscrete = (code: string) => {
@@ -627,7 +734,7 @@ function Game() {
     // 鼠标按键（仅在指针锁定游戏中触发；未锁定时的点击用于锁定不触发动作）
     const onMouseDown = (e: MouseEvent) => {
       if (!look.locked) return
-      if (screenRef.current !== 'game' || overlayRef.current !== 'none') return
+      if (portraitBlockedRef.current || screenRef.current !== 'game' || overlayRef.current !== 'none') return
       fireDiscrete(`Mouse${e.button}`)
     }
     // 屏蔽右键菜单（游戏中右键默认用作快捷使用）
@@ -637,7 +744,7 @@ function Game() {
     // 滚轮：先分发给绑定到 WheelUp/WheelDown 的动作，再循环切换快捷栏选中格
     const onWheel = (e: WheelEvent) => {
       if (!look.locked) return
-      if (screenRef.current !== 'game' || overlayRef.current !== 'none') return
+      if (portraitBlockedRef.current || screenRef.current !== 'game' || overlayRef.current !== 'none') return
       fireDiscrete(e.deltaY < 0 ? 'WheelUp' : 'WheelDown')
       const dir = e.deltaY > 0 ? 1 : -1
       engine.player.selected = (engine.player.selected + dir + engine.player.hotbar.length) % engine.player.hotbar.length
@@ -645,45 +752,133 @@ function Game() {
     }
     canvas.addEventListener('click', onClick)
     document.addEventListener('pointerlockchange', onLockChange)
-    window.addEventListener('mousemove', onMouseMove)
+    window.addEventListener('blur',onFocusChange)
+    window.addEventListener('focus',onFocusChange)
+    document.addEventListener('visibilitychange',onFocusChange)
+    window.addEventListener(motionEvent, onMouseMove)
     window.addEventListener('mousedown', onMouseDown)
     window.addEventListener('contextmenu', onContextMenu)
     window.addEventListener('wheel', onWheel, { passive: true })
 
+    onLockChange()
+    return () => {
+      disposed = true
+      canvas.removeEventListener('click', onClick)
+      document.removeEventListener('pointerlockchange', onLockChange)
+      window.removeEventListener('blur',onFocusChange)
+      window.removeEventListener('focus',onFocusChange)
+      document.removeEventListener('visibilitychange',onFocusChange)
+      window.removeEventListener(motionEvent, onMouseMove)
+      window.removeEventListener('mousedown', onMouseDown)
+      window.removeEventListener('contextmenu', onContextMenu)
+      window.removeEventListener('wheel', onWheel)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // 主循环（Three.js 第一人称渲染）
+  useEffect(() => {
+    const canvas = canvasRef.current!
+    const renderer = getRenderer(canvas)
+    rendererRef.current = renderer
+    renderer.setResolutionMode(settingsRef.current.renderResolution)
+    // 诊断钩子（自动化测试用）：暴露渲染器与 THREE 构造器
+    ;(window as unknown as { __renderer: typeof renderer }).__renderer = renderer
+    ;(window as unknown as { __THREE: typeof THREE }).__THREE = THREE
+    let raf = 0
+    let last = performance.now()
+    let hudAcc = 0
+    let frameTimes: number[] = []
+    let resScale = 1
+    let resolutionKey = ''
+    let pendingMap: typeof engine.map = null
+    let waitingForMap = false
+    let resolutionChangedAt = 0
+
+    const resize = () => {
+      const settings = settingsRef.current
+      renderer.setResolutionMode(settings.renderResolution)
+      const nativeDpr = Math.min(window.devicePixelRatio || 1, Math.max(.75, Math.min(2, settings.maxPixelRatio)))
+      const targetHeight = settings.renderResolution === '720p' ? 720
+        : settings.renderResolution === '480p_retro' ? 360
+          : settings.renderResolution === '320p_ps1' ? 180
+            : 0
+      const baseScale = Math.max(0.5, Math.min(1, settings.renderScale / 100))
+      const dpr = targetHeight > 0
+        ? Math.max(0.05, Math.min(nativeDpr, targetHeight / Math.max(1, window.innerHeight)))
+        : nativeDpr * baseScale * resScale
+      renderer.resize(window.innerWidth, window.innerHeight, dpr)
+      canvas.style.width = '100%'
+      canvas.style.height = '100%'
+      canvas.style.imageRendering = settings.renderResolution === '480p_retro' || settings.renderResolution === '320p_ps1' ? 'pixelated' : 'auto'
+    }
+    resize()
+    window.addEventListener('resize', resize)
+
     // 标题吸引模式地图
     let attractMap: ReturnType<typeof generateLevel> | null = null
+    let attractPreparing = false
+    let alive = true
 
     const loop = (now: number) => {
       raf = requestAnimationFrame(loop)
+      const settings = settingsRef.current
       const dt = (now - last) / 1000
       last = now
+      if (document.hidden) { frameTimes = []; return }
+      const nextResolutionKey = `${settings.renderResolution}:${settings.renderScale}:${settings.maxPixelRatio}:${settings.dynamicRes}:${settings.dynamicResTarget}`
+      if (nextResolutionKey !== resolutionKey) {
+        resolutionKey = nextResolutionKey; resScale = 1; frameTimes = []; resize()
+      }
       // 动态分辨率
-      if (settings.renderResolution === 'native' && settings.dynamicRes) {
+      if (settings.renderResolution === 'native' && settings.dynamicRes && dt < .25 && !loadingRef.current && !waitingForMap && !engine.transition) {
         frameTimes.push(now)
         if (frameTimes.length > 30) {
           const avg = (frameTimes[frameTimes.length - 1] - frameTimes[0]) / (frameTimes.length - 1)
           const minScale = engine.player.level === 5 ? 0.5 : 0.6
           const frameBudget = 1000 / settings.dynamicResTarget
-          if (avg > frameBudget * 1.12 && resScale > minScale) { resScale = Math.max(minScale, resScale - 0.1); resize() }
-          else if (avg < frameBudget * 0.84 && resScale < 1) { resScale = Math.min(1, resScale + 0.05); resize() }
+          if (avg > frameBudget * 1.12 && resScale > minScale && now - resolutionChangedAt > 900) {
+            resScale = Math.max(minScale, resScale - 0.1); resolutionChangedAt = now; resize()
+          } else if (avg <= frameBudget * 1.04 && resScale < 1 && now - resolutionChangedAt > 5000) {
+            // A 60 Hz display cannot reach the old 0.84 × 60 fps threshold.
+            // Probe recovery slowly; sustained overload backs down on the next window.
+            resScale = Math.min(1, resScale + 0.05); resolutionChangedAt = now; resize()
+          }
           frameTimes = []
         }
-      }
+      } else frameTimes = []
 
       const paused = overlayRef.current !== 'none' && overlayRef.current !== 'death' && overlayRef.current !== 'victory'
       // v23：过场演出播放中、且引擎的层级切换已完成 → 冻结操作，等过场放完再交还控制权
       const cine = cutRef.current !== null && engine.transition === null
-      engine.paused = paused || screenRef.current !== 'game' || cine
+      // Give the title/cut animation exclusive frame time while it enters or
+      // leaves. World preparation runs only under the fully presented card.
+      const presenting = (cutRef.current !== null && cutStageRef.current !== 'loading')
+        || (screenRef.current === 'intro' && introPhaseRef.current !== 'holding')
+      if (engine.map !== pendingMap) { pendingMap = engine.map; waitingForMap = true }
+      if (waitingForMap && renderer.isNearWorldReady(engine)) waitingForMap = false
+      engine.paused = portraitBlockedRef.current || paused || screenRef.current !== 'game' || cine || waitingForMap || presenting
+      if (presenting) return
 
       if (screenRef.current === 'title' || screenRef.current === 'design') {
         // 吸引模式：L0 出生点缓慢环视（v54：设计模式全屏覆盖，背景同走吸引模式，引擎保持暂停）
-        if (!attractMap) attractMap = generateLevel(LEVELS[0], 1337)
+        if (!attractMap && !attractPreparing) {
+          attractPreparing = true
+          void prepareChunkWindow(LEVELS[0], 1337).then(() => {
+            if (alive && (screenRef.current === 'title' || screenRef.current === 'design')) {
+              attractMap = generateLevel(LEVELS[0], 1337)
+            }
+          }).finally(() => { attractPreparing = false })
+        }
+        if (!attractMap) return
         look.yaw += dt * 0.18
         look.pitch = Math.sin(now / 4000) * 0.08
         const savedMap = engine.map
+        const savedLevel = engine.player.level
         const px = engine.player.x, py = engine.player.y
         const fl = engine.player.flashlight
         engine.map = attractMap
+        engine.player.level = 0
         engine.player.x = attractMap.spawn.x + 0.5
         engine.player.y = attractMap.spawn.y + 0.5
         engine.player.flashlight = true
@@ -691,29 +886,36 @@ function Game() {
         engine.player.x = px; engine.player.y = py
         engine.player.flashlight = fl
         engine.map = savedMap
+        engine.player.level = savedLevel
       } else {
         renderer.applyView(engine)
         engine.update(dt)
+        if ((cutRef.current && cutStageRef.current !== 'loading')
+          || (screenRef.current === 'intro' && introPhaseRef.current !== 'holding')) return
         mpSessionRef.current?.tick(engine, dt) // v58：联机状态同步（12Hz）
         renderer.render(canvas, engine, { grain: settings.grain, flicker: settings.flicker / 100, shake: settings.shake }, dt)
+        // loadLevel can replace the map inside update(). Publish readiness for
+        // that exact map immediately, independently of the throttled HUD rate.
+        if (engine.map !== pendingMap) { pendingMap = engine.map; waitingForMap = true }
+        if (waitingForMap || screenRef.current === 'intro' || (cutRef.current && !engine.transition)) {
+          waitingForMap = !renderer.isNearWorldReady(engine)
+        }
+        updateWorldLoading(waitingForMap || !!engine.transition)
       }
 
       hudAcc += dt
-      if (hudAcc > 0.12) { hudAcc = 0; setTick((n) => n + 1) }
+      if (hudAcc > 1 / settings.hudRefreshRate) {
+        hudAcc = 0; setTick((n) => n + 1)
+      }
     }
     raf = requestAnimationFrame(loop)
     return () => {
+      alive = false
       cancelAnimationFrame(raf)
       window.removeEventListener('resize', resize)
-      canvas.removeEventListener('click', onClick)
-      document.removeEventListener('pointerlockchange', onLockChange)
-      window.removeEventListener('mousemove', onMouseMove)
-      window.removeEventListener('mousedown', onMouseDown)
-      window.removeEventListener('contextmenu', onContextMenu)
-      window.removeEventListener('wheel', onWheel)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [settings.grain, settings.flicker, settings.shake, settings.dynamicRes, settings.dynamicResTarget, settings.renderResolution, settings.renderScale])
+  }, [])
 
   // 画面设置：手电实时阴影（移动端强制关闭）
   useEffect(() => {
@@ -737,9 +939,13 @@ function Game() {
     r.setFov(settings.cameraFov)
     r.setTextureQuality(settings.textureQuality)
     r.setDetailDistance(settings.detailDistance / 100)
+    r.setWallOcclusion(settings.wallOcclusion)
     r.setParticleDensity(settings.particleDensity / 100)
     r.setShadowUpdateRate(settings.shadowUpdateRate)
-  }, [settings.cameraFov, settings.textureQuality, settings.detailDistance, settings.particleDensity, settings.shadowUpdateRate])
+    r.setSceneLightLimit(settings.sceneLightLimit)
+    r.setChunkBudget(settings.chunkBudgetMs)
+    r.setLoadingBudget(settings.loadingBudgetMs)
+  }, [settings.cameraFov, settings.textureQuality, settings.detailDistance, settings.wallOcclusion, settings.particleDensity, settings.shadowUpdateRate, settings.sceneLightLimit, settings.chunkBudgetMs, settings.loadingBudgetMs])
 
   // 画面设置：距离雾远近 / 远处灯光全开
   useEffect(() => {
@@ -786,6 +992,9 @@ function Game() {
     engine.mpMapSeed = null
     engine.mpSpawnSlot = null
     engine.over = true
+    cutRef.current = null
+    setCut(null)
+    pendingIntro.current = false
     audio.stopHum()
     audio.stopRain() // v54：L4 雨声随退出停止
     audio.stopBGM()
@@ -817,7 +1026,8 @@ function Game() {
   } as CSSProperties
 
   return (
-    <div data-ui={settings.uiPresentation} className={`br-app fixed inset-0 overflow-hidden ${settings.grain ? 'vhs-grain scanlines' : 'scanlines'} ${customPause ? 'br-hide-hud-pause' : ''}`} style={appStyle}>
+    <>
+    <div inert={portraitBlocked} data-ui={settings.uiPresentation} className={`br-app fixed inset-0 overflow-hidden ${settings.grain ? 'vhs-grain scanlines' : 'scanlines'} ${customPause ? 'br-hide-hud-pause' : ''}`} style={appStyle}>
       <canvas
         ref={canvasRef}
         style={{
@@ -870,13 +1080,18 @@ function Game() {
       {/* 出口过渡动画（v23：切入切出过场演出）*/}
       {cut && (
         <Cutscene
+          key={cut.id}
           kind={cut.kind}
+          levelId={cut.levelId}
           cutIn={cut.cutIn}
           toName={cut.toName}
           caption={cut.caption}
+          ready={!worldLoading}
+          onStageChange={(stage) => { cutStageRef.current = stage }}
           onDone={() => {
+            cutRef.current = null
             setCut(null)
-            if (pendingIntro.current) { pendingIntro.current = false; setScreen('intro') }
+            if (pendingIntro.current) { pendingIntro.current = false; introPhaseRef.current = 'presenting'; screenRef.current = 'intro'; setScreen('intro') }
           }}
         />
       )}
@@ -897,11 +1112,21 @@ function Game() {
       {/* 层级进入卡 */}
       {screen === 'intro' && (
         <LevelIntro
+          key={engine.mapRev}
           level={levelNo(levelDef.id)}
+          levelId={levelDef.id}
           name={levelDef.name}
           flavor={levelDef.flavor}
           seed={engine.seed}
-          onDone={() => { setScreen('game'); engine.paused = false }}
+          ready={!worldLoading}
+          onPhaseChange={(phase) => { introPhaseRef.current = phase }}
+          onDone={() => {
+            if (worldLoadingRef.current || !rendererRef.current?.isNearWorldReady(engine)) {
+              updateWorldLoading(true)
+              return
+            }
+            setScreen('game')
+          }}
         />
       )}
 
@@ -913,6 +1138,9 @@ function Game() {
         />
       )}
 
+      {screen === 'game' && worldLoading && !cut && (
+        <div className="fixed inset-0 z-[65] flex items-center justify-center bg-black/90 text-amber-100" role="status">正在准备附近场景…</div>
+      )}
       {screen === 'game' && overlay === 'none' && !hudHidden && <CareerTracker />}
       {/* HUD（v54：沉浸模式 F1 隐藏整层；战利品面板等覆盖 UI 不受影响） */}
       {screen === 'game' && overlay !== 'death' && overlay !== 'victory' && !hudHidden && (
@@ -947,7 +1175,7 @@ function Game() {
         <DialogOverlay npcId={dialogId} onClose={() => setOverlay('none')} />
       )}
       <FullscreenHint />
-      {screen === 'game' && isMobile && overlay === 'none' && !hudHidden && (
+      {screen === 'game' && isMobile && !portraitBlocked && overlay === 'none' && !hudHidden && (
         <TouchControls
           engine={engine}
           settings={settings}
@@ -1015,7 +1243,8 @@ function Game() {
         />
       )}
       {overlay === 'radio' && <RadioOverlay onClose={() => setOverlay('pause')} />}
-      {overlay === 'inventory' && <InventoryOverlay engine={engine} onClose={() => setOverlay('none')} initialTab={invTab} />}
+      {overlay === 'facility' && <FacilityPanel faction={facilityFaction} onClose={()=>setOverlay('none')}/>}
+      {overlay === 'inventory' && <InventoryOverlay key={factionPage??'all'} engine={engine} onClose={() => {setOverlay('none');setFactionPage(undefined)}} initialTab={invTab} initialFaction={factionPage} />}
       {overlay === 'codex' && <InventoryOverlay engine={engine} onClose={() => setOverlay('none')} codexOnly />}
       {overlay === 'death' && (
         <DeathScreen
@@ -1033,6 +1262,8 @@ function Game() {
         />
       )}
     </div>
+    {portraitBlocked && <PortraitNotice onIgnore={() => setPortraitDismissed(true)} />}
+    </>
   )
 }
 

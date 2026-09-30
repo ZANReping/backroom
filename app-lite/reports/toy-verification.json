@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "checks": [
+    "production: legacy MIDI normalized, procedural-only settings, SDK failure fallback",
+    "production: invitation opens lobby and prefills code without automatic connection",
+    "synced Levels 2/3/4/8/11 become playable after scene warmup; chunk worker loads; no missing local resources",
+    "production: start game, procedural musician, death report, PNG download, no music downloads or JS errors",
+    "mock SDK: report shares a relative path; generated PNG fits 2MB base64 target",
+    "mock SDK: safe area/viewport applied, confirmed mode change, no false success on missing callback, invalid links rejected",
+    "mock lobby: closed room error, host invitation/QR path, share rejection, forced procedural audio without network",
+    "production: new portrait notice respects Toy orientation and allows immersive entry or ignore",
+    "production: report landing displays shared data and returns to title without loading a save"
+  ],
+  "realBilibiliClientTested": false
+}

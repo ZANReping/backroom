@@ -1,5 +1,7 @@
 # Level 1 据点实现与来源记录
 
+2026-09-10：商人之家由 `content/bntgBlueprint.ts` 独立定义；注册构件来自 `content/tradeDecor.ts`，模型来自 `renderer/tradeMeshes.ts`，现场任务和盘点状态来自 `engine/bntg.ts`。所有团体晋升已迁至图鉴详情页，`CareerPanel` 不再属于 NPC 对话；`FacilityPanel` 承载现场工序。最新变更及验收边界以 `info.md` 顶部记录为准；下文旧版截图与性能记录不代表本轮商人之家。
+
 ## 文件入口
 
 | 数据或功能 | 文件 |

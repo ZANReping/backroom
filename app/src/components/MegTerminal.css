@@ -1,0 +1,184 @@
+.meg-terminal {
+  --meg-accent: #a5a45a;
+  --meg-text: #e2e3c9;
+  --meg-dim: #a5ad94;
+  --meg-edge: #444b32;
+  color: var(--meg-text);
+  background: #10150f;
+  border: 1px solid var(--meg-accent);
+  box-shadow: 0 10px 50px #0005, inset 0 0 80px #a5a45a05;
+  font-family: 'Consolas', 'Cascadia Mono', 'Noto Sans SC', monospace;
+  font-size: 12px;
+  line-height: 1.65;
+  isolation: isolate;
+  overflow: hidden;
+  text-align: left;
+}
+.meg-terminal * { box-sizing: border-box; }
+.meg-terminal button, .meg-terminal input, .meg-terminal select { font: inherit; }
+.meg-terminal button, .meg-terminal summary { cursor: pointer; }
+.meg-terminal button:focus-visible, .meg-terminal a:focus-visible, .meg-terminal summary:focus-visible,
+.meg-terminal input:focus-visible, .meg-terminal select:focus-visible, .meg-terminal [role=tabpanel]:focus-visible { outline: 2px solid #e5e7a2; outline-offset: 3px; }
+.meg-header { padding: 24px 28px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--meg-edge); background: linear-gradient(115deg, #222919, #10150f 70%); }
+.meg-brand { display: flex; align-items: center; gap: 16px; min-width: 0; }
+.meg-brand > img { width: 66px; height: 66px; object-fit: contain; }
+.meg-terminal .meg-eyebrow { color: var(--meg-accent); font-size: 10px; letter-spacing: .12em; margin: 0; }
+.meg-brand h2 { color: var(--meg-text); margin: 3px 0 0; font-family: inherit; font-size: 32px; line-height: 1.2; font-weight: 800; letter-spacing: .07em; }
+.meg-brand h2 span { font-size: 13px; display: inline-block; margin-left: 16px; font-weight: 400; letter-spacing: .12em; }
+.meg-connection { color: var(--meg-accent); text-align: right; font-size: 10px; flex-shrink: 0; }
+.meg-connection small { display: block; color: var(--meg-dim); font-size: 8px; letter-spacing: .07em; margin-top: 7px; }
+.meg-command { padding: 9px 28px; color: var(--meg-dim); font-size: 10px; border-bottom: 1px solid var(--meg-edge); background: #090e09; }
+.meg-command span { color: var(--meg-accent); margin-right: 10px; }
+.meg-command b { color: var(--meg-accent); margin-left: 6px; }
+.meg-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 1px solid var(--meg-edge); }
+.meg-tabs > button { min-height: 72px; display: flex; align-items: center; gap: 13px; padding: 14px 24px; text-align: left; border: 0; border-right: 1px solid var(--meg-edge); background: #161c12; color: var(--meg-dim); position: relative; }
+.meg-tabs > button:last-child { border-right: 0; }
+.meg-tabs > button:hover { background: #252d1b; }
+.meg-tabs > button[aria-selected=true] { background: #a5a45a18; color: #e9eab7; box-shadow: inset 0 -3px var(--meg-accent); }
+.meg-tabs > button > span:nth-child(2) { font-size: 15px; }
+.meg-tabs small { display: block; font-size: 9px; letter-spacing: .08em; opacity: .8; }
+.meg-tab-index { color: var(--meg-accent); font-size: 11px; }
+.meg-tab-marker { margin-left: auto; opacity: .35; }
+.meg-tabs [aria-selected=true] .meg-tab-marker { opacity: 1; }
+.meg-content { padding: 26px 28px; min-height: 460px; }
+.meg-section-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 22px; }
+.meg-section-heading h3 { font-family: inherit; font-size: 20px; font-weight: 600; line-height: 1.5; margin: 3px 0 0; letter-spacing: .1em; }
+.meg-stamp { border: 1px solid var(--meg-edge); color: var(--meg-accent); padding: 4px 10px; font-size: 10px; white-space: nowrap; }
+.meg-id-card { display: grid; grid-template-columns: 172px minmax(0, 1fr); gap: 30px; padding: 22px; border: 1px solid var(--meg-edge); background: repeating-linear-gradient(0deg, transparent 0 3px, #fff01 3px 4px), linear-gradient(120deg, #202719, #151b12); }
+.meg-photo { position: relative; height: 222px; overflow: hidden; border: 1px solid #71784b; background: repeating-linear-gradient(0deg, #b9bb8810 0 1px, transparent 1px 4px), radial-gradient(ellipse at 50% 30%, #505d3b, #202b1b); }
+.meg-photo::after { content: ''; position: absolute; inset: 0; box-shadow: inset 0 0 20px #090f1260; pointer-events: none; }
+.meg-photo img { display: block; width: 100%; height: 100%; object-fit: cover; filter: sepia(.3) saturate(.68); }
+.meg-photo-corner, .meg-photo-caption { position: absolute; z-index: 1; left: 8px; font-size: 8px; letter-spacing: .07em; color: #e2e3b6; }
+.meg-photo-corner { top: 7px; }
+.meg-photo-caption { bottom: 0; left: 0; right: 0; padding: 5px; text-align: center; background: #111b12dd; font-size: 7px; }
+.meg-barcode { height: 21px; margin: 13px 0 5px; opacity: .6; background: repeating-linear-gradient(90deg, var(--meg-accent) 0 1px, transparent 1px 3px, var(--meg-accent) 3px 6px, transparent 6px 8px, var(--meg-accent) 8px 10px, transparent 10px 15px, var(--meg-accent) 15px 16px, transparent 16px 19px); }
+.meg-record-id { display: block; color: var(--meg-dim); font-size: 9px; letter-spacing: .1em; text-align: center; overflow-wrap: anywhere; }
+.meg-id-content { min-width: 0; }
+.meg-id-content h4 { font-size: 27px; font-weight: 500; margin: 7px 0 0; letter-spacing: .05em; overflow-wrap: anywhere; }
+.meg-terminal .meg-muted { color: var(--meg-dim); font-size: 11px; margin: 5px 0 12px; }
+.meg-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 18px 0; gap: 16px 12px; }
+.meg-fields dt { color: var(--meg-dim); font-size: 9px; margin-bottom: 4px; }
+.meg-fields dd { margin: 0; font-size: 14px; overflow-wrap: anywhere; }
+.meg-field-wide { grid-column: 1 / -1; border-top: 1px solid var(--meg-edge); padding-top: 12px; }
+.meg-fields .meg-position { color: #c7cc80; font-size: 17px; }
+.meg-terminal .meg-button { border: 1px solid #656f44; background: #232c19; color: #d6dcaf; min-height: 36px; padding: 6px 14px; transition: background .15s; }
+.meg-terminal .meg-button:hover { background: #364126; }
+.meg-terminal .meg-button-primary, .meg-terminal .meg-button[aria-pressed=true] { color: #12180d; background: var(--meg-accent); }
+.meg-profile-form { padding: 20px; margin-top: 12px; border: 1px solid var(--meg-accent); background: #1b2417; }
+.meg-form-fields { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 14px; margin: 14px 0; }
+.meg-form-fields label { display: flex; flex-direction: column; gap: 5px; color: var(--meg-dim); font-size: 11px; }
+.meg-terminal input, .meg-terminal select { width: 100%; min-width: 0; min-height: 38px; color: var(--meg-text); border: 1px solid #646e45; background: #0f160e; padding: 7px 9px; border-radius: 0; }
+.meg-terminal input::placeholder { color: #929a7d; }
+.meg-actions { display: flex; gap: 10px; }
+.meg-error { color: #efa48f; }
+.meg-reputation { margin: 20px 0; border-left: 2px solid var(--meg-accent); padding: 0 0 0 16px; }
+.meg-reputation > div { display: flex; justify-content: space-between; align-items: baseline; }
+.meg-reputation strong { font-size: 22px; color: var(--meg-accent); }
+.meg-reputation p { margin: 6px 0 2px; font-size: 11px; }
+.meg-reputation small { color: var(--meg-dim); font-size: 9px; }
+.meg-reputation meter { width: 100%; height: 7px; display: block; margin: 5px 0; accent-color: var(--meg-accent); }
+.meg-reputation meter::-webkit-meter-bar { background: #303823; border: 0; border-radius: 0; }
+.meg-reputation meter::-webkit-meter-optimum-value { background: var(--meg-accent); }
+.meg-career { border-top: 1px solid var(--meg-edge); margin-top: 22px; padding-top: 14px; }
+.meg-career summary { color: #cdd1a0; font-size: 12px; }
+.meg-career summary span { color: var(--meg-dim); font-size: 10px; margin-left: 12px; }
+.meg-career .menu-btn { border-color: var(--meg-edge); color: var(--meg-text); }
+.meg-career p, .meg-career li { font-size: 12px; }
+.meg-filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0; }
+.meg-empty { padding: 42px 16px; text-align: center; border: 1px dashed var(--meg-edge); color: var(--meg-dim); }
+.meg-empty > span { font-size: 30px; color: var(--meg-accent); }
+.meg-empty h4 { font-size: 16px; color: #d4d7b1; margin: 10px 0; }
+.meg-empty p { margin: 7px 0; font-size: 11px; }
+.meg-quest-list { display: grid; gap: 14px; }
+.meg-quest { padding: 18px 20px; border: 1px solid var(--meg-edge); background: #192114; }
+.meg-quest-top, .meg-progress-label { display: flex; justify-content: space-between; align-items: center; gap: 14px; }
+.meg-status { color: var(--meg-dim); font-size: 10px; white-space: nowrap; }
+.meg-status.is-ready, .meg-ready-note { color: #d3d995; }
+.meg-quest h4, .meg-route h4 { font-size: 16px; margin: 10px 0 8px; color: #dce0bd; }
+.meg-quest p { font-size: 12px; margin: 6px 0 12px; }
+.meg-progress-label { font-size: 10px; color: var(--meg-dim); margin-top: 18px; }
+.meg-progress-label strong { font-weight: 400; color: var(--meg-accent); }
+.meg-quest progress { display: block; width: 100%; height: 4px; border: 0; accent-color: var(--meg-accent); margin: 8px 0 16px; }
+.meg-quest progress::-webkit-progress-bar { background: #343c26; }
+.meg-quest progress::-webkit-progress-value { background: var(--meg-accent); }
+.meg-quest progress::-moz-progress-bar { background: var(--meg-accent); }
+.meg-quest-bottom { border-top: 1px solid var(--meg-edge); padding-top: 10px; display: flex; flex-direction: column; gap: 4px; color: var(--meg-dim); font-size: 10px; }
+.meg-route { padding: 18px 20px; margin-top: 20px; border: 1px dashed var(--meg-edge); }
+.meg-search { display: flex; align-items: center; gap: 12px; margin: 14px 0 20px; color: var(--meg-dim); font-size: 11px; }
+.meg-search input { flex: 1; }
+.meg-contact-list { display: grid; gap: 14px; }
+.meg-contact { display: flex; align-items: flex-start; gap: 18px; padding: 18px; border: 1px solid var(--meg-edge); background: linear-gradient(100deg, #1e2818, #12190f); }
+.meg-contact > img { flex-shrink: 0; background: #303c25; border-bottom: 2px solid var(--meg-accent); }
+.meg-contact-copy { flex: 1; min-width: 0; }
+.meg-contact-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.meg-contact-heading strong { font-size: 16px; color: #dedfc0; }
+.meg-chat-log { max-height: 260px; overflow-y: auto; }
+.meg-chat-message > span:first-child { display: block; margin-bottom: 3px; }
+.meg-contact h3 { font-size: 16px; color: #dedfc0; margin: 0 0 3px; }
+.meg-contact p { font-size: 11px; margin: 5px 0; overflow-wrap: anywhere; }
+.meg-chat { border-top: 1px solid var(--meg-edge); margin-top: 12px; padding-top: 8px; }
+.meg-chat summary { color: var(--meg-accent); font-size: 11px; }
+.meg-chat-message { padding: 8px 10px; margin-top: 8px; border-left: 2px solid var(--meg-edge); background: #090f08; white-space: pre-wrap; overflow-wrap: anywhere; }
+.meg-chat-player { border-color: var(--meg-accent); background: #2c361d; }
+.meg-footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 12px 28px; border-top: 1px solid var(--meg-edge); color: var(--meg-dim); font-size: 9px; letter-spacing: .05em; background: #0c110a; }
+.meg-footer a { color: var(--meg-accent); text-underline-offset: 3px; }
+.meg-mission-journal { margin-bottom: 32px; padding-bottom: 28px; border-bottom: 1px solid var(--meg-accent); }
+.meg-dossiers { display: grid; gap: 10px; margin-top: 18px; }
+.meg-dossier { border: 1px solid #41432d; background: #12150f; }
+.meg-dossier.is-tracked { border-color: var(--meg-accent); }
+.meg-dossier > summary { padding: 16px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; cursor: pointer; }
+.meg-dossier > summary strong { flex: 1; min-width: 130px; font-size: 17px; color: #e1e2c7; }
+.meg-dossier > summary::after { content: '+'; color: var(--meg-accent); }
+.meg-dossier[open] > summary::after { content: '−'; }
+.meg-dossier-body { padding: 0 18px 18px; line-height: 1.8; font-size: 13px; }
+.meg-dossier-body > p { margin: 10px 0; }
+.meg-current-stage { margin: 18px 0; padding: 15px; background: #1d2116; border-left: 2px solid var(--meg-accent); }
+.meg-current-stage .meg-button { margin-top: 12px; }
+.meg-stage-list { list-style: none; margin: 16px 0; padding: 0; display: grid; gap: 12px; }
+.meg-stage-list li { display: flex; gap: 12px; color: #8d9480; }
+.meg-stage-list li > span { font-family: monospace; width: 22px; flex-shrink: 0; }
+.meg-stage-list li small { display: block; font-size: 11px; }
+.meg-stage-list .is-current { color: #e1e2c7; }
+.meg-stage-list .is-done { color: var(--meg-accent); }
+.meg-ending { padding: 12px 16px; border-left: 2px solid var(--meg-accent); background: #202416; }
+.meg-promotion { padding-top: 12px; }
+.meg-dossier summary:focus-visible { outline: 2px solid var(--meg-accent); outline-offset: 2px; }
+@media (max-width: 640px) {
+  .meg-header { padding: 18px 16px; flex-wrap: wrap; gap: 10px; }
+  .meg-brand > img { width: 46px; height: 46px; }
+  .meg-brand { gap: 10px; }
+  .meg-brand h2 { font-size: 25px; }
+  .meg-brand h2 span { font-size: 11px; margin-left: 10px; }
+  .meg-connection { width: 100%; text-align: left; padding-left: 56px; }
+  .meg-connection small { display: none; }
+  .meg-command { padding: 8px 16px; font-size: 9px; }
+  .meg-tabs > button { min-height: 66px; padding: 12px 10px; gap: 7px; }
+  .meg-tabs small { font-size: 7px; letter-spacing: 0; }
+  .meg-tab-marker { display: none; }
+  .meg-content { padding: 20px 16px; min-height: 380px; }
+  .meg-id-card { padding: 16px; gap: 18px; grid-template-columns: 110px minmax(0, 1fr); }
+  .meg-photo { height: 154px; }
+  .meg-photo-caption { font-size: 5px; }
+  .meg-id-content h4 { font-size: 21px; }
+  .meg-id-content > .meg-eyebrow { font-size: 8px; letter-spacing: 0; }
+  .meg-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+  .meg-fields > div:first-child { grid-column: 1 / -1; }
+  .meg-fields dd { font-size: 12px; }
+  .meg-fields .meg-position { font-size: 14px; }
+  .meg-form-fields { grid-template-columns: 1fr 1fr; }
+  .meg-form-fields label:first-child { grid-column: 1 / -1; }
+  .meg-contact { padding: 14px 10px; gap: 12px; }
+  .meg-quest { padding: 16px 12px; }
+  .meg-footer { padding: 12px 16px; }
+  .meg-footer > span:last-child { display: none; }
+}
+@media (max-width: 420px) {
+  .meg-id-card { grid-template-columns: 1fr; }
+  .meg-photo-column { width: 142px; margin: 0 auto; }
+  .meg-photo { height: 188px; }
+  .meg-fields { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .meg-fields > div:first-child { grid-column: auto; }
+  .meg-tabs > button { gap: 5px; padding: 10px 7px; }
+  .meg-section-heading { gap: 8px; }
+  .meg-stamp { font-size: 9px; padding: 3px 6px; }
+}
