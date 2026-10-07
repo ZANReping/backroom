@@ -1,3 +1,6 @@
+import {isAlphaKind} from '../content/alphaDecor'
+import {buildAlphaDecor} from './alphaMeshes'
+import {buildL0Furniture} from './l0Furniture'
 import {buildL4Structure} from './l4Meshes'
 import { buildL5Structure, buildL5Registered } from './l5Meshes'
 import { isL5DecorKind } from '../content/l5Decor'
@@ -1133,6 +1136,8 @@ function hangingCeil(s: Structure, m: GameMap, H: number): number {
 
 // ---------- 结构低模 ----------
 export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: number): THREE.Object3D | null {
+  if(_def.id===0){const furniture=buildL0Furniture(s);if(furniture)return furniture}
+  if(isAlphaKind(s.kind))return m.settlement?.blueprint.id==='alpha'?null:buildAlphaDecor(s)
   if(isTradeKind(s.kind))return m.settlement?.blueprint.decorations&&s.kind!=='trade_anomaly'?null:buildTradeDecor(s)
   if(s.kind === 'settlementprop') return null
   if(s.kind === 'settlementstation') return buildSettlementStation(s)
@@ -1893,11 +1898,11 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       // v9 朝向约定：门板平面与所在墙线平行（水平墙线→面朝南北；垂直墙线→整体旋转 90° 面朝东西）
       // v10 修复：① dbl 双开门两扇镜像（铰链各在外缘、对开）② 开门方向=门洞内侧
       // （连通地板更多的一侧）③ 开门角收敛到 ~89°，门板尖端不再旋入侧墙
-      const rot = doorNeedsRotate(m, s)
+      const rot = s.data?.l0Door?Number(s.data.deg??0)*Math.PI/180:doorNeedsRotate(m, s)
       grp.rotation.y = rot
       const ax = Math.floor(s.x + s.w / 2), ay = Math.floor(s.y + s.h / 2)
       // 双开门镜像：搭档位于本体局部 -X 侧时，铰链移到 +X 缘、旋转取反
-      let mirror = false
+      let mirror = !!s.data?.l0Door
       if (s.data?.dbl) {
         const dblMate = (tx: number, ty: number) =>
           m.structures.some((o) => o !== s && (o.kind === 'hoteldoor' || o.kind === 'glassdoor') && !!o.data?.dbl
@@ -1920,7 +1925,8 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
         }
         return n
       }
-      const swingIn = floorNear(wzx, wzz) >= floorNear(-wzx, -wzz) ? 1 : -1
+      // L0 leaves sit at the outer face of the thick jamb and open into the ring.
+      const swingIn = s.data?.l0Door ? -1 : floorNear(wzx, wzz) >= floorNear(-wzx, -wzz) ? 1 : -1
       grp.userData.swing = swingIn * (mirror ? -1 : 1)
       // v41：门的颜色/材料各异（L2 废弃公共带：data.hue 0..4 门板/门框配色）
       const HUES: { panel: string; frame: string; inset: string }[] = [
@@ -1936,20 +1942,23 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       const doorPaint=l2?l2DoorMaterial(l2Variant,l2Hue):undefined
       const hue = l2 ? { panel: '#c8c7b9', frame: '#8b8d86', inset: '#b9bdba' }
         : sealed ? { panel: '#2e3238', frame: '#1c1e22', inset: '#26282c' } // 锁死：冷灰钢门
-        : s.data?.manila ? { panel: '#5a3b25', frame: '#28170e', inset: '#3a2417' }
+        : s.data?.manila ? { panel: '#876647', frame: '#64462e', inset: '#806041' }
           : s.data?.l9 ? { panel: '#5b3b26', frame: '#281b13', inset: '#3c2619' }
           : HUES[typeof s.data?.hue === 'number' ? s.data.hue % HUES.length : 0]
-      grp.add(box(0.14, 2.15, 0.24, hue.frame, -0.46, 1.07, 0))
-      grp.add(box(0.14, 2.15, 0.24, hue.frame, 0.46, 1.07, 0))
-      grp.add(box(1.06, 0.14, 0.24, hue.frame, 0, 2.2, 0))
+      const slim=!!s.data?.l0Door
+      grp.add(box(slim?.045:.14, 2.15, slim?.10:.24, hue.frame, slim?-.5075:-.46, 1.07, 0))
+      grp.add(box(slim?.045:.14, 2.15, slim?.10:.24, hue.frame, slim?.5075:.46, 1.07, 0))
+      grp.add(box(1.06, slim?.055:.14, slim?.10:.24, hue.frame, 0, slim?2.2425:2.2, 0))
       if(doorPaint)for(const child of grp.children){const mesh=child as THREE.Mesh;if(mesh.isMesh&&!Array.isArray(mesh.material)){mesh.material.dispose();mesh.material=doorPaint}}
-      const panel = s.data?.manila || s.data?.l9
+      const doorWood=s.data?.l0Door?litMaterial({map:levelTexture('l0-remake/door-wood.png',()=>noiseTexture('#765739','#62472e')),roughness:.76,envBase:.025}):undefined
+      const panel = doorWood ? new THREE.Mesh(new THREE.BoxGeometry(.99,2.21,.07),doorWood) : s.data?.manila || s.data?.l9
         ? s.data?.l9
           ? l9PbrBox(.88, 2.1, .07, 'l9_furniture_wood', '#85654c', '#806248', '#433326', .72, .62, .2, .42)
-          : texBox(0.88, 2.1, 0.07, 'crate_wood.jpg', '#624126', '#3b2517', '#806044', 0.72)
+          : texBox(0.88, 2.1, 0.07, 'crate_wood.jpg', '#624126', '#3b2517', '#e1c7a1', 0.72)
         : l2 ? new THREE.Mesh(new THREE.BoxGeometry(.88,2.1,.07),doorPaint) : box(0.88, 2.1, 0.07, hue.panel, 0, 0, 0)
-      panel.geometry.translate(mirror ? -0.44 : 0.44, 1.05, 0) // 铰链在左缘（镜像=右缘）
-      panel.position.set(mirror ? 0.44 : -0.44, 0, 0)
+      const halfLeaf=doorWood?.495:.44
+      panel.geometry.translate(mirror ? -halfLeaf : halfLeaf, doorWood?1.105:1.05, 0) // 铰链在左缘（镜像=右缘）
+      panel.position.set(mirror ? halfLeaf : -halfLeaf, 0, 0)
       panel.userData.lid = 1
       grp.add(panel)
       // 门板嵌板 + 把手（上锁=红，未锁=金；随镜像换侧）
@@ -1957,7 +1966,7 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       // 开门后两块嵌板留在门洞半空（「浮空两个长方体」）。
       // panel 网格原点在铰链缘（position.x = ±0.44），子件局部坐标需补偿该偏移；
       // 把手贴在开门侧（leading edge）而非旧版的铰链侧。
-      const hingeOff = mirror ? -0.44 : 0.44 // 子件局部 X 补偿：嵌板回到门面中央
+      const hingeOff = mirror ? -halfLeaf : halfLeaf // 子件局部 X 补偿：嵌板回到门面中央
       if (l2) addL2DoorDetails(panel, hingeOff, mirror, sealed,l2Variant,l2Hue,doorPaint)
       if (!l2) {
       const knob = glow(0.06, 0.06, 0.1, sealed ? '#3a3f46' : s.data?.locked ? '#c93a2e' : '#b08d46', 0, 0, 0)
@@ -1966,11 +1975,20 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       const knobB = glow(0.06, 0.06, 0.1, sealed ? '#3a3f46' : s.data?.locked ? '#c93a2e' : '#b08d46', 0, 0, 0)
       knobB.position.set(hingeOff + (mirror ? -0.3 : 0.3), 1.02, -0.05) // v54：背面把手（双面可见/可辨）
       panel.add(knobB)
+      if(doorWood){
+        // Six shallow framed panels on both sides, merged into one moving mesh.
+        const panels:THREE.BufferGeometry[]=[]
+        for(const z of [-.045,.045])for(const x of [-.19,.19])for(const [y,h]of [[.42,.55],[1.13,.58],[1.78,.40]]){
+          const g=new RoundedBoxGeometry(.30,h,.022,1,.009);g.translate(hingeOff+x,y,z);panels.push(g)
+        }
+        const merged=mergeGeometries(panels);panels.forEach(g=>g.dispose());if(merged)panel.add(new THREE.Mesh(merged,doorWood))
+      }else{
       panel.add(box(0.6, 0.8, 0.02, hue.inset, hingeOff, 1.55, 0.045))
       panel.add(box(0.6, 0.5, 0.02, hue.inset, hingeOff, 0.5, 0.045))
       // v54：背面嵌板对称——门板正反两面一致（把手此前已双面）
       panel.add(box(0.6, 0.8, 0.02, hue.inset, hingeOff, 1.55, -0.045))
       panel.add(box(0.6, 0.5, 0.02, hue.inset, hingeOff, 0.5, -0.045))
+      }
       if (sealed) {
         // 锁死的门（L2：锁的结构闻所未闻）——门扇焊死：交叉钢条 + 铆钉 + 门缝灌铅
         const bar1 = box(1.0, 0.09, 0.03, '#22252a', hingeOff, 1.05, 0.06)
@@ -1987,7 +2005,7 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       // 补门楣薄墙（墙色 + 顶部暗线），消除门洞上方与天花之间的缺口（多层/挑高区同规则）
       {
         const lintelH = Math.max(0, CH - 2.27)
-        if (lintelH > 0.01) {
+        if (lintelH > 0.01 && !s.data?.l0Door) {
           if(l2){
             const lintel=new THREE.Mesh(new THREE.BoxGeometry(1.06,lintelH,.24),l2Material(l2Variant,'wall'))
             lintel.position.y=2.27+lintelH/2;grp.add(lintel)
@@ -1997,6 +2015,7 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
           }
         }
       }
+      if (s.data?.l0Door) {for(const child of grp.children)child.position.z-=.44;grp.scale.x *= Math.max(s.w,s.h) / 1.06;grp.scale.y *= 2.13 / 2.27}
       break
     }
     case 'windowblack': case 'windowtrap': case 'hotelwindow': {
@@ -2043,12 +2062,22 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
           for (const [cx2, cz2] of [[-1, -1], [1, -1], [-1, 1], [1, 1]] as const)
             chair.add(box(0.05, 0.45, 0.05, '#5d646b', cx2 * 0.17, 0.22, cz2 * 0.17))
           chair.add(glow(0.04, 0.04, 0.02, '#8a9096', 0, 0.72, -0.18))
+        } else if (s.data?.l0Furniture) {
+          const timber=litMaterial({map:levelTexture('l0-remake/wood.png',()=>noiseTexture('#865d36','#4c301c')),color:'#ead3b5',roughness:.72,envBase:.045})
+          const seat=new THREE.Mesh(new THREE.CylinderGeometry(.245,.235,.045,12),timber);seat.scale.z=.85;seat.position.y=.46;chair.add(seat)
+          for(const x of [-.18,.18])for(const z of [-.16,.16]){const leg=new THREE.Mesh(new THREE.CylinderGeometry(.023,.017,.44,6),timber);leg.position.set(x,.22,z);leg.rotation.z=-x*.25;chair.add(leg)}
+          for(const x of [-.19,.19]){const post=new THREE.Mesh(new THREE.CylinderGeometry(.019,.022,.54,6),timber);post.position.set(x,.74,-.17);chair.add(post)}
+          for(const x of [-.12,-.06,0,.06,.12]){const spindle=new THREE.Mesh(new THREE.CylinderGeometry(.011,.012,.40,5),timber);spindle.position.set(x,.72,-.20-Math.sqrt(.05-x*x)*.1);chair.add(spindle)}
+          const bow=new THREE.CatmullRomCurve3([new THREE.Vector3(-.20,.97,-.17),new THREE.Vector3(-.12,1.025,-.22),new THREE.Vector3(0,1.04,-.24),new THREE.Vector3(.12,1.025,-.22),new THREE.Vector3(.20,.97,-.17)])
+          chair.add(new THREE.Mesh(new THREE.TubeGeometry(bow,10,.025,5,false),timber))
+          for(const z of [-.16,.16]){const rung=new THREE.Mesh(new THREE.CylinderGeometry(.012,.012,.36,5),timber);rung.rotation.z=Math.PI/2;rung.position.set(0,.18,z);chair.add(rung)}
         } else {
           chair.add(texBox(0.42, 0.05, 0.42, 'crate_wood.jpg', '#6a4b31', '#3c291d', '#9a7854', 0.5, 0, 0.45, 0))
           chair.add(texBox(0.42, 0.52, 0.05, 'crate_wood.jpg', '#6a4b31', '#3c291d', '#8e6c49', 0.5, 0, 0.7, -0.19))
           for (const [cx2, cz2] of [[-1, -1], [1, -1], [-1, 1], [1, 1]] as const)
             chair.add(texBox(0.05, 0.45, 0.05, 'crate_wood.jpg', '#5a3c28', '#342219', '#82613f', 0.5, cx2 * 0.17, 0.22, cz2 * 0.17))
         }
+        if (s.data?.l0Furniture && !s.data?.fallen) chair.scale.y = 1.17
         chair.rotation.y = ((Number(s.data?.deg) || 0) * Math.PI) / 180
         if (s.data?.fallen) { chair.rotation.z = Math.PI / 2; chair.position.y = 0.23 }
         grp.add(chair)
@@ -2152,26 +2181,32 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
     case 'dresser': {
       if (s.data?.manilaTable) {
         // 八角会合桌 + 桌下橱柜（结构本身仍登记为 dresser，以沿用搜索/掉落/持久化流程）。
-        const woodTex = levelTexture('crate_wood.jpg', () => noiseTexture('#765034', '#452c1d'))
-        const woodMat = litMaterial({ color: '#8b6848', map: woodTex, bumpMap: woodTex, bumpScale: 0.012, roughness: 0.88, envBase: 0.045 })
+        const woodTex = levelTexture('l0-remake/wood.png', () => noiseTexture('#765034', '#452c1d'))
+        const woodMat = litMaterial({ color: '#dfc6a8', map: woodTex, bumpMap: woodTex, bumpScale: 0.012, roughness: 0.78, envBase: 0.045 })
         const top = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 0.9, 0.1, 8), woodMat)
         top.position.y = 0.82
         top.rotation.y = Math.PI / 8
         grp.add(top)
-        const base = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.54, 0.68, 8), woodMat)
+        const base = new THREE.Mesh(new THREE.CylinderGeometry(0.70, 0.73, 0.68, 8), woodMat)
         base.position.y = 0.37
         base.rotation.y = Math.PI / 8
         grp.add(base)
+        for(const y of [.09,.74]){const rim=new THREE.Mesh(new THREE.CylinderGeometry(.755,.755,.045,8),woodMat);rim.position.y=y;rim.rotation.y=Math.PI/8;grp.add(rim)}
+        for(let i=0;i<8;i++){const angle=(i+.5)*Math.PI/4;const stile=new THREE.Mesh(new THREE.BoxGeometry(.035,.57,.035),woodMat);stile.position.set(Math.sin(angle)*.705,.41,Math.cos(angle)*.705);grp.add(stile)}
         grp.add(texBox(1.18, 0.08, 0.62, 'crate_wood.jpg', '#654228', '#3d281a', '#755337', 0.72, 0, 0.08, 0))
         // 面向 +Z 的双开橱柜门，搜索后由统一容器动画向两侧外摆。
         for (const sgn of [-1, 1]) {
-          const door = texBox(0.44, 0.5, 0.045, 'crate_wood.jpg', '#704a2d', '#412819', '#8c6847', 0.55)
-          door.geometry.translate(-sgn * 0.22, 0.25, 0)
-          door.position.set(sgn * 0.44, 0.14, 0.52)
-          door.add(glow(0.035, 0.035, 0.025, '#b08d46', -sgn * 0.37, 0.26, 0.035))
+          const door = texBox(0.55, 0.54, 0.045, 'l0-remake/wood.png', '#704a2d', '#412819', '#d4b08b', 0.55)
+          door.geometry.translate(-sgn * 0.275, 0.27, 0)
+          door.position.set(sgn * 0.55, 0.14, 0.69)
+          door.add(box(.43,.38,.02,'#785033',-sgn*.275,.27,.033))
+          door.add(box(0.035, 0.035, 0.025, '#b08d46', -sgn * 0.49, 0.30, 0.055))
           movable(door, sgn < 0 ? 'doorL' : 'doorR')
           grp.add(door)
         }
+        grp.rotation.y=Math.PI
+        if(s.data?.l0Furniture)grp.scale.set(.7,1.1,.7)
+        else grp.scale.set(.85,1.25,.85)
         if (s.looted) grp.userData.open = 1
         break
       }
@@ -4982,7 +5017,22 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
     }
     case 'megdoc': {
       // M.E.G. 文档：牛皮纸封皮 + 几页摊开的纸（data.ontable=放在桌面上）
-      const y0 = s.data?.ontable ? (s.data?.manila ? 0.88 : 0.76) : 0
+      const y0 = s.data?.ontable ? (s.data?.l0Furniture ? 0.98 : s.data?.manila ? 1.10 : 0.76) : 0
+      if(s.data?.doc==='backrooms_basics'){
+        grp.add(box(.24,.018,.31,'#f4f2eb',0,y0+.009,0))
+        const logo=levelTexture('documents/manila-mary-logo.png',()=>noiseTexture('#ffffff','#98885c'))
+        const mark=new THREE.Mesh(new THREE.PlaneGeometry(.095,.05),litMaterial({color:'#ffffff',map:logo}))
+        mark.rotation.x=-Math.PI/2;mark.position.set(0,y0+.019,-.11);grp.add(mark)
+        // Fine text is suggested by ink lines; the readable letter uses the original logo and text.
+        const lines:THREE.BufferGeometry[]=[]
+        for(let paragraph=0;paragraph<4;paragraph++)for(let row=0;row<3;row++){
+          const line=new THREE.BoxGeometry(row===2?.15:.20,.0015,.002)
+          line.translate(row===2?-.025:0,y0+.019,-.065+paragraph*.047+row*.009);lines.push(line)
+        }
+        const geometry=mergeGeometries(lines);lines.forEach(g=>g.dispose())
+        if(geometry)grp.add(new THREE.Mesh(geometry,litMaterial({color:'#555047'})))
+        break
+      }
       grp.add(box(0.24, 0.015, 0.3, '#c9a86a', 0, y0 + 0.008, 0))
       grp.add(box(0.22, 0.01, 0.28, '#e8e2d2', 0.01, y0 + 0.022, 0.01))
       const page = box(0.2, 0.008, 0.26, '#dcd6c4', -0.015, y0 + 0.032, -0.01)
@@ -6157,6 +6207,7 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
 
 // ---------- 出口低模 ----------
 export function buildExit(kind: string, def: LevelDef, structure?: Structure): THREE.Group {
+  if(def.id===101&&kind==='unlockeddoor')return buildAlphaDecor({kind:'alpha_entry_portal',x:-.9,y:-.12,w:1.8,h:.24,solid:true})
   if (def.id === 11 && (kind === 'l11roadback' || kind === 'countrypath')) {
     const marker = buildL11Structure({ kind: 'l11landmark', x: -.5, y: -.5, w: 1, h: 1, solid: false, data: { citySite: kind === 'countrypath' ? 'L10' : 'L9' } })!
     return marker
@@ -6232,6 +6283,7 @@ export function buildExit(kind: string, def: LevelDef, structure?: Structure): T
       break
     }
     case 'flickerdoor': {
+      if(def.id===0)break // L0 animates its actual, opaque architectural wall.
       // 门形异常并非实体门框，而是原墙纸本身被分区照亮：底层大面保留墙纹，细条以不同相位闪烁。
       const glow = new THREE.Mesh(new THREE.PlaneGeometry(1.14, 2.18), strobeMat(0, 0.22))
       glow.position.set(0, 1.1, 0)

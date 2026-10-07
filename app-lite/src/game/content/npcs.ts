@@ -8,6 +8,7 @@ import type { AvatarCfg } from '../core/avatar'
 import type { FloorBand } from '../core/types'
 import { DEFAULT_AVATAR } from '../core/avatar'
 import { L11_PEOPLE } from './l11People'
+import { ALPHA_PEOPLE, ALPHA_REVISIONS } from './alphaPeople'
 
 export interface DialogueNode {
   npc: string // NPC 台词
@@ -27,6 +28,8 @@ export interface NpcDef {
   trade?: { item: string; price: number }[] // 商品（按 currency 货币定价）
   barter?: { give: string; giveN: number; get: string; getN: number; give2?: string; give2N?: number }[] // 以物易物（玩家给 give×giveN[ + give2×give2N]、换得 get×getN；可与普通 trade 并存）
   workLoop?: 'hammer' | 'saw' | 'paint' | 'mop' // v39：装修工作循环动作（BRC 员工：锚定工作点不游荡，渲染层 procedual 驱动手臂+工具）
+  wanderRadius?: number // Small public work pockets can keep their staff close without freezing them.
+  communityGear?: 'satchel'|'clipboard'|'headphones'|'apron'|'tools'|'book'|'medic'|'hardhat'|'radio'
   warehouse?: 'meg' | 'bntg' // v54：寄存仓库 NPC——声望 ≥10（或 BNTG 付 5 压印币临时）时对话出现「寄存物品/取回物品」（阵营互通仓库，48 栏位）
   medic?: boolean // v55：医疗身份 NPC（杜邦/马丁/莫雷尔/萨伊拉）——疫疾三阶以上对话出现「求治感染」（清除感染值）
   lines: DialogueNode[] // 预制对话树（0=开场）
@@ -375,6 +378,7 @@ export function jerryFollowerDef(...nums: number[]): NpcDef {
 }
 
 export const NPCS: Record<string, NpcDef> = {
+  ...ALPHA_PEOPLE,
   ...Object.fromEntries(L11_PEOPLE.map((npc) => [npc.id, npc])),
   // v58：小小（Entity 720）——L7 环形场的可对话实体；傲慢、恶意毫不掩饰、隐瞒 L9 出口。
   // 非人形实体走实体交互通道（interact.ts case 'tiny'），此处仅承载对话树与人设；被激怒后由交互层拒绝对话。
@@ -2349,3 +2353,6 @@ export const NPCS: Record<string, NpcDef> = {
     idle: ['先清创，再问话。', '把急救包补回巡逻柜。', '伤口不会替任何阵营说话。'],
   },
 }
+
+// Enrich existing Alpha contacts without replacing their gameplay capabilities or stable IDs.
+for (const [id, revision] of Object.entries(ALPHA_REVISIONS)) Object.assign(NPCS[id], revision)

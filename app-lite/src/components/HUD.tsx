@@ -23,10 +23,12 @@ import { DECOR_REGISTRY, DECOR_LEVEL_ORDER } from '@/game/content/decorRegistry'
 import { storage } from '@/game/core/storage'
 import { audio } from '@/game/core/audio'
 import { MUSIC_LIBRARY } from '@/game/core/midi' // v56 六轮：图鉴全开同步解锁电台音乐
+import { drawAlphaMap } from '@/game/content/alphaMap'
 import { bindLabelFor } from '@/game/core/keybinds'
 import { IconHP, IconStamina, IconHunger, IconThirst, IconSanity, IconBattery, IconPause, IconMap, IconInteract, IconCrouch, IconIsolation, IconPlant } from './icons'
 import { PHENOMENA, rarityText } from '@/game/content/phenomena'
 import MegQuestTracker from './MegQuestTracker'
+import AlphaMapPanel from './AlphaMapPanel'
 
 // 现象图标映射（phenomena.ts 中 def.icon → 具体 SVG 组件）
 const PHEN_ICON = { isolation: IconIsolation, plant: IconPlant, flicker: IconStamina } as const
@@ -86,6 +88,7 @@ function Minimap({ engine, size }: { engine: Engine; size: number }) {
     const g = c.getContext('2d')!
     const k = size / 140 // 标记随尺寸缩放
     c.width = size; c.height = size
+    if (m.settlement?.blueprint.id === 'alpha') { drawAlphaMap(g, size, engine.player, { mini: true, yaw: look.yaw }); return }
     // ---- v17：无限模式（L0）——以玩家为中心显示已探索 chunk（窗口内读实时探索，窗口外读持久位图）----
     if (m.inf) {
       const inf = m.inf
@@ -786,21 +789,21 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
             style={{ background: 'color-mix(in srgb, var(--panel) 88%, transparent)' }}
             onClick={(e) => e.stopPropagation()}
           >
-            <Minimap engine={engine} size={bigMapSize} />
+            {engine.map?.settlement?.blueprint.id === 'alpha' ? <AlphaMapPanel engine={engine} compact /> : <Minimap engine={engine} size={bigMapSize} />}
             {/* v13：当前楼层标注（多楼层契约存在时） */}
             {floorInfo && (
               <div className="font-mono2 text-[12px]" style={{ color: 'var(--amber)' }}>
                 L{dispId} · {def.name} · 当前 {floorInfo.cur + 1}F / 共{floorInfo.total}层
               </div>
             )}
-            <div className="font-mono2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>
+            {engine.map?.settlement?.blueprint.id !== 'alpha' && <div className="font-mono2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>
               <span><span style={{ color: 'var(--amber)' }}>●</span> 你的位置</span>
               <span><span style={{ color: 'var(--exit)' }}>●</span> 出口</span>
               {mapZData(engine.map).elev && <span><span style={{ color: MINIMAP_COLORS.high }}>■</span> 高台</span>}
               {mapZData(engine.map).elev && <span><span style={{ color: MINIMAP_COLORS.low }}>■</span> 低洼</span>}
               {(mapZData(engine.map).outdoor || mapZData(engine.map).elev) && <span><span style={{ color: MINIMAP_COLORS.outdoor }}>■</span> 室外</span>}
               <span style={{ opacity: 0.7 }}>点击空白处关闭</span>
-            </div>
+            </div>}
             <button
               className="hud-panel font-mono2 absolute -right-2 -top-2 flex h-7 w-7 items-center justify-center text-[13px]"
               style={{ color: 'var(--text)', background: 'var(--panel)' }}

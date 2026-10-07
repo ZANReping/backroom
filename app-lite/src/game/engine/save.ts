@@ -36,6 +36,7 @@ export interface SaveSnapshot {
   career?: import('./career').CareerSave
   /** v59：据点连续公共空间布局版本；缺省/1 为旧版小房间布局。 */
   settlementLayout?: 1 | 2
+  alphaLayout?: 1 | 2 | 3 | 4 | 5
   bntgLayout?:3
   l1World?: L1WorldSave
   l11World?: L11WorldSave
@@ -142,6 +143,7 @@ export function snapshot(eng: Engine): SaveSnapshot {
     visited: [...eng.visitedLevels],
     career: structuredClone(eng.career),
     settlementLayout: 2,
+    alphaLayout: 5,
     bntgLayout:3,
     outpostReturn: eng.outpostReturn,
     rep: eng.rep,

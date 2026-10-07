@@ -27,6 +27,8 @@
     "check:bntg": "esbuild scripts/check-bntg.ts --bundle --platform=node --format=esm --outfile=.cache/check-bntg.mjs && node .cache/check-bntg.mjs",
     "check:settlement-assets": "node scripts/check-settlement-assets.mjs",
     "fetch:settlement-assets": "node scripts/fetch-settlement-assets.mjs",
+    "fetch:alpha-assets": "node scripts/fetch-alpha-assets.mjs",
+    "check:alpha": "esbuild scripts/check-alpha.ts --bundle --platform=node --format=esm --outfile=.cache/check-alpha.mjs && node .cache/check-alpha.mjs",
     "check:generation-obstacles": "esbuild scripts/check-generation-obstacles.ts --bundle --platform=node --format=esm --outfile=.cache/check-generation-obstacles.mjs && node .cache/check-generation-obstacles.mjs",
     "check:item-batches": "esbuild scripts/check-item-batches.ts --bundle --platform=node --format=esm --outfile=.cache/check-item-batches.mjs && node .cache/check-item-batches.mjs",
     "check:static-colors": "esbuild scripts/check-static-colors.ts --bundle --platform=node --format=esm --outfile=.cache/check-static-colors.mjs && node .cache/check-static-colors.mjs",

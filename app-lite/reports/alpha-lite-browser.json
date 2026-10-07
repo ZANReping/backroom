@@ -1,0 +1,138 @@
+{
+  "passed": true,
+  "checks": [
+    "UI start, preload off, MIDI normalized, Alpha playable, all map regions selectable, compact map fits viewport",
+    "all 21 new compressed textures decode at <=512px"
+  ],
+  "regions": [
+    "overview",
+    "exploration",
+    "administration",
+    "archives",
+    "research",
+    "anemoia",
+    "crimson",
+    "epiphany",
+    "river",
+    "zephyr",
+    "entry_n",
+    "entry_e",
+    "entry_w"
+  ],
+  "errors": [],
+  "missing": [],
+  "musicRequests": [],
+  "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "base": {
+    "id": "alpha",
+    "npcs": 29,
+    "structures": 6825
+  },
+  "textures": [
+    {
+      "name": "cardboard_color.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "cardboard_normalgl.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "cardboard_roughness.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "cave_rock_color.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "cave_rock_normalgl.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "cave_rock_roughness.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "concrete_color.jpg",
+      "width": 512,
+      "height": 256
+    },
+    {
+      "name": "concrete_normalgl.jpg",
+      "width": 512,
+      "height": 256
+    },
+    {
+      "name": "concrete_roughness.jpg",
+      "width": 512,
+      "height": 256
+    },
+    {
+      "name": "plaster_color.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "plaster_normalgl.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "plaster_roughness.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "steel_color.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "steel_normalgl.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "steel_roughness.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "terrazzo_color.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "terrazzo_normalgl.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "terrazzo_roughness.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "wood_color.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "wood_normalgl.jpg",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "name": "wood_roughness.jpg",
+      "width": 512,
+      "height": 512
+    }
+  ]
+}

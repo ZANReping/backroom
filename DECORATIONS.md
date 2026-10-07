@@ -2,7 +2,7 @@
 
 > 由 `app/src/game/content/decorRegistry.ts` 统一注册表生成。修改模型先更新注册定义，再同步本表。尺寸以米计；交互不等同于可搜刮。
 
-## 有碰撞体积（146）
+## 有碰撞体积（213）
 
 | 名称 | ID | 交互 | 容器 | 生成层级 | 说明 |
 |---|---|---|---|---|---|
@@ -105,9 +105,76 @@
 | 压缩干草块 | `l10haybale` |  |  | L10 | infinite L10 贴地生成，使用独立 PBR 干草材质与模型碰撞 |
 | 地铁入口 | `subwayent` |  |  | L11 | mapgenDeep L11 |
 | 街机柜 | `arcadecab` | ✓ |  | L11 | mapgenDeep L11（任何交互送去 Level 25） |
+| 阿谢儿·利沃纪念陈列 | `alpha_memorial` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 2.2×0.4×1.9，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 半透明玻璃窗与百叶帘 | `alpha_blinds` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 2.2×0.18×1.45，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 编号值班储物柜 | `alpha_lockers` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.5×0.48×1.85，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 编号纸质档案抽屉柜 | `alpha_archive_bank` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.65×0.62×2.4，档案署模型来自 content/alphaArchiveDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 不锈钢通风操作柜 | `alpha_fumehood` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 3.4×0.9×3.65，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 穿孔角钢周转箱货架 | `alpha_rack` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 3×0.65×2.4，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 床头柜与台灯 | `alpha_bedside` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 0.5×0.45×1.12，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 大会厅翻折式扶手座椅 | `alpha_hall_seat` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 0.72×0.85×1.05，行政署模型来自 content/alphaAdminDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 大会厅讲台与演示设备 | `alpha_hall_podium` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.2×0.72×1.16，行政署模型来自 content/alphaAdminDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 大会厅可步行阶梯台 | `alpha_hall_tier` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 18×1.8×0.12，行政署模型来自 content/alphaAdminDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 档案归还推车 | `alpha_archive_trolley` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 0.8×0.5×1.1，档案署模型来自 content/alphaArchiveDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 档案检索与阅览台 | `alpha_archive_reader` | ✓ |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.8×0.8×1.05，档案署模型来自 content/alphaArchiveDecor.ts；默认无交互，data.facility=1 时承接档案查询业务；始终非容器 |
+| 档案员布面隔断与 L 形工位 | `alpha_archive_cubicle` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 3×2.5×1.8，档案署模型来自 content/alphaArchiveDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 档案员软垫转椅 | `alpha_archive_chair` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 0.65×0.68×1.05，档案署模型来自 content/alphaArchiveDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 多媒体图书馆双面书架 | `alpha_library_shelf` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 2.4×0.72×2.22，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 分类抽屉样品与器械架 | `alpha_sample_rack` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 2.4×0.78×2.2，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 分类回收桶组 | `alpha_recycling` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.25×0.43×0.83，社区走廊模型来自 content/alphaCommunityDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 封箱胶带包裹与托盘 | `alpha_parcel_stack` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.45×1.15×1.95，行政署模型来自 content/alphaAdminDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 缝补台与线轴 | `alpha_mending_table` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.7×0.65×1.05，社区走廊模型来自 content/alphaCommunityDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 公共茶水台与保温壶 | `alpha_tea_cart` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.8×0.58×1.3，社区走廊模型来自 content/alphaCommunityDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 黑色管架会议椅 | `alpha_chair` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 0.5×0.54×0.86，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 技术支援多屏开发工作台 | `alpha_tech_bench` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 3.6×2.2×1.4，档案署模型来自 content/alphaArchiveDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 监督者高背办公椅 | `alpha_executive_chair` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 0.76×0.78×1.26，行政署模型来自 content/alphaAdminDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 监督者会客沙发 | `alpha_executive_sofa` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 2.5×0.9×0.9，行政署模型来自 content/alphaAdminDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 监督者木制办公桌 | `alpha_executive_desk` | ✓ |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 3.2×1.1×1.22，行政署模型来自 content/alphaAdminDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 监督者书柜与文件边柜 | `alpha_executive_bookcase` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 3×0.44×2.4，行政署模型来自 content/alphaAdminDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 居民餐桌与木椅 | `alpha_home_table` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 2.3×1.8×0.86，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 居民公共厨房 | `alpha_home_kitchen` | ✓ |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 3.8×0.66×2.2，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 居民晾衣架 | `alpha_drying_rack` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.5×0.55×1.65，社区走廊模型来自 content/alphaCommunityDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 居民图书和日用品交换架 | `alpha_swap_shelf` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.6×0.34×1.65，社区走廊模型来自 content/alphaCommunityDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 居民信格与投递箱 | `alpha_postbox` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.5×0.32×1.55，社区走廊模型来自 content/alphaCommunityDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 居民衣柜与日用品 | `alpha_home_wardrobe` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.5×0.56×2.05，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 居民阅读扶手椅 | `alpha_reading_chair` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 0.86×0.88×0.9，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 菌菇生产压制菌棒 | `alpha_mushroom_block` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 0.64×0.6×0.74，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 菌菇收获与培养记录台 | `alpha_grow_station` | ✓ |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 2.4×0.75×1.45，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 扩建板材与施工物料 | `alpha_build_supplies` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 2.5×0.85×1.2，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 扩建工程围挡 | `alpha_build_barrier` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 2×0.32×1.15，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 扩建木工作业台 | `alpha_build_bench` | ✓ |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 2.2×0.8×1.3，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 蓝灰开放周转箱堆 | `alpha_bins` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 0.65×0.48×1.1，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 蓝色吊柜研究员工位 | `alpha_office_station` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.6×0.65×2.28，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 贸易中转包裹手推车 | `alpha_parcel_cart` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.1×0.85×1.5，行政署模型来自 content/alphaAdminDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 贸易中转登记与失物柜台 | `alpha_dispatch_desk` | ✓ |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 2.2×0.85×1.25，行政署模型来自 content/alphaAdminDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 贸易中转分拣货架 | `alpha_sorting_rack` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 3×0.65×2.4，行政署模型来自 content/alphaAdminDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 米色层压板课桌 | `alpha_desk` | ✓ |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.8×0.65×0.76，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 模拟无线电机柜与操作台 | `alpha_radio` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 4.8×1.15×2.35，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 木抽屉不锈钢实验台 | `alpha_labbench` | ✓ |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 3×0.8×0.94，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 木制双层床与梯子 | `alpha_bunk` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 2.15×1×2.05，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
 | 墙体窗 | `wallwindow` |  |  | 据点101、据点105、据点106、据点107 | 代替整格内隔墙（下 1/3 墙+中段玻璃+上段接顶；整格 solid；代墙模式同 machinewall） |
+| 实验岛台与记录器具 | `alpha_lab_island` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 3.6×1.1×0.9，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
 | 双层床 | `bunkbed` |  |  | 据点101、据点102、据点103、据点104、据点106 | 据点民居/员工区手工 |
+| 天鹰段混凝土柱与梁 | `alpha_aquila_column` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 0.85×0.85×3.6，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 停放补给推车 | `alpha_cart` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 0.85×0.6×0.95，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 图书馆电脑与耳机工作台 | `alpha_library_terminal` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.5×0.75×1.22，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 图书馆借还服务柜台 | `alpha_library_counter` | ✓ |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 3×0.85×1.15，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 外勤挂衣与鞋靴架 | `alpha_mudroom` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.8×0.48×1.8，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 无线电操作转椅 | `alpha_swivel` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 0.6×0.65×1，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
 | 无线电机柜 | `serverrack` |  |  | 据点101、据点102、据点106 | Alpha 中控室、商人之家机房 |
+| 洗衣机与折衣台 | `alpha_laundry` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 2.6×0.7×1.05，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 行囊与换洗衣物 | `alpha_bags` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 0.7×0.55×0.65，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 行政署不锈钢导流栏 | `alpha_queue_rail` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 3×0.2×1.05，行政署模型来自 content/alphaAdminDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 行政署穿孔金属联排候座 | `alpha_waiting_seats` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 3.2×1.15×0.97，行政署模型来自 content/alphaAdminDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 行政署深木接待前台 | `alpha_reception_counter` | ✓ |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 4.2×2×1.22，行政署模型来自 content/alphaAdminDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 样品冷藏柜 | `alpha_cold_cabinet` | ✓ |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.35×0.8×2.2，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 饮水与杯具台 | `alpha_water` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.2×0.55×1.5，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 值班单人床 | `alpha_bed` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 2.1×1×0.6，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 走廊盆栽 | `alpha_planter` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 0.5×0.5×1.2，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 走廊棋盘与休息桌 | `alpha_rest_table` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.25×0.8×0.76，社区走廊模型来自 content/alphaCommunityDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 走廊休息长椅 | `alpha_bench` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 2.1×0.55×0.84，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| Alpha 灰泥／木护墙墙段 | `alpha_wall` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 3×0.18×2.9，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| Alpha 双扇检查门与返程标识 | `alpha_entry_portal` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.8×0.24×2.65，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
 | 玻璃商品柜 | `trade_showcase` |  |  | 据点102 | 可复用贸易构件；模型、碰撞、尺寸与参数见 tradeDecor；静态货物不进入搜刮表 |
 | 打包台 | `trade_pack` | ✓ |  | 据点102 | 可复用贸易构件；模型、碰撞、尺寸与参数见 tradeDecor；静态货物不进入搜刮表 |
 | 分类仓储架 | `trade_rack` |  |  | 据点102 | 可复用贸易构件；模型、碰撞、尺寸与参数见 tradeDecor；静态货物不进入搜刮表 |
@@ -153,7 +220,7 @@
 | 门（保留类型） | `door` |  |  |  | 无任何生成器放置（仅 mapgen 校验代码引用；L5 structures 列表为死文档） |
 | 圆形拱门（保留类型） | `roundarch` |  |  |  | 无任何生成器放置 |
 
-## 无碰撞体积（低模）（144）
+## 无碰撞体积（低模）（168）
 
 | 名称 | ID | 交互 | 容器 | 生成层级 | 说明 |
 |---|---|---|---|---|---|
@@ -280,14 +347,38 @@
 | 金属字母 | `endletters` | ✓ |  | L601 | mapgenDeep L601 中央（the end is near） |
 | 摊开在地上的书 | `prop:l601_books` |  |  | L601 | buildDecorations gen=library |
 | 阅览灯 | `prop:l601_readlamp` |  |  | L601 | buildDecorations gen=library |
+| 办公室空调与除湿机 | `alpha_climate` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 0.9×0.3×0.48，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 表面安装电线管 | `alpha_conduit` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 4×0.07×0.06，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 大会厅投影幕与教学板 | `alpha_hall_screen` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 6×0.18×3.8，行政署模型来自 content/alphaAdminDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 档案室激光打印机 | `alpha_archive_printer` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 0.56×0.56×0.35，档案署模型来自 content/alphaArchiveDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 吊装投影机 | `alpha_projector` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 0.4×0.35×0.22，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
 | 挂式平板电视 | `walltv` |  |  | 据点101、据点105、据点106、据点107 | mountOnWall 贴墙：黑框+微亮屏幕；据点休息/娱乐区 |
-| 据点服务锚点 | `settlementstation` |  |  | 据点101、据点102、据点103、据点104 | 服务数据，商人之家附着于注册柜台 |
+| 黑板与下拉投影幕 | `alpha_board` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 6×0.15×2.7，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 换班与失物招领公告板 | `alpha_notice` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.8×0.075×1.05，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 居民装框风景画 | `alpha_home_frame` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 0.9×0.055×0.62，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 灭火器与急救壁柜 | `alpha_safety` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 0.9×0.18×0.85，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 模拟挂钟 | `alpha_clock` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 0.32×0.045×0.32，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 柔性局部排风臂 | `alpha_extractor` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 2.3×0.5×1.55，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
 | 软木公告栏 | `noticeboard` |  |  | 据点101、据点102、据点103、据点104、据点105、据点106、L274 | 据点墙面装饰（deco 落点校验） |
+| 社区手写留言板 | `alpha_community_board` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.9×0.075×1.12，社区走廊模型来自 content/alphaCommunityDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 实验室吊装风管与轨道灯 | `alpha_lab_duct` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 4×0.7×0.65，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 实验室试剂文献壁架 | `alpha_lab_shelf` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 3×0.32×1.3，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
 | 通风口格栅 | `ventgrate` |  |  | 据点101、据点103、据点104 | 据点天花板通风口 |
 | 投影幕+黑板 | `screenboard` |  |  | 据点101、据点102、据点103、据点106 | 会议室/教室贴墙 |
+| 图书馆红色灯带吊楣 | `alpha_library_soffit` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.55×12×0.22，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 显微镜与检测仪 | `alpha_microscope` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 0.8×0.5×0.56，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 行政署灯槽与格井吊顶 | `alpha_admin_cove` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 7.4×9.8×0.55，行政署模型来自 content/alphaAdminDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 行政署会客区织物地毯 | `alpha_admin_rug` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 6×4×0.025，行政署模型来自 content/alphaAdminDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 荧光灯／暖色吸顶灯 | `alpha_light` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.25×0.3×0.12，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 装框行动地图 | `alpha_map` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.2×0.06×0.9，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| 走廊护墙与防撞条 | `alpha_trim` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 3×0.055×1.15，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| Alpha 地面模块 | `alpha_floor` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 4×4×0.12，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| Alpha 吊顶模块 | `alpha_ceiling` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 4×4×0.12，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
+| Alpha 房间导引牌 | `alpha_sign` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.5×0.04×0.3，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
 | 报价板 | `trade_prices` | ✓ |  | 据点102 | 可复用贸易构件；模型、碰撞、尺寸与参数见 tradeDecor；静态货物不进入搜刮表 |
 | 编号门牌 | `trade_number` |  |  | 据点102 | 可复用贸易构件；模型、碰撞、尺寸与参数见 tradeDecor；静态货物不进入搜刮表 |
 | 金属屋面 | `trade_roof` |  |  | 据点102 | 可复用贸易构件；模型、碰撞、尺寸与参数见 tradeDecor；静态货物不进入搜刮表 |
+| 据点服务锚点 | `settlementstation` |  |  | 据点102、据点103、据点104 | 服务数据，商人之家附着于注册柜台；Alpha 改由实际家具的 data.facility 承接 |
 | 贸易地坪模块 | `trade_floor` |  |  | 据点102 | 可复用贸易构件；模型、碰撞、尺寸与参数见 tradeDecor；静态货物不进入搜刮表 |
 | 贸易吊顶 | `trade_ceiling` |  |  | 据点102 | 可复用贸易构件；模型、碰撞、尺寸与参数见 tradeDecor；静态货物不进入搜刮表 |
 | 贸易主梁 | `trade_beam` |  |  | 据点102 | 可复用贸易构件；模型、碰撞、尺寸与参数见 tradeDecor；静态货物不进入搜刮表 |
@@ -395,7 +486,105 @@
 | 泳池毛巾长凳 | `l5_pool_bench` | 1×1 | 3.3 | ✓ |
 | 救生圈与水深牌 | `l5_pool_safety` | 1×1 | 3.3 |  |
 
+## Alpha 基地构件默认尺寸
+
+91 项构件中，通用模型来自 `content/alphaDecor.ts`；研究署/入口模型来自 `content/alphaResearchDecor.ts`；档案署模型来自 `content/alphaArchiveDecor.ts`；行政署模型来自 `content/alphaAdminDecor.ts`；居民区模型来自 `content/alphaResidentialDecor.ts`；社区走廊模型来自 `content/alphaCommunityDecor.ts`；支持设计模式预览与旋转，这些静态构件默认不是容器，只有带有 facility 数据的业务家具承接现场业务；档案柜编号遵循“字母通道 + 1 位自底向上层数 + 2 位水平位置”（例如 A124）。
+
+| 名称 | ID | 宽×深 | 安装高度 | 碰撞 |
+|---|---|---|---|---|
+| 木抽屉不锈钢实验台 | `alpha_labbench` | 3×0.8 | 0.94 | ✓ |
+| 不锈钢通风操作柜 | `alpha_fumehood` | 3.4×0.9 | 3.65 | ✓ |
+| 实验岛台与记录器具 | `alpha_lab_island` | 3.6×1.1 | 0.9 | ✓ |
+| 实验室试剂文献壁架 | `alpha_lab_shelf` | 3×0.32 | 1.3 |  |
+| 实验室吊装风管与轨道灯 | `alpha_lab_duct` | 4×0.7 | 0.65 |  |
+| 柔性局部排风臂 | `alpha_extractor` | 2.3×0.5 | 1.55 |  |
+| 显微镜与检测仪 | `alpha_microscope` | 0.8×0.5 | 0.56 |  |
+| 蓝色吊柜研究员工位 | `alpha_office_station` | 1.6×0.65 | 2.28 | ✓ |
+| 办公室空调与除湿机 | `alpha_climate` | 0.9×0.3 | 0.48 |  |
+| 分类抽屉样品与器械架 | `alpha_sample_rack` | 2.4×0.78 | 2.2 | ✓ |
+| 样品冷藏柜 | `alpha_cold_cabinet` | 1.35×0.8 | 2.2 | ✓ |
+| Alpha 双扇检查门与返程标识 | `alpha_entry_portal` | 1.8×0.24 | 2.65 | ✓ |
+| 档案员布面隔断与 L 形工位 | `alpha_archive_cubicle` | 3×2.5 | 1.8 | ✓ |
+| 档案员软垫转椅 | `alpha_archive_chair` | 0.65×0.68 | 1.05 | ✓ |
+| 技术支援多屏开发工作台 | `alpha_tech_bench` | 3.6×2.2 | 1.4 | ✓ |
+| 编号纸质档案抽屉柜 | `alpha_archive_bank` | 1.65×0.62 | 2.4 | ✓ |
+| 档案检索与阅览台 | `alpha_archive_reader` | 1.8×0.8 | 1.05 | ✓ |
+| 档案归还推车 | `alpha_archive_trolley` | 0.8×0.5 | 1.1 | ✓ |
+| 档案室激光打印机 | `alpha_archive_printer` | 0.56×0.56 | 0.35 |  |
+| 行政署深木接待前台 | `alpha_reception_counter` | 4.2×2 | 1.22 | ✓ |
+| 行政署穿孔金属联排候座 | `alpha_waiting_seats` | 3.2×1.15 | 0.97 | ✓ |
+| 行政署不锈钢导流栏 | `alpha_queue_rail` | 3×0.2 | 1.05 | ✓ |
+| 行政署灯槽与格井吊顶 | `alpha_admin_cove` | 7.4×9.8 | 0.55 |  |
+| 大会厅翻折式扶手座椅 | `alpha_hall_seat` | 0.72×0.85 | 1.05 | ✓ |
+| 大会厅可步行阶梯台 | `alpha_hall_tier` | 18×1.8 | 0.12 | ✓ |
+| 大会厅投影幕与教学板 | `alpha_hall_screen` | 6×0.18 | 3.8 |  |
+| 大会厅讲台与演示设备 | `alpha_hall_podium` | 1.2×0.72 | 1.16 | ✓ |
+| 封箱胶带包裹与托盘 | `alpha_parcel_stack` | 1.45×1.15 | 1.95 | ✓ |
+| 贸易中转分拣货架 | `alpha_sorting_rack` | 3×0.65 | 2.4 | ✓ |
+| 贸易中转包裹手推车 | `alpha_parcel_cart` | 1.1×0.85 | 1.5 | ✓ |
+| 贸易中转登记与失物柜台 | `alpha_dispatch_desk` | 2.2×0.85 | 1.25 | ✓ |
+| 监督者木制办公桌 | `alpha_executive_desk` | 3.2×1.1 | 1.22 | ✓ |
+| 监督者书柜与文件边柜 | `alpha_executive_bookcase` | 3×0.44 | 2.4 | ✓ |
+| 监督者会客沙发 | `alpha_executive_sofa` | 2.5×0.9 | 0.9 | ✓ |
+| 监督者高背办公椅 | `alpha_executive_chair` | 0.76×0.78 | 1.26 | ✓ |
+| 行政署会客区织物地毯 | `alpha_admin_rug` | 6×4 | 0.025 |  |
+| 菌菇生产压制菌棒 | `alpha_mushroom_block` | 0.64×0.6 | 0.74 | ✓ |
+| 菌菇收获与培养记录台 | `alpha_grow_station` | 2.4×0.75 | 1.45 | ✓ |
+| 多媒体图书馆双面书架 | `alpha_library_shelf` | 2.4×0.72 | 2.22 | ✓ |
+| 图书馆电脑与耳机工作台 | `alpha_library_terminal` | 1.5×0.75 | 1.22 | ✓ |
+| 图书馆借还服务柜台 | `alpha_library_counter` | 3×0.85 | 1.15 | ✓ |
+| 居民阅读扶手椅 | `alpha_reading_chair` | 0.86×0.88 | 0.9 | ✓ |
+| 图书馆红色灯带吊楣 | `alpha_library_soffit` | 1.55×12 | 0.22 |  |
+| 居民衣柜与日用品 | `alpha_home_wardrobe` | 1.5×0.56 | 2.05 | ✓ |
+| 居民公共厨房 | `alpha_home_kitchen` | 3.8×0.66 | 2.2 | ✓ |
+| 居民餐桌与木椅 | `alpha_home_table` | 2.3×1.8 | 0.86 | ✓ |
+| 洗衣机与折衣台 | `alpha_laundry` | 2.6×0.7 | 1.05 | ✓ |
+| 阿谢儿·利沃纪念陈列 | `alpha_memorial` | 2.2×0.4 | 1.9 | ✓ |
+| 居民装框风景画 | `alpha_home_frame` | 0.9×0.055 | 0.62 |  |
+| 扩建板材与施工物料 | `alpha_build_supplies` | 2.5×0.85 | 1.2 | ✓ |
+| 扩建木工作业台 | `alpha_build_bench` | 2.2×0.8 | 1.3 | ✓ |
+| 扩建工程围挡 | `alpha_build_barrier` | 2×0.32 | 1.15 | ✓ |
+| 天鹰段混凝土柱与梁 | `alpha_aquila_column` | 0.85×0.85 | 3.6 | ✓ |
+| 居民信格与投递箱 | `alpha_postbox` | 1.5×0.32 | 1.55 | ✓ |
+| 公共茶水台与保温壶 | `alpha_tea_cart` | 1.8×0.58 | 1.3 | ✓ |
+| 居民图书和日用品交换架 | `alpha_swap_shelf` | 1.6×0.34 | 1.65 | ✓ |
+| 缝补台与线轴 | `alpha_mending_table` | 1.7×0.65 | 1.05 | ✓ |
+| 分类回收桶组 | `alpha_recycling` | 1.25×0.43 | 0.83 | ✓ |
+| 居民晾衣架 | `alpha_drying_rack` | 1.5×0.55 | 1.65 | ✓ |
+| 社区手写留言板 | `alpha_community_board` | 1.9×0.075 | 1.12 |  |
+| 走廊棋盘与休息桌 | `alpha_rest_table` | 1.25×0.8 | 0.76 | ✓ |
+| Alpha 灰泥／木护墙墙段 | `alpha_wall` | 3×0.18 | 2.9 | ✓ |
+| Alpha 地面模块 | `alpha_floor` | 4×4 | 0.12 |  |
+| Alpha 吊顶模块 | `alpha_ceiling` | 4×4 | 0.12 |  |
+| 模拟无线电机柜与操作台 | `alpha_radio` | 4.8×1.15 | 2.35 | ✓ |
+| 黑色管架会议椅 | `alpha_chair` | 0.5×0.54 | 0.86 | ✓ |
+| 无线电操作转椅 | `alpha_swivel` | 0.6×0.65 | 1 | ✓ |
+| 米色层压板课桌 | `alpha_desk` | 1.8×0.65 | 0.76 | ✓ |
+| 黑板与下拉投影幕 | `alpha_board` | 6×0.15 | 2.7 |  |
+| 吊装投影机 | `alpha_projector` | 0.4×0.35 | 0.22 |  |
+| 穿孔角钢周转箱货架 | `alpha_rack` | 3×0.65 | 2.4 | ✓ |
+| 蓝灰开放周转箱堆 | `alpha_bins` | 0.65×0.48 | 1.1 | ✓ |
+| 木制双层床与梯子 | `alpha_bunk` | 2.15×1 | 2.05 | ✓ |
+| 值班单人床 | `alpha_bed` | 2.1×1 | 0.6 | ✓ |
+| 床头柜与台灯 | `alpha_bedside` | 0.5×0.45 | 1.12 | ✓ |
+| 行囊与换洗衣物 | `alpha_bags` | 0.7×0.55 | 0.65 | ✓ |
+| 荧光灯／暖色吸顶灯 | `alpha_light` | 1.25×0.3 | 0.12 |  |
+| 半透明玻璃窗与百叶帘 | `alpha_blinds` | 2.2×0.18 | 1.45 | ✓ |
+| 模拟挂钟 | `alpha_clock` | 0.32×0.045 | 0.32 |  |
+| 换班与失物招领公告板 | `alpha_notice` | 1.8×0.075 | 1.05 |  |
+| 走廊休息长椅 | `alpha_bench` | 2.1×0.55 | 0.84 | ✓ |
+| 编号值班储物柜 | `alpha_lockers` | 1.5×0.48 | 1.85 | ✓ |
+| 饮水与杯具台 | `alpha_water` | 1.2×0.55 | 1.5 | ✓ |
+| 灭火器与急救壁柜 | `alpha_safety` | 0.9×0.18 | 0.85 |  |
+| 外勤挂衣与鞋靴架 | `alpha_mudroom` | 1.8×0.48 | 1.8 | ✓ |
+| 停放补给推车 | `alpha_cart` | 0.85×0.6 | 0.95 | ✓ |
+| 走廊盆栽 | `alpha_planter` | 0.5×0.5 | 1.2 | ✓ |
+| 走廊护墙与防撞条 | `alpha_trim` | 3×0.055 | 1.15 |  |
+| 装框行动地图 | `alpha_map` | 1.2×0.06 | 0.9 |  |
+| Alpha 房间导引牌 | `alpha_sign` | 1.5×0.04 | 0.3 |  |
+| 表面安装电线管 | `alpha_conduit` | 4×0.07 | 0.06 |  |
+
 ## 统计
 
-- 条目总数 307；可交互 54，容器 17。
+- 条目总数 398；可交互 65，容器 17。
 - 重建命令：在 app 内运行 `npx esbuild scripts/sync-decorations.ts --bundle --platform=node --format=esm --outfile=.cache/sync-decorations.mjs` 后运行 `node .cache/sync-decorations.mjs`。

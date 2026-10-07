@@ -3,6 +3,7 @@ from pathlib import Path
 import concurrent.futures
 import io
 import json
+import hashlib
 import sys
 import subprocess
 import types
@@ -65,6 +66,18 @@ def main():
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
         results = list(pool.map(image_job, images))
     print('Images:', sum(r['before'] for r in results), '->', sum(r['after'] for r in results), flush=True)
+    # Alpha's asset verifier checks the shipped bytes. Retain the upstream
+    # provenance hashes separately and describe the actual compressed files.
+    manifest_path = SOURCE / 'public/textures/alpha/manifest.json'
+    if manifest_path.exists():
+        manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+        for asset in manifest['assets']:
+            data = (ROOT / 'public/textures/alpha' / asset['file']).read_bytes()
+            asset['sourceBytes'] = asset['bytes']
+            asset['sourceSha256'] = asset['sha256']
+            asset['bytes'] = len(data)
+            asset['sha256'] = hashlib.sha256(data).hexdigest()
+        (ROOT / 'public/textures/alpha/manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding='utf-8')
     # Include every source character (including escaped Unicode), ASCII and punctuation.
     # Characters from arbitrary player names can still use the existing CSS fallback fonts.
     chars = set(chr(i) for i in range(32, 256)) | set(chr(i) for i in range(0x2000, 0x2070))

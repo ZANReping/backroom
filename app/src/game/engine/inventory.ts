@@ -17,6 +17,7 @@ const GENIUS_FACTS = [
 ]
 /** 迁跃浆果：传送回首次发现这种浆果的层级 */
 export function warpToBerryLevel(eng: Engine, tag?: number) {    const dest = tag ?? eng.warpBerryLevel // 格子标签优先；无标签的旧档浆果回退到首次获得层级
+    if(eng.player.level===0&&eng.map?.inf?.l0?.trapped){eng.msg('涟漪越过转角，却仍回到这间红色的房间。','lore');return}
   if (dest === null || dest === eng.player.level) {
     eng.msg('浆果的空间涟漪荡开——但你已经在这里了。', 'lore')
     return

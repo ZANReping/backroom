@@ -45,6 +45,10 @@ export class GameAudio {
   private ambient: GainNode | null = null
   private sfx: GainNode | null = null
   private humOsc: OscillatorNode[] = []
+  private humBus:GainNode|null=null
+  private manilaBus:GainNode|null=null
+  private manilaNoteAt=0
+  private manilaNote=0
   private whisperTimer = 0
   private heartTimer: ReturnType<typeof setInterval> | null = null
   private bgmBus: GainNode | null = null
@@ -163,6 +167,8 @@ export class GameAudio {
     this.ensure()
     if (!this.ctx || !this.ambient) return
     this.stopHum()
+    if(this.bgmBus)this.bgmBus.gain.value=.55*this.bgmVol
+    this.humBus=this.ctx.createGain();this.humBus.connect(this.ambient)
     const base = levelId >= 100 ? 56 : 50 + levelId * 6 // v36：据点 id≥100——别让 id 直接乘出刺耳高频哼声
     for (const [mult, gain] of [[1, 0.035], [2, 0.018], [3, 0.008]] as const) {
       const o = this.ctx.createOscillator()
@@ -170,7 +176,7 @@ export class GameAudio {
       o.frequency.value = base * mult
       const g = this.ctx.createGain()
       g.gain.value = gain
-      o.connect(g).connect(this.ambient)
+      o.connect(g).connect(this.humBus)
       o.start()
       this.humOsc.push(o)
     }
@@ -179,13 +185,28 @@ export class GameAudio {
     const bp = this.ctx.createBiquadFilter()
     bp.type = 'bandpass'; bp.frequency.value = base * 4; bp.Q.value = 6
     const ng = this.ctx.createGain(); ng.gain.value = 0.012
-    noise.connect(bp).connect(ng).connect(this.ambient)
+    noise.connect(bp).connect(ng).connect(this.humBus)
     noise.start()
     this.humOsc.push(noise as unknown as OscillatorNode)
   }
   stopHum() {
     for (const o of this.humOsc) { try { o.stop() } catch { /* */ } }
     this.humOsc = []
+    this.humBus?.disconnect();this.humBus=null
+    if(this.manilaBus&&this.ctx)this.manilaBus.gain.setTargetAtTime(0,this.ctx.currentTime,.4)
+  }
+
+  /** Original restrained pentatonic piano; no sampled or third-party musical work. */
+  setL0Ambience(meeting:number,dark:boolean,red:boolean){
+    const c=this.ctx;if(!c||!this.ambient)return
+    this.humBus?.gain.setTargetAtTime(dark?0:(1-meeting)*(red?.62:1),c.currentTime,.6)
+    if(this.bgmBus)this.bgmBus.gain.setTargetAtTime(.55*this.bgmVol*(1-meeting)*(dark?0:1),c.currentTime,1.2)
+    if(!this.manilaBus){this.manilaBus=c.createGain();this.manilaBus.gain.value=0;this.manilaBus.connect(this.master??this.ambient)}
+    this.manilaBus.gain.setTargetAtTime(meeting*.1*this.bgmVol,c.currentTime,1.2)
+    if(meeting<=.01||c.currentTime<this.manilaNoteAt)return
+    this.manilaNoteAt=c.currentTime+1.25
+    const notes=[60,64,67,71,69,64,62,67,60,67,64,62,57,64,67,62],note=notes[this.manilaNote++%notes.length]
+    for(const [mult,amp]of [[1,.45],[2,.18],[3,.06]]){const o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=440*2**((note-69)/12)*mult;g.gain.setValueAtTime(0,c.currentTime);g.gain.linearRampToValueAtTime(amp,c.currentTime+.007);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+3.4);o.connect(g).connect(this.manilaBus);o.start();o.stop(c.currentTime+3.5);o.onended=()=>{o.disconnect();g.disconnect()}}
   }
 
   // v54：L4 常驻雨声（永不止歇的大雨；惯例同 startHum——loadLevel 按 id===4 驱动，离层 stopRain）：

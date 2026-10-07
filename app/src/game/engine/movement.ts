@@ -1,3 +1,5 @@
+import { tickL0 } from './l0State'
+import { l0Sample } from '../world/l0Architecture'
 import { stableAt } from './career'
 import { l1DistanceScale } from '../world/l1Layout'
 // v53：移动/输入积分 + 垂直物理（固定子步积分主段、液体浮沉、跳跃重力、梯子攀爬）——
@@ -7,7 +9,7 @@ import { integrateMove } from '../core/player'
 import { WALL_H, look } from '../renderer/shared'
 import { levelDefOf, NORMAL_LEVELS } from '../levels'
 import { audio } from '../core/audio'
-import { chunkKey, CS, applyRedPlague } from '../world/infinite'
+import { chunkKey, CS } from '../world/infinite'
 import { RemotePlayerViews } from '../renderer/remotePlayers' // v58：联机玩家碰撞查询
 import type { Engine } from '../engine'
 import { l8AvenuePortalContact } from '../world/infiniteL8'
@@ -90,6 +92,8 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   if (wantSprint) { speed = 6.0; p.stamina = Math.max(0, p.stamina - (l7Swim ? 16 : 22) * (eng.manmadeT > 0 ? 2 : 1) * dt) } // v51：人制品效应中体力消耗 ×2
   else p.stamina = Math.min(100, p.stamina + (p.coffeeT > 0 ? 24 : 12) * (eng.inOutpost ? 2 : 1) * (eng.manmadeT > 0 ? 0.5 : 1) * (p.infection >= 100 ? 0.9 : 1) * dt) // v51：人制品效应中体力恢复 ×0.5；v55：疫疾一阶起 ×0.9
   if (p.crouching && !l7Swim) speed *= 0.5 // 蹲伏减速（L7 潜泳由下潜逻辑负责，不再额外砍半）
+    const carpet=l0Sample(m,p.x,p.y)
+    speed*=(1-.10*(carpet?.arch??0))*(1-.40*(carpet?.red??0))
   if (wet && lq === 0) speed *= 0.55
   if (lq === 1 && l7Swim) speed *= 0.72 // v57o：开放水域游泳比室内水池更快
   else if (lq !== 0) speed *= 0.5 // v13：液体中移动减速
@@ -103,26 +107,6 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   eng.statusMsgT.stamina -= dt
   eng.statusMsgT.hunger -= dt
   eng.statusMsgT.thirst -= dt
-  // v23：The Manila Room——墙内传出敲击声与砰砰声，灯灭期间最响；灯亮度剧烈波动、周期性全黑
-  {
-    const mi = Math.floor(p.y) * m.w + Math.floor(p.x)
-    const inManila = m.tint?.[mi] === 1
-    if (inManila) {
-      eng.manilaT -= dt
-      if (eng.manilaT <= 0) {
-        eng.manilaT = 9 + Math.random() * 11
-        const dark = eng.blackoutT > 0
-        const lines = dark
-          ? ['灯全灭了。墙里那阵敲击声一下子变得很近——就在你背后那面墙的里面。',
-             '黑暗中，砰、砰、砰。有规律，像是在回应什么。']
-          : ['墙里传来敲击声。你贴上去听，它停了；你退开，它又开始了。',
-             '砰的一声闷响从墙体内部传来。这间房的墙有两格厚。',
-             '如果有人从门口进来，你会先看见一个轮廓「淡入现形」。别和别人同时走同一个门。']
-        eng.msg(lines[Math.floor(Math.random() * lines.length)], 'lore')
-        if (dark) { p.sanity = Math.max(0, p.sanity - 6); eng.emit({ kind: 'sanityhit' }) }
-      }
-    } else eng.manilaT = 4
-  }
   // v30：植殖癌（Level 1 花园段）——行为逐渐僵硬、视野逐渐变绿，最终原地生根化为一株植物
   {
     const inf = m.inf
@@ -160,7 +144,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
         n++
       }
       if (n) {
-        eng.msg('背包里的 Pockets 在发烫。街区尽头，有什么东西同时转了过来。', 'damage')
+        eng.msg('背包里的「一些口袋」在发烫。街区尽头，有什么东西同时转了过来。', 'damage')
         audio.aggro()
       } else {
         // 当前窗口没有邻里守望时也必须真正“引来”观察者/挺进者，而不是静默失效。
@@ -173,7 +157,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
           const e = makeEntity(Math.random() < 0.52 ? 'watcher' : 'strider', tx + 0.5, ty + 0.5)
           e.state = 'chase'; e.targetX = p.x; e.targetY = p.y; e.stateT = 0
           m.entities.push(e)
-          eng.msg('背包里的 Pockets 突然发烫。一个属于“邻里守望”的轮廓出现在街角。', 'damage')
+          eng.msg('背包里的「一些口袋」突然发烫。一个属于“邻里守望”的轮廓出现在街角。', 'damage')
           audio.aggro()
           break
         }
@@ -224,6 +208,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
     if (eng.stepAcc > 0.9) {
       eng.stepAcc = 0
       const g0 = eng.levelDef.gen
+      if (wet&&eng.player.level===0) audio.splash(.1)
       if (lq !== 0) audio.swim() // 水中移动划水声
       else audio.footstep(g0 === 'garage' || g0 === 'grid' ? 'concrete' : g0 === 'pipes' ? 'metal' : 'carpet')
       eng.noise = Math.min(1, eng.noise + (wantSprint ? 0.5 : 0.15))
@@ -244,26 +229,11 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
     eng.updateInfiniteWindow()
     // 窗口平移会同步改写玩家局部坐标并重缝 m 数组；后续深坑/液体/离水判定必须使用新索引。
     tileI = Math.floor(p.y) * m.w + Math.floor(p.x)
-    // 红室（v34）：到达刷新红室的区块先播报预警；玩家真正走进红厅（瓦片 tint=2）才触发蔓延
-    const inf = m.inf
-    if (!inf.plague) {
-      const ck = chunkKey(Math.floor((inf.ox + p.x) / CS), Math.floor((inf.oy + p.y) / CS))
-      const c = inf.chunks.get(ck)
-      if (c?.variant === 'red') {
-        if (!eng.redAnnounced.has(ck)) {
-          eng.redAnnounced.add(ck)
-          eng.msg('空气里多了一股铁锈味。前方有个房间透着不祥的红光——档案里管那种地方叫「红室」，别久留。', 'lore')
-        }
-        if (m.tint[Math.floor(p.y) * m.w + Math.floor(p.x)] === 2) {
-          // 红室蔓延：周围所有房间与即将生成的新区域全部变成红室（不再产物资）
-          applyRedPlague(m)
-          p.sanity = Math.max(0, p.sanity - 15)
-          eng.camShake = Math.min(1, eng.camShake + 0.5)
-          audio.whisper(1)
-          eng.msg('红色漫过了你的脚踝——墙纸、地毯、灯光，一切都在变红。档案说得对：已经来不及了。', 'lore')
-        }
-      }
-    }
+    tickL0(eng,dt)
+    // Entering a personal red room replaces the map. Do not finish this frame's
+    // physics against the old shared map or its pre-teleport tile index.
+    if(eng.map!==m)return mag
+    tileI = Math.floor(p.y) * m.w + Math.floor(p.x)
   }
 
   // ---- v13：电梯乘降（交互后轿厢垂直送达另一层）----

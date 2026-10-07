@@ -35,6 +35,7 @@ import { buildSkyAndLiquidsJob, buildLiquidSurfacesJob, updateLiquidTime, resetL
 import { RemotePlayerViews } from './remotePlayers' // v58：联机远端玩家渲染
 import { SKY_PROFILES, skyLightDir, makeSkyMesh, makeMirageFleet, updateMirageFleet, type MirageFleet } from './skybox'
 import { buildStructure, buildExit, buildL10CropLodJob, updateL10Wind } from './structures'
+import { ALPHA_ENTRIES } from '../content/alphaBlueprint'
 import { buildDecorationsJob } from './decorations'
 import { buildEntityMesh } from './entitiesMesh'
 import { animateMoth, buildMothMesh } from './mothMeshes'
@@ -1342,9 +1343,13 @@ export class Renderer3D {
         Math.abs(p.x - this.lightSortX) + Math.abs(p.y - this.lightSortY) > .75) {
       sorted.length = m.lights.length
       for (let i = 0; i < m.lights.length; i++) sorted[i] = m.lights[i]
+      // Alpha's enclosed rooms share a dense plan. Keep their own fixtures in the
+      // pool before lights across walls, especially at the back of the large hall.
+      const alphaRoom=m.settlement?.blueprint.id==='alpha'?m.settlement.blueprint.rooms.find(r=>r.enclosed&&p.x>r.x&&p.x<r.x+r.w&&p.y>r.y&&p.y<r.y+r.h):undefined
+      const roomPriority=(l:LightSource)=>alphaRoom&&l.x>alphaRoom.x&&l.x<alphaRoom.x+alphaRoom.w&&l.y>alphaRoom.y&&l.y<alphaRoom.y+alphaRoom.h?-10000:0
       sorted.sort((a, b) => {
         const adx = a.x - p.x, ady = a.y - p.y, bdx = b.x - p.x, bdy = b.y - p.y
-        return adx * adx + ady * ady - (bdx * bdx + bdy * bdy)
+        return adx * adx + ady * ady + roomPriority(a) - (bdx * bdx + bdy * bdy + roomPriority(b))
       })
       this.lightSortMap = m; this.lightSortRev = m.inf?.rev ?? engine.mapRev
       this.lightSortTime = this.time; this.lightSortX = p.x; this.lightSortY = p.y
@@ -2599,6 +2604,10 @@ export class Renderer3D {
 
   // v30：门类出口（楼梯井/未上锁的门）——组移到墙格中心（geometry 已在该墙格开门洞），开口朝向出口格
   private orientDoor(m: GameMap, grp: THREE.Group, e: { x: number; y: number }) {
+    if(m.settlement?.blueprint.id==='alpha'){
+      const entry=ALPHA_ENTRIES.find(r=>r.exit.x===e.x&&r.exit.y===e.y)
+      if(entry){grp.position.set(entry.mount.x,0,entry.mount.y);grp.rotation.y=entry.mount.deg*Math.PI/180;return}
+    }
     const tx = Math.floor(e.x), ty = Math.floor(e.y)
     const at = (x: number, y: number) => (x < 0 || y < 0 || x >= m.w || y >= m.h ? 0 : m.tiles[y * m.w + x])
     for (const [wx, wy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {

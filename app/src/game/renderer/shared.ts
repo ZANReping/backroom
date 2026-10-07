@@ -1,3 +1,4 @@
+import {installL0EnvironmentShader} from './l0EnvironmentShader'
 // 渲染器公共工具：常量/调色/几何与程序化纹理基础
 import * as THREE from 'three'
 import { prepareCachedTextureImage, publishTextureImage } from './textureImages'
@@ -27,7 +28,7 @@ export type VisualInteractionHit = VisualInteractionHitBase & (
 
 // 视角共享状态（桌面 Pointer Lock / 移动端右半屏拖动写入）。visualHit 由真实 Three.js 相机射线逐帧写入，
 // 引擎只把它当成候选命中，仍会重新验证距离、楼层与三维 LOS。
-export const look: { yaw: number; pitch: number; locked: boolean; rayX: number; rayY: number; rayZ: number; visualHit: VisualInteractionHit | null } = {
+export const look: { yaw: number; pitch: number; roll?:number; locked: boolean; rayX: number; rayY: number; rayZ: number; visualHit: VisualInteractionHit | null } = {
   yaw: 0, pitch: 0, locked: false,
   // 相机中心射线的游戏世界分量（rayY 对应 Three.js Z，rayZ 是垂直轴）。
   rayX: 0, rayY: -1, rayZ: 0,
@@ -80,7 +81,7 @@ export function litMaterial(params: THREE.MeshLambertMaterialParameters & { roug
   // 这里仅自动补齐缺失的 emissiveMap；显式提供的专用发光图仍然优先。
   const shaded = { ...rest }
   if (shaded.map && shaded.emissive && !shaded.emissiveMap) shaded.emissiveMap = shaded.map
-  if (materialMode !== 'realistic') return new THREE.MeshLambertMaterial(shaded)
+  if (materialMode !== 'realistic') { const mat=new THREE.MeshLambertMaterial(shaded);installL0EnvironmentShader(mat);return mat }
   const mat = new THREE.MeshStandardMaterial({
     ...shaded,
     roughness: roughness ?? 0.85,
@@ -90,6 +91,7 @@ export function litMaterial(params: THREE.MeshLambertMaterialParameters & { roug
   const base = envBase ?? 0.18
   mat.envMapIntensity = base * reflectK
   mat.userData.envBase = base
+  installL0EnvironmentShader(mat)
   return mat
 }
 

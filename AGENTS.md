@@ -1,5 +1,20 @@
 # Codex agent routing
 
+## Multiplayer freeze (user requirement, 2026-10-06)
+
+- Multiplayer is temporarily disabled. Keep its entry points closed and retain its existing implementation for possible later use.
+- Until the human user explicitly requests reopening multiplayer, do not update multiplayer features, protocols, synchronization or compatibility, and do not include multiplayer requirements or multiplayer testing in unrelated work.
+- Current development and acceptance target single-player gameplay. A general request to continue development does not reopen multiplayer.
+- This requirement applies to the Three.js game in `app`; do not propagate changes into `app-lite` without a separate request.
+
+## Game models and texture assets
+
+- Models may be authored in Blender and imported into the game. Reuse suitable open-source/openly licensed models when their license permits the intended distribution; optimize mesh, UVs, materials and scale for the project's runtime and performance budget.
+- Prefer suitable openly licensed texture assets first. If none fit the intended appearance, use the imagegen skill to create textures, then prepare matching normal and roughness maps and other required PBR channels. Keep OpenGL normal orientation, world scale, seamless edges, mipmaps and quality tiers consistent with the renderer.
+- Record the original source URL, author, exact license, local asset paths and modifications for every reused asset. Keep generated source images, prompts and reproducible processing scripts with the project. Do not assume that a free download permits redistribution.
+- Compare generated textures strictly against the supplied references (motif, scale, color, contrast and wear). When they differ, revise the prompt and regenerate as far as practical; preserve iteration notes and verify the selected texture on the in-game geometry before accepting it.
+- Inspect imported assets in the actual game, including UV seams, lighting, collision alignment, draw calls and resource disposal. Tool choice does not relax the current task's performance or compatibility requirements.
+
 ## Automatic Luna delegation
 
 - Automatically delegate implementation work to the custom `luna_repetitive_worker` agent without asking the user when all of the following are true:

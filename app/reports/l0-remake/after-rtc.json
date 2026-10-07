@@ -1,0 +1,13 @@
+{
+  "transport": "two engine clients, local RTCPeerConnection ordered data channels; no WAN/TURN test",
+  "checks": [
+    "host starts two RTC clients",
+    "shared drop",
+    "shared pickup ledger",
+    "authoritative layout revision",
+    "personal red space isolates both directions",
+    "RTC reconnect restores private loop"
+  ],
+  "packets": 33,
+  "bytes": 14716
+}

@@ -342,7 +342,7 @@ export function throwHeld(eng: Engine, type: string) {
   audio.swing()
   const speed = 9
   const dir = crosshairDirection()
-  const lead = 0.38
+  const lead = type==='glowstick'?.08:.38
   eng.projectiles.push({
     id: eng.projId++, type,
     x: p.x + dir.x * lead, y: p.y + dir.y * lead,
@@ -514,6 +514,7 @@ export function updateProjectiles(eng: Engine, dt: number) {
     const oldZ = pr.z
     pr.vz -= 9.8 * dt
     const nz = oldZ + pr.vz * dt
+    if(pr.type==='glowstick')pr.floorZ=groundHeightAt(m,pr.x,pr.y,bandOfPlayerZ(m,pr.floorZ))
     if (nz <= pr.floorZ) { pr.done = true; eng.landProjectile(pr, pr.x, pr.y); continue }
     // 用短射线段而非旧 tileAt 整格占地判定，防止快速投掷物穿过薄模型，
     // 也不会在异形装饰的透明空隙外凭空撞停。
@@ -536,6 +537,16 @@ export function landProjectile(eng: Engine, pr: Projectile, x: number, y: number
   const m = eng.map!
   const kind = ITEMS[pr.type].throw
   switch (kind) {
+    case 'light': {
+      const z=groundHeightAt(m,x,y,bandOfPlayerZ(m,pr.floorZ))
+      if(m.inf?.l0&&z<=-8)break // No recoverable object hovering over a bottomless pit.
+      const item={id:Math.random(),type:pr.type,x,y,z}
+      m.items.push(item)
+      const inf=m.inf
+      inf?.chunks.get(`${Math.floor((x+inf.ox)/32)},${Math.floor((y+inf.oy)/32)}`)?.items.push(item)
+      eng.msg(eng.levelDef.noFlashlight?'荧光棒落在地上，这里仍然没有光。':'荧光棒落在地上，发出柔和的绿光，可以再次拾取。','system')
+      break
+    }
     case 'explode': { // 汽油罐：范围伤害
       eng.noiseEvent(x, y, 18, true)
       eng.camShake = Math.min(1, eng.camShake + 0.5)

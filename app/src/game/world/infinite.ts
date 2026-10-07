@@ -1,15 +1,16 @@
+import {genL0Architecture,l0RegionOf,newL0Space,l0RestoredDropPosition,type L0Layout,type L0SpaceState} from './l0Architecture'
 import { newL1Dynamics, restoreL1Container, rememberL1Container, type L1Dynamics } from './l1Dynamics'
 // ================= v17：Level 0「教学关卡」无限 chunk 流式生成 =================
 // 以玩家为中心按 32×32 瓦片 chunk 流式生成/卸载；chunk 用「世界种子+chunk 坐标」
 // 确定性生成（同种子重访同 chunk 内容一致）。chunk 间通过共享边哈希的「边缘开口」
 // 缝合：每条 chunk 边界的走廊开口位置由两侧 chunk 用同一哈希计算，墙壁/走廊自然衔接。
-// 迷宫（回溯 DFS，全覆盖连通）+ 柱群 + 开阔区混合；稀有变体房间见 variantOf。
+// 迷宫（回溯 DFS，全覆盖连通）+ 柱厅（旧 pillars 别名）+ 开阔区混合；稀有变体房间见 variantOf。
 import { RNG } from '../core/rng'
+import {placeL0StarterSupplies} from './starterSupplies'
 import { canOccupy, PLAYER_RADIUS } from '../core/player'
 import { preparedL11, prefetchL11 } from './l11ChunkCache'
 import { takePreparedChunk, prefetchChunks } from './chunkCache'
-import { UNIVERSAL_ITEMS } from '../content/items'
-import { makeEntity, ENTITIES, type Entity } from '../entities'
+import { makeEntity, type Entity } from '../entities'
 import type { NpcState } from '../content/npcs'
 import type { GameMap } from './mapgen'
 import { fixHanging, HANGING_KINDS, waterItemZForTile } from './mapgen'
@@ -24,13 +25,13 @@ export const RS = 8 // 出口保底超区域边长（chunk）：8×8 chunk = 256
 export const GEN_ITEM_BASE = 0x200000 // 生成器固有物品 id 起点（玩家掉落物 id < 此值）
 
 export type L0Variant =
-  | 'maze' | 'pillars' | 'open' // 常规：迷宫 / 柱群 / 开阔区
+  | 'maze' | 'pillars' | 'open' // 常规：迷宫 / 柱厅（pillars 为旧别名）/ 开阔区
   | 'arch' | 'pillarhall' | 'pit' // 较稀有：拱厅 / 柱厅 / 深坑
   | 'blackout' | 'manila' // 稀有：熄灯区 / 马尼拉室
   | 'red' // 极稀有：红室
 
 export const VARIANT_NAMES: Record<L0Variant, string> = {
-  maze: '迷宫', pillars: '柱群', open: '开阔区',
+  maze: '迷宫', pillars: '柱厅', open: '开阔区',
   arch: '拱厅', pillarhall: '柱厅', pit: '深坑',
   blackout: '熄灯区', manila: '马尼拉室', red: '红室',
 }
@@ -56,10 +57,10 @@ export const VARIANT_LORE: Record<string, string[]> = {
     '在低可见度的掩映下，熄灯区会不断变动，极难穿行。档案建议：一旦误入，立刻向视线中的第一缕微光狂奔，或循着任意嗡鸣声前行，直至找到出口。',
   ],
   manila: [
-    'The Manila Room（马尼拉室）。Level 0 中罕见出现的一间孤立的正方形厚墙房间，因其独特的米黄色壁纸而得名。陈设极少，通常不超过一张桌子和一把椅子；扩建后的房间在四面各保留一处宽入口并接回外围迷宫。生存难度 0，无敌对实体。',
-    '它是 Level 0「孤立效应」唯一已知的例外：这是全层唯一一个人们能够看见彼此的房间，且对所有人都出现在同一位置，因此成为流浪者约定的会合点。副作用：他人进入时会「淡入现形」，故须避免多人同时从同一个入口进入。',
-    '桌上通常放着盖有 M.E.G. 徽记的文件夹，内容涵盖剪辑（no-clip）说明、最常见与最危险实体的图鉴，以及重要层级指南。约 36% 的新流浪者反映这些文件对逃出 Level 0 起了关键作用；文件会随房间的正常变化偶尔消失，报告缺失后需补放。',
-    '⚠ 它并不安静。灯光与 Level 0 几乎完全相同，并发出同样恼人的嗡鸣；墙内会传出敲击声与砰砰声，被认为可能有实体存在于墙体之内——这些声音在灯灭期间最响。灯的亮度剧烈波动，会周期性地完全熄灭陷入全黑。',
+    'The Manila Room（马尼拉室）。Level 0 中罕见出现的一间 8×8 米净室，厚墙四面设有木门并连接外环廊；菱形壁纸、木地板、偏置的八角柜桌和一正一倒两把椅子构成固定陈设。生存难度 0，无敌对实体。',
+    '它是 Level 0「孤立效应」唯一已知的例外：房间与外环廊的核心区域解除孤立效应，所有进入者都能在同一位置看见彼此；边缘则以渐变方式显现，因此成为流浪者约定的安全会合点。',
+    '桌上保留盖有 M.E.G. 徽记的文件夹，内容涵盖剪辑（no-clip）说明、最常见与最危险实体的图鉴，以及重要层级指南；柜内保留一次性补给。补给不会自动补货，搜刮状态应由房间持续记录。',
+    '灯光保持平稳，接近房间时 Level 0 的嗡鸣逐渐退去，随后响起舒缓的钢琴声。房间不会触发敲墙惊吓、强制熄灯或理智伤害。',
   ],
   red: [
     '与 Level 0 整体完全割裂的异常区域。一旦完全进入便再也无法逃离，面临死循环的困境；即便只是身处附近，也会引发严重的幽闭恐惧与急性妄想。',
@@ -68,6 +69,7 @@ export const VARIANT_LORE: Record<string, string[]> = {
 }
 
 export interface LiveChunk {
+  l0?: L0Layout
   up2?: Uint8Array
   upWall2?: Uint8Array
   stair?: Uint32Array
@@ -109,6 +111,8 @@ export interface ChunkDynState {
 }
 
 export interface InfiniteState {
+  l0Pending?: import("../engine/l0State").L0Pending
+  l0?: L0SpaceState
   mothAlerts?: { all: boolean; nests: Record<string, boolean> }
   l1Dynamics?: L1Dynamics
   // Compact permanent inventory ledger, independent of the bounded geometry/chunk cache.
@@ -148,27 +152,9 @@ const h01 = (...n: number[]) => h32(...n) / 4294967296
 
 export const chunkKey = (cx: number, cy: number) => `${cx},${cy}`
 // 结构稳定 sid：窗口内 (cx&0xff, cy&0xff) 不重复（窗口仅 5 chunk 宽），n<16 个带状态结构/chunk
-const sidOf = (cx: number, cy: number, n: number) => ((cx & 0xff) << 24) | ((cy & 0xff) << 16) | ((n & 0xff) << 4) | 1
-const itemIdOf = (cx: number, cy: number, n: number) => GEN_ITEM_BASE + ((cx & 0xff) << 12) + ((cy & 0xff) << 4) + (n & 0xf)
 
 // ---------- 变体判定（独立哈希流，不消耗布局 RNG）----------
-export function variantOf(seed: number, cx: number, cy: number): L0Variant {
-  // Level 0 的固定出生 chunk 始终使用开阔区；标题背景同样从该地图出生点取景。
-  if (cx === 0 && cy === 0) return 'open'
-  if (Math.abs(cx) <= 1 && Math.abs(cy) <= 1) {
-    // 出生安全区：常规迷宫/开阔
-    return h01(seed, 0xb10, cx, cy) < 0.7 ? 'maze' : 'open'
-  }
-  const r = h01(seed, 0x9a17, cx, cy)
-  if (r < 0.014) return 'red' // 极稀有 ~1/71
-  if (r < 0.046) return 'manila' // 稀有 ~1/31
-  if (r < 0.082) return 'blackout' // 稀有 ~1/28
-  if (r < 0.172) return 'pit' // 较稀有 ~1/11
-  if (r < 0.262) return 'arch' // 较稀有 ~1/11
-  if (r < 0.352) return 'pillarhall' // 较稀有 ~1/11
-  const r2 = h01(seed, 0xbe11, cx, cy)
-  return r2 < 0.55 ? 'maze' : r2 < 0.8 ? 'pillars' : 'open'
-}
+export function variantOf(seed:number,cx:number,cy:number):L0Variant{return l0RegionOf(seed,cx,cy)}
 
 // ---------- 多无限层级注册表（v29：L0 内置；L1 等由 infiniteL1.ts 注册，避免循环依赖）----------
 // 实现位于 infiniteRegistry.ts（无依赖独立模块，防循环初始化 TDZ）
@@ -206,471 +192,8 @@ export function exitTarget(seed: number, cx: number, cy: number): { x: number; y
 // ---------- chunk 生成（世界坐标内容；纯函数：同种子同坐标必一致）----------
 // ---------- chunk 生成（世界坐标内容；纯函数：同种子同坐标必一致；GenChunk 契约见 infiniteRegistry）----------
 // v54：导出供设计模式数据提取（game/design/extractLayouts.ts）按变体生成代表性 chunk；游戏行为不变
-export function genL0ChunkRaw(def: LevelDef, seed: number, cx: number, cy: number, forceVariant?: L0Variant): GenChunk {
-  const variant = forceVariant ?? variantOf(seed, cx, cy)
-  const rng = new RNG(h32(seed, cx, cy, 0x1a0))
-  const tiles = new Uint8Array(CS * CS).fill(2)
-  const wet = new Uint8Array(CS * CS)
-  const elev = new Uint8Array(CS * CS)
-  const step = new Uint8Array(CS * CS)
-  const tint = new Uint8Array(CS * CS)
-  const crawl = new Uint8Array(CS * CS)
-  const structures: Structure[] = []
-  const items: GroundItem[] = []
-  const lights: LightSource[] = []
-  const exits: ExitInstance[] = []
-  const entities: { type: string; x: number; y: number }[] = []
-  const li = (x: number, y: number) => y * CS + x
-  const isF = (x: number, y: number) => x >= 0 && y >= 0 && x < CS && y < CS && tiles[li(x, y)] === 1
-  const WX = cx * CS, WY = cy * CS
-  let sidN = 0, itemN = 0
-  const pushStruct = (kind: Structure['kind'], x: number, y: number, w: number, h: number, solid: boolean, withSid = false, data?: Structure['data']) => {
-    const d = withSid ? { ...data, sid: sidOf(cx, cy, sidN++) } : data
-    structures.push({ kind, x: WX + x, y: WY + y, w, h, solid, data: d })
-  }
-  const pushItem = (type: string, x: number, y: number) => {
-    items.push({ id: itemIdOf(cx, cy, itemN++), type, x: WX + x + 0.5, y: WY + y + 0.5 })
-  }
-  const pushLight = (x: number, y: number, r: number, color: string) => {
-    lights.push({ x: WX + x + 0.5, y: WY + y + 0.5, r, color, flickerSeed: rng.next() * 100, gen: 1 })
-  }
-  const carve = (x0: number, y0: number, x1: number, y1: number) => {
-    for (let y = Math.max(1, y0); y <= Math.min(CS - 2, y1); y++)
-      for (let x = Math.max(1, x0); x <= Math.min(CS - 2, x1); x++) tiles[li(x, y)] = 1
-  }
-  const solidAtL = (x: number, y: number) =>
-    structures.some((s) => s.solid && WX + x >= s.x && WX + x < s.x + s.w && WY + y >= s.y && WY + y < s.y + s.h)
-  // 深坑洞（elev=4）：放置类逻辑一律避开（物品/结构/出口不得生成在洞口上）
-  const holeAt = (x: number, y: number) => x >= 0 && y >= 0 && x < CS && y < CS && elev[li(x, y)] === 4
-  // 马尼拉室内部只保留条目明确描述的家具与补给，通用随机装饰/掉落不得挤入。
-  const manilaReserved = (x: number, y: number) => variant === 'manila' && x >= 9 && x <= 22 && y >= 9 && y <= 22
-  // 空地放置（本chunk 2..29 区域，需外圈全地板）
-  const placeFree = (kind: Structure['kind'], w: number, h: number, solid: boolean, withSid = false, data?: Structure['data']): boolean => {
-    for (let t = 0; t < 80; t++) {
-      const x = rng.int(2, CS - w - 3), y = rng.int(2, CS - h - 3)
-      let ok = true
-      for (let j = y - 1; j <= y + h && ok; j++)
-        for (let i = x - 1; i <= x + w && ok; i++)
-          if (!isF(i, j) || solidAtL(i, j) || holeAt(i, j) || manilaReserved(i, j)) ok = false
-      if (!ok) continue
-      pushStruct(kind, x, y, w, h, solid, withSid, data)
-      return true
-    }
-    return false
-  }
-  // 贴墙放置（涂鸦/通风口；限定区域内）
-  const placeWallHug = (kind: Structure['kind'], withSid = false, data?: Structure['data'], area?: { x0: number; y0: number; x1: number; y1: number }): boolean => {
-    const a = area ?? { x0: 2, y0: 2, x1: CS - 3, y1: CS - 3 }
-    for (let t = 0; t < 120; t++) {
-      const x = rng.int(a.x0, a.x1), y = rng.int(a.y0, a.y1)
-      if (!isF(x, y) || solidAtL(x, y) || holeAt(x, y) || manilaReserved(x, y)) continue
-      if (!(isF(x + 1, y) && isF(x - 1, y) && isF(x, y + 1) && isF(x, y - 1))) {
-        pushStruct(kind, x, y, 1, 1, false, withSid, data)
-        return true
-      }
-    }
-    return false
-  }
-
-  // ---- 基础地形 ----
-  const mazeCarve = () => {
-    // 10×10 回溯迷宫：格 (i,j) → 瓦片 (2+3i .. 3+3i, 2+3j .. 3+3j)，全覆盖 ⇒ 整体连通
-    const N = 10
-    const seen = new Uint8Array(N * N)
-    const carveCell = (i: number, j: number) => carve(2 + 3 * i, 2 + 3 * j, 3 + 3 * i, 3 + 3 * j)
-    const stack: [number, number][] = [[4, 4]]
-    seen[4 * N + 4] = 1
-    carveCell(4, 4)
-    while (stack.length) {
-      const [i, j] = stack[stack.length - 1]
-      const dirs: [number, number][] = []
-      for (const [di, dj] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
-        const ni = i + di, nj = j + dj
-        if (ni >= 0 && nj >= 0 && ni < N && nj < N && !seen[nj * N + ni]) dirs.push([di, dj])
-      }
-      if (!dirs.length) { stack.pop(); continue }
-      const [di, dj] = dirs[Math.floor(rng.next() * dirs.length)]
-      // 打通两格间 1 厚墙（2 宽门洞）：格 i 占 2+3i..3+3i，格间隔墙在 4+3i
-      if (di !== 0) carve(4 + 3 * Math.min(i, i + di), 2 + 3 * j, 4 + 3 * Math.min(i, i + di), 3 + 3 * j)
-      else carve(2 + 3 * i, 4 + 3 * Math.min(j, j + dj), 3 + 3 * i, 4 + 3 * Math.min(j, j + dj))
-      const ni = i + di, nj = j + dj
-      seen[nj * N + ni] = 1
-      carveCell(ni, nj)
-      stack.push([ni, nj])
-    }
-    // 随机破墙成环（减少完美迷宫的死角感）
-    for (let t = 0; t < 14; t++) {
-      const i = rng.int(0, N - 1), j = rng.int(0, N - 1)
-      if (rng.chance(0.5) && i + 1 < N) carve(4 + 3 * i, 2 + 3 * j, 4 + 3 * i, 3 + 3 * j)
-      else if (j + 1 < N) carve(2 + 3 * i, 4 + 3 * j, 3 + 3 * i, 4 + 3 * j)
-    }
-  }
-  switch (variant) {
-    case 'maze':
-    case 'blackout':
-    case 'manila':
-      mazeCarve()
-      break
-    case 'pillars': {
-      carve(2, 2, CS - 3, CS - 3)
-      for (let y = 5; y < CS - 4; y += 6)
-        for (let x = 5; x < CS - 4; x += 6)
-          // v29：柱群与柱厅同款——立柱贴墙纸（wp 标记由渲染层处理）
-          if (rng.chance(0.85) && Math.abs(x - 16) + Math.abs(y - 16) > 4)
-            pushStruct('pillar', x + rng.int(-1, 1), y + rng.int(-1, 1), 1, 1, true, false, { wp: 1 })
-      break
-    }
-    case 'open': {
-      carve(3, 3, CS - 4, CS - 4)
-      let placed = 0
-      for (let attempt = 0; attempt < 24 && placed < 5; attempt++) { // 少量墙块孤岛
-        const bx = rng.int(6, CS - 10), by = rng.int(6, CS - 10)
-        // 原点 chunk 中心保留 10×10m 无障碍出生广场，避免初始视角贴墙或卡入孤岛。
-        if (cx === 0 && cy === 0 && bx <= 20 && bx + 1 >= 11 && by <= 20 && by + 1 >= 11) continue
-        for (let j = 0; j < 2; j++) for (let i = 0; i < 2; i++) tiles[li(by + j, bx + i)] = 2
-        placed++
-      }
-      break
-    }
-    case 'arch': {
-      // 拱厅：扩大开放大厅，并用连续 3m 拱廊形成两道半高分隔墙。
-      carve(4, 7, 27, 24)
-      for (const ay of [11, 20])
-        for (let ax = 6; ax <= 24; ax += 3) pushStruct('arch', ax, ay, 3, 1, true)
-      break
-    }
-    case 'pillarhall': {
-      // 柱厅：密集柱阵大厅（柱距 3，通道 2 宽；柱子贴墙纸，wp 标记由渲染层处理）
-      carve(6, 6, 25, 25)
-      for (let y = 8; y <= 23; y += 3)
-        for (let x = 8; x <= 23; x += 3) pushStruct('pillar', x, y, 1, 1, true, false, { wp: 1 })
-      break
-    }
-    case 'pit': {
-      // 深坑：方形大厅内 3×3 整齐排列的正方形深洞（2×2，洞间距 2；往下望不见底，坠入即死）
-      carve(8, 8, 23, 23)
-      for (let gy = 0; gy < 3; gy++)
-        for (let gx = 0; gx < 3; gx++)
-          for (let j = 0; j < 2; j++)
-            for (let i = 0; i < 2; i++)
-              elev[li(11 + gx * 4 + i, 11 + gy * 4 + j)] = 4
-      break
-    }
-    case 'red':
-      // 红室：方形大厅，整体红 tint（红灯光 + 红雾由渲染层按 tint 处理）
-      carve(9, 9, 22, 22)
-      break
-  }
-
-  // ---- 边缘缝合：按共享边哈希开 2 宽口并向内挖走廊直至接上既有地板 ----
-  const openings: { x: number; y: number; dx: number; dy: number }[] = []
-  const east = edgeOpen(seed, true, cx + 1, cy)
-  const west = edgeOpen(seed, true, cx, cy)
-  const south = edgeOpen(seed, false, cx, cy + 1)
-  const north = edgeOpen(seed, false, cx, cy)
-  for (let k = 0; k < 10; k++) {
-    if (east[k]) openings.push({ x: CS - 1, y: 2 + 3 * k, dx: -1, dy: 0 })
-    if (west[k]) openings.push({ x: 0, y: 2 + 3 * k, dx: 1, dy: 0 })
-    if (south[k]) openings.push({ x: 2 + 3 * k, y: CS - 1, dx: 0, dy: -1 })
-    if (north[k]) openings.push({ x: 2 + 3 * k, y: 0, dx: 0, dy: 1 })
-  }
-  for (const o of openings) {
-    let x = o.x, y = o.y
-    let x2 = o.dy !== 0 ? x + 1 : x, y2 = o.dx !== 0 ? y + 1 : y // 2 宽副线
-    for (let d = 0; d < CS - 1; d++) {
-      const f = isF(x, y) && isF(x2, y2)
-      if (f && d > 0) break
-      tiles[li(x, y)] = 1
-      tiles[li(x2, y2)] = 1
-      x += o.dx; y += o.dy
-      x2 += o.dx; y2 += o.dy
-      if (x < 0 || y < 0 || x >= CS || y >= CS || x2 < 0 || y2 < 0 || x2 >= CS || y2 >= CS) break
-    }
-  }
-
-  // ---- 变体专属内容（tint/灯光/结构/lore）----
-  const roomTint = (x0: number, y0: number, x1: number, y1: number, t: number) => {
-    for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) if (x >= 0 && y >= 0 && x < CS && y < CS) tint[li(x, y)] = t
-  }
-  switch (variant) {
-    case 'arch':
-      for (const [lx, ly] of [[7, 9], [13, 9], [19, 9], [25, 9], [9, 16], [16, 16], [23, 16], [9, 23], [16, 23], [23, 23]] as const)
-        pushLight(lx, ly, 4.8, def.palette.light)
-      placeWallHug('graffiti', true, { loreKind: 'arch' }, { x0: 5, y0: 8, x1: 26, y1: 23 })
-      // v32：滋水枪——很小概率出现在拱门区域
-      if (rng.chance(0.05)) pushItem('squirtgun', rng.int(7, 24), rng.int(13, 18))
-      break
-    case 'pillarhall':
-      for (const [lx, ly] of [[9, 9], [22, 9], [15, 15], [9, 22], [22, 22]] as const) pushLight(lx, ly, 4, def.palette.light)
-      placeWallHug('graffiti', true, { loreKind: 'pillarhall' }, { x0: 7, y0: 7, x1: 24, y1: 24 })
-      break
-    case 'pit': {
-      pushLight(9, 9, 4, def.palette.light)
-      pushLight(22, 22, 4, def.palette.light)
-      // 洞间走道上的反光物（警示用；安全格=深洞之间的 2 宽通道）
-      const spots = [[13, 13], [17, 13], [13, 17], [17, 17]] as const
-      const [sx, sy] = spots[rng.int(0, spots.length - 1)]
-      pushItem(rng.chance(0.5) ? 'glowstick' : 'bandage', sx, sy)
-      placeWallHug('graffiti', true, { loreKind: 'pit' }, { x0: 8, y0: 8, x1: 23, y1: 23 })
-      break
-    }
-    case 'blackout':
-      roomTint(0, 0, CS - 1, CS - 1, 3) // 熄灯区：无任何灯光（下方通用灯光跳过）
-      placeWallHug('graffiti', true, { loreKind: 'blackout' })
-      pushItem('glowstick', 14 + rng.int(0, 3), 14 + rng.int(0, 3))
-      break
-    case 'manila': {
-      // ===== The Manila Room（马尼拉室）· 严格按 Wikidot manila-room 条目复刻 =====
-      // 「an isolated, square room with thick walls within Level 0, named for the unique beige
-      //   color of its wallpaper. It has minimal furnishings which vary slightly between
-      //   appearances, usually no more than a table and chair as well as anywhere from
-      //   1 to 4 entrances.」
-      const R = 14                      // 扩大后的正方形会合室
-      const rx0 = 9, ry0 = 9
-      const rx1 = rx0 + R - 1, ry1 = ry0 + R - 1
-      // 厚墙（thick walls）：房间外再包一圈实墙，房间与迷宫之间隔着两格厚的墙体
-      for (let y = ry0 - 2; y <= ry1 + 2; y++)
-        for (let x = rx0 - 2; x <= rx1 + 2; x++)
-          if (x > 0 && y > 0 && x < CS - 1 && y < CS - 1) tiles[li(x, y)] = 2
-      carve(rx0 + 1, ry0 + 1, rx1 - 1, ry1 - 1)
-      // Wikidot 描述为四面各一扇木门：四条单格走廊穿过厚墙，并继续接回外围迷宫。
-      const midX = (rx0 + rx1) >> 1, midY = (ry0 + ry1) >> 1
-      // 独特米黄色壁纸；同一 tint 的地面在渲染层改走独立木地板材质。
-      const connectDoor = (sx: number, sy: number, dx: number, dy: number) => {
-        let x = sx, y = sy
-        for (let step = 0; step < CS; step++) {
-          if (x <= 0 || y <= 0 || x >= CS - 1 || y >= CS - 1) break
-          const joinedExistingFloor = tiles[li(x, y)] === 1
-          tiles[li(x, y)] = 1
-          if (step >= 4 && joinedExistingFloor) break
-          x += dx; y += dy
-        }
-      }
-      connectDoor(midX, ry0, 0, -1)
-      connectDoor(midX, ry1, 0, 1)
-      connectDoor(rx0, midY, -1, 0)
-      connectDoor(rx1, midY, 1, 0)
-      roomTint(rx0 - 2, ry0 - 2, rx1 + 2, ry1 + 2, 1)
-      // 四面入口均为深色橡木门，门本身可正常开合并持久保存状态。
-      pushStruct('hoteldoor', midX, ry0, 1, 1, true, true, { open: 0, manila: 1 })
-      pushStruct('hoteldoor', midX, ry1, 1, 1, true, true, { open: 0, manila: 1 })
-      pushStruct('hoteldoor', rx0, midY, 1, 1, true, true, { open: 0, manila: 1 })
-      pushStruct('hoteldoor', rx1, midY, 1, 1, true, true, { open: 0, manila: 1 })
-      // 中央八角桌由桌下橱柜承重；橱柜可搜索且固定装有食物与水。
-      const tx = midX - 1, ty = midY - 1
-      pushStruct('dresser', tx, ty, 3, 3, true, true, {
-        manilaTable: 1, loot: 1, lootItems: ['canned', 'canned', 'almond', 'almond'],
-      })
-      // 两把木椅，一把保持直立，另一把侧翻在地。
-      pushStruct('table', midX - 2, midY + 2, 1, 1, true, false, { chair: 1, manila: 1, deg: 18 })
-      pushStruct('table', midX + 2, midY - 2, 1, 1, true, false, { chair: 1, manila: 1, fallen: 1, deg: 208 })
-      // 桌面文档并排摆放：重要层级资料 + 基本生存指南（可交互阅读，查看后存入图鉴）。
-      pushStruct('megdoc', midX - 0.25, midY, 1, 1, false, false, { manila: 1, ontable: 1, doc: 'meg_levels' })
-      pushStruct('megdoc', midX + 0.25, midY, 1, 1, false, false, { manila: 1, ontable: 1, doc: 'backrooms_basics' })
-      // 灯光与 Level 0 几乎完全相同，并发出同样恼人的噪音；亮度剧烈波动、会周期性完全熄灭
-      pushStruct('hanglight', midX, midY, 1, 1, false, false, { manila: 1 })
-      pushLight(midX, midY, 5.0, '#e5c88f')
-      // 固定出口：室内西墙上一块门形区域与原墙纸融为一体并异常闪烁，保证每次都可找到。
-      if (def.exits.length > 0) {
-        const exitX = rx0 + 1, exitY = ry0 + 3
-        exits.push({ def: def.exits[0], x: WX + exitX, y: WY + exitY, discovered: false })
-        pushLight(exitX, exitY, 2.5, '#f5e37a')
-      }
-      break
-    }
-    case 'red':
-      roomTint(8, 8, 23, 23, 2)
-      pushLight(11, 11, 5, '#ff2a1a')
-      pushLight(20, 15, 5, '#ff2a1a')
-      pushLight(14, 20, 5, '#ff2a1a')
-      pushStruct('hanglight', 15, 15, 1, 1, false, false, { red: 1 })
-      placeWallHug('graffiti', true, { loreKind: 'red' }, { x0: 9, y0: 9, x1: 22, y1: 22 })
-      break
-  }
-
-  // ---- 通用内容（灯光/灯阵/湿地毯/容器/涂鸦/物品；熄灯区无灯）----
-  if (variant !== 'blackout') {
-    const nL = variant === 'red' ? 0 : rng.int(0, 3)
-    for (let i = 0; i < nL; i++) {
-      for (let t = 0; t < 30; t++) {
-        const x = rng.int(2, CS - 3), y = rng.int(2, CS - 3)
-        if (!isF(x, y) || holeAt(x, y)) continue
-        // v50：L0 灯光位置对齐 4 格网（排列整齐）；半径加大=大范围柔光
-        pushLight(Math.round(x / 4) * 4, Math.round(y / 4) * 4, 9, def.palette.light)
-        break
-      }
-    }
-    // v29：保底照明——按 8 格间距的 4×4 网格每格至少 1 盏（半径更大、覆盖更均匀），
-    // 确保正常区域（非熄灯区）每隔一段路必定有灯，不再有连续几十格的无灯黑区
-    if (variant !== 'red') {
-      for (let gy = 0; gy < 4; gy++)
-        for (let gx = 0; gx < 4; gx++) {
-          // v50：L0 灯阵改格心定点（整齐排列）+ 大范围柔光（r=9，衰减覆盖约 23m）
-          const x = gx * 8 + 4, y = gy * 8 + 4
-          if (isF(x, y) && !holeAt(x, y)) pushLight(x, y, 9, def.palette.light)
-          else
-            outer: for (let y2 = gy * 8; y2 < gy * 8 + 8; y2++)
-              for (let x2 = gx * 8; x2 < gx * 8 + 8; x2++) {
-                if (!isF(x2, y2) || holeAt(x2, y2)) continue
-                pushLight(x2, y2, 9, def.palette.light)
-                break outer
-              }
-        }
-      if (rng.chance(0.5)) placeFree('lightgrid', 2, 1, false)
-      if (rng.chance(0.35)) placeFree('hanglight', 1, 1, false)
-    }
-  }
-  // 湿地毯斑块
-  for (let i = 0, n = rng.int(1, 3); i < n; i++) {
-    const x0 = rng.int(3, CS - 4), y0 = rng.int(3, CS - 4)
-    for (let j = 0; j < 5; j++) {
-      const x = x0 + rng.int(-1, 1), y = y0 + rng.int(-1, 1)
-      if (isF(x, y) && !holeAt(x, y) && !manilaReserved(x, y)) wet[li(x, y)] = 1
-    }
-  }
-  // 火盐晶体（Object 15）：前五个层级的角落产生，L0 尤其中罕见（约 6% chunk 一枚）
-  if (variant !== 'red' && rng.chance(0.06)) {
-    for (let t = 0; t < 40; t++) {
-      const x = rng.int(2, CS - 3), y = rng.int(2, CS - 3)
-      if (!isF(x, y) || solidAtL(x, y) || holeAt(x, y) || manilaReserved(x, y)) continue
-      const walls = (!isF(x + 1, y) ? 1 : 0) + (!isF(x - 1, y) ? 1 : 0) + (!isF(x, y + 1) ? 1 : 0) + (!isF(x, y - 1) ? 1 : 0)
-      if (walls < 2) continue
-      pushItem('firesalt', x, y)
-      break
-    }
-  }
-  // 容器 / 通风口 / 插板（wiki：L0 无尸体与梯子，不再生成；红室不产任何物资）
-  if (variant !== 'red' && rng.chance(0.4)) placeFree('crate', 1, 1, true, true, { loot: 1 })
-  if (rng.chance(0.3)) placeWallHug('vent')
-  if (rng.chance(0.55)) placeWallHug('socket')
-  if (rng.chance(0.45)) placeWallHug('graffiti', true, { lore: rng.int(0, 5) })
-  // 物品（独特 + 通用池；磁带低频保底；红室不产任何物资）
-  const pool = [...def.items, ...UNIVERSAL_ITEMS]
-  for (let i = 0, n = variant === 'red' ? 0 : rng.int(1, 3); i < n; i++) {
-    const t0 = rng.weighted(pool.map((p) => ({ v: p.type, w: p.w })))
-    const t = t0 === 'almond' && rng.chance(0.1) ? 'cashew' : t0 // v32：腰果水 1/10 概率替代杏仁水
-    for (let tr = 0; tr < 30; tr++) {
-      const x = rng.int(2, CS - 3), y = rng.int(2, CS - 3)
-      if (!isF(x, y) || solidAtL(x, y) || holeAt(x, y) || manilaReserved(x, y)) continue
-      pushItem(t, x, y)
-      break
-    }
-  }
-  if (variant !== 'red' && h01(seed, 0x7a9e, cx, cy) < 0.1) {
-    for (let tr = 0; tr < 40; tr++) {
-      const x = rng.int(2, CS - 3), y = rng.int(2, CS - 3)
-      if (!isF(x, y) || solidAtL(x, y) || holeAt(x, y) || manilaReserved(x, y)) continue
-      pushItem('tape', x, y)
-      break
-    }
-  }
-
-  // ---- 出口（本 chunk 为所在超区域宿主 → 放置唯一「闪烁的墙壁」）----
-  const rx = Math.floor(cx / RS), ry = Math.floor(cy / RS)
-  const host = regionHost(seed, rx, ry)
-  if (variant !== 'manila' && host.cx === cx && host.cy === cy && def.exits.length > 0) {
-    const tgt = exitTarget(seed, cx, cy)
-    let best = -1, bd = 1e9
-    for (let y = 1; y < CS - 1; y++)
-      for (let x = 1; x < CS - 1; x++) {
-        if (!isF(x, y) || solidAtL(x, y) || holeAt(x, y)) continue
-        if (isF(x + 1, y) && isF(x - 1, y) && isF(x, y + 1) && isF(x, y - 1)) continue // 需邻墙
-        const d = Math.hypot(x - tgt.x, y - tgt.y)
-        if (d < bd) { bd = d; best = li(x, y) }
-      }
-    if (best >= 0) {
-      const ex = best % CS, ey = Math.floor(best / CS)
-      exits.push({ def: def.exits[0], x: WX + ex, y: WY + ey, discovered: false })
-      pushLight(ex, ey, 2.5, '#f5e37a') // 出口微光（v29：闪烁的墙壁面片本身发光，点光只需柔和烘托）
-      placeWallHug('graffiti', true, { loreKind: 'exitguide' }, { x0: Math.max(1, ex - 5), y0: Math.max(1, ey - 5), x1: Math.min(CS - 2, ex + 5), y1: Math.min(CS - 2, ey + 5) })
-    }
-  }
-
-  // ---- 罕见出口「向下的灰色阶梯」（每 2×2 超区域 1 个——比闪烁的墙壁稀有 4 倍）----
-  if (def.exits.length > 1 && def.exits[1].kind === 'graystairs') {
-    const R2 = RS * 2
-    const rx2 = Math.floor(cx / R2), ry2 = Math.floor(cy / R2)
-    const host2 = { cx: rx2 * R2 + (h32(seed, 0xe51, rx2, ry2) % R2), cy: ry2 * R2 + (h32(seed, 0xe52, rx2, ry2) % R2) }
-    if (host2.cx === cx && host2.cy === cy) {
-      const tgt = exitTarget(seed, cx, cy)
-      // 楼梯走向需 4 格畅通（玩家要真实走下去；邻墙方向反侧为走向）
-      const runOk = (x: number, y: number) => {
-        for (const [wx, wy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
-          if (isF(x + wx, y + wy)) continue
-          let clear = true
-          for (let k = 1; k <= 4; k++) if (!isF(x - wx * k, y - wy * k) || holeAt(x - wx * k, y - wy * k) || solidAtL(x - wx * k, y - wy * k)) { clear = false; break }
-          if (clear) return [wx, wy]
-        }
-        return null
-      }
-      let best = -1, bd = -1, bdir: number[] | null = null
-      for (let y = 1; y < CS - 1; y++)
-        for (let x = 1; x < CS - 1; x++) {
-          if (!isF(x, y) || solidAtL(x, y) || holeAt(x, y)) continue
-          if (isF(x + 1, y) && isF(x - 1, y) && isF(x, y + 1) && isF(x, y - 1)) continue // 需邻墙
-          const dir = runOk(x, y)
-          if (!dir) continue
-          const d = Math.hypot(x - tgt.x, y - tgt.y) // 尽量远离区域主出口
-          if (d > bd) { bd = d; best = li(x, y); bdir = dir }
-        }
-      if (best >= 0 && bdir) {
-        const ex = best % CS, ey = Math.floor(best / CS)
-        exits.push({ def: def.exits[1], x: WX + ex, y: WY + ey, discovered: false })
-        pushLight(ex, ey, 2.5, '#9aa2b0') // 冷灰微光（与闪烁的墙壁的暖黄光区分）
-        // 走向上的 3 格标为深渊洞口（elev=4）——地面视觉上开洞，踏步真正伸入黑暗
-        for (let k = 1; k <= 3; k++) elev[li(ex - bdir[0] * k, ey - bdir[1] * k)] = 4
-      }
-    }
-  }
-
-  // ---- v25：实体（栖息地过滤，与有限层同一契约）----
-  // L0 设定实体绝迹（def.entities=[]），本块默认不产生任何实体；若未来无限层级配置实体：
-  // indoor=普通地板（chunk 全室内，无 outdoor=1 瓦片）、outdoor=室外瓦片、any=随意；
-  // 无符合瓦片（如 outdoor 栖息地在全室内 chunk）时降级 any 并计数告警。
-  const habFallback: Record<string, number> = {}
-  if (def.entities.length > 0) {
-    const outdoorAt = (_x: number, _y: number) => false // L0 chunk 无室外瓦片（全室内）
-    for (const se of def.entities) {
-      const hab = ENTITIES[se.type]?.habitat ?? 'any'
-      const n = rng.int(se.min, se.max)
-      for (let i = 0; i < n; i++) {
-        const tryPick = (want: 'indoor' | 'outdoor' | 'any'): { x: number; y: number } | null => {
-          for (let t = 0; t < 40; t++) {
-            const x = rng.int(2, CS - 3), y = rng.int(2, CS - 3)
-            if (!isF(x, y) || solidAtL(x, y) || holeAt(x, y)) continue
-            if (want === 'outdoor' && !outdoorAt(x, y)) continue
-            if (want === 'indoor' && outdoorAt(x, y)) continue
-            return { x, y }
-          }
-          return null
-        }
-        let p = tryPick(hab)
-        if (!p && hab !== 'any') { habFallback[`${se.type}:${hab}`] = (habFallback[`${se.type}:${hab}`] ?? 0) + 1; p = tryPick('any') }
-        if (p) entities.push({ type: se.type, x: WX + p.x + 0.5, y: WY + p.y + 0.5 })
-      }
-    }
-    const habMiss = Object.values(habFallback).reduce((a, b) => a + b, 0)
-    if (habMiss > 0) console.warn(`[habitat] 无限 chunk(${cx},${cy}) 无符合瓦片，降级 any ×${habMiss}`)
-  }
-
-  // v26：悬挂生成物查重——同一块天花板瓦片不重叠放置多个悬挂物（L0 chunk 全室内必有天花板；
-  // 世界坐标判定，chunk 边界处与邻 chunk 的冲突由窗口缝合后的 fixHanging 兜底）
-  {
-    const taken = new Set<number>()
-    for (let i = 0; i < structures.length; i++) {
-      const s = structures[i]
-      if (!HANGING_KINDS.includes(s.kind)) continue
-      let dup = false
-      for (let ty = Math.floor(s.y); ty < Math.floor(s.y + s.h) && !dup; ty++)
-        for (let tx = Math.floor(s.x); tx < Math.floor(s.x + s.w) && !dup; tx++)
-          if (taken.has(ty * 4096 + tx)) dup = true
-      if (dup) { structures.splice(i, 1); i--; continue }
-      for (let ty = Math.floor(s.y); ty < Math.floor(s.y + s.h); ty++)
-        for (let tx = Math.floor(s.x); tx < Math.floor(s.x + s.w); tx++) taken.add(ty * 4096 + tx)
-    }
-  }
-
-  return { variant, tiles, wet, elev, step, tint, crawl, structures, items, lights, exits, entities, habFallback }
+export function genL0ChunkRaw(def:LevelDef,seed:number,cx:number,cy:number,forceVariant?:L0Variant):GenChunk {
+  return genL0Architecture(def,seed,cx,cy,forceVariant)
 }
 
 // ================= 窗口管理：加载/卸载/平移/状态持久化 =================
@@ -692,7 +215,7 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
     if (inf.cityMutable !== false && age>=180 && h32(inf.seed,cx,cy,revision,Math.floor(last))%100<12) (inf.cityRevisions??={})[key]=revision+1
     delete inf.cityUnloaded[key]
   }
-  const raw = def.id === 11 ? preparedL11(def, inf.seed, cx, cy, inf.cityRevisions?.[key] ?? 0)
+  const raw = def.id === 0 ? genL0Architecture(def,inf.seed,cx,cy,undefined,inf.l0?.revisions[key]??0,inf.l0?.redProgress) : def.id === 11 ? preparedL11(def, inf.seed, cx, cy, inf.cityRevisions?.[key] ?? 0)
     : (!inf.plague ? takePreparedChunk(def, inf.seed, cx, cy) : undefined) ?? infiniteImplFor(def.id).genRaw(def, inf.seed, cx, cy, inf.plague ? 'red' : undefined)
   const st = inf.state.get(key)
   const structures: Structure[] = raw.structures.map((s) => {
@@ -720,10 +243,10 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
     .map((it) => ({ ...it, x: it.x - ox, y: it.y - oy }))
   // 卸载时保存的玩家掉落物（世界坐标 → 窗口坐标）
   for (const e of st?.extraItems ?? []) {
-    if (!inf.taken.has(e.id)) items.push({ ...e, x: e.x - ox, y: e.y - oy })
+    if (!inf.taken.has(e.id)) {const p=raw.l0?l0RestoredDropPosition(raw.l0,e.x,e.y):e;items.push({ ...e, x:p.x-ox, y:p.y-oy })}
   }
   const lights: LightSource[] = raw.lights.map((l) => ({ ...l, x: l.x - ox, y: l.y - oy }))
-  for (const e of st?.extraLights ?? []) lights.push({ ...e, x: e.x - ox, y: e.y - oy })
+  for (const e of st?.extraLights ?? []) {const p=raw.l0?l0RestoredDropPosition(raw.l0,e.x,e.y):e;lights.push({ ...e, x:p.x-ox, y:p.y-oy })}
   const exits: ExitInstance[] = raw.exits.map((e) => ({ def: e.def, x: e.x - ox, y: e.y - oy, floor: e.floor, z: e.z, discovered: st?.exitDisc ?? false }))
   // v25：chunk 实体（栖息地过滤结果，世界坐标 → 窗口坐标）
   // v41：calm 实例标记（L2 被动死亡飞蛾）——浅拷贝 def 置被动语义，不污染共享实体定义
@@ -760,7 +283,7 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
     moveT: 1 + Math.random() * 5, bubbleText: '', bubbleT: 0,
     hp: sp.def.faction === 'brc' ? 55 : sp.def.faction === 'jerry' ? 45 : undefined, // BRC 员工/信众可伤害可杀死；其余 NPC 无敌（据点居民契约）
   }))
-  return { key, cx, cy, variant: raw.variant, tiles: raw.tiles, wet: raw.wet, elev: raw.elev, tint: raw.tint, crawl: raw.crawl, outdoor: raw.outdoor, ceiling: raw.ceiling, liquid: raw.liquid, dn: raw.dn, dnWall: raw.dnWall, up: raw.up, upWall: raw.upWall, up2: raw.up2, upWall2: raw.upWall2, stair: raw.stair, seaFloor: raw.seaFloor, terrain: raw.terrain, caveCeil: raw.caveCeil, structures, items, lights, exits, entities, npcs, habFallback: raw.habFallback }
+  return { key, cx, cy, l0: raw.l0, variant: raw.variant, tiles: raw.tiles, wet: raw.wet, elev: raw.elev, tint: raw.tint, crawl: raw.crawl, outdoor: raw.outdoor, ceiling: raw.ceiling, liquid: raw.liquid, dn: raw.dn, dnWall: raw.dnWall, up: raw.up, upWall: raw.upWall, up2: raw.up2, upWall2: raw.upWall2, stair: raw.stair, seaFloor: raw.seaFloor, terrain: raw.terrain, caveCeil: raw.caveCeil, structures, items, lights, exits, entities, npcs, habFallback: raw.habFallback }
 }
 
 // 把已加载 chunk 内容缝合进窗口数组与对象列表
@@ -849,13 +372,13 @@ function stitch(m: GameMap, explored?: Uint8Array) {
 }
 
 // 保存窗口已探索位图到各 chunk（平移/卸载前调用）
-function saveExplored(m: GameMap, explored: Uint8Array) {
+export function saveExplored(m: GameMap, explored: Uint8Array) {
   const inf = m.inf!
   const W = m.w
   for (const c of inf.chunks.values()) {
     const x0 = c.cx * CS - inf.ox, y0 = c.cy * CS - inf.oy
     let bm = inf.explored.get(c.key)
-    if (!bm) { bm = new Uint8Array(CS * CS); mapSetCapped(inf.explored, c.key, bm, EXPLORED_CAP) }
+    if (!bm) { bm = new Uint8Array(CS * CS); mapSetCapped(inf.explored, c.key, bm, inf.l0?Infinity:EXPLORED_CAP) }
     for (let y = 0; y < CS; y++)
       for (let x = 0; x < CS; x++) {
         const v = explored[(y0 + y) * W + x0 + x]
@@ -865,7 +388,7 @@ function saveExplored(m: GameMap, explored: Uint8Array) {
 }
 
 // 卸载 chunk：持久化动态状态（世界坐标存储）
-function evictChunk(m: GameMap, c: LiveChunk) {
+export function snapshotChunkState(m: GameMap, c: LiveChunk):ChunkDynState {
   const inf = m.inf!
   const st: ChunkDynState = { structs: [], extraItems: [], extraLights: [], exitDisc: false }
   for (const s of c.structures) {
@@ -898,9 +421,13 @@ function evictChunk(m: GameMap, c: LiveChunk) {
     if (!l.gen) st.extraLights.push({ ...l, x: l.x + inf.ox, y: l.y + inf.oy })
   }
   for (const e of c.exits) if (e.discovered) st.exitDisc = true
+  return st
+}
+function evictChunk(m:GameMap,c:LiveChunk){
+  const inf=m.inf!,st=snapshotChunkState(m,c)
   // v25：卸载 chunk 时其实体一并移出窗口（不持久化；重访时按 raw 栖息地过滤结果重建）
   if (c.entities.length > 0) m.entities = m.entities.filter((e) => !c.entities.includes(e))
-  mapSetCapped(inf.state, c.key, st, STATE_CAP)
+  mapSetCapped(inf.state, c.key, st, inf.l0?Infinity:STATE_CAP)
   inf.chunks.delete(c.key)
   if (inf.cityClock !== undefined) (inf.cityUnloaded??={})[c.key]=inf.cityClock
 }
@@ -942,6 +469,7 @@ export function generateInfinite(def: LevelDef, seed: number, firstVisit = true)
     l10LakeTerrain: def.id === 10,
     inf: {
       seed, ox: -WIN_R * CS, oy: -WIN_R * CS,
+      l0: def.id===0?newL0Space():undefined,
       chunks: new Map(), explored: new Map(), state: new Map(),
       taken: new Set(), regionExits: new Map(), regionExitMiss: new Set(), rev: 0,
     },
@@ -961,7 +489,7 @@ export function generateInfinite(def: LevelDef, seed: number, firstVisit = true)
     if (x < 0 || y < 0 || x >= W || y >= W) return true
     // L2 racks use fractional footprints. Validate the actual player centre
     // (loadLevel adds .5), including body radius, rather than the tile corner.
-    if(def.id===2)return !canOccupy(m,x+.5,y+.5,PLAYER_RADIUS,{z:0})
+    if(def.id===0||def.id===2)return !canOccupy(m,x+.5,y+.5,PLAYER_RADIUS,{z:0})
     const i = y * W + x
     if (spawnFloor === 1) {
       if (m.up[i] !== 1 || m.upWall[i] === 1) return true
@@ -980,20 +508,7 @@ export function generateInfinite(def: LevelDef, seed: number, firstVisit = true)
   // v29：仅 Level 0 首次到层（firstVisit）刷新——重访不再重复生成；Level 1 起不再发放
   if (firstVisit && def.id === 0) {
     const rng0 = new RNG(h32(seed, 0x5eed))
-    const scatter = ['bandage', 'almond', 'flashlight', rng0.pick(['bandage', 'canned', 'battery', 'glowstick', 'coffee'])]
-    const solidAt0 = (x: number, y: number) =>
-      m.structures.some((s) => s.solid && x >= s.x && x < s.x + s.w && y >= s.y && y < s.y + s.h)
-    let placed = 0
-    for (let r = 1; r < 6 && placed < scatter.length; r++) {
-      for (let t = 0; t < 40 && placed < scatter.length; t++) {
-        const x = m.spawn.x + rng0.int(-r, r), y = m.spawn.y + rng0.int(-r, r)
-        if (x < 1 || y < 1 || x >= W - 1 || y >= W - 1) continue
-        if (m.tiles[y * W + x] !== 1 || solidAt0(x, y)) continue
-        if (m.items.some((it) => Math.abs(it.x - x - 0.5) < 0.9 && Math.abs(it.y - y - 0.5) < 0.9)) continue
-        // id < GEN_ITEM_BASE：按玩家掉落物规则随窗口平移持久保存
-        m.items.push({ id: Math.random(), type: scatter[placed++], x: x + 0.5, y: y + 0.5 })
-      }
-    }
+    placeL0StarterSupplies(m,rng0.pick(['bandage','canned','battery','glowstick','coffee']))
   }
   // v34：首次进入 Level 1——出生点旁放「致新流浪者的纸条」+ 一瓶杏仁水
   // （wikidot Level 1：探险者总署把纸条附在特别制作的杏仁水瓶上；查看纸条即收录图鉴「文档」）
@@ -1127,6 +642,7 @@ export function l0RegionExitPos(m: GameMap, rx: number, ry: number, def: LevelDe
   const hit = inf.regionExits.get(key)
   if (hit) return hit
   if (inf.regionExitMiss.has(key)) return null // v57t：无出口区域不再重复生成宿主 chunk
+  if(inf.l0?.trapped)return null
   const impl = infiniteImplFor(def.id)
   const host = regionHost(inf.seed, rx, ry)
   // v57t：L7 用轻量解析式锚点（完整 chunk 生成只为拿一个出口位置太贵；HUD 每帧都会调用最近出口）
@@ -1199,6 +715,11 @@ registerInfiniteLevel(0, {
   genRaw: (def, seed, cx, cy, fv) => genL0ChunkRaw(def, seed, cx, cy, fv as L0Variant | undefined),
   variantOf,
   rareVariants: RARE_VARIANTS,
-  variantNames: VARIANT_NAMES,
+  variantNames: Object.fromEntries(Object.entries(VARIANT_NAMES).filter(([key]) => key !== 'pillars')) as Record<L0Variant, string>,
   variantLore: VARIANT_LORE,
 })
+
+/** Restore a saved L0 space without consuming items or changing other levels. */
+export function rebuildL0(m:GameMap,def:LevelDef,explored?:Uint8Array){
+ const inf=m.inf!;for(const c of [...inf.chunks.values()])inf.chunks.set(c.key,instantiate(def,inf,c.cx,c.cy,inf.ox,inf.oy));stitch(m,explored);inf.rev++;inf.redo=(inf.redo??0)+1
+}

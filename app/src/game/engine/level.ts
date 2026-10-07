@@ -1,3 +1,5 @@
+import { captureL0,restoreL0 } from './l0State'
+import {settleGlowFlight} from './glowsticks'
 import { look } from '../renderer/shared'
 import { hasFactionFieldwork } from './factionMissions'
 import { captureL1,restoreL1 } from './l1State'
@@ -23,10 +25,13 @@ import { resetEffects } from './effects'
 import { persist as persistSave } from './save'
 
 export function nextMapSeed(eng: Engine, id: number): number {
-  return eng.mpMapSeed?.(id) ?? (id === 1 ? eng.l1World?.seed ?? (eng.seed+131) : id === 11 ? eng.l11World?.seed ?? (eng.seed+1441) : eng.seed+eng.time*7+id*131)
+  return eng.mpMapSeed?.(id) ?? (id === 0 ? eng.l0World?.seed ?? eng.seed : id === 1 ? eng.l1World?.seed ?? (eng.seed+131) : id === 11 ? eng.l11World?.seed ?? (eng.seed+1441) : eng.seed+eng.time*7+id*131)
 }
 
 export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; firstVisit: boolean }, preparedMapSeed?: number) {
+  settleGlowFlight(eng)
+  if (!restore && eng.player.level === 0 && eng.map?.inf) eng.l0World=captureL0(eng)
+  eng.l0Meeting=0;eng.l0Blur=0
   if (!restore && eng.player.level === 1 && eng.map?.inf) eng.l1World=captureL1(eng)
   if (!restore && eng.player.level === 11 && eng.map?.inf) eng.l11World = captureL11(eng)
   const l11From = eng.arriveL11From
@@ -35,8 +40,7 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   // v29：初始物资仅首次到层刷新（重访 L0 不再白嫖出生点补给）
   const firstVisit = !eng.visitedLevels.has(id)
   eng.visitedLevels.add(id)
-  // v29：经 L0 灰色阶梯下行 → L1 出生点附近生成返程阶梯（在换图前取走标记）
-  const viaStairs = eng.arriveStairs
+  // Retire the legacy L0/L1 stair arrival flag, including old saves.
   eng.arriveStairs = false
   // v51：乘电梯抵达（在换图前取走标记；读档恢复 restore 路径不套用电梯落点——存档以原出生点为准）
   const viaElevator = eng.arriveElevator && !restore
@@ -217,6 +221,7 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   eng.porchDrop = null // v58：换层中止门廊拖拽演出
   audio.setUnderwater(false)
   eng.explored = new Uint8Array(eng.map.w * eng.map.h)
+  if(id===0)restoreL0(eng)
   if(id===1)restoreL1(eng)
   if(id===11)restoreL11(eng)
   eng.visible = new Uint8Array(eng.map.w * eng.map.h)
@@ -259,7 +264,6 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
         bri: 1 + (Math.random() * 2 - 1) * 0.02,
       }
     : { hue: 0, sat: 1, con: 1, bri: 1 }
-  if (id === 1 && viaStairs && eng.map.inf) eng.placeBonusStairs() // v29：返程「向上的灰色阶梯」
   eng.ambientT = 10 + Math.random() * 8
   eng.l9FogPhase = 'idle'
   eng.l9FogK = 0
@@ -364,14 +368,7 @@ export function updateInfiniteWindow(eng: Engine) {
   eng.climb = null
   eng.porchDrop = null // v58：换层中止门廊拖拽演出
   eng.syncInfNpcs() // v39：窗口平移后重收集 chunk NPC（卸载消失/新载加入）
-  // v29：返程阶梯（世界坐标固定；stitch 重建 m.exits 后重新注入，并同步所属 chunk 供渲染）
-  if (eng.bonusExit && m.inf && !m.exits.some((e) => e.def === eng.bonusExit!.def)) {
-    const inf = m.inf
-    const exit: ExitInstance = { def: eng.bonusExit.def, x: eng.bonusExit.wx - inf.ox, y: eng.bonusExit.wy - inf.oy, discovered: true }
-    m.exits.push(exit)
-    const c = inf.chunks.get(chunkKey(Math.floor(eng.bonusExit.wx / CS), Math.floor(eng.bonusExit.wy / CS)))
-    if (c && !c.exits.some((e) => e.def === eng.bonusExit!.def)) c.exits.push(exit)
-  }
+  eng.bonusExit = null
 }
 
 export type RestorePlacementResult = 'exact' | 'nearby' | 'spawn' | 'legacy-spawn'
@@ -389,6 +386,7 @@ export function restoreSavedPlayerPosition(
 ): RestorePlacementResult {
   const m = eng.map!
   const p = eng.player
+  if(eng.l0RestorePosition){worldPos=eng.l0RestorePosition;eng.l0RestorePosition=undefined;p.z=0;p.floor=0}
 
   const findSafe = (cx: number, cy: number, band: FloorBand, maxR: number) => {
     for (let r = 0; r <= maxR; r++) {
@@ -431,8 +429,8 @@ export function restoreSavedPlayerPosition(
     }
 
     // 先把绝对坐标换算到初始窗口，再复用正常流式平移逻辑加载正确的世界区块。
-    p.x = worldPos.x - m.inf.ox
-    p.y = worldPos.y - m.inf.oy
+    p.x = worldPos!.x - m.inf.ox
+    p.y = worldPos!.y - m.inf.oy
     updateInfiniteWindow(eng)
   }
 
@@ -550,6 +548,7 @@ export function tinyBlocksLittleDoor(eng: Engine, exit?: ExitInstance): boolean 
 }
 
 export function takeExit(eng: Engine, def: ExitDef) {  const p = eng.player
+  if (def.kind === 'graystairs' || def.kind === 'graystairsup') return
   if (def.kind === 'littledoor' && tinyBlocksLittleDoor(eng)) {
     eng.msg('小小正盘踞在门扇上方。只要它还在附近，你就不可能掀开「小小的谎言」。', 'system')
     audio.uiTick()
@@ -605,8 +604,6 @@ export function takeExit(eng: Engine, def: ExitDef) {  const p = eng.player
     return
   }
   audio.pickup()
-  // v29：经 L0「向下的灰色阶梯」下行 → 在 L1 出生点附近生成返程阶梯
-  if (def.kind === 'graystairs' && def.dest === 1) eng.arriveStairs = true
   // v51：乘电梯 → 抵达层出生点改到该层电梯旁（L3↔L4/L5 双向）
   if (def.kind === 'elevatorshaft') eng.arriveElevator = true
   // v54：经古典楼梯 → 抵达 L5 时出生点改到该层保底楼梯 2 格外空旷地板（L4↔L5 双向链）
@@ -727,38 +724,10 @@ export function updateStairs(eng: Engine, dt: number) {
   }
 }
 
-// v29：在 L1 出生点附近放置返程「向上的灰色阶梯」（邻墙地板格，就近搜索）
+/** Compatibility entry point: the retired L0/L1 return stairs are never recreated. */
 export function placeBonusStairs(eng: Engine) {
-  const m = eng.map!, inf = m.inf!, W = m.w
-  const at = (x: number, y: number) => (x < 0 || y < 0 || x >= W || y >= W ? 0 : m.tiles[y * W + x])
-  const solidAt = (x: number, y: number) => m.structures.some((s) => s.solid && x >= s.x && x < s.x + s.w && y >= s.y && y < s.y + s.h)
-  // 可行走阶梯：走向需 4 格畅通（地板且无实心结构）
-  const runOk = (x: number, y: number) => {
-    for (const [wx, wy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
-      if (at(x + wx, y + wy) === 1) continue
-      let clear = true
-      for (let k = 1; k <= 4; k++) if (at(x - wx * k, y - wy * k) !== 1 || solidAt(x - wx * k, y - wy * k)) { clear = false; break }
-      if (clear) return true
-    }
-    return false
-  }
-  for (let r = 1; r <= 6; r++)
-    for (let dy = -r; dy <= r; dy++)
-      for (let dx = -r; dx <= r; dx++) {
-        const x = Math.floor(m.spawn.x) + dx, y = Math.floor(m.spawn.y) + dy
-        if (x < 1 || y < 1 || x >= W - 1 || y >= W - 1) continue
-        if (m.tiles[y * W + x] !== 1 || !runOk(x, y)) continue
-        if (m.tiles[y * W + x + 1] === 1 && m.tiles[y * W + x - 1] === 1 && m.tiles[(y + 1) * W + x] === 1 && m.tiles[(y - 1) * W + x] === 1) continue // 需邻墙
-        const def: ExitDef = { kind: 'graystairsup', name: '向上的灰色阶梯', dest: 0, anim: 'bloom' }
-        eng.bonusExit = { def, wx: inf.ox + x, wy: inf.oy + y }
-        const exit: ExitInstance = { def, x, y, discovered: true }
-        m.exits.push(exit)
-        // 渲染层按 chunk 出口列表构建网格——必须同步进所属 LiveChunk 才会被渲染
-        const c = inf.chunks.get(chunkKey(Math.floor((inf.ox + x) / CS), Math.floor((inf.oy + y) / CS)))
-        c?.exits.push(exit)
-        eng.msg('不远处有一段向上的灰色阶梯——可以循原路返回 Level 0。', 'lore')
-        return
-      }
+  eng.bonusExit = null
+  eng.arriveStairs = false
 }
 /** v55：家常酒店入住申请（地标卡「提交流浪者信息申请」办理；姓名自动取玩家形象名，永久解锁，随存档持久） */
 export function applyHomelyStay(eng: Engine) {

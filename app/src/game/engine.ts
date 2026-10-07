@@ -1,4 +1,5 @@
 import * as careerSystem from './engine/career'
+import {restoreGlowFlight} from './engine/glowsticks'
 import { megState, resetMegRuntime, updateMegMissions } from './engine/megMissions'
 import { updateFactionMissions } from './engine/factionMissions'
 import { freshProfile, normalizeProfile, type PlayerProfile } from './core/playerProfile'
@@ -189,7 +190,8 @@ export class Engine {
   // 共用 scanInteract 的同一选择结果，杜绝「提示普通门却触发相邻上锁门」的目标漂移。
   interactTarget: { kind: string; label: string; s?: Structure; it?: GameMap['items'][number]; e?: GameMap['exits'][number]; npc?: NpcState; ent?: Entity; vmBack?: boolean } | null = null
   // 开发者模式（noAttackCooldown=true 时仅绕过攻击间隔；体力消耗仍保留，便于单独调试战斗节奏）
-  dev = { god: false, noclip: false, speed: false, statLock: true, oneHit: false, invisible: false, frozenAI: false, bright: false, noAttackCooldown: false, phenOn: new Set<string>(), phenOff: new Set<string>(), hintDist: 30 }
+  devEnabled = false
+  dev = { mapReveal: false, god: false, noclip: false, speed: false, statLock: true, oneHit: false, invisible: false, frozenAI: false, bright: false, noAttackCooldown: false, phenOn: new Set<string>(), phenOff: new Set<string>(), hintDist: 30 }
   // 地图就地修改版本号（开发者强制生成固定结构时 +1；渲染层据此重建有限层静态几何）
   mapRev = 0
   // 开场爬起动画计时（>0 时锁定移动/攻击/跳跃，渲染层相机从贴地侧躺缓慢起身）
@@ -239,6 +241,12 @@ export class Engine {
   arriveL9From: number | null = null // L5=住宅门口；L7=后院泳池；L8=道路尽头石洞
   arriveL10From: number | null = null // L9=田野边缘步道；L11=乡间主路旁
   arriveL11From: number | null = null
+  l0RestorePosition?: {x:number;y:number}
+  l0World?: import("./engine/l0State").L0WorldSave
+  l0SharedWorld?: import("./engine/l0State").L0WorldSave
+  l0Loops=0
+  l0Meeting=0
+  l0Blur=0
   l1World?: L1WorldSave
   l11World?: L11WorldSave
   l11Weather: {kind:'calm'|'gust'|'rain'|'mist';t:number;k:number;wetness:number} = {kind:'calm',t:120,k:0,wetness:0}
@@ -412,7 +420,7 @@ export class Engine {
     this.emit({ kind: 'msg', text, msgKind: kind })
   }
 
-  newRun(seed: number, difficulty: Difficulty, slot: save.SaveSlotId = 'slot1') {
+  newRun(seed: number, difficulty: Difficulty, slot: save.SaveSlotId = 'slot1', forceFresh = false) {
     this.seed = seed
     this.difficulty = difficulty
     this.saveSlot = slot
@@ -439,6 +447,10 @@ export class Engine {
     this.arriveL7SafeWater = false
     this.arriveL8AvenueEnd = false
     this.l10Weather = { kind: 'calm', t: 80, k: 0, wetness: 0 }
+    this.l0RestorePosition = undefined
+    this.l0World = undefined
+    this.l0SharedWorld = undefined
+    this.l0Loops=0;this.l0Meeting=0;this.l0Blur=0
     this.l1World = undefined
     this.l11World = undefined
     this.l11Weather = {kind:'calm',t:120,k:0,wetness:0}
@@ -465,7 +477,7 @@ export class Engine {
     // v29a：主界面「继续游戏」用存档种子重进 newRun——存在同种子快照时恢复进度而不是重开新游戏。
     // （「开始新游戏」的种子是随机新生成的，与快照种子不同，自然走全新开局路径。）
     // v54：从绑定的存档槽读取快照（slot1/2/3/auto）；v58：联机开局一律全新（不读档）
-    const snap = this.mpSession ? null : loadSaveSnapshot(slot)
+    const snap = forceFresh ? null : this.mpSession ? this.mpSession.resumeSnapshot??null : loadSaveSnapshot(slot)
     if (snap && snap.seed === seed) {
       this.difficulty = snap.difficulty ?? difficulty
       this.time = snap.time
@@ -491,6 +503,8 @@ export class Engine {
       this.radio.perLevel = this.radio.perLevel ?? {}
       this.heardSongs = snap.heardSongs ?? []
       this.l10Weather = snap.l10Weather ?? { kind: 'calm', t: 80, k: 0, wetness: 0 }
+      this.l0World = snap.l0World
+      this.l0SharedWorld = snap.l0SharedWorld
       this.l1World = snap.l1World
       this.l11World = snap.l11World
       this.l11Weather = snap.l11Weather ?? {kind:'calm',t:120,k:0,wetness:0}
@@ -506,9 +520,11 @@ export class Engine {
       this.player.level = snap.level
       // v59：旧版据点布局的坐标落在已移除的小房间/墙体中，统一迁移到新布局的安全出生点。
       // 布局版本 2 保留世界坐标恢复及既有安全校正逻辑。
-      const legacySettlement = (snap.level===102 && snap.bntgLayout!==3) || (snap.settlementLayout !== 2 && [101,103,104,116].includes(snap.level))
-      if (legacySettlement) { this.player.x=this.map!.spawn.x; this.player.y=this.map!.spawn.y; this.player.z=0; this.player.floor=0 }
-      const placement = legacySettlement ? 'legacy-settlement-spawn' : level.restoreSavedPlayerPosition(this, snap.worldPos)
+      const legacySettlement = (snap.level===101 && snap.alphaLayout!==5) || (snap.level===102 && snap.bntgLayout!==3) || (snap.settlementLayout !== 2 && [101,103,104,116].includes(snap.level))
+      const legacyL0=snap.level===0&&!snap.l0World
+      if (legacySettlement||legacyL0) { this.player.x=this.map!.spawn.x; this.player.y=this.map!.spawn.y; this.player.z=0; this.player.floor=0 }
+      const placement = legacyL0 ? 'legacy-l0-spawn' : legacySettlement ? 'legacy-settlement-spawn' : level.restoreSavedPlayerPosition(this, snap.worldPos)
+      restoreGlowFlight(this,snap.glowProjectiles)
       if(snap.level===5&&this.map?.inf&&snap.l5MothAlerts)this.map.inf.mothAlerts=structuredClone(snap.l5MothAlerts)
       if (snap.level === 8 && Array.isArray(snap.avenueMarks) && snap.avenueMarks.length > 0) {
         const restored = snap.avenueMarks.filter((mk) =>
@@ -526,7 +542,8 @@ export class Engine {
       // aliveTime 由 (Date.now()-startTime) 推导：平移 startTime 保持存活时长连续
       this.player.startTime = Date.now() - (snap.player.aliveTime ?? 0) * 1000
       this.introT = 0 // 读档不播摔落爬起动画
-      if (placement === 'legacy-settlement-spawn') this.msg('旧版据点布局已迁移至新的安全接待点。', 'system')
+      if (placement === 'legacy-l0-spawn') this.msg('Level 0 已更新，已迁移到安全入口；背包、属性、任务与图鉴均已保留。','system')
+      else if (placement === 'legacy-settlement-spawn') this.msg('旧版据点布局已迁移至新的安全接待点。', 'system')
       else if (placement === 'legacy-spawn') this.msg('旧版无限层存档缺少世界坐标，已移至本层安全入口。', 'system')
       else if (placement !== 'exact') this.msg('原存档落点已被地形占用，已移至附近安全位置。', 'system')
       this.msg(`读档成功——回到 ${levelLabel(snap.level)}。`, 'system')

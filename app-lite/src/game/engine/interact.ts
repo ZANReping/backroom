@@ -215,6 +215,14 @@ export function structureInteractionProfile(s: Structure): StructureInteractionP
       lo = 0.1; hi = 2.45; horizontalRadius = Math.min(0.65, Math.max(0.42, Math.min(s.w, s.h) / 2)); break
     case 'frontdesk': lo = 0.15; hi = 1.32; horizontalRadius = Math.min(1.2, Math.max(0.45, s.w / 2)); break
     case 'table': lo = 0.55; hi = 0.88; horizontalRadius = Math.min(0.75, Math.max(0.35, Math.min(s.w, s.h) / 2)); break
+    case 'alpha_desk': lo = 0.68; hi = 0.82; horizontalRadius = Math.min(0.75, Math.max(0.35, Math.min(s.w, s.h) / 2)); break
+    case 'alpha_labbench': lo = 0.84; hi = 1.04; horizontalRadius = Math.min(0.75, Math.max(0.35, Math.min(s.w, s.h) / 2)); break
+    case 'alpha_cold_cabinet': lo = 0.3; hi = 1.85; horizontalRadius = Math.min(0.75, Math.max(0.35, Math.min(s.w, s.h) / 2)); break
+    case 'alpha_archive_reader': lo = 0.72; hi = 1.1; horizontalRadius = Math.min(0.75, Math.max(0.35, Math.min(s.w, s.h) / 2)); break
+    case 'alpha_reception_counter': lo = 0.75; hi = 1.25; horizontalRadius = Math.min(0.75, Math.max(0.35, Math.min(s.w, s.h) / 2)); break
+    case 'alpha_dispatch_desk': case 'alpha_executive_desk': lo = 0.72; hi = 1.08; horizontalRadius = Math.min(0.75, Math.max(0.35, Math.min(s.w, s.h) / 2)); break
+    case 'alpha_grow_station': case 'alpha_home_kitchen': case 'alpha_library_counter': case 'alpha_build_bench':
+      lo = 0.72; hi = 1.1; horizontalRadius = Math.min(0.75, Math.max(0.35, Math.min(s.w, s.h) / 2)); break
     case 'valve': lo = 0.15; hi = 1.38; horizontalRadius = 0.3; break
     case 'phonograph': lo = 0.08; hi = 1.62; horizontalRadius = 0.34; break
     case 'booth': lo = 0.1; hi = 2.05; horizontalRadius = Math.min(0.7, Math.max(0.45, Math.min(s.w, s.h) / 2)); break

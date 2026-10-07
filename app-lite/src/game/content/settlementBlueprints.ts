@@ -1,4 +1,5 @@
 import { room, type SettlementBlueprint as Blueprint, type RoomSpec, type FurniturePlacement as Furniture, type ShellSpec } from './settlementTypes'
+import {ALPHA_BLUEPRINT} from './alphaBlueprint'
 import {BNTG_BLUEPRINT} from './bntgBlueprint'
 
 // Metres. Function zones never imply walls; only E() authors enclosed construction.
@@ -35,48 +36,6 @@ function S(b:Blueprint,id:string,x:number,y:number,services:string,npc?:string,a
  r.service??=services.split('/')[0];if(npc)r.npc=npc
  b.services.push({id,zone:id,x:r.x+x,y:r.y+y,label:label??r.name,services:services.split('/'),npc,access,mount:'counter'})
 }
-const alpha=base('alpha',101,128,'meg','M.E.G. Alpha 基地',8,10,112,108,4.4,'slab')
-O(alpha,
- Z('atrium','Alpha · 公共中庭',48,24,32,28,'residential',[F('sofa',2,6,6),F('sofa',24,6,6),F('table',11,21,10,1.3,8),F('planter',2,18,4),F('planter',26,18,4),F('board',10,0,12)],4.4),
- Z('reception','行政署 · 接待与公共服务',48,12,32,10,'intake',[F('counter',2,3,8),F('counter',20,3,8),F('board',11,0,10)],4.4),
- Z('hall_a','行政署 · 多用途会堂',12,12,32,18,'auditorium',[F('board',6,1,20),F('table',3,6,6,2,8),F('table',13,6,6,2,8),F('table',23,6,6,2,8),F('screen',11,11,.2,5),F('screen',21,11,.2,5)],4.4),
- Z('administration','行政署 · 集中办公',84,12,18,16,'office',[F('desk',2,3,6),F('desk',10,8,6),F('locker',1,13,10)]),
- Z('radio','探险署 · 行动与无线电大厅',12,34,32,20,'radio',[F('radio',1,1,12),F('radio',19,1,11),F('desk',2,6,7),F('desk',22,6,7),F('table',10,12,10,2,10),F('board',11,0,10)]),
- Z('equipment','探险署 · 整备与仓储带',12,58,32,16,'store',[F('shelf',1,1,11),F('shelf',20,1,11),F('shelf',1,5,11),F('shelf',20,5,11),F('counter',19,11,11)]),
- Z('field_training','探险署 · 训练工作区',12,78,32,12,'workshop',[F('table',2,2,13,1.2,8),F('locker',23,2,7),F('board',3,0,12)]),
- Z('query','档案署 · 开放信息与阅览区',48,56,32,28,'library',[F('shelf',1,2,9),F('shelf',22,2,9),F('shelf',1,7,9),F('shelf',22,7,9),F('table',12,12,8,2,8),F('desk',2,20,8),F('desk',22,20,8)]),
- Z('sample','研究署 · 样本接收与观察门厅',84,32,18,10,'lab',[F('counter',2,3,12)]),
- Z('community_dining','腥红区 · 社区食堂与起居',46,89,32,16,'dining',[F('table',2,2,8,1.2,8),F('table',20,2,8,1.2,8),F('sofa',2,10,8),F('counter',20,11,10)]),
- Z('anemoia_services','爱念陌异区 · 菌菇与居民服务',104,12,12,10,'garden',[F('planter',1,1,4,2),F('planter',7,1,4,2),F('counter',1,7,7)]),
- Z('river_services','利沃区 · 洗衣维修起居',84,90,32,14,'wash',[F('sink',2,2,9),F('table',20,2,10),F('sofa',3,10,9)]),
- Z('library','先驱区 · 图书与公共活动',12,94,30,10,'library',[F('shelf',1,0,10),F('sofa',16,3,10),F('radio',1,6,5)]),
- Z('zephyr_services','西风区 · 扩建联络',82,108,14,8,'workshop',[F('table',1,2,7),F('board',1,0,10)]))
-E(alpha,Z('overseer','监督者驻办',104,34,12,8,'office',[F('desk',2,3,7)],2.8),3)
-E(alpha,Z('botany','研究署 · 植物实验区',84,46,14,18,'lab',[F('lab',2,5,9,1.4),F('planter',2,11,8,2),F('sink',2,1,4)]),0,'n',true,3)
-E(alpha,Z('microbiology','研究署 · 微生物实验区',102,46,14,18,'lab',[F('lab',2,5,9,1.4),F('lab',2,11,9,1.4),F('sink',2,1,4)]),1,'n',true,3)
-E(alpha,Z('cold_samples','研究署 · 冷藏后勤',100,68,16,14,'vault',[F('fridge',1,1,5),F('fridge',10,1,5)],3.2),1,'s')
-E(alpha,Z('servers','档案署 · 服务器',82,68,14,14,'radio',[F('radio',1,1,4),F('radio',9,1,4)],3.2),1,'s')
-E(alpha,Z('restricted','档案署 · 受控记录',62,108,16,8,'archive',[F('shelf',1,2,4),F('shelf',11,2,4)],2.8),3)
-for(const [key,name,x,y] of [['anemoia','爱念陌异',104,24],['crimson','腥红',46,108],['epiphany','先驱',10,108],['zephyr','西风',28,108],['river','利沃',100,108]] as const)
- for(let i=0;i<2;i++)E(alpha,{...Z(key+'_home_'+i,name+' · 住宅 '+(i+1),x+i*8,y,7,8,'bedroom',[F('bed',.7,1,1.2,2.1),F('desk',3.5,2,2),F('sofa',.7,5,2)],2.6),housing:i?'double':'single'},0,key==='anemoia'?'n':'n')
-S(alpha,'reception',5,4,'career/report/lost/cargo','justin')
-S(alpha,'radio',4,7,'radio/dispatch/report','nightingale')
-S(alpha,'equipment',22,12,'equipment/warehouse/inventory/cargo','brandt')
-S(alpha,'field_training',4,3,'training/field_training/inspect/repair')
-S(alpha,'query',5,21,'archive/report/repair/testimony','river')
-S(alpha,'sample',5,4,'sample/observation/ethics/seal','faust')
-S(alpha,'botany',5,6,'botany/analysis')
-S(alpha,'microbiology',5,6,'analysis',undefined,1)
-S(alpha,'overseer',4,4,'report','kat',3)
-S(alpha,'community_dining',23,12,'meal/community/cargo','suanpan')
-S(alpha,'river_services',24,3,'repair/care/community')
-S(alpha,'anemoia_services',4,8,'cultivation/community')
-S(alpha,'library',4,1,'archive/community')
-S(alpha,'cold_samples',11,2,'cold',undefined,1)
-S(alpha,'restricted',4,3,'classified',undefined,3)
-alpha.circulation=[{x:44,y:10,w:4,h:108},{x:78,y:10,w:4,h:108},{x:8,y:30,w:96,h:4},{x:8,y:54,w:112,h:4},{x:8,y:84,w:112,h:4}]
-alpha.focus={x:63,y:28,targets:['reception','radio','sample','query']}
-
 const bntg=base('bntg',102,80,'bntg','商人之家',6,8,68,64,4.8,'industrial')
 O(bntg,
  Z('market','市场 · 六店报价与议价',8,10,64,15,'market',Array.from({length:6},(_,i)=>[F('counter',2+i*10+(i>=3?4:0),3,7),F('shelf',2+i*10+(i>=3?4:0),0,7)]).flat(),4.8),
@@ -179,5 +138,5 @@ for(let i=0;i<2;i++)S(cornu,'holding_'+i,5,2,'appeal/hearing/compensation')
 cornu.circulation=[{x:28,y:27,w:4,h:43},{x:52,y:27,w:4,h:28},{x:8,y:27,w:64,h:3},{x:56,y:48,w:16,h:3},{x:8,y:61,w:22,h:2},{x:8,y:68,w:64,h:2}]
 cornu.focus={x:40,y:24,targets:['reception','casefiles','evidence_entry','briefing']}
 
-export const SETTLEMENTS:Record<number,Blueprint>={101:alpha,102:BNTG_BLUEPRINT,103:ariane,104:tom,116:cornu}
+export const SETTLEMENTS:Record<number,Blueprint>={101:ALPHA_BLUEPRINT,102:BNTG_BLUEPRINT,103:ariane,104:tom,116:cornu}
 

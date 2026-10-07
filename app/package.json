@@ -27,6 +27,8 @@
     "check:bntg": "esbuild scripts/check-bntg.ts --bundle --platform=node --format=esm --outfile=.cache/check-bntg.mjs && node .cache/check-bntg.mjs",
     "check:settlement-assets": "node scripts/check-settlement-assets.mjs",
     "fetch:settlement-assets": "node scripts/fetch-settlement-assets.mjs",
+    "fetch:alpha-assets": "node scripts/fetch-alpha-assets.mjs",
+    "check:alpha": "esbuild scripts/check-alpha.ts --bundle --platform=node --format=esm --outfile=.cache/check-alpha.mjs && node .cache/check-alpha.mjs",
     "check:generation-obstacles": "esbuild scripts/check-generation-obstacles.ts --bundle --platform=node --format=esm --outfile=.cache/check-generation-obstacles.mjs && node .cache/check-generation-obstacles.mjs",
     "check:item-batches": "esbuild scripts/check-item-batches.ts --bundle --platform=node --format=esm --outfile=.cache/check-item-batches.mjs && node .cache/check-item-batches.mjs",
     "check:static-colors": "esbuild scripts/check-static-colors.ts --bundle --platform=node --format=esm --outfile=.cache/check-static-colors.mjs && node .cache/check-static-colors.mjs",
@@ -37,7 +39,23 @@
     "check:l4-batch-job": "esbuild scripts/check-l4-batch-job.ts --bundle --platform=node --format=esm --outfile=.cache/check-l4-batch-job.mjs && node .cache/check-l4-batch-job.mjs",
     "check:static-batch-job": "esbuild scripts/check-static-batch-job.ts --bundle --platform=node --format=esm --outfile=.cache/check-static-batch-job.mjs && node .cache/check-static-batch-job.mjs",
     "generate:l1-materials": "node scripts/gen-l1-materials.mjs",
-    "generate:l5-ornament": "node scripts/gen-l5-ornament.mjs"
+    "generate:l5-ornament": "node scripts/gen-l5-ornament.mjs",
+    "generate:six-items": "node scripts/gen-six-item-atlas.mjs && node scripts/gen-six-item-icons.mjs",
+    "check:six-items": "esbuild scripts/check-six-item-meshes.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-six-item-meshes.mjs && node .cache/check-six-item-meshes.mjs",
+    "check:l0-architecture": "esbuild scripts/check-l0-architecture.ts --bundle --platform=node --format=esm --outfile=.cache/check-l0-architecture.mjs && node .cache/check-l0-architecture.mjs",
+    "check:l0-state": "esbuild scripts/check-l0-state.ts --bundle --platform=node --format=esm --outfile=.cache/check-l0-state.mjs && node .cache/check-l0-state.mjs",
+    "check:l0-network": "esbuild scripts/check-l0-network.ts --bundle --platform=node --format=esm --define:import.meta.env={} --outfile=.cache/check-l0-network.mjs && node .cache/check-l0-network.mjs",
+    "check:l0-meshes": "esbuild scripts/check-l0-meshes.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l0-meshes.mjs && node .cache/check-l0-meshes.mjs",
+    "check:l0-continuity": "esbuild scripts/check-l0-continuity.ts --bundle --platform=node --format=esm --outfile=.cache/check-l0-continuity.mjs && node .cache/check-l0-continuity.mjs",
+    "check:seed-input": "esbuild scripts/check-seed-input.ts --bundle --platform=node --format=esm --outfile=.cache/check-seed-input.mjs && node .cache/check-seed-input.mjs",
+    "check:l0-presentation": "esbuild scripts/check-l0-presentation.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l0-presentation.mjs && node .cache/check-l0-presentation.mjs",
+    "check:l0-refinements": "esbuild scripts/check-l0-refinements.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l0-refinements.mjs && node .cache/check-l0-refinements.mjs",
+    "check:l0": "npm run check:seed-input && npm run check:l0-continuity && npm run check:l0-architecture && npm run check:l0-state && npm run check:l0-meshes && npm run check:l0-presentation && npm run check:l0-refinements && npm run check:l0-experience && npm run check:l0-visibility",
+    "generate:l0-materials": "node scripts/gen-l0-materials.mjs",
+    "verify:l0": "node scripts/verify-l0-remake.mjs",
+    "summarize:l0": "node scripts/summarize-l0-remake.mjs",
+    "check:l0-experience": "esbuild scripts/check-l0-experience.ts --bundle --platform=node --format=esm --outfile=.cache/check-l0-experience.mjs && node .cache/check-l0-experience.mjs",
+    "check:l0-visibility": "esbuild scripts/check-l0-visibility.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l0-visibility.mjs && node .cache/check-l0-visibility.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -112,4 +130,3 @@
     "vite": "^7.2.4"
   }
 }
-

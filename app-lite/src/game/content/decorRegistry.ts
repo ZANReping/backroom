@@ -15,6 +15,9 @@ import { CONTAINERS } from '../decorations/containers'
 import { DECOR_VIEWS } from '../decorations/lore'
 import {TRADE_DEFS} from './tradeDecor'
 import { L5_DECOR_DEFS } from './l5Decor'
+import { ALPHA_DEFS } from './alphaDecor'
+import { ADMIN_NAMES } from './alphaAdminDecor'
+import { COMMUNITY_NAMES } from './alphaCommunityDecor'
 
 export type DecorCategory = 'solid' | 'nonsolid' | 'decal'
 
@@ -39,6 +42,11 @@ const INTERACT_EXTRA: ReadonlySet<string> = new Set([
   'lift', 'lightswitch', 'megsign', 'arcadecab',
   'hoteldoor', 'rollerdoor', 'glassdoor', 'inkdoor', 'bargate',
   'windowtrap', 'megdoc', 'landmark', 'invitation', 'valve', 'booth', 'server', 'vending', 'frontdesk',
+  // Alpha furniture becomes interactive only when the instance carries data.facility;
+  // these entries are non-container by default and do not create business services alone.
+  'alpha_desk', 'alpha_labbench', 'alpha_cold_cabinet', 'alpha_archive_reader',
+  'alpha_reception_counter', 'alpha_dispatch_desk', 'alpha_executive_desk',
+  'alpha_grow_station', 'alpha_home_kitchen', 'alpha_library_counter', 'alpha_build_bench',
 ])
 
 type RawEntry = Omit<DecorEntry, 'container' | 'interactive'>
@@ -48,8 +56,9 @@ const S = (id: string, name: string, cat: DecorCategory, levels: readonly string
 // ---------- 结构类装饰物（StructKind；建模在 renderer/structures.ts）----------
 const RAW: RawEntry[] = [
   ...L5_DECOR_DEFS.map(d => S(d.id, d.name, d.solid ? 'solid' : 'nonsolid', ['L5'], `L5 可复用静态装饰；默认尺寸 ${d.w}×${d.d}×${d.height}，模型与材质参考 renderer/l5Meshes.ts；data.l5=1；不参与交互`)),
+  ...ALPHA_DEFS.map(d => S(d.id, d.name, d.solid ? 'solid' : 'nonsolid', ['据点101'], `Alpha 基地可复用静态装饰；默认尺寸 ${d.w}×${d.d}×${d.height}，${d.id in COMMUNITY_NAMES ? '社区走廊模型来自 content/alphaCommunityDecor.ts' : d.id in ADMIN_NAMES ? '行政署模型来自 content/alphaAdminDecor.ts' : (d.id.startsWith('alpha_archive') || d.id === 'alpha_tech_bench') ? '档案署模型来自 content/alphaArchiveDecor.ts' : '模型与碰撞来自 content/alphaDecor.ts'}；默认无交互，${d.id === 'alpha_archive_reader' ? 'data.facility=1 时承接档案查询业务' : 'data.facility=1 时承接现场业务'}；始终非容器`)),
   ...TRADE_DEFS.map(d=>S(d.id,d.name,d.solid?'solid':'nonsolid',d.id==='trade_terminal'?['据点102','L3']:['据点102'],'可复用贸易构件；模型、碰撞、尺寸与参数见 tradeDecor；静态货物不进入搜刮表')),
-  S('settlementstation','据点服务锚点','nonsolid',['据点101','据点102','据点103','据点104'],'服务数据，商人之家附着于注册柜台'),
+  S('settlementstation','据点服务锚点','nonsolid',['据点102','据点103','据点104'],'服务数据，商人之家附着于注册柜台；Alpha 改由实际家具的 data.facility 承接'),
   // ===== 通用 / L0–L5 =====
   S('pillar', '柱子', 'solid', ['L0', 'L1', 'L5', '据点101'], 'infinite L0 柱厅/迷宫、infiniteL1、infiniteL5 主厅红木柱、Alpha 基地；有限 garage 柱网为死代码'),
   S('car', '废弃汽车', 'solid', ['L1', 'L9', 'L11'], 'infiniteL1 parking 段、mapgenDeep L9/L11；有限 garage 车队为死代码'),

@@ -1,6 +1,8 @@
+import {ALPHA_LIGHTS, ALPHA_PLACEMENT_CLEARANCES} from '../content/alphaBlueprint'
 import { CAREERS } from '../content/careers'
 import { NPCS, genRandomNpcs } from '../content/npcs'
 import { RNG } from '../core/rng'
+import { canOccupy } from '../core/player'
 import type { GameMap } from './mapgen'
 import type { LevelDef } from '../core/types'
 import type { RoomSpec, SettlementBlueprint, SurfaceMaterial, Rect } from '../content/settlementTypes'
@@ -89,7 +91,7 @@ export function genSettlement(m:GameMap,def:LevelDef,b:SettlementBlueprint){
  for(const p of b.partitions)m.structures.push({kind:'settlementprop',x:p.x,y:p.y,w:p.w,h:p.h,solid:true,data:{height:(p.bottom??0)+p.height,bottom:p.bottom??0,partition:1}})
  for(const p of settlementColumns(b))m.structures.push({kind:'settlementprop',x:p.x-.3,y:p.y-.3,w:.6,h:.6,solid:true,data:{height:p.height,partition:1}})
  for(const d of b.doors)m.structures.push({kind:'hoteldoor',x:d.x,y:d.y,w:d.w,h:d.h,solid:true,data:{careerDoor:1,settlementDoor:1,height:d.height,axis:d.axis,access:d.access,faction:b.faction,open:0}})
- const clear=(x:number,y:number)=>m.tiles[Math.floor(y)*m.w+Math.floor(x)]===1&&!m.structures.some(s=>s.solid&&Number(s.data?.bottom??0)<1.8&&x>s.x-.45&&x<s.x+s.w+.45&&y>s.y-.45&&y<s.y+s.h+.45)&&!m.npcs!.some(n=>Math.hypot(n.x-x,n.y-y)<1.5)
+ const clear=(x:number,y:number)=>m.tiles[Math.floor(y)*m.w+Math.floor(x)]===1&&!(b.id==='alpha'&&ALPHA_PLACEMENT_CLEARANCES.some(r=>x>r.x-.3&&x<r.x+r.w+.3&&y>r.y-.3&&y<r.y+r.h+.3))&&(b.id==='alpha'?canOccupy(m,x,y,.32,{z:0,band:0,crouch:false}):!m.structures.some(s=>s.solid&&Number(s.data?.bottom??0)<1.8&&x>s.x-.45&&x<s.x+s.w+.45&&y>s.y-.45&&y<s.y+s.h+.45))&&!m.npcs!.some(n=>Math.hypot(n.x-x,n.y-y)<1.5)
  for(const s of b.services){
   if(!b.decorations)m.structures.push({kind:'settlementstation',x:s.x,y:s.y,w:.2,h:.2,solid:false,data:{room:s.zone,label:s.label,services:s.services,service:s.services[0],faction:b.faction,access:s.access??0,npc:s.npc??'',mount:s.mount??'counter'}})
   if(s.npc&&NPCS[s.npc]&&!m.npcs!.some(n=>n.id===s.npc)){
@@ -107,12 +109,13 @@ export function genSettlement(m:GameMap,def:LevelDef,b:SettlementBlueprint){
   }
  }
  // Lighting follows common ceiling runs. Table lamps are local in the small restaurant.
- for(let y=3;y<m.h-2;y+=b.id==='tom'?6:6)for(let x=3;x<m.w-2;x+=6){
+ if(b.id==='alpha')m.lights.push(...ALPHA_LIGHTS.map(l=>({...l})))
+ else for(let y=3;y<m.h-2;y+=b.id==='tom'?6:6)for(let x=3;x<m.w-2;x+=6){
   const i=y*m.w+x;if(m.tiles[i]!==1)continue
   m.lights.push({x:x+.5,y:y+.5,r:7,color:b.id==='tom'?'#ffdbad':'#e5e6d9',fixZ:settlementCeiling(m,x+.5,y+.5)-.25,flickerSeed:x+y,keep:1})
  }
  b.exits.forEach((p,i)=>m.exits.push({...p,def:def.exits[i%def.exits.length],discovered:true}))
- const rng=new RNG(b.level*104729),people=genRandomNpcs(()=>rng.next(),b.id==='alpha'?12:8,b.id==='bntg'?'bntg':b.id==='ariane'?'ariane':b.id==='tom'?'mixed':'meg')
+ const rng=new RNG(b.level*104729),people=genRandomNpcs(()=>rng.next(),b.id==='alpha'?4:8,b.id==='bntg'?'bntg':b.id==='ariane'?'ariane':b.id==='tom'?'mixed':'meg')
  const zones=b.rooms.filter(r=>!r.enclosed&&['residential','dining','market','classroom','office','library','intake'].includes(r.style))
  m.npcDefs??=[]
  people.forEach((person,i)=>{

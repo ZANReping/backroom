@@ -1,0 +1,785 @@
+{
+  "method": "1920x1080 DPR1; realistic; high textures; 16 scene lights; 2 scene shadows; AO half resolution after only; no dynamic resolution; warm at least 3 seconds and wait for all visible chunks, model warmup, material compilation and recycle queues to complete, with resource counts continuously stable for 1 second; 5 rounds >=120 RAF intervals; median of round medians/P95, pass checks all rounds. Draws/triangles: end-of-round frame samples, not frame averages; cached shadow submissions vary across frames.",
+  "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "rows": [
+    {
+      "id": 0,
+      "name": "教学关卡",
+      "before": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 571
+      },
+      "after": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 120,
+        "triangles": 151136,
+        "geometry": 146,
+        "textures": 37
+      },
+      "build": {
+        "before": 12.5,
+        "after": 50.2
+      },
+      "pass": true
+    },
+    {
+      "id": 1,
+      "name": "宜居地带",
+      "before": {
+        "median": 4.2,
+        "p95": 8.4,
+        "draws": 864
+      },
+      "after": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 494,
+        "triangles": 462703,
+        "geometry": 587,
+        "textures": 44
+      },
+      "build": {
+        "before": 1199.9,
+        "after": 995.8
+      },
+      "pass": true
+    },
+    {
+      "id": 2,
+      "name": "废弃公共带",
+      "before": {
+        "median": 4.2,
+        "p95": 6.3,
+        "draws": 865
+      },
+      "after": {
+        "median": 4.2,
+        "p95": 8.4,
+        "draws": 505,
+        "triangles": 155072,
+        "geometry": 636,
+        "textures": 165
+      },
+      "build": {
+        "before": 41.6,
+        "after": 45.9
+      },
+      "pass": true
+    },
+    {
+      "id": 3,
+      "name": "电站",
+      "before": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 722
+      },
+      "after": {
+        "median": 8.2,
+        "p95": 8.4,
+        "draws": 364,
+        "triangles": 422691,
+        "geometry": 448,
+        "textures": 60
+      },
+      "build": {
+        "before": 25.1,
+        "after": 41.6
+      },
+      "pass": true
+    },
+    {
+      "id": 4,
+      "name": "废弃办公室",
+      "before": {
+        "median": 16.7,
+        "p95": 20.9,
+        "draws": 2090
+      },
+      "after": {
+        "median": 16.6,
+        "p95": 25,
+        "draws": 1162,
+        "triangles": 223895,
+        "geometry": 1393,
+        "textures": 143
+      },
+      "build": {
+        "before": 479.2,
+        "after": 1112.5
+      },
+      "pass": false
+    },
+    {
+      "id": 5,
+      "name": "恐怖酒店",
+      "before": {
+        "median": 12.5,
+        "p95": 33.4,
+        "draws": 1333
+      },
+      "after": {
+        "median": 12.5,
+        "p95": 29.1,
+        "draws": 1880,
+        "triangles": 2563763,
+        "geometry": 1657,
+        "textures": 241
+      },
+      "build": {
+        "before": 1645.8,
+        "after": 129.2
+      },
+      "pass": false
+    },
+    {
+      "id": 6,
+      "name": "熄灯",
+      "before": {
+        "median": 4.2,
+        "p95": 8.4,
+        "draws": 1020
+      },
+      "after": {
+        "median": 4.3,
+        "p95": 8.4,
+        "draws": 1023,
+        "triangles": 128799,
+        "geometry": 925,
+        "textures": 292
+      },
+      "build": {
+        "before": 79.2,
+        "after": 95.9
+      },
+      "pass": true
+    },
+    {
+      "id": 7,
+      "name": "深海恐惧",
+      "before": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 496
+      },
+      "after": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 109,
+        "triangles": 69031,
+        "geometry": 255,
+        "textures": 227
+      },
+      "build": {
+        "before": 2241.7,
+        "after": 2404
+      },
+      "pass": true
+    },
+    {
+      "id": 8,
+      "name": "洞穴系统",
+      "before": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 105
+      },
+      "after": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 108,
+        "triangles": 107839,
+        "geometry": 313,
+        "textures": 63
+      },
+      "build": {
+        "before": 233.4,
+        "after": 246
+      },
+      "pass": true
+    },
+    {
+      "id": 9,
+      "name": "郊区",
+      "before": {
+        "median": 8.4,
+        "p95": 12.6,
+        "draws": 2188
+      },
+      "after": {
+        "median": 4.2,
+        "p95": 8.4,
+        "draws": 964,
+        "triangles": 242360,
+        "geometry": 1078,
+        "textures": 224
+      },
+      "build": {
+        "before": 83.3,
+        "after": 99.9
+      },
+      "pass": true
+    },
+    {
+      "id": 10,
+      "name": "丰裕",
+      "before": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 295
+      },
+      "after": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 298,
+        "triangles": 572225,
+        "geometry": 292,
+        "textures": 385
+      },
+      "build": {
+        "before": 62.5,
+        "after": 62.5
+      },
+      "pass": true
+    },
+    {
+      "id": 11,
+      "name": "不夜城",
+      "before": {
+        "median": 4.2,
+        "p95": 8.4,
+        "draws": 885
+      },
+      "after": {
+        "median": 4.2,
+        "p95": 8.4,
+        "draws": 407,
+        "triangles": 337915,
+        "geometry": 446,
+        "textures": 185
+      },
+      "build": {
+        "before": 441.6,
+        "after": 545.7
+      },
+      "pass": true
+    },
+    {
+      "id": 12,
+      "name": "终末",
+      "before": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 449
+      },
+      "after": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 144,
+        "triangles": 108165,
+        "geometry": 486,
+        "textures": 79
+      },
+      "build": {
+        "before": 812.5,
+        "after": 920.9
+      },
+      "pass": true
+    },
+    {
+      "id": 101,
+      "name": "M.E.G. Alpha 基地",
+      "before": {
+        "median": 12.4,
+        "p95": 12.6,
+        "draws": 2282
+      },
+      "after": {
+        "median": 4.2,
+        "p95": 8.5,
+        "draws": 179,
+        "triangles": 84533,
+        "geometry": 269,
+        "textures": 316
+      },
+      "build": {
+        "before": 2437.4,
+        "after": 2975
+      },
+      "pass": false
+    },
+    {
+      "id": 102,
+      "name": "商人之家",
+      "before": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 983
+      },
+      "after": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 54,
+        "triangles": 26521,
+        "geometry": 549,
+        "textures": 87
+      },
+      "build": {
+        "before": 104.2,
+        "after": 133.4
+      },
+      "pass": true
+    },
+    {
+      "id": 103,
+      "name": "希波克拉底 - 1",
+      "before": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 680
+      },
+      "after": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 67,
+        "triangles": 91413,
+        "geometry": 285,
+        "textures": 94
+      },
+      "build": {
+        "before": 25.1,
+        "after": 29.4
+      },
+      "pass": true
+    },
+    {
+      "id": 104,
+      "name": "Tom 的餐馆",
+      "before": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 1037
+      },
+      "after": {
+        "median": 4.2,
+        "p95": 8.4,
+        "draws": 62,
+        "triangles": 18201,
+        "geometry": 427,
+        "textures": 93
+      },
+      "build": {
+        "before": 29.3,
+        "after": 33.3
+      },
+      "pass": true
+    },
+    {
+      "id": 105,
+      "name": "办公区EL3A",
+      "before": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 414
+      },
+      "after": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 32,
+        "triangles": 24627,
+        "geometry": 758,
+        "textures": 77
+      },
+      "build": {
+        "before": 16.6,
+        "after": 16.8
+      },
+      "pass": true
+    },
+    {
+      "id": 106,
+      "name": "M.E.G. Gemma 基地",
+      "before": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 272
+      },
+      "after": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 36,
+        "triangles": 80691,
+        "geometry": 699,
+        "textures": 75
+      },
+      "build": {
+        "before": 24.9,
+        "after": 29.2
+      },
+      "pass": true
+    },
+    {
+      "id": 107,
+      "name": "B.N.T.G. 存储设施",
+      "before": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 146
+      },
+      "after": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 32,
+        "triangles": 15353,
+        "geometry": 693,
+        "textures": 75
+      },
+      "build": {
+        "before": 20.8,
+        "after": 16.6
+      },
+      "pass": true
+    },
+    {
+      "id": 108,
+      "name": "蓝色救赎",
+      "before": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 115
+      },
+      "after": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 32,
+        "triangles": 10325,
+        "geometry": 266,
+        "textures": 79
+      },
+      "build": {
+        "before": 20.9,
+        "after": 33.3
+      },
+      "pass": true
+    },
+    {
+      "id": 109,
+      "name": "M.E.G. Omega 基地",
+      "before": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 190
+      },
+      "after": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 31,
+        "triangles": 39903,
+        "geometry": 653,
+        "textures": 77
+      },
+      "build": {
+        "before": 12.5,
+        "after": 16.7
+      },
+      "pass": true
+    },
+    {
+      "id": 110,
+      "name": "M.E.G. 哨所「家政服务」",
+      "before": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 209
+      },
+      "after": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 33,
+        "triangles": 12809,
+        "geometry": 272,
+        "textures": 80
+      },
+      "build": {
+        "before": 16.7,
+        "after": 25
+      },
+      "pass": true
+    },
+    {
+      "id": 111,
+      "name": "家常酒店",
+      "before": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 261
+      },
+      "after": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 33,
+        "triangles": 13889,
+        "geometry": 283,
+        "textures": 81
+      },
+      "build": {
+        "before": 8.3,
+        "after": 8.4
+      },
+      "pass": true
+    },
+    {
+      "id": 112,
+      "name": "原住民",
+      "before": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 288
+      },
+      "after": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 33,
+        "triangles": 12309,
+        "geometry": 319,
+        "textures": 81
+      },
+      "build": {
+        "before": 25,
+        "after": 29.2
+      },
+      "pass": true
+    },
+    {
+      "id": 113,
+      "name": "M.E.G.“空巢”前哨站",
+      "before": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 169
+      },
+      "after": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 31,
+        "triangles": 5425,
+        "geometry": 245,
+        "textures": 89
+      },
+      "build": {
+        "before": 8.4,
+        "after": 12.5
+      },
+      "pass": true
+    },
+    {
+      "id": 114,
+      "name": "哈莫兹洞穴社群",
+      "before": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 159
+      },
+      "after": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 31,
+        "triangles": 6685,
+        "geometry": 234,
+        "textures": 88
+      },
+      "build": {
+        "before": 8.3,
+        "after": 12.6
+      },
+      "pass": true
+    },
+    {
+      "id": 115,
+      "name": "M.E.G. Beta基地",
+      "before": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 222
+      },
+      "after": {
+        "median": 8.3,
+        "p95": 12.4,
+        "draws": 71,
+        "triangles": 80069,
+        "geometry": 215,
+        "textures": 89
+      },
+      "build": {
+        "before": 25,
+        "after": 29.3
+      },
+      "pass": true
+    },
+    {
+      "id": 116,
+      "name": "丰饶角",
+      "before": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 687
+      },
+      "after": {
+        "median": 4.2,
+        "p95": 8.5,
+        "draws": 67,
+        "triangles": 21345,
+        "geometry": 312,
+        "textures": 109
+      },
+      "build": {
+        "before": 25.2,
+        "after": 33.3
+      },
+      "pass": true
+    },
+    {
+      "id": 274,
+      "name": "杰瑞的房间",
+      "before": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 94
+      },
+      "after": {
+        "median": 4.2,
+        "p95": 4.3,
+        "draws": 31,
+        "triangles": 17013,
+        "geometry": 395,
+        "textures": 85
+      },
+      "build": {
+        "before": 12.5,
+        "after": 16.7
+      },
+      "pass": true
+    }
+  ],
+  "normal": [
+    {
+      "seed": 7391,
+      "x": 16,
+      "y": 16,
+      "yaw": 0.42,
+      "median": 4.2,
+      "p95": 4.3,
+      "draws": 178,
+      "triangles": 220166,
+      "pass": true,
+      "buildMaxFrame": 66.7
+    },
+    {
+      "seed": 7391,
+      "x": 29,
+      "y": 27,
+      "yaw": -1.5707963267948966,
+      "median": 4.2,
+      "p95": 4.3,
+      "draws": 160,
+      "triangles": 130422,
+      "pass": true,
+      "buildMaxFrame": 45.9
+    },
+    {
+      "seed": 7391,
+      "x": 33,
+      "y": 27,
+      "yaw": -1.5707963267948966,
+      "median": 4.2,
+      "p95": 4.3,
+      "draws": 156,
+      "triangles": 129660,
+      "pass": true,
+      "buildMaxFrame": 45.9
+    },
+    {
+      "seed": 7391,
+      "x": 64,
+      "y": 46,
+      "yaw": 0.8,
+      "median": 4.2,
+      "p95": 4.3,
+      "draws": 124,
+      "triangles": 109444,
+      "pass": true,
+      "buildMaxFrame": 50
+    },
+    {
+      "seed": 781,
+      "x": -32,
+      "y": -16,
+      "yaw": 1.5707963267948966,
+      "median": 4.2,
+      "p95": 4.3,
+      "draws": 141,
+      "triangles": 123334,
+      "pass": true,
+      "buildMaxFrame": 54.2
+    },
+    {
+      "seed": 42561,
+      "x": 48,
+      "y": 31,
+      "yaw": 3.141592653589793,
+      "median": 4.2,
+      "p95": 4.3,
+      "draws": 156,
+      "triangles": 152106,
+      "pass": true,
+      "buildMaxFrame": 54.1
+    }
+  ],
+  "feedback": [
+    {
+      "id": 0,
+      "draws": "103→120",
+      "triangles": "251488→151136",
+      "median": "4.2→4.2",
+      "p95": "4.3→4.3",
+      "maxFrame": "320.9→50.2"
+    }
+  ],
+  "lifecycle": {
+    "stable": true,
+    "rounds": [
+      {
+        "round": 0,
+        "geometries": 171,
+        "textures": 56,
+        "programs": 66
+      },
+      {
+        "round": 1,
+        "geometries": 171,
+        "textures": 56,
+        "programs": 66
+      },
+      {
+        "round": 2,
+        "geometries": 171,
+        "textures": 56,
+        "programs": 66
+      },
+      {
+        "round": 3,
+        "geometries": 171,
+        "textures": 56,
+        "programs": 66
+      },
+      {
+        "round": 4,
+        "geometries": 171,
+        "textures": 56,
+        "programs": 66
+      }
+    ]
+  }
+}

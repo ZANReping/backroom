@@ -1,0 +1,18 @@
+{
+  "phase": "first enhanced-warmup after benchmark",
+  "level": 5,
+  "outcome": "No samples accepted from the timed-out scene; the completed level was measured in a later resumed run.",
+  "error": "Warmup timed out after 60000 ms",
+  "pending": {
+    "missing": 2,
+    "chunk": true,
+    "finite": false,
+    "flash": false,
+    "moth": false,
+    "items": 0,
+    "compile": false,
+    "retired": 0,
+    "textures": 0
+  },
+  "followup": "The queue subsequently completed. Complete warmup exposed higher steady-state geometry and draw counts than the old early-sampling result. Both before and after snapshots were remeasured using the enhanced checks."
+}

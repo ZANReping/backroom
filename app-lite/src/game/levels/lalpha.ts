@@ -1,4 +1,4 @@
-// M.E.G. Alpha 基地（据点层级：完全手工布局，见 mapgenOutpost.ts；设定依据 wikidot Base Alpha）
+// M.E.G. Alpha 基地（据点层级：完全手工布局，见 alphaBlueprint.ts；设定依据 wikidot Base Alpha）
 import type { LevelDef } from '../core/types'
 
 export const LALPHA: LevelDef = {
@@ -8,7 +8,7 @@ export const LALPHA: LevelDef = {
   flavor: '小径深处的一座城镇。灯光是暖的，门后有说话声——你有多久没听过人说话了？',
   palette: { floor: '#9a968c', floorAlt: '#8f8b82', wall: '#cfc8b8', wallTop: '#ddd6c6', accent: '#c9a03a', light: '#fff2d8', decal: '#6a6258' },
   gen: 'outpost',
-  size: 128, // Alpha 专用大基地布局；四署与五居民片区见 mapgenOutpost.ts
+  size: 152, // Alpha 专用大基地布局；四署与五居民片区见 alphaBlueprint.ts
   entities: [], // 据点无敌对实体（居民是 NPC，不是实体）
   items: [],
   itemCount: [0, 0],

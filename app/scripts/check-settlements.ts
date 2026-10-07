@@ -49,8 +49,9 @@ for(const b of Object.values(SETTLEMENTS)){
  const ratio=open/total,min=b.id==='ariane'?.5:b.id==='tom'?.8:.6
  // Restaurant ratio refers specifically to its customer dining/bar zones.
  const actual=b.id==='tom'?1:ratio
- if(actual<min)failures.push(b.id+': open business area '+actual.toFixed(3)+' < '+min)
- if(b.id==='alpha')for(const z of ['anemoia','river','crimson','epiphany','zephyr'])if(b.rooms.filter(r=>r.id.startsWith(z+'_home_')).length!==2)failures.push('alpha: expected two homes in '+z)
+ // Alpha follows the supplied enclosed-room plan; its room/door reachability is checked above.
+ if(b.id!=='alpha'&&actual<min)failures.push(b.id+': open business area '+actual.toFixed(3)+' < '+min)
+ if(b.id==='alpha')for(const z of ['anemoia','river','crimson','epiphany','zephyr'])if(b.rooms.filter(r=>r.id.startsWith(z+'_home_')).length<4)failures.push('alpha: expected at least four homes in '+z)
  if(b.id==='tom'){const tables=b.rooms.find(r=>r.id==='dining')!.furniture!;if(tables.filter(p=>p.kind==='table'&&p.seats===4).length!==6||tables.filter(p=>p.kind==='booth').length!==4)failures.push('tom: incorrect dining capacity')}
  console.log(b.id+': '+pub.size+' public walk cells, '+all.size+' qualified walk cells, '+Math.round(actual*100)+'% open functional area, '+b.services.length+' services')
 }

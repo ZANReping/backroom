@@ -15,6 +15,7 @@ import { L8_ORIGIN, l8AvenuePoint } from '../world/infiniteL8'
 import { CONTAINER_KINDS } from '../decorations/containers'
 import { OUTPOSTS, isLandmarkStruct } from '../content/outposts'
 import { DECOR_REGISTRY } from '../content/decorRegistry'
+import { ALPHA_DEFS, isAlphaKind } from '../content/alphaDecor'
 import { DIFF } from './shared'
 import type { ExitInstance, FloorBand, Structure, StructKind } from '../core/types'
 import type { Engine } from '../engine'
@@ -235,7 +236,8 @@ export function devSpawnDecor(eng: Engine, kind: string): boolean {
   const p = eng.player
   const f = devForward(eng)
   const tx = Math.floor(p.x + f.fx * 1.5), ty = Math.floor(p.y + f.fy * 1.5)
-  const s: Structure = { kind: kind as StructKind, x: tx, y: ty, w: 1, h: 1, solid: entry.cat === 'solid', floor: p.floor }
+  const alpha = isAlphaKind(kind) ? ALPHA_DEFS.find(d => d.id === kind) : undefined
+  const s: Structure = { kind: kind as StructKind, x: tx, y: ty, w: alpha?.w ?? 1, h: alpha?.d ?? 1, solid: alpha?.solid ?? entry.cat === 'solid', floor: p.floor, ...(alpha ? { data: { height: alpha.height, deg: 0 } } : {}) }
   m.structures.push(s)
   const inf = m.inf
   if (inf) {

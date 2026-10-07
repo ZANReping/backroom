@@ -12,6 +12,7 @@ import { buildDesignFile } from '@/game/design/buildDesignFile'
 import type { CodexEntry, CodexKind, LayoutEntry, StructEntry, ZoneEntry } from '@/game/design/types'
 import { DECOR_REGISTRY } from '@/game/content/decorRegistry'
 import {TRADE_DEFS} from '@/game/content/tradeDecor'
+import {ALPHA_DEFS, isAlphaKind} from '@/game/content/alphaDecor'
 import TradeDecorPreview from './TradeDecorPreview'
 import L5DecorPreview from './L5DecorPreview'
 import { L5_DECOR_DEFS, isL5DecorKind } from '@/game/content/l5Decor'
@@ -750,8 +751,9 @@ export default function DesignMode({ onBack }: { onBack: () => void }) {
       if (placing.type === 'struct') {
         const d = DECOR.get(placing.kind)
         const trade=TRADE_DEFS.find(d=>d.id===placing.kind)
+        const alpha=isAlphaKind(placing.kind) ? ALPHA_DEFS.find(d=>d.id===placing.kind) : undefined
         const l5 = isL5DecorKind(placing.kind) ? L5_DECOR_DEFS.find(v => v.id === placing.kind) : undefined
-        const s: StructEntry = { kind: placing.kind, x, y, w: l5?.w ?? trade?.w ?? 1, h: l5?.d ?? trade?.d ?? 1, solid: l5?.solid ?? d?.cat === 'solid', ...(l5 ? { data: { ...(l5.data ?? {}), l5: 1, height: l5.height } } : trade ? { data: { height: trade.height, deg: 0 } } : {}), ...onR }
+        const s: StructEntry = { kind: placing.kind, x, y, w: l5?.w ?? trade?.w ?? alpha?.w ?? 1, h: l5?.d ?? trade?.d ?? alpha?.d ?? 1, solid: l5?.solid ?? alpha?.solid ?? d?.cat === 'solid', ...(l5 ? { data: { ...(l5.data ?? {}), l5: 1, height: l5.height } } : trade ? { data: { height: trade.height, deg: 0 } } : alpha ? { data: { height: alpha.height, deg: 0 } } : {}), ...onR }
         if ((e.floors ?? 1) > 1) s.floor = floor
         ;(e.structures ??= []).push(s)
         if (e.randomized) setHint('已放置并标记 onRandomSample——复刻时写进生成器保证必出')

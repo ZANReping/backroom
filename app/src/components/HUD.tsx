@@ -22,10 +22,15 @@ import { DECOR_REGISTRY, DECOR_LEVEL_ORDER } from '@/game/content/decorRegistry'
 import { storage } from '@/game/core/storage'
 import { audio } from '@/game/core/audio'
 import { MUSIC_LIBRARY } from '@/game/core/midi' // v56 六轮：图鉴全开同步解锁电台音乐
+import { drawAlphaMap } from '@/game/content/alphaMap'
 import { bindLabelFor } from '@/game/core/keybinds'
 import { IconHP, IconStamina, IconHunger, IconThirst, IconSanity, IconBattery, IconPause, IconMap, IconInteract, IconCrouch, IconIsolation, IconPlant } from './icons'
 import { PHENOMENA, rarityText } from '@/game/content/phenomena'
 import MegQuestTracker from './MegQuestTracker'
+import AlphaMapPanel from './AlphaMapPanel'
+import {drawL0Map} from '@/game/content/l0Map'
+import { drawMapPlayer } from '@/game/content/mapPlayer'
+import { mapSight } from '@/game/world/mapSight'
 
 // 现象图标映射（phenomena.ts 中 def.icon → 具体 SVG 组件）
 const PHEN_ICON = { isolation: IconIsolation, plant: IconPlant, flicker: IconStamina } as const
@@ -85,6 +90,7 @@ function Minimap({ engine, size }: { engine: Engine; size: number }) {
     const g = c.getContext('2d')!
     const k = size / 140 // 标记随尺寸缩放
     c.width = size; c.height = size
+    if (m.settlement?.blueprint.id === 'alpha') { drawAlphaMap(g, size, engine.player, { mini: true, yaw: look.yaw, sight: mapSight(engine, look.yaw) }); return }
     // ---- v17：无限模式（L0）——以玩家为中心显示已探索 chunk（窗口内读实时探索，窗口外读持久位图）----
     if (m.inf) {
       const inf = m.inf
@@ -98,6 +104,11 @@ function Minimap({ engine, size }: { engine: Engine; size: number }) {
       const wx0 = Math.floor(inf.ox + px), wy0 = Math.floor(inf.oy + py)
       const mod = (v: number, n: number) => ((v % n) + n) % n
       g.fillStyle = '#0a0908'; g.fillRect(0, 0, size, size)
+      if(inf.l0){
+        g.save();g.translate((half-px)*s,(half-py)*s)
+        drawL0Map(g,engine,{x0:px-half,y0:py-half,x1:px+half,y1:py+half,scale:s})
+        g.restore()
+      }else{
       for (let dy = -half; dy < half; dy++)
         for (let dx = -half; dx < half; dx++) {
           const wx = wx0 + dx, wy = wy0 + dy
@@ -112,7 +123,7 @@ function Minimap({ engine, size }: { engine: Engine; size: number }) {
             const bm = inf.explored.get(`${Math.floor(wx / CS)},${Math.floor(wy / CS)}`)
             if (bm && bm[mod(wy, CS) * CS + mod(wx, CS)]) { ex = 1; floor = true }
           }
-          if (!ex || !floor) continue
+          if (!(engine.devEnabled&&engine.dev.mapReveal)&&!ex || !floor) continue
           g.fillStyle = tnt === 2 ? '#7a1a12' : tnt === 1 ? '#8a7a4a' : el === 4 ? '#050505' : el === 1 ? MINIMAP_COLORS.low : MINIMAP_COLORS.normal
           g.fillRect((dx + half) * s, (dy + half) * s, Math.ceil(s), Math.ceil(s))
         }
@@ -123,6 +134,7 @@ function Minimap({ engine, size }: { engine: Engine; size: number }) {
         if (mod(wx0 + i, CS) !== 0) continue
         g.beginPath(); g.moveTo((i + half) * s, 0); g.lineTo((i + half) * s, size); g.stroke()
         if (mod(wy0 + i, CS) === 0) { g.beginPath(); g.moveTo(0, (i + half) * s); g.lineTo(size, (i + half) * s); g.stroke() }
+      }
       }
       for (const e of m.exits) {
         if (!e.discovered || (e.floor ?? 0) !== pBand) continue
@@ -191,8 +203,7 @@ function Minimap({ engine, size }: { engine: Engine; size: number }) {
         g.fillStyle = '#6ad9c9'
         g.fillRect(sx - 0.75 * k, sy - 0.75 * k, 1.5 * k, 1.5 * k)
       }
-      g.fillStyle = '#e8b93c'
-      g.beginPath(); g.arc(size / 2, size / 2, 2 * k, 0, 7); g.fill()
+      drawMapPlayer(g, size / 2, size / 2, look.yaw, { scale: s, radius: 3.5, color: '#e8b93c', sight: mapSight(engine, look.yaw) })
       return
     }
     const s = size / m.w
@@ -206,7 +217,7 @@ function Minimap({ engine, size }: { engine: Engine; size: number }) {
     for (let y = 0; y < m.h; y++)
       for (let x = 0; x < m.w; x++) {
         const idx = y * m.w + x
-        if (!engine.explored[idx]) continue
+        if (!(engine.devEnabled&&engine.dev.mapReveal)&&!engine.explored[idx]) continue
         if (pBand >= 1) {
           const upA = pBand === 2 ? m.up2 : m.up // v54：三层视图读 up2
           const wallA = pBand === 2 ? m.upWall2 : m.upWall
@@ -285,20 +296,17 @@ function Minimap({ engine, size }: { engine: Engine; size: number }) {
       g.beginPath(); g.arc(n.x * s, n.y * s, 2 * k, 0, 7); g.fill()
     }
     // 玩家标记：高度指示（低洼变暗+↓，高台↑）+ 蹲伏缩小
-    const pz = engine.player as unknown as { crouching?: boolean }
     const pIdx = Math.floor(engine.player.y) * m.w + Math.floor(engine.player.x)
     const pEl = elev && pIdx >= 0 && pIdx < elev.length ? elev[pIdx] : 0
-    const r = 2 * k * (pz.crouching ? 0.65 : 1)
-    g.fillStyle = pEl === 1 ? '#93792a' : '#e8b93c'
-    g.beginPath(); g.arc(engine.player.x * s, engine.player.y * s, r, 0, 7); g.fill()
+    drawMapPlayer(g, engine.player.x * s, engine.player.y * s, look.yaw, { scale: s, radius: 3.5, color: pEl === 1 ? '#93792a' : '#e8b93c', sight: mapSight(engine, look.yaw) })
     if (pEl === 1 || pEl === 2 || pEl === 3) {
       g.font = `${Math.max(7, Math.round(8 * k))}px monospace`
       g.textAlign = 'center'
       g.fillStyle = pEl === 1 ? '#8fa3c9' : '#ffe37a'
       g.fillText(pEl === 1 ? '↓' : '↑', engine.player.x * s, engine.player.y * s - 3.2 * k)
     }
-  })
-  return <canvas ref={ref} style={{ width: size, height: size, imageRendering: 'pixelated' }} />
+  }, [engine, size, look.yaw, engine.player.x, engine.player.y, engine.player.z, engine.player.floor, engine.player.crouching, engine.mapRev, engine.map?.inf?.rev, Math.floor(engine.time * 8)])
+  return <canvas data-minimap ref={ref} style={{ width: size, height: size, imageRendering: 'pixelated' }} />
 }
 
 export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, onPause, onInventory, onSelectSlot, onUseSlot }: Props) {
@@ -785,21 +793,21 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
             style={{ background: 'color-mix(in srgb, var(--panel) 88%, transparent)' }}
             onClick={(e) => e.stopPropagation()}
           >
-            <Minimap engine={engine} size={bigMapSize} />
+            {engine.map?.settlement?.blueprint.id === 'alpha' ? <AlphaMapPanel engine={engine} compact /> : <Minimap engine={engine} size={bigMapSize} />}
             {/* v13：当前楼层标注（多楼层契约存在时） */}
             {floorInfo && (
               <div className="font-mono2 text-[12px]" style={{ color: 'var(--amber)' }}>
                 L{dispId} · {def.name} · 当前 {floorInfo.cur + 1}F / 共{floorInfo.total}层
               </div>
             )}
-            <div className="font-mono2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>
+            {engine.map?.settlement?.blueprint.id !== 'alpha' && <div className="font-mono2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>
               <span><span style={{ color: 'var(--amber)' }}>●</span> 你的位置</span>
               <span><span style={{ color: 'var(--exit)' }}>●</span> 出口</span>
               {mapZData(engine.map).elev && <span><span style={{ color: MINIMAP_COLORS.high }}>■</span> 高台</span>}
               {mapZData(engine.map).elev && <span><span style={{ color: MINIMAP_COLORS.low }}>■</span> 低洼</span>}
               {(mapZData(engine.map).outdoor || mapZData(engine.map).elev) && <span><span style={{ color: MINIMAP_COLORS.outdoor }}>■</span> 室外</span>}
               <span style={{ opacity: 0.7 }}>点击空白处关闭</span>
-            </div>
+            </div>}
             <button
               className="hud-panel font-mono2 absolute -right-2 -top-2 flex h-7 w-7 items-center justify-center text-[13px]"
               style={{ color: 'var(--text)', background: 'var(--panel)' }}
@@ -1311,6 +1319,7 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
                     <DevBtn active={engine.dev.bright} onClick={() => { engine.dev.bright = !engine.dev.bright }} title="一键照明：层级全局增亮——灯光强度拉满、环境光常亮，无视停电/熄灯区/层级光照系数">一键照明</DevBtn>
                     <DevBtn active={engine.dev.noAttackCooldown} onClick={() => { engine.dev.noAttackCooldown = !engine.dev.noAttackCooldown; engine.attackCooldownT = 0 }} title="关闭所有武器与空手攻击间隔；体力消耗仍然保留">攻击无冷却</DevBtn>
                     <DevBtn active={codexAll} onClick={toggleCodexAll} title="图鉴全开：实体/物品/层级/文档全部解锁（关闭后恢复到开启前的图鉴进度）">图鉴全开</DevBtn>
+                    <DevBtn active={engine.dev.mapReveal} onClick={() => { engine.dev.mapReveal = !engine.dev.mapReveal }} title="临时显示原版大地图和小地图的全部地形，关闭后恢复探索迷雾，不改写探索记录">地图全开</DevBtn>
                   </div>
                 </DevSection>
                 <DevSection label="现象（当前层可触发）">
@@ -1415,13 +1424,13 @@ const GLYPH_COLOR: Record<string, string> = {
   // ===== v25：v23/v25 新增物品专属配色（各自独特，一眼可辨） =====
   chalkstub: '#f0f0f8', megfolder: '#bf9b5f', rope: '#a8854e', divemask: '#4ac9c9',
   thingmeat: '#c95a6a', oddbook: '#8a6ac9', cavingsuit: '#d97a2e', xenonmarble: '#66e0d0',
-  driedfruit: '#b86a2e', uvlamp: '#b48aff', stonekazoo: '#9a8a72', pockets: '#d96ac9',
+  driedfruit: '#b86a2e', uvlamp: '#b48aff', stonekazoo: '#9a8a72', pockets: '#78cfcc',
   housekey: '#c9c9d2', wheatgrain: '#d9c25a', nails: '#7d8896', timber: '#96682e',
   presses: '#cfa12e', pamphlet: '#7ac9b0', citywater: '#3aa0d8', endnote: '#8a7a6a',
   // ===== v32：后室扩展物品 =====
   cashew: '#c9a05a',
   knife: '#c9cdd4', axe: '#d96a3a', headlamp: '#f0d060', nightvision: '#78b886', notebook: '#8a6a4a',
-  fuyouyu: '#6ad9a8', squirtgun: '#4ac9e8', warpberry: '#b06ae0', royalration: '#e8c93d',
+  fuyouyu: '#788f59', squirtgun: '#4ac9e8', warpberry: '#b06ae0', royalration: '#e8c93d',
   // ===== v38：Tom 的餐馆菜肴 =====
   tomatosoup: '#d95a3a', gardensalad: '#7ac97a', garlicbread: '#d9a85a', pasta: '#e8b93c',
   meatstew: '#c96a4a', pizza: '#e08a4a', lasagna: '#d9a03d', tomsspecial: '#c95a4a',
@@ -1507,7 +1516,10 @@ export function ItemGlyph({ type, size = 24, count }: { type: string; size?: num
   const f = { fill: 'currentColor', stroke: 'none' as const }
   const inner = (() => {
     switch (g) {
-      case 'bottle': return <><rect x="9" y="6" width="6" height="13" rx="1" {...s} /><path d="M10.5 3h3v3h-3z" {...f} /><path d="M9 12h6" {...s} /></>
+      case 'milk':
+      case 'bottle': return type === 'luckymilk'
+        ? <><path d="M9 9.5V7.2c0-.7.5-1.2 1.1-1.2h3.8c.6 0 1.1.5 1.1 1.2v2.3l1.1 2.1v5.8a2 2 0 0 1-2 2H9.9a2 2 0 0 1-2-2v-5.8z" {...s} /><path d="M10.2 4h3.6v2h-3.6z" {...s} /><path d="M8.2 12h7.6v4.2H8.2z" {...s} /></>
+        : <><rect x="9" y="6" width="6" height="13" rx="1" {...s} /><path d="M10.5 3h3v3h-3z" {...f} /><path d="M9 12h6" {...s} /></>
       case 'can': return <><rect x="7" y="5" width="10" height="14" rx="2" {...s} /><ellipse cx="12" cy="5.5" rx="5" ry="1" {...s} /><path d="M7 12h10" {...s} /></>
       case 'bandage': return <><rect x="3" y="9" width="18" height="7" rx="3.5" {...s} /><circle cx="9" cy="12.5" r="0.8" {...f} /><circle cx="12" cy="12.5" r="0.8" {...f} /><circle cx="15" cy="12.5" r="0.8" {...f} /></>
       case 'battery': return <><rect x="9" y="6" width="6" height="14" rx="1" {...s} /><path d="M10.5 3.5h3v2h-3z" {...f} /><path d="M12 9l-1.5 3h3L12 15" {...s} /></>
@@ -1552,8 +1564,10 @@ export function ItemGlyph({ type, size = 24, count }: { type: string; size?: num
       case 'uv': return <><rect x="3.5" y="10" width="17" height="4.5" rx="2.2" {...s} /><path d="M7 7.5V5m5 2.5V4m5 3.5V5M7 17v2.5m5-2.5V19m5-2v2.5" {...s} /></>
       {/* 石卡祖笛：锥形笛身 + 顶部振膜孔 */}
       case 'kazoo': return <><path d="M3 11.5h10.5L20 9v7.5l-6.5-1.5H3z" {...s} /><circle cx="9" cy="9.2" r="1.7" {...s} /><path d="M9 10.9v.6" {...s} /></>
-      {/* Pockets 布袋：束口袋（袋身 + 扎口 + 绳结） */}
-      case 'pocket': return <><path d="M8.5 8.5C6.5 10.5 5 12.7 5 15a7 5.6 0 0 0 14 0c0-2.3-1.5-4.5-3.5-6.5" {...s} /><path d="M9 8.5l1.2-3.6h3.6L15 8.5M9.3 6.3h5.4" {...s} /></>
+      {/* 一些口袋：双叶蛋白石胸针；其他 pocket 类保留通用布袋符号 */}
+      case 'pocket': return type === 'pockets'
+        ? <><path d="M9 11 7 6 4 5l1 3-3-1 2 3-3 1 5 4 3-1M15 13l2 5 3 1-1-3 3 1-2-3 3-1-5-4-3 1" {...s} /><path d="m4 9 4 3m8 0 4 3" {...s} /><ellipse cx="12" cy="12" rx="3.2" ry="2.8" {...s} /><ellipse cx="12" cy="12" rx="1.5" ry="1.3" {...f} /></>
+        : <><path d="M8.5 8.5C6.5 10.5 5 12.7 5 15a7 5.6 0 0 0 14 0c0-2.3-1.5-4.5-3.5-6.5" {...s} /><path d="M9 8.5l1.2-3.6h3.6L15 8.5M9.3 6.3h5.4" {...s} /></>
       {/* 割下的小麦：麦秆 + 左右麦粒 + 芒 */}
       case 'wheat': return <><path d="M12 21V6.5" {...s} /><path d="M12 9 9.5 7M12 9l2.5-2M12 12.5l-2.5-2M12 12.5l2.5-2M12 16l-2.5-2M12 16l2.5-2M12 6.5V3m-2 1.4L11.2 6M14 4.4 12.8 6" {...s} /></>
       {/* 一把钉子：三枚扇开的铁钉 */}

@@ -1,0 +1,176 @@
+{
+  "date": "2026-10-02",
+  "originalFilesAudited": 1202,
+  "originalUnchanged": true,
+  "protectedLiteFilesUnchanged": [
+    "src/App.tsx",
+    "src/components/SettingsModal.tsx",
+    "src/game/core/audio.ts",
+    "src/game/core/preload.ts",
+    "src/game/net/apply.ts",
+    "src/game/net/connectionConfig.ts",
+    "src/game/net/peer.ts",
+    "src/game/net/protocol.ts",
+    "src/game/net/session.ts",
+    "src/game/platform/toy.ts",
+    "src/game/platform/toyReport.ts"
+  ],
+  "alphaTextures": {
+    "count": 21,
+    "before": 20744846,
+    "after": 754043
+  },
+  "checks": {
+    "alphaAssertions": 55163,
+    "fiveSettlements": true,
+    "productionBuild": true,
+    "browser": {
+      "passed": true,
+      "checks": [
+        "UI start, preload off, MIDI normalized, Alpha playable, all map regions selectable, compact map fits viewport",
+        "all 21 new compressed textures decode at <=512px"
+      ],
+      "regions": [
+        "overview",
+        "exploration",
+        "administration",
+        "archives",
+        "research",
+        "anemoia",
+        "crimson",
+        "epiphany",
+        "river",
+        "zephyr",
+        "entry_n",
+        "entry_e",
+        "entry_w"
+      ],
+      "errors": [],
+      "missing": [],
+      "musicRequests": [],
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "base": {
+        "id": "alpha",
+        "npcs": 29,
+        "structures": 6825
+      },
+      "textures": [
+        {
+          "name": "cardboard_color.jpg",
+          "width": 512,
+          "height": 512
+        },
+        {
+          "name": "cardboard_normalgl.jpg",
+          "width": 512,
+          "height": 512
+        },
+        {
+          "name": "cardboard_roughness.jpg",
+          "width": 512,
+          "height": 512
+        },
+        {
+          "name": "cave_rock_color.jpg",
+          "width": 512,
+          "height": 512
+        },
+        {
+          "name": "cave_rock_normalgl.jpg",
+          "width": 512,
+          "height": 512
+        },
+        {
+          "name": "cave_rock_roughness.jpg",
+          "width": 512,
+          "height": 512
+        },
+        {
+          "name": "concrete_color.jpg",
+          "width": 512,
+          "height": 256
+        },
+        {
+          "name": "concrete_normalgl.jpg",
+          "width": 512,
+          "height": 256
+        },
+        {
+          "name": "concrete_roughness.jpg",
+          "width": 512,
+          "height": 256
+        },
+        {
+          "name": "plaster_color.jpg",
+          "width": 512,
+          "height": 512
+        },
+        {
+          "name": "plaster_normalgl.jpg",
+          "width": 512,
+          "height": 512
+        },
+        {
+          "name": "plaster_roughness.jpg",
+          "width": 512,
+          "height": 512
+        },
+        {
+          "name": "steel_color.jpg",
+          "width": 512,
+          "height": 512
+        },
+        {
+          "name": "steel_normalgl.jpg",
+          "width": 512,
+          "height": 512
+        },
+        {
+          "name": "steel_roughness.jpg",
+          "width": 512,
+          "height": 512
+        },
+        {
+          "name": "terrazzo_color.jpg",
+          "width": 512,
+          "height": 512
+        },
+        {
+          "name": "terrazzo_normalgl.jpg",
+          "width": 512,
+          "height": 512
+        },
+        {
+          "name": "terrazzo_roughness.jpg",
+          "width": 512,
+          "height": 512
+        },
+        {
+          "name": "wood_color.jpg",
+          "width": 512,
+          "height": 512
+        },
+        {
+          "name": "wood_normalgl.jpg",
+          "width": 512,
+          "height": 512
+        },
+        {
+          "name": "wood_roughness.jpg",
+          "width": 512,
+          "height": 512
+        }
+      ]
+    }
+  },
+  "package": {
+    "limitBytes": 50000000,
+    "originalPublicBytes": 337943891,
+    "litePublicBytes": 22334461,
+    "distBytes": 26984893,
+    "zipBytes": 23191603,
+    "distFiles": 557,
+    "remainingUnpackedBytes": 23015107,
+    "zipSHA256": "0589fb046f30e6aa05c66781b61363c68d17096fd41d8174365db2b69a64edd1"
+  }
+}

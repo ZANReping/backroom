@@ -1,0 +1,357 @@
+{
+  "date": "2026-10-04",
+  "aggregation": "median of five round statistics; raw per-round samples retained in performance JSON",
+  "allPassed": true,
+  "summary": [
+    {
+      "mode": "classic",
+      "type": "mixed",
+      "before": {
+        "frameMedian": 4.199999999999818,
+        "frameP95": 4.300000000000182,
+        "drawMedian": 0.599999999627471,
+        "drawP95": 0.8000000007450581
+      },
+      "after": {
+        "frameMedian": 4.199999999999818,
+        "frameP95": 4.300000000000182,
+        "drawMedian": 0.40000000037252903,
+        "drawP95": 0.5
+      },
+      "calls": [
+        220,
+        130
+      ],
+      "triangles": [
+        6440,
+        33800
+      ],
+      "passed": true
+    },
+    {
+      "mode": "classic",
+      "type": "luckymilk",
+      "before": {
+        "frameMedian": 4.199999999998909,
+        "frameP95": 4.300000000001091,
+        "drawMedian": 0.09999999962747097,
+        "drawP95": 0.10000000149011612
+      },
+      "after": {
+        "frameMedian": 4.199999999998909,
+        "frameP95": 4.300000000000182,
+        "drawMedian": 0.09999999962747097,
+        "drawP95": 0.19999999925494194
+      },
+      "calls": [
+        4,
+        3
+      ],
+      "triangles": [
+        48,
+        608
+      ],
+      "passed": true
+    },
+    {
+      "mode": "classic",
+      "type": "capacitor",
+      "before": {
+        "frameMedian": 4.199999999998909,
+        "frameP95": 4.299999999999272,
+        "drawMedian": 0.09999999962747097,
+        "drawP95": 0.19999999925494194
+      },
+      "after": {
+        "frameMedian": 4.199999999998909,
+        "frameP95": 4.300000000001091,
+        "drawMedian": 0.09999999962747097,
+        "drawP95": 0.19999999925494194
+      },
+      "calls": [
+        6,
+        3
+      ],
+      "triangles": [
+        140,
+        464
+      ],
+      "passed": true
+    },
+    {
+      "mode": "classic",
+      "type": "skeleton",
+      "before": {
+        "frameMedian": 4.200000000000728,
+        "frameP95": 4.299999999999272,
+        "drawMedian": 0.09999999962747097,
+        "drawP95": 0.19999999925494194
+      },
+      "after": {
+        "frameMedian": 4.200000000000728,
+        "frameP95": 4.299999999999272,
+        "drawMedian": 0,
+        "drawP95": 0.10000000149011612
+      },
+      "calls": [
+        4,
+        1
+      ],
+      "triangles": [
+        76,
+        388
+      ],
+      "passed": true
+    },
+    {
+      "mode": "classic",
+      "type": "rabbit",
+      "before": {
+        "frameMedian": 4.19999999999709,
+        "frameP95": 4.299999999999272,
+        "drawMedian": 0.09999999962747097,
+        "drawP95": 0.2000000011175871
+      },
+      "after": {
+        "frameMedian": 4.19999999999709,
+        "frameP95": 4.299999999999272,
+        "drawMedian": 0.09999999962747097,
+        "drawP95": 0.10000000149011612
+      },
+      "calls": [
+        2,
+        2
+      ],
+      "triangles": [
+        24,
+        656
+      ],
+      "passed": true
+    },
+    {
+      "mode": "classic",
+      "type": "pockets",
+      "before": {
+        "frameMedian": 4.200000000000728,
+        "frameP95": 4.299999999999272,
+        "drawMedian": 0.09999999962747097,
+        "drawP95": 0.2000000011175871
+      },
+      "after": {
+        "frameMedian": 4.200000000000728,
+        "frameP95": 4.299999999999272,
+        "drawMedian": 0.09999999962747097,
+        "drawP95": 0.10000000149011612
+      },
+      "calls": [
+        3,
+        2
+      ],
+      "triangles": [
+        68,
+        624
+      ],
+      "passed": true
+    },
+    {
+      "mode": "classic",
+      "type": "fuyouyu",
+      "before": {
+        "frameMedian": 4.19999999999709,
+        "frameP95": 4.30000000000291,
+        "drawMedian": 0.09999999962747097,
+        "drawP95": 0.19999999925494194
+      },
+      "after": {
+        "frameMedian": 4.19999999999709,
+        "frameP95": 4.30000000000291,
+        "drawMedian": 0,
+        "drawP95": 0.10000000149011612
+      },
+      "calls": [
+        3,
+        2
+      ],
+      "triangles": [
+        288,
+        640
+      ],
+      "passed": true
+    },
+    {
+      "mode": "realistic",
+      "type": "mixed",
+      "before": {
+        "frameMedian": 4.199999999999818,
+        "frameP95": 4.300000000000182,
+        "drawMedian": 0.599999999627471,
+        "drawP95": 0.7999999988824129
+      },
+      "after": {
+        "frameMedian": 4.199999999999818,
+        "frameP95": 4.300000000000182,
+        "drawMedian": 0.40000000037252903,
+        "drawP95": 0.599999999627471
+      },
+      "calls": [
+        220,
+        130
+      ],
+      "triangles": [
+        6440,
+        33800
+      ],
+      "passed": true
+    },
+    {
+      "mode": "realistic",
+      "type": "luckymilk",
+      "before": {
+        "frameMedian": 4.199999999998909,
+        "frameP95": 4.300000000000182,
+        "drawMedian": 0.09999999962747097,
+        "drawP95": 0.19999999925494194
+      },
+      "after": {
+        "frameMedian": 4.199999999998909,
+        "frameP95": 4.300000000000182,
+        "drawMedian": 0.09999999962747097,
+        "drawP95": 0.10000000149011612
+      },
+      "calls": [
+        4,
+        3
+      ],
+      "triangles": [
+        48,
+        608
+      ],
+      "passed": true
+    },
+    {
+      "mode": "realistic",
+      "type": "capacitor",
+      "before": {
+        "frameMedian": 4.199999999998909,
+        "frameP95": 4.300000000001091,
+        "drawMedian": 0.09999999962747097,
+        "drawP95": 0.19999999925494194
+      },
+      "after": {
+        "frameMedian": 4.199999999998909,
+        "frameP95": 4.300000000001091,
+        "drawMedian": 0.09999999962747097,
+        "drawP95": 0.10000000149011612
+      },
+      "calls": [
+        6,
+        3
+      ],
+      "triangles": [
+        140,
+        464
+      ],
+      "passed": true
+    },
+    {
+      "mode": "realistic",
+      "type": "skeleton",
+      "before": {
+        "frameMedian": 4.200000000000728,
+        "frameP95": 4.299999999999272,
+        "drawMedian": 0.09999999962747097,
+        "drawP95": 0.19999999925494194
+      },
+      "after": {
+        "frameMedian": 4.19999999999709,
+        "frameP95": 4.299999999999272,
+        "drawMedian": 0,
+        "drawP95": 0.10000000149011612
+      },
+      "calls": [
+        4,
+        1
+      ],
+      "triangles": [
+        76,
+        388
+      ],
+      "passed": true
+    },
+    {
+      "mode": "realistic",
+      "type": "rabbit",
+      "before": {
+        "frameMedian": 4.19999999999709,
+        "frameP95": 4.299999999999272,
+        "drawMedian": 0,
+        "drawP95": 0.10000000149011612
+      },
+      "after": {
+        "frameMedian": 4.200000000000728,
+        "frameP95": 4.299999999999272,
+        "drawMedian": 0.09999999962747097,
+        "drawP95": 0.10000000149011612
+      },
+      "calls": [
+        2,
+        2
+      ],
+      "triangles": [
+        24,
+        656
+      ],
+      "passed": true
+    },
+    {
+      "mode": "realistic",
+      "type": "pockets",
+      "before": {
+        "frameMedian": 4.200000000000728,
+        "frameP95": 4.299999999999272,
+        "drawMedian": 0.09999999962747097,
+        "drawP95": 0.19999999925494194
+      },
+      "after": {
+        "frameMedian": 4.19999999999709,
+        "frameP95": 4.299999999999272,
+        "drawMedian": 0.09999999962747097,
+        "drawP95": 0.19999999925494194
+      },
+      "calls": [
+        3,
+        2
+      ],
+      "triangles": [
+        68,
+        624
+      ],
+      "passed": true
+    },
+    {
+      "mode": "realistic",
+      "type": "fuyouyu",
+      "before": {
+        "frameMedian": 4.19999999999709,
+        "frameP95": 4.30000000000291,
+        "drawMedian": 0.09999999962747097,
+        "drawP95": 0.10000000149011612
+      },
+      "after": {
+        "frameMedian": 4.19999999999709,
+        "frameP95": 4.30000000000291,
+        "drawMedian": 0.09999999962747097,
+        "drawP95": 0.10000000149011612
+      },
+      "calls": [
+        3,
+        2
+      ],
+      "triangles": [
+        288,
+        640
+      ],
+      "passed": true
+    }
+  ]
+}

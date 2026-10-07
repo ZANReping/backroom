@@ -1,3 +1,5 @@
+import { captureL0,type L0WorldSave } from './l0State'
+import {captureGlowFlight} from './glowsticks'
 import { captureL1, type L1WorldSave } from './l1State'
 // v53：存档读写（自 engine.ts 拆分；逻辑逐语句搬运，存档格式/字段迁移语义不变）
 // v54：存档槽位——3 个手动槽 + 1 个自动保存槽（localStorage 键 br_save_slot1/2/3 + br_save_auto）。
@@ -31,12 +33,16 @@ export const SAVE_KEY = 'br_save_state'
 const LEGACY_SEED_KEY = 'br_save'
 
 export interface SaveSnapshot {
+  glowProjectiles?: import('../engine').Projectile[]
   l5MothAlerts?: { all: boolean; nests: Record<string, boolean> }
   profile?: import('../core/playerProfile').PlayerProfile
   career?: import('./career').CareerSave
   /** v59：据点连续公共空间布局版本；缺省/1 为旧版小房间布局。 */
   settlementLayout?: 1 | 2
+  alphaLayout?: 1 | 2 | 3 | 4 | 5
   bntgLayout?:3
+  l0World?: L0WorldSave
+  l0SharedWorld?: L0WorldSave
   l1World?: L1WorldSave
   l11World?: L11WorldSave
   l11Weather?: {kind:'calm'|'gust'|'rain'|'mist';t:number;k:number;wetness:number}
@@ -128,6 +134,9 @@ export function snapshot(eng: Engine): SaveSnapshot {
   const inf = eng.map?.inf
   return {
     v: 1,
+    glowProjectiles: captureGlowFlight(eng),
+    l0World: captureL0(eng),
+    l0SharedWorld: eng.l0SharedWorld,
     l1World: captureL1(eng),
     l11World: captureL11(eng),
     l5MothAlerts: eng.levelDef.id===5 && inf?.mothAlerts ? structuredClone(inf.mothAlerts) : undefined,
@@ -142,6 +151,7 @@ export function snapshot(eng: Engine): SaveSnapshot {
     visited: [...eng.visitedLevels],
     career: structuredClone(eng.career),
     settlementLayout: 2,
+    alphaLayout: 5,
     bntgLayout:3,
     outpostReturn: eng.outpostReturn,
     rep: eng.rep,

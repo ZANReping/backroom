@@ -1,4 +1,7 @@
 import { flickerL1Crates } from './l1State'
+import {l0Sample} from '../world/l0Architecture'
+import {mapWallOccluded} from '../content/mapPlayer'
+import {revealMapSight} from '../world/mapSight'
 // v53：现象与停电（层级氛围事件播报、L1「闪烁」停电链、视野计算）——
 // 自 engine.ts 拆分，逻辑逐语句搬运。
 import { LEVEL_EVENTS } from '../levels'
@@ -202,6 +205,7 @@ function bcast(eng: Engine, e: Parameters<NonNullable<Engine['mpSession']>['send
 
 export function rollAmbientEvent(eng: Engine) {
   const lvl = eng.player.level
+  if(lvl===0&&(eng.l0Meeting>0||eng.map?.inf?.l0?.trapped||(eng.map&&l0Sample(eng.map,eng.player.x,eng.player.y)?.effect==='blackout')))return
   if (lvl === 6) {
     // 只有地表会出现极远的自然声幻听；大多数轮次维持彻底寂静。
     if (eng.player.floor === 0 && Math.random() < 0.18) {
@@ -326,15 +330,17 @@ export function computeVisibility(eng: Engine) {
     return
   }
   eng.visible.fill(0)
+  revealMapSight(eng)
   const r = 8
   const px = Math.floor(p.x), py = Math.floor(p.y)
+  const inf=m.inf,wx=p.x+(inf?.ox??0),wy=p.y+(inf?.oy??0),eye=p.z+(p.crouching?.95:1.55)
+  const l0Walls=inf?.l0?[...inf.chunks.values()].flatMap(c=>c.l0?.walls??[]).filter(w=>w.bottom<eye&&w.top>eye&&w.x<wx+r&&w.x+w.w>wx-r&&w.y<wy+r&&w.y+w.h>wy-r):undefined
   for (let y = Math.max(0, py - r); y <= Math.min(m.h - 1, py + r); y++) {
     for (let x = Math.max(0, px - r); x <= Math.min(m.w - 1, px + r); x++) {
       const d = Math.hypot(x + 0.5 - p.x, y + 0.5 - p.y)
       if (d > r) continue
-      if (eng.los(p.x, p.y, x + 0.5, y + 0.5)) {
+      if (l0Walls?!mapWallOccluded(l0Walls,wx,wy,x+.5+inf!.ox,y+.5+inf!.oy):eng.los(p.x, p.y, x + 0.5, y + 0.5)) {
         eng.visible[y * m.w + x] = 1
-        eng.explored[y * m.w + x] = 1
       }
     }
   }

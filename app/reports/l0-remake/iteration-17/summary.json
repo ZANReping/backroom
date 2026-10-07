@@ -1,0 +1,23 @@
+{
+  "steady": true,
+  "stable": true,
+  "scenes": 14,
+  "maxRafP95": 6.80000000000291,
+  "maxGpuP95": 5.99552,
+  "mapDraw": [
+    {
+      "name": "mini",
+      "median": 0.7000000001862645,
+      "p95": 1,
+      "samples": 100,
+      "cadence": "one redraw per RAF after 20 warmup frames"
+    },
+    {
+      "name": "large",
+      "median": 1.400000000372529,
+      "p95": 1.800000000745058,
+      "samples": 100,
+      "cadence": "one redraw per RAF after 20 warmup frames"
+    }
+  ]
+}

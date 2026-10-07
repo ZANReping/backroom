@@ -1,4 +1,5 @@
 import {isTradeKind,tradeParts} from '../content/tradeDecor'
+import {isAlphaKind,alphaParts} from '../content/alphaDecor'
 import {isL5DecorKind,L5_DECOR_DEFS} from '../content/l5Decor'
 import { appendLegacyStations, settlementCeiling } from './settlement'
 // 程序化地图生成：房间+走廊/迷宫混合，按层级 motif 放置结构
@@ -484,6 +485,14 @@ export function structColliders(s: Structure, m?: GameMap): ColliderBox[] {
     return tradeParts(s).filter(p=>p.solid).map(p=>{
       const pts=[[p.x,p.y],[p.x+p.w,p.y],[p.x,p.y+p.d],[p.x+p.w,p.y+p.d]].map(([x,y])=>{x-=s.w/2;y-=s.h/2;return [s.x+s.w/2+x*c+y*v,s.y+s.h/2-x*v+y*c]})
       return {x0:Math.min(...pts.map(p=>p[0])),x1:Math.max(...pts.map(p=>p[0])),y0:Math.min(...pts.map(p=>p[1])),y1:Math.max(...pts.map(p=>p[1])),bottom:p.z,top:p.z+p.h,stand:false}
+    })
+  }
+  if(isAlphaKind(s.kind)){
+    if(!s.solid)return []
+    const a=Number(s.data?.deg??0)*Math.PI/180,c=Math.cos(a),v=Math.sin(a)
+    return alphaParts(s).filter(p=>p.solid).map(p=>{
+      const pts=[[p.x,p.y],[p.x+p.w,p.y],[p.x,p.y+p.d],[p.x+p.w,p.y+p.d]].map(([x,y])=>{x-=s.w/2;y-=s.h/2;return [s.x+s.w/2+x*c+y*v,s.y+s.h/2-x*v+y*c]})
+      return {x0:Math.min(...pts.map(p=>p[0])),x1:Math.max(...pts.map(p=>p[0])),y0:Math.min(...pts.map(p=>p[1])),y1:Math.max(...pts.map(p=>p[1])),...(p.stand?{}:{bottom:p.z}),top:p.z+p.h,stand:!!p.stand}
     })
   }
   const cx = s.x + s.w / 2, cy = s.y + s.h / 2

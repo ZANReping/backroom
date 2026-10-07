@@ -15,6 +15,8 @@ import { clearFactionTracking, factionState, trackFactionTask } from './factionM
 import { isEnhancedFaction, isNewFaction, questFaction } from '../content/factionTerminals'
 import { l2JerryRoomRectAt } from '../world/infiniteL2' // v45：信众宣传间领地矩形（HUD 声望显示）
 import type { Engine } from '../engine'
+import { ALPHA_PLACEMENT_CLEARANCES } from '../content/alphaBlueprint'
+import { canOccupy } from '../core/player'
 
 // ---- v45：信众领地判定（HUD 声望显示，仿衔尾段 ouroboros）+ 教化诵咏 + 接触冷却 ----
 // （原 step 内联段，逐语句搬运）
@@ -63,6 +65,10 @@ export function updateNpcs(eng: Engine, dt: number) {
       const nf = n.floor ?? 0
       const tx = Math.floor(nx), ty = Math.floor(ny)
       if (!walkableAt(m, tx, ty, nf)) return false
+      if(p.level===101){
+        if(ALPHA_PLACEMENT_CLEARANCES.some(r=>nx>r.x-.22&&nx<r.x+r.w+.22&&ny>r.y-.22&&ny<r.y+r.h+.22))return false
+        return canOccupy(m,nx,ny,.24,{z:floorHeight(m,nx,ny,nf),band:nf,crouch:false})
+      }
       return !structBlocksPoint(m, nx, ny, floorHeight(m, nx, ny, nf), nf)
     }
     // v39：死亡动画计时（尸体由渲染层倒地/下沉，计时归零后在循环尾移除）
@@ -123,9 +129,11 @@ export function updateNpcs(eng: Engine, dt: number) {
         n.bubbleT = 3
         n.moveT = 4 + Math.random() * 5
       } else { // 新挪动目标（岗位半径 3 内）
-        const a = Math.random() * Math.PI * 2, r = 0.5 + Math.random() * 2.5
+        const radius=Math.max(0,n.def.wanderRadius??3)
+        const a = Math.random() * Math.PI * 2, r = radius*(1/6+Math.random()*5/6)
         n.tx = n.homeX + Math.cos(a) * r
         n.ty = n.homeY + Math.sin(a) * r
+        if(p.level===101&&!walkOk(n.tx,n.ty)){n.tx=n.x;n.ty=n.y}
         n.moveT = 5 + Math.random() * 7
       }
     }

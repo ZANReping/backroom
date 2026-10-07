@@ -1,0 +1,271 @@
+{
+  "date": "2026-10-02",
+  "source": "app",
+  "target": "app-lite",
+  "scope": [
+    "src",
+    "scripts"
+  ],
+  "excluded": [
+    "src/components/HUD.tsx",
+    "src/game/renderer/renderer.ts"
+  ],
+  "copied": [
+    {
+      "path": "src/components/AlphaMapPanel.tsx",
+      "kind": "new",
+      "upstreamHash": "610c14dbd5a99007c28a538b6a63aa05244b5e64d57ea9ca558669fad5371136",
+      "liteBeforeHash": null,
+      "baselineHash": null
+    },
+    {
+      "path": "src/components/DesignMode.tsx",
+      "kind": "changed",
+      "upstreamHash": "38b62a669f16ec83b4825afe30458621961ec3b840728eeb67efd01acb9cfcb6",
+      "liteBeforeHash": "bbad5ba26c65bb6aa372cf76c8143a4505026a88609065dfbaabf87613404734",
+      "baselineHash": "bbad5ba26c65bb6aa372cf76c8143a4505026a88609065dfbaabf87613404734"
+    },
+    {
+      "path": "src/components/InventoryOverlay.tsx",
+      "kind": "changed",
+      "upstreamHash": "5c46f570ca23a27d1051f35a0313caf8d2914ff0154460bfddfdd23d3b9c8758",
+      "liteBeforeHash": "4d51be6c4976f387504e71404f51046132e41e7e0b7798f26912936a8dca951a",
+      "baselineHash": "4d51be6c4976f387504e71404f51046132e41e7e0b7798f26912936a8dca951a"
+    },
+    {
+      "path": "src/components/TradeDecorPreview.tsx",
+      "kind": "changed",
+      "upstreamHash": "8b8c127b5cf241e7bdc56f3d1b1555128bba7e16881cd4d1b2ddec4ea1de202e",
+      "liteBeforeHash": "ec3f18cc2dc3d50bd743ee5d3946d391b00cddd775b2ad4d4b461b6bcd62d5db",
+      "baselineHash": "ec3f18cc2dc3d50bd743ee5d3946d391b00cddd775b2ad4d4b461b6bcd62d5db"
+    },
+    {
+      "path": "src/game/engine.ts",
+      "kind": "changed",
+      "upstreamHash": "f1489e43d929fedfc9c899ed5c373c91be9c0ae704c29cdcfdc54b23c7284066",
+      "liteBeforeHash": "b03117b06d0373df47c62835763e1bba0e30f84d74c4ee0086fd5d8a78a574ef",
+      "baselineHash": "b03117b06d0373df47c62835763e1bba0e30f84d74c4ee0086fd5d8a78a574ef"
+    },
+    {
+      "path": "src/game/content/alphaAdminDecor.ts",
+      "kind": "new",
+      "upstreamHash": "7473f924fd6db02b7bb2fab10b72dcbab88eb743b3cc4d6166499d2626041c53",
+      "liteBeforeHash": null,
+      "baselineHash": null
+    },
+    {
+      "path": "src/game/content/alphaArchiveDecor.ts",
+      "kind": "new",
+      "upstreamHash": "003fbd8c104e4dc15b5401589ccdf1ee90f9e89c299f3066cf31601b958afd9c",
+      "liteBeforeHash": null,
+      "baselineHash": null
+    },
+    {
+      "path": "src/game/content/alphaBlueprint.ts",
+      "kind": "new",
+      "upstreamHash": "c0d1ab198da3eacb89b721f77b239b88d03e51faa6f65db5f22f02035df964ba",
+      "liteBeforeHash": null,
+      "baselineHash": null
+    },
+    {
+      "path": "src/game/content/alphaCommunityDecor.ts",
+      "kind": "new",
+      "upstreamHash": "b7b94597c59a3056939cf7dec515dc8be4bf185a9e5a87e2e462bed40a52bec4",
+      "liteBeforeHash": null,
+      "baselineHash": null
+    },
+    {
+      "path": "src/game/content/alphaCommunityLayout.ts",
+      "kind": "new",
+      "upstreamHash": "29e200847afe1906bf3988398f04a87a944c1c3acaa437ce41319732107a708e",
+      "liteBeforeHash": null,
+      "baselineHash": null
+    },
+    {
+      "path": "src/game/content/alphaDecor.ts",
+      "kind": "new",
+      "upstreamHash": "7a7ebd0febfedb2e03cb97d80086fcfeed59f4cfc64bd928eea30e374a34815f",
+      "liteBeforeHash": null,
+      "baselineHash": null
+    },
+    {
+      "path": "src/game/content/alphaMap.ts",
+      "kind": "new",
+      "upstreamHash": "d416598c970e323f9277912461c372b3b8b227be2cca9b3943774127b103ce8c",
+      "liteBeforeHash": null,
+      "baselineHash": null
+    },
+    {
+      "path": "src/game/content/alphaPeople.ts",
+      "kind": "new",
+      "upstreamHash": "185566404d0210f8b38406bc51ccbfb8511df29b02a57af57296b9359b4dfcf9",
+      "liteBeforeHash": null,
+      "baselineHash": null
+    },
+    {
+      "path": "src/game/content/alphaPlacement.ts",
+      "kind": "new",
+      "upstreamHash": "55435a1f0f00bf90dd4cab92313e835368c7d3480bd284ecc6c2786626747fd4",
+      "liteBeforeHash": null,
+      "baselineHash": null
+    },
+    {
+      "path": "src/game/content/alphaResearchDecor.ts",
+      "kind": "new",
+      "upstreamHash": "2162aa5a5d1ea2c72855fc3868d042aa4c1872efd243ff911ca33502633eccb0",
+      "liteBeforeHash": null,
+      "baselineHash": null
+    },
+    {
+      "path": "src/game/content/alphaResidentialDecor.ts",
+      "kind": "new",
+      "upstreamHash": "dbbd044d556a31202eb586c30fdbf1b98c60b1254186e16e91c78968883d1e7d",
+      "liteBeforeHash": null,
+      "baselineHash": null
+    },
+    {
+      "path": "src/game/content/decorRegistry.ts",
+      "kind": "changed",
+      "upstreamHash": "100f81dc5217ddef194cdebcf07eab473515d50207d2d43a997b46852fd1bd1c",
+      "liteBeforeHash": "fa9dca27a57b6fc750775e61eb1b4ecbc8c4d812fc72afd2164a1383277dfea3",
+      "baselineHash": "fa9dca27a57b6fc750775e61eb1b4ecbc8c4d812fc72afd2164a1383277dfea3"
+    },
+    {
+      "path": "src/game/content/npcs.ts",
+      "kind": "changed",
+      "upstreamHash": "49987c087f1453a1b33fe5011e7b8ff2a16bbc9e073e20b1b3e3b10e8129cfd6",
+      "liteBeforeHash": "bcdbb50491528bbe6b58b2fefa63ac2d9146b2e09da5bcce850db412bf01df1a",
+      "baselineHash": "bcdbb50491528bbe6b58b2fefa63ac2d9146b2e09da5bcce850db412bf01df1a"
+    },
+    {
+      "path": "src/game/content/settlementBlueprints.ts",
+      "kind": "changed",
+      "upstreamHash": "6630be2d18f8c86e04c1296c831bad1c960a56f262a88a73503abc80ed62cae6",
+      "liteBeforeHash": "e27132e4315b835c52aa5c9b39913f9513218b01c8076add032db6ece9587ac7",
+      "baselineHash": "e27132e4315b835c52aa5c9b39913f9513218b01c8076add032db6ece9587ac7"
+    },
+    {
+      "path": "src/game/core/types.ts",
+      "kind": "changed",
+      "upstreamHash": "11493c01d674ae2388137d15136f3b6510a455f19274b16ee619d40fba03f8a7",
+      "liteBeforeHash": "26811bf1399e195f56c68a48d6eaddb7d207b5513770fd884e1115ad3d827144",
+      "baselineHash": "26811bf1399e195f56c68a48d6eaddb7d207b5513770fd884e1115ad3d827144"
+    },
+    {
+      "path": "src/game/engine/dev.ts",
+      "kind": "changed",
+      "upstreamHash": "3f738ab529a312227d6d8c6ad5046e2fec265849ee35e7461be99b03dde0a55b",
+      "liteBeforeHash": "d78e3fd8fd12c9863ba443ce7f071ddc3957358fc038c1fcedf9c17d3c539743",
+      "baselineHash": "d78e3fd8fd12c9863ba443ce7f071ddc3957358fc038c1fcedf9c17d3c539743"
+    },
+    {
+      "path": "src/game/engine/interact.ts",
+      "kind": "changed",
+      "upstreamHash": "a9ed6ab42522d04d1613f03402a5d98ad956d5efda0dc10a52bd73db6fe075f7",
+      "liteBeforeHash": "a793d44177320d4c66613d36edc6d94ce4c67f243443fe2e11bde577fe65c09b",
+      "baselineHash": "a793d44177320d4c66613d36edc6d94ce4c67f243443fe2e11bde577fe65c09b"
+    },
+    {
+      "path": "src/game/engine/npc.ts",
+      "kind": "changed",
+      "upstreamHash": "e4e3d9af26a66d19529c7ee869d8f062eff8b09a73e731dd3da450ddc1520501",
+      "liteBeforeHash": "fada957caff2602ec395ef3edd6234b9a3a2f0286b6cb62c8471a5d8fc522f98",
+      "baselineHash": "fada957caff2602ec395ef3edd6234b9a3a2f0286b6cb62c8471a5d8fc522f98"
+    },
+    {
+      "path": "src/game/engine/save.ts",
+      "kind": "changed",
+      "upstreamHash": "a6cce2779819d5fe8aa6a40818ea1f236e85a92f39827976358eefaa86abc21f",
+      "liteBeforeHash": "ef74d08f1fbf87f6a4c31da62ac019e8261af374c71617cceb0734e7f028ce5f",
+      "baselineHash": "ef74d08f1fbf87f6a4c31da62ac019e8261af374c71617cceb0734e7f028ce5f"
+    },
+    {
+      "path": "src/game/levels/lalpha.ts",
+      "kind": "changed",
+      "upstreamHash": "d324987153c2a9768a1b1ed0d7341ebc78a416269fe5a32da27a18792dae717d",
+      "liteBeforeHash": "28cbebcf9ee98b26d5f62ab006d3ab2e3e4f606618163467314033b8d13e61b1",
+      "baselineHash": "28cbebcf9ee98b26d5f62ab006d3ab2e3e4f606618163467314033b8d13e61b1"
+    },
+    {
+      "path": "src/game/renderer/alphaMeshes.ts",
+      "kind": "new",
+      "upstreamHash": "0e0f2e1db55e8b95a0f94b1982ed69973f9ed8e7208f5a9da096ea90f08b78fc",
+      "liteBeforeHash": null,
+      "baselineHash": null
+    },
+    {
+      "path": "src/game/renderer/alphaSurfaceShader.ts",
+      "kind": "new",
+      "upstreamHash": "41d867a7502d72bf83282543b6b7b6afa037162f3510474f8b3a4c349c55386a",
+      "liteBeforeHash": null,
+      "baselineHash": null
+    },
+    {
+      "path": "src/game/renderer/npcGear.ts",
+      "kind": "changed",
+      "upstreamHash": "37712c635010913ab5e4541e57973d74f722443d1f0954eefd8793aad0e2390f",
+      "liteBeforeHash": "2d94ee8cfc970e36ca5dcce7ed5ffbe6e42de778f029171abe10b46709f81e57",
+      "baselineHash": "2d94ee8cfc970e36ca5dcce7ed5ffbe6e42de778f029171abe10b46709f81e57"
+    },
+    {
+      "path": "src/game/renderer/settlementMeshes.ts",
+      "kind": "changed",
+      "upstreamHash": "69ad55d901dce83faf019ed27668022922a80f2b94b1aa4abc754d59a57c41ee",
+      "liteBeforeHash": "aeb90f5d82ad28dd5d8ecc2205d5fc5fedca4d7a12016e8712d0c881959f5e7b",
+      "baselineHash": "aeb90f5d82ad28dd5d8ecc2205d5fc5fedca4d7a12016e8712d0c881959f5e7b"
+    },
+    {
+      "path": "src/game/renderer/structures.ts",
+      "kind": "changed",
+      "upstreamHash": "263aefe453d8b3ad2a733ac46fb57facf586aab87ba87717c9fa62562d8f87d6",
+      "liteBeforeHash": "dd7ac988f6e74a43b1b4d6036a151330c5f1856dcb48b247a65d7960abff84ab",
+      "baselineHash": "dd7ac988f6e74a43b1b4d6036a151330c5f1856dcb48b247a65d7960abff84ab"
+    },
+    {
+      "path": "src/game/world/mapgen.ts",
+      "kind": "changed",
+      "upstreamHash": "5f2acdc697061217d4c581a91a3a37cfd3c66325c7d9adc2d77ef235b3448a76",
+      "liteBeforeHash": "e3707a020af8847459e1033191008fcb2475dc32a7d7d22c4147df6ed96b8ef5",
+      "baselineHash": "e3707a020af8847459e1033191008fcb2475dc32a7d7d22c4147df6ed96b8ef5"
+    },
+    {
+      "path": "src/game/world/settlement.ts",
+      "kind": "changed",
+      "upstreamHash": "93eb803a7a6f68bf91e7b80c43124df5bf066499e172db432dbadbc3d79b1fa5",
+      "liteBeforeHash": "604263a9c2c35888e030145e692d91cc7425f3fd5fd79fcdb4546f2afa208798",
+      "baselineHash": "604263a9c2c35888e030145e692d91cc7425f3fd5fd79fcdb4546f2afa208798"
+    },
+    {
+      "path": "scripts/check-alpha.ts",
+      "kind": "new",
+      "upstreamHash": "10bacb4843e91cda7d5ccbdbc2508c70eb3499c5a1b0a8116870878e02b5c021",
+      "liteBeforeHash": null,
+      "baselineHash": null
+    },
+    {
+      "path": "scripts/check-settlements.ts",
+      "kind": "changed",
+      "upstreamHash": "e9335e50aee48db3c4264d5165daa86d1854a558e0558505b58f1aca67d0cecb",
+      "liteBeforeHash": "5000faba0354998143d7b2786724a1e4c52d2652eb878a964588b29ce38dbfa8",
+      "baselineHash": "5000faba0354998143d7b2786724a1e4c52d2652eb878a964588b29ce38dbfa8"
+    },
+    {
+      "path": "scripts/fetch-alpha-assets.mjs",
+      "kind": "new",
+      "upstreamHash": "aff6d3a19603a644955059855490f4141de4d0eefdd67c6895ae2343c53cfd4d",
+      "liteBeforeHash": null,
+      "baselineHash": null
+    },
+    {
+      "path": "scripts/sync-decorations.ts",
+      "kind": "changed",
+      "upstreamHash": "4e4346a7dc06978d9bd9717855f77167a5b0f3463aece39908ba0210f8d39262",
+      "liteBeforeHash": "96bd5102ef65e60880854a77c27d8828e2bf0c5b9622a6ae5c4776cc36857fb1",
+      "baselineHash": "96bd5102ef65e60880854a77c27d8828e2bf0c5b9622a6ae5c4776cc36857fb1"
+    }
+  ],
+  "liteOnlyAdaptation": [
+    "src/components/AlphaMapPanel.tsx: imported toyViewport; used Toy viewport height and CSS variables for compact sizing"
+  ],
+  "originalAppModified": false
+}

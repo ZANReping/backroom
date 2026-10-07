@@ -48,3 +48,14 @@ export function seedString(seed: number): string {
   const h = (seed >>> 0).toString(16).toUpperCase().padStart(8, '0')
   return `${h.slice(0, 4)}-${h.slice(4)}`
 }
+
+export function parseSeedInput(input: string): number | null {
+  const value = input.trim()
+  if (!value) return null
+  if (/^[0-9a-fA-F]{4}-[0-9a-fA-F]{4}$/.test(value)) return Number.parseInt(value.replace('-', ''), 16) >>> 0
+  if (/^\d+$/.test(value)) {
+    const parsed = Number(value)
+    return Number.isSafeInteger(parsed) && parsed >= 0 && parsed <= 0xffffffff ? parsed : null
+  }
+  return null
+}

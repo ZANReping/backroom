@@ -1,3 +1,4 @@
+import {buildAlphaBatchJob} from './alphaMeshes'
 import * as THREE from 'three'
 import type { GameMap } from '../world/mapgen'
 import type { Structure } from '../core/types'
@@ -30,6 +31,7 @@ function material(kind:SurfaceMaterial,color:string){
  return mat
 }
 export function* buildSettlementTerrainJob(m:GameMap,parent:THREE.Group):Generator<void,void,unknown>{
+ if(m.settlement?.blueprint.id==='alpha'){yield* buildAlphaBatchJob(m.structures,parent);return}
  if(m.settlement?.blueprint.decorations){yield* buildTradeBatchJob(m.structures,parent);return}
  const s=m.settlement!,b=s.blueprint,geometry=new THREE.BoxGeometry(1,1,1),materials=new Map<string,THREE.Material>(),batches=new Map<string,Map<string,Box[]>>()
  const vaults:THREE.BufferGeometry[]=[]

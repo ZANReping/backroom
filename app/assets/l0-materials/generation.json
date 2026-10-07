@@ -1,0 +1,45 @@
+{
+  "tool": "Built-in image_gen via imagegen skill",
+  "iterations": [
+    {
+      "id": "l0-wallpaper",
+      "prompt": "Create a seamless square tileable diffuse/albedo texture for a realistic 3D game, 1024x1024. Flat orthographic scan of vintage 1970s Backrooms yellow office wallpaper. Muted faded pale mustard-beige paper, densely repeating delicate olive-brown small botanical branching sprigs, stylized upright fern leaves and thin climbing stems, softly weathered thin ink. About 10 columns and 9 staggered rows of tiny repeated sprigs across entire image, each 6 cm wide in physical scale, no bold geometric grid. Fine woven paper micrograin, subtle varied age coloration, very restrained wear. Perfectly uniform neutral diffuse lighting, NO baked shadows, NO specular highlights, NO perspective, no wall corner, no objects, no border, no text, no watermark. Left/right and top/bottom edges must seamlessly repeat. Used as a material, not a scene photograph."
+    },
+    {
+      "id": "l0-manila-wallpaper",
+      "prompt": "Create a seamless square tileable albedo/diffuse texture for a realistic 3D game, 1024x1024. Flat orthographic scan of old beige Manila-room wallpaper. A fine continuous ornate diamond trellis made of slender curling stems, leaves and tiny delicate flowers, antique brown-grey printing on warm pale cream-beige paper. Closely spaced diamonds, 8 diamonds across and 8 high, each diamond slightly taller than wide; botanical curls and small bud clusters run along every diamond edge, a small floral sprig at each intersection, empty lightly mottled cream diamond centers. Ornate yet restrained, thin faded ink with authentic paper fibers, slight age, no large dark blotches. Uniform neutral diffuse lighting without shadows or highlights. Seamless matching all edges. NO perspective, NO room scene, no wall corner, no objects, no border, no text, no watermark. This is a texture scan for wrapping onto real geometry."
+    },
+    {
+      "id": "l0-wallpaper-v2",
+      "prompt": "The attached image is a STYLE AND PATTERN REFERENCE, a close-up crop of wallpaper in the original Backrooms photograph. Produce ONLY a seamless square diffuse albedo texture, fully flat/orthographic with all perspective removed, matching THIS exact small repeating motif, not generic floral wallpaper. Carefully replicate its thin vertical stalk columns with pairs of short upward-pointing chevron/arrowhead leaves, tiny oval dots along the stems, intermittent empty stalk gaps. The motif is graphic and geometric, sparse narrow arrowhead chains, NOT realistic fern bouquets, NO flowers, no large leaves, no isolated sprigs. Muted dull pale yellow-olive paper ground, slightly darker desaturated olive-gray ink, very low contrast as reference. 12 narrow repeating columns with staggered vertical chevron motifs; finest woven paper grain but smooth overall. Seamless on all edges. Remove the reference's perspective, outlet, lighting gradients and photo noise; no wall corner, borders, watermark or text. Texture only, evenly lit, 1024 square."
+    },
+    {
+      "id": "l0-manila-wallpaper-v2",
+      "prompt": "Use attached room photo as exact wallpaper pattern reference. Extract/reconstruct the wallpaper as a flat orthographic, evenly lit seamless square albedo texture. Match the reference closely: densely interlocked vertical diamond lattice formed by THIN, low-contrast grey-taupe damask curls and tiny scrolls, repeated pointed diamond/quatrefoil outlines with small repeated curling leafy ornaments at crossings. About eight diamonds across, ten diamonds high. The ornaments are densely packed abstract ornate ink filigree, NOT clearly drawn big flowers or vines. Narrow light cream empty centers. Pale warm cream/beige paper ground, very restrained desaturated taupe-gray printing, delicate faded ink as photo. No dark brown bold lines, no giant flower intersections, no large empty areas. The first attempt with coarse floral vines was wrong. Remove room corner, ceiling, molding, outlet, all shadows and light gradients. Render texture only with no perspective, no objects, no text, no watermark. Seamless left/right and top/bottom for wrapping on game walls."
+    },
+    {
+      "id": "l0-wallpaper-v3",
+      "prompt": "Reconstruct the wallpaper pattern in Image 1 exactly as a seamless flat albedo texture. Image 2 is a rejected draft: its bold military chevrons and huge round dots are WRONG. Preserve the column rhythm but make markings about ONE THIRD that thickness, with slightly curved tapered fine V-shaped pairs of short leaves like an upright wheat stem, THREE tiny paired leaf levels near each tip, irregular faded ink edges. Stems are very fine interrupted hairlines with small elongated dashes, NOT bold dotted stripes. Match Image 1's subdued faint small motifs and close column spacing. Narrow motifs occupy only about half the spacing between columns. Make the yellow ground less saturated and a little paler, muted yellow-gray (#c2be8f), ink only gently darker grey-olive, lower contrast than Image 2. 16 columns and 12 staggered repeats vertically over a square. No realistic bouquets, no flowers, no giant sharp vector arrows. Flat evenly lit scanned vintage paper, no perspective or objects or outlet, no borders, no text. Fully tileable, fine paper grain, texture only."
+    },
+    {
+      "id": "l0-wallpaper-v4",
+      "prompt": "Use case: precise-object-edit. Asset type: seamless albedo wallpaper for a 3D game. Image 1 is the exact reference; inspect the LARGE wallpaper on the RIGHT foreground wall. Image 2 is the previous texture, which is too sparse: isolated three-leaf arrowheads separated by very long empty stems. Reconstruct ONLY the right foreground wallpaper from image 1 as a flat evenly lit orthographic seamless square scan. Narrow densely repeating vertical chains of tiny bent leaves and fine branching strokes, fine paired leaves alternate along interrupted thin stalks; the reference has much denser vertical ornamentation and less empty stalk space than image 2. Match the thin organically bent gray olive markings and subdued old yellow-beige paper. Approximately 16 narrow columns across and 22 close repeats down, with adjacent columns staggered. Each column is an interlocking delicate leaf/arrowhead chain, not isolated military chevrons. Fine woven paper grain, low but clearly readable print contrast, subtle faded ink. No shadow gradients, perspective, outlet, room, borders, stains, flowers or large bouquets. Do not copy the lighting of the photograph. No text or watermark. Output a seamless tileable square texture, edges matching."
+    }
+  ],
+  "selected": {
+    "wall": "wall-v4.png",
+    "manila": "manila-v2.png"
+  },
+  "review": "v1 rejected: botanical bouquets / oversized flowers. v2 yellow rejected: bold military chevrons. v3 was still too sparse; v4 increases motif density and close vertical repeats. Manila v2 uses dense low-contrast damask diamonds. Compared with app/reference in actual scene; not claimed pixel-identical.Runtime material pass now includes diffuser and clamps carpet/wood roughness to avoid plastic highlights; no renderer integration is implied.",
+  "inGameCalibration": {
+    "referenceReview": "reports/l0-remake/reference-contact.jpg; full-size compare/overlay files per photo",
+    "adjustments": [
+      "Reduced wallpaper blue component and restored warmer carpet browns based on reference wall/floor pixel patches.",
+      "Ceiling receives a smaller indirect contribution than downward-facing lamps; avoid white uniformly bright ceiling.",
+      "Reduced cream-wall normal strength after visible exaggerated surface ridges.",
+      "Kept CC0 PBR source channels; reprocessed selected saved wallpaper sources after in-game review.",
+      "Red room now recolors wall-v4 directly without additional generated wall spots; arch-carpet uses the same CC0 scan with target [153,137,106] and 0.30 macro wear."
+    ],
+    "remaining": "Fine motif and lighting are reconstructed; no pixel-perfect or all-views <=3% claim."
+  }
+}

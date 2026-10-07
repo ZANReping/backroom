@@ -15,6 +15,18 @@ export function applyNpcGear(parts: Record<string, THREE.Object3D>, id: string, 
     head.add(box(0.055, 0.045, 0.012, '#2a2d30', 0.06, 0.15, 0.126))
     head.add(box(0.025, 0.01, 0.012, '#2a2d30', 0, 0.15, 0.126))
   }
+  // Practical resident accessories are shared by world models and codex portraits.
+  if(def?.communityGear){
+    const gear=def.communityGear,torso=parts.torso
+    if(gear==='satchel'&&torso){torso.add(box(.055,.56,.028,'#82664b',-.08,0,.145));torso.add(box(.24,.24,.13,'#8e795c',.20,-.20,.10));torso.add(box(.20,.04,.014,'#bca77f',.20,-.11,.173))}
+    if(gear==='clipboard'&&armL){armL.add(box(.20,.28,.025,'#87795a',0,-.43,.10));armL.add(box(.17,.22,.007,'#dedbc7',0,-.42,.117));armL.add(box(.08,.024,.016,'#a2aaa1',0,-.30,.122))}
+    if((gear==='headphones'||gear==='radio')&&head){for(const x of [-.15,.15])head.add(box(.045,.12,.10,'#3d4945',x,.13,0));head.add(box(.33,.025,.065,'#4c5b50',0,.29,0));if(gear==='radio')head.add(box(.024,.025,.15,'#484c45',.15,.08,.11))}
+    if(gear==='apron'&&torso){torso.add(box(.30,.51,.023,'#c8bda3',0,-.05,.143));torso.add(box(.23,.15,.012,'#a79c83',0,-.13,.16));torso.add(box(.34,.024,.03,'#e2d7b8',0,.04,.143))}
+    if(gear==='tools'&&torso){torso.add(box(.46,.055,.28,'#776346',0,-.24,0));for(let i=0;i<3;i++){torso.add(box(.036,.14,.055,'#68766f',.10+i*.055,-.24,.17));torso.add(box(.043,.07,.06,'#b28d51',.10+i*.055,-.31,.17))}}
+    if(gear==='book'&&armL){armL.add(box(.20,.24,.065,'#597c70',0,-.46,.08));armL.add(box(.17,.21,.05,'#d6d1ba',.005,-.46,.095))}
+    if(gear==='medic'&&torso){torso.add(box(.19,.19,.08,'#e3ddd0',.22,-.16,.13));torso.add(box(.12,.035,.009,'#749784',.22,-.16,.176));torso.add(box(.035,.12,.009,'#749784',.22,-.16,.177))}
+    if(gear==='hardhat'&&head){head.add(box(.32,.045,.33,'#bfa868',0,.275,.02));head.add(box(.26,.10,.25,'#ceb879',0,.34,0));head.add(box(.035,.025,.26,'#e2ce9a',0,.4,0))}
+  }
   // v39：BRC 员工制服配饰（黑影 + 制服本体由 buildPlayerModel 淡蓝上衣/棕裤承担）——
   // 深灰军式贝雷帽（正面金属徽章按级别铜/银/金）/ 红色肩铠 / 白围裙 / 黑腰带 / 黑皮雨靴 / 手中工具
   if (id.startsWith('brc_')) {

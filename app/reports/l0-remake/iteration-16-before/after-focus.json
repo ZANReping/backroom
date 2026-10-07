@@ -1,0 +1,170 @@
+[
+  {
+    "mode": "realistic",
+    "state": "clear",
+    "sanity": 100,
+    "red": 0,
+    "blur": 0,
+    "stats": {
+      "label": "red-lost",
+      "median": 4.199999999999818,
+      "p95": 12.600000000000023,
+      "max": 54.100000000000136,
+      "draws": 89,
+      "triangles": 111894,
+      "memory": {
+        "geometries": 115,
+        "textures": 59
+      },
+      "programs": 40,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    }
+  },
+  {
+    "mode": "realistic",
+    "state": "low-sanity",
+    "sanity": 0,
+    "red": 0,
+    "blur": 0.8,
+    "stats": {
+      "label": "red-lost",
+      "median": 4.199999999999818,
+      "p95": 12.600000000000364,
+      "max": 45.900000000000546,
+      "draws": 89,
+      "triangles": 111894,
+      "memory": {
+        "geometries": 115,
+        "textures": 59
+      },
+      "programs": 40,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    }
+  },
+  {
+    "mode": "realistic",
+    "state": "red-transition",
+    "sanity": 100,
+    "red": 1,
+    "blur": 0.9,
+    "stats": {
+      "label": "red-lost",
+      "median": 4.200000000000728,
+      "p95": 12.600000000000364,
+      "max": 50.100000000000364,
+      "draws": 89,
+      "triangles": 111894,
+      "memory": {
+        "geometries": 115,
+        "textures": 59
+      },
+      "programs": 40,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    }
+  },
+  {
+    "mode": "realistic",
+    "state": "combined",
+    "sanity": 0,
+    "red": 1,
+    "blur": 0.9,
+    "stats": {
+      "label": "red-lost",
+      "median": 4.200000000000728,
+      "p95": 12.600000000000364,
+      "max": 46,
+      "draws": 89,
+      "triangles": 111894,
+      "memory": {
+        "geometries": 115,
+        "textures": 59
+      },
+      "programs": 40,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    }
+  },
+  {
+    "mode": "classic",
+    "state": "clear",
+    "sanity": 100,
+    "red": 0,
+    "blur": 0,
+    "stats": {
+      "label": "red-lost",
+      "median": 4.200000000000728,
+      "p95": 16.599999999998545,
+      "max": 45.80000000000291,
+      "draws": 88,
+      "triangles": 111893,
+      "memory": {
+        "geometries": 134,
+        "textures": 42
+      },
+      "programs": 64,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    }
+  },
+  {
+    "mode": "classic",
+    "state": "low-sanity",
+    "sanity": 0,
+    "red": 0,
+    "blur": 0.8,
+    "stats": {
+      "label": "red-lost",
+      "median": 4.200000000000728,
+      "p95": 12.700000000000728,
+      "max": 50,
+      "draws": 88,
+      "triangles": 111893,
+      "memory": {
+        "geometries": 115,
+        "textures": 42
+      },
+      "programs": 59,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    }
+  },
+  {
+    "mode": "classic",
+    "state": "red-transition",
+    "sanity": 100,
+    "red": 1,
+    "blur": 0.9,
+    "stats": {
+      "label": "red-lost",
+      "median": 4.200000000000728,
+      "p95": 12.599999999998545,
+      "max": 46,
+      "draws": 88,
+      "triangles": 111893,
+      "memory": {
+        "geometries": 115,
+        "textures": 42
+      },
+      "programs": 59,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    }
+  },
+  {
+    "mode": "classic",
+    "state": "combined",
+    "sanity": 0,
+    "red": 1,
+    "blur": 0.9,
+    "stats": {
+      "label": "red-lost",
+      "median": 4.19999999999709,
+      "p95": 12.599999999998545,
+      "max": 50,
+      "draws": 88,
+      "triangles": 111893,
+      "memory": {
+        "geometries": 115,
+        "textures": 42
+      },
+      "programs": 59,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    }
+  }
+]

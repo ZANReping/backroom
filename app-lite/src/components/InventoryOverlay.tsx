@@ -31,6 +31,7 @@ import FactionTerminal from './FactionTerminal'
 import { FACTION_TERMINALS, isEnhancedFaction, isNewFaction, questFaction, NEW_FACTIONS } from '@/game/content/factionTerminals'
 import { completedFactionLines, factionState, trackFactionTask } from '@/game/engine/factionMissions'
 import DocOverlay from './DocOverlay'
+import AlphaMapPanel from './AlphaMapPanel'
 // （物品显示稀有度已由 IOTS 罕见度取代，见 codexScores.ITEM_IOTS / IOTS_FREQ_COLORS）
 import { PHENOMENA, rarityText } from '@/game/content/phenomena'
 import { IconIsolation, IconPlant, IconStamina } from './icons'
@@ -1422,7 +1423,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
           </div>
         )}
 
-        {tab === '地图' && <BigMap engine={engine} />}
+        {tab === '地图' && (engine.map?.settlement?.blueprint.id === 'alpha' ? <AlphaMapPanel engine={engine} /> : <BigMap engine={engine} />)}
 
         {tab === '日志' && <LogTab engine={engine} />}
 

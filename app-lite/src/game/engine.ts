@@ -506,7 +506,7 @@ export class Engine {
       this.player.level = snap.level
       // v59：旧版据点布局的坐标落在已移除的小房间/墙体中，统一迁移到新布局的安全出生点。
       // 布局版本 2 保留世界坐标恢复及既有安全校正逻辑。
-      const legacySettlement = (snap.level===102 && snap.bntgLayout!==3) || (snap.settlementLayout !== 2 && [101,103,104,116].includes(snap.level))
+      const legacySettlement = (snap.level===101 && snap.alphaLayout!==5) || (snap.level===102 && snap.bntgLayout!==3) || (snap.settlementLayout !== 2 && [101,103,104,116].includes(snap.level))
       if (legacySettlement) { this.player.x=this.map!.spawn.x; this.player.y=this.map!.spawn.y; this.player.z=0; this.player.floor=0 }
       const placement = legacySettlement ? 'legacy-settlement-spawn' : level.restoreSavedPlayerPosition(this, snap.worldPos)
       if(snap.level===5&&this.map?.inf&&snap.l5MothAlerts)this.map.inf.mothAlerts=structuredClone(snap.l5MothAlerts)

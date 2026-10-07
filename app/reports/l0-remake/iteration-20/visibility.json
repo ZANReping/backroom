@@ -1,0 +1,15 @@
+{
+  "pass": true,
+  "checks": [
+    "Preview and exploration share exact thin-wall hits; fan pixels beyond wall stay transparent; preview is read-only",
+    "Open doors, other floors, low furniture, noSight, nearest hit and tile walls obey the same sight rules",
+    "24 light configurations: all portable slots retained, baked fixtures filtered, unrelated lighter/shadow ordering correct, unused slots clear",
+    "Nested live lights and invisible lights preserve correct shader ordering"
+  ],
+  "mapCpu": {
+    "median": 0.2940999999999576,
+    "p95": 0.48030000000005657,
+    "samples": 100,
+    "scenario": "120x120, thin wall, 60m, forced uncached query; Node CPU"
+  }
+}

@@ -50,6 +50,17 @@ export function buildHeldItem(type: string): THREE.Group {
     g.add(m); return m
   }
   switch (type) {
+    case 'luckymilk':
+    case 'capacitor':
+    case 'skeleton':
+    case 'rabbit':
+    case 'pockets':
+    case 'fuyouyu': {
+      // Hold the lower body/shaft, leaving labels, stone faces and ring holes above the palm.
+      g.add(buildItemMesh(type, { halo: false }))
+      g.position.set(0, type === 'luckymilk' || type === 'capacitor' ? .1 : .08, -.075)
+      break
+    }
     case 'crowbar': { // 参考《半条命》：主杆竖持，顶部羊角向视线前方弯曲
       const detail = buildDetailedItemMesh('crowbar')
       const pose = new THREE.Group()
@@ -120,9 +131,8 @@ export function buildHeldItem(type: string): THREE.Group {
     }
     default: {
       // 复用物品低模（去掉地面光环）
-      const src = buildItemMesh(type)
+      const src = buildItemMesh(type, { halo: false })
       for (const ch of [...src.children]) {
-        if ((ch as THREE.Mesh).geometry?.type === 'RingGeometry') continue
         g.add(ch)
       }
       g.position.set(0, 0.02, -0.18)

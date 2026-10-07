@@ -4,6 +4,8 @@ import { audio } from '@/game/core/audio'
 import type { Difficulty } from '@/game/engine'
 import type { RenderResolutionMode } from '@/game/renderer/shared'
 import { BIND_ACTIONS, bindLabel, conflictOf, actionLabel, getKeybinds, setKeybind, resetKeybinds } from '@/game/core/keybinds'
+import { parseSeedInput, seedString } from '@/game/core/rng'
+import {completeGraphicsPreset,graphicsSnapshot,graphicsEqual,loadGraphicsPresets,saveGraphicsPresets,type CustomGraphicsPreset} from '@/game/core/graphicsPresets'
 
 export type UiTheme = 'amber' | 'liminal' | 'basalt' | 'dark-liminal' | 'greyspace' | 'database' | 'fandom' | 'meg'
 export type UiPresentation = 'classic' | 'immersive'
@@ -18,7 +20,8 @@ export interface GameSettings {
   shake: boolean
   headBob: boolean // v54：真实视角摇晃
   realWater: boolean // v57t：真实水体效果（海面涌浪起伏+程序化波光/天空反射；默认关闭=纯色平水面）
-  flicker: number // 0-100
+  flicker: number // 旧设置兼容，固定为 0
+  eyeAdaptation:boolean // 快明适应、慢暗适应
   renderResolution: RenderResolutionMode // 固定硬件光栅化分辨率；native 时才允许动态分辨率接管
   renderScale: number // 原生分辨率渲染比例 50–100%；固定低分辨率档位不受此项影响
   dynamicRes: boolean
@@ -43,6 +46,7 @@ export interface GameSettings {
   shadowQuality: number // 阴影质量 0=低 1=中 2=高（手电/太阳 shadow map 尺寸与软影半径；仅 realistic）
   sunShadows: boolean // 自然光投影（室外太阳/月亮；仅 realistic）
   lightShadows: number // 场景灯投影盏数：0=关，1/2/4 盏最近灯光阴影（经典模式控制 L9 路灯，真实模式控制全层场景灯；开销随盏数增加）
+  ambientOcclusion: 0 | 1 | 2 // 环境遮蔽：0=关，1=半分辨率，2=高
   bloomStrength: number // 泛光程度 0–100（仅 realistic 且泛光开启时生效）
   reflectivity: number // 反射强度 0–100（环境反射/水面反射；仅 realistic）
   bloomFx: boolean // 泛光（辉光后处理；仅 realistic）
@@ -55,7 +59,7 @@ export interface GameSettings {
   ambient: number // 环境音（荧光灯嗡鸣 / L4 雨声）0-100
   bgm: number // v54：音乐（每层 BGM）0-100
   bgmStyle: 'procedural' | 'midi' // v56：BGM 曲风——procedural=随机程序化 / midi=MIDI 音符序列（按 Wikidot 各层风格重制）
-  preloadAllLevels: boolean // 开始游戏时预载全部层级资产；关闭后仅在进入具体层级时按需加载
+  newGameSeed: string // 下次新游戏使用的种子；空值表示随机
   sfx: number // 音效（攻击/拾取/UI/实体叫声等全部单发）0-100
   muted: boolean
   leftHanded: boolean
@@ -72,17 +76,17 @@ export interface GameSettings {
 
 export const defaultSettings: GameSettings = {
   difficulty: 'normal', autoSprint: false,
-  grain: true, shake: true, headBob: false, realWater: false, flicker: 70, renderResolution: 'native', renderScale: 100, dynamicRes: true, dynamicResTarget: 60, shadows: true, fogOfWar: true,
-  maxPixelRatio: 2, sceneLightLimit: 24, chunkBudgetMs: 3, loadingBudgetMs: 6, hudRefreshRate: 8,
+  grain: true, shake: true, headBob: false, realWater: false, flicker: 0, eyeAdaptation:true, renderResolution: 'native', renderScale: 100, dynamicRes: true, dynamicResTarget: 60, shadows: true, fogOfWar: true,
+  maxPixelRatio: 2, sceneLightLimit: 16, chunkBudgetMs: 3, loadingBudgetMs: 6, hudRefreshRate: 8,
   textureQuality: 1, detailDistance: 100, wallOcclusion: true, particleDensity: 100, shadowUpdateRate: 1, cameraFov: 72,
   vcrFx: false, vcrStrength: 100, vcrScanlines: true,
   fogScale: 100, darknessBoost: 0, farLights: false,
-  lightMode: 'classic', shadowQuality: 1, sunShadows: true, lightShadows: 0,
+  lightMode: 'classic', shadowQuality: 1, sunShadows: true, lightShadows: 2, ambientOcclusion: 1,
   reflectivity: 60, bloomFx: true, bloomStrength: 35, exposure: 100,
-  grainStrength: 50, scanlineStrength: 60, vignetteStrength: 18, colorGrade: 'neutral',
+  grainStrength: 12, scanlineStrength: 0, vignetteStrength: 18, colorGrade: 'neutral',
   volume: 80, ambient: 50, bgm: 100, sfx: 90, muted: false,
   bgmStyle: 'procedural',
-  preloadAllLevels: false,
+  newGameSeed: '',
   leftHanded: false, stickSize: 120, btnOpacity: 70,
   sensitivity: 1.0, devMode: false,
   theme: 'amber',
@@ -96,35 +100,37 @@ type GraphicsPreset = 'performance' | 'balanced' | 'immersive' | 'mobile'
 
 export const GRAPHICS_PRESETS: Record<GraphicsPreset, Partial<GameSettings>> = {
   performance: {
+    flicker:0,eyeAdaptation:false,
     renderResolution: 'native', renderScale: 85, dynamicRes: true, dynamicResTarget: 60, maxPixelRatio: 1, sceneLightLimit: 12, chunkBudgetMs: 2, loadingBudgetMs: 4, hudRefreshRate: 4, cameraFov: 70,
     textureQuality: 0, detailDistance: 65, wallOcclusion: true, particleDensity: 25, shadowUpdateRate: 0,
     shadows: false, shadowQuality: 0, farLights: false, lightMode: 'classic', sunShadows: false, fogOfWar: true, fogScale: 85,
-    lightShadows: 0, bloomFx: false, realWater: false, grain: false, vcrFx: false,
-    vcrStrength: 60, vcrScanlines: false, shake: false, headBob: false, vignetteStrength: 0, scanlineStrength: 35,
+    lightShadows: 0, ambientOcclusion: 0, bloomFx: false, realWater: false, grain: false, vcrFx: false,
+    vcrStrength: 60, vcrScanlines: false, shake: false, headBob: false, vignetteStrength: 0, scanlineStrength: 0,
     colorGrade: 'neutral', exposure: 100,
   },
   balanced: {
-    renderResolution: 'native', renderScale: 100, dynamicRes: true, dynamicResTarget: 60, maxPixelRatio: 1.5, sceneLightLimit: 24, chunkBudgetMs: 3, loadingBudgetMs: 6, hudRefreshRate: 8, fogOfWar: true, fogScale: 100, cameraFov: 72,
+    renderResolution: 'native', renderScale: 100, dynamicRes: true, dynamicResTarget: 60, maxPixelRatio: 1.5, sceneLightLimit: 16, chunkBudgetMs: 3, loadingBudgetMs: 6, hudRefreshRate: 8, fogOfWar: true, fogScale: 100, cameraFov: 72,
     textureQuality: 1, detailDistance: 100, wallOcclusion: true, particleDensity: 70, shadowUpdateRate: 1,
     shadows: true, shadowQuality: 1, farLights: false, lightMode: 'classic', sunShadows: true,
-    lightShadows: 0, bloomFx: true, bloomStrength: 35, reflectivity: 60, realWater: false,
-    grain: true, grainStrength: 50, vcrFx: false, vcrStrength: 100, vcrScanlines: true, shake: true, headBob: false,
-    flicker: 70, vignetteStrength: 18, scanlineStrength: 60, colorGrade: 'neutral', exposure: 100,
+    lightShadows: 1, ambientOcclusion: 1, bloomFx: true, bloomStrength: 35, reflectivity: 60, realWater: false,
+    grain: true, grainStrength: 12, vcrFx: false, vcrStrength: 100, vcrScanlines: true, shake: true, headBob: false,
+    flicker: 0, eyeAdaptation:true,vignetteStrength: 18, scanlineStrength: 0, colorGrade: 'neutral', exposure: 100,
   },
   immersive: {
     renderResolution: 'native', renderScale: 100, dynamicRes: false, dynamicResTarget: 60, maxPixelRatio: 2, sceneLightLimit: 48, chunkBudgetMs: 4, loadingBudgetMs: 8, hudRefreshRate: 12, fogOfWar: true, fogScale: 100, cameraFov: 74,
     textureQuality: 2, detailDistance: 140, wallOcclusion: true, particleDensity: 100, shadowUpdateRate: 2,
     shadows: true, farLights: true, lightMode: 'realistic', shadowQuality: 2,
     sunShadows: true, lightShadows: 2, bloomFx: true, bloomStrength: 45, reflectivity: 80,
-    realWater: true, grain: true, grainStrength: 42, vcrFx: false, vcrStrength: 100, vcrScanlines: true, shake: true,
-    headBob: true, flicker: 70, vignetteStrength: 32, scanlineStrength: 50,
-    colorGrade: 'liminal', exposure: 100,
+    realWater: true, grain: true, grainStrength: 16, vcrFx: false, vcrStrength: 100, vcrScanlines: true, shake: true,
+    headBob: true, flicker: 0,eyeAdaptation:true, vignetteStrength: 18, scanlineStrength: 0,
+    colorGrade: 'neutral', exposure: 100,
   },
   mobile: {
+    flicker:0,eyeAdaptation:false,
     renderResolution: 'native', renderScale: 80, dynamicRes: true, dynamicResTarget: 60, maxPixelRatio: 1,
     sceneLightLimit: 8, chunkBudgetMs: 1.5, loadingBudgetMs: 4, hudRefreshRate: 4, fogOfWar: true, fogScale: 85,
     detailDistance: 65, wallOcclusion: true, particleDensity: 25, textureQuality: 0, shadows: false, shadowQuality: 0,
-    farLights: false, lightMode: 'classic', sunShadows: false, lightShadows: 0, bloomFx: false,
+    farLights: false, lightMode: 'classic', sunShadows: false, lightShadows: 0, ambientOcclusion: 0, bloomFx: false,
     realWater: false, grain: false, vcrFx: false, vcrScanlines: false, shake: false, headBob: false,
   },
 }
@@ -190,6 +196,18 @@ function Slider({ k, label, value, onSet, min = 0, max = 100, step = 1, valueLab
 export default function SettingsModal({ settings, onChange, onClose, onOpenLayoutEditor }: { settings: GameSettings; onChange: (s: GameSettings) => void; onClose: () => void; onOpenLayoutEditor?: () => void }) {
   const [tab, setTab] = useState<(typeof TABS)[number]>('游戏')
   const [graphicsTab, setGraphicsTab] = useState<(typeof GRAPHICS_TABS)[number]>('基础')
+  const [seedDraft, setSeedDraft] = useState(settings.newGameSeed)
+  const [customPresets,setCustomPresets]=useState(()=>loadGraphicsPresets(defaultSettings))
+  const [presetName,setPresetName]=useState('')
+  const [presetMessage,setPresetMessage]=useState('')
+  const storePresets=(next:CustomGraphicsPreset[])=>{if(!saveGraphicsPresets(next)){setPresetMessage('本机存储不可用，预设未保存。');return false}setCustomPresets(next);return true}
+  const saveCustom=()=>{
+    const name=presetName.trim();if(!name){setPresetMessage('请先输入预设名称。');return}
+    const old=customPresets.find(p=>p.name===name)
+    if(!old&&customPresets.length>=6){setPresetMessage('最多保存 6 个自定义预设，请先删除一个。');return}
+    const entry={id:old?.id??`custom-${Date.now()}-${Math.random().toString(36).slice(2,8)}`,name,values:graphicsSnapshot(settings)}
+    if(storePresets(old?customPresets.map(p=>p.id===old.id?entry:p):[...customPresets,entry])){setPresetMessage(old?'已更新同名预设。':'预设已保存到本机。');setPresetName('')}
+  }
   const isMobile = typeof window !== 'undefined' && (window.matchMedia?.('(pointer: coarse)').matches || 'ontouchstart' in window)
   const set = <K extends keyof GameSettings>(k: K, v: GameSettings[K]) => {
     const ns = { ...settings, [k]: v }
@@ -204,8 +222,18 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
 
   const setBool = (k: keyof GameSettings, v: boolean) => set(k, v as GameSettings[typeof k])
   const setNum = (k: keyof GameSettings, v: number) => set(k, v as GameSettings[typeof k])
+  const parsedSeed = parseSeedInput(seedDraft)
+  const seedIsBlank = seedDraft.trim() === ''
+  const seedError = seedIsBlank || parsedSeed !== null ? '' : '请输入 XXXX-XXXX 十六进制种子，或 0–4294967295 的十进制数字。'
+  const applySeed = () => {
+    if (!seedIsBlank && parsedSeed === null) return
+    const normalized = seedIsBlank ? '' : seedString(parsedSeed as number)
+    setSeedDraft(normalized)
+    set('newGameSeed', normalized)
+    audio.uiTick()
+  }
   const applyGraphicsPreset = (preset: GraphicsPreset) => {
-    onChange({ ...settings, ...GRAPHICS_PRESETS[preset] })
+    onChange({ ...settings, ...completeGraphicsPreset(defaultSettings,GRAPHICS_PRESETS[preset]),flicker:0 })
     audio.uiTick()
   }
   const setRenderResolution = (mode: RenderResolutionMode) => {
@@ -258,10 +286,14 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
                 ))}
               </div>
               <Toggle k="autoSprint" label="自动冲刺" value={settings.autoSprint as boolean} onSet={setBool} />
-              <Toggle k="preloadAllLevels" label="启动时预载全部层级资产" value={settings.preloadAllLevels as boolean} onSet={setBool} />
-              <div className="pb-2 text-[11px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>
-                关闭后只预载即将进入的层级；其余层级会在首次进入时按需加载，可缩短首次启动等待时间。
-              </div>
+              <label className="block py-2 text-[14px]" style={{ color: 'var(--text)' }}>
+                <span className="mb-1 block">新游戏种子</span>
+                <div className="flex gap-2">
+                  <input value={seedDraft} onChange={(e) => setSeedDraft(e.target.value)} placeholder="留空=随机" className="min-w-0 flex-1 border bg-transparent px-2 py-1.5 font-mono2 text-[12px]" style={{ borderColor: seedError ? 'var(--blood)' : 'var(--panel-edge)', color: 'var(--text)' }} />
+                  <button type="button" disabled={!!seedError} onClick={applySeed} className="border px-3 py-1.5 text-[12px] disabled:opacity-40" style={{ borderColor: 'var(--amber)', color: 'var(--amber)' }}>应用</button>
+                </div>
+                <div className="mt-1 text-[11px]" style={{ color: seedError ? 'var(--blood)' : 'var(--text-dim)' }}>{seedError || '仅影响下次新游戏，不影响继续存档。格式：XXXX-XXXX 或十进制数字。'}</div>
+              </label>
               <div className="py-2 text-[13px]" style={{ color: 'var(--text-dim)' }}>语言：简体中文（固定）</div>
               <div className="mt-4 border-t pt-2" style={{ borderColor: 'var(--panel-edge)' }}>
                 <Toggle k="devMode" label="开发者模式（调试面板）" value={settings.devMode as boolean} onSet={setBool} />
@@ -296,13 +328,21 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
                     <div className="mb-2 text-[13px] font-semibold" style={{ color: 'var(--amber)' }}>快捷预设</div>
                     <div className="grid grid-cols-4 gap-2">
                       {([['performance', '性能优先', '低负载'], ['balanced', '平衡', '推荐'], ['immersive', '沉浸优先', '高负载'], ['mobile', '手机流畅', '移动端']] as const).map(([id, label, note]) => (
-                        <button key={id} className="border px-2 py-2 text-[12px]" style={{ borderColor: 'var(--panel-edge)', color: 'var(--text)', background: 'var(--panel)' }} onClick={() => applyGraphicsPreset(id)}>
+                        <button key={id} className="border px-2 py-2 text-[12px]" aria-pressed={graphicsEqual(settings,completeGraphicsPreset(defaultSettings,GRAPHICS_PRESETS[id]))} style={{ borderColor: graphicsEqual(settings,completeGraphicsPreset(defaultSettings,GRAPHICS_PRESETS[id]))?'var(--amber)':'var(--panel-edge)', color: 'var(--text)', background: graphicsEqual(settings,completeGraphicsPreset(defaultSettings,GRAPHICS_PRESETS[id]))?'var(--amber-15,rgba(232,185,60,.15))':'var(--panel)' }} onClick={() => applyGraphicsPreset(id)}>
                           <span className="block">{label}</span>
                           <span className="font-mono2 text-[10px]" style={{ color: 'var(--text-dim)' }}>{note}</span>
                         </button>
                       ))}
                     </div>
-                    <div className="mt-2 text-[10px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>预设只批量修改下方选项；之后仍可逐项微调。沉浸优先会启用真实光影、水面与更远的细节。</div>
+                    <div className="mt-3 flex flex-wrap gap-2" aria-label="自定义画面预设">
+                      {customPresets.map(p=><div key={p.id} className="flex border" style={{borderColor:graphicsEqual(settings,p.values)?'var(--amber)':'var(--panel-edge)'}}>
+                        <button aria-pressed={graphicsEqual(settings,p.values)} className="px-3 py-2 text-[12px]" style={{color:'var(--text)',background:graphicsEqual(settings,p.values)?'rgba(232,185,60,.15)':'transparent'}} onClick={()=>{onChange({...settings,...p.values,flicker:0});audio.uiTick()}}>{p.name}</button>
+                        <button className="px-2 text-[12px]" style={{color:'var(--text-dim)'}} aria-label={`删除预设 ${p.name}`} onClick={()=>storePresets(customPresets.filter(v=>v.id!==p.id))}>×</button>
+                      </div>)}
+                    </div>
+                    <div className="mt-2 flex gap-2"><input aria-label="自定义预设名称" maxLength={24} value={presetName} onChange={e=>setPresetName(e.target.value)} placeholder="预设名称（同名可覆盖）" className="min-w-0 flex-1 border bg-transparent px-2 text-[12px]" style={{color:'var(--text)',borderColor:'var(--panel-edge)'}}/><button className="border px-2 py-2 text-[12px]" style={{color:'var(--amber)',borderColor:'var(--panel-edge)'}} onClick={saveCustom}>保存当前画面</button></div>
+                    <div role="status" className="mt-1 text-[11px]" style={{color:'var(--text-dim)'}}>{presetMessage}</div>
+                    <div className="mt-2 text-[10px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>预设保存各画面页签的选项，可继续微调；最多保存 6 个自定义预设，同名保存会覆盖。按钮亮起表示全部画面选项完全一致。</div>
                   </div>
                   <div className="mb-3 border p-3" style={{ borderColor: 'var(--panel-edge)', background: 'color-mix(in srgb, var(--amber) 3%, var(--panel))' }}>
                     <div className="mb-2 text-[13px] font-semibold" style={{ color: 'var(--amber)' }}>3D 硬件光栅化分辨率</div>
@@ -336,13 +376,13 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
                   </div>
                   <div className="pt-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>真实模式启用物理光照、环境反射、软阴影与泛光；可随时切回经典模式。</div>
                   <Toggle k="shadows" label="手电实时阴影" value={settings.shadows} onSet={setBool} />
-                  <div className="py-2 text-[14px]" style={{ color: 'var(--text)' }}>手电阴影刷新率</div>
+                  <div className="py-2 text-[14px]" style={{ color: 'var(--text)' }}>阴影刷新率</div>
                   <div className="grid grid-cols-3 gap-2">
                     {([[0, '性能'], [1, '平衡'], [2, '流畅']] as const).map(([v, l]) => (
                       <button key={v} className="border px-2 py-2 text-[12px]" style={{ borderColor: settings.shadowUpdateRate === v ? 'var(--amber)' : 'var(--panel-edge)', color: settings.shadowUpdateRate === v ? 'var(--amber)' : 'var(--text-dim)', background: 'var(--panel)' }} onClick={() => set('shadowUpdateRate', v)}>{l}</button>
                     ))}
                   </div>
-                  <div className="pt-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>只改变移动时阴影贴图的更新频率；流畅档响应最快，性能档最省 GPU。</div>
+                  <div className="pt-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>调整移动手电与附近场景灯的阴影更新频率，保留当前阴影数量和分辨率。</div>
                   <div className="py-2 text-[14px]" style={{ color: 'var(--text)' }}>阴影质量</div>
                   <div className="grid grid-cols-3 gap-2">
                     {([[0, '低'], [1, '中'], [2, '高']] as const).map(([v, l]) => (
@@ -350,13 +390,14 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
                     ))}
                   </div>
                   <Toggle k="sunShadows" label="自然光投影（室外太阳/月亮）" value={settings.sunShadows} onSet={setBool} />
-                  <div className="py-2 text-[14px]" style={{ color: 'var(--text)' }}>场景灯投影（开销随盏数增加）</div>
-                  <div className="grid grid-cols-4 gap-2">
-                    {([[0, '关'], [1, '1 盏'], [2, '2 盏'], [4, '4 盏']] as const).map(([v, l]) => (
-                      <button key={v} className="border px-2 py-2 text-[12px]" style={{ borderColor: settings.lightShadows === v ? 'var(--amber)' : 'var(--panel-edge)', color: settings.lightShadows === v ? 'var(--amber)' : 'var(--text-dim)', background: 'var(--panel)' }} onClick={() => set('lightShadows', v)}>{l}</button>
+                  <div className="py-2 text-[14px]" style={{ color: 'var(--text)' }}>环境遮蔽</div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {([[0, '关'], [1, '半分辨率'], [2, '高']] as const).map(([v, l]) => (
+                      <button key={v} className="border px-2 py-2 text-[12px]" style={{ borderColor: settings.ambientOcclusion === v ? 'var(--amber)' : 'var(--panel-edge)', color: settings.ambientOcclusion === v ? 'var(--amber)' : 'var(--text-dim)', background: 'var(--panel)' }} onClick={() => set('ambientOcclusion', v)}>{l}</button>
                     ))}
                   </div>
-                  {settings.lightMode === 'classic' && <div className="pt-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>自然光投影、反射与泛光仅在真实模式中生效；经典模式下 L9 路灯投影仍受此项控制。关闭投影可降低开销。</div>}
+                  <div className="pt-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>增强墙角与家具接触处的暗部；低档设备建议关闭。</div>
+                  {settings.lightMode === 'classic' && <div className="pt-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>自然光投影、反射与泛光仅在真实模式中生效。</div>}
                   <Toggle k="fogOfWar" label="距离雾" value={settings.fogOfWar} onSet={setBool} />
                   <Slider k="fogScale" label="距离雾远近" value={settings.fogScale} onSet={setNum} min={50} max={200} step={5} valueLabel={`${settings.fogScale}%`} />
                   <div className="pb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>50% = 更近更浓 · 100% = 默认 · 200% = 更远更淡。</div>
@@ -436,7 +477,8 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
                   )}
                   <Toggle k="shake" label="受伤与低生命屏幕震动" value={settings.shake} onSet={setBool} />
                   <Toggle k="headBob" label="真实行走视角（起伏、侧摆、落地回弹）" value={settings.headBob} onSet={setBool} />
-                  <Slider k="flicker" label="灯光闪烁强度" value={settings.flicker} onSet={setNum} valueLabel={`${settings.flicker}%`} />
+                  <Toggle k="eyeAdaptation" label="人眼动态曝光" value={settings.eyeAdaptation} onSet={setBool} />
+                  <p className="text-[11px]" style={{color:'var(--text-dim)'}}>进入亮处快速适应，进入暗处缓慢适应；无光处仍保持黑暗。</p>
                   <div className="mt-2 border-l-2 pl-2 text-[11px] leading-relaxed" style={{ borderColor: 'var(--amber)', color: 'var(--text-dim)' }}>暗角、调色和视角效果只改变视觉呈现；不会改变实体感知、照明范围或游戏难度。</div>
                 </div>
               )}

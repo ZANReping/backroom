@@ -1,6 +1,7 @@
 // 物品低模（自包含，仅依赖 three）——地面/投掷物/手持展示用的小模型 + 稀有度光环底座。
 // 实体模型在 entitiesMesh.ts。
 import * as THREE from 'three'
+import { buildSixItemMesh } from './sixItemMesh'
 import { buildFlashlightMesh } from './flashlightMesh'
 import { buildBandageMesh, buildCannedFoodMesh } from './supplyMesh'
 import { buildBatteryMesh, buildWaterThermosMesh } from './provisionsMesh'
@@ -29,6 +30,9 @@ export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Gr
     return m
   }
   switch (type) {
+    // Six detailed models share UV atlases; their factory emits at most three material batches.
+    case 'luckymilk': case 'capacitor': case 'skeleton': case 'rabbit': case 'pockets': case 'fuyouyu':
+      grp.add(buildSixItemMesh(type)); break
     case 'almond': // 杏仁水：不锈钢保温杯轮廓 +「杏仁水」真实环绕 UV
       grp.add(buildWaterThermosMesh('almond')); break
     case 'canned': // 罐头：真实 UV 纸标签 + 金属卷边端盖/压槽/易拉环
@@ -41,8 +45,6 @@ export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Gr
     case 'tape': // 磁带：透明卷轴窗、螺丝、纸质标签 UV
     case 'lighter': // 打火机：拉丝钢壳、铰链、风罩与火轮
       grp.add(buildDetailedItemMesh(type)); break
-    case 'rabbit': // 幸运兔脚：腿骨 + 毛爪
-      em(0.06, 0.14, 0.06, '#d8cfc0', 0, 0.05, 0); em(0.1, 0.1, 0.08, '#b8a890', 0, -0.08, 0); break
     case 'wallpaper': // 壁纸碎片：不规则断边、卷边与 Level 0 墙纸 UV
     case 'glowstick': // 荧光棒：透明外壳、发光液芯、端盖与挂环
       grp.add(buildDetailedItemMesh(type)); break
@@ -55,9 +57,6 @@ export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Gr
     case 'carkey': // 车钥匙：遥控柄 + 按键 + 钥匙片
       em(0.07, 0.12, 0.03, '#2a2d30'); em(0.02, 0.02, 0.035, '#c94a3a', 0, 0.03, 0)
       em(0.03, 0.1, 0.015, '#b0b0b0', 0, 0.11, 0); break
-    case 'skeleton': // 万能钥匙：黄铜匙环 + 杆 + 双齿
-      cm(0.05, 0.05, 0.02, '#b08d46', 0, 0.11, 0, 10, Math.PI / 2)
-      em(0.03, 0.16, 0.02, '#b08d46', 0, 0, 0); em(0.05, 0.02, 0.02, '#b08d46', 0.03, -0.06, 0); em(0.04, 0.02, 0.02, '#b08d46', 0.025, -0.02, 0); break
     case 'gas': // 汽油罐：罐体 + 把手 + 斜嘴
       em(0.2, 0.28, 0.14, '#a63a2e'); em(0.12, 0.03, 0.04, '#8a2e22', 0, 0.16, 0)
       em(0.05, 0.1, 0.05, '#6a3a2e', 0.07, 0.14, 0, 0, -0.4); break
@@ -69,24 +68,6 @@ export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Gr
       em(0.26, 0.3, 0.1, '#3a5a3a'); em(0.16, 0.12, 0.1, '#2e4a2e', 0, 0.2, 0); break
     case 'fuse': // 保险丝：陶瓷身 + 双金属帽
       cm(0.05, 0.05, 0.16, '#d9cfb0'); cm(0.06, 0.06, 0.04, '#d9b13b', 0, 0.09, 0, 6); cm(0.06, 0.06, 0.04, '#d9b13b', 0, -0.09, 0, 6); break
-    case 'capacitor': { // 电容器「瓶装闪电」（参考 Object 42）：玻璃烧瓶 + 软木塞 + 瓶中疾走的蓝色电荷
-      const glass = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.095, 0.17, 8),
-        new THREE.MeshLambertMaterial({ color: '#9fd8e8', transparent: true, opacity: 0.35, emissive: '#3a8ab0', emissiveIntensity: 0.3 }))
-      glass.position.y = -0.03; grp.add(glass)
-      const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.05, 0.06, 8),
-        new THREE.MeshLambertMaterial({ color: '#9fd8e8', transparent: true, opacity: 0.35, emissive: '#3a8ab0', emissiveIntensity: 0.3 }))
-      neck.position.y = 0.075; grp.add(neck)
-      cm(0.03, 0.034, 0.05, '#a8865a', 0, 0.125, 0, 8) // 软木塞
-      // 瓶中闪电：自发光芯 + 两道折线
-      const core = new THREE.Mesh(new THREE.IcosahedronGeometry(0.04, 0), new THREE.MeshBasicMaterial({ color: '#8fd4ff' }))
-      core.position.y = -0.03; core.scale.y = 1.7; grp.add(core)
-      const bolt = (w: number, h: number, color: string, x: number, y: number, z: number, rz: number) => {
-        const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.014), new THREE.MeshBasicMaterial({ color }))
-        m.position.set(x, y, z); m.rotation.z = rz; grp.add(m)
-      }
-      bolt(0.014, 0.1, '#eaf7ff', 0.022, -0.02, 0.01, 0.5)
-      bolt(0.014, 0.08, '#8fd4ff', -0.022, -0.05, -0.012, -0.55)
-      break }
     case 'coffee': // 咖啡：锥形纸杯、瓦楞杯套、杯盖、饮口与印刷 UV
       grp.add(buildDetailedItemMesh(type)); break
     case 'stapler': // 订书机：底座 + 上臂
@@ -144,9 +125,6 @@ export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Gr
       cm(0.045, 0.05, 0.2, '#8a8474', 0, 0, 0, 6, 0, Math.PI / 2)
       cm(0.03, 0.036, 0.06, '#7a7466', 0.02, 0.06, 0, 6)
       em(0.045, 0.04, 0.04, '#9a9484', -0.11, 0.012, 0.012); break
-    case 'pockets': // Pockets（Object 51）：布袋 + 束口 + 抽绳
-      cm(0.1, 0.14, 0.2, '#6a5a7a'); cm(0.06, 0.08, 0.06, '#4a3d5a', 0, 0.13, 0, 6)
-      em(0.17, 0.02, 0.02, '#c9a0d0', 0, 0.15, 0); break
     case 'housekey': // 门廊钥匙：匙环 + 匙杆 + 匙齿
       cm(0.045, 0.045, 0.015, '#9a9a8a', 0, 0.1, 0, 10, Math.PI / 2)
       em(0.025, 0.14, 0.015, '#9a9a8a'); em(0.04, 0.02, 0.015, '#8a8a7a', 0.03, -0.05, 0)
@@ -238,13 +216,6 @@ export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Gr
     // ---------- v32：后室扩展物品 ----------
     case 'cashew': // 腰果水：同型保温杯，但使用歪斜乱码标签与污损暖褐配色
       grp.add(buildWaterThermosMesh('cashew')); break
-    case 'luckymilk': { // v54：幸运豆奶（Object 28）：豆奶纸盒 + 四叶草标 + 顶折封口
-      em(0.15, 0.24, 0.11, '#eef0e8') // 纸盒身（乳白）
-      em(0.15, 0.05, 0.11, '#7ab06a', 0, 0.145, 0) // 顶折封口（绿）
-      em(0.152, 0.08, 0.112, '#a8d89a', 0, -0.04, 0) // 四叶草标带（浅绿横带）
-      em(0.04, 0.04, 0.01, '#4a8a3e', 0, -0.04, 0.06) // 四叶草（正面深绿点）
-      break
-    }
     case 'knife': // 刀：带刃线的钢刃、护手、铆钉与防滑柄 UV
     case 'axe': // 斧头：楔形斧刃、斧楔、木纹柄与包覆握把
       grp.add(buildDetailedItemMesh(type)); break
@@ -263,13 +234,6 @@ export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Gr
       em(0.2, 0.03, 0.26, '#5a3a2a')
       em(0.18, 0.025, 0.24, '#e8e2d2', 0.012, 0.026, 0)
       cm(0.008, 0.008, 0.2, '#2a2d30', 0.06, 0.05, 0.02, 6, 0, Math.PI / 2); break
-    case 'fuyouyu': { // 福友玉：温润玉环 + 挂绳 + 玉坠
-      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.07, 0.022, 8, 16),
-        new THREE.MeshLambertMaterial({ color: '#6ad9a8', emissive: '#2a6a4a', emissiveIntensity: 0.4 }))
-      ring.rotation.x = Math.PI / 2
-      grp.add(ring)
-      cm(0.006, 0.006, 0.16, '#8a3a3a', 0, 0.1, 0, 5)
-      em(0.03, 0.01, 0.03, '#3a8a68', 0, -0.075, 0); break }
     case 'squirtgun': { // 滋水枪：共享成型枪壳、透明刻度罐、泵筒、供液管与三套 UV
       const gun = buildSquirtGunMesh()
       gun.scale.setScalar(.82)

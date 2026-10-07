@@ -2,6 +2,7 @@
 // 自 engine.ts step 内联段拆分，逻辑逐语句搬运；返回 true 表示本帧已死亡（原 step 的 return）。
 // v55：疫疾（Entity 19）隐藏感染值——湿地/锅炉房积累、四阶段效果、升阶计图鉴遭遇。
 import { tileAt } from '../world/mapgen'
+import {l0Sample,l0Meeting} from '../world/l0Architecture'
 import { audio } from '../core/audio'
 import { recordEncounter } from '../entities'
 import type { Engine } from '../engine'
@@ -70,11 +71,12 @@ export function updateSurvival(eng: Engine, dt: number, dm: DiffMult, mag: numbe
   }
   // 理智：黑暗中流失
   const lit = eng.isLit(p.x, p.y)
-  // 现象判定：孤立效应——Level 0 除马尼拉室外的所有区域发生（红室 tint=2，马尼拉 tint=1），
+  // 现象判定：孤立效应——按独立区域标识与马尼拉会合渐变判断，
   // 生效期间替代原版的黑暗理智流失机制；植殖癌——花园段生效（判定见上方，含染病未愈期）。
   // 开发者面板可对每个现象强制开（phenOn）/强制关（phenOff）
-  const pTint = m.tint?.[Math.floor(p.y) * m.w + Math.floor(p.x)] ?? 0
-  let isolation = p.level === 0 && pTint !== 1
+  const meeting=p.level===0?l0Meeting(m,p.x,p.y):0
+  const red=p.level===0&&l0Sample(m,p.x,p.y)?.effect==='red'
+  let isolation = p.level === 0 && meeting < 1
   if (eng.dev.phenOn.has('isolation')) isolation = true
   if (eng.dev.phenOff.has('isolation')) isolation = false
   const flickerActive = eng.levelDef.id === 1 &&
@@ -89,8 +91,9 @@ export function updateSurvival(eng: Engine, dt: number, dm: DiffMult, mag: numbe
   if (!eng.dev.god) {
     if (isolation) {
       // 孤立效应：缓慢失去理智；红室内流失速率加倍
-      p.sanity -= 0.25 * dm.drain * (pTint === 2 ? 2 : 1) * dt
-    } else if (!lit && eng.levelDef.id === 6) p.sanity -= 0.1 * dm.drain * dt
+      p.sanity -= 0.25 * dm.drain * (red ? 2 : 1) * (eng.dev.phenOn.has('isolation')?1:1-meeting) * dt
+    } else if(p.level===0&&meeting>0){ /* A calm meeting space grants no automatic stat recovery. */ }
+    else if (!lit && eng.levelDef.id === 6) p.sanity -= 0.1 * dm.drain * dt
     else if (!lit && !p.flashlight) p.sanity -= 0.75 * dm.drain * dt
     else if (!lit) p.sanity -= 0.25 * dm.drain * dt
     else p.sanity = Math.min(100, p.sanity + 0.4 * dt)

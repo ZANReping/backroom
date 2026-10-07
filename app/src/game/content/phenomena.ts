@@ -48,7 +48,7 @@ export const PHENOMENA: Record<string, PhenomenonDef> = {
     rarity: 'level',
     rarityNote: 'Level 0',
     levels: [0],
-    desc: '在 Level 0（马尼拉室除外），任何同行者都会被无形地分开：呼喊无人应答，留下的记号凭空消失。独自置身其中时，理智会缓慢流失；红室之中，流失速率加倍。',
+    desc: '在 Level 0，同行者会被无形地分开，独处时理智缓慢流失；红室内速率加倍。马尼拉房间及外环廊核心解除孤立，接近边缘时同行者逐渐显现。会合处没有自动补给或属性恢复。',
     icon: 'isolation',
   },
   // 植殖癌：Level 1 花园段。逗留者行为逐渐僵硬、视野逐渐变绿，最终原地生根化为一株植物

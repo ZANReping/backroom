@@ -1,0 +1,104 @@
+{
+  "level": {
+    "id": 5,
+    "name": "恐怖酒店"
+  },
+  "id": 5,
+  "name": "恐怖酒店",
+  "build": {
+    "elapsed": 40435.199999999255,
+    "maxFrame": 100
+  },
+  "warmup": {
+    "elapsed": 40346.60000000149,
+    "pending": {
+      "missing": 0,
+      "chunk": false,
+      "finite": false,
+      "flash": false,
+      "moth": false,
+      "items": 0,
+      "compile": false,
+      "retired": 0,
+      "textures": 0
+    },
+    "groups": 25,
+    "memory": {
+      "geometries": 1650,
+      "textures": 227
+    },
+    "programs": 114
+  },
+  "rounds": [
+    {
+      "label": "5:open",
+      "median": 20.69999999999709,
+      "p95": 25,
+      "max": 33.299999999995634,
+      "draws": 1880,
+      "triangles": 2563763,
+      "memory": {
+        "geometries": 1650,
+        "textures": 227
+      },
+      "programs": 114,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "label": "5:open",
+      "median": 20.799999999995634,
+      "p95": 25.099999999998545,
+      "max": 29.200000000004366,
+      "draws": 1880,
+      "triangles": 2563763,
+      "memory": {
+        "geometries": 1650,
+        "textures": 227
+      },
+      "programs": 114,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "label": "5:open",
+      "median": 20.700000000004366,
+      "p95": 25,
+      "max": 29.19999999999709,
+      "draws": 1995,
+      "triangles": 2679627,
+      "memory": {
+        "geometries": 1650,
+        "textures": 227
+      },
+      "programs": 114,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "label": "5:open",
+      "median": 16.799999999995634,
+      "p95": 25,
+      "max": 25.099999999998545,
+      "draws": 1336,
+      "triangles": 1787933,
+      "memory": {
+        "geometries": 1650,
+        "textures": 227
+      },
+      "programs": 114,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "label": "5:open",
+      "median": 20.69999999999709,
+      "p95": 25,
+      "max": 29.400000000001455,
+      "draws": 1880,
+      "triangles": 2563763,
+      "memory": {
+        "geometries": 1650,
+        "textures": 227
+      },
+      "programs": 114,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    }
+  ]
+}

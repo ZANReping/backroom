@@ -1,3 +1,5 @@
+import {isAlphaKind} from '../content/alphaDecor'
+import {buildAlphaDecor} from './alphaMeshes'
 import {buildL4Structure} from './l4Meshes'
 import { buildL5Structure, buildL5Registered } from './l5Meshes'
 import { isL5DecorKind } from '../content/l5Decor'
@@ -1133,6 +1135,7 @@ function hangingCeil(s: Structure, m: GameMap, H: number): number {
 
 // ---------- 结构低模 ----------
 export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: number): THREE.Object3D | null {
+  if(isAlphaKind(s.kind))return m.settlement?.blueprint.id==='alpha'?null:buildAlphaDecor(s)
   if(isTradeKind(s.kind))return m.settlement?.blueprint.decorations&&s.kind!=='trade_anomaly'?null:buildTradeDecor(s)
   if(s.kind === 'settlementprop') return null
   if(s.kind === 'settlementstation') return buildSettlementStation(s)
@@ -6157,6 +6160,7 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
 
 // ---------- 出口低模 ----------
 export function buildExit(kind: string, def: LevelDef, structure?: Structure): THREE.Group {
+  if(def.id===101&&kind==='unlockeddoor')return buildAlphaDecor({kind:'alpha_entry_portal',x:-.9,y:-.12,w:1.8,h:.24,solid:true})
   if (def.id === 11 && (kind === 'l11roadback' || kind === 'countrypath')) {
     const marker = buildL11Structure({ kind: 'l11landmark', x: -.5, y: -.5, w: 1, h: 1, solid: false, data: { citySite: kind === 'countrypath' ? 'L10' : 'L9' } })!
     return marker

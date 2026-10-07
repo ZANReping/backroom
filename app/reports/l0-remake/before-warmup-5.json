@@ -1,0 +1,23 @@
+{
+  "firstTimeout": "Error: {\"exceptionId\":12,\"text\":\"Uncaught (in promise) Error: Warmup timed out: {\\\"missing\\\":2,\\\"chunk\\\":true,\\\"finite\\\":false,\\\"flash\\\":false,\\\"moth\\\":false,\\\"items\\\":0,\\\"compile\\\":false,\\\"retired\\\":0,\\\"textures\\\":0}\",\"lineNumber\":92,\"columnNumber\":34,\"scriptId\":\"18561\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"warm\",\"scriptId\":\"18561\",\"url\":\"http://127.0.0.1:3004/verifier/l0-remake.ts\",\"lineNumber\":91,\"columnNumber\":33}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: Warmup timed out: {\\\"missing\\\":2,\\\"chunk\\\":true,\\\"finite\\\":false,\\\"flash\\\":false,\\\"moth\\\":false,\\\"items\\\":0,\\\"compile\\\":false,\\\"retired\\\":0,\\\"textures\\\":0}\\n    at Object.warm (http://127.0.0.1:3004/verifier/l0-remake.ts:92:34)\",\"objectId\":\"5676213831835361801.188.1\"}}",
+  "retry": {
+    "elapsed": 6515.39999999851,
+    "pending": {
+      "missing": 0,
+      "chunk": false,
+      "finite": false,
+      "flash": false,
+      "moth": false,
+      "items": 0,
+      "compile": false,
+      "retired": 0,
+      "textures": 0
+    },
+    "groups": 25,
+    "memory": {
+      "geometries": 1650,
+      "textures": 233
+    },
+    "programs": 212
+  }
+}

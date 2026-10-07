@@ -1,0 +1,34 @@
+import {readFileSync,writeFileSync,existsSync} from 'node:fs';
+const root=new URL('../reports/l0-remake/',import.meta.url),read=name=>JSON.parse(readFileSync(new URL(name,root),'utf8'));
+const median=a=>[...a].sort((a,b)=>a-b)[Math.floor(a.length/2)],metric=(r,k)=>median(r.rounds.map(v=>v[k])),n=x=>Number(x.toFixed(2));
+const before=read('before-performance.json'),after=read('after-performance.json');
+const normal=existsSync(new URL('after-normal.json',root))?read('after-normal.json'):null;
+const feedbackBefore=existsSync(new URL('iteration-13-before/after-performance.json',root))?read('iteration-13-before/after-performance.json'):null;
+const rows=after.map(a=>{const b=before.find(v=>v.id===a.id);return{id:a.id,name:a.name,before:{median:n(metric(b,'median')),p95:n(metric(b,'p95')),draws:metric(b,'draws')},after:{median:n(metric(a,'median')),p95:n(metric(a,'p95')),draws:metric(a,'draws'),triangles:metric(a,'triangles'),geometry:a.rounds.at(-1).memory.geometries,textures:a.rounds.at(-1).memory.textures},build:{before:n(b.build.maxFrame),after:n(a.build.maxFrame)},pass:a.rounds.every(r=>r.median<=16.7&&r.p95<=20)}});
+const conditions=read('after-conditions.json').map(v=>({condition:v.condition,median:n(metric(v,'median')),p95:n(metric(v,'p95')),pass:v.rounds.every(r=>r.median<=16.7&&r.p95<=20)}));
+const regions=read('after-regions.json').map(v=>({region:v.region,median:n(metric(v,'median')),p95:n(metric(v,'p95')),draws:metric(v,'draws'),triangles:metric(v,'triangles'),pass:v.rounds.every(r=>r.median<=16.7&&r.p95<=20)}));
+const lifecycle=read('after-lifecycle.json');
+const stable=lifecycle.slice(1).every(v=>JSON.stringify(v.stats.memory)===JSON.stringify(lifecycle[1].stats.memory)&&v.stats.programs===lifecycle[1].stats.programs);
+const normalRows=normal?normal.map(v=>({seed:v.pose.seed,x:v.pose.x,y:v.pose.y,yaw:v.pose.yaw,median:n(metric(v,'median')),p95:n(metric(v,'p95')),draws:metric(v,'draws'),triangles:metric(v,'triangles'),pass:v.rounds.every(r=>r.median<=16.7&&r.p95<=20),buildMaxFrame:n(v.build.maxFrame)})):null;
+const feedback=feedbackBefore?after.filter(a=>a.id===0).map(a=>{const b=feedbackBefore.find(v=>v.id===a.id);return b?{id:a.id,draws:metric(b,'draws')+'→'+metric(a,'draws'),triangles:metric(b,'triangles')+'→'+metric(a,'triangles'),median:n(metric(b,'median'))+'→'+n(metric(a,'median')),p95:n(metric(b,'p95'))+'→'+n(metric(a,'p95')),maxFrame:n(b.build.maxFrame)+'→'+n(a.build.maxFrame)}:null}).filter(Boolean):null;
+const data={method:'1920x1080 DPR1; realistic; high textures; 16 scene lights; 2 scene shadows; AO half resolution after only; no dynamic resolution; warm at least 3 seconds and wait for all visible chunks, model warmup, material compilation and recycle queues to complete, with resource counts continuously stable for 1 second; 5 rounds >=120 RAF intervals; median of round medians/P95, pass checks all rounds. Draws/triangles: end-of-round frame samples, not frame averages; cached shadow submissions vary across frames.',gpu:after[0].rounds[0].gpu,rows,normal:normalRows,feedback,lifecycle:{stable,rounds:lifecycle.map(v=>({round:v.round,...v.stats.memory,programs:v.stats.programs}))}};
+writeFileSync(new URL('summary.json',root),JSON.stringify(data,null,2)+'\n');
+let text=`# Level 0 / 全层真实光影验证报告\n\n${data.gpu}\n\n测量：1080p、DPR 1、高纹理、16 场景灯、2 场景阴影，关闭动态分辨率；新版另开半分辨率 AO。前后均重新预热至少 3 秒，等待所有可见区块、编译和回收完成并保持资源计数稳定 1 秒，五轮各至少 120 帧。表内取五轮统计的中位数，通过判断检查每一轮；这是 RAF 帧间隔，受刷新调度下限影响，不是 GPU timer query。前后使用同一设备、地图种子、画质和相机规则。\n\n## 稳态性能\n\n|层级|旧中位/P95 ms|新中位/P95 ms|绘制调用 旧→新|新三角面|每轮目标|\n|---|---:|---:|---:|---:|---|\n`;
+for(const v of rows)text+=`|${v.id} ${v.name}|${v.before.median}/${v.before.p95}|${v.after.median}/${v.after.p95}|${v.before.draws}→${v.after.draws}|${v.after.triangles}|${v.pass?'通过':'未达标'}|\n`;
+text+='\n## 特殊状态\n\n|状态|中位 ms|P95 ms|每轮目标|\n|---|---:|---:|---|\n';
+for(const v of conditions)text+=`|${v.condition}|${v.median}|${v.p95}|${v.pass?'通过':'未达标'}|\n`;
+text+='\n## Level 0 区域补测\n\n|区域|中位 ms|P95 ms|绘制调用|三角面|每轮目标|\n|---|---:|---:|---:|---:|---|\n';
+for(const v of regions)text+=`|${v.region}|${v.median}|${v.p95}|${v.draws}|${v.triangles}|${v.pass?'通过':'未达标'}|\n`;
+text+='\n绘制调用和三角面是各轮末帧采样的中位数。缓存阴影使提交量随帧变化，因此这些值不是全帧平均吞吐量；稳态目标仍由整轮帧间隔检验。\n';
+text+='\n## 构建与资源\n\n新版复测预热至少 3 秒，并等待可见范围全部区块、模型预热、材质编译与回收队列完成，资源计数连续稳定 1 秒；冷启动/切层构建峰值单独记录，不混入预热后 FPS 结论。首次纹理上传和着色器编译仍可能造成明显卡顿；这项不能视为通过无卡顿验收。\n\n|层级|旧构建最大帧 ms|新构建最大帧 ms|\n|---|---:|---:|\n';
+for(const v of rows)text+=`|${v.id}|${v.build.before}|${v.build.after}|\n`;
+text+=`\n五轮跨黄室→拱门→柱厅→马尼拉→黄室并切换经典/真实、高/低纹理。后四轮资源${stable?'稳定':'计数尚未收敛，不能判定稳定或泄漏'}：\n\n|轮次|几何|纹理|程序|\n|---|---:|---:|---:|\n`;
+for(const v of data.lifecycle.rounds)text+=`|${v.round+1}|${v.geometries}|${v.textures}|${v.programs}|\n`;
+text+='\n## 视觉与复现\n\n[逐图复核与剩余差异](VISUAL-REVIEW.md)，[12 项对照总览](reference-contact.jpg)，逐张 `compare-*.jpg` 为参考/游戏并排，`overlay-*.png` 为 50% 叠加。相机参数及画幅在 [after-anchors.json](after-anchors.json)。另存七区域经典正面及真实模式背面手电截图。所有画面均来自可移动的真实游戏建筑。\n\n墙纸按细箭叶/断续细茎及密集菱形卷纹重生成，保存完整 Prompt 与筛选理由；低对比地毯、纹理尺度和光源颜色在场景中复核。**尚未证明所有 12 张的主要轮廓均小于 3% 误差**；柱厅、坑区及马尼拉家具/取景仍有差别，不能称为精确复刻验收通过。纹理与光照重建也不是参考照片逐像素复制。\n\n## 功能与边界\n\n';
+for(const [file,label]of [['after-photo-regression.json','实际 GPU AO 平墙/接触阴影回归'],['after-functional.json','实际游戏交互/原子布局切换'],['after-rtc.json','双引擎实际 RTC'],['settings-ui.json','正式设置界面：真实光影与 AO'],['checks.json','生产构建与回归']])if(existsSync(new URL(file,root)))text+=`- [${label}](${file})\n`;
+text+='\nRTC 为本机两个独立引擎与会话、实际有序 DataChannel，不含公网信令/TURN 或跨设备验证。没有 Android 真机数据，不把桌面结果当作 Android 结论。完整操作、存档兼容、来源与素材流程见 [LEVEL0-REMAKE.md](../../LEVEL0-REMAKE.md)。\n';
+if(normalRows){text+='\n## 普通种子与边界\n\n[六视角截图](normal-contact.jpg) · [逐轮原始数据与相机](after-normal.json)\n\n|seed|x|y|中位/P95 ms|绘制调用|三角面|最大构建帧|每轮目标|\n|---|---:|---:|---:|---:|---:|---:|---|\n';for(const v of normalRows)text+='|'+v.seed+'|'+v.x+'|'+v.y+'|'+v.median+'/'+v.p95+'|'+v.draws+'|'+v.triangles+'|'+v.buildMaxFrame+'|'+(v.pass?'通过':'未达标')+'|\n';}
+if(feedback){text+='\n## 本轮材质反馈前后\n\n|场景|绘制调用|三角面|中位 ms|P95 ms|最大构建帧 ms|\n|---|---:|---:|---:|---:|---:|\n';for(const v of feedback)text+='|'+v.id+'|'+v.draws+'|'+v.triangles+'|'+v.median+'|'+v.p95+'|'+v.maxFrame+'|\n';text+='\n新材质可能增加绘制批次；构建峰值是单次采样，不代表稳定统计。\n';}
+text+='\n视觉补充：[本轮反馈前后](natural-light-comparison.jpg)、[模型近景](detail-contact.jpg)、[失焦对照](focus-contact.jpg)、[Bumper 灯光说明](../../BUMPER-LIGHTING.md)。\n';
+writeFileSync(new URL('REPORT.md',root),text);
+console.log(JSON.stringify({levelsPassed:rows.filter(v=>v.pass).length,total:rows.length,conditionsPassed:conditions.filter(v=>v.pass).length,regionsPassed:regions.filter(v=>v.pass).length,resourcesStable:stable}));

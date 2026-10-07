@@ -107,7 +107,7 @@ export interface ExitInstance {
   discovered: boolean
 }
 
-export type StructKind = import('../content/tradeDecor').TradeKind | import('../content/l5Decor').L5DecorKind | 'settlementprop' | 'settlementstation' | 'l4stairs' | 'l4prop'
+export type StructKind = import('../content/tradeDecor').TradeKind | import('../content/l5Decor').L5DecorKind | import('../content/alphaDecor').AlphaKind | 'settlementprop' | 'settlementstation' | 'l4stairs' | 'l4prop'
   | 'pillar' | 'car' | 'booth' | 'pipes' | 'valve' | 'gauge' | 'boiler'
   | 'generator' | 'cabinet' | 'trench' | 'cubicle' | 'copier' | 'server' | 'vending'
   | 'desk' | 'door' | 'ballroom' | 'lightgrid' | 'wet'   | 'graffiti' | 'crate'

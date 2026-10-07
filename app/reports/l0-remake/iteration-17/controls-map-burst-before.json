@@ -1,0 +1,34 @@
+{
+  "checks": [
+    "multiplayer entry hidden",
+    "preload option replaced by seed input",
+    "invalid seed rejected",
+    "decimal seed stored in displayed format",
+    "original map exposes reveal and no separate developer map",
+    "original map legend lists L0 regions",
+    "map preview does not spawn or explore the world",
+    "drag does not teleport",
+    "right click safely teleports",
+    "world panel disables the shared reveal switch",
+    "world panel reveals without writing exploration",
+    "original map reflects the world panel switch",
+    "arch map target reachable",
+    "minimap uses the same regional legend"
+  ],
+  "mapDraw": [
+    {
+      "name": "mini",
+      "median": 2.7000000001862645,
+      "p95": 5.099999999627471,
+      "samples": 100
+    },
+    {
+      "name": "large",
+      "median": 5.3999999994412065,
+      "p95": 103.20000000018626,
+      "samples": 100
+    }
+  ],
+  "pass": true,
+  "errors": []
+}
