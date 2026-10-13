@@ -4,7 +4,7 @@ const profile=(exposure:number,ambient:number,reflection:number,white:LightingPr
 /** Relative to each level's own weather/day/night/underwater lighting; no automatic exposure. */
 export const LEVEL_LIGHTING:Record<number,LightingProfile>={
  0:profile(.94,.55,.16,[1.025,1,.95],.09,.36),
- 1:profile(.97,.76,.42,[1.02,1,.97]),2:profile(.94,.64,.3,[1,.99,.96]),
+ 1:profile(.97,.24,.12,[.98,1,1.02]),2:profile(.94,.64,.3,[1,.99,.96]),
  3:profile(.92,.64,.28,[1.035,1,.96]),4:profile(1,.84,.56,[.98,1,1.025]),
  5:profile(.98,.76,.4,[1.025,1,.965]),6:profile(1,1,.035,[.97,1,1.035],.035,.18),
  7:profile(.93,.9,.68,[.98,1,1.015],.1,.2),8:profile(.97,.78,.32,[1.02,1,.97],.1,.4),

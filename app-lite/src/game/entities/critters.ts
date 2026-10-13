@@ -39,12 +39,12 @@ export const CRITTER_ENTITIES: Record<string, EntityDef> = {
     aggroStinger: true,
   },
   hound: {
-    type: 'hound', name: '猎犬', hp: 35, speed: 3.4, damage: 18, sight: 6, hearing: 12, hearsSprint: true, intimidatable: true, color: '#7e6c58', habitat: 'any',
-    desc: '四肢着地的人形掠食者，听觉极其灵敏，速度全实体中最快。',
+    type: 'hound', name: '猎犬', hp: 35, speed: 3.4, damage: 18, sight: 6, hearing: 12, hearsSprint: true, color: '#7e6c58', habitat: 'any',
+    desc: '灰白皮包骨的人形四足掠食者，长发垂过脸，满口利齿。看见人就会被激怒。',
     codex: {
       no: 'Entity 8「Hound」', danger: '4 级（高威胁）', habitat: 'Level 1 / Level 4 / Level 5 / Level 9 / Level 11 等多个层级',
-      behavior: '视力平平，但听觉半径极大，对奔跑脚步声尤其敏感——冲刺会把半个楼层外的它引来。Level 3 的个体智能显著更高：平日潜伏伏击，只在流浪者背对它们的瞬间发起攻击；被直视时会僵住不动。',
-      counter: '在它附近慢走，不要冲刺。若被盯上，直视它的眼睛并持续制造噪声（奔踏、反复挥击）可将它震慑在原地——但一旦移开视线或停止发声，它立刻恢复行动。',
+       behavior: '目击人类即被激怒，第一次锁定时会仰头嚎叫，召集附近同类带着更远的视野搜寻嚎叫处。听觉灵敏，奔跑声会把远处的它引来。看见它就逃跑会触发冲锋——冲锋快于步行，扑击造成震动与短暂减速。直接、持续的眼神接触能让它伏低后退，但只维持约 4 秒（持续制造噪音可延长），之后它会习惯你的目光，6 秒内不再惧怕。Level 3 的个体潜伏伏击，被直视时完全僵住。Level 11 的城市效应下存在中立个体：它们只远远观察，被攻击才会转为敌对。',
+      counter: '别跑。它靠近时盯住它的眼睛，趁它后退的几秒规划路线、慢慢离开。听见嚎叫就立刻躲到猎犬视线之外。Level 11 的中立猎犬别去招惹——打了一只，附近的都会扑上来。',
       lore: [
         '「猎犬」指一类四肢着地、骨骼结构明显异于人类的人形掠食者。其颈椎可以 180 度旋转，奔跑时关节发出湿响。',
         '它的内耳结构异常发达。实验记录显示，它对 12 米外的奔跑声的反应时间不足一秒，但对同距离慢速拖行声几乎无反应。',

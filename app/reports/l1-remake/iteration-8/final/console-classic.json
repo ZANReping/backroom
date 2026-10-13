@@ -1,0 +1,152 @@
+{
+  "errors": [
+    {
+      "exceptionId": 1,
+      "text": "Uncaught",
+      "lineNumber": 10,
+      "columnNumber": 42,
+      "scriptId": "213",
+      "url": "http://127.0.0.1:3013/src/game/renderer/l1BakedScene.ts",
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "buildL1BakedScene",
+            "scriptId": "213",
+            "url": "http://127.0.0.1:3013/src/game/renderer/l1BakedScene.ts",
+            "lineNumber": 10,
+            "columnNumber": 42
+          },
+          {
+            "functionName": "buildInfiniteChunk",
+            "scriptId": "134",
+            "url": "http://127.0.0.1:3013/src/game/renderer/renderer.ts",
+            "lineNumber": 2882,
+            "columnNumber": 46
+          },
+          {
+            "functionName": "syncInfinite",
+            "scriptId": "134",
+            "url": "http://127.0.0.1:3013/src/game/renderer/renderer.ts",
+            "lineNumber": 2678,
+            "columnNumber": 34
+          },
+          {
+            "functionName": "render",
+            "scriptId": "134",
+            "url": "http://127.0.0.1:3013/src/game/renderer/renderer.ts",
+            "lineNumber": 966,
+            "columnNumber": 11
+          },
+          {
+            "functionName": "frame",
+            "scriptId": "5",
+            "url": "http://127.0.0.1:3013/verifier/l0-remake.ts",
+            "lineNumber": 177,
+            "columnNumber": 4
+          }
+        ]
+      },
+      "exception": {
+        "type": "object",
+        "subtype": "error",
+        "className": "Error",
+        "description": "Error: Error: L1 atlas chart capacity exceeded\n    at buildL1BakedScene (http://127.0.0.1:3013/src/game/renderer/l1BakedScene.ts:11:43)\n    at buildL1BakedScene.next (<anonymous>)\n    at Renderer3D.buildInfiniteChunk (http://127.0.0.1:3013/src/game/renderer/renderer.ts:2883:47)\n    at buildInfiniteChunk.next (<anonymous>)\n    at Renderer3D.syncInfinite (http://127.0.0.1:3013/src/game/renderer/renderer.ts:2679:35)\n    at Renderer3D.render (http://127.0.0.1:3013/src/game/renderer/renderer.ts:967:12)\n    at frame (http://127.0.0.1:3013/verifier/l0-remake.ts:178:5)",
+        "objectId": "-413971162682760195.2.1",
+        "preview": {
+          "type": "object",
+          "subtype": "error",
+          "description": "Error: Error: L1 atlas chart capacity exceeded\n    at buildL1BakedScene (http://127.0.0.1:3013/src/game/renderer/l1BakedScene.ts:11:43)\n    at buildL1BakedScene.next (<anonymous>)\n    at Renderer3D.buildInfiniteChunk (http://127.0.0.1:3013/src/game/renderer/renderer.ts:2883:47)\n    at buildInfiniteChunk.next (<anonymous>)\n    at Renderer3D.syncInfinite (http://127.0.0.1:3013/src/game/renderer/renderer.ts:2679:35)\n    at Renderer3D.render (http://127.0.0.1:3013/src/game/renderer/renderer.ts:967:12)\n    at frame (http://127.0.0.1:3013/verifier/l0-remake.ts:178:5)",
+          "overflow": false,
+          "properties": [
+            {
+              "name": "stack",
+              "type": "string",
+              "value": "Error: Error: L1 atlas chart capacity exceeded\n   …ttp://127.0.0.1:3013/verifier/l0-remake.ts:178:5)"
+            },
+            {
+              "name": "message",
+              "type": "string",
+              "value": "Error: L1 atlas chart capacity exceeded"
+            }
+          ]
+        }
+      },
+      "executionContextId": 2
+    }
+  ],
+  "consoleMessages": [
+    {
+      "type": "warning",
+      "args": [
+        {
+          "type": "string",
+          "value": "THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead."
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1791521453388.685,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "warn",
+            "scriptId": "284",
+            "url": "http://127.0.0.1:3013/node_modules/.vite/deps/chunk-2BUXAFR3.js?v=f66ecc7d",
+            "lineNumber": 296,
+            "columnNumber": 14
+          },
+          {
+            "functionName": "WebGLShadowMap.render",
+            "scriptId": "284",
+            "url": "http://127.0.0.1:3013/node_modules/.vite/deps/chunk-2BUXAFR3.js?v=f66ecc7d",
+            "lineNumber": 37297,
+            "columnNumber": 6
+          },
+          {
+            "functionName": "WebGLRenderer.render",
+            "scriptId": "284",
+            "url": "http://127.0.0.1:3013/node_modules/.vite/deps/chunk-2BUXAFR3.js?v=f66ecc7d",
+            "lineNumber": 42096,
+            "columnNumber": 16
+          },
+          {
+            "functionName": "render",
+            "scriptId": "166",
+            "url": "http://127.0.0.1:3013/node_modules/.vite/deps/three_examples_jsm_postprocessing_RenderPass__js.js?v=f66ecc7d",
+            "lineNumber": 67,
+            "columnNumber": 13
+          },
+          {
+            "functionName": "render",
+            "scriptId": "219",
+            "url": "http://127.0.0.1:3013/src/game/renderer/photoPass.ts",
+            "lineNumber": 20,
+            "columnNumber": 10
+          },
+          {
+            "functionName": "render",
+            "scriptId": "170",
+            "url": "http://127.0.0.1:3013/node_modules/.vite/deps/three_examples_jsm_postprocessing_EffectComposer__js.js?v=f66ecc7d",
+            "lineNumber": 209,
+            "columnNumber": 11
+          },
+          {
+            "functionName": "render",
+            "scriptId": "134",
+            "url": "http://127.0.0.1:3013/src/game/renderer/renderer.ts",
+            "lineNumber": 1677,
+            "columnNumber": 41
+          },
+          {
+            "functionName": "frame",
+            "scriptId": "5",
+            "url": "http://127.0.0.1:3013/verifier/l0-remake.ts",
+            "lineNumber": 177,
+            "columnNumber": 4
+          }
+        ]
+      }
+    }
+  ],
+  "networkErrors": [],
+  "stderr": "\r\nDevTools listening on ws://127.0.0.1:9264/devtools/browser/cceee7b3-6593-4367-8c84-e528cb37de19\r\nCreated TensorFlow Lite XNNPACK delegate for CPU.\r\n[54080:53784:1009/125109.163:ERROR:chrome\\updater\\ipc\\update_service_dialer_win.cc:75] Failed to open named pipe server process 17736: 拒绝访问。 (0x5)\r\n[54080:54908:1009/125111.375:ERROR:chrome\\updater\\ipc\\update_service_dialer_win.cc:75] Failed to open named pipe server process 27992: 拒绝访问。 (0x5)\r\n[54080:53784:1009/125113.594:ERROR:chrome\\updater\\ipc\\update_service_dialer_win.cc:75] Failed to open named pipe server process 59308: 拒绝访问。 (0x5)\r\n[54080:54908:1009/125113.823:ERROR:chrome\\updater\\ipc\\update_service_dialer_win.cc:75] Failed to open named pipe server process 28320: 拒绝访问。 (0x5)\r\n[54080:53784:1009/125114.026:ERROR:chrome\\updater\\ipc\\update_service_dialer_win.cc:75] Failed to open named pipe server process 41256: 拒绝访问。 (0x5)\r\n[54080:54908:1009/125114.263:ERROR:chrome\\updater\\ipc\\update_service_dialer_win.cc:75] Failed to open named pipe server process 14856: 拒绝访问。 (0x5)\r\n[54080:58844:1009/125152.150:ERROR:google_apis\\gcm\\engine\\registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT\r\n[54080:58844:1009/125212.908:ERROR:google_apis\\gcm\\engine\\registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT\r\n[54080:58844:1009/125300.278:ERROR:google_apis\\gcm\\engine\\registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT\r\n"
+}

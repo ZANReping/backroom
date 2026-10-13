@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { DOCS } from '@/game/content/docs'
 import { audio } from '@/game/core/audio'
+import ManilaLetter from './ManilaLetter'
 
 const SERIF = "'SimSun','Songti SC',serif"
 
@@ -18,7 +19,7 @@ export default function DocOverlay({ docId, onClose }: { docId: string; onClose:
       // v29b：移动端改为正常点按关闭——touchend 直触（不再依赖 iOS 合成 click，避免误变长按判定）
       onTouchEnd={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
-      {doc.style === 'note' ? (
+      {doc.style === 'foundation' ? <ManilaLetter doc={doc} onClose={onClose}/> : doc.style === 'note' ? (
         /* 手写纸条风格：泛黄横线纸 + 斜体，无红头/落款（v34：L1 迎新纸条） */
         <div
           className="anim-slideUp relative flex max-h-[86dvh] w-full max-w-[620px] flex-col overflow-hidden rounded-sm"

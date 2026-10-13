@@ -1,6 +1,7 @@
 // 实体类型定义与 AI 状态机类型（游荡→调查→追击→攻击）
 export type AIState = 'idle' | 'wander' | 'investigate' | 'chase' | 'attack' | 'stunned'
 export type MothForm = 'male' | 'female' | 'larva' | 'guard'
+export type EntityForm = MothForm | import('./smilers').SmilerKind
 
 export interface EntityCodex {
   no: string // 档案编号
@@ -14,6 +15,7 @@ export interface EntityCodex {
 
 export interface EntityDef {
   mothForm?: MothForm // Entity 4 的实例子变种，统一 type / 图鉴 / 注册
+  smilerKind?: import('./smilers').SmilerKind // Entity 3 的实例子变种，统一 type / 图鉴 / 注册
   type: string
   name: string
   hp: number
@@ -118,6 +120,9 @@ export interface Entity {
   huntScanT?: number // 群落捕食目标扫描节流；避免高密度生态每帧进行实体数平方级 LOS 检查
   encountered?: boolean // v54：图鉴遭遇已计数（按个体去重——看见/索敌/攻击命中/特殊交互，每只只计一次）
   blackoutSpawn?: boolean // 停电期间生成（笑魇）：灯光恢复时消散
+  dl?: import('../engine/dullerAI').DullerState // v63：钝人运行时状态（潜伏/隔墙抓取/携物；不入存档/联机）
+  hd?: import('../engine/houndAI').HoundState // v62：猎犬（含 L11 中立变种）运行时状态（不入存档/联机）
+  sm?: import('./smilers').SmilerState // v61：笑魇变种与 AI 运行时状态（不入存档/联机）
   l9FogSpawn?: boolean // L9 罕见浓雾期间生成的残缺者；雾散后随之退散
   l10BurrowT?: number // L10 旧挖掘点事件蠕虫：离开现场后在 15～25 秒内退回地下
   flightBand?: import('../core/types').FloorBand // 飞行所依附楼层；避免高度越过 band 中线后误判跨层

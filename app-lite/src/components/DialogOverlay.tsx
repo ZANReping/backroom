@@ -105,11 +105,11 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 p-4" onClick={onClose}>
       <div
-        className="anim-slideUp hud-panel flex w-full max-w-[560px] gap-4 p-4"
+        className="dlg-panel anim-slideUp hud-panel flex w-full max-w-[600px] gap-4 p-4"
         style={{ background: 'var(--panel)', borderColor: facColor }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex w-[104px] shrink-0 flex-col items-center gap-1">
+        <div className="dlg-side flex w-[112px] shrink-0 flex-col items-center gap-1">
           <AvatarPreview avatar={avatar} npcId={def.id} npcDef={def} size={92} />
           <div className="font-title text-[15px]" style={{ color: 'var(--amber)' }}>{def.name}</div>
           <div className="font-mono2 text-center text-[10px]" style={{ color: 'var(--text-dim)' }}>{def.role}</div>
@@ -128,7 +128,8 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
           {mode === 'chat' && (
             <>
               <div
-                className="mb-3 min-h-[76px] border p-2 text-[13px] leading-relaxed"
+                data-speaker={def.name}
+                className="dlg-line mb-3 min-h-[76px] border p-2 text-[13px] leading-relaxed"
                 style={{ borderColor: 'var(--panel-edge)', color: 'var(--text)', background: 'rgba(0,0,0,0.25)' }}
               >
                 {noTalk ? `「……我跟你没什么好说的。」（与${fac!.name}的声望过低）` : isRand && !useLlm ? smallTalk : line}

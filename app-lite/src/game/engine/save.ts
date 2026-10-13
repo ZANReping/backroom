@@ -1,3 +1,5 @@
+import { captureL0,type L0WorldSave } from './l0State'
+import {captureGlowFlight} from './glowsticks'
 import { captureL1, type L1WorldSave } from './l1State'
 // v53：存档读写（自 engine.ts 拆分；逻辑逐语句搬运，存档格式/字段迁移语义不变）
 // v54：存档槽位——3 个手动槽 + 1 个自动保存槽（localStorage 键 br_save_slot1/2/3 + br_save_auto）。
@@ -10,6 +12,7 @@ import type { Difficulty } from './shared'
 import type { WarehouseState } from './warehouse'
 import type { AvenueMapMark, Engine, PlayerState } from '../engine'
 import { captureL11, type L11WorldSave } from './l11State'
+import { dullerSafePosition } from './dullerAI'
 
 // ===== v29a：存档/读档 =====
 // v54 起：各槽位自持全量快照（含 seed/difficulty），继续游戏时凭种子匹配恢复进度。
@@ -31,6 +34,7 @@ export const SAVE_KEY = 'br_save_state'
 const LEGACY_SEED_KEY = 'br_save'
 
 export interface SaveSnapshot {
+  glowProjectiles?: import('../engine').Projectile[]
   l5MothAlerts?: { all: boolean; nests: Record<string, boolean> }
   profile?: import('../core/playerProfile').PlayerProfile
   career?: import('./career').CareerSave
@@ -38,6 +42,8 @@ export interface SaveSnapshot {
   settlementLayout?: 1 | 2
   alphaLayout?: 1 | 2 | 3 | 4 | 5
   bntgLayout?:3
+  l0World?: L0WorldSave
+  l0SharedWorld?: L0WorldSave
   l1World?: L1WorldSave
   l11World?: L11WorldSave
   l11Weather?: {kind:'calm'|'gust'|'rain'|'mist';t:number;k:number;wetness:number}
@@ -127,8 +133,12 @@ export function clearRunSlots(eng: Engine) {
 // v29a：当前进度快照（纯 JSON 可序列化）
 export function snapshot(eng: Engine): SaveSnapshot {
   const inf = eng.map?.inf
+  const safe = dullerSafePosition(eng)
   return {
     v: 1,
+    glowProjectiles: captureGlowFlight(eng),
+    l0World: captureL0(eng),
+    l0SharedWorld: eng.l0SharedWorld,
     l1World: captureL1(eng),
     l11World: captureL11(eng),
     l5MothAlerts: eng.levelDef.id===5 && inf?.mothAlerts ? structuredClone(inf.mothAlerts) : undefined,
@@ -138,7 +148,7 @@ export function snapshot(eng: Engine): SaveSnapshot {
     time: eng.time,
     mapSeed: eng.mapSeed,
     mapFirstVisit: eng.mapFirstVisit,
-    worldPos: inf ? { x: inf.ox + eng.player.x, y: inf.oy + eng.player.y } : undefined,
+    worldPos: inf ? { x: inf.ox + (safe?.x??eng.player.x), y: inf.oy + (safe?.y??eng.player.y) } : undefined,
     level: eng.player.level,
     visited: [...eng.visitedLevels],
     career: structuredClone(eng.career),
@@ -162,7 +172,7 @@ export function snapshot(eng: Engine): SaveSnapshot {
     avenueMarks: eng.player.level === 8 ? eng.avenueMarks.map((mk) => ({ ...mk })) : undefined,
     avenueHintSeq: eng.player.level === 8 ? eng.avenueHintSeq : undefined,
     l10Weather: eng.player.level === 10 ? { ...eng.l10Weather } : undefined,
-    player: JSON.parse(JSON.stringify(eng.player)),
+    player: JSON.parse(JSON.stringify(safe?{...eng.player,...safe,vz:0}:eng.player)),
   }
 }
 /** 立即写盘（暂停/退回主界面写绑定槽；周期与切层自动存档显式传 'auto'；死亡与胜利后不再覆盖存档） */

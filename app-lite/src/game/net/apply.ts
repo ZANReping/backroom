@@ -1,3 +1,4 @@
+import {syncL0Revisions,syncL0Dynamics,l0Space,rememberL0Event} from '../engine/l0State'
 import { syncL1Crates } from '../engine/l1State'
 // v58 联机：远端世界事件应用到本地（先到先得共享物资/容器/门；出口/死亡播报）
 // v59：全局事件（L1「闪烁」停电链）+ 房主权威实体快照应用（提线木偶）+ 联机战斗伤害结算
@@ -7,14 +8,20 @@ import { makeEntity, type Entity } from '../entities'
 import { LEGACY_MOTH_FORMS, mothDefinition, mothFormOf } from '../entities/moths'
 import { chunkKey, CS } from '../world/infinite'
 
+const receivedL0=new WeakMap<Engine,Set<string>>()
 export function applyMpEvent(eng: Engine, e: MpEvent) {
   const m = eng.map
   if (!m) return
+  if(eng.mpSession?.isHost)rememberL0Event(eng,e)
+  if(e.scopeLevel!==undefined&&(eng.player.level!==e.scopeLevel||(e.scopeLevel===0&&e.space!==l0Space(m))))return
+  if(e.scopeLevel===0&&e.eventId){const seen=receivedL0.get(eng)??new Set<string>();if(seen.has(e.eventId))return;seen.add(e.eventId);receivedL0.set(eng,seen);if(seen.size>4096)seen.delete(seen.values().next().value!)}
   const ox = m.inf?.ox ?? 0, oy = m.inf?.oy ?? 0
   eng.applyingNet = true // 防止应用远端事件时再次广播（回环）
   try {
     switch (e.t) {
+      case 'l0world': {syncL0Revisions(eng,e.seed,e.revisions);syncL0Dynamics(eng,e);break}
       case 'takeItem': {
+        if(e.scopeLevel===0)m.inf?.taken.add(e.id)
         const it = m.items.find((i) => i.id === e.id)
         if (it) {
           m.items = m.items.filter((i) => i !== it)
@@ -23,6 +30,7 @@ export function applyMpEvent(eng: Engine, e: MpEvent) {
         break
       }
       case 'dropItem': {
+        if(e.scopeLevel===0&&m.inf?.taken.has(e.id))break
         // 房主击杀掉落：世界坐标 → 本端窗口坐标；窗口内且不重复才落地（stitch 时吸收进 chunk 持久化）
         const x = e.x - ox, y = e.y - oy
         if (x >= 0 && y >= 0 && x < m.w && y < m.h && !m.items.some((i) => i.id === e.id))

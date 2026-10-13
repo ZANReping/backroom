@@ -7,6 +7,16 @@
 - Current development and acceptance target single-player gameplay. A general request to continue development does not reopen multiplayer.
 - This requirement applies to the Three.js game in `app`; do not propagate changes into `app-lite` without a separate request.
 
+## Script-based verification (user requirement, 2026-10-08)
+
+- Use command-line scripts as the default verification method. For the Three.js game in `app`, reuse existing verification scripts and prefer Playwright or direct Chrome DevTools Protocol (CDP) automation for browser checks. Browser/Computer Use plugins are not the routine default.
+- Run automated browser checks in true headless mode: set Playwright `headless: true` or launch Chrome with `--headless=new`. Hiding a tab/window or using PowerShell `-WindowStyle Hidden` does not establish headless mode; verify the actual launch options.
+- Each chat must use its own QA browser profile and debugging port. Use separate development-server ports for concurrent checks, and verify the browser/server belongs to that chat before connecting to or closing it. Do not attach to the user's everyday browser profile or tabs unless explicitly requested.
+- For gameplay or visual changes, exercise the actual running game and verify the relevant behavior. A successful build or static check alone is insufficient. For visual checks, inspect the generated screenshots and use reproducible seeds, camera views, viewport sizes and quality settings where applicable.
+- Save relevant screenshots, verification results and browser console/runtime errors in `app/reports/` or the existing task report directory, and report the commands used and any checks that remain unverified.
+- Clean up the QA browsers and development servers created by that chat when verification finishes or fails. Verify process ownership before terminating anything; preserve processes owned by other chats or the user.
+- Use an interactive or headed browser only when the user requests it or a specific check requires it, such as pointer-lock interaction or reproducing a display-only issue. Explain the reason, limit its use to that check, and return to scripted verification afterwards.
+
 ## Game models and texture assets
 
 - Models may be authored in Blender and imported into the game. Reuse suitable open-source/openly licensed models when their license permits the intended distribution; optimize mesh, UVs, materials and scale for the project's runtime and performance budget.

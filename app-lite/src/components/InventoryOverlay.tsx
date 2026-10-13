@@ -1,11 +1,16 @@
 // 背包/图鉴/状态/地图 覆盖层
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import {drawL0Map} from '@/game/content/l0Map'
+import { drawMapPlayer } from '@/game/content/mapPlayer'
+import { look } from '@/game/core/renderer3d'
+import { mapSight } from '@/game/world/mapSight'
+import L0MapLegend from './L0MapLegend'
 import { npcPortrait } from './npcPortrait'
 import type { Engine, SlotRef, SlotWhere } from '@/game/engine'
 import { l11MapMarks } from '@/game/engine/l11State'
 import { ITEMS, itemUseProfile } from '@/game/content/items'
 import { storage } from '@/game/core/storage'
-import { ENTITIES, MOTH_FORMS, mergeMothCodex, unlockTier, loadSeen, entitySpawnLevels, entityThreat, entityRarity, type EntityRarity } from '@/game/entities'
+import { ENTITIES, MOTH_FORMS, SMILER_KINDS, mergeMothCodex, unlockTier, loadSeen, entitySpawnLevels, entityThreat, entityRarity, type EntityRarity } from '@/game/entities'
 import { LevelClassBanner, CecsBox } from './CodexWidgets'
 import { ENTITY_FACTION, FACTION_FONTS, IOTS_FREQ_COLORS, IOTS_FREQ_VALUES, IOTS_ORIGIN_VALUES, IOTS_UTIL_VALUES, itemIOTS, itemIOTSLevel } from '@/game/content/codexScores'
 import { WIN_TAPES, LEVELS, ALL_LEVEL_DEFS, levelNo, levelLabel, levelDefOf } from '@/game/levels'
@@ -18,7 +23,7 @@ import { ItemGlyph } from './HUD'
 import AvatarPreview from './AvatarPreview'
 import { loadAvatar } from '@/game/core/avatar'
 import { audio } from '@/game/core/audio'
-import { getKeybinds } from '@/game/core/keybinds'
+import { bindLabel, getKeybinds } from '@/game/core/keybinds'
 import { DOCS } from '@/game/content/docs'
 import { OUTPOSTS, isLandmarkStruct } from '@/game/content/outposts'
 import { NPCS, npcAvatar } from '@/game/content/npcs'
@@ -31,6 +36,7 @@ import FactionTerminal from './FactionTerminal'
 import { FACTION_TERMINALS, isEnhancedFaction, isNewFaction, questFaction, NEW_FACTIONS } from '@/game/content/factionTerminals'
 import { completedFactionLines, factionState, trackFactionTask } from '@/game/engine/factionMissions'
 import DocOverlay from './DocOverlay'
+import {requestDevMapPreview,devMapTeleport,type DevMapPreview} from '@/game/engine/devMap'
 import AlphaMapPanel from './AlphaMapPanel'
 // （物品显示稀有度已由 IOTS 罕见度取代，见 codexScores.ITEM_IOTS / IOTS_FREQ_COLORS）
 import { PHENOMENA, rarityText } from '@/game/content/phenomena'
@@ -89,6 +95,11 @@ export function discoverFromEngine(eng: Engine) {
 function BigMap({ engine }: { engine: Engine }) {
   const ref = useRef<HTMLCanvasElement>(null)
   const [zoom, setZoom] = useState(4)
+  const [,refreshMap]=useState(0)
+  const reveal=engine.devEnabled&&engine.dev.mapReveal
+  const [preview,setPreview]=useState<DevMapPreview|null>(null)
+  const [mapMessage,setMapMessage]=useState('')
+  const teleporting=useRef(false)
   // v35：拖动平移（指针拖动，单位=瓦片；「回正」复位到玩家居中）
   const [pan, setPan] = useState({ x: 0, y: 0 })
   const drag = useRef<{ px: number; py: number; ox: number; oy: number } | null>(null)
@@ -126,11 +137,25 @@ function BigMap({ engine }: { engine: Engine }) {
   const playerBand = (typeof pf === 'number' && Number.isFinite(pf) ? Math.max(-1, Math.min(2, Math.floor(pf))) : 0) as FloorBand
   const [floorSel, setFloorSel] = useState<FloorBand | null>(null)
   const viewFloor: FloorBand = floorSel ?? playerBand
+  useEffect(()=>{
+    if(!engine.devEnabled||!reveal){setPreview(null);return}
+    const c=new AbortController(),m=engine.map
+    if(!m)return
+    const timeout=setTimeout(()=>{void requestDevMapPreview(engine,{x:engine.player.x+pan.x+(m.inf?.ox??0),y:engine.player.y+pan.y+(m.inf?.oy??0),span:Math.min(512,480/zoom),floor:viewFloor},c.signal).then(setPreview).catch(e=>{if(e.name!=='AbortError')setMapMessage('地图预览暂不可用')})},40)
+    return()=>{clearTimeout(timeout);c.abort()}
+  },[engine,pan,zoom,viewFloor,reveal,engine.map?.inf?.rev])
+  const host=useRef<HTMLDivElement>(null)
+  const [mapSize,setMapSize]=useState(400)
+  useLayoutEffect(()=>{
+    const el=host.current;if(!el)return
+    const measure=()=>setMapSize(Math.min(el.clientWidth||400,480))
+    const observer=new ResizeObserver(measure);observer.observe(el);measure();return()=>observer.disconnect()
+  },[])
   useEffect(() => {
     const c = ref.current
     const m = engine.map
     if (!c || !m) return
-    const size = Math.min(c.parentElement?.clientWidth ?? 400, 480)
+    const size = mapSize
     c.width = size; c.height = size
     const g = c.getContext('2d')!
     g.fillStyle = '#0a0908'; g.fillRect(0, 0, size, size)
@@ -141,10 +166,10 @@ function BigMap({ engine }: { engine: Engine }) {
     // v54c：wallwindow 格按墙绘制（瓦片虽雕成地板，渲染/碰撞均为整格墙）
     const wwSet = new Set<number>()
     for (const st of m.structures) if (st.kind === 'wallwindow') wwSet.add(Math.floor(st.y + st.h / 2) * m.w + Math.floor(st.x + st.w / 2))
-    for (let y = 0; y < m.h; y++)
+    if(!(m.inf?.l0&&viewFloor===0))for (let y = 0; y < m.h; y++)
       for (let x = 0; x < m.w; x++) {
         const i = y * m.w + x
-        if (!engine.explored[i]) continue
+        if (!(engine.devEnabled&&reveal) && !engine.explored[i]) continue
         // v43：多层按层过滤——上层画 up 楼板（灰绿底色区分），主层画 tiles；v54：三层视图画 up2 楼板
         if (viewFloor === -1) {
           if (m.dn[i] !== 1 && m.dnWall[i] !== 1) continue
@@ -157,10 +182,19 @@ function BigMap({ engine }: { engine: Engine }) {
           g.fillStyle = wallA[i] === 1 ? '#1d2b25' : '#31423a'
         } else {
           if (m.tiles[i] !== 1 || wwSet.has(i)) continue
-          g.fillStyle = '#3a3423'
+          g.fillStyle = m.elev[i]===4?'#060606':m.tint[i]===2?'#642629':m.tint[i]===3?'#22221e':'#3a3423'
         }
         g.fillRect(x * s, y * s, s, s)
       }
+    if(m.inf?.l0&&viewFloor===0){
+      drawL0Map(g,engine,{x0:px-size/(2*s),y0:py-size/(2*s),x1:px+size/(2*s),y1:py+size/(2*s),scale:s,preview})
+    }else if(engine.devEnabled&&reveal&&preview){
+      for(const c of preview.cells){
+        const ox=c.cx*32-(m.inf?.ox??0),oy=c.cy*32-(m.inf?.oy??0)
+        for(let i=0;i<1024;i++){if(!c.tiles[i])continue;g.fillStyle=c.tiles[i]!==1?'#9b906f':c.elev[i]===4?'#060606':c.tint[i]===2?'#642629':c.tint[i]===3?'#22221e':'#3a3423';g.fillRect((ox+i%32)*s,(oy+(i>>5))*s,s,s)}
+        g.fillStyle='#b4a477';for(const w of c.walls)g.fillRect((w.x-(m.inf?.ox??0))*s,(w.y-(m.inf?.oy??0))*s,Math.max(.7,w.w*s),Math.max(.7,w.h*s))
+      }
+    }
     // v54：楼梯坡道标记（仅多层地图）——亮青三角指向上行方向（dir 1+x 2-x 3+y 4-y），与出口金点/地标黄三角区分；
     // 按视图楼层过滤：坡道格在该层有地面/楼板才显示（1F 看 tiles，2F 看 up，3F 看 up2），未探索不显示
     if (floors > 1) {
@@ -273,18 +307,25 @@ function BigMap({ engine }: { engine: Engine }) {
     }
     // 玩家：画在真实地图坐标（随内容平移——拖远可出画面；「回正」按钮归位到玩家居中），
     // 本层高亮，另一层淡显（多层时提示玩家不在当前视图层）
-    g.fillStyle = viewFloor === playerBand ? '#e8b93c' : 'rgba(232,185,60,0.3)'
-    g.beginPath(); g.arc(engine.player.x * s, engine.player.y * s, 4, 0, 7); g.fill()
+    drawMapPlayer(g, engine.player.x * s, engine.player.y * s, look.yaw, { scale: s, radius: 5, alpha: viewFloor === playerBand ? 1 : .3, sight: mapSight(engine, look.yaw) })
     g.restore()
-  }, [engine, zoom, pan, viewFloor, floors, playerBand])
+  }, [engine, mapSize, zoom, pan, viewFloor, floors, playerBand, preview, reveal, look.yaw, engine.player.x, engine.player.y, engine.mapRev, engine.map?.inf?.rev])
   return (
     <div className="flex flex-col items-center gap-2">
       {/* v46：画布与侧缘切层按钮的相对定位容器（1F/2F 按钮移到地图右侧缘竖排） */}
-      <div className="relative">
+      <div ref={host} className="relative w-full max-w-[480px]">
         <canvas
+          data-world-map="true"
           ref={ref}
-          style={{ imageRendering: 'pixelated', border: '1px solid var(--panel-edge)', touchAction: 'none', cursor: drag.current ? 'grabbing' : 'grab' }}
+          style={{ width: mapSize, height: mapSize, imageRendering: 'pixelated', border: '1px solid var(--panel-edge)', touchAction: 'none', cursor: drag.current ? 'grabbing' : 'grab' }}
+          onContextMenu={async(e)=>{
+            if(!engine.devEnabled)return;e.preventDefault();if(teleporting.current)return
+            const c=e.currentTarget,r=c.getBoundingClientRect(),x=engine.player.x+pan.x+(e.clientX-r.left-r.width/2)/zoom+(engine.map?.inf?.ox??0),y=engine.player.y+pan.y+(e.clientY-r.top-r.height/2)/zoom+(engine.map?.inf?.oy??0)
+            teleporting.current=true;setMapMessage('正在检查落点…')
+            try{const ok=await devMapTeleport(engine,{x,y,floor:viewFloor});setMapMessage(ok?`已传送到 ${x.toFixed(1)}, ${y.toFixed(1)}`:'附近没有安全落点，原位置保留');if(ok)setPan({x:0,y:0})}catch{setMapMessage('无法传送，原位置保留')}finally{teleporting.current=false}
+          }}
           onPointerDown={(e) => {
+            if(e.button!==0)return
             e.currentTarget.setPointerCapture(e.pointerId)
             drag.current = { px: e.clientX, py: e.clientY, ox: pan.x, oy: pan.y }
           }}
@@ -311,12 +352,15 @@ function BigMap({ engine }: { engine: Engine }) {
           </div>
         )}
       </div>
+      {engine.devEnabled&&<div className="flex items-center gap-3 text-xs"><label><input type="checkbox" checked={reveal} onChange={e=>{engine.dev.mapReveal=e.target.checked;refreshMap(n=>n+1)}}/> 地图全开</label><span>右键安全传送 · 拖动平移</span></div>}
+      {engine.map?.inf?.l0&&<L0MapLegend/>}
+      {mapMessage&&<div className="text-xs" role="status">{mapMessage}</div>}
       {floorText && <div className="font-mono2 text-[12px]" style={{ color: 'var(--amber)' }}>{floorText}</div>}
       <div className="flex gap-2">
         <button className="menu-btn px-4 py-1" onClick={() => setZoom((z) => Math.max(2, z - 1))}>－</button>
         <button className="menu-btn px-4 py-1" onClick={() => setZoom((z) => Math.min(10, z + 1))}>＋</button>
         <button
-          className="menu-btn px-4 py-1"
+          className="menu-btn whitespace-nowrap px-4 py-1"
           style={{ opacity: pan.x || pan.y ? 1 : 0.45 }}
           title="回到玩家居中"
           onClick={() => { setPan({ x: 0, y: 0 }); audio.uiTick() }}
@@ -366,7 +410,7 @@ function itemStatChips(it: (typeof ITEMS)[string], engine?: Engine, berryDest?: 
   if (it.value3) chips.push(`口渴 ${it.value3 >= 0 ? '+' : ''}${it.value3}`)
   // 液态痛苦（Object 48）：危险消耗品——自饮重创，装枪高伤
   if (it.type === 'liquidpain') chips.push('饮用：生命 -35 · 理智 -55 · 口渴 -30', '装入滋水枪：腐蚀水线 60 伤害', '⚠ 切勿饮用')
-  if (it.throw) chips.push(`投掷：${{ explode: '范围伤害', shock: '电击+眩晕', noise: '声响引怪', lure: '引路者诱饵' }[it.throw]}`)
+  if (it.throw) chips.push(`投掷：${{ explode: '范围伤害', shock: '电击+眩晕', noise: '声响引怪', lure: '引路者诱饵', light: '绿色照明 · 可回收' }[it.throw]}`)
   if (it.passive) chips.push(`被动：${it.passive}`)
   if (it.equip) chips.push(`装备位：${{ offhand: '副手', body: '身体', gloves: '手套', head: '头饰', pocket: '口袋' }[it.equip]}`)
   // 特殊机制
@@ -381,7 +425,7 @@ function itemStatChips(it: (typeof ITEMS)[string], engine?: Engine, berryDest?: 
   return chips
 }
 
-const FILTER_SEL_STYLE = { background: 'var(--panel)', color: 'var(--text)', border: '1px solid var(--panel-edge)', padding: '2px 4px' } as const
+const FILTER_SEL_STYLE = { background: 'var(--panel)', color: 'var(--text)', border: '1px solid var(--panel-edge)', padding: '3px 6px', borderRadius: 'var(--ui-radius)' } as const
 
 /** 全部物品的 IOTS 分类缓存（静态数据，模块级计算一次） */
 const ITEM_IOTS: Record<string, { frequency: string; utility: string; origin: string }> =
@@ -485,6 +529,19 @@ function CodexDetail({ detail, onBack }: { detail: { kind: 'entity' | 'item' | '
                     <div key={form.name} className="text-[12px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>
                       <span style={{ color: 'var(--text)' }}>{form.name}</span>：{form.desc}
                       <div style={{ color: tier >= 2 ? 'var(--text-dim)' : 'var(--text-muted)' }}>{tier >= 2 ? form.behavior : '【行为未解锁】'}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {e.type === 'smiler' && (
+              <div className="mt-3 border-t pt-2" style={{ borderColor: 'var(--panel-edge)' }}>
+                <div className="font-mono2 mb-1 text-[11px]" style={{ color: 'var(--amber)' }}>子变种</div>
+                <div className="grid gap-1">
+                  {Object.values(SMILER_KINDS).map((kind) => (
+                    <div key={kind.name} className="text-[12px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>
+                      <span style={{ color: 'var(--text)' }}>{kind === SMILER_KINDS.common ? '普通笑魇' : kind.name}</span>：{kind.desc}
+                      <div style={{ color: tier >= 2 ? 'var(--text-dim)' : 'var(--text-muted)' }}>{tier >= 2 ? kind.behavior : '【行为未解锁】'}</div>
                     </div>
                   ))}
                 </div>
@@ -743,12 +800,12 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
       <button
         key={`${w}${i}`}
         data-inv-slot="" data-w={w} data-i={i}
-        className="relative flex items-center justify-center border"
+        className={`wb-slot relative flex items-center justify-center border ${s ? 'has-item' : ''} ${selected || isLocked ? 'is-selected' : ''}`}
         style={{
           width: 56, height: 56,
           touchAction: 'none', // 拖拽手势不从格子滚动页面（移动端 preventDefault 等效）
           borderColor: isTarget ? 'var(--amber)' : isLocked ? 'var(--amber)' : selected ? 'var(--amber)' : 'var(--panel-edge)',
-          background: isTarget ? 'rgba(232,185,60,0.22)' : isLocked ? 'rgba(232,185,60,0.18)' : selected ? 'rgba(232,185,60,0.12)' : 'rgba(0,0,0,0.3)',
+          background: isTarget ? 'color-mix(in srgb, var(--amber) 22%, transparent)' : isLocked ? 'color-mix(in srgb, var(--amber) 18%, transparent)' : selected ? 'color-mix(in srgb, var(--amber) 12%, transparent)' : undefined,
           boxShadow: isTarget ? '0 0 10px rgba(232,185,60,0.6), inset 0 0 6px rgba(232,185,60,0.4)' : isLocked ? '0 0 8px rgba(232,185,60,0.5), inset 0 0 6px rgba(232,185,60,0.35)' : 'none',
           transform: isTarget ? 'scale(1.08)' : 'none',
           opacity: isSource ? 0.35 : 1,
@@ -899,29 +956,38 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
           </div>
         </div>
       )}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-10">
-        <span className="font-mono2 text-[40px]" style={{ color: 'var(--text)' }}>PAUSED</span>
-      </div>
       <div
-        className="hud-panel anim-slideUp max-h-[88dvh] w-full max-w-[720px] overflow-y-auto p-4 lg:max-w-[1024px] max-md:fixed max-md:inset-x-0 max-md:bottom-0 max-md:max-h-[85dvh] max-md:max-w-none"
-        style={{ background: 'var(--panel)', minHeight: 320 }}
+        className="wb-panel hud-panel anim-slideUp w-full max-w-[720px] lg:max-w-[1024px] max-md:fixed max-md:inset-x-0 max-md:bottom-0 max-md:max-w-none"
+        style={{ background: 'var(--panel)' }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="mb-3 flex items-center justify-between">
-          <div className="flex gap-4">
-            {TABS.map((t) => (
-              <button
-                key={t}
-                className="pb-1 text-[15px]"
-                style={{ color: tab === t ? 'var(--amber)' : 'var(--text-dim)', borderBottom: tab === t ? '2px solid var(--amber)' : '2px solid transparent' }}
-                onClick={() => { setTab(t); audio.uiTick() }}
-              >
-                {t}
-              </button>
-            ))}
+        {/* 2026-10 UI：工作台外壳——标题 + 档案夹分页（附快捷键）+ 关闭；内容区独立滚动，切页不跳尺寸 */}
+        <div className="wb-head">
+          <div className="wb-title">
+            <span className="wb-kicker font-mono2">FIELD KIT · 档案工作台</span>
+            <span className="wb-meta font-mono2">磁带 {p.tapes}/{WIN_TAPES}</span>
           </div>
-          <button className="font-mono2 border px-3 py-1 text-[12px]" style={{ borderColor: 'var(--panel-edge)', color: 'var(--text-dim)' }} onClick={onClose}>关闭</button>
+          <nav className="wb-tabs" role="tablist">
+            {TABS.map((t) => {
+              const kb = getKeybinds()
+              const key = ({ 背包: kb.inventory, 图鉴: kb.codex, 状态: kb.status, 地图: kb.map, 日志: kb.log, 任务: kb.quest } as Record<string, string | undefined>)[t]
+              return (
+                <button
+                  key={t}
+                  role="tab"
+                  aria-selected={tab === t}
+                  className={`wb-tab ${tab === t ? 'is-active' : ''}`}
+                  onClick={() => { setTab(t); audio.uiTick() }}
+                >
+                  <span>{t}</span>
+                  {key && <kbd className="wb-key font-mono2">{bindLabel(key)}</kbd>}
+                </button>
+              )
+            })}
+          </nav>
+          <button className="set-close font-mono2" aria-label="关闭" onClick={onClose}>✕<span>Esc</span></button>
         </div>
+        <div className="wb-body">
 
         {tab === '背包' && (
           // v20 修复：三栏仅在 lg（≥1024px）启用——720px 面板下中栏仅 ~226px，背包 8 列（476px）严重挤压重叠；
@@ -933,7 +999,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
               <div className="hud-panel max-h-[46dvh] overflow-y-auto p-3">{detailBody}</div>
             ) : (
             <div className="hud-panel flex flex-col items-center gap-1 p-2">
-              <div className="font-mono2 text-[11px]" style={{ color: 'var(--amber)' }}>装备</div>
+              <div className="wb-label font-mono2">装备</div>
               <AvatarPreview avatar={loadAvatar()} gloves={p.hasGloves} suit={p.hasSuit} cavingsuit={p.equip.body?.type === 'cavingsuit'} divemask={p.equip.head?.type === 'divemask'} headlamp={p.equip.head?.type === 'headlamp'} nightvision={p.equip.head?.type === 'nightvision'} size={132} />
               <div className="mt-1 grid grid-cols-2 gap-1.5">
                 {/* 主手：展示快捷栏当前选中项（非独立槽位，不可拖放） */}
@@ -968,9 +1034,9 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
             </div>
             )}
             <div>
-              <div className="font-mono2 mb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>快捷栏</div>
+              <div className="wb-label font-mono2">快捷栏 <span>{p.hotbar.filter(Boolean).length}/{p.hotbar.length}</span></div>
               <div className="mb-3 flex flex-wrap gap-1.5">{p.hotbar.map((s, i) => slotBtn(s, 'hotbar', i))}</div>
-              <div className="font-mono2 mb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>背包</div>
+              <div className="wb-label font-mono2">背包 <span>{p.backpack.filter(Boolean).length}/{p.backpack.length}</span></div>
               {/* v20：移动端 4 列（242px 适配 390px 屏；原 6 列 366px 溢出），md 起 8 列×2 行 */}
               <div className="grid grid-cols-4 gap-1.5 md:grid-cols-8">{p.backpack.map((s, i) => slotBtn(s, 'backpack', i))}</div>
             </div>
@@ -990,7 +1056,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
           ) : (
           <div className="codex-list">
             {/* 分类子页面切换：实体 / 层级 / 物品 / 现象 */}
-            <div className="font-mono2 mb-2 flex gap-1 text-[11px]">
+            <div className="wb-cats font-mono2 mb-3 flex flex-wrap items-center gap-1 text-[11px]">
               {(['层级', '实体', '物品', '现象', '团体', '据点', '人士', '文档'] as const).map((c) => (
                 <button
                   key={c}
@@ -1207,7 +1273,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
             )}
             {codexCat === '文档' && (
             <div className="grid gap-2">
-              <div className="font-mono2 mb-1 text-[11px]" style={{ color: 'var(--amber)' }}>文档（查看过的 M.E.G. 文档会保存在这里，可反复阅读）</div>
+              <div className="font-mono2 mb-1 text-[11px]" style={{ color: 'var(--amber)' }}>文档（查看过的文件会保存在这里，可反复阅读）</div>
               {Object.values(DOCS).map((d) => {
                 const unlocked = !!codex[`doc_${d.id}`]
                 return (
@@ -1488,6 +1554,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
             })}
           </div>
         )}
+        </div>
       </div>
       {/* 图鉴「文档」阅读视图（盖在覆盖层之上；阻止点击冒泡误关背包） */}
       {readingDoc && (

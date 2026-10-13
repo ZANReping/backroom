@@ -1,4 +1,6 @@
 import { ALPHA_BLUEPRINT as blueprint, ALPHA_DISTRICTS, ALPHA_ENTRIES, ALPHA_DOORWAYS } from './alphaBlueprint'
+import { drawMapPlayer } from './mapPlayer'
+import type { MapSight } from '../world/mapSight'
 import type { Rect, RoomSpec } from './settlementTypes'
 
 const contains=(r:Rect,x:number,y:number)=>x>=r.x&&x<r.x+r.w&&y>=r.y&&y<r.y+r.h
@@ -23,7 +25,7 @@ export const alphaRoomColor=(r:RoomSpec)=>r.style==='lab'?'#e9b887':r.style==='o
 export const alphaRoomName=(r:RoomSpec)=>r.name.replace(/^.*? · /,'').replace('研究员办公室 ','办公室 ').replace('值班宿舍 ','宿舍 ')
 
 /** Both HUD and expanded maps use this published base plan, independent of exploration fog. */
-export function drawAlphaMap(g:CanvasRenderingContext2D,size:number,player:{x:number;y:number},options:{mini?:boolean;region?:string|null;yaw?:number;height?:number}={}){
+export function drawAlphaMap(g:CanvasRenderingContext2D,size:number,player:{x:number;y:number},options:{mini?:boolean;region?:string|null;yaw?:number;height?:number;sight:MapSight}){
  const mini=options.mini??false,region=options.region??null,bounds=alphaRegionBounds(region),pad=mini?5:22
  const height=options.height??size,scale=Math.min((size-pad*2)/bounds.w,(height-pad*2)/bounds.h),ox=(size-bounds.w*scale)/2-bounds.x*scale,oy=(height-bounds.h*scale)/2-bounds.y*scale
  const current=alphaRegionAt(player.x,player.y)
@@ -69,8 +71,7 @@ export function drawAlphaMap(g:CanvasRenderingContext2D,size:number,player:{x:nu
  }
  const px=ox+player.x*scale,py=oy+player.y*scale
  if(px>=2&&py>=2&&px<=size-2&&py<=height-2){
-  g.save();g.translate(px,py);g.rotate(-(options.yaw??0));g.fillStyle='#fff4b5';g.strokeStyle='#172c2c';g.lineWidth=mini?1.2:2
-  const r=mini?3.5:6;g.beginPath();g.moveTo(0,-r*1.5);g.lineTo(r,r);g.lineTo(0,r*.48);g.lineTo(-r,r);g.closePath();g.fill();g.stroke();g.restore()
+  drawMapPlayer(g,px,py,options.yaw??0,{scale, radius:mini?3.5:5,color:'#fff4b5',sight:options.sight})
  }
  g.restore();g.fillStyle='#ecede1';g.font=`bold ${mini?8:12}px system-ui`;g.textAlign='left';g.textBaseline='top';g.fillText('N ↑',mini?5:10,mini?4:9)
  g.restore()

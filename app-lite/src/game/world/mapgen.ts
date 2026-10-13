@@ -276,6 +276,14 @@ export function l7SeaHAt(m: GameMap, x: number, y: number): number {
 // 连续地面高度（世界坐标，坡道 smoothstep 平滑插值；玩家脚底/相机/实体站立用）
 // band：楼层高度带（0=主层 1=上层 2=第三层[v54]），上层非楼梯瓦片地面=band×FLOOR_H
 export function floorHeight(m: GameMap, x: number, y: number, band: FloorBand = bandOfZ(0)): number {
+  if(band===0&&m.inf?.l0){
+    const wx=x+m.inf.ox,wy=y+m.inf.oy,a=m.inf.chunks.get(`${Math.floor(wx/32)},${Math.floor(wy/32)}`)?.l0
+    if(a){
+      if(a.pits.some(r=>wx>=r.x&&wx<r.x+r.w&&wy>=r.y&&wy<r.y+r.h))return -10
+      const puddle=a.puddles.find(r=>wx>=r.x&&wx<r.x+r.w&&wy>=r.y&&wy<r.y+r.h)
+      return puddle?-puddle.depth:0
+    }
+  }
   const tx = Math.floor(x), ty = Math.floor(y)
   if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return 0
   const i = ty * m.w + tx
@@ -309,6 +317,11 @@ export function floorHeight(m: GameMap, x: number, y: number, band: FloorBand = 
   if (m.l10LakeTerrain && m.elev[i] === 3) return surfaceUndulationAt(m, x, y)
   if (m.liquid[i] === 1) return -(m.seaFloor[i] || POOL_DEPTH)
   if (m.liquid[i] === 2) return ELEV_H[m.elev[i]] - SHALLOW_DEPTH // 浅水洼：以所在高度档为基准
+  if(m.inf?.l0&&m.wet[i]){
+    const wx=x+m.inf.ox,wy=y+m.inf.oy,layout=m.inf.chunks.get(`${Math.floor(wx/32)},${Math.floor(wy/32)}`)?.l0
+    const puddle=layout?.puddles.find(p=>wx>=p.x&&wx<p.x+p.w&&wy>=p.y&&wy<p.y+p.h)
+    if(puddle)return -puddle.depth
+  }
   return ELEV_H[m.elev[i]] + (m.elev[i] === 3 ? surfaceUndulationAt(m, x, y) : 0)
 }
 
@@ -480,6 +493,15 @@ const modelCollidersFor = (s: Structure): ColliderBox[] | null => {
 //   （钳制不超出自身 footprint，1×1 据点锅炉不外扩）；罐顶 2.6m 不可站
 // - sphboiler 球罐：砖石基座 1.7×1.7 + 球罐 r0.85 @顶 ~2.2m → 盒 ±0.85；球顶不可站
 export function structColliders(s: Structure, m?: GameMap): ColliderBox[] {
+  if(s.data?.l1Static){
+    const height={bottom:Number(s.data.bottom),top:Number(s.data.top),stand:false}
+    if(!s.data.l1Round)return [{x0:s.x,y0:s.y,x1:s.x+s.w,y1:s.y+s.h,...height}]
+    // Tight circumscribed strips retain the existing AABB broad phase without
+    // the square corners of a cylindrical column becoming invisible blockers.
+    return Array.from({length:16},(_,i)=>{const lo=-1+i/8,hi=lo+.125,nearest=lo>0?lo:hi<0?hi:0,r=Math.sqrt(1-nearest*nearest)*s.h/2;return{x0:s.x+i*s.w/16,x1:s.x+(i+1)*s.w/16,y0:s.y+s.h/2-r,y1:s.y+s.h/2+r,...height}})
+  }
+  if(s.data?.l0Door){const vertical=Number(s.data.deg)%180!==0,x=s.x+s.w/2,y=s.y+s.h/2;return[{x0:x-(vertical?.04:.44),y0:y-(vertical?.44:.04),x1:x+(vertical?.04:.44),y1:y+(vertical?.44:.04),bottom:0,top:2.13,stand:false}]}
+  if(s.data?.l0Wall)return [{x0:s.x,y0:s.y,x1:s.x+s.w,y1:s.y+s.h,bottom:Number(s.data.bottom),top:Number(s.data.top),stand:false}]
   if(isTradeKind(s.kind)){
     const a=Number(s.data?.deg??0)*Math.PI/180,c=Math.cos(a),v=Math.sin(a)
     return tradeParts(s).filter(p=>p.solid).map(p=>{
@@ -558,6 +580,7 @@ export function structColliders(s: Structure, m?: GameMap): ColliderBox[] {
     case 'desk':
       return [{ x0: cx - s.w * 0.45, y0: cy - 0.35, x1: cx + s.w * 0.45, y1: cy + 0.35, top: 0.77, stand: true }]
     case 'crate':
+      if(s.data?.l1Crate)return[{x0:s.x,y0:s.y,x1:s.x+s.w,y1:s.y+s.h,top:Number(s.data.l1Stack)===2?1.36:.68,stand:true}]
       return [{ x0: cx - 0.42, y0: cy - 0.42, x1: cx + 0.42, y1: cy + 0.42, top: 0.7, stand: true }]
     case 'l10haybale': {
       // 渲染器尚未建立模型碰撞时的确定性回退。按实际摆放角度求旋转长方体的平面 AABB；
@@ -748,7 +771,9 @@ const colliderBlocksBody = (base: number, b: ColliderBox, z: number): boolean =>
     const playerTop = z + 1.48
     // 已站到可站立顶面后，不能让同一个盒把角色判定在自身内部。
     if (b.stand && z >= base + b.top - .06) return false
-    return playerTop >= base + b.bottom && z <= base + b.top
+    // Touching a top plane is not body penetration (notably L0 well walls
+    // whose top is exactly the walkable floor). Keep below-floor sides solid.
+    return playerTop > base + b.bottom + .0001 && z < base + b.top - .0001
   }
   // 接地低物件可直接踏上；超过台阶高度的部分才横向阻挡。
   return base + b.top - z > STEP_UP
@@ -887,6 +912,7 @@ export function wallBaseTopAt(m: GameMap, x: number, y: number, wallH: number): 
     if (m.up2[ni] === 1 && m.outdoor[ni] !== 1) top = Math.max(top, 2 * FLOOR_H + 2.6) // v54：邻第三层楼板→接到三层天花
   }
   if (!adj) return null
+  // L1 partitions use the same roof height as their visible/collidable neighbours.
   if (nearOutdoor && !nearIndoor) top = Math.min(top, 1.1) // 室外护墙/围栏
   // v54c 多层解耦：正上方压着上层楼板/上层墙（本格 up/up2/upWall）时，本墙止于楼板底——
   // 不再被邻格的上层楼板牵着升高（旧规则让 1F 间墙穿过上层地板，上层平面被 1F 轮廓牵死）
@@ -937,6 +963,7 @@ export function ceilingHeightAt(m: GameMap, x: number, y: number, wallH: number,
   // 洞穴边界是连续体积，不服从「该瓦片中心是否为地板」；先取真实洞顶再走旧瓦片逻辑。
   if (band === 0 && m.caveVolumeId !== undefined) return caveCeilingAt(m, x, y)
   if (!hasCeiling(m, tx, ty)) return Infinity
+  if(m.inf?.l0)return 2.7
   if (band === 0 && m.l1Architecture) return l1RoofAt(m,x,y,wallH,true)
   if (band === 0 && m.inf && [18,19,20,51].includes(m.tint[i])) return l3RoofAt(m,x,y)
   if (band === 0 && m.organicCave && m.caveCeil) return caveCeilingAt(m, x, y)

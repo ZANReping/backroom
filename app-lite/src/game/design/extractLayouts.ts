@@ -118,10 +118,10 @@ type RandMark = number | true // number=固定概率；true=次数/落点随机�
 const L0_RAND_STRUCT: Record<string, RandMark> = { // infinite.ts
   'pillars:pillar': 0.85, // 柱群网格每点 85% 立柱
   'manila:crate': 0.55, 'manila:megfolder': 0.75, // 马尼拉室补给箱 / 第二份文件夹
-  '*:crate': 0.4, '*:vent': 0.3, '*:socket': 0.55, '*:lightgrid': 0.5, '*:hanglight': 0.35,
+  '*:crate': 0.4, '*:lightgrid': 0.5, '*:hanglight': 0.35,
 }
 const L0_RAND_ITEM: Record<string, RandMark> = {
-  '*:firesalt': 0.06, '*:tape': 0.1, 'arch:squirtgun': 0.05, 'manila:almond': 0.7,
+  '*:tape': 0.1, 'arch:squirtgun': 0.05, 'manila:almond': 0.7,
 }
 const L1_RAND_STRUCT: Record<string, RandMark> = { // infiniteL1.ts
   'parking:pillar': 0.8, 'aisle:pillar': true, 'aisle:car': 0.2, 'aisle:rebar': 0.4,
@@ -227,15 +227,18 @@ const L0_RULES: SpawnRule[] = [ // infinite.ts（variantOf / genL0ChunkRaw）
   { key: 'infinite.variant.blackout.chance', value: 0.036, note: '熄灯区每 chunk 概率' },
   { key: 'infinite.variant.pit.chance', value: 0.09, note: '深坑每 chunk 概率' },
   { key: 'infinite.variant.arch.chance', value: 0.09, note: '拱厅每 chunk 概率' },
-  { key: 'infinite.variant.pillarhall.chance', value: 0.09, note: '柱厅每 chunk 概率' },
+  { key: 'infinite.variant.pillarhall.chance', value: 0.09, note: '2×2 连续柱厅约 9% 面积，宿主数量相应减量' },
+  { key: 'l0Architecture.sockets.perChunk', value: '≤3', note: '长墙上的合批插座面板' },
+  { key: 'reference.seed', value: 20261006, note: '12 个固定展示视角使用的 Level 0 复刻种子' },
+  { key: 'l0Architecture.revision.interval', value: 30, note: '视线外空间变化检查间隔（秒）' },
+  { key: 'l0Architecture.revision.probability.maze', value: 0.15, note: '黄室局部变化概率' },
+  { key: 'l0Architecture.revision.probability.pillarhall', value: 0.2, note: '柱厅局部变化概率' },
+  { key: 'l0Architecture.revision.probability.blackout', value: 0.3, note: '熄灯区局部变化概率' },
+  { key: 'l0Architecture.revision.protection.distance', value: '12m', note: '玩家保护距离' },
+  { key: 'l0Architecture.revision.protection.unseen', value: '5s', note: '区域需持续无人观察时间' },
   { key: 'infinite.variant.maze.weight', value: 0.55, note: '常规 chunk 内迷宫权重（柱群 0.25 / 开阔区 0.2）' },
   { key: 'infinite.exit.flickerdoor.perRegion', value: '1/8×8', note: '闪烁的墙壁：每 8×8 chunk 超区域保底 1 个' },
-  { key: 'infinite.exit.graystairs.perRegion', value: '1/16×16', note: '向下的灰色阶梯：每 16×16 chunk 超区域 1 个' },
   { key: 'infinite.crate.chance', value: 0.4, note: '板条箱每 chunk 概率（红室不产任何物资）' },
-  { key: 'infinite.vent.chance', value: 0.3, note: '通风口每 chunk 概率' },
-  { key: 'infinite.socket.chance', value: 0.55, note: '墙上插板每 chunk 概率' },
-  { key: 'infinite.graffiti.chance', value: 0.45, note: '涂鸦每 chunk 概率' },
-  { key: 'infinite.firesalt.chance', value: 0.06, note: '火盐晶体（角落 ≥2 面墙）每 chunk 概率' },
   { key: 'infinite.tape.chance', value: 0.1, note: '磁带低频保底每 chunk 概率' },
   { key: 'infinite.cashew.replace', value: 0.1, note: '腰果水替代杏仁水的概率' },
   { key: 'infinite.lightgrid.chance', value: 0.5, note: '灯阵每 chunk 概率' },

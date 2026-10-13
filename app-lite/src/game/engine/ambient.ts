@@ -1,4 +1,7 @@
-import { flickerL1Crates } from './l1State'
+import { flickerL1Crates,tickL1Dynamics } from './l1State'
+import {l0Sample} from '../world/l0Architecture'
+import {mapWallOccluded} from '../content/mapPlayer'
+import {revealMapSight} from '../world/mapSight'
 // v53：现象与停电（层级氛围事件播报、L1「闪烁」停电链、视野计算）——
 // 自 engine.ts 拆分，逻辑逐语句搬运。
 import { LEVEL_EVENTS } from '../levels'
@@ -16,6 +19,7 @@ const l5BoilerSound=new WeakMap<Engine,{pulse:number;whisper:number}>()
 // ---- 层级氛围事件（wiki 设定播报）+ L1 停电预警/恢复 + 开发者现象开关 ----
 // （原 step 内联段，逐语句搬运）
 export function updateAmbient(eng: Engine, dt: number) {
+  tickL1Dynamics(eng,dt)
   const map=eng.map,p=eng.player,tint=map?.tint[Math.floor(p.y)*map.w+Math.floor(p.x)]
   if(eng.levelDef.id===5&&(tint===24||tint===67)){
     const sound=l5BoilerSound.get(eng)??{pulse:0,whisper:14}
@@ -202,6 +206,7 @@ function bcast(eng: Engine, e: Parameters<NonNullable<Engine['mpSession']>['send
 
 export function rollAmbientEvent(eng: Engine) {
   const lvl = eng.player.level
+  if(lvl===0&&(eng.l0Meeting>0||eng.map?.inf?.l0?.trapped||(eng.map&&l0Sample(eng.map,eng.player.x,eng.player.y)?.effect==='blackout')))return
   if (lvl === 6) {
     // 只有地表会出现极远的自然声幻听；大多数轮次维持彻底寂静。
     if (eng.player.floor === 0 && Math.random() < 0.18) {
@@ -226,7 +231,7 @@ export function rollAmbientEvent(eng: Engine) {
   }
   // L1「闪烁」现象（Fandom：停电数分钟到数天，实体倾巢而出）——低频率随机发生
   // v59 联机：房主在同层时由房主统一掷骰并广播，客人跳过本地随机（两端同步停/来电）
-  if (lvl === 1 && eng.blackoutT <= 0 && eng.blackoutWarnT <= 0 && !eng.dev.phenOff.has('flicker') && !hostHere(eng) && Math.random() < 0.12) {
+  if (lvl === 1 && eng.mpSession?.started && eng.blackoutT <= 0 && eng.blackoutWarnT <= 0 && !eng.dev.phenOff.has('flicker') && !hostHere(eng) && Math.random() < 0.12) {
     eng.startBlackout(14 + Math.random() * 10)
     return
   }
@@ -326,15 +331,17 @@ export function computeVisibility(eng: Engine) {
     return
   }
   eng.visible.fill(0)
+  revealMapSight(eng)
   const r = 8
   const px = Math.floor(p.x), py = Math.floor(p.y)
+  const inf=m.inf,wx=p.x+(inf?.ox??0),wy=p.y+(inf?.oy??0),eye=p.z+(p.crouching?.95:1.55)
+  const l0Walls=inf?.l0?[...inf.chunks.values()].flatMap(c=>c.l0?.walls??[]).filter(w=>w.bottom<eye&&w.top>eye&&w.x<wx+r&&w.x+w.w>wx-r&&w.y<wy+r&&w.y+w.h>wy-r):undefined
   for (let y = Math.max(0, py - r); y <= Math.min(m.h - 1, py + r); y++) {
     for (let x = Math.max(0, px - r); x <= Math.min(m.w - 1, px + r); x++) {
       const d = Math.hypot(x + 0.5 - p.x, y + 0.5 - p.y)
       if (d > r) continue
-      if (eng.los(p.x, p.y, x + 0.5, y + 0.5)) {
+      if (l0Walls?!mapWallOccluded(l0Walls,wx,wy,x+.5+inf!.ox,y+.5+inf!.oy):eng.los(p.x, p.y, x + 0.5, y + 0.5)) {
         eng.visible[y * m.w + x] = 1
-        eng.explored[y * m.w + x] = 1
       }
     }
   }

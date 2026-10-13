@@ -25,27 +25,35 @@ export default function DeathScreen({ engine, cause, onRetry, onTitle }: { engin
     ['步数', `${Math.round(p.steps)}`],
     ['种子', seedString(engine.seed)],
   ]
+  // 2026-10 UI：事故报告式结算——编号取自种子，死因置于血色框，数据两列大字号
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4">
+    <div className="end-backdrop end-backdrop--death fixed inset-0 z-50 flex items-center justify-center p-4">
       {report && <ToySurvivalReport report={report} onClose={() => setReport(null)} />}
-      <div className="hud-panel relative max-h-[90dvh] w-full max-w-[420px] overflow-y-auto p-6" style={{ borderColor: 'var(--blood)' }}>
+      <div className="end-card end-card--death hud-panel relative max-h-[90dvh] w-full max-w-[480px] overflow-y-auto p-6" style={{ borderColor: 'var(--blood)' }}>
         {/* 血滴渐变 */}
-        <div className="pointer-events-none absolute inset-x-0 top-0" style={{ background: 'linear-gradient(to bottom, rgba(179,53,43,0.35), transparent)', animation: 'dripDown 2s ease-out both' }} />
-        <h1 className="font-title text-center text-[56px]" style={{ color: 'var(--blood)', textShadow: '0 0 20px rgba(179,53,43,0.5)' }}>
-          {title.slice(0, chars)}
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-full" style={{ background: 'linear-gradient(to bottom, color-mix(in srgb, var(--blood) 30%, transparent), transparent 55%)', animation: 'dripDown 2s ease-out both' }} />
+        <div className="end-kicker font-mono2 relative">
+          <span>INCIDENT REPORT · 事故报告</span>
+          <span>#{seedString(engine.seed)}</span>
+        </div>
+        <h1 className="font-title relative mt-2 text-center text-[56px]" style={{ color: 'var(--blood)', textShadow: '0 0 20px color-mix(in srgb, var(--blood) 50%, transparent)' }}>
+          {title.slice(0, chars)}<span className="end-caret" aria-hidden>▌</span>
         </h1>
-        <div className="mt-1 text-center text-[13px]" style={{ color: 'var(--text-dim)' }}>死因:{cause}</div>
-        <div className="font-mono2 mt-5 space-y-2 text-[12px]">
-          {rows.map(([k, v], i) => (
-            <div key={k} className="anim-slideUp flex justify-between border-b pb-1" style={{ borderColor: 'var(--panel-edge)', animationDelay: `${800 + i * 90}ms` }}>
-              <span style={{ color: 'var(--text-dim)' }}>{k}</span>
-              <span style={{ color: 'var(--text)' }}>{v}</span>
+        <div className="end-cause relative anim-slideUp" style={{ animationDelay: '700ms' }}>
+          <span className="font-mono2">死因</span>
+          <span>{cause}</span>
+        </div>
+        <div className="end-stats font-mono2 relative">
+          {rows.filter(([k]) => k !== '种子').map(([k, v], i) => (
+            <div key={k} className={`end-stat anim-slideUp ${k === '到达层级' ? 'is-wide' : ''}`} style={{ animationDelay: `${800 + i * 90}ms` }}>
+              <span className="end-stat-k">{k}</span>
+              <span className="end-stat-v">{v}</span>
             </div>
           ))}
         </div>
-        <div className="mt-6 flex gap-3">
-          <button className="menu-btn flex-1 text-center" style={{ borderColor: 'var(--amber)', color: 'var(--amber)' }} onClick={() => { audio.uiTick(); onRetry() }}>再来一次</button>
-          <button className="menu-btn flex-1 text-center" onClick={() => { audio.uiTick(); onTitle() }}>回到标题</button>
+        <div className="relative mt-6 flex gap-3">
+          <button className="menu-btn menu-btn--primary end-btn flex-1 text-center" onClick={() => { audio.uiTick(); onRetry() }}>再来一次</button>
+          <button className="menu-btn end-btn flex-1 text-center" onClick={() => { audio.uiTick(); onTitle() }}>回到标题</button>
         </div>
         <button className="mt-3 w-full border px-3 py-2 text-sm" onClick={() => setReport(makeReport(engine, 'dead', cause))}>生成生存报告</button>
       </div>

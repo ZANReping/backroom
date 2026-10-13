@@ -75,7 +75,9 @@ export const L7_PORCH = { x0: 13, x1: 16, y0: 18, y1: 24, innerX0: 14, innerX1: 
 export const L7_ROPE = { anchor: { x: 15, y: 18 }, top: { x: 15, y: 23 }, base: { x: 15, y: 25 } }
 
 // v58：「小小的谎言」环形结构场——入口房间正西 150m 暮色带浅台（世界坐标纯函数，各 chunk 一致裁剪）
-export const L7_ARENA = { x: -135, y: 15, r: 12, depth: 46 } // 圆心 / 石柱环半径 / 压平海床深度（暮色带 24~90m）
+export const L7_ARENA = { x: -135, y: 15, r: 12, depth: 46 }
+// v66：入口海山——台地边缘半径 / 陡崖水平宽度 / 山脚裙带深度
+export const L7_MOUNT = { edge: 35, cliff: 28, foot: 226 } // 圆心 / 石柱环半径 / 压平海床深度（暮色带 24~90m）
 
 const h01 = (...n: number[]) => h32(...n) / 4294967296
 const smooth = (t: number) => t * t * (3 - 2 * t)
@@ -120,20 +122,136 @@ function l7SeaFloorRaw(seed: number, wx: number, wy: number): number {
   const ridge = 1 - Math.abs(l7ValueNoise(seed, 0x171f, wx, wy, 55) * 2) // 脊状沙纹（三角尖峰 0..1）
   const detail = bd * (0.11 * mid + 0.05 * (ridge - 0.45))
     + l7ValueNoise(seed, 0x1720, wx, wy, 13) * Math.min(2.0, 0.4 + bd * 0.012)
-  let raw = raw0 + detail
-  // v58：环形结构场海床压平——圆心 26m 内渐变为平坦暮色浅台（跨 chunk 连续，与岛核判定错开）
+  // v66：远海大地形——扭曲脊线噪声生成海山脊（抬升，最多约 150m），尖锐低谷生成海沟（加深，最多约 130m）。
+  //      岛核区（rise>0）不参与，岛屿判定保持不变。
+  let far = raw0 + detail
+  if (rise <= 0) {
+    const wq = l7ValueNoise(seed, 0x1750, wx, wy, 140) * 70
+    const ridgeN = 1 - Math.abs(l7ValueNoise(seed, 0x1751, wx + wq, wy - wq, 210) * 2)
+    const trenchN = 1 - Math.abs(l7ValueNoise(seed, 0x1752, wx - wq, wy + wq, 320) * 2)
+    far -= Math.pow(ridgeN, 5) * Math.min(150, far * 0.62)
+    far += Math.pow(trenchN, 9) * 130
+  }
+  // v66：入口海山（Wikidot：岩洞所在的高耸海山几乎就在入口房间正下方；Fandom：舱室周边海床仅数米深，
+  //      一定距离后几乎竖直下滑到未知深度）。山顶 = 出生浅海台地；台地边缘（约 34m，带角度噪声）是
+  //      一圈陡崖，约 28m 水平距离内下落到 ~240m 的山脚裙带；约 260m 外完全交给远海地形。
+  const r = Math.hypot(wx - L7_ORIGIN.x, wy - L7_ORIGIN.y)
+  const ang = Math.atan2(wy - L7_ORIGIN.y, wx - L7_ORIGIN.x)
+  const edge = l7ShelfEdge(seed, ang)
+  const shelf = 7 + Math.min(r, 30) * 0.05 + l7ValueNoise(seed, 0x1753, wx, wy, 9) * 0.6
+  const apron = L7_MOUNT.foot + l7ValueNoise(seed, 0x1754, wx, wy, 60) * 26 + l7ValueNoise(seed, 0x1755, wx, wy, 17) * 5
+  // 陡崖剖面：前 6m 为崖肩圆角，随后近乎竖直；崖面加入沟槽（按角度的高频噪声），避免像车床加工的圆柱
+  const gully = l7ValueNoise(seed, 0x1756, ang * 40, r * 0.1, 3) * 10
+  const u = Math.max(0, Math.min(1, (r - edge) / L7_MOUNT.cliff))
+  const cliffK = u <= 0 ? 0 : Math.pow(u, 0.55) * (0.92 + 0.08 * smooth(u))
+  let mount = shelf + (apron + gully * u * (1 - u) * 4 - shelf) * cliffK
+  if (r > edge + L7_MOUNT.cliff) mount = apron
+  const kFar = smooth(Math.min(1, Math.max(0, (r - 150) / 110)))
+  let raw = mount + (far - mount) * kFar
+  // v58/v66：环形结构场海床压平——山脚裙带上隆起一座平顶石台（暮色带 46m），台缘 34m 渐变成陡坡
   const ad = Math.hypot(wx - L7_ARENA.x, wy - L7_ARENA.y)
-  if (ad < 26) {
+  if (ad < L7_ARENA.r + 34) {
     const flat = L7_ARENA.depth + l7ValueNoise(seed, 0x1721, wx, wy, 7) * 1.1 // 场内微起伏
-    const kf = smooth(Math.min(1, Math.max(0, (ad - L7_ARENA.r) / 14))) // 环外 14m 渐变带
+    const kf = smooth(Math.min(1, Math.max(0, (ad - L7_ARENA.r - 2) / 32)))
     raw = flat + (raw - flat) * kf
   }
-  const r = Math.hypot(wx - L7_ORIGIN.x, wy - L7_ORIGIN.y)
-  // v57t：出生点所在 chunk 内是几乎平坦的浅海台地（r≲22 时 k=0，海床只随 3×3 低通轻微起伏），
-  // 离开出生 chunk 后才开始向深处过渡，约 150m 外完全交给 fBm 深海场。
-  const shallow = 7 + Math.min(r, 22) * 0.02
-  const k = smooth(Math.min(1, Math.max(0, (r - 22) / 128)))
-  return shallow + (raw - shallow) * k
+  return raw
+}
+
+/** v66：入口海山台地边缘半径（随方位角缓慢变化的噪声，约 28~42m）。 */
+function l7ShelfEdge(seed: number, ang: number): number {
+  const a = (ang + Math.PI) / (Math.PI * 2) * 24 // 24 段周向值噪声（首尾相接）
+  const i0 = Math.floor(a), t = smooth(a - i0)
+  const v = (i: number) => h01(seed, 0x1757, ((i % 24) + 24) % 24) * 2 - 1
+  return L7_MOUNT.edge + (v(i0) + (v(i0 + 1) - v(i0)) * t) * 7
+}
+
+/** v66：入口海山侧壁上的固定岩洞（→ Level 8，Wikidot「午夜带底部，海山一侧」）。世界坐标纯函数。 */
+const mountCaves = new Map<number, { x: number; y: number; depth: number }>()
+export function l7MountCave(seed: number): { x: number; y: number; depth: number } {
+  const cached=mountCaves.get(seed)
+  if(cached)return cached
+  const cave=findL7MountCave(seed)
+  if(mountCaves.size>=32)mountCaves.delete(mountCaves.keys().next().value!)
+  mountCaves.set(seed,cave)
+  return cave
+}
+function findL7MountCave(seed: number): { x: number; y: number; depth: number } {
+  const ang = (h01(seed, 0x1758) * 2 - 1) * Math.PI
+  // 沿方位向外步进，找到海床深度首次达到目标（午夜带底部 ~205m）的瓦片
+  for (let r = 30; r < 120; r += 1) {
+    const x = Math.round(L7_ORIGIN.x + Math.cos(ang) * r), y = Math.round(L7_ORIGIN.y + Math.sin(ang) * r)
+    const d = l7SeaFloorAt(seed, x, y)
+    if (d >= 205) return { x, y, depth: d }
+  }
+  const x = Math.round(L7_ORIGIN.x + Math.cos(ang) * 90), y = Math.round(L7_ORIGIN.y + Math.sin(ang) * 90)
+  return { x, y, depth: l7SeaFloorAt(seed, x, y) }
+}
+
+// ---------- v66：重力交界区（Fandom：竖直水墙 + 倒悬在天空中的平整水面） ----------
+/** 一处重力交界区：一道竖直水墙（长 len、厚 thick，从海面升到 top）连接一片倒悬水面（半径 r，高度 top）。 */
+export interface L7GravZone { id: number; x: number; y: number; ang: number; len: number; thick: number; top: number; r: number }
+export const L7_GRAV_CELL = 420
+const gravCache = new Map<string, L7GravZone | null>()
+/** 宏格 (gx,gy) 内的重力交界区（约 38% 宏格有一处；入口 300m 内与岛核附近不生成）。 */
+export function l7GravZoneInCell(seed: number, gx: number, gy: number): L7GravZone | null {
+  const key = `${seed},${gx},${gy}`
+  const hit = gravCache.get(key)
+  if (hit !== undefined) return hit
+  let z: L7GravZone | null = null
+  if (h01(seed, 0x1760, gx, gy) < 0.38) {
+    const x = gx * L7_GRAV_CELL + 90 + h01(seed, 0x1761, gx, gy) * (L7_GRAV_CELL - 180)
+    const y = gy * L7_GRAV_CELL + 90 + h01(seed, 0x1762, gx, gy) * (L7_GRAV_CELL - 180)
+    if (Math.hypot(x - L7_ORIGIN.x, y - L7_ORIGIN.y) > 300 && l7SeaFloorAt(seed, Math.floor(x), Math.floor(y)) > 14) {
+      z = {
+        id: (h32(seed, 0x1763, gx, gy) >>> 8),
+        x, y,
+        ang: h01(seed, 0x1764, gx, gy) * Math.PI,
+        len: 46 + h01(seed, 0x1765, gx, gy) * 40,
+        thick: 5 + h01(seed, 0x1766, gx, gy) * 3,
+        top: 34 + h01(seed, 0x1767, gx, gy) * 14,
+        r: 64 + h01(seed, 0x1768, gx, gy) * 30,
+      }
+    }
+  }
+  if (gravCache.size > 512) gravCache.clear()
+  gravCache.set(key, z)
+  return z
+}
+/** 以 (wx,wy) 为圆心 rad 内的所有重力交界区（按距离升序）。 */
+export function l7GravZonesNear(seed: number, wx: number, wy: number, rad: number): L7GravZone[] {
+  const out: L7GravZone[] = []
+  const g0x = Math.floor((wx - rad) / L7_GRAV_CELL), g1x = Math.floor((wx + rad) / L7_GRAV_CELL)
+  const g0y = Math.floor((wy - rad) / L7_GRAV_CELL), g1y = Math.floor((wy + rad) / L7_GRAV_CELL)
+  for (let gy = g0y; gy <= g1y; gy++) for (let gx = g0x; gx <= g1x; gx++) {
+    const z = l7GravZoneInCell(seed, gx, gy)
+    if (z && Math.hypot(z.x - wx, z.y - wy) < rad + z.r) out.push(z)
+  }
+  return out.sort((a, b) => Math.hypot(a.x - wx, a.y - wy) - Math.hypot(b.x - wx, b.y - wy))
+}
+/** 世界点是否位于某道水墙的水平投影内。along/perp 为墙局部坐标；nx,ny 为墙面法线（垂直于墙）。 */
+export function l7GravWallAt(seed: number, wx: number, wy: number): { zone: L7GravZone; top: number; along: number; perp: number; nx: number; ny: number } | null {
+  const gx = Math.floor(wx / L7_GRAV_CELL), gy = Math.floor(wy / L7_GRAV_CELL)
+  for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+    const z = l7GravZoneInCell(seed, gx + dx, gy + dy)
+    if (!z) continue
+    const ca = Math.cos(z.ang), sa = Math.sin(z.ang)
+    const rx = wx - z.x, ry = wy - z.y
+    const along = rx * ca + ry * sa, perp = -rx * sa + ry * ca
+    if (Math.abs(along) <= z.len / 2 && Math.abs(perp) <= z.thick / 2) return { zone: z, top: z.top, along, perp, nx: -sa, ny: ca }
+  }
+  return null
+}
+/** 到最近重力交界区水墙的水平距离（米；无则 Infinity）——现实碎裂强度用。 */
+export function l7GravDistance(seed: number, wx: number, wy: number): number {
+  let best = Infinity
+  for (const z of l7GravZonesNear(seed, wx, wy, 160)) {
+    const ca = Math.cos(z.ang), sa = Math.sin(z.ang)
+    const rx = wx - z.x, ry = wy - z.y
+    const along = Math.max(0, Math.abs(rx * ca + ry * sa) - z.len / 2), perp = Math.max(0, Math.abs(-rx * sa + ry * ca) - z.thick / 2)
+    best = Math.min(best, Math.hypot(along, perp))
+  }
+  return best
 }
 
 /** 瓦片级海床深度（米，水面以下，正数）。3×3 低通让出生点浅海与外界海床、chunk 边界都连续平滑。 */
@@ -347,6 +465,12 @@ export function genL7ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
       const hostZone = l7ZoneAt(seed, WX + 16, WY + 16)
       const midnightHost = isHost && !(cx === 0 && cy === 0) && hostZone === 'midnight'
       // 午夜宿主区域必有一个岩洞（出口指引可用）；其余午夜区域概率出现
+      // v66：入口海山侧壁的固定岩洞（世界坐标纯函数；归属 chunk 推送一次）
+      const mc = l7MountCave(seed)
+      if (caveDef && inChunk(mc.x, mc.y)) {
+        exits.push({ def: caveDef, x: mc.x, y: mc.y, discovered: false })
+        pushLight(mc.x, mc.y, 3.6, '#5fd8e8')
+      }
       const caveRoll = caveDef && (midnightHost || h01(seed, 0x1715, cx, cy) < 0.04)
       if (caveRoll) {
         const spot = findWaterFor('midnight', new Set())
@@ -389,6 +513,15 @@ export function genL7ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
         if (raw < -0.8 && !centers.some((c) => Math.hypot(c.x - x, c.y - y) < 3)) centers.push({ x, y })
       }
     for (const c of centers) pushStruct('rockisle', WX + c.x, WY + c.y, 1, 1, false)
+    // v66：臣服堡垒（Wikidot）——岛上用家具堆叠、焦油加固的简易庇护所。本作只做已废弃的版本：
+    //      无人驻守，内部一只可搜刮的板条箱与一只木桶（居民去向不明）。约半数岛屿上有一座。
+    const c0 = centers[0]
+    if (c0 && h01(seed, 0x1740, cx, cy) < 0.55) {
+      pushStruct('l7fort', WX + c0.x - 2, WY + c0.y - 2, 5, 5, false, false, { rot: h32(seed, 0x1741, cx, cy) % 4 })
+      // Dedicated slots preserve the existing container identity sequence.
+      pushStruct('crate', WX + c0.x, WY + c0.y, 1, 1, true, false, { loot: 1, fort: 1, sid: sidOf(240) })
+      if (c0.x + 1 < CS && liquid[li(c0.x + 1, c0.y)] === 0) pushStruct('barrel', WX + c0.x + 1, WY + c0.y, 1, 1, true, false, { loot: 1, fort: 1, sid: sidOf(241) })
+    }
   }
 
   // ---- v58：环形结构场「小小的谎言」（入口正西 150m 暮色带；世界坐标纯函数，各 chunk 裁剪自己那份） ----
@@ -468,6 +601,39 @@ export function genL7ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
   if (rng.chance(0.7)) placeOnWater('bonepile', 1, 1, false, true, { loot: 1 }, 'abyss')
   if (rng.chance(0.16)) placeOnWater('fishbones', 3, 2, false, false, undefined, 'abyss')
 
+  // ---- v66：水中装饰物（按深度带；全部为无碰撞、单次绘制的合并/实例化模型） ----
+  {
+    const drng = new RNG(h32(seed, 0x1745, cx, cy)) // 独立随机流：不扰动既有容器/实体/物品的生成序列
+    const placeDeco = (kind: Structure['kind'], w: number, h: number, data: Structure['data'], want: ReturnType<typeof zoneAt> | ReturnType<typeof zoneAt>[]): boolean => {
+      const wants = Array.isArray(want) ? want : [want]
+      for (let tr = 0; tr < 40; tr++) {
+        const x = drng.int(2, CS - 2 - w), y = drng.int(2, CS - 2 - h)
+        if (nearEntry(x, y, 3) || nearFixedExit(x, y, 3)) continue
+        if (!wants.includes(zoneAt(x, y))) continue
+        let ok = true
+        for (let j = y; j < y + h && ok; j++) for (let i = x; i < x + w && ok; i++) if (!isWaterTile(i, j)) ok = false
+        if (!ok) continue
+        pushStruct(kind, WX + x, WY + y, w, h, false, false, { ...data, seed: h32(seed, 0x1746, WX + x, WY + y) % 100000 })
+        return true
+      }
+      return false
+    }
+    // 漂浮/沉底碎屑场：每 chunk 一组实例（骨片、锈蚀废铁、书皮纸块、合成纤维碎屑），内容按每个实例落点的深度带决定
+    if (isWaterTile(16, 16) && !nearEntry(16, 16, 0)) pushStruct('l7debris', WX + 16, WY + 16, 1, 1, false, false, { seed: h32(seed, 0x1747, cx, cy) % 100000 })
+    // 类人骨架（巨颚、长牙、鳍足）：暮色带开始出现，午夜带成群
+    if (drng.chance(0.3)) placeDeco('l7skeleton', 1, 2, {}, 'twilight')
+    for (let i = 0, n = drng.int(1, 3); i < n; i++) placeDeco('l7skeleton', 1, 2, {}, 'midnight')
+    if (drng.chance(0.55)) placeDeco('l7skeleton', 1, 2, { eroded: 1 }, 'abyss')
+    // 不可理解的巨鱼骨架（地标级，20m 上下）
+    if (drng.chance(0.11)) placeDeco('l7giantfish', 6, 3, {}, ['midnight', 'abyss'])
+    // 海床露出的泡烂地毯补丁（合成纤维；暗示海床下铺着地毯）
+    for (let i = 0, n = drng.chance(0.6) ? drng.int(1, 2) : 0; i < n; i++) placeDeco('l7carpet', 3, 2, {}, ['midnight', 'abyss'])
+    // 深渊：持续冒泡的未知源头（大气泡柱）
+    if (drng.chance(0.22)) placeDeco('l7bubbles', 1, 1, { big: 1 }, 'abyss')
+    // 焦油岩堆顶上的细气泡柱
+    for (const st of structures) if (st.kind === 'seatarpit' && drng.chance(0.35)) pushStruct('l7bubbles', st.x + 1, st.y + 1, 1, 1, false, false, { seed: h32(seed, 0x1748, st.x, st.y) % 100000 })
+  }
+
   // ---- 实体（v57p：按放置点海床深度垂直划分；出生安全区 |cx|,|cy|≤1 不生成） ----
   if (!(Math.abs(cx) <= 1 && Math.abs(cy) <= 1)) {
     const placeEntityIn = (type: string, want: ReturnType<typeof zoneAt>): boolean => {
@@ -516,6 +682,9 @@ export function genL7ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
 /** v57t：L7 区域宿主出口锚点的轻量解析式版本。与 genL7ChunkRaw 的宿主出口判定逐条一致，
  *  但不生成整 chunk 海床数组——HUD 每帧出口指引首次求解时不再造成数百毫秒卡顿。 */
 export function l7RegionExitAnchor(seed: number, rx: number, ry: number): { x: number; y: number; z?: number } | null {
+  // v66：入口海山岩洞所在区域优先指向它
+  const mc = l7MountCave(seed)
+  if (Math.floor(Math.floor(mc.x / CS) / RS) === rx && Math.floor(Math.floor(mc.y / CS) / RS) === ry) return { x: mc.x, y: mc.y }
   const host = regionHost(seed, rx, ry)
   const { cx, cy } = host
   if (cx === 0 && cy === 0) return null

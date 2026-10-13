@@ -11,6 +11,9 @@
 // 新实体请先读这些 case 再动手；设定依据在 entities/ 各定义的 codex 注释里。
 import * as THREE from 'three'
 import { buildMothMesh } from './mothMeshes'
+import { buildSmilerMesh } from './smilerMesh'
+import { buildHoundMesh } from './houndMesh'
+import { buildDullerMesh } from './dullerMesh'
 import { ENTITIES } from '../entities'
 import { box, cyl, glow, litMaterial, mulberry } from './shared'
 import { buildPlayerModel } from './playerModel'
@@ -33,6 +36,8 @@ export interface EntityMeshOpts {
   arachnidMorph?: 'spider' | 'scorpion' | 'tick' | 'mite'
   arachnidBreed?: number
   herbivore?: boolean
+  smilerKind?: import('../entities/smilers').SmilerKind // v61：笑魇变种
+  houndNeutral?: boolean // v62：L11 中立猎犬
 }
 
 // 七层之物使用纯程序化 UV：DataTexture 在浏览器与 Node 验收脚本中都可创建，
@@ -98,6 +103,9 @@ function getThingSkinTextures() {
 }
 export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Group {
   if(type === 'deathmoth') return buildMothMesh(opts?.mothForm ?? 'male')
+  if (type === 'duller') return buildDullerMesh(opts?.seed ?? 0) // v63：重制钝人
+  if (type === 'hound') return buildHoundMesh(!!opts?.houndNeutral, opts?.seed ?? 0) // v62：重制猎犬
+  if (type === 'smiler') return buildSmilerMesh(opts?.smilerKind ?? 'common', opts?.seed ?? 0) // v61：重制笑魇（含 5 变种）
   const grp = new THREE.Group()
   grp.userData.entityType = type
   const def = ENTITIES[type]
@@ -189,43 +197,7 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
   }
 
   switch (type) {
-    case 'duller': { // 钝人（Entity 6）：约 2m；深灰近黑；皮肤干皱、局部「煮烂」破口露出紫红肌肉；
-      //               没有脸也没有耳朵；手臂长得不成比例（过膝）；姿态扭曲、站姿摇晃。
-      const dk = '#2f2f36', dl = '#26262c', dh = '#34343c', rip = '#6b2a4a'
-      tag(box(0.42, 0.92, 0.28, dk, 0, 1.2, 0), 'torso')
-      grp.add(box(0.5, 0.16, 0.3, dl, 0.02, 1.62, 0)) // 高低不齐的肩
-      grp.add(box(0.12, 0.14, 0.12, dl, -0.24, 1.7, 0)) // 抬高的左肩（扭曲站姿）
-      // 头：无面、无耳的拉长椭球——wiki 明确「没有脸也没有耳朵」，故不设眼睛
-      const dhead = sph(0.15, dh, 8)
-      dhead.scale.set(0.82, 1.42, 0.86)
-      dhead.position.set(0.02, 1.82, 0)
-      dhead.rotation.z = 0.17 // 歪斜的颈
-      tag(dhead, 'head')
-      // 无五官的正面平滑面：仅作朝向标记，不含任何五官（父级已带非等比缩放，此处按其比例配平）
-      const blank = sph(0.13, '#3a3a43', 8)
-      blank.scale.set(0.72, 0.9, 0.34)
-      blank.position.set(0, 0, 0.12)
-      face(blank); dhead.add(blank)
-      // 不成比例的长臂（垂到膝下，wiki 称其还能继续伸长）
-      joint(0.13, 1.3, 0.15, dl, -0.31, 1.5, 0, 'armL')
-      joint(0.13, 1.36, 0.15, dl, 0.31, 1.47, 0, 'armR')
-      tip(parts.armL, 0.12, 0.22, 0.13, dk, -1.32)
-      tip(parts.armR, 0.12, 0.22, 0.13, dk, -1.38)
-      joint(0.17, 0.74, 0.18, dl, -0.13, 0.76, 0, 'legL')
-      joint(0.17, 0.74, 0.18, dl, 0.13, 0.74, 0, 'legR')
-      tip(parts.legL, 0.19, 0.09, 0.26, dk, -0.72, 0.04)
-      tip(parts.legR, 0.19, 0.09, 0.26, dk, -0.72, 0.04)
-      for (let i = 0; i < 4; i++) grp.add(box(0.34 - i * 0.04, 0.02, 0.02, dl, 0, 1.5 - i * 0.16, 0.145)) // 干皱褶线
-      // 破口/「煮烂」处露出的紫红肌肉——全身唯一的高彩度视觉锚点
-      ebox(0.17, 0.13, 0.03, rip, -0.09, 1.36, 0.145, 0.5)
-      ebox(0.1, 0.19, 0.03, rip, 0.14, 1.05, 0.145, 0.5)
-      ebox(0.09, 0.11, 0.03, rip, -0.23, 1.55, 0.09, 0.5)
-      ebox(0.12, 0.1, 0.03, rip, 0.06, 1.42, -0.15, 0.45)
-      const armRip = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.17, 0.03), emat(rip, 0.5))
-      armRip.position.set(0, -0.62, 0.08)
-      parts.armL.add(armRip)
-      break
-    }
+    // v63：'duller' 已在函数开头交给 dullerMesh.buildDullerMesh（旧版方块模型移除）
     case 'faceling': { // 无面灵（Entity 9）：与人类高度相似——直接复用玩家形象模型（随机肤色/发型/服装），
       //                 唯独完全缺失面部特征：头部只剩一张没有五官的光滑平面。
       const pm = buildPlayerModel(randomAvatar(), {})
@@ -319,55 +291,7 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
       grp.add(box(0.03, 0.05, 0.05, '#8a8a8e', 0.04, 0.04, 0.02))
       break
     }
-    case 'smiler': { // 笑魇（Entity 3）：完全无定形。主体 Nigrum ignem——纯黑、形态最接近「火」的
-      //               不明幽质；发光的眼与齿是 Ardenti risu。
-      const flame = new THREE.Group()
-      flame.position.set(0, 0.95, 0)
-      // 上窄下宽的火焰剪影：大小不一、带随机偏移与倾斜的黑块堆叠
-      const fb = (w: number, h: number, d: number, x: number, y: number, z: number, rz: number, cc: string) => {
-        const m = box(w, h, d, cc, x, y, z)
-        m.rotation.z = rz; m.rotation.y = rz * 0.6
-        flame.add(m)
-      }
-      fb(0.14, 0.34, 0.13, 0.03, 0.66, 0.01, 0.24, '#050505')
-      fb(0.28, 0.4, 0.22, -0.05, 0.38, 0.02, -0.16, '#040404')
-      fb(0.5, 0.5, 0.34, 0.03, 0.02, -0.02, 0.1, '#050505')
-      fb(0.68, 0.46, 0.42, -0.02, -0.36, 0.01, -0.07, '#030303')
-      fb(0.82, 0.36, 0.5, 0.04, -0.72, -0.03, 0.05, '#040404')
-      const rng = mulberry(0x5311)
-      for (let i = 0; i < 9; i++) { // 撕裂外缘的「火舌/烟缕」
-        const a = rng() * Math.PI * 2
-        const rr = 0.24 + rng() * 0.2
-        fb(0.07 + rng() * 0.09, 0.18 + rng() * 0.26, 0.07 + rng() * 0.07,
-          Math.cos(a) * rr, -0.6 + rng() * 1.3, Math.sin(a) * rr * 0.8, (rng() - 0.5) * 1.1, '#050505')
-      }
-      tag(flame, 'torso')
-      eyes(1.36, 0.15, '#ffffff', 0.095)
-      const teeth = new THREE.Group() // 齿列：细长上翘的长笑弧（比旧版更宽更弯）
-      for (let i = 0; i < 11; i++) {
-        const a = (i / 10 - 0.5) * 1.9
-        const t = glow(0.048, 0.09 - Math.abs(a) * 0.025, 0.02, '#ffffff',
-          Math.sin(a) * 0.28, 1.0 + (1 - Math.cos(a)) * 0.3, 0.2 - Math.abs(a) * 0.035)
-        t.rotation.z = -a * 0.55
-        face(t)
-        teeth.add(t)
-      }
-      tag(teeth, 'teeth')
-      grp.add(teeth)
-      // 人形四肢：关节以非自然角度反折（悬浮，无腿）
-      const sarm = (side: number, part: string) => {
-        const a = joint(0.085, 0.34, 0.085, '#050505', side * 0.29, 1.24, 0, part)
-        const fore = new THREE.Group()
-        fore.position.y = -0.34; fore.rotation.x = 2.15 // 肘部反折
-        fore.add(box(0.075, 0.33, 0.075, '#040404', 0, -0.165, 0))
-        const hand = new THREE.Group()
-        hand.position.y = -0.33; hand.rotation.x = -1.5 // 腕部再反折
-        for (let i = 0; i < 3; i++) hand.add(box(0.02, 0.15, 0.02, '#050505', (i - 1) * 0.035, -0.075, 0))
-        fore.add(hand); a.add(fore)
-      }
-      sarm(-1, 'armL'); sarm(1, 'armR')
-      break
-    }
+    // v61：'smiler' 已在函数开头交给 smilerMesh.buildSmilerMesh（旧版方块模型移除）
     case 'arms': { // 手臂（Level 1 特有）：自天花板通风管垂下的苍白长臂，指节反曲；
       //             停电时伸出管口猎捕（平时 hidden 缩回管内，渲染层不可见）。
       const sk = '#c9a684', sk2 = '#b08d6a'
@@ -423,66 +347,7 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
       }
       break
     }
-    case 'hound': { // 猎犬（Entity 8）：wiki 明确它是「人类」——病态消瘦的人形四足爬行者。
-      //              前肢（手臂）加长到与后肢接近等长、肩胛高耸、脊柱前倾、肋骨与关节突出；
-      //              头顶生出一大团垂落的黑色长发遮住整张脸，发帘之下是极大的嘴与尖牙；手部为利爪。（原生 +X）
-      const sk = '#a1907c', sd = '#8a7867', hair = '#0a0a0d'
-      // 躯干组：pivot 必须落在 y=0.55（renderer 按状态改写 torso.position.y=0.55/0.45 压低身位）
-      const tg = new THREE.Group()
-      tg.position.set(0, 0.55, 0)
-      tg.add(box(0.46, 0.34, 0.34, sk, 0.16, 0.12, 0)) // 胸廓（前高——脊柱前倾）
-      tg.add(box(0.36, 0.26, 0.3, sd, -0.2, 0.02, 0)) // 塌陷的腰
-      tg.add(box(0.3, 0.32, 0.34, sk, -0.44, -0.01, 0)) // 骨盆
-      tg.add(box(0.17, 0.16, 0.1, sd, 0.21, 0.3, -0.13)) // 高耸的肩胛
-      tg.add(box(0.17, 0.16, 0.1, sd, 0.21, 0.3, 0.13))
-      for (let i = 0; i < 4; i++) tg.add(box(0.03, 0.22, 0.36, sd, 0.3 - i * 0.11, 0.1, 0)) // 突出的肋骨
-      for (let i = 0; i < 6; i++) tg.add(box(0.07, 0.08, 0.07, sd, 0.26 - i * 0.14, 0.29 - i * 0.035, 0)) // 前倾的脊线
-      tag(tg, 'torso')
-      // 头（pivot 在头中心）：人头轮廓 + 遮脸的黑色长发团 + 发帘下的巨口尖牙
-      const hg = new THREE.Group()
-      hg.position.set(0.52, 0.78, 0)
-      hg.add(box(0.2, 0.24, 0.22, sk, 0, 0, 0)) // 人头颅
-      hg.add(box(0.14, 0.1, 0.18, sd, 0.07, -0.1, 0)) // 颧/上颌
-      const maw = box(0.17, 0.17, 0.25, '#1a0f0d', 0.1, -0.21, 0) // 极大的嘴
-      face(maw); hg.add(maw)
-      for (let i = 0; i < 6; i++) { // 上下两排尖牙
-        const z = (i / 5 - 0.5) * 0.2
-        hg.add(face(glow(0.03, 0.075, 0.028, '#efe8d8', 0.14, -0.15, z)))
-        hg.add(face(glow(0.028, 0.062, 0.026, '#e0d8c6', 0.13, -0.27, z)))
-      }
-      hg.add(box(0.32, 0.28, 0.36, hair, -0.02, 0.15, 0)) // 头顶发团（头部最大的视觉体积）
-      hg.add(box(0.13, 0.3, 0.35, hair, 0.11, 0.02, 0)) // 前垂发帘（遮住整张脸）
-      hg.add(box(0.18, 0.52, 0.11, hair, 0.04, -0.1, -0.16)) // 两侧长发
-      hg.add(box(0.18, 0.52, 0.11, hair, 0.04, -0.1, 0.16))
-      hg.add(box(0.22, 0.54, 0.3, hair, -0.15, -0.06, 0)) // 后垂长发
-      tag(hg, 'head')
-      // 四肢：前肢=加长的人类手臂，与后肢接近等长（renderer 用 rotation.z 做对角步态）
-      const fl = joint(0.11, 0.66, 0.12, sd, 0.3, 0.68, -0.16, 'armL')
-      const fr = joint(0.11, 0.66, 0.12, sd, 0.3, 0.68, 0.16, 'armR')
-      const bl = joint(0.13, 0.62, 0.14, sd, -0.42, 0.64, -0.15, 'legL')
-      const br = joint(0.13, 0.62, 0.14, sd, -0.42, 0.64, 0.15, 'legR')
-      for (const l of [fl, fr]) {
-        tip(l, 0.13, 0.09, 0.13, sd, -0.33) // 突出的肘关节
-        tip(l, 0.12, 0.07, 0.13, sk, -0.63) // 掌
-        for (let i = 0; i < 4; i++) { // 利爪：向前撑地
-          const cl = box(0.12, 0.022, 0.022, '#2e2620', 0.07, -0.65, (i - 1.5) * 0.036)
-          cl.rotation.z = -0.3
-          l.add(cl)
-        }
-      }
-      for (const l of [bl, br]) {
-        tip(l, 0.15, 0.1, 0.15, sd, -0.31) // 突出的膝关节
-        l.add(box(0.22, 0.07, 0.13, sk, 0.05, -0.59, 0)) // 消瘦的脚（沿 +X 前伸）
-      }
-      // 保留 tail 部件名（renderer 会摆动它）：病态消瘦者外突拖曳的尾椎骨
-      const tgeo = new THREE.BoxGeometry(0.26, 0.05, 0.05)
-      tgeo.translate(-0.13, 0, 0)
-      const tl = new THREE.Mesh(tgeo, lam(sd))
-      tl.position.set(-0.6, 0.5, 0)
-      tl.rotation.z = -0.32
-      tag(tl, 'tail')
-      break
-    }
+    // v62：'hound' 已在函数开头交给 houndMesh.buildHoundMesh（旧版方块模型移除）
     case 'carrier': { // 运输车：机械厢体（底盘/货厢/驾驶室/风挡/保险杠/四轮/前后灯，原生 +X）
       // 修复 v15：v14 底盘（torso）从未挂入场景 → 车身悬浮于四轮之上、保险杠/车灯悬空。
       // 现把上部车体整合进 body 组并 tag 为 torso（冲撞时整体绕 z 微俯仰，轮组独立）。
@@ -1968,7 +1833,7 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
   }
   // 统一正面到 +X：猎犬/运输车/管道蠕虫/电弧体/死亡飞蛾，以及 v23 的水生/蛇形/四足/眼球类
   // 原生面向 +X（或各向对称）；其余按 +Z 建造的模型包一层 rotation.y=π/2 内层组把正面旋到 +X。
-  const facesX = type === 'hound' || type === 'carrier' || type === 'pipeworm' || type === 'arcwraith' || type === 'deathmoth'
+  const facesX = type === 'hound' || type === 'duller' || type === 'carrier' || type === 'pipeworm' || type === 'arcwraith' || type === 'deathmoth'
     || type === 'tiny' || type === 'thething' || type === 'wrangler' || type === 'camocrawler' || type === 'lightguide' || type === 'curabitur'
     || type === 'corpserat' || type === 'watcher' || type === 'strider' || type === 'mangled' || type === 'soilworm'
     || type === 'nguithr' || type === 'dryshrimp' || type === 'arachnid'

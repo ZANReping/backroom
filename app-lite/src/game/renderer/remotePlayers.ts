@@ -1,5 +1,7 @@
 // v58 联机：远端玩家渲染——第三人称形象（复用玩家模型）+ 名牌 + 手持物品 + 动作动画
 // （步行/游泳/蹲伏/攻击/倒地）；孤立效应下互不可见（L0 非马尼拉室区域）。
+import {l0Meeting} from '../world/l0Architecture'
+import {l0Space} from '../engine/l0State'
 import * as THREE from 'three'
 import { buildPlayerModel } from './playerModel'
 import { buildItemMesh } from './itemsMesh'
@@ -20,6 +22,60 @@ interface View {
   x: number; y: number; z: number // 当前显示位置（插值平滑）
   yaw: number // 身体朝向（慢速追随头部）
   headYaw: number // 头部朝向（快速追随视角——先转头再转身子）
+}
+
+function disposeHeld(v: View) {
+  const held = v.heldMesh
+  if (!held) return
+  held.removeFromParent()
+  const geometries = new Set<THREE.BufferGeometry>()
+  const materials = new Set<THREE.Material>()
+  held.traverse(o => {
+    const mesh = o as THREE.Mesh
+    if (!mesh.isMesh) return
+    geometries.add(mesh.geometry)
+    for (const material of (Array.isArray(mesh.material) ? mesh.material : [mesh.material])) materials.add(material)
+  })
+  for (const geometry of geometries) geometry.dispose()
+  for (const material of materials) material.dispose()
+  v.heldMesh = null
+}
+
+function restoreL0Materials(v: View) {
+  v.grp.traverse(o => {
+    const mesh = o as THREE.Mesh
+    if (!mesh.material) return
+    const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
+    for (const mat of mats) {
+      const saved = mat.userData.l0Original
+      if (!saved) continue
+      if (mat.transparent !== saved.transparent) { mat.transparent = saved.transparent; mat.needsUpdate = true }
+      mat.opacity = saved.opacity
+      mat.depthWrite = saved.depthWrite
+    }
+  })
+}
+
+function disposeView(v: View) {
+  disposeHeld(v)
+  const geometries = new Set<THREE.BufferGeometry>()
+  const materials = new Set<THREE.Material>()
+  v.grp.traverse(o => {
+    const mesh = o as THREE.Mesh
+    if (!mesh.isMesh) return
+    geometries.add(mesh.geometry)
+    for (const material of (Array.isArray(mesh.material) ? mesh.material : [mesh.material])) materials.add(material)
+  })
+  for (const geometry of geometries) geometry.dispose()
+  for (const material of materials) {
+    // The name tag owns this CanvasTexture; held-item textures are already
+    // detached by disposeHeld and are shared by the item material factory.
+    if (material === v.tag.material) (material as THREE.SpriteMaterial).map?.dispose()
+    material.dispose()
+  }
+  v.tag.material.map?.dispose()
+  v.tag.material.dispose()
+  v.grp.removeFromParent()
 }
 
 function makeNameTag(name: string): THREE.Sprite {
@@ -47,14 +103,13 @@ export class RemotePlayerViews {
   update(scene: THREE.Scene, engine: Engine, session: MpSession | null, time: number, dt: number) {
     const m = engine.map
     if (!session || !session.started || !m) {
-      if (this.views.size) this.clearAll(scene)
+      if (this.views.size) this.clearAll()
       return
     }
     const p = engine.player
     const ox = m.inf?.ox ?? 0, oy = m.inf?.oy ?? 0 // 远端坐标为世界坐标 → 本端窗口坐标
     // 孤立效应：L0 内非马尼拉室（tint≠1）区域互相不可见
-    const pi = Math.floor(p.y) * m.w + Math.floor(p.x)
-    const isolated = p.level === 0 && (m.tint?.[pi] ?? 0) !== 1
+    const isolated = p.level === 0 && l0Meeting(m,p.x,p.y)<=0
 
     const seen = new Set<string>()
     for (const r of session.remotes.values()) {
@@ -65,7 +120,7 @@ export class RemotePlayerViews {
     }
     for (const [id, v] of this.views) {
       if (!seen.has(id)) {
-        scene.remove(v.grp)
+        disposeView(v)
         this.views.delete(id)
       }
     }
@@ -96,6 +151,25 @@ export class RemotePlayerViews {
     // 可见性：同层 + 双向孤立效应（任一端处于 L0 非马尼拉室即互不可见）+ 状态新鲜（>8s 未刷新视为消失）
     v.grp.visible = s.level === p.level && !isolated && !s.iso && Date.now() - r.lastSeen <= 8000
 
+    if (p.level === 0) {
+      v.grp.visible &&= s.l0Space === l0Space(engine.map)
+      const opacity = Math.min(l0Meeting(engine.map!, p.x, p.y), s.l0Meeting ?? 0)
+      v.grp.traverse(o => {
+        const mesh = o as THREE.Mesh
+        if (!mesh.material) return
+        const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
+        for (const mat of mats) {
+          if (mat.userData.l0Original === undefined) mat.userData.l0Original = { opacity: mat.opacity, transparent: mat.transparent, depthWrite: mat.depthWrite }
+          const saved = mat.userData.l0Original
+          const targetOpacity = opacity < 1 ? saved.opacity * opacity : saved.opacity
+          const targetTransparent = opacity < 1 ? true : saved.transparent
+          const targetDepthWrite = opacity < 1 ? false : saved.depthWrite
+          if (mat.transparent !== targetTransparent) { mat.transparent = targetTransparent; mat.needsUpdate = true }
+          mat.opacity = targetOpacity
+          mat.depthWrite = targetDepthWrite
+        }
+      })
+    } else restoreL0Materials(v)
     // 位置/朝向插值（~11Hz 状态流）
     const tx = s.x - ox, ty = s.y - oy
     const k = Math.min(1, dt * 10)
@@ -161,8 +235,7 @@ export class RemotePlayerViews {
 
     // 手持物品第三人称展示（挂右手关节，随手臂摆动）
     if (s.held !== v.heldType) {
-      if (v.heldMesh) v.heldMesh.removeFromParent()
-      v.heldMesh = null
+      disposeHeld(v)
       v.heldType = s.held
       if (s.held && parts.armR) {
         const item = buildItemMesh(s.held, { halo: false }) // v59：手持物品不显示脚底稀有度光圈
@@ -174,8 +247,8 @@ export class RemotePlayerViews {
     }
   }
 
-  private clearAll(scene: THREE.Scene) {
-    for (const [, v] of this.views) scene.remove(v.grp)
+  private clearAll() {
+    for (const [, v] of this.views) disposeView(v)
     this.views.clear()
   }
 
@@ -185,12 +258,12 @@ export class RemotePlayerViews {
     if (!session || !session.started || !m) return []
     const p = engine.player
     // 本端正处孤立效应区域（L0 非马尼拉室）时不与任何远端玩家碰撞（互不可见即互不碰撞）
-    if (p.level === 0 && (m.tint?.[Math.floor(p.y) * m.w + Math.floor(p.x)] ?? 0) !== 1) return []
+    if (p.level === 0 && l0Meeting(m,p.x,p.y)<.98) return []
     const ox = m.inf?.ox ?? 0, oy = m.inf?.oy ?? 0
     const out: { x: number; y: number; z: number }[] = []
     for (const r of session.remotes.values()) {
       if (session.isHost ? r.id === 'HOST' : r.id === session.selfId) continue
-      if (r.s.level !== p.level || r.s.dead || r.s.iso) continue
+      if (r.s.level !== p.level || r.s.dead || r.s.iso || (p.level===0&&(r.s.l0Space!==l0Space(m)||(r.s.l0Meeting??0)<.98))) continue
       out.push({ x: r.s.x - ox, y: r.s.y - oy, z: r.s.z })
     }
     return out

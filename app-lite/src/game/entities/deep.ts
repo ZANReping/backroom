@@ -159,7 +159,7 @@ export const DEEP_ENTITIES: Record<string, EntityDef> = {
     codex: {
       no: 'Entity 96「The Neighborhood Watch」· Watchers', danger: '5 级（极端威胁）', habitat: 'Level 9',
       behavior: '悬浮不动，缓慢转向。锁定后从远距离发射光束——被击中的活体会当场化为细灰色的粉尘。',
-      counter: '打断视线：绕到房屋、栅栏或树后。⚠ 最重要的一条：**绝对不要把 Pockets 带进 Level 9**，那会立刻把它们全部引来。同时关闭一切电子设备。',
+      counter: '打断视线：绕到房屋、栅栏或树后。⚠ 最重要的一条：**绝对不要把一些口袋带进 Level 9**，那会立刻把它们全部引来。同时关闭一切电子设备。',
       lore: [
         '邻里守望分三种形态：Watchers（悬浮的巨型眼球）、Striders（六足猎手）、Swimmers（犬类大小的水生变种，八条视神经呈章鱼式排列）。',
         '它们会破坏并腐蚀电子设备。M.E.G. 的现场纪律是：进入 Level 9 前关机、取出电池、检查背包里有没有 Object 51。',

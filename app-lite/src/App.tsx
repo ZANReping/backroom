@@ -1,6 +1,6 @@
 import ToyEnvironment from '@/components/ToyEnvironment'
 import ToySurvivalReport from '@/components/ToySurvivalReport'
-import { enterToyGame, toyNotice, toySnapshot, toyViewport, validRoomCode } from '@/game/platform/toy'
+import { enterToyGame, toyNotice, toySnapshot, toyViewport } from '@/game/platform/toy'
 import { readReport } from '@/game/platform/toyReport'
 import './toy.css'
 import CareerTracker from '@/components/CareerTracker'
@@ -11,16 +11,18 @@ import { engine } from '@/game/engine'
 import type { SaveSlotId, SlotInfo } from '@/game/engine'
 import { listSaveSlots, readSaveSlot, clearSaveSnapshot } from '@/game/engine/save'
 import { storage } from '@/game/core/storage'
+import { titleBackgroundSource } from '@/game/core/titleSave'
+import { failBoot, finishBoot } from './boot'
 import { isPortraitOrientation } from '@/game/core/orientation'
 import { getRenderer, look, type Renderer3D } from '@/game/core/renderer3d'
 import { MouseLookInput, requestMouseCapture } from '@/game/core/mouseLook'
 import * as THREE from 'three'
 import { audio } from '@/game/core/audio'
-import { randomSeed } from '@/game/core/rng'
+import { randomSeed, parseSeedInput } from '@/game/core/rng'
 import { preloadGameResources } from '@/game/core/preload'
 import { getKeybinds, type KeyBindMap } from '@/game/core/keybinds'
-import { LEVELS, levelLabel, levelNo, levelDefOf } from '@/game/levels'
-import { generateLevel } from '@/game/world/mapgen'
+import { levelLabel, levelNo, levelDefOf } from '@/game/levels'
+import { generateLevel, floorHeight } from '@/game/world/mapgen'
 import { prepareChunkWindow } from '@/game/world/chunkCache'
 import { CS } from '@/game/world/infinite'
 import type { HudEvent } from '@/game/engine'
@@ -53,6 +55,7 @@ import LobbyOverlay from '@/components/LobbyOverlay' // v58：联机大厅
 import SquirtRadial, { type SquirtWheelAction, type SquirtWheelOption, type SquirtWheelState } from '@/components/SquirtRadial'
 import { MpSession } from '@/game/net/session'
 import { applyMpEvent } from '@/game/net/apply'
+import { MULTIPLAYER_ENABLED } from '@/game/core/features'
 
 type Screen = 'title' | 'loading' | 'intro' | 'game' | 'fall' | 'design'
 type Overlay = 'none' | 'settings' | 'howto' | 'pause' | 'radio' | 'inventory' | 'codex' | 'death' | 'victory' | 'avatar' | 'notebook' | 'doc' | 'landmark' | 'dialog' | 'lobby' | 'facility'
@@ -91,12 +94,12 @@ export default function App() {
 }
 
 function Game() {
-  const [invitation] = useState(() => validRoomCode(new URLSearchParams(window.location.search).get('room')))
   const [sharedReport, setSharedReport] = useState(() => readReport(window.location.search))
+
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const rendererRef = useRef<Renderer3D | null>(null)
   const [screen, setScreen] = useState<Screen>('title')
-  const [overlay, setOverlay] = useState<Overlay>(() => invitation ? 'lobby' : 'none')
+  const [overlay, setOverlay] = useState<Overlay>('none')
   const [worldLoading, setWorldLoading] = useState(false)
   const worldLoadingRef = useRef(false)
   const updateWorldLoading = useCallback((loading: boolean) => {
@@ -108,8 +111,10 @@ function Game() {
     const defaults = createDefaultSettings(typeof window !== 'undefined' && (toySnapshot().container?.deviceType === 'phone' || toySnapshot().container?.deviceType === 'tablet' || window.matchMedia?.('(pointer: coarse)').matches || 'ontouchstart' in window))
     try {
       const stored = JSON.parse(storage.get('br_settings') ?? '{}') as Record<string, unknown>
+      delete stored.preloadAllLevels
+      if(typeof stored.newGameSeed!=='string'||(stored.newGameSeed.trim()&&!parseSeedInput(stored.newGameSeed)&&parseSeedInput(stored.newGameSeed)!==0))delete stored.newGameSeed
       delete stored.dust // 已移除的旧版漂浮尘埃设置不再继续写回存档。
-      return { ...defaults, ...stored, bgmStyle: 'procedural' } as GameSettings
+      return { ...defaults, ...stored, bgmStyle: 'procedural', flicker:0,eyeAdaptation:typeof stored.eyeAdaptation==='boolean'?stored.eyeAdaptation:defaults.eyeAdaptation } as GameSettings
     } catch { return defaults }
   })
   const settingsRef = useRef(settings)
@@ -144,11 +149,16 @@ function Game() {
   const [invTab, setInvTab] = useState<'背包' | '图鉴' | '状态' | '地图' | '日志' | '任务'>('背包')
   // v54：存档槽位列表（标题屏展示；回标题时刷新）
   const [slots, setSlots] = useState<SlotInfo[]>(() => listSaveSlots())
+  const titleSource = titleBackgroundSource(slots)
+  const titleSourceRef = useRef(titleSource)
+  titleSourceRef.current = titleSource
+  const [titleReadyKey, setTitleReadyKey] = useState('')
+  const [titleError, setTitleError] = useState(false)
   const refreshSlots = useCallback(() => setSlots(listSaveSlots()), [])
   // v57：开始游戏加载界面状态（进度 + 当前资源 + 已完成内容）
   const [loadState, setLoadState] = useState({ progress: 0, label: '初始化加载器', detail: '准备预载资源', history: [] as string[] })
-  const loadingRef = useRef(false)
   const loadingGeneration = useRef(0)
+  const loadingRef = useRef(false)
   const [, setTick] = useState(0)
   const overlayRef = useRef(overlay)
   overlayRef.current = overlay
@@ -213,6 +223,8 @@ function Game() {
     audio.setBgmStyle(settings.bgmStyle) // v56：BGM 曲风（程序化 / MIDI）
     audio.setAmbVolume(settings.ambient / 100)
     audio.setSfxVolume(settings.sfx / 100)
+    engine.devEnabled = settings.devMode
+    if (!settings.devMode) engine.dev.mapReveal = false
     engine.dev.god = settings.devMode // 开发者模式：无敌
     // 界面主题：挂到 <html data-theme>，CSS 变量随之整体切换（见 index.css）
     document.documentElement.dataset.theme = settings.theme
@@ -364,6 +376,7 @@ function Game() {
   // v58：联机会话（非空=联机局进行中）
   const mpSessionRef = useRef<MpSession | null>(null)
   const onMpStart = useCallback((session: MpSession, seed: number) => {
+    if (!MULTIPLAYER_ENABLED) { session.leave(); return }
     mpSessionRef.current = session
     ;(window as unknown as { __mpSession: MpSession }).__mpSession = session // 调试/联机冒烟读取点
     engine.mpSession = session
@@ -398,7 +411,7 @@ function Game() {
     if (generation !== loadingGeneration.current) return
     audio.resume()
     look.yaw = 0; look.pitch = 0
-    const s = seed ?? randomSeed()
+    const s = seed ?? parseSeedInput(settings.newGameSeed) ?? randomSeed()
     const fresh = seed === undefined || forceFresh // v58：联机开局强制新游戏（跳过读档恢复 + 播入场动画）
     if (fresh) {
       // 全新开局（非「继续游戏」）：清空 NPC 聊天记录与随机 NPC 图鉴记录
@@ -408,7 +421,7 @@ function Game() {
       for (const k of Object.keys(c)) if (k.startsWith('npc_rand_')) { delete c[k]; cleared = true }
       if (cleared) saveCodex(c)
     }
-    engine.newRun(s, settings.difficulty, slot)
+    engine.newRun(s, settings.difficulty, slot, fresh)
     engine.paused = true
     setLoadState(prev => ({ ...prev, progress: 96, label: '准备附近场景', detail: '正在分帧构建入口并预热渲染', history: [...prev.history.slice(-7), '地图数据就绪，正在构建入口场景'] }))
     // The animation loop keeps rendering under LoadingScreen. Do not dismiss it
@@ -440,7 +453,7 @@ function Game() {
       setScreen('fall')
     }
     refreshSlots()
-  }, [settings.difficulty, refreshSlots])
+  }, [settings.difficulty, settings.newGameSeed, refreshSlots])
 
   // 点击「开始游戏/继续游戏」后：显示加载界面 → 预载贴图/BGM 资源并回报进度 → 再进入游戏。
   // 预载失败一律降级放行（渲染层/音频层均有程序化兜底）。
@@ -451,12 +464,12 @@ function Game() {
     const generation = ++loadingGeneration.current
     if (seed === undefined || forceFresh) targetLevel = 0
     audio.resume() // 用户手势内解锁 WebAudio
-    const runSeed = seed ?? randomSeed()
+    const runSeed = seed ?? parseSeedInput(settings.newGameSeed) ?? randomSeed()
     setLog([])
     setOverlay('none')
     setLoadState({ progress: 2, label: '初始化加载器', detail: '正在准备资源清单', history: [] })
     setScreen('loading')
-    void preloadGameResources({ targetLevel, bgmStyle: settings.bgmStyle, allLevels: settings.preloadAllLevels }, (u) => {
+    void preloadGameResources({ targetLevel, bgmStyle: settings.bgmStyle, allLevels: false }, (u) => {
       if (generation !== loadingGeneration.current) return
       setLoadState((prev) => ({
         progress: Math.max(prev.progress, u.progress),
@@ -492,7 +505,7 @@ function Game() {
       }
       finally { if (generation === loadingGeneration.current) loadingRef.current = false }
     })
-  }, [settings.bgmStyle, settings.preloadAllLevels, commitStart, refreshSlots])
+  }, [settings.bgmStyle, settings.newGameSeed, commitStart, refreshSlots])
 
   // v54：从槽位继续（读快照取种子与层级）；空槽回退为新游戏
   const continueSlot = useCallback((slot: SaveSlotId) => {
@@ -814,7 +827,7 @@ function Game() {
       window.removeEventListener('wheel', onWheel)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMobile])
+  }, [])
 
   // 主循环（Three.js 第一人称渲染）
   useEffect(() => {
@@ -855,10 +868,41 @@ function Game() {
     resize()
     window.addEventListener('resize', resize)
 
-    // 标题吸引模式地图
-    let attractMap: ReturnType<typeof generateLevel> | null = null
-    let attractPreparing = false
+    // Read-only preview facade: do not load/advance a run or temporarily overwrite its player/map.
+    const attractEngine: typeof engine = Object.assign(Object.create(Object.getPrototypeOf(engine)), engine, {
+      player: structuredClone(engine.player), input: { ...engine.input }, npcs: [],
+      map: null, paused: true, over: true, handsHidden: true,
+    })
+    let attractKey = '', attractEpoch = 0, attractReadyFrames = 0, attractPublished = ''
+    let attractYaw = 0, attractTime = 0
+    let attractFailed = false
     let alive = true
+    const failAttract = (error: unknown) => {
+      if (!alive || attractFailed) return
+      attractFailed = true; setTitleError(true); failBoot(error)
+    }
+    const prepareAttract = () => {
+      const source = titleSourceRef.current
+      if (attractKey === source.key) return
+      attractKey = source.key
+      const epoch = ++attractEpoch
+      attractEngine.map = null; attractReadyFrames = 0; attractYaw = 0; attractTime = 0; attractPublished = ''
+      setTitleReadyKey('')
+      attractFailed = false; setTitleError(false)
+      const def = levelDefOf(source.level)!
+      canvas.dataset.titleReady = 'false'
+      canvas.dataset.titleLevel = String(source.level)
+      canvas.dataset.titleSeed = String(source.seed)
+      void prepareChunkWindow(def, source.seed).then(() => {
+        if (!alive || epoch !== attractEpoch) return
+        const map = generateLevel(def, source.seed, false)
+        attractEngine.map = map; attractEngine.seed = source.seed; attractEngine.mapSeed = source.seed
+        Object.assign(attractEngine.player, { level: source.level, x: map.spawn.x + .5, y: map.spawn.y + .5,
+          z: floorHeight(map, map.spawn.x + .5, map.spawn.y + .5, 0), floor: 0, flashlight: true })
+      }).catch(error => { if (alive && epoch === attractEpoch) failAttract(error) })
+    }
+    // Begins under the HTML “正在寻找入口” screen, before the first menu render.
+    prepareAttract()
 
     const loop = (now: number) => {
       raf = requestAnimationFrame(loop)
@@ -901,39 +945,30 @@ function Game() {
       if (presenting) return
 
       if (screenRef.current === 'title' || screenRef.current === 'design') {
-        // 吸引模式：L0 出生点缓慢环视（v54：设计模式全屏覆盖，背景同走吸引模式，引擎保持暂停）
-        if (!attractMap && !attractPreparing) {
-          attractPreparing = true
-          void prepareChunkWindow(LEVELS[0], 1337).then(() => {
-            if (alive && (screenRef.current === 'title' || screenRef.current === 'design')) {
-              attractMap = generateLevel(LEVELS[0], 1337)
-            }
-          }).finally(() => { attractPreparing = false })
-        }
-        if (!attractMap) return
-        look.yaw += dt * 0.18
-        look.pitch = Math.sin(now / 4000) * 0.08
-        const savedMap = engine.map
-        const savedLevel = engine.player.level
-        const px = engine.player.x, py = engine.player.y
-        const fl = engine.player.flashlight
-        engine.map = attractMap
-        engine.player.level = 0
-        engine.player.x = attractMap.spawn.x + 0.5
-        engine.player.y = attractMap.spawn.y + 0.5
-        engine.player.flashlight = true
-        renderer.render(canvas, engine, { grain: settings.grain, flicker: settings.flicker / 100, shake: false }, dt)
-        engine.player.x = px; engine.player.y = py
-        engine.player.flashlight = fl
-        engine.map = savedMap
-        engine.player.level = savedLevel
+        prepareAttract()
+        if (!attractEngine.map || attractFailed) return
+        const savedLook = { ...look }
+        try {
+          // Freeze the initial framing while loading, then slowly look around.
+          if (attractPublished === attractKey) { attractTime += Math.min(dt,.1); attractYaw += Math.min(dt,.1)*.18 }
+          look.yaw = attractYaw; look.pitch = Math.sin(attractTime/4)*.08; look.roll = 0
+          renderer.render(canvas, attractEngine, { grain: settings.grain, flicker: 0, shake: false }, dt)
+          attractReadyFrames = renderer.isTitleWorldReady(attractEngine) ? attractReadyFrames + 1 : 0
+          if (attractReadyFrames >= 3 && attractPublished !== attractKey) {
+            attractPublished = attractKey
+            canvas.dataset.titleReady = 'true'
+            setTitleReadyKey(attractKey)
+            finishBoot()
+          }
+        } catch (error) { failAttract(error); return }
+        finally { Object.assign(look, savedLook) }
       } else {
         renderer.applyView(engine)
         engine.update(dt)
         if ((cutRef.current && cutStageRef.current !== 'loading')
           || (screenRef.current === 'intro' && introPhaseRef.current !== 'holding')) return
         mpSessionRef.current?.tick(engine, dt) // v58：联机状态同步（12Hz）
-        renderer.render(canvas, engine, { grain: settings.grain, flicker: settings.flicker / 100, shake: settings.shake }, dt)
+        renderer.render(canvas, engine, { grain: settings.grain, flicker: 0, shake: settings.shake }, dt)
         // loadLevel can replace the map inside update(). Publish readiness for
         // that exact map immediately, independently of the throttled HUD rate.
         if (engine.map !== pendingMap) { pendingMap = engine.map; waitingForMap = true }
@@ -951,6 +986,7 @@ function Game() {
     raf = requestAnimationFrame(loop)
     return () => {
       alive = false
+      attractEpoch++
       cancelAnimationFrame(raf)
       window.removeEventListener('resize', resize)
     }
@@ -1020,7 +1056,9 @@ function Game() {
     r.setBloomFx(settings.bloomFx)
     r.setBloomStrength(settings.bloomStrength)
     r.setExposure(settings.exposure)
-  }, [settings.lightMode, settings.realWater, settings.shadowQuality, settings.sunShadows, settings.lightShadows, settings.reflectivity, settings.bloomFx, settings.bloomStrength, settings.exposure])
+    r.setEyeAdaptation(settings.eyeAdaptation)
+    r.setPhotography(settings.ambientOcclusion??1,settings.grain?settings.grainStrength:0,settings.vignetteStrength,settings.colorGrade,settings.scanlineStrength)
+  }, [settings.lightMode, settings.realWater, settings.shadowQuality, settings.sunShadows, settings.lightShadows, settings.reflectivity, settings.bloomFx, settings.bloomStrength, settings.exposure,settings.eyeAdaptation,settings.ambientOcclusion,settings.grain,settings.grainStrength,settings.vignetteStrength,settings.colorGrade,settings.scanlineStrength])
 
   const quitToTitle = () => {
     loadingGeneration.current++
@@ -1049,19 +1087,6 @@ function Game() {
 
   const levelDef = engine.levelDef
 
-  // 现象「孤立效应」附加表现：Level 0 内对画布施加极轻微的画面微调色（每次进层重新随机）
-  const cg = engine.colorGrade
-  const phenomenonGradeFilter = engine.player.level === 0 && (cg.hue !== 0 || cg.sat !== 1 || cg.con !== 1 || cg.bri !== 1)
-    ? `hue-rotate(${cg.hue.toFixed(2)}deg) saturate(${cg.sat.toFixed(3)}) contrast(${cg.con.toFixed(3)}) brightness(${cg.bri.toFixed(3)})`
-    : ''
-  const atmosphereGradeFilter = settings.colorGrade === 'liminal'
-    ? 'sepia(0.12) saturate(0.84) hue-rotate(-7deg) contrast(1.06)'
-    : settings.colorGrade === 'cold'
-      ? 'saturate(0.76) hue-rotate(8deg) contrast(1.08) brightness(0.96)'
-      : settings.colorGrade === 'bleached'
-        ? 'saturate(0.58) contrast(1.15) brightness(1.03)'
-        : ''
-  const gradeFilter = [phenomenonGradeFilter, atmosphereGradeFilter].filter(Boolean).join(' ') || undefined
   const scanlineBase = settings.theme === 'database' ? 0.5 : ['liminal', 'basalt', 'fandom', 'meg'].includes(settings.theme) ? 0.22 : 0.6
   const appStyle = {
     background: 'var(--ink)',
@@ -1076,22 +1101,14 @@ function Game() {
       setSharedReport(null)
       const url = new URL(window.location.href); url.searchParams.delete('report'); window.history.replaceState(null, '', url)
     }} />}
-    <div inert={portraitBlocked} data-ui={settings.uiPresentation} className={`br-app fixed inset-0 overflow-hidden ${settings.grain ? 'vhs-grain scanlines' : 'scanlines'} ${customPause ? 'br-hide-hud-pause' : ''}`} style={appStyle}>
+    <div inert={portraitBlocked} data-ui={settings.uiPresentation} className={`br-app fixed inset-0 overflow-hidden ${customPause ? 'br-hide-hud-pause' : ''}`} style={appStyle}>
       <canvas
         ref={canvasRef}
         style={{
-          position: 'fixed', top: 0, left: 0, zIndex: 1, filter: gradeFilter,
+          position: 'fixed', top: 0, left: 0, zIndex: 1,
           imageRendering: settings.renderResolution === '480p_retro' || settings.renderResolution === '320p_ps1' ? 'pixelated' : 'auto',
         }}
       />
-
-      {settings.vignetteStrength > 0 && (
-        <div
-          className="pointer-events-none fixed inset-0 z-[2]"
-          style={{ background: `radial-gradient(ellipse at center, transparent 43%, rgba(0,0,0,${(settings.vignetteStrength * 0.008).toFixed(3)}) 100%)` }}
-          aria-hidden="true"
-        />
-      )}
 
       {/* 沉浸式 UI 的低存在感取景框；纯装饰，不参与命中测试，也不增加逐帧状态。 */}
       <div className="immersive-ui-frame" aria-hidden="true">
@@ -1199,7 +1216,7 @@ function Game() {
           log={log}
           toasts={toasts}
           devMode={settings.devMode}
-          fxScale={settings.flicker / 100}
+          fxScale={0}
           onPause={() => setOverlay('pause')}
           onInventory={() => { discoverFromEngine(engine); setInvTab('背包'); setOverlay('inventory') }}
           onSelectSlot={(i) => { engine.player.selected = i; audio.uiTick() }}
@@ -1247,7 +1264,14 @@ function Game() {
       )}
 
       {/* 标题 */}
-      {screen === 'title' && overlay === 'none' && (
+      {screen === 'title' && titleReadyKey !== titleSource.key && (
+        <LoadingScreen progress={0} label="正在寻找入口" detail={`正在准备 ${levelLabel(titleSource.level)} 的主界面背景……`} history={[]} />
+      )}
+      {screen === 'title' && titleError && <div className="fixed inset-0 z-[80] flex flex-col items-center justify-center gap-4" style={{ background: 'var(--ink)', color: 'var(--text)' }} role="alert">
+        <p>主界面背景加载失败，请重新连接。</p>
+        <button className="menu-btn" onClick={() => window.location.reload()}>重新连接</button>
+      </div>}
+      {screen === 'title' && titleReadyKey === titleSource.key && overlay === 'none' && (
         <TitleScreen
           slots={slots}
           onNewGame={(slot) => requestStart(undefined, slot, 0)}
@@ -1257,7 +1281,7 @@ function Game() {
           onHowTo={() => setOverlay('howto')}
           onCodex={() => setOverlay('codex')}
           onAvatar={() => setOverlay('avatar')}
-          onMultiplayer={() => setOverlay('lobby')}
+          onMultiplayer={MULTIPLAYER_ENABLED ? () => setOverlay('lobby') : undefined}
           devMode={settings.devMode}
           onDesign={() => setScreen('design')}
         />
@@ -1269,7 +1293,7 @@ function Game() {
       )}
 
       {/* 覆盖层 */}
-      {overlay === 'lobby' && <LobbyOverlay initialCode={invitation ?? undefined} onClose={() => setOverlay('none')} onStart={onMpStart} />}
+      {MULTIPLAYER_ENABLED && overlay === 'lobby' && <LobbyOverlay onClose={() => setOverlay('none')} onStart={onMpStart} />}
       {overlay === 'avatar' && <AvatarEditor onClose={() => setOverlay('none')} />}
       {overlay === 'settings' && (
         <SettingsModal

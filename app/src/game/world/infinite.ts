@@ -1,5 +1,7 @@
 import {genL0Architecture,l0RegionOf,newL0Space,l0RestoredDropPosition,type L0Layout,type L0SpaceState} from './l0Architecture'
 import { newL1Dynamics, restoreL1Container, rememberL1Container, type L1Dynamics } from './l1Dynamics'
+import {l1RestoredDropPosition} from './l1Architecture'
+import type { L1ArchitectureData } from './l1BuildingTypes'
 // ================= v17：Level 0「教学关卡」无限 chunk 流式生成 =================
 // 以玩家为中心按 32×32 瓦片 chunk 流式生成/卸载；chunk 用「世界种子+chunk 坐标」
 // 确定性生成（同种子重访同 chunk 内容一致）。chunk 间通过共享边哈希的「边缘开口」
@@ -70,6 +72,7 @@ export const VARIANT_LORE: Record<string, string[]> = {
 
 export interface LiveChunk {
   l0?: L0Layout
+  l1?: L1ArchitectureData
   up2?: Uint8Array
   upWall2?: Uint8Array
   stair?: Uint32Array
@@ -243,10 +246,10 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
     .map((it) => ({ ...it, x: it.x - ox, y: it.y - oy }))
   // 卸载时保存的玩家掉落物（世界坐标 → 窗口坐标）
   for (const e of st?.extraItems ?? []) {
-    if (!inf.taken.has(e.id)) {const p=raw.l0?l0RestoredDropPosition(raw.l0,e.x,e.y):e;items.push({ ...e, x:p.x-ox, y:p.y-oy })}
+    if (!inf.taken.has(e.id)) {const p=raw.l0?l0RestoredDropPosition(raw.l0,e.x,e.y):def.id===1?l1RestoredDropPosition(raw,cx,cy,e.x,e.y):e;items.push({ ...e, x:p.x-ox, y:p.y-oy })}
   }
   const lights: LightSource[] = raw.lights.map((l) => ({ ...l, x: l.x - ox, y: l.y - oy }))
-  for (const e of st?.extraLights ?? []) {const p=raw.l0?l0RestoredDropPosition(raw.l0,e.x,e.y):e;lights.push({ ...e, x:p.x-ox, y:p.y-oy })}
+  for (const e of st?.extraLights ?? []) {const p=raw.l0?l0RestoredDropPosition(raw.l0,e.x,e.y):def.id===1?l1RestoredDropPosition(raw,cx,cy,e.x,e.y):e;lights.push({ ...e, x:p.x-ox, y:p.y-oy })}
   const exits: ExitInstance[] = raw.exits.map((e) => ({ def: e.def, x: e.x - ox, y: e.y - oy, floor: e.floor, z: e.z, discovered: st?.exitDisc ?? false }))
   // v25：chunk 实体（栖息地过滤结果，世界坐标 → 窗口坐标）
   // v41：calm 实例标记（L2 被动死亡飞蛾）——浅拷贝 def 置被动语义，不污染共享实体定义
@@ -283,7 +286,7 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
     moveT: 1 + Math.random() * 5, bubbleText: '', bubbleT: 0,
     hp: sp.def.faction === 'brc' ? 55 : sp.def.faction === 'jerry' ? 45 : undefined, // BRC 员工/信众可伤害可杀死；其余 NPC 无敌（据点居民契约）
   }))
-  return { key, cx, cy, l0: raw.l0, variant: raw.variant, tiles: raw.tiles, wet: raw.wet, elev: raw.elev, tint: raw.tint, crawl: raw.crawl, outdoor: raw.outdoor, ceiling: raw.ceiling, liquid: raw.liquid, dn: raw.dn, dnWall: raw.dnWall, up: raw.up, upWall: raw.upWall, up2: raw.up2, upWall2: raw.upWall2, stair: raw.stair, seaFloor: raw.seaFloor, terrain: raw.terrain, caveCeil: raw.caveCeil, structures, items, lights, exits, entities, npcs, habFallback: raw.habFallback }
+  return { key, cx, cy, l0: raw.l0, l1: raw.l1, variant: raw.variant, tiles: raw.tiles, wet: raw.wet, elev: raw.elev, tint: raw.tint, crawl: raw.crawl, outdoor: raw.outdoor, ceiling: raw.ceiling, liquid: raw.liquid, dn: raw.dn, dnWall: raw.dnWall, up: raw.up, upWall: raw.upWall, up2: raw.up2, upWall2: raw.upWall2, stair: raw.stair, seaFloor: raw.seaFloor, terrain: raw.terrain, caveCeil: raw.caveCeil, structures, items, lights, exits, entities, npcs, habFallback: raw.habFallback }
 }
 
 // 把已加载 chunk 内容缝合进窗口数组与对象列表

@@ -1,6 +1,7 @@
-// Large, seed-shaped districts. Six-colouring prevents nearby disconnected repeats.
+import { l1PathChunk,l1ReferenceAt } from './l1Spatial'
+// Large seed-shaped districts; paths are local branches inside these five districts.
 export type L1District = 'parking'|'storage'|'gothic'|'ouroboros'|'garden'|'maintenance'
-const TYPES:L1District[]=['parking','storage','garden','gothic','ouroboros','maintenance']
+const TYPES:L1District[]=['parking','storage','garden','gothic','ouroboros','parking']
 const mod=(n:number,d:number)=>(n%d+d)%d
 export const L1_DISTRICT_SIZE=16
 const compact=(variant:L1District)=>variant==='ouroboros'||variant==='garden'
@@ -22,7 +23,7 @@ export function l1District(seed:number,cx:number,cy:number){
     const variant=TYPES[mod(gx+2*gy,6)]
     if(compact(variant)){
       const centerY=gy*32-warped(seed,gx*16,gy*16)[1]
-      if(Math.abs(x-gx*16)<5&&Math.abs(cy-centerY)<6){
+      if(Math.abs(x-gx*16)<3&&Math.abs(cy-centerY)<4){
         result={gx,gy,key:`${gx},${gy}`,variant,cx:gx*16,cy:gy*16};best=-Infinity
       }
       continue
@@ -35,6 +36,7 @@ export function l1District(seed:number,cx:number,cy:number){
   return result
 }
 export function l1Transition(seed:number,cx:number,cy:number){
+  if(l1ReferenceAt(seed,cx*32+16,cy*32+16)||l1PathChunk(seed,cx,cy))return null
   const a=l1District(seed,cx,cy)
   // Only the boundary owner's chunk becomes a passage; never randomly selected.
   for(const [dx,dy] of [[1,0],[0,1]]){
@@ -43,12 +45,19 @@ export function l1Transition(seed:number,cx:number,cy:number){
   }
   return null
 }
-export function l1LayoutVariant(seed:number,cx:number,cy:number){return l1Transition(seed,cx,cy)?'aisle':l1District(seed,cx,cy).variant}
+export function l1LayoutVariant(seed:number,cx:number,cy:number){
+ const ref=l1ReferenceAt(seed,cx*32+16,cy*32+16);if(ref)return ref.variant
+ return l1PathChunk(seed,cx,cy)?'maintenance':l1Transition(seed,cx,cy)?'aisle':l1District(seed,cx,cy).variant
+}
 export function l1TransitionStyle(seed:number,wx:number,wy:number){
   const cx=Math.floor(wx/32),cy=Math.floor(wy/32),t=l1Transition(seed,cx,cy)
-  return t?(mod(t.axis==='x'?wx:wy,32)<16?t.a:t.b):l1District(seed,cx,cy).variant
+  // The connection is owned by an eight-metre structural bay, with a stable
+  // seed-selected frame. It need not bisect the streaming chunk.
+  const frame=8+8*mod(Math.imul(cx,31)^Math.imul(cy,17)^seed,3)
+  return t?(mod(t.axis==='x'?wx:wy,32)<frame?t.a:t.b):l1District(seed,cx,cy).variant
 }
 export function l1Outpost(seed:number,cx:number,cy:number){
+  if(l1ReferenceAt(seed,cx*32+16,cy*32+16))return undefined
   const d=l1District(seed,cx,cy)
   // The first base stays deep inside the starting parking district, over 125 m from (15.5,15.5).
   const anchor=d.gx===0&&d.gy===0?L1_START_OUTPOST_CHUNK:{cx:d.cx,cy:d.cy}
@@ -63,6 +72,6 @@ export function l1DistanceScale(seed:number,wx:number,wy:number){
   const u=mod(t.axis==='x'?wx:wy,32),v=mod(t.axis==='x'?wy:wx,32)
   const envelope=Math.sin(Math.PI*u/32)**2*Math.sin(Math.PI*v/32)**2
   const stretch=mod(cx+cy+(seed>>>0),2)===0
-  return 1+envelope*(stretch?-.72:1.4)
+  return 1+envelope*(stretch?-.28:.35)
 }
 

@@ -1,3 +1,4 @@
+import { newL7Fx } from './l7Events'
 import { captureL0,restoreL0 } from './l0State'
 import {settleGlowFlight} from './glowsticks'
 import { look } from '../renderer/shared'
@@ -25,7 +26,7 @@ import { resetEffects } from './effects'
 import { persist as persistSave } from './save'
 
 export function nextMapSeed(eng: Engine, id: number): number {
-  return eng.mpMapSeed?.(id) ?? (id === 0 ? eng.l0World?.seed ?? eng.seed : id === 1 ? eng.l1World?.seed ?? (eng.seed+131) : id === 11 ? eng.l11World?.seed ?? (eng.seed+1441) : eng.seed+eng.time*7+id*131)
+  return eng.mpMapSeed?.(id) ?? (id === 0 ? eng.l0World?.seed ?? eng.seed : id === 1 ? eng.l1World?.seed ?? (eng.seed===20261006?eng.seed:eng.seed+131) : id === 11 ? eng.l11World?.seed ?? (eng.seed+1441) : eng.seed+eng.time*7+id*131)
 }
 
 export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; firstVisit: boolean }, preparedMapSeed?: number) {
@@ -220,6 +221,8 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   eng.climb = null
   eng.porchDrop = null // v58：换层中止门廊拖拽演出
   audio.setUnderwater(false)
+  audio.stopDeepPressure()
+  eng.l7fx=newL7Fx();eng.l7fx.mapRef=eng.map
   eng.explored = new Uint8Array(eng.map.w * eng.map.h)
   if(id===0)restoreL0(eng)
   if(id===1)restoreL1(eng)

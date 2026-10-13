@@ -1,0 +1,555 @@
+{
+  "status": "passed",
+  "checks": [
+    "app settings: panel fits viewport",
+    "app codex: panel fits viewport",
+    "desktop settings: panel fits viewport",
+    "desktop pause: panel fits viewport",
+    "desktop inventory: panel fits viewport",
+    "desktop dialog: panel fits viewport",
+    "desktop loot: panel fits viewport",
+    "desktop death: panel fits viewport",
+    "desktop victory: panel fits viewport",
+    "desktop loading: panel fits viewport",
+    "portrait settings: panel fits viewport",
+    "portrait pause: panel fits viewport",
+    "portrait inventory: panel fits viewport",
+    "portrait dialog: panel fits viewport",
+    "portrait loot: panel fits viewport",
+    "portrait death: panel fits viewport",
+    "portrait victory: panel fits viewport",
+    "portrait loading: panel fits viewport",
+    "landscape settings: panel fits viewport",
+    "landscape pause: panel fits viewport",
+    "landscape inventory: panel fits viewport",
+    "landscape dialog: panel fits viewport",
+    "landscape loot: panel fits viewport",
+    "landscape death: panel fits viewport",
+    "landscape victory: panel fits viewport",
+    "landscape loading: panel fits viewport",
+    "difficulty click updates state",
+    "switch updates once",
+    "画面 category activates",
+    "音频 category activates",
+    "操作 category activates",
+    "主题 category activates",
+    "API category activates",
+    "游戏 category activates",
+    "removed scene shadow option stays absent",
+    "inventory 图鉴: panel fits viewport",
+    "inventory 状态: panel fits viewport",
+    "inventory 地图: panel fits viewport",
+    "inventory 日志: panel fits viewport",
+    "inventory 任务: panel fits viewport",
+    "inventory 背包: panel fits viewport",
+    "take one updates inventory and container",
+    "loot count rerenders after engine event",
+    "take all drains container",
+    "empty loot state renders",
+    "leave closes container",
+    "save picker opens",
+    "manual save persists to isolated storage and confirms",
+    "title continue displays saved level",
+    "theme amber activates",
+    "theme liminal activates",
+    "theme basalt activates",
+    "theme dark-liminal activates",
+    "theme greyspace activates",
+    "theme database activates",
+    "theme fandom activates",
+    "theme meg activates",
+    "no uncaught browser exceptions",
+    "desktop complete victory stamp: panel fits viewport",
+    "desktop complete death: panel fits viewport",
+    "portrait complete victory stamp: panel fits viewport",
+    "portrait complete death: panel fits viewport",
+    "narrow complete victory stamp: panel fits viewport",
+    "narrow complete death: panel fits viewport",
+    "landscape complete victory stamp: panel fits viewport",
+    "landscape complete death: panel fits viewport",
+    "switch uses a single accessible state"
+  ],
+  "layouts": [
+    {
+      "name": "app settings",
+      "x": 290,
+      "y": 135.93885803222656,
+      "width": 860,
+      "height": 640,
+      "viewport": [
+        1440,
+        900
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "app codex",
+      "x": 208,
+      "y": 76.66827392578125,
+      "width": 1024,
+      "height": 760,
+      "viewport": [
+        1440,
+        900
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "desktop settings",
+      "x": 290,
+      "y": 130,
+      "width": 860,
+      "height": 640,
+      "viewport": [
+        1440,
+        900
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "desktop pause",
+      "x": 0,
+      "y": 0,
+      "width": 340,
+      "height": 900,
+      "viewport": [
+        1440,
+        900
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "desktop inventory",
+      "x": 208,
+      "y": 70,
+      "width": 1024,
+      "height": 760,
+      "viewport": [
+        1440,
+        900
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "desktop dialog",
+      "x": 420,
+      "y": 293,
+      "width": 600,
+      "height": 314,
+      "viewport": [
+        1440,
+        900
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "desktop loot",
+      "x": 560,
+      "y": 637.5,
+      "width": 320,
+      "height": 166.5,
+      "viewport": [
+        1440,
+        900
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "desktop death",
+      "x": 480,
+      "y": 215.5,
+      "width": 480,
+      "height": 469,
+      "viewport": [
+        1440,
+        900
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "desktop victory",
+      "x": 490,
+      "y": 232.75,
+      "width": 460,
+      "height": 434.5,
+      "viewport": [
+        1440,
+        900
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "desktop loading",
+      "x": 440,
+      "y": 313.5,
+      "width": 560,
+      "height": 273,
+      "viewport": [
+        1440,
+        900
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "portrait settings",
+      "x": 0,
+      "y": 124,
+      "width": 390,
+      "height": 720,
+      "viewport": [
+        390,
+        844
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "portrait pause",
+      "x": 15,
+      "y": 152.25,
+      "width": 360,
+      "height": 539.5,
+      "viewport": [
+        390,
+        844
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "portrait inventory",
+      "x": 0,
+      "y": 126.609375,
+      "width": 390,
+      "height": 717.390625,
+      "viewport": [
+        390,
+        844
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "portrait dialog",
+      "x": 16,
+      "y": 258.3125,
+      "width": 358,
+      "height": 327.375,
+      "viewport": [
+        390,
+        844
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "portrait loot",
+      "x": 35,
+      "y": 607.5,
+      "width": 320,
+      "height": 140.5,
+      "viewport": [
+        390,
+        844
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "portrait death",
+      "x": 16,
+      "y": 187.5,
+      "width": 358,
+      "height": 469,
+      "viewport": [
+        390,
+        844
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "portrait victory",
+      "x": 16,
+      "y": 204.75,
+      "width": 358,
+      "height": 434.5,
+      "viewport": [
+        390,
+        844
+      ],
+      "horizontalOverflow": 24
+    },
+    {
+      "name": "portrait loading",
+      "x": 15.59375,
+      "y": 285.5,
+      "width": 358.796875,
+      "height": 273,
+      "viewport": [
+        390,
+        844
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "landscape settings",
+      "x": 13,
+      "y": 23.40625,
+      "width": 818,
+      "height": 343.1875,
+      "viewport": [
+        844,
+        390
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "landscape pause",
+      "x": 0,
+      "y": 0,
+      "width": 340,
+      "height": 390,
+      "viewport": [
+        844,
+        390
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "landscape inventory",
+      "x": 62,
+      "y": 23.40625,
+      "width": 720,
+      "height": 343.1875,
+      "viewport": [
+        844,
+        390
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "landscape dialog",
+      "x": 122,
+      "y": 46.5,
+      "width": 600,
+      "height": 297,
+      "viewport": [
+        844,
+        390
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "landscape loot",
+      "x": 262,
+      "y": 177.5,
+      "width": 320,
+      "height": 134.5,
+      "viewport": [
+        844,
+        390
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "landscape death",
+      "x": 102,
+      "y": 10,
+      "width": 640,
+      "height": 251,
+      "viewport": [
+        844,
+        390
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "landscape victory",
+      "x": 192,
+      "y": 10,
+      "width": 460,
+      "height": 274.75,
+      "viewport": [
+        844,
+        390
+      ],
+      "horizontalOverflow": 16
+    },
+    {
+      "name": "landscape loading",
+      "x": 142,
+      "y": 69,
+      "width": 560,
+      "height": 252,
+      "viewport": [
+        844,
+        390
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "inventory 图鉴",
+      "x": 208,
+      "y": 70,
+      "width": 1024,
+      "height": 760,
+      "viewport": [
+        1440,
+        900
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "inventory 状态",
+      "x": 208,
+      "y": 70,
+      "width": 1024,
+      "height": 760,
+      "viewport": [
+        1440,
+        900
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "inventory 地图",
+      "x": 208,
+      "y": 70,
+      "width": 1024,
+      "height": 760,
+      "viewport": [
+        1440,
+        900
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "inventory 日志",
+      "x": 208,
+      "y": 70,
+      "width": 1024,
+      "height": 760,
+      "viewport": [
+        1440,
+        900
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "inventory 任务",
+      "x": 208,
+      "y": 70,
+      "width": 1024,
+      "height": 760,
+      "viewport": [
+        1440,
+        900
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "inventory 背包",
+      "x": 208,
+      "y": 70,
+      "width": 1024,
+      "height": 760,
+      "viewport": [
+        1440,
+        900
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "desktop complete victory stamp",
+      "x": 836.1158447265625,
+      "y": 354.3658142089844,
+      "width": 87.768310546875,
+      "height": 87.76837158203125,
+      "viewport": [
+        1440,
+        900
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "desktop complete death",
+      "x": 480,
+      "y": 215.5,
+      "width": 480,
+      "height": 469,
+      "viewport": [
+        1440,
+        900
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "portrait complete victory stamp",
+      "x": 284.1158142089844,
+      "y": 326.3658142089844,
+      "width": 87.76837158203125,
+      "height": 87.76837158203125,
+      "viewport": [
+        390,
+        844
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "portrait complete death",
+      "x": 16,
+      "y": 187.5,
+      "width": 358,
+      "height": 469,
+      "viewport": [
+        390,
+        844
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "narrow complete victory stamp",
+      "x": 214.1157989501953,
+      "y": 213.11581420898438,
+      "width": 87.76838684082031,
+      "height": 87.76837158203125,
+      "viewport": [
+        320,
+        568
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "narrow complete death",
+      "x": 16,
+      "y": 62,
+      "width": 288,
+      "height": 444,
+      "viewport": [
+        320,
+        568
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "landscape complete victory stamp",
+      "x": 599.604248046875,
+      "y": 101.35427856445312,
+      "width": 68.79150390625,
+      "height": 68.79144287109375,
+      "viewport": [
+        844,
+        390
+      ],
+      "horizontalOverflow": 0
+    },
+    {
+      "name": "landscape complete death",
+      "x": 102,
+      "y": 10,
+      "width": 640,
+      "height": 251,
+      "viewport": [
+        844,
+        390
+      ],
+      "horizontalOverflow": 0
+    }
+  ],
+  "errors": []
+}

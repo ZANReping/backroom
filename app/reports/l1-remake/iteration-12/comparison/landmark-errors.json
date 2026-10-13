@@ -1,0 +1,261 @@
+{
+  "method": "Manual source points (~1% annotation uncertainty), unregistered geometric projection; visibility correspondence still requires image review.",
+  "scope": [
+    "parking-common",
+    "parking-round",
+    "parking-dim"
+  ],
+  "missing": [],
+  "cases": {
+    "parking-common": {
+      "status": "measured",
+      "points": 3,
+      "within3": 3,
+      "allWithin3": true
+    },
+    "parking-round": {
+      "status": "measured",
+      "points": 4,
+      "within3": 4,
+      "allWithin3": true
+    },
+    "parking-dim": {
+      "status": "measured",
+      "points": 3,
+      "within3": 3,
+      "allWithin3": true
+    }
+  },
+  "landmarks": [
+    {
+      "id": "parking-common",
+      "landmark": "near-column-foot",
+      "kind": "column",
+      "world": [
+        -5.2,
+        0,
+        1.6
+      ],
+      "sourceUV": [
+        0.305,
+        0.745
+      ],
+      "projectedUV": [
+        0.30720988403453414,
+        0.7508104112595149
+      ],
+      "inFrame": true,
+      "dxPercent": 0.22098840345341486,
+      "dyPercent": 0.5810411259514869,
+      "maxPercent": 0.5810411259514869,
+      "within3": true
+    },
+    {
+      "id": "parking-common",
+      "landmark": "near-column-beam-joint",
+      "kind": "beam",
+      "world": [
+        -5.2,
+        2.55,
+        1.6
+      ],
+      "sourceUV": [
+        0.305,
+        0.486
+      ],
+      "projectedUV": [
+        0.3136186136465282,
+        0.4788821893216403
+      ],
+      "inFrame": true,
+      "dxPercent": 0.8618613646528217,
+      "dyPercent": -0.7117810678359704,
+      "maxPercent": 0.8618613646528217,
+      "within3": true
+    },
+    {
+      "id": "parking-common",
+      "landmark": "next-column-foot",
+      "kind": "column",
+      "world": [
+        -5.2,
+        0,
+        -4.8
+      ],
+      "sourceUV": [
+        0.502,
+        0.681
+      ],
+      "projectedUV": [
+        0.48413603954608747,
+        0.6831417253257599
+      ],
+      "inFrame": true,
+      "dxPercent": -1.786396045391253,
+      "dyPercent": 0.21417253257598468,
+      "maxPercent": 1.786396045391253,
+      "within3": true
+    },
+    {
+      "id": "parking-round",
+      "landmark": "left-round-foot",
+      "kind": "column",
+      "world": [
+        -2.5,
+        0,
+        -1.2
+      ],
+      "sourceUV": [
+        0.303,
+        0.478
+      ],
+      "projectedUV": [
+        0.3060405146178202,
+        0.4792575733082775
+      ],
+      "inFrame": true,
+      "dxPercent": 0.30405146178202336,
+      "dyPercent": 0.12575733082775264,
+      "maxPercent": 0.30405146178202336,
+      "within3": true
+    },
+    {
+      "id": "parking-round",
+      "landmark": "left-round-head",
+      "kind": "beam",
+      "world": [
+        -2.5,
+        3.23,
+        -1.2
+      ],
+      "sourceUV": [
+        0.28023952095808385,
+        0.12479740680713128
+      ],
+      "projectedUV": [
+        0.27538243590537437,
+        0.12448619904502695
+      ],
+      "inFrame": true,
+      "dxPercent": -0.48570850527094867,
+      "dyPercent": -0.031120776210433188,
+      "maxPercent": 0.48570850527094867,
+      "within3": true
+    },
+    {
+      "id": "parking-round",
+      "landmark": "next-post-foot",
+      "kind": "column",
+      "world": [
+        -2.5,
+        0,
+        -7.2
+      ],
+      "sourceUV": [
+        0.40838323353293415,
+        0.4051863857374392
+      ],
+      "projectedUV": [
+        0.4274831119072763,
+        0.3981471972238313
+      ],
+      "inFrame": true,
+      "dxPercent": 1.9099878374342127,
+      "dyPercent": -0.7039188513607908,
+      "maxPercent": 1.9099878374342127,
+      "within3": true
+    },
+    {
+      "id": "parking-round",
+      "landmark": "third-post-foot",
+      "kind": "column",
+      "world": [
+        -2.5,
+        0,
+        -13.2
+      ],
+      "sourceUV": [
+        0.5005988023952096,
+        0.3565640194489465
+      ],
+      "projectedUV": [
+        0.47990034544322624,
+        0.3631382166824024
+      ],
+      "inFrame": true,
+      "dxPercent": -2.0698456951983357,
+      "dyPercent": 0.6574197233455925,
+      "maxPercent": 2.0698456951983357,
+      "within3": true
+    },
+    {
+      "id": "parking-dim",
+      "landmark": "left-column-foot",
+      "kind": "column",
+      "world": [
+        -2.5,
+        0,
+        -3
+      ],
+      "sourceUV": [
+        0.204,
+        0.672
+      ],
+      "projectedUV": [
+        0.19693035835680078,
+        0.6617706346346515
+      ],
+      "inFrame": true,
+      "dxPercent": -0.7069641643199204,
+      "dyPercent": -1.0229365365348575,
+      "maxPercent": 1.0229365365348575,
+      "within3": true
+    },
+    {
+      "id": "parking-dim",
+      "landmark": "right-column-foot",
+      "kind": "column",
+      "world": [
+        4.3,
+        0,
+        -3
+      ],
+      "sourceUV": [
+        0.647,
+        0.673
+      ],
+      "projectedUV": [
+        0.6586111807688062,
+        0.6659051008552386
+      ],
+      "inFrame": true,
+      "dxPercent": 1.1611180768806184,
+      "dyPercent": -0.7094899144761468,
+      "maxPercent": 1.1611180768806184,
+      "within3": true
+    },
+    {
+      "id": "parking-dim",
+      "landmark": "left-column-beam-joint",
+      "kind": "beam",
+      "world": [
+        -2.5,
+        3.53,
+        -3
+      ],
+      "sourceUV": [
+        0.204,
+        0.328
+      ],
+      "projectedUV": [
+        0.19915938807094752,
+        0.344904085753733
+      ],
+      "inFrame": true,
+      "dxPercent": -0.48406119290524685,
+      "dyPercent": 1.6904085753732978,
+      "maxPercent": 1.6904085753732978,
+      "within3": true
+    }
+  ]
+}

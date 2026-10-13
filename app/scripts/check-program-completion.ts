@@ -8,7 +8,7 @@ const check=(ok:unknown,label:string)=>{assert.ok(ok,label);checks++}
 const flush=async()=>{for(let n=0;n<24;n++)await Promise.resolve()}
 type Entry={program:object|undefined}
 const fake=(entries:Entry[]=[])=>{
-  const state={lost:false,extension:true,ready:new Set<object>(),queries:[] as object[]}
+  const state={lost:false,extension:true,ready:new Set<object>(),queries:[] as object[],target:null as THREE.WebGLRenderTarget|null}
   const gl={
     isContextLost:()=>state.lost,
     getExtension:()=>state.extension?{COMPLETION_STATUS_KHR:0x91b1}:null,
@@ -17,7 +17,7 @@ const fake=(entries:Entry[]=[])=>{
       state.queries.push(program);return state.ready.has(program)
     },
   }
-  const renderer={info:{programs:entries},getContext:()=>gl,compileAsync:()=>Promise.resolve()} as unknown as THREE.WebGLRenderer
+  const renderer={info:{programs:entries},getContext:()=>gl,compileAsync:()=>Promise.resolve(),getRenderTarget:()=>state.target,setRenderTarget:(t:THREE.WebGLRenderTarget|null)=>{state.target=t}} as unknown as THREE.WebGLRenderer
   return {renderer,state,entries}
 }
 const timers:(()=>void)[]=[]
@@ -71,19 +71,24 @@ try {
     const geometry=new THREE.BoxGeometry(),material=new THREE.MeshLambertMaterial()
     root.add(new THREE.Mesh(geometry,material))
     const current={},nonCurrent={},pending=fake();let submitted=0,disposed=0,rendererDisposed=0
+    const originalTarget=new THREE.WebGLRenderTarget(1,1),hdrTarget=new THREE.WebGLRenderTarget(1,1,{type:THREE.HalfFloatType})
+    pending.state.target=originalTarget
     material.addEventListener('dispose',()=>disposed++)
     pending.renderer.compileAsync=()=>{
+      check(pending.state.target===hdrTarget,'shader submission uses the same HDR target as the actual frame')
       submitted++;pending.entries.push({program:current},{program:nonCurrent});pending.state.ready.add(current)
       return reject?Promise.reject(new Error('original compiler failed')):Promise.resolve(root)
     }
-    const job=compileSceneJob(pending.renderer,root,camera,scene)
+    const job=compileSceneJob(pending.renderer,root,camera,scene,hdrTarget)
     job.next();job.next();await flush()
+    check(pending.state.target===originalTarget,'compile restores the previous target without waiting for the driver')
     check(submitted===1&&!job.next().done,'a settled compiler promise cannot hide an unfinished non-current variant')
     job.return();afterSceneCompile(root,()=>{geometry.dispose();material.dispose()});afterRendererCompile(pending.renderer,()=>rendererDisposed++)
     await flush();check(disposed===0&&rendererDisposed===0,'cancel retains resources until every submitted variant finishes')
     pending.state.ready.add(nonCurrent);await tick()
     check(disposed===1&&rendererDisposed===1,'cancel releases root and renderer resources exactly once')
     await tick();check(disposed===1&&rendererDisposed===1&&root.parent===null,'completion cannot repeat disposal or publish a cancelled root')
+    originalTarget.dispose();hdrTarget.dispose()
   }
   check(timers.length===0,'all regression fixtures release their pollers')
 } finally {globalThis.setTimeout=timeout}

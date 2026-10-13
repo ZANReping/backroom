@@ -1,3 +1,4 @@
+import { addL7Caustics } from './l7Ocean'
 import {buildL4Terrain} from './l4Terrain'
 import { l5SurfaceBatches } from './l5Materials'
 import { buildL5Architecture } from './l5Architecture'
@@ -7,7 +8,8 @@ import { buildSettlementTerrainJob } from './settlementMeshes'
 // 地形几何：地面/台阶坡道/高差接缝/天花板/风道/多层楼板/墙体（静态合并 + 顶点色）
 import * as THREE from 'three'
 import { l1RoofAt } from '../world/l1Architecture'
-import { l1Material,l1WorldUV } from './l1Materials'
+import { l1SkylightAt } from '../world/l1Spatial'
+import { l1Material,l1SurfaceScale,l1WorldUV,l1PathWallFaces } from './l1Materials'
 import { buildL1RoofClosure } from './l1RoofGeometry'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { ELEV_H, FLOOR_H, UNDER_CEIL, UNDER_FLOOR, surfaceUndulationAt, tallCeilH, wallBaseTopAt, ceilingSteps, l7SeaTile, l7SeaTileH, type GameMap } from '../world/mapgen'
@@ -16,6 +18,7 @@ import { col, rampGeo, levelTexture, noiseTexture, OUTDOOR_FLOOR, manilaWallText
 import { l2Material, l2WorldUV, type L2Surface } from './l2Materials'
 import { buildCaveVolumeTerrainJob } from './caveVolume'
 import { buildL11TerrainJob } from './l11Meshes'
+import { l10GroundMaterial, l10SplatOfTint } from './l10Ground'
 
 // v17：range 限定构建范围（无限模式按 chunk 构建；坐标读取全图，跨 chunk 接缝一致）
 export interface TerrainRange { x0: number; y0: number; x1: number; y1: number; variant?: string; skipL5Architecture?: boolean }
@@ -120,7 +123,7 @@ export function* buildTerrainJob(m: GameMap, def: LevelDef, wallH: number, g: TH
   if (def.id === 115) return yield* buildL11TerrainJob(m, g, range, true)
   const pal = def.palette
   const H = wallH
-  const l1 = def.id===1 && !!range && range.variant!=='maintenance' && range.variant!=='aisle'
+  const l1 = def.id===1 && !!range && range.variant!=='aisle'
   const l1Style=range?.variant??'parking'
   const l3=def.id===3
   const l3Surface=(gs:THREE.BufferGeometry[],surface:L3Surface)=>{for(const geo of gs){geo.deleteAttribute('color');l3WorldUV(geo,m.inf?.ox??0,m.inf?.oy??0,surface==='wall'?.8:.45)}return l3Material(range?.variant??'lit',surface)}
@@ -254,6 +257,8 @@ const l10PackedDirtGeos: THREE.BufferGeometry[] = []
 const l10DampShoreGeos: THREE.BufferGeometry[] = []
 const l10WoodFloorGeos: THREE.BufferGeometry[] = []
 const l10CropGroundGeos: THREE.BufferGeometry[] = []
+// v64：L10 室外地表合成一张高度混合材质（逐顶点地表权重），消除瓦片方格硬边
+const l10SplatGeos: THREE.BufferGeometry[] = []
 
 const makeL9Puddle = (x: number, y: number, city: boolean) => {
   const shape = new THREE.Shape()
@@ -460,7 +465,28 @@ for (let y = RY0; y < RY1; y++) {
       : l1 ? col('#ffffff') : c
     for (let i = 0; i < n; i++) { carr[i * 3] = seabedTint.r; carr[i * 3 + 1] = seabedTint.g; carr[i * 3 + 2] = seabedTint.b }
     geo.setAttribute('color', new THREE.BufferAttribute(carr, 3))
-    if(l1)l1WorldUV(geo,m.inf?.ox??0,m.inf?.oy??0,l1Style==='garden'?.65:.3)
+    if(l1)l1WorldUV(geo,m.inf?.ox??0,m.inf?.oy??0,l1SurfaceScale(l1Style,'floor'))
+    if (def.id === 10 && l10Smooth && tnt !== 49) {
+      const pos = geo.attributes.position as THREE.BufferAttribute
+      const sp = new Float32Array(pos.count * 4)
+      for (let vi = 0; vi < pos.count; vi++) {
+        const vx = pos.getX(vi), vz = pos.getZ(vi)
+        const tx0 = Math.floor(vx - .49), tx1 = Math.floor(vx + .49), ty0 = Math.floor(vz - .49), ty1 = Math.floor(vz + .49)
+        let n = 0
+        for (let ty = ty0; ty <= ty1; ty++) for (let tx = tx0; tx <= tx1; tx++) {
+          if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) continue
+          const ni = ty * m.w + tx
+          const w = l10SplatOfTint(m.tint[ni], m.liquid[ni])
+          sp[vi * 4] += w[0]; sp[vi * 4 + 1] += w[1]; sp[vi * 4 + 2] += w[2]; sp[vi * 4 + 3] += w[3]; n++
+        }
+        if (n) for (let k = 0; k < 4; k++) sp[vi * 4 + k] /= n
+      }
+      geo.setAttribute('aSplat', new THREE.BufferAttribute(sp, 4))
+      const white = new Float32Array(pos.count * 3).fill(1)
+      geo.setAttribute('color', new THREE.BufferAttribute(white, 3))
+      l10SplatGeos.push(geo)
+      continue
+    }
     const seabedRock = l7Seabed && hv(Math.floor(x / 5), Math.floor(y / 5), 0x71) > 0.63
     if (def.id === 9 && isWet && (tnt === 34 || tnt === 39)) makeL9Puddle(x, y, tnt === 39)
     ;(l7Seabed ? (seabedRock ? l7RockSeabedGeos : l7SandSeabedGeos)
@@ -489,12 +515,12 @@ if (l7SandSeabedGeos.length) {
     configureSurfaceTexture(sand, THREE.SRGBColorSpace)
     sand.userData.l7SeabedConfigured = 1
   }
-  g.add(new THREE.Mesh(mergeGeometries(l7SandSeabedGeos)!, litMaterial({
+  g.add(new THREE.Mesh(mergeGeometries(l7SandSeabedGeos)!, addL7Caustics(litMaterial({
     color: '#ffffff', vertexColors: true, map: sand, bumpMap: sand, bumpScale: 0.038,
     roughness: 0.7, envBase: 0.34,
     // 深水带仍保留极低的贴图化亮度下限；主要凹凸和高光由下潜自然光负责。
     emissive: '#78908b', emissiveMap: sand, emissiveIntensity: 0.1,
-  })))
+  }))))
 }
 if (l7RockSeabedGeos.length) {
   yield
@@ -503,11 +529,11 @@ if (l7RockSeabedGeos.length) {
     configureSurfaceTexture(rock, THREE.SRGBColorSpace)
     rock.userData.l7SeabedConfigured = 1
   }
-  g.add(new THREE.Mesh(mergeGeometries(l7RockSeabedGeos)!, litMaterial({
+  g.add(new THREE.Mesh(mergeGeometries(l7RockSeabedGeos)!, addL7Caustics(litMaterial({
     color: '#ffffff', vertexColors: true, map: rock, bumpMap: rock, bumpScale: 0.055,
     roughness: 0.6, envBase: 0.4,
     emissive: '#718783', emissiveMap: rock, emissiveIntensity: 0.09,
-  })))
+  }))))
 }
 if (floorGeos.length) {
   yield
@@ -663,6 +689,13 @@ const addL10Surface = (
   mat.userData.l10BaseEnv = envBase
   g.add(new THREE.Mesh(mergeGeometries(geos)!, mat))
 }
+if (l10SplatGeos.length) {
+  yield
+  const ground = new THREE.Mesh(mergeGeometries(l10SplatGeos)!, l10GroundMaterial())
+  ground.name = 'l10-ground-splat'
+  g.add(ground)
+  for (const geo of l10SplatGeos) geo.dispose()
+}
 addL10Surface(l10DrySoilGeos, 'l10_dry_soil', ['#79684d', '#ad9870'], .93, .045, .72)
 addL10Surface(l10GrassGeos, 'l10_grass', ['#6a7350', '#39442d'], .98, .025, .68)
 addL10Surface(l10WetRutGeos, 'l10_wet_rut', ['#44372a', '#69533b'], .28, .42, .84, true)
@@ -807,7 +840,7 @@ for (let y = RY0; y < RY1; y++) {
 if(m.l1Architecture){
   const roof=buildL1RoofClosure(m,{x0:RX0,y0:RY0,x1:RX1,y1:RY1},H)
   if(roof){
-    l1WorldUV(roof,m.inf?.ox??0,m.inf?.oy??0,.35)
+    l1WorldUV(roof,m.inf?.ox??0,m.inf?.oy??0,l1SurfaceScale(range?.variant??'parking','concrete'))
     const mesh=new THREE.Mesh(roof,l1Material(range?.variant??'parking','concrete'))
     mesh.name='l1-roof-closure';g.add(mesh)
   }
@@ -819,11 +852,13 @@ for (let y = RY0; y < RY1; y++) {
   for (let x = RX0; x < RX1; x++) {
     if ((x - RX0) % 16 === 0) yield
     const ti = y * m.w + x
-    if (m.tiles[ti] !== 1 || m.outdoor[ti] === 1) continue
+    if ((m.tiles[ti] !== 1&&!(l1&&l1Style==='storage'&&m.tiles[ti]===2)) || m.outdoor[ti] === 1) continue
+    if (def.id === 10) continue // L10 farm buildings provide their own pitched roofs.
     if (m.up[ti] === 1 || m.up2[ti] === 1) continue // 上层楼板底面即本层天花板（楼板盒自带底面）；v54c：3F 板可独立于 2F 存在（多层解耦——任意上层板/屋面板墙兜底当天花）
     if(l3&&(m.tint[ti]===L3_NARROW_TINT||m.tint[ti]===20))continue
     if(l1&&l1Style==='gothic')continue // Dedicated continuous vault shell replaces the flat ceiling.
-    if(l1&&l1Style==='garden'&&m.lights.some(L=>L.keep===1&&Math.abs(L.x-x-.5)<1.35&&Math.abs(L.y-y-.5)<1.75))continue
+    // Skylights use the absolute fixture grid, independent of blackout or loaded light lists.
+    if(l1&&l1Style==='garden'&&m.inf&&l1SkylightAt(x+m.inf.ox+.5,y+m.inf.oy+.5))continue
     const ch = l3?l3Height(l3StyleAt(m,x+.5,y+.5)):m.l1Architecture ? l1RoofAt(m,x+.5,y+.5,H) : m.ceiling[ti] === 1 ? tallCeilH(m, H) : H
     const tnt = m.tint[ti]
     // v53：L0 仅贴图——普通瓦片纯白（底色已烘焙进 l0_ceil.jpg），tint 瓦片折算相对底色因子
@@ -836,6 +871,7 @@ for (let y = RY0; y < RY1; y++) {
     // v52：L0 天花板同走世界空间 UV（rotateX(+π/2) 后默认 UV 本就和 u=x、v=z 一致，贴图无需调整）
     if (def.id === 0) worldWallUV(geo, 1)
     else if (def.id === 9) worldWallUV(geo, .55)
+    else if(l1)l1WorldUV(geo,m.inf?.ox??0,m.inf?.oy??0,l1SurfaceScale(l1Style,'ceiling'))
     const n = geo.attributes.position.count
     const carr = new Float32Array(n * 3)
     for (let i = 0; i < n; i++) { carr[i * 3] = ccTile.r; carr[i * 3 + 1] = ccTile.g; carr[i * 3 + 2] = ccTile.b }
@@ -1379,6 +1415,17 @@ if (l9InteriorBaseGeos.length) {
     roughnessMap: rough, roughness: .68, envBase: .18,
   })))
 }
+// Painted side rooms are part of the same path layout in ordinary and showcase seeds.
+// Split existing wall faces, never overlay a second wall or decal.
+if(l1&&l1Style==='maintenance'&&m.inf){
+  const painted:THREE.BufferGeometry[]=[]
+  for(const geos of [wallGeos,wallGeos2]){
+    const brick:THREE.BufferGeometry[]=[]
+    for(const geo of geos){const [b,p]=l1PathWallFaces(geo,m.inf.seed,m.inf.ox,m.inf.oy);if(b)brick.push(b);if(p)painted.push(p);geo.dispose()}
+    geos.splice(0,geos.length,...brick)
+  }
+  if(painted.length){g.add(new THREE.Mesh(mergeGeometries(painted)!,l1Material('maintenance-plaster','wall')));for(const geo of painted)geo.dispose()}
+}
 if (wallGeos.length) {
   yield
   const wallTex = def.id === 9
@@ -1397,7 +1444,7 @@ if (wallGeos.length) {
     ...(def.id === 0 ? { envBase: 0.035, roughness: 0.94, bumpMap: wallTex, bumpScale: 0.008 } : {}),
     map: wallTex,
   })
-  if(l1)for(const geo of wallGeos){geo.deleteAttribute('color');l1WorldUV(geo,m.inf?.ox??0,m.inf?.oy??0,.35)}
+  if(l1)for(const geo of wallGeos){geo.deleteAttribute('color');l1WorldUV(geo,m.inf?.ox??0,m.inf?.oy??0,l1SurfaceScale(l1Style,'wall'))}
   const wm=l3?l3Surface(wallGeos,'wall'):l2?l2Surface(wallGeos,'wall'):l1?l1Material(l1Style,'wall'):wallMat
   if(l2||l3)wallMat.dispose()
   if (def.id === 5) { l5SurfaceBatches(wallGeos, m, g, 'wall', wm) }
@@ -1413,7 +1460,7 @@ if (wallGeos2.length) {
     ...(def.id === 0 ? { envBase: 0.035, roughness: 0.94, bumpMap: wallTex2, bumpScale: 0.008 } : {}),
     map: wallTex2,
   })
-  if(l1)for(const geo of wallGeos2){geo.deleteAttribute('color');l1WorldUV(geo,m.inf?.ox??0,m.inf?.oy??0,.35)}
+  if(l1)for(const geo of wallGeos2){geo.deleteAttribute('color');l1WorldUV(geo,m.inf?.ox??0,m.inf?.oy??0,l1SurfaceScale(l1Style,'wall'))}
   if (def.id === 5) { l5SurfaceBatches(wallGeos2, m, g, 'wall', wallMat2) }
   else g.add(new THREE.Mesh(mergeGeometries(wallGeos2)!, l3?l3Surface(wallGeos2,'wall'):l1?l1Material(l1Style,'wall'):wallMat2))
 }

@@ -28,6 +28,7 @@ import { runEffectTicks, resetEffects } from './engine/effects'
 import * as save from './engine/save'
 import * as level from './engine/level'
 import * as movement from './engine/movement'
+import { newL7Fx, type L7Fx } from './engine/l7Events'
 import * as survival from './engine/survival'
 import * as entityAI from './engine/entityAI'
 import * as combat from './engine/combat'
@@ -173,6 +174,7 @@ export class Engine {
   fakes: { x: number; y: number; t: number }[] = [] // 理智幻影
   particles: { x: number; y: number; vx: number; vy: number; t: number; life: number; color: string; size: number; z?: number; vz?: number }[] = []
   // v13：液体状态
+  l7fx: L7Fx = newL7Fx() // v66：L7 涌浪/致幻/重力交界区事件状态
   inLiquid = 0 // 当前所在液体类型（0 无 1 深水 2 浅水）
   submerged = false // 头部没入水下
   breathT = 0 // 水下屏气计时（超限微扣 HP）
@@ -940,7 +942,7 @@ export class Engine {
   devForward(): { fx: number; fy: number } { return dev.devForward(this) }
   devFindSpot(cx: number, cy: number, maxR = 6, band: FloorBand = this.player.floor): { x: number; y: number } | null { return dev.devFindSpot(this, cx, cy, maxR, band) }
   /** 召唤实体：在玩家前方 dist 格（默认 3）生成指定类型实体 */
-  devSpawnEntity(type: string, dist = 3, mothForm?: import('./entities').MothForm): boolean { return dev.devSpawnEntity(this, type, dist, mothForm) }
+  devSpawnEntity(type: string, dist = 3, form?: import('./entities').EntityForm): boolean { return dev.devSpawnEntity(this, type, dist, form) }
   /** 每种实体各召唤一只，环绕玩家排开 */
   devSpawnAllEntities(): number { return dev.devSpawnAllEntities(this) }
   /** 给予物品：默认进背包；toGround=true 时生成在玩家脚下 */

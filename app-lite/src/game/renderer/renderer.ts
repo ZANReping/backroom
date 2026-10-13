@@ -1,3 +1,30 @@
+import { L7OceanFx, l7CausticUniforms } from './l7Ocean'
+import { l7SurgeUniforms, waterUniforms } from './water'
+import { l7SurgeShaderParams } from '../engine/l7Events'
+import { l7GravZonesNear } from '../world/infiniteL7'
+import type { SkySystem } from './skySystem'
+import {genL0Architecture,l0Sample,type L0Layout} from '../world/l0Architecture'
+import {l0LightingNeighbours} from '../world/l0Neighbourhood'
+import {mapVision} from '../content/mapPlayer'
+import {EyeAdaptation} from './eyeAdaptation'
+import {glowstickLights} from './glowstickLights'
+import {l0FlickerTime} from './l0Flicker'
+import {updateL0EnvironmentShader} from './l0EnvironmentShader'
+import {updateL1SurfaceField,disposeL1SurfaceField} from './l1SurfaceField'
+import {buildL1BakedScene,buildL1EmitterMeshes} from './l1BakedScene'
+import {l1NativePower,l1ProbeIlluminance,updateL1Probes,disposeL1Probes} from './l1Probes'
+import {requestL1Bake,retainL1Bakes,disposeL1Bakes} from './l1BakeQueue'
+import {measureL1BuildJob,recordL1BuildStage} from './l1BuildMetrics'
+import {updateL1PortalLighting} from './l1PortalLighting'
+import {l1PuddleGeometryJob} from './l1Water'
+import {l1Material} from './l1Materials'
+import {L1Shafts} from './l1Shafts'
+import {lightingProfile} from './lightingProfiles'
+import {PhotoPass,PhotoRenderPass,PhotoFinishShader,perceptionBlur} from './photoPass'
+import {buildL0Architecture} from './l0Architecture'
+import {syncL0PointMask} from './l0PointMask'
+import {commitL0Revision,type L0Pending} from '../engine/l0State'
+import {l0WallMount} from '../world/l0Architecture'
 import { l1Transition } from '../world/l1Layout'
 import {buildL4Lights,disposeL4Owned} from './l4Meshes'
 import {L4VolumeFog} from './l4VolumeFog'
@@ -11,7 +38,7 @@ import { buildL5Architecture } from './l5Architecture'
 import { l3Height, l3StyleAt } from '../world/l3Architecture'
 import { buildL2Architecture } from './l2Architecture'
 import { disposeL2Owned } from './l2Materials'
-import { l1Profile, l1StyleAt } from '../world/l1Architecture'
+import { l1Profile, l1StyleAt, l1RoofAt } from '../world/l1Architecture'
 import { L1WaterReflection } from './l1Water'
 import { disposeL1Owned,disposeL1Materials } from './l1Materials'
 import type { Engine } from '../engine'
@@ -34,7 +61,7 @@ import { CS, type LiveChunk } from '../world/infinite'
 import { buildSkyAndLiquidsJob, buildLiquidSurfacesJob, updateLiquidTime, resetLiquidWaves } from './liquidsSky'
 import { RemotePlayerViews } from './remotePlayers' // v58：联机远端玩家渲染
 import { SKY_PROFILES, skyLightDir, makeSkyMesh, makeMirageFleet, updateMirageFleet, type MirageFleet } from './skybox'
-import { buildStructure, buildExit, buildL10CropLodJob, updateL10Wind } from './structures'
+import { buildStructure, buildExit, buildL10CropLodJob, stepL10Wind } from './structures'
 import { ALPHA_ENTRIES } from '../content/alphaBlueprint'
 import { buildDecorationsJob } from './decorations'
 import { buildEntityMesh } from './entitiesMesh'
@@ -63,11 +90,22 @@ import { setSquirtGunLiquid } from './squirtGunMesh'
 import { WallOcclusion } from './occlusion'
 import { l5StairWallDirection } from '../world/l5Topology'
 import { L5NestLighting } from './l5NestLighting'
+import { animateSmiler } from './smilerMesh'
+import { animateHound } from './houndMesh'
+import { animateDuller } from './dullerMesh'
+import { updateWaterUniforms } from './water'
+import { l10WindUniforms } from './l10Wind'
+import { smilerHeadroom } from '../world/smilerClearance'
 
 function disposeWorldGeometry(object: THREE.Object3D): void {
+  // A cancelled finite build can own a sky before skyMesh is assigned.
+  const sky = object.userData.sky as SkySystem | undefined
+  if (sky) { sky.dispose(); return }
   const instanced = object as THREE.InstancedMesh
   if (instanced.isInstancedMesh) instanced.dispose()
   ;(object as THREE.Mesh).geometry?.dispose()
+  const materials=(object as THREE.Mesh).material
+  for(const m of (Array.isArray(materials)?materials:materials?[materials]:[]))if(m.userData.l0Owned)m.dispose()
 }
 
 /**
@@ -356,6 +394,7 @@ export class Renderer3D {
   private builtRev = -1 // 已构建地图的 engine.mapRev（开发者就地改图时触发重建）
   private lightPool: THREE.PointLight[] = []
   private l1Water=new L1WaterReflection()
+  private l1Shafts=new L1Shafts()
   private l1Sun=new THREE.SpotLight('#fff0bb',0,18,.62,.65,2)
   private lightPoolExtra: THREE.PointLight[] = [] // v41「远处灯光全开」扩展池（默认不进场景）
   private flash!: THREE.SpotLight
@@ -369,13 +408,16 @@ export class Renderer3D {
   private l5NestLighting = new L5NestLighting()
   private movingLids = new WeakMap<THREE.Object3D,THREE.Object3D[]>()
   private l5ShadowEpoch = 0
-  private l5PointShadows = new WeakMap<THREE.PointLight,{source:LightSource;time:number;epoch:number;far:number}>()
+  private l5PointShadows = new WeakMap<THREE.PointLight,{source:LightSource;map:GameMap;bucket:number;epoch:number;far:number;x:number;y:number;z:number}>()
   private hemiBase = 0.12
   private entityMeshes = new Map<number, THREE.Group>()
   // 实体显示朝向缓存（v34：转向平滑过渡——引擎 facing 瞬跳，渲染侧按角速度上限短弧插值）
   private entityFacing = new Map<number, number>()
   // v35：NPC 渲染池（不是实体，独立 Map 驱动）
   private npcMeshes = new Map<string, NpcMeshRec>()
+  private l1NpcFrustum = new THREE.Frustum()
+  private l1NpcProjection = new THREE.Matrix4()
+  private l1NpcBounds = new THREE.Sphere(new THREE.Vector3(),2)
   private itemMeshes = new Map<number, THREE.Group>()
   private itemWarmup = new ModelWarmupQueue()
   private itemPool: { key: string; group: THREE.Group }[] = []
@@ -393,7 +435,7 @@ export class Renderer3D {
   private lightSortTime = -1
   private lightSortX = Infinity
   private lightSortY = Infinity
-  private sceneLightLimit = 24
+  private sceneLightLimit = 16
   private chunkBudgetMs = 3
   private loadingBudgetMs = 6
   private activeLightPool: THREE.PointLight[] = []
@@ -459,6 +501,12 @@ export class Renderer3D {
   private l10WetApplied = -1
   private l10WetUpdateT = 0
   private userExposure = 1.45
+  private eyeAdaptationOn=true
+  readonly eyeAdaptation=new EyeAdaptation()
+  private eyeMeter=.32
+  private eyeMeterAt=-1
+  private eyeMap:GameMap|null=null
+  private l7Fx: L7OceanFx | null = null // v66：L7 水体/深海氛围渲染层
   private uwK = 0 // v13：水下视野混合（0=水上 1=水下：蓝绿浑浊短视距）
   private l7LightKeep = 1 // v58：L7 自然光深度衰减因子（定向阳光随深度变暗；水上=1）
   // v50：光影设置项
@@ -480,6 +528,11 @@ export class Renderer3D {
   private flashWasOn = false
   private bloomOn = true
   private bloomStrength = 35 // 泛光程度 0–100
+  private photoPass:PhotoPass|null=null
+  private photoFinish:ShaderPass|null=null
+  private photo={ao:1,grain:.0024,vignette:.144,grade:'neutral',scanline:0}
+  setPhotography(ao:number,grain:number,vignette:number,grade:string,scanline=0){this.photo={ao,grain:grain*.0002,vignette:vignette*.008,grade,scanline};this.composerKey=''}
+  private disposeComposer(){if(this.composer){for(const pass of this.composer.passes)pass.dispose();this.composer.dispose();this.composer=null}this.photoPass=null;this.photoFinish=null}
   private composer: EffectComposer | null = null
   private bloomPass: UnrealBloomPass | null = null
   private composerKey = '' // 已构建 composer 的通道组合（泛光/VCR 开关变化时重建）
@@ -518,6 +571,7 @@ export class Renderer3D {
   // L9 室内只在住宅附近或玩家所在住宅内显示；低频更新避免每帧遍历全部家具。
   private l9InteriorCullT = 1
   private cityChunkTask: {map:GameMap;rev:number;key:string;iter:Generator<void,void,unknown>} | null = null
+  private l0RevisionJob: {map:GameMap;pending:L0Pending;iter:Generator<void,void,unknown>} | null = null
   private finiteTask: Generator<void, void, unknown> | null = null
   private finitePendingRoot: THREE.Group | null = null
   private cityDistant:THREE.Group|null=null
@@ -874,7 +928,14 @@ export class Renderer3D {
     this.updateL11Distant(m,def.id)
     const far=def.id===11?560:60
     if(this.camera.far!==far){this.camera.far=far;this.camera.updateProjectionMatrix()}
-    updateL10Wind(this.time * (def.id === 10 ? 1 + engine.l10Weather.k * (engine.l10Weather.kind === 'gust' ? 1.35 : .45) : 1))
+    // v64：风场相位按速度积分、强度/风向平滑过渡；带上窗口原点与玩家位置（玩家穿过麦田时作物分开）
+    if (def.id === 10) stepL10Wind(dt, engine.l10Weather.kind, engine.l10Weather.k, { x: m.inf?.ox ?? 0, y: m.inf?.oy ?? 0 }, { x: engine.player.x, y: engine.player.z, z: engine.player.y })
+    updateWaterUniforms(this.time, {
+      rain: def.id === 10 && weather.kind === 'rain' ? weather.k : 0,
+      wind: def.id === 10 ? l10WindUniforms.uL10WindStrength.value : .5,
+      windDir: def.id === 10 ? l10WindUniforms.uL10WindDir.value : { x: .86, y: .51 },
+      origin: { x: m.inf?.ox ?? 0, y: m.inf?.oy ?? 0 },
+    })
     const nightVision = engine.player.equip.head?.type === 'nightvision' && engine.player.battery > 0
     if (def.id === 6) {
       if (!this.l6WasActive) this.l6DarkAdapt = 0
@@ -896,7 +957,7 @@ export class Renderer3D {
     // Room/garden/outdoor transitions change light intensity, never shader counts.
     this.sunDir.castShadow = this.lightMode === 'realistic' && this.sunShadowsOn
       && (SKY_PROFILES[def.id]?.sunLight ?? 0) > 0
-    this.l1Sun.castShadow = def.id === 1 && this.lightMode === 'realistic' && this.sunShadowsOn
+    this.l1Sun.castShadow = false // Native skylight visibility is baked for every aperture.
     const pointSlots = this.lightMode === 'realistic' ? this.lightShadowCount
       : (def.id === 9 || def.id === 11) ? Math.min(2, this.lightShadowCount) : 0
     for (let i = 0; i < this.activeLightPool.length; i++) this.activeLightPool[i].castShadow = i < pointSlots
@@ -908,6 +969,7 @@ export class Renderer3D {
         this.buildInfiniteEnv(m, def)
       }
       this.syncInfinite(m, def, engine.player, buildBudget)
+      this.syncL0Revision(engine,buildBudget)
     } else if (this.builtMap !== m || this.builtRev !== engine.mapRev) {
       // 有限层：地图对象更换或开发者就地改图（mapRev++）时重建静态几何
       this.finiteTask?.return()
@@ -1006,7 +1068,7 @@ export class Renderer3D {
     const insanity = 1 - p.sanity / 100
     this.camera.rotation.y = look.yaw + this.camShakeX * 2
     this.camera.rotation.x = look.pitch + this.camShakeY * 2 + bobPitch // v55：真实摇晃的抛物俯仰（上升微仰/下坠前倾）
-    this.camera.rotation.z = Math.sin(this.time * 0.7) * 0.05 * insanity + bobRoll
+    this.camera.rotation.z = (look.roll??0) + Math.sin(this.time * 0.7) * 0.05 * insanity + bobRoll
     // 开场爬起：introT 3.2→0，相机从贴地侧躺缓慢起身、视线从地面抬起
     {
       const it = Math.max(0, Math.min(1, engine.introT / 3.2))
@@ -1019,13 +1081,13 @@ export class Renderer3D {
     }
     const fov = this.fovBase + Math.sin(this.time * 1.8) * 7 * insanity + (engine.input.sprint && mag > 0.1 ? 5 : 0) + dropFov // v58：拖拽演出 FOV 扩张
     if (Math.abs(fov - this.camera.fov) > 0.05) { this.camera.fov = fov; this.camera.updateProjectionMatrix() }
+    mapVision.fov=2*Math.atan(Math.tan(this.camera.fov*Math.PI/360)*this.camera.aspect)
 
     // 手电（低电量闪烁警告 / 电弧体瘫痪抖动）
     // Level 6「熄灯」仍禁用外带光源；其余层（含 L8）按 LevelDef.lightMul 正常照明。
     const lmul = this.levelCfg?.noFlashlight ? 0 : (this.levelCfg?.lightMul ?? 1)
     const fl = p.flashlight && p.battery > 0 && p.flashJamT <= 0 && lmul > 0
     let flI = fl ? 30 * (0.55 + 0.45 * (p.battery / 100)) * lmul : 0
-    if (fl && p.battery <= 15) flI *= (Math.random() < 0.25 * opts.flicker ? 0.15 : 1) // 低电警告闪烁（受减闪烁设置约束）
     // 贴墙防过曝：沿视线步进探测最近墙体距离，近处衰减手电强度
     if (flI > 0 && engine.map) {
       const m = engine.map
@@ -1110,8 +1172,10 @@ export class Renderer3D {
         // L7 户外只小幅放宽（near 3.5 / far 29），海面始终笼在可见的迷雾里
         const outNear = def.id === 7 ? 3.5 : def.id === 9 ? 2.8 : 5
         const outFar = def.id === 11 ? 320 : def.id === 7 ? 29 : def.id === 9 ? 38 : 48
+        // v66：L7 骨粉雾霾随时间缓慢起伏；致幻越深雾越压近
+        const outFarK = def.id === 7 ? outFar * (0.86 + 0.14 * Math.sin(this.time * 0.045)) * (1 - engine.l7fx.halluc * 0.22) : outFar
         fog.near = this.fogNear + (outNear - this.fogNear) * k
-        fog.far = this.fogFar + (outFar - this.fogFar) * k
+        fog.far = this.fogFar + (outFarK - this.fogFar) * k
         fog.color.copy(this.fogC).lerp(this.skyC, k)
         if (this.scene.background instanceof THREE.Color) this.scene.background.copy(fog.color)
       }
@@ -1160,7 +1224,9 @@ export class Renderer3D {
       // v13：水下视野——眼高没入深水面则蓝绿浑浊、视距骤减、环境光转冷
       // v57o：L7 按真实下潜深度进一步衰减——越深越黑、视距越短（日光带→深渊带）
       const eyeZ = p.z + 1.55
-      const under = m.liquid[pi] === 1 && eyeZ < 0.05
+      // v66：L7 水墙内水面上限 = 墙顶；涌浪抬升海面
+      const l7Wall = def.id === 7 ? engine.l7fx.wall : null
+      const under = m.liquid[pi] === 1 && eyeZ < (l7Wall ? l7Wall.top : 0.05 + (def.id === 7 ? engine.l7fx.surgeH : 0))
       this.uwK += ((under ? 1 : 0) - this.uwK) * Math.min(1, dt * 6)
       this.l7LightKeep = 1 // v58：默认无衰减；水下 L7 分支按深度写入
       if (this.uwK > 0.01) {
@@ -1168,10 +1234,12 @@ export class Renderer3D {
         const below = under ? Math.max(0, -(p.z - 0.06)) : 0
         const depthK = def.id === 7 ? Math.min(1, below / 230) : 0
         if (def.id === 7) this.l7LightKeep = 0.18 + 0.82 * Math.pow(1 - depthK, 1.35)
-        const uwC = new THREE.Color('#0d3548').lerp(new THREE.Color('#020a12'), depthK)
+        // v66：L7 水下颜色分段——有光带青绿 → 暮色带深蓝 → 午夜带墨蓝 → 深渊近黑；超纯水浅处视距更远
+        const uwC = def.id === 7 ? l7WaterColor(below) : new THREE.Color('#0d3548').lerp(new THREE.Color('#020a12'), depthK)
         if (fog) {
-          const far = 16 - 10.5 * depthK
-          fog.near = fog.near * (1 - uk) + 0.15 * uk
+          const far = def.id === 7 ? 23 - 13 * Math.pow(depthK, 0.6) - (engine.l7fx.halluc * 2) : 16 - 10.5 * depthK
+          // L7 水下用负 near 作为分通道消光哨兵（见 l7Ocean.patchL7Fog）
+          fog.near = def.id === 7 && uk > 0.5 ? -0.01 : fog.near * (1 - uk) + 0.15 * uk
           fog.far = fog.far * (1 - uk) + far * uk
           fog.color.lerp(uwC, uk)
           if (this.scene.background instanceof THREE.Color) this.scene.background.copy(fog.color)
@@ -1227,21 +1295,18 @@ export class Renderer3D {
     } else {
       this.sunDir.intensity = 0
     }
-    // v35：天空球跟随玩家头顶（球半径恒定 42 < far 60，大地图球面不再被远平面裁成黑圆盖）
-    // v58：L7 球心压到水线（0.2）——旧 5.5 的球底缘悬在半空，海平面尽端与天空地平线之间
-    // 露出一圈背景色「间距带」；压到水线后球底缘沉入海面之下，海天在雾里无缝相接
-    if (this.skyMesh) this.skyMesh.position.set(
-      this.camera.position.x,
-      this.levelCfg?.id === 7 ? 0.2 : (this.levelCfg?.id === 9 || this.levelCfg?.id === 10) ? this.camera.position.y : 5.5,
-      this.camera.position.z,
-    )
+    // Full sky sphere follows the camera, including elevation, without a horizon gap.
+    if (this.skyMesh) this.skyMesh.position.copy(this.camera.position)
     // v58：蜃楼船队以玩家为锚（永远无法靠近），水下时隐没
-    if (this.mirageFleet) updateMirageFleet(this.mirageFleet, this.time, this.camera.position, this.uwK)
+    if (this.mirageFleet) updateMirageFleet(this.mirageFleet, this.time, this.camera.position, this.uwK, def.id === 7 ? engine.l7fx.halluc : 0)
+    if (this.l7Fx && def.id === 7) this.updateL7Fx(engine, m, dt)
     // v17：tint 氛围（红室=红雾 / 熄灯区=近黑雾 / 马尼拉=暖调 / v29 浓雾区=灰白短视距 / v30 花园段=青翠阳光），按玩家所在瓦片平滑混合
+    updateL0EnvironmentShader(m,def.id,engine.dev.bright,nightVision)
+    if(def.id===1)updateL1SurfaceField(m)
     const bright = engine.dev.bright // v34：一键照明——层级全局增亮
     {
       const pi2 = Math.floor(p.y) * m.w + Math.floor(p.x)
-      const tnt = m.tint[pi2]
+      const tnt = def.id===0?0:m.tint[pi2]
       const target = tnt === 2 ? '#4a0503' : tnt === 3 ? '#000000' : tnt === 4 ? '#575b5e' : tnt === 1 ? '#161006' : tnt === 6 && def.id!==1 ? '#3d5c2f' : null
       this.tintK += ((target ? 1 : 0) - this.tintK) * Math.min(1, dt * 2.5)
       if (target) this.tintC.lerp(col(target), Math.min(1, dt * 4))
@@ -1338,11 +1403,13 @@ export class Renderer3D {
     // 看见的地方必有光、看不见的地方不浪费；「远处灯光全开」时 96 盏全场景点亮（前 88 全亮、末 8 渐隐）
     // 复用排序缓冲，且比较平方距离：避免 L5 密集灯光每帧分配数组并在比较器内反复开平方。
     const sorted = this.lightSortScratch
+    const portableLights=glowstickLights(engine)
     if (this.lightSortMap !== m || this.lightSortRev !== (m.inf?.rev ?? engine.mapRev) ||
-        sorted.length !== m.lights.length || this.time - this.lightSortTime >= .1 ||
+        sorted.length !== m.lights.length+portableLights.length || portableLights.length>0 || this.time - this.lightSortTime >= .1 ||
         Math.abs(p.x - this.lightSortX) + Math.abs(p.y - this.lightSortY) > .75) {
       sorted.length = m.lights.length
       for (let i = 0; i < m.lights.length; i++) sorted[i] = m.lights[i]
+      sorted.push(...portableLights)
       // Alpha's enclosed rooms share a dense plan. Keep their own fixtures in the
       // pool before lights across walls, especially at the back of the large hall.
       const alphaRoom=m.settlement?.blueprint.id==='alpha'?m.settlement.blueprint.rooms.find(r=>r.enclosed&&p.x>r.x&&p.x<r.x+r.w&&p.y>r.y&&p.y<r.y+r.h):undefined
@@ -1363,8 +1430,10 @@ export class Renderer3D {
     lightPow.clear()
     let nearbyBouncePower = 0
     let nearbyNaturalPower = 0
+    let l1ShadowRefreshed = false
     for (let i = 0; i < pool.length; i++) {
       const pl = pool[i]
+      pl.userData.l0Baked=false
       pl.shadow.autoUpdate = false
       let L = sorted[i]
       if (!L) {
@@ -1378,6 +1447,7 @@ export class Renderer3D {
           continue
         }
       }
+      pl.userData.l0Baked=(def.id===0||def.id===1&&L.keep!==1)&&L.gen===1&&!bright
       const li = Math.floor(L.y) * m.w + Math.floor(L.x)
       // v46：光源点高度与灯具贴附规则一致——z=层基准（z+2.4）、fixZ=绝对安装高（fixZ-0.2）、
       // 多层时贴所在瓦片真实天花/楼板底（灯具不再悬空或嵌进楼板）；
@@ -1392,10 +1462,9 @@ export class Renderer3D {
       else ptY = this.wallH - 0.25
       pl.position.set(L.x, ptY, L.y)
       pl.color.set(L.color)
-      const fl1 = Math.sin(this.time * 13 + L.flickerSeed * 17) * Math.sin(this.time * 7.3 + L.flickerSeed)
-      const flick = 1 - opts.flicker * Math.max(0, fl1) * 0.7
+      const flick = 1
       // v31：「闪烁」现象预警期——主区域灯光（非 keep）快速明灭数秒，随后才完全停电
-      const warnF = engine.blackoutWarnT > 0 && L.keep !== 1 ? (Math.sin(this.time * 43 + L.flickerSeed * 29) > -0.2 ? 0.1 : 1.3) : 1
+      const warnF = engine.blackoutWarnT > 0 && L.keep !== 1 && (def.id!==1||L.gen===1) ? (Math.sin(this.time * 43 + L.flickerSeed * 29) > -0.2 ? 0.1 : 1.3) : 1
       const dL = Math.hypot(L.x - p.x, L.y - p.y)
       const rankFade = this.farLights
         ? (i < 88 ? 1 : Math.max(0, 1 - (i - 87) / 8))
@@ -1429,7 +1498,7 @@ export class Renderer3D {
       // 路灯进室内后强度为 0，但保留 castShadow 状态，避免每次跨门槛都让 Three.js 重编译
       // 光照程序/重建阴影资源；真正的阴影绘制仍因灯强度为 0 而没有可见贡献。
       const cast = occludedShadow
-        || (pl.intensity > 0.01 && this.lightMode === 'realistic' && i < this.lightShadowCount && (def.id===4 || (L.intensityMul ?? 1) >= 0.5))
+        || (pl.intensity > 0.01 && this.lightMode === 'realistic' && i < this.lightShadowCount && (def.id===1||def.id===4 || (L.intensityMul ?? 1) >= 0.5))
       // Keep each configured pool slot even when its assigned source is dim,
       // absent or bioluminescent; those sources still skip shadow rendering.
       pl.shadow.intensity = cast ? 1 : 0
@@ -1441,30 +1510,36 @@ export class Renderer3D {
           pl.shadow.camera.far = shadowFar
           pl.shadow.camera.updateProjectionMatrix()
         }
-        if(def.id===5){
-          // Hotel lamps and architecture are static. Keep surface lighting at
-          // full frame rate while refreshing the costly six-face depth map at
-          // 12/20/30 Hz. Reassigned lamps and incoming chunks refresh immediately.
-          const prev=this.l5PointShadows.get(pl),period=1/[12,20,30][this.shadowQuality]
-          const dirty=!pl.shadow.map||!prev||prev.source!==L||prev.epoch!==this.l5ShadowEpoch||prev.far!==pl.shadow.camera.far||this.time-prev.time>=period
+        {
+          // Reuse scene-light shadow cubes on every level. Stagger the two
+          // slots, so their six-face refreshes do not normally share a frame.
+          // The flashlight retains its independent movement-sensitive refresh.
+          // Dense hotel ornament makes each cube expensive. Preserve both
+          // soft-shadow slots, but cache static hotel lamps for longer; source,
+          // geometry and position changes still invalidate immediately.
+          const prev=this.l5PointShadows.get(pl),period=(def.id===5||def.id===1?[200,100,50]:[100,50,16])[this.shadowUpdateRate]
+          const bucket=Math.floor((performance.now()+i*period/2)/period)
+          const invalid=!pl.shadow.map||!prev||prev.map!==m||prev.source!==L||prev.epoch!==this.l5ShadowEpoch||prev.far!==pl.shadow.camera.far||prev.x!==pl.position.x||prev.y!==pl.position.y||prev.z!==pl.position.z
+          // L1 fixtures are static. Keep both shadow slots, but stagger their
+          // periodic refresh even after a long frame; changed geometry/source
+          // still invalidates immediately. Portable flashlight stays independent.
+          const dirty=invalid||prev!.bucket!==bucket&&(def.id!==1||!l1ShadowRefreshed)
           pl.shadow.needsUpdate=dirty
-          if(dirty)this.l5PointShadows.set(pl,{source:L,time:this.time,epoch:this.l5ShadowEpoch,far:pl.shadow.camera.far})
+          if(dirty&&def.id===1)l1ShadowRefreshed=true
+          if(dirty)this.l5PointShadows.set(pl,{source:L,map:m,bucket,epoch:this.l5ShadowEpoch,far:pl.shadow.camera.far,x:pl.position.x,y:pl.position.y,z:pl.position.z})
         }
       }
     }
+    if(def.id===0||def.id===1)syncL0PointMask(this.scene,this.camera)
     // 点光负责直接光；按玩家附近实际点亮的灯估算低成本漫反射回弹。
     // 它会柔和天花板与墙角的死黑，但停电区没有能量，L6 的禁用灯光也不会被照亮。
-    if (!bright && this.levelCfg?.id !== 6) {
+    if (!bright && this.levelCfg?.id !== 6 && def.id!==1) {
       this.ambient.intensity += Math.min(0.055, nearbyBouncePower * 0.0035)
       this.hemi.intensity += Math.min(0.065, nearbyBouncePower * 0.004)
       // 生物荧光/自然微光需要有少量真实的半球入射光，才能让 bump/normal/roughness
       // 在黑暗中继续响应；单纯提高 emissive 只会留下没有反射细节的平面颜色。
       this.ambient.intensity += Math.min(0.055, nearbyNaturalPower * 0.01)
       this.hemi.intensity += Math.min(0.14, nearbyNaturalPower * 0.025)
-      if(def.id===1&&(!m.inf?.blackout||['garden','ouroboros','maintenance'].includes(l1StyleAt(m,p.x,p.y)??''))){
-        this.ambient.intensity+=Math.min(.16,nearbyBouncePower*.008)
-        this.hemi.intensity+=Math.min(.09,nearbyBouncePower*.004)
-      }
     }
     // L9 罕见浓雾独立于普通区块 tint：数十秒渐入、短距离维持，再自然散去。
     if (def.id === 9 && engine.l9FogK > 0.001 && !bright) {
@@ -1495,14 +1570,16 @@ export class Renderer3D {
       }
       this.updateL10WetMaterials(w.wetness, dt)
     }
-    if ((def.id === 9 || def.id === 10 || def.id===11) && this.skyMesh) {
-      const sm = this.skyMesh.material as THREE.ShaderMaterial
-      if (sm.uniforms?.uTime) sm.uniforms.uTime.value = engine.time
-      if (sm.uniforms?.uFogMix) sm.uniforms.uFogMix.value = bright ? 0 : def.id === 9
-        ? Math.max(0, Math.min(1, engine.l9FogK))
-        : weather.kind === 'mist' ? Math.max(0, Math.min(.72, weather.k * .72))
-          : weather.kind === 'rain' ? Math.max(0, Math.min(.18, weather.k * .18)) : 0
-      if (sm.uniforms?.uFogColor) sm.uniforms.uFogColor.value.set(def.id === 9 ? '#697278' : '#8d9494')
+    const skySys = this.skyMesh?.userData.sky as SkySystem | undefined
+    if (skySys) {
+      skySys.setQuality(this.lightMode === 'classic' || this.textureQuality === 0 ? 'low' : 'high')
+      const wk = Math.max(0, Math.min(1, weather.k))
+      const farmSky = def.id === 10 || def.id === 11
+      const fogMix = bright ? 0 : def.id === 9 ? Math.max(0, Math.min(1, engine.l9FogK))
+        : farmSky ? (weather.kind === 'mist' ? .72 * wk : weather.kind === 'rain' ? .18 * wk : 0) : 0
+      const boost = farmSky ? (weather.kind === 'rain' ? .14 * wk : weather.kind === 'mist' ? .06 * wk : weather.kind === 'gust' ? -.05 * wk : 0) : 0
+      skySys.setWeather(boost, fogMix)
+      skySys.update(this.three, engine.time, this.scene.fog instanceof THREE.Fog || this.scene.fog instanceof THREE.FogExp2 ? this.scene.fog.color : undefined)
     }
     // 「额外暗度」只压低无方向的环境底光，让黑角更深；手电、打火机和开发者
     // 一键照明保持原强度。点光源与雾距则走上方 effectiveDarkness，等价于提高层级 darkness。
@@ -1511,26 +1588,27 @@ export class Renderer3D {
       this.ambient.intensity *= shadowKeep
       this.hemi.intensity *= shadowKeep
     }
-    // 灯具 flicker（自发光强度）
+    // 灯具亮度跟随供电状态；不再叠加全局灯光闪烁。
     // v53：带 src 的灯具自发光盒亮度跟随其点光源本帧实际强度（/8 归一）——停电（光源被剔除）/
     // 超出灯池未点亮/光照系数为 0（L6）时灯具不再发亮，闪烁与停电预警和点光源同步；
-    // 无 src 的装饰性自发光件（出口牌等）保持原闪烁逻辑
+    // 无 src 的装饰性自发光件（出口牌等）保持恒定亮度。
     const fixtureColor=new THREE.Color()
     for (const f of this.fixtures) {
-      const fl1 = Math.sin(this.time * 13 + f.seed * 17) * Math.sin(this.time * 7.3 + f.seed)
       if(f.batch){
         const warn=engine.blackoutWarnT>0?(Math.sin(this.time*43+f.seed*29)>-.2?.1:1):1
-        const power=m.inf?.blackout?0:warn*(1-opts.flicker*Math.max(0,fl1)*.2)
-        fixtureColor.copy(f.mat.userData.base as THREE.Color).multiplyScalar(power)
+        const power=m.inf?.blackout&&f.src?.keep!==1?0:f.src?.keep===1?1:warn
+        if(f.mat.userData.l1Owned&&f.src)fixtureColor.set(f.src.color).multiplyScalar(power*(f.src.keep?1.2:f.src.natural?.65:3.2*Math.pow(f.src.intensityMul??1,.3)))
+        else fixtureColor.copy(f.mat.userData.base as THREE.Color).multiplyScalar(power)
         f.batch.setColorAt(f.index!,fixtureColor);f.batch.instanceColor!.needsUpdate=true
         continue
       }
-      const k = f.src ? Math.min(1, (lightPow.get(f.src) ?? 0) / 8) : 1 - opts.flicker * Math.max(0, fl1) * 0.8
+      const k = f.src ? Math.min(1, (lightPow.get(f.src) ?? 0) / 8) : 1
       // L2 tubes remain bright sources even where their illumination is weak.
       // Preserve zero during blackouts and the source's flicker modulation.
       f.mat.color.copy(f.mat.userData.base as THREE.Color).multiplyScalar(f.mat.userData.l2Owned ? Math.pow(k, .2) : k)
     }
     // 出口脉动：闪烁墙以不规则电压波动替代硬二值开关，墙纸轮廓始终保留。
+    l0FlickerTime.value=this.time
     for (const e of this.exitMeshes) {
       if (e.bob) e.mesh.position.y = e.bob.baseY + Math.sin(this.time * 1.4 + e.bob.phase) * e.bob.amp
       if (!e.mat) continue
@@ -1555,6 +1633,8 @@ export class Renderer3D {
     this.updateProjectiles(engine)
     this.updateWallMarks(engine)
     this.updateStructs(dt)
+    updateL1PortalLighting(m,this.animatedStructMeshes,def.id===1)
+    updateL1Probes(m.inf?.seed??0,m.inf?.ox??0,m.inf?.oy??0,def.id===1)
     this.l5NestLighting.update(m, def.id, this.wallH, this.camera, this.animatedStructMeshes, engine.dev.bright)
     this.updateVisualInteractionHit(engine)
     this.updateParticles(engine, dt)
@@ -1562,19 +1642,20 @@ export class Renderer3D {
     this.updateViewmodel(engine, dt)
     this.updateCrosshair(engine)
     if(!this.l1Sun.parent){this.scene.add(this.l1Sun);this.scene.add(this.l1Sun.target);this.l1Sun.shadow.mapSize.set(512,512);this.l1Sun.shadow.bias=-.0005;this.l1Sun.shadow.normalBias=.03}
-    const inGarden=def.id===1&&l1StyleAt(m,p.x,p.y)==='garden'
-    this.l1Sun.intensity=inGarden?70:0
+    const inGarden=def.id===1&&!m.inf?.blackout&&l1StyleAt(m,p.x,p.y)==='garden'
+    this.l1Sun.intensity=0 // v4 skylights are fixed-world emitters in the static solve.
     this.l1Sun.shadow.autoUpdate=false
     this.l1Sun.shadow.needsUpdate=this.l1Sun.castShadow&&(inGarden||!this.l1Sun.shadow.map)
     if(inGarden){
-      const source=sorted.find(L=>L.natural&&L.keep)
-      if(source){this.l1Sun.position.set(source.x,6.18,source.y);this.l1Sun.target.position.set(source.x-2.2,.1,source.y+1.4)}
+      const source=sorted.find(L=>L.natural)
+      if(source){this.l1Sun.position.set(source.x,(source.fixZ??6.38)-.2,source.y);this.l1Sun.target.position.set(source.x+2.2,.1,source.y-1.4)}
       else this.l1Sun.intensity=0
     } else if(this.l1Sun.castShadow&&!this.l1Sun.shadow.map) {
       this.l1Sun.position.set(p.x,6.18,p.y)
       this.l1Sun.target.position.set(p.x-2.2,.1,p.y+1.4)
     }
-    this.l1Water.update(this.scene,m,p.x,p.y,def.id===1&&this.lightMode==='realistic',this.time,!!m.inf?.blackout)
+    this.l1Water.update(this.scene,m,p.x,p.y,def.id===1&&this.lightMode==='realistic',this.time,!!m.inf?.blackout,this.chunkGroups.values())
+    this.l1Shafts.update(this.scene,m,sorted,def.id===1&&this.lightMode==='realistic'&&this.textureQuality>0&&!bright,this.time,engine.blackoutWarnT>0)
     this.wallOcclusion.update(this.camera, !this.three.shadowMap.enabled)
     this.itemWarmup.advance()
     this.advanceFlashWarmup()
@@ -1584,16 +1665,54 @@ export class Renderer3D {
     }
 
     // realistic 泛光、VCR、PS1 色阶抖动或夜视滤镜开启时走 EffectComposer；其余保持直接渲染。
+    const photoProfile=lightingProfile(engine),real=this.lightMode==='realistic'
+    l1NativePower.value=bright?1:m.inf?.blackout?0:engine.blackoutWarnT>0?(Math.sin(this.time*43)>-.2?.1:1):1
+    if(def.id===1&&!bright){this.ambient.intensity*=.08;this.hemi.intensity*=.08}
+    if(real&&!engine.dev.bright){this.three.toneMappingExposure*=def.id===0?1:photoProfile.exposure;this.ambient.intensity*=photoProfile.ambient;this.hemi.intensity*=photoProfile.ambient}
+    // Meter the same native illumination that reaches the frame during an outage.
+    if(def.id===1&&!bright&&m.inf?.blackout){this.ambient.intensity*=.018;this.hemi.intensity*=.018}
+    // Use exactly the current fog/draw reach, including weather and user overrides.
+    mapVision.range=Math.max(mapVision.near,Math.min(this.camera.far,(this.scene.fog as THREE.Fog|null)?.far??this.camera.far))
+    if(this.eyeMap!==m){this.eyeMap=m;this.eyeMeterAt=-1;this.eyeAdaptation.reset()}
+    const adaptEye=this.eyeAdaptationOn&&!bright&&!nightVision&&def.id!==6
+    if(adaptEye&&(this.eyeMeterAt<0||this.time-this.eyeMeterAt>.1)){
+      const dark=def.id===0?(l0Sample(m,p.x,p.y)?.blackout??0):0
+      let light=(this.ambient.intensity+this.hemi.intensity*.35)*.4*(1-dark*.985)
+      if(def.id===1&&m.inf)light+=l1ProbeIlluminance(m.inf.seed,p.x+m.inf.ox,p.y+m.inf.oy)*.18
+      for(const L of sorted.slice(0,12)){
+        if(def.id===1&&L.gen===1&&L.keep!==1)continue
+        const d=Math.hypot(L.x-p.x,L.y-p.y)
+        if(d>Math.min(14,L.r*2.6)||!engine.los(p.x,p.y,L.x,L.y))continue
+        light+=.07*(L.intensityMul??1)*Math.max(0,1-d/(L.r*2.6))**2
+      }
+      if(fl)light+=.16
+      this.eyeMeter=light;this.eyeMeterAt=this.time
+    }
+    const eyeExposure=this.eyeAdaptation.update(this.eyeMeter,dt,adaptEye,def.id===1?{maxExposure:1.35,hold:engine.blackoutWarnT>0,darkTau:m.inf?.blackout?3.6:2.8}:undefined)
+    this.three.toneMappingExposure*=eyeExposure
+    // Native L1 light has no energy during an outage; portable lights still use the light pool.
+    this.scene.environmentIntensity=(real?photoProfile.reflection:1)*(def.id===1&&!bright&&m.inf?.blackout ? .018 : 1)
+    const ao=real&&this.textureQuality>0?this.photo.ao:0
+    const focusBlur=perceptionBlur(engine.player.sanity,engine.player.level===0?engine.l0Blur:0)
+    const wantPhoto=real||this.photo.grain>0||this.photo.vignette>0||this.photo.scanline>0||this.photo.grade!=='neutral'||focusBlur>0
+    // HDR tube emitters participate in the same thresholded bloom as other levels.
     const wantBloom = this.lightMode === 'realistic' && this.bloomOn
     const wantPs1 = this.resolutionMode === '320p_ps1'
     // v58：夜视滤镜——佩戴+有电即启用（开发者照明下让位）；贴图不染绿，绿色只来自滤镜
     const wantNv = nightVision && !engine.dev.bright
-    const key = `${wantBloom ? 'b' : ''}${this.vcrOn ? 'v' : ''}${wantPs1 ? 'p' : ''}${wantNv ? 'n' : ''}`
+    // The opaque entry/title loading card covers L5 until this gate opens.
+    // Keep building, compiling and uploading above, but don't compete with it
+    // by drawing the partial hotel (and all its post effects) every frame.
+    // The first complete frame is still rendered before App can dismiss the card.
+    const preparingHotel = def.id === 5 && engine.paused && !this.isNearWorldReady(engine)
+    const key = `${wantPhoto?'f'+ao:''}${wantBloom ? 'b' : ''}${this.vcrOn ? 'v' : ''}${wantPs1 ? 'p' : ''}${wantNv ? 'n' : ''}`
     if (key) {
       if (!this.composer || this.composerKey !== key) {
-        this.composer?.dispose()
+        this.disposeComposer()
         this.composer = new EffectComposer(this.three)
-        this.composer.addPass(new RenderPass(this.scene, this.camera))
+        this.photoPass=wantPhoto?new PhotoPass(this.camera):null
+        if(this.photoPass)this.photoPass.quality=ao
+        this.composer.addPass(this.photoPass?new PhotoRenderPass(this.scene,this.camera,this.photoPass):new RenderPass(this.scene, this.camera))
         this.bloomPass = null
         this.vcrPass = null
         this.retroPass = null
@@ -1602,8 +1721,10 @@ export class Renderer3D {
           this.bloomPass = new UnrealBloomPass(new THREE.Vector2(this.three.domElement.width, this.three.domElement.height), this.bloomStrength / 100, 0.5, 0.85)
           this.composer.addPass(this.bloomPass)
         }
+        if(this.photoPass)this.composer.addPass(this.photoPass)
         // 关键：composer 中间目标不应用 ACES 色调映射/sRGB，必须补 OutputPass——否则曝光失效、画面整体变暗
         this.composer.addPass(new OutputPass())
+        if(wantPhoto){this.photoFinish=new ShaderPass(PhotoFinishShader);this.composer.addPass(this.photoFinish)}
         if (this.vcrOn) {
           this.vcrPass = new ShaderPass(VcrShader)
           this.composer.addPass(this.vcrPass)
@@ -1641,11 +1762,14 @@ export class Renderer3D {
         this.three.getDrawingBufferSize(dbSize)
         ;(this.nvPass.uniforms.resolution.value as THREE.Vector2).copy(dbSize)
       }
-      this.composer.render()
+      if(this.photoPass){const u=this.photoPass.material.uniforms;u.white.value.fromArray(real?photoProfile.white:[1,1,1]);u.saturation.value=(this.photo.grade==='bleached'?.62:this.photo.grade==='cold'?.8:this.photo.grade==='liminal'?.88:1)*(real?(photoProfile.saturation??1):1);if(this.photo.grade==='cold')u.white.value.multiply(new THREE.Vector3(.96,1,1.025));if(this.photo.grade==='liminal')u.white.value.multiply(new THREE.Vector3(1.02,1,.97));u.strength.value=photoProfile.ao;u.halation.value=0}
+      if(this.photoFinish){const u=this.photoFinish.uniforms;u.time.value=this.time;u.grain.value=this.photo.grain;u.vignette.value=this.photo.vignette;u.scanline.value=this.photo.scanline*.0015;u.blur.value=focusBlur;this.three.getDrawingBufferSize(u.resolution.value)}
+      if(this.bloomPass){this.bloomPass.threshold=1.02;this.bloomPass.strength=this.bloomStrength/35*photoProfile.bloom*(1+this.eyeAdaptation.glare);this.bloomPass.radius=.3+this.eyeAdaptation.glare*.12}
+      if (!preparingHotel) this.composer.render()
     } else {
       // 所有后处理关闭后立即释放中间帧缓冲，避免原生/720P 档仍占着上一档的显存。
       if (this.composer) {
-        this.composer.dispose()
+        this.disposeComposer()
         this.composer = null
         this.bloomPass = null
         this.vcrPass = null
@@ -1653,7 +1777,7 @@ export class Renderer3D {
         this.nvPass = null
         this.composerKey = ''
       }
-      this.three.render(this.scene, this.camera)
+      if (!preparingHotel) this.three.render(this.scene, this.camera)
     }
     this.drainRetiredWorld(.65)
     this.flushRetiredTextures()
@@ -1672,6 +1796,7 @@ export class Renderer3D {
     const targets = this.interactRayTargets
     targets.length = 0
     for (const [s, grp] of this.structMeshes) {
+      if(s.data?.l1Hidden)continue
       if (s.kind !== 'lift' && (s.floor ?? 0) !== band) continue
       const sx = Math.max(s.x, Math.min(p.x, s.x + s.w))
       const sy = Math.max(s.y, Math.min(p.y, s.y + s.h))
@@ -1804,13 +1929,14 @@ export class Renderer3D {
     root.traverse(node => {
       const material = (node as THREE.Mesh).material
       for (const mat of Array.isArray(material) ? material : material ? [material] : []) {
+        for(const texture of mat.userData.l1Textures??[])if(texture?.isTexture)textures.add(texture)
         for (const value of Object.values(mat)) {
           const texture = value as THREE.Texture | undefined
-          if (texture?.isTexture && !texture.isRenderTargetTexture) textures.add(texture)
+          if (texture?.isTexture && !texture.isRenderTargetTexture && !texture.userData.skyOwned) textures.add(texture)
         }
         for (const uniform of Object.values((mat as THREE.ShaderMaterial).uniforms ?? {})) {
           const texture = uniform.value as THREE.Texture | undefined
-          if (texture?.isTexture && !texture.isRenderTargetTexture) textures.add(texture)
+          if (texture?.isTexture && !texture.isRenderTargetTexture && !texture.userData.skyOwned) textures.add(texture)
         }
       }
     })
@@ -1820,9 +1946,9 @@ export class Renderer3D {
     const textures = new Set<THREE.Texture>()
     this.collectTextures(this.vmFlash, textures)
     for (const texture of textures) { this.three.initTexture(texture); yield }
-    yield* compileSceneJob(this.three, this.vmFlash, this.camera, this.scene)
+    yield* compileSceneJob(this.three, this.vmFlash, this.camera, this.scene, this.composer?.readBuffer ?? null)
     this.vmFlash.updateWorldMatrix(true, true)
-    yield* uploadSceneJob(this.three, this.vmFlash, this.camera, this.scene)
+    yield* uploadSceneJob(this.three, this.vmFlash, this.camera, this.scene, false, null, this.composer?.readBuffer ?? null)
   }
 
   /** Pay template, texture and skinning-program cost behind the level loading screen. */
@@ -1835,9 +1961,9 @@ export class Renderer3D {
         this.collectTextures(model, textures)
         for (const texture of textures) { this.three.initTexture(texture); yield }
         this.enableShadows(model)
-        yield* compileSceneJob(this.three, model, this.camera, this.scene)
+        yield* compileSceneJob(this.three, model, this.camera, this.scene, this.composer?.readBuffer ?? null)
         model.updateWorldMatrix(true, true)
-        yield* uploadSceneJob(this.three, model, this.camera, this.scene)
+        yield* uploadSceneJob(this.three, model, this.camera, this.scene, false, null, this.composer?.readBuffer ?? null)
       } finally { this.disposeItemModel(model) }
     }
   }
@@ -1847,7 +1973,7 @@ export class Renderer3D {
     // shader variant. Intensity and the player's switch deliberately stay out.
     const key = [this.lightMode, this.three.shadowMap.enabled, this.flash.castShadow,
       this.sunDir.castShadow, this.l1Sun.castShadow, this.scene.environment?.id ?? -1,
-      !!this.scene.fog, this.activeLightPool.map(light => +light.castShadow).join('')].join(':')
+      !!this.scene.fog, !!this.composer, this.activeLightPool.map(light => +light.castShadow).join('')].join(':')
     if (key !== this.flashWarmupKey) {
       this.flashWarmup?.return()
       this.flashWarmupKey = key
@@ -2060,8 +2186,9 @@ export class Renderer3D {
   setHeadBob(on: boolean) { this.headBobReal = on }
 
   /** 基础视野角；冲刺、低理智与过场的临时 FOV 仍在此基础上叠加。 */
-  setFov(degrees: number) {
-    this.fovBase = Math.max(60, Math.min(90, degrees))
+  setFov(degrees: number, minimum = 60) {
+    // Photo framing may use a longer lens; the gameplay settings retain 60°.
+    this.fovBase = Math.max(Math.max(35, minimum), Math.min(90, degrees))
   }
 
   /** 纹理质量使用各向异性过滤实现，避免切换时重载或复制贴图。 */
@@ -2211,6 +2338,13 @@ export class Renderer3D {
     return true
   }
 
+  /** Menu gate includes decoded material images, not only completed geometry. */
+  isTitleWorldReady(engine: Engine): boolean {
+    if (!this.isNearWorldReady(engine)) return false
+    for (const texture of this.worldTextures) if (texture.userData.fileImagePending) return false
+    return true
+  }
+
   // ---------- v50：光影模式设置 ----------
 
   /** 光影模式：classic=当前版本 / realistic=物理光照（Standard 材质 + 环境反射 + 软阴影）。
@@ -2331,6 +2465,7 @@ export class Renderer3D {
     this.userExposure = 1.45 * (pct / 100)
     this.three.toneMappingExposure = this.userExposure
   }
+  setEyeAdaptation(on:boolean){if(this.eyeAdaptationOn!==on){this.eyeAdaptationOn=on;this.eyeAdaptation.reset();this.eyeMeterAt=-1}}
 
   /** 反射强度（0–100）：即时调整全部 Standard 材质的 envMapIntensity（基准 envBase × 倍率） */
   setReflectivity(v: number) {
@@ -2356,7 +2491,7 @@ export class Renderer3D {
     this.l4Volume?.dispose();this.l4Volume=null
     if(this.voidRain){this.voidRain.removeFromParent();this.voidRain.geometry.dispose();(this.voidRain.material as THREE.Material).dispose();this.voidRain=null}
     this.l1Water.clear(this.scene)
-    this.l1Sun.shadow.dispose();afterRendererCompile(this.three, disposeL1Materials)
+    this.l1Sun.shadow.dispose();this.l1Shafts.dispose();disposeL1SurfaceField();disposeL1Bakes();disposeL1Probes();afterRendererCompile(this.three, disposeL1Materials)
     this.cancelMaterialPrecompile()
     this.l10Rain.geometry.dispose()
     ;(this.l10Rain.material as THREE.Material).dispose()
@@ -2364,6 +2499,7 @@ export class Renderer3D {
   }
 
   private teardown() {
+    this.l0RevisionJob?.iter.return();this.l0RevisionJob=null
     this.mothWarmup?.return(); this.mothWarmup = null; this.mothWarmupDone = false
     this.drainRetiredWorld(Infinity)
     this.flashWarmup?.return(); this.flashWarmup = null; this.flashWarmupKey = ''
@@ -2386,8 +2522,22 @@ export class Renderer3D {
     this.cancelMaterialPrecompile()
     resetLiquidWaves() // v57t：旧水面波浪 uniform 随几何一并失效
     // v58：无限模式 L7 挂到场景的天空球/蜃楼船队随层级拆卸（有限层天空球在 levelGroup 内一并移除）
-    if (this.skyMesh) { this.scene.remove(this.skyMesh); this.skyMesh = null }
+    if (this.skyMesh) {
+      const sky = this.skyMesh
+      sky.removeFromParent(); this.skyMesh = null
+      afterSceneCompile(sky, () => {
+        const system = sky.userData.sky as SkySystem | undefined
+        if (system) system.dispose()
+        else {
+          sky.geometry.dispose()
+          for (const mat of Array.isArray(sky.material) ? sky.material : [sky.material]) mat.dispose()
+        }
+      })
+    }
     if (this.mirageFleet) { this.scene.remove(this.mirageFleet.group); this.mirageFleet = null }
+    if (this.l7Fx) { const fx=this.l7Fx; fx.group.removeFromParent(); afterSceneCompile(fx.group,()=>fx.dispose()); this.l7Fx=null }
+    this.l7ZoneT=0;this.l7Zones=[]
+    l7SurgeUniforms.uL7Surge.value.set(0,0,0,0)
     if (this.levelGroup) {
       this.scene.remove(this.levelGroup)
       this.levelGroup.traverse((o) => {
@@ -2445,8 +2595,8 @@ export class Renderer3D {
     this.scene.fog = new THREE.Fog(fogC, def.id === 7 ? 3.0 : 2.0, fogFar)
     this.scene.background = new THREE.Color().copy(fogC)
     this.fogC.copy(fogC)
-    this.fogNear = m.settlement ? 12 : 2.0
-    this.fogFar = fogFar
+    this.fogNear = def.id===0?20:m.settlement ? 12 : 2.0
+    this.fogFar = def.id===0?65:fogFar
     this.skyC.set(SKY[def.id] ?? '#0a0a0c')
     this.outK = 0
     this.tintK = 0
@@ -2459,18 +2609,69 @@ export class Renderer3D {
     if(def.id===5){this.hemi.color.set('#ddc8a6');this.hemi.groundColor.set('#665441')}
     // v58：L7 巨大迷雾 + 蜃楼船队——无限模式此前没有天空球（仅背景色/雾）；
     // 挂到场景而非 chunk 组（chunk 流式重建不受影响），球心/船位每帧跟随玩家
-    if (def.id === 7 || def.id === 8 || def.id === 9 || def.id === 10 || def.id === 11) {
+    if (SKY_PROFILES[def.id]) {
       this.skyMesh = makeSkyMesh(m, def)
       if (this.skyMesh) this.scene.add(this.skyMesh)
       this.mirageFleet = makeMirageFleet(def.id)
       if (this.mirageFleet) this.scene.add(this.mirageFleet.group)
     }
+    if (def.id === 7) { this.l7Fx = new L7OceanFx(); this.scene.add(this.l7Fx.group) }
     this.applyEnvProbe(def)
+  }
+
+  // ---------- v66：L7 水体/深海氛围每帧更新 ----------
+  private l7FlashDir = new THREE.Vector3()
+  private l7ZoneT = 0
+  private l7ZoneCenter = new THREE.Vector2(Infinity,Infinity)
+  private l7Zones: { id: number; x: number; z: number; ang: number; len: number; thick: number; top: number; r: number }[] = [] // 世界坐标
+  private updateL7Fx(engine: Engine, m: GameMap, dt: number) {
+    const fx = this.l7Fx!
+    // 水下看不到天空球：海面以外（未加载的远处）不应露出云层；背景退回雾色
+    if (this.skyMesh) this.skyMesh.visible = this.uwK < 0.5
+    const inf = m.inf
+    if (!inf) return
+    const ox = inf.ox, oy = inf.oy
+    waterUniforms.uWaterOrigin.value.set(ox, oy)
+    const sp = l7SurgeShaderParams(engine)
+    l7SurgeUniforms.uL7Surge.value.set(sp.x, sp.y, sp.z, sp.w)
+    const p = engine.player
+    const eyeZ = this.camera.position.y
+    const below = Math.max(0, -eyeZ)
+    const depthK = Math.min(1, below / 230)
+    // 焦散：随下潜自然光衰减；手电不产生焦散
+    l7CausticUniforms.uL7Caustic.value = this.l7LightKeep * (this.lightMode === 'realistic' || this.realWaterOn ? 1 : 0.6)
+    // 重力交界区：每 0.5s 重新查询 260m 内的区（缓存世界坐标，每帧按当前窗口原点换算到场景坐标）
+    this.l7ZoneT -= dt
+    if (this.l7ZoneT <= 0 || (this.l7ZoneCenter.x-p.x-ox)**2+(this.l7ZoneCenter.y-p.y-oy)**2>64) {
+      this.l7ZoneCenter.set(p.x+ox,p.y+oy)
+      this.l7ZoneT = 0.5
+      this.l7Zones = l7GravZonesNear(inf.seed, p.x + ox, p.y + oy, 260).slice(0, 2).map((z) => ({ id: z.id, x: z.x, z: z.y, ang: z.ang, len: z.len, thick: z.thick, top: z.top, r: z.r }))
+    }
+    const zones = this.l7Zones.map((z) => ({ ...z, x: z.x - ox, z: z.z - oy }))
+    // 现实碎裂强度：深渊（>200m）与重力交界区附近（<40m）
+    const glitch = Math.max(Math.min(1, Math.max(0, (below - 200) / 70)), Math.max(0, 1 - engine.l7fx.gravDist / 40) * 0.55)
+    const fog = this.scene.fog as THREE.Fog | null
+    this.l7FlashDir.copy(this.flash.target.position).sub(this.flash.position).normalize()
+    const s = engine.l7fx.surge
+    let back: { x: number; z: number; dx: number; dz: number; env: number; t: number } | null = null
+    if (s) {
+      const env = Math.min(1, s.t / 5) * (1 - Math.min(1, Math.max(0, (s.t - s.dur) / 8)))
+      back = { x: s.wx - ox, z: s.wy - oy, dx: s.dx, dz: s.dy, env, t: s.t }
+    }
+    const fl = p.flashlight && p.battery > 0 && p.flashJamT <= 0
+    fx.update({
+      time: this.time, cam: this.camera, uw: this.uwK, depth: below, depthK,
+      eyeAbove: eyeZ - (engine.l7fx.wall ? engine.l7fx.wall.top : engine.l7fx.surgeH), waterY: engine.l7fx.surgeH,
+      lightKeep: this.l7LightKeep, flashOn: !!fl, flashPos: this.flash.position, flashDir: this.l7FlashDir,
+      halluc: engine.l7fx.halluc, glitch, fogColor: fog?.color ?? new THREE.Color('#3f5a66'), fogFar: fog?.far ?? 30,
+      zones, back, hi: this.textureQuality > 0 && (this.realWaterOn || this.lightMode === 'realistic'),
+    })
   }
 
   // ---------- v17：无限模式 chunk 同步（分帧构建、远离卸载、平移只动 position）----------
   private syncInfinite(m: GameMap, def: LevelDef, p: { x: number; y: number }, budgetMs = this.chunkBudgetMs) {
     const inf = m.inf!
+    if(def.id===1)for(const [s,root]of this.structMeshes)if(s.data?.l1Crate)root.visible=!s.data.l1Hidden
     // 全图变化（红室蔓延）：卸载全部已构建 chunk，按新着色重建
     const redo = inf.redo ?? 0
     if (redo !== this.chunkRedo) {
@@ -2549,17 +2750,55 @@ export class Renderer3D {
       return Math.max(x-p.x,0,p.x-x-CS)**2 + Math.max(y-p.y,0,p.y-y-CS)**2
     }
     queue.sort((a,b) => distance(a)-distance(b))
+    if(def.id===1){retainL1Bakes(inf.seed,want);for(const c of queue.slice(0,6))if(c.l1)requestL1Bake(c.l1,this.lightMode==='realistic'&&this.textureQuality>0?'high':'low')}
     if(this.cityChunkTask && (this.cityChunkTask.map!==m || this.cityChunkTask.rev!==inf.rev || !want.has(this.cityChunkTask.key))){this.cityChunkTask.iter.return();this.cityChunkTask=null}
     if(!this.cityChunkTask && queue[0])this.cityChunkTask={map:m,rev:inf.rev,key:queue[0].key,iter:this.buildInfiniteChunk(m,def,queue[0])}
-    const deadline=performance.now()+budgetMs
+    const deadline=performance.now()+(def.id===1?Math.min(2,budgetMs):budgetMs)
     let steps = 0
     while(this.cityChunkTask && performance.now()<deadline && steps++<64){if(this.cityChunkTask.iter.next().done)this.cityChunkTask=null}
+  }
+
+  private syncL0Revision(eng:Engine,budget:number){
+    const m=eng.map!,pending=m.inf?.l0Pending
+    if(this.l0RevisionJob&&(this.l0RevisionJob.map!==m||this.l0RevisionJob.pending!==pending)){this.l0RevisionJob.iter.return();this.l0RevisionJob=null}
+    if(pending&&!this.l0RevisionJob)this.l0RevisionJob={map:m,pending,iter:this.prepareL0Revision(eng,pending)}
+    const deadline=performance.now()+Math.min(2,budget)
+    while(this.l0RevisionJob&&performance.now()<deadline)if(this.l0RevisionJob.iter.next().done)this.l0RevisionJob=null
+  }
+  private *prepareL0Revision(eng:Engine,pending:L0Pending):Generator<void,void,unknown>{
+    const m=eng.map!,inf=m.inf!,ox=inf.ox,oy=inf.oy,revision=inf.rev,prepared=new Map<string,THREE.Group>();let installed=false
+    const state={...inf.l0!,revisions:{...inf.l0!.revisions},redProgress:pending.redProgress??inf.l0!.redProgress}
+    if(!pending.redProgress)state.revisions[pending.key]=pending.revision
+    const layouts=new Map<string,L0Layout>()
+    try{
+      for(const key of pending.affected??[pending.key]){
+        const c=inf.chunks.get(key);if(!c)continue
+        layouts.set(key,genL0Architecture(eng.levelDef,inf.seed,c.cx,c.cy,undefined,state.revisions[key]??0,state.redProgress).l0!)
+      }
+      for(const [key,layout]of layouts){
+        if(!this.chunkGroups.has(key))continue
+        const group=new THREE.Group();group.name='l0-static';prepared.set(key,group)
+        yield* buildL0Architecture(layout,ox,oy,group,l0LightingNeighbours(eng.levelDef,inf.seed,layout,state,layouts))
+        yield* compileSceneJob(this.three,group,this.camera,this.scene)
+        yield* uploadSceneJob(this.three,group,this.camera,this.scene)
+      }
+      if(inf.rev!==revision){if(inf.l0Pending===pending)inf.l0Pending=undefined;return}
+      if(eng.map!==m||inf.l0Pending!==pending||!commitL0Revision(eng,pending))return
+      for(const [key,g]of prepared){
+        const cg=this.chunkGroups.get(key);if(!cg){afterSceneCompile(g,()=>g.traverse(disposeWorldGeometry));continue}
+        g.position.set(ox-inf.ox,0,oy-inf.oy)
+        const old=cg.group.getObjectByName('l0-static');if(old){old.removeFromParent();this.retireWorld(old)}
+        cg.group.add(g);g.updateWorldMatrix(true,true)
+      }
+      installed=true
+    }finally{if(!installed)for(const g of prepared.values())afterSceneCompile(g,()=>g.traverse(disposeWorldGeometry))}
   }
 
   // v29：闪烁的墙壁——出口面片贴到相邻墙面（面向出口所在地板格；无相邻墙时保持居中）
   // v55c：dist 可调——boilerdeep 黑门门框在模型局部 -0.42，dist 0.93 使门框前缘微凸墙面 1cm
   // （0.48 的旧值让门框浮在墙前 0.44m/门牌半嵌墙盒内——墙面无门洞开凿[非 DOOR_EXIT_KINDS]，门体须贴在墙面外）
   private orientExitToWall(m: GameMap, grp: THREE.Group, e: { x: number; y: number }, dist = 0.48) {
+    if(m.inf?.l0){const mount=l0WallMount(m,e.x+.5,e.y+.5);if(mount){grp.rotation.y=mount.yaw;grp.position.set(mount.x,0,mount.y);return}}
     const tx = Math.floor(e.x), ty = Math.floor(e.y)
     const at = (x: number, y: number) => (x < 0 || y < 0 || x >= m.w || y >= m.h ? 0 : m.tiles[y * m.w + x])
     const dirs = [
@@ -2677,12 +2916,14 @@ export class Renderer3D {
     const range = { x0: wx, y0: wy, x1: wx + CS, y1: wy + CS, variant: c.variant }
     const tr=def.id===1&&c.variant==='aisle'?l1Transition(inf.seed,c.cx,c.cy):null
     const ranges=tr? [ {...range,x1:tr.axis==='x'?wx+16:wx+CS,y1:tr.axis==='y'?wy+16:wy+CS,variant:tr.a}, {...range,x0:tr.axis==='x'?wx+16:wx,y0:tr.axis==='y'?wy+16:wy,variant:tr.b} ]:[range]
-    if(m.organicCave)yield* buildCaveVolumeTerrainJob(m,g,range)
+    if(def.id===0&&c.l0){const architecture=new THREE.Group();architecture.name='l0-static';g.add(architecture);yield* buildL0Architecture(c.l0,inf.ox,inf.oy,architecture,l0LightingNeighbours(def,inf.seed,c.l0,inf.l0))}
+    else if(def.id===1&&c.l1)yield* buildL1BakedScene(c.l1,inf.ox,inf.oy,g,this.lightMode==='realistic'&&this.textureQuality>0?'high':'low')
+    else if(m.organicCave)yield* buildCaveVolumeTerrainJob(m,g,range)
     else if(def.id===11)yield* buildL11TerrainJob(m,g,range)
     else for(const r of ranges){
       for(let z=r.y0;z<r.y1;z+=4){yield* buildTerrainJob(m,def,def.id===1?l1Profile(r.variant).height:H,g,{...r,y0:z,y1:Math.min(z+4,r.y1),skipL5Architecture:def.id===5});yield}
     }
-    if(!m.organicCave && def.id!==11){
+    if(!m.organicCave && def.id!==11 && def.id!==0 && !(def.id===1&&c.l1)){
       const slices=[...g.children],merged=new THREE.Group()
       if(def.id===4)yield* batchL4StaticJob(merged,slices);else yield* batchStaticRootsJob(merged,slices)
       for(const slice of slices)if(slice.parent!==merged){g.remove(slice);slice.traverse(disposeWorldGeometry)}
@@ -2725,19 +2966,23 @@ export class Renderer3D {
       return l9Interiors.find(({ house: h }) => x > h.x + .5 && x < h.x + h.w - .5 && y > h.y + .5 && y < h.y + h.h - .5)
     }
     for (const s of c.structures) {
-      if(s.data?.l1Hidden)continue
+      if(s.data?.l1Static){structs.push(s);continue}
+      if(s.data?.l0Wall){structs.push(s);continue}
+      // Reserve hidden crate meshes too: anomalies toggle one root, never rebuild a level.
+      if(s.data?.l1Hidden&&!s.data.l1Crate)continue
       if(def.id===2 && s.data?.l2Service){structs.push(s);continue}
       // Legacy tile cables are covered by the continuous architectural runs.
       if(def.id===3 && (s.kind==='l3service'||s.kind==='cables'||s.kind==='pipes'&&s.data?.ceil)){structs.push(s);continue}
       yield
       if (def.id === 10 && s.kind === 'wheatpatch') { structs.push(s); continue }
-      const mesh = def.id===11 && s.kind==='l11building' ? yield* buildL11Building(s) : buildStructure(s, def, m, H)
+      const mesh = def.id===11 && s.kind==='l11building' ? yield* buildL11Building(s) : buildStructure(s, def, m, def.id===1?l1RoofAt(m,s.x+s.w/2,s.y+s.h/2,H):H)
       if (mesh) {
         // Loop stair roots sit at their entrance landing, not the lower flight's void tile.
         const gy = s.kind==='l4stairs'?0:floorHeight(m, s.x + s.w / 2, s.y + s.h / 2, s.floor ?? 0)
         ;(mesh as THREE.Group).position.y += gy
         syncStructureModelColliders(s, mesh, gy)
         this.batchContainerShell(s, mesh)
+        if(s.data?.l1Crate)mesh.visible=!s.data.l1Hidden
         const interior = interiorFor(s)
         if ((def.id === 9 || (def.id === 11 && s.kind !== 'l11building')) && !l9KeepIndividual(s)) {
           if (interior) interiorStatic.get(interior.group)!.push(mesh)
@@ -2748,11 +2993,11 @@ export class Renderer3D {
           ;(interior?.group ?? g).add(mesh as THREE.Group)
           this.structMeshes.set(s, mesh as THREE.Group)
           if (ANIM_STRUCT(s)) this.animatedStructMeshes.set(s, mesh as THREE.Group)
-          if(def.id===3&&L3_BATCH_STATIC.has(s.kind)||def.id===8&&L8_BATCH_STATIC.has(s.kind)||def.id===4&&['cubicle','officechair','pillar','desk','table','glasswin','windowblack','l4stairs','l4prop'].includes(s.kind)||
+          if(def.id===1&&!ANIM_STRUCT(s)&&s.data?.sid===undefined||def.id===3&&L3_BATCH_STATIC.has(s.kind)||def.id===8&&L8_BATCH_STATIC.has(s.kind)||def.id===4&&['cubicle','officechair','pillar','desk','table','glasswin','windowblack','l4stairs','l4prop'].includes(s.kind)||
              def.id===5&&!ANIM_STRUCT(s)&&s.data?.sid===undefined){
             // L4 office furniture uses many material groups. A 16 m batch at
             // reduced detail cuts CPU draw submissions; exact proxies remain.
-            const batchSize=def.id===4&&this.detailDistanceScale<=.75?16:8
+            const batchSize=def.id===1?32:def.id===4&&this.detailDistanceScale<=.75?16:8
             const key=`${Math.floor((s.x-wx)/batchSize)},${Math.floor((s.y-wy)/batchSize)}`,roots=l3Static.get(key)??[]
             roots.push(mesh);l3Static.set(key,roots)
           }
@@ -2796,11 +3041,15 @@ export class Renderer3D {
     }
     // 灯具（L0 全室内：自发光盒；v53：src 记录光源，亮度随其点亮状态）
     const fixtures: { mat: THREE.MeshBasicMaterial; seed: number; src?: LightSource; batch?: THREE.InstancedMesh; index?: number }[] = []
-    if(def.id===1)for(const r of ranges)yield* buildL1Architecture(m,r,g,c.lights.filter(l=>l.x>=r.x0&&l.x<r.x1&&l.y>=r.y0&&l.y<r.y1),fixtures)
+    if(def.id===1&&c.l1){
+      buildL1EmitterMeshes(c.l1,inf.ox,inf.oy,g,c.lights,fixtures)
+      const wet=yield* l1PuddleGeometryJob(m,range);if(wet){const mesh=new THREE.Mesh(wet,l1Material('parking','wet'));mesh.userData.noCastShadow=true;mesh.name='l1-wet-floor';g.add(mesh)}
+    }
+    else if(def.id===1)for(const r of ranges)yield* buildL1Architecture(m,r,g,c.lights.filter(l=>l.x>=r.x0&&l.x<r.x1&&l.y>=r.y0&&l.y<r.y1),fixtures)
     if(def.id===2)yield* buildL2Architecture(m,range,g,c.structures,c.lights,fixtures)
     if(def.id===3)yield* buildL3Architecture(m,range,g,c.structures,c.lights,fixtures)
     if(def.id===4)buildL4Lights(m,g,c.lights,fixtures)
-    const l0FixtureFrameMat = def.id === 0 ? new THREE.MeshLambertMaterial({ color: '#8d8875' }) : null
+    const l0FixtureFrameMat: THREE.MeshLambertMaterial | null = null
     for (const L of c.lights) {
       yield
       if(def.id===4)continue
@@ -2867,22 +3116,24 @@ export class Renderer3D {
       })
     }
     // 装饰（chunk 范围）
-    if(def.id!==4)yield* buildDecorationsJob(m, def, H, g, fixtures, range)
+    if(def.id!==4&&def.id!==0&&!(def.id===1&&c.l1))yield* buildDecorationsJob(m, def, H, g, fixtures, range)
     yield
     this.enableShadows(g)
-    yield* this.warmSceneTextures(g)
+    if(def.id===1)yield* measureL1BuildJob('texturePrepare',this.warmSceneTextures(g));else yield* this.warmSceneTextures(g)
     // Compile only the incoming chunk, before publishing it to normal drawing.
     // KHR_parallel_shader_compile can then finish while later frames stay responsive.
     yield
-    yield* compileSceneJob(this.three, g, this.camera, this.scene)
+    if(def.id===1)yield* measureL1BuildJob('compile',compileSceneJob(this.three,g,this.camera,this.scene,this.composer?.readBuffer??null));else yield* compileSceneJob(this.three, g, this.camera, this.scene, def.id === 5 ? this.composer?.readBuffer ?? null : undefined)
     this.freezeStaticTransforms(g)
     yield
-    yield* uploadSceneJob(this.three, g, this.camera, this.scene, true, this.flashShadowsOn ? this.flash : null)
+    if(def.id===1)yield* measureL1BuildJob('upload',uploadSceneJob(this.three,g,this.camera,this.scene,true,this.flashShadowsOn?this.flash:null,this.composer?.readBuffer??null));else yield* uploadSceneJob(this.three, g, this.camera, this.scene, true, this.flashShadowsOn ? this.flash : null, def.id === 5 ? this.composer?.readBuffer ?? null : undefined)
+    const installStarted=performance.now()
     this.scene.add(g)
     this.chunkGroups.set(c.key, { group: g, wx, wy, structs, fixtures, exitMeshes, exitRoots, l9Interiors })
-    if(def.id===5)this.l5ShadowEpoch++
+    this.l5ShadowEpoch++
     this.fixtures.push(...fixtures)
     this.exitMeshes.push(...exitMeshes)
+    if(def.id===1)recordL1BuildStage('installCpu',performance.now()-installStarted)
     if (def.id === 4 || def.id === 5) {
       const terrain=g.getObjectByName('terrain-batch')
       if(terrain){
@@ -2929,7 +3180,7 @@ export class Renderer3D {
     // v7：室外混合基准（render() 每帧按玩家位置 lerp）
     this.fogC.copy(fogC)
     this.fogNear = 2.0
-    this.fogFar = fogFar
+    this.fogFar = def.id===0?65:fogFar
     this.skyC.set(SKY[def.id] ?? '#0a0a0c')
     this.outK = 0
     // v10：层级最低环境光/半球光基准（darkness 越高兜底越亮，保证 10m 内结构轮廓可辨）
@@ -3001,7 +3252,7 @@ export class Renderer3D {
     // 缺省贴所在瓦片真实顶面——楼板底下=2.65、挑高=挑高顶、普通=层高；
     // v47：挑高贴附不再限于多层——单层挑高（L274 教堂穹顶主间等）同样贴挑高顶；
     // noFix=不画默认灯盒（实体灯具由结构模型提供，如 walllamp 壁挂斜照灯）
-    const l0FixtureFrameMat = def.id === 0 ? new THREE.MeshLambertMaterial({ color: '#8d8875' }) : null
+    const l0FixtureFrameMat: THREE.MeshLambertMaterial | null = null
     for (const L of m.lights) {
       yield
       const mat = new THREE.MeshBasicMaterial({ color: L.color })
@@ -3106,7 +3357,7 @@ export class Renderer3D {
       return
     }
     this.pendingEnvProbe = null
-    this.scene.environment = envProbe(def, skyTex)
+    this.scene.environment = envProbe(def, skyTex,this.three)
   }
 
   private updateEntities(engine: Engine, dt: number) {
@@ -3123,12 +3374,14 @@ export class Renderer3D {
       if (distance > (e.def.mothForm==='larva'?12:reach)) { if (grp) grp.visible = false; continue }
       // v53：L3 高智能实体建模变体（无面灵错位器官/石器、水豚尸鼠；seed=实体 id 保证重建一致）；
       // 尸鼠形态按层级固定：L2 灰白廊道种群 / L3 水豚 / 其余深褐（v53，替代原随机二选一）
-      const eOpts = (e.def.l3face || e.def.tool || e.def.capybara || e.def.type === 'corpserat' || e.def.type === 'arachnid' || e.def.type === 'deathmoth')
+      const eOpts = (e.def.l3face || e.def.tool || e.def.capybara || e.def.type === 'corpserat' || e.def.type === 'arachnid' || e.def.type === 'deathmoth' || e.def.type === 'smiler' || e.def.type === 'hound' || e.def.type === 'duller')
         ? {
           l3face: e.def.l3face, tool: e.def.tool, capybara: e.def.capybara, mothForm: e.def.mothForm,
           ratMorph: (engine.levelDef.id === 2 ? 'gray' : engine.levelDef.id === 5 ? 'hotel' : 'brown') as 'gray' | 'brown' | 'hotel',
           seed: e.id, ceilingCrawler: e.def.ceilingCrawler,
           arachnidMorph: e.def.arachnidMorph, arachnidBreed: e.def.arachnidBreed, herbivore: e.def.herbivore,
+          smilerKind: e.sm?.kind ?? e.def.smilerKind,
+          houndNeutral: e.hd?.neutral ?? (engine.levelDef.id === 11 && !e.provoked && e.hp >= e.def.hp),
         } : undefined // v60：L8 洞顶尸鼠与蛛形纲生态变体随实例固定
       if (!grp) {
         if(engine.levelDef.id===5&&entityBuilds>0&&(entityBuilds>=2||performance.now()>entityBuildDeadline))continue
@@ -3153,7 +3406,9 @@ export class Renderer3D {
         this.scene.add(grp)
       }
       // v51：人制品售货机活化——def 切换（vendingmachine→vmad）时重建模型（含骷髅手腿）
-      if (grp.userData.entType !== e.def.type || (e.def.type === 'deathmoth' && grp.userData.mothForm !== (e.def.mothForm ?? 'male'))) {
+      if (grp.userData.entType !== e.def.type || (e.def.type === 'deathmoth' && grp.userData.mothForm !== (e.def.mothForm ?? 'male'))
+        || (e.def.type === 'smiler' && e.sm && grp.userData.smilerKind !== e.sm.kind)
+        || (e.def.type === 'hound' && e.hd && grp.userData.houndNeutral !== e.hd.neutral)) { // v61：笑魇变种在首个 AI tick 决定
         this.scene.remove(grp)
         this.disposeItemModel(grp)
         grp = buildEntityMesh(e.def.type, eOpts)
@@ -3161,6 +3416,14 @@ export class Renderer3D {
         this.enableShadows(grp)
         this.entityMeshes.set(e.id, grp)
         this.scene.add(grp)
+      }
+      // Change only the carried item; retain the animated body and its resources.
+      if (e.def.type === 'duller' && (grp.userData.dullerCarryAttached !== true || grp.userData.dullerCarry !== (e.dl?.carry ?? ''))) {
+        const c = e.dl?.carry ?? ''
+        grp.userData.dullerCarry = c; grp.userData.dullerCarryAttached = true
+        const rig = grp.userData.dullerRig as { carry: THREE.Group } | undefined
+        if(rig){for(const old of [...rig.carry.children]){rig.carry.remove(old);this.disposeItemModel(old as THREE.Group)}
+          if(c){const it=buildItemMesh(c,{halo:false});it.scale.multiplyScalar(.85);rig.carry.add(it);this.enableShadows(it)}}
       }
       const ceilingRat = !!e.def.ceilingCrawler && !!m.organicCave && !e.dead
       const gz = ceilingRat ? caveCeilingAt(m, e.x, e.y) - 0.04 : (e.z ?? floorHeight(m, e.x, e.y))
@@ -3221,7 +3484,7 @@ export class Renderer3D {
       }
       if (parts) {
         // 四肢摆动（行走循环）：双足左右交替；猎犬四足对角步态；v58：小小走专属泳姿（下方分支）
-        if (et === 'hound') {
+        if (et === 'hound' && parts.legL) { // v62：新猎犬模型由 animateHound 驱动，旧部件不存在
           const g2 = e.animT * 7 // 猎犬步频更快
           parts.legL!.rotation.z = Math.sin(g2) * gaitAmp * 0.9 // 后左 + 前右
           parts.armR!.rotation.z = Math.sin(g2) * gaitAmp * 0.9
@@ -3246,10 +3509,6 @@ export class Renderer3D {
           if (parts.head && et !== 'thething') parts.head.rotation.y = Math.sin(t * 0.55) * 0.4
           if (et === 'faceling' && parts.armR) parts.armR.rotation.x = -0.5 + Math.sin(t * 3.2) * 0.12 // 习惯性敲键
           if (et === 'bellhop' && parts.torso) parts.torso.rotation.x = 0.08 + Math.sin(t * 1.1) * 0.06 // 殷勤微躬
-          if (et === 'duller') { // 垂臂慢晃
-            if (parts.armL) parts.armL.rotation.x = Math.sin(t * 1.2) * 0.08
-            if (parts.armR) parts.armR.rotation.x = -Math.sin(t * 1.2) * 0.08
-          }
         } else {
           if (parts.head) parts.head.rotation.y = 0
           if (et === 'bellhop' && parts.torso) parts.torso.rotation.x = 0 // 脱离待机时收躬
@@ -3597,9 +3856,16 @@ export class Renderer3D {
         }
       }
       // 攻击前摇整体缩放 + 受击硬直抖动
-      if (lunging && et !== 'thething' && et !== 'deathmoth') grp.scale.setScalar(esc * 1.14)
+      if (lunging && et !== 'thething' && et !== 'deathmoth' && et !== 'smiler') grp.scale.setScalar(esc * 1.14)
       if (e.stunT > 0) grp.rotation.z = Math.sin(this.time * 40) * 0.1
       else grp.rotation.z = 0
+      if (et === 'smiler' && !e.dead) animateSmiler(grp, e, this.time, gz, {
+        headroom: (e.sm?.kind ?? e.def.smilerKind) === 'great' ? smilerHeadroom(m, e.x, e.y, e.z, e.facing, this.wallH) : Infinity,
+        eyeAboveFeet: this.camera.position.y - gz,
+        distance: Math.hypot(e.x - engine.player.x, e.y - engine.player.y), dt,
+      })
+      if (et === 'hound' && !e.dead) animateHound(grp, e, this.time, gz)
+      if (et === 'duller' && !e.dead) animateDuller(grp, e, this.time, gz, m.inf?.ox??0, m.inf?.oy??0)
       // ---------- 死亡动画（按实体差异化）----------
       if (e.dead) {
         const k = Math.max(0, e.deathT) / 1.4 // 1 → 0
@@ -3718,6 +3984,14 @@ export class Renderer3D {
   private updateNpcs(engine: Engine, dt: number) {
     const m = engine.map!
     const seen = new Set<string>()
+    const l1=engine.player.level===1&&!!m.l1Architecture
+    const l1Reach=this.fogEnabled?Math.min(this.camera.far,((this.scene.fog as THREE.Fog|null)?.far??this.camera.far)+3):this.camera.far
+    if(l1){this.camera.updateMatrixWorld();this.l1NpcProjection.multiplyMatrices(this.camera.projectionMatrix,this.camera.matrixWorldInverse);this.l1NpcFrustum.setFromProjectionMatrix(this.l1NpcProjection)}
+    const visible=(x:number,y:number,distance:number)=>{
+      if(!l1||distance<=24)return true // Warm nearby models, including behind the player.
+      if(distance>l1Reach)return false
+      this.l1NpcBounds.center.set(x,1.1,y);return this.l1NpcFrustum.intersectsSphere(this.l1NpcBounds)
+    }
     // Character factories contain dozens of geometries. Spread first entry
     // and incoming chunk populations over frames, closest character first.
     let nextId: string | undefined, nearest = Infinity
@@ -3725,12 +3999,20 @@ export class Renderer3D {
       if (this.npcMeshes.has(n.id)) continue
       const distance = Math.hypot(n.x-engine.player.x,n.y-engine.player.y)
       if (m.settlement && distance > 24) continue
+      if(!visible(n.x,n.y,distance))continue
       if (distance < nearest) { nearest = distance; nextId = n.id }
     }
     for (const n of engine.npcs) {
       seen.add(n.id)
       let rec = this.npcMeshes.get(n.id)
       if(m.settlement&&Math.hypot(n.x-engine.player.x,n.y-engine.player.y)>24){if(rec){rec.grp.visible=false;rec.bubble.visible=false}continue}
+      const distance=Math.hypot(n.x-engine.player.x,n.y-engine.player.y)
+      if(!visible(n.x,n.y,distance)){
+        if(rec){rec.grp.visible=false;rec.bubble.visible=false}
+        // Retain a small hysteresis band, but do not keep all off-screen streamed actors allocated.
+        if(rec&&distance>l1Reach+32){this.disposeNpc(rec);this.npcMeshes.delete(n.id)}
+        continue
+      }
       if (!rec) {
         if (n.id !== nextId) continue
         // 随机玩家形象（种子确定）+ 制服徽章（胸口小色块）
@@ -4403,3 +4685,17 @@ export function getRenderer(canvas: HTMLCanvasElement): Renderer3D {
 
 
 
+
+
+/** v66：L7 水下水体颜色随深度分段插值（下潜深度米）。 */
+const L7_UW_STOPS: [number, THREE.Color][] = [
+  [0, new THREE.Color('#15505e')], [24, new THREE.Color('#0c3446')], [90, new THREE.Color('#05182a')], [230, new THREE.Color('#010812')], [320, new THREE.Color('#000306')],
+]
+const l7UwTmp = new THREE.Color()
+function l7WaterColor(depth: number): THREE.Color {
+  for (let i = 1; i < L7_UW_STOPS.length; i++) {
+    const [d1, c1] = L7_UW_STOPS[i], [d0, c0] = L7_UW_STOPS[i - 1]
+    if (depth <= d1) return l7UwTmp.copy(c0).lerp(c1, (depth - d0) / (d1 - d0)).clone()
+  }
+  return L7_UW_STOPS[L7_UW_STOPS.length - 1][1].clone()
+}

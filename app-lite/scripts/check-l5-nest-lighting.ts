@@ -25,11 +25,16 @@ lighting.update(map,5,3.3,camera,animated);assert.equal(lighting.uniforms.l5Play
 
 function checkMaterial(material:THREE.Material){
   let originalCalls=0;const original=material.onBeforeCompile;material.onBeforeCompile=(shader)=>{originalCalls++;shader.uniforms.originalTest={value:7};shader.fragmentShader+='\noriginal-test-marker';original(shader,{ } as any)};material.customProgramCacheKey=()=> 'original-test-key'
-  const lighting2=new L5NestLighting();lighting2.patch(material);const patched=material.onBeforeCompile;assert.notEqual(patched,original);lighting2.patch(material);assert.equal(material.onBeforeCompile,patched);assert.equal(material.customProgramCacheKey(),'original-test-key|l5-nest-light-v3')
+  const lighting2=new L5NestLighting();lighting2.patch(material);const patched=material.onBeforeCompile;assert.notEqual(patched,original);lighting2.patch(material);assert.equal(material.onBeforeCompile,patched);assert.equal(material.customProgramCacheKey(),'original-test-key|l5-nest-light-v4')
   const vertex='void main(){gl_Position=vec4(0.0);}',shader:any={uniforms:{},vertexShader:vertex,fragmentShader:'#include <common>\n#include <lights_fragment_begin>\n#include <lights_fragment_end>\n#include <fog_fragment>'};patched(shader,{} as any)
   assert.equal(originalCalls,1);assert.equal(shader.uniforms.originalTest.value,7);assert(shader.fragmentShader.includes('original-test-marker'))
   assert.equal(shader.vertexShader,vertex);for(const u of ['l5NestCount','l5NestBounds','l5NestDoors','l5NestHeight','l5NestCameraWorld'])assert.equal(shader.uniforms[u],(lighting2.uniforms as any)[u])
   assert(shader.fragmentShader.includes('l5PortalLight')&&shader.fragmentShader.includes('l5NestAmbient')&&shader.fragmentShader.includes('pointLight')&&shader.fragmentShader.includes('spotLight'),'portal light shader markers missing')
+  assert(!shader.fragmentShader.includes('l5PointMask'),'legacy point mask must be absent')
+  assert(shader.fragmentShader.includes('i < NUM_POINT_LIGHT_SHADOWS'),'shadow-light loop must remain bounded by shadow lights')
+  assert(shader.fragmentShader.includes('for (int j = NUM_POINT_LIGHT_SHADOWS; j < l5LightLoopLimit; j++)'),'dynamic point-light loop missing')
+  assert(shader.fragmentShader.includes('if (j >= NUM_POINT_LIGHTS) break;'),'dynamic point-light loop bound missing')
+  assert(shader.fragmentShader.includes('RE_Direct(directLight, geometryPosition, geometryNormal, geometryViewDir, geometryClearcoatNormal, material, reflectedLight);'),'dynamic point-light BRDF call missing')
 }
 checkMaterial(new THREE.MeshLambertMaterial());checkMaterial(new THREE.MeshStandardMaterial())
 camera.position.set(3,2,-4);camera.rotation.set(.2,.4,-.1);lighting.update(map,5,3.3,camera,animated);assert(lighting.uniforms.l5NestCameraWorld.value.equals(camera.matrixWorld),'camera world uniform not current')

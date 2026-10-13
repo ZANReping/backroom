@@ -1,0 +1,81 @@
+{
+  "status": "passed",
+  "checks": [
+    "owned browser uses true headless mode and dedicated profile",
+    "empty-save-level0: actual scene is level 0",
+    "empty-save-level0: menu never precedes ready scene",
+    "latest-auto-level4: actual scene is level 4",
+    "latest-auto-level4: menu never precedes ready scene",
+    "title preview leaves snapshots and live player untouched",
+    "Continue summary and scene choose the same latest slot",
+    "Continue enters the saved level with its themed HUD",
+    "wheat HUD uses the loading title handwriting font",
+    "mobile HUD uses the same level theme",
+    "quit-saved-level10: actual scene is level 10",
+    "quit-saved-level10: menu never precedes ready scene",
+    "finite-tom-diner: actual scene is level 104",
+    "finite-tom-diner: menu never precedes ready scene",
+    "hotel-level5: actual scene is level 5",
+    "hotel-level5: menu never precedes ready scene",
+    "invalid-save-fallback: actual scene is level 0",
+    "invalid-save-fallback: menu never precedes ready scene",
+    "no uncaught runtime exceptions"
+  ],
+  "shots": [
+    "empty-save-level0",
+    "latest-auto-level4",
+    "game-level4-hud",
+    "game-level10-hud",
+    "game-level10-hud-mobile",
+    "quit-saved-level10",
+    "finite-tom-diner",
+    "hotel-level5",
+    "invalid-save-fallback"
+  ],
+  "errors": [],
+  "network": [],
+  "audit": [
+    {
+      "label": "empty-save-level0",
+      "premature": false,
+      "firstFrame": 28613,
+      "menu": 33866.400000002235,
+      "bootRemoved": 34058.10000000149
+    },
+    {
+      "label": "latest-auto-level4",
+      "premature": false,
+      "firstFrame": 2065.099999997765,
+      "menu": 9153,
+      "bootRemoved": 9357.800000000745
+    },
+    {
+      "label": "quit-saved-level10",
+      "premature": false,
+      "firstFrame": 2065.099999997765,
+      "menu": 9153,
+      "bootRemoved": 9357.800000000745
+    },
+    {
+      "label": "finite-tom-diner",
+      "premature": false,
+      "firstFrame": 2066.800000000745,
+      "menu": 4674.89999999851,
+      "bootRemoved": 4893.199999999255
+    },
+    {
+      "label": "hotel-level5",
+      "premature": false,
+      "firstFrame": 1667.699999999255,
+      "menu": 28516.300000000745,
+      "bootRemoved": 28709.300000000745
+    },
+    {
+      "label": "invalid-save-fallback",
+      "premature": false,
+      "firstFrame": 1768.6000000014901,
+      "menu": 6329.800000000745,
+      "bootRemoved": 6537.300000000745
+    }
+  ]
+}

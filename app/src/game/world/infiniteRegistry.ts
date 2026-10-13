@@ -1,10 +1,12 @@
 // 多无限层级注册表（独立无依赖模块，避免 infinite.ts ↔ infiniteL1.ts 循环初始化 TDZ）
 import type { LevelDef, Structure, GroundItem, LightSource, ExitInstance } from '../core/types'
 import type { NpcDef } from '../content/npcs' // 仅类型引用（编译期擦除，不产生运行时环）
+import type { L1ArchitectureData } from './l1BuildingTypes'
 
 // chunk 原始生成数据（世界坐标内容；纯函数：同种子同坐标必一致）
 export interface GenChunk {
   l0?: import('./l0Architecture').L0Layout
+  l1?: L1ArchitectureData
   variant: string // 变体 id（L0=maze/pillars/… L1=aisle/parking/…）
   tiles: Uint8Array
   wet: Uint8Array

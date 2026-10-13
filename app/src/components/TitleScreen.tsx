@@ -3,6 +3,7 @@
 // 点「继续游戏」进入槽位页（3 手动槽 + 只读自动槽，显示层级/磁带/时间，选择后读取）
 import { useEffect, useState } from 'react'
 import { audio } from '@/game/core/audio'
+import { latestSaveSlot } from '@/game/core/titleSave'
 import { levelLabel, levelDefOf, WIN_TAPES } from '@/game/levels'
 import { SAVE_SLOT_LABELS, type SaveSlotId, type SlotInfo } from '@/game/engine'
 import FullscreenButton from './FullscreenButton'
@@ -81,20 +82,31 @@ export default function TitleScreen({ slots, onNewGame, onContinueSlot, onDelete
     return () => { alive = false; clearTimeout(to) }
   }, [])
 
-  const btn = (label: string, fn: () => void, delay: number, key?: string) => (
-    <button
-      key={key ?? label}
-      className="menu-btn font-mono2 anim-slideUp"
-      style={
-        landscape
-          ? { animationDelay: `${delay}ms`, width: '100%', padding: '6px 12px', fontSize: 13 }
-          : { animationDelay: `${delay}ms`, width: 320, margin: '0 auto' }
-      }
-      onClick={() => { audio.resume(); audio.uiTick(); fn() }}
-    >
-      {label}
-    </button>
-  )
+  // 2026-10 UI：菜单项 = 序号 + 标题 + 情境副行（继续游戏显示最近存档摘要），主操作单独强调
+  let menuIndex = 0
+  const btn = (label: string, fn: () => void, delay: number, opts: { key?: string; hint?: string; primary?: boolean; index?: boolean } = {}) => {
+    const idx = opts.index === false ? null : String(++menuIndex).padStart(2, '0')
+    return (
+      <button
+        key={opts.key ?? label}
+        className={`menu-btn title-menu-btn font-mono2 anim-slideUp ${opts.primary ? 'menu-btn--primary' : ''}`}
+        style={
+          landscape
+            ? { animationDelay: `${delay}ms`, width: '100%', padding: '6px 12px 6px 40px', fontSize: 13 }
+            : { animationDelay: `${delay}ms` }
+        }
+        onClick={() => { audio.resume(); audio.uiTick(); fn() }}
+      >
+        {idx && <span className="menu-index" aria-hidden>{idx}</span>}
+        <span className="menu-label">{label}</span>
+        {opts.hint && <span className="menu-hint">{opts.hint}</span>}
+      </button>
+    )
+  }
+  const latest = latestSaveSlot(slots)
+  const continueHint = latest?.snap
+    ? `${latest.label} · ${levelLabel(latest.snap.level)}「${levelDefOf(latest.snap.level)?.name ?? ''}」· 磁带 ${latest.snap.player.tapes}/${WIN_TAPES}`
+    : '暂无存档'
 
   // v54：存档槽位页（「继续游戏」进入）——每槽显示层级/磁带进度/保存时间；空槽标注「空」；
   // 自动槽只读（仅继续，不可选为新游戏写入槽）。新开游戏走首屏「开始游戏」（绑定槽 1）。
@@ -152,18 +164,19 @@ export default function TitleScreen({ slots, onNewGame, onContinueSlot, onDelete
   const buttons = view === 'slots' ? (
     <>
       {slotPanel}
-      {btn('返回', () => setView('main'), 100)}
+      {btn('返回', () => setView('main'), 100, { index: false })}
     </>
   ) : (
     <>
-      {btn('开始游戏', () => onNewGame('slot1'), 100)}
-      {btn('继续游戏', () => setView('slots'), 180)}
-      {btn('图鉴档案', onCodex, 260)}
-      {btn('形象编辑', onAvatar, 300)}
-      {btn('设置', onSettings, 340)}
-      {onMultiplayer && btn('联机模式', onMultiplayer, 380)}
-      {btn('操作说明', onHowTo, 420)}
-      {devMode && onDesign && btn('设计模式', onDesign, 500)}
+      {btn('开始游戏', () => onNewGame('slot1'), 100, { primary: true, hint: '新的下坠 · 写入槽位 1' })}
+      {btn('继续游戏', () => setView('slots'), 160, { hint: continueHint })}
+      <div className="title-menu-sep anim-slideUp" style={{ animationDelay: '220ms' }} aria-hidden />
+      {btn('图鉴档案', onCodex, 240, { hint: '层级 · 实体 · 物品 · 团体' })}
+      {btn('形象编辑', onAvatar, 280)}
+      {btn('设置', onSettings, 320)}
+      {onMultiplayer && btn('联机模式', onMultiplayer, 360)}
+      {btn('操作说明', onHowTo, 400)}
+      {devMode && onDesign && btn('设计模式', onDesign, 460)}
     </>
   )
 
@@ -201,24 +214,22 @@ export default function TitleScreen({ slots, onNewGame, onContinueSlot, onDelete
           </div>
         </div>
       ) : (
-        /* 竖屏 / 桌面：居中纵向布局 */
-        <div className="flex h-full w-full flex-col items-center justify-center">
-          <div className="flex w-full max-w-[560px] flex-col items-center gap-6 px-6">
-            <div className="text-center">
-              <h1
-                className="title-hero font-title anim-flickerIn"
-                style={{ fontSize: 'clamp(44px, 10vw, 72px)', color: 'var(--text)', textShadow: '2px 0 rgba(179,53,43,0.4), -2px 0 rgba(122,111,208,0.4)' }}
-              >
-                {title}
-              </h1>
-              <div className="title-hero font-mono2 mt-2 text-[13px]" style={{ color: 'var(--text-dim)', letterSpacing: '0.4em' }}>
-                BACKROOMS : DESCENT
-              </div>
-            </div>
-            <div className={`flex w-full flex-col items-stretch gap-3 ${view === 'slots' ? 'max-w-[560px]' : 'max-w-[340px]'}`} style={{ opacity: entered ? 1 : 0, transition: 'opacity 0.5s' }}>
+        /* 竖屏 / 桌面：左侧档案目录式布局；渐变底保证在明亮的 3D 场景上可读 */
+        <div className="title-shell">
+          <div className="title-scrim" aria-hidden />
+          <div className="title-col">
+            <div className="title-kicker font-mono2 anim-slideUp">● REC · SIGNAL RECOVERED · CAM_04</div>
+            <h1
+              className="title-hero font-title anim-flickerIn"
+              style={{ fontSize: 'clamp(48px, 9vw, 88px)', lineHeight: 1.05, color: 'var(--text)', textShadow: '2px 0 rgba(179,53,43,0.4), -2px 0 rgba(122,111,208,0.4)' }}
+            >
+              {title}
+            </h1>
+            <div className="title-hero title-sub font-mono2">BACKROOMS : DESCENT</div>
+            <nav className={`title-menu ${view === 'slots' ? 'is-slots' : ''}`} style={{ opacity: entered ? 1 : 0, transition: 'opacity 0.5s' }}>
               {buttons}
-            </div>
-            <div className="title-hero font-mono2 text-[11px]" style={{ color: 'var(--text-dim)' }}>
+            </nav>
+            <div className="title-hero title-foot font-mono2">
               v1.0 · 所有层级均为程序生成 · 戴上耳机体验更佳
             </div>
           </div>

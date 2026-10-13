@@ -28,3 +28,14 @@ downloads and do not inherit the ambientCG CC0 attribution above.
 
 Every family owns independent albedo, tangent-space normal and roughness maps,
 so wet soil, crops, wood and metal do not share reflection parameters.
+
+## v64 additions (2026-10-09)
+
+| Local file | Source | License |
+| --- | --- | --- |
+| `l10_leafcard.png` | Drawn procedurally by `scripts/gen-l10-v64-textures.py` (seeded, reproducible) | Project-original, CC0-1.0 |
+| `l10_canola_clump.png` | Same generator | Project-original, CC0-1.0 |
+| `l10_corrugated_normal.png` | Same generator (analytic sine profile, OpenGL normal orientation) | Project-original, CC0-1.0 |
+| `l10_siding_diff.jpg` | Same generator (board-and-batten planks with weathered red paint) | Project-original, CC0-1.0 |
+
+No third-party images were used. Run `python3 scripts/gen-l10-v64-textures.py` to regenerate.

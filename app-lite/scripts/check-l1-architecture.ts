@@ -4,7 +4,8 @@ import { L1 } from '../src/game/levels/l1'
 import { L1_PROFILES, l1VaultHeight } from '../src/game/world/l1Architecture'
 import { l1District, l1LayoutVariant, l1Outpost, l1Transition, l1DistanceScale } from '../src/game/world/l1Layout'
 import { l1CrateHidden, newL1Dynamics, rememberL1Container, restoreL1Container } from '../src/game/world/l1Dynamics'
-import { l1Puddles } from '../src/game/world/l1Puddles'
+import { l1Puddles, l1PuddleContains } from '../src/game/world/l1Puddles'
+import { L1_PHOTO_ANCHORS, L1_SHOWCASE_SEED, l1ReferenceAt, l1SkylightAt } from '../src/game/world/l1Spatial'
 import * as THREE from 'three'
 import { buildL1RoofClosure } from '../src/game/renderer/l1RoofGeometry'
 import type { GameMap } from '../src/game/world/mapgen'
@@ -18,17 +19,21 @@ for (const seed of seeds) for (const variant of variants) for (const [cx, cy] of
   assert.deepEqual(a, b, `determinism ${seed}:${variant}:${cx},${cy}`)
   const profile = L1_PROFILES[variant]
   assert.equal(profile.height, ({ parking: 3.6, storage: 6.4, gothic: 3.8, ouroboros: 4.8, garden: 6.4, maintenance: 3.6 } as const)[variant])
+  assert.equal(a.l1?.version, 4, `L1 architecture version ${seed}:${variant}:${cx},${cy}`)
+  for (const b of a.l1?.boxes ?? []) for (const v of [...b.min, ...b.max]) assert(Number.isFinite(v), 'non-finite L1 box geometry')
+  for (const e of a.l1?.emitters ?? []) for (const v of [...e.position, ...e.normal, ...e.tangent, e.width, e.height, e.power, e.range]) assert(Number.isFinite(v), 'non-finite L1 light geometry')
 
   for (const s of a.structures.filter(s => s.data?.l1Column !== undefined)) {
-    const tx = Math.floor(s.x - cx * 32), ty = Math.floor(s.y - cy * 32)
+    const tx = Math.floor(s.x + s.w / 2 - cx * 32), ty = Math.floor(s.y + s.h / 2 - cy * 32)
     assert.equal(a.tiles[ty * 32 + tx], 1, `column on floor ${seed}:${variant}:${cx},${cy}`)
     const overlaps = (x: number, y: number, w = 0, h = 0) => s.x < x + w && s.x + s.w > x && s.y < y + h && s.y + s.h > y
     assert(!a.structures.some(t => t !== s && t.data?.sid !== undefined && overlaps(t.x, t.y, t.w, t.h)), 'column overlaps sid structure')
-    for (const q of [...a.exits, ...a.items, ...a.entities, ...(a.npcs ?? [])]) assert(!overlaps(q.x, q.y, 1, 1), 'column overlaps gameplay object')
+    for (const q of [...a.exits, ...a.items, ...a.entities, ...(a.npcs ?? [])]) assert(!overlaps(q.x - .17, q.y - .17, .34, .34), 'column overlaps gameplay object')
   }
-  for (const light of a.lights) {
-    if (light.fixZ !== undefined) assert(light.fixZ <= profile.height, `light above roof ${seed}:${variant}:${cx},${cy}`)
-    if (variant === 'garden' || variant === 'ouroboros') assert.equal(light.keep, 1, `persistent light ${seed}:${variant}:${cx},${cy}`)
+  for (const [i, light] of a.lights.entries()) {
+    const emitter=a.l1?.emitters[i]
+    if (emitter) { assert.equal(light.fixZ, emitter.position[1] + .2); assert.equal(light.r, emitter.range / 2.6) }
+    if (emitter?.kind === 'emergency') { assert.equal(light.keep, 1); assert(emitter.color[1] > emitter.color[0]) }
   }
 }
 
@@ -39,7 +44,7 @@ for (const [x, z] of [[-12.5, -7.5], [-2.5, 2.5], [2.5, -2.5], [7.5, 12.5]]) ass
 assert(Math.abs(l1VaultHeight(4.5 - 1e-6, 4.5) - l1VaultHeight(4.5 + 1e-6, 4.5)) < 1e-3, 'gothic vault continuity')
 
 for (const seed of seeds) for (let cy=-5;cy<=5;cy++) for (let cx=-5;cx<=5;cx++) {
-  const ps=l1Puddles(seed,cx,cy); assert(ps.length<=4); assert.deepEqual(ps,l1Puddles(seed,cx,cy))
+  const ps=l1Puddles(seed,cx,cy); assert(ps.length<=40); assert.deepEqual(ps,l1Puddles(seed,cx,cy)); for(const p of ps){assert(Number.isFinite(p.x)&&Number.isFinite(p.y)&&Number.isFinite(p.rx)&&Number.isFinite(p.ry));assert(p.rx>0&&p.ry>0)}
   const v=l1LayoutVariant(seed,cx,cy), t=l1Transition(seed,cx,cy)
   if(v==='aisle') assert(t&&t.a!==t.b, 'aisle transition')
   const d=l1District(seed,cx,cy), out=l1Outpost(seed,cx,cy)
@@ -52,7 +57,7 @@ for(const seed of seeds) for(let gy=-2;gy<=2;gy++) for(let gx=-2;gx<=2;gx++) {
   if(compact){
     const cells=new Set<string>()
     for(let y=-16;y<=16;y++)for(let x=-16;x<=16;x++)if(l1District(seed,gx*16+x,gy*16+y).key===`${gx},${gy}`)cells.add(`${x},${y}`)
-    assert(cells.size>=48&&cells.size<166,`compact district remains large but below 65% of old area: ${cells.size}`)
+    assert(cells.size>=20&&cells.size<100,`compact district remains bounded: ${cells.size}`)
     const reached=new Set(['0,0']),queue=[[0,0]]
     for(const [x,y] of queue)for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){
       const k=`${x+dx},${y+dy}`
@@ -62,7 +67,8 @@ for(const seed of seeds) for(let gy=-2;gy<=2;gy++) for(let gx=-2;gx<=2;gx++) {
   }
 }
 for(const seed of seeds){
-  for(let y=-5;y<=5;y++)for(let x=-5;x<=5;x++)assert.equal(l1LayoutVariant(seed,x,y),'parking','starting 11x11 parking cluster retained')
+  for(let y=-5;y<=5;y++)for(let x=-5;x<=5;x++)assert(['parking','maintenance'].includes(l1LayoutVariant(seed,x,y)),'starting 11x11 parking/maintenance cluster retained')
+  for(let y=-1;y<=1;y++)for(let x=-1;x<=1;x++)assert.equal(l1LayoutVariant(seed,x,y),'parking','starting 3x3 parking cluster retained')
   let nearest=Infinity
   for(let y=-6;y<=6;y++)for(let x=-6;x<=6;x++)if(l1Outpost(seed,x,y)){
     nearest=Math.min(nearest,Math.hypot(x*32+20.5-15.5,y*32+20.5-15.5))
@@ -112,5 +118,16 @@ restoreL1Container(dyn,1,0,0,fresh,0,0)
 assert.deepEqual(fresh.data?.lootItems,[]);assert.equal(fresh.looted,true)
 const scales:number[]=[]
 for(const seed of seeds)for(let cx=-40;cx<=40;cx++)for(let cy=-40;cy<=40;cy++)scales.push(l1DistanceScale(seed,cx*32+16,cy*32+16))
-assert(scales.every(v=>v>=.28-1e-9&&v<=2.4+1e-9));assert(scales.some(v=>v<.6)&&scales.some(v=>v>1.8));assert.equal(l1DistanceScale(1,0,0),1)
+assert(scales.every(v=>v>=.72-1e-9&&v<=1.35+1e-9));assert(scales.some(v=>v<.95)&&scales.some(v=>v>1.1));assert.equal(l1DistanceScale(1,0,0),1)
+assert(scales.some(v=>v>=.72&&v<.95)&&scales.some(v=>v>1.1&&v<=1.35),'anomaly distance range sampled')
+for(const a of L1_PHOTO_ANCHORS)assert.equal(l1ReferenceAt(L1_SHOWCASE_SEED,a.centerX,a.centerY)?.variant,a.variant,'photo anchor variant')
+const puddleHitFrom=(seed:number,cx:number,cy:number,x:number,y:number)=>l1Puddles(seed,cx,cy).some(p=>l1PuddleContains(p,x,y))
+let puddleTrue=0,puddleFalse=0
+for(const seed of [1,42,L1_SHOWCASE_SEED])for(const [x,y] of [[31.99,12.5],[32.01,12.5],[-32.01,-12.5],[-31.99,-12.5],[63.99,-24.01],[-64.01,24.01]] as const){
+  const cx=Math.floor(x/32),cy=Math.floor(y/32),a=puddleHitFrom(seed,cx,cy,x,y),b=puddleHitFrom(seed,cx+(x>=0?1:-1),cy,x,y)
+  assert.equal(a,b,`puddle shared query at ${seed}:${x},${y}`); if(a)puddleTrue++;else puddleFalse++
+}
+assert(puddleTrue>0&&puddleFalse>0,'puddle shared query samples true and false')
+for(const [x,y] of [[3,3],[11,3],[-5,-5],[-13,-5]] as const){ assert.equal(l1SkylightAt(x,y),l1SkylightAt(x+8,y),`skylight x period ${x},${y}`); assert.equal(l1SkylightAt(x,y),l1SkylightAt(x,y+8),`skylight y period ${x},${y}`) }
+assert.equal(l1SkylightAt(3,3),l1SkylightAt(-5,-5),'skylight signed period')
 console.log('L1 architecture / districts / anomaly / crate persistence / puddle checks passed')

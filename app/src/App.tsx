@@ -6,6 +6,8 @@ import { engine } from '@/game/engine'
 import type { SaveSlotId, SlotInfo } from '@/game/engine'
 import { listSaveSlots, readSaveSlot, clearSaveSnapshot } from '@/game/engine/save'
 import { storage } from '@/game/core/storage'
+import { titleBackgroundSource } from '@/game/core/titleSave'
+import { failBoot, finishBoot } from './boot'
 import { isPortraitOrientation } from '@/game/core/orientation'
 import { getRenderer, look, type Renderer3D } from '@/game/core/renderer3d'
 import { MouseLookInput, requestMouseCapture } from '@/game/core/mouseLook'
@@ -14,8 +16,8 @@ import { audio } from '@/game/core/audio'
 import { randomSeed, parseSeedInput } from '@/game/core/rng'
 import { preloadGameResources } from '@/game/core/preload'
 import { getKeybinds, type KeyBindMap } from '@/game/core/keybinds'
-import { LEVELS, levelLabel, levelNo, levelDefOf } from '@/game/levels'
-import { generateLevel } from '@/game/world/mapgen'
+import { levelLabel, levelNo, levelDefOf } from '@/game/levels'
+import { generateLevel, floorHeight } from '@/game/world/mapgen'
 import { prepareChunkWindow } from '@/game/world/chunkCache'
 import { CS } from '@/game/world/infinite'
 import type { HudEvent } from '@/game/engine'
@@ -140,6 +142,11 @@ function Game() {
   const [invTab, setInvTab] = useState<'背包' | '图鉴' | '状态' | '地图' | '日志' | '任务'>('背包')
   // v54：存档槽位列表（标题屏展示；回标题时刷新）
   const [slots, setSlots] = useState<SlotInfo[]>(() => listSaveSlots())
+  const titleSource = titleBackgroundSource(slots)
+  const titleSourceRef = useRef(titleSource)
+  titleSourceRef.current = titleSource
+  const [titleReadyKey, setTitleReadyKey] = useState('')
+  const [titleError, setTitleError] = useState(false)
   const refreshSlots = useCallback(() => setSlots(listSaveSlots()), [])
   // v57：开始游戏加载界面状态（进度 + 当前资源 + 已完成内容）
   const [loadState, setLoadState] = useState({ progress: 0, label: '初始化加载器', detail: '准备预载资源', history: [] as string[] })
@@ -824,10 +831,41 @@ function Game() {
     resize()
     window.addEventListener('resize', resize)
 
-    // 标题吸引模式地图
-    let attractMap: ReturnType<typeof generateLevel> | null = null
-    let attractPreparing = false
+    // Read-only preview facade: do not load/advance a run or temporarily overwrite its player/map.
+    const attractEngine: typeof engine = Object.assign(Object.create(Object.getPrototypeOf(engine)), engine, {
+      player: structuredClone(engine.player), input: { ...engine.input }, npcs: [],
+      map: null, paused: true, over: true, handsHidden: true,
+    })
+    let attractKey = '', attractEpoch = 0, attractReadyFrames = 0, attractPublished = ''
+    let attractYaw = 0, attractTime = 0
+    let attractFailed = false
     let alive = true
+    const failAttract = (error: unknown) => {
+      if (!alive || attractFailed) return
+      attractFailed = true; setTitleError(true); failBoot(error)
+    }
+    const prepareAttract = () => {
+      const source = titleSourceRef.current
+      if (attractKey === source.key) return
+      attractKey = source.key
+      const epoch = ++attractEpoch
+      attractEngine.map = null; attractReadyFrames = 0; attractYaw = 0; attractTime = 0; attractPublished = ''
+      setTitleReadyKey('')
+      attractFailed = false; setTitleError(false)
+      const def = levelDefOf(source.level)!
+      canvas.dataset.titleReady = 'false'
+      canvas.dataset.titleLevel = String(source.level)
+      canvas.dataset.titleSeed = String(source.seed)
+      void prepareChunkWindow(def, source.seed).then(() => {
+        if (!alive || epoch !== attractEpoch) return
+        const map = generateLevel(def, source.seed, false)
+        attractEngine.map = map; attractEngine.seed = source.seed; attractEngine.mapSeed = source.seed
+        Object.assign(attractEngine.player, { level: source.level, x: map.spawn.x + .5, y: map.spawn.y + .5,
+          z: floorHeight(map, map.spawn.x + .5, map.spawn.y + .5, 0), floor: 0, flashlight: true })
+      }).catch(error => { if (alive && epoch === attractEpoch) failAttract(error) })
+    }
+    // Begins under the HTML “正在寻找入口” screen, before the first menu render.
+    prepareAttract()
 
     const loop = (now: number) => {
       raf = requestAnimationFrame(loop)
@@ -870,32 +908,23 @@ function Game() {
       if (presenting) return
 
       if (screenRef.current === 'title' || screenRef.current === 'design') {
-        // 吸引模式：L0 出生点缓慢环视（v54：设计模式全屏覆盖，背景同走吸引模式，引擎保持暂停）
-        if (!attractMap && !attractPreparing) {
-          attractPreparing = true
-          void prepareChunkWindow(LEVELS[0], 1337).then(() => {
-            if (alive && (screenRef.current === 'title' || screenRef.current === 'design')) {
-              attractMap = generateLevel(LEVELS[0], 1337)
-            }
-          }).finally(() => { attractPreparing = false })
-        }
-        if (!attractMap) return
-        look.yaw += dt * 0.18
-        look.pitch = Math.sin(now / 4000) * 0.08
-        const savedMap = engine.map
-        const savedLevel = engine.player.level
-        const px = engine.player.x, py = engine.player.y
-        const fl = engine.player.flashlight
-        engine.map = attractMap
-        engine.player.level = 0
-        engine.player.x = attractMap.spawn.x + 0.5
-        engine.player.y = attractMap.spawn.y + 0.5
-        engine.player.flashlight = true
-        renderer.render(canvas, engine, { grain: settings.grain, flicker: 0, shake: false }, dt)
-        engine.player.x = px; engine.player.y = py
-        engine.player.flashlight = fl
-        engine.map = savedMap
-        engine.player.level = savedLevel
+        prepareAttract()
+        if (!attractEngine.map || attractFailed) return
+        const savedLook = { ...look }
+        try {
+          // Freeze the initial framing while loading, then slowly look around.
+          if (attractPublished === attractKey) { attractTime += Math.min(dt,.1); attractYaw += Math.min(dt,.1)*.18 }
+          look.yaw = attractYaw; look.pitch = Math.sin(attractTime/4)*.08; look.roll = 0
+          renderer.render(canvas, attractEngine, { grain: settings.grain, flicker: 0, shake: false }, dt)
+          attractReadyFrames = renderer.isTitleWorldReady(attractEngine) ? attractReadyFrames + 1 : 0
+          if (attractReadyFrames >= 3 && attractPublished !== attractKey) {
+            attractPublished = attractKey
+            canvas.dataset.titleReady = 'true'
+            setTitleReadyKey(attractKey)
+            finishBoot()
+          }
+        } catch (error) { failAttract(error); return }
+        finally { Object.assign(look, savedLook) }
       } else {
         renderer.applyView(engine)
         engine.update(dt)
@@ -920,6 +949,7 @@ function Game() {
     raf = requestAnimationFrame(loop)
     return () => {
       alive = false
+      attractEpoch++
       cancelAnimationFrame(raf)
       window.removeEventListener('resize', resize)
     }
@@ -1188,7 +1218,14 @@ function Game() {
       )}
 
       {/* 标题 */}
-      {screen === 'title' && overlay === 'none' && (
+      {screen === 'title' && titleReadyKey !== titleSource.key && (
+        <LoadingScreen progress={0} label="正在寻找入口" detail={`正在准备 ${levelLabel(titleSource.level)} 的主界面背景……`} history={[]} />
+      )}
+      {screen === 'title' && titleError && <div className="fixed inset-0 z-[80] flex flex-col items-center justify-center gap-4" style={{ background: 'var(--ink)', color: 'var(--text)' }} role="alert">
+        <p>主界面背景加载失败，请重新连接。</p>
+        <button className="menu-btn" onClick={() => window.location.reload()}>重新连接</button>
+      </div>}
+      {screen === 'title' && titleReadyKey === titleSource.key && overlay === 'none' && (
         <TitleScreen
           slots={slots}
           onNewGame={(slot) => requestStart(undefined, slot, 0)}

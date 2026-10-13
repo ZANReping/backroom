@@ -1,0 +1,265 @@
+{
+  "error": "Error: Runtime.evaluate timed out",
+  "pending": {
+    "missing": 13,
+    "chunk": true,
+    "finite": false,
+    "flash": false,
+    "moth": false,
+    "items": 0,
+    "compile": false,
+    "retired": 0,
+    "textures": 0
+  },
+  "stats": {
+    "label": "1:open",
+    "median": 9.60000000000582,
+    "p95": 27.39999999999418,
+    "max": 57.30000000001746,
+    "cpuMedian": null,
+    "cpuP95": null,
+    "gpuMedian": null,
+    "gpuP95": null,
+    "gpuSamples": 0,
+    "draws": 152,
+    "triangles": 45745,
+    "memory": {
+      "geometries": 716,
+      "textures": 93
+    },
+    "programs": 77,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "bake": {
+    "entries": 21,
+    "bytes": 95452544,
+    "hits": 5715,
+    "diskHits": 0,
+    "offlineLoads": 6,
+    "computations": 53,
+    "completed": 59,
+    "stale": 6,
+    "active": 2,
+    "queued": 4,
+    "stages": [
+      {
+        "key": "4:7:7391:2,-1:c39fa865:high",
+        "generationMs": 58.399999998509884,
+        "geometryMs": 17.899999998509884,
+        "bakeMs": 3928.3000000044703,
+        "samples": 32341,
+        "rays": 824904,
+        "bytes": 3955696
+      },
+      {
+        "key": "4:7:7391:-1,2:93510758:high",
+        "generationMs": 50.399999998509884,
+        "geometryMs": 11.299999997019768,
+        "bakeMs": 3480.10000000149,
+        "samples": 33804,
+        "rays": 679478,
+        "bytes": 6100872
+      },
+      {
+        "key": "4:7:7391:2,1:6a4c3c7c:high",
+        "generationMs": 54.70000000298023,
+        "geometryMs": 2.2999999970197678,
+        "bakeMs": 2644.10000000149,
+        "samples": 37440,
+        "rays": 668804,
+        "bytes": 5361008
+      },
+      {
+        "key": "4:7:7391:1,2:a3e74feb:high",
+        "generationMs": 22.30000000447035,
+        "geometryMs": 9,
+        "bakeMs": 2969.60000000149,
+        "samples": 33091,
+        "rays": 771072,
+        "bytes": 6123872
+      },
+      {
+        "key": "4:7:7391:-2,-2:77ef3774:high",
+        "generationMs": 67.60000000149012,
+        "geometryMs": 1.5,
+        "bakeMs": 3193,
+        "samples": 37830,
+        "rays": 523118,
+        "bytes": 5360088
+      },
+      {
+        "key": "4:7:7391:2,-2:dd780cf0:high",
+        "generationMs": 40.20000000298023,
+        "geometryMs": 17.799999997019768,
+        "bakeMs": 5900.60000000149,
+        "samples": 31888,
+        "rays": 725134,
+        "bytes": 6155520
+      },
+      {
+        "key": "4:7:7391:-2,2:2d839c08:high",
+        "generationMs": 89.20000000298023,
+        "geometryMs": 4.699999995529652,
+        "bakeMs": 4266.5,
+        "samples": 36978,
+        "rays": 354232,
+        "bytes": 5358248
+      },
+      {
+        "key": "4:7:7391:2,2:5d5754f5:high",
+        "generationMs": 134,
+        "geometryMs": 21,
+        "bakeMs": 8133.70000000298,
+        "samples": 32449,
+        "rays": 785762,
+        "bytes": 6137488
+      },
+      {
+        "key": "4:7:7391:3,0:459a55ff:high",
+        "generationMs": 137.69999999552965,
+        "geometryMs": 35.5,
+        "bakeMs": 9497.80000000447,
+        "samples": 31872,
+        "rays": 855210,
+        "bytes": 6106392
+      },
+      {
+        "key": "4:7:7391:3,-1:8ee39d14:high",
+        "generationMs": 183.70000000298023,
+        "geometryMs": 69.29999999701977,
+        "bakeMs": 10978.20000000298,
+        "samples": 34552,
+        "rays": 950032,
+        "bytes": 4087808
+      },
+      {
+        "key": "4:7:7391:3,1:414a8071:high",
+        "generationMs": 87.5,
+        "geometryMs": 42.80000000447035,
+        "bakeMs": 10603.10000000149,
+        "samples": 34310,
+        "rays": 831306,
+        "bytes": 6046960
+      },
+      {
+        "key": "4:7:7391:3,-2:227ab281:high",
+        "generationMs": 134.80000000447035,
+        "geometryMs": 49.899999998509884,
+        "bakeMs": 20596.5,
+        "samples": 33524,
+        "rays": 905518,
+        "bytes": 6002064
+      },
+      {
+        "key": "4:7:7391:3,2:6829173:high",
+        "generationMs": 105.10000000149012,
+        "geometryMs": 58.099999994039536,
+        "bakeMs": 14366.40000000596,
+        "samples": 32839,
+        "rays": 843720,
+        "bytes": 6077504
+      },
+      {
+        "key": "4:7:7391:4,0:69261626:high",
+        "generationMs": 349,
+        "geometryMs": 180.5,
+        "bakeMs": 23732.5,
+        "samples": 33231,
+        "rays": 1029412,
+        "bytes": 6139328
+      },
+      {
+        "key": "4:7:7391:4,-1:36673521:high",
+        "generationMs": 247.5,
+        "geometryMs": 62.80000000447035,
+        "bakeMs": 18241.89999999851,
+        "samples": 34048,
+        "rays": 1022704,
+        "bytes": 4132888
+      },
+      {
+        "key": "4:7:7391:4,1:2ef420bb:high",
+        "generationMs": 73.89999999850988,
+        "geometryMs": 54.30000000447035,
+        "bakeMs": 16457.59999999404,
+        "samples": 35387,
+        "rays": 961448,
+        "bytes": 6185880
+      },
+      {
+        "key": "4:7:7391:4,2:56e2cd36:high",
+        "generationMs": 283.5,
+        "geometryMs": 48.79999999701977,
+        "bakeMs": 18080.70000000298,
+        "samples": 32731,
+        "rays": 989330,
+        "bytes": 6120928
+      }
+    ]
+  },
+  "mainStages": {
+    "meshAndMaterialCpu": {
+      "count": 419,
+      "total": 108.60000002384186,
+      "max": 11.399999998509884,
+      "last": 0.10000000149011612,
+      "mean": 0.25918854420964643
+    },
+    "texturePrepareCpu": {
+      "count": 1079,
+      "total": 395.7999999523163,
+      "max": 51.100000001490116,
+      "last": 0,
+      "mean": 0.3668211306323599
+    },
+    "texturePrepareElapsed": {
+      "count": 56,
+      "total": 1160.099999986589,
+      "max": 400.20000000298023,
+      "last": 18.099999994039536,
+      "mean": 20.716071428331947
+    },
+    "compileCpu": {
+      "count": 16661,
+      "total": 281.69999998807907,
+      "max": 17.100000001490116,
+      "last": 0,
+      "mean": 0.016907748633820243
+    },
+    "compileElapsed": {
+      "count": 56,
+      "total": 4394.80000000447,
+      "max": 723.2999999970198,
+      "last": 38.70000000298023,
+      "mean": 78.47857142865125
+    },
+    "uploadCpu": {
+      "count": 114,
+      "total": 338.99999994784594,
+      "max": 76.5,
+      "last": 0.5999999940395355,
+      "mean": 2.973684210068824
+    },
+    "uploadElapsed": {
+      "count": 56,
+      "total": 596.5999999642372,
+      "max": 111.79999999701977,
+      "last": 16.19999999552965,
+      "mean": 10.653571427932807
+    },
+    "installCpu": {
+      "count": 56,
+      "total": 0.6999999955296516,
+      "max": 0.10000000149011612,
+      "last": 0,
+      "mean": 0.012499999920172351
+    },
+    "reflectionReuseCpu": {
+      "count": 18,
+      "total": 47.599999986588955,
+      "max": 6.700000002980232,
+      "last": 1,
+      "mean": 2.6444444436993866
+    }
+  }
+}

@@ -1,0 +1,1304 @@
+{
+  "method": "Manual source points (~1% annotation uncertainty), unregistered geometric projection; visibility correspondence still requires image review.",
+  "scope": [
+    "parking-common",
+    "parking-round",
+    "parking-room",
+    "parking-water",
+    "parking-bright",
+    "parking-clean",
+    "parking-dry",
+    "parking-dim",
+    "parking-dark",
+    "parking-props",
+    "storage",
+    "gothic",
+    "ouroboros",
+    "garden",
+    "path-corridor",
+    "path-room",
+    "crate",
+    "power-out"
+  ],
+  "missing": [],
+  "cases": {
+    "parking-common": {
+      "status": "measured",
+      "points": 3,
+      "within3": 3,
+      "allWithin3": true
+    },
+    "parking-round": {
+      "status": "measured",
+      "points": 4,
+      "within3": 4,
+      "allWithin3": true
+    },
+    "parking-room": {
+      "status": "measured",
+      "points": 3,
+      "within3": 3,
+      "allWithin3": true
+    },
+    "parking-water": {
+      "status": "measured",
+      "points": 2,
+      "within3": 2,
+      "allWithin3": true
+    },
+    "parking-bright": {
+      "status": "measured",
+      "points": 2,
+      "within3": 2,
+      "allWithin3": true
+    },
+    "parking-clean": {
+      "status": "measured",
+      "points": 2,
+      "within3": 2,
+      "allWithin3": true
+    },
+    "parking-dry": {
+      "status": "measured",
+      "points": 2,
+      "within3": 2,
+      "allWithin3": true
+    },
+    "parking-dim": {
+      "status": "measured",
+      "points": 3,
+      "within3": 3,
+      "allWithin3": true
+    },
+    "parking-dark": {
+      "status": "measured",
+      "points": 2,
+      "within3": 2,
+      "allWithin3": true
+    },
+    "parking-props": {
+      "status": "measured",
+      "points": 4,
+      "within3": 4,
+      "allWithin3": true
+    },
+    "storage": {
+      "status": "measured",
+      "points": 3,
+      "within3": 3,
+      "allWithin3": true
+    },
+    "gothic": {
+      "status": "measured",
+      "points": 5,
+      "within3": 5,
+      "allWithin3": true
+    },
+    "ouroboros": {
+      "status": "measured",
+      "points": 2,
+      "within3": 2,
+      "allWithin3": true
+    },
+    "garden": {
+      "status": "measured",
+      "points": 2,
+      "within3": 2,
+      "allWithin3": true
+    },
+    "path-corridor": {
+      "status": "measured",
+      "points": 2,
+      "within3": 2,
+      "allWithin3": true
+    },
+    "path-room": {
+      "status": "measured",
+      "points": 3,
+      "within3": 3,
+      "allWithin3": true
+    },
+    "crate": {
+      "status": "measured",
+      "points": 4,
+      "within3": 4,
+      "allWithin3": true
+    },
+    "power-out": {
+      "status": "measured",
+      "points": 2,
+      "within3": 2,
+      "allWithin3": true
+    }
+  },
+  "landmarks": [
+    {
+      "id": "parking-common",
+      "landmark": "near-column-foot",
+      "kind": "column",
+      "world": [
+        -5.2,
+        0,
+        1.6
+      ],
+      "sourceUV": [
+        0.305,
+        0.745
+      ],
+      "projectedUV": [
+        0.30272178877725636,
+        0.7450442059505096
+      ],
+      "inFrame": true,
+      "dxPercent": -0.22782112227436313,
+      "dyPercent": 0.004420595050957932,
+      "maxPercent": 0.22782112227436313,
+      "within3": true
+    },
+    {
+      "id": "parking-common",
+      "landmark": "near-column-beam-joint",
+      "kind": "beam",
+      "world": [
+        -5.2,
+        2.55,
+        1.6
+      ],
+      "sourceUV": [
+        0.305,
+        0.486
+      ],
+      "projectedUV": [
+        0.3072906892006656,
+        0.4859900851921857
+      ],
+      "inFrame": true,
+      "dxPercent": 0.22906892006656077,
+      "dyPercent": -0.0009914807814315196,
+      "maxPercent": 0.22906892006656077,
+      "within3": true
+    },
+    {
+      "id": "parking-common",
+      "landmark": "next-column-foot",
+      "kind": "column",
+      "world": [
+        -5.2,
+        0,
+        -4.8
+      ],
+      "sourceUV": [
+        0.502,
+        0.681
+      ],
+      "projectedUV": [
+        0.5019619473285871,
+        0.680822595268887
+      ],
+      "inFrame": true,
+      "dxPercent": -0.003805267141288038,
+      "dyPercent": -0.01774047311130511,
+      "maxPercent": 0.01774047311130511,
+      "within3": true
+    },
+    {
+      "id": "parking-round",
+      "landmark": "left-round-foot",
+      "kind": "column",
+      "world": [
+        -2.5,
+        0,
+        -1.2
+      ],
+      "sourceUV": [
+        0.303,
+        0.478
+      ],
+      "projectedUV": [
+        0.3060405146178202,
+        0.4792575733082775
+      ],
+      "inFrame": true,
+      "dxPercent": 0.30405146178202336,
+      "dyPercent": 0.12575733082775264,
+      "maxPercent": 0.30405146178202336,
+      "within3": true
+    },
+    {
+      "id": "parking-round",
+      "landmark": "left-round-head",
+      "kind": "beam",
+      "world": [
+        -2.5,
+        3.23,
+        -1.2
+      ],
+      "sourceUV": [
+        0.28023952095808385,
+        0.12479740680713128
+      ],
+      "projectedUV": [
+        0.27538243590537437,
+        0.12448619904502695
+      ],
+      "inFrame": true,
+      "dxPercent": -0.48570850527094867,
+      "dyPercent": -0.031120776210433188,
+      "maxPercent": 0.48570850527094867,
+      "within3": true
+    },
+    {
+      "id": "parking-round",
+      "landmark": "next-post-foot",
+      "kind": "column",
+      "world": [
+        -2.5,
+        0,
+        -7.2
+      ],
+      "sourceUV": [
+        0.40838323353293415,
+        0.4051863857374392
+      ],
+      "projectedUV": [
+        0.4274831119072763,
+        0.3981471972238313
+      ],
+      "inFrame": true,
+      "dxPercent": 1.9099878374342127,
+      "dyPercent": -0.7039188513607908,
+      "maxPercent": 1.9099878374342127,
+      "within3": true
+    },
+    {
+      "id": "parking-round",
+      "landmark": "third-post-foot",
+      "kind": "column",
+      "world": [
+        -2.5,
+        0,
+        -13.2
+      ],
+      "sourceUV": [
+        0.5005988023952096,
+        0.3565640194489465
+      ],
+      "projectedUV": [
+        0.47990034544322624,
+        0.3631382166824024
+      ],
+      "inFrame": true,
+      "dxPercent": -2.0698456951983357,
+      "dyPercent": 0.6574197233455925,
+      "maxPercent": 2.0698456951983357,
+      "within3": true
+    },
+    {
+      "id": "parking-room",
+      "landmark": "room-left-wall-foot",
+      "kind": "wall",
+      "world": [
+        -3,
+        0,
+        5
+      ],
+      "sourceUV": [
+        0.311,
+        0.832
+      ],
+      "projectedUV": [
+        0.30688873100906094,
+        0.8417758402102897
+      ],
+      "inFrame": true,
+      "dxPercent": -0.41112689909390543,
+      "dyPercent": 0.9775840210289766,
+      "maxPercent": 0.9775840210289766,
+      "within3": true
+    },
+    {
+      "id": "parking-room",
+      "landmark": "room-opening-post-foot",
+      "kind": "column",
+      "world": [
+        -1.3,
+        0,
+        4.35
+      ],
+      "sourceUV": [
+        0.506,
+        0.793
+      ],
+      "projectedUV": [
+        0.5091497741910987,
+        0.7773635714217398
+      ],
+      "inFrame": true,
+      "dxPercent": 0.3149774191098742,
+      "dyPercent": -1.5636428578260197,
+      "maxPercent": 1.5636428578260197,
+      "within3": true
+    },
+    {
+      "id": "parking-room",
+      "landmark": "room-opening-post-head",
+      "kind": "beam",
+      "world": [
+        -1.3,
+        2.7,
+        4.35
+      ],
+      "sourceUV": [
+        0.506,
+        0.312
+      ],
+      "projectedUV": [
+        0.5087024295187389,
+        0.31901064745492935
+      ],
+      "inFrame": true,
+      "dxPercent": 0.27024295187388914,
+      "dyPercent": 0.7010647454929353,
+      "maxPercent": 0.7010647454929353,
+      "within3": true
+    },
+    {
+      "id": "parking-water",
+      "landmark": "left-column-foot",
+      "kind": "column",
+      "world": [
+        -3.2,
+        0,
+        -8.2
+      ],
+      "sourceUV": [
+        0.289,
+        0.355
+      ],
+      "projectedUV": [
+        0.28914043207274853,
+        0.35490599017333013
+      ],
+      "inFrame": true,
+      "dxPercent": 0.014043207274855307,
+      "dyPercent": -0.00940098266698497,
+      "maxPercent": 0.014043207274855307,
+      "within3": true
+    },
+    {
+      "id": "parking-water",
+      "landmark": "near-right-column-foot",
+      "kind": "column",
+      "world": [
+        3,
+        0,
+        -2
+      ],
+      "sourceUV": [
+        0.85,
+        0.506
+      ],
+      "projectedUV": [
+        0.8499677909211418,
+        0.5061290259212236
+      ],
+      "inFrame": true,
+      "dxPercent": -0.00322090788581475,
+      "dyPercent": 0.012902592122354672,
+      "maxPercent": 0.012902592122354672,
+      "within3": true
+    },
+    {
+      "id": "parking-bright",
+      "landmark": "white-column-foot",
+      "kind": "column",
+      "world": [
+        6.5,
+        0,
+        -8
+      ],
+      "sourceUV": [
+        0.7,
+        0.558
+      ],
+      "projectedUV": [
+        0.6974077450628493,
+        0.55797192291047
+      ],
+      "inFrame": true,
+      "dxPercent": -0.2592254937150651,
+      "dyPercent": -0.0028077089530009758,
+      "maxPercent": 0.2592254937150651,
+      "within3": true
+    },
+    {
+      "id": "parking-bright",
+      "landmark": "white-column-head",
+      "kind": "beam",
+      "world": [
+        6.5,
+        2.83,
+        -8
+      ],
+      "sourceUV": [
+        0.7,
+        0.225
+      ],
+      "projectedUV": [
+        0.7025363529844564,
+        0.2251200508836091
+      ],
+      "inFrame": true,
+      "dxPercent": 0.2536352984456425,
+      "dyPercent": 0.012005088360908522,
+      "maxPercent": 0.2536352984456425,
+      "within3": true
+    },
+    {
+      "id": "parking-clean",
+      "landmark": "middle-column-foot",
+      "kind": "column",
+      "world": [
+        0,
+        0,
+        -6.3
+      ],
+      "sourceUV": [
+        0.407,
+        0.605
+      ],
+      "projectedUV": [
+        0.40724557719296556,
+        0.6053741732050174
+      ],
+      "inFrame": true,
+      "dxPercent": 0.024557719296558478,
+      "dyPercent": 0.03741732050174251,
+      "maxPercent": 0.03741732050174251,
+      "within3": true
+    },
+    {
+      "id": "parking-clean",
+      "landmark": "next-column-foot",
+      "kind": "column",
+      "world": [
+        0,
+        0,
+        -12.1
+      ],
+      "sourceUV": [
+        0.634,
+        0.538
+      ],
+      "projectedUV": [
+        0.6337223079172885,
+        0.5377327374228821
+      ],
+      "inFrame": true,
+      "dxPercent": -0.027769208271155588,
+      "dyPercent": -0.026726257711795487,
+      "maxPercent": 0.027769208271155588,
+      "within3": true
+    },
+    {
+      "id": "parking-dry",
+      "landmark": "right-wall-corner-foot",
+      "kind": "wall",
+      "world": [
+        8,
+        0,
+        3
+      ],
+      "sourceUV": [
+        0.634,
+        0.709
+      ],
+      "projectedUV": [
+        0.6334027495861084,
+        0.7090469201775405
+      ],
+      "inFrame": true,
+      "dxPercent": -0.05972504138915813,
+      "dyPercent": 0.004692017754048816,
+      "maxPercent": 0.05972504138915813,
+      "within3": true
+    },
+    {
+      "id": "parking-dry",
+      "landmark": "right-wall-corner-head",
+      "kind": "wall",
+      "world": [
+        8,
+        3.13,
+        3
+      ],
+      "sourceUV": [
+        0.634,
+        0.22
+      ],
+      "projectedUV": [
+        0.6345194689785592,
+        0.2200617003136086
+      ],
+      "inFrame": true,
+      "dxPercent": 0.05194689785591455,
+      "dyPercent": 0.006170031360860917,
+      "maxPercent": 0.05194689785591455,
+      "within3": true
+    },
+    {
+      "id": "parking-dim",
+      "landmark": "left-column-foot",
+      "kind": "column",
+      "world": [
+        -2.5,
+        0,
+        -3
+      ],
+      "sourceUV": [
+        0.204,
+        0.672
+      ],
+      "projectedUV": [
+        0.19951904328285164,
+        0.6782836470070666
+      ],
+      "inFrame": true,
+      "dxPercent": -0.4480956717148349,
+      "dyPercent": 0.6283647007066517,
+      "maxPercent": 0.6283647007066517,
+      "within3": true
+    },
+    {
+      "id": "parking-dim",
+      "landmark": "right-column-foot",
+      "kind": "column",
+      "world": [
+        4.3,
+        0,
+        -3
+      ],
+      "sourceUV": [
+        0.647,
+        0.673
+      ],
+      "projectedUV": [
+        0.650233236279433,
+        0.6616976587853473
+      ],
+      "inFrame": true,
+      "dxPercent": 0.32332362794329494,
+      "dyPercent": -1.130234121465279,
+      "maxPercent": 1.130234121465279,
+      "within3": true
+    },
+    {
+      "id": "parking-dim",
+      "landmark": "left-column-beam-joint",
+      "kind": "beam",
+      "world": [
+        -2.5,
+        3.53,
+        -3
+      ],
+      "sourceUV": [
+        0.204,
+        0.328
+      ],
+      "projectedUV": [
+        0.20555807190755493,
+        0.3328882046313976
+      ],
+      "inFrame": true,
+      "dxPercent": 0.1558071907554942,
+      "dyPercent": 0.4888204631397608,
+      "maxPercent": 0.4888204631397608,
+      "within3": true
+    },
+    {
+      "id": "parking-dark",
+      "landmark": "central-column-foot",
+      "kind": "column",
+      "world": [
+        -1.5,
+        0,
+        -3
+      ],
+      "sourceUV": [
+        0.493,
+        0.617
+      ],
+      "projectedUV": [
+        0.49269372252552673,
+        0.6171688930979543
+      ],
+      "inFrame": true,
+      "dxPercent": -0.030627747447325993,
+      "dyPercent": 0.016889309795431462,
+      "maxPercent": 0.030627747447325993,
+      "within3": true
+    },
+    {
+      "id": "parking-dark",
+      "landmark": "far-column-foot",
+      "kind": "column",
+      "world": [
+        5.3,
+        0,
+        -10
+      ],
+      "sourceUV": [
+        0.593,
+        0.579
+      ],
+      "projectedUV": [
+        0.5934477744912762,
+        0.5788023518342235
+      ],
+      "inFrame": true,
+      "dxPercent": 0.04477744912761983,
+      "dyPercent": -0.019764816577649835,
+      "maxPercent": 0.04477744912761983,
+      "within3": true
+    },
+    {
+      "id": "parking-props",
+      "landmark": "rear-wall-floor",
+      "kind": "wall",
+      "world": [
+        0,
+        0,
+        -7
+      ],
+      "sourceUV": [
+        0.5,
+        0.508
+      ],
+      "projectedUV": [
+        0.4817214456971861,
+        0.5175868514743344
+      ],
+      "inFrame": true,
+      "dxPercent": -1.8278554302813887,
+      "dyPercent": 0.9586851474334357,
+      "maxPercent": 1.8278554302813887,
+      "within3": true
+    },
+    {
+      "id": "parking-props",
+      "landmark": "rear-wall-ceiling",
+      "kind": "wall",
+      "world": [
+        0,
+        3.1,
+        -7
+      ],
+      "sourceUV": [
+        0.5,
+        0.322
+      ],
+      "projectedUV": [
+        0.4820742023162149,
+        0.32993045963953355
+      ],
+      "inFrame": true,
+      "dxPercent": -1.7925797683785105,
+      "dyPercent": 0.7930459639533538,
+      "maxPercent": 1.7925797683785105,
+      "within3": true
+    },
+    {
+      "id": "parking-props",
+      "landmark": "left-column-foot",
+      "kind": "column",
+      "world": [
+        -4.8,
+        0,
+        -2.125
+      ],
+      "sourceUV": [
+        0.114,
+        0.592
+      ],
+      "projectedUV": [
+        0.12063800205036013,
+        0.5788499477475123
+      ],
+      "inFrame": true,
+      "dxPercent": 0.6638002050360123,
+      "dyPercent": -1.3150052252487665,
+      "maxPercent": 1.3150052252487665,
+      "within3": true
+    },
+    {
+      "id": "parking-props",
+      "landmark": "right-column-foot",
+      "kind": "column",
+      "world": [
+        5.2,
+        0,
+        -2.125
+      ],
+      "sourceUV": [
+        0.809,
+        0.608
+      ],
+      "projectedUV": [
+        0.8279405267625641,
+        0.6047854399682187
+      ],
+      "inFrame": true,
+      "dxPercent": 1.894052676256408,
+      "dyPercent": -0.3214560031781333,
+      "maxPercent": 1.894052676256408,
+      "within3": true
+    },
+    {
+      "id": "storage",
+      "landmark": "left-steel-post-foot",
+      "kind": "column",
+      "world": [
+        -4.5,
+        0,
+        6.5
+      ],
+      "sourceUV": [
+        0.17,
+        0.683
+      ],
+      "projectedUV": [
+        0.1697318010562126,
+        0.6829078332133209
+      ],
+      "inFrame": true,
+      "dxPercent": -0.02681989437874066,
+      "dyPercent": -0.009216678667911538,
+      "maxPercent": 0.02681989437874066,
+      "within3": true
+    },
+    {
+      "id": "storage",
+      "landmark": "middle-steel-post-foot",
+      "kind": "column",
+      "world": [
+        -4.5,
+        0,
+        -3
+      ],
+      "sourceUV": [
+        0.491,
+        0.672
+      ],
+      "projectedUV": [
+        0.49224153046420804,
+        0.6728785383069684
+      ],
+      "inFrame": true,
+      "dxPercent": 0.12415304642080516,
+      "dyPercent": 0.08785383069683794,
+      "maxPercent": 0.12415304642080516,
+      "within3": true
+    },
+    {
+      "id": "storage",
+      "landmark": "third-steel-post-foot",
+      "kind": "column",
+      "world": [
+        -4.5,
+        0,
+        -12.5
+      ],
+      "sourceUV": [
+        0.642,
+        0.669
+      ],
+      "projectedUV": [
+        0.6411015280398368,
+        0.6682493421019876
+      ],
+      "inFrame": true,
+      "dxPercent": -0.08984719601632385,
+      "dyPercent": -0.07506578980124301,
+      "maxPercent": 0.08984719601632385,
+      "within3": true
+    },
+    {
+      "id": "gothic",
+      "landmark": "near-column-left-springing",
+      "kind": "column",
+      "world": [
+        -1.397,
+        1.7184,
+        -1
+      ],
+      "profile": {
+        "center": [
+          -1,
+          1.7184,
+          -1
+        ],
+        "radius": 0.397,
+        "side": "left"
+      },
+      "sourceUV": [
+        0.077,
+        0.74
+      ],
+      "projectedUV": [
+        0.09505354451228698,
+        0.7628932206038281
+      ],
+      "inFrame": true,
+      "dxPercent": 1.805354451228698,
+      "dyPercent": 2.2893220603828146,
+      "maxPercent": 2.2893220603828146,
+      "within3": true
+    },
+    {
+      "id": "gothic",
+      "landmark": "near-column-right-springing",
+      "kind": "column",
+      "world": [
+        -0.603,
+        1.7184,
+        -1
+      ],
+      "profile": {
+        "center": [
+          -1,
+          1.7184,
+          -1
+        ],
+        "radius": 0.397,
+        "side": "right"
+      },
+      "sourceUV": [
+        0.335,
+        0.74
+      ],
+      "projectedUV": [
+        0.31448947509199054,
+        0.7172060165971139
+      ],
+      "inFrame": true,
+      "dxPercent": -2.0510524908009478,
+      "dyPercent": -2.2793983402886075,
+      "maxPercent": 2.2793983402886075,
+      "within3": true
+    },
+    {
+      "id": "gothic",
+      "landmark": "next-column-foot",
+      "kind": "column",
+      "world": [
+        -1,
+        0,
+        -7
+      ],
+      "sourceUV": [
+        0.45,
+        0.667
+      ],
+      "projectedUV": [
+        0.4443425062380294,
+        0.6740053360562046
+      ],
+      "inFrame": true,
+      "dxPercent": -0.5657493761970611,
+      "dyPercent": 0.700533605620457,
+      "maxPercent": 0.700533605620457,
+      "within3": true
+    },
+    {
+      "id": "gothic",
+      "landmark": "right-column-foot",
+      "kind": "column",
+      "world": [
+        5,
+        0,
+        -7
+      ],
+      "sourceUV": [
+        0.835,
+        0.718
+      ],
+      "projectedUV": [
+        0.8409513839286654,
+        0.6999189624738423
+      ],
+      "inFrame": true,
+      "dxPercent": 0.5951383928665455,
+      "dyPercent": -1.808103752615764,
+      "maxPercent": 1.808103752615764,
+      "within3": true
+    },
+    {
+      "id": "gothic",
+      "landmark": "right-column-springing",
+      "kind": "column",
+      "world": [
+        5,
+        1.7184,
+        -7
+      ],
+      "sourceUV": [
+        0.835,
+        0.501
+      ],
+      "projectedUV": [
+        0.8510334932055037,
+        0.520031054192477
+      ],
+      "inFrame": true,
+      "dxPercent": 1.6033493205503735,
+      "dyPercent": 1.903105419247697,
+      "maxPercent": 1.903105419247697,
+      "within3": true
+    },
+    {
+      "id": "ouroboros",
+      "landmark": "near-column-foot",
+      "kind": "column",
+      "world": [
+        4.8,
+        0,
+        -2
+      ],
+      "sourceUV": [
+        0.773,
+        0.91
+      ],
+      "projectedUV": [
+        0.7720271992010981,
+        0.9079546412854977
+      ],
+      "inFrame": true,
+      "dxPercent": -0.09728007989019405,
+      "dyPercent": -0.20453587145022878,
+      "maxPercent": 0.20453587145022878,
+      "within3": true
+    },
+    {
+      "id": "ouroboros",
+      "landmark": "near-column-head",
+      "kind": "column",
+      "world": [
+        4.8,
+        4.25,
+        -2
+      ],
+      "sourceUV": [
+        0.773,
+        0.02
+      ],
+      "projectedUV": [
+        0.7719674084781374,
+        0.022503242084039365
+      ],
+      "inFrame": true,
+      "dxPercent": -0.10325915218626358,
+      "dyPercent": 0.2503242084039365,
+      "maxPercent": 0.2503242084039365,
+      "within3": true
+    },
+    {
+      "id": "garden",
+      "landmark": "left-front-column-foot",
+      "kind": "column",
+      "world": [
+        -2,
+        0,
+        -7.2
+      ],
+      "sourceUV": [
+        0.221,
+        0.604
+      ],
+      "projectedUV": [
+        0.22106336413008393,
+        0.603993770993676
+      ],
+      "inFrame": true,
+      "dxPercent": 0.006336413008392605,
+      "dyPercent": -0.0006229006323965613,
+      "maxPercent": 0.006336413008392605,
+      "within3": true
+    },
+    {
+      "id": "garden",
+      "landmark": "right-front-column-foot",
+      "kind": "column",
+      "world": [
+        5.2,
+        0,
+        0
+      ],
+      "sourceUV": [
+        0.974,
+        0.933
+      ],
+      "projectedUV": [
+        0.9739821381671956,
+        0.933027376006312
+      ],
+      "inFrame": true,
+      "dxPercent": -0.001786183280438891,
+      "dyPercent": 0.0027376006311974344,
+      "maxPercent": 0.0027376006311974344,
+      "within3": true
+    },
+    {
+      "id": "path-corridor",
+      "landmark": "left-wall-floor-at-crossing",
+      "kind": "wall",
+      "world": [
+        -2,
+        0,
+        0
+      ],
+      "sourceUV": [
+        0.315,
+        0.664
+      ],
+      "projectedUV": [
+        0.31503653021909367,
+        0.6642020355164346
+      ],
+      "inFrame": true,
+      "dxPercent": 0.0036530219093666716,
+      "dyPercent": 0.02020355164346066,
+      "maxPercent": 0.02020355164346066,
+      "within3": true
+    },
+    {
+      "id": "path-corridor",
+      "landmark": "right-wall-floor-at-crossing",
+      "kind": "wall",
+      "world": [
+        0,
+        0,
+        0
+      ],
+      "sourceUV": [
+        0.675,
+        0.673
+      ],
+      "projectedUV": [
+        0.6749124533668297,
+        0.672845561383654
+      ],
+      "inFrame": true,
+      "dxPercent": -0.008754663317034339,
+      "dyPercent": -0.015443861634600875,
+      "maxPercent": 0.015443861634600875,
+      "within3": true
+    },
+    {
+      "id": "path-room",
+      "landmark": "rear-left-ceiling-corner",
+      "kind": "wall",
+      "world": [
+        1,
+        3.4,
+        3
+      ],
+      "sourceUV": [
+        0.364,
+        0.181
+      ],
+      "projectedUV": [
+        0.36011905522432436,
+        0.17948990337849502
+      ],
+      "inFrame": true,
+      "dxPercent": -0.3880944775675632,
+      "dyPercent": -0.1510096621504975,
+      "maxPercent": 0.3880944775675632,
+      "within3": true
+    },
+    {
+      "id": "path-room",
+      "landmark": "rear-right-ceiling-corner",
+      "kind": "wall",
+      "world": [
+        3,
+        3.4,
+        3
+      ],
+      "sourceUV": [
+        0.664,
+        0.177
+      ],
+      "projectedUV": [
+        0.6685978519902847,
+        0.17436787143059446
+      ],
+      "inFrame": true,
+      "dxPercent": 0.4597851990284618,
+      "dyPercent": -0.2632128569405534,
+      "maxPercent": 0.4597851990284618,
+      "within3": true
+    },
+    {
+      "id": "path-room",
+      "landmark": "rear-right-floor-corner",
+      "kind": "wall",
+      "world": [
+        3,
+        0,
+        3
+      ],
+      "sourceUV": [
+        0.664,
+        0.568
+      ],
+      "projectedUV": [
+        0.6623434367182655,
+        0.5684765232866084
+      ],
+      "inFrame": true,
+      "dxPercent": -0.165656328173458,
+      "dyPercent": 0.047652328660841015,
+      "maxPercent": 0.165656328173458,
+      "within3": true
+    },
+    {
+      "id": "crate",
+      "landmark": "stack-upper-left-front",
+      "kind": "prop",
+      "world": [
+        -0.14,
+        1.36,
+        -0.145
+      ],
+      "sourceUV": [
+        0.005,
+        0.134
+      ],
+      "projectedUV": [
+        0.0035616387153969975,
+        0.145073786991885
+      ],
+      "inFrame": true,
+      "dxPercent": -0.14383612846030025,
+      "dyPercent": 1.1073786991884993,
+      "maxPercent": 1.1073786991884993,
+      "within3": true
+    },
+    {
+      "id": "crate",
+      "landmark": "stack-upper-right-front",
+      "kind": "prop",
+      "world": [
+        1.14,
+        1.36,
+        -0.145
+      ],
+      "sourceUV": [
+        0.964,
+        0.128
+      ],
+      "projectedUV": [
+        0.9680781644207949,
+        0.12692093842156532
+      ],
+      "inFrame": true,
+      "dxPercent": 0.4078164420794894,
+      "dyPercent": -0.10790615784346813,
+      "maxPercent": 0.4078164420794894,
+      "within3": true
+    },
+    {
+      "id": "crate",
+      "landmark": "stack-middle-left-front",
+      "kind": "prop",
+      "world": [
+        -0.14,
+        0.68,
+        -0.145
+      ],
+      "sourceUV": [
+        0.026,
+        0.585
+      ],
+      "projectedUV": [
+        0.022786096281413315,
+        0.5753989199773949
+      ],
+      "inFrame": true,
+      "dxPercent": -0.32139037185866837,
+      "dyPercent": -0.9601080022605069,
+      "maxPercent": 0.9601080022605069,
+      "within3": true
+    },
+    {
+      "id": "crate",
+      "landmark": "stack-middle-right-front",
+      "kind": "prop",
+      "world": [
+        1.14,
+        0.68,
+        -0.145
+      ],
+      "sourceUV": [
+        0.945,
+        0.633
+      ],
+      "projectedUV": [
+        0.9447829489520165,
+        0.6324032509733744
+      ],
+      "inFrame": true,
+      "dxPercent": -0.021705104798341868,
+      "dyPercent": -0.059674902662565366,
+      "maxPercent": 0.059674902662565366,
+      "within3": true
+    },
+    {
+      "id": "power-out",
+      "landmark": "central-column-foot",
+      "kind": "column",
+      "world": [
+        -0.3,
+        0,
+        0.1
+      ],
+      "sourceUV": [
+        0.556,
+        0.65
+      ],
+      "projectedUV": [
+        0.5473954606587134,
+        0.6500864595696916
+      ],
+      "inFrame": true,
+      "dxPercent": -0.8604539341286688,
+      "dyPercent": 0.008645956969155488,
+      "maxPercent": 0.8604539341286688,
+      "within3": true
+    },
+    {
+      "id": "power-out",
+      "landmark": "central-column-head",
+      "kind": "column",
+      "world": [
+        -0.3,
+        2.85,
+        0.1
+      ],
+      "sourceUV": [
+        0.556,
+        0.394
+      ],
+      "projectedUV": [
+        0.5470690095906383,
+        0.39395592080937586
+      ],
+      "inFrame": true,
+      "dxPercent": -0.8930990409361739,
+      "dyPercent": -0.004407919062415777,
+      "maxPercent": 0.8930990409361739,
+      "within3": true
+    }
+  ]
+}

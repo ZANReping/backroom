@@ -190,6 +190,7 @@ export class GameAudio {
     this.humOsc.push(noise as unknown as OscillatorNode)
   }
   stopHum() {
+    this.stopDeepPressure()
     for (const o of this.humOsc) { try { o.stop() } catch { /* */ } }
     this.humOsc = []
     this.humBus?.disconnect();this.humBus=null
@@ -533,6 +534,156 @@ export class GameAudio {
       g.gain.setValueAtTime(vol, t)
       g.gain.exponentialRampToValueAtTime(0.001, t + 0.5)
       o.connect(g).connect(this.sfx); o.start(); o.stop(t + 0.52)
+    }
+  }
+
+  /** v61：笑魇的咯咯笑——几声短促、带共振峰的气声，pitch 区分变种（巨笑魇低沉、幽影尖细） */
+  smilerGiggle(vol = 1, pitch = 1) {
+    if (!this.ctx || !this.sfx || vol <= 0.02) return
+    const t0 = this.ctx.currentTime
+    const pan = this.ctx.createStereoPanner()
+    pan.pan.value = Math.random() * 1.6 - 0.8
+    pan.connect(this.sfx)
+    const n = 3 + Math.floor(Math.random() * 3)
+    for (let i = 0; i < n; i++) {
+      const t = t0 + i * (0.11 + Math.random() * 0.05) / pitch
+      const src = this.noiseSrc()
+      const bp = this.ctx.createBiquadFilter()
+      bp.type = 'bandpass'; bp.Q.value = 6
+      bp.frequency.setValueAtTime((1100 + Math.random() * 300) * pitch, t)
+      bp.frequency.exponentialRampToValueAtTime(700 * pitch, t + 0.09)
+      const g = this.ctx.createGain()
+      g.gain.setValueAtTime(0.0001, t)
+      g.gain.exponentialRampToValueAtTime(0.06 * vol, t + 0.015)
+      g.gain.exponentialRampToValueAtTime(0.0008, t + 0.1)
+      src.connect(bp).connect(g).connect(pan)
+      src.start(t); src.stop(t + 0.11)
+      const o = this.ctx.createOscillator()
+      o.type = 'triangle'
+      o.frequency.setValueAtTime(330 * pitch * (1 + i * 0.04), t)
+      o.frequency.exponentialRampToValueAtTime(240 * pitch, t + 0.09)
+      const og = this.ctx.createGain()
+      og.gain.setValueAtTime(0.0001, t)
+      og.gain.exponentialRampToValueAtTime(0.025 * vol, t + 0.02)
+      og.gain.exponentialRampToValueAtTime(0.0005, t + 0.1)
+      o.connect(og).connect(pan); o.start(t); o.stop(t + 0.11)
+    }
+  }
+
+  /** v62：猎犬嚎叫——两个略失谐的锯齿波沿「低→高→回落」滑音，带颤音与低通；pitch>1 为中立个体受惊的短促呜咽 */
+  houndHowl(vol = 1, pitch = 1, dur = 1.3) {
+    if (!this.ctx || !this.sfx || vol <= 0.02) return
+    const t = this.ctx.currentTime
+    const lp = this.ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1400 * pitch; lp.Q.value = 3
+    const g = this.ctx.createGain()
+    g.gain.setValueAtTime(0.0001, t)
+    g.gain.exponentialRampToValueAtTime(0.07 * vol, t + dur * 0.25)
+    g.gain.setValueAtTime(0.07 * vol, t + dur * 0.7)
+    g.gain.exponentialRampToValueAtTime(0.0005, t + dur)
+    const lfo = this.ctx.createOscillator(); lfo.frequency.value = 6.5
+    const lg = this.ctx.createGain(); lg.gain.value = 9 * pitch
+    lfo.connect(lg)
+    for (const det of [0, 7]) {
+      const o = this.ctx.createOscillator(); o.type = 'sawtooth'
+      o.frequency.setValueAtTime(260 * pitch + det, t)
+      o.frequency.exponentialRampToValueAtTime(520 * pitch + det, t + dur * 0.35)
+      o.frequency.exponentialRampToValueAtTime(380 * pitch + det, t + dur)
+      lg.connect(o.frequency)
+      o.connect(lp); o.start(t); o.stop(t + dur + 0.02)
+    }
+    lp.connect(g).connect(this.sfx)
+    lfo.start(t); lfo.stop(t + dur + 0.02)
+  }
+
+  // v63：钝人手臂「切」出墙体——灰泥碎裂的闷响 + 关节咔哒 + 拉长的筋腱摩擦
+  dullerReach(vol = 1) {
+    if (!this.ctx || !this.sfx || vol <= 0.02) return
+    const t = this.ctx.currentTime
+    const n = this.noiseSrc()
+    const lp = this.ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.setValueAtTime(700, t); lp.frequency.exponentialRampToValueAtTime(180, t + 0.5)
+    const g = this.ctx.createGain()
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.16 * vol, t + 0.03); g.gain.exponentialRampToValueAtTime(0.001, t + 0.6)
+    n.connect(lp).connect(g).connect(this.sfx); n.start(t); n.stop(t + 0.62)
+    for (let i = 0; i < 5; i++) { // 关节咔哒
+      const ct = t + 0.12 + i * (0.07 + Math.random() * 0.05)
+      const o = this.ctx.createOscillator(); o.type = 'square'; o.frequency.setValueAtTime(1800 + Math.random() * 900, ct); o.frequency.exponentialRampToValueAtTime(300, ct + 0.025)
+      const cg = this.ctx.createGain(); cg.gain.setValueAtTime(0.05 * vol, ct); cg.gain.exponentialRampToValueAtTime(0.0005, ct + 0.03)
+      o.connect(cg).connect(this.sfx); o.start(ct); o.stop(ct + 0.035)
+    }
+    const s2 = this.ctx.createOscillator(); s2.type = 'sawtooth' // 筋腱拉伸
+    s2.frequency.setValueAtTime(70, t + 0.1); s2.frequency.linearRampToValueAtTime(140, t + 0.8)
+    const bp = this.ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 420; bp.Q.value = 4
+    const sg = this.ctx.createGain(); sg.gain.setValueAtTime(0.0001, t + 0.1); sg.gain.exponentialRampToValueAtTime(0.05 * vol, t + 0.3); sg.gain.exponentialRampToValueAtTime(0.0005, t + 0.85)
+    s2.connect(bp).connect(sg).connect(this.sfx); s2.start(t + 0.1); s2.stop(t + 0.86)
+  }
+
+  // v66：L7 七层之物的远处低吼——极低频的滑音 + 胸腔共鸣的带通噪声，距离越远越闷、越晚
+  leviathanGroan(vol = 1, dist = 100) {
+    if (!this.ctx || !this.sfx) return
+    const t = this.ctx.currentTime + Math.min(1.2, dist / 330)
+    const far = Math.max(0.25, 1 - dist / 260)
+    const lp = this.ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 180 + far * 220
+    const g = this.ctx.createGain()
+    g.gain.setValueAtTime(0.0001, t)
+    g.gain.exponentialRampToValueAtTime(0.22 * vol * far, t + 1.6)
+    g.gain.exponentialRampToValueAtTime(0.0008, t + 7.5)
+    lp.connect(g).connect(this.sfx)
+    for (const [f0, f1, type] of [[46, 31, 'sawtooth'], [69, 44, 'triangle'], [23, 19, 'sine']] as const) {
+      const o = this.ctx.createOscillator(); o.type = type
+      o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + 6.5)
+      o.connect(lp); o.start(t); o.stop(t + 7.6)
+    }
+    const n = this.noiseSrc()
+    const bp = this.ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 95; bp.Q.value = 2.5
+    const ng = this.ctx.createGain(); ng.gain.setValueAtTime(0.0001, t); ng.gain.exponentialRampToValueAtTime(0.5 * vol * far, t + 2.2); ng.gain.exponentialRampToValueAtTime(0.001, t + 7)
+    n.connect(bp).connect(ng).connect(lp); n.start(t); n.stop(t + 7.2)
+  }
+
+  // v66：L7 深海水压音景——持续低频轰鸣 + 偶发金属/骨骼受压的吱嘎声；k=0 关闭（0~1 随深度）
+  private deepNodes: { g: GainNode; o: OscillatorNode[]; n: AudioBufferSourceNode; nodes: AudioNode[] } | null = null
+  stopDeepPressure() {
+    const d=this.deepNodes;if(!d)return
+    this.deepNodes=null;this.deepCreakT=6
+    const t=this.ctx!.currentTime
+    d.g.gain.cancelScheduledValues(t);d.g.gain.setTargetAtTime(0,t,.08)
+    for(const source of [...d.o,d.n]){source.onended=()=>source.disconnect();source.stop(t+.4)}
+    d.n.onended=()=>{d.n.disconnect();for(const node of d.nodes)node.disconnect()}
+  }
+  private deepCreakT = 6
+  setDeepPressure(k: number, dt = 0.016) {
+    if (!this.ctx || !this.sfx) return
+    if (k <= 0.001) { this.stopDeepPressure(); return }
+    if (!this.deepNodes) {
+      const g = this.ctx.createGain(); g.gain.value = 0
+      const lp = this.ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 140
+      lp.connect(g).connect(this.sfx)
+      const o: OscillatorNode[] = [], nodes: AudioNode[] = [g,lp]
+      for (const [f, type] of [[27.5, 'sine'], [41.2, 'triangle']] as const) {
+        const os = this.ctx.createOscillator(); os.type = type; os.frequency.value = f
+        const lfo = this.ctx.createOscillator(); lfo.frequency.value = 0.07 + f * 0.001
+        const lg = this.ctx.createGain(); lg.gain.value = f * 0.04
+        nodes.push(lg)
+        lfo.connect(lg).connect(os.frequency); lfo.start()
+        os.connect(lp); os.start(); o.push(os, lfo)
+      }
+      const n = this.noiseSrc()
+      const ng = this.ctx.createGain(); ng.gain.value = 0.35
+      n.connect(ng).connect(lp); n.start()
+      nodes.push(ng)
+      this.deepNodes = { g, o, n, nodes }
+    }
+    this.deepNodes.g.gain.setTargetAtTime(0.16 * k, this.ctx.currentTime, 0.4)
+    this.deepCreakT -= dt
+    if (k > 0.35 && this.deepCreakT <= 0) {
+      this.deepCreakT = 5 + Math.random() * 12 * (1.4 - k)
+      const t = this.ctx.currentTime
+      const o = this.ctx.createOscillator(); o.type = 'sawtooth'
+      const f = 70 + Math.random() * 90
+      o.frequency.setValueAtTime(f, t); o.frequency.linearRampToValueAtTime(f * (0.6 + Math.random() * 0.3), t + 1.3)
+      const bp = this.ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 300 + Math.random() * 300; bp.Q.value = 9
+      const cg = this.ctx.createGain(); cg.gain.setValueAtTime(0.0001, t); cg.gain.exponentialRampToValueAtTime(0.05 * k, t + 0.25); cg.gain.exponentialRampToValueAtTime(0.0005, t + 1.4)
+      const pan = this.ctx.createStereoPanner(); pan.pan.value = Math.random() * 2 - 1
+      o.connect(bp).connect(cg).connect(pan).connect(this.sfx); o.start(t); o.stop(t + 1.45)
     }
   }
 

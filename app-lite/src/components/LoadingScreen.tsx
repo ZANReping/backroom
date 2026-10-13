@@ -19,14 +19,18 @@ export default function LoadingScreen({ progress, label, detail, history }: Prop
 
       <div className="hud-panel font-mono2 relative w-[min(560px,92vw)] px-6 py-6" style={{ background: 'color-mix(in srgb, var(--panel) 92%, transparent)' }}>
         <div className="flex items-baseline justify-between gap-4">
-          <div className="text-[13px] tracking-[0.34em]" style={{ color: 'var(--text)' }}>正在进入后室</div>
+          <div>
+            <div className="text-[9px] tracking-[0.3em]" style={{ color: 'var(--text-dim)' }}>NOCLIP · 切出现实</div>
+            <div className="mt-1 text-[13px] tracking-[0.34em]" style={{ color: 'var(--text)' }}>正在进入后室<span className="end-caret" aria-hidden>_</span></div>
+          </div>
           <div className="text-[22px]" style={{ color: 'var(--amber)' }}>{pct}<span className="text-[10px]" style={{ color: 'var(--text-dim)' }}>%</span></div>
         </div>
 
         {/* 进度条 */}
-        <div className="mt-3 h-[10px] w-full overflow-hidden border" style={{ borderColor: 'var(--panel-edge)', background: 'color-mix(in srgb, var(--ink) 82%, transparent)' }}>
+        {/* 2026-10 UI：进度条叠加 20 格刻度，最后一格跳动光标 */}
+        <div className="load-bar mt-3 h-[12px] w-full overflow-hidden border" style={{ borderColor: 'var(--panel-edge)', background: 'color-mix(in srgb, var(--ink) 82%, transparent)' }}>
           <div
-            className="h-full"
+            className="load-fill h-full"
             style={{
               width: `${pct}%`,
               background: 'linear-gradient(90deg, color-mix(in srgb, var(--amber) 72%, black), var(--amber))',

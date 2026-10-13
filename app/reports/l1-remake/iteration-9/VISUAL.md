@@ -1,0 +1,28 @@
+# 十八参考视觉验收
+
+使用原图归一化关键点与未配准的几何投影比较，无自动拉伸对齐或调色。人工标注约有 1% 读取误差，点投影不能代替可见轮廓检查。灯光采样使用同图位置的线性 sRGB 均值，不是现场照度测量。
+
+共 48 点，48 点在 3% 内；已标注点均在3%内；这不代表整幅还原完成。
+
+| 场景 | ≤3% 点数/总数 | 最大横纵偏差 % | 地面亮度差（游戏−参考） | 顶部亮度差 |
+|---|---:|---:|---:|---:|
+| [parking-common](comparison/parking-common-compare.png) | 3/3 | 0.23 | -0.06 | 0.08 |
+| [parking-round](comparison/parking-round-compare.png) | 2/2 | 0.21 | 0.19 | 0.04 |
+| [parking-room](comparison/parking-room-compare.png) | 3/3 | 1.56 | 0.11 | 0.33 |
+| [parking-water](comparison/parking-water-compare.png) | 2/2 | 0.01 | 0.10 | 0.19 |
+| [parking-bright](comparison/parking-bright-compare.png) | 2/2 | 0.26 | 0.13 | 0.09 |
+| [parking-clean](comparison/parking-clean-compare.png) | 2/2 | 0.04 | 0.12 | 0.10 |
+| [parking-dry](comparison/parking-dry-compare.png) | 2/2 | 0.06 | 0.18 | 0.07 |
+| [parking-dim](comparison/parking-dim-compare.png) | 3/3 | 1.13 | -0.01 | -0.01 |
+| [parking-dark](comparison/parking-dark-compare.png) | 2/2 | 0.04 | -0.01 | -0.01 |
+| [parking-props](comparison/parking-props-compare.png) | 4/4 | 1.89 | 0.00 | -0.01 |
+| [storage](comparison/storage-compare.png) | 3/3 | 0.12 | -0.08 | 0.01 |
+| [gothic](comparison/gothic-compare.png) | 5/5 | 2.29 | -0.02 | 0.06 |
+| [ouroboros](comparison/ouroboros-compare.png) | 2/2 | 0.25 | -0.24 | -0.00 |
+| [garden](comparison/garden-compare.png) | 2/2 | 0.01 | -0.07 | 0.01 |
+| [path-corridor](comparison/path-corridor-compare.png) | 2/2 | 0.02 | -0.03 | 0.33 |
+| [path-room](comparison/path-room-compare.png) | 3/3 | 0.46 | 0.05 | 0.15 |
+| [crate](comparison/crate-compare.png) | 4/4 | 1.11 | 0.04 | 0.02 |
+| [power-out](comparison/power-out-compare.png) | 2/2 | 0.89 | -0.01 | -0.01 |
+
+逐点误差与是否位于视锥内见 comparison/landmark-errors.csv；亮暗采样矩形见 reference-data.json。

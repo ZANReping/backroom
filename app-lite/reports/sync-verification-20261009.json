@@ -1,0 +1,686 @@
+{
+  "date": "2026-10-09",
+  "status": "complete",
+  "originalUnchanged": true,
+  "originalFilesAudited": 1550,
+  "changedImages": {
+    "count": 76,
+    "beforeBytes": 27772474,
+    "afterBytes": 2325146
+  },
+  "omittedRegenerableBakeBytes": 105966105,
+  "distBytes": 30461245,
+  "browser": {
+    "passed": true,
+    "seed": 20261006,
+    "viewport": {
+      "width": 1100,
+      "height": 700
+    },
+    "levels": [
+      {
+        "level": 0,
+        "structures": 922,
+        "entities": 0,
+        "chunks": 25,
+        "drawCalls": 1
+      },
+      {
+        "level": 1,
+        "structures": 639,
+        "entities": 13,
+        "chunks": 16,
+        "drawCalls": 1
+      },
+      {
+        "level": 7,
+        "structures": 263,
+        "entities": 0,
+        "chunks": 17,
+        "drawCalls": 1
+      },
+      {
+        "level": 10,
+        "structures": 2406,
+        "entities": 0,
+        "chunks": 11,
+        "drawCalls": 1
+      },
+      {
+        "level": 101,
+        "structures": 6825,
+        "entities": 0,
+        "chunks": 0,
+        "drawCalls": 1
+      }
+    ],
+    "errors": [],
+    "missing": [],
+    "musicRequests": [],
+    "browser": {
+      "protocolVersion": "1.3",
+      "product": "Chrome/151.0.7922.34",
+      "revision": "@782af9cb30a53f54487e5d2e44738645a8ec457c",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36",
+      "jsVersion": "15.1.206.8"
+    },
+    "launch": {
+      "arguments": [
+        "C:\\Users\\ZANRe\\AppData\\Local\\ms-playwright\\chromium-1234\\chrome-win64\\chrome.exe",
+        "--disable-field-trial-config",
+        "--disable-background-networking",
+        "--disable-background-timer-throttling",
+        "--disable-backgrounding-occluded-windows",
+        "--disable-back-forward-cache",
+        "--disable-breakpad",
+        "--disable-client-side-phishing-detection",
+        "--disable-component-extensions-with-background-pages",
+        "--disable-component-update",
+        "--no-default-browser-check",
+        "--disable-default-apps",
+        "--disable-dev-shm-usage",
+        "--disable-edgeupdater",
+        "--disable-extensions",
+        "--disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion",
+        "--enable-features=CDPScreenshotNewSurface",
+        "--allow-pre-commit-input",
+        "--disable-hang-monitor",
+        "--disable-ipc-flooding-protection",
+        "--disable-popup-blocking",
+        "--disable-prompt-on-repost",
+        "--disable-renderer-backgrounding",
+        "--disable-updater-scheduler",
+        "--force-color-profile=srgb",
+        "--metrics-recording-only",
+        "--no-first-run",
+        "--password-store=basic",
+        "--use-mock-keychain",
+        "--no-service-autorun",
+        "--export-tagged-pdf",
+        "--disable-search-engine-choice-screen",
+        "--unsafely-disable-devtools-self-xss-warnings",
+        "--edge-skip-compat-layer-relaunch",
+        "--disable-infobars",
+        "--disable-search-engine-choice-screen",
+        "--disable-sync",
+        "--enable-unsafe-swiftshader",
+        "--headless",
+        "--hide-scrollbars",
+        "--mute-audio",
+        "--blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4",
+        "--no-sandbox",
+        "--use-angle=d3d11",
+        "--enable-automation",
+        "--remote-debugging-port=9259",
+        "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app-lite\\.cache\\sync-20261009\\qa-profile",
+        "--remote-debugging-pipe",
+        "--noerrdialogs",
+        "--flag-switches-begin",
+        "--flag-switches-end",
+        "--enable-unsafe-swiftshader",
+        "about:blank"
+      ]
+    },
+    "multiplayerEntrypointsClosed": true,
+    "settings": {
+      "difficulty": "normal",
+      "autoSprint": false,
+      "grain": false,
+      "shake": true,
+      "headBob": false,
+      "realWater": false,
+      "flicker": 0,
+      "eyeAdaptation": false,
+      "renderResolution": "480p_retro",
+      "renderScale": 100,
+      "dynamicRes": false,
+      "dynamicResTarget": 60,
+      "shadows": false,
+      "fogOfWar": true,
+      "maxPixelRatio": 2,
+      "sceneLightLimit": 16,
+      "chunkBudgetMs": 3,
+      "loadingBudgetMs": 6,
+      "hudRefreshRate": 8,
+      "textureQuality": 1,
+      "detailDistance": 100,
+      "wallOcclusion": true,
+      "particleDensity": 100,
+      "shadowUpdateRate": 1,
+      "cameraFov": 72,
+      "vcrFx": false,
+      "vcrStrength": 100,
+      "vcrScanlines": true,
+      "fogScale": 100,
+      "darknessBoost": 0,
+      "farLights": false,
+      "lightMode": "classic",
+      "shadowQuality": 1,
+      "sunShadows": true,
+      "lightShadows": 2,
+      "ambientOcclusion": 1,
+      "reflectivity": 60,
+      "bloomFx": true,
+      "bloomStrength": 35,
+      "exposure": 100,
+      "grainStrength": 12,
+      "scanlineStrength": 0,
+      "vignetteStrength": 18,
+      "colorGrade": "neutral",
+      "volume": 80,
+      "ambient": 50,
+      "bgm": 100,
+      "sfx": 90,
+      "muted": false,
+      "bgmStyle": "procedural",
+      "newGameSeed": "20261006",
+      "leftHanded": false,
+      "stickSize": 120,
+      "btnOpacity": 70,
+      "sensitivity": 1,
+      "devMode": true,
+      "theme": "amber",
+      "uiPresentation": "classic",
+      "llmEndpoint": "",
+      "llmApiKey": "",
+      "llmModel": ""
+    },
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "movement": {
+      "before": {
+        "x": 79.5,
+        "y": 79.5
+      },
+      "after": {
+        "x": 79.5,
+        "y": 77.45999999999981
+      }
+    },
+    "l1": {
+      "baked": 183,
+      "databases": [
+        "l1-static-v4-r12"
+      ]
+    },
+    "textures": [
+      {
+        "path": "public/textures/l10_canola_clump.png",
+        "w": 341,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l10_corrugated_normal.png",
+        "w": 256,
+        "h": 256
+      },
+      {
+        "path": "public/textures/l10_leafcard.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l10_siding_diff.jpg",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/documents/manila-mary-logo.png",
+        "w": 1024,
+        "h": 503
+      },
+      {
+        "path": "public/textures/items-six/color.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/items-six/normal.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/items-six/roughness.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/arch-carpet-normal.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/arch-carpet-rough.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/arch-carpet.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/carpet-normal.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/carpet-rough.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/carpet.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/ceiling-normal.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/ceiling-rough.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/ceiling.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/cream-normal.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/cream-rough.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/cream.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/diffuser-normal.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/diffuser-rough.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/diffuser.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/door-wood-normal.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/door-wood-rough.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/door-wood.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/dots-normal.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/dots-rough.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/dots.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/manila-ceiling-normal.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/manila-ceiling-rough.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/manila-ceiling.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/manila-normal.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/manila-rough.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/manila.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/pit-normal.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/pit-rough.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/pit.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/red-carpet-normal.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/red-carpet-rough.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/red-carpet.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/red-ceiling-normal.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/red-ceiling-rough.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/red-ceiling.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/red-normal.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/red-rough.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/red.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/wall-normal.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/wall-rough.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/wall.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/wood-normal.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/wood-rough.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l0-remake/wood.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l1/crate-marks.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l1/steel.jpg",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l1/steel_normal.jpg",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l1/steel_roughness.jpg",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/icons/pixel/item_fuyouyu.png",
+        "w": 128,
+        "h": 128
+      },
+      {
+        "path": "public/textures/icons/pixel/item_luckymilk.png",
+        "w": 128,
+        "h": 128
+      },
+      {
+        "path": "public/textures/icons/pixel/item_pockets.png",
+        "w": 128,
+        "h": 128
+      },
+      {
+        "path": "public/textures/items-refined/food/color.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/items-refined/food/normal.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/items-refined/food/roughness.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/items-refined/gear/color.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/items-refined/gear/normal.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/items-refined/gear/roughness.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/items-refined/paper/color.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/items-refined/paper/normal.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/items-refined/paper/roughness.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/items-refined/tools/color.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/items-refined/tools/normal.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/items-refined/tools/roughness.png",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l1/polyhaven/leaves_alpha.jpg",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l1/polyhaven/leaves_diff.jpg",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l1/polyhaven/leaves_nor_gl.jpg",
+        "w": 512,
+        "h": 512
+      },
+      {
+        "path": "public/textures/l1/polyhaven/leaves_rough.jpg",
+        "w": 512,
+        "h": 512
+      }
+    ]
+  },
+  "scriptChecks": [
+    {
+      "command": "npm run check:l1",
+      "status": 0
+    },
+    {
+      "command": "npm run check:l1-refinements",
+      "status": 0
+    },
+    {
+      "command": "npm run check:l1-bake",
+      "status": 0
+    },
+    {
+      "command": "npm run check:six-items",
+      "status": 0
+    },
+    {
+      "command": "npm run check:refined-items",
+      "status": 0
+    },
+    {
+      "command": "npm run check:hounds",
+      "status": 0
+    },
+    {
+      "command": "npm run check:hound-integration",
+      "status": 0
+    },
+    {
+      "command": "npm run check:smilers",
+      "status": 0
+    },
+    {
+      "command": "npm run check:smiler-integration",
+      "status": 0
+    },
+    {
+      "command": "npm run check:smiler-forms",
+      "status": 0
+    },
+    {
+      "command": "npm run check:smiler-spacing",
+      "status": 0
+    },
+    {
+      "command": "npm run check:dullers",
+      "status": 0
+    },
+    {
+      "command": "npm run check:duller-integration",
+      "status": 0
+    },
+    {
+      "command": "npm run check:l7",
+      "status": 0
+    },
+    {
+      "command": "npm run check:l10",
+      "status": 0
+    },
+    {
+      "command": "npm run check:l10-model-import",
+      "status": 0
+    }
+  ],
+  "level0Checks": [
+    "seed-input",
+    "continuity",
+    "architecture",
+    "state",
+    "meshes",
+    "presentation",
+    "refinements",
+    "experience",
+    "visibility"
+  ],
+  "typeCheck": "npm run build passed (tsc -b and vite)",
+  "finalZipUpdated": true,
+  "multiplayer": "Entrypoints closed; room query ignored; dormant implementation retained",
+  "package": {
+    "limitBytes": 50000000,
+    "originalPublicBytes": 471712043,
+    "litePublicBytes": 24731328,
+    "distBytes": 30461245,
+    "zipBytes": 25922522,
+    "distFiles": 645,
+    "remainingUnpackedBytes": 19538755,
+    "zipSHA256": "5b26d92d6979695a24dc0f5dbc0ae91d18b7f00436fb21190622980bbb9891be"
+  },
+  "commands": [
+    "npm run build",
+    "node scripts/verify-sync-20261009.cjs <bundled-playwright>",
+    "python scripts/package-lite.py"
+  ],
+  "unverified": [
+    "Bilibili App device testing"
+  ]
+}

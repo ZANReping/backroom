@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom'
 import type { Engine } from '@/game/engine'
 import { l11MapMarks } from '@/game/engine/l11State'
 import { ITEMS } from '@/game/content/items'
-import { ENTITIES, MOTH_FORMS, entitySpawnLevels, type MothForm } from '@/game/entities'
+import { ENTITIES, MOTH_FORMS, SMILER_KINDS, entitySpawnLevels, type MothForm, type SmilerKind } from '@/game/entities'
 import { WIN_TAPES, LEVELS, levelNo, levelLabel } from '@/game/levels'
 import { seedString } from '@/game/core/rng'
 import { look } from '@/game/core/renderer3d'
@@ -23,6 +23,8 @@ import { storage } from '@/game/core/storage'
 import { audio } from '@/game/core/audio'
 import { MUSIC_LIBRARY } from '@/game/core/midi' // v56 六轮：图鉴全开同步解锁电台音乐
 import { drawAlphaMap } from '@/game/content/alphaMap'
+import { levelTitleTheme } from './levelTitleTheme'
+import './LevelTitleTheme.css'
 import { bindLabelFor } from '@/game/core/keybinds'
 import { IconHP, IconStamina, IconHunger, IconThirst, IconSanity, IconBattery, IconPause, IconMap, IconInteract, IconCrouch, IconIsolation, IconPlant } from './icons'
 import { PHENOMENA, rarityText } from '@/game/content/phenomena'
@@ -53,17 +55,19 @@ interface Props {
 
 function Bar({ color, value, icon, label, compact, critical }: { color: string; value: number; icon: React.ReactNode; label: string; compact: boolean; critical?: boolean }) {
   const low = value < 25
+  // 2026-10 UI：满值行降低存在感（is-full），低值/危急行点亮；轨道带 25% 刻度，数值去掉冗余的「/100」
+  const full = value >= 99.5
   return (
-    <div className={`flex items-center gap-1.5 max-md:landscape:w-[76px] ${critical ? 'anim-shatter' : ''}`}>
+    <div className={`hud-bar flex items-center gap-1.5 max-md:landscape:w-[76px] ${full ? 'is-full' : ''} ${low ? 'is-low' : ''} ${critical ? 'anim-shatter' : ''}`} style={{ ['--bar-c' as string]: color }}>
       <span style={{ color, width: 14, height: 14, display: 'inline-flex' }}>{icon}</span>
-      {!compact && <span className="font-mono2 w-8 text-[10px]" style={{ color: 'var(--text-dim)' }}>{label}</span>}
-      <div className="relative h-[6px] flex-1 overflow-hidden rounded-sm" style={{ background: 'rgba(0,0,0,0.5)' }}>
+      {!compact && <span className="hud-bar-label font-mono2 w-8 text-[10px]">{label}</span>}
+      <div className="hud-bar-track relative h-[6px] flex-1 overflow-hidden">
         <div
-          className={`h-full ${low ? 'anim-barPulse' : ''}`}
+          className={`hud-bar-fill h-full ${low ? 'anim-barPulse' : ''}`}
           style={{ width: `${value}%`, background: color, transition: 'width 0.3s ease' }}
         />
       </div>
-      {!compact && <span className="font-mono2 w-9 text-right text-[10px]" style={{ color: 'var(--text-dim)' }}>{Math.round(value)}/100</span>}
+      {!compact && <span className="hud-bar-value font-mono2 w-7 text-right text-[11px]">{Math.round(value)}</span>}
     </div>
   )
 }
@@ -316,6 +320,7 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
   // v40：据点是主层级的子层级——顶部信息栏的层级号显示主层级（如 Alpha 基地显示 LEVEL 1 而非 LEVEL 101）
   const outpostDef = Object.values(OUTPOSTS).find((o) => o.levelId === p.level)
   const dispId = outpostDef?.parent ?? def.id
+  const titleTheme = levelTitleTheme(p.level)
   const interact = engine.getInteract()
   const now = Date.now()
   // 移动端横屏：小地图默认折叠，点击展开为半透明大地图浮层
@@ -421,8 +426,7 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
       {/* 选中物品名（快捷栏上方） */}
       {p.hotbar[p.selected] && (
         <div
-          className="font-mono2 px-2 py-0.5 text-[11px]"
-          style={{ color: 'var(--amber)', background: 'color-mix(in srgb, var(--panel) 85%, transparent)', border: '1px solid var(--panel-edge)' }}
+          className="hud-hotbar-name font-mono2 px-2 py-0.5 text-[11px]"
         >
           {ITEMS[p.hotbar[p.selected]!.type]?.name ?? p.hotbar[p.selected]!.type}
         </div>
@@ -431,7 +435,7 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
       {p.hotbar.map((s, i) => (
         <button
           key={i}
-          className="relative flex shrink-0 items-center justify-center border"
+          className={`hud-slot relative flex shrink-0 items-center justify-center border ${p.selected === i ? 'is-selected' : ''}`}
           style={{
             width: isMobile ? 40 : 44, height: isMobile ? 40 : 44,
             borderColor: p.selected === i ? 'var(--amber)' : 'var(--panel-edge)',
@@ -543,10 +547,26 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
         className={`hud-location-cluster ${isMobile ? 'absolute top-3 text-center' : 'absolute left-1/2 top-3 -translate-x-1/2 text-center'}`}
         style={isMobile ? { left: landscape ? 378 : 156, right: landscape ? 118 : 110, pointerEvents: 'none' } : undefined}
       >
-        <div className="hud-panel font-mono2 inline-block max-w-full truncate px-3 py-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>
+        <div className={`hud-panel hud-loc font-mono2 inline-block max-w-full truncate px-3 py-1 text-[11px]`} style={{ color: 'var(--text-dim)' }}>
           {isMobile
-            ? `L${dispId} ${def.name}${floorText ? ` · ${floorText}` : ''} · 磁带 ${p.tapes}/${WIN_TAPES}`
-            : `LEVEL ${dispId} · ${def.name} · B${dispId}${floorText ? ` · ${floorText}` : ''} · 磁带 ${p.tapes}/${WIN_TAPES}`}
+            ? (
+              <span className={`hud-loc-mobile${titleTheme !== 'default' ? ' level-title-themed' : ''}`} data-title-theme={titleTheme}>
+                <span className="hud-loc-level level-title__eyebrow" style={{ color: 'var(--title-accent, inherit)' }}>L{dispId}</span>{' '}
+                <span className="hud-loc-name level-title__name" style={{ color: 'var(--title-ink, inherit)' }}>{def.name}</span>{floorText ? ` · ${floorText}` : ''} · 磁带 {p.tapes}/{WIN_TAPES}
+              </span>
+            )
+            : (
+              <span className={`hud-loc-row${titleTheme !== 'default' ? ' level-title-themed' : ''}`} data-title-theme={titleTheme}>
+                <span className="hud-loc-level level-title__eyebrow" style={{ color: 'var(--title-accent, inherit)' }}>LEVEL {dispId}</span>
+                <span className="hud-loc-name level-title__name" style={{ color: 'var(--title-ink, inherit)' }}>{def.name}</span>
+                <span className="hud-loc-meta">B{dispId}{floorText ? ` · ${floorText}` : ''}</span>
+                <span className="hud-loc-tapes" title={`磁带 ${p.tapes}/${WIN_TAPES}`}>
+                  磁带
+                  {Array.from({ length: WIN_TAPES }, (_, i) => <i key={i} className={i < p.tapes ? 'on' : ''} />)}
+                  <b>{p.tapes}/{WIN_TAPES}</b>
+                </span>
+              </span>
+            )}
         </div>
         {isMobile && (
           <div className="pointer-events-none mx-auto mt-1 max-h-[3.6em] space-y-0.5 overflow-hidden" style={{ maxWidth: '100%' }}>
@@ -590,8 +610,9 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
           {((p as unknown as { crouching?: boolean }).crouching || (engine.input as unknown as { crouch?: boolean }).crouch) && (
             <span style={{ color: 'var(--amber)', width: 14, height: 14 }} title="蹲伏中"><IconCrouch width={14} height={14} /></span>
           )}
-          <span style={{ color: 'var(--amber)', width: 14, height: 14 }}><IconBattery width={14} height={14} /></span>
-          <span className="font-mono2 text-[10px]" style={{ color: 'var(--text-dim)' }}>{Math.round(p.battery)}%</span>
+          <span style={{ color: p.battery <= 15 ? 'var(--blood)' : 'var(--amber)', width: 14, height: 14 }}><IconBattery width={14} height={14} /></span>
+          <span className={`hud-battery ${p.battery <= 15 ? 'is-low' : ''}`} aria-hidden><i style={{ width: `${Math.max(0, Math.min(100, p.battery))}%` }} /></span>
+          <span className="font-mono2 text-[10px]" style={{ color: p.battery <= 15 ? 'var(--blood)' : 'var(--text-dim)' }}>{Math.round(p.battery)}%</span>
           {/* 噪音指示 */}
           <span className="flex items-end gap-[2px]">
             {[0.33, 0.66, 1].map((th, i) => (
@@ -628,12 +649,18 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
         <div className="hud-context-cluster absolute bottom-3 right-3 space-y-1 text-right">
           {interact && (
             <div className="hud-panel anim-slideUp font-mono2 inline-block px-3 py-1.5 text-[12px]" style={{ color: 'var(--amber)' }}>
-              [{bindLabelFor('interact')}] {interact.label}
+              <kbd className="hud-kbd-accent">{bindLabelFor('interact')}</kbd> {interact.label}
             </div>
           )}
-          <div className="hud-panel font-mono2 block px-3 py-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>
-            [{bindLabelFor('attack')}] 攻击　[{bindLabelFor('jump')}] 跳跃　[{bindLabelFor('crouch')}] 蹲伏　[{bindLabelFor('flashlight')}] 手电 {Math.round(p.battery)}%　[{bindLabelFor('quickuse')}] 使用　[{bindLabelFor('quickdrop')}] 丢弃　[{bindLabelFor('inspect')}] 检视
-            {p.hotbar[p.selected]?.type === 'squirtgun' ? `　[${bindLabelFor('reload')}] 装填 / 按住轮盘` : ''}
+          {/* 2026-10 UI：按键提示改为可换行的键帽列表并限宽，不再横跨半屏压住快捷栏 */}
+          <div className="hud-panel hud-keyhints font-mono2 text-[11px]" style={{ color: 'var(--text-dim)' }}>
+            {([
+              ['attack', '攻击'], ['jump', '跳跃'], ['crouch', '蹲伏'], ['flashlight', '手电'],
+              ['quickuse', '使用'], ['quickdrop', '丢弃'], ['inspect', '检视'],
+              ...(p.hotbar[p.selected]?.type === 'squirtgun' ? [['reload', '装填/轮盘']] : []),
+            ] as [string, string][]).map(([k, t]) => (
+              <span key={k} className="hud-keyhint"><kbd>{bindLabelFor(k)}</kbd>{t}</span>
+            ))}
           </div>
         </div>
       )}
@@ -924,6 +951,7 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
   // v54：召唤页子页切换（实体 / 物品 / 装饰物）
   const [spawnSub, setSpawnSub] = useState<'entity' | 'item' | 'decor'>('entity')
   const [selectedMothForm, setSelectedMothForm] = useState<MothForm>('male')
+  const [selectedSmilerKind, setSelectedSmilerKind] = useState<SmilerKind>('common')
   // v54：召唤装饰物（decorRegistry 结构类条目，按生成层级分页；decal:/prop: 为渲染侧贴花/道具，不可放置；
   // 末页「全部层」=全部层级分组合并一页列出）
   const decorPages = [
@@ -1053,11 +1081,12 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
                   )}
                   <div className="grid grid-cols-3 gap-1">
                     {curEntPage.ents.map((d) => (
-                      <div key={d.type} className={d.type === 'deathmoth' ? 'col-span-3 flex items-center gap-2' : 'flex'}>
-                        <DevBtn title={entitySpawnLevels(d.type).some((s) => s.event) ? `${d.desc}（特殊事件生成）` : d.desc} onClick={() => engine.devSpawnEntity(d.type, 3, d.type === 'deathmoth' ? selectedMothForm : undefined)}>
+                      <div key={d.type} className={d.type === 'deathmoth' || d.type === 'smiler' ? 'col-span-3 flex items-center gap-2' : 'flex'}>
+                        <DevBtn title={entitySpawnLevels(d.type).some((s) => s.event) ? `${d.desc}（特殊事件生成）` : d.desc} onClick={() => engine.devSpawnEntity(d.type, 3, d.type === 'deathmoth' ? selectedMothForm : d.type === 'smiler' ? selectedSmilerKind : undefined)}>
                           <span style={{ color: d.color }}>●</span> {d.name}
                         </DevBtn>
                         {d.type === 'deathmoth' && <select aria-label="死亡飞蛾子变种" value={selectedMothForm} onChange={(e) => setSelectedMothForm(e.target.value as MothForm)} className="max-w-[7rem] border px-1 text-[10px]" style={{ background: 'var(--panel)', color: 'var(--text-dim)', borderColor: 'var(--panel-edge)' }}>{Object.entries(MOTH_FORMS).map(([key, form]) => <option key={key} value={key}>{form.name}</option>)}</select>}
+                        {d.type === 'smiler' && <select aria-label="笑魇子变种" value={selectedSmilerKind} onChange={(e) => setSelectedSmilerKind(e.target.value as SmilerKind)} className="max-w-[7rem] border px-1 text-[10px]" style={{ background: 'var(--panel)', color: 'var(--text-dim)', borderColor: 'var(--panel-edge)' }}>{Object.entries(SMILER_KINDS).map(([key, kind]) => <option key={key} value={key}>{key === 'common' ? '普通笑魇' : kind.name}</option>)}</select>}
                       </div>
                     ))}
                   </div>

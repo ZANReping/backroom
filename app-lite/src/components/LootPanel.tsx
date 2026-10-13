@@ -12,30 +12,32 @@ export default function LootPanel({ engine, onClose }: { engine: Engine; onClose
   return (
     <div className="pointer-events-none fixed inset-0 z-40 flex items-end justify-center pb-24" onClick={onClose}>
       <div
-        className="hud-panel anim-lootPop pointer-events-auto w-[300px] p-3"
+        className="loot-panel hud-panel anim-lootPop pointer-events-auto w-[320px] p-3"
         style={{ background: 'var(--panel)', boxShadow: '0 0 30px rgba(0,0,0,0.8)' }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-2 flex items-center justify-between">
-          <span className="font-title text-[15px]" style={{ color: 'var(--amber)' }}>{lp.label}</span>
+          <span className="flex flex-col">
+            <span className="loot-kicker font-mono2">搜索容器 · {lp.items.length} 件</span>
+            <span className="font-title text-[16px]" style={{ color: 'var(--amber)' }}>{lp.label}</span>
+          </span>
           <div className="flex gap-2">
             {lp.items.length > 0 && (
               <button
-                className="font-mono2 border px-2 py-0.5 text-[11px]"
-                style={{ borderColor: 'var(--amber)', color: 'var(--amber)' }}
+                className="loot-take font-mono2 border px-2 py-1 text-[11px]"
                 onClick={() => { engine.takeAllLoot(); audio.uiTick() }}
               >
                 全部拿取
               </button>
             )}
-            <button className="font-mono2 border px-2 py-0.5 text-[11px]" style={{ borderColor: 'var(--panel-edge)', color: 'var(--text-dim)' }} onClick={onClose}>离开</button>
+            <button className="loot-leave font-mono2 border px-2 py-1 text-[11px]" onClick={onClose}>离开</button>
           </div>
         </div>
         {!isMobile && (
           <div className="font-mono2 mb-2 text-[10px]" style={{ color: 'var(--text-dim)' }}>
             {lp.items.length > 0
-              ? <>[{bindLabelFor('interact')}] 全部拿取　[Esc] 离开　未拿完的物品会留在容器里</>
-              : <>[{bindLabelFor('interact')}] 或 [Esc] 关闭（v20：拿空后 {bindLabelFor('interact')}=关闭）</>}
+              ? <><kbd className="hud-key">{bindLabelFor('interact')}</kbd> 全部拿取　<kbd className="hud-key">Esc</kbd> 离开　未拿完的会留在容器里</>
+              : <><kbd className="hud-key">{bindLabelFor('interact')}</kbd> 或 <kbd className="hud-key">Esc</kbd> 关闭</>}
           </div>
         )}
         {lp.items.length === 0 ? (
@@ -45,8 +47,8 @@ export default function LootPanel({ engine, onClose }: { engine: Engine; onClose
             {lp.items.map((type, i) => (
               <button
                 key={`${type}-${i}`}
-                className="anim-lootPop relative flex h-[64px] flex-col items-center justify-center gap-1 border active:scale-95"
-                style={{ borderColor: 'var(--panel-edge)', background: 'rgba(0,0,0,0.35)', animationDelay: `${i * 0.05}s` }}
+                className="loot-cell wb-slot has-item anim-lootPop relative flex h-[68px] flex-col items-center justify-center gap-1 border active:scale-95"
+                style={{ borderColor: 'var(--panel-edge)', animationDelay: `${i * 0.05}s` }}
                 onClick={() => engine.takeLoot(i)}
               >
                 <ItemGlyph type={type} size={26} />

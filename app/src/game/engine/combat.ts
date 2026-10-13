@@ -1,5 +1,6 @@
 import { witnessedOffense } from './career'
 import { provokeMoths } from './moths'
+import { provokeHound } from './houndAI'
 // v53：战斗/投掷/击退 + 伤害/死亡结算 + 粒子生成 —— 自 engine.ts 拆分，逻辑逐语句搬运。
 import { ITEMS } from '../content/items'
 import { bandOfZ, bandOfPlayerZ, groundHeightAt, wallAt, structBlocksSight } from '../world/mapgen'
@@ -8,6 +9,7 @@ import { audio } from '../core/audio'
 import { recordEntityEncounter, type Entity } from '../entities'
 import type { Engine, Projectile } from '../engine'
 import { clearRunSlots } from './save'
+import { dullerDrop, dullerSquirted, dullerHurt, dullerDropPosition, releaseDullerPlayer } from './dullerAI'
 
 export function hurtPlayer(eng: Engine, dmg: number, source: string) {
   if (eng.dev.god) return
@@ -23,6 +25,7 @@ export function hurtPlayer(eng: Engine, dmg: number, source: string) {
 
 export function die(eng: Engine, cause: string, force = false) {
   if (eng.dev.god && !force) { eng.player.hp = Math.max(eng.player.hp, 20); return }
+  releaseDullerPlayer(eng)
   eng.over = true
   eng.player.hp = 0
   eng.usingItem = null
@@ -129,9 +132,21 @@ function startAttackAnimation(eng: Engine, kind: Engine['attackAnimKind'], durat
 
 export function killCheck(eng: Engine, e: Entity) {
   if(!e.dead)provokeMoths(eng,e)
+  provokeHound(eng,e)
+  dullerHurt(eng,e)
   if (e.hp > 0 || e.dead) return
   const p = eng.player, m = eng.map!
   e.dead = true; e.deathT = 1.4
+  if(e.def.type==='duller'){
+    const type=dullerDrop(e)
+    if(type){
+      const item={id:Math.random(),type,...dullerDropPosition(eng,e)}
+      m.items.push(item)
+      const inf=m.inf
+      if(inf)inf.chunks.get(`${Math.floor((item.x+inf.ox)/32)},${Math.floor((item.y+inf.oy)/32)}`)?.items.push(item)
+      eng.msg(`钝人攥着的${ITEMS[type]?.name??'东西'}掉在了地上。`,'loot')
+    }
+  }
   p.kills++
   // v35：杀死 Ferren——BNTG 声望大跌（它是商人之家的吉祥物）
   if (e.def.type === 'ferren') {
@@ -495,6 +510,7 @@ export function squirt(eng: Engine) {
       }
       e.stunT = 0.4
       audio.hit()
+      if (eng.squirtTank === 'almond' && e.def.type === 'duller' && !e.dead) dullerSquirted(eng, e) // v63：钝人厌恶杏仁水
       eng.msg(eng.squirtTank === 'liquidpain' ? `水线正中${e.def.name}——液态痛苦嘶嘶地腐蚀着它的表皮。` : eng.squirtTank === 'cashew' ? `水线正中${e.def.name}——苦涩的腰果水把它灼得发颤。` : `水线正中${e.def.name}，甜腻的杏仁水四溅。`, 'system')
     } else {
       eng.msg(`水线滋了${e.def.name}一身清水——什么效果也没有。`, 'system')

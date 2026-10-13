@@ -6,7 +6,7 @@ import type { LevelDef } from '../core/types'
 import { col } from './shared'
 
 let pmrem: THREE.PMREMGenerator | null = null
-const cache = new Map<string, THREE.Texture>()
+const cache = new Map<string, THREE.WebGLRenderTarget>()
 
 function gradEnvTexture(def: LevelDef): THREE.Texture {
   const pal = def.palette
@@ -26,18 +26,19 @@ function gradEnvTexture(def: LevelDef): THREE.Texture {
 }
 
 /** 本层环境贴图（按 层级id+有无天空贴图 缓存；realistic 模式专用） */
-export function envProbe(def: LevelDef, skyTex?: THREE.Texture | null): THREE.Texture {
+export function envProbe(def: LevelDef, skyTex: THREE.Texture | null | undefined, renderer:THREE.WebGLRenderer): THREE.Texture {
   const key = `${def.id}:${skyTex ? 'sky' : 'pal'}`
   const hit = cache.get(key)
-  if (hit) return hit
+  if (hit) return hit.texture
   if (!pmrem) {
-    pmrem = new THREE.PMREMGenerator(new THREE.WebGLRenderer({ antialias: false }))
+    // Render-target textures belong to their WebGL context. Use the game's renderer.
+    pmrem = new THREE.PMREMGenerator(renderer)
     pmrem.compileEquirectangularShader()
   }
   const src = skyTex ?? gradEnvTexture(def)
   const rt = pmrem.fromEquirectangular(src)
   if (!skyTex) src.dispose()
-  cache.set(key, rt.texture)
+  cache.set(key, rt)
   return rt.texture
 }
 

@@ -1,6 +1,8 @@
+import { stepL7Events } from './l7Events'
 import { tickL0 } from './l0State'
 import { l0Sample } from '../world/l0Architecture'
 import { stableAt } from './career'
+import { dullerControlsPlayer } from './dullerAI'
 import { l1DistanceScale } from '../world/l1Layout'
 // v53：移动/输入积分 + 垂直物理（固定子步积分主段、液体浮沉、跳跃重力、梯子攀爬）——
 // 自 engine.ts step 内联段拆分，逻辑逐语句搬运；updateMovement 返回 null 表示本帧已死亡/终止（原 step 的 return）。
@@ -19,7 +21,11 @@ type DiffMult = { dmg: number; drain: number }
 
 /** 移动主段（原 step「---- 移动 ----」至离水判定一整段；返回本帧输入向量模长 mag，null=中止本帧） */
 export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock: boolean): number | null {
+  if (eng.levelDef.id === 7) stepL7Events(eng, dt)
+  audio.setDeepPressure(eng.levelDef.id === 7 && eng.submerged ? Math.min(1, Math.max(0, (-eng.player.z - 30) / 170)) : 0, dt)
   const p = eng.player, m = eng.map!
+  // A scripted wall crossing owns position temporarily; gravity must not snap onto a wall/upper floor.
+  if(dullerControlsPlayer(eng))return 0
   // ---- 移动 ----
   const mag = Math.hypot(eng.input.mx, eng.input.my)
   let tileI = Math.floor(p.y) * m.w + Math.floor(p.x)
@@ -39,7 +45,9 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
     else if (gBand >= 1 && m.up[tileI] === 1 && p.z < FLOOR_H - 0.35) gBand = 0
   }
   // v13：液体状态（深水=可沉没游泳；浅水=减速涟漪）
-  const lq = band === 0 ? m.liquid[tileI] : 0
+  // v66：L7 水墙内（或刚离开水墙、仍在海面以上下坠）时，无论高度带都按深水处理
+  const l7WallLiquid = eng.levelDef.id === 7 && (eng.l7fx.wall || eng.l7fx.wallFall) && m.up[tileI] !== 1 && m.liquid[tileI] === 1
+  const lq = band === 0 || l7WallLiquid ? m.liquid[tileI] : 0
   if (lq !== eng.inLiquid) {
     if (lq === 1 && eng.inLiquid !== 1) { // 入水扑通（无液/浅水→深水；L7 入口房间浅水洼走出门廊即触发）
       audio.splash()
@@ -115,8 +123,8 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
     // 开发者面板现象开关：可强制触发/屏蔽植殖癌（无视所在区段）
     const inGarden = (realGarden || eng.dev.phenOn.has('plantcancer')) && !eng.dev.phenOff.has('plantcancer')
     eng.inGardenEff = inGarden
-    if (inGarden) eng.plantK = Math.min(1, eng.plantK + dt / 75)
-    else eng.plantK = Math.max(0, eng.plantK - dt / 37)
+    if (inGarden) eng.plantK = Math.min(1, eng.plantK + dt / 300)
+    else eng.plantK = Math.max(0, eng.plantK - dt / 150)
     const stages: [number, string][] = [
       [0.25, '你的关节有些发僵，像是很久没有活动过。'],
       [0.5, '视野的边缘泛起一层新绿。你的动作越来越迟缓了。'],
@@ -306,6 +314,27 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
     const waterG = l7Water ? 7.0 : 5.0
     const floorZ = m.l7SeaTerrain ? floorHeight(m, p.x, p.y, 0) : -(m.seaFloor?.[tileI] || POOL_DEPTH)
     const fastSwimVertical = wantSprint && l7Swim && mag > 0.1
+    // v66：L7 水面上限 = 海面 + 涌浪抬升；位于重力交界区水墙内时上限抬到墙顶（可顺着水墙游上去）
+    const l7f = l7Water ? eng.l7fx : null
+    const wall = l7f?.wall ?? null
+    const surfZ = 0.1 + (l7f ? Math.max(0, l7f.surgeH) : 0)
+    const ceilZ = wall ? wall.top - 1.7 : surfZ
+    if (l7f) {
+      if (wall) l7f.wallFall = p.z > surfZ + 0.3
+      // 墙内重力偏向墙体中面：轻微横向拉力（「侧着」漂在水墙里）
+      if (wall && p.z > 0.2) { p.x -= wall.nx * wall.perp * 0.7 * dt; p.y -= wall.ny * wall.perp * 0.7 * dt }
+    }
+    const airborne = !!l7f && !wall && p.z > surfZ + 0.05
+    if (airborne) {
+      // 离开水墙时已高出海面：按正常重力坠回海里
+      p.vz = Math.max(-28, p.vz - 11 * dt)
+      p.z += p.vz * dt
+      if (p.z <= surfZ) {
+        p.z = surfZ; p.vz = 0; l7f!.wallFall = false
+        audio.splash(); eng.splashParticles(p.x, p.y, 0)
+        eng.msg('你从水墙上摔回了海面。', 'system')
+      }
+    } else
     // v57q：取消被动浮力——只有主动操作才会改变深度。
     // v57t 优先级：快速游泳（严格按准星俯仰）> 蹲伏下潜 > 跳跃上浮 > 中性悬浮。
     if (fastSwimVertical) {
@@ -326,20 +355,22 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
       // v57r：无任何主动输入=完全中性悬浮。直接清零垂直速度，杜绝残余动量造成的自动上浮/下沉。
       p.vz = 0
     }
-    p.vz = Math.max(sinkMax, Math.min(upMax, p.vz))
-    p.z += p.vz * dt
+    if (!airborne) {
+      p.vz = Math.max(sinkMax, Math.min(upMax, p.vz))
+      p.z += p.vz * dt
+    }
     if (p.z <= floorZ) { p.z = floorZ; p.vz = 0 } // 池底/海床（v57o：L7 按瓦片深度）
-    if (p.z > 0.1) { p.z = 0.1; p.vz = 0 } // 不越出水面
+    if (p.z > ceilZ && !airborne) { p.z = ceilZ; p.vz = 0 } // 不越出水面（v66：涌浪/水墙抬升上限）
     // v57t：水面的自然漂浮起伏——无垂直输入时身体随波浪在 -0.1~0.1m 间浮动，
     // 而不是固定在 0.1m 像踩在固体平面上。
-    if (l7Water && !eng.input.jump && !eng.input.crouch && !fastSwimVertical && p.z > -0.12) {
+    if (l7Water && !wall && !airborne && !eng.input.jump && !eng.input.crouch && !fastSwimVertical && p.z > -0.12) {
       p.z = Math.max(-0.1, Math.min(0.1,
         Math.sin(eng.time * 1.35 + p.x * 0.7 + p.y * 0.55) * 0.09
-        + Math.sin(eng.time * 2.3 + p.y * 1.1) * 0.04))
+        + Math.sin(eng.time * 2.3 + p.y * 1.1) * 0.04)) + (l7f?.surgeH ?? 0)
       p.vz = 0
     }
     // 水下状态：屏气 + 低通滤波 + 气泡
-    const sub = p.z + 1.55 < 0
+    const sub = p.z + 1.55 < (wall ? wall.top : l7f ? l7f.surgeH : 0)
     if (sub && !eng.wasSubmerged) eng.msg('水没过了头顶——视野变成浑浊的蓝。', 'system')
     eng.submerged = sub
     eng.wasSubmerged = sub

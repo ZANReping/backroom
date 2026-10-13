@@ -1,16 +1,7 @@
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router'
-import { useEffect, type ReactNode } from 'react'
 import './index.css'
-import { failBoot, finishBoot } from './boot'
-
-function ReadyGate({ children }: { children: ReactNode }) {
-  useEffect(() => {
-    const frame = requestAnimationFrame(() => finishBoot())
-    return () => cancelAnimationFrame(frame)
-  }, [])
-  return children
-}
+import { failBoot } from './boot'
 
 const rootElement = document.getElementById('root')
 if (!rootElement) {
@@ -22,9 +13,7 @@ if (!rootElement) {
         onUncaughtError: (error) => failBoot(error),
       }).render(
         <BrowserRouter>
-          <ReadyGate>
-            <App />
-          </ReadyGate>
+          <App />
         </BrowserRouter>,
       )
     })

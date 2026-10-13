@@ -1,133 +1,26 @@
-// Procedural skies use identical pixel generation in a background Worker.
+// Dynamic volumetric skies; Worker bitmaps remain the stable reflection source.
 import * as THREE from 'three'
 import type { GameMap } from '../world/mapgen'
 import type { LevelDef } from '../core/types'
 import { SKY_PROFILES, rngFrom, smoothstep, D2R } from './skyPixels'
 import { skyTexture } from './skyTextureCache'
+import { SkySystem } from './skySystem'
 export { SKY_PROFILES } from './skyPixels'
 export type { SkyProfile } from './skyPixels'
 export { skyTexture } from './skyTextureCache'
-/** 天空盒网格：上半球（地平线以上），BackSide + fog:false + depthWrite:false。
+/** 天空盒网格：完整球面，BackSide + fog:false + depthWrite:false。
  *  半径恒定 42 < 相机 far 60——旧版按地图外包取半径（大地图 r≈80+），球面超出远平面
  *  被裁剪，与相机等距的球壳交界在视野里形成一个巨大黑色圆盖；改小后由 renderer
  *  每帧把球心移到玩家头顶（大气无视差，跟随即无限天空），任意尺寸地图均不再被裁。 */
-export function makeSkyMesh(m: GameMap, def: LevelDef): THREE.Mesh | null {
+export function makeSkyMesh(_m: GameMap, def: LevelDef): THREE.Mesh | null {
   const prof = SKY_PROFILES[def.id]
   if (!prof) return null
-  if (def.id === 9 || def.id === 10 || def.id === 11) {
-    // L9 使用完整球壳上的方向采样，并叠加两层连续三维噪声阴云。旧立方体即使按方向
-    // 采样，低亮度时六个盒面和每面的三角对角线仍会被辨认成“贴图接缝”。
-    const body = prof.moon
-    const phi = body ? (body.az / 360 - .5) * Math.PI * 2 : 0
-    const elv = body ? body.elv * Math.PI / 180 : Math.PI / 4
-    const moonDir = new THREE.Vector3(Math.cos(phi) * Math.cos(elv), Math.sin(elv), Math.sin(phi) * Math.cos(elv))
-    const mat = new THREE.ShaderMaterial({
-      uniforms: {
-        uTime: { value: 0 },
-        uBody: { value: def.id === 11 ? 0 : 1 },
-        uMoonDir: { value: moonDir },
-        uFarm: { value: def.id === 10 || def.id === 11 ? 1 : 0 },
-        uFogMix: { value: 0 },
-        uFogColor: { value: new THREE.Color('#697278') },
-      },
-      vertexShader: `
-        varying vec3 vSkyDir;
-        void main() {
-          vSkyDir = normalize(position);
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-      `,
-      fragmentShader: `
-        uniform float uTime;
-        uniform float uBody;
-        uniform float uFarm;
-        uniform vec3 uMoonDir;
-        uniform float uFogMix;
-        uniform vec3 uFogColor;
-        varying vec3 vSkyDir;
-        float hash31(vec3 p) {
-          p = fract(p * 0.1031);
-          p += dot(p, p.yzx + 33.33);
-          return fract((p.x + p.y) * p.z);
-        }
-        float noise3(vec3 p) {
-          vec3 i = floor(p), f = fract(p);
-          f = f * f * (3.0 - 2.0 * f);
-          float n000 = hash31(i + vec3(0.0,0.0,0.0));
-          float n100 = hash31(i + vec3(1.0,0.0,0.0));
-          float n010 = hash31(i + vec3(0.0,1.0,0.0));
-          float n110 = hash31(i + vec3(1.0,1.0,0.0));
-          float n001 = hash31(i + vec3(0.0,0.0,1.0));
-          float n101 = hash31(i + vec3(1.0,0.0,1.0));
-          float n011 = hash31(i + vec3(0.0,1.0,1.0));
-          float n111 = hash31(i + vec3(1.0,1.0,1.0));
-          return mix(mix(mix(n000,n100,f.x),mix(n010,n110,f.x),f.y),
-                     mix(mix(n001,n101,f.x),mix(n011,n111,f.x),f.y),f.z);
-        }
-        void main() {
-          vec3 d = normalize(vSkyDir);
-          // L9 不再读取 skyTexture(9) 的旧等距柱状画布。底色直接按真实仰角生成，
-          // 地平线、低云与天顶之间没有任何图片边界或旧月盘残留。
-          float height = clamp(d.y, 0.0, 1.0);
-          float vertical = smoothstep(0.0, 0.82, pow(height, .62));
-          vec3 horizonColor = mix(vec3(.066, .079, .088), vec3(.43, .46, .47), uFarm);
-          vec3 zenithColor = mix(vec3(.012, .022, .032), vec3(.29, .32, .34), uFarm);
-          vec3 sky = mix(horizonColor, zenithColor, vertical);
-          sky += mix(vec3(.035, .039, .043), vec3(.10, .105, .105), uFarm) * exp(-height * 9.0);
-          // 球面方向上的噪声没有经纬接缝；两层以不同速度/高度漂移，产生真实的云层视差。
-          float upper = smoothstep(-0.04, 0.22, d.y);
-          // 每像素只进行一次三维 value-noise；细节层用连续方向波补足，避免天空着色器
-          // 在高分辨率下成为新的性能瓶颈。
-          float slow = noise3(d * 3.8 + vec3(uTime * .005, .7, -uTime * .002));
-          float fast = .5 + .5 * sin(d.x * 17.0 + sin(d.z * 11.0 - uTime * .013) + d.y * 8.0 + uTime * .009);
-          float cloudField = slow * .74 + fast * .26;
-          float cloud = mix(smoothstep(.35, .73, cloudField), smoothstep(.18, .58, cloudField), uFarm) * upper;
-          vec3 cloudDark = mix(vec3(.055, .066, .074), vec3(.25, .28, .29), uFarm);
-          vec3 cloudSilver = mix(vec3(.145, .158, .166), vec3(.52, .54, .54), uFarm);
-          vec3 cloudColor = mix(cloudDark, cloudSilver, smoothstep(.35, .82, fast));
-
-          // L9 月盘 / L10 云后太阳都按真实天空方向重建，不使用始终正对镜头的白色圆片。
-          vec3 md = normalize(uMoonDir);
-          vec3 mr = normalize(cross(vec3(0.0,1.0,0.0), md));
-          vec3 mu = normalize(cross(md, mr));
-          float moonRad = mix(.040, .052, uFarm);
-          float moonDot = dot(d, md);
-          vec2 mp = vec2(dot(d, mr), dot(d, mu)) / sin(moonRad);
-          float disc = 1.0 - smoothstep(.91, 1.045, length(mp));
-          float crater = .5;
-          if (disc > .001) crater = noise3(vec3(mp * 3.6, 11.0));
-          vec3 moonColor = mix(vec3(.56,.59,.62), vec3(.86,.88,.90), smoothstep(.24,.78,crater));
-          vec3 sunColor = vec3(1.0, .965, .87);
-          float moonHalo = pow(max(moonDot, 0.0), 170.0) * .2 + pow(max(moonDot, 0.0), 620.0) * .34;
-          float sunHalo = pow(max(moonDot, 0.0), 38.0) * .23 + pow(max(moonDot, 0.0), 260.0) * .28;
-          sky += mix(vec3(.43,.50,.57) * moonHalo, vec3(.78,.72,.60) * sunHalo, uFarm) * uBody;
-          sky = mix(sky, mix(moonColor, sunColor, uFarm), disc * mix(.86, .38, uFarm) * uBody);
-          // 阴云最后覆盖天体：L10 太阳会随云层厚度变成真实的漫射亮斑。
-          sky = mix(sky, cloudColor, cloud * mix(.34 + .28 * slow, .62 + .24 * slow, uFarm));
-          // 浓雾事件直接作用于天空本身；否则 fog:false 的远景会永远清晰地浮在雾墙后。
-          float fk = smoothstep(0.02, 0.96, uFogMix);
-          sky = mix(sky, uFogColor, fk);
-          gl_FragColor = vec4(sky, 1.0);
-        }
-      `,
-      side: THREE.BackSide,
-      depthWrite: false,
-      depthTest: true,
-      fog: false,
-    })
-    const mesh = new THREE.Mesh(new THREE.SphereGeometry(42, 64, 32), mat)
-    mesh.name = 'skybox'
-    mesh.renderOrder = -1000
-    mesh.frustumCulled = false
-    mesh.position.set(m.w / 2, 1.65, m.h / 2)
-    return mesh
-  }
-  const geo = new THREE.SphereGeometry(42, 48, 24, 0, Math.PI * 2, 0, Math.PI / 2)
-  const mat = new THREE.MeshBasicMaterial({ map: skyTexture(def.id), side: THREE.BackSide, fog: false, depthWrite: false })
-  const mesh = new THREE.Mesh(geo, mat)
-  mesh.name = 'skybox'
-  mesh.position.set(m.w / 2, 5.5, m.h / 2)
-  return mesh
+  // v65：所有户外层级统一走「天空底色 + 时间切片体积云全景」系统（见 skySystem.ts）。
+  const sky = new SkySystem(def.id, skyLightDir(def.id))
+  // 环境反射探针仍使用 Worker 预烘的等距柱状天空（静态、低频，足够做 PBR 反射）；
+  // L9~L11 一直使用调色渐变探针，保持不变。
+  if (def.id !== 9 && def.id !== 10 && def.id !== 11) sky.mesh.material && ((sky.mesh.material as THREE.Material).userData.skyTexture = skyTexture(def.id))
+  return sky.mesh
 }
 
 /** 日/月光照方向（世界单位向量），与天空盒上的光源方位一致 */
@@ -271,7 +164,7 @@ export function makeMirageFleet(defId: number): MirageFleet | null {
  * 显隐：120s 周期内按（船,周期）哈希随机开一扇 16~46s 的显现窗（带 7~13s 淡入淡出），
  * 占空约 15~38%——大部分时间完全隐没；雾幕即使船隐没也缓慢漂流（更淡），hideK=1（水下）全隐。
  */
-export function updateMirageFleet(fleet: MirageFleet, t: number, camPos: THREE.Vector3, hideK: number) {
+export function updateMirageFleet(fleet: MirageFleet, t: number, camPos: THREE.Vector3, hideK: number, clarity = 0) {
   for (const s of fleet.ships) {
     // —— 随机慢频率显隐窗口（确定性：同船同周期恒定） ——
     const CYCLE = 120
@@ -284,6 +177,8 @@ export function updateMirageFleet(fleet: MirageFleet, t: number, camPos: THREE.V
     const fade = 7 + rnd() * 6
     let vis = smoothstep(start, start + fade, lt) * (1 - smoothstep(start + dur - fade, start + dur, lt))
     vis *= 0.85 + 0.15 * Math.sin(t * 0.11 + s.phase * 2.0) // 显现中的轻微呼吸
+    // v66：比普综合症——远海停留越久，船显现得越频繁、越清晰（clarity 0..1）
+    vis = Math.max(vis, clarity * clarity * 0.8 * (0.75 + 0.25 * Math.sin(t * 0.07 + s.phase)))
     // —— 方位/距离：以玩家为锚，永不靠近 ——
     const az = (s.az + Math.sin(t * 0.011 + s.phase * 3.1) * 4.5) * D2R
     const dist = s.dist + Math.sin(t * 0.017 + s.phase) * 2.5
@@ -291,7 +186,7 @@ export function updateMirageFleet(fleet: MirageFleet, t: number, camPos: THREE.V
     g.position.set(camPos.x + Math.cos(az) * dist, s.baseY + Math.sin(t * 0.05 + s.phase * 2.0) * 0.22, camPos.z + Math.sin(az) * dist)
     g.lookAt(camPos.x, g.position.y, camPos.z) // 圆柱式朝向（始终舷侧对玩家，剪影完整）
     g.rotateZ(Math.sin(t * 0.043 + s.phase * 1.7) * 0.022) // 幽灵船般的缓慢横摇
-    const op = vis * 0.34 * (1 - hideK)
+    const op = vis * 0.34 * (1 + clarity * 1.3) * (1 - hideK)
     s.mat.opacity = op
     g.visible = op > 0.004
     // —— 雾幕：船前 3~5m 的软雾团，沿舷侧缓慢漂过；船隐没时雾幕仍在（更淡）——迷雾笼盖 ——
@@ -308,7 +203,7 @@ export function updateMirageFleet(fleet: MirageFleet, t: number, camPos: THREE.V
     )
     v.lookAt(camPos.x, v.position.y, camPos.z)
     const veilPulse = 0.5 + 0.5 * Math.sin(t * 0.031 + s.phase * 6.1)
-    s.veilMat.opacity = (0.07 + 0.13 * veilPulse + vis * 0.14) * (1 - hideK)
+    s.veilMat.opacity = (0.07 + 0.13 * veilPulse + vis * 0.14) * (1 - clarity * 0.5) * (1 - hideK)
     v.visible = s.veilMat.opacity > 0.01
   }
 }

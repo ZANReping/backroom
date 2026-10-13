@@ -6,6 +6,23 @@ import { l5NestLayout } from '../world/infiniteL5'
 // Spatial light isolation, including classic mode where lamps have no shadow maps.
 // One lookup per surface, no extra draw calls / render targets / shader variants per door.
 const MAX_NESTS = 32
+// Keep only sampler-indexed shadow lights unrolled. Expanding the entire PBR
+// equation (up to 96 lights) plus portal masks makes ANGLE spend minutes in
+// compilation on first entry. Non-shadowed lights can use a uniform-bounded
+// loop, with the same order, attenuation and BRDF as Three's original block.
+const pointLoop = /#pragma unroll_loop_start\s+for \( int i = 0; i < NUM_POINT_LIGHTS; i \+\+ \) \{[\s\S]*?#pragma unroll_loop_end/
+const lightingChunk = THREE.ShaderChunk.lights_fragment_begin.replace(pointLoop, loop =>
+  loop.replace('i < NUM_POINT_LIGHTS', 'i < NUM_POINT_LIGHT_SHADOWS')
+    .replace('getPointLightInfo( pointLight, geometryPosition, directLight );', `getPointLightInfo( pointLight, geometryPosition, directLight );
+      directLight.color *= l5PortalLight((l5NestCameraWorld * vec4(pointLight.position, 1.0)).xyz, l5ReceiverNest);`) + `
+  for (int j = NUM_POINT_LIGHT_SHADOWS; j < l5LightLoopLimit; j++) {
+    if (j >= NUM_POINT_LIGHTS) break;
+    pointLight = pointLights[j];
+    getPointLightInfo(pointLight, geometryPosition, directLight);
+    directLight.color *= l5PortalLight((l5NestCameraWorld * vec4(pointLight.position, 1.0)).xyz, l5ReceiverNest);
+    RE_Direct(directLight, geometryPosition, geometryNormal, geometryViewDir, geometryClearcoatNormal, material, reflectedLight);
+  }
+`)
 const fragment = /* glsl */`
 uniform int l5NestCount;
 uniform int l5PlayerNest;
@@ -138,13 +155,6 @@ export class L5NestLighting {
           l5SurfaceWorld = (l5NestCameraWorld * vec4(-vViewPosition, 1.0)).xyz;
           int l5ReceiverNest = l5NestAt(l5SurfaceWorld);
           float l5AmbientKeep = l5NestAmbient(l5ReceiverNest);
-          #if NUM_POINT_LIGHTS > 0
-            float l5PointMask[NUM_POINT_LIGHTS];
-            for (int j = 0; j < l5LightLoopLimit; j++) {
-              if (j >= NUM_POINT_LIGHTS) break;
-              l5PointMask[j] = l5PortalLight((l5NestCameraWorld * vec4(pointLights[j].position, 1.0)).xyz, l5ReceiverNest);
-            }
-          #endif
           #if NUM_SPOT_LIGHTS > 0
             float l5SpotMask[NUM_SPOT_LIGHTS];
             for (int j = 0; j < l5LightLoopLimit; j++) {
@@ -152,9 +162,7 @@ export class L5NestLighting {
               l5SpotMask[j] = l5PortalLight((l5NestCameraWorld * vec4(spotLights[j].position, 1.0)).xyz, l5ReceiverNest);
             }
           #endif
-          ${THREE.ShaderChunk.lights_fragment_begin
-            .replace('getPointLightInfo( pointLight, geometryPosition, directLight );', `getPointLightInfo( pointLight, geometryPosition, directLight );
-              directLight.color *= l5PointMask[ i ];`)
+          ${lightingChunk
             .replace('getSpotLightInfo( spotLight, geometryPosition, directLight );', `getSpotLightInfo( spotLight, geometryPosition, directLight );
               directLight.color *= l5SpotMask[ i ];`)
             .replace('getDirectionalLightInfo( directionalLight, directLight );', `getDirectionalLightInfo( directionalLight, directLight );
@@ -165,7 +173,7 @@ export class L5NestLighting {
           reflectedLight.indirectSpecular *= l5AmbientKeep;`)
         .replace('#include <fog_fragment>', THREE.ShaderChunk.fog_fragment.replace('fogColor, fogFactor', 'fogColor * l5AmbientKeep, fogFactor'))
     }
-    material.customProgramCacheKey = () => key + '|l5-nest-light-v3'
+    material.customProgramCacheKey = () => key + '|l5-nest-light-v4'
     material.needsUpdate = true
   }
 }

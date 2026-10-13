@@ -39,7 +39,7 @@ export function npcPortrait(cfg: AvatarCfg, npcId?: string, npcDef?: NpcDef, siz
   rim.position.set(-2, 1.4, -1.6)
   scene.add(rim)
   const entityPreview = buildNpcEntityPreview(npcId)
-  const model = entityPreview ?? buildPlayerModel(cfg, {})
+  const model = entityPreview ?? buildPlayerModel(cfg)
   // NPC 档案：BRC 黑影摘脸 / 制服徽章 + 标志性配饰（与游戏内 renderer 同一约定）
   if (npcId && !entityPreview) {
     if (npcDef?.faction === 'brc') {

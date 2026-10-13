@@ -241,36 +241,103 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
       {/* v29b：快捷使用 + 滚轮模拟按钮组（仅移动端渲染本组件；锚在摇杆侧底角，远离右侧交互/背包按钮簇与底部快捷栏，
           ≥48px 触摸目标，safe-area 适配；按钮本身是触摸目标并 stopPropagation，不会误触发浮点摇杆） */}
       <div
-        className={`absolute ${side === 'left' ? 'left-3' : 'right-3'} flex flex-col items-center gap-2.5`}
-        style={{ bottom: landscape ? 'calc(env(safe-area-inset-bottom) + 88px)' : 'calc(env(safe-area-inset-bottom) + 148px)' }}
+        className={`absolute ${side === 'left' ? 'left-3' : 'right-3'} ${landscape ? 'tc-quick-land' : 'flex flex-col items-center gap-2.5'}`}
+        style={landscape
+          ? { bottom: 'calc(env(safe-area-inset-bottom) + 104px)', [side]: 'calc(env(safe-area-inset-' + side + ') + 12px)' }
+          : { bottom: 'calc(env(safe-area-inset-bottom) + 148px)' }}
       >
         <button
           aria-label="快捷栏上一切换（模拟滚轮上）"
-          className="flex items-center justify-center rounded-full active:scale-90"
-          style={{ ...btnBase, width: 48, height: 48 }}
+          className="tc-wheel flex items-center justify-center rounded-full active:scale-90"
+          style={{ ...btnBase, width: landscape ? 44 : 48, height: landscape ? 44 : 48 }}
           onTouchStart={(e) => { e.stopPropagation(); cycleSlot(-1) }}
         >
           <IconWheelUp width={22} height={22} />
         </button>
         <button
           aria-label="快捷栏下一切换（模拟滚轮下）"
-          className="flex items-center justify-center rounded-full active:scale-90"
-          style={{ ...btnBase, width: 48, height: 48 }}
+          className="tc-wheel flex items-center justify-center rounded-full active:scale-90"
+          style={{ ...btnBase, width: landscape ? 44 : 48, height: landscape ? 44 : 48 }}
           onTouchStart={(e) => { e.stopPropagation(); cycleSlot(1) }}
         >
           <IconWheelDown width={22} height={22} />
         </button>
         <button
           aria-label="快捷使用（等同于 PC 右键）"
-          className="flex items-center justify-center rounded-full active:scale-90"
+          className="tc-quickuse flex items-center justify-center rounded-full active:scale-90"
           style={{ ...btnBase, width: 56, height: 56, borderColor: 'var(--amber)', color: 'var(--amber)' }}
           onTouchStart={(e) => { e.stopPropagation(); quickUse() }}
         >
           <IconQuickUse width={24} height={24} />
         </button>
       </div>
-      {/* 默认按钮组（未被自定义的按钮保持原排布；横屏弧形）*/}
-      {(!isCustom('backpack') || !isCustom('flashlight') || !isCustom('crouch') || !isCustom('sprint') || !isCustom('jump') || !isCustom('attack')) && (
+      {/* 2026-10 横屏：以攻击/交互键为圆心的拇指扇形——内圈（r=92）跳跃/冲刺/蹲伏，外圈（r=164）手电/背包；
+          整组贴屏幕右下角（左手模式镜像），不再竖向堆到小地图与电量行，避开底部快捷栏。仅未自定义的按钮参与。 */}
+      {landscape && (
+        <div className="tc-arc pointer-events-none absolute" style={{ bottom: 'calc(env(safe-area-inset-bottom) + 16px)', [settings.leftHanded ? 'left' : 'right']: 'calc(env(safe-area-inset-' + (settings.leftHanded ? 'left' : 'right') + ') + 16px)', width: 76, height: 76 }}>
+          {([
+            ['jump', 56, 180, 92],
+            ['sprint', 56, 136, 92],
+            ['crouch', 56, 92, 92],
+            ['flashlight', 48, 168, 164],
+            ['backpack', 48, 140, 166],
+          ] as const).filter(([id]) => !isCustom(id)).map(([id, size, deg, r]) => {
+            const rad = (deg * Math.PI) / 180
+            const dx = Math.cos(rad) * r * (settings.leftHanded ? -1 : 1)
+            const dy = -Math.sin(rad) * r
+            const common = { ...btnBase, position: 'absolute' as const, width: size, height: size, left: 38 + dx - size / 2, top: 38 + dy - size / 2 }
+            const label = { jump: '跳', sprint: '冲刺', crouch: '蹲', flashlight: '手电', backpack: '背包' }[id]
+            if (id === 'jump') return (
+              <button key={id} aria-label="跳跃" data-label={label} className="tc-btn pointer-events-auto flex items-center justify-center rounded-full active:scale-90" style={common}
+                onTouchStart={(e) => { e.stopPropagation(); setJump(true) }} onTouchEnd={(e) => { e.stopPropagation(); setJump(false) }} onTouchCancel={(e) => { e.stopPropagation(); setJump(false) }}>
+                <IconJump width={24} height={24} />
+              </button>
+            )
+            if (id === 'sprint') return (
+              <button key={id} aria-label="冲刺（按住）" data-label={label} className={`tc-btn pointer-events-auto flex items-center justify-center rounded-full active:scale-90 ${sprintHold ? 'is-on' : ''}`} style={{ ...common, color: sprintHold ? 'var(--stamina)' : 'var(--text)', borderColor: sprintHold ? 'var(--stamina)' : 'var(--panel-edge)' }}
+                onTouchStart={(e) => { e.stopPropagation(); setSprintHold(true) }} onTouchEnd={(e) => { e.stopPropagation(); setSprintHold(false) }} onTouchCancel={(e) => { e.stopPropagation(); setSprintHold(false) }}>
+                <IconSprint width={22} height={22} />
+              </button>
+            )
+            if (id === 'crouch') return (
+              <button key={id} aria-label="蹲伏（切换）" data-label={label} className={`tc-btn pointer-events-auto flex items-center justify-center rounded-full active:scale-90 ${crouchOn ? 'is-on' : ''}`}
+                style={{ ...common, color: crouchOn ? 'var(--amber)' : 'var(--text)', borderColor: crouchOn ? 'var(--amber)' : 'var(--panel-edge)', boxShadow: crouchOn ? 'inset 0 0 8px color-mix(in srgb, var(--amber) 50%, transparent)' : 'none' }}
+                onTouchStart={(e) => { e.stopPropagation(); toggleCrouch() }}>
+                <IconCrouch width={24} height={24} />
+              </button>
+            )
+            if (id === 'flashlight') return (
+              <button key={id} aria-label="手电筒" data-label={label} className={`tc-btn tc-btn--sm pointer-events-auto flex items-center justify-center rounded-full active:scale-90 ${engine.player.flashlight ? 'is-on' : ''}`} style={{ ...common, color: engine.player.flashlight ? 'var(--amber)' : 'var(--text-dim)' }}
+                onTouchStart={(e) => { e.stopPropagation(); engine.input.toggleLight = true }}>
+                <IconFlashlight width={20} height={20} />
+              </button>
+            )
+            return (
+              <button key={id} aria-label="背包" data-label={label} className="tc-btn tc-btn--sm pointer-events-auto flex items-center justify-center rounded-full active:scale-90" style={common}
+                onTouchStart={(e) => { e.stopPropagation(); onInventory() }}>
+                <IconBackpack width={20} height={20} />
+              </button>
+            )
+          })}
+          {!isCustom('attack') && (
+            <button
+              aria-label={interact ? '交互' : '攻击'}
+              data-label={interact ? '交互' : '攻击'}
+              className={`tc-btn tc-btn--main pointer-events-auto absolute inset-0 flex items-center justify-center rounded-full active:scale-90 ${interact ? 'anim-pulseAmber' : ''}`}
+              style={{ ...btnBase, borderColor: 'var(--amber)', color: 'var(--amber)', borderWidth: 2 }}
+              onTouchStart={(e) => {
+                e.stopPropagation()
+                if (engine.getInteract()) engine.input.interact = true
+                else engine.input.attack = true
+              }}
+            >
+              {interact ? <IconInteract width={32} height={32} /> : <IconAttack width={32} height={32} />}
+            </button>
+          )}
+        </div>
+      )}
+      {/* 默认按钮组（竖屏；未被自定义的按钮保持原排布）*/}
+      {!landscape && (!isCustom('backpack') || !isCustom('flashlight') || !isCustom('crouch') || !isCustom('sprint') || !isCustom('jump') || !isCustom('attack')) && (
         <div
           className={`absolute ${clusterSide} flex flex-col items-center gap-3`}
           style={{ bottom: landscape ? 'calc(env(safe-area-inset-bottom) + 24px)' : 'calc(env(safe-area-inset-bottom) + 76px)' }}

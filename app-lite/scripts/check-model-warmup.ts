@@ -9,7 +9,8 @@ const flush = async () => { for (let i=0;i<12;i++) await Promise.resolve() }
 const geometry = new THREE.BoxGeometry(), material = new THREE.MeshLambertMaterial()
 const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(), queue = new ModelWarmupQueue()
 const calls: {objects: THREE.Object3D[], resolve: () => void, reject: () => void}[] = []
-const renderer = { info: { programs: [] }, compileAsync(view: THREE.Object3D, c: THREE.Camera, s: THREE.Scene) {
+let renderTarget: THREE.WebGLRenderTarget | null = null
+const renderer = { info: { programs: [] }, getRenderTarget() { return renderTarget }, setRenderTarget(target: THREE.WebGLRenderTarget | null) { renderTarget = target }, compileAsync(view: THREE.Object3D, c: THREE.Camera, s: THREE.Scene) {
   check(c===camera && s===scene, 'compiler uses the live camera and scene lighting')
   const objects: THREE.Object3D[] = [];view.traverse(o=>objects.push(o))
   return new Promise<void>((resolve,reject)=>calls.push({objects,resolve,reject:()=>reject(new Error('driver unavailable'))}))
@@ -54,7 +55,7 @@ try {
   for(const c of calls.slice(before))c.reject()
   await flush();advance(2)
   check(queue.ready(a),'rejected asynchronous compilation permits normal rendering fallback')
-  const failed = new ModelWarmupQueue(), throwing = {compileAsync(){throw new Error('synchronous failure')}} as unknown as THREE.WebGLRenderer
+  const failed = new ModelWarmupQueue(), throwing = { getRenderTarget() { return null }, setRenderTarget(_target: THREE.WebGLRenderTarget | null) {}, compileAsync(){throw new Error('synchronous failure')}} as unknown as THREE.WebGLRenderer
   failed.enqueue(a,throwing,camera,scene);failed.advance()
   assert.throws(()=>failed.advance(),/synchronous failure/);checks++
   check(!a.visible,'synchronous compiler failure restores hidden visibility')

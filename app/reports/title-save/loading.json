@@ -1,0 +1,271 @@
+{
+  "status": "passed",
+  "checks": [
+    "owned browser uses true headless mode and dedicated profile",
+    "empty-save-level0: actual scene is level 0",
+    "empty-save-level0: menu never precedes ready scene",
+    "latest-auto-level4: actual scene is level 4",
+    "latest-auto-level4: menu never precedes ready scene",
+    "title preview leaves snapshots and live player untouched",
+    "Continue summary and scene choose the same latest slot",
+    "delayed texture loading starts under boot screen while menu stays hidden",
+    "no uncaught runtime exceptions"
+  ],
+  "shots": [
+    "empty-save-level0",
+    "boot-preparing-level4",
+    "latest-auto-level4"
+  ],
+  "errors": [],
+  "network": [],
+  "audit": [
+    {
+      "label": "empty-save-level0",
+      "premature": false,
+      "firstFrame": 21430.300000000745,
+      "menu": 26244.199999999255,
+      "bootRemoved": 6552.199999999255,
+      "seed": "1337",
+      "viewport": [
+        1440,
+        900
+      ],
+      "settings": {
+        "difficulty": "normal",
+        "autoSprint": false,
+        "grain": true,
+        "shake": true,
+        "headBob": false,
+        "realWater": false,
+        "flicker": 0,
+        "eyeAdaptation": true,
+        "renderResolution": "native",
+        "renderScale": 100,
+        "dynamicRes": false,
+        "dynamicResTarget": 60,
+        "shadows": true,
+        "fogOfWar": true,
+        "maxPixelRatio": 1,
+        "sceneLightLimit": 16,
+        "chunkBudgetMs": 3,
+        "loadingBudgetMs": 6,
+        "hudRefreshRate": 8,
+        "textureQuality": 1,
+        "detailDistance": 100,
+        "wallOcclusion": true,
+        "particleDensity": 100,
+        "shadowUpdateRate": 1,
+        "cameraFov": 72,
+        "vcrFx": false,
+        "vcrStrength": 100,
+        "vcrScanlines": true,
+        "fogScale": 100,
+        "darknessBoost": 0,
+        "farLights": false,
+        "lightMode": "classic",
+        "shadowQuality": 1,
+        "sunShadows": true,
+        "lightShadows": 2,
+        "ambientOcclusion": 1,
+        "reflectivity": 60,
+        "bloomFx": true,
+        "bloomStrength": 35,
+        "exposure": 100,
+        "grainStrength": 12,
+        "scanlineStrength": 0,
+        "vignetteStrength": 18,
+        "colorGrade": "neutral",
+        "volume": 80,
+        "ambient": 50,
+        "bgm": 100,
+        "sfx": 90,
+        "muted": false,
+        "bgmStyle": "procedural",
+        "newGameSeed": "",
+        "leftHanded": false,
+        "stickSize": 120,
+        "btnOpacity": 70,
+        "sensitivity": 1,
+        "devMode": true,
+        "theme": "amber",
+        "uiPresentation": "classic",
+        "llmEndpoint": "",
+        "llmApiKey": "",
+        "llmModel": ""
+      }
+    },
+    {
+      "label": "latest-auto-level4",
+      "premature": false,
+      "firstFrame": 2720.099999997765,
+      "menu": 12319,
+      "bootRemoved": 101.59999999776483,
+      "seed": "20261008",
+      "viewport": [
+        1440,
+        900
+      ],
+      "settings": {
+        "difficulty": "normal",
+        "autoSprint": false,
+        "grain": true,
+        "shake": true,
+        "headBob": false,
+        "realWater": false,
+        "flicker": 0,
+        "eyeAdaptation": true,
+        "renderResolution": "native",
+        "renderScale": 100,
+        "dynamicRes": false,
+        "dynamicResTarget": 60,
+        "shadows": true,
+        "fogOfWar": true,
+        "maxPixelRatio": 1,
+        "sceneLightLimit": 16,
+        "chunkBudgetMs": 3,
+        "loadingBudgetMs": 6,
+        "hudRefreshRate": 8,
+        "textureQuality": 1,
+        "detailDistance": 100,
+        "wallOcclusion": true,
+        "particleDensity": 100,
+        "shadowUpdateRate": 1,
+        "cameraFov": 72,
+        "vcrFx": false,
+        "vcrStrength": 100,
+        "vcrScanlines": true,
+        "fogScale": 100,
+        "darknessBoost": 0,
+        "farLights": false,
+        "lightMode": "classic",
+        "shadowQuality": 1,
+        "sunShadows": true,
+        "lightShadows": 2,
+        "ambientOcclusion": 1,
+        "reflectivity": 60,
+        "bloomFx": true,
+        "bloomStrength": 35,
+        "exposure": 100,
+        "grainStrength": 12,
+        "scanlineStrength": 0,
+        "vignetteStrength": 18,
+        "colorGrade": "neutral",
+        "volume": 80,
+        "ambient": 50,
+        "bgm": 100,
+        "sfx": 90,
+        "muted": false,
+        "bgmStyle": "procedural",
+        "newGameSeed": "",
+        "leftHanded": false,
+        "stickSize": 120,
+        "btnOpacity": 70,
+        "sensitivity": 1,
+        "devMode": true,
+        "theme": "amber",
+        "uiPresentation": "classic",
+        "llmEndpoint": "",
+        "llmApiKey": "",
+        "llmModel": ""
+      }
+    }
+  ],
+  "delayed": [
+    {
+      "url": "http://127.0.0.1:3188/textures/l4/dirty_carpet_Color.jpg",
+      "boot": true,
+      "menu": false,
+      "scene": "4"
+    },
+    {
+      "url": "http://127.0.0.1:3188/textures/l4/dirty_carpet_NormalGL.jpg",
+      "boot": true,
+      "menu": false,
+      "scene": "4"
+    },
+    {
+      "url": "http://127.0.0.1:3188/textures/l4/ceiling_interior_Color.jpg",
+      "boot": true,
+      "menu": false,
+      "scene": "4"
+    },
+    {
+      "url": "http://127.0.0.1:3188/textures/l4/ceiling_interior_NormalGL.jpg",
+      "boot": true,
+      "menu": false,
+      "scene": "4"
+    },
+    {
+      "url": "http://127.0.0.1:3188/textures/l4/white_plaster_02_Color.jpg",
+      "boot": true,
+      "menu": false,
+      "scene": "4"
+    },
+    {
+      "url": "http://127.0.0.1:3188/textures/l4/white_plaster_02_NormalGL.jpg",
+      "boot": true,
+      "menu": false,
+      "scene": "4"
+    },
+    {
+      "url": "http://127.0.0.1:3188/textures/l4/denim_fabric_Color.jpg",
+      "boot": true,
+      "menu": false,
+      "scene": "4"
+    },
+    {
+      "url": "http://127.0.0.1:3188/textures/l4/denim_fabric_NormalGL.jpg",
+      "boot": true,
+      "menu": false,
+      "scene": "4"
+    },
+    {
+      "url": "http://127.0.0.1:3188/textures/l4/white_plaster_02_Color.jpg",
+      "boot": true,
+      "menu": false,
+      "scene": "4"
+    },
+    {
+      "url": "http://127.0.0.1:3188/textures/l4/ceiling_interior_Color.jpg",
+      "boot": true,
+      "menu": false,
+      "scene": "4"
+    },
+    {
+      "url": "http://127.0.0.1:3188/textures/l4/white_plaster_02_NormalGL.jpg",
+      "boot": true,
+      "menu": false,
+      "scene": "4"
+    },
+    {
+      "url": "http://127.0.0.1:3188/textures/l4/dirty_carpet_NormalGL.jpg",
+      "boot": true,
+      "menu": false,
+      "scene": "4"
+    },
+    {
+      "url": "http://127.0.0.1:3188/textures/l4/ceiling_interior_NormalGL.jpg",
+      "boot": true,
+      "menu": false,
+      "scene": "4"
+    },
+    {
+      "url": "http://127.0.0.1:3188/textures/l4/denim_fabric_Color.jpg",
+      "boot": true,
+      "menu": false,
+      "scene": "4"
+    },
+    {
+      "url": "http://127.0.0.1:3188/textures/l4/denim_fabric_NormalGL.jpg",
+      "boot": true,
+      "menu": false,
+      "scene": "4"
+    },
+    {
+      "url": "http://127.0.0.1:3188/textures/l4/dirty_carpet_Color.jpg",
+      "boot": true,
+      "menu": false,
+      "scene": "4"
+    }
+  ]
+}

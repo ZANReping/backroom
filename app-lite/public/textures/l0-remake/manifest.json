@@ -1,0 +1,194 @@
+[
+  {
+    "material": "wall",
+    "source": "../assets/l0-materials/wall-v4.png",
+    "sourceSHA256": "468f3f8b19e171ed06c7d7357cd50948cbf3279d59163b0e3353a0b43fd0658b",
+    "repeat": 1,
+    "horizontalRepeats": 1,
+    "color": 1024,
+    "normal": 512,
+    "roughness": 512,
+    "normalConvention": "OpenGL +Y"
+  },
+  {
+    "material": "dots",
+    "source": "../public/textures/l4/white_plaster_02_Color.jpg",
+    "sourceSHA256": "a1ebbe091bd1ae93d2abd5de8d69f9003a8d0ee6532bcf9a87c2492c97051f23",
+    "repeat": 1,
+    "horizontalRepeats": 1,
+    "color": 1024,
+    "normal": 512,
+    "roughness": 512,
+    "normalConvention": "OpenGL +Y"
+  },
+  {
+    "material": "manila",
+    "source": "../assets/l0-materials/manila-v2.png",
+    "sourceSHA256": "667885e4e3ed5b74f9749fd9ec2ad0f7a2dff76428ea4b3ffcadb25f7b04f74d",
+    "repeat": 1,
+    "horizontalRepeats": 1,
+    "color": 1024,
+    "normal": 512,
+    "roughness": 512,
+    "normalConvention": "OpenGL +Y"
+  },
+  {
+    "material": "manila-ceiling",
+    "source": "../public/textures/l4/white_plaster_02_Color.jpg",
+    "sourceSHA256": "a1ebbe091bd1ae93d2abd5de8d69f9003a8d0ee6532bcf9a87c2492c97051f23",
+    "repeat": 1,
+    "horizontalRepeats": 1,
+    "color": 1024,
+    "normal": 512,
+    "roughness": 512,
+    "normalConvention": "OpenGL +Y"
+  },
+  {
+    "material": "diffuser",
+    "source": "../public/textures/l4/white_plaster_02_Color.jpg",
+    "sourceSHA256": "a1ebbe091bd1ae93d2abd5de8d69f9003a8d0ee6532bcf9a87c2492c97051f23",
+    "repeat": 1,
+    "horizontalRepeats": 1,
+    "color": 1024,
+    "normal": 512,
+    "roughness": 512,
+    "normalConvention": "OpenGL +Y"
+  },
+  {
+    "material": "door-wood",
+    "source": "../public/textures/l5/wood_floor_Color.jpg",
+    "sourceSHA256": "2a1c07687b6dbb214c4b9213739c6d92d425f1f0fc8ab3ac157f105d78240789",
+    "repeat": 1,
+    "horizontalRepeats": 4,
+    "crop": [
+      12,
+      5,
+      88,
+      910
+    ],
+    "color": 1024,
+    "normal": 512,
+    "roughness": 512,
+    "normalConvention": "OpenGL +Y"
+  },
+  {
+    "material": "carpet",
+    "source": "../public/textures/l4/dirty_carpet_Color.jpg",
+    "sourceSHA256": "b0ef2b248cb7dfa1d33f1b2215fb3b83e815527d4091a2c3a423bdcd63bef60a",
+    "repeat": 6,
+    "horizontalRepeats": 6,
+    "secondarySources": [
+      {
+        "source": "../public/textures/l4/white_plaster_02_Color.jpg",
+        "sourceSHA256": "a1ebbe091bd1ae93d2abd5de8d69f9003a8d0ee6532bcf9a87c2492c97051f23",
+        "purpose": "24px broad wear, amplitude .10"
+      }
+    ],
+    "color": 1024,
+    "normal": 512,
+    "roughness": 512,
+    "normalConvention": "OpenGL +Y"
+  },
+  {
+    "material": "arch-carpet",
+    "source": "../public/textures/l4/dirty_carpet_Color.jpg",
+    "sourceSHA256": "b0ef2b248cb7dfa1d33f1b2215fb3b83e815527d4091a2c3a423bdcd63bef60a",
+    "repeat": 6,
+    "horizontalRepeats": 6,
+    "secondarySources": [
+      {
+        "source": "../public/textures/l4/white_plaster_02_Color.jpg",
+        "sourceSHA256": "a1ebbe091bd1ae93d2abd5de8d69f9003a8d0ee6532bcf9a87c2492c97051f23",
+        "purpose": "24px broad wear, amplitude .18"
+      }
+    ],
+    "color": 1024,
+    "normal": 512,
+    "roughness": 512,
+    "normalConvention": "OpenGL +Y"
+  },
+  {
+    "material": "wood",
+    "source": "../public/textures/l5/wood_floor_Color.jpg",
+    "sourceSHA256": "2a1c07687b6dbb214c4b9213739c6d92d425f1f0fc8ab3ac157f105d78240789",
+    "repeat": 1,
+    "horizontalRepeats": 1,
+    "color": 1024,
+    "normal": 512,
+    "roughness": 512,
+    "normalConvention": "OpenGL +Y"
+  },
+  {
+    "material": "cream",
+    "source": "../public/textures/l4/white_plaster_02_Color.jpg",
+    "sourceSHA256": "a1ebbe091bd1ae93d2abd5de8d69f9003a8d0ee6532bcf9a87c2492c97051f23",
+    "repeat": 1,
+    "horizontalRepeats": 1,
+    "color": 1024,
+    "normal": 512,
+    "roughness": 512,
+    "normalConvention": "OpenGL +Y"
+  },
+  {
+    "material": "ceiling",
+    "source": "../public/textures/l4/white_plaster_02_Color.jpg",
+    "sourceSHA256": "a1ebbe091bd1ae93d2abd5de8d69f9003a8d0ee6532bcf9a87c2492c97051f23",
+    "repeat": 1,
+    "horizontalRepeats": 1,
+    "color": 1024,
+    "normal": 512,
+    "roughness": 512,
+    "normalConvention": "OpenGL +Y"
+  },
+  {
+    "material": "red",
+    "source": "../assets/l0-materials/wall-v4.png",
+    "sourceSHA256": "468f3f8b19e171ed06c7d7357cd50948cbf3279d59163b0e3353a0b43fd0658b",
+    "repeat": 1,
+    "horizontalRepeats": 1,
+    "color": 1024,
+    "normal": 512,
+    "roughness": 512,
+    "normalConvention": "OpenGL +Y"
+  },
+  {
+    "material": "red-carpet",
+    "source": "../public/textures/l4/dirty_carpet_Color.jpg",
+    "sourceSHA256": "b0ef2b248cb7dfa1d33f1b2215fb3b83e815527d4091a2c3a423bdcd63bef60a",
+    "repeat": 6,
+    "horizontalRepeats": 6,
+    "secondarySources": [
+      {
+        "source": "../public/textures/l4/white_plaster_02_Color.jpg",
+        "sourceSHA256": "a1ebbe091bd1ae93d2abd5de8d69f9003a8d0ee6532bcf9a87c2492c97051f23",
+        "purpose": "24px broad wear, amplitude .10"
+      }
+    ],
+    "color": 1024,
+    "normal": 512,
+    "roughness": 512,
+    "normalConvention": "OpenGL +Y"
+  },
+  {
+    "material": "red-ceiling",
+    "source": "../public/textures/l4/white_plaster_02_Color.jpg",
+    "sourceSHA256": "a1ebbe091bd1ae93d2abd5de8d69f9003a8d0ee6532bcf9a87c2492c97051f23",
+    "repeat": 1,
+    "horizontalRepeats": 1,
+    "color": 1024,
+    "normal": 512,
+    "roughness": 512,
+    "normalConvention": "OpenGL +Y"
+  },
+  {
+    "material": "pit",
+    "source": "../public/textures/l4/white_plaster_02_Color.jpg",
+    "sourceSHA256": "a1ebbe091bd1ae93d2abd5de8d69f9003a8d0ee6532bcf9a87c2492c97051f23",
+    "repeat": 1,
+    "horizontalRepeats": 1,
+    "color": 1024,
+    "normal": 512,
+    "roughness": 512,
+    "normalConvention": "OpenGL +Y"
+  }
+]

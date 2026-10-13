@@ -12,6 +12,7 @@ import type { Difficulty } from './shared'
 import type { WarehouseState } from './warehouse'
 import type { AvenueMapMark, Engine, PlayerState } from '../engine'
 import { captureL11, type L11WorldSave } from './l11State'
+import { dullerSafePosition } from './dullerAI'
 
 // ===== v29a：存档/读档 =====
 // v54 起：各槽位自持全量快照（含 seed/difficulty），继续游戏时凭种子匹配恢复进度。
@@ -132,6 +133,7 @@ export function clearRunSlots(eng: Engine) {
 // v29a：当前进度快照（纯 JSON 可序列化）
 export function snapshot(eng: Engine): SaveSnapshot {
   const inf = eng.map?.inf
+  const safe = dullerSafePosition(eng)
   return {
     v: 1,
     glowProjectiles: captureGlowFlight(eng),
@@ -146,7 +148,7 @@ export function snapshot(eng: Engine): SaveSnapshot {
     time: eng.time,
     mapSeed: eng.mapSeed,
     mapFirstVisit: eng.mapFirstVisit,
-    worldPos: inf ? { x: inf.ox + eng.player.x, y: inf.oy + eng.player.y } : undefined,
+    worldPos: inf ? { x: inf.ox + (safe?.x??eng.player.x), y: inf.oy + (safe?.y??eng.player.y) } : undefined,
     level: eng.player.level,
     visited: [...eng.visitedLevels],
     career: structuredClone(eng.career),
@@ -170,7 +172,7 @@ export function snapshot(eng: Engine): SaveSnapshot {
     avenueMarks: eng.player.level === 8 ? eng.avenueMarks.map((mk) => ({ ...mk })) : undefined,
     avenueHintSeq: eng.player.level === 8 ? eng.avenueHintSeq : undefined,
     l10Weather: eng.player.level === 10 ? { ...eng.l10Weather } : undefined,
-    player: JSON.parse(JSON.stringify(eng.player)),
+    player: JSON.parse(JSON.stringify(safe?{...eng.player,...safe,vz:0}:eng.player)),
   }
 }
 /** 立即写盘（暂停/退回主界面写绑定槽；周期与切层自动存档显式传 'auto'；死亡与胜利后不再覆盖存档） */

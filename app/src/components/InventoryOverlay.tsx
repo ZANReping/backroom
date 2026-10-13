@@ -10,7 +10,7 @@ import type { Engine, SlotRef, SlotWhere } from '@/game/engine'
 import { l11MapMarks } from '@/game/engine/l11State'
 import { ITEMS, itemUseProfile } from '@/game/content/items'
 import { storage } from '@/game/core/storage'
-import { ENTITIES, MOTH_FORMS, mergeMothCodex, unlockTier, loadSeen, entitySpawnLevels, entityThreat, entityRarity, type EntityRarity } from '@/game/entities'
+import { ENTITIES, MOTH_FORMS, SMILER_KINDS, mergeMothCodex, unlockTier, loadSeen, entitySpawnLevels, entityThreat, entityRarity, type EntityRarity } from '@/game/entities'
 import { LevelClassBanner, CecsBox } from './CodexWidgets'
 import { ENTITY_FACTION, FACTION_FONTS, IOTS_FREQ_COLORS, IOTS_FREQ_VALUES, IOTS_ORIGIN_VALUES, IOTS_UTIL_VALUES, itemIOTS, itemIOTSLevel } from '@/game/content/codexScores'
 import { WIN_TAPES, LEVELS, ALL_LEVEL_DEFS, levelNo, levelLabel, levelDefOf } from '@/game/levels'
@@ -23,7 +23,7 @@ import { ItemGlyph } from './HUD'
 import AvatarPreview from './AvatarPreview'
 import { loadAvatar } from '@/game/core/avatar'
 import { audio } from '@/game/core/audio'
-import { getKeybinds } from '@/game/core/keybinds'
+import { bindLabel, getKeybinds } from '@/game/core/keybinds'
 import { DOCS } from '@/game/content/docs'
 import { OUTPOSTS, isLandmarkStruct } from '@/game/content/outposts'
 import { NPCS, npcAvatar } from '@/game/content/npcs'
@@ -425,7 +425,7 @@ function itemStatChips(it: (typeof ITEMS)[string], engine?: Engine, berryDest?: 
   return chips
 }
 
-const FILTER_SEL_STYLE = { background: 'var(--panel)', color: 'var(--text)', border: '1px solid var(--panel-edge)', padding: '2px 4px' } as const
+const FILTER_SEL_STYLE = { background: 'var(--panel)', color: 'var(--text)', border: '1px solid var(--panel-edge)', padding: '3px 6px', borderRadius: 'var(--ui-radius)' } as const
 
 /** 全部物品的 IOTS 分类缓存（静态数据，模块级计算一次） */
 const ITEM_IOTS: Record<string, { frequency: string; utility: string; origin: string }> =
@@ -529,6 +529,19 @@ function CodexDetail({ detail, onBack }: { detail: { kind: 'entity' | 'item' | '
                     <div key={form.name} className="text-[12px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>
                       <span style={{ color: 'var(--text)' }}>{form.name}</span>：{form.desc}
                       <div style={{ color: tier >= 2 ? 'var(--text-dim)' : 'var(--text-muted)' }}>{tier >= 2 ? form.behavior : '【行为未解锁】'}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {e.type === 'smiler' && (
+              <div className="mt-3 border-t pt-2" style={{ borderColor: 'var(--panel-edge)' }}>
+                <div className="font-mono2 mb-1 text-[11px]" style={{ color: 'var(--amber)' }}>子变种</div>
+                <div className="grid gap-1">
+                  {Object.values(SMILER_KINDS).map((kind) => (
+                    <div key={kind.name} className="text-[12px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>
+                      <span style={{ color: 'var(--text)' }}>{kind === SMILER_KINDS.common ? '普通笑魇' : kind.name}</span>：{kind.desc}
+                      <div style={{ color: tier >= 2 ? 'var(--text-dim)' : 'var(--text-muted)' }}>{tier >= 2 ? kind.behavior : '【行为未解锁】'}</div>
                     </div>
                   ))}
                 </div>
@@ -787,12 +800,12 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
       <button
         key={`${w}${i}`}
         data-inv-slot="" data-w={w} data-i={i}
-        className="relative flex items-center justify-center border"
+        className={`wb-slot relative flex items-center justify-center border ${s ? 'has-item' : ''} ${selected || isLocked ? 'is-selected' : ''}`}
         style={{
           width: 56, height: 56,
           touchAction: 'none', // 拖拽手势不从格子滚动页面（移动端 preventDefault 等效）
           borderColor: isTarget ? 'var(--amber)' : isLocked ? 'var(--amber)' : selected ? 'var(--amber)' : 'var(--panel-edge)',
-          background: isTarget ? 'rgba(232,185,60,0.22)' : isLocked ? 'rgba(232,185,60,0.18)' : selected ? 'rgba(232,185,60,0.12)' : 'rgba(0,0,0,0.3)',
+          background: isTarget ? 'color-mix(in srgb, var(--amber) 22%, transparent)' : isLocked ? 'color-mix(in srgb, var(--amber) 18%, transparent)' : selected ? 'color-mix(in srgb, var(--amber) 12%, transparent)' : undefined,
           boxShadow: isTarget ? '0 0 10px rgba(232,185,60,0.6), inset 0 0 6px rgba(232,185,60,0.4)' : isLocked ? '0 0 8px rgba(232,185,60,0.5), inset 0 0 6px rgba(232,185,60,0.35)' : 'none',
           transform: isTarget ? 'scale(1.08)' : 'none',
           opacity: isSource ? 0.35 : 1,
@@ -943,29 +956,38 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
           </div>
         </div>
       )}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-10">
-        <span className="font-mono2 text-[40px]" style={{ color: 'var(--text)' }}>PAUSED</span>
-      </div>
       <div
-        className="hud-panel anim-slideUp max-h-[88dvh] w-full max-w-[720px] overflow-y-auto p-4 lg:max-w-[1024px] max-md:fixed max-md:inset-x-0 max-md:bottom-0 max-md:max-h-[85dvh] max-md:max-w-none"
-        style={{ background: 'var(--panel)', minHeight: 320 }}
+        className="wb-panel hud-panel anim-slideUp w-full max-w-[720px] lg:max-w-[1024px] max-md:fixed max-md:inset-x-0 max-md:bottom-0 max-md:max-w-none"
+        style={{ background: 'var(--panel)' }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="mb-3 flex items-center justify-between">
-          <div className="flex gap-4">
-            {TABS.map((t) => (
-              <button
-                key={t}
-                className="pb-1 text-[15px]"
-                style={{ color: tab === t ? 'var(--amber)' : 'var(--text-dim)', borderBottom: tab === t ? '2px solid var(--amber)' : '2px solid transparent' }}
-                onClick={() => { setTab(t); audio.uiTick() }}
-              >
-                {t}
-              </button>
-            ))}
+        {/* 2026-10 UI：工作台外壳——标题 + 档案夹分页（附快捷键）+ 关闭；内容区独立滚动，切页不跳尺寸 */}
+        <div className="wb-head">
+          <div className="wb-title">
+            <span className="wb-kicker font-mono2">FIELD KIT · 档案工作台</span>
+            <span className="wb-meta font-mono2">磁带 {p.tapes}/{WIN_TAPES}</span>
           </div>
-          <button className="font-mono2 border px-3 py-1 text-[12px]" style={{ borderColor: 'var(--panel-edge)', color: 'var(--text-dim)' }} onClick={onClose}>关闭</button>
+          <nav className="wb-tabs" role="tablist">
+            {TABS.map((t) => {
+              const kb = getKeybinds()
+              const key = ({ 背包: kb.inventory, 图鉴: kb.codex, 状态: kb.status, 地图: kb.map, 日志: kb.log, 任务: kb.quest } as Record<string, string | undefined>)[t]
+              return (
+                <button
+                  key={t}
+                  role="tab"
+                  aria-selected={tab === t}
+                  className={`wb-tab ${tab === t ? 'is-active' : ''}`}
+                  onClick={() => { setTab(t); audio.uiTick() }}
+                >
+                  <span>{t}</span>
+                  {key && <kbd className="wb-key font-mono2">{bindLabel(key)}</kbd>}
+                </button>
+              )
+            })}
+          </nav>
+          <button className="set-close font-mono2" aria-label="关闭" onClick={onClose}>✕<span>Esc</span></button>
         </div>
+        <div className="wb-body">
 
         {tab === '背包' && (
           // v20 修复：三栏仅在 lg（≥1024px）启用——720px 面板下中栏仅 ~226px，背包 8 列（476px）严重挤压重叠；
@@ -977,7 +999,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
               <div className="hud-panel max-h-[46dvh] overflow-y-auto p-3">{detailBody}</div>
             ) : (
             <div className="hud-panel flex flex-col items-center gap-1 p-2">
-              <div className="font-mono2 text-[11px]" style={{ color: 'var(--amber)' }}>装备</div>
+              <div className="wb-label font-mono2">装备</div>
               <AvatarPreview avatar={loadAvatar()} gloves={p.hasGloves} suit={p.hasSuit} cavingsuit={p.equip.body?.type === 'cavingsuit'} divemask={p.equip.head?.type === 'divemask'} headlamp={p.equip.head?.type === 'headlamp'} nightvision={p.equip.head?.type === 'nightvision'} size={132} />
               <div className="mt-1 grid grid-cols-2 gap-1.5">
                 {/* 主手：展示快捷栏当前选中项（非独立槽位，不可拖放） */}
@@ -1012,9 +1034,9 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
             </div>
             )}
             <div>
-              <div className="font-mono2 mb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>快捷栏</div>
+              <div className="wb-label font-mono2">快捷栏 <span>{p.hotbar.filter(Boolean).length}/{p.hotbar.length}</span></div>
               <div className="mb-3 flex flex-wrap gap-1.5">{p.hotbar.map((s, i) => slotBtn(s, 'hotbar', i))}</div>
-              <div className="font-mono2 mb-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>背包</div>
+              <div className="wb-label font-mono2">背包 <span>{p.backpack.filter(Boolean).length}/{p.backpack.length}</span></div>
               {/* v20：移动端 4 列（242px 适配 390px 屏；原 6 列 366px 溢出），md 起 8 列×2 行 */}
               <div className="grid grid-cols-4 gap-1.5 md:grid-cols-8">{p.backpack.map((s, i) => slotBtn(s, 'backpack', i))}</div>
             </div>
@@ -1034,7 +1056,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
           ) : (
           <div className="codex-list">
             {/* 分类子页面切换：实体 / 层级 / 物品 / 现象 */}
-            <div className="font-mono2 mb-2 flex gap-1 text-[11px]">
+            <div className="wb-cats font-mono2 mb-3 flex flex-wrap items-center gap-1 text-[11px]">
               {(['层级', '实体', '物品', '现象', '团体', '据点', '人士', '文档'] as const).map((c) => (
                 <button
                   key={c}
@@ -1532,6 +1554,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
             })}
           </div>
         )}
+        </div>
       </div>
       {/* 图鉴「文档」阅读视图（盖在覆盖层之上；阻止点击冒泡误关背包） */}
       {readingDoc && (

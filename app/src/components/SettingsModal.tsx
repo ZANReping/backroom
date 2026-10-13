@@ -96,6 +96,7 @@ export const defaultSettings: GameSettings = {
 
 const TABS = ['游戏', '画面', '音频', '操作', '主题', 'API'] as const
 const GRAPHICS_TABS = ['基础', '光影', '性能', '氛围'] as const
+const TAB_SUB: Record<(typeof TABS)[number], string> = { 游戏: 'GAME', 画面: 'VIDEO', 音频: 'AUDIO', 操作: 'INPUT', 主题: 'THEME', API: 'LLM' }
 type GraphicsPreset = 'performance' | 'balanced' | 'immersive' | 'mobile'
 
 export const GRAPHICS_PRESETS: Record<GraphicsPreset, Partial<GameSettings>> = {
@@ -165,16 +166,16 @@ export const THEMES: { id: UiTheme; name: string; desc: string; bg: string; fg: 
 // （另注：不能用 <label> 包裹 <button>——浏览器会把点击转发给 label 的控件再触发一次。）
 function Toggle({ k, label, value, onSet }: { k: keyof GameSettings; label: string; value: boolean; onSet: (k: keyof GameSettings, v: boolean) => void }) {
   return (
-    <div className="flex items-center justify-between py-2 text-[14px]" style={{ color: 'var(--text)' }}>
+    <div className="set-row flex items-center justify-between py-2 text-[14px]" style={{ color: 'var(--text)' }}>
       <span>{label}</span>
       <button
-        className="h-6 w-11 rounded-full border transition-colors"
-        style={{ borderColor: 'var(--panel-edge)', background: value ? 'var(--amber)' : 'var(--panel)' }}
+        className={`set-switch ${value ? 'is-on' : ''}`}
         onClick={() => onSet(k, !value)}
-        aria-pressed={value}
+        role="switch"
+        aria-checked={value}
         aria-label={label}
       >
-        <span className="block h-4 w-4 rounded-full bg-black/60 transition-transform" style={{ transform: value ? 'translateX(24px)' : 'translateX(4px)' }} />
+        <span className="set-switch-knob" />
       </button>
     </div>
   )
@@ -182,12 +183,13 @@ function Toggle({ k, label, value, onSet }: { k: keyof GameSettings; label: stri
 
 function Slider({ k, label, value, onSet, min = 0, max = 100, step = 1, valueLabel }: { k: keyof GameSettings; label: string; value: number; onSet: (k: keyof GameSettings, v: number) => void; min?: number; max?: number; step?: number; valueLabel?: string }) {
   return (
-    <label className="block py-2 text-[14px]" style={{ color: 'var(--text)' }}>
-      <span className="mb-1 flex justify-between"><span>{label}</span><span className="font-mono2 text-[12px]" style={{ color: 'var(--amber)' }}>{valueLabel ?? value}</span></span>
+    <label className="set-row block py-2 text-[14px]" style={{ color: 'var(--text)' }}>
+      <span className="mb-1.5 flex justify-between"><span>{label}</span><span className="set-value font-mono2 text-[12px]">{valueLabel ?? value}</span></span>
       <input
         type="range" min={min} max={max} step={step} value={value}
         onChange={(e) => onSet(k, Number(e.target.value))}
-        className="w-full accent-[var(--amber)]"
+        className="set-range w-full"
+        style={{ ['--fill' as string]: `${((value - min) / Math.max(1e-6, max - min)) * 100}%` }}
       />
     </label>
   )
@@ -248,36 +250,43 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" onClick={onClose}>
+      {/* 2026-10 UI：桌面为左侧分类栏 + 固定高度内容区（切换分页不再跳尺寸）；移动端保持底部抽屉 + 横向分页 */}
       <div
-        className="hud-panel anim-slideUp w-full max-w-[620px] p-5 max-md:fixed max-md:inset-x-0 max-md:bottom-0 max-md:max-w-none max-md:rounded-t-xl"
+        className="set-modal hud-panel anim-slideUp w-full p-0 max-md:fixed max-md:inset-x-0 max-md:bottom-0 max-md:max-w-none max-md:rounded-t-xl"
         style={{ background: 'var(--panel)' }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="font-title text-[22px]" style={{ color: 'var(--amber)' }}>设置</h2>
-          <button className="font-mono2 px-3 py-1 text-[13px] border" style={{ borderColor: 'var(--panel-edge)', color: 'var(--text-dim)' }} onClick={onClose}>关闭</button>
+        <div className="set-head">
+          <div>
+            <div className="set-kicker font-mono2">设备维护 · SETTINGS</div>
+            <h2 className="font-title text-[22px]" style={{ color: 'var(--amber)' }}>设置</h2>
+          </div>
+          <button className="set-close font-mono2" aria-label="关闭设置" onClick={onClose}>✕<span>Esc</span></button>
         </div>
-        <div className="mb-3 flex gap-4 border-b" style={{ borderColor: 'var(--panel-edge)' }}>
+        <div className="set-body">
+        <nav className="set-tabs" role="tablist" aria-label="设置分类">
           {TABS.map((t) => (
             <button
               key={t}
-              className="pb-2 text-[14px]"
-              style={{ color: tab === t ? 'var(--amber)' : 'var(--text-dim)', borderBottom: tab === t ? '2px solid var(--amber)' : '2px solid transparent' }}
+              className={`set-tab ${tab === t ? 'is-active' : ''}`}
+              role="tab"
+              aria-selected={tab === t}
               onClick={() => { setTab(t); audio.uiTick() }}
             >
-              {t}
+              <span className="set-tab-label">{t}</span>
+              <span className="set-tab-sub font-mono2">{TAB_SUB[t]}</span>
             </button>
           ))}
-        </div>
-        <div className="max-h-[60dvh] overflow-y-auto pr-1">
+        </nav>
+        <div className="set-content overflow-y-auto">
           {tab === '游戏' && (
             <div>
               <div className="py-2 text-[14px]" style={{ color: 'var(--text)' }}>难度</div>
-              <div className="flex gap-2">
+              <div className="set-seg flex">
                 {([['easy', '轻松'], ['normal', '标准'], ['hard', '硬核']] as const).map(([v, l]) => (
                   <button
                     key={v}
-                    className="flex-1 border px-3 py-2 text-[14px]"
+                    className={`set-seg-btn flex-1 border px-3 py-2 text-[14px] ${settings.difficulty === v ? 'is-active' : ''}`}
                     style={{ borderColor: settings.difficulty === v ? 'var(--amber)' : 'var(--panel-edge)', color: settings.difficulty === v ? 'var(--amber)' : 'var(--text-dim)', background: 'var(--panel)' }}
                     onClick={() => set('difficulty', v)}
                   >
@@ -307,11 +316,11 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
           )}
           {tab === '画面' && (
             <div>
-              <div className="mb-3 grid grid-cols-4 gap-1 border-b pb-2" style={{ borderColor: 'var(--panel-edge)' }} role="tablist" aria-label="画面设置分类">
+              <div className="set-seg mb-3 grid grid-cols-4" role="tablist" aria-label="画面设置分类">
                 {GRAPHICS_TABS.map((t) => (
                   <button
                     key={t}
-                    className="border px-2 py-2 text-[12px]"
+                    className={`set-seg-btn border px-2 py-2 text-[12px] ${graphicsTab === t ? 'is-active' : ''}`}
                     style={{ borderColor: graphicsTab === t ? 'var(--amber)' : 'var(--panel-edge)', color: graphicsTab === t ? 'var(--amber)' : 'var(--text-dim)', background: graphicsTab === t ? 'color-mix(in srgb, var(--amber) 10%, var(--panel))' : 'var(--panel)' }}
                     onClick={() => { setGraphicsTab(t); audio.uiTick() }}
                     role="tab"
@@ -626,6 +635,7 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
               )}
             </div>
           )}
+        </div>
         </div>
       </div>
     </div>

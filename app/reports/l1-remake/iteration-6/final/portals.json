@@ -1,0 +1,36 @@
+{
+  "checks": [
+    "存在穿过真实门洞、受开合影响的可站立地面",
+    "照明门与游戏门使用相同稳定身份",
+    "门扇动画驱动原生光通量",
+    "固定地面接收点在开门后变亮",
+    "关门恢复相同地面照度",
+    "开关门不重建建筑或烘焙",
+    "闭门停电时便携光不被原生光遮罩抑制"
+  ],
+  "receiver": {
+    "x": -318.6666666666667,
+    "z": -294.6666666666667,
+    "id": "door:-10,-10:x",
+    "weight": 1
+  },
+  "brightness": {
+    "closed": 2.520227687499884,
+    "open": 14.885617450001298,
+    "restored": 2.5438769874998703,
+    "dark": 0,
+    "flash": 166.0056580750015
+  },
+  "portals": {
+    "bindings": 17,
+    "states": 18,
+    "revision": 147
+  },
+  "images": {
+    "closed": "portals/closed.png",
+    "open": "portals/open.png",
+    "restored": "portals/restored.png",
+    "dark": "portals/dark.png",
+    "flash": "portals/flash.png"
+  }
+}

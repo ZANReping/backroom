@@ -160,6 +160,12 @@ export type StructKind = import('../content/tradeDecor').TradeKind | import('../
   | 'bonepile'     // 骨堆（容器；下颌增大、腿末端成鳍的类人骨架）
   | 'fishbones'    // 不可理解的巨鱼骨架（Midnight Zone）
   | 'seatarpit'    // 深渊焦油与岩石堆（持续冒泡）
+  | 'l7debris'     // v66 L7 每 chunk 一组漂浮/沉底碎屑实例（骨片/废铁/书皮纸块/纤维）
+  | 'l7skeleton'   // v66 L7 巨颚长牙鳍足的类人骨架（合并单网格）
+  | 'l7giantfish'  // v66 L7 午夜带/深渊「不可理解」的巨鱼骨架地标
+  | 'l7carpet'     // v66 L7 海床露出的泡烂地毯补丁
+  | 'l7bubbles'    // v66 L7 深渊气泡柱（GPU 点精灵循环上升）
+  | 'l7fort'       // v66 L7 岛上已废弃的「臣服堡垒」（家具堆叠+焦油）
   | 'ropeanchor'   // L7 入口房间门廊系缆桩：使用尼龙绳后 data.deployed=1，绳索自门廊出口垂至海面，可攀爬返回
   // ===== v23：Level 8「洞穴系统」 =====
   | 'stalagspike'  // L8 钟乳石/石笋簇：真实洞底/洞顶锚定 + PBR 岩石 + 精细碰撞

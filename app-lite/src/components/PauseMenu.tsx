@@ -56,9 +56,17 @@ export default function PauseMenu({ onResume, onSettings, onHowTo, onRadio, show
   const radioItem: [string, () => void] = ['电台管理', onRadio]
   const confirmSnap = confirmOverwrite ? slots.find((s) => s.id === confirmOverwrite)?.snap : null
   return (
-    <div className="fixed inset-0 z-50 flex items-center bg-black/60 backdrop-saturate-[0.6]">
-      <div className="hud-panel anim-slideUp ml-0 flex max-h-[calc(100vh-16px)] w-[280px] flex-col gap-3 overflow-y-auto p-6 max-md:mx-auto" style={{ background: 'var(--panel)' }}>
-        <h2 className="font-title mb-2 text-[26px]" style={{ color: 'var(--amber)' }}>已暂停</h2>
+    <div className="pause-backdrop fixed inset-0 z-50 flex items-stretch bg-black/60 backdrop-saturate-[0.6]">
+      {/* 2026-10 UI：贴左全高侧栏——顶部显示当前进度，主操作强调，退出与其余项分隔 */}
+      <div className="pause-panel hud-panel anim-slideUp flex flex-col gap-2 overflow-y-auto" style={{ background: 'var(--panel)' }}>
+        <div className="pause-head">
+          <div className="pause-kicker font-mono2">❚❚ PAUSED · 录像已冻结</div>
+          <h2 className="font-title text-[30px]" style={{ color: 'var(--amber)' }}>已暂停</h2>
+          <div className="pause-status font-mono2">
+            <span>{levelLabel(engine.player.level)}「{levelDefOf(engine.player.level)?.name ?? ''}」</span>
+            <span>磁带 {engine.player.tapes}/{WIN_TAPES} · 当前{SAVE_SLOT_LABELS[engine.saveSlot] ?? '槽位'}</span>
+          </div>
+        </div>
         {confirmOverwrite && confirmSnap ? (
           <>
             <div className="font-mono2 text-[11px]" style={{ color: 'var(--text-dim)' }}>
@@ -99,26 +107,26 @@ export default function PauseMenu({ onResume, onSettings, onHowTo, onRadio, show
           <>
             {items.map(([label, fn], i) => (
               <Fragment key={label}>
+                {label === '保存并退出到标题' && <div className="title-menu-sep" aria-hidden />}
                 <button
-                  className="menu-btn anim-slideUp"
+                  className={`menu-btn title-menu-btn pause-btn anim-slideUp ${label === '继续' ? 'menu-btn--primary' : ''} ${label === '保存并退出到标题' ? 'is-exit' : ''}`}
                   style={{ animationDelay: `${i * 40}ms` }}
                   onClick={() => { audio.uiTick(); fn() }}
                 >
-                  {label}
+                  <span className="menu-index" aria-hidden>{String(i + 1).padStart(2, '0')}</span>
+                  <span className="menu-label">{label}</span>
+                  {label === '脱离卡死' && <span className="menu-hint">返回游戏检测 3 秒；仅确认无法移动后传送</span>}
+                  {label === '继续' && <span className="menu-hint">Esc 也可返回</span>}
                 </button>
-                {label === '脱离卡死' && (
-                  <div className="font-mono2 -mt-2 px-1 text-[10px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>
-                    返回游戏检测 3 秒；仅确认无法移动后传送
-                  </div>
-                )}
                 {/* v56：电台管理入口（MIDI 曲风下显示） */}
                 {label === '设置' && showRadio && (
                   <button
-                    className="menu-btn anim-slideUp"
-                    style={{ animationDelay: `${i * 40}ms`, borderColor: 'var(--exit)' }}
+                    className="menu-btn title-menu-btn pause-btn anim-slideUp"
+                    style={{ animationDelay: `${i * 40}ms` }}
                     onClick={() => { audio.uiTick(); onRadio() }}
                   >
-                    {radioItem[0]}
+                    <span className="menu-index" aria-hidden>♪</span>
+                    <span className="menu-label">{radioItem[0]}</span>
                   </button>
                 )}
               </Fragment>

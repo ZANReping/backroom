@@ -1,0 +1,52 @@
+import {readFileSync,writeFileSync} from 'node:fs';
+const dir=new URL('../reports/l0-remake/iteration-17/',import.meta.url),read=n=>JSON.parse(readFileSync(new URL(n,dir),'utf8'));
+const regions=read('after-regions.json'),normal=read('after-normal.json'),life=read('after-lifecycle.json'),checks=read('presentation-checks.json'),controls=read('controls.json'),preview=read('after-map-preview.json'),functional=read('after-functional.json');
+const all=[...regions,...normal],max=(rows,key)=>Math.max(...rows.map(x=>x[key]??0)),min=(rows,key)=>Math.min(...rows.map(x=>x[key]??Infinity)),f=x=>Number(x).toFixed(2);
+const steady=all.every(s=>s.rounds.length===5&&s.rounds.every(r=>r.median<=16.7&&r.p95<=20&&r.cpuP95<=20&&r.gpuP95!==null&&r.gpuP95<=20));
+const stable=life.length===5&&life.every(x=>JSON.stringify(x.stats.memory)===JSON.stringify(life[0].stats.memory)&&x.stats.programs===life[0].stats.programs);
+const row=s=>`| ${s.region==='pillars'?'柱厅':s.region??`${s.pose.seed} @ ${s.pose.x},${s.pose.y}`} | ${f(min(s.rounds,'median'))}–${f(max(s.rounds,'median'))} | ${f(max(s.rounds,'p95'))} | ${f(max(s.rounds,'cpuP95'))} | ${f(max(s.rounds,'gpuP95'))} | ${s.rounds[0].draws} | ${s.rounds[0].triangles.toLocaleString('en-US')} |`;
+const lines=[
+'# Level 0 第 17 轮：区域、地图与陈设（2026-10-07）','',
+'## 本轮修改','',
+'1. 原柱群合并入柱厅，开发者区域列表移除重复选项。旧 `pillars` 标识仅用于旧物资抽样/存档兼容；新柱体避让原有掉落与容器，保留物资身份；加载旧 v3 存档时，被新柱体覆盖的玩家掉落和光源只挪到同一区块、同一红室范围内的附近空地，重复读档不会再移动或复制。',
+'2. 八角柜桌作为定位基准，正椅稍靠近柜桌；倒椅调整到局部中心 (15.4, 18.25)，朝向 280°、侧翻 90°，以实际几何最低点落地，碰撞由同一模型生成。内部与门口参考共同校准；门口取景改为东门。',
+'3. 红室材质过渡收在 0.26 米围墙厚度内。围墙内沿开始，地毯、吊顶、内部柱体与墙面完整转红；外侧仍是黄色墙纸。地面和顶面沿内外墙沿切分，避免大三角面插值形成黄色宽边。',
+'4. 开发者面板「世界」增加地图全开，与原版大地图开关共用状态；小地图同步，无永久探索写入，右键仍为安全传送。',
+'5. 大小地图共用实际薄墙、坑口和区域栅格：红室红底斜纹、熄灯蓝灰点纹、深坑黑底方框、拱门弧线、马尼拉木纹线；柱厅显示真实柱位。图例同时用颜色和图形。连续同色地板按行合并绘制，像素边界对齐，消除拖动时条带。',
+'6. 荧光灯标准外形缩至 1.05×0.6 米，四根灯管直径 72 毫米、中心距 110 毫米。仍为 420 三角面/盏并合批；只有灯管发光，保留有效的 HDR 泛光。',
+'7. 拱门改为 12 个完整圆拱、13 根卡其色接顶支柱，修复段间裂缝和末端悬空。左内墙增加两道高位黑条与低位卡其条；普通种子按固定随机值生成红色大桶/金属油漆桶，展示种子固定保留。桶有内壁、卷边和提手，碰撞与本体尺寸一致。',
+'8. 删除黄室贴地踢脚线，改为部分长墙上距地 18 厘米、宽 2.5 厘米的装饰线；马尼拉室内木作收边保留。','',
+'修改限于 app 与根说明。联机继续关闭，没有更新协议或同步，也没有进行联机验收。新增几何为项目原创，复用已有 CC0 纹理，没有引入新下载资产或生成纹理。','',
+'## 检查','',
+`- check:l0 全部通过：种子、1000 组基础迷宫/377 组最终迷宫防贯穿、456 处区域间隔、建筑、保存/迁移、18 组经典/真实网格及新展示检查。新检查包含 ${checks.mergedRegions} 个区域无独立柱群、${checks.redInteriorSamples} 个红室内沿采样、64 种桶具生成与碰撞、地图迷雾和非整数像素移动。`,
+`- 原版 UI ${controls.checks.length} 项通过，浏览器错误 ${controls.errors.length}；[世界开关](world-map-switch.png)、[小地图](arch-minimap.png)、[原版大地图](arch-original-map.png)、[区域图例总览](map-symbols.png)。`,
+`- 实际门柜/搜刮/保存/红室封口 ${functional.checks.length} 项通过，见 [运行时记录](after-functional.json)。个人红室仍通过同一地图真实封口实现，没有循环传送。`,
+`- 2048 米外、256 米视口生成 ${preview.cells} 个轻量预览区块，${f(preview.elapsedMs)} ms；取消过期请求、世界不变、失败传送回滚通过，见 [预览记录](after-map-preview.json)。`,
+'- 生产构建通过。现有字体运行时解析、Browserslist、PostCSS 和大 bundle 提示仍存在，未在本轮扩大修改。',
+`- 五轮跨区/经典真实切换/纹理质量切换后资源${stable?'稳定':'未达到稳定要求'}：${life[0].stats.memory.geometries} 几何、${life[0].stats.memory.textures} 纹理、${life[0].stats.programs} 程序；[各轮原始记录](after-lifecycle.json)。`,'',
+'## 视觉交付','',
+'- [十二参考图并排](reference-contact.jpg)，逐项 compare-*.jpg、overlay-*.png 和 [真实相机参数](after-anchors.json)。',
+'- [拱门接缝](after-arch-joint-realistic.png)、[末端支撑](after-arch-end-realistic.png)、[防撞条与桶具](after-arch-props-realistic.png)、[红室内部](after-red-interior-realistic.png)，同位置另有 classic 版本。',
+'- [马尼拉室内](compare-manila-inside.jpg)、[门口](compare-manila-door.jpg)。倒椅保留各候选朝向截图用于校准记录，最终值以上述生产截图为准。',
+'- [灯管泛光关闭](after-lamp-bloom-off.png) / [开启](after-lamp-bloom-on.png)。只检查发光核心之外的亮度增加，检查通过。',
+'- 上轮原景保存在 [第 16 轮](../iteration-16/REPORT.md)。相同参考视角可作前后对照；门口相机重新校准，不能把这一对截图当作相同相机的差分。',
+'',
+'马尼拉家具相对位置、座面朝向和落地侧已按两张参考校准；原模型轮廓、门洞投影、墙纸尺度及整体照度仍有差异。没有宣称逐像素一致或十二张图全部达到 3% 轮廓误差。','',
+'## 性能','',
+'RTX 4060 Laptop / ANGLE D3D11，1920×1080、DPR 1、真实模式、高纹理、16 场景灯、2 场景阴影，关闭动态分辨率。独立无界面 Chrome 取消帧率上限。预热完成所有待构建、编译、上传及回收，资源计数稳定 1 秒后采样五轮，每轮至少 120 帧且 1.2 秒。RAF 为调度间隔，CPU 为 render 调用，GPU 为 EXT_disjoint_timer_query_webgl2；不能直接由 RAF 倒数推断显示器 FPS。','',
+'| 场景 | RAF 中位数范围 ms | 最差 P95 ms | CPU P95 ms | GPU P95 ms | 绘制调用 | 三角面 |',
+'|---|---:|---:|---:|---:|---:|---:|',...all.map(row),'',
+`${all.length} 个场景${steady?'均通过':'未全部通过'}本轮稳态目标（中位数 ≤16.7 ms、P95 ≤20 ms）。普通种子构建峰值 ${f(Math.min(...normal.map(x=>x.build.maxFrame)))}–${f(Math.max(...normal.map(x=>x.build.maxFrame)))} ms，冷构建仍会卡顿，不能宣称全程 60 FPS。`,
+'',
+'相同展示取景与第 16 轮记录比较，拱门绘制调用 167→'+regions.find(x=>x.region==='arch').rounds[0].draws+'，红室 149→'+regions.find(x=>x.region==='red').rounds[0].draws+'；移除大量连续踢脚线减少了几何。旧记录来自前一轮采样，帧时受测量时环境影响，不将 P95 差异直接归因于这次修改。','',
+'地图单独测量同一画布每帧重绘，预热 20 帧后取 100 帧；这是 Canvas CPU 提交耗时，不是整个游戏帧时：','',
+'| 地图 | 中位数 ms | P95 ms |','|---|---:|---:|',...controls.mapDraw.map(x=>`| ${x.name} | ${f(x.median)} | ${f(x.p95)} |`),'',
+'最初不间断提交 120 次 Canvas 绘制的诊断记录保存在 controls-map-burst-before.json；它会积压绘图命令，不能作为实际交互 P95，也不与逐帧测量直接比较。没有 Android 真机性能结论。','',
+'## 复现','',
+'从 app 目录运行 npm run check:l0、npm run build。设置 L0_VERIFY=1，Vite 使用 3004；专用 Chrome 配置启用本机 CDP 9235，打开 /verifier/l0-remake.html。验证器用独立内存存储，UI 检查使用独立浏览器上下文，不覆盖正常存档。','',
+'设置 QA_TAG=iteration-17 后顺序运行 node scripts/verify-l0-remake.mjs after anchors、presentation、bloom、functional、map-preview、regions、normal、lifecycle，再运行 node scripts/verify-l0-controls.mjs。不要同时运行性能采样或构建。使用 python scripts/compare-l0-references.py iteration-17 生成并排和叠加；node scripts/summarize-l0-presentation.mjs 重建本报告。','',
+'素材与许可见 [SOURCES](../../../public/textures/l0-remake/SOURCES.md)，设计细节见 [LEVEL0-REMAKE](../../../LEVEL0-REMAKE.md)。',''
+];
+writeFileSync(new URL('REPORT.md',dir),lines.join('\n'));
+writeFileSync(new URL('summary.json',dir),JSON.stringify({steady,stable,scenes:all.length,maxRafP95:Math.max(...all.map(x=>max(x.rounds,'p95'))),maxGpuP95:Math.max(...all.map(x=>max(x.rounds,'gpuP95'))),mapDraw:controls.mapDraw},null,2));
+console.log({steady,stable,scenes:all.length});

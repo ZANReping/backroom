@@ -98,6 +98,10 @@ function levelCoreAssets(level: number): Asset[] {
     }
     out.push(T('l10_wheat_clump.png', `Level ${level}`, 'Level 10 · 近中景透明小麦簇', 2))
     out.push(T('l10_barley_clump.png', `Level ${level}`, 'Level 10 · 近中景透明大麦簇', 2))
+    out.push(T('l10_canola_clump.png', `Level ${level}`, 'Level 10 · 油菜花簇', 2))
+    out.push(T('l10_leafcard.png', `Level ${level}`, 'Level 10 · 树冠叶片', 2))
+    out.push(T('l10_siding_diff.jpg', `Level ${level}`, 'Level 10 · 谷仓红木板'))
+    out.push(T('l10_corrugated_normal.png', `Level ${level}`, 'Level 10 · 波纹屋顶法线'))
   }
   return out
 }

@@ -3,20 +3,21 @@ import * as THREE from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { ELEV_H, floorHeight, type GameMap } from '../world/mapgen'
 import type { LevelDef } from '../core/types'
-import { col, SKY, litMaterial, noiseTexture } from './shared'
+import { col, SKY, litMaterial } from './shared'
 import { makeSkyMesh, SKY_PROFILES } from './skybox'
+import { applyWater, updateWaterUniforms, type WaterPresetName } from './water'
 import { L8_LAKE_CENTER, L8_LAKE_WATER_RADIUS, l8GroundAt, l8LakeDistanceAt } from '../world/infiniteL8'
 
 // v57t：真实水体——给水面材质注入「顶点涌浪 + 程序化波光」着色器；renderer 每帧推进统一时间。
 // 不做真实流体物理：多组方向正弦波叠加出浪面法线（低频涌浪+高频碎波随距离淡出防混叠），
 // 配合菲涅尔深水↔天空反射渐变、天光宽高光与细闪波光，视觉上接近真实海面。
+// v64：真实水体着色迁移到通用模块 water.ts（各层级按预设调参，低画质也保留光学深度/菲涅尔/软岸线）。
 const liquidClock={value:0}
-const liquidWaveUniforms: { value: number }[] = []
 export function updateLiquidTime(t: number) {
   liquidClock.value=t
-  for (const u of liquidWaveUniforms) u.value = t
+  updateWaterUniforms(t)
 }
-export function resetLiquidWaves() { liquidWaveUniforms.length = 0 }
+export function resetLiquidWaves() { /* v64：水面统一共享 waterUniforms，无需逐材质登记 */ }
 /** Indoor ripples reflect actual lamps. No outdoor sky or per-chunk clock allocation. */
 function addHotelWaterFX(mat:THREE.Material,ox:number,oy:number){
   const classic=mat instanceof THREE.MeshLambertMaterial
@@ -41,95 +42,6 @@ function addHotelWaterFX(mat:THREE.Material,ox:number,oy:number){
       `)
   }
 }
-function addRealWaterFX(mat: THREE.Material, sea: boolean, nightPool = false) {
-  if (mat.userData.liquidWave) return
-  mat.userData.liquidWave = 1
-  const u = { value: 0 }
-  liquidWaveUniforms.push(u)
-  // 深海↔天空反射的配色：L7 海面取阴天灰蓝海，室内泳池取更暗的室内水光
-  const deep = col(sea ? '#12262e' : nightPool ? '#071117' : '#101d24')
-  const skyc = col(sea ? '#5d7683' : nightPool ? '#151f26' : '#26333a')
-  const body = col(sea ? '#0d303d' : nightPool ? '#06151d' : '#0c2733') // 夜间泳池不再继承白昼亮蓝反射
-  const c3 = (c: THREE.Color) => `vec3(${c.r.toFixed(4)}, ${c.g.toFixed(4)}, ${c.b.toFixed(4)})`
-  const swellK = sea ? 1 : 0.05 // 顶点涌浪幅度：海面 ±0.15m 可见起伏；泳池仅微波纹防溢出池岸
-  const normalAmp = sea ? 1.6 : 0.7 // 波面法线强度（艺术化夸大坡度，出碎浪明暗）
-  const reflMix = sea ? 0.62 : nightPool ? 0.2 : 0.35 // 菲涅尔反射混入比（保留部分受光，手电照水面仍可见）
-  const sheenK = sea ? 0.20 : nightPool ? 0.035 : 0.10 // 天光宽高光强度
-  const glintK = sea ? 1.3 : nightPool ? 0.16 : 0.5 // 细闪波光强度
-  const absorbSig = sea ? 0.25 : 0.4 // v58：水体吸收系数——海 24m+ 俯视即近全浓；泳池 1.7m 半浓见底
-  mat.customProgramCacheKey = () => (sea ? 'realWaterSea' : nightPool ? 'realWaterNightPool' : 'realWaterPool')
-  mat.onBeforeCompile = (shader) => {
-    shader.uniforms.uLiquidTime = u
-    shader.vertexShader = shader.vertexShader
-      .replace('#include <common>', '#include <common>\nuniform float uLiquidTime;\nattribute float aDepth;\nvarying vec3 vLiquidWorld;\nvarying float vDepth;')
-      .replace('#include <begin_vertex>', `#include <begin_vertex>
-      {
-        vec4 lw4 = modelMatrix * vec4(position, 1.0);
-        vLiquidWorld = lw4.xyz;
-        vDepth = aDepth;
-        float lt = uLiquidTime;
-        // 多尺度涌浪位移（长波涌 + 短波碎），纯视觉，不参与物理
-        float lh = sin(lw4.x * 0.21 + lt * 0.55) * 0.055
-                 + cos((lw4.x + lw4.z) * 0.13 - lt * 0.38) * 0.05
-                 + sin(lw4.z * 0.40 + lt * 0.85) * 0.028
-                 + sin(lw4.x * 0.83 - lw4.z * 0.61 + lt * 1.45) * 0.016;
-        transformed.y += lh * ${swellK.toFixed(3)};
-      }`)
-    shader.fragmentShader = shader.fragmentShader
-      .replace('#include <common>', `#include <common>
-      uniform float uLiquidTime;
-      varying vec3 vLiquidWorld;
-      varying float vDepth;
-      vec3 gLiquidN;
-      // 方向正弦波叠加的解析梯度（h=Σa·sin(dot(d,p)+ωt) → ∇h=Σa·d·cos(...)）
-      vec2 liquidGrad(vec2 lp, float lt, float hiK) {
-        vec2 lg = vec2(0.0);
-        lg += vec2(0.50, 0.0) * cos(lp.x * 0.50 + lt * 1.05) * 0.30;
-        lg += vec2(0.36, 0.58) * cos(dot(lp, vec2(0.36, 0.58)) - lt * 0.80) * 0.26;
-        lg += vec2(-0.66, 0.31) * cos(dot(lp, vec2(-0.66, 0.31)) + lt * 1.35) * 0.14;
-        lg += vec2(1.25, -1.05) * cos(dot(lp, vec2(1.25, -1.05)) + lt * 2.10) * 0.075 * hiK;
-        lg += vec2(2.45, 2.05) * cos(dot(lp, vec2(2.45, 2.05)) - lt * 2.90) * 0.045 * hiK;
-        lg += vec2(4.10, -3.55) * cos(dot(lp, vec2(4.10, -3.55)) + lt * 4.10) * 0.028 * hiK;
-        lg += vec2(-3.30, -4.35) * cos(dot(lp, vec2(-3.30, -4.35)) - lt * 3.60) * 0.022 * hiK;
-        return lg;
-      }`)
-      .replace('#include <normal_fragment_maps>', `#include <normal_fragment_maps>
-      {
-        float lDist = distance(cameraPosition, vLiquidWorld);
-        float hiK = 1.0 - smoothstep(10.0, 28.0, lDist);
-        vec2 lg = liquidGrad(vLiquidWorld.xz, uLiquidTime, hiK) * ${normalAmp.toFixed(3)};
-        vec3 wN = normalize(vec3(-lg.x, 1.0, -lg.y));
-        gLiquidN = wN;
-        vec3 vN = normalize((viewMatrix * vec4(wN, 0.0)).xyz);
-        normal = normalize(mix(normal, vN, 0.85));
-      }`)
-      .replace('#include <opaque_fragment>', `#include <opaque_fragment>
-      {
-        vec3 V = normalize(vLiquidWorld - cameraPosition);
-        // 菲涅尔：掠射角反射天空灰蓝，俯视透出深水暗色——浪面坡度带来自然明暗
-        float ndv = clamp(dot(gLiquidN, -V), 0.0, 1.0);
-        float fres = 0.10 + 0.90 * pow(1.0 - ndv, 2.4);
-        gl_FragColor.rgb = mix(gl_FragColor.rgb, mix(${c3(deep)}, ${c3(skyc)}, fres), ${reflMix.toFixed(3)});
-        // 天光宽高光：朝向天空的波面柔和发亮（阴天海面的漫射光泽）
-        vec3 sheenH = normalize(vec3(0.0, 1.0, 0.0) - V);
-        float sheen = pow(clamp(dot(gLiquidN, sheenH), 0.0, 1.0), 5.0);
-        gl_FragColor.rgb += ${c3(skyc)} * sheen * ${sheenK.toFixed(3)};
-        // 细闪波光：近处碎浪的紧凑高光闪点，随距离淡出
-        vec3 glintH = normalize(normalize(vec3(0.35, 0.72, 0.28)) - V);
-        float glint = pow(clamp(dot(gLiquidN, glintH), 0.0, 1.0), 240.0);
-        float glintFade = 1.0 - smoothstep(8.0, 30.0, distance(cameraPosition, vLiquidWorld));
-        gl_FragColor.rgb += vec3(0.85, 0.92, 0.97) * glint * ${glintK.toFixed(3)} * glintFade;
-        // v58 水体吸收：视线穿水路径 = 水深 / 视角余弦——俯视深水水色浓重且近不透明
-        // （呈暗色水体而非清晰透视水底），近岸浅滩/泳池保持清澈；掠射角让位菲涅尔反射；
-        // 背面=水下仰视，仅轻微吸收保留透光（斯涅尔窗亮斑不被压黑）
-        float pathK = vDepth / max(ndv, 0.25);
-        float absorb = (1.0 - exp(-pathK * ${absorbSig.toFixed(3)})) * (gl_FrontFacing ? 1.0 : 0.15);
-        gl_FragColor.rgb = mix(gl_FragColor.rgb, ${c3(body)}, absorb * 0.8 * (1.0 - fres * 0.85));
-        gl_FragColor.a = clamp(max(gl_FragColor.a, max(absorb * 0.97, fres * fres * 0.8)), 0.0, 1.0);
-      }`)
-  }
-}
-
 export function buildSkyAndLiquids(m: GameMap, def: LevelDef, g: THREE.Group, realWater = false) {
   for (const _step of buildSkyAndLiquidsJob(m, def, g, realWater)) { /* synchronous callers */ }
 }
@@ -233,6 +145,25 @@ export function* buildLiquidSurfacesJob(m: GameMap, def: LevelDef, g: THREE.Grou
   const seg = realWater && (def.id === 7 || def.id === 8 || def.id === 10) ? 2 : 1
   const isShallow = (tx: number, ty: number) => tx >= 0 && ty >= 0 && tx < m.w && ty < m.h
     && m.tiles[ty * m.w + tx] === 1 && m.liquid[ty * m.w + tx] === 2
+  const L10_WATER_Y = 0.015
+  const l10NearLake = (tx: number, ty: number) => {
+    for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+      const nx = tx + dx, ny = ty + dy
+      if (nx >= 0 && ny >= 0 && nx < m.w && ny < m.h && m.liquid[ny * m.w + nx] === 1) return true
+    }
+    return false
+  }
+  /** L10 湖面瓦片：3×3 顶点，逐顶点水深 = 水面 - 连续湖底/岸坡高度（共享边上的顶点取值一致）。 */
+  const l10WaterTile = (tx: number, ty: number) => {
+    const g = new THREE.PlaneGeometry(1, 1, 2, 2)
+    g.rotateX(-Math.PI / 2)
+    g.translate(tx + 0.5, L10_WATER_Y, ty + 0.5)
+    const pos = g.attributes.position as THREE.BufferAttribute
+    const d = new Float32Array(pos.count)
+    for (let v = 0; v < pos.count; v++) d[v] = L10_WATER_Y - floorHeight(m, pos.getX(v), pos.getZ(v), 0)
+    g.setAttribute('aDepth', new THREE.BufferAttribute(d, 1))
+    return g
+  }
   for (let y = RY0; y < RY1; y++)
     for (let x = RX0; x < RX1; x++) {
       if ((x - RX0) % 16 === 0) yield
@@ -264,20 +195,26 @@ export function* buildLiquidSurfacesJob(m: GameMap, def: LevelDef, g: THREE.Grou
         }
         damp.computeVertexNormals()
       }
-      if (m.liquid[ii] === 0) continue
+      if (m.liquid[ii] === 0) {
+        // L10 软岸线：紧邻湖面的岸上瓦片也铺水面，逐顶点水深可为负（着色器在岸上丢弃片元），
+        // 水面因而与倾斜岸坡在真实水线处相交，而不是停在瓦片边缘。
+        if (def.id === 10 && m.l10LakeTerrain && l10NearLake(x, y)) waterGeos.push(l10WaterTile(x, y))
+        continue
+      }
       const geo = new THREE.PlaneGeometry(1, 1, seg, seg)
       geo.rotateX(-Math.PI / 2)
       // v58：真实水体按瓦片烘焙水深顶点属性——着色器据此计算视线穿水路径的吸收（深水浓、浅滩清）
       const bakeDepth = (gg: THREE.PlaneGeometry) => {
-        if (!realWater) return
         const d = Math.max(0.3, m.seaFloor[ii] || 1.7)
         gg.setAttribute('aDepth', new THREE.BufferAttribute(new Float32Array(gg.attributes.position.count).fill(d), 1))
       }
       if (m.liquid[ii] === 1) {
         // L8 地下湖由下方一张精确圆形水面统一生成；跳过按瓦片的方形水面，消除岸边方块溢水。
-        if (def.id !== 8) {
-          // L10 岸线 terrain 精确收束到 y=0；只留 1.5cm 防止共面闪烁，不再把湖面架高在地面上。
-          geo.translate(x + 0.5, def.id === 10 ? 0.015 : 0.03, y + 0.5)
+        if (def.id === 10) {
+          geo.dispose()
+          waterGeos.push(l10WaterTile(x, y))
+        } else if (def.id !== 8) {
+          geo.translate(x + 0.5, 0.03, y + 0.5)
           bakeDepth(geo)
           waterGeos.push(geo)
         } else geo.dispose()
@@ -334,7 +271,7 @@ export function* buildLiquidSurfacesJob(m: GameMap, def: LevelDef, g: THREE.Grou
       const lake = new THREE.CircleGeometry(L8_LAKE_WATER_RADIUS, 96)
       waterGeos.push(lake)
       lake.rotateX(-Math.PI / 2)
-      if (realWater) {
+      {
         const pos = lake.attributes.position as THREE.BufferAttribute
         const depths = new Float32Array(pos.count)
         for (let v = 0; v < pos.count; v++) {
@@ -371,14 +308,13 @@ export function* buildLiquidSurfacesJob(m: GameMap, def: LevelDef, g: THREE.Grou
           metalness: 0.06,
           envBase: sea ? 0.95 : caveLake ? 0.72 : nightPool ? 0.42 : farmLake ? 0.76 : 0.9,
         } as THREE.MeshLambertMaterialParameters & { roughness?: number; metalness?: number; envBase?: number }
-        if (!realWater&&def.id!==5) {
-          params.normalMap = noiseTexture('#7a8a92', '#5a6a72')
-          const normalStrength = sea ? 0.46 : caveLake ? 0.3 : 0.35
-          params.normalScale = new THREE.Vector2(normalStrength, normalStrength)
-        }
         const mat = litMaterial(params)
         if(def.id===5)addHotelWaterFX(mat,m.inf?.ox??0,m.inf?.oy??0)
-        if (realWater&&def.id!==5) addRealWaterFX(mat, sea, nightPool)
+        else {
+          // v64：通用水体——realWater 开启走高画质（顶点起伏/雨环/双层细浪），关闭走低画质
+          const preset: WaterPresetName = sea ? 'sea' : caveLake ? 'cave' : nightPool ? 'nightPool' : farmLake ? 'lake' : 'pool'
+          applyWater(mat, preset, realWater ? 'high' : 'low')
+        }
         return mat
       })(),
     ))

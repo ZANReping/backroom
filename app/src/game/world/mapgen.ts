@@ -493,6 +493,13 @@ const modelCollidersFor = (s: Structure): ColliderBox[] | null => {
 //   （钳制不超出自身 footprint，1×1 据点锅炉不外扩）；罐顶 2.6m 不可站
 // - sphboiler 球罐：砖石基座 1.7×1.7 + 球罐 r0.85 @顶 ~2.2m → 盒 ±0.85；球顶不可站
 export function structColliders(s: Structure, m?: GameMap): ColliderBox[] {
+  if(s.data?.l1Static){
+    const height={bottom:Number(s.data.bottom),top:Number(s.data.top),stand:false}
+    if(!s.data.l1Round)return [{x0:s.x,y0:s.y,x1:s.x+s.w,y1:s.y+s.h,...height}]
+    // Tight circumscribed strips retain the existing AABB broad phase without
+    // the square corners of a cylindrical column becoming invisible blockers.
+    return Array.from({length:16},(_,i)=>{const lo=-1+i/8,hi=lo+.125,nearest=lo>0?lo:hi<0?hi:0,r=Math.sqrt(1-nearest*nearest)*s.h/2;return{x0:s.x+i*s.w/16,x1:s.x+(i+1)*s.w/16,y0:s.y+s.h/2-r,y1:s.y+s.h/2+r,...height}})
+  }
   if(s.data?.l0Door){const vertical=Number(s.data.deg)%180!==0,x=s.x+s.w/2,y=s.y+s.h/2;return[{x0:x-(vertical?.04:.44),y0:y-(vertical?.44:.04),x1:x+(vertical?.04:.44),y1:y+(vertical?.44:.04),bottom:0,top:2.13,stand:false}]}
   if(s.data?.l0Wall)return [{x0:s.x,y0:s.y,x1:s.x+s.w,y1:s.y+s.h,bottom:Number(s.data.bottom),top:Number(s.data.top),stand:false}]
   if(isTradeKind(s.kind)){
@@ -573,6 +580,7 @@ export function structColliders(s: Structure, m?: GameMap): ColliderBox[] {
     case 'desk':
       return [{ x0: cx - s.w * 0.45, y0: cy - 0.35, x1: cx + s.w * 0.45, y1: cy + 0.35, top: 0.77, stand: true }]
     case 'crate':
+      if(s.data?.l1Crate)return[{x0:s.x,y0:s.y,x1:s.x+s.w,y1:s.y+s.h,top:Number(s.data.l1Stack)===2?1.36:.68,stand:true}]
       return [{ x0: cx - 0.42, y0: cy - 0.42, x1: cx + 0.42, y1: cy + 0.42, top: 0.7, stand: true }]
     case 'l10haybale': {
       // 渲染器尚未建立模型碰撞时的确定性回退。按实际摆放角度求旋转长方体的平面 AABB；
@@ -904,6 +912,7 @@ export function wallBaseTopAt(m: GameMap, x: number, y: number, wallH: number): 
     if (m.up2[ni] === 1 && m.outdoor[ni] !== 1) top = Math.max(top, 2 * FLOOR_H + 2.6) // v54：邻第三层楼板→接到三层天花
   }
   if (!adj) return null
+  // L1 partitions use the same roof height as their visible/collidable neighbours.
   if (nearOutdoor && !nearIndoor) top = Math.min(top, 1.1) // 室外护墙/围栏
   // v54c 多层解耦：正上方压着上层楼板/上层墙（本格 up/up2/upWall）时，本墙止于楼板底——
   // 不再被邻格的上层楼板牵着升高（旧规则让 1F 间墙穿过上层地板，上层平面被 1F 轮廓牵死）

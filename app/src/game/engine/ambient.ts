@@ -1,4 +1,4 @@
-import { flickerL1Crates } from './l1State'
+import { flickerL1Crates,tickL1Dynamics } from './l1State'
 import {l0Sample} from '../world/l0Architecture'
 import {mapWallOccluded} from '../content/mapPlayer'
 import {revealMapSight} from '../world/mapSight'
@@ -19,6 +19,7 @@ const l5BoilerSound=new WeakMap<Engine,{pulse:number;whisper:number}>()
 // ---- 层级氛围事件（wiki 设定播报）+ L1 停电预警/恢复 + 开发者现象开关 ----
 // （原 step 内联段，逐语句搬运）
 export function updateAmbient(eng: Engine, dt: number) {
+  tickL1Dynamics(eng,dt)
   const map=eng.map,p=eng.player,tint=map?.tint[Math.floor(p.y)*map.w+Math.floor(p.x)]
   if(eng.levelDef.id===5&&(tint===24||tint===67)){
     const sound=l5BoilerSound.get(eng)??{pulse:0,whisper:14}
@@ -230,7 +231,7 @@ export function rollAmbientEvent(eng: Engine) {
   }
   // L1「闪烁」现象（Fandom：停电数分钟到数天，实体倾巢而出）——低频率随机发生
   // v59 联机：房主在同层时由房主统一掷骰并广播，客人跳过本地随机（两端同步停/来电）
-  if (lvl === 1 && eng.blackoutT <= 0 && eng.blackoutWarnT <= 0 && !eng.dev.phenOff.has('flicker') && !hostHere(eng) && Math.random() < 0.12) {
+  if (lvl === 1 && eng.mpSession?.started && eng.blackoutT <= 0 && eng.blackoutWarnT <= 0 && !eng.dev.phenOff.has('flicker') && !hostHere(eng) && Math.random() < 0.12) {
     eng.startBlackout(14 + Math.random() * 10)
     return
   }

@@ -3,6 +3,7 @@
 import { ITEMS, itemName, itemUseProfile, type ItemUseProfile } from '../content/items'
 import { tileAt } from '../world/mapgen'
 import { audio } from '../core/audio'
+import { dullerAlmondScent } from './dullerAI'
 import type { Engine, InvSlot, SlotRef, SlotWhere } from '../engine'
 
 // v51：天才糖的「冷知识」（简单但常被人认错）
@@ -137,7 +138,7 @@ function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = f
       }
       eng.squirtAmmo--
       audio.pickup()
-      if (eng.squirtTank === 'almond') { eng.player.sanity = Math.min(100, eng.player.sanity + 10); eng.msg('你就着储罐喝了一口杏仁水——甜腻。（理智 +10）', 'loot') }
+      if (eng.squirtTank === 'almond') { eng.player.sanity = Math.min(100, eng.player.sanity + 10); eng.msg('你就着储罐喝了一口杏仁水——甜腻。（理智 +10）', 'loot'); dullerAlmondScent(eng) }
       else if (eng.squirtTank === 'cashew') { eng.player.sanity = Math.max(0, eng.player.sanity - 10); eng.msg('你就着储罐喝了一口腰果水——苦涩烧喉。（理智 -10）', 'damage') }
       else if (eng.squirtTank === 'liquidpain') {
         // 液态痛苦（Object 48）：腐蚀性酸液——自饮重创
@@ -251,7 +252,7 @@ function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = f
       else eng.msg('你仔细地做了一遍预防性消毒。目前没有感染疫疾。', 'loot')
       break
     }
-    case 'sanity': p.sanity = Math.min(100, p.sanity + (def.value ?? 30)); applyThirst(def.value3); if (s.type === 'almond' && p.infection < 100) eng.infectionRecoverT = 60; break // v54：杏仁水/市政自来水解渴，腰果水加剧口渴；v55：杏仁水（未满一阶）给 60s「恢复」buff
+    case 'sanity': p.sanity = Math.min(100, p.sanity + (def.value ?? 30)); applyThirst(def.value3); if (s.type === 'almond' && p.infection < 100) eng.infectionRecoverT = 60; if (s.type === 'almond') dullerAlmondScent(eng); break // v54：杏仁水/市政自来水解渴，腰果水加剧口渴；v55：杏仁水（未满一阶）给 60s「恢复」buff
     case 'sanityeat': { // v54：幸运豆奶——理智 +value、饥饿 +value2、口渴 +value3
       p.sanity = Math.min(100, p.sanity + (def.value ?? 40))
       p.hunger = Math.min(100, p.hunger + (def.value2 ?? 20))

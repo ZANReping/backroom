@@ -1,12 +1,14 @@
 // 实体定义汇总与工厂（游荡→调查→追击→攻击 状态机）
 import { HUMANOID_ENTITIES } from './humanoid'
 import { CRITTER_ENTITIES } from './critters'
-import { LEGACY_MOTH_FORMS, mothDefinition, mothFormOf } from './moths'
+import { LEGACY_MOTH_FORMS, MOTH_FORMS, mothDefinition, mothFormOf } from './moths'
+import { isSmilerKind, smilerDefinition } from './smilers'
 import { SPECIAL_ENTITIES } from './special'
 import { DEEP_ENTITIES } from './deep'
-import type { Entity, EntityDef, MothForm } from './types'
+import type { Entity, EntityDef, EntityForm, MothForm } from './types'
 
-export type { AIState, EntityCodex, EntityDef, Entity, MothForm } from './types'
+export type { AIState, EntityCodex, EntityDef, Entity, MothForm, EntityForm } from './types'
+export { SMILER_KINDS, type SmilerKind } from './smilers'
 export { loadSeen, recordEncounter, recordEntityEncounter, unlockTier } from './codex'
 export { mergeMothCodex } from './codex'
 export { MOTH_FORMS } from './moths'
@@ -21,9 +23,10 @@ export const ENTITIES: Record<string, EntityDef> = {
 }
 
 let eid = 1
-export function makeEntity(type: string, x: number, y: number, z = 0, mothForm?: MothForm): Entity {
+export function makeEntity(type: string, x: number, y: number, z = 0, form?: EntityForm): Entity {
   const def = type === 'deathmoth' || Object.hasOwn(LEGACY_MOTH_FORMS, type)
-    ? mothDefinition(mothFormOf(type, mothForm)) : ENTITIES[type]
+    ? mothDefinition(mothFormOf(type, form && Object.hasOwn(MOTH_FORMS, form) ? form as MothForm : undefined))
+    : type === 'smiler' && isSmilerKind(form) ? smilerDefinition(form) : ENTITIES[type]
   return {
     id: eid++, def, x, y, z, hp: def.hp,
     state: def.stationary ? 'idle' : 'wander',

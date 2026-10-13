@@ -11,6 +11,9 @@ import { recordEntityEncounter, ENTITIES, type Entity } from '../entities'
 import { chunkKey, CS } from '../world/infinite'
 import { audio } from '../core/audio'
 import type { Engine } from '../engine'
+import { beginHoundFrame, houndHear, updateHound } from './houndAI'
+import { beginDullerFrame, updateDuller } from './dullerAI'
+import { beginSmilerFrame, flushSmilerSpawns, smilerHear, updateSmiler } from './smilerAI'
 
 // v51：人制品售货机——看过背面后，玩家背对它（视线锥外且 10m 内）即活化追击；受到攻击也会活化
 // （原 step 内联段，逐语句搬运；位于糖果计时器 pre 组与人制品/麻痹 post 组之间）
@@ -64,6 +67,9 @@ export function noiseEvent(eng: Engine, x: number, y: number, radius: number, sp
       }
       continue
     }
+    if (e.def.type === 'smiler') { smilerHear(eng, e, x, y, radius, sprint); continue }
+    if (e.def.type === 'hound') { houndHear(eng, e, x, y, radius, sprint); continue }
+    if (e.def.type === 'duller') continue // Dedicated stalking; ordinary noise never forces a chase.
     if (e.def.passive) continue // 被动实体（无面灵）不循声索敌——只有被攻击才反击
     const d = Math.hypot(e.x - x, e.y - y)
     // v57o：tiny 对水下/水面噪音极敏感——投掷物落水、爆炸与游泳声都能从更远处把它引开
@@ -192,6 +198,9 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
     return
   }
   updateMothDoors(eng)
+  beginSmilerFrame(eng, dt, lightOn)
+  beginHoundFrame(eng, dt)
+  beginDullerFrame(eng, dt)
   for (const e of m.entities) {
     // 死亡动画计时（倒地/消散后移除）
     if (e.dead) { e.deathT -= dt; continue }
@@ -343,19 +352,6 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
       } else continue
     }
 
-    // v53：L3 高智能猎犬——伏击态：平日潜伏不动（普通猎犬的游荡/循声被压制），
-    // 玩家进入视野且背对它（视线锥外 ~69°）时暴起追击；一旦被直视就僵住不动
-    if (l3 && def.type === 'hound' && e.state !== 'chase' && e.state !== 'attack') {
-      if (d < def.sight && eng.los(e.x, e.y, p.x, p.y) && eng.viewAngle(e.x, e.y) > 1.2) {
-        e.state = 'chase'; e.stateT = 0
-        if (!e.activated) { e.activated = true; eng.msg('背后响起湿冷的关节摩擦声——猎犬趁你背对它扑了上来！', 'damage') }
-        audio.aggro()
-      } else {
-        e.state = 'idle'; e.stateT = 0.5; e.targetX = e.x; e.targetY = e.y
-        continue // 保持伏击
-      }
-    }
-
     // v53：L3 尸鼠陷阱——实体踩上即被夹住（轻伤+僵直），并成为附近尸鼠的猎物
     if (ratTraps && def.type !== 'corpserat') {
       const tr = ratTraps.find((t) => Math.hypot(t.x + 0.5 - e.x, t.y + 0.5 - e.y) < 0.6)
@@ -386,6 +382,11 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
       continue
     }
 
+    // v61：笑魇（含变种）走专属状态机 smilerAI，跳过下方通用特殊行为与状态机；末尾的碰撞分离照常执行
+    generic: {
+    if (def.type === 'smiler') { updateSmiler(eng, e, dt, d, dmgMult, l3); break generic }
+    if (def.type === 'hound') { updateHound(eng, e, dt, d, dmgMult, l3); break generic } // v62：猎犬专属 AI
+    if (def.type === 'duller') { updateDuller(eng, e, dt, d, dmgMult); break generic } // v63：钝人专属 AI（隔墙抓取/受注视逃离）
     // —— 特殊行为 ——
     // 笑魇：只在黑暗中逼近；手电照亮时后退
     if (def.darkAmbusher && lightOn && d < 7 && eng.los(e.x, e.y, p.x, p.y)) {
@@ -672,8 +673,10 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
       }
     }
 
+    } // generic
+
     // 穿墙实体（钝人）：行动时发出刺耳的沙沙声，隔着墙也能听见
-    if (def.phases && (e.state === 'wander' || e.state === 'investigate' || e.state === 'chase') && d < 14) {
+    if (def.phases && def.type !== 'duller' && (e.state === 'wander' || e.state === 'investigate' || e.state === 'chase') && d < 14) {
       e.scrapeT = (e.scrapeT ?? Math.random() * 0.7) - dt
       if (e.scrapeT <= 0) {
         e.scrapeT = 0.7
@@ -683,7 +686,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
     }
 
     // ---- v26：实体-玩家最小间距（碰撞推挤分离，攻击判定用距离+面向而非重叠）----
-    if (!eng.dev.invisible && Math.abs(e.z - p.z) < 1.2) {
+    if (!eng.dev.invisible && Math.abs(e.z - p.z) < 1.2 && e.dl?.phase!=='drag' && e.dl?.phase!=='hold') {
       const MIN_SEP = def.stationary ? 0.5 : 0.56
       let sx = e.x - p.x, sy = e.y - p.y
       let sd = Math.hypot(sx, sy)
@@ -706,6 +709,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
       }
     }
   }
+  flushSmilerSpawns(eng)
   m.entities = m.entities.filter((e) => !e.dead || e.deathT > 0)
 }
 export function wanderTarget(eng: Engine, e: Entity) {

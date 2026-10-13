@@ -36,6 +36,7 @@ class CompileView extends THREE.Object3D {
 export function* compileSceneJob(
   renderer: THREE.WebGLRenderer, root: THREE.Object3D,
   camera: THREE.Camera, scene: THREE.Scene,
+  renderTarget?: THREE.WebGLRenderTarget | null,
 ): Generator<void, void, unknown> {
   const objects: THREE.Object3D[] = []
   const lights: THREE.Object3D[] = []
@@ -52,7 +53,14 @@ export function* compileSceneJob(
     yield
     const view = new CompileView([...lights, ...objects.slice(start, start + 8)])
     pending++
-    const compiled = renderer.compileAsync(view, camera, scene)
+    // HDR composition uses linear output without tone mapping. Compiling against
+    // the canvas creates different programs, which then block the first real draw.
+    const previousTarget = renderer.getRenderTarget()
+    let compiled: ReturnType<THREE.WebGLRenderer['compileAsync']>
+    try {
+      if (renderTarget !== undefined) renderer.setRenderTarget(renderTarget)
+      compiled = renderer.compileAsync(view, camera, scene)
+    } finally { renderer.setRenderTarget(previousTarget) }
     const job = Promise.all([
       compiled.then(() => undefined, () => undefined),
       waitForSubmittedPrograms(renderer),
@@ -71,6 +79,7 @@ export function* uploadSceneJob(
   renderer: THREE.WebGLRenderer, root: THREE.Object3D,
   camera: THREE.Camera, scene: THREE.Scene, inViewOnly = false,
   shadowLight: THREE.SpotLight | null = null,
+  renderTarget?: THREE.WebGLRenderTarget | null,
 ): Generator<void, void, unknown> {
   const objects: (THREE.Mesh | THREE.Line | THREE.Points)[] = []
   const frustum = inViewOnly ? new THREE.Frustum().setFromProjectionMatrix(
@@ -121,6 +130,7 @@ export function* uploadSceneJob(
     const frustum = new Map<THREE.Object3D, boolean>()
     const ranges = new Map<THREE.BufferGeometry, number>()
     const autoClear = renderer.autoClear
+    const previousTarget = renderer.getRenderTarget()
     const shadowAuto = renderer.shadowMap.autoUpdate, shadowNeeds = renderer.shadowMap.needsUpdate
     const shadowStates = new Map<THREE.LightShadow, { auto: boolean; needs: boolean }>()
     try {
@@ -131,6 +141,7 @@ export function* uploadSceneJob(
         if (geometry && !ranges.has(geometry)) { ranges.set(geometry, geometry.drawRange.count); geometry.drawRange.count = 0 }
       }
       renderer.autoClear = false
+      if (renderTarget !== undefined) renderer.setRenderTarget(renderTarget)
       // compileAsync covers surface programs, but Three creates depth programs
       // only in a shadow pass. Prepare the actual casters in the same zero-range
       // batches; never clear unrelated sunlight/point-light shadow maps.
@@ -149,6 +160,7 @@ export function* uploadSceneJob(
       renderer.render(view, camera)
     } finally {
       renderer.autoClear = autoClear
+      renderer.setRenderTarget(previousTarget)
       renderer.shadowMap.autoUpdate = shadowAuto; renderer.shadowMap.needsUpdate = shadowNeeds
       for (const [shadow, state] of shadowStates) {
         shadow.autoUpdate = state.auto

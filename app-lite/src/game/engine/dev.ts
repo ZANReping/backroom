@@ -2,8 +2,11 @@
 // 自 engine.ts 拆分，逻辑逐语句搬运；仅供开发者面板/冒烟测试调用，不改变正常游戏流程。
 import { bandOfPlayerZ, floorHeight, tileAt, walkableAt } from '../world/mapgen'
 import { LEVELS } from '../levels'
-import { ENTITIES, makeEntity, applyL3Variant, type Entity, type MothForm } from '../entities'
+import { ENTITIES, makeEntity, applyL3Variant, type Entity, type EntityForm } from '../entities'
 import { MOTH_FORMS } from '../entities/moths'
+import { initSmiler } from './smilerAI'
+import { initHound } from './houndAI'
+import { initDuller } from './dullerAI'
 import { ITEMS, itemName } from '../content/items'
 import { look } from '../core/renderer3d'
 import { prefabsForLevel, placePrefabForced } from '../prefabs'
@@ -71,14 +74,18 @@ export function devFindSpot(eng: Engine, cx: number, cy: number, maxR = 6, band:
 }
 
 /** 召唤实体：在玩家前方 dist 格（默认 3）生成指定类型实体 */
-export function devSpawnEntity(eng: Engine, type: string, dist = 3, mothForm?: MothForm): boolean {
+export function devSpawnEntity(eng: Engine, type: string, dist = 3, form?: EntityForm): boolean {
   const m = eng.map
   if (!m || !ENTITIES[type]) return false
   const p = eng.player
   const { fx, fy } = eng.devForward()
   const spot = eng.devFindSpot(p.x + fx * dist, p.y + fy * dist)
   if (!spot) { eng.msg('附近没有可召唤的空位。', 'system'); return false }
-  const ent = makeEntity(type, spot.x, spot.y, 0, mothForm)
+  const ent = makeEntity(type, spot.x, spot.y, ['smiler','hound','duller'].includes(type) ? floorHeight(m, spot.x, spot.y, p.floor) : 0, form)
+  // Exact developer selection, including frozen AI; summon one dog rather than a random pack.
+  if (type === 'smiler') initSmiler(eng, ent, ent.def.smilerKind ?? 'common', 0, false)
+  if (type === 'hound') initHound(eng, ent)
+  if (type === 'duller') initDuller(eng, ent)
   if (eng.levelDef.id === 5 && ent.def.mothForm === 'male') ent.def = { ...ent.def, passive: true, grudge: true, hunts: undefined }
   if (eng.levelDef.id === 3) applyL3Variant(ent) // v53：L3 召唤应用高智能变体（同 chunk raw 标记）
   // v58fix：水生实体召唤到玩家所在水深（否则 z=0 浮在海面，深水玩家看不见）

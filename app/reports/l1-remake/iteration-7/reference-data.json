@@ -1,0 +1,1478 @@
+{
+  "version": 4,
+  "cases": {
+    "parking-common": {
+      "anchor": {
+        "id": "parking-common",
+        "file": "天鹰段-合集/最普遍的天鹰段.jpg",
+        "variant": "parking",
+        "width": 800,
+        "height": 600,
+        "x": 2064.9656,
+        "y": 25.0535,
+        "z": 0.0627,
+        "yaw": 0.4215,
+        "pitch": 0.0852,
+        "roll": 0,
+        "fov": 56.303,
+        "centerX": 2064,
+        "centerY": 16,
+        "blackout": false
+      },
+      "camera": [
+        0.9656,
+        9.0535,
+        0.0627,
+        0.4215,
+        0.0852,
+        56.303
+      ],
+      "regions": [
+        {
+          "name": "floor",
+          "rect": [
+            0.3,
+            0.78,
+            0.35,
+            0.13
+          ]
+        },
+        {
+          "name": "ceiling",
+          "rect": [
+            0.25,
+            0.08,
+            0.35,
+            0.15
+          ]
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "near-column-foot",
+          "world": [
+            -5.2,
+            0,
+            1.6
+          ],
+          "image": [
+            0.305,
+            0.745
+          ],
+          "kind": "column"
+        },
+        {
+          "id": "near-column-beam-joint",
+          "world": [
+            -5.2,
+            2.55,
+            1.6
+          ],
+          "image": [
+            0.305,
+            0.486
+          ],
+          "kind": "beam"
+        },
+        {
+          "id": "next-column-foot",
+          "world": [
+            -5.2,
+            0,
+            -4.8
+          ],
+          "image": [
+            0.502,
+            0.681
+          ],
+          "kind": "column"
+        }
+      ]
+    },
+    "parking-round": {
+      "anchor": {
+        "id": "parking-round",
+        "file": "天鹰段-合集/圆柱天鹰段，天鹰段的墙壁.png",
+        "variant": "parking",
+        "width": 835,
+        "height": 617,
+        "x": 2321.0553,
+        "y": 24.7088,
+        "z": -0.162,
+        "yaw": 0.0827,
+        "pitch": -0.1577,
+        "roll": 0,
+        "fov": 53.4441,
+        "centerX": 2320,
+        "centerY": 16,
+        "blackout": false
+      },
+      "camera": [
+        1.0553,
+        8.7088,
+        -0.162,
+        0.0827,
+        -0.1577,
+        53.4441
+      ],
+      "regions": [
+        {
+          "name": "floor",
+          "rect": [
+            0.3,
+            0.78,
+            0.35,
+            0.13
+          ]
+        },
+        {
+          "name": "ceiling",
+          "rect": [
+            0.25,
+            0.08,
+            0.35,
+            0.15
+          ]
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "left-round-foot",
+          "world": [
+            -2.5,
+            0,
+            -1.2
+          ],
+          "image": [
+            0.303,
+            0.478
+          ],
+          "kind": "column"
+        },
+        {
+          "id": "left-round-head",
+          "world": [
+            -2.5,
+            3.23,
+            -1.2
+          ],
+          "image": [
+            0.297,
+            0.152
+          ],
+          "kind": "beam"
+        }
+      ]
+    },
+    "parking-room": {
+      "anchor": {
+        "id": "parking-room",
+        "file": "天鹰段-合集/天鹰段中的小房间.png",
+        "variant": "parking",
+        "width": 838,
+        "height": 619,
+        "x": 2572.0414,
+        "y": 25.0908,
+        "z": -0.5,
+        "yaw": -0.498,
+        "pitch": 0.1011,
+        "roll": 0,
+        "fov": 56.8945,
+        "centerX": 2576,
+        "centerY": 16,
+        "blackout": false
+      },
+      "camera": [
+        -3.9586,
+        9.0908,
+        -0.5,
+        -0.498,
+        0.1011,
+        56.8945
+      ],
+      "regions": [
+        {
+          "name": "floor",
+          "rect": [
+            0.3,
+            0.78,
+            0.35,
+            0.13
+          ]
+        },
+        {
+          "name": "ceiling",
+          "rect": [
+            0.25,
+            0.08,
+            0.35,
+            0.15
+          ]
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "room-left-wall-foot",
+          "world": [
+            -3,
+            0,
+            5
+          ],
+          "image": [
+            0.311,
+            0.832
+          ],
+          "kind": "wall"
+        },
+        {
+          "id": "room-opening-post-foot",
+          "world": [
+            -1.3,
+            0,
+            4.35
+          ],
+          "image": [
+            0.506,
+            0.793
+          ],
+          "kind": "column"
+        },
+        {
+          "id": "room-opening-post-head",
+          "world": [
+            -1.3,
+            2.7,
+            4.35
+          ],
+          "image": [
+            0.506,
+            0.312
+          ],
+          "kind": "beam"
+        }
+      ]
+    },
+    "parking-water": {
+      "anchor": {
+        "id": "parking-water",
+        "file": "天鹰段-合集/天鹰段的水洼.png",
+        "variant": "parking",
+        "width": 752,
+        "height": 528,
+        "x": 2832.6867,
+        "y": 19.0061,
+        "z": -0.2057,
+        "yaw": 0.0435,
+        "pitch": -0.2616,
+        "roll": 0,
+        "fov": 53.0557,
+        "centerX": 2832,
+        "centerY": 16,
+        "blackout": false
+      },
+      "camera": [
+        0.6867,
+        3.0061,
+        -0.2057,
+        0.0435,
+        -0.2616,
+        53.0557
+      ],
+      "regions": [
+        {
+          "name": "floor",
+          "rect": [
+            0.3,
+            0.78,
+            0.35,
+            0.13
+          ]
+        },
+        {
+          "name": "ceiling",
+          "rect": [
+            0.25,
+            0.08,
+            0.35,
+            0.15
+          ]
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "left-column-foot",
+          "world": [
+            -3.2,
+            0,
+            -8.2
+          ],
+          "image": [
+            0.289,
+            0.355
+          ],
+          "kind": "column"
+        },
+        {
+          "id": "near-right-column-foot",
+          "world": [
+            3,
+            0,
+            -2
+          ],
+          "image": [
+            0.85,
+            0.506
+          ],
+          "kind": "column"
+        }
+      ]
+    },
+    "parking-bright": {
+      "anchor": {
+        "id": "parking-bright",
+        "file": "天鹰段-合集/较为光亮的天鹰段.png",
+        "variant": "parking",
+        "width": 591,
+        "height": 454,
+        "x": 3091.0958,
+        "y": 16.9717,
+        "z": -0.2578,
+        "yaw": -0.1288,
+        "pitch": -0.0843,
+        "roll": 0,
+        "fov": 49.3826,
+        "centerX": 3088,
+        "centerY": 16,
+        "blackout": false
+      },
+      "camera": [
+        3.0958,
+        0.9717,
+        -0.2578,
+        -0.1288,
+        -0.0843,
+        49.3826
+      ],
+      "regions": [
+        {
+          "name": "floor",
+          "rect": [
+            0.3,
+            0.78,
+            0.35,
+            0.13
+          ]
+        },
+        {
+          "name": "ceiling",
+          "rect": [
+            0.25,
+            0.08,
+            0.35,
+            0.15
+          ]
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "white-column-foot",
+          "world": [
+            6.5,
+            0,
+            -8
+          ],
+          "image": [
+            0.7,
+            0.558
+          ],
+          "kind": "column"
+        },
+        {
+          "id": "white-column-head",
+          "world": [
+            6.5,
+            2.83,
+            -8
+          ],
+          "image": [
+            0.7,
+            0.225
+          ],
+          "kind": "beam"
+        }
+      ]
+    },
+    "parking-clean": {
+      "anchor": {
+        "id": "parking-clean",
+        "file": "天鹰段-合集/较为干净的天鹰段.png",
+        "variant": "parking",
+        "width": 531,
+        "height": 407,
+        "x": 3348.9278,
+        "y": 15.8194,
+        "z": -0.2083,
+        "yaw": 0.5602,
+        "pitch": -0.0686,
+        "roll": 0,
+        "fov": 51.6729,
+        "centerX": 3344,
+        "centerY": 16,
+        "blackout": false
+      },
+      "camera": [
+        4.9278,
+        -0.1806,
+        -0.2083,
+        0.5602,
+        -0.0686,
+        51.6729
+      ],
+      "regions": [
+        {
+          "name": "floor",
+          "rect": [
+            0.3,
+            0.78,
+            0.35,
+            0.13
+          ]
+        },
+        {
+          "name": "ceiling",
+          "rect": [
+            0.25,
+            0.08,
+            0.35,
+            0.15
+          ]
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "middle-column-foot",
+          "world": [
+            0,
+            0,
+            -6.3
+          ],
+          "image": [
+            0.407,
+            0.605
+          ],
+          "kind": "column"
+        },
+        {
+          "id": "next-column-foot",
+          "world": [
+            0,
+            0,
+            -12.1
+          ],
+          "image": [
+            0.634,
+            0.538
+          ],
+          "kind": "column"
+        }
+      ]
+    },
+    "parking-dry": {
+      "anchor": {
+        "id": "parking-dry",
+        "file": "天鹰段-合集/较为干燥的天鹰段.jpg",
+        "variant": "parking",
+        "width": 4080,
+        "height": 2296,
+        "x": 3606.0427,
+        "y": 24.2683,
+        "z": -0.1276,
+        "yaw": -0.0809,
+        "pitch": -0.0144,
+        "roll": 0,
+        "fov": 61.2728,
+        "centerX": 3600,
+        "centerY": 16,
+        "blackout": false
+      },
+      "camera": [
+        6.0427,
+        8.2683,
+        -0.1276,
+        -0.0809,
+        -0.0144,
+        61.2728
+      ],
+      "regions": [
+        {
+          "name": "floor",
+          "rect": [
+            0.3,
+            0.78,
+            0.35,
+            0.13
+          ]
+        },
+        {
+          "name": "ceiling",
+          "rect": [
+            0.25,
+            0.08,
+            0.35,
+            0.15
+          ]
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "right-wall-corner-foot",
+          "world": [
+            8,
+            0,
+            3
+          ],
+          "image": [
+            0.634,
+            0.709
+          ],
+          "kind": "wall"
+        },
+        {
+          "id": "right-wall-corner-head",
+          "world": [
+            8,
+            3.13,
+            3
+          ],
+          "image": [
+            0.634,
+            0.22
+          ],
+          "kind": "wall"
+        }
+      ]
+    },
+    "parking-dim": {
+      "anchor": {
+        "id": "parking-dim",
+        "file": "天鹰段-合集/较为黑暗的天鹰段.png",
+        "variant": "parking",
+        "width": 2048,
+        "height": 1536,
+        "x": 3853.7248,
+        "y": 25.1207,
+        "z": -0.5,
+        "yaw": -0.3217,
+        "pitch": 0.0659,
+        "roll": 0,
+        "fov": 48.023,
+        "centerX": 3856,
+        "centerY": 16,
+        "blackout": false
+      },
+      "camera": [
+        -2.2752,
+        9.1207,
+        -0.5,
+        -0.3217,
+        0.0659,
+        48.023
+      ],
+      "regions": [
+        {
+          "name": "floor",
+          "rect": [
+            0.3,
+            0.78,
+            0.35,
+            0.13
+          ]
+        },
+        {
+          "name": "ceiling",
+          "rect": [
+            0.25,
+            0.08,
+            0.35,
+            0.15
+          ]
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "left-column-foot",
+          "world": [
+            -2.5,
+            0,
+            -3
+          ],
+          "image": [
+            0.204,
+            0.672
+          ],
+          "kind": "column"
+        },
+        {
+          "id": "right-column-foot",
+          "world": [
+            4.3,
+            0,
+            -3
+          ],
+          "image": [
+            0.647,
+            0.673
+          ],
+          "kind": "column"
+        },
+        {
+          "id": "left-column-beam-joint",
+          "world": [
+            -2.5,
+            3.53,
+            -3
+          ],
+          "image": [
+            0.204,
+            0.328
+          ],
+          "kind": "beam"
+        }
+      ]
+    },
+    "parking-dark": {
+      "anchor": {
+        "id": "parking-dark",
+        "file": "天鹰段-合集/黑暗的天鹰段.png",
+        "variant": "parking",
+        "width": 2048,
+        "height": 1536,
+        "x": 4107.4529,
+        "y": 23.0716,
+        "z": -0.0246,
+        "yaw": -0.3106,
+        "pitch": 0.0575,
+        "roll": 0,
+        "fov": 82.1525,
+        "centerX": 4112,
+        "centerY": 16,
+        "blackout": false
+      },
+      "camera": [
+        -4.5471,
+        7.0716,
+        -0.0246,
+        -0.3106,
+        0.0575,
+        82.1525
+      ],
+      "regions": [
+        {
+          "name": "floor",
+          "rect": [
+            0.3,
+            0.78,
+            0.35,
+            0.13
+          ]
+        },
+        {
+          "name": "ceiling",
+          "rect": [
+            0.25,
+            0.08,
+            0.35,
+            0.15
+          ]
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "central-column-foot",
+          "world": [
+            -1.5,
+            0,
+            -3
+          ],
+          "image": [
+            0.493,
+            0.617
+          ],
+          "kind": "column"
+        },
+        {
+          "id": "far-column-foot",
+          "world": [
+            5.3,
+            0,
+            -10
+          ],
+          "image": [
+            0.593,
+            0.579
+          ],
+          "kind": "column"
+        }
+      ]
+    },
+    "parking-props": {
+      "anchor": {
+        "id": "parking-props",
+        "file": "天鹰段自然生成的装饰物.avif",
+        "variant": "parking",
+        "width": 1974,
+        "height": 1481,
+        "x": 4368.368,
+        "y": 19.4832,
+        "z": -0.0184,
+        "yaw": 0.032,
+        "pitch": -0.1013,
+        "roll": 0,
+        "fov": 68.3205,
+        "centerX": 4368,
+        "centerY": 16,
+        "blackout": false
+      },
+      "camera": [
+        0.368,
+        3.4832,
+        -0.0184,
+        0.032,
+        -0.1013,
+        68.3205
+      ],
+      "regions": [
+        {
+          "name": "floor",
+          "rect": [
+            0.3,
+            0.78,
+            0.35,
+            0.13
+          ]
+        },
+        {
+          "name": "ceiling",
+          "rect": [
+            0.25,
+            0.08,
+            0.35,
+            0.15
+          ]
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "rear-wall-floor",
+          "world": [
+            0,
+            0,
+            -8
+          ],
+          "image": [
+            0.5,
+            0.523
+          ],
+          "kind": "wall"
+        },
+        {
+          "id": "rear-wall-ceiling",
+          "world": [
+            0,
+            3.1,
+            -8
+          ],
+          "image": [
+            0.5,
+            0.322
+          ],
+          "kind": "wall"
+        }
+      ]
+    },
+    "storage": {
+      "anchor": {
+        "id": "storage",
+        "file": "跃金段.jpg",
+        "variant": "storage",
+        "width": 1199,
+        "height": 864,
+        "x": 4632.2328,
+        "y": 28.8875,
+        "z": -1.1933,
+        "yaw": 0.6645,
+        "pitch": 0.1619,
+        "roll": 0,
+        "fov": 55.3591,
+        "centerX": 4624,
+        "centerY": 16,
+        "blackout": false
+      },
+      "camera": [
+        8.2328,
+        12.8875,
+        -1.1933,
+        0.6645,
+        0.1619,
+        55.3591
+      ],
+      "regions": [
+        {
+          "name": "floor",
+          "rect": [
+            0.3,
+            0.78,
+            0.35,
+            0.13
+          ]
+        },
+        {
+          "name": "ceiling",
+          "rect": [
+            0.25,
+            0.08,
+            0.35,
+            0.15
+          ]
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "left-steel-post-foot",
+          "world": [
+            -4.5,
+            0,
+            6.5
+          ],
+          "image": [
+            0.17,
+            0.683
+          ],
+          "kind": "column"
+        },
+        {
+          "id": "middle-steel-post-foot",
+          "world": [
+            -4.5,
+            0,
+            -3
+          ],
+          "image": [
+            0.491,
+            0.672
+          ],
+          "kind": "column"
+        },
+        {
+          "id": "third-steel-post-foot",
+          "world": [
+            -4.5,
+            0,
+            -12.5
+          ],
+          "image": [
+            0.642,
+            0.669
+          ],
+          "kind": "column"
+        }
+      ]
+    },
+    "gothic": {
+      "anchor": {
+        "id": "gothic",
+        "file": "哥特段.png",
+        "variant": "gothic",
+        "width": 1358,
+        "height": 858,
+        "x": 4880.6102,
+        "y": 17.6314,
+        "z": 0.7041,
+        "yaw": 0.0788,
+        "pitch": -0.0695,
+        "roll": 0.0129,
+        "fov": 58.294,
+        "centerX": 4880,
+        "centerY": 16,
+        "blackout": false
+      },
+      "camera": [
+        0.6102,
+        1.6314,
+        0.7041,
+        0.0788,
+        -0.0695,
+        58.294,
+        0.0129
+      ],
+      "regions": [
+        {
+          "name": "floor",
+          "rect": [
+            0.3,
+            0.78,
+            0.35,
+            0.13
+          ]
+        },
+        {
+          "name": "ceiling",
+          "rect": [
+            0.25,
+            0.08,
+            0.35,
+            0.15
+          ]
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "near-column-left-springing",
+          "world": [
+            -1.54,
+            1.35,
+            -1
+          ],
+          "image": [
+            0.077,
+            0.74
+          ],
+          "kind": "column",
+          "profile": {
+            "center": [
+              -1,
+              1.35,
+              -1
+            ],
+            "radius": 0.54,
+            "side": "left"
+          }
+        },
+        {
+          "id": "near-column-right-springing",
+          "world": [
+            -0.46,
+            1.35,
+            -1
+          ],
+          "image": [
+            0.335,
+            0.74
+          ],
+          "kind": "column",
+          "profile": {
+            "center": [
+              -1,
+              1.35,
+              -1
+            ],
+            "radius": 0.54,
+            "side": "right"
+          }
+        },
+        {
+          "id": "next-column-foot",
+          "world": [
+            -1,
+            0,
+            -7
+          ],
+          "image": [
+            0.45,
+            0.667
+          ],
+          "kind": "column"
+        },
+        {
+          "id": "right-column-foot",
+          "world": [
+            5,
+            0,
+            -7
+          ],
+          "image": [
+            0.835,
+            0.718
+          ],
+          "kind": "column"
+        },
+        {
+          "id": "right-column-springing",
+          "world": [
+            5,
+            1.35,
+            -7
+          ],
+          "image": [
+            0.835,
+            0.501
+          ],
+          "kind": "column"
+        }
+      ]
+    },
+    "ouroboros": {
+      "anchor": {
+        "id": "ouroboros",
+        "file": "衔尾段.png",
+        "variant": "ouroboros",
+        "width": 1482,
+        "height": 746,
+        "x": 5138.921,
+        "y": 18.259999999999998,
+        "z": 0.4071,
+        "yaw": 0.1754,
+        "pitch": 0.0002,
+        "roll": 0,
+        "fov": 63.6509,
+        "centerX": 5136,
+        "centerY": 16,
+        "blackout": false
+      },
+      "camera": [
+        2.921,
+        2.26,
+        0.4071,
+        0.1754,
+        0.0002,
+        63.6509
+      ],
+      "regions": [
+        {
+          "name": "floor",
+          "rect": [
+            0.3,
+            0.78,
+            0.35,
+            0.13
+          ]
+        },
+        {
+          "name": "ceiling",
+          "rect": [
+            0.25,
+            0.08,
+            0.35,
+            0.15
+          ]
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "near-column-foot",
+          "world": [
+            4.8,
+            0,
+            -2
+          ],
+          "image": [
+            0.773,
+            0.91
+          ],
+          "kind": "column"
+        },
+        {
+          "id": "near-column-head",
+          "world": [
+            4.8,
+            4.25,
+            -2
+          ],
+          "image": [
+            0.773,
+            0.02
+          ],
+          "kind": "column"
+        }
+      ]
+    },
+    "garden": {
+      "anchor": {
+        "id": "garden",
+        "file": "花园段.png",
+        "variant": "garden",
+        "width": 1920,
+        "height": 1080,
+        "x": 5394.2691,
+        "y": 18.0895,
+        "z": -0.1062,
+        "yaw": -0.1282,
+        "pitch": -0.0353,
+        "roll": 0,
+        "fov": 64.2096,
+        "centerX": 5392,
+        "centerY": 16,
+        "blackout": false
+      },
+      "camera": [
+        2.2691,
+        2.0895,
+        -0.1062,
+        -0.1282,
+        -0.0353,
+        64.2096
+      ],
+      "regions": [
+        {
+          "name": "floor",
+          "rect": [
+            0.3,
+            0.78,
+            0.35,
+            0.13
+          ]
+        },
+        {
+          "name": "ceiling",
+          "rect": [
+            0.25,
+            0.08,
+            0.35,
+            0.15
+          ]
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "left-front-column-foot",
+          "world": [
+            -2,
+            0,
+            -7.2
+          ],
+          "image": [
+            0.221,
+            0.604
+          ],
+          "kind": "column"
+        },
+        {
+          "id": "right-front-column-foot",
+          "world": [
+            5.2,
+            0,
+            0
+          ],
+          "image": [
+            0.974,
+            0.933
+          ],
+          "kind": "column"
+        }
+      ]
+    },
+    "path-corridor": {
+      "anchor": {
+        "id": "path-corridor",
+        "file": "小径走廊.jpg",
+        "variant": "maintenance",
+        "width": 1600,
+        "height": 1600,
+        "x": 5647.402,
+        "y": 20.5637,
+        "z": -0.1069,
+        "yaw": 0.0782,
+        "pitch": -0.1097,
+        "roll": 0,
+        "fov": 60.8847,
+        "centerX": 5648,
+        "centerY": 16,
+        "blackout": false
+      },
+      "camera": [
+        -0.598,
+        4.5637,
+        -0.1069,
+        0.0782,
+        -0.1097,
+        60.8847
+      ],
+      "regions": [
+        {
+          "name": "floor",
+          "rect": [
+            0.3,
+            0.78,
+            0.35,
+            0.13
+          ]
+        },
+        {
+          "name": "ceiling",
+          "rect": [
+            0.25,
+            0.08,
+            0.35,
+            0.15
+          ]
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "left-wall-floor-at-crossing",
+          "world": [
+            -2,
+            0,
+            0
+          ],
+          "image": [
+            0.315,
+            0.664
+          ],
+          "kind": "wall"
+        },
+        {
+          "id": "right-wall-floor-at-crossing",
+          "world": [
+            0,
+            0,
+            0
+          ],
+          "image": [
+            0.675,
+            0.673
+          ],
+          "kind": "wall"
+        }
+      ]
+    },
+    "path-room": {
+      "anchor": {
+        "id": "path-room",
+        "file": "小径的房间之一.png",
+        "variant": "maintenance",
+        "width": 1368,
+        "height": 1824,
+        "x": 5906.4942,
+        "y": 26.6,
+        "z": -0.3118,
+        "yaw": 0.0758,
+        "pitch": -0.0832,
+        "roll": 0,
+        "fov": 60.417,
+        "centerX": 5904,
+        "centerY": 16,
+        "blackout": false
+      },
+      "camera": [
+        2.4942,
+        10.6,
+        -0.3118,
+        0.0758,
+        -0.0832,
+        60.417
+      ],
+      "regions": [
+        {
+          "name": "floor",
+          "rect": [
+            0.3,
+            0.78,
+            0.35,
+            0.13
+          ]
+        },
+        {
+          "name": "ceiling",
+          "rect": [
+            0.25,
+            0.08,
+            0.35,
+            0.15
+          ]
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "rear-left-ceiling-corner",
+          "world": [
+            1,
+            3.4,
+            3
+          ],
+          "image": [
+            0.364,
+            0.181
+          ],
+          "kind": "wall"
+        },
+        {
+          "id": "rear-right-ceiling-corner",
+          "world": [
+            3,
+            3.4,
+            3
+          ],
+          "image": [
+            0.664,
+            0.177
+          ],
+          "kind": "wall"
+        },
+        {
+          "id": "rear-right-floor-corner",
+          "world": [
+            3,
+            0,
+            3
+          ],
+          "image": [
+            0.664,
+            0.568
+          ],
+          "kind": "wall"
+        }
+      ]
+    },
+    "crate": {
+      "anchor": {
+        "id": "crate",
+        "file": "板条箱.png",
+        "variant": "storage",
+        "width": 800,
+        "height": 600,
+        "x": 6160.5,
+        "y": 17,
+        "z": -0.65,
+        "yaw": 0,
+        "pitch": -0.15,
+        "roll": 0,
+        "fov": 52,
+        "centerX": 6160,
+        "centerY": 16,
+        "blackout": false
+      },
+      "camera": [
+        0.5,
+        1,
+        -0.65,
+        0,
+        -0.15,
+        52
+      ],
+      "regions": [
+        {
+          "name": "floor",
+          "rect": [
+            0.3,
+            0.78,
+            0.35,
+            0.13
+          ]
+        },
+        {
+          "name": "ceiling",
+          "rect": [
+            0.25,
+            0.08,
+            0.35,
+            0.15
+          ]
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "box-upper-left-front",
+          "world": [
+            0.025,
+            0.66,
+            -0.145
+          ],
+          "image": [
+            0.065,
+            0.174
+          ],
+          "kind": "prop"
+        },
+        {
+          "id": "box-lower-right-front",
+          "world": [
+            0.975,
+            0,
+            -0.145
+          ],
+          "image": [
+            0.945,
+            0.985
+          ],
+          "kind": "prop"
+        }
+      ]
+    },
+    "power-out": {
+      "anchor": {
+        "id": "power-out",
+        "file": "闪烁事件后的天鹰段.png",
+        "variant": "parking",
+        "width": 800,
+        "height": 600,
+        "x": 6416.0723,
+        "y": 23.6441,
+        "z": -0.0214,
+        "yaw": 0.1595,
+        "pitch": 0.0182,
+        "roll": 0,
+        "fov": 73.1285,
+        "centerX": 6416,
+        "centerY": 16,
+        "blackout": true
+      },
+      "camera": [
+        0.0723,
+        7.6441,
+        -0.0214,
+        0.1595,
+        0.0182,
+        73.1285
+      ],
+      "regions": [
+        {
+          "name": "floor",
+          "rect": [
+            0.3,
+            0.78,
+            0.35,
+            0.13
+          ]
+        },
+        {
+          "name": "ceiling",
+          "rect": [
+            0.25,
+            0.08,
+            0.35,
+            0.15
+          ]
+        }
+      ],
+      "landmarks": [
+        {
+          "id": "central-column-foot",
+          "world": [
+            -0.3,
+            0,
+            0.1
+          ],
+          "image": [
+            0.556,
+            0.65
+          ],
+          "kind": "column"
+        },
+        {
+          "id": "central-column-head",
+          "world": [
+            -0.3,
+            2.85,
+            0.1
+          ],
+          "image": [
+            0.556,
+            0.394
+          ],
+          "kind": "column"
+        }
+      ]
+    }
+  }
+}

@@ -1,6 +1,7 @@
 // 第一人称手部/手持物品 viewmodel + 屏幕中心准心（DOM 注入）
 import * as THREE from 'three'
 import { buildItemMesh } from './itemsMesh'
+import { buildRefinedItemMesh } from './refinedItemMesh'
 import { buildFlashlightMesh } from './flashlightMesh'
 import { buildDetailedItemMesh } from './detailItemsMesh'
 import { buildSquirtGunMesh } from './squirtGunMesh'
@@ -50,6 +51,17 @@ export function buildHeldItem(type: string): THREE.Group {
     g.add(m); return m
   }
   switch (type) {
+    case 'luckymilk':
+    case 'capacitor':
+    case 'skeleton':
+    case 'rabbit':
+    case 'pockets':
+    case 'fuyouyu': {
+      // Hold the lower body/shaft, leaving labels, stone faces and ring holes above the palm.
+      g.add(buildItemMesh(type, { halo: false }))
+      g.position.set(0, type === 'luckymilk' || type === 'capacitor' ? .1 : .08, -.075)
+      break
+    }
     case 'crowbar': { // 参考《半条命》：主杆竖持，顶部羊角向视线前方弯曲
       const detail = buildDetailedItemMesh('crowbar')
       const pose = new THREE.Group()
@@ -59,16 +71,21 @@ export function buildHeldItem(type: string): THREE.Group {
       pose.add(detail); g.add(pose)
       break
     }
-    case 'wrench': // 竖持管钳：手柄竖直，顶端开口钳头
-      vb(0.035, 0.3, 0.03, '#8a8a8a', 0, 0.1, -0.05)
-      vb(0.075, 0.07, 0.035, '#8a8a8a', -0.028, 0.28, -0.05, 0, 0.5)
-      vb(0.075, 0.07, 0.035, '#8a8a8a', 0.028, 0.3, -0.05, 0, -0.5)
+    case 'wrench': { // 竖持管钳：共享细化模型，钳头（模型 -X）朝上
+      const detail = buildRefinedItemMesh('wrench')
+      detail.rotation.z = -Math.PI / 2
+      detail.scale.setScalar(.95)
+      detail.position.set(0, .14, -.06)
+      g.add(detail)
       break
-    case 'timber': // 竖持木板：板身竖直 + 木纹 + 钉头
-      vb(0.13, 0.42, 0.04, '#8a6a42', 0, 0.12, -0.05)
-      vb(0.02, 0.42, 0.006, '#6a4e30', 0.03, 0.12, -0.027)
-      vb(0.022, 0.022, 0.012, '#a8a8a8', -0.03, 0.26, -0.026)
+    }
+    case 'timber': { // 竖持木板：共享细化模型，板长（模型 X）竖直
+      const detail = buildRefinedItemMesh('timber')
+      detail.rotation.set(0, Math.PI / 2, Math.PI / 2, 'YXZ')
+      detail.position.set(0, .12, -.05)
+      g.add(detail)
       break
+    }
     case 'lighter': {
       const detail = buildDetailedItemMesh('lighter')
       detail.scale.setScalar(.75)
@@ -120,9 +137,8 @@ export function buildHeldItem(type: string): THREE.Group {
     }
     default: {
       // 复用物品低模（去掉地面光环）
-      const src = buildItemMesh(type)
+      const src = buildItemMesh(type, { halo: false })
       for (const ch of [...src.children]) {
-        if ((ch as THREE.Mesh).geometry?.type === 'RingGeometry') continue
         g.add(ch)
       }
       g.position.set(0, 0.02, -0.18)

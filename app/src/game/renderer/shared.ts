@@ -1,4 +1,5 @@
 import {installL0EnvironmentShader} from './l0EnvironmentShader'
+import {installL1DynamicProbe} from './l1Probes'
 // 渲染器公共工具：常量/调色/几何与程序化纹理基础
 import * as THREE from 'three'
 import { prepareCachedTextureImage, publishTextureImage } from './textureImages'
@@ -81,7 +82,7 @@ export function litMaterial(params: THREE.MeshLambertMaterialParameters & { roug
   // 这里仅自动补齐缺失的 emissiveMap；显式提供的专用发光图仍然优先。
   const shaded = { ...rest }
   if (shaded.map && shaded.emissive && !shaded.emissiveMap) shaded.emissiveMap = shaded.map
-  if (materialMode !== 'realistic') { const mat=new THREE.MeshLambertMaterial(shaded);installL0EnvironmentShader(mat);return mat }
+  if (materialMode !== 'realistic') { const mat=new THREE.MeshLambertMaterial(shaded);installL0EnvironmentShader(mat);installL1DynamicProbe(mat);return mat }
   const mat = new THREE.MeshStandardMaterial({
     ...shaded,
     roughness: roughness ?? 0.85,
@@ -92,6 +93,7 @@ export function litMaterial(params: THREE.MeshLambertMaterialParameters & { roug
   mat.envMapIntensity = base * reflectK
   mat.userData.envBase = base
   installL0EnvironmentShader(mat)
+  installL1DynamicProbe(mat)
   return mat
 }
 
@@ -216,15 +218,23 @@ export function levelTexture(name: string, fallback: () => THREE.Texture): THREE
   ph.wrapS = THREE.RepeatWrapping
   ph.wrapT = THREE.RepeatWrapping
   texCache.set(name, ph)
+  ph.userData.fileImagePending = true
+  // A failed/offline file keeps its real procedural fallback; never block the menu forever.
+  const timeout = setTimeout(() => { ph.userData.fileImagePending = false }, 15000)
+  const settled = () => { clearTimeout(timeout); ph.userData.fileImagePending = false }
   try {
     const url = textureUrl(name)
     new THREE.TextureLoader().load(
       url,
-      async (t) => { await publishTextureImage(ph, t, url) },
+      async (t) => {
+        try { await publishTextureImage(ph, t, url) }
+        catch (err) { console.warn(`[textures] ${url} 解码失败，保留程序化兜底`, err) }
+        finally { settled() }
+      },
       undefined,
-      (err) => { console.warn(`[textures] ${url} 加载失败，保留程序化兜底`, err) },
+      (err) => { settled(); console.warn(`[textures] ${url} 加载失败，保留程序化兜底`, err) },
     )
-  } catch { /* 离线校验/桩环境无 TextureLoader：保留程序化兜底 */ }
+  } catch { settled() /* 离线校验/桩环境无 TextureLoader：保留程序化兜底 */ }
   return ph
 }
 

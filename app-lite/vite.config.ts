@@ -13,6 +13,9 @@ export default defineConfig({
   plugins: [inspectAttr(), react(), settlementVerifier()],
   server: {
     port: 3000,
+    hmr: process.env.L0_VERIFY === '1' ? false : undefined,
+    // Verification captures/browser profiles must not reload a running scene.
+    watch: { ignored: ['**/.cache/**', '**/reports/**'] },
   },
   resolve: {
     alias: {

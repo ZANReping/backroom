@@ -1,0 +1,1303 @@
+{
+  "generatedAt": "2026-10-09T19:12:33.1301774+08:00",
+  "source": "app",
+  "target": "app-lite",
+  "scope": "src and scripts; conflict-free only",
+  "copied": [
+    {
+      "path": "src/main.tsx",
+      "kind": "changed",
+      "bytes": 538
+    },
+    {
+      "path": "src/components/DialogOverlay.tsx",
+      "kind": "changed",
+      "bytes": 39131
+    },
+    {
+      "path": "src/components/DocOverlay.tsx",
+      "kind": "changed",
+      "bytes": 11213
+    },
+    {
+      "path": "src/components/InventoryOverlay.tsx",
+      "kind": "changed",
+      "bytes": 100449
+    },
+    {
+      "path": "src/components/L0MapLegend.tsx",
+      "kind": "new",
+      "bytes": 963
+    },
+    {
+      "path": "src/components/LootPanel.tsx",
+      "kind": "changed",
+      "bytes": 3174
+    },
+    {
+      "path": "src/components/ManilaLetter.tsx",
+      "kind": "new",
+      "bytes": 1459
+    },
+    {
+      "path": "src/components/npcPortrait.ts",
+      "kind": "changed",
+      "bytes": 3346
+    },
+    {
+      "path": "src/components/PauseMenu.tsx",
+      "kind": "changed",
+      "bytes": 7277
+    },
+    {
+      "path": "src/game/engine.ts",
+      "kind": "changed",
+      "bytes": 62057
+    },
+    {
+      "path": "src/proto/dullerProto.ts",
+      "kind": "new",
+      "bytes": 4454
+    },
+    {
+      "path": "src/proto/houndProto.ts",
+      "kind": "new",
+      "bytes": 3171
+    },
+    {
+      "path": "src/proto/l10Views.ts",
+      "kind": "new",
+      "bytes": 3011
+    },
+    {
+      "path": "src/proto/skyProto.ts",
+      "kind": "new",
+      "bytes": 4573
+    },
+    {
+      "path": "src/proto/smilerProto.ts",
+      "kind": "new",
+      "bytes": 3844
+    },
+    {
+      "path": "src/game/content/alphaMap.ts",
+      "kind": "changed",
+      "bytes": 6070
+    },
+    {
+      "path": "src/game/content/decorRegistry.ts",
+      "kind": "changed",
+      "bytes": 38297
+    },
+    {
+      "path": "src/game/content/docs.ts",
+      "kind": "changed",
+      "bytes": 13096
+    },
+    {
+      "path": "src/game/content/items.ts",
+      "kind": "changed",
+      "bytes": 26689
+    },
+    {
+      "path": "src/game/content/l0Map.ts",
+      "kind": "new",
+      "bytes": 5240
+    },
+    {
+      "path": "src/game/content/mapPlayer.ts",
+      "kind": "new",
+      "bytes": 1977
+    },
+    {
+      "path": "src/game/content/phenomena.ts",
+      "kind": "changed",
+      "bytes": 4263
+    },
+    {
+      "path": "src/game/core/features.ts",
+      "kind": "new",
+      "bytes": 105
+    },
+    {
+      "path": "src/game/core/graphicsPresets.ts",
+      "kind": "new",
+      "bytes": 3190
+    },
+    {
+      "path": "src/game/core/rng.ts",
+      "kind": "changed",
+      "bytes": 1775
+    },
+    {
+      "path": "src/game/core/titleSave.ts",
+      "kind": "new",
+      "bytes": 922
+    },
+    {
+      "path": "src/game/core/types.ts",
+      "kind": "changed",
+      "bytes": 26440
+    },
+    {
+      "path": "src/game/design/extractLayouts.ts",
+      "kind": "changed",
+      "bytes": 34392
+    },
+    {
+      "path": "src/game/engine/ambient.ts",
+      "kind": "changed",
+      "bytes": 16378
+    },
+    {
+      "path": "src/game/engine/combat.ts",
+      "kind": "changed",
+      "bytes": 34031
+    },
+    {
+      "path": "src/game/engine/dev.ts",
+      "kind": "changed",
+      "bytes": 37190
+    },
+    {
+      "path": "src/game/engine/devMap.ts",
+      "kind": "new",
+      "bytes": 7290
+    },
+    {
+      "path": "src/game/engine/dullerAI.ts",
+      "kind": "new",
+      "bytes": 20431
+    },
+    {
+      "path": "src/game/engine/entityAI.ts",
+      "kind": "changed",
+      "bytes": 54224
+    },
+    {
+      "path": "src/game/engine/glowsticks.ts",
+      "kind": "new",
+      "bytes": 1063
+    },
+    {
+      "path": "src/game/engine/houndAI.ts",
+      "kind": "new",
+      "bytes": 13225
+    },
+    {
+      "path": "src/game/engine/interact.ts",
+      "kind": "changed",
+      "bytes": 81567
+    },
+    {
+      "path": "src/game/engine/inventory.ts",
+      "kind": "changed",
+      "bytes": 24256
+    },
+    {
+      "path": "src/game/engine/l0State.ts",
+      "kind": "new",
+      "bytes": 17556
+    },
+    {
+      "path": "src/game/engine/l1State.ts",
+      "kind": "changed",
+      "bytes": 6841
+    },
+    {
+      "path": "src/game/engine/l7Events.ts",
+      "kind": "new",
+      "bytes": 6774
+    },
+    {
+      "path": "src/game/engine/level.ts",
+      "kind": "changed",
+      "bytes": 43190
+    },
+    {
+      "path": "src/game/engine/movement.ts",
+      "kind": "changed",
+      "bytes": 32431
+    },
+    {
+      "path": "src/game/engine/save.ts",
+      "kind": "changed",
+      "bytes": 9361
+    },
+    {
+      "path": "src/game/engine/smilerAI.ts",
+      "kind": "new",
+      "bytes": 19984
+    },
+    {
+      "path": "src/game/engine/survival.ts",
+      "kind": "changed",
+      "bytes": 8703
+    },
+    {
+      "path": "src/game/entities/critters.ts",
+      "kind": "changed",
+      "bytes": 18447
+    },
+    {
+      "path": "src/game/entities/deep.ts",
+      "kind": "changed",
+      "bytes": 23739
+    },
+    {
+      "path": "src/game/entities/humanoid.ts",
+      "kind": "changed",
+      "bytes": 11288
+    },
+    {
+      "path": "src/game/entities/index.ts",
+      "kind": "changed",
+      "bytes": 2904
+    },
+    {
+      "path": "src/game/entities/smilerPose.ts",
+      "kind": "new",
+      "bytes": 1963
+    },
+    {
+      "path": "src/game/entities/smilers.ts",
+      "kind": "new",
+      "bytes": 6673
+    },
+    {
+      "path": "src/game/entities/special.ts",
+      "kind": "changed",
+      "bytes": 12758
+    },
+    {
+      "path": "src/game/entities/types.ts",
+      "kind": "changed",
+      "bytes": 8464
+    },
+    {
+      "path": "src/game/levels/l0.ts",
+      "kind": "changed",
+      "bytes": 2444
+    },
+    {
+      "path": "src/game/levels/l1.ts",
+      "kind": "changed",
+      "bytes": 4208
+    },
+    {
+      "path": "src/game/levels/l10.ts",
+      "kind": "changed",
+      "bytes": 2811
+    },
+    {
+      "path": "src/game/levels/l7.ts",
+      "kind": "changed",
+      "bytes": 4692
+    },
+    {
+      "path": "src/game/levels/l9.ts",
+      "kind": "changed",
+      "bytes": 3133
+    },
+    {
+      "path": "src/game/levels/shared.ts",
+      "kind": "changed",
+      "bytes": 8715
+    },
+    {
+      "path": "src/game/renderer/dullerMesh.ts",
+      "kind": "new",
+      "bytes": 22893
+    },
+    {
+      "path": "src/game/renderer/entitiesMesh.ts",
+      "kind": "changed",
+      "bytes": 107736
+    },
+    {
+      "path": "src/game/renderer/envProbe.ts",
+      "kind": "changed",
+      "bytes": 2106
+    },
+    {
+      "path": "src/game/renderer/eyeAdaptation.ts",
+      "kind": "new",
+      "bytes": 1067
+    },
+    {
+      "path": "src/game/renderer/geometry.ts",
+      "kind": "changed",
+      "bytes": 92957
+    },
+    {
+      "path": "src/game/renderer/glowstickLights.ts",
+      "kind": "new",
+      "bytes": 1025
+    },
+    {
+      "path": "src/game/renderer/houndMesh.ts",
+      "kind": "new",
+      "bytes": 28842
+    },
+    {
+      "path": "src/game/renderer/itemsMesh.ts",
+      "kind": "changed",
+      "bytes": 8262
+    },
+    {
+      "path": "src/game/renderer/l0Architecture.ts",
+      "kind": "new",
+      "bytes": 20893
+    },
+    {
+      "path": "src/game/renderer/l0EnvironmentShader.ts",
+      "kind": "new",
+      "bytes": 3415
+    },
+    {
+      "path": "src/game/renderer/l0Fixtures.ts",
+      "kind": "new",
+      "bytes": 2439
+    },
+    {
+      "path": "src/game/renderer/l0Flicker.ts",
+      "kind": "new",
+      "bytes": 1404
+    },
+    {
+      "path": "src/game/renderer/l0Furniture.ts",
+      "kind": "new",
+      "bytes": 8996
+    },
+    {
+      "path": "src/game/renderer/l0Light.ts",
+      "kind": "new",
+      "bytes": 874
+    },
+    {
+      "path": "src/game/renderer/l0LightingBake.ts",
+      "kind": "new",
+      "bytes": 5065
+    },
+    {
+      "path": "src/game/renderer/l0PointMask.ts",
+      "kind": "new",
+      "bytes": 811
+    },
+    {
+      "path": "src/game/renderer/l10Ground.ts",
+      "kind": "new",
+      "bytes": 7235
+    },
+    {
+      "path": "src/game/renderer/l10Meshes.ts",
+      "kind": "new",
+      "bytes": 31406
+    },
+    {
+      "path": "src/game/renderer/l10Wind.ts",
+      "kind": "new",
+      "bytes": 6841
+    },
+    {
+      "path": "src/game/renderer/l1Architecture.ts",
+      "kind": "changed",
+      "bytes": 20198
+    },
+    {
+      "path": "src/game/renderer/l1BakedScene.ts",
+      "kind": "new",
+      "bytes": 6607
+    },
+    {
+      "path": "src/game/renderer/l1BakedShader.ts",
+      "kind": "new",
+      "bytes": 1129
+    },
+    {
+      "path": "src/game/renderer/l1BakeQueue.ts",
+      "kind": "new",
+      "bytes": 3641
+    },
+    {
+      "path": "src/game/renderer/l1BakeStorage.ts",
+      "kind": "new",
+      "bytes": 3017
+    },
+    {
+      "path": "src/game/renderer/l1BuildMetrics.ts",
+      "kind": "new",
+      "bytes": 890
+    },
+    {
+      "path": "src/game/renderer/l1Lighting.ts",
+      "kind": "new",
+      "bytes": 361
+    },
+    {
+      "path": "src/game/renderer/l1Materials.ts",
+      "kind": "changed",
+      "bytes": 12965
+    },
+    {
+      "path": "src/game/renderer/l1PortalLighting.ts",
+      "kind": "new",
+      "bytes": 2416
+    },
+    {
+      "path": "src/game/renderer/l1Probes.ts",
+      "kind": "new",
+      "bytes": 3518
+    },
+    {
+      "path": "src/game/renderer/l1Props.ts",
+      "kind": "new",
+      "bytes": 9797
+    },
+    {
+      "path": "src/game/renderer/l1RoofGeometry.ts",
+      "kind": "changed",
+      "bytes": 2354
+    },
+    {
+      "path": "src/game/renderer/l1ServiceRuns.ts",
+      "kind": "new",
+      "bytes": 724
+    },
+    {
+      "path": "src/game/renderer/l1Shafts.ts",
+      "kind": "new",
+      "bytes": 3683
+    },
+    {
+      "path": "src/game/renderer/l1SurfaceField.ts",
+      "kind": "new",
+      "bytes": 1904
+    },
+    {
+      "path": "src/game/renderer/l1VaultMaterial.ts",
+      "kind": "new",
+      "bytes": 2848
+    },
+    {
+      "path": "src/game/renderer/l1Water.ts",
+      "kind": "changed",
+      "bytes": 8034
+    },
+    {
+      "path": "src/game/renderer/l5NestLighting.ts",
+      "kind": "changed",
+      "bytes": 9329
+    },
+    {
+      "path": "src/game/renderer/l7Meshes.ts",
+      "kind": "new",
+      "bytes": 25053
+    },
+    {
+      "path": "src/game/renderer/l7Ocean.ts",
+      "kind": "new",
+      "bytes": 36905
+    },
+    {
+      "path": "src/game/renderer/lightingProfiles.ts",
+      "kind": "new",
+      "bytes": 1929
+    },
+    {
+      "path": "src/game/renderer/liquidsSky.ts",
+      "kind": "changed",
+      "bytes": 20164
+    },
+    {
+      "path": "src/game/renderer/photoPass.ts",
+      "kind": "new",
+      "bytes": 7541
+    },
+    {
+      "path": "src/game/renderer/refinedItemMesh.ts",
+      "kind": "new",
+      "bytes": 66554
+    },
+    {
+      "path": "src/game/renderer/remotePlayers.ts",
+      "kind": "changed",
+      "bytes": 11559
+    },
+    {
+      "path": "src/game/renderer/sceneWarmup.ts",
+      "kind": "changed",
+      "bytes": 9041
+    },
+    {
+      "path": "src/game/renderer/shared.ts",
+      "kind": "changed",
+      "bytes": 18743
+    },
+    {
+      "path": "src/game/renderer/sixItemMesh.ts",
+      "kind": "new",
+      "bytes": 11393
+    },
+    {
+      "path": "src/game/renderer/skybox.ts",
+      "kind": "changed",
+      "bytes": 11439
+    },
+    {
+      "path": "src/game/renderer/skySystem.ts",
+      "kind": "new",
+      "bytes": 22767
+    },
+    {
+      "path": "src/game/renderer/smilerMesh.ts",
+      "kind": "new",
+      "bytes": 23536
+    },
+    {
+      "path": "src/game/renderer/structures.ts",
+      "kind": "changed",
+      "bytes": 408990
+    },
+    {
+      "path": "src/game/renderer/viewmodel.ts",
+      "kind": "changed",
+      "bytes": 7882
+    },
+    {
+      "path": "src/game/renderer/water.ts",
+      "kind": "new",
+      "bytes": 14747
+    },
+    {
+      "path": "src/game/world/devMap.worker.ts",
+      "kind": "new",
+      "bytes": 1912
+    },
+    {
+      "path": "src/game/world/infinite.ts",
+      "kind": "changed",
+      "bytes": 43514
+    },
+    {
+      "path": "src/game/world/infiniteL1.ts",
+      "kind": "changed",
+      "bytes": 36610
+    },
+    {
+      "path": "src/game/world/infiniteL10.ts",
+      "kind": "changed",
+      "bytes": 40651
+    },
+    {
+      "path": "src/game/world/infiniteL7.ts",
+      "kind": "changed",
+      "bytes": 45297
+    },
+    {
+      "path": "src/game/world/infiniteRegistry.ts",
+      "kind": "changed",
+      "bytes": 7086
+    },
+    {
+      "path": "src/game/world/l0Architecture.ts",
+      "kind": "new",
+      "bytes": 26280
+    },
+    {
+      "path": "src/game/world/l0Maze.ts",
+      "kind": "new",
+      "bytes": 4012
+    },
+    {
+      "path": "src/game/world/l0Neighbourhood.ts",
+      "kind": "new",
+      "bytes": 970
+    },
+    {
+      "path": "src/game/world/l0Partitions.ts",
+      "kind": "new",
+      "bytes": 1862
+    },
+    {
+      "path": "src/game/world/l0RedZone.ts",
+      "kind": "new",
+      "bytes": 3367
+    },
+    {
+      "path": "src/game/world/l0Regions.ts",
+      "kind": "new",
+      "bytes": 9371
+    },
+    {
+      "path": "src/game/world/l0WallDetails.ts",
+      "kind": "new",
+      "bytes": 2235
+    },
+    {
+      "path": "src/game/world/l0WallFaces.ts",
+      "kind": "new",
+      "bytes": 1886
+    },
+    {
+      "path": "src/game/world/l1Architecture.ts",
+      "kind": "changed",
+      "bytes": 15936
+    },
+    {
+      "path": "src/game/world/l1Bake.ts",
+      "kind": "new",
+      "bytes": 25262
+    },
+    {
+      "path": "src/game/world/l1Bake.worker.ts",
+      "kind": "new",
+      "bytes": 1945
+    },
+    {
+      "path": "src/game/world/l1BakeTypes.ts",
+      "kind": "new",
+      "bytes": 1254
+    },
+    {
+      "path": "src/game/world/l1Building.ts",
+      "kind": "new",
+      "bytes": 20368
+    },
+    {
+      "path": "src/game/world/l1BuildingTypes.ts",
+      "kind": "new",
+      "bytes": 2353
+    },
+    {
+      "path": "src/game/world/l1Crate.ts",
+      "kind": "new",
+      "bytes": 342
+    },
+    {
+      "path": "src/game/world/l1Dressing.ts",
+      "kind": "new",
+      "bytes": 2452
+    },
+    {
+      "path": "src/game/world/l1Dynamics.ts",
+      "kind": "changed",
+      "bytes": 1548
+    },
+    {
+      "path": "src/game/world/l1Layout.ts",
+      "kind": "changed",
+      "bytes": 4199
+    },
+    {
+      "path": "src/game/world/l1ParkingServices.ts",
+      "kind": "new",
+      "bytes": 3686
+    },
+    {
+      "path": "src/game/world/l1Placement.ts",
+      "kind": "new",
+      "bytes": 4207
+    },
+    {
+      "path": "src/game/world/l1Puddles.ts",
+      "kind": "changed",
+      "bytes": 2910
+    },
+    {
+      "path": "src/game/world/l1ReferenceCases.ts",
+      "kind": "new",
+      "bytes": 11815
+    },
+    {
+      "path": "src/game/world/l1Spatial.ts",
+      "kind": "new",
+      "bytes": 9933
+    },
+    {
+      "path": "src/game/world/l1VaultMesh.ts",
+      "kind": "new",
+      "bytes": 3021
+    },
+    {
+      "path": "src/game/world/mapgen.ts",
+      "kind": "changed",
+      "bytes": 153483
+    },
+    {
+      "path": "src/game/world/mapSight.ts",
+      "kind": "new",
+      "bytes": 3679
+    },
+    {
+      "path": "src/game/world/smilerClearance.ts",
+      "kind": "new",
+      "bytes": 854
+    },
+    {
+      "path": "src/game/world/starterSupplies.ts",
+      "kind": "new",
+      "bytes": 1265
+    },
+    {
+      "path": "scripts/calibrate-l0-fixtures.mjs",
+      "kind": "new",
+      "bytes": 1700
+    },
+    {
+      "path": "scripts/check-duller-integration.ts",
+      "kind": "new",
+      "bytes": 8284
+    },
+    {
+      "path": "scripts/check-dullers.ts",
+      "kind": "new",
+      "bytes": 7036
+    },
+    {
+      "path": "scripts/check-hound-integration.ts",
+      "kind": "new",
+      "bytes": 10358
+    },
+    {
+      "path": "scripts/check-hounds.ts",
+      "kind": "new",
+      "bytes": 4832
+    },
+    {
+      "path": "scripts/check-l0-architecture.ts",
+      "kind": "new",
+      "bytes": 6553
+    },
+    {
+      "path": "scripts/check-l0-continuity.ts",
+      "kind": "new",
+      "bytes": 6248
+    },
+    {
+      "path": "scripts/check-l0-experience.ts",
+      "kind": "new",
+      "bytes": 8465
+    },
+    {
+      "path": "scripts/check-l0-meshes.ts",
+      "kind": "new",
+      "bytes": 16863
+    },
+    {
+      "path": "scripts/check-l0-presentation.ts",
+      "kind": "new",
+      "bytes": 5029
+    },
+    {
+      "path": "scripts/check-l0-refinements.ts",
+      "kind": "new",
+      "bytes": 7229
+    },
+    {
+      "path": "scripts/check-l0-state.ts",
+      "kind": "new",
+      "bytes": 12937
+    },
+    {
+      "path": "scripts/check-l0-visibility.ts",
+      "kind": "new",
+      "bytes": 4734
+    },
+    {
+      "path": "scripts/check-l1-architecture.ts",
+      "kind": "changed",
+      "bytes": 10227
+    },
+    {
+      "path": "scripts/check-l1-atlas-capacity.ts",
+      "kind": "new",
+      "bytes": 2677
+    },
+    {
+      "path": "scripts/check-l1-bake-visibility.mjs",
+      "kind": "new",
+      "bytes": 943
+    },
+    {
+      "path": "scripts/check-l1-bake-visibility.ts",
+      "kind": "new",
+      "bytes": 1406
+    },
+    {
+      "path": "scripts/check-l1-bake.ts",
+      "kind": "new",
+      "bytes": 3311
+    },
+    {
+      "path": "scripts/check-l1-camera-directions.mjs",
+      "kind": "new",
+      "bytes": 3193
+    },
+    {
+      "path": "scripts/check-l1-crate-stack.ts",
+      "kind": "new",
+      "bytes": 3406
+    },
+    {
+      "path": "scripts/check-l1-detail.ts",
+      "kind": "new",
+      "bytes": 4484
+    },
+    {
+      "path": "scripts/check-l1-exposure.ts",
+      "kind": "new",
+      "bytes": 1406
+    },
+    {
+      "path": "scripts/check-l1-offline.ts",
+      "kind": "new",
+      "bytes": 1610
+    },
+    {
+      "path": "scripts/check-l1-parking-services.ts",
+      "kind": "new",
+      "bytes": 3245
+    },
+    {
+      "path": "scripts/check-l1-portals.ts",
+      "kind": "new",
+      "bytes": 1603
+    },
+    {
+      "path": "scripts/check-l1-props.ts",
+      "kind": "new",
+      "bytes": 6365
+    },
+    {
+      "path": "scripts/check-l1-reference-aspects.mjs",
+      "kind": "new",
+      "bytes": 1155
+    },
+    {
+      "path": "scripts/check-l1-refinements.ts",
+      "kind": "new",
+      "bytes": 8283
+    },
+    {
+      "path": "scripts/check-l1-room-dressing.ts",
+      "kind": "new",
+      "bytes": 4298
+    },
+    {
+      "path": "scripts/check-l1-round-lighting.ts",
+      "kind": "new",
+      "bytes": 1684
+    },
+    {
+      "path": "scripts/check-l1-service-runs.ts",
+      "kind": "new",
+      "bytes": 1171
+    },
+    {
+      "path": "scripts/check-l1-services.ts",
+      "kind": "new",
+      "bytes": 7317
+    },
+    {
+      "path": "scripts/check-l1-v4-placement.ts",
+      "kind": "new",
+      "bytes": 2376
+    },
+    {
+      "path": "scripts/check-l1-vault-mesh.ts",
+      "kind": "new",
+      "bytes": 3097
+    },
+    {
+      "path": "scripts/check-l10-generation.ts",
+      "kind": "changed",
+      "bytes": 10818
+    },
+    {
+      "path": "scripts/check-l10-model-import.ts",
+      "kind": "new",
+      "bytes": 3555
+    },
+    {
+      "path": "scripts/check-l5-nest-lighting.ts",
+      "kind": "changed",
+      "bytes": 4645
+    },
+    {
+      "path": "scripts/check-l7-generation.ts",
+      "kind": "new",
+      "bytes": 3378
+    },
+    {
+      "path": "scripts/check-model-warmup.ts",
+      "kind": "changed",
+      "bytes": 4680
+    },
+    {
+      "path": "scripts/check-program-completion.ts",
+      "kind": "changed",
+      "bytes": 6726
+    },
+    {
+      "path": "scripts/check-refined-item-meshes.ts",
+      "kind": "new",
+      "bytes": 10485
+    },
+    {
+      "path": "scripts/check-seed-input.ts",
+      "kind": "new",
+      "bytes": 660
+    },
+    {
+      "path": "scripts/check-six-item-meshes.ts",
+      "kind": "new",
+      "bytes": 8938
+    },
+    {
+      "path": "scripts/check-smiler-forms.ts",
+      "kind": "new",
+      "bytes": 4392
+    },
+    {
+      "path": "scripts/check-smiler-integration.ts",
+      "kind": "new",
+      "bytes": 6450
+    },
+    {
+      "path": "scripts/check-smiler-spacing.ts",
+      "kind": "new",
+      "bytes": 6974
+    },
+    {
+      "path": "scripts/check-smilers.ts",
+      "kind": "new",
+      "bytes": 8242
+    },
+    {
+      "path": "scripts/compare-l0-references.py",
+      "kind": "new",
+      "bytes": 4907
+    },
+    {
+      "path": "scripts/compare-l1-iteration3.mjs",
+      "kind": "new",
+      "bytes": 3865
+    },
+    {
+      "path": "scripts/compare-l1-iteration4.mjs",
+      "kind": "new",
+      "bytes": 1290
+    },
+    {
+      "path": "scripts/compare-l1-shader-output.mjs",
+      "kind": "new",
+      "bytes": 2854
+    },
+    {
+      "path": "scripts/compare-l1-v4.mjs",
+      "kind": "new",
+      "bytes": 6194
+    },
+    {
+      "path": "scripts/export-l1-v4-references.ts",
+      "kind": "new",
+      "bytes": 1055
+    },
+    {
+      "path": "scripts/fetch-l1-open-assets.mjs",
+      "kind": "new",
+      "bytes": 2759
+    },
+    {
+      "path": "scripts/fetch-manila-logo.mjs",
+      "kind": "new",
+      "bytes": 1185
+    },
+    {
+      "path": "scripts/fit-l1-cameras.ts",
+      "kind": "new",
+      "bytes": 6501
+    },
+    {
+      "path": "scripts/gen-l0-materials.mjs",
+      "kind": "new",
+      "bytes": 6265
+    },
+    {
+      "path": "scripts/gen-l1-crate-marks.mjs",
+      "kind": "new",
+      "bytes": 1620
+    },
+    {
+      "path": "scripts/gen-l10-v64-textures.py",
+      "kind": "new",
+      "bytes": 6202
+    },
+    {
+      "path": "scripts/gen-refined-item-atlas.mjs",
+      "kind": "new",
+      "bytes": 47843
+    },
+    {
+      "path": "scripts/gen-six-item-atlas.mjs",
+      "kind": "new",
+      "bytes": 7604
+    },
+    {
+      "path": "scripts/gen-six-item-icons.mjs",
+      "kind": "new",
+      "bytes": 2718
+    },
+    {
+      "path": "scripts/l0-eval.mjs",
+      "kind": "new",
+      "bytes": 682
+    },
+    {
+      "path": "scripts/l1-reference-plane.mjs",
+      "kind": "new",
+      "bytes": 1474
+    },
+    {
+      "path": "scripts/l1-reference-projection.mjs",
+      "kind": "new",
+      "bytes": 1638
+    },
+    {
+      "path": "scripts/measure-l1-services.ts",
+      "kind": "new",
+      "bytes": 1989
+    },
+    {
+      "path": "scripts/prebake-l1.ts",
+      "kind": "new",
+      "bytes": 3580
+    },
+    {
+      "path": "scripts/prepare-l1-steel.mjs",
+      "kind": "new",
+      "bytes": 1044
+    },
+    {
+      "path": "scripts/profile-l0-build.mjs",
+      "kind": "new",
+      "bytes": 1752
+    },
+    {
+      "path": "scripts/summarize-l0-continuity.mjs",
+      "kind": "new",
+      "bytes": 9288
+    },
+    {
+      "path": "scripts/summarize-l0-presentation.mjs",
+      "kind": "new",
+      "bytes": 9252
+    },
+    {
+      "path": "scripts/summarize-l0-refinements.mjs",
+      "kind": "new",
+      "bytes": 9463
+    },
+    {
+      "path": "scripts/summarize-l0-remake.mjs",
+      "kind": "new",
+      "bytes": 8460
+    },
+    {
+      "path": "scripts/summarize-l1-remake.mjs",
+      "kind": "new",
+      "bytes": 4871
+    },
+    {
+      "path": "scripts/summarize-l1-v4.mjs",
+      "kind": "new",
+      "bytes": 6005
+    },
+    {
+      "path": "scripts/summarize-six-items.mjs",
+      "kind": "new",
+      "bytes": 1849
+    },
+    {
+      "path": "scripts/verify-duller-import.mjs",
+      "kind": "new",
+      "bytes": 4218
+    },
+    {
+      "path": "scripts/verify-hound-import.mjs",
+      "kind": "new",
+      "bytes": 3470
+    },
+    {
+      "path": "scripts/verify-l0-controls.mjs",
+      "kind": "new",
+      "bytes": 11893
+    },
+    {
+      "path": "scripts/verify-l0-experience-render.mjs",
+      "kind": "new",
+      "bytes": 6523
+    },
+    {
+      "path": "scripts/verify-l0-experience.mjs",
+      "kind": "new",
+      "bytes": 8985
+    },
+    {
+      "path": "scripts/verify-l0-remake.mjs",
+      "kind": "new",
+      "bytes": 16732
+    },
+    {
+      "path": "scripts/verify-l0-settings.mjs",
+      "kind": "new",
+      "bytes": 2636
+    },
+    {
+      "path": "scripts/verify-l0-visibility.mjs",
+      "kind": "new",
+      "bytes": 4834
+    },
+    {
+      "path": "scripts/verify-l1-detail-runtime.mjs",
+      "kind": "new",
+      "bytes": 22566
+    },
+    {
+      "path": "scripts/verify-l1-remake.mjs",
+      "kind": "new",
+      "bytes": 2899
+    },
+    {
+      "path": "scripts/verify-l10-import.mjs",
+      "kind": "new",
+      "bytes": 9801
+    },
+    {
+      "path": "scripts/verify-l5-entry.mjs",
+      "kind": "new",
+      "bytes": 10473
+    },
+    {
+      "path": "scripts/verify-l7-import.mjs",
+      "kind": "new",
+      "bytes": 5225
+    },
+    {
+      "path": "scripts/verify-refined-items.mjs",
+      "kind": "new",
+      "bytes": 4737
+    },
+    {
+      "path": "scripts/verify-six-items.mjs",
+      "kind": "new",
+      "bytes": 3965
+    },
+    {
+      "path": "scripts/verify-sky-import.mjs",
+      "kind": "new",
+      "bytes": 7110
+    },
+    {
+      "path": "scripts/verify-smiler-forms.mjs",
+      "kind": "new",
+      "bytes": 5488
+    },
+    {
+      "path": "scripts/verify-smiler-import.mjs",
+      "kind": "new",
+      "bytes": 3483
+    },
+    {
+      "path": "scripts/verify-smiler-spacing.mjs",
+      "kind": "new",
+      "bytes": 3618
+    },
+    {
+      "path": "scripts/verify-title-save.mjs",
+      "kind": "new",
+      "bytes": 11118
+    },
+    {
+      "path": "scripts/verify-ui-import.mjs",
+      "kind": "new",
+      "bytes": 9333
+    }
+  ],
+  "excluded": [
+    {
+      "path": "src/App.tsx",
+      "reason": "conflict"
+    },
+    {
+      "path": "src/index.css",
+      "reason": "conflict"
+    },
+    {
+      "path": "src/components/AlphaMapPanel.tsx",
+      "reason": "conflict"
+    },
+    {
+      "path": "src/components/DeathScreen.tsx",
+      "reason": "conflict"
+    },
+    {
+      "path": "src/components/HUD.tsx",
+      "reason": "conflict"
+    },
+    {
+      "path": "src/components/LoadingScreen.tsx",
+      "reason": "conflict"
+    },
+    {
+      "path": "src/components/SettingsModal.tsx",
+      "reason": "conflict"
+    },
+    {
+      "path": "src/components/TitleScreen.tsx",
+      "reason": "conflict"
+    },
+    {
+      "path": "src/components/TouchControls.tsx",
+      "reason": "conflict"
+    },
+    {
+      "path": "src/components/VictoryScreen.tsx",
+      "reason": "conflict"
+    },
+    {
+      "path": "src/game/core/audio.ts",
+      "reason": "conflict"
+    },
+    {
+      "path": "src/game/core/preload.ts",
+      "reason": "conflict"
+    },
+    {
+      "path": "src/game/net/apply.ts",
+      "reason": "multiplayer-freeze"
+    },
+    {
+      "path": "src/game/net/protocol.ts",
+      "reason": "multiplayer-freeze"
+    },
+    {
+      "path": "src/game/net/session.ts",
+      "reason": "multiplayer-freeze"
+    },
+    {
+      "path": "src/game/renderer/renderer.ts",
+      "reason": "conflict"
+    },
+    {
+      "path": "scripts/check-l0-network.ts",
+      "reason": "multiplayer-freeze"
+    }
+  ],
+  "summary": {
+    "copiedCount": 244,
+    "excludedCount": 17,
+    "multiplayerExcluded": 4
+  }
+}

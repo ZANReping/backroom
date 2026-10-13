@@ -6,6 +6,8 @@ export interface MpIdentity { name: string; avatar: Partial<AvatarCfg> }
 
 /** 玩家逐帧状态（12Hz） */
 export interface MpPlayerState {
+  l0Space?:string
+  l0Meeting?:number
   bntgCounting?:boolean
   bntgTask?:number
   brcQualification?: number // player-owned career; host still validates the physical worksite
@@ -35,7 +37,9 @@ export interface MpEntSnap {
 }
 
 /** 世界事件（折中同步：先到先得共享物资/门/容器/出口/死亡 + 全局现象 + 联机战斗） */
-export type MpEvent =
+export const MP_PROTOCOL=3
+export type MpEvent = {scopeLevel?:number;space?:string;eventId?:string;worldAt?:[number,number];structureId?:number} & (
+  | {t:'l0world';seed:number;revisions:Record<string,number>;taken:number[];chunks:import('../engine/l0State').L0WorldSave['chunks']}
   | {t:'tradeVault';state:import('../engine/bntg').VaultState}
   | {t:'tradeAction';task:number;action:string}
   | {t:'tradeReceipt';owner:string;task:number;action:string;sequence:number}
@@ -54,11 +58,12 @@ export type MpEvent =
   | { t: 'l11revisions'; seed:number; revisions:Record<string,number> }
   | { t: 'entHit'; nid: number; dmg: number } // 客人上报对联机实体的伤害（仅房主结算）
 
+)
 export interface MpLobbyPlayer extends MpIdentity { id: string; slot: number; ready: boolean }
 
 export type MpMsg =
-  | { k: 'hello'; idn: MpIdentity } // c→h：加入握手
-  | { k: 'lobby'; players: MpLobbyPlayer[] } // h→c：大厅快照（含槽位分配）
+  | { k: 'hello'; idn: MpIdentity; protocol?:number; resume?:string } // c→h：加入握手
+  | { k: 'lobby'; players: MpLobbyPlayer[];protocol?:number } // h→c：大厅快照（含槽位分配）
   | { k: 'ready'; ready: boolean } // c→h：切换准备
   | { k: 'start'; seed: number } // h→c：开局（种子=会话种子；槽位取大厅快照）
   | { k: 'state'; id: string; s: MpPlayerState } // c→h：玩家状态；h 聚合后广播

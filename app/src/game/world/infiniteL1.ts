@@ -1,10 +1,11 @@
 // ================= v29：Level 1「宜居地带」无限 chunk 生成 =================
 // 布局基调（wikidot/Fandom 共识）：开阔停车层、工业仓储厅与多个主题区段的无尽缝合体。
 // 开阔大厅 + 墙块孤岛 + 柱阵 + 悬挂荧光灯，而非 L0 的迷宫。
-// v30：区段（Sections）扩展——天鹰段/过道/跃金段/哥特段/衔尾段/花园段/维护通廊/浓雾区/停电区；
-// chunk 边界按共享边哈希 edgeOpen 开 2 宽口打通（原为 28×28 封闭大厅，玩家无法走出出生 chunk）。
+// v30：区段（Sections）扩展——天鹰段/过道/跃金段/哥特段/衔尾段/花园段与嵌入各区段门后的白墙小径；
+// 原始装饰与旧灯光在末尾 applyL1Architecture 统一替换，最终五区与小径共享同一停电规则。
 import { RNG } from '../core/rng'
 import { applyL1Architecture } from './l1Architecture'
+import {l1PlacementWallV2,l1ReferenceAt} from './l1Spatial'
 import { UNIVERSAL_ITEMS } from '../content/items'
 import { ENTITIES } from '../entities'
 import { brcWorkerDef, type NpcDef } from '../content/npcs'
@@ -21,7 +22,7 @@ export type L1Variant =
 export const L1_VARIANT_NAMES: Record<L1Variant, string> = {
   parking: '天鹰段', aisle: '过道', storage: '跃金段', gothic: '哥特段',
   ouroboros: '衔尾段', garden: '花园段',
-  maintenance: '维护通廊',
+  maintenance: '小径',
 }
 // 区段档案（图鉴；设定依据 wikidot「宜居地带」区段概念与 Fandom 特殊区域条目）
 export const L1_VARIANT_LORE: Record<string, string[]> = {
@@ -50,8 +51,8 @@ export const L1_VARIANT_LORE: Record<string, string[]> = {
     '⚠ 切勿久留。进入者会患上「植殖癌」：行为逐渐僵硬，视野逐渐变绿，皮肤浮现叶脉——最终，你将原地生根，成为花园里又一株安静的植物。',
   ],
   maintenance: [
-    '与其他区段截然不同：狭窄且如迷宫般曲折的走廊，墙面白得晃眼，灯光永远充足。裸露的电线、泄露杏仁水的管道与配电箱随处可见。',
-    '墨黑色的金属门嵌在走廊尽头，通往各个区段——无论主区域如何停电，这里永远灯火通明，是停电期间唯一的避难所。',
+    '白刷砖墙围出狭长、曲折的稳定走廊，裸露管线沿着梁顶延伸，门后散布着旧座椅、杂物和不同用途的小房间。',
+    '各区段带绿色应急标识的金属门通往小径。停电时这里同样失去照明；实体较少，却仍可能从门外追入。关门并保持安静有助于避难。',
   ],
 }
 export const L1_RARE_VARIANTS: readonly string[] = ['storage', 'gothic', 'ouroboros', 'garden', 'maintenance']
@@ -62,7 +63,7 @@ export { l1LayoutVariant as l1VariantOf } from './l1Layout'
 import { l1LayoutVariant as l1VariantOf } from './l1Layout'
 
 // ---------- chunk 生成（纯函数：同种子同坐标必一致）----------
-export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: number, forceVariant?: string): GenChunk {
+function genL1LegacyManifest(def: LevelDef, seed: number, cx: number, cy: number, forceVariant?: string): GenChunk {
   const variant = (forceVariant ?? l1VariantOf(seed, cx, cy)) as L1Variant
   const rng = new RNG(h32(seed, cx, cy, 0x1a1))
   const tiles = new Uint8Array(CS * CS).fill(2)
@@ -80,6 +81,7 @@ export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
   const li = (x: number, y: number) => y * CS + x
   const isF = (x: number, y: number) => x >= 0 && y >= 0 && x < CS && y < CS && tiles[li(x, y)] === 1
   const WX = cx * CS, WY = cy * CS
+  const photo=l1ReferenceAt(seed,WX+16,WY+16)
   let sidN = 0, itemN = 0
   const sidOf = (n: number) => ((cx & 0xff) << 24) | ((cy & 0xff) << 16) | ((n & 0xff) << 4) | 1
   const pushStruct = (kind: Structure['kind'], x: number, y: number, w: number, h: number, solid: boolean, withSid = false, data?: Structure['data']) => {
@@ -148,14 +150,13 @@ export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
   const doorSlot = (vertical: boolean, a: number, b: number) => 2 + 3 * (h32(seed, vertical ? 0xd001 : 0xd002, a, b) % 10)
   const dE = doorSlot(true, cx + 1, cy), dW = doorSlot(true, cx, cy)
   const dS = doorSlot(false, cx, cy + 1), dN = doorSlot(false, cx, cy)
-  // 非维护通廊之间的共享边：默认开放，仅 ~20% 瓦片留墙柱（无缝衔接的观感）
-  const seamWall = (vertical: boolean, a: number, b: number, t: number) =>
-    h01(seed, vertical ? 0xe2a1 : 0xe2a2, a, b, t) < 0.2
+  // 原始共享边装饰；末尾 applyL1Architecture 会统一替换最终区段与小径边界。
+  // No decorative boundary walls: the streaming grid must remain invisible.
   if (variant === 'maintenance') {
     // 维护通廊：整 chunk 实心，只雕 2 宽曲折走廊（狭窄且如迷宫）
     // 主走廊一横一纵（对齐开口槽位 2+3k），口字形内环与之相交成迷宫
-    const hy = 2 + 3 * rng.int(1, 8)
-    const vx = 2 + 3 * rng.int(1, 8)
+    const hy = photo?.variant==='maintenance'?14:2 + 3 * rng.int(1, 8)
+    const vx = photo?.variant==='maintenance'?14:2 + 3 * rng.int(1, 8)
     carve(1, hy, CS - 2, hy + 1)
     carve(vx, 1, vx + 1, CS - 2)
     const r0 = 2 + 3 * rng.int(0, 2), r1 = 2 + 3 * rng.int(6, 8)
@@ -163,6 +164,11 @@ export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
     carve(r0, r1, r1 + 1, r1 + 1)
     carve(r0, r0, r0 + 1, r1 + 1)
     carve(r1, r0, r1 + 1, r1 + 1)
+    // Rooms branch from the stable corridor rather than occupying a separate district.
+    if(photo?.id==='path-room'||!photo&&rng.chance(.45)){
+      carve(vx,19,Math.min(28,vx+6),20)
+      carve(Math.min(23,vx+3),18,Math.min(28,vx+6),26)
+    }
     // 边缘开口：与其他区段相邻的边 → 整边墙体，仅在共享门位开一扇墨黑金属门（可交互开关）；
     // 与维护通廊相邻的边 → 走廊槽位直接连通（同区段不设门）
     const connect = (x0: number, y0: number, dx: number, dy: number) => {
@@ -197,25 +203,18 @@ export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
     }
   } else {
     // 开阔大厅：整 chunk 雕通到边缘（仅留 1 格外圈墙环）
-    carve(1, 1, CS - 2, CS - 2)
+    tiles.fill(1)
     // 边界：邻维护通廊 → 整边墙体，仅在共享门位开 2 宽门洞（门本体在维护通廊一侧）；
     // 否则 → 房间无缝衔接，仅零星墙柱
     for (let t = 1; t < CS - 1; t++) {
-      if (vE === 'maintenance') { if (t === dE || t === dE + 1) tiles[li(CS - 1, t)] = 1 }
-      else if (!seamWall(true, cx + 1, cy, t)) tiles[li(CS - 1, t)] = 1
-      if (vW === 'maintenance') { if (t === dW || t === dW + 1) tiles[li(0, t)] = 1 }
-      else if (!seamWall(true, cx, cy, t)) tiles[li(0, t)] = 1
-      if (vS === 'maintenance') { if (t === dS || t === dS + 1) tiles[li(t, CS - 1)] = 1 }
-      else if (!seamWall(false, cx, cy + 1, t)) tiles[li(t, CS - 1)] = 1
-      if (vN === 'maintenance') { if (t === dN || t === dN + 1) tiles[li(t, 0)] = 1 }
-      else if (!seamWall(false, cx, cy, t)) tiles[li(t, 0)] = 1
+      if (vE === 'maintenance') tiles[li(CS - 1, t)] = t===dE||t===dE+1?1:2
+      if (vW === 'maintenance') tiles[li(0, t)] = t===dW||t===dW+1?1:2
+      if (vS === 'maintenance') tiles[li(t, CS - 1)] = t===dS||t===dS+1?1:2
+      if (vN === 'maintenance') tiles[li(t, 0)] = t===dN||t===dN+1?1:2
     }
     // 墙块孤岛（不贴外圈，保持 chunk 间开阔连通；数量按变体）
-    const nBlocks = variant === 'parking' ? rng.int(1, 2)
-      : variant === 'storage' ? rng.int(4, 6)
-        : variant === 'ouroboros' ? rng.int(3, 5)
-          : variant === 'gothic' || variant === 'garden' ? rng.int(0, 1)
-            : rng.int(2, 4)
+    for(let y=0;y<CS;y++)for(let x=0;x<CS;x++)if(l1PlacementWallV2(seed,WX+x,WY+y,variant))tiles[li(x,y)]=2
+    const nBlocks = variant === 'ouroboros' ? rng.int(0,1) : 0
     for (let b = 0; b < nBlocks; b++) {
       const bw = rng.int(2, 3), bh = rng.int(2, 3)
       const bx = rng.int(5, CS - 5 - bw), by = rng.int(5, CS - 5 - bh)
@@ -223,6 +222,11 @@ export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
       if (cx === 0 && cy === 0 && Math.abs(bx - 15) + Math.abs(by - 15) < 4) continue // 出生点（局部 15,15）留空，不压遮挡物
       for (let y = by; y < by + bh; y++) for (let x = bx; x < bx + bw; x++) tiles[li(x, y)] = 2
     }
+    // Reserve a body-wide approach to every shared path doorway after world partitions.
+    if(vE==='maintenance')for(let x=CS-4;x<CS;x++)for(let y=dE;y<=dE+1;y++)tiles[li(x,y)]=1
+    if(vW==='maintenance')for(let x=0;x<4;x++)for(let y=dW;y<=dW+1;y++)tiles[li(x,y)]=1
+    if(vS==='maintenance')for(let y=CS-4;y<CS;y++)for(let x=dS;x<=dS+1;x++)tiles[li(x,y)]=1
+    if(vN==='maintenance')for(let y=0;y<4;y++)for(let x=dN;x<=dN+1;x++)tiles[li(x,y)]=1
   }
 
   // ---- 变体内容 ----
@@ -296,7 +300,7 @@ export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
     case 'ouroboros': {
       // 衔尾段（v39 施工化）：灰色毛坯混凝土 + 铲到一半的补丁墙 + 深色裸露吊顶
       // （tint=10 基底，散布 tint=11 补丁斑块——地面读作新浇水泥补丁、墙面读作残存粉刷）；
-      // 脚手架/红色管道/施工路障加密 + 建材碎料堆散落，暖橙施工灯永亮（keep，见下方灯光布置）
+      // 脚手架/红色管道/施工路障加密 + 建材碎料堆散落；灯光最终受统一停电规则影响。
       for (let y = 0; y < CS; y++) for (let x = 0; x < CS; x++) tint[li(x, y)] = 10
       for (let b = 0, nB = rng.int(5, 8); b < nB; b++) { // 补丁斑块（2~4 格不规则团）
         const px0 = rng.int(2, CS - 3), py0 = rng.int(2, CS - 3)
@@ -347,8 +351,8 @@ export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
       break
     }
     case 'garden': {
-      // 花园段：青翠欲滴的色调（tint=6）与勃勃生机的表象——大量绿植 + 充足阳光（keep 灯，
-      // 见下方灯光布置）。⚠ 进入者将逐渐患上「植殖癌」（engine 侧按所在 chunk 变体推进）
+      // 花园段：青翠欲滴的色调（tint=6）与勃勃生机的表象——大量绿植 + 充足阳光；
+      // 灯光最终受统一停电规则影响。⚠ 进入者将逐渐患上「植殖癌」（engine 侧按所在 chunk 变体推进）
       for (let y = 0; y < CS; y++) for (let x = 0; x < CS; x++) tint[li(x, y)] = 6
       for (let i = 0, n = rng.int(6, 9); i < n; i++) placeFree('wheatpatch', rng.int(1, 2), rng.int(1, 2), false)
       for (let i = 0, n = rng.int(2, 4); i < n; i++) placeFree('hedgerow', rng.int(2, 3), 1, true)
@@ -357,7 +361,7 @@ export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
     }
     case 'maintenance': {
       // 维护通廊：狭窄迷宫走廊（地形已在上方雕出，墨黑金属门已落在各开口）——
-      // 白色调 tint=5、沿走廊布 keep 灯（永远灯火通明，见下方灯光布置）、裸露管线/配电箱、实体极少
+      // 白色调 tint=5、沿走廊布置普通照明（最终受统一停电规则影响）、裸露管线/配电箱、实体极少
       for (let y = 0; y < CS; y++) for (let x = 0; x < CS; x++) tint[li(x, y)] = 5
       for (let i = 0, n = rng.int(1, 3); i < n; i++) placeLoose('toolbox', true, { loot: 1 })
       if (rng.chance(0.5)) placeLoose('locker', true, { loot: 1 })
@@ -433,8 +437,8 @@ export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
 
   // ---- 通用内容 ----
   // 悬挂荧光灯：网格保底（明灭不定——15% 格位缺灯形成暗区）。
-  // v30：各区段灯光差异化——维护通廊沿走廊布 keep 白灯（永远灯火通明）、花园段明亮阳光 keep、
-  // 跃金段照明充足（加密网格、正常灯光）、衔尾段暖橙施工灯 keep（永不停工）、哥特段偏暗暖色。
+  // v30：各区段灯光差异化——小径、花园与衔尾保留各自色温和布置，但所有原生灯最终受统一停电规则影响；
+  // 跃金段照明充足（加密网格、正常灯光），哥特段偏暗暖色。
   if (variant === 'maintenance') {
     for (let y = 2; y < CS - 2; y += 4)
       for (let x = 2; x < CS - 2; x += 4)
@@ -452,7 +456,7 @@ export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
         if (variant !== 'ouroboros' && h01(seed, 0xf11c, cx, cy, gx, gy) < 0.15) continue // 灯光明灭：部分格位灯管缺席
         const x = gx * step0 + 3 + rng.int(0, 2), y = gy * step0 + 3 + rng.int(0, 2)
         if (!isF(x, y)) continue
-        if (variant === 'ouroboros') pushLight(x, y, rng.range(5, 6.5), '#ffb35c', true) // 施工灯永亮
+        if (variant === 'ouroboros') pushLight(x, y, rng.range(5, 6.5), '#ffb35c', true) // 原始施工灯；最终受统一停电规则影响
         else if (variant === 'gothic') pushLight(x, y, rng.range(3.5, 4.5), '#c9a86a') // 偏暗暖色
         else pushLight(x, y, rng.range(4.5, 6.5), def.palette.light)
       }
@@ -507,6 +511,16 @@ export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
         const d = Math.hypot(x - tgt.x, y - tgt.y)
         if (d < bd) { bd = d; best = li(x, y) }
       }
+    if(best<0){
+      // Open halls still require their region's guaranteed exit. Add a short real
+      // service partition only where its entire footprint is clear.
+      for(let y=3;y<CS-3;y++)for(let x=3;x<CS-3;x++){
+        let free=true
+        for(let dz=-1;dz<=1;dz++)for(let dx=0;dx<=2;dx++)if(!isF(x+dx,y+dz)||solidAtL(x+dx,y+dz)||items.some(q=>Math.hypot(q.x-WX-x-dx,q.y-WY-y-dz)<1.5))free=false
+        const d=Math.hypot(x-tgt.x,y-tgt.y);if(free&&d<bd){best=li(x,y);bd=d}
+      }
+      if(best>=0){const x=best%CS,y=Math.floor(best/CS);for(let dy=-1;dy<=1;dy++)tiles[li(x+1,y+dy)]=2}
+    }
     if (best >= 0) {
       const ex = best % CS, ey = Math.floor(best / CS)
       exits.push({ def: exitDef, x: WX + ex, y: WY + ey, discovered: false })
@@ -585,10 +599,17 @@ export function genL1ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
     }
   }
 
-  return applyL1Architecture({ variant, tiles, wet, elev, step, tint, crawl, structures, items, lights, exits, entities, npcs, habFallback }, cx, cy, seed)
+  return applyL1Architecture({ variant, tiles, wet, elev, step, tint, crawl, structures, items, lights, exits, entities, npcs, habFallback }, cx, cy, seed, true)
 }
 
 // ---------- 注册（mapgen generateLevel → generateInfinite 经注册表分派）----------
+import {buildL1Data} from './l1Building'
+import {placeL1Content} from './l1Placement'
+import type {L1StyleName} from './l1BuildingTypes'
+export function genL1ChunkRaw(def:LevelDef,seed:number,cx:number,cy:number,forceVariant?:string):GenChunk {
+  const architecture=buildL1Data(seed,cx,cy,forceVariant&&forceVariant!=='aisle'?forceVariant as L1StyleName:undefined)
+  return placeL1Content(genL1LegacyManifest(def,seed,cx,cy,forceVariant),architecture)
+}
 registerInfiniteLevel(1, {
   genRaw: genL1ChunkRaw,
   variantOf: l1VariantOf,

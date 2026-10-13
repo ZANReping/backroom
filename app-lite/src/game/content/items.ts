@@ -32,7 +32,7 @@ export interface ItemDef {
   /** 稀有度：common 常见 / uncommon 少见 / rare 稀有 / epic 珍稀（缺省按 common 展示） */
   rarity?: ItemRarity
   /** 可投掷：手持时左键掷出（explode=范围伤害 shock=电击+眩晕 noise=声响引怪 lure=引路者诱饵） */
-  throw?: 'explode' | 'shock' | 'noise' | 'lure'
+  throw?: 'explode' | 'shock' | 'noise' | 'lure' | 'light'
   glyph: string // 绘制用
 }
 
@@ -75,7 +75,7 @@ export const ITEMS: Record<string, ItemDef> = {
   lighter: { type: 'lighter', name: '打火机', desc: '微弱的火苗。装备后提供一小圈额外的光。', stack: 1, passive: '微光照明', equip: 'offhand', rarity: 'uncommon', glyph: 'lighter' },
   rabbit: { type: 'rabbit', name: '幸运兔脚', desc: '毛茸茸的护符。携带时提升稀有物品掉落。', stack: 1, passive: '幸运提升', equip: 'pocket', anomalous: true, rarity: 'rare', glyph: 'rabbit' },
   wallpaper: { type: 'wallpaper', name: '壁纸碎片', desc: '从墙上剥落的黄色壁纸。似乎没有任何用处，但你还是收了起来。', stack: 5, unique: 0, rarity: 'common', glyph: 'scrap' },
-  glowstick: { type: 'glowstick', name: '荧光棒', desc: '掰亮后能照亮周围一小片区域，持续很久。', stack: 3, unique: 0, use: 'light', value: 1, rarity: 'common', glyph: 'stick' },
+  glowstick: { type: 'glowstick', name: '荧光棒', desc: '握在手中左键掷出，绿色荧光照亮落点附近；可以捡回再次投掷。', stack: 3, unique: 0, use: 'none', throw: 'light', rarity: 'common', glyph: 'stick' },
   carkey: { type: 'carkey', name: '车钥匙', desc: '停车场的车钥匙。可以打开废弃汽车的后备箱。', stack: 2, unique: 1, equip: 'pocket', rarity: 'uncommon', glyph: 'key' },
   gas: { type: 'gas', name: '火油桶', desc: '半桶火油——熔化的火盐制成的易燃液体，熏香味。也许能点燃什么……', stack: 2, unique: 1, use: 'none', throw: 'explode', rarity: 'rare', glyph: 'gas' },
   firesalt: { type: 'firesalt', name: '火盐晶体', desc: '一小撮橙色半透明晶体碎片，受冲击即爆裂出炽热的火花——后室探险者的首选自卫武器。（Object 15）', stack: 3, use: 'none', throw: 'explode', rarity: 'uncommon', anomalous: true, glyph: 'firesalt' },
@@ -124,7 +124,7 @@ export const ITEMS: Record<string, ItemDef> = {
   stonekazoo: { type: 'stonekazoo', name: '石卡祖笛', desc: '天然形成的岩刺，形状恰好是一支卡祖笛，检测证实没有任何人工雕刻痕迹。吹一声，回声会比你预想的更响——足以把实体引往别处。', stack: 1, unique: 8, use: 'none', anomalous: true, rarity: 'rare', glyph: 'kazoo' },
 
   // Level 9「The Suburbs」
-  pockets: { type: 'pockets', name: 'Pockets', desc: 'Object 51。一块能吞下远超自身体积的布袋，背包上限 +4。⚠ M.E.G. 红字警告：切勿把 Pockets 带入 Level 9——邻里守望会立刻找上门。', stack: 1, unique: 9, equip: 'pocket', passive: '背包 +4 · L9 危险', anomalous: true, rarity: 'epic', glyph: 'pocket' },
+  pockets: { type: 'pockets', name: '一些口袋', desc: 'Object 51。两片银色雕叶托着一颗蓝绿色蛋白石，金色包镶和小铆珠点缀其间。胸针能收纳远超自身体积的物品，背包上限 +4。⚠ M.E.G. 红字警告：切勿把一些口袋带入 Level 9——邻里守望会立刻找上门。', stack: 1, unique: 9, equip: 'pocket', passive: '背包 +4 · L9 危险', anomalous: true, rarity: 'epic', glyph: 'pocket' },
   housekey: { type: 'housekey', name: '门廊钥匙', desc: '从某户人家的门垫下摸出来的。郊区的房子看上去有人住，只是永远没有电。', stack: 2, unique: 9, equip: 'pocket', rarity: 'uncommon', glyph: 'key' },
 
   // Level 10「Bumper Crop」
@@ -145,13 +145,13 @@ export const ITEMS: Record<string, ItemDef> = {
   // ===== v32：后室扩展物品 =====
   cashew: { type: 'cashew', name: '腰果水', desc: '看起来和杏仁水几乎一模一样——但标签只剩乱码，千万别搞混。', stack: 3, use: 'sanity', value: -30, value3: -10, anomalous: true, rarity: 'uncommon', glyph: 'bottle' },
   // v54：幸运豆奶（wikidot Object 28）——理智+40、饥饿+20、口渴+30
-  luckymilk: { type: 'luckymilk', name: '幸运豆奶', desc: '纸盒包装上印着一只微笑的四叶草奶牛。喝下去的人说会交好运——至少他们是这么声称的。', stack: 3, use: 'sanityeat', value: 40, value2: 20, value3: 30, anomalous: true, rarity: 'rare', glyph: 'milk' },
+  luckymilk: { type: 'luckymilk', name: '幸运豆奶', desc: '老式玻璃奶瓶里装着乳白色豆奶，瓶身的标签仿佛与玻璃融为一体。背面的成分表写着：天然防腐剂 300%。（Object 28）', stack: 3, use: 'sanityeat', value: 40, value2: 20, value3: 30, anomalous: true, rarity: 'rare', glyph: 'milk' },
   knife: { type: 'knife', name: '刀', desc: '一把还算锋利的刀。', stack: 1, weapon: 30, attackInterval: 0.42, attackStamina: 6, rarity: 'uncommon', glyph: 'knife' },
   axe: { type: 'axe', name: '斧头', desc: '沉重的消防斧。也能劈开上锁的门——但斧刃经不起太多次硬碰。', stack: 1, weapon: 45, attackInterval: 1.12, attackStamina: 16, rarity: 'rare', glyph: 'axe' },
   headlamp: { type: 'headlamp', name: '头灯', desc: '戴在头上的探照灯，与手电筒共用电池。', stack: 1, equip: 'head', passive: '头灯光源（共用电池）', rarity: 'uncommon', glyph: 'headlamp' },
   nightvision: { type: 'nightvision', name: '夜视眼镜', desc: '“家政服务”哨所改装的低照度夜视镜。不会照亮环境，但能显著放大仅存的微光；佩戴启用时持续消耗通用电池。', stack: 1, equip: 'head', passive: '增强夜视（每秒消耗 0.25 电量）', rarity: 'rare', glyph: 'mask' },
   notebook: { type: 'notebook', name: '笔记本和笔', desc: '一本皮面笔记本，笔还插在书脊上。', stack: 1, use: 'none', rarity: 'uncommon', glyph: 'notebook' },
-  fuyouyu: { type: 'fuyouyu', name: '福友玉', desc: '一块温润的玉佩，贴着皮肤时，能感到它细微的暖意变化。', stack: 1, equip: 'pocket', passive: '实体感应', anomalous: true, rarity: 'rare', glyph: 'jade' },
+  fuyouyu: { type: 'fuyouyu', name: '福友玉', desc: '一块苔藓绿色的软玉吊坠，云絮般的矿脉藏在磨圆的玉面下。贴着皮肤时，能感到它细微的暖意变化。（Object 101）', stack: 1, equip: 'pocket', passive: '实体感应', anomalous: true, rarity: 'rare', glyph: 'jade' },
   squirtgun: { type: 'squirtgun', name: '滋水枪', desc: '造型过分鲜艳的玩具水枪。在右侧信息栏可以为储罐装入液体。', stack: 1, use: 'none', anomalous: true, rarity: 'rare', glyph: 'watergun' },
   warpberry: { type: 'warpberry', name: '迁跃浆果', desc: '表皮泛着空间涟漪的浆果——据说它认得「家」的方向。每颗都记得自己被发现的地方。', stack: 2, use: 'eat', value: 15, anomalous: true, rarity: 'epic', glyph: 'berry' },
   royalration: { type: 'royalration', name: '皇家口粮', desc: '传说中的甘美之物，一口便足以忘记饥饿与恐惧。只是从没有人能只吃一口。', stack: 1, use: 'eat', value: 100, anomalous: true, rarity: 'epic', glyph: 'ration' },
