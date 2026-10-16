@@ -7,7 +7,7 @@
 // v7：z 轴高度系统——canOccupy 增加 z/crouch 选项：
 //   - 高差 > STEP_UP(0.65m) 的瓦片不可直接踏上（跳跃滞空时 p.z 抬高后可通过）；
 //   - 蹲伏低通道（crawl=1）未蹲伏不可进入。
-import { caveVolumeFieldAt, floorHeight, structBlocksCircle, structBlocksPoint, bandOfZ, stairServesBand, walkableAt, STEP_UP, l4CubicleEscapePoints, type GameMap } from '../world/mapgen'
+import { l11MapSpace, caveVolumeFieldAt, floorHeight, structBlocksCircle, structBlocksPoint, bandOfZ, stairServesBand, walkableAt, STEP_UP, l4CubicleEscapePoints, type GameMap } from '../world/mapgen'
 import type { FloorBand } from './types'
 
 export const PLAYER_RADIUS = 0.32
@@ -20,6 +20,7 @@ export interface OccupyOpts {
   z?: number // 脚底当前高度（米）
   crouch?: boolean // 是否蹲伏（低通道必需）
   band?: FloorBand
+  ignoreStructure?: import('./types').Structure // A sit/stand path may cross only its own seat surface.
 }
 
 // 8 点采样（四角 + 四边中点）判断半径 r 的圆能否位于 (x,y)，防止角落穿透
@@ -27,7 +28,15 @@ export function canOccupy(m: GameMap, x: number, y: number, r = PLAYER_RADIUS, o
   const z = opts.z ?? 0
   const band: FloorBand = opts.band ?? bandOfZ(z)
   // 先做完整圆-AABB 相交：细柱可能完全处于玩家圆内部，单纯采样圆周永远碰不到它。
-  if (structBlocksCircle(m, x, y, r, z, band)) return false
+  if (structBlocksCircle(m, x, y, r, z, band,opts.crouch?.88:1.48,undefined,opts.ignoreStructure)) return false
+  if(l11MapSpace(m,x,y,band,z)){
+    for(const [ox,oy]of [[0,0],[-r,0],[r,0],[0,-r],[0,r]]){
+      const sx=x+ox,sy=y+oy;if(sx<0||sy<0||sx>=m.w||sy>=m.h)return false
+      const space=l11MapSpace(m,sx,sy,band,z)
+      if(!space||space.blocked||!space.walkable&&z<=space.height+.1||space.height-z>STEP_UP)return false
+    }
+    return true
+  }
   // v46：中心格是否为楼梯坡道（爬楼梯途中 z≥1.5 换带时，身体悬出坡道边缘属正常，见下方溢出放行）
   const ctx = Math.floor(x), cty = Math.floor(y)
   const centerStair = ctx >= 0 && cty >= 0 && ctx < m.w && cty < m.h && (m.stair[cty * m.w + ctx] & 7) !== 0
@@ -46,7 +55,7 @@ export function canOccupy(m: GameMap, x: number, y: number, r = PLAYER_RADIUS, o
       // v54 跌井守卫：从非坡道格（楼板）踏入不到达本层带的坡道段=跌进楼梯井，拦截；
       // 中心已在坡道上（centerStair）则不受限——3F 沿 2F→3F 坡道连续下行时坡道中段本就不服务 band2
       if (!centerStair && !stairServesBand(m.stair[i], band)) return false
-      if (structBlocksPoint(m, sx, sy, z, band)) return false
+      if (structBlocksPoint(m, sx, sy, z, band,opts.ignoreStructure)) return false
     } else if (band >= 1) {
       if (!walkableAt(m, tx, ty, band)) {
         // v46 楼梯溢出放行：中心在坡道、采样格是普通主层地板（上空无物）→ 放行
@@ -54,9 +63,9 @@ export function canOccupy(m: GameMap, x: number, y: number, r = PLAYER_RADIUS, o
         // 一层地板即卡死，是「阶梯边缘移动卡死 / 多层交界处无法跳跃」的根因）；
         // 跌落保护不变：中心不在坡道时，悬出夹楼边缘仍被拦截
         if (!centerStair || m.tiles[i] !== 1) return false
-        if (structBlocksPoint(m, sx, sy, z, 0) || structBlocksPoint(m, sx, sy, z, 1) || structBlocksPoint(m, sx, sy, z, 2)) return false // v54：三个层带结构都挡（主层立柱/楼梯口实心侧挡）
+        if (structBlocksPoint(m, sx, sy, z, 0,opts.ignoreStructure) || structBlocksPoint(m, sx, sy, z, 1,opts.ignoreStructure) || structBlocksPoint(m, sx, sy, z, 2,opts.ignoreStructure)) return false // v54：三个层带结构都挡（主层立柱/楼梯口实心侧挡）
         spill = true
-      } else if (structBlocksPoint(m, sx, sy, z, band)) return false
+      } else if (structBlocksPoint(m, sx, sy, z, band,opts.ignoreStructure)) return false
     } else {
       if (band === 0 && m.caveVolumeId !== undefined) {
         // 洞穴类层级按真实三维岩体表面碰撞，不再把整块「墙瓦片」当成 1m 方盒。
@@ -66,7 +75,7 @@ export function canOccupy(m: GameMap, x: number, y: number, r = PLAYER_RADIUS, o
           || caveVolumeFieldAt(m, sx, ground + head * 0.55, sy) <= 0.025
           || caveVolumeFieldAt(m, sx, ground + head, sy) <= 0.025) return false
       } else if (!walkableAt(m, tx, ty, band)) return false
-      if (structBlocksPoint(m, sx, sy, z, band)) return false
+      if (structBlocksPoint(m, sx, sy, z, band,opts.ignoreStructure)) return false
       // 蹲伏低通道：头顶风道，未蹲伏不可进入
       if (band === 0 && m.crawl && m.crawl[i] === 1 && !opts.crouch) return false
     }

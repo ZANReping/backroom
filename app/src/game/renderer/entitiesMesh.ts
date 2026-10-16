@@ -10,13 +10,19 @@
 //   悲尸 wretch / 观察者 watcher / 派对客 partygoer / 猎犬 hound / 死亡飞蛾 deathmoth / 肢团 clump
 // 新实体请先读这些 case 再动手；设定依据在 entities/ 各定义的 codex 注释里。
 import * as THREE from 'three'
+import {buildNpcBoneSpear} from './npcBoneSpear'
+import { planFacelingFace } from './facelingFace'
 import { buildMothMesh } from './mothMeshes'
 import { buildSmilerMesh } from './smilerMesh'
 import { buildHoundMesh } from './houndMesh'
+import { buildSkinStealerMesh } from './skinStealerMesh'
+import { buildWretchMesh } from './wretchMesh'
+import { buildRatMesh } from './ratMesh'
+import { buildClumpMesh } from './clumpMesh'
 import { buildDullerMesh } from './dullerMesh'
 import { ENTITIES } from '../entities'
 import { box, cyl, glow, litMaterial, mulberry } from './shared'
-import { buildPlayerModel } from './playerModel'
+import { buildAvatarModel, fitLegacyAttachments } from './retroAvatar'
 import { randomAvatar } from '../core/avatar'
 
 // ---------- 实体低模（骨骼式分组：四肢/头独立 pivot，可程序化动画）----------
@@ -31,13 +37,15 @@ type PartMap = Record<string, THREE.Object3D>
 export interface EntityMeshOpts {
   mothForm?: import('../entities/types').MothForm
   l3face?: boolean; tool?: boolean; capybara?: boolean
-  ratMorph?: 'gray' | 'brown' | 'hotel'; seed?: number
+  ratMorph?: import('../engine/ratAI').RatMorph; seed?: number
   ceilingCrawler?: boolean
   arachnidMorph?: 'spider' | 'scorpion' | 'tick' | 'mite'
   arachnidBreed?: number
   herbivore?: boolean
   smilerKind?: import('../entities/smilers').SmilerKind // v61：笑魇变种
   houndNeutral?: boolean // v62：L11 中立猎犬
+  wretchKind?: import('../entities/wretches').WretchKind
+  l3clump?: boolean // v64：L3 高智能肢团（v65：更大的肉团、更粗的肢体、独立持械臂）
 }
 
 // 七层之物使用纯程序化 UV：DataTexture 在浏览器与 Node 验收脚本中都可创建，
@@ -103,8 +111,12 @@ function getThingSkinTextures() {
 }
 export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Group {
   if(type === 'deathmoth') return buildMothMesh(opts?.mothForm ?? 'male')
+  if (type === 'clump') return buildClumpMesh(!!opts?.l3clump, opts?.seed ?? 0)
   if (type === 'duller') return buildDullerMesh(opts?.seed ?? 0) // v63：重制钝人
   if (type === 'hound') return buildHoundMesh(!!opts?.houndNeutral, opts?.seed ?? 0) // v62：重制猎犬
+  if (type === 'corpserat') return buildRatMesh(opts?.ratMorph ?? (opts?.capybara ? 'capybara' : opts?.ceilingCrawler ? 'cave' : 'common'), opts?.seed ?? 0, !!opts?.ceilingCrawler)
+  if (type === 'wretch') return buildWretchMesh(opts?.seed ?? 0, opts?.wretchKind)
+  if (type === 'skinstealer') return buildSkinStealerMesh(opts?.seed ?? 0) // v77：重制窃皮者（真身）
   if (type === 'smiler') return buildSmilerMesh(opts?.smilerKind ?? 'common', opts?.seed ?? 0) // v61：重制笑魇（含 5 变种）
   const grp = new THREE.Group()
   grp.userData.entityType = type
@@ -200,37 +212,15 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
     // v63：'duller' 已在函数开头交给 dullerMesh.buildDullerMesh（旧版方块模型移除）
     case 'faceling': { // 无面灵（Entity 9）：与人类高度相似——直接复用玩家形象模型（随机肤色/发型/服装），
       //                 唯独完全缺失面部特征：头部只剩一张没有五官的光滑平面。
-      const pm = buildPlayerModel(randomAvatar(), {})
-      // 摘除全部面部件（眼/眉/嘴）
-      const faceParts: THREE.Object3D[] = []
-      pm.traverse((o) => { if (o.userData.face === 1) faceParts.push(o) })
-      for (const o of faceParts) o.parent?.remove(o)
+      // v68：复古人物模型的无面版本（脸面只采样皮肤、鼻梁削平，眼镜/胡须不生成）
+      const faceSeed = opts?.seed ?? Math.floor(Math.random() * 1e6)
+      const avatarSeed = faceSeed + 101
+      const pm = buildAvatarModel(randomAvatar(mulberry(avatarSeed)), { seed: avatarSeed, faceless: true, faceAnomaly: opts?.l3face ? faceSeed : undefined })
+      grp.userData.retroUpdate = pm.userData.retroUpdate
       const pmParts = pm.userData.parts as Record<string, THREE.Object3D>
       // 注册骨骼部件（步态/待机敲键动画沿用现有驱动）
       for (const k of ['torso', 'head', 'armL', 'armR', 'legL', 'legR']) tag(pmParts[k], k)
-      // v53：L3 高智能无面灵——面部长出类似眼/耳/鼻/口的器官，但位置与数量通常不对（按实体 id 确定性）
-      if (opts?.l3face && pmParts.head) {
-        const r = mulberry(((opts.seed ?? 1) * 7919 + 13) >>> 0)
-        const dark = '#3a2e28', flesh = '#6a5040'
-        const head = pmParts.head
-        const eyeN = 1 + Math.floor(r() * 3) // 1~3 只眼（数量不对）
-        for (let i = 0; i < eyeN; i++) {
-          const eye = new THREE.Mesh(new THREE.BoxGeometry(0.032, 0.04, 0.014), lam(dark))
-          eye.position.set((r() - 0.5) * 0.16, 0.06 + r() * 0.16, 0.121) // 位置随机错位：可能居中/斜排/跑到额头
-          head.add(eye)
-        }
-        const nose = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.05, 0.03), lam(flesh)) // 鼻：长错位置的凸起
-        nose.position.set((r() - 0.5) * 0.14, 0.05 + r() * 0.14, 0.135)
-        head.add(nose)
-        const mouth = new THREE.Mesh(new THREE.BoxGeometry(0.014, 0.07, 0.012), lam(dark)) // 口：竖过来的嘴缝
-        mouth.position.set((r() - 0.5) * 0.12, 0.04 + r() * 0.08, 0.121)
-        head.add(mouth)
-        if (r() < 0.6) { // 耳：贴在正面的耳朵（本该长在两侧）
-          const ear = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.06, 0.014), lam(flesh))
-          ear.position.set((r() - 0.5) * 0.16, 0.1 + r() * 0.12, 0.118)
-          head.add(ear)
-        }
-      }
+      if (opts?.l3face) grp.userData.facePlan = planFacelingFace(faceSeed)
       // v53：L3 部分无面灵使用石器工具（石锤握在右手）
       if (opts?.tool && pmParts.armR) {
         const tool = new THREE.Group()
@@ -242,6 +232,7 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
         tool.rotation.x = -0.5
         pmParts.armR.add(tool)
       }
+      fitLegacyAttachments(pm) // 旧坐标系下挂的错位五官/石锤 → 新骨骼坐标
       grp.add(pm)
       break
     }
@@ -315,38 +306,7 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
       tag(hand, 'hand')
       break
     }
-    case 'skinstealer': { // 窃皮者（Entity 10）：高瘦、苍黄色皮肤；深凹的白色眼球；
-      //                    体表覆微小凸起（似章鱼触手吸盘）；手部为尖锐附肢。
-      const sc = '#c2b478', sd = '#a89a60', sh = '#cbbd83'
-      humanoid(1.86, 0.9, sc, { limbs: sd, head: sh })
-      // 深凹眼窝：眉骨/颧骨/眼角围成一圈外突的窝缘（前伸到 z≈0.175），
-      // 纯白眼球缩在窝内（前沿 z≈0.154），窝底再垫一块深色板 → 眼睛明显内陷
-      const socket = (x: number) => {
-        grp.add(box(0.13, 0.04, 0.09, sd, x, 1.79, 0.13)) // 眉骨
-        grp.add(box(0.13, 0.035, 0.09, sd, x, 1.665, 0.13)) // 颧骨
-        grp.add(box(0.03, 0.13, 0.09, sd, x - 0.05 * Math.sign(x || 1), 1.73, 0.13)) // 外眼角
-        grp.add(box(0.11, 0.1, 0.02, '#3f3a24', x, 1.73, 0.105)) // 窝底深色板
-        const eb = sph(0.036, '#ffffff', 8, basic('#ffffff'))
-        eb.position.set(x, 1.73, 0.118)
-        face(eb); grp.add(eb)
-      }
-      socket(-0.075); socket(0.075)
-      const rng = mulberry(0x51e)
-      for (let i = 0; i < 18; i++) { // 吸盘状微小凸起
-        const a = rng() * Math.PI * 2
-        grp.add(box(0.022 + rng() * 0.016, 0.02 + rng() * 0.014, 0.022 + rng() * 0.016,
-          rng() < 0.5 ? '#d4c894' : '#a89a60', Math.cos(a) * 0.2, 0.85 + rng() * 0.95, Math.sin(a) * 0.14))
-      }
-      for (const arm of [parts.armL, parts.armR]) { // 手部尖锐附肢
-        tip(arm, 0.07, 0.14, 0.07, sd, -0.86)
-        for (let i = 0; i < 3; i++) {
-          const cl = box(0.022, 0.14, 0.022, '#5e5230', (i - 1) * 0.038, -1.0, 0.02)
-          cl.rotation.x = -0.25
-          arm.add(cl)
-        }
-      }
-      break
-    }
+    // v77：'skinstealer' 已在函数开头交给 skinStealerMesh.buildSkinStealerMesh（旧版方块模型移除）
     // v62：'hound' 已在函数开头交给 houndMesh.buildHoundMesh（旧版方块模型移除）
     case 'carrier': { // 运输车：机械厢体（底盘/货厢/驾驶室/风挡/保险杠/四轮/前后灯，原生 +X）
       // 修复 v15：v14 底盘（torso）从未挂入场景 → 车身悬浮于四轮之上、保险杠/车灯悬空。
@@ -509,89 +469,7 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
       grp.add(box(0.2, 0.3, 0.02, '#c8d4dc', 0.05, 1.1, -0.14)) // 背部碎镜
       break
     }
-    case 'clump': { // 团块（Entity 5）：a bundle of human limbs——数十条长短粗细不一的人类手臂与腿
-      //              放射状聚合成的球状物，没有统一躯干；一条远超其余长度的主臂；
-      //              团块缝隙中露出散落的眼睛与耳朵，以及一张满是剃刀般利齿的嘴。（不同肢体不同肤色）
-      const skins = ['#b89a7e', '#8a6a52', '#c2a888', '#6e5442', '#a4846a', '#d0b89a', '#7a5c48', '#9a7a60']
-      const rng = mulberry(0x5c1a)
-      const core = new THREE.Group() // 球心：肢体交汇的肉团（无解剖学躯干）
-      core.position.set(0, 0.62, 0)
-      core.add(new THREE.Mesh(new THREE.IcosahedronGeometry(0.4, 0), lam('#6a5240')))
-      core.add(sph(0.26, '#5a4638', 7).translateX(0.2))
-      core.add(sph(0.22, '#7a6248', 7).translateY(0.22))
-      core.add(sph(0.2, '#544232', 7).translateZ(-0.2))
-      tag(core, 'torso')
-      // 放射状肢体束：12 条绕球心分布，长短粗细不一、不同肤色拼贴
-      const limb = (dir: THREE.Vector3, len: number, w: number, cc: string, foot: boolean) => {
-        const g2 = new THREE.Group()
-        g2.position.copy(dir.clone().multiplyScalar(0.3)).add(new THREE.Vector3(0, 0.62, 0))
-        g2.quaternion.setFromUnitVectors(new THREE.Vector3(0, -1, 0), dir)
-        g2.add(box(w, len * 0.55, w, cc, 0, -len * 0.28, 0))
-        const lo = new THREE.Group() // 肘/膝以下反折一次
-        lo.position.y = -len * 0.55
-        lo.rotation.x = 0.35 + rng() * 0.7
-        lo.add(box(w * 0.86, len * 0.45, w * 0.86, cc, 0, -len * 0.23, 0))
-        if (foot) lo.add(box(w * 1.25, w * 0.7, w * 2.1, cc, 0, -len * 0.45, w * 0.55)) // 脚掌
-        else for (let k = 0; k < 3; k++) lo.add(box(w * 0.3, len * 0.13, w * 0.3, cc, (k - 1) * w * 0.36, -len * 0.5, 0)) // 手指
-        g2.add(lo)
-        grp.add(g2)
-      }
-      for (let i = 0; i < 12; i++) {
-        const yv = 0.9 - (i + 0.5) / 8.5 // 覆盖球体上四分之三（朝下的肢体缩短，避免穿地）
-        const rr = Math.sqrt(Math.max(0.02, 1 - yv * yv))
-        const a = i * 2.39996
-        limb(new THREE.Vector3(Math.cos(a) * rr, yv, Math.sin(a) * rr).normalize(),
-          (0.32 + rng() * 0.42) * (yv < -0.12 ? 0.5 : 1), 0.075 + rng() * 0.055,
-          skins[i % skins.length], i % 2 === 0)
-      }
-      // 主臂：远超其余长度的一条（holder 预抬到前上方，renderer 的 rotation.x 在此基础上抓挠蠕动）
-      const mainHold = new THREE.Group()
-      mainHold.position.set(-0.24, 0.82, 0.26)
-      mainHold.rotation.x = -1.15; mainHold.rotation.z = 0.3
-      grp.add(mainHold)
-      const mainArm = jointOn(mainHold, 0.13, 1.5, 0.13, '#c2a888', 'armL')
-      const mainFore = new THREE.Group()
-      mainFore.position.y = -1.5; mainFore.rotation.x = 0.5
-      mainFore.add(box(0.11, 0.5, 0.11, '#d0b89a', 0, -0.25, 0))
-      for (let k = 0; k < 4; k++) mainFore.add(box(0.028, 0.19, 0.028, '#d0b89a', (k - 1.5) * 0.035, -0.6, 0)) // 长指
-      mainArm.add(mainFore)
-      // 次臂与三条触手（rotation.z 预摆姿不会被 renderer 覆盖）
-      const sideHold = new THREE.Group()
-      sideHold.position.set(0.3, 0.8, 0.22); sideHold.rotation.x = -0.9; sideHold.rotation.z = -0.4
-      grp.add(sideHold)
-      const armR = jointOn(sideHold, 0.11, 0.6, 0.11, '#8a6a52', 'armR')
-      tip(armR, 0.13, 0.09, 0.14, '#a4846a', -0.62)
-      const tent = (part: string, x: number, y: number, z: number, rx: number, rz: number, len: number, cc: string) => {
-        const h = new THREE.Group()
-        h.position.set(x, y, z); h.rotation.x = rx; h.rotation.z = rz
-        grp.add(h)
-        jointOn(h, 0.065, len, 0.065, cc, part)
-      }
-      tent('t1', -0.32, 0.9, -0.16, 0.7, 0.6, 0.44, '#6e5442')
-      tent('t2', 0.24, 1.0, -0.04, -0.4, -0.7, 0.38, '#a4846a')
-      tent('t3', 0.06, 0.98, 0.22, -1.2, 0.1, 0.34, '#7a5c48')
-      // 缝隙中露出的散落眼睛
-      const clumpEye = (x: number, y: number, z: number, s: number) => {
-        const e = face(glow(s, s, s, '#e8e2d2', x, y, z))
-        e.add(glow(s * 0.45, s * 0.45, s * 0.3, '#1a1210', 0, 0, s * 0.4))
-        grp.add(e)
-      }
-      clumpEye(0.02, 0.9, 0.36, 0.07); clumpEye(-0.22, 0.62, 0.35, 0.05)
-      clumpEye(0.26, 0.74, 0.3, 0.045); clumpEye(0.06, 0.48, 0.4, 0.04)
-      for (const [ex, ey, ez, ry] of [[-0.3, 0.78, 0.2, 0.9], [0.32, 0.5, 0.18, -1.1], [-0.06, 1.02, 0.12, 0.3]]) { // 缝隙中的耳朵
-        const ear = box(0.03, 0.12, 0.1, '#c2a888', ex, ey, ez)
-        ear.rotation.y = ry; ear.rotation.z = 0.3
-        grp.add(ear)
-      }
-      const maw = box(0.3, 0.15, 0.06, '#2a1a14', 0.05, 0.34, 0.36) // 满是剃刀般利齿的嘴
-      face(maw); grp.add(maw)
-      for (let i = 0; i < 9; i++) {
-        const t = face(glow(0.028, 0.055, 0.02, '#f0ece0', 0.05 + (i / 8 - 0.5) * 0.26, 0.34 + (i % 2 ? 0.03 : -0.03), 0.39))
-        t.rotation.z = (i % 2 ? 1 : -1) * 0.16
-        grp.add(t)
-      }
-      break
-    }
+    // v64：'clump' 已在函数开头交给 clumpMesh.buildClumpMesh（旧版方块模型移除）
 
     // ==================== v23：Level 6–11 / Level 601 ====================
     case 'mimicry': { // 模仿者（Level 6）：黑暗中的类人剪影，深色、轮廓模糊、无面部细节，
@@ -615,7 +493,7 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
       // 厚焦油罩袍 + 焦油层下两栖式生物荧光斑点 + 橡胶质坚韧皮肤 + 面部甲壳（终段张开露尖牙巨口）
       // + 巨物尸骨长矛 + 利爪。原生 +X；眼在暗处变亮、近水面暗淡（renderer 按深度驱动 eyeMats）。
       const skin = '#6f7d6b', skinD = '#525f4e', tar = '#14171c', tarL = '#232b34'
-      const bone = '#d8cdb4', boneD = '#b0a586', faceC = '#d8c9a8', cara = '#39404a'
+      const boneD = '#b0a586', faceC = '#d8c9a8', cara = '#39404a'
       // 眼睛材质（自发光强度由 renderer 按水深/光照写入——暗处亮、水面几乎无光）
       const eyeMat = emat('#9fd8e8', 0.25)
       const spotMat = emat('#7fd8e8', 0.5)
@@ -661,13 +539,7 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
         tip(arm, 0.03, 0.06, 0.03, '#7fd8e8', -0.2, 0.07).material = spotMat // 手臂荧光斑
       }
       // ---- 骨矛（挂 armR 末端；随攻击前刺） ----
-      const spear = new THREE.Group()
-      spear.position.set(0.1, -0.8, 0.02)
-      spear.rotation.z = -1.35 // 近乎持平前指
-      const shaft = cyl(0.022, 0.028, 2.7, bone, 0, 0.6, 0, 6)
-      spear.add(shaft)
-      spear.add(cyl(0.05, 0.012, 0.5, boneD, 0, 2.05, 0, 5)) // 骨刃尖
-      for (const wy of [-0.2, 0.05]) spear.add(cyl(0.045, 0.045, 0.06, tar, 0, wy, 0, 6)) // 缠柄焦油箍
+      const spear = buildNpcBoneSpear()
       parts.armR!.add(spear)
       tag(spear, 'spear')
       // ---- 头（面部甲壳 + 眼 + 甲壳下尖牙巨口 + 焦油头冠） ----
@@ -1394,155 +1266,8 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
       tag(body, 'arachnidBody')
       break
     }
-    case 'corpserat': { // 尸鼠（v42 合并死亡鼠，只保留一名）：形态按层级固定（v53）——
-      // L2=灰白癞斑（廊道种群）/ L3=水豚形态（高智能变种，设陷阱）/ 其余=深褐竖耳（L8 天顶种群，旧档「死亡鼠」）。（原生 +X）
-      if (opts?.ceilingCrawler) {
-        const dung = sph(0.055, '#3a2919', 7)
-        dung.scale.set(0.85, 1.2, 0.85); dung.position.set(-0.05, 0.05, 0); dung.visible = false; tag(dung, 'dung')
-      }
-      // v53：L3 高智能尸鼠——水豚形态：桶状躯干、钝方吻、头顶小圆耳、几乎无尾，体型明显更大
-      if (opts?.capybara) {
-        const cc = '#6a563f', cd = '#584631', cl = '#7a6650'
-        const body = new THREE.Group()
-        body.position.set(0, 0.22, 0)
-        body.add(box(0.42, 0.24, 0.24, cc, 0, 0, 0)) // 桶状躯干
-        body.add(box(0.2, 0.2, 0.22, cd, -0.2, -0.02, 0)) // 后臀
-        body.add(box(0.3, 0.04, 0.22, cd, 0.02, 0.13, 0)) // 背毛
-        tag(body, 'torso')
-        const hg = new THREE.Group()
-        hg.position.set(0.28, 0.3, 0)
-        hg.add(box(0.16, 0.15, 0.16, cl, 0, 0, 0))
-        hg.add(box(0.12, 0.1, 0.12, cl, 0.12, -0.03, 0)) // 钝方吻
-        hg.add(box(0.03, 0.03, 0.03, '#1a1412', 0.19, -0.01, 0)) // 鼻
-        for (const z of [-0.05, 0.05]) hg.add(face(glow(0.024, 0.024, 0.024, '#241f1a', 0.088, 0.05, z))) // 眼（头盒前表面 x=0.08 之外，避免埋进头内）
-        for (const z of [-0.05, 0.05]) hg.add(box(0.035, 0.045, 0.035, cd, -0.02, 0.09, z)) // 头顶小圆耳
-        tag(hg, 'head')
-        jointX(0.05, 0.15, 0.05, cd, 0.15, 0.16, -0.08, 'armL')
-        jointX(0.05, 0.15, 0.05, cd, 0.15, 0.16, 0.08, 'armR')
-        jointX(0.055, 0.15, 0.055, cd, -0.16, 0.16, -0.08, 'legL')
-        jointX(0.055, 0.15, 0.055, cd, -0.16, 0.16, 0.08, 'legR')
-        for (const l of [parts.armL, parts.armR, parts.legL, parts.legR]) tip(l, 0.055, 0.03, 0.07, '#241f1b', -0.15, 0.01)
-        break
-      }
-      if (opts?.ratMorph !== 'gray') {
-        // 深褐形态（旧死亡鼠）：小型四足啮齿——尖吻、长尾、竖耳，深褐色，体长约 0.4m
-        const rc = '#3e3630', rd = '#332c27', rl = '#4c433b'
-        const body = new THREE.Group()
-        body.position.set(0, 0.17, 0)
-        body.add(box(0.26, 0.14, 0.15, rc, 0, 0, 0))
-        body.add(box(0.15, 0.13, 0.14, rd, -0.16, -0.01, 0)) // 后臀
-        body.add(box(0.2, 0.03, 0.13, rd, 0.02, 0.08, 0)) // 背毛
-        tag(body, 'torso')
-        const hg = new THREE.Group()
-        hg.position.set(0.2, 0.19, 0)
-        hg.add(box(0.11, 0.1, 0.1, rl, 0, 0, 0))
-        hg.add(box(0.09, 0.06, 0.06, rl, 0.09, -0.02, 0)) // 尖吻
-        hg.add(box(0.025, 0.025, 0.025, '#1a1412', 0.14, -0.02, 0)) // 鼻
-        for (const z of [-0.04, 0.04]) hg.add(face(glow(0.022, 0.022, 0.022, '#c94a3a', 0.06, 0.02, z))) // 眼
-        hg.add(face(glow(0.022, 0.03, 0.035, '#e8e2d2', 0.13, -0.05, 0))) // 门牙
-        for (const z of [-0.05, 0.05]) { // 竖耳
-          const ear = box(0.02, 0.085, 0.075, rd, -0.02, 0.08, z)
-          ear.rotation.x = z > 0 ? 0.22 : -0.22
-          hg.add(ear)
-        }
-        tag(hg, 'head')
-        const tgeo = new THREE.BoxGeometry(0.3, 0.025, 0.025) // 长尾
-        tgeo.translate(-0.15, 0, 0)
-        const tl = new THREE.Mesh(tgeo, lam('#4a3f38'))
-        tl.position.set(-0.24, 0.17, 0)
-        tl.rotation.z = -0.15
-        tag(tl, 'tail')
-        jointX(0.045, 0.13, 0.045, rd, 0.13, 0.13, -0.06, 'armL')
-        jointX(0.045, 0.13, 0.045, rd, 0.13, 0.13, 0.06, 'armR')
-        jointX(0.05, 0.13, 0.05, rd, -0.12, 0.13, -0.06, 'legL')
-        jointX(0.05, 0.13, 0.05, rd, -0.12, 0.13, 0.06, 'legR')
-        for (const l of [parts.armL, parts.armR, parts.legL, parts.legR]) tip(l, 0.05, 0.03, 0.06, '#241f1b', -0.13, 0.01)
-        if (opts?.ratMorph === 'hotel') { // v55：L5 酒店正装变种——小西装黑马甲 + 白衬衫襟 + 酒红领结
-          body.add(box(0.28, 0.12, 0.17, '#1c1a1e', 0.01, -0.02, 0)) // 小西装躯干（马甲）
-          body.add(box(0.1, 0.08, 0.02, '#e8e4da', 0.12, 0.01, 0.08)) // 白衬衫襟（左）
-          body.add(box(0.1, 0.08, 0.02, '#e8e4da', 0.12, 0.01, -0.08)) // 白衬衫襟（右）
-          hg.add(box(0.04, 0.03, 0.07, '#7a1e24', 0.08, -0.055, 0)) // 酒红领结
-        }
-      } else {
-        // 灰白形态（原尸鼠）：灰白近腐的大型啮齿——癞斑脱毛、尖吻、裸尾，口边沾着飞蛾翅粉
-        const rc = '#8a8078', rd = '#6e665e', rl = '#9a928a', bare = '#a08a80'
-        const body = new THREE.Group()
-        body.position.set(0, 0.19, 0)
-        body.add(box(0.3, 0.16, 0.17, rc, 0, 0, 0))
-        body.add(box(0.17, 0.15, 0.16, rd, -0.18, -0.01, 0)) // 后臀
-        body.add(box(0.22, 0.03, 0.15, rd, 0.02, 0.09, 0)) // 背毛
-        body.add(box(0.09, 0.02, 0.08, bare, 0.05, 0.105, 0.03)) // 癞斑（脱毛露皮）
-        body.add(box(0.07, 0.02, 0.06, bare, -0.1, 0.1, -0.04))
-        tag(body, 'torso')
-        const hg = new THREE.Group()
-        hg.position.set(0.22, 0.21, 0)
-        hg.add(box(0.12, 0.11, 0.11, rl, 0, 0, 0))
-        hg.add(box(0.1, 0.06, 0.06, rl, 0.1, -0.02, 0)) // 尖吻
-        hg.add(box(0.03, 0.03, 0.03, '#1a1412', 0.16, -0.02, 0)) // 鼻
-        for (const z of [-0.045, 0.045]) hg.add(face(glow(0.024, 0.024, 0.024, '#c9a03a', 0.065, 0.02, z))) // 眼（浑浊黄）
-        hg.add(face(glow(0.024, 0.03, 0.04, '#e8e2d2', 0.15, -0.055, 0))) // 门牙
-        hg.add(box(0.05, 0.015, 0.05, '#7a6a5a', 0.13, -0.06, 0)) // 口边沾的飞蛾翅粉
-        for (const z of [-0.055, 0.055]) { // 竖耳
-          const ear = box(0.02, 0.09, 0.08, rd, -0.02, 0.09, z)
-          ear.rotation.x = z > 0 ? 0.22 : -0.22
-          hg.add(ear)
-        }
-        tag(hg, 'head')
-        const tgeo = new THREE.BoxGeometry(0.36, 0.022, 0.022) // 裸尾（无毛，灰粉）
-        tgeo.translate(-0.18, 0, 0)
-        const tl = new THREE.Mesh(tgeo, lam(bare))
-        tl.position.set(-0.28, 0.19, 0)
-        tl.rotation.z = -0.15
-        tag(tl, 'tail')
-        jointX(0.05, 0.15, 0.05, rd, 0.15, 0.15, -0.07, 'armL')
-        jointX(0.05, 0.15, 0.05, rd, 0.15, 0.15, 0.07, 'armR')
-        jointX(0.055, 0.15, 0.055, rd, -0.14, 0.15, -0.07, 'legL')
-        jointX(0.055, 0.15, 0.055, rd, -0.14, 0.15, 0.07, 'legR')
-        for (const l of [parts.armL, parts.armR, parts.legL, parts.legR]) tip(l, 0.055, 0.03, 0.065, '#3a332e', -0.15, 0.01)
-      }
-      break
-    }
-    case 'wretch': { // 悲尸（Entity 15）：骷髅般消瘦的人形；红棕色干裂皮肤，布满孔洞与脓疱；
-      //               牙齿与指甲在错误的位置重新长出；眼睑已溶解——眼球完全外露、永远闭不上。
-      const wc = '#8a4a3a', wd = '#6e3a2e', wl = '#9c5a46'
-      humanoid(1.72, 0.68, wc, { limbs: wd, head: wl })
-      const rng = mulberry(0x15e7)
-      const eyeball = (x: number) => { // 无眼睑的外露眼球（微微外凸、充血）
-        const e = sph(0.045, '#e8dcd2', 8, basic('#e8dcd2'))
-        e.position.set(x, 1.62, 0.075)
-        face(e); grp.add(e)
-        const p = sph(0.02, '#2a1410', 6, basic('#2a1410'))
-        p.position.set(0, 0, 0.036)
-        e.add(p)
-        const vein = new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.006, 0.006), basic('#a02a22'))
-        vein.position.set(0, 0.014, 0.026)
-        e.add(vein)
-      }
-      eyeball(-0.055); eyeball(0.055)
-      grp.add(box(0.12, 0.03, 0.03, '#3a1c16', 0, 1.52, 0.09)) // 溶解的嘴唇
-      for (let i = 0; i < 14; i++) { // 皮肤上的孔洞与脓疱（沿躯干表面一圈分布）
-        const a = rng() * Math.PI * 2
-        const y = 0.6 + rng() * 1.05
-        const px = Math.cos(a) * 0.155, pz = Math.sin(a) * 0.1
-        if (rng() < 0.5) grp.add(box(0.045, 0.045, 0.03, '#3a1c16', px, y, pz)) // 孔洞
-        else ebox(0.05, 0.045, 0.035, '#5e2018', px, y, pz, 0.3) // 脓疱
-      }
-      for (let i = 0; i < 4; i++) grp.add(box(0.2 - i * 0.02, 0.015, 0.02, wd, 0, 1.18 - i * 0.11, 0.09)) // 干裂的肋线
-      const misplaced = (x: number, y: number, z: number, h: number, rz: number) => { // 错位长出的牙齿与指甲
-        const t = box(0.022, h, 0.022, '#e0d6c2', x, y, z)
-        t.rotation.z = rz; t.rotation.x = 0.3
-        grp.add(t)
-      }
-      misplaced(-0.19, 1.32, 0.02, 0.08, 0.5); misplaced(0.2, 1.28, -0.04, 0.07, -0.6)
-      misplaced(-0.05, 1.42, -0.11, 0.09, 0.2); misplaced(0.09, 1.05, 0.1, 0.06, -0.3)
-      misplaced(-0.22, 0.98, 0.03, 0.07, 0.8); misplaced(0.16, 1.45, 0.05, 0.05, -0.2)
-      for (const arm of [parts.armL, parts.armR]) {
-        tip(arm, 0.07, 0.1, 0.07, wd, -0.78)
-        for (let i = 0; i < 3; i++) arm.add(box(0.018, 0.07, 0.018, '#e0d6c2', (i - 1) * 0.03, -0.87, 0.015))
-        arm.add(box(0.022, 0.06, 0.022, '#e0d6c2', 0.04, -0.4, 0.04)) // 手臂上多长的指甲
-      }
-      break
-    }
+    // v79：'corpserat' 已在函数开头交给 ratMesh.buildRatMesh（旧版方块模型移除）
+    // v78：'wretch' 已在函数开头交给 wretchMesh.buildWretchMesh（旧版方块模型移除）
     case 'watcher': { // 观察者（Entity 96）：巨型眼球（直径约 1.2m，白色巩膜 + 深色虹膜 + 黑瞳），
       //                表面伸出多条视神经/血管向后方辐射；静默悬浮。（原生 +X）
       const eyeGrp = new THREE.Group()

@@ -105,9 +105,11 @@ export interface ExitInstance {
   floor?: FloorBand
   z?: number // v57t：出口自身所在高度（如 L7 深水中漂浮的门）；缺省按所在地面高度
   discovered: boolean
+  /** L11 portals retain their building frame through worker transfer/window shifts. */
+  l11?: {id:string;buildingId:string;blockId:string;angle:number;width:number}
 }
 
-export type StructKind = import('../content/tradeDecor').TradeKind | import('../content/l5Decor').L5DecorKind | import('../content/alphaDecor').AlphaKind | 'settlementprop' | 'settlementstation' | 'l4stairs' | 'l4prop'
+export type StructKind = import('../content/tradeDecor').TradeKind | import('../content/l5Decor').L5DecorKind | import('../content/alphaDecor').AlphaKind | import('../content/l11Decor').L11DecorKind | 'settlementprop' | 'settlementstation' | 'l4stairs' | 'l4prop'
   | 'pillar' | 'car' | 'booth' | 'pipes' | 'valve' | 'gauge' | 'boiler'
   | 'generator' | 'cabinet' | 'trench' | 'cubicle' | 'copier' | 'server' | 'vending'
   | 'desk' | 'door' | 'ballroom' | 'lightgrid' | 'wet'   | 'graffiti' | 'crate'
@@ -316,6 +318,7 @@ export type StructKind = import('../content/tradeDecor').TradeKind | import('../
   | 'piperack'     // 有序管架（1×1 格构：三层平行直管 + 支架；data.valve=下吊阀轮，data.rot 转向）
   | 'cabletray'    // 穿孔电缆桥架（顺墙高位：梯形架 + 架内线缆；data.rot 转向；非实心）
   // ===== v53：Level 3 高智能实体 =====
+  | 'ratcorpse'    // v79：尸鼠尸体（L2：被实体杀死/在机器里窒息烫死的无毛尸鼠；侧翻僵直；非实心）
   | 'rattrap'      // 尸鼠陷阱（贴地小型捕兽夹；玩家/实体踩上即被标记为尸鼠猎物，data.sprung=已触发；非实心）
   // ===== v54：据点新装饰 =====
   | 'sofa'         // 双人沙发（底座 + 靠背 + 双扶手 + 双坐垫分块；data.color 实例配色[蓝/绿/酒红/灰等]，data.deg 朝向）
@@ -342,6 +345,7 @@ export type StructKind = import('../content/tradeDecor').TradeKind | import('../
   | 'invitation'   // 烫金邀请函（v55b，L5 贝弗莉室地面散落：信封+烫金边+火漆印；可交互——交互走定居点地标链路前往原住民；非实心）
 
 export interface Structure {
+  l11?: import('../world/l11Types').L11Building
   kind: StructKind
   x: number
   y: number
@@ -371,6 +375,8 @@ export interface LightSource {
   color: string
   flickerSeed: number
   z?: number // v13：灯具高度基准（米；缺省按层高/室外规则）
+  l11Room?: string // L11 local lighting follows the shared room plan, including unshadowed quality tiers.
+  l11Building?: string
   fixZ?: number // v46：灯具绝对安装高度（米；壁灯/立灯用——光源点取 fixZ-0.2，与 z 互斥，z 优先）
   l2Mount?: 'ceiling' | 'wall' // L2 荧光灯安装方式；随 chunk 光源一起平移
   l2Yaw?: number // 灯具水平转角（弧度）

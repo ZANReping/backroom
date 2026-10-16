@@ -2,11 +2,12 @@ import {ALPHA_LIGHTS, ALPHA_PLACEMENT_CLEARANCES} from '../content/alphaBlueprin
 import { CAREERS } from '../content/careers'
 import { NPCS, genRandomNpcs } from '../content/npcs'
 import { RNG } from '../core/rng'
+import {ALPHA_DUTIES} from '../content/alphaDuties'
 import { canOccupy } from '../core/player'
-import type { GameMap } from './mapgen'
+import { enableRuntimeStructCollisionIndex, type GameMap } from './mapgen'
 import type { LevelDef } from '../core/types'
 import type { RoomSpec, SettlementBlueprint, SurfaceMaterial, Rect } from '../content/settlementTypes'
-export interface Furnishing {x:number;y:number;w:number;d:number;z:number;h:number;color:string;material:SurfaceMaterial;solid?:boolean}
+export interface Furnishing {x:number;y:number;w:number;d:number;z:number;h:number;color:string;material:SurfaceMaterial;solid?:boolean;seat?:{yaw:number;label:string;count?:number;relaxed?:boolean}}
 export function settlementCeiling(m:GameMap,x:number,y:number){
  const s=m.settlement!,i=Math.floor(y)*m.w+Math.floor(x),roof=s.blueprint.shells[s.roofIndex[i]]
  if(roof?.roof==='vault')return roof.height-.75+.75*Math.sqrt(Math.max(0,1-((x%5-2.5)/2.5)**2))
@@ -15,12 +16,12 @@ export function settlementCeiling(m:GameMap,x:number,y:number){
 // The same authored furniture components drive both rendering and collision.
 export function furnishings(r:RoomSpec):Furnishing[]{
  const a:Furnishing[]=[]
- const box=(x:number,y:number,w:number,d:number,z:number,h:number,material:SurfaceMaterial,color:string,solid=false)=>a.push({x:r.x+x,y:r.y+y,w,d,z,h,material,color,solid})
+ const box=(x:number,y:number,w:number,d:number,z:number,h:number,material:SurfaceMaterial,color:string,solid=false,seat?:Furnishing['seat'])=>a.push({x:r.x+x,y:r.y+y,w,d,z,h,material,color,solid,seat})
  const table=(x:number,y:number,w:number,d:number,mat:SurfaceMaterial='wood')=>{
   box(x,y,w,d,.74,.09,mat,mat==='wood'?'#c6aa82':'#c3cccb',true)
   for(const dx of [0,w-.08])for(const dy of [0,d-.08])box(x+dx,y+dy,.08,.08,0,.74,'metal','#666e70')
  }
- const chair=(x:number,y:number)=>{box(x,y,.5,.5,.43,.12,'fabric','#746b5b',true);box(x,y+.43,.5,.07,.55,.4,'fabric','#746b5b');for(const dx of [0,.43])box(x+dx,y,.07,.5,0,.43,'metal','#686c69')}
+ const chair=(x:number,y:number)=>{box(x,y,.5,.5,.43,.12,'fabric','#746b5b',true,{yaw:Math.PI,label:'座椅'});box(x,y+.43,.5,.07,.55,.4,'fabric','#746b5b');for(const dx of [0,.43])box(x+dx,y,.07,.5,0,.43,'metal','#686c69')}
  for(const p of r.furniture??[]){
   const {x,y}=p,w=p.w??2,d=p.d??.8
   switch(p.kind){
@@ -32,7 +33,7 @@ export function furnishings(r:RoomSpec):Furnishing[]{
     break
    case 'counter':
     box(x,y,w,d,0,1,'wood','#bba17f',true);box(x-.03,y-.03,w+.06,d+.06,1,.08,'metal','#ced0bd')
-    if(p.seats)for(let i=0;i<p.seats;i++){box(x-.85,y+(i+.5)*d/p.seats,.4,.4,.77,.12,'fabric','#7d4c40',true);box(x-.71,y+(i+.5)*d/p.seats+.14,.1,.1,0,.77,'metal','#6a6c65')}
+    if(p.seats)for(let i=0;i<p.seats;i++){box(x-.85,y+(i+.5)*d/p.seats,.4,.4,.77,.12,'fabric','#7d4c40',true,{yaw:Math.PI/2,label:'吧凳'});box(x-.71,y+(i+.5)*d/p.seats+.14,.1,.1,0,.77,'metal','#6a6c65')}
     break
    case 'shelf':case 'radio':case 'locker':case 'fridge':{
     const height=p.kind==='fridge'?2.1:2
@@ -48,7 +49,7 @@ export function furnishings(r:RoomSpec):Furnishing[]{
     box(x,y,1.2,2.1,.2,.25,'wood','#a89272',true);box(x+.02,y+.02,1.16,2.06,.45,.2,'fabric','#d6d4bf')
     box(x+.1,y+.1,1,.4,.65,.12,'fabric','#ede7cd');box(x+.02,y+.9,1.16,1.15,.65,.04,'fabric','#688c89');break
    case 'sofa':case 'booth':
-    box(x,y,w,.8,.28,.3,'fabric',p.kind==='booth'?'#754b45':'#8a8873',true);box(x,y,w,.14,.58,.6,'fabric',p.kind==='booth'?'#754b45':'#8a8873')
+    box(x,y,w,.8,.28,.3,'fabric',p.kind==='booth'?'#754b45':'#8a8873',true,{yaw:0,label:p.kind==='booth'?'卡座':'沙发',count:Math.max(1,Math.floor(w/.7)),relaxed:true});box(x,y,w,.14,.58,.6,'fabric',p.kind==='booth'?'#754b45':'#8a8873')
     if(p.kind==='booth'){table(x,y+1,w,.65);chair(x+.4,y+2.1)}break
    case 'sink':case 'stove':
     box(x,y,w,d,0,.88,'metal','#bfc7c3',true)
@@ -84,17 +85,22 @@ export function genSettlement(m:GameMap,def:LevelDef,b:SettlementBlueprint){
  b.rooms.forEach((r,ri)=>{
   paint(r,i=>roomIndex[i]=ri)
   m.zones!.push({name:r.name,x:r.x+r.w/2,y:r.y+r.h/2,x0:r.x,y0:r.y,x1:r.x+r.w,y1:r.y+r.h})
-  for(const p of furnishings(r))if(p.solid)m.structures.push({kind:'settlementprop',x:p.x,y:p.y,w:p.w,h:p.d,solid:true,data:{height:p.z+p.h}})
+  for(const p of furnishings(r))if(p.solid)m.structures.push({kind:'settlementprop',x:p.x,y:p.y,w:p.w,h:p.d,solid:true,data:{height:p.z+p.h,...(p.seat?{seatHeight:p.z+p.h,seatYaw:p.seat.yaw,seatLabel:p.seat.label,seatCount:p.seat.count??1,seatRelaxed:!!p.seat.relaxed}:{})}})
  })
  m.settlement={blueprint:b,heights,roomIndex,roofIndex}
  if(b.decorations)m.structures.push(...structuredClone(b.decorations))
  for(const p of b.partitions)m.structures.push({kind:'settlementprop',x:p.x,y:p.y,w:p.w,h:p.h,solid:true,data:{height:(p.bottom??0)+p.height,bottom:p.bottom??0,partition:1}})
  for(const p of settlementColumns(b))m.structures.push({kind:'settlementprop',x:p.x-.3,y:p.y-.3,w:.6,h:.6,solid:true,data:{height:p.height,partition:1}})
- for(const d of b.doors)m.structures.push({kind:'hoteldoor',x:d.x,y:d.y,w:d.w,h:d.h,solid:true,data:{careerDoor:1,settlementDoor:1,height:d.height,axis:d.axis,access:d.access,faction:b.faction,open:0}})
+ for(const d of b.doors)m.structures.push({kind:'hoteldoor',x:d.x,y:d.y,w:d.w,h:d.h,solid:true,data:{careerDoor:1,settlementDoor:1,fittedFrame:b.id==='alpha'?1:0,height:d.height,axis:d.axis,access:d.access,faction:b.faction,open:0}})
+ // Alpha's solid layout is now final. NPC placement must query the same local
+ // collision index as gameplay, rather than rescan thousands of authored props.
+ if(b.id==='alpha')enableRuntimeStructCollisionIndex(m)
  const clear=(x:number,y:number)=>m.tiles[Math.floor(y)*m.w+Math.floor(x)]===1&&!(b.id==='alpha'&&ALPHA_PLACEMENT_CLEARANCES.some(r=>x>r.x-.3&&x<r.x+r.w+.3&&y>r.y-.3&&y<r.y+r.h+.3))&&(b.id==='alpha'?canOccupy(m,x,y,.32,{z:0,band:0,crouch:false}):!m.structures.some(s=>s.solid&&Number(s.data?.bottom??0)<1.8&&x>s.x-.45&&x<s.x+s.w+.45&&y>s.y-.45&&y<s.y+s.h+.45))&&!m.npcs!.some(n=>Math.hypot(n.x-x,n.y-y)<1.5)
  for(const s of b.services){
   if(!b.decorations)m.structures.push({kind:'settlementstation',x:s.x,y:s.y,w:.2,h:.2,solid:false,data:{room:s.zone,label:s.label,services:s.services,service:s.services[0],faction:b.faction,access:s.access??0,npc:s.npc??'',mount:s.mount??'counter'}})
   if(s.npc&&NPCS[s.npc]&&!m.npcs!.some(n=>n.id===s.npc)){
+   const duty=b.id==='alpha'?ALPHA_DUTIES[s.npc]:undefined
+   if(duty){m.npcs!.push({id:s.npc,x:duty.x,y:duty.y,facing:duty.facing});continue}
    let placed=false
    for(let radius=1;radius<5&&!placed;radius+=.5)for(let j=0;j<8&&!placed;j++){const x=s.x+Math.cos(j*Math.PI/4)*radius,y=s.y+Math.sin(j*Math.PI/4)*radius;if(clear(x,y)){m.npcs!.push({id:s.npc,x,y});placed=true}}
   }
@@ -102,6 +108,8 @@ export function genSettlement(m:GameMap,def:LevelDef,b:SettlementBlueprint){
  // Story contacts must survive replacement of legacy outpost layouts. Place them before residents.
  for(const person of b.staff??[]){
   if(!NPCS[person.id]||m.npcs!.some(n=>n.id===person.id))continue
+  const duty=b.id==='alpha'?ALPHA_DUTIES[person.id]:undefined
+  if(duty){m.npcs!.push({id:person.id,x:duty.x,y:duty.y,facing:duty.facing});continue}
   let placed=false
   for(let radius=0;radius<=3&&!placed;radius+=.5)for(let j=0;j<16&&!placed;j++){
    const x=person.x+Math.cos(j*Math.PI/8)*radius,y=person.y+Math.sin(j*Math.PI/8)*radius
@@ -120,6 +128,8 @@ export function genSettlement(m:GameMap,def:LevelDef,b:SettlementBlueprint){
  m.npcDefs??=[]
  people.forEach((person,i)=>{
   const r=zones[i%zones.length];person.id='settlement_'+b.level+'_resident_'+i
+  const duty=b.id==='alpha'?ALPHA_DUTIES[person.id]:undefined
+  if(duty){person.wanderRadius=duty.radius;m.npcDefs!.push(person);m.npcs!.push({id:person.id,x:duty.x,y:duty.y,facing:duty.facing});return}
   if(b.id==='cornucopia'){person.faction='argos';person.role=i%2?'巡逻队员':'案卷协作员';person.background='在旧贸易设施改建的丰饶角轮值。'}
   for(let y=r.y+1.5;y<r.y+r.h-1;y++)for(let x=r.x+1.5;x<r.x+r.w-1;x++)if(clear(x,y)){m.npcDefs!.push(person);m.npcs!.push({id:person.id,x,y});return}
  })

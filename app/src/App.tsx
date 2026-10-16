@@ -131,7 +131,6 @@ function Game() {
   cutRef.current = cut
   const cutStageRef = useRef<'out' | 'loading' | 'in'>('out')
   const introPhaseRef = useRef<'presenting' | 'holding' | 'exiting'>('presenting')
-  const pendingIntro = useRef(false)
   const [fallDmg, setFallDmg] = useState<number | null>(null)
   const [deathCause, setDeathCause] = useState('')
   const [docId, setDocId] = useState('meg_levels')
@@ -216,7 +215,10 @@ function Game() {
     audio.setAmbVolume(settings.ambient / 100)
     audio.setSfxVolume(settings.sfx / 100)
     engine.devEnabled = settings.devMode
-    if (!settings.devMode) engine.dev.mapReveal = false
+    if (!settings.devMode) {
+      engine.dev.mapReveal = false
+      if (engine.dev.fly) engine.devSetFlight(false)
+    }
     engine.dev.god = settings.devMode // 开发者模式：无敌
     // 界面主题：挂到 <html data-theme>，CSS 变量随之整体切换（见 index.css）
     document.documentElement.dataset.theme = settings.theme
@@ -278,9 +280,9 @@ function Game() {
         }
         case 'transition':
           if (e.anim && e.anim !== 'intro') {
+            rendererRef.current?.prepareLevelEntry(engine)
             const d = typeof e.dest === 'number' ? e.dest : undefined
             cutStageRef.current = 'out'
-            pendingIntro.current = false
             screenRef.current = 'game'
             setScreen('game')
             updateWorldLoading(true)
@@ -306,9 +308,10 @@ function Game() {
               cutRef.current = completedCut
               setCut(completedCut)
             }
-            // 层级已载入：据点跳过层级卡（专属切入动画后直接进入）；其余若过场还在播，等过场结束再出层级卡
-            if (levelDefOf(engine.player.level)?.gen === 'outpost') setScreen('game')
-            else if (cutRef.current) pendingIntro.current = true
+            // The cutscene already displays the destination's themed title.
+            // Reveal that prepared scene directly instead of adding a second,
+            // serial introduction card. New/continued runs retain LevelIntro.
+            if (cutRef.current || levelDefOf(engine.player.level)?.gen === 'outpost') { screenRef.current = 'game'; setScreen('game') }
             else { screenRef.current = 'intro'; setScreen('intro') }
           }
           break
@@ -1035,7 +1038,6 @@ function Game() {
     engine.over = true
     cutRef.current = null
     setCut(null)
-    pendingIntro.current = false
     audio.stopHum()
     audio.stopRain() // v54：L4 雨声随退出停止
     audio.stopBGM()
@@ -1111,7 +1113,6 @@ function Game() {
           onDone={() => {
             cutRef.current = null
             setCut(null)
-            if (pendingIntro.current) { pendingIntro.current = false; introPhaseRef.current = 'presenting'; screenRef.current = 'intro'; setScreen('intro') }
           }}
         />
       )}

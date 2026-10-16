@@ -5,6 +5,7 @@ import { LEGACY_MOTH_FORMS, MOTH_FORMS, mothDefinition, mothFormOf } from './mot
 import { isSmilerKind, smilerDefinition } from './smilers'
 import { SPECIAL_ENTITIES } from './special'
 import { DEEP_ENTITIES } from './deep'
+import { refinedDefinition } from './forms'
 import type { Entity, EntityDef, EntityForm, MothForm } from './types'
 
 export type { AIState, EntityCodex, EntityDef, Entity, MothForm, EntityForm } from './types'
@@ -12,6 +13,7 @@ export { SMILER_KINDS, type SmilerKind } from './smilers'
 export { loadSeen, recordEncounter, recordEntityEncounter, unlockTier } from './codex'
 export { mergeMothCodex } from './codex'
 export { MOTH_FORMS } from './moths'
+export { ENTITY_FORMS, entityForms, entityForm, type EntitySubform } from './forms'
 export { entitySpawnLevels, entityThreat, entityRarity, ENTITY_RARITY_LABEL, type EntitySpawn, type EntityRarity } from './spawns'
 
 export const ENTITIES: Record<string, EntityDef> = {
@@ -24,9 +26,10 @@ export const ENTITIES: Record<string, EntityDef> = {
 
 let eid = 1
 export function makeEntity(type: string, x: number, y: number, z = 0, form?: EntityForm): Entity {
-  const def = type === 'deathmoth' || Object.hasOwn(LEGACY_MOTH_FORMS, type)
+  let def = type === 'deathmoth' || Object.hasOwn(LEGACY_MOTH_FORMS, type)
     ? mothDefinition(mothFormOf(type, form && Object.hasOwn(MOTH_FORMS, form) ? form as MothForm : undefined))
-    : type === 'smiler' && isSmilerKind(form) ? smilerDefinition(form) : ENTITIES[type]
+    : type === 'smiler' && isSmilerKind(form) ? smilerDefinition(form) : refinedDefinition(ENTITIES[type], form)
+  if (type === 'faceling' && def.entityForm === 'faceling-anomaly' && Math.random() < 0.4) def = { ...def, tool: true, damage: def.damage + 6 }
   return {
     id: eid++, def, x, y, z, hp: def.hp,
     state: def.stationary ? 'idle' : 'wander',
@@ -35,7 +38,6 @@ export function makeEntity(type: string, x: number, y: number, z = 0, form?: Ent
     facing: Math.random() * Math.PI * 2,
     lungeT: 0, dead: false, deathT: 0, animT: Math.random() * 10,
     hidden: def.ambusher || type === 'arms' ? true : undefined,
-    disguised: type === 'skinstealer' ? 'bandage' : undefined,
   }
 }
 
@@ -47,9 +49,9 @@ export function applyL3Variant(e: Entity, rand: () => number = Math.random): voi
     case 'faceling': // 敌意 + 错位面部器官；~40% 持石器
       e.def = { ...e.def, passive: false, l3face: true, ...(rand() < 0.4 ? { tool: true, damage: e.def.damage + 6 } : {}) }
       break
-    case 'skinstealer': e.disguised = 'human'; break // 伪装成流浪者
+    case 'skinstealer': e.disguised = 'human'; break // 从「穿着人皮」开始（伪装成流浪者，见 skinStealerAI）
     case 'corpserat': e.def = { ...e.def, capybara: true, scale: 1.45 }; break // 水豚形态、体型变大
-    case 'clump': e.def = { ...e.def, scale: 1.2 }; break // 体型变大一点
+    case 'clump': e.def = { ...e.def, l3clump: true, scale: 1.5 }; break // 高智能肢团
     default: break
   }
 }

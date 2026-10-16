@@ -7,7 +7,7 @@ import { ITEMS } from '@/game/content/items'
 import { isMegQuest, megPosition, megQuestProgress } from '@/game/content/megTerminal'
 import { loadAvatar } from '@/game/core/avatar'
 import type { PlayerProfile } from '@/game/core/playerProfile'
-import { npcPortrait } from './npcPortrait'
+import NpcPortraitImage from './NpcPortraitImage'
 import CareerPanel from './CareerPanel'
 import MegContacts from './MegContacts'
 import './MegTerminal.css'
@@ -55,7 +55,7 @@ function MegPersonal({ engine, readOnly }: { engine: Engine; readOnly: boolean }
     <div className="meg-section-heading"><div><p className="meg-eyebrow">01 / PERSONNEL RECORD</p><h3>个人档案</h3></div><span className="meg-stamp">{readOnly ? '档案预览' : joined ? '已登记' : '访客档案'}</span></div>
     <div className="meg-id-card">
       <div className="meg-photo-column">
-        <div className="meg-photo"><span className="meg-photo-corner">M.E.G. / ID</span><img src={npcPortrait(loadAvatar(), undefined, undefined, 240, 'identity')} alt="玩家当前形象的 MEG 证件照" /><span className="meg-photo-caption">IDENTIFICATION PHOTOGRAPH</span></div>
+        <div className="meg-photo"><span className="meg-photo-corner">M.E.G. / ID</span><NpcPortraitImage avatar={loadAvatar()} size={240} framing="identity" alt="玩家当前形象的 MEG 证件照" /><span className="meg-photo-caption">IDENTIFICATION PHOTOGRAPH</span></div>
         <div className="meg-barcode" aria-hidden="true" />
         <span className="meg-record-id">{readOnly ? 'RECORD / PREVIEW' : recordId}</span>
       </div>

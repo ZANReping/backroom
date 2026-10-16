@@ -116,6 +116,7 @@ const IOTS_UTILITY_OVERRIDE: Record<string, string> = {
   royalration: '高风险实用', // 成瘾 + 理智崩塌
   warpberry: '高风险实用', // 不可控传送
   thingmeat: '不建议使用', // 7 层之物的肉
+  ratmeat: '高风险实用', // v79 尸鼠肉（顶饿但可能染病）
   liquidpain: '不建议使用', // 液态痛苦：饮用致命（仅作武器使用）
   manmade: '不建议使用', // 人制品：高多巴胺成瘾食品
   tape: '情境实用', // 集齐 6 盘揭示真相（胜利条件）
@@ -128,6 +129,7 @@ const IOTS_UTILITY_OVERRIDE: Record<string, string> = {
 /** 产地来源个例 */
 const IOTS_ORIGIN_OVERRIDE: Record<string, string> = {
   thingmeat: '实体相关', // 7 层之物身上割下
+  ratmeat: '实体相关', // v79 尸鼠身上割下
   manmade: '实体相关', // 人制品售货机（Entity 36）的产品
   pamphlet: '实体相关', // 杰瑞的信众张贴（鹉主教义）
   candysilver: '交易流通', candybullet: '交易流通', candygun: '交易流通',

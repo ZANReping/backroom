@@ -1,0 +1,35 @@
+/** Authored posts. Bounds are local to each post, never a district-wide random spawn. */
+export interface AlphaDuty {x:number;y:number;facing:number;radius:number;label:string}
+const post=(x:number,y:number,facing:number,radius:number,label:string):AlphaDuty=>({x,y,facing,radius,label})
+export const ALPHA_DUTIES:Record<string,AlphaDuty>={
+ nightingale:post(29.75,31,Math.PI,.35,'中控室 / 无线电值班'),
+ brandt:post(24.7,22.05,Math.PI,.3,'贮存室 / 军需登记'),
+ justin:post(70.2,18.7,Math.PI/2,0,'接待柜台 / 迎新'),
+ kat:post(73.1,6.35,Math.PI/2,0,'监督者办公室 / 办公桌'),
+ river:post(63.1,38.5,Math.PI,0,'档案阅览台 / 核对记录'),
+ faust:post(79.3,36.75,-Math.PI/2,.32,'样本接收实验台'),
+ suanpan:post(65.6,59.55,-Math.PI/2,.3,'社区厨房 / 配给交接'),
+ alpha_linqiao:post(56.9,13.2,0,.55,'北入口 / 接引'),
+ alpha_melody:post(63.2,10.5,Math.PI,.4,'北入口 / 联络登记'),
+ alpha_xuhe:post(34.2,102.25,-Math.PI/2,.3,'南廊 / 居民信格'),
+ alpha_sanya:post(47.8,102.7,-Math.PI/2,0,'南廊 / 缝补工作台'),
+ alpha_zhouyan:post(22.1,44,Math.PI,.65,'探险署 / 电气巡检'),
+ alpha_mara:post(106.4,13.3,-Math.PI/2,.35,'菌菇站 / 培养记录'),
+ alpha_liangsui:post(61.8,59.7,-Math.PI/2,.4,'社区厨房 / 备餐'),
+ alpha_nora:post(37.7,85.25,Math.PI,.3,'图书馆 / 借还服务'),
+ alpha_faith:post(53,104.6,0,.45,'南廊 / 音乐休息角'),
+ alpha_qiaoan:post(124.5,70.45,-Math.PI/2,.35,'利沃区 / 维修台'),
+ alpha_amir:post(136.8,68.6,Math.PI,.6,'东入口 / 运输交接'),
+ alpha_sulan:post(47.8,64.3,0,.4,'医疗值班室 / 护理'),
+ alpha_chenshu:post(68.5,39.3,-Math.PI/2,.5,'技术支援室 / 值班'),
+ alpha_audrey:post(60,105,Math.PI,.45,'南廊 / 口述记录角'),
+ alpha_luowen:post(103,50.9,-Math.PI/2,.35,'样品室 / 检测记录'),
+ alpha_aida:post(65.8,102.5,Math.PI,.55,'南廊 / 茶水整理'),
+ alpha_cuiyue:post(86.7,116.5,Math.PI,.45,'西风区 / 木工联络'),
+ alpha_milo:post(23,86.8,0,.5,'西入口 / 返程核对'),
+ settlement_101_resident_0:post(31.5,64.8,Math.PI,.45,'值班食堂 / 休息'),
+ settlement_101_resident_1:post(35.6,97.2,Math.PI/2,.4,'图书馆 / 阅读'),
+ settlement_101_resident_2:post(124,18.9,0,.55,'老街起居室 / 会客'),
+ settlement_101_resident_3:post(115,68.9,Math.PI,.5,'利沃起居室 / 等候'),
+}
+export function insideAlphaDuty(d:AlphaDuty,x:number,y:number,margin=0){return Math.hypot(x-d.x,y-d.y)<=d.radius+margin+1e-6}

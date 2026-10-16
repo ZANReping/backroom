@@ -5,12 +5,12 @@ import { drawMapPlayer } from '@/game/content/mapPlayer'
 import { look } from '@/game/core/renderer3d'
 import { mapSight } from '@/game/world/mapSight'
 import L0MapLegend from './L0MapLegend'
-import { npcPortrait } from './npcPortrait'
+import NpcPortraitImage from './NpcPortraitImage'
 import type { Engine, SlotRef, SlotWhere } from '@/game/engine'
 import { l11MapMarks } from '@/game/engine/l11State'
 import { ITEMS, itemUseProfile } from '@/game/content/items'
 import { storage } from '@/game/core/storage'
-import { ENTITIES, MOTH_FORMS, SMILER_KINDS, mergeMothCodex, unlockTier, loadSeen, entitySpawnLevels, entityThreat, entityRarity, type EntityRarity } from '@/game/entities'
+import { ENTITIES, entityForms, mergeMothCodex, unlockTier, loadSeen, entitySpawnLevels, entityThreat, entityRarity, type EntityRarity } from '@/game/entities'
 import { LevelClassBanner, CecsBox } from './CodexWidgets'
 import { ENTITY_FACTION, FACTION_FONTS, IOTS_FREQ_COLORS, IOTS_FREQ_VALUES, IOTS_ORIGIN_VALUES, IOTS_UTIL_VALUES, itemIOTS, itemIOTSLevel } from '@/game/content/codexScores'
 import { WIN_TAPES, LEVELS, ALL_LEVEL_DEFS, levelNo, levelLabel, levelDefOf } from '@/game/levels'
@@ -38,6 +38,7 @@ import { completedFactionLines, factionState, trackFactionTask } from '@/game/en
 import DocOverlay from './DocOverlay'
 import {requestDevMapPreview,devMapTeleport,type DevMapPreview} from '@/game/engine/devMap'
 import AlphaMapPanel from './AlphaMapPanel'
+import L11MapPanel from './L11MapPanel'
 // （物品显示稀有度已由 IOTS 罕见度取代，见 codexScores.ITEM_IOTS / IOTS_FREQ_COLORS）
 import { PHENOMENA, rarityText } from '@/game/content/phenomena'
 import { IconIsolation, IconPlant, IconStamina } from './icons'
@@ -501,6 +502,7 @@ function CodexDetail({ detail, onBack }: { detail: { kind: 'entity' | 'item' | '
         const e = ENTITIES[detail.id]
         const tier = unlockTier(detail.id)
         const n = loadSeen()[detail.id] ?? 0
+        const forms = entityForms(e.type)
         // 阵营主题实体（杰瑞→信众 / Ferren→BNTG）：边框/标题用阵营色，配阵营字体与标志水印
         const fac = ENTITY_FACTION[e.type] ? FACTIONS[ENTITY_FACTION[e.type]] : null
         const facFonts = fac ? FACTION_FONTS[fac.id] : undefined
@@ -521,27 +523,14 @@ function CodexDetail({ detail, onBack }: { detail: { kind: 'entity' | 'item' | '
               <Row k="行为" v={tier >= 2 ? e.codex.behavior : `【未解锁：再遭遇 ${3 - n} 次】`} />
               <Row k="应对方法" v={tier >= 3 ? e.codex.counter : `【未解锁：再遭遇 ${6 - n} 次】`} />
             </div>
-            {e.type === 'deathmoth' && (
+            {forms.length > 0 && (
               <div className="mt-3 border-t pt-2" style={{ borderColor: 'var(--panel-edge)' }}>
                 <div className="font-mono2 mb-1 text-[11px]" style={{ color: 'var(--amber)' }}>子变种</div>
                 <div className="grid gap-1">
-                  {Object.values(MOTH_FORMS).map((form) => (
-                    <div key={form.name} className="text-[12px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>
-                      <span style={{ color: 'var(--text)' }}>{form.name}</span>：{form.desc}
+                  {forms.map((form) => (
+                    <div key={form.id} className="text-[12px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>
+                      <span style={{ color: 'var(--text)' }}>{form.name}{form.initial ? '（初始状态）' : ''}</span>：{form.desc}
                       <div style={{ color: tier >= 2 ? 'var(--text-dim)' : 'var(--text-muted)' }}>{tier >= 2 ? form.behavior : '【行为未解锁】'}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-            {e.type === 'smiler' && (
-              <div className="mt-3 border-t pt-2" style={{ borderColor: 'var(--panel-edge)' }}>
-                <div className="font-mono2 mb-1 text-[11px]" style={{ color: 'var(--amber)' }}>子变种</div>
-                <div className="grid gap-1">
-                  {Object.values(SMILER_KINDS).map((kind) => (
-                    <div key={kind.name} className="text-[12px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>
-                      <span style={{ color: 'var(--text)' }}>{kind === SMILER_KINDS.common ? '普通笑魇' : kind.name}</span>：{kind.desc}
-                      <div style={{ color: tier >= 2 ? 'var(--text-dim)' : 'var(--text-muted)' }}>{tier >= 2 ? kind.behavior : '【行为未解锁】'}</div>
                     </div>
                   ))}
                 </div>
@@ -1357,7 +1346,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                   <div className="shrink-0">
                     {/* v41：静态肖像（共享渲染器出图）——替代每卡一个实时上下文（爆 WebGL 上下文上限的崩溃）；
                         配饰仍走 npcGear 同一通道（厨师帽/护士帽/听诊器等可见） */}
-                    <img src={npcPortrait(npcAvatar(n), n.id, n)} alt={n.name} style={{ width: 64, height: 93 }} />
+                    <NpcPortraitImage avatar={npcAvatar(n)} npcId={n.id} npcDef={n} alt={n.name} style={{ width: 64, height: 93 }} />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-baseline gap-2">
@@ -1489,7 +1478,11 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
           </div>
         )}
 
-        {tab === '地图' && (engine.map?.settlement?.blueprint.id === 'alpha' ? <AlphaMapPanel engine={engine} /> : <BigMap engine={engine} />)}
+        {tab === '地图' && (engine.player.level === 11 && engine.map?.inf
+          ? <L11MapPanel engine={engine} />
+          : engine.map?.settlement?.blueprint.id === 'alpha'
+            ? <AlphaMapPanel engine={engine} />
+            : <BigMap engine={engine} />)}
 
         {tab === '日志' && <LogTab engine={engine} />}
 

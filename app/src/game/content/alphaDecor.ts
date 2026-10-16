@@ -4,6 +4,8 @@ import { ARCHIVE_NAMES, ARCHIVE_DIMENSIONS, archiveParts } from './alphaArchiveD
 import { ADMIN_NAMES, ADMIN_DIMENSIONS, adminParts } from './alphaAdminDecor'
 import { RESIDENTIAL_NAMES, RESIDENTIAL_DIMENSIONS, residentialParts } from './alphaResidentialDecor'
 import { COMMUNITY_NAMES, COMMUNITY_DIMENSIONS, communityParts } from './alphaCommunityDecor'
+import { refineAlphaParts } from './alphaStationDetails'
+import {insetAlphaBasin} from './alphaVessels'
 
 /** Alpha's reusable, metre-scale props. Parts are the single source for mesh and collision. */
 export const ALPHA_NAMES = {
@@ -15,14 +17,14 @@ export const ALPHA_NAMES = {
   alpha_bed: '值班单人床', alpha_bedside: '床头柜与台灯', alpha_bags: '行囊与换洗衣物',
   alpha_light: '荧光灯／暖色吸顶灯', alpha_blinds: '半透明玻璃窗与百叶帘', alpha_clock: '模拟挂钟',
   alpha_notice: '换班与失物招领公告板', alpha_bench: '走廊休息长椅', alpha_lockers: '编号值班储物柜',
-  alpha_water: '饮水与杯具台', alpha_safety: '灭火器与急救壁柜', alpha_mudroom: '外勤挂衣与鞋靴架',
+  alpha_water: '饮水与杯具台', alpha_sink:'不锈钢水槽与洗涤柜', alpha_safety: '灭火器与急救壁柜', alpha_mudroom: '外勤挂衣与鞋靴架',
   alpha_cart: '停放补给推车', alpha_planter: '走廊盆栽', alpha_trim: '走廊护墙与防撞条',
   alpha_map: '装框行动地图', alpha_sign: 'Alpha 房间导引牌', alpha_conduit: '表面安装电线管',
 } as const
 export type AlphaKind = keyof typeof ALPHA_NAMES
-export type AlphaSurface = 'plaster'|'wood'|'terrazzo'|'terrazzo_floor'|'fabric'|'metal'|'paint'|'plastic'|'light'|'tile'|'linoleum'|'ceiling'|'soffit'|'carpet'|'glass'|'steel'|'vinyl'|'laminate'|'cabinet_metal'|'office_fabric'|'cardboard'|'packing_tape'|'perforated_metal'|'admin_stone'|'painted_block'|'aquila_concrete'|'cave_rock'|'substrate'|'residential_panel'
+export type AlphaSurface = 'plaster'|'wood'|'wood_panel'|'terrazzo'|'terrazzo_floor'|'fabric'|'metal'|'paint'|'plastic'|'light'|'tile'|'linoleum'|'ceiling'|'soffit'|'carpet'|'glass'|'steel'|'vinyl'|'laminate'|'cabinet_metal'|'office_fabric'|'cardboard'|'packing_tape'|'perforated_metal'|'admin_stone'|'painted_block'|'aquila_concrete'|'cave_rock'|'substrate'|'residential_panel'|'rubber_hose'|'water'|'coffee'
 export type AlphaPanel = 'radio'|'clock'|'blackboard'|'map'|'label'|'vent'|'notice'|'research_screen'|'lab_paper'|'archive_code'|'archive_screen'|'admin_screen'|'admin_projection'|'shipping_label'|'library_screen'|'residential_art'|'memorial'|'community'
-export interface AlphaPart { x:number;y:number;z:number;w:number;d:number;h:number;surface:AlphaSurface;color:string;solid?:boolean;stand?:boolean;shape?:'round'|'rod'|'disc'|'shade'|'globe';panel?:AlphaPanel;text?:string }
+export interface AlphaPart { x:number;y:number;z:number;w:number;d:number;h:number;surface:AlphaSurface;color:string;solid?:boolean;stand?:boolean;shape?:'round'|'rod'|'disc'|'shade'|'globe'|'hose'|'cup'|'cup_handle'|'liquid_disc'|'liquid_plane';panel?:AlphaPanel;text?:string; yaw?:number }
 const dimensions:Record<AlphaKind,[number,number,number,boolean]> = {
  ...RESEARCH_DIMENSIONS,...ARCHIVE_DIMENSIONS,...ADMIN_DIMENSIONS,...RESIDENTIAL_DIMENSIONS,...COMMUNITY_DIMENSIONS,
  alpha_wall:[3,.18,2.9,true],alpha_floor:[4,4,.12,false],alpha_ceiling:[4,4,.12,false],
@@ -32,13 +34,14 @@ const dimensions:Record<AlphaKind,[number,number,number,boolean]> = {
  alpha_bed:[2.1,1,.6,true],alpha_bedside:[.5,.45,1.12,true],alpha_bags:[.7,.55,.65,true],
  alpha_light:[1.25,.3,.12,false],alpha_blinds:[2.2,.18,1.45,true],alpha_clock:[.32,.045,.32,false],
  alpha_notice:[1.8,.075,1.05,false],alpha_bench:[2.1,.55,.84,true],alpha_lockers:[1.5,.48,1.85,true],
- alpha_water:[1.2,.55,1.5,true],alpha_safety:[.9,.18,.85,false],alpha_mudroom:[1.8,.48,1.8,true],
+ alpha_water:[1.2,.55,1.5,true],alpha_sink:[1,.65,1.2,true],alpha_safety:[.9,.18,.85,false],alpha_mudroom:[1.8,.48,1.8,true],
  alpha_cart:[.85,.6,.95,true],alpha_planter:[.5,.5,1.2,true],alpha_trim:[3,.055,1.15,false],
  alpha_map:[1.2,.06,.9,false],alpha_sign:[1.5,.04,.3,false],alpha_conduit:[4,.07,.06,false],
 }
 export const ALPHA_DEFS=Object.entries(ALPHA_NAMES).map(([id,name])=>{const [w,d,height,solid]=dimensions[id as AlphaKind];return {id:id as AlphaKind,name,w,d,height,solid}})
 export const isAlphaKind=(kind:string):kind is AlphaKind=>kind in ALPHA_NAMES
-export function alphaParts(s:Structure):AlphaPart[]{
+export function alphaParts(s:Structure):AlphaPart[]{return refineAlphaParts(s,baseAlphaParts(s))}
+function baseAlphaParts(s:Structure):AlphaPart[]{
  if(s.kind in COMMUNITY_NAMES)return communityParts(s)
  if(s.kind in RESIDENTIAL_NAMES)return residentialParts(s)
  if(s.kind in ADMIN_NAMES)return adminParts(s)
@@ -67,26 +70,27 @@ export function alphaParts(s:Structure):AlphaPart[]{
  }
  switch(s.kind){
  case 'alpha_wall':{
+  // End caps stay flush with the opening; trim projects only across wall thickness.
+  const ex=w<d?.012:0,ey=w<d?0:.012
   if(skin==='door_frame'){B(0,0,0,w,d,H,'wood',color,true);break}
   if(skin==='aquila'||skin==='mushroom'){B(0,0,0,w,d,H,skin==='mushroom'?'cave_rock':'aquila_concrete',skin==='mushroom'?'#959584':'#b7b9ae',true);break}
   if(skin.startsWith('res_')){
-   const timber=skin==='res_zephyr'?'#b69966':skin==='res_river'?'#869989':skin==='res_crimson'?'#97765d':'#b39665',along=w>d,len=along?w:d
+   const timber=skin==='res_zephyr'?'#b69966':skin==='res_river'?'#869989':skin==='res_crimson'?'#97765d':'#b39665'
    B(0,0,0,w,d,H,'residential_panel',skin==='res_zephyr'?'#cbd5d6':skin==='res_crimson'?'#e0d2b6':'#d6d7c2',true)
-   if(z<1.12){B(-.007,-.007,0,w+.014,d+.014,Math.min(H,1.12-z),'wood',timber)
-    for(let t=.16;t<len;t+=.16)B(along?t:-.009,along?-.009:t,0,along?.005:w+.018,along?d+.018:.005,Math.min(H,1.12-z),'wood','#716349')
-    if(H>1.1)B(-.018,-.018,1.10,w+.036,d+.036,.04,'wood',timber)
+   if(z<1.12){B(-ex*.6,-ey*.6,0,w+ex*1.2,d+ey*1.2,Math.min(H,1.12-z),'wood_panel',timber)
+    if(H>1.1)B(-ex*1.5,-ey*1.5,1.10,w+ex*3,d+ey*3,.04,'wood',timber)
    }
-   B(-.015,-.015,H-.04,w+.03,d+.03,.04,'paint','#dcdcc9');if(z===0)B(-.01,-.01,0,w+.02,d+.02,.08,'wood','#746249');break
+   B(-ex,-ey,H-.04,w+ex*2,d+ey*2,.04,'paint','#dcdcc9');if(z===0)B(-ex,-ey,0,w+ex*2,d+ey*2,.08,'wood','#746249');break
   }
-  const wood=skin==='wood',veneer=skin==='admin_veneer';B(0,0,0,w,d,H,wood||veneer?'wood':skin==='transit'?'painted_block':'plaster',wood?'#a77943':color,true)
+  const wood=skin==='wood',veneer=skin==='admin_veneer';B(0,0,0,w,d,H,wood?'wood_panel':veneer?'wood':skin==='transit'?'painted_block':'plaster',wood?'#a18b68':color,true)
   if(skin==='executive')B(-.008,-.008,0,w+.016,d+.016,.91,'wood','#836949')
-  if(wood){const along=w>d,len=along?w:d;for(let t=.18;t<len;t+=.18)B(along?t:-.004,along?-.004:t,0,along?.009:w+.008,along?d+.008:.009,H,'wood','#58391f')}
-  B(-.012,-.012,0,w+.024,d+.024,.13,wood?'wood':'paint',wood?'#553922':'#e6e2ce')
-  B(-.018,-.018,H-.065,w+.036,d+.036,.065,wood?'wood':'paint',wood?'#4c301e':'#f5efdb');break
+  // Subpixel board grooves are antialiased in the material, not separate strips.
+  if(z===0)B(-ex,-ey,0,w+ex*2,d+ey*2,.13,wood?'wood':'paint',wood?'#553922':'#e6e2ce')
+  B(-ex*1.5,-ey*1.5,H-.065,w+ex*3,d+ey*3,.065,wood?'wood':'paint',wood?'#4c301e':'#f5efdb');break
  }
  case 'alpha_floor':B(0,0,-H,w,d,H,skin==='admin_lobby'?'admin_stone':['executive','lecture','archive_office','archive_tech','wood'].includes(skin)?'carpet':skin==='office'?'vinyl':skin==='lab'?'linoleum':skin==='classroom'?'tile':'terrazzo_floor',skin==='admin_lobby'?'#817b65':skin==='executive'?'#6d7667':skin==='lecture'?'#84907d':skin==='transit'?'#9c9d8f':skin==='archive_office'?'#727d7b':skin==='archive_tech'?'#8a8371':skin==='wood'?'#655342':skin==='office'?'#536d8b':skin==='lab'?'#adb3a0':skin==='classroom'?'#dddcd2':skin==='archive'?'#9ea398':'#d2cbb3');break
  case 'alpha_ceiling':
-  B(0,0,0,w,d,H,skin==='wood'?'wood':['lab','lecture','admin_lobby','transit'].includes(skin)?'soffit':'ceiling',skin==='wood'?'#51331e':'#eee9d7')
+  B(0,0,0,w,d,H,skin==='wood'?'wood':['lab','lecture','admin_lobby','transit'].includes(skin)?'soffit':'ceiling',skin==='wood'?'#746145':'#eee9d7')
   if(skin==='wood'){for(let x=0;x<w;x+=1.2)B(x,0,-.055,.06,d,.06,'wood','#372417')}
   if(skin==='classroom'||skin==='office'||skin.startsWith('archive')){for(let x=(1.2-s.x%1.2)%1.2;x<w;x+=1.2)B(x,0,-.023,.018,d,.024,'metal','#c8cac5');for(let y=(.6-s.y%.6)%.6;y<d;y+=.6)B(0,y,-.023,w,.018,.024,'metal','#c8cac5')}
   break
@@ -186,6 +190,12 @@ export function alphaParts(s:Structure):AlphaPart[]{
   for(let i=0;i<n;i++){B(i*cw+.02,d,.12,cw-.04,.018,H-.16,'metal',i%2?'#82958d':'#788b83');B(i*cw+cw-.1,d+.024,.88,.025,.04,.14,'metal','#333e3b');B(i*cw+.1,d+.02,H-.26,cw-.2,.009,.1,'paint','#e5deca',false,undefined,'label',String(12+i));for(let k=0;k<4;k++)B(i*cw+.08,d+.021,H-.43-k*.04,cw-.16,.004,.012,'paint','#374d47')}
   break
  }
+ case 'alpha_sink':
+  B(.025,.015,.08,w-.05,d-.03,.73,'wood','#9a8464',true);B(0,0,.81,w,d,.06,'steel','#adb8af',true)
+  insetAlphaBasin(a,.10,.15,z+.87,w-.20,d-.22,.18)
+  B(w*.5,.07,.87,.028,.028,.30,'steel','#bbc7bd',false,'rod');B(w*.5,.07,1.145,.028,.24,.028,'steel','#bbc7bd');B(w*.5,.285,1.10,.028,.028,.055,'steel','#bbc7bd',false,'rod')
+  for(const x of [.03,w*.51]){B(x,d-.01,.13,w*.46,.025,.62,'wood','#a18c6b');B(x+.06,d+.016,.68,.12,.025,.02,'steel','#9faaa3')}
+  break
  case 'alpha_water':
   B(0,0,0,w*.48,d,.82,'paint','#cdd1c3',true);B(.04,d,.36,w*.4,.025,.29,'paint','#454c47')
   B(w*.13,.08,.82,w*.27,d*.65,.42,'glass','#819fba',false,'rod');B(w*.21,.15,1.24,.13,.13,.06,'plastic','#526f88')

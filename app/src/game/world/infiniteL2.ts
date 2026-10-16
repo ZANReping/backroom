@@ -929,6 +929,21 @@ export function genL2ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
     }
   }
 
+  // ---- v79：尸鼠尸体（Entity 24 / Level 2：尸鼠的尸身比活鼠更常见——被实体杀死，或在机器里窒息、烫死）----
+  // 独立哈希取点（不消耗 rng，后续生成序列不变）；贴墙/管道边的地面，每 chunk 0~3 具
+  if (h01(seed, 0x24c0, cx, cy) < 0.55) {
+    const n = 1 + (h32(seed, cx * 92821 + cy, 0x24c1) % 3)
+    for (let i = 0, k = 0; i < n && k < 40; k++) {
+      const hv = h32(seed, (cx * 73856093) ^ (cy * 19349663) ^ (k * 83492791), 0x24c2)
+      const x = 1 + (hv % (CS - 2)), y = 1 + ((hv >>> 12) % (CS - 2))
+      if (!isF(x, y) || solidAtL(WX + x, WY + y) || crawl[li(x, y)] === 1) continue
+      const byWall = !isF(x - 1, y) || !isF(x + 1, y) || !isF(x, y - 1) || !isF(x, y + 1) || solidAtL(WX + x - 1, WY + y) || solidAtL(WX + x + 1, WY + y) || solidAtL(WX + x, WY + y - 1) || solidAtL(WX + x, WY + y + 1)
+      if (!byWall) continue
+      pushStruct('ratcorpse', WX + x, WY + y, 1, 1, false, false, { seed: hv & 0xffff, scald: (hv >>> 28) & 1 })
+      i++
+    }
+  }
+
   // ---- 实体（低密度；按变体/黑暗度区分；无面灵只在卧室——见房间生成）----
   {
     const eChance = variant === 'tidy' ? 0.12 : variant === 'dim' ? 0.2 : variant === 'dirty' ? 0.28 : 0.26

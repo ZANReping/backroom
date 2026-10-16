@@ -5,6 +5,7 @@ import { ELEV_H, floorHeight, type GameMap } from '../world/mapgen'
 import type { LevelDef } from '../core/types'
 import { col, SKY, litMaterial } from './shared'
 import { makeSkyMesh, SKY_PROFILES } from './skybox'
+import { usesWorldSky } from './skyVisibility'
 import { applyWater, updateWaterUniforms, type WaterPresetName } from './water'
 import { L8_LAKE_CENTER, L8_LAKE_WATER_RADIUS, l8GroundAt, l8LakeDistanceAt } from '../world/infiniteL8'
 
@@ -80,7 +81,7 @@ export function* buildSkyAndLiquidsJob(m: GameMap, def: LevelDef, g: THREE.Group
   // （如 L5 庭院盒西面 x=5 正好落在大堂内），盒面之外的室内墙面被整片涂成
   // 天空色——「藏青虚空立方体/大片区域虚空化」的根源；现盒面恒在地图边界之外，
   // 室内墙面不会再被天空覆盖，天空只经真正的室外开口（无天花板区/护墙上方）可见。
-  if (regions.length) {
+  if (regions.length && usesWorldSky(def.id)) {
     // v35：有配置的层级用精致程序化天空盒（日月/星野/银河/分形云）；其余保持纯色盒回退
     const prof = SKY_PROFILES[def.id]
     const sky = makeSkyMesh(m, def) ?? new THREE.Mesh(

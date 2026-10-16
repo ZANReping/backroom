@@ -1,5 +1,6 @@
 import type { Structure } from '../core/types'
 import type { AlphaPart, AlphaSurface } from './alphaDecor'
+import {insetAlphaBasin} from './alphaVessels'
 
 /** Research furniture, authored from the supplied laboratory / office / specimen references. */
 export const RESEARCH_NAMES = {
@@ -50,7 +51,7 @@ export function researchParts(s:Structure):AlphaPart[]{
  case 'alpha_labbench':
   cabinet();
   if(skin==='sink'){
-   B(w-.88,.19,.916,.69,.45,.022,'paint','#586864');B(w-.84,.23,.929,.61,.36,.01,'steel','#9eaaa3')
+   insetAlphaBasin(a,w-.86,.21,z+.91,.65,.41)
    B(w-.53,.09,.92,.045,.045,.36,'steel','#c1cbc4',false,'rod');B(w-.53,.09,1.24,.045,.29,.04,'steel','#c1cbc4')
   }
   for(let i=0;i<3;i++)bottle(.14+i*.22,.17,.913,.055,.17+i*.025,true)
@@ -89,11 +90,7 @@ export function researchParts(s:Structure):AlphaPart[]{
   for(let x=.35;x<w-.1;x+=1.1){B(x,d+.05,.1,.045,.045,.44,'paint','#e1dfc5');B(x-.045,d,.02,.15,.16,.12,'paint','#dfdfc5',false,'rod');B(x-.025,d+.02,0,.11,.12,.02,'light','#fff2cf',false,'rod')}
   break
  case 'alpha_extractor':
-  // Overlapping ribbed hose sections trace the hanging extraction arm without a rigid diagonal box.
-  for(let i=0;i<41;i++){
-   const t=i/40,x=.05+t*(w-.34),zz=1.3-Math.pow(t,1.7)*1.12
-   B(x,.13,zz,.21,.21,.16,'plastic',i%2?'#1b241f':'#353f36',false,'globe')
-  }
+  B(.05,0,0,w-.1,.5,1.55,'rubber_hose','#29332d',false,'hose')
   B(w-.38,.06,.05,.36,.38,.13,'metal','#25352c');B(.05,.16,1.28,.075,.075,.25,'metal','#7c8b7c');break
  case 'alpha_microscope':
   B(.05,.06,0,.30,.36,.045,'paint','#d7dcca',false,'round');B(.10,.07,.03,.075,.10,.32,'paint','#cbd4c4');B(.17,.11,.30,.15,.15,.07,'paint','#e2e4d2')

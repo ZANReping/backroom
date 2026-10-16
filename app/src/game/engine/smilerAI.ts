@@ -13,7 +13,7 @@ import { makeEntity, type Entity } from '../entities'
 import { SMILER_KINDS, pickSmilerKind, smilerDefinition, type SmilerKind, type SmilerPhase, type SmilerState } from '../entities/smilers'
 import type { Engine } from '../engine'
 import { bandOfZ, floorHeight } from '../world/mapgen'
-import { SMILER_STOP, greatCeilingBend, greatWalkFactor, smilerApproachLimit } from '../entities/smilerPose'
+import { SMILER_STOP, SMILER_STRIKE, smilerReach, greatCeilingBend, greatWalkFactor, smilerApproachLimit } from '../entities/smilerPose'
 import { smilerHeadroom } from '../world/smilerClearance'
 import { WALL_H } from '../renderer/shared'
 
@@ -132,6 +132,10 @@ export function updateSmiler(eng: Engine, e: Entity, dt: number, d: number, dmgM
   const K = SMILER_KINDS[s.kind]
   const def = e.def
   s.t += dt; s.aware = Math.max(0, s.aware - dt); s.glareCd -= dt; s.giggleT -= dt
+  if (s.strikeAge !== undefined) {
+    s.strikeAge += dt
+    if (s.strikeAge >= SMILER_STRIKE.duration) s.strikeAge = undefined
+  }
   if (s.heardT !== undefined) { s.heardT -= dt; if (s.heardT <= 0) { s.heardT = undefined; s.heardLoud = false } }
   const hurt = e.hp < s.lastHp
   s.lastHp = e.hp
@@ -328,6 +332,7 @@ export function updateSmiler(eng: Engine, e: Entity, dt: number, d: number, dmgM
   }
 
   const combat = s.phase === 'stalk' || s.phase === 'pounce' || s.phase === 'flank' || s.phase === 'standoff'
+  if (!combat || e.stunT > 0) { s.strikeT = undefined; s.strikeAge = undefined }
   const stop = SMILER_STOP[s.kind]
   let backing = false
   if (combat && zOk && los && !eng.dev.invisible) {
@@ -347,6 +352,8 @@ export function updateSmiler(eng: Engine, e: Entity, dt: number, d: number, dmgM
     s.ceilingBend = bend
     speed *= greatWalkFactor(bend)
   }
+  // Plant the body during the swing; the player can retreat out of the hit.
+  if (s.strikeAge !== undefined && !backing) speed = 0
   if (speed > 0) {
     e.targetX = tx; e.targetY = ty
     const facing = e.facing
@@ -363,8 +370,8 @@ export function updateSmiler(eng: Engine, e: Entity, dt: number, d: number, dmgM
     if (consumeLure(eng, L) && d < 12) eng.msg('巨笑魇一脚踩灭了荧光棒。', 'system')
   }
 
-  // ---------- 攻击（前摇 0.3s → 扼颈/撕咬）----------
-  const reach = stop + .2
+  // ---------- 攻击：蓄力 → 出击命中点 → 收势，模型使用同一个时钟 ----------
+  const reach = smilerReach(s.kind)
   const strikeD = Math.hypot(e.x - p.x, e.y - p.y)
   const facingPlayer = strikeD < .001 || ((p.x - e.x) * Math.cos(e.facing) + (p.y - e.y) * Math.sin(e.facing)) / strikeD > .6
   if (s.strikeT !== undefined) {
@@ -372,7 +379,7 @@ export function updateSmiler(eng: Engine, e: Entity, dt: number, d: number, dmgM
     eng.faceToward(e, p.x, p.y, dt, 12)
     if (s.strikeT <= 0) {
       s.strikeT = undefined
-      if (strikeD < stop + .4 && facingPlayer && eng.meleeZOk(e) && eng.los(e.x, e.y, p.x, p.y) && !eng.dev.invisible) {
+      if (strikeD <= reach && facingPlayer && eng.meleeZOk(e) && eng.los(e.x, e.y, p.x, p.y) && !eng.dev.invisible) {
         eng.hurtPlayer(def.damage * dmgMult, K.name)
         if (s.kind === 'canid') p.sanity = Math.max(0, p.sanity - 3)
         else if (s.kind === 'great') eng.camShake = Math.min(1, eng.camShake + 0.6)
@@ -383,11 +390,13 @@ export function updateSmiler(eng: Engine, e: Entity, dt: number, d: number, dmgM
         }
       }
     }
-  } else if (combat && strikeD < reach && facingPlayer && e.attackCd <= 0 && zOk && los && !eng.dev.invisible) {
+  } else if (s.strikeAge === undefined && combat && e.stunT <= 0 && strikeD < reach && facingPlayer && e.attackCd <= 0 && zOk && los && !eng.dev.invisible) {
     e.attackCd = s.kind === 'great' ? 2.2 : 1.3
-    e.lungeT = 0.32
-    s.strikeT = 0.3
+    e.lungeT = SMILER_STRIKE.duration
+    s.strikeT = SMILER_STRIKE.hitAt
+    s.strikeAge = 0
   }
+  if (s.strikeAge !== undefined) e.state = 'attack'
 
   // ---------- 渲染提示量 ----------
   const k = Math.min(1, dt * 4)

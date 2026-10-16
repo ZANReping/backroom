@@ -6,6 +6,11 @@ import { getMaterialMode, litMaterial } from './shared'
 import { l1Texture } from './l1Materials'
 import { alphaNormalScale, applyAlphaSurface } from './alphaSurfaceShader'
 import { archiveCode, archiveCodeIndex } from '../content/alphaArchiveDecor'
+import { ALPHA_LIGHTS } from '../content/alphaBlueprint'
+import { alphaBakeParts, alphaBakeFingerprint } from '../content/alphaBakeLayout'
+import { requestAlphaBake, alphaBakeTexture, attachAlphaBakeRects, applyAlphaBake } from './alphaBakedLighting'
+import {alphaHosePoint,ALPHA_HOSE_SIZE} from '../content/alphaHose'
+import {alphaVesselGeometries,alphaLiquidMaterial} from './alphaVesselMeshes'
 
 function archiveAtlas(){
  const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=1024
@@ -109,18 +114,48 @@ function panelTexture(panel:AlphaPanel,text=''){
 const prefix:Partial<Record<AlphaSurface,string>>={wood:'alpha/wood',laminate:'alpha/wood',cabinet_metal:'alpha/steel',plaster:'alpha/plaster',terrazzo:'alpha/terrazzo',terrazzo_floor:'alpha/terrazzo',office_fabric:'settlements/fabric',fabric:'settlements/fabric',carpet:'settlements/fabric',tile:'alpha/terrazzo',ceiling:'alpha/plaster',soffit:'alpha/plaster',steel:'alpha/steel',vinyl:'alpha/plaster',linoleum:'alpha/terrazzo'}
 Object.assign(prefix,{cardboard:'alpha/cardboard',packing_tape:'alpha/plaster',perforated_metal:'alpha/steel',admin_stone:'alpha/terrazzo',painted_block:'alpha/plaster'})
 Object.assign(prefix,{aquila_concrete:'alpha/concrete',cave_rock:'alpha/cave_rock',substrate:'alpha/cave_rock',residential_panel:'alpha/plaster'})
-function material(p:AlphaPart){
+prefix.rubber_hose='alpha/plaster'
+prefix.wood_panel='alpha/wood'
+type PanelAtlas={texture:THREE.Texture;rects:Map<string,[number,number,number,number]>}
+const panelKey=(p:AlphaPart)=>p.panel+'|'+(p.text??'')
+function makePanelAtlas(structures:Structure[]):PanelAtlas|undefined{
+ const panels=new Map<string,AlphaPart>()
+ for(const s of structures)for(const p of alphaParts(s))if(p.panel&&p.panel!=='archive_code')panels.set(panelKey(p),p)
+ if(!panels.size)return
+ const width=2048,placements:{key:string;p:AlphaPart;x:number;y:number;w:number;h:number}[]=[]
+ let x=0,y=0,row=0
+ for(const [key,p]of panels){const w=p.panel==='label'?256:512,h=p.panel==='label'?64:p.panel==='clock'?512:256
+  if(x+w+4>width){x=0;y+=row;row=0}placements.push({key,p,x:x+2,y:y+2,w,h});x+=w+4;row=Math.max(row,h+4)
+ }
+ const height=Math.ceil((y+row)/4)*4,canvas=document.createElement('canvas');canvas.width=width;canvas.height=height
+ const c=canvas.getContext('2d')!,rects:PanelAtlas['rects']=new Map()
+ for(const a of placements){const source=panelTexture(a.p.panel!,a.p.text),img=source.image as HTMLCanvasElement
+  c.drawImage(img,a.x,a.y,a.w,a.h)
+  c.drawImage(img,0,0,img.width,1,a.x,a.y-2,a.w,2);c.drawImage(img,0,img.height-1,img.width,1,a.x,a.y+a.h,a.w,2)
+  c.drawImage(img,0,0,1,img.height,a.x-2,a.y,2,a.h);c.drawImage(img,img.width-1,0,1,img.height,a.x+a.w,a.y,2,a.h)
+  rects.set(a.key,[(a.x+.5)/width,1-(a.y+a.h-.5)/height,(a.w-1)/width,(a.h-1)/height]);source.dispose()
+ }
+ const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=4;texture.name='alpha-signage-atlas'
+ return{texture,rects}
+}
+function material(p:AlphaPart,panels?:PanelAtlas){
+ if(p.surface==='water'||p.surface==='coffee')return alphaLiquidMaterial(p)
  if(p.surface==='glass'){
   const glass=litMaterial({color:p.color||'#b9d3cf',roughness:.16,metalness:0,transparent:true,opacity:.26,depthWrite:false,side:THREE.DoubleSide})
   glass.name='alpha-glass';glass.userData.alphaGlass=true;glass.userData.l1Owned=true
   return glass
  }
- const name=prefix[p.surface],panel=p.panel?panelTexture(p.panel,p.text):undefined
+ const name=prefix[p.surface],panel=p.panel?(p.panel==='archive_code'||!panels?panelTexture(p.panel,p.text):panels.texture):undefined
  const mat=litMaterial({color:p.panel?'#ffffff':p.color,roughness:p.surface==='packing_tape'?.18:p.surface==='perforated_metal'?.42:p.surface==='admin_stone'?.48:p.surface==='cabinet_metal'?.5:p.surface==='laminate'?.48:p.surface==='steel'?.34:p.surface==='vinyl'||p.surface==='linoleum'?.62:p.surface==='wood'?.34:p.surface==='plastic'?.42:p.surface==='metal'?.43:.86,metalness:p.surface==='perforated_metal'?.35:p.surface==='cabinet_metal'?.25:p.surface==='steel'?.78:p.surface==='metal'?.38:0,
   ...(name&&!panel?{map:l1Texture(name+'_color.jpg'),normalMap:l1Texture(name+'_normalgl.jpg',true),normalScale:new THREE.Vector2(alphaNormalScale(p.surface),alphaNormalScale(p.surface)),...(getMaterialMode()==='realistic'?{roughnessMap:l1Texture(name+'_roughness.jpg',true)}:{})}:{}),
   ...(panel?{map:panel}:{}),...(p.surface==='light'?{emissive:p.color,emissiveIntensity:1.2}:p.panel==='admin_projection'?{emissive:'#e1e7d9',emissiveIntensity:.72}:p.panel==='admin_screen'?{emissive:'#c5d4c2',emissiveIntensity:.22}:{})})
  mat.name='alpha-'+p.surface;mat.userData.l1Owned=true;if(panel)mat.userData.settlementLabelTexture=true
  if(name&&!panel)applyAlphaSurface(mat,p.surface)
+ if(p.panel&&p.panel!=='archive_code'&&panels){
+  const prior=mat.onBeforeCompile,key=mat.customProgramCacheKey()
+  mat.onBeforeCompile=(shader,renderer)=>{prior.call(mat,shader,renderer);shader.vertexShader='attribute vec4 alphaPanelRect;\n'+shader.vertexShader;shader.vertexShader=shader.vertexShader.replace('#include <uv_vertex>','#include <uv_vertex>\nvMapUv=alphaPanelRect.xy+uv*alphaPanelRect.zw;')}
+  mat.customProgramCacheKey=()=>key+'|alpha-panels-v1'
+ }
  if(p.panel==='archive_code'){
   mat.onBeforeCompile=shader=>{
    shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nattribute float alphaArchiveCode;')
@@ -131,33 +166,66 @@ function material(p:AlphaPart){
  }
  return mat
 }
-function* buildJob(structures:Structure[],parent:THREE.Group):Generator<void,void,unknown>{
+function* buildJob(structures:Structure[],parent:THREE.Group,bake?:NonNullable<Awaited<ReturnType<typeof requestAlphaBake>>>):Generator<void,void,unknown>{
  const box=new THREE.BoxGeometry(1,1,1),round=new RoundedBoxGeometry(1,1,1,2,.1),rod=new THREE.CylinderGeometry(.5,.5,1,12),disc=rod.clone(),shade=new THREE.CylinderGeometry(.32,.5,1,20)
  disc.rotateX(Math.PI/2)
- const geometry={box,round,rod,disc,shade,globe:new THREE.SphereGeometry(.5,16,10)},materials=new Map<string,THREE.Material>(),buckets=new Map<string,{p:AlphaPart;matKey:string;matrices:THREE.Matrix4[];codes:number[];fixture:boolean}>()
- const up=new THREE.Vector3(0,1,0),pos=new THREE.Vector3(),q=new THREE.Quaternion(),scale=new THREE.Vector3()
+ class HoseCurve extends THREE.Curve<THREE.Vector3>{constructor(){super()}getPoint(t:number,target=new THREE.Vector3()){return target.set(...alphaHosePoint(t))}}
+ const hose=new THREE.TubeGeometry(new HoseCurve(),28,.095,8,false);hose.scale(1/ALPHA_HOSE_SIZE[0],1/ALPHA_HOSE_SIZE[1],1/ALPHA_HOSE_SIZE[2])
+ const geometry={box,round,rod,disc,shade,hose,...alphaVesselGeometries(),globe:new THREE.SphereGeometry(.5,12,8)},materials=new Map<string,THREE.Material>(),buckets=new Map<string,{p:AlphaPart;matKey:string;matrices:THREE.Matrix4[];colors:THREE.Color[];ids:number[];panels:number[];codes:number[];fixture:boolean}>()
+ const atlas=bake?alphaBakeTexture(bake):undefined
+ const panels=makePanelAtlas(structures)
+ const transferredGeometry=new Set<THREE.BufferGeometry>(),transferredMaterials=new Set<THREE.Material>()
+ let transferredPanels=false
+ let partId=0
+ const up=new THREE.Vector3(0,1,0),pos=new THREE.Vector3(),q=new THREE.Quaternion(),groupQ=new THREE.Quaternion(),scale=new THREE.Vector3()
+ try{
  for(const s of structures){
-  q.setFromAxisAngle(up,Number(s.data?.deg??0)*Math.PI/180)
+  const angle=Number(s.data?.deg??0)*Math.PI/180;groupQ.setFromAxisAngle(up,angle)
   for(const p of alphaParts(s)){
-   pos.set(p.x+p.w/2-s.w/2,p.z+p.h/2,p.y+p.d/2-s.h/2).applyQuaternion(q);pos.x+=s.x+s.w/2;pos.z+=s.y+s.h/2
+   pos.set(p.x+p.w/2-s.w/2,p.z+p.h/2,p.y+p.d/2-s.h/2).applyQuaternion(groupQ);pos.x+=s.x+s.w/2;pos.z+=s.y+s.h/2
+   q.setFromAxisAngle(up,angle+(p.yaw??0))
    scale.set(p.w,p.h,p.d)
    const fixture=s.kind==='alpha_light'||s.kind==='alpha_ceiling'||p.surface==='light'
-   const matKey=[p.surface,p.color,p.panel??'',p.panel==='archive_code'?'':p.text??''].join('|'),glassKey=p.surface==='glass'?`:${s.x}:${s.y}:${s.w}:${s.h}:${s.data?.deg??0}`:'',key=Math.floor(s.x/12)+':'+Math.floor(s.y/12)+':'+(p.shape??'box')+':'+matKey+glassKey+(fixture?':fixture':'')
-   let entry=buckets.get(key);if(!entry){entry={p,matKey,matrices:[],codes:[],fixture};buckets.set(key,entry)}entry.matrices.push(new THREE.Matrix4().compose(pos,q,scale));if(p.panel==='archive_code')entry.codes.push(archiveCodeIndex(p.text!))
+   const tinted=p.surface!=='glass'&&p.surface!=='light'&&!p.panel
+   const panelRect=p.panel&&panels?.rects.get(panelKey(p))
+   const matKey=panelRect?['panel',p.panel==='admin_projection'?'projection':p.panel==='admin_screen'?'screen':'print'].join('|'):[p.surface,tinted?'palette':p.color,p.panel??'',p.panel==='archive_code'?'':p.text??''].join('|'),glassKey=(p.surface==='glass'||p.surface==='water')?`:${s.x}:${s.y}:${s.w}:${s.h}:${s.data?.deg??0}`:'',key=Math.floor(s.x/12)+':'+Math.floor(s.y/12)+':'+(p.shape??'box')+':'+matKey+glassKey+(fixture?':fixture':'')
+   let entry=buckets.get(key);if(!entry){entry={p:tinted?{...p,color:'#ffffff'}:p,matKey,matrices:[],colors:[],ids:[],panels:[],codes:[],fixture};buckets.set(key,entry)}entry.matrices.push(new THREE.Matrix4().compose(pos,q,scale));entry.colors.push(new THREE.Color(tinted?p.color:'#ffffff'));entry.ids.push(partId++);if(p.panel==='archive_code')entry.codes.push(archiveCodeIndex(p.text!));if(panelRect)entry.panels.push(...panelRect)
   }
   yield
  }
- for(const [key,{p,matKey,matrices,codes,fixture}] of buckets){
-  let mat=materials.get(matKey);if(!mat){mat=material(p);materials.set(matKey,mat)}
-  const geo=codes.length?geometry.box.clone():geometry[p.shape??'box']
+ for(const [key,{p,matKey,matrices,colors,ids,panels:panelRects,codes,fixture}] of buckets){
+  let mat=materials.get(matKey);if(!mat){mat=material(p,panels);if(atlas&&p.surface!=='light'&&p.surface!=='glass')applyAlphaBake(mat,atlas);materials.set(matKey,mat)}
+  const geo=bake||codes.length||panelRects.length?geometry[p.shape??'box'].clone():geometry[p.shape??'box']
+  if(panelRects.length)geo.setAttribute('alphaPanelRect',new THREE.InstancedBufferAttribute(new Float32Array(panelRects),4))
+  if(bake)attachAlphaBakeRects(geo,ids,bake)
   if(codes.length)geo.setAttribute('alphaArchiveCode',new THREE.InstancedBufferAttribute(new Float32Array(codes),1))
   const mesh=new THREE.InstancedMesh(geo,mat,matrices.length);if(codes.length)mesh.userData.alphaArchiveLabels=true
   // Thin ceiling grids and diffusers lie almost against point sources. They receive shadows
   // from room objects, but do not project exaggerated self-shadows onto their own ceiling.
-  if(fixture)mesh.userData.noCastShadow=true
-  matrices.forEach((m,i)=>mesh.setMatrixAt(i,m));mesh.computeBoundingSphere();mesh.name='alpha-'+key;parent.add(mesh);yield
+  if(fixture||p.surface==='water'||p.surface==='coffee')mesh.userData.noCastShadow=true
+  matrices.forEach((m,i)=>{mesh.setMatrixAt(i,m);mesh.setColorAt(i,colors[i])});mesh.computeBoundingSphere();mesh.name='alpha-'+key;parent.add(mesh)
+  transferredGeometry.add(geo);transferredMaterials.add(mat);transferredPanels ||= panelRects.length>0
+  yield
   if(p.surface==='glass'){mesh.userData.alphaGlass=true;mesh.castShadow=false;mesh.receiveShadow=false}
  }
+ parent.userData.alphaBake=bake?{fingerprint:bake.manifest.fingerprint,parts:partId,atlas:[bake.manifest.width,bake.manifest.height]}:null
+ }finally{
+  // A scene/quality change can cancel the generator before the first batch.
+  // Attached resources belong to the renderer; untransferred templates do not.
+  for(const g of Object.values(geometry))if(!transferredGeometry.has(g))g.dispose()
+  for(const m of materials.values())if(!transferredMaterials.has(m))m.dispose()
+  if(atlas&&!atlas.userData.alphaOwners?.count)atlas.dispose()
+  if(panels&&!transferredPanels)panels.texture.dispose()
+ }
 }
-export function* buildAlphaBatchJob(structures:Structure[],parent:THREE.Group){yield* buildJob(structures.filter(s=>isAlphaKind(s.kind)),parent)}
+export function* buildAlphaBatchJob(structures:Structure[],parent:THREE.Group){
+ const selected=structures.filter(s=>isAlphaKind(s.kind))
+ let ready=false,files:Awaited<ReturnType<typeof requestAlphaBake>>=null
+ void requestAlphaBake().then(value=>{files=value;ready=true})
+ while(!ready)yield
+ const baked=files as Awaited<ReturnType<typeof requestAlphaBake>>
+ const valid=baked&&baked.manifest.fingerprint===alphaBakeFingerprint(alphaBakeParts(selected),ALPHA_LIGHTS)
+ if(baked&&!valid)console.warn('Alpha layout changed: run npm run bake:alpha to refresh its lighting.')
+ yield* buildJob(selected,parent,valid?baked:undefined)
+}
 export function buildAlphaDecor(s:Structure){const g=new THREE.Group();g.userData.alphaOrigin={x:s.x,y:s.y};for(const _ of buildJob([s],g))void _;return g}

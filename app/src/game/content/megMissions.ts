@@ -13,6 +13,14 @@ export interface MegMission {
   brief: string; ending: string; stages: MegStage[]; rep: number; coins: number; items: string[]
 }
 export const MEG_PROMOTION_COUNTS = [2, 5, 9, 13] as const
+/** Promotion thresholds for the currently available MEG field lines. */
+export const MEG_ACTIVE_PROMOTION_COUNTS = [2, 5, 9, 11] as const
+export const MEG_PAUSED_MISSION_IDS: ReadonlySet<string> = new Set([
+  'city-lesson', 'suburban-margin', 'harvest-caution', 'shelter-chain', 'unfinished-atlas',
+] as const)
+export function isPausedMegMission(id: string) {
+  return MEG_PAUSED_MISSION_IDS.has(id)
+}
 export const MEG_TIER_NAMES = ['基础外勤', '区域调查', '跨层行动', '联合勘探'] as const
 export const MEG_NPC_PLACES: Record<string, string> = {
   nightingale: 'Level 1 · Alpha 基地中控室', river: 'Level 1 · Alpha 基地档案查询区', suanpan: 'Level 1 · Alpha 基地社区食堂',

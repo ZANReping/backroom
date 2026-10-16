@@ -1,6 +1,6 @@
 import type { Structure, LightSource, StructKind } from '../core/types'
 import { ALPHA_DEFS, type AlphaKind } from './alphaDecor'
-import { alphaDoorway, alphaWindowOpenings, blocksAlphaDoor, type AlphaDoorway } from './alphaPlacement'
+import { alphaDoorway, alphaWindowOpenings, blocksAlphaDoor, fitAlphaWallMounts, type AlphaDoorway } from './alphaPlacement'
 import { room, type Rect, type RoomSpec, type SettlementBlueprint } from './settlementTypes'
 import { alphaCommunityLayout } from './alphaCommunityLayout'
 import { ALPHA_COMMUNITY_STAFF } from './alphaPeople'
@@ -63,7 +63,7 @@ function enclosed(id:string,name:string,x:number,y:number,w:number,h:number,styl
  }
  const doorway=alphaDoorway(r),deg={n:180,s:0,e:90,w:270}[side]
  const normal={n:[0,-1],s:[0,1],e:[1,0],w:[-1,0]}[side]
- facing('alpha_sign',doorway.cx+normal[0]*.13,doorway.cy+normal[1]*.13,1.5,.04,deg,{z:2.34,label:name,color:'#dad5b6'})
+ facing('alpha_sign',doorway.cx+normal[0]*.13,doorway.cy+normal[1]*.13,1.5,.04,deg,{z:skin.startsWith('res_')?2.45:2.34,label:name,color:'#dad5b6'})
  return r
 }
 function service(id:string,zoneId:string,x:number,y:number,services:string,npc?:string,access=0){
@@ -100,7 +100,7 @@ for(let i=0;i<4;i++){
 }
 enclosed('duty_dining','探险署 · 生活区食堂与休息室',24,60,14,7,'dining','n')
 enclosed('duty_clinic','探险署 · 医疗值班室',40,60,13,7,'clinic','n')
-old('table',26,63,3,1);old('bench',26,65,3,1);old('sink',34,61,1,1);put('alpha_bed',41,62);put('alpha_bed',41,64.7);old('medcabinet',50,61)
+old('table',26,63,3,1);old('bench',26,65,3,1);put('alpha_sink',34,61);put('alpha_bed',41,62);put('alpha_bed',41,64.7);old('medcabinet',50,61)
 
 // Radio room: freestanding bank of vintage racks, warm cream walls and surface wiring.
 put('alpha_radio',24.5,29,4.8,1.15)
@@ -117,7 +117,7 @@ function classroom(rid:string){
  const r=b.rooms.find(r=>r.id===rid)!,mid=r.x+r.w/2
  // The north-entry planning room faces south so its board never covers the entrance.
  const front=(kind:AlphaKind,x:number,y:number,w:number,d:number,data:Structure['data']={})=>r.door==='n'
-  ?put(kind,2*mid-x-w,2*r.y+r.h-y-d,w,d,{...data,deg:180,room:rid})
+  ?put(kind,2*mid-x-w,2*r.y+r.h-y-d,w,d,{...data,deg:180+Number(data.deg??0),room:rid})
   :put(kind,x,y,w,d,{...data,room:rid})
  front('alpha_board',mid-3,r.y+.22,6,.15)
  front('alpha_projector',mid-.2,r.y+4.5,.4,.35,{z:r.height-.52})
@@ -125,7 +125,7 @@ function classroom(rid:string){
  for(let row=0;row<(r.h>=12?4:3);row++)for(const side of [-1,1]){
   const x=mid+(side<0?-5.2:.9),y=r.y+3.2+row*1.8
   front('alpha_desk',x,y,3.8,.7)
-  for(const dx of [.55,2.45])front('alpha_chair',x+dx,y+1,.5,.54)
+  for(const [i,dx] of [.55,2.45].entries())front('alpha_chair',x+dx+(row%2?.045:-.025),y+.94+(i===0?.06:0),.5,.54,{deg:((row+i)%3-1)*3})
  }
  for(const a of alphaWindowOpenings(r))facing('alpha_blinds',r.x+r.w-.09,r.y+a.offset+a.width/2,a.width,.18,270,{z:a.bottom,height:a.height,skin:'open',room:rid})
  for(let y=r.y+2;y<r.y+r.h-1;y+=3.5)for(const x of [r.x+3,r.x+r.w-3])lamp(x,y,r.height)
@@ -185,7 +185,7 @@ put('alpha_hall_screen',86.6,4.3,6.8,.18,{room:'assembly'})
 put('alpha_projector',89.8,11.2,.4,.35,{z:4.68,room:'assembly',deg:180})
 put('alpha_hall_podium',85.1,8.3,1.2,.72,{room:'assembly'})
 put('alpha_desk',87.2,7.8,3,.85,{room:'assembly'});put('alpha_chair',90.8,8.2,.5,.54,{deg:20,room:'assembly'})
-old('sink',96.9,4.7,1,1);put('alpha_lockers',98.35,4.4,1.5,.48,{room:'assembly'})
+put('alpha_sink',96.9,4.7);put('alpha_lockers',98.35,4.4,1.5,.48,{room:'assembly'})
 put('alpha_clock',94.8,4.23,.4,.045,{z:2.8,room:'assembly'})
 for(const x of [80,96.5])put('alpha_notice',x,4.25,3.1,.075,{z:1.2,room:'assembly',skin:'whiteboard'})
 for(const x of [79.25,100.75])for(const y of [7.8,10.5])facing('alpha_notice',x,y,2.4,.075,x<90?90:270,{z:1.3,room:'assembly',skin:'whiteboard'})
@@ -281,7 +281,7 @@ for(let i=0;i<3;i++){
  }
  facing('alpha_office_station',r.x+.55,r.y+5.2,1.6,.65,90,{room:r.id})
  facing('alpha_chair',r.x+1.25,r.y+5.2,.5,.54,90,{room:r.id})
- put('alpha_climate',r.x+1.4,r.y+r.h-.48,.9,.3,{z:2.05,room:r.id})
+ facing('alpha_climate',r.x+1.85,r.y+r.h-.33,.9,.3,180,{z:2.05,room:r.id})
  put('alpha_climate',r.x+1.6,r.y+r.h-.85,.5,.3,{skin:'portable',room:r.id})
  facing('alpha_notice',r.x+.23,r.y+2.1,1.2,.075,90,{z:1.18,room:r.id})
  for(const p of alphaWindowOpenings(r))facing('alpha_blinds',r.x+r.w-.09,r.y+p.offset+p.width/2,p.width,.18,270,{z:p.bottom,height:p.height,room:r.id})
@@ -300,7 +300,7 @@ enclosed('cold_samples','研究署 · 受控冷藏间',111,46,6,8,'vault','n','l
 for(const x of [111.5,114.8])put('alpha_cold_cabinet',x,51.8,1.35,.8,{room:'cold_samples'})
 facing('alpha_sample_rack',111.7,49.8,2.4,.78,90,{room:'cold_samples',label:'C / COLD'})
 lamp(114,49,3);service('cold_samples','cold_samples',112.2,52,'cold',undefined,1)
-facing('alpha_notice',98,43.15,1.8,.075,0,{z:1.1});facing('alpha_safety',89.1,40.8,.9,.18,90,{z:.85})
+facing('alpha_notice',98,43.15,1.8,.075,0,{z:1.1});facing('alpha_safety',88.1,40.8,.9,.18,90,{z:.85})
 
 // Three distinct arrival vestibules. Return exits sit at their outer ends, away from circulation.
 for(const entry of ALPHA_ENTRIES){
@@ -425,6 +425,19 @@ for(const [x,y,w] of [[25,26.6,27],[24.5,39.5,28],[25,58.8,27],[56,56,45]])
  put('alpha_conduit',x,y,w,.06,{z:2.69,height:.055})
 
 decorations.push(...alphaCommunityLayout())
+// Public doors use actual jambs and a lining rather than a bare cut through plaster.
+// A 12 mm reveal covers the wall cut, leaving 1.776 m clear circulation width.
+for(const door of doorways){
+ const r=b.rooms.find(r=>r.id===door.room)!
+ if(residentialSkins.has(r.id)||b.doors.some(d=>d.id===r.id))continue // Timber / operable doors own their complete frames.
+ const horizontal=door.side==='n'||door.side==='s',gap=1.8
+ const centre=horizontal?door.cx:door.cy,start=centre-gap/2
+ const color=r.style==='bedroom'?'#9a845f':'#a4ada5'
+ // Lining overlaps the wall end by 12 mm into the opening, so its reveal is
+ // never coplanar with the plaster cap. The remaining clear opening is 1.776 m.
+ for(const edge of [start-.065,start+gap-.012])wall(horizontal?edge:door.cx-.12,horizontal?door.cy-.12:edge,horizontal?.077:.24,horizontal?.24:.077,2.288,'door_frame',color)
+ wall(horizontal?start-.065:door.cx-.12,horizontal?door.cy-.12:start-.065,horizontal?gap+.13:.24,horizontal?.24:gap+.13,.077,'door_frame',color,2.288)
+}
 // The south edge is beyond the regular ceiling-light grid: light the crew's rest pockets locally.
 lamp(86,125,2.9,true);lamp(99,125,2.9,true)
 
@@ -479,5 +492,6 @@ for(let y=8;y<124;y+=4)for(let x=12;x<140;x+=5)if(isFloor(x,y)&&!lights.some(l=>
 }
 for(const d of ALPHA_DISTRICTS.filter(d=>d.name))put('alpha_sign',d.x+d.w/2-1.5,d.y+.2,3,.04,{z:2.35,label:d.name,color:d.color,skin:'suspended'})
 put('alpha_sign',87,115,7,.04,{z:2.35,label:'西风区 / 正在向南侧走廊扩建',color:'#849caa',skin:'suspended'})
+export const ALPHA_UNSUPPORTED_MOUNTS=fitAlphaWallMounts(decorations)
 export const ALPHA_BLUEPRINT=b
 export const ALPHA_LIGHTS=lights

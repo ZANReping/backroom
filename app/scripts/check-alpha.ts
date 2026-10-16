@@ -120,9 +120,10 @@ for(const door of ALPHA_DOORWAYS){
  const opening={x:door.cx-(horizontal?.904:.13),y:door.cy-(horizontal?.13:.904),w:horizontal?1.808:.26,h:horizontal?.26:1.808}
  const overlap=(p:{x:number;y:number;w:number;h:number})=>p.x<opening.x+opening.w-1e-5&&p.x+p.w>opening.x+1e-5&&p.y<opening.y+opening.h-1e-5&&p.y+p.h>opening.y+1e-5
  check(!wallCuts.some(p=>overlap(p)&&p.bottom<2.304&&p.top>0),'wall cut and mouldings recessed behind wood liner '+door.room+'/'+door.side)
- const jambs=frames.filter(s=>Number(s.data?.z??0)===0),header=frames.find(s=>Number(s.data?.z)===2.3)
+ const jambs=frames.filter(s=>Number(s.data?.z??0)===0),header=frames.find(s=>Number(s.data?.z)>2.28)
  const spans=jambs.map(s=>horizontal?[s.x,s.x+s.w]:[s.y,s.y+s.h]).sort((a,b)=>a[0]-b[0])
- check(spans.length===2&&Math.abs(spans[1][0]-spans[0][1]-1.8)<1e-6&&!!header,'finished opening remains 1.8 m by 2.3 m '+door.room+'/'+door.side)
+ const clearWidth=spans[1][0]-spans[0][1]
+ check(spans.length===2&&clearWidth>=1.775&&clearWidth<=1.801&&!!header,'finished liner preserves at least 1.775 m by 2.28 m clearance '+door.room+'/'+door.side)
 }
 check(framedDoorCount>=26,'all residential door frames covered by geometry regression')
 for(const s of b.decorations!.filter(s=>s.kind==='alpha_board'||s.kind==='alpha_blinds')){

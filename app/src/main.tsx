@@ -16,6 +16,9 @@ if (!rootElement) {
           <App />
         </BrowserRouter>,
       )
+      // v68：空闲时预载复古人物贴图池（脸/衣物/发丝小图），档案肖像与 NPC 首次出现时即可直接用
+      const idle = (window as Window & { requestIdleCallback?: (cb: () => void) => void }).requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 1500))
+      idle(() => { void import('./game/renderer/retroAvatar').then((m) => m.preloadRetroAvatarTextures()) })
     })
     .catch(failBoot)
 }

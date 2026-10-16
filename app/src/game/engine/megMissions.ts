@@ -1,5 +1,5 @@
 import type { Engine } from '../engine'
-import { MEG_MISSIONS, MEG_MISSION_BY_ID, MEG_NPC_PLACES, MEG_PROMOTION_COUNTS, type MegObjective } from '../content/megMissions'
+import { MEG_ACTIVE_PROMOTION_COUNTS, MEG_MISSIONS, MEG_MISSION_BY_ID, MEG_NPC_PLACES, isPausedMegMission, type MegObjective } from '../content/megMissions'
 import { NPCS } from '../content/npcs'
 import { ITEMS } from '../content/items'
 import { CAREERS } from '../content/careers'
@@ -30,9 +30,13 @@ export function megState(eng: Engine): MegSave {
 export function completedMegLines(eng: Engine) {
   return MEG_MISSIONS.filter(m => megState(eng).missions[m.id]?.completed).length
 }
+export function activeMegMissionCount(eng: Engine) {
+  return MEG_MISSIONS.filter(m => !isPausedMegMission(m.id) && megState(eng).missions[m.id] && !megState(eng).missions[m.id].completed).length
+}
 export function megMissionLock(eng: Engine, id: string): string | null {
   const d = MEG_MISSION_BY_ID[id]
   if (!d) return '任务档案不存在。'
+  if (isPausedMegMission(id)) return '该任务线暂不可用。'
   if ((eng.rep.meg ?? 0) <= -60) return 'MEG 当前拒绝交谈。'
   const missing = d.requires.filter(k => !megState(eng).missions[k]?.completed)
   return missing.length ? `先结案：${missing.map(k => MEG_MISSION_BY_ID[k].title).join('、')}` : null
@@ -40,7 +44,7 @@ export function megMissionLock(eng: Engine, id: string): string | null {
 export function canMeetMegNpc(eng: Engine, id: string) {
   const n = eng.npcs.find(n => n.id === id && !n.dead && !n.hostile)
   if (!eng.map || !n || (n.def.faction ?? 'meg') !== 'meg' || (eng.rep.meg ?? 0) <= -60) return false
-  const band = bandOfPlayerZ(eng.map, eng.player.z)
+  const band = bandOfPlayerZ(eng.map, eng.player.z, eng.player.x, eng.player.y)
   return (n.floor ?? 0) === band && Math.hypot(n.x - eng.player.x, n.y - eng.player.y) <= 4 &&
     interactionLos3D(eng, n.x, n.y, floorHeight(eng.map, n.x, n.y, band) + 1, band)
 }
@@ -57,8 +61,8 @@ export function promoteMeg(eng: Engine) {
   if (!canAdministerMeg(eng)) return '请到 MEG 登记设施或任务联系人身边核验履历。'
   const p = route(eng, 'meg'), count = completedMegLines(eng)
   if (!p.joined) return '请先登记 MEG 协作身份。'
-  const rank = Math.max(megState(eng).legacyRank, MEG_PROMOTION_COUNTS.filter(n => count >= n).length)
-  if (rank <= p.rank) return p.rank >= 4 ? '你已取得最高外勤资格。' : `下一职级需要结案 ${MEG_PROMOTION_COUNTS[p.rank]} 条不同任务线，当前 ${count} 条。`
+  const rank = Math.max(megState(eng).legacyRank, MEG_ACTIVE_PROMOTION_COUNTS.filter(n => count >= n).length)
+  if (rank <= p.rank) return p.rank >= 4 ? '你已取得最高外勤资格。' : `下一职级需要结案 ${MEG_ACTIVE_PROMOTION_COUNTS[p.rank]} 条不同任务线，当前 ${count} 条。`
   p.rank = rank; p.active = false
   const message = `履历核验通过：${CAREERS.meg.ranks[rank - 1]}。已结案 ${count} 条任务线。`
   eng.msg(message, 'system'); eng.persist()
@@ -66,6 +70,7 @@ export function promoteMeg(eng: Engine) {
 }
 export function trackMegTask(eng: Engine, target: MegSave['tracked']) {
   if (target?.kind === 'line') {
+    if (isPausedMegMission(target.id)) return false
     const p = megState(eng).missions[target.id]
     if (!p || p.completed) return false
   }
@@ -77,11 +82,12 @@ export function trackMegTask(eng: Engine, target: MegSave['tracked']) {
 }
 export function acceptMegMission(eng: Engine, id: string, npcId: string) {
   const d = MEG_MISSION_BY_ID[id], state = megState(eng)
+  if (isPausedMegMission(id)) return '该任务线暂不可用。'
   if (!d || d.issuer !== npcId || !canMeetMegNpc(eng, npcId)) return '请与任务发起人当面交谈。'
   if (state.missions[id]) return '这条任务线已经接取或结案。'
   const lock = megMissionLock(eng, id)
   if (lock) return lock
-  if (Object.values(state.missions).filter(p => !p.completed).length >= 3) return '最多同时办理三条连续任务线，请先结案一条。'
+  if (activeMegMissionCount(eng) >= 3) return '最多同时办理三条连续任务线，请先结案一条。'
   state.missions[id] = { stage: 0, progress: 0, completed: false, points: [], observed: [], journal: [] }
   clearFactionTracking(eng)
   state.tracked = { kind: 'line', id }
@@ -109,6 +115,7 @@ function advance(eng: Engine, id: string) {
   eng.persist()
 }
 export function submitMegStage(eng: Engine, id: string, npcId: string) {
+  if (isPausedMegMission(id)) return '该任务线暂不可用。'
   const d = MEG_MISSION_BY_ID[id], p = megState(eng).missions[id], o = d?.stages[p?.stage]?.objective
   if (!p || p.completed || !o || (o.kind !== 'talk' && o.kind !== 'deliver') || o.npc !== npcId || !canMeetMegNpc(eng, npcId)) return '请找到本阶段指定的联系人当面交接。'
   if (o.kind === 'deliver') {
@@ -135,6 +142,7 @@ export function updateMegMissions(eng: Engine, dt: number) {
   if (!same) last.candidates.clear()
   last.level = p.level; last.map = m; last.steps = p.steps; last.x = x; last.y = y
   for (const d of MEG_MISSIONS) {
+    if (isPausedMegMission(d.id)) continue
     const progress = megState(eng).missions[d.id]
     if (!progress || progress.completed) continue
     const o = d.stages[progress.stage]?.objective
@@ -145,7 +153,7 @@ export function updateMegMissions(eng: Engine, dt: number) {
       if (progress.progress >= o.n) advance(eng, d.id)
       continue
     }
-    const floor = bandOfPlayerZ(m, p.z)
+    const floor = bandOfPlayerZ(m, p.z, p.x, p.y)
     let key: string | undefined
     if (o.kind === 'record' && same && moved < .08 && Math.abs(p.vz) < .1 && !eng.input.mx && !eng.input.my && progress.points.every(q => q.floor !== floor || Math.hypot(q.x - x, q.y - y) >= 12)) key = `${Math.round(x)},${Math.round(y)},${floor}`
     if (o.kind === 'observe') {

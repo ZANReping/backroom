@@ -11,9 +11,15 @@ import { recordEntityEncounter, ENTITIES, type Entity } from '../entities'
 import { chunkKey, CS } from '../world/infinite'
 import { audio } from '../core/audio'
 import type { Engine } from '../engine'
+import { HUMANOID_RECOVERY } from '../core/humanoidMelee'
 import { beginHoundFrame, houndHear, updateHound } from './houndAI'
+import { beginClumpFrame, clumpHear, updateClump } from './clumpAI'
 import { beginDullerFrame, updateDuller } from './dullerAI'
+import { beginSkinStealerFrame, updateSkinStealer } from './skinStealerAI'
+import { updateWretch, wretchHear } from './wretchAI'
+import { updateRat, updateRatGear } from './ratAI'
 import { beginSmilerFrame, flushSmilerSpawns, smilerHear, updateSmiler } from './smilerAI'
+import { beginL11FacelingFrame,updateL11Faceling,canPlaceL11Faceling } from './l11FacelingAI'
 
 // v51：人制品售货机——看过背面后，玩家背对它（视线锥外且 10m 内）即活化追击；受到攻击也会活化
 // （原 step 内联段，逐语句搬运；位于糖果计时器 pre 组与人制品/麻痹 post 组之间）
@@ -69,18 +75,20 @@ export function noiseEvent(eng: Engine, x: number, y: number, radius: number, sp
     }
     if (e.def.type === 'smiler') { smilerHear(eng, e, x, y, radius, sprint); continue }
     if (e.def.type === 'hound') { houndHear(eng, e, x, y, radius, sprint); continue }
+    if (e.def.type === 'clump') { clumpHear(eng, e, x, y, radius, sprint); continue } // v64：肢团专属听觉（clumpAI）
     if (e.def.type === 'duller') continue // Dedicated stalking; ordinary noise never forces a chase.
+    if (e.def.type === 'wretch') { wretchHear(eng, e, x, y, radius, sprint); continue }
     if (e.def.passive) continue // 被动实体（无面灵）不循声索敌——只有被攻击才反击
     const d = Math.hypot(e.x - x, e.y - y)
     // v57o：tiny 对水下/水面噪音极敏感——投掷物落水、爆炸与游泳声都能从更远处把它引开
     const hearR = e.def.type === 'tiny' ? e.def.hearing * 2.4
       : e.def.type === 'thething' ? e.def.hearing * 2.2 // 维基：会被水中扰动吸引；在黑水里先“听”见玩家
       : sprint && e.def.hearsSprint ? e.def.hearing * 1.6 : e.def.hearing
-    // 失明实体（肢团）只按「响度半径」听觉——蹲行/慢走的小声响不会被顺风耳放大
+    // 失明实体（迷彩爬行者）只按「响度半径」听觉——蹲行/慢走的小声响不会被顺风耳放大
     const effR = e.def.blind ? radius : Math.max(radius, hearR)
     if (d >= effR) continue
     if (e.state === 'chase' || e.state === 'attack') continue
-    // 肢团（失明）：听见声音即高速径直冲撞声源
+    // 失明实体（迷彩爬行者）：听见声音即径直冲向声源
     if (e.def.blind) {
       e.state = 'chase'; e.targetX = x; e.targetY = y; e.stateT = 8
       continue
@@ -101,7 +109,7 @@ export function lookingAt(eng: Engine, e: Entity): boolean {
 
 export function los(eng: Engine, x0: number, y0: number, x1: number, y1: number): boolean {
   const m = eng.map!
-  const band = bandOfPlayerZ(m, eng.player.z)
+  const band = bandOfPlayerZ(m, eng.player.z, eng.player.x, eng.player.y)
   const steps = Math.ceil(Math.hypot(x1 - x0, y1 - y0) * 2)
   for (let i = 1; i < steps; i++) {
     const t = i / steps
@@ -200,15 +208,21 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
   updateMothDoors(eng)
   beginSmilerFrame(eng, dt, lightOn)
   beginHoundFrame(eng, dt)
+  beginClumpFrame(eng, dt)
   beginDullerFrame(eng, dt)
+  beginSkinStealerFrame(eng, dt)
+  updateRatGear(eng, dt, dmgMult)
+  if(eng.levelDef.id===11)beginL11FacelingFrame(m)
   for (const e of m.entities) {
     // 死亡动画计时（倒地/消散后移除）
     if (e.dead) { e.deathT -= dt; continue }
+    if (e.presentationPending) continue
     if (e.l10BurrowT !== undefined) {
       e.l10BurrowT -= dt
       if (e.l10BurrowT <= 0) { e.hidden = true; e.dead = true; e.deathT = .45; continue }
     }
     e.stateT -= dt; e.attackCd -= dt
+    if (e.meleeRecoveryT) e.meleeRecoveryT = Math.max(0, e.meleeRecoveryT - dt)
     if (e.huntScanT !== undefined) e.huntScanT -= dt
     if (e.turnSlowT !== undefined && e.turnSlowT > 0) e.turnSlowT -= dt // v58：七层之物转头迟滞计时
     if (e.lightRecoilT !== undefined && e.lightRecoilT > 0) e.lightRecoilT -= dt
@@ -255,7 +269,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
         eng.msg('猎犬摆脱了震慑，重新扑来！', 'damage')
       }
     }
-    if (e.stunT > 0) { e.stunT -= dt; continue }
+    if (e.stunT > 0) { e.stunT -= dt; if(e.sm){e.sm.strikeT=undefined;e.sm.strikeAge=undefined;e.state='stunned'} continue }
 
     // v51：L3 圣所威慑——实体畏惧天使雕像：不进入圣所 chunk 及其八邻（含入口走廊）。
     // 踏上圣所邻域/tint 20 瓦片的实体立刻以 ×1.4 速度逃向最近的非圣所可走瓦片，
@@ -291,36 +305,12 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
 
     // 遭遇记录（图鉴渐进解锁；v54 按个体去重——每只实体只计一次，recordEntityEncounter 内置守卫）：
     // ① 玩家看见：进入视野范围且有视线
-    if (d < def.sight && eng.los(p.x, p.y, e.x, e.y)) recordEntityEncounter(e)
+    if (!e.encountered && d < def.sight && eng.los(p.x, p.y, e.x, e.y)) recordEntityEncounter(e)
     // ② 实体察觉玩家：进入 追击/攻击（无实体仇恨目标即玩家指向——实体互猎带 targetEnt 不计），
     //    或 调查且目标点是玩家所在（噪音引动；尸鼠 investigate 猎物时目标≠玩家，不计）
     if (!e.targetEnt && (e.state === 'chase' || e.state === 'attack'
       || (e.state === 'investigate' && Math.hypot(e.targetX - p.x, e.targetY - p.y) < 2))) recordEntityEncounter(e)
 
-    // 窃皮者伪装：近身才现身
-    if (e.disguised) {
-      // v53：L3 高智能窃皮者——伪装成流浪者，径直走向玩家，近身暴起
-      if (e.disguised === 'human') {
-        if (d < 2.0) {
-          e.disguised = undefined
-          eng.msg('那个「流浪者」的皮肉像外套一样翻卷脱落——是窃皮者！', 'damage')
-          audio.aggro()
-          e.state = 'chase'
-        } else if (d < 14 && eng.los(e.x, e.y, p.x, p.y)) {
-          eng.faceToward(e, p.x, p.y, dt, 3)
-          e.targetX = p.x; e.targetY = p.y
-          eng.stepEntity(e, def.speed * 0.45, dt) // 装作普通流浪者步行接近
-          e.animT += dt * def.speed * 0.45
-        }
-        continue
-      }
-      if (d < 2.2) {
-        e.disguised = undefined
-        eng.msg('那不是物品——是窃皮者！', 'damage')
-        audio.aggro()
-        e.state = 'chase'
-      } else continue
-    }
     // 手臂：蛰伏于天花板通风管（hidden=缩回管内）；层级灯光熄灭时伸出猎捕
     if (def.type === 'arms') {
       const darkOut = (m.inf?.blackout ?? false) || eng.blackoutT > 0
@@ -386,7 +376,11 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
     generic: {
     if (def.type === 'smiler') { updateSmiler(eng, e, dt, d, dmgMult, l3); break generic }
     if (def.type === 'hound') { updateHound(eng, e, dt, d, dmgMult, l3); break generic } // v62：猎犬专属 AI
+    if (def.type === 'clump') { updateClump(eng, e, dt, d, dmgMult); break generic }
     if (def.type === 'duller') { updateDuller(eng, e, dt, d, dmgMult); break generic } // v63：钝人专属 AI（隔墙抓取/受注视逃离）
+    if (def.type === 'skinstealer') { updateSkinStealer(eng, e, dt, d, dmgMult); break generic } // v77：窃皮者专属 AI（人皮伪装/温顺/饥饿/激怒）
+    if (def.type === 'wretch') { updateWretch(eng, e, dt, d, dmgMult); break generic }
+    if (def.type === 'corpserat') { updateRat(eng, e, dt, d, dmgMult); break generic }
     // —— 特殊行为 ——
     // 笑魇：只在黑暗中逼近；手电照亮时后退
     if (def.darkAmbusher && lightOn && d < 7 && eng.los(e.x, e.y, p.x, p.y)) {
@@ -542,6 +536,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
       }
     }
 
+    if(updateL11Faceling(eng,e,dt))break generic
     switch (e.state) {
       case 'idle':
         if (e.stateT <= 0) { e.state = 'wander'; eng.wanderTarget(e) }
@@ -601,18 +596,11 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
           e.animT += dt * def.speed
           break
         } else if (def.blind) {
-          if (l3) {
-            // v53：L3 高智能肢团——追逐速度更快且会转弯（持续追踪玩家本人，而非径直冲撞最后声源点）
-            e.targetX = p.x; e.targetY = p.y
-            eng.stepEntity(e, def.speed * 1.3, dt)
-            eng.faceToward(e, p.x, p.y, dt, 9)
-            if (d > 14) { e.state = 'investigate'; e.stateT = 4 } // 甩开足够远才失去目标
-          } else {
-            // 肢团（失明）：径直冲向最后听见的声音点；冲达后无处可依则回游荡
-            const arrived = eng.stepEntity(e, def.speed, dt)
-            eng.faceToward(e, e.targetX, e.targetY, dt, 9)
-            if (arrived) { e.state = 'wander'; eng.wanderTarget(e) }
-          }
+          // 失明实体（迷彩爬行者）：径直冲向最后听见的声音点；冲达后无处可依则回游荡
+          // （v64：原 L3 肢团分支已迁入 clumpAI）
+          const arrived = eng.stepEntity(e, def.speed, dt)
+          eng.faceToward(e, e.targetX, e.targetY, dt, 9)
+          if (arrived) { e.state = 'wander'; eng.wanderTarget(e) }
         } else if (e.targetEnt) {
           // 实体对实体反击（死亡飞蛾反击尸鼠）：追击伤害者本人
           const tgt = e.targetEnt
@@ -658,15 +646,10 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
           let diff = Math.abs(want - e.facing)
           if (diff > Math.PI) diff = Math.PI * 2 - diff
           if (diff > 0.7) { e.lungeT = 0.1; break }
-          const hitReach = def.type === 'thething' ? 3.15 : def.grabs ? 1.8 : 1.2
+          const hitReach = def.type === 'thething' ? 3.15 : 1.2
           const hitZ = def.type === 'thething' ? Math.abs(e.z - p.z) < 2.8 : eng.meleeZOk(e)
-          if (d < hitReach && hitZ) {
-            eng.hurtPlayer(def.damage * dmgMult, def.name)
-            if (def.grabs) {
-              p.slowT = 2.5; p.stamina = 0
-              eng.msg('团块的肢体缠住了你！', 'damage')
-            }
-          }
+          if (d < hitReach && hitZ) eng.hurtPlayer(def.damage * dmgMult, def.name)
+          if (def.type === 'faceling') e.meleeRecoveryT = HUMANOID_RECOVERY
           e.state = 'chase'
         }
         break
@@ -686,7 +669,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
     }
 
     // ---- v26：实体-玩家最小间距（碰撞推挤分离，攻击判定用距离+面向而非重叠）----
-    if (!eng.dev.invisible && Math.abs(e.z - p.z) < 1.2 && e.dl?.phase!=='drag' && e.dl?.phase!=='hold') {
+    if (!eng.dev.invisible && Math.abs(e.z - p.z) < 1.2 && e.dl?.phase!=='drag' && e.dl?.phase!=='hold' && e.cl?.phase!=='grab' && e.cl?.phase!=='devour') {
       const MIN_SEP = def.stationary ? 0.5 : 0.56
       let sx = e.x - p.x, sy = e.y - p.y
       let sd = Math.hypot(sx, sy)
@@ -700,12 +683,13 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
           const l9StreetBound = eng.levelDef.id === 9
             && (e.def.type === 'watcher' || e.def.type === 'strider' || e.def.type === 'mangled')
           if (eng.entityWalkH(m, etx, ety, entityBand(m, e), e.def.aquatic === true, e.def.flying === true) !== null
-            && (!l9StreetBound || m.outdoor[ety * m.w + etx] === 1)) { e.x = ex; e.y = ey }
+            && (!l9StreetBound || m.outdoor[ety * m.w + etx] === 1)
+            && (!e.l11Home || canPlaceL11Faceling(m,e,ex,ey))) { e.x = ex; e.y = ey }
         }
         // 玩家侧退剩余部分（碰撞校验，贴墙时不强推）
         const k = def.stationary ? 1 : 0.4
         const px2 = p.x - ux * push * k, py2 = p.y - uy * push * k
-        if (canOccupy(m, px2, py2, PLAYER_RADIUS, { z: p.z, crouch: p.crouching, band: bandOfPlayerZ(m, p.z) })) { p.x = px2; p.y = py2 }
+        if (canOccupy(m, px2, py2, PLAYER_RADIUS, { z: p.z, crouch: p.crouching, band: bandOfPlayerZ(m, p.z, px2, py2) })) { p.x = px2; p.y = py2 }
       }
     }
   }

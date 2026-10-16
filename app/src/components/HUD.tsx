@@ -4,8 +4,9 @@ import { createPortal } from 'react-dom'
 import type { Engine } from '@/game/engine'
 import { l11MapMarks } from '@/game/engine/l11State'
 import { ITEMS } from '@/game/content/items'
-import { ENTITIES, MOTH_FORMS, SMILER_KINDS, entitySpawnLevels, type MothForm, type SmilerKind } from '@/game/entities'
-import { WIN_TAPES, LEVELS, levelNo, levelLabel } from '@/game/levels'
+import { ENTITIES } from '@/game/entities'
+import DevEntitySpawner from './DevEntitySpawner'
+import { WIN_TAPES, LEVELS, levelNo } from '@/game/levels'
 import { seedString } from '@/game/core/rng'
 import { look } from '@/game/core/renderer3d'
 import { exitArrowRotation } from '@/game/content/guide'
@@ -30,6 +31,8 @@ import { IconHP, IconStamina, IconHunger, IconThirst, IconSanity, IconBattery, I
 import { PHENOMENA, rarityText } from '@/game/content/phenomena'
 import MegQuestTracker from './MegQuestTracker'
 import AlphaMapPanel from './AlphaMapPanel'
+import L11MapPanel, { L11Minimap } from './L11MapPanel'
+import DevExitTools from './DevExitTools'
 import {drawL0Map} from '@/game/content/l0Map'
 import { drawMapPlayer } from '@/game/content/mapPlayer'
 import { mapSight } from '@/game/world/mapSight'
@@ -85,7 +88,7 @@ function mapZData(m: Engine['map']): { elev?: Uint8Array; outdoor?: Uint8Array }
   return { elev, outdoor }
 }
 
-function Minimap({ engine, size }: { engine: Engine; size: number }) {
+function LegacyMinimap({ engine, size }: { engine: Engine; size: number }) {
   const ref = useRef<HTMLCanvasElement>(null)
   useEffect(() => {
     const c = ref.current
@@ -311,6 +314,13 @@ function Minimap({ engine, size }: { engine: Engine; size: number }) {
     }
   }, [engine, size, look.yaw, engine.player.x, engine.player.y, engine.player.z, engine.player.floor, engine.player.crouching, engine.mapRev, engine.map?.inf?.rev, Math.floor(engine.time * 8)])
   return <canvas data-minimap ref={ref} style={{ width: size, height: size, imageRendering: 'pixelated' }} />
+}
+
+// Level 11 uses the city-plan map while all other levels keep the legacy minimap.
+function Minimap({ engine, size }: { engine: Engine; size: number }) {
+  return engine.player.level === 11 && engine.map?.inf
+    ? <L11Minimap engine={engine} size={size} />
+    : <LegacyMinimap engine={engine} size={size} />
 }
 
 export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, onPause, onInventory, onSelectSlot, onUseSlot }: Props) {
@@ -817,17 +827,21 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
         >
           <div
             className="hud-panel anim-lootPop relative flex flex-col items-center gap-2 p-3"
-            style={{ background: 'color-mix(in srgb, var(--panel) 88%, transparent)' }}
+            style={{ background: 'color-mix(in srgb, var(--panel) 88%, transparent)', ...(engine.player.level === 11 && engine.map?.inf ? { width: 'min(960px, calc(100vw - 32px))', maxHeight: 'calc(100dvh - 24px)', overflowY: 'auto', padding: 8 } : {}) }}
             onClick={(e) => e.stopPropagation()}
           >
-            {engine.map?.settlement?.blueprint.id === 'alpha' ? <AlphaMapPanel engine={engine} compact /> : <Minimap engine={engine} size={bigMapSize} />}
+            {engine.player.level === 11 && engine.map?.inf
+              ? <L11MapPanel engine={engine} compact />
+              : engine.map?.settlement?.blueprint.id === 'alpha'
+                ? <AlphaMapPanel engine={engine} compact />
+                : <Minimap engine={engine} size={bigMapSize} />}
             {/* v13：当前楼层标注（多楼层契约存在时） */}
-            {floorInfo && (
+            {floorInfo && !(engine.player.level === 11 && engine.map?.inf) && (
               <div className="font-mono2 text-[12px]" style={{ color: 'var(--amber)' }}>
                 L{dispId} · {def.name} · 当前 {floorInfo.cur + 1}F / 共{floorInfo.total}层
               </div>
             )}
-            {engine.map?.settlement?.blueprint.id !== 'alpha' && <div className="font-mono2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>
+            {engine.map?.settlement?.blueprint.id !== 'alpha' && !(engine.player.level === 11 && engine.map?.inf) && <div className="font-mono2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>
               <span><span style={{ color: 'var(--amber)' }}>●</span> 你的位置</span>
               <span><span style={{ color: 'var(--exit)' }}>●</span> 出口</span>
               {mapZData(engine.map).elev && <span><span style={{ color: MINIMAP_COLORS.high }}>■</span> 高台</span>}
@@ -836,7 +850,7 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
               <span style={{ opacity: 0.7 }}>点击空白处关闭</span>
             </div>}
             <button
-              className="hud-panel font-mono2 absolute -right-2 -top-2 flex h-7 w-7 items-center justify-center text-[13px]"
+              className={`hud-panel font-mono2 absolute ${engine.player.level === 11 && engine.map?.inf ? 'right-1 top-1' : '-right-2 -top-2'} flex h-7 w-7 items-center justify-center text-[13px]`}
               style={{ color: 'var(--text)', background: 'var(--panel)' }}
               aria-label="关闭地图"
               onClick={() => { audio.uiTick(); setMapOpen(false) }}
@@ -906,6 +920,7 @@ function DevBtn({ onClick, children, active, wide, title }: { onClick: () => voi
         minHeight: 32, // 移动端触点
       }}
       title={title}
+      aria-pressed={active}
       onClick={() => { onClick(); audio.uiTick() }}
     >
       {children}
@@ -932,26 +947,8 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
   const perPage = 16
   const itemPages = Math.max(1, Math.ceil(allItems.length / perPage))
   const pageItems = allItems.slice(itemPage * perPage, (itemPage + 1) * perPage)
-  // 召唤实体按层分页（默认页=玩家当前所在层；「其他」=无自然生成层级的事件实体；
-  // v54：末页「全部层」=全部实体一页列出，含事件生成与无生成路径的）
-  const entPages = [
-    ...LEVELS.map((lv) => ({
-      label: `${levelLabel(lv.id)} · ${lv.name}`,
-      // v34：生成池 + 特殊事件归属（如 L1 的笑魇/手臂）都计入本层
-      ents: Object.values(ENTITIES).filter((d) => entitySpawnLevels(d.type).some((s) => s.id === lv.id)),
-    })),
-    { label: '其他（无任何生成路径）', ents: Object.values(ENTITIES).filter((d) => entitySpawnLevels(d.type).length === 0) },
-    { label: '全部层', ents: Object.values(ENTITIES) },
-  ]
-  const [entPage, setEntPage] = useState(() => {
-    const i = LEVELS.findIndex((lv) => lv.id === engine.player.level)
-    return i >= 0 ? i : 0
-  })
-  const curEntPage = entPages[Math.min(entPage, entPages.length - 1)]
   // v54：召唤页子页切换（实体 / 物品 / 装饰物）
   const [spawnSub, setSpawnSub] = useState<'entity' | 'item' | 'decor'>('entity')
-  const [selectedMothForm, setSelectedMothForm] = useState<MothForm>('male')
-  const [selectedSmilerKind, setSelectedSmilerKind] = useState<SmilerKind>('common')
   // v54：召唤装饰物（decorRegistry 结构类条目，按生成层级分页；decal:/prop: 为渲染侧贴花/道具，不可放置；
   // 末页「全部层」=全部层级分组合并一页列出）
   const decorPages = [
@@ -1022,7 +1019,7 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
       className={`hud-panel pointer-events-auto absolute z-[45] flex flex-col overflow-hidden font-mono2 text-[11px] ${isMobile ? 'left-2' : 'bottom-3 left-3'}`}
       style={{
         color: 'var(--text)',
-        width: isMobile ? 'min(58vw, 300px)' : 360,
+        width: isMobile ? 'min(88vw, 360px)' : 400,
         maxHeight: collapsed ? undefined : isMobile ? '38dvh' : '62dvh',
         background: 'color-mix(in srgb, var(--panel) 92%, transparent)',
         ...(isMobile ? { top: 'calc(env(safe-area-inset-top, 0px) + 148px)' } : {}),
@@ -1069,32 +1066,7 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
                     <DevBtn key={k} wide active={spawnSub === k} onClick={() => setSpawnSub(k)}>{label}</DevBtn>
                   ))}
                 </div>
-                {spawnSub === 'entity' && (
-                <DevSection label={`召唤实体（前方 3 格 · 共 ${Object.keys(ENTITIES).length} 种 · 按层分页，末页全部层）`}>
-                  <div className="mb-1 flex items-center gap-1">
-                    <DevBtn onClick={() => setEntPage((n) => (n - 1 + entPages.length) % entPages.length)}>‹</DevBtn>
-                    <span className="flex-1 text-center" style={{ color: 'var(--text-dim)' }}>{curEntPage.label}（{curEntPage.ents.length} 种）</span>
-                    <DevBtn onClick={() => setEntPage((n) => (n + 1) % entPages.length)}>›</DevBtn>
-                  </div>
-                  {curEntPage.ents.length === 0 && (
-                    <div className="mb-1" style={{ color: 'var(--text-dim)' }}>本层无自然生成实体</div>
-                  )}
-                  <div className="grid grid-cols-3 gap-1">
-                    {curEntPage.ents.map((d) => (
-                      <div key={d.type} className={d.type === 'deathmoth' || d.type === 'smiler' ? 'col-span-3 flex items-center gap-2' : 'flex'}>
-                        <DevBtn title={entitySpawnLevels(d.type).some((s) => s.event) ? `${d.desc}（特殊事件生成）` : d.desc} onClick={() => engine.devSpawnEntity(d.type, 3, d.type === 'deathmoth' ? selectedMothForm : d.type === 'smiler' ? selectedSmilerKind : undefined)}>
-                          <span style={{ color: d.color }}>●</span> {d.name}
-                        </DevBtn>
-                        {d.type === 'deathmoth' && <select aria-label="死亡飞蛾子变种" value={selectedMothForm} onChange={(e) => setSelectedMothForm(e.target.value as MothForm)} className="max-w-[7rem] border px-1 text-[10px]" style={{ background: 'var(--panel)', color: 'var(--text-dim)', borderColor: 'var(--panel-edge)' }}>{Object.entries(MOTH_FORMS).map(([key, form]) => <option key={key} value={key}>{form.name}</option>)}</select>}
-                        {d.type === 'smiler' && <select aria-label="笑魇子变种" value={selectedSmilerKind} onChange={(e) => setSelectedSmilerKind(e.target.value as SmilerKind)} className="max-w-[7rem] border px-1 text-[10px]" style={{ background: 'var(--panel)', color: 'var(--text-dim)', borderColor: 'var(--panel-edge)' }}>{Object.entries(SMILER_KINDS).map(([key, kind]) => <option key={key} value={key}>{key === 'common' ? '普通笑魇' : kind.name}</option>)}</select>}
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-1">
-                    <DevBtn wide onClick={() => engine.devSpawnAllEntities()}>⚠ 每种一只（环绕召唤）</DevBtn>
-                  </div>
-                </DevSection>
-                )}
+                {spawnSub === 'entity' && <DevEntitySpawner engine={engine} />}
                 {spawnSub === 'item' && (
                 <DevSection label={`给予物品（第 ${itemPage + 1}/${itemPages} 页 · 共 ${allItems.length} 种 · 点名称入包 / ▾ 脚下）`}>
                   <div className="grid grid-cols-2 gap-1">
@@ -1213,25 +1185,7 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
                     )}
                   </div>
                 </DevSection>
-                {engine.levelDef.exits.length > 0 && (
-                  <DevSection label="召唤出口（仅本层可生成；已生成的 ⇢ 直接传送）">
-                    <div className="grid grid-cols-2 gap-1">
-                      {engine.levelDef.exits.map((e) => {
-                        // v54：本层已生成该出口时不再重复生成，点击改为直接传送
-                        const existing = engine.map?.exits.some((x) => x.def.kind === e.kind)
-                        return (
-                          <DevBtn
-                            key={e.kind}
-                            title={existing ? `出口「${e.name}」已生成——点击直接传送` : `在附近召唤出口「${e.name}」`}
-                            onClick={() => { if (!engine.devGotoExitKind(e.kind)) engine.devSummonExit(e.kind) }}
-                          >
-                            {existing ? '⇢' : '🚪'} {e.name}{existing ? '（传送）' : ''}
-                          </DevBtn>
-                        )
-                      })}
-                    </div>
-                  </DevSection>
-                )}
+                {engine.levelDef.exits.length > 0 && <DevExitTools engine={engine} />}
                 {info && (
                   <DevSection label="出口与地标方位">
                     {info.exits.length === 0 && <div style={{ color: 'var(--text-dim)' }}>本层无出口</div>}
@@ -1338,7 +1292,9 @@ function DevPanel({ engine, isMobile }: { engine: Engine; isMobile: boolean }) {
                   </div>
                 </DevSection>
                 <DevSection label="开关">
+                  <p className="mb-2 leading-relaxed" style={{ color: 'var(--text-dim)' }}>飞行：按住跳跃上升、蹲下降低，松开悬停。关闭穿墙时保留碰撞。</p>
                   <div className="grid grid-cols-3 gap-1">
+                    <DevBtn active={engine.dev.fly} onClick={() => engine.devSetFlight(!engine.dev.fly)} title="跳跃上升，蹲下下降；碰撞由穿墙开关控制">飞行</DevBtn>
                     <DevBtn active={engine.dev.noclip} onClick={() => { engine.dev.noclip = !engine.dev.noclip }}>穿墙</DevBtn>
                     <DevBtn active={engine.dev.speed} onClick={() => { engine.dev.speed = !engine.dev.speed }}>加速</DevBtn>
                     <DevBtn active={engine.dev.oneHit} onClick={() => { engine.dev.oneHit = !engine.dev.oneHit }} title="近战攻击直接击杀任意实体">一击必杀</DevBtn>
@@ -1452,7 +1408,7 @@ const GLYPH_COLOR: Record<string, string> = {
   skeleton: '#b08d46', silverware: '#d8d8e0', sedative: '#9adfff', flashlight: '#f0d060',
   // ===== v25：v23/v25 新增物品专属配色（各自独特，一眼可辨） =====
   chalkstub: '#f0f0f8', megfolder: '#bf9b5f', rope: '#a8854e', divemask: '#4ac9c9',
-  thingmeat: '#c95a6a', oddbook: '#8a6ac9', cavingsuit: '#d97a2e', xenonmarble: '#66e0d0',
+  thingmeat: '#c95a6a', ratmeat: '#b0645a', oddbook: '#8a6ac9', cavingsuit: '#d97a2e', xenonmarble: '#66e0d0',
   driedfruit: '#b86a2e', uvlamp: '#b48aff', stonekazoo: '#9a8a72', pockets: '#78cfcc',
   housekey: '#c9c9d2', wheatgrain: '#d9c25a', nails: '#7d8896', timber: '#96682e',
   presses: '#cfa12e', pamphlet: '#7ac9b0', citywater: '#3aa0d8', endnote: '#8a7a6a',
@@ -1488,6 +1444,7 @@ const PIXEL_ICON: Record<string, true> = {
   pizza: true, lasagna: true, tomsspecial: true, grilledsteak: true, jambread: true,
   parcel: true, // v43 物流包裹（像素手绘纸箱）
   dryshrimp: true, friedshrimp: true, // v50 旱虾 / 酥炸旱虾
+  ratmeat: true, // v79 尸鼠肉
   firesalt: true, liquidpain: true, // v50 火盐晶体 / 液态痛苦
   // v51：Object 5 糖果（散装 + 袋装）
   candysilver: true, candybullet: true, candygun: true, candystanley: true,

@@ -5,6 +5,8 @@ import { buildRefinedItemMesh } from './refinedItemMesh'
 import { buildFlashlightMesh } from './flashlightMesh'
 import { buildDetailedItemMesh } from './detailItemsMesh'
 import { buildSquirtGunMesh } from './squirtGunMesh'
+import { buildRetroHand, heldHandPose, FLASH_HAND_POSE, type RetroHand } from './retroViewHand'
+export { heldHandPose, heldBox, LIGHTER_HAND_POSE, buildRetroHand, sleeveKindOf } from './retroViewHand'
 
 // ---------- 第一人称手部/手持物品 ----------
 // v53：去掉自发光（原 emissiveIntensity 0.25）——手部/袖管/手持物在黑暗中不再自发光，
@@ -13,15 +15,12 @@ export function vmat(color: string | number) {
   return new THREE.MeshLambertMaterial({ color })
 }
 
-export function buildViewmodel(vm: THREE.Group, vmFlash: THREE.Group, camera: THREE.Camera): { hand: THREE.Mesh; lhand: THREE.Mesh; sleeve: THREE.Mesh } {
-  // 右臂（袖）+ 手，位于屏幕右下，不遮挡中心视野
-  const sleeve = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.3), vmat('#3a3f46'))
-  sleeve.position.set(0.02, -0.05, 0.16)
-  sleeve.rotation.x = 0.3
-  vm.add(sleeve)
-  const hand = new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.06, 0.11), vmat('#c9a58a'))
-  hand.position.set(0, 0, -0.02)
-  vm.add(hand)
+export interface ViewmodelParts { right: RetroHand; left: RetroHand }
+export function buildViewmodel(vm: THREE.Group, vmFlash: THREE.Group, camera: THREE.Camera): ViewmodelParts {
+  // v71：右手 = 复古低模手（指节分段包住把手 + 前臂 + 袖管），握法随手持物切换（heldHandPose），位于屏幕右下
+  const right = buildRetroHand()
+  right.setPose(heldHandPose(''))
+  vm.add(right.group)
   vm.position.set(0.27, -0.3, -0.55)
   camera.add(vm)
   // 左手手电：细分灯头/反光杯/镜片/防滑握纹/尾盖/开关，金属与橡胶走真实 UV 图集。
@@ -29,12 +28,87 @@ export function buildViewmodel(vm: THREE.Group, vmFlash: THREE.Group, camera: TH
   flashlight.scale.setScalar(0.9)
   flashlight.position.z = 0.015
   vmFlash.add(flashlight)
-  const lhand = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.055, 0.1), vmat('#c9a58a'))
-  lhand.position.set(0, -0.045, -0.06)
-  vmFlash.add(lhand)
+  const left = buildRetroHand({ left: true })
+  left.setPose(FLASH_HAND_POSE, flashlight) // v72：手指按手电真实网格接触求解
+  vmFlash.add(left.group)
   vmFlash.position.set(-0.24, -0.28, -0.42)
   camera.add(vmFlash)
-  return { hand, lhand, sleeve }
+  return { right, left }
+}
+
+/** 手部（vm 节点）动作姿势：走路摆动 / 使用物品 / 攻击 / 搜索。纯函数，renderer 与预览页共用（v71 抽出，数值未改）。 */
+export interface VmAnimState {
+  mx: number; my: number; bobPhase: number; time: number
+  usingItem?: { t: number; dur: number; anim?: string } | null
+  attackAnimT: number; attackAnimDur: number; attackAnimKind?: string; searching?: boolean
+}
+export function vmAnimPose(st: VmAnimState) {
+  // 走路摆动（与头部 bob 同步，幅度更小）
+  const mag = Math.hypot(st.mx, st.my)
+  const moving = mag > 0.1
+  const sway = moving ? Math.sin(st.bobPhase) : 0
+  const sway2 = moving ? Math.abs(Math.cos(st.bobPhase)) : 0
+  let px = 0.27 + sway * 0.012
+  let py = -0.3 - sway2 * 0.016
+  let pz = -0.55
+  let rx = 0
+  let rz = 0
+  if (st.usingItem) {
+    const u = st.usingItem
+    const pr = Math.max(0, Math.min(1, u.t / Math.max(0.01, u.dur)))
+    // 进入与收回各占一小段，中段保持姿势；所有节奏都直接取自同一使用计时器。
+    const pose = Math.min(1, pr / 0.2, (1 - pr) / 0.18)
+    const pulse = Math.sin(pr * Math.PI * 4)
+    if (u.anim === 'bottleDrink') {
+      // 瓶装饮品：先把瓶身竖直举到嘴边，再明显仰瓶吞咽；与滋水枪自饮动作完全分离。
+      const swallow = Math.sin(Math.max(0, Math.min(1, (pr - 0.25) / 0.5)) * Math.PI * 3) * pose
+      px -= pose * 0.075; py += pose * 0.19 + Math.max(0, swallow) * 0.012; pz += pose * 0.14
+      rx = pose * 1.48 + Math.max(0, swallow) * 0.05; rz = pose * 0.2
+    } else if (u.anim === 'drink') {
+      rx = pose * 1.14; rz = pose * 0.12; py += pose * 0.13; pz += pose * 0.08
+    } else if (u.anim === 'eat') {
+      const bite = pose * (0.9 + pulse * 0.08)
+      rx = -bite * 0.92; rz = -bite * 0.12; py += bite * 0.12; pz += bite * 0.035
+    } else if (u.anim === 'medical') {
+      px -= pose * 0.22; py += pose * 0.045; pz -= pose * 0.02
+      rx = -pose * 0.58 + pulse * 0.06; rz = pose * 0.72
+    } else if (u.anim === 'inject') {
+      px -= pose * 0.18; py += pose * 0.1; rx = -pose * 0.48; rz = pose * 0.95
+    } else if (u.anim === 'battery') {
+      px -= pose * 0.16; py -= pose * 0.08; rx = pose * 0.48; rz = pulse * pose * 0.08
+    } else if (u.anim === 'activate') {
+      py += pose * 0.08; pz -= pose * 0.08; rx = -pose * 0.38; rz = pulse * pose * 0.12
+    } else { // read：举到视线下方稳定查看
+      px -= pose * 0.24; py += pose * 0.11; pz += pose * 0.04; rx = -pose * 0.55; rz = pose * 0.18
+    }
+  } else if (st.attackAnimT > 0) {
+    const pr = 1 - st.attackAnimT / Math.max(0.01, st.attackAnimDur)
+    const k = Math.sin(pr * Math.PI)
+    const kind = st.attackAnimKind
+    if (kind === 'punch') {
+      // 空手出拳：直线快速前刺，节奏比挥舞更急促
+      const kj = Math.sin(Math.min(1, pr * 1.3) * Math.PI)
+      pz -= kj * 0.28; py += kj * 0.02; rx = -kj * 0.3; rz = kj * 0.1
+    } else if (kind === 'throw') {
+      // 投掷：抬臂后向前上方甩出
+      rx = -k * 0.75; py += k * 0.12; pz -= k * 0.16; rz = -k * 0.18
+    } else if (kind === 'spray') {
+      // 滋水枪喷射：泵压式快速前顶两下
+      const k2 = Math.max(0, Math.sin(pr * Math.PI * 2))
+      pz -= k2 * 0.09; rx = -k2 * 0.12
+    } else if (kind === 'drink') {
+      // 饮用（滋水枪对自己喝）：抬起到嘴边
+      rx = k * 1.05; py += k * 0.1; pz += k * 0.07
+    } else {
+      // 武器挥舞（撬棍/扳手/木板）：横向挥砍弧线
+      rx = -k * 1.0; rz = k * 0.55; pz -= k * 0.08; py += k * 0.04
+    }
+  } else if (st.searching) {
+    // 搜索动作：小幅翻找
+    rx = -0.22 + Math.sin(st.time * 9) * 0.07
+    px += Math.sin(st.time * 5.2) * 0.015
+  }
+  return { px, py, pz, rx, rz, sway, sway2 }
 }
 
 // 手持物品 3D 建模（切换快捷栏时重建）

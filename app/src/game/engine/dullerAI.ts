@@ -66,8 +66,13 @@ export function initDuller(eng: Engine, e: Entity, carry?: string | null): Dulle
   const [ox,oy]=origin(eng)
   let c = carry === null ? undefined : carry
   if (carry === undefined) {
+    if (e.def.dullerCarry === false) c = undefined
+    else if (e.def.dullerCarry === true) {
+      const pool = CARRY_POOL.filter(type => ITEMS[type])
+      c = pool[Math.floor((((e.id * 2654435761) >>> 0) / 4294967296) * pool.length)]
+    }
     const r = ((e.id * 2654435761) >>> 0) / 4294967296 // 按实体 id 确定性：约 40% 携带随机物品
-    if (r < 0.4) { const pick = CARRY_POOL[Math.floor(r / 0.4 * CARRY_POOL.length)]; if (ITEMS[pick]) c = pick }
+    if (e.def.dullerCarry === undefined && r < 0.4) { const pick = CARRY_POOL[Math.floor(r / 0.4 * CARRY_POOL.length)]; if (ITEMS[pick]) c = pick }
   }
   const s: DullerState = { phase: 'roam', t: 0, spook: 0, lastHp: Math.max(e.hp,e.def.hp), carry: c, lx: e.x+ox, ly: e.y+oy, retarget: 0, wait: 0, fromX: 0, fromY: 0, toX: 0, toY: 0, hitT: 0, reach: 0, reachLen: 1, wallD: -1, sway: 1, run: 0 }
   e.dl = s
@@ -114,7 +119,7 @@ function almondNear(eng: Engine, x: number, y: number, r = 3): boolean {
 /** 玩家能否站在 (x,y)：瓦片可走 + 真实碰撞体积（模拟地图无 tiles 时只看瓦片） */
 function standable(eng: Engine, x: number, y: number, z=eng.player.z): boolean {
   const m = eng.map!, p = eng.player
-  const band = m.tiles ? bandOfPlayerZ(m, z) : 0
+  const band = m.tiles ? bandOfPlayerZ(m, z, x, y) : 0
   const h=eng.entityWalkH(m, Math.floor(x), Math.floor(y), band)
   if (h === null || Math.abs(h-z)>.4) return false
   return !m.tiles || (m.elev[Math.floor(y)*m.w+Math.floor(x)]!==4 && canOccupy(m, x, y, undefined, { z, band, crouch:p.crouching }))
@@ -162,7 +167,7 @@ export function dullerHurt(eng: Engine,e:Entity) {
 export function dullerDropPosition(eng:Engine,e:Entity){
   for(let r=0;r<=6;r+=.5)for(let i=0;i<16;i++){
     const x=e.x+Math.cos(i*Math.PI/8)*r,y=e.y+Math.sin(i*Math.PI/8)*r
-    if(standable(eng,x,y,e.z))return {x,y,z:eng.map?.tiles?floorHeight(eng.map,x,y,bandOfPlayerZ(eng.map,e.z)):e.z}
+    if(standable(eng,x,y,e.z))return {x,y,z:eng.map?.tiles?floorHeight(eng.map,x,y,bandOfPlayerZ(eng.map,e.z,x,y)):e.z}
   }
   return {x:e.x,y:e.y,z:e.z}
 }
@@ -190,7 +195,7 @@ function findLurk(eng: Engine, e: Entity): [number, number] | null {
 function wallHit(eng:Engine,x0:number,y0:number,x1:number,y1:number){
   const m=eng.map!,p=eng.player,d=Math.hypot(x1-x0,y1-y0)
   if(!m.tiles)return eng.los(x0,y0,x1,y1)?null:{x:(x0+x1)/2,y:(y0+y1)/2,nx:Math.sign(x0-x1),ny:0,wall:true}
-  const band=bandOfPlayerZ(m,p.z),ux=(x1-x0)/Math.max(.001,d),uy=(y1-y0)/Math.max(.001,d)
+  const band=bandOfPlayerZ(m,p.z,p.x,p.y),ux=(x1-x0)/Math.max(.001,d),uy=(y1-y0)/Math.max(.001,d)
   const blocked=(x:number,y:number)=>wallAt(m,Math.floor(x),Math.floor(y),band)||structBlocksSight(m,x,y,p.z+1.25,band)
   for(let t=.04;t<d;t+=.04){
     const x=x0+ux*t,y=y0+uy*t

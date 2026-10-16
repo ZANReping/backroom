@@ -121,5 +121,6 @@ export interface SmilerState {
   heardLoud?: boolean
   brokeGaze?: number // 对峙中被移开视线后的加速窗口
   strikeT?: number // 攻击前摇剩余
+  strikeAge?: number // 完整抬手/出击/收势时钟；命中后仍继续到收势完成
   ceilingBend?: number // 巨笑魇当前净空要求（弧度），移动减速与姿态使用相同计算
 }

@@ -59,7 +59,7 @@ export interface NpcEntry {
   remove?: boolean
 }
 
-/** 实体实例：marks=chunk raw 标记（calm/scale/hostile/tool/l3face/human/capybara，仅记录存在的标记） */
+/** 实体实例：marks=chunk raw 标记（calm/scale/hostile/tool/l3face/human/capybara/l3clump，仅记录存在的标记） */
 export interface EntityEntry {
   type: string
   x: number

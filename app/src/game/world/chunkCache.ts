@@ -6,6 +6,7 @@ import { canPrepareL11, prepareL11Window } from './l11ChunkCache'
 // loot and save state remain owned by the main thread's instantiate() path.
 type Job = { key: string; def: LevelDef; seed: number; cx: number; cy: number }
 const ready = new Map<string, GenChunk>()
+const preparedListeners = new Set<{ prefix: string; receive: (raw: GenChunk) => void }>()
 const queued = new Map<string, Job>()
 let worker: Worker | undefined
 let active: Job | undefined
@@ -31,6 +32,7 @@ function ensureWorker() {
       if (!raw) { failed = true; worker?.terminate(); worker = undefined; active = undefined; queued.clear(); return }
       if (raw && key.startsWith(context + ':')) {
         ready.set(key, raw)
+        for (const listener of preparedListeners) if (key.startsWith(listener.prefix)) listener.receive(raw)
         while (ready.size > 64) ready.delete(ready.keys().next().value!)
       }
       active = undefined
@@ -42,6 +44,14 @@ function ensureWorker() {
 }
 
 export function canPrepareChunks(def: LevelDef) { return def.id === 11 ? canPrepareL11() : supported(def) && ensureWorker() }
+
+/** Observe deterministic data without consuming/mutating the map cache. */
+export function watchPreparedChunks(level: number, seed: number, receive: (raw: GenChunk) => void): () => void {
+  const listener = { prefix: `${level}:${seed}:`, receive }
+  preparedListeners.add(listener)
+  for (const [key, raw] of ready) if (key.startsWith(listener.prefix)) receive(raw)
+  return () => { preparedListeners.delete(listener) }
+}
 
 function setContext(def: LevelDef, seed: number) {
   const next = `${def.id}:${seed}`

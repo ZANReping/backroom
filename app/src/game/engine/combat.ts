@@ -3,12 +3,15 @@ import { provokeMoths } from './moths'
 import { provokeHound } from './houndAI'
 // v53：战斗/投掷/击退 + 伤害/死亡结算 + 粒子生成 —— 自 engine.ts 拆分，逻辑逐语句搬运。
 import { ITEMS } from '../content/items'
-import { bandOfZ, bandOfPlayerZ, groundHeightAt, wallAt, structBlocksSight } from '../world/mapgen'
+import { bandOfZ, bandOfPlayerZ, groundHeightAt, wallAt, structBlocksSight, l11MapWater } from '../world/mapgen'
 import { look } from '../core/renderer3d'
 import { audio } from '../core/audio'
 import { recordEntityEncounter, type Entity } from '../entities'
 import type { Engine, Projectile } from '../engine'
 import { clearRunSlots } from './save'
+import { releaseClumpPlayer } from './clumpAI'
+import { seatedEyeHeight, seatedEyeOffset } from './seating'
+import { skinStealerHit } from './skinStealerAI'
 import { dullerDrop, dullerSquirted, dullerHurt, dullerDropPosition, releaseDullerPlayer } from './dullerAI'
 
 export function hurtPlayer(eng: Engine, dmg: number, source: string) {
@@ -26,6 +29,7 @@ export function hurtPlayer(eng: Engine, dmg: number, source: string) {
 export function die(eng: Engine, cause: string, force = false) {
   if (eng.dev.god && !force) { eng.player.hp = Math.max(eng.player.hp, 20); return }
   releaseDullerPlayer(eng)
+  releaseClumpPlayer(eng)
   eng.over = true
   eng.player.hp = 0
   eng.usingItem = null
@@ -58,7 +62,7 @@ function mpDrop(eng: Engine, id: number, it: string, x: number, y: number) {
  *  实体与玩家几乎重合时 atan2 方向退化，旧判定会永远 miss，这就是"近身打不到"的根因） */
 export function canHit(eng: Engine, e: Entity): boolean {
   const p = eng.player
-  if (e.dead || e.disguised) return false
+  if (e.dead || (e.disguised && e.disguised !== 'human')) return false // v77：穿着人皮的窃皮者是真实的身体，可以被击中
   const d = Math.hypot(e.x - p.x, e.y - p.y)
   if (d > eng.attackReach(e)) return false
   if (Math.abs(e.z - p.z) >= 1) return false // 高差过大打不到（跨层够不着）
@@ -100,22 +104,24 @@ function crosshairDirection() {
 function traceCrosshair(eng: Engine, range: number): { x: number; y: number; z: number; travel: number; entity: Entity | null } {
   const p = eng.player, m = eng.map!
   const dir = crosshairDirection()
-  const oz = p.z + 1.55
-  const band = bandOfPlayerZ(m, p.z)
-  let end = { x: p.x + dir.x * range, y: p.y + dir.y * range, z: oz + dir.z * range, travel: range, entity: null as Entity | null }
+  const oz = p.z + seatedEyeHeight(eng)
+  const offset = seatedEyeOffset(eng), ox = p.x + offset.x, oy = p.y + offset.y
+  const band = bandOfPlayerZ(m, p.z, p.x, p.y)
+  let end = { x: ox + dir.x * range, y: oy + dir.y * range, z: oz + dir.z * range, travel: range, entity: null as Entity | null }
   for (let s = 0.15; s <= range; s += 0.12) {
-    const x = p.x + dir.x * s, y = p.y + dir.y * s, z = oz + dir.z * s
+    const x = ox + dir.x * s, y = oy + dir.y * s, z = oz + dir.z * s
     const tx = Math.floor(x), ty = Math.floor(y)
     if (wallAt(m, tx, ty, band) || structBlocksSight(m, x, y, z, band) || z <= groundHeightAt(m, x, y, band) + 0.025) {
-      end = { x: p.x + dir.x * Math.max(0, s - 0.12), y: p.y + dir.y * Math.max(0, s - 0.12), z: oz + dir.z * Math.max(0, s - 0.12), travel: Math.max(0, s - 0.12), entity: null }
+      end = { x: ox + dir.x * Math.max(0, s - 0.12), y: oy + dir.y * Math.max(0, s - 0.12), z: oz + dir.z * Math.max(0, s - 0.12), travel: Math.max(0, s - 0.12), entity: null }
       break
     }
     for (const e of m.entities) {
-      if (e.dead || e.hidden || e.disguised) continue
+      if (e.dead || e.hidden || (e.disguised && e.disguised !== 'human')) continue
       const scale = (e.def.scale ?? 1) * Math.min(2.5, e.def.huge ?? 1)
       const radius = Math.max(0.3, Math.min(1.35, 0.42 * scale))
       const bottom = e.z - (e.def.flying ? 0.38 * scale : 0.05)
-      const top = e.z + Math.max(0.8, 1.6 * scale)
+      const bodyHeight = e.def.type === 'skinstealer' ? (e.disguised === 'human' ? 1.95 : 2.2) : e.def.type === 'faceling' ? 1.85 : 1.6
+      const top = e.z + Math.max(0.8, bodyHeight * scale)
       if (Math.hypot(e.x - x, e.y - y) <= radius && z >= bottom && z <= top) {
         return { x, y, z, travel: s, entity: e }
       }
@@ -131,12 +137,14 @@ function startAttackAnimation(eng: Engine, kind: Engine['attackAnimKind'], durat
 }
 
 export function killCheck(eng: Engine, e: Entity) {
+  skinStealerHit(eng, e)
   if(!e.dead)provokeMoths(eng,e)
   provokeHound(eng,e)
   dullerHurt(eng,e)
   if (e.hp > 0 || e.dead) return
   const p = eng.player, m = eng.map!
   e.dead = true; e.deathT = 1.4
+  if (e.def.type === 'clump') releaseClumpPlayer(eng, e)
   if(e.def.type==='duller'){
     const type=dullerDrop(e)
     if(type){
@@ -161,6 +169,12 @@ export function killCheck(eng: Engine, e: Entity) {
   }
   eng.msg(`击杀了 ${e.def.name}`, 'loot')
   // 旱虾（Entity 20）：被玩家击杀必掉可食用的「旱虾」——被敌方实体捕食不经由本函数，不掉落物品
+  if (e.def.type === 'corpserat' && !e.def.ceilingCrawler && (e.def.capybara || e.rt?.morph === 'capybara' || Math.random() < 0.6)) {
+    const item = { id: Math.random(), type: 'ratmeat', x: e.x, y: e.y, z: e.z }
+    m.items.push(item)
+    const inf = m.inf
+    if (inf) inf.chunks.get(`${Math.floor((item.x + inf.ox) / 32)},${Math.floor((item.y + inf.oy) / 32)}`)?.items.push(item)
+  }
   if (e.def.type === 'dryshrimp') {
     const id = Date.now() % 100000 + Math.random()
     m.items.push({ id, type: 'dryshrimp', x: e.x, y: e.y })
@@ -268,7 +282,8 @@ export function attack(eng: Engine) {
     // v47：伤害鹉主杰瑞——信众哗然：jerry 声望立即 -50（每次）
     if (e.def.type === 'jerry') eng.hurtJerryRep()
     hit = true
-    eng.bloodParticles(e.x, e.y)
+    eng.bloodParticles(e.x, e.y, bloodKind(e))
+    skinStealerHit(eng, e) // v77：伪装中被打伤 → 透明的血露馅
     eng.provoked = true // v23：主动挑衅解除「Level 11 Effect」的被动状态
     if (e.def.type === 'ferren') eng.changeRep('bntg', -15) // v35：攻击 Ferren 惹恼 B.N.T.G.（杀死罚更重，见 killCheck）
     if (e.def.passive && !e.def.noRetaliate) { e.provoked = true; e.targetEnt = undefined; e.state = 'chase'; e.stateT = 0 } // 激怒无面灵（被攻击才反击；Ferren 绝不反击不进 chase）
@@ -281,7 +296,7 @@ export function attack(eng: Engine) {
   let blockedFollower = false // v47：教化约束——被拦下的对信众挥击
   for (const n of eng.npcs) {
     if (n.dead) continue
-    if ((n.floor ?? 0) !== bandOfPlayerZ(m, p.z)) continue // v46：隔层打不到（夹楼 NPC 不会被穿楼板挥中；v56 七轮：玩家带按实际楼层钳制）
+    if ((n.floor ?? 0) !== bandOfPlayerZ(m, p.z, p.x, p.y)) continue // v46：隔层打不到（夹楼 NPC 不会被穿楼板挥中；v56 七轮：玩家带按实际楼层钳制）
     const d = Math.hypot(n.x - p.x, n.y - p.y)
     if (d > 1.8) continue
     const ang = Math.atan2(n.y - p.y, n.x - p.x)
@@ -358,10 +373,11 @@ export function throwHeld(eng: Engine, type: string) {
   const speed = 9
   const dir = crosshairDirection()
   const lead = type==='glowstick'?.08:.38
+  const offset = seatedEyeOffset(eng)
   eng.projectiles.push({
     id: eng.projId++, type,
-    x: p.x + dir.x * lead, y: p.y + dir.y * lead,
-    z: p.z + 1.55 + dir.z * lead, floorZ: p.z,
+    x: p.x + offset.x + dir.x * lead, y: p.y + offset.y + dir.y * lead,
+    z: p.z + seatedEyeHeight(eng) + dir.z * lead, floorZ: p.z,
     vx: dir.x * speed, vy: dir.y * speed, vz: dir.z * speed,
   })
   eng.msg(`你掷出了${ITEMS[type].name}。`, 'system')
@@ -530,11 +546,11 @@ export function updateProjectiles(eng: Engine, dt: number) {
     const oldZ = pr.z
     pr.vz -= 9.8 * dt
     const nz = oldZ + pr.vz * dt
-    if(pr.type==='glowstick')pr.floorZ=groundHeightAt(m,pr.x,pr.y,bandOfPlayerZ(m,pr.floorZ))
+    if(pr.type==='glowstick')pr.floorZ=groundHeightAt(m,pr.x,pr.y,bandOfPlayerZ(m,pr.floorZ,pr.x,pr.y))
     if (nz <= pr.floorZ) { pr.done = true; eng.landProjectile(pr, pr.x, pr.y); continue }
     // 用短射线段而非旧 tileAt 整格占地判定，防止快速投掷物穿过薄模型，
     // 也不会在异形装饰的透明空隙外凭空撞停。
-    const band = bandOfPlayerZ(m, pr.floorZ)
+    const band = bandOfPlayerZ(m, pr.floorZ, pr.x, pr.y)
     const dist = Math.hypot(nx - pr.x, ny - pr.y, nz - oldZ)
     const steps = Math.max(1, Math.ceil(dist / .08))
     let blocked = false
@@ -554,7 +570,7 @@ export function landProjectile(eng: Engine, pr: Projectile, x: number, y: number
   const kind = ITEMS[pr.type].throw
   switch (kind) {
     case 'light': {
-      const z=groundHeightAt(m,x,y,bandOfPlayerZ(m,pr.floorZ))
+      const z=groundHeightAt(m,x,y,bandOfPlayerZ(m,pr.floorZ,x,y))
       if(m.inf?.l0&&z<=-8)break // No recoverable object hovering over a bottomless pit.
       const item={id:Math.random(),type:pr.type,x,y,z}
       m.items.push(item)
@@ -573,13 +589,13 @@ export function landProjectile(eng: Engine, pr: Projectile, x: number, y: number
       }
       let n = 0
       for (const e of m.entities) {
-        if (e.dead || e.disguised) continue
+        if (e.dead || (e.disguised && e.disguised !== 'human')) continue
         const d = Math.hypot(e.x - x, e.y - y)
         if (d > 3.2 || Math.abs(e.z - pr.floorZ) >= 1) continue
         if (e.def.type === 'jerry' && eng.indoctrination > 0) continue // v47：教化约束——投掷波及对鹉主无效
         if (!mpHurtEntity(eng, e, d < 2.2 ? 45 : 20)) { e.hp -= d < 2.2 ? 45 : 20; eng.killCheck(e) } // v59：联机走房主结算
         e.stunT = Math.max(e.stunT, 0.6)
-        eng.bloodParticles(e.x, e.y)
+        eng.bloodParticles(e.x, e.y, bloodKind(e))
         if (e.def.type === 'jerry') eng.hurtJerryRep() // v47：伤害鹉主 → 信众哗然 -50
         n++
       }
@@ -595,7 +611,7 @@ export function landProjectile(eng: Engine, pr: Projectile, x: number, y: number
       }
       let n = 0
       for (const e of m.entities) {
-        if (e.dead || e.disguised) continue
+        if (e.dead || (e.disguised && e.disguised !== 'human')) continue
         const d = Math.hypot(e.x - x, e.y - y)
         if (d > 2.8 || Math.abs(e.z - pr.floorZ) >= 1) continue
         if (e.def.type === 'jerry' && eng.indoctrination > 0) continue // v47：教化约束——投掷波及对鹉主无效
@@ -628,10 +644,14 @@ export function landProjectile(eng: Engine, pr: Projectile, x: number, y: number
   }
 }
 
-export function bloodParticles(eng: Engine, x: number, y: number) {
-  for (let i = 0; i < 8; i++) {
-    const a = Math.random() * Math.PI * 2
-    eng.particles.push({ x, y, vx: Math.cos(a) * 2, vy: Math.sin(a) * 2, t: 0, life: 0.5, color: '#b3352b', size: 2 + Math.random() * 2 })
+/** 实体血液种类：v77 窃皮者半透明；v78 悲尸是浓稠的红褐分泌物混着棕色淤泥 */
+export const bloodKind = (e: Entity): boolean | 'wretch' => (e.def.type === 'skinstealer' ? true : e.def.type === 'wretch' ? 'wretch' : false)
+/** clear：v77 窃皮者的血完全半透明（水样、带一点反光）；'wretch'：v78 悲尸红褐稠液（量多、落得慢）；人类/其他实体为红色 */
+export function bloodParticles(eng: Engine, x: number, y: number, clear: boolean | 'wretch' = false) {
+  const wr = clear === 'wretch'
+  for (let i = 0; i < (wr ? 11 : 8); i++) {
+    const a = Math.random() * Math.PI * 2, sp = wr ? 1.2 : 2
+    eng.particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, t: 0, life: clear === true ? 0.65 : wr ? 0.7 : 0.5, color: clear === true ? (i % 3 ? '#cfe0e4' : '#f4fafb') : wr ? (i % 3 ? '#6e2a1c' : '#5a3a16') : '#b3352b', size: wr ? 2.5 + Math.random() * 2.5 : 2 + Math.random() * 2, ...(clear === true ? { opacity: 0.28 } : {}) })
   }
 }
 export function steamParticles(eng: Engine, x: number, y: number) {
@@ -650,9 +670,10 @@ export function bubbleParticles(eng: Engine, x: number, y: number, z: number) {
   }
 }
 export function rippleParticles(eng: Engine, x: number, y: number) {
+  const canal=eng.levelDef.id===11?l11MapWater(eng.map!,x,y):null
   for (let i = 0; i < 3; i++) {
     const a = Math.random() * Math.PI * 2, r = 0.2 + Math.random() * 0.3
-    eng.particles.push({ x: x + Math.cos(a) * r, y: y + Math.sin(a) * r, vx: Math.cos(a) * 0.7, vy: Math.sin(a) * 0.7, t: 0, life: 0.5, color: '#7fb8d8', size: 0.04 + Math.random() * 0.03, z: eng.inLiquid === 1 ? 0.06 : -0.16, vz: 0 })
+    eng.particles.push({ x: x + Math.cos(a) * r, y: y + Math.sin(a) * r, vx: Math.cos(a) * 0.7, vy: Math.sin(a) * 0.7, t: 0, life: 0.5, color: '#7fb8d8', size: 0.04 + Math.random() * 0.03, z: canal?canal.surface+.03:eng.inLiquid === 1 ? 0.06 : -0.16, vz: 0 })
   }
 }
 /** 引擎粒子推进（原 step「---- 粒子 ----」内联段） */

@@ -130,6 +130,9 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
   const zInput = engine.input as unknown as { jump?: boolean; crouch?: boolean }
   const setJump = (v: boolean) => { zInput.jump = v }
   const toggleCrouch = () => { zInput.crouch = !zInput.crouch }
+  const flightActive = engine.devEnabled && engine.dev.fly
+  const crouchStart = (e: React.TouchEvent) => { e.stopPropagation(); flightActive ? (zInput.crouch = true) : toggleCrouch() }
+  const crouchEnd = (e: React.TouchEvent) => { e.stopPropagation(); if (flightActive) zInput.crouch = false }
   const crouchOn = !!zInput.crouch || !!(engine.player as unknown as { crouching?: boolean }).crouching
   // 横屏：按钮弧形排布，避免遮挡画面中心
   const landscape = typeof window !== 'undefined' && window.innerWidth > window.innerHeight
@@ -153,6 +156,7 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
     return (
       <button
         data-touch-id={id}
+        aria-label={id === 'crouch' ? flightActive ? '下降（按住）' : '蹲伏（切换）' : id === 'jump' ? flightActive ? '上升（按住）' : '跳跃' : undefined}
         className={`flex items-center justify-center rounded-full active:scale-90 ${cls}`}
         style={{
           ...btnBase,
@@ -166,6 +170,7 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
         }}
         onTouchStart={onDown}
         onTouchEnd={onUp}
+        onTouchCancel={onUp}
       >
         {child}
       </button>
@@ -233,8 +238,8 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
       {fixedBtn(
         'crouch', CONTROL_SIZES.crouch,
         { color: crouchOn ? 'var(--amber)' : 'var(--text)', borderColor: crouchOn ? 'var(--amber)' : 'var(--panel-edge)', boxShadow: crouchOn ? 'inset 0 0 8px rgba(232,185,60,0.5)' : 'none' },
-        (e) => { e.stopPropagation(); toggleCrouch() },
-        undefined,
+        crouchStart,
+        crouchEnd,
         <IconCrouch width={24} height={24} />,
       )}
       {fixedBtn('pause', CONTROL_SIZES.pause, {}, (e) => { e.stopPropagation(); onPause?.() }, undefined, <IconPause width={20} height={20} />)}
@@ -300,9 +305,9 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
               </button>
             )
             if (id === 'crouch') return (
-              <button key={id} aria-label="蹲伏（切换）" data-label={label} className={`tc-btn pointer-events-auto flex items-center justify-center rounded-full active:scale-90 ${crouchOn ? 'is-on' : ''}`}
+              <button key={id} aria-label={flightActive ? '下降（按住）' : '蹲伏（切换）'} data-label={flightActive ? '下降' : label} className={`tc-btn pointer-events-auto flex items-center justify-center rounded-full active:scale-90 ${crouchOn ? 'is-on' : ''}`}
                 style={{ ...common, color: crouchOn ? 'var(--amber)' : 'var(--text)', borderColor: crouchOn ? 'var(--amber)' : 'var(--panel-edge)', boxShadow: crouchOn ? 'inset 0 0 8px color-mix(in srgb, var(--amber) 50%, transparent)' : 'none' }}
-                onTouchStart={(e) => { e.stopPropagation(); toggleCrouch() }}>
+                onTouchStart={crouchStart} onTouchEnd={crouchEnd} onTouchCancel={crouchEnd}>
                 <IconCrouch width={24} height={24} />
               </button>
             )
@@ -362,6 +367,7 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
           )}
           {!isCustom('crouch') && (
             <button
+              aria-label={flightActive ? '下降（按住）' : '蹲伏（切换）'}
               className="flex items-center justify-center rounded-full active:scale-90"
               style={{
                 ...btnBase, width: 56, height: 56,
@@ -370,7 +376,7 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
                 boxShadow: crouchOn ? 'inset 0 0 8px rgba(232,185,60,0.5)' : 'none',
                 ...(landscape ? { transform: 'translate(-96px, -8px)' } : {}),
               }}
-              onTouchStart={(e) => { e.stopPropagation(); toggleCrouch() }}
+              onTouchStart={crouchStart} onTouchEnd={crouchEnd} onTouchCancel={crouchEnd}
             >
               <IconCrouch width={24} height={24} />
             </button>

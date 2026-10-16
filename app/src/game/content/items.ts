@@ -114,6 +114,7 @@ export const ITEMS: Record<string, ItemDef> = {
   rope: { type: 'rope', name: '尼龙绳', desc: '一卷结实的尼龙绳。Wikidot 明确建议进入 Level 7 前携带绳索或梯子——否则掉进水里就再也爬不回入口房间。', stack: 1, unique: 7, equip: 'pocket', passive: '可攀回高处', rarity: 'uncommon', glyph: 'rope' },
   divemask: { type: 'divemask', name: '潜水面罩', desc: '海面上方的空气有种未知性质，能让人屏息约三十分钟。有了它，还能更久一点。', stack: 1, unique: 7, equip: 'head', passive: '延长屏息', rarity: 'uncommon', glyph: 'mask' },
   thingmeat: { type: 'thingmeat', name: '巨兽之肉', desc: '油腻、富脂、黏滑，强烈的硫磺味。档案强调：必须生食——加热会唤醒里面休眠的寄生虫。', stack: 2, unique: 7, use: 'eat', value: 55, anomalous: true, rarity: 'rare', glyph: 'meat' },
+  ratmeat: { type: 'ratmeat', name: '尸鼠肉', desc: '从尸鼠身上割下的一条瘦肉，带着一股霉味和飞蛾翅粉的苦味。档案说它「在某种程度上」能当食物——生吃能顶饿，但有可能让你病一场。', stack: 3, use: 'eat', value: 18, anomalous: true, rarity: 'common', glyph: 'meat' },
   oddbook: { type: 'oddbook', name: '来源不明的书', desc: '入口房间书柜上的一本旧书。没有作者，没有出版信息。翻开，是一个在 Level 7 待过的人留下的记录。', stack: 1, unique: 7, use: 'doc', anomalous: true, rarity: 'rare', glyph: 'book' },
 
   // Level 8「洞穴系统」

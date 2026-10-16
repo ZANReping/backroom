@@ -160,6 +160,14 @@ def draw_grilledsteak(d):
         d.line([(x, 11), (x - 2, 21)], fill='#3a2418', width=1)
     d.point([(12, 13), (18, 15), (14, 18)], fill='#a86a4a')   # 肉面高光
 
+def draw_ratmeat(d):
+    # v79 尸鼠肉：一条细长卷曲的暗红瘦肉 + 一端的细骨 + 霉斑
+    d.polygon([(6, 18), (10, 13), (17, 12), (24, 14), (27, 18), (22, 21), (14, 22), (8, 21)], fill='#9a4a44', outline=INK)
+    d.line([(9, 17), (15, 15), (23, 16)], fill='#c87a6a', width=1)           # 筋膜高光
+    d.rectangle([3, 16, 7, 18], fill='#e8e2d2', outline=INK)                 # 细骨
+    d.point([(2, 15), (2, 19)], fill='#e8e2d2')
+    d.point([(18, 19), (20, 18), (12, 19)], fill='#6a7a4a')                  # 霉斑
+
 def draw_jambread(d):
     # 果酱面包：吐司片 + 厚厚果酱（溢出流下）
     d.rounded_rectangle([8, 8, 24, 12], radius=4, fill='#d9a85a', outline=INK)  # 吐司拱顶
@@ -310,6 +318,7 @@ DRAW = {
     'tomsspecial': draw_tomsspecial,
     'grilledsteak': draw_grilledsteak,
     'jambread': draw_jambread,
+    'ratmeat': draw_ratmeat,  # v79
     'capacitor': draw_capacitor,
     'parcel': draw_parcel,
     'dryshrimp': draw_shrimp,

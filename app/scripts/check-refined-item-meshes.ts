@@ -1,5 +1,5 @@
 /**
- * Headless regression checks for the 55 refined item meshes (refinedItemMesh.ts).
+ * Headless regression checks for the 56 refined item meshes (refinedItemMesh.ts).
  * CPU-side Three.js attributes only; no WebGL context or texture decoding.
  * Optional: REFINED_ITEM_EXPORT=<dir> writes one OBJ + MTL per item (UVs into the shared atlases).
  */
@@ -146,7 +146,7 @@ for (const mode of ['classic', 'realistic'] as const) {
   }
 }
 setMaterialMode('classic')
-assert.equal(REFINED_ITEM_TYPES.length, 55)
+assert.equal(REFINED_ITEM_TYPES.length, 56) // v79：+尸鼠肉
 for (const type of ['toString', 'constructor', '__proto__', 'unknown-item']) {
   assert(!isRefinedItemType(type), `${type}: prototype key dispatched as an item`)
   const fallback = buildItemMesh(type, { halo: false }); dispose(fallback); checks++

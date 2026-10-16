@@ -595,6 +595,124 @@ export class GameAudio {
     lfo.start(t); lfo.stop(t + dur + 0.02)
   }
 
+  /** v64：肢团「多人奔跑」——一次甩肢落地拆成 3–5 记略错开的赤脚/手掌拍地声（低通噪声 + 低频肉击），
+   *  每记音高、声像、间隔都随机，听起来像好几个人同时在跑；pace 越高越密越重 */
+  clumpRun(vol = 1, pace = 0.5) {
+    if (!this.ctx || !this.sfx || vol <= 0.02) return
+    const t0 = this.ctx.currentTime
+    const n = 3 + Math.floor(Math.random() * 3)
+    for (let i = 0; i < n; i++) {
+      const t = t0 + i * (0.045 + Math.random() * (0.11 - pace * 0.05))
+      const pan = this.ctx.createStereoPanner(); pan.pan.value = (Math.random() - 0.5) * 0.9
+      const src = this.noiseSrc()
+      const lp = this.ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 520 + Math.random() * 380; lp.Q.value = 0.8
+      const g = this.ctx.createGain()
+      const a = (0.1 + Math.random() * 0.06) * vol * (0.7 + pace * 0.5)
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(a, t + 0.006); g.gain.exponentialRampToValueAtTime(0.0005, t + 0.09)
+      src.connect(lp).connect(g).connect(pan).connect(this.sfx); src.start(t); src.stop(t + 0.1)
+      const o = this.ctx.createOscillator(); o.type = 'sine' // 肉体着地的闷响
+      o.frequency.setValueAtTime(95 + Math.random() * 40, t); o.frequency.exponentialRampToValueAtTime(48, t + 0.08)
+      const og = this.ctx.createGain()
+      og.gain.setValueAtTime(0.0001, t); og.gain.exponentialRampToValueAtTime(0.09 * vol, t + 0.005); og.gain.exponentialRampToValueAtTime(0.0005, t + 0.1)
+      o.connect(og).connect(pan); o.start(t); o.stop(t + 0.11)
+    }
+  }
+
+  /** v64：肢团齿口咀嚼——湿黏的挤压（带通噪声扫频）+ 牙齿咬合的脆响 */
+  clumpChew(vol = 1) {
+    if (!this.ctx || !this.sfx || vol <= 0.02) return
+    const t = this.ctx.currentTime
+    const src = this.noiseSrc()
+    const bp = this.ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 2.5
+    bp.frequency.setValueAtTime(900, t); bp.frequency.exponentialRampToValueAtTime(260, t + 0.28)
+    const g = this.ctx.createGain()
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.14 * vol, t + 0.04); g.gain.exponentialRampToValueAtTime(0.0005, t + 0.3)
+    src.connect(bp).connect(g).connect(this.sfx); src.start(t); src.stop(t + 0.32)
+    for (let i = 0; i < 3; i++) { // 咬合脆响
+      const ct = t + 0.05 + i * (0.06 + Math.random() * 0.04)
+      const o = this.ctx.createOscillator(); o.type = 'square'
+      o.frequency.setValueAtTime(1400 + Math.random() * 1200, ct); o.frequency.exponentialRampToValueAtTime(220, ct + 0.02)
+      const cg = this.ctx.createGain(); cg.gain.setValueAtTime(0.045 * vol, ct); cg.gain.exponentialRampToValueAtTime(0.0005, ct + 0.03)
+      o.connect(cg).connect(this.sfx); o.start(ct); o.stop(ct + 0.035)
+    }
+    const lo = this.ctx.createOscillator(); lo.type = 'sawtooth' // 喉部低吼
+    lo.frequency.setValueAtTime(70, t); lo.frequency.linearRampToValueAtTime(52, t + 0.3)
+    const lf = this.ctx.createBiquadFilter(); lf.type = 'lowpass'; lf.frequency.value = 240
+    const lg = this.ctx.createGain(); lg.gain.setValueAtTime(0.0001, t); lg.gain.exponentialRampToValueAtTime(0.05 * vol, t + 0.05); lg.gain.exponentialRampToValueAtTime(0.0005, t + 0.32)
+    lo.connect(lf).connect(lg).connect(this.sfx); lo.start(t); lo.stop(t + 0.34)
+  }
+
+  // v78：悲尸发声——音高区分威胁（维基）：低沉缓慢的咯咯/咆哮 = 无智慧变体；高音调 = 有智慧或异常迅速的个体。
+  // 咯咯声 = 带通噪声按不规则节律开合（喉部积液）+ 锯齿波基音；有智型是一串有节奏的「音节」；突变型高低两层叠在一起。
+  wretchVoice(vol = 1, pitch = 1, kind: 'shambler' | 'sprinter' | 'smart' | 'mutant' = 'shambler') {
+    if (!this.ctx || !this.sfx || vol <= 0.02) return
+    const ctx = this.ctx, t = ctx.currentTime
+    const layer = (p: number, dur: number, syll: number, gainK: number, t0: number) => {
+      const out = ctx.createGain(); out.gain.value = 0
+      const lp = ctx.createBiquadFilter(); lp.type = 'bandpass'; lp.frequency.value = 420 * p; lp.Q.value = 1.6
+      const n = this.noiseSrc(); n.connect(lp)
+      const o = ctx.createOscillator(); o.type = 'sawtooth'
+      o.frequency.setValueAtTime(95 * p, t0); o.frequency.linearRampToValueAtTime(70 * p + (p > 1.2 ? 160 * p : 0), t0 + dur * 0.4); o.frequency.linearRampToValueAtTime(60 * p, t0 + dur)
+      const og = ctx.createGain(); og.gain.value = p > 1.2 ? 0.55 : 0.4
+      o.connect(og)
+      const mix = ctx.createGain(); lp.connect(mix); og.connect(mix); mix.connect(out).connect(this.sfx!)
+      // 不规则的开合（咯咯 / 音节）
+      const steps = Math.max(3, Math.round(dur * syll))
+      for (let i = 0; i < steps; i++) {
+        const st = t0 + (i / steps) * dur, on = 0.06 * vol * gainK * (0.6 + Math.random() * 0.6)
+        out.gain.setValueAtTime(0.0001, st)
+        out.gain.linearRampToValueAtTime(on, st + (dur / steps) * 0.25)
+        out.gain.linearRampToValueAtTime(0.0001, st + (dur / steps) * (0.7 + Math.random() * 0.25))
+      }
+      n.start(t0); n.stop(t0 + dur + 0.05); o.start(t0); o.stop(t0 + dur + 0.05)
+    }
+    if (kind === 'sprinter') { layer(pitch, 0.55, 5, 1.1, t); layer(pitch * 1.25, 0.4, 3, 0.7, t + 0.12) }
+    else if (kind === 'smart') layer(pitch, 1.0, 7, 0.9, t)
+    else if (kind === 'mutant') { layer(0.55, 1.3, 4, 0.9, t); layer(1.7, 0.8, 6, 0.6, t + 0.2) }
+    else layer(pitch, 1.4, 3.2, 1, t)
+  }
+
+  // v79：尸鼠——吱吱（闲时）/ 连串尖锐的咯吱（激怒）/ 水豚种胸前自制音箱的合成音（单调方波音节 + 带通共振峰跳变）
+  ratVoice(vol = 1, kind: 'squeak' | 'chitter' | 'tts' = 'squeak', syll = 0) {
+    if (!this.ctx || !this.sfx || vol <= 0.02) return
+    const ctx = this.ctx, t = ctx.currentTime
+    if (kind === 'tts') {
+      const n = Math.max(3, Math.min(12, syll || 6)), dur = 0.13
+      const o = ctx.createOscillator(); o.type = 'square'; o.frequency.value = 128
+      const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 5
+      const g = ctx.createGain(); g.gain.value = 0
+      const crush = ctx.createWaveShaper(); const curve = new Float32Array(64)
+      for (let i = 0; i < 64; i++) curve[i] = Math.round(((i / 63) * 2 - 1) * 4) / 4 // 低比特「劣质喇叭」
+      crush.curve = curve
+      o.connect(bp).connect(crush).connect(g).connect(this.sfx)
+      for (let i = 0; i < n; i++) {
+        const st = t + i * dur
+        bp.frequency.setValueAtTime([520, 900, 1400, 700, 1900, 1100][Math.floor(Math.random() * 6)], st)
+        o.frequency.setValueAtTime(i === n - 1 ? 104 : 128 + (Math.random() < 0.2 ? 14 : 0), st)
+        g.gain.setValueAtTime(0.0001, st); g.gain.linearRampToValueAtTime(0.07 * vol, st + 0.02); g.gain.linearRampToValueAtTime(0.0001, st + dur * 0.85)
+      }
+      o.start(t); o.stop(t + n * dur + 0.05)
+      return
+    }
+    const chirps = kind === 'chitter' ? 3 + Math.floor(Math.random() * 3) : 1 + Math.floor(Math.random() * 2)
+    for (let i = 0; i < chirps; i++) {
+      const st = t + i * (kind === 'chitter' ? 0.075 : 0.16), d = kind === 'chitter' ? 0.06 : 0.11
+      const o = ctx.createOscillator(); o.type = 'triangle'
+      const f0 = (kind === 'chitter' ? 3200 : 2600) + Math.random() * 900
+      o.frequency.setValueAtTime(f0, st); o.frequency.exponentialRampToValueAtTime(f0 * (kind === 'chitter' ? 0.7 : 1.35), st + d)
+      const g = ctx.createGain(); g.gain.setValueAtTime(0.0001, st); g.gain.linearRampToValueAtTime(0.05 * vol, st + 0.01); g.gain.exponentialRampToValueAtTime(0.001, st + d)
+      o.connect(g).connect(this.sfx); o.start(st); o.stop(st + d + 0.02)
+    }
+  }
+  // v79：土制炸弹的倒计时「嘀」
+  ratBeep(vol = 1) {
+    if (!this.ctx || !this.sfx || vol <= 0.02) return
+    const t = this.ctx.currentTime
+    const o = this.ctx.createOscillator(); o.type = 'square'; o.frequency.value = 2400
+    const g = this.ctx.createGain(); g.gain.setValueAtTime(0.05 * vol, t); g.gain.setValueAtTime(0.0001, t + 0.06)
+    o.connect(g).connect(this.sfx); o.start(t); o.stop(t + 0.07)
+  }
+
   // v63：钝人手臂「切」出墙体——灰泥碎裂的闷响 + 关节咔哒 + 拉长的筋腱摩擦
   dullerReach(vol = 1) {
     if (!this.ctx || !this.sfx || vol <= 0.02) return

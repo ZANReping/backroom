@@ -6,6 +6,7 @@ import type { AlphaSurface } from '../content/alphaDecor'
 const detailFunctions = /* glsl */`
 varying vec3 vAlphaWorld;
 varying vec2 vAlphaPlane;
+varying vec2 vAlphaLocalUv;
 float alphaHash(vec2 p) {
  vec3 q=fract(vec3(p.xyx)*0.1031);
  q+=dot(q,q.yzx+33.33);
@@ -31,6 +32,7 @@ float alphaScuff(vec2 p) {
 
 function finish(surface:AlphaSurface):string {
  switch(surface){
+ case 'rubber_hose':return 'float rib=0.5+0.5*cos(vAlphaLocalUv.x*251.327);float aa=fwidth(vAlphaLocalUv.x)*80.;rib=mix(rib,.5,smoothstep(.2,1.,aa));diffuseColor.rgb=diffuse*(.68+.32*rib);float alphaWear=.06;';
  case 'admin_stone':return /* glsl */`
   vec2 p=vAlphaWorld.xz-vec2(67.0,18.0);
   float edge=min(min(p.x,10.0-p.x),min(p.y,14.0-p.y));
@@ -154,7 +156,13 @@ function finish(surface:AlphaSurface):string {
  case 'office_fabric':return 'float weaveAA=1.0-smoothstep(0.7,2.5,max(length(dFdx(vMapUv)),length(dFdy(vMapUv)))*1024.0);diffuseColor.rgb=mix(diffuse*0.90,mix(diffuseColor.rgb*2.0,diffuse,0.72),weaveAA)*(0.94+alphaNoise(vAlphaPlane*24.0)*0.09);float alphaWear=0.04;';
  case 'laminate':return 'diffuseColor.rgb=mix(diffuseColor.rgb*3.0,diffuse,0.83);float alphaWear=alphaNoise(vAlphaPlane*5.0)*0.04;';
  case 'cabinet_metal':return 'diffuseColor.rgb=mix(diffuseColor.rgb*1.4,diffuse,0.85)*(0.94+alphaNoise(vAlphaPlane*7.0)*0.09);float alphaWear=alphaScuff(vAlphaPlane)*0.09;';
- case 'wood':return 'diffuseColor.rgb=mix(diffuseColor.rgb*4.0,diffuse,0.35);float alphaWear=0.0;';
+ case 'wood_panel':
+ case 'wood':return `float woodTone=sqrt(max(0.,dot(diffuseColor.rgb/max(diffuse,vec3(0.001)),vec3(0.2126,0.7152,0.0722))));diffuseColor.rgb=diffuse*(0.45+woodTone*1.85);float alphaWear=0.025;${surface==='wood_panel'?`
+  float boardU=vAlphaPlane.x/0.18,boardAA=max(fwidth(vAlphaPlane.x),0.0001);
+  float boardEdge=min(fract(boardU),1.0-fract(boardU))*0.18;
+  float groove=(1.0-smoothstep(0.0015,0.0015+boardAA,boardEdge))*0.003/(0.003+boardAA);
+  diffuseColor.rgb*=(0.96+alphaHash(vec2(floor(boardU),0.0))*0.08)*(1.0-groove*0.48);
+ `:''}`;
  case 'terrazzo':return 'diffuseColor.rgb=mix(diffuseColor.rgb,diffuse,0.72);float alphaWear=0.0;';
  case 'steel':return 'diffuseColor.rgb=mix(diffuseColor.rgb,diffuse,0.55);float alphaWear=0.0;';
  default:return 'float alphaWear=0.0;';
@@ -165,9 +173,10 @@ export function alphaTextureScale(surface:AlphaSurface){
  if(surface==='aquila_concrete')return .42
  if(surface==='cave_rock')return .32
  if(surface==='substrate')return 3
- return surface==='office_fabric'?3:surface==='wood'?.65:surface==='fabric'||surface==='carpet'?2:surface==='terrazzo'||surface==='linoleum'?3:surface==='terrazzo_floor'?1.25:surface==='vinyl'?1.1:surface==='ceiling'?1.6:.5
+ return surface==='office_fabric'?3:surface==='wood'||surface==='wood_panel'?.95:surface==='fabric'||surface==='carpet'?2:surface==='terrazzo'||surface==='linoleum'?3:surface==='terrazzo_floor'?1.25:surface==='vinyl'?1.1:surface==='ceiling'?1.6:.5
 }
 export function alphaNormalScale(surface:AlphaSurface){
+ if(surface==='rubber_hose')return .035
  if(surface==='aquila_concrete')return .5
  if(surface==='cave_rock')return .85
  if(surface==='substrate')return .65
@@ -175,9 +184,9 @@ export function alphaNormalScale(surface:AlphaSurface){
 }
 
 export function applyAlphaSurface(mat:THREE.Material,surface:AlphaSurface){
- const roughness=surface==='packing_tape'?.18:surface==='perforated_metal'?.42:surface==='admin_stone'?.48:surface==='laminate'?.48:surface==='cabinet_metal'?.5:surface==='steel'?.32:surface==='wood'?.42:surface==='vinyl'||surface==='linoleum'?.54:surface==='terrazzo_floor'?.62:surface==='tile'?.7:surface==='terrazzo'?.78:.86
+ const roughness=surface==='packing_tape'?.18:surface==='perforated_metal'?.42:surface==='admin_stone'?.48:surface==='laminate'?.48:surface==='cabinet_metal'?.5:surface==='steel'?.32:surface==='wood'||surface==='wood_panel'?.48:surface==='vinyl'||surface==='linoleum'?.60:surface==='terrazzo_floor'?.72:surface==='tile'?.7:surface==='terrazzo'?.78:.86
  mat.onBeforeCompile=shader=>{
-  shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vAlphaWorld;\nvarying vec2 vAlphaPlane;')
+  shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vAlphaWorld;\nvarying vec2 vAlphaPlane;\nvarying vec2 vAlphaLocalUv;')
   shader.fragmentShader=shader.fragmentShader.replace('#include <common>','#include <common>\n'+detailFunctions)
   shader.vertexShader=shader.vertexShader.replace('#include <uv_vertex>',/* glsl */`#include <uv_vertex>
    vec4 ap=vec4(position,1.0);
@@ -186,8 +195,8 @@ export function applyAlphaSurface(mat:THREE.Material,surface:AlphaSurface){
    #endif
    vec3 aw=(modelMatrix*ap).xyz;
    vec2 plane=abs(normal.y)>0.5?aw.xz:vec2(aw.x+aw.z,aw.y);
-   vAlphaWorld=aw;vAlphaPlane=plane;
-   vec2 auv=${surface==='wood'?'plane.yx':'plane'}*${alphaTextureScale(surface).toFixed(3)};
+   vAlphaWorld=aw;vAlphaPlane=plane;vAlphaLocalUv=uv;
+   vec2 auv=${surface==='wood'||surface==='wood_panel'?'plane.yx':'plane'}*${alphaTextureScale(surface).toFixed(3)};
    #ifdef USE_MAP
    vMapUv=auv;
    #endif
@@ -200,5 +209,5 @@ export function applyAlphaSurface(mat:THREE.Material,surface:AlphaSurface){
   shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\n'+finish(surface))
   shader.fragmentShader=shader.fragmentShader.replace('#include <roughnessmap_fragment>',`#include <roughnessmap_fragment>\nroughnessFactor=clamp(max(roughnessFactor,${roughness.toFixed(3)})+alphaWear,0.0,1.0);`)
  }
- mat.customProgramCacheKey=()=> 'alpha-surfaces-v4-'+surface
+ mat.customProgramCacheKey=()=> 'alpha-surfaces-v5-'+surface
 }

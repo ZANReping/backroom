@@ -13,6 +13,9 @@ import type { WarehouseState } from './warehouse'
 import type { AvenueMapMark, Engine, PlayerState } from '../engine'
 import { captureL11, type L11WorldSave } from './l11State'
 import { dullerSafePosition } from './dullerAI'
+import { sittingSafePosition } from './seating'
+import { migrateL11Snapshot, needsL11Migration } from './l11Migration'
+const l11BackupBlockedSeeds=new Set<number>()
 
 // ===== v29a：存档/读档 =====
 // v54 起：各槽位自持全量快照（含 seed/difficulty），继续游戏时凭种子匹配恢复进度。
@@ -83,7 +86,11 @@ export interface SaveSnapshot {
 function migrateLegacy() {
   const raw = storage.get(SAVE_KEY)
   if (raw) {
-    if (!storage.get(SAVE_SLOT_KEYS.slot1)) storage.set(SAVE_SLOT_KEYS.slot1, raw)
+    const target=storage.get(SAVE_SLOT_KEYS.slot1)
+    if (!target) storage.set(SAVE_SLOT_KEYS.slot1, raw)
+    // Quota/privacy failures may be swallowed by the storage adapter. Keep the
+    // only complete legacy snapshot until its exact copy has been read back.
+    if(storage.get(SAVE_SLOT_KEYS.slot1)!==raw)return
     storage.remove(SAVE_KEY)
   }
   storage.remove(LEGACY_SEED_KEY)
@@ -102,7 +109,16 @@ export function readSaveSlot(slot: SaveSlotId): SaveSnapshot | null {
 }
 export function loadSaveSnapshot(slot: SaveSlotId = 'slot1'): SaveSnapshot | null {
   migrateLegacy()
-  return readSaveSlot(slot)
+  const snapshot=readSaveSlot(slot)
+  if(!snapshot||!needsL11Migration(snapshot))return snapshot
+  const key=SAVE_SLOT_KEYS[slot],raw=storage.get(key)!
+  try{
+    const migrated=migrateL11Snapshot(raw,key,storage)
+    // The verified backup is already durable. A failed write leaves the old slot intact.
+    const json=JSON.stringify(migrated);storage.set(key,json)
+    if(storage.get(key)!==json)throw new Error('Level 11 迁移结果写入失败；原快照已完整备份，原槽位未被覆盖。')
+    l11BackupBlockedSeeds.delete(snapshot.seed);return migrated
+  }catch(error){l11BackupBlockedSeeds.add(snapshot.seed);throw error}
 }
 
 export interface SlotInfo { id: SaveSlotId; label: string; auto: boolean; snap: SaveSnapshot | null }
@@ -133,7 +149,7 @@ export function clearRunSlots(eng: Engine) {
 // v29a：当前进度快照（纯 JSON 可序列化）
 export function snapshot(eng: Engine): SaveSnapshot {
   const inf = eng.map?.inf
-  const safe = dullerSafePosition(eng)
+  const safe = dullerSafePosition(eng) ?? sittingSafePosition(eng)
   return {
     v: 1,
     glowProjectiles: captureGlowFlight(eng),
@@ -177,6 +193,7 @@ export function snapshot(eng: Engine): SaveSnapshot {
 }
 /** 立即写盘（暂停/退回主界面写绑定槽；周期与切层自动存档显式传 'auto'；死亡与胜利后不再覆盖存档） */
 export function persist(eng: Engine, slot?: SaveSlotId) {
+  if(l11BackupBlockedSeeds.has(eng.seed))return
   if (!eng.map || eng.player.hp <= 0 || eng.victory) return
   const snap = eng.snapshot()
   snap.savedAt = Date.now()

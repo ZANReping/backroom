@@ -15,7 +15,8 @@ const light = new THREE.PointLight(); root.add(light); remember(light)
 const hiddenLight = new THREE.PointLight(); hiddenLight.visible = false; root.add(hiddenLight); remember(hiddenLight)
 remember(root)
 const calls: Call[] = []
-const renderer = { compileAsync(view: THREE.Object3D, _camera: THREE.Camera, _scene: THREE.Scene) { assert.equal(_camera,camera);assert.equal(_scene,scene);const objects: THREE.Object3D[] = []; view.traverse(o => objects.push(o));const visible:THREE.Object3D[]=[];view.traverseVisible(o=>visible.push(o));assert.deepEqual(visible,objects); let resolve!: () => void, reject!: () => void; const promise = new Promise<void>((res, rej) => { resolve = res; reject = rej }); calls.push({ objects, resolve, reject }); return promise } } as unknown as THREE.WebGLRenderer
+let renderTarget: THREE.WebGLRenderTarget | null = null
+const renderer = { info: { programs: [] }, getRenderTarget() { return renderTarget }, setRenderTarget(target: THREE.WebGLRenderTarget | null) { renderTarget = target }, compileAsync(view: THREE.Object3D, _camera: THREE.Camera, _scene: THREE.Scene) { assert.equal(_camera,camera);assert.equal(_scene,scene);const objects: THREE.Object3D[] = []; view.traverse(o => objects.push(o));const visible:THREE.Object3D[]=[];view.traverseVisible(o=>visible.push(o));assert.deepEqual(visible,objects); let resolve!: () => void, reject!: () => void; const promise = new Promise<void>((res, rej) => { resolve = res; reject = rej }); calls.push({ objects, resolve, reject }); return promise } } as unknown as THREE.WebGLRenderer
 const job = compileSceneJob(renderer, root, camera, scene)
 assert.equal(job.next().done, false)
 while (calls.length < 3) job.next()

@@ -74,6 +74,9 @@ export interface WaterPreset {
 }
 
 export const WATER_PRESETS = {
+  // L11: sheltered urban canal, restrained green-grey absorption and long,
+  // low-amplitude ripples. Masonry banks have no artificial surf/foam strip.
+  canal: { body: '#102a31', sky: '#254961', horizon: '#45636b', absorb: [.84,.46,.38], reflect: .75, slope: .26, scale: .65, swell: .012, sheen: .035, glint: .18, foamWidth: 0, foam: 0, rain: true },
   // L10：清澈、溶氧高、无藻类的低地湖（维基）——近岸几乎透明，深处偏墨绿灰；阴天反射铅灰色天空
   lake: { body: '#1a2a27', sky: '#6f777a', horizon: '#848b8c', absorb: [.62, .30, .26], reflect: .58, slope: .55, scale: 1, swell: .02, sheen: .12, glint: .45, foamWidth: .14, foam: .22, rain: true },
   // L7：阴天灰蓝海
@@ -102,6 +105,7 @@ export function applyWater(mat: THREE.Material, presetName: WaterPresetName, qua
   const P: WaterPreset = WATER_PRESETS[presetName]
   const hi = quality === 'high'
   const sea = presetName === 'sea'
+  const canal = presetName === 'canal'
   mat.transparent = true
   mat.depthWrite = false
   const previousCompile = mat.onBeforeCompile, previousKey = mat.customProgramCacheKey.bind(mat)
@@ -188,7 +192,9 @@ vec2 wRain(vec2 p, float t){
   vec2 p = vWW.xz / ${f(P.scale)};
   float shoreCalm = 0.35 + 0.65 * smoothstep(0.0, 0.8, vWD);
   vec2 g = wGrad(p, uWaterTime, near) * ${f(P.slope)} * (0.6 + uWaterWind * 0.8) * shoreCalm;
-  g += wRipple(vWW.xz, uWaterTime) * (0.3 + 0.7 * near) * (0.5 + uWaterWind);
+  ${canal ? `// Analytic capillary ripples: no noise texture or granular noise normals.
+  g += vec2(.62,.78)*cos(dot(vWW.xz,vec2(4.1,5.2))-uWaterTime*1.4)*.013*near;
+  g += vec2(-.91,.41)*cos(dot(vWW.xz,vec2(-7.3,3.3))+uWaterTime*1.1)*.009*near;` : 'g += wRipple(vWW.xz, uWaterTime) * (0.3 + 0.7 * near) * (0.5 + uWaterWind);'}
   ${hi && P.rain ? 'g += wRain(vWW.xz, uWaterTime) * uWaterRain * near;' : ''}
   ${sea ? `{ vec2 sp = vWW.xz - uWaterOriginF; float s0 = l7Surge(sp); g += vec2(l7Surge(sp + vec2(0.6, 0.0)) - s0, l7Surge(sp + vec2(0.0, 0.6)) - s0) / 0.6; }` : ''}
   gWN = normalize(vec3(-g.x, 1.0, -g.y));
@@ -213,6 +219,7 @@ vec2 wRain(vec2 p, float t){
   // 水体颜色：散射本色（受场景光照调制）
   vec3 bodyC = ${c3(P.body)} * (0.55 + 0.45 * clamp(dot(lit, vec3(0.6)), 0.0, 1.6));
   vec3 col = mix(bodyC, lit, 0.25) * (1.0 - trans) + bodyC * 0.15;
+  ${canal ? 'col = bodyC * (1.0 - trans); // Water absorption is not the brightly lit concrete bed.' : ''}
   float a = 1.0 - trans;
   // 反射
   float refl = clamp(F * 1.25, 0.0, 1.0) * ${f(P.reflect)};

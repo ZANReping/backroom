@@ -5,6 +5,8 @@ import type { LevelDef } from '../core/types'
 import { SKY_PROFILES, rngFrom, smoothstep, D2R } from './skyPixels'
 import { skyTexture } from './skyTextureCache'
 import { SkySystem } from './skySystem'
+import { L11Sky } from './l11Sky'
+import { usesWorldSky } from './skyVisibility'
 export { SKY_PROFILES } from './skyPixels'
 export type { SkyProfile } from './skyPixels'
 export { skyTexture } from './skyTextureCache'
@@ -13,13 +15,16 @@ export { skyTexture } from './skyTextureCache'
  *  被裁剪，与相机等距的球壳交界在视野里形成一个巨大黑色圆盖；改小后由 renderer
  *  每帧把球心移到玩家头顶（大气无视差，跟随即无限天空），任意尺寸地图均不再被裁。 */
 export function makeSkyMesh(_m: GameMap, def: LevelDef): THREE.Mesh | null {
+  if (!usesWorldSky(def.id)) return null
   const prof = SKY_PROFILES[def.id]
   if (!prof) return null
+  if(def.id===11)return new L11Sky(skyLightDir(11)).mesh
   // v65：所有户外层级统一走「天空底色 + 时间切片体积云全景」系统（见 skySystem.ts）。
   const sky = new SkySystem(def.id, skyLightDir(def.id))
   // 环境反射探针仍使用 Worker 预烘的等距柱状天空（静态、低频，足够做 PBR 反射）；
-  // L9~L11 一直使用调色渐变探针，保持不变。
-  if (def.id !== 9 && def.id !== 10 && def.id !== 11) sky.mesh.material && ((sky.mesh.material as THREE.Material).userData.skyTexture = skyTexture(def.id))
+  // L11 glass reflects the same blue daylight palette as its sky, instead of
+  // reflecting a grey wall/floor gradient. L9/L10 keep their existing probes.
+  if (def.id !== 9 && def.id !== 10) sky.mesh.material && ((sky.mesh.material as THREE.Material).userData.skyTexture = skyTexture(def.id))
   return sky.mesh
 }
 

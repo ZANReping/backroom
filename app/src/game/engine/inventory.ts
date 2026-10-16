@@ -231,6 +231,15 @@ function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = f
         }
         break
       }
+      // v79：尸鼠肉——生吃能顶饿（饥饿 +18），但约三成概率染病（疫疾感染 +60、生命 -3）
+      if (s.type === 'ratmeat' && eng.royalAddictT <= 0) {
+        p.hunger = Math.min(100, p.hunger + (def.value ?? 18))
+        if (Math.random() < 0.3) {
+          p.infection = Math.min(500, p.infection + 60); p.hp = Math.max(1, p.hp - 3)
+          eng.msg('嚼到一半胃里就翻江倒海——这块尸鼠肉不干净。你感觉自己要病了。（饥饿 +18 · 生命 -3 · 染病）', 'damage')
+        } else eng.msg('又柴又腥，带着霉味——但总归填了肚子。（饥饿 +18）', 'loot')
+        break
+      }
       // 成瘾期间：其他所有食物均不恢复饥饿（仍被吃掉）
       if (eng.royalAddictT > 0) {
         eng.msg('成瘾发作：其他食物尝起来像灰烬，一点也吃不饱。', 'damage')

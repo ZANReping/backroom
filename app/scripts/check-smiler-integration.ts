@@ -19,7 +19,7 @@ function world(kind: SmilerKind = 'common') {
       elev: new Uint8Array(cells), step: new Uint8Array(cells),
       liquid: new Uint8Array(cells), seaFloor: new Float32Array(cells),
       structures: [], lights: [], exits: [], spawn: { x: 0, y: 0 },
-      entities: [e], items: [], inf: { ox: 0, oy: 0, taken: new Set<number>() }
+      entities: [e], items: [], inf: { ox: 0, oy: 0, taken: new Set<number>(), chunks: new Map() }
     },
     player: { x: 0, y: 0, z: 0, hp: 100, sanity: 100, stamina: 100, slowT: 0 },
     levelDef: { id: 2 }, input: { sprint: false }, dev: {}, projectiles: [], camShake: 0,

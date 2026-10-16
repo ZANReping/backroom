@@ -8,12 +8,12 @@ const check = (ok: unknown, label: string) => { assert.ok(ok, label); checks++ }
 const flush = async () => { for (let i=0;i<12;i++) await Promise.resolve() }
 const geometry = new THREE.BoxGeometry(), material = new THREE.MeshLambertMaterial()
 const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(), queue = new ModelWarmupQueue()
-const calls: {objects: THREE.Object3D[], resolve: () => void, reject: () => void}[] = []
+const calls: {objects: THREE.Object3D[], target: THREE.WebGLRenderTarget | null, resolve: () => void, reject: () => void}[] = []
 let renderTarget: THREE.WebGLRenderTarget | null = null
 const renderer = { info: { programs: [] }, getRenderTarget() { return renderTarget }, setRenderTarget(target: THREE.WebGLRenderTarget | null) { renderTarget = target }, compileAsync(view: THREE.Object3D, c: THREE.Camera, s: THREE.Scene) {
   check(c===camera && s===scene, 'compiler uses the live camera and scene lighting')
   const objects: THREE.Object3D[] = [];view.traverse(o=>objects.push(o))
-  return new Promise<void>((resolve,reject)=>calls.push({objects,resolve,reject:()=>reject(new Error('driver unavailable'))}))
+  return new Promise<void>((resolve,reject)=>calls.push({objects,target:renderTarget,resolve,reject:()=>reject(new Error('driver unavailable'))}))
 } } as unknown as THREE.WebGLRenderer
 const model = () => {
   const root = new THREE.Group();root.visible=false
@@ -55,10 +55,73 @@ try {
   for(const c of calls.slice(before))c.reject()
   await flush();advance(2)
   check(queue.ready(a),'rejected asynchronous compilation permits normal rendering fallback')
+  const hdr = new THREE.WebGLRenderTarget(16,16), hdrNext = new THREE.WebGLRenderTarget(16,16), previousTarget = new THREE.WebGLRenderTarget(8,8)
+  renderTarget=previousTarget
+  let dynamicTarget: THREE.WebGLRenderTarget | null = null, getterReads=0
+  const targetGetter=()=>{getterReads++;return dynamicTarget}
+  const hdrStart=calls.length
+  queue.enqueue(a,renderer,camera,scene,targetGetter)
+  check(dynamicTarget===null,'target is null when the model is queued')
+  dynamicTarget=hdr;advance(3)
+  check(calls.length>hdrStart&&calls.slice(hdrStart).every(c=>c.target===hdr),'queued model compiles against the latest HDR target')
+  check(renderTarget===previousTarget,'HDR compilation restores the previous render target')
+  dynamicTarget=hdrNext;advance(3)
+  check(calls.slice(hdrStart).some(c=>c.target===hdrNext)&&getterReads===calls.length-hdrStart,'target getter is read for every submitted batch')
+  for(const c of calls.slice(hdrStart))c.resolve()
+  await flush();advance(2);hdr.dispose();hdrNext.dispose();previousTarget.dispose()
   const failed = new ModelWarmupQueue(), throwing = { getRenderTarget() { return null }, setRenderTarget(_target: THREE.WebGLRenderTarget | null) {}, compileAsync(){throw new Error('synchronous failure')}} as unknown as THREE.WebGLRenderer
   failed.enqueue(a,throwing,camera,scene);failed.advance()
   assert.throws(()=>failed.advance(),/synchronous failure/);checks++
   check(!a.visible,'synchronous compiler failure restores hidden visibility')
   failed.cancel(a)
 } finally {geometry.dispose();material.dispose()}
+
+// upload=true: compile first, then initialize each unique texture and upload one
+// zero-range mesh batch per frame while preserving the live scene state.
+{
+  const uploadQueue = new ModelWarmupQueue(), uploadScene = new THREE.Scene(), uploadCamera = new THREE.PerspectiveCamera()
+  const shared = new THREE.Texture(), ignored = new THREE.Texture(); (ignored as any).isRenderTargetTexture = true
+  const uploadTarget = new THREE.WebGLRenderTarget(4, 4), initCalls: THREE.Texture[] = [], renders: { objects: THREE.Object3D[]; target: unknown; autoClear: boolean; shadowAuto: boolean }[] = []
+  let activeTarget: unknown = null
+  const shadowMap = { autoUpdate: true, needsUpdate: false }
+  const uploadRenderer = {
+    info: { programs: [] }, autoClear: true, shadowMap,
+    getRenderTarget: () => activeTarget,
+    setRenderTarget: (target: unknown) => { activeTarget = target },
+    compileAsync: () => Promise.resolve(),
+    initTexture: (texture: THREE.Texture) => { initCalls.push(texture) },
+    render: (view: THREE.Scene) => {
+      const objects = [...view.children]
+      renders.push({ objects, target: activeTarget, autoClear: uploadRenderer.autoClear, shadowAuto: shadowMap.autoUpdate })
+      check(objects.every((o) => (o as THREE.Mesh).geometry?.drawRange.count === 0), 'upload render uses zero draw ranges')
+    },
+  } as unknown as THREE.WebGLRenderer
+  const root = new THREE.Group(); root.visible = false
+  const meshes: THREE.Mesh[] = []
+  for (let i = 0; i < 9; i++) {
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshBasicMaterial({ map: i === 8 ? ignored : shared }))
+    mesh.visible = true; root.add(mesh); meshes.push(mesh)
+  }
+  uploadScene.add(root)
+  const originalRanges = meshes.map((m) => m.geometry.drawRange.count), originalParents = meshes.map((m) => m.parent), originalVisible = meshes.map((m) => m.visible)
+  uploadQueue.enqueue(root, uploadRenderer, uploadCamera, uploadScene, uploadTarget, true)
+  const compileBefore = renders.length
+  uploadQueue.advance(); check(initCalls.length === 0 && renders.length === compileBefore, 'compile pending does not initialize textures')
+  for (let i = 0; i < 4; i++) uploadQueue.advance()
+  await Promise.resolve()
+  let guard = 0
+  while (!uploadQueue.ready(root) && guard++ < 30) {
+    const texturesBefore = initCalls.length, batchesBefore = renders.length
+    uploadQueue.advance(); await Promise.resolve()
+    check(initCalls.length - texturesBefore <= 1 && renders.length - batchesBefore <= 1, 'each advance uploads at most one texture or one batch')
+    check(activeTarget === null && uploadRenderer.autoClear && shadowMap.autoUpdate && !shadowMap.needsUpdate, 'each upload step restores renderer state')
+  }
+  check(initCalls.length === 1, 'shared texture initializes exactly once')
+  check(renders.length === 2 && renders.every((r) => r.objects.length <= 8), 'upload uses at most one 8-mesh batch per advance')
+  check(renders.every((r) => r.target === uploadTarget && !r.autoClear && !r.shadowAuto), 'upload render uses target and disabled clearing/shadows')
+  check(!root.visible && meshes.every((m, i) => m.parent === originalParents[i] && m.visible === originalVisible[i] && m.geometry.drawRange.count === originalRanges[i]), 'upload restores hierarchy, visibility, and draw ranges')
+  const beforeCancel = initCalls.length + renders.length; uploadQueue.enqueue(root, uploadRenderer, uploadCamera, uploadScene, uploadTarget, true); uploadQueue.cancel(root); uploadQueue.advance()
+  check(initCalls.length + renders.length === beforeCancel, 'cancelled upload cannot issue more work')
+  shared.dispose(); ignored.dispose(); meshes.forEach((m) => { m.geometry.dispose(); (m.material as THREE.Material).dispose() }); uploadTarget.dispose()
+}
 console.log(JSON.stringify({passed:checks}))

@@ -3,10 +3,12 @@ import { tickL0 } from './l0State'
 import { l0Sample } from '../world/l0Architecture'
 import { stableAt } from './career'
 import { dullerControlsPlayer } from './dullerAI'
+import { clumpControlsPlayer } from './clumpAI'
 import { l1DistanceScale } from '../world/l1Layout'
 // v53：移动/输入积分 + 垂直物理（固定子步积分主段、液体浮沉、跳跃重力、梯子攀爬）——
 // 自 engine.ts step 内联段拆分，逻辑逐语句搬运；updateMovement 返回 null 表示本帧已死亡/终止（原 step 的 return）。
-import { bandOfZ, bandOfPlayerZ, groundHeightAt, structStandTopAt, ceilingHeightAt, floorHeight, liquidSurfaceH, POOL_DEPTH, FLOOR_H } from '../world/mapgen'
+import { bandOfZ, bandOfPlayerZ, groundHeightAt, structStandTopAt, ceilingHeightAt, l11HeadCeilingAt, l11MapWater, floorHeight, liquidSurfaceH, POOL_DEPTH, FLOOR_H } from '../world/mapgen'
+import { L11_WATER_SURFACE } from '../world/l11Hydrology'
 import { integrateMove } from '../core/player'
 import { WALL_H, look } from '../renderer/shared'
 import { levelDefOf, NORMAL_LEVELS } from '../levels'
@@ -16,6 +18,11 @@ import { RemotePlayerViews } from '../renderer/remotePlayers' // v58：联机玩
 import type { Engine } from '../engine'
 import { l8AvenuePortalContact } from '../world/infiniteL8'
 import { makeEntity } from '../entities'
+import { integrateFlight } from '../core/flight'
+import { ratProvoke } from './ratAI'
+import { stepL11Canal } from './l11Canal'
+import { stepL11Shaft } from './l11Exits'
+import { updateSitting } from './seating'
 
 type DiffMult = { dmg: number; drain: number }
 
@@ -24,17 +31,38 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   if (eng.levelDef.id === 7) stepL7Events(eng, dt)
   audio.setDeepPressure(eng.levelDef.id === 7 && eng.submerged ? Math.min(1, Math.max(0, (-eng.player.z - 30) / 170)) : 0, dt)
   const p = eng.player, m = eng.map!
+  const verticalStart=p.z
   // A scripted wall crossing owns position temporarily; gravity must not snap onto a wall/upper floor.
-  if(dullerControlsPlayer(eng))return 0
+  if(dullerControlsPlayer(eng)||clumpControlsPlayer(eng)){eng.seating=null;return 0}
+  if (eng.devEnabled && eng.dev.fly) {
+    eng.seating = null
+    const mag = Math.hypot(eng.input.mx,eng.input.my), divisor = Math.max(1,mag)
+    const speed = (eng.input.sprint ? 6 : 3.4)*(eng.dev.speed ? 1.8 : 1)
+    p.vz = 0; p.crouching = false; eng.stepAcc = 0
+    if (!introLock) integrateFlight(m,p,eng.input.mx/divisor,eng.input.my/divisor,Number(eng.input.jump)-Number(eng.input.crouch),speed,dt,eng.moveIt,WALL_H[eng.levelDef.gen]??3,eng.dev.noclip)
+    p.floor = bandOfPlayerZ(m,p.z,p.x,p.y)
+    if (m.inf) { eng.updateInfiniteWindow(); tickL0(eng,dt) }
+    const current = eng.map!
+    const surface = liquidSurfaceH(current,Math.floor(p.x),Math.floor(p.y))
+    eng.inLiquid = surface !== null && surface !== undefined && p.z < surface ? 1 : 0
+    eng.submerged = eng.inLiquid === 1 && p.z+1.55 < surface!
+    eng.wasSubmerged = eng.submerged
+    if (!eng.submerged) eng.breathT = 0
+    audio.setUnderwater(eng.submerged)
+    eng.noise = Math.max(0,eng.noise-dt*1.2)
+    eng.playerNoiseT = Math.max(0,eng.playerNoiseT-dt)
+    return introLock ? 0 : mag
+  }
   // ---- 移动 ----
-  const mag = Math.hypot(eng.input.mx, eng.input.my)
+  const mag = eng.seating ? 0 : Math.hypot(eng.input.mx, eng.input.my)
   let tileI = Math.floor(p.y) * m.w + Math.floor(p.x)
   const wet = m.wet[tileI] === 1
   // v13：楼层高度带（供 HUD/小地图与碰撞）
   // v56 七轮：band 按实际楼层数钳制——单层图站家具起跳越过 1.5m（BAND_MID）时 bandOfZ 翻到
   // 不存在的「上层带」：groundHeightAt(band=1)=FLOOR_H 会把玩家吸到 3.0m 并卡在天花板上方/
   // 嵌进楼板；钳制后单层恒为 0、双层 ≤1、三层 ≤2
-  const band = bandOfPlayerZ(m, p.z)
+  let canal=eng.levelDef.id===11?l11MapWater(m,p.x,p.y):null
+  const band = canal?0:bandOfPlayerZ(m, p.z,p.x,p.y)
   p.floor = band
   // v54e：带界误吸修复——band 随 z 即时翻转，z 刚过带界（1.5/4.5）但仍在上层板底之下时，
   // band 地面=上层板面（3.0/6.0），贴地跟随会把人直接吸穿楼板（2F 高柜顶/掉落穿 3F 板）。
@@ -47,19 +75,22 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   // v13：液体状态（深水=可沉没游泳；浅水=减速涟漪）
   // v66：L7 水墙内（或刚离开水墙、仍在海面以上下坠）时，无论高度带都按深水处理
   const l7WallLiquid = eng.levelDef.id === 7 && (eng.l7fx.wall || eng.l7fx.wallFall) && m.up[tileI] !== 1 && m.liquid[tileI] === 1
-  const lq = band === 0 || l7WallLiquid ? m.liquid[tileI] : 0
-  if (lq !== eng.inLiquid) {
+  const cityLiquid=()=>canal&&p.z<=canal.surface+.08&&(!canal.bridge||p.z<canal.bridge.bottom-.025)?1:0
+  let lq = eng.levelDef.id===11?cityLiquid():band === 0 || l7WallLiquid ? m.liquid[tileI] : 0
+  const syncLiquid=()=>{if (lq !== eng.inLiquid) {
     if (lq === 1 && eng.inLiquid !== 1) { // 入水扑通（无液/浅水→深水；L7 入口房间浅水洼走出门廊即触发）
       audio.splash()
-      eng.splashParticles(p.x, p.y, 0)
+      eng.splashParticles(p.x, p.y, eng.levelDef.id===11?L11_WATER_SURFACE:0)
       eng.msg('你跌进了水里——冰冷刺骨。', 'system')
     } else if (eng.inLiquid === 1 && lq !== 1) { // 出水
       audio.splash(0.5)
-      eng.splashParticles(p.x, p.y, 0)
+      eng.splashParticles(p.x, p.y, eng.levelDef.id===11?L11_WATER_SURFACE:0)
       eng.breathT = 0
+      if(eng.levelDef.id===11){eng.submerged=false;eng.wasSubmerged=false;audio.setUnderwater(false)}
     }
     eng.inLiquid = lq
-  }
+  }}
+  syncLiquid()
   // v58：L7 门廊舱门异常重力拖拽演出——脚本化把玩家加速拖向落海点（期间锁定移动与垂直物理）
   if (eng.porchDrop) {
     const gd = eng.porchDrop
@@ -173,6 +204,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
     }
   }
   eng.statusMsgT.battery -= dt
+  if (updateSitting(eng, dt)) return 0
   // v13：电梯乘降 / 梯子攀爬进行中：锁定水平移动（垂直由对应逻辑驱动）
   // v51：脚滑漂移量足够时，即使松开方向键也会继续滑动
   const slipDrift = Math.hypot(eng.slipVx, eng.slipVy)
@@ -243,6 +275,9 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
     if(eng.map!==m)return mag
     tileI = Math.floor(p.y) * m.w + Math.floor(p.x)
   }
+  // Water continues beneath roads. Refresh after movement/streaming so crossing
+  // a bridge edge cannot switch a submerged player onto its road-height floor.
+  if(eng.levelDef.id===11){canal=l11MapWater(m,p.x,p.y);lq=cityLiquid();if(canal)p.floor=0;syncLiquid()}
 
   // ---- v13：电梯乘降（交互后轿厢垂直送达另一层）----
   if (eng.ride) {
@@ -288,12 +323,13 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
       tr.data = { ...tr.data, sprung: 1 }
       p.hp -= 5
       p.slowT = Math.max(p.slowT, 1.2)
+      p.flashJamT = Math.max(p.flashJamT, 2) // v79：夹颚上缠着电池线——电弧让手电短暂熄灭
       eng.emit({ kind: 'damage' })
-      audio.hurt()
-      eng.msg('脚踝「咔」地一痛——你踩中了尸鼠设下的陷阱！附近的尸鼠把你当成了猎物。', 'damage')
+      audio.hurt(); audio.spark()
+      eng.msg('脚踝「咔」地一痛，缠在夹子上的电线噼啪炸出火花——你踩中了尸鼠设下的陷阱！附近的尸鼠把你当成了猎物。', 'damage')
       for (const q of m.entities) {
         if (q.dead || q.def.type !== 'corpserat') continue
-        if (Math.hypot(q.x - p.x, q.y - p.y) < 14) { q.provoked = true; q.targetEnt = undefined; q.state = 'chase'; q.stateT = 0 }
+        if (Math.hypot(q.x - p.x, q.y - p.y) < 14) ratProvoke(q)
       }
       if (p.hp <= 0) { eng.die('尸鼠陷阱'); return null }
     }
@@ -301,6 +337,9 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
 
   // ---- v13：梯子攀爬（贴近按住前进即竖直攀爬）----
   if (!eng.ride) eng.updateClimb(dt, mag)
+  // A canal ladder can finish on dry land during this update. Refresh the water
+  // query before swimming physics, otherwise its old surface pulls us back down.
+  if(eng.levelDef.id===11){canal=l11MapWater(m,p.x,p.y);lq=cityLiquid();syncLiquid()}
 
   // ---- v7：垂直（跳跃/重力/高度档贴地）+ v13 深水浮沉 ----
   if (eng.ride || eng.climb || eng.onStairs) {
@@ -312,12 +351,12 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
     const upMax = l7Water ? 5.0 : 2.6
     const sinkMax = l7Water ? -6.5 : -1.5
     const waterG = l7Water ? 7.0 : 5.0
-    const floorZ = m.l7SeaTerrain ? floorHeight(m, p.x, p.y, 0) : -(m.seaFloor?.[tileI] || POOL_DEPTH)
+    const floorZ = canal?.bottom??(m.l7SeaTerrain ? floorHeight(m, p.x, p.y, 0) : -(m.seaFloor?.[tileI] || POOL_DEPTH))
     const fastSwimVertical = wantSprint && l7Swim && mag > 0.1
     // v66：L7 水面上限 = 海面 + 涌浪抬升；位于重力交界区水墙内时上限抬到墙顶（可顺着水墙游上去）
     const l7f = l7Water ? eng.l7fx : null
     const wall = l7f?.wall ?? null
-    const surfZ = 0.1 + (l7f ? Math.max(0, l7f.surgeH) : 0)
+    const surfZ = canal?canal.surface+.1:0.1 + (l7f ? Math.max(0, l7f.surgeH) : 0)
     const ceilZ = wall ? wall.top - 1.7 : surfZ
     if (l7f) {
       if (wall) l7f.wallFall = p.z > surfZ + 0.3
@@ -341,7 +380,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
       // 准星所指方向即完整 3D 方向：水平分量已按 cos(pitch)，垂直分量严格等于 speed·sin(pitch)。
       p.vz = speed * Math.sin(look.pitch)
       eng.rippleT = 0
-    } else if (eng.input.crouch && p.z > floorZ + 0.08) {
+    } else if (eng.input.crouch && p.z > floorZ + (canal?0:0.08)) {
       // 长按下蹲=持续垂直下潜（非冲刺状态）；先清掉残余上浮速度，避免「按下潜却仍在上升」
       if (p.vz > 0) p.vz = 0
       p.vz -= waterG * 1.25 * dt
@@ -352,7 +391,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
       eng.rippleT = 0
       audio.swim()
     } else {
-      // v57r：无任何主动输入=完全中性悬浮。直接清零垂直速度，杜绝残余动量造成的自动上浮/下沉。
+      // Deep canals use the same neutral swimming buoyancy as other water.
       p.vz = 0
     }
     if (!airborne) {
@@ -370,7 +409,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
       p.vz = 0
     }
     // 水下状态：屏气 + 低通滤波 + 气泡
-    const sub = p.z + 1.55 < (wall ? wall.top : l7f ? l7f.surgeH : 0)
+    const sub = p.z + (canal&&p.crouching?1:1.55) < (canal?canal.surface:wall ? wall.top : l7f ? l7f.surgeH : 0)
     if (sub && !eng.wasSubmerged) eng.msg('水没过了头顶——视野变成浑浊的蓝。', 'system')
     eng.submerged = sub
     eng.wasSubmerged = sub
@@ -402,7 +441,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
     } else eng.breathT = Math.max(0, eng.breathT - dt * 3) // 浮出水面快速恢复
   } else {
     // v26：地面高度 = 地形地面 与 可站立结构顶面（桌/床/箱等低矮家具）取高者
-    const g = Math.max(groundHeightAt(m, p.x, p.y, gBand), structStandTopAt(m, p.x, p.y, p.z, gBand))
+    const g = Math.max(groundHeightAt(m, p.x, p.y, gBand,p.z), structStandTopAt(m, p.x, p.y, p.z, gBand))
     if (eng.input.jump && !introLock) {
       eng.input.jump = false
       // 贴地且未蹲伏才能起跳（蹲伏中无法发力）
@@ -432,19 +471,19 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   }
   // v26：天花板碰撞——跳跃/上浮头顶不穿天花板（室外/挑高区按各自顶高；风道底 1.15m）
   if (!eng.ride && !eng.climb) {
-    const ceil = ceilingHeightAt(m, p.x, p.y, WALL_H[eng.levelDef.gen] ?? 3, band)
     const headH = p.crouching ? 0.95 : 1.55
+    const ceil = Math.min(ceilingHeightAt(m,p.x,p.y,WALL_H[eng.levelDef.gen]??3,band),eng.levelDef.id===11?l11HeadCeilingAt(m,p.x,p.y,verticalStart,headH):Infinity)
     let maxZ = ceil - headH
     // v54c：跳跃顶穿楼板修复——band 随 z 即时翻转（越过 1.5/4.5 即按上层取天花），
     // 站家具起跳时 z 过 1.5 后 band 切到 2F、天花判定跳到 3F——人直接穿进 2F 板。
     // 修正：当前格有上层楼板而 z 尚未到达该层地面时，头顶按板底拦截（坡道格由 updateStairs 接管，豁免）
     const ti = Math.floor(p.y) * m.w + Math.floor(p.x)
-    if ((m.stair[ti] & 7) === 0) {
+    if (eng.levelDef.id!==11&&(m.stair[ti] & 7) === 0) {
       if (band >= 1 && m.up[ti] === 1 && p.z < FLOOR_H) maxZ = Math.min(maxZ, FLOOR_H - 0.35 - headH)
       if (band === 2 && m.up2[ti] === 1 && p.z < 2 * FLOOR_H) maxZ = Math.min(maxZ, 2 * FLOOR_H - 0.35 - headH)
     }
     if (p.z > maxZ) {
-      p.z = Math.max(groundHeightAt(m, p.x, p.y, gBand), maxZ) // v54e：gBand——板下不得取上层板面当地面（防吸穿）
+      p.z = Math.max(groundHeightAt(m, p.x, p.y, gBand,verticalStart), maxZ) // v54e：gBand——板下不得取上层板面当地面（防吸穿）
       if (p.vz > 0) p.vz = 0
     }
   }
@@ -473,15 +512,17 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   // 普通层跌到 -4.5m 以下才死亡。L6 的合法地下层地面就在 -5m，不能套用这条规则；
   // L6 地表深坑已在上方完成“切到地下/失败才死亡”的完整分派。
   // 任何合法深水体都由游泳/溺水规则接管；不能把 L8 地下湖等深于 4.5m 的池底误判成虚空坠落。
-  if (!m.hasUnderground && !eng.ride && !eng.climb && p.z < -4.5 && !eng.dev.noclip && m.liquid[tileI] !== 1) { eng.die('坠入深坑', true); return null }
+  if (!m.hasUnderground && !eng.ride && !eng.climb && p.z < -4.5 && !eng.dev.noclip && (eng.levelDef.id===11?cityLiquid()!==1:m.liquid[tileI]!==1)) { eng.die('坠入深坑', true); return null }
   // 离水判定（走出液体格）
-  if (eng.inLiquid !== 0 && m.liquid[tileI] === 0) {
+  if (eng.inLiquid !== 0 && (eng.levelDef.id===11?cityLiquid()===0:m.liquid[tileI] === 0)) {
     eng.inLiquid = 0
     eng.submerged = false
     eng.wasSubmerged = false
     eng.breathT = 0
     audio.setUnderwater(false)
   }
+  stepL11Canal(eng,dt)
+  stepL11Shaft(eng)
   return mag
 }
 /** v57o：水下屏气上限（秒）。L7 海面空气可让人长时屏息；潜水面罩进一步延长。 */
@@ -546,11 +587,19 @@ export function updateClimb(eng: Engine, dt: number, mag: number) {
   if (mag < 0.1) return
   const fx = Math.cos(p.facing), fy = Math.sin(p.facing)
 
+  if(eng.levelDef.id===11)for(const s of m.structures){
+    if(s.kind!=='l11_canal_ladder'||!s.data?.canalAccess)continue
+    const x=s.x+s.w/2,y=s.y+s.h/2,dx=Number(s.data.climbDX),dy=Number(s.data.climbDY),length=Math.hypot(dx,dy)
+    if(eng.inLiquid!==1||p.z<Number(s.data.climbBase)-.1||p.z>Number(s.data.climbTop)||Math.hypot(p.x-x,p.y-y)>1.1||(fx*dx+fy*dy)/length<.35)continue
+    eng.climb={baseX:x-.5,baseY:y-.5,topX:x+dx-.5,topY:y+dy-.5,dir:1,zBase:Number(s.data.climbBase),zTop:Number(s.data.climbTop)}
+    p.x=x;p.y=y;p.vz=0;eng.msg('你抓住岸边的梯子，开始向上攀爬。','system');return
+  }
+
   // 常规攀爬梯（主层 ↔ 上层）
   for (const s of m.structures) {
     if (s.kind !== 'ladder' || !s.data?.climb) continue
     const tx = s.data.tx as number, ty = s.data.ty as number
-    const band = bandOfPlayerZ(m, p.z)
+    const band = bandOfPlayerZ(m, p.z,p.x,p.y)
     if (band === 0) {
       const cx = s.x + 0.5, cy = s.y + 0.5
       const dx = cx - p.x, dy = cy - p.y
@@ -586,7 +635,7 @@ export function updateClimb(eng: Engine, dt: number, mag: number) {
     const baseY = s.y + Number(s.data.baseDY ?? 1)
     const zTop = floorHeight(m, topX + 0.5, topY + 0.5, 1) // v57m：L7 门廊出口位于 2F
     const zBase = Math.max(0.03, liquidSurfaceH(m, baseX, baseY) ?? 0.03)
-    const band = bandOfPlayerZ(m, p.z)
+    const band = bandOfPlayerZ(m, p.z,p.x,p.y)
     if (band === 0 && eng.inLiquid === 1) {
       // 水中：靠近绳底并面朝顶部绳口 → 向上攀
       const cx = baseX + 0.5, cy = baseY + 0.5

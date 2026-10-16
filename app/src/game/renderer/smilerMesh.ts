@@ -6,7 +6,7 @@ import * as THREE from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import type { Entity } from '../entities'
 import type { SmilerKind } from '../entities/smilers'
-import { GREAT_WAIST, SMILER_STOP, greatAttackBend, greatCeilingBend } from '../entities/smilerPose'
+import { GREAT_WAIST, SMILER_STOP, SMILER_STRIKE, smilerStrikePose, greatAttackBend, greatCeilingBend } from '../entities/smilerPose'
 
 const SMILER_TIME = { value: 0 }
 
@@ -133,7 +133,8 @@ export interface SmilerRig {
   waist?: THREE.Group
   head?: THREE.Group
   bend?: number
-  bentGeometry?: { geometry: THREE.BufferGeometry; rest: Float32Array; angle: number }[]
+  bentGeometry?: { geometry: THREE.BufferGeometry; rest: Float32Array; angle: number | string }[]
+  armJoints: { joint: THREE.Object3D; rest: number }[]
 }
 
 export interface SmilerView {
@@ -147,9 +148,9 @@ export interface SmilerView {
 // quantization avoids buffer uploads when the pose has settled. Feet remain planted.
 function bendBody(rig: SmilerRig, bend: number, pitch: number) {
   const angle = Math.round(bend * 100) / 100, tilt = Math.round(pitch * 100) / 100
-  const fx=rig.head!.position.x, fy=rig.mouthY-GREAT_WAIST
+  const fx=rig.head!.position.x, fy=rig.head!.position.y
   const hx=fx*Math.cos(angle)+fy*Math.sin(angle),hy=GREAT_WAIST+fy*Math.cos(angle)-fx*Math.sin(angle)
-  const hc=Math.cos(tilt),hs=Math.sin(tilt),key=angle*10000+tilt*10+fx
+  const hc=Math.cos(tilt),hs=Math.sin(tilt),key=`${angle}:${tilt}:${fx.toFixed(3)}:${fy.toFixed(3)}`
   for (const part of rig.bentGeometry ?? []) {
     if (part.angle === key) continue
     part.angle = key
@@ -159,9 +160,9 @@ function bendBody(rig: SmilerRig, bend: number, pitch: number) {
       const u = THREE.MathUtils.clamp((y - GREAT_WAIST) / .35, 0, 1)
       const a = angle * u * u * (3 - 2 * u), c = Math.cos(a), s = Math.sin(a)
       const bx=x*c+(y-GREAT_WAIST)*s,by=GREAT_WAIST+(y-GREAT_WAIST)*c-x*s
-      const n=THREE.MathUtils.smoothstep(y,1.1,1.45)
+      const n=THREE.MathUtils.smoothstep(y,rig.mouthY-.22,rig.mouthY+.13)
       // The neck counter-rotates with the face, keeping the eyes outside the black body.
-      const nx=hx+(x-fx)*hc-(y-rig.mouthY)*hs,ny=hy+(x-fx)*hs+(y-rig.mouthY)*hc
+      const nx=hx+(x-(rig.kind==='great'?.4:.27))*hc-(y-rig.mouthY)*hs,ny=hy+(x-(rig.kind==='great'?.4:.27))*hs+(y-rig.mouthY)*hc
       pos.setXYZ(i, bx+(nx-bx)*n,by+(ny-by)*n,part.rest[i*3+2])
     }
     pos.needsUpdate = true
@@ -183,10 +184,10 @@ export function buildSmilerMesh(kind: SmilerKind, seed = 0): THREE.Group {
   const gm = glowMat(glowC)
   const mouthMat = new THREE.MeshBasicMaterial({ color: '#000000', transparent: true })
   const face = new THREE.Group()
-  const waist = kind === 'great' ? new THREE.Group() : undefined
+  const waist = kind === 'great' || kind === 'starved' ? new THREE.Group() : undefined
   const head = waist ? new THREE.Group() : undefined
   if (waist) { waist.position.y = GREAT_WAIST; grp.add(waist) }
-  if(head){head.position.set(.36,1.32-GREAT_WAIST,0);waist!.add(head)}
+  if(head){head.position.set(kind==='great'?.36:.23,(kind==='great'?1.32:1.78)-GREAT_WAIST,0);waist!.add(head)}
   const bentGeometry: NonNullable<SmilerRig['bentGeometry']> = []
   const bendable = (mesh: THREE.Mesh) => {
     if (waist) bentGeometry.push({ geometry: mesh.geometry, rest: Float32Array.from(mesh.geometry.getAttribute('position').array), angle: NaN })
@@ -217,7 +218,7 @@ export function buildSmilerMesh(kind: SmilerKind, seed = 0): THREE.Group {
     head.position.set(0.55, 0.72, 0)
     grp.add(head)
     for (const z of [-0.07, 0.07]) { const ear = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.16, 4), fm); ear.position.set(0.5, 0.88, z); ear.rotation.z = 0.35; grp.add(ear) }
-    face.position.set(0.66, 0.68, 0)
+    face.position.set(.82, .74, 0)
     eyes = new THREE.Mesh(eyeGeo([[0.02, 0.11, -0.065], [0.02, 0.11, 0.065]], 0.032), gm)
     upper = new THREE.Mesh(teethRow(9, 0.17, 0.035, 0.05, -1, 'fang', 0.1), gm)
     lower = new THREE.Mesh(teethRow(8, 0.15, 0.03, 0.045, 1, 'fang', 0.09), gm)
@@ -328,8 +329,9 @@ export function buildSmilerMesh(kind: SmilerKind, seed = 0): THREE.Group {
   const rig: SmilerRig = {
     kind, body, face, upper, lower, eyes, limbs,
     bodyMats: [fm, limbMat], glowMats: [gm], glowBase: [gm.color.clone()], float, mouthY,
-    waist, head, bentGeometry, bend: 0,
+    waist, head, bentGeometry, bend: 0, armJoints: [],
   }
+  for(const arm of limbs.slice(0,kind==='canid'?4:2))arm.traverse(joint=>{if(joint!==arm&&joint instanceof THREE.Group)rig.armJoints.push({joint,rest:joint.rotation.z})})
   grp.userData.smilerRig = rig
   grp.userData.smilerKind = kind
   // 冒烟脚本按 Basic 材质质心判正面：眼齿全在 +X 一侧
@@ -343,7 +345,9 @@ export function animateSmiler(grp: THREE.Group, e: Entity, time: number, gz: num
   if (!rig) return
   SMILER_TIME.value = time
   const s = e.sm
+  const strike=smilerStrikePose(s?.strikeAge ?? (e.state==='attack'?SMILER_STRIKE.hitAt:undefined))
   const t = time + e.id * 1.7
+  rig.face.rotation.z=0
   const vis = s?.vis ?? 1, grin = s?.grin ?? 0.15, glow = s?.glow ?? 0.8
   // 可见度（幽影笑魇）：身体先于眼齿消失，留下一点余光
   const bodyA = rig.kind === 'phantom' ? 0.82 * vis : 1
@@ -352,16 +356,17 @@ export function animateSmiler(grp: THREE.Group, e: Entity, time: number, gz: num
   const gA = Math.min(1, Math.max(0, rig.kind === 'phantom' ? vis * 1.2 : 1))
   rig.glowMats.forEach((m, i) => { m.opacity = gA; m.color.copy(rig.glowBase[i]).multiplyScalar(Math.max(0.15, glow * flick)) })
   // 咧嘴：上排抬、下排落、嘴角拉宽
-  const open = grin
+  const attacking=s?.strikeAge!==undefined||e.state==='attack'
+  const open = attacking ? .12+strike.jaw*.88 : grin
   rig.upper.position.y = open * 0.035
-  rig.lower.position.y = -open * (rig.kind === 'great' ? 0.12 : 0.075)
+  rig.lower.position.y = -open * (rig.kind === 'great' ? .13 : rig.kind==='canid'?.13:.11)
   if (rig.kind === 'starved') rig.lower.position.y += Math.sin(t * 38) * 0.006 * (0.4 + open) // 牙齿打颤
   const wide = 1 + open * 0.22
   rig.upper.scale.set(1, 1, wide); rig.lower.scale.set(1, 1, wide)
   const mouth = rig.face.children.find((c) => c.userData.mouth)
   if (mouth) { openMouth(mouth as THREE.Mesh, Math.round((0.3 + open * (rig.kind === 'great' ? 4.2 : 2.8)) * 20) / 20); mouth.scale.set(1, 1, wide); ((mouth as THREE.Mesh).material as THREE.MeshBasicMaterial).opacity = bodyA }
   // 眼：偶尔眨（短暂熄灭）
-  rig.eyes.scale.y = (Math.sin(t * 0.7) > 0.985 ? 0.1 : 1)
+  rig.eyes.scale.y = (!attacking && Math.sin(t * 0.7) > 0.985 ? 0.1 : 1)
   // 身体呼吸 / 翻涌
   const chase = e.state === 'chase' || e.state === 'attack'
   rig.body.scale.set(1 + Math.sin(t * 2.1) * 0.03, 1 + Math.sin(t * 1.7 + 1) * 0.025, 1 + Math.sin(t * 2.4 + 2) * 0.03)
@@ -369,8 +374,12 @@ export function animateSmiler(grp: THREE.Group, e: Entity, time: number, gz: num
   if (rig.kind === 'canid') {
     rig.limbs.slice(0, 4).forEach((L, i) => { L.rotation.z = Math.sin(gait + (i === 0 || i === 3 ? 0 : Math.PI)) * (chase ? 0.6 : 0.35) })
     rig.limbs[4].rotation.y = Math.sin(t * (chase ? 9 : 3)) * 0.35
-    grp.position.y = gz + Math.abs(Math.sin(gait)) * 0.04
-    rig.face.rotation.z = chase ? -0.1 : Math.sin(t * 0.6) * 0.08
+    // Rear up before the bite: the low muzzle enters the standing player's
+    // view during the tell, then the hindquarters drive the actual leap.
+    grp.position.y = gz + Math.abs(Math.sin(gait)) * .04 + strike.thrust*.46 + strike.charge*.18
+    grp.rotation.z = strike.thrust*.23+strike.charge*.32
+    rig.face.rotation.z = strike.thrust*.15+strike.charge*.2+(chase ? -.05 : Math.sin(t * .6) * .08)
+    rig.limbs.slice(0,2).forEach(L=>{L.rotation.z+=strike.thrust*1.0-strike.charge*.35})
   } else {
     // 手臂：悬浮个体缓慢抽搐摆动；饥饿/巨笑魇随步伐拖动
     rig.limbs.forEach((L, i) => {
@@ -379,19 +388,22 @@ export function animateSmiler(grp: THREE.Group, e: Entity, time: number, gz: num
       else L.rotation.z = Math.sin(gait + i * Math.PI) * (chase ? 0.45 : 0.25) - (rig.kind === 'great' ? 0.25 : 0.1)
       void s2
     })
-    if (rig.float > 0) grp.position.y = gz + rig.float + Math.sin(t * 2.2) * 0.1
+    if (rig.float > 0) {
+      const close=view&&chase?1-THREE.MathUtils.smoothstep(view.distance,SMILER_STOP[rig.kind]+.2,SMILER_STOP[rig.kind]+1.5):0
+      grp.position.y = gz + rig.float + Math.sin(t * 2.2) * .1 + (view?Math.max(-.25,Math.min(0,(view.eyeAboveFeet-1.55)*.45))*close:0)
+    }
     else grp.position.y = gz + Math.abs(Math.sin(gait)) * (rig.kind === 'great' ? 0.05 : 0.03)
     // 前倾：追击时上身压低前冲
-    if(rig.head)rig.head.position.x=.36+(chase?.04:0)
+    if(rig.head)rig.head.position.set((rig.kind==='great'?.36:.23)+(chase?.04:0),rig.mouthY-GREAT_WAIST,0)
     else rig.face.position.x = (rig.kind === 'starved' ? 0.23 : 0.32) + (chase ? 0.04 : 0)
-    grp.rotation.z = rig.kind !== 'great' && chase ? -0.12 : 0
+    grp.rotation.z = !rig.waist && chase ? -0.12 : 0
   }
   if (rig.waist) {
     const scale = e.def.scale ?? 1
-    const roofBend = view ? greatCeilingBend(view.headroom, scale) : s?.ceilingBend ?? 0
+    const roofBend = rig.kind==='great' ? (view ? greatCeilingBend(view.headroom, scale) : s?.ceilingBend ?? 0) : 0
     const combat = s && ['stalk', 'pounce', 'flank', 'standoff'].includes(s.phase)
-    const focus = view && combat ? 1 - THREE.MathUtils.smoothstep(view.distance, SMILER_STOP.great + .2, SMILER_STOP.great + 2) : 0
-    const target = Math.max(roofBend, view ? greatAttackBend(view.eyeAboveFeet, scale) * focus : 0)
+    const focus = view && combat ? 1 - THREE.MathUtils.smoothstep(view.distance, SMILER_STOP[rig.kind] + .2, SMILER_STOP[rig.kind] + 2) : 0
+    const target = Math.max(roofBend, view ? greatAttackBend(view.eyeAboveFeet, scale,rig.mouthY,rig.head!.position.x) * focus : 0)
     const damp = 1 - Math.exp(-9 * Math.min(.1, view?.dt ?? 1 / 60))
     // A new roof must be respected on the first frame; standing back up is smoothed.
     const bend = rig.bend = Math.max(roofBend, (rig.bend ?? 0) + (target - (rig.bend ?? 0)) * damp)
@@ -399,6 +411,11 @@ export function animateSmiler(grp: THREE.Group, e: Entity, time: number, gz: num
     rig.body.scale.set(1, 1, 1)
     grp.position.y = gz
     const c = Math.cos(bend), sn = Math.sin(bend)
+    // Lift the neck out of a deep crouch, rather than burying the face near
+    // the floor. The head still aims upward; its swept-back horns clear roofs.
+    const neckRoom=Math.max(0,Math.min(.28,.18+((view?.headroom??Infinity)-2.5)/scale))
+    const lift=rig.kind==='great' ? Math.min(neckRoom,Math.max(0,(view?.eyeAboveFeet??1.55)/scale-.22-(GREAT_WAIST+rig.head!.position.y*c-rig.head!.position.x*sn)))*focus : 0
+    rig.head!.position.x-=lift*sn;rig.head!.position.y+=lift*c
     const fx = rig.head!.position.x, fy = rig.head!.position.y
     const faceX = (fx * c + fy * sn) * scale
     const faceY = (GREAT_WAIST + fy * c - fx * sn + .18) * scale
@@ -408,6 +425,14 @@ export function animateSmiler(grp: THREE.Group, e: Entity, time: number, gz: num
     // Counter-rotate the shoulders partially: arms hang below the bent torso.
     rig.limbs.forEach(L => { L.rotation.z += bend * .7 })
   }
+  // Readable grab/bite: draw the arms back, extend at impact, then settle.
+  // No mesh allocations, extra lights, or camera movement are involved.
+  if(rig.kind!=='canid')rig.limbs.forEach((L,i)=>{
+    L.rotation.z=L.rotation.z*(1-strike.thrust)+1.55*strike.thrust-strike.charge*.45
+    L.rotation.x=(i?1:-1)*(rig.kind==='great'?.55:.32)*(1-strike.thrust*.8)
+  })
+  for(const {joint,rest} of rig.armJoints)joint.rotation.z=rest*(1-strike.thrust*.88)
+  rig.face.rotation.z+=(strike.charge*.1-strike.thrust*.06)
   // 面部轻微歪头（对峙时缓慢倾斜，更瘆人）
   if (s?.phase === 'standoff') rig.face.rotation.x = Math.sin(t * 0.5) * 0.25
   else rig.face.rotation.x *= 0.9

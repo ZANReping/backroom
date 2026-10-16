@@ -1,5 +1,6 @@
 import type { NpcDef, DialogueNode } from './npcs'
 import type { AvatarCfg } from '../core/avatar'
+import {ALPHA_DUTIES} from './alphaDuties'
 
 // Canon identities are credited in ALPHA-COMMUNITY.md. All local scenes and dialogue are game writing.
 type Talk=[question:string,answer:string]
@@ -89,14 +90,7 @@ export const ALPHA_PEOPLE:Record<string,NpcDef>={
 }
 
 /** Public anchors deliberately sit beside activity pockets, away from doorway sweeps. */
-export const ALPHA_COMMUNITY_STAFF=[
- {id:'alpha_linqiao',x:56.9,y:13.2},{id:'alpha_melody',x:63.2,y:10.5},{id:'alpha_xuhe',x:37,y:105},
- {id:'alpha_sanya',x:46.7,y:105.2},{id:'alpha_zhouyan',x:22.1,y:44},{id:'alpha_mara',x:121.9,y:24.5},
- {id:'alpha_liangsui',x:86,y:71.6},{id:'alpha_nora',x:40,y:102.7},{id:'alpha_faith',x:53,y:104.6},
- {id:'alpha_qiaoan',x:117,y:79.5},{id:'alpha_amir',x:136.8,y:68.6},{id:'alpha_sulan',x:67,y:105},
- {id:'alpha_chenshu',x:65.7,y:56.1},{id:'alpha_audrey',x:60,y:105},{id:'alpha_luowen',x:96.5,y:44.5},
- {id:'alpha_aida',x:72,y:109},{id:'alpha_cuiyue',x:90.7,y:125},{id:'alpha_milo',x:23,y:86.8},
-] as const
+export const ALPHA_COMMUNITY_STAFF=Object.keys(ALPHA_PEOPLE).map(id=>({id,x:ALPHA_DUTIES[id].x,y:ALPHA_DUTIES[id].y}))
 
 // Preserve stable IDs, trading/warehouse/medical fields and service links when enriching old contacts.
 export const ALPHA_REVISIONS:Record<string,Partial<NpcDef>>={

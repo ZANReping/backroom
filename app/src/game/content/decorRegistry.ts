@@ -18,6 +18,7 @@ import { L5_DECOR_DEFS } from './l5Decor'
 import { ALPHA_DEFS } from './alphaDecor'
 import { ADMIN_NAMES } from './alphaAdminDecor'
 import { COMMUNITY_NAMES } from './alphaCommunityDecor'
+import { L11_DECOR_DEFS } from './l11Decor'
 
 export type DecorCategory = 'solid' | 'nonsolid' | 'decal'
 
@@ -58,6 +59,7 @@ const RAW: RawEntry[] = [
   ...L5_DECOR_DEFS.map(d => S(d.id, d.name, d.solid ? 'solid' : 'nonsolid', ['L5'], `L5 可复用静态装饰；默认尺寸 ${d.w}×${d.d}×${d.height}，模型与材质参考 renderer/l5Meshes.ts；data.l5=1；不参与交互`)),
   ...ALPHA_DEFS.map(d => S(d.id, d.name, d.solid ? 'solid' : 'nonsolid', ['据点101'], `Alpha 基地可复用静态装饰；默认尺寸 ${d.w}×${d.d}×${d.height}，${d.id in COMMUNITY_NAMES ? '社区走廊模型来自 content/alphaCommunityDecor.ts' : d.id in ADMIN_NAMES ? '行政署模型来自 content/alphaAdminDecor.ts' : (d.id.startsWith('alpha_archive') || d.id === 'alpha_tech_bench') ? '档案署模型来自 content/alphaArchiveDecor.ts' : '模型与碰撞来自 content/alphaDecor.ts'}；默认无交互，${d.id === 'alpha_archive_reader' ? 'data.facility=1 时承接档案查询业务' : 'data.facility=1 时承接现场业务'}；始终非容器`)),
   ...TRADE_DEFS.map(d=>S(d.id,d.name,d.solid?'solid':'nonsolid',d.id==='trade_terminal'?['据点102','L3']:['据点102'],'可复用贸易构件；模型、碰撞、尺寸与参数见 tradeDecor；静态货物不进入搜刮表')),
+  ...L11_DECOR_DEFS.map(d => S(d.id, d.name, d.solid ? 'solid' : 'nonsolid', ['L11'], `Level 11 ${d.category} 装饰；默认尺寸 ${d.w}×${d.d}×${d.height}，放置条件：${d.placement.join('、')}；正面 -Z${d.wallBack?'，背面靠墙、正面朝室内':''}${d.mount?`，安装高度 ${d.mount}m`:''}；模型与碰撞由 L11 装饰流程提供；无交互、非容器`)),
   S('settlementstation','据点服务锚点','nonsolid',['据点102','据点103','据点104'],'服务数据，商人之家附着于注册柜台；Alpha 改由实际家具的 data.facility 承接'),
   // ===== 通用 / L0–L5 =====
   S('pillar', '柱子', 'solid', ['L0', 'L1', 'L5', '据点101'], 'infinite L0 柱厅/迷宫、infiniteL1、infiniteL5 主厅红木柱、Alpha 基地；有限 garage 柱网为死代码'),
@@ -278,6 +280,7 @@ const RAW: RawEntry[] = [
   S('manifold', '蒸汽集箱', 'solid', ['L3', 'L5'], 'infiniteL3 锅炉房、infiniteL5 锅炉房集汽包'),
   S('piperack', '有序管架', 'solid', ['L3', 'L5'], 'infiniteL3 锅炉房、infiniteL5 维修大厅/锅炉房管道丛林'),
   S('cabletray', '穿孔电缆桥架', 'nonsolid', ['L3', 'L5'], 'infiniteL3 顺墙高位、infiniteL5 维修大厅'),
+  S('ratcorpse', '尸鼠尸体', 'nonsolid', ['L2'], 'infiniteL2 ~55% chunk 贴墙/管道边 1~3 具（v79：尸身比活鼠更常见）'),
   S('rattrap', '尸鼠陷阱', 'nonsolid', ['L3'], 'infiniteL3 ~9% chunk 地面；踩上触发（data.sprung），v53 高智能尸鼠'),
   S('bigpainting', '大幅画作', 'nonsolid', ['L3'], 'infiniteL3 ~25% chunk 廊道砖墙；data.tex/pw/ph 自定义贴图与尺寸，放置前校验墙面连续且足够大（v53 艺术品）'),
   S('stainedglass', '彩色玻璃花窗', 'nonsolid', ['L3'], 'infiniteL3 圣所内腔墙 2~4 扇；data.tex/pw/ph 自定义，跨度校验同大幅画作（v53b）'),

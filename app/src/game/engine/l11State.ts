@@ -1,15 +1,16 @@
 import type { Engine } from '../engine'
 import type { ChunkDynState, InfiniteState } from '../world/infinite'
+import { snapshotChunkState } from '../world/infinite'
 import { l11Anchors } from '../world/l11Layout'
 import { genL11ChunkRaw } from '../world/l11Raw'
 import { L11 } from '../levels/l11'
 export function l11MapMarks(eng:Engine) {
   if(eng.player.level!==11||!eng.map?.inf)return []
-  const anchors=l11Anchors(eng.map.inf.seed),labels={capital:'首都',timesquare:'新时代广场',beta:'M.E.G. Beta'}
-  return (['capital','timesquare','beta'] as const).filter(k=>eng.l11World?.marks.includes(k)).map(k=>({...anchors[k],name:labels[k]}))
+  const anchors=l11Anchors(eng.map.inf.seed),labels={archive:'公共档案馆',metro:'地铁步行站',L9:'Level 9 回程公路',L10:'Level 10 乡间小路'}
+  return (['archive','metro','L9','L10'] as const).filter(k=>eng.l11World?.marks.includes(k)).map(k=>({...anchors[k],name:labels[k]}))
 }
 export interface L11WorldSave {
-  version:1; seed:number
+  version:2; seed:number
   chunks:[string,ChunkDynState][]
   explored:[string,number[]][]
   taken:number[]
@@ -17,6 +18,8 @@ export interface L11WorldSave {
   unloaded:Record<string,number>
   marks:string[]
   containers?: InfiniteState['cityContainers']
+  /** Six tapes have been submitted and the physical seals removed. */
+  archiveUnlocked?:boolean
 }
 export function captureL11(eng:Engine):L11WorldSave|undefined {
   const inf=eng.map?.inf
@@ -28,7 +31,7 @@ export function captureL11(eng:Engine):L11WorldSave|undefined {
       (inf.cityContainers??={})[`${c.key}:${s.data.sid}`]={items:[...s.data.lootItems],looted:s.looted,searched:!!s.data.searched}
     }
     state.set(c.key,{
-    structs:c.structures.filter(s=>typeof s.data?.sid==='number').map(s=>({sid:Number(s.data!.sid),looted:s.looted,data:s.data?{...s.data}:undefined})),
+    ...snapshotChunkState(eng.map!,c),
     // Live map lists include drops placed since the last window shift; chunk lists can be stale.
     extraItems:eng.map!.items.filter(i=>i.id<0x200000&&belongs(i)&&!inf.taken.has(i.id)).map(i=>({...i,x:i.x+inf.ox,y:i.y+inf.oy})),
     extraLights:eng.map!.lights.filter(l=>!l.gen&&belongs(l)).map(l=>({...l,x:l.x+inf.ox,y:l.y+inf.oy})),exitDisc:c.exits.some(e=>e.discovered),
@@ -39,11 +42,11 @@ export function captureL11(eng:Engine):L11WorldSave|undefined {
     for(let y=0;y<32;y++)for(let x=0;x<32;x++)bits[y*32+x]=eng.explored[(y+y0)*eng.map!.w+x+x0]??0
     explored.set(c.key,bits)
   }
-  return {version:1,seed:inf.seed,chunks:[...state].slice(-600),explored:[...explored].slice(-600).map(([k,v])=>[k,Array.from(v)]),taken:[...inf.taken],revisions:{...inf.cityRevisions},unloaded:{...inf.cityUnloaded},containers:structuredClone(inf.cityContainers??{}),marks:eng.l11World?.marks??[]}
+  return {version:2,seed:inf.seed,chunks:[...state].slice(-600),explored:[...explored].slice(-600).map(([k,v])=>[k,Array.from(v)]),taken:[...inf.taken],revisions:{...inf.cityRevisions},unloaded:{...inf.cityUnloaded},containers:structuredClone(inf.cityContainers??{}),marks:eng.l11World?.marks??[],archiveUnlocked:eng.l11World?.archiveUnlocked??false}
 }
 export function restoreL11(eng:Engine) {
   const inf=eng.map?.inf,saved=eng.l11World
-  if(!inf||!saved||saved.seed!==inf.seed)return
+  if(!inf||!saved||saved.version!==2||saved.seed!==inf.seed)return
   inf.state=new Map(saved.chunks??[]);inf.taken=new Set(saved.taken??[])
   inf.explored=new Map((saved.explored??[]).map(([k,v])=>[k,new Uint8Array(v)]))
   inf.cityRevisions={...saved.revisions};inf.cityUnloaded={...saved.unloaded}

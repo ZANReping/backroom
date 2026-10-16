@@ -97,9 +97,10 @@ export const SKY_PROFILES: Record<number, SkyProfile> = {
     sunLight: 0.72, sunColor: '#f1eadb',
   },
   11: {
-    zenith: '#9aa3a7', zenithMid: '#a9b0b2', horizon: '#bec2bf', haze: '#a1aaac',
-    clouds: { density: 0.93, color: '#d5d8d5', alpha: 0.75, cirrus: 0.15, overcast: 1 },
-    sunLight: .72, sunColor: '#e8e9e1',
+    zenith: '#5488b9', zenithMid: '#8eb1ce', horizon: '#d4dfdf', haze: '#bccfd8',
+    clouds: { density: .4, color: '#f2f1e9', alpha: .58, cirrus: .12, overcast: .12 },
+    sun: { az: 285, elv: 48, size: 3, color: '#fff9e9', glow: '#eee4cd' },
+    sunLight: 3.35, sunColor: '#fff5e8',
   },
 }
 

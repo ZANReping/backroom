@@ -14,7 +14,7 @@ export interface AvatarCfg {
   pantsStyle: number // 裤子款式：0 长裤 1 短裤 2 工装裤 3 牛仔裤 4 运动裤 5 阔腿裤
   face: number // 表情：0 平静 1 微笑 2 严肃 3 困倦
   glasses: number // 眼镜：0 无 1 圆框 2 方框 3 墨镜
-  beard: number // 胡须：0 无 1 山羊胡 2 络腮胡
+  beard: number // 胡须：0 无 1 山羊胡 2 络腮胡 3 胡茬 4 八字胡 5 连鬓胡 6 下颌胡 7 长须 8 铅笔胡
   shoes: number // 鞋子：0 便鞋 1 运动鞋 2 皮靴
 }
 
@@ -29,7 +29,7 @@ export const PANTS_STYLE_NAMES = ['长裤', '短裤', '工装裤', '牛仔裤', 
 export const PANTS_OPTIONS = ['#2a2d33', '#3a352e', '#2e3a4a', '#4a4a42', '#5c5244']
 export const FACE_NAMES = ['平静', '微笑', '严肃', '困倦']
 export const GLASSES_NAMES = ['无', '圆框', '方框', '墨镜']
-export const BEARD_NAMES = ['无', '山羊胡', '络腮胡']
+export const BEARD_NAMES = ['无', '山羊胡', '络腮胡', '胡茬', '八字胡', '连鬓胡', '下颌胡', '长须', '铅笔胡']
 export const SHOE_NAMES = ['便鞋', '运动鞋', '皮靴']
 
 export const DEFAULT_AVATAR: AvatarCfg = {

@@ -5,6 +5,7 @@ import type { L1ArchitectureData } from './l1BuildingTypes'
 
 // chunk 原始生成数据（世界坐标内容；纯函数：同种子同坐标必一致）
 export interface GenChunk {
+  l11?: import('./l11Types').L11ChunkData
   l0?: import('./l0Architecture').L0Layout
   l1?: L1ArchitectureData
   variant: string // 变体 id（L0=maze/pillars/… L1=aisle/parking/…）
@@ -36,7 +37,8 @@ export interface GenChunk {
   // v44：scale=实例级体型缩放（L2 温顺死亡飞蛾 0.6）——instantiate 一并浅拷贝带入 def
   entities: {
     type: string; x: number; y: number; z?: number; calm?: boolean; scale?: number; facing?: number
-    hostile?: 1; tool?: 1; l3face?: 1; human?: 1; capybara?: 1
+    l11Home?: import('./l11FacelingTypes').L11FacelingHome
+    hostile?: 1; tool?: 1; l3face?: 1; human?: 1; capybara?: 1; l3clump?: 1
     ceilingCrawler?: 1
     arachnidMorph?: 'spider' | 'scorpion' | 'tick' | 'mite'
     arachnidBreed?: number

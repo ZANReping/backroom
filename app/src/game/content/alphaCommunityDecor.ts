@@ -1,5 +1,6 @@
 import type { Structure } from '../core/types'
 import type { AlphaPart, AlphaPanel, AlphaSurface } from './alphaDecor'
+import { alphaCupParts } from './alphaVessels'
 
 /** Shared corridor furniture; authored parts also define the walking collision. */
 export const COMMUNITY_NAMES={
@@ -13,7 +14,7 @@ export function communityParts(s:Structure):AlphaPart[]{
  const B=(x:number,y:number,zz:number,ww:number,dd:number,h:number,surface:AlphaSurface='paint',color='#c4c2ad',solid=false,shape?:AlphaPart['shape'],panel?:AlphaPanel,text?:string)=>{if(ww>0&&dd>0&&h>0)a.push({x,y,z:z+zz,w:ww,d:dd,h,surface,color,solid,shape,panel,text})}
  const label=(text:string,x:number,y:number,zz:number,ww:number,hh:number)=>B(x,y,zz,ww,.008,hh,'paint','#e4debf',false,undefined,'label',text)
  const legs=(h:number)=>{for(const x of [.06,w-.1])for(const y of [.06,d-.1])B(x,y,0,.04,.04,h,'metal','#626b65',true)}
- const cup=(x:number,y:number,zz:number,c:string)=>{B(x,y,zz,.10,.10,.11,'paint',c,false,'rod');B(x+.08,y+.03,zz+.025,.045,.025,.06,'paint',c,false,'round');B(x+.012,y+.012,zz+.109,.076,.076,.003,'paint','#534531',false,'rod')}
+ const cup=(x:number,y:number,zz:number,c:string)=>{a.push(...alphaCupParts(x,y,z+zz,.10,.11,c))}
  switch(s.kind){
  case 'alpha_postbox':
   B(0,0,0,w,d,H,'cabinet_metal','#6c877d',true)

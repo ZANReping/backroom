@@ -3,8 +3,9 @@
 // 主游戏画面上下文被挤掉（视角变纯色、无法行动）；配饰与游戏内走同一 npcGear 通道。
 import * as THREE from 'three'
 import type { AvatarCfg } from '@/game/core/avatar'
-import { buildPlayerModel } from '@/game/renderer/playerModel'
-import { applyNpcGear } from '@/game/renderer/npcGear'
+import { buildCharacterModel } from '@/game/renderer/characterModel'
+import { retroModelReady } from '@/game/renderer/retroAvatar'
+import { disposeCharacterModel } from '@/game/renderer/retroResources'
 import { buildNpcEntityPreview } from '@/game/renderer/npcEntityPreview'
 import type { NpcDef } from '@/game/content/npcs'
 
@@ -39,34 +40,19 @@ export function npcPortrait(cfg: AvatarCfg, npcId?: string, npcDef?: NpcDef, siz
   rim.position.set(-2, 1.4, -1.6)
   scene.add(rim)
   const entityPreview = buildNpcEntityPreview(npcId)
-  const model = entityPreview ?? buildPlayerModel(cfg)
-  // NPC 档案：BRC 黑影摘脸 / 制服徽章 + 标志性配饰（与游戏内 renderer 同一约定）
-  if (npcId && !entityPreview) {
-    if (npcDef?.faction === 'brc') {
-      const hd = (model.userData.parts as Record<string, THREE.Object3D>).head
-      const faceParts: THREE.Object3D[] = []
-      hd?.traverse((o) => { if (o.userData.face) faceParts.push(o) })
-      for (const f of faceParts) f.parent?.remove(f)
-    } else if (npcDef?.uniform?.badge) {
-      const badge = new THREE.Mesh(
-        new THREE.BoxGeometry(0.07, 0.09, 0.015),
-        new THREE.MeshLambertMaterial({ color: npcDef.uniform.badge }),
-      )
-      badge.position.set(-0.1, 1.2, 0.125)
-      model.add(badge)
-    }
-    applyNpcGear(model.userData.parts as Record<string, THREE.Object3D>, npcId, npcDef)
-  }
+  // v68：复古人物模型（与游戏内同一工厂：专属/通用形象、BRC 无脸、徽章、配饰换算）
+  const model = entityPreview ?? buildCharacterModel(cfg, { npcId, npcDef })
+  ;(model.userData.retroUpdate as ((t: number) => void) | undefined)?.(0)
   scene.add(model)
   model.rotation.y = framing === 'identity' ? 0 : 0.45 // 证件照正面；常规档案微侧以展示配饰
   renderer.render(scene, cam)
   const url = renderer.domElement.toDataURL('image/png')
   scene.remove(model)
-  model.traverse((o) => {
-    const m = o as THREE.Mesh
-    if (m.geometry) m.geometry.dispose()
-    if (m.material) for (const mat of Array.isArray(m.material) ? m.material : [m.material]) mat.dispose()
-  })
-  cache.set(key, url)
+  disposeCharacterModel(model)
+  // 贴图池还没到位（启动后贴图仍在下载）：这一帧不缓存，下次调用重新渲染
+  if (retroModelReady(model)) {
+    if (cache.size >= 96) cache.delete(cache.keys().next().value!)
+    cache.set(key, url)
+  }
   return url
 }

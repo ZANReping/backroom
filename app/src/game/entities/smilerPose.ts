@@ -1,7 +1,21 @@
 import type { SmilerKind } from './smilers'
 
-/** Centre distances include the muzzle / forward reach of the bent giant. */
-export const SMILER_STOP: Record<SmilerKind, number> = { common: 1.9, phantom: 1.8, starved: 2.7, canid: 2.5, great: 3.4 }
+/** Centre spacing: the face stays outside the camera while limbs close the gap. */
+export const SMILER_STOP: Record<SmilerKind, number> = { common: 1.45, phantom: 1.4, starved: 1.95, canid: 1.7, great: 2.7 }
+export const SMILER_STRIKE = { windup: .28, swing: .14, recovery: .32, hitAt: .38, duration: .74 }
+/** The damage boundary is deliberately almost the same as the approach stop. */
+export const smilerReach = (kind: SmilerKind) => SMILER_STOP[kind] + .12
+export function smilerStrikePose(age?: number) {
+  if (age === undefined || age < 0 || age >= SMILER_STRIKE.duration) return { charge: 0, thrust: 0, jaw: 0 }
+  const ease = (t: number) => { t = Math.max(0, Math.min(1, t)); return t*t*(3-2*t) }
+  if (age < SMILER_STRIKE.windup) { const charge=ease(age/SMILER_STRIKE.windup);return {charge,thrust:0,jaw:charge} }
+  if (age < SMILER_STRIKE.windup+SMILER_STRIKE.swing) {
+    const thrust=ease((age-SMILER_STRIKE.windup)/SMILER_STRIKE.swing)
+    return {charge:1-thrust,thrust,jaw:1-.85*ease((age-SMILER_STRIKE.hitAt+.015)/.05)}
+  }
+  const rest=1-ease((age-SMILER_STRIKE.windup-SMILER_STRIKE.swing)/SMILER_STRIKE.recovery)
+  return {charge:0,thrust:rest,jaw:.15*rest}
+}
 export const GREAT_WAIST = .72
 export const GREAT_MAX_BEND = 1.48
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v))
@@ -20,12 +34,12 @@ export function greatCeilingBend(headroom: number, scale: number) {
   }
   return hi
 }
-export function greatAttackBend(eyeAboveFeet: number, scale: number) {
+export function greatAttackBend(eyeAboveFeet: number, scale: number, mouthHeight = 1.32, forward = .4) {
   const mouthY = eyeAboveFeet / scale - .18
   let lo = .35, hi = GREAT_MAX_BEND
   for (let i = 0; i < 12; i++) {
     const mid = (lo + hi) / 2
-    const y = GREAT_WAIST + (1.32 - GREAT_WAIST) * Math.cos(mid) - .4 * Math.sin(mid)
+    const y = GREAT_WAIST + (mouthHeight - GREAT_WAIST) * Math.cos(mid) - forward * Math.sin(mid)
     if (y > mouthY) lo = mid
     else hi = mid
   }

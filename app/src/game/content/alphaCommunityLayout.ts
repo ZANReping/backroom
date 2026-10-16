@@ -9,7 +9,7 @@ export function alphaCommunityLayout():Structure[]{
   out.push({kind,x,y,w:d.w,h:d.d,solid:d.solid,data:{height:d.height,community:area,...data}})
  }
  const face=(kind:AlphaKind,cx:number,cy:number,deg:number,area:string,data:Structure['data']={})=>{const d=ALPHA_DEFS.find(d=>d.id===kind)!;put(kind,cx-d.w/2,cy-d.d/2,area,{...data,deg})}
- const board=(cx:number,cy:number,deg:number,area:string,label:string,stand=false)=>face('alpha_community_board',cx,cy,deg,area,{z:stand?.85:1.12,label,stand:stand?1:0})
+ const board=(cx:number,cy:number,deg:number,area:string,label:string,stand=false)=>face('alpha_community_board',cx,cy,deg,area,{z:stand?.85:1.22,label,stand:stand?1:0})
  const planter=(x:number,y:number,area:string)=>put('alpha_planter',x,y,area)
 
  // Arrival: familiar objects at wall edges, well clear of the three return gates and inner doors.
@@ -28,13 +28,13 @@ export function alphaCommunityLayout():Structure[]{
  // Four-metre expedition spine: modest tea and resting pockets against the west wall.
  face('alpha_tea_cart',20.42,37,90,'expedition_rest')
  face('alpha_recycling',20.35,47.1,90,'expedition_rest')
- board(20.04,57.6,90,'expedition_rest','换班以后|梁穗：晚班餐已经留好|夜莺的杯子请勿拿走|请写清借走的工具|今天也记得报平安')
+ board(20.04,59.55,90,'expedition_rest','换班以后|梁穗：晚班餐已经留好|夜莺的杯子请勿拿走|请写清借走的工具|今天也记得报平安')
  face('alpha_swap_shelf',52.9,24.4,0,'expedition_rest')
 
  // Narrow linking corridors receive shallow wall details, never freestanding furniture.
  board(63,55.06,0,'archive_link','记录之外|奥黛：口述记录可以撤回|陈述：报修请抄下错误原文|遇到矛盾先保留两份记录|私人信件不作公开资料')
- board(91.5,55.06,0,'research_link','研究署交接|洛文：不知道就写未知|样本切勿在走廊打开|培养记录请送交接台|手套留在工作区')
- for(const [x,y,deg] of [[55.92,26,270],[101.1,14,90],[118.08,50,90]] as const)face('alpha_home_frame',x,y,deg,'link_gallery',{z:1.25})
+ board(93,54.06,0,'research_link','研究署交接|洛文：不知道就写未知|样本切勿在走廊打开|培养记录请送交接台|手套留在工作区')
+ for(const [x,y,deg] of [[55.92,26,270],[101.1,14,90],[117.08,50,90]] as const)face('alpha_home_frame',x,y,deg,'link_gallery',{z:1.25})
 
  // Resident hall pockets, fitted between doors rather than in front of them.
  face('alpha_tea_cart',121.45,30.8,90,'anemoia_corner')

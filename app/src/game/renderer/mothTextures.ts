@@ -4,10 +4,21 @@ import { makeCanvasCtx, toTex } from './shared'
 let cached: { wing: THREE.Texture; skin: THREE.Texture; relief: THREE.Texture; facets: THREE.Texture } | undefined
 /** Deterministic painted scale layers: cached for the entire colony. */
 export function mothTextures() {
-  if (cached) return cached
+  const job = prepareMothTextures()
+  let step = job.next()
+  while (!step.done) step = job.next()
+  return cached!
+}
+export const mothTexturesReady = () => !!cached
+/** Pixel-identical painting, spread over small row batches for live encounters. */
+export function* prepareMothTextures(): Generator<void, void> {
+  if (cached) return
+  const owned: THREE.Texture[] = []
+  try {
   const n = 512, [c, ctx] = makeCanvasCtx(n, n), pixels = ctx.createImageData(n, n)
   const noise = (x: number, y: number) => ((Math.imul(x + 17, 73856093) ^ Math.imul(y + 51, 19349663)) >>> 0) % 1021 / 1021
   for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+    if (x === 0 && y % 8 === 0) yield
     const u = x / n, v = y / n, band = u + Math.sin(v * 8) * .055 + Math.sin(v * 29) * .011
     const scales = noise(x >> 1, y >> 1) * .18 + Math.sin(y * 2.2 + x * .31) * .045
     const stripe = Math.exp(-Math.pow((band - .68) / .043, 2)) * .34 + Math.exp(-Math.pow((band - .37) / .022, 2)) * .17
@@ -32,9 +43,11 @@ export function mothTextures() {
   ctx.fillStyle = '#58492f'; ctx.beginPath(); ctx.ellipse(280, 260, 15, 24, -.4, 0, Math.PI * 2); ctx.fill()
   ctx.strokeStyle = '#d6c08a'; ctx.lineWidth = 3; ctx.stroke()
   const wing = toTex(c); wing.anisotropy = 4
+  owned.push(wing)
   const [sc, sx] = makeCanvasCtx(256, 256), [bc, bx] = makeCanvasCtx(256, 256)
   const skinData = sx.createImageData(256, 256), bumpData = bx.createImageData(256, 256)
   for (let y = 0; y < 256; y++) for (let x = 0; x < 256; x++) {
+    if (x === 0 && y % 8 === 0) yield
     const i = (y * 256 + x) * 4, grit = noise(x, y), mottling = noise(x >> 3, y >> 3)
     const ridge = Math.pow(.5 + .5 * Math.sin(y * .31 + Math.sin(x * .09)), 8)
     const k = .63 + grit * .22 + mottling * .15 - ridge * .13
@@ -43,9 +56,11 @@ export function mothTextures() {
   }
   sx.putImageData(skinData, 0, 0); bx.putImageData(bumpData, 0, 0)
   const skin = toTex(sc), relief = toTex(bc); relief.colorSpace = THREE.NoColorSpace
+  owned.push(skin, relief)
   const [ec, ex] = makeCanvasCtx(128, 128)
   ex.fillStyle = '#424242'; ex.fillRect(0, 0, 128, 128)
   for (let row = -1; row < 22; row++) for (let col = -1; col < 19; col++) {
+    if (col === -1 && row % 4 === 0) yield
     const x = col * 7.2 + (row % 2) * 3.6, y = row * 6.2
     const gradient = ex.createRadialGradient(x - .5, y - .5, 0, x, y, 3.4)
     gradient.addColorStop(0, '#cccccc'); gradient.addColorStop(1, '#646464')
@@ -54,5 +69,8 @@ export function mothTextures() {
     ex.closePath(); ex.fill()
   }
   const facets = toTex(ec); facets.colorSpace = THREE.NoColorSpace
-  cached = { wing, skin, relief, facets }; return cached
+  owned.push(facets)
+  for (const texture of owned) texture.userData.entityShared = true
+  cached = { wing, skin, relief, facets }
+  } finally { if (!cached) for (const texture of owned) texture.dispose() }
 }

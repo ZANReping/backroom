@@ -1,0 +1,42 @@
+{
+  "size": 256,
+  "tileSize": 64,
+  "gutter": 2,
+  "tiles": [
+    "cloth",
+    "leather",
+    "steel",
+    "brass",
+    "wood",
+    "paper",
+    "knit",
+    "rubber",
+    "enamel",
+    "glass",
+    "cross",
+    "label",
+    "mesh",
+    "feather",
+    "seam",
+    "plain"
+  ],
+  "sources": [
+    {
+      "file": "/textures/settlements/fabric_color.jpg",
+      "sha256": "de7321c185f7dfe83e71b84ad1f813364107f85f5ed2e605c820b8f7f4fe498b"
+    },
+    {
+      "file": "/textures/alpha/steel_color.jpg",
+      "sha256": "9d32b9bbcf071433a3ed69f0409cc11886bb3c554300acaf0da93a92a2059e5b"
+    },
+    {
+      "file": "/textures/alpha/wood_color.jpg",
+      "sha256": "f3c6c5456457e8d05c1fee4d2f186f41d0aea2b8a06859b69ce2934e11aa8798"
+    },
+    {
+      "file": "/textures/alpha/cardboard_color.jpg",
+      "sha256": "21236a873daeff5b25c772d38e785aee5d876bf75d037c5cec6d6c863bb7b462"
+    }
+  ],
+  "generator": "scripts/gen-npc-gear-atlas.mjs"
+}

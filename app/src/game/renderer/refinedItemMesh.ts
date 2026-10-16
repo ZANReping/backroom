@@ -13,7 +13,7 @@ export const REFINED_ITEM_ATLAS = {
   housekey: 'tools', presses: 'tools', eaglecoin: 'tools', sedative: 'tools', uvlamp: 'tools', headlamp: 'tools', nightvision: 'tools', silverware: 'tools',
   gloves: 'gear', suit: 'gear', cavingsuit: 'gear', rope: 'gear', divemask: 'gear', chalkstub: 'gear', stonekazoo: 'gear', wheatgrain: 'gear',
   xenonmarble: 'gear', driedfruit: 'gear',
-  thingmeat: 'food', dryshrimp: 'food', friedshrimp: 'food', tomatosoup: 'food', gardensalad: 'food', garlicbread: 'food', pasta: 'food',
+  thingmeat: 'food', ratmeat: 'food', dryshrimp: 'food', friedshrimp: 'food', tomatosoup: 'food', gardensalad: 'food', garlicbread: 'food', pasta: 'food',
   meatstew: 'food', pizza: 'food', lasagna: 'food', tomsspecial: 'food', grilledsteak: 'food', jambread: 'food',
   megfolder: 'paper', oddbook: 'paper', pamphlet: 'paper', endnote: 'paper', welcomenote: 'paper', notebook: 'paper', parcel: 'paper',
   candysilver: 'paper', candybullet: 'paper', candygun: 'paper', candystanley: 'paper', candywaste: 'paper', candygenius: 'paper',
@@ -685,6 +685,16 @@ function thingmeat(p: Parts) {
   p.add(lathe([[.012, -.04], [.016, -.036], [.013, .03], [.02, .04], [.012, .046], [0, .046]], 10), meat, C.ceramic, { p: [-.13, .0, .02], r: [0, 0, HP] })
 }
 
+// v79：尸鼠肉——一条细长、略卷的瘦肉，一端连着一截细骨
+function ratmeat(p: Parts) {
+  const meat = surface('food', 0, .5)
+  const g = new THREE.BoxGeometry(.2, .045, .07, 5, 2, 2)
+  warp(g, v => { v.y += Math.sin(v.x * 18) * .008; v.z *= 1 - Math.abs(v.x) * 1.8; v.y *= 1 - Math.abs(v.x) * 1.5 })
+  lumpyWelded(g, .004, 40, 5)
+  p.add(g, meat, C.meat, { r: [0, .3, .05] })
+  p.add(lathe([[.006, -.05], [.009, -.046], [.006, .04], [.01, .048], [0, .05]], 8), meat, C.ceramic, { p: [-.1, .0, -.03], r: [0, .3, HP] })
+}
+
 /** 虾体沿弧线：头在 -X，背部拱起，尾扇在 +X 向下卷。返回头部位置与朝向。 */
 function shrimpPath(t: number) {
   const ang = PI * (.92 - .98 * t), rad = .095
@@ -1012,7 +1022,7 @@ function citywater(p: Parts) {
 const BUILDERS: Record<RefinedItemType, (p: Parts) => void> = {
   carkey, gas, wrench, fuse, stapler, keycard, nails, timber, housekey, presses, eaglecoin, sedative, uvlamp, headlamp, nightvision, silverware,
   gloves, suit, cavingsuit, rope, divemask, chalkstub, stonekazoo, wheatgrain, xenonmarble, driedfruit,
-  thingmeat, dryshrimp, friedshrimp, tomatosoup, gardensalad, garlicbread, pasta, meatstew, pizza, lasagna, tomsspecial, grilledsteak, jambread,
+  thingmeat, ratmeat, dryshrimp, friedshrimp, tomatosoup, gardensalad, garlicbread, pasta, meatstew, pizza, lasagna, tomsspecial, grilledsteak, jambread,
   megfolder, oddbook, pamphlet, endnote, welcomenote, notebook, parcel, candysilver, candybullet, candygun, candystanley, candywaste, candygenius, candymint, manmade, citywater,
 }
 

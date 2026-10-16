@@ -1,7 +1,16 @@
 // 实体类型定义与 AI 状态机类型（游荡→调查→追击→攻击）
 export type AIState = 'idle' | 'wander' | 'investigate' | 'chase' | 'attack' | 'stunned'
 export type MothForm = 'male' | 'female' | 'larva' | 'guard'
-export type EntityForm = MothForm | import('./smilers').SmilerKind
+export type RefinedEntityForm =
+  | 'hound-hostile' | 'hound-neutral' | 'hound-ambusher'
+  | 'duller-empty' | 'duller-carrying'
+  | 'faceling-common' | 'faceling-anomaly' | 'faceling-tool'
+  | 'skinstealer-skinned' | 'skinstealer-docile' | 'skinstealer-hunt'
+  | 'clump-common' | 'clump-fasting' | 'clump-intelligent' | 'clump-intelligent-fasting' | 'clump-brick' | 'clump-stone' | 'clump-squirt'
+  | 'wretch-shambler' | 'wretch-sprinter' | 'wretch-smart' | 'wretch-mutant'
+  | 'corpserat-brown' | 'corpserat-gray' | 'corpserat-hotel' | 'corpserat-capybara' | 'corpserat-ceiling'
+  | 'arachnid-spider' | 'arachnid-scorpion' | 'arachnid-tick' | 'arachnid-mite' | 'arachnid-herbivore'
+export type EntityForm = MothForm | import('./smilers').SmilerKind | RefinedEntityForm
 
 export interface EntityCodex {
   no: string // 档案编号
@@ -14,6 +23,14 @@ export interface EntityCodex {
 }
 
 export interface EntityDef {
+  entityForm?: EntityForm // 显式选择的父实体内子变种；不创建独立实体或图鉴 ID
+  houndKind?: 'hostile' | 'neutral' | 'ambusher'
+  wretchKind?: import('./wretches').WretchKind
+  dullerCarry?: boolean // 仅指定初始携物状态；未指定时沿用随机规则
+  skinPhase?: 'skinned' | 'docile' | 'hunt'
+  clumpWeapon?: 'brick' | 'stone' | 'squirt'
+  clumpFasting?: boolean
+  ratMorph?: import('./rats').RatMorph | 'gray' | 'brown'
   mothForm?: MothForm // Entity 4 的实例子变种，统一 type / 图鉴 / 注册
   smilerKind?: import('./smilers').SmilerKind // Entity 3 的实例子变种，统一 type / 图鉴 / 注册
   type: string
@@ -32,7 +49,7 @@ export interface EntityDef {
   lightLure?: boolean // 趋光：被手电光吸引
   drainsLight?: boolean // 近身快速耗电（死亡飞蛾扑灯）
   jamsLight?: boolean // 瘫痪手电（电弧体）
-  grabs?: boolean // 攻击减速（团块）
+  grabs?: boolean // 攻击减速（旧团块标记；v64 肢团改由 clumpAI 专属处理，仅联机提线木偶保留读取）
   ambusher?: boolean // 埋伏：近身才现身（管道蠕虫）
   feignNeutral?: boolean // 假装中立，近身暴起（侍者）
   mirrorMove?: boolean // 镜像移动（镜中人）
@@ -62,6 +79,8 @@ export interface EntityDef {
   l3face?: boolean // L3 无面灵：面部长出位置/数量错误的眼耳鼻口器官
   tool?: boolean // L3 无面灵：使用石器工具（伤害上调，手部建模持有石器）
   capybara?: boolean // L3 尸鼠：水豚形态（体型变大）
+  l3clump?: boolean // v64：L3 高智能肢团（体型更大、无混乱期、持械/滋水枪、贴顶俯扑；见 clumpAI）
+  l3Tuned?: boolean // v64：L3 肢团的生命/伤害加成已应用（防重复）
   // ===== v60：Level 8 生态实例变体 =====
   ceilingCrawler?: boolean // 罗特尼斯尸鼠：受反向重力影响，在洞顶爬行
   arachnidMorph?: 'spider' | 'scorpion' | 'tick' | 'mite' // 蛛形纲外形
@@ -98,19 +117,25 @@ export interface Entity {
   stunT: number
   facing: number
   lungeT: number // 攻击前摇动画
+  meleeRecoveryT?: number // 人形近战命中后的收势，模拟时钟驱动
   dead: boolean
   deathT: number // 死亡动画剩余时间
   animT: number // 步态相位
   hidden?: boolean // 埋伏中（管道蠕虫）
+  presentationPending?: boolean // Runtime-only GPU preparation; cannot attack before its model is ready.
   screamed?: boolean // 久坐者
   activated?: boolean // 人制品售货机：已被激活（背对触发，长出骷髅手腿追击玩家）
   webX?: number // Nguithr'xurh：陷阱（结囊）位置 x/y
   webY?: number
-  disguised?: string // 窃皮者伪装成的物品类型
+  disguised?: string // 窃皮者伪装：'human' = 穿着人皮（随机 NPC 外观）；v77 起不再伪装成物品
+  rt?: import('../engine/ratAI').RatState
+  wr?: import('../engine/wretchAI').WretchState // v78：悲尸运行时状态（变体/警觉/撞门；不入存档）
+  ss?: import('../engine/skinStealerAI').SkinStealerState // v77：窃皮者运行时状态（人皮/温顺/饥饿/激怒；不入存档/联机）
   fakeT?: number // 复印机幽灵幻影计时
   scrapeT?: number // 穿墙沙沙声计时（钝人）
   intimidated?: boolean // 猎犬：正处于「直视+噪音」威慑中（播报去抖）
   provoked?: boolean // 被动实体（无面灵）：被玩家攻击后激怒，持续反击直到脱战平息
+  l11Home?: import('../world/l11FacelingTypes').L11FacelingHome
   mothNest?: string // World-stable Beverly annex id; never rebased with the window.
   turnSlowT?: number // v58：七层之物——体节被击后转头迟滞的剩余时间
   lightStressT?: number // 七层之物被手电持续直射的累计刺激：先避光，超过阈值后暴怒
@@ -121,6 +146,7 @@ export interface Entity {
   encountered?: boolean // v54：图鉴遭遇已计数（按个体去重——看见/索敌/攻击命中/特殊交互，每只只计一次）
   blackoutSpawn?: boolean // 停电期间生成（笑魇）：灯光恢复时消散
   dl?: import('../engine/dullerAI').DullerState // v63：钝人运行时状态（潜伏/隔墙抓取/携物；不入存档/联机）
+  cl?: import('../engine/clumpAI').ClumpState // v64：肢团（含 L3 子变种）运行时状态（不入存档/联机）
   hd?: import('../engine/houndAI').HoundState // v62：猎犬（含 L11 中立变种）运行时状态（不入存档/联机）
   sm?: import('./smilers').SmilerState // v61：笑魇变种与 AI 运行时状态（不入存档/联机）
   l9FogSpawn?: boolean // L9 罕见浓雾期间生成的残缺者；雾散后随之退散

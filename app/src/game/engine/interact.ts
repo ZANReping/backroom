@@ -4,7 +4,7 @@ import {TRADE_DEFS} from '../content/tradeDecor'
 import type { CareerId } from '../content/settlementTypes'
 // v53：交互（scanInteract/doInteract/容器搜索/战利品面板/结构触发伤害/配电箱嗡鸣）——
 // 自 engine.ts 拆分，逻辑逐语句搬运；triggerStructs 返回 true 表示本帧已死亡（原 step 的 return）。
-import { bandOfZ, bandOfPlayerZ, floorHeight, groundHeightAt, structBlocksSight, structColliders, wallAt, FLOOR_H } from '../world/mapgen'
+import { bandOfZ, bandOfPlayerZ, floorHeight, groundHeightAt, structBlocksSight, l11InteractionBlocked, structColliders, wallAt, FLOOR_H } from '../world/mapgen'
 import { canOccupy, PLAYER_RADIUS } from '../core/player'
 import { CONTAINERS, CONTAINER_RARE } from '../decorations/containers'
 import { DECOR_VIEWS, GRAFFITI_LORE, GRAFFITI_LORE_KIND, BRAILLE_MARKS, GLASSWIN_TEXT } from '../decorations/lore'
@@ -15,9 +15,12 @@ import { audio } from '../core/audio'
 import { forceL7PorchDrop } from './movement'
 import { entityBand as entityFloorBand } from './entityAI'
 import { makeEntity } from '../entities'
+import { skinStealerTalk } from './skinStealerAI'
 import { look } from '../renderer/shared'
 import type { FloorBand, Structure } from '../core/types'
 import type { Engine } from '../engine'
+import { beginSitting, pickSeat, standUp, seatedEyeHeight, seatedEyeOffset } from './seating'
+import { furnitureSeats } from '../content/furnitureSeats'
 
 type DiffMult = { dmg: number; drain: number }
 
@@ -272,16 +275,17 @@ interface InteractionRay {
 
 /** 交互使用的眼高与蹲伏相机保持一致；摇头/震屏只作视觉效果，不改变操作瞄准。 */
 export function interactionEyeZ(eng: Engine): number {
-  return eng.player.z + (eng.player.crouching ? 1.0 : 1.55)
+  return eng.player.z + seatedEyeHeight(eng)
 }
 
 /** 从屏幕中央准星发出的世界空间射线，与 renderer/combat 的朝向约定一致。 */
 export function crosshairRay(eng: Engine): InteractionRay {
   const p = eng.player
+  const offset = seatedEyeOffset(eng)
   const n = Math.hypot(look.rayX, look.rayY, look.rayZ) || 1
   return {
-    ox: p.x,
-    oy: p.y,
+    ox: p.x + offset.x,
+    oy: p.y + offset.y,
     oz: interactionEyeZ(eng),
     dx: look.rayX / n,
     dy: look.rayY / n,
@@ -404,9 +408,10 @@ export function structureInteractionVolume(eng: Engine, s: Structure, band: Floo
 /** 当前楼层带的三维交互 LOS：墙体、地板高度与精细实心结构碰撞盒均参与。 */
 export function interactionLos3D(eng: Engine, x: number, y: number, z: number, band: FloorBand, target?: Structure): boolean {
   const p = eng.player, m = eng.map
-  if (!m || bandOfPlayerZ(m, p.z) !== band) return false
+  if (!m || bandOfPlayerZ(m, p.z,p.x,p.y) !== band) return false
   const x0 = p.x, y0 = p.y, z0 = interactionEyeZ(eng)
   const dx = x - x0, dy = y - y0, dz = z - z0
+  if(p.level===11&&l11InteractionBlocked(m,[x0,z0,y0],[x,z,y],band,target))return false
   const steps = Math.max(2, Math.ceil(Math.hypot(dx, dy, dz) / 0.12))
   for (let i = 1; i < steps; i++) {
     const t = i / steps
@@ -490,7 +495,7 @@ export function viewAngle(eng: Engine, x: number, y: number): number {
 export function scanInteract(eng: Engine) {
   const p = eng.player, m = eng.map!
   eng.interactTarget = null
-  const band = bandOfPlayerZ(m, p.z)
+  const band = bandOfPlayerZ(m, p.z,p.x,p.y)
   type Target = NonNullable<Engine['interactTarget']>
   type Candidate = { target: Target; a: number; d: number; can: boolean }
   const choice: { current: Candidate | null } = { current: null }
@@ -529,10 +534,12 @@ export function scanInteract(eng: Engine) {
     if (e.def.kind === 'graystairs' || e.def.kind === 'graystairsup' || e.def.kind === 'oldstairs') continue // v29/v54：可行走阶梯——直接走上去/走下去，无 E 交互
     if (e.def.kind === 'ninthroad') continue // L8 第九大道狭窄洞口由移动碰触自动进入，不显示 E 交互提示
     if (e.def.kind === 'lakeswim') continue // L10 深湖仅在湖心持续下潜约 3 秒后自动触发
+    if (e.def.kind === 'l11liftshaft') continue // enter the open shaft by walking
     const ex = e.x + 0.5, ey = e.y + 0.5
     const d = Math.hypot(ex - p.x, ey - p.y)
     const tinyBlocked = e.def.kind === 'littledoor' && eng.tinyBlocksLittleDoor(e)
-    const exitTarget: Target = { kind: 'exit', label: tinyBlocked ? '小小盘踞在门上方（暂时无法进入）' : `进入 ${e.def.name}`, e }
+    const archiveSealed=p.level===11&&e.def.kind==='basebeta'&&!eng.l11World?.archiveUnlocked
+    const exitTarget: Target = { kind: 'exit', label: archiveSealed?`提交六盘磁带并撕下封条（${eng.countItem('tape')}/6）`:tinyBlocked ? '小小盘踞在门上方（暂时无法进入）' : `进入 ${e.def.name}`, e }
     // v58：准星真实命中出口模型（电梯门等）——与结构/物品共用视觉命中通道，直指即达
     if (visualHit?.kind === 'exit' && visualHit.exit === e
       && interactionLos3D(eng, visualHit.x, visualHit.y, visualHit.z, e.floor ?? 0)) {
@@ -571,7 +578,7 @@ export function scanInteract(eng: Engine) {
   // 地面物品（半径 2.0m；v13：按物品所在高度过滤楼层）
   for (const it of m.items) {
     const iz = it.z ?? groundHeightAt(m, it.x, it.y)
-    const itemBand = bandOfPlayerZ(m, iz)
+    const itemBand = bandOfPlayerZ(m, iz,it.x,it.y)
     if (itemBand !== band) continue
     const target: Target = {
       kind: 'item', label: it.type === 'welcomenote' ? `查看 ${itemName(it.type)}` : `拾取 ${itemName(it.type)}`, it,
@@ -609,6 +616,11 @@ export function scanInteract(eng: Engine) {
     const d = structureSurfaceDistance(s, p.x, p.y) // 大结构按最近表面，而非中心计交互距离
     if (d > INTERACT_RANGE.object) continue
     if(s.kind==='trade_anomaly'&&s.data?.hidden)continue
+    if (furnitureSeats(s, eng.levelDef.id).length) {
+      if (!eng.seating) consider('sit', '坐下', s, d, !!pickSeat(eng, s))
+      else if (s === eng.seating.structure) consider('stand', '起身', s, d, true)
+      continue
+    }
     if (s.kind === 'settlementstation' || s.data?.facility || TRADE_DEFS.some(def=>def.id===s.kind&&def.interactive)) { consider('settlementstation', String(s.data?.label ?? '查看贸易设施'), s, d, true); continue }
     if (s.kind === 'lift') { consider('lift', band === 0 ? '乘电梯 上楼' : '乘电梯 下楼', s, d, !eng.ride); continue }
     // v18：已搜空容器仍可选中（交互时提示「容器是空的」），未搜空的正常提示
@@ -726,6 +738,16 @@ export function scanInteract(eng: Engine) {
       }, e.x, e.y, e.z + bodyHeight * 0.48, entityBand, INTERACT_RANGE.npc, true, bodyRadius,
       volumeAt(e.x, e.y, e.z - 0.18 * scale, bodyRadius, bodyHeight), surfaceDistance, undefined, bodyHeight * 0.48)
   }
+  // v77：穿着人皮的窃皮者——看上去就是个流浪者，可以搭话；但它只会重复几句借来的话，不会进入对话
+  for (const e of m.entities) {
+    if (e.dead || e.def.type !== 'skinstealer' || e.disguised !== 'human') continue
+    const entityBand = entityFloorBand(m, e)
+    if (entityBand !== band) continue
+    const bodyRadius = 0.3, bodyHeight = 1.85
+    const surfaceDistance = Math.max(0, Math.hypot(e.x - p.x, e.y - p.y) - bodyRadius)
+    considerTarget({ kind: 'skinstealer', label: '与 流浪者 交谈', ent: e }, e.x, e.y, e.z + bodyHeight * 0.5, entityBand, INTERACT_RANGE.npc, true, bodyRadius,
+      volumeAt(e.x, e.y, e.z, bodyRadius, bodyHeight), surfaceDistance, undefined, bodyHeight * 0.5)
+  }
   // v51：人制品售货机（Entity 36）——正面取货 / 背面看标语。
   for (const e of m.entities) {
     if (e.dead || e.def.type !== 'vendingmachine' || e.activated) continue
@@ -740,7 +762,7 @@ export function scanInteract(eng: Engine) {
       }, e.x, e.y, e.z + 0.95, entityBand, INTERACT_RANGE.object, true, 0.5,
       volumeAt(e.x, e.y, e.z, 0.5, 1.9))
   }
-  eng.interactTarget = choice.current?.target ?? null
+  eng.interactTarget = choice.current?.target ?? (eng.seating ? { kind: 'stand', label: '起身', s: eng.seating.structure } : null)
 }
 
 function sameInteractionTarget(a: Engine['interactTarget'], b: Engine['interactTarget']): boolean {
@@ -757,6 +779,8 @@ export function doInteract(eng: Engine) {
   if (!sameInteractionTarget(scanned, t) || !t) return
   const p = eng.player, m = eng.map
   switch (t.kind) {
+    case 'sit': { if (t.s) beginSitting(eng, t.s); break }
+    case 'stand': { standUp(eng); break }
     case 'careerField': { recordField(eng,String(t.s?.data?.faction) as CareerId);break }
     case 'settlementstation': {
       const s=t.s!;
@@ -767,8 +791,8 @@ export function doInteract(eng: Engine) {
       break
     }
     case 'l11guide': {
-      if (eng.l11World) eng.l11World.marks = ['capital','timesquare','beta']
-      eng.msg('已记下首都、新时代广场与 M.E.G. Beta 基地的位置。道路、建筑与地标不会随城市细节变化而移动。','system')
+      if (eng.l11World) eng.l11World.marks = ['archive','metro','L9','L10']
+      eng.msg('已记下公共档案馆、地铁和两条出城路线的位置。道路、建筑与出口保持稳定。','system')
       break
     }
     case 'l11inspect': {
@@ -796,7 +820,7 @@ export function doInteract(eng: Engine) {
       break
     }
     case 'l6stairwell': {
-      eng.switchL6Floor(bandOfPlayerZ(m, p.z) === 0 ? -1 : 0, 'stairs')
+      eng.switchL6Floor(bandOfPlayerZ(m, p.z,p.x,p.y) === 0 ? -1 : 0, 'stairs')
       break
     }
     case 'obelisk': {
@@ -1225,7 +1249,7 @@ export function doInteract(eng: Engine) {
       break
     }
     case 'landmark': {
-      if(eng.player.level===11&&eng.l11World)eng.l11World.marks=['capital','timesquare','beta']
+      if(eng.player.level===11&&eng.l11World)eng.l11World.marks=['archive','metro','L9','L10']
       // v35：定居点地标——打开地标卡（据点介绍 + 前往/离开）
       // v55b：邀请函（invitation 结构）同走本链路（data.outpost='originals'）
       const s = t.s && (t.s.kind === 'landmark' || t.s.kind === 'invitation') ? t.s : null
@@ -1260,6 +1284,12 @@ export function doInteract(eng: Engine) {
       e.facing = Math.atan2(p.y - e.y, p.x - e.x) // 转身面向玩家
       audio.uiTick()
       eng.emit({ kind: 'dialog', text: 'tiny' })
+      break
+    }
+    case 'skinstealer': {
+      const e = t.ent
+      if (!e || e.dead || e.def.type !== 'skinstealer' || e.disguised !== 'human') return
+      skinStealerTalk(eng, e)
       break
     }
     case 'vendingmachine': {

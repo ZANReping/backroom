@@ -14,7 +14,15 @@ $sets = @(
   @{ Asset = 'Plaster004'; Prefix = 'l11_plaster' },
   @{ Asset = 'Tiles074'; Prefix = 'l11_tiles' },
   @{ Asset = 'Metal032'; Prefix = 'l11_metal' },
-  @{ Asset = 'WoodFloor051'; Prefix = 'l11_wood' }
+  @{ Asset = 'WoodFloor051'; Prefix = 'l11_wood' },
+  @{ Asset = 'Grass004'; Prefix = 'l11_grass' }
+  @{ Asset = 'PavingStones035'; Prefix = 'l11_paving' }
+  @{ Asset = 'Tiles139'; Prefix = 'l11_limestone' }
+  @{ Asset = 'Tiles107'; Prefix = 'l11_ceramic' }
+  @{ Asset = 'TactilePaving002'; Prefix = 'l11_tactile' }
+  @{ Asset = 'Wood051'; Prefix = 'l11_propwood' }
+  @{ Asset = 'Wood092'; Prefix = 'l11_rawwood' }
+  @{ Asset = 'Fabric061'; Prefix = 'l11_fabric' }
 )
 
 function Test-Jpeg([string]$Path) {
@@ -35,7 +43,9 @@ foreach ($set in $sets) {
     $ok = $false
     for ($attempt = 1; $attempt -le 3 -and !$ok; $attempt++) {
       try {
-        & curl.exe --fail --location --connect-timeout 12 --max-time 50 --silent --show-error $url --output $zip
+        # Keep certificate verification; tolerate only an unavailable Windows
+        # revocation server, which otherwise blocks valid public CC0 downloads.
+        & curl.exe --ssl-revoke-best-effort --fail --location --connect-timeout 12 --max-time 50 --silent --show-error $url --output $zip
         if ($LASTEXITCODE -ne 0) { throw "Download failed: $($set.Asset)" }
         $ok = $true
       } catch { if ($attempt -eq 3) { throw } }

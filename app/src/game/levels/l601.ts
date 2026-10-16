@@ -41,7 +41,7 @@ export const L601: LevelDef = {
     // 真结局：金属字母底下那扇没有装饰的门。
     { kind: 'trueend', name: '金属字母底下的门', dest: 'win', anim: 'dawn' },
   ],
-  entrance: 'Level 11 · M.E.G. Base Beta 档案室',
+  entrance: 'Level 11 · 无人公共档案馆设备门',
   exitDesc: '出口：两扇。一扇是你家的前门——灯开着，鞋摆得整整齐齐，钥匙在门口的小碟子里。另一扇在中央那排金属字母底下，没有装饰，也没有灯。Level 601 只对识破它的人开一次门。',
   lightDensity: 0.014,
   darkness: 0.3,

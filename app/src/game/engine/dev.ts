@@ -1,12 +1,17 @@
+import { summonDevExit, devOperateExit } from './devExits'
 // v53：开发者模式 API（召唤/传送/状态控制/层级重建/调试信息）——
 // 自 engine.ts 拆分，逻辑逐语句搬运；仅供开发者面板/冒烟测试调用，不改变正常游戏流程。
 import { bandOfPlayerZ, floorHeight, tileAt, walkableAt } from '../world/mapgen'
 import { LEVELS } from '../levels'
-import { ENTITIES, makeEntity, applyL3Variant, type Entity, type EntityForm } from '../entities'
-import { MOTH_FORMS } from '../entities/moths'
+import { ENTITIES, makeEntity, applyL3Variant, entityForm, type Entity, type EntityForm } from '../entities'
 import { initSmiler } from './smilerAI'
 import { initHound } from './houndAI'
+import { initClump } from './clumpAI'
 import { initDuller } from './dullerAI'
+import { initWretch } from './wretchAI'
+import { initRat } from './ratAI'
+import { initSkinStealer } from './skinStealerAI'
+import { updateFlyingAltitude } from './entityAI'
 import { ITEMS, itemName } from '../content/items'
 import { look } from '../core/renderer3d'
 import { prefabsForLevel, placePrefabForced } from '../prefabs'
@@ -20,7 +25,7 @@ import { OUTPOSTS, isLandmarkStruct } from '../content/outposts'
 import { DECOR_REGISTRY } from '../content/decorRegistry'
 import { ALPHA_DEFS, isAlphaKind } from '../content/alphaDecor'
 import { DIFF } from './shared'
-import type { ExitInstance, FloorBand, Structure, StructKind } from '../core/types'
+import type { FloorBand, Structure, StructKind } from '../core/types'
 import type { Engine } from '../engine'
 import { canOccupy, PLAYER_RADIUS } from '../core/player'
 import {l3StyleAt,L3_NARROW_TINT} from '../world/l3Architecture'
@@ -73,25 +78,38 @@ export function devFindSpot(eng: Engine, cx: number, cy: number, maxR = 6, band:
   return null
 }
 
+/** Resolve initial states immediately, even while AI is frozen. Explicit forms win over habitat defaults. */
+function initDevEntity(eng: Engine, ent: Entity, explicit: boolean) {
+  const type = ent.def.type
+  if (eng.levelDef.id === 3 && !explicit) applyL3Variant(ent)
+  if (type === 'smiler') initSmiler(eng, ent, ent.def.smilerKind ?? 'common', 0, false)
+  if (type === 'hound') initHound(eng, ent)
+  if (type === 'duller') initDuller(eng, ent)
+  if (type === 'wretch') initWretch(eng, ent)
+  if (type === 'corpserat') initRat(eng, ent)
+  if (type === 'skinstealer') initSkinStealer(eng, ent)
+  if (type === 'clump') initClump(eng, ent)
+  if (eng.levelDef.id === 5 && ent.def.mothForm === 'male') ent.def = { ...ent.def, passive: true, grudge: true, hunts: undefined }
+  if (ent.def.aquatic) ent.z = eng.player.z
+  if (ent.def.flying) {
+    ent.flightBand = eng.player.floor
+    updateFlyingAltitude(eng, ent, 0)
+  }
+}
+
 /** 召唤实体：在玩家前方 dist 格（默认 3）生成指定类型实体 */
 export function devSpawnEntity(eng: Engine, type: string, dist = 3, form?: EntityForm): boolean {
   const m = eng.map
   if (!m || !ENTITIES[type]) return false
+  if (form !== undefined && !entityForm(type, form)) return false
   const p = eng.player
   const { fx, fy } = eng.devForward()
   const spot = eng.devFindSpot(p.x + fx * dist, p.y + fy * dist)
   if (!spot) { eng.msg('附近没有可召唤的空位。', 'system'); return false }
-  const ent = makeEntity(type, spot.x, spot.y, ['smiler','hound','duller'].includes(type) ? floorHeight(m, spot.x, spot.y, p.floor) : 0, form)
-  // Exact developer selection, including frozen AI; summon one dog rather than a random pack.
-  if (type === 'smiler') initSmiler(eng, ent, ent.def.smilerKind ?? 'common', 0, false)
-  if (type === 'hound') initHound(eng, ent)
-  if (type === 'duller') initDuller(eng, ent)
-  if (eng.levelDef.id === 5 && ent.def.mothForm === 'male') ent.def = { ...ent.def, passive: true, grudge: true, hunts: undefined }
-  if (eng.levelDef.id === 3) applyL3Variant(ent) // v53：L3 召唤应用高智能变体（同 chunk raw 标记）
-  // v58fix：水生实体召唤到玩家所在水深（否则 z=0 浮在海面，深水玩家看不见）
-  if (ent.def.aquatic) ent.z = p.z
+  const ent = makeEntity(type, spot.x, spot.y, floorHeight(m, spot.x, spot.y, p.floor), form)
+  initDevEntity(eng, ent, form !== undefined)
   m.entities.push(ent)
-  eng.msg(`[DEV] 召唤了 ${ent.def.name}${ent.def.mothForm ? ` · ${MOTH_FORMS[ent.def.mothForm].name}` : ''}（${spot.x.toFixed(0)}, ${spot.y.toFixed(0)}）`, 'system')
+  eng.msg(`[DEV] 召唤了 ${ent.def.name}${form ? ` · ${entityForm(type, form)!.name}` : ''}（${spot.x.toFixed(0)}, ${spot.y.toFixed(0)}）`, 'system')
   return true
 }
 
@@ -104,9 +122,8 @@ export function devSpawnAllEntities(eng: Engine): number {
     const ang = (i / types.length) * Math.PI * 2
     const spot = eng.devFindSpot(p.x + Math.cos(ang) * 4, p.y + Math.sin(ang) * 4, 8)
     if (spot && eng.map) {
-      const ent = makeEntity(t, spot.x, spot.y)
-      if (eng.levelDef.id === 3) applyL3Variant(ent) // v53：L3 召唤应用高智能变体
-      if (ent.def.aquatic) ent.z = p.z // v58fix：水生实体生成在玩家水深
+      const ent = makeEntity(t, spot.x, spot.y, floorHeight(eng.map, spot.x, spot.y, p.floor))
+      initDevEntity(eng, ent, false)
       eng.map.entities.push(ent); n++
     }
   })
@@ -166,68 +183,9 @@ export function devDrainStats(eng: Engine) {
   eng.msg('[DEV] 状态已清空', 'system')
 }
 
-/** 召唤指定出口：仅限本层可生成的种类（levelDef.exits）；在玩家附近邻墙地板生成一个并标记已发现 */
+/** Explicit summon: never teleports when another exit already exists. */
 export function devSummonExit(eng: Engine, kind: string): boolean {
-  const m = eng.map
-  if (!m) return false
-  const def = eng.levelDef.exits.find((e) => e.kind === kind)
-  if (!def) { eng.msg('[DEV] 本层不会生成该出口。', 'system'); return false }
-  const p = eng.player
-  const at = (x: number, y: number) => (x < 0 || y < 0 || x >= m.w || y >= m.h ? 0 : m.tiles[y * m.w + x])
-  const solidAt = (x: number, y: number) => m.structures.some((s) => s.solid && x >= s.x && x < s.x + s.w && y >= s.y && y < s.y + s.h)
-  // 可行走阶梯：走向需 4 格畅通（真实走下去/走上去的通道）
-  const stairKind = kind === 'graystairs' || kind === 'graystairsup' || kind === 'oldstairs' // v54：L4 古典楼梯同为可行走阶梯
-  const runOk = (x: number, y: number) => {
-    if (!stairKind) return true
-    for (const [wx, wy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
-      if (at(x + wx, y + wy) === 1) continue
-      let clear = true
-      for (let k = 1; k <= 4; k++) if (at(x - wx * k, y - wy * k) !== 1 || solidAt(x - wx * k, y - wy * k)) { clear = false; break }
-      if (clear) return true
-    }
-    return false
-  }
-  let best: { x: number; y: number; score: number } | null = null
-  for (let ty = Math.floor(p.y) - 7; ty <= Math.floor(p.y) + 7; ty++)
-    for (let tx = Math.floor(p.x) - 7; tx <= Math.floor(p.x) + 7; tx++) {
-      if (at(tx, ty) !== 1 || solidAt(tx, ty) || !runOk(tx, ty)) continue
-      if (at(tx + 1, ty) === 1 && at(tx - 1, ty) === 1 && at(tx, ty + 1) === 1 && at(tx, ty - 1) === 1) continue // 需邻墙
-      const d = Math.hypot(tx + 0.5 - p.x, ty + 0.5 - p.y)
-      if (d < 1.6 || d > 8) continue
-      if (m.exits.some((e) => Math.floor(e.x) === tx && Math.floor(e.y) === ty)) continue
-      const ang = Math.abs(Math.atan2(ty + 0.5 - p.y, tx + 0.5 - p.x) - p.facing)
-      const score = d + Math.min(ang, Math.PI * 2 - ang) * 2 // 优先朝向侧
-      if (!best || score < best.score) best = { x: tx, y: ty, score }
-    }
-  if (!best) { eng.msg('[DEV] 附近没有可放置出口的邻墙地板。', 'system'); return false }
-  const exit: ExitInstance = { def, x: best.x, y: best.y, discovered: true }
-  m.exits.push(exit)
-  // 无限模式：同步进所属 LiveChunk，窗口重缝合后不丢（chunk 卸载后失效，dev 工具可接受）
-  const inf = m.inf
-  if (inf) {
-    const c = inf.chunks.get(chunkKey(Math.floor((inf.ox + best.x) / CS), Math.floor((inf.oy + best.y) / CS)))
-    c?.exits.push(exit)
-    // 下行阶梯：走向 3 格标为深渊洞口（视觉开洞；同步 chunk 局部数组防 stitch 还原）
-    if ((kind === 'graystairs' || kind === 'oldstairs') && c) { // v54：下行阶梯（含 L4 古典楼梯）走向标深渊洞口
-      for (const [wx, wy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
-        if (at(best.x + wx, best.y + wy) === 1) continue
-        let clear = true
-        for (let k = 1; k <= 3; k++) if (at(best.x - wx * k, best.y - wy * k) !== 1) { clear = false; break }
-        if (!clear) continue
-        for (let k = 1; k <= 3; k++) {
-          const hx = best.x - wx * k, hy = best.y - wy * k
-          m.elev[hy * m.w + hx] = 4
-          const lx = hx - (c.cx * CS - inf.ox), ly = hy - (c.cy * CS - inf.oy)
-          if (lx >= 0 && ly >= 0 && lx < CS && ly < CS) c.elev[ly * CS + lx] = 4
-        }
-        break
-      }
-    }
-    inf.redo = (inf.redo ?? 0) + 1 // 出口网格只在 chunk 构建时生成——强制重建以渲染新召唤的出口
-  }
-  eng.mapRev++ // 有限层：触发渲染层重建静态几何（含新出口）
-  eng.msg(`[DEV] 已在附近召唤出口「${def.name}」（${best.x},${best.y}）`, 'system')
-  return true
+  const out=summonDevExit(eng,kind);eng.msg(`[DEV] ${out.message}`,'system');return out.ok
 }
 
 /** v54：召唤装饰物（DevPanel 召唤页「装饰物」标签；数据源 decorRegistry 结构类条目）。
@@ -258,19 +216,9 @@ export function devSpawnDecor(eng: Engine, kind: string): boolean {
   return true
 }
 
-/** v54：传送到本层已生成的指定种类出口（召唤出口「已存在则传送」；不存在返回 false，由调用方走生成） */
-export function devGotoExitKind(eng: Engine, kind: string): boolean {
-  const m = eng.map
-  if (!m) return false
-  const e = m.exits.find((x) => x.def.kind === kind)
-  if (!e) return false
-  const p = eng.player
-  const band = (e.floor ?? 0) as FloorBand
-  const spot = eng.devFindSpot(e.x, e.y, 3, band)
-  if (!spot) { eng.msg('[DEV] 该出口附近没有落脚点。', 'system'); return false }
-  p.x = spot.x; p.y = spot.y; p.z = (e.z ?? floorHeight(m, p.x, p.y, band)) + 0.02; p.vz = 0; p.floor = band // v57t：传送带 z 轴
-  eng.msg(`[DEV] 已传送到出口「${e.def.name}」`, 'system')
-  return true
+/** Finds the nearest matching exit, including unloaded chunks. */
+export async function devGotoExitKind(eng: Engine, kind: string): Promise<boolean> {
+  return (await devOperateExit(eng,kind,'teleport')).ok
 }
 
 /** v57t：传送到最近的 L7 荒岛（窗口内已有则直达；否则用解析式岛核搜索窗口外的最近岛屿并流式生成） */
@@ -614,7 +562,7 @@ export function devGotoExit(eng: Engine): boolean {
   if (!m?.inf) return eng.devTeleport('exit')
   const inf = m.inf
   const p = eng.player
-  const band = bandOfPlayerZ(m, p.z)
+  const band = bandOfPlayerZ(m, p.z, p.x, p.y)
   const w = l0NearestExit(m, eng.levelDef, inf.ox + p.x, inf.oy + p.y, band)
   if (!w) { eng.msg('[DEV] 未找到保底出口。', 'system'); return false }
   // 出口世界坐标 → 站到出口旁 1 格

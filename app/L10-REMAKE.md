@@ -27,7 +27,7 @@
 - 小棚：半开木门、碎玻璃窗、工作台、搁板、靠墙木板。
 - 外屋：单坡屋面、半开门上的月牙孔、室内坐凳。
 - 墙体拆成独立轴对齐盒（门洞/窗洞可通行），碰撞自动取自模型；屋面/装饰条不参与碰撞。室内不露天（挡雨、室内光照），通用平顶不再生成。
-- 树篱节点：平顶叶团 + 透明叶簇卡片；等高树：树干（碰撞）+ 主枝 + 叶团 + 26 张叶卡；圆草捆。全部由区块静态合批。
+- 树篱节点：平顶叶团 + 透明叶簇卡片；等高树：约 7m 的分枝树干（碰撞）+ 主枝 + 独立叶片簇，叶冠无碰撞；圆草捆。L9/L10 树采用与 L11 相同的分枝和叶片岛屿建模方式，共六种树形（圆冠、窄冠、双干、宽冠、偏冠、疏冠），每形四种确定性枝干组合，L10 风动保持不变。全部由区块静态合批。
 
 ## 4. 麦田动效（`renderer/l10Wind.ts`）
 - 修复：旧版把 `time × (1+阵风)` 当相位，天气变化时整片麦田瞬间换相抽搐；现在相位按速度积分，强度/风向平滑过渡。
@@ -53,7 +53,7 @@
 - 无头 Chromium（SwiftShader）实机截图；真机 GPU 未验证。
 
 ## 新增贴图
-`l10_leafcard.png`、`l10_canola_clump.png`、`l10_corrugated_normal.png`、`l10_siding_diff.jpg`，由 `scripts/gen-l10-v64-textures.py` 程序化生成（CC0，见 `public/textures/L10-ASSET-SOURCES.md`）。
+`l10_canola_clump.png`、`l10_corrugated_normal.png`、`l10_siding_diff.jpg` 由 `scripts/gen-l10-v64-textures.py` 程序化生成（CC0，见 `public/textures/L10-ASSET-SOURCES.md`）。旧版 `l10_leafcard.png` 的 26 张大叶卡方案已移除；树冠改用 L11 同源的 CC0 树皮/叶片图集与独立叶片簇。来源、作者、许可证、本地路径和复现脚本见 [`L9-L10-TREE-SOURCES.md`](public/textures/L9-L10-TREE-SOURCES.md)。
 
 
 ## 本项目接入补充（2026-10-09）

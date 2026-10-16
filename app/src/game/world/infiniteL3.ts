@@ -168,12 +168,12 @@ export function l3HallAt(seed: number, k: number, r: number, side: number): { x0
 // v53：L3 高智能实体实例标记（wikidot Level 3 条目；instantiate 浅拷贝带入 def）。
 // v54：抽成统一出口——廊道实体与装配线大房间「额外实体」两条生成路径必须下发同一套标记，
 // 否则同层同类实体形态/行为分叉（尸鼠缺 capybara 标记 → 渲染成深褐形态而非水豚形态）。
-function l3EntityMarks(type: string, r: RNG): { hostile?: 1; tool?: 1; l3face?: 1; human?: 1; capybara?: 1; scale?: number } {
+function l3EntityMarks(type: string, r: RNG): { hostile?: 1; tool?: 1; l3face?: 1; human?: 1; capybara?: 1; l3clump?: 1; scale?: number } {
   switch (type) {
     case 'faceling': return { hostile: 1, l3face: 1, ...(r.chance(0.4) ? { tool: 1 as const } : {}) } // 敌意 + 错位面部器官；~40% 持石器
     case 'skinstealer': return { human: 1 } // 伪装成流浪者（接近后暴起，见 entityAI）
     case 'corpserat': return { capybara: 1, scale: 1.45 } // 水豚形态、体型变大
-    case 'clump': return { scale: 1.2 } // 体型变大一点（追击更快/会转弯见 entityAI）
+    case 'clump': return { l3clump: 1, scale: 1.5 } // v64：L3 高智能肢团——更大更壮（完全伸展约 8 英尺），无混乱期/持械/贴顶俯扑见 clumpAI
     default: return {}
   }
 }
@@ -196,7 +196,7 @@ export function genL3ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
   const items: GroundItem[] = []
   const lights: LightSource[] = []
   const exits: ExitInstance[] = []
-  const entities: { type: string; x: number; y: number; calm?: boolean; scale?: number; hostile?: 1; tool?: 1; l3face?: 1; human?: 1; capybara?: 1 }[] = []
+  const entities: { type: string; x: number; y: number; calm?: boolean; scale?: number; hostile?: 1; tool?: 1; l3face?: 1; human?: 1; capybara?: 1; l3clump?: 1 }[] = []
   const li = (x: number, y: number) => y * CS + x
   const isF = (x: number, y: number) => x >= 0 && y >= 0 && x < CS && y < CS && tiles[li(x, y)] === 1
   const WX = cx * CS, WY = cy * CS

@@ -1,4 +1,4 @@
-// 户外天空 + 体积云（v65）。所有带 SKY_PROFILES 的户外层级（L2/3/4/5/6/7/9/10/11）共用。
+// 户外天空 + 体积云。运行中的户外层由 usesWorldSky 选择，旧 profile 不代表当前层有天空。
 //
 // 旧版：L2~L7 是 Worker 预烘的 2048×1024 静态位图天空（云不会动、贴在球面上、没有体积感）；
 // L9~L11 是单层三维噪声着色的球面「云斑」，没有光照，只有明暗两色插值。
@@ -21,6 +21,7 @@
 import * as THREE from 'three'
 import { SKY_PROFILES, type SkyProfile } from './skyPixels'
 import { getMaterialMode } from './shared'
+import { SKY_VISIBILITY_GLSL, skyVisibilityUniforms, setSkyAccess, type SkyOpening } from './skyVisibility'
 
 // ------------------------------------------------------------------ 3D 噪声贴图
 const N = 48
@@ -205,6 +206,7 @@ uniform vec3 uZenith, uZenithMid, uHorizon, uHaze, uSunDir, uSunDisc, uGlow, uFo
 uniform vec3 uGlowA, uGlowB; uniform float uGlowAK, uGlowBK;
 varying vec3 vDir;
 ${GLSL_COMMON}
+${SKY_VISIBILITY_GLSL}
 float h21(vec2 p) { p = fract(p * vec2(123.34, 456.21)); p += dot(p, p + 45.32); return fract(p.x * p.y); }
 void main() {
   vec3 d = normalize(vDir);
@@ -288,7 +290,7 @@ void main() {
   // 高光肩部：亮云/日晕平滑压到 1 以内，不会整片过曝成纯白
   vec3 hi = max(col - 0.62, 0.0);
   col = min(col, 0.62) + 0.38 * (1.0 - exp(-hi * 2.6));
-  gl_FragColor = vec4(col, 1.0);
+  gl_FragColor = vec4(mix(uSkyIndoor, col, skyVisibility(d)), 1.0);
   #include <colorspace_fragment>
 }`
 
@@ -313,6 +315,7 @@ export class SkySystem {
   private q: SkyQuality
   private baseCoverage: number
   private disposed = false
+  private visibility = skyVisibilityUniforms()
 
   constructor(id: number, sunDir: THREE.Vector3) {
     const P: SkyProfile = SKY_PROFILES[id]
@@ -367,6 +370,7 @@ export class SkySystem {
     const glows = P.horizonGlow ?? []
     this.skyMat = new THREE.ShaderMaterial({
       uniforms: {
+        ...this.visibility,
         tClouds: { value: cl ? this.rt.texture : null },
         tNoise: { value: noise },
         uTime: { value: 0 },
@@ -412,6 +416,10 @@ export class SkySystem {
     this.skyMat.uniforms.uFogMix.value = Math.max(0, Math.min(1, fogMix))
   }
 
+  setVisibility(amount: number, eye: THREE.Vector3, fog: THREE.Color, opening?: SkyOpening) {
+    setSkyAccess(this.visibility, amount, eye, fog, opening)
+  }
+
   /** Low texture quality also caps cloud work, including realistic mode on mobile. */
   setQuality(tier: 'high' | 'low') {
     if (this.disposed || this.q === QUALITY[tier]) return
@@ -425,7 +433,7 @@ export class SkySystem {
 
   /** 每帧调用：推进时间、同步场景雾色，并对云层全景图做一片时间切片重算。 */
   update(renderer: THREE.WebGLRenderer, time: number, fogColor?: THREE.Color) {
-    if (this.disposed) return
+    if (this.disposed || !this.mesh.visible) return
     this.skyMat.uniforms.uTime.value = time
     if (fogColor) this.skyMat.uniforms.uFogColor.value.copy(fogColor)
     if (!this.skyMat.uniforms.tClouds.value) return

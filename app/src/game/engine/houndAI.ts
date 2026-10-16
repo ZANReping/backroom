@@ -47,12 +47,12 @@ export function beginHoundFrame(eng: Engine, dt: number) {
 }
 const once = (eng: Engine, key: string, text: string, kind: 'system' | 'damage' = 'system') => { const F=frameFor(eng); if (!F.told.has(key)) { F.told.add(key); eng.msg(text, kind) } }
 
-export function initHound(eng: Engine, e: Entity, neutral = eng.levelDef.id === 11): HoundState {
+export function initHound(eng: Engine, e: Entity, neutral = e.def.houndKind ? e.def.houndKind === 'neutral' : eng.levelDef.id === 11): HoundState {
   neutral = neutral && !e.provoked
   const s: HoundState = { neutral, phase: 'roam', t: 0, gazeT: 0, gazeCd: 0, alert: 0, lostT: 0,
     lastX: e.x+(eng.map?.inf?.ox??0), lastY: e.y+(eng.map?.inf?.oy??0), lastHp: Math.max(e.hp,e.def.hp),
     crouch: 0, howlPose: 0, sit: 0, jaw: 0, wag: 0 }
-  e.def = { ...e.def, name: neutral ? '中立猎犬' : '猎犬' }
+  e.def = { ...e.def, houndKind: e.def.houndKind ?? (neutral ? 'neutral' : eng.levelDef.id === 3 ? 'ambusher' : 'hostile'), name: neutral ? '中立猎犬' : '猎犬' }
   e.hd = s
   return s
 }
@@ -97,6 +97,7 @@ export function updateHound(eng: Engine, e: Entity, dt: number, d: number, dmgMu
   const p = eng.player, m = eng.map!, def = e.def
   const ox=m.inf?.ox??0,oy=m.inf?.oy??0
   const s = e.hd ?? initHound(eng, e)
+  if (e.def.houndKind === 'ambusher') l3 = true
   s.t += dt; s.gazeCd -= dt; s.alert = Math.max(0, s.alert - dt)
   const hurt = e.hp < s.lastHp
   s.lastHp = e.hp

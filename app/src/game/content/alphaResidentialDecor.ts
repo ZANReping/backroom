@@ -1,5 +1,6 @@
 import type { Structure } from '../core/types'
 import type { AlphaPart, AlphaPanel, AlphaSurface } from './alphaDecor'
+import {alphaCupParts,insetAlphaBasin} from './alphaVessels'
 
 /** Residential furniture shares the same metre-scale geometry and collision source. */
 export const RESIDENTIAL_NAMES={
@@ -15,7 +16,7 @@ export function residentialParts(s:Structure):AlphaPart[]{
  const B=(x:number,y:number,zz:number,ww:number,dd:number,h:number,surface:AlphaSurface='paint',c=color,solid=false,shape?:AlphaPart['shape'],panel?:AlphaPanel,text?:string)=>{if(ww>0&&dd>0&&h>0)a.push({x,y,z:z+zz,w:ww,d:dd,h,surface,color:c,solid,shape,panel,text})}
  const legs=(ww:number,dd:number,h:number,c='#686c63')=>{for(const x of [.05,ww-.09])for(const y of [.05,dd-.09])B(x,y,0,.04,.04,h,'metal',c,true)}
  const paper=(x:number,y:number,zz:number)=>{B(x,y,zz,.23,.3,.012,'paint','#e8e1ca');for(let i=0;i<5;i++)B(x+.025,y+.045+i*.037,zz+.013,.17,.003,.002,'paint','#737c71')}
- const mug=(x:number,y:number,zz:number)=>{B(x,y,zz,.09,.09,.10,'paint','#c4c4a6',false,'rod');B(x+.075,y+.025,zz+.025,.04,.025,.06,'paint','#c4c4a6',false,'round');B(x+.01,y+.01,zz+.098,.07,.07,.002,'paint','#473b2b',false,'rod')}
+ const mug=(x:number,y:number,zz:number)=>{a.push(...alphaCupParts(x,y,z+zz,.09,.10,'#c4c4a6'))}
  const screen=(x:number,y:number,zz:number)=>{B(x+.12,y+.08,zz,.22,.19,.02,'plastic','#4f5753');B(x+.2,y+.06,zz+.02,.035,.04,.13,'metal','#7a827a');B(x,y,zz+.12,.47,.06,.32,'plastic','#313a38');B(x+.022,y+.061,zz+.144,.426,.004,.269,'paint','#c6d6cf',false,undefined,'library_screen');B(x-.04,y+.24,zz,.43,.15,.019,'plastic','#444d49');for(let i=0;i<3;i++)for(let j=0;j<12;j++)B(x-.026+j*.033,y+.25+i*.037,zz+.020,.024,.025,.006,'plastic','#abb2a4')}
  switch(s.kind){
  case 'alpha_mushroom_block':{
@@ -67,7 +68,8 @@ export function residentialParts(s:Structure):AlphaPart[]{
   const fridge=.68;B(w-fridge,0,.025,fridge,d,H-.04,'paint','#dadbca',true);for(const zz of [.3,1.24])B(w-.095,d+.014,zz,.023,.025,.24,'metal','#a8afa4');B(w-fridge,d+.002,1.16,fridge,.004,.009,'paint','#a7ad9c')
   B(0,0,.1,w-fridge-.04,d,.73,'wood',color,true);B(0,0,.83,w-fridge-.02,d,.055,'laminate','#cbc7ad',true)
   for(let x=.05;x<w-fridge-.1;x+=.51){B(x,d+.003,.13,.46,.012,.64,'wood',color);B(x+.29,d+.02,.68,.12,.026,.02,'metal','#adae9a')}
-  B(.15,.1,.887,.55,.42,.018,'steel','#8e9b95');B(.20,.15,.89,.45,.32,.012,'paint','#576b65');B(.51,.065,.89,.023,.025,.27,'metal','#adbeb5',false,'rod');B(.51,.065,1.14,.023,.16,.025,'metal','#adbeb5')
+  insetAlphaBasin(a,.17,.12,z+.885,.51,.38,.16)
+  B(.51,.065,.89,.023,.025,.27,'metal','#adbeb5',false,'rod');B(.51,.065,1.14,.023,.16,.025,'metal','#adbeb5')
   B(1.05,.09,.888,.56,.45,.018,'paint','#343f3a');for(const x of [1.11,1.39])for(const yy of [.15,.39])B(x,yy,.91,.15,.15,.016,'metal','#66766b',false,'rod')
   B(.04,.01,1.5,w-fridge-.12,.30,.62,'wood',color,true);for(let x=.10;x<w-fridge-.2;x+=.53)B(x,.314,1.57,.025,.02,.12,'metal','#b9b9a0')
   B(1.9,.16,.887,.17,.20,.26,'metal','#a7afa2',false,'round');mug(2.2,.24,.887);paper(2.4,.16,.887);break

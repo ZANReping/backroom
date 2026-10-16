@@ -71,6 +71,7 @@ export const VARIANT_LORE: Record<string, string[]> = {
 }
 
 export interface LiveChunk {
+  l11?: import('./l11Types').L11ChunkData
   l0?: L0Layout
   l1?: L1ArchitectureData
   up2?: Uint8Array
@@ -114,6 +115,8 @@ export interface ChunkDynState {
 }
 
 export interface InfiniteState {
+  cityInstances?: Map<string, Structure>
+  cityReferences?: Map<string, number>
   l0Pending?: import("../engine/l0State").L0Pending
   l0?: L0SpaceState
   mothAlerts?: { all: boolean; nests: Record<string, boolean> }
@@ -204,6 +207,12 @@ export function genL0ChunkRaw(def:LevelDef,seed:number,cx:number,cy:number,force
 const STATE_CAP = 600 // 卸载 chunk 动态状态 LRU 上限（内存控制）
 const EXPLORED_CAP = 800 // 已探索位图上限
 
+/** Predict the existing leave/revisit dressing rule without mutating a save. */
+export function l11NextDressingRevision(inf:InfiniteState,cx:number,cy:number,clock=inf.cityClock??0){
+  const key=chunkKey(cx,cy),revision=inf.cityRevisions?.[key]??0,last=inf.cityUnloaded?.[key]
+  return last!==undefined&&inf.cityMutable!==false&&clock-last>=180&&h32(inf.seed,cx,cy,revision,Math.floor(last))%100<12?revision+1:revision
+}
+
 function mapSetCapped<K, V>(map: Map<K, V>, key: K, val: V, cap: number) {
   if (map.has(key)) map.delete(key)
   map.set(key, val)
@@ -211,17 +220,18 @@ function mapSetCapped<K, V>(map: Map<K, V>, key: K, val: V, cap: number) {
 }
 
 // 由确定性 raw 数据 + 持久动态状态实例化「活体」chunk（窗口坐标对象）
-function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, ox: number, oy: number): LiveChunk {
+function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, ox: number, oy: number, prepared?:GenChunk): LiveChunk {
   const key = chunkKey(cx, cy)
   if (def.id === 11 && inf.cityUnloaded?.[key] !== undefined) {
-    const last=inf.cityUnloaded[key], age=(inf.cityClock??0)-last, revision=inf.cityRevisions?.[key]??0
-    if (inf.cityMutable !== false && age>=180 && h32(inf.seed,cx,cy,revision,Math.floor(last))%100<12) (inf.cityRevisions??={})[key]=revision+1
+    const next=l11NextDressingRevision(inf,cx,cy)
+    if(next!==(inf.cityRevisions?.[key]??0))(inf.cityRevisions??={})[key]=next
     delete inf.cityUnloaded[key]
   }
-  const raw = def.id === 0 ? genL0Architecture(def,inf.seed,cx,cy,undefined,inf.l0?.revisions[key]??0,inf.l0?.redProgress) : def.id === 11 ? preparedL11(def, inf.seed, cx, cy, inf.cityRevisions?.[key] ?? 0)
-    : (!inf.plague ? takePreparedChunk(def, inf.seed, cx, cy) : undefined) ?? infiniteImplFor(def.id).genRaw(def, inf.seed, cx, cy, inf.plague ? 'red' : undefined)
+  const raw = prepared ?? (def.id === 0 ? genL0Architecture(def,inf.seed,cx,cy,undefined,inf.l0?.revisions[key]??0,inf.l0?.redProgress) : def.id === 11 ? preparedL11(def, inf.seed, cx, cy, inf.cityRevisions?.[key] ?? 0)
+    : (!inf.plague ? takePreparedChunk(def, inf.seed, cx, cy) : undefined) ?? infiniteImplFor(def.id).genRaw(def, inf.seed, cx, cy, inf.plague ? 'red' : undefined))
   const st = inf.state.get(key)
   const structures: Structure[] = raw.structures.map((s) => {
+    if(s.l11){const shared=inf.cityInstances?.get(s.l11.id);if(shared){shared.x=s.l11.x-ox;shared.y=s.l11.y-oy;return shared}}
     const live: Structure = { ...s, x: s.x - ox, y: s.y - oy, data: s.data ? { ...s.data } : undefined }
     const saved = st?.structs.find((q) => q.sid === (s.data?.sid as number | undefined))
     if (saved) {
@@ -239,6 +249,7 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
     const inventory=def.id===11?inf.cityContainers?.[`${key}:${s.data?.sid}`]:undefined
     if(inventory){live.looted=inventory.looted;live.data={...live.data,lootItems:[...inventory.items],searched:inventory.searched?1:0}}
     if(def.id===1)restoreL1Container(inf.l1Dynamics??=newL1Dynamics(),inf.seed,cx,cy,live,ox,oy)
+    if(s.l11)(inf.cityInstances??=new Map()).set(s.l11.id,live)
     return live
   })
   const items: GroundItem[] = raw.items
@@ -250,19 +261,23 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
   }
   const lights: LightSource[] = raw.lights.map((l) => ({ ...l, x: l.x - ox, y: l.y - oy }))
   for (const e of st?.extraLights ?? []) {const p=raw.l0?l0RestoredDropPosition(raw.l0,e.x,e.y):def.id===1?l1RestoredDropPosition(raw,cx,cy,e.x,e.y):e;lights.push({ ...e, x:p.x-ox, y:p.y-oy })}
-  const exits: ExitInstance[] = raw.exits.map((e) => ({ def: e.def, x: e.x - ox, y: e.y - oy, floor: e.floor, z: e.z, discovered: st?.exitDisc ?? false }))
+  const exits: ExitInstance[] = raw.exits.map((e) => ({ ...e, x: e.x - ox, y: e.y - oy, discovered: st?.exitDisc ?? false }))
   // v25：chunk 实体（栖息地过滤结果，世界坐标 → 窗口坐标）
   // v41：calm 实例标记（L2 被动死亡飞蛾）——浅拷贝 def 置被动语义，不污染共享实体定义
   // v44：scale 实例标记（L2 温顺死亡飞蛾体型 0.6）——与 calm 一并浅拷贝带入
-  const entities: Entity[] = raw.entities.map((e) => {
+  // A pedestrian can leave its birth chunk while that chunk unloads/reloads.
+  // Its stable ecological ID prevents a second copy appearing at the old post.
+  const cityResidents=def.id===11?new Set([...inf.chunks.values()].flatMap(c=>c.entities.filter(e=>!e.dead).map(e=>e.l11Home?.id))):undefined
+  const entities: Entity[] = raw.entities.filter(e=>!e.l11Home||!cityResidents?.has(e.l11Home.id)).map((e) => {
     const ent = makeEntity(e.type, e.x - ox, e.y - oy, e.z ?? 0, e.mothForm)
     ent.mothNest = e.mothNest
+    ent.l11Home = e.l11Home
     if (ent.def.type === 'deathmoth' && inf.mothAlerts?.all && ent.def.mothForm !== 'larva') ent.provoked = true
     if (e.calm || e.scale !== undefined) ent.def = { ...ent.def, ...(e.calm ? { passive: true } : {}), ...(e.scale !== undefined ? { scale: e.scale } : {}) }
     if (def.id === 5 && ent.def.type === 'deathmoth' && ent.def.mothForm === 'male') ent.def = { ...ent.def, passive: true, grudge: true, hunts: undefined }
     // v53：L3 高智能实体标记——hostile 剥除被动（无面灵转敌意）；tool 石器（伤害 +6）；
     // l3face/capybara 形态变体；human 窃皮者伪装成流浪者（接近后暴起，见 entityAI）
-    if (e.hostile || e.tool || e.l3face || e.capybara) ent.def = { ...ent.def, ...(e.hostile ? { passive: false } : {}), ...(e.tool ? { tool: true, damage: ent.def.damage + 6 } : {}), ...(e.l3face ? { l3face: true } : {}), ...(e.capybara ? { capybara: true } : {}) }
+    if (e.hostile || e.tool || e.l3face || e.capybara || e.l3clump) ent.def = { ...ent.def, ...(e.hostile ? { passive: false } : {}), ...(e.tool ? { tool: true, damage: ent.def.damage + 6 } : {}), ...(e.l3face ? { l3face: true } : {}), ...(e.capybara ? { capybara: true } : {}), ...(e.l3clump ? { l3clump: true } : {}) } // v64：l3clump=L3 高智能肢团
     if (e.ceilingCrawler || e.arachnidMorph || e.arachnidBreed !== undefined || e.herbivore) ent.def = {
       ...ent.def,
       ...(e.ceilingCrawler ? { ceilingCrawler: true } : {}),
@@ -286,7 +301,7 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
     moveT: 1 + Math.random() * 5, bubbleText: '', bubbleT: 0,
     hp: sp.def.faction === 'brc' ? 55 : sp.def.faction === 'jerry' ? 45 : undefined, // BRC 员工/信众可伤害可杀死；其余 NPC 无敌（据点居民契约）
   }))
-  return { key, cx, cy, l0: raw.l0, l1: raw.l1, variant: raw.variant, tiles: raw.tiles, wet: raw.wet, elev: raw.elev, tint: raw.tint, crawl: raw.crawl, outdoor: raw.outdoor, ceiling: raw.ceiling, liquid: raw.liquid, dn: raw.dn, dnWall: raw.dnWall, up: raw.up, upWall: raw.upWall, up2: raw.up2, upWall2: raw.upWall2, stair: raw.stair, seaFloor: raw.seaFloor, terrain: raw.terrain, caveCeil: raw.caveCeil, structures, items, lights, exits, entities, npcs, habFallback: raw.habFallback }
+  return { key, cx, cy, l0: raw.l0, l1: raw.l1, l11: raw.l11, variant: raw.variant, tiles: raw.tiles, wet: raw.wet, elev: raw.elev, tint: raw.tint, crawl: raw.crawl, outdoor: raw.outdoor, ceiling: raw.ceiling, liquid: raw.liquid, dn: raw.dn, dnWall: raw.dnWall, up: raw.up, upWall: raw.upWall, up2: raw.up2, upWall2: raw.upWall2, stair: raw.stair, seaFloor: raw.seaFloor, terrain: raw.terrain, caveCeil: raw.caveCeil, structures, items, lights, exits, entities, npcs, habFallback: raw.habFallback }
 }
 
 // 把已加载 chunk 内容缝合进窗口数组与对象列表
@@ -305,6 +320,7 @@ function stitch(m: GameMap, explored?: Uint8Array) {
   if (explored) explored.fill(0)
   m.structures = []; m.items = []; m.lights = []; m.exits = []
   const habFb: Record<string, number> = {}
+  const citySeen=new Set<string>(),cityReferences=new Map<string,number>()
   for (const c of inf.chunks.values()) {
     if (c.habFallback) for (const [k, v] of Object.entries(c.habFallback)) habFb[k] = (habFb[k] ?? 0) + v
     const x0 = c.cx * CS - inf.ox, y0 = c.cy * CS - inf.oy
@@ -334,7 +350,13 @@ function stitch(m: GameMap, explored?: Uint8Array) {
       }
     }
     // 台阶：raw 的 step 未存进 LiveChunk（pit 台阶由 elev 派生重建）——这里按 elev 边重建
-    m.structures.push(...c.structures.filter(s=>!s.data?.l1Hidden))
+    m.structures.push(...c.structures.filter(s=>{
+      if(s.data?.l1Hidden)return false
+      if(!s.l11)return true
+      cityReferences.set(s.l11.id,(cityReferences.get(s.l11.id)??0)+1)
+      if(citySeen.has(s.l11.id))return false
+      citySeen.add(s.l11.id);return true
+    }))
     m.items.push(...c.items.filter((it) => !inf.taken.has(it.id)))
     m.lights.push(...c.lights)
     m.exits.push(...c.exits)
@@ -348,6 +370,8 @@ function stitch(m: GameMap, explored?: Uint8Array) {
     }
   }
   // v57m：窗口内任一 chunk 提供上层楼板时，本层按 2F 图处理（L7 入口舱体）
+  inf.cityReferences=cityReferences
+  for(const id of inf.cityInstances?.keys()??[])if(!citySeen.has(id))inf.cityInstances!.delete(id)
   m.floors = [...inf.chunks.values()].some(c => c.up2?.some(v => v === 1)) ? 3 : [...inf.chunks.values()].some((c) => c.up?.some((v) => v === 1)) ? 2 : 1
   m.hasUnderground = [...inf.chunks.values()].some(c => c.dn?.some(v => v === 1))
   // v27：栖息地降级计数并入（与有限层 GameMap.habitatFallback 同契约，供验证器/调试面板读取）
@@ -536,16 +560,22 @@ export function generateInfinite(def: LevelDef, seed: number, firstVisit = true)
 
 // 每帧调用：玩家跨出中心 chunk 时平移窗口（流式加载/卸载）。
 // 返回平移量（瓦片；引擎据此反向平移玩家/粒子等动态坐标），未平移返回 null。
-export function updateInfinite(m: GameMap, def: LevelDef, px: number, py: number, explored?: Uint8Array): { dx: number; dy: number } | null {
+export function updateInfinite(m: GameMap, def: LevelDef, px: number, py: number, explored?: Uint8Array, prepared?:ReadonlyMap<string,GenChunk>): { dx: number; dy: number } | null {
   const inf = m.inf
   if (!inf) return null
   const pcx = Math.floor((inf.ox + px) / CS)
   const pcy = Math.floor((inf.oy + py) / CS)
-  if (def.id === 11) prefetchL11(def, inf.seed, pcx, pcy, inf.cityRevisions)
-  else if (!inf.plague) prefetchChunks(def, inf.seed, pcx, pcy, inf.chunks)
+  if(!prepared){
+    if (def.id === 11) prefetchL11(def, inf.seed, pcx, pcy, inf.cityRevisions)
+    else if (!inf.plague) prefetchChunks(def, inf.seed, pcx, pcy, inf.chunks)
+  }
   const nox = (pcx - WIN_R) * CS
   const noy = (pcy - WIN_R) * CS
   if (nox === inf.ox && noy === inf.oy) return null
+  // Refuse incomplete background preparations before mutating the old window.
+  if(prepared)for(let y=pcy-WIN_R;y<=pcy+WIN_R;y++)for(let x=pcx-WIN_R;x<=pcx+WIN_R;x++){
+    const key=chunkKey(x,y);if(!inf.chunks.has(key)&&!prepared.has(key))throw Error('Incomplete destination chunks')
+  }
   const dx = nox - inf.ox, dy = noy - inf.oy
 
   if (explored) saveExplored(m, explored)
@@ -600,7 +630,7 @@ export function updateInfinite(m: GameMap, def: LevelDef, px: number, py: number
   }
   // 幸存 chunk：活体对象随窗口反向平移
   for (const c of inf.chunks.values()) {
-    for (const s of c.structures) { s.x -= dx; s.y -= dy }
+    for (const s of c.structures) { if(s.l11){s.x=s.l11.x-nox;s.y=s.l11.y-noy}else{s.x -= dx; s.y -= dy} }
     for (const it of c.items) { it.x -= dx; it.y -= dy }
     for (const l of c.lights) { l.x -= dx; l.y -= dy }
     for (const e of c.exits) { e.x -= dx; e.y -= dy }
@@ -615,7 +645,7 @@ export function updateInfinite(m: GameMap, def: LevelDef, px: number, py: number
   for (let cy = ncy0; cy < ncy0 + WIN_CHUNKS; cy++)
     for (let cx = ncx0; cx < ncx0 + WIN_CHUNKS; cx++) {
       const key = chunkKey(cx, cy)
-      if (!inf.chunks.has(key)) inf.chunks.set(key, instantiate(def, inf, cx, cy, inf.ox, inf.oy))
+      if (!inf.chunks.has(key)) inf.chunks.set(key, instantiate(def, inf, cx, cy, inf.ox, inf.oy,prepared?.get(key)))
     }
   stitch(m, explored)
   inf.rev++

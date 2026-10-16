@@ -33,11 +33,13 @@ import * as survival from './engine/survival'
 import * as entityAI from './engine/entityAI'
 import * as combat from './engine/combat'
 import * as interact from './engine/interact'
+import type { SittingState } from './engine/seating'
 import * as npc from './engine/npc'
 import * as inventory from './engine/inventory'
 import * as warehouse from './engine/warehouse'
 import * as ambient from './engine/ambient'
 import * as dev from './engine/dev'
+import { devOperateExit } from './engine/devExits'
 import * as unstuck from './engine/unstuck'
 import { loadSaveSnapshot, type SaveSnapshot } from './engine/save'
 import { canPrepareChunks, prepareChunkWindow } from './world/chunkCache'
@@ -168,11 +170,11 @@ export class Engine {
   fakeEnds = 0
   pocketsAlarmT = 6
   manilaT = 4
-  transition: { anim: string; t: number; dest: number | 'random' | 'win'; fallDamage?: number; preparing?: boolean; prepared?: boolean; mapSeed?: number } | null = null
+  transition: { anim: string; t: number; startedAt?: number; dest: number | 'random' | 'win'; fallDamage?: number; preparing?: boolean; prepared?: boolean; mapSeed?: number } | null = null
   explored: Uint8Array = new Uint8Array(0)
   visible: Uint8Array = new Uint8Array(0)
   fakes: { x: number; y: number; t: number }[] = [] // 理智幻影
-  particles: { x: number; y: number; vx: number; vy: number; t: number; life: number; color: string; size: number; z?: number; vz?: number }[] = []
+  particles: { x: number; y: number; vx: number; vy: number; t: number; life: number; color: string; size: number; z?: number; vz?: number; opacity?: number }[] = []
   // v13：液体状态
   l7fx: L7Fx = newL7Fx() // v66：L7 涌浪/致幻/重力交界区事件状态
   inLiquid = 0 // 当前所在液体类型（0 无 1 深水 2 浅水）
@@ -191,9 +193,10 @@ export class Engine {
   // v12：interactTarget 携带目标引用（结构/物品/出口），HUD 提示与 doInteract 执行
   // 共用 scanInteract 的同一选择结果，杜绝「提示普通门却触发相邻上锁门」的目标漂移。
   interactTarget: { kind: string; label: string; s?: Structure; it?: GameMap['items'][number]; e?: GameMap['exits'][number]; npc?: NpcState; ent?: Entity; vmBack?: boolean } | null = null
+  seating: SittingState | null = null
   // 开发者模式（noAttackCooldown=true 时仅绕过攻击间隔；体力消耗仍保留，便于单独调试战斗节奏）
   devEnabled = false
-  dev = { mapReveal: false, god: false, noclip: false, speed: false, statLock: true, oneHit: false, invisible: false, frozenAI: false, bright: false, noAttackCooldown: false, phenOn: new Set<string>(), phenOff: new Set<string>(), hintDist: 30 }
+  dev = { mapReveal: false, god: false, noclip: false, fly: false, speed: false, statLock: true, oneHit: false, invisible: false, frozenAI: false, bright: false, noAttackCooldown: false, phenOn: new Set<string>(), phenOff: new Set<string>(), hintDist: 30 }
   // 地图就地修改版本号（开发者强制生成固定结构时 +1；渲染层据此重建有限层静态几何）
   mapRev = 0
   // 开场爬起动画计时（>0 时锁定移动/攻击/跳跃，渲染层相机从贴地侧躺缓慢起身）
@@ -415,7 +418,25 @@ export class Engine {
     this.listeners.push(fn)
     return () => { this.listeners = this.listeners.filter((f) => f !== fn) }
   }
-  emit(e: HudEvent) { for (const f of this.listeners) f(e) }
+  emit(e: HudEvent) {
+    if (e.kind === 'transition' && e.anim !== 'intro' && this.transition) {
+      this.transition.startedAt ??= performance.now()
+      this.prepareLevelTransition()
+    }
+    for (const f of this.listeners) f(e)
+  }
+
+  /** Raw map work overlaps the exit animation; live state changes under its card. */
+  private prepareLevelTransition() {
+    const t = this.transition
+    if (!t || t.dest === 'win' || t.preparing || t.prepared) return
+    if (t.dest === 'random') t.dest = Math.floor(Math.random() * NORMAL_LEVELS)
+    const def = levelDefOf(t.dest)
+    if (!def || !canPrepareChunks(def)) return
+    t.preparing = true
+    t.mapSeed = level.nextMapSeed(this, t.dest)
+    void prepareChunkWindow(def, t.mapSeed).catch(() => undefined).then(() => { t.prepared = true })
+  }
   msg(text: string, kind: MsgKind = 'system') {
     this.msgLog.push({ text, kind })
     if (this.msgLog.length > 400) this.msgLog.splice(0, this.msgLog.length - 400)
@@ -573,7 +594,7 @@ export class Engine {
   loadLevel(id: number, restore?: { mapSeed: number; firstVisit: boolean }, preparedMapSeed?: number) { level.loadLevel(this, id, restore, preparedMapSeed) }
   /** v39：无限层级 NPC 同步——从已加载 LiveChunk 收集活体 NPC（窗口平移后重收集） */
   syncInfNpcs() { level.syncInfNpcs(this) }
-  updateInfiniteWindow() { level.updateInfiniteWindow(this) }
+  updateInfiniteWindow(prepared?:ReadonlyMap<string,import('./world/infiniteRegistry').GenChunk>) { level.updateInfiniteWindow(this,prepared) }
   nearestExit() { return level.nearestExit(this) }
   /** v35：最近的定居点地标（出口提示的替代目标——附近无出口时指向它） */
   nearestLandmark() { return level.nearestLandmark(this) }
@@ -656,7 +677,7 @@ export class Engine {
   squirt() { combat.squirt(this) }
   updateProjectiles(dt: number) { combat.updateProjectiles(this, dt) }
   landProjectile(pr: Projectile, x: number, y: number) { combat.landProjectile(this, pr, x, y) }
-  bloodParticles(x: number, y: number) { combat.bloodParticles(this, x, y) }
+  bloodParticles(x: number, y: number, clear: boolean | 'wretch' = false) { combat.bloodParticles(this, x, y, clear) }
   steamParticles(x: number, y: number) { combat.steamParticles(this, x, y) }
   splashParticles(x: number, y: number, z: number) { combat.splashParticles(this, x, y, z) }
   bubbleParticles(x: number, y: number, z: number) { combat.bubbleParticles(this, x, y, z) }
@@ -823,15 +844,15 @@ export class Engine {
     // 过渡动画中
     if (this.transition) {
       this.transition.t += dt
+      // App deliberately suspends simulation while the departure animation is
+      // visible. Count that wall time once rather than replaying its delay.
+      if (this.transition.startedAt !== undefined)
+        this.transition.t = Math.max(this.transition.t, (performance.now() - this.transition.startedAt) / 1000)
       if (this.transition.t > 0.9) {
         const t = this.transition
         if (t.dest === 'random') t.dest = Math.floor(Math.random()*NORMAL_LEVELS)
         if (t.dest !== 'win' && !t.prepared && canPrepareChunks(levelDefOf(t.dest)!)) {
-          if (!t.preparing) {
-            t.preparing = true
-            t.mapSeed = level.nextMapSeed(this, t.dest)
-            void prepareChunkWindow(levelDefOf(t.dest)!, t.mapSeed).catch(() => undefined).then(() => { t.prepared = true })
-          }
+          this.prepareLevelTransition()
           return
         }
         this.transition = null
@@ -943,6 +964,17 @@ export class Engine {
   devFindSpot(cx: number, cy: number, maxR = 6, band: FloorBand = this.player.floor): { x: number; y: number } | null { return dev.devFindSpot(this, cx, cy, maxR, band) }
   /** 召唤实体：在玩家前方 dist 格（默认 3）生成指定类型实体 */
   devSpawnEntity(type: string, dist = 3, form?: import('./entities').EntityForm): boolean { return dev.devSpawnEntity(this, type, dist, form) }
+  devSetFlight(enabled: boolean): void {
+    this.dev.fly = this.devEnabled && enabled
+    this.player.vz = 0
+    this.moveIt.acc = 0
+    this.input.jump = this.input.crouch = false
+    if (this.dev.fly) {
+      this.ride = this.climb = this.porchDrop = null
+      this.onStairs = false
+      this.player.crouching = false
+    }
+  }
   /** 每种实体各召唤一只，环绕玩家排开 */
   devSpawnAllEntities(): number { return dev.devSpawnAllEntities(this) }
   /** 给予物品：默认进背包；toGround=true 时生成在玩家脚下 */
@@ -955,10 +987,11 @@ export class Engine {
   devFillStats() { dev.devFillStats(this) }
   /** 全部清空（HP 保留 1 防死亡） */
   devDrainStats() { dev.devDrainStats(this) }
-  /** 召唤指定出口：仅限本层可生成的种类（levelDef.exits）；在玩家附近邻墙地板生成一个并标记已发现 */
+  /** 按本层出口的建筑、道路与通行条件，在附近生成并标记已发现。 */
   devSummonExit(kind: string): boolean { return dev.devSummonExit(this, kind) }
-  /** v54：传送到本层已生成的指定种类出口（召唤出口「已存在则传送」） */
-  devGotoExitKind(kind: string): boolean { return dev.devGotoExitKind(this, kind) }
+  /** Explicit summon/nearest safe teleport; never falls back to the other action. */
+  devOperateExit(kind:string,mode:'summon'|'teleport',signal?:AbortSignal,destination?:ExitDef['dest'],progress?:(message:string)=>void) { return devOperateExit(this,kind,mode,signal,destination,progress) }
+  devGotoExitKind(kind: string): Promise<boolean> { return dev.devGotoExitKind(this, kind) }
   /** v54：召唤装饰物（decorRegistry 结构类条目；落位面前 1 格，无限层同步写 LiveChunk） */
   devSpawnDecor(kind: string): boolean { return dev.devSpawnDecor(this, kind) }
   /** 传送：exit=最近出口 / entity=最近实体 / container=最近未搜容器 / spawn=出生点 / landmark=最近定居点地标 */

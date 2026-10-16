@@ -8,7 +8,7 @@ import { completedFactionLines, factionState, trackFactionTask } from '@/game/en
 import { megQuestProgress } from '@/game/content/megTerminal'
 import { ITEMS } from '@/game/content/items'
 import { loadAvatar } from '@/game/core/avatar'
-import { npcPortrait } from './npcPortrait'
+import NpcPortraitImage from './NpcPortraitImage'
 import { ProfileEditor } from './MegTerminal'
 import MegContacts from './MegContacts'
 import { FactionCareerPanel, FactionMissionJournal } from './FactionMissions'
@@ -24,7 +24,7 @@ function Personal({ faction, engine, readOnly }: { faction: NewFaction; engine: 
   return <>
     <div className="faction-section-title"><div><small>01 / PERSONAL RECORD</small><h3>{config.record}</h3></div><span>{readOnly ? '档案预览' : joined ? '身份已登记' : '访客记录'}</span></div>
     <article className="faction-id">
-      <div className="faction-photo-column"><div className="faction-photo"><small>{config.short} / ID</small><img src={npcPortrait(loadAvatar(), undefined, undefined, 240, 'identity')} alt={`玩家当前形象的 ${config.short} 证件照`} /><span>{config.record}</span></div><div className="faction-id-code">{readOnly ? 'PREVIEW' : `${faction.toUpperCase()}-${(engine.seed >>> 0).toString(16).toUpperCase().padStart(8, '0')}`}</div></div>
+      <div className="faction-photo-column"><div className="faction-photo"><small>{config.short} / ID</small><NpcPortraitImage avatar={loadAvatar()} size={240} framing="identity" alt={`玩家当前形象的 ${config.short} 证件照`} /><span>{config.record}</span></div><div className="faction-id-code">{readOnly ? 'PREVIEW' : `${faction.toUpperCase()}-${(engine.seed >>> 0).toString(16).toUpperCase().padStart(8, '0')}`}</div></div>
       <div className="faction-id-copy"><small>{config.code}</small><h4>{readOnly ? '个人档案' : p.name || '姓名未登记'}</h4><p className="faction-muted">{config.motto}</p><dl>
         <div><dt>姓名 / NAME</dt><dd>{readOnly ? '—' : p.name || '未登记'}</dd></div><div><dt>性别 / GENDER</dt><dd>{readOnly ? '—' : p.gender ?? '未登记'}</dd></div><div><dt>年龄 / AGE</dt><dd>{readOnly ? '—' : p.age === null ? '未登记' : `${p.age} 岁`}</dd></div><div className="faction-position"><dt>{joined ? '职位 / POSITION' : '团体关系 / RELATION'}</dt><dd>{role}</dd></div>
       </dl>{!readOnly && <button onClick={() => { setEditing(v => !v); setSaved(false) }}>{editing ? '收起编辑' : '编辑个人资料'} ↗</button>}{saved && <p role="status">资料已保存，各团体共用这份个人资料。</p>}{readOnly && <p>进入游戏后可填写姓名、性别和年龄。</p>}</div>

@@ -10,6 +10,7 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import type { Structure } from '../core/types'
 import { configureSurfaceTexture, getMaterialMode, levelTexture, litMaterial, mulberry, noiseTexture } from './shared'
 import { withL10Wind } from './l10Wind'
+import { buildOutdoorTree } from './outdoorTrees'
 
 type Mat = THREE.MeshLambertMaterial | THREE.MeshStandardMaterial
 const cache = new Map<string, Mat>()
@@ -400,46 +401,7 @@ function hedgeNode(c: Ctx, s: Structure) {
 }
 
 // ---------------------------------------------------------------- 等高树（维基：树木与灌木高度一致）
-function tree(c: Ctx, s: Structure) {
-  const v = Number(s.data?.v ?? 0)
-  const r = mulberry((v * 977 + Math.floor(s.x * 4) * 61 + Math.floor(s.y * 4) * 191) >>> 0)
-  const trunkH = 3.1
-  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(.19, .3, trunkH, 9).translate(0, trunkH / 2, 0), M.bark())
-  const tuv = trunk.geometry.attributes.uv as THREE.BufferAttribute
-  for (let i = 0; i < tuv.count; i++) tuv.setXY(i, tuv.getX(i) * 1.2, tuv.getY(i) * 2.5)
-  c.g.add(trunk)
-  // 主枝（不参与碰撞）
-  const br: THREE.BufferGeometry[] = []
-  for (let k = 0; k < 4; k++) {
-    const a = k * Math.PI / 2 + r() * .8, len = 1.6 + r() * .7
-    const b = new THREE.CylinderGeometry(.05, .11, len, 6).translate(0, len / 2, 0)
-    b.rotateZ(.75 + r() * .3); b.rotateY(a); b.translate(0, trunkH - .5 - r() * .6, 0)
-    br.push(b)
-  }
-  const bm = new THREE.Mesh(mergeGeometries(br)!, M.bark()); br.forEach(g => g.dispose()); bm.userData.noCollision = 1; c.g.add(bm)
-  // 树冠：统一 7m 高；内核若干叶团 + 外层叶卡
-  const cores: THREE.BufferGeometry[] = [], cards: THREE.BufferGeometry[] = []
-  const crownC = 4.9, crownR = 2.0
-  for (let k = 0; k < 6; k++) {
-    const a = r() * Math.PI * 2, d = k === 0 ? 0 : .9 + r() * .6
-    const g = new THREE.IcosahedronGeometry(1.05 + r() * .35, 1)
-    g.scale(1, .8, 1); g.translate(Math.cos(a) * d, crownC + (k === 0 ? .4 : (r() - .5) * 1.1), Math.sin(a) * d)
-    cores.push(g)
-  }
-  for (let k = 0; k < 26; k++) {
-    const a = r() * Math.PI * 2, el = -.4 + r() * 1.3
-    const q = new THREE.PlaneGeometry(1.7, 1.6)
-    q.rotateY(a + Math.PI / 2 + (r() - .5)); q.rotateX((r() - .5) * .6)
-    q.translate(Math.cos(a) * crownR * Math.cos(el), Math.min(6.4, crownC + Math.sin(el) * 1.5), Math.sin(a) * crownR * Math.cos(el))
-    cards.push(q)
-  }
-  const core = mergeGeometries(cores)!; cores.forEach(g => g.dispose())
-  const cuv = core.attributes.uv as THREE.BufferAttribute, cpos = core.attributes.position as THREE.BufferAttribute
-  for (let i = 0; i < cuv.count; i++) cuv.setXY(i, cpos.getX(i) * .6, (cpos.getY(i) + cpos.getZ(i)) * .6)
-  core.computeVertexNormals()
-  const coreMesh = new THREE.Mesh(core, M.leafCore()); coreMesh.userData.noCollision = 1; c.g.add(coreMesh)
-  const cardMesh = new THREE.Mesh(mergeGeometries(cards)!, M.leafCard()); cards.forEach(g => g.dispose()); cardMesh.userData.noCollision = 1; c.g.add(cardMesh)
-}
+function tree(c: Ctx, s: Structure) { c.g.add(buildOutdoorTree(s, 10)) }
 
 // ---------------------------------------------------------------- 圆草捆
 function roundBale(c: Ctx, s: Structure) {

@@ -90,7 +90,7 @@ export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Gr
     suit: '#9a8fd0', gloves: '#9a8fd0', rabbit: '#c9a0d0', lighter: '#c9a0d0', // 装备：紫
     silverware: '#d8d8e0', wallpaper: '#c9b458',
     // v23 新增：Level 6–11 / Level 601
-    driedfruit: '#8fd98f', thingmeat: '#8fd98f', wheatgrain: '#8fd98f', citywater: '#8fd98f', // 补给：绿
+    driedfruit: '#8fd98f', thingmeat: '#8fd98f', ratmeat: '#8fd98f', wheatgrain: '#8fd98f', citywater: '#8fd98f', // 补给：绿
     uvlamp: '#b06ad9', xenonmarble: '#66e0d0', // 光源：紫外紫 / 氙气蓝绿
     timber: '#d96a4a', nails: '#d96a4a', // 武器/工具：红
     housekey: '#7fb0c9', // 钥匙：冰蓝

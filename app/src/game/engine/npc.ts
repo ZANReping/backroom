@@ -17,6 +17,8 @@ import { l2JerryRoomRectAt } from '../world/infiniteL2' // v45：信众宣传间
 import type { Engine } from '../engine'
 import { ALPHA_PLACEMENT_CLEARANCES } from '../content/alphaBlueprint'
 import { canOccupy } from '../core/player'
+import { HUMANOID_WINDUP, HUMANOID_RECOVERY } from '../core/humanoidMelee'
+import {updateAlphaDuty} from './alphaNpc'
 
 // ---- v45：信众领地判定（HUD 声望显示，仿衔尾段 ouroboros）+ 教化诵咏 + 接触冷却 ----
 // （原 step 内联段，逐语句搬运）
@@ -79,6 +81,20 @@ export function updateNpcs(eng: Engine, dt: number) {
     if (n.hostile) {
       const hdx = p.x - n.x, hdy = p.y - n.y, hdd = Math.hypot(hdx, hdy)
       n.atkT = Math.max(0, (n.atkT ?? 0) - dt)
+      n.meleeRecoveryT = Math.max(0, (n.meleeRecoveryT ?? 0) - dt)
+      n.facing = Math.atan2(hdy, hdx)
+      const canHit = () => hdd <= 1.3 && Math.abs(p.z - floorHeight(m, n.x, n.y, n.floor ?? 0)) < 1.2
+        && eng.los(n.x, n.y, p.x, p.y)
+      if ((n.lungeT ?? 0) > 0) {
+        n.lungeT = Math.max(0, n.lungeT! - dt)
+        n.tx = n.x; n.ty = n.y
+        if (!n.lungeT) {
+          n.meleeRecoveryT = HUMANOID_RECOVERY
+          if (canHit()) eng.hurtPlayer(9, `${FACTIONS[n.def.faction ?? 'meg']?.name ?? 'NPC'} ${n.def.name}`)
+        }
+        continue
+      }
+      if (n.meleeRecoveryT > HUMANOID_RECOVERY - .1) { n.tx = n.x; n.ty = n.y; continue }
       if (hdd > 1.15) {
         const sp = 2.3 * dt
         const nx2 = n.x + (hdx / hdd) * sp, ny2 = n.y + (hdy / hdd) * sp
@@ -86,11 +102,13 @@ export function updateNpcs(eng: Engine, dt: number) {
         n.tx = p.x; n.ty = p.y // 渲染层据此播步态
       } else {
         n.tx = n.x; n.ty = n.y
-        if (n.atkT <= 0) { n.atkT = 1.3; eng.hurtPlayer(9, `${FACTIONS[n.def.faction ?? 'meg']?.name ?? 'NPC'} ${n.def.name}`); audio.swing() }
+        if (n.atkT <= 0 && canHit()) { n.atkT = 1.3; n.lungeT = HUMANOID_WINDUP; audio.swing() }
       }
       n.facing = Math.atan2(hdy, hdx)
       continue
     }
+    n.lungeT = 0; n.meleeRecoveryT = 0
+    if(p.level===101&&updateAlphaDuty(eng,n,dt,walkOk))continue
     // v45：杰瑞的信众——看见玩家（~8m）主动靠近（approach 走向玩家），到 ~2.5m 停下后高频自言自语传教；
     // 不追出领地（玩家离岗位锚点 >10m 即放弃，回默认游荡）；
     // v47：仅野外随机信众（L2 宣传间）主动传教——L274 内的信众不主动靠近，需玩家主动交谈；
@@ -204,7 +222,7 @@ export function confessBrc(eng: Engine, npcId: string): boolean {
 export function aimJerry(eng: Engine): Entity | null {
   const p = eng.player, m = eng.map
   if (!m) return null
-  const band = bandOfPlayerZ(m, p.z)
+  const band = bandOfPlayerZ(m, p.z, p.x, p.y)
   let best: { e: Entity; a: number; d: number } | null = null
   for (const e of eng.map?.entities ?? []) {
     if (e.dead || e.def.type !== 'jerry') continue

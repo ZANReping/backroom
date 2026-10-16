@@ -11,11 +11,13 @@ import {buildTradeDecor} from './tradeMeshes'
 import { buildSettlementStation } from './settlementMeshes'
 // 结构/出口低模（按 StructKind 建造，含可动盖板/门铰链 userData 约定）
 import * as THREE from 'three'
+import { buildRatMesh, buildRatGearMesh } from './ratMesh'
 import {buildL4OldStairs} from './l4OldStairs'
 import { buildL1Column } from './l1Architecture'
 import { buildL1Prop } from './l1Props'
 import { l1RoofAt } from '../world/l1Architecture'
 import { buildL11Structure } from './l11Meshes'
+import { l11Material } from './l11Materials'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js'
 import { caveCeilingAt, doorNeedsRotate, floorHeight, tallCeilH, type GameMap } from '../world/mapgen'
@@ -24,6 +26,7 @@ import { box, cyl, glow, col, mulberry, levelTexture, noiseTexture, makeCanvasCt
 import { addL2DoorDetails, l2DoorMaterial } from './l2Door'
 import { withL10Wind as windInject } from './l10Wind'
 import { buildL10Structure } from './l10Meshes'
+import { buildOutdoorTree } from './outdoorTrees'
 import { buildL7Structure } from './l7Meshes'
 import {l2Material} from './l2Materials'
 import {alignL2WallProp,buildL2Machine} from './l2WallProps'
@@ -1185,7 +1188,7 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
   // 实际画面只剩整格墙洞后的明亮室内，看上去就像一排“发光门”。
   const localL9Component = s.kind === 'l9window' || s.kind === 'l9tvconsole' || s.kind === 'l9planter' || s.kind === 'l9vegbed'
   if (s.kind.startsWith('l9') && !localL9Component) {
-    const l9 = buildExit(s.kind, _def, s)
+    const l9 = s.kind === 'l9tree' ? buildOutdoorTree(s, 9, { x: m.inf?.ox ?? 0, y: m.inf?.oy ?? 0 }) : buildExit(s.kind, _def, s)
     l9.position.set(cx, 0, cz)
     return l9
   }
@@ -1894,14 +1897,16 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
         const length = Math.max(1, axis === 'x' ? s.w : s.h)
         const height = Math.max(1.8, Number(s.data.height) || 2.35)
         const thickness = 0.12
-        const width = Math.max(0.72, length - 0.18)
+        const fitted=!!s.data.fittedFrame
+        const width = Math.max(0.72, length - (fitted ? .296 : .18))
         grp.rotation.y = axis === 'y' ? Math.PI / 2 : 0
         const frame = s.data.locked ? '#282b30' : '#3d4144'
         grp.add(box(0.14, height, 0.22, frame, -length / 2 + 0.07, height / 2, 0))
         grp.add(box(0.14, height, 0.22, frame, length / 2 - 0.07, height / 2, 0))
         grp.add(box(length, 0.14, 0.22, frame, 0, height - 0.07, 0))
-        const panel = box(width, height - 0.12, thickness, s.data.locked ? '#31383d' : '#69706f', 0, 0, 0)
-        panel.geometry.translate(s.data.swing === -1 ? -width / 2 : width / 2, (height - 0.12) / 2, 0)
+        const panelHeight=height-(fitted?.156:.12)
+        const panel = box(width, panelHeight, thickness, s.data.locked ? '#31383d' : '#69706f', 0, 0, 0)
+        panel.geometry.translate(s.data.swing === -1 ? -width / 2 : width / 2, panelHeight / 2+(fitted?.008:0), 0)
         panel.position.x = s.data.swing === -1 ? width / 2 : -width / 2
         panel.userData.lid = 1
         grp.userData.swing = s.data.swing === -1 ? -1 : 1
@@ -3193,7 +3198,17 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       grp.rotation.y = r() < 0.5 ? 0 : Math.PI / 2
       break
     }
+    case 'ratcorpse': {
+      // v79：L2 尸鼠尸体——无毛种侧翻僵直、嘴张开；部分被烫得发黑
+      const c = buildRatMesh('hairless', Number(s.data?.seed ?? 0), false, true)
+      if (s.data?.scald) c.traverse((o) => { const mm = (o as THREE.Mesh).material as THREE.MeshLambertMaterial | undefined; if (mm?.color && mm.map) { mm.color = mm.color.clone().multiplyScalar(0.55) } })
+      c.rotation.y = (Number(s.data?.seed ?? 0) % 628) / 100
+      grp.add(c)
+      break
+    }
     case 'rattrap': {
+      // v79：换用水豚种尸鼠的电击陷阱模型（捕兽夹 + 9V 电池 + 缠在夹颚上的红黑电线）
+      if (_def.id === 3) { const tr = buildRatGearMesh('trap', s.x * 131 + s.y * 67); grp.add(tr); break }
       // v53：尸鼠陷阱（L3 高智能尸鼠设置）——贴地小型捕兽夹：锈铁底板 + 张开的一对锯齿夹颚 + 中央诱饵踏板；
       // 玩家/实体踩上即触发（data.sprung=1，一次性；触发判定在 engine/movement.ts 与 entityAI.ts，模型保持不变）
       const r = mulberry(s.x * 131 + s.y * 67)
@@ -4523,21 +4538,7 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       break
     }
     case 'l10tree': {
-      const rr = mulberry(s.x * 137 + s.y * 61)
-      const wood = l10Wettable(litMaterial({ color: '#8b7354', map: levelTexture('l10_wood_diff.jpg', () => noiseTexture('#6c5136', '#947653')), normalMap: levelTexture('l10_wood_normal.jpg', () => noiseTexture('#8080ff', '#7f7fff')), roughnessMap: levelTexture('l10_wood_rough.jpg', () => noiseTexture('#eeeeee', '#d0d0d0')), normalScale: new THREE.Vector2(.5, .5), roughness: .92, envBase: .035 }), .92, .035)
-      const trunk = new THREE.Mesh(new THREE.CylinderGeometry(.22, .34, 3.5, 9), wood)
-      trunk.position.y = 1.75; grp.add(trunk)
-      for (let i = 0; i < 5; i++) {
-        const crownGeo = new THREE.DodecahedronGeometry(.78 + rr() * .35, 1)
-        const crownUv = crownGeo.attributes.uv as THREE.BufferAttribute
-        for (let u = 0; u < crownUv.count; u++) crownUv.setXY(u, crownUv.getX(u) * 1.65, crownUv.getY(u) * 1.65)
-        crownUv.needsUpdate = true
-        const crown = new THREE.Mesh(crownGeo, l10LeafMaterial())
-        crown.scale.set(1 + rr() * .45, .72 + rr() * .35, 1 + rr() * .42)
-        crown.position.set((rr() - .5) * 1.35, 3.1 + rr() * 1.1, (rr() - .5) * 1.2)
-        crown.userData.noCollision = 1
-        grp.add(crown)
-      }
+      grp.add(buildOutdoorTree(s, 10, { x: m.inf?.ox ?? 0, y: m.inf?.oy ?? 0 }))
       break
     }
     case 'l10haybale': {
@@ -4806,12 +4807,13 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
     // ===================== v23：通用新容器（均带「已搜刮」视觉变化）=====================
     case 'locker': {
       // 储物柜：竖直金属柜（金属贴图，looted 变暗）+ 通风百叶 + 把手 + 编号牌（v54：薄钢门快速外摆）
-      const metalMat = texLambert('locker_metal', s.looted ? '#3f464b' : '#5a636a', '#394046', s.looted ? '#7a8288' : '#e8eaec')
+      const metalMat = _def.id === 11 ? l11Material('metal', s.looted ? '#7a8288' : '#b2babd') : texLambert('locker_metal', s.looted ? '#3f464b' : '#5a636a', '#394046', s.looted ? '#7a8288' : '#e8eaec')
       const body = new THREE.Mesh(new THREE.BoxGeometry(0.64, 1.9, 0.46), metalMat)
       body.position.set(0, 0.95, 0)
       grp.add(body)
       grp.add(box(0.68, 0.07, 0.5, '#4a5259', 0, 1.92, 0))
-      const door = new THREE.Mesh(new THREE.BoxGeometry(0.58, 1.82, 0.05), texLambert('locker_metal', s.looted ? '#485057' : '#646d75', '#394046', s.looted ? '#868e94' : '#f0f2f4'))
+      const doorMaterial = _def.id === 11 ? l11Material('metal', s.looted ? '#868e94' : '#bdc4c7') : texLambert('locker_metal', s.looted ? '#485057' : '#646d75', '#394046', s.looted ? '#868e94' : '#f0f2f4')
+      const door = new THREE.Mesh(new THREE.BoxGeometry(0.58, 1.82, 0.05), doorMaterial)
       door.geometry.translate(0.29, 0.95, 0) // 铰链在左缘
       door.position.set(-0.29, 0.02, 0.235)
       movable(door, 'lid')
@@ -6799,16 +6801,7 @@ export function buildExit(kind: string, def: LevelDef, structure?: Structure): T
       break
     }
     case 'l9tree': {
-      const style = Number(s.data?.style ?? 0) % 5, sc = Number(s.data?.scale ?? 100) / 100
-      const trunk = ['#4c392b','#44352a','#56402d','#3e332b','#514235'][style]
-      const leaf = [['#263a2d','#344b35'],['#3b432c','#51563a'],['#2b3f38','#36534b'],['#443b2b','#5b4a30'],['#25342a','#314632']][style]
-      grp.add(cyl(.17,.25,3.5,trunk,0,1.75,0,10))
-      for (const [ry,rz,rr] of [[2.1,-.35,-.65],[2.45,.28,.72],[2.78,-.12,-.5]] as const) {
-        const branch=cyl(.055,.1,1.4,trunk,0,ry,rz,7); branch.rotation.z=rr; grp.add(branch)
-      }
-      const crowns: [number,number,number,number][] = [[0,3.65,0,1.05],[-.7,3.35,.12,.76],[.68,3.45,-.2,.82],[.15,4.32,.08,.72],[-.2,3.72,.68,.7]]
-      for (let i=0;i<crowns.length;i++){const [x,y,z,r]=crowns[i];const crown=new THREE.Mesh(new THREE.DodecahedronGeometry(r,1),new THREE.MeshLambertMaterial({color:leaf[i%2]}));crown.position.set(x,y,z);crown.scale.set(1.18,.86,1.05);grp.add(crown)}
-      grp.scale.setScalar(sc)
+      grp.add(buildOutdoorTree(s, 9))
       break
     }
     case 'l9shrub': {

@@ -1,5 +1,4 @@
-import {isTradeKind,tradeParts} from '../content/tradeDecor'
-import {isAlphaKind,alphaParts} from '../content/alphaDecor'
+import {settlementColliders} from './settlementColliders'
 import {isL5DecorKind,L5_DECOR_DEFS} from '../content/l5Decor'
 import { appendLegacyStations, settlementCeiling } from './settlement'
 // 程序化地图生成：房间+走廊/迷宫混合，按层级 motif 放置结构
@@ -23,7 +22,13 @@ import './infiniteL8' // v59：注册 Level 8 无限有机洞穴与生态分区�
 import './infiniteL9' // v61：注册 Level 9 无限郊区、住宅街与第九大道引导路线生成器
 import './infiniteL10' // v62：注册 Level 10 无限农田、连续道路与湖泊生成器
 import './infiniteL11'
-import { l11MetroRamp } from './l11Layout'
+import { l11MetroRamp, l11SpaceAt } from './l11Layout'
+import { l11MetroColliders,L11_METRO_CEILING } from './l11Metro'
+import { l11CanalAt,l11BridgeDeck } from './l11Hydrology'
+import { l11BuildingColliders, l11PropColliders,l11CollidersNear,l11CollisionRevision,l11StructureBounds } from './l11Collision'
+import { l11SolidHits,l11SolidSegmentHit,l11SolidSurface,type L11Solid,type L11SolidCollider,type SolidPoint } from './l11Solid'
+import { isL11DecorKind } from '../content/l11Decor'
+import { inPolygon, circlePolygon, type Polygon } from './l11Geometry'
 import { genDeep } from './mapgenDeep'
 import { genOutpost } from './mapgenOutpost'
 import { CONTAINER_KINDS } from '../decorations/containers'
@@ -37,6 +42,7 @@ export interface GameMap {
   h: number
   tiles: Uint8Array // 0虚空 1地板 2墙
   structures: Structure[]
+  ratGear?: import('../engine/ratAI').RatGear[] // v79：L3 水豚种尸鼠布下的电击陷阱/土制炸弹（世界坐标；不入存档/联机）
   items: GroundItem[]
   lights: LightSource[]
   exits: ExitInstance[]
@@ -96,6 +102,7 @@ export const UNDER_MID = -1.0 // 地下带分界：z < UNDER_MID 视为身处地
 // v29a：液体水面高度（= liquid 水位；深水≈所在 elev 地面 +0.03，浅水洼 -0.17），供漂浮物贴水面
 export function liquidSurfaceH(m: GameMap, tx: number, ty: number): number | null {
   if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return null
+  const canal=l11MapWater(m,tx+.5,ty+.5);if(canal)return canal.bridge?null:canal.surface
   const i = ty * m.w + tx
   if (m.liquid[i] === 1) return m.l10LakeTerrain ? 0.015 : ELEV_H[m.elev[i]] + 0.03
   if (m.liquid[i] === 2) return m.organicCave ? surfaceUndulationAt(m, tx + 0.5, ty + 0.5) + 0.035 : ELEV_H[m.elev[i]] - 0.17
@@ -114,6 +121,7 @@ export function waterItemZForTile(liquid: number, elev: number, type: string, de
 /** 物品落在液体瓦片上时的生成高度：沉底物→水底，漂浮物→水面；非液体瓦片→undefined（默认地面高度） */
 export function waterItemZ(m: GameMap, tx: number, ty: number, type: string): number | undefined {
   if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return undefined
+  const canal=l11MapWater(m,tx+.5,ty+.5);if(canal)return canal.bridge?undefined:WATER_SINK.has(type)?canal.bottom:canal.surface
   return waterItemZForTile(m.liquid[ty * m.w + tx], m.elev[ty * m.w + tx], type, m.seaFloor?.[ty * m.w + tx] ?? POOL_DEPTH)
 }
 // 统一楼层带：地下 / 地表 / 二层 / 三层。
@@ -122,7 +130,13 @@ export const bandOfZ = (z: number): FloorBand => z < UNDER_MID ? -1 : (z >= FLOO
  *  「上层带」（groundHeightAt(band=1)=FLOOR_H 把玩家吸到 3.0m 卡到天花板上方）；玩家相关判断
  *  （移动/交互/隔层过滤/击退落点）一律用本函数，实体用 bandOfZ（实体 z 不叠家具不会越带）
  */
-export const bandOfPlayerZ = (m: GameMap, z: number): FloorBand => {
+export const bandOfPlayerZ = (m: GameMap, z: number,x?:number,y?:number): FloorBand => {
+  if(m.inf&&x!==undefined&&y!==undefined){
+    const wx=x+m.inf.ox,wy=y+m.inf.oy,data=m.inf.chunks.get(`${Math.floor(wx/32)},${Math.floor(wy/32)}`)?.l11
+    if(data){const b=data.buildings.find(b=>inPolygon(wx,wy,b.footprint));if(b)return Math.max(0,Math.min(b.accessible-1,bandOfZ(z-b.base))) as FloorBand
+      return z<UNDER_MID&&!l11CanalAt(data,wx,wy)?-1:0
+    }
+  }
   const band = bandOfZ(z)
   if (band === -1) return m.hasUnderground ? -1 : 0
   return Math.min(band, Math.max(0, (m.floors ?? 1) - 1)) as FloorBand
@@ -275,7 +289,24 @@ export function l7SeaHAt(m: GameMap, x: number, y: number): number {
 
 // 连续地面高度（世界坐标，坡道 smoothstep 平滑插值；玩家脚底/相机/实体站立用）
 // band：楼层高度带（0=主层 1=上层 2=第三层[v54]），上层非楼梯瓦片地面=band×FLOOR_H
-export function floorHeight(m: GameMap, x: number, y: number, band: FloorBand = bandOfZ(0)): number {
+export function l11MapSpace(m:GameMap,x:number,y:number,band:number,feet?:number){
+  const inf=m.inf;if(!inf)return null;const wx=x+inf.ox,wy=y+inf.oy,data=inf.chunks.get(`${Math.floor(wx/32)},${Math.floor(wy/32)}`)?.l11
+  return data?l11SpaceAt(data,wx,wy,band,feet):null
+}
+/** Exact continuous canal footprint, including the water underneath bridges. */
+export function l11MapWater(m:GameMap,x:number,y:number){
+  const inf=m.inf;if(!inf)return null;const wx=x+inf.ox,wy=y+inf.oy,data=inf.chunks.get(`${Math.floor(wx/32)},${Math.floor(wy/32)}`)?.l11
+  return data?l11CanalAt(data,wx,wy):null
+}
+function* l11BridgeCollidersAt(m:GameMap,x:number,y:number,r=0){
+  const inf=m.inf;if(!inf)return;const wx=x+inf.ox,wy=y+inf.oy
+  for(let cy=Math.floor((wy-r)/32);cy<=Math.floor((wy+r)/32);cy++)for(let cx=Math.floor((wx-r)/32);cx<=Math.floor((wx+r)/32);cx++){
+    const data=inf.chunks.get(`${cx},${cy}`)?.l11;if(!data)continue
+    for(const b of [...l11BridgeDeck(data).colliders,...l11BridgeDeck(data).supports])if(wx+r>=b.x0&&wx-r<=b.x1&&wy+r>=b.y0&&wy-r<=b.y1)yield b
+  }
+}
+export function floorHeight(m: GameMap, x: number, y: number, band: FloorBand = bandOfZ(0),feet?:number): number {
+  const city=l11MapSpace(m,x,y,band,feet);if(city)return city.height
   if(band===0&&m.inf?.l0){
     const wx=x+m.inf.ox,wy=y+m.inf.oy,a=m.inf.chunks.get(`${Math.floor(wx/32)},${Math.floor(wy/32)}`)?.l0
     if(a){
@@ -329,8 +360,18 @@ export function floorHeight(m: GameMap, x: number, y: number, band: FloorBand = 
 export const groundHeightAt = floorHeight
 
 /** 指定楼层带的墙/不可达地形判定。越界恒视为墙。 */
+const cityTileWalkability=new WeakMap<object,Uint8Array>()
 export function wallAt(m: GameMap, tx: number, ty: number, band: FloorBand): boolean {
   if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return true
+  const inf=m.inf,wx=tx+(inf?.ox??0),wy=ty+(inf?.oy??0),cx=Math.floor(wx/32),cy=Math.floor(wy/32),city=inf?.chunks.get(`${cx},${cy}`)?.l11
+  if(city){
+    // Immutable chunk plans make tile-centre navigation queries cacheable;
+    // sub-tile player collision still uses the exact polygons above.
+    let values=cityTileWalkability.get(city);if(!values){values=new Uint8Array(4096);cityTileWalkability.set(city,values)}
+    const k=(band+1)*1024+(wy-cy*32)*32+wx-cx*32
+    if(!values[k])values[k]=l11SpaceAt(city,wx+.5,wy+.5,band).walkable?1:2
+    return values[k]===2
+  }
   const i = ty * m.w + tx
 
   if (band === -1) return m.dn[i] !== 1 || m.dnWall[i] === 1
@@ -351,8 +392,15 @@ function isSolidStruct(m: GameMap, x: number, y: number): boolean {
 
 // v13：楼层过滤的实心结构判定（碰撞/AI 按所在楼层高度带过滤；lift 跨层不算实心）
 export function solidStructAtFloor(m: GameMap, x: number, y: number, floor: FloorBand, ignore?: Structure): boolean {
-  return structsNear(m, x, y).some((s) => s !== ignore && s.solid && (s.floor ?? 0) === floor
-    && structColliders(s, m).some((b) => x >= b.x0 && x <= b.x1 && y >= b.y0 && y <= b.y1))
+  for(const s of structsNear(m,x,y)){
+    if(s===ignore||!s.solid||!s.l11&&(s.floor??0)!==floor)continue
+    const boxes=structColliders(s,m)
+    // Preserve the same exact collision predicate; only narrow the candidate
+    // set. A nearby room must not scan the tower's roof and every facade bay.
+    for(const b of s.l11?l11CollidersNear(boxes as L11SolidCollider[],x,y,0):boxes)
+      if(x>=b.x0&&x<=b.x1&&y>=b.y0&&y<=b.y1&&(!b.polygon||inPolygon(x,y,b.polygon))&&(!s.l11||colliderBlocksBody(s.l11.base,b,s.l11.base+floor*3)))return true
+  }
+  return false
 }
 
 // v55c（任务3 性能）：结构碰撞空间索引——仅无限层运行时启用（m.inf 存在：单窗千级结构 × 每帧
@@ -362,7 +410,7 @@ const structGridCache = new WeakMap<GameMap, {
   rev: number; modelRev: number; structures: Structure[]; count: number; grid: Map<number, Structure[]>
 }>()
 
-/** 地图渲染构建完成后启用结构空间索引；生成阶段继续使用实时线性扫描。 */
+/** Enable once solid layout placement has finished; mutable generation keeps linear scans. */
 export function enableRuntimeStructCollisionIndex(m: GameMap): void {
   runtimeStructGridMaps.add(m)
   structGridCache.delete(m)
@@ -372,12 +420,12 @@ function structGrid(m: GameMap): Map<number, Structure[]> | null {
   if (!m.inf && !runtimeStructGridMaps.has(m)) return null
   const rev = m.inf?.rev ?? 0
   const hit = structGridCache.get(m)
-  if (hit && hit.rev === rev && hit.modelRev === modelColliderSpatialRev
+  if (hit && hit.rev === rev && hit.modelRev === modelColliderSpatialRev+l11CollisionRevision
     && hit.structures === m.structures && hit.count === m.structures.length) return hit.grid
   const grid = new Map<number, Structure[]>()
   for (const s of m.structures) {
     if (!s.solid && !(s.kind==='glassdoor'&&s.data?.l4)) continue // open doors must remain indexed when closed later
-    const boxes = structColliders(s, m)
+    const boxes = s.l11||isL11DecorKind(s.kind)?[l11StructureBounds(s)]:structColliders(s, m)
     const x0 = Math.min(...boxes.map((b) => b.x0)), y0 = Math.min(...boxes.map((b) => b.y0))
     const x1 = Math.max(...boxes.map((b) => b.x1)), y1 = Math.max(...boxes.map((b) => b.y1))
     for (let ty = Math.max(0, Math.floor(y0)); ty <= Math.min(m.h - 1, Math.floor(y1 - 1e-6)); ty++)
@@ -388,7 +436,7 @@ function structGrid(m: GameMap): Map<number, Structure[]> | null {
       }
   }
   structGridCache.set(m, {
-    rev, modelRev: modelColliderSpatialRev, structures: m.structures, count: m.structures.length, grid,
+    rev, modelRev: modelColliderSpatialRev+l11CollisionRevision, structures: m.structures, count: m.structures.length, grid,
   })
   return grid
 }
@@ -421,6 +469,9 @@ export function l4CubicleEscapePoints(m:GameMap,x:number,y:number,z:number,r:num
 // 结构碰撞盒（世界坐标 AABB）。top=碰撞顶面高度；stand=true 时顶面可作为站立平台（接入 z 物理）。
 // FULL_BLOCK 表示全高阻挡（不可跳上/翻越）；缺省类型 = 整个 w×h 外接范围全高阻挡（旧行为）。
 export interface ColliderBox {
+  volume?: L11Solid
+  pieces?: L11SolidCollider[]
+  polygon?: Polygon
   x0: number; y0: number; x1: number; y1: number
   /** 相对结构所在地面的碰撞上沿。 */
   top: number
@@ -493,6 +544,8 @@ const modelCollidersFor = (s: Structure): ColliderBox[] | null => {
 //   （钳制不超出自身 footprint，1×1 据点锅炉不外扩）；罐顶 2.6m 不可站
 // - sphboiler 球罐：砖石基座 1.7×1.7 + 球罐 r0.85 @顶 ~2.2m → 盒 ±0.85；球顶不可站
 export function structColliders(s: Structure, m?: GameMap): ColliderBox[] {
+  if(s.kind==='l11subway')return l11MetroColliders(s)
+  if(isL11DecorKind(s.kind))return l11PropColliders(s)
   if(s.data?.l1Static){
     const height={bottom:Number(s.data.bottom),top:Number(s.data.top),stand:false}
     if(!s.data.l1Round)return [{x0:s.x,y0:s.y,x1:s.x+s.w,y1:s.y+s.h,...height}]
@@ -502,23 +555,10 @@ export function structColliders(s: Structure, m?: GameMap): ColliderBox[] {
   }
   if(s.data?.l0Door){const vertical=Number(s.data.deg)%180!==0,x=s.x+s.w/2,y=s.y+s.h/2;return[{x0:x-(vertical?.04:.44),y0:y-(vertical?.44:.04),x1:x+(vertical?.04:.44),y1:y+(vertical?.44:.04),bottom:0,top:2.13,stand:false}]}
   if(s.data?.l0Wall)return [{x0:s.x,y0:s.y,x1:s.x+s.w,y1:s.y+s.h,bottom:Number(s.data.bottom),top:Number(s.data.top),stand:false}]
-  if(isTradeKind(s.kind)){
-    const a=Number(s.data?.deg??0)*Math.PI/180,c=Math.cos(a),v=Math.sin(a)
-    return tradeParts(s).filter(p=>p.solid).map(p=>{
-      const pts=[[p.x,p.y],[p.x+p.w,p.y],[p.x,p.y+p.d],[p.x+p.w,p.y+p.d]].map(([x,y])=>{x-=s.w/2;y-=s.h/2;return [s.x+s.w/2+x*c+y*v,s.y+s.h/2-x*v+y*c]})
-      return {x0:Math.min(...pts.map(p=>p[0])),x1:Math.max(...pts.map(p=>p[0])),y0:Math.min(...pts.map(p=>p[1])),y1:Math.max(...pts.map(p=>p[1])),bottom:p.z,top:p.z+p.h,stand:false}
-    })
-  }
-  if(isAlphaKind(s.kind)){
-    if(!s.solid)return []
-    const a=Number(s.data?.deg??0)*Math.PI/180,c=Math.cos(a),v=Math.sin(a)
-    return alphaParts(s).filter(p=>p.solid).map(p=>{
-      const pts=[[p.x,p.y],[p.x+p.w,p.y],[p.x,p.y+p.d],[p.x+p.w,p.y+p.d]].map(([x,y])=>{x-=s.w/2;y-=s.h/2;return [s.x+s.w/2+x*c+y*v,s.y+s.h/2-x*v+y*c]})
-      return {x0:Math.min(...pts.map(p=>p[0])),x1:Math.max(...pts.map(p=>p[0])),y0:Math.min(...pts.map(p=>p[1])),y1:Math.max(...pts.map(p=>p[1])),...(p.stand?{}:{bottom:p.z}),top:p.z+p.h,stand:!!p.stand}
-    })
-  }
+  const settlement = settlementColliders(s)
+  if (settlement) return settlement
   const cx = s.x + s.w / 2, cy = s.y + s.h / 2
-  if (s.kind === 'l11building') return s.solid ? [{ x0:s.x,y0:s.y,x1:s.x+s.w,y1:s.y+s.h,top:Number(s.data?.floors??10)*3,stand:false }] : []
+  if(s.l11)return l11BuildingColliders(s)
   if (s.kind === 'l11window') return [{ x0:s.data?.axis?cx-.05:s.x,y0:s.data?.axis?s.y:cy-.05,x1:s.data?.axis?cx+.05:s.x+s.w,y1:s.data?.axis?s.y+s.h:cy+.05,top:3,stand:false }]
   if (s.kind === 'l11prop' && s.data?.prop === 'tree') return [{ x0:cx-.2,y0:cy-.2,x1:cx+.2,y1:cy+.2,top:3.5,stand:false }]
   if (s.kind === 'angelstatue') return l3AngelCollision(s)
@@ -780,14 +820,19 @@ const colliderBlocksBody = (base: number, b: ColliderBox, z: number): boolean =>
 }
 
 // 世界点 (x,y) 在脚底高度 z 处是否被实心结构碰撞盒阻挡（精细亚瓦片判定）
-export function structBlocksPoint(m: GameMap, x: number, y: number, z: number, band: FloorBand): boolean {
+const citySolid=(s:Structure)=>!!s.l11||isL11DecorKind(s.kind)||s.kind==='l11subway'
+const colliderBase=(s:Structure,m:GameMap,band:FloorBand)=>s.kind==='l11subway'?0:s.l11?.base??(floorHeight(m,s.x+s.w/2,s.y+s.h/2,isL11DecorKind(s.kind)?s.floor??0:band)+Number(s.data?.mount??0))
+const collidersAt=(s:Structure,m:GameMap,x:number,y:number,r=0):Iterable<ColliderBox>=>s.l11?l11CollidersNear(l11BuildingColliders(s),x,y,r):structColliders(s,m)
+export function structBlocksPoint(m: GameMap, x: number, y: number, z: number, band: FloorBand, ignoreStructure?: Structure): boolean {
+  for(const b of l11BridgeCollidersAt(m,x,y))if(l11SolidHits(b,x+m.inf!.ox,y+m.inf!.oy,0,z,z+1.48))return true
   const arr = structsNear(m, Math.floor(x), Math.floor(y)) // v55c：无限层瓦片桶；有限层全表
   for (const s of arr) {
-    if ((!s.solid && !(s.kind==='glassdoor'&&s.data?.l4)) || (s.floor ?? 0) !== band) continue
-    const base = floorHeight(m, s.x + s.w / 2, s.y + s.h / 2, band) // v57t：碰撞盒以结构所在地面为基——深海底的桶不再堵住上方整条水柱
-    for (const b of structColliders(s, m)) {
-      if (x < b.x0 || x > b.x1 || y < b.y0 || y > b.y1) continue
-      if (colliderBlocksBody(base, b, z)) return true
+    if (s === ignoreStructure) continue
+    if ((!s.solid && !(s.kind==='glassdoor'&&s.data?.l4)) || (!citySolid(s) && (s.floor ?? 0) !== band)) continue
+    const base = colliderBase(s,m,band)
+    for (const b of collidersAt(s,m,x,y)) {
+      if (x < b.x0 || x > b.x1 || y < b.y0 || y > b.y1 || b.polygon&&!inPolygon(x,y,b.polygon)) continue
+      if (b.volume?l11SolidHits(b as L11SolidCollider,x,y,0,z-base,z-base+1.48):colliderBlocksBody(base,b,z))return true
     }
   }
   return false
@@ -797,16 +842,34 @@ export function structBlocksPoint(m: GameMap, x: number, y: number, z: number, b
  * 圆形角色碰撞体与结构模型盒的精确二维相交检测。旧的 8 点圆周采样会在路灯杆、
  * 栏杆柱等细模型完全落入角色圆内部时漏检；圆心到 AABB 最近点检测不会产生该盲区。
  */
-export function structBlocksCircle(m: GameMap, x: number, y: number, radius: number, z: number, band: FloorBand): boolean {
+export function structBlocksCircle(m: GameMap, x: number, y: number, radius: number, z: number, band: FloorBand,bodyHeight=1.48,flightWallH?:number,ignoreStructure?:Structure): boolean {
   const r = Math.max(0, radius)
+  const flying = flightWallH !== undefined
+  for(const b of l11BridgeCollidersAt(m,x,y,r))if(l11SolidHits(b,x+m.inf!.ox,y+m.inf!.oy,r,z,z+bodyHeight)&&(flying||l11SolidSurface(b,x+m.inf!.ox,y+m.inf!.oy,r)>z+.22))return true
   const hits = (s: Structure): boolean => {
-    if ((!s.solid && !(s.kind==='glassdoor'&&s.data?.l4)) || (s.floor ?? 0) !== band) return false
-    const base = floorHeight(m, s.x + s.w / 2, s.y + s.h / 2, band)
-    for (const b of structColliders(s, m)) {
+    if (s === ignoreStructure) return false
+    if ((!s.solid && !(s.kind==='glassdoor'&&s.data?.l4)) || (!flying && !citySolid(s) && (s.floor ?? 0) !== band)) return false
+    const base = colliderBase(s,m,flying ? s.floor ?? 0 : band)
+    for (const b of collidersAt(s,m,x,y,r)) {
       const qx = Math.max(b.x0, Math.min(b.x1, x))
       const qy = Math.max(b.y0, Math.min(b.y1, y))
       const dx = x - qx, dy = y - qy
-      if (dx * dx + dy * dy > r * r + 1e-9) continue
+      if (dx * dx + dy * dy > r * r + 1e-9 || b.polygon&&!circlePolygon(x,y,r,b.polygon)) continue
+      if(b.volume){
+        if(z-base>=b.top-.025)continue
+        if(!l11SolidHits(b as L11SolidCollider,x,y,r,z-base,z-base+bodyHeight))continue
+        // Visible stair risers/kerbs can be stepped onto; taller furniture
+        // requires a jump. Do not extrude a high horizontal bar to the floor.
+        if(!flying&&l11SolidSurface(b as L11SolidCollider,x,y,r)<=z-base+.22)continue
+        return true
+      }
+      if (flying) {
+        // Free flight uses the actual vertical volume, without ground-step allowances.
+        const ceiling = ceilingHeightAt(m,x,y,flightWallH!,s.floor??0)
+        const top = b.top >= FULL_BLOCK ? (Number.isFinite(ceiling) ? ceiling : base + flightWallH!) : base + b.top
+        if (z + bodyHeight > base + (b.bottom ?? 0) + .0001 && z < top - .0001) return true
+        continue
+      }
       if (colliderBlocksBody(base, b, z)) return true
     }
     return false
@@ -825,13 +888,15 @@ export function structBlocksCircle(m: GameMap, x: number, y: number, radius: num
 
 /** 三维视线是否被指定楼层带的精细结构碰撞盒截断；target 可忽略目标自身，避免柜体遮住自己的交互面。 */
 export function structBlocksSight(m: GameMap, x: number, y: number, z: number, band: FloorBand, target?: Structure): boolean {
+  for(const b of l11BridgeCollidersAt(m,x,y))if(l11SolidHits(b,x+m.inf!.ox,y+m.inf!.oy,.0001,z-.001,z+.001))return true
   const arr = structsNear(m, Math.floor(x), Math.floor(y))
   for (const s of arr) {
-    if (s === target || !s.solid || s.data?.noSight === 1 || (s.floor ?? 0) !== band) continue // v58：noSight=仅碰撞结构（电梯门挡块）不遮交互视线
-    const base = floorHeight(m, s.x + s.w / 2, s.y + s.h / 2, band)
-    for (const b of structColliders(s, m)) {
-      if (x < b.x0 || x > b.x1 || y < b.y0 || y > b.y1) continue
+    if (s === target || !s.solid || s.data?.noSight === 1 || (!citySolid(s) && (s.floor ?? 0) !== band)) continue // v58：noSight=仅碰撞结构（电梯门挡块）不遮交互视线
+    const base = colliderBase(s,m,band)
+    for (const b of collidersAt(s,m,x,y)) {
+      if (x < b.x0 || x > b.x1 || y < b.y0 || y > b.y1 || b.polygon&&!inPolygon(x,y,b.polygon)) continue
       const bottom = b.bottom === undefined ? base : base + b.bottom
+      if(b.volume){if(l11SolidHits(b as L11SolidCollider,x,y,.0001,z-base-.001,z-base+.001))return true;continue}
       // 前台的物理碰撞仍保持不可翻越，但它的可见模型最高仅约 1.22m；
       // 视线不应把柜台当成一堵通到天花板的墙，否则柜台后的 NPC 只有绕到侧面/贴脸才可交谈。
       const sightTop = s.kind === 'frontdesk' ? 1.24 : b.top
@@ -841,29 +906,62 @@ export function structBlocksSight(m: GameMap, x: number, y: number, z: number, b
   return false
 }
 
+/** City interaction segments visit precise nearby solids once. In particular,
+ * a 4mm window must block reaching through it between the regular LOS samples. */
+export function l11InteractionBlocked(m:GameMap,from:SolidPoint,to:SolidPoint,band:FloorBand,target?:Structure):boolean {
+  if(!m.inf)return false
+  const nearby=new Set<Structure>(),x=(from[0]+to[0])/2,y=(from[2]+to[2])/2,r=Math.max(Math.abs(from[0]-to[0]),Math.abs(from[2]-to[2]))/2+.01
+  for(let cy=Math.max(0,Math.floor(y-r));cy<=Math.min(m.h-1,Math.floor(y+r));cy++)for(let cx=Math.max(0,Math.floor(x-r));cx<=Math.min(m.w-1,Math.floor(x+r));cx++)for(const s of structsNear(m,cx,cy))if(s!==target&&s.solid&&s.data?.noSight!==1&&citySolid(s))nearby.add(s)
+  for(const s of nearby){
+    const base=colliderBase(s,m,band),a:SolidPoint=[from[0],from[1]-base,from[2]],b:SolidPoint=[to[0],to[1]-base,to[2]]
+    for(const collider of collidersAt(s,m,x,y,r))if(collider.volume&&l11SolidSegmentHit(collider as L11SolidCollider,a,b))return true
+  }
+  return false
+}
+
 // 世界点 (x,y) 处可站立的结构顶面高度（无则 -Infinity；仅当玩家 z 已接近/高于顶面时生效，
 // 与 structBlocksPoint 的放行条件衔接：能进入 footprint 即可落在顶面上，不会卡进家具内部）
 export function structStandTopAt(m: GameMap, x: number, y: number, z: number, band: FloorBand, radius = .32): number {
   let best = -Infinity
+  for(const b of l11BridgeCollidersAt(m,x,y,radius)){const h=l11SolidSurface(b,x+m.inf!.ox,y+m.inf!.oy,radius);if(h<=z+.225)best=Math.max(best,h)}
   // A foot can overlap a thin partition even when its centre is outside the tile.
   const center = structsNear(m, Math.floor(x), Math.floor(y))
-  const nearCubicles=m.tint[Math.floor(y)*m.w+Math.floor(x)]===51?new Set(center):null
+  const city=!!l11MapSpace(m,x,y,0)||center.some(citySolid)
+  const nearCubicles=city||m.tint[Math.floor(y)*m.w+Math.floor(x)]===51?new Set(center):null
   if(nearCubicles)for(const dx of [-radius,radius])for(const dy of [-radius,radius])
-    for(const s of structsNear(m,Math.floor(x+dx),Math.floor(y+dy)))if(s.kind==='cubicle'&&s.data?.l4)nearCubicles.add(s)
+    for(const s of structsNear(m,Math.floor(x+dx),Math.floor(y+dy)))if(city||s.kind==='cubicle'&&s.data?.l4)nearCubicles.add(s)
   const arr=nearCubicles??center
   for (const s of arr) {
-    if (!s.solid || (s.floor ?? 0) !== band) continue
-    const base = floorHeight(m, s.x + s.w / 2, s.y + s.h / 2, band) // v57t：可站立顶面同样以结构地面为基准
-    for (const b of structColliders(s, m)) {
+    if (!s.solid || (!citySolid(s) && (s.floor ?? 0) !== band)) continue
+    const base = colliderBase(s,m,band)
+    for (const b of collidersAt(s,m,x,y,radius)) {
       if (!b.stand) continue
+      if(b.volume){const h=base+l11SolidSurface(b as L11SolidCollider,x,y,radius);if(h<=z+.225)best=Math.max(best,h);continue}
       if(s.kind==='cubicle'&&s.data?.l4){
         // Match the radius AND the conservative corner samples used by canOccupy.
         if(x+radius<b.x0||x-radius>b.x1||y+radius<b.y0||y-radius>b.y1)continue
-      }else if (x < b.x0 || x > b.x1 || y < b.y0 || y > b.y1) continue
+      }else if (x < b.x0 || x > b.x1 || y < b.y0 || y > b.y1 || b.polygon&&!inPolygon(x,y,b.polygon)) continue
       if (base + b.top <= z + (s.kind==='cubicle'&&s.data?.l4 ? .06 : STEP_UP-.1)) best = Math.max(best, base + b.top)
     }
   }
   return best
+}
+
+/** Swept upward head collision against the same solids used for lateral and
+ * landing contacts. World-height filtering also sees props on another floor. */
+export function l11HeadCeilingAt(m:GameMap,x:number,y:number,feetBefore:number,head:number,r=.32):number {
+  let ceiling=Infinity;const seen=new Set<Structure>()
+  for(const b of l11BridgeCollidersAt(m,x,y,r)){const h=l11SolidSurface(b,x+m.inf!.ox,y+m.inf!.oy,r,false);if(h>=feetBefore+head-.035)ceiling=Math.min(ceiling,h)}
+  for(const dx of [-r,0,r])for(const dy of [-r,0,r])for(const s of structsNear(m,x+dx,y+dy)){
+    if(seen.has(s)||!s.solid||!citySolid(s))continue;seen.add(s)
+    const base=colliderBase(s,m,s.floor??0)
+    for(const b of collidersAt(s,m,x,y,r))if(b.volume){
+      if(base+b.top<feetBefore+head-.035)continue
+      const h=base+l11SolidSurface(b as L11SolidCollider,x,y,r,false)
+      if(h>=feetBefore+head-.035)ceiling=Math.min(ceiling,h)
+    }
+  }
+  return ceiling
 }
 
 // ================= v26：天花板碰撞 + 悬挂物依附 =================
@@ -955,6 +1053,8 @@ export function ceilingSteps(m: GameMap, wallH: number): CeilStep[] {
 // v46：楼梯坡道格=楼梯口上空（无楼板——坡道上段 up=1 是「上层可站」标记而非有楼板），
 // 顶高取上层天花（此前误取楼板底 2.65，坡道中段起跳被看不见的「楼板」拦截——多层交界处无法跳跃）
 export function ceilingHeightAt(m: GameMap, x: number, y: number, wallH: number, band: FloorBand = 0): number {
+  // L11 uses actual slabs/roofs/canopies and stair holes, not 1m ceiling tiles.
+  if(l11MapSpace(m,x,y,band))return band>=0||l11MetroRamp(x+m.inf!.ox,y+m.inf!.oy,m.inf!.seed)!==null?Infinity:L11_METRO_CEILING
   const tx = Math.floor(x), ty = Math.floor(y)
   if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return Infinity
   const i = ty * m.w + tx

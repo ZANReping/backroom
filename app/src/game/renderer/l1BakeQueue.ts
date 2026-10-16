@@ -11,7 +11,9 @@ function dispatch(){for(const w of workers){if(w.entry)continue;const next=[...e
 function init(){
  if(workers.length)return
  const mobile=typeof navigator!=='undefined'&&/Android|iPhone|iPad/i.test(navigator.userAgent)
- for(let i=0;i<(mobile?1:2);i++){
+ const logicalCores=typeof navigator!=='undefined'&&Number.isFinite(navigator.hardwareConcurrency)&&navigator.hardwareConcurrency>0?Math.floor(navigator.hardwareConcurrency):4
+ const workerCount=mobile?1:Math.min(8,Math.max(1,Math.floor(logicalCores/2)))
+ for(let i=0;i<workerCount;i++){
   const w:{worker:Worker;entry?:Entry}={worker:new Worker(new URL('../world/l1Bake.worker.ts',import.meta.url),{type:'module'})};workers.push(w)
   w.worker.onmessage=({data}:{data:{result?:L1BakeResult;error?:string}})=>{
    const e=w.entry;w.entry=undefined;if(!e){dispatch();return}
@@ -36,5 +38,5 @@ export function requestL1Bake(data:L1ArchitectureData,quality:L1BakeQuality):Ent
 export function retainL1Bakes(seed:number,keys:Set<string>){
  for(const [key,e]of entries)if(e.pending&&(e.data.seed!==seed||!keys.has(`${e.data.cx},${e.data.cy}`))&&!workers.some(w=>w.entry===e)){entries.delete(key);stale++}
 }
-export function l1BakeStats(){return{entries:entries.size,bytes,hits,diskHits,offlineLoads,computations,completed,stale,active:workers.filter(w=>w.entry).length,queued:[...entries.values()].filter(e=>e.pending).length,stages:[...entries.values()].filter(e=>e.result).map(e=>({key:e.key,...e.result!.metrics}))}}
+export function l1BakeStats(){return{entries:entries.size,bytes,hits,diskHits,offlineLoads,computations,completed,stale,workers:workers.length,active:workers.filter(w=>w.entry).length,queued:[...entries.values()].filter(e=>e.pending).length,stages:[...entries.values()].filter(e=>e.result).map(e=>({key:e.key,...e.result!.metrics}))}}
 export function disposeL1Bakes(){for(const w of workers)w.worker.terminate();workers.length=0;entries.clear();bytes=0}

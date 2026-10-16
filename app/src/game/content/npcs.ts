@@ -7,7 +7,6 @@
 import type { AvatarCfg } from '../core/avatar'
 import type { FloorBand } from '../core/types'
 import { DEFAULT_AVATAR } from '../core/avatar'
-import { L11_PEOPLE } from './l11People'
 import { ALPHA_PEOPLE, ALPHA_REVISIONS } from './alphaPeople'
 
 export interface DialogueNode {
@@ -255,6 +254,8 @@ export interface NpcState {
   dead?: boolean
   deathT?: number // 死亡动画剩余秒数（渲染层倒地/下沉，归零后移除）
   atkT?: number // 敌对近战冷却
+  lungeT?: number // 近战蓄力倒计时；归零时才结算命中
+  meleeRecoveryT?: number // 收势倒计时
 }
 
 // ================= v39：后室装修公司（BRC）员工 =================
@@ -379,7 +380,6 @@ export function jerryFollowerDef(...nums: number[]): NpcDef {
 
 export const NPCS: Record<string, NpcDef> = {
   ...ALPHA_PEOPLE,
-  ...Object.fromEntries(L11_PEOPLE.map((npc) => [npc.id, npc])),
   // v58：小小（Entity 720）——L7 环形场的可对话实体；傲慢、恶意毫不掩饰、隐瞒 L9 出口。
   // 非人形实体走实体交互通道（interact.ts case 'tiny'），此处仅承载对话树与人设；被激怒后由交互层拒绝对话。
   tiny: {

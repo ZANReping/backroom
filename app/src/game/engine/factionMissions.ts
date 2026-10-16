@@ -35,7 +35,7 @@ export function factionMissionLock(eng: Engine, id: string): string | null {
 export function canMeetFactionNpc(eng: Engine, id: string, f: NewFaction) {
   const n = eng.npcs.find(n => n.id === id && !n.dead && !n.hostile)
   if (!eng.map || !n || n.def.faction !== f || !factionCanTalk(eng, f)) return false
-  const band = bandOfPlayerZ(eng.map, eng.player.z)
+  const band = bandOfPlayerZ(eng.map, eng.player.z, eng.player.x, eng.player.y)
   return (n.floor ?? 0) === band && Math.hypot(n.x - eng.player.x, n.y - eng.player.y) <= 4 && interactionLos3D(eng, n.x, n.y, floorHeight(eng.map, n.x, n.y, band) + 1, band)
 }
 export function canAdministerFaction(eng: Engine, f: NewFaction) {
@@ -146,7 +146,7 @@ export function updateFactionMissions(eng: Engine, dt: number) {
     if (!o || !('level' in o)) continue
     if (o.level !== p.level) { last.candidates.delete(d.id); continue }
     if (o.kind === 'walk') { progress.progress = Math.min(o.n, progress.progress + delta); if (progress.progress >= o.n) advance(eng, d.id); continue }
-    const floor = bandOfPlayerZ(m, p.z)
+    const floor = bandOfPlayerZ(m, p.z, p.x, p.y)
     let key: string | undefined
     if (o.kind === 'record' && same && moved < .08 && Math.abs(p.vz) < .1 && !eng.input.mx && !eng.input.my && progress.points.every(q => q.floor !== floor || Math.hypot(q.x - x, q.y - y) >= 12)) key = `${Math.round(x)},${Math.round(y)},${floor}`
     if (o.kind === 'observe' || o.kind === 'vault') {

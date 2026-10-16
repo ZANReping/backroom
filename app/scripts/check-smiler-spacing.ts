@@ -46,15 +46,16 @@ for (const kind of kinds) for (const dt of [1/60,1/30,.1]) {
 
 // Real mesh positions projected through a first-person camera, including maximum open grin.
 const v = new THREE.Vector3(), box = new THREE.Box3(),ray = new THREE.Raycaster()
-for(const kind of kinds) for(const eye of [1.0,1.55]) for(const fov of [60,75]) for(const roof of [2.5,2.7,3.25,Infinity]) {
+for(const kind of kinds) for(const eye of [1.0,1.55]) for(const fov of [60,75]) for(const roof of [2.5,2.7,3.25,Infinity]) for(const age of [.24,.38]) {
   const e=makeEntity('smiler',0,0,0,kind),g=buildSmilerMesh(kind,17)
-  initSmiler(world(kind).eng,e,kind,1,false);e.state='attack';e.sm!.phase='pounce';e.sm!.grin=1
+  initSmiler(world(kind).eng,e,kind,1,false);e.state='attack';e.sm!.phase='pounce';e.sm!.grin=1;e.sm!.strikeAge=age
   g.scale.setScalar(e.def.scale??1)
   const camera=new THREE.PerspectiveCamera(fov,16/10,.08,100)
   camera.position.set(SMILER_STOP[kind],eye,0);camera.lookAt(0,eye,0);camera.updateMatrixWorld()
   for(let i=0;i<120;i++)animateSmiler(g,e,i/60,0,{headroom:roof,eyeAboveFeet:eye,distance:SMILER_STOP[kind],dt:1/60})
-  g.updateMatrixWorld(true);box.makeEmpty()
   const rig=g.userData.smilerRig as SmilerRig
+  // Exclude the intentional blink when testing body occlusion of open eyes.
+  rig.eyes.scale.y=1;g.updateMatrixWorld(true);box.makeEmpty()
   for(const mesh of [rig.eyes,rig.upper,rig.lower]) {
     const pos=mesh.geometry.getAttribute('position')
     for(let i=0;i<pos.count;i++)box.expandByPoint(v.fromBufferAttribute(pos,i).applyMatrix4(mesh.matrixWorld).project(camera))
@@ -67,10 +68,10 @@ for(const kind of kinds) for(const eye of [1.0,1.55]) for(const fov of [60,75]) 
     }
     // Back-facing tooth vertices can be hidden by the other row / mouth at a low angle.
     // Eyes must actually remain visible, not merely project inside the viewport.
-    if(mesh===rig.eyes)check(visible/total>.25,`${kind}/${roof}: eyes remain outside body (${visible}/${total})`)
+    if(mesh===rig.eyes)check(visible/total>.25,`${kind}/${roof} eye=${eye} age=${age}: eyes remain outside body (${visible}/${total})`)
   }
   check(box.min.x>-.94&&box.max.x<.94&&box.min.y>-.94&&box.max.y<.94&&box.max.z<1,
-    `${kind} eye=${eye} fov=${fov}: complete face in frame ${JSON.stringify(box)}`)
+    `${kind} eye=${eye} fov=${fov} age=${age}: complete face in frame ${JSON.stringify(box)}`)
   if(kind==='great')check(box.setFromObject(g,true).max.y+.2<=roof,`attacking giant keeps head below ${roof} roof`)
 }
 

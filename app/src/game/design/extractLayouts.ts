@@ -207,6 +207,7 @@ function extractVariant(level: number, vid: string, name: string, raw: GenChunk,
       if (en.l3face) marks.l3face = true // L3 无面灵：错位面部器官
       if (en.human) marks.human = true // L3 窃皮者：伪装流浪者
       if (en.capybara) marks.capybara = true // L3 尸鼠：水豚形态
+      if (en.l3clump) marks.l3clump = true // v64：L3 高智能肢团
       const e: EntityEntry = { type: en.type, x: r2(en.x - ox), y: r2(en.y - oy), ...randMark(ET, vid, en.type, true) }
       if (Object.keys(marks).length) e.marks = marks
       return e

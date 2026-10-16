@@ -39,7 +39,7 @@ export function canEscapeCurrentPosition(eng: Engine): boolean {
   const m = eng.map
   if (!m) return true
   const p = eng.player
-  const band = bandOfPlayerZ(m, p.z)
+  const band = bandOfPlayerZ(m, p.z, p.x, p.y)
   const span = Math.ceil(ESCAPE_RADIUS / ESCAPE_STEP)
   const side = span * 2 + 1
   const seen = new Uint8Array(side * side)
@@ -74,7 +74,7 @@ export function canEscapeCurrentPosition(eng: Engine): boolean {
 export function findUnstuckDestination(eng: Engine): UnstuckDestination | null {
   const m = eng.map
   if (!m) return null
-  const currentBand = bandOfPlayerZ(m, eng.player.z)
+  const currentBand = bandOfPlayerZ(m, eng.player.z, eng.player.x, eng.player.y)
   const bands = [currentBand, 0, 1, 2].filter((v, i, a) => v < (m.floors ?? 1) && a.indexOf(v) === i) as (0 | 1 | 2)[]
   const originX = Number.isFinite(eng.player.x) ? eng.player.x : m.w / 2
   const originY = Number.isFinite(eng.player.y) ? eng.player.y : m.h / 2

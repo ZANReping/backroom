@@ -1,6 +1,8 @@
 import * as THREE from 'three'
 import { waitForSubmittedPrograms } from './programCompletion'
 
+export type WarmupTarget = THREE.WebGLRenderTarget | null | (() => THREE.WebGLRenderTarget | null)
+
 const pendingRoots = new WeakMap<THREE.Object3D, Set<Promise<void>>>()
 const pendingRenderers = new WeakMap<THREE.WebGLRenderer, Set<Promise<void>>>()
 
@@ -36,7 +38,7 @@ class CompileView extends THREE.Object3D {
 export function* compileSceneJob(
   renderer: THREE.WebGLRenderer, root: THREE.Object3D,
   camera: THREE.Camera, scene: THREE.Scene,
-  renderTarget?: THREE.WebGLRenderTarget | null,
+  renderTarget?: WarmupTarget,
 ): Generator<void, void, unknown> {
   const objects: THREE.Object3D[] = []
   const lights: THREE.Object3D[] = []
@@ -58,7 +60,7 @@ export function* compileSceneJob(
     const previousTarget = renderer.getRenderTarget()
     let compiled: ReturnType<THREE.WebGLRenderer['compileAsync']>
     try {
-      if (renderTarget !== undefined) renderer.setRenderTarget(renderTarget)
+      if (renderTarget !== undefined) renderer.setRenderTarget(typeof renderTarget === 'function' ? renderTarget() : renderTarget)
       compiled = renderer.compileAsync(view, camera, scene)
     } finally { renderer.setRenderTarget(previousTarget) }
     const job = Promise.all([

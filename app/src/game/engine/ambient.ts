@@ -1,7 +1,8 @@
 import { flickerL1Crates,tickL1Dynamics } from './l1State'
 import {l0Sample} from '../world/l0Architecture'
 import {mapWallOccluded} from '../content/mapPlayer'
-import {revealMapSight} from '../world/mapSight'
+import {revealMapSight,mapSight} from '../world/mapSight'
+import { seatedEyeHeight, seatedEyeOffset } from './seating'
 // v53：现象与停电（层级氛围事件播报、L1「闪烁」停电链、视野计算）——
 // 自 engine.ts 拆分，逻辑逐语句搬运。
 import { LEVEL_EVENTS } from '../levels'
@@ -332,9 +333,16 @@ export function computeVisibility(eng: Engine) {
   }
   eng.visible.fill(0)
   revealMapSight(eng)
+  // L11 already computed the exact room/door/window visibility above. The
+  // legacy 8m tile circle repeated ~200 LOS marches through every facade trim
+  // collider per frame, even though both city maps use mapSight directly.
+  if(eng.levelDef.id===11){
+    for(const i of mapSight(eng).cells)eng.visible[i]=1
+    return
+  }
   const r = 8
   const px = Math.floor(p.x), py = Math.floor(p.y)
-  const inf=m.inf,wx=p.x+(inf?.ox??0),wy=p.y+(inf?.oy??0),eye=p.z+(p.crouching?.95:1.55)
+  const offset=seatedEyeOffset(eng),inf=m.inf,wx=p.x+offset.x+(inf?.ox??0),wy=p.y+offset.y+(inf?.oy??0),eye=p.z+(eng.seating?seatedEyeHeight(eng):p.crouching?.95:1.55)
   const l0Walls=inf?.l0?[...inf.chunks.values()].flatMap(c=>c.l0?.walls??[]).filter(w=>w.bottom<eye&&w.top>eye&&w.x<wx+r&&w.x+w.w>wx-r&&w.y<wy+r&&w.y+w.h>wy-r):undefined
   for (let y = Math.max(0, py - r); y <= Math.min(m.h - 1, py + r); y++) {
     for (let x = Math.max(0, px - r); x <= Math.min(m.w - 1, px + r); x++) {

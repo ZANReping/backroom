@@ -19,6 +19,7 @@ import { L9_CAVE_SPAWN, L9_L5_DOOR_SPAWN, L9_POOL_SPAWN, l9ArrowCount, l9ArrowPo
 import { L10_L11_SPAWN, L10_L9_SPAWN } from '../world/infiniteL10'
 import { L11_SPAWNS } from '../world/l11Layout'
 import { captureL11, restoreL11 } from './l11State'
+import { submitL11ArchiveTapes } from './l11Exits'
 import type { ExitDef, ExitInstance, FloorBand } from '../core/types'
 import type { Engine } from '../engine'
 import { l5StairWallDirection } from '../world/l5Topology'
@@ -30,6 +31,7 @@ export function nextMapSeed(eng: Engine, id: number): number {
 }
 
 export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; firstVisit: boolean }, preparedMapSeed?: number) {
+  eng.seating = null
   settleGlowFlight(eng)
   if (!restore && eng.player.level === 0 && eng.map?.inf) eng.l0World=captureL0(eng)
   eng.l0Meeting=0;eng.l0Blur=0
@@ -110,7 +112,7 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   eng.player.crouching = false
   eng.player.floor = 0
   if (id === 11 && eng.map.inf) {
-    if (!eng.l11World) eng.l11World = {version:1,seed:mapSeed,chunks:[],explored:[],taken:[],revisions:{},unloaded:{},marks:[]}
+    if (!eng.l11World) eng.l11World = {version:2,seed:mapSeed,chunks:[],explored:[],taken:[],revisions:{},unloaded:{},marks:[]}
     eng.map.inf.cityClock=eng.time
     const anchor=l11From===9?L11_SPAWNS[9]:l11From===10?L11_SPAWNS[10]:l11From===115?L11_SPAWNS.beta:L11_SPAWNS.default
     eng.player.x=anchor.x-eng.map.inf.ox;eng.player.y=anchor.y-eng.map.inf.oy
@@ -329,7 +331,11 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
     longroad: '双车辙的土路笔直伸向地平线。它通向一座城市。',
     countrypath: '城市边缘分出一条乡间小路，沿着它可以回到 Level 10。',
     lakeswim: '湖水清澈见底，底下却没有底。',
-    basebeta: 'M.E.G. Base Beta 的档案室在城里。档案员要看齐六盘磁带才肯开门。',
+    basebeta: '木门上贴着封条。先提交六盘磁带并拆封，再次交互才能进入。',
+    l11unfinisheddoor: '未完工混凝土楼的门后传来仓储大厅里的回声。',
+    l11liftshaft: '没有电梯轿厢的井道里，管道的轰鸣声越来越近。',
+    l11brickdoor: '砖墙与铁栅窗之间的小木门通向 Level 3。',
+    l11officedoor: '楼上办公间门缝里透出另一座办公室的荧光。',
     shopsign: '街上有一排陌生的店招。每一块牌子后面都是另一层。',
     groundclip: '这一段人行道下面是空的。',
     homedoor: '走廊尽头那扇门后面透出暖黄的光。门缝底下摆着一双拖鞋。',
@@ -351,11 +357,11 @@ export function syncInfNpcs(eng: Engine) {
   for (const n of eng.npcs) if (!eng.knownNpcs.some((k) => k.id === n.id)) eng.knownNpcs.push(n.def)
 }
 
-export function updateInfiniteWindow(eng: Engine) {
+export function updateInfiniteWindow(eng: Engine, prepared?:ReadonlyMap<string,import('../world/infiniteRegistry').GenChunk>) {
   const m = eng.map!
   if (eng.levelDef.id===11 && m.inf) m.inf.cityClock=eng.time
   if (eng.levelDef.id===11 && m.inf) m.inf.cityMutable=!eng.mpSession?.started || eng.mpSession.isHost
-  const shift = updateInfinite(m, eng.levelDef, eng.player.x, eng.player.y, eng.explored)
+  const shift = updateInfinite(m, eng.levelDef, eng.player.x, eng.player.y, eng.explored,prepared)
   if (!shift) return
   const { dx, dy } = shift
   const p = eng.player
@@ -438,7 +444,7 @@ export function restoreSavedPlayerPosition(
   }
 
   const finitePosition = Number.isFinite(p.x) && Number.isFinite(p.y) && Number.isFinite(p.z)
-  const band = finitePosition ? bandOfPlayerZ(m, p.z) : 0
+  const band = finitePosition ? bandOfPlayerZ(m, p.z, p.x, p.y) : 0
   p.floor = band
   p.vz = 0 // 不恢复暂停瞬间的下落速度，避免载入首帧再次穿入地面/楼板。
   if (finitePosition && canOccupy(m, p.x, p.y, PLAYER_RADIUS, { z: p.z, crouch: p.crouching, band })) return 'exact'
@@ -460,18 +466,18 @@ export function nearestExit(eng: Engine) {
     // 优先窗口内已加载出口（可交互实例）
     let best: { x: number; y: number } | null = null, bd = 1e9
     for (const e of m.exits) {
-      if ((e.floor ?? 0) !== bandOfPlayerZ(m, p.z)) continue
+      if ((e.floor ?? 0) !== bandOfPlayerZ(m, p.z, p.x, p.y)) continue
       const d = Math.hypot(e.x + 0.5 - p.x, e.y + 0.5 - p.y)
       if (d < bd) { bd = d; best = e }
     }
     if (best && bd < 40) return { x: best.x, y: best.y, d: bd }
-    const w = l0NearestExit(m, eng.levelDef, inf.ox + p.x, inf.oy + p.y, bandOfPlayerZ(m, p.z))
+    const w = l0NearestExit(m, eng.levelDef, inf.ox + p.x, inf.oy + p.y, bandOfPlayerZ(m, p.z, p.x, p.y))
     if (w && (!best || w.d < bd)) return w
     return best ? { x: best.x, y: best.y, d: bd } : w
   }
   let best: { x: number; y: number } | null = null, bd = 1e9
   for (const e of m.exits) {
-    if ((e.floor ?? 0) !== bandOfPlayerZ(m, p.z)) continue
+    if ((e.floor ?? 0) !== bandOfPlayerZ(m, p.z, p.x, p.y)) continue
     const d = Math.hypot(e.x + 0.5 - p.x, e.y + 0.5 - p.y)
     if (d < bd) { bd = d; best = e }
   }
@@ -551,6 +557,7 @@ export function tinyBlocksLittleDoor(eng: Engine, exit?: ExitInstance): boolean 
 }
 
 export function takeExit(eng: Engine, def: ExitDef) {  const p = eng.player
+  if(p.level===11&&def.kind==='basebeta'&&submitL11ArchiveTapes(eng))return
   if (def.kind === 'graystairs' || def.kind === 'graystairsup') return
   if (def.kind === 'littledoor' && tinyBlocksLittleDoor(eng)) {
     eng.msg('小小正盘踞在门扇上方。只要它还在附近，你就不可能掀开「小小的谎言」。', 'system')
