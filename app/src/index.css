@@ -1129,6 +1129,7 @@ textarea:focus-visible {
 @media (max-width: 1000px) { .hud-keyhints { display: none; } }
 
 /* 快捷栏：选中格抬起 + 顶部强调条；物品名贴在选中格上方 */
+.hud-hotbar-row { padding: 5px 3px 2px; overflow: visible; }
 .hud-slot { transition: transform 0.12s ease, border-color 0.12s ease; }
 .hud-slot.is-selected { transform: translateY(-3px); }
 .hud-slot.is-selected::before {
@@ -1148,6 +1149,10 @@ textarea:focus-visible {
   box-shadow: var(--quote-shadow);
 }
 [data-ui='immersive'] .hud-slot.is-selected { transform: translateY(-3px); }
+@media (max-width: 360px) {
+  .hud-hotbar-row { gap: 2px; padding-inline: 2px; }
+  .hud-hotbar-row .hud-slot { width: 38px !important; height: 38px !important; }
+}
 
 /* ========================================================================== */
 /* 2026-10 UI 优化 · 第三部分：暂停菜单 + 设置                                 */
@@ -1630,6 +1635,24 @@ textarea:focus-visible {
 
 /* 容器查询宿主：图鉴详情页（nulevelclass 横幅窄态布局依赖） */
 .cq { container-type: inline-size; }
+
+/* Entity archive imagery uses the same game model, captured once on demand. */
+.entity-archive-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(160px, 29%); align-items: start; gap: 18px; }
+.entity-archive-preview { min-width: 0; margin: 0; border: 1px solid var(--panel-edge); background: color-mix(in srgb, var(--panel) 85%, #14202b); }
+.entity-archive-image { width: 100%; padding: 0; border: 0; aspect-ratio: 1; display: grid; place-items: center; color: inherit; cursor: pointer; background: radial-gradient(ellipse at 50% 46%, rgba(125, 143, 155, .16), rgba(0, 0, 0, .32)); }
+.entity-archive-image:disabled { cursor: default; }
+.entity-archive-image:focus-visible { outline: 2px solid var(--amber); outline-offset: -3px; }
+.entity-archive-image img { display: block; width: 100%; height: auto; object-fit: contain; }
+.entity-archive-placeholder { color: var(--text-dim); padding: 16px; font-size: 11px; text-align: center; }
+.entity-archive-preview figcaption { border-top: 1px solid var(--panel-edge); color: var(--text-dim); font-size: 10px; line-height: 1.6; padding: 7px 9px; overflow-wrap: anywhere; }
+.entity-archive-hint { display: block; margin-top: 3px; color: var(--text-muted); }
+@container (max-width: 500px) {
+  .entity-archive-layout { grid-template-columns: minmax(0, 1fr) minmax(112px, 32%); gap: 10px; }
+}
+@container (max-width: 330px) {
+  .entity-archive-layout { grid-template-columns: 1fr; }
+  .entity-archive-preview { width: min(200px, 100%); justify-self: end; }
+}
 
 /* 2026-10 UI · 第六部分：矮屏（手机横屏等，高度 ≤ 520px）结算页压缩，避免上下被裁 */
 .end-backdrop, .end-victory { overflow-y: auto; }

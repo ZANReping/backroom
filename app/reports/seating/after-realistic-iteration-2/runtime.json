@@ -1,0 +1,907 @@
+{
+  "run": "qa-seating-1792133951930-50060",
+  "baseline": false,
+  "classic": false,
+  "skipRuntime": false,
+  "label": "iteration-2",
+  "requestedCases": null,
+  "mode": "realistic",
+  "port": 8765,
+  "cdp": 8766,
+  "profile": "E:\\ZAN\\backroom\\app\\reports\\seating\\after-realistic-iteration-2\\qa-seating-1792133951930-50060",
+  "cases": [
+    "chair-sitting-down",
+    "chair-seated",
+    "chair-first-person",
+    "sofa-seated",
+    "bench-seated",
+    "office-seated",
+    "chair-standing-up",
+    "manila"
+  ],
+  "views": [
+    {
+      "id": "chair-sitting-down",
+      "view": {
+        "level": 108,
+        "state": "sitting-down",
+        "blend": 0.5192265547295132,
+        "seat": {
+          "x": 11,
+          "y": 11,
+          "z": 0.475,
+          "yaw": 0,
+          "index": 0,
+          "label": "座椅",
+          "relaxed": false,
+          "floor": 0
+        },
+        "player": {
+          "x": 11,
+          "y": 11.408657428479914,
+          "z": 0
+        },
+        "eyeHeight": 1.346672395889778,
+        "stats": {
+          "label": "108:open",
+          "median": 4.199999999998909,
+          "p95": 4.299999999999272,
+          "max": 1012.6000000000004,
+          "p99": 8.300000000001091,
+          "frames": 1000,
+          "over16ms": 5,
+          "over33ms": 2,
+          "cpuMedian": null,
+          "cpuP95": null,
+          "gpuMedian": null,
+          "gpuP95": null,
+          "gpuSamples": 0,
+          "draws": 67,
+          "triangles": 30995,
+          "memory": {
+            "geometries": 39,
+            "textures": 36
+          },
+          "programs": 58,
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        }
+      }
+    },
+    {
+      "id": "chair-seated",
+      "view": {
+        "level": 108,
+        "state": "seated",
+        "blend": 1,
+        "seat": {
+          "x": 11,
+          "y": 11,
+          "z": 0.475,
+          "yaw": 0,
+          "index": 0,
+          "label": "座椅",
+          "relaxed": false,
+          "floor": 0
+        },
+        "player": {
+          "x": 11,
+          "y": 11,
+          "z": 0
+        },
+        "eyeHeight": 1.245,
+        "stats": {
+          "label": "108:open",
+          "median": 4.199999999998909,
+          "p95": 4.299999999999272,
+          "max": 1750,
+          "p99": 4.30000000000291,
+          "frames": 1000,
+          "over16ms": 2,
+          "over33ms": 2,
+          "cpuMedian": null,
+          "cpuP95": null,
+          "gpuMedian": null,
+          "gpuP95": null,
+          "gpuSamples": 0,
+          "draws": 100,
+          "triangles": 53267,
+          "memory": {
+            "geometries": 39,
+            "textures": 36
+          },
+          "programs": 58,
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        }
+      }
+    },
+    {
+      "id": "chair-first-person",
+      "view": {
+        "level": 108,
+        "state": "seated",
+        "blend": 1,
+        "seat": {
+          "x": 11,
+          "y": 11,
+          "z": 0.475,
+          "yaw": 0,
+          "index": 0,
+          "label": "座椅",
+          "relaxed": false,
+          "floor": 0
+        },
+        "player": {
+          "x": 11,
+          "y": 11,
+          "z": 0
+        },
+        "eyeHeight": 1.245,
+        "stats": {
+          "label": "108:open",
+          "median": 4.19999999999709,
+          "p95": 4.299999999999272,
+          "max": 170.79999999999927,
+          "p99": 4.30000000000291,
+          "frames": 1000,
+          "over16ms": 1,
+          "over33ms": 1,
+          "cpuMedian": null,
+          "cpuP95": null,
+          "gpuMedian": null,
+          "gpuP95": null,
+          "gpuSamples": 0,
+          "draws": 58,
+          "triangles": 26081,
+          "memory": {
+            "geometries": 39,
+            "textures": 36
+          },
+          "programs": 57,
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        }
+      }
+    },
+    {
+      "id": "sofa-seated",
+      "view": {
+        "level": 108,
+        "state": "seated",
+        "blend": 1,
+        "seat": {
+          "x": 10.729570600599757,
+          "y": 11.271602540378444,
+          "z": 0.58,
+          "yaw": 0.5235987755982988,
+          "index": 0,
+          "label": "沙发",
+          "relaxed": true,
+          "floor": 0
+        },
+        "player": {
+          "x": 10.729570600599757,
+          "y": 11.271602540378444,
+          "z": 0
+        },
+        "eyeHeight": 1.35,
+        "stats": {
+          "label": "108:open",
+          "median": 4.19999999999709,
+          "p95": 4.299999999999272,
+          "max": 9.900000000001455,
+          "p99": 4.400000000001455,
+          "frames": 1000,
+          "over16ms": 0,
+          "over33ms": 0,
+          "cpuMedian": null,
+          "cpuP95": null,
+          "gpuMedian": null,
+          "gpuP95": null,
+          "gpuSamples": 0,
+          "draws": 72,
+          "triangles": 32003,
+          "memory": {
+            "geometries": 39,
+            "textures": 35
+          },
+          "programs": 60,
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        }
+      }
+    },
+    {
+      "id": "bench-seated",
+      "view": {
+        "level": 108,
+        "state": "seated",
+        "blend": 1,
+        "seat": {
+          "x": 10.622966199426461,
+          "y": 11.2089150861596,
+          "z": 0.475,
+          "yaw": 0.4363323129985824,
+          "index": 0,
+          "label": "长椅",
+          "relaxed": false,
+          "floor": 0
+        },
+        "player": {
+          "x": 10.622966199426461,
+          "y": 11.2089150861596,
+          "z": 0
+        },
+        "eyeHeight": 1.245,
+        "stats": {
+          "label": "108:open",
+          "median": 4.200000000000728,
+          "p95": 4.30000000000291,
+          "max": 454.2000000000007,
+          "p99": 4.399999999997817,
+          "frames": 1000,
+          "over16ms": 1,
+          "over33ms": 1,
+          "cpuMedian": null,
+          "cpuP95": null,
+          "gpuMedian": null,
+          "gpuP95": null,
+          "gpuSamples": 0,
+          "draws": 67,
+          "triangles": 31163,
+          "memory": {
+            "geometries": 38,
+            "textures": 35
+          },
+          "programs": 60,
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        }
+      }
+    },
+    {
+      "id": "office-seated",
+      "view": {
+        "level": 108,
+        "state": "seated",
+        "blend": 1,
+        "seat": {
+          "x": 11,
+          "y": 11,
+          "z": 0.475,
+          "yaw": 0,
+          "index": 0,
+          "label": "办公椅",
+          "relaxed": false,
+          "floor": 0
+        },
+        "player": {
+          "x": 11,
+          "y": 11,
+          "z": 0
+        },
+        "eyeHeight": 1.245,
+        "stats": {
+          "label": "108:open",
+          "median": 4.19999999999709,
+          "p95": 4.299999999999272,
+          "max": 150,
+          "p99": 4.30000000000291,
+          "frames": 1000,
+          "over16ms": 1,
+          "over33ms": 1,
+          "cpuMedian": null,
+          "cpuP95": null,
+          "gpuMedian": null,
+          "gpuP95": null,
+          "gpuSamples": 0,
+          "draws": 67,
+          "triangles": 31107,
+          "memory": {
+            "geometries": 39,
+            "textures": 35
+          },
+          "programs": 60,
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        }
+      }
+    },
+    {
+      "id": "chair-standing-up",
+      "view": {
+        "level": 108,
+        "state": "standing-up",
+        "blend": 0.4807734452704868,
+        "seat": {
+          "x": 11,
+          "y": 11,
+          "z": 0.475,
+          "yaw": 0,
+          "index": 0,
+          "label": "座椅",
+          "relaxed": false,
+          "floor": 0
+        },
+        "player": {
+          "x": 11,
+          "y": 11.337497260574183,
+          "z": 0
+        },
+        "eyeHeight": 1.358400594274781,
+        "stats": {
+          "label": "108:open",
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "max": 154,
+          "p99": 4.400000000001455,
+          "frames": 1000,
+          "over16ms": 1,
+          "over33ms": 1,
+          "cpuMedian": null,
+          "cpuP95": null,
+          "gpuMedian": null,
+          "gpuP95": null,
+          "gpuSamples": 0,
+          "draws": 67,
+          "triangles": 30995,
+          "memory": {
+            "geometries": 39,
+            "textures": 36
+          },
+          "programs": 60,
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        }
+      }
+    },
+    {
+      "id": "manila",
+      "view": {
+        "level": 0,
+        "state": "seated",
+        "blend": 1,
+        "seat": {
+          "x": -369.63,
+          "y": 177.05,
+          "z": 0.5709599999999999,
+          "yaw": 0,
+          "index": 0,
+          "label": "座椅",
+          "relaxed": false,
+          "floor": 0
+        },
+        "player": {
+          "x": 78.37,
+          "y": 81.05000000000001,
+          "z": 0
+        },
+        "eyeHeight": 1.34096,
+        "stats": {
+          "label": "0:manila",
+          "median": 4.200000000004366,
+          "p95": 12.5,
+          "max": 95.70000000000437,
+          "p99": 25.099999999998545,
+          "frames": 1000,
+          "over16ms": 23,
+          "over33ms": 5,
+          "cpuMedian": null,
+          "cpuP95": null,
+          "gpuMedian": null,
+          "gpuP95": null,
+          "gpuSamples": 0,
+          "draws": 275,
+          "triangles": 339257,
+          "memory": {
+            "geometries": 431,
+            "textures": 80
+          },
+          "programs": 73,
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        }
+      }
+    }
+  ],
+  "runtime": {
+    "ok": true,
+    "families": [
+      {
+        "kind": "table",
+        "level": 108,
+        "seats": 1,
+        "initial": [
+          11,
+          11,
+          0
+        ],
+        "saved": {
+          "x": 11,
+          "y": 11.65,
+          "z": 0
+        }
+      },
+      {
+        "kind": "table",
+        "level": 0,
+        "seats": 1,
+        "initial": [
+          11,
+          11,
+          0
+        ],
+        "saved": {
+          "x": 11,
+          "y": 11.65,
+          "z": 0
+        }
+      },
+      {
+        "kind": "officechair",
+        "level": 108,
+        "seats": 1,
+        "initial": [
+          11,
+          11,
+          0
+        ],
+        "saved": {
+          "x": 11,
+          "y": 11.85,
+          "z": 0
+        }
+      },
+      {
+        "kind": "officechair",
+        "level": 4,
+        "seats": 1,
+        "initial": [
+          11,
+          11,
+          0
+        ],
+        "saved": {
+          "x": 10.15,
+          "y": 11,
+          "z": 0
+        }
+      },
+      {
+        "kind": "loungechair",
+        "level": 108,
+        "seats": 1,
+        "initial": [
+          11,
+          10.995,
+          0
+        ],
+        "saved": {
+          "x": 11,
+          "y": 11.844999999999999,
+          "z": 0
+        }
+      },
+      {
+        "kind": "bench",
+        "level": 108,
+        "seats": 2,
+        "initial": [
+          11.03,
+          11.43,
+          0
+        ],
+        "saved": {
+          "x": 11.527147421734917,
+          "y": 11.848741496704498,
+          "z": 0
+        }
+      },
+      {
+        "kind": "sofa",
+        "level": 108,
+        "seats": 2,
+        "initial": [
+          10.754271387248178,
+          11.294138485878786,
+          0
+        ],
+        "saved": {
+          "x": 11.127096070876357,
+          "y": 11.82658731466663,
+          "z": 0
+        }
+      },
+      {
+        "kind": "sofa",
+        "level": 5,
+        "seats": 3,
+        "initial": [
+          11.12,
+          11.59,
+          0
+        ],
+        "saved": {
+          "x": 11.77,
+          "y": 11.59,
+          "z": 0
+        }
+      },
+      {
+        "kind": "l5_antique_sofa",
+        "level": 108,
+        "seats": 3,
+        "initial": [
+          10.41,
+          11.12,
+          0
+        ],
+        "saved": {
+          "x": 10.41,
+          "y": 11.77,
+          "z": 0
+        }
+      },
+      {
+        "kind": "l5_pool_bench",
+        "level": 108,
+        "seats": 2,
+        "initial": [
+          10.57,
+          11.03,
+          0
+        ],
+        "saved": {
+          "x": 10.151258503295502,
+          "y": 11.527147421734917,
+          "z": 0
+        }
+      },
+      {
+        "kind": "gymbench",
+        "level": 108,
+        "seats": 1,
+        "initial": [
+          11.25,
+          11,
+          0
+        ],
+        "saved": {
+          "x": 11.25,
+          "y": 10.35,
+          "z": 0
+        }
+      },
+      {
+        "kind": "l9patiochair",
+        "level": 9,
+        "seats": 1,
+        "initial": [
+          11.04,
+          11,
+          0
+        ],
+        "saved": {
+          "x": 11.889999999999999,
+          "y": 11,
+          "z": 0
+        }
+      },
+      {
+        "kind": "alpha_chair",
+        "level": 108,
+        "seats": 1,
+        "initial": [
+          11,
+          10.97,
+          0
+        ],
+        "saved": {
+          "x": 11,
+          "y": 10.32,
+          "z": 0
+        }
+      },
+      {
+        "kind": "alpha_swivel",
+        "level": 108,
+        "seats": 1,
+        "initial": [
+          11,
+          10.97,
+          0
+        ],
+        "saved": {
+          "x": 11,
+          "y": 10.32,
+          "z": 0
+        }
+      },
+      {
+        "kind": "alpha_archive_chair",
+        "level": 108,
+        "seats": 1,
+        "initial": [
+          11,
+          10.97,
+          0
+        ],
+        "saved": {
+          "x": 11,
+          "y": 10.32,
+          "z": 0
+        }
+      },
+      {
+        "kind": "alpha_executive_chair",
+        "level": 108,
+        "seats": 1,
+        "initial": [
+          11,
+          10.97,
+          0
+        ],
+        "saved": {
+          "x": 11,
+          "y": 10.32,
+          "z": 0
+        }
+      },
+      {
+        "kind": "alpha_hall_seat",
+        "level": 108,
+        "seats": 1,
+        "initial": [
+          11,
+          10.96,
+          0
+        ],
+        "saved": {
+          "x": 11,
+          "y": 10.31,
+          "z": 0
+        }
+      },
+      {
+        "kind": "alpha_reading_chair",
+        "level": 108,
+        "seats": 1,
+        "initial": [
+          11,
+          11.09,
+          0
+        ],
+        "saved": {
+          "x": 11,
+          "y": 11.74,
+          "z": 0
+        }
+      },
+      {
+        "kind": "alpha_bench",
+        "level": 108,
+        "seats": 2,
+        "initial": [
+          10.328,
+          11.035,
+          0
+        ],
+        "saved": {
+          "x": 10.328,
+          "y": 11.685,
+          "z": 0
+        }
+      },
+      {
+        "kind": "alpha_waiting_seats",
+        "level": 108,
+        "seats": 4,
+        "initial": [
+          9.8,
+          10.95,
+          0
+        ],
+        "saved": {
+          "x": 9.8,
+          "y": 11.799999999999999,
+          "z": 0
+        }
+      },
+      {
+        "kind": "alpha_executive_sofa",
+        "level": 108,
+        "seats": 3,
+        "initial": [
+          10.273333333333333,
+          11.1,
+          0
+        ],
+        "saved": {
+          "x": 10.273333333333333,
+          "y": 11.75,
+          "z": 0
+        }
+      },
+      {
+        "kind": "alpha_home_table",
+        "level": 108,
+        "seats": 4,
+        "initial": [
+          10.47,
+          11.64,
+          0
+        ],
+        "saved": {
+          "x": 9.620000000000001,
+          "y": 11.64,
+          "z": 0
+        }
+      },
+      {
+        "kind": "l11_task_chair",
+        "level": 108,
+        "seats": 1,
+        "initial": [
+          11,
+          10.97,
+          0
+        ],
+        "saved": {
+          "x": 11,
+          "y": 10.32,
+          "z": 0
+        }
+      },
+      {
+        "kind": "l11_cafe_chair",
+        "level": 108,
+        "seats": 1,
+        "initial": [
+          11,
+          10.975,
+          0
+        ],
+        "saved": {
+          "x": 11,
+          "y": 10.325,
+          "z": 0
+        }
+      },
+      {
+        "kind": "l11_dining_chair",
+        "level": 108,
+        "seats": 1,
+        "initial": [
+          11,
+          10.97,
+          0
+        ],
+        "saved": {
+          "x": 11,
+          "y": 10.32,
+          "z": 0
+        }
+      },
+      {
+        "kind": "l11_armchair",
+        "level": 108,
+        "seats": 1,
+        "initial": [
+          11,
+          10.91,
+          0
+        ],
+        "saved": {
+          "x": 11,
+          "y": 10.26,
+          "z": 0
+        }
+      },
+      {
+        "kind": "l11_sofa",
+        "level": 108,
+        "seats": 3,
+        "initial": [
+          10.362,
+          10.9,
+          0
+        ],
+        "saved": {
+          "x": 10.362,
+          "y": 10.05,
+          "z": 0
+        }
+      },
+      {
+        "kind": "l11_park_bench",
+        "level": 108,
+        "seats": 3,
+        "initial": [
+          10.43,
+          10.975,
+          0
+        ],
+        "saved": {
+          "x": 10.43,
+          "y": 10.325,
+          "z": 0
+        }
+      },
+      {
+        "kind": "l11_gym_bench",
+        "level": 108,
+        "seats": 3,
+        "initial": [
+          10.4,
+          10.97,
+          0
+        ],
+        "saved": {
+          "x": 10.4,
+          "y": 10.32,
+          "z": 0
+        }
+      },
+      {
+        "kind": "l11_picnic_table",
+        "level": 108,
+        "seats": 4,
+        "initial": [
+          10.5,
+          11.736,
+          0
+        ],
+        "saved": {
+          "x": 9.85,
+          "y": 11.736,
+          "z": 0
+        }
+      }
+    ],
+    "safeguards": [
+      "walls",
+      "fallen-chair",
+      "non-seat-props",
+      "safe-save",
+      "jump-exit",
+      "blocked-exit",
+      "teleport",
+      "survival",
+      "pause",
+      "movement-exit",
+      "avatar-cache"
+    ],
+    "memory": {
+      "geometries": 212,
+      "textures": 50
+    }
+  },
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\seating\\after-realistic-iteration-2\\qa-seating-1792133951930-50060",
+    "--remote-debugging-port=8766",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.40",
+    "revision": "@cfaadc5a132d78e1828635aa8405a499f3e14864",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.20"
+  },
+  "pids": {
+    "server": 59732,
+    "browser": 69828
+  },
+  "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [],
+  "networkErrors": []
+}

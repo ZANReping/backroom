@@ -39,6 +39,12 @@ let textureDisposals=0;map.addEventListener('dispose',()=>textureDisposals++)
 ok(map===(b.sleeve.material as THREE.MeshLambertMaterial).map,'shared sleeve texture')
 const first=buildHeldItem('almond'),pose=heldHandPose('almond',heldBox(first));a.setPose(pose,first);observe()
 const initial=a.skin.geometry;a.setPose(pose,first);ok(a.skin.geometry===initial,'same item reuses pose geometry')
+const shrimp=buildHeldItem('liveshrimp'),shrimpPose=heldHandPose('liveshrimp',heldBox(shrimp)),handPosition=a.group.position.clone(),handRotation=a.group.quaternion.clone()
+const prepared=a.preparePose(shrimpPose,shrimp)
+ok(a.skin.geometry===initial&&a.group.position.equals(handPosition)&&a.group.quaternion.equals(handRotation),'background contact preparation preserves visible hand')
+a.setPose(shrimpPose,shrimp);ok(a.skin.geometry===(prepared.children[0] as THREE.Mesh).geometry,'first held shrimp reuses exact prepared finger geometry');observe()
+a.setPose(pose,first);prepared.clear()
+shrimp.traverse(o=>{const m=o as THREE.Mesh;m.geometry?.dispose();for(const mat of Array.isArray(m.material)?m.material:[m.material])mat?.dispose()})
 let materialDisposals=0
 for(const m of [a.skin.material,a.sleeve.material] as THREE.Material[])m.addEventListener('dispose',()=>materialDisposals++)
 for(let i=0;i<24;i++){a.setPose({...pose,at:[i*.001,pose.at[1],pose.at[2]]},first);observe()}

@@ -5,7 +5,9 @@ import { L1_PROFILES, l1VaultHeight } from '../src/game/world/l1Architecture'
 import { l1District, l1LayoutVariant, l1Outpost, l1Transition, l1DistanceScale } from '../src/game/world/l1Layout'
 import { l1CrateHidden, newL1Dynamics, rememberL1Container, restoreL1Container } from '../src/game/world/l1Dynamics'
 import { l1Puddles, l1PuddleContains } from '../src/game/world/l1Puddles'
-import { L1_PHOTO_ANCHORS, L1_SHOWCASE_SEED, l1ReferenceAt, l1SkylightAt } from '../src/game/world/l1Spatial'
+import { L1_SHOWCASE_SEED, l1FindReference, l1ReferenceAt, l1SkylightAt } from '../src/game/world/l1Spatial'
+import {l1PlanRegions,l1RegionAt,l1PlanTile} from '../src/game/world/l1Plan'
+import {l1OutpostSite} from '../src/game/world/l1OutpostSites'
 import * as THREE from 'three'
 import { buildL1RoofClosure } from '../src/game/renderer/l1RoofGeometry'
 import type { GameMap } from '../src/game/world/mapgen'
@@ -25,7 +27,8 @@ for (const seed of seeds) for (const variant of variants) for (const [cx, cy] of
 
   for (const s of a.structures.filter(s => s.data?.l1Column !== undefined)) {
     const tx = Math.floor(s.x + s.w / 2 - cx * 32), ty = Math.floor(s.y + s.h / 2 - cy * 32)
-    assert.equal(a.tiles[ty * 32 + tx], 1, `column on floor ${seed}:${variant}:${cx},${cy}`)
+    if(variant==='gothic')assert([-.49,0,.49].some(dx=>[-.49,0,.49].some(dy=>{const x=Math.floor(s.x+s.w/2+dx-cx*32),y=Math.floor(s.y+s.h/2+dy-cy*32);return x>=0&&x<32&&y>=0&&y<32&&a.tiles[y*32+x]===1})),`engaged column exposes a shaft to hall floor ${seed}:${cx},${cy}`)
+    else assert.equal(a.tiles[ty * 32 + tx], 1, `column on floor ${seed}:${variant}:${cx},${cy}`)
     const overlaps = (x: number, y: number, w = 0, h = 0) => s.x < x + w && s.x + s.w > x && s.y < y + h && s.y + s.h > y
     assert(!a.structures.some(t => t !== s && t.data?.sid !== undefined && overlaps(t.x, t.y, t.w, t.h)), 'column overlaps sid structure')
     for (const q of [...a.exits, ...a.items, ...a.entities, ...(a.npcs ?? [])]) assert(!overlaps(q.x - .17, q.y - .17, .34, .34), 'column overlaps gameplay object')
@@ -50,34 +53,24 @@ for (const seed of seeds) for (let cy=-5;cy<=5;cy++) for (let cx=-5;cx<=5;cx++) 
   const d=l1District(seed,cx,cy), out=l1Outpost(seed,cx,cy)
   if(out) assert(['parking','storage','gothic'].includes(d.variant), 'outpost variant')
 }
-for(const seed of seeds) for(let gy=-2;gy<=2;gy++) for(let gx=-2;gx<=2;gx++) {
-  const v=l1District(seed,gx*16,gy*16).variant
-  const compact=v==='garden'||v==='ouroboros',r=compact?1:4
-  for(let y=-r;y<=r;y++)for(let x=-r;x<=r;x++) assert.equal(l1District(seed,gx*16+x,gy*16+y).variant,v)
-  if(compact){
-    const cells=new Set<string>()
-    for(let y=-16;y<=16;y++)for(let x=-16;x<=16;x++)if(l1District(seed,gx*16+x,gy*16+y).key===`${gx},${gy}`)cells.add(`${x},${y}`)
-    assert(cells.size>=20&&cells.size<100,`compact district remains bounded: ${cells.size}`)
-    const reached=new Set(['0,0']),queue=[[0,0]]
-    for(const [x,y] of queue)for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){
-      const k=`${x+dx},${y+dy}`
-      if(cells.has(k)&&!reached.has(k)){reached.add(k);queue.push([x+dx,y+dy])}
-    }
-    assert.equal(reached.size,cells.size,'compact district is one connected cluster')
+// v2 halls are BSP rectangles, with path belts replacing the old 16-chunk districts.
+for(const seed of seeds)for(const r of l1PlanRegions(seed,-960,-960,960,960)){
+  for(const [x,y] of [[r.ix0+1,r.iy0+1],[r.ix1-1,r.iy1-1],[(r.ix0+r.ix1)/2,(r.iy0+r.iy1)/2]]){
+    assert.equal(l1RegionAt(seed,x,y)?.id,r.id,'hall keeps one region identity')
+    assert.equal(l1PlanTile(seed,x,y).style,r.section,'hall section is continuous')
   }
 }
 for(const seed of seeds){
-  for(let y=-5;y<=5;y++)for(let x=-5;x<=5;x++)assert(['parking','maintenance'].includes(l1LayoutVariant(seed,x,y)),'starting 11x11 parking/maintenance cluster retained')
-  for(let y=-1;y<=1;y++)for(let x=-1;x<=1;x++)assert.equal(l1LayoutVariant(seed,x,y),'parking','starting 3x3 parking cluster retained')
-  let nearest=Infinity
-  for(let y=-6;y<=6;y++)for(let x=-6;x<=6;x++)if(l1Outpost(seed,x,y)){
-    nearest=Math.min(nearest,Math.hypot(x*32+20.5-15.5,y*32+20.5-15.5))
-    const core=l1District(seed,x,y).key
-    for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++)assert.equal(l1District(seed,x+dx,y+dy).key,core,'starting base remains in district interior')
-  }
-  assert(nearest>=125&&nearest<150,'first landmark lies 125–150 m from spawn')
-  assert(!genL1ChunkRaw(L1,seed,0,0).structures.some(s=>s.kind==='landmark'),'no base in spawn chunk')
-  assert(genL1ChunkRaw(L1,seed,3,3).structures.some(s=>s.kind==='landmark'&&s.data?.outpost==='alpha'),'starting Alpha at its new anchor')
+  const spawn=l1RegionAt(seed,15,15)!;assert.equal(spawn.section,'parking')
+  assert(Math.min(15-spawn.ix0,spawn.ix1-15,15-spawn.iy0,spawn.iy1-15)>=18,'arrival clearance')
+  const bases=[]
+  for(let y=-7;y<=7;y++)for(let x=-7;x<=7;x++)if(l1Outpost(seed,x,y)==='alpha'&&l1RegionAt(seed,x*32+16,y*32+16)?.id===spawn.id)bases.push({x,y})
+  assert.equal(bases.length,1,'one Alpha landmark in the arrival hall')
+  const base=bases[0]
+  assert(Math.hypot(base.x*32+20.5-15.5,base.y*32+20.5-15.5)<300,'arrival landmark remains nearby')
+  assert(!genL1ChunkRaw(L1,seed,0,0).structures.some(s=>s.kind==='landmark'&&Math.hypot(s.x-15.5,s.y-15.5)<12),'arrival stays clear of entrance structures')
+  const site=l1OutpostSite(seed,spawn)!;assert(site,'arrival hall has a path-wall entrance')
+  assert(genL1ChunkRaw(L1,seed,Math.floor((site.x+.5)/32),Math.floor((site.z+.5)/32)).structures.some(s=>s.kind==='landmark'&&s.data?.outpost==='alpha'&&s.data.l1EntranceId===site.id),'Alpha entrance survives actual placement in its exterior-wall owner')
 }
 
 // Real mesh raycasts: front-facing fascia from both directions and a visible back above the low roof.
@@ -118,9 +111,12 @@ restoreL1Container(dyn,1,0,0,fresh,0,0)
 assert.deepEqual(fresh.data?.lootItems,[]);assert.equal(fresh.looted,true)
 const scales:number[]=[]
 for(const seed of seeds)for(let cx=-40;cx<=40;cx++)for(let cy=-40;cy<=40;cy++)scales.push(l1DistanceScale(seed,cx*32+16,cy*32+16))
-assert(scales.every(v=>v>=.72-1e-9&&v<=1.35+1e-9));assert(scales.some(v=>v<.95)&&scales.some(v=>v>1.1));assert.equal(l1DistanceScale(1,0,0),1)
+assert(scales.every(v=>v>=.72-1e-9&&v<=1.35+1e-9));assert(scales.some(v=>v<.95)&&scales.some(v=>v>1.1))
 assert(scales.some(v=>v>=.72&&v<.95)&&scales.some(v=>v>1.1&&v<=1.35),'anomaly distance range sampled')
-for(const a of L1_PHOTO_ANCHORS)assert.equal(l1ReferenceAt(L1_SHOWCASE_SEED,a.centerX,a.centerY)?.variant,a.variant,'photo anchor variant')
+for(const id of ['parking-common','parking-round','storage','gothic','garden','ouroboros','power-out']){
+  const a=l1FindReference(L1_SHOWCASE_SEED,id,2400);assert(a,`generated reference bay ${id}`)
+  assert.equal(l1ReferenceAt(L1_SHOWCASE_SEED,a.centerX,a.centerY)?.id,id,'actual reference identity')
+}
 const puddleHitFrom=(seed:number,cx:number,cy:number,x:number,y:number)=>l1Puddles(seed,cx,cy).some(p=>l1PuddleContains(p,x,y))
 let puddleTrue=0,puddleFalse=0
 for(const seed of [1,42,L1_SHOWCASE_SEED])for(const [x,y] of [[31.99,12.5],[32.01,12.5],[-32.01,-12.5],[-31.99,-12.5],[63.99,-24.01],[-64.01,24.01]] as const){

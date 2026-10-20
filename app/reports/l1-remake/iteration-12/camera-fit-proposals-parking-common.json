@@ -1,0 +1,74 @@
+[
+  {
+    "id": "parking-common",
+    "initial": [
+      0.9655999999999949,
+      9.0535,
+      0.0627,
+      0.4215,
+      0.0852,
+      56.303,
+      0
+    ],
+    "proposed": [
+      -0.0573,
+      9.3037,
+      0.0384,
+      0.3291,
+      0.0868,
+      55.9277,
+      0.0084
+    ],
+    "safe": true,
+    "parallels": [
+      {
+        "id": "near-pier-left-edge",
+        "angleDegrees": 0.9961390263207075,
+        "endpointError": 0.0020721719209778437,
+        "vanishingPoint": [
+          0.5681836210038582,
+          -10.322542431356881
+        ]
+      },
+      {
+        "id": "middle-pier-left-edge",
+        "angleDegrees": -0.14005228234232905,
+        "endpointError": 0.00014056609343351384,
+        "vanishingPoint": [
+          0.5681836210038582,
+          -10.322542431356881
+        ]
+      },
+      {
+        "id": "front-cross-pipe",
+        "angleDegrees": 0.21417091453716702,
+        "endpointError": 0.0023807963749674474,
+        "vanishingPoint": [
+          -1.5765069024904752,
+          0.5586993053959435
+        ]
+      },
+      {
+        "id": "rear-cross-pipe",
+        "angleDegrees": -0.207279110521043,
+        "endpointError": 0.0019618121501326327,
+        "vanishingPoint": [
+          -1.5765069024904752,
+          0.5586993053959435
+        ]
+      },
+      {
+        "id": "longitudinal-ceiling-pipe",
+        "angleDegrees": -0.12101400593469114,
+        "endpointError": 0.0006173753749339,
+        "vanishingPoint": [
+          0.74161816367323,
+          0.5846629168039899
+        ]
+      }
+    ],
+    "landmarks": 3,
+    "underdetermined": false,
+    "maxErrorPercent": 1.7863960453921746
+  }
+]

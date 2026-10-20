@@ -1,0 +1,95 @@
+{
+  "existingSourceChanges": [
+    {
+      "path": "src/components/HUD.tsx",
+      "expected": true
+    },
+    {
+      "path": "src/game/content/codexScores.ts",
+      "expected": true
+    },
+    {
+      "path": "src/game/content/items.ts",
+      "expected": true
+    },
+    {
+      "path": "src/game/content/npcs.ts",
+      "expected": true
+    },
+    {
+      "path": "src/game/engine/dullerAI.ts",
+      "expected": true
+    },
+    {
+      "path": "src/game/engine/entityAI.ts",
+      "expected": true
+    },
+    {
+      "path": "src/game/engine/interact.ts",
+      "expected": true
+    },
+    {
+      "path": "src/game/engine/inventory.ts",
+      "expected": true
+    },
+    {
+      "path": "src/game/entities/critters.ts",
+      "expected": true
+    },
+    {
+      "path": "src/game/entities/types.ts",
+      "expected": true
+    },
+    {
+      "path": "src/game/renderer/dullerMesh.ts",
+      "expected": true
+    },
+    {
+      "path": "src/game/renderer/entitiesMesh.ts",
+      "expected": true
+    },
+    {
+      "path": "src/game/renderer/itemsMesh.ts",
+      "expected": true
+    },
+    {
+      "path": "src/game/renderer/refinedItemMesh.ts",
+      "expected": true
+    },
+    {
+      "path": "src/game/renderer/renderer.ts",
+      "expected": true
+    }
+  ],
+  "allExistingChangesExpected": true,
+  "protectedFiles": [
+    {
+      "path": "src/game/renderer/retroFaceAlignment.ts",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/renderer/retroNamedFaceAlignment.json",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/renderer/retroAvatar.ts",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/renderer/retroNpc.ts",
+      "unchanged": true
+    },
+    {
+      "path": "src/components/AvatarEditor.tsx",
+      "unchanged": true
+    },
+    {
+      "path": "src/components/AvatarPreview.tsx",
+      "unchanged": true
+    },
+    {
+      "path": "src/components/NpcPortraitImage.tsx",
+      "unchanged": true
+    }
+  ]
+}

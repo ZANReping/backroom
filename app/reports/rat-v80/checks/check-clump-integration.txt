@@ -1,0 +1,229 @@
+
+> my-app@0.0.0 check:clump-integration
+> esbuild scripts/check-clump-integration.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-clump-integration.mjs && node .cache/check-clump-integration.mjs
+
+
+  .cache\check-clump-integration.mjs  2.5mb
+
+Done in 132ms
+{
+  "checks": 3739591,
+  "stats": [
+    {
+      "mode": "classic",
+      "l3": false,
+      "seed": 0,
+      "tris": 10986,
+      "draws": 5,
+      "bones": 34,
+      "buildMs": 142.07659999999998
+    },
+    {
+      "mode": "classic",
+      "l3": false,
+      "seed": 1,
+      "tris": 11290,
+      "draws": 5,
+      "bones": 34,
+      "buildMs": 91.10400000000004
+    },
+    {
+      "mode": "classic",
+      "l3": false,
+      "seed": 2,
+      "tris": 11422,
+      "draws": 5,
+      "bones": 34,
+      "buildMs": 75.41150000000005
+    },
+    {
+      "mode": "classic",
+      "l3": false,
+      "seed": 3,
+      "tris": 10986,
+      "draws": 5,
+      "bones": 34,
+      "buildMs": 16.120700000000056
+    },
+    {
+      "mode": "classic",
+      "l3": false,
+      "seed": 4,
+      "tris": 11290,
+      "draws": 5,
+      "bones": 34,
+      "buildMs": 11.673900000000003
+    },
+    {
+      "mode": "classic",
+      "l3": false,
+      "seed": 5,
+      "tris": 11422,
+      "draws": 5,
+      "bones": 34,
+      "buildMs": 15.779899999999998
+    },
+    {
+      "mode": "classic",
+      "l3": true,
+      "seed": 0,
+      "tris": 11950,
+      "draws": 6,
+      "bones": 47,
+      "buildMs": 73.17510000000016
+    },
+    {
+      "mode": "classic",
+      "l3": true,
+      "seed": 1,
+      "tris": 12314,
+      "draws": 6,
+      "bones": 47,
+      "buildMs": 55.7958000000001
+    },
+    {
+      "mode": "classic",
+      "l3": true,
+      "seed": 2,
+      "tris": 11966,
+      "draws": 6,
+      "bones": 47,
+      "buildMs": 66.64589999999998
+    },
+    {
+      "mode": "classic",
+      "l3": true,
+      "seed": 3,
+      "tris": 11950,
+      "draws": 6,
+      "bones": 47,
+      "buildMs": 22.425899999999956
+    },
+    {
+      "mode": "classic",
+      "l3": true,
+      "seed": 4,
+      "tris": 12314,
+      "draws": 6,
+      "bones": 47,
+      "buildMs": 23.304999999999836
+    },
+    {
+      "mode": "classic",
+      "l3": true,
+      "seed": 5,
+      "tris": 11966,
+      "draws": 6,
+      "bones": 47,
+      "buildMs": 20.76189999999997
+    },
+    {
+      "mode": "realistic",
+      "l3": false,
+      "seed": 0,
+      "tris": 10986,
+      "draws": 5,
+      "bones": 34,
+      "buildMs": 12.67730000000006
+    },
+    {
+      "mode": "realistic",
+      "l3": false,
+      "seed": 1,
+      "tris": 11290,
+      "draws": 5,
+      "bones": 34,
+      "buildMs": 14.737999999999829
+    },
+    {
+      "mode": "realistic",
+      "l3": false,
+      "seed": 2,
+      "tris": 11422,
+      "draws": 5,
+      "bones": 34,
+      "buildMs": 13.607500000000073
+    },
+    {
+      "mode": "realistic",
+      "l3": false,
+      "seed": 3,
+      "tris": 10986,
+      "draws": 5,
+      "bones": 34,
+      "buildMs": 11.41540000000009
+    },
+    {
+      "mode": "realistic",
+      "l3": false,
+      "seed": 4,
+      "tris": 11290,
+      "draws": 5,
+      "bones": 34,
+      "buildMs": 10.08680000000004
+    },
+    {
+      "mode": "realistic",
+      "l3": false,
+      "seed": 5,
+      "tris": 11422,
+      "draws": 5,
+      "bones": 34,
+      "buildMs": 12.666899999999941
+    },
+    {
+      "mode": "realistic",
+      "l3": true,
+      "seed": 0,
+      "tris": 11950,
+      "draws": 6,
+      "bones": 47,
+      "buildMs": 17.077199999999948
+    },
+    {
+      "mode": "realistic",
+      "l3": true,
+      "seed": 1,
+      "tris": 12314,
+      "draws": 6,
+      "bones": 47,
+      "buildMs": 19.66689999999994
+    },
+    {
+      "mode": "realistic",
+      "l3": true,
+      "seed": 2,
+      "tris": 11966,
+      "draws": 6,
+      "bones": 47,
+      "buildMs": 13.870499999999993
+    },
+    {
+      "mode": "realistic",
+      "l3": true,
+      "seed": 3,
+      "tris": 11950,
+      "draws": 6,
+      "bones": 47,
+      "buildMs": 15.783200000000079
+    },
+    {
+      "mode": "realistic",
+      "l3": true,
+      "seed": 4,
+      "tris": 12314,
+      "draws": 6,
+      "bones": 47,
+      "buildMs": 14.125999999999976
+    },
+    {
+      "mode": "realistic",
+      "l3": true,
+      "seed": 5,
+      "tris": 11966,
+      "draws": 6,
+      "bones": 47,
+      "buildMs": 13.47889999999984
+    }
+  ]
+}

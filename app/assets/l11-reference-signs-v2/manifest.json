@@ -1,0 +1,158 @@
+{
+  "generator": "built-in image_gen",
+  "processing": "node scripts/prepare-l11-inspected-signs.mjs",
+  "changes": [
+    "crop generated margins only",
+    "resize to declared world aspect, high/low tiers; sRGB albedo; mipmapped in renderer",
+    "uniform OpenGL normal and roughness; no noise",
+    "retain source alpha for circular face"
+  ],
+  "records": [
+    {
+      "id": "pegasus",
+      "author": "OpenAI image_gen, project-directed reference reconstruction",
+      "license": "AI-generated project asset; reproduced depicted signage; no CC0 claim",
+      "sourceURL": null,
+      "origin": "exec-be49ff83-650d-4391-bdb6-1457504fb720.png",
+      "source": "pegasus-source.png",
+      "prompt": "pegasus.prompt.txt",
+      "reference": "reference/L11/11iconic.jpg",
+      "crop": [
+        372,
+        33,
+        248,
+        1520
+      ],
+      "sourceSize": [
+        992,
+        1586
+      ],
+      "worldMetres": [
+        2.3,
+        14
+      ],
+      "text": [
+        "PEGASUS",
+        "Apartment Residences",
+        "866 997 9310"
+      ],
+      "files": [
+        "public/textures/l11-inspected-pegasus.png",
+        "public/textures/l11-inspected-pegasus_normal.png",
+        "public/textures/l11-inspected-pegasus_roughness.png",
+        "public/textures/l11-inspected-pegasus_low.png",
+        "public/textures/l11-inspected-pegasus_low_normal.png",
+        "public/textures/l11-inspected-pegasus_low_roughness.png"
+      ],
+      "review": "Visible wording and reading direction inspected against source-pixel crops. Typeface/physical metres remain reconstruction estimates, not a survey. Illegible poster copy is deliberately not invented."
+    },
+    {
+      "id": "hope",
+      "author": "OpenAI image_gen, project-directed reference reconstruction",
+      "license": "AI-generated project asset; reproduced depicted signage; no CC0 claim",
+      "sourceURL": null,
+      "origin": "exec-97b88c05-cab5-4f50-b2d5-4dabdd8c03b8.png",
+      "source": "hope-source.png",
+      "prompt": "hope.prompt.txt",
+      "reference": "reference/L11/11iconic.jpg",
+      "crop": [
+        28,
+        110,
+        2063,
+        521
+      ],
+      "sourceSize": [
+        2117,
+        743
+      ],
+      "worldMetres": [
+        1.25,
+        0.44
+      ],
+      "text": [
+        "Hope"
+      ],
+      "files": [
+        "public/textures/l11-inspected-hope.png",
+        "public/textures/l11-inspected-hope_normal.png",
+        "public/textures/l11-inspected-hope_roughness.png",
+        "public/textures/l11-inspected-hope_low.png",
+        "public/textures/l11-inspected-hope_low_normal.png",
+        "public/textures/l11-inspected-hope_low_roughness.png"
+      ],
+      "review": "Visible wording and reading direction inspected against source-pixel crops. Typeface/physical metres remain reconstruction estimates, not a survey. Illegible poster copy is deliberately not invented."
+    },
+    {
+      "id": "famima",
+      "author": "OpenAI image_gen, project-directed reference reconstruction",
+      "license": "AI-generated project asset; reproduced depicted signage; no CC0 claim",
+      "sourceURL": null,
+      "origin": "exec-700f6e3d-c409-41a3-9f1d-5747792eed48.png",
+      "source": "famima-source.png",
+      "prompt": "famima.prompt.txt",
+      "reference": "reference/L11/11iconic.jpg",
+      "crop": [
+        15,
+        120,
+        2142,
+        477
+      ],
+      "sourceSize": [
+        2172,
+        724
+      ],
+      "worldMetres": [
+        2.8,
+        0.58
+      ],
+      "text": [
+        "Famima!!"
+      ],
+      "files": [
+        "public/textures/l11-inspected-famima.png",
+        "public/textures/l11-inspected-famima_normal.png",
+        "public/textures/l11-inspected-famima_roughness.png",
+        "public/textures/l11-inspected-famima_low.png",
+        "public/textures/l11-inspected-famima_low_normal.png",
+        "public/textures/l11-inspected-famima_low_roughness.png"
+      ],
+      "review": "Visible wording and reading direction inspected against source-pixel crops. Typeface/physical metres remain reconstruction estimates, not a survey. Illegible poster copy is deliberately not invented."
+    },
+    {
+      "id": "famima-round",
+      "author": "OpenAI image_gen, project-directed reference reconstruction",
+      "license": "AI-generated project asset; reproduced depicted signage; no CC0 claim",
+      "sourceURL": null,
+      "origin": "exec-e848d633-88bc-40e0-9cad-fe77678cdf11.png",
+      "source": "famima-round-source.png",
+      "prompt": "famima-round.prompt.txt",
+      "reference": "reference/L11/11iconic.jpg",
+      "crop": [
+        23,
+        25,
+        1208,
+        1199
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "worldMetres": [
+        0.68,
+        0.68
+      ],
+      "text": [
+        "Famima!!"
+      ],
+      "files": [
+        "public/textures/l11-inspected-famima-round.png",
+        "public/textures/l11-inspected-famima-round_normal.png",
+        "public/textures/l11-inspected-famima-round_roughness.png",
+        "public/textures/l11-inspected-famima-round_low.png",
+        "public/textures/l11-inspected-famima-round_low_normal.png",
+        "public/textures/l11-inspected-famima-round_low_roughness.png"
+      ],
+      "review": "Visible wording and reading direction inspected against source-pixel crops. Typeface/physical metres remain reconstruction estimates, not a survey. Illegible poster copy is deliberately not invented."
+    }
+  ]
+}

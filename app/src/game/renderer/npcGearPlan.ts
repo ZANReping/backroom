@@ -42,7 +42,8 @@ export function npcGearPlan(id: string, def?: NpcDef): NpcGearSpec[] {
     if (wl === 'paint') add(g('pouch', 'paint', { side: 'left' }))
     return out
   }
-  if (id === 'bluebird') return [...out, g('apron', 'robe'), g('hat', 'crown'), g('badge', 'medallion', { slot: 'chest' }), g('bird', 'parrot', { side: 'right' })]
+  // 重制杰瑞：肩头不再挂静态小鹦鹉——讲道时真正的鹉主（Entity 7 实体）会站上青鸟神父的肩头
+  if (id === 'bluebird') return [...out, g('apron', 'robe'), g('hat', 'crown'), g('badge', 'medallion', { slot: 'chest' })]
   if (id === 'sinclair') return [...out, g('feather', 'blue', { slot: 'chest' }), g('badge', 'blue', { slot: 'chest' }), g('book', 'diary', { side: 'left' })]
   if (id.startsWith('jerry_') || def?.faction === 'jerry') return [...out, g('band', 'blue'), g('feather', 'blue'), g('badge', 'jerry', { slot: 'chest' })]
   if (id === 'joey') return [...out, g('guitar', 'electric'), g('glasses', 'sunglasses'), g('pen', 'pick', { side: 'right' })]

@@ -1,11 +1,13 @@
-import {l1Noise,l1ParkingAt,l1ReferenceAt,L1_PHOTO_ANCHORS,L1_SHOWCASE_SEED} from './l1Spatial'
+import {l1Noise,l1ParkingAt,l1ReferenceAt,L1_PHOTO_ANCHORS} from './l1Spatial'
 export interface L1Puddle {x:number;y:number;rx:number;ry:number;angle:number;phase:number}
 /** Neighbouring chunks query the same overlapping leak footprints, including negative coordinates. */
 export function l1Puddles(seed:number,cx:number,cy:number):L1Puddle[]{
  const out:L1Puddle[]=[]
  // Authored leaks are ordinary footprint data: rendering, reflections and wet
  // footsteps all consume them, in free play as well as at the recorded camera.
- if(seed===L1_SHOWCASE_SEED)for(const a of L1_PHOTO_ANCHORS){
+ const near=new Set<(typeof L1_PHOTO_ANCHORS)[number]>()
+ for(const dx of [-32,16,64])for(const dy of [-32,16,64]){const a=l1ReferenceAt(seed,cx*32+dx,cy*32+dy);if(a)near.add(a)}
+ for(const a of near){
   if(!['parking-common','parking-water','parking-bright'].includes(a.id))continue
   if(Math.abs(cx*32+16-a.centerX)>48||Math.abs(cy*32+16-a.centerY)>48)continue
   if(a.id==='parking-common'){

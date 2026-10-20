@@ -1,0 +1,868 @@
+{
+  "label": "touch",
+  "port": 26977,
+  "cdp": 31507,
+  "views": [
+    {
+      "name": "default",
+      "drawn": {
+        "stowed": false,
+        "visible": true,
+        "vmHeld": "crowbar",
+        "stow": 0,
+        "cooldown": 0,
+        "using": null,
+        "offhand": true,
+        "light": 29.94851100000003,
+        "position": [
+          41.7,
+          25.5,
+          0
+        ],
+        "memory": {
+          "geometries": 157,
+          "textures": 74
+        },
+        "crosshair": "block"
+      },
+      "hidden": {
+        "checks": [
+          "Production App is running with its input listeners",
+          "Touch holster toggles the actual engine",
+          "Touch holster updates the actual viewmodel",
+          "Holster touch target is at least 48 pixels",
+          "Holster control stays within viewport",
+          "Accessible pressed state tracks holster",
+          "Quick use is visibly unavailable while stowed",
+          "Attack is visibly unavailable while stowed"
+        ],
+        "buttons": [
+          {
+            "id": "quickuse",
+            "label": "快捷使用（等同于 PC 右键）",
+            "pressed": null,
+            "disabled": "true",
+            "rect": {
+              "x": 12,
+              "y": 230,
+              "width": 56,
+              "height": 56,
+              "cx": 40,
+              "cy": 258
+            }
+          },
+          {
+            "id": "holster",
+            "label": "取出主手",
+            "pressed": "true",
+            "disabled": null,
+            "rect": {
+              "x": 196,
+              "y": 266,
+              "width": 48,
+              "height": 48,
+              "cx": 220,
+              "cy": 290
+            }
+          },
+          {
+            "id": "attack",
+            "label": "攻击",
+            "pressed": null,
+            "disabled": "true",
+            "rect": {
+              "x": 752,
+              "y": 298,
+              "width": 76,
+              "height": 76,
+              "cx": 790,
+              "cy": 336
+            }
+          }
+        ],
+        "state": {
+          "stowed": true,
+          "visible": false,
+          "vmHeld": "crowbar",
+          "stow": 0.9998385314223717,
+          "cooldown": 0,
+          "using": null,
+          "offhand": true,
+          "light": 29.901544500000067,
+          "position": [
+            41.7,
+            25.5,
+            0
+          ],
+          "memory": {
+            "geometries": 157,
+            "textures": 74
+          },
+          "crosshair": "block"
+        }
+      },
+      "blocked": {
+        "checks": [
+          "Production App is running with its input listeners",
+          "Touch holster toggles the actual engine",
+          "Touch holster updates the actual viewmodel",
+          "Holster touch target is at least 48 pixels",
+          "Holster control stays within viewport",
+          "Accessible pressed state tracks holster",
+          "Quick use is visibly unavailable while stowed",
+          "Attack is visibly unavailable while stowed",
+          "Touch attack and quick use cannot bypass holster"
+        ],
+        "state": {
+          "stowed": true,
+          "visible": false,
+          "vmHeld": "crowbar",
+          "stow": 0.9999999077164562,
+          "cooldown": 0,
+          "using": null,
+          "offhand": true,
+          "light": 29.8700422500001,
+          "position": [
+            41.7,
+            25.5,
+            0
+          ],
+          "memory": {
+            "geometries": 157,
+            "textures": 74
+          },
+          "crosshair": "block"
+        }
+      },
+      "restored": {
+        "checks": [
+          "Production App is running with its input listeners",
+          "Touch holster toggles the actual engine",
+          "Touch holster updates the actual viewmodel",
+          "Holster touch target is at least 48 pixels",
+          "Holster control stays within viewport",
+          "Accessible pressed state tracks holster",
+          "Quick use is visibly unavailable while stowed",
+          "Attack is visibly unavailable while stowed",
+          "Touch attack and quick use cannot bypass holster",
+          "Touch holster toggles the actual engine",
+          "Touch holster updates the actual viewmodel",
+          "Holster touch target is at least 48 pixels",
+          "Holster control stays within viewport",
+          "Accessible pressed state tracks holster",
+          "Quick use is visibly unavailable while stowed",
+          "Attack is visibly unavailable while stowed"
+        ],
+        "buttons": [
+          {
+            "id": "quickuse",
+            "label": "快捷使用（等同于 PC 右键）",
+            "pressed": null,
+            "disabled": "false",
+            "rect": {
+              "x": 12,
+              "y": 230,
+              "width": 56,
+              "height": 56,
+              "cx": 40,
+              "cy": 258
+            }
+          },
+          {
+            "id": "holster",
+            "label": "收起主手",
+            "pressed": "false",
+            "disabled": null,
+            "rect": {
+              "x": 196,
+              "y": 266,
+              "width": 48,
+              "height": 48,
+              "cx": 220,
+              "cy": 290
+            }
+          },
+          {
+            "id": "attack",
+            "label": "攻击",
+            "pressed": null,
+            "disabled": "false",
+            "rect": {
+              "x": 752,
+              "y": 298,
+              "width": 76,
+              "height": 76,
+              "cx": 790,
+              "cy": 336
+            }
+          }
+        ],
+        "state": {
+          "stowed": false,
+          "visible": true,
+          "vmHeld": "crowbar",
+          "stow": 0.00016121042144688836,
+          "cooldown": 0,
+          "using": null,
+          "offhand": true,
+          "light": 29.83264050000013,
+          "position": [
+            41.7,
+            25.5,
+            0
+          ],
+          "memory": {
+            "geometries": 157,
+            "textures": 76
+          },
+          "crosshair": "block"
+        }
+      }
+    },
+    {
+      "name": "left",
+      "drawn": {
+        "stowed": false,
+        "visible": true,
+        "vmHeld": "crowbar",
+        "stow": 0,
+        "cooldown": 0,
+        "using": null,
+        "offhand": true,
+        "light": 29.93334375000006,
+        "position": [
+          41.7,
+          25.5,
+          0
+        ],
+        "memory": {
+          "geometries": 157,
+          "textures": 73
+        },
+        "crosshair": "block"
+      },
+      "hidden": {
+        "checks": [
+          "Production App is running with its input listeners",
+          "Touch holster toggles the actual engine",
+          "Touch holster updates the actual viewmodel",
+          "Holster touch target is at least 48 pixels",
+          "Holster control stays within viewport",
+          "Accessible pressed state tracks holster",
+          "Quick use is visibly unavailable while stowed",
+          "Attack is visibly unavailable while stowed"
+        ],
+        "buttons": [
+          {
+            "id": "quickuse",
+            "label": "快捷使用（等同于 PC 右键）",
+            "pressed": null,
+            "disabled": "true",
+            "rect": {
+              "x": 776,
+              "y": 230,
+              "width": 56,
+              "height": 56,
+              "cx": 804,
+              "cy": 258
+            }
+          },
+          {
+            "id": "holster",
+            "label": "取出主手",
+            "pressed": "true",
+            "disabled": null,
+            "rect": {
+              "x": 600,
+              "y": 266,
+              "width": 48,
+              "height": 48,
+              "cx": 624,
+              "cy": 290
+            }
+          },
+          {
+            "id": "attack",
+            "label": "攻击",
+            "pressed": null,
+            "disabled": "true",
+            "rect": {
+              "x": 16,
+              "y": 298,
+              "width": 76,
+              "height": 76,
+              "cx": 54,
+              "cy": 336
+            }
+          }
+        ],
+        "state": {
+          "stowed": true,
+          "visible": false,
+          "vmHeld": "crowbar",
+          "stow": 0.9998495079049893,
+          "cooldown": 0,
+          "using": null,
+          "offhand": true,
+          "light": 29.886093750000104,
+          "position": [
+            41.7,
+            25.5,
+            0
+          ],
+          "memory": {
+            "geometries": 157,
+            "textures": 74
+          },
+          "crosshair": "block"
+        }
+      },
+      "blocked": {
+        "checks": [
+          "Production App is running with its input listeners",
+          "Touch holster toggles the actual engine",
+          "Touch holster updates the actual viewmodel",
+          "Holster touch target is at least 48 pixels",
+          "Holster control stays within viewport",
+          "Accessible pressed state tracks holster",
+          "Quick use is visibly unavailable while stowed",
+          "Attack is visibly unavailable while stowed",
+          "Touch attack and quick use cannot bypass holster"
+        ],
+        "state": {
+          "stowed": true,
+          "visible": false,
+          "vmHeld": "crowbar",
+          "stow": 0.9999998874648253,
+          "cooldown": 0,
+          "using": null,
+          "offhand": true,
+          "light": 29.855725500000133,
+          "position": [
+            41.7,
+            25.5,
+            0
+          ],
+          "memory": {
+            "geometries": 157,
+            "textures": 76
+          },
+          "crosshair": "block"
+        }
+      },
+      "restored": {
+        "checks": [
+          "Production App is running with its input listeners",
+          "Touch holster toggles the actual engine",
+          "Touch holster updates the actual viewmodel",
+          "Holster touch target is at least 48 pixels",
+          "Holster control stays within viewport",
+          "Accessible pressed state tracks holster",
+          "Quick use is visibly unavailable while stowed",
+          "Attack is visibly unavailable while stowed",
+          "Touch attack and quick use cannot bypass holster",
+          "Touch holster toggles the actual engine",
+          "Touch holster updates the actual viewmodel",
+          "Holster touch target is at least 48 pixels",
+          "Holster control stays within viewport",
+          "Accessible pressed state tracks holster",
+          "Quick use is visibly unavailable while stowed",
+          "Attack is visibly unavailable while stowed"
+        ],
+        "buttons": [
+          {
+            "id": "quickuse",
+            "label": "快捷使用（等同于 PC 右键）",
+            "pressed": null,
+            "disabled": "false",
+            "rect": {
+              "x": 776,
+              "y": 230,
+              "width": 56,
+              "height": 56,
+              "cx": 804,
+              "cy": 258
+            }
+          },
+          {
+            "id": "holster",
+            "label": "收起主手",
+            "pressed": "false",
+            "disabled": null,
+            "rect": {
+              "x": 600,
+              "y": 266,
+              "width": 48,
+              "height": 48,
+              "cx": 624,
+              "cy": 290
+            }
+          },
+          {
+            "id": "attack",
+            "label": "攻击",
+            "pressed": null,
+            "disabled": "false",
+            "rect": {
+              "x": 16,
+              "y": 298,
+              "width": 76,
+              "height": 76,
+              "cx": 54,
+              "cy": 336
+            }
+          }
+        ],
+        "state": {
+          "stowed": false,
+          "visible": true,
+          "vmHeld": "crowbar",
+          "stow": 0.00016121041861351428,
+          "cooldown": 0,
+          "using": null,
+          "offhand": true,
+          "light": 29.818317000000164,
+          "position": [
+            41.7,
+            25.5,
+            0
+          ],
+          "memory": {
+            "geometries": 157,
+            "textures": 77
+          },
+          "crosshair": "block"
+        }
+      }
+    },
+    {
+      "name": "custom",
+      "drawn": {
+        "stowed": false,
+        "visible": true,
+        "vmHeld": "crowbar",
+        "stow": 0,
+        "cooldown": 0,
+        "using": null,
+        "offhand": true,
+        "light": 29.93362050000006,
+        "position": [
+          41.7,
+          25.5,
+          0
+        ],
+        "memory": {
+          "geometries": 157,
+          "textures": 73
+        },
+        "crosshair": "block"
+      },
+      "hidden": {
+        "checks": [
+          "Production App is running with its input listeners",
+          "Touch holster toggles the actual engine",
+          "Touch holster updates the actual viewmodel",
+          "Holster touch target is at least 48 pixels",
+          "Holster control stays within viewport",
+          "Accessible pressed state tracks holster",
+          "Quick use is visibly unavailable while stowed",
+          "Attack is visibly unavailable while stowed"
+        ],
+        "buttons": [
+          {
+            "id": "attack",
+            "label": "攻击",
+            "pressed": null,
+            "disabled": "true",
+            "rect": {
+              "x": 411.3125,
+              "y": 229.1875,
+              "width": 72,
+              "height": 72,
+              "cx": 447.3125,
+              "cy": 265.1875
+            }
+          },
+          {
+            "id": "holster",
+            "label": "取出主手",
+            "pressed": "true",
+            "disabled": null,
+            "rect": {
+              "x": 224.390625,
+              "y": 166.203125,
+              "width": 57.59375,
+              "height": 57.59375,
+              "cx": 253.1875,
+              "cy": 195
+            }
+          },
+          {
+            "id": "quickuse",
+            "label": "快捷使用（等同于 PC 右键）",
+            "pressed": null,
+            "disabled": "true",
+            "rect": {
+              "x": 12,
+              "y": 230,
+              "width": 56,
+              "height": 56,
+              "cx": 40,
+              "cy": 258
+            }
+          }
+        ],
+        "state": {
+          "stowed": true,
+          "visible": false,
+          "vmHeld": "crowbar",
+          "stow": 0.9998680120595791,
+          "cooldown": 0,
+          "using": null,
+          "offhand": true,
+          "light": 29.886093750000104,
+          "position": [
+            41.7,
+            25.5,
+            0
+          ],
+          "memory": {
+            "geometries": 157,
+            "textures": 75
+          },
+          "crosshair": "block"
+        }
+      },
+      "blocked": {
+        "checks": [
+          "Production App is running with its input listeners",
+          "Touch holster toggles the actual engine",
+          "Touch holster updates the actual viewmodel",
+          "Holster touch target is at least 48 pixels",
+          "Holster control stays within viewport",
+          "Accessible pressed state tracks holster",
+          "Quick use is visibly unavailable while stowed",
+          "Attack is visibly unavailable while stowed",
+          "Touch attack and quick use cannot bypass holster"
+        ],
+        "state": {
+          "stowed": true,
+          "visible": false,
+          "vmHeld": "crowbar",
+          "stow": 0.9999998946102022,
+          "cooldown": 0,
+          "using": null,
+          "offhand": true,
+          "light": 29.856002250000127,
+          "position": [
+            41.7,
+            25.5,
+            0
+          ],
+          "memory": {
+            "geometries": 157,
+            "textures": 77
+          },
+          "crosshair": "block"
+        }
+      },
+      "restored": {
+        "checks": [
+          "Production App is running with its input listeners",
+          "Touch holster toggles the actual engine",
+          "Touch holster updates the actual viewmodel",
+          "Holster touch target is at least 48 pixels",
+          "Holster control stays within viewport",
+          "Accessible pressed state tracks holster",
+          "Quick use is visibly unavailable while stowed",
+          "Attack is visibly unavailable while stowed",
+          "Touch attack and quick use cannot bypass holster",
+          "Touch holster toggles the actual engine",
+          "Touch holster updates the actual viewmodel",
+          "Holster touch target is at least 48 pixels",
+          "Holster control stays within viewport",
+          "Accessible pressed state tracks holster",
+          "Quick use is visibly unavailable while stowed",
+          "Attack is visibly unavailable while stowed"
+        ],
+        "buttons": [
+          {
+            "id": "attack",
+            "label": "攻击",
+            "pressed": null,
+            "disabled": "false",
+            "rect": {
+              "x": 411.3125,
+              "y": 229.1875,
+              "width": 72,
+              "height": 72,
+              "cx": 447.3125,
+              "cy": 265.1875
+            }
+          },
+          {
+            "id": "holster",
+            "label": "收起主手",
+            "pressed": "false",
+            "disabled": null,
+            "rect": {
+              "x": 224.390625,
+              "y": 166.203125,
+              "width": 57.59375,
+              "height": 57.59375,
+              "cx": 253.1875,
+              "cy": 195
+            }
+          },
+          {
+            "id": "quickuse",
+            "label": "快捷使用（等同于 PC 右键）",
+            "pressed": null,
+            "disabled": "false",
+            "rect": {
+              "x": 12,
+              "y": 230,
+              "width": 56,
+              "height": 56,
+              "cx": 40,
+              "cy": 258
+            }
+          }
+        ],
+        "state": {
+          "stowed": false,
+          "visible": true,
+          "vmHeld": "crowbar",
+          "stow": 0.000161210419620562,
+          "cooldown": 0,
+          "using": null,
+          "offhand": true,
+          "light": 29.81859375000016,
+          "position": [
+            41.7,
+            25.5,
+            0
+          ],
+          "memory": {
+            "geometries": 157,
+            "textures": 77
+          },
+          "crosshair": "block"
+        }
+      }
+    }
+  ],
+  "checks": [
+    {
+      "checks": [
+        "Production App is running with its input listeners",
+        "Touch holster toggles the actual engine",
+        "Touch holster updates the actual viewmodel",
+        "Holster touch target is at least 48 pixels",
+        "Holster control stays within viewport",
+        "Accessible pressed state tracks holster",
+        "Quick use is visibly unavailable while stowed",
+        "Attack is visibly unavailable while stowed",
+        "Touch attack and quick use cannot bypass holster",
+        "Touch holster toggles the actual engine",
+        "Touch holster updates the actual viewmodel",
+        "Holster touch target is at least 48 pixels",
+        "Holster control stays within viewport",
+        "Accessible pressed state tracks holster",
+        "Quick use is visibly unavailable while stowed",
+        "Attack is visibly unavailable while stowed"
+      ],
+      "state": {
+        "stowed": false,
+        "visible": true,
+        "vmHeld": "crowbar",
+        "stow": 0.00016121042144688836,
+        "cooldown": 0,
+        "using": null,
+        "offhand": true,
+        "light": 29.83264050000013,
+        "position": [
+          41.7,
+          25.5,
+          0
+        ],
+        "memory": {
+          "geometries": 157,
+          "textures": 76
+        },
+        "crosshair": "block"
+      },
+      "memoryKeys": [
+        "br_settings",
+        "br_save_slot1",
+        "br_keybinds"
+      ]
+    },
+    {
+      "checks": [
+        "Production App is running with its input listeners",
+        "Touch holster toggles the actual engine",
+        "Touch holster updates the actual viewmodel",
+        "Holster touch target is at least 48 pixels",
+        "Holster control stays within viewport",
+        "Accessible pressed state tracks holster",
+        "Quick use is visibly unavailable while stowed",
+        "Attack is visibly unavailable while stowed",
+        "Touch attack and quick use cannot bypass holster",
+        "Touch holster toggles the actual engine",
+        "Touch holster updates the actual viewmodel",
+        "Holster touch target is at least 48 pixels",
+        "Holster control stays within viewport",
+        "Accessible pressed state tracks holster",
+        "Quick use is visibly unavailable while stowed",
+        "Attack is visibly unavailable while stowed"
+      ],
+      "state": {
+        "stowed": false,
+        "visible": true,
+        "vmHeld": "crowbar",
+        "stow": 0.00016121041861351428,
+        "cooldown": 0,
+        "using": null,
+        "offhand": true,
+        "light": 29.818317000000164,
+        "position": [
+          41.7,
+          25.5,
+          0
+        ],
+        "memory": {
+          "geometries": 157,
+          "textures": 77
+        },
+        "crosshair": "block"
+      },
+      "memoryKeys": [
+        "br_settings",
+        "br_save_slot1",
+        "br_keybinds"
+      ]
+    },
+    {
+      "checks": [
+        "Production App is running with its input listeners",
+        "Touch holster toggles the actual engine",
+        "Touch holster updates the actual viewmodel",
+        "Holster touch target is at least 48 pixels",
+        "Holster control stays within viewport",
+        "Accessible pressed state tracks holster",
+        "Quick use is visibly unavailable while stowed",
+        "Attack is visibly unavailable while stowed",
+        "Touch attack and quick use cannot bypass holster",
+        "Touch holster toggles the actual engine",
+        "Touch holster updates the actual viewmodel",
+        "Holster touch target is at least 48 pixels",
+        "Holster control stays within viewport",
+        "Accessible pressed state tracks holster",
+        "Quick use is visibly unavailable while stowed",
+        "Attack is visibly unavailable while stowed"
+      ],
+      "state": {
+        "stowed": false,
+        "visible": true,
+        "vmHeld": "crowbar",
+        "stow": 0.000161210419620562,
+        "cooldown": 0,
+        "using": null,
+        "offhand": true,
+        "light": 29.81859375000016,
+        "position": [
+          41.7,
+          25.5,
+          0
+        ],
+        "memory": {
+          "geometries": 157,
+          "textures": 77
+        },
+        "crosshair": "block"
+      },
+      "memoryKeys": [
+        "br_settings",
+        "br_touch_layout",
+        "br_save_slot1",
+        "br_keybinds"
+      ]
+    }
+  ],
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:26977/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sat, 17 Oct 2026 11:07:09 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 279,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 26977,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 76642.458896,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.694,
+        "sendEnd": 0.733,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 81.913,
+        "receiveHeadersEnd": 82.091
+      },
+      "responseTime": 1792235229387.9,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\holster\\touch\\qa-holster-1792235213005-30644",
+    "--remote-debugging-port=31507",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "server": 77600,
+    "browser": 81480
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

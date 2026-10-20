@@ -1,0 +1,1243 @@
+{
+  "run": "qa-1792038432293-37248",
+  "port": 1910,
+  "cdp": 1911,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-reference\\facade-surface-fix\\qa-1792038432293-37248",
+  "label": "facade-surface-fix",
+  "baseline": false,
+  "low": false,
+  "mode": "realistic",
+  "quick": false,
+  "seed": 20261014,
+  "views": [
+    {
+      "id": "01-office-street",
+      "world": [
+        272,
+        415,
+        0.17315159930199545
+      ],
+      "target": [
+        270,
+        220,
+        12
+      ],
+      "yaw": 0.010256050641667055,
+      "pitch": 0.05265031107251866,
+      "fov": 42,
+      "lighting": {
+        "exposure": 1.1789446066777265,
+        "meter": 0.4708359999999998,
+        "outdoor": 0.9999999999999996,
+        "fogNear": 300,
+        "fogFar": 1800,
+        "sun": 3.35,
+        "msaa": 4,
+        "buffer": [
+          1920,
+          1080
+        ]
+      },
+      "stats": {
+        "label": "11:open",
+        "median": 12.60000000000582,
+        "p95": 33.19999999999709,
+        "max": 250,
+        "p99": 54.10000000000582,
+        "frames": 1000,
+        "over16ms": 391,
+        "over33ms": 46,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 2435,
+        "triangles": 6648684,
+        "memory": {
+          "geometries": 1711,
+          "textures": 78
+        },
+        "programs": 126,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "performance": {
+        "label": "11:open",
+        "median": 16.69999999999709,
+        "p95": 29.19999999999709,
+        "max": 33.39999999999418,
+        "p99": 33.30000000000291,
+        "frames": 103,
+        "over16ms": 66,
+        "over33ms": 1,
+        "cpuMedian": 16.799999999813735,
+        "cpuP95": 28.199999999720603,
+        "gpuMedian": 17.645568,
+        "gpuP95": 25.698304,
+        "gpuSamples": 101,
+        "draws": 1838,
+        "triangles": 3883500,
+        "memory": {
+          "geometries": 1711,
+          "textures": 78
+        },
+        "programs": 126,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "id": "03-canal",
+      "world": [
+        760,
+        967.8,
+        1.3488329107481563
+      ],
+      "target": [
+        760,
+        780,
+        12
+      ],
+      "yaw": 0,
+      "pitch": 0.048424133181329244,
+      "fov": 56,
+      "lighting": {
+        "exposure": 1.1789232453720038,
+        "meter": 0.4708359999999998,
+        "outdoor": 0.9999999999999996,
+        "fogNear": 300,
+        "fogFar": 1800,
+        "sun": 3.35,
+        "msaa": 4,
+        "buffer": [
+          1920,
+          1080
+        ]
+      },
+      "stats": {
+        "label": "11:open",
+        "median": 12.39999999999418,
+        "p95": 33.39999999999418,
+        "max": 1104.199999999997,
+        "p99": 79.30000000000291,
+        "frames": 1000,
+        "over16ms": 273,
+        "over33ms": 50,
+        "cpuMedian": 16.799999999813735,
+        "cpuP95": 28.199999999720603,
+        "gpuMedian": 17.680384,
+        "gpuP95": 26.200064,
+        "gpuSamples": 103,
+        "draws": 234,
+        "triangles": 1543903,
+        "memory": {
+          "geometries": 776,
+          "textures": 72
+        },
+        "programs": 116,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "performance": {
+        "label": "11:open",
+        "median": 8.30000000000291,
+        "p95": 16.59999999999127,
+        "max": 20.89999999999418,
+        "p99": 16.80000000000291,
+        "frames": 194,
+        "over16ms": 8,
+        "over33ms": 0,
+        "cpuMedian": 6.5,
+        "cpuP95": 14.5,
+        "gpuMedian": 7.73632,
+        "gpuP95": 12.58496,
+        "gpuSamples": 192,
+        "draws": 234,
+        "triangles": 1543903,
+        "memory": {
+          "geometries": 776,
+          "textures": 72
+        },
+        "programs": 116,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "id": "04-office-reverse",
+      "world": [
+        272,
+        284,
+        0.12114374307066494
+      ],
+      "target": [
+        272,
+        392,
+        13
+      ],
+      "yaw": 3.141592653589793,
+      "pitch": 0.10451459891826874,
+      "fov": 75,
+      "lighting": {
+        "exposure": 1.1789232453720038,
+        "meter": 0.4708359999999998,
+        "outdoor": 0.9999999999999996,
+        "fogNear": 300,
+        "fogFar": 1800,
+        "sun": 3.35,
+        "msaa": 4,
+        "buffer": [
+          1920,
+          1080
+        ]
+      },
+      "stats": {
+        "label": "11:open",
+        "median": 16.69999999999709,
+        "p95": 33.30000000000291,
+        "max": 395.6999999999971,
+        "p99": 70.80000000000291,
+        "frames": 1000,
+        "over16ms": 637,
+        "over33ms": 48,
+        "cpuMedian": 6.5,
+        "cpuP95": 14.5,
+        "gpuMedian": 7.774208,
+        "gpuP95": 12.758016,
+        "gpuSamples": 194,
+        "draws": 1674,
+        "triangles": 4180565,
+        "memory": {
+          "geometries": 1586,
+          "textures": 77
+        },
+        "programs": 111,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "performance": {
+        "label": "11:open",
+        "median": 16.70000000001164,
+        "p95": 25,
+        "max": 29.300000000017462,
+        "p99": 29.300000000017462,
+        "frames": 100,
+        "over16ms": 58,
+        "over33ms": 0,
+        "cpuMedian": 15.699999999720603,
+        "cpuP95": 23.700000000186265,
+        "gpuMedian": 16.884736,
+        "gpuP95": 24.604672,
+        "gpuSamples": 98,
+        "draws": 599,
+        "triangles": 2289617,
+        "memory": {
+          "geometries": 1586,
+          "textures": 77
+        },
+        "programs": 111,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    }
+  ],
+  "command": [
+    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-reference\\facade-surface-fix\\qa-1792038432293-37248",
+    "--remote-debugging-port=1911",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.40",
+    "revision": "@cfaadc5a132d78e1828635aa8405a499f3e14864",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.20"
+  },
+  "pids": {
+    "server": 44452,
+    "browser": 45248
+  },
+  "setup": {
+    "seed": 20261014,
+    "newGameSeed": 20259573,
+    "version": 10,
+    "buildings": 29,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "low": false,
+    "baseline": false,
+    "weather": "calm",
+    "time": 10,
+    "shadows": true
+  },
+  "cases": [
+    {
+      "id": "01-office-street",
+      "x": 272,
+      "y": 415,
+      "z": 0,
+      "tx": 270,
+      "ty": 220,
+      "th": 12,
+      "fov": 42,
+      "reference": "11iconic.jpg"
+    },
+    {
+      "id": "03-canal",
+      "x": 760,
+      "y": 967.8,
+      "z": 0,
+      "tx": 760,
+      "ty": 780,
+      "th": 12,
+      "fov": 56,
+      "reference": "11canal.png"
+    },
+    {
+      "id": "04-office-reverse",
+      "x": 272,
+      "y": 284,
+      "z": 0,
+      "tx": 272,
+      "ty": 392,
+      "th": 13,
+      "fov": 75
+    }
+  ],
+  "hardware": {
+    "vendor": "Google Inc. (NVIDIA)",
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+  },
+  "validationSkipped": true,
+  "walkStart": {
+    "x": 272,
+    "y": 403,
+    "revision": 4
+  },
+  "walking": {
+    "label": "11:open",
+    "median": 50.10000000000582,
+    "p95": 187.5,
+    "max": 312.5,
+    "p99": 250.10000000000582,
+    "frames": 311,
+    "over16ms": 310,
+    "over33ms": 215,
+    "cpuMedian": 30,
+    "cpuP95": 43.700000000186265,
+    "gpuMedian": 38.344704,
+    "gpuP95": 175.922176,
+    "gpuSamples": 307,
+    "draws": 1498,
+    "triangles": 6187886,
+    "memory": {
+      "geometries": 2040,
+      "textures": 81
+    },
+    "programs": 120,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "streamTimings": [
+    {
+      "ms": 20.600000000093132,
+      "before": 4,
+      "after": 5,
+      "x": 272,
+      "y": 383.9316666666649
+    }
+  ],
+  "walkEnd": {
+    "x": 272,
+    "y": 359.6783333333293,
+    "revision": 5
+  },
+  "ok": false,
+  "failure": "Error: Normal walk failed to cross city chunks",
+  "errors": [],
+  "failureState": {
+    "pending": {
+      "missing": 0,
+      "chunk": false,
+      "distant": true,
+      "finite": false,
+      "flash": false,
+      "moth": false,
+      "items": 0,
+      "compile": false,
+      "retired": 0,
+      "textures": 0
+    },
+    "stats": {
+      "label": "11:open",
+      "median": 49.90000000002328,
+      "p95": 187.5,
+      "max": 312.5,
+      "p99": 250.10000000000582,
+      "frames": 313,
+      "over16ms": 312,
+      "over33ms": 215,
+      "cpuMedian": 30,
+      "cpuP95": 43.700000000186265,
+      "gpuMedian": 38.344704,
+      "gpuP95": 175.922176,
+      "gpuSamples": 308,
+      "draws": 1494,
+      "triangles": 6492740,
+      "memory": {
+        "geometries": 2040,
+        "textures": 81
+      },
+      "programs": 120,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "revision": 5,
+    "contextLost": false,
+    "programs": [
+      {
+        "id": 0,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 1,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 2,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 14,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 15,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 16,
+        "name": "OutputShader",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 17,
+        "name": "unspecified",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 18,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 19,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 20,
+        "name": "",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 21,
+        "name": "",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 22,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 23,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 24,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 25,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 26,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 27,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 28,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 29,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 30,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 62,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 32,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 33,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 34,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 64,
+        "name": "l11-asphalt:#cad0d0:false:realistic",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 36,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 37,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 38,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 39,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 40,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 41,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 42,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 43,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 65,
+        "name": "l11-paint:#eee9d6:false:realistic",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 63,
+        "name": "l11-concrete:#8d918b:false:realistic",
+        "used": 5,
+        "ready": true
+      },
+      {
+        "id": 61,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 59,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 60,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 49,
+        "name": "EquirectangularToCubeUV",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 50,
+        "name": "EquirectangularToCubeUV",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 51,
+        "name": "PMREMGGXConvolution",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 52,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 53,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 66,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 67,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 68,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 69,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 70,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 71,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 72,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 73,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 74,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 148,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 146,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 143,
+        "name": "l11-car-paint",
+        "used": 4,
+        "ready": true
+      },
+      {
+        "id": 144,
+        "name": "",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 79,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 80,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 81,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 82,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 83,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 140,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 135,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 137,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 134,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 133,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 142,
+        "name": "l11-cc0-leaves",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 147,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 141,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 92,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 93,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 94,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 95,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 96,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 97,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 98,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 99,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 139,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 138,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 136,
+        "name": "",
+        "used": 20,
+        "ready": true
+      },
+      {
+        "id": 103,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 104,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 105,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 106,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 107,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 145,
+        "name": "",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 109,
+        "name": "",
+        "used": 61,
+        "ready": true
+      },
+      {
+        "id": 110,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 111,
+        "name": "",
+        "used": 6,
+        "ready": true
+      },
+      {
+        "id": 112,
+        "name": "l11-concrete:#8d918b:false:realistic",
+        "used": 235,
+        "ready": true
+      },
+      {
+        "id": 113,
+        "name": "l11-asphalt:#cad0d0:false:realistic",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 114,
+        "name": "l11-paint:#eee9d6:false:realistic",
+        "used": 200,
+        "ready": true
+      },
+      {
+        "id": 115,
+        "name": "l11-clear-shop-glass",
+        "used": 8,
+        "ready": true
+      },
+      {
+        "id": 116,
+        "name": "l11-generated-full-signs",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 117,
+        "name": "l11-architectural-glass",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 118,
+        "name": "l11-cc0-leaves",
+        "used": 5,
+        "ready": true
+      },
+      {
+        "id": 119,
+        "name": "l11-bronze-office-glass",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 120,
+        "name": "l11-bronze-office-glass",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 121,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 122,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 123,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 124,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 125,
+        "name": "l11-cut-limestone-cladding",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 126,
+        "name": "",
+        "used": 4,
+        "ready": true
+      },
+      {
+        "id": 127,
+        "name": "l11-metal:#c6d2ce:true:realistic",
+        "used": 14,
+        "ready": true
+      },
+      {
+        "id": 128,
+        "name": "l11-paper:#8caba6:true:realistic",
+        "used": 49,
+        "ready": true
+      },
+      {
+        "id": 129,
+        "name": "l11-brick:#acadaa:false:realistic",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 130,
+        "name": "l11-complete-vertical-hotel",
+        "used": 4,
+        "ready": true
+      },
+      {
+        "id": 131,
+        "name": "l11-canal-water-realistic:true",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 132,
+        "name": "l11-canal-water-realistic:true",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 154,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 155,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 156,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 157,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 158,
+        "name": "retro avatar / body",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 159,
+        "name": "retro avatar / solid",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 160,
+        "name": "retro avatar / hair",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 161,
+        "name": "retro avatar / glass",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 162,
+        "name": "retro avatar / glass",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 163,
+        "name": "",
+        "used": 1,
+        "ready": true
+      }
+    ]
+  },
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "networkErrors": [
+    {
+      "requestId": "17920.30",
+      "loaderId": "1B20C4085B3A8A7BA3609AB8F3840DFF",
+      "timestamp": 2693.070108,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:1910/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Thu, 15 Oct 2026 04:27:36 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 148,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 1910,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 2692.522232,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.618,
+          "sendEnd": 0.709,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 546.614,
+          "receiveHeadersEnd": 546.88
+        },
+        "responseTime": 1792038456222.183,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "70EC0CC809E9BF50BD447EF5EDD15E6C"
+    },
+    {
+      "requestId": "17920.620",
+      "loaderId": "1B20C4085B3A8A7BA3609AB8F3840DFF",
+      "timestamp": 2840.84859,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:1910/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Thu, 15 Oct 2026 04:30:03 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": false,
+        "connectionId": 2799,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 1910,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 2840.801029,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": 1.074,
+          "dnsEnd": 1.089,
+          "connectStart": 1.089,
+          "connectEnd": 2.097,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 2.179,
+          "sendEnd": 2.271,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 13.819,
+          "receiveHeadersEnd": 14.163
+        },
+        "responseTime": 1792038603968.185,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "70EC0CC809E9BF50BD447EF5EDD15E6C"
+    }
+  ]
+}

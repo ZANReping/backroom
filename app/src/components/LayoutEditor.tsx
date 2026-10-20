@@ -1,9 +1,9 @@
 // 触屏按键布局编辑器：拖拽移动控件、双指缩放（0.8–1.5×），按竖屏/横屏分别存 localStorage
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { storage } from '@/game/core/storage'
-import { IconFlashlight, IconBackpack, IconSprint, IconAttack, IconPause, IconJump, IconCrouch } from './icons'
+import { IconFlashlight, IconBackpack, IconSprint, IconAttack, IconPause, IconJump, IconCrouch, IconHolster } from './icons'
 
-export type TouchControlId = 'stick' | 'attack' | 'sprint' | 'flashlight' | 'backpack' | 'pause' | 'jump' | 'crouch'
+export type TouchControlId = 'stick' | 'attack' | 'sprint' | 'flashlight' | 'backpack' | 'pause' | 'jump' | 'crouch' | 'holster'
 
 /** 控件中心点（相对视口 0~1）与缩放 */
 export interface TouchLayoutItem {
@@ -33,6 +33,7 @@ export const CONTROL_SIZES: Record<TouchControlId, number> = {
   pause: 44,
   jump: 56,
   crouch: 56,
+  holster: 48,
 }
 
 export const CONTROL_LABELS: Record<TouchControlId, string> = {
@@ -44,6 +45,7 @@ export const CONTROL_LABELS: Record<TouchControlId, string> = {
   pause: '暂停',
   jump: '跳跃',
   crouch: '蹲伏',
+  holster: '收起/取出主手',
 }
 
 export function loadTouchLayout(): TouchLayoutStore {
@@ -79,6 +81,7 @@ export function defaultTouchLayout(
     attack: p(w - 48, bottomEdge - 36),
     stick: { x: landscape ? 0.13 : 0.22, y: landscape ? 0.7 : 0.76, scale: 1 },
     pause: p(w - 42, 42), // HUD 右上暂停键中心
+    holster: p(landscape ? 220 : 148, h - (landscape ? 100 : 210)),
   }
   if (leftHanded) {
     for (const k of Object.keys(map) as TouchControlId[]) map[k] = { ...map[k], x: 1 - map[k].x }
@@ -285,6 +288,7 @@ export default function LayoutEditor({ leftHanded, stickSize, onClose }: EditorP
           {id === 'pause' && <IconPause width={iconPx} height={iconPx} />}
           {id === 'jump' && <IconJump width={iconPx} height={iconPx} />}
           {id === 'crouch' && <IconCrouch width={iconPx} height={iconPx} />}
+          {id === 'holster' && <IconHolster width={iconPx} height={iconPx} />}
         </div>
         <div className="font-mono2 mt-1 text-[11px]" style={{ color: 'var(--amber)', textShadow: '0 1px 2px #000' }}>
           {CONTROL_LABELS[id]}

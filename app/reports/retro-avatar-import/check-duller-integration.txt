@@ -1,0 +1,15 @@
+
+> my-app@0.0.0 check:duller-integration
+> esbuild scripts/check-duller-integration.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-duller-integration.mjs && node .cache/check-duller-integration.mjs
+
+
+  .cache\check-duller-integration.mjs  5.8mb
+
+Done in 284ms
+{
+  "integration": "passed",
+  "checks": 351,
+  "meshes": 23,
+  "triangles": 18110,
+  "sharedTextures": 3
+}

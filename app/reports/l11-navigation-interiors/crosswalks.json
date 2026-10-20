@@ -1,0 +1,150 @@
+{
+  "ok": true,
+  "checks": 10543,
+  "oracle": {
+    "legal": 47,
+    "rejected": 43
+  },
+  "walkers": [
+    {
+      "id": 3,
+      "stalled": 0,
+      "maxStalled": 5.199999999999991,
+      "firstStall": null,
+      "activity": {
+        "activity": "walking",
+        "travel": 128.77333333331939,
+        "crossings": 3,
+        "pending": false,
+        "pathLength": 31,
+        "next": [
+          267.375,
+          150.375
+        ],
+        "blocked": 0
+      }
+    },
+    {
+      "id": 4,
+      "stalled": 3.766666666666663,
+      "maxStalled": 5.799999999999989,
+      "firstStall": null,
+      "activity": {
+        "activity": "walking",
+        "travel": 134.02399999998738,
+        "crossings": 2,
+        "pending": false,
+        "pathLength": 105,
+        "next": [
+          181.125,
+          137.625
+        ],
+        "blocked": 0
+      }
+    },
+    {
+      "id": 5,
+      "stalled": 0,
+      "maxStalled": 4.499999999999994,
+      "firstStall": null,
+      "activity": {
+        "activity": "walking",
+        "travel": 142.58933333332288,
+        "crossings": 0,
+        "pending": false,
+        "pathLength": 6,
+        "next": [
+          251.625,
+          149.625
+        ],
+        "blocked": 0
+      }
+    },
+    {
+      "id": 6,
+      "stalled": 0,
+      "maxStalled": 4.833333333333326,
+      "firstStall": null,
+      "activity": {
+        "activity": "walking",
+        "travel": 135.4026666666544,
+        "crossings": 2,
+        "pending": false,
+        "pathLength": 29,
+        "next": [
+          135.375,
+          279.375
+        ],
+        "blocked": 0
+      }
+    },
+    {
+      "id": 12,
+      "stalled": 1.5666666666666682,
+      "maxStalled": 4.266666666666661,
+      "firstStall": null,
+      "activity": {
+        "activity": "resting",
+        "travel": 130.56266666665317,
+        "crossings": 5,
+        "pending": false,
+        "pathLength": 0,
+        "blocked": 0
+      }
+    },
+    {
+      "id": 13,
+      "stalled": 0,
+      "maxStalled": 6.199999999999988,
+      "firstStall": null,
+      "activity": {
+        "activity": "walking",
+        "travel": 122.11466666665387,
+        "crossings": 4,
+        "pending": false,
+        "pathLength": 20,
+        "next": [
+          262.125,
+          266.625
+        ],
+        "blocked": 0
+      }
+    },
+    {
+      "id": 15,
+      "stalled": 0,
+      "maxStalled": 6.733333333333319,
+      "firstStall": null,
+      "activity": {
+        "activity": "walking",
+        "travel": 126.80799999998612,
+        "crossings": 6,
+        "pending": false,
+        "pathLength": 3,
+        "next": [
+          278.625,
+          253.125
+        ],
+        "blocked": 0
+      }
+    },
+    {
+      "id": 16,
+      "stalled": 0,
+      "maxStalled": 5.366666666666657,
+      "firstStall": null,
+      "activity": {
+        "activity": "walking",
+        "travel": 127.04266666665274,
+        "crossings": 2,
+        "pending": false,
+        "pathLength": 1,
+        "next": [
+          266.625,
+          185.625
+        ],
+        "blocked": 0
+      }
+    }
+  ]
+}

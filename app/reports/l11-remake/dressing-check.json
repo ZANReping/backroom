@@ -1,0 +1,279 @@
+{
+  "seeds": [
+    42,
+    20261006
+  ],
+  "macroregion": {
+    "mx": 0,
+    "my": 0,
+    "chunksPerAxis": 32,
+    "worldBounds": {
+      "x0": 0,
+      "y0": 0,
+      "x1": 1024,
+      "y1": 1024
+    },
+    "extraNegativeSamples": 2
+  },
+  "scannedChunks": 2052,
+  "byCategory": {
+    "municipal": {
+      "kinds": 20,
+      "quantities": {
+        "l11_signal": 90,
+        "l11_pedestrian_signal": 34,
+        "l11_streetlight": 2166,
+        "l11_bollard": 182,
+        "l11_hydrant": 166,
+        "l11_parking_meter": 159,
+        "l11_road_sign": 165,
+        "l11_street_name": 158,
+        "l11_utility_box": 375,
+        "l11_transformer": 19,
+        "l11_bus_shelter": 219,
+        "l11_bus_stop": 419,
+        "l11_bike_rack": 527,
+        "l11_trash_bin": 610,
+        "l11_recycling_bin": 603,
+        "l11_post_box": 512,
+        "l11_manhole": 289,
+        "l11_storm_drain": 566,
+        "l11_traffic_island": 47,
+        "l11_ticket_machine": 180
+      }
+    },
+    "commerce": {
+      "kinds": 22,
+      "quantities": {
+        "l11_vertical_wall_sign": 81,
+        "l11_vertical_blade_sign": 78,
+        "l11_shop_awning": 11,
+        "l11_cafe_table": 10,
+        "l11_cafe_chair": 8,
+        "l11_menu_board": 8,
+        "l11_display_rack": 544,
+        "l11_newspaper_box": 9,
+        "l11_vending_machine": 23,
+        "l11_phone_booth": 153,
+        "l11_parcel_locker": 89,
+        "l11_market_stall": 6,
+        "l11_umbrella": 4,
+        "l11_produce_crates": 253,
+        "l11_shopping_cart": 258,
+        "l11_delivery_bike": 52,
+        "l11_sedan": 192,
+        "l11_delivery_van": 172,
+        "l11_box_truck": 163,
+        "l11_taxi": 173,
+        "l11_bus": 153,
+        "l11_motor_scooter": 345
+      }
+    },
+    "waterfront": {
+      "kinds": 15,
+      "quantities": {
+        "l11_plane_tree": 2550,
+        "l11_cypress": 58,
+        "l11_shrub_planter": 580,
+        "l11_flower_planter": 520,
+        "l11_park_bench": 282,
+        "l11_picnic_table": 47,
+        "l11_canal_railing": 1133,
+        "l11_mooring_bollard": 35,
+        "l11_life_ring": 31,
+        "l11_lock_winch": 16,
+        "l11_lock_gate": 14,
+        "l11_drinking_fountain": 110,
+        "l11_park_lamp": 52,
+        "l11_fountain": 49,
+        "l11_pergola": 55
+      }
+    },
+    "service": {
+      "kinds": 15,
+      "quantities": {
+        "l11_hvac": 138,
+        "l11_duct": 163,
+        "l11_downpipe": 164,
+        "l11_fire_escape": 93,
+        "l11_loading_dock": 106,
+        "l11_pallet": 131,
+        "l11_pallet_stack": 556,
+        "l11_dumpster": 129,
+        "l11_scaffold": 124,
+        "l11_safety_fence": 138,
+        "l11_cone": 239,
+        "l11_road_barrier": 147,
+        "l11_cable_reel": 269,
+        "l11_cement_mixer": 122,
+        "l11_ladder": 173
+      }
+    },
+    "interior": {
+      "kinds": 30,
+      "quantities": {
+        "l11_office_desk": 2105,
+        "l11_task_chair": 1544,
+        "l11_meeting_table": 114,
+        "l11_file_cabinet": 461,
+        "l11_bookcase": 427,
+        "l11_reception_desk": 179,
+        "l11_sofa": 1353,
+        "l11_armchair": 475,
+        "l11_coffee_table": 529,
+        "l11_bed": 1894,
+        "l11_wardrobe": 892,
+        "l11_kitchen_counter": 2324,
+        "l11_sink": 1922,
+        "l11_refrigerator": 1302,
+        "l11_stove": 456,
+        "l11_dining_table": 416,
+        "l11_dining_chair": 1976,
+        "l11_toilet": 2005,
+        "l11_wash_basin": 2005,
+        "l11_radiator": 1012,
+        "l11_ceiling_light": 7648,
+        "l11_floor_lamp": 1648,
+        "l11_classroom_desk": 428,
+        "l11_chalkboard": 81,
+        "l11_lab_bench": 161,
+        "l11_archive_shelf": 92,
+        "l11_microfilm_reader": 38,
+        "l11_exhibit_case": 66,
+        "l11_gym_bench": 102,
+        "l11_workbench": 71
+      }
+    }
+  },
+  "missingKinds": [],
+  "buildingCount": 680,
+  "buildingDistribution": {
+    "open": 457,
+    "sealed": 223,
+    "accessible1": 314,
+    "accessible2": 120,
+    "accessible3": 23
+  },
+  "openness": {
+    "townhouse": {
+      "open": 41,
+      "sealed": 18
+    },
+    "balcony": {
+      "open": 52,
+      "sealed": 15
+    },
+    "corner-home": {
+      "open": 34,
+      "sealed": 18
+    },
+    "archive": {
+      "open": 8,
+      "sealed": 1
+    },
+    "courtyard": {
+      "open": 46,
+      "sealed": 26
+    },
+    "slab": {
+      "open": 29,
+      "sealed": 17
+    },
+    "detached": {
+      "open": 42,
+      "sealed": 27
+    },
+    "supermarket": {
+      "open": 4,
+      "sealed": 3
+    },
+    "museum": {
+      "open": 9,
+      "sealed": 2
+    },
+    "school": {
+      "open": 8,
+      "sealed": 5
+    },
+    "strip-shops": {
+      "open": 5,
+      "sealed": 2
+    },
+    "rounded-office": {
+      "open": 12,
+      "sealed": 5
+    },
+    "parking": {
+      "open": 6,
+      "sealed": 3
+    },
+    "fin-office": {
+      "open": 13,
+      "sealed": 1
+    },
+    "ribbon-office": {
+      "open": 11,
+      "sealed": 8
+    },
+    "curtain-tower": {
+      "open": 12,
+      "sealed": 5
+    },
+    "setback-office": {
+      "open": 11,
+      "sealed": 5
+    },
+    "pump-house": {
+      "open": 10,
+      "sealed": 8
+    },
+    "substation": {
+      "open": 11,
+      "sealed": 8
+    },
+    "corner-shops": {
+      "open": 8,
+      "sealed": 2
+    },
+    "twin-office": {
+      "open": 7,
+      "sealed": 6
+    },
+    "court-shops": {
+      "open": 4,
+      "sealed": 3
+    },
+    "warehouse": {
+      "open": 13,
+      "sealed": 7
+    },
+    "brick-factory": {
+      "open": 11,
+      "sealed": 6
+    },
+    "transit-station": {
+      "open": 7,
+      "sealed": 2
+    },
+    "sports-hall": {
+      "open": 9,
+      "sealed": 2
+    },
+    "municipal": {
+      "open": 8,
+      "sealed": 4
+    },
+    "workshop": {
+      "open": 14,
+      "sealed": 5
+    },
+    "sawtooth": {
+      "open": 7,
+      "sealed": 8
+    },
+    "hotel": {
+      "open": 5,
+      "sealed": 1
+    }
+  }
+}

@@ -22,6 +22,8 @@ export const L2: LevelDef = {
   items: [
     { type: 'wrench', w: 10 },
     { type: 'gloves', w: 10 },
+    { type: 'jerryflyer', w: 6 }, // 重制杰瑞：信众的诱导传单 / 伪造的生存日志残页（读完标出「据点」=信众宣传间）
+    { type: 'fakelog', w: 4 },
   ],
   // wiki：机器不产物资，补给极度匮乏 → 掉落数为全层最低
   containerBias: 0.5,

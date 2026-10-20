@@ -280,11 +280,12 @@ export function* buildL1Architecture(m:GameMap,range:TerrainRange,g:THREE.Group,
         card(x+Math.sin(a)*.17+Math.sin(t*4)*.18,H-.2-t*len,z+Math.cos(a)*.15,.11,.16,a,j)
       }
     }
-    for(let z=z0;z<z1;z+=.8)for(let x=x0;x<x1;x+=.8){
+    // v2 C: ref 花园段 floor is a continuous moss/clover carpet — smaller, flatter, denser cards over a mossy ground
+    for(let z=z0;z<z1;z+=.7)for(let x=x0;x<x1;x+=.7){
       if(!floor(x,z))continue
       const r=l1Hash((x+ox)*7,(z+oz)*7,11)
-      const jx=(r-.5)*.65,jz=(l1Hash((x+ox)*11,(z+oz)*11,37)-.5)*.65
-      for(let j=0;j<4;j++)card(x+.3+jx+Math.sin(j)*.12,.07+r*.08,z+.3+jz+Math.cos(j)*.12,.13,.19,r*6+j,j,-.65)
+      const jx=(r-.5)*.6,jz=(l1Hash((x+ox)*11,(z+oz)*11,37)-.5)*.6
+      for(let j=0;j<4;j++)card(x+.3+jx+Math.sin(j*1.7)*.16,.025+r*.035,z+.3+jz+Math.cos(j*1.7)*.16,.085,.12,r*6+j,j,-1.25)
     }
     const lod=new THREE.LOD();lod.name='l1-ivy-lod';lod.position.set((x0+x1)/2,0,(z0+z1)/2)
     for(let i=0;i<layers.length;i++){

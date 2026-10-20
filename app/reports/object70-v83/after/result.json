@@ -1,0 +1,493 @@
+{
+  "label": "after",
+  "before": false,
+  "port": 22313,
+  "cdp": 25078,
+  "views": [
+    {
+      "view": "stages",
+      "diag": {
+        "items": [],
+        "render": {
+          "calls": 75,
+          "triangles": 7614,
+          "memory": {
+            "geometries": 65,
+            "textures": 5
+          }
+        }
+      }
+    },
+    {
+      "view": "lineup",
+      "diag": {
+        "items": [
+          {
+            "suit": "棕褐",
+            "tris": 2522,
+            "calls": 20
+          },
+          {
+            "suit": "炭灰",
+            "tris": 2522,
+            "calls": 20
+          },
+          {
+            "suit": "海军蓝",
+            "tris": 2522,
+            "calls": 20
+          },
+          {
+            "suit": "橄榄褐",
+            "tris": 2522,
+            "calls": 20
+          },
+          {
+            "suit": "黑",
+            "tris": 2522,
+            "calls": 20
+          }
+        ],
+        "render": {
+          "calls": 113,
+          "triangles": 12464,
+          "memory": {
+            "geometries": 93,
+            "textures": 4
+          }
+        }
+      }
+    },
+    {
+      "view": "search",
+      "diag": {
+        "items": [],
+        "render": {
+          "calls": 121,
+          "triangles": 12612,
+          "memory": {
+            "geometries": 101,
+            "textures": 4
+          }
+        }
+      }
+    },
+    {
+      "view": "close&view=head",
+      "diag": {
+        "items": [],
+        "render": {
+          "calls": 25,
+          "triangles": 2524,
+          "memory": {
+            "geometries": 21,
+            "textures": 4
+          }
+        }
+      }
+    },
+    {
+      "view": "close&view=case&k=1",
+      "diag": {
+        "items": [],
+        "render": {
+          "calls": 25,
+          "triangles": 2524,
+          "memory": {
+            "geometries": 21,
+            "textures": 4
+          }
+        }
+      }
+    }
+  ],
+  "checks": {
+    "checks": [
+      "Reference corpse survives deterministic density thinning",
+      "Natural corpse has a collision-safe viewing position",
+      "Production interaction ray selects the generated corpse",
+      "New model is installed in actual L1",
+      "Legacy decoration gets a deterministic persistent SID",
+      "Runtime corpse uses a static baked mesh",
+      "Production E starts a real corpse search",
+      "Briefcase moves during the search progress bar",
+      "Lid stays shut until the search completes",
+      "Interrupted search returns the case to the hand",
+      "Restarting search does not reroll its contents",
+      "Completed search persists opened/searched flags",
+      "Actual renderer opens the briefcase lid",
+      "Briefcase contents become visible",
+      "Production loot UI is visible",
+      "New corpse loot pool supplies two common items",
+      "Taking the loot empties the persistent inventory",
+      "Taking everything hides the model contents",
+      "Loot is added to the actual player inventory",
+      "Real v1 save contains the corpse container state",
+      "Natural corpse has a collision-safe viewing position",
+      "Reading the real save restores an open and empty corpse",
+      "Restored model is open and contains no duplicated supplies",
+      "Searching a restored empty corpse gives no second reward",
+      "Reloading preserves inventory quantities",
+      "Bento is rendered by the actual held-item cache",
+      "Separate bento instances own separate materials",
+      "Bento enters the actual timed eating action",
+      "Eating consumes one bento and restores 45 hunger",
+      "Stowing also blocks using the newly imported consumable",
+      "Corpse survives material-mode rebuild 0/classic",
+      "Corpse survives material-mode rebuild 0/realistic",
+      "Corpse survives material-mode rebuild 1/classic",
+      "Corpse survives material-mode rebuild 1/realistic",
+      "Corpse survives material-mode rebuild 2/classic",
+      "Corpse survives material-mode rebuild 2/realistic",
+      "Repeated quality rebuilds keep geometry and texture counts stable [{\"geometry\":333,\"textures\":141,\"programs\":107,\"chunks\":25},{\"geometry\":335,\"textures\":142,\"programs\":107,\"chunks\":25},{\"geometry\":335,\"textures\":142,\"programs\":107,\"chunks\":25}]"
+    ],
+    "state": {
+      "before": false,
+      "seed": 20261017,
+      "world": [
+        -10,
+        -23
+      ],
+      "position": [
+        -9.5,
+        -20.799999999999997,
+        0
+      ],
+      "yaw": 0,
+      "pitch": -0.6848212459426012,
+      "mode": "realistic",
+      "fov": 72,
+      "sid": -416295405,
+      "looted": true,
+      "opened": 1,
+      "items": [],
+      "open": 1,
+      "stats": {
+        "geometry": 335,
+        "textures": 142,
+        "programs": 107,
+        "chunks": 25
+      }
+    },
+    "records": [
+      {
+        "geometry": 333,
+        "textures": 141,
+        "programs": 107,
+        "chunks": 25
+      },
+      {
+        "geometry": 335,
+        "textures": 142,
+        "programs": 107,
+        "chunks": 25
+      },
+      {
+        "geometry": 335,
+        "textures": 142,
+        "programs": 107,
+        "chunks": 25
+      }
+    ],
+    "memoryKeys": [
+      "br_settings",
+      "br_save_slot1"
+    ]
+  },
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:22313/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sat, 17 Oct 2026 12:03:40 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 237,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 22313,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 80033.976504,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.251,
+        "sendEnd": 0.322,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 9.266,
+        "receiveHeadersEnd": 9.342
+      },
+      "responseTime": 1792238620832.861,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\object70-v83\\after\\qa-object70-1792238611981-83112",
+    "--remote-debugging-port=25078",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "server": 61976,
+    "browser": 45408
+  },
+  "initial": {
+    "before": false,
+    "seed": 20261017,
+    "world": [
+      -10,
+      -23
+    ],
+    "position": [
+      -9.5,
+      -20.799999999999997,
+      0
+    ],
+    "yaw": 0,
+    "pitch": -0.6848212459426012,
+    "mode": "realistic",
+    "fov": 72,
+    "sid": -416295405,
+    "looted": false,
+    "open": 0,
+    "stats": {
+      "geometry": 291,
+      "textures": 80,
+      "programs": 74,
+      "chunks": 9
+    }
+  },
+  "startSearch": {
+    "before": false,
+    "seed": 20261017,
+    "world": [
+      -10,
+      -23
+    ],
+    "position": [
+      -9.5,
+      -20.799999999999997,
+      0
+    ],
+    "yaw": 0,
+    "pitch": -0.6848212459426012,
+    "mode": "realistic",
+    "fov": 72,
+    "sid": -416295405,
+    "looted": false,
+    "items": [
+      "citywater",
+      "bento"
+    ],
+    "open": 0.14488096371887577,
+    "stats": {
+      "geometry": 373,
+      "textures": 111,
+      "programs": 83,
+      "chunks": 16
+    }
+  },
+  "finishSearch": {
+    "before": false,
+    "seed": 20261017,
+    "world": [
+      -10,
+      -23
+    ],
+    "position": [
+      -9.5,
+      -20.799999999999997,
+      0
+    ],
+    "yaw": 0,
+    "pitch": -0.6848212459426012,
+    "mode": "realistic",
+    "fov": 72,
+    "sid": -416295405,
+    "looted": false,
+    "opened": 1,
+    "items": [
+      "citywater",
+      "bento"
+    ],
+    "open": 0.9959005522085437,
+    "stats": {
+      "geometry": 438,
+      "textures": 131,
+      "programs": 83,
+      "chunks": 22
+    }
+  },
+  "takeAndRestore": {
+    "before": false,
+    "seed": 20261017,
+    "world": [
+      -10,
+      -23
+    ],
+    "position": [
+      -9.5,
+      -20.799999999999997,
+      0
+    ],
+    "yaw": 0,
+    "pitch": -0.6848212459426012,
+    "mode": "realistic",
+    "fov": 72,
+    "sid": -416295405,
+    "looted": true,
+    "opened": 1,
+    "items": [],
+    "open": 1,
+    "stats": {
+      "geometry": 276,
+      "textures": 108,
+      "programs": 83,
+      "chunks": 14
+    }
+  },
+  "bentoPrepare": {
+    "before": false,
+    "seed": 20261017,
+    "world": [
+      -10,
+      -23
+    ],
+    "position": [
+      -9.5,
+      -20.799999999999997,
+      0
+    ],
+    "yaw": 0,
+    "pitch": -0.6848212459426012,
+    "mode": "realistic",
+    "fov": 72,
+    "sid": -416295405,
+    "looted": true,
+    "opened": 1,
+    "items": [],
+    "open": 1,
+    "stats": {
+      "geometry": 316,
+      "textures": 129,
+      "programs": 83,
+      "chunks": 20
+    }
+  },
+  "eatBento": {
+    "before": false,
+    "seed": 20261017,
+    "world": [
+      -10,
+      -23
+    ],
+    "position": [
+      -9.5,
+      -20.799999999999997,
+      0
+    ],
+    "yaw": 0,
+    "pitch": -0.6848212459426012,
+    "mode": "realistic",
+    "fov": 72,
+    "sid": -416295405,
+    "looted": true,
+    "opened": 1,
+    "items": [],
+    "open": 1,
+    "stats": {
+      "geometry": 320,
+      "textures": 142,
+      "programs": 83,
+      "chunks": 25
+    }
+  },
+  "retirement": {
+    "records": [
+      {
+        "geometry": 333,
+        "textures": 141,
+        "programs": 107,
+        "chunks": 25
+      },
+      {
+        "geometry": 335,
+        "textures": 142,
+        "programs": 107,
+        "chunks": 25
+      },
+      {
+        "geometry": 335,
+        "textures": 142,
+        "programs": 107,
+        "chunks": 25
+      }
+    ],
+    "state": {
+      "before": false,
+      "seed": 20261017,
+      "world": [
+        -10,
+        -23
+      ],
+      "position": [
+        -9.5,
+        -20.799999999999997,
+        0
+      ],
+      "yaw": 0,
+      "pitch": -0.6848212459426012,
+      "mode": "realistic",
+      "fov": 72,
+      "sid": -416295405,
+      "looted": true,
+      "opened": 1,
+      "items": [],
+      "open": 1,
+      "stats": {
+        "geometry": 335,
+        "textures": 142,
+        "programs": 107,
+        "chunks": 25
+      }
+    }
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

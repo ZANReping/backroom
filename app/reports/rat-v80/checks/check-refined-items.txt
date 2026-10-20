@@ -1,0 +1,10 @@
+
+> my-app@0.0.0 check:refined-items
+> esbuild scripts/check-refined-item-meshes.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-refined-item-meshes.mjs && node .cache/check-refined-item-meshes.mjs
+
+
+  .cache\check-refined-item-meshes.mjs  906.3kb
+
+Done in 90ms
+{"items":56,"maxTriangles":1200,"maxBatches":3,"checks":2118}
+refined item mesh checks passed

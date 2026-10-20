@@ -3,16 +3,23 @@ import type {FloorBand} from '../core/types'
 import {floorHeight,structColliders} from '../world/mapgen'
 import {canOccupy,PLAYER_RADIUS} from '../core/player'
 import {insideRedZone,redZonesNear} from '../world/l0RedZone'
-export type DevMapCell={cx:number;cy:number;tiles:Uint8Array;tint:Uint8Array;elev:Uint8Array;regions?:Uint8Array;pits?:{x:number;y:number;w:number;h:number}[];walls:{x:number;y:number;w:number;h:number}[]}
+import {l1MapGeometry,type L1MapDoor} from '../world/l1MapData'
+export type DevMapCell={cx:number;cy:number;tiles:Uint8Array;tint:Uint8Array;elev:Uint8Array;regions?:Uint8Array;wet?:Uint8Array;doors?:L1MapDoor[];pits?:{x:number;y:number;w:number;h:number}[];walls:{x:number;y:number;w:number;h:number;round?:boolean}[]}
 export type DevMapPreview={cells:DevMapCell[];labels:{x:number;y:number;text:string}[]}
 let worker:Worker|undefined,serial=0
 const previewCache=new Map<string,DevMapCell>()
 let active:{id:number;resolve:(v:DevMapPreview)=>void;reject:(e:unknown)=>void;data:DevMapPreview}|undefined
 export function requestDevMapPreview(eng:Engine,view:{x:number;y:number;span:number;floor:number},signal:AbortSignal):Promise<DevMapPreview>{
- const m=eng.map;if(!eng.devEnabled||!m||signal.aborted)return Promise.reject(new DOMException('Cancelled','AbortError'))
+ const m=eng.map;if(!m||(!eng.devEnabled&&!m.l1Architecture)||signal.aborted)return Promise.reject(new DOMException('Cancelled','AbortError'))
  const {floor}=view,span=Math.max(32,Math.min(512,view.span)),inf=m.inf
  const coords:{cx:number;cy:number}[]=[]
- for(let cy=Math.floor((view.y-span/2)/32);cy<=Math.floor((view.y+span/2)/32);cy++)for(let cx=Math.floor((view.x-span/2)/32);cx<=Math.floor((view.x+span/2)/32);cx++)coords.push({cx,cy})
+ for(let cy=Math.floor((view.y-span/2)/32);cy<=Math.floor((view.y+span/2)/32);cy++)for(let cx=Math.floor((view.x-span/2)/32);cx<=Math.floor((view.x+span/2)/32);cx++){
+  const key=`${cx},${cy}`
+  // The ordinary L1 map may recall discovered terrain outside the live window;
+  // it never previews unexplored chunks or changes the exploration bitmap.
+  if(m.l1Architecture&&!(eng.devEnabled&&eng.dev.mapReveal)&&!inf?.chunks.has(key)&&!inf?.explored.get(key)?.some(Boolean))continue
+  coords.push({cx,cy})
+ }
  if(!inf){
   const cells:DevMapCell[]=[],source=floor<0?m.dn:floor===1?m.up:floor===2?m.up2:m.tiles
   for(const c of coords){const tiles=new Uint8Array(1024),tint=new Uint8Array(1024),elev=new Uint8Array(1024)
@@ -29,8 +36,9 @@ export function requestDevMapPreview(eng:Engine,view:{x:number;y:number;span:num
   keys.set(cellKey,key)
   if(live){
    const source=floor<0?live.dn:floor===1?live.up:floor===2?live.up2:live.tiles
-   const walls=live.l0?live.l0.walls.filter(w=>w.bottom<1.8&&w.top>.05).map(w=>({x:w.x,y:w.y,w:w.w,h:w.h})):live.structures.filter(s=>s.solid&&(s.floor??0)===floor).flatMap(s=>structColliders(s,m)).map(r=>({x:r.x0+inf.ox,y:r.y0+inf.oy,w:r.x1-r.x0,h:r.y1-r.y0}))
-   ready.cells.push({...c,tiles:source??new Uint8Array(1024),tint:live.tint,elev:live.elev,walls,regions:live.l0?.mapRegions,pits:live.l0?.pits})
+   const l1=live.l1?l1MapGeometry(live.l1):undefined
+   const walls=l1?.walls??(live.l0?live.l0.walls.filter(w=>w.bottom<1.8&&w.top>.05).map(w=>({x:w.x,y:w.y,w:w.w,h:w.h})):live.structures.filter(s=>s.solid&&(s.floor??0)===floor).flatMap(s=>structColliders(s,m)).map(r=>({x:r.x0+inf.ox,y:r.y0+inf.oy,w:r.x1-r.x0,h:r.y1-r.y0})))
+   ready.cells.push({...c,tiles:source??new Uint8Array(1024),tint:live.tint,elev:live.elev,walls,regions:l1?.regions??live.l0?.mapRegions,pits:live.l0?.pits,wet:l1?.wet,doors:l1?.doors})
   }else{const cached=previewCache.get(key);if(cached)ready.cells.push(cached);else missing.push(c)}
  }
  // The normal opening view is already live: no worker startup or regeneration.
@@ -50,7 +58,7 @@ export function requestDevMapPreview(eng:Engine,view:{x:number;y:number;span:num
  }).then(data=>{
   const result=data as DevMapPreview
   for(const c of result.cells)if(!inf.chunks.has(`${c.cx},${c.cy}`)){const key=keys.get(`${c.cx},${c.cy}`)!;previewCache.set(key,c);if(previewCache.size>256)previewCache.delete(previewCache.keys().next().value!)}
-  for(const c of result.cells){const live=inf.chunks.get(`${c.cx},${c.cy}`);if(live?.l0){c.walls=live.l0.walls.filter(w=>w.bottom<1.8&&w.top>.05).map(w=>({x:w.x,y:w.y,w:w.w,h:w.h}));c.regions=live.l0.mapRegions;c.pits=live.l0.pits}}
+  for(const c of result.cells){const live=inf.chunks.get(`${c.cx},${c.cy}`);if(live?.l0){c.walls=live.l0.walls.filter(w=>w.bottom<1.8&&w.top>.05).map(w=>({x:w.x,y:w.y,w:w.w,h:w.h}));c.regions=live.l0.mapRegions;c.pits=live.l0.pits}else if(live?.l1){const a=l1MapGeometry(live.l1);c.walls=a.walls;c.regions=a.regions;c.wet=a.wet;c.doors=a.doors}}
   return result
  })
 }

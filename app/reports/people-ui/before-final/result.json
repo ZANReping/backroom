@@ -1,0 +1,85 @@
+{
+  "label": "before-final",
+  "port": 2399,
+  "cdp": 2400,
+  "models": [],
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:2399/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sat, 17 Oct 2026 08:44:44 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 261,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 2399,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 68097.763463,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.27,
+        "sendEnd": 0.321,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 8.924,
+        "receiveHeadersEnd": 9.057
+      },
+      "responseTime": 1792226684619.616,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\people-ui\\before-final\\qa-people-1792226672442-67108",
+    "--remote-debugging-port=2400",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "server": 47880,
+    "browser": 85532
+  },
+  "setup": {
+    "people": 96
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) TypeError: Cannot read properties of undefined (reading 'click')\",\"lineNumber\":30,\"columnNumber\":21,\"scriptId\":\"494\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"people\",\"scriptId\":\"494\",\"url\":\"http://127.0.0.1:2399/verifier/people-ui-check.ts\",\"lineNumber\":29,\"columnNumber\":20}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"TypeError\",\"description\":\"TypeError: Cannot read properties of undefined (reading 'click')\\n    at Object.people (http://127.0.0.1:2399/verifier/people-ui-check.ts:30:21)\",\"objectId\":\"-8411831552871596366.2.1\"}}",
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

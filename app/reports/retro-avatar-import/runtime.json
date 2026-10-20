@@ -1,0 +1,163 @@
+{
+  "checks": 17,
+  "variants": [
+    {
+      "id": "kat",
+      "bones": 19,
+      "triangles": 2014,
+      "drawCalls": 6,
+      "partTriangles": {
+        "legs": 320,
+        "shoes": 216,
+        "pants": 72,
+        "shirt": 192,
+        "collar": 64,
+        "belt": 28,
+        "neck": 48,
+        "sleeves": 352,
+        "hands": 252,
+        "face": 84,
+        "cranium": 132,
+        "ears": 16,
+        "hair": 182,
+        "bun": 20,
+        "clipboard": 36
+      },
+      "poseHz": 24
+    },
+    {
+      "id": "tom",
+      "bones": 19,
+      "triangles": 1962,
+      "drawCalls": 5,
+      "partTriangles": {
+        "legs": 320,
+        "shoes": 216,
+        "pants": 72,
+        "shirt": 192,
+        "collar": 64,
+        "neck": 48,
+        "sleeves": 352,
+        "hands": 252,
+        "face": 84,
+        "cranium": 132,
+        "ears": 16,
+        "hair": 182,
+        "sideburns": 4,
+        "neckerchief": 28
+      },
+      "poseHz": 24
+    },
+    {
+      "id": "aiko",
+      "bones": 19,
+      "triangles": 2160,
+      "drawCalls": 6,
+      "partTriangles": {
+        "legs": 320,
+        "shoes": 216,
+        "pants": 72,
+        "shirt": 176,
+        "collar": 64,
+        "neck": 48,
+        "sleeves": 352,
+        "hands": 252,
+        "face": 84,
+        "cranium": 132,
+        "ears": 16,
+        "hair": 182,
+        "longHair": 142,
+        "axe": 104
+      },
+      "poseHz": 24
+    },
+    {
+      "id": "kowalski",
+      "bones": 19,
+      "triangles": 2066,
+      "drawCalls": 5,
+      "partTriangles": {
+        "legs": 320,
+        "shoes": 216,
+        "pants": 72,
+        "shirt": 192,
+        "collar": 64,
+        "neck": 48,
+        "sleeves": 352,
+        "hands": 252,
+        "face": 84,
+        "cranium": 132,
+        "ears": 16,
+        "hair": 182,
+        "sideburns": 4,
+        "glasses": 132
+      },
+      "poseHz": 24
+    },
+    {
+      "id": "avatar",
+      "bones": 19,
+      "triangles": 2080,
+      "drawCalls": 5,
+      "partTriangles": {
+        "legs": 320,
+        "shoes": 216,
+        "pants": 72,
+        "shirt": 192,
+        "collar": 64,
+        "hood": 20,
+        "badge": 12,
+        "neck": 48,
+        "sleeves": 352,
+        "hands": 252,
+        "face": 84,
+        "cranium": 132,
+        "ears": 16,
+        "hair": 182,
+        "longHair": 118
+      },
+      "poseHz": 24
+    }
+  ],
+  "cycles": [
+    {
+      "geometries": 144,
+      "textures": 101
+    },
+    {
+      "geometries": 144,
+      "textures": 102
+    },
+    {
+      "geometries": 144,
+      "textures": 102
+    },
+    {
+      "geometries": 144,
+      "textures": 102
+    }
+  ],
+  "stats": {
+    "label": "104:open",
+    "median": 4.199999999998909,
+    "p95": 12.400000000001455,
+    "max": 795.8999999999996,
+    "p99": 33.5,
+    "frames": 1000,
+    "over16ms": 30,
+    "over33ms": 12,
+    "cpuMedian": null,
+    "cpuP95": null,
+    "gpuMedian": null,
+    "gpuP95": null,
+    "gpuSamples": 0,
+    "draws": 99,
+    "triangles": 32975,
+    "memory": {
+      "geometries": 143,
+      "textures": 104
+    },
+    "programs": 87,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  }
+}

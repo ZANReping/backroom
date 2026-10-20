@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-14",
+  "checks": [
+    {"command":"npm run check:outpost-colliders","passed":true,"checks":992,"alphaPrototypes":91,"tradePrototypes":30},
+    {"command":"npm run check:alpha","passed":true,"checks":55163,"publicWalkCells":10044,"qualifiedWalkCells":10230},
+    {"command":"npm run check:settlements","passed":true,"settlements":5},
+    {"command":"npm run check:model-warmup","passed":true,"checks":83},
+    {"command":"npm run check:program-completion","passed":true,"checks":58},
+    {"command":"npx tsc -b","passed":true},
+    {"command":"npm run build","passed":true,"viteBuildSeconds":24.75}
+  ],
+  "buildWarnings":["Browserslist data is old","font URLs are left for runtime resolution","PostCSS from option missing","l11Materials is both statically and dynamically imported","large output chunks"],
+  "environment":"The sandbox initially blocked Vite realpath with EPERM. The isolated browser runs and final production build succeeded with the permitted project filesystem access."
+}

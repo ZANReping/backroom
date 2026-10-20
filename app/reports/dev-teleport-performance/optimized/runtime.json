@@ -1,0 +1,1144 @@
+{
+  "ok": true,
+  "label": "optimized",
+  "cases": {
+    "outbound": {
+      "id": "outbound",
+      "kind": "l11officedoor",
+      "result": {
+        "ok": true,
+        "message": "已传送到最近的「上层办公间门」旁安全空地，距出口 0.6 米 · 2F。"
+      },
+      "before": {
+        "x": 26.5,
+        "y": 26.5,
+        "z": 0,
+        "floor": 0
+      },
+      "after": {
+        "x": 345.90104117273444,
+        "y": -350.4360252164293,
+        "z": 2.93243426997946,
+        "floor": 1
+      },
+      "distance": 494.06253876223747,
+      "actionMs": 1715.1000000089407,
+      "nearReadyMs": 2878,
+      "settledMs": 10958.70000000298,
+      "updates": [
+        10.099999994039536
+      ],
+      "clones": [
+        3.6000000089406967,
+        0,
+        0,
+        0
+      ],
+      "frames": {
+        "count": 1023,
+        "max": 250,
+        "p95": 20.900000000001455,
+        "over50": 8,
+        "over100": 2
+      },
+      "eventLoop": {
+        "count": 488,
+        "max": 130,
+        "p95": 28.099999994039536,
+        "over50": 6,
+        "over100": 2
+      },
+      "settled": {
+        "elapsed": 7981.29999999702,
+        "pending": {
+          "missing": 0,
+          "chunk": false,
+          "distant": false,
+          "finite": false,
+          "flash": false,
+          "moth": false,
+          "entityCpu": 0,
+          "items": 0,
+          "compile": false,
+          "retired": 0,
+          "textures": 0
+        },
+        "groups": 25,
+        "memory": {
+          "geometries": 2305,
+          "textures": 89
+        },
+        "programs": 70
+      },
+      "stats": {
+        "label": "11:open",
+        "median": 8.30000000000291,
+        "p95": 20.900000000001455,
+        "max": 250,
+        "p99": 49.900000000001455,
+        "frames": 1000,
+        "over16ms": 153,
+        "over33ms": 20,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 684,
+        "triangles": 1510319,
+        "memory": {
+          "geometries": 2305,
+          "textures": 89
+        },
+        "programs": 70,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "chunks": 25,
+      "renderChunks": 25,
+      "progress": [
+        {
+          "at": 1,
+          "message": "正在查找最近出口…"
+        },
+        {
+          "at": 1280,
+          "message": "已找到出口，正在准备目的地…"
+        },
+        {
+          "at": 1336.2999999970198,
+          "message": "正在准备目的地：1 / 25 个区块…"
+        },
+        {
+          "at": 1372.4000000059605,
+          "message": "正在准备目的地：2 / 25 个区块…"
+        },
+        {
+          "at": 1383.7000000029802,
+          "message": "正在准备目的地：3 / 25 个区块…"
+        },
+        {
+          "at": 1393.6000000089407,
+          "message": "正在准备目的地：4 / 25 个区块…"
+        },
+        {
+          "at": 1400.2000000029802,
+          "message": "正在准备目的地：5 / 25 个区块…"
+        },
+        {
+          "at": 1400.4000000059605,
+          "message": "正在准备目的地：6 / 25 个区块…"
+        },
+        {
+          "at": 1413.7999999970198,
+          "message": "正在准备目的地：7 / 25 个区块…"
+        },
+        {
+          "at": 1432.6000000089407,
+          "message": "正在准备目的地：8 / 25 个区块…"
+        },
+        {
+          "at": 1440.7000000029802,
+          "message": "正在准备目的地：9 / 25 个区块…"
+        },
+        {
+          "at": 1457.7000000029802,
+          "message": "正在准备目的地：10 / 25 个区块…"
+        },
+        {
+          "at": 1467,
+          "message": "正在准备目的地：11 / 25 个区块…"
+        },
+        {
+          "at": 1475.9000000059605,
+          "message": "正在准备目的地：12 / 25 个区块…"
+        },
+        {
+          "at": 1499.6000000089407,
+          "message": "正在准备目的地：13 / 25 个区块…"
+        },
+        {
+          "at": 1513.1000000089407,
+          "message": "正在准备目的地：14 / 25 个区块…"
+        },
+        {
+          "at": 1523.9000000059605,
+          "message": "正在准备目的地：15 / 25 个区块…"
+        },
+        {
+          "at": 1532.7000000029802,
+          "message": "正在准备目的地：16 / 25 个区块…"
+        },
+        {
+          "at": 1549.9000000059605,
+          "message": "正在准备目的地：17 / 25 个区块…"
+        },
+        {
+          "at": 1567.2000000029802,
+          "message": "正在准备目的地：18 / 25 个区块…"
+        },
+        {
+          "at": 1574.6000000089407,
+          "message": "正在准备目的地：19 / 25 个区块…"
+        },
+        {
+          "at": 1582.5,
+          "message": "正在准备目的地：20 / 25 个区块…"
+        },
+        {
+          "at": 1599.4000000059605,
+          "message": "正在准备目的地：21 / 25 个区块…"
+        },
+        {
+          "at": 1611.9000000059605,
+          "message": "正在准备目的地：22 / 25 个区块…"
+        },
+        {
+          "at": 1632.6000000089407,
+          "message": "正在准备目的地：23 / 25 个区块…"
+        },
+        {
+          "at": 1640.6000000089407,
+          "message": "正在准备目的地：24 / 25 个区块…"
+        },
+        {
+          "at": 1645.2000000029802,
+          "message": "正在准备目的地：25 / 25 个区块…"
+        },
+        {
+          "at": 1649.4000000059605,
+          "message": "目的地已准备，正在检查安全落点…"
+        }
+      ],
+      "phases": {
+        "updateL11Distant": {
+          "count": 1023,
+          "max": 115.79999999701977,
+          "p95": 6.300000011920929,
+          "over50": 2,
+          "over100": 1
+        },
+        "syncInfinite": {
+          "count": 1023,
+          "max": 29,
+          "p95": 8.5,
+          "over50": 0,
+          "over100": 0
+        },
+        "drainRetiredWorld": {
+          "count": 1023,
+          "max": 0.7999999970197678,
+          "p95": 0.09999999403953552,
+          "over50": 0,
+          "over100": 0
+        },
+        "flushRetiredTextures": {
+          "count": 1023,
+          "max": 0.4000000059604645,
+          "p95": 0,
+          "over50": 0,
+          "over100": 0
+        },
+        "compile": {
+          "count": 386,
+          "max": 8.5,
+          "p95": 0.3999999910593033,
+          "over50": 0,
+          "over100": 0
+        },
+        "initTexture": {
+          "count": 780,
+          "max": 24,
+          "p95": 0,
+          "over50": 0,
+          "over100": 0
+        }
+      }
+    },
+    "return": {
+      "id": "return",
+      "kind": "basebeta",
+      "result": {
+        "ok": true,
+        "message": "已传送到最近的「公共档案馆的封条木门」旁安全空地，距出口 0.6 米 · 1F。"
+      },
+      "before": {
+        "x": 345.90104117273444,
+        "y": -350.4360252164293,
+        "z": 2.93243426997946,
+        "floor": 1
+      },
+      "after": {
+        "x": 36.84,
+        "y": 87,
+        "z": 0.02,
+        "floor": 0
+      },
+      "distance": 535.6015340978059,
+      "actionMs": 262.5,
+      "nearReadyMs": 1042.5,
+      "settledMs": 6842.20000000298,
+      "updates": [
+        11.200000002980232
+      ],
+      "clones": [
+        8,
+        0,
+        0,
+        0
+      ],
+      "frames": {
+        "count": 629,
+        "max": 66.70000000000437,
+        "p95": 20.900000000001455,
+        "over50": 4,
+        "over100": 0
+      },
+      "eventLoop": {
+        "count": 341,
+        "max": 54.29999999701977,
+        "p95": 19.5,
+        "over50": 2,
+        "over100": 0
+      },
+      "settled": {
+        "elapsed": 5775.5999999940395,
+        "pending": {
+          "missing": 0,
+          "chunk": false,
+          "distant": false,
+          "finite": false,
+          "flash": false,
+          "moth": false,
+          "entityCpu": 0,
+          "items": 0,
+          "compile": false,
+          "retired": 0,
+          "textures": 0
+        },
+        "groups": 25,
+        "memory": {
+          "geometries": 1151,
+          "textures": 93
+        },
+        "programs": 70
+      },
+      "stats": {
+        "label": "11:open",
+        "median": 8.39999999999418,
+        "p95": 20.799999999995634,
+        "max": 112.5,
+        "p99": 33.400000000001455,
+        "frames": 1000,
+        "over16ms": 112,
+        "over33ms": 11,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 342,
+        "triangles": 1312212,
+        "memory": {
+          "geometries": 1151,
+          "textures": 93
+        },
+        "programs": 70,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "chunks": 25,
+      "renderChunks": 25,
+      "progress": [
+        {
+          "at": 0.29999999701976776,
+          "message": "正在查找最近出口…"
+        },
+        {
+          "at": 7.299999997019768,
+          "message": "已找到出口，正在准备目的地…"
+        },
+        {
+          "at": 23.400000005960464,
+          "message": "正在准备目的地：1 / 25 个区块…"
+        },
+        {
+          "at": 30.400000005960464,
+          "message": "正在准备目的地：2 / 25 个区块…"
+        },
+        {
+          "at": 30.400000005960464,
+          "message": "正在准备目的地：3 / 25 个区块…"
+        },
+        {
+          "at": 30.400000005960464,
+          "message": "正在准备目的地：4 / 25 个区块…"
+        },
+        {
+          "at": 30.400000005960464,
+          "message": "正在准备目的地：5 / 25 个区块…"
+        },
+        {
+          "at": 38.79999999701977,
+          "message": "正在准备目的地：6 / 25 个区块…"
+        },
+        {
+          "at": 47.29999999701977,
+          "message": "正在准备目的地：7 / 25 个区块…"
+        },
+        {
+          "at": 47.5,
+          "message": "正在准备目的地：8 / 25 个区块…"
+        },
+        {
+          "at": 54.70000000298023,
+          "message": "正在准备目的地：9 / 25 个区块…"
+        },
+        {
+          "at": 62.599999994039536,
+          "message": "正在准备目的地：10 / 25 个区块…"
+        },
+        {
+          "at": 76.70000000298023,
+          "message": "正在准备目的地：11 / 25 个区块…"
+        },
+        {
+          "at": 95.59999999403954,
+          "message": "正在准备目的地：12 / 25 个区块…"
+        },
+        {
+          "at": 102.40000000596046,
+          "message": "正在准备目的地：13 / 25 个区块…"
+        },
+        {
+          "at": 123.20000000298023,
+          "message": "正在准备目的地：14 / 25 个区块…"
+        },
+        {
+          "at": 123.20000000298023,
+          "message": "正在准备目的地：15 / 25 个区块…"
+        },
+        {
+          "at": 130.40000000596046,
+          "message": "正在准备目的地：16 / 25 个区块…"
+        },
+        {
+          "at": 155.29999999701977,
+          "message": "正在准备目的地：17 / 25 个区块…"
+        },
+        {
+          "at": 155.29999999701977,
+          "message": "正在准备目的地：18 / 25 个区块…"
+        },
+        {
+          "at": 164.70000000298023,
+          "message": "正在准备目的地：19 / 25 个区块…"
+        },
+        {
+          "at": 190.20000000298023,
+          "message": "正在准备目的地：20 / 25 个区块…"
+        },
+        {
+          "at": 190.29999999701977,
+          "message": "正在准备目的地：21 / 25 个区块…"
+        },
+        {
+          "at": 200.09999999403954,
+          "message": "正在准备目的地：22 / 25 个区块…"
+        },
+        {
+          "at": 208,
+          "message": "正在准备目的地：23 / 25 个区块…"
+        },
+        {
+          "at": 217.5,
+          "message": "正在准备目的地：24 / 25 个区块…"
+        },
+        {
+          "at": 226,
+          "message": "正在准备目的地：25 / 25 个区块…"
+        },
+        {
+          "at": 226,
+          "message": "目的地已准备，正在检查安全落点…"
+        }
+      ],
+      "phases": {
+        "updateL11Distant": {
+          "count": 629,
+          "max": 59,
+          "p95": 7.799999997019768,
+          "over50": 2,
+          "over100": 0
+        },
+        "syncInfinite": {
+          "count": 629,
+          "max": 29.400000005960464,
+          "p95": 9.700000002980232,
+          "over50": 0,
+          "over100": 0
+        },
+        "drainRetiredWorld": {
+          "count": 629,
+          "max": 1.2000000029802322,
+          "p95": 0.7000000029802322,
+          "over50": 0,
+          "over100": 0
+        },
+        "flushRetiredTextures": {
+          "count": 629,
+          "max": 0.29999999701976776,
+          "p95": 0,
+          "over50": 0,
+          "over100": 0
+        },
+        "compile": {
+          "count": 231,
+          "max": 8.099999994039536,
+          "p95": 0.30000001192092896,
+          "over50": 0,
+          "over100": 0
+        },
+        "initTexture": {
+          "count": 641,
+          "max": 3.2000000029802322,
+          "p95": 0,
+          "over50": 0,
+          "over100": 0
+        }
+      }
+    },
+    "cancel": {
+      "id": "cancel",
+      "result": {
+        "ok": false,
+        "message": "已取消，位置未改变。"
+      },
+      "ms": 14.700000002980232,
+      "unchanged": true,
+      "progress": [
+        "正在查找最近出口…",
+        "已找到出口，正在准备目的地…",
+        "正在准备目的地：1 / 25 个区块…"
+      ]
+    },
+    "repeat": {
+      "id": "repeat",
+      "kind": "l11officedoor",
+      "result": {
+        "ok": true,
+        "message": "已传送到最近的「上层办公间门」旁安全空地，距出口 0.6 米 · 2F。"
+      },
+      "before": {
+        "x": 36.84,
+        "y": 87,
+        "z": 0.02,
+        "floor": 0
+      },
+      "after": {
+        "x": 345.90104117273444,
+        "y": -350.4360252164293,
+        "z": 2.93243426997946,
+        "floor": 1
+      },
+      "distance": 535.6015340978059,
+      "actionMs": 1778.4000000059605,
+      "nearReadyMs": 2866.2000000029802,
+      "settledMs": 10537.90000000596,
+      "updates": [
+        5.200000002980232
+      ],
+      "clones": [
+        6,
+        0,
+        0,
+        0
+      ],
+      "frames": {
+        "count": 952,
+        "max": 120.90000000000146,
+        "p95": 20.900000000001455,
+        "over50": 7,
+        "over100": 2
+      },
+      "eventLoop": {
+        "count": 461,
+        "max": 116.70000000298023,
+        "p95": 27.5,
+        "over50": 6,
+        "over100": 1
+      },
+      "settled": {
+        "elapsed": 7575.29999999702,
+        "pending": {
+          "missing": 0,
+          "chunk": false,
+          "distant": false,
+          "finite": false,
+          "flash": false,
+          "moth": false,
+          "entityCpu": 0,
+          "items": 0,
+          "compile": false,
+          "retired": 0,
+          "textures": 0
+        },
+        "groups": 25,
+        "memory": {
+          "geometries": 2234,
+          "textures": 101
+        },
+        "programs": 70
+      },
+      "stats": {
+        "label": "11:open",
+        "median": 8.39999999999418,
+        "p95": 20.89999999999418,
+        "max": 120.90000000000146,
+        "p99": 45.799999999995634,
+        "frames": 1000,
+        "over16ms": 156,
+        "over33ms": 14,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 2022,
+        "triangles": 2913811,
+        "memory": {
+          "geometries": 2234,
+          "textures": 101
+        },
+        "programs": 70,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "chunks": 25,
+      "renderChunks": 25,
+      "progress": [
+        {
+          "at": 0.20000000298023224,
+          "message": "正在查找最近出口…"
+        },
+        {
+          "at": 1338.0999999940395,
+          "message": "已找到出口，正在准备目的地…"
+        },
+        {
+          "at": 1394.5,
+          "message": "正在准备目的地：1 / 25 个区块…"
+        },
+        {
+          "at": 1439.2000000029802,
+          "message": "正在准备目的地：2 / 25 个区块…"
+        },
+        {
+          "at": 1450,
+          "message": "正在准备目的地：3 / 25 个区块…"
+        },
+        {
+          "at": 1463.9000000059605,
+          "message": "正在准备目的地：4 / 25 个区块…"
+        },
+        {
+          "at": 1469.0999999940395,
+          "message": "正在准备目的地：5 / 25 个区块…"
+        },
+        {
+          "at": 1469.0999999940395,
+          "message": "正在准备目的地：6 / 25 个区块…"
+        },
+        {
+          "at": 1481.0999999940395,
+          "message": "正在准备目的地：7 / 25 个区块…"
+        },
+        {
+          "at": 1499.5999999940395,
+          "message": "正在准备目的地：8 / 25 个区块…"
+        },
+        {
+          "at": 1512.4000000059605,
+          "message": "正在准备目的地：9 / 25 个区块…"
+        },
+        {
+          "at": 1532.4000000059605,
+          "message": "正在准备目的地：10 / 25 个区块…"
+        },
+        {
+          "at": 1543.4000000059605,
+          "message": "正在准备目的地：11 / 25 个区块…"
+        },
+        {
+          "at": 1551.5,
+          "message": "正在准备目的地：12 / 25 个区块…"
+        },
+        {
+          "at": 1579.2000000029802,
+          "message": "正在准备目的地：13 / 25 个区块…"
+        },
+        {
+          "at": 1594.7999999970198,
+          "message": "正在准备目的地：14 / 25 个区块…"
+        },
+        {
+          "at": 1601.7000000029802,
+          "message": "正在准备目的地：15 / 25 个区块…"
+        },
+        {
+          "at": 1612.2000000029802,
+          "message": "正在准备目的地：16 / 25 个区块…"
+        },
+        {
+          "at": 1637.2000000029802,
+          "message": "正在准备目的地：17 / 25 个区块…"
+        },
+        {
+          "at": 1656.2000000029802,
+          "message": "正在准备目的地：18 / 25 个区块…"
+        },
+        {
+          "at": 1662.9000000059605,
+          "message": "正在准备目的地：19 / 25 个区块…"
+        },
+        {
+          "at": 1673.9000000059605,
+          "message": "正在准备目的地：20 / 25 个区块…"
+        },
+        {
+          "at": 1693.7999999970198,
+          "message": "正在准备目的地：21 / 25 个区块…"
+        },
+        {
+          "at": 1705.2000000029802,
+          "message": "正在准备目的地：22 / 25 个区块…"
+        },
+        {
+          "at": 1730.2000000029802,
+          "message": "正在准备目的地：23 / 25 个区块…"
+        },
+        {
+          "at": 1739.2999999970198,
+          "message": "正在准备目的地：24 / 25 个区块…"
+        },
+        {
+          "at": 1744.5999999940395,
+          "message": "正在准备目的地：25 / 25 个区块…"
+        },
+        {
+          "at": 1748.7000000029802,
+          "message": "目的地已准备，正在检查安全落点…"
+        }
+      ],
+      "phases": {
+        "updateL11Distant": {
+          "count": 952,
+          "max": 110.8999999910593,
+          "p95": 6.399999991059303,
+          "over50": 2,
+          "over100": 2
+        },
+        "syncInfinite": {
+          "count": 952,
+          "max": 74.79999999701977,
+          "p95": 9.100000008940697,
+          "over50": 1,
+          "over100": 0
+        },
+        "drainRetiredWorld": {
+          "count": 952,
+          "max": 0.7999999970197678,
+          "p95": 0.09999999403953552,
+          "over50": 0,
+          "over100": 0
+        },
+        "flushRetiredTextures": {
+          "count": 952,
+          "max": 0.29999999701976776,
+          "p95": 0,
+          "over50": 0,
+          "over100": 0
+        },
+        "compile": {
+          "count": 386,
+          "max": 4.799999997019768,
+          "p95": 0.3999999910593033,
+          "over50": 0,
+          "over100": 0
+        },
+        "initTexture": {
+          "count": 780,
+          "max": 0.6000000089406967,
+          "p95": 0,
+          "over50": 0,
+          "over100": 0
+        }
+      }
+    },
+    "far": {
+      "id": "far",
+      "kind": "basebeta",
+      "result": {
+        "ok": true,
+        "message": "已传送到最近的「公共档案馆的封条木门」旁安全空地，距出口 0.6 米 · 1F。"
+      },
+      "before": {
+        "x": 12304,
+        "y": -8160,
+        "z": 0.13696896536262917,
+        "floor": 0
+      },
+      "after": {
+        "x": 36.84,
+        "y": 87,
+        "z": 0.02,
+        "floor": 0
+      },
+      "distance": 14781.61775536088,
+      "actionMs": 318.80000001192093,
+      "nearReadyMs": 1190.2000000029802,
+      "settledMs": 7368.100000008941,
+      "updates": [
+        3.8999999910593033
+      ],
+      "clones": [
+        3.5999999940395355,
+        0.10000000894069672,
+        0,
+        0
+      ],
+      "frames": {
+        "count": 672,
+        "max": 162.60000000000582,
+        "p95": 20.90000000000873,
+        "over50": 5,
+        "over100": 1
+      },
+      "eventLoop": {
+        "count": 350,
+        "max": 177.20000000298023,
+        "p95": 24.100000008940697,
+        "over50": 4,
+        "over100": 2
+      },
+      "settled": {
+        "elapsed": 6149.199999988079,
+        "pending": {
+          "missing": 0,
+          "chunk": false,
+          "distant": false,
+          "finite": false,
+          "flash": false,
+          "moth": false,
+          "entityCpu": 0,
+          "items": 0,
+          "compile": false,
+          "retired": 0,
+          "textures": 0
+        },
+        "groups": 25,
+        "memory": {
+          "geometries": 1151,
+          "textures": 108
+        },
+        "programs": 70
+      },
+      "stats": {
+        "label": "11:open",
+        "median": 8.30000000000291,
+        "p95": 20.79999999998836,
+        "max": 162.60000000000582,
+        "p99": 37.59999999999127,
+        "frames": 1000,
+        "over16ms": 102,
+        "over33ms": 13,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 342,
+        "triangles": 1311994,
+        "memory": {
+          "geometries": 1151,
+          "textures": 108
+        },
+        "programs": 70,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "chunks": 25,
+      "renderChunks": 25,
+      "progress": [
+        {
+          "at": 0.10000000894069672,
+          "message": "正在查找最近出口…"
+        },
+        {
+          "at": 6.4000000059604645,
+          "message": "已找到出口，正在准备目的地…"
+        },
+        {
+          "at": 25.30000001192093,
+          "message": "正在准备目的地：1 / 25 个区块…"
+        },
+        {
+          "at": 31.600000008940697,
+          "message": "正在准备目的地：2 / 25 个区块…"
+        },
+        {
+          "at": 31.600000008940697,
+          "message": "正在准备目的地：3 / 25 个区块…"
+        },
+        {
+          "at": 31.600000008940697,
+          "message": "正在准备目的地：4 / 25 个区块…"
+        },
+        {
+          "at": 38.900000005960464,
+          "message": "正在准备目的地：5 / 25 个区块…"
+        },
+        {
+          "at": 39.30000001192093,
+          "message": "正在准备目的地：6 / 25 个区块…"
+        },
+        {
+          "at": 57.900000005960464,
+          "message": "正在准备目的地：7 / 25 个区块…"
+        },
+        {
+          "at": 67.40000000596046,
+          "message": "正在准备目的地：8 / 25 个区块…"
+        },
+        {
+          "at": 76.6000000089407,
+          "message": "正在准备目的地：9 / 25 个区块…"
+        },
+        {
+          "at": 81.70000000298023,
+          "message": "正在准备目的地：10 / 25 个区块…"
+        },
+        {
+          "at": 92.70000000298023,
+          "message": "正在准备目的地：11 / 25 个区块…"
+        },
+        {
+          "at": 135.70000000298023,
+          "message": "正在准备目的地：12 / 25 个区块…"
+        },
+        {
+          "at": 140.30000001192093,
+          "message": "正在准备目的地：13 / 25 个区块…"
+        },
+        {
+          "at": 156,
+          "message": "正在准备目的地：14 / 25 个区块…"
+        },
+        {
+          "at": 164.1000000089407,
+          "message": "正在准备目的地：15 / 25 个区块…"
+        },
+        {
+          "at": 174.70000000298023,
+          "message": "正在准备目的地：16 / 25 个区块…"
+        },
+        {
+          "at": 190.70000000298023,
+          "message": "正在准备目的地：17 / 25 个区块…"
+        },
+        {
+          "at": 196.90000000596046,
+          "message": "正在准备目的地：18 / 25 个区块…"
+        },
+        {
+          "at": 205.90000000596046,
+          "message": "正在准备目的地：19 / 25 个区块…"
+        },
+        {
+          "at": 225.70000000298023,
+          "message": "正在准备目的地：20 / 25 个区块…"
+        },
+        {
+          "at": 230.20000000298023,
+          "message": "正在准备目的地：21 / 25 个区块…"
+        },
+        {
+          "at": 247.90000000596046,
+          "message": "正在准备目的地：22 / 25 个区块…"
+        },
+        {
+          "at": 257.1000000089407,
+          "message": "正在准备目的地：23 / 25 个区块…"
+        },
+        {
+          "at": 273.1000000089407,
+          "message": "正在准备目的地：24 / 25 个区块…"
+        },
+        {
+          "at": 279.20000000298023,
+          "message": "正在准备目的地：25 / 25 个区块…"
+        },
+        {
+          "at": 283.80000001192093,
+          "message": "目的地已准备，正在检查安全落点…"
+        }
+      ],
+      "phases": {
+        "updateL11Distant": {
+          "count": 672,
+          "max": 145,
+          "p95": 8.099999994039536,
+          "over50": 3,
+          "over100": 1
+        },
+        "syncInfinite": {
+          "count": 672,
+          "max": 26.700000002980232,
+          "p95": 10.100000008940697,
+          "over50": 0,
+          "over100": 0
+        },
+        "drainRetiredWorld": {
+          "count": 672,
+          "max": 1.4000000059604645,
+          "p95": 0.09999999403953552,
+          "over50": 0,
+          "over100": 0
+        },
+        "flushRetiredTextures": {
+          "count": 672,
+          "max": 0.10000000894069672,
+          "p95": 0,
+          "over50": 0,
+          "over100": 0
+        },
+        "compile": {
+          "count": 231,
+          "max": 6.200000002980232,
+          "p95": 0.30000001192092896,
+          "over50": 0,
+          "over100": 0
+        },
+        "initTexture": {
+          "count": 641,
+          "max": 24,
+          "p95": 0,
+          "over50": 0,
+          "over100": 0
+        }
+      }
+    }
+  },
+  "run": "qa-1792128180249-16736",
+  "port": 13973,
+  "cdp": 13974,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\dev-teleport-performance\\optimized\\qa-1792128180249-16736",
+  "command": [
+    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\dev-teleport-performance\\optimized\\qa-1792128180249-16736",
+    "--remote-debugging-port=13974",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.40",
+    "revision": "@cfaadc5a132d78e1828635aa8405a499f3e14864",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.20"
+  },
+  "pids": {
+    "server": 68232,
+    "browser": 63576
+  },
+  "stats": {
+    "label": "11:open",
+    "median": 4.299999999995634,
+    "p95": 20.80000000000291,
+    "max": 208.40000000000146,
+    "p99": 41.599999999998545,
+    "frames": 1000,
+    "over16ms": 102,
+    "over33ms": 15,
+    "cpuMedian": null,
+    "cpuP95": null,
+    "gpuMedian": null,
+    "gpuP95": null,
+    "gpuSamples": 0,
+    "draws": 309,
+    "triangles": 1600889,
+    "memory": {
+      "geometries": 924,
+      "textures": 74
+    },
+    "programs": 64,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "errors": [],
+  "networkErrors": [
+    {
+      "requestId": "61244.12",
+      "loaderId": "6DCE8F7848FB86197FD85081DFC8E757",
+      "timestamp": 92434.328279,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:13973/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Fri, 16 Oct 2026 05:23:09 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 183,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 13973,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 92433.677847,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.386,
+          "sendEnd": 0.435,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 649.62,
+          "receiveHeadersEnd": 649.743
+        },
+        "responseTime": 1792128190493.539,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "E3125234C1683393D0D8A5759BDD8FB5"
+    }
+  ],
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  }
+}

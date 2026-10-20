@@ -1,0 +1,9 @@
+
+> my-app@0.0.0 check:item-batches
+> esbuild scripts/check-item-batches.ts --bundle --platform=node --format=esm --outfile=.cache/check-item-batches.mjs && node .cache/check-item-batches.mjs
+
+
+  .cache\check-item-batches.mjs  599.5kb
+
+Done in 108ms
+item batches regression passed: 29 checks

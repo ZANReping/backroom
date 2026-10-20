@@ -1,0 +1,116 @@
+{
+  "sources": [
+    {
+      "file": "upstream/wretchMesh.ts",
+      "match": true
+    },
+    {
+      "file": "upstream/wretchAI.ts",
+      "match": true
+    },
+    {
+      "file": "upstream/wretchProto.ts",
+      "match": true
+    },
+    {
+      "file": "upstream/proto-wretch.html",
+      "match": true
+    },
+    {
+      "file": "upstream/check-wretches.ts",
+      "match": true
+    },
+    {
+      "file": "upstream/WRETCH-REMAKE.md",
+      "match": true
+    }
+  ],
+  "diffWhitespace": [
+    {
+      "file": "package.json",
+      "status": 1,
+      "output": "",
+      "passed": true
+    },
+    {
+      "file": "src\\components\\HowToPlay.tsx",
+      "status": 1,
+      "output": "",
+      "passed": true
+    },
+    {
+      "file": "src\\game\\core\\audio.ts",
+      "status": 1,
+      "output": "",
+      "passed": true
+    },
+    {
+      "file": "src\\game\\engine\\combat.ts",
+      "status": 1,
+      "output": "",
+      "passed": true
+    },
+    {
+      "file": "src\\game\\engine\\entityAI.ts",
+      "status": 1,
+      "output": "",
+      "passed": true
+    },
+    {
+      "file": "src\\game\\engine.ts",
+      "status": 1,
+      "output": "",
+      "passed": true
+    },
+    {
+      "file": "src\\game\\entities\\deep.ts",
+      "status": 1,
+      "output": "",
+      "passed": true
+    },
+    {
+      "file": "src\\game\\entities\\types.ts",
+      "status": 1,
+      "output": "",
+      "passed": true
+    },
+    {
+      "file": "src\\game\\renderer\\entitiesMesh.ts",
+      "status": 1,
+      "output": "",
+      "passed": true
+    },
+    {
+      "file": "src\\game\\renderer\\renderer.ts",
+      "status": 1,
+      "output": "",
+      "passed": true
+    },
+    {
+      "file": "src\\game\\renderer\\retroAvatar.ts",
+      "status": 1,
+      "output": "",
+      "passed": true
+    },
+    {
+      "file": "src\\game\\renderer\\retroNpc.ts",
+      "status": 1,
+      "output": "",
+      "passed": true
+    }
+  ],
+  "syntax": [
+    {
+      "file": "scripts/verify-wretch-import.mjs",
+      "status": 0,
+      "output": ""
+    },
+    {
+      "file": "scripts/level-entry-preview.mjs",
+      "status": 0,
+      "output": ""
+    }
+  ],
+  "missingLinks": [],
+  "note": "No-index diff status 1 means files differ; CRLF is preserved and accepted with cr-at-eol."
+}

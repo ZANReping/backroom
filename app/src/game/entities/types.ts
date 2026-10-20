@@ -130,6 +130,7 @@ export interface Entity {
   disguised?: string // 窃皮者伪装：'human' = 穿着人皮（随机 NPC 外观）；v77 起不再伪装成物品
   rt?: import('../engine/ratAI').RatState
   wr?: import('../engine/wretchAI').WretchState // v78：悲尸运行时状态（变体/警觉/撞门；不入存档）
+  sh?: import('../engine/shrimpAI').ShrimpState // v81：旱虾运行时状态（游荡/两栖/分裂/诱饵/被捕食；不入存档）
   ss?: import('../engine/skinStealerAI').SkinStealerState // v77：窃皮者运行时状态（人皮/温顺/饥饿/激怒；不入存档/联机）
   fakeT?: number // 复印机幽灵幻影计时
   scrapeT?: number // 穿墙沙沙声计时（钝人）
@@ -145,8 +146,10 @@ export interface Entity {
   huntScanT?: number // 群落捕食目标扫描节流；避免高密度生态每帧进行实体数平方级 LOS 检查
   encountered?: boolean // v54：图鉴遭遇已计数（按个体去重——看见/索敌/攻击命中/特殊交互，每只只计一次）
   blackoutSpawn?: boolean // 停电期间生成（笑魇）：灯光恢复时消散
+  jy?: import('../engine/jerryAI').JerryState // 鹉主杰瑞的局内姿态与行为。
   dl?: import('../engine/dullerAI').DullerState // v63：钝人运行时状态（潜伏/隔墙抓取/携物；不入存档/联机）
   cl?: import('../engine/clumpAI').ClumpState // v64：肢团（含 L3 子变种）运行时状态（不入存档/联机）
+  pg?: import('../engine/partygoerAI').PartyState // 派对客（Entity 67）运行时状态：群体/伪装/断臂/狂战士/倒地爬走（不入存档/联机）
   hd?: import('../engine/houndAI').HoundState // v62：猎犬（含 L11 中立变种）运行时状态（不入存档/联机）
   sm?: import('./smilers').SmilerState // v61：笑魇变种与 AI 运行时状态（不入存档/联机）
   l9FogSpawn?: boolean // L9 罕见浓雾期间生成的残缺者；雾散后随之退散

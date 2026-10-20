@@ -1,0 +1,113 @@
+{
+  "summaries": [
+    {
+      "region": "parking",
+      "anchor": "parking-common",
+      "rounds": 5,
+      "median": 12.5,
+      "p95": 20.900000000001455,
+      "cpuP95": 21.099999997764826,
+      "gpuP95": 18.439168,
+      "buildPeak": 745.7999999999993,
+      "draws": "283–888",
+      "triangles": "195767–645145",
+      "passed": false
+    },
+    {
+      "region": "storage",
+      "anchor": "storage",
+      "rounds": 5,
+      "median": 12.5,
+      "p95": 20.89999999999418,
+      "cpuP95": 20.399999998509884,
+      "gpuP95": 18.837504,
+      "buildPeak": 579.2000000000007,
+      "draws": "441–713",
+      "triangles": "273357–509405",
+      "passed": false
+    },
+    {
+      "region": "gothic",
+      "anchor": "gothic",
+      "rounds": 5,
+      "median": 8.299999999995634,
+      "p95": 8.5,
+      "cpuP95": 6.100000001490116,
+      "gpuP95": 7.491584,
+      "buildPeak": 1046,
+      "draws": "156–278",
+      "triangles": "522541–1599321",
+      "passed": true
+    },
+    {
+      "region": "ouroboros",
+      "anchor": "ouroboros",
+      "rounds": 5,
+      "median": 8.5,
+      "p95": 16.69999999999709,
+      "cpuP95": 18,
+      "gpuP95": 15.287296,
+      "buildPeak": 345.8999999999942,
+      "draws": "514–514",
+      "triangles": "316449–316449",
+      "passed": true
+    },
+    {
+      "region": "garden",
+      "anchor": "garden",
+      "rounds": 5,
+      "median": 8.30000000000291,
+      "p95": 12.60000000000582,
+      "cpuP95": 6,
+      "gpuP95": 10.194944,
+      "buildPeak": 212.5,
+      "draws": "174–401",
+      "triangles": "320361–826089",
+      "passed": true
+    },
+    {
+      "region": "maintenance",
+      "anchor": "path-corridor",
+      "rounds": 5,
+      "median": 12.5,
+      "p95": 13.30000000000291,
+      "cpuP95": 9.900000002235174,
+      "gpuP95": 12.321792,
+      "buildPeak": 141.6999999999971,
+      "draws": "309–447",
+      "triangles": "142725–307557",
+      "passed": true
+    }
+  ],
+  "allSteadyPassed": false,
+  "resources": [
+    {
+      "memory": {
+        "geometries": 506,
+        "textures": 68
+      },
+      "programs": 130
+    },
+    {
+      "memory": {
+        "geometries": 506,
+        "textures": 68
+      },
+      "programs": 130
+    },
+    {
+      "memory": {
+        "geometries": 506,
+        "textures": 68
+      },
+      "programs": 130
+    },
+    {
+      "memory": {
+        "geometries": 506,
+        "textures": 68
+      },
+      "programs": 130
+    }
+  ]
+}

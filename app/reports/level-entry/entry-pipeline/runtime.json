@@ -1,0 +1,4671 @@
+{
+  "run": "qa-1792043636662-54204",
+  "label": "entry-pipeline",
+  "mode": "realistic",
+  "port": 13615,
+  "cdp": 13616,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\level-entry\\entry-pipeline\\qa-1792043636662-54204",
+  "levels": [
+    1,
+    5,
+    0
+  ],
+  "cases": [
+    {
+      "id": 1,
+      "cold": {
+        "id": 1,
+        "name": "Level 1",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 13072,
+        "readyMs": 13072,
+        "loadMs": 13116.599999999627,
+        "preparationMs": 1283.2000000001863,
+        "generationMs": 6.599999999627471,
+        "sceneMs": 11782.200000000186,
+        "frames": 2001,
+        "cpuTotalMs": 5561.599999991246,
+        "cpuMaxMs": 1977.5999999996275,
+        "frameP95Ms": 7.400000000372529,
+        "metrics": {
+          "buildInfiniteChunk": {
+            "calls": 369142,
+            "cpuMs": 1153.6999999815598,
+            "maxMs": 35
+          },
+          "warmSceneTextures": {
+            "calls": 176,
+            "cpuMs": 139.7999999988824,
+            "maxMs": 32.799999999813735
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 2021.4000000003725,
+            "chunks": 0,
+            "chunkTask": "0,0",
+            "finiteTask": false,
+            "flashlight": true,
+            "moth": true,
+            "items": 3,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 7,
+              "textures": 3
+            }
+          },
+          {
+            "atMs": 6773.299999999814,
+            "chunks": 1,
+            "chunkTask": "0,0",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 17,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 34,
+              "textures": 32
+            }
+          },
+          {
+            "atMs": 7607.4000000003725,
+            "chunks": 2,
+            "chunkTask": "1,0",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 17,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 70,
+              "textures": 35
+            }
+          },
+          {
+            "atMs": 7612.200000000186,
+            "chunks": 3,
+            "chunkTask": "0,1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 17,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 74,
+              "textures": 35
+            }
+          },
+          {
+            "atMs": 7725,
+            "chunks": 4,
+            "chunkTask": "-1,-1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 17,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 79,
+              "textures": 35
+            }
+          },
+          {
+            "atMs": 8523.599999999627,
+            "chunks": 5,
+            "chunkTask": "1,-1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 17,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 79,
+              "textures": 37
+            }
+          },
+          {
+            "atMs": 9117.200000000186,
+            "chunks": 6,
+            "chunkTask": "-1,1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 17,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 104,
+              "textures": 39
+            }
+          },
+          {
+            "atMs": 10048.400000000373,
+            "chunks": 7,
+            "chunkTask": "1,-1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 17,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 104,
+              "textures": 42
+            }
+          },
+          {
+            "atMs": 10680.799999999814,
+            "chunks": 8,
+            "chunkTask": "0,-2",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 17,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 114,
+              "textures": 45
+            }
+          },
+          {
+            "atMs": 13072,
+            "chunks": 9,
+            "chunkTask": "-2,0",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 17,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": true,
+            "memory": {
+              "geometries": 209,
+              "textures": 73
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 9,
+          "chunkTask": "2,0",
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 17,
+          "npcs": 0,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 209,
+            "textures": 74
+          }
+        },
+        "firstReady": {
+          "structures": 653,
+          "lights": 962,
+          "npcs": 0,
+          "nearNpcs": 0,
+          "npcMeshes": 0,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 209,
+            "textures": 74
+          },
+          "programs": 82,
+          "drawCalls": 327,
+          "triangles": 409415,
+          "spawn": {
+            "x": 79.5,
+            "y": 79.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        },
+        "bakes": {
+          "entries": 12,
+          "bytes": 52281816,
+          "hits": 1101,
+          "diskHits": 0,
+          "offlineLoads": 0,
+          "computations": 10,
+          "completed": 10,
+          "stale": 0,
+          "workers": 4,
+          "active": 1,
+          "queued": 2,
+          "stages": [
+            {
+              "key": "4:12:424242:0,0:da54c9b8:high",
+              "generationMs": 677.5999999996275,
+              "geometryMs": 46.10000000055879,
+              "bakeMs": 3508,
+              "samples": 29585,
+              "rays": 635032,
+              "bytes": 4199864
+            },
+            {
+              "key": "4:12:424242:0,-1:ecd4dcd:high",
+              "generationMs": 694.1000000005588,
+              "geometryMs": 44.200000000186265,
+              "bakeMs": 2798.7999999998137,
+              "samples": 23462,
+              "rays": 516024,
+              "bytes": 4153864
+            },
+            {
+              "key": "4:12:424242:-1,0:55ff0724:high",
+              "generationMs": 589.0999999996275,
+              "geometryMs": 47.700000000186265,
+              "bakeMs": 2001.9000000003725,
+              "samples": 22382,
+              "rays": 399594,
+              "bytes": 6337128
+            },
+            {
+              "key": "4:12:424242:1,0:ebb7e90c:high",
+              "generationMs": 570.8000000007451,
+              "geometryMs": 43.89999999944121,
+              "bakeMs": 4611.9000000003725,
+              "samples": 30472,
+              "rays": 789958,
+              "bytes": 6294992
+            },
+            {
+              "key": "4:12:424242:0,1:3da95ec4:high",
+              "generationMs": 204.6000000005588,
+              "geometryMs": 21.299999999813735,
+              "bakeMs": 3457,
+              "samples": 22584,
+              "rays": 564754,
+              "bytes": 4114304
+            },
+            {
+              "key": "4:12:424242:-1,-1:ad835efd:high",
+              "generationMs": 194.79999999981374,
+              "geometryMs": 31.299999999813735,
+              "bakeMs": 3131.5999999996275,
+              "samples": 25746,
+              "rays": 590166,
+              "bytes": 4198944
+            },
+            {
+              "key": "4:12:424242:1,-1:fe36531c:high",
+              "generationMs": 281.70000000018626,
+              "geometryMs": 32.09999999962747,
+              "bakeMs": 3911.9000000003725,
+              "samples": 31972,
+              "rays": 898468,
+              "bytes": 6240896
+            },
+            {
+              "key": "4:12:424242:-1,1:f48c7394:high",
+              "generationMs": 285.29999999981374,
+              "geometryMs": 21.5,
+              "bakeMs": 2264.7999999998137,
+              "samples": 25198,
+              "rays": 579056,
+              "bytes": 6287264
+            },
+            {
+              "key": "4:12:424242:1,1:4b109efc:high",
+              "generationMs": 85.90000000037253,
+              "geometryMs": 19.799999999813735,
+              "bakeMs": 2486,
+              "samples": 23814,
+              "rays": 632192,
+              "bytes": 6235560
+            },
+            {
+              "key": "4:12:424242:0,-2:996e83d1:high",
+              "generationMs": 101.8999999994412,
+              "geometryMs": 15.299999999813735,
+              "bakeMs": 2034.9000000003725,
+              "samples": 23776,
+              "rays": 630534,
+              "bytes": 4219000
+            }
+          ]
+        }
+      },
+      "programAudit": [
+        {
+          "ms": 11.800000000745058,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "0,1,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8388608,srgb,onBeforeCompile() {\n  }",
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME EquirectangularToCubeUV"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME EquirectangularToCubeUV",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ]
+          ]
+        },
+        {
+          "ms": 483.09999999962747,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "0,2,GGX_SAMPLES,256,CUBEUV_TEXEL_WIDTH,0.002976190476190476,CUBEUV_TEXEL_HEIGHT,0.015625,CUBEUV_MAX_MIP,4.0,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8388608,srgb,onBeforeCompile() {\n  }",
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME PMREMGGXConvolution",
+              "#define GGX_SAMPLES 256",
+              "#define CUBEUV_TEXEL_WIDTH 0.002976190476190476",
+              "#define CUBEUV_TEXEL_HEIGHT 0.015625",
+              "#define CUBEUV_MAX_MIP 4.0"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME PMREMGGXConvolution",
+              "#define GGX_SAMPLES 256",
+              "#define CUBEUV_TEXEL_WIDTH 0.002976190476190476",
+              "#define CUBEUV_TEXEL_HEIGHT 0.015625",
+              "#define CUBEUV_MAX_MIP 4.0"
+            ]
+          ]
+        },
+        {
+          "ms": 16.700000000186265,
+          "phase": "upload",
+          "precompiled": false,
+          "key": "depth,highp,srgb-linear,false,,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,3200,8388608,8532992,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "basic,highp,srgb,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,1,9,1,0,1,0,0,0,0,0,0,1,4,0,0,0,0,8388610,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "basic",
+                "after": "depth"
+              },
+              {
+                "i": 2,
+                "before": "srgb",
+                "after": "srgb-linear"
+              },
+              {
+                "i": 5,
+                "before": "false",
+                "after": "uv"
+              },
+              {
+                "i": 33,
+                "before": "1",
+                "after": "0"
+              },
+              {
+                "i": 34,
+                "before": "9",
+                "after": "0"
+              },
+              {
+                "i": 35,
+                "before": "1",
+                "after": "0"
+              },
+              {
+                "i": 37,
+                "before": "1",
+                "after": "0"
+              },
+              {
+                "i": 45,
+                "before": "4",
+                "after": "0"
+              },
+              {
+                "i": 48,
+                "before": "0",
+                "after": "3200"
+              },
+              {
+                "i": 49,
+                "before": "0",
+                "after": "8388608"
+              },
+              {
+                "i": 50,
+                "before": "8388610",
+                "after": "8532992"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshDepthMaterial",
+              "#define SHADER_NAME ",
+              "#define USE_MAP",
+              "#define MAP_UV uv",
+              "#define HAS_NORMAL",
+              "#define FLIP_SIDED",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshDepthMaterial",
+              "#define SHADER_NAME ",
+              "#define USE_MAP",
+              "#define FLIP_SIDED",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define OPAQUE",
+              "#define DEPTH_PACKING 3200",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ]
+          ]
+        },
+        {
+          "ms": 36.700000000186265,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "depth,highp,srgb-linear,false,,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,1,17,2,0,1,0,0,1,1,0,0,1,0,0,0,3200,8388608,8533024,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "basic,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,0,,false,0,,1,17,2,0,1,0,0,1,1,0,0,1,0,0,0,0,8388608,8391683,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "basic",
+                "after": "depth"
+              },
+              {
+                "i": 5,
+                "before": "false",
+                "after": "uv"
+              },
+              {
+                "i": 28,
+                "before": "0",
+                "after": ""
+              },
+              {
+                "i": 29,
+                "before": "",
+                "after": "false"
+              },
+              {
+                "i": 48,
+                "before": "0",
+                "after": "3200"
+              },
+              {
+                "i": 50,
+                "before": "8391683",
+                "after": "8533024"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshDepthMaterial",
+              "#define SHADER_NAME ",
+              "#define USE_MAP",
+              "#define MAP_UV uv",
+              "#define HAS_NORMAL",
+              "#define USE_SKINNING",
+              "#define FLIP_SIDED",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshDepthMaterial",
+              "#define SHADER_NAME ",
+              "#define USE_MAP",
+              "#define FLIP_SIDED",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define OPAQUE",
+              "#define DEPTH_PACKING 3200",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ]
+          ]
+        },
+        {
+          "ms": 41.10000000055879,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "depth,highp,srgb-linear,false,,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,1,17,2,0,1,0,0,1,1,0,0,1,0,0,0,3200,8388608,8532992,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "basic,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,0,,false,0,,1,17,2,0,1,0,0,1,1,0,0,1,0,0,0,0,8388608,8391683,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "basic",
+                "after": "depth"
+              },
+              {
+                "i": 5,
+                "before": "false",
+                "after": "uv"
+              },
+              {
+                "i": 28,
+                "before": "0",
+                "after": ""
+              },
+              {
+                "i": 29,
+                "before": "",
+                "after": "false"
+              },
+              {
+                "i": 48,
+                "before": "0",
+                "after": "3200"
+              },
+              {
+                "i": 50,
+                "before": "8391683",
+                "after": "8532992"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshDepthMaterial",
+              "#define SHADER_NAME ",
+              "#define USE_MAP",
+              "#define MAP_UV uv",
+              "#define HAS_NORMAL",
+              "#define FLIP_SIDED",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshDepthMaterial",
+              "#define SHADER_NAME ",
+              "#define USE_MAP",
+              "#define FLIP_SIDED",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define OPAQUE",
+              "#define DEPTH_PACKING 3200",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ]
+          ]
+        },
+        {
+          "ms": 38.200000000186265,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "distance,highp,srgb-linear,false,,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,1,17,2,0,1,0,0,1,1,0,0,1,0,0,0,0,8388608,8524832,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "basic,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,0,,false,0,,1,17,2,0,1,0,0,1,1,0,0,1,0,0,0,0,8388608,8391683,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "basic",
+                "after": "distance"
+              },
+              {
+                "i": 5,
+                "before": "false",
+                "after": "uv"
+              },
+              {
+                "i": 28,
+                "before": "0",
+                "after": ""
+              },
+              {
+                "i": 29,
+                "before": "",
+                "after": "false"
+              },
+              {
+                "i": 50,
+                "before": "8391683",
+                "after": "8524832"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshDistanceMaterial",
+              "#define SHADER_NAME ",
+              "#define USE_MAP",
+              "#define MAP_UV uv",
+              "#define HAS_NORMAL",
+              "#define USE_SKINNING",
+              "#define FLIP_SIDED",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define DISTANCE",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshDistanceMaterial",
+              "#define SHADER_NAME ",
+              "#define USE_MAP",
+              "#define FLIP_SIDED",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define OPAQUE",
+              "#define DISTANCE",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ]
+          ]
+        },
+        {
+          "ms": 42.799999999813735,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "distance,highp,srgb-linear,false,,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,1,17,2,0,1,0,0,1,1,0,0,1,0,0,0,0,8388608,8524800,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "basic,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,0,,false,0,,1,17,2,0,1,0,0,1,1,0,0,1,0,0,0,0,8388608,8391683,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "basic",
+                "after": "distance"
+              },
+              {
+                "i": 5,
+                "before": "false",
+                "after": "uv"
+              },
+              {
+                "i": 28,
+                "before": "0",
+                "after": ""
+              },
+              {
+                "i": 29,
+                "before": "",
+                "after": "false"
+              },
+              {
+                "i": 50,
+                "before": "8391683",
+                "after": "8524800"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshDistanceMaterial",
+              "#define SHADER_NAME ",
+              "#define USE_MAP",
+              "#define MAP_UV uv",
+              "#define HAS_NORMAL",
+              "#define FLIP_SIDED",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define DISTANCE",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshDistanceMaterial",
+              "#define SHADER_NAME ",
+              "#define USE_MAP",
+              "#define FLIP_SIDED",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define OPAQUE",
+              "#define DISTANCE",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ]
+          ]
+        },
+        {
+          "ms": 651.5999999996275,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "physical,STANDARD,,highp,srgb-linear,306,64,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,1,17,2,0,1,0,0,1,1,0,0,1,0,0,0,0,8389648,8520739,srgb,l0-spatial-environment-v3|l1-dynamic-indirect-v4",
+          "closest": {
+            "key": "physical,STANDARD,,highp,srgb-linear,306,64,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,1,17,2,0,1,0,0,1,1,0,0,1,0,0,0,0,8389136,8389635,srgb,l0-spatial-environment-v3|l1-dynamic-indirect-v4",
+            "diff": [
+              {
+                "i": 51,
+                "before": "8389136",
+                "after": "8389648"
+              },
+              {
+                "i": 52,
+                "before": "8389635",
+                "after": "8520739"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshStandardMaterial",
+              "#define SHADER_NAME ",
+              "#define STANDARD ",
+              "#define USE_FOG",
+              "#define USE_MAP",
+              "#define USE_ENVMAP",
+              "#define ENVMAP_MODE_REFLECTION",
+              "#define MAP_UV uv",
+              "#define HAS_NORMAL",
+              "#define USE_COLOR",
+              "#define USE_SKINNING",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define STANDARD",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshStandardMaterial",
+              "#define SHADER_NAME ",
+              "#define STANDARD ",
+              "#define USE_FOG",
+              "#define USE_MAP",
+              "#define USE_ENVMAP",
+              "#define ENVMAP_TYPE_CUBE_UV",
+              "#define ENVMAP_MODE_REFLECTION",
+              "#define ENVMAP_BLENDING_NONE",
+              "#define CUBEUV_TEXEL_WIDTH 0.002976190476190476",
+              "#define CUBEUV_TEXEL_HEIGHT 0.015625",
+              "#define CUBEUV_MAX_MIP 4.0",
+              "#define USE_COLOR",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define OPAQUE",
+              "#define STANDARD",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix",
+              "#define RE_Direct\t\t\t\tRE_Direct_Physical",
+              "#define RE_Direct_RectArea\t\tRE_Direct_RectArea_Physical",
+              "#define RE_IndirectDiffuse\t\tRE_IndirectDiffuse_Physical",
+              "#define RE_IndirectSpecular\t\tRE_IndirectSpecular_Physical"
+            ]
+          ]
+        },
+        {
+          "ms": 713.7000000001863,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "physical,STANDARD,,highp,srgb-linear,306,64,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,1,17,2,0,1,0,0,1,1,0,0,1,0,0,0,0,8389648,8520707,srgb,l0-spatial-environment-v3|l1-dynamic-indirect-v4",
+          "closest": {
+            "key": "physical,STANDARD,,highp,srgb-linear,306,64,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,1,17,2,0,1,0,0,1,1,0,0,1,0,0,0,0,8388624,8520707,srgb,l0-spatial-environment-v3|l1-dynamic-indirect-v4",
+            "diff": [
+              {
+                "i": 51,
+                "before": "8388624",
+                "after": "8389648"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshStandardMaterial",
+              "#define SHADER_NAME ",
+              "#define STANDARD ",
+              "#define USE_FOG",
+              "#define USE_ENVMAP",
+              "#define ENVMAP_MODE_REFLECTION",
+              "#define HAS_NORMAL",
+              "#define USE_COLOR",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define STANDARD",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshStandardMaterial",
+              "#define SHADER_NAME ",
+              "#define STANDARD ",
+              "#define USE_FOG",
+              "#define USE_ENVMAP",
+              "#define ENVMAP_TYPE_CUBE_UV",
+              "#define ENVMAP_MODE_REFLECTION",
+              "#define ENVMAP_BLENDING_NONE",
+              "#define CUBEUV_TEXEL_WIDTH 0.002976190476190476",
+              "#define CUBEUV_TEXEL_HEIGHT 0.015625",
+              "#define CUBEUV_MAX_MIP 4.0",
+              "#define USE_COLOR",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define OPAQUE",
+              "#define STANDARD",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix",
+              "#define RE_Direct\t\t\t\tRE_Direct_Physical",
+              "#define RE_Direct_RectArea\t\tRE_Direct_RectArea_Physical",
+              "#define RE_IndirectDiffuse\t\tRE_IndirectDiffuse_Physical",
+              "#define RE_IndirectSpecular\t\tRE_IndirectSpecular_Physical"
+            ]
+          ]
+        },
+        {
+          "ms": 21.100000000558794,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "points,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,true,0,,1,17,2,0,1,0,0,1,1,0,0,1,0,0,0,0,3072,8389635,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "basic,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,0,,false,0,,1,17,2,0,1,0,0,1,1,0,0,1,0,0,0,0,8388608,8389635,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "basic",
+                "after": "points"
+              },
+              {
+                "i": 28,
+                "before": "0",
+                "after": ""
+              },
+              {
+                "i": 30,
+                "before": "false",
+                "after": "true"
+              },
+              {
+                "i": 49,
+                "before": "8388608",
+                "after": "3072"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE PointsMaterial",
+              "#define SHADER_NAME ",
+              "#define USE_FOG",
+              "#define USE_COLOR",
+              "#define USE_COLOR_ALPHA",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define USE_SIZEATTENUATION",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE PointsMaterial",
+              "#define SHADER_NAME ",
+              "#define USE_FOG",
+              "#define USE_COLOR",
+              "#define USE_COLOR_ALPHA",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ]
+          ]
+        },
+        {
+          "ms": 10.399999999441206,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "3,4,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,1,17,2,0,1,0,0,1,1,0,0,1,0,0,0,0,0,8389633,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "0,1,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8388608,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "0",
+                "after": "3"
+              },
+              {
+                "i": 1,
+                "before": "1",
+                "after": "4"
+              },
+              {
+                "i": 30,
+                "before": "false",
+                "after": ""
+              },
+              {
+                "i": 34,
+                "before": "0",
+                "after": "1"
+              },
+              {
+                "i": 35,
+                "before": "0",
+                "after": "17"
+              },
+              {
+                "i": 36,
+                "before": "0",
+                "after": "2"
+              },
+              {
+                "i": 38,
+                "before": "0",
+                "after": "1"
+              },
+              {
+                "i": 41,
+                "before": "0",
+                "after": "1"
+              },
+              {
+                "i": 42,
+                "before": "0",
+                "after": "1"
+              },
+              {
+                "i": 51,
+                "before": "8388608",
+                "after": "8389633"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME L1WetReflection",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME L1WetReflection",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF"
+            ]
+          ]
+        },
+        {
+          "ms": 11.399999999441206,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "5,6,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8519680,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "0,1,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8388608,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "0",
+                "after": "5"
+              },
+              {
+                "i": 1,
+                "before": "1",
+                "after": "6"
+              },
+              {
+                "i": 51,
+                "before": "8388608",
+                "after": "8519680"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME "
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define OPAQUE"
+            ]
+          ]
+        },
+        {
+          "ms": 11.5,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "7,8,KERNEL_RADIUS,6,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8519680,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "0,1,highp,srgb,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,4,0,0,0,0,0,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "0",
+                "after": "7"
+              },
+              {
+                "i": 1,
+                "before": "1",
+                "after": "8"
+              },
+              {
+                "i": 2,
+                "before": "highp",
+                "after": "KERNEL_RADIUS"
+              },
+              {
+                "i": 3,
+                "before": "srgb",
+                "after": "6"
+              },
+              {
+                "i": 4,
+                "before": "false",
+                "after": "highp"
+              },
+              {
+                "i": 5,
+                "before": "",
+                "after": "srgb-linear"
+              },
+              {
+                "i": 7,
+                "before": "false",
+                "after": ""
+              },
+              {
+                "i": 29,
+                "before": "",
+                "after": "false"
+              },
+              {
+                "i": 31,
+                "before": "false",
+                "after": ""
+              },
+              {
+                "i": 32,
+                "before": "0",
+                "after": "false"
+              },
+              {
+                "i": 33,
+                "before": "",
+                "after": "false"
+              },
+              {
+                "i": 35,
+                "before": "0",
+                "after": ""
+              },
+              {
+                "i": 45,
+                "before": "1",
+                "after": "0"
+              },
+              {
+                "i": 46,
+                "before": "4",
+                "after": "0"
+              },
+              {
+                "i": 47,
+                "before": "0",
+                "after": "1"
+              },
+              {
+                "i": 52,
+                "before": "srgb",
+                "after": "0"
+              },
+              {
+                "i": 53,
+                "before": "onBeforeCompile() {\n  }",
+                "after": "8519680"
+              },
+              {
+                "i": 54,
+                "after": "srgb"
+              },
+              {
+                "i": 55,
+                "after": "onBeforeCompile() {\n  }"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define KERNEL_RADIUS 6"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define KERNEL_RADIUS 6",
+              "#define OPAQUE",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ]
+          ]
+        },
+        {
+          "ms": 12.700000000186265,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "7,8,KERNEL_RADIUS,10,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8519680,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "0,1,highp,srgb,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,4,0,0,0,0,0,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "0",
+                "after": "7"
+              },
+              {
+                "i": 1,
+                "before": "1",
+                "after": "8"
+              },
+              {
+                "i": 2,
+                "before": "highp",
+                "after": "KERNEL_RADIUS"
+              },
+              {
+                "i": 3,
+                "before": "srgb",
+                "after": "10"
+              },
+              {
+                "i": 4,
+                "before": "false",
+                "after": "highp"
+              },
+              {
+                "i": 5,
+                "before": "",
+                "after": "srgb-linear"
+              },
+              {
+                "i": 7,
+                "before": "false",
+                "after": ""
+              },
+              {
+                "i": 29,
+                "before": "",
+                "after": "false"
+              },
+              {
+                "i": 31,
+                "before": "false",
+                "after": ""
+              },
+              {
+                "i": 32,
+                "before": "0",
+                "after": "false"
+              },
+              {
+                "i": 33,
+                "before": "",
+                "after": "false"
+              },
+              {
+                "i": 35,
+                "before": "0",
+                "after": ""
+              },
+              {
+                "i": 45,
+                "before": "1",
+                "after": "0"
+              },
+              {
+                "i": 46,
+                "before": "4",
+                "after": "0"
+              },
+              {
+                "i": 47,
+                "before": "0",
+                "after": "1"
+              },
+              {
+                "i": 52,
+                "before": "srgb",
+                "after": "0"
+              },
+              {
+                "i": 53,
+                "before": "onBeforeCompile() {\n  }",
+                "after": "8519680"
+              },
+              {
+                "i": 54,
+                "after": "srgb"
+              },
+              {
+                "i": 55,
+                "after": "onBeforeCompile() {\n  }"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define KERNEL_RADIUS 10"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define KERNEL_RADIUS 10",
+              "#define OPAQUE",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ]
+          ]
+        },
+        {
+          "ms": 14.599999999627471,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "7,8,KERNEL_RADIUS,14,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8519680,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "0,1,highp,srgb,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,4,0,0,0,0,0,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "0",
+                "after": "7"
+              },
+              {
+                "i": 1,
+                "before": "1",
+                "after": "8"
+              },
+              {
+                "i": 2,
+                "before": "highp",
+                "after": "KERNEL_RADIUS"
+              },
+              {
+                "i": 3,
+                "before": "srgb",
+                "after": "14"
+              },
+              {
+                "i": 4,
+                "before": "false",
+                "after": "highp"
+              },
+              {
+                "i": 5,
+                "before": "",
+                "after": "srgb-linear"
+              },
+              {
+                "i": 7,
+                "before": "false",
+                "after": ""
+              },
+              {
+                "i": 29,
+                "before": "",
+                "after": "false"
+              },
+              {
+                "i": 31,
+                "before": "false",
+                "after": ""
+              },
+              {
+                "i": 32,
+                "before": "0",
+                "after": "false"
+              },
+              {
+                "i": 33,
+                "before": "",
+                "after": "false"
+              },
+              {
+                "i": 35,
+                "before": "0",
+                "after": ""
+              },
+              {
+                "i": 45,
+                "before": "1",
+                "after": "0"
+              },
+              {
+                "i": 46,
+                "before": "4",
+                "after": "0"
+              },
+              {
+                "i": 47,
+                "before": "0",
+                "after": "1"
+              },
+              {
+                "i": 52,
+                "before": "srgb",
+                "after": "0"
+              },
+              {
+                "i": 53,
+                "before": "onBeforeCompile() {\n  }",
+                "after": "8519680"
+              },
+              {
+                "i": 54,
+                "after": "srgb"
+              },
+              {
+                "i": 55,
+                "after": "onBeforeCompile() {\n  }"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define KERNEL_RADIUS 14"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define KERNEL_RADIUS 14",
+              "#define OPAQUE",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ]
+          ]
+        },
+        {
+          "ms": 16.800000000745058,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "7,8,KERNEL_RADIUS,18,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8519680,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "0,1,highp,srgb,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,4,0,0,0,0,0,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "0",
+                "after": "7"
+              },
+              {
+                "i": 1,
+                "before": "1",
+                "after": "8"
+              },
+              {
+                "i": 2,
+                "before": "highp",
+                "after": "KERNEL_RADIUS"
+              },
+              {
+                "i": 3,
+                "before": "srgb",
+                "after": "18"
+              },
+              {
+                "i": 4,
+                "before": "false",
+                "after": "highp"
+              },
+              {
+                "i": 5,
+                "before": "",
+                "after": "srgb-linear"
+              },
+              {
+                "i": 7,
+                "before": "false",
+                "after": ""
+              },
+              {
+                "i": 29,
+                "before": "",
+                "after": "false"
+              },
+              {
+                "i": 31,
+                "before": "false",
+                "after": ""
+              },
+              {
+                "i": 32,
+                "before": "0",
+                "after": "false"
+              },
+              {
+                "i": 33,
+                "before": "",
+                "after": "false"
+              },
+              {
+                "i": 35,
+                "before": "0",
+                "after": ""
+              },
+              {
+                "i": 45,
+                "before": "1",
+                "after": "0"
+              },
+              {
+                "i": 46,
+                "before": "4",
+                "after": "0"
+              },
+              {
+                "i": 47,
+                "before": "0",
+                "after": "1"
+              },
+              {
+                "i": 52,
+                "before": "srgb",
+                "after": "0"
+              },
+              {
+                "i": 53,
+                "before": "onBeforeCompile() {\n  }",
+                "after": "8519680"
+              },
+              {
+                "i": 54,
+                "after": "srgb"
+              },
+              {
+                "i": 55,
+                "after": "onBeforeCompile() {\n  }"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define KERNEL_RADIUS 18"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define KERNEL_RADIUS 18",
+              "#define OPAQUE",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ]
+          ]
+        },
+        {
+          "ms": 18.5,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "7,8,KERNEL_RADIUS,22,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8519680,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "0,1,highp,srgb,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,4,0,0,0,0,0,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "0",
+                "after": "7"
+              },
+              {
+                "i": 1,
+                "before": "1",
+                "after": "8"
+              },
+              {
+                "i": 2,
+                "before": "highp",
+                "after": "KERNEL_RADIUS"
+              },
+              {
+                "i": 3,
+                "before": "srgb",
+                "after": "22"
+              },
+              {
+                "i": 4,
+                "before": "false",
+                "after": "highp"
+              },
+              {
+                "i": 5,
+                "before": "",
+                "after": "srgb-linear"
+              },
+              {
+                "i": 7,
+                "before": "false",
+                "after": ""
+              },
+              {
+                "i": 29,
+                "before": "",
+                "after": "false"
+              },
+              {
+                "i": 31,
+                "before": "false",
+                "after": ""
+              },
+              {
+                "i": 32,
+                "before": "0",
+                "after": "false"
+              },
+              {
+                "i": 33,
+                "before": "",
+                "after": "false"
+              },
+              {
+                "i": 35,
+                "before": "0",
+                "after": ""
+              },
+              {
+                "i": 45,
+                "before": "1",
+                "after": "0"
+              },
+              {
+                "i": 46,
+                "before": "4",
+                "after": "0"
+              },
+              {
+                "i": 47,
+                "before": "0",
+                "after": "1"
+              },
+              {
+                "i": 52,
+                "before": "srgb",
+                "after": "0"
+              },
+              {
+                "i": 53,
+                "before": "onBeforeCompile() {\n  }",
+                "after": "8519680"
+              },
+              {
+                "i": 54,
+                "after": "srgb"
+              },
+              {
+                "i": 55,
+                "after": "onBeforeCompile() {\n  }"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define KERNEL_RADIUS 22"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define KERNEL_RADIUS 22",
+              "#define OPAQUE",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ]
+          ]
+        },
+        {
+          "ms": 12.299999999813735,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "7,9,NUM_MIPS,5,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8519680,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "0,1,highp,srgb,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,4,0,0,0,0,0,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "0",
+                "after": "7"
+              },
+              {
+                "i": 1,
+                "before": "1",
+                "after": "9"
+              },
+              {
+                "i": 2,
+                "before": "highp",
+                "after": "NUM_MIPS"
+              },
+              {
+                "i": 3,
+                "before": "srgb",
+                "after": "5"
+              },
+              {
+                "i": 4,
+                "before": "false",
+                "after": "highp"
+              },
+              {
+                "i": 5,
+                "before": "",
+                "after": "srgb-linear"
+              },
+              {
+                "i": 7,
+                "before": "false",
+                "after": ""
+              },
+              {
+                "i": 29,
+                "before": "",
+                "after": "false"
+              },
+              {
+                "i": 31,
+                "before": "false",
+                "after": ""
+              },
+              {
+                "i": 32,
+                "before": "0",
+                "after": "false"
+              },
+              {
+                "i": 33,
+                "before": "",
+                "after": "false"
+              },
+              {
+                "i": 35,
+                "before": "0",
+                "after": ""
+              },
+              {
+                "i": 45,
+                "before": "1",
+                "after": "0"
+              },
+              {
+                "i": 46,
+                "before": "4",
+                "after": "0"
+              },
+              {
+                "i": 47,
+                "before": "0",
+                "after": "1"
+              },
+              {
+                "i": 52,
+                "before": "srgb",
+                "after": "0"
+              },
+              {
+                "i": 53,
+                "before": "onBeforeCompile() {\n  }",
+                "after": "8519680"
+              },
+              {
+                "i": 54,
+                "after": "srgb"
+              },
+              {
+                "i": 55,
+                "after": "onBeforeCompile() {\n  }"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define NUM_MIPS 5"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define NUM_MIPS 5",
+              "#define OPAQUE"
+            ]
+          ]
+        },
+        {
+          "ms": 10.599999999627471,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "10,11,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8389120,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "0,1,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8388608,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "0",
+                "after": "10"
+              },
+              {
+                "i": 1,
+                "before": "1",
+                "after": "11"
+              },
+              {
+                "i": 51,
+                "before": "8388608",
+                "after": "8389120"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME "
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define PREMULTIPLIED_ALPHA"
+            ]
+          ]
+        },
+        {
+          "ms": 42.299999999813735,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "12,13,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8519680,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "0,1,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8388608,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "0",
+                "after": "12"
+              },
+              {
+                "i": 1,
+                "before": "1",
+                "after": "13"
+              },
+              {
+                "i": 51,
+                "before": "8388608",
+                "after": "8519680"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME "
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define OPAQUE"
+            ]
+          ]
+        },
+        {
+          "ms": 35.10000000055879,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "12,14,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8519680,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "0,1,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8388608,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "0",
+                "after": "12"
+              },
+              {
+                "i": 1,
+                "before": "1",
+                "after": "14"
+              },
+              {
+                "i": 51,
+                "before": "8388608",
+                "after": "8519680"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME "
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define OPAQUE"
+            ]
+          ]
+        },
+        {
+          "ms": 11.299999999813735,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "15,16,SRGB_TRANSFER,,ACES_FILMIC_TONE_MAPPING,,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "0,1,highp,srgb,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,4,0,0,0,0,0,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "0",
+                "after": "15"
+              },
+              {
+                "i": 1,
+                "before": "1",
+                "after": "16"
+              },
+              {
+                "i": 2,
+                "before": "highp",
+                "after": "SRGB_TRANSFER"
+              },
+              {
+                "i": 3,
+                "before": "srgb",
+                "after": ""
+              },
+              {
+                "i": 4,
+                "before": "false",
+                "after": "ACES_FILMIC_TONE_MAPPING"
+              },
+              {
+                "i": 6,
+                "before": "false",
+                "after": "onBeforeCompile() {\n  }"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define SHADER_TYPE RawShaderMaterial",
+              "#define SHADER_NAME OutputShader",
+              "#define SRGB_TRANSFER ",
+              "#define ACES_FILMIC_TONE_MAPPING "
+            ],
+            [
+              "#define SHADER_TYPE RawShaderMaterial",
+              "#define SHADER_NAME OutputShader",
+              "#define SRGB_TRANSFER ",
+              "#define ACES_FILMIC_TONE_MAPPING ",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )"
+            ]
+          ]
+        },
+        {
+          "ms": 24.700000000186265,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "12,17,highp,srgb,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,4,0,0,0,0,8519680,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "0,1,highp,srgb,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,4,0,0,0,0,0,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "0",
+                "after": "12"
+              },
+              {
+                "i": 1,
+                "before": "1",
+                "after": "17"
+              },
+              {
+                "i": 51,
+                "before": "0",
+                "after": "8519680"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME unspecified"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME unspecified",
+              "#define TONE_MAPPING",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define OPAQUE"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "cold": {
+        "id": 5,
+        "name": "Level 5",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 10935.799999999814,
+        "readyMs": 10935.900000000373,
+        "loadMs": 10990.5,
+        "preparationMs": 463.40000000037253,
+        "generationMs": 8.199999999254942,
+        "sceneMs": 10464.300000000745,
+        "frames": 1373,
+        "cpuTotalMs": 7583.899999957532,
+        "cpuMaxMs": 642.6000000005588,
+        "frameP95Ms": 15.200000000186265,
+        "metrics": {
+          "buildInfiniteChunk": {
+            "calls": 197372,
+            "cpuMs": 4718.80000001844,
+            "maxMs": 48.90000000037253
+          },
+          "warmSceneTextures": {
+            "calls": 452,
+            "cpuMs": 494.70000000391155,
+            "maxMs": 48.90000000037253
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 884.0999999996275,
+            "chunks": 0,
+            "chunkTask": "0,0",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 1,
+              "textures": 2
+            }
+          },
+          {
+            "atMs": 6073.5999999996275,
+            "chunks": 1,
+            "chunkTask": "-1,0",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 18,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 338,
+              "textures": 82
+            }
+          },
+          {
+            "atMs": 6497.0999999996275,
+            "chunks": 2,
+            "chunkTask": "0,0",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 18,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 531,
+              "textures": 83
+            }
+          },
+          {
+            "atMs": 6533.299999999814,
+            "chunks": 3,
+            "chunkTask": "0,1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 18,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 584,
+              "textures": 83
+            }
+          },
+          {
+            "atMs": 8222.099999999627,
+            "chunks": 5,
+            "chunkTask": "-1,-1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 18,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 628,
+              "textures": 102
+            }
+          },
+          {
+            "atMs": 8251.200000000186,
+            "chunks": 6,
+            "chunkTask": "-1,1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 18,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 892,
+              "textures": 102
+            }
+          },
+          {
+            "atMs": 8874.5,
+            "chunks": 7,
+            "chunkTask": "1,1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 18,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 1037,
+              "textures": 105
+            }
+          },
+          {
+            "atMs": 9309.700000000186,
+            "chunks": 8,
+            "chunkTask": "1,1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 18,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 1245,
+              "textures": 120
+            }
+          },
+          {
+            "atMs": 10400.900000000373,
+            "chunks": 9,
+            "chunkTask": "-1,1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 18,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 1245,
+              "textures": 133
+            }
+          },
+          {
+            "atMs": 10935.799999999814,
+            "chunks": 11,
+            "chunkTask": "2,0",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 18,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": true,
+            "memory": {
+              "geometries": 2126,
+              "textures": 157
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 11,
+          "chunkTask": "0,2",
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": false,
+          "items": 18,
+          "npcs": 0,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 2126,
+            "textures": 158
+          }
+        },
+        "firstReady": {
+          "structures": 1903,
+          "lights": 870,
+          "npcs": 0,
+          "nearNpcs": 0,
+          "npcMeshes": 0,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 2126,
+            "textures": 158
+          },
+          "programs": 101,
+          "drawCalls": 1265,
+          "triangles": 581787,
+          "spawn": {
+            "x": 79.5,
+            "y": 79.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      },
+      "programAudit": [
+        {
+          "ms": 90.90000000037253,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "0,1,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,8388608,8388608,srgb,onBeforeCompile() {\n  }",
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define HAS_NORMAL"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME "
+            ]
+          ]
+        },
+        {
+          "ms": 12.700000000186265,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "2,3,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8388608,srgb,onBeforeCompile() {\n  }",
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME EquirectangularToCubeUV"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME EquirectangularToCubeUV",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ]
+          ]
+        },
+        {
+          "ms": 538.0999999996275,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "2,4,GGX_SAMPLES,256,CUBEUV_TEXEL_WIDTH,0.0006510416666666666,CUBEUV_TEXEL_HEIGHT,0.00048828125,CUBEUV_MAX_MIP,9.0,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8388608,srgb,onBeforeCompile() {\n  }",
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME PMREMGGXConvolution",
+              "#define GGX_SAMPLES 256",
+              "#define CUBEUV_TEXEL_WIDTH 0.0006510416666666666",
+              "#define CUBEUV_TEXEL_HEIGHT 0.00048828125",
+              "#define CUBEUV_MAX_MIP 9.0"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME PMREMGGXConvolution",
+              "#define GGX_SAMPLES 256",
+              "#define CUBEUV_TEXEL_WIDTH 0.0006510416666666666",
+              "#define CUBEUV_TEXEL_HEIGHT 0.00048828125",
+              "#define CUBEUV_MAX_MIP 9.0"
+            ]
+          ]
+        },
+        {
+          "ms": 19.700000000186265,
+          "phase": "upload",
+          "precompiled": true,
+          "key": "physical,STANDARD,,highp,srgb-linear,306,2048,uv,false,false,false,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,1,17,2,0,1,0,1,1,1,0,0,1,0,0,0,0,8389648,8520739,srgb,onBeforeCompile() {\n  }|l5-nest-light-v4",
+          "closest": {
+            "key": "physical,STANDARD,,highp,srgb-linear,306,2048,uv,false,false,false,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,1,17,2,0,1,0,1,1,1,0,0,1,0,0,0,0,8389648,8520739,srgb,onBeforeCompile() {\n  }|l5-nest-light-v4",
+            "diff": []
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshStandardMaterial",
+              "#define SHADER_NAME ",
+              "#define STANDARD ",
+              "#define USE_FOG",
+              "#define USE_MAP",
+              "#define USE_ENVMAP",
+              "#define ENVMAP_MODE_REFLECTION",
+              "#define USE_BUMPMAP",
+              "#define MAP_UV uv",
+              "#define BUMPMAP_UV uv",
+              "#define HAS_NORMAL",
+              "#define USE_COLOR",
+              "#define USE_SKINNING",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define STANDARD",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshStandardMaterial",
+              "#define SHADER_NAME ",
+              "#define STANDARD ",
+              "#define USE_FOG",
+              "#define USE_MAP",
+              "#define USE_ENVMAP",
+              "#define ENVMAP_TYPE_CUBE_UV",
+              "#define ENVMAP_MODE_REFLECTION",
+              "#define ENVMAP_BLENDING_NONE",
+              "#define CUBEUV_TEXEL_WIDTH 0.0006510416666666666",
+              "#define CUBEUV_TEXEL_HEIGHT 0.00048828125",
+              "#define CUBEUV_MAX_MIP 9.0",
+              "#define USE_BUMPMAP",
+              "#define USE_COLOR",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define OPAQUE",
+              "#define STANDARD",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix",
+              "#define RE_Direct\t\t\t\tRE_Direct_Physical",
+              "#define RE_Direct_RectArea\t\tRE_Direct_RectArea_Physical",
+              "#define RE_IndirectDiffuse\t\tRE_IndirectDiffuse_Physical",
+              "#define RE_IndirectSpecular\t\tRE_IndirectSpecular_Physical"
+            ]
+          ]
+        },
+        {
+          "ms": 14.399999999441206,
+          "phase": "upload",
+          "precompiled": false,
+          "key": "depth,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,1,17,2,0,1,0,1,1,1,0,0,1,0,0,0,3200,8388609,8532992,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "basic,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,0,,false,0,,1,17,2,0,1,0,1,1,1,0,0,1,0,0,0,0,8388609,8520707,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "basic",
+                "after": "depth"
+              },
+              {
+                "i": 28,
+                "before": "0",
+                "after": ""
+              },
+              {
+                "i": 29,
+                "before": "",
+                "after": "false"
+              },
+              {
+                "i": 48,
+                "before": "0",
+                "after": "3200"
+              },
+              {
+                "i": 50,
+                "before": "8520707",
+                "after": "8532992"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshDepthMaterial",
+              "#define SHADER_NAME ",
+              "#define USE_INSTANCING",
+              "#define HAS_NORMAL",
+              "#define FLIP_SIDED",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshDepthMaterial",
+              "#define SHADER_NAME ",
+              "#define FLIP_SIDED",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define OPAQUE",
+              "#define DEPTH_PACKING 3200",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ]
+          ]
+        },
+        {
+          "ms": 13.299999999813735,
+          "phase": "upload",
+          "precompiled": false,
+          "key": "depth,highp,srgb-linear,false,,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,1,17,2,0,1,0,1,1,1,0,0,1,0,0,0,3200,8388609,8532992,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "basic,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,0,,false,0,,1,17,2,0,1,0,1,1,1,0,0,1,0,0,0,0,8388609,8520707,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "basic",
+                "after": "depth"
+              },
+              {
+                "i": 5,
+                "before": "false",
+                "after": "uv"
+              },
+              {
+                "i": 28,
+                "before": "0",
+                "after": ""
+              },
+              {
+                "i": 29,
+                "before": "",
+                "after": "false"
+              },
+              {
+                "i": 48,
+                "before": "0",
+                "after": "3200"
+              },
+              {
+                "i": 50,
+                "before": "8520707",
+                "after": "8532992"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshDepthMaterial",
+              "#define SHADER_NAME ",
+              "#define USE_INSTANCING",
+              "#define USE_MAP",
+              "#define MAP_UV uv",
+              "#define HAS_NORMAL",
+              "#define FLIP_SIDED",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshDepthMaterial",
+              "#define SHADER_NAME ",
+              "#define USE_MAP",
+              "#define FLIP_SIDED",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define OPAQUE",
+              "#define DEPTH_PACKING 3200",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ]
+          ]
+        },
+        {
+          "ms": 28.90000000037253,
+          "phase": "upload",
+          "precompiled": true,
+          "key": "physical,STANDARD,,highp,srgb-linear,306,2048,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,1,17,2,0,1,0,1,1,1,0,0,1,0,0,0,0,8388624,8520707,srgb,l5-ballroom-rose-carpet|l5-nest-light-v4",
+          "closest": {
+            "key": "physical,STANDARD,,highp,srgb-linear,306,2048,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,1,17,2,0,1,0,1,1,1,0,0,1,0,0,0,0,8388624,8520707,srgb,l5-ballroom-rose-carpet|l5-nest-light-v4",
+            "diff": []
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshStandardMaterial",
+              "#define SHADER_NAME ",
+              "#define STANDARD ",
+              "#define USE_FOG",
+              "#define USE_MAP",
+              "#define USE_ENVMAP",
+              "#define ENVMAP_MODE_REFLECTION",
+              "#define MAP_UV uv",
+              "#define HAS_NORMAL",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define STANDARD",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshStandardMaterial",
+              "#define SHADER_NAME ",
+              "#define STANDARD ",
+              "#define USE_FOG",
+              "#define USE_MAP",
+              "#define USE_ENVMAP",
+              "#define ENVMAP_TYPE_CUBE_UV",
+              "#define ENVMAP_MODE_REFLECTION",
+              "#define ENVMAP_BLENDING_NONE",
+              "#define CUBEUV_TEXEL_WIDTH 0.0006510416666666666",
+              "#define CUBEUV_TEXEL_HEIGHT 0.00048828125",
+              "#define CUBEUV_MAX_MIP 9.0",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define OPAQUE",
+              "#define STANDARD",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix",
+              "#define RE_Direct\t\t\t\tRE_Direct_Physical",
+              "#define RE_Direct_RectArea\t\tRE_Direct_RectArea_Physical",
+              "#define RE_IndirectDiffuse\t\tRE_IndirectDiffuse_Physical",
+              "#define RE_IndirectSpecular\t\tRE_IndirectSpecular_Physical"
+            ]
+          ]
+        },
+        {
+          "ms": 37.69999999925494,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "distance,highp,srgb-linear,false,,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,1,17,2,0,1,0,1,1,1,0,0,1,0,0,0,0,8388608,8524800,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "depth,highp,srgb-linear,false,,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,1,17,2,0,1,0,1,1,1,0,0,1,0,0,0,3200,8388608,8532992,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "depth",
+                "after": "distance"
+              },
+              {
+                "i": 48,
+                "before": "3200",
+                "after": "0"
+              },
+              {
+                "i": 50,
+                "before": "8532992",
+                "after": "8524800"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshDistanceMaterial",
+              "#define SHADER_NAME ",
+              "#define USE_MAP",
+              "#define MAP_UV uv",
+              "#define HAS_NORMAL",
+              "#define FLIP_SIDED",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define DISTANCE",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshDistanceMaterial",
+              "#define SHADER_NAME ",
+              "#define USE_MAP",
+              "#define FLIP_SIDED",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define OPAQUE",
+              "#define DISTANCE",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ]
+          ]
+        },
+        {
+          "ms": 10.100000000558794,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "distance,highp,srgb-linear,false,,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,1,17,2,0,1,0,1,1,1,0,0,1,0,0,0,0,8388609,8524800,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "depth,highp,srgb-linear,false,,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,1,17,2,0,1,0,1,1,1,0,0,1,0,0,0,3200,8388609,8532992,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "depth",
+                "after": "distance"
+              },
+              {
+                "i": 48,
+                "before": "3200",
+                "after": "0"
+              },
+              {
+                "i": 50,
+                "before": "8532992",
+                "after": "8524800"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshDistanceMaterial",
+              "#define SHADER_NAME ",
+              "#define USE_INSTANCING",
+              "#define USE_MAP",
+              "#define MAP_UV uv",
+              "#define HAS_NORMAL",
+              "#define FLIP_SIDED",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define DISTANCE",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshDistanceMaterial",
+              "#define SHADER_NAME ",
+              "#define USE_MAP",
+              "#define FLIP_SIDED",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define OPAQUE",
+              "#define DISTANCE",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ]
+          ]
+        },
+        {
+          "ms": 88.79999999981374,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "5,6,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,1,17,2,0,1,0,1,1,1,0,0,1,0,0,0,0,8388608,8524801,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "0,1,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,8388608,8388608,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "0",
+                "after": "5"
+              },
+              {
+                "i": 1,
+                "before": "1",
+                "after": "6"
+              },
+              {
+                "i": 30,
+                "before": "false",
+                "after": ""
+              },
+              {
+                "i": 34,
+                "before": "0",
+                "after": "1"
+              },
+              {
+                "i": 35,
+                "before": "0",
+                "after": "17"
+              },
+              {
+                "i": 36,
+                "before": "0",
+                "after": "2"
+              },
+              {
+                "i": 38,
+                "before": "0",
+                "after": "1"
+              },
+              {
+                "i": 40,
+                "before": "0",
+                "after": "1"
+              },
+              {
+                "i": 41,
+                "before": "0",
+                "after": "1"
+              },
+              {
+                "i": 42,
+                "before": "0",
+                "after": "1"
+              },
+              {
+                "i": 51,
+                "before": "8388608",
+                "after": "8524801"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define HAS_NORMAL",
+              "#define FLIP_SIDED",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define FLIP_SIDED",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define OPAQUE"
+            ]
+          ]
+        },
+        {
+          "ms": 52.299999999813735,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "points,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,true,0,,1,17,2,0,1,0,1,1,1,0,0,1,0,0,0,0,3072,8389635,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "basic,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,0,,false,0,,1,17,2,0,1,0,1,1,1,0,0,1,0,0,0,0,8388608,8389635,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "basic",
+                "after": "points"
+              },
+              {
+                "i": 28,
+                "before": "0",
+                "after": ""
+              },
+              {
+                "i": 30,
+                "before": "false",
+                "after": "true"
+              },
+              {
+                "i": 49,
+                "before": "8388608",
+                "after": "3072"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE PointsMaterial",
+              "#define SHADER_NAME ",
+              "#define USE_FOG",
+              "#define USE_COLOR",
+              "#define USE_COLOR_ALPHA",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define USE_SIZEATTENUATION",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE PointsMaterial",
+              "#define SHADER_NAME ",
+              "#define USE_FOG",
+              "#define USE_COLOR",
+              "#define USE_COLOR_ALPHA",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ]
+          ]
+        },
+        {
+          "ms": 11.099999999627471,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "9,10,KERNEL_RADIUS,18,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8519680,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "2,3,highp,srgb,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,4,0,0,0,0,0,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "2",
+                "after": "9"
+              },
+              {
+                "i": 1,
+                "before": "3",
+                "after": "10"
+              },
+              {
+                "i": 2,
+                "before": "highp",
+                "after": "KERNEL_RADIUS"
+              },
+              {
+                "i": 3,
+                "before": "srgb",
+                "after": "18"
+              },
+              {
+                "i": 4,
+                "before": "false",
+                "after": "highp"
+              },
+              {
+                "i": 5,
+                "before": "",
+                "after": "srgb-linear"
+              },
+              {
+                "i": 7,
+                "before": "false",
+                "after": ""
+              },
+              {
+                "i": 29,
+                "before": "",
+                "after": "false"
+              },
+              {
+                "i": 31,
+                "before": "false",
+                "after": ""
+              },
+              {
+                "i": 32,
+                "before": "0",
+                "after": "false"
+              },
+              {
+                "i": 33,
+                "before": "",
+                "after": "false"
+              },
+              {
+                "i": 35,
+                "before": "0",
+                "after": ""
+              },
+              {
+                "i": 45,
+                "before": "1",
+                "after": "0"
+              },
+              {
+                "i": 46,
+                "before": "4",
+                "after": "0"
+              },
+              {
+                "i": 47,
+                "before": "0",
+                "after": "1"
+              },
+              {
+                "i": 52,
+                "before": "srgb",
+                "after": "0"
+              },
+              {
+                "i": 53,
+                "before": "onBeforeCompile() {\n  }",
+                "after": "8519680"
+              },
+              {
+                "i": 54,
+                "after": "srgb"
+              },
+              {
+                "i": 55,
+                "after": "onBeforeCompile() {\n  }"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define KERNEL_RADIUS 18"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define KERNEL_RADIUS 18",
+              "#define OPAQUE",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ]
+          ]
+        },
+        {
+          "ms": 12.799999999813735,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "9,10,KERNEL_RADIUS,22,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8519680,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "2,3,highp,srgb,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,4,0,0,0,0,0,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "2",
+                "after": "9"
+              },
+              {
+                "i": 1,
+                "before": "3",
+                "after": "10"
+              },
+              {
+                "i": 2,
+                "before": "highp",
+                "after": "KERNEL_RADIUS"
+              },
+              {
+                "i": 3,
+                "before": "srgb",
+                "after": "22"
+              },
+              {
+                "i": 4,
+                "before": "false",
+                "after": "highp"
+              },
+              {
+                "i": 5,
+                "before": "",
+                "after": "srgb-linear"
+              },
+              {
+                "i": 7,
+                "before": "false",
+                "after": ""
+              },
+              {
+                "i": 29,
+                "before": "",
+                "after": "false"
+              },
+              {
+                "i": 31,
+                "before": "false",
+                "after": ""
+              },
+              {
+                "i": 32,
+                "before": "0",
+                "after": "false"
+              },
+              {
+                "i": 33,
+                "before": "",
+                "after": "false"
+              },
+              {
+                "i": 35,
+                "before": "0",
+                "after": ""
+              },
+              {
+                "i": 45,
+                "before": "1",
+                "after": "0"
+              },
+              {
+                "i": 46,
+                "before": "4",
+                "after": "0"
+              },
+              {
+                "i": 47,
+                "before": "0",
+                "after": "1"
+              },
+              {
+                "i": 52,
+                "before": "srgb",
+                "after": "0"
+              },
+              {
+                "i": 53,
+                "before": "onBeforeCompile() {\n  }",
+                "after": "8519680"
+              },
+              {
+                "i": 54,
+                "after": "srgb"
+              },
+              {
+                "i": 55,
+                "after": "onBeforeCompile() {\n  }"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define KERNEL_RADIUS 22"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define KERNEL_RADIUS 22",
+              "#define OPAQUE",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ]
+          ]
+        },
+        {
+          "ms": 20.799999999813735,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "14,15,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8519680,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "2,3,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8388608,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "2",
+                "after": "14"
+              },
+              {
+                "i": 1,
+                "before": "3",
+                "after": "15"
+              },
+              {
+                "i": 51,
+                "before": "8388608",
+                "after": "8519680"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME "
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define OPAQUE"
+            ]
+          ]
+        },
+        {
+          "ms": 11.199999999254942,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "14,16,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8519680,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "2,3,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8388608,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "2",
+                "after": "14"
+              },
+              {
+                "i": 1,
+                "before": "3",
+                "after": "16"
+              },
+              {
+                "i": 51,
+                "before": "8388608",
+                "after": "8519680"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME "
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define OPAQUE"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": 0,
+      "cold": {
+        "id": 0,
+        "name": "Level 0",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 3182.7000000001863,
+        "readyMs": 3182.7000000001863,
+        "loadMs": 3207.7999999998137,
+        "preparationMs": 478.29999999981374,
+        "generationMs": 49,
+        "sceneMs": 2655.4000000003725,
+        "frames": 320,
+        "cpuTotalMs": 1941.6999999983236,
+        "cpuMaxMs": 250.70000000018626,
+        "frameP95Ms": 15.900000000372529,
+        "metrics": {
+          "buildInfiniteChunk": {
+            "calls": 35680,
+            "cpuMs": 1258.2999999951571,
+            "maxMs": 57.09999999962747
+          },
+          "warmSceneTextures": {
+            "calls": 171,
+            "cpuMs": 16.90000000130385,
+            "maxMs": 6.099999999627471
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 639.9000000003725,
+            "chunks": 0,
+            "chunkTask": "0,-1",
+            "finiteTask": false,
+            "flashlight": true,
+            "moth": true,
+            "items": 6,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 7,
+              "textures": 3
+            }
+          },
+          {
+            "atMs": 2303.4000000003725,
+            "chunks": 1,
+            "chunkTask": "0,-1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 27,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 37,
+              "textures": 30
+            }
+          },
+          {
+            "atMs": 2326.5,
+            "chunks": 3,
+            "chunkTask": "1,0",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 27,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 48,
+              "textures": 30
+            }
+          },
+          {
+            "atMs": 2622.7999999998137,
+            "chunks": 5,
+            "chunkTask": "0,1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 27,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 58,
+              "textures": 30
+            }
+          },
+          {
+            "atMs": 2636.7000000001863,
+            "chunks": 6,
+            "chunkTask": "1,-1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 27,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 58,
+              "textures": 30
+            }
+          },
+          {
+            "atMs": 2923.7999999998137,
+            "chunks": 7,
+            "chunkTask": "1,-1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 27,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 58,
+              "textures": 30
+            }
+          },
+          {
+            "atMs": 3182.7000000001863,
+            "chunks": 9,
+            "chunkTask": "0,-2",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 27,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": true,
+            "memory": {
+              "geometries": 198,
+              "textures": 51
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 9,
+          "chunkTask": "0,-2",
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 27,
+          "npcs": 0,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 198,
+            "textures": 52
+          }
+        },
+        "firstReady": {
+          "structures": 997,
+          "lights": 951,
+          "npcs": 0,
+          "nearNpcs": 0,
+          "npcMeshes": 0,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 198,
+            "textures": 52
+          },
+          "programs": 68,
+          "drawCalls": 121,
+          "triangles": 130391,
+          "spawn": {
+            "x": 79.5,
+            "y": 79.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      },
+      "programAudit": [
+        {
+          "ms": 14.099999999627471,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "0,2,GGX_SAMPLES,256,CUBEUV_TEXEL_WIDTH,0.002976190476190476,CUBEUV_TEXEL_HEIGHT,0.015625,CUBEUV_MAX_MIP,4.0,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8388608,srgb,onBeforeCompile() {\n  }",
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME PMREMGGXConvolution",
+              "#define GGX_SAMPLES 256",
+              "#define CUBEUV_TEXEL_WIDTH 0.002976190476190476",
+              "#define CUBEUV_TEXEL_HEIGHT 0.015625",
+              "#define CUBEUV_MAX_MIP 4.0"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME PMREMGGXConvolution",
+              "#define GGX_SAMPLES 256",
+              "#define CUBEUV_TEXEL_WIDTH 0.002976190476190476",
+              "#define CUBEUV_TEXEL_HEIGHT 0.015625",
+              "#define CUBEUV_MAX_MIP 4.0"
+            ]
+          ]
+        },
+        {
+          "ms": 10.400000000372529,
+          "phase": "upload",
+          "precompiled": true,
+          "key": "physical,STANDARD,,highp,srgb-linear,306,64,uv,false,false,false,false,uv,false,uv,false,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,1,17,2,0,1,0,0,1,1,0,0,1,0,0,0,0,8388688,8520707,srgb,l0-bake-v7-true-false-true",
+          "closest": {
+            "key": "physical,STANDARD,,highp,srgb-linear,306,64,uv,false,false,false,false,uv,false,uv,false,uv,false,false,false,false,false,false,false,false,false,false,false,false,false,,,false,0,,1,17,2,0,1,0,0,1,1,0,0,1,0,0,0,0,8388688,8520707,srgb,l0-bake-v7-true-false-true",
+            "diff": []
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshStandardMaterial",
+              "#define SHADER_NAME l0-trim",
+              "#define STANDARD ",
+              "#define USE_FOG",
+              "#define USE_MAP",
+              "#define USE_ENVMAP",
+              "#define ENVMAP_MODE_REFLECTION",
+              "#define USE_NORMALMAP",
+              "#define USE_NORMALMAP_TANGENTSPACE",
+              "#define USE_EMISSIVEMAP",
+              "#define USE_ROUGHNESSMAP",
+              "#define MAP_UV uv",
+              "#define EMISSIVEMAP_UV uv",
+              "#define NORMALMAP_UV uv",
+              "#define ROUGHNESSMAP_UV uv",
+              "#define HAS_NORMAL",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define STANDARD",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE MeshStandardMaterial",
+              "#define SHADER_NAME l0-trim",
+              "#define STANDARD ",
+              "#define USE_FOG",
+              "#define USE_MAP",
+              "#define USE_ENVMAP",
+              "#define ENVMAP_TYPE_CUBE_UV",
+              "#define ENVMAP_MODE_REFLECTION",
+              "#define ENVMAP_BLENDING_NONE",
+              "#define CUBEUV_TEXEL_WIDTH 0.002976190476190476",
+              "#define CUBEUV_TEXEL_HEIGHT 0.015625",
+              "#define CUBEUV_MAX_MIP 4.0",
+              "#define USE_NORMALMAP",
+              "#define USE_NORMALMAP_TANGENTSPACE",
+              "#define USE_EMISSIVEMAP",
+              "#define USE_ROUGHNESSMAP",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define OPAQUE",
+              "#define STANDARD",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix",
+              "#define RE_Direct\t\t\t\tRE_Direct_Physical",
+              "#define RE_Direct_RectArea\t\tRE_Direct_RectArea_Physical",
+              "#define RE_IndirectDiffuse\t\tRE_IndirectDiffuse_Physical",
+              "#define RE_IndirectSpecular\t\tRE_IndirectSpecular_Physical"
+            ]
+          ]
+        },
+        {
+          "ms": 23.59999999962747,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "points,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,,true,0,,1,17,2,0,1,0,0,1,1,0,0,1,0,0,0,0,3072,8389635,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "basic,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,0,,false,0,,1,17,2,0,1,0,0,1,1,0,0,1,0,0,0,0,8388608,8389635,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "basic",
+                "after": "points"
+              },
+              {
+                "i": 28,
+                "before": "0",
+                "after": ""
+              },
+              {
+                "i": 30,
+                "before": "false",
+                "after": "true"
+              },
+              {
+                "i": 49,
+                "before": "8388608",
+                "after": "3072"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE PointsMaterial",
+              "#define SHADER_NAME ",
+              "#define USE_FOG",
+              "#define USE_COLOR",
+              "#define USE_COLOR_ALPHA",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define USE_SIZEATTENUATION",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE PointsMaterial",
+              "#define SHADER_NAME ",
+              "#define USE_FOG",
+              "#define USE_COLOR",
+              "#define USE_COLOR_ALPHA",
+              "#define USE_SHADOWMAP",
+              "#define SHADOWMAP_TYPE_PCF",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ]
+          ]
+        },
+        {
+          "ms": 10.599999999627471,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "5,6,KERNEL_RADIUS,22,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8519680,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "0,1,highp,srgb,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,4,0,0,0,0,0,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "0",
+                "after": "5"
+              },
+              {
+                "i": 1,
+                "before": "1",
+                "after": "6"
+              },
+              {
+                "i": 2,
+                "before": "highp",
+                "after": "KERNEL_RADIUS"
+              },
+              {
+                "i": 3,
+                "before": "srgb",
+                "after": "22"
+              },
+              {
+                "i": 4,
+                "before": "false",
+                "after": "highp"
+              },
+              {
+                "i": 5,
+                "before": "",
+                "after": "srgb-linear"
+              },
+              {
+                "i": 7,
+                "before": "false",
+                "after": ""
+              },
+              {
+                "i": 29,
+                "before": "",
+                "after": "false"
+              },
+              {
+                "i": 31,
+                "before": "false",
+                "after": ""
+              },
+              {
+                "i": 32,
+                "before": "0",
+                "after": "false"
+              },
+              {
+                "i": 33,
+                "before": "",
+                "after": "false"
+              },
+              {
+                "i": 35,
+                "before": "0",
+                "after": ""
+              },
+              {
+                "i": 45,
+                "before": "1",
+                "after": "0"
+              },
+              {
+                "i": 46,
+                "before": "4",
+                "after": "0"
+              },
+              {
+                "i": 47,
+                "before": "0",
+                "after": "1"
+              },
+              {
+                "i": 52,
+                "before": "srgb",
+                "after": "0"
+              },
+              {
+                "i": 53,
+                "before": "onBeforeCompile() {\n  }",
+                "after": "8519680"
+              },
+              {
+                "i": 54,
+                "after": "srgb"
+              },
+              {
+                "i": 55,
+                "after": "onBeforeCompile() {\n  }"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define KERNEL_RADIUS 22"
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define KERNEL_RADIUS 22",
+              "#define OPAQUE",
+              "#define PI 3.141592653589793",
+              "#define PI2 6.283185307179586",
+              "#define PI_HALF 1.5707963267948966",
+              "#define RECIPROCAL_PI 0.3183098861837907",
+              "#define RECIPROCAL_PI2 0.15915494309189535",
+              "#define EPSILON 1e-6",
+              "#define saturate( a ) clamp( a, 0.0, 1.0 )",
+              "#define whiteComplement( a ) ( 1.0 - saturate( a ) )",
+              "#define inverseTransformDirection transformDirectionByInverseViewMatrix"
+            ]
+          ]
+        },
+        {
+          "ms": 18.600000000558794,
+          "phase": "draw",
+          "precompiled": false,
+          "key": "10,11,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8519680,srgb,onBeforeCompile() {\n  }",
+          "closest": {
+            "key": "0,1,highp,srgb-linear,false,,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,,false,false,0,,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,8388608,srgb,onBeforeCompile() {\n  }",
+            "diff": [
+              {
+                "i": 0,
+                "before": "0",
+                "after": "10"
+              },
+              {
+                "i": 1,
+                "before": "1",
+                "after": "11"
+              },
+              {
+                "i": 51,
+                "before": "8388608",
+                "after": "8519680"
+              }
+            ]
+          },
+          "shaders": [
+            [
+              "#define attribute in",
+              "#define varying out",
+              "#define texture2D texture",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME "
+            ],
+            [
+              "#define varying in",
+              "#define gl_FragColor pc_fragColor",
+              "#define gl_FragDepthEXT gl_FragDepth",
+              "#define texture2D texture",
+              "#define textureCube texture",
+              "#define texture2DProj textureProj",
+              "#define texture2DLodEXT textureLod",
+              "#define texture2DProjLodEXT textureProjLod",
+              "#define textureCubeLodEXT textureLod",
+              "#define texture2DGradEXT textureGrad",
+              "#define texture2DProjGradEXT textureProjGrad",
+              "#define textureCubeGradEXT textureGrad",
+              "#define HIGH_PRECISION",
+              "#define SHADER_TYPE ShaderMaterial",
+              "#define SHADER_NAME ",
+              "#define OPAQUE"
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\level-entry\\entry-pipeline\\qa-1792043636662-54204",
+    "--remote-debugging-port=13616",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.40",
+    "revision": "@cfaadc5a132d78e1828635aa8405a499f3e14864",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.20"
+  },
+  "pids": {
+    "server": 44480,
+    "browser": 46592
+  },
+  "setup": {
+    "mode": "realistic",
+    "viewport": [
+      1920,
+      1080
+    ],
+    "dpr": 1,
+    "seed": 424242,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "settings": {
+      "texture": 1,
+      "lights": 16,
+      "shadows": true,
+      "lightShadows": 1,
+      "loadingBudget": 6,
+      "chunkBudget": 3,
+      "detail": 1,
+      "bloom": true,
+      "ao": 1
+    },
+    "hardwareConcurrency": 32
+  },
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [],
+  "networkErrors": [
+    {
+      "requestId": "56432.400",
+      "loaderId": "8B3AE17C8C6B3536CFD0D2833DB4E7EA",
+      "timestamp": 7888.938088,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:13615/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Thu, 15 Oct 2026 05:54:13 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 193,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 13615,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 7888.928302,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 1.871,
+          "sendEnd": 1.908,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 9.167,
+          "receiveHeadersEnd": 9.287
+        },
+        "responseTime": 1792043653565.315,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "7019EC9AD1085864827B47C908BFE666"
+    }
+  ]
+}

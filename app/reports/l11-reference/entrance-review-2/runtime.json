@@ -1,0 +1,947 @@
+{
+  "run": "qa-1791990882139-61648",
+  "port": 1855,
+  "cdp": 1856,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-reference\\entrance-review-2\\qa-1791990882139-61648",
+  "label": "entrance-review-2",
+  "baseline": false,
+  "low": false,
+  "mode": "realistic",
+  "quick": false,
+  "seed": 20261014,
+  "views": [
+    {
+      "id": "22-grand-entrance",
+      "world": [
+        277,
+        391,
+        0.1688892681787434
+      ],
+      "target": [
+        292,
+        367,
+        3.2
+      ],
+      "yaw": -0.5585993153435624,
+      "pitch": 0.0522847787712022,
+      "fov": 72,
+      "lighting": {
+        "exposure": 1.1821446769899282,
+        "meter": 0.4708359999999998,
+        "outdoor": 0.9999999999999996,
+        "fogNear": 300,
+        "fogFar": 1800,
+        "sun": 3.35,
+        "msaa": 4,
+        "buffer": [
+          1920,
+          1080
+        ]
+      },
+      "stats": {
+        "label": "11:open",
+        "median": 12.5,
+        "p95": 41.60000000000582,
+        "max": 212.5,
+        "p99": 116.69999999999709,
+        "frames": 1000,
+        "over16ms": 349,
+        "over33ms": 68,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 2450,
+        "triangles": 7057784,
+        "memory": {
+          "geometries": 1608,
+          "textures": 78
+        },
+        "programs": 115,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "performance": {
+        "label": "11:open",
+        "median": 38,
+        "p95": 1127.4000000000087,
+        "max": 2149.5,
+        "p99": 2149.5,
+        "frames": 100,
+        "over16ms": 90,
+        "over33ms": 50,
+        "cpuMedian": 29.200000002980232,
+        "cpuP95": 51.900000005960464,
+        "gpuMedian": 18.960384,
+        "gpuP95": 1058.689024,
+        "gpuSamples": 98,
+        "draws": 1331,
+        "triangles": 5234334,
+        "memory": {
+          "geometries": 1608,
+          "textures": 78
+        },
+        "programs": 115,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    }
+  ],
+  "command": [
+    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-reference\\entrance-review-2\\qa-1791990882139-61648",
+    "--remote-debugging-port=1856",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/154.0.8037.98",
+    "revision": "@b859317bf11f6be47f9b7799ec690a0a42a1fb33",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+    "jsVersion": "15.4.80.20"
+  },
+  "pids": {
+    "server": 73072,
+    "browser": 2572
+  },
+  "setup": {
+    "seed": 20261014,
+    "newGameSeed": 20259573,
+    "version": 8,
+    "buildings": 29,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "low": false,
+    "baseline": false,
+    "weather": "calm",
+    "time": 10,
+    "shadows": true
+  },
+  "cases": [
+    {
+      "id": "22-grand-entrance",
+      "x": 277,
+      "y": 391,
+      "z": 0,
+      "tx": 292,
+      "ty": 367,
+      "th": 3.2,
+      "fov": 72,
+      "reference": "11iconic.jpg"
+    }
+  ],
+  "validation": [],
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: Stair descent blocked l11v2:20261014:0:0:reference:east-stone flight 0: error 0.9350000000000591, height 0.33333333333333326\",\"lineNumber\":8,\"columnNumber\":17,\"scriptId\":\"376\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"check\",\"scriptId\":\"376\",\"url\":\"http://127.0.0.1:1855/verifier/l11-reference.ts\",\"lineNumber\":7,\"columnNumber\":16},{\"functionName\":\"validate\",\"scriptId\":\"376\",\"url\":\"http://127.0.0.1:1855/verifier/l11-reference.ts\",\"lineNumber\":162,\"columnNumber\":10}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: Stair descent blocked l11v2:20261014:0:0:reference:east-stone flight 0: error 0.9350000000000591, height 0.33333333333333326\\n    at check (http://127.0.0.1:1855/verifier/l11-reference.ts:8:17)\\n    at Object.validate (http://127.0.0.1:1855/verifier/l11-reference.ts:163:11)\",\"objectId\":\"5061692510003105886.2.1\"}}",
+  "errors": [],
+  "failureState": {
+    "pending": {
+      "missing": 9,
+      "chunk": true,
+      "distant": true,
+      "finite": false,
+      "flash": false,
+      "moth": false,
+      "items": 0,
+      "compile": false,
+      "retired": 11,
+      "textures": 0
+    },
+    "stats": {
+      "label": "11:open",
+      "median": 47.80000000000291,
+      "p95": 229.1999999999971,
+      "max": 2149.5,
+      "p99": 1127.4000000000087,
+      "frames": 482,
+      "over16ms": 472,
+      "over33ms": 403,
+      "cpuMedian": 29.200000002980232,
+      "cpuP95": 51.900000005960464,
+      "gpuMedian": 19.206144,
+      "gpuP95": 1058.689024,
+      "gpuSamples": 100,
+      "draws": 3137,
+      "triangles": 9503858,
+      "memory": {
+        "geometries": 1829,
+        "textures": 78
+      },
+      "programs": 116,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "chunk": "11,10",
+    "revision": 7,
+    "contextLost": false,
+    "programs": [
+      {
+        "id": 0,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 1,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 2,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 14,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 15,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 16,
+        "name": "OutputShader",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 17,
+        "name": "unspecified",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 18,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 19,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 20,
+        "name": "",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 21,
+        "name": "",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 22,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 23,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 24,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 25,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 26,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 27,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 28,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 29,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 30,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 50,
+        "name": "l11-asphalt:#cad0d0:false:realistic",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 32,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 33,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 34,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 49,
+        "name": "l11-concrete:#8d918b:false:realistic",
+        "used": 21,
+        "ready": true
+      },
+      {
+        "id": 36,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 37,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 38,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 39,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 40,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 41,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 42,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 43,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 55,
+        "name": "l11-generated-full-signs",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 54,
+        "name": "l11-metal:#7a8581:false:realistic",
+        "used": 4,
+        "ready": true
+      },
+      {
+        "id": 53,
+        "name": "l11-rubber:#202728:false:realistic",
+        "used": 5,
+        "ready": true
+      },
+      {
+        "id": 52,
+        "name": "l11-glass:#b7c9c4:false:realistic",
+        "used": 4,
+        "ready": true
+      },
+      {
+        "id": 51,
+        "name": "l11-paint:#eee9d6:false:realistic",
+        "used": 15,
+        "ready": true
+      },
+      {
+        "id": 56,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 57,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 58,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 59,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 60,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 61,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 62,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 63,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 64,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 65,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 66,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 67,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 68,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 69,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 70,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 71,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 72,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 73,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 74,
+        "name": "EquirectangularToCubeUV",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 75,
+        "name": "EquirectangularToCubeUV",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 76,
+        "name": "PMREMGGXConvolution",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 77,
+        "name": "retro avatar / body",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 78,
+        "name": "retro avatar / solid",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 79,
+        "name": "retro avatar / hair",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 80,
+        "name": "retro avatar / glass",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 81,
+        "name": "retro avatar / glass",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 82,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 83,
+        "name": "",
+        "used": 31,
+        "ready": true
+      },
+      {
+        "id": 84,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 85,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 86,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 87,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 88,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 89,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 90,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 91,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 92,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 93,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 94,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 95,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 96,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 97,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 98,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 99,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 100,
+        "name": "",
+        "used": 6,
+        "ready": true
+      },
+      {
+        "id": 101,
+        "name": "l11-concrete:#8d918b:false:realistic",
+        "used": 212,
+        "ready": true
+      },
+      {
+        "id": 102,
+        "name": "l11-asphalt:#cad0d0:false:realistic",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 103,
+        "name": "l11-paint:#eee9d6:false:realistic",
+        "used": 165,
+        "ready": true
+      },
+      {
+        "id": 104,
+        "name": "l11-clear-shop-glass",
+        "used": 5,
+        "ready": true
+      },
+      {
+        "id": 105,
+        "name": "l11-generated-full-signs",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 106,
+        "name": "l11-architectural-glass",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 107,
+        "name": "l11-cc0-leaves",
+        "used": 5,
+        "ready": true
+      },
+      {
+        "id": 108,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 109,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 110,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 111,
+        "name": "",
+        "used": 4,
+        "ready": true
+      },
+      {
+        "id": 112,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 113,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 114,
+        "name": "l11-car-paint",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 115,
+        "name": "l11-brick:#acadaa:false:realistic",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 116,
+        "name": "l11-complete-vertical-hotel",
+        "used": 4,
+        "ready": true
+      },
+      {
+        "id": 117,
+        "name": "l11-canal-water-realistic:true",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 118,
+        "name": "l11-canal-water-realistic:true",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 119,
+        "name": "l11-concrete::true:realistic",
+        "used": 36,
+        "ready": true
+      },
+      {
+        "id": 120,
+        "name": "l11-paint:#98a395:true:realistic",
+        "used": 51,
+        "ready": true
+      },
+      {
+        "id": 121,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 122,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 123,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 124,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 125,
+        "name": "",
+        "used": 10,
+        "ready": true
+      },
+      {
+        "id": 126,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 127,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 128,
+        "name": "l11-cc0-leaves",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 129,
+        "name": "",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 130,
+        "name": "",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 131,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 132,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 133,
+        "name": "",
+        "used": 1,
+        "ready": true
+      }
+    ]
+  },
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "networkErrors": [
+    {
+      "requestId": "64036.14",
+      "loaderId": "BFE9D6CEBE3757EF349C8B9FE48CDF08",
+      "timestamp": 128382.248723,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:1855/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Wed, 14 Oct 2026 15:15:03 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 190,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 1855,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 128380.567487,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.548,
+          "sendEnd": 0.64,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 1679.945,
+          "receiveHeadersEnd": 1680.168
+        },
+        "responseTime": 1791990903191.82,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "515974312747AE46B6F9F241EAB242D1"
+    }
+  ]
+}

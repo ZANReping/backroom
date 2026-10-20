@@ -1,0 +1,15 @@
+
+> my-app@0.0.0 check:hound-integration
+> esbuild scripts/check-hound-integration.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-hound-integration.mjs && node .cache/check-hound-integration.mjs
+
+
+  .cache\check-hound-integration.mjs  5.8mb
+
+Done in 517ms
+{
+  "integration": "passed",
+  "productionGameplay": "passed",
+  "meshes": 24,
+  "triangles": 10052,
+  "sharedTextures": 2
+}

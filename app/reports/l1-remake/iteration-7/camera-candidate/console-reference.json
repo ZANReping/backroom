@@ -1,0 +1,78 @@
+{
+  "errors": [],
+  "consoleMessages": [
+    {
+      "type": "warning",
+      "args": [
+        {
+          "type": "string",
+          "value": "THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead."
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1791515567968.943,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "warn",
+            "scriptId": "291",
+            "url": "http://127.0.0.1:3013/node_modules/.vite/deps/chunk-2BUXAFR3.js?v=f66ecc7d",
+            "lineNumber": 296,
+            "columnNumber": 14
+          },
+          {
+            "functionName": "WebGLShadowMap.render",
+            "scriptId": "291",
+            "url": "http://127.0.0.1:3013/node_modules/.vite/deps/chunk-2BUXAFR3.js?v=f66ecc7d",
+            "lineNumber": 37297,
+            "columnNumber": 6
+          },
+          {
+            "functionName": "WebGLRenderer.render",
+            "scriptId": "291",
+            "url": "http://127.0.0.1:3013/node_modules/.vite/deps/chunk-2BUXAFR3.js?v=f66ecc7d",
+            "lineNumber": 42096,
+            "columnNumber": 16
+          },
+          {
+            "functionName": "render",
+            "scriptId": "204",
+            "url": "http://127.0.0.1:3013/node_modules/.vite/deps/three_examples_jsm_postprocessing_RenderPass__js.js?v=f66ecc7d",
+            "lineNumber": 67,
+            "columnNumber": 13
+          },
+          {
+            "functionName": "render",
+            "scriptId": "242",
+            "url": "http://127.0.0.1:3013/src/game/renderer/photoPass.ts",
+            "lineNumber": 20,
+            "columnNumber": 10
+          },
+          {
+            "functionName": "render",
+            "scriptId": "205",
+            "url": "http://127.0.0.1:3013/node_modules/.vite/deps/three_examples_jsm_postprocessing_EffectComposer__js.js?v=f66ecc7d",
+            "lineNumber": 209,
+            "columnNumber": 11
+          },
+          {
+            "functionName": "render",
+            "scriptId": "160",
+            "url": "http://127.0.0.1:3013/src/game/renderer/renderer.ts",
+            "lineNumber": 1668,
+            "columnNumber": 20
+          },
+          {
+            "functionName": "frame",
+            "scriptId": "7",
+            "url": "http://127.0.0.1:3013/verifier/l0-remake.ts",
+            "lineNumber": 177,
+            "columnNumber": 4
+          }
+        ]
+      }
+    }
+  ],
+  "networkErrors": [],
+  "stderr": "\r\nDevTools listening on ws://127.0.0.1:9264/devtools/browser/ff884111-5cf0-414e-ac5d-54c40d1cafe5\r\nCreated TensorFlow Lite XNNPACK delegate for CPU.\r\n[13608:41820:1009/111304.445:ERROR:chrome\\updater\\ipc\\update_service_dialer_win.cc:75] Failed to open named pipe server process 44864: 拒绝访问。 (0x5)\r\n[13608:39568:1009/111304.591:ERROR:chrome\\updater\\ipc\\update_service_dialer_win.cc:75] Failed to open named pipe server process 23280: 拒绝访问。 (0x5)\r\n[13608:41820:1009/111304.730:ERROR:chrome\\updater\\ipc\\update_service_dialer_win.cc:75] Failed to open named pipe server process 45212: 拒绝访问。 (0x5)\r\n[13608:39568:1009/111304.880:ERROR:chrome\\updater\\ipc\\update_service_dialer_win.cc:75] Failed to open named pipe server process 35748: 拒绝访问。 (0x5)\r\n[13608:41820:1009/111305.020:ERROR:chrome\\updater\\ipc\\update_service_dialer_win.cc:75] Failed to open named pipe server process 13844: 拒绝访问。 (0x5)\r\n[13608:39568:1009/111305.176:ERROR:chrome\\updater\\ipc\\update_service_dialer_win.cc:75] Failed to open named pipe server process 42596: 拒绝访问。 (0x5)\r\n[13608:30352:1009/111418.837:ERROR:google_apis\\gcm\\engine\\registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT\r\n[13608:30352:1009/111442.544:ERROR:google_apis\\gcm\\engine\\registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT\r\n"
+}

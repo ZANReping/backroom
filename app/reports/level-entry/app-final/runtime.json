@@ -1,0 +1,661 @@
+{
+  "run": "qa-1792044984156-28628",
+  "label": "app-final",
+  "mode": "realistic",
+  "port": 7899,
+  "cdp": 7900,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\level-entry\\app-final\\qa-1792044984156-28628",
+  "levels": [
+    104
+  ],
+  "cases": [
+    {
+      "id": 104,
+      "cold": {
+        "id": 104,
+        "name": "Tom 的餐馆",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 2916.9000000003725,
+        "readyMs": 2916.9000000003725,
+        "loadMs": 2928,
+        "preparationMs": 0.19999999925494194,
+        "generationMs": 9.600000001490116,
+        "sceneMs": 2907.0999999996275,
+        "frames": 247,
+        "cpuTotalMs": 2315.7000000160187,
+        "cpuMaxMs": 653.3000000007451,
+        "frameP95Ms": 16.699999999254942,
+        "metrics": {
+          "buildLevel": {
+            "calls": 226168,
+            "cpuMs": 1226.0000000111759,
+            "maxMs": 650.7999999988824
+          },
+          "warmSceneTextures": {
+            "calls": 29,
+            "cpuMs": 5.099999999627471,
+            "maxMs": 3.400000000372529
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 107.59999999962747,
+            "chunks": 0,
+            "finiteTask": true,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 1,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 0,
+              "textures": 1
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 0,
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 0,
+          "npcs": 9,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 144,
+            "textures": 83
+          }
+        },
+        "firstReady": {
+          "structures": 132,
+          "lights": 46,
+          "npcs": 10,
+          "nearNpcs": 9,
+          "npcMeshes": 9,
+          "meshes": 249,
+          "instances": 4546,
+          "materials": 143,
+          "memory": {
+            "geometries": 144,
+            "textures": 83
+          },
+          "programs": 82,
+          "drawCalls": 672,
+          "triangles": 302173,
+          "spawn": {
+            "x": 40.5,
+            "y": 25.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\level-entry\\app-final\\qa-1792044984156-28628",
+    "--remote-debugging-port=7900",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.40",
+    "revision": "@cfaadc5a132d78e1828635aa8405a499f3e14864",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.20"
+  },
+  "pids": {
+    "server": 58660,
+    "browser": 4504
+  },
+  "setup": {
+    "mode": "realistic",
+    "viewport": [
+      1920,
+      1080
+    ],
+    "dpr": 1,
+    "seed": 424242,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "settings": {
+      "texture": 1,
+      "lights": 16,
+      "shadows": true,
+      "lightShadows": 1,
+      "loadingBudget": 6,
+      "chunkBudget": 3,
+      "detail": 1,
+      "bloom": true,
+      "ao": 1
+    },
+    "hardwareConcurrency": 32
+  },
+  "appLevels": {
+    "checks": [
+      "Level 0 accepts movement after entry",
+      "Level 1 accepts movement after entry",
+      "Level 2 accepts movement after entry",
+      "Level 3 accepts movement after entry",
+      "Level 4 accepts movement after entry",
+      "Level 5 accepts movement after entry",
+      "Level 6 accepts movement after entry",
+      "Level 7 accepts movement after entry",
+      "Level 8 accepts movement after entry",
+      "Level 9 accepts movement after entry",
+      "Level 10 accepts movement after entry",
+      "Level 11 accepts movement after entry",
+      "Level 12 accepts movement after entry",
+      "Level 101 accepts movement after entry",
+      "Level 102 accepts movement after entry",
+      "Level 103 accepts movement after entry",
+      "Level 104 accepts movement after entry",
+      "Level 105 accepts movement after entry",
+      "Level 106 accepts movement after entry",
+      "Level 107 accepts movement after entry",
+      "Level 108 accepts movement after entry",
+      "Level 109 accepts movement after entry",
+      "Level 110 accepts movement after entry",
+      "Level 111 accepts movement after entry",
+      "Level 112 accepts movement after entry",
+      "Level 113 accepts movement after entry",
+      "Level 114 accepts movement after entry",
+      "Level 116 accepts movement after entry",
+      "Level 274 accepts movement after entry"
+    ],
+    "entries": [
+      {
+        "id": 0,
+        "sceneReadyMs": 5027.4000000003725,
+        "playableMs": 8268.60000000149,
+        "mapSeed": 424242,
+        "memory": {
+          "geometries": 133,
+          "textures": 81
+        },
+        "programs": 51,
+        "moved": 1.813333333333503
+      },
+      {
+        "id": 1,
+        "sceneReadyMs": 11388.200000001118,
+        "playableMs": 16676.300000000745,
+        "mapSeed": 424373,
+        "memory": {
+          "geometries": 261,
+          "textures": 110
+        },
+        "programs": 63,
+        "moved": 0.9973333333336996
+      },
+      {
+        "id": 2,
+        "sceneReadyMs": 9435.900000000373,
+        "playableMs": 13282.400000000373,
+        "mapSeed": 424544.656,
+        "memory": {
+          "geometries": 728,
+          "textures": 188
+        },
+        "programs": 87,
+        "moved": 1.7566666666668311
+      },
+      {
+        "id": 3,
+        "sceneReadyMs": 5150.700000001118,
+        "playableMs": 8730.700000001118,
+        "mapSeed": 424692.5715,
+        "memory": {
+          "geometries": 484,
+          "textures": 101
+        },
+        "programs": 97,
+        "moved": 1.7566666666668311
+      },
+      {
+        "id": 4,
+        "sceneReadyMs": 4573.700000001118,
+        "playableMs": 8350.700000001118,
+        "mapSeed": 424840.3981,
+        "memory": {
+          "geometries": 1161,
+          "textures": 160
+        },
+        "programs": 112,
+        "moved": 1.870000000000175
+      },
+      {
+        "id": 5,
+        "sceneReadyMs": 10211.099999999627,
+        "playableMs": 14658.5,
+        "mapSeed": 424989.3643,
+        "memory": {
+          "geometries": 1162,
+          "textures": 196
+        },
+        "programs": 151,
+        "moved": 1.870000000000175
+      },
+      {
+        "id": 6,
+        "sceneReadyMs": 3819.199999999255,
+        "playableMs": 7776.199999999255,
+        "mapSeed": 425138.0652,
+        "memory": {
+          "geometries": 937,
+          "textures": 179
+        },
+        "programs": 147,
+        "moved": 1.7850000000001671
+      },
+      {
+        "id": 7,
+        "sceneReadyMs": 5317.799999998882,
+        "playableMs": 9550.199999999255,
+        "mapSeed": 425281.5462,
+        "memory": {
+          "geometries": 408,
+          "textures": 175
+        },
+        "programs": 158,
+        "moved": 0.9505833333336824
+      },
+      {
+        "id": 8,
+        "sceneReadyMs": 5177.300000000745,
+        "playableMs": 10113.5,
+        "mapSeed": 425429.3161,
+        "memory": {
+          "geometries": 252,
+          "textures": 107
+        },
+        "programs": 162,
+        "moved": 1.5583333333334792
+      },
+      {
+        "id": 9,
+        "sceneReadyMs": 6032.800000000745,
+        "playableMs": 10290.099999999627,
+        "mapSeed": 425575.3941,
+        "memory": {
+          "geometries": 1537,
+          "textures": 264
+        },
+        "programs": 194,
+        "moved": 1.4492500000002764
+      },
+      {
+        "id": 10,
+        "sceneReadyMs": 5071,
+        "playableMs": 9616.699999999255,
+        "mapSeed": 425723.8927,
+        "memory": {
+          "geometries": 242,
+          "textures": 209
+        },
+        "programs": 208,
+        "moved": 1.7566666666668311
+      },
+      {
+        "id": 11,
+        "sceneReadyMs": 8161.5,
+        "playableMs": 12891.400000000373,
+        "mapSeed": 425683,
+        "memory": {
+          "geometries": 415,
+          "textures": 141
+        },
+        "programs": 239,
+        "moved": 1.813333333333503
+      },
+      {
+        "id": 12,
+        "sceneReadyMs": 5521.4000000003725,
+        "playableMs": 9962,
+        "mapSeed": 426018.7066,
+        "memory": {
+          "geometries": 709,
+          "textures": 130
+        },
+        "programs": 251,
+        "moved": 1.7283333333333388
+      },
+      {
+        "id": 101,
+        "sceneReadyMs": 7462.700000001118,
+        "playableMs": 8193.400000000373,
+        "mapSeed": 437693.6309,
+        "memory": {
+          "geometries": 226,
+          "textures": 381
+        },
+        "programs": 284,
+        "moved": 1.756666666666721
+      },
+      {
+        "id": 102,
+        "sceneReadyMs": 3584.699999999255,
+        "playableMs": 4310.9000000003725,
+        "mapSeed": 437841.3728,
+        "memory": {
+          "geometries": 437,
+          "textures": 164
+        },
+        "programs": 259,
+        "moved": 1.7283333333333868
+      },
+      {
+        "id": 103,
+        "sceneReadyMs": 3750.10000000149,
+        "playableMs": 4631.4000000003725,
+        "mapSeed": 437987.1022,
+        "memory": {
+          "geometries": 331,
+          "textures": 171
+        },
+        "programs": 267,
+        "moved": 1.756666666666721
+      },
+      {
+        "id": 104,
+        "sceneReadyMs": 3019.4000000003725,
+        "playableMs": 3805,
+        "mapSeed": 438134.436,
+        "memory": {
+          "geometries": 275,
+          "textures": 177
+        },
+        "programs": 265,
+        "moved": 1.7283333333332784
+      },
+      {
+        "id": 105,
+        "sceneReadyMs": 3389.2999999988824,
+        "playableMs": 4234.9000000003725,
+        "mapSeed": 438281.79850000003,
+        "memory": {
+          "geometries": 726,
+          "textures": 172
+        },
+        "programs": 263,
+        "moved": 1.6999999999999993
+      },
+      {
+        "id": 106,
+        "sceneReadyMs": 2955.300000000745,
+        "playableMs": 3841.9000000003725,
+        "mapSeed": 438428.75430000003,
+        "memory": {
+          "geometries": 762,
+          "textures": 178
+        },
+        "programs": 263,
+        "moved": 1.7283333333333326
+      },
+      {
+        "id": 107,
+        "sceneReadyMs": 2660.199999999255,
+        "playableMs": 3408.5999999996275,
+        "mapSeed": 438575.6779,
+        "memory": {
+          "geometries": 745,
+          "textures": 180
+        },
+        "programs": 261,
+        "moved": 1.6999999999999993
+      },
+      {
+        "id": 108,
+        "sceneReadyMs": 2491.4000000003725,
+        "playableMs": 3337,
+        "mapSeed": 438721.5823,
+        "memory": {
+          "geometries": 339,
+          "textures": 176
+        },
+        "programs": 261,
+        "moved": 1.6999999999999993
+      },
+      {
+        "id": 109,
+        "sceneReadyMs": 2811.5,
+        "playableMs": 3622.699999999255,
+        "mapSeed": 438868.3911,
+        "memory": {
+          "geometries": 683,
+          "textures": 193
+        },
+        "programs": 262,
+        "moved": 1.7283333333333326
+      },
+      {
+        "id": 110,
+        "sceneReadyMs": 2547.699999999255,
+        "playableMs": 3399.199999999255,
+        "mapSeed": 439014.8198,
+        "memory": {
+          "geometries": 296,
+          "textures": 189
+        },
+        "programs": 261,
+        "moved": 1.6999999999999993
+      },
+      {
+        "id": 111,
+        "sceneReadyMs": 2585.2000000011176,
+        "playableMs": 3395,
+        "mapSeed": 439161.86100000003,
+        "memory": {
+          "geometries": 262,
+          "textures": 196
+        },
+        "programs": 262,
+        "moved": 1.6999999999999993
+      },
+      {
+        "id": 112,
+        "sceneReadyMs": 2613.4000000003725,
+        "playableMs": 3405.199999999255,
+        "mapSeed": 439308.5823,
+        "memory": {
+          "geometries": 288,
+          "textures": 204
+        },
+        "programs": 261,
+        "moved": 1.7283333333333326
+      },
+      {
+        "id": 113,
+        "sceneReadyMs": 3085.2999999988824,
+        "playableMs": 4012.5,
+        "mapSeed": 439455.44920000003,
+        "memory": {
+          "geometries": 261,
+          "textures": 211
+        },
+        "programs": 262,
+        "moved": 1.6999999999999993
+      },
+      {
+        "id": 114,
+        "sceneReadyMs": 2590.699999999255,
+        "playableMs": 3413.199999999255,
+        "mapSeed": 439602.7256,
+        "memory": {
+          "geometries": 257,
+          "textures": 211
+        },
+        "programs": 262,
+        "moved": 1.7283333333333326
+      },
+      {
+        "id": 116,
+        "sceneReadyMs": 3033.300000000745,
+        "playableMs": 3807.0999999996275,
+        "mapSeed": 439880.9131,
+        "memory": {
+          "geometries": 327,
+          "textures": 234
+        },
+        "programs": 270,
+        "moved": 1.7000000000000526
+      },
+      {
+        "id": 274,
+        "sceneReadyMs": 2570.7000000011176,
+        "playableMs": 3337.300000000745,
+        "mapSeed": 460594.10870000004,
+        "memory": {
+          "geometries": 473,
+          "textures": 217
+        },
+        "programs": 263,
+        "moved": 1.7283333333333326
+      }
+    ]
+  },
+  "ok": false,
+  "failure": "Error: 1 browser errors",
+  "failureState": {
+    "level": 274,
+    "paused": false,
+    "transition": null,
+    "ready": true,
+    "pending": false,
+    "root": false,
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\nThe Followers Of Jerry 声望 0\nLEVEL 274\n杰瑞的房间\nB274\n磁带\n0/6\n入口\n100%\nLevel 274 · 杰瑞的房间「杰瑞的房间」\nSurvival Difficulty: Class 宜居 · 安全 · 鹉主在上\n入口：信众引路（杰瑞的信众声望 ≥10）\n出口线索：某处有一扇没上锁的门——推开试试。\n1\n2\n3\n4\n5\n6\n7\nE 进入 返回\n左键\n攻击\n空格\n跳跃\nC\n蹲伏\nF\n手电\n右键\n使用\nQ\n丢弃\nV\n检视\n➤\n你感觉到明显的气流（1m）\n开发者模式\n🛠 开发者模式 · DEV\n▾\n召唤\n状态\n传送\n世界\n信息\n实体\n物品\n装饰物\n召唤实体（前方 3 格 · 共 38 种 · 按层分页，末页全部层）\n‹\nLevel 601 · 终末（2 种）\n›\n● 派对客 =)\n● 窗户\n⚠ 每种一只（环绕召唤）"
+  },
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [
+    {
+      "timestamp": 1792045168031.445,
+      "exceptionDetails": {
+        "exceptionId": 1,
+        "text": "Uncaught",
+        "lineNumber": 106,
+        "columnNumber": 33,
+        "scriptId": "653",
+        "url": "http://127.0.0.1:7899/src/game/content/l11MapModel.ts",
+        "stackTrace": {
+          "callFrames": [
+            {
+              "functionName": "fitL11Map",
+              "scriptId": "653",
+              "url": "http://127.0.0.1:7899/src/game/content/l11MapModel.ts",
+              "lineNumber": 106,
+              "columnNumber": 33
+            },
+            {
+              "functionName": "draw",
+              "scriptId": "567",
+              "url": "http://127.0.0.1:7899/src/components/L11MapPanel.tsx",
+              "lineNumber": 126,
+              "columnNumber": 52
+            }
+          ]
+        },
+        "exception": {
+          "type": "object",
+          "subtype": "error",
+          "className": "TypeError",
+          "description": "TypeError: Cannot read properties of undefined (reading 'ox')\n    at fitL11Map (http://127.0.0.1:7899/src/game/content/l11MapModel.ts:107:34)\n    at draw (http://127.0.0.1:7899/src/components/L11MapPanel.tsx:127:53)",
+          "objectId": "-3691209698614743046.4.1",
+          "preview": {
+            "type": "object",
+            "subtype": "error",
+            "description": "TypeError: Cannot read properties of undefined (reading 'ox')\n    at fitL11Map (http://127.0.0.1:7899/src/game/content/l11MapModel.ts:107:34)\n    at draw (http://127.0.0.1:7899/src/components/L11MapPanel.tsx:127:53)",
+            "overflow": false,
+            "properties": [
+              {
+                "name": "stack",
+                "type": "string",
+                "value": "TypeError: Cannot read properties of undefined (re…0.0.1:7899/src/components/L11MapPanel.tsx:127:53)"
+              },
+              {
+                "name": "message",
+                "type": "string",
+                "value": "Cannot read properties of undefined (reading 'ox')"
+              }
+            ]
+          }
+        },
+        "executionContextId": 4
+      }
+    }
+  ],
+  "networkErrors": [
+    {
+      "requestId": "54080.400",
+      "loaderId": "090F8A169F1F49FBAE1B78AB29C1DF81",
+      "timestamp": 9237.464759,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:7899/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Thu, 15 Oct 2026 06:16:42 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 200,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 7899,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 9237.454296,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.525,
+          "sendEnd": 0.568,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 9.813,
+          "receiveHeadersEnd": 9.948
+        },
+        "responseTime": 1792045002091.955,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "503CE254928D3B7E5C571E3A06EF3C80"
+    }
+  ]
+}

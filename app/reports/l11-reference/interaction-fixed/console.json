@@ -1,0 +1,57 @@
+[
+  {
+    "timestamp": 1791983661987.992,
+    "exceptionDetails": {
+      "exceptionId": 1,
+      "text": "Uncaught",
+      "lineNumber": 42011,
+      "columnNumber": 24,
+      "scriptId": "154",
+      "url": "http://127.0.0.1:6509/reports/l11-reference/interaction-fixed/qa-1791983641693-56484/vite-cache/deps/chunk-BWT6IPVN.js?v=8f24e5a6",
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "",
+            "scriptId": "154",
+            "url": "http://127.0.0.1:6509/reports/l11-reference/interaction-fixed/qa-1791983641693-56484/vite-cache/deps/chunk-BWT6IPVN.js?v=8f24e5a6",
+            "lineNumber": 42011,
+            "columnNumber": 24
+          },
+          {
+            "functionName": "checkMaterialsReady",
+            "scriptId": "154",
+            "url": "http://127.0.0.1:6509/reports/l11-reference/interaction-fixed/qa-1791983641693-56484/vite-cache/deps/chunk-BWT6IPVN.js?v=8f24e5a6",
+            "lineNumber": 42008,
+            "columnNumber": 21
+          }
+        ]
+      },
+      "exception": {
+        "type": "object",
+        "subtype": "error",
+        "className": "TypeError",
+        "description": "TypeError: Cannot read properties of undefined (reading 'isReady')\n    at http://127.0.0.1:6509/reports/l11-reference/interaction-fixed/qa-1791983641693-56484/vite-cache/deps/chunk-BWT6IPVN.js?v=8f24e5a6:42012:25\n    at Set.forEach (<anonymous>)\n    at checkMaterialsReady (http://127.0.0.1:6509/reports/l11-reference/interaction-fixed/qa-1791983641693-56484/vite-cache/deps/chunk-BWT6IPVN.js?v=8f24e5a6:42009:22)",
+        "objectId": "3025369122909628968.2.1",
+        "preview": {
+          "type": "object",
+          "subtype": "error",
+          "description": "TypeError: Cannot read properties of undefined (reading 'isReady')\n    at http://127.0.0.1:6509/reports/l11-reference/interaction-fixed/qa-1791983641693-56484/vite-cache/deps/chunk-BWT6IPVN.js?v=8f24e5a6:42012:25\n    at Set.forEach (<anonymous>)\n    at checkMaterialsReady (http://127.0.0.1:6509/reports/l11-reference/interaction-fixed/qa-1791983641693-56484/vite-cache/deps/chunk-BWT6IPVN.js?v=8f24e5a6:42009:22)",
+          "overflow": false,
+          "properties": [
+            {
+              "name": "stack",
+              "type": "string",
+              "value": "TypeError: Cannot read properties of undefined (re…cache/deps/chunk-BWT6IPVN.js?v=8f24e5a6:42009:22)"
+            },
+            {
+              "name": "message",
+              "type": "string",
+              "value": "Cannot read properties of undefined (reading 'isReady')"
+            }
+          ]
+        }
+      },
+      "executionContextId": 2
+    }
+  }
+]

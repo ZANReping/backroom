@@ -1,0 +1,586 @@
+{
+  "schemaVersion": 2,
+  "capturedAtUtc": "2026-10-18T11:52:03.6989752Z",
+  "notes": [
+    "zipEntries preserves hashes of the original archive entries, including empty directory entries.",
+    "initialImports records the first byte-for-byte copy before integration fixes; targetSha256 in that section is historical.",
+    "integratedFiles records current merged bytes. A null source or baseline hash means that snapshot is not available; it does not mean the file was absent.",
+    "The supplied archive has no standalone code license declaration.",
+    "Current files are a selective integration and do not constitute a full archive overwrite."
+  ],
+  "sourceZip": {
+    "path": "jerry-remake.zip",
+    "sha256": "6d14974dd652e337a8be7d880adb90a8776eb8a271930d7c0df931816741dbe8"
+  },
+  "zipEntries": [
+    {
+      "path": "jerry-remake.patch",
+      "size": 225845,
+      "sha256": "38317e92bf46985ac67b2a0dbc9dd30c75111828dbcc5944d6434204af0d65d1"
+    },
+    {
+      "path": "screenshots/side.png",
+      "size": 94346,
+      "sha256": "64942849dbd2c3fd82408c1e6b0daf6261585105eb19c16acbd0cefce2256aec"
+    },
+    {
+      "path": "screenshots/shoulder.png",
+      "size": 139129,
+      "sha256": "4388f1f3dc5da0aba89fdc9efcd5a72a97fba37b4bffad28c3f937ee08addf94"
+    },
+    {
+      "path": "screenshots/poses.png",
+      "size": 315143,
+      "sha256": "46bbf22aab5ae57db1ac2de1305f1d544d5f7e11d833ae01c0e1ecbada052266"
+    },
+    {
+      "path": "screenshots/poses-real.png",
+      "size": 333317,
+      "sha256": "d253961f76cb559753ae4e5d792b669e340d94974021df572ff2b082063e2924"
+    },
+    {
+      "path": "screenshots/perch.png",
+      "size": 71160,
+      "sha256": "1feb481187fdcaa03e331c0df3ea1cb7bfffa248702069830fd05d1f1d959e18"
+    },
+    {
+      "path": "screenshots/game-realistic-shoulder.png",
+      "size": 1333184,
+      "sha256": "04ae36e1bfac7a963e38dccbab46a891201f59579a9f6434d4ae9458a9fe5912"
+    },
+    {
+      "path": "screenshots/game-realistic-shoulder-side.png",
+      "size": 1442678,
+      "sha256": "58d1df99645e5c7be9def5436d6b22b4e5b0a1d0fb0a8ffba28779ee236431f9"
+    },
+    {
+      "path": "screenshots/game-realistic-pounce.png",
+      "size": 1280690,
+      "sha256": "f001c75cd205faa8eef5949e0eeeb10357e4ca96e64ee186f426a92311948df0"
+    },
+    {
+      "path": "screenshots/game-realistic-perch.png",
+      "size": 1212336,
+      "sha256": "d1e9e622cbaf83ce608c9f3b6fc8ddf42e7b3997fefc1dc0baea3274ea7c2520"
+    },
+    {
+      "path": "screenshots/game-realistic-perch-close.png",
+      "size": 1284528,
+      "sha256": "c6a42a9b60e6643da1e2e97c6c8a9916808fb5bf87b6f5540198bd755faec003"
+    },
+    {
+      "path": "screenshots/game-classic-stupor.png",
+      "size": 704841,
+      "sha256": "2778ff0960fd57c68a52d3536e7793ecc0db9e8a1ea59265f2e841e38cfab463"
+    },
+    {
+      "path": "screenshots/game-classic-stupor-devotion.png",
+      "size": 1585720,
+      "sha256": "1dd09464177a2ef5e016c6b53a351f92f26469000506f6dab3ed55d51593bec6"
+    },
+    {
+      "path": "screenshots/game-classic-shoulder.png",
+      "size": 1227080,
+      "sha256": "eb8cbc731846a969e89a0d5760e4e11a3621f55b40ca7772e30c7caa9309d12c"
+    },
+    {
+      "path": "screenshots/game-classic-shoulder-side.png",
+      "size": 1382609,
+      "sha256": "d1df6b2bdc7a385a55ca9ccf9f30ab94a42891a09185cb5033b844793379adf7"
+    },
+    {
+      "path": "screenshots/game-classic-shoulder-back.png",
+      "size": 1220613,
+      "sha256": "3d5e22959f1fe98a826c3f8416913796c627df6ab837f6b2686e60d76edb2bd0"
+    },
+    {
+      "path": "screenshots/game-classic-pounce.png",
+      "size": 1215470,
+      "sha256": "98772a29faef7406e5fed19349f5b4494c3420ae481e6e00dff758a8543fc1ff"
+    },
+    {
+      "path": "screenshots/game-classic-perch.png",
+      "size": 1173593,
+      "sha256": "a1ff2cf91d0c4aecda4c90dadb423a60706845a969202db892138dcd330def9b"
+    },
+    {
+      "path": "screenshots/game-classic-perch-close.png",
+      "size": 1201044,
+      "sha256": "ff9ed251748fb7352cc0408c8abf223e68dc3fdd9592f4449f88122020f41a9f"
+    },
+    {
+      "path": "screenshots/game-aim-prompt.png",
+      "size": 1156148,
+      "sha256": "cc3e4b0dce00d0e735b81ac81d5d163c00628ae802fcf3f8eda6ccc8385832cb"
+    },
+    {
+      "path": "screenshots/game-aim-contact.png",
+      "size": 735313,
+      "sha256": "c411751d3c7343a81669c7eda8922bd321eb91aec5eea506080726612c88fb38"
+    },
+    {
+      "path": "screenshots/front.png",
+      "size": 92497,
+      "sha256": "7049c441847bb6fc19798b40711138a53105dde3f5f5a36cace9891336c0051a"
+    },
+    {
+      "path": "screenshots/front-real.png",
+      "size": 90843,
+      "sha256": "684616e7a145c6d60e9299e0646a7af2eaa240ffe172382a3268d4c2ec5e7259"
+    },
+    {
+      "path": "screenshots/close.png",
+      "size": 246670,
+      "sha256": "6d1c789e727f5821db276455163349918ebe5c5d5cc34c730829bfc2418cfd00"
+    },
+    {
+      "path": "screenshots/back.png",
+      "size": 112473,
+      "sha256": "275b58c542de1d93bb82cf42dc9bf4437cf1dad8d8bff5e3640152ffc8e7f9f3"
+    },
+    {
+      "path": "files/app/src/proto/jerryProto.ts",
+      "size": 8185,
+      "sha256": "5e75b8b9bac2d52a2cca8f42fc3178984028df8c80755ac00a4b36fe7cbfdf81"
+    },
+    {
+      "path": "files/app/src/game/world/mapgenOutpost.ts",
+      "size": 163334,
+      "sha256": "555f7cc40e972af63c5e2a2d10d3660d30aaae36cbbf316e6aa3fc5ea5200804"
+    },
+    {
+      "path": "files/app/src/game/world/mapgen.ts",
+      "size": 162545,
+      "sha256": "91f9f81356db4eacf2483226671545dc92bdb3c026e0cf9ca9a698f875a0f6fe"
+    },
+    {
+      "path": "files/app/src/game/renderer/structures.ts",
+      "size": 408616,
+      "sha256": "86ac95ee62d0b128d1c091c3da261aad91b167b972b53101e1e7f93838525fdb"
+    },
+    {
+      "path": "files/app/src/game/renderer/renderer.ts",
+      "size": 292474,
+      "sha256": "733d70b7b3382c2a1993cc06592fa7bd2928b1b27dcfbcb2b59eb2f4f918f87e"
+    },
+    {
+      "path": "files/app/src/game/renderer/qaCpuSkin.ts",
+      "size": 3646,
+      "sha256": "5c23b492a2b2edfebeac30aa8719e138a5cd48495f2f3360759d641e6b1fb0c8"
+    },
+    {
+      "path": "files/app/src/game/renderer/npcGearPlan.ts",
+      "size": 7332,
+      "sha256": "ca94b5c5feb9d40fbafc0a8979e7fe59e6161d1bca32c171194b0384992f04f0"
+    },
+    {
+      "path": "files/app/src/game/renderer/jerryMesh.ts",
+      "size": 31525,
+      "sha256": "70834f0ba368070945a18d334244e1fb9ff8b4f029a06aeec7b0df718bd49a8b"
+    },
+    {
+      "path": "files/app/src/game/renderer/itemsMesh.ts",
+      "size": 9167,
+      "sha256": "ebbbbdd75d455d8ede296182336ad6d20dd9f5adbaa03d06cfac4d0ec0797090"
+    },
+    {
+      "path": "files/app/src/game/renderer/entitiesMesh.ts",
+      "size": 90587,
+      "sha256": "32364ee4697da2e79784d982d37a8875a3aa0218900c94dcdce65a18d9731681"
+    },
+    {
+      "path": "files/app/src/game/levels/l2.ts",
+      "size": 4407,
+      "sha256": "0abd2c2a2225d269ff00d1b60ab89adfedf6b9740bb713568ebf14c34248abee"
+    },
+    {
+      "path": "files/app/src/game/levels/l1.ts",
+      "size": 4481,
+      "sha256": "6c8bd6c404c9740368a372e96c60af12e73a9b6f61471eb7d280d04eb26ba37e"
+    },
+    {
+      "path": "files/app/src/game/entities/types.ts",
+      "size": 10822,
+      "sha256": "172f42fa3e3e9230e0054ff987712c788fcd49b9bf7a7a03ecb85d6917a31057"
+    },
+    {
+      "path": "files/app/src/game/entities/critters.ts",
+      "size": 21975,
+      "sha256": "a3b7d24395f2d6d5900d7ea3df9202f3c73829f743103f9cda2a1456ff529df0"
+    },
+    {
+      "path": "files/app/src/game/engine/npc.ts",
+      "size": 34890,
+      "sha256": "80206ed3fbce8d70aa22d2be4336d013f6222b246dc21e9f47af17aea27aaf49"
+    },
+    {
+      "path": "files/app/src/game/engine/level.ts",
+      "size": 44360,
+      "sha256": "590db56d2c17b8a9a860de6432a6649130fc47a7900acf8d05e778d54480b84c"
+    },
+    {
+      "path": "files/app/src/game/engine/jerryAI.ts",
+      "size": 51311,
+      "sha256": "d605bac7ee990be9436c6e201ea21dfdc0d2443a65cbb744ac67b9405f0c399f"
+    },
+    {
+      "path": "files/app/src/game/engine/inventory.ts",
+      "size": 25122,
+      "sha256": "738a45bafd83c4c13b291305c4de78a57e342ca128eed71821ed1f2cdf1a5e3d"
+    },
+    {
+      "path": "files/app/src/game/engine/interact.ts",
+      "size": 83957,
+      "sha256": "67123944c9b1810ce11e14edce431e8fec4a1910c6232953ed6b7e213fcc68f8"
+    },
+    {
+      "path": "files/app/src/game/engine/entityAI.ts",
+      "size": 54689,
+      "sha256": "47992422e79ddac30a764f5a8eae386a54ccfebd2785d97b5789f6213f5b5480"
+    },
+    {
+      "path": "files/app/src/game/engine/effects.ts",
+      "size": 10396,
+      "sha256": "2ace5a0b6985b12143888dccfbc531995e5a889c4b12867f19a7204010875e1a"
+    },
+    {
+      "path": "files/app/src/game/engine/combat.ts",
+      "size": 36744,
+      "sha256": "2914add92a9b1da3d90b899c2e88bbef8b59123a26d17b5498b85cce10c976b3"
+    },
+    {
+      "path": "files/app/src/game/engine/career.ts",
+      "size": 14043,
+      "sha256": "9435092b4ce160f78df422550eb788ee2c0437a37e35345318fdfa29201a9c1d"
+    },
+    {
+      "path": "files/app/src/game/engine.ts",
+      "size": 64179,
+      "sha256": "e0bd890c50a5a3d2cb7214dcb8e3e160abe157ccf7695c7728c46d68c90b4fc2"
+    },
+    {
+      "path": "files/app/src/game/content/npcs.ts",
+      "size": 156674,
+      "sha256": "13e8f370f4c2e4b4ee03c6dfdd30d3a400e64c12edabe861ea3702e14144b26f"
+    },
+    {
+      "path": "files/app/src/game/content/items.ts",
+      "size": 27833,
+      "sha256": "316a19af2515057fe5a48b624c0ed3cfa76af681e031f643e041486c1e70067b"
+    },
+    {
+      "path": "files/app/src/game/content/codexScores.ts",
+      "size": 15444,
+      "sha256": "5bf51422b8de00228e2ab91dd1d720b47e1dbe5110dc67edd5dbe1ec8bf17a1d"
+    },
+    {
+      "path": "files/app/src/components/HUD.tsx",
+      "size": 103252,
+      "sha256": "d3d1260766b52446590c0e23b2ca78017f6b72d4e665aca70c23614cad30819f"
+    },
+    {
+      "path": "files/app/scripts/verify-jerry.mjs",
+      "size": 4382,
+      "sha256": "3960aaa7c56d3fe22a27f0076cb7f6b021ab7caae2ec36ae344e37adbef5412f"
+    },
+    {
+      "path": "files/app/scripts/verify-jerry-game.mjs",
+      "size": 18834,
+      "sha256": "c1987d16be465f0405867d077cf635c059844600bf1dca5d5d7f6a502fb7d8d6"
+    },
+    {
+      "path": "files/app/scripts/check-jerry.ts",
+      "size": 30299,
+      "sha256": "c990a476201b873db57a09a0cedab75439dc888997fb9a3ff336d6a83723011f"
+    },
+    {
+      "path": "files/app/proto-jerry.html",
+      "size": 611,
+      "sha256": "4b4dbd48539cb8997ca55e2e97d4bb7e30bfd2f6d1a6a5bd32e0ac322434241b"
+    },
+    {
+      "path": "files/app/package.json",
+      "size": 25824,
+      "sha256": "d741425d132ec95a435cfa725e77b07a447121cf8aa7f102e0e88e32f86c9aab"
+    },
+    {
+      "path": "files/app/JERRY-REMAKE.md",
+      "size": 4618,
+      "sha256": "196989bfa8651f4fb7ec0461f493641064e0ddecf92a6329320ee763b938856d"
+    }
+  ],
+  "initialImports": [
+    {
+      "path": "src/game/engine/jerryAI.ts",
+      "sourceSha256": "d605bac7ee990be9436c6e201ea21dfdc0d2443a65cbb744ac67b9405f0c399f",
+      "targetSha256": "d605bac7ee990be9436c6e201ea21dfdc0d2443a65cbb744ac67b9405f0c399f"
+    },
+    {
+      "path": "src/game/renderer/jerryMesh.ts",
+      "sourceSha256": "70834f0ba368070945a18d334244e1fb9ff8b4f029a06aeec7b0df718bd49a8b",
+      "targetSha256": "70834f0ba368070945a18d334244e1fb9ff8b4f029a06aeec7b0df718bd49a8b"
+    },
+    {
+      "path": "src/game/renderer/qaCpuSkin.ts",
+      "sourceSha256": "5c23b492a2b2edfebeac30aa8719e138a5cd48495f2f3360759d641e6b1fb0c8",
+      "targetSha256": "5c23b492a2b2edfebeac30aa8719e138a5cd48495f2f3360759d641e6b1fb0c8"
+    },
+    {
+      "path": "src/proto/jerryProto.ts",
+      "sourceSha256": "5e75b8b9bac2d52a2cca8f42fc3178984028df8c80755ac00a4b36fe7cbfdf81",
+      "targetSha256": "5e75b8b9bac2d52a2cca8f42fc3178984028df8c80755ac00a4b36fe7cbfdf81"
+    },
+    {
+      "path": "proto-jerry.html",
+      "sourceSha256": "4b4dbd48539cb8997ca55e2e97d4bb7e30bfd2f6d1a6a5bd32e0ac322434241b",
+      "targetSha256": "4b4dbd48539cb8997ca55e2e97d4bb7e30bfd2f6d1a6a5bd32e0ac322434241b"
+    },
+    {
+      "path": "scripts/check-jerry.ts",
+      "sourceSha256": "c990a476201b873db57a09a0cedab75439dc888997fb9a3ff336d6a83723011f",
+      "targetSha256": "c990a476201b873db57a09a0cedab75439dc888997fb9a3ff336d6a83723011f"
+    }
+  ],
+  "integratedFiles": [
+    {
+      "path": "app/package.json",
+      "sourceSha256": "d741425d132ec95a435cfa725e77b07a447121cf8aa7f102e0e88e32f86c9aab",
+      "integratedSha256": "e419205f71cf33a349b31f7f0c7c683eb8e527c1fd75906e5a9863f162f8b867",
+      "beforeIntegrationSha256": "3066b80b11c84d1fe6221e9f3b6320e2c899da2f1674789b3c064d4a111385e4"
+    },
+    {
+      "path": "app/proto-jerry.html",
+      "sourceSha256": "4b4dbd48539cb8997ca55e2e97d4bb7e30bfd2f6d1a6a5bd32e0ac322434241b",
+      "integratedSha256": "4b4dbd48539cb8997ca55e2e97d4bb7e30bfd2f6d1a6a5bd32e0ac322434241b",
+      "beforeIntegrationSha256": null
+    },
+    {
+      "path": "app/scripts/check-jerry.ts",
+      "sourceSha256": "c990a476201b873db57a09a0cedab75439dc888997fb9a3ff336d6a83723011f",
+      "integratedSha256": "5de6b743377a4dbd20b1e655e0c7950876ac97423462cc7bca849e32bdb09d98",
+      "beforeIntegrationSha256": null
+    },
+    {
+      "path": "app/scripts/verify-jerry.mjs",
+      "sourceSha256": "3960aaa7c56d3fe22a27f0076cb7f6b021ab7caae2ec36ae344e37adbef5412f",
+      "integratedSha256": "a69dd44c51329d8cb03e3d9dd9f69f7b44a976c89de4fec0af30d9e54bc73724",
+      "beforeIntegrationSha256": null
+    },
+    {
+      "path": "app/src/components/HUD.tsx",
+      "sourceSha256": "d3d1260766b52446590c0e23b2ca78017f6b72d4e665aca70c23614cad30819f",
+      "integratedSha256": "3e468933a64eb79354dc0999592a893aca3d502a47ceade92f80c53a5512438c",
+      "beforeIntegrationSha256": "61952fd4b890e7b43af14218ea60db3dbd3a5931fbcfb7380c1aa07e077a61b8"
+    },
+    {
+      "path": "app/src/game/engine.ts",
+      "sourceSha256": "e0bd890c50a5a3d2cb7214dcb8e3e160abe157ccf7695c7728c46d68c90b4fc2",
+      "integratedSha256": "829459c18cac20c25d843f34cc35e35c26203c926953636f4b0c151bba985804",
+      "beforeIntegrationSha256": "fc609bf0109ea85cc5d3ab5c5013772306e2dfc30a12ef95699f5dfaab149e15"
+    },
+    {
+      "path": "app/src/game/content/codexScores.ts",
+      "sourceSha256": "5bf51422b8de00228e2ab91dd1d720b47e1dbe5110dc67edd5dbe1ec8bf17a1d",
+      "integratedSha256": "6d7062172ee42ab64fa68584ef92a1d15d4a97fa4c467cd31d66841de5030683",
+      "beforeIntegrationSha256": "19e31712b5a80c3703ec2e669ed0834fcd815e23d3e97c325b6d7e98db834fb5"
+    },
+    {
+      "path": "app/src/game/content/items.ts",
+      "sourceSha256": "316a19af2515057fe5a48b624c0ed3cfa76af681e031f643e041486c1e70067b",
+      "integratedSha256": "159575906f9bdfc14712bf86c5e207a67cb152bc8942f4161b6fed4539366b8b",
+      "beforeIntegrationSha256": "b424dbe46651683b4842776e06bef47d959ebd215967522eb15962b301463e07"
+    },
+    {
+      "path": "app/src/game/content/npcs.ts",
+      "sourceSha256": "13e8f370f4c2e4b4ee03c6dfdd30d3a400e64c12edabe861ea3702e14144b26f",
+      "integratedSha256": "64187d197bdb776208a9ffe702ee046d629d196fd9f66bc3d11b6f4293396a65",
+      "beforeIntegrationSha256": "5e9e909b9c3240f4e5c2b53970a78c05123176d5ac753d97c6a69b8c71125904"
+    },
+    {
+      "path": "app/src/game/engine/career.ts",
+      "sourceSha256": "9435092b4ce160f78df422550eb788ee2c0437a37e35345318fdfa29201a9c1d",
+      "integratedSha256": "9435092b4ce160f78df422550eb788ee2c0437a37e35345318fdfa29201a9c1d",
+      "beforeIntegrationSha256": "e779f7a1f70f4a2b9cdaee2d5a2811aede3560572221bdad561886dc18f45ae0"
+    },
+    {
+      "path": "app/src/game/engine/combat.ts",
+      "sourceSha256": "2914add92a9b1da3d90b899c2e88bbef8b59123a26d17b5498b85cce10c976b3",
+      "integratedSha256": "dcc5d61f81d353bd96c6d801161b335fb15c16566a4cb7a13211a3748739c409",
+      "beforeIntegrationSha256": "f49bd2d4cb307bc498abaefef86e232a8939d7963202f72ba3a6233b352e7354"
+    },
+    {
+      "path": "app/src/game/engine/effects.ts",
+      "sourceSha256": "2ace5a0b6985b12143888dccfbc531995e5a889c4b12867f19a7204010875e1a",
+      "integratedSha256": "d3956e9790011b9b7655571619e5b4a56eb12036ea2e32471412a732c1606f7f",
+      "beforeIntegrationSha256": "3cc70b6fe32100b5f7f5266daf667f4a1b0e02eafe77559b16474c237ce57b92"
+    },
+    {
+      "path": "app/src/game/engine/entityAI.ts",
+      "sourceSha256": "47992422e79ddac30a764f5a8eae386a54ccfebd2785d97b5789f6213f5b5480",
+      "integratedSha256": "5daf3c6dbc74f6e95405f57f8af02a9e0bd8fd2fb90af8a1f3ae205155312203",
+      "beforeIntegrationSha256": "60a939d3f072b2d3c8516d2cdb8b28fd6c596485d4a6510c5fc465744dca7832"
+    },
+    {
+      "path": "app/src/game/engine/interact.ts",
+      "sourceSha256": "67123944c9b1810ce11e14edce431e8fec4a1910c6232953ed6b7e213fcc68f8",
+      "integratedSha256": "1c8a94146192e35574553fc2ff6fb15472c43c6155de4c3d780520601f505af6",
+      "beforeIntegrationSha256": "394fba20ec17820fd018a0f0a09c1cba74ba0b09b1c9d83736d7e05294c18c88"
+    },
+    {
+      "path": "app/src/game/engine/inventory.ts",
+      "sourceSha256": "738a45bafd83c4c13b291305c4de78a57e342ca128eed71821ed1f2cdf1a5e3d",
+      "integratedSha256": "701a391d4fc441cd5ef6111a9aaf1a416f32bc78f7fd78de5356b8e0f6e815d7",
+      "beforeIntegrationSha256": "f2e04f1a51be62df5dab9a16ce50dfca4e9ee57ed97307d4cdca1e03d782bb62"
+    },
+    {
+      "path": "app/src/game/engine/jerryAI.ts",
+      "sourceSha256": "d605bac7ee990be9436c6e201ea21dfdc0d2443a65cbb744ac67b9405f0c399f",
+      "integratedSha256": "86304d8e0eb6a21461ffebf9a56cd862c18c1f904a0d3bd52d71a0a598f5aa32",
+      "beforeIntegrationSha256": null
+    },
+    {
+      "path": "app/src/game/engine/level.ts",
+      "sourceSha256": "590db56d2c17b8a9a860de6432a6649130fc47a7900acf8d05e778d54480b84c",
+      "integratedSha256": "590db56d2c17b8a9a860de6432a6649130fc47a7900acf8d05e778d54480b84c",
+      "beforeIntegrationSha256": "70cd864d7780dfdcc766de65786e927538a00e295bd3f993e82e826595f612b2"
+    },
+    {
+      "path": "app/src/game/engine/npc.ts",
+      "sourceSha256": "80206ed3fbce8d70aa22d2be4336d013f6222b246dc21e9f47af17aea27aaf49",
+      "integratedSha256": "80206ed3fbce8d70aa22d2be4336d013f6222b246dc21e9f47af17aea27aaf49",
+      "beforeIntegrationSha256": "4385ade81f43187ea504a940b9b933077af94d027adb74fa135f3e9fbdf704de"
+    },
+    {
+      "path": "app/src/game/entities/critters.ts",
+      "sourceSha256": "a3b7d24395f2d6d5900d7ea3df9202f3c73829f743103f9cda2a1456ff529df0",
+      "integratedSha256": "00605d04938bbe7860778b90e54e38822b9c9379b27b3def57b47f1759c6411d",
+      "beforeIntegrationSha256": "4ce92de4b87903e82944873c06be3dfbd7e31f3631c11f0e33ebab3982538c1c"
+    },
+    {
+      "path": "app/src/game/entities/types.ts",
+      "sourceSha256": "172f42fa3e3e9230e0054ff987712c788fcd49b9bf7a7a03ecb85d6917a31057",
+      "integratedSha256": "f6e77ed8122ab4afab75d100d895c3961054e7b03803b4b19e779f0708b16037",
+      "beforeIntegrationSha256": "f43e416bcfa62dd13c3f57014068dcd51ba3bb835c92f623f777eb04ce7b6fa0"
+    },
+    {
+      "path": "app/src/game/levels/l1.ts",
+      "sourceSha256": "6c8bd6c404c9740368a372e96c60af12e73a9b6f61471eb7d280d04eb26ba37e",
+      "integratedSha256": "6c8bd6c404c9740368a372e96c60af12e73a9b6f61471eb7d280d04eb26ba37e",
+      "beforeIntegrationSha256": "64284f17c52395835d804c699b95f83b772240382e81e01e1b9b5060f5b2da6e"
+    },
+    {
+      "path": "app/src/game/levels/l2.ts",
+      "sourceSha256": "0abd2c2a2225d269ff00d1b60ab89adfedf6b9740bb713568ebf14c34248abee",
+      "integratedSha256": "0abd2c2a2225d269ff00d1b60ab89adfedf6b9740bb713568ebf14c34248abee",
+      "beforeIntegrationSha256": "18ca2ee796c925fcd76dce8b7e2c06615698737c38a680cb67345828e58755be"
+    },
+    {
+      "path": "app/src/game/renderer/entitiesMesh.ts",
+      "sourceSha256": "32364ee4697da2e79784d982d37a8875a3aa0218900c94dcdce65a18d9731681",
+      "integratedSha256": "7219b8b3ac956228a3364c6d04bdd172e3c3d57d6ae70423ce04d4871de8180f",
+      "beforeIntegrationSha256": "ecb2e1eb0db1dd7171348b2d2eadd12f20108fad1afbbd92020b62586085411c"
+    },
+    {
+      "path": "app/src/game/renderer/itemsMesh.ts",
+      "sourceSha256": "ebbbbdd75d455d8ede296182336ad6d20dd9f5adbaa03d06cfac4d0ec0797090",
+      "integratedSha256": "3cb4fcb0b5a99a78ddae33d795c67331fbcd7180bfbe4e6a4169b0b83f7f5269",
+      "beforeIntegrationSha256": "c58cac94c9c52b78e4e10a2814f02ceb984d0f75f573329fb612223877c85f21"
+    },
+    {
+      "path": "app/src/game/renderer/jerryMesh.ts",
+      "sourceSha256": "70834f0ba368070945a18d334244e1fb9ff8b4f029a06aeec7b0df718bd49a8b",
+      "integratedSha256": "eb9f1c2fe1fea4cf64cb07c109bc0b2751643e4b266f5e3cd9bb768adec3b9d4",
+      "beforeIntegrationSha256": null
+    },
+    {
+      "path": "app/src/game/renderer/npcGearPlan.ts",
+      "sourceSha256": "ca94b5c5feb9d40fbafc0a8979e7fe59e6161d1bca32c171194b0384992f04f0",
+      "integratedSha256": "ca94b5c5feb9d40fbafc0a8979e7fe59e6161d1bca32c171194b0384992f04f0",
+      "beforeIntegrationSha256": "a25e1ecbedc5ee828b0fd278619fa0cb1d71a81f68af964f977e0bf262f7ac1e"
+    },
+    {
+      "path": "app/src/game/renderer/qaCpuSkin.ts",
+      "sourceSha256": "5c23b492a2b2edfebeac30aa8719e138a5cd48495f2f3360759d641e6b1fb0c8",
+      "integratedSha256": "5c23b492a2b2edfebeac30aa8719e138a5cd48495f2f3360759d641e6b1fb0c8",
+      "beforeIntegrationSha256": null
+    },
+    {
+      "path": "app/src/game/renderer/renderer.ts",
+      "sourceSha256": "733d70b7b3382c2a1993cc06592fa7bd2928b1b27dcfbcb2b59eb2f4f918f87e",
+      "integratedSha256": "4be92420a1acddca53e1146f8d4576373de7f6cf89387ea91941bde6871cd753",
+      "beforeIntegrationSha256": "4e969a85556e5c1b3fe0020eb023281c9ff511ed47f535194cb11ac7dfbda177"
+    },
+    {
+      "path": "app/src/game/renderer/structures.ts",
+      "sourceSha256": "86ac95ee62d0b128d1c091c3da261aad91b167b972b53101e1e7f93838525fdb",
+      "integratedSha256": "25688bec33e210261d667e6e5dc788799b634e328b19d3c1130b9b1309df4f18",
+      "beforeIntegrationSha256": "34772a3365201f3939d862bbfb432e7b00576768249308f829c425823936c1bd"
+    },
+    {
+      "path": "app/src/game/world/mapgen.ts",
+      "sourceSha256": "91f9f81356db4eacf2483226671545dc92bdb3c026e0cf9ca9a698f875a0f6fe",
+      "integratedSha256": "f7a261d2782a5950ac14d5936d2d6feb5d46fe6679681f763b08f08f5dc4d210",
+      "beforeIntegrationSha256": "97d3ce8da9be0140e63d2ea8ca7a8e13211e48e9620914cc3e75f6c9b17e821c"
+    },
+    {
+      "path": "app/src/game/world/mapgenOutpost.ts",
+      "sourceSha256": "555f7cc40e972af63c5e2a2d10d3660d30aaae36cbbf316e6aa3fc5ea5200804",
+      "integratedSha256": "555f7cc40e972af63c5e2a2d10d3660d30aaae36cbbf316e6aa3fc5ea5200804",
+      "beforeIntegrationSha256": "b90fa9213a6d16f29a130034e0c10095ea85f319894e9c4bcec3db1973436496"
+    },
+    {
+      "path": "app/src/proto/jerryProto.ts",
+      "sourceSha256": "5e75b8b9bac2d52a2cca8f42fc3178984028df8c80755ac00a4b36fe7cbfdf81",
+      "integratedSha256": "5e75b8b9bac2d52a2cca8f42fc3178984028df8c80755ac00a4b36fe7cbfdf81",
+      "beforeIntegrationSha256": null
+    },
+    {
+      "path": "app/scripts/gen-item-icons.py",
+      "sourceSha256": null,
+      "integratedSha256": "0cb41eb3f06b52b6ef5dd521c01c75d95d4daabcbcc19379281c0044381c168d",
+      "beforeIntegrationSha256": null
+    },
+    {
+      "path": "app/public/textures/icons/pixel/item_jerryflyer.png",
+      "sourceSha256": null,
+      "integratedSha256": "ef81cc93246a44b1b9f52cf22421a95b87b52c57b1e35df50f081c703393580c",
+      "beforeIntegrationSha256": null
+    },
+    {
+      "path": "app/public/textures/icons/pixel/item_fakelog.png",
+      "sourceSha256": null,
+      "integratedSha256": "d2f65f2dd1f652a063c8f24a34f3b24cdc23d6e57f662ea0fed55114a3f36984",
+      "beforeIntegrationSha256": null
+    },
+    {
+      "path": "app/public/textures/icons/SOURCES.md",
+      "sourceSha256": null,
+      "integratedSha256": "006a6a128b5d585a485ca9dae330c3070b0361fa2c1f9ac9e0607999e244e592",
+      "beforeIntegrationSha256": null
+    },
+    {
+      "path": "app/src/components/InventoryOverlay.tsx",
+      "sourceSha256": null,
+      "integratedSha256": "f420f6f6e37b584749343b004c1ff7eb43d29bd7d9dd3c89210ca6524d2a4c2e",
+      "beforeIntegrationSha256": null
+    },
+    {
+      "path": "app/verifier/jerry-app.html",
+      "sourceSha256": null,
+      "integratedSha256": "894cd193bbb7be0fed6a846eab446be76513e2c3e258bdc5a6f522ffb7db3650",
+      "beforeIntegrationSha256": null
+    },
+    {
+      "path": "app/verifier/jerry-app.tsx",
+      "sourceSha256": null,
+      "integratedSha256": "643d2ebf22185d78ee8985fe03ee7fe90b0226458dbdcbdfcce65a27720aa7b9",
+      "beforeIntegrationSha256": null
+    },
+    {
+      "path": "app/verifier/jerry-check.ts",
+      "sourceSha256": null,
+      "integratedSha256": "7757cd2430d2863229498a5ed962c4f4c63ee30929049cd7937adea08abdb9e1",
+      "beforeIntegrationSha256": null
+    }
+  ]
+}

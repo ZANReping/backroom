@@ -39,7 +39,7 @@ export interface ItemDef {
 const BOTTLED_DRINK_ITEMS = new Set(['almond', 'liquidpain', 'coffee', 'citywater', 'cashew', 'luckymilk'])
 const QUICK_FOOD_ITEMS = new Set(['warpberry', 'wheatgrain', 'driedfruit'])
 const MEAL_ITEMS = new Set(['tomatosoup', 'gardensalad', 'garlicbread', 'pasta', 'meatstew', 'pizza', 'lasagna', 'tomsspecial', 'grilledsteak', 'jambread'])
-const READ_ITEMS = new Set(['megfolder', 'pamphlet'])
+const READ_ITEMS = new Set(['megfolder', 'pamphlet', 'jerryflyer', 'fakelog'])
 
 /**
  * 消耗品统一使用模板。相同形态复用同一动作，且只有动作完整结束后才结算效果与扣除物品。
@@ -65,6 +65,7 @@ export function itemUseProfile(def: ItemDef): ItemUseProfile | null {
 
 export const ITEMS: Record<string, ItemDef> = {
   almond: { type: 'almond', name: '杏仁水', desc: '甜腻的液体，后室里最受欢迎的补给。', stack: 3, use: 'sanity', value: 30, value3: 30, anomalous: true, rarity: 'uncommon', glyph: 'bottle' },
+  bento: { type: 'bento', name: '自制便当', desc: '从 Object 70 的公文包里找到的便当盒，橡皮筋还勒着盒盖。米饭、煎蛋和一点腌菜，像是有人每天早上替他准备好的。', stack: 2, use: 'eat', value: 45, rarity: 'uncommon', glyph: 'bowl' }, // v83
   canned: { type: 'canned', name: '罐装食品', desc: '标签已经脱落的罐头。', stack: 3, use: 'eat', value: 35, rarity: 'common', glyph: 'can' },
   bandage: { type: 'bandage', name: '绷带', desc: '还算干净的一卷绷带。', stack: 3, use: 'heal', value: 30, rarity: 'common', glyph: 'bandage' },
   disinfectant: { type: 'disinfectant', name: '消毒液', desc: '希波克拉底团队标准配发的医用消毒液，气味刺鼻。早期感染能彻底消杀，病入肌理就无能为力了。', stack: 3, use: 'cure', value: 25, rarity: 'uncommon', glyph: 'bottle' },
@@ -79,6 +80,8 @@ export const ITEMS: Record<string, ItemDef> = {
   carkey: { type: 'carkey', name: '车钥匙', desc: '停车场的车钥匙。可以打开废弃汽车的后备箱。', stack: 2, unique: 1, equip: 'pocket', rarity: 'uncommon', glyph: 'key' },
   gas: { type: 'gas', name: '火油桶', desc: '半桶火油——熔化的火盐制成的易燃液体，熏香味。也许能点燃什么……', stack: 2, unique: 1, use: 'none', throw: 'explode', rarity: 'rare', glyph: 'gas' },
   firesalt: { type: 'firesalt', name: '火盐晶体', desc: '一小撮橙色半透明晶体碎片，受冲击即爆裂出炽热的火花——后室探险者的首选自卫武器。（Object 15）', stack: 3, use: 'none', throw: 'explode', rarity: 'uncommon', anomalous: true, glyph: 'firesalt' },
+  // 派对客（Entity 67）的「丝绒蛋糕」：L601 派对客附近的地上可以捡到——陷阱。吃下去会增加转化值（不入存档的当局数值）
+  velvetcake: { type: 'velvetcake', name: '丝绒蛋糕', desc: '一块深红色、湿润发亮的丝绒蛋糕，奶油霜上插着一根没点燃的蜡烛，闻起来甜得发腻。纸托上用血红的字写着「=)」。M.E.G. 档案：切勿食用。', stack: 2, unique: 12, use: 'eat', value: 0, anomalous: true, rarity: 'uncommon', glyph: 'meat' },
   liquidpain: { type: 'liquidpain', name: '液态痛苦', desc: '半透明的淡红色液体——杏仁水的致命变种。绝不能喝。但装进滋水枪，它就是武器。（Object 48）', stack: 1, use: 'eat', value3: -30, anomalous: true, rarity: 'epic', glyph: 'pain' },
   manmade: { type: 'manmade', name: '人制品', desc: '一包用糖果纸简单包裹的「产品」，散发着不正常的甜香。吃下后的 5 分钟内：无法进食其他食物、治疗减半、始终感到饥饿与口渴、体力恢复减半消耗加倍，但受伤略轻。（Entity 36 的产品）', stack: 1, use: 'eat', value: 15, anomalous: true, rarity: 'uncommon', glyph: 'meat' },
   // ---------- Object 5：B.N.T.G. 糖果（商人之家糖果贩兑换，统一 饥饿+5 理智+5，糖瘾 60s）----------
@@ -96,7 +99,8 @@ export const ITEMS: Record<string, ItemDef> = {
   suit: { type: 'suit', name: '绝缘服', desc: '橡胶绝缘服。装备后免疫电弧伤害。', stack: 1, unique: 3, passive: '绝缘', equip: 'body', rarity: 'uncommon', glyph: 'suit' },
   fuse: { type: 'fuse', name: '保险丝', desc: '粗大的工业保险丝。电梯井需要 2 枚才能启动。', stack: 4, unique: 3, rarity: 'common', glyph: 'fuse' },
   capacitor: { type: 'capacitor', name: '瓶装闪电', desc: '一只塞着软木塞的玻璃烧瓶，瓶内一道蓝色闪电疾走不休——封存着约十亿焦耳的电荷。（即 Object 42「瓶装闪电」）', stack: 2, unique: 3, use: 'none', throw: 'shock', rarity: 'uncommon', anomalous: true, glyph: 'cap' },
-  dryshrimp: { type: 'dryshrimp', name: '旱虾', desc: '一只完整的旱虾——生吃也完全安全，是后室里最受欢迎的应急口粮。也可以带给 Tom 加工成菜。', stack: 2, use: 'eat', value: 25, anomalous: true, rarity: 'common', glyph: 'shrimp' },
+  dryshrimp: { type: 'dryshrimp', name: '旱虾', desc: '一只已经不动了的旱虾，鳍叶耷拉在身侧——生吃也完全安全，是后室里最受欢迎的应急口粮。也可以带给 Tom 加工成菜。', stack: 2, use: 'eat', value: 25, anomalous: true, rarity: 'common', glyph: 'shrimp' },
+  liveshrimp: { type: 'liveshrimp', name: '活旱虾', desc: '活抓的旱虾，还在慢吞吞地划着两排鳍叶。可以直接生吃，也可以带给 Tom；丢在地上它会自己爬走——附近的钝人和死亡飞蛾会先去吃它，是现成的诱饵。', stack: 2, use: 'eat', value: 25, anomalous: true, rarity: 'common', glyph: 'shrimp' },
   friedshrimp: { type: 'friedshrimp', name: '酥炸旱虾', desc: 'Tom 的招牌小手笔：整虾裹粉酥炸，壳都炸得焦香——「连壳吃，钙质满满！」', stack: 2, use: 'eat', value: 45, rarity: 'uncommon', glyph: 'shrimp' },
   coffee: { type: 'coffee', name: '咖啡', desc: '自动售货机里的罐装咖啡。', stack: 3, unique: 4, use: 'stamina', value: 1, value3: 10, rarity: 'common', glyph: 'coffee' },
   stapler: { type: 'stapler', name: '订书机', desc: '沉重的订书机，掷出去足以吸引注意。', stack: 2, unique: 4, use: 'none', throw: 'noise', rarity: 'common', glyph: 'stapler' },
@@ -135,6 +139,9 @@ export const ITEMS: Record<string, ItemDef> = {
 
   // Level 11「The City That Never Sleeps」
   presses: { type: 'presses', name: 'B.N.T.G.压印币', desc: 'B.N.T.G. 在新时代广场与商人之家通用的压印币。「繁荣缔造和平」——一瓶杏仁水可兑两枚。', stack: 60, unique: 11, anomalous: true, rarity: 'rare', glyph: 'coin' },
+  // 重制杰瑞：信众的诱导材料（L1/L2 偶尔捡到）——读完在地图上标出一个「据点」，实际指向 Level 2 的信众宣传间（jerryAI.jerryLureRead）
+  jerryflyer: { type: 'jerryflyer', name: '蓝羽传单', desc: '一张折过很多次的传单，印着一只蓝色的大鸟和一行手写体：「迷路了？我们有水、有灯、有同伴。」背面画着一张方位图。', stack: 3, use: 'sanity', value: 3, rarity: 'uncommon', glyph: 'book' },
+  fakelog: { type: 'fakelog', name: '流浪者日志残页', desc: '从某本生存日志上撕下的一页，字迹工整，记着一处「安全屋」的方位。纸张很新——新得不像在后室里放了很久。', stack: 3, use: 'sanity', value: 3, rarity: 'uncommon', glyph: 'book' },
   pamphlet: { type: 'pamphlet', name: '宣传册', desc: '在 Level 11 买到、在别处才用得上的东西。纸页上印着一座你没去过的层级。', stack: 2, unique: 11, use: 'sanity', value: 20, anomalous: true, rarity: 'rare', glyph: 'book' },
   citywater: { type: 'citywater', name: '市政自来水', desc: '这座城市自行发电、供水、回收废物、生产食物。水龙头是真的能出水的——只是一个人也没有。能解渴，但不顶饱。', stack: 3, unique: 11, use: 'sanity', value: 25, value3: 30, anomalous: true, rarity: 'common', glyph: 'bottle' },
   // v43：办公区EL3A 物流任务——缠满胶带的密封包裹，面单写着收件人（目的地见委托详情；不可堆叠，每件占一格）

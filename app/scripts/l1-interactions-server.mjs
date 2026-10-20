@@ -1,0 +1,11 @@
+import {createServer} from 'vite'
+import {readFileSync} from 'node:fs'
+import path from 'node:path'
+import {fileURLToPath} from 'node:url'
+const app=fileURLToPath(new URL('../',import.meta.url)),port=Number(process.argv[2]),profile=process.argv[3],before=process.argv[4]==='before'
+if(!Number.isInteger(port)||!profile)throw Error('Expected owned QA port/profile')
+const snapshots=before?new Map(JSON.parse(readFileSync(path.join(app,'.cache/l1-interactions/baseline.json'),'utf8')).filter(v=>!v.path.startsWith('../')).map(v=>[path.resolve(app,v.path).toLowerCase(),path.join(app,'.cache/l1-interactions/before',v.path)])):new Map()
+const server=await createServer({root:app,configFile:path.join(app,'vite.config.ts'),cacheDir:path.join(profile,'vite-cache'),
+ plugins:before?[{name:'l1-interactions-before',enforce:'pre',load(id){const snapshot=snapshots.get(path.normalize(id.split('?')[0]).toLowerCase());if(snapshot){console.log('[baseline] '+path.relative(app,id));return readFileSync(snapshot,'utf8')}}}]:[],
+ optimizeDeps:{entries:['index.html','verifier/l1v2-app.html']},server:{host:'127.0.0.1',port,strictPort:true,hmr:false}})
+await server.listen();server.printUrls()

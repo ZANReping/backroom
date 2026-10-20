@@ -10,6 +10,7 @@ import {updateBntg,type BntgSave} from './bntg'
 import { freshMeg, megState, promoteMeg, registerMeg, type MegSave } from './megMissions'
 import { isNewFaction, isEnhancedFaction, type NewFaction } from '../content/factionTerminals'
 import { factionState, promoteFaction, registerFaction, type FactionSave } from './factionMissions'
+import { jerryDeprogrammed } from './jerryAI'
 export interface CareerSave {factions?:Partial<Record<NewFaction,FactionSave>>}
 export interface CareerSave {meg?:MegSave}
 export interface CareerSave {bntg?:BntgSave}
@@ -82,7 +83,7 @@ export function requestRecovery(eng:Engine,service:string){
  if(service==='care'){eng.player.hp=100;eng.player.infection=0;return '基础诊疗完成，无需入会或付费。'}
  if(service==='help'&&s.deprogram===0){s.deprogram=1;return '已登记自愿求助。请在公开档案或证言设施核验证言。'}
  if(service==='testimony'&&s.deprogram===1){s.deprogram=2;return '已经核对外界证言。请在医疗设施完成隔离恢复。'}
- if(service==='isolation'&&s.deprogram===2){s.deprogram=3;eng.indoctrination=0;return '自愿恢复完成。你仍可选择自己的团体身份。'}
+ if(service==='isolation'&&s.deprogram===2){s.deprogram=3;const had=eng.indoctrination>0;eng.indoctrination=0;if(had)jerryDeprogrammed(eng);return had?'自愿恢复完成。你仍可选择自己的团体身份——但有些东西再也回不来了。':'自愿恢复完成。你仍可选择自己的团体身份。'}
  if(service==='hearing'){s.case.resolved.push(...s.case.evidence);s.case.evidence=[];s.case.stage='clear';return '听证已受理：争议记录解除追捕，保留申诉材料。你可以自由离开。'}
  return '尚未满足这一恢复步骤的条件。'
 }

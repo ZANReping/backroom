@@ -5,15 +5,15 @@ import { stableAt } from './career'
 import { dullerControlsPlayer } from './dullerAI'
 import { clumpControlsPlayer } from './clumpAI'
 import { l1DistanceScale } from '../world/l1Layout'
+import { l1BuildingStyleAt } from '../world/l1Building'
 // v53：移动/输入积分 + 垂直物理（固定子步积分主段、液体浮沉、跳跃重力、梯子攀爬）——
 // 自 engine.ts step 内联段拆分，逻辑逐语句搬运；updateMovement 返回 null 表示本帧已死亡/终止（原 step 的 return）。
 import { bandOfZ, bandOfPlayerZ, groundHeightAt, structStandTopAt, ceilingHeightAt, l11HeadCeilingAt, l11MapWater, floorHeight, liquidSurfaceH, POOL_DEPTH, FLOOR_H } from '../world/mapgen'
 import { L11_WATER_SURFACE } from '../world/l11Hydrology'
-import { integrateMove } from '../core/player'
+import { integrateMove, resolvePlayerPenetration } from '../core/player'
 import { WALL_H, look } from '../renderer/shared'
 import { levelDefOf, NORMAL_LEVELS } from '../levels'
 import { audio } from '../core/audio'
-import { chunkKey, CS } from '../world/infinite'
 import { RemotePlayerViews } from '../renderer/remotePlayers' // v58：联机玩家碰撞查询
 import type { Engine } from '../engine'
 import { l8AvenuePortalContact } from '../world/infiniteL8'
@@ -150,7 +150,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   {
     const inf = m.inf
     const realGarden = eng.levelDef.id === 1 && !!inf &&
-      inf.chunks.get(chunkKey(Math.floor((inf.ox + p.x) / CS), Math.floor((inf.oy + p.y) / CS)))?.variant === 'garden'
+      l1BuildingStyleAt(inf.seed, inf.ox + p.x, inf.oy + p.y) === 'garden'
     // 开发者面板现象开关：可强制触发/屏蔽植殖癌（无视所在区段）
     const inGarden = (realGarden || eng.dev.phenOn.has('plantcancer')) && !eng.dev.phenOff.has('plantcancer')
     eng.inGardenEff = inGarden
@@ -487,6 +487,10 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
       if (p.vz > 0) p.vz = 0
     }
   }
+  // Keep vertical motion/late model bounds from leaving an idle player inside
+  // a prop. Scripted seating, climbing and lifts retain position ownership.
+  if(!eng.dev.noclip&&!eng.seating&&!eng.ride&&!eng.climb&&!eng.onStairs&&!eng.porchDrop)
+    resolvePlayerPenetration(m,p,.32,{z:p.z,band:bandOfPlayerZ(m,p.z,p.x,p.y),crouch:p.crouching})
   // v29：可行走灰色阶梯——走下去/走上去自动换层（覆盖本帧重力贴地结果）
   eng.updateStairs(dt)
   // L8 第九大道末端是可穿行的狭窄洞口：玩家身体碰到洞口平面即自动前往 L9，

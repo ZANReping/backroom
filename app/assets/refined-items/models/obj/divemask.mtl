@@ -1,0 +1,27 @@
+newmtl divemask_0_surface
+Kd 1 1 1
+Ka 0 0 0
+Ks 0.1 0.1 0.1
+d 1
+map_Kd ../textures/gear/color.png
+norm ../textures/gear/normal.png
+map_Pr ../textures/gear/roughness.png
+
+newmtl divemask_1_glass
+Kd 1 1 1
+Ka 0 0 0
+Ks 0.1 0.1 0.1
+d 0.45
+map_Kd ../textures/gear/color.png
+norm ../textures/gear/normal.png
+map_Pr ../textures/gear/roughness.png
+
+newmtl divemask_2_surface
+Kd 1 1 1
+Ka 0 0 0
+Ks 0.1 0.1 0.1
+d 1
+map_Kd ../textures/gear/color.png
+norm ../textures/gear/normal.png
+map_Pr ../textures/gear/roughness.png
+

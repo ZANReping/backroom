@@ -10,6 +10,8 @@ import { recordEntityEncounter, type Entity } from '../entities'
 import type { Engine, Projectile } from '../engine'
 import { clearRunSlots } from './save'
 import { releaseClumpPlayer } from './clumpAI'
+import {jerryHurt,jerryKnockoutIntercept,jerryInputLock} from './jerryAI'
+import { partygoerAimPart, partygoerDamage, partygoerKillGuard, partyPainK, partyConvK } from './partygoerAI'
 import { seatedEyeHeight, seatedEyeOffset } from './seating'
 import { skinStealerHit } from './skinStealerAI'
 import { dullerDrop, dullerSquirted, dullerHurt, dullerDropPosition, releaseDullerPlayer } from './dullerAI'
@@ -18,11 +20,14 @@ export function hurtPlayer(eng: Engine, dmg: number, source: string) {
   if (eng.dev.god) return
   const p = eng.player
   p.hp -= dmg * (eng.manmadeT > 0 ? 0.9 : 1) // v51：人制品效应中受到的伤害 -10%
-  p.sanity = Math.max(0, p.sanity - 4)
-  eng.camShake = Math.min(1, eng.camShake + 0.6)
+  // 派对客转化：转化值越高痛觉越弱——伤害照扣，但镜头震动/红闪/理智损失逐步减弱，高转化时不再红闪
+  const pain = partyPainK(eng)
+  p.sanity = Math.max(0, p.sanity - 4 * pain)
+  eng.camShake = Math.min(1, eng.camShake + 0.6 * pain)
   audio.hurt()
-  eng.emit({ kind: 'damage' })
-  eng.msg(`受到 ${Math.round(dmg)} 点伤害（${source}）`, 'damage')
+  if (partyConvK(eng) < 0.5) eng.emit({ kind: 'damage' })
+  eng.msg(partyConvK(eng) >= 0.6 ? `你几乎感觉不到疼（受到 ${Math.round(dmg)} 点伤害，${source}）` : `受到 ${Math.round(dmg)} 点伤害（${source}）`, 'damage')
+  if(jerryKnockoutIntercept(eng,source))return
   if (p.hp <= 0) eng.die(`被 ${source} 撕碎`)
 }
 
@@ -77,6 +82,7 @@ export function canHit(eng: Engine, e: Entity): boolean {
 
 /** 准星当前可命中的最近实体（渲染层据此改变准星样式） */
 export function aimEntity(eng: Engine): Entity | null {
+  if (eng.handsStowed) return null
   const m = eng.map
   if (!m) return null
   let best: Entity | null = null, bd = 1e9
@@ -137,6 +143,7 @@ function startAttackAnimation(eng: Engine, kind: Engine['attackAnimKind'], durat
 }
 
 export function killCheck(eng: Engine, e: Entity) {
+  if (partygoerKillGuard(eng, e)) return // 派对客：击杀必须按顺序（断臂→狂战士→倒地→火烧），血量见底只会倒地
   skinStealerHit(eng, e)
   if(!e.dead)provokeMoths(eng,e)
   provokeHound(eng,e)
@@ -183,6 +190,7 @@ export function killCheck(eng: Engine, e: Entity) {
 }
 
 export function attack(eng: Engine) {
+  if (eng.handsStowed || jerryInputLock(eng)) return
   const p = eng.player, m = eng.map!
   const held = p.hotbar[p.selected]
   // An empty squirt gun is not an attack: keep its existing feedback, but do
@@ -262,11 +270,19 @@ export function attack(eng: Engine) {
       eng.provoked = true
       continue
     }
-    if (thingBody) {
+    if (e.def.type === 'partygoer') {
+      // 派对客：按准星打中的部位结算（面条臂 / 头脸 / 躯干），胸甲闭合时躯体减伤 90%，倒地后只能用火烧尽
+      const dir = crosshairDirection(), off = seatedEyeOffset(eng)
+      const part = partygoerAimPart(eng, e, { ox: p.x + off.x, oy: p.y + off.y, oz: p.z + seatedEyeHeight(eng), dx: dir.x, dy: dir.y, dz: dir.z })
+      partygoerDamage(eng, e, dmg, 'melee', part)
+    } else if (thingBody) {
       // v58：体节命中——伤害大减，但让它转头迟滞 3 秒；巨躯不被击退
       e.hp -= dmg * 0.25
       if ((e.turnSlowT ?? 0) <= 0) eng.msg('刀刃没入它皮革般的身体——伤害甚微，但它转头的动作滞涩了一瞬。', 'system')
       e.turnSlowT = 3
+    } else if (e.def.type === 'jerry') {
+      e.hp -= dmg // 鹉主杰瑞：不被击退（它在栖木/神父肩上），受伤后尖啸反扑（jerryAI.jerryHurt）
+      jerryHurt(eng, e)
     } else {
       e.hp -= dmg
       // 击退位移做墙体校验：落点不可走（墙/实心结构/不可达高差）则不位移——
@@ -364,6 +380,7 @@ export function attack(eng: Engine) {
 // ---------- v28：可投掷道具 ----------
 /** 掷出手持的可投掷物品（消耗 1 个；订书机/玻璃珠落地后可捡回） */
 export function throwHeld(eng: Engine, type: string) {
+  if (eng.handsStowed) return
   const p = eng.player
   const slot = p.hotbar[p.selected]
   if (!slot || slot.type !== type) return
@@ -389,6 +406,7 @@ export function throwHeld(eng: Engine, type: string) {
 export const SQUIRT_CAP = 27
 /** 往滋水枪储罐装入 1 瓶液体（3 份喷射量；储罐只能装一种液体，清水无需对应物品） */
 export function loadSquirt(eng: Engine, liquid: 'water' | 'almond' | 'cashew' | 'liquidpain'): boolean {
+  if (eng.handsStowed) return false
   const NAME = { water: '清水', almond: '杏仁水', cashew: '腰果水', liquidpain: '液态痛苦' } as const
   if (eng.squirtTank !== 'none' && eng.squirtTank !== liquid) {
     eng.msg(`储罐里还有别的液体——喷完或喝完才能换。`, 'system')
@@ -406,6 +424,7 @@ export function loadSquirt(eng: Engine, liquid: 'water' | 'almond' | 'cashew' | 
 
 /** 清空储罐（把残液倒掉，换液体免喷完） */
 export function clearSquirt(eng: Engine) {
+  if (eng.handsStowed) return
   if (eng.squirtTank === 'none') { eng.msg('储罐本来就是空的。', 'system'); return }
   const NAME = { water: '清水', almond: '杏仁水', cashew: '腰果水', liquidpain: '液态痛苦' } as const
   eng.msg(`倒空了储罐里的${NAME[eng.squirtTank]}（${eng.squirtAmmo} 份残液）。`, 'system')
@@ -442,6 +461,7 @@ export function stanleyTeleport(eng: Engine) {
 
 /** 枪糖：左键发射巧克力子弹（直线 12m，1 点伤害，命中也只是糊一脸） */
 export function shootChocolate(eng: Engine) {
+  if (eng.handsStowed) return
   const p = eng.player
   if (!eng.dev.noAttackCooldown && eng.chocoCd > 0) return
   eng.chocoCd = eng.dev.noAttackCooldown ? 0 : 0.22
@@ -476,6 +496,7 @@ export function shootChocolate(eng: Engine) {
 
 /** 滋水枪喷射：清水无效果；杏仁水雾轻伤实体，腰果水雾造成更大伤害 */
 export function squirt(eng: Engine) {
+  if (eng.handsStowed) return
   const p = eng.player
   if (eng.squirtAmmo <= 0 || eng.squirtTank === 'none') {
     eng.msg('储罐是空的——先装入液体。', 'system')
@@ -593,10 +614,11 @@ export function landProjectile(eng: Engine, pr: Projectile, x: number, y: number
         const d = Math.hypot(e.x - x, e.y - y)
         if (d > 3.2 || Math.abs(e.z - pr.floorZ) >= 1) continue
         if (e.def.type === 'jerry' && eng.indoctrination > 0) continue // v47：教化约束——投掷波及对鹉主无效
+        if (e.def.type === 'partygoer') { partygoerDamage(eng, e, d < 2.2 ? 45 : 20, 'fire'); e.stunT = Math.max(e.stunT, e.pg?.phase === 'burn' ? 0 : 0.6); n++; continue } // 派对客：皮肤防火；倒地/爬行的「尸体」被点燃即烧尽
         if (!mpHurtEntity(eng, e, d < 2.2 ? 45 : 20)) { e.hp -= d < 2.2 ? 45 : 20; eng.killCheck(e) } // v59：联机走房主结算
         e.stunT = Math.max(e.stunT, 0.6)
         eng.bloodParticles(e.x, e.y, bloodKind(e))
-        if (e.def.type === 'jerry') eng.hurtJerryRep() // v47：伤害鹉主 → 信众哗然 -50
+        if (e.def.type === 'jerry') { eng.hurtJerryRep(); if (!e.dead) jerryHurt(eng, e) } // v47：伤害鹉主 → 信众哗然 -50；重制：尖啸反扑
         n++
       }
       eng.msg(n > 0 ? `汽油罐轰然炸开——火焰吞没了 ${n} 个实体。` : '汽油罐轰然炸开，火焰很快熄灭了。', n > 0 ? 'damage' : 'system')
@@ -615,9 +637,10 @@ export function landProjectile(eng: Engine, pr: Projectile, x: number, y: number
         const d = Math.hypot(e.x - x, e.y - y)
         if (d > 2.8 || Math.abs(e.z - pr.floorZ) >= 1) continue
         if (e.def.type === 'jerry' && eng.indoctrination > 0) continue // v47：教化约束——投掷波及对鹉主无效
+        if (e.def.type === 'partygoer') { partygoerDamage(eng, e, 20, 'shock'); continue } // 派对客：免疫电击（法拉第笼般的皮肤），也不会被电僵
         if (!mpHurtEntity(eng, e, 20)) { e.hp -= 20; eng.killCheck(e) } // v59：联机走房主结算
         e.stunT = Math.max(e.stunT, 2.5)
-        if (e.def.type === 'jerry') eng.hurtJerryRep() // v47：伤害鹉主 → 信众哗然 -50
+        if (e.def.type === 'jerry') { eng.hurtJerryRep(); if (!e.dead) jerryHurt(eng, e) }
         n++
       }
       eng.msg(n > 0 ? `瓶装闪电炸开一团电火花——${n} 个实体被电得僵直。` : '瓶装闪电炸开一团电火花，什么也没电到。', n > 0 ? 'damage' : 'system')

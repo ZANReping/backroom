@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 2,
+  "zipEntries": 59,
+  "integratedFiles": 40,
+  "sourceZipMatches": true,
+  "mismatches": [],
+  "docs": {
+    "integration": true,
+    "report": true
+  },
+  "reports": {
+    "classic": {
+      "ok": true,
+      "checks": 59,
+      "nativeGpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "errors": 0,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      },
+      "resources": [
+        {
+          "geometries": 349,
+          "textures": 48,
+          "programs": 36
+        },
+        {
+          "geometries": 349,
+          "textures": 48,
+          "programs": 36
+        },
+        {
+          "geometries": 349,
+          "textures": 48,
+          "programs": 36
+        }
+      ]
+    },
+    "realistic": {
+      "ok": true,
+      "checks": 59,
+      "nativeGpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "errors": 0,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      },
+      "resources": [
+        {
+          "geometries": 357,
+          "textures": 67,
+          "programs": 58
+        },
+        {
+          "geometries": 357,
+          "textures": 67,
+          "programs": 58
+        },
+        {
+          "geometries": 357,
+          "textures": 67,
+          "programs": 58
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,27 @@
+newmtl uvlamp_0_glow
+Kd 1 1 1
+Ka 0 0 0
+Ks 0.1 0.1 0.1
+d 1
+map_Kd ../textures/tools/color.png
+map_Ke ../textures/tools/color.png
+Ke 1 1 1
+
+newmtl uvlamp_1_surface
+Kd 1 1 1
+Ka 0 0 0
+Ks 0.1 0.1 0.1
+d 1
+map_Kd ../textures/tools/color.png
+norm ../textures/tools/normal.png
+map_Pr ../textures/tools/roughness.png
+
+newmtl uvlamp_2_surface
+Kd 1 1 1
+Ka 0 0 0
+Ks 0.1 0.1 0.1
+d 1
+map_Kd ../textures/tools/color.png
+norm ../textures/tools/normal.png
+map_Pr ../textures/tools/roughness.png
+

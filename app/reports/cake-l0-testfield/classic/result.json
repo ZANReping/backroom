@@ -1,0 +1,320 @@
+{
+  "mode": "classic",
+  "port": 21258,
+  "cdp": 28782,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:21258/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sun, 18 Oct 2026 07:42:36 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 259,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 21258,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 13236.295529,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.5,
+        "sendEnd": 0.534,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 70.357,
+        "receiveHeadersEnd": 70.652
+      },
+      "responseTime": 1792309356593.622,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\cake-l0-testfield\\classic\\qa-1792309332223-66640",
+    "--remote-debugging-port=28782",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "server": 67512,
+    "browser": 61944
+  },
+  "before": {
+    "seed": 7391,
+    "mapSeed": 7391,
+    "mode": "classic",
+    "player": [
+      54,
+      16,
+      0
+    ],
+    "look": [
+      0.42,
+      -0.03
+    ],
+    "fov": 72,
+    "origin": [
+      -32,
+      -64
+    ],
+    "resources": {
+      "geometries": 242,
+      "textures": 31,
+      "programs": 42
+    },
+    "chunks": 25,
+    "baselineField": {
+      "x": 14,
+      "y": -24,
+      "w": 80,
+      "h": 80
+    },
+    "remainingWalls": 284,
+    "baseline": "Exact devTestField snapshot before this fix; current renderer"
+  },
+  "initial": {
+    "seed": 7391,
+    "mapSeed": 7391,
+    "mode": "classic",
+    "field": {
+      "x": 14,
+      "y": -24,
+      "w": 80,
+      "h": 80
+    },
+    "player": [
+      54,
+      16,
+      0
+    ],
+    "look": [
+      0.42,
+      -0.03
+    ],
+    "fov": 72,
+    "origin": [
+      -32,
+      -64
+    ],
+    "resources": {
+      "geometries": 253,
+      "textures": 31,
+      "programs": 42
+    },
+    "chunks": 25
+  },
+  "icon": {
+    "seed": 7391,
+    "mapSeed": 7391,
+    "mode": "classic",
+    "field": {
+      "x": 14,
+      "y": -24,
+      "w": 80,
+      "h": 80
+    },
+    "player": [
+      54,
+      16,
+      0
+    ],
+    "look": [
+      0.42,
+      -0.03
+    ],
+    "fov": 72,
+    "origin": [
+      -32,
+      -64
+    ],
+    "resources": {
+      "geometries": 253,
+      "textures": 31,
+      "programs": 42
+    },
+    "chunks": 25,
+    "icons": [
+      {
+        "src": "/textures/icons/pixel/item_velvetcake.png",
+        "size": [
+          128,
+          128
+        ],
+        "display": [
+          24,
+          24
+        ]
+      },
+      {
+        "src": "/textures/icons/pixel/item_velvetcake.png",
+        "size": [
+          128,
+          128
+        ],
+        "display": [
+          28,
+          28
+        ]
+      },
+      {
+        "src": "/textures/icons/pixel/item_velvetcake.png",
+        "size": [
+          128,
+          128
+        ],
+        "display": [
+          28,
+          28
+        ]
+      }
+    ]
+  },
+  "streaming": {
+    "seed": 7391,
+    "mapSeed": 7391,
+    "mode": "classic",
+    "field": {
+      "x": 14,
+      "y": -24,
+      "w": 80,
+      "h": 80
+    },
+    "player": [
+      54,
+      16,
+      0
+    ],
+    "look": [
+      0.42,
+      -0.03
+    ],
+    "fov": 72,
+    "origin": [
+      -32,
+      -64
+    ],
+    "resources": {
+      "geometries": 241,
+      "textures": 32,
+      "programs": 40
+    },
+    "chunks": 25,
+    "walkedMetres": 22.66666666666879
+  },
+  "summary": {
+    "checks": [
+      "Pre-fix function reproduces remaining rendered thin walls after tile clearing",
+      "Actual developer panel activates the 80x80 test field",
+      "Initial field: cleared thin walls and colliders",
+      "Initial field: one hundred lit fixtures",
+      "Initial field: walkable flat floor and neutral materials across chunk seams",
+      "Initial field: WebGL context alive",
+      "Production hotbar uses the new pixel image",
+      "Inventory and hotbar load the 128x128 PNG without fallback",
+      "Real movement crosses chunk seams without an invisible wall",
+      "Streaming removes the test-field chunks from the live window",
+      "Reloaded field: cleared thin walls and colliders",
+      "Reloaded field: one hundred lit fixtures",
+      "Reloaded field: walkable flat floor and neutral materials across chunk seams",
+      "Reloaded field: WebGL context alive",
+      "A dropped cake returns once after unloading/reloading",
+      "Temporary field is absent from the serialized world",
+      "Repeated test-field activation 1",
+      "Repeated test-field activation 2",
+      "Repeated test-field activation 3",
+      "Repeated field rebuilds stabilize geometry and texture counts",
+      "Reused field: cleared thin walls and colliders",
+      "Reused field: one hundred lit fixtures",
+      "Reused field: walkable flat floor and neutral materials across chunk seams",
+      "Reused field: WebGL context alive"
+    ],
+    "memory": [
+      {
+        "geometries": 241,
+        "textures": 32
+      },
+      {
+        "geometries": 241,
+        "textures": 32
+      },
+      {
+        "geometries": 241,
+        "textures": 32
+      }
+    ],
+    "status": {
+      "seed": 7391,
+      "mapSeed": 7391,
+      "mode": "classic",
+      "field": {
+        "x": 14,
+        "y": -24,
+        "w": 80,
+        "h": 80
+      },
+      "player": [
+        54,
+        16,
+        0
+      ],
+      "look": [
+        0.42,
+        -0.03
+      ],
+      "fov": 72,
+      "origin": [
+        -32,
+        -64
+      ],
+      "resources": {
+        "geometries": 241,
+        "textures": 32,
+        "programs": 40
+      },
+      "chunks": 25
+    }
+  },
+  "gpu": {
+    "vendor": "Google Inc. (NVIDIA)",
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

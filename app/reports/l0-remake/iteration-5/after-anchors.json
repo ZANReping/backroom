@@ -1,0 +1,87 @@
+[
+  {
+    "pose": {
+      "id": "manila-inside",
+      "file": "马尼拉房间内部.avif",
+      "x": 591.708,
+      "y": 14.073,
+      "z": 0.415,
+      "yaw": 2.983,
+      "pitch": -0.195,
+      "fov": 40.01
+    },
+    "width": 640,
+    "height": 480,
+    "actualCamera": {
+      "fov": 40.01,
+      "position": {
+        "x": 591.708,
+        "y": 1.9682677654157446,
+        "z": 14.073000000000008
+      },
+      "rotation": {
+        "x": -0.195,
+        "y": 2.983,
+        "z": 0
+      }
+    },
+    "stats": {
+      "label": "manila-inside",
+      "median": 4.199999999999818,
+      "p95": 12.5,
+      "max": 74.89999999999986,
+      "draws": 135,
+      "triangles": 69267,
+      "memory": {
+        "geometries": 156,
+        "textures": 53
+      },
+      "programs": 55,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    }
+  },
+  {
+    "pose": {
+      "id": "manila-door",
+      "file": "马尼拉房间，从门向内.avif",
+      "x": 593.15,
+      "y": 21.6,
+      "yaw": 0.5,
+      "pitch": -0.03,
+      "fov": 62,
+      "doors": [
+        0,
+        180
+      ]
+    },
+    "width": 640,
+    "height": 480,
+    "actualCamera": {
+      "fov": 62,
+      "position": {
+        "x": 593.15,
+        "y": 1.5483759898632143,
+        "z": 21.599999999999994
+      },
+      "rotation": {
+        "x": -0.03,
+        "y": 0.5,
+        "z": 0
+      }
+    },
+    "stats": {
+      "label": "manila-door",
+      "median": 4.199999999999818,
+      "p95": 12.599999999999909,
+      "max": 79.09999999999991,
+      "draws": 161,
+      "triangles": 79247,
+      "memory": {
+        "geometries": 179,
+        "textures": 51
+      },
+      "programs": 57,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    }
+  }
+]

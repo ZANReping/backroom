@@ -1,0 +1,306 @@
+{
+  "label": "before-realistic",
+  "mode": "realistic",
+  "baseline": true,
+  "port": 2230,
+  "cdp": 2231,
+  "poses": [
+    {
+      "pose": "crawl",
+      "meshes": 28,
+      "triangles": 336,
+      "prepareMs": 83.09999999403954,
+      "position": [
+        43.25,
+        0.050581491667485025,
+        25.5
+      ],
+      "fov": 60,
+      "yaw": -1.5707963267948966,
+      "pitch": -0.5,
+      "stats": {
+        "label": "104:open",
+        "median": 4.199999999998909,
+        "p95": 4.300000000001091,
+        "max": 187.5,
+        "p99": 4.399999999999636,
+        "frames": 1000,
+        "over16ms": 2,
+        "over33ms": 1,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 103,
+        "triangles": 24349,
+        "memory": {
+          "geometries": 164,
+          "textures": 85
+        },
+        "programs": 48,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "pose": "items",
+      "types": [
+        "dryshrimp",
+        "friedshrimp"
+      ],
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.299999999999272,
+        "max": 187.5,
+        "p99": 4.400000000001455,
+        "frames": 1000,
+        "over16ms": 4,
+        "over33ms": 2,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 354,
+        "triangles": 182593,
+        "memory": {
+          "geometries": 140,
+          "textures": 88
+        },
+        "programs": 51,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    }
+  ],
+  "checks": null,
+  "memory": null,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:2230/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sat, 17 Oct 2026 10:04:46 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": false,
+      "connectionId": 162,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 2230,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 72898.840252,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": 0.268,
+        "dnsEnd": 0.277,
+        "connectStart": 0.277,
+        "connectEnd": 0.994,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 1.048,
+        "sendEnd": 1.088,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 1245.803,
+        "receiveHeadersEnd": 1245.973
+      },
+      "responseTime": 1792231486933.285,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\shrimp-v81\\before-realistic\\qa-shrimp-1792231481141-84652",
+    "--remote-debugging-port=2231",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "server": 76888,
+    "browser": 12636
+  },
+  "mount": {
+    "seed": 20261006,
+    "baseline": true,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "liveItem": false
+  },
+  "benchmark": {
+    "rounds": [
+      {
+        "label": "104:open",
+        "median": 4.200000000000728,
+        "p95": 4.30000000000291,
+        "max": 4.399999999997817,
+        "p99": 4.30000000000291,
+        "frames": 294,
+        "over16ms": 0,
+        "over33ms": 0,
+        "cpuMedian": 0.7999999970197678,
+        "cpuP95": 1.4000000059604645,
+        "gpuMedian": 4.067328,
+        "gpuP95": 5.31968,
+        "gpuSamples": 292,
+        "draws": 103,
+        "triangles": 24349,
+        "memory": {
+          "geometries": 168,
+          "textures": 88
+        },
+        "programs": 51,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.299999999999272,
+        "max": 4.400000000001455,
+        "p99": 4.30000000000291,
+        "frames": 292,
+        "over16ms": 0,
+        "over33ms": 0,
+        "cpuMedian": 0.800000011920929,
+        "cpuP95": 1.5999999940395355,
+        "gpuMedian": 4.015104,
+        "gpuP95": 5.293056,
+        "gpuSamples": 290,
+        "draws": 103,
+        "triangles": 24349,
+        "memory": {
+          "geometries": 168,
+          "textures": 88
+        },
+        "programs": 51,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.299999999999272,
+        "max": 4.400000000001455,
+        "p99": 4.30000000000291,
+        "frames": 293,
+        "over16ms": 0,
+        "over33ms": 0,
+        "cpuMedian": 0.9000000059604645,
+        "cpuP95": 1.5999999940395355,
+        "gpuMedian": 4.050944,
+        "gpuP95": 5.276672,
+        "gpuSamples": 291,
+        "draws": 103,
+        "triangles": 24349,
+        "memory": {
+          "geometries": 168,
+          "textures": 88
+        },
+        "programs": 51,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.299999999999272,
+        "max": 4.30000000000291,
+        "p99": 4.299999999999272,
+        "frames": 295,
+        "over16ms": 0,
+        "over33ms": 0,
+        "cpuMedian": 1.0999999940395355,
+        "cpuP95": 1.7999999970197678,
+        "gpuMedian": 4.007936,
+        "gpuP95": 5.189632,
+        "gpuSamples": 293,
+        "draws": 103,
+        "triangles": 24349,
+        "memory": {
+          "geometries": 168,
+          "textures": 88
+        },
+        "programs": 51,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "104:open",
+        "median": 4.200000000000728,
+        "p95": 4.299999999999272,
+        "max": 4.5,
+        "p99": 4.299999999999272,
+        "frames": 293,
+        "over16ms": 0,
+        "over33ms": 0,
+        "cpuMedian": 0.9000000059604645,
+        "cpuP95": 1.6000000089406967,
+        "gpuMedian": 4.01408,
+        "gpuP95": 5.311488,
+        "gpuSamples": 291,
+        "draws": 103,
+        "triangles": 24349,
+        "memory": {
+          "geometries": 168,
+          "textures": 88
+        },
+        "programs": 51,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    ],
+    "description": "One live shrimp, warmed EL3A room, five sequential samples; includes the existing scene and postprocessing."
+  },
+  "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "stats": {
+    "label": "104:open",
+    "median": 4.200000000000728,
+    "p95": 4.299999999999272,
+    "max": 4.5,
+    "p99": 4.299999999999272,
+    "frames": 293,
+    "over16ms": 0,
+    "over33ms": 0,
+    "cpuMedian": 0.9000000059604645,
+    "cpuP95": 1.6000000089406967,
+    "gpuMedian": 4.01408,
+    "gpuP95": 5.311488,
+    "gpuSamples": 291,
+    "draws": 103,
+    "triangles": 24349,
+    "memory": {
+      "geometries": 168,
+      "textures": 88
+    },
+    "programs": 51,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

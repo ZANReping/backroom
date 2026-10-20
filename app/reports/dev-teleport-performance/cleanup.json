@@ -1,0 +1,71 @@
+{
+  "passed": true,
+  "method": "Read-only process, child process, listener and isolated profile inspection",
+  "reports": [
+    {
+      "report": "baseline",
+      "run": "qa-1792127113690-11492",
+      "ports": [
+        3523,
+        3524
+      ],
+      "pids": [
+        58936,
+        12720
+      ],
+      "ownedProcesses": [],
+      "listeners": [],
+      "serverChildren": [],
+      "profileExists": false
+    },
+    {
+      "report": "baseline",
+      "run": "qa-1792127257104-19632",
+      "ports": [
+        1999,
+        2000
+      ],
+      "pids": [
+        66732,
+        61756
+      ],
+      "ownedProcesses": [],
+      "listeners": [],
+      "serverChildren": [],
+      "profileExists": false
+    },
+    {
+      "report": "optimized",
+      "run": "qa-1792128180249-16736",
+      "ports": [
+        13973,
+        13974
+      ],
+      "pids": [
+        68232,
+        63576
+      ],
+      "ownedProcesses": [],
+      "listeners": [],
+      "serverChildren": [],
+      "profileExists": false
+    },
+    {
+      "report": "regression",
+      "run": "qa-1792128406790-11212",
+      "ports": [
+        2166,
+        2167
+      ],
+      "pids": [
+        4968,
+        55448
+      ],
+      "ownedProcesses": [],
+      "listeners": [],
+      "serverChildren": [],
+      "profileExists": false
+    }
+  ],
+  "residual": []
+}

@@ -1,6 +1,9 @@
 import {genL0Architecture,l0RegionOf,newL0Space,l0RestoredDropPosition,type L0Layout,type L0SpaceState} from './l0Architecture'
+import {applyL0TestField} from './l0TestField'
 import { newL1Dynamics, restoreL1Container, rememberL1Container, type L1Dynamics } from './l1Dynamics'
 import {l1RestoredDropPosition} from './l1Architecture'
+import {RS,h32,regionHost} from './infiniteSeed'
+export {RS,h32,regionHost,exitTarget} from './infiniteSeed'
 import type { L1ArchitectureData } from './l1BuildingTypes'
 // ================= v17：Level 0「教学关卡」无限 chunk 流式生成 =================
 // 以玩家为中心按 32×32 瓦片 chunk 流式生成/卸载；chunk 用「世界种子+chunk 坐标」
@@ -8,6 +11,7 @@ import type { L1ArchitectureData } from './l1BuildingTypes'
 // 缝合：每条 chunk 边界的走廊开口位置由两侧 chunk 用同一哈希计算，墙壁/走廊自然衔接。
 // 迷宫（回溯 DFS，全覆盖连通）+ 柱厅（旧 pillars 别名）+ 开阔区混合；稀有变体房间见 variantOf。
 import { RNG } from '../core/rng'
+import { object70Keep, object70Sid } from '../decorations/object70'
 import {placeL0StarterSupplies} from './starterSupplies'
 import { canOccupy, PLAYER_RADIUS } from '../core/player'
 import { preparedL11, prefetchL11 } from './l11ChunkCache'
@@ -23,7 +27,6 @@ export const CS = 32 // chunk 边长（瓦片）
 export const WIN_R = 2 // 窗口半径（chunk）：5×5 chunk = 160×160 瓦片
 export const WIN_CHUNKS = WIN_R * 2 + 1
 export const WIN_TILES = WIN_CHUNKS * CS
-export const RS = 8 // 出口保底超区域边长（chunk）：8×8 chunk = 256m，任意 500m 半径圆必含完整区域
 export const GEN_ITEM_BASE = 0x200000 // 生成器固有物品 id 起点（玩家掉落物 id < 此值）
 
 export type L0Variant =
@@ -115,6 +118,7 @@ export interface ChunkDynState {
 }
 
 export interface InfiniteState {
+  l0TestField?: import('./l0Architecture').L0Rect // Transient; reapplied when a chunk returns to the window.
   cityInstances?: Map<string, Structure>
   cityReferences?: Map<string, number>
   l0Pending?: import("../engine/l0State").L0Pending
@@ -143,17 +147,6 @@ export interface InfiniteState {
 }
 
 // ---------- 确定性哈希（负坐标安全）----------
-export function h32(...nums: number[]): number {
-  let h = 0x811c9dc5
-  for (const n of nums) {
-    h ^= n >>> 0
-    h = Math.imul(h, 0x01000193)
-    h ^= h >>> 13
-    h = Math.imul(h, 0x85ebca6b)
-    h ^= h >>> 16
-  }
-  return h >>> 0
-}
 const h01 = (...n: number[]) => h32(...n) / 4294967296
 
 export const chunkKey = (cx: number, cy: number) => `${cx},${cy}`
@@ -184,16 +177,7 @@ export function edgeOpen(seed: number, vertical: boolean, a: number, b: number):
 export const encStep = (dir: number, lo: number, hi: number) => dir | (lo << 3) | (hi << 5)
 
 // ---------- 出口保底：每 RS×RS chunk 超区域恰有 1 个出口「闪烁的墙壁」 ----------
-export function regionHost(seed: number, rx: number, ry: number): { cx: number; cy: number } {
-  return {
-    cx: rx * RS + (h32(seed, 0xe11, rx, ry) % RS),
-    cy: ry * RS + (h32(seed, 0xe12, rx, ry) % RS),
-  }
-}
 // 出口 chunk 内目标点（确定性；实际出口=最近的「地板且邻墙」瓦片）
-export function exitTarget(seed: number, cx: number, cy: number): { x: number; y: number } {
-  return { x: 6 + (h32(seed, 0xe21, cx, cy) % 20), y: 6 + (h32(seed, 0xe22, cx, cy) % 20) }
-}
 
 // ---------- chunk 生成（世界坐标内容；纯函数：同种子同坐标必一致）----------
 // ---------- chunk 生成（世界坐标内容；纯函数：同种子同坐标必一致；GenChunk 契约见 infiniteRegistry）----------
@@ -227,13 +211,16 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
     if(next!==(inf.cityRevisions?.[key]??0))(inf.cityRevisions??={})[key]=next
     delete inf.cityUnloaded[key]
   }
-  const raw = prepared ?? (def.id === 0 ? genL0Architecture(def,inf.seed,cx,cy,undefined,inf.l0?.revisions[key]??0,inf.l0?.redProgress) : def.id === 11 ? preparedL11(def, inf.seed, cx, cy, inf.cityRevisions?.[key] ?? 0)
+  const rawSource = prepared ?? (def.id === 0 ? genL0Architecture(def,inf.seed,cx,cy,undefined,inf.l0?.revisions[key]??0,inf.l0?.redProgress) : def.id === 11 ? preparedL11(def, inf.seed, cx, cy, inf.cityRevisions?.[key] ?? 0)
     : (!inf.plague ? takePreparedChunk(def, inf.seed, cx, cy) : undefined) ?? infiniteImplFor(def.id).genRaw(def, inf.seed, cx, cy, inf.plague ? 'red' : undefined))
+  const raw = def.id === 0 ? applyL0TestField(rawSource, inf.l0TestField) : rawSource
   const st = inf.state.get(key)
-  const structures: Structure[] = raw.structures.map((s) => {
+  // v83：Object 70（容器「尸体」）生成概率减半——按世界坐标确定性哈希保留约一半，不改动生成器随机序列
+  const structures: Structure[] = raw.structures.filter((s) => s.kind !== 'corpse' || object70Keep(def.id, s.x, s.y)).map((s) => {
     if(s.l11){const shared=inf.cityInstances?.get(s.l11.id);if(shared){shared.x=s.l11.x-ox;shared.y=s.l11.y-oy;return shared}}
-    const live: Structure = { ...s, x: s.x - ox, y: s.y - oy, data: s.data ? { ...s.data } : undefined }
-    const saved = st?.structs.find((q) => q.sid === (s.data?.sid as number | undefined))
+    const data = s.kind === 'corpse' ? { ...s.data, sid: s.data?.sid ?? object70Sid(def.id, s.x, s.y, s.floor) } : s.data
+    const live: Structure = { ...s, x: s.x - ox, y: s.y - oy, data: data ? { ...data } : undefined }
+    const saved = st?.structs.find((q) => q.sid === (data?.sid as number | undefined))
     if (saved) {
       if (saved.looted) live.looted = true
       if (saved.data) {

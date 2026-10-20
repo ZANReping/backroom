@@ -1,24 +1,30 @@
-import {l1LayoutVariant,l1TransitionStyle,l1Outpost} from './l1Layout'
-import {l1HallWall,l1Mod,l1Noise,l1ParkingAt,l1ReferenceAt,l1PathRoom} from './l1Spatial'
+import {l1LayoutVariant,l1Outpost} from './l1Layout'
+import {l1PlanTile,l1PlanDoors,l1RegionAt} from './l1Plan'
+import {l1HallWall,l1Mod,l1Noise,l1ParkingAt,l1ReferenceAt,l1RegionReference,l1PathRoom} from './l1Spatial'
 import {L1_REFERENCE_CASES} from './l1ReferenceCases'
 import {l1Puddles} from './l1Puddles'
 import {l1ParkingServices} from './l1ParkingServices'
+import {fitL1Exit} from './l1WallFixtures'
 import {L1_STYLE_NAMES,type L1ArchitectureData,type L1Box,type L1Emitter,type L1Module,type L1StyleName,type V3} from './l1BuildingTypes'
 
 const BASE:Record<L1StyleName,L1Module>={
  parking:{height:3.25,spacingX:7,spacingZ:7,phaseX:6.5,phaseZ:6.5,columnWidth:.92,columnDepth:1.08,round:false,beamDepth:.27,beamWidth:.42,lampSpacing:7,wallTubes:true,power:1.25,finish:'raw'},
- storage:{height:6.2,spacingX:10,spacingZ:9,phaseX:6.5,phaseZ:6.5,columnWidth:.42,columnDepth:.42,round:false,beamDepth:1.1,beamWidth:.30,lampSpacing:7,wallTubes:false,power:2,finish:'paint'},
+ storage:{height:6.2,spacingX:10,spacingZ:9,phaseX:6.5,phaseZ:6.5,columnWidth:.62,columnDepth:.62,round:false,beamDepth:1.1,beamWidth:.30,lampSpacing:7,wallTubes:false,power:2,finish:'raw'},
  gothic:{height:3.65,spacingX:6,spacingZ:6,phaseX:4.5,phaseZ:4.5,columnWidth:1.08,columnDepth:1.08,round:true,beamDepth:0,beamWidth:0,lampSpacing:6,wallTubes:false,power:1.05,finish:'raw'},
  ouroboros:{height:4.25,spacingX:7,spacingZ:7,phaseX:6.5,phaseZ:6.5,columnWidth:.78,columnDepth:.78,round:false,beamDepth:.55,beamWidth:.55,lampSpacing:7,wallTubes:false,power:1.55,finish:'peeling'},
- garden:{height:7.8,spacingX:7.2,spacingZ:7.2,phaseX:6.5,phaseZ:6.5,columnWidth:1.65,columnDepth:1.65,round:false,beamDepth:.4,beamWidth:.65,lampSpacing:7.2,wallTubes:false,power:2.4,finish:'raw'},
+ garden:{height:7.8,spacingX:7.2,spacingZ:7.2,phaseX:6.5,phaseZ:6.5,columnWidth:1.65,columnDepth:1.65,round:false,beamDepth:.4,beamWidth:.65,lampSpacing:7.2,wallTubes:false,power:4.6,finish:'raw'},
+ fabled:{height:3.3,spacingX:6,spacingZ:6,phaseX:4.5,phaseZ:4.5,columnWidth:.34,columnDepth:.34,round:false,beamDepth:.32,beamWidth:.28,lampSpacing:6,wallTubes:false,power:3.4,finish:'paint'},
  maintenance:{height:2.65,spacingX:8,spacingZ:8,phaseX:6.5,phaseZ:6.5,columnWidth:.6,columnDepth:.6,round:false,beamDepth:.14,beamWidth:.18,lampSpacing:5,wallTubes:false,power:.9,finish:'paint'},
 }
 export function l1BuildingStyleAt(seed:number,x:number,z:number):L1StyleName {
- const v=l1LayoutVariant(seed,Math.floor(x/32),Math.floor(z/32))
- return (v==='aisle'?l1TransitionStyle(seed,x,z):v) as L1StyleName
+ return l1PlanTile(seed,x,z).style as L1StyleName
 }
 export function l1ModuleAt(seed:number,x:number,z:number,force?:L1StyleName):L1Module {
- const style=force??l1BuildingStyleAt(seed,x,z),ref=l1ReferenceAt(seed,x,z),override=ref?L1_REFERENCE_CASES[ref.id]?.module:undefined
+ const style=force??l1BuildingStyleAt(seed,x,z),region=style==='gothic'?l1RegionAt(seed,x,z):undefined
+ // A vault cannot change its shaft grid or springing height at the edge of a
+ // photographic bay. Use one structural profile throughout its gothic hall.
+ const candidate=region?.section==='gothic'?l1RegionReference(seed,region):l1ReferenceAt(seed,x,z)
+ const ref=candidate?.variant===style?candidate:undefined,override=ref?L1_REFERENCE_CASES[ref.id]?.module:undefined
  const p={...BASE[style],...override}
  if(ref){p.phaseX+=ref.centerX;p.phaseZ+=ref.centerY}
  else if(style==='parking'){const a=l1ParkingAt(seed,x,z);p.round=a.round;if(a.clean)p.finish='paint';if(a.brightness<.3){p.lighting='service-bay';p.wallTubes=false}}
@@ -59,7 +65,16 @@ function pathFloor(seed:number,cx:number,cz:number){
  }
  if(pathTiles.size>=512)pathTiles.delete(pathTiles.keys().next().value!);pathTiles.set(key,out);return out
 }
-export function l1BuildingFloorAt(seed:number,x:number,z:number,force?:L1StyleName){
+export function l1BuildingFloorAt(seed:number,x:number,z:number,_force?:L1StyleName){
+ const cx=Math.floor(x/32),cz=Math.floor(z/32),lx=l1Mod(Math.floor(x),32),lz=l1Mod(Math.floor(z),32)
+ const t=l1PlanTile(seed,x,z)
+ if(t.door)return true
+ if(!t.floor)return false
+ if(t.style==='maintenance')return true
+ if(l1Outpost(seed,cx,cz)&&lx>=9&&lx<24&&lz>=9&&lz<24)return true
+ return !l1HallWall(seed,x,z,t.style)
+}
+export function l1BuildingFloorAtLegacy(seed:number,x:number,z:number,force?:L1StyleName){
  const cx=Math.floor(x/32),cz=Math.floor(z/32),lx=l1Mod(Math.floor(x),32),lz=l1Mod(Math.floor(z),32),style=force??l1BuildingStyleAt(seed,x,z)
  const ref=l1ReferenceAt(seed,x,z)
  if(ref?.id==='crate'&&Math.abs(x-ref.centerX)<4&&Math.abs(z-ref.centerY)<4)return true
@@ -90,6 +105,43 @@ export function buildL1Data(seed:number,cx:number,cy:number,force?:L1StyleName):
   for(let dz=0;dz<d;dz++)for(let dx=0;dx<w;dx++)used[(z+dz)*32+x+dx]=1
   addBox(`wall:${x0+x},${z0+z}`,[x0+x,0,z0+z],[x0+x+w,p.height,z0+z+d],style,p.wallFinish??'wall',true)
  }
+ // 传说段 (ref 传说段.webp): dark timber wainscot on every hall-facing wall; most runs carry the old
+ // timber-framed frosted-glass office partition up to ~2.5 m with a dark board fascia above.
+ for(const b of boxes.slice())if(b.style==='fabled'&&b.solid&&b.id.startsWith('wall:')){
+  const H=b.max[1]
+  for(const [axis,side] of [[0,-1],[0,1],[2,-1],[2,1]] as const){
+   const along=axis===0?2:0,face=side<0?b.min[axis]:b.max[axis],lo=b.min[along],hi=b.max[along]
+   const floorAt=(t:number)=>{const q=face+side*.5;return axis===0?l1BuildingFloorAt(seed,q,t,force):l1BuildingFloorAt(seed,t,q,force)}
+   let a=NaN
+   for(let t=lo;t<=hi;t++){
+    const ok=t<hi&&floorAt(t+.5)
+    if(ok&&Number.isNaN(a))a=t
+    if(!ok&&!Number.isNaN(a)){fabledWall(axis,side,face,a,t,H);a=NaN}
+   }
+  }
+ }
+ // 传说段 ceiling: exposed timber joists (ref) every 0.9 m along x, coalesced per run of fabled floor.
+ for(let jx=Math.ceil((x0+.45)/.9)*.9-.45;jx<x0+32;jx+=.9){
+  const cxI=Math.floor(jx-x0);let a=NaN
+  for(let z=0;z<=32;z++){
+   const ok=z<32&&floor[z*32+cxI]&&styles[z*32+cxI]===L1_STYLE_NAMES.indexOf('fabled')
+   if(ok&&Number.isNaN(a))a=z
+   if(!ok&&!Number.isNaN(a)){const H=l1ModuleAt(seed,jx,z0+a,'fabled').height;addBox(`fab:joist:${jx.toFixed(2)}:${z0+a}`,[jx-.05,H-.24,z0+a],[jx+.05,H,z0+z],'fabled','paint',false,true);a=NaN}
+  }
+ }
+ function fabledWall(axis:0|2,side:-1|1,face:number,a:number,e:number,H:number){
+  const box=(id:string,t0:number,t1:number,y0:number,y1:number,d0:number,d1:number,surface:L1Box['surface'])=>{
+   const n0=side<0?face-d1:face+d0,n1=side<0?face-d0:face+d1
+   addBox(`fab:${id}:${axis}${side}:${face}:${t0.toFixed(2)}`,axis===0?[n0,y0,t0]:[t0,y0,n0],axis===0?[n1,y1,t1]:[t1,y1,n1],'fabled',surface,false,true)
+  }
+  const glazed=((Math.imul(Math.floor(face*7+a*13+axis*31)^seed,2654435761)>>>0)%10)<7&&e-a>=3
+  box('wainscot',a,e,0,1.05,0,.05,'paint');box('rail',a,e,1.05,1.13,0,.09,'paint')
+  if(!glazed)return
+  box('sill',a,e,1.13,1.2,0,.07,'paint');box('glass',a,e,1.2,2.42,0,.025,'glass');box('head',a,e,2.42,2.52,0,.08,'paint');box('fascia',a,e,2.52,H,0,.04,'paint')
+  const n=Math.max(1,Math.round((e-a)/1.25))
+  for(let i=0;i<=n;i++){const t=a+(e-a)*i/n;box('post',Math.max(a,t-.045),Math.min(e,t+.045),1.13,2.52,0,.075,'paint')}
+  for(let i=0;i<n;i++){box('bar',a+(e-a)*i/n,a+(e-a)*(i+1)/n,1.78,1.83,0,.05,'paint')}
+ }
  const ref=l1ReferenceAt(seed,x0+16,z0+16),partitions=ref?(L1_REFERENCE_CASES[ref.id].partitions??[]).map(b=>({min:[b.min[0]+ref.centerX,b.min[1]+ref.centerY],max:[b.max[0]+ref.centerX,b.max[1]+ref.centerY]})):[]
  for(const [i,b]of partitions.entries()){
   const x=Math.max(x0,b.min[0]),z=Math.max(z0,b.min[1]),X=Math.min(x0+32,b.max[0]),Z=Math.min(z0+32,b.max[1]);if(X<=x||Z<=z)continue
@@ -98,15 +150,25 @@ export function buildL1Data(seed:number,cx:number,cy:number,force?:L1StyleName):
  }
  const clear=(x:number,z:number,r=.6)=>{for(const dx of [-r,0,r])for(const dz of [-r,0,r])if(!l1BuildingFloorAt(seed,x+dx,z+dz,force))return false;return !partitions.some(b=>x+r>b.min[0]&&x-r<b.max[0]&&z+r>b.min[1]&&z-r<b.max[1])}
  const candidateStyles=[...new Set(Array.from(styles,n=>L1_STYLE_NAMES[n]))]
- for(const style of candidateStyles){
-  const p=l1ModuleAt(seed,x0+16,z0+16,style)
+ // Mixed chunks can contain several hall grids. The centre of the streaming
+ // chunk is never the authority for a pillar on its opposite edge.
+ const profiles=new Map<string,{style:L1StyleName;p:L1Module}>(),profileKey=(style:L1StyleName,p:L1Module)=>style+JSON.stringify(p)
+ for(let z=0;z<32;z++)for(let x=0;x<32;x++){
+  const style=styleAt(x0+x+.5,z0+z+.5);if(style==='maintenance')continue
+  const p=l1ModuleAt(seed,x0+x+.5,z0+z+.5,style);profiles.set(profileKey(style,p),{style,p})
+ }
+ for(const [key,{style,p}]of profiles){
   if(style==='maintenance')continue
   for(let gz=Math.ceil((z0-p.phaseZ)/p.spacingZ);;gz++){
    const z=p.phaseZ+gz*p.spacingZ;if(z>=z0+32)break
    for(let gx=Math.ceil((x0-p.phaseX)/p.spacingX);;gx++){
     const x=p.phaseX+gx*p.spacingX;if(x>=x0+32)break
-    if(styleAt(x,z)!==style&&!force||!clear(x,z,Math.max(p.columnWidth,p.columnDepth)/2+.2))continue
-    if(Math.hypot(x-15.5,z-15.5)<4||l1Outpost(seed,cx,cy)&&x>x0+9&&x<x0+24&&z>z0+9&&z<z0+24)continue
+    if(styleAt(x,z)!==style||profileKey(style,l1ModuleAt(seed,x,z,style))!==key)continue
+    const radius=Math.max(p.columnWidth,p.columnDepth)/2
+    // Shafts meeting perimeter walls become real engaged columns. Requiring a
+    // clearance halo used to delete them while leaving their vaults suspended.
+    const visible=style==='gothic'?[-radius,0,radius].some(dx=>[-radius,0,radius].some(dz=>styleAt(x+dx,z+dz)==='gothic'&&l1BuildingFloorAt(seed,x+dx,z+dz,force))):clear(x,z,radius+.2)
+    if(!visible||style!=='gothic'&&Math.hypot(x-15.5,z-15.5)<4)continue
     const id=`column:${x.toFixed(3)},${z.toFixed(3)}`,top=style==='gothic'?(p.springHeight??1.35):p.height
     const round=p.round&&(p.columnPattern!=='mixed'||l1Mod(gz,3)===0)
     if(style==='storage'){
@@ -158,6 +220,35 @@ export function buildL1Data(seed:number,cx:number,cy:number,force?:L1StyleName):
     }
    }
   }
+  if(style==='ouroboros'){
+   // 衔尾段 ref: big lagged (insulated) ducts on hangers and red sprinkler mains under a dark slab.
+   for(let k=Math.ceil((x0-p.phaseX-3.4)/(p.spacingX*2));;k++){
+    const x=p.phaseX+3.4+k*p.spacingX*2;if(x>=x0+32)break
+    const r=.42,y=p.height-.95
+    for(let z=z0;z<z0+32;z+=4)if(styleAt(x,z+2)===style){
+     addBox(`our-duct:${x},${z}`,[x-r,y-r,z],[x+r,y+r,z+4],style,'whitePipe',false,false,'round',2)
+     addBox(`our-hanger:${x},${z}`,[x-.02,y+r,z+1.98],[x+.02,p.height,z+2.02],style,'metal')
+    }
+   }
+   for(let k=Math.ceil((x0-p.phaseX-1.2)/p.spacingX);;k++){
+    const x=p.phaseX+1.2+k*p.spacingX;if(x>=x0+32)break
+    for(let z=z0;z<z0+32;z+=4)if(styleAt(x,z+2)===style)for(const o of [0,.22])addBox(`our-red:${x+o},${z}`,[x+o-.045,p.height-.42,z],[x+o+.045,p.height-.33,z+4],style,'red',false,true,'round',2)
+   }
+   // v2 C: ref 衔尾段 is an abandoned, littered floor — paper/rubble scraps and dark boards stood against columns.
+   for(let n=0;n<46;n++){
+    const x=x0+l1Noise(n,x0*3+z0,seed^0x7a1)*32,z=z0+l1Noise(n,z0*5+x0,seed^0x7a3)*32
+    if(styleAt(x,z)!==style||!clear(x,z,.35))continue
+    const q=l1Noise(n,x0+z0,seed^0x7a5),w=.08+q*.42,d=.06+l1Noise(n,7,seed^0x7a7)*.34,h=.004+q*q*.05
+    addBox(`our-litter:${x.toFixed(2)},${z.toFixed(2)}`,[x,0,z],[x+w,h,z+d],style,q<.55?'paint':q<.8?'cable':'peeling',false,true)
+   }
+   for(let k=Math.ceil((x0-p.phaseX)/p.spacingX);;k++){const cxk=p.phaseX+k*p.spacingX;if(cxk>=x0+32)break
+    for(let j=Math.ceil((z0-p.phaseZ)/p.spacingZ);;j++){const czk=p.phaseZ+j*p.spacingZ;if(czk>=z0+32)break
+     if(cxk<x0||czk<z0||styleAt(cxk,czk)!==style||l1Noise(k,j,seed^0x7b1)>.16)continue
+     const fx=cxk+p.columnWidth/2+.02
+     addBox(`our-board:${cxk},${czk}`,[fx,0,czk-.55],[fx+.035,1.25+l1Noise(k,j,seed^0x7b3)*.6,czk+.55],style,'cable',false,true)
+    }
+   }
+  }
   if(style==='parking')boxes.push(...l1ParkingServices(p,x0,z0,(x,z)=>styleAt(x,z)==='parking'&&clear(x,z,.05)))
   for(let z=z0;z<z0+32;z+=4)for(let x=x0;x<x0+32;x+=4){
    if(styleAt(x+2,z+2)!==style||!clear(x+2,z+2,.2))continue
@@ -200,15 +291,27 @@ export function buildL1Data(seed:number,cx:number,cy:number,force?:L1StyleName):
     if(style==='maintenance'&&sideRoom&&x>sideRoom.x0&&x<sideRoom.x1&&z>sideRoom.y0&&z<sideRoom.y1)continue
     if(p.lighting==='wall-bay'||p.lighting==='wall-tubes'&&l1Noise(gx,gz,seed^123)>.2)continue
     const on=p.lighting!=='service-bay'&&(style!=='parking'||!p.wallTubes||l1Noise(gx,gz,seed^123)<.25)
-    if(style==='garden')continue // Actual skylight apertures below own their emission.
-    lamp(`lamp:${x.toFixed(3)},${z.toFixed(3)}`,[x,(style==='gothic'?l1BuildingRoof(seed,x,z,true):p.height)-(style==='storage'?p.beamDepth+.25:.15),z],[0,-1,0],p.lampAlongZ?[0,0,1]:[1,0,0],style==='storage'?1.4:1.2,style==='storage'?.48:.045,style,style==='storage'?'panel':'tube',on?p.power:0)
+    if(style==='garden'&&l1Mod(gx+gz,2))continue // v2: skylights plus a sparse grey fill grid (ref is evenly bright moss)
+    lamp(`lamp:${x.toFixed(3)},${z.toFixed(3)}`,[x,(style==='gothic'?l1BuildingRoof(seed,x,z,true):p.height)-(style==='storage'?p.beamDepth+.25:.15),z],[0,-1,0],p.lampAlongZ?[0,0,1]:[1,0,0],style==='storage'?1.4:1.2,style==='storage'?.48:.045,style,style==='storage'?'panel':'tube',on?(style==='garden'?p.power*.45:p.power):0)
    }
+  }
+ }
+ // v2 小径: ceiling tubes along the 2 m maze corridors (one per other 3 m cell, centred across the corridor).
+ if(candidateStyles.includes('maintenance')){
+  const pm=BASE.maintenance,mf=(x:number,z:number)=>{const t=l1PlanTile(seed,Math.floor(x),Math.floor(z));return t.floor&&t.style==='maintenance'&&!t.room}
+  for(let j=Math.floor(z0/3);j*3<z0+32;j++)for(let i=Math.floor(x0/3);i*3<x0+32;i++){
+   if(l1Mod(i+2*j,3))continue
+   for(const o of [1,2]){const x=i*3+o,z=j*3+o;if(x<x0||x>=x0+32||z<z0||z>=z0+32)continue
+    if(!(mf(x-.5,z-.5)&&mf(x+.5,z-.5)&&mf(x-.5,z+.5)&&mf(x+.5,z+.5)))continue
+    const alongZ=mf(x,z-1.6)&&mf(x,z+1.6),alongX=mf(x-1.6,z)&&mf(x+1.6,z)
+    if(!alongZ&&!alongX)continue // no tube hard against a dead-end / corner wall
+    lamp(`path-tube:${x},${z}`,[x,pm.height-.06,z],[0,-1,0],alongZ?[0,0,1]:[1,0,0],1.2,.06,'maintenance','tube',pm.power*.5,8);break}
   }
  }
  for(const r of roofs)if(r.sky)lamp(r.id+':sun',[r.x+1,r.height+.04,r.z+1],[.32,-.92,-.2],[1,0,0],r.w,r.d,r.style,'sky',l1ModuleAt(seed,r.x,r.z).power)
  if(candidateStyles.includes('maintenance')&&sideRoom){
   const p=l1ModuleAt(seed,sideRoom.x0+1,sideRoom.y0+1,'maintenance')
-  for(let z=sideRoom.y0+1.8;z<sideRoom.y1-.6;z+=3.0)lamp(`roomtube:${sideRoom.x1},${z}`,[sideRoom.x1-.32,p.height-.16,z],[0,-1,0],[0,0,1],1.18,.04,'maintenance','tube',p.power)
+  for(let z=sideRoom.y0+1.8;z<sideRoom.y1-.6;z+=3.0)lamp(`roomtube:${sideRoom.x1},${z}`,[sideRoom.x1-.6,p.height-.16,z],[0,-1,0],[0,0,1],1.18,.04,'maintenance','tube',p.power*1.3)
   const {x0:x,x1:X,y0:z,y1:Z}=sideRoom,h=p.height-.3
   addBox(`room-pipe:${x},${z}`,[X-.18,h-.035,z+.3],[X-.11,h+.035,Z-.15],'maintenance','whitePipe',false,false,'round',2)
   addBox(`room-pipe-cross:${x},${z}`,[x+.2,h-.035,Z-1.04],[X-.11,h+.035,Z-.97],'maintenance','whitePipe',false,false,'round',0)
@@ -236,15 +339,17 @@ export function buildL1Data(seed:number,cx:number,cy:number,force?:L1StyleName):
   if(p.lighting==='service-bay')continue
   for(let z=Math.ceil(b.min[2]/p.spacingZ)*p.spacingZ+1;z<b.max[2];z+=p.spacingZ)lamp(`walltube:${x},${z}`,[x,p.height*.66,z],[side,0,0],[0,1,0],1.3,.045,'parking','tube',p.power*1.3)
  }
- if(candidateStyles.includes('maintenance'))for(const [dx,dz]of [[1,0],[-1,0],[0,1],[0,-1]]){
-  if(l1LayoutVariant(seed,cx+dx,cy+dz)==='maintenance')continue
-  const ex=cx+(dx>0?1:0),ez=cy+(dz>0?1:0),slot=4+2*Math.floor(l1Noise(ex,ez,seed^(dx?0xd001:0xd002))*12)
-  const x=x0+(dx?(dx>0?31:0):slot),z=z0+(dz?(dz>0?31:0):slot),w=dx?1:2,d=dx?2:1
-  const id=`door:${ex},${ez}:${dx?'x':'z'}`;openings.push({id,x,z,w,d,height:2.2,door:true})
-  lamp(id+':sign',[x+w/2,2.35,z+d/2],[dx,0,dz],[dz?1:0,0,dx?1:0],.36,.14,'maintenance','emergency',.045)
+ // 过道 ↔ 小径 doors from the v2 plan. The green emergency lamp faces the hall (wiki: find the lit door).
+ for(const door of l1PlanDoors(seed,x0,z0,x0+32,z0+32)){
+  const w=door.axis==='x'?1:2,d=door.axis==='x'?2:1,x=door.x,z=door.y
+  const nx=door.dir===0?1:door.dir===1?-1:0,nz=door.dir===2?1:door.dir===3?-1:0
+  openings.push({id:door.id,x,z,w,d,height:2.2,door:true})
+  lamp(door.id+':sign',[x+w/2+nx*.56,2.35,z+d/2+nz*.56],[nx,0,nz],[nz?1:0,0,nx?1:0],.36,.14,'maintenance','emergency',.045)
  }
+ const puddles=l1Puddles(seed,cx,cy),result:L1ArchitectureData={version:4,seed,cx,cy,fingerprint:'',boxes,roofs,emitters,openings,puddles,floor,styles}
+ if(!force)fitL1Exit(result,(x,z)=>l1BuildingRoof(seed,x,z,true))
  let hash=2166136261
- const puddles=l1Puddles(seed,cx,cy),signature=JSON.stringify([boxes,roofs,emitters,openings,puddles])+(candidateStyles.includes('gothic')?'|vault-edge-3':'');for(let i=0;i<signature.length;i++)hash=Math.imul(hash^signature.charCodeAt(i),16777619)
- const result:L1ArchitectureData={version:4,seed,cx,cy,fingerprint:(hash>>>0).toString(16),boxes,roofs,emitters,openings,puddles,floor,styles}
+ const signature=JSON.stringify([result.boxes,roofs,emitters,openings,puddles,result.exit])+(candidateStyles.includes('gothic')?'|vault-edge-4':'');for(let i=0;i<signature.length;i++)hash=Math.imul(hash^signature.charCodeAt(i),16777619)
+ result.fingerprint=(hash>>>0).toString(16)
  if(caches.size>=96)caches.delete(caches.keys().next().value!);caches.set(key,result);return result
 }

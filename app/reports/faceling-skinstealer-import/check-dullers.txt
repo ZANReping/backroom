@@ -1,0 +1,28 @@
+
+> my-app@0.0.0 check:dullers
+> esbuild scripts/check-dullers.ts --bundle --platform=node --format=esm --outfile=.cache/check-dullers.mjs && node .cache/check-dullers.mjs
+
+
+  .cache\check-dullers.mjs  2.1mb
+
+Done in 164ms
+✔ 潜伏到墙后并伸臂（roam→lurk→reach→drag→hold→flee）
+✔ 把玩家拖穿墙壁到另一侧走廊（x=2.47）
+✔ 抓取/拖拽造成伤害与理智损失（34.5）
+✔ 提示：被拖进墙
+✔ 得手后被看清，随即逃离
+✔ 回头看见伸出的手臂 → 未被抓（hurt=0）
+✔ 提示：被盯住后缩回
+✔ 视线内被直视即逃（flee）
+✔ 逃离时急速奔跑（1 秒 3.49 米）
+✔ 刻意靠近 → 逃离（flee）
+✔ 饮用杏仁水后不会被抓
+✔ 拖拽中喝杏仁水 → 挣脱并回到墙这一侧（x=0.50）
+✔ 杏仁水滋中 → 缩回墙里逃走
+✔ 玩家站在地上的杏仁水旁 → 钝人不伸手
+✔ 带着杏仁水时它伸手前会犹豫（0.83s → 1.23s）
+✔ 挨打即松手（x=0.50）
+✔ 约四成钝人攥着随机物品（79/200）
+✔ 被杀时掉落携带物
+
+全部通过

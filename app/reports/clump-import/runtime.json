@@ -1,0 +1,37 @@
+{
+  "checks": [
+    "entity location has actual clearance",
+    "production AI winds up and captures player",
+    "production movement allows collision-checked dragging",
+    "jump presses escape through actual movement hook",
+    "devour is nonlethal and spits player out",
+    "killing captor immediately releases player",
+    "freezing AI releases capture",
+    "production renderer creates clump rig",
+    "GPU bone texture uploaded without CPU baking"
+  ],
+  "seed": 20261006,
+  "stats": {
+    "label": "104:open",
+    "median": 9.600000000000364,
+    "p95": 28.600000000000364,
+    "max": 1041.0999999999995,
+    "p99": 133.69999999999982,
+    "frames": 741,
+    "over16ms": 154,
+    "over33ms": 21,
+    "cpuMedian": null,
+    "cpuP95": null,
+    "gpuMedian": null,
+    "gpuP95": null,
+    "gpuSamples": 0,
+    "draws": 656,
+    "triangles": 360931,
+    "memory": {
+      "geometries": 150,
+      "textures": 95
+    },
+    "programs": 74,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  }
+}

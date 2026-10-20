@@ -1,0 +1,425 @@
+{
+  "run": "qa-1792075308970-67080",
+  "port": 2322,
+  "cdp": 2323,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-access-fixes\\runtime\\qa-1792075308970-67080",
+  "seed": 20261006,
+  "command": [
+    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-access-fixes\\runtime\\qa-1792075308970-67080",
+    "--remote-debugging-port=2323",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.40",
+    "revision": "@cfaadc5a132d78e1828635aa8405a499f3e14864",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.20"
+  },
+  "pids": {
+    "server": 13600,
+    "browser": 29476
+  },
+  "map": {
+    "hidden": {
+      "canvas": [
+        764,
+        464
+      ],
+      "host": [
+        766,
+        466
+      ],
+      "gap": 1,
+      "hash": 643282927,
+      "mini": 308269523,
+      "checked": false,
+      "explored": 0,
+      "loading": {
+        "clients": 2,
+        "worker": false,
+        "pending": 0,
+        "cached": 0,
+        "failed": 0
+      }
+    },
+    "revealed": {
+      "canvas": [
+        764,
+        464
+      ],
+      "host": [
+        766,
+        466
+      ],
+      "gap": 1,
+      "hash": 2654870235,
+      "mini": 1352466947,
+      "checked": true,
+      "explored": 0,
+      "loading": {
+        "clients": 2,
+        "worker": false,
+        "pending": 0,
+        "cached": 0,
+        "failed": 0
+      }
+    },
+    "small": {
+      "canvas": [
+        460,
+        354
+      ],
+      "host": [
+        462,
+        356
+      ],
+      "gap": 1,
+      "hash": 1197649208,
+      "mini": null,
+      "checked": true,
+      "explored": 0,
+      "loading": {
+        "clients": 1,
+        "worker": false,
+        "pending": 0,
+        "cached": 0,
+        "failed": 0
+      }
+    },
+    "restored": {
+      "canvas": [
+        764,
+        464
+      ],
+      "host": [
+        766,
+        466
+      ],
+      "gap": 1,
+      "hash": 643282927,
+      "mini": 308269523,
+      "checked": false,
+      "explored": 0,
+      "loading": {
+        "clients": 2,
+        "worker": false,
+        "pending": 0,
+        "cached": 0,
+        "failed": 0
+      }
+    }
+  },
+  "metro": {
+    "descent": {
+      "end": {
+        "x": 27.5,
+        "y": 132.0433333333346,
+        "z": -5,
+        "floor": -1,
+        "liquid": 0
+      },
+      "samples": 239,
+      "ceiling": -2
+    }
+  },
+  "metroSides": {
+    "sideSamples": [
+      {
+        "x": 26.338333333333225,
+        "y": 120.5,
+        "z": -0.25,
+        "floor": 0,
+        "liquid": 0
+      },
+      {
+        "x": 28.661666666666775,
+        "y": 120.5,
+        "z": -0.25,
+        "floor": 0,
+        "liquid": 0
+      },
+      {
+        "x": 26.338333333333225,
+        "y": 123,
+        "z": -1.5,
+        "floor": -1,
+        "liquid": 0
+      },
+      {
+        "x": 28.661666666666775,
+        "y": 123,
+        "z": -1.5,
+        "floor": -1,
+        "liquid": 0
+      },
+      {
+        "x": 26.338333333333225,
+        "y": 126,
+        "z": -3,
+        "floor": -1,
+        "liquid": 0
+      },
+      {
+        "x": 28.661666666666775,
+        "y": 126,
+        "z": -3,
+        "floor": -1,
+        "liquid": 0
+      },
+      {
+        "x": 26.338333333333225,
+        "y": 129.3,
+        "z": -4.650000000000006,
+        "floor": -1,
+        "liquid": 0
+      },
+      {
+        "x": 28.661666666666775,
+        "y": 129.3,
+        "z": -4.650000000000006,
+        "floor": -1,
+        "liquid": 0
+      }
+    ],
+    "closure": {
+      "y": -1,
+      "z": 98
+    },
+    "ascent": true
+  },
+  "left": {
+    "side": -1,
+    "station": {
+      "key": "canal_ladder",
+      "id": "canal:20261006:0:canal_ladder:256:-1",
+      "x": 711.7428458833343,
+      "y": 256.0451153357547,
+      "angle": 1.673511701065759,
+      "base": -2.5,
+      "landX": 709.7135978822188,
+      "landY": 255.83594423361933,
+      "landZ": 0.03015586672398113,
+      "side": -1
+    },
+    "frames": 50,
+    "landing": {
+      "x": 709.7135978822188,
+      "y": 255.83594423361933,
+      "z": 0.00015586672398112955,
+      "floor": 0,
+      "liquid": 0
+    },
+    "walkAway": true
+  },
+  "right": {
+    "side": 1,
+    "station": {
+      "key": "canal_ladder",
+      "id": "canal:20261006:0:canal_ladder:448:1",
+      "x": 711.6727721611722,
+      "y": 447.95157563501624,
+      "angle": -1.4605175635824195,
+      "base": -2.5,
+      "landX": 713.700380093831,
+      "landY": 448.176088599941,
+      "landZ": 0.08245078083410531,
+      "side": 1
+    },
+    "frames": 52,
+    "landing": {
+      "x": 713.700380093831,
+      "y": 448.176088599941,
+      "z": 0.052450780834105315,
+      "floor": 0,
+      "liquid": 0
+    },
+    "walkAway": true
+  },
+  "drain": {
+    "key": "sewer_outlet",
+    "id": "canal:20261006:0:sewer_outlet:128:1",
+    "x": 744.6171485683011,
+    "y": 127.99147608599004,
+    "angle": -1.4997038399266394,
+    "base": -1.3,
+    "landX": 746.3328038368184,
+    "landY": 128.11365218679933,
+    "landZ": -0.026202210904727824,
+    "side": 1
+  },
+  "highrise": {
+    "generationMs": 195.10000000149012,
+    "warm": {
+      "elapsed": 6987.80000000447,
+      "pending": {
+        "missing": 0,
+        "chunk": false,
+        "distant": false,
+        "finite": false,
+        "flash": false,
+        "moth": false,
+        "entityCpu": 0,
+        "items": 0,
+        "compile": false,
+        "retired": 0,
+        "textures": 0
+      },
+      "groups": 25,
+      "memory": {
+        "geometries": 1759,
+        "textures": 99
+      },
+      "programs": 74
+    },
+    "world": {
+      "x": 400.5,
+      "y": 240.5,
+      "z": 0.11871389612335671,
+      "floor": 0,
+      "liquid": 0
+    },
+    "loaded": 25,
+    "buildings": 16,
+    "stats": {
+      "label": "11:open",
+      "median": 8.299999999995634,
+      "p95": 16.700000000004366,
+      "max": 416.5,
+      "p99": 45.900000000001455,
+      "frames": 1000,
+      "over16ms": 59,
+      "over33ms": 17,
+      "cpuMedian": null,
+      "cpuP95": null,
+      "gpuMedian": null,
+      "gpuP95": null,
+      "gpuSamples": 0,
+      "draws": 573,
+      "triangles": 1782187,
+      "memory": {
+        "geometries": 1775,
+        "textures": 100
+      },
+      "programs": 74,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "steady": {
+      "label": "11:open",
+      "median": 8.30000000000291,
+      "p95": 12.39999999999418,
+      "max": 12.5,
+      "p99": 12.5,
+      "frames": 226,
+      "over16ms": 0,
+      "over33ms": 0,
+      "cpuMedian": 5.9000000059604645,
+      "cpuP95": 9.5,
+      "gpuMedian": 6.459392,
+      "gpuP95": 9.020416,
+      "gpuSamples": 223,
+      "draws": 1630,
+      "triangles": 3430349,
+      "memory": {
+        "geometries": 1775,
+        "textures": 100
+      },
+      "programs": 74,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    }
+  },
+  "deep": {
+    "depth": 5,
+    "bed": -6.099999904632568,
+    "shallowSafe": true,
+    "reset": true,
+    "seconds": 24.833333333333332
+  },
+  "travel": {
+    "transition": {
+      "anim": "noclip",
+      "t": 0,
+      "dest": 7,
+      "startedAt": 73367.40000000596,
+      "preparing": true,
+      "mapSeed": 20261923
+    },
+    "safeWater": true,
+    "hp": 57.416666666662955
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: Level 7 safe arrival is not in water\",\"lineNumber\":10,\"columnNumber\":17,\"scriptId\":\"407\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"assert\",\"scriptId\":\"407\",\"url\":\"http://127.0.0.1:2322/verifier/l11-access.ts\",\"lineNumber\":9,\"columnNumber\":16},{\"functionName\":\"finishTravel\",\"scriptId\":\"407\",\"url\":\"http://127.0.0.1:2322/verifier/l11-access.ts\",\"lineNumber\":208,\"columnNumber\":6}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: Level 7 safe arrival is not in water\\n    at assert (http://127.0.0.1:2322/verifier/l11-access.ts:10:17)\\n    at Object.finishTravel (http://127.0.0.1:2322/verifier/l11-access.ts:209:7)\",\"objectId\":\"-5427088365909595407.2.1\"}}",
+  "errors": [],
+  "cleanup": {
+    "browserExit": 0,
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "networkErrors": [
+    {
+      "requestId": "3696.14",
+      "loaderId": "B4972E455DCBB6A6C7DFA0F30CEE6DB2",
+      "timestamp": 39556.047172,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:2322/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Thu, 15 Oct 2026 14:42:00 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 120,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 2322,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 39555.90145,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.62,
+          "sendEnd": 0.657,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 144.796,
+          "receiveHeadersEnd": 145.184
+        },
+        "responseTime": 1792075320674.09,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "561E2C3B3160F0806E2DE15C22B911F3"
+    }
+  ]
+}

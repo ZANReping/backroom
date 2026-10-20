@@ -1,0 +1,142 @@
+{
+  "errors": [],
+  "consoleMessages": [
+    {
+      "type": "warning",
+      "args": [
+        {
+          "type": "string",
+          "value": "THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead."
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1791462224503.978,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "warn",
+            "scriptId": "236",
+            "url": "http://127.0.0.1:3012/node_modules/.vite/deps/chunk-2BUXAFR3.js?v=f66ecc7d",
+            "lineNumber": 296,
+            "columnNumber": 14
+          },
+          {
+            "functionName": "WebGLShadowMap.render",
+            "scriptId": "236",
+            "url": "http://127.0.0.1:3012/node_modules/.vite/deps/chunk-2BUXAFR3.js?v=f66ecc7d",
+            "lineNumber": 37297,
+            "columnNumber": 6
+          },
+          {
+            "functionName": "WebGLRenderer.render",
+            "scriptId": "236",
+            "url": "http://127.0.0.1:3012/node_modules/.vite/deps/chunk-2BUXAFR3.js?v=f66ecc7d",
+            "lineNumber": 42096,
+            "columnNumber": 16
+          },
+          {
+            "functionName": "render",
+            "scriptId": "148",
+            "url": "http://127.0.0.1:3012/node_modules/.vite/deps/three_examples_jsm_postprocessing_RenderPass__js.js?v=f66ecc7d",
+            "lineNumber": 67,
+            "columnNumber": 13
+          },
+          {
+            "functionName": "render",
+            "scriptId": "199",
+            "url": "http://127.0.0.1:3012/src/game/renderer/photoPass.ts",
+            "lineNumber": 20,
+            "columnNumber": 10
+          },
+          {
+            "functionName": "render",
+            "scriptId": "149",
+            "url": "http://127.0.0.1:3012/node_modules/.vite/deps/three_examples_jsm_postprocessing_EffectComposer__js.js?v=f66ecc7d",
+            "lineNumber": 209,
+            "columnNumber": 11
+          },
+          {
+            "functionName": "render",
+            "scriptId": "132",
+            "url": "http://127.0.0.1:3012/src/game/renderer/renderer.ts",
+            "lineNumber": 1666,
+            "columnNumber": 20
+          },
+          {
+            "functionName": "frame",
+            "scriptId": "4",
+            "url": "http://127.0.0.1:3012/verifier/l0-remake.ts",
+            "lineNumber": 177,
+            "columnNumber": 4
+          }
+        ]
+      }
+    }
+  ],
+  "networkErrors": [
+    {
+      "requestId": "102652.358",
+      "timestamp": 31452.164837,
+      "type": "Fetch",
+      "errorText": "net::ERR_ABORTED",
+      "canceled": true
+    },
+    {
+      "requestId": "102652.354",
+      "timestamp": 31452.179185,
+      "type": "Fetch",
+      "errorText": "net::ERR_ABORTED",
+      "canceled": true
+    },
+    {
+      "requestId": "102652.356",
+      "timestamp": 31452.218833,
+      "type": "Fetch",
+      "errorText": "net::ERR_ABORTED",
+      "canceled": true
+    },
+    {
+      "requestId": "102652.355",
+      "timestamp": 31452.219784,
+      "type": "Fetch",
+      "errorText": "net::ERR_ABORTED",
+      "canceled": true
+    },
+    {
+      "requestId": "102652.353",
+      "timestamp": 31452.220162,
+      "type": "Fetch",
+      "errorText": "net::ERR_ABORTED",
+      "canceled": true
+    },
+    {
+      "requestId": "102652.357",
+      "timestamp": 31452.231665,
+      "type": "Fetch",
+      "errorText": "net::ERR_ABORTED",
+      "canceled": true
+    },
+    {
+      "requestId": "102652.542",
+      "timestamp": 31462.027136,
+      "type": "Fetch",
+      "errorText": "net::ERR_ABORTED",
+      "canceled": true
+    },
+    {
+      "requestId": "102652.540",
+      "timestamp": 31462.045517,
+      "type": "Fetch",
+      "errorText": "net::ERR_ABORTED",
+      "canceled": true
+    },
+    {
+      "requestId": "102652.541",
+      "timestamp": 31462.055197,
+      "type": "Fetch",
+      "errorText": "net::ERR_ABORTED",
+      "canceled": true
+    }
+  ],
+  "stderr": "\r\nDevTools listening on ws://127.0.0.1:9261/devtools/browser/29329474-e145-4969-befb-2bbc5a0f4382\r\nCreated TensorFlow Lite XNNPACK delegate for CPU.\r\n[87820:98652:1008/202400.581:ERROR:chrome\\updater\\ipc\\update_service_dialer_win.cc:75] Failed to open named pipe server process 94768: 拒绝访问。 (0x5)\r\n[87820:80640:1008/202402.821:ERROR:chrome\\updater\\ipc\\update_service_dialer_win.cc:75] Failed to open named pipe server process 73992: 拒绝访问。 (0x5)\r\n[87820:98652:1008/202405.210:ERROR:chrome\\updater\\ipc\\update_service_dialer_win.cc:75] Failed to open named pipe server process 89152: 拒绝访问。 (0x5)\r\n[87820:80640:1008/202405.703:ERROR:chrome\\updater\\ipc\\update_service_dialer_win.cc:75] Failed to open named pipe server process 87112: 拒绝访问。 (0x5)\r\n[87820:98652:1008/202407.944:ERROR:chrome\\updater\\ipc\\update_service_dialer_win.cc:75] Failed to open named pipe server process 44144: 拒绝访问。 (0x5)\r\n[87820:80640:1008/202410.530:ERROR:chrome\\updater\\ipc\\update_service_dialer_win.cc:75] Failed to open named pipe server process 76384: 拒绝访问。 (0x5)\r\n[87820:101084:1008/202443.439:ERROR:google_apis\\gcm\\engine\\registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT\r\n[87820:101084:1008/202512.138:ERROR:google_apis\\gcm\\engine\\registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT\r\n[87820:101084:1008/202553.057:ERROR:google_apis\\gcm\\engine\\registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT\r\n"
+}

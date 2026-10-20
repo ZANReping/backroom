@@ -1,0 +1,68 @@
+[
+  {
+    "root": "before-realistic",
+    "ok": true,
+    "errors": 0,
+    "unexpectedRequests": 0,
+    "cleanup": {
+      "browser": "SIGTERM",
+      "server": "SIGTERM",
+      "profileRemoved": true
+    }
+  },
+  {
+    "root": "before-realistic-interactions",
+    "ok": true,
+    "errors": 0,
+    "unexpectedRequests": 0,
+    "cleanup": {
+      "browser": "SIGTERM",
+      "server": "SIGTERM",
+      "profileRemoved": true
+    }
+  },
+  {
+    "root": "after-realistic",
+    "ok": true,
+    "errors": 0,
+    "unexpectedRequests": 0,
+    "cleanup": {
+      "browser": "SIGTERM",
+      "server": "SIGTERM",
+      "profileRemoved": true
+    }
+  },
+  {
+    "root": "before-realistic-benchmark",
+    "ok": true,
+    "errors": 0,
+    "unexpectedRequests": 0,
+    "cleanup": {
+      "browser": "SIGTERM",
+      "server": "SIGTERM",
+      "profileRemoved": true
+    }
+  },
+  {
+    "root": "after-realistic-benchmark",
+    "ok": true,
+    "errors": 0,
+    "unexpectedRequests": 0,
+    "cleanup": {
+      "browser": "SIGTERM",
+      "server": "SIGTERM",
+      "profileRemoved": true
+    }
+  },
+  {
+    "root": "after-classic",
+    "ok": true,
+    "errors": 0,
+    "unexpectedRequests": 0,
+    "cleanup": {
+      "browser": "SIGTERM",
+      "server": "SIGTERM",
+      "profileRemoved": true
+    }
+  }
+]

@@ -1,0 +1,1881 @@
+{
+  "description": "Completed, individually asserted actual-game views; run-level failures are retained below. Realistic coverage combines unchanged views from an earlier run with final weather/L5 checks.",
+  "seed": 20261006,
+  "viewport": [
+    1920,
+    1080
+  ],
+  "dpr": 1,
+  "fov": 75,
+  "framesPerView": 90,
+  "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "baseline": {
+    "source": "before-realistic/runtime.json",
+    "ok": false,
+    "views": 15,
+    "errors": 0,
+    "networkErrors": 1
+  },
+  "runs": [
+    {
+      "source": "after-realistic/runtime-timeout.json",
+      "ok": false,
+      "completedViews": 18,
+      "requestedViews": 18,
+      "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: Warmup timed out: {\\\"missing\\\":15,\\\"chunk\\\":true,\\\"distant\\\":false,\\\"finite\\\":false,\\\"flash\\\":false,\\\"moth\\\":false,\\\"entityCpu\\\":0,\\\"items\\\":0,\\\"compile\\\":false,\\\"retired\\\":0,\\\"textures\\\":0}\",\"lineNumber\":113,\"columnNumber\":95,\"scriptId\":\"6\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"warm\",\"scriptId\":\"6\",\"url\":\"http://127.0.0.1:8217/verifier/l0-remake.ts\",\"lineNumber\":112,\"columnNumber\":94}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: Warmup timed out: {\\\"missing\\\":15,\\\"chunk\\\":true,\\\"distant\\\":false,\\\"finite\\\":false,\\\"flash\\\":false,\\\"moth\\\":false,\\\"entityCpu\\\":0,\\\"items\\\":0,\\\"compile\\\":false,\\\"retired\\\":0,\\\"textures\\\":0}\\n    at Object.warm (http://127.0.0.1:8217/verifier/l0-remake.ts:113:95)\\n    at async Module.transitions (http://127.0.0.1:8217/verifier/sky-visibility.ts:194:5)\",\"objectId\":\"7740257318452288907.2.1\"}}",
+      "errors": 0,
+      "networkErrors": 0,
+      "transitionSamples": 0,
+      "maxEnclosureStep": null,
+      "skyRegressionChecks": 0,
+      "cleanup": {
+        "browserExit": "SIGTERM",
+        "serverExit": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "source": "after-realistic-final/runtime.json",
+      "ok": true,
+      "completedViews": 6,
+      "requestedViews": 6,
+      "failure": null,
+      "errors": 0,
+      "networkErrors": 0,
+      "transitionSamples": 74,
+      "maxEnclosureStep": 0.1772346029263696,
+      "skyRegressionChecks": 4644935,
+      "cleanup": {
+        "browserExit": "SIGTERM",
+        "serverExit": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "source": "after-classic-final/runtime.json",
+      "ok": false,
+      "completedViews": 22,
+      "requestedViews": 22,
+      "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: Warmup timed out: {\\\"missing\\\":7,\\\"chunk\\\":true,\\\"distant\\\":false,\\\"finite\\\":false,\\\"flash\\\":false,\\\"moth\\\":false,\\\"entityCpu\\\":0,\\\"items\\\":0,\\\"compile\\\":false,\\\"retired\\\":0,\\\"textures\\\":0}\",\"lineNumber\":113,\"columnNumber\":95,\"scriptId\":\"7\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"warm\",\"scriptId\":\"7\",\"url\":\"http://127.0.0.1:14023/verifier/l0-remake.ts\",\"lineNumber\":112,\"columnNumber\":94}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: Warmup timed out: {\\\"missing\\\":7,\\\"chunk\\\":true,\\\"distant\\\":false,\\\"finite\\\":false,\\\"flash\\\":false,\\\"moth\\\":false,\\\"entityCpu\\\":0,\\\"items\\\":0,\\\"compile\\\":false,\\\"retired\\\":0,\\\"textures\\\":0}\\n    at Object.warm (http://127.0.0.1:14023/verifier/l0-remake.ts:113:95)\\n    at async Module.transitions (http://127.0.0.1:14023/verifier/sky-visibility.ts:207:5)\",\"objectId\":\"-6217675239971679286.2.1\"}}",
+      "errors": 0,
+      "networkErrors": 0,
+      "transitionSamples": 0,
+      "maxEnclosureStep": null,
+      "skyRegressionChecks": 0,
+      "cleanup": {
+        "browserExit": "SIGTERM",
+        "serverExit": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "source": "after-classic-transition/runtime.json",
+      "ok": true,
+      "completedViews": 2,
+      "requestedViews": 2,
+      "failure": null,
+      "errors": 0,
+      "networkErrors": 0,
+      "transitionSamples": 74,
+      "maxEnclosureStep": 0.2327964552695067,
+      "skyRegressionChecks": 0,
+      "cleanup": {
+        "browserExit": "SIGTERM",
+        "serverExit": "SIGTERM",
+        "profileRemoved": true
+      }
+    }
+  ],
+  "modes": {
+    "realistic": [
+      {
+        "id": "l2-corridor",
+        "source": "after-realistic/runtime-timeout.json",
+        "screenshot": "after-realistic/case-l2-corridor.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 9.600000001490116,
+        "p95": 11.599999994039536,
+        "calls": 491,
+        "triangles": 218157,
+        "level": 2,
+        "sky": false,
+        "visible": false,
+        "opening": null,
+        "amount": null,
+        "enclosure": 1,
+        "underwater": 0,
+        "cloudSize": null,
+        "fog": {
+          "near": 2,
+          "far": 14.5,
+          "color": "0b0908"
+        },
+        "background": "0b0908",
+        "memory": {
+          "geometries": 1280,
+          "textures": 236
+        },
+        "pose": {
+          "x": -53.5,
+          "y": -61.5,
+          "z": 0,
+          "yaw": -3.141592653589793,
+          "pitch": 0.02,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l3-corridor",
+        "source": "after-realistic/runtime-timeout.json",
+        "screenshot": "after-realistic/case-l3-corridor.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 9.5,
+        "p95": 10.5,
+        "calls": 274,
+        "triangles": 494829,
+        "level": 3,
+        "sky": false,
+        "visible": false,
+        "opening": null,
+        "amount": null,
+        "enclosure": 1,
+        "underwater": 0,
+        "cloudSize": null,
+        "fog": {
+          "near": 2,
+          "far": 14.680000000000001,
+          "color": "1f1e1c"
+        },
+        "background": "1f1e1c",
+        "memory": {
+          "geometries": 465,
+          "textures": 53
+        },
+        "pose": {
+          "x": 14.5,
+          "y": -61.5,
+          "z": 0,
+          "yaw": -3.141592653589793,
+          "pitch": 0.02,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l4-office",
+        "source": "after-realistic/runtime-timeout.json",
+        "screenshot": "after-realistic/case-l4-office.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 13.5,
+        "p95": 18.700000002980232,
+        "calls": 1559,
+        "triangles": 436663,
+        "level": 4,
+        "sky": false,
+        "visible": false,
+        "opening": null,
+        "amount": null,
+        "enclosure": 1,
+        "underwater": 0,
+        "cloudSize": null,
+        "fog": {
+          "near": 30,
+          "far": 56.4,
+          "color": "59676d"
+        },
+        "background": "59676d",
+        "memory": {
+          "geometries": 1283,
+          "textures": 136
+        },
+        "pose": {
+          "x": 14.5,
+          "y": -61.5,
+          "z": 0,
+          "yaw": -3.141592653589793,
+          "pitch": 0.02,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l4-window",
+        "source": "after-realistic/runtime-timeout.json",
+        "screenshot": "after-realistic/case-l4-window.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 19.600000001490116,
+        "p95": 24.899999998509884,
+        "calls": 1789,
+        "triangles": 351679,
+        "level": 4,
+        "sky": false,
+        "visible": false,
+        "opening": null,
+        "amount": null,
+        "enclosure": 1,
+        "underwater": 0,
+        "cloudSize": null,
+        "fog": {
+          "near": 20.400000000000006,
+          "far": 56.4,
+          "color": "59676d"
+        },
+        "background": "59676d",
+        "memory": {
+          "geometries": 2797,
+          "textures": 146
+        },
+        "pose": {
+          "x": -38.5,
+          "y": -47.5,
+          "z": 0,
+          "yaw": 1.5707963267948966,
+          "pitch": 0.12,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l5-corridor",
+        "source": "after-realistic-final/runtime.json",
+        "screenshot": "after-realistic-final/case-l5-corridor.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 18.700000002980232,
+        "p95": 35.5,
+        "calls": 1582,
+        "triangles": 1253973,
+        "level": 5,
+        "sky": false,
+        "visible": false,
+        "opening": null,
+        "amount": null,
+        "enclosure": 1,
+        "underwater": 0,
+        "rainVisible": false,
+        "cloudSize": null,
+        "fog": {
+          "near": 7,
+          "far": 56.4,
+          "color": "1f0b0d"
+        },
+        "background": "1f0b0d",
+        "memory": {
+          "geometries": 1812,
+          "textures": 247
+        },
+        "pose": {
+          "x": -25.5,
+          "y": -61.5,
+          "z": 0,
+          "yaw": -3.141592653589793,
+          "pitch": 0.02,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l2-fog-off",
+        "source": "after-realistic/runtime-timeout.json",
+        "screenshot": "after-realistic/case-l2-fog-off.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 9.199999995529652,
+        "p95": 15.200000002980232,
+        "calls": 969,
+        "triangles": 636087,
+        "level": 2,
+        "sky": false,
+        "visible": false,
+        "opening": null,
+        "amount": null,
+        "enclosure": 1,
+        "underwater": 0,
+        "cloudSize": null,
+        "fog": {
+          "near": 9990,
+          "far": 9999,
+          "color": "0b0908"
+        },
+        "background": "0b0908",
+        "memory": {
+          "geometries": 1270,
+          "textures": 352
+        },
+        "pose": {
+          "x": -53.5,
+          "y": -61.5,
+          "z": 0,
+          "yaw": -3.141592653589793,
+          "pitch": 0.02,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l11-metro-far",
+        "source": "after-realistic/runtime-timeout.json",
+        "screenshot": "after-realistic/case-l11-metro-far.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 9.299999997019768,
+        "p95": 13,
+        "calls": 421,
+        "triangles": 1348498,
+        "level": 11,
+        "sky": true,
+        "visible": false,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 1,
+        "underwater": 0,
+        "cloudSize": null,
+        "fog": {
+          "near": 4,
+          "far": 38,
+          "color": "16181a"
+        },
+        "background": "16181a",
+        "memory": {
+          "geometries": 1534,
+          "textures": 115
+        },
+        "pose": {
+          "x": 16,
+          "y": 164,
+          "z": -5,
+          "yaw": 3.141592653589793,
+          "pitch": 0.04,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l11-metro-fog-off",
+        "source": "after-realistic/runtime-timeout.json",
+        "screenshot": "after-realistic/case-l11-metro-fog-off.png",
+        "baselineSamePose": null,
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 9.399999998509884,
+        "p95": 12.800000004470348,
+        "calls": 672,
+        "triangles": 1648007,
+        "level": 11,
+        "sky": true,
+        "visible": false,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 1,
+        "underwater": 0,
+        "cloudSize": null,
+        "fog": {
+          "near": 9990,
+          "far": 9999,
+          "color": "16181a"
+        },
+        "background": "16181a",
+        "memory": {
+          "geometries": 1863,
+          "textures": 128
+        },
+        "pose": {
+          "x": 16,
+          "y": 164,
+          "z": -5,
+          "yaw": 3.141592653589793,
+          "pitch": 0.04,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l11-entrance",
+        "source": "after-realistic/runtime-timeout.json",
+        "screenshot": "after-realistic/case-l11-entrance.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 90,
+        "cloudDraws": 0,
+        "median": 9.799999997019768,
+        "p95": 29.399999998509884,
+        "calls": 571,
+        "triangles": 1376678,
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 1,
+        "underwater": 0,
+        "cloudSize": null,
+        "fog": {
+          "near": 4,
+          "far": 38,
+          "color": "16181a"
+        },
+        "background": "16181a",
+        "memory": {
+          "geometries": 1713,
+          "textures": 130
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 132,
+          "z": -5,
+          "yaw": 0,
+          "pitch": 0.55,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l11-ramp",
+        "source": "after-realistic/runtime-timeout.json",
+        "screenshot": "after-realistic/case-l11-ramp.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 90,
+        "cloudDraws": 0,
+        "median": 15.600000001490116,
+        "p95": 31.899999998509884,
+        "calls": 594,
+        "triangles": 1520280,
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.1682175050933789,
+        "underwater": 0,
+        "cloudSize": null,
+        "fog": {
+          "near": 208.51134642244554,
+          "far": 1288.123376872218,
+          "color": "b5c4cb"
+        },
+        "background": "b5c4cb",
+        "memory": {
+          "geometries": 1481,
+          "textures": 129
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 125,
+          "z": -2.5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l11-street",
+        "source": "after-realistic-final/runtime.json",
+        "screenshot": "after-realistic-final/case-l11-street.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 90,
+        "cloudDraws": 0,
+        "median": 11.5,
+        "p95": 29.600000001490116,
+        "calls": 463,
+        "triangles": 1619561,
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 8.334149637517371e-16,
+        "underwater": 0,
+        "rainVisible": false,
+        "cloudSize": null,
+        "fog": {
+          "near": 299.9999999999995,
+          "far": 1799.9999999999973,
+          "color": "c4d4dc"
+        },
+        "background": "c4d4dc",
+        "memory": {
+          "geometries": 1347,
+          "textures": 124
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 116,
+          "z": 0,
+          "yaw": 3.141592653589793,
+          "pitch": 0.3,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l6-underground",
+        "source": "after-realistic/runtime-timeout.json",
+        "screenshot": "after-realistic/case-l6-underground.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 9.5,
+        "p95": 11.299999997019768,
+        "calls": 251,
+        "triangles": 32711,
+        "level": 6,
+        "sky": true,
+        "visible": false,
+        "opening": 0,
+        "amount": 0,
+        "enclosure": 1,
+        "underwater": 0,
+        "cloudSize": [
+          512,
+          192
+        ],
+        "fog": {
+          "near": 2,
+          "far": 13,
+          "color": "080809"
+        },
+        "background": "080809",
+        "memory": {
+          "geometries": 772,
+          "textures": 203
+        },
+        "pose": {
+          "x": -57.5,
+          "y": -61.5,
+          "z": -5,
+          "yaw": -3.141592653589793,
+          "pitch": 0.02,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l7-cabin-closed",
+        "source": "after-realistic/runtime-timeout.json",
+        "screenshot": "after-realistic/case-l7-cabin-closed.png",
+        "baselineSamePose": null,
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 9.200000002980232,
+        "p95": 14,
+        "calls": 124,
+        "triangles": 49873,
+        "level": 7,
+        "sky": true,
+        "visible": false,
+        "opening": 0,
+        "amount": 0,
+        "enclosure": 1,
+        "underwater": 0,
+        "cloudSize": [
+          512,
+          192
+        ],
+        "fog": {
+          "near": 2,
+          "far": 27,
+          "color": "0a1014"
+        },
+        "background": "0a1014",
+        "memory": {
+          "geometries": 627,
+          "textures": 224
+        },
+        "pose": {
+          "x": 14.5,
+          "y": 22.599999999999994,
+          "z": 3,
+          "yaw": 3.141592653589793,
+          "pitch": 0.14,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l7-cabin-open",
+        "source": "after-realistic/runtime-timeout.json",
+        "screenshot": "after-realistic/case-l7-cabin-open.png",
+        "baselineSamePose": null,
+        "frames": 90,
+        "skyDraws": 90,
+        "cloudDraws": 90,
+        "median": 9.100000001490116,
+        "p95": 14.5,
+        "calls": 140,
+        "triangles": 52259,
+        "level": 7,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 6.880427206273082e-8,
+        "underwater": 0,
+        "cloudSize": [
+          512,
+          192
+        ],
+        "fog": {
+          "near": 2,
+          "far": 27,
+          "color": "0a1014"
+        },
+        "background": "0a1014",
+        "memory": {
+          "geometries": 636,
+          "textures": 227
+        },
+        "pose": {
+          "x": 14.5,
+          "y": 22.599999999999994,
+          "z": 3,
+          "yaw": 3.141592653589793,
+          "pitch": 0.14,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l7-sea",
+        "source": "after-realistic/runtime-timeout.json",
+        "screenshot": "after-realistic/case-l7-sea.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 90,
+        "cloudDraws": 90,
+        "median": 9.100000001490116,
+        "p95": 14.600000001490116,
+        "calls": 381,
+        "triangles": 131157,
+        "level": 7,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 4.070239568986487e-20,
+        "underwater": 0,
+        "cloudSize": [
+          512,
+          192
+        ],
+        "fog": {
+          "near": 3.4999640555149574,
+          "far": 28.121358988027463,
+          "color": "4a5e64"
+        },
+        "background": "4a5e64",
+        "memory": {
+          "geometries": 698,
+          "textures": 236
+        },
+        "pose": {
+          "x": 24,
+          "y": 26,
+          "z": 0,
+          "yaw": -1.6,
+          "pitch": 0.2,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l7-underwater",
+        "source": "after-realistic/runtime-timeout.json",
+        "screenshot": "after-realistic/case-l7-underwater.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 9.600000001490116,
+        "p95": 15.899999998509884,
+        "calls": 348,
+        "triangles": 125267,
+        "level": 7,
+        "sky": true,
+        "visible": false,
+        "opening": 0,
+        "amount": 0,
+        "enclosure": 9.730088345022977e-32,
+        "underwater": 0.9999999999917415,
+        "cloudSize": [
+          512,
+          192
+        ],
+        "fog": {
+          "near": -0.01,
+          "far": 21.25936514480979,
+          "color": "124857"
+        },
+        "background": "124857",
+        "memory": {
+          "geometries": 701,
+          "textures": 236
+        },
+        "pose": {
+          "x": 24,
+          "y": 26,
+          "z": -8,
+          "yaw": -1.6,
+          "pitch": 0.05,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l9-street",
+        "source": "after-realistic/runtime-timeout.json",
+        "screenshot": "after-realistic/case-l9-street.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 90,
+        "cloudDraws": 90,
+        "median": 62,
+        "p95": 82.29999999701977,
+        "calls": 3047,
+        "triangles": 711889,
+        "level": 9,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "underwater": 0,
+        "cloudSize": [
+          512,
+          192
+        ],
+        "fog": {
+          "near": 2.8,
+          "far": 38,
+          "color": "05070f"
+        },
+        "background": "05070f",
+        "memory": {
+          "geometries": 1403,
+          "textures": 249
+        },
+        "pose": {
+          "x": 4,
+          "y": 17,
+          "z": 0,
+          "yaw": 0.42,
+          "pitch": 0.26,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l10-field",
+        "source": "after-realistic/runtime-timeout.json",
+        "screenshot": "after-realistic/case-l10-field.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 90,
+        "cloudDraws": 90,
+        "median": 14.5,
+        "p95": 19.899999998509884,
+        "calls": 324,
+        "triangles": 440035,
+        "level": 10,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "underwater": 0,
+        "cloudSize": [
+          512,
+          192
+        ],
+        "fog": {
+          "near": 5,
+          "far": 48,
+          "color": "8d9195"
+        },
+        "background": "8d9195",
+        "memory": {
+          "geometries": 443,
+          "textures": 409
+        },
+        "pose": {
+          "x": 17,
+          "y": 21,
+          "z": 0,
+          "yaw": 0.42,
+          "pitch": 0.26,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l11-metro-rain",
+        "source": "after-realistic-final/runtime.json",
+        "screenshot": "after-realistic-final/case-l11-metro-rain.png",
+        "baselineSamePose": null,
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 9.5,
+        "p95": 12.899999998509884,
+        "calls": 436,
+        "triangles": 1348804,
+        "level": 11,
+        "sky": true,
+        "visible": false,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9999999999999998,
+        "underwater": 0,
+        "rainVisible": false,
+        "cloudSize": null,
+        "fog": {
+          "near": 3.9999999999999996,
+          "far": 38.00000000000008,
+          "color": "16181a"
+        },
+        "background": "16181a",
+        "memory": {
+          "geometries": 1482,
+          "textures": 123
+        },
+        "pose": {
+          "x": 16,
+          "y": 164,
+          "z": -5,
+          "yaw": 3.141592653589793,
+          "pitch": 0.04,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l11-metro-mist",
+        "source": "after-realistic-final/runtime.json",
+        "screenshot": "after-realistic-final/case-l11-metro-mist.png",
+        "baselineSamePose": null,
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 9.399999998509884,
+        "p95": 12.699999995529652,
+        "calls": 436,
+        "triangles": 1348804,
+        "level": 11,
+        "sky": true,
+        "visible": false,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9999999999999998,
+        "underwater": 0,
+        "rainVisible": false,
+        "cloudSize": null,
+        "fog": {
+          "near": 3.9999999999999987,
+          "far": 38.00000000000007,
+          "color": "16181a"
+        },
+        "background": "16181a",
+        "memory": {
+          "geometries": 1482,
+          "textures": 123
+        },
+        "pose": {
+          "x": 16,
+          "y": 164,
+          "z": -5,
+          "yaw": 3.141592653589793,
+          "pitch": 0.04,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l11-entrance-rain",
+        "source": "after-realistic-final/runtime.json",
+        "screenshot": "after-realistic-final/case-l11-entrance-rain.png",
+        "baselineSamePose": null,
+        "frames": 90,
+        "skyDraws": 90,
+        "cloudDraws": 0,
+        "median": 10.399999998509884,
+        "p95": 26.600000001490116,
+        "calls": 573,
+        "triangles": 1376688,
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9999999999999998,
+        "underwater": 0,
+        "rainVisible": false,
+        "cloudSize": null,
+        "fog": {
+          "near": 3.9999999999999996,
+          "far": 38.00000000000008,
+          "color": "16181a"
+        },
+        "background": "16181a",
+        "memory": {
+          "geometries": 1541,
+          "textures": 125
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 132,
+          "z": -5,
+          "yaw": 0,
+          "pitch": 0.55,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l11-entrance-mist",
+        "source": "after-realistic-final/runtime.json",
+        "screenshot": "after-realistic-final/case-l11-entrance-mist.png",
+        "baselineSamePose": null,
+        "frames": 90,
+        "skyDraws": 90,
+        "cloudDraws": 0,
+        "median": 9.700000002980232,
+        "p95": 14.899999998509884,
+        "calls": 573,
+        "triangles": 1376688,
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9999999999999998,
+        "underwater": 0,
+        "rainVisible": false,
+        "cloudSize": null,
+        "fog": {
+          "near": 3.9999999999999987,
+          "far": 38.00000000000007,
+          "color": "16181a"
+        },
+        "background": "16181a",
+        "memory": {
+          "geometries": 1541,
+          "textures": 125
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 132,
+          "z": -5,
+          "yaw": 0,
+          "pitch": 0.55,
+          "fov": 75
+        }
+      }
+    ],
+    "classic": [
+      {
+        "id": "l2-corridor",
+        "source": "after-classic-final/runtime.json",
+        "screenshot": "after-classic-final/case-l2-corridor.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 9.5,
+        "p95": 10.5,
+        "calls": 477,
+        "triangles": 218143,
+        "level": 2,
+        "sky": false,
+        "visible": false,
+        "opening": null,
+        "amount": null,
+        "enclosure": 1,
+        "underwater": 0,
+        "rainVisible": false,
+        "cloudSize": null,
+        "fog": {
+          "near": 2,
+          "far": 14.5,
+          "color": "0b0908"
+        },
+        "background": "0b0908",
+        "memory": {
+          "geometries": 1193,
+          "textures": 211
+        },
+        "pose": {
+          "x": -53.5,
+          "y": -61.5,
+          "z": 0,
+          "yaw": -3.141592653589793,
+          "pitch": 0.02,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l3-corridor",
+        "source": "after-classic-final/runtime.json",
+        "screenshot": "after-classic-final/case-l3-corridor.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 9.5,
+        "p95": 10,
+        "calls": 260,
+        "triangles": 494815,
+        "level": 3,
+        "sky": false,
+        "visible": false,
+        "opening": null,
+        "amount": null,
+        "enclosure": 1,
+        "underwater": 0,
+        "rainVisible": false,
+        "cloudSize": null,
+        "fog": {
+          "near": 2,
+          "far": 14.680000000000001,
+          "color": "1f1e1c"
+        },
+        "background": "1f1e1c",
+        "memory": {
+          "geometries": 438,
+          "textures": 34
+        },
+        "pose": {
+          "x": 14.5,
+          "y": -61.5,
+          "z": 0,
+          "yaw": -3.141592653589793,
+          "pitch": 0.02,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l4-office",
+        "source": "after-classic-final/runtime.json",
+        "screenshot": "after-classic-final/case-l4-office.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 9.5,
+        "p95": 10.799999997019768,
+        "calls": 1044,
+        "triangles": 206855,
+        "level": 4,
+        "sky": false,
+        "visible": false,
+        "opening": null,
+        "amount": null,
+        "enclosure": 1,
+        "underwater": 0,
+        "rainVisible": false,
+        "cloudSize": null,
+        "fog": {
+          "near": 30,
+          "far": 56.4,
+          "color": "59676d"
+        },
+        "background": "59676d",
+        "memory": {
+          "geometries": 1092,
+          "textures": 114
+        },
+        "pose": {
+          "x": 14.5,
+          "y": -61.5,
+          "z": 0,
+          "yaw": -3.141592653589793,
+          "pitch": 0.02,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l4-window",
+        "source": "after-classic-final/runtime.json",
+        "screenshot": "after-classic-final/case-l4-window.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 9.600000001490116,
+        "p95": 11.5,
+        "calls": 1523,
+        "triangles": 248299,
+        "level": 4,
+        "sky": false,
+        "visible": false,
+        "opening": null,
+        "amount": null,
+        "enclosure": 1,
+        "underwater": 0,
+        "rainVisible": false,
+        "cloudSize": null,
+        "fog": {
+          "near": 20.400000000148445,
+          "far": 56.4,
+          "color": "59676d"
+        },
+        "background": "59676d",
+        "memory": {
+          "geometries": 2599,
+          "textures": 123
+        },
+        "pose": {
+          "x": -38.5,
+          "y": -47.5,
+          "z": 0,
+          "yaw": 1.5707963267948966,
+          "pitch": 0.12,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l5-corridor",
+        "source": "after-classic-transition/runtime.json",
+        "screenshot": "after-classic-transition/case-l5-corridor.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 11.799999997019768,
+        "p95": 12.900000005960464,
+        "calls": 1568,
+        "triangles": 1253959,
+        "level": 5,
+        "sky": false,
+        "visible": false,
+        "opening": null,
+        "amount": null,
+        "enclosure": 1,
+        "underwater": 0,
+        "rainVisible": false,
+        "cloudSize": null,
+        "fog": {
+          "near": 7,
+          "far": 56.4,
+          "color": "1f0b0d"
+        },
+        "background": "1f0b0d",
+        "memory": {
+          "geometries": 1686,
+          "textures": 215
+        },
+        "pose": {
+          "x": -25.5,
+          "y": -61.5,
+          "z": 0,
+          "yaw": -3.141592653589793,
+          "pitch": 0.02,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l2-fog-off",
+        "source": "after-classic-final/runtime.json",
+        "screenshot": "after-classic-final/case-l2-fog-off.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 38.100000001490116,
+        "p95": 39.30000000447035,
+        "calls": 955,
+        "triangles": 636073,
+        "level": 2,
+        "sky": false,
+        "visible": false,
+        "opening": null,
+        "amount": null,
+        "enclosure": 1,
+        "underwater": 0,
+        "rainVisible": false,
+        "cloudSize": null,
+        "fog": {
+          "near": 9990,
+          "far": 9999,
+          "color": "0b0908"
+        },
+        "background": "0b0908",
+        "memory": {
+          "geometries": 1201,
+          "textures": 326
+        },
+        "pose": {
+          "x": -53.5,
+          "y": -61.5,
+          "z": 0,
+          "yaw": -3.141592653589793,
+          "pitch": 0.02,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l11-metro-far",
+        "source": "after-classic-final/runtime.json",
+        "screenshot": "after-classic-final/case-l11-metro-far.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 38.100000001490116,
+        "p95": 40.899999998509884,
+        "calls": 763,
+        "triangles": 2305082,
+        "level": 11,
+        "sky": true,
+        "visible": false,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9999999999999998,
+        "underwater": 0,
+        "rainVisible": false,
+        "cloudSize": null,
+        "fog": {
+          "near": 3.9999999999999996,
+          "far": 38.00000000000006,
+          "color": "16181a"
+        },
+        "background": "16181a",
+        "memory": {
+          "geometries": 1134,
+          "textures": 104
+        },
+        "pose": {
+          "x": 16,
+          "y": 164,
+          "z": -5,
+          "yaw": 3.141592653589793,
+          "pitch": 0.04,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l11-metro-fog-off",
+        "source": "after-classic-final/runtime.json",
+        "screenshot": "after-classic-final/case-l11-metro-fog-off.png",
+        "baselineSamePose": null,
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 38.29999999701977,
+        "p95": 41.70000000298023,
+        "calls": 1092,
+        "triangles": 2641887,
+        "level": 11,
+        "sky": true,
+        "visible": false,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9999999999999998,
+        "underwater": 0,
+        "rainVisible": false,
+        "cloudSize": null,
+        "fog": {
+          "near": 9990,
+          "far": 9999,
+          "color": "16181a"
+        },
+        "background": "16181a",
+        "memory": {
+          "geometries": 1338,
+          "textures": 104
+        },
+        "pose": {
+          "x": 16,
+          "y": 164,
+          "z": -5,
+          "yaw": 3.141592653589793,
+          "pitch": 0.04,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l11-metro-rain",
+        "source": "after-classic-final/runtime.json",
+        "screenshot": "after-classic-final/case-l11-metro-rain.png",
+        "baselineSamePose": null,
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 38.20000000298023,
+        "p95": 40.899999998509884,
+        "calls": 440,
+        "triangles": 1390640,
+        "level": 11,
+        "sky": true,
+        "visible": false,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9999999999999998,
+        "underwater": 0,
+        "rainVisible": false,
+        "cloudSize": null,
+        "fog": {
+          "near": 3.9999999999999996,
+          "far": 38.00000000000008,
+          "color": "16181a"
+        },
+        "background": "16181a",
+        "memory": {
+          "geometries": 1338,
+          "textures": 104
+        },
+        "pose": {
+          "x": 16,
+          "y": 164,
+          "z": -5,
+          "yaw": 3.141592653589793,
+          "pitch": 0.04,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l11-metro-mist",
+        "source": "after-classic-final/runtime.json",
+        "screenshot": "after-classic-final/case-l11-metro-mist.png",
+        "baselineSamePose": null,
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 37.79999999701977,
+        "p95": 41.30000000447035,
+        "calls": 781,
+        "triangles": 2346540,
+        "level": 11,
+        "sky": true,
+        "visible": false,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9999999999999998,
+        "underwater": 0,
+        "rainVisible": false,
+        "cloudSize": null,
+        "fog": {
+          "near": 3.9999999999999987,
+          "far": 38.00000000000007,
+          "color": "16181a"
+        },
+        "background": "16181a",
+        "memory": {
+          "geometries": 1338,
+          "textures": 104
+        },
+        "pose": {
+          "x": 16,
+          "y": 164,
+          "z": -5,
+          "yaw": 3.141592653589793,
+          "pitch": 0.04,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l11-entrance",
+        "source": "after-classic-final/runtime.json",
+        "screenshot": "after-classic-final/case-l11-entrance.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 90,
+        "cloudDraws": 0,
+        "median": 38.20000000298023,
+        "p95": 41.899999998509884,
+        "calls": 905,
+        "triangles": 2327140,
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9999999999999998,
+        "underwater": 0,
+        "rainVisible": false,
+        "cloudSize": null,
+        "fog": {
+          "near": 3.9999999999999996,
+          "far": 38.00000000000006,
+          "color": "16181a"
+        },
+        "background": "16181a",
+        "memory": {
+          "geometries": 1280,
+          "textures": 107
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 132,
+          "z": -5,
+          "yaw": 0,
+          "pitch": 0.55,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l11-entrance-rain",
+        "source": "after-classic-final/runtime.json",
+        "screenshot": "after-classic-final/case-l11-entrance-rain.png",
+        "baselineSamePose": null,
+        "frames": 90,
+        "skyDraws": 90,
+        "cloudDraws": 0,
+        "median": 38.600000001490116,
+        "p95": 41.399999998509884,
+        "calls": 905,
+        "triangles": 2327140,
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9999999999999998,
+        "underwater": 0,
+        "rainVisible": false,
+        "cloudSize": null,
+        "fog": {
+          "near": 3.9999999999999996,
+          "far": 38.00000000000008,
+          "color": "16181a"
+        },
+        "background": "16181a",
+        "memory": {
+          "geometries": 1280,
+          "textures": 107
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 132,
+          "z": -5,
+          "yaw": 0,
+          "pitch": 0.55,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l11-entrance-mist",
+        "source": "after-classic-final/runtime.json",
+        "screenshot": "after-classic-final/case-l11-entrance-mist.png",
+        "baselineSamePose": null,
+        "frames": 90,
+        "skyDraws": 90,
+        "cloudDraws": 0,
+        "median": 38.100000001490116,
+        "p95": 41,
+        "calls": 905,
+        "triangles": 2327140,
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9999999999999998,
+        "underwater": 0,
+        "rainVisible": false,
+        "cloudSize": null,
+        "fog": {
+          "near": 3.9999999999999987,
+          "far": 38.00000000000007,
+          "color": "16181a"
+        },
+        "background": "16181a",
+        "memory": {
+          "geometries": 1280,
+          "textures": 107
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 132,
+          "z": -5,
+          "yaw": 0,
+          "pitch": 0.55,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l11-ramp",
+        "source": "after-classic-final/runtime.json",
+        "screenshot": "after-classic-final/case-l11-ramp.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 90,
+        "cloudDraws": 0,
+        "median": 38.399999998509884,
+        "p95": 41.29999999701977,
+        "calls": 1043,
+        "triangles": 2824849,
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.17310099186229336,
+        "underwater": 0,
+        "rainVisible": false,
+        "cloudSize": null,
+        "fog": {
+          "near": 206.10726894214326,
+          "far": 1274.5650130816202,
+          "color": "b4c3ca"
+        },
+        "background": "b4c3ca",
+        "memory": {
+          "geometries": 1026,
+          "textures": 106
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 125,
+          "z": -2.5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l11-street",
+        "source": "after-classic-transition/runtime.json",
+        "screenshot": "after-classic-transition/case-l11-street.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 90,
+        "cloudDraws": 0,
+        "median": 4.100000008940697,
+        "p95": 6.5999999940395355,
+        "calls": 449,
+        "triangles": 1619547,
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "underwater": 0,
+        "rainVisible": false,
+        "cloudSize": null,
+        "fog": {
+          "near": 300,
+          "far": 1800,
+          "color": "c4d4dc"
+        },
+        "background": "c4d4dc",
+        "memory": {
+          "geometries": 773,
+          "textures": 91
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 116,
+          "z": 0,
+          "yaw": 3.141592653589793,
+          "pitch": 0.3,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l6-underground",
+        "source": "after-classic-final/runtime.json",
+        "screenshot": "after-classic-final/case-l6-underground.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 38.20000000298023,
+        "p95": 38.79999999701977,
+        "calls": 237,
+        "triangles": 32697,
+        "level": 6,
+        "sky": true,
+        "visible": false,
+        "opening": 0,
+        "amount": 0,
+        "enclosure": 0.9999999999999998,
+        "underwater": 0,
+        "rainVisible": false,
+        "cloudSize": [
+          256,
+          96
+        ],
+        "fog": {
+          "near": 2.000000000008513,
+          "far": 13.000000000099321,
+          "color": "080809"
+        },
+        "background": "080809",
+        "memory": {
+          "geometries": 738,
+          "textures": 178
+        },
+        "pose": {
+          "x": -57.5,
+          "y": -61.5,
+          "z": -5,
+          "yaw": -3.141592653589793,
+          "pitch": 0.02,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l7-cabin-closed",
+        "source": "after-classic-final/runtime.json",
+        "screenshot": "after-classic-final/case-l7-cabin-closed.png",
+        "baselineSamePose": null,
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 38.29999999701977,
+        "p95": 38.69999999552965,
+        "calls": 110,
+        "triangles": 49859,
+        "level": 7,
+        "sky": true,
+        "visible": false,
+        "opening": 0,
+        "amount": 0,
+        "enclosure": 1,
+        "underwater": 0,
+        "rainVisible": false,
+        "cloudSize": [
+          256,
+          96
+        ],
+        "fog": {
+          "near": 2,
+          "far": 27,
+          "color": "0a1014"
+        },
+        "background": "0a1014",
+        "memory": {
+          "geometries": 403,
+          "textures": 197
+        },
+        "pose": {
+          "x": 14.5,
+          "y": 22.599999999999994,
+          "z": 3,
+          "yaw": 3.141592653589793,
+          "pitch": 0.14,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l7-cabin-open",
+        "source": "after-classic-final/runtime.json",
+        "screenshot": "after-classic-final/case-l7-cabin-open.png",
+        "baselineSamePose": null,
+        "frames": 90,
+        "skyDraws": 90,
+        "cloudDraws": 90,
+        "median": 38.19999999552965,
+        "p95": 38.899999998509884,
+        "calls": 126,
+        "triangles": 52245,
+        "level": 7,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 3.509405257800451e-17,
+        "underwater": 0,
+        "rainVisible": false,
+        "cloudSize": [
+          256,
+          96
+        ],
+        "fog": {
+          "near": 2,
+          "far": 27,
+          "color": "0a1014"
+        },
+        "background": "0a1014",
+        "memory": {
+          "geometries": 412,
+          "textures": 200
+        },
+        "pose": {
+          "x": 14.5,
+          "y": 22.599999999999994,
+          "z": 3,
+          "yaw": 3.141592653589793,
+          "pitch": 0.14,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l7-sea",
+        "source": "after-classic-final/runtime.json",
+        "screenshot": "after-classic-final/case-l7-sea.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 90,
+        "cloudDraws": 90,
+        "median": 38.20000000298023,
+        "p95": 39.30000000447035,
+        "calls": 146,
+        "triangles": 66553,
+        "level": 7,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 9.088985972493292e-36,
+        "underwater": 0,
+        "rainVisible": false,
+        "cloudSize": [
+          256,
+          96
+        ],
+        "fog": {
+          "near": 3.4999999953109455,
+          "far": 28.124629519360198,
+          "color": "4a5e64"
+        },
+        "background": "4a5e64",
+        "memory": {
+          "geometries": 486,
+          "textures": 208
+        },
+        "pose": {
+          "x": 24,
+          "y": 26,
+          "z": 0,
+          "yaw": -1.6,
+          "pitch": 0.2,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l7-underwater",
+        "source": "after-classic-final/runtime.json",
+        "screenshot": "after-classic-final/case-l7-underwater.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 38.29999999701977,
+        "p95": 38.70000000298023,
+        "calls": 112,
+        "triangles": 58743,
+        "level": 7,
+        "sky": true,
+        "visible": false,
+        "opening": 0,
+        "amount": 0,
+        "enclosure": 5.0485194479517917e-54,
+        "underwater": 0.9999999999999998,
+        "rainVisible": false,
+        "cloudSize": [
+          256,
+          96
+        ],
+        "fog": {
+          "near": -0.01,
+          "far": 21.259365144753126,
+          "color": "124857"
+        },
+        "background": "124857",
+        "memory": {
+          "geometries": 504,
+          "textures": 208
+        },
+        "pose": {
+          "x": 24,
+          "y": 26,
+          "z": -8,
+          "yaw": -1.6,
+          "pitch": 0.05,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l9-street",
+        "source": "after-classic-final/runtime.json",
+        "screenshot": "after-classic-final/case-l9-street.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 90,
+        "cloudDraws": 90,
+        "median": 37.80000000447035,
+        "p95": 42.70000000298023,
+        "calls": 2242,
+        "triangles": 579363,
+        "level": 9,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "underwater": 0,
+        "rainVisible": false,
+        "cloudSize": [
+          256,
+          96
+        ],
+        "fog": {
+          "near": 2.8,
+          "far": 38,
+          "color": "05070f"
+        },
+        "background": "05070f",
+        "memory": {
+          "geometries": 1190,
+          "textures": 164
+        },
+        "pose": {
+          "x": 4,
+          "y": 17,
+          "z": 0,
+          "yaw": 0.42,
+          "pitch": 0.26,
+          "fov": 75
+        }
+      },
+      {
+        "id": "l10-field",
+        "source": "after-classic-final/runtime.json",
+        "screenshot": "after-classic-final/case-l10-field.png",
+        "baselineSamePose": true,
+        "frames": 90,
+        "skyDraws": 90,
+        "cloudDraws": 90,
+        "median": 38.19999999552965,
+        "p95": 38.80000000447035,
+        "calls": 208,
+        "triangles": 255945,
+        "level": 10,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "underwater": 0,
+        "rainVisible": false,
+        "cloudSize": [
+          256,
+          96
+        ],
+        "fog": {
+          "near": 5,
+          "far": 48,
+          "color": "8d9195"
+        },
+        "background": "8d9195",
+        "memory": {
+          "geometries": 317,
+          "textures": 375
+        },
+        "pose": {
+          "x": 17,
+          "y": 21,
+          "z": 0,
+          "yaw": 0.42,
+          "pitch": 0.26,
+          "fov": 75
+        }
+      }
+    ]
+  }
+}

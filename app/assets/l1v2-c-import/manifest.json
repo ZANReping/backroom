@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "sourceZip": {
+    "file": "backroom-l1v2-C.zip",
+    "sha256": "dc6716559274dc9b03343a5a3b37d98b33caaade8d957988a15920668a609595"
+  },
+  "scope": "Selected Level 1 files from the supplied full patch; merged with the existing project, then stage D. Unrelated old NPC/entity/UI changes excluded.",
+  "selectedPaths": [
+    "app/proto-l1v2.html",
+    "app/public/textures/l1/fabled/SOURCES.md",
+    "app/public/textures/l1/fabled/dark_planks_diff.jpg",
+    "app/public/textures/l1/fabled/dark_planks_nor_gl.jpg",
+    "app/public/textures/l1/fabled/dark_planks_rough.jpg",
+    "app/public/textures/l1/fabled/old_wood_floor_diff.jpg",
+    "app/public/textures/l1/fabled/old_wood_floor_nor_gl.jpg",
+    "app/public/textures/l1/fabled/old_wood_floor_rough.jpg",
+    "app/scripts/check-l1-v2.ts",
+    "app/scripts/l1-plan-connect.ts",
+    "app/scripts/l1-plan-map.ts",
+    "app/scripts/l1-plan-stats.ts",
+    "app/src/game/renderer/l1BakedScene.ts",
+    "app/src/game/renderer/l1Materials.ts",
+    "app/src/game/world/infiniteL1.ts",
+    "app/src/game/world/l1Architecture.ts",
+    "app/src/game/world/l1Bake.ts",
+    "app/src/game/world/l1BakeTypes.ts",
+    "app/src/game/world/l1Building.ts",
+    "app/src/game/world/l1BuildingTypes.ts",
+    "app/src/game/world/l1Dressing.ts",
+    "app/src/game/world/l1Layout.ts",
+    "app/src/game/world/l1ParkingServices.ts",
+    "app/src/game/world/l1Placement.ts",
+    "app/src/game/world/l1Plan.ts",
+    "app/src/game/world/l1Puddles.ts",
+    "app/src/game/world/l1ReferenceCases.ts",
+    "app/src/game/world/l1Spatial.ts",
+    "app/src/proto/l1v2Proto.ts",
+    "app/package.json",
+    "app/src/game/engine/ambient.ts",
+    "app/src/game/renderer/renderer.ts",
+    "app/src/game/renderer/structures.ts",
+    "app/src/game/world/infinite.ts",
+    "app/src/game/world/mapgen.ts",
+    "app/public/textures/l1/SOURCES.md"
+  ],
+  "additionalReference": "reference/L1/传说段.webp",
+  "sourceDocs": [
+    "README-UPSTREAM.md",
+    "REPORT-UPSTREAM.md"
+  ],
+  "notes": [
+    "Upstream screenshots and SSIM metrics are historical, not this integration acceptance.",
+    "Camera/exposure-only screenshot globals were not copied into production.",
+    "Code license follows the existing project and original supplied files; no separate license was asserted for the user archive."
+  ]
+}

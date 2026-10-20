@@ -1,0 +1,54 @@
+{
+  "ok": true,
+  "errors": 0,
+  "comparableModels": 90,
+  "medianTriangles": {
+    "before": 2010,
+    "after": 2258
+  },
+  "medianMaterialGroups": {
+    "before": 23,
+    "after": 6
+  },
+  "modes": [
+    {
+      "mode": "realistic",
+      "frameMedian": 9.599999999998545,
+      "worstP95": 9.799999999999272,
+      "gpuMedian": 9.40032,
+      "worstGpuP95": 10.379264,
+      "draws": 217
+    },
+    {
+      "mode": "classic",
+      "frameMedian": 9.599999999998545,
+      "worstP95": 9.700000000004366,
+      "gpuMedian": 8.855552,
+      "worstGpuP95": 11.099136,
+      "draws": 203
+    }
+  ],
+  "cycles": [
+    {
+      "geometries": 2526,
+      "textures": 94
+    },
+    {
+      "geometries": 2526,
+      "textures": 94
+    },
+    {
+      "geometries": 2526,
+      "textures": 94
+    },
+    {
+      "geometries": 2526,
+      "textures": 94
+    }
+  ],
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

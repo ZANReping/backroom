@@ -1,0 +1,120 @@
+[
+  {
+    "name": "check:l0",
+    "exitCode": 0,
+    "note": "Architecture, state, network and 18 mesh builds passed before this batch"
+  },
+  {
+    "name": "build",
+    "exitCode": 0,
+    "log": "check-build.log"
+  },
+  {
+    "name": "check:l1",
+    "exitCode": 0,
+    "log": "check-check-l1.log"
+  },
+  {
+    "name": "check:generation-obstacles",
+    "exitCode": 0,
+    "log": "check-check-generation-obstacles.log"
+  },
+  {
+    "name": "check:item-batches",
+    "exitCode": 0,
+    "log": "check-check-item-batches.log"
+  },
+  {
+    "name": "check:six-items",
+    "exitCode": 0,
+    "log": "check-check-six-items.log"
+  },
+  {
+    "name": "check:texture-images",
+    "exitCode": 0,
+    "log": "check-check-texture-images.log"
+  },
+  {
+    "name": "check:model-warmup",
+    "exitCode": 0,
+    "log": "check-check-model-warmup.log"
+  },
+  {
+    "name": "check:static-batch-job",
+    "exitCode": 0,
+    "log": "check-check-static-batch-job.log"
+  },
+  {
+    "name": "check:static-colors",
+    "exitCode": 0,
+    "log": "check-check-static-colors.log"
+  },
+  {
+    "name": "check:instance-colors",
+    "exitCode": 0,
+    "log": "check-check-instance-colors.log"
+  },
+  {
+    "name": "check:program-completion",
+    "exitCode": 0,
+    "log": "check-check-program-completion.log"
+  },
+  {
+    "name": "final build / check:l0 / check:generation-obstacles",
+    "exitCode": 0,
+    "note": "Retested after shallow puddle collision, red-room map handoff, doorway closure, furniture and final material calibration; 18 region/mode mesh builds and 11527 generation-obstacle assertions passed."
+  },
+  {
+    "name": "settings UI",
+    "exitCode": 0,
+    "log": "settings-ui.json",
+    "note": "Production App settings: realistic + half-resolution AO controls verified; no JS errors or failed requests."
+  },
+  {
+    "name": "2026-10-06 visual calibration regressions",
+    "exitCode": 0,
+    "note": "Production build; L0 architecture/state/network/18 mesh builds; L1; 11527 obstacle checks; static colors/batches, instance colors, texture images, model warmup, program completion, item batches and six item meshes rerun successfully. Production build and all L0 checks rerun again after final doorway width and red-corridor lighting calibration."
+  },
+  {
+    "name": "focused production build",
+    "exitCode": 0,
+    "log": "focused-build.log",
+    "note": "Production build completed; Vite emitted only the existing >500 kB chunk advisory."
+  },
+  {
+    "name": "focused L0 checks",
+    "exitCode": 0,
+    "log": "focused-check-l0.log",
+    "note": "Architecture, state, network and mesh checks passed; mesh coverage 18 region/mode builds, furniture budgets and release checks included."
+  },
+  {
+    "name": "Bumper-Crop reference production build",
+    "exitCode": 0,
+    "log": "bumper-reference-build.log",
+    "note": "Production build completed; Vite emitted only the existing >500 kB chunk advisory."
+  },
+  {
+    "name": "Bumper-Crop reference L0 checks",
+    "exitCode": 0,
+    "log": "bumper-reference-check-l0.log",
+    "note": "Architecture, state, network and mesh checks passed; mesh coverage 18 region/mode builds, furniture budgets and release checks included."
+  },
+  {
+    "name": "natural lighting production build",
+    "exitCode": 0,
+    "log": "natural-build.log",
+    "note": "Final lamp frame, trim, world partitions, four wood doorway floors and material calibration; existing Vite chunk-size advisory only."
+  },
+  {
+    "name": "natural lighting L0 regressions",
+    "exitCode": 0,
+    "log": "natural-check-l0.log",
+    "note": "Architecture, state, network and 18 region/mode mesh builds passed. Includes positive/negative world seams, generation-1 drop migration, actual baked wall occlusion and indexed wood/carpet doorway coverage."
+  },
+  {
+    "name": "natural lighting final runtime suite",
+    "exitCode": 0,
+    "log": "after-functional.json",
+    "note": "12 reference views, 6 prop details, 7 regions in classic/back-flashlight views, 8 focus views, 6 ordinary world poses, 8 region performance scenes, 5 special conditions and 5 lifecycle rounds. Door/cabinet interactions and atomic revision passed; local two-client RTC passed separately in after-rtc.json. All 11 collector error files empty. This does not claim all-layer performance success."
+  }
+]

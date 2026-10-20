@@ -7,6 +7,7 @@ import {RNG} from '../core/rng'
 import {applyRedZoneWalls,redZonesNear,redGateClearance,type L0RedZone,type L0RedProgressMap} from './l0RedZone'
 import {denseL0Maze} from './l0Maze'
 import {continuousL0Partitions} from './l0Partitions'
+import {subtractL0Field} from './l0TestField'
 import {l0Hash,l0BaseRegion,legacyL0Region,l0EnvironmentAt,l0LayoutEnvironment,referenceL0Region,type L0BaseRegion,type L0Effect} from './l0Regions'
 export {l0Hash,l0EnvironmentAt,l0LayoutEnvironment} from './l0Regions'
 export const L0_REFERENCE_SEED = 20261006
@@ -16,6 +17,7 @@ export type L0Surface = 'wall'|'dots'|'cream'|'khaki'|'red'|'manila'|'pit'
 export interface L0Rect {x:number;y:number;w:number;h:number}
 export interface L0Wall extends L0Rect {bottom:number;top:number;surface:L0Surface;redFace?:'nx'|'px'|'nz'|'pz';redGate?:string;redZone?:string}
 export interface L0Layout {
+  testField?:L0Rect // Runtime-only developer clearing in world coordinates.
   seed:number;cx:number;cy:number;region:L0Region;baseRegion:L0BaseRegion;effectOverride?:L0Effect;revision:number;reference:boolean
   walls:L0Wall[];pits:L0Rect[];puddles:(L0Rect&{depth:number})[]
   arches:{x:number;y:number;length:number}[]
@@ -29,7 +31,7 @@ export interface L0Layout {
 export interface L0RedEntry extends L0Rect {id:string;axis:'x'|'y';sign:1|-1;plane:number}
 export interface L0SpaceState {version:1;revisions:Record<string,number>;space:string;trapped:boolean;checkAt:number;unseen:Record<string,number>;portal?:{lastX:number;lastY:number;armed:boolean;room:number};entryId?:string;redProgress?:L0RedProgressMap}
 /** Wood continues through all four full-depth doorway reveals. */
-export function l0WoodRects(a:L0Layout):L0Rect[]{return a.wood?[a.wood,...a.walls.filter(w=>w.surface==='manila'&&w.bottom>0).map(({x,y,w,h})=>({x,y,w,h}))]:[]}
+export function l0WoodRects(a:L0Layout):L0Rect[]{const floors=a.wood?[a.wood,...a.walls.filter(w=>w.surface==='manila'&&w.bottom>0).map(({x,y,w,h})=>({x,y,w,h}))]:[];return a.testField?floors.flatMap(r=>subtractL0Field(r,a.testField!)):floors}
 export function newL0Space():L0SpaceState{return{version:1,revisions:{},space:'shared',trapped:false,checkAt:0,unseen:{}}}
 const rnd=(...v:number[])=>l0Hash(...v)/4294967296
 const contains=(r:L0Rect,x:number,y:number,pad=0)=>x>=r.x-pad&&y>=r.y-pad&&x<r.x+r.w+pad&&y<r.y+r.h+pad

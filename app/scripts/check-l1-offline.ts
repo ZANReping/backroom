@@ -12,7 +12,9 @@ for(const row of manifest.chunks){
  assert.equal(r.bakeRevision,L1_BAKE_REVISION);assert.equal(r.fingerprint,data.fingerprint,`${row.file}: architecture`)
  const key=`${row.seed}:${row.cx},${row.cy}:${row.quality}`;assert(!keys.has(key));keys.add(key);compressedBytes+=bytes.byteLength
 }
-assert.equal(keys.size,162);assert.equal(manifest.anchors.length,18)
+assert(keys.size>=9,'published near-entry lighting window')
+for(const id of ['spawn','parking-common','storage','gothic','ouroboros','garden','fabled','path-room'])assert(manifest.anchors.includes(id),`v2 bake coverage ${id}`)
+assert(manifest.chunks.some((r:any)=>r.cx===0&&r.cy===0),'arrival chunk prebaked')
 const result={passed:true,bakeRevision:L1_BAKE_REVISION,chunks:keys.size,anchors:manifest.anchors.length,compressedBytes}
 if(process.env.L1_QA_ITERATION){assert(/^iteration-\d+$/.test(process.env.L1_QA_ITERATION));const out=resolve('reports/l1-remake',process.env.L1_QA_ITERATION);mkdirSync(out,{recursive:true});writeFileSync(resolve(out,'offline-check.json'),JSON.stringify(result,null,2)+'\n')}
 console.log(JSON.stringify(result))

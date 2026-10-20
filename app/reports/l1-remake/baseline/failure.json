@@ -1,0 +1,21 @@
+{
+  "error": "Error: Browser exceptions: 1",
+  "errors": [
+    {
+      "exceptionId": 2,
+      "text": "Uncaught",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "scriptId": "1",
+      "url": "http://127.0.0.1:3004/verifier/l0-remake.html?level=1&mode=realistic&baseline=l1",
+      "exception": {
+        "type": "object",
+        "subtype": "error",
+        "className": "TypeError",
+        "description": "TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:3004/.cache/l1-before/src/game/engine.ts?import",
+        "objectId": "-2191894424707341946.3.1"
+      },
+      "executionContextId": 3
+    }
+  ]
+}

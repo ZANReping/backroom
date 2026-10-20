@@ -1,7 +1,7 @@
 /** Serializable, absolute-world architecture. Three.js objects never cross this boundary. */
 import type {L1Puddle} from './l1Puddles'
-export type L1StyleName = 'parking'|'storage'|'gothic'|'ouroboros'|'garden'|'maintenance'
-export type L1SurfaceName = 'floor'|'wall'|'brick'|'ceiling'|'column'|'paint'|'metal'|'red'|'whitePipe'|'cable'|'peeling'|'ground'|'line'|'leaf'
+export type L1StyleName = 'parking'|'storage'|'gothic'|'ouroboros'|'garden'|'maintenance'|'fabled'
+export type L1SurfaceName = 'floor'|'wall'|'brick'|'ceiling'|'column'|'paint'|'metal'|'red'|'whitePipe'|'cable'|'peeling'|'ground'|'line'|'leaf'|'glass'
 export type V3 = [number,number,number]
 export interface L1Box {
  id:string; min:V3; max:V3; style:L1StyleName; surface:L1SurfaceName
@@ -21,8 +21,10 @@ export interface L1ArchitectureData {
  boxes:L1Box[];roofs:L1RoofPatch[];emitters:L1Emitter[];openings:L1Opening[]
  puddles:L1Puddle[]
  floor:Uint8Array;styles:Uint8Array
+ /** World-space approach cell and wall direction of the guaranteed portal. */
+ exit?:{x:number;z:number;dir:number;kind:'stairs'|'unlockeddoor'}
 }
-export const L1_STYLE_NAMES:L1StyleName[]=['parking','storage','gothic','ouroboros','garden','maintenance']
+export const L1_STYLE_NAMES:L1StyleName[]=['parking','storage','gothic','ouroboros','garden','maintenance','fabled']
 export interface L1Module {
  height:number;spacingX:number;spacingZ:number;phaseX:number;phaseZ:number
  columnWidth:number;columnDepth:number;round:boolean;beamDepth:number;beamWidth:number

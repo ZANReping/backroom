@@ -1,0 +1,229 @@
+{
+  "result": {
+    "result": {
+      "type": "object",
+      "value": {
+        "warm": {
+          "elapsed": 21549.29999999702,
+          "pending": {
+            "missing": 0,
+            "chunk": false,
+            "finite": false,
+            "flash": false,
+            "moth": false,
+            "items": 0,
+            "compile": false,
+            "retired": 0,
+            "textures": 0
+          },
+          "groups": 25,
+          "memory": {
+            "geometries": 195,
+            "textures": 66
+          },
+          "programs": 76
+        },
+        "build": {
+          "elapsed": 21549.29999999702,
+          "maxFrame": 554.1999999999971
+        },
+        "stats": {
+          "label": "normal:8421327:16,16",
+          "median": 9.599999999991269,
+          "p95": 9.80000000000291,
+          "max": 496.70000000001164,
+          "draws": 160,
+          "triangles": 324535,
+          "memory": {
+            "geometries": 195,
+            "textures": 66
+          },
+          "programs": 76,
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        }
+      }
+    }
+  },
+  "top": [
+    {
+      "name": " renderer/l0LightingBake.ts:38",
+      "ms": 6577.025
+    },
+    {
+      "name": "(idle) :0",
+      "ms": 3657.886
+    },
+    {
+      "name": "blocks renderer/l0LightingBake.ts:5",
+      "ms": 2680.152
+    },
+    {
+      "name": "add renderer/l0Architecture.ts:72",
+      "ms": 1036.298
+    },
+    {
+      "name": "(garbage collector) :0",
+      "ms": 900.54
+    },
+    {
+      "name": "(program) :0",
+      "ms": 825.997
+    },
+    {
+      "name": "l0EnvironmentAt world/l0Regions.ts:96",
+      "ms": 737.718
+    },
+    {
+      "name": "l0FixtureLight renderer/l0Light.ts:2",
+      "ms": 374.083
+    },
+    {
+      "name": "needsUpdate deps/chunk-2BUXAFR3.js:32724",
+      "ms": 362.767
+    },
+    {
+      "name": "environmentAt renderer/l0Architecture.ts:63",
+      "ms": 302.747
+    },
+    {
+      "name": "setValue deps/chunk-2BUXAFR3.js:35394",
+      "ms": 225.783
+    },
+    {
+      "name": "l0LayoutEnvironment world/l0Regions.ts:126",
+      "ms": 216.14
+    },
+    {
+      "name": "texSubImage2D :0",
+      "ms": 205.981
+    },
+    {
+      "name": "getProgramInfoLog :0",
+      "ms": 188.402
+    },
+    {
+      "name": "updateMatrixWorld deps/chunk-2BUXAFR3.js:7265",
+      "ms": 147.915
+    },
+    {
+      "name": "setValueV3f deps/chunk-2BUXAFR3.js:34869",
+      "ms": 144.593
+    },
+    {
+      "name": "WebGLRenderer.renderBufferDirect deps/chunk-2BUXAFR3.js:41862",
+      "ms": 135.342
+    },
+    {
+      "name": "setProgram deps/chunk-2BUXAFR3.js:42425",
+      "ms": 128.658
+    },
+    {
+      "name": "getUv deps/three_examples_jsm_geometries_RoundedBoxGeometry__js.js:9",
+      "ms": 112.332
+    },
+    {
+      "name": "projectObject deps/chunk-2BUXAFR3.js:42152",
+      "ms": 110.765
+    },
+    {
+      "name": "upload deps/chunk-2BUXAFR3.js:35459",
+      "ms": 101.5
+    },
+    {
+      "name": "_BoxGeometry deps/chunk-2BUXAFR3.js:16375",
+      "ms": 96.638
+    },
+    {
+      "name": "intersectsObject deps/chunk-2BUXAFR3.js:14415",
+      "ms": 96.023
+    },
+    {
+      "name": "setup deps/chunk-2BUXAFR3.js:32648",
+      "ms": 81.724
+    },
+    {
+      "name": "bindVertexArray :0",
+      "ms": 75.204
+    },
+    {
+      "name": "setValueV1f deps/chunk-2BUXAFR3.js:34849",
+      "ms": 64.897
+    },
+    {
+      "name": "Float32BufferAttribute deps/chunk-2BUXAFR3.js:10305",
+      "ms": 61.177
+    },
+    {
+      "name": "key renderer/l0LightingBake.ts:23",
+      "ms": 59.004
+    },
+    {
+      "name": "flatten deps/chunk-2BUXAFR3.js:34808",
+      "ms": 58.881
+    },
+    {
+      "name": "setIndex deps/chunk-2BUXAFR3.js:10625",
+      "ms": 54.918
+    },
+    {
+      "name": "render renderer/renderer.ts:891",
+      "ms": 53.526
+    },
+    {
+      "name": "mergeGeometries deps/three_examples_jsm_utils_BufferGeometryUtils__js.js:57",
+      "ms": 48.593
+    },
+    {
+      "name": "buildL0Architecture renderer/l0Architecture.ts:61",
+      "ms": 48.258
+    },
+    {
+      "name": "buildPlane deps/chunk-2BUXAFR3.js:16406",
+      "ms": 47.932
+    },
+    {
+      "name": "l0EffectPatches world/l0Regions.ts:65",
+      "ms": 44.921
+    },
+    {
+      "name": "setValue deps/chunk-2BUXAFR3.js:35451",
+      "ms": 44.672
+    },
+    {
+      "name": "frame verifier/l0-remake.ts:130",
+      "ms": 41.828
+    },
+    {
+      "name": "uniformMatrix4fv :0",
+      "ms": 41.278
+    },
+    {
+      "name": "syncInfinite renderer/renderer.ts:2490",
+      "ms": 41.059
+    },
+    {
+      "name": "getBindingState deps/chunk-2BUXAFR3.js:32677",
+      "ms": 39.863
+    },
+    {
+      "name": "bindTexture :0",
+      "ms": 36.546
+    },
+    {
+      "name": "BufferAttribute deps/chunk-2BUXAFR3.js:9719",
+      "ms": 36.079
+    },
+    {
+      "name": "_BufferGeometry deps/chunk-2BUXAFR3.js:10591",
+      "ms": 36.019
+    },
+    {
+      "name": "refreshUniformsCommon deps/chunk-2BUXAFR3.js:40431",
+      "ms": 33.869
+    },
+    {
+      "name": " renderer/l0LightingBake.ts:67",
+      "ms": 32.788
+    }
+  ]
+}

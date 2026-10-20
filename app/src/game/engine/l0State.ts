@@ -1,5 +1,6 @@
 import {redZonesNear,insideRedZone,type L0RedProgressMap,type L0RedGate} from '../world/l0RedZone'
 import {l0Sample} from '../world/l0Architecture'
+import {applyL0TestField,l0FieldContains,l0FieldIntersects} from '../world/l0TestField'
 import type {Engine} from '../engine'
 import type {ChunkDynState} from '../world/infinite'
 import {snapshotChunkState,saveExplored,rebuildL0,restitch} from '../world/infinite'
@@ -129,6 +130,7 @@ export function l0Connected(a:L0Layout){
 }
 export function l0RevisionSafe(eng:Engine,next:L0Layout){
  const m=eng.map!,inf=m.inf!,c=inf.chunks.get(`${next.cx},${next.cy}`);if(!c?.l0)return false
+ if(inf.l0TestField&&l0FieldIntersects(inf.l0TestField,{x:next.cx*32,y:next.cy*32,w:32,h:32}))return false
  const changes=changedWalls(c.l0,next);if(!changes.length)return false
  for(const w of changes){
   if(observers(eng).some(p=>l0VisibleTo(w,p)))return false
@@ -150,7 +152,7 @@ export function commitL0Revision(eng:Engine,pending:L0Pending){
  else inf.l0.revisions[pending.key]=pending.revision
  for(const key of pending.affected??[pending.key]){
   const c=inf.chunks.get(key);if(!c)continue
-  const raw=genL0Architecture(eng.levelDef,inf.seed,c.cx,c.cy,undefined,inf.l0.revisions[key]??0,inf.l0.redProgress)
+  const raw=applyL0TestField(genL0Architecture(eng.levelDef,inf.seed,c.cx,c.cy,undefined,inf.l0.revisions[key]??0,inf.l0.redProgress),inf.l0TestField)
   c.l0=raw.l0;c.structures=[...c.structures.filter(s=>!s.data?.l0Wall),...raw.structures.filter(s=>s.data?.l0Wall).map(s=>({...s,x:s.x-inf.ox,y:s.y-inf.oy}))]
   c.lights=[...c.lights.filter(l=>!l.gen),...raw.lights.map(l=>({...l,x:l.x-inf.ox,y:l.y-inf.oy}))]
  }
@@ -169,6 +171,7 @@ export function tickL0(eng:Engine,dt:number){
  eng.l0Meeting=l0Meeting(m,eng.player.x,eng.player.y)
  const e=l0Sample(m,eng.player.x,eng.player.y)
  audio.setL0Ambience(eng.l0Meeting,(e?.blackout??0)>.5,(e?.red??0)>.5)
+ if(inf.l0TestField&&l0FieldContains(inf.l0TestField,eng.player.x+inf.ox,eng.player.y+inf.oy))return
  if((e?.red??0)>.1){const key=e?.id??`${a?.cx},${a?.cy}`;if(!eng.redAnnounced.has(key)){eng.redAnnounced.add(key);eng.msg('墙纸开始泛红，地毯变得黏脚。围墙上还有许多通向黄室的开口。','lore')}}
  tickRedClosures(eng)
  if(eng.mpSession?.started&&!eng.mpSession.isHost)return

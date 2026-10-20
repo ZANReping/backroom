@@ -1360,7 +1360,7 @@ function genJerryRoom(m: GameMap, rng: RNG, def: LevelDef): { cx: number; cy: nu
   S('domering', 32, 32, 1, 1, false, { r: 16, apex: 5.1 })
   // 杰瑞的栖木（居中立 perch；鹉主 Entity 7 栖息于横杆上）
   S('perch', 32, 32)
-  m.entities.push(makeEntity('jerry', X(32) + 0.5, X(32) + 0.5, 0.55)) // 鹉主：stationary 栖木上，无害
+  m.entities.push(makeEntity('jerry', X(32) + 0.5, X(32) + 0.5, 0)) // 鹉主：z=地面；栖木高度由 jerryAI 的 alt 表示（重制：真实尺寸金刚鹦鹉，站在 1.44m 高的 T 形栖木上）
   // 讲坛（栖木北侧，面向长椅会众）+ 栖木两侧烛台 + 入口处圣水盆一对
   S('pulpit', 32, 26)
   S('candlestand', 30, 31, 1, 1, false); S('candlestand', 34, 31, 1, 1, false)

@@ -1,0 +1,217 @@
+{
+  "run": "qa-1791969011681-57048",
+  "port": 8256,
+  "cdp": 8257,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-reference\\glass-diagnostic\\qa-1791969011681-57048",
+  "label": "glass-diagnostic",
+  "baseline": false,
+  "low": false,
+  "quick": false,
+  "seed": 20261014,
+  "views": [
+    {
+      "id": "02-brick-apartments",
+      "world": [
+        132,
+        538,
+        0.1484547501134176
+      ],
+      "target": [
+        120,
+        590,
+        8
+      ],
+      "yaw": 2.9147938055359073,
+      "pitch": 0.1175359474657469,
+      "fov": 78,
+      "stats": {
+        "label": "11:open",
+        "median": 4.200000000000728,
+        "p95": 12.5,
+        "max": 91.60000000000218,
+        "p99": 20.80000000000291,
+        "frames": 1000,
+        "over16ms": 22,
+        "over33ms": 5,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 1397,
+        "triangles": 934027,
+        "memory": {
+          "geometries": 1135,
+          "textures": 66
+        },
+        "programs": 104,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    }
+  ],
+  "command": [
+    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-reference\\glass-diagnostic\\qa-1791969011681-57048",
+    "--remote-debugging-port=8257",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/154.0.8037.98",
+    "revision": "@b859317bf11f6be47f9b7799ec690a0a42a1fb33",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+    "jsVersion": "15.4.80.20"
+  },
+  "pids": {
+    "server": 74372,
+    "browser": 66464
+  },
+  "setup": {
+    "seed": 20261014,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "low": false,
+    "baseline": false,
+    "weather": "calm",
+    "time": 10,
+    "shadows": true
+  },
+  "cases": [
+    {
+      "id": "02-brick-apartments",
+      "x": 132,
+      "y": 538,
+      "z": 0,
+      "tx": 120,
+      "ty": 590,
+      "th": 8,
+      "fov": 78,
+      "reference": "11scenes.jpg"
+    }
+  ],
+  "glassDebug": {
+    "glass": [
+      {
+        "name": "l11-architectural-glass",
+        "opacity": 0.64,
+        "color": "3a5357",
+        "env": 1.1
+      }
+    ],
+    "sun": {
+      "intensity": 3.35,
+      "position": [
+        -12.46034479848855,
+        126.48307508127041,
+        9.582623951511437
+      ],
+      "target": [
+        67.974609375,
+        0.1484547501134176,
+        90.017578125
+      ]
+    },
+    "ambient": 0.12480000000000001,
+    "hemi": 0.3743999999573744,
+    "exposure": 1.7075200000000001
+  },
+  "validationSkipped": true,
+  "performance": {
+    "label": "11:open",
+    "median": 4.200000000000728,
+    "p95": 8.400000000001455,
+    "max": 16.599999999998545,
+    "p99": 12.5,
+    "frames": 267,
+    "over16ms": 0,
+    "over33ms": 0,
+    "cpuMedian": 5.700000002980232,
+    "cpuP95": 7.899999991059303,
+    "gpuMedian": 5.292032,
+    "gpuP95": 7.822336,
+    "gpuSamples": 265,
+    "draws": 562,
+    "triangles": 482573,
+    "memory": {
+      "geometries": 1135,
+      "textures": 66
+    },
+    "programs": 104,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "errors": [],
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "networkErrors": [
+    {
+      "requestId": "40624.12",
+      "loaderId": "78BF7630210F9AA3FE4FBE775D9ACEF0",
+      "timestamp": 106499.694338,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:8256/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Wed, 14 Oct 2026 09:10:20 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": false,
+        "connectionId": 159,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 8256,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 106499.665586,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": 0.816,
+          "dnsEnd": 0.825,
+          "connectStart": 0.825,
+          "connectEnd": 1.571,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 1.612,
+          "sendEnd": 1.651,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 28.186,
+          "receiveHeadersEnd": 28.291
+        },
+        "responseTime": 1791969020638.48,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "E72C0000428B8EAD8C1D6DD251248F0E"
+    }
+  ]
+}

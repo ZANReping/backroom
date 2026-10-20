@@ -18,11 +18,11 @@ import { registerInfiniteLevel, type GenChunk } from './infiniteRegistry'
 // ---------- 变体 ----------
 export type L1Variant =
   | 'parking' | 'aisle' | 'storage' | 'gothic' | 'ouroboros' | 'garden'
-  | 'maintenance'
+  | 'maintenance' | 'fabled'
 export const L1_VARIANT_NAMES: Record<L1Variant, string> = {
   parking: '天鹰段', aisle: '过道', storage: '跃金段', gothic: '哥特段',
   ouroboros: '衔尾段', garden: '花园段',
-  maintenance: '小径',
+  maintenance: '小径', fabled: '传说段',
 }
 // 区段档案（图鉴；设定依据 wikidot「宜居地带」区段概念与 Fandom 特殊区域条目）
 export const L1_VARIANT_LORE: Record<string, string[]> = {
@@ -50,12 +50,16 @@ export const L1_VARIANT_LORE: Record<string, string[]> = {
     '花园段——青翠欲滴的色调与勃勃生机的表象：绿色植物与充足的阳光，在永夜的后室里像一场过于美好的梦。',
     '⚠ 切勿久留。进入者会患上「植殖癌」：行为逐渐僵硬，视野逐渐变绿，皮肤浮现叶脉——最终，你将原地生根，成为花园里又一株安静的植物。',
   ],
+  fabled: [
+    '传说段——曾经的人类要塞，迷失在时间之中。朱漆木梁、木护墙板与磨砂玻璃隔断还留着三百年前的温馨风貌，绚丽的霓虹与彩色电缆却已涌入古色古香的房间。',
+    '后室会改变，但从未忘记它过去的模样。或许数十年后，这里也会褪成地下无数仓库大厅中平凡无奇的一个。',
+  ],
   maintenance: [
     '白刷砖墙围出狭长、曲折的稳定走廊，裸露管线沿着梁顶延伸，门后散布着旧座椅、杂物和不同用途的小房间。',
     '各区段带绿色应急标识的金属门通往小径。停电时这里同样失去照明；实体较少，却仍可能从门外追入。关门并保持安静有助于避难。',
   ],
 }
-export const L1_RARE_VARIANTS: readonly string[] = ['storage', 'gothic', 'ouroboros', 'garden', 'maintenance']
+export const L1_RARE_VARIANTS: readonly string[] = ['storage', 'gothic', 'ouroboros', 'garden', 'maintenance', 'fabled']
 
 const h01 = (...n: number[]) => h32(...n) / 4294967296
 
@@ -608,7 +612,11 @@ import {placeL1Content} from './l1Placement'
 import type {L1StyleName} from './l1BuildingTypes'
 export function genL1ChunkRaw(def:LevelDef,seed:number,cx:number,cy:number,forceVariant?:string):GenChunk {
   const architecture=buildL1Data(seed,cx,cy,forceVariant&&forceVariant!=='aisle'?forceVariant as L1StyleName:undefined)
-  return placeL1Content(genL1LegacyManifest(def,seed,cx,cy,forceVariant),architecture)
+  const content=genL1LegacyManifest(def,seed,cx,cy,forceVariant)
+  if(architecture.exit){const p=architecture.exit,exitDef=def.exits.find(e=>e.kind===p.kind)
+    if(exitDef)content.exits=[{def:exitDef,x:p.x,y:p.z,discovered:false,l1:{wallDir:p.dir}}]
+  }
+  return placeL1Content(content,architecture)
 }
 registerInfiniteLevel(1, {
   genRaw: genL1ChunkRaw,

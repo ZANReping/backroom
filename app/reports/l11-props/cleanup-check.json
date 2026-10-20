@@ -1,0 +1,98 @@
+{
+  "checkedAt": "2026-10-13T13:02:25.0724745Z",
+  "ok": true,
+  "note": "Read-only ownership audit; no processes were terminated. Port/PID reuse alone is not treated as ownership.",
+  "runs": [
+    {
+      "run": "qa-1791893984771-59620",
+      "ports": [
+        14612,
+        14613
+      ],
+      "originalPids": {
+        "server": 12544,
+        "browser": 37848
+      },
+      "ownedBrowserPids": [],
+      "ownedServerPids": [],
+      "profileRemains": false,
+      "remainingListeners": []
+    },
+    {
+      "run": "qa-1791894807027-41944",
+      "ports": [
+        4416,
+        4417
+      ],
+      "originalPids": {
+        "server": 37280,
+        "browser": 54360
+      },
+      "ownedBrowserPids": [],
+      "ownedServerPids": [],
+      "profileRemains": false,
+      "remainingListeners": []
+    },
+    {
+      "run": "qa-1791895430126-50644",
+      "ports": [
+        1908,
+        1909
+      ],
+      "originalPids": {
+        "server": 59564,
+        "browser": 50092
+      },
+      "ownedBrowserPids": [],
+      "ownedServerPids": [],
+      "profileRemains": false,
+      "remainingListeners": []
+    },
+    {
+      "run": "qa-1791895763769-35064",
+      "ports": [
+        2813,
+        2814
+      ],
+      "originalPids": {
+        "server": 11784,
+        "browser": 32404
+      },
+      "ownedBrowserPids": [],
+      "ownedServerPids": [],
+      "profileRemains": false,
+      "remainingListeners": []
+    },
+    {
+      "run": "qa-1791896211790-53868",
+      "ports": [
+        14367,
+        14368
+      ],
+      "originalPids": {
+        "server": 35504,
+        "browser": 53452
+      },
+      "ownedBrowserPids": [],
+      "ownedServerPids": [],
+      "profileRemains": false,
+      "remainingListeners": []
+    },
+    {
+      "run": "qa-1791896385881-32620",
+      "ports": [
+        1300,
+        1301
+      ],
+      "originalPids": {
+        "server": 44752,
+        "browser": 43876
+      },
+      "ownedBrowserPids": [],
+      "ownedServerPids": [],
+      "profileRemains": false,
+      "remainingListeners": []
+    }
+  ],
+  "strayOwnedBrowsers": []
+}

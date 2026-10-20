@@ -1,0 +1,83 @@
+[
+  {
+    "pose": {
+      "id": "pillars",
+      "file": "柱厅.jpg",
+      "x": 200.1,
+      "y": 32.8,
+      "z": 0.25,
+      "yaw": -0.3,
+      "pitch": -0.03,
+      "fov": 65
+    },
+    "width": 500,
+    "height": 375,
+    "actualCamera": {
+      "fov": 65,
+      "position": {
+        "x": 200.10000000000002,
+        "y": 1.800827552040214,
+        "z": 32.8
+      },
+      "rotation": {
+        "x": -0.03,
+        "y": -0.3,
+        "z": 0
+      }
+    },
+    "stats": {
+      "label": "pillars",
+      "median": 4.300000000000182,
+      "p95": 16.600000000000364,
+      "max": 66.70000000000005,
+      "draws": 107,
+      "triangles": 61943,
+      "memory": {
+        "geometries": 120,
+        "textures": 45
+      },
+      "programs": 46,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    }
+  },
+  {
+    "pose": {
+      "id": "yellow",
+      "file": "黄室.jpg",
+      "x": 13.5,
+      "y": 25.7,
+      "yaw": 0,
+      "pitch": -0.26,
+      "fov": 60
+    },
+    "width": 640,
+    "height": 480,
+    "actualCamera": {
+      "fov": 60,
+      "position": {
+        "x": 13.5,
+        "y": 1.5507351962792746,
+        "z": 25.700000000000003
+      },
+      "rotation": {
+        "x": -0.26,
+        "y": 0,
+        "z": 0
+      }
+    },
+    "stats": {
+      "label": "yellow",
+      "median": 4.300000000000182,
+      "p95": 16.59999999999991,
+      "max": 45.899999999999864,
+      "draws": 101,
+      "triangles": 81575,
+      "memory": {
+        "geometries": 119,
+        "textures": 44
+      },
+      "programs": 45,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    }
+  }
+]

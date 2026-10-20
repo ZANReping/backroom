@@ -1,0 +1,57 @@
+[
+  {
+    "timestamp": 1792045168031.445,
+    "exceptionDetails": {
+      "exceptionId": 1,
+      "text": "Uncaught",
+      "lineNumber": 106,
+      "columnNumber": 33,
+      "scriptId": "653",
+      "url": "http://127.0.0.1:7899/src/game/content/l11MapModel.ts",
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "fitL11Map",
+            "scriptId": "653",
+            "url": "http://127.0.0.1:7899/src/game/content/l11MapModel.ts",
+            "lineNumber": 106,
+            "columnNumber": 33
+          },
+          {
+            "functionName": "draw",
+            "scriptId": "567",
+            "url": "http://127.0.0.1:7899/src/components/L11MapPanel.tsx",
+            "lineNumber": 126,
+            "columnNumber": 52
+          }
+        ]
+      },
+      "exception": {
+        "type": "object",
+        "subtype": "error",
+        "className": "TypeError",
+        "description": "TypeError: Cannot read properties of undefined (reading 'ox')\n    at fitL11Map (http://127.0.0.1:7899/src/game/content/l11MapModel.ts:107:34)\n    at draw (http://127.0.0.1:7899/src/components/L11MapPanel.tsx:127:53)",
+        "objectId": "-3691209698614743046.4.1",
+        "preview": {
+          "type": "object",
+          "subtype": "error",
+          "description": "TypeError: Cannot read properties of undefined (reading 'ox')\n    at fitL11Map (http://127.0.0.1:7899/src/game/content/l11MapModel.ts:107:34)\n    at draw (http://127.0.0.1:7899/src/components/L11MapPanel.tsx:127:53)",
+          "overflow": false,
+          "properties": [
+            {
+              "name": "stack",
+              "type": "string",
+              "value": "TypeError: Cannot read properties of undefined (re…0.0.1:7899/src/components/L11MapPanel.tsx:127:53)"
+            },
+            {
+              "name": "message",
+              "type": "string",
+              "value": "Cannot read properties of undefined (reading 'ox')"
+            }
+          ]
+        }
+      },
+      "executionContextId": 4
+    }
+  }
+]

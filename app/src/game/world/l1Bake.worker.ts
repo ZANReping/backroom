@@ -2,7 +2,7 @@
 import {bakeL1} from './l1Bake'
 import {l1BakeBuffers,L1_BAKE_REVISION,type L1BakeQuality,type L1BakeResult} from './l1BakeTypes'
 declare const self:DedicatedWorkerGlobalScope
-self.onmessage=async({data}:{data:{id:number;seed:number;cx:number;cy:number;quality:L1BakeQuality;fingerprint:string;compressed?:ArrayBuffer}})=>{
+self.onmessage=async({data}:{data:{id:number;seed:number;cx:number;cy:number;quality:L1BakeQuality;fingerprint:string;compressed?:ArrayBuffer;initial?:boolean}})=>{
  try{
   let result:L1BakeResult|undefined
   if(data.compressed)try{
@@ -15,9 +15,9 @@ self.onmessage=async({data}:{data:{id:number;seed:number;cx:number;cy:number;qua
     if(Array.isArray(v))return v.map(decode);if(v&&typeof v==='object')return Object.fromEntries(Object.entries(v).map(([k,x])=>[k,decode(x)]));return v
    }
    const r=decode(JSON.parse(json)) as L1BakeResult
-   if(r.version===4&&r.bakeRevision===L1_BAKE_REVISION&&r.fingerprint===data.fingerprint&&r.quality===data.quality&&r.seed===data.seed&&r.cx===data.cx&&r.cy===data.cy){result=r;result.metrics.decodeMs=performance.now()-started}
+   if(!r.provisional&&r.version===4&&r.bakeRevision===L1_BAKE_REVISION&&r.fingerprint===data.fingerprint&&r.quality===data.quality&&r.seed===data.seed&&r.cx===data.cx&&r.cy===data.cy){result=r;result.metrics.decodeMs=performance.now()-started}
   }catch{/* Corrupt or stale offline data falls back to the same deterministic integrator. */}
-  result??=bakeL1(data.seed,data.cx,data.cy,data.quality);self.postMessage({id:data.id,result},l1BakeBuffers(result))
+  result??=bakeL1(data.seed,data.cx,data.cy,data.quality,!!data.initial&&data.quality==='high');self.postMessage({id:data.id,result},l1BakeBuffers(result))
  }
  catch(e){self.postMessage({id:data.id,error:String(e)})}
 }

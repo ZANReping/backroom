@@ -14,10 +14,13 @@ import type { Engine } from '../engine'
 import { HUMANOID_RECOVERY } from '../core/humanoidMelee'
 import { beginHoundFrame, houndHear, updateHound } from './houndAI'
 import { beginClumpFrame, clumpHear, updateClump } from './clumpAI'
+import { beginPartygoerFrame, partygoerHear, updatePartygoer } from './partygoerAI'
 import { beginDullerFrame, updateDuller } from './dullerAI'
 import { beginSkinStealerFrame, updateSkinStealer } from './skinStealerAI'
 import { updateWretch, wretchHear } from './wretchAI'
+import {updateJerryEntity} from './jerryAI'
 import { updateRat, updateRatGear } from './ratAI'
+import { updateShrimp, devourShrimp } from './shrimpAI'
 import { beginSmilerFrame, flushSmilerSpawns, smilerHear, updateSmiler } from './smilerAI'
 import { beginL11FacelingFrame,updateL11Faceling,canPlaceL11Faceling } from './l11FacelingAI'
 
@@ -76,6 +79,7 @@ export function noiseEvent(eng: Engine, x: number, y: number, radius: number, sp
     if (e.def.type === 'smiler') { smilerHear(eng, e, x, y, radius, sprint); continue }
     if (e.def.type === 'hound') { houndHear(eng, e, x, y, radius, sprint); continue }
     if (e.def.type === 'clump') { clumpHear(eng, e, x, y, radius, sprint); continue } // v64：肢团专属听觉（clumpAI）
+    if (e.def.type === 'partygoer') { partygoerHear(eng, e, x, y, radius, sprint); continue } // 派对客专属听觉（近视、以听觉为主）
     if (e.def.type === 'duller') continue // Dedicated stalking; ordinary noise never forces a chase.
     if (e.def.type === 'wretch') { wretchHear(eng, e, x, y, radius, sprint); continue }
     if (e.def.passive) continue // 被动实体（无面灵）不循声索敌——只有被攻击才反击
@@ -209,6 +213,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
   beginSmilerFrame(eng, dt, lightOn)
   beginHoundFrame(eng, dt)
   beginClumpFrame(eng, dt)
+  beginPartygoerFrame(eng, dt) // 派对客：心灵感应共享目标、包抄角、低语冷却
   beginDullerFrame(eng, dt)
   beginSkinStealerFrame(eng, dt)
   updateRatGear(eng, dt, dmgMult)
@@ -358,6 +363,8 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
       }
     }
 
+    // 重制鹉主杰瑞：栖木/神父肩头/扑击/地上蹦跳回栖木/注视教化/主动搭话（jerryAI；不走通用状态机）
+    if (def.type === 'jerry') { updateJerryEntity(eng, e, dt, d); continue }
     if (def.stationary) {
       // 久坐者：看见玩家就尖叫
       if (def.type === 'seated' && !e.screamed && d < def.sight && eng.los(e.x, e.y, p.x, p.y)) {
@@ -377,10 +384,12 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
     if (def.type === 'smiler') { updateSmiler(eng, e, dt, d, dmgMult, l3); break generic }
     if (def.type === 'hound') { updateHound(eng, e, dt, d, dmgMult, l3); break generic } // v62：猎犬专属 AI
     if (def.type === 'clump') { updateClump(eng, e, dt, d, dmgMult); break generic }
+    if (def.type === 'partygoer') { updatePartygoer(eng, e, dt, d, dmgMult); break generic } // 派对客专属 AI（伪装/群体/断臂/狂战士/倒地爬走）
     if (def.type === 'duller') { updateDuller(eng, e, dt, d, dmgMult); break generic } // v63：钝人专属 AI（隔墙抓取/受注视逃离）
     if (def.type === 'skinstealer') { updateSkinStealer(eng, e, dt, d, dmgMult); break generic } // v77：窃皮者专属 AI（人皮伪装/温顺/饥饿/激怒）
     if (def.type === 'wretch') { updateWretch(eng, e, dt, d, dmgMult); break generic }
     if (def.type === 'corpserat') { updateRat(eng, e, dt, d, dmgMult); break generic }
+    if (def.type === 'dryshrimp') { updateShrimp(eng, e, dt, d); break generic } // v81：旱虾专属 AI（两栖游荡/有丝分裂/受惊/诱饵）
     // —— 特殊行为 ——
     // 笑魇：只在黑暗中逼近；手电照亮时后退
     if (def.darkAmbusher && lightOn && d < 7 && eng.los(e.x, e.y, p.x, p.y)) {
@@ -474,7 +483,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
       e.state = 'chase'
       if (def.aggroStinger) audio.aggro()
     }
-    // 侍者近身暴起
+    // 侍者近身暴起（派对客已走 partygoerAI，有自己的暴起提示）
     if (def.feignNeutral && d <= 2.4 && e.state !== 'chase' && e.state !== 'attack' && eng.los(e.x, e.y, p.x, p.y)) {
       e.state = 'chase'
       eng.msg('侍者不笑了。', 'damage')
@@ -508,15 +517,26 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
         const rd = Math.hypot(retained.x - e.x, retained.y - e.y, (retained.z - e.z) * 0.8)
         prey = retained; pd = rd
       } else if (retained) e.targetEnt = undefined
+      // v81：旱虾——正在追玩家的捕食者只会被「诱饵」（玩家放生的活旱虾）引开；已被别的捕食者叼住的不再争抢
+      const chasingPlayer = e.state === 'chase' // 攻击阶段已由本段入口排除
+      if (prey?.def.type === 'dryshrimp' && (prey.sh?.eater || (chasingPlayer && !((prey.sh?.bait ?? 0) > 0)))) { prey = null; pd = 1e9; e.targetEnt = undefined }
       if (!prey) for (const q of m.entities) {
         if (q === e || q.dead || q.hidden || q.disguised) continue
         if (!def.hunts.includes(q.def.type)) continue
+        if (q.def.type === 'dryshrimp' && (q.sh?.eater || q.sh?.phase === 'held' || (chasingPlayer && !((q.sh?.bait ?? 0) > 0)))) continue
         const qd = Math.hypot(q.x - e.x, q.y - e.y, (q.z - e.z) * 0.8)
         if (qd < 15 && qd < pd && eng.los(e.x, e.y, q.x, q.y)) { prey = q; pd = qd }
       }
       if (prey) {
         if (e.def.flying) e.targetEnt = prey
-        if (pd < 1.05 && Math.abs(prey.z - e.z) < 0.82 && e.attackCd <= 0) {
+        if (prey.def.type === 'dryshrimp') {
+          // v81：旱虾不是「打」死的——捕食者贴近后整只吃掉（不掉落），随后停留片刻进食
+          if (Math.hypot(prey.x - e.x, prey.y - e.y) < 0.9 && Math.abs(prey.z - e.z) < 1.6) {
+            devourShrimp(eng, e, prey)
+            e.targetEnt = undefined; e.attackCd = 1.5
+            e.state = 'idle'; e.stateT = 1.6
+          } else { e.state = 'investigate'; e.targetX = prey.x; e.targetY = prey.y; e.stateT = 2 }
+        } else if (pd < 1.05 && Math.abs(prey.z - e.z) < 0.82 && e.attackCd <= 0) {
           e.attackCd = 1.1
           prey.hp -= def.damage
           prey.stunT = Math.max(prey.stunT, 0.3)

@@ -1,0 +1,324 @@
+{
+  "viewport": [
+    1920,
+    1080
+  ],
+  "seed": 20261006,
+  "level": 104,
+  "rows": [
+    {
+      "name": "before-realistic",
+      "ok": true,
+      "mode": "realistic",
+      "baseline": true,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "rounds": [
+        {
+          "median": 4.200000000000728,
+          "p95": 4.30000000000291,
+          "draws": 103,
+          "triangles": 24349,
+          "frames": 294,
+          "memory": {
+            "geometries": 168,
+            "textures": 88
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.299999999999272,
+          "draws": 103,
+          "triangles": 24349,
+          "frames": 292,
+          "memory": {
+            "geometries": 168,
+            "textures": 88
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.299999999999272,
+          "draws": 103,
+          "triangles": 24349,
+          "frames": 293,
+          "memory": {
+            "geometries": 168,
+            "textures": 88
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.299999999999272,
+          "draws": 103,
+          "triangles": 24349,
+          "frames": 295,
+          "memory": {
+            "geometries": 168,
+            "textures": 88
+          }
+        },
+        {
+          "median": 4.200000000000728,
+          "p95": 4.299999999999272,
+          "draws": 103,
+          "triangles": 24349,
+          "frames": 293,
+          "memory": {
+            "geometries": 168,
+            "textures": 88
+          }
+        }
+      ],
+      "medianOfMedians": 4.19999999999709,
+      "medianOfP95": 4.299999999999272,
+      "entity": {
+        "meshes": 28,
+        "triangles": 336,
+        "firstPrepareMs": 83.09999999403954
+      },
+      "checks": 0,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "name": "runtime-realistic",
+      "ok": true,
+      "mode": "realistic",
+      "baseline": false,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "rounds": [
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "draws": 83,
+          "triangles": 30533,
+          "frames": 294,
+          "memory": {
+            "geometries": 160,
+            "textures": 96
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "draws": 83,
+          "triangles": 30533,
+          "frames": 293,
+          "memory": {
+            "geometries": 160,
+            "textures": 96
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "draws": 83,
+          "triangles": 30533,
+          "frames": 295,
+          "memory": {
+            "geometries": 160,
+            "textures": 96
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "draws": 380,
+          "triangles": 188937,
+          "frames": 292,
+          "memory": {
+            "geometries": 160,
+            "textures": 96
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "draws": 83,
+          "triangles": 30533,
+          "frames": 293,
+          "memory": {
+            "geometries": 160,
+            "textures": 96
+          }
+        }
+      ],
+      "medianOfMedians": 4.19999999999709,
+      "medianOfP95": 4.30000000000291,
+      "entity": {
+        "meshes": 8,
+        "triangles": 6520,
+        "firstPrepareMs": 1329.1000000089407
+      },
+      "checks": 18,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "name": "before-classic",
+      "ok": true,
+      "mode": "classic",
+      "baseline": true,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "rounds": [
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "draws": 89,
+          "triangles": 24335,
+          "frames": 294,
+          "memory": {
+            "geometries": 161,
+            "textures": 62
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.299999999995634,
+          "draws": 89,
+          "triangles": 24335,
+          "frames": 295,
+          "memory": {
+            "geometries": 161,
+            "textures": 62
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.299999999995634,
+          "draws": 89,
+          "triangles": 24335,
+          "frames": 295,
+          "memory": {
+            "geometries": 161,
+            "textures": 62
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "draws": 89,
+          "triangles": 24335,
+          "frames": 294,
+          "memory": {
+            "geometries": 161,
+            "textures": 62
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "draws": 89,
+          "triangles": 24335,
+          "frames": 293,
+          "memory": {
+            "geometries": 161,
+            "textures": 62
+          }
+        }
+      ],
+      "medianOfMedians": 4.19999999999709,
+      "medianOfP95": 4.30000000000291,
+      "entity": {
+        "meshes": 28,
+        "triangles": 336,
+        "firstPrepareMs": 80.80000001192093
+      },
+      "checks": 0,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "name": "runtime-classic",
+      "ok": true,
+      "mode": "classic",
+      "baseline": false,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "rounds": [
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "draws": 69,
+          "triangles": 30519,
+          "frames": 292,
+          "memory": {
+            "geometries": 153,
+            "textures": 66
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "draws": 69,
+          "triangles": 30519,
+          "frames": 295,
+          "memory": {
+            "geometries": 153,
+            "textures": 66
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "draws": 69,
+          "triangles": 30519,
+          "frames": 295,
+          "memory": {
+            "geometries": 153,
+            "textures": 66
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "draws": 69,
+          "triangles": 30519,
+          "frames": 292,
+          "memory": {
+            "geometries": 153,
+            "textures": 66
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "draws": 69,
+          "triangles": 30519,
+          "frames": 294,
+          "memory": {
+            "geometries": 153,
+            "textures": 66
+          }
+        }
+      ],
+      "medianOfMedians": 4.19999999999709,
+      "medianOfP95": 4.30000000000291,
+      "entity": {
+        "meshes": 8,
+        "triangles": 6520,
+        "firstPrepareMs": 595.1000000089407
+      },
+      "checks": 18,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    }
+  ],
+  "limitations": [
+    "rAF frame pacing near a 240 FPS ceiling; not isolated GPU milliseconds",
+    "Realistic updated run partly overlapped a production build",
+    "Last-frame counters may include a scheduled shadow refresh",
+    "Single entity scene only; no mobile hardware or swarm performance conclusion"
+  ]
+}

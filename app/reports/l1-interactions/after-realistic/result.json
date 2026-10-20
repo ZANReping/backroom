@@ -1,0 +1,735 @@
+{
+  "before": false,
+  "mode": "realistic",
+  "port": 23145,
+  "cdp": 18462,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:23145/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Mon, 19 Oct 2026 11:45:40 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 269,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 23145,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 29561.517145,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.354,
+        "sendEnd": 0.397,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 71.116,
+        "receiveHeadersEnd": 71.304
+      },
+      "responseTime": 1792410340820.366,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l1-interactions\\after-realistic\\qa-1792410326816-22512",
+    "--remote-debugging-port=18462",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 24940,
+    "server": 50432
+  },
+  "entryMs": 3217.2874999999985,
+  "initial": {
+    "world": [
+      15.5,
+      15.5,
+      0
+    ],
+    "mode": "realistic",
+    "camera": [
+      79.5,
+      1.544215965567957,
+      79.5
+    ],
+    "yaw": 0,
+    "pitch": 0,
+    "fov": 72,
+    "memory": {
+      "geometries": 401,
+      "textures": 132
+    },
+    "held": "",
+    "cache": 0
+  },
+  "crate": {
+    "world": [
+      8.5,
+      9.5,
+      0.68
+    ],
+    "mode": "realistic",
+    "camera": [
+      72.5,
+      2.2313286845783757,
+      73.5
+    ],
+    "yaw": -1.5707963267948966,
+    "pitch": -0.85,
+    "fov": 72,
+    "memory": {
+      "geometries": 464,
+      "textures": 138
+    },
+    "held": "",
+    "cache": 0
+  },
+  "hands": {
+    "world": [
+      8.5,
+      9.5,
+      0.68
+    ],
+    "mode": "realistic",
+    "camera": [
+      72.5,
+      2.224696642161241,
+      73.5
+    ],
+    "yaw": -1.5707963267948966,
+    "pitch": -0.06,
+    "fov": 72,
+    "memory": {
+      "geometries": 592,
+      "textures": 153
+    },
+    "held": "wrench",
+    "cache": 3
+  },
+  "map": {
+    "openMs": 1434,
+    "width": 480,
+    "height": 480,
+    "world": [
+      8.5,
+      9.5,
+      0.68
+    ],
+    "mode": "realistic",
+    "camera": [
+      72.5,
+      2.234292136985214,
+      73.5
+    ],
+    "yaw": -1.5707963267948966,
+    "pitch": -0.06,
+    "fov": 72,
+    "memory": {
+      "geometries": 592,
+      "textures": 153
+    },
+    "held": "wrench",
+    "cache": 3
+  },
+  "corpse": {
+    "world": [
+      -18.75024815230273,
+      37.402440883409014,
+      0
+    ],
+    "mode": "realistic",
+    "camera": [
+      77.24975184769727,
+      0.9961552251073209,
+      69.40244088340901
+    ],
+    "yaw": -2.9173805439100993,
+    "pitch": -0.7076684917518464,
+    "fov": 35,
+    "memory": {
+      "geometries": 456,
+      "textures": 127
+    },
+    "held": "wrench",
+    "cache": 3,
+    "faceTexture": "http://127.0.0.1:23145/textures/npc-retro/pool/m0-2/neutral-blink.png",
+    "detailClip": {
+      "x": 710,
+      "y": 286.3142943291041,
+      "width": 500,
+      "height": 500,
+      "scale": 1
+    }
+  },
+  "summary": {
+    "before": false,
+    "checks": [
+      "Actual App enters L1 on a live WebGL context",
+      "A naturally generated single shipping case is available",
+      "Actual falling physics lands on case lid at 1.36m",
+      "Standing body is outside case collision at 1.36m",
+      "Production support query agrees with rendered lid",
+      "Actual falling physics lands on case lid at 0.68m",
+      "Standing body is outside case collision at 0.68m",
+      "Production support query agrees with rendered lid",
+      "A real jump from surrounding floor settles on the single case",
+      "Walking off the case returns to the real floor",
+      "Actual falling physics lands on case lid at 0.68m",
+      "Standing body is outside case collision at 0.68m",
+      "Production support query agrees with rendered lid",
+      "Production keyboard hotbar changes the selected and displayed item",
+      "Old item lowers before model swap",
+      "Hand moves visibly below resting pose",
+      "Hand returns to idle after a short switch",
+      "Rapid slot changes settle on the latest real selection",
+      "Actual attack immediately takes priority over switching",
+      "Actual timed use takes priority over switching",
+      "Switching does not change consumable settlement",
+      "Selecting a slot while stowed keeps the hand hidden",
+      "Switches preserve the bounded held-model cache",
+      "Actual map displays seven region symbols and feature legends",
+      "No legend is inserted underneath the HUD minimap",
+      "Remote preview returns actual L1 architecture metadata",
+      "Remote map preview changes no live world or exploration state",
+      "Ordinary map does not generate wholly unexplored far chunks",
+      "Unexplored terrain stays invisible even if preview metadata was cached",
+      "A natural corpse has a collision-safe head close-up",
+      "Actual world corpse material resolves to the closed-eye image"
+    ],
+    "records": [
+      {
+        "kind": "case",
+        "stack": 2,
+        "supported": true,
+        "colliders": [
+          {
+            "x0": 66.86,
+            "y0": 67.14500000000001,
+            "x1": 68.14,
+            "y1": 67.85500000000002,
+            "top": 1.36,
+            "stand": true,
+            "polygon": [
+              [
+                [
+                  66.86,
+                  67.14500000000001
+                ],
+                [
+                  68.14,
+                  67.14500000000001
+                ],
+                [
+                  68.14,
+                  67.85500000000002
+                ],
+                [
+                  66.86,
+                  67.85500000000002
+                ]
+              ]
+            ]
+          }
+        ],
+        "position": {
+          "world": [
+            3.5,
+            35.500000000000014,
+            1.36
+          ],
+          "mode": "realistic",
+          "camera": [
+            79.5,
+            1.5444026073064132,
+            79.5
+          ],
+          "yaw": 0,
+          "pitch": 0,
+          "fov": 72,
+          "memory": {
+            "geometries": 401,
+            "textures": 132
+          },
+          "held": "",
+          "cache": 0
+        }
+      },
+      {
+        "kind": "case",
+        "stack": 1,
+        "supported": true,
+        "colliders": [
+          {
+            "x0": 71.86,
+            "y0": 73.145,
+            "x1": 73.14,
+            "y1": 73.855,
+            "top": 0.68,
+            "stand": true,
+            "polygon": [
+              [
+                [
+                  71.86,
+                  73.145
+                ],
+                [
+                  73.14,
+                  73.145
+                ],
+                [
+                  73.14,
+                  73.855
+                ],
+                [
+                  71.86,
+                  73.855
+                ]
+              ]
+            ]
+          }
+        ],
+        "position": {
+          "world": [
+            8.5,
+            9.5,
+            0.68
+          ],
+          "mode": "realistic",
+          "camera": [
+            79.5,
+            1.5444026073064132,
+            79.5
+          ],
+          "yaw": 0,
+          "pitch": 0,
+          "fov": 72,
+          "memory": {
+            "geometries": 401,
+            "textures": 132
+          },
+          "held": "",
+          "cache": 0
+        }
+      },
+      {
+        "kind": "case",
+        "stack": 1,
+        "supported": true,
+        "colliders": [
+          {
+            "x0": 71.86,
+            "y0": 73.145,
+            "x1": 73.14,
+            "y1": 73.855,
+            "top": 0.68,
+            "stand": true,
+            "polygon": [
+              [
+                [
+                  71.86,
+                  73.145
+                ],
+                [
+                  73.14,
+                  73.145
+                ],
+                [
+                  73.14,
+                  73.855
+                ],
+                [
+                  71.86,
+                  73.855
+                ]
+              ]
+            ]
+          }
+        ],
+        "position": {
+          "world": [
+            8.5,
+            9.5,
+            0.68
+          ],
+          "mode": "realistic",
+          "camera": [
+            79.5,
+            1.5444026073064132,
+            79.5
+          ],
+          "yaw": 0,
+          "pitch": 0,
+          "fov": 72,
+          "memory": {
+            "geometries": 401,
+            "textures": 132
+          },
+          "held": "",
+          "cache": 0
+        }
+      },
+      {
+        "kind": "hand-timeline",
+        "timeline": [
+          {
+            "time": 27532.60000000149,
+            "held": "crowbar",
+            "y": -0.30001550756516343,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 27538.800000000745,
+            "held": "crowbar",
+            "y": -0.30001345343528213,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 27544.400000002235,
+            "held": "crowbar",
+            "y": -0.3000128360626246,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 27551.70000000298,
+            "held": "crowbar",
+            "y": -0.3000122512586162,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 27561,
+            "held": "crowbar",
+            "y": -0.30001117840508823,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 27566.60000000149,
+            "held": "crowbar",
+            "y": -0.3000102239602565,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 27573.300000000745,
+            "held": "crowbar",
+            "y": -0.30000934258147105,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 27579.60000000149,
+            "held": "crowbar",
+            "y": -0.3029681987910315,
+            "phase": "lower",
+            "dip": 0.04421052631579713
+          },
+          {
+            "time": 27590.800000000745,
+            "held": "crowbar",
+            "y": -0.32464735198924677,
+            "phase": "lower",
+            "dip": 0.13157894736842107
+          },
+          {
+            "time": 27598,
+            "held": "crowbar",
+            "y": -0.3644375895210896,
+            "phase": "lower",
+            "dip": 0.22000000000001535
+          },
+          {
+            "time": 27607.10000000149,
+            "held": "crowbar",
+            "y": -0.417188152345985,
+            "phase": "lower",
+            "dip": 0.3073684210526393
+          },
+          {
+            "time": 27616.800000000745,
+            "held": "crowbar",
+            "y": -0.5126217001371148,
+            "phase": "lower",
+            "dip": 0.4389473684210603
+          },
+          {
+            "time": 27623.60000000149,
+            "held": "crowbar",
+            "y": -0.5813316463560306,
+            "phase": "lower",
+            "dip": 0.5273684210526163
+          },
+          {
+            "time": 27629,
+            "held": "crowbar",
+            "y": -0.6146510792970339,
+            "phase": "lower",
+            "dip": 0.5705263157894813
+          },
+          {
+            "time": 27635.300000000745,
+            "held": "crowbar",
+            "y": -0.6798075919283962,
+            "phase": "lower",
+            "dip": 0.6589473684210373
+          },
+          {
+            "time": 27643.20000000298,
+            "held": "crowbar",
+            "y": -0.7090613646275132,
+            "phase": "lower",
+            "dip": 0.7021052631579023
+          },
+          {
+            "time": 27648.70000000298,
+            "held": "crowbar",
+            "y": -0.7605671752031782,
+            "phase": "lower",
+            "dip": 0.7894736842105263
+          },
+          {
+            "time": 27661.400000002235,
+            "held": "crowbar",
+            "y": -0.7986383275081166,
+            "phase": "lower",
+            "dip": 0.8778947368421206
+          },
+          {
+            "time": 27685.5,
+            "held": "almond",
+            "y": -0.8199231484427463,
+            "phase": "raise",
+            "dip": 0.9927999999999884
+          },
+          {
+            "time": 27693.300000000745,
+            "held": "almond",
+            "y": -0.7622804992382013,
+            "phase": "raise",
+            "dip": 0.7927999999999884
+          },
+          {
+            "time": 27699.400000002235,
+            "held": "almond",
+            "y": -0.744523732440987,
+            "phase": "raise",
+            "dip": 0.76
+          },
+          {
+            "time": 27705.300000000745,
+            "held": "almond",
+            "y": -0.7034640121452738,
+            "phase": "raise",
+            "dip": 0.6936000000000058
+          },
+          {
+            "time": 27711,
+            "held": "almond",
+            "y": -0.680542647315203,
+            "phase": "raise",
+            "dip": 0.6599999999999999
+          },
+          {
+            "time": 27718.900000002235,
+            "held": "almond",
+            "y": -0.6564941325064708,
+            "phase": "raise",
+            "dip": 0.6263999999999941
+          },
+          {
+            "time": 27735.400000002235,
+            "held": "almond",
+            "y": -0.580575018506519,
+            "phase": "raise",
+            "dip": 0.5263999999999941
+          },
+          {
+            "time": 27748.20000000298,
+            "held": "almond",
+            "y": -0.5036191998294735,
+            "phase": "raise",
+            "dip": 0.42720000000001157
+          },
+          {
+            "time": 27756.900000002235,
+            "held": "almond",
+            "y": -0.42948635818869596,
+            "phase": "raise",
+            "dip": 0.3256000000000058
+          },
+          {
+            "time": 27763,
+            "held": "almond",
+            "y": -0.38717858825587065,
+            "phase": "raise",
+            "dip": 0.25999999999999995
+          },
+          {
+            "time": 27769.400000002235,
+            "held": "almond",
+            "y": -0.3505361907359615,
+            "phase": "raise",
+            "dip": 0.19279999999998831
+          },
+          {
+            "time": 27777.60000000149,
+            "held": "almond",
+            "y": -0.33567763114427634,
+            "phase": "raise",
+            "dip": 0.15999999999999995
+          },
+          {
+            "time": 27785,
+            "held": "almond",
+            "y": -0.3126046991533599,
+            "phase": "raise",
+            "dip": 0.09279999999998831
+          },
+          {
+            "time": 27794.900000002235,
+            "held": "almond",
+            "y": -0.30106940801568,
+            "phase": "raise",
+            "dip": 0.026399999999994123
+          },
+          {
+            "time": 27812.10000000149,
+            "held": "almond",
+            "y": -0.3000012038599215,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 27822.20000000298,
+            "held": "almond",
+            "y": -0.30000101394701567,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 27827.800000000745,
+            "held": "almond",
+            "y": -0.3000009502957731,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 27832.900000002235,
+            "held": "almond",
+            "y": -0.3000009201271614,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 27838.10000000149,
+            "held": "almond",
+            "y": -0.30000086278623556,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 27842.70000000298,
+            "held": "almond",
+            "y": -0.30000083559461943,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 27847.5,
+            "held": "almond",
+            "y": -0.3000008093210925,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 27852.300000000745,
+            "held": "almond",
+            "y": -0.3000007845332266,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 27863.10000000149,
+            "held": "almond",
+            "y": -0.30000075997319237,
+            "phase": "idle",
+            "dip": 0
+          }
+        ]
+      },
+      {
+        "kind": "remote-preview",
+        "elapsedMs": 868.8000000007451,
+        "chunks": 16
+      }
+    ],
+    "state": {
+      "world": [
+        -18.75024815230273,
+        37.402440883409014,
+        0
+      ],
+      "mode": "realistic",
+      "camera": [
+        77.24975184769727,
+        1.0028467651898032,
+        69.40244088340901
+      ],
+      "yaw": -2.9173805439100993,
+      "pitch": -0.7076684917518464,
+      "fov": 35,
+      "memory": {
+        "geometries": 456,
+        "textures": 127
+      },
+      "held": "wrench",
+      "cache": 3
+    }
+  },
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

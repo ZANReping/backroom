@@ -1,0 +1,922 @@
+{
+  "run": "qa-wretch-1792056029917-57588",
+  "label": "after",
+  "port": 9997,
+  "cdp": 9998,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\wretch-import\\after\\qa-wretch-1792056029917-57588",
+  "views": [
+    {
+      "kind": "shambler",
+      "pose": "front",
+      "id": 900000,
+      "player": [
+        40.25,
+        25.5,
+        0
+      ],
+      "entity": [
+        43.3,
+        25.5,
+        0
+      ],
+      "yaw": -1.5707963267948966,
+      "pitch": -0.24,
+      "fov": 60,
+      "triangles": 4155,
+      "draws": 6,
+      "skinned": 1,
+      "ready": true,
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "max": 8.400000000001455,
+        "p99": 4.400000000001455,
+        "frames": 1000,
+        "over16ms": 0,
+        "over33ms": 0,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 143,
+        "triangles": 49616,
+        "memory": {
+          "geometries": 147,
+          "textures": 97
+        },
+        "programs": 61,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "kind": "shambler",
+      "pose": "close",
+      "id": 900000,
+      "player": [
+        42.1,
+        25.5,
+        0
+      ],
+      "entity": [
+        43.3,
+        25.5,
+        0
+      ],
+      "yaw": -1.5707963267948966,
+      "pitch": -0.05,
+      "fov": 60,
+      "triangles": 4155,
+      "draws": 6,
+      "skinned": 1,
+      "ready": true,
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "max": 8.400000000001455,
+        "p99": 8.299999999995634,
+        "frames": 1000,
+        "over16ms": 0,
+        "over33ms": 0,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 139,
+        "triangles": 48212,
+        "memory": {
+          "geometries": 147,
+          "textures": 97
+        },
+        "programs": 61,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "kind": "sprinter",
+      "pose": "front",
+      "id": 900002,
+      "player": [
+        40.25,
+        25.5,
+        0
+      ],
+      "entity": [
+        43.3,
+        25.5,
+        0
+      ],
+      "yaw": -1.5707963267948966,
+      "pitch": -0.24,
+      "fov": 60,
+      "triangles": 4189,
+      "draws": 7,
+      "skinned": 1,
+      "ready": true,
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "max": 529.2000000000044,
+        "p99": 4.30000000000291,
+        "frames": 1000,
+        "over16ms": 1,
+        "over33ms": 1,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 144,
+        "triangles": 49650,
+        "memory": {
+          "geometries": 147,
+          "textures": 100
+        },
+        "programs": 61,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "kind": "sprinter",
+      "pose": "close",
+      "id": 900002,
+      "player": [
+        42.1,
+        25.5,
+        0
+      ],
+      "entity": [
+        43.3,
+        25.5,
+        0
+      ],
+      "yaw": -1.5707963267948966,
+      "pitch": -0.05,
+      "fov": 60,
+      "triangles": 4189,
+      "draws": 7,
+      "skinned": 1,
+      "ready": true,
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "max": 529.2000000000044,
+        "p99": 4.30000000000291,
+        "frames": 1000,
+        "over16ms": 1,
+        "over33ms": 1,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 140,
+        "triangles": 48246,
+        "memory": {
+          "geometries": 147,
+          "textures": 100
+        },
+        "programs": 61,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "kind": "smart",
+      "pose": "front",
+      "id": 900010,
+      "player": [
+        40.25,
+        25.5,
+        0
+      ],
+      "entity": [
+        43.3,
+        25.5,
+        0
+      ],
+      "yaw": -1.5707963267948966,
+      "pitch": -0.24,
+      "fov": 60,
+      "triangles": 3715,
+      "draws": 6,
+      "skinned": 1,
+      "ready": true,
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "max": 612.5999999999985,
+        "p99": 8.30000000000291,
+        "frames": 1000,
+        "over16ms": 1,
+        "over33ms": 1,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 143,
+        "triangles": 49176,
+        "memory": {
+          "geometries": 147,
+          "textures": 103
+        },
+        "programs": 61,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "kind": "smart",
+      "pose": "close",
+      "id": 900010,
+      "player": [
+        42.1,
+        25.5,
+        0
+      ],
+      "entity": [
+        43.3,
+        25.5,
+        0
+      ],
+      "yaw": -1.5707963267948966,
+      "pitch": -0.05,
+      "fov": 60,
+      "triangles": 3715,
+      "draws": 6,
+      "skinned": 1,
+      "ready": true,
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.299999999995634,
+        "max": 8.400000000001455,
+        "p99": 4.30000000000291,
+        "frames": 1000,
+        "over16ms": 0,
+        "over33ms": 0,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 139,
+        "triangles": 47772,
+        "memory": {
+          "geometries": 147,
+          "textures": 103
+        },
+        "programs": 61,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "kind": "mutant",
+      "pose": "front",
+      "id": 900013,
+      "player": [
+        40.25,
+        25.5,
+        0
+      ],
+      "entity": [
+        43.3,
+        25.5,
+        0
+      ],
+      "yaw": -1.5707963267948966,
+      "pitch": -0.24,
+      "fov": 60,
+      "triangles": 5479,
+      "draws": 6,
+      "skinned": 1,
+      "ready": true,
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "max": 554.1000000000058,
+        "p99": 4.30000000000291,
+        "frames": 1000,
+        "over16ms": 2,
+        "over33ms": 1,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 143,
+        "triangles": 50940,
+        "memory": {
+          "geometries": 147,
+          "textures": 104
+        },
+        "programs": 61,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "kind": "mutant",
+      "pose": "close",
+      "id": 900013,
+      "player": [
+        42.1,
+        25.5,
+        0
+      ],
+      "entity": [
+        43.3,
+        25.5,
+        0
+      ],
+      "yaw": -1.5707963267948966,
+      "pitch": -0.05,
+      "fov": 60,
+      "triangles": 5479,
+      "draws": 6,
+      "skinned": 1,
+      "ready": true,
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "max": 8.39999999999418,
+        "p99": 4.30000000000291,
+        "frames": 1000,
+        "over16ms": 0,
+        "over33ms": 0,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 139,
+        "triangles": 49536,
+        "memory": {
+          "geometries": 147,
+          "textures": 104
+        },
+        "programs": 61,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\wretch-import\\after\\qa-wretch-1792056029917-57588",
+    "--remote-debugging-port=9998",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.40",
+    "revision": "@cfaadc5a132d78e1828635aa8405a499f3e14864",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.20"
+  },
+  "pids": {
+    "server": 33264,
+    "browser": 37204
+  },
+  "setup": {
+    "ids": {
+      "shambler": 900000,
+      "sprinter": 900002,
+      "smart": 900010,
+      "mutant": 900013
+    },
+    "baseline": false,
+    "seed": 20261006,
+    "stats": {
+      "label": "104:open",
+      "median": 4.19999999999709,
+      "p95": 4.30000000000291,
+      "max": 1379.0999999999985,
+      "p99": 12.5,
+      "frames": 1000,
+      "over16ms": 3,
+      "over33ms": 2,
+      "cpuMedian": null,
+      "cpuP95": null,
+      "gpuMedian": null,
+      "gpuP95": null,
+      "gpuSamples": 0,
+      "draws": 143,
+      "triangles": 49616,
+      "memory": {
+        "geometries": 147,
+        "textures": 97
+      },
+      "programs": 61,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    }
+  },
+  "behavior": {
+    "checks": [
+      "shambler: production AI chases and damages the player",
+      "shambler: model/AI/max health agree",
+      "shambler: GPU skinning and cloth textures ready",
+      "shambler: actual cloth cutouts and separate skin atlas",
+      "sprinter: production AI chases and damages the player",
+      "sprinter: model/AI/max health agree",
+      "sprinter: GPU skinning and cloth textures ready",
+      "sprinter: actual cloth cutouts and separate skin atlas",
+      "smart: production AI chases and damages the player",
+      "smart: model/AI/max health agree",
+      "smart: GPU skinning and cloth textures ready",
+      "smart: actual cloth cutouts and separate skin atlas",
+      "mutant: production AI chases and damages the player",
+      "mutant: model/AI/max health agree",
+      "mutant: GPU skinning and cloth textures ready",
+      "mutant: actual cloth cutouts and separate skin atlas",
+      "production noise hook alerts wretch at source position",
+      "closed door uses actual game collider",
+      "production AI opens door and removes solid collider",
+      "hoteldoor: lock added during bash remains closed",
+      "hoteldoor: protected door eligibility",
+      "bargate: lock added during bash remains closed",
+      "bargate: protected door eligibility",
+      "inkdoor: lock added during bash remains closed",
+      "inkdoor: protected door eligibility",
+      "glassdoor: lock added during bash remains closed",
+      "glassdoor: protected door eligibility",
+      "rollerdoor: lock added during bash remains closed",
+      "rollerdoor: protected door eligibility",
+      "production death handler accepts remade wretch",
+      "dead wretch mesh retires"
+    ],
+    "views": [
+      {
+        "kind": "shambler",
+        "pose": "front",
+        "id": 900000,
+        "player": [
+          40.25,
+          25.5,
+          0
+        ],
+        "entity": [
+          43.3,
+          25.5,
+          0
+        ],
+        "yaw": -1.5707963267948966,
+        "pitch": -0.24,
+        "fov": 60,
+        "triangles": 4155,
+        "draws": 6,
+        "skinned": 1,
+        "ready": true,
+        "stats": {
+          "label": "104:open",
+          "median": 4.19999999999709,
+          "p95": 8.30000000000291,
+          "max": 258.3000000000029,
+          "p99": 8.400000000008731,
+          "frames": 1000,
+          "over16ms": 1,
+          "over33ms": 1,
+          "cpuMedian": null,
+          "cpuP95": null,
+          "gpuMedian": null,
+          "gpuP95": null,
+          "gpuSamples": 0,
+          "draws": 670,
+          "triangles": 316106,
+          "memory": {
+            "geometries": 147,
+            "textures": 104
+          },
+          "programs": 61,
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        }
+      },
+      {
+        "kind": "sprinter",
+        "pose": "front",
+        "id": 900002,
+        "player": [
+          40.25,
+          25.5,
+          0
+        ],
+        "entity": [
+          43.3,
+          25.5,
+          0
+        ],
+        "yaw": -1.5707963267948966,
+        "pitch": -0.24,
+        "fov": 60,
+        "triangles": 4189,
+        "draws": 7,
+        "skinned": 1,
+        "ready": true,
+        "stats": {
+          "label": "104:open",
+          "median": 4.19999999999709,
+          "p95": 8.39999999999418,
+          "max": 237.5,
+          "p99": 8.5,
+          "frames": 1000,
+          "over16ms": 3,
+          "over33ms": 1,
+          "cpuMedian": null,
+          "cpuP95": null,
+          "gpuMedian": null,
+          "gpuP95": null,
+          "gpuSamples": 0,
+          "draws": 677,
+          "triangles": 316344,
+          "memory": {
+            "geometries": 147,
+            "textures": 104
+          },
+          "programs": 61,
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        }
+      },
+      {
+        "kind": "smart",
+        "pose": "front",
+        "id": 900010,
+        "player": [
+          40.25,
+          25.5,
+          0
+        ],
+        "entity": [
+          43.3,
+          25.5,
+          0
+        ],
+        "yaw": -1.5707963267948966,
+        "pitch": -0.24,
+        "fov": 60,
+        "triangles": 3715,
+        "draws": 6,
+        "skinned": 1,
+        "ready": true,
+        "stats": {
+          "label": "104:open",
+          "median": 4.19999999999709,
+          "p95": 8.39999999999418,
+          "max": 312.5,
+          "p99": 8.5,
+          "frames": 1000,
+          "over16ms": 2,
+          "over33ms": 1,
+          "cpuMedian": null,
+          "cpuP95": null,
+          "gpuMedian": null,
+          "gpuP95": null,
+          "gpuSamples": 0,
+          "draws": 734,
+          "triangles": 332622,
+          "memory": {
+            "geometries": 147,
+            "textures": 104
+          },
+          "programs": 61,
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        }
+      },
+      {
+        "kind": "mutant",
+        "pose": "front",
+        "id": 900013,
+        "player": [
+          40.25,
+          25.5,
+          0
+        ],
+        "entity": [
+          43.3,
+          25.5,
+          0
+        ],
+        "yaw": -1.5707963267948966,
+        "pitch": -0.24,
+        "fov": 60,
+        "triangles": 5479,
+        "draws": 6,
+        "skinned": 1,
+        "ready": true,
+        "stats": {
+          "label": "104:open",
+          "median": 4.19999999999709,
+          "p95": 8.400000000008731,
+          "max": 295.8000000000029,
+          "p99": 8.5,
+          "frames": 1000,
+          "over16ms": 2,
+          "over33ms": 2,
+          "cpuMedian": null,
+          "cpuP95": null,
+          "gpuMedian": null,
+          "gpuP95": null,
+          "gpuSamples": 0,
+          "draws": 143,
+          "triangles": 50940,
+          "memory": {
+            "geometries": 147,
+            "textures": 104
+          },
+          "programs": 61,
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        }
+      }
+    ]
+  },
+  "cycles": {
+    "memory": [
+      {
+        "geometries": 145,
+        "textures": 82
+      },
+      {
+        "geometries": 145,
+        "textures": 82
+      },
+      {
+        "geometries": 145,
+        "textures": 82
+      },
+      {
+        "geometries": 145,
+        "textures": 82
+      }
+    ],
+    "checks": [
+      "shambler: production AI chases and damages the player",
+      "shambler: model/AI/max health agree",
+      "shambler: GPU skinning and cloth textures ready",
+      "shambler: actual cloth cutouts and separate skin atlas",
+      "sprinter: production AI chases and damages the player",
+      "sprinter: model/AI/max health agree",
+      "sprinter: GPU skinning and cloth textures ready",
+      "sprinter: actual cloth cutouts and separate skin atlas",
+      "smart: production AI chases and damages the player",
+      "smart: model/AI/max health agree",
+      "smart: GPU skinning and cloth textures ready",
+      "smart: actual cloth cutouts and separate skin atlas",
+      "mutant: production AI chases and damages the player",
+      "mutant: model/AI/max health agree",
+      "mutant: GPU skinning and cloth textures ready",
+      "mutant: actual cloth cutouts and separate skin atlas",
+      "production noise hook alerts wretch at source position",
+      "closed door uses actual game collider",
+      "production AI opens door and removes solid collider",
+      "hoteldoor: lock added during bash remains closed",
+      "hoteldoor: protected door eligibility",
+      "bargate: lock added during bash remains closed",
+      "bargate: protected door eligibility",
+      "inkdoor: lock added during bash remains closed",
+      "inkdoor: protected door eligibility",
+      "glassdoor: lock added during bash remains closed",
+      "glassdoor: protected door eligibility",
+      "rollerdoor: lock added during bash remains closed",
+      "rollerdoor: protected door eligibility",
+      "production death handler accepts remade wretch",
+      "dead wretch mesh retires",
+      "spawn/remove resources stabilize across four cycles"
+    ]
+  },
+  "performance": [
+    {
+      "label": "104:open",
+      "median": 4.19999999999709,
+      "p95": 4.30000000000291,
+      "max": 8.5,
+      "p99": 8.39999999999418,
+      "frames": 279,
+      "over16ms": 0,
+      "over33ms": 0,
+      "cpuMedian": 2.5,
+      "cpuP95": 5.400000002235174,
+      "gpuMedian": 4.10624,
+      "gpuP95": 5.876736,
+      "gpuSamples": 277,
+      "draws": 143,
+      "triangles": 49616,
+      "memory": {
+        "geometries": 147,
+        "textures": 104
+      },
+      "programs": 78,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "label": "104:open",
+      "median": 4.19999999999709,
+      "p95": 4.30000000000291,
+      "max": 8.39999999999418,
+      "p99": 8.39999999999418,
+      "frames": 294,
+      "over16ms": 0,
+      "over33ms": 0,
+      "cpuMedian": 2.599999997764826,
+      "cpuP95": 5.599999997764826,
+      "gpuMedian": 3.934208,
+      "gpuP95": 5.984256,
+      "gpuSamples": 291,
+      "draws": 143,
+      "triangles": 49616,
+      "memory": {
+        "geometries": 147,
+        "textures": 104
+      },
+      "programs": 78,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "label": "104:open",
+      "median": 4.19999999999709,
+      "p95": 4.30000000000291,
+      "max": 8.39999999999418,
+      "p99": 4.400000000008731,
+      "frames": 286,
+      "over16ms": 0,
+      "over33ms": 0,
+      "cpuMedian": 2.400000002235174,
+      "cpuP95": 4.600000001490116,
+      "gpuMedian": 3.964928,
+      "gpuP95": 5.296128,
+      "gpuSamples": 283,
+      "draws": 734,
+      "triangles": 335702,
+      "memory": {
+        "geometries": 147,
+        "textures": 104
+      },
+      "programs": 78,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "label": "104:open",
+      "median": 4.19999999999709,
+      "p95": 4.30000000000291,
+      "max": 4.30000000000291,
+      "p99": 4.30000000000291,
+      "frames": 297,
+      "over16ms": 0,
+      "over33ms": 0,
+      "cpuMedian": 2.199999999254942,
+      "cpuP95": 4.5,
+      "gpuMedian": 4.054016,
+      "gpuP95": 5.023744,
+      "gpuSamples": 294,
+      "draws": 143,
+      "triangles": 49616,
+      "memory": {
+        "geometries": 147,
+        "textures": 104
+      },
+      "programs": 78,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "label": "104:open",
+      "median": 4.19999999999709,
+      "p95": 4.30000000000291,
+      "max": 4.400000000008731,
+      "p99": 4.30000000000291,
+      "frames": 300,
+      "over16ms": 0,
+      "over33ms": 0,
+      "cpuMedian": 2.100000001490116,
+      "cpuP95": 3.899999998509884,
+      "gpuMedian": 4.02944,
+      "gpuP95": 5.074944,
+      "gpuSamples": 297,
+      "draws": 143,
+      "triangles": 49616,
+      "memory": {
+        "geometries": 147,
+        "textures": 104
+      },
+      "programs": 78,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    }
+  ],
+  "habitat": {
+    "level": 2,
+    "seed": 20261006,
+    "entity": {
+      "id": 47,
+      "position": [
+        78.5,
+        82.5,
+        0
+      ],
+      "kind": "shambler",
+      "hp": 75
+    },
+    "player": [
+      78.5,
+      79.5,
+      0
+    ],
+    "stats": {
+      "label": "2:open",
+      "median": 4.2999999999883585,
+      "p95": 12.599999999991269,
+      "max": 3791.7000000000116,
+      "p99": 29.19999999999709,
+      "frames": 984,
+      "over16ms": 30,
+      "over33ms": 8,
+      "cpuMedian": 2.100000001490116,
+      "cpuP95": 3.899999998509884,
+      "gpuMedian": 4.02944,
+      "gpuP95": 5.074944,
+      "gpuSamples": 300,
+      "draws": 654,
+      "triangles": 535450,
+      "memory": {
+        "geometries": 1195,
+        "textures": 207
+      },
+      "programs": 88,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    }
+  },
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [],
+  "networkErrors": [
+    {
+      "requestId": "24804.13",
+      "loaderId": "D560BEFB95CCA8E365EDAF82B75F2234",
+      "timestamp": 20281.610074,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:9997/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Thu, 15 Oct 2026 09:20:46 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 190,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 9997,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 20281.359734,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.416,
+          "sendEnd": 0.459,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 249.444,
+          "receiveHeadersEnd": 249.613
+        },
+        "responseTime": 1792056046237.024,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "B2B69280D7A52A13CF38D78F85B50083"
+    }
+  ]
+}

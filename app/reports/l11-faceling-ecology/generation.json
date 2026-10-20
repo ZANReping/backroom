@@ -1,0 +1,1042 @@
+{
+  "checks": 23306,
+  "seeds": [
+    {
+      "seed": 1,
+      "homes": 70,
+      "shopkeepers": 29,
+      "upper": 10
+    },
+    {
+      "seed": 42,
+      "homes": 100,
+      "shopkeepers": 22,
+      "upper": 28
+    },
+    {
+      "seed": 20261006,
+      "homes": 120,
+      "shopkeepers": 46,
+      "upper": 33
+    }
+  ],
+  "simulations": [
+    {
+      "world": [
+        220,
+        220
+      ],
+      "count": 13,
+      "ms": {
+        "p50": 0.051799999997456325,
+        "p95": 1.1480000000010477,
+        "max": 10.010000000002037
+      },
+      "moves": [
+        {
+          "id": "l11:20261006:pedestrian:5:4",
+          "role": "pedestrian",
+          "from": [
+            45.5,
+            20.5
+          ],
+          "to": [
+            130.27826621011934,
+            21.71527288233878
+          ],
+          "activity": "walking",
+          "travel": 88.38133333332834,
+          "crossings": 0,
+          "pending": false,
+          "pathLength": 11,
+          "next": [
+            262.125,
+            149.625
+          ],
+          "blocked": 0
+        },
+        {
+          "id": "l11:20261006:pedestrian:6:4",
+          "role": "pedestrian",
+          "from": [
+            70.5,
+            10.5
+          ],
+          "to": [
+            9.627937195638623,
+            6.67623374556598
+          ],
+          "activity": "walking",
+          "travel": 89.40799999999477,
+          "crossings": 1,
+          "pending": false,
+          "pathLength": 17,
+          "next": [
+            137.625,
+            135.375
+          ],
+          "blocked": 0
+        },
+        {
+          "id": "l11:20261006:pedestrian:8:5",
+          "role": "pedestrian",
+          "from": [
+            138.5,
+            61.5
+          ],
+          "to": [
+            136.37374432083112,
+            46.691279973322224
+          ],
+          "activity": "walking",
+          "travel": 96.77066666665974,
+          "crossings": 0,
+          "pending": false,
+          "pathLength": 2,
+          "next": [
+            264.375,
+            175.125
+          ],
+          "blocked": 0
+        },
+        {
+          "id": "l11:20261006:pedestrian:4:6",
+          "role": "pedestrian",
+          "from": [
+            22.5,
+            90.5
+          ],
+          "to": [
+            16.775704672979003,
+            136.0073871735264
+          ],
+          "activity": "walking",
+          "travel": 90.17066666666126,
+          "crossings": 1,
+          "pending": false,
+          "pathLength": 11,
+          "next": [
+            136.125,
+            264.375
+          ],
+          "blocked": 0
+        },
+        {
+          "id": "l11v2:20261006:0:0:block:5:lot:0:1:f0:room:6:faceling",
+          "role": "office",
+          "from": [
+            53,
+            75.56666666666666
+          ],
+          "to": [
+            52.84058131853311,
+            75.56414517317961
+          ],
+          "activity": "working",
+          "travel": 8.624000000000006,
+          "crossings": 0,
+          "pending": false,
+          "pathLength": 0,
+          "blocked": 0
+        },
+        {
+          "id": "l11v2:20261006:0:0:block:5:lot:2:1:f0:room:2:faceling",
+          "role": "office",
+          "from": [
+            107.33333333333331,
+            65.51666666666665
+          ],
+          "to": [
+            112.0709238954559,
+            66.25411230768444
+          ],
+          "activity": "working",
+          "travel": 22.62399999999928,
+          "crossings": 0,
+          "pending": false,
+          "pathLength": 0,
+          "blocked": 0
+        },
+        {
+          "id": "l11v2:20261006:0:0:block:5:lot:0:2:f1:room:6:faceling",
+          "role": "office",
+          "from": [
+            46.476699999999994,
+            125.23333333333332
+          ],
+          "to": [
+            46.92543881052157,
+            124.93831362415798
+          ],
+          "activity": "working",
+          "travel": 5.888000000000004,
+          "crossings": 0,
+          "pending": false,
+          "pathLength": 0,
+          "blocked": 0
+        },
+        {
+          "id": "l11v2:20261006:0:0:block:5:lot:0:2:f1:room:2:faceling",
+          "role": "office",
+          "from": [
+            46.476699999999994,
+            115.23333333333332
+          ],
+          "to": [
+            46.476699999999994,
+            115.23333333333332
+          ],
+          "activity": "working",
+          "travel": 0,
+          "crossings": 0,
+          "pending": false,
+          "pathLength": 0,
+          "blocked": 0
+        },
+        {
+          "id": "l11v2:20261006:0:0:block:5:lot:0:2:f0:room:6:faceling",
+          "role": "office",
+          "from": [
+            46.476699999999994,
+            125.23333333333332
+          ],
+          "to": [
+            46.609214657997995,
+            125.315250224739
+          ],
+          "activity": "working",
+          "travel": 15.712000000000012,
+          "crossings": 0,
+          "pending": false,
+          "pathLength": 0,
+          "blocked": 0
+        },
+        {
+          "id": "l11:20261006:pedestrian:4:8",
+          "role": "pedestrian",
+          "from": [
+            20.5,
+            131.5
+          ],
+          "to": [
+            11.080769195503962,
+            158.349919664818
+          ],
+          "activity": "walking",
+          "travel": 87.70666666666183,
+          "crossings": 2,
+          "pending": false,
+          "pathLength": 13,
+          "next": [
+            138.375,
+            274.875
+          ],
+          "blocked": 0
+        },
+        {
+          "id": "l11:20261006:pedestrian:6:8",
+          "role": "pedestrian",
+          "from": [
+            80.5,
+            136.5
+          ],
+          "to": [
+            149.3044346809188,
+            150.6006130777002
+          ],
+          "activity": "waiting-crossing",
+          "travel": 80.40266666666352,
+          "crossings": 2,
+          "pending": false,
+          "pathLength": 8,
+          "next": [
+            271.125,
+            278.625
+          ],
+          "blocked": 0
+        },
+        {
+          "id": "l11:20261006:pedestrian:7:8",
+          "role": "pedestrian",
+          "from": [
+            111.5,
+            150.5
+          ],
+          "to": [
+            150.47981800199926,
+            150.62485935679535
+          ],
+          "activity": "planning",
+          "travel": 86.91466666666201,
+          "crossings": 3,
+          "pending": true,
+          "pathLength": 0,
+          "blocked": 1.8000000000000023
+        },
+        {
+          "id": "l11:20261006:pedestrian:8:8",
+          "role": "pedestrian",
+          "from": [
+            150.5,
+            150.5
+          ],
+          "to": [
+            137.12490880880813,
+            108.78346558702057
+          ],
+          "activity": "resting",
+          "travel": 83.9226666666627,
+          "crossings": 2,
+          "pending": false,
+          "pathLength": 0,
+          "blocked": 0
+        }
+      ]
+    },
+    {
+      "world": [
+        -80,
+        -80
+      ],
+      "count": 5,
+      "ms": {
+        "p50": 0.013200000001234002,
+        "p95": 1.0016999999970722,
+        "max": 4.758700000002136
+      },
+      "moves": [
+        {
+          "id": "l11v2:20261006:-1:-1:block:105:lot:1:2:f0:room:3:faceling",
+          "role": "office",
+          "from": [
+            0.9418551625753366,
+            10.92091956561407
+          ],
+          "to": [
+            0.9418551625753366,
+            10.92091956561407
+          ],
+          "activity": "working",
+          "travel": 0,
+          "crossings": 0,
+          "pending": false,
+          "pathLength": 0,
+          "blocked": 0
+        },
+        {
+          "id": "l11:20261006:pedestrian:-4:-5",
+          "role": "pedestrian",
+          "from": [
+            60.5,
+            3.5
+          ],
+          "to": [
+            71.73298201432232,
+            0.6612755478099359
+          ],
+          "activity": "resting",
+          "travel": 11.586666666666744,
+          "crossings": 0,
+          "pending": false,
+          "pathLength": 0,
+          "blocked": 0
+        },
+        {
+          "id": "l11:20261006:pedestrian:-3:-4",
+          "role": "pedestrian",
+          "from": [
+            93.5,
+            56.5
+          ],
+          "to": [
+            32.33063762683001,
+            24.126038134121274
+          ],
+          "activity": "walking",
+          "travel": 96.00799999999325,
+          "crossings": 0,
+          "pending": false,
+          "pathLength": 2,
+          "next": [
+            -129.375,
+            -135.375
+          ],
+          "blocked": 0
+        },
+        {
+          "id": "l11:20261006:pedestrian:-2:-3",
+          "role": "pedestrian",
+          "from": [
+            114.5,
+            86.5
+          ],
+          "to": [
+            66.3160772482913,
+            136.7747846742343
+          ],
+          "activity": "walking",
+          "travel": 91.4319999999943,
+          "crossings": 1,
+          "pending": false,
+          "pathLength": 1,
+          "next": [
+            -96.375,
+            -22.125
+          ],
+          "blocked": 0
+        },
+        {
+          "id": "l11:20261006:pedestrian:-2:-2",
+          "role": "pedestrian",
+          "from": [
+            110.5,
+            107.5
+          ],
+          "to": [
+            72.59949443406202,
+            146.23441883183557
+          ],
+          "activity": "walking",
+          "travel": 89.14399999999483,
+          "crossings": 3,
+          "pending": false,
+          "pathLength": 1,
+          "next": [
+            -88.125,
+            -13.125
+          ],
+          "blocked": 0
+        }
+      ]
+    },
+    {
+      "world": [
+        1035,
+        1028
+      ],
+      "count": 12,
+      "ms": {
+        "p50": 0.10520000000178698,
+        "p95": 1.8518999999978405,
+        "max": 7.692800000000716
+      },
+      "moves": [
+        {
+          "id": "l11:20261006:pedestrian:30:30",
+          "role": "pedestrian",
+          "from": [
+            12.5,
+            27.5
+          ],
+          "to": [
+            27.246734949945676,
+            0.40159498996467846
+          ],
+          "activity": "resting",
+          "travel": 64.32800000000057,
+          "crossings": 2,
+          "pending": false,
+          "pathLength": 0,
+          "blocked": 0
+        },
+        {
+          "id": "l11:20261006:pedestrian:33:30",
+          "role": "pedestrian",
+          "from": [
+            122.5,
+            26.5
+          ],
+          "to": [
+            149.19286453963787,
+            44.15688003623086
+          ],
+          "activity": "walking",
+          "travel": 86.21066666666218,
+          "crossings": 4,
+          "pending": false,
+          "pathLength": 10,
+          "next": [
+            1105.875,
+            1004.625
+          ],
+          "blocked": 0
+        },
+        {
+          "id": "l11:20261006:pedestrian:34:30",
+          "role": "pedestrian",
+          "from": [
+            148.5,
+            4.5
+          ],
+          "to": [
+            135.49370701935322,
+            58.84705796963544
+          ],
+          "activity": "walking",
+          "travel": 94.04266666666037,
+          "crossings": 3,
+          "pending": false,
+          "pathLength": 9,
+          "next": [
+            1094.625,
+            1023.375
+          ],
+          "blocked": 0
+        },
+        {
+          "id": "l11:20261006:pedestrian:32:31",
+          "role": "pedestrian",
+          "from": [
+            70.5,
+            61.5
+          ],
+          "to": [
+            25.07692362621185,
+            65.17496813086859
+          ],
+          "activity": "walking",
+          "travel": 88.23466666666171,
+          "crossings": 0,
+          "pending": false,
+          "pathLength": 66,
+          "next": [
+            985.125,
+            1025.625
+          ],
+          "blocked": 0
+        },
+        {
+          "id": "l11:20261006:pedestrian:30:32",
+          "role": "pedestrian",
+          "from": [
+            25.5,
+            66.5
+          ],
+          "to": [
+            7.108410873713638,
+            45.95739299112563
+          ],
+          "activity": "walking",
+          "travel": 86.18133333332885,
+          "crossings": 2,
+          "pending": false,
+          "pathLength": 12,
+          "next": [
+            964.875,
+            994.125
+          ],
+          "blocked": 0
+        },
+        {
+          "id": "l11:20261006:pedestrian:32:32",
+          "role": "pedestrian",
+          "from": [
+            69.5,
+            92.5
+          ],
+          "to": [
+            70.1046053398727,
+            135.17743903557675
+          ],
+          "activity": "walking",
+          "travel": 88.23466666666171,
+          "crossings": 1,
+          "pending": false,
+          "pathLength": 40,
+          "next": [
+            1030.125,
+            1089.375
+          ],
+          "blocked": 0
+        },
+        {
+          "id": "l11:20261006:pedestrian:33:32",
+          "role": "pedestrian",
+          "from": [
+            125.5,
+            68.5
+          ],
+          "to": [
+            121.39180952059405,
+            91.06627689332504
+          ],
+          "activity": "walking",
+          "travel": 93.16266666666057,
+          "crossings": 2,
+          "pending": false,
+          "pathLength": 1,
+          "next": [
+            1085.625,
+            1051.125
+          ],
+          "blocked": 0
+        },
+        {
+          "id": "l11:20261006:pedestrian:34:32",
+          "role": "pedestrian",
+          "from": [
+            157.5,
+            68.5
+          ],
+          "to": [
+            93.24587239714765,
+            69.39736774176959
+          ],
+          "activity": "walking",
+          "travel": 88.08799999999508,
+          "crossings": 3,
+          "pending": false,
+          "pathLength": 24,
+          "next": [
+            1052.625,
+            1029.375
+          ],
+          "blocked": 0
+        },
+        {
+          "id": "l11:20261006:pedestrian:31:33",
+          "role": "pedestrian",
+          "from": [
+            36.5,
+            99.5
+          ],
+          "to": [
+            27.869996141528077,
+            69.01382521726805
+          ],
+          "activity": "walking",
+          "travel": 98.58933333332598,
+          "crossings": 2,
+          "pending": false,
+          "pathLength": 24,
+          "next": [
+            986.625,
+            1028.625
+          ],
+          "blocked": 0
+        },
+        {
+          "id": "l11:20261006:pedestrian:33:33",
+          "role": "pedestrian",
+          "from": [
+            103.5,
+            116.5
+          ],
+          "to": [
+            94.6078907293886,
+            141.91887618468854
+          ],
+          "activity": "walking",
+          "travel": 64.97333333333376,
+          "crossings": 0,
+          "pending": false,
+          "pathLength": 2,
+          "next": [
+            1054.875,
+            1100.625
+          ],
+          "blocked": 0
+        },
+        {
+          "id": "l11:20261006:pedestrian:32:34",
+          "role": "pedestrian",
+          "from": [
+            70.5,
+            137.5
+          ],
+          "to": [
+            78.37870785019277,
+            114.83671891698191
+          ],
+          "activity": "walking",
+          "travel": 88.76266666666159,
+          "crossings": 3,
+          "pending": false,
+          "pathLength": 23,
+          "next": [
+            1048.875,
+            1074.375
+          ],
+          "blocked": 0
+        },
+        {
+          "id": "l11:20261006:pedestrian:33:34",
+          "role": "pedestrian",
+          "from": [
+            98.5,
+            135.5
+          ],
+          "to": [
+            91.38761344181444,
+            79.69889422332267
+          ],
+          "activity": "walking",
+          "travel": 89.08533333332818,
+          "crossings": 3,
+          "pending": false,
+          "pathLength": 1,
+          "next": [
+            1051.125,
+            1050.375
+          ],
+          "blocked": 0
+        }
+      ]
+    }
+  ],
+  "fixtures": [
+    {
+      "seed": 1,
+      "home": {
+        "id": "l11v2:1:0:0:block:7:lot:0:2:f0:room:9:faceling",
+        "role": "shopkeeper",
+        "seed": 58785405,
+        "position": [
+          413.435,
+          250.31666666666663
+        ],
+        "facing": 0,
+        "floor": 0,
+        "buildingId": "l11v2:1:0:0:block:7:lot:0:2",
+        "roomId": "l11v2:1:0:0:block:7:lot:0:2:f0:room:9",
+        "fixtureId": "l11v2:1:0:0:block:7:lot:0:2:f0:room:9:fixture:0",
+        "stops": [
+          [
+            413.435,
+            250.31666666666663
+          ],
+          [
+            413.435,
+            249.66666666666666
+          ]
+        ]
+      },
+      "base": 0.3082274675108654
+    },
+    {
+      "seed": 1,
+      "home": {
+        "id": "l11v2:1:0:0:block:7:lot:0:2:f0:room:4:faceling",
+        "role": "shopkeeper",
+        "seed": 3808057457,
+        "position": [
+          421.695,
+          229.6833333333333
+        ],
+        "facing": 0.42099057425224606,
+        "floor": 0,
+        "buildingId": "l11v2:1:0:0:block:7:lot:0:2",
+        "roomId": "l11v2:1:0:0:block:7:lot:0:2:f0:room:4",
+        "fixtureId": "l11v2:1:0:0:block:7:lot:0:2:f0:room:4:fixture:0",
+        "stops": [
+          [
+            421.695,
+            229.6833333333333
+          ],
+          [
+            421.695,
+            229.0333333333333
+          ]
+        ]
+      },
+      "base": 0.3082274675108654
+    },
+    {
+      "seed": 1,
+      "home": {
+        "id": "l11v2:1:0:0:block:10:lot:0:0:f0:room:0:faceling",
+        "role": "office",
+        "seed": 226834555,
+        "position": [
+          293.05,
+          292.75
+        ],
+        "facing": -2.8526172435972263,
+        "floor": 0,
+        "buildingId": "l11v2:1:0:0:block:10:lot:0:0",
+        "roomId": "l11v2:1:0:0:block:10:lot:0:0:f0:room:0",
+        "fixtureId": "l11v2:1:0:0:block:10:lot:0:0:f0:room:0:fixture:0",
+        "stops": [
+          [
+            293.05,
+            292.75
+          ]
+        ]
+      },
+      "base": 0.32602314174134284
+    },
+    {
+      "seed": 1,
+      "home": {
+        "id": "l11v2:1:0:0:block:10:lot:2:2:f0:room:1:faceling",
+        "role": "office",
+        "seed": 3993068301,
+        "position": [
+          376.3333333333333,
+          360.18333333333334
+        ],
+        "facing": -1.945129942802481,
+        "floor": 0,
+        "buildingId": "l11v2:1:0:0:block:10:lot:2:2",
+        "roomId": "l11v2:1:0:0:block:10:lot:2:2:f0:room:1",
+        "fixtureId": "l11v2:1:0:0:block:10:lot:2:2:f0:room:1:fixture:0",
+        "stops": [
+          [
+            376.3333333333333,
+            360.18333333333334
+          ],
+          [
+            378.2864019799822,
+            360.16312538338434
+          ]
+        ]
+      },
+      "base": 0.3485163390369922
+    },
+    {
+      "seed": 42,
+      "home": {
+        "id": "l11v2:42:0:0:block:5:lot:2:2:f0:room:7:faceling",
+        "role": "shopkeeper",
+        "seed": 399286680,
+        "position": [
+          250.31666666666663,
+          257.41166666666663
+        ],
+        "facing": -1.5707963267948966,
+        "floor": 0,
+        "buildingId": "l11v2:42:0:0:block:5:lot:2:2",
+        "roomId": "l11v2:42:0:0:block:5:lot:2:2:f0:room:7",
+        "fixtureId": "l11v2:42:0:0:block:5:lot:2:2:f0:room:7:fixture:0",
+        "stops": [
+          [
+            250.31666666666663,
+            257.41166666666663
+          ],
+          [
+            249.66666666666666,
+            257.41166666666663
+          ]
+        ]
+      },
+      "base": 0.19327133512087247
+    },
+    {
+      "seed": 42,
+      "home": {
+        "id": "l11v2:42:0:0:block:5:lot:2:2:f0:room:6:faceling",
+        "role": "shopkeeper",
+        "seed": 4124480179,
+        "position": [
+          231.2833333333333,
+          257.41166666666663
+        ],
+        "facing": -1.5707963267948966,
+        "floor": 0,
+        "buildingId": "l11v2:42:0:0:block:5:lot:2:2",
+        "roomId": "l11v2:42:0:0:block:5:lot:2:2:f0:room:6",
+        "fixtureId": "l11v2:42:0:0:block:5:lot:2:2:f0:room:6:fixture:0",
+        "stops": [
+          [
+            231.2833333333333,
+            257.41166666666663
+          ],
+          [
+            230.63333333333333,
+            257.41166666666663
+          ]
+        ]
+      },
+      "base": 0.19327133512087247
+    },
+    {
+      "seed": 42,
+      "home": {
+        "id": "l11v2:42:0:0:block:5:lot:1:2:f0:room:3:faceling",
+        "role": "office",
+        "seed": 2393280977,
+        "position": [
+          191.88416666666666,
+          254.48333333333332
+        ],
+        "facing": 0.37433361600758436,
+        "floor": 0,
+        "buildingId": "l11v2:42:0:0:block:5:lot:1:2",
+        "roomId": "l11v2:42:0:0:block:5:lot:1:2:f0:room:3",
+        "fixtureId": "l11v2:42:0:0:block:5:lot:1:2:f0:room:3:fixture:0",
+        "stops": [
+          [
+            191.88416666666666,
+            254.48333333333332
+          ],
+          [
+            191.71847477440411,
+            256.4889233098676
+          ],
+          [
+            191.57149572075966,
+            253.70941612416254
+          ]
+        ]
+      },
+      "base": 0.16752254516085058
+    },
+    {
+      "seed": 42,
+      "home": {
+        "id": "l11v2:42:0:0:block:9:lot:1:0:f1:room:1:faceling",
+        "role": "office",
+        "seed": 362688019,
+        "position": [
+          193.66666666666666,
+          302.9
+        ],
+        "facing": -1.9451299428024809,
+        "floor": 1,
+        "buildingId": "l11v2:42:0:0:block:9:lot:1:0",
+        "roomId": "l11v2:42:0:0:block:9:lot:1:0:f1:room:1",
+        "fixtureId": "l11v2:42:0:0:block:9:lot:1:0:f1:room:1:fixture:0",
+        "stops": [
+          [
+            193.66666666666666,
+            302.9
+          ],
+          [
+            197.86666666666665,
+            305.2
+          ],
+          [
+            196.7175924302234,
+            302.73137580943296
+          ]
+        ]
+      },
+      "base": 0.23126209960594687
+    },
+    {
+      "seed": 20261006,
+      "home": {
+        "id": "l11v2:20261006:0:0:block:1:lot:0:1:f0:room:1:faceling",
+        "role": "shopkeeper",
+        "seed": 2190595251,
+        "position": [
+          179.04500000000002,
+          67.68333333333334
+        ],
+        "facing": 0.42099057425224606,
+        "floor": 0,
+        "buildingId": "l11v2:20261006:0:0:block:1:lot:0:1",
+        "roomId": "l11v2:20261006:0:0:block:1:lot:0:1:f0:room:1",
+        "fixtureId": "l11v2:20261006:0:0:block:1:lot:0:1:f0:room:1:fixture:0",
+        "stops": [
+          [
+            179.04500000000002,
+            67.68333333333334
+          ],
+          [
+            179.04500000000002,
+            67.03333333333335
+          ]
+        ]
+      },
+      "base": 0.004550617650952968
+    },
+    {
+      "seed": 20261006,
+      "home": {
+        "id": "l11v2:20261006:0:0:block:3:lot:0:0:f0:room:7:faceling",
+        "role": "shopkeeper",
+        "seed": 1854345099,
+        "position": [
+          413.435,
+          51.31666666666666
+        ],
+        "facing": 0,
+        "floor": 0,
+        "buildingId": "l11v2:20261006:0:0:block:3:lot:0:0",
+        "roomId": "l11v2:20261006:0:0:block:3:lot:0:0:f0:room:7",
+        "fixtureId": "l11v2:20261006:0:0:block:3:lot:0:0:f0:room:7:fixture:0",
+        "stops": [
+          [
+            413.435,
+            51.31666666666666
+          ],
+          [
+            413.435,
+            50.66666666666667
+          ]
+        ]
+      },
+      "base": 0.022420107113719858
+    },
+    {
+      "seed": 20261006,
+      "home": {
+        "id": "l11v2:20261006:0:0:block:1:lot:1:2:f1:room:2:faceling",
+        "role": "office",
+        "seed": 3497066911,
+        "position": [
+          209.66666666666666,
+          105.51666666666667
+        ],
+        "facing": -1.945129942802481,
+        "floor": 1,
+        "buildingId": "l11v2:20261006:0:0:block:1:lot:1:2",
+        "roomId": "l11v2:20261006:0:0:block:1:lot:1:2:f1:room:2",
+        "fixtureId": "l11v2:20261006:0:0:block:1:lot:1:2:f1:room:2:fixture:0",
+        "stops": [
+          [
+            209.66666666666666,
+            105.51666666666667
+          ],
+          [
+            213.86666666666665,
+            107.34166666666667
+          ],
+          [
+            211.38653193588056,
+            105.84200819803324
+          ],
+          [
+            210.57291001320505,
+            105.06270523518712
+          ]
+        ]
+      },
+      "base": 0.030853951181069476
+    },
+    {
+      "seed": 20261006,
+      "home": {
+        "id": "l11v2:20261006:0:0:block:2:lot:2:1:f0:room:0:faceling",
+        "role": "office",
+        "seed": 3145730007,
+        "position": [
+          365.3583333333333,
+          92.08333333333334
+        ],
+        "facing": -2.8526172435972263,
+        "floor": 0,
+        "buildingId": "l11v2:20261006:0:0:block:2:lot:2:1",
+        "roomId": "l11v2:20261006:0:0:block:2:lot:2:1:f0:room:0",
+        "fixtureId": "l11v2:20261006:0:0:block:2:lot:2:1:f0:room:0:fixture:0",
+        "stops": [
+          [
+            365.3583333333333,
+            92.08333333333334
+          ],
+          [
+            366.4546570919066,
+            87.93000988781763
+          ],
+          [
+            365.92773267294587,
+            87.98835482851914
+          ]
+        ]
+      },
+      "base": 2.1462805571210364
+    }
+  ],
+  "ok": true
+}

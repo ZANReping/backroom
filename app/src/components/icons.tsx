@@ -72,6 +72,9 @@ export const IconSkull = (p: SVGProps<SVGSVGElement>) => (
 export const IconQuickUse = (p: SVGProps<SVGSVGElement>) => (
   <svg {...base(p)}><path d="M9 11.5V5a1.8 1.8 0 0 1 3.6 0v5.2" /><path d="M12.6 10.5 16 9.6a1.8 1.8 0 0 1 2.2 2.5l-2.8 5.6A4.5 4.5 0 0 1 11.4 20h-.8a4.5 4.5 0 0 1-4.5-4.5v-2.8l1.7-2.6" /><path d="M9 13.5h3.6" /></svg>
 )
+export const IconHolster = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base(p)}><path d="M7 8h10l2 4v8H5v-8l2-4z" /><path d="M9 8V5h6v3M8 13h8M12 13v4" /></svg>
+)
 // v29b：移动端滚轮模拟（快捷栏上/下切换）
 export const IconWheelUp = (p: SVGProps<SVGSVGElement>) => (
   <svg {...base(p)}><rect x="9" y="2.5" width="6" height="19" rx="3" /><path d="M12 6v3" /><path d="m9.2 12.4 2.8-2.8 2.8 2.8" /></svg>

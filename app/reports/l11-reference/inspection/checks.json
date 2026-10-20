@@ -1,0 +1,64 @@
+{
+  "version": 11,
+  "scope": "Single-player app Level 11 reference inspection; main run plus final canopy/entrance correction",
+  "commands": [
+    {
+      "command": "npm run build",
+      "log": "build-final.log",
+      "status": "passed"
+    },
+    {
+      "command": "npm run check:l11",
+      "log": "generation.log",
+      "status": "passed"
+    },
+    {
+      "command": "npm run check:l11-reference",
+      "log": "l11-reference.log",
+      "status": "passed"
+    },
+    {
+      "command": "npm run check:l11-architecture",
+      "log": "architecture-final.log",
+      "status": "passed"
+    },
+    {
+      "command": "npm run check:l11-meshes",
+      "log": "l11-meshes-final.log",
+      "status": "passed"
+    },
+    {
+      "command": "npm run check:l11-collision",
+      "log": "collision-final.log",
+      "status": "passed"
+    },
+    {
+      "command": "npm run check:l11-urban",
+      "log": "urban.log",
+      "status": "passed"
+    }
+  ],
+  "browser": [
+    {
+      "command": "node scripts/verify-l11-reference.mjs --label=inspection-runtime --case=01,03,14,15,16,22,23,29,30,31,32,33 --validate=west-piers,east-stone,quay-east-near --rooms --architecture --random-cases=retail,twins --lifecycle",
+      "report": "../inspection-runtime/runtime.json",
+      "status": "passed"
+    },
+    {
+      "command": "node scripts/verify-l11-reference.mjs --label=inspection-final --case=01,14,15,22,23,30,33 --validate=west-piers,east-stone --rooms --architecture --random-cases=retail,twins",
+      "report": "../inspection-final/runtime.json",
+      "status": "passed"
+    },
+    {
+      "command": "node scripts/check-l11-inspection-report.mjs",
+      "report": "../inspection-ui/runtime.json",
+      "status": "passed"
+    }
+  ],
+  "notes": [
+    "build 与 verify 初次在沙盒内因 spawn EPERM 未启动；重跑使用授权子进程并通过。",
+    "完整运行检查移动帧时间和三次重载；最后局部修改另跑 7 个视角、入口、房门与随机世界，保留各轮次来源。",
+    "其余七张参考图已放大审查；本次未把它们全部实现成新的实机镜头。",
+    "构建保留原有 CSS / 字体和大包警告，详见日志。"
+  ]
+}

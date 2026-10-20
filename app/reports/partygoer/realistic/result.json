@@ -1,0 +1,930 @@
+{
+  "mode": "realistic",
+  "port": 31312,
+  "cdp": 19932,
+  "views": [
+    {
+      "name": "idle",
+      "stagedPose": true,
+      "seed": 6767,
+      "mapSeed": 6767,
+      "mode": "realistic",
+      "id": 10,
+      "hp": 130,
+      "armHp": [
+        26,
+        26
+      ],
+      "position": [
+        9.5,
+        55.5,
+        0
+      ],
+      "player": [
+        13.1,
+        55.5,
+        0
+      ],
+      "yaw": 1.5707963267948966,
+      "pitch": -0.09691762779436307,
+      "fov": 72,
+      "phase": "party",
+      "intern": false,
+      "color": "yellow",
+      "nativeSkin": true,
+      "cpuSkin": false,
+      "lost": false,
+      "budget": {
+        "meshes": 3,
+        "draws": 3,
+        "tris": 7248
+      },
+      "memory": {
+        "geometries": 460,
+        "textures": 50,
+        "programs": 70,
+        "entities": 1
+      }
+    },
+    {
+      "name": "offer",
+      "stagedPose": true,
+      "seed": 6767,
+      "mapSeed": 6767,
+      "mode": "realistic",
+      "id": 10,
+      "hp": 130,
+      "armHp": [
+        26,
+        26
+      ],
+      "position": [
+        9.5,
+        55.5,
+        0
+      ],
+      "player": [
+        13.1,
+        55.5,
+        0
+      ],
+      "yaw": 1.5707963267948966,
+      "pitch": -0.09691762779436307,
+      "fov": 72,
+      "phase": "party",
+      "intern": false,
+      "color": "yellow",
+      "nativeSkin": true,
+      "cpuSkin": false,
+      "lost": false,
+      "budget": {
+        "meshes": 3,
+        "draws": 4,
+        "tris": 7790
+      },
+      "memory": {
+        "geometries": 461,
+        "textures": 50,
+        "programs": 73,
+        "entities": 1
+      }
+    },
+    {
+      "name": "bite",
+      "stagedPose": true,
+      "seed": 6767,
+      "mapSeed": 6767,
+      "mode": "realistic",
+      "id": 10,
+      "hp": 130,
+      "armHp": [
+        26,
+        26
+      ],
+      "position": [
+        9.5,
+        55.5,
+        0
+      ],
+      "player": [
+        13.1,
+        55.5,
+        0
+      ],
+      "yaw": 1.5707963267948966,
+      "pitch": -0.09691762779436307,
+      "fov": 72,
+      "phase": "bite",
+      "intern": false,
+      "color": "yellow",
+      "nativeSkin": true,
+      "cpuSkin": false,
+      "lost": false,
+      "budget": {
+        "meshes": 3,
+        "draws": 3,
+        "tris": 7248
+      },
+      "memory": {
+        "geometries": 461,
+        "textures": 50,
+        "programs": 73,
+        "entities": 1
+      }
+    },
+    {
+      "name": "berserk",
+      "stagedPose": true,
+      "seed": 6767,
+      "mapSeed": 6767,
+      "mode": "realistic",
+      "id": 10,
+      "hp": 130,
+      "armHp": [
+        0,
+        0
+      ],
+      "position": [
+        9.5,
+        55.5,
+        0
+      ],
+      "player": [
+        13.5,
+        55.5,
+        0
+      ],
+      "yaw": 1.5707963267948966,
+      "pitch": -0.08727771294946148,
+      "fov": 72,
+      "phase": "hunt",
+      "intern": false,
+      "color": "yellow",
+      "nativeSkin": true,
+      "cpuSkin": false,
+      "lost": false,
+      "budget": {
+        "meshes": 3,
+        "draws": 3,
+        "tris": 7248
+      },
+      "memory": {
+        "geometries": 461,
+        "textures": 50,
+        "programs": 73,
+        "entities": 1
+      }
+    },
+    {
+      "name": "crawl",
+      "stagedPose": true,
+      "seed": 6767,
+      "mapSeed": 6767,
+      "mode": "realistic",
+      "id": 10,
+      "hp": 130,
+      "armHp": [
+        0,
+        0
+      ],
+      "position": [
+        9.5,
+        55.5,
+        0
+      ],
+      "player": [
+        13.1,
+        55.5,
+        0
+      ],
+      "yaw": 1.5707963267948966,
+      "pitch": -0.09691762779436307,
+      "fov": 72,
+      "phase": "crawl",
+      "intern": false,
+      "color": "yellow",
+      "nativeSkin": true,
+      "cpuSkin": false,
+      "lost": false,
+      "budget": {
+        "meshes": 3,
+        "draws": 3,
+        "tris": 7248
+      },
+      "memory": {
+        "geometries": 461,
+        "textures": 50,
+        "programs": 73,
+        "entities": 1
+      }
+    },
+    {
+      "name": "burn",
+      "stagedPose": true,
+      "seed": 6767,
+      "mapSeed": 6767,
+      "mode": "realistic",
+      "id": 10,
+      "hp": 130,
+      "armHp": [
+        0,
+        0
+      ],
+      "position": [
+        9.5,
+        55.5,
+        0
+      ],
+      "player": [
+        13.1,
+        55.5,
+        0
+      ],
+      "yaw": 1.5707963267948966,
+      "pitch": -0.09691762779436307,
+      "fov": 72,
+      "phase": "burn",
+      "intern": false,
+      "color": "yellow",
+      "nativeSkin": true,
+      "cpuSkin": false,
+      "lost": false,
+      "budget": {
+        "meshes": 3,
+        "draws": 3,
+        "tris": 7248
+      },
+      "memory": {
+        "geometries": 461,
+        "textures": 50,
+        "programs": 73,
+        "entities": 1
+      }
+    }
+  ],
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:31312/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sun, 18 Oct 2026 06:23:33 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 370,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 31312,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 8493.108631,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 2.19,
+        "sendEnd": 2.266,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 259.407,
+        "receiveHeadersEnd": 259.876
+      },
+      "responseTime": 1792304613595.968,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\partygoer\\realistic\\qa-1792304569581-69916",
+    "--remote-debugging-port=19932",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "server": 67068,
+    "browser": 60372
+  },
+  "initial": {
+    "seed": 6767,
+    "mapSeed": 6767,
+    "mode": "realistic",
+    "id": 10,
+    "hp": 130,
+    "armHp": [
+      26,
+      26
+    ],
+    "position": [
+      9.5,
+      55.5,
+      0
+    ],
+    "player": [
+      13.1,
+      55.5,
+      0
+    ],
+    "yaw": 1.5707963267948966,
+    "pitch": -0.09691762779436307,
+    "fov": 72,
+    "phase": "party",
+    "intern": false,
+    "color": "yellow",
+    "nativeSkin": true,
+    "cpuSkin": false,
+    "lost": false,
+    "budget": {
+      "meshes": 3,
+      "draws": 3,
+      "tris": 7248
+    },
+    "memory": {
+      "geometries": 460,
+      "textures": 50,
+      "programs": 70,
+      "entities": 1
+    }
+  },
+  "checks": {
+    "checks": [
+      "Natural L601 partygoer pack has two to four members",
+      "Natural generation places velvet cake bait",
+      "Natural generation places party posters",
+      "Collision-safe camera position at 3.6 metres",
+      "Production GPU skinning renders; no QA CPU replacement",
+      "WebGL context stays alive",
+      "Actual model obeys six draws and eight thousand triangle budget",
+      "Model uses the selected lighting material path",
+      "Collision-safe camera position at 3.6 metres",
+      "Native GPU pose visible: idle",
+      "Collision-safe camera position at 3.6 metres",
+      "Native GPU pose visible: offer",
+      "Collision-safe camera position at 3.6 metres",
+      "Native GPU pose visible: bite",
+      "Collision-safe camera position at 4 metres",
+      "Native GPU pose visible: berserk",
+      "Collision-safe camera position at 3.6 metres",
+      "Native GPU pose visible: crawl",
+      "Collision-safe camera position at 3.6 metres",
+      "Native GPU pose visible: burn",
+      "Collision-safe camera position at 1.55 metres",
+      "Approaching a natural specimen ends its friendly disguise",
+      "Actual AI grab-bite damages the player and adds conversion",
+      "Collision-safe camera position at 1.3 metres",
+      "Production melee can sever both arms and reveal the berserker",
+      "Berserker cannot add conversion after losing both mouths",
+      "Head strikes knock the berserker down without awarding a kill",
+      "Actual AI starts crawling after its down delay",
+      "Untreated body revives without regenerating its arms",
+      "Revived berserker can be knocked down again",
+      "A real fire-salt landing ignites the downed body",
+      "Burning completes through the actual kill and loot path",
+      "Eating velvet cake consumes the actual inventory item and adds conversion",
+      "Existing Alt holster still blocks cake use",
+      "Runtime conversion does not change the save format",
+      "Collision-safe camera position at 3.6 metres"
+    ],
+    "state": {
+      "seed": 6767,
+      "mapSeed": 6767,
+      "mode": "realistic",
+      "id": 10,
+      "hp": 130,
+      "armHp": [
+        26,
+        26
+      ],
+      "position": [
+        9.5,
+        55.5,
+        0
+      ],
+      "player": [
+        13.1,
+        55.5,
+        0
+      ],
+      "yaw": 1.5707963267948966,
+      "pitch": -0.09691762779436307,
+      "fov": 72,
+      "phase": "party",
+      "intern": false,
+      "color": "yellow",
+      "nativeSkin": true,
+      "cpuSkin": false,
+      "lost": false,
+      "budget": {
+        "meshes": 3,
+        "draws": 3,
+        "tris": 7248
+      },
+      "memory": {
+        "geometries": 474,
+        "textures": 54,
+        "programs": 75,
+        "entities": 1
+      }
+    }
+  },
+  "archive": {
+    "state": "ready",
+    "view": "1",
+    "cache": {
+      "builds": 2,
+      "renders": 2,
+      "hits": 0,
+      "cached": 2,
+      "bytes": 397592,
+      "queued": 0,
+      "active": null,
+      "studio": true,
+      "memory": {
+        "geometries": 2,
+        "textures": 5
+      }
+    }
+  },
+  "resources": {
+    "rounds": [
+      {
+        "geometries": 474,
+        "textures": 54,
+        "programs": 75,
+        "entities": 1
+      },
+      {
+        "geometries": 474,
+        "textures": 54,
+        "programs": 75,
+        "entities": 1
+      },
+      {
+        "geometries": 474,
+        "textures": 54,
+        "programs": 75,
+        "entities": 1
+      }
+    ],
+    "remaining": {
+      "seed": 6767,
+      "mapSeed": 6767,
+      "mode": "realistic",
+      "id": 10,
+      "hp": 130,
+      "armHp": [
+        26,
+        26
+      ],
+      "position": [
+        9.5,
+        55.5,
+        0
+      ],
+      "player": [
+        13.1,
+        55.5,
+        0
+      ],
+      "yaw": 1.5707963267948966,
+      "pitch": -0.09691762779436307,
+      "fov": 72,
+      "phase": "party",
+      "intern": false,
+      "color": "yellow",
+      "nativeSkin": true,
+      "cpuSkin": false,
+      "lost": false,
+      "budget": {
+        "meshes": 3,
+        "draws": 3,
+        "tris": 7248
+      },
+      "memory": {
+        "geometries": 474,
+        "textures": 54,
+        "programs": 75,
+        "entities": 1
+      }
+    }
+  },
+  "transformation": {
+    "over": true,
+    "cause": "死因加入了派对 =)",
+    "conversion": 100,
+    "intern": 25,
+    "finishedEntranceAnimations": 7
+  },
+  "summary": {
+    "checks": [
+      "Natural L601 partygoer pack has two to four members",
+      "Natural generation places velvet cake bait",
+      "Natural generation places party posters",
+      "Collision-safe camera position at 3.6 metres",
+      "Production GPU skinning renders; no QA CPU replacement",
+      "WebGL context stays alive",
+      "Actual model obeys six draws and eight thousand triangle budget",
+      "Model uses the selected lighting material path",
+      "Collision-safe camera position at 3.6 metres",
+      "Native GPU pose visible: idle",
+      "Collision-safe camera position at 3.6 metres",
+      "Native GPU pose visible: offer",
+      "Collision-safe camera position at 3.6 metres",
+      "Native GPU pose visible: bite",
+      "Collision-safe camera position at 4 metres",
+      "Native GPU pose visible: berserk",
+      "Collision-safe camera position at 3.6 metres",
+      "Native GPU pose visible: crawl",
+      "Collision-safe camera position at 3.6 metres",
+      "Native GPU pose visible: burn",
+      "Collision-safe camera position at 1.55 metres",
+      "Approaching a natural specimen ends its friendly disguise",
+      "Actual AI grab-bite damages the player and adds conversion",
+      "Collision-safe camera position at 1.3 metres",
+      "Production melee can sever both arms and reveal the berserker",
+      "Berserker cannot add conversion after losing both mouths",
+      "Head strikes knock the berserker down without awarding a kill",
+      "Actual AI starts crawling after its down delay",
+      "Untreated body revives without regenerating its arms",
+      "Revived berserker can be knocked down again",
+      "A real fire-salt landing ignites the downed body",
+      "Burning completes through the actual kill and loot path",
+      "Eating velvet cake consumes the actual inventory item and adds conversion",
+      "Existing Alt holster still blocks cake use",
+      "Runtime conversion does not change the save format",
+      "Collision-safe camera position at 3.6 metres",
+      "Existing entity archive generates the remake and changes angle on click",
+      "Collision-safe camera position at 3.6 metres",
+      "New instances use native GPU skinning",
+      "New instances use native GPU skinning",
+      "New instances use native GPU skinning",
+      "Repeated spawn and retirement stabilizes geometry and texture counts",
+      "Releasing neighbours preserves the surviving model and shared textures",
+      "Conversion reaches its actual game-over ending",
+      "Joining the party spawns one balloon-carrying intern at the player",
+      "The converted intern actually renders its red balloon",
+      "Ending cause is visible at its completed animation frame"
+    ],
+    "records": [
+      {
+        "name": "idle",
+        "stagedPose": true,
+        "seed": 6767,
+        "mapSeed": 6767,
+        "mode": "realistic",
+        "id": 10,
+        "hp": 130,
+        "armHp": [
+          26,
+          26
+        ],
+        "position": [
+          9.5,
+          55.5,
+          0
+        ],
+        "player": [
+          13.1,
+          55.5,
+          0
+        ],
+        "yaw": 1.5707963267948966,
+        "pitch": -0.09691762779436307,
+        "fov": 72,
+        "phase": "party",
+        "intern": false,
+        "color": "yellow",
+        "nativeSkin": true,
+        "cpuSkin": false,
+        "lost": false,
+        "budget": {
+          "meshes": 3,
+          "draws": 3,
+          "tris": 7248
+        },
+        "memory": {
+          "geometries": 460,
+          "textures": 50,
+          "programs": 70,
+          "entities": 1
+        }
+      },
+      {
+        "name": "offer",
+        "stagedPose": true,
+        "seed": 6767,
+        "mapSeed": 6767,
+        "mode": "realistic",
+        "id": 10,
+        "hp": 130,
+        "armHp": [
+          26,
+          26
+        ],
+        "position": [
+          9.5,
+          55.5,
+          0
+        ],
+        "player": [
+          13.1,
+          55.5,
+          0
+        ],
+        "yaw": 1.5707963267948966,
+        "pitch": -0.09691762779436307,
+        "fov": 72,
+        "phase": "party",
+        "intern": false,
+        "color": "yellow",
+        "nativeSkin": true,
+        "cpuSkin": false,
+        "lost": false,
+        "budget": {
+          "meshes": 3,
+          "draws": 4,
+          "tris": 7790
+        },
+        "memory": {
+          "geometries": 461,
+          "textures": 50,
+          "programs": 73,
+          "entities": 1
+        }
+      },
+      {
+        "name": "bite",
+        "stagedPose": true,
+        "seed": 6767,
+        "mapSeed": 6767,
+        "mode": "realistic",
+        "id": 10,
+        "hp": 130,
+        "armHp": [
+          26,
+          26
+        ],
+        "position": [
+          9.5,
+          55.5,
+          0
+        ],
+        "player": [
+          13.1,
+          55.5,
+          0
+        ],
+        "yaw": 1.5707963267948966,
+        "pitch": -0.09691762779436307,
+        "fov": 72,
+        "phase": "bite",
+        "intern": false,
+        "color": "yellow",
+        "nativeSkin": true,
+        "cpuSkin": false,
+        "lost": false,
+        "budget": {
+          "meshes": 3,
+          "draws": 3,
+          "tris": 7248
+        },
+        "memory": {
+          "geometries": 461,
+          "textures": 50,
+          "programs": 73,
+          "entities": 1
+        }
+      },
+      {
+        "name": "berserk",
+        "stagedPose": true,
+        "seed": 6767,
+        "mapSeed": 6767,
+        "mode": "realistic",
+        "id": 10,
+        "hp": 130,
+        "armHp": [
+          0,
+          0
+        ],
+        "position": [
+          9.5,
+          55.5,
+          0
+        ],
+        "player": [
+          13.5,
+          55.5,
+          0
+        ],
+        "yaw": 1.5707963267948966,
+        "pitch": -0.08727771294946148,
+        "fov": 72,
+        "phase": "hunt",
+        "intern": false,
+        "color": "yellow",
+        "nativeSkin": true,
+        "cpuSkin": false,
+        "lost": false,
+        "budget": {
+          "meshes": 3,
+          "draws": 3,
+          "tris": 7248
+        },
+        "memory": {
+          "geometries": 461,
+          "textures": 50,
+          "programs": 73,
+          "entities": 1
+        }
+      },
+      {
+        "name": "crawl",
+        "stagedPose": true,
+        "seed": 6767,
+        "mapSeed": 6767,
+        "mode": "realistic",
+        "id": 10,
+        "hp": 130,
+        "armHp": [
+          0,
+          0
+        ],
+        "position": [
+          9.5,
+          55.5,
+          0
+        ],
+        "player": [
+          13.1,
+          55.5,
+          0
+        ],
+        "yaw": 1.5707963267948966,
+        "pitch": -0.09691762779436307,
+        "fov": 72,
+        "phase": "crawl",
+        "intern": false,
+        "color": "yellow",
+        "nativeSkin": true,
+        "cpuSkin": false,
+        "lost": false,
+        "budget": {
+          "meshes": 3,
+          "draws": 3,
+          "tris": 7248
+        },
+        "memory": {
+          "geometries": 461,
+          "textures": 50,
+          "programs": 73,
+          "entities": 1
+        }
+      },
+      {
+        "name": "burn",
+        "stagedPose": true,
+        "seed": 6767,
+        "mapSeed": 6767,
+        "mode": "realistic",
+        "id": 10,
+        "hp": 130,
+        "armHp": [
+          0,
+          0
+        ],
+        "position": [
+          9.5,
+          55.5,
+          0
+        ],
+        "player": [
+          13.1,
+          55.5,
+          0
+        ],
+        "yaw": 1.5707963267948966,
+        "pitch": -0.09691762779436307,
+        "fov": 72,
+        "phase": "burn",
+        "intern": false,
+        "color": "yellow",
+        "nativeSkin": true,
+        "cpuSkin": false,
+        "lost": false,
+        "budget": {
+          "meshes": 3,
+          "draws": 3,
+          "tris": 7248
+        },
+        "memory": {
+          "geometries": 461,
+          "textures": 50,
+          "programs": 73,
+          "entities": 1
+        }
+      }
+    ],
+    "state": {
+      "seed": 6767,
+      "mapSeed": 6767,
+      "mode": "realistic",
+      "id": 10,
+      "hp": 130,
+      "armHp": [
+        26,
+        26
+      ],
+      "position": [
+        9.5,
+        55.5,
+        0
+      ],
+      "player": [
+        13.1,
+        55.5,
+        0
+      ],
+      "yaw": 1.5707963267948966,
+      "pitch": -0.09691762779436307,
+      "fov": 72,
+      "phase": "party",
+      "intern": false,
+      "color": "yellow",
+      "nativeSkin": true,
+      "cpuSkin": false,
+      "lost": false,
+      "budget": {
+        "meshes": 3,
+        "draws": 3,
+        "tris": 7248
+      },
+      "memory": {
+        "geometries": 478,
+        "textures": 55,
+        "programs": 76,
+        "entities": 2
+      }
+    },
+    "memory": {
+      "geometries": 478,
+      "textures": 55,
+      "programs": 76,
+      "entities": 2
+    }
+  },
+  "gpu": {
+    "vendor": "Google Inc. (NVIDIA)",
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "ok": true,
+  "galleries": [
+    {
+      "view": "colors",
+      "retries": 0,
+      "cpuSkin": false
+    },
+    {
+      "view": "poses",
+      "retries": 0,
+      "cpuSkin": false
+    },
+    {
+      "view": "close",
+      "retries": 0,
+      "cpuSkin": false
+    }
+  ],
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

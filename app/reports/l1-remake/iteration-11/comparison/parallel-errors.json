@@ -1,0 +1,139 @@
+{
+  "scope": [
+    "parking-common",
+    "parking-round",
+    "parking-room",
+    "parking-water",
+    "parking-bright",
+    "parking-clean",
+    "parking-dry",
+    "parking-dim",
+    "parking-dark",
+    "parking-props",
+    "storage",
+    "gothic",
+    "ouroboros",
+    "garden",
+    "path-corridor",
+    "path-room",
+    "crate",
+    "power-out"
+  ],
+  "method": "Manual source parallel lines, camera direction only; not full visual acceptance",
+  "rows": [
+    {
+      "id": "parking-round",
+      "line": "near-column-left-edge",
+      "axis": 1,
+      "sourceFrom": [
+        0.25748502994011974,
+        0.10696920583468396
+      ],
+      "sourceTo": [
+        0.288622754491018,
+        0.4700162074554295
+      ],
+      "angleDegrees": -0.3739705145253561,
+      "endpointErrorPercent": 0.11927529662765182,
+      "vanishingPoint": [
+        0.6256347251439333,
+        4.177560990765562
+      ]
+    },
+    {
+      "id": "parking-round",
+      "line": "next-post-left-edge",
+      "axis": 1,
+      "sourceFrom": [
+        0.37485029940119763,
+        0.1685575364667747
+      ],
+      "sourceTo": [
+        0.39281437125748503,
+        0.40032414910858993
+      ],
+      "angleDegrees": 1.1834398966171615,
+      "endpointErrorPercent": 0.24065217409165468,
+      "vanishingPoint": [
+        0.6256347251439333,
+        4.177560990765562
+      ]
+    },
+    {
+      "id": "parking-round",
+      "line": "rear-post-left-edge",
+      "axis": 1,
+      "sourceFrom": [
+        0.47904191616766467,
+        0.2252836304700162
+      ],
+      "sourceTo": [
+        0.4874251497005988,
+        0.353322528363047
+      ],
+      "angleDegrees": 2.2261730713819676,
+      "endpointErrorPercent": 0.2496532240714401,
+      "vanishingPoint": [
+        0.6256347251439333,
+        4.177560990765562
+      ]
+    },
+    {
+      "id": "parking-round",
+      "line": "right-wall-floor",
+      "axis": 2,
+      "sourceFrom": [
+        0.895808383233533,
+        0.6304700162074555
+      ],
+      "sourceTo": [
+        0.667065868263473,
+        0.3565640194489465
+      ],
+      "angleDegrees": 2.1106159124341017,
+      "endpointErrorPercent": 0.7611497930412588,
+      "vanishingPoint": [
+        0.6119279199365787,
+        0.2749582332195322
+      ]
+    },
+    {
+      "id": "parking-round",
+      "line": "column-row-floor",
+      "axis": 2,
+      "sourceFrom": [
+        0.30538922155688625,
+        0.4813614262560778
+      ],
+      "sourceTo": [
+        0.5005988023952096,
+        0.3565640194489465
+      ],
+      "angleDegrees": -1.7036180633013522,
+      "endpointErrorPercent": 0.4343089372612651,
+      "vanishingPoint": [
+        0.6119279199365787,
+        0.2749582332195322
+      ]
+    },
+    {
+      "id": "parking-round",
+      "line": "ceiling-longitudinal-beam",
+      "axis": 2,
+      "sourceFrom": [
+        0.32335329341317365,
+        0.12641815235008103
+      ],
+      "sourceTo": [
+        0.5149700598802395,
+        0.20745542949756887
+      ],
+      "angleDegrees": 5.139136427258792,
+      "endpointErrorPercent": 1.216810727897644,
+      "vanishingPoint": [
+        0.6119279199365787,
+        0.2749582332195322
+      ]
+    }
+  ]
+}

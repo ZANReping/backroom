@@ -1,0 +1,6294 @@
+{
+  "run": "qa-1791980901850-29396",
+  "port": 14127,
+  "cdp": 14128,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-reference\\iteration-8\\qa-1791980901850-29396",
+  "label": "iteration-8",
+  "baseline": false,
+  "low": false,
+  "mode": "realistic",
+  "quick": true,
+  "seed": 20261014,
+  "views": [
+    {
+      "id": "01-office-street",
+      "world": [
+        272,
+        415,
+        0.17315159930199545
+      ],
+      "target": [
+        270,
+        220,
+        12
+      ],
+      "yaw": 0.010256050641667055,
+      "pitch": 0.05265031107251866,
+      "fov": 42,
+      "lighting": {
+        "exposure": 1.178946478545374,
+        "meter": 0.4708359999999289,
+        "outdoor": 0.9999999999999981,
+        "fogNear": 220,
+        "fogFar": 1000,
+        "sun": 3.35
+      },
+      "stats": {
+        "label": "11:open",
+        "median": 8.299999999995634,
+        "p95": 12.5,
+        "max": 129.1999999999971,
+        "p99": 16.700000000004366,
+        "frames": 1000,
+        "over16ms": 19,
+        "over33ms": 1,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 1200,
+        "triangles": 3877392,
+        "memory": {
+          "geometries": 1563,
+          "textures": 74
+        },
+        "programs": 132,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "performance": {
+        "label": "11:open",
+        "median": 8.200000000004366,
+        "p95": 12.39999999999418,
+        "max": 12.599999999998545,
+        "p99": 12.599999999998545,
+        "frames": 224,
+        "over16ms": 0,
+        "over33ms": 0,
+        "cpuMedian": 6,
+        "cpuP95": 9.299999997019768,
+        "gpuMedian": 6.592512,
+        "gpuP95": 9.254912,
+        "gpuSamples": 222,
+        "draws": 607,
+        "triangles": 1232624,
+        "memory": {
+          "geometries": 1563,
+          "textures": 74
+        },
+        "programs": 132,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "id": "02-brick-apartments",
+      "world": [
+        108,
+        535,
+        0.1394951070903015
+      ],
+      "target": [
+        122,
+        582,
+        10
+      ],
+      "yaw": -2.852088981628405,
+      "pitch": 0.16786628966527675,
+      "fov": 50,
+      "lighting": {
+        "exposure": 1.1789232453720042,
+        "meter": 0.4708359999999998,
+        "outdoor": 0.9999999999999996,
+        "fogNear": 220,
+        "fogFar": 1000,
+        "sun": 3.35
+      },
+      "stats": {
+        "label": "11:open",
+        "median": 8.299999999995634,
+        "p95": 16.599999999998545,
+        "max": 225,
+        "p99": 25,
+        "frames": 1000,
+        "over16ms": 36,
+        "over33ms": 7,
+        "cpuMedian": 6,
+        "cpuP95": 9.299999997019768,
+        "gpuMedian": 6.59456,
+        "gpuP95": 9.254912,
+        "gpuSamples": 224,
+        "draws": 536,
+        "triangles": 590738,
+        "memory": {
+          "geometries": 1171,
+          "textures": 71
+        },
+        "programs": 122,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "performance": {
+        "label": "11:open",
+        "median": 4.200000000004366,
+        "p95": 8.400000000001455,
+        "max": 12.599999999998545,
+        "p99": 8.5,
+        "frames": 257,
+        "over16ms": 0,
+        "over33ms": 0,
+        "cpuMedian": 5.4000000059604645,
+        "cpuP95": 7.899999991059303,
+        "gpuMedian": 5.421056,
+        "gpuP95": 7.939072,
+        "gpuSamples": 255,
+        "draws": 536,
+        "triangles": 590738,
+        "memory": {
+          "geometries": 1171,
+          "textures": 71
+        },
+        "programs": 122,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "id": "03-canal",
+      "world": [
+        760,
+        967.8,
+        0.3369615275227693
+      ],
+      "target": [
+        760,
+        780,
+        12
+      ],
+      "yaw": 0,
+      "pitch": 0.05379808354748984,
+      "fov": 56,
+      "lighting": {
+        "exposure": 1.1789232453720038,
+        "meter": 0.4708359999999998,
+        "outdoor": 0.9999999999999996,
+        "fogNear": 220,
+        "fogFar": 1000,
+        "sun": 3.35
+      },
+      "stats": {
+        "label": "11:open",
+        "median": 4.19999999999709,
+        "p95": 8.30000000000291,
+        "max": 66.59999999999854,
+        "p99": 16.599999999998545,
+        "frames": 1000,
+        "over16ms": 7,
+        "over33ms": 1,
+        "cpuMedian": 5.4000000059604645,
+        "cpuP95": 7.899999991059303,
+        "gpuMedian": 5.460992,
+        "gpuP95": 7.945216,
+        "gpuSamples": 257,
+        "draws": 393,
+        "triangles": 1122083,
+        "memory": {
+          "geometries": 741,
+          "textures": 69
+        },
+        "programs": 123,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "performance": {
+        "label": "11:open",
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "max": 8.400000000001455,
+        "p99": 4.30000000000291,
+        "frames": 359,
+        "over16ms": 0,
+        "over33ms": 0,
+        "cpuMedian": 2.1000000089406967,
+        "cpuP95": 4.4000000059604645,
+        "gpuMedian": 4.323328,
+        "gpuP95": 6.940672,
+        "gpuSamples": 357,
+        "draws": 211,
+        "triangles": 692655,
+        "memory": {
+          "geometries": 741,
+          "textures": 69
+        },
+        "programs": 123,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    }
+  ],
+  "command": [
+    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-reference\\iteration-8\\qa-1791980901850-29396",
+    "--remote-debugging-port=14128",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/154.0.8037.98",
+    "revision": "@b859317bf11f6be47f9b7799ec690a0a42a1fb33",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+    "jsVersion": "15.4.80.20"
+  },
+  "pids": {
+    "server": 43236,
+    "browser": 51652
+  },
+  "setup": {
+    "seed": 20261014,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "low": false,
+    "baseline": false,
+    "weather": "calm",
+    "time": 10,
+    "shadows": true
+  },
+  "cases": [
+    {
+      "id": "01-office-street",
+      "x": 272,
+      "y": 415,
+      "z": 0,
+      "tx": 270,
+      "ty": 220,
+      "th": 12,
+      "fov": 42,
+      "reference": "11iconic.jpg"
+    },
+    {
+      "id": "02-brick-apartments",
+      "x": 108,
+      "y": 535,
+      "z": 0,
+      "tx": 122,
+      "ty": 582,
+      "th": 10,
+      "fov": 50,
+      "reference": "11scenes.jpg"
+    },
+    {
+      "id": "03-canal",
+      "x": 760,
+      "y": 967.8,
+      "z": 0,
+      "tx": 760,
+      "ty": 780,
+      "th": 12,
+      "fov": 56,
+      "reference": "11canal.png"
+    }
+  ],
+  "validationSkipped": true,
+  "walkStart": {
+    "x": 272,
+    "y": 403,
+    "revision": 4
+  },
+  "walking": {
+    "label": "11:open",
+    "median": 8.299999999988358,
+    "p95": 12.60000000000582,
+    "max": 225,
+    "p99": 20.80000000000291,
+    "frames": 3134,
+    "over16ms": 96,
+    "over33ms": 10,
+    "cpuMedian": 5.600000008940697,
+    "cpuP95": 11.899999991059303,
+    "gpuMedian": 6.607872,
+    "gpuP95": 10.87488,
+    "gpuSamples": 3131,
+    "draws": 913,
+    "triangles": 3939997,
+    "memory": {
+      "geometries": 1772,
+      "textures": 79
+    },
+    "programs": 127,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "streamTimings": [
+    {
+      "ms": 10.399999991059303,
+      "before": 4,
+      "after": 5,
+      "x": 272,
+      "y": 383.9883333333315
+    },
+    {
+      "ms": 5,
+      "before": 5,
+      "after": 6,
+      "x": 272,
+      "y": 351.9999999999952
+    }
+  ],
+  "walkEnd": {
+    "x": 272,
+    "y": 323.1566666666592,
+    "revision": 6
+  },
+  "cycles": [
+    {
+      "memory": {
+        "geometries": 1617,
+        "textures": 86
+      },
+      "cachedAvatarTextures": 12,
+      "nonPooledTextures": 74,
+      "programs": 127,
+      "buildings": 6,
+      "references": 6,
+      "roots": 32,
+      "pending": {
+        "missing": 0,
+        "chunk": false,
+        "distant": false,
+        "finite": false,
+        "flash": false,
+        "moth": false,
+        "items": 0,
+        "compile": false,
+        "retired": 0,
+        "textures": 0
+      },
+      "textureAllocations": {
+        "created": 206,
+        "live": [
+          {
+            "id": 2,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "deb954ef-bee0-49b5-91c5-63b1923dbc1f",
+                "name": "",
+                "size": [
+                  4096,
+                  2048
+                ],
+                "flags": [
+                  "skyOwned",
+                  "skyPending",
+                  "fullEquirect"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "l11-cc0-sky:uniform"
+                ],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 3,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "f05052ae-b5eb-4ee8-9d29-6cc15437c77c",
+                "name": "",
+                "size": [
+                  12,
+                  12
+                ],
+                "flags": [],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 5,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "da27cc0c-1f43-4641-b135-be486034a9f7",
+                "name": "",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 6,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "d6ea9750-7d36-4bb4-b9c0-decf0b92255d",
+                "name": "",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 7,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "de32b8c2-b8e0-4815-b61d-c8c3ce0483e9",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/npc-retro/faceless/t4.png",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 8,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "bead045a-8ac9-4dd0-ad6a-805598c255d2",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/npc-retro/cloth/hair-straight.png",
+                "size": [
+                  64,
+                  64
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [
+                  "retroNpc:avatar:retro avatar / hair"
+                ],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 9,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "33f48fa5-7fb8-4058-9165-4b49be245bb0",
+                "name": "",
+                "size": [
+                  256,
+                  256
+                ],
+                "flags": [],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:MeshLambertMaterial"
+                ],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 10,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "81a27519-4d33-4726-a941-4c4a03e04eca",
+                "name": "",
+                "size": [
+                  256,
+                  256
+                ],
+                "flags": [],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:MeshLambertMaterial"
+                ],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 20,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "f33ea018-3b56-4655-a2c3-f7b6e4efb8b3",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_concrete.jpg",
+                "size": [
+                  1024,
+                  512
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-concrete:#d3d8d4:false:realistic",
+                  "Mesh:l11-concrete:#d9d2c3:false:realistic",
+                  "Mesh:l11-concrete:#d8d7cb:false:realistic",
+                  "Mesh:l11-concrete:#c9ced0:false:realistic",
+                  "Mesh:l11-concrete:#a9ada5:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 31
+              }
+            ]
+          },
+          {
+            "id": 21,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "2b11a79e-7b38-457e-b3d4-e07500169845",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_concrete_normal.jpg",
+                "size": [
+                  1024,
+                  512
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-concrete:#d3d8d4:false:realistic",
+                  "Mesh:l11-concrete:#d9d2c3:false:realistic",
+                  "Mesh:l11-concrete:#d8d7cb:false:realistic",
+                  "Mesh:l11-concrete:#c9ced0:false:realistic",
+                  "Mesh:l11-concrete:#a9ada5:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 31
+              }
+            ]
+          },
+          {
+            "id": 22,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "d245a615-7ed6-4d94-8b45-805653339e83",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_concrete_roughness.jpg",
+                "size": [
+                  1024,
+                  512
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-concrete:#d3d8d4:false:realistic",
+                  "Mesh:l11-concrete:#d9d2c3:false:realistic",
+                  "Mesh:l11-concrete:#d8d7cb:false:realistic",
+                  "Mesh:l11-concrete:#c9ced0:false:realistic",
+                  "Mesh:l11-concrete:#a9ada5:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 31
+              }
+            ]
+          },
+          {
+            "id": 23,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "610c7bf3-1674-46dd-b3a3-981b7306e349",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_metal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-metal:#899a96:false:realistic",
+                  "Mesh:l11-metal:#4b5050:false:realistic",
+                  "Mesh:l11-metal::false:realistic",
+                  "Mesh:l11-metal:#606964:false:realistic",
+                  "l9-static-merged:l11-metal:#5d6c67:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 32
+              }
+            ]
+          },
+          {
+            "id": 24,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "f663786a-9c75-4891-ba5e-bd2335da0d63",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_paving.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-paving:#e1ddcf:false:realistic",
+                  "Mesh:l11-paving:#92988e:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 20
+              }
+            ]
+          },
+          {
+            "id": 25,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "56cb9733-02e3-4af2-ab18-0ef4f6be4387",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_paving_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-paving:#e1ddcf:false:realistic",
+                  "Mesh:l11-paving:#92988e:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 20
+              }
+            ]
+          },
+          {
+            "id": 26,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "f5091021-c7f3-4f5d-9f19-e832c3e591fb",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_paving_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-paving:#e1ddcf:false:realistic",
+                  "Mesh:l11-paving:#92988e:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 20
+              }
+            ]
+          },
+          {
+            "id": 27,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "56c91edb-c5d9-45fa-b28b-168be7f576b5",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_metal_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-metal:#899a96:false:realistic",
+                  "Mesh:l11-metal:#4b5050:false:realistic",
+                  "Mesh:l11-metal::false:realistic",
+                  "Mesh:l11-metal:#606964:false:realistic",
+                  "l9-static-merged:l11-metal:#5d6c67:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 32
+              }
+            ]
+          },
+          {
+            "id": 28,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "f9b523d0-12f0-4887-9fcc-c6ba4a7da840",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_metal_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-metal:#899a96:false:realistic",
+                  "Mesh:l11-metal:#4b5050:false:realistic",
+                  "Mesh:l11-metal::false:realistic",
+                  "Mesh:l11-metal:#606964:false:realistic",
+                  "l9-static-merged:l11-metal:#5d6c67:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 32
+              }
+            ]
+          },
+          {
+            "id": 29,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "a126e6e0-e3ed-4480-86fe-7050828dfabd",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_asphalt.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-asphalt:#cad0d0:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 10
+              }
+            ]
+          },
+          {
+            "id": 30,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "501f1092-eba3-44e9-bafb-43bf7817a5da",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_asphalt_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-asphalt:#cad0d0:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 10
+              }
+            ]
+          },
+          {
+            "id": 37,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "92e265f9-7c69-458c-abf4-ed4b2a0a9428",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_asphalt_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-asphalt:#cad0d0:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 10
+              }
+            ]
+          },
+          {
+            "id": 41,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "67fa47e0-d489-42ef-8f9c-e80281f0092f",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_limestone.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:l11-limestone:#e9dfc9:false:realistic",
+                  "Mesh:l11-limestone:#f0e5d2:false:realistic",
+                  "Mesh:l11-limestone:#ded8c9:false:realistic",
+                  "Mesh:l11-limestone::true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 10
+              }
+            ]
+          },
+          {
+            "id": 42,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "da6d1a59-98d3-4909-842e-abd517f14798",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_limestone_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:l11-limestone:#e9dfc9:false:realistic",
+                  "Mesh:l11-limestone:#f0e5d2:false:realistic",
+                  "Mesh:l11-limestone:#ded8c9:false:realistic",
+                  "Mesh:l11-limestone::true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 10
+              }
+            ]
+          },
+          {
+            "id": 43,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "4c3d9090-c2e9-4a42-9bc4-4608586eaef4",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_limestone_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:l11-limestone:#e9dfc9:false:realistic",
+                  "Mesh:l11-limestone:#f0e5d2:false:realistic",
+                  "Mesh:l11-limestone:#ded8c9:false:realistic",
+                  "Mesh:l11-limestone::true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 10
+              }
+            ]
+          },
+          {
+            "id": 47,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "3d3a9cee-bb54-4da8-bac2-f9d84a8cf08f",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_plaster.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:l11-plaster:#ede5d3:false:realistic",
+                  "Mesh:l11-plaster:#d3d8d4:false:realistic",
+                  "Mesh:l11-plaster:#e5dcc6:false:realistic",
+                  "Mesh:l11-plaster:#bbbfba:false:realistic",
+                  "Mesh:l11-plaster:#c9c2ad:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 10
+              }
+            ]
+          },
+          {
+            "id": 48,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "44e93f6f-f915-4226-be88-ad4967f59929",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_plaster_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:l11-plaster:#ede5d3:false:realistic",
+                  "Mesh:l11-plaster:#d3d8d4:false:realistic",
+                  "Mesh:l11-plaster:#e5dcc6:false:realistic",
+                  "Mesh:l11-plaster:#bbbfba:false:realistic",
+                  "Mesh:l11-plaster:#c9c2ad:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 10
+              }
+            ]
+          },
+          {
+            "id": 49,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "6716bba6-5977-47fe-968f-3c2ce1a3e5df",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_plaster_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:l11-plaster:#ede5d3:false:realistic",
+                  "Mesh:l11-plaster:#d3d8d4:false:realistic",
+                  "Mesh:l11-plaster:#e5dcc6:false:realistic",
+                  "Mesh:l11-plaster:#bbbfba:false:realistic",
+                  "Mesh:l11-plaster:#c9c2ad:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 10
+              }
+            ]
+          },
+          {
+            "id": 57,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "45984c8e-823e-4dde-8a20-bf73a5bab15a",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_brick.jpg",
+                "size": [
+                  1024,
+                  512
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:l11-brick:#dfd8c9:false:realistic",
+                  "Mesh:l11-brick:#f0e5da:false:realistic",
+                  "Mesh:l11-brick:#d2c6b9:false:realistic",
+                  "Mesh:l11-brick:#acadaa:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 3
+              }
+            ]
+          },
+          {
+            "id": 58,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "929c6f5e-be2a-49e5-aac9-b44179648a7c",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_brick_normal.jpg",
+                "size": [
+                  1024,
+                  512
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:l11-brick:#dfd8c9:false:realistic",
+                  "Mesh:l11-brick:#f0e5da:false:realistic",
+                  "Mesh:l11-brick:#d2c6b9:false:realistic",
+                  "Mesh:l11-brick:#acadaa:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 3
+              }
+            ]
+          },
+          {
+            "id": 59,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "6ba4077f-b2a3-4bbd-a331-e78c3183d2e4",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_brick_roughness.jpg",
+                "size": [
+                  1024,
+                  512
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:l11-brick:#dfd8c9:false:realistic",
+                  "Mesh:l11-brick:#f0e5da:false:realistic",
+                  "Mesh:l11-brick:#d2c6b9:false:realistic",
+                  "Mesh:l11-brick:#acadaa:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 3
+              }
+            ]
+          },
+          {
+            "id": 65,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "6c4b77d2-d1c6-484d-9bd8-e6205a871fac",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_propwood.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 1,
+                "owners": [
+                  "Mesh:l11-propwood:#8f897b:false:realistic",
+                  "Mesh:l11-propwood:#d4c7ad:true:realistic",
+                  "Mesh:l11-propwood:#bdaf96:false:realistic",
+                  "l9-static-merged:l11-propwood:#898272:false:realistic",
+                  "l9-static-merged:l11-propwood:#888375:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 28
+              }
+            ]
+          },
+          {
+            "id": 66,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "358600d0-6832-418a-8558-36a315ed584d",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_propwood_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 1,
+                "owners": [
+                  "Mesh:l11-propwood:#8f897b:false:realistic",
+                  "Mesh:l11-propwood:#d4c7ad:true:realistic",
+                  "Mesh:l11-propwood:#bdaf96:false:realistic",
+                  "l9-static-merged:l11-propwood:#898272:false:realistic",
+                  "l9-static-merged:l11-propwood:#888375:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 28
+              }
+            ]
+          },
+          {
+            "id": 67,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "ec9fb596-7d1a-4b02-838a-7f829a841e3e",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_propwood_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 1,
+                "owners": [
+                  "Mesh:l11-propwood:#8f897b:false:realistic",
+                  "Mesh:l11-propwood:#d4c7ad:true:realistic",
+                  "Mesh:l11-propwood:#bdaf96:false:realistic",
+                  "l9-static-merged:l11-propwood:#898272:false:realistic",
+                  "l9-static-merged:l11-propwood:#888375:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 28
+              }
+            ]
+          },
+          {
+            "id": 83,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "5a5116da-466a-41ab-aa36-8c6355cd8edb",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11-foliage/2k/leaves.png",
+                "size": [
+                  2048,
+                  2048
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 1,
+                "owners": [
+                  "Mesh:l11-cc0-leaves",
+                  "l9-static-merged:l11-cc0-leaves",
+                  "l9-static-instanced:l11-cc0-leaves"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 5
+              }
+            ]
+          },
+          {
+            "id": 84,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "86c2fe82-f19c-44f3-a6a8-27356c6db2bb",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11-foliage/2k/normal.jpg",
+                "size": [
+                  2048,
+                  2048
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 1,
+                "owners": [
+                  "Mesh:l11-cc0-leaves",
+                  "l9-static-merged:l11-cc0-leaves",
+                  "l9-static-instanced:l11-cc0-leaves"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 5
+              }
+            ]
+          },
+          {
+            "id": 85,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "2febb094-cfb2-4a67-9596-6bea8eab1ceb",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11-foliage/2k/roughness.jpg",
+                "size": [
+                  2048,
+                  2048
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 1,
+                "owners": [
+                  "Mesh:l11-cc0-leaves",
+                  "l9-static-merged:l11-cc0-leaves",
+                  "l9-static-instanced:l11-cc0-leaves"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 5
+              }
+            ]
+          },
+          {
+            "id": 92,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "ba53e43a-62da-4f11-a437-deba27f786fa",
+                "name": "",
+                "size": [
+                  256,
+                  256
+                ],
+                "flags": [],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 125,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "8a0c2ba8-f12c-4dd2-9fe8-60e5d39ae38b",
+                "name": "",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 126,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "112c28aa-3193-4c8d-965e-6ee19c4349bd",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/npc-retro/faceless/t0.png",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [
+                  "retroNpc:avatar:retro avatar / skin"
+                ],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 127,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "80f835f5-532c-4ca9-9e43-79f41ae20739",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/npc-retro/cloth/hair-crop.png",
+                "size": [
+                  64,
+                  64
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 155,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "c09fc2d7-47b8-4917-9359-461e4dc7192b",
+                "name": "",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 156,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "5d9e9427-6095-489d-8c7f-aba26f297895",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/npc-retro/faceless/t3.png",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 158,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "8b096449-fa10-4c4f-a843-b1448c87cc6e",
+                "name": "",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 159,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "47e06a46-bb57-4fe6-a599-898c97e8b584",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/npc-retro/faceless/t2.png",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 160,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "8a05c5b9-1911-4c09-bcfc-eb997c1ad3ff",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/npc-retro/cloth/hair-curly.png",
+                "size": [
+                  64,
+                  64
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 161,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "bcd08657-215a-4a9f-8ae7-58a9d96359f6",
+                "name": "",
+                "size": [
+                  256,
+                  256
+                ],
+                "flags": [],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 185,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "4cfbb7ca-b580-4fa1-b522-096c7fb20a18",
+                "name": "",
+                "size": [
+                  12,
+                  12
+                ],
+                "flags": [],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "retroNpc:avatar:skeleton"
+                ],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 186,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "307b4c24-385d-4022-971a-ce762d788de8",
+                "name": "",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [
+                  "retroNpc:avatar:retro avatar / body"
+                ],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 187,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "7de9b925-8251-4c74-a0fd-128eb9c3245c",
+                "name": "",
+                "size": [
+                  12,
+                  12
+                ],
+                "flags": [],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "SkinnedMesh:skeleton"
+                ],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 188,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "2a70fc21-3f95-42d1-aa79-a0835b7b6313",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_ceramic.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 8,
+                "owners": [
+                  "Mesh:l11-ceramic:#e1e0d5:true:realistic",
+                  "Mesh:l11-ceramic:#e0e2da:true:realistic",
+                  "Mesh:l11-ceramic:#e3e8df:true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 9
+              }
+            ]
+          },
+          {
+            "id": 189,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "5ce1b05a-8eae-44eb-9402-843e9134288b",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_ceramic_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 8,
+                "owners": [
+                  "Mesh:l11-ceramic:#e1e0d5:true:realistic",
+                  "Mesh:l11-ceramic:#e0e2da:true:realistic",
+                  "Mesh:l11-ceramic:#e3e8df:true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 9
+              }
+            ]
+          },
+          {
+            "id": 190,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "22e51ad0-29fa-4806-bbaf-cda5e17f4094",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_ceramic_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 8,
+                "owners": [
+                  "Mesh:l11-ceramic:#e1e0d5:true:realistic",
+                  "Mesh:l11-ceramic:#e0e2da:true:realistic",
+                  "Mesh:l11-ceramic:#e3e8df:true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 9
+              }
+            ]
+          },
+          {
+            "id": 191,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "246a0508-d3d3-49cb-8135-f6d5a5cf1ef0",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_fabric.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 7,
+                "owners": [
+                  "Mesh:l11-fabric:#828d8d:true:realistic",
+                  "l9-static-merged:l11-fabric:#839592:false:realistic",
+                  "l9-static-merged:l11-fabric:#c9c8ae:false:realistic",
+                  "l9-static-merged:l11-fabric:#686a5c:false:realistic",
+                  "l9-static-instanced:l11-fabric:#bbc8c1:true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 24
+              }
+            ]
+          },
+          {
+            "id": 192,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "bd2adab6-0ead-41df-93d0-4c0957b2e2b0",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_fabric_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 7,
+                "owners": [
+                  "Mesh:l11-fabric:#828d8d:true:realistic",
+                  "l9-static-merged:l11-fabric:#839592:false:realistic",
+                  "l9-static-merged:l11-fabric:#c9c8ae:false:realistic",
+                  "l9-static-merged:l11-fabric:#686a5c:false:realistic",
+                  "l9-static-instanced:l11-fabric:#bbc8c1:true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 24
+              }
+            ]
+          },
+          {
+            "id": 193,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "94a8de3a-1b9a-423f-a400-61379bf40707",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_fabric_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 7,
+                "owners": [
+                  "Mesh:l11-fabric:#828d8d:true:realistic",
+                  "l9-static-merged:l11-fabric:#839592:false:realistic",
+                  "l9-static-merged:l11-fabric:#c9c8ae:false:realistic",
+                  "l9-static-merged:l11-fabric:#686a5c:false:realistic",
+                  "l9-static-instanced:l11-fabric:#bbc8c1:true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 24
+              }
+            ]
+          },
+          {
+            "id": 194,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "09801e8c-81ff-4381-8e3f-58eea65998ad",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_signs.png",
+                "size": [
+                  4096,
+                  2048
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 6,
+                "owners": [
+                  "l9-static-merged:l11-generated-full-signs",
+                  "Mesh:l11-generated-full-signs"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 11
+              }
+            ]
+          },
+          {
+            "id": 195,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "fa1ae5f1-7e74-4949-917c-b5d9b2974252",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_tiles.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 3,
+                "owners": [
+                  "Mesh:l11-tile::true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 2
+              }
+            ]
+          },
+          {
+            "id": 196,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "007c939d-e603-4747-a50d-02a9cfdfa47b",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_tiles_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 3,
+                "owners": [
+                  "Mesh:l11-tile::true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 2
+              }
+            ]
+          },
+          {
+            "id": 197,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "03f4d98c-bc49-4168-b454-0ad9e25e4853",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_tiles_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 3,
+                "owners": [
+                  "Mesh:l11-tile::true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 2
+              }
+            ]
+          },
+          {
+            "id": 198,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "b0aaa8d7-dffd-42f7-a2da-27b7fe0c41cf",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_wood.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 5,
+                "owners": [
+                  "Mesh:l11-wood::true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 2
+              }
+            ]
+          },
+          {
+            "id": 199,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "27ef1737-6590-4805-a11a-a45af6a0a463",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_wood_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 5,
+                "owners": [
+                  "Mesh:l11-wood::true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 2
+              }
+            ]
+          },
+          {
+            "id": 200,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "721bd2f2-89f9-4750-8f95-8cc3629f8638",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_wood_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 5,
+                "owners": [
+                  "Mesh:l11-wood::true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 2
+              }
+            ]
+          },
+          {
+            "id": 201,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "35ddb891-899f-4c7d-8101-b48838caa353",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_grass.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 7,
+                "owners": [
+                  "Mesh:l11-grass:#a3b994:false:realistic",
+                  "l9-static-merged:l11-grass:#55774d:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 8
+              }
+            ]
+          },
+          {
+            "id": 202,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "27149422-2d50-4a4c-9fa2-e63d7fc088da",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_grass_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 7,
+                "owners": [
+                  "Mesh:l11-grass:#a3b994:false:realistic",
+                  "l9-static-merged:l11-grass:#55774d:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 8
+              }
+            ]
+          },
+          {
+            "id": 203,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "115ac7a8-5d7d-47a8-9b4b-020632aeb2ae",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_grass_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 7,
+                "owners": [
+                  "Mesh:l11-grass:#a3b994:false:realistic",
+                  "l9-static-merged:l11-grass:#55774d:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 8
+              }
+            ]
+          },
+          {
+            "id": 204,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "0980d186-59bc-4d14-ba87-6a6067e41520",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_rawwood.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 7,
+                "owners": [
+                  "l9-static-merged:l11-rawwood:#eeebdd:false:realistic",
+                  "l9-static-merged:l11-rawwood:#efeddf:false:realistic",
+                  "l9-static-merged:l11-rawwood:#e2e2d3:false:realistic",
+                  "l9-static-merged:l11-rawwood:#e4dfce:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 5
+              }
+            ]
+          },
+          {
+            "id": 205,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "7a80e166-bfdb-489c-9a35-9c82e32b5206",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_rawwood_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 7,
+                "owners": [
+                  "l9-static-merged:l11-rawwood:#eeebdd:false:realistic",
+                  "l9-static-merged:l11-rawwood:#efeddf:false:realistic",
+                  "l9-static-merged:l11-rawwood:#e2e2d3:false:realistic",
+                  "l9-static-merged:l11-rawwood:#e4dfce:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 5
+              }
+            ]
+          },
+          {
+            "id": 206,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "042b32bd-b5a7-494e-99dc-690ad3c292d8",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_rawwood_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 7,
+                "owners": [
+                  "l9-static-merged:l11-rawwood:#eeebdd:false:realistic",
+                  "l9-static-merged:l11-rawwood:#efeddf:false:realistic",
+                  "l9-static-merged:l11-rawwood:#e2e2d3:false:realistic",
+                  "l9-static-merged:l11-rawwood:#e4dfce:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 5
+              }
+            ]
+          }
+        ]
+      },
+      "geometryAudit": {
+        "scene": {
+          "cpu": 2012,
+          "gpu": 1598
+        },
+        "entities": {
+          "cpu": 30,
+          "gpu": 30,
+          "byType": {
+            "hound": {
+              "models": 1,
+              "cpu": 24,
+              "gpu": 24
+            },
+            "deathmoth": {
+              "models": 1,
+              "cpu": 5,
+              "gpu": 5
+            },
+            "faceling": {
+              "models": 1,
+              "cpu": 1,
+              "gpu": 1
+            }
+          }
+        },
+        "city": {
+          "cpu": 1543,
+          "gpu": 1212
+        },
+        "buildings": {
+          "cpu": 358,
+          "gpu": 284
+        },
+        "offScene": 19
+      }
+    },
+    {
+      "memory": {
+        "geometries": 1618,
+        "textures": 87
+      },
+      "cachedAvatarTextures": 13,
+      "nonPooledTextures": 74,
+      "programs": 127,
+      "buildings": 6,
+      "references": 6,
+      "roots": 32,
+      "pending": {
+        "missing": 0,
+        "chunk": false,
+        "distant": false,
+        "finite": false,
+        "flash": false,
+        "moth": false,
+        "items": 0,
+        "compile": false,
+        "retired": 0,
+        "textures": 0
+      },
+      "textureAllocations": {
+        "created": 260,
+        "live": [
+          {
+            "id": 2,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "deb954ef-bee0-49b5-91c5-63b1923dbc1f",
+                "name": "",
+                "size": [
+                  4096,
+                  2048
+                ],
+                "flags": [
+                  "skyOwned",
+                  "skyPending",
+                  "fullEquirect"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "l11-cc0-sky:uniform"
+                ],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 3,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "f05052ae-b5eb-4ee8-9d29-6cc15437c77c",
+                "name": "",
+                "size": [
+                  12,
+                  12
+                ],
+                "flags": [],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 5,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "da27cc0c-1f43-4641-b135-be486034a9f7",
+                "name": "",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 6,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "d6ea9750-7d36-4bb4-b9c0-decf0b92255d",
+                "name": "",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 7,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "de32b8c2-b8e0-4815-b61d-c8c3ce0483e9",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/npc-retro/faceless/t4.png",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 8,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "bead045a-8ac9-4dd0-ad6a-805598c255d2",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/npc-retro/cloth/hair-straight.png",
+                "size": [
+                  64,
+                  64
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [
+                  "retroNpc:avatar:retro avatar / hair"
+                ],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 9,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "33f48fa5-7fb8-4058-9165-4b49be245bb0",
+                "name": "",
+                "size": [
+                  256,
+                  256
+                ],
+                "flags": [],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:MeshLambertMaterial"
+                ],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 10,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "81a27519-4d33-4726-a941-4c4a03e04eca",
+                "name": "",
+                "size": [
+                  256,
+                  256
+                ],
+                "flags": [],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:MeshLambertMaterial"
+                ],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 20,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "f33ea018-3b56-4655-a2c3-f7b6e4efb8b3",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_concrete.jpg",
+                "size": [
+                  1024,
+                  512
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-concrete:#d3d8d4:false:realistic",
+                  "Mesh:l11-concrete:#d9d2c3:false:realistic",
+                  "Mesh:l11-concrete:#d8d7cb:false:realistic",
+                  "Mesh:l11-concrete:#c9ced0:false:realistic",
+                  "Mesh:l11-concrete:#a9ada5:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 31
+              }
+            ]
+          },
+          {
+            "id": 21,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "2b11a79e-7b38-457e-b3d4-e07500169845",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_concrete_normal.jpg",
+                "size": [
+                  1024,
+                  512
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-concrete:#d3d8d4:false:realistic",
+                  "Mesh:l11-concrete:#d9d2c3:false:realistic",
+                  "Mesh:l11-concrete:#d8d7cb:false:realistic",
+                  "Mesh:l11-concrete:#c9ced0:false:realistic",
+                  "Mesh:l11-concrete:#a9ada5:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 31
+              }
+            ]
+          },
+          {
+            "id": 22,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "d245a615-7ed6-4d94-8b45-805653339e83",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_concrete_roughness.jpg",
+                "size": [
+                  1024,
+                  512
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-concrete:#d3d8d4:false:realistic",
+                  "Mesh:l11-concrete:#d9d2c3:false:realistic",
+                  "Mesh:l11-concrete:#d8d7cb:false:realistic",
+                  "Mesh:l11-concrete:#c9ced0:false:realistic",
+                  "Mesh:l11-concrete:#a9ada5:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 31
+              }
+            ]
+          },
+          {
+            "id": 23,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "610c7bf3-1674-46dd-b3a3-981b7306e349",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_metal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-metal:#899a96:false:realistic",
+                  "Mesh:l11-metal:#4b5050:false:realistic",
+                  "Mesh:l11-metal::false:realistic",
+                  "Mesh:l11-metal:#606964:false:realistic",
+                  "l9-static-merged:l11-metal:#5d6c67:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 32
+              }
+            ]
+          },
+          {
+            "id": 24,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "f663786a-9c75-4891-ba5e-bd2335da0d63",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_paving.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-paving:#e1ddcf:false:realistic",
+                  "Mesh:l11-paving:#92988e:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 20
+              }
+            ]
+          },
+          {
+            "id": 25,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "56cb9733-02e3-4af2-ab18-0ef4f6be4387",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_paving_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-paving:#e1ddcf:false:realistic",
+                  "Mesh:l11-paving:#92988e:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 20
+              }
+            ]
+          },
+          {
+            "id": 26,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "f5091021-c7f3-4f5d-9f19-e832c3e591fb",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_paving_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-paving:#e1ddcf:false:realistic",
+                  "Mesh:l11-paving:#92988e:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 20
+              }
+            ]
+          },
+          {
+            "id": 27,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "56c91edb-c5d9-45fa-b28b-168be7f576b5",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_metal_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-metal:#899a96:false:realistic",
+                  "Mesh:l11-metal:#4b5050:false:realistic",
+                  "Mesh:l11-metal::false:realistic",
+                  "Mesh:l11-metal:#606964:false:realistic",
+                  "l9-static-merged:l11-metal:#5d6c67:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 32
+              }
+            ]
+          },
+          {
+            "id": 28,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "f9b523d0-12f0-4887-9fcc-c6ba4a7da840",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_metal_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-metal:#899a96:false:realistic",
+                  "Mesh:l11-metal:#4b5050:false:realistic",
+                  "Mesh:l11-metal::false:realistic",
+                  "Mesh:l11-metal:#606964:false:realistic",
+                  "l9-static-merged:l11-metal:#5d6c67:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 32
+              }
+            ]
+          },
+          {
+            "id": 29,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "a126e6e0-e3ed-4480-86fe-7050828dfabd",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_asphalt.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-asphalt:#cad0d0:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 10
+              }
+            ]
+          },
+          {
+            "id": 30,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "501f1092-eba3-44e9-bafb-43bf7817a5da",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_asphalt_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-asphalt:#cad0d0:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 10
+              }
+            ]
+          },
+          {
+            "id": 37,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "92e265f9-7c69-458c-abf4-ed4b2a0a9428",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_asphalt_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-asphalt:#cad0d0:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 10
+              }
+            ]
+          },
+          {
+            "id": 41,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "67fa47e0-d489-42ef-8f9c-e80281f0092f",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_limestone.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:l11-limestone:#e9dfc9:false:realistic",
+                  "Mesh:l11-limestone:#f0e5d2:false:realistic",
+                  "Mesh:l11-limestone:#ded8c9:false:realistic",
+                  "Mesh:l11-limestone::true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 10
+              }
+            ]
+          },
+          {
+            "id": 42,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "da6d1a59-98d3-4909-842e-abd517f14798",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_limestone_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:l11-limestone:#e9dfc9:false:realistic",
+                  "Mesh:l11-limestone:#f0e5d2:false:realistic",
+                  "Mesh:l11-limestone:#ded8c9:false:realistic",
+                  "Mesh:l11-limestone::true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 10
+              }
+            ]
+          },
+          {
+            "id": 43,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "4c3d9090-c2e9-4a42-9bc4-4608586eaef4",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_limestone_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:l11-limestone:#e9dfc9:false:realistic",
+                  "Mesh:l11-limestone:#f0e5d2:false:realistic",
+                  "Mesh:l11-limestone:#ded8c9:false:realistic",
+                  "Mesh:l11-limestone::true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 10
+              }
+            ]
+          },
+          {
+            "id": 47,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "3d3a9cee-bb54-4da8-bac2-f9d84a8cf08f",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_plaster.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:l11-plaster:#ede5d3:false:realistic",
+                  "Mesh:l11-plaster:#d3d8d4:false:realistic",
+                  "Mesh:l11-plaster:#e5dcc6:false:realistic",
+                  "Mesh:l11-plaster:#bbbfba:false:realistic",
+                  "Mesh:l11-plaster:#c9c2ad:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 10
+              }
+            ]
+          },
+          {
+            "id": 48,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "44e93f6f-f915-4226-be88-ad4967f59929",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_plaster_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:l11-plaster:#ede5d3:false:realistic",
+                  "Mesh:l11-plaster:#d3d8d4:false:realistic",
+                  "Mesh:l11-plaster:#e5dcc6:false:realistic",
+                  "Mesh:l11-plaster:#bbbfba:false:realistic",
+                  "Mesh:l11-plaster:#c9c2ad:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 10
+              }
+            ]
+          },
+          {
+            "id": 49,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "6716bba6-5977-47fe-968f-3c2ce1a3e5df",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_plaster_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:l11-plaster:#ede5d3:false:realistic",
+                  "Mesh:l11-plaster:#d3d8d4:false:realistic",
+                  "Mesh:l11-plaster:#e5dcc6:false:realistic",
+                  "Mesh:l11-plaster:#bbbfba:false:realistic",
+                  "Mesh:l11-plaster:#c9c2ad:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 10
+              }
+            ]
+          },
+          {
+            "id": 57,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "45984c8e-823e-4dde-8a20-bf73a5bab15a",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_brick.jpg",
+                "size": [
+                  1024,
+                  512
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:l11-brick:#dfd8c9:false:realistic",
+                  "Mesh:l11-brick:#f0e5da:false:realistic",
+                  "Mesh:l11-brick:#d2c6b9:false:realistic",
+                  "Mesh:l11-brick:#acadaa:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 3
+              }
+            ]
+          },
+          {
+            "id": 58,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "929c6f5e-be2a-49e5-aac9-b44179648a7c",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_brick_normal.jpg",
+                "size": [
+                  1024,
+                  512
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:l11-brick:#dfd8c9:false:realistic",
+                  "Mesh:l11-brick:#f0e5da:false:realistic",
+                  "Mesh:l11-brick:#d2c6b9:false:realistic",
+                  "Mesh:l11-brick:#acadaa:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 3
+              }
+            ]
+          },
+          {
+            "id": 59,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "6ba4077f-b2a3-4bbd-a331-e78c3183d2e4",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_brick_roughness.jpg",
+                "size": [
+                  1024,
+                  512
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:l11-brick:#dfd8c9:false:realistic",
+                  "Mesh:l11-brick:#f0e5da:false:realistic",
+                  "Mesh:l11-brick:#d2c6b9:false:realistic",
+                  "Mesh:l11-brick:#acadaa:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 3
+              }
+            ]
+          },
+          {
+            "id": 65,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "6c4b77d2-d1c6-484d-9bd8-e6205a871fac",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_propwood.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 1,
+                "owners": [
+                  "Mesh:l11-propwood:#8f897b:false:realistic",
+                  "Mesh:l11-propwood:#d4c7ad:true:realistic",
+                  "Mesh:l11-propwood:#bdaf96:false:realistic",
+                  "l9-static-merged:l11-propwood:#898272:false:realistic",
+                  "l9-static-merged:l11-propwood:#888375:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 28
+              }
+            ]
+          },
+          {
+            "id": 66,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "358600d0-6832-418a-8558-36a315ed584d",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_propwood_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 1,
+                "owners": [
+                  "Mesh:l11-propwood:#8f897b:false:realistic",
+                  "Mesh:l11-propwood:#d4c7ad:true:realistic",
+                  "Mesh:l11-propwood:#bdaf96:false:realistic",
+                  "l9-static-merged:l11-propwood:#898272:false:realistic",
+                  "l9-static-merged:l11-propwood:#888375:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 28
+              }
+            ]
+          },
+          {
+            "id": 67,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "ec9fb596-7d1a-4b02-838a-7f829a841e3e",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_propwood_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 1,
+                "owners": [
+                  "Mesh:l11-propwood:#8f897b:false:realistic",
+                  "Mesh:l11-propwood:#d4c7ad:true:realistic",
+                  "Mesh:l11-propwood:#bdaf96:false:realistic",
+                  "l9-static-merged:l11-propwood:#898272:false:realistic",
+                  "l9-static-merged:l11-propwood:#888375:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 28
+              }
+            ]
+          },
+          {
+            "id": 83,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "5a5116da-466a-41ab-aa36-8c6355cd8edb",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11-foliage/2k/leaves.png",
+                "size": [
+                  2048,
+                  2048
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 1,
+                "owners": [
+                  "Mesh:l11-cc0-leaves",
+                  "l9-static-merged:l11-cc0-leaves",
+                  "l9-static-instanced:l11-cc0-leaves"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 5
+              }
+            ]
+          },
+          {
+            "id": 84,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "86c2fe82-f19c-44f3-a6a8-27356c6db2bb",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11-foliage/2k/normal.jpg",
+                "size": [
+                  2048,
+                  2048
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 1,
+                "owners": [
+                  "Mesh:l11-cc0-leaves",
+                  "l9-static-merged:l11-cc0-leaves",
+                  "l9-static-instanced:l11-cc0-leaves"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 5
+              }
+            ]
+          },
+          {
+            "id": 85,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "2febb094-cfb2-4a67-9596-6bea8eab1ceb",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11-foliage/2k/roughness.jpg",
+                "size": [
+                  2048,
+                  2048
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 1,
+                "owners": [
+                  "Mesh:l11-cc0-leaves",
+                  "l9-static-merged:l11-cc0-leaves",
+                  "l9-static-instanced:l11-cc0-leaves"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 5
+              }
+            ]
+          },
+          {
+            "id": 92,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "ba53e43a-62da-4f11-a437-deba27f786fa",
+                "name": "",
+                "size": [
+                  256,
+                  256
+                ],
+                "flags": [],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 125,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "8a0c2ba8-f12c-4dd2-9fe8-60e5d39ae38b",
+                "name": "",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 126,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "112c28aa-3193-4c8d-965e-6ee19c4349bd",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/npc-retro/faceless/t0.png",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 127,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "80f835f5-532c-4ca9-9e43-79f41ae20739",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/npc-retro/cloth/hair-crop.png",
+                "size": [
+                  64,
+                  64
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 155,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "c09fc2d7-47b8-4917-9359-461e4dc7192b",
+                "name": "",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 156,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "5d9e9427-6095-489d-8c7f-aba26f297895",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/npc-retro/faceless/t3.png",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 158,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "8b096449-fa10-4c4f-a843-b1448c87cc6e",
+                "name": "",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 159,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "47e06a46-bb57-4fe6-a599-898c97e8b584",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/npc-retro/faceless/t2.png",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [
+                  "retroNpc:avatar:retro avatar / skin"
+                ],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 160,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "8a05c5b9-1911-4c09-bcfc-eb997c1ad3ff",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/npc-retro/cloth/hair-curly.png",
+                "size": [
+                  64,
+                  64
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 161,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "bcd08657-215a-4a9f-8ae7-58a9d96359f6",
+                "name": "",
+                "size": [
+                  256,
+                  256
+                ],
+                "flags": [],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 186,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "307b4c24-385d-4022-971a-ce762d788de8",
+                "name": "",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 239,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "39e0894b-6305-46ae-bd8e-1bfd5a1d3aa0",
+                "name": "",
+                "size": [
+                  12,
+                  12
+                ],
+                "flags": [],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "retroNpc:avatar:skeleton"
+                ],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 240,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "60f00e74-6559-489e-9bfd-c77a248be62e",
+                "name": "",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [
+                  "retroNpc:avatar:retro avatar / body"
+                ],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 241,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "008d6d4c-3ff3-45e0-9e19-0b14c6fb7192",
+                "name": "",
+                "size": [
+                  12,
+                  12
+                ],
+                "flags": [],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "SkinnedMesh:skeleton"
+                ],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 242,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "2a70fc21-3f95-42d1-aa79-a0835b7b6313",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_ceramic.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 11,
+                "owners": [
+                  "Mesh:l11-ceramic:#e1e0d5:true:realistic",
+                  "Mesh:l11-ceramic:#e0e2da:true:realistic",
+                  "Mesh:l11-ceramic:#e3e8df:true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 9
+              }
+            ]
+          },
+          {
+            "id": 243,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "5ce1b05a-8eae-44eb-9402-843e9134288b",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_ceramic_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 11,
+                "owners": [
+                  "Mesh:l11-ceramic:#e1e0d5:true:realistic",
+                  "Mesh:l11-ceramic:#e0e2da:true:realistic",
+                  "Mesh:l11-ceramic:#e3e8df:true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 9
+              }
+            ]
+          },
+          {
+            "id": 244,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "22e51ad0-29fa-4806-bbaf-cda5e17f4094",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_ceramic_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 11,
+                "owners": [
+                  "Mesh:l11-ceramic:#e1e0d5:true:realistic",
+                  "Mesh:l11-ceramic:#e0e2da:true:realistic",
+                  "Mesh:l11-ceramic:#e3e8df:true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 9
+              }
+            ]
+          },
+          {
+            "id": 245,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "246a0508-d3d3-49cb-8135-f6d5a5cf1ef0",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_fabric.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 10,
+                "owners": [
+                  "Mesh:l11-fabric:#828d8d:true:realistic",
+                  "l9-static-merged:l11-fabric:#839592:false:realistic",
+                  "l9-static-merged:l11-fabric:#c9c8ae:false:realistic",
+                  "l9-static-merged:l11-fabric:#686a5c:false:realistic",
+                  "l9-static-instanced:l11-fabric:#bbc8c1:true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 24
+              }
+            ]
+          },
+          {
+            "id": 246,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "bd2adab6-0ead-41df-93d0-4c0957b2e2b0",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_fabric_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 10,
+                "owners": [
+                  "Mesh:l11-fabric:#828d8d:true:realistic",
+                  "l9-static-merged:l11-fabric:#839592:false:realistic",
+                  "l9-static-merged:l11-fabric:#c9c8ae:false:realistic",
+                  "l9-static-merged:l11-fabric:#686a5c:false:realistic",
+                  "l9-static-instanced:l11-fabric:#bbc8c1:true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 24
+              }
+            ]
+          },
+          {
+            "id": 247,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "94a8de3a-1b9a-423f-a400-61379bf40707",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_fabric_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 10,
+                "owners": [
+                  "Mesh:l11-fabric:#828d8d:true:realistic",
+                  "l9-static-merged:l11-fabric:#839592:false:realistic",
+                  "l9-static-merged:l11-fabric:#c9c8ae:false:realistic",
+                  "l9-static-merged:l11-fabric:#686a5c:false:realistic",
+                  "l9-static-instanced:l11-fabric:#bbc8c1:true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 24
+              }
+            ]
+          },
+          {
+            "id": 248,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "09801e8c-81ff-4381-8e3f-58eea65998ad",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_signs.png",
+                "size": [
+                  4096,
+                  2048
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 9,
+                "owners": [
+                  "l9-static-merged:l11-generated-full-signs",
+                  "Mesh:l11-generated-full-signs"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 11
+              }
+            ]
+          },
+          {
+            "id": 249,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "fa1ae5f1-7e74-4949-917c-b5d9b2974252",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_tiles.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 4,
+                "owners": [
+                  "Mesh:l11-tile::true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 2
+              }
+            ]
+          },
+          {
+            "id": 250,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "007c939d-e603-4747-a50d-02a9cfdfa47b",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_tiles_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 4,
+                "owners": [
+                  "Mesh:l11-tile::true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 2
+              }
+            ]
+          },
+          {
+            "id": 251,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "03f4d98c-bc49-4168-b454-0ad9e25e4853",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_tiles_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 4,
+                "owners": [
+                  "Mesh:l11-tile::true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 2
+              }
+            ]
+          },
+          {
+            "id": 252,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "b0aaa8d7-dffd-42f7-a2da-27b7fe0c41cf",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_wood.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 7,
+                "owners": [
+                  "Mesh:l11-wood::true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 2
+              }
+            ]
+          },
+          {
+            "id": 253,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "27ef1737-6590-4805-a11a-a45af6a0a463",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_wood_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 7,
+                "owners": [
+                  "Mesh:l11-wood::true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 2
+              }
+            ]
+          },
+          {
+            "id": 254,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "721bd2f2-89f9-4750-8f95-8cc3629f8638",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_wood_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 7,
+                "owners": [
+                  "Mesh:l11-wood::true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 2
+              }
+            ]
+          },
+          {
+            "id": 255,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "35ddb891-899f-4c7d-8101-b48838caa353",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_grass.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 10,
+                "owners": [
+                  "Mesh:l11-grass:#a3b994:false:realistic",
+                  "l9-static-merged:l11-grass:#55774d:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 8
+              }
+            ]
+          },
+          {
+            "id": 256,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "27149422-2d50-4a4c-9fa2-e63d7fc088da",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_grass_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 10,
+                "owners": [
+                  "Mesh:l11-grass:#a3b994:false:realistic",
+                  "l9-static-merged:l11-grass:#55774d:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 8
+              }
+            ]
+          },
+          {
+            "id": 257,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "115ac7a8-5d7d-47a8-9b4b-020632aeb2ae",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_grass_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 10,
+                "owners": [
+                  "Mesh:l11-grass:#a3b994:false:realistic",
+                  "l9-static-merged:l11-grass:#55774d:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 8
+              }
+            ]
+          },
+          {
+            "id": 258,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "0980d186-59bc-4d14-ba87-6a6067e41520",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_rawwood.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 10,
+                "owners": [
+                  "l9-static-merged:l11-rawwood:#eeebdd:false:realistic",
+                  "l9-static-merged:l11-rawwood:#efeddf:false:realistic",
+                  "l9-static-merged:l11-rawwood:#e2e2d3:false:realistic",
+                  "l9-static-merged:l11-rawwood:#e4dfce:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 5
+              }
+            ]
+          },
+          {
+            "id": 259,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "7a80e166-bfdb-489c-9a35-9c82e32b5206",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_rawwood_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 10,
+                "owners": [
+                  "l9-static-merged:l11-rawwood:#eeebdd:false:realistic",
+                  "l9-static-merged:l11-rawwood:#efeddf:false:realistic",
+                  "l9-static-merged:l11-rawwood:#e2e2d3:false:realistic",
+                  "l9-static-merged:l11-rawwood:#e4dfce:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 5
+              }
+            ]
+          },
+          {
+            "id": 260,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "042b32bd-b5a7-494e-99dc-690ad3c292d8",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_rawwood_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 10,
+                "owners": [
+                  "l9-static-merged:l11-rawwood:#eeebdd:false:realistic",
+                  "l9-static-merged:l11-rawwood:#efeddf:false:realistic",
+                  "l9-static-merged:l11-rawwood:#e2e2d3:false:realistic",
+                  "l9-static-merged:l11-rawwood:#e4dfce:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 5
+              }
+            ]
+          }
+        ]
+      },
+      "geometryAudit": {
+        "scene": {
+          "cpu": 2012,
+          "gpu": 1599
+        },
+        "entities": {
+          "cpu": 30,
+          "gpu": 30,
+          "byType": {
+            "hound": {
+              "models": 1,
+              "cpu": 24,
+              "gpu": 24
+            },
+            "deathmoth": {
+              "models": 1,
+              "cpu": 5,
+              "gpu": 5
+            },
+            "faceling": {
+              "models": 1,
+              "cpu": 1,
+              "gpu": 1
+            }
+          }
+        },
+        "city": {
+          "cpu": 1543,
+          "gpu": 1212
+        },
+        "buildings": {
+          "cpu": 358,
+          "gpu": 285
+        },
+        "offScene": 19
+      }
+    },
+    {
+      "memory": {
+        "geometries": 1618,
+        "textures": 90
+      },
+      "cachedAvatarTextures": 16,
+      "nonPooledTextures": 74,
+      "programs": 127,
+      "buildings": 6,
+      "references": 6,
+      "roots": 32,
+      "pending": {
+        "missing": 0,
+        "chunk": false,
+        "distant": false,
+        "finite": false,
+        "flash": false,
+        "moth": false,
+        "items": 0,
+        "compile": false,
+        "retired": 0,
+        "textures": 0
+      },
+      "textureAllocations": {
+        "created": 316,
+        "live": [
+          {
+            "id": 2,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "deb954ef-bee0-49b5-91c5-63b1923dbc1f",
+                "name": "",
+                "size": [
+                  4096,
+                  2048
+                ],
+                "flags": [
+                  "skyOwned",
+                  "skyPending",
+                  "fullEquirect"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "l11-cc0-sky:uniform"
+                ],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 3,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "f05052ae-b5eb-4ee8-9d29-6cc15437c77c",
+                "name": "",
+                "size": [
+                  12,
+                  12
+                ],
+                "flags": [],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 5,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "da27cc0c-1f43-4641-b135-be486034a9f7",
+                "name": "",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 6,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "d6ea9750-7d36-4bb4-b9c0-decf0b92255d",
+                "name": "",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 7,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "de32b8c2-b8e0-4815-b61d-c8c3ce0483e9",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/npc-retro/faceless/t4.png",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 8,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "bead045a-8ac9-4dd0-ad6a-805598c255d2",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/npc-retro/cloth/hair-straight.png",
+                "size": [
+                  64,
+                  64
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [
+                  "retroNpc:avatar:retro avatar / hair"
+                ],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 9,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "33f48fa5-7fb8-4058-9165-4b49be245bb0",
+                "name": "",
+                "size": [
+                  256,
+                  256
+                ],
+                "flags": [],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:MeshLambertMaterial"
+                ],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 10,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "81a27519-4d33-4726-a941-4c4a03e04eca",
+                "name": "",
+                "size": [
+                  256,
+                  256
+                ],
+                "flags": [],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:MeshLambertMaterial"
+                ],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 20,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "f33ea018-3b56-4655-a2c3-f7b6e4efb8b3",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_concrete.jpg",
+                "size": [
+                  1024,
+                  512
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-concrete:#d3d8d4:false:realistic",
+                  "Mesh:l11-concrete:#d9d2c3:false:realistic",
+                  "Mesh:l11-concrete:#d8d7cb:false:realistic",
+                  "Mesh:l11-concrete:#c9ced0:false:realistic",
+                  "Mesh:l11-concrete:#a9ada5:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 31
+              }
+            ]
+          },
+          {
+            "id": 21,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "2b11a79e-7b38-457e-b3d4-e07500169845",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_concrete_normal.jpg",
+                "size": [
+                  1024,
+                  512
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-concrete:#d3d8d4:false:realistic",
+                  "Mesh:l11-concrete:#d9d2c3:false:realistic",
+                  "Mesh:l11-concrete:#d8d7cb:false:realistic",
+                  "Mesh:l11-concrete:#c9ced0:false:realistic",
+                  "Mesh:l11-concrete:#a9ada5:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 31
+              }
+            ]
+          },
+          {
+            "id": 22,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "d245a615-7ed6-4d94-8b45-805653339e83",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_concrete_roughness.jpg",
+                "size": [
+                  1024,
+                  512
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-concrete:#d3d8d4:false:realistic",
+                  "Mesh:l11-concrete:#d9d2c3:false:realistic",
+                  "Mesh:l11-concrete:#d8d7cb:false:realistic",
+                  "Mesh:l11-concrete:#c9ced0:false:realistic",
+                  "Mesh:l11-concrete:#a9ada5:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 31
+              }
+            ]
+          },
+          {
+            "id": 23,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "610c7bf3-1674-46dd-b3a3-981b7306e349",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_metal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-metal:#899a96:false:realistic",
+                  "Mesh:l11-metal:#4b5050:false:realistic",
+                  "Mesh:l11-metal::false:realistic",
+                  "Mesh:l11-metal:#606964:false:realistic",
+                  "l9-static-merged:l11-metal:#5d6c67:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 32
+              }
+            ]
+          },
+          {
+            "id": 24,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "f663786a-9c75-4891-ba5e-bd2335da0d63",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_paving.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-paving:#e1ddcf:false:realistic",
+                  "Mesh:l11-paving:#92988e:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 20
+              }
+            ]
+          },
+          {
+            "id": 25,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "56cb9733-02e3-4af2-ab18-0ef4f6be4387",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_paving_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-paving:#e1ddcf:false:realistic",
+                  "Mesh:l11-paving:#92988e:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 20
+              }
+            ]
+          },
+          {
+            "id": 26,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "f5091021-c7f3-4f5d-9f19-e832c3e591fb",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_paving_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-paving:#e1ddcf:false:realistic",
+                  "Mesh:l11-paving:#92988e:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 20
+              }
+            ]
+          },
+          {
+            "id": 27,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "56c91edb-c5d9-45fa-b28b-168be7f576b5",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_metal_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-metal:#899a96:false:realistic",
+                  "Mesh:l11-metal:#4b5050:false:realistic",
+                  "Mesh:l11-metal::false:realistic",
+                  "Mesh:l11-metal:#606964:false:realistic",
+                  "l9-static-merged:l11-metal:#5d6c67:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 32
+              }
+            ]
+          },
+          {
+            "id": 28,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "f9b523d0-12f0-4887-9fcc-c6ba4a7da840",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_metal_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-metal:#899a96:false:realistic",
+                  "Mesh:l11-metal:#4b5050:false:realistic",
+                  "Mesh:l11-metal::false:realistic",
+                  "Mesh:l11-metal:#606964:false:realistic",
+                  "l9-static-merged:l11-metal:#5d6c67:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 32
+              }
+            ]
+          },
+          {
+            "id": 29,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "a126e6e0-e3ed-4480-86fe-7050828dfabd",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_asphalt.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-asphalt:#cad0d0:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 10
+              }
+            ]
+          },
+          {
+            "id": 30,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "501f1092-eba3-44e9-bafb-43bf7817a5da",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_asphalt_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-asphalt:#cad0d0:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 10
+              }
+            ]
+          },
+          {
+            "id": 37,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "92e265f9-7c69-458c-abf4-ed4b2a0a9428",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_asphalt_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 2,
+                "owners": [
+                  "Mesh:l11-asphalt:#cad0d0:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 10
+              }
+            ]
+          },
+          {
+            "id": 41,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "67fa47e0-d489-42ef-8f9c-e80281f0092f",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_limestone.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:l11-limestone:#e9dfc9:false:realistic",
+                  "Mesh:l11-limestone:#f0e5d2:false:realistic",
+                  "Mesh:l11-limestone:#ded8c9:false:realistic",
+                  "Mesh:l11-limestone::true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 10
+              }
+            ]
+          },
+          {
+            "id": 42,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "da6d1a59-98d3-4909-842e-abd517f14798",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_limestone_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:l11-limestone:#e9dfc9:false:realistic",
+                  "Mesh:l11-limestone:#f0e5d2:false:realistic",
+                  "Mesh:l11-limestone:#ded8c9:false:realistic",
+                  "Mesh:l11-limestone::true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 10
+              }
+            ]
+          },
+          {
+            "id": 43,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "4c3d9090-c2e9-4a42-9bc4-4608586eaef4",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_limestone_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:l11-limestone:#e9dfc9:false:realistic",
+                  "Mesh:l11-limestone:#f0e5d2:false:realistic",
+                  "Mesh:l11-limestone:#ded8c9:false:realistic",
+                  "Mesh:l11-limestone::true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 10
+              }
+            ]
+          },
+          {
+            "id": 47,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "3d3a9cee-bb54-4da8-bac2-f9d84a8cf08f",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_plaster.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:l11-plaster:#ede5d3:false:realistic",
+                  "Mesh:l11-plaster:#d3d8d4:false:realistic",
+                  "Mesh:l11-plaster:#e5dcc6:false:realistic",
+                  "Mesh:l11-plaster:#bbbfba:false:realistic",
+                  "Mesh:l11-plaster:#c9c2ad:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 10
+              }
+            ]
+          },
+          {
+            "id": 48,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "44e93f6f-f915-4226-be88-ad4967f59929",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_plaster_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:l11-plaster:#ede5d3:false:realistic",
+                  "Mesh:l11-plaster:#d3d8d4:false:realistic",
+                  "Mesh:l11-plaster:#e5dcc6:false:realistic",
+                  "Mesh:l11-plaster:#bbbfba:false:realistic",
+                  "Mesh:l11-plaster:#c9c2ad:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 10
+              }
+            ]
+          },
+          {
+            "id": 49,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "6716bba6-5977-47fe-968f-3c2ce1a3e5df",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_plaster_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:l11-plaster:#ede5d3:false:realistic",
+                  "Mesh:l11-plaster:#d3d8d4:false:realistic",
+                  "Mesh:l11-plaster:#e5dcc6:false:realistic",
+                  "Mesh:l11-plaster:#bbbfba:false:realistic",
+                  "Mesh:l11-plaster:#c9c2ad:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 10
+              }
+            ]
+          },
+          {
+            "id": 57,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "45984c8e-823e-4dde-8a20-bf73a5bab15a",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_brick.jpg",
+                "size": [
+                  1024,
+                  512
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:l11-brick:#dfd8c9:false:realistic",
+                  "Mesh:l11-brick:#f0e5da:false:realistic",
+                  "Mesh:l11-brick:#d2c6b9:false:realistic",
+                  "Mesh:l11-brick:#acadaa:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 3
+              }
+            ]
+          },
+          {
+            "id": 58,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "929c6f5e-be2a-49e5-aac9-b44179648a7c",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_brick_normal.jpg",
+                "size": [
+                  1024,
+                  512
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:l11-brick:#dfd8c9:false:realistic",
+                  "Mesh:l11-brick:#f0e5da:false:realistic",
+                  "Mesh:l11-brick:#d2c6b9:false:realistic",
+                  "Mesh:l11-brick:#acadaa:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 3
+              }
+            ]
+          },
+          {
+            "id": 59,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "6ba4077f-b2a3-4bbd-a331-e78c3183d2e4",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_brick_roughness.jpg",
+                "size": [
+                  1024,
+                  512
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "Mesh:l11-brick:#dfd8c9:false:realistic",
+                  "Mesh:l11-brick:#f0e5da:false:realistic",
+                  "Mesh:l11-brick:#d2c6b9:false:realistic",
+                  "Mesh:l11-brick:#acadaa:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 3
+              }
+            ]
+          },
+          {
+            "id": 65,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "6c4b77d2-d1c6-484d-9bd8-e6205a871fac",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_propwood.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 1,
+                "owners": [
+                  "Mesh:l11-propwood:#8f897b:false:realistic",
+                  "Mesh:l11-propwood:#d4c7ad:true:realistic",
+                  "Mesh:l11-propwood:#bdaf96:false:realistic",
+                  "l9-static-merged:l11-propwood:#898272:false:realistic",
+                  "l9-static-merged:l11-propwood:#888375:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 28
+              }
+            ]
+          },
+          {
+            "id": 66,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "358600d0-6832-418a-8558-36a315ed584d",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_propwood_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 1,
+                "owners": [
+                  "Mesh:l11-propwood:#8f897b:false:realistic",
+                  "Mesh:l11-propwood:#d4c7ad:true:realistic",
+                  "Mesh:l11-propwood:#bdaf96:false:realistic",
+                  "l9-static-merged:l11-propwood:#898272:false:realistic",
+                  "l9-static-merged:l11-propwood:#888375:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 28
+              }
+            ]
+          },
+          {
+            "id": 67,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "ec9fb596-7d1a-4b02-838a-7f829a841e3e",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_propwood_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 1,
+                "owners": [
+                  "Mesh:l11-propwood:#8f897b:false:realistic",
+                  "Mesh:l11-propwood:#d4c7ad:true:realistic",
+                  "Mesh:l11-propwood:#bdaf96:false:realistic",
+                  "l9-static-merged:l11-propwood:#898272:false:realistic",
+                  "l9-static-merged:l11-propwood:#888375:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 28
+              }
+            ]
+          },
+          {
+            "id": 83,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "5a5116da-466a-41ab-aa36-8c6355cd8edb",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11-foliage/2k/leaves.png",
+                "size": [
+                  2048,
+                  2048
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 1,
+                "owners": [
+                  "Mesh:l11-cc0-leaves",
+                  "l9-static-merged:l11-cc0-leaves",
+                  "l9-static-instanced:l11-cc0-leaves"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 5
+              }
+            ]
+          },
+          {
+            "id": 84,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "86c2fe82-f19c-44f3-a6a8-27356c6db2bb",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11-foliage/2k/normal.jpg",
+                "size": [
+                  2048,
+                  2048
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 1,
+                "owners": [
+                  "Mesh:l11-cc0-leaves",
+                  "l9-static-merged:l11-cc0-leaves",
+                  "l9-static-instanced:l11-cc0-leaves"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 5
+              }
+            ]
+          },
+          {
+            "id": 85,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "2febb094-cfb2-4a67-9596-6bea8eab1ceb",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11-foliage/2k/roughness.jpg",
+                "size": [
+                  2048,
+                  2048
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 1,
+                "owners": [
+                  "Mesh:l11-cc0-leaves",
+                  "l9-static-merged:l11-cc0-leaves",
+                  "l9-static-instanced:l11-cc0-leaves"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 5
+              }
+            ]
+          },
+          {
+            "id": 92,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "ba53e43a-62da-4f11-a437-deba27f786fa",
+                "name": "",
+                "size": [
+                  256,
+                  256
+                ],
+                "flags": [],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 125,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "8a0c2ba8-f12c-4dd2-9fe8-60e5d39ae38b",
+                "name": "",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 126,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "112c28aa-3193-4c8d-965e-6ee19c4349bd",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/npc-retro/faceless/t0.png",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 127,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "80f835f5-532c-4ca9-9e43-79f41ae20739",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/npc-retro/cloth/hair-crop.png",
+                "size": [
+                  64,
+                  64
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 155,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "c09fc2d7-47b8-4917-9359-461e4dc7192b",
+                "name": "",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 156,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "5d9e9427-6095-489d-8c7f-aba26f297895",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/npc-retro/faceless/t3.png",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [
+                  "retroNpc:avatar:retro avatar / skin"
+                ],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 158,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "8b096449-fa10-4c4f-a843-b1448c87cc6e",
+                "name": "",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 159,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "47e06a46-bb57-4fe6-a599-898c97e8b584",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/npc-retro/faceless/t2.png",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 160,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "8a05c5b9-1911-4c09-bcfc-eb997c1ad3ff",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/npc-retro/cloth/hair-curly.png",
+                "size": [
+                  64,
+                  64
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 161,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "bcd08657-215a-4a9f-8ae7-58a9d96359f6",
+                "name": "",
+                "size": [
+                  256,
+                  256
+                ],
+                "flags": [],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 186,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "307b4c24-385d-4022-971a-ce762d788de8",
+                "name": "",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 240,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "60f00e74-6559-489e-9bfd-c77a248be62e",
+                "name": "",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 269,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "be3902c2-5736-4ddb-b6ee-b6d20dc8b912",
+                "name": "",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 271,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "8113359d-c6b9-419b-8205-6f435f6a5dcb",
+                "name": "",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 295,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "ad294680-60eb-4afc-82fa-66d3c80b9a45",
+                "name": "",
+                "size": [
+                  12,
+                  12
+                ],
+                "flags": [],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "SkinnedMesh:skeleton"
+                ],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 296,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "dfe7e65d-8f99-493d-ae0a-71f0e83cee09",
+                "name": "",
+                "size": [
+                  12,
+                  12
+                ],
+                "flags": [],
+                "avatarPool": false,
+                "disposals": 0,
+                "owners": [
+                  "retroNpc:avatar:skeleton"
+                ],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 297,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "1ec1d059-7bb7-49b9-bd24-e3ae10ef43b5",
+                "name": "",
+                "size": [
+                  128,
+                  128
+                ],
+                "flags": [
+                  "retroShared",
+                  "ready"
+                ],
+                "avatarPool": true,
+                "disposals": 0,
+                "owners": [
+                  "retroNpc:avatar:retro avatar / body"
+                ],
+                "world": false,
+                "retired": false
+              }
+            ]
+          },
+          {
+            "id": 298,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "2a70fc21-3f95-42d1-aa79-a0835b7b6313",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_ceramic.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 14,
+                "owners": [
+                  "Mesh:l11-ceramic:#e1e0d5:true:realistic",
+                  "Mesh:l11-ceramic:#e0e2da:true:realistic",
+                  "Mesh:l11-ceramic:#e3e8df:true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 9
+              }
+            ]
+          },
+          {
+            "id": 299,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "5ce1b05a-8eae-44eb-9402-843e9134288b",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_ceramic_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 14,
+                "owners": [
+                  "Mesh:l11-ceramic:#e1e0d5:true:realistic",
+                  "Mesh:l11-ceramic:#e0e2da:true:realistic",
+                  "Mesh:l11-ceramic:#e3e8df:true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 9
+              }
+            ]
+          },
+          {
+            "id": 300,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "22e51ad0-29fa-4806-bbaf-cda5e17f4094",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_ceramic_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 14,
+                "owners": [
+                  "Mesh:l11-ceramic:#e1e0d5:true:realistic",
+                  "Mesh:l11-ceramic:#e0e2da:true:realistic",
+                  "Mesh:l11-ceramic:#e3e8df:true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 9
+              }
+            ]
+          },
+          {
+            "id": 301,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "246a0508-d3d3-49cb-8135-f6d5a5cf1ef0",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_fabric.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 13,
+                "owners": [
+                  "Mesh:l11-fabric:#828d8d:true:realistic",
+                  "l9-static-merged:l11-fabric:#839592:false:realistic",
+                  "l9-static-merged:l11-fabric:#c9c8ae:false:realistic",
+                  "l9-static-merged:l11-fabric:#686a5c:false:realistic",
+                  "l9-static-instanced:l11-fabric:#bbc8c1:true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 24
+              }
+            ]
+          },
+          {
+            "id": 302,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "bd2adab6-0ead-41df-93d0-4c0957b2e2b0",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_fabric_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 13,
+                "owners": [
+                  "Mesh:l11-fabric:#828d8d:true:realistic",
+                  "l9-static-merged:l11-fabric:#839592:false:realistic",
+                  "l9-static-merged:l11-fabric:#c9c8ae:false:realistic",
+                  "l9-static-merged:l11-fabric:#686a5c:false:realistic",
+                  "l9-static-instanced:l11-fabric:#bbc8c1:true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 24
+              }
+            ]
+          },
+          {
+            "id": 303,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "94a8de3a-1b9a-423f-a400-61379bf40707",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_fabric_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 13,
+                "owners": [
+                  "Mesh:l11-fabric:#828d8d:true:realistic",
+                  "l9-static-merged:l11-fabric:#839592:false:realistic",
+                  "l9-static-merged:l11-fabric:#c9c8ae:false:realistic",
+                  "l9-static-merged:l11-fabric:#686a5c:false:realistic",
+                  "l9-static-instanced:l11-fabric:#bbc8c1:true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 24
+              }
+            ]
+          },
+          {
+            "id": 304,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "09801e8c-81ff-4381-8e3f-58eea65998ad",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_signs.png",
+                "size": [
+                  4096,
+                  2048
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 12,
+                "owners": [
+                  "l9-static-merged:l11-generated-full-signs",
+                  "Mesh:l11-generated-full-signs"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 11
+              }
+            ]
+          },
+          {
+            "id": 305,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "fa1ae5f1-7e74-4949-917c-b5d9b2974252",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_tiles.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 5,
+                "owners": [
+                  "Mesh:l11-tile::true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 2
+              }
+            ]
+          },
+          {
+            "id": 306,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "007c939d-e603-4747-a50d-02a9cfdfa47b",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_tiles_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 5,
+                "owners": [
+                  "Mesh:l11-tile::true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 2
+              }
+            ]
+          },
+          {
+            "id": 307,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "03f4d98c-bc49-4168-b454-0ad9e25e4853",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_tiles_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 5,
+                "owners": [
+                  "Mesh:l11-tile::true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 2
+              }
+            ]
+          },
+          {
+            "id": 308,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "b0aaa8d7-dffd-42f7-a2da-27b7fe0c41cf",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_wood.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 9,
+                "owners": [
+                  "Mesh:l11-wood::true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 2
+              }
+            ]
+          },
+          {
+            "id": 309,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "27ef1737-6590-4805-a11a-a45af6a0a463",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_wood_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 9,
+                "owners": [
+                  "Mesh:l11-wood::true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 2
+              }
+            ]
+          },
+          {
+            "id": 310,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "721bd2f2-89f9-4750-8f95-8cc3629f8638",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_wood_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 9,
+                "owners": [
+                  "Mesh:l11-wood::true:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 2
+              }
+            ]
+          },
+          {
+            "id": 311,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "35ddb891-899f-4c7d-8101-b48838caa353",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_grass.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 13,
+                "owners": [
+                  "Mesh:l11-grass:#a3b994:false:realistic",
+                  "l9-static-merged:l11-grass:#55774d:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 8
+              }
+            ]
+          },
+          {
+            "id": 312,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "27149422-2d50-4a4c-9fa2-e63d7fc088da",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_grass_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 13,
+                "owners": [
+                  "Mesh:l11-grass:#a3b994:false:realistic",
+                  "l9-static-merged:l11-grass:#55774d:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 8
+              }
+            ]
+          },
+          {
+            "id": 313,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "115ac7a8-5d7d-47a8-9b4b-020632aeb2ae",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_grass_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 13,
+                "owners": [
+                  "Mesh:l11-grass:#a3b994:false:realistic",
+                  "l9-static-merged:l11-grass:#55774d:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 8
+              }
+            ]
+          },
+          {
+            "id": 314,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "0980d186-59bc-4d14-ba87-6a6067e41520",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_rawwood.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 13,
+                "owners": [
+                  "l9-static-merged:l11-rawwood:#eeebdd:false:realistic",
+                  "l9-static-merged:l11-rawwood:#efeddf:false:realistic",
+                  "l9-static-merged:l11-rawwood:#e2e2d3:false:realistic",
+                  "l9-static-merged:l11-rawwood:#e4dfce:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 5
+              }
+            ]
+          },
+          {
+            "id": 315,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "7a80e166-bfdb-489c-9a35-9c82e32b5206",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_rawwood_normal.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 13,
+                "owners": [
+                  "l9-static-merged:l11-rawwood:#eeebdd:false:realistic",
+                  "l9-static-merged:l11-rawwood:#efeddf:false:realistic",
+                  "l9-static-merged:l11-rawwood:#e2e2d3:false:realistic",
+                  "l9-static-merged:l11-rawwood:#e4dfce:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 5
+              }
+            ]
+          },
+          {
+            "id": 316,
+            "stack": "",
+            "textures": [
+              {
+                "uuid": "042b32bd-b5a7-494e-99dc-690ad3c292d8",
+                "name": "",
+                "src": "http://127.0.0.1:14127/textures/l11_rawwood_roughness.jpg",
+                "size": [
+                  1024,
+                  1024
+                ],
+                "flags": [
+                  "fileImagePending",
+                  "loadedImage"
+                ],
+                "avatarPool": false,
+                "disposals": 13,
+                "owners": [
+                  "l9-static-merged:l11-rawwood:#eeebdd:false:realistic",
+                  "l9-static-merged:l11-rawwood:#efeddf:false:realistic",
+                  "l9-static-merged:l11-rawwood:#e2e2d3:false:realistic",
+                  "l9-static-merged:l11-rawwood:#e4dfce:false:realistic"
+                ],
+                "world": true,
+                "retired": false,
+                "refs": 5
+              }
+            ]
+          }
+        ]
+      },
+      "geometryAudit": {
+        "scene": {
+          "cpu": 2012,
+          "gpu": 1599
+        },
+        "entities": {
+          "cpu": 30,
+          "gpu": 30,
+          "byType": {
+            "hound": {
+              "models": 1,
+              "cpu": 24,
+              "gpu": 24
+            },
+            "deathmoth": {
+              "models": 1,
+              "cpu": 5,
+              "gpu": 5
+            },
+            "faceling": {
+              "models": 1,
+              "cpu": 1,
+              "gpu": 1
+            }
+          }
+        },
+        "city": {
+          "cpu": 1543,
+          "gpu": 1212
+        },
+        "buildings": {
+          "cpu": 358,
+          "gpu": 285
+        },
+        "offScene": 19
+      }
+    }
+  ],
+  "performance": {
+    "label": "11:open",
+    "median": 8.299999999988358,
+    "p95": 12.5,
+    "max": 20.79999999998836,
+    "p99": 12.60000000000582,
+    "frames": 201,
+    "over16ms": 1,
+    "over33ms": 0,
+    "cpuMedian": 6.799999997019768,
+    "cpuP95": 10.5,
+    "gpuMedian": 7.122944,
+    "gpuP95": 10.184704,
+    "gpuSamples": 199,
+    "draws": 1761,
+    "triangles": 3098208,
+    "memory": {
+      "geometries": 1618,
+      "textures": 90
+    },
+    "programs": 127,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "errors": [],
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "networkErrors": [
+    {
+      "requestId": "53880.12",
+      "loaderId": "05B97BAED1B883DD72514BFBCB206D46",
+      "timestamp": 118389.537078,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:14127/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Wed, 14 Oct 2026 12:28:30 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 187,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 14127,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 118389.514976,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.423,
+          "sendEnd": 0.48,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 21.343,
+          "receiveHeadersEnd": 21.496
+        },
+        "responseTime": 1791980910480.706,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "CB856A033D6B821274B4CB1E268D9688"
+    },
+    {
+      "requestId": "53880.549",
+      "loaderId": "05B97BAED1B883DD72514BFBCB206D46",
+      "timestamp": 118455.253591,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:14127/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Wed, 14 Oct 2026 12:29:36 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": false,
+        "connectionId": 2472,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 14127,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 118455.23025,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": 0.799,
+          "dnsEnd": 1.272,
+          "connectStart": 1.272,
+          "connectEnd": 2.004,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 2.086,
+          "sendEnd": 2.161,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 19.162,
+          "receiveHeadersEnd": 19.363
+        },
+        "responseTime": 1791980976193.799,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "CB856A033D6B821274B4CB1E268D9688"
+    }
+  ]
+}

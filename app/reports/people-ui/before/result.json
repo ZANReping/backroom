@@ -1,0 +1,85 @@
+{
+  "label": "before",
+  "port": 14195,
+  "cdp": 14196,
+  "models": [],
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:14195/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sat, 17 Oct 2026 08:42:21 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 285,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 14195,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 67955.08239,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.599,
+        "sendEnd": 0.642,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 10.162,
+        "receiveHeadersEnd": 10.431
+      },
+      "responseTime": 1792226541939.781,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\people-ui\\before\\qa-people-1792226527905-74536",
+    "--remote-debugging-port=14196",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "server": 83664,
+    "browser": 66944
+  },
+  "setup": {
+    "people": 96
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: UI wait timed out\",\"lineNumber\":9,\"columnNumber\":9,\"scriptId\":\"494\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"until\",\"scriptId\":\"494\",\"url\":\"http://127.0.0.1:14195/verifier/people-ui-check.ts\",\"lineNumber\":8,\"columnNumber\":8}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: UI wait timed out\\n    at until (http://127.0.0.1:14195/verifier/people-ui-check.ts:9:9)\\n    at async Object.people (http://127.0.0.1:14195/verifier/people-ui-check.ts:29:5)\",\"objectId\":\"-8858299721908748558.2.1\"}}",
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

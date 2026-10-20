@@ -1,0 +1,110 @@
+{
+  "seed": 20261006,
+  "bakeRevision": 17,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "performance": {
+    "before": {
+      "median": 9.599999999991269,
+      "p95": 19.10000000000582,
+      "worstP95": 19.19999999999709,
+      "cpuMedian": 6.600000001490116,
+      "draws": 304,
+      "triangles": 161036
+    },
+    "after": {
+      "median": 9.599999999991269,
+      "p95": 9.700000000011642,
+      "worstP95": 9.700000000011642,
+      "cpuMedian": 4.100000001490116,
+      "draws": 304,
+      "triangles": 161036
+    },
+    "classic": {
+      "median": 9.599999999991269,
+      "p95": 9.700000000011642,
+      "worstP95": 9.700000000011642,
+      "cpuMedian": 3.7000000029802322,
+      "draws": 293,
+      "triangles": 128825
+    },
+    "earlierFullRuns": {
+      "before": {
+        "median": 4.2000000000116415,
+        "p95": 12.400000000023283,
+        "worstP95": 12.5,
+        "cpuMedian": 4.299999997019768,
+        "draws": 304,
+        "triangles": 161036
+      },
+      "after": {
+        "median": 9.599999999976717,
+        "p95": 19.29999999998836,
+        "worstP95": 20.099999999976717,
+        "cpuMedian": 7.700000002980232,
+        "draws": 304,
+        "triangles": 161036
+      }
+    },
+    "method": "Five warmed rounds per run. Use adjacent isolated before/after benchmark runs; earlier full-sequence baseline had a different rAF cadence, which also changed when the old version was rerun."
+  },
+  "entryMs": {
+    "before": 3902.818099999997,
+    "after": 4992.518499999998,
+    "classic": 3182.5264000000025
+  },
+  "crate": {
+    "before": {
+      "distance": 0.9330193356768746,
+      "embedded": 175
+    },
+    "after": {
+      "distance": 3.3933639283338266,
+      "embedded": 0
+    }
+  },
+  "hotbar": {
+    "before": 18,
+    "after": 0,
+    "touchSelected": 5
+  },
+  "errors": {
+    "before": [],
+    "after": [],
+    "classic": []
+  },
+  "cleanup": {
+    "before": {
+      "browser": "SIGTERM",
+      "server": "SIGTERM",
+      "profileRemoved": true
+    },
+    "oldInteractions": {
+      "browser": "SIGTERM",
+      "server": "SIGTERM",
+      "profileRemoved": true
+    },
+    "after": {
+      "browser": "SIGTERM",
+      "server": "SIGTERM",
+      "profileRemoved": true
+    },
+    "classic": {
+      "browser": "SIGTERM",
+      "server": "SIGTERM",
+      "profileRemoved": true
+    },
+    "pairedBefore": {
+      "browser": "SIGTERM",
+      "server": "SIGTERM",
+      "profileRemoved": true
+    },
+    "pairedAfter": {
+      "browser": "SIGTERM",
+      "server": "SIGTERM",
+      "profileRemoved": true
+    }
+  }
+}

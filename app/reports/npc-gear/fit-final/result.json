@@ -1,0 +1,36 @@
+{
+  "label": "fit-final",
+  "port": 1697,
+  "cdp": 1698,
+  "models": [],
+  "errors": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\npc-gear\\fit-final\\qa-gear-1792166626100-55880",
+    "--remote-debugging-port=1698",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "server": 26200,
+    "browser": 12904
+  },
+  "memory": {
+    "geometries": 65,
+    "textures": 37
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

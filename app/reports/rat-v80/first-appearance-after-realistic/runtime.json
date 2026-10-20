@@ -1,0 +1,2274 @@
+{
+  "coldBrowserPerRound": true,
+  "runs": [
+    {
+      "run": "qa-entity-entry-1792074643144-36848",
+      "baseline": false,
+      "classic": false,
+      "port": 3006,
+      "cdp": 3007,
+      "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\rat-v80\\first-appearance-after-realistic\\round-1\\qa-entity-entry-1792074643144-36848",
+      "command": [
+        "C:/Program Files/Google/Chrome/Application/chrome.exe",
+        "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\rat-v80\\first-appearance-after-realistic\\round-1\\qa-entity-entry-1792074643144-36848",
+        "--remote-debugging-port=3007",
+        "--headless=new",
+        "--enable-automation",
+        "--no-first-run",
+        "--no-default-browser-check",
+        "--disable-background-networking",
+        "--window-size=1920,1080",
+        "--noerrdialogs",
+        "--flag-switches-begin",
+        "--flag-switches-end",
+        "about:blank"
+      ],
+      "browser": {
+        "protocolVersion": "1.3",
+        "product": "Chrome/155.0.8059.40",
+        "revision": "@cfaadc5a132d78e1828635aa8405a499f3e14864",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "jsVersion": "15.5.35.20"
+      },
+      "pids": {
+        "server": 22860,
+        "browser": 63344
+      },
+      "data": {
+        "seed": 20261006,
+        "level": 104,
+        "viewport": [
+          1920,
+          1080
+        ],
+        "mode": "realistic",
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "results": [
+          {
+            "type": "arachnid",
+            "firstCpu": 15.600000001490116,
+            "maxCpu": 15.600000001490116,
+            "buildMax": 6.199999995529652,
+            "medianCpu": 2.2999999970197678,
+            "p95Cpu": 8,
+            "maxRaf": 16,
+            "appearanceMs": 89.5,
+            "waitFrames": 10,
+            "frames": 104,
+            "memory": {
+              "geometries": 174,
+              "textures": 93
+            },
+            "programs": 58
+          },
+          {
+            "type": "arcwraith",
+            "firstCpu": 2.5,
+            "maxCpu": 2.8000000044703484,
+            "buildMax": 0.5,
+            "medianCpu": 1.6000000014901161,
+            "p95Cpu": 2.600000001490116,
+            "maxRaf": 4.5,
+            "appearanceMs": 29.200000002980232,
+            "waitFrames": 6,
+            "frames": 104,
+            "memory": {
+              "geometries": 155,
+              "textures": 93
+            },
+            "programs": 58
+          },
+          {
+            "type": "arms",
+            "firstCpu": 1.7000000029802322,
+            "maxCpu": 3.100000001490116,
+            "buildMax": 0.4000000059604645,
+            "medianCpu": 1.2999999970197678,
+            "p95Cpu": 2.3000000044703484,
+            "maxRaf": 4.300000004470348,
+            "appearanceMs": 20.80000000447035,
+            "waitFrames": 4,
+            "frames": 101,
+            "memory": {
+              "geometries": 152,
+              "textures": 93
+            },
+            "programs": 58
+          },
+          {
+            "type": "bellhop",
+            "firstCpu": 2.1999999955296516,
+            "maxCpu": 2.8000000044703484,
+            "buildMax": 0.7999999970197678,
+            "medianCpu": 1.5,
+            "p95Cpu": 2.5,
+            "maxRaf": 4.300000004470348,
+            "appearanceMs": 37.79999999701977,
+            "waitFrames": 8,
+            "frames": 105,
+            "memory": {
+              "geometries": 167,
+              "textures": 93
+            },
+            "programs": 58
+          },
+          {
+            "type": "camocrawler",
+            "firstCpu": 2.399999998509884,
+            "maxCpu": 3.3000000044703484,
+            "buildMax": 0.8999999985098839,
+            "medianCpu": 1.6000000014901161,
+            "p95Cpu": 2.7000000029802322,
+            "maxRaf": 4.4000000059604645,
+            "appearanceMs": 54.80000000447035,
+            "waitFrames": 12,
+            "frames": 110,
+            "memory": {
+              "geometries": 181,
+              "textures": 93
+            },
+            "programs": 58
+          },
+          {
+            "type": "carrier",
+            "firstCpu": 1.7000000029802322,
+            "maxCpu": 2.7000000029802322,
+            "buildMax": 0.5,
+            "medianCpu": 1.2999999970197678,
+            "p95Cpu": 2.2999999970197678,
+            "maxRaf": 4.399999998509884,
+            "appearanceMs": 39.100000001490116,
+            "waitFrames": 8,
+            "frames": 106,
+            "memory": {
+              "geometries": 163,
+              "textures": 93
+            },
+            "programs": 58
+          },
+          {
+            "type": "clump",
+            "firstCpu": 1.1999999955296516,
+            "maxCpu": 42.399999998509884,
+            "buildMax": 40.29999999701977,
+            "medianCpu": 1.6000000014901161,
+            "p95Cpu": 3.5,
+            "maxRaf": 42.600000001490116,
+            "appearanceMs": 852.1000000014901,
+            "waitFrames": 191,
+            "frames": 277,
+            "memory": {
+              "geometries": 150,
+              "textures": 95
+            },
+            "programs": 60
+          },
+          {
+            "type": "copierwraith",
+            "firstCpu": 3.2000000029802322,
+            "maxCpu": 3.600000001490116,
+            "buildMax": 0.6000000014901161,
+            "medianCpu": 1.5,
+            "p95Cpu": 2.600000001490116,
+            "maxRaf": 4.5,
+            "appearanceMs": 168.20000000298023,
+            "waitFrames": 39,
+            "frames": 137,
+            "memory": {
+              "geometries": 154,
+              "textures": 94
+            },
+            "programs": 59
+          },
+          {
+            "type": "corpserat",
+            "firstCpu": 1.2999999970197678,
+            "maxCpu": 20.700000002980232,
+            "buildMax": 18.80000000447035,
+            "medianCpu": 1.8000000044703484,
+            "p95Cpu": 4.799999997019768,
+            "maxRaf": 58.19999999552965,
+            "appearanceMs": 730.2999999970198,
+            "waitFrames": 157,
+            "frames": 238,
+            "memory": {
+              "geometries": 170,
+              "textures": 97
+            },
+            "programs": 63
+          },
+          {
+            "type": "curabitur",
+            "firstCpu": 3.399999998509884,
+            "maxCpu": 5.799999997019768,
+            "buildMax": 2,
+            "medianCpu": 1.7999999970197678,
+            "p95Cpu": 3.600000001490116,
+            "maxRaf": 44.5,
+            "appearanceMs": 617.6999999955297,
+            "waitFrames": 147,
+            "frames": 230,
+            "memory": {
+              "geometries": 198,
+              "textures": 97
+            },
+            "programs": 62
+          },
+          {
+            "type": "deathmoth",
+            "firstCpu": 2.9000000059604645,
+            "maxCpu": 21.299999997019768,
+            "buildMax": 18.799999997019768,
+            "medianCpu": 3.2000000029802322,
+            "p95Cpu": 8.200000002980232,
+            "maxRaf": 301.20000000298023,
+            "appearanceMs": 926.3000000044703,
+            "waitFrames": 194,
+            "frames": 219,
+            "memory": {
+              "geometries": 150,
+              "textures": 102
+            },
+            "programs": 64
+          },
+          {
+            "type": "dryshrimp",
+            "firstCpu": 3.5,
+            "maxCpu": 5.299999997019768,
+            "buildMax": 0.8999999985098839,
+            "medianCpu": 2,
+            "p95Cpu": 4.5,
+            "maxRaf": 5.699999995529652,
+            "appearanceMs": 47.899999998509884,
+            "waitFrames": 10,
+            "frames": 108,
+            "memory": {
+              "geometries": 173,
+              "textures": 101
+            },
+            "programs": 59
+          },
+          {
+            "type": "duller",
+            "firstCpu": 38.79999999701977,
+            "maxCpu": 38.79999999701977,
+            "buildMax": 37.100000001490116,
+            "medianCpu": 1.8999999985098839,
+            "p95Cpu": 4.299999997019768,
+            "maxRaf": 85.80000000447035,
+            "appearanceMs": 829.8999999985099,
+            "waitFrames": 168,
+            "frames": 255,
+            "memory": {
+              "geometries": 179,
+              "textures": 105
+            },
+            "programs": 63
+          },
+          {
+            "type": "faceling",
+            "firstCpu": 7.299999997019768,
+            "maxCpu": 7.299999997019768,
+            "buildMax": 5.800000004470348,
+            "medianCpu": 1.5,
+            "p95Cpu": 3.0999999940395355,
+            "maxRaf": 7.899999998509884,
+            "appearanceMs": 37.79999999701977,
+            "waitFrames": 8,
+            "frames": 106,
+            "memory": {
+              "geometries": 146,
+              "textures": 108
+            },
+            "programs": 59
+          },
+          {
+            "type": "ferren",
+            "firstCpu": 1.7999999970197678,
+            "maxCpu": 3,
+            "buildMax": 0.3999999985098839,
+            "medianCpu": 1.6000000014901161,
+            "p95Cpu": 2.7999999970197678,
+            "maxRaf": 4.300000004470348,
+            "appearanceMs": 29.599999994039536,
+            "waitFrames": 6,
+            "frames": 104,
+            "memory": {
+              "geometries": 157,
+              "textures": 107
+            },
+            "programs": 59
+          },
+          {
+            "type": "hound",
+            "firstCpu": 23.80000000447035,
+            "maxCpu": 23.80000000447035,
+            "buildMax": 22.200000002980232,
+            "medianCpu": 1.7000000029802322,
+            "p95Cpu": 4.399999998509884,
+            "maxRaf": 31.900000005960464,
+            "appearanceMs": 265.6000000014901,
+            "waitFrames": 50,
+            "frames": 147,
+            "memory": {
+              "geometries": 169,
+              "textures": 109
+            },
+            "programs": 63
+          },
+          {
+            "type": "jerry",
+            "firstCpu": 1.6000000014901161,
+            "maxCpu": 3,
+            "buildMax": 0.29999999701976776,
+            "medianCpu": 1.2000000029802322,
+            "p95Cpu": 2.399999998509884,
+            "maxRaf": 4.300000004470348,
+            "appearanceMs": 29.399999998509884,
+            "waitFrames": 6,
+            "frames": 104,
+            "memory": {
+              "geometries": 159,
+              "textures": 109
+            },
+            "programs": 59
+          },
+          {
+            "type": "lightguide",
+            "firstCpu": 1.6000000014901161,
+            "maxCpu": 3.100000001490116,
+            "buildMax": 0.5,
+            "medianCpu": 1.3000000044703484,
+            "p95Cpu": 2.2999999970197678,
+            "maxRaf": 4.399999998509884,
+            "appearanceMs": 29.30000000447035,
+            "waitFrames": 6,
+            "frames": 103,
+            "memory": {
+              "geometries": 158,
+              "textures": 109
+            },
+            "programs": 59
+          },
+          {
+            "type": "malady",
+            "firstCpu": 2.399999998509884,
+            "maxCpu": 2.899999998509884,
+            "buildMax": 0.19999999552965164,
+            "medianCpu": 1.5,
+            "p95Cpu": 2.600000001490116,
+            "maxRaf": 4.399999998509884,
+            "appearanceMs": 21,
+            "waitFrames": 4,
+            "frames": 102,
+            "memory": {
+              "geometries": 153,
+              "textures": 109
+            },
+            "programs": 59
+          },
+          {
+            "type": "mangled",
+            "firstCpu": 3.4000000059604645,
+            "maxCpu": 4.399999998509884,
+            "buildMax": 2,
+            "medianCpu": 1.7000000029802322,
+            "p95Cpu": 3.100000001490116,
+            "maxRaf": 4.600000001490116,
+            "appearanceMs": 169.70000000298023,
+            "waitFrames": 39,
+            "frames": 137,
+            "memory": {
+              "geometries": 254,
+              "textures": 109
+            },
+            "programs": 60
+          },
+          {
+            "type": "mimicry",
+            "firstCpu": 1.5,
+            "maxCpu": 2.899999998509884,
+            "buildMax": 0.3999999985098839,
+            "medianCpu": 1.3999999985098839,
+            "p95Cpu": 2.3000000044703484,
+            "maxRaf": 4.4000000059604645,
+            "appearanceMs": 62.900000005960464,
+            "waitFrames": 14,
+            "frames": 111,
+            "memory": {
+              "geometries": 158,
+              "textures": 109
+            },
+            "programs": 60
+          },
+          {
+            "type": "mirrorself",
+            "firstCpu": 1.6000000014901161,
+            "maxCpu": 2.6999999955296516,
+            "buildMax": 0.20000000298023224,
+            "medianCpu": 1.2000000029802322,
+            "p95Cpu": 2.2000000029802322,
+            "maxRaf": 4.399999998509884,
+            "appearanceMs": 29.399999998509884,
+            "waitFrames": 6,
+            "frames": 104,
+            "memory": {
+              "geometries": 155,
+              "textures": 109
+            },
+            "programs": 59
+          },
+          {
+            "type": "nguithr",
+            "firstCpu": 2.2999999970197678,
+            "maxCpu": 3,
+            "buildMax": 1.0999999940395355,
+            "medianCpu": 1.5,
+            "p95Cpu": 2.600000001490116,
+            "maxRaf": 4.300000004470348,
+            "appearanceMs": 64.30000000447035,
+            "waitFrames": 14,
+            "frames": 112,
+            "memory": {
+              "geometries": 188,
+              "textures": 109
+            },
+            "programs": 59
+          },
+          {
+            "type": "partygoer",
+            "firstCpu": 2.5,
+            "maxCpu": 3,
+            "buildMax": 1,
+            "medianCpu": 1.5,
+            "p95Cpu": 2.600000001490116,
+            "maxRaf": 4.300000004470348,
+            "appearanceMs": 71.29999999701977,
+            "waitFrames": 16,
+            "frames": 114,
+            "memory": {
+              "geometries": 199,
+              "textures": 109
+            },
+            "programs": 59
+          },
+          {
+            "type": "pipeworm",
+            "firstCpu": 1.5,
+            "maxCpu": 2.600000001490116,
+            "buildMax": 0.4000000059604645,
+            "medianCpu": 1.2000000029802322,
+            "p95Cpu": 2.2999999970197678,
+            "maxRaf": 4.399999998509884,
+            "appearanceMs": 38,
+            "waitFrames": 8,
+            "frames": 106,
+            "memory": {
+              "geometries": 164,
+              "textures": 109
+            },
+            "programs": 59
+          },
+          {
+            "type": "seated",
+            "firstCpu": 1.2999999970197678,
+            "maxCpu": 2.5,
+            "buildMax": 0.3999999985098839,
+            "medianCpu": 1.1000000014901161,
+            "p95Cpu": 2,
+            "maxRaf": 4.399999998509884,
+            "appearanceMs": 38,
+            "waitFrames": 8,
+            "frames": 106,
+            "memory": {
+              "geometries": 166,
+              "textures": 109
+            },
+            "programs": 59
+          },
+          {
+            "type": "skinstealer",
+            "firstCpu": 4.799999997019768,
+            "maxCpu": 4.799999997019768,
+            "buildMax": 3.399999998509884,
+            "medianCpu": 1.1000000014901161,
+            "p95Cpu": 2.100000001490116,
+            "maxRaf": 5,
+            "appearanceMs": 33.900000005960464,
+            "waitFrames": 7,
+            "frames": 105,
+            "memory": {
+              "geometries": 146,
+              "textures": 112
+            },
+            "programs": 59
+          },
+          {
+            "type": "smiler",
+            "firstCpu": 3.5,
+            "maxCpu": 3.7999999970197678,
+            "buildMax": 2.4000000059604645,
+            "medianCpu": 1.2999999970197678,
+            "p95Cpu": 2.5,
+            "maxRaf": 5.100000001490116,
+            "appearanceMs": 154.60000000149012,
+            "waitFrames": 36,
+            "frames": 134,
+            "memory": {
+              "geometries": 159,
+              "textures": 111
+            },
+            "programs": 60
+          },
+          {
+            "type": "soilworm",
+            "firstCpu": 1.2999999970197678,
+            "maxCpu": 2.5,
+            "buildMax": 0.29999999701976776,
+            "medianCpu": 1.2999999970197678,
+            "p95Cpu": 2.2999999970197678,
+            "maxRaf": 4.399999998509884,
+            "appearanceMs": 37.899999998509884,
+            "waitFrames": 8,
+            "frames": 106,
+            "memory": {
+              "geometries": 162,
+              "textures": 111
+            },
+            "programs": 59
+          },
+          {
+            "type": "strider",
+            "firstCpu": 2.0999999940395355,
+            "maxCpu": 5.299999997019768,
+            "buildMax": 0.7999999970197678,
+            "medianCpu": 1.3999999985098839,
+            "p95Cpu": 2.5,
+            "maxRaf": 5.699999995529652,
+            "appearanceMs": 64.30000000447035,
+            "waitFrames": 14,
+            "frames": 112,
+            "memory": {
+              "geometries": 191,
+              "textures": 111
+            },
+            "programs": 59
+          },
+          {
+            "type": "thething",
+            "firstCpu": 49.80000000447035,
+            "maxCpu": 49.80000000447035,
+            "buildMax": 48.30000000447035,
+            "medianCpu": 2.3000000044703484,
+            "p95Cpu": 5.699999995529652,
+            "maxRaf": 50.399999998509884,
+            "appearanceMs": 863.8999999985099,
+            "waitFrames": 193,
+            "frames": 275,
+            "memory": {
+              "geometries": 304,
+              "textures": 113
+            },
+            "programs": 66
+          },
+          {
+            "type": "tiny",
+            "firstCpu": 4.200000002980232,
+            "maxCpu": 4.399999998509884,
+            "buildMax": 1.5,
+            "medianCpu": 1.8999999985098839,
+            "p95Cpu": 3.3000000044703484,
+            "maxRaf": 4.700000002980232,
+            "appearanceMs": 88.60000000149012,
+            "waitFrames": 20,
+            "frames": 118,
+            "memory": {
+              "geometries": 210,
+              "textures": 113
+            },
+            "programs": 60
+          },
+          {
+            "type": "vendingmachine",
+            "firstCpu": 1.8999999985098839,
+            "maxCpu": 3.5,
+            "buildMax": 0.5,
+            "medianCpu": 1.6000000014901161,
+            "p95Cpu": 2.8000000044703484,
+            "maxRaf": 4.399999998509884,
+            "appearanceMs": 28.30000000447035,
+            "waitFrames": 6,
+            "frames": 104,
+            "memory": {
+              "geometries": 160,
+              "textures": 113
+            },
+            "programs": 60
+          },
+          {
+            "type": "vmad",
+            "firstCpu": 3.399999998509884,
+            "maxCpu": 3.399999998509884,
+            "buildMax": 0.6000000014901161,
+            "medianCpu": 1.3000000044703484,
+            "p95Cpu": 2.5,
+            "maxRaf": 4.300000004470348,
+            "appearanceMs": 55.600000001490116,
+            "waitFrames": 12,
+            "frames": 110,
+            "memory": {
+              "geometries": 180,
+              "textures": 113
+            },
+            "programs": 60
+          },
+          {
+            "type": "watcher",
+            "firstCpu": 2,
+            "maxCpu": 3,
+            "buildMax": 0.7000000029802322,
+            "medianCpu": 1.5,
+            "p95Cpu": 2.600000001490116,
+            "maxRaf": 4.399999998509884,
+            "appearanceMs": 54.69999999552965,
+            "waitFrames": 12,
+            "frames": 109,
+            "memory": {
+              "geometries": 178,
+              "textures": 113
+            },
+            "programs": 60
+          },
+          {
+            "type": "windowent",
+            "firstCpu": 2.100000001490116,
+            "maxCpu": 3.100000001490116,
+            "buildMax": 0.7000000029802322,
+            "medianCpu": 1.6999999955296516,
+            "p95Cpu": 2.899999998509884,
+            "maxRaf": 4.399999998509884,
+            "appearanceMs": 83.80000000447035,
+            "waitFrames": 19,
+            "frames": 117,
+            "memory": {
+              "geometries": 169,
+              "textures": 113
+            },
+            "programs": 61
+          },
+          {
+            "type": "wrangler",
+            "firstCpu": 2.100000001490116,
+            "maxCpu": 2.899999998509884,
+            "buildMax": 0.6999999955296516,
+            "medianCpu": 1.5,
+            "p95Cpu": 2.600000001490116,
+            "maxRaf": 4.300000004470348,
+            "appearanceMs": 54.399999998509884,
+            "waitFrames": 12,
+            "frames": 110,
+            "memory": {
+              "geometries": 182,
+              "textures": 113
+            },
+            "programs": 60
+          },
+          {
+            "type": "wretch",
+            "firstCpu": 21.399999998509884,
+            "maxCpu": 36.79999999701977,
+            "buildMax": 19.600000001490116,
+            "medianCpu": 1.5,
+            "p95Cpu": 3.399999998509884,
+            "maxRaf": 86.79999999701977,
+            "appearanceMs": 705.7000000029802,
+            "waitFrames": 140,
+            "frames": 219,
+            "memory": {
+              "geometries": 147,
+              "textures": 117
+            },
+            "programs": 63
+          }
+        ]
+      },
+      "ok": true,
+      "cleanup": {
+        "browserExit": "SIGTERM",
+        "serverExit": "SIGTERM",
+        "profileRemoved": true
+      },
+      "errors": [],
+      "networkErrors": [
+        {
+          "requestId": "12492.12",
+          "loaderId": "E42728253B36D431E4462C4C68719AC2",
+          "timestamp": 38889.841679,
+          "type": "Other",
+          "response": {
+            "url": "http://127.0.0.1:3006/favicon.ico",
+            "status": 404,
+            "statusText": "Not Found",
+            "headers": {
+              "Keep-Alive": "timeout=5",
+              "Content-Length": "0",
+              "Date": "Thu, 15 Oct 2026 14:30:54 GMT",
+              "Vary": "Origin",
+              "Connection": "keep-alive"
+            },
+            "mimeType": "text/plain",
+            "charset": "",
+            "connectionReused": true,
+            "connectionId": 173,
+            "remoteIPAddress": "127.0.0.1",
+            "remotePort": 3006,
+            "fromDiskCache": false,
+            "fromServiceWorker": false,
+            "fromPrefetchCache": false,
+            "encodedDataLength": 143,
+            "timing": {
+              "requestTime": 38889.823353,
+              "proxyStart": -1,
+              "proxyEnd": -1,
+              "dnsStart": -1,
+              "dnsEnd": -1,
+              "connectStart": -1,
+              "connectEnd": -1,
+              "sslStart": -1,
+              "sslEnd": -1,
+              "workerStart": -1,
+              "workerReady": -1,
+              "workerFetchStart": -1,
+              "workerRespondWithSettled": -1,
+              "sendStart": 0.38,
+              "sendEnd": 0.442,
+              "pushStart": 0,
+              "pushEnd": 0,
+              "receiveHeadersStart": 17.51,
+              "receiveHeadersEnd": 17.652
+            },
+            "responseTime": 1792074654468.709,
+            "protocol": "http/1.1",
+            "alternateProtocolUsage": "unspecifiedReason",
+            "securityState": "secure"
+          },
+          "hasExtraInfo": true,
+          "frameId": "9CA322D4B03A614DE92D398C54AA3DD5"
+        }
+      ]
+    },
+    {
+      "run": "qa-entity-entry-1792074704604-64188",
+      "baseline": false,
+      "classic": false,
+      "port": 12783,
+      "cdp": 12784,
+      "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\rat-v80\\first-appearance-after-realistic\\round-2\\qa-entity-entry-1792074704604-64188",
+      "command": [
+        "C:/Program Files/Google/Chrome/Application/chrome.exe",
+        "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\rat-v80\\first-appearance-after-realistic\\round-2\\qa-entity-entry-1792074704604-64188",
+        "--remote-debugging-port=12784",
+        "--headless=new",
+        "--enable-automation",
+        "--no-first-run",
+        "--no-default-browser-check",
+        "--disable-background-networking",
+        "--window-size=1920,1080",
+        "--noerrdialogs",
+        "--flag-switches-begin",
+        "--flag-switches-end",
+        "about:blank"
+      ],
+      "browser": {
+        "protocolVersion": "1.3",
+        "product": "Chrome/155.0.8059.40",
+        "revision": "@cfaadc5a132d78e1828635aa8405a499f3e14864",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "jsVersion": "15.5.35.20"
+      },
+      "pids": {
+        "server": 8288,
+        "browser": 60212
+      },
+      "data": {
+        "seed": 20261006,
+        "level": 104,
+        "viewport": [
+          1920,
+          1080
+        ],
+        "mode": "realistic",
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "results": [
+          {
+            "type": "arachnid",
+            "firstCpu": 9,
+            "maxCpu": 10.800000004470348,
+            "buildMax": 4,
+            "medianCpu": 4.199999995529652,
+            "p95Cpu": 8.799999997019768,
+            "maxRaf": 11.300000004470348,
+            "appearanceMs": 80.20000000298023,
+            "waitFrames": 10,
+            "frames": 94,
+            "memory": {
+              "geometries": 174,
+              "textures": 89
+            },
+            "programs": 58
+          },
+          {
+            "type": "arcwraith",
+            "firstCpu": 2.100000001490116,
+            "maxCpu": 6.200000002980232,
+            "buildMax": 0.6000000014901161,
+            "medianCpu": 1.6999999955296516,
+            "p95Cpu": 3.5,
+            "maxRaf": 6.5,
+            "appearanceMs": 29.399999998509884,
+            "waitFrames": 6,
+            "frames": 104,
+            "memory": {
+              "geometries": 155,
+              "textures": 93
+            },
+            "programs": 58
+          },
+          {
+            "type": "arms",
+            "firstCpu": 1.7999999970197678,
+            "maxCpu": 3.600000001490116,
+            "buildMax": 0.3999999985098839,
+            "medianCpu": 1.5,
+            "p95Cpu": 2.7000000029802322,
+            "maxRaf": 4.300000004470348,
+            "appearanceMs": 20.899999998509884,
+            "waitFrames": 4,
+            "frames": 101,
+            "memory": {
+              "geometries": 152,
+              "textures": 93
+            },
+            "programs": 58
+          },
+          {
+            "type": "bellhop",
+            "firstCpu": 2.5,
+            "maxCpu": 6.600000001490116,
+            "buildMax": 0.8999999985098839,
+            "medianCpu": 1.7000000029802322,
+            "p95Cpu": 4.200000002980232,
+            "maxRaf": 5.600000001490116,
+            "appearanceMs": 37.899999998509884,
+            "waitFrames": 8,
+            "frames": 104,
+            "memory": {
+              "geometries": 167,
+              "textures": 93
+            },
+            "programs": 58
+          },
+          {
+            "type": "camocrawler",
+            "firstCpu": 5.399999998509884,
+            "maxCpu": 8.200000002980232,
+            "buildMax": 1.6999999955296516,
+            "medianCpu": 4.200000002980232,
+            "p95Cpu": 7.300000004470348,
+            "maxRaf": 8.5,
+            "appearanceMs": 70.89999999850988,
+            "waitFrames": 12,
+            "frames": 99,
+            "memory": {
+              "geometries": 181,
+              "textures": 93
+            },
+            "programs": 58
+          },
+          {
+            "type": "carrier",
+            "firstCpu": 4.899999998509884,
+            "maxCpu": 6.700000002980232,
+            "buildMax": 1.1000000014901161,
+            "medianCpu": 2.5999999940395355,
+            "p95Cpu": 4.4000000059604645,
+            "maxRaf": 7,
+            "appearanceMs": 43.099999994039536,
+            "waitFrames": 8,
+            "frames": 106,
+            "memory": {
+              "geometries": 163,
+              "textures": 93
+            },
+            "programs": 58
+          },
+          {
+            "type": "clump",
+            "firstCpu": 1.4000000059604645,
+            "maxCpu": 49.29999999701977,
+            "buildMax": 47.20000000298023,
+            "medianCpu": 3.5,
+            "p95Cpu": 6.600000001490116,
+            "maxRaf": 65.19999999552965,
+            "appearanceMs": 1050.8999999985099,
+            "waitFrames": 227,
+            "frames": 297,
+            "memory": {
+              "geometries": 150,
+              "textures": 95
+            },
+            "programs": 60
+          },
+          {
+            "type": "copierwraith",
+            "firstCpu": 2.5,
+            "maxCpu": 7.300000004470348,
+            "buildMax": 0.7000000029802322,
+            "medianCpu": 2.600000001490116,
+            "p95Cpu": 6.199999995529652,
+            "maxRaf": 13.699999995529652,
+            "appearanceMs": 178.30000000447035,
+            "waitFrames": 42,
+            "frames": 135,
+            "memory": {
+              "geometries": 154,
+              "textures": 94
+            },
+            "programs": 59
+          },
+          {
+            "type": "corpserat",
+            "firstCpu": 1.7999999970197678,
+            "maxCpu": 25.700000002980232,
+            "buildMax": 21.700000002980232,
+            "medianCpu": 3.2000000029802322,
+            "p95Cpu": 6.700000002980232,
+            "maxRaf": 53.20000000298023,
+            "appearanceMs": 1109.0999999940395,
+            "waitFrames": 236,
+            "frames": 327,
+            "memory": {
+              "geometries": 170,
+              "textures": 97
+            },
+            "programs": 63
+          },
+          {
+            "type": "curabitur",
+            "firstCpu": 4.5,
+            "maxCpu": 8.699999995529652,
+            "buildMax": 2.7999999970197678,
+            "medianCpu": 1.8999999985098839,
+            "p95Cpu": 5.0999999940395355,
+            "maxRaf": 55.20000000298023,
+            "appearanceMs": 665.8999999985099,
+            "waitFrames": 158,
+            "frames": 239,
+            "memory": {
+              "geometries": 198,
+              "textures": 97
+            },
+            "programs": 62
+          },
+          {
+            "type": "deathmoth",
+            "firstCpu": 1.7999999970197678,
+            "maxCpu": 24.899999998509884,
+            "buildMax": 19.600000001490116,
+            "medianCpu": 4.600000001490116,
+            "p95Cpu": 11,
+            "maxRaf": 290.3999999985099,
+            "appearanceMs": 1422.2000000029802,
+            "waitFrames": 241,
+            "frames": 269,
+            "memory": {
+              "geometries": 150,
+              "textures": 102
+            },
+            "programs": 64
+          },
+          {
+            "type": "dryshrimp",
+            "firstCpu": 3.899999998509884,
+            "maxCpu": 8.900000005960464,
+            "buildMax": 1.1999999955296516,
+            "medianCpu": 2.399999998509884,
+            "p95Cpu": 5.399999998509884,
+            "maxRaf": 9.200000002980232,
+            "appearanceMs": 55.79999999701977,
+            "waitFrames": 10,
+            "frames": 106,
+            "memory": {
+              "geometries": 173,
+              "textures": 101
+            },
+            "programs": 59
+          },
+          {
+            "type": "duller",
+            "firstCpu": 37.100000001490116,
+            "maxCpu": 37.100000001490116,
+            "buildMax": 35.30000000447035,
+            "medianCpu": 4.200000002980232,
+            "p95Cpu": 8.699999995529652,
+            "maxRaf": 92.29999999701977,
+            "appearanceMs": 1290.7999999970198,
+            "waitFrames": 228,
+            "frames": 291,
+            "memory": {
+              "geometries": 179,
+              "textures": 105
+            },
+            "programs": 63
+          },
+          {
+            "type": "faceling",
+            "firstCpu": 15.599999994039536,
+            "maxCpu": 15.599999994039536,
+            "buildMax": 11.800000004470348,
+            "medianCpu": 3.0999999940395355,
+            "p95Cpu": 7.300000004470348,
+            "maxRaf": 16.799999997019768,
+            "appearanceMs": 72.59999999403954,
+            "waitFrames": 8,
+            "frames": 103,
+            "memory": {
+              "geometries": 146,
+              "textures": 108
+            },
+            "programs": 59
+          },
+          {
+            "type": "ferren",
+            "firstCpu": 2.100000001490116,
+            "maxCpu": 8.100000001490116,
+            "buildMax": 0.3999999985098839,
+            "medianCpu": 3,
+            "p95Cpu": 6.699999995529652,
+            "maxRaf": 8.5,
+            "appearanceMs": 27.200000002980232,
+            "waitFrames": 6,
+            "frames": 99,
+            "memory": {
+              "geometries": 157,
+              "textures": 107
+            },
+            "programs": 59
+          },
+          {
+            "type": "hound",
+            "firstCpu": 43.70000000298023,
+            "maxCpu": 43.70000000298023,
+            "buildMax": 39.20000000298023,
+            "medianCpu": 4.100000001490116,
+            "p95Cpu": 8,
+            "maxRaf": 46.70000000298023,
+            "appearanceMs": 375.30000000447035,
+            "waitFrames": 55,
+            "frames": 143,
+            "memory": {
+              "geometries": 169,
+              "textures": 109
+            },
+            "programs": 63
+          },
+          {
+            "type": "jerry",
+            "firstCpu": 5.100000001490116,
+            "maxCpu": 8.300000004470348,
+            "buildMax": 0.6000000014901161,
+            "medianCpu": 4.199999995529652,
+            "p95Cpu": 7.799999997019768,
+            "maxRaf": 8.600000001490116,
+            "appearanceMs": 44,
+            "waitFrames": 6,
+            "frames": 95,
+            "memory": {
+              "geometries": 159,
+              "textures": 109
+            },
+            "programs": 59
+          },
+          {
+            "type": "lightguide",
+            "firstCpu": 3.2999999970197678,
+            "maxCpu": 8.700000002980232,
+            "buildMax": 0.6999999955296516,
+            "medianCpu": 4.299999997019768,
+            "p95Cpu": 8.199999995529652,
+            "maxRaf": 9.100000001490116,
+            "appearanceMs": 28.30000000447035,
+            "waitFrames": 6,
+            "frames": 88,
+            "memory": {
+              "geometries": 158,
+              "textures": 109
+            },
+            "programs": 59
+          },
+          {
+            "type": "malady",
+            "firstCpu": 8.299999997019768,
+            "maxCpu": 10.400000005960464,
+            "buildMax": 0.5,
+            "medianCpu": 4.899999998509884,
+            "p95Cpu": 9.100000001490116,
+            "maxRaf": 10.800000004470348,
+            "appearanceMs": 36.5,
+            "waitFrames": 4,
+            "frames": 76,
+            "memory": {
+              "geometries": 153,
+              "textures": 109
+            },
+            "programs": 59
+          },
+          {
+            "type": "mangled",
+            "firstCpu": 10.200000002980232,
+            "maxCpu": 11.900000005960464,
+            "buildMax": 5.299999997019768,
+            "medianCpu": 5.5,
+            "p95Cpu": 10.299999997019768,
+            "maxRaf": 12.200000002980232,
+            "appearanceMs": 257.3999999985099,
+            "waitFrames": 43,
+            "frames": 107,
+            "memory": {
+              "geometries": 254,
+              "textures": 109
+            },
+            "programs": 60
+          },
+          {
+            "type": "mimicry",
+            "firstCpu": 5.399999998509884,
+            "maxCpu": 8.700000002980232,
+            "buildMax": 1,
+            "medianCpu": 3.1999999955296516,
+            "p95Cpu": 6.799999997019768,
+            "maxRaf": 9,
+            "appearanceMs": 105.5,
+            "waitFrames": 21,
+            "frames": 111,
+            "memory": {
+              "geometries": 158,
+              "textures": 109
+            },
+            "programs": 60
+          },
+          {
+            "type": "mirrorself",
+            "firstCpu": 4.100000001490116,
+            "maxCpu": 7.699999995529652,
+            "buildMax": 0.5,
+            "medianCpu": 2.899999998509884,
+            "p95Cpu": 6.5,
+            "maxRaf": 8.100000001490116,
+            "appearanceMs": 31.899999998509884,
+            "waitFrames": 6,
+            "frames": 103,
+            "memory": {
+              "geometries": 155,
+              "textures": 109
+            },
+            "programs": 59
+          },
+          {
+            "type": "nguithr",
+            "firstCpu": 2.600000001490116,
+            "maxCpu": 7.100000001490116,
+            "buildMax": 1,
+            "medianCpu": 2.2999999970197678,
+            "p95Cpu": 6.5,
+            "maxRaf": 7.4000000059604645,
+            "appearanceMs": 71.10000000149012,
+            "waitFrames": 14,
+            "frames": 112,
+            "memory": {
+              "geometries": 188,
+              "textures": 109
+            },
+            "programs": 59
+          },
+          {
+            "type": "partygoer",
+            "firstCpu": 3,
+            "maxCpu": 9.5,
+            "buildMax": 1.4000000059604645,
+            "medianCpu": 3.5,
+            "p95Cpu": 6,
+            "maxRaf": 9.800000004470348,
+            "appearanceMs": 77.79999999701977,
+            "waitFrames": 16,
+            "frames": 107,
+            "memory": {
+              "geometries": 199,
+              "textures": 109
+            },
+            "programs": 59
+          },
+          {
+            "type": "pipeworm",
+            "firstCpu": 2.1999999955296516,
+            "maxCpu": 8.399999998509884,
+            "buildMax": 0.5,
+            "medianCpu": 4.200000002980232,
+            "p95Cpu": 7.799999997019768,
+            "maxRaf": 9.100000001490116,
+            "appearanceMs": 43.600000001490116,
+            "waitFrames": 8,
+            "frames": 91,
+            "memory": {
+              "geometries": 164,
+              "textures": 109
+            },
+            "programs": 59
+          },
+          {
+            "type": "seated",
+            "firstCpu": 4.200000002980232,
+            "maxCpu": 9.400000005960464,
+            "buildMax": 0.3999999985098839,
+            "medianCpu": 4.399999998509884,
+            "p95Cpu": 8.5,
+            "maxRaf": 9.800000004470348,
+            "appearanceMs": 42.70000000298023,
+            "waitFrames": 8,
+            "frames": 88,
+            "memory": {
+              "geometries": 166,
+              "textures": 109
+            },
+            "programs": 59
+          },
+          {
+            "type": "skinstealer",
+            "firstCpu": 15.399999998509884,
+            "maxCpu": 15.399999998509884,
+            "buildMax": 10.699999995529652,
+            "medianCpu": 5.300000004470348,
+            "p95Cpu": 9.399999998509884,
+            "maxRaf": 16.399999998509884,
+            "appearanceMs": 76.79999999701977,
+            "waitFrames": 8,
+            "frames": 71,
+            "memory": {
+              "geometries": 146,
+              "textures": 113
+            },
+            "programs": 59
+          },
+          {
+            "type": "smiler",
+            "firstCpu": 15.899999998509884,
+            "maxCpu": 15.899999998509884,
+            "buildMax": 7.5999999940395355,
+            "medianCpu": 4.800000004470348,
+            "p95Cpu": 9.200000002980232,
+            "maxRaf": 30.200000002980232,
+            "appearanceMs": 397.20000000298023,
+            "waitFrames": 63,
+            "frames": 132,
+            "memory": {
+              "geometries": 159,
+              "textures": 112
+            },
+            "programs": 60
+          },
+          {
+            "type": "soilworm",
+            "firstCpu": 5.399999998509884,
+            "maxCpu": 9.400000005960464,
+            "buildMax": 0.9000000059604645,
+            "medianCpu": 4.5999999940395355,
+            "p95Cpu": 8.5,
+            "maxRaf": 9.900000005960464,
+            "appearanceMs": 51.600000001490116,
+            "waitFrames": 8,
+            "frames": 87,
+            "memory": {
+              "geometries": 162,
+              "textures": 112
+            },
+            "programs": 59
+          },
+          {
+            "type": "strider",
+            "firstCpu": 6,
+            "maxCpu": 12,
+            "buildMax": 1.5999999940395355,
+            "medianCpu": 5.5999999940395355,
+            "p95Cpu": 11,
+            "maxRaf": 12.399999998509884,
+            "appearanceMs": 89.60000000149012,
+            "waitFrames": 14,
+            "frames": 73,
+            "memory": {
+              "geometries": 191,
+              "textures": 112
+            },
+            "programs": 59
+          },
+          {
+            "type": "thething",
+            "firstCpu": 131.69999999552965,
+            "maxCpu": 131.69999999552965,
+            "buildMax": 122.70000000298023,
+            "medianCpu": 5.799999997019768,
+            "p95Cpu": 11.700000002980232,
+            "maxRaf": 132.89999999850988,
+            "appearanceMs": 1941.2999999970198,
+            "waitFrames": 245,
+            "frames": 293,
+            "memory": {
+              "geometries": 313,
+              "textures": 114
+            },
+            "programs": 68
+          },
+          {
+            "type": "tiny",
+            "firstCpu": 8.399999998509884,
+            "maxCpu": 8.899999998509884,
+            "buildMax": 3.2999999970197678,
+            "medianCpu": 3.8000000044703484,
+            "p95Cpu": 8.199999995529652,
+            "maxRaf": 9.399999998509884,
+            "appearanceMs": 129.19999999552965,
+            "waitFrames": 20,
+            "frames": 111,
+            "memory": {
+              "geometries": 210,
+              "textures": 114
+            },
+            "programs": 60
+          },
+          {
+            "type": "vendingmachine",
+            "firstCpu": 2.5999999940395355,
+            "maxCpu": 7.799999997019768,
+            "buildMax": 0.7000000029802322,
+            "medianCpu": 3.7000000029802322,
+            "p95Cpu": 6,
+            "maxRaf": 8.100000001490116,
+            "appearanceMs": 29.600000001490116,
+            "waitFrames": 6,
+            "frames": 99,
+            "memory": {
+              "geometries": 160,
+              "textures": 114
+            },
+            "programs": 60
+          },
+          {
+            "type": "vmad",
+            "firstCpu": 5.399999998509884,
+            "maxCpu": 10.800000004470348,
+            "buildMax": 1.1000000014901161,
+            "medianCpu": 4.800000004470348,
+            "p95Cpu": 8.700000002980232,
+            "maxRaf": 11.200000002980232,
+            "appearanceMs": 68.60000000149012,
+            "waitFrames": 12,
+            "frames": 85,
+            "memory": {
+              "geometries": 180,
+              "textures": 114
+            },
+            "programs": 60
+          },
+          {
+            "type": "watcher",
+            "firstCpu": 11.199999995529652,
+            "maxCpu": 11.199999995529652,
+            "buildMax": 2.100000001490116,
+            "medianCpu": 4.799999997019768,
+            "p95Cpu": 8.600000001490116,
+            "maxRaf": 11.599999994039536,
+            "appearanceMs": 82.5,
+            "waitFrames": 12,
+            "frames": 86,
+            "memory": {
+              "geometries": 178,
+              "textures": 114
+            },
+            "programs": 60
+          },
+          {
+            "type": "windowent",
+            "firstCpu": 5.100000001490116,
+            "maxCpu": 9.600000001490116,
+            "buildMax": 1.2999999970197678,
+            "medianCpu": 4.600000001490116,
+            "p95Cpu": 8.5,
+            "maxRaf": 9.900000005960464,
+            "appearanceMs": 124.10000000149012,
+            "waitFrames": 22,
+            "frames": 100,
+            "memory": {
+              "geometries": 169,
+              "textures": 114
+            },
+            "programs": 61
+          },
+          {
+            "type": "wrangler",
+            "firstCpu": 7,
+            "maxCpu": 10.600000001490116,
+            "buildMax": 1.7999999970197678,
+            "medianCpu": 4.899999998509884,
+            "p95Cpu": 9.100000001490116,
+            "maxRaf": 10.899999998509884,
+            "appearanceMs": 88.29999999701977,
+            "waitFrames": 12,
+            "frames": 86,
+            "memory": {
+              "geometries": 182,
+              "textures": 114
+            },
+            "programs": 60
+          },
+          {
+            "type": "wretch",
+            "firstCpu": 47.29999999701977,
+            "maxCpu": 198.79999999701977,
+            "buildMax": 42.900000005960464,
+            "medianCpu": 4.5,
+            "p95Cpu": 8.399999998509884,
+            "maxRaf": 199.39999999850988,
+            "appearanceMs": 1354.3999999985099,
+            "waitFrames": 220,
+            "frames": 252,
+            "memory": {
+              "geometries": 147,
+              "textures": 118
+            },
+            "programs": 63
+          }
+        ]
+      },
+      "ok": true,
+      "cleanup": {
+        "browserExit": "SIGTERM",
+        "serverExit": "SIGTERM",
+        "profileRemoved": true
+      },
+      "errors": [],
+      "networkErrors": [
+        {
+          "requestId": "54124.12",
+          "loaderId": "9157A82A73654B19D1F7E5A1E3635D26",
+          "timestamp": 38950.042637,
+          "type": "Other",
+          "response": {
+            "url": "http://127.0.0.1:12783/favicon.ico",
+            "status": 404,
+            "statusText": "Not Found",
+            "headers": {
+              "Keep-Alive": "timeout=5",
+              "Content-Length": "0",
+              "Date": "Thu, 15 Oct 2026 14:31:54 GMT",
+              "Vary": "Origin",
+              "Connection": "keep-alive"
+            },
+            "mimeType": "text/plain",
+            "charset": "",
+            "connectionReused": true,
+            "connectionId": 120,
+            "remoteIPAddress": "127.0.0.1",
+            "remotePort": 12783,
+            "fromDiskCache": false,
+            "fromServiceWorker": false,
+            "fromPrefetchCache": false,
+            "encodedDataLength": 143,
+            "timing": {
+              "requestTime": 38949.843242,
+              "proxyStart": -1,
+              "proxyEnd": -1,
+              "dnsStart": -1,
+              "dnsEnd": -1,
+              "connectStart": -1,
+              "connectEnd": -1,
+              "sslStart": -1,
+              "sslEnd": -1,
+              "workerStart": -1,
+              "workerReady": -1,
+              "workerFetchStart": -1,
+              "workerRespondWithSettled": -1,
+              "sendStart": 0.387,
+              "sendEnd": 0.458,
+              "pushStart": 0,
+              "pushEnd": 0,
+              "receiveHeadersStart": 198.532,
+              "receiveHeadersEnd": 198.709
+            },
+            "responseTime": 1792074714669.619,
+            "protocol": "http/1.1",
+            "alternateProtocolUsage": "unspecifiedReason",
+            "securityState": "secure"
+          },
+          "hasExtraInfo": true,
+          "frameId": "E20EDA27C15316DFCD27D371F2B39BE1"
+        }
+      ]
+    },
+    {
+      "run": "qa-entity-entry-1792074762288-55648",
+      "baseline": false,
+      "classic": false,
+      "port": 1380,
+      "cdp": 1381,
+      "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\rat-v80\\first-appearance-after-realistic\\round-3\\qa-entity-entry-1792074762288-55648",
+      "command": [
+        "C:/Program Files/Google/Chrome/Application/chrome.exe",
+        "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\rat-v80\\first-appearance-after-realistic\\round-3\\qa-entity-entry-1792074762288-55648",
+        "--remote-debugging-port=1381",
+        "--headless=new",
+        "--enable-automation",
+        "--no-first-run",
+        "--no-default-browser-check",
+        "--disable-background-networking",
+        "--window-size=1920,1080",
+        "--noerrdialogs",
+        "--flag-switches-begin",
+        "--flag-switches-end",
+        "about:blank"
+      ],
+      "browser": {
+        "protocolVersion": "1.3",
+        "product": "Chrome/155.0.8059.40",
+        "revision": "@cfaadc5a132d78e1828635aa8405a499f3e14864",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "jsVersion": "15.5.35.20"
+      },
+      "pids": {
+        "server": 38240,
+        "browser": 17584
+      },
+      "data": {
+        "seed": 20261006,
+        "level": 104,
+        "viewport": [
+          1920,
+          1080
+        ],
+        "mode": "realistic",
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "results": [
+          {
+            "type": "arachnid",
+            "firstCpu": 19.399999998509884,
+            "maxCpu": 19.399999998509884,
+            "buildMax": 8.900000005960464,
+            "medianCpu": 3.2000000029802322,
+            "p95Cpu": 7.600000001490116,
+            "maxRaf": 19.799999997019768,
+            "appearanceMs": 102.70000000298023,
+            "waitFrames": 10,
+            "frames": 104,
+            "memory": {
+              "geometries": 174,
+              "textures": 93
+            },
+            "programs": 58
+          },
+          {
+            "type": "arcwraith",
+            "firstCpu": 2.2000000029802322,
+            "maxCpu": 11.200000002980232,
+            "buildMax": 0.5,
+            "medianCpu": 3.8000000044703484,
+            "p95Cpu": 7,
+            "maxRaf": 11.5,
+            "appearanceMs": 31.5,
+            "waitFrames": 6,
+            "frames": 94,
+            "memory": {
+              "geometries": 155,
+              "textures": 93
+            },
+            "programs": 58
+          },
+          {
+            "type": "arms",
+            "firstCpu": 2.0999999940395355,
+            "maxCpu": 6.299999997019768,
+            "buildMax": 0.5999999940395355,
+            "medianCpu": 2.600000001490116,
+            "p95Cpu": 5.399999998509884,
+            "maxRaf": 6.600000001490116,
+            "appearanceMs": 20.899999998509884,
+            "waitFrames": 4,
+            "frames": 101,
+            "memory": {
+              "geometries": 152,
+              "textures": 93
+            },
+            "programs": 58
+          },
+          {
+            "type": "bellhop",
+            "firstCpu": 2.2999999970197678,
+            "maxCpu": 6.100000001490116,
+            "buildMax": 0.7999999970197678,
+            "medianCpu": 1.7999999970197678,
+            "p95Cpu": 3.5,
+            "maxRaf": 6.399999998509884,
+            "appearanceMs": 38.100000001490116,
+            "waitFrames": 8,
+            "frames": 106,
+            "memory": {
+              "geometries": 167,
+              "textures": 93
+            },
+            "programs": 58
+          },
+          {
+            "type": "camocrawler",
+            "firstCpu": 2,
+            "maxCpu": 6.5999999940395355,
+            "buildMax": 0.7999999970197678,
+            "medianCpu": 1.8000000044703484,
+            "p95Cpu": 4.100000001490116,
+            "maxRaf": 6.899999998509884,
+            "appearanceMs": 54.70000000298023,
+            "waitFrames": 12,
+            "frames": 109,
+            "memory": {
+              "geometries": 181,
+              "textures": 93
+            },
+            "programs": 58
+          },
+          {
+            "type": "carrier",
+            "firstCpu": 2,
+            "maxCpu": 7.700000002980232,
+            "buildMax": 0.6000000014901161,
+            "medianCpu": 2,
+            "p95Cpu": 5,
+            "maxRaf": 8.100000001490116,
+            "appearanceMs": 36.100000001490116,
+            "waitFrames": 8,
+            "frames": 102,
+            "memory": {
+              "geometries": 163,
+              "textures": 93
+            },
+            "programs": 58
+          },
+          {
+            "type": "clump",
+            "firstCpu": 4,
+            "maxCpu": 72.30000000447035,
+            "buildMax": 68,
+            "medianCpu": 3.6999999955296516,
+            "p95Cpu": 7.5,
+            "maxRaf": 72.60000000149012,
+            "appearanceMs": 1423.3000000044703,
+            "waitFrames": 277,
+            "frames": 359,
+            "memory": {
+              "geometries": 150,
+              "textures": 95
+            },
+            "programs": 60
+          },
+          {
+            "type": "copierwraith",
+            "firstCpu": 5.100000001490116,
+            "maxCpu": 6.299999997019768,
+            "buildMax": 0.8000000044703484,
+            "medianCpu": 1.7999999970197678,
+            "p95Cpu": 4,
+            "maxRaf": 7.799999997019768,
+            "appearanceMs": 183.79999999701977,
+            "waitFrames": 43,
+            "frames": 139,
+            "memory": {
+              "geometries": 154,
+              "textures": 94
+            },
+            "programs": 59
+          },
+          {
+            "type": "corpserat",
+            "firstCpu": 2.100000001490116,
+            "maxCpu": 68.70000000298023,
+            "buildMax": 62.29999999701977,
+            "medianCpu": 3.899999998509884,
+            "p95Cpu": 7.600000001490116,
+            "maxRaf": 68.89999999850988,
+            "appearanceMs": 1204.7000000029802,
+            "waitFrames": 217,
+            "frames": 289,
+            "memory": {
+              "geometries": 170,
+              "textures": 97
+            },
+            "programs": 63
+          },
+          {
+            "type": "curabitur",
+            "firstCpu": 7.100000001490116,
+            "maxCpu": 9.700000002980232,
+            "buildMax": 3.399999998509884,
+            "medianCpu": 3.2000000029802322,
+            "p95Cpu": 8.100000001490116,
+            "maxRaf": 73.5,
+            "appearanceMs": 770.5,
+            "waitFrames": 176,
+            "frames": 234,
+            "memory": {
+              "geometries": 198,
+              "textures": 97
+            },
+            "programs": 62
+          },
+          {
+            "type": "deathmoth",
+            "firstCpu": 4.899999998509884,
+            "maxCpu": 51.900000005960464,
+            "buildMax": 39.80000000447035,
+            "medianCpu": 5.200000002980232,
+            "p95Cpu": 11.700000002980232,
+            "maxRaf": 325.69999999552965,
+            "appearanceMs": 1567,
+            "waitFrames": 228,
+            "frames": 248,
+            "memory": {
+              "geometries": 150,
+              "textures": 102
+            },
+            "programs": 64
+          },
+          {
+            "type": "dryshrimp",
+            "firstCpu": 5.5,
+            "maxCpu": 8.700000002980232,
+            "buildMax": 1.1999999955296516,
+            "medianCpu": 4.300000004470348,
+            "p95Cpu": 8.200000002980232,
+            "maxRaf": 9.100000001490116,
+            "appearanceMs": 59.30000000447035,
+            "waitFrames": 10,
+            "frames": 93,
+            "memory": {
+              "geometries": 173,
+              "textures": 101
+            },
+            "programs": 59
+          },
+          {
+            "type": "duller",
+            "firstCpu": 52.70000000298023,
+            "maxCpu": 52.70000000298023,
+            "buildMax": 51.100000001490116,
+            "medianCpu": 3.5,
+            "p95Cpu": 7.600000001490116,
+            "maxRaf": 119.19999999552965,
+            "appearanceMs": 1134.6999999955297,
+            "waitFrames": 214,
+            "frames": 292,
+            "memory": {
+              "geometries": 179,
+              "textures": 105
+            },
+            "programs": 63
+          },
+          {
+            "type": "faceling",
+            "firstCpu": 10.300000004470348,
+            "maxCpu": 10.300000004470348,
+            "buildMax": 7,
+            "medianCpu": 1.5,
+            "p95Cpu": 4.600000001490116,
+            "maxRaf": 10.900000005960464,
+            "appearanceMs": 50,
+            "waitFrames": 8,
+            "frames": 107,
+            "memory": {
+              "geometries": 146,
+              "textures": 109
+            },
+            "programs": 59
+          },
+          {
+            "type": "ferren",
+            "firstCpu": 1.5,
+            "maxCpu": 3.6999999955296516,
+            "buildMax": 0.3999999985098839,
+            "medianCpu": 1.5,
+            "p95Cpu": 2.899999998509884,
+            "maxRaf": 4.300000004470348,
+            "appearanceMs": 28.700000002980232,
+            "waitFrames": 6,
+            "frames": 104,
+            "memory": {
+              "geometries": 157,
+              "textures": 108
+            },
+            "programs": 59
+          },
+          {
+            "type": "hound",
+            "firstCpu": 30.200000002980232,
+            "maxCpu": 30.200000002980232,
+            "buildMax": 24.30000000447035,
+            "medianCpu": 2.600000001490116,
+            "p95Cpu": 7.399999998509884,
+            "maxRaf": 41.399999998509884,
+            "appearanceMs": 363.70000000298023,
+            "waitFrames": 62,
+            "frames": 155,
+            "memory": {
+              "geometries": 169,
+              "textures": 110
+            },
+            "programs": 63
+          },
+          {
+            "type": "jerry",
+            "firstCpu": 2,
+            "maxCpu": 2.9000000059604645,
+            "buildMax": 0.5,
+            "medianCpu": 1.3999999985098839,
+            "p95Cpu": 2.5,
+            "maxRaf": 4.5,
+            "appearanceMs": 27.899999998509884,
+            "waitFrames": 6,
+            "frames": 103,
+            "memory": {
+              "geometries": 159,
+              "textures": 110
+            },
+            "programs": 59
+          },
+          {
+            "type": "lightguide",
+            "firstCpu": 2.100000001490116,
+            "maxCpu": 4.100000001490116,
+            "buildMax": 0.6000000014901161,
+            "medianCpu": 1.6000000014901161,
+            "p95Cpu": 2.899999998509884,
+            "maxRaf": 4.5,
+            "appearanceMs": 29.30000000447035,
+            "waitFrames": 6,
+            "frames": 103,
+            "memory": {
+              "geometries": 158,
+              "textures": 110
+            },
+            "programs": 59
+          },
+          {
+            "type": "malady",
+            "firstCpu": 2,
+            "maxCpu": 7.899999998509884,
+            "buildMax": 0.3999999985098839,
+            "medianCpu": 1.8999999985098839,
+            "p95Cpu": 4.5,
+            "maxRaf": 8.299999997019768,
+            "appearanceMs": 20.799999997019768,
+            "waitFrames": 4,
+            "frames": 99,
+            "memory": {
+              "geometries": 153,
+              "textures": 110
+            },
+            "programs": 59
+          },
+          {
+            "type": "mangled",
+            "firstCpu": 4.699999995529652,
+            "maxCpu": 12.299999997019768,
+            "buildMax": 2,
+            "medianCpu": 3.2000000029802322,
+            "p95Cpu": 7.399999998509884,
+            "maxRaf": 12.699999995529652,
+            "appearanceMs": 196.19999999552965,
+            "waitFrames": 45,
+            "frames": 126,
+            "memory": {
+              "geometries": 254,
+              "textures": 110
+            },
+            "programs": 60
+          },
+          {
+            "type": "mimicry",
+            "firstCpu": 1.8000000044703484,
+            "maxCpu": 3.600000001490116,
+            "buildMax": 0.5,
+            "medianCpu": 1.6999999955296516,
+            "p95Cpu": 3,
+            "maxRaf": 4.4000000059604645,
+            "appearanceMs": 75.80000000447035,
+            "waitFrames": 17,
+            "frames": 115,
+            "memory": {
+              "geometries": 158,
+              "textures": 110
+            },
+            "programs": 60
+          },
+          {
+            "type": "mirrorself",
+            "firstCpu": 1.5,
+            "maxCpu": 3.6999999955296516,
+            "buildMax": 0.29999999701976776,
+            "medianCpu": 1.3000000044703484,
+            "p95Cpu": 2.5,
+            "maxRaf": 4.399999998509884,
+            "appearanceMs": 29.200000002980232,
+            "waitFrames": 6,
+            "frames": 104,
+            "memory": {
+              "geometries": 155,
+              "textures": 110
+            },
+            "programs": 59
+          },
+          {
+            "type": "nguithr",
+            "firstCpu": 2.100000001490116,
+            "maxCpu": 5,
+            "buildMax": 1,
+            "medianCpu": 1.5,
+            "p95Cpu": 3.7999999970197678,
+            "maxRaf": 5.300000004470348,
+            "appearanceMs": 64.10000000149012,
+            "waitFrames": 14,
+            "frames": 111,
+            "memory": {
+              "geometries": 188,
+              "textures": 110
+            },
+            "programs": 59
+          },
+          {
+            "type": "partygoer",
+            "firstCpu": 2.899999998509884,
+            "maxCpu": 4.699999995529652,
+            "buildMax": 1.2000000029802322,
+            "medianCpu": 1.8999999985098839,
+            "p95Cpu": 3.4000000059604645,
+            "maxRaf": 5,
+            "appearanceMs": 72,
+            "waitFrames": 16,
+            "frames": 114,
+            "memory": {
+              "geometries": 199,
+              "textures": 110
+            },
+            "programs": 59
+          },
+          {
+            "type": "pipeworm",
+            "firstCpu": 2,
+            "maxCpu": 3.4000000059604645,
+            "buildMax": 0.5,
+            "medianCpu": 1.5,
+            "p95Cpu": 2.600000001490116,
+            "maxRaf": 4.399999998509884,
+            "appearanceMs": 36.69999999552965,
+            "waitFrames": 8,
+            "frames": 106,
+            "memory": {
+              "geometries": 164,
+              "textures": 110
+            },
+            "programs": 59
+          },
+          {
+            "type": "seated",
+            "firstCpu": 1.8999999985098839,
+            "maxCpu": 2.600000001490116,
+            "buildMax": 0.3999999985098839,
+            "medianCpu": 1.2999999970197678,
+            "p95Cpu": 2.2999999970197678,
+            "maxRaf": 4.700000002980232,
+            "appearanceMs": 37.400000005960464,
+            "waitFrames": 8,
+            "frames": 106,
+            "memory": {
+              "geometries": 166,
+              "textures": 110
+            },
+            "programs": 59
+          },
+          {
+            "type": "skinstealer",
+            "firstCpu": 4.899999998509884,
+            "maxCpu": 4.899999998509884,
+            "buildMax": 3.5,
+            "medianCpu": 1.1000000014901161,
+            "p95Cpu": 2,
+            "maxRaf": 5.299999997019768,
+            "appearanceMs": 37.79999999701977,
+            "waitFrames": 8,
+            "frames": 106,
+            "memory": {
+              "geometries": 146,
+              "textures": 114
+            },
+            "programs": 59
+          },
+          {
+            "type": "smiler",
+            "firstCpu": 3.3000000044703484,
+            "maxCpu": 6.200000002980232,
+            "buildMax": 2.4000000059604645,
+            "medianCpu": 1.8000000044703484,
+            "p95Cpu": 4.200000002980232,
+            "maxRaf": 8.399999998509884,
+            "appearanceMs": 171.70000000298023,
+            "waitFrames": 40,
+            "frames": 136,
+            "memory": {
+              "geometries": 159,
+              "textures": 113
+            },
+            "programs": 60
+          },
+          {
+            "type": "soilworm",
+            "firstCpu": 2.899999998509884,
+            "maxCpu": 5.399999998509884,
+            "buildMax": 0.5,
+            "medianCpu": 1.6000000014901161,
+            "p95Cpu": 2.899999998509884,
+            "maxRaf": 5.5999999940395355,
+            "appearanceMs": 37.600000001490116,
+            "waitFrames": 8,
+            "frames": 106,
+            "memory": {
+              "geometries": 162,
+              "textures": 113
+            },
+            "programs": 59
+          },
+          {
+            "type": "strider",
+            "firstCpu": 2,
+            "maxCpu": 5.100000001490116,
+            "buildMax": 0.7999999970197678,
+            "medianCpu": 1.8999999985098839,
+            "p95Cpu": 4.299999997019768,
+            "maxRaf": 5.299999997019768,
+            "appearanceMs": 62.599999994039536,
+            "waitFrames": 14,
+            "frames": 112,
+            "memory": {
+              "geometries": 191,
+              "textures": 113
+            },
+            "programs": 59
+          },
+          {
+            "type": "thething",
+            "firstCpu": 59.20000000298023,
+            "maxCpu": 59.20000000298023,
+            "buildMax": 56.899999998509884,
+            "medianCpu": 4.5,
+            "p95Cpu": 9.5,
+            "maxRaf": 59.80000000447035,
+            "appearanceMs": 1271.7999999970198,
+            "waitFrames": 234,
+            "frames": 289,
+            "memory": {
+              "geometries": 304,
+              "textures": 115
+            },
+            "programs": 66
+          },
+          {
+            "type": "tiny",
+            "firstCpu": 7.200000002980232,
+            "maxCpu": 9.600000001490116,
+            "buildMax": 2.5,
+            "medianCpu": 3.2000000029802322,
+            "p95Cpu": 8.299999997019768,
+            "maxRaf": 9.799999997019768,
+            "appearanceMs": 105.5,
+            "waitFrames": 20,
+            "frames": 108,
+            "memory": {
+              "geometries": 210,
+              "textures": 115
+            },
+            "programs": 60
+          },
+          {
+            "type": "vendingmachine",
+            "firstCpu": 5.100000001490116,
+            "maxCpu": 6.799999997019768,
+            "buildMax": 1.2000000029802322,
+            "medianCpu": 2.600000001490116,
+            "p95Cpu": 4.9000000059604645,
+            "maxRaf": 7.100000001490116,
+            "appearanceMs": 31.299999997019768,
+            "waitFrames": 6,
+            "frames": 104,
+            "memory": {
+              "geometries": 160,
+              "textures": 115
+            },
+            "programs": 60
+          },
+          {
+            "type": "vmad",
+            "firstCpu": 2.100000001490116,
+            "maxCpu": 7.899999998509884,
+            "buildMax": 0.5,
+            "medianCpu": 2.2999999970197678,
+            "p95Cpu": 4.799999997019768,
+            "maxRaf": 8.099999994039536,
+            "appearanceMs": 55.5,
+            "waitFrames": 12,
+            "frames": 108,
+            "memory": {
+              "geometries": 180,
+              "textures": 115
+            },
+            "programs": 60
+          },
+          {
+            "type": "watcher",
+            "firstCpu": 2.6999999955296516,
+            "maxCpu": 8.600000001490116,
+            "buildMax": 0.8999999985098839,
+            "medianCpu": 3.399999998509884,
+            "p95Cpu": 5.399999998509884,
+            "maxRaf": 8.899999998509884,
+            "appearanceMs": 55.20000000298023,
+            "waitFrames": 12,
+            "frames": 107,
+            "memory": {
+              "geometries": 178,
+              "textures": 115
+            },
+            "programs": 60
+          },
+          {
+            "type": "windowent",
+            "firstCpu": 3.7999999970197678,
+            "maxCpu": 5.699999995529652,
+            "buildMax": 0.6999999955296516,
+            "medianCpu": 1.7999999970197678,
+            "p95Cpu": 3.5999999940395355,
+            "maxRaf": 5.899999998509884,
+            "appearanceMs": 80.59999999403954,
+            "waitFrames": 18,
+            "frames": 115,
+            "memory": {
+              "geometries": 169,
+              "textures": 115
+            },
+            "programs": 61
+          },
+          {
+            "type": "wrangler",
+            "firstCpu": 2.5,
+            "maxCpu": 3.7000000029802322,
+            "buildMax": 0.7000000029802322,
+            "medianCpu": 1.6999999955296516,
+            "p95Cpu": 3,
+            "maxRaf": 4.4000000059604645,
+            "appearanceMs": 53.20000000298023,
+            "waitFrames": 12,
+            "frames": 109,
+            "memory": {
+              "geometries": 182,
+              "textures": 115
+            },
+            "programs": 60
+          },
+          {
+            "type": "wretch",
+            "firstCpu": 26.700000002980232,
+            "maxCpu": 143.10000000149012,
+            "buildMax": 24.80000000447035,
+            "medianCpu": 3.100000001490116,
+            "p95Cpu": 7,
+            "maxRaf": 143.39999999850988,
+            "appearanceMs": 867.1000000014901,
+            "waitFrames": 176,
+            "frames": 228,
+            "memory": {
+              "geometries": 147,
+              "textures": 119
+            },
+            "programs": 63
+          }
+        ]
+      },
+      "ok": true,
+      "cleanup": {
+        "browserExit": "SIGTERM",
+        "serverExit": "SIGTERM",
+        "profileRemoved": true
+      },
+      "errors": [],
+      "networkErrors": [
+        {
+          "requestId": "3488.12",
+          "loaderId": "C2C3487806D59EF9AEDFDA5A3F2E40A9",
+          "timestamp": 39012.921531,
+          "type": "Other",
+          "response": {
+            "url": "http://127.0.0.1:1380/favicon.ico",
+            "status": 404,
+            "statusText": "Not Found",
+            "headers": {
+              "Keep-Alive": "timeout=5",
+              "Content-Length": "0",
+              "Date": "Thu, 15 Oct 2026 14:32:56 GMT",
+              "Vary": "Origin",
+              "Connection": "keep-alive"
+            },
+            "mimeType": "text/plain",
+            "charset": "",
+            "connectionReused": true,
+            "connectionId": 192,
+            "remoteIPAddress": "127.0.0.1",
+            "remotePort": 1380,
+            "fromDiskCache": false,
+            "fromServiceWorker": false,
+            "fromPrefetchCache": false,
+            "encodedDataLength": 143,
+            "timing": {
+              "requestTime": 39011.816215,
+              "proxyStart": -1,
+              "proxyEnd": -1,
+              "dnsStart": -1,
+              "dnsEnd": -1,
+              "connectStart": -1,
+              "connectEnd": -1,
+              "sslStart": -1,
+              "sslEnd": -1,
+              "workerStart": -1,
+              "workerReady": -1,
+              "workerFetchStart": -1,
+              "workerRespondWithSettled": -1,
+              "sendStart": 0.425,
+              "sendEnd": 0.485,
+              "pushStart": 0,
+              "pushEnd": 0,
+              "receiveHeadersStart": 1103.919,
+              "receiveHeadersEnd": 1104.154
+            },
+            "responseTime": 1792074777547.979,
+            "protocol": "http/1.1",
+            "alternateProtocolUsage": "unspecifiedReason",
+            "securityState": "secure"
+          },
+          "hasExtraInfo": true,
+          "frameId": "5EA913FECDEC2024E7E00BBE7ADD9EC1"
+        }
+      ]
+    }
+  ],
+  "ok": true
+}

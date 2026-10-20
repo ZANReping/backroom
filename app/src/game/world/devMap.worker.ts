@@ -2,6 +2,8 @@ import './mapgen'
 import {infiniteImplFor,type GenChunk} from './infiniteRegistry'
 import {genL0Architecture,type L0SpaceState} from './l0Architecture'
 import type {LevelDef} from '../core/types'
+import {buildL1Data} from './l1Building'
+import {l1MapGeometry} from './l1MapData'
 type Request={id:number;def:LevelDef;seed:number;coords:{cx:number;cy:number}[];floor:number;state?:L0SpaceState;cancel?:boolean}
 const cache=new Map<string,GenChunk>()
 let current:Request|undefined,index=0
@@ -12,6 +14,11 @@ function pump(id:number){
  do{
  const at=job.coords[index++];if(!at){self.postMessage({id:job.id,done:true});current=undefined;return}
  try{
+  if(job.def.id===1){
+   const geometry=l1MapGeometry(buildL1Data(job.seed,at.cx,at.cy))
+   self.postMessage({id:job.id,cell:{...at,...geometry,tint:new Uint8Array(1024),elev:new Uint8Array(1024)}})
+   continue
+  }
   const key=JSON.stringify([job.def.id,job.seed,at,job.state?.revisions[`${at.cx},${at.cy}`]??0,job.state?.redProgress])
   let raw=cache.get(key)
   if(!raw){raw=job.def.id===0?genL0Architecture(job.def,job.seed,at.cx,at.cy,undefined,job.state?.revisions[`${at.cx},${at.cy}`]??0,job.state?.redProgress):infiniteImplFor(job.def.id).genRaw(job.def,job.seed,at.cx,at.cy);cache.set(key,raw);if(cache.size>256)cache.delete(cache.keys().next().value!)}

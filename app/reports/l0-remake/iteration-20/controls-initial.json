@@ -1,0 +1,43 @@
+{
+  "checks": [
+    "multiplayer entry hidden",
+    "preload option replaced by seed input",
+    "invalid seed rejected",
+    "decimal seed stored in displayed format",
+    "original map exposes reveal and no separate developer map",
+    "big map opens at full available size",
+    "original map legend lists L0 regions",
+    "map preview does not spawn or explore the world",
+    "drag does not teleport",
+    "big map size stays fixed after dragging",
+    "right click safely teleports",
+    "minimap has no legend below it",
+    "world panel disables the shared reveal switch",
+    "world panel reveals without writing exploration",
+    "original map reflects the world panel switch",
+    "arch map target reachable",
+    "minimap has no legend below it",
+    "all-map 1 canvas rendered",
+    "all-map 4 canvas rendered"
+  ],
+  "mapDraw": [
+    {
+      "name": "mini",
+      "median": 0.5999999977648258,
+      "p95": 0.9000000022351742,
+      "samples": 100,
+      "cadence": "one redraw per RAF after 20 warmup frames"
+    },
+    {
+      "name": "large",
+      "median": 1.1000000014901161,
+      "p95": 1.4000000022351742,
+      "samples": 100,
+      "cadence": "one redraw per RAF after 20 warmup frames"
+    }
+  ],
+  "pass": false,
+  "error": "Error: Timeout !document.body.innerText.includes('准备附近场景')&&!document.body.innerText.includes('正在准备资源')",
+  "errors": [],
+  "dom": "正在准备附近场景…\nHP\n100/100\n体力\n100/100\n饥饿\n100/100\n口渴\n100/100\n理智\n100/100\n孤立效应\nThe M.E.G. 声望 +30\nLEVEL 1 · M.E.G. Alpha 基地 · B1 · 磁带 0/6\n北部入口 · 登记前厅\n100%\nAlpha 基地「M.E.G. Alpha 基地」\nSurvival Difficulty: Class 宜居 · 安全 · M.E.G. 主要基地\n入口：定居点地标\n出口线索：某处有一扇没上锁的门——推开试试。\n1\n2\n3\n4\n5\n6\n7\n[左键] 攻击　[空格] 跳跃　[C] 蹲伏　[F] 手电 100%　[右键] 使用　[Q] 丢弃　[V] 检视\n➤\n你感觉到一丝气流（9m）\n开发者模式\n🛠 开发者模式 · DEV\n▾\n召唤\n状态\n传送\n世界\n信息\n层级跳转\nL0\nL1\nL2\nL3\nL4\nL5\nL6\nL7\nL8\nL9\nL10\nL11\nL601\n据点跳转\nL11\nM.E.G. Beta基地与琥珀营地\nL1\nM.E.G. Alpha 基地\nL1\n商人之家\nL1\n希波克拉底 - 1\nL1\nTom 的餐馆\nL2\n办公区EL3A\nL3\nM.E.G. Gemma 基地\nL3\n存储设施\nL3\n蓝色救赎\nL4\nM.E.G. Omega 基地\nL5\nM.E.G. 哨所「家政服务」\nL5\n家常酒店\nL5\n原住民\nL1\n丰饶角\nL8\nM.E.G.“空巢”前哨站\nL8\n哈莫兹洞穴社群\n–\n杰瑞的房间\n出口提示距离：30m（默认 30m）\n−10m\n＋10m\n＋50m\n重置\n开关\n穿墙\n加速\n一击必杀\n隐形\n冻结AI\n无敌\n一键照明\n攻击无冷却\n图鉴全开\n地图全开\n现象（当前层可触发）\n本层无可触发的现象\n层级事件\n🎲 触发随机事件\n🔌 强制停电 20s\n💀 清场（杀光实体）\n⏩ 快进 60 秒\n♻ 重生成（同种子）\n🎲 重生成（新种子）\nPAUSED\n背包\n图鉴\n状态\n地图\n日志\n任务\n关闭\nALPHA / 北部入口 · 登记前厅\n全基地\n跟随所在区\n自动 · 进入区域后显示房间\n全基地 · 署区与入口\n探险署\n行政署\n档案署\n研究署\n居民片区「爱念陌异区」\n居民片区「腥红区」\n居民片区「先驱区」\n居民片区「利沃区」\n居民片区「西风区」\n北部入口 · 登记前厅\n东部入口 · 物资检查\n西部入口 · 居民接待\n▲ 你的位置\n● 返回 Level 1\n白色缺口：门\n登记前厅"
+}

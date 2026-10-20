@@ -4,7 +4,7 @@ import type { Engine } from '@/game/engine'
 import { look } from '@/game/core/renderer3d'
 import { audio } from '@/game/core/audio'
 import type { GameSettings } from './SettingsModal'
-import { IconFlashlight, IconBackpack, IconSprint, IconInteract, IconAttack, IconPause, IconJump, IconCrouch, IconQuickUse, IconWheelUp, IconWheelDown } from './icons'
+import { IconFlashlight, IconBackpack, IconSprint, IconInteract, IconAttack, IconPause, IconJump, IconCrouch, IconQuickUse, IconWheelUp, IconWheelDown, IconHolster } from './icons'
 import { CONTROL_SIZES, clampLayoutItem, type TouchControlId, type TouchLayoutMap } from './LayoutEditor'
 
 interface Props {
@@ -123,9 +123,13 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
     audio.uiTick()
   }
   // v29b：快捷使用——与 PC 右键（quickuse 绑定）相同的快捷使用/装备逻辑
-  const quickUse = () => { engine.quickUse() }
+  const quickUse = () => { if (!engine.handsStowed) engine.quickUse() }
+  const handsStowed = !!engine.handsStowed
+  const holster = (e: React.TouchEvent) => { e.stopPropagation(); engine.toggleHands() }
 
   const interact = engine.getInteract()
+  const attackUnavailable = handsStowed && !interact
+  const holsterContent = <><IconHolster width={18} height={18} /><span className="text-[10px] leading-tight">{handsStowed ? '取出' : '收起'}</span></>
   // v7：跳跃/蹲伏输入（游戏层契约字段，防御性写入，字段不存在也只是无害的额外属性）
   const zInput = engine.input as unknown as { jump?: boolean; crouch?: boolean }
   const setJump = (v: boolean) => { zInput.jump = v }
@@ -156,7 +160,9 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
     return (
       <button
         data-touch-id={id}
-        aria-label={id === 'crouch' ? flightActive ? '下降（按住）' : '蹲伏（切换）' : id === 'jump' ? flightActive ? '上升（按住）' : '跳跃' : undefined}
+        aria-label={id === 'holster' ? (handsStowed ? '取出主手' : '收起主手') : id === 'attack' ? interact ? '交互' : '攻击' : id === 'crouch' ? flightActive ? '下降（按住）' : '蹲伏（切换）' : id === 'jump' ? flightActive ? '上升（按住）' : '跳跃' : undefined}
+        aria-pressed={id === 'holster' ? handsStowed : undefined}
+        aria-disabled={id === 'attack' ? attackUnavailable : undefined}
         className={`flex items-center justify-center rounded-full active:scale-90 ${cls}`}
         style={{
           ...btnBase,
@@ -218,11 +224,11 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
       {fixedBtn('sprint', CONTROL_SIZES.sprint, { color: sprintHold ? 'var(--stamina)' : 'var(--text)' }, (e) => { e.stopPropagation(); setSprintHold(true) }, (e) => { e.stopPropagation(); setSprintHold(false) }, <IconSprint width={22} height={22} />)}
       {fixedBtn(
         'attack', CONTROL_SIZES.attack,
-        { borderColor: 'var(--amber)', color: 'var(--amber)' },
+        { borderColor: attackUnavailable ? 'var(--panel-edge)' : 'var(--amber)', color: attackUnavailable ? 'var(--text-dim)' : 'var(--amber)', opacity: attackUnavailable ? .5 : 1 },
         (e) => {
           e.stopPropagation()
           if (engine.getInteract()) engine.input.interact = true
-          else engine.input.attack = true
+          else if (!engine.handsStowed) engine.input.attack = true
         },
         undefined,
         interact ? <IconInteract width={30} height={30} /> : <IconAttack width={30} height={30} />,
@@ -243,6 +249,7 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
         <IconCrouch width={24} height={24} />,
       )}
       {fixedBtn('pause', CONTROL_SIZES.pause, {}, (e) => { e.stopPropagation(); onPause?.() }, undefined, <IconPause width={20} height={20} />)}
+      {fixedBtn('holster', CONTROL_SIZES.holster, { color: handsStowed ? 'var(--amber)' : 'var(--text)' }, holster, undefined, holsterContent, 'flex-col')}
       {/* v29b：快捷使用 + 滚轮模拟按钮组（仅移动端渲染本组件；锚在摇杆侧底角，远离右侧交互/背包按钮簇与底部快捷栏，
           ≥48px 触摸目标，safe-area 适配；按钮本身是触摸目标并 stopPropagation，不会误触发浮点摇杆） */}
       <div
@@ -270,12 +277,19 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
         <button
           aria-label="快捷使用（等同于 PC 右键）"
           className="tc-quickuse flex items-center justify-center rounded-full active:scale-90"
-          style={{ ...btnBase, width: 56, height: 56, borderColor: 'var(--amber)', color: 'var(--amber)' }}
+          aria-disabled={handsStowed}
+          style={{ ...btnBase, width: 56, height: 56, borderColor: 'var(--amber)', color: handsStowed ? 'var(--text-dim)' : 'var(--amber)', opacity: handsStowed ? 0.5 : 1 }}
           onTouchStart={(e) => { e.stopPropagation(); quickUse() }}
         >
           <IconQuickUse width={24} height={24} />
         </button>
       </div>
+      {!isCustom('holster') && (
+        <button data-touch-id="holster" aria-label={handsStowed ? '取出主手' : '收起主手'} aria-pressed={handsStowed}
+          className="absolute flex flex-col items-center justify-center rounded-full active:scale-90"
+          style={{ ...btnBase, width: 48, height: 48, bottom: landscape ? 'calc(env(safe-area-inset-bottom) + 76px)' : 'calc(env(safe-area-inset-bottom) + 186px)', [side]: `calc(env(safe-area-inset-${side}) + ${landscape ? 196 : 124}px)`, color: handsStowed ? 'var(--amber)' : 'var(--text)' }}
+          onTouchStart={holster}>{holsterContent}</button>
+      )}
       {/* 2026-10 横屏：以攻击/交互键为圆心的拇指扇形——内圈（r=92）跳跃/冲刺/蹲伏，外圈（r=164）手电/背包；
           整组贴屏幕右下角（左手模式镜像），不再竖向堆到小地图与电量行，避开底部快捷栏。仅未自定义的按钮参与。 */}
       {landscape && (
@@ -327,13 +341,15 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
           {!isCustom('attack') && (
             <button
               aria-label={interact ? '交互' : '攻击'}
+              data-touch-id="attack"
+              aria-disabled={attackUnavailable}
               data-label={interact ? '交互' : '攻击'}
               className={`tc-btn tc-btn--main pointer-events-auto absolute inset-0 flex items-center justify-center rounded-full active:scale-90 ${interact ? 'anim-pulseAmber' : ''}`}
-              style={{ ...btnBase, borderColor: 'var(--amber)', color: 'var(--amber)', borderWidth: 2 }}
+              style={{ ...btnBase, borderColor: attackUnavailable ? 'var(--panel-edge)' : 'var(--amber)', color: attackUnavailable ? 'var(--text-dim)' : 'var(--amber)', borderWidth: 2, opacity: attackUnavailable ? .5 : 1 }}
               onTouchStart={(e) => {
                 e.stopPropagation()
                 if (engine.getInteract()) engine.input.interact = true
-                else engine.input.attack = true
+                else if (!engine.handsStowed) engine.input.attack = true
               }}
             >
               {interact ? <IconInteract width={32} height={32} /> : <IconAttack width={32} height={32} />}
@@ -406,12 +422,15 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
               )}
               {!isCustom('attack') && (
                 <button
+                  data-touch-id="attack"
+                  aria-label={interact ? '交互' : '攻击'}
+                  aria-disabled={attackUnavailable}
                   className={`flex items-center justify-center rounded-full active:scale-90 ${interact ? 'anim-pulseAmber' : ''}`}
-                  style={{ ...btnBase, width: 72, height: 72, borderColor: 'var(--amber)', color: 'var(--amber)' }}
+                  style={{ ...btnBase, width: 72, height: 72, borderColor: attackUnavailable ? 'var(--panel-edge)' : 'var(--amber)', color: attackUnavailable ? 'var(--text-dim)' : 'var(--amber)', opacity: attackUnavailable ? .5 : 1 }}
                   onTouchStart={(e) => {
                     e.stopPropagation()
                     if (engine.getInteract()) engine.input.interact = true
-                    else engine.input.attack = true
+                    else if (!engine.handsStowed) engine.input.attack = true
                   }}
                 >
                   {interact ? <IconInteract width={30} height={30} /> : <IconAttack width={30} height={30} />}

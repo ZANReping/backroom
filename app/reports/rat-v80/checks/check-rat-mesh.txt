@@ -1,0 +1,9 @@
+
+> my-app@0.0.0 check:rat-mesh
+> esbuild scripts/check-rat-mesh.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-rat-mesh.mjs && node .cache/check-rat-mesh.mjs
+
+
+  .cache\check-rat-mesh.mjs  674.0kb
+
+Done in 75ms
+{"morphs":5,"modes":2,"gear":2,"checks":1222}

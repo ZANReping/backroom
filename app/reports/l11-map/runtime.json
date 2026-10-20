@@ -1,0 +1,325 @@
+{
+  "run": "qa-1791950677865-27116",
+  "port": 14915,
+  "cdp": 14916,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-map\\qa-1791950677865-27116",
+  "seed": 20261006,
+  "command": [
+    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-map\\qa-1791950677865-27116",
+    "--remote-debugging-port=14916",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/154.0.8037.98",
+    "revision": "@b859317bf11f6be47f9b7799ec690a0a42a1fb33",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+    "jsVersion": "15.4.80.20"
+  },
+  "pids": {
+    "server": 65396,
+    "browser": 64168
+  },
+  "render": {
+    "label": "11:open",
+    "median": 4.200000000000728,
+    "p95": 12.600000000000364,
+    "max": 1666.699999999999,
+    "p99": 79.19999999999891,
+    "frames": 671,
+    "over16ms": 25,
+    "over33ms": 13,
+    "cpuMedian": null,
+    "cpuP95": null,
+    "gpuMedian": null,
+    "gpuP95": null,
+    "gpuSamples": 0,
+    "draws": 232,
+    "triangles": 239449,
+    "memory": {
+      "geometries": 848,
+      "textures": 67
+    },
+    "programs": 65,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "sharedClients": 2,
+  "explored": {
+    "pixels": 3748,
+    "canvas": {},
+    "legend": "住宅办公商业工业公共道路水系公园未探索"
+  },
+  "cityPaint": {
+    "samples": 35,
+    "medianMs": 0.5999999940395355,
+    "p95Ms": 0.800000011920929,
+    "maxMs": 0.9000000059604645,
+    "mode": "city"
+  },
+  "doorway": {
+    "ok": true,
+    "building": "l11v2:20261006:0:0:block:0:lot:2:0",
+    "modes": [
+      "city",
+      "interior",
+      "city"
+    ]
+  },
+  "interior": {
+    "kind": "interior",
+    "id": "l11v2:20261006:0:0:block:1:lot:1:2",
+    "floor": 0,
+    "title": "公共档案馆",
+    "accessible": 2,
+    "building": "l11v2:20261006:0:0:block:1:lot:1:2",
+    "angle": 0,
+    "world": [
+      196.34166666666667,
+      121.86666666666667
+    ],
+    "room": "reading"
+  },
+  "upper": {
+    "kind": "interior",
+    "id": "l11v2:20261006:0:0:block:1:lot:1:2",
+    "floor": 1,
+    "title": "公共档案馆",
+    "accessible": 2,
+    "building": "l11v2:20261006:0:0:block:1:lot:1:2",
+    "angle": 0,
+    "world": [
+      196.34166666666667,
+      121.86666666666667
+    ],
+    "room": "reading"
+  },
+  "rotated": {
+    "kind": "interior",
+    "id": "l11v2:20261006:0:0:block:90:lot:0:0",
+    "floor": 0,
+    "title": "横窗办公板楼",
+    "accessible": 2,
+    "building": "l11v2:20261006:0:0:block:90:lot:0:0",
+    "angle": -0.3141592653589793,
+    "world": [
+      749.4351619931267,
+      579.891312223677
+    ],
+    "room": "reception"
+  },
+  "interiorPaint": {
+    "samples": 35,
+    "medianMs": 0.4000000059604645,
+    "p95Ms": 0.7000000029802322,
+    "maxMs": 2.2999999970197678,
+    "mode": "interior"
+  },
+  "viewBefore": {
+    "x": 743.7341871998623,
+    "y": 584.0232227216493,
+    "scale": 10.901550078247185
+  },
+  "viewPanned": {
+    "x": 737.3130819902759,
+    "y": 580.3540197447428,
+    "scale": 10.901550078247185
+  },
+  "viewZoomed": {
+    "x": 737.3130819902759,
+    "y": 580.3388989613863,
+    "scale": 16.263201649302275
+  },
+  "viewReset": {
+    "x": 743.7341871998623,
+    "y": 584.0232227216493,
+    "scale": 10.901550078247185
+  },
+  "districts": {
+    "open": true,
+    "entries": 7
+  },
+  "worker": {
+    "ok": true,
+    "elapsed": 322.09999999403954,
+    "clients": 2,
+    "worker": true,
+    "pending": 1,
+    "cached": 1,
+    "failed": 0
+  },
+  "returnToCity": {
+    "x": 26.5,
+    "y": 26.5,
+    "scale": 2.577777777777778
+  },
+  "mobile": {
+    "width": 390,
+    "scroll": 390,
+    "canvas": [
+      680,
+      340
+    ],
+    "overflow": [
+      false,
+      false
+    ]
+  },
+  "touch": {
+    "x": -5.2647058823529385,
+    "y": 44.147058823529406,
+    "scale": 1.4166666666666667
+  },
+  "closeButton": {
+    "x": 795,
+    "y": 17,
+    "right": 823,
+    "bottom": 45
+  },
+  "beforeDispose": {
+    "clients": 1,
+    "worker": false,
+    "pending": 0,
+    "cached": 0,
+    "failed": 0
+  },
+  "afterDispose": {
+    "clients": 0,
+    "worker": false,
+    "pending": 0,
+    "cached": 0,
+    "failed": 0
+  },
+  "legacy": {
+    "minimap": true,
+    "l11": false
+  },
+  "errors": [],
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "networkErrors": [
+    {
+      "requestId": "30828.15",
+      "loaderId": "EF739E7C29E3332E668D8F1129EC426D",
+      "timestamp": 88166.307479,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:14915/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Wed, 14 Oct 2026 04:04:47 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 149,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 14915,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 88166.287115,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.387,
+          "sendEnd": 0.44,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 19.719,
+          "receiveHeadersEnd": 19.842
+        },
+        "responseTime": 1791950687251.542,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "17F9D42C2E19D1C202FE8B575836FE1E"
+    },
+    {
+      "requestId": "30828.558",
+      "loaderId": "EF739E7C29E3332E668D8F1129EC426D",
+      "timestamp": 88204.57207,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:14915/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Wed, 14 Oct 2026 04:05:25 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 2382,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 14915,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 88204.5623,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.384,
+          "sendEnd": 0.422,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 8.569,
+          "receiveHeadersEnd": 8.723
+        },
+        "responseTime": 1791950725515.578,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "17F9D42C2E19D1C202FE8B575836FE1E"
+    }
+  ]
+}

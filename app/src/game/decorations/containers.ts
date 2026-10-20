@@ -16,7 +16,8 @@ export interface ContainerDef {
 // v23：可搜索容器统一表
 export const CONTAINERS: Record<string, ContainerDef> = {
   crate:    { label: '补给箱',        dur: 1.8, n: 2, pool: ['almond', 'canned', 'bandage', 'battery', 'tape', 'glowstick'] },
-  corpse:   { label: '尸体',          dur: 1.2, n: 1, pool: ['bandage', 'almond', 'battery', 'tape', 'wallpaper'] },
+  // v83：Object 70 的公文包——自制晚餐便当、文具、水瓶最常见；稀有表里还有各具尸体「独一无二」的东西
+  corpse:   { label: '尸体',          dur: 1.8, n: 2, pool: ['bento', 'bento', 'citywater', 'notebook', 'almond', 'bandage', 'tape'] },
   car:      { label: '后备箱',        dur: 1.8, n: 2, pool: ['gas', 'almond', 'canned', 'battery', 'tape'], gate: 'carkey' },
   cabinet:  { label: '配电柜',        dur: 1.8, n: 2, pool: ['battery', 'fuse', 'capacitor', 'tape'] },
   dresser:  { label: '柜子',          dur: 1.6, n: 2, pool: ['silverware', 'sedative', 'almond', 'bandage', 'tape'] },
@@ -44,4 +45,5 @@ export const CONTAINER_KINDS: readonly string[] = Object.keys(CONTAINERS)
 export const CONTAINER_RARE: Record<string, { type: string; p: number; onceOwned?: boolean }[]> = {
   crate: [{ type: 'knife', p: 0.1 }, { type: 'axe', p: 0.08 }, { type: 'headlamp', p: 0.06 }],
   dresser: [{ type: 'notebook', p: 0.12, onceOwned: true }],
+  corpse: [{ type: 'lighter', p: 0.06 }, { type: 'housekey', p: 0.05 }, { type: 'rabbit', p: 0.03 }, { type: 'sedative', p: 0.04 }], // v83：公文包里各不相同的私人物件
 }

@@ -1,0 +1,13 @@
+{
+  "assetFiles": 6,
+  "geometries": 16,
+  "treeParts": 30,
+  "foliageParts": 6,
+  "cacheHits": 16,
+  "checks": [
+    "six bark files match source metadata, original bytes, runtime copies, and tier dimensions",
+    "trimmed foliage geometry has finite positions, bounded extents, UV island coverage, and stable caching",
+    "source cache stays within 96 entries / 32 MiB, evicts unused geometry, regenerates deterministically and preserves merged scene meshes",
+    "plane tree: 23 tapered bark cylinders, 3 solid junction nodes, 4 trimmed leaf clusters; shrub planter: 2 non-solid clusters"
+  ]
+}

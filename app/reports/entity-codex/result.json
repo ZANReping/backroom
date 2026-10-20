@@ -1,0 +1,4606 @@
+{
+  "port": 17909,
+  "cdp": 29059,
+  "views": [
+    {
+      "type": "smiler",
+      "status": "ready",
+      "pixels": 512,
+      "silhouette": {
+        "w": 16,
+        "h": 51
+      },
+      "bounds": {
+        "x": 1153.671875,
+        "y": 562.125,
+        "w": 274.328125,
+        "h": 324.328125
+      },
+      "stats": {
+        "builds": 1,
+        "renders": 1,
+        "hits": 0,
+        "cached": 1,
+        "bytes": 30124,
+        "queued": 0,
+        "active": null,
+        "studio": true,
+        "memory": {
+          "geometries": 14,
+          "textures": 0
+        }
+      }
+    },
+    {
+      "type": "hound",
+      "status": "ready",
+      "pixels": 656,
+      "silhouette": {
+        "w": 30,
+        "h": 44
+      },
+      "bounds": {
+        "x": 1153.671875,
+        "y": 562.125,
+        "w": 274.328125,
+        "h": 324.328125
+      },
+      "stats": {
+        "builds": 2,
+        "renders": 2,
+        "hits": 0,
+        "cached": 2,
+        "bytes": 196992,
+        "queued": 0,
+        "active": null,
+        "studio": true,
+        "memory": {
+          "geometries": 24,
+          "textures": 2
+        }
+      }
+    },
+    {
+      "type": "faceling",
+      "status": "ready",
+      "pixels": 564,
+      "silhouette": {
+        "w": 16,
+        "h": 54
+      },
+      "bounds": {
+        "x": 1153.671875,
+        "y": 562.125,
+        "w": 274.328125,
+        "h": 324.328125
+      },
+      "stats": {
+        "builds": 3,
+        "renders": 3,
+        "hits": 0,
+        "cached": 3,
+        "bytes": 298340,
+        "queued": 0,
+        "active": null,
+        "studio": true,
+        "memory": {
+          "geometries": 1,
+          "textures": 7
+        }
+      }
+    },
+    {
+      "type": "deathmoth",
+      "status": "ready",
+      "pixels": 690,
+      "silhouette": {
+        "w": 51,
+        "h": 27
+      },
+      "bounds": {
+        "x": 1153.671875,
+        "y": 561.625,
+        "w": 274.328125,
+        "h": 324.328125
+      },
+      "stats": {
+        "builds": 4,
+        "renders": 4,
+        "hits": 0,
+        "cached": 4,
+        "bytes": 508944,
+        "queued": 0,
+        "active": null,
+        "studio": true,
+        "memory": {
+          "geometries": 5,
+          "textures": 12
+        }
+      }
+    },
+    {
+      "type": "clump",
+      "status": "ready",
+      "pixels": 507,
+      "silhouette": {
+        "w": 46,
+        "h": 22
+      },
+      "bounds": {
+        "x": 1153.671875,
+        "y": 561.625,
+        "w": 274.328125,
+        "h": 324.328125
+      },
+      "stats": {
+        "builds": 5,
+        "renders": 5,
+        "hits": 0,
+        "cached": 5,
+        "bytes": 675748,
+        "queued": 0,
+        "active": null,
+        "studio": true,
+        "memory": {
+          "geometries": 5,
+          "textures": 13
+        }
+      }
+    },
+    {
+      "type": "thething",
+      "status": "ready",
+      "pixels": 181,
+      "silhouette": {
+        "w": 51,
+        "h": 4
+      },
+      "bounds": {
+        "x": 1153.671875,
+        "y": 561.75,
+        "w": 274.328125,
+        "h": 324.328125
+      },
+      "stats": {
+        "builds": 6,
+        "renders": 6,
+        "hits": 0,
+        "cached": 6,
+        "bytes": 734712,
+        "queued": 0,
+        "active": null,
+        "studio": true,
+        "memory": {
+          "geometries": 159,
+          "textures": 14
+        }
+      }
+    },
+    {
+      "type": "wretch",
+      "status": "ready",
+      "pixels": 532,
+      "silhouette": {
+        "w": 14,
+        "h": 54
+      },
+      "bounds": {
+        "x": 1153.671875,
+        "y": 561.625,
+        "w": 274.328125,
+        "h": 324.328125
+      },
+      "stats": {
+        "builds": 7,
+        "renders": 7,
+        "hits": 0,
+        "cached": 7,
+        "bytes": 836204,
+        "queued": 0,
+        "active": null,
+        "studio": true,
+        "memory": {
+          "geometries": 2,
+          "textures": 19
+        }
+      }
+    }
+  ],
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:17909/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sat, 17 Oct 2026 12:59:21 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 275,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 17909,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 83375.031696,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.615,
+        "sendEnd": 0.682,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 126.031,
+        "receiveHeadersEnd": 126.314
+      },
+      "responseTime": 1792241962004.819,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    },
+    {
+      "url": "http://127.0.0.1:17909/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sat, 17 Oct 2026 12:59:36 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 279,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 17909,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 83389.876069,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.827,
+        "sendEnd": 0.922,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 39.629,
+        "receiveHeadersEnd": 40.2
+      },
+      "responseTime": 1792241976762.79,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\entity-codex\\qa-1792241942439-4772",
+    "--remote-debugging-port=29059",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "server": 55320,
+    "browser": 55312
+  },
+  "initial": {
+    "stats": {
+      "builds": 0,
+      "renders": 0,
+      "hits": 0,
+      "cached": 0,
+      "bytes": 0,
+      "queued": 0,
+      "active": null,
+      "studio": false,
+      "memory": null
+    },
+    "level": 104,
+    "seed": 20261017
+  },
+  "all": {
+    "records": [
+      {
+        "type": "smiler",
+        "status": "ready",
+        "pixels": 512,
+        "silhouette": {
+          "w": 16,
+          "h": 51
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 571.9456787109375,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 7,
+          "renders": 7,
+          "hits": 1,
+          "cached": 7,
+          "bytes": 836204,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 2,
+            "textures": 19
+          }
+        }
+      },
+      {
+        "type": "arms",
+        "status": "ready",
+        "pixels": 324,
+        "silhouette": {
+          "w": 11,
+          "h": 51
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 565.2465209960938,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 8,
+          "renders": 8,
+          "hits": 1,
+          "cached": 8,
+          "bytes": 860720,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 7,
+            "textures": 18
+          }
+        }
+      },
+      {
+        "type": "arcwraith",
+        "status": "ready",
+        "pixels": 716,
+        "silhouette": {
+          "w": 18,
+          "h": 50
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 572.37646484375,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 9,
+          "renders": 9,
+          "hits": 1,
+          "cached": 9,
+          "bytes": 881692,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 10,
+            "textures": 18
+          }
+        }
+      },
+      {
+        "type": "vendingmachine",
+        "status": "ready",
+        "pixels": 1281,
+        "silhouette": {
+          "w": 25,
+          "h": 54
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 573.6409912109375,
+          "w": 274.328125,
+          "h": 324.32806396484375
+        },
+        "stats": {
+          "builds": 10,
+          "renders": 10,
+          "hits": 1,
+          "cached": 10,
+          "bytes": 907000,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 15,
+            "textures": 18
+          }
+        }
+      },
+      {
+        "type": "nguithr",
+        "status": "ready",
+        "pixels": 340,
+        "silhouette": {
+          "w": 25,
+          "h": 52
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 573.2412719726562,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 11,
+          "renders": 11,
+          "hits": 1,
+          "cached": 11,
+          "bytes": 949828,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 47,
+            "textures": 18
+          }
+        }
+      },
+      {
+        "type": "malady",
+        "status": "unavailable"
+      },
+      {
+        "type": "duller",
+        "status": "ready",
+        "pixels": 320,
+        "silhouette": {
+          "w": 11,
+          "h": 44
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 561.625,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 13,
+          "renders": 12,
+          "hits": 1,
+          "cached": 13,
+          "bytes": 1037176,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 22,
+            "textures": 20
+          }
+        }
+      },
+      {
+        "type": "skinstealer",
+        "status": "ready",
+        "pixels": 535,
+        "silhouette": {
+          "w": 14,
+          "h": 54
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 561.625,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 14,
+          "renders": 13,
+          "hits": 1,
+          "cached": 14,
+          "bytes": 1135292,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 1,
+            "textures": 24
+          }
+        }
+      },
+      {
+        "type": "faceling",
+        "status": "ready",
+        "pixels": 564,
+        "silhouette": {
+          "w": 16,
+          "h": 54
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 572.3746948242188,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 14,
+          "renders": 13,
+          "hits": 2,
+          "cached": 14,
+          "bytes": 1135292,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 1,
+            "textures": 24
+          }
+        }
+      },
+      {
+        "type": "copierwraith",
+        "status": "ready",
+        "pixels": 757,
+        "silhouette": {
+          "w": 24,
+          "h": 51
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 571.1204833984375,
+          "w": 274.328125,
+          "h": 324.32806396484375
+        },
+        "stats": {
+          "builds": 15,
+          "renders": 14,
+          "hits": 2,
+          "cached": 15,
+          "bytes": 1157024,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 9,
+            "textures": 23
+          }
+        }
+      },
+      {
+        "type": "seated",
+        "status": "ready",
+        "pixels": 909,
+        "silhouette": {
+          "w": 27,
+          "h": 52
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 572.37255859375,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 16,
+          "renders": 15,
+          "hits": 2,
+          "cached": 16,
+          "bytes": 1186428,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 21,
+            "textures": 23
+          }
+        }
+      },
+      {
+        "type": "bellhop",
+        "status": "ready",
+        "pixels": 973,
+        "silhouette": {
+          "w": 34,
+          "h": 54
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 572.8091430664062,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 17,
+          "renders": 16,
+          "hits": 2,
+          "cached": 17,
+          "bytes": 1217248,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 22,
+            "textures": 23
+          }
+        }
+      },
+      {
+        "type": "mirrorself",
+        "status": "ready",
+        "pixels": 805,
+        "silhouette": {
+          "w": 20,
+          "h": 54
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 570.720703125,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 18,
+          "renders": 17,
+          "hits": 2,
+          "cached": 18,
+          "bytes": 1237964,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 10,
+            "textures": 23
+          }
+        }
+      },
+      {
+        "type": "dryshrimp",
+        "status": "ready",
+        "pixels": 294,
+        "silhouette": {
+          "w": 40,
+          "h": 16
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 562.125,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 19,
+          "renders": 18,
+          "hits": 2,
+          "cached": 19,
+          "bytes": 1348776,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 8,
+            "textures": 25
+          }
+        }
+      },
+      {
+        "type": "arachnid",
+        "status": "ready",
+        "pixels": 347,
+        "silhouette": {
+          "w": 49,
+          "h": 17
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 571.0238037109375,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 20,
+          "renders": 19,
+          "hits": 2,
+          "cached": 20,
+          "bytes": 1402684,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 29,
+            "textures": 25
+          }
+        }
+      },
+      {
+        "type": "hound",
+        "status": "ready",
+        "pixels": 656,
+        "silhouette": {
+          "w": 30,
+          "h": 44
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 571.1162109375,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 20,
+          "renders": 19,
+          "hits": 3,
+          "cached": 20,
+          "bytes": 1402684,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 29,
+            "textures": 25
+          }
+        }
+      },
+      {
+        "type": "clump",
+        "status": "ready",
+        "pixels": 507,
+        "silhouette": {
+          "w": 46,
+          "h": 22
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 570.627197265625,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 20,
+          "renders": 19,
+          "hits": 4,
+          "cached": 20,
+          "bytes": 1402684,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 29,
+            "textures": 25
+          }
+        }
+      },
+      {
+        "type": "deathmoth",
+        "status": "ready",
+        "pixels": 690,
+        "silhouette": {
+          "w": 51,
+          "h": 27
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 570.215087890625,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 20,
+          "renders": 19,
+          "hits": 5,
+          "cached": 20,
+          "bytes": 1402684,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 29,
+            "textures": 25
+          }
+        }
+      },
+      {
+        "type": "carrier",
+        "status": "ready",
+        "pixels": 1171,
+        "silhouette": {
+          "w": 41,
+          "h": 37
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 571.1217041015625,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 21,
+          "renders": 20,
+          "hits": 5,
+          "cached": 21,
+          "bytes": 1435544,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 18,
+            "textures": 25
+          }
+        }
+      },
+      {
+        "type": "pipeworm",
+        "status": "ready",
+        "pixels": 677,
+        "silhouette": {
+          "w": 38,
+          "h": 28
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 573.2410888671875,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 22,
+          "renders": 21,
+          "hits": 5,
+          "cached": 22,
+          "bytes": 1485468,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 19,
+            "textures": 25
+          }
+        }
+      },
+      {
+        "type": "corpserat",
+        "status": "ready",
+        "pixels": 419,
+        "silhouette": {
+          "w": 36,
+          "h": 26
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 562.125,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 23,
+          "renders": 22,
+          "hits": 5,
+          "cached": 23,
+          "bytes": 1628192,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 25,
+            "textures": 28
+          }
+        }
+      },
+      {
+        "type": "ferren",
+        "status": "ready",
+        "pixels": 867,
+        "silhouette": {
+          "w": 38,
+          "h": 35
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 570.7174682617188,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 24,
+          "renders": 23,
+          "hits": 5,
+          "cached": 24,
+          "bytes": 1650892,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 12,
+            "textures": 28
+          }
+        }
+      },
+      {
+        "type": "jerry",
+        "status": "ready",
+        "pixels": 778,
+        "silhouette": {
+          "w": 25,
+          "h": 49
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 574.58349609375,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 25,
+          "renders": 24,
+          "hits": 5,
+          "cached": 25,
+          "bytes": 1678200,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 14,
+            "textures": 28
+          }
+        }
+      },
+      {
+        "type": "mimicry",
+        "status": "ready",
+        "pixels": 862,
+        "silhouette": {
+          "w": 19,
+          "h": 54
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 575.0453491210938,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 26,
+          "renders": 25,
+          "hits": 5,
+          "cached": 26,
+          "bytes": 1702612,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 13,
+            "textures": 28
+          }
+        }
+      },
+      {
+        "type": "tiny",
+        "status": "ready",
+        "pixels": 370,
+        "silhouette": {
+          "w": 51,
+          "h": 44
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 569.8084716796875,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 27,
+          "renders": 26,
+          "hits": 5,
+          "cached": 27,
+          "bytes": 1754616,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 62,
+            "textures": 29
+          }
+        }
+      },
+      {
+        "type": "thething",
+        "status": "ready",
+        "pixels": 181,
+        "silhouette": {
+          "w": 51,
+          "h": 4
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 572.8655395507812,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 27,
+          "renders": 26,
+          "hits": 6,
+          "cached": 27,
+          "bytes": 1754616,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 62,
+            "textures": 29
+          }
+        }
+      },
+      {
+        "type": "wrangler",
+        "status": "ready",
+        "pixels": 467,
+        "silhouette": {
+          "w": 37,
+          "h": 18
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 573.2396850585938,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 28,
+          "renders": 27,
+          "hits": 6,
+          "cached": 28,
+          "bytes": 1799108,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 37,
+            "textures": 29
+          }
+        }
+      },
+      {
+        "type": "camocrawler",
+        "status": "ready",
+        "pixels": 812,
+        "silhouette": {
+          "w": 30,
+          "h": 43
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 571.1155395507812,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 29,
+          "renders": 28,
+          "hits": 6,
+          "cached": 29,
+          "bytes": 1844232,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 36,
+            "textures": 29
+          }
+        }
+      },
+      {
+        "type": "lightguide",
+        "status": "ready",
+        "pixels": 400,
+        "silhouette": {
+          "w": 39,
+          "h": 40
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 573.2454833984375,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 30,
+          "renders": 29,
+          "hits": 6,
+          "cached": 30,
+          "bytes": 1873844,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 13,
+            "textures": 29
+          }
+        }
+      },
+      {
+        "type": "curabitur",
+        "status": "ready",
+        "pixels": 480,
+        "silhouette": {
+          "w": 20,
+          "h": 47
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 567.0516357421875,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 31,
+          "renders": 30,
+          "hits": 6,
+          "cached": 31,
+          "bytes": 1973928,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 53,
+            "textures": 29
+          }
+        }
+      },
+      {
+        "type": "wretch",
+        "status": "ready",
+        "pixels": 532,
+        "silhouette": {
+          "w": 14,
+          "h": 54
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 575.49072265625,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 31,
+          "renders": 30,
+          "hits": 7,
+          "cached": 31,
+          "bytes": 1973928,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 53,
+            "textures": 29
+          }
+        }
+      },
+      {
+        "type": "watcher",
+        "status": "ready",
+        "pixels": 1023,
+        "silhouette": {
+          "w": 41,
+          "h": 36
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 568.076171875,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 32,
+          "renders": 31,
+          "hits": 7,
+          "cached": 32,
+          "bytes": 2105244,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 33,
+            "textures": 29
+          }
+        }
+      },
+      {
+        "type": "strider",
+        "status": "ready",
+        "pixels": 695,
+        "silhouette": {
+          "w": 38,
+          "h": 52
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 571.5349731445312,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 33,
+          "renders": 32,
+          "hits": 7,
+          "cached": 32,
+          "bytes": 2147620,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 46,
+            "textures": 29
+          }
+        }
+      },
+      {
+        "type": "mangled",
+        "status": "ready",
+        "pixels": 1394,
+        "silhouette": {
+          "w": 44,
+          "h": 45
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 572.815185546875,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 34,
+          "renders": 33,
+          "hits": 7,
+          "cached": 32,
+          "bytes": 2291972,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 109,
+            "textures": 29
+          }
+        }
+      },
+      {
+        "type": "soilworm",
+        "status": "ready",
+        "pixels": 729,
+        "silhouette": {
+          "w": 38,
+          "h": 30
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 571.9490966796875,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 35,
+          "renders": 34,
+          "hits": 7,
+          "cached": 32,
+          "bytes": 2316940,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 17,
+            "textures": 29
+          }
+        }
+      },
+      {
+        "type": "partygoer",
+        "status": "ready",
+        "pixels": 1011,
+        "silhouette": {
+          "w": 43,
+          "h": 55
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 571.1243896484375,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 36,
+          "renders": 35,
+          "hits": 7,
+          "cached": 32,
+          "bytes": 2375164,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 54,
+            "textures": 29
+          }
+        }
+      },
+      {
+        "type": "windowent",
+        "status": "ready",
+        "pixels": 1126,
+        "silhouette": {
+          "w": 26,
+          "h": 56
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 571.9441528320312,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 37,
+          "renders": 36,
+          "hits": 7,
+          "cached": 32,
+          "bytes": 2372644,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 24,
+            "textures": 29
+          }
+        }
+      }
+    ],
+    "stats": {
+      "builds": 37,
+      "renders": 36,
+      "hits": 7,
+      "cached": 32,
+      "bytes": 2372644,
+      "queued": 0,
+      "active": null,
+      "studio": true,
+      "memory": {
+        "geometries": 24,
+        "textures": 29
+      }
+    }
+  },
+  "cache": {
+    "before": {
+      "builds": 37,
+      "renders": 36,
+      "hits": 8,
+      "cached": 32,
+      "bytes": 2372644,
+      "queued": 0,
+      "active": null,
+      "studio": true,
+      "memory": {
+        "geometries": 24,
+        "textures": 29
+      }
+    },
+    "after": {
+      "builds": 37,
+      "renders": 36,
+      "hits": 9,
+      "cached": 32,
+      "bytes": 2372644,
+      "queued": 0,
+      "active": null,
+      "studio": true,
+      "memory": {
+        "geometries": 24,
+        "textures": 29
+      }
+    },
+    "stats": {
+      "builds": 38,
+      "renders": 37,
+      "hits": 9,
+      "cached": 32,
+      "bytes": 2402768,
+      "queued": 0,
+      "active": null,
+      "studio": true,
+      "memory": {
+        "geometries": 14,
+        "textures": 29
+      }
+    }
+  },
+  "cycles": [
+    {
+      "type": "smiler",
+      "steps": 16,
+      "seenForms": [
+        "common",
+        "phantom",
+        "starved",
+        "canid",
+        "great"
+      ],
+      "images": [
+        {
+          "view": 1,
+          "angle": 1,
+          "appearance": 0,
+          "form": "common",
+          "pixels": 576
+        },
+        {
+          "view": 2,
+          "angle": 2,
+          "appearance": 0,
+          "form": "common",
+          "pixels": 499
+        },
+        {
+          "view": 3,
+          "angle": 3,
+          "appearance": 0,
+          "form": "common",
+          "pixels": 578
+        },
+        {
+          "view": 4,
+          "angle": 0,
+          "appearance": 1,
+          "form": "phantom",
+          "pixels": 468
+        },
+        {
+          "view": 5,
+          "angle": 1,
+          "appearance": 1,
+          "form": "phantom",
+          "pixels": 552
+        },
+        {
+          "view": 6,
+          "angle": 2,
+          "appearance": 1,
+          "form": "phantom",
+          "pixels": 497
+        },
+        {
+          "view": 7,
+          "angle": 3,
+          "appearance": 1,
+          "form": "phantom",
+          "pixels": 552
+        },
+        {
+          "view": 8,
+          "angle": 0,
+          "appearance": 2,
+          "form": "starved",
+          "pixels": 367
+        },
+        {
+          "view": 9,
+          "angle": 1,
+          "appearance": 2,
+          "form": "starved",
+          "pixels": 429
+        },
+        {
+          "view": 10,
+          "angle": 2,
+          "appearance": 2,
+          "form": "starved",
+          "pixels": 334
+        },
+        {
+          "view": 11,
+          "angle": 3,
+          "appearance": 2,
+          "form": "starved",
+          "pixels": 418
+        },
+        {
+          "view": 12,
+          "angle": 0,
+          "appearance": 3,
+          "form": "canid",
+          "pixels": 597
+        },
+        {
+          "view": 13,
+          "angle": 1,
+          "appearance": 3,
+          "form": "canid",
+          "pixels": 595
+        },
+        {
+          "view": 14,
+          "angle": 2,
+          "appearance": 3,
+          "form": "canid",
+          "pixels": 536
+        },
+        {
+          "view": 15,
+          "angle": 3,
+          "appearance": 3,
+          "form": "canid",
+          "pixels": 586
+        },
+        {
+          "view": 16,
+          "angle": 0,
+          "appearance": 4,
+          "form": "great",
+          "pixels": 835
+        }
+      ],
+      "stats": {
+        "builds": 54,
+        "renders": 53,
+        "hits": 10,
+        "cached": 32,
+        "bytes": 1801736,
+        "queued": 0,
+        "active": null,
+        "studio": true,
+        "memory": {
+          "geometries": 13,
+          "textures": 29
+        }
+      }
+    },
+    {
+      "type": "deathmoth",
+      "steps": 12,
+      "seenForms": [
+        "male",
+        "female",
+        "larva",
+        "guard"
+      ],
+      "images": [
+        {
+          "view": 1,
+          "angle": 1,
+          "appearance": 0,
+          "form": "male",
+          "pixels": 879
+        },
+        {
+          "view": 2,
+          "angle": 2,
+          "appearance": 0,
+          "form": "male",
+          "pixels": 662
+        },
+        {
+          "view": 3,
+          "angle": 3,
+          "appearance": 0,
+          "form": "male",
+          "pixels": 863
+        },
+        {
+          "view": 4,
+          "angle": 0,
+          "appearance": 1,
+          "form": "female",
+          "pixels": 693
+        },
+        {
+          "view": 5,
+          "angle": 1,
+          "appearance": 1,
+          "form": "female",
+          "pixels": 871
+        },
+        {
+          "view": 6,
+          "angle": 2,
+          "appearance": 1,
+          "form": "female",
+          "pixels": 655
+        },
+        {
+          "view": 7,
+          "angle": 3,
+          "appearance": 1,
+          "form": "female",
+          "pixels": 850
+        },
+        {
+          "view": 8,
+          "angle": 0,
+          "appearance": 2,
+          "form": "larva",
+          "pixels": 457
+        },
+        {
+          "view": 9,
+          "angle": 1,
+          "appearance": 2,
+          "form": "larva",
+          "pixels": 467
+        },
+        {
+          "view": 10,
+          "angle": 2,
+          "appearance": 2,
+          "form": "larva",
+          "pixels": 445
+        },
+        {
+          "view": 11,
+          "angle": 3,
+          "appearance": 2,
+          "form": "larva",
+          "pixels": 467
+        },
+        {
+          "view": 12,
+          "angle": 0,
+          "appearance": 3,
+          "form": "guard",
+          "pixels": 478
+        }
+      ],
+      "stats": {
+        "builds": 67,
+        "renders": 66,
+        "hits": 10,
+        "cached": 32,
+        "bytes": 3539872,
+        "queued": 0,
+        "active": null,
+        "studio": true,
+        "memory": {
+          "geometries": 5,
+          "textures": 30
+        }
+      }
+    },
+    {
+      "type": "corpserat",
+      "steps": 16,
+      "seenForms": [
+        "corpserat-brown",
+        "corpserat-gray",
+        "corpserat-hotel",
+        "corpserat-capybara",
+        "corpserat-ceiling"
+      ],
+      "images": [
+        {
+          "view": 1,
+          "angle": 1,
+          "appearance": 0,
+          "form": "corpserat-brown",
+          "pixels": 244
+        },
+        {
+          "view": 2,
+          "angle": 2,
+          "appearance": 0,
+          "form": "corpserat-brown",
+          "pixels": 288
+        },
+        {
+          "view": 3,
+          "angle": 3,
+          "appearance": 0,
+          "form": "corpserat-brown",
+          "pixels": 251
+        },
+        {
+          "view": 4,
+          "angle": 0,
+          "appearance": 1,
+          "form": "corpserat-gray",
+          "pixels": 405
+        },
+        {
+          "view": 5,
+          "angle": 1,
+          "appearance": 1,
+          "form": "corpserat-gray",
+          "pixels": 231
+        },
+        {
+          "view": 6,
+          "angle": 2,
+          "appearance": 1,
+          "form": "corpserat-gray",
+          "pixels": 269
+        },
+        {
+          "view": 7,
+          "angle": 3,
+          "appearance": 1,
+          "form": "corpserat-gray",
+          "pixels": 224
+        },
+        {
+          "view": 8,
+          "angle": 0,
+          "appearance": 2,
+          "form": "corpserat-hotel",
+          "pixels": 555
+        },
+        {
+          "view": 9,
+          "angle": 1,
+          "appearance": 2,
+          "form": "corpserat-hotel",
+          "pixels": 462
+        },
+        {
+          "view": 10,
+          "angle": 2,
+          "appearance": 2,
+          "form": "corpserat-hotel",
+          "pixels": 633
+        },
+        {
+          "view": 11,
+          "angle": 3,
+          "appearance": 2,
+          "form": "corpserat-hotel",
+          "pixels": 419
+        },
+        {
+          "view": 12,
+          "angle": 0,
+          "appearance": 3,
+          "form": "corpserat-capybara",
+          "pixels": 871
+        },
+        {
+          "view": 13,
+          "angle": 1,
+          "appearance": 3,
+          "form": "corpserat-capybara",
+          "pixels": 693
+        },
+        {
+          "view": 14,
+          "angle": 2,
+          "appearance": 3,
+          "form": "corpserat-capybara",
+          "pixels": 1105
+        },
+        {
+          "view": 15,
+          "angle": 3,
+          "appearance": 3,
+          "form": "corpserat-capybara",
+          "pixels": 746
+        },
+        {
+          "view": 16,
+          "angle": 0,
+          "appearance": 4,
+          "form": "corpserat-ceiling",
+          "pixels": 401
+        }
+      ],
+      "stats": {
+        "builds": 84,
+        "renders": 83,
+        "hits": 10,
+        "cached": 32,
+        "bytes": 5410896,
+        "queued": 0,
+        "active": null,
+        "studio": true,
+        "memory": {
+          "geometries": 25,
+          "textures": 31
+        }
+      }
+    },
+    {
+      "type": "arachnid",
+      "steps": 16,
+      "seenForms": [
+        "arachnid-spider",
+        "arachnid-scorpion",
+        "arachnid-tick",
+        "arachnid-mite",
+        "arachnid-herbivore"
+      ],
+      "images": [
+        {
+          "view": 1,
+          "angle": 1,
+          "appearance": 0,
+          "form": "arachnid-spider",
+          "pixels": 540
+        },
+        {
+          "view": 2,
+          "angle": 2,
+          "appearance": 0,
+          "form": "arachnid-spider",
+          "pixels": 450
+        },
+        {
+          "view": 3,
+          "angle": 3,
+          "appearance": 0,
+          "form": "arachnid-spider",
+          "pixels": 408
+        },
+        {
+          "view": 4,
+          "angle": 0,
+          "appearance": 1,
+          "form": "arachnid-scorpion",
+          "pixels": 379
+        },
+        {
+          "view": 5,
+          "angle": 1,
+          "appearance": 1,
+          "form": "arachnid-scorpion",
+          "pixels": 451
+        },
+        {
+          "view": 6,
+          "angle": 2,
+          "appearance": 1,
+          "form": "arachnid-scorpion",
+          "pixels": 463
+        },
+        {
+          "view": 7,
+          "angle": 3,
+          "appearance": 1,
+          "form": "arachnid-scorpion",
+          "pixels": 355
+        },
+        {
+          "view": 8,
+          "angle": 0,
+          "appearance": 2,
+          "form": "arachnid-tick",
+          "pixels": 368
+        },
+        {
+          "view": 9,
+          "angle": 1,
+          "appearance": 2,
+          "form": "arachnid-tick",
+          "pixels": 466
+        },
+        {
+          "view": 10,
+          "angle": 2,
+          "appearance": 2,
+          "form": "arachnid-tick",
+          "pixels": 426
+        },
+        {
+          "view": 11,
+          "angle": 3,
+          "appearance": 2,
+          "form": "arachnid-tick",
+          "pixels": 380
+        },
+        {
+          "view": 12,
+          "angle": 0,
+          "appearance": 3,
+          "form": "arachnid-mite",
+          "pixels": 348
+        },
+        {
+          "view": 13,
+          "angle": 1,
+          "appearance": 3,
+          "form": "arachnid-mite",
+          "pixels": 440
+        },
+        {
+          "view": 14,
+          "angle": 2,
+          "appearance": 3,
+          "form": "arachnid-mite",
+          "pixels": 396
+        },
+        {
+          "view": 15,
+          "angle": 3,
+          "appearance": 3,
+          "form": "arachnid-mite",
+          "pixels": 370
+        },
+        {
+          "view": 16,
+          "angle": 0,
+          "appearance": 4,
+          "form": "arachnid-herbivore",
+          "pixels": 343
+        }
+      ],
+      "stats": {
+        "builds": 101,
+        "renders": 100,
+        "hits": 10,
+        "cached": 32,
+        "bytes": 3397680,
+        "queued": 0,
+        "active": null,
+        "studio": true,
+        "memory": {
+          "geometries": 25,
+          "textures": 31
+        }
+      }
+    },
+    {
+      "type": "wretch",
+      "steps": 12,
+      "seenForms": [
+        "wretch-shambler",
+        "wretch-sprinter",
+        "wretch-smart",
+        "wretch-mutant"
+      ],
+      "images": [
+        {
+          "view": 1,
+          "angle": 1,
+          "appearance": 0,
+          "form": "wretch-shambler",
+          "pixels": 370
+        },
+        {
+          "view": 2,
+          "angle": 2,
+          "appearance": 0,
+          "form": "wretch-shambler",
+          "pixels": 548
+        },
+        {
+          "view": 3,
+          "angle": 3,
+          "appearance": 0,
+          "form": "wretch-shambler",
+          "pixels": 377
+        },
+        {
+          "view": 4,
+          "angle": 0,
+          "appearance": 1,
+          "form": "wretch-sprinter",
+          "pixels": 499
+        },
+        {
+          "view": 5,
+          "angle": 1,
+          "appearance": 1,
+          "form": "wretch-sprinter",
+          "pixels": 383
+        },
+        {
+          "view": 6,
+          "angle": 2,
+          "appearance": 1,
+          "form": "wretch-sprinter",
+          "pixels": 526
+        },
+        {
+          "view": 7,
+          "angle": 3,
+          "appearance": 1,
+          "form": "wretch-sprinter",
+          "pixels": 385
+        },
+        {
+          "view": 8,
+          "angle": 0,
+          "appearance": 2,
+          "form": "wretch-smart",
+          "pixels": 557
+        },
+        {
+          "view": 9,
+          "angle": 1,
+          "appearance": 2,
+          "form": "wretch-smart",
+          "pixels": 360
+        },
+        {
+          "view": 10,
+          "angle": 2,
+          "appearance": 2,
+          "form": "wretch-smart",
+          "pixels": 606
+        },
+        {
+          "view": 11,
+          "angle": 3,
+          "appearance": 2,
+          "form": "wretch-smart",
+          "pixels": 368
+        },
+        {
+          "view": 12,
+          "angle": 0,
+          "appearance": 3,
+          "form": "wretch-mutant",
+          "pixels": 597
+        }
+      ],
+      "stats": {
+        "builds": 114,
+        "renders": 113,
+        "hits": 10,
+        "cached": 32,
+        "bytes": 2566112,
+        "queued": 0,
+        "active": null,
+        "studio": true,
+        "memory": {
+          "geometries": 2,
+          "textures": 39
+        }
+      }
+    },
+    {
+      "type": "hound",
+      "steps": 8,
+      "seenForms": [
+        "hound-hostile",
+        "hound-neutral",
+        "hound-ambusher"
+      ],
+      "images": [
+        {
+          "view": 1,
+          "angle": 1,
+          "appearance": 0,
+          "form": "hound-hostile",
+          "pixels": 394
+        },
+        {
+          "view": 2,
+          "angle": 2,
+          "appearance": 0,
+          "form": "hound-hostile",
+          "pixels": 468
+        },
+        {
+          "view": 3,
+          "angle": 3,
+          "appearance": 0,
+          "form": "hound-hostile",
+          "pixels": 403
+        },
+        {
+          "view": 4,
+          "angle": 0,
+          "appearance": 1,
+          "form": "hound-neutral",
+          "pixels": 658
+        },
+        {
+          "view": 5,
+          "angle": 1,
+          "appearance": 1,
+          "form": "hound-neutral",
+          "pixels": 397
+        },
+        {
+          "view": 6,
+          "angle": 2,
+          "appearance": 1,
+          "form": "hound-neutral",
+          "pixels": 470
+        },
+        {
+          "view": 7,
+          "angle": 3,
+          "appearance": 1,
+          "form": "hound-neutral",
+          "pixels": 404
+        },
+        {
+          "view": 8,
+          "angle": 0,
+          "appearance": 2,
+          "form": "hound-ambusher",
+          "pixels": 666
+        }
+      ],
+      "stats": {
+        "builds": 123,
+        "renders": 122,
+        "hits": 10,
+        "cached": 32,
+        "bytes": 2973336,
+        "queued": 0,
+        "active": null,
+        "studio": true,
+        "memory": {
+          "geometries": 24,
+          "textures": 38
+        }
+      }
+    },
+    {
+      "type": "faceling",
+      "steps": 4,
+      "seenForms": [
+        "faceling-common",
+        "faceling-anomaly"
+      ],
+      "images": [
+        {
+          "view": 1,
+          "angle": 1,
+          "appearance": 0,
+          "form": "faceling-common",
+          "pixels": 397
+        },
+        {
+          "view": 2,
+          "angle": 2,
+          "appearance": 0,
+          "form": "faceling-common",
+          "pixels": 579
+        },
+        {
+          "view": 3,
+          "angle": 3,
+          "appearance": 0,
+          "form": "faceling-common",
+          "pixels": 407
+        },
+        {
+          "view": 4,
+          "angle": 0,
+          "appearance": 1,
+          "form": "faceling-anomaly",
+          "pixels": 577
+        }
+      ],
+      "stats": {
+        "builds": 128,
+        "renders": 127,
+        "hits": 10,
+        "cached": 32,
+        "bytes": 3157952,
+        "queued": 0,
+        "active": null,
+        "studio": true,
+        "memory": {
+          "geometries": 1,
+          "textures": 42
+        }
+      }
+    },
+    {
+      "type": "clump",
+      "steps": 4,
+      "seenForms": [
+        "clump-common",
+        "clump-intelligent"
+      ],
+      "images": [
+        {
+          "view": 1,
+          "angle": 1,
+          "appearance": 0,
+          "form": "clump-common",
+          "pixels": 522
+        },
+        {
+          "view": 2,
+          "angle": 2,
+          "appearance": 0,
+          "form": "clump-common",
+          "pixels": 484
+        },
+        {
+          "view": 3,
+          "angle": 3,
+          "appearance": 0,
+          "form": "clump-common",
+          "pixels": 510
+        },
+        {
+          "view": 4,
+          "angle": 0,
+          "appearance": 1,
+          "form": "clump-intelligent",
+          "pixels": 372
+        }
+      ],
+      "stats": {
+        "builds": 133,
+        "renders": 132,
+        "hits": 10,
+        "cached": 32,
+        "bytes": 3690576,
+        "queued": 0,
+        "active": null,
+        "studio": true,
+        "memory": {
+          "geometries": 5,
+          "textures": 42
+        }
+      }
+    },
+    {
+      "type": "skinstealer",
+      "steps": 8,
+      "seenForms": [
+        "skinstealer-skinned",
+        "skinstealer-docile",
+        "skinstealer-hunt"
+      ],
+      "images": [
+        {
+          "view": 1,
+          "angle": 1,
+          "appearance": 0,
+          "form": "skinstealer-skinned",
+          "pixels": 365
+        },
+        {
+          "view": 2,
+          "angle": 2,
+          "appearance": 0,
+          "form": "skinstealer-skinned",
+          "pixels": 539
+        },
+        {
+          "view": 3,
+          "angle": 3,
+          "appearance": 0,
+          "form": "skinstealer-skinned",
+          "pixels": 367
+        },
+        {
+          "view": 4,
+          "angle": 0,
+          "appearance": 1,
+          "form": "skinstealer-docile",
+          "pixels": 376
+        },
+        {
+          "view": 5,
+          "angle": 1,
+          "appearance": 1,
+          "form": "skinstealer-docile",
+          "pixels": 275
+        },
+        {
+          "view": 6,
+          "angle": 2,
+          "appearance": 1,
+          "form": "skinstealer-docile",
+          "pixels": 371
+        },
+        {
+          "view": 7,
+          "angle": 3,
+          "appearance": 1,
+          "form": "skinstealer-docile",
+          "pixels": 277
+        },
+        {
+          "view": 8,
+          "angle": 0,
+          "appearance": 2,
+          "form": "skinstealer-hunt",
+          "pixels": 376
+        }
+      ],
+      "stats": {
+        "builds": 142,
+        "renders": 141,
+        "hits": 10,
+        "cached": 32,
+        "bytes": 3814712,
+        "queued": 0,
+        "active": null,
+        "studio": true,
+        "memory": {
+          "geometries": 23,
+          "textures": 45
+        }
+      }
+    },
+    {
+      "type": "duller",
+      "steps": 4,
+      "seenForms": [],
+      "images": [
+        {
+          "view": 1,
+          "angle": 1,
+          "appearance": 0,
+          "form": "",
+          "pixels": 253
+        },
+        {
+          "view": 2,
+          "angle": 2,
+          "appearance": 0,
+          "form": "",
+          "pixels": 439
+        },
+        {
+          "view": 3,
+          "angle": 3,
+          "appearance": 0,
+          "form": "",
+          "pixels": 234
+        },
+        {
+          "view": 4,
+          "angle": 0,
+          "appearance": 1,
+          "form": "",
+          "pixels": 318
+        }
+      ],
+      "stats": {
+        "builds": 147,
+        "renders": 146,
+        "hits": 10,
+        "cached": 32,
+        "bytes": 3692064,
+        "queued": 0,
+        "active": null,
+        "studio": true,
+        "memory": {
+          "geometries": 22,
+          "textures": 45
+        }
+      }
+    }
+  ],
+  "cycleCache": {
+    "before": {
+      "builds": 148,
+      "renders": 147,
+      "hits": 10,
+      "cached": 32,
+      "bytes": 3745424,
+      "queued": 0,
+      "active": null,
+      "studio": true,
+      "memory": {
+        "geometries": 24,
+        "textures": 45
+      }
+    },
+    "after": {
+      "builds": 148,
+      "renders": 147,
+      "hits": 11,
+      "cached": 32,
+      "bytes": 3745424,
+      "queued": 0,
+      "active": null,
+      "studio": true,
+      "memory": {
+        "geometries": 24,
+        "textures": 45
+      }
+    },
+    "stats": {
+      "builds": 149,
+      "renders": 148,
+      "hits": 11,
+      "cached": 32,
+      "bytes": 3644432,
+      "queued": 0,
+      "active": null,
+      "studio": true,
+      "memory": {
+        "geometries": 14,
+        "textures": 45
+      }
+    }
+  },
+  "mobile": {
+    "record": {
+      "type": "hound",
+      "status": "ready",
+      "pixels": 656,
+      "silhouette": {
+        "w": 30,
+        "h": 44
+      },
+      "bounds": {
+        "x": 560.1875,
+        "y": 103.7880859375,
+        "w": 190.8125,
+        "h": 240.8125
+      },
+      "stats": {
+        "builds": 149,
+        "renders": 148,
+        "hits": 12,
+        "cached": 32,
+        "bytes": 3644432,
+        "queued": 0,
+        "active": null,
+        "studio": true,
+        "memory": {
+          "geometries": 14,
+          "textures": 45
+        }
+      }
+    },
+    "viewport": [
+      844,
+      390
+    ],
+    "note": "Windows desktop Chrome touch emulation; not Android hardware"
+  },
+  "close": {
+    "released": {
+      "builds": 149,
+      "renders": 148,
+      "hits": 12,
+      "cached": 32,
+      "bytes": 3644432,
+      "queued": 0,
+      "active": null,
+      "studio": false,
+      "memory": null
+    },
+    "stats": {
+      "builds": 149,
+      "renders": 148,
+      "hits": 13,
+      "cached": 32,
+      "bytes": 3644432,
+      "queued": 0,
+      "active": null,
+      "studio": false,
+      "memory": null
+    },
+    "memoryKeys": [
+      "br_settings",
+      "br_codex_seen",
+      "br_save_slot1",
+      "br_codex"
+    ]
+  },
+  "checks": {
+    "checks": [
+      "Entity list creates no model previews",
+      "Opening the list does not build every entity",
+      "Existing codex excludes only the internal activated form",
+      "Model preview generated: smiler",
+      "Full resolution model image: smiler",
+      "Correct accessible specimen name: smiler",
+      "Image contains rendered geometry rather than an empty canvas: smiler",
+      "Preview sits to the right of M.E.G. archive text: smiler",
+      "Preview stays inside the actual archive panel: smiler",
+      "Model preview generated: hound",
+      "Full resolution model image: hound",
+      "Correct accessible specimen name: hound",
+      "Image contains rendered geometry rather than an empty canvas: hound",
+      "Preview sits to the right of M.E.G. archive text: hound",
+      "Preview stays inside the actual archive panel: hound",
+      "Model preview generated: faceling",
+      "Full resolution model image: faceling",
+      "Correct accessible specimen name: faceling",
+      "Image contains rendered geometry rather than an empty canvas: faceling",
+      "Preview sits to the right of M.E.G. archive text: faceling",
+      "Preview stays inside the actual archive panel: faceling",
+      "Model preview generated: deathmoth",
+      "Full resolution model image: deathmoth",
+      "Correct accessible specimen name: deathmoth",
+      "Image contains rendered geometry rather than an empty canvas: deathmoth",
+      "Moth wings are visibly spread rather than an edge-on sliver",
+      "Preview sits to the right of M.E.G. archive text: deathmoth",
+      "Preview stays inside the actual archive panel: deathmoth",
+      "Model preview generated: clump",
+      "Full resolution model image: clump",
+      "Correct accessible specimen name: clump",
+      "Image contains rendered geometry rather than an empty canvas: clump",
+      "Preview sits to the right of M.E.G. archive text: clump",
+      "Preview stays inside the actual archive panel: clump",
+      "Model preview generated: thething",
+      "Full resolution model image: thething",
+      "Correct accessible specimen name: thething",
+      "Image contains rendered geometry rather than an empty canvas: thething",
+      "Long body is readable in a broadside view",
+      "Preview sits to the right of M.E.G. archive text: thething",
+      "Preview stays inside the actual archive panel: thething",
+      "Model preview generated: wretch",
+      "Full resolution model image: wretch",
+      "Correct accessible specimen name: wretch",
+      "Image contains rendered geometry rather than an empty canvas: wretch",
+      "Preview sits to the right of M.E.G. archive text: wretch",
+      "Preview stays inside the actual archive panel: wretch",
+      "Model preview generated: smiler",
+      "Full resolution model image: smiler",
+      "Correct accessible specimen name: smiler",
+      "Image contains rendered geometry rather than an empty canvas: smiler",
+      "Preview sits to the right of M.E.G. archive text: smiler",
+      "Preview stays inside the actual archive panel: smiler",
+      "Model preview generated: arms",
+      "Full resolution model image: arms",
+      "Correct accessible specimen name: arms",
+      "Image contains rendered geometry rather than an empty canvas: arms",
+      "Preview sits to the right of M.E.G. archive text: arms",
+      "Preview stays inside the actual archive panel: arms",
+      "Model preview generated: arcwraith",
+      "Full resolution model image: arcwraith",
+      "Correct accessible specimen name: arcwraith",
+      "Image contains rendered geometry rather than an empty canvas: arcwraith",
+      "Preview sits to the right of M.E.G. archive text: arcwraith",
+      "Preview stays inside the actual archive panel: arcwraith",
+      "Model preview generated: vendingmachine",
+      "Full resolution model image: vendingmachine",
+      "Correct accessible specimen name: vendingmachine",
+      "Image contains rendered geometry rather than an empty canvas: vendingmachine",
+      "Preview sits to the right of M.E.G. archive text: vendingmachine",
+      "Preview stays inside the actual archive panel: vendingmachine",
+      "Model preview generated: nguithr",
+      "Full resolution model image: nguithr",
+      "Correct accessible specimen name: nguithr",
+      "Image contains rendered geometry rather than an empty canvas: nguithr",
+      "Preview sits to the right of M.E.G. archive text: nguithr",
+      "Preview stays inside the actual archive panel: nguithr",
+      "Invisible entity has a truthful no-visible-body state",
+      "Model preview generated: duller",
+      "Full resolution model image: duller",
+      "Correct accessible specimen name: duller",
+      "Image contains rendered geometry rather than an empty canvas: duller",
+      "Preview sits to the right of M.E.G. archive text: duller",
+      "Preview stays inside the actual archive panel: duller",
+      "Model preview generated: skinstealer",
+      "Full resolution model image: skinstealer",
+      "Correct accessible specimen name: skinstealer",
+      "Image contains rendered geometry rather than an empty canvas: skinstealer",
+      "Preview sits to the right of M.E.G. archive text: skinstealer",
+      "Preview stays inside the actual archive panel: skinstealer",
+      "Model preview generated: faceling",
+      "Full resolution model image: faceling",
+      "Correct accessible specimen name: faceling",
+      "Image contains rendered geometry rather than an empty canvas: faceling",
+      "Preview sits to the right of M.E.G. archive text: faceling",
+      "Preview stays inside the actual archive panel: faceling",
+      "Model preview generated: copierwraith",
+      "Full resolution model image: copierwraith",
+      "Correct accessible specimen name: copierwraith",
+      "Image contains rendered geometry rather than an empty canvas: copierwraith",
+      "Preview sits to the right of M.E.G. archive text: copierwraith",
+      "Preview stays inside the actual archive panel: copierwraith",
+      "Model preview generated: seated",
+      "Full resolution model image: seated",
+      "Correct accessible specimen name: seated",
+      "Image contains rendered geometry rather than an empty canvas: seated",
+      "Preview sits to the right of M.E.G. archive text: seated",
+      "Preview stays inside the actual archive panel: seated",
+      "Model preview generated: bellhop",
+      "Full resolution model image: bellhop",
+      "Correct accessible specimen name: bellhop",
+      "Image contains rendered geometry rather than an empty canvas: bellhop",
+      "Preview sits to the right of M.E.G. archive text: bellhop",
+      "Preview stays inside the actual archive panel: bellhop",
+      "Model preview generated: mirrorself",
+      "Full resolution model image: mirrorself",
+      "Correct accessible specimen name: mirrorself",
+      "Image contains rendered geometry rather than an empty canvas: mirrorself",
+      "Preview sits to the right of M.E.G. archive text: mirrorself",
+      "Preview stays inside the actual archive panel: mirrorself",
+      "Model preview generated: dryshrimp",
+      "Full resolution model image: dryshrimp",
+      "Correct accessible specimen name: dryshrimp",
+      "Image contains rendered geometry rather than an empty canvas: dryshrimp",
+      "Preview sits to the right of M.E.G. archive text: dryshrimp",
+      "Preview stays inside the actual archive panel: dryshrimp",
+      "Model preview generated: arachnid",
+      "Full resolution model image: arachnid",
+      "Correct accessible specimen name: arachnid",
+      "Image contains rendered geometry rather than an empty canvas: arachnid",
+      "Preview sits to the right of M.E.G. archive text: arachnid",
+      "Preview stays inside the actual archive panel: arachnid",
+      "Model preview generated: hound",
+      "Full resolution model image: hound",
+      "Correct accessible specimen name: hound",
+      "Image contains rendered geometry rather than an empty canvas: hound",
+      "Preview sits to the right of M.E.G. archive text: hound",
+      "Preview stays inside the actual archive panel: hound",
+      "Model preview generated: clump",
+      "Full resolution model image: clump",
+      "Correct accessible specimen name: clump",
+      "Image contains rendered geometry rather than an empty canvas: clump",
+      "Preview sits to the right of M.E.G. archive text: clump",
+      "Preview stays inside the actual archive panel: clump",
+      "Model preview generated: deathmoth",
+      "Full resolution model image: deathmoth",
+      "Correct accessible specimen name: deathmoth",
+      "Image contains rendered geometry rather than an empty canvas: deathmoth",
+      "Moth wings are visibly spread rather than an edge-on sliver",
+      "Preview sits to the right of M.E.G. archive text: deathmoth",
+      "Preview stays inside the actual archive panel: deathmoth",
+      "Model preview generated: carrier",
+      "Full resolution model image: carrier",
+      "Correct accessible specimen name: carrier",
+      "Image contains rendered geometry rather than an empty canvas: carrier",
+      "Preview sits to the right of M.E.G. archive text: carrier",
+      "Preview stays inside the actual archive panel: carrier",
+      "Model preview generated: pipeworm",
+      "Full resolution model image: pipeworm",
+      "Correct accessible specimen name: pipeworm",
+      "Image contains rendered geometry rather than an empty canvas: pipeworm",
+      "Preview sits to the right of M.E.G. archive text: pipeworm",
+      "Preview stays inside the actual archive panel: pipeworm",
+      "Model preview generated: corpserat",
+      "Full resolution model image: corpserat",
+      "Correct accessible specimen name: corpserat",
+      "Image contains rendered geometry rather than an empty canvas: corpserat",
+      "Preview sits to the right of M.E.G. archive text: corpserat",
+      "Preview stays inside the actual archive panel: corpserat",
+      "Model preview generated: ferren",
+      "Full resolution model image: ferren",
+      "Correct accessible specimen name: ferren",
+      "Image contains rendered geometry rather than an empty canvas: ferren",
+      "Preview sits to the right of M.E.G. archive text: ferren",
+      "Preview stays inside the actual archive panel: ferren",
+      "Model preview generated: jerry",
+      "Full resolution model image: jerry",
+      "Correct accessible specimen name: jerry",
+      "Image contains rendered geometry rather than an empty canvas: jerry",
+      "Preview sits to the right of M.E.G. archive text: jerry",
+      "Preview stays inside the actual archive panel: jerry",
+      "Model preview generated: mimicry",
+      "Full resolution model image: mimicry",
+      "Correct accessible specimen name: mimicry",
+      "Image contains rendered geometry rather than an empty canvas: mimicry",
+      "Preview sits to the right of M.E.G. archive text: mimicry",
+      "Preview stays inside the actual archive panel: mimicry",
+      "Model preview generated: tiny",
+      "Full resolution model image: tiny",
+      "Correct accessible specimen name: tiny",
+      "Image contains rendered geometry rather than an empty canvas: tiny",
+      "Preview sits to the right of M.E.G. archive text: tiny",
+      "Preview stays inside the actual archive panel: tiny",
+      "Model preview generated: thething",
+      "Full resolution model image: thething",
+      "Correct accessible specimen name: thething",
+      "Image contains rendered geometry rather than an empty canvas: thething",
+      "Long body is readable in a broadside view",
+      "Preview sits to the right of M.E.G. archive text: thething",
+      "Preview stays inside the actual archive panel: thething",
+      "Model preview generated: wrangler",
+      "Full resolution model image: wrangler",
+      "Correct accessible specimen name: wrangler",
+      "Image contains rendered geometry rather than an empty canvas: wrangler",
+      "Preview sits to the right of M.E.G. archive text: wrangler",
+      "Preview stays inside the actual archive panel: wrangler",
+      "Model preview generated: camocrawler",
+      "Full resolution model image: camocrawler",
+      "Correct accessible specimen name: camocrawler",
+      "Image contains rendered geometry rather than an empty canvas: camocrawler",
+      "Preview sits to the right of M.E.G. archive text: camocrawler",
+      "Preview stays inside the actual archive panel: camocrawler",
+      "Model preview generated: lightguide",
+      "Full resolution model image: lightguide",
+      "Correct accessible specimen name: lightguide",
+      "Image contains rendered geometry rather than an empty canvas: lightguide",
+      "Preview sits to the right of M.E.G. archive text: lightguide",
+      "Preview stays inside the actual archive panel: lightguide",
+      "Model preview generated: curabitur",
+      "Full resolution model image: curabitur",
+      "Correct accessible specimen name: curabitur",
+      "Image contains rendered geometry rather than an empty canvas: curabitur",
+      "Preview sits to the right of M.E.G. archive text: curabitur",
+      "Preview stays inside the actual archive panel: curabitur",
+      "Model preview generated: wretch",
+      "Full resolution model image: wretch",
+      "Correct accessible specimen name: wretch",
+      "Image contains rendered geometry rather than an empty canvas: wretch",
+      "Preview sits to the right of M.E.G. archive text: wretch",
+      "Preview stays inside the actual archive panel: wretch",
+      "Model preview generated: watcher",
+      "Full resolution model image: watcher",
+      "Correct accessible specimen name: watcher",
+      "Image contains rendered geometry rather than an empty canvas: watcher",
+      "Preview sits to the right of M.E.G. archive text: watcher",
+      "Preview stays inside the actual archive panel: watcher",
+      "Model preview generated: strider",
+      "Full resolution model image: strider",
+      "Correct accessible specimen name: strider",
+      "Image contains rendered geometry rather than an empty canvas: strider",
+      "Preview sits to the right of M.E.G. archive text: strider",
+      "Preview stays inside the actual archive panel: strider",
+      "Model preview generated: mangled",
+      "Full resolution model image: mangled",
+      "Correct accessible specimen name: mangled",
+      "Image contains rendered geometry rather than an empty canvas: mangled",
+      "Preview sits to the right of M.E.G. archive text: mangled",
+      "Preview stays inside the actual archive panel: mangled",
+      "Model preview generated: soilworm",
+      "Full resolution model image: soilworm",
+      "Correct accessible specimen name: soilworm",
+      "Image contains rendered geometry rather than an empty canvas: soilworm",
+      "Preview sits to the right of M.E.G. archive text: soilworm",
+      "Preview stays inside the actual archive panel: soilworm",
+      "Model preview generated: partygoer",
+      "Full resolution model image: partygoer",
+      "Correct accessible specimen name: partygoer",
+      "Image contains rendered geometry rather than an empty canvas: partygoer",
+      "Preview sits to the right of M.E.G. archive text: partygoer",
+      "Preview stays inside the actual archive panel: partygoer",
+      "Model preview generated: windowent",
+      "Full resolution model image: windowent",
+      "Correct accessible specimen name: windowent",
+      "Image contains rendered geometry rather than an empty canvas: windowent",
+      "Preview sits to the right of M.E.G. archive text: windowent",
+      "Preview stays inside the actual archive panel: windowent",
+      "PNG cache obeys both entry and byte limits",
+      "Model preview generated: hound",
+      "Full resolution model image: hound",
+      "Correct accessible specimen name: hound",
+      "Image contains rendered geometry rather than an empty canvas: hound",
+      "Preview sits to the right of M.E.G. archive text: hound",
+      "Preview stays inside the actual archive panel: hound",
+      "Model preview generated: hound",
+      "Full resolution model image: hound",
+      "Correct accessible specimen name: hound",
+      "Image contains rendered geometry rather than an empty canvas: hound",
+      "Preview sits to the right of M.E.G. archive text: hound",
+      "Preview stays inside the actual archive panel: hound",
+      "Reopening a cached entity does not rebuild its model",
+      "Model preview generated: smiler",
+      "Full resolution model image: smiler",
+      "Correct accessible specimen name: smiler",
+      "Image contains rendered geometry rather than an empty canvas: smiler",
+      "Preview sits to the right of M.E.G. archive text: smiler",
+      "Preview stays inside the actual archive panel: smiler",
+      "Cancelled request never updates a different entity image",
+      "Rapid navigation retains the selected entity identity",
+      "Model preview generated: smiler",
+      "Full resolution model image: smiler",
+      "Correct accessible specimen name: smiler",
+      "Image contains rendered geometry rather than an empty canvas: smiler",
+      "Preview sits to the right of M.E.G. archive text: smiler",
+      "Preview stays inside the actual archive panel: smiler",
+      "Archive preview button available: smiler",
+      "Cycle image is a complete PNG: smiler 1",
+      "Cycle image changes: smiler 1",
+      "Cycle angle changes: smiler 1",
+      "Cycle image contains visible geometry: smiler 1",
+      "Preview identifies the actual registered form: smiler 1",
+      "Archive preview button available: smiler",
+      "Cycle image is a complete PNG: smiler 2",
+      "Cycle image changes: smiler 2",
+      "Cycle angle changes: smiler 2",
+      "Cycle image contains visible geometry: smiler 2",
+      "Preview identifies the actual registered form: smiler 2",
+      "Archive preview button available: smiler",
+      "Cycle image is a complete PNG: smiler 3",
+      "Cycle image changes: smiler 3",
+      "Cycle angle changes: smiler 3",
+      "Cycle image contains visible geometry: smiler 3",
+      "Preview identifies the actual registered form: smiler 3",
+      "Archive preview button available: smiler",
+      "Cycle image is a complete PNG: smiler 4",
+      "Cycle image changes: smiler 4",
+      "Cycle angle changes: smiler 4",
+      "Cycle image contains visible geometry: smiler 4",
+      "Cycle advances appearance after four angles: smiler 4",
+      "Preview identifies the actual registered form: smiler 4",
+      "Archive preview button available: smiler",
+      "Cycle image is a complete PNG: smiler 5",
+      "Cycle image changes: smiler 5",
+      "Cycle angle changes: smiler 5",
+      "Cycle image contains visible geometry: smiler 5",
+      "Preview identifies the actual registered form: smiler 5",
+      "Archive preview button available: smiler",
+      "Cycle image is a complete PNG: smiler 6",
+      "Cycle image changes: smiler 6",
+      "Cycle angle changes: smiler 6",
+      "Cycle image contains visible geometry: smiler 6",
+      "Preview identifies the actual registered form: smiler 6",
+      "Archive preview button available: smiler",
+      "Cycle image is a complete PNG: smiler 7",
+      "Cycle image changes: smiler 7",
+      "Cycle angle changes: smiler 7",
+      "Cycle image contains visible geometry: smiler 7",
+      "Preview identifies the actual registered form: smiler 7",
+      "Archive preview button available: smiler",
+      "Cycle image is a complete PNG: smiler 8",
+      "Cycle image changes: smiler 8",
+      "Cycle angle changes: smiler 8",
+      "Cycle image contains visible geometry: smiler 8",
+      "Cycle advances appearance after four angles: smiler 8",
+      "Preview identifies the actual registered form: smiler 8",
+      "Archive preview button available: smiler",
+      "Cycle image is a complete PNG: smiler 9",
+      "Cycle image changes: smiler 9",
+      "Cycle angle changes: smiler 9",
+      "Cycle image contains visible geometry: smiler 9",
+      "Preview identifies the actual registered form: smiler 9",
+      "Archive preview button available: smiler",
+      "Cycle image is a complete PNG: smiler 10",
+      "Cycle image changes: smiler 10",
+      "Cycle angle changes: smiler 10",
+      "Cycle image contains visible geometry: smiler 10",
+      "Preview identifies the actual registered form: smiler 10",
+      "Archive preview button available: smiler",
+      "Cycle image is a complete PNG: smiler 11",
+      "Cycle image changes: smiler 11",
+      "Cycle angle changes: smiler 11",
+      "Cycle image contains visible geometry: smiler 11",
+      "Preview identifies the actual registered form: smiler 11",
+      "Archive preview button available: smiler",
+      "Cycle image is a complete PNG: smiler 12",
+      "Cycle image changes: smiler 12",
+      "Cycle angle changes: smiler 12",
+      "Cycle image contains visible geometry: smiler 12",
+      "Cycle advances appearance after four angles: smiler 12",
+      "Preview identifies the actual registered form: smiler 12",
+      "Archive preview button available: smiler",
+      "Cycle image is a complete PNG: smiler 13",
+      "Cycle image changes: smiler 13",
+      "Cycle angle changes: smiler 13",
+      "Cycle image contains visible geometry: smiler 13",
+      "Preview identifies the actual registered form: smiler 13",
+      "Archive preview button available: smiler",
+      "Cycle image is a complete PNG: smiler 14",
+      "Cycle image changes: smiler 14",
+      "Cycle angle changes: smiler 14",
+      "Cycle image contains visible geometry: smiler 14",
+      "Preview identifies the actual registered form: smiler 14",
+      "Archive preview button available: smiler",
+      "Cycle image is a complete PNG: smiler 15",
+      "Cycle image changes: smiler 15",
+      "Cycle angle changes: smiler 15",
+      "Cycle image contains visible geometry: smiler 15",
+      "Preview identifies the actual registered form: smiler 15",
+      "Archive preview button available: smiler",
+      "Cycle image is a complete PNG: smiler 16",
+      "Cycle image changes: smiler 16",
+      "Cycle angle changes: smiler 16",
+      "Cycle image contains visible geometry: smiler 16",
+      "Cycle advances appearance after four angles: smiler 16",
+      "Preview identifies the actual registered form: smiler 16",
+      "Click tour reaches all registered forms: smiler",
+      "Click tour keeps the image cache bounded: smiler",
+      "Model preview generated: deathmoth",
+      "Full resolution model image: deathmoth",
+      "Correct accessible specimen name: deathmoth",
+      "Image contains rendered geometry rather than an empty canvas: deathmoth",
+      "Moth wings are visibly spread rather than an edge-on sliver",
+      "Preview sits to the right of M.E.G. archive text: deathmoth",
+      "Preview stays inside the actual archive panel: deathmoth",
+      "Archive preview button available: deathmoth",
+      "Cycle image is a complete PNG: deathmoth 1",
+      "Cycle image changes: deathmoth 1",
+      "Cycle angle changes: deathmoth 1",
+      "Cycle image contains visible geometry: deathmoth 1",
+      "Preview identifies the actual registered form: deathmoth 1",
+      "Archive preview button available: deathmoth",
+      "Cycle image is a complete PNG: deathmoth 2",
+      "Cycle image changes: deathmoth 2",
+      "Cycle angle changes: deathmoth 2",
+      "Cycle image contains visible geometry: deathmoth 2",
+      "Preview identifies the actual registered form: deathmoth 2",
+      "Archive preview button available: deathmoth",
+      "Cycle image is a complete PNG: deathmoth 3",
+      "Cycle image changes: deathmoth 3",
+      "Cycle angle changes: deathmoth 3",
+      "Cycle image contains visible geometry: deathmoth 3",
+      "Preview identifies the actual registered form: deathmoth 3",
+      "Archive preview button available: deathmoth",
+      "Cycle image is a complete PNG: deathmoth 4",
+      "Cycle image changes: deathmoth 4",
+      "Cycle angle changes: deathmoth 4",
+      "Cycle image contains visible geometry: deathmoth 4",
+      "Cycle advances appearance after four angles: deathmoth 4",
+      "Preview identifies the actual registered form: deathmoth 4",
+      "Archive preview button available: deathmoth",
+      "Cycle image is a complete PNG: deathmoth 5",
+      "Cycle image changes: deathmoth 5",
+      "Cycle angle changes: deathmoth 5",
+      "Cycle image contains visible geometry: deathmoth 5",
+      "Preview identifies the actual registered form: deathmoth 5",
+      "Archive preview button available: deathmoth",
+      "Cycle image is a complete PNG: deathmoth 6",
+      "Cycle image changes: deathmoth 6",
+      "Cycle angle changes: deathmoth 6",
+      "Cycle image contains visible geometry: deathmoth 6",
+      "Preview identifies the actual registered form: deathmoth 6",
+      "Archive preview button available: deathmoth",
+      "Cycle image is a complete PNG: deathmoth 7",
+      "Cycle image changes: deathmoth 7",
+      "Cycle angle changes: deathmoth 7",
+      "Cycle image contains visible geometry: deathmoth 7",
+      "Preview identifies the actual registered form: deathmoth 7",
+      "Archive preview button available: deathmoth",
+      "Cycle image is a complete PNG: deathmoth 8",
+      "Cycle image changes: deathmoth 8",
+      "Cycle angle changes: deathmoth 8",
+      "Cycle image contains visible geometry: deathmoth 8",
+      "Cycle advances appearance after four angles: deathmoth 8",
+      "Preview identifies the actual registered form: deathmoth 8",
+      "Archive preview button available: deathmoth",
+      "Cycle image is a complete PNG: deathmoth 9",
+      "Cycle image changes: deathmoth 9",
+      "Cycle angle changes: deathmoth 9",
+      "Cycle image contains visible geometry: deathmoth 9",
+      "Preview identifies the actual registered form: deathmoth 9",
+      "Archive preview button available: deathmoth",
+      "Cycle image is a complete PNG: deathmoth 10",
+      "Cycle image changes: deathmoth 10",
+      "Cycle angle changes: deathmoth 10",
+      "Cycle image contains visible geometry: deathmoth 10",
+      "Preview identifies the actual registered form: deathmoth 10",
+      "Archive preview button available: deathmoth",
+      "Cycle image is a complete PNG: deathmoth 11",
+      "Cycle image changes: deathmoth 11",
+      "Cycle angle changes: deathmoth 11",
+      "Cycle image contains visible geometry: deathmoth 11",
+      "Preview identifies the actual registered form: deathmoth 11",
+      "Archive preview button available: deathmoth",
+      "Cycle image is a complete PNG: deathmoth 12",
+      "Cycle image changes: deathmoth 12",
+      "Cycle angle changes: deathmoth 12",
+      "Cycle image contains visible geometry: deathmoth 12",
+      "Cycle advances appearance after four angles: deathmoth 12",
+      "Preview identifies the actual registered form: deathmoth 12",
+      "Click tour reaches all registered forms: deathmoth",
+      "Click tour keeps the image cache bounded: deathmoth",
+      "Model preview generated: corpserat",
+      "Full resolution model image: corpserat",
+      "Correct accessible specimen name: corpserat",
+      "Image contains rendered geometry rather than an empty canvas: corpserat",
+      "Preview sits to the right of M.E.G. archive text: corpserat",
+      "Preview stays inside the actual archive panel: corpserat",
+      "Archive preview button available: corpserat",
+      "Cycle image is a complete PNG: corpserat 1",
+      "Cycle image changes: corpserat 1",
+      "Cycle angle changes: corpserat 1",
+      "Cycle image contains visible geometry: corpserat 1",
+      "Preview identifies the actual registered form: corpserat 1",
+      "Archive preview button available: corpserat",
+      "Cycle image is a complete PNG: corpserat 2",
+      "Cycle image changes: corpserat 2",
+      "Cycle angle changes: corpserat 2",
+      "Cycle image contains visible geometry: corpserat 2",
+      "Preview identifies the actual registered form: corpserat 2",
+      "Archive preview button available: corpserat",
+      "Cycle image is a complete PNG: corpserat 3",
+      "Cycle image changes: corpserat 3",
+      "Cycle angle changes: corpserat 3",
+      "Cycle image contains visible geometry: corpserat 3",
+      "Preview identifies the actual registered form: corpserat 3",
+      "Archive preview button available: corpserat",
+      "Cycle image is a complete PNG: corpserat 4",
+      "Cycle image changes: corpserat 4",
+      "Cycle angle changes: corpserat 4",
+      "Cycle image contains visible geometry: corpserat 4",
+      "Cycle advances appearance after four angles: corpserat 4",
+      "Preview identifies the actual registered form: corpserat 4",
+      "Archive preview button available: corpserat",
+      "Cycle image is a complete PNG: corpserat 5",
+      "Cycle image changes: corpserat 5",
+      "Cycle angle changes: corpserat 5",
+      "Cycle image contains visible geometry: corpserat 5",
+      "Preview identifies the actual registered form: corpserat 5",
+      "Archive preview button available: corpserat",
+      "Cycle image is a complete PNG: corpserat 6",
+      "Cycle image changes: corpserat 6",
+      "Cycle angle changes: corpserat 6",
+      "Cycle image contains visible geometry: corpserat 6",
+      "Preview identifies the actual registered form: corpserat 6",
+      "Archive preview button available: corpserat",
+      "Cycle image is a complete PNG: corpserat 7",
+      "Cycle image changes: corpserat 7",
+      "Cycle angle changes: corpserat 7",
+      "Cycle image contains visible geometry: corpserat 7",
+      "Preview identifies the actual registered form: corpserat 7",
+      "Archive preview button available: corpserat",
+      "Cycle image is a complete PNG: corpserat 8",
+      "Cycle image changes: corpserat 8",
+      "Cycle angle changes: corpserat 8",
+      "Cycle image contains visible geometry: corpserat 8",
+      "Cycle advances appearance after four angles: corpserat 8",
+      "Preview identifies the actual registered form: corpserat 8",
+      "Archive preview button available: corpserat",
+      "Cycle image is a complete PNG: corpserat 9",
+      "Cycle image changes: corpserat 9",
+      "Cycle angle changes: corpserat 9",
+      "Cycle image contains visible geometry: corpserat 9",
+      "Preview identifies the actual registered form: corpserat 9",
+      "Archive preview button available: corpserat",
+      "Cycle image is a complete PNG: corpserat 10",
+      "Cycle image changes: corpserat 10",
+      "Cycle angle changes: corpserat 10",
+      "Cycle image contains visible geometry: corpserat 10",
+      "Preview identifies the actual registered form: corpserat 10",
+      "Archive preview button available: corpserat",
+      "Cycle image is a complete PNG: corpserat 11",
+      "Cycle image changes: corpserat 11",
+      "Cycle angle changes: corpserat 11",
+      "Cycle image contains visible geometry: corpserat 11",
+      "Preview identifies the actual registered form: corpserat 11",
+      "Archive preview button available: corpserat",
+      "Cycle image is a complete PNG: corpserat 12",
+      "Cycle image changes: corpserat 12",
+      "Cycle angle changes: corpserat 12",
+      "Cycle image contains visible geometry: corpserat 12",
+      "Cycle advances appearance after four angles: corpserat 12",
+      "Preview identifies the actual registered form: corpserat 12",
+      "Archive preview button available: corpserat",
+      "Cycle image is a complete PNG: corpserat 13",
+      "Cycle image changes: corpserat 13",
+      "Cycle angle changes: corpserat 13",
+      "Cycle image contains visible geometry: corpserat 13",
+      "Preview identifies the actual registered form: corpserat 13",
+      "Archive preview button available: corpserat",
+      "Cycle image is a complete PNG: corpserat 14",
+      "Cycle image changes: corpserat 14",
+      "Cycle angle changes: corpserat 14",
+      "Cycle image contains visible geometry: corpserat 14",
+      "Preview identifies the actual registered form: corpserat 14",
+      "Archive preview button available: corpserat",
+      "Cycle image is a complete PNG: corpserat 15",
+      "Cycle image changes: corpserat 15",
+      "Cycle angle changes: corpserat 15",
+      "Cycle image contains visible geometry: corpserat 15",
+      "Preview identifies the actual registered form: corpserat 15",
+      "Archive preview button available: corpserat",
+      "Cycle image is a complete PNG: corpserat 16",
+      "Cycle image changes: corpserat 16",
+      "Cycle angle changes: corpserat 16",
+      "Cycle image contains visible geometry: corpserat 16",
+      "Cycle advances appearance after four angles: corpserat 16",
+      "Preview identifies the actual registered form: corpserat 16",
+      "Click tour reaches all registered forms: corpserat",
+      "Click tour keeps the image cache bounded: corpserat",
+      "Model preview generated: arachnid",
+      "Full resolution model image: arachnid",
+      "Correct accessible specimen name: arachnid",
+      "Image contains rendered geometry rather than an empty canvas: arachnid",
+      "Preview sits to the right of M.E.G. archive text: arachnid",
+      "Preview stays inside the actual archive panel: arachnid",
+      "Archive preview button available: arachnid",
+      "Cycle image is a complete PNG: arachnid 1",
+      "Cycle image changes: arachnid 1",
+      "Cycle angle changes: arachnid 1",
+      "Cycle image contains visible geometry: arachnid 1",
+      "Preview identifies the actual registered form: arachnid 1",
+      "Archive preview button available: arachnid",
+      "Cycle image is a complete PNG: arachnid 2",
+      "Cycle image changes: arachnid 2",
+      "Cycle angle changes: arachnid 2",
+      "Cycle image contains visible geometry: arachnid 2",
+      "Preview identifies the actual registered form: arachnid 2",
+      "Archive preview button available: arachnid",
+      "Cycle image is a complete PNG: arachnid 3",
+      "Cycle image changes: arachnid 3",
+      "Cycle angle changes: arachnid 3",
+      "Cycle image contains visible geometry: arachnid 3",
+      "Preview identifies the actual registered form: arachnid 3",
+      "Archive preview button available: arachnid",
+      "Cycle image is a complete PNG: arachnid 4",
+      "Cycle image changes: arachnid 4",
+      "Cycle angle changes: arachnid 4",
+      "Cycle image contains visible geometry: arachnid 4",
+      "Cycle advances appearance after four angles: arachnid 4",
+      "Preview identifies the actual registered form: arachnid 4",
+      "Archive preview button available: arachnid",
+      "Cycle image is a complete PNG: arachnid 5",
+      "Cycle image changes: arachnid 5",
+      "Cycle angle changes: arachnid 5",
+      "Cycle image contains visible geometry: arachnid 5",
+      "Preview identifies the actual registered form: arachnid 5",
+      "Archive preview button available: arachnid",
+      "Cycle image is a complete PNG: arachnid 6",
+      "Cycle image changes: arachnid 6",
+      "Cycle angle changes: arachnid 6",
+      "Cycle image contains visible geometry: arachnid 6",
+      "Preview identifies the actual registered form: arachnid 6",
+      "Archive preview button available: arachnid",
+      "Cycle image is a complete PNG: arachnid 7",
+      "Cycle image changes: arachnid 7",
+      "Cycle angle changes: arachnid 7",
+      "Cycle image contains visible geometry: arachnid 7",
+      "Preview identifies the actual registered form: arachnid 7",
+      "Archive preview button available: arachnid",
+      "Cycle image is a complete PNG: arachnid 8",
+      "Cycle image changes: arachnid 8",
+      "Cycle angle changes: arachnid 8",
+      "Cycle image contains visible geometry: arachnid 8",
+      "Cycle advances appearance after four angles: arachnid 8",
+      "Preview identifies the actual registered form: arachnid 8",
+      "Archive preview button available: arachnid",
+      "Cycle image is a complete PNG: arachnid 9",
+      "Cycle image changes: arachnid 9",
+      "Cycle angle changes: arachnid 9",
+      "Cycle image contains visible geometry: arachnid 9",
+      "Preview identifies the actual registered form: arachnid 9",
+      "Archive preview button available: arachnid",
+      "Cycle image is a complete PNG: arachnid 10",
+      "Cycle image changes: arachnid 10",
+      "Cycle angle changes: arachnid 10",
+      "Cycle image contains visible geometry: arachnid 10",
+      "Preview identifies the actual registered form: arachnid 10",
+      "Archive preview button available: arachnid",
+      "Cycle image is a complete PNG: arachnid 11",
+      "Cycle image changes: arachnid 11",
+      "Cycle angle changes: arachnid 11",
+      "Cycle image contains visible geometry: arachnid 11",
+      "Preview identifies the actual registered form: arachnid 11",
+      "Archive preview button available: arachnid",
+      "Cycle image is a complete PNG: arachnid 12",
+      "Cycle image changes: arachnid 12",
+      "Cycle angle changes: arachnid 12",
+      "Cycle image contains visible geometry: arachnid 12",
+      "Cycle advances appearance after four angles: arachnid 12",
+      "Preview identifies the actual registered form: arachnid 12",
+      "Archive preview button available: arachnid",
+      "Cycle image is a complete PNG: arachnid 13",
+      "Cycle image changes: arachnid 13",
+      "Cycle angle changes: arachnid 13",
+      "Cycle image contains visible geometry: arachnid 13",
+      "Preview identifies the actual registered form: arachnid 13",
+      "Archive preview button available: arachnid",
+      "Cycle image is a complete PNG: arachnid 14",
+      "Cycle image changes: arachnid 14",
+      "Cycle angle changes: arachnid 14",
+      "Cycle image contains visible geometry: arachnid 14",
+      "Preview identifies the actual registered form: arachnid 14",
+      "Archive preview button available: arachnid",
+      "Cycle image is a complete PNG: arachnid 15",
+      "Cycle image changes: arachnid 15",
+      "Cycle angle changes: arachnid 15",
+      "Cycle image contains visible geometry: arachnid 15",
+      "Preview identifies the actual registered form: arachnid 15",
+      "Archive preview button available: arachnid",
+      "Cycle image is a complete PNG: arachnid 16",
+      "Cycle image changes: arachnid 16",
+      "Cycle angle changes: arachnid 16",
+      "Cycle image contains visible geometry: arachnid 16",
+      "Cycle advances appearance after four angles: arachnid 16",
+      "Preview identifies the actual registered form: arachnid 16",
+      "Click tour reaches all registered forms: arachnid",
+      "Click tour keeps the image cache bounded: arachnid",
+      "Model preview generated: wretch",
+      "Full resolution model image: wretch",
+      "Correct accessible specimen name: wretch",
+      "Image contains rendered geometry rather than an empty canvas: wretch",
+      "Preview sits to the right of M.E.G. archive text: wretch",
+      "Preview stays inside the actual archive panel: wretch",
+      "Archive preview button available: wretch",
+      "Cycle image is a complete PNG: wretch 1",
+      "Cycle image changes: wretch 1",
+      "Cycle angle changes: wretch 1",
+      "Cycle image contains visible geometry: wretch 1",
+      "Preview identifies the actual registered form: wretch 1",
+      "Archive preview button available: wretch",
+      "Cycle image is a complete PNG: wretch 2",
+      "Cycle image changes: wretch 2",
+      "Cycle angle changes: wretch 2",
+      "Cycle image contains visible geometry: wretch 2",
+      "Preview identifies the actual registered form: wretch 2",
+      "Archive preview button available: wretch",
+      "Cycle image is a complete PNG: wretch 3",
+      "Cycle image changes: wretch 3",
+      "Cycle angle changes: wretch 3",
+      "Cycle image contains visible geometry: wretch 3",
+      "Preview identifies the actual registered form: wretch 3",
+      "Archive preview button available: wretch",
+      "Cycle image is a complete PNG: wretch 4",
+      "Cycle image changes: wretch 4",
+      "Cycle angle changes: wretch 4",
+      "Cycle image contains visible geometry: wretch 4",
+      "Cycle advances appearance after four angles: wretch 4",
+      "Preview identifies the actual registered form: wretch 4",
+      "Archive preview button available: wretch",
+      "Cycle image is a complete PNG: wretch 5",
+      "Cycle image changes: wretch 5",
+      "Cycle angle changes: wretch 5",
+      "Cycle image contains visible geometry: wretch 5",
+      "Preview identifies the actual registered form: wretch 5",
+      "Archive preview button available: wretch",
+      "Cycle image is a complete PNG: wretch 6",
+      "Cycle image changes: wretch 6",
+      "Cycle angle changes: wretch 6",
+      "Cycle image contains visible geometry: wretch 6",
+      "Preview identifies the actual registered form: wretch 6",
+      "Archive preview button available: wretch",
+      "Cycle image is a complete PNG: wretch 7",
+      "Cycle image changes: wretch 7",
+      "Cycle angle changes: wretch 7",
+      "Cycle image contains visible geometry: wretch 7",
+      "Preview identifies the actual registered form: wretch 7",
+      "Archive preview button available: wretch",
+      "Cycle image is a complete PNG: wretch 8",
+      "Cycle image changes: wretch 8",
+      "Cycle angle changes: wretch 8",
+      "Cycle image contains visible geometry: wretch 8",
+      "Cycle advances appearance after four angles: wretch 8",
+      "Preview identifies the actual registered form: wretch 8",
+      "Archive preview button available: wretch",
+      "Cycle image is a complete PNG: wretch 9",
+      "Cycle image changes: wretch 9",
+      "Cycle angle changes: wretch 9",
+      "Cycle image contains visible geometry: wretch 9",
+      "Preview identifies the actual registered form: wretch 9",
+      "Archive preview button available: wretch",
+      "Cycle image is a complete PNG: wretch 10",
+      "Cycle image changes: wretch 10",
+      "Cycle angle changes: wretch 10",
+      "Cycle image contains visible geometry: wretch 10",
+      "Preview identifies the actual registered form: wretch 10",
+      "Archive preview button available: wretch",
+      "Cycle image is a complete PNG: wretch 11",
+      "Cycle image changes: wretch 11",
+      "Cycle angle changes: wretch 11",
+      "Cycle image contains visible geometry: wretch 11",
+      "Preview identifies the actual registered form: wretch 11",
+      "Archive preview button available: wretch",
+      "Cycle image is a complete PNG: wretch 12",
+      "Cycle image changes: wretch 12",
+      "Cycle angle changes: wretch 12",
+      "Cycle image contains visible geometry: wretch 12",
+      "Cycle advances appearance after four angles: wretch 12",
+      "Preview identifies the actual registered form: wretch 12",
+      "Click tour reaches all registered forms: wretch",
+      "Click tour keeps the image cache bounded: wretch",
+      "Model preview generated: hound",
+      "Full resolution model image: hound",
+      "Correct accessible specimen name: hound",
+      "Image contains rendered geometry rather than an empty canvas: hound",
+      "Preview sits to the right of M.E.G. archive text: hound",
+      "Preview stays inside the actual archive panel: hound",
+      "Archive preview button available: hound",
+      "Cycle image is a complete PNG: hound 1",
+      "Cycle image changes: hound 1",
+      "Cycle angle changes: hound 1",
+      "Cycle image contains visible geometry: hound 1",
+      "Preview identifies the actual registered form: hound 1",
+      "Archive preview button available: hound",
+      "Cycle image is a complete PNG: hound 2",
+      "Cycle image changes: hound 2",
+      "Cycle angle changes: hound 2",
+      "Cycle image contains visible geometry: hound 2",
+      "Preview identifies the actual registered form: hound 2",
+      "Archive preview button available: hound",
+      "Cycle image is a complete PNG: hound 3",
+      "Cycle image changes: hound 3",
+      "Cycle angle changes: hound 3",
+      "Cycle image contains visible geometry: hound 3",
+      "Preview identifies the actual registered form: hound 3",
+      "Archive preview button available: hound",
+      "Cycle image is a complete PNG: hound 4",
+      "Cycle image changes: hound 4",
+      "Cycle angle changes: hound 4",
+      "Cycle image contains visible geometry: hound 4",
+      "Cycle advances appearance after four angles: hound 4",
+      "Preview identifies the actual registered form: hound 4",
+      "Archive preview button available: hound",
+      "Cycle image is a complete PNG: hound 5",
+      "Cycle image changes: hound 5",
+      "Cycle angle changes: hound 5",
+      "Cycle image contains visible geometry: hound 5",
+      "Preview identifies the actual registered form: hound 5",
+      "Archive preview button available: hound",
+      "Cycle image is a complete PNG: hound 6",
+      "Cycle image changes: hound 6",
+      "Cycle angle changes: hound 6",
+      "Cycle image contains visible geometry: hound 6",
+      "Preview identifies the actual registered form: hound 6",
+      "Archive preview button available: hound",
+      "Cycle image is a complete PNG: hound 7",
+      "Cycle image changes: hound 7",
+      "Cycle angle changes: hound 7",
+      "Cycle image contains visible geometry: hound 7",
+      "Preview identifies the actual registered form: hound 7",
+      "Archive preview button available: hound",
+      "Cycle image is a complete PNG: hound 8",
+      "Cycle image changes: hound 8",
+      "Cycle angle changes: hound 8",
+      "Cycle image contains visible geometry: hound 8",
+      "Cycle advances appearance after four angles: hound 8",
+      "Preview identifies the actual registered form: hound 8",
+      "Click tour reaches all registered forms: hound",
+      "Click tour keeps the image cache bounded: hound",
+      "Model preview generated: faceling",
+      "Full resolution model image: faceling",
+      "Correct accessible specimen name: faceling",
+      "Image contains rendered geometry rather than an empty canvas: faceling",
+      "Preview sits to the right of M.E.G. archive text: faceling",
+      "Preview stays inside the actual archive panel: faceling",
+      "Archive preview button available: faceling",
+      "Cycle image is a complete PNG: faceling 1",
+      "Cycle image changes: faceling 1",
+      "Cycle angle changes: faceling 1",
+      "Cycle image contains visible geometry: faceling 1",
+      "Preview identifies the actual registered form: faceling 1",
+      "Archive preview button available: faceling",
+      "Cycle image is a complete PNG: faceling 2",
+      "Cycle image changes: faceling 2",
+      "Cycle angle changes: faceling 2",
+      "Cycle image contains visible geometry: faceling 2",
+      "Preview identifies the actual registered form: faceling 2",
+      "Archive preview button available: faceling",
+      "Cycle image is a complete PNG: faceling 3",
+      "Cycle image changes: faceling 3",
+      "Cycle angle changes: faceling 3",
+      "Cycle image contains visible geometry: faceling 3",
+      "Preview identifies the actual registered form: faceling 3",
+      "Archive preview button available: faceling",
+      "Cycle image is a complete PNG: faceling 4",
+      "Cycle image changes: faceling 4",
+      "Cycle angle changes: faceling 4",
+      "Cycle image contains visible geometry: faceling 4",
+      "Cycle advances appearance after four angles: faceling 4",
+      "Preview identifies the actual registered form: faceling 4",
+      "Click tour reaches all registered forms: faceling",
+      "Click tour keeps the image cache bounded: faceling",
+      "Model preview generated: clump",
+      "Full resolution model image: clump",
+      "Correct accessible specimen name: clump",
+      "Image contains rendered geometry rather than an empty canvas: clump",
+      "Preview sits to the right of M.E.G. archive text: clump",
+      "Preview stays inside the actual archive panel: clump",
+      "Archive preview button available: clump",
+      "Cycle image is a complete PNG: clump 1",
+      "Cycle image changes: clump 1",
+      "Cycle angle changes: clump 1",
+      "Cycle image contains visible geometry: clump 1",
+      "Preview identifies the actual registered form: clump 1",
+      "Archive preview button available: clump",
+      "Cycle image is a complete PNG: clump 2",
+      "Cycle image changes: clump 2",
+      "Cycle angle changes: clump 2",
+      "Cycle image contains visible geometry: clump 2",
+      "Preview identifies the actual registered form: clump 2",
+      "Archive preview button available: clump",
+      "Cycle image is a complete PNG: clump 3",
+      "Cycle image changes: clump 3",
+      "Cycle angle changes: clump 3",
+      "Cycle image contains visible geometry: clump 3",
+      "Preview identifies the actual registered form: clump 3",
+      "Archive preview button available: clump",
+      "Cycle image is a complete PNG: clump 4",
+      "Cycle image changes: clump 4",
+      "Cycle angle changes: clump 4",
+      "Cycle image contains visible geometry: clump 4",
+      "Cycle advances appearance after four angles: clump 4",
+      "Preview identifies the actual registered form: clump 4",
+      "Click tour reaches all registered forms: clump",
+      "Click tour keeps the image cache bounded: clump",
+      "Model preview generated: skinstealer",
+      "Full resolution model image: skinstealer",
+      "Correct accessible specimen name: skinstealer",
+      "Image contains rendered geometry rather than an empty canvas: skinstealer",
+      "Preview sits to the right of M.E.G. archive text: skinstealer",
+      "Preview stays inside the actual archive panel: skinstealer",
+      "Archive preview button available: skinstealer",
+      "Cycle image is a complete PNG: skinstealer 1",
+      "Cycle image changes: skinstealer 1",
+      "Cycle angle changes: skinstealer 1",
+      "Cycle image contains visible geometry: skinstealer 1",
+      "Preview identifies the actual registered form: skinstealer 1",
+      "Archive preview button available: skinstealer",
+      "Cycle image is a complete PNG: skinstealer 2",
+      "Cycle image changes: skinstealer 2",
+      "Cycle angle changes: skinstealer 2",
+      "Cycle image contains visible geometry: skinstealer 2",
+      "Preview identifies the actual registered form: skinstealer 2",
+      "Archive preview button available: skinstealer",
+      "Cycle image is a complete PNG: skinstealer 3",
+      "Cycle image changes: skinstealer 3",
+      "Cycle angle changes: skinstealer 3",
+      "Cycle image contains visible geometry: skinstealer 3",
+      "Preview identifies the actual registered form: skinstealer 3",
+      "Archive preview button available: skinstealer",
+      "Cycle image is a complete PNG: skinstealer 4",
+      "Cycle image changes: skinstealer 4",
+      "Cycle angle changes: skinstealer 4",
+      "Cycle image contains visible geometry: skinstealer 4",
+      "Cycle advances appearance after four angles: skinstealer 4",
+      "Preview identifies the actual registered form: skinstealer 4",
+      "Archive preview button available: skinstealer",
+      "Cycle image is a complete PNG: skinstealer 5",
+      "Cycle image changes: skinstealer 5",
+      "Cycle angle changes: skinstealer 5",
+      "Cycle image contains visible geometry: skinstealer 5",
+      "Preview identifies the actual registered form: skinstealer 5",
+      "Archive preview button available: skinstealer",
+      "Cycle image is a complete PNG: skinstealer 6",
+      "Cycle image changes: skinstealer 6",
+      "Cycle angle changes: skinstealer 6",
+      "Cycle image contains visible geometry: skinstealer 6",
+      "Preview identifies the actual registered form: skinstealer 6",
+      "Archive preview button available: skinstealer",
+      "Cycle image is a complete PNG: skinstealer 7",
+      "Cycle image changes: skinstealer 7",
+      "Cycle angle changes: skinstealer 7",
+      "Cycle image contains visible geometry: skinstealer 7",
+      "Preview identifies the actual registered form: skinstealer 7",
+      "Archive preview button available: skinstealer",
+      "Cycle image is a complete PNG: skinstealer 8",
+      "Cycle image changes: skinstealer 8",
+      "Cycle angle changes: skinstealer 8",
+      "Cycle image contains visible geometry: skinstealer 8",
+      "Cycle advances appearance after four angles: skinstealer 8",
+      "Preview identifies the actual registered form: skinstealer 8",
+      "Click tour reaches all registered forms: skinstealer",
+      "Click tour keeps the image cache bounded: skinstealer",
+      "Model preview generated: duller",
+      "Full resolution model image: duller",
+      "Correct accessible specimen name: duller",
+      "Image contains rendered geometry rather than an empty canvas: duller",
+      "Preview sits to the right of M.E.G. archive text: duller",
+      "Preview stays inside the actual archive panel: duller",
+      "Archive preview button available: duller",
+      "Cycle image is a complete PNG: duller 1",
+      "Cycle image changes: duller 1",
+      "Cycle angle changes: duller 1",
+      "Cycle image contains visible geometry: duller 1",
+      "Archive preview button available: duller",
+      "Cycle image is a complete PNG: duller 2",
+      "Cycle image changes: duller 2",
+      "Cycle angle changes: duller 2",
+      "Cycle image contains visible geometry: duller 2",
+      "Archive preview button available: duller",
+      "Cycle image is a complete PNG: duller 3",
+      "Cycle image changes: duller 3",
+      "Cycle angle changes: duller 3",
+      "Cycle image contains visible geometry: duller 3",
+      "Archive preview button available: duller",
+      "Cycle image is a complete PNG: duller 4",
+      "Cycle image changes: duller 4",
+      "Cycle angle changes: duller 4",
+      "Cycle image contains visible geometry: duller 4",
+      "Cycle advances appearance after four angles: duller 4",
+      "Click tour reaches all registered forms: duller",
+      "Click tour keeps the image cache bounded: duller",
+      "Model preview generated: hound",
+      "Full resolution model image: hound",
+      "Correct accessible specimen name: hound",
+      "Image contains rendered geometry rather than an empty canvas: hound",
+      "Preview sits to the right of M.E.G. archive text: hound",
+      "Preview stays inside the actual archive panel: hound",
+      "Model preview generated: hound",
+      "Full resolution model image: hound",
+      "Correct accessible specimen name: hound",
+      "Image contains rendered geometry rather than an empty canvas: hound",
+      "Preview sits to the right of M.E.G. archive text: hound",
+      "Preview stays inside the actual archive panel: hound",
+      "Reopening a cached entity does not rebuild its model",
+      "Model preview generated: smiler",
+      "Full resolution model image: smiler",
+      "Correct accessible specimen name: smiler",
+      "Image contains rendered geometry rather than an empty canvas: smiler",
+      "Preview sits to the right of M.E.G. archive text: smiler",
+      "Preview stays inside the actual archive panel: smiler",
+      "Cancelled request never updates a different entity image",
+      "Rapid navigation retains the selected entity identity",
+      "Model preview generated: hound",
+      "Full resolution model image: hound",
+      "Correct accessible specimen name: hound",
+      "Image contains rendered geometry rather than an empty canvas: hound",
+      "Preview sits to the right of M.E.G. archive text: hound",
+      "Preview stays inside the actual archive panel: hound",
+      "Touch layout has no horizontal overflow",
+      "Closing the actual game codex unmounts the preview",
+      "Idle studio automatically releases its WebGL context and GPU models",
+      "Cached PNG works after GPU context release"
+    ],
+    "records": [
+      {
+        "type": "smiler",
+        "status": "ready",
+        "pixels": 512,
+        "silhouette": {
+          "w": 16,
+          "h": 51
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 571.9456787109375,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 7,
+          "renders": 7,
+          "hits": 1,
+          "cached": 7,
+          "bytes": 836204,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 2,
+            "textures": 19
+          }
+        }
+      },
+      {
+        "type": "arms",
+        "status": "ready",
+        "pixels": 324,
+        "silhouette": {
+          "w": 11,
+          "h": 51
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 565.2465209960938,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 8,
+          "renders": 8,
+          "hits": 1,
+          "cached": 8,
+          "bytes": 860720,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 7,
+            "textures": 18
+          }
+        }
+      },
+      {
+        "type": "arcwraith",
+        "status": "ready",
+        "pixels": 716,
+        "silhouette": {
+          "w": 18,
+          "h": 50
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 572.37646484375,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 9,
+          "renders": 9,
+          "hits": 1,
+          "cached": 9,
+          "bytes": 881692,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 10,
+            "textures": 18
+          }
+        }
+      },
+      {
+        "type": "vendingmachine",
+        "status": "ready",
+        "pixels": 1281,
+        "silhouette": {
+          "w": 25,
+          "h": 54
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 573.6409912109375,
+          "w": 274.328125,
+          "h": 324.32806396484375
+        },
+        "stats": {
+          "builds": 10,
+          "renders": 10,
+          "hits": 1,
+          "cached": 10,
+          "bytes": 907000,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 15,
+            "textures": 18
+          }
+        }
+      },
+      {
+        "type": "nguithr",
+        "status": "ready",
+        "pixels": 340,
+        "silhouette": {
+          "w": 25,
+          "h": 52
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 573.2412719726562,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 11,
+          "renders": 11,
+          "hits": 1,
+          "cached": 11,
+          "bytes": 949828,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 47,
+            "textures": 18
+          }
+        }
+      },
+      {
+        "type": "malady",
+        "status": "unavailable"
+      },
+      {
+        "type": "duller",
+        "status": "ready",
+        "pixels": 320,
+        "silhouette": {
+          "w": 11,
+          "h": 44
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 561.625,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 13,
+          "renders": 12,
+          "hits": 1,
+          "cached": 13,
+          "bytes": 1037176,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 22,
+            "textures": 20
+          }
+        }
+      },
+      {
+        "type": "skinstealer",
+        "status": "ready",
+        "pixels": 535,
+        "silhouette": {
+          "w": 14,
+          "h": 54
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 561.625,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 14,
+          "renders": 13,
+          "hits": 1,
+          "cached": 14,
+          "bytes": 1135292,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 1,
+            "textures": 24
+          }
+        }
+      },
+      {
+        "type": "faceling",
+        "status": "ready",
+        "pixels": 564,
+        "silhouette": {
+          "w": 16,
+          "h": 54
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 572.3746948242188,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 14,
+          "renders": 13,
+          "hits": 2,
+          "cached": 14,
+          "bytes": 1135292,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 1,
+            "textures": 24
+          }
+        }
+      },
+      {
+        "type": "copierwraith",
+        "status": "ready",
+        "pixels": 757,
+        "silhouette": {
+          "w": 24,
+          "h": 51
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 571.1204833984375,
+          "w": 274.328125,
+          "h": 324.32806396484375
+        },
+        "stats": {
+          "builds": 15,
+          "renders": 14,
+          "hits": 2,
+          "cached": 15,
+          "bytes": 1157024,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 9,
+            "textures": 23
+          }
+        }
+      },
+      {
+        "type": "seated",
+        "status": "ready",
+        "pixels": 909,
+        "silhouette": {
+          "w": 27,
+          "h": 52
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 572.37255859375,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 16,
+          "renders": 15,
+          "hits": 2,
+          "cached": 16,
+          "bytes": 1186428,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 21,
+            "textures": 23
+          }
+        }
+      },
+      {
+        "type": "bellhop",
+        "status": "ready",
+        "pixels": 973,
+        "silhouette": {
+          "w": 34,
+          "h": 54
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 572.8091430664062,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 17,
+          "renders": 16,
+          "hits": 2,
+          "cached": 17,
+          "bytes": 1217248,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 22,
+            "textures": 23
+          }
+        }
+      },
+      {
+        "type": "mirrorself",
+        "status": "ready",
+        "pixels": 805,
+        "silhouette": {
+          "w": 20,
+          "h": 54
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 570.720703125,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 18,
+          "renders": 17,
+          "hits": 2,
+          "cached": 18,
+          "bytes": 1237964,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 10,
+            "textures": 23
+          }
+        }
+      },
+      {
+        "type": "dryshrimp",
+        "status": "ready",
+        "pixels": 294,
+        "silhouette": {
+          "w": 40,
+          "h": 16
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 562.125,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 19,
+          "renders": 18,
+          "hits": 2,
+          "cached": 19,
+          "bytes": 1348776,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 8,
+            "textures": 25
+          }
+        }
+      },
+      {
+        "type": "arachnid",
+        "status": "ready",
+        "pixels": 347,
+        "silhouette": {
+          "w": 49,
+          "h": 17
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 571.0238037109375,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 20,
+          "renders": 19,
+          "hits": 2,
+          "cached": 20,
+          "bytes": 1402684,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 29,
+            "textures": 25
+          }
+        }
+      },
+      {
+        "type": "hound",
+        "status": "ready",
+        "pixels": 656,
+        "silhouette": {
+          "w": 30,
+          "h": 44
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 571.1162109375,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 20,
+          "renders": 19,
+          "hits": 3,
+          "cached": 20,
+          "bytes": 1402684,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 29,
+            "textures": 25
+          }
+        }
+      },
+      {
+        "type": "clump",
+        "status": "ready",
+        "pixels": 507,
+        "silhouette": {
+          "w": 46,
+          "h": 22
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 570.627197265625,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 20,
+          "renders": 19,
+          "hits": 4,
+          "cached": 20,
+          "bytes": 1402684,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 29,
+            "textures": 25
+          }
+        }
+      },
+      {
+        "type": "deathmoth",
+        "status": "ready",
+        "pixels": 690,
+        "silhouette": {
+          "w": 51,
+          "h": 27
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 570.215087890625,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 20,
+          "renders": 19,
+          "hits": 5,
+          "cached": 20,
+          "bytes": 1402684,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 29,
+            "textures": 25
+          }
+        }
+      },
+      {
+        "type": "carrier",
+        "status": "ready",
+        "pixels": 1171,
+        "silhouette": {
+          "w": 41,
+          "h": 37
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 571.1217041015625,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 21,
+          "renders": 20,
+          "hits": 5,
+          "cached": 21,
+          "bytes": 1435544,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 18,
+            "textures": 25
+          }
+        }
+      },
+      {
+        "type": "pipeworm",
+        "status": "ready",
+        "pixels": 677,
+        "silhouette": {
+          "w": 38,
+          "h": 28
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 573.2410888671875,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 22,
+          "renders": 21,
+          "hits": 5,
+          "cached": 22,
+          "bytes": 1485468,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 19,
+            "textures": 25
+          }
+        }
+      },
+      {
+        "type": "corpserat",
+        "status": "ready",
+        "pixels": 419,
+        "silhouette": {
+          "w": 36,
+          "h": 26
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 562.125,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 23,
+          "renders": 22,
+          "hits": 5,
+          "cached": 23,
+          "bytes": 1628192,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 25,
+            "textures": 28
+          }
+        }
+      },
+      {
+        "type": "ferren",
+        "status": "ready",
+        "pixels": 867,
+        "silhouette": {
+          "w": 38,
+          "h": 35
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 570.7174682617188,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 24,
+          "renders": 23,
+          "hits": 5,
+          "cached": 24,
+          "bytes": 1650892,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 12,
+            "textures": 28
+          }
+        }
+      },
+      {
+        "type": "jerry",
+        "status": "ready",
+        "pixels": 778,
+        "silhouette": {
+          "w": 25,
+          "h": 49
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 574.58349609375,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 25,
+          "renders": 24,
+          "hits": 5,
+          "cached": 25,
+          "bytes": 1678200,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 14,
+            "textures": 28
+          }
+        }
+      },
+      {
+        "type": "mimicry",
+        "status": "ready",
+        "pixels": 862,
+        "silhouette": {
+          "w": 19,
+          "h": 54
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 575.0453491210938,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 26,
+          "renders": 25,
+          "hits": 5,
+          "cached": 26,
+          "bytes": 1702612,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 13,
+            "textures": 28
+          }
+        }
+      },
+      {
+        "type": "tiny",
+        "status": "ready",
+        "pixels": 370,
+        "silhouette": {
+          "w": 51,
+          "h": 44
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 569.8084716796875,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 27,
+          "renders": 26,
+          "hits": 5,
+          "cached": 27,
+          "bytes": 1754616,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 62,
+            "textures": 29
+          }
+        }
+      },
+      {
+        "type": "thething",
+        "status": "ready",
+        "pixels": 181,
+        "silhouette": {
+          "w": 51,
+          "h": 4
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 572.8655395507812,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 27,
+          "renders": 26,
+          "hits": 6,
+          "cached": 27,
+          "bytes": 1754616,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 62,
+            "textures": 29
+          }
+        }
+      },
+      {
+        "type": "wrangler",
+        "status": "ready",
+        "pixels": 467,
+        "silhouette": {
+          "w": 37,
+          "h": 18
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 573.2396850585938,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 28,
+          "renders": 27,
+          "hits": 6,
+          "cached": 28,
+          "bytes": 1799108,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 37,
+            "textures": 29
+          }
+        }
+      },
+      {
+        "type": "camocrawler",
+        "status": "ready",
+        "pixels": 812,
+        "silhouette": {
+          "w": 30,
+          "h": 43
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 571.1155395507812,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 29,
+          "renders": 28,
+          "hits": 6,
+          "cached": 29,
+          "bytes": 1844232,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 36,
+            "textures": 29
+          }
+        }
+      },
+      {
+        "type": "lightguide",
+        "status": "ready",
+        "pixels": 400,
+        "silhouette": {
+          "w": 39,
+          "h": 40
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 573.2454833984375,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 30,
+          "renders": 29,
+          "hits": 6,
+          "cached": 30,
+          "bytes": 1873844,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 13,
+            "textures": 29
+          }
+        }
+      },
+      {
+        "type": "curabitur",
+        "status": "ready",
+        "pixels": 480,
+        "silhouette": {
+          "w": 20,
+          "h": 47
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 567.0516357421875,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 31,
+          "renders": 30,
+          "hits": 6,
+          "cached": 31,
+          "bytes": 1973928,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 53,
+            "textures": 29
+          }
+        }
+      },
+      {
+        "type": "wretch",
+        "status": "ready",
+        "pixels": 532,
+        "silhouette": {
+          "w": 14,
+          "h": 54
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 575.49072265625,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 31,
+          "renders": 30,
+          "hits": 7,
+          "cached": 31,
+          "bytes": 1973928,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 53,
+            "textures": 29
+          }
+        }
+      },
+      {
+        "type": "watcher",
+        "status": "ready",
+        "pixels": 1023,
+        "silhouette": {
+          "w": 41,
+          "h": 36
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 568.076171875,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 32,
+          "renders": 31,
+          "hits": 7,
+          "cached": 32,
+          "bytes": 2105244,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 33,
+            "textures": 29
+          }
+        }
+      },
+      {
+        "type": "strider",
+        "status": "ready",
+        "pixels": 695,
+        "silhouette": {
+          "w": 38,
+          "h": 52
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 571.5349731445312,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 33,
+          "renders": 32,
+          "hits": 7,
+          "cached": 32,
+          "bytes": 2147620,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 46,
+            "textures": 29
+          }
+        }
+      },
+      {
+        "type": "mangled",
+        "status": "ready",
+        "pixels": 1394,
+        "silhouette": {
+          "w": 44,
+          "h": 45
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 572.815185546875,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 34,
+          "renders": 33,
+          "hits": 7,
+          "cached": 32,
+          "bytes": 2291972,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 109,
+            "textures": 29
+          }
+        }
+      },
+      {
+        "type": "soilworm",
+        "status": "ready",
+        "pixels": 729,
+        "silhouette": {
+          "w": 38,
+          "h": 30
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 571.9490966796875,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 35,
+          "renders": 34,
+          "hits": 7,
+          "cached": 32,
+          "bytes": 2316940,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 17,
+            "textures": 29
+          }
+        }
+      },
+      {
+        "type": "partygoer",
+        "status": "ready",
+        "pixels": 1011,
+        "silhouette": {
+          "w": 43,
+          "h": 55
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 571.1243896484375,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 36,
+          "renders": 35,
+          "hits": 7,
+          "cached": 32,
+          "bytes": 2375164,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 54,
+            "textures": 29
+          }
+        }
+      },
+      {
+        "type": "windowent",
+        "status": "ready",
+        "pixels": 1126,
+        "silhouette": {
+          "w": 26,
+          "h": 56
+        },
+        "bounds": {
+          "x": 1153.671875,
+          "y": 571.9441528320312,
+          "w": 274.328125,
+          "h": 324.328125
+        },
+        "stats": {
+          "builds": 37,
+          "renders": 36,
+          "hits": 7,
+          "cached": 32,
+          "bytes": 2372644,
+          "queued": 0,
+          "active": null,
+          "studio": true,
+          "memory": {
+            "geometries": 24,
+            "textures": 29
+          }
+        }
+      }
+    ],
+    "stats": {
+      "builds": 149,
+      "renders": 148,
+      "hits": 13,
+      "cached": 32,
+      "bytes": 3644432,
+      "queued": 0,
+      "active": null,
+      "studio": false,
+      "memory": null
+    }
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import type { Engine } from '@/game/engine'
 import { l11MapMarks } from '@/game/engine/l11State'
+import { partyConvK } from '@/game/engine/partygoerAI'
 import { ITEMS } from '@/game/content/items'
 import { ENTITIES } from '@/game/entities'
 import DevEntitySpawner from './DevEntitySpawner'
@@ -13,6 +14,7 @@ import { exitArrowRotation } from '@/game/content/guide'
 import { CS, infiniteImplFor } from '@/game/world/infinite'
 import { l5CorridorAt, l5RegionAt } from '@/game/world/infiniteL5' // v55：L5 区域名按大厅/房间矩形判定
 import { l7ZoneOfDepth } from '@/game/world/infiniteL7' // v57q：L7 深度带按玩家当前下潜深度显示
+import { l1StyleAt } from '@/game/world/l1Architecture'
 import { stairServesBand, bandOfPlayerZ } from '@/game/world/mapgen'
 import { CONTAINER_KINDS } from '@/game/decorations/containers'
 import { DOCS } from '@/game/content/docs'
@@ -34,8 +36,10 @@ import AlphaMapPanel from './AlphaMapPanel'
 import L11MapPanel, { L11Minimap } from './L11MapPanel'
 import DevExitTools from './DevExitTools'
 import {drawL0Map} from '@/game/content/l0Map'
+import {drawL1Map} from '@/game/content/l1Map'
 import { drawMapPlayer } from '@/game/content/mapPlayer'
 import { mapSight } from '@/game/world/mapSight'
+import { jerryOverlay, jerryLureMarks } from '@/game/engine/jerryAI'
 
 // 现象图标映射（phenomena.ts 中 def.icon → 具体 SVG 组件）
 const PHEN_ICON = { isolation: IconIsolation, plant: IconPlant, flicker: IconStamina } as const
@@ -111,9 +115,10 @@ function LegacyMinimap({ engine, size }: { engine: Engine; size: number }) {
       const wx0 = Math.floor(inf.ox + px), wy0 = Math.floor(inf.oy + py)
       const mod = (v: number, n: number) => ((v % n) + n) % n
       g.fillStyle = '#0a0908'; g.fillRect(0, 0, size, size)
-      if(inf.l0){
+      if(inf.l0||m.l1Architecture){
         g.save();g.translate((half-px)*s,(half-py)*s)
-        drawL0Map(g,engine,{x0:px-half,y0:py-half,x1:px+half,y1:py+half,scale:s})
+        const view={x0:px-half,y0:py-half,x1:px+half,y1:py+half,scale:s}
+        if(inf.l0)drawL0Map(g,engine,view);else drawL1Map(g,engine,view)
         g.restore()
       }else{
       for (let dy = -half; dy < half; dy++)
@@ -156,6 +161,12 @@ function LegacyMinimap({ engine, size }: { engine: Engine; size: number }) {
       for(const mark of l11MapMarks(engine)){
         const sx=Math.max(5,Math.min(size-5,(mark.x-inf.ox-px+half)*s)),sy=Math.max(5,Math.min(size-5,(mark.y-inf.oy-py+half)*s))
         g.save();g.fillStyle='#b7d2c6';g.fillRect(sx-2,sy-2,4,4);g.font='8px monospace';g.textAlign='center';g.fillText(mark.name,sx,sy-5);g.restore()
+      }
+      // 重制杰瑞：信众诱导材料标出的「据点」（蓝色方框；到达后变灰）——不受探索位图限制，贴边显示方向
+      for (const mark of jerryLureMarks(engine)) {
+        const sx = Math.max(6, Math.min(size - 6, (mark.x - px + half) * s)), sy = Math.max(6, Math.min(size - 6, (mark.y - py + half) * s))
+        g.save(); g.strokeStyle = mark.found ? 'rgba(140,150,180,0.7)' : '#5f86ff'; g.lineWidth = 1.6; g.strokeRect(sx - 3 * k, sy - 3 * k, 6 * k, 6 * k)
+        g.fillStyle = mark.found ? 'rgba(140,150,180,0.7)' : '#9fb6ff'; g.font = `${Math.max(7, Math.round(8 * k))}px monospace`; g.textAlign = 'center'; g.fillText(mark.name, sx, sy - 5 * k); g.restore()
       }
       // 历史标记保留为暗金菱形；最新标记为青蓝发光菱形，且是 HUD 唯一会指向的路线点。
       if (engine.player.level === 8) for (const mark of engine.avenueMarks) {
@@ -346,7 +357,10 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
   const infMap = engine.map?.inf
   if (infMap) {
     const impl = infiniteImplFor(engine.levelDef.id)
-    if (engine.levelDef.id === 7) {
+    if (engine.levelDef.id === 1) {
+      curVariant = l1StyleAt(engine.map!, p.x, p.y) ?? null
+      areaName = curVariant ? impl.variantNames[curVariant] ?? null : null
+    } else if (engine.levelDef.id === 7) {
       // v57q：光带只由玩家当前下潜深度决定，与水平位置/海床位置无关
       const z = p.z >= 3 ? 'entry' : l7ZoneOfDepth(Math.max(0, -p.z))
       curVariant = z
@@ -441,7 +455,7 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
           {ITEMS[p.hotbar[p.selected]!.type]?.name ?? p.hotbar[p.selected]!.type}
         </div>
       )}
-      <div className="flex gap-1 overflow-x-auto">
+      <div className="hud-hotbar-row flex gap-1">
       {p.hotbar.map((s, i) => (
         <button
           key={i}
@@ -665,9 +679,11 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
           {/* 2026-10 UI：按键提示改为可换行的键帽列表并限宽，不再横跨半屏压住快捷栏 */}
           <div className="hud-panel hud-keyhints font-mono2 text-[11px]" style={{ color: 'var(--text-dim)' }}>
             {([
-              ['attack', '攻击'], ['jump', '跳跃'], ['crouch', '蹲伏'], ['flashlight', '手电'],
-              ['quickuse', '使用'], ['quickdrop', '丢弃'], ['inspect', '检视'],
-              ...(p.hotbar[p.selected]?.type === 'squirtgun' ? [['reload', '装填/轮盘']] : []),
+              ...(!engine.handsStowed ? [['attack', '攻击']] : []),
+              ['jump', '跳跃'], ['crouch', '蹲伏'], ['flashlight', '手电'],
+              ...(!engine.handsStowed ? [['quickuse', '使用'], ['quickdrop', '丢弃'], ['inspect', '检视']] : []),
+              ['holster', engine.handsStowed ? '取出主手' : '收起主手'],
+              ...(!engine.handsStowed && p.hotbar[p.selected]?.type === 'squirtgun' ? [['reload', '装填/轮盘']] : []),
             ] as [string, string][]).map(([k, t]) => (
               <span key={k} className="hud-keyhint"><kbd>{bindLabelFor(k)}</kbd>{t}</span>
             ))}
@@ -727,6 +743,22 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
           </>
         )
       })()}
+      {/* 派对客转化：视力变差（近视模糊，越往视野边缘越糊）+ 视野边缘泛起金黄的皮革色；没有数值，只有画面表现 */}
+      {(() => {
+        const ck = partyConvK(engine)
+        if (ck <= 0) return null
+        const blur = (0.8 + ck * 3.2).toFixed(2)
+        return (
+          <>
+            <div className="pointer-events-none fixed inset-0 z-[30]" style={{
+              backdropFilter: `blur(${blur}px)`, WebkitBackdropFilter: `blur(${blur}px)`,
+              maskImage: `radial-gradient(ellipse at center, transparent ${Math.round(42 - ck * 34)}%, black ${Math.round(78 - ck * 30)}%)`,
+              WebkitMaskImage: `radial-gradient(ellipse at center, transparent ${Math.round(42 - ck * 34)}%, black ${Math.round(78 - ck * 30)}%)`,
+            }} />
+            <div className="pointer-events-none fixed inset-0 z-[31]" style={{ boxShadow: `inset 0 0 ${Math.round(90 + ck * 120)}px ${Math.round(20 + ck * 40)}px rgba(214,170,40,${(0.12 + ck * 0.32).toFixed(3)})` }} />
+          </>
+        )
+      })()}
       {/* 理智 ≤40：紫边呼吸扭曲；≤20 加强 + 角落黑影 */}
       {p.sanity <= 40 && (
         <div
@@ -737,9 +769,21 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
       {p.sanity <= 20 && fxScale > 0.15 && (
         <div className="pointer-events-none fixed right-0 top-0 z-[31] h-40 w-40 anim-cornerShadow" style={{ background: 'radial-gradient(circle at top right, rgba(0,0,0,0.85), transparent 70%)' }} />
       )}
-      {/* HP ≤30：红色暗角脉冲 */}
-      {p.hp <= 30 && p.hp > 0 && (
-        <div className="pointer-events-none fixed inset-0 z-[31] anim-hpPulse" style={{ boxShadow: `inset 0 0 140px 40px rgba(179,53,43,${0.3 + 0.25 * fxScale})` }} />
+      {/* 杰瑞木僵、虔诚姿态、击晕与驯服残响。 */}
+      {(() => {
+        const jo=jerryOverlay(engine)
+        if(!jo.trance&&!jo.black&&!jo.devotion&&!jo.lapse)return null
+        const t=Math.max(jo.trance,jo.lapse*.55)
+        return <>
+          {t>0&&<div data-jerry-trance className="pointer-events-none fixed inset-0 z-[32]" style={{boxShadow:`inset 0 0 ${Math.round(160+t*260)}px ${Math.round(40+t*140)}px rgba(18,36,120,${(.35+t*.5).toFixed(3)})`,backdropFilter:`saturate(${(1-t*.7).toFixed(2)}) blur(${(t*1.6).toFixed(2)}px)`,WebkitBackdropFilter:`saturate(${(1-t*.7).toFixed(2)}) blur(${(t*1.6).toFixed(2)}px)`}}/>}
+          {jo.trance>.6&&<div className="pointer-events-none fixed inset-x-0 bottom-[22%] z-[33] text-center font-mono2 text-[15px] tracking-[0.5em]" style={{color:'rgba(190,206,255,0.85)',textShadow:'0 0 12px rgba(40,80,220,0.9)'}}>……</div>}
+          {jo.devotion>.05&&<div className="pointer-events-none fixed inset-x-0 bottom-[24%] z-[33] text-center text-[16px]" style={{color:`rgba(226,232,255,${jo.devotion.toFixed(2)})`,textShadow:'0 1px 6px #000'}}>你低下头，双手交叠在胸前。</div>}
+          {jo.black>0&&<div data-jerry-ko className="pointer-events-none fixed inset-0 z-[40]" style={{background:`rgba(0,0,0,${Math.min(1,jo.black).toFixed(3)})`}}>{jo.black>.9&&<div className="absolute inset-x-0 top-1/2 text-center text-[14px]" style={{color:'rgba(200,200,210,0.7)'}}>……有人拖着你的脚踝。</div>}</div>}
+        </>
+      })()}
+      {/* HP ≤30：红色暗角脉冲（派对客转化越深，痛觉越弱，暗角越淡；高转化时消失） */}
+      {p.hp <= 30 && p.hp > 0 && partyConvK(engine) < 0.85 && (
+        <div className="pointer-events-none fixed inset-0 z-[31] anim-hpPulse" style={{ boxShadow: `inset 0 0 140px 40px rgba(179,53,43,${(0.3 + 0.25 * fxScale) * (1 - partyConvK(engine))})` }} />
       )}
       {/* 电池 ≤15：顶部警告 */}
       {p.flashlight && p.battery <= 15 && p.battery > 0 && (
@@ -1408,10 +1452,10 @@ const GLYPH_COLOR: Record<string, string> = {
   skeleton: '#b08d46', silverware: '#d8d8e0', sedative: '#9adfff', flashlight: '#f0d060',
   // ===== v25：v23/v25 新增物品专属配色（各自独特，一眼可辨） =====
   chalkstub: '#f0f0f8', megfolder: '#bf9b5f', rope: '#a8854e', divemask: '#4ac9c9',
-  thingmeat: '#c95a6a', ratmeat: '#b0645a', oddbook: '#8a6ac9', cavingsuit: '#d97a2e', xenonmarble: '#66e0d0',
+  thingmeat: '#c95a6a', ratmeat: '#b0645a', velvetcake: '#b3243c', oddbook: '#8a6ac9', cavingsuit: '#d97a2e', xenonmarble: '#66e0d0',
   driedfruit: '#b86a2e', uvlamp: '#b48aff', stonekazoo: '#9a8a72', pockets: '#78cfcc',
   housekey: '#c9c9d2', wheatgrain: '#d9c25a', nails: '#7d8896', timber: '#96682e',
-  presses: '#cfa12e', pamphlet: '#7ac9b0', citywater: '#3aa0d8', endnote: '#8a7a6a',
+  presses: '#cfa12e', pamphlet: '#7ac9b0', jerryflyer:'#4268d6', fakelog:'#b8a77a', citywater: '#3aa0d8', endnote: '#8a7a6a',
   // ===== v32：后室扩展物品 =====
   cashew: '#c9a05a',
   knife: '#c9cdd4', axe: '#d96a3a', headlamp: '#f0d060', nightvision: '#78b886', notebook: '#8a6a4a',
@@ -1444,6 +1488,8 @@ const PIXEL_ICON: Record<string, true> = {
   pizza: true, lasagna: true, tomsspecial: true, grilledsteak: true, jambread: true,
   parcel: true, // v43 物流包裹（像素手绘纸箱）
   dryshrimp: true, friedshrimp: true, // v50 旱虾 / 酥炸旱虾
+  liveshrimp: true, // v81 活旱虾
+  bento: true, // v83 自制便当（Object 70）
   ratmeat: true, // v79 尸鼠肉
   firesalt: true, liquidpain: true, // v50 火盐晶体 / 液态痛苦
   // v51：Object 5 糖果（散装 + 袋装）
@@ -1453,6 +1499,8 @@ const PIXEL_ICON: Record<string, true> = {
   candywaste_bag: true, candygenius_bag: true, candymint_bag: true,
   manmade: true, // v51 人制品
   luckymilk: true, // v54 幸运豆奶（Object 28）
+  velvetcake: true,
+  jerryflyer: true, fakelog: true,
 }
 // v14：网络素材贴图图标（game-icons.net，CC BY 3.0，见 public/textures/icons/SOURCES.md）；
 // 不在表内或加载失败的物品回退手绘 SVG。

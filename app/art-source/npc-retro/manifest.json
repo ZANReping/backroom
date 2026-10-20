@@ -1,1099 +1,1470 @@
 {
- "note": "复古 NPC 生成贴图源（Hark image generation, 2026-10-13）。脸图按 Bumper-Crop NPC 管线做法：正面、对称、无阴影、脸部撑满方图；闭眼图为同图编辑；衣物 2×2 图集（左上躯干正面/右上躯干背面/左下袖子/右下裤子）。landmarks = [眼线 v, 鼻尖 v, 嘴 v, 下巴 v, 左眼 u, 右眼 u]（v 自顶向下）。处理脚本 scripts/gen-retro-npc-textures.py。",
- "license": "Generated for this project; no third-party image used. Bumper-Crop (github.com/obtusecat12/Bumper-Crop) referenced for method only (framing/layout), no assets copied.",
- "npcs": {
-  "kat": {
-   "landmarks": [
-    0.36,
-    0.59,
-    0.78,
-    0.98,
-    0.29,
-    0.71
-   ],
-   "skinUV": [
-    0.2,
-    0.42
-   ],
-   "hair": [
-    0,
-    0
-   ]
+  "note": "复古 NPC 生成贴图源（Hark image generation, 2026-10-13）。脸图按 Bumper-Crop NPC 管线做法：正面、对称、无阴影、脸部撑满方图；闭眼图为同图编辑；衣物 2×2 图集（左上躯干正面/右上躯干背面/左下袖子/右下裤子）。landmarks = [眼线 v, 鼻尖 v, 嘴 v, 下巴 v, 左眼 u, 右眼 u]（v 自顶向下）。处理脚本 scripts/gen-retro-npc-textures.py。",
+  "license": "Generated for this project; no third-party image used. Bumper-Crop (github.com/obtusecat12/Bumper-Crop) referenced for method only (framing/layout), no assets copied.",
+  "npcs": {
+    "kat": {
+      "landmarks": [
+        0.36,
+        0.59,
+        0.78,
+        0.98,
+        0.29,
+        0.71
+      ],
+      "skinUV": [
+        0.2,
+        0.42
+      ],
+      "hair": [
+        0,
+        0
+      ]
+    },
+    "tom": {
+      "landmarks": [
+        0.36,
+        0.62,
+        0.78,
+        0.98,
+        0.29,
+        0.71
+      ],
+      "skinUV": [
+        0.2,
+        0.42
+      ],
+      "hair": [
+        1,
+        0
+      ]
+    },
+    "aiko": {
+      "landmarks": [
+        0.365,
+        0.585,
+        0.735,
+        0.94,
+        0.31,
+        0.675
+      ],
+      "skinUV": [
+        0.22,
+        0.42
+      ],
+      "hair": [
+        0,
+        1
+      ]
+    },
+    "kowalski": {
+      "landmarks": [
+        0.37,
+        0.6,
+        0.77,
+        0.98,
+        0.3,
+        0.7
+      ],
+      "skinUV": [
+        0.2,
+        0.42
+      ],
+      "hair": [
+        1,
+        1
+      ]
+    }
   },
-  "tom": {
-   "landmarks": [
-    0.36,
-    0.62,
-    0.78,
-    0.98,
-    0.29,
-    0.71
-   ],
-   "skinUV": [
-    0.2,
-    0.42
-   ],
-   "hair": [
-    1,
-    0
-   ]
+  "prompts": {
+    "face": "Game character face texture (diffuse map), square. Strictly frontal, perfectly symmetric orthographic photograph of <person>. Face fills the square edge to edge (hairline to just below chin, cheeks to cheeks, ears cropped). Flat even diffuse lighting, no shadows/highlights. Eyes ~37% from top, nose ~60%, mouth ~76%. No text, no background. (reference image: framing only)",
+    "blink": "Edit this exact photo: the same person with both eyes peacefully closed, natural blink. Change nothing else, pixel-aligned.",
+    "body": "Game clothing texture atlas, 2x2 grid: TL torso front, TR torso back, BL sleeve with cuff at bottom, BR trousers front. Orthographic, flat lighting, realistic fabric, no people/text/background.",
+    "hair": "2x2 hair swatches, strands vertical: TL near-black combed back, TR short dark-brown wavy, BL long straight jet-black, BR thin silver-grey with scalp.",
+    "person": {
+      "kat": "a woman in her late 40s, stern practical expression, short near-black hair pulled back tightly, light olive-tan skin",
+      "tom": "a cheerful Italian-American man in his mid 50s, round warm face, rosy cheeks, thick dark-brown moustache, gentle closed-lip smile",
+      "aiko": "a quiet 25-year-old Japanese woman, calm reserved slightly tired expression, straight black hair, no makeup",
+      "kowalski": "a kindly talkative Polish man about 72, wrinkled, thin grey combed-back hair, bushy grey eyebrows, small grey moustache"
+    },
+    "clothes": {
+      "kat": "charcoal #3a3f46 overseer uniform jacket with brass-gold badge, slate #2a2d33 trousers",
+      "tom": "off-white #f0eee8 double-breasted chef jacket with red badge and sauce stain, charcoal trousers",
+      "aiko": "terracotta #c97a4a waitress shirt with cream #f0e6d0 half apron and name badge, dark grey #3a3f46 trousers",
+      "kowalski": "brown-olive #6a5a40 knit cardigan over cream shirt and green tie, pen in pocket, brown-grey #3a352e trousers"
+    }
   },
-  "aiko": {
-   "landmarks": [
-    0.365,
-    0.585,
-    0.735,
-    0.94,
-    0.31,
-    0.675
-   ],
-   "skinUV": [
-    0.22,
-    0.42
-   ],
-   "hair": [
-    0,
-    1
-   ]
+  "history": [
+    "2026-10-13 v3: aiko 脸图重做——原图下巴被裁掉；用 Hark 图像生成按同一人物生成拉远的正面照（含完整下巴），按眼-下巴比例裁成方图，灰底角落填发色；闭眼图为程序绘制（上睑肤色覆盖 + 睫毛线）。"
+  ],
+  "prompts_v3": {
+    "aiko-head-wide": "Zoomed-out frontal ID photo of the same young Japanese woman as the reference ... entire head visible, chin/jaw/neck visible, perfectly frontal, flat even lighting, plain light grey background. (ref: previous aiko-face.webp)"
   },
-  "kowalski": {
-   "landmarks": [
-    0.37,
-    0.6,
-    0.77,
-    0.98,
-    0.3,
-    0.7
-   ],
-   "skinUV": [
-    0.2,
-    0.42
-   ],
-   "hair": [
-    1,
-    1
-   ]
+  "pool": {
+    "note": "v68 通用形象脸池（Hark image generation, 2026-10-13）：性别 m/f × 肤色档 0–4（对应 SKIN_OPTIONS）× 3 张（0≈27 岁=玩家用，1≈45 岁，2≈60 岁）。原图 1024 → 用 YuNet 人脸关键点把眼线/嘴/两眼中心规范化到统一构图后存 512 webp（pool/<g><k>-<v>-face.webp）；闭眼与表情（smile/serious/sleepy，仅第 0 张）为同图编辑。少数原图重生成时提示词追加了 \"extreme close-up, no background visible\" 或更明确的年龄/族裔描述。处理脚本 scripts/gen-retro-avatar-textures.py。运行时统一 landmarks 见 retroAvatar.ts POOL_META。",
+    "reference_image": "kat-face.webp（只用于构图）",
+    "jobs": {
+      "0": [
+        {
+          "file": "face-m0-0.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a Northern European man about 27 with fair, pale skin (skin tone close to #f0c8a8), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, clean-shaven. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "face-m0-1.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a Slavic man in his mid 40s with light stubble with fair, pale skin (skin tone close to #f0c8a8), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, light stubble only, no beard. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "face-m0-2.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a fair-skinned man about 62, wrinkled, receding hairline with fair, pale skin (skin tone close to #f0c8a8), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, clean-shaven. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "face-f0-0.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a Northern European woman about 27 with fair, pale skin (skin tone close to #f0c8a8), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "face-f0-1.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a fair-skinned woman in her mid 40s, faint freckles with fair, pale skin (skin tone close to #f0c8a8), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "face-f0-2.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a fair-skinned woman about 60, wrinkled with fair, pale skin (skin tone close to #f0c8a8), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "blink-m0-0.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "blink-m0-1.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "blink-m0-2.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "expr-m0-smile.png",
+          "prompt": "Edit this exact photo: the same person with a gentle closed-mouth smile (mouth corners raised, slight cheek lift, eyes still open). Change nothing else; keep framing, eyes, eyebrows, skin and lighting identical."
+        },
+        {
+          "file": "expr-m0-serious.png",
+          "prompt": "Edit this exact photo: the same person looking stern and serious: eyebrows lowered and slightly drawn together, lips pressed into a firm flat line. Change nothing else; keep framing, face shape, skin and lighting identical."
+        },
+        {
+          "file": "expr-m0-sleepy.png",
+          "prompt": "Edit this exact photo: the same person looking drowsy and sleepy: heavy upper eyelids, eyes about half open, relaxed eyebrows, mouth closed. Change nothing else; keep framing, face shape, skin and lighting identical."
+        },
+        {
+          "file": "blink-f0-0.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "blink-f0-1.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "blink-f0-2.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "expr-f0-smile.png",
+          "prompt": "Edit this exact photo: the same person with a gentle closed-mouth smile (mouth corners raised, slight cheek lift, eyes still open). Change nothing else; keep framing, eyes, eyebrows, skin and lighting identical."
+        },
+        {
+          "file": "expr-f0-serious.png",
+          "prompt": "Edit this exact photo: the same person looking stern and serious: eyebrows lowered and slightly drawn together, lips pressed into a firm flat line. Change nothing else; keep framing, face shape, skin and lighting identical."
+        },
+        {
+          "file": "expr-f0-sleepy.png",
+          "prompt": "Edit this exact photo: the same person looking drowsy and sleepy: heavy upper eyelids, eyes about half open, relaxed eyebrows, mouth closed. Change nothing else; keep framing, face shape, skin and lighting identical."
+        }
+      ],
+      "1": [
+        {
+          "file": "face-m1-0.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of an East Asian man about 27 with light beige skin (skin tone close to #c9a58a), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, clean-shaven. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "face-m1-1.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a Southern European man in his mid 40s with light stubble with light beige skin (skin tone close to #c9a58a), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, light stubble only, no beard. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "face-m1-2.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of an East Asian man about 62, wrinkled with light beige skin (skin tone close to #c9a58a), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, clean-shaven. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "face-f1-0.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of an East Asian woman about 27 with light beige skin (skin tone close to #c9a58a), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "face-f1-1.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a Southern European woman in her mid 40s with light beige skin (skin tone close to #c9a58a), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "face-f1-2.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of an East Asian woman about 60, wrinkled with light beige skin (skin tone close to #c9a58a), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "blink-m1-0.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "blink-m1-1.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "blink-m1-2.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "expr-m1-smile.png",
+          "prompt": "Edit this exact photo: the same person with a gentle closed-mouth smile (mouth corners raised, slight cheek lift, eyes still open). Change nothing else; keep framing, eyes, eyebrows, skin and lighting identical."
+        },
+        {
+          "file": "expr-m1-serious.png",
+          "prompt": "Edit this exact photo: the same person looking stern and serious: eyebrows lowered and slightly drawn together, lips pressed into a firm flat line. Change nothing else; keep framing, face shape, skin and lighting identical."
+        },
+        {
+          "file": "expr-m1-sleepy.png",
+          "prompt": "Edit this exact photo: the same person looking drowsy and sleepy: heavy upper eyelids, eyes about half open, relaxed eyebrows, mouth closed. Change nothing else; keep framing, face shape, skin and lighting identical."
+        },
+        {
+          "file": "blink-f1-0.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "blink-f1-1.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "blink-f1-2.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "expr-f1-smile.png",
+          "prompt": "Edit this exact photo: the same person with a gentle closed-mouth smile (mouth corners raised, slight cheek lift, eyes still open). Change nothing else; keep framing, eyes, eyebrows, skin and lighting identical."
+        },
+        {
+          "file": "expr-f1-serious.png",
+          "prompt": "Edit this exact photo: the same person looking stern and serious: eyebrows lowered and slightly drawn together, lips pressed into a firm flat line. Change nothing else; keep framing, face shape, skin and lighting identical."
+        },
+        {
+          "file": "expr-f1-sleepy.png",
+          "prompt": "Edit this exact photo: the same person looking drowsy and sleepy: heavy upper eyelids, eyes about half open, relaxed eyebrows, mouth closed. Change nothing else; keep framing, face shape, skin and lighting identical."
+        }
+      ],
+      "2": [
+        {
+          "file": "face-m2-0.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a Latino man about 27 with medium tan skin (skin tone close to #a87f5c), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, clean-shaven. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "face-m2-1.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a Middle Eastern man in his mid 40s with light stubble with medium tan skin (skin tone close to #a87f5c), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, light stubble only, no beard. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "face-m2-2.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a Latino man about 62, wrinkled with medium tan skin (skin tone close to #a87f5c), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, clean-shaven. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "face-f2-0.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a Latina woman about 27 with medium tan skin (skin tone close to #a87f5c), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "face-f2-1.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a Middle Eastern woman in her mid 40s with medium tan skin (skin tone close to #a87f5c), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "face-f2-2.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a South Asian woman about 58, wrinkled with medium tan skin (skin tone close to #a87f5c), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "blink-m2-0.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "blink-m2-1.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "blink-m2-2.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "expr-m2-smile.png",
+          "prompt": "Edit this exact photo: the same person with a gentle closed-mouth smile (mouth corners raised, slight cheek lift, eyes still open). Change nothing else; keep framing, eyes, eyebrows, skin and lighting identical."
+        },
+        {
+          "file": "expr-m2-serious.png",
+          "prompt": "Edit this exact photo: the same person looking stern and serious: eyebrows lowered and slightly drawn together, lips pressed into a firm flat line. Change nothing else; keep framing, face shape, skin and lighting identical."
+        },
+        {
+          "file": "expr-m2-sleepy.png",
+          "prompt": "Edit this exact photo: the same person looking drowsy and sleepy: heavy upper eyelids, eyes about half open, relaxed eyebrows, mouth closed. Change nothing else; keep framing, face shape, skin and lighting identical."
+        },
+        {
+          "file": "blink-f2-0.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "blink-f2-1.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "blink-f2-2.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "expr-f2-smile.png",
+          "prompt": "Edit this exact photo: the same person with a gentle closed-mouth smile (mouth corners raised, slight cheek lift, eyes still open). Change nothing else; keep framing, eyes, eyebrows, skin and lighting identical."
+        },
+        {
+          "file": "expr-f2-serious.png",
+          "prompt": "Edit this exact photo: the same person looking stern and serious: eyebrows lowered and slightly drawn together, lips pressed into a firm flat line. Change nothing else; keep framing, face shape, skin and lighting identical."
+        },
+        {
+          "file": "expr-f2-sleepy.png",
+          "prompt": "Edit this exact photo: the same person looking drowsy and sleepy: heavy upper eyelids, eyes about half open, relaxed eyebrows, mouth closed. Change nothing else; keep framing, face shape, skin and lighting identical."
+        }
+      ],
+      "3": [
+        {
+          "file": "face-m3-0.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a South Asian man about 27 with warm brown skin (skin tone close to #7d5a3c), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, clean-shaven. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "face-m3-1.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a mixed-race man in his mid 40s with light stubble with warm brown skin (skin tone close to #7d5a3c), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, light stubble only, no beard. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "face-m3-2.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a South Asian man about 62, wrinkled, grey eyebrows with warm brown skin (skin tone close to #7d5a3c), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, clean-shaven. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "face-f3-0.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a South Asian woman about 27 with warm brown skin (skin tone close to #7d5a3c), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "face-f3-1.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a mixed-race woman in her mid 40s with warm brown skin (skin tone close to #7d5a3c), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "face-f3-2.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a North African woman about 58, wrinkled with warm brown skin (skin tone close to #7d5a3c), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "blink-m3-0.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "blink-m3-1.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "blink-m3-2.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "expr-m3-smile.png",
+          "prompt": "Edit this exact photo: the same person with a gentle closed-mouth smile (mouth corners raised, slight cheek lift, eyes still open). Change nothing else; keep framing, eyes, eyebrows, skin and lighting identical."
+        },
+        {
+          "file": "expr-m3-serious.png",
+          "prompt": "Edit this exact photo: the same person looking stern and serious: eyebrows lowered and slightly drawn together, lips pressed into a firm flat line. Change nothing else; keep framing, face shape, skin and lighting identical."
+        },
+        {
+          "file": "expr-m3-sleepy.png",
+          "prompt": "Edit this exact photo: the same person looking drowsy and sleepy: heavy upper eyelids, eyes about half open, relaxed eyebrows, mouth closed. Change nothing else; keep framing, face shape, skin and lighting identical."
+        },
+        {
+          "file": "blink-f3-0.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "blink-f3-1.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "blink-f3-2.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "expr-f3-smile.png",
+          "prompt": "Edit this exact photo: the same person with a gentle closed-mouth smile (mouth corners raised, slight cheek lift, eyes still open). Change nothing else; keep framing, eyes, eyebrows, skin and lighting identical."
+        },
+        {
+          "file": "expr-f3-serious.png",
+          "prompt": "Edit this exact photo: the same person looking stern and serious: eyebrows lowered and slightly drawn together, lips pressed into a firm flat line. Change nothing else; keep framing, face shape, skin and lighting identical."
+        },
+        {
+          "file": "expr-f3-sleepy.png",
+          "prompt": "Edit this exact photo: the same person looking drowsy and sleepy: heavy upper eyelids, eyes about half open, relaxed eyebrows, mouth closed. Change nothing else; keep framing, face shape, skin and lighting identical."
+        }
+      ],
+      "4": [
+        {
+          "file": "face-m4-0.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a West African man about 27 with deep dark-brown skin (skin tone close to #5a4030), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, clean-shaven. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "face-m4-1.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of an African man in his mid 40s with light stubble with deep dark-brown skin (skin tone close to #5a4030), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, light stubble only, no beard. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "face-m4-2.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of an African man about 62, wrinkled, grey eyebrows with deep dark-brown skin (skin tone close to #5a4030), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, clean-shaven. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "face-f4-0.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a West African woman about 27 with deep dark-brown skin (skin tone close to #5a4030), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "face-f4-1.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of an African woman in her mid 40s with deep dark-brown skin (skin tone close to #5a4030), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "face-f4-2.png",
+          "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of an African woman about 60, wrinkled with deep dark-brown skin (skin tone close to #5a4030), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
+        },
+        {
+          "file": "blink-m4-0.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "blink-m4-1.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "blink-m4-2.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "expr-m4-smile.png",
+          "prompt": "Edit this exact photo: the same person with a gentle closed-mouth smile (mouth corners raised, slight cheek lift, eyes still open). Change nothing else; keep framing, eyes, eyebrows, skin and lighting identical."
+        },
+        {
+          "file": "expr-m4-serious.png",
+          "prompt": "Edit this exact photo: the same person looking stern and serious: eyebrows lowered and slightly drawn together, lips pressed into a firm flat line. Change nothing else; keep framing, face shape, skin and lighting identical."
+        },
+        {
+          "file": "expr-m4-sleepy.png",
+          "prompt": "Edit this exact photo: the same person looking drowsy and sleepy: heavy upper eyelids, eyes about half open, relaxed eyebrows, mouth closed. Change nothing else; keep framing, face shape, skin and lighting identical."
+        },
+        {
+          "file": "blink-f4-0.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "blink-f4-1.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "blink-f4-2.png",
+          "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
+        },
+        {
+          "file": "expr-f4-smile.png",
+          "prompt": "Edit this exact photo: the same person with a gentle closed-mouth smile (mouth corners raised, slight cheek lift, eyes still open). Change nothing else; keep framing, eyes, eyebrows, skin and lighting identical."
+        },
+        {
+          "file": "expr-f4-serious.png",
+          "prompt": "Edit this exact photo: the same person looking stern and serious: eyebrows lowered and slightly drawn together, lips pressed into a firm flat line. Change nothing else; keep framing, face shape, skin and lighting identical."
+        },
+        {
+          "file": "expr-f4-sleepy.png",
+          "prompt": "Edit this exact photo: the same person looking drowsy and sleepy: heavy upper eyelids, eyes about half open, relaxed eyebrows, mouth closed. Change nothing else; keep framing, face shape, skin and lighting identical."
+        }
+      ]
+    },
+    "normalize": {
+      "m0-0": {
+        "src_landmarks": [
+          0.404,
+          0.605,
+          0.769,
+          1.045,
+          0.333,
+          0.668
+        ],
+        "scale": 1.11,
+        "landmarks": [
+          0.367,
+          0.601,
+          0.781,
+          1.088,
+          0.305,
+          0.681
+        ]
+      },
+      "m0-1": {
+        "src_landmarks": [
+          0.377,
+          0.61,
+          0.795,
+          1.114,
+          0.311,
+          0.683
+        ],
+        "scale": 0.969,
+        "landmarks": [
+          0.368,
+          0.589,
+          0.769,
+          1.079,
+          0.325,
+          0.678
+        ]
+      },
+      "m0-2": {
+        "src_landmarks": [
+          0.38,
+          0.6,
+          0.784,
+          1.045,
+          0.309,
+          0.682
+        ],
+        "scale": 1.002,
+        "landmarks": [
+          0.37,
+          0.599,
+          0.789,
+          1.057,
+          0.308,
+          0.687
+        ]
+      },
+      "m1-0": {
+        "src_landmarks": [
+          0.372,
+          0.615,
+          0.796,
+          1.118,
+          0.288,
+          0.685
+        ],
+        "scale": 0.955,
+        "landmarks": [
+          0.376,
+          0.595,
+          0.765,
+          1.076,
+          0.318,
+          0.685
+        ]
+      },
+      "m1-1": {
+        "src_landmarks": [
+          0.376,
+          0.602,
+          0.776,
+          1.089,
+          0.315,
+          0.678
+        ],
+        "scale": 1.012,
+        "landmarks": [
+          0.376,
+          0.591,
+          0.772,
+          1.055,
+          0.319,
+          0.681
+        ]
+      },
+      "m1-2": {
+        "src_landmarks": [
+          0.382,
+          0.607,
+          0.784,
+          1.084,
+          0.313,
+          0.678
+        ],
+        "scale": 1.007,
+        "landmarks": [
+          0.361,
+          0.594,
+          0.779,
+          1.098,
+          0.312,
+          0.687
+        ]
+      },
+      "m2-0": {
+        "src_landmarks": [
+          0.367,
+          0.604,
+          0.785,
+          1.112,
+          0.311,
+          0.688
+        ],
+        "scale": 0.969,
+        "landmarks": [
+          0.367,
+          0.598,
+          0.768,
+          1.083,
+          0.31,
+          0.682
+        ]
+      },
+      "m2-1": {
+        "src_landmarks": [
+          0.38,
+          0.606,
+          0.781,
+          1.1,
+          0.317,
+          0.682
+        ],
+        "scale": 1.01,
+        "landmarks": [
+          0.368,
+          0.601,
+          0.784,
+          1.105,
+          0.303,
+          0.679
+        ]
+      },
+      "m2-2": {
+        "src_landmarks": [
+          0.371,
+          0.611,
+          0.789,
+          1.106,
+          0.303,
+          0.689
+        ],
+        "scale": 0.969,
+        "landmarks": [
+          0.374,
+          0.601,
+          0.778,
+          1.048,
+          0.314,
+          0.692
+        ]
+      },
+      "m3-0": {
+        "src_landmarks": [
+          0.372,
+          0.604,
+          0.776,
+          1.097,
+          0.308,
+          0.685
+        ],
+        "scale": 1.002,
+        "landmarks": [
+          0.368,
+          0.601,
+          0.772,
+          1.092,
+          0.309,
+          0.688
+        ]
+      },
+      "m3-1": {
+        "src_landmarks": [
+          0.382,
+          0.595,
+          0.772,
+          1.069,
+          0.336,
+          0.678
+        ],
+        "scale": 1.038,
+        "landmarks": [
+          0.365,
+          0.596,
+          0.776,
+          1.086,
+          0.321,
+          0.682
+        ]
+      },
+      "m3-2": {
+        "src_landmarks": [
+          0.367,
+          0.598,
+          0.781,
+          1.058,
+          0.309,
+          0.693
+        ],
+        "scale": 0.978,
+        "landmarks": [
+          0.369,
+          0.597,
+          0.775,
+          1.045,
+          0.315,
+          0.694
+        ]
+      },
+      "m4-0": {
+        "src_landmarks": [
+          0.426,
+          0.616,
+          0.756,
+          1.015,
+          0.348,
+          0.66
+        ],
+        "scale": 1.227,
+        "landmarks": [
+          0.37,
+          0.6,
+          0.772,
+          1.057,
+          0.313,
+          0.694
+        ]
+      },
+      "m4-1": {
+        "src_landmarks": [
+          0.358,
+          0.6,
+          0.776,
+          1.101,
+          0.306,
+          0.69
+        ],
+        "scale": 0.969,
+        "landmarks": [
+          0.375,
+          0.604,
+          0.772,
+          1.087,
+          0.315,
+          0.686
+        ]
+      },
+      "m4-2": {
+        "src_landmarks": [
+          0.435,
+          0.606,
+          0.754,
+          1.005,
+          0.353,
+          0.643
+        ],
+        "scale": 1.27,
+        "landmarks": [
+          0.379,
+          0.584,
+          0.756,
+          1.012,
+          0.328,
+          0.677
+        ]
+      },
+      "f0-0": {
+        "src_landmarks": [
+          0.379,
+          0.611,
+          0.79,
+          1.097,
+          0.305,
+          0.685
+        ],
+        "scale": 0.985,
+        "landmarks": [
+          0.364,
+          0.595,
+          0.775,
+          1.079,
+          0.307,
+          0.679
+        ]
+      },
+      "f0-1": {
+        "src_landmarks": [
+          0.377,
+          0.607,
+          0.784,
+          1.085,
+          0.311,
+          0.684
+        ],
+        "scale": 0.995,
+        "landmarks": [
+          0.363,
+          0.594,
+          0.77,
+          1.075,
+          0.313,
+          0.682
+        ]
+      },
+      "f0-2": {
+        "src_landmarks": [
+          0.376,
+          0.608,
+          0.784,
+          1.085,
+          0.304,
+          0.682
+        ],
+        "scale": 0.993,
+        "landmarks": [
+          0.37,
+          0.595,
+          0.768,
+          1.068,
+          0.313,
+          0.676
+        ]
+      },
+      "f1-0": {
+        "src_landmarks": [
+          0.377,
+          0.614,
+          0.785,
+          1.103,
+          0.299,
+          0.68
+        ],
+        "scale": 0.993,
+        "landmarks": [
+          0.371,
+          0.616,
+          0.795,
+          1.118,
+          0.318,
+          0.712
+        ]
+      },
+      "f1-1": {
+        "src_landmarks": [
+          0.378,
+          0.606,
+          0.781,
+          1.085,
+          0.306,
+          0.681
+        ],
+        "scale": 1.005,
+        "landmarks": [
+          0.362,
+          0.597,
+          0.777,
+          1.092,
+          0.307,
+          0.685
+        ]
+      },
+      "f1-2": {
+        "src_landmarks": [
+          0.379,
+          0.608,
+          0.789,
+          1.1,
+          0.307,
+          0.68
+        ],
+        "scale": 0.988,
+        "landmarks": [
+          0.365,
+          0.59,
+          0.771,
+          1.084,
+          0.313,
+          0.678
+        ]
+      },
+      "f2-0": {
+        "src_landmarks": [
+          0.374,
+          0.601,
+          0.777,
+          1.074,
+          0.311,
+          0.682
+        ],
+        "scale": 1.005,
+        "landmarks": [
+          0.376,
+          0.598,
+          0.776,
+          1.038,
+          0.322,
+          0.691
+        ]
+      },
+      "f2-1": {
+        "src_landmarks": [
+          0.378,
+          0.605,
+          0.78,
+          1.085,
+          0.306,
+          0.681
+        ],
+        "scale": 1.007,
+        "landmarks": [
+          0.365,
+          0.594,
+          0.773,
+          1.084,
+          0.313,
+          0.683
+        ]
+      },
+      "f2-2": {
+        "src_landmarks": [
+          0.381,
+          0.609,
+          0.786,
+          1.088,
+          0.303,
+          0.68
+        ],
+        "scale": 1,
+        "landmarks": [
+          0.371,
+          0.596,
+          0.781,
+          1.062,
+          0.326,
+          0.699
+        ]
+      },
+      "f3-0": {
+        "src_landmarks": [
+          0.375,
+          0.606,
+          0.789,
+          1.098,
+          0.313,
+          0.688
+        ],
+        "scale": 0.978,
+        "landmarks": [
+          0.365,
+          0.592,
+          0.767,
+          1.072,
+          0.309,
+          0.675
+        ]
+      },
+      "f3-1": {
+        "src_landmarks": [
+          0.382,
+          0.603,
+          0.776,
+          1.075,
+          0.312,
+          0.676
+        ],
+        "scale": 1.028,
+        "landmarks": [
+          0.365,
+          0.595,
+          0.771,
+          1.084,
+          0.312,
+          0.683
+        ]
+      },
+      "f3-2": {
+        "src_landmarks": [
+          0.378,
+          0.607,
+          0.783,
+          1.088,
+          0.304,
+          0.681
+        ],
+        "scale": 1,
+        "landmarks": [
+          0.363,
+          0.592,
+          0.769,
+          1.08,
+          0.312,
+          0.683
+        ]
+      },
+      "f4-0": {
+        "src_landmarks": [
+          0.369,
+          0.593,
+          0.763,
+          1.06,
+          0.31,
+          0.678
+        ],
+        "scale": 1.028,
+        "landmarks": [
+          0.366,
+          0.609,
+          0.783,
+          1.089,
+          0.316,
+          0.718
+        ]
+      },
+      "f4-1": {
+        "src_landmarks": [
+          0.359,
+          0.596,
+          0.778,
+          1.091,
+          0.309,
+          0.689
+        ],
+        "scale": 0.967,
+        "landmarks": [
+          0.377,
+          0.598,
+          0.77,
+          1.077,
+          0.316,
+          0.68
+        ]
+      },
+      "f4-2": {
+        "src_landmarks": [
+          0.364,
+          0.596,
+          0.78,
+          1.064,
+          0.309,
+          0.695
+        ],
+        "scale": 0.974,
+        "landmarks": [
+          0.367,
+          0.599,
+          0.78,
+          1.096,
+          0.313,
+          0.687
+        ]
+      }
+    }
+  },
+  "cloth": {
+    "note": "v68 通用衣物/发丝（Hark image generation, 2026-10-13）：中性浅灰面料图集，运行时顶点色染色。cloth/top-<k>.webp = 上衣 k 的正面/背面/袖子（裁自生成图各象限）；pants.webp = 6 款裤腿（长裤/短裤/工装/牛仔/运动/阔腿）；hair.webp = 直发/寸发/卷发/脏辫。top-5/6/7 首次生成有背景，重生成时追加了 tight crop / no background。",
+    "jobs": [
+      {
+        "file": "top-0.png",
+        "prompt": "Game clothing texture atlas, square image split into an exact 2x2 grid of equal quadrants. Top-left: front of a plain crew-neck T-shirt torso (neckline at top edge). Top-right: back of the same T-shirt. Bottom-left: a short T-shirt sleeve, hem at the bottom edge. Bottom-right: plain T-shirt fabric. The fabric is NEUTRAL LIGHT GREY, fully desaturated (no color at all, about 80% brightness) so it can be tinted in-engine; darker grey only for seams, folds, stitching and shading. Orthographic flat-lay view, flat even lighting, realistic fabric texture, each quadrant filled edge to edge with fabric (no background, no people, no hangers, no text, no logos)."
+      },
+      {
+        "file": "top-1.png",
+        "prompt": "Game clothing texture atlas, square image split into an exact 2x2 grid of equal quadrants. Top-left: front of a button-up shirt torso with center button placket and one breast pocket (collar at top edge). Top-right: back of the shirt with yoke seam. Bottom-left: a long shirt sleeve, buttoned cuff at the bottom edge. Bottom-right: plain shirt fabric. The fabric is NEUTRAL LIGHT GREY, fully desaturated (no color at all, about 80% brightness) so it can be tinted in-engine; darker grey only for seams, folds, stitching and shading. Orthographic flat-lay view, flat even lighting, realistic fabric texture, each quadrant filled edge to edge with fabric (no background, no people, no hangers, no text, no logos)."
+      },
+      {
+        "file": "top-2.png",
+        "prompt": "Game clothing texture atlas, square image split into an exact 2x2 grid of equal quadrants. Top-left: front of a pullover hoodie torso with kangaroo pocket and two drawstrings (neck at top edge). Top-right: back of the hoodie. Bottom-left: a long hoodie sleeve with ribbed cuff at the bottom edge. Bottom-right: hood fabric. The fabric is NEUTRAL LIGHT GREY, fully desaturated (no color at all, about 80% brightness) so it can be tinted in-engine; darker grey only for seams, folds, stitching and shading. Orthographic flat-lay view, flat even lighting, realistic fabric texture, each quadrant filled edge to edge with fabric (no background, no people, no hangers, no text, no logos)."
+      },
+      {
+        "file": "top-3.png",
+        "prompt": "Game clothing texture atlas, square image split into an exact 2x2 grid of equal quadrants. Top-left: front of a work jacket torso with center zipper and two flap chest pockets (collar at top edge). Top-right: back of the jacket with seams. Bottom-left: a long jacket sleeve with cuff at the bottom edge. Bottom-right: plain jacket fabric. The fabric is NEUTRAL LIGHT GREY, fully desaturated (no color at all, about 80% brightness) so it can be tinted in-engine; darker grey only for seams, folds, stitching and shading. Orthographic flat-lay view, flat even lighting, realistic fabric texture, each quadrant filled edge to edge with fabric (no background, no people, no hangers, no text, no logos)."
+      },
+      {
+        "file": "top-4.png",
+        "prompt": "Game clothing texture atlas, square image split into an exact 2x2 grid of equal quadrants. Top-left: front of a heavy canvas workwear coverall-style jacket torso with snap buttons, two large patch chest pockets and a reflective tape stripe across the chest. Top-right: back with reflective stripe. Bottom-left: a long canvas sleeve with reflective band near the cuff at the bottom. Bottom-right: plain canvas. The fabric is NEUTRAL LIGHT GREY, fully desaturated (no color at all, about 80% brightness) so it can be tinted in-engine; darker grey only for seams, folds, stitching and shading. Orthographic flat-lay view, flat even lighting, realistic fabric texture, each quadrant filled edge to edge with fabric (no background, no people, no hangers, no text, no logos)."
+      },
+      {
+        "file": "top-5.png",
+        "prompt": "Game clothing texture atlas, square image split into an exact 2x2 grid of equal quadrants. Top-left: front of a ribbed sleeveless tank top torso (deep armholes, scoop neck at top). Top-right: back of the tank top. Bottom-left: ribbed knit fabric. Bottom-right: ribbed knit fabric. The fabric is NEUTRAL LIGHT GREY, fully desaturated (no color at all, about 80% brightness) so it can be tinted in-engine; darker grey only for seams, folds, stitching and shading. Orthographic flat-lay view, flat even lighting, realistic fabric texture, each quadrant filled edge to edge with fabric (no background, no people, no hangers, no text, no logos)."
+      },
+      {
+        "file": "top-6.png",
+        "prompt": "Game clothing texture atlas, square image split into an exact 2x2 grid of equal quadrants. Top-left: front of a cable-knit wool sweater torso with ribbed crew neck at top and ribbed waistband at bottom. Top-right: back of the sweater. Bottom-left: a long knit sleeve with ribbed cuff at the bottom edge. Bottom-right: knit fabric. The fabric is NEUTRAL LIGHT GREY, fully desaturated (no color at all, about 80% brightness) so it can be tinted in-engine; darker grey only for seams, folds, stitching and shading. Orthographic flat-lay view, flat even lighting, realistic fabric texture, each quadrant filled edge to edge with fabric (no background, no people, no hangers, no text, no logos)."
+      },
+      {
+        "file": "top-7.png",
+        "prompt": "Game clothing texture atlas, square image split into an exact 2x2 grid of equal quadrants. Top-left: front of a long double-breasted trench coat torso with two rows of buttons and a belt at the waist (lapels at top edge). Top-right: back of the trench coat with back vent and belt. Bottom-left: a long trench coat sleeve with strap at the cuff at the bottom edge. Bottom-right: gabardine fabric. The fabric is NEUTRAL LIGHT GREY, fully desaturated (no color at all, about 80% brightness) so it can be tinted in-engine; darker grey only for seams, folds, stitching and shading. Orthographic flat-lay view, flat even lighting, realistic fabric texture, each quadrant filled edge to edge with fabric (no background, no people, no hangers, no text, no logos)."
+      },
+      {
+        "file": "pants-a.png",
+        "prompt": "Game clothing texture atlas, square image split into an exact 2x2 grid of equal quadrants. Each quadrant is the front of ONE trouser leg, waist at top, hem at bottom edge, filling the quadrant. Top-left: plain suit trousers with a center crease. Top-right: shorts (hem at the vertical middle, the lower half of the quadrant is plain fabric). Bottom-left: cargo trousers with a large flap side pocket at mid thigh. Bottom-right: denim jeans with stitched seams, front pocket and slight fading (still grey, no blue). The fabric is NEUTRAL LIGHT GREY, fully desaturated (no color at all, about 80% brightness) so it can be tinted in-engine; darker grey only for seams, folds, stitching and shading. Orthographic flat-lay view, flat even lighting, realistic fabric texture, each quadrant filled edge to edge with fabric (no background, no people, no hangers, no text, no logos)."
+      },
+      {
+        "file": "pants-b.png",
+        "prompt": "Game clothing texture atlas, square image split into an exact 2x2 grid of equal quadrants. Each quadrant is the front of ONE trouser leg, waist at top, hem at bottom edge, filling the quadrant. Top-left: soft fleece sweatpants with elastic ribbed ankle cuff at the bottom. Top-right: loose wide-leg trousers with soft drape folds. Bottom-left: plain fabric. Bottom-right: plain fabric. The fabric is NEUTRAL LIGHT GREY, fully desaturated (no color at all, about 80% brightness) so it can be tinted in-engine; darker grey only for seams, folds, stitching and shading. Orthographic flat-lay view, flat even lighting, realistic fabric texture, each quadrant filled edge to edge with fabric (no background, no people, no hangers, no text, no logos)."
+      },
+      {
+        "file": "hair-gray.png",
+        "prompt": "Hair texture swatches, square image split into an exact 2x2 grid. Neutral LIGHT GREY hair, fully desaturated (no color, about 75% brightness, darker grey strand shadows) so it can be tinted in-engine. Strands run vertically. Top-left: straight smooth hair. Top-right: short cropped hair with visible scalp texture. Bottom-left: tight curls. Bottom-right: thick dreadlocks/braids. Each quadrant filled edge to edge, flat even lighting, no background, no text."
+      }
+    ]
+  },
+  "named": {
+    "note": "v79 有名 NPC 专属脸（Hark image generation, 2026-10-17）：除 kat/tom/aiko/kowalski（手工示例，已有专属模型）与 B.R.C. 黑影（无脸）外，每个固定 NPC 一张。参考图 kat-face.webp 只用于构图。原图 1024 → YuNet 关键点（两眼中心 + 嘴角中点）仿射到池脸同一构图，存 512 webp（named/<id>-face.webp）。闭眼为程序合成（scripts/gen-retro-avatar-textures.py synth_blink），不是生成图。脸图外缘残留的源照片头发与白边由 scripts/retro_face_clean.py 修补。",
+    "reference_image": "kat-face.webp（只用于构图）",
+    "license": "项目自有（AI 生成）",
+    "jobs": {
+      "alpha_melody": {
+        "file": "named/alpha_melody-face.webp",
+        "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a woman of American appearance, about 25 years old, with fair, pale skin (skin tone close to #f0c8a8), a dimpled chin and a small mole on one cheek, no makeup, calm neutral expression, mouth closed, eyes open looking straight ahead, dark brown hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no earrings, no glasses, no hat. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale; the person must look clearly different from the reference."
+      },
+      "alpha_faith": {
+        "file": "named/alpha_faith-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of Irish-American appearance, about 41 years old, with light skin (skin tone close to #c9a58a), high cheekbones and arched eyebrows, no makeup; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "alpha_linqiao": {
+        "file": "named/alpha_linqiao-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Chinese appearance, about 30 years old, with medium tan skin (skin tone close to #a87f5c), thick straight eyebrows and laugh lines around the eyes, clean-shaven; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "alpha_xuhe": {
+        "file": "named/alpha_xuhe-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of Chinese appearance, about 42 years old, with light skin (skin tone close to #c9a58a), thick straight eyebrows and high cheekbones, no makeup; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "alpha_sanya": {
+        "file": "named/alpha_sanya-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of mixed Slavic and North African appearance, about 52 years old, with brown skin (skin tone close to #7d5a3c), a few freckles across the nose and a slightly crooked nose, no makeup; neutral expression, mouth closed, eyes open; brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "alpha_zhouyan": {
+        "file": "named/alpha_zhouyan-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Chinese appearance, about 26 years old, with light skin (skin tone close to #c9a58a), thick straight eyebrows and sun-weathered skin, a short trimmed beard; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "alpha_mara": {
+        "file": "named/alpha_mara-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of West African appearance, about 30 years old, with dark brown skin (skin tone close to #5a4030), sun-weathered skin and a slightly crooked nose, no makeup; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "alpha_liangsui": {
+        "file": "named/alpha_liangsui-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Southern Chinese appearance, about 27 years old, with medium tan skin (skin tone close to #a87f5c), laugh lines around the eyes and wide-set eyes, clean-shaven; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "alpha_nora": {
+        "file": "named/alpha_nora-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of Norwegian appearance, about 38 years old, with fair, pale skin (skin tone close to #f0c8a8), sun-weathered skin and thick straight eyebrows, no makeup; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "alpha_qiaoan": {
+        "file": "named/alpha_qiaoan-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Korean-American appearance, about 20 years old, with fair, pale skin (skin tone close to #f0c8a8), a strong square jaw and a dimpled chin, clean-shaven; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "alpha_amir": {
+        "file": "named/alpha_amir-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Arab appearance, about 39 years old, with brown skin (skin tone close to #7d5a3c), a strong square jaw and a dimpled chin, a full beard; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "alpha_sulan": {
+        "file": "named/alpha_sulan-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of Chinese appearance, about 34 years old, with light skin (skin tone close to #c9a58a), thick straight eyebrows and sun-weathered skin, no makeup; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "alpha_chenshu": {
+        "file": "named/alpha_chenshu-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Chinese appearance, about 31 years old, with light skin (skin tone close to #c9a58a), faint acne scars and a broad nose and full lips, clean-shaven; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "alpha_audrey": {
+        "file": "named/alpha_audrey-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of Lebanese appearance, about 57 years old, with medium tan skin (skin tone close to #a87f5c), wide-set eyes and a faint scar through one eyebrow, no makeup; neutral expression, mouth closed, eyes open; white hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "alpha_luowen": {
+        "file": "named/alpha_luowen-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Dutch appearance, about 26 years old, with fair, pale skin (skin tone close to #f0c8a8), a faint scar through one eyebrow and close-set eyes, clean-shaven; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "alpha_aida": {
+        "file": "named/alpha_aida-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of Moroccan appearance, about 29 years old, with brown skin (skin tone close to #7d5a3c), a narrow face and thin lips and thick straight eyebrows, no makeup; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "alpha_cuiyue": {
+        "file": "named/alpha_cuiyue-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Northern Chinese appearance, about 25 years old, with medium tan skin (skin tone close to #a87f5c), a narrow face and thin lips and a small mole on one cheek, clean-shaven; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "alpha_milo": {
+        "file": "named/alpha_milo-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Italian appearance, about 23 years old, with fair, pale skin (skin tone close to #f0c8a8), laugh lines around the eyes and a dimpled chin, clean-shaven; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "justin": {
+        "file": "named/justin-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of American appearance, about 42 years old, with fair, pale skin (skin tone close to #f0c8a8), a small mole on one cheek and deep-set tired eyes, clean-shaven; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "nightingale": {
+        "file": "named/nightingale-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of Polish appearance, about 31 years old, with light skin (skin tone close to #c9a58a), faint acne scars and sun-weathered skin, no makeup; neutral expression, mouth closed, eyes open; black hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "river": {
+        "file": "named/river-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Welsh appearance, about 45 years old, with fair, pale skin (skin tone close to #f0c8a8), arched eyebrows and a strong square jaw, clean-shaven; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "faust": {
+        "file": "named/faust-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of German appearance, about 58 years old, with light skin (skin tone close to #c9a58a), a faint scar through one eyebrow and a round soft face, clean-shaven; neutral expression, mouth closed, eyes open; white hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "suanpan": {
+        "file": "named/suanpan-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Vietnamese appearance, about 47 years old, with medium tan skin (skin tone close to #a87f5c), heavy eyelids and a faint scar through one eyebrow, clean-shaven; neutral expression, mouth closed, eyes open; black hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "lan": {
+        "file": "named/lan-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of English appearance, about 36 years old, with light skin (skin tone close to #c9a58a), close-set eyes and arched eyebrows, clean-shaven; neutral expression, mouth closed, eyes open; black hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "candyman": {
+        "file": "named/candyman-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Scottish appearance, about 50 years old, with fair, pale skin (skin tone close to #e8b890), thick straight eyebrows and a dimpled chin, clean-shaven; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "laozhangfang": {
+        "file": "named/laozhangfang-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Austrian appearance, about 64 years old, with light skin (skin tone close to #c9a58a), a round soft face and faint acne scars, clean-shaven; neutral expression, mouth closed, eyes open; white hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "shen": {
+        "file": "named/shen-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of English appearance, about 49 years old, with fair, pale skin (skin tone close to #f0c8a8), a strong square jaw and a narrow face and thin lips, clean-shaven; neutral expression, mouth closed, eyes open; black hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "tang": {
+        "file": "named/tang-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of Australian appearance, about 55 years old, with fair, pale skin (skin tone close to #f0c8a8), arched eyebrows and a small mole on one cheek, no makeup; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "kui": {
+        "file": "named/kui-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Maori appearance, about 38 years old, with brown skin (skin tone close to #7d5a3c), a strong square jaw and wide-set eyes, clean-shaven; neutral expression, mouth closed, eyes open; black hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "mccauley": {
+        "file": "named/mccauley-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Irish appearance, about 48 years old, with light skin (skin tone close to #c9a58a), faint acne scars and wide-set eyes, clean-shaven; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "vesper": {
+        "file": "named/vesper-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of Czech appearance, about 53 years old, with fair, pale skin (skin tone close to #f0c8a8), close-set eyes and thick straight eyebrows, no makeup; neutral expression, mouth closed, eyes open; auburn hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "pidge": {
+        "file": "named/pidge-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Mexican-American appearance, about 29 years old, with medium tan skin (skin tone close to #a87f5c), a slightly crooked nose and a round soft face, clean-shaven; neutral expression, mouth closed, eyes open; black hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "boone": {
+        "file": "named/boone-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of African-American appearance, about 44 years old, with brown skin (skin tone close to #7d5a3c), thick straight eyebrows and a strong square jaw, a full beard; neutral expression, mouth closed, eyes open; black hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "whitfield": {
+        "file": "named/whitfield-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of English appearance, about 40 years old, with fair, pale skin (skin tone close to #e8c8a8), arched eyebrows and a strong square jaw, no makeup; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "lecomte": {
+        "file": "named/lecomte-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of French appearance, about 43 years old, with fair, pale skin (skin tone close to #f0c8a8), arched eyebrows and a faint scar through one eyebrow, clean-shaven; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "muller": {
+        "file": "named/muller-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Swiss-German appearance, about 44 years old, with light skin (skin tone close to #c9a58a), laugh lines around the eyes and a slightly crooked nose, a short trimmed beard; neutral expression, mouth closed, eyes open; auburn hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "dupont": {
+        "file": "named/dupont-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of French appearance, about 50 years old, with fair, pale skin (skin tone close to #f0c8a8), a dimpled chin and a long straight nose, no makeup; neutral expression, mouth closed, eyes open; black hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "morel": {
+        "file": "named/morel-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Algerian-French appearance, about 37 years old, with medium tan skin (skin tone close to #a87f5c), a faint scar through one eyebrow and thick straight eyebrows, clean-shaven; neutral expression, mouth closed, eyes open; black hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "martin": {
+        "file": "named/martin-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of French appearance, about 48 years old, with light skin (skin tone close to #c9a58a), sun-weathered skin and a long straight nose, no makeup; neutral expression, mouth closed, eyes open; auburn hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "lefevre": {
+        "file": "named/lefevre-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Belgian appearance, about 30 years old, with fair, pale skin (skin tone close to #f0c8a8), wide-set eyes and a slightly crooked nose, clean-shaven; neutral expression, mouth closed, eyes open; black hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "joey": {
+        "file": "named/joey-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Italian-American appearance, about 34 years old, with light skin (skin tone close to #d8a878), close-set eyes and faint acne scars, clean-shaven; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "brandt": {
+        "file": "named/brandt-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Danish appearance, about 45 years old, with light skin (skin tone close to #c9a58a), deep-set tired eyes and a narrow face and thin lips, clean-shaven; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "meilin": {
+        "file": "named/meilin-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of Taiwanese appearance, about 34 years old, with fair, pale skin (skin tone close to #f0c8a8), a round soft face and a small mole on one cheek, no makeup; neutral expression, mouth closed, eyes open; black hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "harper": {
+        "file": "named/harper-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of Spanish appearance, about 46 years old, with fair, pale skin (skin tone close to #e8c8a8), a faint scar through one eyebrow and a small mole on one cheek, no makeup; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "mateo": {
+        "file": "named/mateo-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Mexican appearance, about 55 years old, with medium tan skin (skin tone close to #a87f5c), wide-set eyes and faint acne scars, clean-shaven; neutral expression, mouth closed, eyes open; grey hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "isaac": {
+        "file": "named/isaac-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Prussian German appearance, about 41 years old, with fair, pale skin (skin tone close to #e8c8a8), high cheekbones and a dimpled chin, clean-shaven; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "aurora": {
+        "file": "named/aurora-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of Chinese-American appearance, about 28 years old, with fair, pale skin (skin tone close to #f0c8a8), a faint scar through one eyebrow and deep-set tired eyes, no makeup; neutral expression, mouth closed, eyes open; black hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "dorian": {
+        "file": "named/dorian-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of Puerto Rican appearance, about 41 years old, with fair, pale skin (skin tone close to #e8c8a8), laugh lines around the eyes and a slightly crooked nose, no makeup; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "gunter": {
+        "file": "named/gunter-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Ghanaian appearance, about 46 years old, with brown skin (skin tone close to #7d5a3c), a long straight nose and thick straight eyebrows, clean-shaven; neutral expression, mouth closed, eyes open; black hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "pippa": {
+        "file": "named/pippa-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of English appearance, about 24 years old, with fair, pale skin (skin tone close to #f0c8a8), heavy eyelids and high cheekbones, no makeup; neutral expression, mouth closed, eyes open; black hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "whitaker": {
+        "file": "named/whitaker-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Canadian appearance, about 52 years old, with fair, pale skin (skin tone close to #e8c8a8), thick straight eyebrows and sun-weathered skin, clean-shaven; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "irene": {
+        "file": "named/irene-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of Irish appearance, about 57 years old, with fair, pale skin (skin tone close to #f0c8a8), a faint scar through one eyebrow and high cheekbones, no makeup; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "grove": {
+        "file": "named/grove-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Scottish appearance, about 33 years old, with light skin (skin tone close to #c9a58a), faint acne scars and high cheekbones, clean-shaven; neutral expression, mouth closed, eyes open; black hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "hobbs": {
+        "file": "named/hobbs-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Jamaican appearance, about 54 years old, with brown skin (skin tone close to #7d5a3c), a slightly crooked nose and laugh lines around the eyes, clean-shaven; neutral expression, mouth closed, eyes open; black hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "saira": {
+        "file": "named/saira-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of Pakistani appearance, about 31 years old, with medium tan skin (skin tone close to #c98a5a), laugh lines around the eyes and faint acne scars, no makeup; neutral expression, mouth closed, eyes open; black hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "voss": {
+        "file": "named/voss-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of German appearance, about 39 years old, with fair, pale skin (skin tone close to #e8c8a8), a broad nose and full lips and close-set eyes, clean-shaven; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "barclay": {
+        "file": "named/barclay-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of English appearance, about 58 years old, with light skin (skin tone close to #d8b090), a slightly crooked nose and laugh lines around the eyes, clean-shaven; neutral expression, mouth closed, eyes open; grey hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "petra": {
+        "file": "named/petra-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of Dutch appearance, about 35 years old, with fair, pale skin (skin tone close to #e8c0a0), heavy eyelids and faint acne scars, no makeup; neutral expression, mouth closed, eyes open; auburn hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "otis": {
+        "file": "named/otis-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Greek appearance, about 58 years old, with medium tan skin (skin tone close to #a87f5c), a strong square jaw and wide-set eyes, clean-shaven; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "vivian": {
+        "file": "named/vivian-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of English appearance, about 33 years old, with fair, pale skin (skin tone close to #f0c8a8), close-set eyes and faint acne scars, no makeup; neutral expression, mouth closed, eyes open; black hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "margot": {
+        "file": "named/margot-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of Singaporean Chinese appearance, about 27 years old, with fair, pale skin (skin tone close to #e8c0a0), sun-weathered skin and a faint scar through one eyebrow, no makeup; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "harold": {
+        "file": "named/harold-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of English appearance, about 70 years old, with light skin (skin tone close to #d8b090), arched eyebrows and high cheekbones, clean-shaven, wrinkled; neutral expression, mouth closed, eyes open; grey hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "amelia": {
+        "file": "named/amelia-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman resembling a 1930s American aviator, about 39 years old, with fair, pale skin (skin tone close to #e8c0a0), a long straight nose, a few freckles, wide gap-toothed-smile type face, no makeup; neutral expression, mouth closed, eyes open; light auburn hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "dorothy": {
+        "file": "named/dorothy-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: young woman resembling an Edwardian New York socialite, about 25 years old, with fair, pale porcelain skin (skin tone close to #f0d0b8), a strong square jaw and a few freckles across the nose, no makeup; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "astor": {
+        "file": "named/astor-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man resembling a 1910s American industrialist, about 47 years old, with light skin (skin tone close to #d8b090), high cheekbones, a long face and a neat brown mustache; neutral expression, mouth closed, eyes open; brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "smith": {
+        "file": "named/smith-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man resembling an Edwardian English sea captain, about 62 years old, with light skin (skin tone close to #d8b090), high cheekbones and a full neatly trimmed white beard and white mustache; neutral expression, mouth closed, eyes open; white hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "hoffa": {
+        "file": "named/hoffa-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man resembling a 1970s American union boss, about 62 years old, with light skin (skin tone close to #c99878), a broad heavy jaw, close-set eyes and thick straight eyebrows, clean-shaven; neutral stern expression, mouth closed, eyes open; dark brown hair slicked back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "white": {
+        "file": "named/white-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man resembling an Elizabethan English colonist, about 47 years old, with weathered light skin (skin tone close to #d8b090), heavy eyelids, a slightly crooked nose and a short pointed brown beard; neutral expression, mouth closed, eyes open; brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "northup": {
+        "file": "named/northup-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: African-American man resembling a 19th-century portrait, about 45 years old, with dark brown skin (skin tone close to #6a4a34), deep-set tired eyes and a small mole on one cheek, clean-shaven; neutral dignified expression, mouth closed, eyes open; short black hair, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "nestwarden": {
+        "file": "named/nestwarden-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Canadian appearance, about 51 years old, with light skin (skin tone close to #c99373), a faint scar through one eyebrow and a small mole on one cheek, a short trimmed beard; neutral expression, mouth closed, eyes open; brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "nestmedic": {
+        "file": "named/nestmedic-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of Chinese-Canadian appearance, about 32 years old, with light skin (skin tone close to #d5a181), high cheekbones and a few freckles across the nose, no makeup; neutral expression, mouth closed, eyes open; black hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "hammozliaison": {
+        "file": "named/hammozliaison-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of Irish appearance, about 30 years old, with light skin (skin tone close to #e0b18e), high cheekbones and a few freckles across the nose, no makeup; neutral expression, mouth closed, eyes open; auburn hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "reginaldhammoz": {
+        "file": "named/reginaldhammoz-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man resembling a Victorian English gentleman explorer, about 66 years old, with light skin (skin tone close to #d6ad8d), a slightly crooked nose, a broad nose and full lips, grey mutton-chop sideburns, wrinkled; neutral expression, mouth closed, eyes open; white hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "hammozguide": {
+        "file": "named/hammozguide-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of mixed Afro-Caribbean and English appearance, about 41 years old, with medium tan skin (skin tone close to #b98265), heavy eyelids and a narrow face and thin lips, clean-shaven; neutral expression, mouth closed, eyes open; black hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "hammozscientist": {
+        "file": "named/hammozscientist-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of Iranian appearance, about 45 years old, with medium tan skin (skin tone close to #9f6e55), a round soft face and a dimpled chin, no makeup; neutral expression, mouth closed, eyes open; black hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "zeph": {
+        "file": "named/zeph-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Croatian appearance, about 40 years old, with light skin (skin tone close to #c9a58a), a narrow face and thin lips and gaunt cheeks, clean-shaven; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "polly": {
+        "file": "named/polly-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of Irish appearance, about 36 years old, with fair, pale skin (skin tone close to #f0c8a8), thick straight eyebrows and a narrow face and thin lips, no makeup; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "bluebird": {
+        "file": "named/bluebird-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Portuguese appearance, about 63 years old, with light skin (skin tone close to #d8b898), wide-set eyes and a dimpled chin, clean-shaven, wrinkled; neutral serene expression, mouth closed, eyes open; white hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "sinclair": {
+        "file": "named/sinclair-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of Scottish appearance, about 38 years old, with fair, pale skin (skin tone close to #e8c8a8), deep-set tired eyes and arched eyebrows, no makeup; neutral cold expression, mouth closed, eyes open; black hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "theron": {
+        "file": "named/theron-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Greek appearance, about 60 years old, with light olive skin (skin tone close to #c9a58a), a broad nose and full lips and thick straight eyebrows, clean-shaven, wrinkled; neutral expression, mouth closed, eyes open; white hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "aella": {
+        "file": "named/aella-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of Swedish appearance, about 29 years old, with fair, pale skin (skin tone close to #f0c8a8), arched eyebrows and laugh lines around the eyes, no makeup; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "argos_clerk": {
+        "file": "named/argos_clerk-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of Finnish appearance, about 36 years old, with fair, pale skin (skin tone close to #e6b99b), a slightly crooked nose and sun-weathered skin, no makeup; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "argos_investigator": {
+        "file": "named/argos_investigator-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Israeli appearance, about 36 years old, with light skin (skin tone close to #c79472), a slightly crooked long nose and dark stubble, clean-shaven; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "argos_marshal": {
+        "file": "named/argos_marshal-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Colombian appearance, about 30 years old, with medium tan skin (skin tone close to #b77f60), sun-weathered skin and heavy eyelids, clean-shaven; neutral expression, mouth closed, eyes open; prematurely grey hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "argos_reviewer": {
+        "file": "named/argos_reviewer-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of Indian appearance, about 30 years old, with light brown skin (skin tone close to #d8a786), sun-weathered skin and a dimpled chin, no makeup, no bindi; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "argos_medic": {
+        "file": "named/argos_medic-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: woman of Czech appearance, about 27 years old, with fair, pale skin (skin tone close to #e7b898), close-set eyes and a long straight nose, no makeup; neutral expression, mouth closed, eyes open; auburn hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "l11_archivist": {
+        "file": "named/l11_archivist-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Hungarian appearance, about 36 years old, with light skin (skin tone close to #bb967b), arched eyebrows and high cheekbones, clean-shaven; neutral expression, mouth closed, eyes open; grey hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "l11_quartermaster": {
+        "file": "named/l11_quartermaster-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Scottish appearance, about 28 years old, with light freckled skin (skin tone close to #c9a58a), a few freckles across the nose and high cheekbones, clean-shaven; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "l11_tutor": {
+        "file": "named/l11_tutor-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Welsh appearance, about 38 years old, with light skin (skin tone close to #c9a58a), a faint scar through one eyebrow and a round soft face, clean-shaven; neutral expression, mouth closed, eyes open; black hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "l11_trader": {
+        "file": "named/l11_trader-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of Romanian appearance, about 42 years old, with light skin (skin tone close to #c9a58a), a round soft face and a dimpled chin, clean-shaven; neutral expression, mouth closed, eyes open; dark brown hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      },
+      "l11_caretaker": {
+        "file": "named/l11_caretaker-face.webp",
+        "prompt": "Frontal symmetric studio face photo texture, square: man of American appearance, about 61 years old, with light skin (skin tone close to #c9a58a), arched eyebrows and a small mole on one cheek, clean-shaven, wrinkled; neutral kind expression, mouth closed, eyes open; white hair pulled back, no fringe, no earrings/glasses/hat. Same framing as reference (face edge to edge, hairline at top, chin at bottom, ears cropped); flat diffuse light; no text, no background; a clearly different person from the reference."
+      }
+    }
   }
- },
- "prompts": {
-  "face": "Game character face texture (diffuse map), square. Strictly frontal, perfectly symmetric orthographic photograph of <person>. Face fills the square edge to edge (hairline to just below chin, cheeks to cheeks, ears cropped). Flat even diffuse lighting, no shadows/highlights. Eyes ~37% from top, nose ~60%, mouth ~76%. No text, no background. (reference image: framing only)",
-  "blink": "Edit this exact photo: the same person with both eyes peacefully closed, natural blink. Change nothing else, pixel-aligned.",
-  "body": "Game clothing texture atlas, 2x2 grid: TL torso front, TR torso back, BL sleeve with cuff at bottom, BR trousers front. Orthographic, flat lighting, realistic fabric, no people/text/background.",
-  "hair": "2x2 hair swatches, strands vertical: TL near-black combed back, TR short dark-brown wavy, BL long straight jet-black, BR thin silver-grey with scalp.",
-  "person": {
-   "kat": "a woman in her late 40s, stern practical expression, short near-black hair pulled back tightly, light olive-tan skin",
-   "tom": "a cheerful Italian-American man in his mid 50s, round warm face, rosy cheeks, thick dark-brown moustache, gentle closed-lip smile",
-   "aiko": "a quiet 25-year-old Japanese woman, calm reserved slightly tired expression, straight black hair, no makeup",
-   "kowalski": "a kindly talkative Polish man about 72, wrinkled, thin grey combed-back hair, bushy grey eyebrows, small grey moustache"
-  },
-  "clothes": {
-   "kat": "charcoal #3a3f46 overseer uniform jacket with brass-gold badge, slate #2a2d33 trousers",
-   "tom": "off-white #f0eee8 double-breasted chef jacket with red badge and sauce stain, charcoal trousers",
-   "aiko": "terracotta #c97a4a waitress shirt with cream #f0e6d0 half apron and name badge, dark grey #3a3f46 trousers",
-   "kowalski": "brown-olive #6a5a40 knit cardigan over cream shirt and green tie, pen in pocket, brown-grey #3a352e trousers"
-  }
- },
- "history": [
-  "2026-10-13 v3: aiko 脸图重做——原图下巴被裁掉；用 Hark 图像生成按同一人物生成拉远的正面照（含完整下巴），按眼-下巴比例裁成方图，灰底角落填发色；闭眼图为程序绘制（上睑肤色覆盖 + 睫毛线）。"
- ],
- "prompts_v3": {
-  "aiko-head-wide": "Zoomed-out frontal ID photo of the same young Japanese woman as the reference ... entire head visible, chin/jaw/neck visible, perfectly frontal, flat even lighting, plain light grey background. (ref: previous aiko-face.webp)"
- },
- "pool": {
-  "note": "v68 通用形象脸池（Hark image generation, 2026-10-13）：性别 m/f × 肤色档 0–4（对应 SKIN_OPTIONS）× 3 张（0≈27 岁=玩家用，1≈45 岁，2≈60 岁）。原图 1024 → 用 YuNet 人脸关键点把眼线/嘴/两眼中心规范化到统一构图后存 512 webp（pool/<g><k>-<v>-face.webp）；闭眼与表情（smile/serious/sleepy，仅第 0 张）为同图编辑。少数原图重生成时提示词追加了 \"extreme close-up, no background visible\" 或更明确的年龄/族裔描述。处理脚本 scripts/gen-retro-avatar-textures.py。运行时统一 landmarks 见 retroAvatar.ts POOL_META。",
-  "reference_image": "kat-face.webp（只用于构图）",
-  "jobs": {
-   "0": [
-    {
-     "file": "face-m0-0.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a Northern European man about 27 with fair, pale skin (skin tone close to #f0c8a8), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, clean-shaven. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "face-m0-1.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a Slavic man in his mid 40s with light stubble with fair, pale skin (skin tone close to #f0c8a8), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, light stubble only, no beard. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "face-m0-2.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a fair-skinned man about 62, wrinkled, receding hairline with fair, pale skin (skin tone close to #f0c8a8), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, clean-shaven. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "face-f0-0.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a Northern European woman about 27 with fair, pale skin (skin tone close to #f0c8a8), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "face-f0-1.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a fair-skinned woman in her mid 40s, faint freckles with fair, pale skin (skin tone close to #f0c8a8), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "face-f0-2.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a fair-skinned woman about 60, wrinkled with fair, pale skin (skin tone close to #f0c8a8), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "blink-m0-0.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "blink-m0-1.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "blink-m0-2.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "expr-m0-smile.png",
-     "prompt": "Edit this exact photo: the same person with a gentle closed-mouth smile (mouth corners raised, slight cheek lift, eyes still open). Change nothing else; keep framing, eyes, eyebrows, skin and lighting identical."
-    },
-    {
-     "file": "expr-m0-serious.png",
-     "prompt": "Edit this exact photo: the same person looking stern and serious: eyebrows lowered and slightly drawn together, lips pressed into a firm flat line. Change nothing else; keep framing, face shape, skin and lighting identical."
-    },
-    {
-     "file": "expr-m0-sleepy.png",
-     "prompt": "Edit this exact photo: the same person looking drowsy and sleepy: heavy upper eyelids, eyes about half open, relaxed eyebrows, mouth closed. Change nothing else; keep framing, face shape, skin and lighting identical."
-    },
-    {
-     "file": "blink-f0-0.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "blink-f0-1.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "blink-f0-2.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "expr-f0-smile.png",
-     "prompt": "Edit this exact photo: the same person with a gentle closed-mouth smile (mouth corners raised, slight cheek lift, eyes still open). Change nothing else; keep framing, eyes, eyebrows, skin and lighting identical."
-    },
-    {
-     "file": "expr-f0-serious.png",
-     "prompt": "Edit this exact photo: the same person looking stern and serious: eyebrows lowered and slightly drawn together, lips pressed into a firm flat line. Change nothing else; keep framing, face shape, skin and lighting identical."
-    },
-    {
-     "file": "expr-f0-sleepy.png",
-     "prompt": "Edit this exact photo: the same person looking drowsy and sleepy: heavy upper eyelids, eyes about half open, relaxed eyebrows, mouth closed. Change nothing else; keep framing, face shape, skin and lighting identical."
-    }
-   ],
-   "1": [
-    {
-     "file": "face-m1-0.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of an East Asian man about 27 with light beige skin (skin tone close to #c9a58a), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, clean-shaven. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "face-m1-1.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a Southern European man in his mid 40s with light stubble with light beige skin (skin tone close to #c9a58a), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, light stubble only, no beard. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "face-m1-2.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of an East Asian man about 62, wrinkled with light beige skin (skin tone close to #c9a58a), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, clean-shaven. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "face-f1-0.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of an East Asian woman about 27 with light beige skin (skin tone close to #c9a58a), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "face-f1-1.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a Southern European woman in her mid 40s with light beige skin (skin tone close to #c9a58a), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "face-f1-2.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of an East Asian woman about 60, wrinkled with light beige skin (skin tone close to #c9a58a), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "blink-m1-0.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "blink-m1-1.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "blink-m1-2.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "expr-m1-smile.png",
-     "prompt": "Edit this exact photo: the same person with a gentle closed-mouth smile (mouth corners raised, slight cheek lift, eyes still open). Change nothing else; keep framing, eyes, eyebrows, skin and lighting identical."
-    },
-    {
-     "file": "expr-m1-serious.png",
-     "prompt": "Edit this exact photo: the same person looking stern and serious: eyebrows lowered and slightly drawn together, lips pressed into a firm flat line. Change nothing else; keep framing, face shape, skin and lighting identical."
-    },
-    {
-     "file": "expr-m1-sleepy.png",
-     "prompt": "Edit this exact photo: the same person looking drowsy and sleepy: heavy upper eyelids, eyes about half open, relaxed eyebrows, mouth closed. Change nothing else; keep framing, face shape, skin and lighting identical."
-    },
-    {
-     "file": "blink-f1-0.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "blink-f1-1.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "blink-f1-2.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "expr-f1-smile.png",
-     "prompt": "Edit this exact photo: the same person with a gentle closed-mouth smile (mouth corners raised, slight cheek lift, eyes still open). Change nothing else; keep framing, eyes, eyebrows, skin and lighting identical."
-    },
-    {
-     "file": "expr-f1-serious.png",
-     "prompt": "Edit this exact photo: the same person looking stern and serious: eyebrows lowered and slightly drawn together, lips pressed into a firm flat line. Change nothing else; keep framing, face shape, skin and lighting identical."
-    },
-    {
-     "file": "expr-f1-sleepy.png",
-     "prompt": "Edit this exact photo: the same person looking drowsy and sleepy: heavy upper eyelids, eyes about half open, relaxed eyebrows, mouth closed. Change nothing else; keep framing, face shape, skin and lighting identical."
-    }
-   ],
-   "2": [
-    {
-     "file": "face-m2-0.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a Latino man about 27 with medium tan skin (skin tone close to #a87f5c), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, clean-shaven. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "face-m2-1.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a Middle Eastern man in his mid 40s with light stubble with medium tan skin (skin tone close to #a87f5c), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, light stubble only, no beard. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "face-m2-2.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a Latino man about 62, wrinkled with medium tan skin (skin tone close to #a87f5c), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, clean-shaven. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "face-f2-0.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a Latina woman about 27 with medium tan skin (skin tone close to #a87f5c), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "face-f2-1.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a Middle Eastern woman in her mid 40s with medium tan skin (skin tone close to #a87f5c), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "face-f2-2.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a South Asian woman about 58, wrinkled with medium tan skin (skin tone close to #a87f5c), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "blink-m2-0.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "blink-m2-1.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "blink-m2-2.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "expr-m2-smile.png",
-     "prompt": "Edit this exact photo: the same person with a gentle closed-mouth smile (mouth corners raised, slight cheek lift, eyes still open). Change nothing else; keep framing, eyes, eyebrows, skin and lighting identical."
-    },
-    {
-     "file": "expr-m2-serious.png",
-     "prompt": "Edit this exact photo: the same person looking stern and serious: eyebrows lowered and slightly drawn together, lips pressed into a firm flat line. Change nothing else; keep framing, face shape, skin and lighting identical."
-    },
-    {
-     "file": "expr-m2-sleepy.png",
-     "prompt": "Edit this exact photo: the same person looking drowsy and sleepy: heavy upper eyelids, eyes about half open, relaxed eyebrows, mouth closed. Change nothing else; keep framing, face shape, skin and lighting identical."
-    },
-    {
-     "file": "blink-f2-0.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "blink-f2-1.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "blink-f2-2.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "expr-f2-smile.png",
-     "prompt": "Edit this exact photo: the same person with a gentle closed-mouth smile (mouth corners raised, slight cheek lift, eyes still open). Change nothing else; keep framing, eyes, eyebrows, skin and lighting identical."
-    },
-    {
-     "file": "expr-f2-serious.png",
-     "prompt": "Edit this exact photo: the same person looking stern and serious: eyebrows lowered and slightly drawn together, lips pressed into a firm flat line. Change nothing else; keep framing, face shape, skin and lighting identical."
-    },
-    {
-     "file": "expr-f2-sleepy.png",
-     "prompt": "Edit this exact photo: the same person looking drowsy and sleepy: heavy upper eyelids, eyes about half open, relaxed eyebrows, mouth closed. Change nothing else; keep framing, face shape, skin and lighting identical."
-    }
-   ],
-   "3": [
-    {
-     "file": "face-m3-0.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a South Asian man about 27 with warm brown skin (skin tone close to #7d5a3c), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, clean-shaven. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "face-m3-1.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a mixed-race man in his mid 40s with light stubble with warm brown skin (skin tone close to #7d5a3c), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, light stubble only, no beard. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "face-m3-2.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a South Asian man about 62, wrinkled, grey eyebrows with warm brown skin (skin tone close to #7d5a3c), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, clean-shaven. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "face-f3-0.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a South Asian woman about 27 with warm brown skin (skin tone close to #7d5a3c), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "face-f3-1.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a mixed-race woman in her mid 40s with warm brown skin (skin tone close to #7d5a3c), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "face-f3-2.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a North African woman about 58, wrinkled with warm brown skin (skin tone close to #7d5a3c), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "blink-m3-0.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "blink-m3-1.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "blink-m3-2.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "expr-m3-smile.png",
-     "prompt": "Edit this exact photo: the same person with a gentle closed-mouth smile (mouth corners raised, slight cheek lift, eyes still open). Change nothing else; keep framing, eyes, eyebrows, skin and lighting identical."
-    },
-    {
-     "file": "expr-m3-serious.png",
-     "prompt": "Edit this exact photo: the same person looking stern and serious: eyebrows lowered and slightly drawn together, lips pressed into a firm flat line. Change nothing else; keep framing, face shape, skin and lighting identical."
-    },
-    {
-     "file": "expr-m3-sleepy.png",
-     "prompt": "Edit this exact photo: the same person looking drowsy and sleepy: heavy upper eyelids, eyes about half open, relaxed eyebrows, mouth closed. Change nothing else; keep framing, face shape, skin and lighting identical."
-    },
-    {
-     "file": "blink-f3-0.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "blink-f3-1.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "blink-f3-2.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "expr-f3-smile.png",
-     "prompt": "Edit this exact photo: the same person with a gentle closed-mouth smile (mouth corners raised, slight cheek lift, eyes still open). Change nothing else; keep framing, eyes, eyebrows, skin and lighting identical."
-    },
-    {
-     "file": "expr-f3-serious.png",
-     "prompt": "Edit this exact photo: the same person looking stern and serious: eyebrows lowered and slightly drawn together, lips pressed into a firm flat line. Change nothing else; keep framing, face shape, skin and lighting identical."
-    },
-    {
-     "file": "expr-f3-sleepy.png",
-     "prompt": "Edit this exact photo: the same person looking drowsy and sleepy: heavy upper eyelids, eyes about half open, relaxed eyebrows, mouth closed. Change nothing else; keep framing, face shape, skin and lighting identical."
-    }
-   ],
-   "4": [
-    {
-     "file": "face-m4-0.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a West African man about 27 with deep dark-brown skin (skin tone close to #5a4030), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, clean-shaven. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "face-m4-1.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of an African man in his mid 40s with light stubble with deep dark-brown skin (skin tone close to #5a4030), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, light stubble only, no beard. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "face-m4-2.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of an African man about 62, wrinkled, grey eyebrows with deep dark-brown skin (skin tone close to #5a4030), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, clean-shaven. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "face-f4-0.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of a West African woman about 27 with deep dark-brown skin (skin tone close to #5a4030), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "face-f4-1.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of an African woman in her mid 40s with deep dark-brown skin (skin tone close to #5a4030), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "face-f4-2.png",
-     "prompt": "Game character face texture (diffuse map), square image. Strictly frontal, perfectly symmetric orthographic photograph of an African woman about 60, wrinkled with deep dark-brown skin (skin tone close to #5a4030), calm neutral expression, mouth closed, hair pulled tightly back off the forehead or cropped very short (no fringe, no strands on the face), no makeup, no earrings, no glasses, no facial hair. The face fills the square edge to edge: top edge at the hairline, bottom edge just below the chin, left and right edges at the outer cheeks, ears cropped out. Eyes at about 37% from the top, nose tip about 60%, mouth about 77%, chin about 96%. Flat, even, diffuse studio lighting, no shadows, no specular highlights. No text, no background. Use the reference image only for framing and scale."
-    },
-    {
-     "file": "blink-m4-0.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "blink-m4-1.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "blink-m4-2.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "expr-m4-smile.png",
-     "prompt": "Edit this exact photo: the same person with a gentle closed-mouth smile (mouth corners raised, slight cheek lift, eyes still open). Change nothing else; keep framing, eyes, eyebrows, skin and lighting identical."
-    },
-    {
-     "file": "expr-m4-serious.png",
-     "prompt": "Edit this exact photo: the same person looking stern and serious: eyebrows lowered and slightly drawn together, lips pressed into a firm flat line. Change nothing else; keep framing, face shape, skin and lighting identical."
-    },
-    {
-     "file": "expr-m4-sleepy.png",
-     "prompt": "Edit this exact photo: the same person looking drowsy and sleepy: heavy upper eyelids, eyes about half open, relaxed eyebrows, mouth closed. Change nothing else; keep framing, face shape, skin and lighting identical."
-    },
-    {
-     "file": "blink-f4-0.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "blink-f4-1.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "blink-f4-2.png",
-     "prompt": "Edit this exact photo: the same person with both eyes peacefully closed in a natural blink. Change nothing else; keep framing, face shape, skin, lighting and every other pixel identical."
-    },
-    {
-     "file": "expr-f4-smile.png",
-     "prompt": "Edit this exact photo: the same person with a gentle closed-mouth smile (mouth corners raised, slight cheek lift, eyes still open). Change nothing else; keep framing, eyes, eyebrows, skin and lighting identical."
-    },
-    {
-     "file": "expr-f4-serious.png",
-     "prompt": "Edit this exact photo: the same person looking stern and serious: eyebrows lowered and slightly drawn together, lips pressed into a firm flat line. Change nothing else; keep framing, face shape, skin and lighting identical."
-    },
-    {
-     "file": "expr-f4-sleepy.png",
-     "prompt": "Edit this exact photo: the same person looking drowsy and sleepy: heavy upper eyelids, eyes about half open, relaxed eyebrows, mouth closed. Change nothing else; keep framing, face shape, skin and lighting identical."
-    }
-   ]
-  },
-  "normalize": {
-   "m0-0": {
-    "src_landmarks": [
-     0.404,
-     0.605,
-     0.769,
-     1.045,
-     0.333,
-     0.668
-    ],
-    "scale": 1.11,
-    "landmarks": [
-     0.367,
-     0.601,
-     0.781,
-     1.088,
-     0.305,
-     0.681
-    ]
-   },
-   "m0-1": {
-    "src_landmarks": [
-     0.377,
-     0.61,
-     0.795,
-     1.114,
-     0.311,
-     0.683
-    ],
-    "scale": 0.969,
-    "landmarks": [
-     0.368,
-     0.589,
-     0.769,
-     1.079,
-     0.325,
-     0.678
-    ]
-   },
-   "m0-2": {
-    "src_landmarks": [
-     0.38,
-     0.6,
-     0.784,
-     1.045,
-     0.309,
-     0.682
-    ],
-    "scale": 1.002,
-    "landmarks": [
-     0.37,
-     0.599,
-     0.789,
-     1.057,
-     0.308,
-     0.687
-    ]
-   },
-   "m1-0": {
-    "src_landmarks": [
-     0.372,
-     0.615,
-     0.796,
-     1.118,
-     0.288,
-     0.685
-    ],
-    "scale": 0.955,
-    "landmarks": [
-     0.376,
-     0.595,
-     0.765,
-     1.076,
-     0.318,
-     0.685
-    ]
-   },
-   "m1-1": {
-    "src_landmarks": [
-     0.376,
-     0.602,
-     0.776,
-     1.089,
-     0.315,
-     0.678
-    ],
-    "scale": 1.012,
-    "landmarks": [
-     0.376,
-     0.591,
-     0.772,
-     1.055,
-     0.319,
-     0.681
-    ]
-   },
-   "m1-2": {
-    "src_landmarks": [
-     0.382,
-     0.607,
-     0.784,
-     1.084,
-     0.313,
-     0.678
-    ],
-    "scale": 1.007,
-    "landmarks": [
-     0.361,
-     0.594,
-     0.779,
-     1.098,
-     0.312,
-     0.687
-    ]
-   },
-   "m2-0": {
-    "src_landmarks": [
-     0.367,
-     0.604,
-     0.785,
-     1.112,
-     0.311,
-     0.688
-    ],
-    "scale": 0.969,
-    "landmarks": [
-     0.367,
-     0.598,
-     0.768,
-     1.083,
-     0.31,
-     0.682
-    ]
-   },
-   "m2-1": {
-    "src_landmarks": [
-     0.38,
-     0.606,
-     0.781,
-     1.1,
-     0.317,
-     0.682
-    ],
-    "scale": 1.01,
-    "landmarks": [
-     0.368,
-     0.601,
-     0.784,
-     1.105,
-     0.303,
-     0.679
-    ]
-   },
-   "m2-2": {
-    "src_landmarks": [
-     0.371,
-     0.611,
-     0.789,
-     1.106,
-     0.303,
-     0.689
-    ],
-    "scale": 0.969,
-    "landmarks": [
-     0.374,
-     0.601,
-     0.778,
-     1.048,
-     0.314,
-     0.692
-    ]
-   },
-   "m3-0": {
-    "src_landmarks": [
-     0.372,
-     0.604,
-     0.776,
-     1.097,
-     0.308,
-     0.685
-    ],
-    "scale": 1.002,
-    "landmarks": [
-     0.368,
-     0.601,
-     0.772,
-     1.092,
-     0.309,
-     0.688
-    ]
-   },
-   "m3-1": {
-    "src_landmarks": [
-     0.382,
-     0.595,
-     0.772,
-     1.069,
-     0.336,
-     0.678
-    ],
-    "scale": 1.038,
-    "landmarks": [
-     0.365,
-     0.596,
-     0.776,
-     1.086,
-     0.321,
-     0.682
-    ]
-   },
-   "m3-2": {
-    "src_landmarks": [
-     0.367,
-     0.598,
-     0.781,
-     1.058,
-     0.309,
-     0.693
-    ],
-    "scale": 0.978,
-    "landmarks": [
-     0.369,
-     0.597,
-     0.775,
-     1.045,
-     0.315,
-     0.694
-    ]
-   },
-   "m4-0": {
-    "src_landmarks": [
-     0.426,
-     0.616,
-     0.756,
-     1.015,
-     0.348,
-     0.66
-    ],
-    "scale": 1.227,
-    "landmarks": [
-     0.37,
-     0.6,
-     0.772,
-     1.057,
-     0.313,
-     0.694
-    ]
-   },
-   "m4-1": {
-    "src_landmarks": [
-     0.358,
-     0.6,
-     0.776,
-     1.101,
-     0.306,
-     0.69
-    ],
-    "scale": 0.969,
-    "landmarks": [
-     0.375,
-     0.604,
-     0.772,
-     1.087,
-     0.315,
-     0.686
-    ]
-   },
-   "m4-2": {
-    "src_landmarks": [
-     0.435,
-     0.606,
-     0.754,
-     1.005,
-     0.353,
-     0.643
-    ],
-    "scale": 1.27,
-    "landmarks": [
-     0.379,
-     0.584,
-     0.756,
-     1.012,
-     0.328,
-     0.677
-    ]
-   },
-   "f0-0": {
-    "src_landmarks": [
-     0.379,
-     0.611,
-     0.79,
-     1.097,
-     0.305,
-     0.685
-    ],
-    "scale": 0.985,
-    "landmarks": [
-     0.364,
-     0.595,
-     0.775,
-     1.079,
-     0.307,
-     0.679
-    ]
-   },
-   "f0-1": {
-    "src_landmarks": [
-     0.377,
-     0.607,
-     0.784,
-     1.085,
-     0.311,
-     0.684
-    ],
-    "scale": 0.995,
-    "landmarks": [
-     0.363,
-     0.594,
-     0.77,
-     1.075,
-     0.313,
-     0.682
-    ]
-   },
-   "f0-2": {
-    "src_landmarks": [
-     0.376,
-     0.608,
-     0.784,
-     1.085,
-     0.304,
-     0.682
-    ],
-    "scale": 0.993,
-    "landmarks": [
-     0.37,
-     0.595,
-     0.768,
-     1.068,
-     0.313,
-     0.676
-    ]
-   },
-   "f1-0": {
-    "src_landmarks": [
-     0.377,
-     0.614,
-     0.785,
-     1.103,
-     0.299,
-     0.68
-    ],
-    "scale": 0.993,
-    "landmarks": [
-     0.371,
-     0.616,
-     0.795,
-     1.118,
-     0.318,
-     0.712
-    ]
-   },
-   "f1-1": {
-    "src_landmarks": [
-     0.378,
-     0.606,
-     0.781,
-     1.085,
-     0.306,
-     0.681
-    ],
-    "scale": 1.005,
-    "landmarks": [
-     0.362,
-     0.597,
-     0.777,
-     1.092,
-     0.307,
-     0.685
-    ]
-   },
-   "f1-2": {
-    "src_landmarks": [
-     0.379,
-     0.608,
-     0.789,
-     1.1,
-     0.307,
-     0.68
-    ],
-    "scale": 0.988,
-    "landmarks": [
-     0.365,
-     0.59,
-     0.771,
-     1.084,
-     0.313,
-     0.678
-    ]
-   },
-   "f2-0": {
-    "src_landmarks": [
-     0.374,
-     0.601,
-     0.777,
-     1.074,
-     0.311,
-     0.682
-    ],
-    "scale": 1.005,
-    "landmarks": [
-     0.376,
-     0.598,
-     0.776,
-     1.038,
-     0.322,
-     0.691
-    ]
-   },
-   "f2-1": {
-    "src_landmarks": [
-     0.378,
-     0.605,
-     0.78,
-     1.085,
-     0.306,
-     0.681
-    ],
-    "scale": 1.007,
-    "landmarks": [
-     0.365,
-     0.594,
-     0.773,
-     1.084,
-     0.313,
-     0.683
-    ]
-   },
-   "f2-2": {
-    "src_landmarks": [
-     0.381,
-     0.609,
-     0.786,
-     1.088,
-     0.303,
-     0.68
-    ],
-    "scale": 1.0,
-    "landmarks": [
-     0.371,
-     0.596,
-     0.781,
-     1.062,
-     0.326,
-     0.699
-    ]
-   },
-   "f3-0": {
-    "src_landmarks": [
-     0.375,
-     0.606,
-     0.789,
-     1.098,
-     0.313,
-     0.688
-    ],
-    "scale": 0.978,
-    "landmarks": [
-     0.365,
-     0.592,
-     0.767,
-     1.072,
-     0.309,
-     0.675
-    ]
-   },
-   "f3-1": {
-    "src_landmarks": [
-     0.382,
-     0.603,
-     0.776,
-     1.075,
-     0.312,
-     0.676
-    ],
-    "scale": 1.028,
-    "landmarks": [
-     0.365,
-     0.595,
-     0.771,
-     1.084,
-     0.312,
-     0.683
-    ]
-   },
-   "f3-2": {
-    "src_landmarks": [
-     0.378,
-     0.607,
-     0.783,
-     1.088,
-     0.304,
-     0.681
-    ],
-    "scale": 1.0,
-    "landmarks": [
-     0.363,
-     0.592,
-     0.769,
-     1.08,
-     0.312,
-     0.683
-    ]
-   },
-   "f4-0": {
-    "src_landmarks": [
-     0.369,
-     0.593,
-     0.763,
-     1.06,
-     0.31,
-     0.678
-    ],
-    "scale": 1.028,
-    "landmarks": [
-     0.366,
-     0.609,
-     0.783,
-     1.089,
-     0.316,
-     0.718
-    ]
-   },
-   "f4-1": {
-    "src_landmarks": [
-     0.359,
-     0.596,
-     0.778,
-     1.091,
-     0.309,
-     0.689
-    ],
-    "scale": 0.967,
-    "landmarks": [
-     0.377,
-     0.598,
-     0.77,
-     1.077,
-     0.316,
-     0.68
-    ]
-   },
-   "f4-2": {
-    "src_landmarks": [
-     0.364,
-     0.596,
-     0.78,
-     1.064,
-     0.309,
-     0.695
-    ],
-    "scale": 0.974,
-    "landmarks": [
-     0.367,
-     0.599,
-     0.78,
-     1.096,
-     0.313,
-     0.687
-    ]
-   }
-  }
- },
- "cloth": {
-  "note": "v68 通用衣物/发丝（Hark image generation, 2026-10-13）：中性浅灰面料图集，运行时顶点色染色。cloth/top-<k>.webp = 上衣 k 的正面/背面/袖子（裁自生成图各象限）；pants.webp = 6 款裤腿（长裤/短裤/工装/牛仔/运动/阔腿）；hair.webp = 直发/寸发/卷发/脏辫。top-5/6/7 首次生成有背景，重生成时追加了 tight crop / no background。",
-  "jobs": [
-   {
-    "file": "top-0.png",
-    "prompt": "Game clothing texture atlas, square image split into an exact 2x2 grid of equal quadrants. Top-left: front of a plain crew-neck T-shirt torso (neckline at top edge). Top-right: back of the same T-shirt. Bottom-left: a short T-shirt sleeve, hem at the bottom edge. Bottom-right: plain T-shirt fabric. The fabric is NEUTRAL LIGHT GREY, fully desaturated (no color at all, about 80% brightness) so it can be tinted in-engine; darker grey only for seams, folds, stitching and shading. Orthographic flat-lay view, flat even lighting, realistic fabric texture, each quadrant filled edge to edge with fabric (no background, no people, no hangers, no text, no logos)."
-   },
-   {
-    "file": "top-1.png",
-    "prompt": "Game clothing texture atlas, square image split into an exact 2x2 grid of equal quadrants. Top-left: front of a button-up shirt torso with center button placket and one breast pocket (collar at top edge). Top-right: back of the shirt with yoke seam. Bottom-left: a long shirt sleeve, buttoned cuff at the bottom edge. Bottom-right: plain shirt fabric. The fabric is NEUTRAL LIGHT GREY, fully desaturated (no color at all, about 80% brightness) so it can be tinted in-engine; darker grey only for seams, folds, stitching and shading. Orthographic flat-lay view, flat even lighting, realistic fabric texture, each quadrant filled edge to edge with fabric (no background, no people, no hangers, no text, no logos)."
-   },
-   {
-    "file": "top-2.png",
-    "prompt": "Game clothing texture atlas, square image split into an exact 2x2 grid of equal quadrants. Top-left: front of a pullover hoodie torso with kangaroo pocket and two drawstrings (neck at top edge). Top-right: back of the hoodie. Bottom-left: a long hoodie sleeve with ribbed cuff at the bottom edge. Bottom-right: hood fabric. The fabric is NEUTRAL LIGHT GREY, fully desaturated (no color at all, about 80% brightness) so it can be tinted in-engine; darker grey only for seams, folds, stitching and shading. Orthographic flat-lay view, flat even lighting, realistic fabric texture, each quadrant filled edge to edge with fabric (no background, no people, no hangers, no text, no logos)."
-   },
-   {
-    "file": "top-3.png",
-    "prompt": "Game clothing texture atlas, square image split into an exact 2x2 grid of equal quadrants. Top-left: front of a work jacket torso with center zipper and two flap chest pockets (collar at top edge). Top-right: back of the jacket with seams. Bottom-left: a long jacket sleeve with cuff at the bottom edge. Bottom-right: plain jacket fabric. The fabric is NEUTRAL LIGHT GREY, fully desaturated (no color at all, about 80% brightness) so it can be tinted in-engine; darker grey only for seams, folds, stitching and shading. Orthographic flat-lay view, flat even lighting, realistic fabric texture, each quadrant filled edge to edge with fabric (no background, no people, no hangers, no text, no logos)."
-   },
-   {
-    "file": "top-4.png",
-    "prompt": "Game clothing texture atlas, square image split into an exact 2x2 grid of equal quadrants. Top-left: front of a heavy canvas workwear coverall-style jacket torso with snap buttons, two large patch chest pockets and a reflective tape stripe across the chest. Top-right: back with reflective stripe. Bottom-left: a long canvas sleeve with reflective band near the cuff at the bottom. Bottom-right: plain canvas. The fabric is NEUTRAL LIGHT GREY, fully desaturated (no color at all, about 80% brightness) so it can be tinted in-engine; darker grey only for seams, folds, stitching and shading. Orthographic flat-lay view, flat even lighting, realistic fabric texture, each quadrant filled edge to edge with fabric (no background, no people, no hangers, no text, no logos)."
-   },
-   {
-    "file": "top-5.png",
-    "prompt": "Game clothing texture atlas, square image split into an exact 2x2 grid of equal quadrants. Top-left: front of a ribbed sleeveless tank top torso (deep armholes, scoop neck at top). Top-right: back of the tank top. Bottom-left: ribbed knit fabric. Bottom-right: ribbed knit fabric. The fabric is NEUTRAL LIGHT GREY, fully desaturated (no color at all, about 80% brightness) so it can be tinted in-engine; darker grey only for seams, folds, stitching and shading. Orthographic flat-lay view, flat even lighting, realistic fabric texture, each quadrant filled edge to edge with fabric (no background, no people, no hangers, no text, no logos)."
-   },
-   {
-    "file": "top-6.png",
-    "prompt": "Game clothing texture atlas, square image split into an exact 2x2 grid of equal quadrants. Top-left: front of a cable-knit wool sweater torso with ribbed crew neck at top and ribbed waistband at bottom. Top-right: back of the sweater. Bottom-left: a long knit sleeve with ribbed cuff at the bottom edge. Bottom-right: knit fabric. The fabric is NEUTRAL LIGHT GREY, fully desaturated (no color at all, about 80% brightness) so it can be tinted in-engine; darker grey only for seams, folds, stitching and shading. Orthographic flat-lay view, flat even lighting, realistic fabric texture, each quadrant filled edge to edge with fabric (no background, no people, no hangers, no text, no logos)."
-   },
-   {
-    "file": "top-7.png",
-    "prompt": "Game clothing texture atlas, square image split into an exact 2x2 grid of equal quadrants. Top-left: front of a long double-breasted trench coat torso with two rows of buttons and a belt at the waist (lapels at top edge). Top-right: back of the trench coat with back vent and belt. Bottom-left: a long trench coat sleeve with strap at the cuff at the bottom edge. Bottom-right: gabardine fabric. The fabric is NEUTRAL LIGHT GREY, fully desaturated (no color at all, about 80% brightness) so it can be tinted in-engine; darker grey only for seams, folds, stitching and shading. Orthographic flat-lay view, flat even lighting, realistic fabric texture, each quadrant filled edge to edge with fabric (no background, no people, no hangers, no text, no logos)."
-   },
-   {
-    "file": "pants-a.png",
-    "prompt": "Game clothing texture atlas, square image split into an exact 2x2 grid of equal quadrants. Each quadrant is the front of ONE trouser leg, waist at top, hem at bottom edge, filling the quadrant. Top-left: plain suit trousers with a center crease. Top-right: shorts (hem at the vertical middle, the lower half of the quadrant is plain fabric). Bottom-left: cargo trousers with a large flap side pocket at mid thigh. Bottom-right: denim jeans with stitched seams, front pocket and slight fading (still grey, no blue). The fabric is NEUTRAL LIGHT GREY, fully desaturated (no color at all, about 80% brightness) so it can be tinted in-engine; darker grey only for seams, folds, stitching and shading. Orthographic flat-lay view, flat even lighting, realistic fabric texture, each quadrant filled edge to edge with fabric (no background, no people, no hangers, no text, no logos)."
-   },
-   {
-    "file": "pants-b.png",
-    "prompt": "Game clothing texture atlas, square image split into an exact 2x2 grid of equal quadrants. Each quadrant is the front of ONE trouser leg, waist at top, hem at bottom edge, filling the quadrant. Top-left: soft fleece sweatpants with elastic ribbed ankle cuff at the bottom. Top-right: loose wide-leg trousers with soft drape folds. Bottom-left: plain fabric. Bottom-right: plain fabric. The fabric is NEUTRAL LIGHT GREY, fully desaturated (no color at all, about 80% brightness) so it can be tinted in-engine; darker grey only for seams, folds, stitching and shading. Orthographic flat-lay view, flat even lighting, realistic fabric texture, each quadrant filled edge to edge with fabric (no background, no people, no hangers, no text, no logos)."
-   },
-   {
-    "file": "hair-gray.png",
-    "prompt": "Hair texture swatches, square image split into an exact 2x2 grid. Neutral LIGHT GREY hair, fully desaturated (no color, about 75% brightness, darker grey strand shadows) so it can be tinted in-engine. Strands run vertically. Top-left: straight smooth hair. Top-right: short cropped hair with visible scalp texture. Bottom-left: tight curls. Bottom-right: thick dreadlocks/braids. Each quadrant filled edge to edge, flat even lighting, no background, no text."
-   }
-  ]
- }
 }

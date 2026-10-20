@@ -1,0 +1,587 @@
+{
+  "ok": true,
+  "run": "qa-1792143044748-66904",
+  "port": 13877,
+  "cdp": 13878,
+  "profile": "E:\\ZAN\\backroom\\app\\reports\\l11-navigation-interiors\\qa-1792143044748-66904",
+  "command": [
+    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l11-navigation-interiors\\qa-1792143044748-66904",
+    "--remote-debugging-port=13878",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.40",
+    "revision": "@cfaadc5a132d78e1828635aa8405a499f3e14864",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.20"
+  },
+  "pids": {
+    "server": 71652,
+    "browser": 45524
+  },
+  "phase": "after-first",
+  "views": {
+    "street": {
+      "pose": {
+        "kind": "street",
+        "building": "l11v2:20261006:0:0:block:1:lot:0:1",
+        "room": "l11v2:20261006:0:0:block:1:lot:0:1:f0:room:1",
+        "floor": 0,
+        "position": [
+          153,
+          79.49998333333335,
+          0.034550617650952964
+        ],
+        "look": {
+          "yaw": -1.2390585607048772,
+          "pitch": -0.12,
+          "locked": false,
+          "rayX": 0.9386785291983251,
+          "rayY": -0.32334440809775006,
+          "rayZ": -0.11971220728891938,
+          "visualHit": null,
+          "roll": 0
+        }
+      },
+      "performance": {
+        "stats": {
+          "label": "11:open",
+          "median": 20.90000000000873,
+          "p95": 246,
+          "max": 325,
+          "p99": 300.1000000000058,
+          "frames": 123,
+          "over16ms": 102,
+          "over33ms": 16,
+          "cpuMedian": 22.399999991059303,
+          "cpuP95": 34.099999994039536,
+          "gpuMedian": 19.525632,
+          "gpuP95": 229.533696,
+          "gpuSamples": 121,
+          "draws": 1853,
+          "triangles": 2872767,
+          "memory": {
+            "geometries": 2394,
+            "textures": 115
+          },
+          "programs": 76,
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        },
+        "draws": {
+          "p50": 1680,
+          "p95": 2905
+        },
+        "triangles": {
+          "p50": 2498421,
+          "p95": 3644489
+        },
+        "interiors": {
+          "groups": 98,
+          "visible": 46,
+          "empty": 0
+        }
+      }
+    },
+    "shop": {
+      "pose": {
+        "kind": "shop",
+        "building": "l11v2:20261006:0:0:block:1:lot:0:1",
+        "room": "l11v2:20261006:0:0:block:1:lot:0:1:f0:room:1",
+        "floor": 0,
+        "position": [
+          179.04500000000002,
+          67.68333333333334,
+          0.034550617650952964
+        ],
+        "look": {
+          "yaw": 2.5020772589540634,
+          "pitch": -0.12,
+          "locked": false,
+          "rayX": -0.5925148172487847,
+          "rayY": 0.7966148245963378,
+          "rayZ": -0.11971220728891936,
+          "visualHit": null,
+          "roll": 0
+        }
+      },
+      "performance": {
+        "stats": {
+          "label": "11:open",
+          "median": 20.80000000000291,
+          "p95": 270.8000000000029,
+          "max": 404.1000000000058,
+          "p99": 370.8999999999942,
+          "frames": 124,
+          "over16ms": 79,
+          "over33ms": 39,
+          "cpuMedian": 19.200000002980232,
+          "cpuP95": 31.299999997019768,
+          "gpuMedian": 12.439552,
+          "gpuP95": 212.287488,
+          "gpuSamples": 122,
+          "draws": 1425,
+          "triangles": 2768861,
+          "memory": {
+            "geometries": 2500,
+            "textures": 115
+          },
+          "programs": 76,
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        },
+        "draws": {
+          "p50": 1425,
+          "p95": 2553
+        },
+        "triangles": {
+          "p50": 2548267,
+          "p95": 3671713
+        },
+        "interiors": {
+          "groups": 98,
+          "visible": 38,
+          "empty": 0
+        }
+      }
+    },
+    "office": {
+      "pose": {
+        "kind": "office",
+        "building": "l11v2:20261006:0:0:block:1:lot:1:2",
+        "room": "l11v2:20261006:0:0:block:1:lot:1:2:f1:room:2",
+        "floor": 1,
+        "position": [
+          209.66666666666666,
+          105.51666666666667,
+          3.0608539511810693
+        ],
+        "look": {
+          "yaw": -1.9807059921112682,
+          "pitch": -0.12,
+          "locked": false,
+          "rayX": 0.9105612185976895,
+          "rayY": 0.3956605295097122,
+          "rayZ": -0.11971220728891936,
+          "visualHit": null,
+          "roll": 0
+        }
+      },
+      "performance": {
+        "stats": {
+          "label": "11:open",
+          "median": 20.90000000000873,
+          "p95": 33.30000000000291,
+          "max": 41.69999999999709,
+          "p99": 41.59999999999127,
+          "frames": 121,
+          "over16ms": 95,
+          "over33ms": 5,
+          "cpuMedian": 19.5,
+          "cpuP95": 32.099999994039536,
+          "gpuMedian": 15.905792,
+          "gpuP95": 29.748224,
+          "gpuSamples": 119,
+          "draws": 784,
+          "triangles": 1672197,
+          "memory": {
+            "geometries": 2614,
+            "textures": 115
+          },
+          "programs": 76,
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        },
+        "draws": {
+          "p50": 784,
+          "p95": 2796
+        },
+        "triangles": {
+          "p50": 1672197,
+          "p95": 3319679
+        },
+        "interiors": {
+          "groups": 98,
+          "visible": 53,
+          "empty": 0
+        }
+      }
+    }
+  },
+  "walkers": [
+    {
+      "id": 11,
+      "home": "l11:20261006:pedestrian:5:4",
+      "activities": {
+        "resting": 18.300000000000068,
+        "planning": 7.299999999999984,
+        "walking": 146.59999999999425,
+        "yielding": 3.133333333333332,
+        "waiting-crossing": 4.66666666666666
+      },
+      "travel": 128.77333333334715,
+      "last": [
+        140.24916148242227,
+        21.64380451505332
+      ],
+      "stalled": 0,
+      "maxStalled": 5.199999999999991,
+      "world": [
+        268.24916148242227,
+        149.64380451505332,
+        0.09154381167592959
+      ],
+      "activity": {
+        "activity": "walking",
+        "travel": 128.77333333331939,
+        "crossings": 3,
+        "pending": false,
+        "pathLength": 31,
+        "next": [
+          267.375,
+          150.375
+        ],
+        "blocked": 0
+      },
+      "surface": "crosswalk"
+    },
+    {
+      "id": 12,
+      "home": "l11:20261006:pedestrian:6:4",
+      "activities": {
+        "resting": 16.83333333333333,
+        "planning": 6.43333333333332,
+        "walking": 152.49999999999392,
+        "waiting-crossing": 4.233333333333328
+      },
+      "travel": 134.02400000000142,
+      "last": [
+        52.97269731922941,
+        9.624990967457421
+      ],
+      "stalled": 3.766666666666663,
+      "maxStalled": 5.799999999999989,
+      "world": [
+        180.9726973192294,
+        137.62499096745742,
+        0.0577982759738719
+      ],
+      "activity": {
+        "activity": "walking",
+        "travel": 134.02399999998738,
+        "crossings": 2,
+        "pending": false,
+        "pathLength": 105,
+        "next": [
+          181.125,
+          137.625
+        ],
+        "blocked": 0
+      },
+      "surface": "sidewalk"
+    },
+    {
+      "id": 13,
+      "home": "l11:20261006:pedestrian:8:5",
+      "activities": {
+        "resting": 10.233333333333308,
+        "planning": 5.033333333333325,
+        "walking": 162.19999999999337,
+        "yielding": 2.533333333333334
+      },
+      "travel": 142.58933333334951,
+      "last": [
+        133.42242116914213,
+        22.323991704438328
+      ],
+      "stalled": 0,
+      "maxStalled": 4.499999999999994,
+      "world": [
+        261.4224211691421,
+        150.32399170443833,
+        0.09013537149410002
+      ],
+      "activity": {
+        "activity": "walking",
+        "travel": 142.58933333332288,
+        "crossings": 0,
+        "pending": false,
+        "pathLength": 6,
+        "next": [
+          251.625,
+          149.625
+        ],
+        "blocked": 0
+      },
+      "surface": "sidewalk"
+    },
+    {
+      "id": 14,
+      "home": "l11:20261006:pedestrian:4:6",
+      "activities": {
+        "resting": 16.09999999999996,
+        "planning": 6.766666666666652,
+        "walking": 154.13333333332716,
+        "waiting-crossing": 2.999999999999999
+      },
+      "travel": 135.40266666666156,
+      "last": [
+        1.8294307700630554,
+        151.35454903816554
+      ],
+      "stalled": 0,
+      "maxStalled": 4.833333333333326,
+      "world": [
+        129.82943077006306,
+        279.35454903816554,
+        0.1399059101593173
+      ],
+      "activity": {
+        "activity": "walking",
+        "travel": 135.4026666666544,
+        "crossings": 2,
+        "pending": false,
+        "pathLength": 29,
+        "next": [
+          135.375,
+          279.375
+        ],
+        "blocked": 0
+      },
+      "surface": "sidewalk"
+    },
+    {
+      "id": 20,
+      "home": "l11:20261006:pedestrian:4:8",
+      "activities": {
+        "resting": 15.03333333333329,
+        "planning": 6.233333333333321,
+        "walking": 148.5666666666608,
+        "waiting-crossing": 10.166666666666641
+      },
+      "travel": 130.5626666666575,
+      "last": [
+        21.4731498765276,
+        150.62357800231518
+      ],
+      "stalled": 1.5666666666666682,
+      "maxStalled": 4.266666666666661,
+      "world": [
+        149.4731498765276,
+        278.6235780023152,
+        0.14325410451862863
+      ],
+      "activity": {
+        "activity": "resting",
+        "travel": 130.56266666665317,
+        "crossings": 5,
+        "pending": false,
+        "pathLength": 0,
+        "blocked": 0
+      },
+      "surface": "sidewalk"
+    },
+    {
+      "id": 21,
+      "home": "l11:20261006:pedestrian:6:8",
+      "activities": {
+        "resting": 11.699999999999969,
+        "planning": 11.233333333333304,
+        "walking": 134.8666666666616,
+        "yielding": 16.466666666666644,
+        "waiting-crossing": 5.733333333333323
+      },
+      "travel": 118.33066666667526,
+      "last": [
+        123.77195500889638,
+        137.4890268178582
+      ],
+      "stalled": 0,
+      "maxStalled": 6.199999999999988,
+      "world": [
+        251.77195500889638,
+        265.4890268178582,
+        0.15529152466508322
+      ],
+      "activity": {
+        "activity": "walking",
+        "travel": 118.33066666665475,
+        "crossings": 4,
+        "pending": false,
+        "pathLength": 2,
+        "next": [
+          243.375,
+          265.125
+        ],
+        "blocked": 0
+      },
+      "surface": "sidewalk"
+    },
+    {
+      "id": 23,
+      "home": "l11:20261006:pedestrian:7:8",
+      "activities": {
+        "resting": 6.666666666666653,
+        "planning": 6.766666666666652,
+        "walking": 144.33333333332772,
+        "waiting-crossing": 13.999999999999961,
+        "yielding": 8.233333333333315
+      },
+      "travel": 126.80800000001106,
+      "last": [
+        150.61992357557358,
+        133.74287066621395
+      ],
+      "stalled": 0,
+      "maxStalled": 6.733333333333319,
+      "world": [
+        278.6199235755736,
+        261.74287066621395,
+        0.15760126508148184
+      ],
+      "activity": {
+        "activity": "walking",
+        "travel": 126.80799999998612,
+        "crossings": 6,
+        "pending": false,
+        "pathLength": 3,
+        "next": [
+          278.625,
+          253.125
+        ],
+        "blocked": 0
+      },
+      "surface": "sidewalk"
+    },
+    {
+      "id": 24,
+      "home": "l11:20261006:pedestrian:8:8",
+      "activities": {
+        "resting": 20.233333333333498,
+        "planning": 9.033333333333312,
+        "walking": 144.6333333333277,
+        "waiting-crossing": 2.8999999999999995,
+        "yielding": 3.1999999999999984
+      },
+      "travel": 127.04266666668885,
+      "last": [
+        137.73624731871018,
+        65.86283937732225
+      ],
+      "stalled": 0,
+      "maxStalled": 5.366666666666657,
+      "world": [
+        265.7362473187102,
+        193.86283937732225,
+        0.11242340982010333
+      ],
+      "activity": {
+        "activity": "walking",
+        "travel": 127.04266666665274,
+        "crossings": 2,
+        "pending": false,
+        "pathLength": 1,
+        "next": [
+          266.625,
+          185.625
+        ],
+        "blocked": 0
+      },
+      "surface": "sidewalk"
+    }
+  ],
+  "stats": {
+    "label": "11:open",
+    "median": 25.10000000000582,
+    "p95": 62.5,
+    "max": 512.5,
+    "p99": 191.60000000000582,
+    "frames": 810,
+    "over16ms": 702,
+    "over33ms": 219,
+    "cpuMedian": 19.5,
+    "cpuP95": 32.099999994039536,
+    "gpuMedian": 15.905792,
+    "gpuP95": 29.335552,
+    "gpuSamples": 121,
+    "draws": 777,
+    "triangles": 1827290,
+    "memory": {
+      "geometries": 2350,
+      "textures": 138
+    },
+    "programs": 78,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "errors": [],
+  "networkErrors": [
+    {
+      "requestId": "11788.13",
+      "loaderId": "FE837ED049F4B62A6A9192FED941D3A7",
+      "timestamp": 107303.444688,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:13877/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Fri, 16 Oct 2026 09:30:57 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 141,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 13877,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 107301.09111,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.504,
+          "sendEnd": 0.584,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 2352.338,
+          "receiveHeadersEnd": 2352.529
+        },
+        "responseTime": 1792143059609.52,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "F7C307B0C210B4F953DA877B782815E7"
+    }
+  ],
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  }
+}

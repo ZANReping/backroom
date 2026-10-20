@@ -26,6 +26,7 @@ export function furnitureSeats(s: Structure, level: number): FurnitureSeat[] {
     }
     case 'table': return s.data?.chair ? [seat(s.data?.l0Furniture ? .488 : .475)] : []
     case 'officechair': return [seat(level === 4 ? .52 : .475, 0, 0, level === 4 ? Math.PI : 0, '办公椅')]
+    case 'barberchair': return [seat(.5125, 0, .02, 0, '理发椅')]
     case 'loungechair': return [seat(.43, 0, -.005, 0, '休闲椅', true)]
     case 'bench': case 'l5_pool_bench': return [seat(.475, -.43, .03, 0, '长椅'), seat(.475, .43, .03, 0, '长椅')]
     case 'sofa': case 'l5_antique_sofa':

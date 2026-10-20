@@ -1,0 +1,4123 @@
+{
+  "run": "qa-1792041992218-28020",
+  "label": "baseline",
+  "mode": "realistic",
+  "port": 5764,
+  "cdp": 5765,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\level-entry\\baseline\\qa-1792041992218-28020",
+  "levels": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111,
+    112,
+    113,
+    114,
+    116,
+    274
+  ],
+  "cases": [
+    {
+      "id": 0,
+      "cold": {
+        "id": 0,
+        "name": "Level 0",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 14512.700000000186,
+        "readyMs": 14512.799999999814,
+        "loadMs": 14536,
+        "preparationMs": 732.2999999998137,
+        "generationMs": 65.1000000005588,
+        "sceneMs": 13715.399999999441,
+        "frames": 380,
+        "cpuTotalMs": 13074.099999998696,
+        "cpuMaxMs": 3397.0999999996275,
+        "frameP95Ms": 22.700000000186265,
+        "metrics": {
+          "buildInfiniteChunk": {
+            "calls": 14409,
+            "cpuMs": 1620.8000000072643,
+            "maxMs": 44.89999999944121
+          },
+          "warmSceneTextures": {
+            "calls": 171,
+            "cpuMs": 5.999999998137355,
+            "maxMs": 2.7000000001862645
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 1961,
+            "chunks": 0,
+            "chunkTask": "0,0",
+            "finiteTask": false,
+            "flashlight": true,
+            "moth": true,
+            "items": 6,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 9,
+              "textures": 21
+            }
+          },
+          {
+            "atMs": 8003.299999999814,
+            "chunks": 1,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 27,
+            "npcs": 0,
+            "texturesPending": 18,
+            "ready": false,
+            "memory": {
+              "geometries": 43,
+              "textures": 47
+            }
+          },
+          {
+            "atMs": 12919.299999999814,
+            "chunks": 2,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 27,
+            "npcs": 0,
+            "texturesPending": 13,
+            "ready": false,
+            "memory": {
+              "geometries": 111,
+              "textures": 52
+            }
+          },
+          {
+            "atMs": 13272.299999999814,
+            "chunks": 3,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 27,
+            "npcs": 0,
+            "texturesPending": 5,
+            "ready": false,
+            "memory": {
+              "geometries": 114,
+              "textures": 52
+            }
+          },
+          {
+            "atMs": 13485.700000000186,
+            "chunks": 4,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 27,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 117,
+              "textures": 52
+            }
+          },
+          {
+            "atMs": 13771.900000000373,
+            "chunks": 5,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 27,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 117,
+              "textures": 52
+            }
+          },
+          {
+            "atMs": 13934.299999999814,
+            "chunks": 6,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 27,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 124,
+              "textures": 52
+            }
+          },
+          {
+            "atMs": 14145,
+            "chunks": 7,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 27,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 132,
+              "textures": 52
+            }
+          },
+          {
+            "atMs": 14328.700000000186,
+            "chunks": 8,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 27,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 132,
+              "textures": 52
+            }
+          },
+          {
+            "atMs": 14512.700000000186,
+            "chunks": 9,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 27,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": true,
+            "memory": {
+              "geometries": 132,
+              "textures": 52
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 9,
+          "chunkTask": "0,-2",
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 27,
+          "npcs": 0,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 132,
+            "textures": 52
+          }
+        },
+        "firstReady": {
+          "structures": 997,
+          "lights": 951,
+          "npcs": 0,
+          "nearNpcs": 0,
+          "npcMeshes": 0,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 132,
+            "textures": 52
+          },
+          "programs": 86,
+          "drawCalls": 121,
+          "triangles": 130391,
+          "spawn": {
+            "x": 79.5,
+            "y": 79.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 1,
+      "cold": {
+        "id": 1,
+        "name": "Level 1",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 21636,
+        "readyMs": 21636.099999999627,
+        "loadMs": 21649.5,
+        "preparationMs": 1428.8999999994412,
+        "generationMs": 9.100000000558794,
+        "sceneMs": 20198.099999999627,
+        "frames": 3458,
+        "cpuTotalMs": 15721.799999994226,
+        "cpuMaxMs": 2157.699999999255,
+        "frameP95Ms": 7.8999999994412065,
+        "metrics": {
+          "buildInfiniteChunk": {
+            "calls": 207730,
+            "cpuMs": 949.5999999977648,
+            "maxMs": 46.5
+          },
+          "warmSceneTextures": {
+            "calls": 176,
+            "cpuMs": 37.80000000074506,
+            "maxMs": 5.3999999994412065
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 3595.899999999441,
+            "chunks": 0,
+            "chunkTask": "0,0",
+            "finiteTask": false,
+            "flashlight": true,
+            "moth": true,
+            "items": 3,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 14,
+              "textures": 26
+            }
+          },
+          {
+            "atMs": 9735.099999999627,
+            "chunks": 1,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 17,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 110,
+              "textures": 53
+            }
+          },
+          {
+            "atMs": 10180.5,
+            "chunks": 2,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 17,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 138,
+              "textures": 55
+            }
+          },
+          {
+            "atMs": 11817.599999999627,
+            "chunks": 3,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 17,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 146,
+              "textures": 58
+            }
+          },
+          {
+            "atMs": 12945.899999999441,
+            "chunks": 4,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 17,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 154,
+              "textures": 61
+            }
+          },
+          {
+            "atMs": 13605.700000000186,
+            "chunks": 5,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 17,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 160,
+              "textures": 63
+            }
+          },
+          {
+            "atMs": 15976.399999999441,
+            "chunks": 6,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 17,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 185,
+              "textures": 65
+            }
+          },
+          {
+            "atMs": 18327.099999999627,
+            "chunks": 7,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 17,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 195,
+              "textures": 68
+            }
+          },
+          {
+            "atMs": 18982,
+            "chunks": 8,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 17,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 202,
+              "textures": 71
+            }
+          },
+          {
+            "atMs": 21636,
+            "chunks": 9,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 17,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": true,
+            "memory": {
+              "geometries": 209,
+              "textures": 75
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 9,
+          "chunkTask": "0,-2",
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 17,
+          "npcs": 0,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 209,
+            "textures": 75
+          }
+        },
+        "firstReady": {
+          "structures": 653,
+          "lights": 962,
+          "npcs": 0,
+          "nearNpcs": 0,
+          "npcMeshes": 0,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 209,
+            "textures": 75
+          },
+          "programs": 89,
+          "drawCalls": 141,
+          "triangles": 98709,
+          "spawn": {
+            "x": 79.5,
+            "y": 79.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 2,
+      "cold": {
+        "id": 2,
+        "name": "Level 2",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 10609.700000000186,
+        "readyMs": 10609.799999999814,
+        "loadMs": 10633.900000000373,
+        "preparationMs": 547.9000000003725,
+        "generationMs": 13.399999999441206,
+        "sceneMs": 10048.5,
+        "frames": 554,
+        "cpuTotalMs": 8508.799999994226,
+        "cpuMaxMs": 1729.1000000005588,
+        "frameP95Ms": 18.5,
+        "metrics": {
+          "buildInfiniteChunk": {
+            "calls": 30998,
+            "cpuMs": 2609.0999999819323,
+            "maxMs": 1185
+          },
+          "warmSceneTextures": {
+            "calls": 195,
+            "cpuMs": 23.699999999254942,
+            "maxMs": 5.7000000001862645
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 1345.2000000001863,
+            "chunks": 0,
+            "chunkTask": "0,0",
+            "finiteTask": false,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 4,
+              "textures": 23
+            }
+          },
+          {
+            "atMs": 6611.9000000003725,
+            "chunks": 1,
+            "finiteTask": false,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 11,
+            "ready": false,
+            "memory": {
+              "geometries": 196,
+              "textures": 53
+            }
+          },
+          {
+            "atMs": 6821.0999999996275,
+            "chunks": 2,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 8,
+            "ready": false,
+            "memory": {
+              "geometries": 201,
+              "textures": 63
+            }
+          },
+          {
+            "atMs": 7031.0999999996275,
+            "chunks": 3,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 3,
+            "ready": false,
+            "memory": {
+              "geometries": 299,
+              "textures": 74
+            }
+          },
+          {
+            "atMs": 7238.9000000003725,
+            "chunks": 4,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 300,
+              "textures": 86
+            }
+          },
+          {
+            "atMs": 8373.400000000373,
+            "chunks": 5,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 305,
+              "textures": 99
+            }
+          },
+          {
+            "atMs": 10180.200000000186,
+            "chunks": 6,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 475,
+              "textures": 113
+            }
+          },
+          {
+            "atMs": 10330.700000000186,
+            "chunks": 7,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 476,
+              "textures": 126
+            }
+          },
+          {
+            "atMs": 10609.700000000186,
+            "chunks": 8,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 1,
+            "ready": true,
+            "memory": {
+              "geometries": 622,
+              "textures": 140
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 8,
+          "chunkTask": "1,1",
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 0,
+          "npcs": 0,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 622,
+            "textures": 139
+          }
+        },
+        "firstReady": {
+          "structures": 1280,
+          "lights": 214,
+          "npcs": 0,
+          "nearNpcs": 0,
+          "npcMeshes": 0,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 622,
+            "textures": 139
+          },
+          "programs": 84,
+          "drawCalls": 539,
+          "triangles": 159641,
+          "spawn": {
+            "x": 78.5,
+            "y": 79.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 3,
+      "cold": {
+        "id": 3,
+        "name": "Level 3",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 20497.799999999814,
+        "readyMs": 20497.799999999814,
+        "loadMs": 20508.099999999627,
+        "preparationMs": 545.0999999996275,
+        "generationMs": 7.7999999998137355,
+        "sceneMs": 19944.900000000373,
+        "frames": 672,
+        "cpuTotalMs": 17857.70000000391,
+        "cpuMaxMs": 4426.899999999441,
+        "frameP95Ms": 19.299999999813735,
+        "metrics": {
+          "buildInfiniteChunk": {
+            "calls": 36422,
+            "cpuMs": 5787.59999998752,
+            "maxMs": 4382.899999999441
+          },
+          "warmSceneTextures": {
+            "calls": 125,
+            "cpuMs": 15,
+            "maxMs": 3.7000000001862645
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 1179.7999999998137,
+            "chunks": 0,
+            "chunkTask": "0,0",
+            "finiteTask": false,
+            "flashlight": true,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 4,
+              "textures": 23
+            }
+          },
+          {
+            "atMs": 13250.099999999627,
+            "chunks": 1,
+            "finiteTask": false,
+            "flashlight": true,
+            "moth": true,
+            "items": 4,
+            "npcs": 0,
+            "texturesPending": 2,
+            "ready": false,
+            "memory": {
+              "geometries": 89,
+              "textures": 43
+            }
+          },
+          {
+            "atMs": 14074.200000000186,
+            "chunks": 2,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 4,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 218,
+              "textures": 44
+            }
+          },
+          {
+            "atMs": 15075.200000000186,
+            "chunks": 3,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 4,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 228,
+              "textures": 46
+            }
+          },
+          {
+            "atMs": 17124.599999999627,
+            "chunks": 4,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 4,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 237,
+              "textures": 50
+            }
+          },
+          {
+            "atMs": 17263.5,
+            "chunks": 5,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 4,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 237,
+              "textures": 51
+            }
+          },
+          {
+            "atMs": 18249.89999999944,
+            "chunks": 6,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 4,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 346,
+              "textures": 51
+            }
+          },
+          {
+            "atMs": 20159.89999999944,
+            "chunks": 7,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 4,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 421,
+              "textures": 51
+            }
+          },
+          {
+            "atMs": 20305.599999999627,
+            "chunks": 8,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 4,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 421,
+              "textures": 52
+            }
+          },
+          {
+            "atMs": 20497.799999999814,
+            "chunks": 9,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 4,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": true,
+            "memory": {
+              "geometries": 421,
+              "textures": 52
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 9,
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 4,
+          "npcs": 0,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 421,
+            "textures": 52
+          }
+        },
+        "firstReady": {
+          "structures": 982,
+          "lights": 431,
+          "npcs": 0,
+          "nearNpcs": 0,
+          "npcMeshes": 0,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 421,
+            "textures": 52
+          },
+          "programs": 106,
+          "drawCalls": 555,
+          "triangles": 1546143,
+          "spawn": {
+            "x": 79.5,
+            "y": 79.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 4,
+      "cold": {
+        "id": 4,
+        "name": "Level 4",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 19726.799999999814,
+        "readyMs": 19726.89999999944,
+        "loadMs": 19750.699999999255,
+        "preparationMs": 516.5999999996275,
+        "generationMs": 8.700000000186265,
+        "sceneMs": 19201.599999999627,
+        "frames": 661,
+        "cpuTotalMs": 16856.400000000373,
+        "cpuMaxMs": 5499.9000000003725,
+        "frameP95Ms": 21.5,
+        "metrics": {
+          "buildInfiniteChunk": {
+            "calls": 35926,
+            "cpuMs": 1301.70000001695,
+            "maxMs": 19
+          },
+          "warmSceneTextures": {
+            "calls": 256,
+            "cpuMs": 95.90000000223517,
+            "maxMs": 18.700000000186265
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 1242.199999999255,
+            "chunks": 0,
+            "chunkTask": "0,0",
+            "finiteTask": false,
+            "flashlight": true,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 5,
+              "textures": 24
+            }
+          },
+          {
+            "atMs": 15214.299999999814,
+            "chunks": 1,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 35,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 368,
+              "textures": 68
+            }
+          },
+          {
+            "atMs": 17524.199999999255,
+            "chunks": 2,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 35,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 640,
+              "textures": 80
+            }
+          },
+          {
+            "atMs": 17836.199999999255,
+            "chunks": 3,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 35,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 673,
+              "textures": 93
+            }
+          },
+          {
+            "atMs": 18091.599999999627,
+            "chunks": 4,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 35,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 690,
+              "textures": 99
+            }
+          },
+          {
+            "atMs": 18557.89999999944,
+            "chunks": 5,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 35,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 700,
+              "textures": 109
+            }
+          },
+          {
+            "atMs": 18802.599999999627,
+            "chunks": 6,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 35,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 788,
+              "textures": 109
+            }
+          },
+          {
+            "atMs": 19091.699999999255,
+            "chunks": 7,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 35,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 987,
+              "textures": 113
+            }
+          },
+          {
+            "atMs": 19373.89999999944,
+            "chunks": 8,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 35,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 997,
+              "textures": 116
+            }
+          },
+          {
+            "atMs": 19726.799999999814,
+            "chunks": 9,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 35,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": true,
+            "memory": {
+              "geometries": 1006,
+              "textures": 119
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 9,
+          "chunkTask": "0,-2",
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 35,
+          "npcs": 0,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 1006,
+            "textures": 119
+          }
+        },
+        "firstReady": {
+          "structures": 1604,
+          "lights": 1126,
+          "npcs": 0,
+          "nearNpcs": 0,
+          "npcMeshes": 0,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 1006,
+            "textures": 119
+          },
+          "programs": 126,
+          "drawCalls": 766,
+          "triangles": 110517,
+          "spawn": {
+            "x": 79.5,
+            "y": 79.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 5,
+      "cold": {
+        "id": 5,
+        "name": "Level 5",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 34910.39999999944,
+        "readyMs": 34910.59999999963,
+        "loadMs": 34970.700000000186,
+        "preparationMs": 578.3999999994412,
+        "generationMs": 10.300000000745058,
+        "sceneMs": 34321.89999999944,
+        "frames": 2775,
+        "cpuTotalMs": 26457.79999998212,
+        "cpuMaxMs": 5456.5,
+        "frameP95Ms": 10.5,
+        "metrics": {
+          "buildInfiniteChunk": {
+            "calls": 158295,
+            "cpuMs": 17732.699999957345,
+            "maxMs": 5455.700000000186
+          },
+          "warmSceneTextures": {
+            "calls": 364,
+            "cpuMs": 357.50000000558794,
+            "maxMs": 33.700000000186265
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 1107.7000000001863,
+            "chunks": 0,
+            "chunkTask": "0,0",
+            "finiteTask": false,
+            "flashlight": true,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 1,
+              "textures": 3
+            }
+          },
+          {
+            "atMs": 23720.099999999627,
+            "chunks": 1,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 18,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 256,
+              "textures": 59
+            }
+          },
+          {
+            "atMs": 24359.799999999814,
+            "chunks": 2,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 18,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 549,
+              "textures": 69
+            }
+          },
+          {
+            "atMs": 26704.200000000186,
+            "chunks": 3,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 18,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 570,
+              "textures": 79
+            }
+          },
+          {
+            "atMs": 28598.200000000186,
+            "chunks": 4,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 18,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 585,
+              "textures": 88
+            }
+          },
+          {
+            "atMs": 29580.599999999627,
+            "chunks": 5,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 18,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 585,
+              "textures": 90
+            }
+          },
+          {
+            "atMs": 30297.099999999627,
+            "chunks": 6,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 18,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 873,
+              "textures": 98
+            }
+          },
+          {
+            "atMs": 30607.39999999944,
+            "chunks": 7,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 18,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 1018,
+              "textures": 101
+            }
+          },
+          {
+            "atMs": 31511.599999999627,
+            "chunks": 8,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 18,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 1018,
+              "textures": 103
+            }
+          },
+          {
+            "atMs": 34910.39999999944,
+            "chunks": 9,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 18,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": true,
+            "memory": {
+              "geometries": 1899,
+              "textures": 130
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 9,
+          "chunkTask": "0,-2",
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": false,
+          "items": 18,
+          "npcs": 0,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 1899,
+            "textures": 131
+          }
+        },
+        "firstReady": {
+          "structures": 1903,
+          "lights": 870,
+          "npcs": 0,
+          "nearNpcs": 0,
+          "npcMeshes": 0,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 1899,
+            "textures": 131
+          },
+          "programs": 135,
+          "drawCalls": 1807,
+          "triangles": 1558987,
+          "spawn": {
+            "x": 79.5,
+            "y": 79.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 6,
+      "cold": {
+        "id": 6,
+        "name": "Level 6",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 8632.799999999814,
+        "readyMs": 8632.799999999814,
+        "loadMs": 8649.099999999627,
+        "preparationMs": 511.20000000018626,
+        "generationMs": 5.7999999998137355,
+        "sceneMs": 8115.799999999814,
+        "frames": 671,
+        "cpuTotalMs": 7022.200000005774,
+        "cpuMaxMs": 1656,
+        "frameP95Ms": 12.5,
+        "metrics": {
+          "buildInfiniteChunk": {
+            "calls": 41050,
+            "cpuMs": 586.4999999916181,
+            "maxMs": 33.39999999944121
+          },
+          "warmSceneTextures": {
+            "calls": 153,
+            "cpuMs": 7.7999999998137355,
+            "maxMs": 1.400000000372529
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 1097.7000000001863,
+            "chunks": 0,
+            "chunkTask": "0,0",
+            "finiteTask": false,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 4,
+              "textures": 23
+            }
+          },
+          {
+            "atMs": 3573.2000000001863,
+            "chunks": 1,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 2,
+            "ready": false,
+            "memory": {
+              "geometries": 124,
+              "textures": 42
+            }
+          },
+          {
+            "atMs": 5936.5,
+            "chunks": 2,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 264,
+              "textures": 53
+            }
+          },
+          {
+            "atMs": 6919.5999999996275,
+            "chunks": 3,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 308,
+              "textures": 63
+            }
+          },
+          {
+            "atMs": 7097.399999999441,
+            "chunks": 4,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 367,
+              "textures": 74
+            }
+          },
+          {
+            "atMs": 7212.899999999441,
+            "chunks": 5,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 481,
+              "textures": 83
+            }
+          },
+          {
+            "atMs": 7338.5,
+            "chunks": 6,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 582,
+              "textures": 91
+            }
+          },
+          {
+            "atMs": 8382.099999999627,
+            "chunks": 7,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 668,
+              "textures": 100
+            }
+          },
+          {
+            "atMs": 8506.399999999441,
+            "chunks": 8,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 748,
+              "textures": 110
+            }
+          },
+          {
+            "atMs": 8632.799999999814,
+            "chunks": 9,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": true,
+            "memory": {
+              "geometries": 750,
+              "textures": 118
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 9,
+          "chunkTask": "0,-2",
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 1,
+          "npcs": 0,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 750,
+            "textures": 118
+          }
+        },
+        "firstReady": {
+          "structures": 498,
+          "lights": 0,
+          "npcs": 0,
+          "nearNpcs": 0,
+          "npcMeshes": 0,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 750,
+            "textures": 118
+          },
+          "programs": 83,
+          "drawCalls": 916,
+          "triangles": 66605,
+          "spawn": {
+            "x": 79.5,
+            "y": 79.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 7,
+      "cold": {
+        "id": 7,
+        "name": "Level 7",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 26398.700000000186,
+        "readyMs": 26398.799999999814,
+        "loadMs": 26415.299999999814,
+        "preparationMs": 957.4000000003725,
+        "generationMs": 9.799999999813735,
+        "sceneMs": 25431.599999999627,
+        "frames": 926,
+        "cpuTotalMs": 24171.300000000745,
+        "cpuMaxMs": 7545.199999999255,
+        "frameP95Ms": 14.399999999441206,
+        "metrics": {
+          "buildInfiniteChunk": {
+            "calls": 55575,
+            "cpuMs": 8756.300000001676,
+            "maxMs": 4757.4000000003725
+          },
+          "warmSceneTextures": {
+            "calls": 104,
+            "cpuMs": 15,
+            "maxMs": 4.800000000745058
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 2226.0999999996275,
+            "chunks": 0,
+            "chunkTask": "0,0",
+            "finiteTask": false,
+            "flashlight": true,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 17,
+              "textures": 24
+            }
+          },
+          {
+            "atMs": 20404.599999999627,
+            "chunks": 1,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 3,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 159,
+              "textures": 43
+            }
+          },
+          {
+            "atMs": 22533,
+            "chunks": 2,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 3,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 185,
+              "textures": 51
+            }
+          },
+          {
+            "atMs": 23548.599999999627,
+            "chunks": 3,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 3,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 205,
+              "textures": 57
+            }
+          },
+          {
+            "atMs": 23657.700000000186,
+            "chunks": 4,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 3,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 224,
+              "textures": 65
+            }
+          },
+          {
+            "atMs": 23782.400000000373,
+            "chunks": 5,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 3,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 243,
+              "textures": 72
+            }
+          },
+          {
+            "atMs": 25822.200000000186,
+            "chunks": 6,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 3,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 268,
+              "textures": 78
+            }
+          },
+          {
+            "atMs": 26031.299999999814,
+            "chunks": 7,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 3,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 287,
+              "textures": 84
+            }
+          },
+          {
+            "atMs": 26188.700000000186,
+            "chunks": 8,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 3,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 300,
+              "textures": 92
+            }
+          },
+          {
+            "atMs": 26398.700000000186,
+            "chunks": 9,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 3,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": true,
+            "memory": {
+              "geometries": 307,
+              "textures": 100
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 9,
+          "chunkTask": "0,-2",
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 3,
+          "npcs": 0,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 307,
+            "textures": 100
+          }
+        },
+        "firstReady": {
+          "structures": 246,
+          "lights": 3,
+          "npcs": 0,
+          "nearNpcs": 0,
+          "npcMeshes": 0,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 307,
+            "textures": 100
+          },
+          "programs": 109,
+          "drawCalls": 185,
+          "triangles": 70917,
+          "spawn": {
+            "x": 79.5,
+            "y": 79.5,
+            "z": 3
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 8,
+      "cold": {
+        "id": 8,
+        "name": "Level 8",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 8306.799999999814,
+        "readyMs": 8306.799999999814,
+        "loadMs": 8318.200000000186,
+        "preparationMs": 945.6000000005588,
+        "generationMs": 12.699999999254942,
+        "sceneMs": 7348.5,
+        "frames": 986,
+        "cpuTotalMs": 5122.199999991804,
+        "cpuMaxMs": 2145.199999999255,
+        "frameP95Ms": 8.600000000558794,
+        "metrics": {
+          "buildInfiniteChunk": {
+            "calls": 59014,
+            "cpuMs": 1266.500000008382,
+            "maxMs": 30.600000000558794
+          },
+          "warmSceneTextures": {
+            "calls": 28,
+            "cpuMs": 12.600000001490116,
+            "maxMs": 5.1000000005587935
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 1245.4000000003725,
+            "chunks": 0,
+            "chunkTask": "0,0",
+            "finiteTask": false,
+            "flashlight": true,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 9,
+              "textures": 21
+            }
+          },
+          {
+            "atMs": 6426.299999999814,
+            "chunks": 1,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 2,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 47,
+              "textures": 27
+            }
+          },
+          {
+            "atMs": 6848.4000000003725,
+            "chunks": 2,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 2,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 76,
+              "textures": 27
+            }
+          },
+          {
+            "atMs": 7094.200000000186,
+            "chunks": 3,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 2,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 76,
+              "textures": 27
+            }
+          },
+          {
+            "atMs": 7406.100000000559,
+            "chunks": 4,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 2,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 76,
+              "textures": 27
+            }
+          },
+          {
+            "atMs": 7639.100000000559,
+            "chunks": 5,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 2,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 100,
+              "textures": 27
+            }
+          },
+          {
+            "atMs": 7989.700000000186,
+            "chunks": 6,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 2,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 118,
+              "textures": 27
+            }
+          },
+          {
+            "atMs": 8306.799999999814,
+            "chunks": 7,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 2,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": true,
+            "memory": {
+              "geometries": 118,
+              "textures": 27
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 7,
+          "chunkTask": "-1,1",
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 2,
+          "npcs": 0,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 118,
+            "textures": 27
+          }
+        },
+        "firstReady": {
+          "structures": 416,
+          "lights": 18,
+          "npcs": 0,
+          "nearNpcs": 0,
+          "npcMeshes": 0,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 118,
+            "textures": 27
+          },
+          "programs": 70,
+          "drawCalls": 111,
+          "triangles": 89239,
+          "spawn": {
+            "x": 79.5,
+            "y": 73.5,
+            "z": -0.09867965015926425
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 9,
+      "cold": {
+        "id": 9,
+        "name": "Level 9",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 20104.200000000186,
+        "readyMs": 20104.300000000745,
+        "loadMs": 20125.10000000056,
+        "preparationMs": 559.1000000005588,
+        "generationMs": 10.299999999813735,
+        "sceneMs": 19534.900000000373,
+        "frames": 1199,
+        "cpuTotalMs": 16890.5,
+        "cpuMaxMs": 10731.900000000373,
+        "frameP95Ms": 16.600000000558794,
+        "metrics": {
+          "buildInfiniteChunk": {
+            "calls": 71271,
+            "cpuMs": 1769.8999999808148,
+            "maxMs": 143.1000000005588
+          },
+          "warmSceneTextures": {
+            "calls": 199,
+            "cpuMs": 28.59999999962747,
+            "maxMs": 4.599999999627471
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 1228.7000000001863,
+            "chunks": 0,
+            "chunkTask": "0,0",
+            "finiteTask": false,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 11,
+              "textures": 25
+            }
+          },
+          {
+            "atMs": 16413.10000000056,
+            "chunks": 1,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 3,
+            "ready": false,
+            "memory": {
+              "geometries": 355,
+              "textures": 84
+            }
+          },
+          {
+            "atMs": 18508.10000000056,
+            "chunks": 2,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 640,
+              "textures": 109
+            }
+          },
+          {
+            "atMs": 19188.400000000373,
+            "chunks": 3,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 827,
+              "textures": 127
+            }
+          },
+          {
+            "atMs": 19487.900000000373,
+            "chunks": 4,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 856,
+              "textures": 127
+            }
+          },
+          {
+            "atMs": 19782.10000000056,
+            "chunks": 5,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 890,
+              "textures": 127
+            }
+          },
+          {
+            "atMs": 20104.200000000186,
+            "chunks": 6,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": true,
+            "memory": {
+              "geometries": 925,
+              "textures": 127
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 6,
+          "chunkTask": "1,0",
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 0,
+          "npcs": 0,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 925,
+            "textures": 127
+          }
+        },
+        "firstReady": {
+          "structures": 1720,
+          "lights": 40,
+          "npcs": 0,
+          "nearNpcs": 0,
+          "npcMeshes": 0,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 925,
+            "textures": 127
+          },
+          "programs": 101,
+          "drawCalls": 1031,
+          "triangles": 279171,
+          "spawn": {
+            "x": 68,
+            "y": 81,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 10,
+      "cold": {
+        "id": 10,
+        "name": "Level 10",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 20100.299999999814,
+        "readyMs": 20100.299999999814,
+        "loadMs": 20113.599999999627,
+        "preparationMs": 664.5,
+        "generationMs": 9.400000000372529,
+        "sceneMs": 19426.39999999944,
+        "frames": 1539,
+        "cpuTotalMs": 15970.700000016019,
+        "cpuMaxMs": 6566.5,
+        "frameP95Ms": 9.700000000186265,
+        "metrics": {
+          "buildInfiniteChunk": {
+            "calls": 94514,
+            "cpuMs": 1364.5000000121072,
+            "maxMs": 85.8999999994412
+          },
+          "warmSceneTextures": {
+            "calls": 184,
+            "cpuMs": 6.400000000372529,
+            "maxMs": 0.39999999944120646
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 1296.2999999998137,
+            "chunks": 0,
+            "chunkTask": "0,0",
+            "finiteTask": false,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 11,
+              "textures": 25
+            }
+          },
+          {
+            "atMs": 10176.400000000373,
+            "chunks": 1,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 2,
+            "ready": false,
+            "memory": {
+              "geometries": 53,
+              "textures": 59
+            }
+          },
+          {
+            "atMs": 10690.5,
+            "chunks": 2,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 66,
+              "textures": 69
+            }
+          },
+          {
+            "atMs": 13319.599999999627,
+            "chunks": 3,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 78,
+              "textures": 80
+            }
+          },
+          {
+            "atMs": 13849.900000000373,
+            "chunks": 4,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 1,
+            "ready": false,
+            "memory": {
+              "geometries": 96,
+              "textures": 97
+            }
+          },
+          {
+            "atMs": 14037,
+            "chunks": 5,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 97,
+              "textures": 108
+            }
+          },
+          {
+            "atMs": 15263.200000000186,
+            "chunks": 6,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 104,
+              "textures": 118
+            }
+          },
+          {
+            "atMs": 20100.299999999814,
+            "chunks": 7,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": true,
+            "memory": {
+              "geometries": 128,
+              "textures": 129
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 7,
+          "chunkTask": "1,-1",
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 1,
+          "npcs": 0,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 128,
+            "textures": 129
+          }
+        },
+        "firstReady": {
+          "structures": 1721,
+          "lights": 0,
+          "npcs": 0,
+          "nearNpcs": 0,
+          "npcMeshes": 0,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 128,
+            "textures": 129
+          },
+          "programs": 84,
+          "drawCalls": 148,
+          "triangles": 205587,
+          "spawn": {
+            "x": 81,
+            "y": 85,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 11,
+      "cold": {
+        "id": 11,
+        "name": "Level 11",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 12245.299999999814,
+        "readyMs": 12245.400000000373,
+        "loadMs": 12281.600000000559,
+        "preparationMs": 895,
+        "generationMs": 14.200000000186265,
+        "sceneMs": 11336.200000000186,
+        "frames": 299,
+        "cpuTotalMs": 9931.599999999627,
+        "cpuMaxMs": 4300.299999999814,
+        "frameP95Ms": 49.5,
+        "metrics": {
+          "buildInfiniteChunk": {
+            "calls": 15072,
+            "cpuMs": 1360.2000000011176,
+            "maxMs": 235
+          },
+          "warmSceneTextures": {
+            "calls": 101,
+            "cpuMs": 348.2000000011176,
+            "maxMs": 206.5
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 1346.2000000001863,
+            "chunks": 0,
+            "chunkTask": "0,0",
+            "finiteTask": false,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 3,
+              "textures": 22
+            }
+          },
+          {
+            "atMs": 10162.299999999814,
+            "chunks": 1,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 105,
+              "textures": 54
+            }
+          },
+          {
+            "atMs": 11531.100000000559,
+            "chunks": 2,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 139,
+              "textures": 54
+            }
+          },
+          {
+            "atMs": 11916.400000000373,
+            "chunks": 3,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 173,
+              "textures": 57
+            }
+          },
+          {
+            "atMs": 12245.299999999814,
+            "chunks": 4,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 4,
+            "ready": true,
+            "memory": {
+              "geometries": 239,
+              "textures": 66
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 4,
+          "chunkTask": "0,-1",
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": false,
+          "items": 0,
+          "npcs": 0,
+          "texturesPending": 3,
+          "ready": true,
+          "memory": {
+            "geometries": 248,
+            "textures": 65
+          }
+        },
+        "firstReady": {
+          "structures": 394,
+          "lights": 49,
+          "npcs": 0,
+          "nearNpcs": 0,
+          "npcMeshes": 0,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 248,
+            "textures": 65
+          },
+          "programs": 85,
+          "drawCalls": 468,
+          "triangles": 580987,
+          "spawn": {
+            "x": 90.5,
+            "y": 90.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 12,
+      "cold": {
+        "id": 12,
+        "name": "Level 601",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 8073.5999999996275,
+        "readyMs": 8073.5999999996275,
+        "loadMs": 8094.5,
+        "preparationMs": 0.09999999962747097,
+        "generationMs": 19.5,
+        "sceneMs": 8054,
+        "frames": 371,
+        "cpuTotalMs": 7452.199999992736,
+        "cpuMaxMs": 2367.2999999998137,
+        "frameP95Ms": 21,
+        "metrics": {
+          "buildLevel": {
+            "calls": 19057,
+            "cpuMs": 1042.699999988079,
+            "maxMs": 59.200000000186265
+          },
+          "warmSceneTextures": {
+            "calls": 18,
+            "cpuMs": 9.800000000745058,
+            "maxMs": 4.400000000372529
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 276.70000000018626,
+            "chunks": 0,
+            "finiteTask": true,
+            "flashlight": true,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 56,
+              "textures": 19
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 0,
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 4,
+          "npcs": 0,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 469,
+            "textures": 42
+          }
+        },
+        "firstReady": {
+          "structures": 600,
+          "lights": 99,
+          "npcs": 0,
+          "nearNpcs": 0,
+          "npcMeshes": 0,
+          "meshes": 336,
+          "instances": 104,
+          "materials": 275,
+          "memory": {
+            "geometries": 469,
+            "textures": 42
+          },
+          "programs": 98,
+          "drawCalls": 117,
+          "triangles": 117947,
+          "spawn": {
+            "x": 32.5,
+            "y": 32.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 101,
+      "cold": {
+        "id": 101,
+        "name": "Alpha 基地",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 27044.5,
+        "readyMs": 27044.5,
+        "loadMs": 27082.89999999944,
+        "preparationMs": 0,
+        "generationMs": 51.200000000186265,
+        "sceneMs": 26993.299999999814,
+        "frames": 499,
+        "cpuTotalMs": 25690.200000000186,
+        "cpuMaxMs": 2005.2000000001863,
+        "frameP95Ms": 352.20000000018626,
+        "metrics": {
+          "buildLevel": {
+            "calls": 328334,
+            "cpuMs": 23657.299999991432,
+            "maxMs": 2004
+          },
+          "warmSceneTextures": {
+            "calls": 255,
+            "cpuMs": 187.50000000093132,
+            "maxMs": 85.69999999925494
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 125.70000000018626,
+            "chunks": 0,
+            "finiteTask": true,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 1,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 0,
+              "textures": 1
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 0,
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 0,
+          "npcs": 4,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 95,
+            "textures": 292
+          }
+        },
+        "firstReady": {
+          "structures": 6825,
+          "lights": 488,
+          "npcs": 29,
+          "nearNpcs": 4,
+          "npcMeshes": 4,
+          "meshes": 4657,
+          "instances": 78507,
+          "materials": 952,
+          "memory": {
+            "geometries": 95,
+            "textures": 292
+          },
+          "programs": 135,
+          "drawCalls": 200,
+          "triangles": 27385,
+          "spawn": {
+            "x": 61,
+            "y": 13.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 102,
+      "cold": {
+        "id": 102,
+        "name": "商人之家",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 5224.899999999441,
+        "readyMs": 5224.899999999441,
+        "loadMs": 5239.0999999996275,
+        "preparationMs": 0.09999999962747097,
+        "generationMs": 22.40000000037253,
+        "sceneMs": 5202.399999999441,
+        "frames": 224,
+        "cpuTotalMs": 4726.600000002421,
+        "cpuMaxMs": 1176.3999999994412,
+        "frameP95Ms": 16.100000000558794,
+        "metrics": {
+          "buildLevel": {
+            "calls": 193443,
+            "cpuMs": 2943.500000017695,
+            "maxMs": 1175.5
+          },
+          "warmSceneTextures": {
+            "calls": 25,
+            "cpuMs": 11.700000000186265,
+            "maxMs": 4.2999999998137355
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 79.8999999994412,
+            "chunks": 0,
+            "finiteTask": true,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 1,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 0,
+              "textures": 1
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 0,
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 0,
+          "npcs": 7,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 306,
+            "textures": 66
+          }
+        },
+        "firstReady": {
+          "structures": 9944,
+          "lights": 124,
+          "npcs": 18,
+          "nearNpcs": 7,
+          "npcMeshes": 7,
+          "meshes": 695,
+          "instances": 11574,
+          "materials": 237,
+          "memory": {
+            "geometries": 306,
+            "textures": 66
+          },
+          "programs": 98,
+          "drawCalls": 82,
+          "triangles": 35699,
+          "spawn": {
+            "x": 40.5,
+            "y": 12.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 103,
+      "cold": {
+        "id": 103,
+        "name": "希波克拉底 - 1",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 4556.699999999255,
+        "readyMs": 4556.699999999255,
+        "loadMs": 4565.0999999996275,
+        "preparationMs": 0.09999999962747097,
+        "generationMs": 3.099999999627471,
+        "sceneMs": 4553.5,
+        "frames": 223,
+        "cpuTotalMs": 4069.4999999962747,
+        "cpuMaxMs": 1172.6000000005588,
+        "frameP95Ms": 16.90000000037253,
+        "metrics": {
+          "buildLevel": {
+            "calls": 190033,
+            "cpuMs": 2897.499999988824,
+            "maxMs": 1087.1000000005588
+          },
+          "warmSceneTextures": {
+            "calls": 31,
+            "cpuMs": 2.3999999994412065,
+            "maxMs": 1.800000000745058
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 46.799999999813735,
+            "chunks": 0,
+            "finiteTask": true,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 1,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 0,
+              "textures": 1
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 0,
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 0,
+          "npcs": 3,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 200,
+            "textures": 65
+          }
+        },
+        "firstReady": {
+          "structures": 207,
+          "lights": 114,
+          "npcs": 14,
+          "nearNpcs": 3,
+          "npcMeshes": 3,
+          "meshes": 496,
+          "instances": 9426,
+          "materials": 206,
+          "memory": {
+            "geometries": 200,
+            "textures": 65
+          },
+          "programs": 101,
+          "drawCalls": 76,
+          "triangles": 93223,
+          "spawn": {
+            "x": 40.5,
+            "y": 13.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 104,
+      "cold": {
+        "id": 104,
+        "name": "Tom 的餐馆",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 2572.800000000745,
+        "readyMs": 2572.800000000745,
+        "loadMs": 2583.5,
+        "preparationMs": 0,
+        "generationMs": 2.6000000005587935,
+        "sceneMs": 2570.2000000001863,
+        "frames": 56,
+        "cpuTotalMs": 2421.9999999962747,
+        "cpuMaxMs": 629.5999999996275,
+        "frameP95Ms": 124.8999999994412,
+        "metrics": {
+          "buildLevel": {
+            "calls": 35891,
+            "cpuMs": 1338.3999999938533,
+            "maxMs": 542.0999999996275
+          },
+          "warmSceneTextures": {
+            "calls": 29,
+            "cpuMs": 2.4999999990686774,
+            "maxMs": 1.599999999627471
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 51.60000000055879,
+            "chunks": 0,
+            "finiteTask": true,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 1,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 0,
+              "textures": 1
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 0,
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 0,
+          "npcs": 9,
+          "texturesPending": 11,
+          "ready": true,
+          "memory": {
+            "geometries": 144,
+            "textures": 83
+          }
+        },
+        "firstReady": {
+          "structures": 132,
+          "lights": 46,
+          "npcs": 10,
+          "nearNpcs": 9,
+          "npcMeshes": 9,
+          "meshes": 249,
+          "instances": 4546,
+          "materials": 143,
+          "memory": {
+            "geometries": 144,
+            "textures": 83
+          },
+          "programs": 96,
+          "drawCalls": 107,
+          "triangles": 39097,
+          "spawn": {
+            "x": 40.5,
+            "y": 25.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 105,
+      "cold": {
+        "id": 105,
+        "name": "办公区EL3A",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 3760.899999999441,
+        "readyMs": 3760.899999999441,
+        "loadMs": 3771.5999999996275,
+        "preparationMs": 0.09999999962747097,
+        "generationMs": 8,
+        "sceneMs": 3752.7999999998137,
+        "frames": 228,
+        "cpuTotalMs": 3331.4999999990687,
+        "cpuMaxMs": 876.7000000001863,
+        "frameP95Ms": 19,
+        "metrics": {
+          "buildLevel": {
+            "calls": 157885,
+            "cpuMs": 2135.6999999955297,
+            "maxMs": 873.3000000007451
+          },
+          "warmSceneTextures": {
+            "calls": 12,
+            "cpuMs": 10.200000000186265,
+            "maxMs": 6.2999999998137355
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 59.700000000186265,
+            "chunks": 0,
+            "finiteTask": true,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 1,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 0,
+              "textures": 1
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 0,
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 0,
+          "npcs": 9,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 595,
+            "textures": 62
+          }
+        },
+        "firstReady": {
+          "structures": 221,
+          "lights": 59,
+          "npcs": 9,
+          "nearNpcs": 5,
+          "npcMeshes": 9,
+          "meshes": 551,
+          "instances": 1445,
+          "materials": 545,
+          "memory": {
+            "geometries": 595,
+            "textures": 62
+          },
+          "programs": 103,
+          "drawCalls": 76,
+          "triangles": 43077,
+          "spawn": {
+            "x": 40.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 106,
+      "cold": {
+        "id": 106,
+        "name": "M.E.G. Gemma 基地",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 2462.5999999996275,
+        "readyMs": 2462.5999999996275,
+        "loadMs": 2472,
+        "preparationMs": 0.09999999962747097,
+        "generationMs": 7.900000000372529,
+        "sceneMs": 2454.5999999996275,
+        "frames": 114,
+        "cpuTotalMs": 2344.2999999988824,
+        "cpuMaxMs": 419.20000000018626,
+        "frameP95Ms": 23.700000000186265,
+        "metrics": {
+          "buildLevel": {
+            "calls": 39058,
+            "cpuMs": 1281.7999999960884,
+            "maxMs": 384.79999999981374
+          },
+          "warmSceneTextures": {
+            "calls": 9,
+            "cpuMs": 6.400000000372529,
+            "maxMs": 4.900000000372529
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 56.700000000186265,
+            "chunks": 0,
+            "finiteTask": true,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 1,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 0,
+              "textures": 1
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 0,
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 0,
+          "npcs": 10,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 631,
+            "textures": 61
+          }
+        },
+        "firstReady": {
+          "structures": 208,
+          "lights": 233,
+          "npcs": 10,
+          "nearNpcs": 4,
+          "npcMeshes": 10,
+          "meshes": 590,
+          "instances": 1034,
+          "materials": 577,
+          "memory": {
+            "geometries": 631,
+            "textures": 61
+          },
+          "programs": 103,
+          "drawCalls": 86,
+          "triangles": 100875,
+          "spawn": {
+            "x": 39.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 107,
+      "cold": {
+        "id": 107,
+        "name": "存储设施",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 1928.7000000001863,
+        "readyMs": 1928.7000000001863,
+        "loadMs": 1938.800000000745,
+        "preparationMs": 0.10000000055879354,
+        "generationMs": 5.7999999998137355,
+        "sceneMs": 1922.7999999998137,
+        "frames": 77,
+        "cpuTotalMs": 1828.800000003539,
+        "cpuMaxMs": 432,
+        "frameP95Ms": 75,
+        "metrics": {
+          "buildLevel": {
+            "calls": 31051,
+            "cpuMs": 810.300000009127,
+            "maxMs": 212.29999999981374
+          },
+          "warmSceneTextures": {
+            "calls": 8,
+            "cpuMs": 6.3999999994412065,
+            "maxMs": 4.7999999998137355
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 51.80000000074506,
+            "chunks": 0,
+            "finiteTask": true,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 1,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 0,
+              "textures": 1
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 0,
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 0,
+          "npcs": 6,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 614,
+            "textures": 50
+          }
+        },
+        "firstReady": {
+          "structures": 87,
+          "lights": 185,
+          "npcs": 6,
+          "nearNpcs": 1,
+          "npcMeshes": 6,
+          "meshes": 576,
+          "instances": 1320,
+          "materials": 576,
+          "memory": {
+            "geometries": 614,
+            "textures": 50
+          },
+          "programs": 95,
+          "drawCalls": 62,
+          "triangles": 27057,
+          "spawn": {
+            "x": 39.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 108,
+      "cold": {
+        "id": 108,
+        "name": "蓝色救赎",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 1646.1000000005588,
+        "readyMs": 1646.1000000005588,
+        "loadMs": 1652.6000000005588,
+        "preparationMs": 0.20000000018626451,
+        "generationMs": 4.2000000001862645,
+        "sceneMs": 1641.7000000001863,
+        "frames": 64,
+        "cpuTotalMs": 1556.6000000033528,
+        "cpuMaxMs": 401.70000000018626,
+        "frameP95Ms": 43.799999999813735,
+        "metrics": {
+          "buildLevel": {
+            "calls": 38513,
+            "cpuMs": 589.2999999942258,
+            "maxMs": 265.40000000037253
+          },
+          "warmSceneTextures": {
+            "calls": 11,
+            "cpuMs": 2.6000000005587935,
+            "maxMs": 2.300000000745058
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 47.5,
+            "chunks": 0,
+            "finiteTask": true,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 1,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 0,
+              "textures": 1
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 0,
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 0,
+          "npcs": 2,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 208,
+            "textures": 40
+          }
+        },
+        "firstReady": {
+          "structures": 47,
+          "lights": 99,
+          "npcs": 2,
+          "nearNpcs": 0,
+          "npcMeshes": 2,
+          "meshes": 175,
+          "instances": 94,
+          "materials": 175,
+          "memory": {
+            "geometries": 208,
+            "textures": 40
+          },
+          "programs": 89,
+          "drawCalls": 41,
+          "triangles": 14027,
+          "spawn": {
+            "x": 39.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 109,
+      "cold": {
+        "id": 109,
+        "name": "M.E.G. Omega 基地",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 2148.399999999441,
+        "readyMs": 2148.5,
+        "loadMs": 2161.2999999998137,
+        "preparationMs": 0.09999999962747097,
+        "generationMs": 5.7000000001862645,
+        "sceneMs": 2142.7000000001863,
+        "frames": 91,
+        "cpuTotalMs": 2038.0999999940395,
+        "cpuMaxMs": 453,
+        "frameP95Ms": 42.10000000055879,
+        "metrics": {
+          "buildLevel": {
+            "calls": 36407,
+            "cpuMs": 948.3999999957159,
+            "maxMs": 339.30000000074506
+          },
+          "warmSceneTextures": {
+            "calls": 8,
+            "cpuMs": 6.400000000372529,
+            "maxMs": 4.3999999994412065
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 48.19999999925494,
+            "chunks": 0,
+            "finiteTask": true,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 1,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 0,
+              "textures": 1
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 0,
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 0,
+          "npcs": 10,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 552,
+            "textures": 60
+          }
+        },
+        "firstReady": {
+          "structures": 162,
+          "lights": 194,
+          "npcs": 10,
+          "nearNpcs": 2,
+          "npcMeshes": 10,
+          "meshes": 510,
+          "instances": 1069,
+          "materials": 505,
+          "memory": {
+            "geometries": 552,
+            "textures": 60
+          },
+          "programs": 86,
+          "drawCalls": 80,
+          "triangles": 59581,
+          "spawn": {
+            "x": 39.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 110,
+      "cold": {
+        "id": 110,
+        "name": "M.E.G. 哨所「家政服务」",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 1630.7999999998137,
+        "readyMs": 1630.7999999998137,
+        "loadMs": 1639.2000000001863,
+        "preparationMs": 0.10000000055879354,
+        "generationMs": 3.2999999998137355,
+        "sceneMs": 1627.3999999994412,
+        "frames": 53,
+        "cpuTotalMs": 1539.7000000001863,
+        "cpuMaxMs": 425.3999999994412,
+        "frameP95Ms": 62.700000000186265,
+        "metrics": {
+          "buildLevel": {
+            "calls": 32052,
+            "cpuMs": 579.5000000055879,
+            "maxMs": 175.3999999994412
+          },
+          "warmSceneTextures": {
+            "calls": 9,
+            "cpuMs": 5.300000000745058,
+            "maxMs": 4.2000000001862645
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 53.90000000037253,
+            "chunks": 0,
+            "finiteTask": true,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 1,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 0,
+              "textures": 1
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 0,
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 0,
+          "npcs": 4,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 165,
+            "textures": 46
+          }
+        },
+        "firstReady": {
+          "structures": 23,
+          "lights": 31,
+          "npcs": 4,
+          "nearNpcs": 3,
+          "npcMeshes": 4,
+          "meshes": 129,
+          "instances": 114,
+          "materials": 129,
+          "memory": {
+            "geometries": 165,
+            "textures": 46
+          },
+          "programs": 91,
+          "drawCalls": 53,
+          "triangles": 20829,
+          "spawn": {
+            "x": 26.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 111,
+      "cold": {
+        "id": 111,
+        "name": "家常酒店",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 2173,
+        "readyMs": 2173,
+        "loadMs": 2185.5999999996275,
+        "preparationMs": 0.09999999962747097,
+        "generationMs": 2.7999999998137355,
+        "sceneMs": 2170.100000000559,
+        "frames": 149,
+        "cpuTotalMs": 1763.0999999977648,
+        "cpuMaxMs": 477.30000000074506,
+        "frameP95Ms": 19.09999999962747,
+        "metrics": {
+          "buildLevel": {
+            "calls": 131797,
+            "cpuMs": 683.8999999910593,
+            "maxMs": 221
+          },
+          "warmSceneTextures": {
+            "calls": 9,
+            "cpuMs": 7.2000000001862645,
+            "maxMs": 5.7000000001862645
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 47.39999999944121,
+            "chunks": 0,
+            "finiteTask": true,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 1,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 0,
+              "textures": 1
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 0,
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 0,
+          "npcs": 5,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 131,
+            "textures": 47
+          }
+        },
+        "firstReady": {
+          "structures": 23,
+          "lights": 34,
+          "npcs": 5,
+          "nearNpcs": 5,
+          "npcMeshes": 5,
+          "meshes": 91,
+          "instances": 112,
+          "materials": 91,
+          "memory": {
+            "geometries": 131,
+            "textures": 47
+          },
+          "programs": 84,
+          "drawCalls": 270,
+          "triangles": 171427,
+          "spawn": {
+            "x": 26.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 112,
+      "cold": {
+        "id": 112,
+        "name": "原住民",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 1755.0999999996275,
+        "readyMs": 1755.0999999996275,
+        "loadMs": 1763.4000000003725,
+        "preparationMs": 0.20000000018626451,
+        "generationMs": 2.7999999998137355,
+        "sceneMs": 1752.0999999996275,
+        "frames": 56,
+        "cpuTotalMs": 1664.4999999990687,
+        "cpuMaxMs": 425.09999999962747,
+        "frameP95Ms": 92.29999999981374,
+        "metrics": {
+          "buildLevel": {
+            "calls": 37243,
+            "cpuMs": 656.2000000020489,
+            "maxMs": 181.59999999962747
+          },
+          "warmSceneTextures": {
+            "calls": 8,
+            "cpuMs": 4.599999999627471,
+            "maxMs": 3.599999999627471
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 52.09999999962747,
+            "chunks": 0,
+            "finiteTask": true,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 1,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 0,
+              "textures": 1
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 0,
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 0,
+          "npcs": 7,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 157,
+            "textures": 49
+          }
+        },
+        "firstReady": {
+          "structures": 26,
+          "lights": 46,
+          "npcs": 7,
+          "nearNpcs": 7,
+          "npcMeshes": 7,
+          "meshes": 112,
+          "instances": 73,
+          "materials": 111,
+          "memory": {
+            "geometries": 157,
+            "textures": 49
+          },
+          "programs": 93,
+          "drawCalls": 71,
+          "triangles": 27695,
+          "spawn": {
+            "x": 26.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 113,
+      "cold": {
+        "id": 113,
+        "name": "M.E.G.“空巢”前哨站",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 2751.7999999998137,
+        "readyMs": 2751.9000000003725,
+        "loadMs": 2758.7000000001863,
+        "preparationMs": 0.20000000018626451,
+        "generationMs": 3.5,
+        "sceneMs": 2748.2000000001863,
+        "frames": 177,
+        "cpuTotalMs": 2347.4999999934807,
+        "cpuMaxMs": 1074.2999999998137,
+        "frameP95Ms": 16,
+        "metrics": {
+          "buildLevel": {
+            "calls": 153477,
+            "cpuMs": 1385.1000000238419,
+            "maxMs": 730.6999999992549
+          },
+          "warmSceneTextures": {
+            "calls": 15,
+            "cpuMs": 4.1000000005587935,
+            "maxMs": 1.900000000372529
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 55.10000000055879,
+            "chunks": 0,
+            "finiteTask": true,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 1,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 0,
+              "textures": 1
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 0,
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 0,
+          "npcs": 3,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 130,
+            "textures": 49
+          }
+        },
+        "firstReady": {
+          "structures": 31,
+          "lights": 6,
+          "npcs": 3,
+          "nearNpcs": 3,
+          "npcMeshes": 3,
+          "meshes": 96,
+          "instances": 88,
+          "materials": 94,
+          "memory": {
+            "geometries": 130,
+            "textures": 49
+          },
+          "programs": 91,
+          "drawCalls": 46,
+          "triangles": 11775,
+          "spawn": {
+            "x": 26.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 114,
+      "cold": {
+        "id": 114,
+        "name": "哈莫兹洞穴社群",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 1763.5,
+        "readyMs": 1763.5,
+        "loadMs": 1770,
+        "preparationMs": 0,
+        "generationMs": 3.2999999998137355,
+        "sceneMs": 1760.2000000001863,
+        "frames": 58,
+        "cpuTotalMs": 1678.499999997206,
+        "cpuMaxMs": 406.70000000018626,
+        "frameP95Ms": 54.299999999813735,
+        "metrics": {
+          "buildLevel": {
+            "calls": 35208,
+            "cpuMs": 709.5999999940395,
+            "maxMs": 190.1000000005588
+          },
+          "warmSceneTextures": {
+            "calls": 13,
+            "cpuMs": 3.5,
+            "maxMs": 1.400000000372529
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 51.59999999962747,
+            "chunks": 0,
+            "finiteTask": true,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 1,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 0,
+              "textures": 1
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 0,
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 0,
+          "npcs": 3,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 126,
+            "textures": 46
+          }
+        },
+        "firstReady": {
+          "structures": 34,
+          "lights": 7,
+          "npcs": 3,
+          "nearNpcs": 2,
+          "npcMeshes": 3,
+          "meshes": 92,
+          "instances": 101,
+          "materials": 90,
+          "memory": {
+            "geometries": 126,
+            "textures": 46
+          },
+          "programs": 95,
+          "drawCalls": 46,
+          "triangles": 13397,
+          "spawn": {
+            "x": 26.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 116,
+      "cold": {
+        "id": 116,
+        "name": "丰饶角",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 2383.399999999441,
+        "readyMs": 2383.5,
+        "loadMs": 2392.899999999441,
+        "preparationMs": 0,
+        "generationMs": 2.5,
+        "sceneMs": 2381,
+        "frames": 55,
+        "cpuTotalMs": 2245.8999999975786,
+        "cpuMaxMs": 516,
+        "frameP95Ms": 122.3999999994412,
+        "metrics": {
+          "buildLevel": {
+            "calls": 32190,
+            "cpuMs": 1308.6999999973923,
+            "maxMs": 514.7000000001863
+          },
+          "warmSceneTextures": {
+            "calls": 32,
+            "cpuMs": 2.2999999998137355,
+            "maxMs": 1.7000000001862645
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 48.59999999962747,
+            "chunks": 0,
+            "finiteTask": true,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 1,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 0,
+              "textures": 1
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 0,
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 0,
+          "npcs": 2,
+          "texturesPending": 9,
+          "ready": true,
+          "memory": {
+            "geometries": 196,
+            "textures": 62
+          }
+        },
+        "firstReady": {
+          "structures": 174,
+          "lights": 114,
+          "npcs": 13,
+          "nearNpcs": 2,
+          "npcMeshes": 2,
+          "meshes": 440,
+          "instances": 9556,
+          "materials": 201,
+          "memory": {
+            "geometries": 196,
+            "textures": 62
+          },
+          "programs": 96,
+          "drawCalls": 72,
+          "triangles": 20313,
+          "spawn": {
+            "x": 40.5,
+            "y": 13.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 274,
+      "cold": {
+        "id": 274,
+        "name": "Level 274 · 杰瑞的房间",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 1680.0999999996275,
+        "readyMs": 1680.0999999996275,
+        "loadMs": 1689.3999999994412,
+        "preparationMs": 0.09999999962747097,
+        "generationMs": 5.900000000372529,
+        "sceneMs": 1674.0999999996275,
+        "frames": 65,
+        "cpuTotalMs": 1587.6999999973923,
+        "cpuMaxMs": 428.79999999981374,
+        "frameP95Ms": 49,
+        "metrics": {
+          "buildLevel": {
+            "calls": 32328,
+            "cpuMs": 605.1000000042841,
+            "maxMs": 162
+          },
+          "warmSceneTextures": {
+            "calls": 7,
+            "cpuMs": 4.7000000001862645,
+            "maxMs": 3.2000000001862645
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 50.09999999962747,
+            "chunks": 0,
+            "finiteTask": true,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 1,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 0,
+              "textures": 1
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 0,
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 0,
+          "npcs": 7,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 342,
+            "textures": 49
+          }
+        },
+        "firstReady": {
+          "structures": 82,
+          "lights": 24,
+          "npcs": 7,
+          "nearNpcs": 0,
+          "npcMeshes": 7,
+          "meshes": 304,
+          "instances": 357,
+          "materials": 304,
+          "memory": {
+            "geometries": 342,
+            "textures": 49
+          },
+          "programs": 89,
+          "drawCalls": 65,
+          "triangles": 30641,
+          "spawn": {
+            "x": 40.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\level-entry\\baseline\\qa-1792041992218-28020",
+    "--remote-debugging-port=5765",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.40",
+    "revision": "@cfaadc5a132d78e1828635aa8405a499f3e14864",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.20"
+  },
+  "pids": {
+    "server": 30636,
+    "browser": 52392
+  },
+  "setup": {
+    "mode": "realistic",
+    "viewport": [
+      1920,
+      1080
+    ],
+    "dpr": 1,
+    "seed": 424242,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "settings": {
+      "texture": 1,
+      "lights": 16,
+      "shadows": true,
+      "lightShadows": 1,
+      "loadingBudget": 6,
+      "chunkBudget": 3,
+      "detail": 1,
+      "bloom": true,
+      "ao": 1
+    }
+  },
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [],
+  "networkErrors": [
+    {
+      "requestId": "3044.402",
+      "loaderId": "CABCA7579F71DAD87CDF5A80CA912E00",
+      "timestamp": 6255.948888,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:5764/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Thu, 15 Oct 2026 05:26:59 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 221,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 5764,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 6255.93664,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 1.931,
+          "sendEnd": 1.96,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 11.288,
+          "receiveHeadersEnd": 11.495
+        },
+        "responseTime": 1792042019101.265,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "6DA61015D6619C6DB498BBD435D2B273"
+    }
+  ]
+}

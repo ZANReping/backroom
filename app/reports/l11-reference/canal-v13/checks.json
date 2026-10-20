@@ -1,0 +1,53 @@
+{
+  "label": "canal-v13",
+  "logs": [
+    {
+      "command": "npm run build",
+      "exit": 0,
+      "file": "../v13-build.log"
+    },
+    {
+      "command": "npm run check:l11-waterways",
+      "exit": 0,
+      "file": "../v13-waterways.log"
+    },
+    {
+      "command": "npm run check:l11-meshes",
+      "exit": 0,
+      "file": "../v13-meshes.log"
+    },
+    {
+      "command": "npm run check:l11-collision",
+      "exit": 0,
+      "file": "../v13-collision.log"
+    },
+    {
+      "command": "npm run check:l11",
+      "exit": 0,
+      "file": "../v13-generation.log"
+    }
+  ],
+  "staticSnapshots": [
+    {
+      "present": true,
+      "source": "../../l11-waterways/static.json",
+      "file": "waterways.json"
+    },
+    {
+      "present": true,
+      "source": "../../l11-remake/mesh-check.json",
+      "file": "meshes.json"
+    },
+    {
+      "present": true,
+      "source": "../../l11-water-collision/static-collision.json",
+      "file": "collision.json"
+    },
+    {
+      "present": true,
+      "source": "../../l11-remake/generation-check.json",
+      "file": "generation.json"
+    }
+  ],
+  "allExitSuccessful": true
+}

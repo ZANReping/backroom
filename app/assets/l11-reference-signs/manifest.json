@@ -1,0 +1,37 @@
+{
+  "generator": "built-in image_gen",
+  "origin": "C:/Users/ZANRe/.codex/generated_images/01a1337a-758c-7c30-b54e-7b5d0d99cc8e/exec-bbff28ce-7884-4ab7-a801-ac0614809e21.png",
+  "source": "source.png",
+  "prompt": "prompt.txt",
+  "reference": "reference/L11/11iconic.jpg (orange vertical leasing board)",
+  "license": "AI-generated project asset; no third-party CC0 claim",
+  "sourceSize": [
+    724,
+    2172
+  ],
+  "crop": [
+    169,
+    9,
+    387,
+    2154
+  ],
+  "worldMetres": [
+    2.3,
+    14
+  ],
+  "processing": "node scripts/prepare-l11-reference-banner.mjs",
+  "changes": [
+    "crop gray margins; preserve entire board",
+    "resize high/low; sRGB albedo",
+    "uniform OpenGL normal and roughness 185; no noise"
+  ],
+  "files": [
+    "public/textures/l11-reference-banner.png",
+    "public/textures/l11-reference-banner_normal.png",
+    "public/textures/l11-reference-banner_roughness.png",
+    "public/textures/l11-reference-banner_low.png",
+    "public/textures/l11-reference-banner_low_normal.png",
+    "public/textures/l11-reference-banner_low_roughness.png"
+  ],
+  "review": "Text PEGASUS correct, complete bordered board. Accepted for in-game review; image is not a photograph."
+}

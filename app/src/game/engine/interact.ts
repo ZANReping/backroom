@@ -16,6 +16,8 @@ import { forceL7PorchDrop } from './movement'
 import { entityBand as entityFloorBand } from './entityAI'
 import { makeEntity } from '../entities'
 import { skinStealerTalk } from './skinStealerAI'
+import {jerryInteractBox,jerryInputLock} from './jerryAI'
+import { catchShrimp } from './shrimpAI'
 import { look } from '../renderer/shared'
 import type { FloorBand, Structure } from '../core/types'
 import type { Engine } from '../engine'
@@ -708,17 +710,16 @@ export function scanInteract(eng: Engine) {
     if (e.dead || e.def.type !== 'jerry') continue
     const entityBand = bandOfZ(e.z)
     if (entityBand !== band) continue
-    const bodyRadius = 0.42
-    const bodyHeight = 1.6
-    const surfaceDistance = Math.max(0, Math.hypot(e.x - p.x, e.y - p.y) - bodyRadius)
+    // 重制：判定盒随杰瑞离地高度（栖木 1.48m / 神父肩头）抬高，并排除栖木自身遮挡——与 npc.aimJerry 同一口径
+    const box = jerryInteractBox(eng, e)
     considerTarget({
         kind: 'jerry',
         label: eng.jerryContactCd > 0
           ? `接触 鹉主杰瑞（冷却 ${Math.ceil(eng.jerryContactCd)}s）`
           : eng.jerryTamed ? '接触 鹉主杰瑞（已驯服）' : '接触 鹉主杰瑞（教化 +25 · 对其使用杏仁水可驯服）',
         ent: e,
-      }, e.x, e.y, e.z + bodyHeight * 0.5, entityBand, INTERACT_RANGE.npc, true, bodyRadius,
-      volumeAt(e.x, e.y, e.z, bodyRadius, bodyHeight), surfaceDistance, undefined, bodyHeight * 0.5)
+      }, box.x, box.y, box.z, entityBand, INTERACT_RANGE.npc, true, box.radius,
+      box.volume, box.surfaceDistance, box.perch, box.verticalRadius)
   }
   // v58：小小（L7 环形场的可对话实体）——未被激怒时可交谈；激怒后仍可选中但拒绝对话
   for (const e of m.entities) {
@@ -748,6 +749,16 @@ export function scanInteract(eng: Engine) {
     considerTarget({ kind: 'skinstealer', label: '与 流浪者 交谈', ent: e }, e.x, e.y, e.z + bodyHeight * 0.5, entityBand, INTERACT_RANGE.npc, true, bodyRadius,
       volumeAt(e.x, e.y, e.z, bodyRadius, bodyHeight), surfaceDistance, undefined, bodyHeight * 0.5)
   }
+  // v81：旱虾——直接活抓进背包（「带上它」）
+  for (const e of m.entities) {
+    if (e.dead || e.def.type !== 'dryshrimp' || e.sh?.eater) continue
+    const entityBand = entityFloorBand(m, e)
+    if (entityBand !== band) continue
+    const sz = e.sh?.size ?? 1
+    const surfaceDistance = Math.max(0, Math.hypot(e.x - p.x, e.y - p.y) - 0.2 * sz)
+    considerTarget({ kind: 'shrimp', label: '活抓 旱虾', ent: e }, e.x, e.y, e.z + 0.1, entityBand, INTERACT_RANGE.item, true, 0.26 * sz,
+      volumeAt(e.x, e.y, e.z, 0.26 * sz, 0.22), surfaceDistance, undefined, 0.12)
+  }
   // v51：人制品售货机（Entity 36）——正面取货 / 背面看标语。
   for (const e of m.entities) {
     if (e.dead || e.def.type !== 'vendingmachine' || e.activated) continue
@@ -771,6 +782,7 @@ function sameInteractionTarget(a: Engine['interactTarget'], b: Engine['interactT
 }
 
 export function doInteract(eng: Engine) {
+  if (jerryInputLock(eng)) return
   const scanned = eng.interactTarget
   if (!scanned || !eng.map) return
   // 输入到真正执行之间再次跑同一套距离、楼层带、硬准星与三维 LOS；目标发生变化则本次按键作废。
@@ -1290,6 +1302,12 @@ export function doInteract(eng: Engine) {
       const e = t.ent
       if (!e || e.dead || e.def.type !== 'skinstealer' || e.disguised !== 'human') return
       skinStealerTalk(eng, e)
+      break
+    }
+    case 'shrimp': {
+      const e = t.ent
+      if (!e || e.dead || e.def.type !== 'dryshrimp') return
+      if (catchShrimp(eng, e)) audio.uiTick()
       break
     }
     case 'vendingmachine': {

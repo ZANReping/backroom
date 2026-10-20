@@ -20,6 +20,9 @@ import { buildWretchMesh } from './wretchMesh'
 import { buildRatMesh } from './ratMesh'
 import { buildClumpMesh } from './clumpMesh'
 import { buildDullerMesh } from './dullerMesh'
+import { buildShrimpMesh } from './shrimpMesh'
+import { buildPartygoerMesh } from './partygoerMesh'
+import {buildJerryMesh} from './jerryMesh'
 import { ENTITIES } from '../entities'
 import { box, cyl, glow, litMaterial, mulberry } from './shared'
 import { buildAvatarModel, fitLegacyAttachments } from './retroAvatar'
@@ -35,6 +38,9 @@ type PartMap = Record<string, THREE.Object3D>
 // v53：实体建模变体（L3 高智能实体：无面灵错位面部器官/石器工具、尸鼠水豚形态；seed=实体 id，保证重建一致）
 // ratMorph：尸鼠按层级固定形态——L2 灰白廊道种群 / L3 水豚（capybara 优先）/ L5 酒店正装（小西装+领结）/ 其余层级深褐（旧档「死亡鼠」）
 export interface EntityMeshOpts {
+  partygoerColor?: import('../entities/partygoerLook').PartygoerColor
+  partygoerIntern?: boolean
+  partygoerBalloonArm?: 0 | 1
   mothForm?: import('../entities/types').MothForm
   l3face?: boolean; tool?: boolean; capybara?: boolean
   ratMorph?: import('../engine/ratAI').RatMorph; seed?: number
@@ -110,9 +116,12 @@ function getThingSkinTextures() {
   return thingSkinTextures
 }
 export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Group {
+  if(type==='jerry')return buildJerryMesh()
+  if (type === 'partygoer') return buildPartygoerMesh(opts?.seed ?? 0, { color: opts?.partygoerColor, intern: opts?.partygoerIntern, balloonArm: opts?.partygoerBalloonArm })
   if(type === 'deathmoth') return buildMothMesh(opts?.mothForm ?? 'male')
   if (type === 'clump') return buildClumpMesh(!!opts?.l3clump, opts?.seed ?? 0)
   if (type === 'duller') return buildDullerMesh(opts?.seed ?? 0) // v63：重制钝人
+  if (type === 'dryshrimp') return buildShrimpMesh(opts?.seed ?? 0) // v81：重制旱虾（奇虾体型，鳍片划水着色器动画）
   if (type === 'hound') return buildHoundMesh(!!opts?.houndNeutral, opts?.seed ?? 0) // v62：重制猎犬
   if (type === 'corpserat') return buildRatMesh(opts?.ratMorph ?? (opts?.capybara ? 'capybara' : opts?.ceilingCrawler ? 'cave' : 'common'), opts?.seed ?? 0, !!opts?.ceilingCrawler)
   if (type === 'wretch') return buildWretchMesh(opts?.seed ?? 0, opts?.wretchKind)
@@ -255,33 +264,7 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
       joint(0.06, 0.14, 0.06, dark, 0.07, 0.16, -0.18, 'legR')
       break
     }
-    case 'jerry': { // 鹉主杰瑞（Entity 7）：蓝色小鹦鹉——立姿：圆身/钩喙/冠羽/收翅/长尾羽，蓝得不像后室的造物
-      const blue = '#2a5fd8', dark = '#1a3f9e', lite = '#6a9ae8', beak = '#e8a33c'
-      tag(box(0.16, 0.22, 0.18, blue, 0, 0.24, 0), 'torso') // 圆身
-      grp.add(box(0.12, 0.14, 0.13, lite, 0, 0.22, 0.05)) // 胸腹亮色
-      const hd = box(0.13, 0.12, 0.12, blue, 0, 0.4, 0.03) // 头
-      tag(hd, 'head')
-      hd.add(box(0.05, 0.04, 0.06, beak, 0, -0.02, 0.08)) // 上钩喙
-      hd.add(box(0.035, 0.025, 0.04, '#c97a1a', 0, -0.05, 0.06)) // 下喙
-      face(glow(0.028, 0.028, 0.02, '#101828', -0.045, 0.42, 0.1)) // 眼（左）
-      face(glow(0.028, 0.028, 0.02, '#101828', 0.045, 0.42, 0.1)) // 眼（右）
-      // 冠羽（三根小羽，后脑）
-      hd.add(box(0.02, 0.07, 0.02, dark, -0.03, 0.08, -0.04))
-      hd.add(box(0.02, 0.09, 0.02, dark, 0, 0.09, -0.05))
-      hd.add(box(0.02, 0.07, 0.02, dark, 0.03, 0.08, -0.04))
-      // 收起的双翅（体侧深色块，微外张）
-      const wl = box(0.04, 0.18, 0.14, dark, -0.09, 0.24, -0.01); wl.rotation.z = 0.12
-      const wr = box(0.04, 0.18, 0.14, dark, 0.09, 0.24, -0.01); wr.rotation.z = -0.12
-      tag(wl, 'wingL'); tag(wr, 'wingR')
-      // 长尾羽（下垂微后翘，蓝黑相间）
-      const tl = box(0.09, 0.03, 0.24, blue, 0, 0.12, -0.18); tl.rotation.x = -0.5
-      tag(tl, 'tail')
-      grp.add(box(0.05, 0.025, 0.18, dark, 0, 0.1, -0.26)) // 尾端深色
-      // 爪（抓握横杆的两只小爪）
-      grp.add(box(0.03, 0.05, 0.05, '#8a8a8e', -0.04, 0.04, 0.02))
-      grp.add(box(0.03, 0.05, 0.05, '#8a8a8e', 0.04, 0.04, 0.02))
-      break
-    }
+    // 鹉主杰瑞（Entity 7）：已在函数开头交给 jerryMesh.buildJerryMesh（旧方块小鹦鹉移除，见 JERRY-REMAKE.md）
     // v61：'smiler' 已在函数开头交给 smilerMesh.buildSmilerMesh（旧版方块模型移除）
     case 'arms': { // 手臂（Level 1 特有）：自天花板通风管垂下的苍白长臂，指节反曲；
       //             停电时伸出管口猎捕（平时 hidden 缩回管内，渲染层不可见）。
@@ -1145,50 +1128,7 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
       sac.add(box(0.012, 1.2, 0.012, '#d8d4c4', 0, 0.75, 0)) // 悬丝向上
       tag(sac, 'sacGrp')
       break }
-    case 'dryshrimp': { // 旱虾（Entity 20）：分节橙褐色躯体 + 两侧扇状鳍叶 + 柄眼与触须 + 扇尾（奇虾科造型）
-      const shell = '#b3612e', shellD = '#8f4a22', fin = '#d9a86a', belly = '#c97a45'
-      const body = new THREE.Group()
-      body.position.set(0, 0.12, 0)
-      // 分节躯体（头→尾渐窄，逐节微降）
-      for (let i = 0; i < 5; i++) {
-        const w = 0.1 - i * 0.008, x = 0.12 - i * 0.09
-        body.add(box(0.1, 0.075, w * 2, i % 2 ? shell : shellD, x, -i * 0.004, 0))
-        // 每节两侧扇状鳍叶（薄片外翻）
-        for (const z of [-1, 1]) {
-          const f = box(0.11, 0.012, 0.055, fin, x - 0.01, -0.02, z * (w + 0.04))
-          f.rotation.x = z > 0 ? 0.5 : -0.5
-          f.rotation.z = -0.15
-          body.add(f)
-        }
-      }
-      body.add(box(0.22, 0.04, 0.14, belly, 0, -0.045, 0)) // 腹甲
-      tag(body, 'torso')
-      // 头部：柄眼（黑珠）+ 前附肢 + 触须
-      const hg = new THREE.Group()
-      hg.position.set(0.2, 0.15, 0)
-      hg.add(box(0.09, 0.07, 0.1, shell, 0, 0, 0))
-      for (const z of [-0.05, 0.05]) {
-        hg.add(box(0.035, 0.015, 0.015, shellD, 0.04, 0.045, z)) // 眼柄
-        hg.add(glow(0.022, 0.022, 0.022, '#101216', 0.065, 0.055, z)) // 黑眼
-        // 奇虾标志性前附肢（向下弯的须爪）
-        const cl = box(0.02, 0.1, 0.02, shellD, 0.05, -0.06, z)
-        cl.rotation.z = 0.5
-        hg.add(cl)
-        const at = box(0.12, 0.008, 0.008, fin, 0.1, 0.02, z)
-        at.rotation.y = z > 0 ? -0.35 : 0.35 // 触须前伸外撇
-        hg.add(at)
-      }
-      tag(hg, 'head')
-      // 扇尾（三片尾鳍展开）
-      const tail = new THREE.Group()
-      tail.position.set(-0.34, 0.11, 0)
-      for (const [ry, z] of [[-0.5, -0.05], [0, 0], [0.5, 0.05]] as const) {
-        const t = box(0.14, 0.012, 0.05, fin, -0.05, 0, z)
-        t.rotation.y = ry
-        tail.add(t)
-      }
-      tag(tail, 'tail')
-      break }
+    // v81：'dryshrimp' 已在函数开头交给 shrimpMesh.buildShrimpMesh（旧版方块模型移除）
     case 'arachnid': {
       const morph = opts?.arachnidMorph ?? 'spider'
       const breed = Math.max(0, Math.floor(opts?.arachnidBreed ?? 0))
@@ -1412,76 +1352,7 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
       }
       break
     }
-    case 'partygoer': { // 派对客（Entity 67）：高大两足（约 2.2m）、鲜黄色光滑皮革皮肤、腿部厚重呈块状；
-      //                 长而软的面条状手臂，末端不是手而是吸盘状的口（环 + 内圈小尖牙）；
-      //                 面部只有一个血涂的「=)」刻痕；胸前甲壳内藏第二对带爪之手。
-      const yc = '#e8c93c', yd = '#c9a92c', yl = '#f2dd6a', blood = '#8a1f1f'
-      joint(0.29, 0.92, 0.32, yd, -0.2, 0.95, 0, 'legL') // 厚重块状的腿
-      joint(0.29, 0.92, 0.32, yd, 0.2, 0.95, 0, 'legR')
-      tip(parts.legL, 0.33, 0.13, 0.44, '#a88a22', -0.9, 0.06)
-      tip(parts.legR, 0.33, 0.13, 0.44, '#a88a22', -0.9, 0.06)
-      tag(box(0.5, 0.72, 0.34, yc, 0, 1.36, 0), 'torso')
-      tag(box(0.34, 0.34, 0.32, yl, 0, 1.92, 0), 'head')
-      grp.add(box(0.4, 0.12, 0.3, yd, 0, 1.73, 0)) // 颈/肩
-      // 血涂的「=)」刻痕：一对短横作眼 + 一条上翘弧线作嘴
-      grp.add(face(box(0.1, 0.024, 0.02, blood, -0.08, 1.99, 0.165)))
-      grp.add(face(box(0.1, 0.024, 0.02, blood, 0.08, 1.99, 0.165)))
-      for (let i = 0; i < 7; i++) {
-        const a = (i / 6 - 0.5) * 1.7
-        grp.add(face(box(0.038, 0.032, 0.02, blood, Math.sin(a) * 0.115, 1.85 + (1 - Math.cos(a)) * 0.2, 0.165)))
-      }
-      const noodle = (side: number, part: string) => { // 面条状长臂：5 段递减小圆柱串成柔软观感
-        const root = new THREE.Group()
-        root.position.set(side * 0.3, 1.62, 0)
-        grp.add(root); tag(root, part)
-        let cur: THREE.Object3D = root
-        for (let i = 0; i < 5; i++) {
-          const seg = new THREE.Group()
-          seg.position.y = i === 0 ? 0 : -0.26
-          seg.rotation.z = side * 0.17
-          seg.rotation.x = 0.09
-          const r = 0.075 - i * 0.009
-          const m = cyl(r, r + 0.007, 0.27, i % 2 ? yd : yc, 0, -0.135, 0, 7)
-          seg.add(m)
-          cur.add(seg)
-          cur = seg
-        }
-        const mouth = new THREE.Group() // 末端吸盘状的口
-        mouth.position.y = -0.26
-        mouth.rotation.x = Math.PI / 2
-        mouth.add(new THREE.Mesh(new THREE.TorusGeometry(0.085, 0.028, 4, 10), lam('#b8971f')))
-        for (let i = 0; i < 8; i++) { // 内圈倒钩小尖牙
-          const a = (i / 8) * Math.PI * 2
-          mouth.add(box(0.022, 0.032, 0.022, '#e8e2d2', Math.cos(a) * 0.052, Math.sin(a) * 0.052, 0.012))
-        }
-        cur.add(mouth)
-      }
-      noodle(-1, 'armL'); noodle(1, 'armR')
-      // 胸前甲壳：renderer 会把 sheet 的 y 钉在 1.0±0.12 并绕 Y 自转，
-      // 故挂在抬高 0.42 的 holder 内（世界 y≈1.42=胸口），且做成绕 Y 对称的甲壳筒——自转不产生跳动。
-      const shHold = new THREE.Group()
-      shHold.position.set(0, 0.42, 0)
-      grp.add(shHold)
-      const sheet = new THREE.Group()
-      sheet.position.y = 1.0
-      sheet.add(cyl(0.24, 0.31, 0.44, '#d8b62e', 0, 0, 0, 8))
-      sheet.add(cyl(0.325, 0.325, 0.05, '#a8891c', 0, -0.16, 0, 8)) // 甲壳开合缝
-      shHold.add(sheet); tag(sheet, 'sheet')
-      const clawArm = (side: number, part: string) => { // 甲壳内藏的第二对带爪之手
-        const a = new THREE.Group()
-        a.position.set(side * 0.14, 1.52, 0.03)
-        a.rotation.z = side * 0.5
-        a.add(box(0.08, 0.34, 0.09, '#6a4a12', 0, -0.17, 0))
-        const hand = new THREE.Group()
-        hand.position.y = -0.34
-        hand.rotation.x = -0.6
-        for (let i = 0; i < 3; i++) hand.add(box(0.02, 0.12, 0.02, '#e8e2d2', (i - 1) * 0.03, -0.06, 0.02))
-        a.add(hand)
-        grp.add(a); tag(a, part)
-      }
-      clawArm(-1, 't1'); clawArm(1, 't2')
-      break
-    }
+    // 派对客（Entity 67）：已在函数开头交给 partygoerMesh.buildPartygoerMesh（旧方块模型移除，见 PARTYGOER-REMAKE.md）
     case 'soilworm': { // 土壤蠕虫：小型分节蠕虫（5 节递减 + 前端口器环），土褐色，体长约 0.5m。（原生 +X）
       // renderer 会把 seg 的 y 钉在 0.35 并叠加 ±0.12 蠕动——对 0.5m 小虫过大，
       // 故整体挂在 scale=0.3 的外层组内按 3.33 倍建模，缩放后落到 y≈0.105、幅度 ±0.036。

@@ -68,6 +68,7 @@ function material(name:string,baked=true){
 export function* buildL0Architecture(a:L0Layout,ox:number,oy:number,root:THREE.Group,neighbours:L0Layout[]=[]):Generator<void>{
  const groups=new Map<string,THREE.BufferGeometry[]>(),light=createL0LightSampler(a,neighbours),flicker=createL0FlickerSampler([a,...neighbours]),environment=new Map<string,ReturnType<typeof l0LayoutEnvironment>>()
  const environmentAt=(x:number,z:number)=>{const key=`${x.toFixed(4)},${z.toFixed(4)}`;let e=environment.get(key);if(!e){e=l0LayoutEnvironment(a,x,z);environment.set(key,e)}return e}
+ const inWood=(x:number,z:number)=>!!a.wood&&inside(a.wood,x,z)&&(!a.testField||!inside(a.testField,x,z))
  function add(g:THREE.BufferGeometry,name:string,bake=true,forceYellow=false,fixture?:{light:number;red:number;arch:number}){
   // ExtrudeGeometry is non-indexed; Box/PlaneGeometry are indexed. Mixing them
   // makes mergeGeometries reject the entire material bucket (including arches).
@@ -79,7 +80,7 @@ export function* buildL0Architecture(a:L0Layout,ox:number,oy:number,root:THREE.G
    uv.setXY(i,(top?x:Math.abs(nx)>.5?z:x)*scale,(top?z:h)*scale)
    if(top&&name==='wood')uv.setXY(i,z/1.7,x/1.7)
    if(top&&name.endsWith('ceiling'))uv.setXY(i,x/1.2,z/.6)
-   const ceilingK=name==='ceiling'?(a.wood&&inside(a.wood,x,z)?.8:.36):1
+   const ceilingK=name==='ceiling'?(inWood(x,z)?.8:.36):1
    const v=(fixture?.light??(bake?light(x,z,h,nx,n.getY(i),nz):1))*ceilingK;c.set([v,v,v],i*3)
    const e=fixture??environmentAt(x,z);field.set([forceYellow?0:e.red,name==='carpet'||name==='trim'?e.arch:0],i*2)
    flash.set(flicker(x,z,h,nx,n.getY(i),nz),i*4)
@@ -131,7 +132,7 @@ export function* buildL0Architecture(a:L0Layout,ox:number,oy:number,root:THREE.G
  for(let zi=0;zi<ceilZ.length-1;zi++){
   for(let xi=0;xi<ceilX.length-1;xi++){
    const x=ceilX[xi],z=ceilZ[zi],w=ceilX[xi+1]-x,d=ceilZ[zi+1]-z
-   const ceil=new THREE.PlaneGeometry(w,d);ceil.rotateX(Math.PI/2);ceil.translate(x+w/2,L0_HEIGHT,z+d/2);add(ceil,a.wood&&inside(a.wood,x+w/2,z+d/2)?'manila-ceiling':'ceiling')
+   const ceil=new THREE.PlaneGeometry(w,d);ceil.rotateX(Math.PI/2);ceil.translate(x+w/2,L0_HEIGHT,z+d/2);add(ceil,inWood(x+w/2,z+d/2)?'manila-ceiling':'ceiling')
   }yield
  }
  // Emit the boundary of the union, never overlapping BoxGeometry walls.

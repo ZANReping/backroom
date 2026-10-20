@@ -1,0 +1,9 @@
+
+> my-app@0.0.0 check:texture-images
+> esbuild scripts/check-texture-images.ts --bundle --platform=node --format=esm --outfile=.cache/check-texture-images.mjs && node .cache/check-texture-images.mjs
+
+
+  .cache\check-texture-images.mjs  451.3kb
+
+Done in 103ms
+texture image lifecycle regression passed: 96 checks

@@ -1,6 +1,7 @@
 /** World-space controls; no loaded chunks, mutable RNG or renderer dependencies. */
 import {L1_REFERENCE_CASES} from './l1ReferenceCases'
-export const L1_GENERATION_VERSION=4
+import {l1PlanTile,l1PlanRooms,l1RegionAt,type L1Room,type L1RoomType} from './l1Plan'
+export const L1_GENERATION_VERSION=6
 export const L1_SHOWCASE_SEED=20261006
 export const l1Mod=(x:number,n:number)=>(x%n+n)%n
 export const l1SkylightAt=(x:number,y:number)=>{const dx=l1Mod(Math.floor(x)-3,8),dy=l1Mod(Math.floor(y)-3,8);return Math.min(dx,8-dx)<=1&&Math.min(dy,8-dy)<=1}
@@ -47,9 +48,42 @@ export const L1_PHOTO_ANCHORS=refs.map(([id,file,variant,width,height],i)=>{
  },[dx,dy,z,yaw,pitch,fov,roll=0]=L1_REFERENCE_CASES[id]?.camera??poses[id]
  return{id,file,variant,width,height,x:cx+dx,y:16+dy,z,yaw,pitch,roll,fov,centerX:cx,centerY:16,blackout:id==='power-out'}
 })
-export function l1ReferenceAt(seed:number,x:number,y:number){
- if(seed!==L1_SHOWCASE_SEED||Math.abs(y-16)>80)return undefined
- return L1_PHOTO_ANCHORS.find(a=>Math.abs(x-a.centerX)<80)
+/** v2 reference bays: the 18 authored photo cases (module proportions, partitions, puddles,
+ * lighting state, recorded camera) are planted at the centre of real 区段 halls. Each hall
+ * region of a matching section gets at most one bay; its influence is a box of ±L1_REF_HALF m
+ * clipped to the region, so the rest of the hall stays procedural. */
+export const L1_REF_HALF=56
+const REF_WEIGHTS:Record<string,[string,number][]>={
+ parking:[['parking-common',3],['parking-round',1.5],['parking-water',1.5],['parking-bright',1.5],['parking-clean',1.5],['parking-dry',1],['parking-room',1],['parking-dim',1],['parking-dark',.8],['parking-props',1],['power-out',.4]],
+ storage:[['storage',2],['crate',1]],gothic:[['gothic',1]],ouroboros:[['ouroboros',1]],garden:[['garden',1]],
+}
+type L1Anchor=(typeof L1_PHOTO_ANCHORS)[number]
+const refCache=new Map<string,L1Anchor|null>()
+export function l1RegionReference(seed:number,r:{id:string;ix0:number;iy0:number;ix1:number;iy1:number;section:string}):L1Anchor|null{
+ const key=seed+':'+r.id;const hit=refCache.get(key);if(hit!==undefined)return hit
+ let out:L1Anchor|null=null
+ const w=REF_WEIGHTS[r.section],h=l1Noise(r.ix0*7+r.iy1,r.iy0*13+r.ix1,seed^0x5eed)
+ if(w&&Math.min(r.ix1-r.ix0,r.iy1-r.iy0)>=70&&h<.85){
+  const total=w.reduce((s,[,v])=>s+v,0);let t=l1Noise(r.ix1,r.iy0,seed^0xbad)*total,id=w[0][0]
+  for(const [k,v]of w){if(t<v){id=k;break}t-=v}
+  const base=L1_PHOTO_ANCHORS.find(a=>a.id===id)
+  if(base){// snap to a chunk centre (32k+16): authored props/reserves/lights assume the old strip's chunk-centred anchors
+   const cx=Math.floor((r.ix0+r.ix1)/64)*32+16,cy=Math.floor((r.iy0+r.iy1)/64)*32+16
+   out={...base,x:base.x-base.centerX+cx,y:base.y-base.centerY+cy,centerX:cx,centerY:cy}}
+ }
+ if(refCache.size>4096)refCache.delete(refCache.keys().next().value!)
+ refCache.set(key,out);return out
+}
+export function l1ReferenceAt(seed:number,x:number,y:number):L1Anchor|undefined{
+ const r=l1RegionAt(seed,Math.floor(x),Math.floor(y));if(!r)return undefined
+ const a=l1RegionReference(seed,r as any);if(!a)return undefined
+ return Math.abs(x-a.centerX)<=L1_REF_HALF&&Math.abs(y-a.centerY)<=L1_REF_HALF?a:undefined
+}
+/** Nearest reference bay of a given case id (dev capture / checks). */
+export function l1FindReference(seed:number,id:string,rx=1500):L1Anchor|undefined{
+ let best:L1Anchor|undefined,bd=1e18
+ for(let y=-rx;y<=rx;y+=40)for(let x=-rx;x<=rx;x+=40){const r=l1RegionAt(seed,x,y);if(!r)continue;const a=l1RegionReference(seed,r as any);if(a&&a.id===id){const d=Math.hypot(a.centerX,a.centerY);if(d<bd){bd=d;best=a}}}
+ return best
 }
 export function l1ParkingAt(seed:number,x:number,y:number){
  const ref=l1ReferenceAt(seed,x,y),id=ref?.id
@@ -58,16 +92,17 @@ export function l1ParkingAt(seed:number,x:number,y:number){
  return {wet,brightness,round:id==='parking-round'||(!ref&&field(seed^519,x,y,157)>.72),clean:id==='parking-clean',
   corridor:id==='parking-dry'||(!ref&&field(seed^97,x,y,131)>.76),room:id==='parking-room',props:id==='parking-props'}
 }
-/** Short connected branches embedded in every district, never a sixth macro district. */
+/** Compatibility summary; actual halls and path belts are classified per tile. */
 export function l1PathChunk(seed:number,cx:number,cy:number){
- const ref=l1ReferenceAt(seed,cx*32+16,cy*32+16);if(ref)return ref.variant==='maintenance'
- if(Math.abs(cx)<=1&&Math.abs(cy)<=1||Math.abs(cx-3)<=1&&Math.abs(cy-3)<=1)return false
- const gx=Math.floor(cx/4),gy=Math.floor(cy/4),r=l1Noise(gx,gy,seed^0x7713)
- const x=l1Mod(cx,4),y=l1Mod(cy,4)
- return r<.5?y===1&&(x===1||x===2):x===2&&(y===1||y===2)
+ return l1PlanTile(seed,cx*32+16,cy*32+16).style==='maintenance'
 }
 /** Stable side-room data, shared by layout and wall finish. Coordinates are absolute. */
-export function l1PathRoom(seed:number,cx:number,cy:number){
+export function l1PathRoom(seed:number,cx:number,cy:number):{x0:number;x1:number;y0:number;y1:number;vx:number;type?:L1RoomType;door?:L1Room['door'];alcove?:{x0:number;x1:number;y0:number;y1:number}}|null{
+ const rooms=l1PlanRooms(seed,cx*32,cy*32,cx*32+32,cy*32+32).filter(r=>Math.floor((r.x0+r.x1)/2/32)===cx&&Math.floor((r.y0+r.y1)/2/32)===cy)
+ const r=rooms[0];if(!r)return null
+ return {x0:r.x0,x1:r.x1,y0:r.y0,y1:r.y1,vx:r.x0-cx*32,type:r.type,door:r.door}
+}
+export function l1PathRoomLegacy(seed:number,cx:number,cy:number){
  const ref=l1ReferenceAt(seed,cx*32+16,cy*32+16)
  if(ref?ref.id!=='path-room':l1Noise(cx,cy,seed^1223)>=.45)return null
  const vx=ref?14:5+3*Math.floor(l1Noise(cx,cy,seed^1237)*8)
@@ -75,9 +110,7 @@ export function l1PathRoom(seed:number,cx:number,cy:number){
  return{x0:cx*32+Math.min(23,vx+3),x1:cx*32+Math.min(28,vx+6)+1,y0:cy*32+18,y1:cy*32+27,vx}
 }
 export function l1PathPlasterAt(seed:number,x:number,y:number){
- const r=l1PathRoom(seed,Math.floor(x/32),Math.floor(y/32))
- const inside=(b:{x0:number;x1:number;y0:number;y1:number})=>x>=b.x0-.05&&x<=b.x1+.05&&y>=b.y0-.05&&y<=b.y1+.05
- return !!r&&(inside(r)||!!r.alcove&&inside(r.alcove))
+ return l1PlanRooms(seed,x-.5,y-.5,x+.5,y+.5).some(b=>x>=b.x0-1.05&&x<=b.x1+.05&&y>=b.y0-1.05&&y<=b.y1+.05)
 }
 type Partition={x0:number;y0:number;x1:number;y1:number}
 const partitionCache=new Map<string,readonly Partition[]>()
@@ -116,6 +149,10 @@ export function l1HallPartitions(seed:number,gx:number,gy:number,style:string):r
 export function l1HallWall(seed:number,wx:number,wy:number,style:string){
  const x=Math.floor(wx),y=Math.floor(wy),ref=l1ReferenceAt(seed,wx,wy)
  if(Math.abs(wx-15.5)<5&&Math.abs(wy-15.5)<5)return false
+ // v2: partitions only stand well inside a hall region, clear of its boundary doors.
+ const region=l1RegionAt(seed,x,y)
+ if(!region||x<region.ix0+7||x>region.ix1-7||y<region.iy0+7||y>region.iy1-7)return false
+ if(style!=='parking'&&style!=='storage')return false
  if(ref){
   const u=x-ref.centerX,v=y-ref.centerY,id=ref.id
   // Reference bays are real authored architecture, with the same walls/collision/UV.

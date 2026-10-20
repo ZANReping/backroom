@@ -1,0 +1,104 @@
+{
+  "asset": "tree_small_02",
+  "officialAssetUrl": "https://polyhaven.com/a/tree_small_02",
+  "metadata": {
+    "infoUrl": "https://api.polyhaven.com/info/tree_small_02",
+    "filesUrl": "https://api.polyhaven.com/files/tree_small_02"
+  },
+  "authors": {
+    "Rico Cilliers": "All"
+  },
+  "license": "CC0 1.0 Universal",
+  "licenseUrl": "https://polyhaven.com/license",
+  "processing": "Diffuse RGB combined with alpha grayscale into RGBA PNG only; normal and roughness preserved unchanged. No generation, repainting, noise, or other image processing.",
+  "files": [
+    {
+      "size": "1k",
+      "width": 1024,
+      "height": 1024,
+      "files": [
+        {
+          "kind": "diffuse",
+          "sourceUrl": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/tree_small_02/tree_small_02_leaves_diff_1k.jpg",
+          "expectedMd5": "315cbc2cebfb399e649ccd39112c109a",
+          "actualMd5": "315cbc2cebfb399e649ccd39112c109a",
+          "bytes": 340003,
+          "localPath": "app/assets/l11-foliage/1k/tree_small_02_leaves_diff_1k.jpg"
+        },
+        {
+          "kind": "alpha",
+          "sourceUrl": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/tree_small_02/tree_small_02_leaves_alpha_1k.png",
+          "expectedMd5": "63199ba87a9e8928424bd8c3b8017bd0",
+          "actualMd5": "63199ba87a9e8928424bd8c3b8017bd0",
+          "bytes": 264711,
+          "localPath": "app/assets/l11-foliage/1k/tree_small_02_leaves_alpha_1k.png"
+        },
+        {
+          "kind": "normal",
+          "sourceUrl": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/tree_small_02/tree_small_02_leaves_nor_gl_1k.jpg",
+          "expectedMd5": "b06c87e73f54d9654f66d67e9de7aa85",
+          "actualMd5": "b06c87e73f54d9654f66d67e9de7aa85",
+          "bytes": 681604,
+          "localPath": "app/assets/l11-foliage/1k/tree_small_02_leaves_nor_gl_1k.jpg"
+        },
+        {
+          "kind": "roughness",
+          "sourceUrl": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/tree_small_02/tree_small_02_leaves_rough_1k.jpg",
+          "expectedMd5": "df8afe55f9d3de3b179a41496645a4f9",
+          "actualMd5": "df8afe55f9d3de3b179a41496645a4f9",
+          "bytes": 307562,
+          "localPath": "app/assets/l11-foliage/1k/tree_small_02_leaves_rough_1k.jpg"
+        }
+      ],
+      "outputs": [
+        "app/public/textures/l11-foliage/1k/leaves.png",
+        "app/public/textures/l11-foliage/1k/normal.jpg",
+        "app/public/textures/l11-foliage/1k/roughness.jpg"
+      ]
+    },
+    {
+      "size": "2k",
+      "width": 2048,
+      "height": 2048,
+      "files": [
+        {
+          "kind": "diffuse",
+          "sourceUrl": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/tree_small_02/tree_small_02_leaves_diff_2k.jpg",
+          "expectedMd5": "021ddc0cf1d94b99716a106cede576c7",
+          "actualMd5": "021ddc0cf1d94b99716a106cede576c7",
+          "bytes": 961870,
+          "localPath": "app/assets/l11-foliage/2k/tree_small_02_leaves_diff_2k.jpg"
+        },
+        {
+          "kind": "alpha",
+          "sourceUrl": "https://dl.polyhaven.org/file/ph-assets/Models/png/2k/tree_small_02/tree_small_02_leaves_alpha_2k.png",
+          "expectedMd5": "4d94de8e4677e92ce6d812871f9cf541",
+          "actualMd5": "4d94de8e4677e92ce6d812871f9cf541",
+          "bytes": 636661,
+          "localPath": "app/assets/l11-foliage/2k/tree_small_02_leaves_alpha_2k.png"
+        },
+        {
+          "kind": "normal",
+          "sourceUrl": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/tree_small_02/tree_small_02_leaves_nor_gl_2k.jpg",
+          "expectedMd5": "ab509e55b5d763f68195e0eb257bb5e3",
+          "actualMd5": "ab509e55b5d763f68195e0eb257bb5e3",
+          "bytes": 2395771,
+          "localPath": "app/assets/l11-foliage/2k/tree_small_02_leaves_nor_gl_2k.jpg"
+        },
+        {
+          "kind": "roughness",
+          "sourceUrl": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/tree_small_02/tree_small_02_leaves_rough_2k.jpg",
+          "expectedMd5": "d9e2a970e08ed0af96f360c964cc7bfe",
+          "actualMd5": "d9e2a970e08ed0af96f360c964cc7bfe",
+          "bytes": 902847,
+          "localPath": "app/assets/l11-foliage/2k/tree_small_02_leaves_rough_2k.jpg"
+        }
+      ],
+      "outputs": [
+        "app/public/textures/l11-foliage/2k/leaves.png",
+        "app/public/textures/l11-foliage/2k/normal.jpg",
+        "app/public/textures/l11-foliage/2k/roughness.jpg"
+      ]
+    }
+  ]
+}

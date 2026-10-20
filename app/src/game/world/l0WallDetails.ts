@@ -1,5 +1,6 @@
 import {l0Hash,l0LayoutEnvironment} from './l0Regions'
 import type {L0Layout,L0Wall} from './l0Architecture'
+import {l0FieldContains} from './l0TestField'
 /** Select a whole connected partition, so narrow junction/end faces and both
  * arms inherit the same moulding. Neighbour data is deterministic, not live. */
 export function l0TrimWalls(seed:number,walls:L0Wall[]):Set<L0Wall>{
@@ -20,6 +21,6 @@ export function l0TrimWalls(seed:number,walls:L0Wall[]):Set<L0Wall>{
  return new Set(eligible.filter((_,i)=>{const p=keys.get(root(i))!;return p.maxX-p.x<28&&p.maxY-p.y<28&&l0Hash(seed,Math.round(p.x*1000),Math.round(p.y*1000),0xdec)%100<12}))
 }
 export function l0OutletPositions(a:L0Layout){
- if(a.wood){const r=a.wood;return[{x:r.x+1.1,y:r.y,nx:0,ny:1},{x:r.x+r.w-1.1,y:r.y+r.h,nx:0,ny:-1},{x:r.x,y:r.y+1.5,nx:1,ny:0},{x:r.x+r.w,y:r.y+6.4,nx:-1,ny:0}]}
+ if(a.wood){const r=a.wood;return[{x:r.x+1.1,y:r.y,nx:0,ny:1},{x:r.x+r.w-1.1,y:r.y+r.h,nx:0,ny:-1},{x:r.x,y:r.y+1.5,nx:1,ny:0},{x:r.x+r.w,y:r.y+6.4,nx:-1,ny:0}].filter(p=>!a.testField||!l0FieldContains(a.testField,p.x,p.y))}
  return a.walls.filter(w=>w.bottom===0&&w.w>3&&w.h<1.1&&!w.redFace).map(w=>({x:w.x+.493,y:w.y+w.h,nx:0,ny:1})).filter(p=>l0LayoutEnvironment(a,p.x,p.y+.02).red<.01&&!a.walls.some(w=>p.x>w.x&&p.x<w.x+w.w&&p.y+.02>w.y&&p.y+.02<w.y+w.h)).slice(0,3)
 }

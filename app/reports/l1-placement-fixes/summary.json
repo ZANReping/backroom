@@ -1,0 +1,111 @@
+{
+  "ok": true,
+  "generation": 6,
+  "bakeRevision": 15,
+  "bakedChunks": 99,
+  "staticChecks": 4252,
+  "coverage": {
+    "chunks": 675,
+    "columns": 1447,
+    "wallColumns": 39,
+    "exits": 10,
+    "wallProps": 730,
+    "outposts": 156
+  },
+  "runs": [
+    {
+      "name": "before-realistic",
+      "checks": 2,
+      "scenes": 7,
+      "entryMs": 3551.946600000003,
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "name": "after-realistic",
+      "checks": 1202,
+      "scenes": 7,
+      "entryMs": 3148.0537000000004,
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "name": "after-classic",
+      "checks": 1202,
+      "scenes": 7,
+      "entryMs": 2098.833300000002,
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "name": "after-realistic-details",
+      "checks": 13,
+      "scenes": 2,
+      "entryMs": 3591.817900000002,
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    }
+  ],
+  "regressions": [
+    "check:l1",
+    "check:l1-v2",
+    "check:l1-props",
+    "check:l1-services",
+    "check:l1-bake",
+    "check:l1-vault-mesh",
+    "check:l1-room-dressing",
+    "check:l1-d-import",
+    "check:l1-interactions",
+    "check:l1-offline",
+    "check:l1-placement-fixes"
+  ],
+  "build": "passed",
+  "sourceHashes": {
+    "src/game/world/infiniteSeed.ts": "f544a70bb409d457faa4ef4e1ea36ea7d1f9bfa4e33dcb35031340910587e71d",
+    "src/game/world/infinite.ts": "2797c95c399f6598817c20e5bb62e09ef6f5206854f68c28f70f84177b64d691",
+    "src/game/world/l1Building.ts": "e480e6247a1da3bbc98d3833a71468c9b730b3f5f3cf4e7b06c68bcba68c6329",
+    "src/game/world/l1BuildingTypes.ts": "52f1c72eb0d45c3db36a4c40f9ccd4f4a96af6e0f7bc845528150e6a1e239b46",
+    "src/game/world/l1Layout.ts": "271ea94875b8d8953e6e7a64f60cb507094760820d9483268b5d930c9cb7c11f",
+    "src/game/world/l1Spatial.ts": "1b4b69b026c3daae45b9fb053372c760b9a505aa4ee25d50687a41c97383b41b",
+    "src/game/world/l1Placement.ts": "488fe4adee96b71f7cefd85f7c8d295e9d20eb6da8292cf3dedf57efc0ad5f68",
+    "src/game/world/l1WallFixtures.ts": "753c0a5da74ae5331dabadf9ab24c473cdd009bf116fdab039d75be3a88552ec",
+    "src/game/world/l1OutpostSites.ts": "33f0c1c4a5a30a0a826d3f1ce7a534cbbf295831f1fa4c8aa94168ab0511af05",
+    "src/game/world/infiniteL1.ts": "e1bd1871e95796677ee7781db8421f291086fa8e7e5b22879af75b396831213f",
+    "src/game/world/l1Bake.ts": "7367f6b74ec5d172e69ddadb498bdfb5bb34aa14f631fc81975d9ebf42d85d8d",
+    "src/game/world/l1BakeTypes.ts": "696f072885b1b41d9eac72de99379ba13de5ff6e820816ac92a2af6113648392",
+    "src/game/core/types.ts": "04f3ecb21779190947a02b3b14600d815284f68583198a87ea817a56b03cc606",
+    "src/game/renderer/structures.ts": "41d70e7522636dc77eea1d6099ff905f3feaf0cd74fd816db3b0542ed658e4c2",
+    "src/game/renderer/renderer.ts": "c7aa62f1cec20d54f2eb5ea9f8caa38bbd2bf6565ae6dedc2bae9b303ac29c8f",
+    "src/game/renderer/l1BakedScene.ts": "a69e4c376a4f3fc59b89d942772122e008db84c923da1e2bd6fd794496d5c9fc",
+    "src/game/renderer/l1OutpostEntrance.ts": "52843b04fae844d10902bb440996cbe75b8660ff88db07756d5562d5879d8e67",
+    "public/assets/l1-bakes/manifest.json": "e0d04ac7ca1417873845d06fc0bd35c150e26cca0f91778622798428c4a58acc"
+  }
+}

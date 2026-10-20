@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-16",
+  "scope": "app single-player",
+  "passed": true,
+  "build": true,
+  "commands": [
+    "npm run build",
+    "npm run check:l11-exits",
+    "npm run check:l11-surfaces",
+    "npm run check:l11-meshes",
+    "npx esbuild scripts/check-l11-dev-ground.ts --bundle --platform=node --format=esm --outfile=.cache/check-l11-dev-ground.mjs",
+    "node .cache/check-l11-dev-ground.mjs",
+    "node scripts/verify-l11-dev-map-park.mjs",
+    "node scripts/verify-l11-dev-map-park.mjs --park-only",
+    "node scripts/verify-l11-dev-map-park.mjs --summon-only",
+    "./scripts/check-l11-dev-cleanup.ps1"
+  ],
+  "browser": "Chrome/155.0.8059.40",
+  "hardware": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "headless": true,
+  "viewport": [
+    1920,
+    1080
+  ],
+  "narrowViewport": [
+    820,
+    950
+  ],
+  "seed": 20261006,
+  "mapViews": [
+    "desktop",
+    "narrow",
+    "indoor",
+    "metro"
+  ],
+  "nearestRuntimeKinds": [
+    "l11v2:20261006:-1:-1:block:67:lot:0:1:exit",
+    "l11v2:20261006:-1:-1:block:108:lot:1:0:exit",
+    "l11v2:20261006:-1:-1:block:11:lot:1:2:exit",
+    "l11v2:20261006:-1:-2:block:106:lot:0:0:exit",
+    "l11:public-archive:exit"
+  ],
+  "doorRestorations": 5,
+  "newOfficeDoor": true,
+  "newRoadSign": true,
+  "adjacentSignRejected": true,
+  "parkViews": 3,
+  "parkRaySamples": 75,
+  "parkGeometryCases": 15,
+  "nearestStaticCases": 13,
+  "runtimeErrors": 0,
+  "networkNotes": [
+    "The verifier document requested /favicon.ico, which returns 404; game assets loaded."
+  ],
+  "cleanup": true
+}

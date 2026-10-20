@@ -1,0 +1,113 @@
+{
+  "checkedAt": "2026-10-13T11:22:27.3818279Z",
+  "ok": true,
+  "note": "Read-only ownership audit; no processes were terminated. Port/PID reuse alone is not treated as ownership.",
+  "runs": [
+    {
+      "run": "qa-1791888719996-44672",
+      "ports": [
+        13714,
+        13715
+      ],
+      "originalPids": {
+        "server": 43136,
+        "browser": 58652
+      },
+      "ownedBrowserPids": [],
+      "ownedServerPids": [],
+      "profileRemains": false,
+      "remainingListeners": []
+    },
+    {
+      "run": "qa-1791889224808-432",
+      "ports": [
+        5629,
+        5630
+      ],
+      "originalPids": {
+        "server": 58548,
+        "browser": 40280
+      },
+      "ownedBrowserPids": [],
+      "ownedServerPids": [],
+      "profileRemains": false,
+      "remainingListeners": []
+    },
+    {
+      "run": "qa-1791887480451-34824",
+      "ports": [
+        9239,
+        9240
+      ],
+      "originalPids": {
+        "server": 55828,
+        "browser": 60888
+      },
+      "ownedBrowserPids": [],
+      "ownedServerPids": [],
+      "profileRemains": false,
+      "remainingListeners": []
+    },
+    {
+      "run": "qa-1791889591820-9612",
+      "ports": [
+        4211,
+        4212
+      ],
+      "originalPids": {
+        "server": 668,
+        "browser": 13256
+      },
+      "ownedBrowserPids": [],
+      "ownedServerPids": [],
+      "profileRemains": false,
+      "remainingListeners": []
+    },
+    {
+      "run": "qa-1791890074520-6344",
+      "ports": [
+        10267,
+        10268
+      ],
+      "originalPids": {
+        "server": 45940,
+        "browser": 53264
+      },
+      "ownedBrowserPids": [],
+      "ownedServerPids": [],
+      "profileRemains": false,
+      "remainingListeners": []
+    },
+    {
+      "run": "qa-1791888319528-60316",
+      "ports": [
+        5700,
+        5701
+      ],
+      "originalPids": {
+        "server": 50540,
+        "browser": 51756
+      },
+      "ownedBrowserPids": [],
+      "ownedServerPids": [],
+      "profileRemains": false,
+      "remainingListeners": []
+    },
+    {
+      "run": "qa-1791890407917-34676",
+      "ports": [
+        8236,
+        8237
+      ],
+      "originalPids": {
+        "server": 29332,
+        "browser": 50464
+      },
+      "ownedBrowserPids": [],
+      "ownedServerPids": [],
+      "profileRemains": false,
+      "remainingListeners": []
+    }
+  ],
+  "strayOwnedBrowsers": []
+}

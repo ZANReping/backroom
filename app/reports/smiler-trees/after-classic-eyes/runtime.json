@@ -1,0 +1,165 @@
+{
+  "run": "qa-smiler-trees-1792128819925-44740",
+  "baseline": false,
+  "classic": true,
+  "skipRuntime": true,
+  "label": "eyes",
+  "requestedCases": [
+    "phantom-windup",
+    "phantom-impact"
+  ],
+  "mode": "classic",
+  "port": 12565,
+  "cdp": 12566,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\smiler-trees\\after-classic-eyes\\qa-smiler-trees-1792128819925-44740",
+  "cases": [
+    "phantom-windup",
+    "phantom-impact"
+  ],
+  "views": [
+    {
+      "id": "phantom-windup",
+      "view": {
+        "kind": "phantom",
+        "age": 0.24,
+        "distance": 1.4000000000000057,
+        "faceNDC": {
+          "isBox3": true,
+          "min": {
+            "x": -0.22606361929692378,
+            "y": -0.721883047560148,
+            "z": 0.8893237015962171
+          },
+          "max": {
+            "x": 0.22606361929692378,
+            "y": -0.07922263658561597,
+            "z": 0.8990112784795549
+          }
+        },
+        "bend": 0,
+        "stats": {
+          "label": "3:open",
+          "median": 4.200000000000728,
+          "p95": 8.30000000000291,
+          "max": 70.70000000000073,
+          "p99": 8.5,
+          "frames": 683,
+          "over16ms": 2,
+          "over33ms": 1,
+          "cpuMedian": 1.2999999970197678,
+          "cpuP95": 18.100000008940697,
+          "gpuMedian": 0,
+          "gpuP95": 0,
+          "gpuSamples": 10,
+          "draws": 240,
+          "triangles": 462709,
+          "memory": {
+            "geometries": 523,
+            "textures": 34
+          },
+          "programs": 37,
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        },
+        "pose": {
+          "x": 15.5,
+          "y": 15.5,
+          "z": 0,
+          "yaw": -1.5707963267948966,
+          "pitch": 0,
+          "fov": 60
+        },
+        "seed": 20261006
+      }
+    },
+    {
+      "id": "phantom-impact",
+      "view": {
+        "kind": "phantom",
+        "age": 0.38,
+        "distance": 1.4000000000000057,
+        "faceNDC": {
+          "isBox3": true,
+          "min": {
+            "x": -0.22356026429110318,
+            "y": -0.6966596215511807,
+            "z": 0.8857086099111527
+          },
+          "max": {
+            "x": 0.22356026429110318,
+            "y": -0.09291508601867564,
+            "z": 0.8994863870664228
+          }
+        },
+        "bend": 0,
+        "stats": {
+          "label": "3:open",
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "max": 8.400000000001455,
+          "p99": 8.39999999999418,
+          "frames": 747,
+          "over16ms": 0,
+          "over33ms": 0,
+          "cpuMedian": 2.0999999940395355,
+          "cpuP95": 3.7999999970197678,
+          "gpuMedian": 3.364864,
+          "gpuP95": 6.426624,
+          "gpuSamples": 12,
+          "draws": 240,
+          "triangles": 462709,
+          "memory": {
+            "geometries": 523,
+            "textures": 34
+          },
+          "programs": 37,
+          "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+        },
+        "pose": {
+          "x": 15.5,
+          "y": 15.5,
+          "z": 0,
+          "yaw": -1.5707963267948966,
+          "pitch": 0,
+          "fov": 60
+        },
+        "seed": 20261006
+      }
+    }
+  ],
+  "runtime": null,
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\smiler-trees\\after-classic-eyes\\qa-smiler-trees-1792128819925-44740",
+    "--remote-debugging-port=12566",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.40",
+    "revision": "@cfaadc5a132d78e1828635aa8405a499f3e14864",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.20"
+  },
+  "pids": {
+    "server": 62696,
+    "browser": 46572
+  },
+  "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [],
+  "networkErrors": []
+}

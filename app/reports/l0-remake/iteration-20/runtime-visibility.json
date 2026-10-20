@@ -1,0 +1,509 @@
+{
+  "cases": [
+    {
+      "mode": "classic",
+      "lights": 8,
+      "shadows": 0,
+      "greenPixels": 481835,
+      "floorPixels": 269442,
+      "sources": [
+        {
+          "x": 77.5,
+          "y": 20.5,
+          "r": 1.8,
+          "color": "#61ff67",
+          "flickerSeed": 0,
+          "noFix": 1,
+          "keep": 1,
+          "intensityMul": 0.25,
+          "fixZ": 0.65
+        },
+        {
+          "x": 142.5,
+          "y": 52.5,
+          "r": 1.8,
+          "color": "#61ff67",
+          "flickerSeed": 0,
+          "noFix": 1,
+          "keep": 1,
+          "intensityMul": 0.25,
+          "fixZ": 0.65
+        },
+        {
+          "x": 130.5,
+          "y": 86.5,
+          "r": 1.8,
+          "color": "#61ff67",
+          "flickerSeed": 0,
+          "noFix": 1,
+          "keep": 1,
+          "intensityMul": 0.25,
+          "fixZ": 0.65
+        },
+        {
+          "x": 106.5,
+          "y": 154.5,
+          "r": 1.8,
+          "color": "#61ff67",
+          "flickerSeed": 0,
+          "noFix": 1,
+          "keep": 1,
+          "intensityMul": 0.25,
+          "fixZ": 0.65
+        },
+        {
+          "x": 79.5,
+          "y": 93.2408086256019,
+          "r": 1.8,
+          "color": "#61ff67",
+          "flickerSeed": 0,
+          "noFix": 1,
+          "keep": 1,
+          "intensityMul": 0.25,
+          "fixZ": 0.65
+        }
+      ],
+      "mask": [
+        {
+          "i": 0,
+          "color": "ff9a3c",
+          "power": 0,
+          "baked": false,
+          "masked": 0
+        },
+        {
+          "i": 1,
+          "color": "61ff67",
+          "power": 1.4330400000000003,
+          "baked": false,
+          "masked": 0
+        },
+        {
+          "i": 2,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        },
+        {
+          "i": 3,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        },
+        {
+          "i": 4,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        },
+        {
+          "i": 5,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        },
+        {
+          "i": 6,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        },
+        {
+          "i": 7,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        },
+        {
+          "i": 8,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        }
+      ],
+      "stats": {
+        "label": "blackout",
+        "median": 4.199999999999818,
+        "p95": 4.300000000000182,
+        "max": 58.29999999999927,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 124,
+        "triangles": 314903,
+        "memory": {
+          "geometries": 158,
+          "textures": 27
+        },
+        "programs": 54,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "recovered": true
+    },
+    {
+      "mode": "realistic",
+      "lights": 8,
+      "shadows": 0,
+      "greenPixels": 500939,
+      "floorPixels": 277570,
+      "sources": [
+        {
+          "x": 77.5,
+          "y": 20.5,
+          "r": 1.8,
+          "color": "#61ff67",
+          "flickerSeed": 0,
+          "noFix": 1,
+          "keep": 1,
+          "intensityMul": 0.25,
+          "fixZ": 0.65
+        },
+        {
+          "x": 142.5,
+          "y": 52.5,
+          "r": 1.8,
+          "color": "#61ff67",
+          "flickerSeed": 0,
+          "noFix": 1,
+          "keep": 1,
+          "intensityMul": 0.25,
+          "fixZ": 0.65
+        },
+        {
+          "x": 130.5,
+          "y": 86.5,
+          "r": 1.8,
+          "color": "#61ff67",
+          "flickerSeed": 0,
+          "noFix": 1,
+          "keep": 1,
+          "intensityMul": 0.25,
+          "fixZ": 0.65
+        },
+        {
+          "x": 106.5,
+          "y": 154.5,
+          "r": 1.8,
+          "color": "#61ff67",
+          "flickerSeed": 0,
+          "noFix": 1,
+          "keep": 1,
+          "intensityMul": 0.25,
+          "fixZ": 0.65
+        },
+        {
+          "x": 79.5,
+          "y": 93.2408086256019,
+          "r": 1.8,
+          "color": "#61ff67",
+          "flickerSeed": 0,
+          "noFix": 1,
+          "keep": 1,
+          "intensityMul": 0.25,
+          "fixZ": 0.65
+        }
+      ],
+      "mask": [
+        {
+          "i": 0,
+          "color": "ff9a3c",
+          "power": 0,
+          "baked": false,
+          "masked": 0
+        },
+        {
+          "i": 1,
+          "color": "61ff67",
+          "power": 1.4330400000000003,
+          "baked": false,
+          "masked": 0
+        },
+        {
+          "i": 2,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        },
+        {
+          "i": 3,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        },
+        {
+          "i": 4,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        },
+        {
+          "i": 5,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        },
+        {
+          "i": 6,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        },
+        {
+          "i": 7,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        },
+        {
+          "i": 8,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        }
+      ],
+      "stats": {
+        "label": "blackout",
+        "median": 4.199999999998909,
+        "p95": 4.300000000000182,
+        "max": 300,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 138,
+        "triangles": 314917,
+        "memory": {
+          "geometries": 163,
+          "textures": 51
+        },
+        "programs": 68,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "recovered": true
+    },
+    {
+      "mode": "realistic",
+      "lights": 16,
+      "shadows": 2,
+      "greenPixels": 495428,
+      "floorPixels": 276769,
+      "sources": [
+        {
+          "x": 77.5,
+          "y": 20.5,
+          "r": 1.8,
+          "color": "#61ff67",
+          "flickerSeed": 0,
+          "noFix": 1,
+          "keep": 1,
+          "intensityMul": 0.25,
+          "fixZ": 0.65
+        },
+        {
+          "x": 142.5,
+          "y": 52.5,
+          "r": 1.8,
+          "color": "#61ff67",
+          "flickerSeed": 0,
+          "noFix": 1,
+          "keep": 1,
+          "intensityMul": 0.25,
+          "fixZ": 0.65
+        },
+        {
+          "x": 130.5,
+          "y": 86.5,
+          "r": 1.8,
+          "color": "#61ff67",
+          "flickerSeed": 0,
+          "noFix": 1,
+          "keep": 1,
+          "intensityMul": 0.25,
+          "fixZ": 0.65
+        },
+        {
+          "x": 106.5,
+          "y": 154.5,
+          "r": 1.8,
+          "color": "#61ff67",
+          "flickerSeed": 0,
+          "noFix": 1,
+          "keep": 1,
+          "intensityMul": 0.25,
+          "fixZ": 0.65
+        },
+        {
+          "x": 79.5,
+          "y": 93.2408086256019,
+          "r": 1.8,
+          "color": "#61ff67",
+          "flickerSeed": 0,
+          "noFix": 1,
+          "keep": 1,
+          "intensityMul": 0.25,
+          "fixZ": 0.65
+        }
+      ],
+      "mask": [
+        {
+          "i": 0,
+          "color": "61ff67",
+          "power": 1.4330400000000003,
+          "baked": false,
+          "masked": 0
+        },
+        {
+          "i": 1,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        },
+        {
+          "i": 2,
+          "color": "ff9a3c",
+          "power": 0,
+          "baked": false,
+          "masked": 0
+        },
+        {
+          "i": 3,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        },
+        {
+          "i": 4,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        },
+        {
+          "i": 5,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        },
+        {
+          "i": 6,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        },
+        {
+          "i": 7,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        },
+        {
+          "i": 8,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        },
+        {
+          "i": 9,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        },
+        {
+          "i": 10,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        },
+        {
+          "i": 11,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        },
+        {
+          "i": 12,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        },
+        {
+          "i": 13,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        },
+        {
+          "i": 14,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        },
+        {
+          "i": 15,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        },
+        {
+          "i": 16,
+          "color": "f7f4dd",
+          "power": 2.4075072000000004,
+          "baked": true,
+          "masked": 1
+        }
+      ],
+      "stats": {
+        "label": "blackout",
+        "median": 4.199999999998909,
+        "p95": 4.300000000001091,
+        "max": 474.8000000000011,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 138,
+        "triangles": 314917,
+        "memory": {
+          "geometries": 163,
+          "textures": 51
+        },
+        "programs": 53,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "recovered": true
+    }
+  ],
+  "pass": true,
+  "errors": []
+}

@@ -1,0 +1,242 @@
+{
+  "mode": "realistic",
+  "run": "qa-1791878877237-51068",
+  "port": 12542,
+  "cdp": 12543,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-remake\\qa-1791878877237-51068",
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/154.0.8037.98",
+    "revision": "@b859317bf11f6be47f9b7799ec690a0a42a1fb33",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+    "jsVersion": "15.4.80.20"
+  },
+  "command": [
+    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-remake\\qa-1791878877237-51068",
+    "--remote-debugging-port=12543",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--disk-cache-size=8388608",
+    "--media-cache-size=1048576",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "server": 33528,
+    "browser": 8548
+  },
+  "quality": {
+    "viewport": [
+      1920,
+      1080
+    ],
+    "texture": 2,
+    "shadowLights": 2,
+    "shadows": true,
+    "sceneLights": 16,
+    "bloom": true,
+    "detail": 1
+  },
+  "screenshotFormat": "jpg",
+  "warm": {
+    "elapsed": 21382.799999998882,
+    "pending": {
+      "missing": 0,
+      "chunk": false,
+      "distant": false,
+      "finite": false,
+      "flash": false,
+      "moth": false,
+      "items": 0,
+      "compile": false,
+      "retired": 0,
+      "textures": 0
+    },
+    "groups": 25,
+    "memory": {
+      "geometries": 331,
+      "textures": 133
+    },
+    "programs": 58
+  },
+  "world": {
+    "npcs": 0,
+    "buildings": 7,
+    "structures": 358,
+    "shared": [
+      [
+        "l11v2:20261006:-1:-1:block:109:lot:0:2",
+        2
+      ],
+      [
+        "l11v2:20261006:-1:-1:block:110:lot:2:2",
+        1
+      ],
+      [
+        "l11v2:20261006:0:-1:block:76:lot:0:0",
+        2
+      ],
+      [
+        "l11v2:20261006:0:-1:block:76:lot:1:1",
+        6
+      ],
+      [
+        "l11v2:20261006:0:-1:block:76:lot:1:0",
+        1
+      ],
+      [
+        "l11:public-archive",
+        4
+      ],
+      [
+        "l11v2:20261006:-1:0:block:40:lot:0:0",
+        2
+      ]
+    ],
+    "rendered": 7,
+    "exits": [
+      {
+        "name": "城市边缘乡间小路",
+        "kind": "countrypath"
+      },
+      {
+        "name": "郊区回程公路",
+        "kind": "l11roadback"
+      },
+      {
+        "name": "公共档案馆的设备门",
+        "kind": "basebeta",
+        "req": {
+          "tapes": 6
+        }
+      }
+    ],
+    "origin": [
+      -64,
+      -64
+    ]
+  },
+  "entry": {
+    "label": "11:open",
+    "median": 12.5,
+    "p95": 104.09999999999854,
+    "max": 170.90000000000146,
+    "p99": 145.90000000000146,
+    "frames": 122,
+    "over16ms": 45,
+    "over33ms": 40,
+    "cpuMedian": 9.5,
+    "cpuP95": 14,
+    "gpuMedian": 9.106432,
+    "gpuP95": 87.965696,
+    "gpuSamples": 120,
+    "draws": 344,
+    "triangles": 179312,
+    "memory": {
+      "geometries": 331,
+      "textures": 133
+    },
+    "programs": 58,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "movingStart": {
+    "x": 528,
+    "y": 994,
+    "revision": 1
+  },
+  "moving": {
+    "label": "11:open",
+    "median": 8.39999999999418,
+    "p95": 74.89999999999418,
+    "max": 504.1000000000058,
+    "p99": 95.79999999998836,
+    "frames": 1167,
+    "over16ms": 341,
+    "over33ms": 245,
+    "cpuMedian": 6.300000000745058,
+    "cpuP95": 13.099999999627471,
+    "gpuMedian": 6.899712,
+    "gpuP95": 72.477696,
+    "gpuSamples": 1165,
+    "draws": 508,
+    "triangles": 168837,
+    "memory": {
+      "geometries": 823,
+      "textures": 138
+    },
+    "programs": 65,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "movingEnd": {
+    "x": 528,
+    "y": 1061.9150000000063,
+    "revision": 3
+  },
+  "timings": {
+    "updateInfiniteWindow": {
+      "ms": 42.600000001490116,
+      "calls": 1171,
+      "max": 15.599999999627471
+    },
+    "updateMovement": {
+      "ms": 257.9999999869615,
+      "calls": 1171,
+      "max": 40.40000000037253
+    },
+    "updateSurvival": {
+      "ms": 24.09999998472631,
+      "calls": 1171,
+      "max": 0.900000000372529
+    },
+    "updateEntities": {
+      "ms": 8.400000000372529,
+      "calls": 1171,
+      "max": 1.200000001117587
+    },
+    "updateJerry": {
+      "ms": 1.400000000372529,
+      "calls": 1171,
+      "max": 0.2000000011175871
+    },
+    "updateNpcs": {
+      "ms": 2.199999997392297,
+      "calls": 1171,
+      "max": 0.5
+    },
+    "scanInteract": {
+      "ms": 53.39999997988343,
+      "calls": 1171,
+      "max": 1.199999999254942
+    },
+    "triggerStructs": {
+      "ms": 15.600000021979213,
+      "calls": 1171,
+      "max": 0.19999999925494194
+    },
+    "updateAmbient": {
+      "ms": 11.099999997764826,
+      "calls": 1171,
+      "max": 0.900000000372529
+    },
+    "computeVisibility": {
+      "ms": 2233.0000000018626,
+      "calls": 1171,
+      "max": 19.59999999962747
+    },
+    "update": {
+      "ms": 2691.7999999877065,
+      "calls": 1171,
+      "max": 70.90000000037253
+    }
+  },
+  "crossedMacroregion": true,
+  "errors": [],
+  "ok": true
+}

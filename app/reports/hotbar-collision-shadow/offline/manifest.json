@@ -1,0 +1,1995 @@
+{
+  "version": 1,
+  "seed": 20261006,
+  "quality": "high",
+  "radius": 1,
+  "anchors": [
+    "spawn",
+    "parking-common",
+    "parking-dim",
+    "storage",
+    "gothic",
+    "ouroboros",
+    "garden",
+    "fabled",
+    "path-room",
+    "path-corridor",
+    "parking-round"
+  ],
+  "anchorPositions": [
+    {
+      "centerX": 15.5,
+      "centerY": 15.5
+    },
+    {
+      "id": "parking-common",
+      "file": "天鹰段-合集/最普遍的天鹰段.jpg",
+      "variant": "parking",
+      "width": 800,
+      "height": 600,
+      "x": 111.94270000000006,
+      "y": 121.30369999999999,
+      "z": 0.0384,
+      "yaw": 0.3291,
+      "pitch": 0.0868,
+      "roll": 0.0084,
+      "fov": 55.9277,
+      "centerX": 112,
+      "centerY": 112,
+      "blackout": false
+    },
+    {
+      "id": "parking-dim",
+      "file": "天鹰段-合集/较为黑暗的天鹰段.png",
+      "variant": "parking",
+      "width": 2048,
+      "height": 1536,
+      "x": -781.4677999999999,
+      "y": 1019.1027,
+      "z": -0.0495,
+      "yaw": 0.0386,
+      "pitch": 0.0216,
+      "roll": 0.0026,
+      "fov": 42.5875,
+      "centerX": -784,
+      "centerY": 1008,
+      "blackout": false
+    },
+    {
+      "id": "storage",
+      "file": "跃金段.jpg",
+      "variant": "storage",
+      "width": 1199,
+      "height": 864,
+      "x": 344.23279999999977,
+      "y": -387.1125,
+      "z": -1.1933,
+      "yaw": 0.6645,
+      "pitch": 0.1619,
+      "roll": 0,
+      "fov": 55.3591,
+      "centerX": 336,
+      "centerY": -400,
+      "blackout": false
+    },
+    {
+      "id": "gothic",
+      "file": "哥特段.png",
+      "variant": "gothic",
+      "width": 1358,
+      "height": 858,
+      "x": 304.29569999999967,
+      "y": -142.922,
+      "z": 1.0016,
+      "yaw": 0.0574,
+      "pitch": -0.0983,
+      "roll": 0.0236,
+      "fov": 61.2543,
+      "centerX": 304,
+      "centerY": -144,
+      "blackout": false
+    },
+    {
+      "id": "ouroboros",
+      "file": "衔尾段.png",
+      "variant": "ouroboros",
+      "width": 1482,
+      "height": 746,
+      "x": -365.0789999999997,
+      "y": -301.74,
+      "z": 0.4071,
+      "yaw": 0.1754,
+      "pitch": 0.0002,
+      "roll": 0,
+      "fov": 63.6509,
+      "centerX": -368,
+      "centerY": -304,
+      "blackout": false
+    },
+    {
+      "id": "garden",
+      "file": "花园段.png",
+      "variant": "garden",
+      "width": 1920,
+      "height": 1080,
+      "x": -141.73089999999956,
+      "y": -109.9105,
+      "z": -0.1062,
+      "yaw": -0.1282,
+      "pitch": -0.0353,
+      "roll": 0,
+      "fov": 64.2096,
+      "centerX": -144,
+      "centerY": -112,
+      "blackout": false
+    },
+    {
+      "centerX": 1209.5,
+      "centerY": -252.5
+    },
+    {
+      "centerX": -454,
+      "centerY": -767.5
+    },
+    {
+      "centerX": -458,
+      "centerY": -771
+    },
+    {
+      "id": "parking-round",
+      "file": "天鹰段-合集/圆柱天鹰段，天鹰段的墙壁.png",
+      "variant": "parking",
+      "width": 835,
+      "height": 617,
+      "x": 497.4838,
+      "y": 182.7814,
+      "z": 0.2004,
+      "yaw": 0.1737,
+      "pitch": -0.2386,
+      "roll": -0.0462,
+      "fov": 58.3555,
+      "centerX": 496,
+      "centerY": 176,
+      "blackout": false
+    }
+  ],
+  "bakeRevision": 17,
+  "chunks": [
+    {
+      "file": "chunk--16--26-high.json.gz",
+      "seed": 20261006,
+      "cx": -16,
+      "cy": -26,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "df69dd86",
+      "metrics": {
+        "generationMs": 414.57070000004023,
+        "geometryMs": 41.73309999995399,
+        "bakeMs": 32076.39690000005,
+        "samples": 83772,
+        "rays": 7407724,
+        "bytes": 6306400
+      }
+    },
+    {
+      "file": "chunk--15--26-high.json.gz",
+      "seed": 20261006,
+      "cx": -15,
+      "cy": -26,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "a26756ec",
+      "metrics": {
+        "generationMs": 355.6140000000596,
+        "geometryMs": 34.42709999997169,
+        "bakeMs": 27670.17909999995,
+        "samples": 94048,
+        "rays": 6686002,
+        "bytes": 6131968
+      }
+    },
+    {
+      "file": "chunk--14--26-high.json.gz",
+      "seed": 20261006,
+      "cx": -14,
+      "cy": -26,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "c09a5055",
+      "metrics": {
+        "generationMs": 271.4589000000851,
+        "geometryMs": 62.39659999997821,
+        "bakeMs": 31001.55540000007,
+        "samples": 101624,
+        "rays": 7781057,
+        "bytes": 6924272
+      }
+    },
+    {
+      "file": "chunk--16--25-high.json.gz",
+      "seed": 20261006,
+      "cx": -16,
+      "cy": -25,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "2a3d85c4",
+      "metrics": {
+        "generationMs": 428.69510000001173,
+        "geometryMs": 38.11680000007618,
+        "bakeMs": 22753.85329999996,
+        "samples": 81650,
+        "rays": 5248131,
+        "bytes": 6091856
+      }
+    },
+    {
+      "file": "chunk--15--25-high.json.gz",
+      "seed": 20261006,
+      "cx": -15,
+      "cy": -25,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "9905895f",
+      "metrics": {
+        "generationMs": 385.96450000000186,
+        "geometryMs": 37.04579999996349,
+        "bakeMs": 22769.784900000086,
+        "samples": 93474,
+        "rays": 5355707,
+        "bytes": 6061680
+      }
+    },
+    {
+      "file": "chunk--14--25-high.json.gz",
+      "seed": 20261006,
+      "cx": -14,
+      "cy": -25,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "bf2c2275",
+      "metrics": {
+        "generationMs": 286.09699999995064,
+        "geometryMs": 67.00970000005327,
+        "bakeMs": 30674.06150000007,
+        "samples": 97086,
+        "rays": 8400550,
+        "bytes": 6902560
+      }
+    },
+    {
+      "file": "chunk--16--24-high.json.gz",
+      "seed": 20261006,
+      "cx": -16,
+      "cy": -24,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "b756fbb9",
+      "metrics": {
+        "generationMs": 408.9793999999529,
+        "geometryMs": 38.54619999998249,
+        "bakeMs": 24411.921399999992,
+        "samples": 79626,
+        "rays": 5815398,
+        "bytes": 6194160
+      }
+    },
+    {
+      "file": "chunk--15--24-high.json.gz",
+      "seed": 20261006,
+      "cx": -15,
+      "cy": -24,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "82c145bb",
+      "metrics": {
+        "generationMs": 324.5587999999989,
+        "geometryMs": 39.78330000001006,
+        "bakeMs": 21928.310699999915,
+        "samples": 91925,
+        "rays": 5267126,
+        "bytes": 6139512
+      }
+    },
+    {
+      "file": "chunk--14--24-high.json.gz",
+      "seed": 20261006,
+      "cx": -14,
+      "cy": -24,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "352283a3",
+      "metrics": {
+        "generationMs": 278.2796999999555,
+        "geometryMs": 61.136899999924935,
+        "bakeMs": 28368.7723999999,
+        "samples": 98440,
+        "rays": 6966162,
+        "bytes": 6920960
+      }
+    },
+    {
+      "file": "chunk--16--23-high.json.gz",
+      "seed": 20261006,
+      "cx": -16,
+      "cy": -23,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "6beb9cb8",
+      "metrics": {
+        "generationMs": 293.31239999993704,
+        "geometryMs": 24.2455000000773,
+        "bakeMs": 13615.619399999967,
+        "samples": 93626,
+        "rays": 3611239,
+        "bytes": 5746120
+      }
+    },
+    {
+      "file": "chunk--15--23-high.json.gz",
+      "seed": 20261006,
+      "cx": -15,
+      "cy": -23,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "ef50129f",
+      "metrics": {
+        "generationMs": 270.204400000046,
+        "geometryMs": 23.524800000013784,
+        "bakeMs": 10528.533999999985,
+        "samples": 95206,
+        "rays": 2974237,
+        "bytes": 5725328
+      }
+    },
+    {
+      "file": "chunk--14--23-high.json.gz",
+      "seed": 20261006,
+      "cx": -14,
+      "cy": -23,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "989258b1",
+      "metrics": {
+        "generationMs": 215.26210000005085,
+        "geometryMs": 25.27059999993071,
+        "bakeMs": 11244.25529999996,
+        "samples": 98814,
+        "rays": 3142147,
+        "bytes": 5822848
+      }
+    },
+    {
+      "file": "chunk-9--14-high.json.gz",
+      "seed": 20261006,
+      "cx": 9,
+      "cy": -14,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "7a3fe4c9",
+      "metrics": {
+        "generationMs": 201.95709999999963,
+        "geometryMs": 45.91049999999814,
+        "bakeMs": 22059.684400000027,
+        "samples": 83694,
+        "rays": 6354657,
+        "bytes": 4228752
+      }
+    },
+    {
+      "file": "chunk-10--14-high.json.gz",
+      "seed": 20261006,
+      "cx": 10,
+      "cy": -14,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "b6751eac",
+      "metrics": {
+        "generationMs": 192.13430000003427,
+        "geometryMs": 38.249199999962,
+        "bakeMs": 23677.709700000007,
+        "samples": 79640,
+        "rays": 6187115,
+        "bytes": 3875656
+      }
+    },
+    {
+      "file": "chunk-11--14-high.json.gz",
+      "seed": 20261006,
+      "cx": 11,
+      "cy": -14,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "68f3510f",
+      "metrics": {
+        "generationMs": 233.94189999997616,
+        "geometryMs": 46.146100000012666,
+        "bakeMs": 20446.506600000022,
+        "samples": 78386,
+        "rays": 5861937,
+        "bytes": 4185328
+      }
+    },
+    {
+      "file": "chunk-9--13-high.json.gz",
+      "seed": 20261006,
+      "cx": 9,
+      "cy": -13,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "a30f15ef",
+      "metrics": {
+        "generationMs": 198.9028999999864,
+        "geometryMs": 43.12109999998938,
+        "bakeMs": 25818.498900000006,
+        "samples": 85042,
+        "rays": 6221207,
+        "bytes": 4225624
+      }
+    },
+    {
+      "file": "chunk-10--13-high.json.gz",
+      "seed": 20261006,
+      "cx": 10,
+      "cy": -13,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "8d18453e",
+      "metrics": {
+        "generationMs": 232.04330000001937,
+        "geometryMs": 36.68800000002375,
+        "bakeMs": 23606.712899999984,
+        "samples": 75740,
+        "rays": 5921907,
+        "bytes": 3874736
+      }
+    },
+    {
+      "file": "chunk-11--13-high.json.gz",
+      "seed": 20261006,
+      "cx": 11,
+      "cy": -13,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "4fbe81d2",
+      "metrics": {
+        "generationMs": 197.84090000001015,
+        "geometryMs": 43.18270000000484,
+        "bakeMs": 20707.52469999995,
+        "samples": 75806,
+        "rays": 5708710,
+        "bytes": 4184408
+      }
+    },
+    {
+      "file": "chunk-9--12-high.json.gz",
+      "seed": 20261006,
+      "cx": 9,
+      "cy": -12,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "2e108acf",
+      "metrics": {
+        "generationMs": 236.45629999996163,
+        "geometryMs": 42.024399999994785,
+        "bakeMs": 21216.436400000006,
+        "samples": 84322,
+        "rays": 6581676,
+        "bytes": 4251016
+      }
+    },
+    {
+      "file": "chunk-10--12-high.json.gz",
+      "seed": 20261006,
+      "cx": 10,
+      "cy": -12,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "b93533dd",
+      "metrics": {
+        "generationMs": 203.92310000001453,
+        "geometryMs": 32.61320000002161,
+        "bakeMs": 20723.89129999996,
+        "samples": 78288,
+        "rays": 6138101,
+        "bytes": 3897920
+      }
+    },
+    {
+      "file": "chunk-11--12-high.json.gz",
+      "seed": 20261006,
+      "cx": 11,
+      "cy": -12,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "93c21204",
+      "metrics": {
+        "generationMs": 198.9260999999824,
+        "geometryMs": 49.67420000000857,
+        "bakeMs": 18845.94219999999,
+        "samples": 77736,
+        "rays": 5792127,
+        "bytes": 4204832
+      }
+    },
+    {
+      "file": "chunk--13--11-high.json.gz",
+      "seed": 20261006,
+      "cx": -13,
+      "cy": -11,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "b0138eb5",
+      "metrics": {
+        "generationMs": 269.4806000000099,
+        "geometryMs": 44.649800000013784,
+        "bakeMs": 18947.526700000046,
+        "samples": 87153,
+        "rays": 4497361,
+        "bytes": 6385888
+      }
+    },
+    {
+      "file": "chunk--12--11-high.json.gz",
+      "seed": 20261006,
+      "cx": -12,
+      "cy": -11,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "30a92f67",
+      "metrics": {
+        "generationMs": 237.1294999999227,
+        "geometryMs": 52.39210000005551,
+        "bakeMs": 20152.00230000005,
+        "samples": 90006,
+        "rays": 4974117,
+        "bytes": 6521312
+      }
+    },
+    {
+      "file": "chunk--11--11-high.json.gz",
+      "seed": 20261006,
+      "cx": -11,
+      "cy": -11,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "4e054d26",
+      "metrics": {
+        "generationMs": 221.5456000000704,
+        "geometryMs": 54.66569999989588,
+        "bakeMs": 20951.627199999988,
+        "samples": 88981,
+        "rays": 4384878,
+        "bytes": 6512480
+      }
+    },
+    {
+      "file": "chunk--13--10-high.json.gz",
+      "seed": 20261006,
+      "cx": -13,
+      "cy": -10,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "a396cc59",
+      "metrics": {
+        "generationMs": 327.76969999994617,
+        "geometryMs": 65.08100000000559,
+        "bakeMs": 29345.77059999993,
+        "samples": 86925,
+        "rays": 6718312,
+        "bytes": 6941752
+      }
+    },
+    {
+      "file": "chunk--12--10-high.json.gz",
+      "seed": 20261006,
+      "cx": -12,
+      "cy": -10,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "ab176dca",
+      "metrics": {
+        "generationMs": 294.7854000000516,
+        "geometryMs": 80.71880000003148,
+        "bakeMs": 32839.947000000044,
+        "samples": 90860,
+        "rays": 7930362,
+        "bytes": 7116920
+      }
+    },
+    {
+      "file": "chunk--11--10-high.json.gz",
+      "seed": 20261006,
+      "cx": -11,
+      "cy": -10,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "ee462c95",
+      "metrics": {
+        "generationMs": 297.5366999999387,
+        "geometryMs": 78.66330000001471,
+        "bakeMs": 29371.194800000056,
+        "samples": 88827,
+        "rays": 6582726,
+        "bytes": 7075520
+      }
+    },
+    {
+      "file": "chunk--13--9-high.json.gz",
+      "seed": 20261006,
+      "cx": -13,
+      "cy": -9,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "29b7e4e5",
+      "metrics": {
+        "generationMs": 344.59419999993406,
+        "geometryMs": 83.79940000001807,
+        "bakeMs": 26968.83400000003,
+        "samples": 89871,
+        "rays": 6958487,
+        "bytes": 6969352
+      }
+    },
+    {
+      "file": "chunk--12--9-high.json.gz",
+      "seed": 20261006,
+      "cx": -12,
+      "cy": -9,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "abf3d0d5",
+      "metrics": {
+        "generationMs": 321.07580000010785,
+        "geometryMs": 79.36119999992661,
+        "bakeMs": 31468.338800000027,
+        "samples": 94087,
+        "rays": 7943727,
+        "bytes": 7152984
+      }
+    },
+    {
+      "file": "chunk--11--9-high.json.gz",
+      "seed": 20261006,
+      "cx": -11,
+      "cy": -9,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "39e72ea7",
+      "metrics": {
+        "generationMs": 301.4397999999346,
+        "geometryMs": 86.65820000006352,
+        "bakeMs": 28982.038500000024,
+        "samples": 92009,
+        "rays": 7019534,
+        "bytes": 7103304
+      }
+    },
+    {
+      "file": "chunk-36--9-high.json.gz",
+      "seed": 20261006,
+      "cx": 36,
+      "cy": -9,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "3b70fff8",
+      "metrics": {
+        "generationMs": 275.32950000010896,
+        "geometryMs": 63.043199999956414,
+        "bakeMs": 28497.985400000005,
+        "samples": 92009,
+        "rays": 6220994,
+        "bytes": 7103304
+      }
+    },
+    {
+      "file": "chunk-37--9-high.json.gz",
+      "seed": 20261006,
+      "cx": 37,
+      "cy": -9,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "fd520b06",
+      "metrics": {
+        "generationMs": 242.32789999991655,
+        "geometryMs": 25.236000000033528,
+        "bakeMs": 15048.547499999986,
+        "samples": 84546,
+        "rays": 3714546,
+        "bytes": 5645104
+      }
+    },
+    {
+      "file": "chunk-38--9-high.json.gz",
+      "seed": 20261006,
+      "cx": 38,
+      "cy": -9,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "9021cc4f",
+      "metrics": {
+        "generationMs": 202.65909999993164,
+        "geometryMs": 15.547399999923073,
+        "bakeMs": 26428.124700000044,
+        "samples": 66814,
+        "rays": 5986113,
+        "bytes": 5492752
+      }
+    },
+    {
+      "file": "chunk-36--8-high.json.gz",
+      "seed": 20261006,
+      "cx": 36,
+      "cy": -8,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "4a3ea58",
+      "metrics": {
+        "generationMs": 249.88689999992494,
+        "geometryMs": 301.9413000000641,
+        "bakeMs": 24076.869099999894,
+        "samples": 85810,
+        "rays": 4465724,
+        "bytes": 6874192
+      }
+    },
+    {
+      "file": "chunk-37--8-high.json.gz",
+      "seed": 20261006,
+      "cx": 37,
+      "cy": -8,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "f02f5481",
+      "metrics": {
+        "generationMs": 375.22039999999106,
+        "geometryMs": 95.20319999998901,
+        "bakeMs": 13597.33329999994,
+        "samples": 91137,
+        "rays": 3289114,
+        "bytes": 5771592
+      }
+    },
+    {
+      "file": "chunk-38--8-high.json.gz",
+      "seed": 20261006,
+      "cx": 38,
+      "cy": -8,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "a54f7722",
+      "metrics": {
+        "generationMs": 229.48180000006687,
+        "geometryMs": 37.758499999996275,
+        "bakeMs": 22695.955600000103,
+        "samples": 94653,
+        "rays": 5015565,
+        "bytes": 6056160
+      }
+    },
+    {
+      "file": "chunk-36--7-high.json.gz",
+      "seed": 20261006,
+      "cx": 36,
+      "cy": -7,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "723e3ff5",
+      "metrics": {
+        "generationMs": 270.18249999999534,
+        "geometryMs": 931.7412000000477,
+        "bakeMs": 34202.18180000002,
+        "samples": 67685,
+        "rays": 6333181,
+        "bytes": 9060160
+      }
+    },
+    {
+      "file": "chunk-37--7-high.json.gz",
+      "seed": 20261006,
+      "cx": 37,
+      "cy": -7,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "2e87218a",
+      "metrics": {
+        "generationMs": 272.9466000000248,
+        "geometryMs": 156.3921000000555,
+        "bakeMs": 13812.307099999976,
+        "samples": 91548,
+        "rays": 3174656,
+        "bytes": 6157912
+      }
+    },
+    {
+      "file": "chunk-38--7-high.json.gz",
+      "seed": 20261006,
+      "cx": 38,
+      "cy": -7,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "6e6016f6",
+      "metrics": {
+        "generationMs": 202.11899999994785,
+        "geometryMs": 55.20209999999497,
+        "bakeMs": 31705.24789999996,
+        "samples": 96038,
+        "rays": 7891853,
+        "bytes": 6761616
+      }
+    },
+    {
+      "file": "chunk-8--6-high.json.gz",
+      "seed": 20261006,
+      "cx": 8,
+      "cy": -6,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "2fb60829",
+      "metrics": {
+        "generationMs": 237.00960000004852,
+        "geometryMs": 747.054300000018,
+        "bakeMs": 28548.082400000014,
+        "samples": 66088,
+        "rays": 5788117,
+        "bytes": 8872280
+      }
+    },
+    {
+      "file": "chunk-9--6-high.json.gz",
+      "seed": 20261006,
+      "cx": 9,
+      "cy": -6,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "a55723e7",
+      "metrics": {
+        "generationMs": 264.4189999999944,
+        "geometryMs": 714.9559000000008,
+        "bakeMs": 28569.41610000003,
+        "samples": 66005,
+        "rays": 6349667,
+        "bytes": 6775128
+      }
+    },
+    {
+      "file": "chunk-10--6-high.json.gz",
+      "seed": 20261006,
+      "cx": 10,
+      "cy": -6,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "21e6630f",
+      "metrics": {
+        "generationMs": 232.00729999999749,
+        "geometryMs": 746.4269000000204,
+        "bakeMs": 30822.54759999999,
+        "samples": 67710,
+        "rays": 6533453,
+        "bytes": 6967608
+      }
+    },
+    {
+      "file": "chunk--6--5-high.json.gz",
+      "seed": 20261006,
+      "cx": -6,
+      "cy": -5,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "223c9b55",
+      "metrics": {
+        "generationMs": 177.91070000000764,
+        "geometryMs": 151.96869999996852,
+        "bakeMs": 29830.44530000002,
+        "samples": 72312,
+        "rays": 8137770,
+        "bytes": 8732704
+      }
+    },
+    {
+      "file": "chunk--5--5-high.json.gz",
+      "seed": 20261006,
+      "cx": -5,
+      "cy": -5,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "23272fed",
+      "metrics": {
+        "generationMs": 207.2791000000434,
+        "geometryMs": 157.09340000001248,
+        "bakeMs": 27678.04130000004,
+        "samples": 69768,
+        "rays": 7536480,
+        "bytes": 8163776
+      }
+    },
+    {
+      "file": "chunk--4--5-high.json.gz",
+      "seed": 20261006,
+      "cx": -4,
+      "cy": -5,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "ac03726e",
+      "metrics": {
+        "generationMs": 216.42460000002757,
+        "geometryMs": 163.65280000003986,
+        "bakeMs": 29628.079499999993,
+        "samples": 69768,
+        "rays": 7608984,
+        "bytes": 8129920
+      }
+    },
+    {
+      "file": "chunk-8--5-high.json.gz",
+      "seed": 20261006,
+      "cx": 8,
+      "cy": -5,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "14bc076a",
+      "metrics": {
+        "generationMs": 233.55890000000363,
+        "geometryMs": 790.2986000000383,
+        "bakeMs": 27938.43599999993,
+        "samples": 66035,
+        "rays": 5722003,
+        "bytes": 8877800
+      }
+    },
+    {
+      "file": "chunk-9--5-high.json.gz",
+      "seed": 20261006,
+      "cx": 9,
+      "cy": -5,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "2da76dc5",
+      "metrics": {
+        "generationMs": 253.6121999999741,
+        "geometryMs": 737.5112000000081,
+        "bakeMs": 25979.376099999994,
+        "samples": 65953,
+        "rays": 6283192,
+        "bytes": 6780648
+      }
+    },
+    {
+      "file": "chunk-10--5-high.json.gz",
+      "seed": 20261006,
+      "cx": 10,
+      "cy": -5,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "dbe65704",
+      "metrics": {
+        "generationMs": 260.7317000000039,
+        "geometryMs": 774.9363000000594,
+        "bakeMs": 29383.117499999935,
+        "samples": 67670,
+        "rays": 6474503,
+        "bytes": 6974048
+      }
+    },
+    {
+      "file": "chunk--6--4-high.json.gz",
+      "seed": 20261006,
+      "cx": -6,
+      "cy": -4,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "f5c4e5b7",
+      "metrics": {
+        "generationMs": 184.13349999999627,
+        "geometryMs": 153.73600000003353,
+        "bakeMs": 32466.294999999925,
+        "samples": 77810,
+        "rays": 8166619,
+        "bytes": 9172648
+      }
+    },
+    {
+      "file": "chunk--5--4-high.json.gz",
+      "seed": 20261006,
+      "cx": -5,
+      "cy": -4,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "bfde1aad",
+      "metrics": {
+        "generationMs": 324.1526999999769,
+        "geometryMs": 214.7909000000218,
+        "bakeMs": 28547.93889999995,
+        "samples": 74630,
+        "rays": 7529457,
+        "bytes": 8461488
+      }
+    },
+    {
+      "file": "chunk--4--4-high.json.gz",
+      "seed": 20261006,
+      "cx": -4,
+      "cy": -4,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "bbe2236f",
+      "metrics": {
+        "generationMs": 156.15600000007544,
+        "geometryMs": 142.9364999999525,
+        "bakeMs": 30886.675800000085,
+        "samples": 74630,
+        "rays": 7606819,
+        "bytes": 8428368
+      }
+    },
+    {
+      "file": "chunk-8--4-high.json.gz",
+      "seed": 20261006,
+      "cx": 8,
+      "cy": -4,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "eb507b02",
+      "metrics": {
+        "generationMs": 223.83779999997932,
+        "geometryMs": 853.4340000000084,
+        "bakeMs": 28643.605899999966,
+        "samples": 67685,
+        "rays": 5925251,
+        "bytes": 9060160
+      }
+    },
+    {
+      "file": "chunk-9--4-high.json.gz",
+      "seed": 20261006,
+      "cx": 9,
+      "cy": -4,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "580d98f6",
+      "metrics": {
+        "generationMs": 244.4484999999404,
+        "geometryMs": 754.8634999999776,
+        "bakeMs": 27591.89759999991,
+        "samples": 67610,
+        "rays": 6492910,
+        "bytes": 6963008
+      }
+    },
+    {
+      "file": "chunk-10--4-high.json.gz",
+      "seed": 20261006,
+      "cx": 10,
+      "cy": -4,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "6ecb9159",
+      "metrics": {
+        "generationMs": 261.7924999999814,
+        "geometryMs": 865.7193999999436,
+        "bakeMs": 31229.604399999953,
+        "samples": 69644,
+        "rays": 6735858,
+        "bytes": 7193064
+      }
+    },
+    {
+      "file": "chunk--6--3-high.json.gz",
+      "seed": 20261006,
+      "cx": -6,
+      "cy": -3,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "c210f8e0",
+      "metrics": {
+        "generationMs": 169.51560000004247,
+        "geometryMs": 130.3004999998957,
+        "bakeMs": 35263.22219999996,
+        "samples": 72312,
+        "rays": 8830377,
+        "bytes": 8732704
+      }
+    },
+    {
+      "file": "chunk--5--3-high.json.gz",
+      "seed": 20261006,
+      "cx": -5,
+      "cy": -3,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "5f784170",
+      "metrics": {
+        "generationMs": 235.35439999995288,
+        "geometryMs": 181.85900000005495,
+        "bakeMs": 33338.23300000001,
+        "samples": 69768,
+        "rays": 8213216,
+        "bytes": 8163776
+      }
+    },
+    {
+      "file": "chunk--4--3-high.json.gz",
+      "seed": 20261006,
+      "cx": -4,
+      "cy": -3,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "9a7d13d7",
+      "metrics": {
+        "generationMs": 195.78899999998976,
+        "geometryMs": 168.6933999999892,
+        "bakeMs": 31331.837499999907,
+        "samples": 69768,
+        "rays": 8289029,
+        "bytes": 8129920
+      }
+    },
+    {
+      "file": "chunk--2--2-high.json.gz",
+      "seed": 20261006,
+      "cx": -2,
+      "cy": -2,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "24c94c2d",
+      "metrics": {
+        "generationMs": 173.59829999999965,
+        "geometryMs": 149.75800000000027,
+        "bakeMs": 25725.41,
+        "samples": 70111,
+        "rays": 5782725,
+        "bytes": 10133416
+      }
+    },
+    {
+      "file": "chunk--1--2-high.json.gz",
+      "seed": 20261006,
+      "cx": -1,
+      "cy": -2,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "18c0b94e",
+      "metrics": {
+        "generationMs": 210.60190000000011,
+        "geometryMs": 43.88810000000012,
+        "bakeMs": 22318.261599999998,
+        "samples": 100209,
+        "rays": 5791227,
+        "bytes": 6012368
+      }
+    },
+    {
+      "file": "chunk-0--2-high.json.gz",
+      "seed": 20261006,
+      "cx": 0,
+      "cy": -2,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "3165bcec",
+      "metrics": {
+        "generationMs": 212.95620000000008,
+        "geometryMs": 68.0933,
+        "bakeMs": 41150.9609,
+        "samples": 93594,
+        "rays": 8579253,
+        "bytes": 6898696
+      }
+    },
+    {
+      "file": "chunk-1--2-high.json.gz",
+      "seed": 20261006,
+      "cx": 1,
+      "cy": -2,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "e3dfafd1",
+      "metrics": {
+        "generationMs": 269.39500000000044,
+        "geometryMs": 73.28469999999652,
+        "bakeMs": 45073.1544,
+        "samples": 97570,
+        "rays": 8151823,
+        "bytes": 6883976
+      }
+    },
+    {
+      "file": "chunk-2--2-high.json.gz",
+      "seed": 20261006,
+      "cx": 2,
+      "cy": -2,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "bf7cf2f",
+      "metrics": {
+        "generationMs": 306.1702000000005,
+        "geometryMs": 74.65699999999924,
+        "bakeMs": 42834.6394,
+        "samples": 96516,
+        "rays": 7733300,
+        "bytes": 6724448
+      }
+    },
+    {
+      "file": "chunk--2--1-high.json.gz",
+      "seed": 20261006,
+      "cx": -2,
+      "cy": -1,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "27206704",
+      "metrics": {
+        "generationMs": 294.5888999999952,
+        "geometryMs": 113.27320000000327,
+        "bakeMs": 22187.086000000003,
+        "samples": 93801,
+        "rays": 3631685,
+        "bytes": 7580048
+      }
+    },
+    {
+      "file": "chunk--1--1-high.json.gz",
+      "seed": 20261006,
+      "cx": -1,
+      "cy": -1,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "1b9d674a",
+      "metrics": {
+        "generationMs": 269.2063999999955,
+        "geometryMs": 39.67080000000715,
+        "bakeMs": 24989.4795,
+        "samples": 95661,
+        "rays": 4082310,
+        "bytes": 5816224
+      }
+    },
+    {
+      "file": "chunk-0--1-high.json.gz",
+      "seed": 20261006,
+      "cx": 0,
+      "cy": -1,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "2379db19",
+      "metrics": {
+        "generationMs": 289.0338000000047,
+        "geometryMs": 65.27069999999367,
+        "bakeMs": 34165.689,
+        "samples": 97391,
+        "rays": 4993848,
+        "bytes": 6249360
+      }
+    },
+    {
+      "file": "chunk-1--1-high.json.gz",
+      "seed": 20261006,
+      "cx": 1,
+      "cy": -1,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "73c6c986",
+      "metrics": {
+        "generationMs": 407.0729999999894,
+        "geometryMs": 93.10440000001108,
+        "bakeMs": 35863.5294,
+        "samples": 96823,
+        "rays": 4892436,
+        "bytes": 6255800
+      }
+    },
+    {
+      "file": "chunk-2--1-high.json.gz",
+      "seed": 20261006,
+      "cx": 2,
+      "cy": -1,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "f8253389",
+      "metrics": {
+        "generationMs": 373.49980000000505,
+        "geometryMs": 66.76339999999618,
+        "bakeMs": 42752.00690000001,
+        "samples": 96143,
+        "rays": 5415841,
+        "bytes": 6205936
+      }
+    },
+    {
+      "file": "chunk--2-0-high.json.gz",
+      "seed": 20261006,
+      "cx": -2,
+      "cy": 0,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "a61b5ac",
+      "metrics": {
+        "generationMs": 374.696299999996,
+        "geometryMs": 67.53789999999572,
+        "bakeMs": 40396.0462,
+        "samples": 83587,
+        "rays": 4844560,
+        "bytes": 5945576
+      }
+    },
+    {
+      "file": "chunk--1-0-high.json.gz",
+      "seed": 20261006,
+      "cx": -1,
+      "cy": 0,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "8b7f9fd0",
+      "metrics": {
+        "generationMs": 459.05530000000726,
+        "geometryMs": 82.83400000000256,
+        "bakeMs": 37108.01580000001,
+        "samples": 82290,
+        "rays": 5002215,
+        "bytes": 5922944
+      }
+    },
+    {
+      "file": "chunk-0-0-high.json.gz",
+      "seed": 20261006,
+      "cx": 0,
+      "cy": 0,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "af5fcef",
+      "metrics": {
+        "generationMs": 436.4769999999844,
+        "geometryMs": 68.89480000000913,
+        "bakeMs": 26345.250300000014,
+        "samples": 78714,
+        "rays": 4564264,
+        "bytes": 6225072
+      }
+    },
+    {
+      "file": "chunk-1-0-high.json.gz",
+      "seed": 20261006,
+      "cx": 1,
+      "cy": 0,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "d648f762",
+      "metrics": {
+        "generationMs": 371.7729999999865,
+        "geometryMs": 46.33339999997406,
+        "bakeMs": 22123.588900000002,
+        "samples": 77004,
+        "rays": 4486786,
+        "bytes": 6216056
+      }
+    },
+    {
+      "file": "chunk-2-0-high.json.gz",
+      "seed": 20261006,
+      "cx": 2,
+      "cy": 0,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "12335f7",
+      "metrics": {
+        "generationMs": 332.5703999999969,
+        "geometryMs": 51.1533000000054,
+        "bakeMs": 27191.88679999998,
+        "samples": 78402,
+        "rays": 5299658,
+        "bytes": 6241632
+      }
+    },
+    {
+      "file": "chunk--2-1-high.json.gz",
+      "seed": 20261006,
+      "cx": -2,
+      "cy": 1,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "9a61e48d",
+      "metrics": {
+        "generationMs": 282.0646999999881,
+        "geometryMs": 31.153299999976298,
+        "bakeMs": 22016.90420000002,
+        "samples": 85026,
+        "rays": 4802303,
+        "bytes": 5858728
+      }
+    },
+    {
+      "file": "chunk--1-1-high.json.gz",
+      "seed": 20261006,
+      "cx": -1,
+      "cy": 1,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "7bc7b98f",
+      "metrics": {
+        "generationMs": 328.6036000000022,
+        "geometryMs": 44.19789999999921,
+        "bakeMs": 18495.9608,
+        "samples": 84744,
+        "rays": 4647739,
+        "bytes": 5885592
+      }
+    },
+    {
+      "file": "chunk-0-1-high.json.gz",
+      "seed": 20261006,
+      "cx": 0,
+      "cy": 1,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "1d88c57a",
+      "metrics": {
+        "generationMs": 290.90729999999166,
+        "geometryMs": 32.42840000000433,
+        "bakeMs": 23746.059600000008,
+        "samples": 79816,
+        "rays": 5946887,
+        "bytes": 6141536
+      }
+    },
+    {
+      "file": "chunk-1-1-high.json.gz",
+      "seed": 20261006,
+      "cx": 1,
+      "cy": 1,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "7bf5eb07",
+      "metrics": {
+        "generationMs": 269.8888999999908,
+        "geometryMs": 30.681700000015553,
+        "bakeMs": 21689.407799999986,
+        "samples": 80859,
+        "rays": 4789695,
+        "bytes": 4051744
+      }
+    },
+    {
+      "file": "chunk-2-1-high.json.gz",
+      "seed": 20261006,
+      "cx": 2,
+      "cy": 1,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "b0d913ea",
+      "metrics": {
+        "generationMs": 240.62270000000717,
+        "geometryMs": 53.327900000003865,
+        "bakeMs": 26066.099799999996,
+        "samples": 83217,
+        "rays": 5120651,
+        "bytes": 4109888
+      }
+    },
+    {
+      "file": "chunk--2-2-high.json.gz",
+      "seed": 20261006,
+      "cx": -2,
+      "cy": 2,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "99840001",
+      "metrics": {
+        "generationMs": 383.79159999999683,
+        "geometryMs": 48.812000000005355,
+        "bakeMs": 28051.6299,
+        "samples": 83673,
+        "rays": 4610391,
+        "bytes": 5944472
+      }
+    },
+    {
+      "file": "chunk--1-2-high.json.gz",
+      "seed": 20261006,
+      "cx": -1,
+      "cy": 2,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "a8ac6130",
+      "metrics": {
+        "generationMs": 353.56789999999455,
+        "geometryMs": 45.490600000019185,
+        "bakeMs": 23535.281000000017,
+        "samples": 82060,
+        "rays": 4742419,
+        "bytes": 5923864
+      }
+    },
+    {
+      "file": "chunk-0-2-high.json.gz",
+      "seed": 20261006,
+      "cx": 0,
+      "cy": 2,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "d845b69e",
+      "metrics": {
+        "generationMs": 426.5219999999972,
+        "geometryMs": 52.88589999999385,
+        "bakeMs": 39010.433099999995,
+        "samples": 77780,
+        "rays": 6009703,
+        "bytes": 6201888
+      }
+    },
+    {
+      "file": "chunk-1-2-high.json.gz",
+      "seed": 20261006,
+      "cx": 1,
+      "cy": 2,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "3d973e70",
+      "metrics": {
+        "generationMs": 438.3635999999824,
+        "geometryMs": 58.17029999999795,
+        "bakeMs": 33933.39420000001,
+        "samples": 80951,
+        "rays": 4900845,
+        "bytes": 4145952
+      }
+    },
+    {
+      "file": "chunk-2-2-high.json.gz",
+      "seed": 20261006,
+      "cx": 2,
+      "cy": 2,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "91784a87",
+      "metrics": {
+        "generationMs": 477.7663000000175,
+        "geometryMs": 59.89660000000731,
+        "bakeMs": 32367.645699999965,
+        "samples": 76933,
+        "rays": 4389077,
+        "bytes": 3988816
+      }
+    },
+    {
+      "file": "chunk-3-2-high.json.gz",
+      "seed": 20261006,
+      "cx": 3,
+      "cy": 2,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "48aba82d",
+      "metrics": {
+        "generationMs": 435.3914999999979,
+        "geometryMs": 54.174399999988964,
+        "bakeMs": 26636.07760000002,
+        "samples": 75986,
+        "rays": 3916977,
+        "bytes": 3969864
+      }
+    },
+    {
+      "file": "chunk-4-2-high.json.gz",
+      "seed": 20261006,
+      "cx": 4,
+      "cy": 2,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "473b0a68",
+      "metrics": {
+        "generationMs": 469.469700000016,
+        "geometryMs": 59.58140000002459,
+        "bakeMs": 26891.9743,
+        "samples": 75683,
+        "rays": 3709276,
+        "bytes": 4024328
+      }
+    },
+    {
+      "file": "chunk-2-3-high.json.gz",
+      "seed": 20261006,
+      "cx": 2,
+      "cy": 3,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "22a8965f",
+      "metrics": {
+        "generationMs": 459.60739999997895,
+        "geometryMs": 70.18210000003455,
+        "bakeMs": 36985.004200000025,
+        "samples": 76897,
+        "rays": 4951044,
+        "bytes": 3982192
+      }
+    },
+    {
+      "file": "chunk-3-3-high.json.gz",
+      "seed": 20261006,
+      "cx": 3,
+      "cy": 3,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "adc860d8",
+      "metrics": {
+        "generationMs": 405.2172000000137,
+        "geometryMs": 59.65220000001136,
+        "bakeMs": 28737.745799999975,
+        "samples": 76016,
+        "rays": 4024429,
+        "bytes": 3975384
+      }
+    },
+    {
+      "file": "chunk-4-3-high.json.gz",
+      "seed": 20261006,
+      "cx": 4,
+      "cy": 3,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "27307568",
+      "metrics": {
+        "generationMs": 419.8391999999876,
+        "geometryMs": 57.87729999999283,
+        "bakeMs": 30532.926799999957,
+        "samples": 75677,
+        "rays": 4356140,
+        "bytes": 4023224
+      }
+    },
+    {
+      "file": "chunk-2-4-high.json.gz",
+      "seed": 20261006,
+      "cx": 2,
+      "cy": 4,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "fd255a78",
+      "metrics": {
+        "generationMs": 505.7179999999935,
+        "geometryMs": 66.43619999999646,
+        "bakeMs": 34578.40000000002,
+        "samples": 75659,
+        "rays": 4525581,
+        "bytes": 4019912
+      }
+    },
+    {
+      "file": "chunk-3-4-high.json.gz",
+      "seed": 20261006,
+      "cx": 3,
+      "cy": 4,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "c61a1877",
+      "metrics": {
+        "generationMs": 450.1952000000165,
+        "geometryMs": 61.81469999998808,
+        "bakeMs": 41608.09409999999,
+        "samples": 76998,
+        "rays": 4623684,
+        "bytes": 4027640
+      }
+    },
+    {
+      "file": "chunk-4-4-high.json.gz",
+      "seed": 20261006,
+      "cx": 4,
+      "cy": 4,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "aa7d1e55",
+      "metrics": {
+        "generationMs": 456.02840000001015,
+        "geometryMs": 58.90349999995669,
+        "bakeMs": 37603.84700000001,
+        "samples": 75671,
+        "rays": 4093128,
+        "bytes": 4022120
+      }
+    },
+    {
+      "file": "chunk-14-4-high.json.gz",
+      "seed": 20261006,
+      "cx": 14,
+      "cy": 4,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "a661bd64",
+      "metrics": {
+        "generationMs": 394.7602000000188,
+        "geometryMs": 53.85510000004433,
+        "bakeMs": 11813.638399999938,
+        "samples": 86820,
+        "rays": 2362417,
+        "bytes": 6633736
+      }
+    },
+    {
+      "file": "chunk-15-4-high.json.gz",
+      "seed": 20261006,
+      "cx": 15,
+      "cy": 4,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "58a7faee",
+      "metrics": {
+        "generationMs": 345.7579999999143,
+        "geometryMs": 53.976200000033714,
+        "bakeMs": 18205.566100000055,
+        "samples": 88804,
+        "rays": 3743432,
+        "bytes": 6628952
+      }
+    },
+    {
+      "file": "chunk-16-4-high.json.gz",
+      "seed": 20261006,
+      "cx": 16,
+      "cy": 4,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "48ef5bc1",
+      "metrics": {
+        "generationMs": 249.3351000000257,
+        "geometryMs": 47.12190000002738,
+        "bakeMs": 18148.621700000018,
+        "samples": 94257,
+        "rays": 4498899,
+        "bytes": 6075480
+      }
+    },
+    {
+      "file": "chunk-14-5-high.json.gz",
+      "seed": 20261006,
+      "cx": 14,
+      "cy": 5,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "63ad6fe0",
+      "metrics": {
+        "generationMs": 423.6396999999415,
+        "geometryMs": 46.24139999994077,
+        "bakeMs": 9832.83440000005,
+        "samples": 84590,
+        "rays": 2245822,
+        "bytes": 6544496
+      }
+    },
+    {
+      "file": "chunk-15-5-high.json.gz",
+      "seed": 20261006,
+      "cx": 15,
+      "cy": 5,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "7dff515",
+      "metrics": {
+        "generationMs": 378.20470000000205,
+        "geometryMs": 50.490600000019185,
+        "bakeMs": 19380.871999999974,
+        "samples": 87388,
+        "rays": 4049690,
+        "bytes": 6476232
+      }
+    },
+    {
+      "file": "chunk-16-5-high.json.gz",
+      "seed": 20261006,
+      "cx": 16,
+      "cy": 5,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "ab978ba1",
+      "metrics": {
+        "generationMs": 270.42169999994803,
+        "geometryMs": 38.70709999999963,
+        "bakeMs": 20899.74650000001,
+        "samples": 93494,
+        "rays": 4770369,
+        "bytes": 6074192
+      }
+    },
+    {
+      "file": "chunk-14-6-high.json.gz",
+      "seed": 20261006,
+      "cx": 14,
+      "cy": 6,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "9b404b9d",
+      "metrics": {
+        "generationMs": 279.66499999992084,
+        "geometryMs": 50.92709999997169,
+        "bakeMs": 14038.64300000004,
+        "samples": 89120,
+        "rays": 2769207,
+        "bytes": 6587552
+      }
+    },
+    {
+      "file": "chunk-15-6-high.json.gz",
+      "seed": 20261006,
+      "cx": 15,
+      "cy": 6,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "32d47d77",
+      "metrics": {
+        "generationMs": 367.7957999999635,
+        "geometryMs": 59.991700000013225,
+        "bakeMs": 13289.49840000004,
+        "samples": 89428,
+        "rays": 2571295,
+        "bytes": 6596016
+      }
+    },
+    {
+      "file": "chunk-16-6-high.json.gz",
+      "seed": 20261006,
+      "cx": 16,
+      "cy": 6,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "adf41680",
+      "metrics": {
+        "generationMs": 268.1466000000946,
+        "geometryMs": 46.38169999991078,
+        "bakeMs": 14951.080100000021,
+        "samples": 94853,
+        "rays": 4127075,
+        "bytes": 5982192
+      }
+    },
+    {
+      "file": "chunk--26-30-high.json.gz",
+      "seed": 20261006,
+      "cx": -26,
+      "cy": 30,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "871cde4c",
+      "metrics": {
+        "generationMs": 595.7607999999891,
+        "geometryMs": 83.813300000038,
+        "bakeMs": 37164.67560000002,
+        "samples": 104467,
+        "rays": 4115968,
+        "bytes": 6221944
+      }
+    },
+    {
+      "file": "chunk--25-30-high.json.gz",
+      "seed": 20261006,
+      "cx": -25,
+      "cy": 30,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "48dfc5cf",
+      "metrics": {
+        "generationMs": 681.8347000000067,
+        "geometryMs": 69.5400999999838,
+        "bakeMs": 26715.852400000033,
+        "samples": 106331,
+        "rays": 3521893,
+        "bytes": 6241448
+      }
+    },
+    {
+      "file": "chunk--24-30-high.json.gz",
+      "seed": 20261006,
+      "cx": -24,
+      "cy": 30,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "b29549bd",
+      "metrics": {
+        "generationMs": 559.0800999999628,
+        "geometryMs": 71.01279999996768,
+        "bakeMs": 21515.676800000016,
+        "samples": 102642,
+        "rays": 3096932,
+        "bytes": 6110440
+      }
+    },
+    {
+      "file": "chunk--26-31-high.json.gz",
+      "seed": 20261006,
+      "cx": -26,
+      "cy": 31,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "33e43be1",
+      "metrics": {
+        "generationMs": 520.0638000000035,
+        "geometryMs": 49.57740000000922,
+        "bakeMs": 24097.033000000054,
+        "samples": 102122,
+        "rays": 4243180,
+        "bytes": 6414224
+      }
+    },
+    {
+      "file": "chunk--25-31-high.json.gz",
+      "seed": 20261006,
+      "cx": -25,
+      "cy": 31,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "fa36ab92",
+      "metrics": {
+        "generationMs": 734.5654000000213,
+        "geometryMs": 72.92510000005132,
+        "bakeMs": 21219.892700000026,
+        "samples": 105299,
+        "rays": 3968469,
+        "bytes": 6423608
+      }
+    },
+    {
+      "file": "chunk--24-31-high.json.gz",
+      "seed": 20261006,
+      "cx": -24,
+      "cy": 31,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "cb86154c",
+      "metrics": {
+        "generationMs": 702.1296000000439,
+        "geometryMs": 67.92479999997886,
+        "bakeMs": 17373.57780000003,
+        "samples": 100134,
+        "rays": 3378021,
+        "bytes": 6332528
+      }
+    },
+    {
+      "file": "chunk--26-32-high.json.gz",
+      "seed": 20261006,
+      "cx": -26,
+      "cy": 32,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "8ca5182e",
+      "metrics": {
+        "generationMs": 350.8166000000201,
+        "geometryMs": 48.492399999988265,
+        "bakeMs": 26345.077900000033,
+        "samples": 104532,
+        "rays": 3491928,
+        "bytes": 6345960
+      }
+    },
+    {
+      "file": "chunk--25-32-high.json.gz",
+      "seed": 20261006,
+      "cx": -25,
+      "cy": 32,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "eec70c64",
+      "metrics": {
+        "generationMs": 393.8090000000084,
+        "geometryMs": 40.66039999999339,
+        "bakeMs": 26492.190499999968,
+        "samples": 105328,
+        "rays": 3445726,
+        "bytes": 4248624
+      }
+    },
+    {
+      "file": "chunk--24-32-high.json.gz",
+      "seed": 20261006,
+      "cx": -24,
+      "cy": 32,
+      "quality": "high",
+      "bakeRevision": 17,
+      "fingerprint": "8ad32bd9",
+      "metrics": {
+        "generationMs": 323.3876000000164,
+        "geometryMs": 39.43430000002263,
+        "bakeMs": 19794.10089999996,
+        "samples": 102496,
+        "rays": 2513106,
+        "bytes": 4158280
+      }
+    }
+  ]
+}

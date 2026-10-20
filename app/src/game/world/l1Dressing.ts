@@ -1,6 +1,7 @@
 import type {Structure} from '../core/types'
 import {l1Noise,l1PathRoom,l1ReferenceAt} from './l1Spatial'
 import {l1LayoutVariant} from './l1Layout'
+import {l1PlanRooms} from './l1Plan'
 import type {L1ArchitectureData} from './l1BuildingTypes'
 
 /** Assembly is placed after the building is complete, so legacy loot clearance
@@ -27,6 +28,36 @@ export function l1HallDressing(a:L1ArchitectureData):Structure[]{
 /** Furnish only completed rooms; never let the old content generator carve the
  * reference architecture or silently drop furniture before the room exists. */
 export function l1RoomDressing(seed:number,cx:number,cy:number):Structure[]{
+ // v2: every 小径 room centred in this chunk, furnished by its wiki type.
+ const out:Structure[]=[]
+ for(const r of l1PlanRooms(seed,cx*32,cy*32,cx*32+32,cy*32+32)){
+  if(Math.floor((r.x0+r.x1)/2/32)!==cx||Math.floor((r.y0+r.y1)/2/32)!==cy)continue
+  const w=r.x1-r.x0,h=r.y1-r.y0,mx=(r.x0+r.x1)/2,my=(r.y0+r.y1)/2
+  // the wall opposite the doorway carries the main piece
+  const back=r.door.dir===2?{x:mx,y:r.y1-1}:r.door.dir===3?{x:mx,y:r.y0}:r.door.dir===0?{x:r.x1-1,y:my}:{x:r.x0,y:my}
+  const deg=r.door.dir===2?0:r.door.dir===3?180:r.door.dir===0?270:90
+  const put=(kind:Structure['kind'],x:number,y:number,sw=1,sh=1,solid=true,data:Structure['data']={})=>out.push({kind,x:Math.floor(x),y:Math.floor(y),w:sw,h:sh,solid,data:{...data,l1RoomDressing:1,l1Room:r.id}})
+  if(r.type==='office'){put('desk',back.x-.5,back.y,1,1,true,{deg});put('officechair',mx,my,1,1,false,{deg})}
+  else if(r.type==='sickbay'&&((r.x0*73856093^r.y0*19349663)>>>0)%2===0){
+   // ref 小径的房间之一: a narrow back room with old hydraulic barber chairs in a row along one wall
+   // chairs sit a step off the back wall, facing the doorway (model +Z = seat front), one per 2 m tile pair
+   const alongX=r.door.dir>=2,len=alongX?w:h,n=Math.max(1,Math.min(3,Math.floor((len-1)/2))),off=(len-(n-1)*2)/2-.5
+   const cd=r.door.dir===0?270:r.door.dir===1?90:r.door.dir===2?180:0
+   const by=r.door.dir===2?back.y-1:r.door.dir===3?back.y+1:back.y,bx=r.door.dir===0?back.x-1:r.door.dir===1?back.x+1:back.x
+   for(let i=0;i<n;i++){if(alongX)put('barberchair',r.x0+off+i*2,by,1,1,false,{deg:cd});else put('barberchair',bx,r.y0+off+i*2,1,1,false,{deg:cd})}
+   // Keep the table near the entrance, away from the back-wall chair row.
+   const tx=alongX?(r.door.x>mx?r.x0+1:r.x1-2):r.door.dir===0?r.x0+1:r.x1-2
+   const ty=alongX?(r.door.dir===2?r.y0+1:r.y1-2):(r.door.y>my?r.y0+1:r.y1-2)
+   put('table',tx,ty)
+  }
+  else if(r.type==='sickbay'){put('bed',mx-.5,back.y,1,1,true,{deg});put('table',r.x0+.5,r.y0+.5);put('table',r.x1-1.5,r.y0+.5);put('table',r.x0+.5,r.y1-1.5)}
+  else if(r.type==='rubber')put('officechair',mx-.5,my-.5,1,1,false,{l1Sunk:1})
+  else if(r.type==='gallery'){put('photo',r.x0+1,r.y0,1,1,false);put('photo',r.x1-2,r.y0,1,1,false);put('photo',mx-.5,my-.5,1,1,false,{flat:1})}
+  else if(r.type==='mattress'){put('bed',r.x0+.5,r.y0+.5,1,1,true,{l1Mattress:1});if(w>5||h>5)put('bed',r.x1-1.5,r.y1-1.5,1,1,true,{l1Mattress:1})}
+ }
+ return out
+}
+export function l1RoomDressingLegacy(seed:number,cx:number,cy:number):Structure[]{
  if(l1LayoutVariant(seed,cx,cy)!=='maintenance')return[]
  const room=l1PathRoom(seed,cx,cy),ref=l1ReferenceAt(seed,cx*32+16,cy*32+16)
  if(!room||ref&&ref.id!=='path-room'||!ref&&l1Noise(cx,cy,seed^887)>.5)return[]

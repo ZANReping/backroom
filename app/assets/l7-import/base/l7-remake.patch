@@ -1,0 +1,2062 @@
+diff --git a/app/L7-REMAKE.md b/app/L7-REMAKE.md
+new file mode 100644
+index 0000000..a0bd08b
+--- /dev/null
++++ b/app/L7-REMAKE.md
+@@ -0,0 +1,67 @@
++# Level 7「深海恐惧症」重制（v66）
++
++设定依据：backrooms-wiki-cn《Level 7 - 深海恐惧症》（Wikidot 译本，作为结构主线）与 Fandom zh《Level 7: 深海恐惧症》（雾霾、重力异常、比普综合症、海床陡降等作为氛围与事件层）。
++
++## 1. 地形生成（`src/game/world/infiniteL7.ts`）
++
++| 区域 | 做法 | 依据 |
++|---|---|---|
++| 入口海山台地 | 出生点周围约 35m（带 24 段周向噪声，28~42m）海床仅 7~9m 深 | Fandom：舱室周边海床仅数米深 |
++| 环形陡崖 | 台地边缘 28m 水平距离内下落约 220m，剖面 `u^0.55`（崖肩即近乎竖直），崖面按方位加沟槽 | Fandom：一定距离后几乎竖直下滑到未知深度 |
++| 山脚裙带 | 约 226m（±26m 中频噪声），大部分落在午夜带底部，局部为深渊 | — |
++| 海山岩洞 | `l7MountCave(seed)`：沿随机方位找到海床首次深于 205m 的崖面瓦片，固定生成 `l7cave` → Level 8；所在区域的出口指引优先指向它 | Wikidot：午夜带底部、几乎处于入口房间正下方的海底山一侧 |
++| 远海 | 原 fBm 深海场 + 扭曲脊线噪声的海山脊（最多抬升约 150m）+ 尖锐低谷的海沟（最多加深约 130m）；150~260m 之间与海山剖面平滑过渡 | — |
++| 「小小的谎言」环形场 | 仍在入口正西 150m、46m 深；台缘渐变带由 14m 扩到 32m，在山脚裙带上隆起成一座平顶石台 | Wikidot 出口 |
++| 重力交界区 | 每 420m 宏格约 38% 概率一处（入口 300m 内不生成）：一道长 46~86m、厚 5~8m、高 34~48m 的竖直水墙，墙顶连着一片半径 64~94m 的倒悬水面 | Fandom：竖直的水墙、倒悬在天空中的平整水面 |
++| 臣服堡垒 | 约 55% 的岩岛中心有一座**已废弃**的家具堆叠+焦油加固庇护所，内有可搜刮的板条箱与木桶 | Wikidot：臣服堡垒 |
++
++新增装饰物生成使用独立随机流（`0x1745`），不改变既有容器/实体/物品的生成序列。
++
++## 2. 特殊事件（`src/game/engine/l7Events.ts`）
++
++- **七层之物涌浪**：在离入口 80m 以外的海面，每 2~5 分钟一次。远处 90~130m 浮出一段约 46m 长的焦油色背脊，切向游过约 24s 后下沉；它推开的环形涌浪以 9m/s 传播。浪峰经过时玩家被抬起并被推离波源（着色器与 CPU 使用同一公式 `l7SurgeHeight`）。同时有一声随距离变闷的远处低吼。
++- **比普综合症 / 骨粉雾致幻**：在入口 180m 外的海面停留超过 2 分钟后，致幻度 0→1（约 10 分钟达到满值）。效果包括：蜃楼船显现更频繁、更清晰；逆着移动方向的缓慢漂移（「像被洋流悄悄往后拉，尽管海水完全没有运动」）；幻听；视野边缘缓慢呼吸；雾压近。回到入口附近或长时间潜在水下会消退。
++- **重力交界区**：处在水墙投影内时，水面上限抬到墙顶，可以顺着水墙游上去，并受到指向墙体中面的横向拉力。离开墙体时如果高于海面，就按正常重力坠回海里（带落水提示）。
++- **深海水压音景**：30m 以下出现持续低频轰鸣，越深越响，并偶发金属或骨骼受压的吱嘎声（`audio.setDeepPressure`）。
++
++## 3. 水中装饰物（`src/game/renderer/l7Meshes.ts`，均无碰撞）
++
++| 结构 | 内容 | 分布 | 绘制 |
++|---|---|---|---|
++| `l7debris` | 书皮纸块（Fandom：书架上只有书皮包着的实心纸块）、骨片、锈蚀废铁、合成纤维、木桶；悬浮件绕自身慢转并漂移 | 每 chunk 一组，按每件落点的深度带决定内容 | 1 |
++| `l7skeleton` | 巨颚、两列长牙、扇形鳍足骨（带残膜）的类人骨架，3 种躺姿；深渊变体有缺骨侵蚀 | 暮色 30% / 午夜 1~3 具 / 深渊 55% | 1 |
++| `l7giantfish` | 18~26m 的「不可理解」巨鱼骨：主脊中段分叉、肋骨一半反折、颅骨上并排三组眼眶、尾端第二颅骨、被咬掉的一段 | 午夜/深渊 11% | 1 |
++| `l7carpet` | 贴合海床起伏、卷边的泡烂地毯，带菱格花纹 | 午夜/深渊 | 1 |
++| `l7bubbles` | GPU 点精灵循环上升的空心气泡；大号源头是焦油裂口，柱高约 46m | 深渊 22% + 35% 的焦油岩堆 | 1~2 |
++| `l7fort` | 废弃臣服堡垒 | 岩岛 | 2 |
++
++## 4. 水体与水下光影（`water.ts` sea 预设、`l7Ocean.ts`、`geometry.ts`、`renderer.ts`）
++
++**水面**
++- sea 预设调成几乎静止的海面：起伏 0.15 → 0.045m，坡度 1.6 → 0.62。吸收系数按超纯水降低，浅海可以清楚看到海床。
++- 涌浪：顶点位移在所有画质下都开启，法线由有限差分得到。
++- 斯涅尔窗：从水下仰视时，只有约 97° 锥内能看到折射进来的天空；锥外是全内反射的暗色水体。窗缘有一圈偏蓝的亮环，并随细浪抖动。
++
++**水下**
++- 分通道消光雾：全局 `fog_fragment` 增补，以 `fog.near < 0` 作为 L7 水下哨兵。红光最先被吸收，其次绿光，蓝光留得最远。这一步不增加绘制次数。
++- 水体颜色按深度分 5 段：0m 青绿 `#15505e`、24m `#0c3446`、90m `#05182a`、230m `#010812`、320m `#000306`。视距从 23m（超纯水）随深度缩到约 10m。
++- 海床焦散：注入海床材质的自发光项，用两层错相叠加并让 R/B 略微错位做出色散感，随水深 `exp(-d/9)` 衰减，约 34m 以下截止。
++- 水下光柱：7 片斜插的加法面片围绕相机缓慢公转，约 45m 以下消失。
++- 悬浮颗粒：2200 个点精灵在相机周围 22m 立方体内循环复用。水下是骨粉“海雪”；水上是悬浮在空气中的骨质雾霾微粒（Fandom）。被手电光锥照到的颗粒会亮起。
++- 手电体积光锥：只在水下且开手电时出现，越深越明显。
++- 屏幕叠加：半入水时显示分屏水线和弯月面；越深视野边缘越暗；致幻时边缘缓慢呼吸。
++- 现实碎裂：在深渊（200m 以下）和重力交界区 40m 内，出现闪烁的青/白/品红发光三角碎片和黑色像素空洞（Fandom GoPro 描述）。
++- 七层之物背脊、水墙和倒悬水面使用更长的自有雾距，因此在浓雾中只显示为比雾更暗的剪影。
++
++## 5. 性能
++
++- 新增全屏/近景效果合计约 6 次绘制（颗粒 1、光柱 7 片共享材质、光锥 1、叠加 1、碎裂 2）。分通道雾、焦散和涌浪都在现有着色器内完成。
++- 装饰物每件 1 次绘制，碎屑场整 chunk 合并为 1 个网格。气泡柱每 chunk 平均约 0.35 个。
++- “真实水体”和写实光照都关闭时，不显示光柱和现实碎裂；深度消光、颗粒、斯涅尔窗、水线和暗角保留。
++- 真机 GPU 帧时间尚未实测；以上只在无头 SwiftShader 下验证过功能。
++
++## 6. 验证
++
++- `npm run check:l7`：5 个种子，覆盖海山剖面、岩洞深度与指引、环形场深度、纯函数、重力区内外判定、装饰物数量与无碰撞。
++- `npx tsc -p tsconfig.app.json --noEmit`、`npm run build`。
++- 游戏内无头截图：`/workspace/work/ui/l7/mkspec2.py`。
+diff --git a/app/package.json b/app/package.json
+index 49abdc3..5ba1693 100644
+--- a/app/package.json
++++ b/app/package.json
+@@ -10,6 +10,7 @@
+     "fetch:l4-assets": "node scripts/fetch-l4-assets.mjs",
+     "fetch:l5-assets": "node scripts/fetch-l5-assets.mjs",
+     "generate:l10-pbr": "esbuild scripts/gen-l10-pbr.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/gen-l10-pbr.mjs && node .cache/gen-l10-pbr.mjs",
++    "check:l7": "esbuild scripts/check-l7-generation.ts --bundle --platform=node --format=esm --outfile=.cache/check-l7-generation.mjs && node .cache/check-l7-generation.mjs",
+     "check:l10": "esbuild scripts/check-l10-generation.ts --bundle --platform=node --format=esm --outfile=.cache/check-l10-generation.mjs && node .cache/check-l10-generation.mjs",
+     "check:l11": "esbuild scripts/check-l11-generation.ts --bundle --platform=node --format=esm --outfile=.cache/check-l11-generation.mjs && node .cache/check-l11-generation.mjs",
+     "check:l11-meshes": "esbuild scripts/check-l11-meshes.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l11-meshes.mjs && node .cache/check-l11-meshes.mjs",
+diff --git a/app/scripts/check-l7-generation.ts b/app/scripts/check-l7-generation.ts
+new file mode 100644
+index 0000000..5eaac0d
+--- /dev/null
++++ b/app/scripts/check-l7-generation.ts
+@@ -0,0 +1,52 @@
++// v66：Level 7 生成检查——海山剖面、固定岩洞、重力交界区、装饰物分布、纯函数一致性。
++import { genL7ChunkRaw, l7SeaFloorAt, l7MountCave, l7GravZonesNear, l7GravWallAt, l7RegionExitAnchor, L7_ORIGIN, L7_MOUNT, L7_ARENA } from '../src/game/world/infiniteL7'
++import { L7 } from '../src/game/levels/l7'
++import { CS, RS } from '../src/game/world/infinite'
++
++let pass = 0, fail = 0
++const ok = (c: boolean, msg: string) => { if (c) pass++; else { fail++; console.log('FAIL', msg) } }
++
++for (const seed of [1, 777, 12345, 20261009, 99991]) {
++  // 1) 入口海山：台地浅（<12m）；崖外 30m 内跌破 150m；山脚裙带 ~240m
++  for (let a = 0; a < 16; a++) {
++    const ang = a / 16 * Math.PI * 2
++    const at = (r: number) => l7SeaFloorAt(seed, Math.round(L7_ORIGIN.x + Math.cos(ang) * r), Math.round(L7_ORIGIN.y + Math.sin(ang) * r))
++    ok(at(10) < 12, `seed ${seed} 台地浅 ang${a} ${at(10).toFixed(1)}`)
++    ok(at(L7_MOUNT.edge + L7_MOUNT.cliff + 12) > 150, `seed ${seed} 陡崖 ang${a} ${at(L7_MOUNT.edge + L7_MOUNT.cliff + 12).toFixed(1)}`)
++  }
++  // 2) 环形场仍是暮色带浅台
++  const ad = l7SeaFloorAt(seed, L7_ARENA.x, L7_ARENA.y)
++  ok(ad > 40 && ad < 52, `seed ${seed} 环形场深度 ${ad.toFixed(1)}`)
++  // 3) 固定岩洞：午夜带底部、在其 chunk 生成中存在
++  const mc = l7MountCave(seed)
++  ok(mc.depth >= 200 && mc.depth < 260, `seed ${seed} 岩洞深度 ${mc.depth.toFixed(1)}`)
++  const ccx = Math.floor(mc.x / CS), ccy = Math.floor(mc.y / CS)
++  const ch = genL7ChunkRaw(L7, seed, ccx, ccy)
++  ok(ch.exits.some((e) => e.def.kind === 'l7cave' && e.x === mc.x && e.y === mc.y), `seed ${seed} 岩洞出口在 chunk 内`)
++  const anchor = l7RegionExitAnchor(seed, Math.floor(ccx / RS), Math.floor(ccy / RS))
++  ok(!!anchor && anchor.x === mc.x && anchor.y === mc.y, `seed ${seed} 区域出口指引指向海山岩洞`)
++  // 4) 纯函数
++  const a1 = genL7ChunkRaw(L7, seed, 3, -2), a2 = genL7ChunkRaw(L7, seed, 3, -2)
++  ok(JSON.stringify(a1.structures) === JSON.stringify(a2.structures) && a1.seaFloor.every((v, i) => v === a2.seaFloor[i]), `seed ${seed} 纯函数`)
++  // 5) 重力交界区：不在入口 300m 内；墙内判定
++  const zs = l7GravZonesNear(seed, 15, 15, 2500)
++  ok(zs.length > 0, `seed ${seed} 有重力交界区`)
++  for (const z of zs) {
++    ok(Math.hypot(z.x - L7_ORIGIN.x, z.y - L7_ORIGIN.y) > 300, `seed ${seed} 交界区远离入口`)
++    ok(!!l7GravWallAt(seed, z.x, z.y), `seed ${seed} 墙心判定`)
++    ok(!l7GravWallAt(seed, z.x + Math.cos(z.ang + Math.PI / 2) * (z.thick + 2), z.y + Math.sin(z.ang + Math.PI / 2) * (z.thick + 2)), `seed ${seed} 墙外判定`)
++  }
++  // 6) 装饰物：抽样 64 个 chunk
++  const cnt: Record<string, number> = {}
++  for (let cy = -4; cy < 4; cy++) for (let cx = -4; cx < 4; cx++) {
++    const c = genL7ChunkRaw(L7, seed, cx, cy)
++    for (const s of c.structures) cnt[s.kind] = (cnt[s.kind] ?? 0) + 1
++    // 装饰物全部无碰撞
++    for (const s of c.structures) if (s.kind.startsWith('l7') && s.kind !== 'l7fort') ok(!s.solid, `${s.kind} 无碰撞`)
++  }
++  ok((cnt.l7debris ?? 0) >= 50, `seed ${seed} 碎屑场 ${cnt.l7debris}`)
++  ok((cnt.l7skeleton ?? 0) >= 20, `seed ${seed} 类人骨架 ${cnt.l7skeleton}`)
++  console.log(`seed ${seed}`, JSON.stringify(cnt))
++}
++console.log(`L7 generation: ${pass} passed, ${fail} failed`)
++if (fail) process.exit(1)
+diff --git a/app/src/game/content/decorRegistry.ts b/app/src/game/content/decorRegistry.ts
+index 4280eea..cb8cd7b 100644
+--- a/app/src/game/content/decorRegistry.ts
++++ b/app/src/game/content/decorRegistry.ts
+@@ -124,6 +124,12 @@ const RAW: RawEntry[] = [
+   S('bonepile', '骨堆', 'nonsolid', ['L7', 'L8'], 'mapgenDeep L7/L8 散点'),
+   S('fishbones', '巨鱼骨架', 'nonsolid', ['L7'], 'mapgenDeep L7'),
+   S('seatarpit', '深渊焦油岩堆', 'nonsolid', ['L7'], 'mapgenDeep L7'),
++  S('l7debris', '漂浮碎屑场', 'nonsolid', ['L7'], 'infiniteL7 v66 每 chunk 一组实例：书皮纸块/骨片/锈蚀废铁/纤维，按落点深度带'),
++  S('l7skeleton', '类人骨架（巨颚鳍足）', 'nonsolid', ['L7'], 'infiniteL7 v66 暮色带起出现，午夜带成群'),
++  S('l7giantfish', '不可理解的巨鱼骨架', 'nonsolid', ['L7'], 'infiniteL7 v66 午夜带/深渊稀有地标'),
++  S('l7carpet', '海床地毯补丁', 'nonsolid', ['L7'], 'infiniteL7 v66 午夜带/深渊海床'),
++  S('l7bubbles', '深渊气泡柱', 'nonsolid', ['L7'], 'infiniteL7 v66 焦油岩堆与未知源头'),
++  S('l7fort', '臣服堡垒（废弃）', 'nonsolid', ['L7'], 'infiniteL7 v66 约半数岩岛；内含可搜刮板条箱/木桶'),
+   S('ropeanchor', '系缆桩（尼龙绳锚点）', 'nonsolid', ['L7'], 'infiniteL7 门廊入口；data.deployed 持久化，绳索自门廊出口垂至海面，可靠近攀爬'),
+   S('stalagspike', '钟乳石与石笋', 'solid', ['L8'], 'infiniteL8；按生态密度生成，分别贴紧洞顶/洞底并带精细碰撞'),
+   S('caveboulder', '洞穴突岩', 'solid', ['L8'], 'infiniteL8；按生态使用不同真实岩石 PBR'),
+diff --git a/app/src/game/core/audio.ts b/app/src/game/core/audio.ts
+index c52cede..4548c7b 100644
+--- a/app/src/game/core/audio.ts
++++ b/app/src/game/core/audio.ts
+@@ -616,6 +616,66 @@ export class GameAudio {
+     s2.connect(bp).connect(sg).connect(this.sfx); s2.start(t + 0.1); s2.stop(t + 0.86)
+   }
+ 
++  // v66：L7 七层之物的远处低吼——极低频的滑音 + 胸腔共鸣的带通噪声，距离越远越闷、越晚
++  leviathanGroan(vol = 1, dist = 100) {
++    if (!this.ctx || !this.sfx) return
++    const t = this.ctx.currentTime + Math.min(1.2, dist / 330)
++    const far = Math.max(0.25, 1 - dist / 260)
++    const lp = this.ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 180 + far * 220
++    const g = this.ctx.createGain()
++    g.gain.setValueAtTime(0.0001, t)
++    g.gain.exponentialRampToValueAtTime(0.22 * vol * far, t + 1.6)
++    g.gain.exponentialRampToValueAtTime(0.0008, t + 7.5)
++    lp.connect(g).connect(this.sfx)
++    for (const [f0, f1, type] of [[46, 31, 'sawtooth'], [69, 44, 'triangle'], [23, 19, 'sine']] as const) {
++      const o = this.ctx.createOscillator(); o.type = type
++      o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + 6.5)
++      o.connect(lp); o.start(t); o.stop(t + 7.6)
++    }
++    const n = this.noiseSrc()
++    const bp = this.ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 95; bp.Q.value = 2.5
++    const ng = this.ctx.createGain(); ng.gain.setValueAtTime(0.0001, t); ng.gain.exponentialRampToValueAtTime(0.5 * vol * far, t + 2.2); ng.gain.exponentialRampToValueAtTime(0.001, t + 7)
++    n.connect(bp).connect(ng).connect(lp); n.start(t); n.stop(t + 7.2)
++  }
++
++  // v66：L7 深海水压音景——持续低频轰鸣 + 偶发金属/骨骼受压的吱嘎声；k=0 关闭（0~1 随深度）
++  private deepNodes: { g: GainNode; o: OscillatorNode[]; n: AudioBufferSourceNode } | null = null
++  private deepCreakT = 6
++  setDeepPressure(k: number, dt = 0.016) {
++    if (!this.ctx || !this.sfx) return
++    if (k <= 0.001 && !this.deepNodes) return
++    if (!this.deepNodes) {
++      const g = this.ctx.createGain(); g.gain.value = 0
++      const lp = this.ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 140
++      lp.connect(g).connect(this.sfx)
++      const o: OscillatorNode[] = []
++      for (const [f, type] of [[27.5, 'sine'], [41.2, 'triangle']] as const) {
++        const os = this.ctx.createOscillator(); os.type = type; os.frequency.value = f
++        const lfo = this.ctx.createOscillator(); lfo.frequency.value = 0.07 + f * 0.001
++        const lg = this.ctx.createGain(); lg.gain.value = f * 0.04
++        lfo.connect(lg).connect(os.frequency); lfo.start()
++        os.connect(lp); os.start(); o.push(os, lfo)
++      }
++      const n = this.noiseSrc()
++      const ng = this.ctx.createGain(); ng.gain.value = 0.35
++      n.connect(ng).connect(lp); n.start()
++      this.deepNodes = { g, o, n }
++    }
++    this.deepNodes.g.gain.setTargetAtTime(0.16 * k, this.ctx.currentTime, 0.4)
++    this.deepCreakT -= dt
++    if (k > 0.35 && this.deepCreakT <= 0) {
++      this.deepCreakT = 5 + Math.random() * 12 * (1.4 - k)
++      const t = this.ctx.currentTime
++      const o = this.ctx.createOscillator(); o.type = 'sawtooth'
++      const f = 70 + Math.random() * 90
++      o.frequency.setValueAtTime(f, t); o.frequency.linearRampToValueAtTime(f * (0.6 + Math.random() * 0.3), t + 1.3)
++      const bp = this.ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 300 + Math.random() * 300; bp.Q.value = 9
++      const cg = this.ctx.createGain(); cg.gain.setValueAtTime(0.0001, t); cg.gain.exponentialRampToValueAtTime(0.05 * k, t + 0.25); cg.gain.exponentialRampToValueAtTime(0.0005, t + 1.4)
++      const pan = this.ctx.createStereoPanner(); pan.pan.value = Math.random() * 2 - 1
++      o.connect(bp).connect(cg).connect(pan).connect(this.sfx); o.start(t); o.stop(t + 1.45)
++    }
++  }
++
+   whisper(vol = 1) {
+     if (!this.ctx || !this.sfx) return
+     const t = this.ctx.currentTime
+diff --git a/app/src/game/core/types.ts b/app/src/game/core/types.ts
+index f18d435..bf8aae1 100644
+--- a/app/src/game/core/types.ts
++++ b/app/src/game/core/types.ts
+@@ -160,6 +160,12 @@ export type StructKind = import('../content/tradeDecor').TradeKind | import('../
+   | 'bonepile'     // 骨堆（容器；下颌增大、腿末端成鳍的类人骨架）
+   | 'fishbones'    // 不可理解的巨鱼骨架（Midnight Zone）
+   | 'seatarpit'    // 深渊焦油与岩石堆（持续冒泡）
++  | 'l7debris'     // v66 L7 每 chunk 一组漂浮/沉底碎屑实例（骨片/废铁/书皮纸块/纤维）
++  | 'l7skeleton'   // v66 L7 巨颚长牙鳍足的类人骨架（合并单网格）
++  | 'l7giantfish'  // v66 L7 午夜带/深渊「不可理解」的巨鱼骨架地标
++  | 'l7carpet'     // v66 L7 海床露出的泡烂地毯补丁
++  | 'l7bubbles'    // v66 L7 深渊气泡柱（GPU 点精灵循环上升）
++  | 'l7fort'       // v66 L7 岛上已废弃的「臣服堡垒」（家具堆叠+焦油）
+   | 'ropeanchor'   // L7 入口房间门廊系缆桩：使用尼龙绳后 data.deployed=1，绳索自门廊出口垂至海面，可攀爬返回
+   // ===== v23：Level 8「洞穴系统」 =====
+   | 'stalagspike'  // L8 钟乳石/石笋簇：真实洞底/洞顶锚定 + PBR 岩石 + 精细碰撞
+diff --git a/app/src/game/engine.ts b/app/src/game/engine.ts
+index bba0b09..0cbd5ad 100644
+--- a/app/src/game/engine.ts
++++ b/app/src/game/engine.ts
+@@ -28,6 +28,7 @@ import { runEffectTicks, resetEffects } from './engine/effects'
+ import * as save from './engine/save'
+ import * as level from './engine/level'
+ import * as movement from './engine/movement'
++import { newL7Fx, type L7Fx } from './engine/l7Events'
+ import * as survival from './engine/survival'
+ import * as entityAI from './engine/entityAI'
+ import * as combat from './engine/combat'
+@@ -173,6 +174,7 @@ export class Engine {
+   fakes: { x: number; y: number; t: number }[] = [] // 理智幻影
+   particles: { x: number; y: number; vx: number; vy: number; t: number; life: number; color: string; size: number; z?: number; vz?: number }[] = []
+   // v13：液体状态
++  l7fx: L7Fx = newL7Fx() // v66：L7 涌浪/致幻/重力交界区事件状态
+   inLiquid = 0 // 当前所在液体类型（0 无 1 深水 2 浅水）
+   submerged = false // 头部没入水下
+   breathT = 0 // 水下屏气计时（超限微扣 HP）
+diff --git a/app/src/game/engine/l7Events.ts b/app/src/game/engine/l7Events.ts
+new file mode 100644
+index 0000000..c6a9770
+--- /dev/null
++++ b/app/src/game/engine/l7Events.ts
+@@ -0,0 +1,144 @@
++// v66：Level 7 特殊事件（每帧在玩家移动前调用一次；只在 L7 生效）。
++//
++// 1) 七层之物涌浪（Fandom：楼层海面仅存的涌浪源自这一实体的活动）——
++//    玩家在远离入口的开阔海面时，每 2~5 分钟一次：远处 90~130m 浮出一段巨大的背脊，
++//    沿切向缓慢游过约 24s 后下沉；它推开的环形涌浪传到玩家处时，玩家被抬起并被推离波源。
++// 2) 比普综合症 + 骨粉雾（Fandom）——在远海水面停留越久（halluc 0→1），蜃楼船越清晰；
++//    明明海水完全静止，人却像被洋流悄悄往后拉（逆着移动方向的缓慢漂移）；耳边出现幻听。
++//    回到入口附近或长时间潜在水下会慢慢消退。
++// 3) 重力交界区水墙（Fandom：竖直的水墙）——位于水墙投影内时，水面上限抬高到墙顶，
++//    可以「侧着」顺着水墙游上去；墙内重力偏向墙体中面（轻微横向拉力）。离开墙体时若高于海面，则坠落回海。
++import type { Engine } from '../engine'
++import { audio } from '../core/audio'
++import { L7_ORIGIN, l7GravWallAt, l7GravDistance } from '../world/infiniteL7'
++import { l7SurgeHeight } from '../renderer/water'
++
++export interface L7Surge {
++  /** 背脊当前世界坐标（瓦片） */
++  wx: number; wy: number
++  /** 游动方向（单位向量） */
++  dx: number; dy: number
++  t: number; dur: number; amp: number
++}
++export interface L7Fx {
++  surge: L7Surge | null
++  /** 涌浪环形波前半径（米） */
++  surgeR: number
++  nextSurge: number
++  farT: number
++  halluc: number
++  whisperT: number
++  /** 本帧玩家所在水墙（null=不在） */
++  wall: { top: number; nx: number; ny: number; perp: number } | null
++  /** 到最近水墙的水平距离（米） */
++  gravDist: number
++  gravT: number
++  /** 离开水墙时仍高于海面、正在坠落 */
++  wallFall: boolean
++  /** 本帧玩家处涌浪海面偏移（米） */
++  surgeH: number
++  mapRef: unknown
++}
++export const newL7Fx = (): L7Fx => ({ surge: null, surgeR: 0, nextSurge: 140, farT: 0, halluc: 0, whisperT: 10, wall: null, gravDist: Infinity, gravT: 0, wallFall: false, surgeH: 0, mapRef: null })
++
++const SURGE_SPEED = 9 // 涌浪波前传播速度（m/s）
++
++/** 当前涌浪着色器参数（场景坐标）。供渲染器写入 l7SurgeUniforms。 */
++export function l7SurgeShaderParams(eng: Engine): { x: number; y: number; z: number; w: number } {
++  const fx = eng.l7fx, m = eng.map
++  if (!fx.surge || !m?.inf) return { x: 0, y: 0, z: 0, w: 0 }
++  const s = fx.surge
++  const env = Math.min(1, s.t / 4) * (1 - Math.max(0, (s.t - s.dur) / 14))
++  return { x: s.wx - m.inf.ox, y: s.wy - m.inf.oy, z: s.amp * Math.max(0, env), w: fx.surgeR }
++}
++
++export function stepL7Events(eng: Engine, dt: number) {
++  const m = eng.map
++  if (!m?.inf || eng.levelDef.id !== 7) return
++  const fx = eng.l7fx
++  if (fx.mapRef !== m) { Object.assign(fx, newL7Fx()); fx.mapRef = m }
++  const p = eng.player
++  const seed = m.inf.seed
++  const wx = p.x + m.inf.ox, wy = p.y + m.inf.oy
++  const r = Math.hypot(wx - L7_ORIGIN.x, wy - L7_ORIGIN.y)
++  const inSea = eng.inLiquid === 1
++  const nearSurface = inSea && p.z > -2.5
++
++  // ---- 重力交界区 ----
++  fx.gravT -= dt
++  if (fx.gravT <= 0) { fx.gravT = 0.25; fx.gravDist = r > 250 ? l7GravDistance(seed, wx, wy) : Infinity }
++  const w = fx.gravDist < 8 ? l7GravWallAt(seed, wx, wy) : null
++  fx.wall = w ? { top: w.top, nx: w.nx, ny: w.ny, perp: w.perp } : null
++
++  // ---- 七层之物涌浪 ----
++  if (fx.surge) {
++    const s = fx.surge
++    s.t += dt
++    s.wx += s.dx * 6 * dt; s.wy += s.dy * 6 * dt
++    fx.surgeR += SURGE_SPEED * dt
++    if (s.t > s.dur + 16) { fx.surge = null; fx.surgeR = 0; fx.nextSurge = 120 + Math.random() * 180 }
++  } else if (nearSurface && r > 80 && !eng.dev.frozenAI) {
++    fx.nextSurge -= dt
++    if (fx.nextSurge <= 0) {
++      const a = Math.random() * Math.PI * 2, d = 90 + Math.random() * 40
++      const sgn = Math.random() < 0.5 ? -1 : 1
++      fx.surge = { wx: wx + Math.cos(a) * d, wy: wy + Math.sin(a) * d, dx: -Math.sin(a) * sgn, dy: Math.cos(a) * sgn, t: 0, dur: 22 + Math.random() * 8, amp: 0.75 + Math.random() * 0.45 }
++      fx.surgeR = 0
++      audio.leviathanGroan(1, d)
++      eng.msg('远处的海面隆起了一道漫长的弧——有什么东西在水下翻了个身。', 'system')
++    }
++  }
++  fx.surgeH = 0
++  if (fx.surge) {
++    const sp = l7SurgeShaderParams(eng)
++    fx.surgeH = l7SurgeHeight(p.x, p.y, sp)
++    if (nearSurface && Math.abs(fx.surgeH) > 0.05) {
++      // 推离波源：只在波峰（h>0）推，力度与浪高成正比
++      const ddx = p.x - sp.x, ddy = p.y - sp.y, L = Math.hypot(ddx, ddy) || 1
++      const push = Math.max(0, fx.surgeH) * 1.5 * dt
++      moveIfWater(eng, (ddx / L) * push, (ddy / L) * push)
++    }
++  }
++
++  // ---- 比普综合症 / 骨粉雾致幻 ----
++  const far = nearSurface && r > 180
++  if (far) fx.farT += dt
++  else fx.farT = Math.max(0, fx.farT - dt * (r < 60 ? 3 : inSea && p.z < -4 ? 1 : 0.4))
++  const target = Math.min(1, Math.max(0, (fx.farT - 120) / 480))
++  fx.halluc += (target - fx.halluc) * Math.min(1, dt * 0.5)
++  if (fx.halluc > 0.25 && nearSurface) {
++    // 「如同洋流正在悄悄地将自己向后方拉去，尽管海水完全没有运动」
++    const mx = eng.input.mx, my = eng.input.my
++    const mag = Math.hypot(mx, my)
++    if (mag > 0.1) {
++      const k = (fx.halluc - 0.25) * 0.55 * dt
++      // input.mx/my 已是世界方向（integrateMove 直接使用）；逆着移动方向缓慢漂移
++      moveIfWater(eng, -mx / mag * k, -my / mag * k)
++    }
++    fx.whisperT -= dt
++    if (fx.whisperT <= 0) {
++      fx.whisperT = 7 + Math.random() * 14 * (1.3 - fx.halluc)
++      audio.whisper(0.45 + fx.halluc * 0.6)
++      if (fx.halluc > 0.55 && Math.random() < 0.25) eng.msg('雾里有船。很近。你游了很久，它还是那么近。', 'system')
++    }
++  }
++}
++
++function moveIfWater(eng: Engine, dx: number, dy: number) {
++  const m = eng.map!, p = eng.player
++  const nx = p.x + dx, ny = p.y + dy
++  const tx = Math.floor(nx), ty = Math.floor(ny)
++  if (tx < 1 || ty < 1 || tx >= m.w - 1 || ty >= m.h - 1) return
++  if (m.liquid[ty * m.w + tx] !== 1 || m.up?.[ty * m.w + tx] === 1) return
++  p.x = nx; p.y = ny
++}
++
++/** 开发者/预览：立刻在玩家前方触发一次涌浪（angleDeg=背脊相对玩家的世界方位）。 */
++export function triggerL7Surge(eng: Engine, angleDeg = 0, dist = 70) {
++  const m = eng.map
++  if (!m?.inf) return
++  const p = eng.player, a = angleDeg * Math.PI / 180
++  const wx = p.x + m.inf.ox, wy = p.y + m.inf.oy
++  eng.l7fx.surge = { wx: wx + Math.cos(a) * dist, wy: wy + Math.sin(a) * dist, dx: -Math.sin(a), dy: Math.cos(a), t: 6, dur: 40, amp: 1.0 }
++  eng.l7fx.surgeR = 40
++}
+diff --git a/app/src/game/engine/movement.ts b/app/src/game/engine/movement.ts
+index f2ab603..103095b 100644
+--- a/app/src/game/engine/movement.ts
++++ b/app/src/game/engine/movement.ts
+@@ -1,3 +1,4 @@
++import { stepL7Events } from './l7Events'
+ import { tickL0 } from './l0State'
+ import { l0Sample } from '../world/l0Architecture'
+ import { stableAt } from './career'
+@@ -19,6 +20,8 @@ type DiffMult = { dmg: number; drain: number }
+ 
+ /** 移动主段（原 step「---- 移动 ----」至离水判定一整段；返回本帧输入向量模长 mag，null=中止本帧） */
+ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock: boolean): number | null {
++  if (eng.levelDef.id === 7) stepL7Events(eng, dt) // v66：涌浪 / 致幻 / 重力交界区
++  audio.setDeepPressure(eng.levelDef.id === 7 && eng.submerged ? Math.min(1, Math.max(0, (-eng.player.z - 30) / 170)) : 0, dt) // v66：深海水压音景
+   const p = eng.player, m = eng.map!
+   // ---- 移动 ----
+   const mag = Math.hypot(eng.input.mx, eng.input.my)
+@@ -39,7 +42,9 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
+     else if (gBand >= 1 && m.up[tileI] === 1 && p.z < FLOOR_H - 0.35) gBand = 0
+   }
+   // v13：液体状态（深水=可沉没游泳；浅水=减速涟漪）
+-  const lq = band === 0 ? m.liquid[tileI] : 0
++  // v66：L7 水墙内（或刚离开水墙、仍在海面以上下坠）时，无论高度带都按深水处理
++  const l7WallLiquid = eng.levelDef.id === 7 && (eng.l7fx.wall || eng.l7fx.wallFall) && m.up[tileI] !== 1 && m.liquid[tileI] === 1
++  const lq = band === 0 || l7WallLiquid ? m.liquid[tileI] : 0
+   if (lq !== eng.inLiquid) {
+     if (lq === 1 && eng.inLiquid !== 1) { // 入水扑通（无液/浅水→深水；L7 入口房间浅水洼走出门廊即触发）
+       audio.splash()
+@@ -306,6 +311,27 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
+     const waterG = l7Water ? 7.0 : 5.0
+     const floorZ = m.l7SeaTerrain ? floorHeight(m, p.x, p.y, 0) : -(m.seaFloor?.[tileI] || POOL_DEPTH)
+     const fastSwimVertical = wantSprint && l7Swim && mag > 0.1
++    // v66：L7 水面上限 = 海面 + 涌浪抬升；位于重力交界区水墙内时上限抬到墙顶（可顺着水墙游上去）
++    const l7f = l7Water ? eng.l7fx : null
++    const wall = l7f?.wall ?? null
++    const surfZ = 0.1 + (l7f ? Math.max(0, l7f.surgeH) : 0)
++    const ceilZ = wall ? wall.top - 1.7 : surfZ
++    if (l7f) {
++      if (wall) l7f.wallFall = p.z > surfZ + 0.3
++      // 墙内重力偏向墙体中面：轻微横向拉力（「侧着」漂在水墙里）
++      if (wall && p.z > 0.2) { p.x -= wall.nx * wall.perp * 0.7 * dt; p.y -= wall.ny * wall.perp * 0.7 * dt }
++    }
++    const airborne = !!l7f && !wall && p.z > surfZ + 0.05
++    if (airborne) {
++      // 离开水墙时已高出海面：按正常重力坠回海里
++      p.vz = Math.max(-28, p.vz - 11 * dt)
++      p.z += p.vz * dt
++      if (p.z <= surfZ) {
++        p.z = surfZ; p.vz = 0; l7f!.wallFall = false
++        audio.splash(); eng.splashParticles(p.x, p.y, 0)
++        eng.msg('你从水墙上摔回了海面。', 'system')
++      }
++    } else 
+     // v57q：取消被动浮力——只有主动操作才会改变深度。
+     // v57t 优先级：快速游泳（严格按准星俯仰）> 蹲伏下潜 > 跳跃上浮 > 中性悬浮。
+     if (fastSwimVertical) {
+@@ -326,20 +352,22 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
+       // v57r：无任何主动输入=完全中性悬浮。直接清零垂直速度，杜绝残余动量造成的自动上浮/下沉。
+       p.vz = 0
+     }
+-    p.vz = Math.max(sinkMax, Math.min(upMax, p.vz))
+-    p.z += p.vz * dt
++    if (!airborne) {
++      p.vz = Math.max(sinkMax, Math.min(upMax, p.vz))
++      p.z += p.vz * dt
++    }
+     if (p.z <= floorZ) { p.z = floorZ; p.vz = 0 } // 池底/海床（v57o：L7 按瓦片深度）
+-    if (p.z > 0.1) { p.z = 0.1; p.vz = 0 } // 不越出水面
++    if (p.z > ceilZ && !airborne) { p.z = ceilZ; p.vz = 0 } // 不越出水面（v66：涌浪/水墙抬升上限）
+     // v57t：水面的自然漂浮起伏——无垂直输入时身体随波浪在 -0.1~0.1m 间浮动，
+     // 而不是固定在 0.1m 像踩在固体平面上。
+-    if (l7Water && !eng.input.jump && !eng.input.crouch && !fastSwimVertical && p.z > -0.12) {
++    if (l7Water && !wall && !airborne && !eng.input.jump && !eng.input.crouch && !fastSwimVertical && p.z > -0.12) {
+       p.z = Math.max(-0.1, Math.min(0.1,
+         Math.sin(eng.time * 1.35 + p.x * 0.7 + p.y * 0.55) * 0.09
+-        + Math.sin(eng.time * 2.3 + p.y * 1.1) * 0.04))
++        + Math.sin(eng.time * 2.3 + p.y * 1.1) * 0.04)) + (l7f?.surgeH ?? 0)
+       p.vz = 0
+     }
+     // 水下状态：屏气 + 低通滤波 + 气泡
+-    const sub = p.z + 1.55 < 0
++    const sub = p.z + 1.55 < (wall ? wall.top : l7f ? l7f.surgeH : 0)
+     if (sub && !eng.wasSubmerged) eng.msg('水没过了头顶——视野变成浑浊的蓝。', 'system')
+     eng.submerged = sub
+     eng.wasSubmerged = sub
+diff --git a/app/src/game/levels/l7.ts b/app/src/game/levels/l7.ts
+index dcf08fc..4f80844 100644
+--- a/app/src/game/levels/l7.ts
++++ b/app/src/game/levels/l7.ts
+@@ -8,7 +8,7 @@ export const L7: LevelDef = {
+   name: '深海恐惧',
+   sd: 'Survival Difficulty: Class 4 · 实体 2 · 极难离开',
+   flavor: '楼梯尽头是一间由锈蚀钢板拼成的金属舱室：里面亮着荧光吊灯，地上铺着旧地毯，浅水一直漫到门廊。舱门之外四米半以下就是海面。',
+-  lore: 'Level 7「Thalassophobia」。由两个截然不同的空间组成。入口房间：从 Level 6 下来的楼梯底部，本体是一间悬浮在海面上方的锈蚀金属舱室。左墙一个书柜（内有若干来源不明的书）、一张小咖啡桌、一把椅子、一盏荧光吊灯，金属地面上铺着旧地毯并积着一层不深于水洼的水。房间向南伸出一道门廊，尽头舱门外即海洋。舱室采用与下方海洋不同的重力轴——它侧向嵌在海洋空间的天花板里，任何站到舱门前的东西重力都会被强制切换，直接坠落约 4.5 米到水面。舱门边有系缆桩，可使用尼龙绳垂入海中，作为返回入口的唯一可靠途径。海洋空间：无限延伸，上方是高悬的混凝土天花板；没有任何固定光源，却存在弥漫的、来源不明的昏暗自然光；水极冷但不会立即致命；水面上方的空气含有某种未知性质，使人能屏息约 30 分钟。四个深度带：Daylight Zone（照明最好也最荒芜）、Twilight Zone（水下约 1 公里，散落骨头与锈蚀金属，首次出现下颌异常增大、牙齿尖锐、腿部末端成鳍的类人骨架）、Midnight Zone（再往下约 3 公里，完全黑暗，大量类人骨架与结构「不可理解」的巨鱼骨架；发现合成纤维碎片，暗示海床是铺着地毯的）、The Abyss（7 公里以下，山丘状的焦油与岩石堆，持续冒泡）。本作的海床拥有真实逐瓦片深度：从舱门落入海中后可以一路下潜，穿越有光带、微光带、午夜带，直到深逾两百米的深渊带。⚠ Wikidot 明确建议携带绳索或梯子，否则掉进水里后无法爬回入口房间。——据 Backrooms Wikidot 与 Fandom 整理。',
++  lore: 'Level 7「Thalassophobia」。由两个截然不同的空间组成。入口房间：从 Level 6 下来的楼梯底部，本体是一间悬浮在海面上方的锈蚀金属舱室。左墙一个书柜（内有若干来源不明的书）、一张小咖啡桌、一把椅子、一盏荧光吊灯，金属地面上铺着旧地毯并积着一层不深于水洼的水。房间向南伸出一道门廊，尽头舱门外即海洋。舱室采用与下方海洋不同的重力轴——它侧向嵌在海洋空间的天花板里，任何站到舱门前的东西重力都会被强制切换，直接坠落约 4.5 米到水面。舱门边有系缆桩，可使用尼龙绳垂入海中，作为返回入口的唯一可靠途径。海洋空间：无限延伸，上方是高悬的混凝土天花板；没有任何固定光源，却存在弥漫的、来源不明的昏暗自然光；水极冷但不会立即致命；水面上方的空气含有某种未知性质，使人能屏息约 30 分钟。四个深度带：Daylight Zone（照明最好也最荒芜）、Twilight Zone（水下约 1 公里，散落骨头与锈蚀金属，首次出现下颌异常增大、牙齿尖锐、腿部末端成鳍的类人骨架）、Midnight Zone（再往下约 3 公里，完全黑暗，大量类人骨架与结构「不可理解」的巨鱼骨架；发现合成纤维碎片，暗示海床是铺着地毯的）、The Abyss（7 公里以下，山丘状的焦油与岩石堆，持续冒泡）。本作的海床拥有真实逐瓦片深度：从舱门落入海中后可以一路下潜，穿越有光带、微光带、午夜带，直到深逾两百米的深渊带。入口舱室下方是一座海山的平顶：周围只有数米深的浅台，台缘之外海床几乎竖直地跌进两百多米深的黑暗，岩洞就开在那面崖壁的底部。远海偶尔能看见竖立的水墙连着一片倒悬在天上的海面；水面始终近乎静止，唯一的涌浪来自水下那个东西翻身。⚠ Wikidot 明确建议携带绳索或梯子，否则掉进水里后无法爬回入口房间。——据 Backrooms Wikidot 与 Fandom 整理。',
+   palette: {
+     floor: '#2b3b44', floorAlt: '#25333b', wall: '#4e5358', wallTop: '#5b6166',
+     accent: '#8fb2bd', light: '#a9c6cf', decal: '#1b262c',
+diff --git a/app/src/game/renderer/geometry.ts b/app/src/game/renderer/geometry.ts
+index 5cc9bbb..9f93a8c 100644
+--- a/app/src/game/renderer/geometry.ts
++++ b/app/src/game/renderer/geometry.ts
+@@ -1,3 +1,4 @@
++import { addL7Caustics } from './l7Ocean'
+ import {buildL4Terrain} from './l4Terrain'
+ import { l5SurfaceBatches } from './l5Materials'
+ import { buildL5Architecture } from './l5Architecture'
+@@ -513,12 +514,12 @@ if (l7SandSeabedGeos.length) {
+     configureSurfaceTexture(sand, THREE.SRGBColorSpace)
+     sand.userData.l7SeabedConfigured = 1
+   }
+-  g.add(new THREE.Mesh(mergeGeometries(l7SandSeabedGeos)!, litMaterial({
++  g.add(new THREE.Mesh(mergeGeometries(l7SandSeabedGeos)!, addL7Caustics(litMaterial({
+     color: '#ffffff', vertexColors: true, map: sand, bumpMap: sand, bumpScale: 0.038,
+     roughness: 0.7, envBase: 0.34,
+     // 深水带仍保留极低的贴图化亮度下限；主要凹凸和高光由下潜自然光负责。
+     emissive: '#78908b', emissiveMap: sand, emissiveIntensity: 0.1,
+-  })))
++  }))))
+ }
+ if (l7RockSeabedGeos.length) {
+   yield
+@@ -527,11 +528,11 @@ if (l7RockSeabedGeos.length) {
+     configureSurfaceTexture(rock, THREE.SRGBColorSpace)
+     rock.userData.l7SeabedConfigured = 1
+   }
+-  g.add(new THREE.Mesh(mergeGeometries(l7RockSeabedGeos)!, litMaterial({
++  g.add(new THREE.Mesh(mergeGeometries(l7RockSeabedGeos)!, addL7Caustics(litMaterial({
+     color: '#ffffff', vertexColors: true, map: rock, bumpMap: rock, bumpScale: 0.055,
+     roughness: 0.6, envBase: 0.4,
+     emissive: '#718783', emissiveMap: rock, emissiveIntensity: 0.09,
+-  })))
++  }))))
+ }
+ if (floorGeos.length) {
+   yield
+diff --git a/app/src/game/renderer/l7Meshes.ts b/app/src/game/renderer/l7Meshes.ts
+new file mode 100644
+index 0000000..e364844
+--- /dev/null
++++ b/app/src/game/renderer/l7Meshes.ts
+@@ -0,0 +1,452 @@
++// v66：Level 7 水中装饰物（全部无碰撞；每件一个合并网格 / 一个实例化网格 / 一组点精灵，单次绘制）。
++//
++// 设定依据（backrooms-wiki-cn Level 7 与 Fandom zh Level 7）：
++//   暮色带：零散骨片与生锈废铁漂浮；完整的类人骸骨——下颚巨大、牙齿长而锋利、腿部末端呈鳍肢；
++//           带撕咬/抓挠痕迹的巨大鱼类骸骨。
++//   午夜带：更多完整类人骸骨；巨大到不可思议、结构「难以理解」的鱼类骨架；人造纤维碎屑（海床铺有地毯）。
++//   深渊带：堆积成山的岩石与焦油，深处某个源头持续产生稳定气泡；骨骸被水压侵蚀。
++//   岛屿：「臣服堡垒」——家具堆叠、焦油加固的简易庇护所（本作为已废弃版本）。
++//   Fandom：书架上没有书，只有书皮包着的实心无特征纸块（漂在近水面）。
++import * as THREE from 'three'
++import type { Structure } from '../core/types'
++import { floorHeight, type GameMap } from '../world/mapgen'
++import { litMaterial } from './shared'
++import { sweep, merge, V, rng } from './houndMesh'
++import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
++import { waterUniforms } from './water'
++
++type G = THREE.BufferGeometry
++
++/** 给几何体写入统一顶点色（保留 sweep 的明暗 AO 作为乘数）。 */
++function tint(g: G, hex: string, k = 1): G {
++  const c = new THREE.Color(hex)
++  const n = g.attributes.position.count
++  const old = g.attributes.color as THREE.BufferAttribute | undefined
++  const arr = new Float32Array(n * 3)
++  for (let i = 0; i < n; i++) {
++    const s = (old ? old.getX(i) : 1) * k
++    arr[i * 3] = c.r * s; arr[i * 3 + 1] = c.g * s; arr[i * 3 + 2] = c.b * s
++  }
++  g.setAttribute('color', new THREE.BufferAttribute(arr, 3))
++  if (!g.attributes.uv) g.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(n * 2), 2))
++  return g
++}
++const prim = (g: G, hex: string, x = 0, y = 0, z = 0, rx = 0, ry = 0, rz = 0, k = 1) => {
++  g.rotateX(rx); g.rotateY(ry); g.rotateZ(rz); g.translate(x, y, z)
++  return tint(g.index ? g.toNonIndexed() : g, hex, k)
++}
++/** 骨管：沿控制点扫掠，两端略膨大（骨骺），截面略扁。 */
++function bone(pts: THREE.Vector3[], r: number, hex: string, seg = 6, radial = 6): G {
++  const g = sweep(pts, (t, _d, cs) => r * (1 + 0.45 * Math.pow(Math.abs(t * 2 - 1), 6)) * (0.85 + 0.15 * Math.abs(cs)), { seg, radial })
++  return tint(g, hex)
++}
++
++let boneMat: THREE.Material | null = null
++let tarMat: THREE.Material | null = null
++let carpetMat: THREE.Material | null = null
++let woodMat: THREE.Material | null = null
++function mats() {
++  boneMat ??= litMaterial({ color: '#ffffff', vertexColors: true, roughness: 0.82, envBase: 0.25, emissive: '#2a2c28', emissiveIntensity: 0.25 })
++  tarMat ??= litMaterial({ color: '#ffffff', vertexColors: true, roughness: 0.22, metalness: 0.05, envBase: 0.85 })
++  carpetMat ??= litMaterial({ color: '#ffffff', vertexColors: true, roughness: 1, envBase: 0.05, side: THREE.DoubleSide })
++  woodMat ??= litMaterial({ color: '#ffffff', vertexColors: true, roughness: 0.9, envBase: 0.12 })
++  return { bone: boneMat, tar: tarMat, carpet: carpetMat, wood: woodMat }
++}
++
++// ---------------- 类人骨架（巨颚、长牙、鳍足） ----------------
++const skeletonCache = new Map<number, G>()
++function skeletonGeo(variant: number, eroded: boolean): G {
++  const key = variant * 2 + (eroded ? 1 : 0)
++  const hit = skeletonCache.get(key)
++  if (hit) return hit
++  const r = rng(91 + key * 13)
++  const col = eroded ? '#9d988a' : '#cdc6b2', dark = '#2a2620'
++  const parts: G[] = []
++  // 躺姿：沿 +z 为头向；整体贴地（y≈0.08）；变体决定蜷曲/侧卧
++  const curl = variant === 1 ? 0.35 : variant === 2 ? -0.25 : 0.08
++  // 脊柱（17 节椎骨合成一根带结节的扫掠管）
++  const spine: THREE.Vector3[] = []
++  for (let i = 0; i <= 6; i++) { const t = i / 6; spine.push(V(Math.sin(t * Math.PI) * curl, 0.09 + Math.sin(t * 3.1) * 0.02, -0.55 + t * 1.15)) }
++  parts.push(tint(sweep(spine, (t) => 0.035 * (1 + 0.35 * Math.max(0, Math.sin(t * 17 * Math.PI))), { seg: 34, radial: 6 }), col))
++  // 肋笼：每侧 7 根弯肋（侵蚀体缺若干根）
++  for (let i = 0; i < 7; i++) for (const s of [-1, 1]) {
++    if (eroded && r() < 0.35) continue
++    const z = 0.2 + i * 0.075, l = 0.24 - Math.abs(i - 2) * 0.02
++    parts.push(bone([V(s * 0.02, 0.1, z), V(s * l * 0.7, 0.16, z - 0.02), V(s * l, 0.08, z - 0.05), V(s * l * 0.82, 0.03, z - 0.07)], 0.011, col, 5, 4))
++  }
++  // 骨盆
++  parts.push(prim(new THREE.TorusGeometry(0.11, 0.03, 5, 9, Math.PI * 1.3), col, 0, 0.07, -0.5, Math.PI / 2, 0, Math.PI * 0.85))
++  // 颅骨：小颅腔 + 夸张巨颚（Wikidot「下颚巨大」）
++  const hz = 0.72
++  parts.push(prim(new THREE.SphereGeometry(0.1, 9, 7), col, curl * 0.3, 0.13, hz, 0, 0, 0))
++  parts.push(prim(new THREE.SphereGeometry(0.028, 6, 4), dark, curl * 0.3 - 0.04, 0.16, hz + 0.08))
++  parts.push(prim(new THREE.SphereGeometry(0.028, 6, 4), dark, curl * 0.3 + 0.04, 0.16, hz + 0.08))
++  const jawOpen = 0.25 + r() * 0.5
++  const jaw = new THREE.CylinderGeometry(0.14, 0.17, 0.08, 10, 1, false, -Math.PI * 0.55, Math.PI * 1.1)
++  jaw.scale(1, 1, 1.9)
++  parts.push(prim(jaw, col, curl * 0.3, 0.06, hz + 0.18, jawOpen, 0, 0))
++  // 长而锋利的牙：上下两列细锥
++  for (let i = 0; i < 9; i++) {
++    const a = -0.9 + (i / 8) * 1.8
++    const tx = Math.sin(a) * 0.13 + curl * 0.3, tz = hz + 0.16 + Math.cos(a) * 0.2
++    parts.push(prim(new THREE.ConeGeometry(0.012, 0.09 + r() * 0.04, 4), '#ded8c4', tx, 0.13, tz, Math.PI, 0, 0))
++    parts.push(prim(new THREE.ConeGeometry(0.011, 0.08 + r() * 0.04, 4), '#ded8c4', tx, 0.06 + Math.sin(jawOpen) * 0.05, tz + 0.02, 0, 0, 0))
++  }
++  // 臂骨
++  for (const s of [-1, 1]) {
++    const a0 = V(s * 0.17, 0.11, 0.55), a1 = V(s * (0.32 + r() * 0.1), 0.06, 0.32 + r() * 0.15), a2 = V(s * (0.4 + r() * 0.1), 0.04, 0.05 + r() * 0.2)
++    parts.push(bone([a0, a0.clone().lerp(a1, 0.5).add(V(0, 0.02, 0)), a1], 0.018, col))
++    if (!eroded || r() > 0.4) parts.push(bone([a1, a1.clone().lerp(a2, 0.5), a2], 0.014, col))
++  }
++  // 腿骨 + 鳍肢（Wikidot「腿部的末端呈现出类似鳍肢的结构」）：扇形张开的细长趾骨，骨间残留薄膜
++  for (const s of [-1, 1]) {
++    const k0 = V(s * 0.09, 0.08, -0.55), k1 = V(s * 0.14, 0.07, -0.98), k2 = V(s * 0.16, 0.05, -1.36)
++    parts.push(bone([k0, k0.clone().lerp(k1, 0.5).add(V(0, 0.02, 0)), k1], 0.024, col))
++    parts.push(bone([k1, k1.clone().lerp(k2, 0.5), k2], 0.019, col))
++    for (let f = 0; f < 5; f++) {
++      const a = (f - 2) * 0.24 + s * 0.12
++      const tip = V(k2.x + Math.sin(a) * 0.36, 0.03, k2.z - Math.cos(a) * 0.4)
++      parts.push(bone([k2, k2.clone().lerp(tip, 0.55).add(V(0, 0.015, 0)), tip], 0.008, col, 4, 4))
++    }
++    if (!eroded) {
++      const m = new THREE.CircleGeometry(0.4, 9, -Math.PI / 2 - 0.62 + s * 0.12, 1.24)
++      m.rotateX(-Math.PI / 2)
++      parts.push(prim(m, '#4e463a', k2.x, 0.025, k2.z, 0, 0, 0, 0.9))
++    }
++  }
++  const g = merge(parts)
++  g.computeVertexNormals()
++  g.computeBoundingSphere()
++  skeletonCache.set(key, g)
++  return g
++}
++
++// ---------------- 不可理解的巨鱼骨架 ----------------
++// 「结构难以理解」：主脊柱在中段分叉成两条，肋骨一半朝外一半朝内反折，颅骨上并排三组眼眶，
++// 尾部再接一个朝后的小颅骨；全长约 18~26m，局部有撕咬缺口（Wikidot 暮色带鱼骨的抓挠痕迹）。
++const giantCache = new Map<number, G>()
++function giantFishGeo(v: number): G {
++  const hit = giantCache.get(v)
++  if (hit) return hit
++  const r = rng(733 + v * 41)
++  const col = '#cbc4b0', dark = '#1d1b17'
++  const parts: G[] = []
++  const L = 18 + r() * 8
++  const H = 2.2 + r() * 0.8
++  const main: THREE.Vector3[] = []
++  for (let i = 0; i <= 8; i++) { const t = i / 8; main.push(V(-L / 2 + t * L, H + Math.sin(t * Math.PI) * 1.4 - t * t * 1.2, Math.sin(t * 5.3) * 0.9)) }
++  const curve = new THREE.CatmullRomCurve3(main)
++  parts.push(tint(sweep(main, (t) => 0.22 * (1 - t * 0.55) * (1 + 0.3 * Math.max(0, Math.sin(t * 46 * Math.PI))), { seg: 90, radial: 7 }), col))
++  // 分叉脊柱：自 40% 处岔出，向上斜后方延伸，末端悬空
++  const P = new THREE.Vector3(); curve.getPointAt(0.4, P)
++  const fork = [P.clone(), P.clone().add(V(3, 1.4, 1.6)), P.clone().add(V(6.5, 2.0, 2.4)), P.clone().add(V(9, 1.1, 3.6))]
++  parts.push(tint(sweep(fork, (t) => 0.15 * (1 - t * 0.6) * (1 + 0.3 * Math.max(0, Math.sin(t * 24 * Math.PI))), { seg: 48, radial: 6 }), col))
++  // 肋骨：沿主脊每 0.55m 一对；第 n 对的左右肋随机「反折」（向上/向内卷），并留出撕咬缺口
++  const T = new THREE.Vector3()
++  const ribs = Math.floor(L / 0.62)
++  const gapAt = 0.25 + r() * 0.5
++  for (let i = 2; i < ribs - 2; i++) {
++    const t = i / ribs
++    if (Math.abs(t - gapAt) < 0.05) continue // 被咬掉的一段
++    curve.getPointAt(t, P); curve.getTangentAt(t, T)
++    const len = (1.6 + Math.sin(t * Math.PI) * 2.4) * (0.8 + r() * 0.35)
++    for (const s of [-1, 1]) {
++      const inv = r() < 0.32 ? -1 : 1
++      const down = inv > 0 ? -1 : 0.9
++      const a = P.clone()
++      const b = P.clone().add(V(-T.x * 0.2, down * len * 0.45, s * len * 0.55))
++      const c = P.clone().add(V(-T.x * 0.5, down * len * 0.95, s * len * (inv > 0 ? 0.7 : 0.25)))
++      const d = P.clone().add(V(-T.x * 0.8 + (r() - 0.5) * 0.4, down * len * 1.05 - (inv > 0 ? 0 : 0.6), s * len * (inv > 0 ? 0.35 : -0.15)))
++      if (d.y < 0.05) d.y = 0.05 + r() * 0.08
++      if (c.y < 0.05) c.y = 0.08
++      parts.push(bone([a, b, c, d], 0.06 * (1 - t * 0.4), col, 7, 5))
++    }
++  }
++  // 巨颅：长吻 + 张开的颚 + 一排三组眼眶
++  curve.getPointAt(0, P)
++  const skull = new THREE.SphereGeometry(1.1, 12, 9); skull.scale(1.8, 0.95, 1.05)
++  parts.push(prim(skull, col, P.x - 1.2, P.y + 0.1, P.z))
++  const snout = new THREE.ConeGeometry(0.75, 2.8, 9); snout.rotateZ(Math.PI / 2)
++  parts.push(prim(snout, col, P.x - 3.6, P.y + 0.15, P.z))
++  const jaw = new THREE.CylinderGeometry(0.3, 0.5, 3.4, 8); jaw.rotateZ(Math.PI / 2 + 0.38)
++  parts.push(prim(jaw, col, P.x - 3, P.y - 1.15, P.z))
++  for (let e = 0; e < 3; e++) for (const s of [-1, 1]) parts.push(prim(new THREE.SphereGeometry(0.22 - e * 0.04, 7, 5), dark, P.x - 0.5 - e * 0.75, P.y + 0.45 + e * 0.08, P.z + s * (0.85 - e * 0.08)))
++  for (let i = 0; i < 14; i++) {
++    const tx = P.x - 2.1 - i * 0.22
++    parts.push(prim(new THREE.ConeGeometry(0.06, 0.42 + r() * 0.3, 4), '#ddd6c0', tx, P.y - 0.55, P.z + (i % 2 ? 0.32 : -0.32), Math.PI, 0, 0))
++  }
++  // 尾端第二颅骨（朝后）
++  curve.getPointAt(1, P)
++  const s2 = new THREE.SphereGeometry(0.55, 9, 7); s2.scale(1.5, 0.9, 1)
++  parts.push(prim(s2, col, P.x + 0.6, P.y, P.z))
++  parts.push(prim(new THREE.SphereGeometry(0.12, 6, 4), dark, P.x + 1.15, P.y + 0.2, P.z + 0.28))
++  // 尾鳍骨：扇形鳍条
++  for (let f = 0; f < 7; f++) {
++    const a = (f - 3) * 0.28
++    parts.push(bone([P.clone(), P.clone().add(V(1.2, Math.sin(a) * 1.4, Math.cos(a) * 0.4 - 0.2)), P.clone().add(V(2.4, Math.sin(a) * 2.6, Math.cos(a) * 0.7 - 0.3))], 0.04, col, 5, 4))
++  }
++  const g = merge(parts)
++  g.computeVertexNormals()
++  g.computeBoundingSphere()
++  giantCache.set(v, g)
++  return g
++}
++
++// ---------------- 碎屑场（实例化） ----------------
++type DebrisKind = 'paper' | 'bone' | 'scrap' | 'fiber' | 'barrel'
++const debrisGeo: Partial<Record<DebrisKind, G>> = {}
++function debrisGeometry(k: DebrisKind): G {
++  const hit = debrisGeo[k]
++  if (hit) return hit
++  let g: G
++  if (k === 'paper') {
++    // 书皮包着的实心纸块：书皮色块 + 纸芯白边
++    g = merge([prim(new THREE.BoxGeometry(0.22, 0.05, 0.3), '#3d4a52'), prim(new THREE.BoxGeometry(0.2, 0.04, 0.29), '#cfc9b8', 0.012, 0, 0)])
++  } else if (k === 'bone') {
++    g = bone([V(-0.18, 0, 0), V(0, 0.02, 0.01), V(0.18, 0, 0)], 0.022, '#cbc4b0', 4, 5)
++  } else if (k === 'scrap') {
++    // 锈蚀废铁：弯折薄板 + 断管
++    const plate = new THREE.BoxGeometry(0.42, 0.02, 0.28, 3, 1, 1)
++    const p = plate.attributes.position as THREE.BufferAttribute
++    for (let i = 0; i < p.count; i++) p.setY(i, p.getY(i) + Math.abs(p.getX(i)) * 0.35)
++    g = merge([prim(plate, '#6a4630'), prim(new THREE.CylinderGeometry(0.04, 0.04, 0.34, 6, 1, true), '#5b3a26', 0.1, 0.06, 0.08, 0, 0, Math.PI / 2)])
++  } else if (k === 'barrel') {
++    g = prim(new THREE.CylinderGeometry(0.26, 0.26, 0.8, 9), '#4b3b2c', 0, 0, 0, 0, 0, Math.PI / 2)
++  } else {
++    // 人造纤维碎屑：一缕扭曲的薄带
++    const s = new THREE.PlaneGeometry(0.5, 0.06, 6, 1)
++    const p = s.attributes.position as THREE.BufferAttribute
++    for (let i = 0; i < p.count; i++) p.setZ(i, Math.sin(p.getX(i) * 9) * 0.05)
++    g = prim(s, '#6d5f52')
++  }
++  if (g.index) g = g.toNonIndexed()
++  for (const a of Object.keys(g.attributes)) if (!['position', 'normal', 'uv', 'color'].includes(a)) g.deleteAttribute(a)
++  g.computeVertexNormals()
++  debrisGeo[k] = g
++  return g
++}
++let debrisMat: THREE.Material | null = null
++/** 碎屑共享材质：每个碎片的顶点带 aPivot（碎片中心）——悬浮件绕自身慢转并上下漂移，沉底件（aPivot.w=0）静止。 */
++function debrisMaterial() {
++  if (debrisMat) return debrisMat
++  const mat = litMaterial({ color: '#ffffff', vertexColors: true, roughness: 0.85, envBase: 0.2, side: THREE.DoubleSide })
++  mat.onBeforeCompile = (sh) => {
++    sh.uniforms.uWaterTime = waterUniforms.uWaterTime
++    sh.vertexShader = sh.vertexShader
++      .replace('#include <common>', '#include <common>\nuniform float uWaterTime;\nattribute vec4 aPivot;')
++      .replace('#include <begin_vertex>', `#include <begin_vertex>
++{
++  vec3 pv = aPivot.xyz;
++  float ph = dot(pv, vec3(1.37, 0.71, 2.13));
++  float drift = aPivot.w;
++  float t = uWaterTime;
++  vec3 lp = transformed - pv;
++  float a = sin(t * 0.21 + ph) * 0.7 * drift;
++  lp.xz = mat2(cos(a), -sin(a), sin(a), cos(a)) * lp.xz;
++  float b = sin(t * 0.17 + ph * 1.3) * 0.4 * drift;
++  lp.xy = mat2(cos(b), -sin(b), sin(b), cos(b)) * lp.xy;
++  transformed = pv + lp + vec3(sin(t * 0.13 + ph) * 0.12, sin(t * 0.37 + ph * 1.7) * 0.18, cos(t * 0.11 + ph) * 0.12) * drift;
++}`)
++  }
++  mat.customProgramCacheKey = () => 'l7-debris-v66b'
++  debrisMat = mat
++  return mat
++}
++
++function buildDebris(s: Structure, m: GameMap): THREE.Object3D {
++  const r = rng(Number(s.data?.seed ?? 1) + 7)
++  const cx = s.x + 0.5, cz = s.y + 0.5
++  const gy = floorHeight(m, cx, cz, 0)
++  const parts: G[] = []
++  const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), E = new THREE.Euler(), S = new THREE.Vector3(1, 1, 1), Pp = new THREE.Vector3()
++  const N = 46
++  for (let i = 0; i < N; i++) {
++    const x = cx + (r() - 0.5) * 31, z = cz + (r() - 0.5) * 31
++    const tx = Math.floor(x), tz = Math.floor(z)
++    if (tx < 0 || tz < 0 || tx >= m.w || tz >= m.h || m.liquid[tz * m.w + tx] !== 1) continue
++    const floor = floorHeight(m, x, z, 0) // 负值：海床
++    const depth = -floor
++    let kind: DebrisKind, y: number
++    const u = r()
++    if (depth < 24) {
++      if (u > 0.22) continue // 有光带最萧条：只有极少量漂在近水面的纸块
++      kind = r() < 0.85 ? 'paper' : 'barrel'; y = -0.25 - r() * 2.5
++    } else if (depth < 90) {
++      kind = u < 0.5 ? 'bone' : u < 0.85 ? 'scrap' : 'paper'
++      // 暮色带：碎屑悬浮在水层中（档案「漂浮着零散的骨片与生锈的废铁」），集中在 24m 以下
++      y = r() < 0.6 ? -(24 + r() * Math.max(1, depth - 26)) : floor + 0.05
++    } else if (depth < 230) {
++      kind = u < 0.55 ? 'bone' : u < 0.8 ? 'fiber' : 'scrap'
++      y = r() < 0.75 ? floor + 0.04 : floor + 1 + r() * 6
++    } else {
++      if (u > 0.6) continue
++      kind = u < 0.45 ? 'bone' : 'fiber'; y = floor + 0.03
++    }
++    const floating = y > floor + 0.2
++    E.set((r() - 0.5) * (floating ? 3 : 0.3), r() * Math.PI * 2, (r() - 0.5) * (floating ? 3 : 0.3))
++    Q.setFromEuler(E)
++    const sc = 0.8 + r() * 0.7
++    S.set(sc, sc, sc)
++    Pp.set(x - cx, y - gy, z - cz)
++    const g = debrisGeometry(kind).clone().applyMatrix4(M.compose(Pp, Q, S))
++    const n = g.attributes.position.count
++    const pv = new Float32Array(n * 4)
++    for (let k = 0; k < n; k++) { pv[k * 4] = Pp.x; pv[k * 4 + 1] = Pp.y; pv[k * 4 + 2] = Pp.z; pv[k * 4 + 3] = floating ? 1 : 0 }
++    g.setAttribute('aPivot', new THREE.BufferAttribute(pv, 4))
++    parts.push(g)
++  }
++  if (!parts.length) return new THREE.Group()
++  const mesh = new THREE.Mesh(mergeGeometries(parts)!, debrisMaterial())
++  for (const g of parts) g.dispose()
++  mesh.userData.noCastShadow = 1
++  return mesh
++}
++
++// ---------------- 深渊气泡柱（点精灵，GPU 循环上升） ----------------
++let bubbleMat: THREE.ShaderMaterial | null = null
++function bubbleMaterial() {
++  bubbleMat ??= new THREE.ShaderMaterial({
++    uniforms: { uWaterTime: waterUniforms.uWaterTime, uPx: { value: 1 } },
++    vertexShader: `uniform float uWaterTime; attribute vec4 aSeed; varying float vA;
++void main(){
++  // aSeed: x=相位 y=上升速度 z=柱高 w=侧向摆幅
++  float h = mod(uWaterTime * aSeed.y + aSeed.x * aSeed.z, aSeed.z);
++  vec3 p = position;
++  p.y += h;
++  p.x += sin(h * 1.3 + aSeed.x * 6.0) * aSeed.w * (0.3 + h / aSeed.z);
++  p.z += cos(h * 1.1 + aSeed.x * 4.0) * aSeed.w * (0.3 + h / aSeed.z);
++  vec4 mv = modelViewMatrix * vec4(p, 1.0);
++  gl_Position = projectionMatrix * mv;
++  float sz = (0.035 + fract(aSeed.x * 7.3) * 0.06) * (1.0 + h / aSeed.z * 0.8);
++  gl_PointSize = clamp(sz * 900.0 / -mv.z, 1.0, 22.0);
++  vA = smoothstep(0.0, 0.6, h) * (1.0 - smoothstep(aSeed.z * 0.8, aSeed.z, h)) * clamp(1.0 - (-mv.z) / 26.0, 0.0, 1.0);
++}`,
++    fragmentShader: `varying float vA;
++void main(){
++  vec2 q = gl_PointCoord * 2.0 - 1.0; float d = dot(q, q);
++  if (d > 1.0) discard;
++  // 空心气泡：亮边 + 左上高光，中心近乎透明
++  float rim = smoothstep(0.55, 0.95, d) * (1.0 - smoothstep(0.95, 1.0, d));
++  float hl = smoothstep(0.2, 0.0, length(q - vec2(-0.35, 0.35)));
++  gl_FragColor = vec4(vec3(0.62, 0.74, 0.78) * (rim + hl * 1.4), (rim * 0.75 + hl) * vA);
++}`,
++    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
++  })
++  return bubbleMat
++}
++function buildBubbles(s: Structure): THREE.Object3D {
++  const big = !!s.data?.big
++  const r = rng(Number(s.data?.seed ?? 3) + 11)
++  const n = big ? 260 : 46
++  const pos = new Float32Array(n * 3), seed = new Float32Array(n * 4)
++  const H = big ? 46 : 9
++  for (let i = 0; i < n; i++) {
++    const a = r() * Math.PI * 2, rad = Math.sqrt(r()) * (big ? 0.55 : 0.25)
++    pos[i * 3] = Math.cos(a) * rad; pos[i * 3 + 1] = 0.1; pos[i * 3 + 2] = Math.sin(a) * rad
++    seed[i * 4] = r(); seed[i * 4 + 1] = (big ? 1.6 : 0.9) + r() * 0.9; seed[i * 4 + 2] = H * (0.6 + r() * 0.4); seed[i * 4 + 3] = big ? 0.35 : 0.12
++  }
++  const g = new THREE.BufferGeometry()
++  g.setAttribute('position', new THREE.BufferAttribute(pos, 3))
++  g.setAttribute('aSeed', new THREE.BufferAttribute(seed, 4))
++  g.boundingSphere = new THREE.Sphere(new THREE.Vector3(0, H / 2, 0), H / 2 + 2)
++  const pts = new THREE.Points(g, bubbleMaterial())
++  pts.userData.noCastShadow = 1
++  const grp = new THREE.Group()
++  grp.add(pts)
++  if (big) {
++    // 源头：焦油裂口（黑色亮面隆起 + 一圈岩块）
++    const parts: G[] = [prim(new THREE.SphereGeometry(1.2, 10, 6, 0, Math.PI * 2, 0, Math.PI / 2), '#0a0b0d', 0, -0.2, 0, 0, 0, 0)]
++    for (let i = 0; i < 7; i++) { const a = i / 7 * Math.PI * 2; parts.push(prim(new THREE.DodecahedronGeometry(0.4 + r() * 0.35, 0), '#33383c', Math.cos(a) * 1.5, 0.1, Math.sin(a) * 1.5, r(), r(), r())) }
++    const src = new THREE.Mesh(merge(parts), mats().tar)
++    src.geometry.computeVertexNormals()
++    grp.add(src)
++  }
++  return grp
++}
++
++// ---------------- 海床地毯补丁 ----------------
++function buildCarpet(s: Structure, m: GameMap): THREE.Object3D {
++  const r = rng(Number(s.data?.seed ?? 5) + 3)
++  const w = s.w * 0.95, h = s.h * 0.95
++  const g = new THREE.PlaneGeometry(w, h, 10, 7)
++  g.rotateX(-Math.PI / 2)
++  const p = g.attributes.position as THREE.BufferAttribute
++  const cx = s.x + s.w / 2, cz = s.y + s.h / 2, gy = floorHeight(m, cx, cz, 0)
++  const colA = new THREE.Color('#5a4b3f'), colB = new THREE.Color('#3b322b'), c = new THREE.Color()
++  const cols = new Float32Array(p.count * 3)
++  for (let i = 0; i < p.count; i++) {
++    const x = p.getX(i), z = p.getZ(i)
++    // 贴合海床起伏 + 卷边（边缘翘起、局部破洞以颜色压暗模拟）
++    const edge = Math.max(Math.abs(x) / (w / 2), Math.abs(z) / (h / 2))
++    p.setY(i, floorHeight(m, cx + x, cz + z, 0) - gy + 0.025 + Math.pow(edge, 6) * 0.12 * r())
++    c.copy(colA).lerp(colB, r() * 0.6 + (edge > 0.85 ? 0.3 : 0))
++    // 旧地毯的规则花纹：菱形格
++    if (Math.abs(((x * 3 + z * 3) % 1 + 1) % 1 - 0.5) < 0.08 || Math.abs(((x * 3 - z * 3) % 1 + 1) % 1 - 0.5) < 0.08) c.multiplyScalar(1.35)
++    cols[i * 3] = c.r; cols[i * 3 + 1] = c.g; cols[i * 3 + 2] = c.b
++  }
++  g.setAttribute('color', new THREE.BufferAttribute(cols, 3))
++  g.computeVertexNormals()
++  const mesh = new THREE.Mesh(g, mats().carpet)
++  mesh.userData.noCastShadow = 1
++  return mesh
++}
++
++// ---------------- 臣服堡垒（废弃） ----------------
++function buildFort(s: Structure): THREE.Object3D {
++  const r = rng(s.x * 31 + s.y * 17)
++  const parts: G[] = [], tar: G[] = []
++  const wood = ['#5a4330', '#6b5038', '#4a3826', '#73614c']
++  const W = s.w, H = s.h
++  // 外圈：书架/桌/椅/门板横七竖八堆成的矮墙，留一个朝海的缺口
++  const gapA = (Number(s.data?.rot ?? 0) * Math.PI) / 2
++  for (let i = 0; i < 18; i++) {
++    const a = (i / 18) * Math.PI * 2
++    if (Math.abs(Math.atan2(Math.sin(a - gapA), Math.cos(a - gapA))) < 0.4) continue
++    const rad = Math.min(W, H) * 0.44
++    const x = Math.cos(a) * rad, z = Math.sin(a) * rad
++    const kind = r()
++    const c = wood[Math.floor(r() * wood.length)]
++    if (kind < 0.35) parts.push(prim(new THREE.BoxGeometry(0.9, 1.6 + r() * 0.5, 0.32), c, x, 0.8, z, (r() - 0.5) * 0.3, -a + Math.PI / 2, (r() - 0.5) * 0.25)) // 倒立书架
++    else if (kind < 0.6) { parts.push(prim(new THREE.BoxGeometry(1.1, 0.06, 0.7), c, x, 0.95, z, 1.2 + r() * 0.3, -a, 0)); parts.push(prim(new THREE.BoxGeometry(0.06, 0.8, 0.06), c, x + 0.3, 0.4, z)) } // 侧翻桌
++    else if (kind < 0.8) parts.push(prim(new THREE.BoxGeometry(0.85, 2.0, 0.06), c, x, 0.9, z, 0, -a + Math.PI / 2, 0.2 * (r() - 0.5))) // 门板
++    else { parts.push(prim(new THREE.BoxGeometry(0.42, 0.06, 0.42), c, x, 0.45 + r() * 0.8, z, r(), r(), r())); parts.push(prim(new THREE.BoxGeometry(0.06, 0.5, 0.06), c, x, 0.25, z)) } // 椅子
++    // 焦油：接缝处的黑色亮面涂抹/流挂
++    tar.push(prim(new THREE.SphereGeometry(0.28 + r() * 0.2, 7, 5), '#0b0b0c', x * 0.96, 0.3 + r() * 1.1, z * 0.96, 0, 0, 0))
++  }
++  // 顶棚：几块门板斜搭 + 焦油封边
++  for (let i = 0; i < 4; i++) parts.push(prim(new THREE.BoxGeometry(2.1, 0.05, 0.8), wood[i % 4], (r() - 0.5) * 0.8, 2.0 + r() * 0.2, -0.9 + i * 0.6, 0.15 * (r() - 0.5), r() * 0.4, 0.12))
++  tar.push(prim(new THREE.BoxGeometry(2.3, 0.04, 2.6), '#0b0b0c', 0, 2.08, 0, 0, 0, 0.1))
++  // 祭坛般的小堆：骨片 + 一张被焦油糊住的纸（居民据称崇拜七层之物）
++  parts.push(prim(new THREE.CylinderGeometry(0.35, 0.45, 0.4, 7), '#3b3833', 1.2, 0.2, 1.0))
++  for (let i = 0; i < 5; i++) parts.push(bone([V(1.0 + r() * 0.4, 0.42, 0.8 + r() * 0.4), V(1.2, 0.5 + r() * 0.2, 1.0), V(1.4 - r() * 0.4, 0.42, 1.2 - r() * 0.4)], 0.02, '#cbc4b0', 3, 4))
++  const grp = new THREE.Group()
++  const wm = new THREE.Mesh(merge(parts), mats().wood); wm.geometry.computeVertexNormals(); grp.add(wm)
++  const tm = new THREE.Mesh(merge(tar), mats().tar); tm.geometry.computeVertexNormals(); grp.add(tm)
++  return grp
++}
++
++/** L7 v66 新结构入口；返回已居中（x/z 位于结构中心、y=0 为所在瓦片地面）的模型，非本模块结构返回 null。 */
++export function buildL7Structure(s: Structure, m: GameMap): THREE.Object3D | null {
++  switch (s.kind) {
++    case 'l7debris': return buildDebris(s, m)
++    case 'l7bubbles': return buildBubbles(s)
++    case 'l7carpet': return buildCarpet(s, m)
++    case 'l7fort': return buildFort(s)
++    case 'l7skeleton': {
++      const seed = Number(s.data?.seed ?? 0)
++      const mesh = new THREE.Mesh(skeletonGeo(seed % 3, !!s.data?.eroded), mats().bone)
++      mesh.rotation.y = (seed % 360) * Math.PI / 180
++      mesh.position.y = 0.0
++      mesh.userData.noCastShadow = 1
++      return mesh
++    }
++    case 'l7giantfish': {
++      const seed = Number(s.data?.seed ?? 0)
++      const mesh = new THREE.Mesh(giantFishGeo(seed % 4), mats().bone)
++      mesh.rotation.y = (seed % 360) * Math.PI / 180
++      mesh.userData.noCastShadow = 1
++      return mesh
++    }
++  }
++  return null
++}
+diff --git a/app/src/game/renderer/l7Ocean.ts b/app/src/game/renderer/l7Ocean.ts
+new file mode 100644
+index 0000000..09af9c4
+--- /dev/null
++++ b/app/src/game/renderer/l7Ocean.ts
+@@ -0,0 +1,496 @@
++// v66：Level 7 水体与深海氛围渲染层（L7 专用；其它层级不创建）。
++//
++// 组成（括号内为每帧绘制次数）：
++//   · 分通道水下消光雾：全局 fog_fragment 增补——当 fog.near < 0（L7 水下哨兵值）时，红光最先被吸收、
++//     其次绿光，蓝光最远（0 次额外绘制，所有材质自动生效）。
++//   · 海床焦散：注入 L7 海床材质的自发光项，随水深指数衰减，约 30m 以下消失（0 次额外绘制）。
++//   · 悬浮颗粒（1）：相机周围 22m 立方体内循环复用的 2200 个点精灵——水下是骨粉「海雪」，
++//     水面以上是悬浮在空气里的骨质雾霾微粒（Fandom）。被手电光锥照到会亮起。
++//   · 水下光柱（1）：7 片竖直加法面片，从海面斜插下来，随深度淡出（约 45m 以下消失）。
++//   · 手电体积光锥（1）：仅水下+开手电时出现，加法混合，强度沿锥长衰减。
++//   · 屏幕叠加（1）：半入水时的分屏水线与弯月面、随深度加深的压迫暗角、致幻时的边缘呼吸。
++//   · 重力交界区（每区 2）：竖直水墙 + 倒悬水面（自带更远的雾距，在雾中可见轮廓）。
++//   · 现实碎裂（2）：深渊与重力交界区附近闪烁的发光三角碎片与像素空洞（实例化）。
++//   · 七层之物背脊（1）：涌浪事件时在远处雾中浮出的一段巨大背脊。
++// 全部共享一套 uniforms，每帧只做常数级 CPU 工作。
++import * as THREE from 'three'
++import { waterUniforms } from './water'
++
++// ---------------- 分通道水下雾（全局一次性补丁） ----------------
++let fogPatched = false
++export function patchL7Fog() {
++  if (fogPatched) return
++  fogPatched = true
++  const chunk = THREE.ShaderChunk.fog_fragment
++  if (!chunk.includes('gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor );')) return
++  THREE.ShaderChunk.fog_fragment = chunk.replace('gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor );', `gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, fogFactor );
++	#ifndef FOG_EXP2
++	if ( fogNear < 0.0 ) {
++		// v66 L7 水下：Beer–Lambert 分通道消光——红光最先消失，其次绿光（标量 fogFactor 视作蓝通道）
++		float l7f = smoothstep( 0.0, fogFar, vFogDepth );
++		vec3 l7c = vec3( 1.0 - pow( 1.0 - l7f, 3.2 ), 1.0 - pow( 1.0 - l7f, 1.45 ), l7f );
++		vec3 l7t = clamp( ( l7c - fogFactor ) / max( 1.0 - fogFactor, 1e-3 ), 0.0, 1.0 );
++		gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor, l7t );
++	}
++	#endif`)
++}
++
++// ---------------- 海床焦散 ----------------
++export const l7CausticUniforms = { uL7Caustic: { value: 1 } }
++/** 给 L7 海床材质注入焦散（场景坐标 + 窗口原点保证跨区块连续）。 */
++export function addL7Caustics<T extends THREE.Material>(mat: T): T {
++  const prev = mat.onBeforeCompile
++  mat.onBeforeCompile = (sh, r) => {
++    prev?.call(mat, sh, r)
++    Object.assign(sh.uniforms, { uWaterTime: waterUniforms.uWaterTime, uWaterOrigin: waterUniforms.uWaterOrigin }, l7CausticUniforms)
++    sh.vertexShader = sh.vertexShader
++      .replace('#include <common>', '#include <common>\nvarying vec3 vL7W;')
++      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvL7W = (modelMatrix * vec4(position, 1.0)).xyz;')
++    sh.fragmentShader = sh.fragmentShader
++      .replace('#include <common>', `#include <common>
++varying vec3 vL7W; uniform float uWaterTime; uniform vec2 uWaterOrigin; uniform float uL7Caustic;
++float l7Cau(vec2 p, float t){
++  vec2 q = p * 0.62;
++  float a = sin(q.x * 2.1 + sin(q.y * 1.7 + t * 0.55) * 1.6 + t * 0.42);
++  float b = sin(q.y * 2.4 + sin(q.x * 1.3 - t * 0.5) * 1.5 - t * 0.37);
++  float c = sin((q.x + q.y) * 1.6 + sin(q.x * 0.9 + t * 0.6) * 1.2 + t * 0.3);
++  return pow(clamp(1.0 - abs(a + b + c) / 1.7, 0.0, 1.0), 5.0);
++}`)
++      .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
++{
++  float dep = -vL7W.y;
++  if (dep > 0.2 && dep < 34.0) {
++    vec2 wp = vL7W.xz + uWaterOrigin;
++    // 两层错相焦散叠加，模拟色散的轻微分离（R/B 略错位）
++    float cr = l7Cau(wp + vec2(0.06, 0.0), uWaterTime), cb = l7Cau(wp - vec2(0.06, 0.0), uWaterTime);
++    float cg = l7Cau(wp * 1.37 + 3.1, uWaterTime * 1.13) * 0.6 + (cr + cb) * 0.2;
++    float k = exp(-dep / 9.0) * smoothstep(0.2, 1.2, dep) * uL7Caustic;
++    totalEmissiveRadiance += diffuseColor.rgb * vec3(cr, cg, cb) * vec3(0.55, 0.85, 0.95) * 1.6 * k;
++  }
++}`)
++  }
++  const key = mat.customProgramCacheKey?.bind(mat)
++  mat.customProgramCacheKey = () => (key ? key() : '') + '-l7cau66'
++  return mat
++}
++
++// ---------------- 通用小工具 ----------------
++const FOG_GLSL = `uniform vec3 uFogC; uniform float uFogFar;
++vec3 l7Fog(vec3 c, float dist, float farMul){ return mix(c, uFogC, smoothstep(0.0, uFogFar * farMul, dist)); }`
++
++export interface L7FxInput {
++  time: number
++  cam: THREE.PerspectiveCamera
++  /** 0=水上 1=水下 */
++  uw: number
++  /** 眼睛在水面以下的深度（米，水上为 0） */
++  depth: number
++  depthK: number
++  eyeAbove: number
++  waterY: number
++  lightKeep: number
++  flashOn: boolean
++  flashPos: THREE.Vector3
++  flashDir: THREE.Vector3
++  halluc: number
++  glitch: number
++  fogColor: THREE.Color
++  fogFar: number
++  /** 场景坐标下的重力交界区 */
++  zones: { id: number; x: number; z: number; ang: number; len: number; thick: number; top: number; r: number }[]
++  /** 七层之物背脊（场景坐标）；null=无 */
++  back: { x: number; z: number; dx: number; dz: number; env: number; t: number } | null
++  hi: boolean
++}
++
++export class L7OceanFx {
++  readonly group = new THREE.Group()
++  private U = {
++    uTime: { value: 0 }, uCam: { value: new THREE.Vector3() }, uUw: { value: 0 }, uDepth: { value: 0 }, uDepthK: { value: 0 },
++    uKeep: { value: 1 }, uFlashOn: { value: 0 }, uFlashPos: { value: new THREE.Vector3() }, uFlashDir: { value: new THREE.Vector3(0, 0, -1) },
++    uHalluc: { value: 0 }, uGlitch: { value: 0 }, uFogC: { value: new THREE.Color() }, uFogFar: { value: 30 }, uWaterY: { value: 0 },
++    uEyeAbove: { value: 1 }, uInvP: { value: new THREE.Matrix4() }, uCamW: { value: new THREE.Matrix4() }, uRay: { value: 0 },
++  }
++  private snow: THREE.Points
++  private rays: THREE.Mesh[] = []
++  private cone: THREE.Mesh
++  private overlay: THREE.Mesh
++  private shards: THREE.InstancedMesh
++  private voids: THREE.InstancedMesh
++  private back: THREE.Group
++  private zoneMeshes = new Map<number, THREE.Group>()
++  private wallMat: THREE.ShaderMaterial
++  private skySeaMat: THREE.ShaderMaterial
++  private disposables: { dispose(): void }[] = []
++
++  constructor() {
++    patchL7Fog()
++    this.group.name = 'l7-ocean-fx'
++    const U = this.U
++    // ---- 悬浮颗粒 ----
++    {
++      const N = 2200, pos = new Float32Array(N * 3), rnd = new Float32Array(N)
++      for (let i = 0; i < N; i++) { pos[i * 3] = Math.random(); pos[i * 3 + 1] = Math.random(); pos[i * 3 + 2] = Math.random(); rnd[i] = Math.random() }
++      const g = new THREE.BufferGeometry()
++      g.setAttribute('position', new THREE.BufferAttribute(pos, 3))
++      g.setAttribute('aR', new THREE.BufferAttribute(rnd, 1))
++      const mat = new THREE.ShaderMaterial({
++        uniforms: U, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
++        vertexShader: `uniform float uTime; uniform vec3 uCam; uniform float uUw; uniform float uKeep; uniform float uFlashOn; uniform vec3 uFlashPos; uniform vec3 uFlashDir; uniform float uWaterY;
++attribute float aR; varying float vA; varying float vLit;
++const float B = 22.0;
++void main(){
++  vec3 drift = vec3(sin(uTime * 0.05 + aR * 6.0) * 0.6, -uTime * (0.06 + aR * 0.05) * uUw + sin(uTime * 0.11 + aR * 9.0) * 0.3, cos(uTime * 0.04 + aR * 5.0) * 0.6);
++  vec3 p = uCam + (fract(position + (drift - uCam) / B) - 0.5) * B;
++  // 水下只画水面以下的颗粒；水上只画空中骨粉微粒（且稀疏）
++  float side = uUw > 0.5 ? step(p.y, uWaterY - 0.05) : step(uWaterY + 0.15, p.y) * step(aR, 0.32);
++  vec3 L = p - uFlashPos; float ld = length(L);
++  float cone = smoothstep(0.86, 0.96, dot(L / max(ld, 1e-3), uFlashDir)) * clamp(1.0 - ld / 13.0, 0.0, 1.0) * uFlashOn;
++  vLit = cone;
++  vec4 mv = modelViewMatrix * vec4(p, 1.0);
++  gl_Position = projectionMatrix * mv;
++  float d = -mv.z;
++  gl_PointSize = clamp((0.016 + aR * 0.022) * 1100.0 / max(d, 0.2), 1.0, 7.0);
++  vA = side * smoothstep(0.25, 1.2, d) * (1.0 - smoothstep(B * 0.32, B * 0.5, d));
++  vA *= (uUw > 0.5 ? (0.10 + 0.25 * uKeep) : 0.12) + cone * 1.6;
++}`,
++        fragmentShader: `varying float vA; varying float vLit;
++void main(){ vec2 q = gl_PointCoord * 2.0 - 1.0; float d = dot(q, q); if (d > 1.0) discard;
++  gl_FragColor = vec4(mix(vec3(0.55, 0.66, 0.66), vec3(0.95, 0.97, 0.9), vLit) * (1.0 - d), vA); }`,
++      })
++      this.snow = new THREE.Points(g, mat)
++      this.snow.frustumCulled = false
++      this.snow.renderOrder = 5
++      this.group.add(this.snow)
++      this.disposables.push(g, mat)
++    }
++    // ---- 水下光柱 ----
++    {
++      const g = new THREE.PlaneGeometry(1, 1, 1, 8)
++      g.translate(0, -0.5, 0)
++      const mat = new THREE.ShaderMaterial({
++        uniforms: U, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false,
++        vertexShader: `varying vec2 vUv; varying vec3 vW; void main(){ vUv = uv; vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`,
++        fragmentShader: `uniform float uTime; uniform float uRay; uniform vec3 uCam; varying vec2 vUv; varying vec3 vW;
++void main(){
++  float x = vUv.x, y = vUv.y; // y=1 海面，y=0 底端
++  float edge = smoothstep(0.0, 0.35, x) * smoothstep(1.0, 0.65, x);
++  float shimmer = 0.6 + 0.4 * sin(vW.x * 0.7 + vW.z * 0.5 + uTime * 0.9) * sin(uTime * 0.37 + vW.z * 0.3);
++  float fall = pow(y, 2.2);
++  float nearFade = smoothstep(1.5, 5.0, length(vW - uCam));
++  gl_FragColor = vec4(vec3(0.42, 0.62, 0.66) * edge * fall * shimmer * uRay * nearFade * 0.22, 1.0);
++}`,
++      })
++      for (let i = 0; i < 7; i++) {
++        const m = new THREE.Mesh(g, mat)
++        m.frustumCulled = false
++        m.renderOrder = 6
++        m.userData.a = (i / 7) * Math.PI * 2 + Math.random() * 0.6
++        m.userData.r = 5 + Math.random() * 12
++        m.userData.w = 1.4 + Math.random() * 2.4
++        this.rays.push(m)
++        this.group.add(m)
++      }
++      this.disposables.push(g, mat)
++    }
++    // ---- 手电体积光锥 ----
++    {
++      const L = 11, R = Math.tan(0.5) * L
++      const g = new THREE.ConeGeometry(R, L, 24, 6, true)
++      g.translate(0, -L / 2, 0)
++      g.rotateX(-Math.PI / 2) // 尖端在原点，沿 -z 展开
++      const mat = new THREE.ShaderMaterial({
++        uniforms: U, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false,
++        vertexShader: `varying float vT; varying vec3 vN; varying vec3 vV; void main(){ vT = -position.z / ${L.toFixed(1)}; vec4 mv = modelViewMatrix * vec4(position, 1.0); vV = normalize(-mv.xyz); vN = normalize(normalMatrix * normal); gl_Position = projectionMatrix * mv; }`,
++        fragmentShader: `uniform float uUw; uniform float uDepthK; uniform float uTime; varying float vT; varying vec3 vN; varying vec3 vV;
++void main(){
++  float rim = pow(abs(dot(vN, vV)), 1.6); // 正对视线的锥体中轴更亮，边缘柔和
++  float along = pow(1.0 - vT, 1.7) * smoothstep(0.0, 0.06, vT);
++  float grain = 0.85 + 0.15 * sin(vT * 40.0 - uTime * 1.3);
++  float k = uUw * (0.06 + 0.07 * uDepthK);
++  gl_FragColor = vec4(vec3(0.62, 0.78, 0.86) * rim * along * grain * k, 1.0);
++}`,
++      })
++      this.cone = new THREE.Mesh(g, mat)
++      this.cone.frustumCulled = false
++      this.cone.renderOrder = 7
++      this.group.add(this.cone)
++      this.disposables.push(g, mat)
++    }
++    // ---- 屏幕叠加：水线 / 压迫暗角 / 致幻呼吸 ----
++    {
++      const g = new THREE.PlaneGeometry(2, 2)
++      const mat = new THREE.ShaderMaterial({
++        uniforms: U, transparent: true, depthTest: false, depthWrite: false, fog: false,
++        vertexShader: `varying vec2 vNdc; void main(){ vNdc = position.xy; gl_Position = vec4(position.xy, 0.0, 1.0); }`,
++        fragmentShader: `uniform mat4 uInvP; uniform mat4 uCamW; uniform vec3 uCam; uniform float uWaterY; uniform float uEyeAbove; uniform float uTime;
++uniform float uDepthK; uniform float uHalluc; uniform float uUw; uniform vec3 uFogC; varying vec2 vNdc;
++void main(){
++  vec4 col = vec4(0.0);
++  // 近平面上该像素的世界坐标（取相机前 0.12m 处的切面），与海面高度比较得到分屏水线
++  if (abs(uEyeAbove) < 0.45) {
++    vec4 v = uInvP * vec4(vNdc, -1.0, 1.0); v /= v.w;
++    vec3 dir = normalize((uCamW * vec4(v.xyz, 0.0)).xyz);
++    vec3 P = uCam + dir * 0.12;
++    float h = uWaterY + sin(P.x * 3.1 + uTime * 1.7) * 0.006 + sin(P.z * 2.3 - uTime * 1.3) * 0.005;
++    float s = P.y - h;
++    float lineW = 0.0025;
++    if (uEyeAbove > 0.0) {
++      // 眼在水上：下半屏透过水面看水下——青色浑浊
++      float under = smoothstep(lineW, -lineW, s);
++      col = mix(col, vec4(0.04, 0.2, 0.24, 0.66), under);
++    } else {
++      // 眼在水下：上半屏是被水膜扭曲的空气——提亮、去色
++      float over = smoothstep(-lineW, lineW, s);
++      col = mix(col, vec4(vec3(0.62, 0.7, 0.72), 0.28), over);
++    }
++    // 弯月面：一条暗线加一道亮边
++    float men = exp(-pow(s / 0.0035, 2.0));
++    col = mix(col, vec4(0.02, 0.05, 0.06, 0.85), men * 0.8);
++    col.rgb += vec3(0.5, 0.6, 0.6) * exp(-pow((s - 0.006) / 0.003, 2.0)) * 0.25;
++  }
++  // 压迫暗角：深度越大视野越窄；致幻时边缘缓慢呼吸并略带青绿色差
++  vec2 q = vNdc;
++  float r = length(q * vec2(1.0, 0.82));
++  float breathe = uHalluc * (0.55 + 0.45 * sin(uTime * 0.8)) ;
++  float vig = smoothstep(0.55 - uDepthK * 0.25 - breathe * 0.1, 1.45, r) * (uDepthK * 0.85 * uUw + breathe * 0.45);
++  col.rgb = mix(col.rgb, vec3(0.0, 0.01 * breathe, 0.008 * breathe), clamp(vig, 0.0, 1.0));
++  col.a = max(col.a, clamp(vig, 0.0, 0.96));
++  if (col.a < 0.003) discard;
++  gl_FragColor = col;
++}`,
++      })
++      this.overlay = new THREE.Mesh(g, mat)
++      this.overlay.frustumCulled = false
++      this.overlay.renderOrder = 9990
++      this.group.add(this.overlay)
++      this.disposables.push(g, mat)
++    }
++    // ---- 现实碎裂：发光三角 + 像素空洞 ----
++    {
++      const tri = new THREE.BufferGeometry()
++      tri.setAttribute('position', new THREE.BufferAttribute(new Float32Array([0, 0.5, 0, -0.43, -0.25, 0, 0.43, -0.25, 0]), 3))
++      const vs = `uniform float uTime; uniform vec3 uCam; uniform float uGlitch; varying float vA; varying float vH;
++float h1(float n){ return fract(sin(n) * 43758.5453); }
++void main(){
++  float id = float(gl_InstanceID);
++  float rate = 0.6 + h1(id * 3.1) * 1.6;
++  float cyc = floor(uTime * rate + h1(id));
++  float s = id * 17.0 + cyc * 7.3;
++  vec3 o = vec3(h1(s + 1.0), h1(s + 2.0), h1(s + 3.0)) * 2.0 - 1.0;
++  float R = 6.0 + h1(s + 4.0) * 12.0;
++  vec3 c = uCam + normalize(o + 1e-3) * R;
++  float sz = (0.08 + h1(s + 5.0) * 0.3) * (0.6 + uGlitch * 0.6);
++  float on = step(h1(s + 6.0), uGlitch * 0.9) * step(0.25, fract(uTime * rate + h1(id)));
++  // 面片朝向相机（billboard）并按实例随机旋转
++  vec3 f = normalize(uCam - c), rt = normalize(cross(vec3(0.0, 1.0, 0.0), f)), up = cross(f, rt);
++  float a = h1(s + 7.0) * 6.283;
++  vec2 lp = mat2(cos(a), -sin(a), sin(a), cos(a)) * position.xy * sz * on;
++  vec3 w = c + rt * lp.x + up * lp.y;
++  vA = on; vH = h1(s + 8.0);
++  gl_Position = projectionMatrix * viewMatrix * vec4(w, 1.0);
++}`
++      const glowMat = new THREE.ShaderMaterial({
++        uniforms: U, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false,
++        vertexShader: vs,
++        fragmentShader: `uniform float uGlitch; varying float vA; varying float vH;
++void main(){ vec3 c = vH < 0.6 ? vec3(0.45, 0.95, 1.0) : vH < 0.85 ? vec3(1.0) : vec3(0.95, 0.4, 0.9); gl_FragColor = vec4(c * vA * (0.5 + uGlitch), 1.0); }`,
++      })
++      const quad = new THREE.PlaneGeometry(0.7, 0.7)
++      const voidMat = new THREE.ShaderMaterial({
++        uniforms: U, transparent: false, depthWrite: true, side: THREE.DoubleSide, fog: false,
++        vertexShader: vs.replace('float id = float(gl_InstanceID);', 'float id = float(gl_InstanceID) + 977.0;'),
++        fragmentShader: `varying float vA; void main(){ if (vA < 0.5) discard; gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0); }`,
++      })
++      this.shards = new THREE.InstancedMesh(tri, glowMat, 150)
++      this.voids = new THREE.InstancedMesh(quad, voidMat, 40)
++      for (const im of [this.shards, this.voids]) { im.frustumCulled = false; im.visible = false; this.group.add(im) }
++      this.disposables.push(tri, quad, glowMat, voidMat)
++    }
++    // ---- 七层之物背脊 ----
++    {
++      this.back = new THREE.Group()
++      const mat = new THREE.ShaderMaterial({
++        uniforms: U, fog: false,
++        vertexShader: `varying vec3 vN; varying vec3 vW; void main(){ vN = normalize(mat3(modelMatrix) * normal); vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`,
++        fragmentShader: `${FOG_GLSL} uniform vec3 uCam; varying vec3 vN; varying vec3 vW;
++void main(){
++  vec3 V = normalize(vW - uCam);
++  float lam = 0.35 + 0.65 * max(0.0, vN.y);
++  float fres = pow(1.0 - abs(dot(vN, -V)), 4.0);
++  vec3 c = vec3(0.035, 0.04, 0.045) * lam + vec3(0.25, 0.3, 0.32) * fres * 0.5; // 湿亮的焦油色皮肤
++  // 只用更长的雾距（×4.5）：在骨粉浓雾里只剩一道比雾更暗的剪影
++  gl_FragColor = vec4(l7Fog(c, length(vW - uCam), 4.5), 1.0);
++  if (vW.y < -0.4) discard;
++}`,
++      })
++      // 一段长约 46m 的拱形背：主体为扁平管，背上一列高低错落的骨刺
++      const pts: THREE.Vector3[] = []
++      for (let i = 0; i <= 10; i++) { const t = i / 10; pts.push(new THREE.Vector3(-23 + t * 46, Math.sin(t * Math.PI) * 3.2 - 1.2, Math.sin(t * 4.0) * 0.8)) }
++      const curve = new THREE.CatmullRomCurve3(pts)
++      const body = new THREE.TubeGeometry(curve, 60, 2.6, 10, false)
++      body.scale(1, 0.7, 1)
++      const parts: THREE.BufferGeometry[] = [body]
++      for (let i = 1; i < 22; i++) {
++        const t = i / 22, P = curve.getPointAt(t)
++        const h = 1.2 + Math.sin(t * Math.PI) * 3.4 * (0.6 + Math.random() * 0.6)
++        const s = new THREE.ConeGeometry(0.35 + Math.random() * 0.25, h, 6)
++        s.rotateZ(-0.35 - Math.random() * 0.2)
++        s.translate(P.x, P.y * 0.7 + 1.6 + h / 2, P.z)
++        parts.push(s.toNonIndexed())
++      }
++      const merged = mergeSimple(parts.map((p) => (p.index ? p.toNonIndexed() : p)))
++      merged.computeVertexNormals()
++      const mesh = new THREE.Mesh(merged, mat)
++      mesh.frustumCulled = false
++      this.back.add(mesh)
++      this.back.visible = false
++      this.group.add(this.back)
++      this.disposables.push(merged, mat, body)
++    }
++    // ---- 重力交界区材质 ----
++    this.wallMat = new THREE.ShaderMaterial({
++      uniforms: U, transparent: true, depthWrite: false, side: THREE.DoubleSide, fog: false,
++      vertexShader: `varying vec3 vW; varying vec3 vN; void main(){ vN = normalize(mat3(modelMatrix) * normal); vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`,
++      fragmentShader: `${FOG_GLSL} uniform vec3 uCam; uniform float uTime; varying vec3 vW; varying vec3 vN;
++void main(){
++  vec3 V = normalize(vW - uCam);
++  float ndv = abs(dot(vN, V));
++  float F = 0.03 + 0.97 * pow(1.0 - ndv, 5.0);
++  // 侧向重力：水墙表面的波纹沿墙面水平流动（而不是向下流）
++  float rip = sin(vW.y * 1.7 + (vW.x + vW.z) * 0.9 - uTime * 1.1) * 0.5 + sin(vW.y * 4.3 - (vW.x - vW.z) * 2.1 + uTime * 1.9) * 0.25;
++  // 墙体越往上越暗（光要穿过更厚的水才能到达），表面只留细弱的横向流纹
++  vec3 body = mix(vec3(0.05, 0.19, 0.24), vec3(0.015, 0.07, 0.1), smoothstep(0.0, 30.0, vW.y));
++  vec3 c = mix(body, uFogC * 0.95, F * 0.85) + vec3(0.06, 0.09, 0.1) * rip * 0.18;
++  float a = 0.62 + F * 0.3;
++  float d = length(vW - uCam);
++  // 墙底与海面相接处、墙顶与倒悬海面相接处略亮（两种重力的交界线）
++  c += vec3(0.25, 0.32, 0.34) * exp(-abs(vW.y) * 1.6) * 0.5;
++  gl_FragColor = vec4(l7Fog(c, d, 2.6), a * (1.0 - smoothstep(uFogFar * 2.0, uFogFar * 2.6, d) * 0.5));
++}`,
++    })
++    this.skySeaMat = new THREE.ShaderMaterial({
++      uniforms: { ...U, uR: { value: 70 } }, transparent: true, depthWrite: false, side: THREE.DoubleSide, fog: false,
++      vertexShader: `varying vec3 vW; varying vec2 vL; void main(){ vL = position.xy; vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`,
++      fragmentShader: `${FOG_GLSL} uniform vec3 uCam; uniform float uTime; uniform float uR; varying vec3 vW; varying vec2 vL;
++void main(){
++  vec3 V = normalize(vW - uCam);
++  // 倒悬海面：从下往上看，法线朝下；细浪法线
++  vec2 p = vW.xz * 0.35;
++  vec2 g = vec2(cos(p.x * 1.3 + uTime * 0.6) * 0.3 + cos(dot(p, vec2(0.7, 1.1)) - uTime * 0.45) * 0.25,
++                cos(p.y * 1.1 - uTime * 0.5) * 0.3 + cos(dot(p, vec2(-1.2, 0.6)) + uTime * 0.7) * 0.2) * 0.25;
++  vec3 N = normalize(vec3(g.x, -1.0, g.y));
++  float ndv = clamp(dot(N, -V), 0.0, 1.0);
++  float F = 0.02 + 0.98 * pow(1.0 - ndv, 5.0);
++  vec3 c = mix(vec3(0.02, 0.08, 0.11), uFogC * 0.9, F) + vec3(0.03, 0.05, 0.05) * (g.x + g.y); // 近乎垂直仰望时看进「天上的海」的暗色水体
++  float rim = smoothstep(uR, uR * 0.55, length(vL));
++  float d = length(vW - uCam);
++  gl_FragColor = vec4(l7Fog(c, d, 3.2), (0.55 + F * 0.4) * rim);
++}`,
++    })
++    this.disposables.push(this.wallMat, this.skySeaMat)
++  }
++
++  private zoneGroup(z: L7FxInput['zones'][number]) {
++    let g = this.zoneMeshes.get(z.id)
++    if (g) return g
++    g = new THREE.Group()
++    const wallG = new THREE.BoxGeometry(z.len, z.top, z.thick, 24, 12, 1)
++    wallG.translate(0, z.top / 2, 0)
++    const wall = new THREE.Mesh(wallG, this.wallMat)
++    wall.frustumCulled = false
++    wall.renderOrder = 3
++    g.add(wall)
++    const sea = new THREE.Mesh(new THREE.CircleGeometry(z.r, 48), this.skySeaMat.clone())
++    ;(sea.material as THREE.ShaderMaterial).uniforms = { ...this.U, uR: { value: z.r } }
++    sea.rotation.x = Math.PI / 2
++    sea.position.y = z.top
++    sea.frustumCulled = false
++    sea.renderOrder = 2
++    g.add(sea)
++    g.userData.dispose = () => { wallG.dispose(); sea.geometry.dispose(); (sea.material as THREE.Material).dispose() }
++    this.zoneMeshes.set(z.id, g)
++    this.group.add(g)
++    return g
++  }
++
++  update(i: L7FxInput) {
++    const U = this.U
++    U.uTime.value = i.time
++    U.uCam.value.copy(i.cam.position)
++    U.uUw.value = i.uw
++    U.uDepth.value = i.depth
++    U.uDepthK.value = i.depthK
++    U.uKeep.value = i.lightKeep
++    U.uFlashOn.value = i.flashOn ? 1 : 0
++    U.uFlashPos.value.copy(i.flashPos)
++    U.uFlashDir.value.copy(i.flashDir).normalize()
++    U.uHalluc.value = i.halluc
++    U.uGlitch.value = i.glitch
++    U.uFogC.value.copy(i.fogColor)
++    U.uFogFar.value = i.fogFar
++    U.uWaterY.value = i.waterY
++    U.uEyeAbove.value = i.eyeAbove
++    U.uInvP.value.copy(i.cam.projectionMatrixInverse)
++    U.uCamW.value.copy(i.cam.matrixWorld)
++    U.uRay.value = i.uw * (1 - smoothstep(4, 45, i.depth)) * i.lightKeep * (i.hi ? 1 : 0)
++    // 光柱：围绕相机缓慢公转的斜插面片，顶端贴着海面
++    const rayOn = U.uRay.value > 0.01
++    for (const m of this.rays) {
++      m.visible = rayOn
++      if (!rayOn) continue
++      const a = m.userData.a + i.time * 0.012
++      const x = i.cam.position.x + Math.cos(a) * m.userData.r, z = i.cam.position.z + Math.sin(a) * m.userData.r
++      m.position.set(x, i.waterY - 0.05, z)
++      m.scale.set(m.userData.w, 26 + Math.min(20, i.depth), 1)
++      m.rotation.set(0, Math.atan2(i.cam.position.x - x, i.cam.position.z - z), 0.22)
++    }
++    // 手电光锥
++    this.cone.visible = i.flashOn && i.uw > 0.5
++    if (this.cone.visible) {
++      this.cone.position.copy(i.flashPos)
++      this.cone.lookAt(i.flashPos.x + i.flashDir.x, i.flashPos.y + i.flashDir.y, i.flashPos.z + i.flashDir.z)
++      const s = 1 - i.depthK * 0.4
++      this.cone.scale.set(1, 1, s)
++    }
++    // 碎裂
++    const gl = i.glitch > 0.02 && i.hi
++    this.shards.visible = gl
++    this.voids.visible = gl && i.glitch > 0.3
++    // 背脊
++    if (i.back && i.back.env > 0.01) {
++      this.back.visible = true
++      this.back.position.set(i.back.x, -4.5 + i.back.env * 6.0 + Math.sin(i.time * 0.4) * 0.3, i.back.z)
++      this.back.rotation.y = Math.atan2(-i.back.dz, i.back.dx)
++      this.back.rotation.z = Math.sin(i.back.t * 0.35) * 0.04
++    } else this.back.visible = false
++    // 重力交界区
++    const live = new Set<number>()
++    for (const z of i.zones) {
++      live.add(z.id)
++      const g = this.zoneGroup(z)
++      g.position.set(z.x, 0, z.z)
++      g.rotation.y = -z.ang
++    }
++    for (const [id, g] of this.zoneMeshes) if (!live.has(id)) { this.group.remove(g); g.userData.dispose?.(); this.zoneMeshes.delete(id) }
++  }
++
++  dispose() {
++    for (const g of this.zoneMeshes.values()) g.userData.dispose?.()
++    this.zoneMeshes.clear()
++    for (const d of this.disposables) d.dispose()
++    this.group.removeFromParent()
++  }
++}
++
++function smoothstep(a: number, b: number, x: number) { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t) }
++function mergeSimple(gs: THREE.BufferGeometry[]): THREE.BufferGeometry {
++  let n = 0
++  for (const g of gs) n += g.attributes.position.count
++  const pos = new Float32Array(n * 3)
++  let o = 0
++  for (const g of gs) { pos.set(g.attributes.position.array as Float32Array, o); o += g.attributes.position.count * 3 }
++  const out = new THREE.BufferGeometry()
++  out.setAttribute('position', new THREE.BufferAttribute(pos, 3))
++  return out
++}
+diff --git a/app/src/game/renderer/renderer.ts b/app/src/game/renderer/renderer.ts
+index 8d5816d..a05dd7a 100644
+--- a/app/src/game/renderer/renderer.ts
++++ b/app/src/game/renderer/renderer.ts
+@@ -48,6 +48,10 @@ import { buildSkyAndLiquidsJob, buildLiquidSurfacesJob, updateLiquidTime, resetL
+ import { RemotePlayerViews } from './remotePlayers' // v58：联机远端玩家渲染
+ import type { SkySystem } from './skySystem'
+ import { SKY_PROFILES, skyLightDir, makeSkyMesh, makeMirageFleet, updateMirageFleet, type MirageFleet } from './skybox'
++import { L7OceanFx, l7CausticUniforms } from './l7Ocean'
++import { l7SurgeUniforms, waterUniforms } from './water'
++import { l7SurgeShaderParams } from '../engine/l7Events'
++import { l7GravZonesNear } from '../world/infiniteL7'
+ import { buildStructure, buildExit, buildL10CropLodJob, stepL10Wind } from './structures'
+ import { ALPHA_ENTRIES } from '../content/alphaBlueprint'
+ import { buildDecorationsJob } from './decorations'
+@@ -483,6 +487,7 @@ export class Renderer3D {
+   private eyeMeter=.32
+   private eyeMeterAt=-1
+   private eyeMap:GameMap|null=null
++  private l7Fx: L7OceanFx | null = null // v66：L7 水体/深海氛围渲染层
+   private uwK = 0 // v13：水下视野混合（0=水上 1=水下：蓝绿浑浊短视距）
+   private l7LightKeep = 1 // v58：L7 自然光深度衰减因子（定向阳光随深度变暗；水上=1）
+   // v50：光影设置项
+@@ -1142,8 +1147,10 @@ export class Renderer3D {
+         // L7 户外只小幅放宽（near 3.5 / far 29），海面始终笼在可见的迷雾里
+         const outNear = def.id === 7 ? 3.5 : def.id === 9 ? 2.8 : 5
+         const outFar = def.id === 11 ? 320 : def.id === 7 ? 29 : def.id === 9 ? 38 : 48
++        // v66：L7 骨粉雾霾随时间缓慢起伏；致幻越深雾越压近
++        const outFarK = def.id === 7 ? outFar * (0.86 + 0.14 * Math.sin(this.time * 0.045)) * (1 - engine.l7fx.halluc * 0.22) : outFar
+         fog.near = this.fogNear + (outNear - this.fogNear) * k
+-        fog.far = this.fogFar + (outFar - this.fogFar) * k
++        fog.far = this.fogFar + (outFarK - this.fogFar) * k
+         fog.color.copy(this.fogC).lerp(this.skyC, k)
+         if (this.scene.background instanceof THREE.Color) this.scene.background.copy(fog.color)
+       }
+@@ -1192,7 +1199,9 @@ export class Renderer3D {
+       // v13：水下视野——眼高没入深水面则蓝绿浑浊、视距骤减、环境光转冷
+       // v57o：L7 按真实下潜深度进一步衰减——越深越黑、视距越短（日光带→深渊带）
+       const eyeZ = p.z + 1.55
+-      const under = m.liquid[pi] === 1 && eyeZ < 0.05
++      // v66：L7 水墙内水面上限 = 墙顶；涌浪抬升海面
++      const l7Wall = def.id === 7 ? engine.l7fx.wall : null
++      const under = m.liquid[pi] === 1 && eyeZ < (l7Wall ? l7Wall.top : 0.05 + (def.id === 7 ? engine.l7fx.surgeH : 0))
+       this.uwK += ((under ? 1 : 0) - this.uwK) * Math.min(1, dt * 6)
+       this.l7LightKeep = 1 // v58：默认无衰减；水下 L7 分支按深度写入
+       if (this.uwK > 0.01) {
+@@ -1200,10 +1209,12 @@ export class Renderer3D {
+         const below = under ? Math.max(0, -(p.z - 0.06)) : 0
+         const depthK = def.id === 7 ? Math.min(1, below / 230) : 0
+         if (def.id === 7) this.l7LightKeep = 0.18 + 0.82 * Math.pow(1 - depthK, 1.35)
+-        const uwC = new THREE.Color('#0d3548').lerp(new THREE.Color('#020a12'), depthK)
++        // v66：L7 水下颜色分段——有光带青绿 → 暮色带深蓝 → 午夜带墨蓝 → 深渊近黑；超纯水浅处视距更远
++        const uwC = def.id === 7 ? l7WaterColor(below) : new THREE.Color('#0d3548').lerp(new THREE.Color('#020a12'), depthK)
+         if (fog) {
+-          const far = 16 - 10.5 * depthK
+-          fog.near = fog.near * (1 - uk) + 0.15 * uk
++          const far = def.id === 7 ? 23 - 13 * Math.pow(depthK, 0.6) - (engine.l7fx.halluc * 2) : 16 - 10.5 * depthK
++          // L7 水下用负 near 作为分通道消光哨兵（见 l7Ocean.patchL7Fog）
++          fog.near = def.id === 7 && uk > 0.5 ? -0.01 : fog.near * (1 - uk) + 0.15 * uk
+           fog.far = fog.far * (1 - uk) + far * uk
+           fog.color.lerp(uwC, uk)
+           if (this.scene.background instanceof THREE.Color) this.scene.background.copy(fog.color)
+@@ -1265,7 +1276,8 @@ export class Renderer3D {
+     // v65：天空按方向着色（地平线以下融入雾色），球心始终在相机处，地平线恰在视平线高度
+     if (this.skyMesh) this.skyMesh.position.copy(this.camera.position)
+     // v58：蜃楼船队以玩家为锚（永远无法靠近），水下时隐没
+-    if (this.mirageFleet) updateMirageFleet(this.mirageFleet, this.time, this.camera.position, this.uwK)
++    if (this.mirageFleet) updateMirageFleet(this.mirageFleet, this.time, this.camera.position, this.uwK, def.id === 7 ? engine.l7fx.halluc : 0)
++    if (this.l7Fx && def.id === 7) this.updateL7Fx(engine, m, def)
+     // v17：tint 氛围（红室=红雾 / 熄灯区=近黑雾 / 马尼拉=暖调 / v29 浓雾区=灰白短视距 / v30 花园段=青翠阳光），按玩家所在瓦片平滑混合
+     updateL0EnvironmentShader(m,def.id,engine.dev.bright,nightVision)
+     const bright = engine.dev.bright // v34：一键照明——层级全局增亮
+@@ -2461,6 +2473,8 @@ export class Renderer3D {
+     // v58：无限模式 L7 挂到场景的天空球/蜃楼船队随层级拆卸（有限层天空球在 levelGroup 内一并移除）
+     if (this.skyMesh) { this.scene.remove(this.skyMesh); (this.skyMesh.userData.sky as SkySystem | undefined)?.dispose(); this.skyMesh = null }
+     if (this.mirageFleet) { this.scene.remove(this.mirageFleet.group); this.mirageFleet = null }
++    if (this.l7Fx) { this.l7Fx.dispose(); this.l7Fx = null }
++    l7SurgeUniforms.uL7Surge.value.set(0, 0, 0, 0)
+     if (this.levelGroup) {
+       this.scene.remove(this.levelGroup)
+       this.levelGroup.traverse((o) => {
+@@ -2538,9 +2552,58 @@ export class Renderer3D {
+       this.mirageFleet = makeMirageFleet(def.id)
+       if (this.mirageFleet) this.scene.add(this.mirageFleet.group)
+     }
++    if (def.id === 7) { this.l7Fx = new L7OceanFx(); this.scene.add(this.l7Fx.group) }
+     this.applyEnvProbe(def)
+   }
+ 
++  // ---------- v66：L7 水体/深海氛围每帧更新 ----------
++  private l7FlashDir = new THREE.Vector3()
++  private l7ZoneT = 0
++  private l7Zones: { id: number; x: number; z: number; ang: number; len: number; thick: number; top: number; r: number }[] = [] // 世界坐标
++  private updateL7Fx(engine: Engine, m: GameMap, def: LevelDef) {
++    const fx = this.l7Fx!
++    // 水下看不到天空球：海面以外（未加载的远处）不应露出云层；背景退回雾色
++    if (this.skyMesh) this.skyMesh.visible = this.uwK < 0.5
++    const inf = m.inf
++    if (!inf) return
++    void def
++    const ox = inf.ox, oy = inf.oy
++    waterUniforms.uWaterOrigin.value.set(ox, oy)
++    const sp = l7SurgeShaderParams(engine)
++    l7SurgeUniforms.uL7Surge.value.set(sp.x, sp.y, sp.z, sp.w)
++    const p = engine.player
++    const eyeZ = this.camera.position.y
++    const below = Math.max(0, -eyeZ)
++    const depthK = Math.min(1, below / 230)
++    // 焦散：随下潜自然光衰减；手电不产生焦散
++    l7CausticUniforms.uL7Caustic.value = this.l7LightKeep * (this.lightMode === 'realistic' || this.realWaterOn ? 1 : 0.6)
++    // 重力交界区：每 0.5s 重新查询 260m 内的区（缓存世界坐标，每帧按当前窗口原点换算到场景坐标）
++    this.l7ZoneT -= 1 / 60
++    if (this.l7ZoneT <= 0) {
++      this.l7ZoneT = 0.5
++      this.l7Zones = l7GravZonesNear(inf.seed, p.x + ox, p.y + oy, 260).slice(0, 2).map((z) => ({ id: z.id, x: z.x, z: z.y, ang: z.ang, len: z.len, thick: z.thick, top: z.top, r: z.r }))
++    }
++    const zones = this.l7Zones.map((z) => ({ ...z, x: z.x - ox, z: z.z - oy }))
++    // 现实碎裂强度：深渊（>200m）与重力交界区附近（<40m）
++    const glitch = Math.max(Math.min(1, Math.max(0, (below - 200) / 70)), Math.max(0, 1 - engine.l7fx.gravDist / 40) * 0.55)
++    const fog = this.scene.fog as THREE.Fog | null
++    this.l7FlashDir.copy(this.flash.target.position).sub(this.flash.position).normalize()
++    const s = engine.l7fx.surge
++    let back: { x: number; z: number; dx: number; dz: number; env: number; t: number } | null = null
++    if (s) {
++      const env = Math.min(1, s.t / 5) * (1 - Math.min(1, Math.max(0, (s.t - s.dur) / 8)))
++      back = { x: s.wx - ox, z: s.wy - oy, dx: s.dx, dz: s.dy, env, t: s.t }
++    }
++    const fl = p.flashlight && p.battery > 0 && p.flashJamT <= 0
++    fx.update({
++      time: this.time, cam: this.camera, uw: this.uwK, depth: below, depthK,
++      eyeAbove: eyeZ - (engine.l7fx.wall ? engine.l7fx.wall.top : engine.l7fx.surgeH), waterY: engine.l7fx.surgeH,
++      lightKeep: this.l7LightKeep, flashOn: !!fl, flashPos: this.flash.position, flashDir: this.l7FlashDir,
++      halluc: engine.l7fx.halluc, glitch, fogColor: fog?.color ?? new THREE.Color('#3f5a66'), fogFar: fog?.far ?? 30,
++      zones, back, hi: this.realWaterOn || this.lightMode === 'realistic',
++    })
++  }
++
+   // ---------- v17：无限模式 chunk 同步（分帧构建、远离卸载、平移只动 position）----------
+   private syncInfinite(m: GameMap, def: LevelDef, p: { x: number; y: number }, budgetMs = this.chunkBudgetMs) {
+     const inf = m.inf!
+@@ -4526,3 +4589,16 @@ export function getRenderer(canvas: HTMLCanvasElement): Renderer3D {
+ 
+ 
+ 
++
++/** v66：L7 水下水体颜色随深度分段插值（下潜深度米）。 */
++const L7_UW_STOPS: [number, THREE.Color][] = [
++  [0, new THREE.Color('#15505e')], [24, new THREE.Color('#0c3446')], [90, new THREE.Color('#05182a')], [230, new THREE.Color('#010812')], [320, new THREE.Color('#000306')],
++]
++const l7UwTmp = new THREE.Color()
++function l7WaterColor(depth: number): THREE.Color {
++  for (let i = 1; i < L7_UW_STOPS.length; i++) {
++    const [d1, c1] = L7_UW_STOPS[i], [d0, c0] = L7_UW_STOPS[i - 1]
++    if (depth <= d1) return l7UwTmp.copy(c0).lerp(c1, (depth - d0) / (d1 - d0)).clone()
++  }
++  return L7_UW_STOPS[L7_UW_STOPS.length - 1][1].clone()
++}
+diff --git a/app/src/game/renderer/skybox.ts b/app/src/game/renderer/skybox.ts
+index e7a3fc3..975aaa5 100644
+--- a/app/src/game/renderer/skybox.ts
++++ b/app/src/game/renderer/skybox.ts
+@@ -164,7 +164,7 @@ export function makeMirageFleet(defId: number): MirageFleet | null {
+  * 显隐：120s 周期内按（船,周期）哈希随机开一扇 16~46s 的显现窗（带 7~13s 淡入淡出），
+  * 占空约 15~38%——大部分时间完全隐没；雾幕即使船隐没也缓慢漂流（更淡），hideK=1（水下）全隐。
+  */
+-export function updateMirageFleet(fleet: MirageFleet, t: number, camPos: THREE.Vector3, hideK: number) {
++export function updateMirageFleet(fleet: MirageFleet, t: number, camPos: THREE.Vector3, hideK: number, clarity = 0) {
+   for (const s of fleet.ships) {
+     // —— 随机慢频率显隐窗口（确定性：同船同周期恒定） ——
+     const CYCLE = 120
+@@ -177,6 +177,8 @@ export function updateMirageFleet(fleet: MirageFleet, t: number, camPos: THREE.V
+     const fade = 7 + rnd() * 6
+     let vis = smoothstep(start, start + fade, lt) * (1 - smoothstep(start + dur - fade, start + dur, lt))
+     vis *= 0.85 + 0.15 * Math.sin(t * 0.11 + s.phase * 2.0) // 显现中的轻微呼吸
++    // v66：比普综合症——远海停留越久，船显现得越频繁、越清晰（clarity 0..1）
++    vis = Math.max(vis, clarity * clarity * 0.8 * (0.75 + 0.25 * Math.sin(t * 0.07 + s.phase)))
+     // —— 方位/距离：以玩家为锚，永不靠近 ——
+     const az = (s.az + Math.sin(t * 0.011 + s.phase * 3.1) * 4.5) * D2R
+     const dist = s.dist + Math.sin(t * 0.017 + s.phase) * 2.5
+@@ -184,7 +186,7 @@ export function updateMirageFleet(fleet: MirageFleet, t: number, camPos: THREE.V
+     g.position.set(camPos.x + Math.cos(az) * dist, s.baseY + Math.sin(t * 0.05 + s.phase * 2.0) * 0.22, camPos.z + Math.sin(az) * dist)
+     g.lookAt(camPos.x, g.position.y, camPos.z) // 圆柱式朝向（始终舷侧对玩家，剪影完整）
+     g.rotateZ(Math.sin(t * 0.043 + s.phase * 1.7) * 0.022) // 幽灵船般的缓慢横摇
+-    const op = vis * 0.34 * (1 - hideK)
++    const op = vis * 0.34 * (1 + clarity * 1.3) * (1 - hideK)
+     s.mat.opacity = op
+     g.visible = op > 0.004
+     // —— 雾幕：船前 3~5m 的软雾团，沿舷侧缓慢漂过；船隐没时雾幕仍在（更淡）——迷雾笼盖 ——
+@@ -201,7 +203,7 @@ export function updateMirageFleet(fleet: MirageFleet, t: number, camPos: THREE.V
+     )
+     v.lookAt(camPos.x, v.position.y, camPos.z)
+     const veilPulse = 0.5 + 0.5 * Math.sin(t * 0.031 + s.phase * 6.1)
+-    s.veilMat.opacity = (0.07 + 0.13 * veilPulse + vis * 0.14) * (1 - hideK)
++    s.veilMat.opacity = (0.07 + 0.13 * veilPulse + vis * 0.14) * (1 - clarity * 0.5) * (1 - hideK)
+     v.visible = s.veilMat.opacity > 0.01
+   }
+ }
+diff --git a/app/src/game/renderer/structures.ts b/app/src/game/renderer/structures.ts
+index 394c3b4..a34a1dd 100644
+--- a/app/src/game/renderer/structures.ts
++++ b/app/src/game/renderer/structures.ts
+@@ -23,6 +23,7 @@ import { box, cyl, glow, col, mulberry, levelTexture, noiseTexture, makeCanvasCt
+ import { addL2DoorDetails, l2DoorMaterial } from './l2Door'
+ import { withL10Wind as windInject } from './l10Wind'
+ import { buildL10Structure } from './l10Meshes'
++import { buildL7Structure } from './l7Meshes'
+ import {l2Material} from './l2Materials'
+ import {alignL2WallProp,buildL2Machine} from './l2WallProps'
+ 
+@@ -1151,6 +1152,7 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH:
+     if(isL5DecorKind(s.kind)){const model=buildL5Registered(s);model.position.x=cx;model.position.z=cz;return model}
+   const H = wallH
+   if(_def.id===10){const l10=buildL10Structure(s);if(l10){l10.position.set(cx,0,cz);return l10}}
++  if(_def.id===7&&s.kind.startsWith('l7')){const l7=buildL7Structure(s,m);if(l7){l7.position.x+=cx;l7.position.z+=cz;return l7}}
+   if(_def.id===4){const replacement=buildL4Structure(s);if(replacement){replacement.position.set(cx,0,cz);return replacement}}
+   if(_def.id===3){const replacement=l3Structure(s,H);if(replacement){replacement.position.set(cx,0,cz);return replacement}}
+   const CH = hangingCeil(s, m, H) // v26：本瓦片天花板底面高度（悬挂物专用）
+diff --git a/app/src/game/renderer/water.ts b/app/src/game/renderer/water.ts
+index 667d5c7..00c0ccd 100644
+--- a/app/src/game/renderer/water.ts
++++ b/app/src/game/renderer/water.ts
+@@ -27,6 +27,18 @@ export const waterUniforms = {
+   uWaterOrigin: { value: new THREE.Vector2(0, 0) },
+ }
+ 
++/** v66：L7 七层之物涌浪（场景坐标）：x,y=波源 xz；z=振幅(m)；w=波前半径(m)。z<=0 时关闭。 */
++export const l7SurgeUniforms = { uL7Surge: { value: new THREE.Vector4(0, 0, 0, 0) } }
++/** 与着色器同一公式的 CPU 版本（引擎用于玩家起伏与推力）。返回海面高度偏移（米）。 */
++export function l7SurgeHeight(px: number, pz: number, s: { x: number; y: number; z: number; w: number }): number {
++  if (s.z <= 0) return 0
++  const d = Math.hypot(px - s.x, pz - s.y), x = d - s.w
++  return s.z * Math.exp(-(x * x) / (2 * 16 * 16)) * Math.exp(-d / 140) * Math.sin(x * 0.45)
++}
++const SURGE_GLSL = `uniform vec4 uL7Surge;
++float l7Surge(vec2 p){ if (uL7Surge.z <= 0.0) return 0.0; float d = length(p - uL7Surge.xy); float x = d - uL7Surge.w;
++  return uL7Surge.z * exp(-x * x / 512.0) * exp(-d / 140.0) * sin(x * 0.45); }`
++
+ export function updateWaterUniforms(time: number, opts?: { rain?: number; wind?: number; windDir?: { x: number; y: number }; origin?: { x: number; y: number } }) {
+   waterUniforms.uWaterTime.value = time
+   if (opts?.rain !== undefined) waterUniforms.uWaterRain.value = opts.rain
+@@ -65,7 +77,9 @@ export const WATER_PRESETS = {
+   // L10：清澈、溶氧高、无藻类的低地湖（维基）——近岸几乎透明，深处偏墨绿灰；阴天反射铅灰色天空
+   lake: { body: '#1a2a27', sky: '#6f777a', horizon: '#848b8c', absorb: [.62, .30, .26], reflect: .58, slope: .55, scale: 1, swell: .02, sheen: .12, glint: .45, foamWidth: .14, foam: .22, rain: true },
+   // L7：阴天灰蓝海
+-  sea: { body: '#0d303d', sky: '#5d7683', horizon: '#7d929b', absorb: [.45, .2, .14], reflect: .7, slope: 1.6, scale: 1, swell: .15, sheen: .2, glint: 1.3, foamWidth: .35, foam: .45, rain: true },
++  // v66：Fandom「海洋基本保持静止，几乎没有任何波浪」——起伏与坡度大幅降低；唯一的涌浪来自七层之物（uL7Surge）。
++  //      超纯水：吸收系数更低（浅海清澈见底），散射本色偏冷青。
++  sea: { body: '#0b2c38', sky: '#5d7683', horizon: '#7d929b', absorb: [.36, .12, .085], reflect: .74, slope: .62, scale: 1.25, swell: .045, sheen: .22, glint: .75, foamWidth: .35, foam: .3, rain: true },
+   // 室内泳池：亮蓝、清澈
+   pool: { body: '#0c2733', sky: '#26333a', horizon: '#33424a', absorb: [.5, .16, .1], reflect: .4, slope: .7, scale: .7, swell: .006, sheen: .1, glint: .5, foamWidth: 0, foam: 0, rain: false },
+   // L9 夜间泳池：只有极暗的天光
+@@ -89,15 +103,18 @@ export function applyWater(mat: THREE.Material, presetName: WaterPresetName, qua
+   const hi = quality === 'high'
+   mat.transparent = true
+   mat.depthWrite = false
+-  mat.customProgramCacheKey = () => `water64-${presetName}-${quality}`
++  const sea = presetName === 'sea'
++  mat.customProgramCacheKey = () => `water66-${presetName}-${quality}`
+   mat.onBeforeCompile = (shader) => {
+     Object.assign(shader.uniforms, waterUniforms)
++    if (sea) Object.assign(shader.uniforms, l7SurgeUniforms)
+     shader.vertexShader = shader.vertexShader
+       .replace('#include <common>', `#include <common>
+ uniform float uWaterTime; uniform vec2 uWaterOrigin; uniform float uWaterWind; uniform vec2 uWaterWindDir;
+ attribute float aDepth;
+ varying vec3 vWW;
+-varying float vWD;`)
++varying float vWD;
++${sea ? SURGE_GLSL : ''}`)
+       .replace('#include <begin_vertex>', `#include <begin_vertex>
+ {
+   vec4 w4 = modelMatrix * vec4(position, 1.0);
+@@ -111,12 +128,16 @@ varying float vWD;`)
+           + sin(dot(p, vec2(-0.09, 0.17)) - t * 0.42) * 0.35
+           + sin(dot(p, vec2(0.37, 0.29)) + t * 0.95) * 0.15;
+   transformed.y += h * sw;` : ''}
++  ${sea ? 'transformed.y += l7Surge(w4.xz) * smoothstep(0.0, 2.0, aDepth);' : ''}
+ }`)
+     shader.fragmentShader = shader.fragmentShader
+       .replace('#include <common>', `#include <common>
++uniform vec2 uWaterOrigin;
++#define uWaterOriginF uWaterOrigin
+ uniform float uWaterTime; uniform float uWaterRain; uniform float uWaterWind; uniform vec2 uWaterWindDir;
+ varying vec3 vWW;
+ varying float vWD;
++${sea ? SURGE_GLSL : ''}
+ vec3 gWN;
+ float wHash(vec2 p){ p = fract(p * vec2(127.1, 311.7)); p += dot(p, p + 19.19); return fract(p.x * p.y); }
+ float wNoise(vec2 p){ vec2 i = floor(p), q = fract(p); vec2 u = q * q * (3.0 - 2.0 * q);
+@@ -167,6 +188,7 @@ vec2 wRain(vec2 p, float t){
+   vec2 g = wGrad(p, uWaterTime, near) * ${f(P.slope)} * (0.6 + uWaterWind * 0.8) * shoreCalm;
+   g += wRipple(vWW.xz, uWaterTime) * (0.3 + 0.7 * near) * (0.5 + uWaterWind);
+   ${hi && P.rain ? 'g += wRain(vWW.xz, uWaterTime) * uWaterRain * near;' : ''}
++  ${sea ? `{ vec2 sp = vWW.xz - uWaterOriginF; float s0 = l7Surge(sp); g += vec2(l7Surge(sp + vec2(0.6, 0.0)) - s0, l7Surge(sp + vec2(0.0, 0.6)) - s0) / 0.6; }` : ''}
+   gWN = normalize(vec3(-g.x, 1.0, -g.y));
+   vec3 vN = normalize((viewMatrix * vec4(gWN, 0.0)).xyz);
+   normal = normalize(mix(normal, vN, 0.9));
+@@ -212,7 +234,17 @@ vec2 wRain(vec2 p, float t){
+   float shore = smoothstep(-0.005, 0.07, vWD);
+   if (vWD < -0.01) discard;
+   // 背面（水下仰视）：只轻微吸收，保留斯涅尔窗的亮度
+-  if (!gl_FrontFacing) { col = mix(lit, bodyC, 0.35); a = 0.45; }
++  ${sea ? `if (!gl_FrontFacing) {
++    // v66 斯涅尔窗：水下仰视时，只有与竖直方向夹角 < 48.6°（水的临界角）的锥内能看到折射进来的天空；
++    // 锥外发生全内反射，映出的是下方幽暗的水体。窗缘带一圈偏蓝的亮环（色散近似），并随细浪抖动。
++    float cu = clamp(dot(V, gWN), -1.0, 1.0);
++    float win = smoothstep(0.62, 0.69, cu);
++    vec3 skyIn = mix(${c3(P.horizon)}, ${c3(P.sky)}, smoothstep(0.66, 1.0, cu)) * 1.35;
++    vec3 tir = bodyC * 0.32;
++    float rim = exp(-pow((cu - 0.655) / 0.022, 2.0));
++    col = mix(tir, skyIn, win) + vec3(0.2, 0.32, 0.38) * rim * 0.55;
++    a = mix(0.93, 0.8, win);
++  }` : 'if (!gl_FrontFacing) { col = mix(lit, bodyC, 0.35); a = 0.45; }'}
+   gl_FragColor = vec4(col, clamp(a, 0.0, 0.97) * shore);
+ }`)
+     // 场景坐标系下的视线方向（不含窗口原点）
+diff --git a/app/src/game/world/infiniteL7.ts b/app/src/game/world/infiniteL7.ts
+index 9fbcbd5..ab4817e 100644
+--- a/app/src/game/world/infiniteL7.ts
++++ b/app/src/game/world/infiniteL7.ts
+@@ -75,7 +75,9 @@ export const L7_PORCH = { x0: 13, x1: 16, y0: 18, y1: 24, innerX0: 14, innerX1:
+ export const L7_ROPE = { anchor: { x: 15, y: 18 }, top: { x: 15, y: 23 }, base: { x: 15, y: 25 } }
+ 
+ // v58：「小小的谎言」环形结构场——入口房间正西 150m 暮色带浅台（世界坐标纯函数，各 chunk 一致裁剪）
+-export const L7_ARENA = { x: -135, y: 15, r: 12, depth: 46 } // 圆心 / 石柱环半径 / 压平海床深度（暮色带 24~90m）
++export const L7_ARENA = { x: -135, y: 15, r: 12, depth: 46 }
++// v66：入口海山——台地边缘半径 / 陡崖水平宽度 / 山脚裙带深度
++export const L7_MOUNT = { edge: 35, cliff: 28, foot: 226 } // 圆心 / 石柱环半径 / 压平海床深度（暮色带 24~90m）
+ 
+ const h01 = (...n: number[]) => h32(...n) / 4294967296
+ const smooth = (t: number) => t * t * (3 - 2 * t)
+@@ -120,20 +122,127 @@ function l7SeaFloorRaw(seed: number, wx: number, wy: number): number {
+   const ridge = 1 - Math.abs(l7ValueNoise(seed, 0x171f, wx, wy, 55) * 2) // 脊状沙纹（三角尖峰 0..1）
+   const detail = bd * (0.11 * mid + 0.05 * (ridge - 0.45))
+     + l7ValueNoise(seed, 0x1720, wx, wy, 13) * Math.min(2.0, 0.4 + bd * 0.012)
+-  let raw = raw0 + detail
+-  // v58：环形结构场海床压平——圆心 26m 内渐变为平坦暮色浅台（跨 chunk 连续，与岛核判定错开）
++  // v66：远海大地形——扭曲脊线噪声生成海山脊（抬升，最多约 150m），尖锐低谷生成海沟（加深，最多约 130m）。
++  //      岛核区（rise>0）不参与，岛屿判定保持不变。
++  let far = raw0 + detail
++  if (rise <= 0) {
++    const wq = l7ValueNoise(seed, 0x1750, wx, wy, 140) * 70
++    const ridgeN = 1 - Math.abs(l7ValueNoise(seed, 0x1751, wx + wq, wy - wq, 210) * 2)
++    const trenchN = 1 - Math.abs(l7ValueNoise(seed, 0x1752, wx - wq, wy + wq, 320) * 2)
++    far -= Math.pow(ridgeN, 5) * Math.min(150, far * 0.62)
++    far += Math.pow(trenchN, 9) * 130
++  }
++  // v66：入口海山（Wikidot：岩洞所在的高耸海山几乎就在入口房间正下方；Fandom：舱室周边海床仅数米深，
++  //      一定距离后几乎竖直下滑到未知深度）。山顶 = 出生浅海台地；台地边缘（约 34m，带角度噪声）是
++  //      一圈陡崖，约 28m 水平距离内下落到 ~240m 的山脚裙带；约 260m 外完全交给远海地形。
++  const r = Math.hypot(wx - L7_ORIGIN.x, wy - L7_ORIGIN.y)
++  const ang = Math.atan2(wy - L7_ORIGIN.y, wx - L7_ORIGIN.x)
++  const edge = l7ShelfEdge(seed, ang)
++  const shelf = 7 + Math.min(r, 30) * 0.05 + l7ValueNoise(seed, 0x1753, wx, wy, 9) * 0.6
++  const apron = L7_MOUNT.foot + l7ValueNoise(seed, 0x1754, wx, wy, 60) * 26 + l7ValueNoise(seed, 0x1755, wx, wy, 17) * 5
++  // 陡崖剖面：前 6m 为崖肩圆角，随后近乎竖直；崖面加入沟槽（按角度的高频噪声），避免像车床加工的圆柱
++  const gully = l7ValueNoise(seed, 0x1756, ang * 40, r * 0.1, 3) * 10
++  const u = Math.max(0, Math.min(1, (r - edge) / L7_MOUNT.cliff))
++  const cliffK = u <= 0 ? 0 : Math.pow(u, 0.55) * (0.92 + 0.08 * smooth(u))
++  let mount = shelf + (apron + gully * u * (1 - u) * 4 - shelf) * cliffK
++  if (r > edge + L7_MOUNT.cliff) mount = apron
++  const kFar = smooth(Math.min(1, Math.max(0, (r - 150) / 110)))
++  let raw = mount + (far - mount) * kFar
++  // v58/v66：环形结构场海床压平——山脚裙带上隆起一座平顶石台（暮色带 46m），台缘 34m 渐变成陡坡
+   const ad = Math.hypot(wx - L7_ARENA.x, wy - L7_ARENA.y)
+-  if (ad < 26) {
++  if (ad < L7_ARENA.r + 34) {
+     const flat = L7_ARENA.depth + l7ValueNoise(seed, 0x1721, wx, wy, 7) * 1.1 // 场内微起伏
+-    const kf = smooth(Math.min(1, Math.max(0, (ad - L7_ARENA.r) / 14))) // 环外 14m 渐变带
++    const kf = smooth(Math.min(1, Math.max(0, (ad - L7_ARENA.r - 2) / 32)))
+     raw = flat + (raw - flat) * kf
+   }
+-  const r = Math.hypot(wx - L7_ORIGIN.x, wy - L7_ORIGIN.y)
+-  // v57t：出生点所在 chunk 内是几乎平坦的浅海台地（r≲22 时 k=0，海床只随 3×3 低通轻微起伏），
+-  // 离开出生 chunk 后才开始向深处过渡，约 150m 外完全交给 fBm 深海场。
+-  const shallow = 7 + Math.min(r, 22) * 0.02
+-  const k = smooth(Math.min(1, Math.max(0, (r - 22) / 128)))
+-  return shallow + (raw - shallow) * k
++  return raw
++}
++
++/** v66：入口海山台地边缘半径（随方位角缓慢变化的噪声，约 28~42m）。 */
++function l7ShelfEdge(seed: number, ang: number): number {
++  const a = (ang + Math.PI) / (Math.PI * 2) * 24 // 24 段周向值噪声（首尾相接）
++  const i0 = Math.floor(a), t = smooth(a - i0)
++  const v = (i: number) => h01(seed, 0x1757, ((i % 24) + 24) % 24) * 2 - 1
++  return L7_MOUNT.edge + (v(i0) + (v(i0 + 1) - v(i0)) * t) * 7
++}
++
++/** v66：入口海山侧壁上的固定岩洞（→ Level 8，Wikidot「午夜带底部，海山一侧」）。世界坐标纯函数。 */
++export function l7MountCave(seed: number): { x: number; y: number; depth: number } {
++  const ang = (h01(seed, 0x1758) * 2 - 1) * Math.PI
++  // 沿方位向外步进，找到海床深度首次达到目标（午夜带底部 ~205m）的瓦片
++  for (let r = 30; r < 120; r += 1) {
++    const x = Math.round(L7_ORIGIN.x + Math.cos(ang) * r), y = Math.round(L7_ORIGIN.y + Math.sin(ang) * r)
++    const d = l7SeaFloorAt(seed, x, y)
++    if (d >= 205) return { x, y, depth: d }
++  }
++  const x = Math.round(L7_ORIGIN.x + Math.cos(ang) * 90), y = Math.round(L7_ORIGIN.y + Math.sin(ang) * 90)
++  return { x, y, depth: l7SeaFloorAt(seed, x, y) }
++}
++
++// ---------- v66：重力交界区（Fandom：竖直水墙 + 倒悬在天空中的平整水面） ----------
++/** 一处重力交界区：一道竖直水墙（长 len、厚 thick，从海面升到 top）连接一片倒悬水面（半径 r，高度 top）。 */
++export interface L7GravZone { id: number; x: number; y: number; ang: number; len: number; thick: number; top: number; r: number }
++export const L7_GRAV_CELL = 420
++const gravCache = new Map<string, L7GravZone | null>()
++/** 宏格 (gx,gy) 内的重力交界区（约 38% 宏格有一处；入口 300m 内与岛核附近不生成）。 */
++export function l7GravZoneInCell(seed: number, gx: number, gy: number): L7GravZone | null {
++  const key = `${seed},${gx},${gy}`
++  const hit = gravCache.get(key)
++  if (hit !== undefined) return hit
++  let z: L7GravZone | null = null
++  if (h01(seed, 0x1760, gx, gy) < 0.38) {
++    const x = gx * L7_GRAV_CELL + 90 + h01(seed, 0x1761, gx, gy) * (L7_GRAV_CELL - 180)
++    const y = gy * L7_GRAV_CELL + 90 + h01(seed, 0x1762, gx, gy) * (L7_GRAV_CELL - 180)
++    if (Math.hypot(x - L7_ORIGIN.x, y - L7_ORIGIN.y) > 300 && l7SeaFloorAt(seed, Math.floor(x), Math.floor(y)) > 14) {
++      z = {
++        id: (h32(seed, 0x1763, gx, gy) >>> 8),
++        x, y,
++        ang: h01(seed, 0x1764, gx, gy) * Math.PI,
++        len: 46 + h01(seed, 0x1765, gx, gy) * 40,
++        thick: 5 + h01(seed, 0x1766, gx, gy) * 3,
++        top: 34 + h01(seed, 0x1767, gx, gy) * 14,
++        r: 64 + h01(seed, 0x1768, gx, gy) * 30,
++      }
++    }
++  }
++  if (gravCache.size > 512) gravCache.clear()
++  gravCache.set(key, z)
++  return z
++}
++/** 以 (wx,wy) 为圆心 rad 内的所有重力交界区（按距离升序）。 */
++export function l7GravZonesNear(seed: number, wx: number, wy: number, rad: number): L7GravZone[] {
++  const out: L7GravZone[] = []
++  const g0x = Math.floor((wx - rad) / L7_GRAV_CELL), g1x = Math.floor((wx + rad) / L7_GRAV_CELL)
++  const g0y = Math.floor((wy - rad) / L7_GRAV_CELL), g1y = Math.floor((wy + rad) / L7_GRAV_CELL)
++  for (let gy = g0y; gy <= g1y; gy++) for (let gx = g0x; gx <= g1x; gx++) {
++    const z = l7GravZoneInCell(seed, gx, gy)
++    if (z && Math.hypot(z.x - wx, z.y - wy) < rad + z.r) out.push(z)
++  }
++  return out.sort((a, b) => Math.hypot(a.x - wx, a.y - wy) - Math.hypot(b.x - wx, b.y - wy))
++}
++/** 世界点是否位于某道水墙的水平投影内。along/perp 为墙局部坐标；nx,ny 为墙面法线（垂直于墙）。 */
++export function l7GravWallAt(seed: number, wx: number, wy: number): { zone: L7GravZone; top: number; along: number; perp: number; nx: number; ny: number } | null {
++  const gx = Math.floor(wx / L7_GRAV_CELL), gy = Math.floor(wy / L7_GRAV_CELL)
++  for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
++    const z = l7GravZoneInCell(seed, gx + dx, gy + dy)
++    if (!z) continue
++    const ca = Math.cos(z.ang), sa = Math.sin(z.ang)
++    const rx = wx - z.x, ry = wy - z.y
++    const along = rx * ca + ry * sa, perp = -rx * sa + ry * ca
++    if (Math.abs(along) <= z.len / 2 && Math.abs(perp) <= z.thick / 2) return { zone: z, top: z.top, along, perp, nx: -sa, ny: ca }
++  }
++  return null
++}
++/** 到最近重力交界区水墙的水平距离（米；无则 Infinity）——现实碎裂强度用。 */
++export function l7GravDistance(seed: number, wx: number, wy: number): number {
++  let best = Infinity
++  for (const z of l7GravZonesNear(seed, wx, wy, 160)) {
++    const ca = Math.cos(z.ang), sa = Math.sin(z.ang)
++    const rx = wx - z.x, ry = wy - z.y
++    const along = Math.max(0, Math.abs(rx * ca + ry * sa) - z.len / 2), perp = Math.max(0, Math.abs(-rx * sa + ry * ca) - z.thick / 2)
++    best = Math.min(best, Math.hypot(along, perp))
++  }
++  return best
+ }
+ 
+ /** 瓦片级海床深度（米，水面以下，正数）。3×3 低通让出生点浅海与外界海床、chunk 边界都连续平滑。 */
+@@ -347,6 +456,12 @@ export function genL7ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
+       const hostZone = l7ZoneAt(seed, WX + 16, WY + 16)
+       const midnightHost = isHost && !(cx === 0 && cy === 0) && hostZone === 'midnight'
+       // 午夜宿主区域必有一个岩洞（出口指引可用）；其余午夜区域概率出现
++      // v66：入口海山侧壁的固定岩洞（世界坐标纯函数；归属 chunk 推送一次）
++      const mc = l7MountCave(seed)
++      if (caveDef && inChunk(mc.x, mc.y)) {
++        exits.push({ def: caveDef, x: mc.x, y: mc.y, discovered: false })
++        pushLight(mc.x, mc.y, 3.6, '#5fd8e8')
++      }
+       const caveRoll = caveDef && (midnightHost || h01(seed, 0x1715, cx, cy) < 0.04)
+       if (caveRoll) {
+         const spot = findWaterFor('midnight', new Set())
+@@ -389,6 +504,14 @@ export function genL7ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
+         if (raw < -0.8 && !centers.some((c) => Math.hypot(c.x - x, c.y - y) < 3)) centers.push({ x, y })
+       }
+     for (const c of centers) pushStruct('rockisle', WX + c.x, WY + c.y, 1, 1, false)
++    // v66：臣服堡垒（Wikidot）——岛上用家具堆叠、焦油加固的简易庇护所。本作只做已废弃的版本：
++    //      无人驻守，内部一只可搜刮的板条箱与一只木桶（居民去向不明）。约半数岛屿上有一座。
++    const c0 = centers[0]
++    if (c0 && h01(seed, 0x1740, cx, cy) < 0.55) {
++      pushStruct('l7fort', WX + c0.x - 2, WY + c0.y - 2, 5, 5, false, false, { rot: h32(seed, 0x1741, cx, cy) % 4 })
++      pushStruct('crate', WX + c0.x, WY + c0.y, 1, 1, true, true, { loot: 1, fort: 1 })
++      if (c0.x + 1 < CS && liquid[li(c0.x + 1, c0.y)] === 0) pushStruct('barrel', WX + c0.x + 1, WY + c0.y, 1, 1, true, true, { loot: 1, fort: 1 })
++    }
+   }
+ 
+   // ---- v58：环形结构场「小小的谎言」（入口正西 150m 暮色带；世界坐标纯函数，各 chunk 裁剪自己那份） ----
+@@ -468,6 +591,39 @@ export function genL7ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
+   if (rng.chance(0.7)) placeOnWater('bonepile', 1, 1, false, true, { loot: 1 }, 'abyss')
+   if (rng.chance(0.16)) placeOnWater('fishbones', 3, 2, false, false, undefined, 'abyss')
+ 
++  // ---- v66：水中装饰物（按深度带；全部为无碰撞、单次绘制的合并/实例化模型） ----
++  {
++    const drng = new RNG(h32(seed, 0x1745, cx, cy)) // 独立随机流：不扰动既有容器/实体/物品的生成序列
++    const placeDeco = (kind: Structure['kind'], w: number, h: number, data: Structure['data'], want: ReturnType<typeof zoneAt> | ReturnType<typeof zoneAt>[]): boolean => {
++      const wants = Array.isArray(want) ? want : [want]
++      for (let tr = 0; tr < 40; tr++) {
++        const x = drng.int(2, CS - 2 - w), y = drng.int(2, CS - 2 - h)
++        if (nearEntry(x, y, 3) || nearFixedExit(x, y, 3)) continue
++        if (!wants.includes(zoneAt(x, y))) continue
++        let ok = true
++        for (let j = y; j < y + h && ok; j++) for (let i = x; i < x + w && ok; i++) if (!isWaterTile(i, j)) ok = false
++        if (!ok) continue
++        pushStruct(kind, WX + x, WY + y, w, h, false, false, { ...data, seed: h32(seed, 0x1746, WX + x, WY + y) % 100000 })
++        return true
++      }
++      return false
++    }
++    // 漂浮/沉底碎屑场：每 chunk 一组实例（骨片、锈蚀废铁、书皮纸块、合成纤维碎屑），内容按每个实例落点的深度带决定
++    if (isWaterTile(16, 16) && !nearEntry(16, 16, 0)) pushStruct('l7debris', WX + 16, WY + 16, 1, 1, false, false, { seed: h32(seed, 0x1747, cx, cy) % 100000 })
++    // 类人骨架（巨颚、长牙、鳍足）：暮色带开始出现，午夜带成群
++    if (drng.chance(0.3)) placeDeco('l7skeleton', 1, 2, {}, 'twilight')
++    for (let i = 0, n = drng.int(1, 3); i < n; i++) placeDeco('l7skeleton', 1, 2, {}, 'midnight')
++    if (drng.chance(0.55)) placeDeco('l7skeleton', 1, 2, { eroded: 1 }, 'abyss')
++    // 不可理解的巨鱼骨架（地标级，20m 上下）
++    if (drng.chance(0.11)) placeDeco('l7giantfish', 6, 3, {}, ['midnight', 'abyss'])
++    // 海床露出的泡烂地毯补丁（合成纤维；暗示海床下铺着地毯）
++    for (let i = 0, n = drng.chance(0.6) ? drng.int(1, 2) : 0; i < n; i++) placeDeco('l7carpet', 3, 2, {}, ['midnight', 'abyss'])
++    // 深渊：持续冒泡的未知源头（大气泡柱）
++    if (drng.chance(0.22)) placeDeco('l7bubbles', 1, 1, { big: 1 }, 'abyss')
++    // 焦油岩堆顶上的细气泡柱
++    for (const st of structures) if (st.kind === 'seatarpit' && drng.chance(0.35)) pushStruct('l7bubbles', st.x + 1, st.y + 1, 1, 1, false, false, { seed: h32(seed, 0x1748, st.x, st.y) % 100000 })
++  }
++
+   // ---- 实体（v57p：按放置点海床深度垂直划分；出生安全区 |cx|,|cy|≤1 不生成） ----
+   if (!(Math.abs(cx) <= 1 && Math.abs(cy) <= 1)) {
+     const placeEntityIn = (type: string, want: ReturnType<typeof zoneAt>): boolean => {
+@@ -516,6 +672,9 @@ export function genL7ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
+ /** v57t：L7 区域宿主出口锚点的轻量解析式版本。与 genL7ChunkRaw 的宿主出口判定逐条一致，
+  *  但不生成整 chunk 海床数组——HUD 每帧出口指引首次求解时不再造成数百毫秒卡顿。 */
+ export function l7RegionExitAnchor(seed: number, rx: number, ry: number): { x: number; y: number; z?: number } | null {
++  // v66：入口海山岩洞所在区域优先指向它
++  const mc = l7MountCave(seed)
++  if (Math.floor(Math.floor(mc.x / CS) / RS) === rx && Math.floor(Math.floor(mc.y / CS) / RS) === ry) return { x: mc.x, y: mc.y }
+   const host = regionHost(seed, rx, ry)
+   const { cx, cy } = host
+   if (cx === 0 && cy === 0) return null

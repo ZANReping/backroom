@@ -1,0 +1,84 @@
+{
+  "stage": "after",
+  "mode": "realistic",
+  "port": 18957,
+  "cdp": 22513,
+  "scenes": [],
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:18957/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Mon, 19 Oct 2026 04:31:12 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": false,
+      "connectionId": 1298,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 18957,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 3493.132682,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": 14.618,
+        "dnsEnd": 14.629,
+        "connectStart": 14.629,
+        "connectEnd": 15.561,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 15.907,
+        "sendEnd": 15.953,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 23.761,
+        "receiveHeadersEnd": 24.104
+      },
+      "responseTime": 1792384272388.548,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l1v2-import\\after-realistic\\qa-1792384262163-39008",
+    "--remote-debugging-port=22513",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "server": 38764,
+    "browser": 44304
+  },
+  "ok": false,
+  "failure": "Error: Timeout app.ready",
+  "partial": null,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

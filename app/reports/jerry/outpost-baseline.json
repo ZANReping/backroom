@@ -1,0 +1,56 @@
+{
+  "description": "Rebuild the regression with every available pre-import file snapshot substituted; all runtime dependencies are outside the Jerry changes.",
+  "sameBundledBytes": true,
+  "currentBundleSha256": "f6a520a9d2e7b11bc07afd2dd78ccfc3c3b29779c72b6fbe2f00994b5425284b",
+  "beforeImportBundleSha256": "f6a520a9d2e7b11bc07afd2dd78ccfc3c3b29779c72b6fbe2f00994b5425284b",
+  "baselineExit": 1,
+  "baselineError": [
+    "AssertionError [ERR_ASSERTION]: alpha geometry alpha_office_station at -25 degrees\r"
+  ],
+  "inputs": [
+    {
+      "file": "src/game/content/alphaVessels.ts",
+      "sha256": "deb01231f8a48481f88737c4be8762b7d49b2ca801ce51a9daee299694a6da56"
+    },
+    {
+      "file": "src/game/content/alphaResearchDecor.ts",
+      "sha256": "11a05cc3c9e07f1588e4ad19f1b6c142fc088bf53ddb10ac9cb8cad40256f078"
+    },
+    {
+      "file": "src/game/content/alphaArchiveDecor.ts",
+      "sha256": "003fbd8c104e4dc15b5401589ccdf1ee90f9e89c299f3066cf31601b958afd9c"
+    },
+    {
+      "file": "src/game/content/alphaAdminDecor.ts",
+      "sha256": "7473f924fd6db02b7bb2fab10b72dcbab88eb743b3cc4d6166499d2626041c53"
+    },
+    {
+      "file": "src/game/content/alphaResidentialDecor.ts",
+      "sha256": "57c1299edd707c2377787b48e01224eceb361f910ff37c799ef55cee8dd12d91"
+    },
+    {
+      "file": "src/game/content/alphaCommunityDecor.ts",
+      "sha256": "786a7380eaaa7527e9dcac238f6d30756ca5bcf5d33cdfd8997d813a688789db"
+    },
+    {
+      "file": "src/game/content/alphaStationDetails.ts",
+      "sha256": "e6d930c91be97f75d2fd7d660d731705da01cb224a1a9ed5f4dbb853d8116230"
+    },
+    {
+      "file": "src/game/content/alphaDecor.ts",
+      "sha256": "3c73bcfa56219c6360f2054c0862617378517a700153468ac1acdb3f51871fe9"
+    },
+    {
+      "file": "src/game/content/tradeDecor.ts",
+      "sha256": "96780425fcd6f552b37ae0cb03196ea255e90b274146093ca0c3b0f7749997eb"
+    },
+    {
+      "file": "src/game/world/settlementColliders.ts",
+      "sha256": "6773e74f42d0c91d115485696646c06eac3687f107256ae2e6cd0b8fbee41fdb"
+    },
+    {
+      "file": "scripts/check-outpost-colliders.ts",
+      "sha256": "eaa0f006a8f33764904ec7d421359013e95fc71798f819cbb477359c55fa4070"
+    }
+  ]
+}

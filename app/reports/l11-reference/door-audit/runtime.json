@@ -1,0 +1,615 @@
+{
+  "run": "qa-1791974977564-11176",
+  "port": 1740,
+  "cdp": 1741,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-reference\\door-audit\\qa-1791974977564-11176",
+  "label": "door-audit",
+  "baseline": false,
+  "low": false,
+  "mode": "realistic",
+  "quick": false,
+  "seed": 20261014,
+  "views": [
+    {
+      "id": "12-apartment-living-reverse",
+      "world": [
+        129.2,
+        580.85,
+        3.1515372300664333
+      ],
+      "target": [
+        126.2,
+        583.5,
+        4.751537230066433
+      ],
+      "yaw": 2.294326644327963,
+      "pitch": 0.012490570586393438,
+      "fov": 78,
+      "room": "living",
+      "lighting": {
+        "exposure": 1.6280613928654628,
+        "meter": 0.17170954425523838,
+        "outdoor": 4.615832588163296e-11,
+        "fogNear": 150,
+        "fogFar": 650,
+        "sun": 3.35
+      },
+      "stats": {
+        "label": "11:open",
+        "median": 4.19999999999709,
+        "p95": 8.400000000001455,
+        "max": 112.40000000000146,
+        "p99": 12.5,
+        "frames": 1000,
+        "over16ms": 3,
+        "over33ms": 2,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 350,
+        "triangles": 388611,
+        "memory": {
+          "geometries": 773,
+          "textures": 70
+        },
+        "programs": 118,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "performance": {
+        "label": "11:open",
+        "median": 4.19999999999709,
+        "p95": 8.400000000001455,
+        "max": 12.60000000000582,
+        "p99": 12.5,
+        "frames": 325,
+        "over16ms": 0,
+        "over33ms": 0,
+        "cpuMedian": 4.5,
+        "cpuP95": 8,
+        "gpuMedian": 4.634624,
+        "gpuP95": 7.314432,
+        "gpuSamples": 322,
+        "draws": 350,
+        "triangles": 388611,
+        "memory": {
+          "geometries": 773,
+          "textures": 70
+        },
+        "programs": 118,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    }
+  ],
+  "command": [
+    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-reference\\door-audit\\qa-1791974977564-11176",
+    "--remote-debugging-port=1741",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/154.0.8037.98",
+    "revision": "@b859317bf11f6be47f9b7799ec690a0a42a1fb33",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+    "jsVersion": "15.4.80.20"
+  },
+  "pids": {
+    "server": 62360,
+    "browser": 20624
+  },
+  "setup": {
+    "seed": 20261014,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "low": false,
+    "baseline": false,
+    "weather": "calm",
+    "time": 10,
+    "shadows": true
+  },
+  "cases": [
+    {
+      "id": "12-apartment-living-reverse",
+      "building": "brick-housing",
+      "floor": 1,
+      "reverse": true
+    }
+  ],
+  "validation": [
+    {
+      "ok": true,
+      "entrances": [
+        {
+          "id": "l11v2:20261014:0:0:reference:west-piers",
+          "error": 0.05333333333305745,
+          "local": [
+            63.55333333333306,
+            24
+          ],
+          "rooms": [
+            12,
+            12
+          ],
+          "doors": 24,
+          "flights": [
+            {
+              "flight": 0,
+              "error": 0.0399999999992815,
+              "height": 3.0150000000000006,
+              "returnError": 0.05666666666667197,
+              "returnHeight": 0.015000000000000013
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "entrances": [
+        {
+          "id": "l11v2:20261014:0:0:reference:west-limestone",
+          "error": 0.05333333333305745,
+          "local": [
+            59.55333333333306,
+            19
+          ],
+          "rooms": [
+            12,
+            12
+          ],
+          "doors": 24,
+          "flights": [
+            {
+              "flight": 0,
+              "error": 0.0399999999992815,
+              "height": 3.015,
+              "returnError": 0.05666666666667197,
+              "returnHeight": 0.015000000000000013
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "entrances": [
+        {
+          "id": "l11v2:20261014:0:0:reference:east-stone",
+          "error": 0.05333333333305745,
+          "local": [
+            1.4466666666669425,
+            21
+          ],
+          "rooms": [
+            34,
+            36
+          ],
+          "doors": 70,
+          "flights": [
+            {
+              "flight": 0,
+              "error": 0.0399999999992815,
+              "height": 3.015,
+              "returnError": 0.05666666666667197,
+              "returnHeight": 0.015000000000000013
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "entrances": [
+        {
+          "id": "l11v2:20261014:0:0:reference:east-ribbon",
+          "error": 0.05333333333305745,
+          "local": [
+            1.4466666666669425,
+            22
+          ],
+          "rooms": [
+            12,
+            12
+          ],
+          "doors": 24,
+          "flights": [
+            {
+              "flight": 0,
+              "error": 0.0399999999992815,
+              "height": 3.015,
+              "returnError": 0.05666666666667197,
+              "returnHeight": 0.015000000000000013
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "entrances": [
+        {
+          "id": "l11v2:20261014:0:0:reference:west-ribbon",
+          "error": 0.05333333333305745,
+          "local": [
+            58.55333333333306,
+            47
+          ],
+          "rooms": [
+            31,
+            31
+          ],
+          "doors": 62,
+          "flights": [
+            {
+              "flight": 0,
+              "error": 0.039999999999224656,
+              "height": 3.015,
+              "returnError": 0.05666666666667197,
+              "returnHeight": 0.014999999999999993
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "entrances": [
+        {
+          "id": "l11v2:20261014:0:0:reference:east-glass",
+          "error": 0.05333333333305745,
+          "local": [
+            1.4466666666669425,
+            45.5
+          ],
+          "rooms": [
+            34,
+            34
+          ],
+          "doors": 68,
+          "flights": [
+            {
+              "flight": 0,
+              "error": 0.039999999999224656,
+              "height": 3.015,
+              "returnError": 0.05666666666667197,
+              "returnHeight": 0.015
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "entrances": [
+        {
+          "id": "l11v2:20261014:0:0:reference:west-south",
+          "error": 0.05333333333305745,
+          "local": [
+            59.55333333333306,
+            41.5
+          ],
+          "rooms": [
+            21
+          ],
+          "doors": 21,
+          "flights": []
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "entrances": [
+        {
+          "id": "l11v2:20261014:0:0:reference:east-south",
+          "error": 0.05333333333305745,
+          "local": [
+            1.4466666666669425,
+            40.5
+          ],
+          "rooms": [
+            27
+          ],
+          "doors": 27,
+          "flights": []
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "entrances": [
+        {
+          "id": "l11v2:20261014:0:0:reference:brick-housing",
+          "error": 0.05333333333305745,
+          "local": [
+            45,
+            1.4466666666669425
+          ],
+          "rooms": [
+            32,
+            32,
+            32
+          ],
+          "doors": 96,
+          "flights": [
+            {
+              "flight": 0,
+              "error": 0.0399999999992815,
+              "height": 3.015,
+              "returnError": 0.056666666666728815,
+              "returnHeight": 0.014999999999999986
+            },
+            {
+              "flight": 1,
+              "error": 0.0399999999992815,
+              "height": 6.015,
+              "returnError": 0.056666666666728815,
+              "returnHeight": 3.015
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "entrances": [
+        {
+          "id": "l11v2:20261014:0:0:reference:quay-west-near",
+          "error": 0.05333333333305745,
+          "local": [
+            56.55333333333306,
+            26
+          ],
+          "rooms": [
+            13,
+            13
+          ],
+          "doors": 26,
+          "flights": [
+            {
+              "flight": 0,
+              "error": 0.0399999999992815,
+              "height": 3.0150000000000006,
+              "returnError": 0.056666666666728815,
+              "returnHeight": 0.015000000000000013
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "entrances": [
+        {
+          "id": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "error": 0.05333333333305745,
+          "local": [
+            44.55333333333306,
+            14
+          ],
+          "rooms": [
+            7,
+            7
+          ],
+          "doors": 14,
+          "flights": [
+            {
+              "flight": 0,
+              "error": 0.0399999999992815,
+              "height": 3.015,
+              "returnError": 0.056666666666728815,
+              "returnHeight": 0.015000000000000013
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "entrances": [
+        {
+          "id": "l11v2:20261014:0:0:reference:quay-east-near",
+          "error": 0.05333333333305745,
+          "local": [
+            1.4466666666669425,
+            43.5
+          ],
+          "rooms": [
+            21,
+            21
+          ],
+          "doors": 42,
+          "flights": [
+            {
+              "flight": 0,
+              "error": 0.0399999999992815,
+              "height": 3.015,
+              "returnError": 0.056666666666728815,
+              "returnHeight": 0.015000000000000013
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "entrances": [
+        {
+          "id": "l11v2:20261014:0:0:reference:quay-west-mid",
+          "error": 0.05333333333305745,
+          "local": [
+            52.55333333333306,
+            51.5
+          ],
+          "rooms": [
+            24
+          ],
+          "doors": 24,
+          "flights": []
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "entrances": [
+        {
+          "id": "l11v2:20261014:0:0:reference:quay-east-mid",
+          "error": 0.05333333333305745,
+          "local": [
+            1.4466666666669425,
+            52
+          ],
+          "rooms": [
+            36,
+            36
+          ],
+          "doors": 72,
+          "flights": [
+            {
+              "flight": 0,
+              "error": 0.0399999999992815,
+              "height": 3.015,
+              "returnError": 0.056666666666728815,
+              "returnHeight": 0.015000000000000013
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "entrances": [
+        {
+          "id": "l11v2:20261014:0:0:reference:quay-west-far",
+          "error": 0.05333333333305745,
+          "local": [
+            60.55333333333306,
+            44
+          ],
+          "rooms": [
+            22
+          ],
+          "doors": 22,
+          "flights": []
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "entrances": [
+        {
+          "id": "l11v2:20261014:0:0:reference:quay-east-far",
+          "error": 0.05333333333305745,
+          "local": [
+            1.4466666666669425,
+            43
+          ],
+          "rooms": [
+            27
+          ],
+          "doors": 27,
+          "flights": []
+        }
+      ]
+    }
+  ],
+  "performance": {
+    "label": "11:open",
+    "median": 41.59999999997672,
+    "p95": 50.20000000001164,
+    "max": 3545.7999999999884,
+    "p99": 3545.7999999999884,
+    "frames": 100,
+    "over16ms": 100,
+    "over33ms": 96,
+    "cpuMedian": 40.3999999910593,
+    "cpuP95": 49.8999999910593,
+    "gpuMedian": 14.701568,
+    "gpuP95": 18.24256,
+    "gpuSamples": 98,
+    "draws": 1253,
+    "triangles": 3166133,
+    "memory": {
+      "geometries": 851,
+      "textures": 95
+    },
+    "programs": 113,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "errors": [],
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "networkErrors": [
+    {
+      "requestId": "72860.12",
+      "loaderId": "0BE01E472754F7E08510854CCCCBDEF7",
+      "timestamp": 112464.599862,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:1740/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Wed, 14 Oct 2026 10:49:45 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 178,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 1740,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 112464.434365,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.377,
+          "sendEnd": 0.428,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 164.589,
+          "receiveHeadersEnd": 164.681
+        },
+        "responseTime": 1791974985543.342,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "C739183226396A7D3DE2337E9318B36D"
+    }
+  ]
+}

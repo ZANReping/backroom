@@ -1,0 +1,464 @@
+{
+  "before": true,
+  "mode": "realistic",
+  "port": 28594,
+  "cdp": 21508,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:28594/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Mon, 19 Oct 2026 11:32:03 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 261,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 28594,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 28743.805966,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.371,
+        "sendEnd": 0.421,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 65.168,
+        "receiveHeadersEnd": 65.307
+      },
+      "responseTime": 1792409523103.24,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l1-interactions\\before-realistic\\qa-1792409507301-17316",
+    "--remote-debugging-port=21508",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 54100,
+    "server": 53668
+  },
+  "entryMs": 4528.1597,
+  "initial": {
+    "world": [
+      15.5,
+      15.5,
+      0
+    ],
+    "mode": "realistic",
+    "camera": [
+      79.5,
+      1.5504674038442476,
+      79.5
+    ],
+    "yaw": 0,
+    "pitch": 0,
+    "fov": 72,
+    "memory": {
+      "geometries": 431,
+      "textures": 149
+    },
+    "held": "",
+    "cache": 0
+  },
+  "crate": {
+    "world": [
+      8.5,
+      9.5,
+      0
+    ],
+    "mode": "realistic",
+    "camera": [
+      72.5,
+      1.5566972306637301,
+      73.5
+    ],
+    "yaw": -1.5707963267948966,
+    "pitch": -0.85,
+    "fov": 72,
+    "memory": {
+      "geometries": 502,
+      "textures": 151
+    },
+    "held": "",
+    "cache": 0
+  },
+  "hands": {
+    "world": [
+      8.5,
+      9.5,
+      0
+    ],
+    "mode": "realistic",
+    "camera": [
+      72.5,
+      1.542223870952576,
+      73.5
+    ],
+    "yaw": -1.5707963267948966,
+    "pitch": -0.06,
+    "fov": 72,
+    "memory": {
+      "geometries": 603,
+      "textures": 154
+    },
+    "held": "almond",
+    "cache": 2
+  },
+  "map": {
+    "openMs": 510.8999999985099,
+    "width": 480,
+    "height": 480,
+    "world": [
+      8.5,
+      9.5,
+      0
+    ],
+    "mode": "realistic",
+    "camera": [
+      72.5,
+      1.546948679957399,
+      73.5
+    ],
+    "yaw": -1.5707963267948966,
+    "pitch": -0.06,
+    "fov": 72,
+    "memory": {
+      "geometries": 603,
+      "textures": 154
+    },
+    "held": "almond",
+    "cache": 2
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: Timeout close map\",\"lineNumber\":10,\"columnNumber\":48,\"scriptId\":\"552\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"until\",\"scriptId\":\"552\",\"url\":\"http://127.0.0.1:28594/verifier/l1-interactions-check.ts\",\"lineNumber\":9,\"columnNumber\":47}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: Timeout close map\\n    at until (http://127.0.0.1:28594/verifier/l1-interactions-check.ts:10:48)\\n    at async Object.closeMap (http://127.0.0.1:28594/verifier/l1-interactions-check.ts:210:5)\",\"objectId\":\"743467724904252278.2.1\"}}",
+  "partial": {
+    "before": true,
+    "checks": [
+      "Actual App enters L1 on a live WebGL context",
+      "A naturally generated single shipping case is available",
+      "Production keyboard hotbar changes the selected and displayed item"
+    ],
+    "records": [
+      {
+        "kind": "case",
+        "stack": 2,
+        "supported": false,
+        "colliders": [
+          {
+            "x0": 66.95599997854232,
+            "y0": 67.17499999022485,
+            "x1": 68.04400002145768,
+            "y1": 67.82500000977518,
+            "bottom": 0.0949999988079071,
+            "top": 1.2649999856948853,
+            "stand": false
+          },
+          {
+            "x0": 66.85600001430511,
+            "y0": 67.17600000715257,
+            "x1": 68.14399998569489,
+            "y1": 67.82399999284746,
+            "top": 1.3600000143051147,
+            "stand": false
+          },
+          {
+            "x0": 66.85600001430511,
+            "y0": 67.14100001072885,
+            "x1": 68.14399998569489,
+            "y1": 67.85899998927118,
+            "top": 1.3600000143051147,
+            "stand": false
+          }
+        ],
+        "position": {
+          "world": [
+            3.5,
+            35.500000000000014,
+            0
+          ],
+          "mode": "realistic",
+          "camera": [
+            79.5,
+            1.5508007271344366,
+            79.5
+          ],
+          "yaw": 0,
+          "pitch": 0,
+          "fov": 72,
+          "memory": {
+            "geometries": 431,
+            "textures": 149
+          },
+          "held": "",
+          "cache": 0
+        }
+      },
+      {
+        "kind": "case",
+        "stack": 1,
+        "supported": false,
+        "colliders": [
+          {
+            "x0": 71.95599997854232,
+            "y0": 73.17499999022483,
+            "x1": 73.04400002145768,
+            "y1": 73.82500000977517,
+            "bottom": 0.0949999988079071,
+            "top": 0.5849999785423279,
+            "stand": false
+          },
+          {
+            "x0": 71.85600001430511,
+            "y0": 73.17600000715255,
+            "x1": 73.14399998569489,
+            "y1": 73.82399999284745,
+            "top": 0.6800000071525574,
+            "stand": false
+          },
+          {
+            "x0": 71.85600001430511,
+            "y0": 73.14100001072883,
+            "x1": 73.14399998569489,
+            "y1": 73.85899998927117,
+            "top": 0.6800000071525574,
+            "stand": false
+          }
+        ],
+        "position": {
+          "world": [
+            8.5,
+            9.5,
+            0
+          ],
+          "mode": "realistic",
+          "camera": [
+            79.5,
+            1.5508007271344366,
+            79.5
+          ],
+          "yaw": 0,
+          "pitch": 0,
+          "fov": 72,
+          "memory": {
+            "geometries": 431,
+            "textures": 149
+          },
+          "held": "",
+          "cache": 0
+        }
+      },
+      {
+        "kind": "hand-timeline",
+        "timeline": [
+          {
+            "time": 28560.5,
+            "held": "crowbar",
+            "y": -0.3000155524051872,
+            "dip": 0
+          },
+          {
+            "time": 28566.89999999851,
+            "held": "crowbar",
+            "y": -0.30001419155785075,
+            "dip": 0
+          },
+          {
+            "time": 28576.699999999255,
+            "held": "crowbar",
+            "y": -0.30001296686318146,
+            "dip": 0
+          },
+          {
+            "time": 28588.10000000149,
+            "held": "crowbar",
+            "y": -0.30001187589867556,
+            "dip": 0
+          },
+          {
+            "time": 28593.89999999851,
+            "held": "crowbar",
+            "y": -0.3000104184215063,
+            "dip": 0
+          },
+          {
+            "time": 28598.89999999851,
+            "held": "crowbar",
+            "y": -0.3000099923208994,
+            "dip": 0
+          },
+          {
+            "time": 28604.699999999255,
+            "held": "crowbar",
+            "y": -0.3000095767973805,
+            "dip": 0
+          },
+          {
+            "time": 28621,
+            "held": "almond",
+            "y": -0.30000879951834375,
+            "dip": 0
+          },
+          {
+            "time": 28626.89999999851,
+            "held": "almond",
+            "y": -0.3000074497116039,
+            "dip": 0
+          },
+          {
+            "time": 28634.39999999851,
+            "held": "almond",
+            "y": -0.30000715438314324,
+            "dip": 0
+          },
+          {
+            "time": 28644.60000000149,
+            "held": "almond",
+            "y": -0.30000660588862293,
+            "dip": 0
+          },
+          {
+            "time": 28651.5,
+            "held": "almond",
+            "y": -0.30000609992703303,
+            "dip": 0
+          },
+          {
+            "time": 28657.89999999851,
+            "held": "almond",
+            "y": -0.3000056491886306,
+            "dip": 0
+          },
+          {
+            "time": 28664.199999999255,
+            "held": "almond",
+            "y": -0.30000543017600717,
+            "dip": 0
+          },
+          {
+            "time": 28669,
+            "held": "almond",
+            "y": -0.3000050361174694,
+            "dip": 0
+          },
+          {
+            "time": 28673.699999999255,
+            "held": "almond",
+            "y": -0.30000484883651535,
+            "dip": 0
+          },
+          {
+            "time": 28679,
+            "held": "almond",
+            "y": -0.300004669610542,
+            "dip": 0
+          },
+          {
+            "time": 28683.699999999255,
+            "held": "almond",
+            "y": -0.30000433447565145,
+            "dip": 0
+          },
+          {
+            "time": 28688.5,
+            "held": "almond",
+            "y": -0.3000041770190634,
+            "dip": 0
+          },
+          {
+            "time": 28693.300000000745,
+            "held": "almond",
+            "y": -0.3000040261429486,
+            "dip": 0
+          },
+          {
+            "time": 28697.89999999851,
+            "held": "almond",
+            "y": -0.300003881527026,
+            "dip": 0
+          },
+          {
+            "time": 28711.800000000745,
+            "held": "almond",
+            "y": -0.30000374613543834,
+            "dip": 0
+          },
+          {
+            "time": 28723.300000000745,
+            "held": "almond",
+            "y": -0.3000032322855788,
+            "dip": 0
+          }
+        ]
+      }
+    ],
+    "state": {
+      "world": [
+        8.5,
+        9.5,
+        0
+      ],
+      "mode": "realistic",
+      "camera": [
+        72.5,
+        1.557793388779153,
+        73.5
+      ],
+      "yaw": -1.5707963267948966,
+      "pitch": -0.06,
+      "fov": 72,
+      "memory": {
+        "geometries": 603,
+        "textures": 154
+      },
+      "held": "almond",
+      "cache": 2
+    }
+  },
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 10552.39999999851
+    },
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\nLEVEL 1\n宜居地带\nB1\n磁带\n0/6\n天鹰段\n100%\n杏仁水\n1\n2\n2\n3\n4\n5\n6\n7\nE 搜索 补给箱\n空格\n跳跃\nC\n蹲伏\nF\n手电\n左Alt\n取出主手\n开发者模式\n🛠 开发者模式 · DEV\n▴\nFIELD KIT · 档案工作台\n磁带 0/6\n背包\nI\n图鉴\nG\n状态\nU\n地图\nM\n日志\nL\n任务\nJ\n✕\nEsc\n 地图全开\n右键安全传送 · 拖动平移\n－\n＋\n回正\n● 玩家\n● 出口（亮=已发现）\n■ 容器（未搜刮）\n■ 容器（已搜刮）\n· 地面物品\n■ 已探索地板"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

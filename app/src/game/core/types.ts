@@ -107,6 +107,8 @@ export interface ExitInstance {
   discovered: boolean
   /** L11 portals retain their building frame through worker transfer/window shifts. */
   l11?: {id:string;buildingId:string;blockId:string;angle:number;width:number}
+  /** L1 portal approach and carved wall use the same explicit mounting frame. */
+  l1?: {wallDir:number}
 }
 
 export type StructKind = import('../content/tradeDecor').TradeKind | import('../content/l5Decor').L5DecorKind | import('../content/alphaDecor').AlphaKind | import('../content/l11Decor').L11DecorKind | 'settlementprop' | 'settlementstation' | 'l4stairs' | 'l4prop'
@@ -248,11 +250,13 @@ export type StructKind = import('../content/tradeDecor').TradeKind | import('../
   // ===== v35：据点（Alpha 基地）家具 =====
   | 'serverrack'   // 中控室无线电机柜（表盘/指示灯/线缆）
   | 'officechair'  // 办公转椅
+  | 'barberchair'  // 液压理发椅（L1 v2 小径房间）
   | 'binshelf'     // 储物货架（蓝灰收纳箱）
   | 'bunkbed'      // 双层床（民居）
   | 'screenboard'  // 投影幕 + 黑板（会议室/教室，贴墙）
   | 'noticeboard'  // 软木公告栏（据点墙面装饰）
   | 'megposter'    // M.E.G. 标语海报（据点墙面装饰）
+  | 'partyflag'    // 派对客（Entity 67）的大红旗诱饵：L601 派对客群旁（mapgen.placePartyPack）
   | 'bigpainting'  // 大幅画作（v53，L3 砖墙艺术品）：类似标语海报但尺寸自定义——data.tex 贴图 + data.pw/data.ph 米制宽高；生成器必须在放置前校验墙面连续且足够大（见 infiniteL3）
   | 'stainedglass' // 彩色玻璃花窗（v53b，L3 圣所）：石框尖拱 + 彩玻贴图（data.tex/pw/ph 自定义），放置前同样校验墙面跨度
   | 'photo'        // 相片（据点墙面装饰）

@@ -1,0 +1,127 @@
+{
+  "checks": 4252,
+  "counts": {
+    "chunks": 675,
+    "columns": 1447,
+    "wallColumns": 39,
+    "exits": 10,
+    "wallProps": 730,
+    "outposts": 156
+  },
+  "cases": {
+    "stairs": {
+      "seed": 20261006,
+      "cx": -4,
+      "cy": -9,
+      "x": -119,
+      "z": -271,
+      "dir": 0,
+      "kind": "stairs"
+    },
+    "stairCharts": true,
+    "unlockeddoor": {
+      "seed": 20261006,
+      "cx": -4,
+      "cy": -1,
+      "x": -118,
+      "z": -22,
+      "dir": 2,
+      "kind": "unlockeddoor"
+    },
+    "ariane": {
+      "seed": 20261006,
+      "cx": 10,
+      "cy": 2,
+      "id": "outpost:1,0:3",
+      "outpost": "ariane",
+      "x": 338.5,
+      "z": 92,
+      "dir": 2
+    },
+    "alpha": {
+      "seed": 20261006,
+      "cx": 3,
+      "cy": -1,
+      "id": "outpost:0,0:4",
+      "outpost": "alpha",
+      "x": 102.5,
+      "z": -10,
+      "dir": 2
+    },
+    "bntg": {
+      "seed": 20261006,
+      "cx": -15,
+      "cy": 10,
+      "id": "outpost:-1,1:0",
+      "outpost": "bntg",
+      "x": -466,
+      "z": 339.5,
+      "dir": 1
+    },
+    "cornucopia": {
+      "seed": 20261006,
+      "cx": 21,
+      "cy": -16,
+      "id": "outpost:1,-1:2",
+      "outpost": "cornucopia",
+      "x": 688.5,
+      "z": -496,
+      "dir": 2
+    },
+    "tom": {
+      "seed": 20261006,
+      "cx": -14,
+      "cy": -3,
+      "id": "outpost:-1,0:1",
+      "outpost": "tom",
+      "x": -439,
+      "z": -85.5,
+      "dir": 1
+    },
+    "orgs:20261006": [
+      "ariane",
+      "alpha",
+      "bntg",
+      "cornucopia",
+      "tom"
+    ],
+    "orgs:7": [
+      "ariane",
+      "bntg",
+      "cornucopia",
+      "alpha",
+      "tom"
+    ],
+    "orgs:424242": [
+      "alpha",
+      "tom",
+      "ariane",
+      "bntg",
+      "cornucopia"
+    ],
+    "gothic": {
+      "id": "gothic",
+      "file": "哥特段.png",
+      "variant": "gothic",
+      "width": 1358,
+      "height": 858,
+      "x": 304.29569999999967,
+      "y": -142.922,
+      "z": 1.0016,
+      "yaw": 0.0574,
+      "pitch": -0.0983,
+      "roll": 0.0236,
+      "fov": 61.2543,
+      "centerX": 304,
+      "centerY": -144,
+      "blackout": false
+    },
+    "wallColumn": {
+      "seed": 20261006,
+      "cx": 11,
+      "cy": -5,
+      "x": 381,
+      "z": -145
+    }
+  }
+}

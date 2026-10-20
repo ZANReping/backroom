@@ -54,3 +54,11 @@ gloves, glowstick, headlamp, housekey, keycard, knife, lighter, megfolder, nails
 oddbook, pamphlet, pockets, presses, rabbit, rope, royalration, sedative, silverware, skeleton,
 squirtgun, stapler, stonekazoo, suit, tape, thingmeat, timber, uvlamp, wallpaper, warpberry,
 wheatgrain, wrench, xenonmarble
+
+## 2026-10-18 原创丝绒蛋糕像素图标
+
+`pixel/item_velvetcake.png` 为本项目原创程序化像素画，造型对应现有丝绒蛋糕模型，未使用外部位图素材。32×32 透明原稿经最近邻放大为 128×128 RGBA，沿用本项目既有像素图标的授权处理。生成命令：在 `app` 目录运行 `python scripts/gen-item-icons.py`；已有 PNG 会跳过，绘制函数为 `draw_velvetcake`。派对客及蛋糕的设定来源见 [派对客接入说明](../../../PARTYGOER-REMAKE.md)。
+
+## 2026-10-18 杰瑞相关原创像素图标
+
+`pixel/item_jerryflyer.png` 与 `pixel/item_fakelog.png` 为本项目原创程序化像素画，使用 `scripts/gen-item-icons.py` 的 Pillow 绘制流程生成；无第三方素材或版权来源，随项目同许可发布。生成命令：在 `app` 目录运行 `python scripts/gen-item-icons.py`。

@@ -1,13 +1,17 @@
 // 背包/图鉴/状态/地图 覆盖层
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import {drawL0Map} from '@/game/content/l0Map'
+import {drawL1Map} from '@/game/content/l1Map'
 import { drawMapPlayer } from '@/game/content/mapPlayer'
 import { look } from '@/game/core/renderer3d'
 import { mapSight } from '@/game/world/mapSight'
 import L0MapLegend from './L0MapLegend'
+import L1MapLegend from './L1MapLegend'
 import NpcPortraitImage from './NpcPortraitImage'
+import EntityPreviewImage from './EntityPreviewImage'
 import type { Engine, SlotRef, SlotWhere } from '@/game/engine'
 import { l11MapMarks } from '@/game/engine/l11State'
+import { jerryLureMarks } from '@/game/engine/jerryAI'
 import { ITEMS, itemUseProfile } from '@/game/content/items'
 import { storage } from '@/game/core/storage'
 import { ENTITIES, entityForms, mergeMothCodex, unlockTier, loadSeen, entitySpawnLevels, entityThreat, entityRarity, type EntityRarity } from '@/game/entities'
@@ -139,12 +143,12 @@ function BigMap({ engine }: { engine: Engine }) {
   const [floorSel, setFloorSel] = useState<FloorBand | null>(null)
   const viewFloor: FloorBand = floorSel ?? playerBand
   useEffect(()=>{
-    if(!engine.devEnabled||!reveal){setPreview(null);return}
+    if((!engine.devEnabled||!reveal)&&!engine.map?.l1Architecture){setPreview(null);return}
     const c=new AbortController(),m=engine.map
     if(!m)return
     const timeout=setTimeout(()=>{void requestDevMapPreview(engine,{x:engine.player.x+pan.x+(m.inf?.ox??0),y:engine.player.y+pan.y+(m.inf?.oy??0),span:Math.min(512,480/zoom),floor:viewFloor},c.signal).then(setPreview).catch(e=>{if(e.name!=='AbortError')setMapMessage('地图预览暂不可用')})},40)
     return()=>{clearTimeout(timeout);c.abort()}
-  },[engine,pan,zoom,viewFloor,reveal,engine.map?.inf?.rev])
+  },[engine,pan,zoom,viewFloor,reveal,engine.levelDef.id,engine.map?.inf?.seed,engine.map?.inf?.rev])
   const host=useRef<HTMLDivElement>(null)
   const [mapSize,setMapSize]=useState(400)
   useLayoutEffect(()=>{
@@ -167,7 +171,7 @@ function BigMap({ engine }: { engine: Engine }) {
     // v54c：wallwindow 格按墙绘制（瓦片虽雕成地板，渲染/碰撞均为整格墙）
     const wwSet = new Set<number>()
     for (const st of m.structures) if (st.kind === 'wallwindow') wwSet.add(Math.floor(st.y + st.h / 2) * m.w + Math.floor(st.x + st.w / 2))
-    if(!(m.inf?.l0&&viewFloor===0))for (let y = 0; y < m.h; y++)
+    if(!((m.inf?.l0||m.l1Architecture)&&viewFloor===0))for (let y = 0; y < m.h; y++)
       for (let x = 0; x < m.w; x++) {
         const i = y * m.w + x
         if (!(engine.devEnabled&&reveal) && !engine.explored[i]) continue
@@ -189,6 +193,8 @@ function BigMap({ engine }: { engine: Engine }) {
       }
     if(m.inf?.l0&&viewFloor===0){
       drawL0Map(g,engine,{x0:px-size/(2*s),y0:py-size/(2*s),x1:px+size/(2*s),y1:py+size/(2*s),scale:s,preview})
+    }else if(m.l1Architecture&&viewFloor===0){
+      drawL1Map(g,engine,{x0:px-size/(2*s),y0:py-size/(2*s),x1:px+size/(2*s),y1:py+size/(2*s),scale:s,preview})
     }else if(engine.devEnabled&&reveal&&preview){
       for(const c of preview.cells){
         const ox=c.cx*32-(m.inf?.ox??0),oy=c.cy*32-(m.inf?.oy??0)
@@ -270,6 +276,17 @@ function BigMap({ engine }: { engine: Engine }) {
         g.fillText(mark.kind === 'exit' ? '第九大道出口' : `第九大道 ${mark.seq + 1}号路标`, mx + r + 3, my + 3)
         g.restore()
       }
+    }
+    if (viewFloor === 0) for (const mark of jerryLureMarks(engine)) {
+      // Keep distant paper waypoints on the visible viewport edge, including
+      // destinations outside the streamed window and maps that have been panned.
+      const x = Math.max(px * s - size / 2 + 10, Math.min(px * s + size / 2 - 10, mark.x * s))
+      const y = Math.max(py * s - size / 2 + 26, Math.min(py * s + size / 2 - 10, mark.y * s))
+      g.save(); g.fillStyle = mark.found ? '#879da4' : '#7aa6ff'; g.strokeStyle = '#bfd6ff'; g.lineWidth = 1.5
+      g.beginPath(); g.moveTo(x, y - 5); g.lineTo(x + 5, y); g.lineTo(x, y + 5); g.lineTo(x - 5, y); g.closePath(); g.fill(); g.stroke()
+      g.font = '10px monospace'; g.textAlign = x > px * s ? 'right' : 'left'
+      const distance = Math.round(Math.hypot(mark.x - engine.player.x, mark.y - engine.player.y))
+      g.fillText(mark.name + (mark.found ? '（已抵达）' : ` · ${distance}m`), x, y - 9, size - 20); g.restore()
     }
     // 区域名称（据点大地图标注；v43：带 z 的标注只出现在对应楼层视图）
     if(viewFloor===0)for(const mark of l11MapMarks(engine)){
@@ -355,6 +372,7 @@ function BigMap({ engine }: { engine: Engine }) {
       </div>
       {engine.devEnabled&&<div className="flex items-center gap-3 text-xs"><label><input type="checkbox" checked={reveal} onChange={e=>{engine.dev.mapReveal=e.target.checked;refreshMap(n=>n+1)}}/> 地图全开</label><span>右键安全传送 · 拖动平移</span></div>}
       {engine.map?.inf?.l0&&<L0MapLegend/>}
+      {engine.map?.l1Architecture&&<L1MapLegend/>}
       {mapMessage&&<div className="text-xs" role="status">{mapMessage}</div>}
       {floorText && <div className="font-mono2 text-[12px]" style={{ color: 'var(--amber)' }}>{floorText}</div>}
       <div className="flex gap-2">
@@ -368,7 +386,7 @@ function BigMap({ engine }: { engine: Engine }) {
         >回正</button>
       </div>
       {/* 图例（v32） */}
-      <div className="font-mono2 grid grid-cols-2 gap-x-5 gap-y-0.5 self-center text-[10px] md:grid-cols-3" style={{ color: 'var(--text-dim)' }}>
+      {!engine.map?.l1Architecture&&<div className="font-mono2 grid grid-cols-2 gap-x-5 gap-y-0.5 self-center text-[10px] md:grid-cols-3" style={{ color: 'var(--text-dim)' }}>
         <span><span style={{ color: 'var(--amber)' }}>●</span> 玩家</span>
         <span><span style={{ color: '#f5e37a' }}>●</span> 出口（亮=已发现）</span>
         <span><span style={{ color: '#c9a03a' }}>■</span> 容器（未搜刮）</span>
@@ -378,7 +396,7 @@ function BigMap({ engine }: { engine: Engine }) {
         {floors > 1 && <span><span style={{ color: '#31423a' }}>■</span> 上层楼板（{viewFloor + 1}F 视图）</span>}
         {floors > 1 && <span><span style={{ color: '#1d2b25' }}>■</span> 上层墙体（{viewFloor + 1}F 视图）</span>}
         {floors > 1 && <span><span style={{ color: '#4de3ff' }}>▲</span> 楼梯（指向上行方向）</span>}
-      </div>
+      </div>}
     </div>
   )
 }
@@ -538,10 +556,15 @@ function CodexDetail({ detail, onBack }: { detail: { kind: 'entity' | 'item' | '
             )}
             <div className="mt-3 border-t pt-3" style={{ borderColor: 'var(--panel-edge)' }}>
               <div className="font-mono2 mb-2 text-[11px]" style={{ color: 'var(--amber)' }}>M.E.G. 档案记录</div>
-              {e.codex.lore.map((para, i) => (
-                <p key={i} className="mb-2 text-[12px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>{para}</p>
-              ))}
-              <p className="codex-quote mt-2 border-l-2 pl-2 text-[12px] italic" style={{ borderColor: 'var(--blood)', color: 'var(--text)' }}>{e.codex.sighting}</p>
+              <div className="entity-archive-layout">
+                <div className="min-w-0" data-entity-archive-text>
+                  {e.codex.lore.map((para, i) => (
+                    <p key={i} className="mb-2 text-[12px] leading-relaxed" style={{ color: 'var(--text-dim)' }}>{para}</p>
+                  ))}
+                  <p className="codex-quote mt-2 border-l-2 pl-2 text-[12px] italic" style={{ borderColor: 'var(--blood)', color: 'var(--text)' }}>{e.codex.sighting}</p>
+                </div>
+                <EntityPreviewImage key={e.type} type={e.type} name={e.name} />
+              </div>
             </div>
             </div>
           </div>
@@ -1098,6 +1121,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                 return (
                   <button
                     key={e.type}
+                    data-entity-card={e.type}
                     className="hud-panel p-2 text-left transition-transform active:scale-95"
                     style={{ opacity: tier >= 1 ? 1 : 0.45, cursor: tier >= 1 ? 'pointer' : 'default', borderColor: tier >= 1 && efac ? efac.color : undefined }}
                     onClick={() => { if (tier >= 1) { setDetail({ kind: 'entity', id: e.type }); audio.uiTick() } }}
@@ -1339,25 +1363,25 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                   {met.length === 0 && (
                     <div className="font-mono2 py-4 text-center text-[11px]" style={{ color: 'var(--text-dim)' }}>尚未遇见任何人士</div>
                   )}
-                  {met.map((n) => (
-                <div key={n.id} className="hud-panel relative overflow-hidden p-3" style={{ borderColor: FACTIONS[n.faction ?? 'meg']?.color }}>
+                  {met.map((n) => {const chat=loadChat(n.id);return (
+                <div key={n.id} className="hud-panel relative overflow-hidden p-3" style={{ borderColor: FACTIONS[n.faction ?? 'meg']?.color, contentVisibility:'auto', containIntrinsicSize:'auto 120px' }}>
                   {FACTIONS[n.faction ?? 'meg']?.logo && <FactionLogo file={FACTIONS[n.faction ?? 'meg']!.logo!} name={FACTIONS[n.faction ?? 'meg']!.name} />}
                   <div className="relative flex gap-3">
                   <div className="shrink-0">
                     {/* v41：静态肖像（共享渲染器出图）——替代每卡一个实时上下文（爆 WebGL 上下文上限的崩溃）；
                         配饰仍走 npcGear 同一通道（厨师帽/护士帽/听诊器等可见） */}
-                    <NpcPortraitImage avatar={npcAvatar(n)} npcId={n.id} npcDef={n} alt={n.name} style={{ width: 64, height: 93 }} />
+                    <NpcPortraitImage avatar={npcAvatar(n)} npcId={n.id} npcDef={n} framing="identity" alt={`${n.name} 的证件照`} style={{ width: 64, height: 93 }} />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-baseline gap-2">
                       <span className="font-title text-[16px]" style={{ color: 'var(--amber)', fontFamily: (FACTION_FONTS[n.faction ?? 'meg']?.header ?? FACTION_FONTS[n.faction ?? 'meg']?.title) }}>{n.name}</span>
                       <span className="font-mono2 text-[10px]" style={{ color: 'var(--text-dim)', fontFamily: FACTION_FONTS[n.faction ?? 'meg']?.mono }}>{n.role}</span>
-                      {loadChat(n.id).length > 0 && (
+                      {chat.length > 0 && (
                         <button
                           className="font-mono2 ml-auto border px-2 text-[10px]"
                           style={{ borderColor: 'var(--panel-edge)', color: chatView === n.id ? 'var(--amber)' : 'var(--text-dim)' }}
                           onClick={() => { setChatView(chatView === n.id ? null : n.id); audio.uiTick() }}
-                        >聊天记录（{loadChat(n.id).length}）</button>
+                        >聊天记录（{chat.length}）</button>
                       )}
                     </div>
                     <div className="mt-1 text-[11.5px] leading-relaxed" style={{ color: 'var(--text-dim)', fontFamily: FACTION_FONTS[n.faction ?? 'meg']?.body }}>
@@ -1368,7 +1392,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                     </div>
                     {chatView === n.id && (
                       <div className="mt-2 max-h-[20dvh] overflow-y-auto border p-1.5 pr-1" style={{ borderColor: 'var(--panel-edge)', background: 'rgba(0,0,0,0.25)' }}>
-                        {loadChat(n.id).map((m, i) => (
+                        {chat.map((m, i) => (
                           <div key={i} className={`mb-1 flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                             <div
                               className="max-w-[85%] px-1.5 py-0.5 text-[11px] leading-relaxed"
@@ -1386,7 +1410,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                   </div>
                   </div>
                 </div>
-                  ))}
+                  )})}
                 </>)
               })()}
             </div>

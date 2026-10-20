@@ -212,6 +212,7 @@ async function main() {
     // 随机 NPC 一群：每组左旧右新（同一 randomAvatar 配置 + 种子）
     const n = Number(q.get('n') ?? 6), seed0 = Number(q.get('seed') ?? 11)
     cam.position.set(0, 1.5, 10.2); cam.lookAt(0, 0.95, 0); cam.updateMatrixWorld()
+    if (q.get('close') === '1') { cam.position.set(0, 1.56, 2.3); cam.lookAt(0, 1.5, 0); cam.updateMatrixWorld() }
     for (let i = 0; i < n; i++) {
       const sd = seed0 + i * 7, cfg = randomAvatar(mulberry(sd * 977))
       const x = (i - (n - 1) / 2) * (9.2 / n)
@@ -220,12 +221,23 @@ async function main() {
       label(x, 0.06, 1.0, `<span class="s">${['男', '女'][cfg.gender]} · ${HAIR_NAMES[cfg.hair]} · ${TOP_STYLE_NAMES[cfg.topStyle]} · ${PANTS_STYLE_NAMES[cfg.pantsStyle]}</span>`)
     }
     label(0, 2.3, 0, q.get('old') === '0' ? '随机 NPC（新复古模型）' : '<span class="s">随机 NPC：每组左 = 现有方块模型，右 = 新复古模型（同一配置）</span>')
+  } else if (mode === 'poolclose') {
+    // v82：随机 NPC 池脸特写（看发际线与皮肤的交界）；&seed= &yaw= &n=
+    const n = Number(q.get('n') ?? 6), seed0 = Number(q.get('seed') ?? 11), yaw = Number(q.get('yaw') ?? 0)
+    cam.fov = 20; cam.updateProjectionMatrix()
+    cam.position.set(0, 1.6, 3.3); cam.lookAt(0, 1.55, 0); cam.updateMatrixWorld()
+    for (let i = 0; i < n; i++) {
+      const sd = seed0 + i * 7, cfg = randomAvatar(mulberry(sd * 977))
+      const x = (i - (n - 1) / 2) * 0.42
+      await placeAvatar(buildAvatarModel(cfg, { seed: sd, driven: false }), x, 0, yaw)
+      label(x, 1.3, 0, `<span class="s">${['男', '女'][cfg.gender]} · ${HAIR_NAMES[cfg.hair]}</span>`)
+    }
   } else if (mode === 'named') {
     // 有名 NPC（固定配置 + 配饰）：左旧右新
     const ids = (q.get('ids') ?? 'kat,tom,aiko,kowalski').split(',')
     cam.position.set(0, 1.5, 10.2); cam.lookAt(0, 0.95, 0); cam.updateMatrixWorld()
     for (let i = 0; i < ids.length; i++) {
-      const id = ids[i], def = NPCS[id], x = (i - (ids.length - 1) / 2) * (9.2 / ids.length)
+      const id = ids[i], def = NPCS[id], x = (i - (ids.length - 1) / 2) * (q.get('close') === '1' ? 0.62 : 9.2 / ids.length)
       if (!def) continue
       if (q.get('old') !== '0') placeOldCfg(npcAvatar(def), x - 0.36, 0, 0.15, id)
       const mdl = buildCharacterModel(npcAvatar(def), { npcId: id, npcDef: def, driven: q.get('walk') === '1' })

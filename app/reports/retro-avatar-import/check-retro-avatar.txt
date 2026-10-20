@@ -1,0 +1,14 @@
+
+> my-app@0.0.0 check:retro-avatar
+> esbuild scripts/check-retro-avatar.ts --bundle --platform=node --format=esm --outfile=.cache/check-retro-avatar.mjs && node .cache/check-retro-avatar.mjs
+
+
+  .cache\check-retro-avatar.mjs  785.9kb
+
+Done in 98ms
+Retro avatar: 2441 checks passed; 110 model configurations
+npm notice
+npm notice New minor version of npm available! 11.6.2 -> 11.21.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.21.0
+npm notice To update run: npm install -g npm@11.21.0
+npm notice

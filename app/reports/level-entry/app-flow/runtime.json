@@ -1,0 +1,222 @@
+{
+  "run": "qa-1792044668832-55452",
+  "label": "app-flow",
+  "mode": "realistic",
+  "port": 11499,
+  "cdp": 11500,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\level-entry\\app-flow\\qa-1792044668832-55452",
+  "levels": [
+    104
+  ],
+  "cases": [
+    {
+      "id": 104,
+      "cold": {
+        "id": 104,
+        "name": "Tom 的餐馆",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 3572.5999999996275,
+        "readyMs": 3572.5999999996275,
+        "loadMs": 3584.7999999988824,
+        "preparationMs": 0.19999999925494194,
+        "generationMs": 11.5,
+        "sceneMs": 3560.9000000003725,
+        "frames": 308,
+        "cpuTotalMs": 2896.2999999932945,
+        "cpuMaxMs": 811.3000000007451,
+        "frameP95Ms": 14.599999999627471,
+        "metrics": {
+          "buildLevel": {
+            "calls": 287180,
+            "cpuMs": 1614.5000000111759,
+            "maxMs": 802.5
+          },
+          "warmSceneTextures": {
+            "calls": 29,
+            "cpuMs": 3.699999999254942,
+            "maxMs": 2.299999998882413
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 104.59999999962747,
+            "chunks": 0,
+            "finiteTask": true,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 1,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 0,
+              "textures": 1
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 0,
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 0,
+          "npcs": 9,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 144,
+            "textures": 83
+          }
+        },
+        "firstReady": {
+          "structures": 132,
+          "lights": 46,
+          "npcs": 10,
+          "nearNpcs": 9,
+          "npcMeshes": 9,
+          "meshes": 249,
+          "instances": 4546,
+          "materials": 143,
+          "memory": {
+            "geometries": 144,
+            "textures": 83
+          },
+          "programs": 82,
+          "drawCalls": 107,
+          "triangles": 39097,
+          "spawn": {
+            "x": 40.5,
+            "y": 25.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\level-entry\\app-flow\\qa-1792044668832-55452",
+    "--remote-debugging-port=11500",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.40",
+    "revision": "@cfaadc5a132d78e1828635aa8405a499f3e14864",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.20"
+  },
+  "pids": {
+    "server": 37448,
+    "browser": 33020
+  },
+  "setup": {
+    "mode": "realistic",
+    "viewport": [
+      1920,
+      1080
+    ],
+    "dpr": 1,
+    "seed": 424242,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "settings": {
+      "texture": 1,
+      "lights": 16,
+      "shadows": true,
+      "lightShadows": 1,
+      "loadingBudget": 6,
+      "chunkBudget": 3,
+      "detail": 1,
+      "bloom": true,
+      "ao": 1
+    },
+    "hardwareConcurrency": 32
+  },
+  "ok": false,
+  "failure": "Error: Timeout: saved game title",
+  "failureState": {
+    "level": 0,
+    "paused": true,
+    "transition": null,
+    "ready": false,
+    "pending": false,
+    "root": false,
+    "text": "SECTOR 0.7.13\nNOCLIP DETECTED\nHUM: 50Hz\nCAM_04 OFFLINE\nDEPTH: ??\nSIGNAL LOST\n● REC · SIGNAL RECOVERED · CAM_04\n后 室\nBACKROOMS : DESCENT\n01\n开始游戏\n新的下坠 · 写入槽位 1\n02\n继续游戏\n存档槽 1 · Tom 的餐馆「Tom 的餐馆」· 磁带 0/6\n03\n图鉴档案\n层级 · 实体 · 物品 · 团体\n04\n形象编辑\n05\n设置\n06\n操作说明\n07\n设计模式\nv1.0 · 所有层级均为程序生成 · 戴上耳机体验更佳"
+  },
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [],
+  "networkErrors": [
+    {
+      "requestId": "40328.401",
+      "loaderId": "1C7C54338CFCCFD1191A7B591EC783F2",
+      "timestamp": 8923.865931,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:11499/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Thu, 15 Oct 2026 06:11:28 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 210,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 11499,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 8923.855639,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.71,
+          "sendEnd": 0.785,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 9.488,
+          "receiveHeadersEnd": 9.65
+        },
+        "responseTime": 1792044688492.972,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "50807A95E540DF111C0BB4F20DAD8C80"
+    }
+  ]
+}

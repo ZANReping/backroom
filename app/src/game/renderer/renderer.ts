@@ -5,15 +5,16 @@ import { l7GravZonesNear } from '../world/infiniteL7'
 import type { SkySystem } from './skySystem'
 import {genL0Architecture,l0Sample,type L0Layout} from '../world/l0Architecture'
 import {l0LightingNeighbours} from '../world/l0Neighbourhood'
+import {applyL0TestField} from '../world/l0TestField'
 import {mapVision} from '../content/mapPlayer'
 import {EyeAdaptation} from './eyeAdaptation'
 import {glowstickLights} from './glowstickLights'
 import {l0FlickerTime} from './l0Flicker'
 import {updateL0EnvironmentShader} from './l0EnvironmentShader'
 import {updateL1SurfaceField,disposeL1SurfaceField} from './l1SurfaceField'
-import {buildL1BakedScene,buildL1EmitterMeshes} from './l1BakedScene'
+import {buildL1BakedScene,buildL1EmitterMeshes,advanceL1BakedScenes} from './l1BakedScene'
 import {l1NativePower,l1ProbeIlluminance,updateL1Probes,disposeL1Probes} from './l1Probes'
-import {requestL1Bake,retainL1Bakes,disposeL1Bakes} from './l1BakeQueue'
+import {requestL1Bake,retainL1Bakes,disposeL1Bakes,cancelL1BakeWork} from './l1BakeQueue'
 import { watchPreparedChunks } from '../world/chunkCache'
 import {measureL1BuildJob,recordL1BuildStage} from './l1BuildMetrics'
 import {updateL1PortalLighting} from './l1PortalLighting'
@@ -79,6 +80,7 @@ import { animateMoth, buildMothMesh } from './mothMeshes'
 import { buildItemMesh } from './itemsMesh'
 import { batchRigidItem } from './itemBatches'
 import { buildViewmodel, buildHeldItem, buildCrosshair, vmat, vmAnimPose, heldHandPose, heldBox, buildRetroHand, LIGHTER_HAND_POSE, sleeveKindOf, type ViewmodelParts } from './viewmodel'
+import { ViewmodelSwitch } from './viewmodelSwitch'
 import { getAvatar, randomAvatar } from '../core/avatar'
 import { buildAvatarModel } from './retroAvatar'
 import { buildCharacterModel } from './characterModel'
@@ -116,10 +118,15 @@ import { L5NestLighting } from './l5NestLighting'
 import { animateSmiler } from './smilerMesh'
 import { animateHound } from './houndMesh'
 import { animateClump, animateClumpDeath } from './clumpMesh'
+import { animatePartygoer, animatePartygoerDeath, partygoerGeometryReady, preparePartygoerJob } from './partygoerMesh'
+import { partyConvK } from '../engine/partygoerAI'
 import { animateDuller } from './dullerMesh'
+import { animateShrimp, animateShrimpDeath, prepareShrimpTextures, shrimpTexturesReady, prepareShrimpItemMesh } from './shrimpMesh'
+import { animateObject70Part } from './object70Mesh'
 import { animateSkinStealer } from './skinStealerMesh'
 import { animateWretch } from './wretchMesh'
 import { animateRat, buildRatGearMesh, animateRatGear, prepareRatTextures, ratTexturesReady } from './ratMesh'
+import { animateJerry, buildStonePool, jerryShoulderPoint, syncStonePool } from './jerryMesh'
 import { ratMorphFor } from '../entities/rats'
 import { updateWaterUniforms } from './water'
 import { l10WindUniforms } from './l10Wind'
@@ -133,7 +140,7 @@ function disposeWorldGeometry(object: THREE.Object3D): void {
   if (instanced.isInstancedMesh) instanced.dispose()
   ;(object as THREE.Mesh).geometry?.dispose()
   const materials=(object as THREE.Mesh).material
-  for(const m of (Array.isArray(materials)?materials:materials?[materials]:[]))if(m.userData.l0Owned)m.dispose()
+  for(const m of (Array.isArray(materials)?materials:materials?[materials]:[]))if(m.userData.l0Owned||m.userData.object70Owned)m.dispose()
 }
 
 /**
@@ -142,6 +149,9 @@ function disposeWorldGeometry(object: THREE.Object3D): void {
  */
 export function syncStructureModelColliders(s: Structure, root: THREE.Object3D, groundY: number): void {
   if (!s.solid) return
+  // L1 case boards are merged BufferGeometry; the semantic closed lid and
+  // stacked height come from the same dimensions as the actual crate model.
+  if(s.kind==='crate'&&s.data?.l1Crate)return
   if(s.data?.l4&&['cubicle','l4stairs','glasswin','windowblack','windowtrap','pillar','hoteldoor','glassdoor'].includes(s.kind))return
   if (s.kind === 'l11building' || s.kind === 'l11window' || (s.kind === 'l11prop' && s.data?.prop === 'tree')) return
   root.updateWorldMatrix(true, true)
@@ -219,7 +229,7 @@ export type LightMode = 'classic' | 'realistic'
 // v54：容器开启动画注册表——key=kind 白名单，value=open 进度 lerp 速率
 // （locker 薄钢门快脆 11 / safebox 厚重门迟缓 2.6 / mailbox 小门轻快 8；binshelf 非搜索容器，仅预留动画约定）
 const CONTAINER_ANIM: Record<string, number> = {
-  crate: 6, corpse: 6, car: 6, cabinet: 6, dresser: 6, megcrate: 6,
+  crate: 6, corpse: 4, car: 6, cabinet: 6, dresser: 6, megcrate: 6,
   locker: 11, toolbox: 6, suitcase: 6, fridge: 5, safebox: 2.6, mailbox: 8,
   barrel: 6, bookcase: 6, bonepile: 5, campstall: 6, elecbox: 6, binshelf: 6,
 }
@@ -599,10 +609,13 @@ export class Renderer3D {
   private _e1 = new THREE.Euler()
   private _e2 = new THREE.Euler()
   private vmHandBase = { x: 0, y: 0, z: 0 }
+  private vmSwitch = new ViewmodelSwitch()
   private heldCache = new Map<string, THREE.Group>()
   private vmFlash = new THREE.Group()
   private flashWarmup: Generator<void, void, unknown> | null = null
   private flashWarmupKey = ''
+  private shrimpHeldWarmup: Generator<void, void, unknown> | null = null
+  private shrimpHeldWarmupKey = ''
   private mothWarmup: Generator<void, void, unknown> | null = null
   private mothWarmupDone = false
   private mothProgramOwners: THREE.Group[] = []
@@ -613,6 +626,7 @@ export class Renderer3D {
   private vmLag = { x: 0, y: 0 }
   private vmLookPrev = { yaw: 0, pitch: 0 }
   private inspectK = 0
+  private stowK = 0
   private inspectPhase = 0
   private vmLighterFlame!: THREE.Mesh
   private vmLighterHand!: ReturnType<typeof buildRetroHand>
@@ -810,7 +824,8 @@ export class Renderer3D {
   private updateViewmodel(engine: Engine, dt: number) {
     const p = engine.player
     const show = !engine.paused && !engine.over && !!engine.map && !engine.handsHidden // v54：F1 全沉浸隐藏手部建模（F2 半沉浸保留）
-    this.vm.visible = show
+    this.stowK = THREE.MathUtils.damp(this.stowK, engine.handsStowed ? 1 : 0, 16, dt)
+    this.vm.visible = show && this.stowK < .995
     this.vmFlash.visible = show && p.equip.offhand?.type === 'flashlight' && p.flashlight && p.battery > 0 && p.flashJamT <= 0 // v32：手部模型仅手电（头灯戴在头上，无手部模型）
     // 副手打火机：装备即常显（火苗随时间跳动）
     this.vmLighter.visible = show && p.hasLighter
@@ -829,9 +844,11 @@ export class Renderer3D {
       const look = { skin: av.skin, sleeve: sleeveC, sleeveKind: suit ? 'long' as const : sleeveKindOf(av.topStyle), topStyle: av.topStyle, plainSleeve: suit, gloved: p.hasGloves }
       this.vmParts.right.setLook(look); this.vmParts.left.setLook(look); this.vmLighterHand.setLook(look)
     }
-    if (!show) return
     // 从背包开始使用时也把对应物品临时放入手中，让动作与实际耗时完整可见。
-    const held = engine.gunCandyT > 0 ? 'guncandy' : (engine.usingItem?.type ?? p.hotbar[p.selected]?.type ?? '') // v51：枪糖生效中右手恒为枪
+    const requested = engine.gunCandyT > 0 ? 'guncandy' : (engine.usingItem?.type ?? p.hotbar[p.selected]?.type ?? '') // v51：枪糖生效中右手恒为枪
+    this.vmSwitch.update(p.selected,requested,dt,show&&!engine.handsStowed&&!engine.usingItem&&engine.attackAnimT<=0&&engine.gunCandyT<=0)
+    if (!show || !this.vm.visible) return
+    const held=this.vmSwitch.held
     if (held !== this.vmHeld) this.setHeldItem(held)
     // 储罐液体与余量直接更新现有材质/液面，不因每次喷射或换液重建整把枪。
     if (held === 'squirtgun' && this.vmItem) {
@@ -843,7 +860,7 @@ export class Renderer3D {
     }
     // V 检视只附加在物品根节点；手部的走动、攻击、饮用和搜索动画仍由父节点照常执行。
     // 因此检视不会吞掉任何游戏操作，甚至可以与攻击/移动同时发生。
-    const inspectTarget = engine.inspectHeld && !!this.vmItem ? 1 : 0
+    const inspectTarget = !engine.handsStowed && engine.inspectHeld && !!this.vmItem ? 1 : 0
     this.inspectK = THREE.MathUtils.lerp(this.inspectK, inspectTarget, Math.min(1, dt * (inspectTarget ? 8 : 11)))
     if (inspectTarget > 0) this.inspectPhase += dt * .9
     if (this.vmItem) {
@@ -893,9 +910,10 @@ export class Renderer3D {
       rz += this.vmLag.x * 1.2
       rx += this.vmLag.y * 1.6
     }
-    this.vm.position.set(px, py, pz)
-    this.vm.rotation.x = rx
-    this.vm.rotation.z = rz
+    const dip=this.vmSwitch.dip*this.vmSwitch.dip*(3-2*this.vmSwitch.dip)
+    this.vm.position.set(px+dip*.025, py - this.stowK * .68 - dip*.52, pz + this.stowK * .18+dip*.025)
+    this.vm.rotation.x = rx - this.stowK * .4-dip*.3
+    this.vm.rotation.z = rz-dip*.08
     // 手电随移动轻微浮动
     this.vmFlash.position.y = -0.28 - sway2 * 0.01
   }
@@ -912,7 +930,7 @@ export class Renderer3D {
     const cooldownFrac = engine.attackCooldownDur > 0
       ? Math.max(0, Math.min(1, engine.attackCooldownT / engine.attackCooldownDur))
       : 0
-    this.crossCooldown.style.display = show && !engine.dev.noAttackCooldown && cooldownFrac > 0 ? 'block' : 'none'
+    this.crossCooldown.style.display = show && !engine.handsStowed && !engine.dev.noAttackCooldown && cooldownFrac > 0 ? 'block' : 'none'
     this.crossCooldownFill.style.width = `${(cooldownFrac * 100).toFixed(1)}%`
     this.crossCooldownFill.style.background = color
     const st = `${show}|${scale.toFixed(2)}|${color}`
@@ -996,6 +1014,7 @@ export class Renderer3D {
     const pointSlots = this.lightMode === 'realistic' ? this.lightShadowCount
       : (def.id === 9 || def.id === 11) ? Math.min(2, this.lightShadowCount) : 0
     for (let i = 0; i < this.activeLightPool.length; i++) this.activeLightPool[i].castShadow = i < pointSlots
+    if (this.levelCfg?.id === 1 && def.id !== 1) cancelL1BakeWork()
     const buildBudget = engine.paused && !this.isNearWorldReady(engine) ? this.loadingBudgetMs : this.chunkBudgetMs
     if (m.inf) {
       // v17：无限模式（L0）——chunk 几何按视野流式构建/卸载
@@ -1468,6 +1487,16 @@ export class Renderer3D {
       const fog = this.scene.fog as THREE.Fog | null
       if (fog && fog.far < 9000) { fog.near *= this.fogScale; fog.far *= this.fogScale }
     }
+    // 派对客转化：转化值越高视力越差——雾距向 ~7m 收拢（近视），满值前最多压到约 1/4
+    {
+      const ck = partyConvK(engine)
+      const fog = this.scene.fog as THREE.Fog | null
+      if (fog && ck > 0) {
+        const far = Math.min(fog.far, 60)
+        fog.far = far + (7 - far) * Math.min(0.9, ck * 0.95)
+        fog.near = Math.min(fog.near, fog.far * 0.25) * (1 - ck * 0.6)
+      }
+    }
 
     // L3 rooms can contain hundreds of machine parts. Chunks wholly beyond the
     // opaque fog contribute no pixels; use distance to the box, never its centre.
@@ -1743,8 +1772,9 @@ export class Renderer3D {
     this.updateNpcs(engine, dt)
     this.updateItems(engine, dt)
     this.updateProjectiles(engine)
+    this.updateJerryStones(engine)
     this.updateWallMarks(engine)
-    this.updateStructs(dt)
+    this.updateStructs(dt, engine.searching)
     updateL1PortalLighting(m,this.animatedStructMeshes,def.id===1)
     updateL1Probes(m.inf?.seed??0,m.inf?.ox??0,m.inf?.oy??0,def.id===1)
     this.l5NestLighting.update(m, def.id, this.wallH, this.camera, this.animatedStructMeshes, engine.dev.bright)
@@ -1774,6 +1804,7 @@ export class Renderer3D {
     this.wallOcclusion.update(this.camera, !this.three.shadowMap.enabled)
     if (!this.pendingEnvProbe) this.itemWarmup.advance()
     this.advanceFlashWarmup()
+    this.advanceShrimpHeldWarmup()
     if (!this.pendingEnvProbe && (def.id === 5 || def.id === 11) && !this.mothWarmupDone) {
       this.mothWarmup ??= this.warmMothModels()
       if (this.mothWarmup.next().done) { this.mothWarmupDone = true; this.mothWarmup = null }
@@ -1781,7 +1812,7 @@ export class Renderer3D {
 
     // realistic 泛光、VCR、PS1 色阶抖动或夜视滤镜开启时走 EffectComposer；其余保持直接渲染。
     const photoProfile=lightingProfile(engine),real=this.lightMode==='realistic'
-    l1NativePower.value=bright?1:m.inf?.blackout?0:engine.blackoutWarnT>0?(Math.sin(this.time*43)>-.2?.1:1):1
+    l1NativePower.value=bright?1:m.inf?.blackout?.04:engine.blackoutWarnT>0?(Math.sin(this.time*43)>-.2?.1:1):1
     if(def.id===1&&!bright){this.ambient.intensity*=.08;this.hemi.intensity*=.08}
     if(real&&!engine.dev.bright){this.three.toneMappingExposure*=def.id===0?1:photoProfile.exposure;this.ambient.intensity*=photoProfile.ambient;this.hemi.intensity*=photoProfile.ambient}
     // Meter the same native illumination that reaches the frame during an outage.
@@ -2117,6 +2148,47 @@ export class Renderer3D {
     this.vmFlash.visible = true
     try { if (this.flashWarmup.next().done) this.flashWarmup = null }
     finally { this.vmFlash.visible = visible }
+  }
+
+  /** Prepare the catchable shrimp before interaction, retaining the exact item
+   * and solved fingers used by setHeldItem, including their first GPU upload. */
+  private *warmShrimpHeld(): Generator<void, void, unknown> {
+    yield* prepareShrimpTextures()
+    yield* prepareShrimpItemMesh('liveshrimp')
+    const key = `${this.lightMode}:liveshrimp`
+    let item = this.heldCache.get(key)
+    if (!item) { item = buildHeldItem('liveshrimp'); this.heldCache.set(key, item) }
+    while (this.heldCache.size > 12) {
+      const oldest = [...this.heldCache.keys()].find(k => k !== key && this.heldCache.get(k) !== this.vmItem)!
+      const retired = this.heldCache.get(oldest)!
+      this.heldCache.delete(oldest); this.disposeItemModel(retired)
+    }
+    yield
+    const box = item.userData.handBox ??= heldBox(item)
+    const hand = this.vmParts.right.preparePose(heldHandPose('liveshrimp', box), item)
+    try {
+      yield
+      // Compile the actual cache owner so cancellation/eviction can retain its
+      // materials until asynchronous program polling finishes. No reparenting.
+      for (const root of [item, hand]) {
+        this.applyTextureQuality(root)
+        yield* this.warmSceneTextures(root)
+        yield* compileSceneJob(this.three, root, this.camera, this.scene, this.composer?.readBuffer ?? null)
+        root.updateWorldMatrix(true, true)
+        yield* uploadSceneJob(this.three, root, this.camera, this.scene, false, null, this.composer?.readBuffer ?? null)
+      }
+    } finally { afterSceneCompile(hand, () => hand.clear()) }
+  }
+
+  private advanceShrimpHeldWarmup() {
+    if (this.pendingEnvProbe || !this.flashWarmupKey) return
+    const key = this.flashWarmupKey + ':' + (this.vmParts.right.sleeve.visible ? 'long' : 'bare')
+    if (key !== this.shrimpHeldWarmupKey || !this.shrimpHeldWarmup && !this.heldCache.has(`${this.lightMode}:liveshrimp`)) {
+      this.shrimpHeldWarmup?.return()
+      this.shrimpHeldWarmupKey = key
+      this.shrimpHeldWarmup = this.warmShrimpHeld()
+    }
+    if (this.shrimpHeldWarmup?.next().done) this.shrimpHeldWarmup = null
   }
 
   private retainWorldTextures(root: THREE.Object3D) {
@@ -2502,7 +2574,7 @@ export class Renderer3D {
     this.stopEntryPreparation = watchPreparedChunks(1, transition.mapSeed, raw => {
       if (engine.transition !== transition) return
       const data = raw.l1
-      if (data && Math.abs(data.cx) <= 1 && Math.abs(data.cy) <= 1) requestL1Bake(data, quality)
+      if (data && Math.abs(data.cx) <= 1 && Math.abs(data.cy) <= 1) requestL1Bake(data, quality,data.cx*data.cx+data.cy*data.cy)
     })
   }
 
@@ -2511,6 +2583,7 @@ export class Renderer3D {
     const m = engine.map
     if (!m || this.builtMap !== m) return false
     if (this.pendingEnvProbe || !this.flashWarmupKey || this.flashWarmup) return false
+    if (!this.shrimpHeldWarmupKey || this.shrimpHeldWarmup) return false
     if ((engine.levelDef.id === 5 || engine.levelDef.id === 11) && !this.mothWarmupDone) return false
     const skyMap = (this.skyMesh?.material as THREE.MeshBasicMaterial | undefined)?.map
     if (skyMap?.userData.skyPending) return false
@@ -2695,7 +2768,7 @@ export class Renderer3D {
       this.vmParts.left.dispose()
       this.disposeItemModel(this.vmFlash)
     })
-    this.vmParts.right.dispose()
+    afterRendererCompile(this.three, () => this.vmParts.right.dispose())
     this.vmLighterHand.dispose()
     this.disposeItemModel(this.vmLighter)
     this.vm.removeFromParent(); this.vmFlash.removeFromParent(); this.vmLighter.removeFromParent()
@@ -2723,6 +2796,7 @@ export class Renderer3D {
     this.mothProgramOwners.length = 0
     this.drainRetiredWorld(Infinity)
     this.flashWarmup?.return(); this.flashWarmup = null; this.flashWarmupKey = ''
+    this.shrimpHeldWarmup?.return(); this.shrimpHeldWarmup = null; this.shrimpHeldWarmupKey = ''
     this.wallOcclusion.clear()
     this.pendingEnvProbe = null
     // Release GPU images when leaving a level; cached Sources remain available
@@ -2987,8 +3061,7 @@ export class Renderer3D {
       retainL1Bakes(inf.seed,want)
       // Queue every entry-neighbour immediately. A six-chunk lookahead left
       // workers idle while the renderer waited to publish the first batch.
-      const nearby=queue.filter(c=>distance(c)<=24*24)
-      for(const c of loading?nearby:queue.slice(0,6))if(c.l1)requestL1Bake(c.l1,this.lightMode==='realistic'&&this.textureQuality>0?'high':'low')
+      for(const c of queue)if(c.l1)requestL1Bake(c.l1,this.lightMode==='realistic'&&this.textureQuality>0?'high':'low',distance(c))
     }
     this.chunkBuilds.cancelWhere(task=>task.map!==m||task.rev!==inf.rev||!want.has(task.key))
     // City structures span chunks and keep their existing serial ownership.
@@ -3004,6 +3077,7 @@ export class Renderer3D {
       this.chunkBuilds.add({map:m,rev:inf.rev,key:c.key,iter:this.buildInfiniteChunk(m,def,c)})
     }
     this.chunkBuilds.advance(def.id===1&&!loading?Math.min(2,budgetMs):budgetMs,loading?192:64)
+    if(def.id===1)advanceL1BakedScenes(this.chunkGroups.values(),this.three,performance.now()/1000)
   }
 
   private syncL0Revision(eng:Engine,budget:number){
@@ -3021,7 +3095,7 @@ export class Renderer3D {
     try{
       for(const key of pending.affected??[pending.key]){
         const c=inf.chunks.get(key);if(!c)continue
-        layouts.set(key,genL0Architecture(eng.levelDef,inf.seed,c.cx,c.cy,undefined,state.revisions[key]??0,state.redProgress).l0!)
+        layouts.set(key,applyL0TestField(genL0Architecture(eng.levelDef,inf.seed,c.cx,c.cy,undefined,state.revisions[key]??0,state.redProgress),inf.l0TestField).l0!)
       }
       for(const [key,layout]of layouts){
         if(!this.chunkGroups.has(key))continue
@@ -3090,7 +3164,8 @@ export class Renderer3D {
   }
 
   // v30：门类出口（楼梯井/未上锁的门）——组移到墙格中心（geometry 已在该墙格开门洞），开口朝向出口格
-  private orientDoor(m: GameMap, grp: THREE.Group, e: { x: number; y: number }) {
+  private orientDoor(m: GameMap, grp: THREE.Group, e: { x: number; y: number; l1?:{wallDir:number} }) {
+    if(e.l1){const [dx,dz]=[[0,-1],[1,0],[0,1],[-1,0]][e.l1.wallDir];grp.position.set(e.x+.5+dx,0,e.y+.5+dz);grp.rotation.y=Math.atan2(dx,dz);return}
     if(m.settlement?.blueprint.id==='alpha'){
       const entry=ALPHA_ENTRIES.find(r=>r.exit.x===e.x&&r.exit.y===e.y)
       if(entry){grp.position.set(entry.mount.x,0,entry.mount.y);grp.rotation.y=entry.mount.deg*Math.PI/180;return}
@@ -3652,7 +3727,7 @@ export class Renderer3D {
       if (distance > (e.def.mothForm==='larva'?12:reach)) { if (grp) grp.visible = false; e.presentationPending = false; continue }
       // v53：L3 高智能实体建模变体（无面灵错位器官/石器、水豚尸鼠；seed=实体 id 保证重建一致）；
       // 尸鼠形态按层级固定：L2 灰白廊道种群 / L3 水豚 / 其余深褐（v53，替代原随机二选一）
-      const eOpts = (e.def.l3face || e.def.tool || e.def.capybara || e.def.type === 'faceling' || e.def.type === 'corpserat' || e.def.type === 'arachnid' || e.def.type === 'deathmoth' || e.def.type === 'smiler' || e.def.type === 'hound' || e.def.type === 'duller' || e.def.type === 'skinstealer' || e.def.type === 'clump' || e.def.type === 'wretch')
+      const eOpts = (e.def.l3face || e.def.tool || e.def.capybara || e.def.type === 'faceling' || e.def.type === 'corpserat' || e.def.type === 'arachnid' || e.def.type === 'deathmoth' || e.def.type === 'smiler' || e.def.type === 'hound' || e.def.type === 'duller' || e.def.type === 'skinstealer' || e.def.type === 'clump' || e.def.type === 'wretch' || e.def.type === 'dryshrimp' || e.def.type === 'partygoer')
         ? {
           l3face: e.def.l3face, tool: e.def.tool, capybara: e.def.capybara, mothForm: e.def.mothForm,
           ratMorph: ratMorphFor(engine.levelDef.id, e.def),
@@ -3661,6 +3736,7 @@ export class Renderer3D {
           smilerKind: e.sm?.kind ?? e.def.smilerKind,
           houndNeutral: e.hd?.neutral ?? ((e.def.houndKind ? e.def.houndKind === 'neutral' : engine.levelDef.id === 11) && !e.provoked && e.hp >= e.def.hp),
           wretchKind: e.wr?.kind ?? e.def.wretchKind,
+          partygoerColor: e.pg?.color, partygoerIntern: e.pg?.intern, partygoerBalloonArm: e.pg?.balloonArm,
           l3clump: !!e.def.l3clump,
         } : undefined // v60：L8 洞顶尸鼠与蛛形纲生态变体随实例固定
       if (!grp) {
@@ -3669,7 +3745,9 @@ export class Renderer3D {
           const l3 = !!e.def.l3clump, key = `clump-${l3}-${((e.id % 3) + 3) % 3}`
           if (!this.entityCpuWarmup.request(key, clumpBlobReady(l3, e.id), () => prepareClumpBlob(l3, e.id))) continue
         }
+        if (e.def.type === 'partygoer' && !this.entityCpuWarmup.request('partygoer-geo', partygoerGeometryReady(), preparePartygoerJob)) continue
         if (e.def.type === 'deathmoth' && !this.entityCpuWarmup.request('moth-textures', mothTexturesReady(), prepareMothTextures)) continue
+        if (e.def.type === 'dryshrimp' && !this.entityCpuWarmup.request('shrimp-textures', shrimpTexturesReady(), prepareShrimpTextures)) continue
         if (e.def.type === 'corpserat') {
           const morph = ratMorphFor(engine.levelDef.id, e.def)
           if (!this.entityCpuWarmup.request(`rat-textures-${morph}`, ratTexturesReady(morph), () => prepareRatTextures(morph))) continue
@@ -3791,8 +3869,8 @@ export class Renderer3D {
       } else if (et === 'thething') {
         // 巨躯悬在水中，不能套用陆生实体“踩地颠簸”；极慢的升沉让尺度更重。
         grp.position.y = gz + Math.sin(t * 0.42) * 0.16
-      } else if (et === 'corpserat') {
-        grp.position.y = gz // v79：尸鼠的颠动由 animateRat 驱动
+      } else if (et === 'corpserat' || et === 'dryshrimp' || et === 'partygoer') {
+        grp.position.y = gz // Dedicated rat/shrimp/partygoer animations own their vertical pose.
       } else if (!e.def.stationary && et !== 'deathmoth') {
         grp.position.y = gz + Math.abs(Math.sin(gait)) * gaitAmp * 0.12
       }
@@ -3862,7 +3940,7 @@ export class Renderer3D {
             }
           }
         }
-        // 复印机幽灵：漂浮纸张翻飞
+        // 复印机幽灵：漂浮纸张翻飞（重制派对客的胸甲不再叫 sheet，不受影响）
         if (parts.sheet) { parts.sheet.rotation.y = t * 1.4; parts.sheet.position.y = 1.0 + Math.sin(t * 2.2) * 0.12 }
         // Nguithr'xurh：节肢恐怖动画——交替步态 / 腹部脉动 / 闲置肢抖 / 前摇后仰下扑
         if (et === 'nguithr' && parts.spiderBody) {
@@ -4178,13 +4256,29 @@ export class Renderer3D {
         const up = (e.cl?.ceil ?? 0) > 0.01 || e.cl?.phase === 'pullup' ? ceilingHeightAt(m, e.x, e.y, this.wallH, bandOfZ(e.z)) - gz : 3
         animateClump(grp, e, this.time, gz, Number.isFinite(up) ? up : 3)
       }
+      if (et === 'partygoer' && !e.dead) animatePartygoer(grp, e, this.time, gz, dt) // 重制派对客：面条臂/胸甲/蜈蚣臂/倒地爬走/燃烧
       if (et === 'duller' && !e.dead) animateDuller(grp, e, this.time, gz, m.inf?.ox??0, m.inf?.oy??0)
       if (et === 'skinstealer' && !e.dead && !e.disguised) animateSkinStealer(grp, e, this.time, gz)
       if (et === 'skinstealer') this.updateSkinBubble(engine, e, gz)
       if (et === 'wretch' && !e.dead) animateWretch(grp, e, this.time, gz)
       if (et === 'corpserat' && !e.dead) animateRat(grp, e, this.time, gz) // v79
+      if (et === 'dryshrimp' && !e.dead) { animateShrimp(grp, e, this.time, gz); const rig = grp.userData.shrimpRig as { detail?: THREE.Object3D[] } | undefined; if (rig?.detail) for (const o of rig.detail) o.visible = distance < 12 } // v81：前附肢（带小刺）12m 外隐藏
       if (et === 'corpserat') { const fur = (grp.userData.ratRig as { fur?: THREE.Mesh[] } | undefined)?.fur; if (fur) for (const f of fur) { f.visible = distance < 10; f.castShadow = false } } // v80：毛壳 10m 外隐藏
       if (et === 'corpserat') this.updateEntityBubble(engine, e, gz, e.rt && !e.dead && e.rt.bubbleT > 0 ? e.rt.bubbleText : '', 0.75 * (e.def.scale ?? 1))
+      if(et==='jerry'){
+        const jy=e.jy
+        let jz=gz+(jy?.alt??0)
+        if(!e.dead){
+          animateJerry(grp,e,this.time)
+          grp.position.y=jz
+          if(jy?.mode==='shoulder'&&jy.rider){
+            const rec=this.npcMeshes.get(jy.rider),bones=rec?.grp.visible?humanoidMotion(rec.grp)?.rig.bones:undefined
+            if(rec&&bones){jerryShoulderPoint(bones.upperArmL,bones.clavicleL,this.jerryTmp);grp.position.copy(this.jerryTmp);grp.quaternion.copy(rec.grp.quaternion);jz=grp.position.y}
+          }
+          grp.userData.jerryLastAlt=grp.position.y-gz
+        }
+        this.updateJerryBubble(engine,e,grp.position.x,grp.position.z,jz+(jy?.mode==='shoulder'?.5:0),jy&&!e.dead&&jy.bubbleT>0?jy.bubbleText:'')
+      }
       // ---------- 死亡动画（按实体差异化）----------
       if (e.dead) {
         const k = Math.max(0, e.deathT) / 1.4 // 1 → 0
@@ -4217,6 +4311,10 @@ export class Renderer3D {
             if (parts.upperJaw) parts.upperJaw.rotation.z = 0.32 + d * 0.12
             if (parts.jaw) parts.jaw.rotation.z = -0.72 - d * 0.28
           }
+        } else if (et === 'dryshrimp') {
+          // v81：被吃掉（缩进捕食者嘴里）/ 被打死（翻肚、鳍片耷拉）
+          grp.scale.setScalar(esc)
+          animateShrimpDeath(grp, e, d, gz)
         } else if (et === 'hound') {
           // 侧翻瘫倒、四肢抽搐收拢
           grp.rotation.z = d * 1.55
@@ -4237,6 +4335,18 @@ export class Renderer3D {
           animateClumpDeath(grp, d)
           grp.scale.set(esc * (1 + d * 0.35), esc * Math.max(0.05, 0.25 + 0.75 * k), esc * (1 + d * 0.35))
           grp.position.y = gz - d * 0.06
+        } else if (et === 'partygoer') {
+          // 派对客只会在被烧尽后死亡：焦黑的躯壳塌成一摊灰
+          animatePartygoerDeath(grp, e, d, this.time)
+          grp.position.y = gz - d * 0.04
+        } else if (et === 'jerry') {
+          // Fall continuously from the perch/posed shoulder instead of snapping
+          // down to the generic humanoid death animation's ground origin.
+          const age=Math.max(0,1.4-e.deathT)
+          const start=grp.userData.jerryDeathAlt??(grp.userData.jerryDeathAlt=grp.userData.jerryLastAlt??e.jy?.alt??1.48)
+          grp.position.y=gz+Math.max(.08,start-4.9*age*age)
+          grp.rotation.z=-Math.min(1,age/.55)*1.3
+          grp.scale.setScalar(Math.max(.01,Math.min(1,k*2.5)))
         } else if (et === 'seated') {
           // 瘫倒在前方扶手
           if (parts?.torso) parts.torso.rotation.x = d * 0.85
@@ -4329,6 +4439,56 @@ export class Renderer3D {
   }
 
   /** 实体头顶气泡（样式与据点 NPC 相同）：v77 窃皮者借来的自言自语 / v79 水豚种尸鼠音箱里的合成音 */
+  /** 鹉主杰瑞的说话气泡：台词是成年人的完整句子，气泡更大且自动折行（字幕同时进消息栏） */
+  private updateJerryBubble(engine: Engine, e: import('../entities').Entity, x: number, y: number, z: number, txt: string) {
+    let b = this.skinBubbles.get(e.id)
+    if (!b) {
+      if (!txt) return
+      const canvas = document.createElement('canvas')
+      canvas.width = 640; canvas.height = 200
+      const tex = new THREE.CanvasTexture(canvas)
+      tex.colorSpace = THREE.SRGBColorSpace
+      const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 0.47), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, toneMapped: false, fog: false }))
+      this.scene.add(mesh)
+      b = { mesh, bubbleCanvas: canvas, bubbleTex: tex, text: '' }
+      this.skinBubbles.set(e.id, b)
+    }
+    if (txt !== b.text) {
+      b.text = txt
+      const c = b.bubbleCanvas, g = c.getContext('2d')!
+      g.clearRect(0, 0, c.width, c.height)
+      if (txt) {
+        g.font = `30px 'SimSun','Songti SC','Noto Serif CJK SC',serif`; g.textAlign = 'center'; g.textBaseline = 'middle'
+        const lines: string[] = []; let cur = ''
+        for (const ch of txt) { if (g.measureText(cur + ch).width > c.width - 44) { lines.push(cur); cur = ch } else cur += ch }
+        if (cur) lines.push(cur)
+        const shown = lines.slice(0, 4), lh = 40, y0 = c.height / 2 - (shown.length - 1) * lh / 2
+        // Short replies and screams should not occupy a full four-line panel.
+        const width = Math.min(c.width - 8, Math.max(112, ...shown.map(line => g.measureText(line).width)) + 36)
+        const height = Math.min(c.height - 8, shown.length * lh + 24), left = (c.width - width) / 2, top = (c.height - height) / 2
+        g.fillStyle = 'rgba(236,240,252,0.94)'; g.fillRect(left, top, width, height)
+        g.strokeStyle = 'rgba(40,60,140,0.9)'; g.lineWidth = 3; g.strokeRect(left, top, width, height)
+        g.fillStyle = '#1e2440'
+        shown.forEach((l, i) => g.fillText(i === 3 && lines.length > 4 ? l.slice(0, -1) + '…' : l, c.width / 2, y0 + i * lh))
+      }
+      b.bubbleTex.needsUpdate = true
+    }
+    b.mesh.visible = txt.length > 0
+    if (b.mesh.visible) {
+      b.mesh.position.set(x, z + 0.78, y)
+      b.mesh.rotation.y = Math.atan2(engine.player.x - x, engine.player.y - y)
+    }
+  }
+  private jerryTmp = new THREE.Vector3()
+  private updateJerryStones(engine: Engine) {
+    const st = engine.jerryRun.stones
+    if (!st.length && !this.stonePool) return
+    if (!this.stonePool) this.stonePool = buildStonePool()
+    if (this.stonePool.parent !== this.scene) this.scene.add(this.stonePool)
+    syncStonePool(this.stonePool, st)
+  }
+  private stonePool: THREE.InstancedMesh | null = null
+
   private updateEntityBubble(engine: Engine, e: import('../entities').Entity, gz: number, txt: string, height: number) {
     let b = this.skinBubbles.get(e.id)
     if (!b) {
@@ -4695,7 +4855,7 @@ export class Renderer3D {
   }
 
   // ---------- 容器盖板/门开关/状态动画 ----------
-  private updateStructs(dt: number) {
+  private updateStructs(dt: number, searching?: { sid: number; t: number; dur: number } | null) {
     const c01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
     for (const [s, g] of this.animatedStructMeshes) {
       if(s.kind==='trade_anomaly'){g.visible=!s.data?.hidden;g.position.set(s.x-g.userData.tradeOrigin.x,0,s.y-g.userData.tradeOrigin.y);continue}
@@ -4804,7 +4964,9 @@ export class Renderer3D {
       }
       // v54：白名单扩到全部容器（CONTAINER_ANIM 的 key；值 = open 插值速率——locker 薄钢门快脆 / safebox 厚重门迟缓）
       if (!isDoor && !(k0 in CONTAINER_ANIM)) continue
-      const target = isDoor ? (s.data?.open ? 1 : 0) : (s.data?.opened || s.looted ? 1 : 0)
+      let target = isDoor ? (s.data?.open ? 1 : 0) : (s.data?.opened || s.looted ? 1 : 0)
+      // v83：Object 70 公文包在搜索进度条期间就开始动（抽出、弹扣到 0.5），中断搜索则放回去
+      if (k0 === 'corpse' && !target && searching && searching.sid === s.data?.sid) target = 0.5 * Math.min(1, searching.t / Math.max(0.01, searching.dur))
       g.userData.open = (g.userData.open ?? 0) + (target - (g.userData.open ?? 0)) * -Math.expm1(-dt * (isDoor ? (k0 === 'hoteldoor' ? 4 : 6) : CONTAINER_ANIM[k0]))
       // Settle exactly once so closed doors regain their original collision boxes.
       // Idle containers otherwise traverse every child mesh on every frame.
@@ -4839,8 +5001,8 @@ export class Renderer3D {
           case 'car': // 后备箱向上掀起
             ch.rotation.x = -k * 1.9
             break
-          case 'corpse': // 盖布侧滑掀开 + 微倾
-            ch.position.x = bx + k * 0.8; ch.rotation.z = brz + k * 0.3
+          case 'corpse': // v83：Object 70 公文包——搜索中抽出 + 弹扣，搜完箱盖翻开，取空后箱内清空
+            animateObject70Part(ch, part, k, !!s.looted)
             break
           case 'cabinet': // 双开门对称外摆
             ch.rotation.y = (part === 'doorL' ? -1 : 1) * k * 1.6

@@ -1,0 +1,38 @@
+
+> my-app@0.0.0 check:smiler-integration
+> esbuild scripts/check-smiler-integration.ts --bundle --platform=node --format=esm --outfile=.cache/check-smiler-integration.mjs && node .cache/check-smiler-integration.mjs
+
+
+  .cache\check-smiler-integration.mjs  2.4mb
+
+Done in 112ms
+{
+  "integration": "passed",
+  "budgets": [
+    {
+      "kind": "common",
+      "meshes": 14,
+      "triangles": 1014
+    },
+    {
+      "kind": "phantom",
+      "meshes": 10,
+      "triangles": 930
+    },
+    {
+      "kind": "starved",
+      "meshes": 14,
+      "triangles": 934
+    },
+    {
+      "kind": "canid",
+      "meshes": 21,
+      "triangles": 874
+    },
+    {
+      "kind": "great",
+      "meshes": 13,
+      "triangles": 1576
+    }
+  ]
+}

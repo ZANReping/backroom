@@ -1,0 +1,28 @@
+{
+  "scope": "app / Level 11 single-player architecture and reference districts",
+  "referenceVersion": 9,
+  "commands": [
+    {"command":"npm run check:l11","status":"passed","note":"12 plans, 24 chunks, 220 entrances, 247 courtyard openings, 89 stairs; migration and paused-mission checks passed."},
+    {"command":"npm run check:l11-reference","status":"passed","note":"29 reference buildings, 44 accessible floors, 819 room doors, 1638 clear approaches."},
+    {"command":"npm run check:l11-architecture","status":"passed","note":"4 ordinary seeds, 3706 buildings, all 29 reference recipes, both mounts of all 4 vertical sign faces, 184 bridges, 268 pier groups, 9 garden entrances."},
+    {"command":"npm run check:l11-meshes","status":"passed","note":"30 building archetypes, 102 decor types, 32 atlas signs and 4 vertical sign assets; 1857 generated geometries disposed."},
+    {"command":"npm run check:l11-collision","status":"passed","note":"102 registered prop definitions, rotated bounds, segmented rings, sloped surfaces and glass."},
+    {"command":"npm run check:l11-waterways","status":"passed","note":"44 samples, 1730 deck prisms, 32 seams, 1.2m water depth."},
+    {"command":"npm run check:l11-urban","status":"passed","note":"173 buildings, 223 floors, 1992 rooms, 11422 fixtures; no missing core furnishings or layout failures."},
+    {"command":"npm run check:l11-dressing","status":"passed","note":"2052 chunks across seeds 42 and 20261006; all 102 registered decor types generated."},
+    {"command":"npm run check:l11-map","status":"passed","note":"356 buildings, 21 room colors, negative chunks and indoor contexts."},
+    {"command":"npm run build","status":"passed","note":"TypeScript and Vite production build passed. Existing font resolution, Browserslist, PostCSS, mixed-import and bundle-size warnings remain."},
+    {"command":"node scripts/verify-l11-reference.mjs --label=architecture-low --case=01,03,22 --visual-only --low","status":"passed","note":"3 views, no runtime errors, owned browser/server/profile cleaned."},
+    {"command":"node scripts/verify-l11-reference.mjs --label=architecture-classic --case=03,22 --visual-only --classic","status":"passed","note":"2 views, no runtime errors, owned browser/server/profile cleaned."},
+    {"command":"node scripts/verify-l11-reference.mjs --label=architecture-signs --case=22 --visual-only --architecture --random-cases=blade-sign","status":"passed","note":"Supplemental ordinary-world projecting-sign view, no runtime errors, owned browser/server/profile cleaned."}
+  ],
+  "compatibility": {
+    "low": {"version":9,"ok":true,"views":3,"report":"../architecture-low/runtime.json"},
+    "classic": {"version":9,"ok":true,"views":2,"report":"../architecture-classic/runtime.json"},
+    "note": "The two compatibility runs used independent ports and profiles in parallel; their frame times are not used as performance benchmarks. Main high-quality performance was measured separately."
+  },
+  "toolLimitations": ["The optional Git whitespace diff check returned 'this operation must be run in a work tree', while rev-parse recognized this checkout; no Git configuration was changed. Code compilation, generation, geometry and browser checks above ran independently."],
+  "reviewHistory": [
+    {"file":"viewpoint-review-failure.json","note":"Physical checks and resource cycles passed. The QA camera could not stand at its initial projecting-sign viewpoint; corrected to choose an oblique clear pavement viewpoint."}
+  ]
+}

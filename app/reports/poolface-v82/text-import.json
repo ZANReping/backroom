@@ -1,0 +1,30 @@
+{
+  "zipSha256": "e6a7ebfb6065b1d43bef9d62c05212aa8b19da5b4d2633201e8126eb7d1cc87a",
+  "baseline": ".cache/poolface-v82-holster-before",
+  "files": [
+    {
+      "path": "scripts/gen-retro-avatar-textures.py",
+      "before": "015615d29895bd194e1312458ba067ee60f499fb2d3c663ca4b3086ebfc44359",
+      "after": "274f891c2054eccf19d0ac985b3e615d1a6454f97fd16796860111db4f687bdd",
+      "hunks": 3
+    },
+    {
+      "path": "scripts/retro_face_clean.py",
+      "before": "304250b23bbf61fbd7f858e00efcd1f1f1ef68674999d91f76ff819628029d8b",
+      "after": "0d9eb8f4fed705a2f796ece5856846847147cf937432a0bf8ee9e34f36f09046",
+      "hunks": 1
+    },
+    {
+      "path": "src/game/renderer/retroNpc.ts",
+      "before": "a50a0c45c46afaf64dd2b25bcdb6d7bc5c4623681682bf5edb0f6039ccfb4f2c",
+      "after": "46c92dddc98f7409e59867e04c1905e885bc54905128976592a8151abeb4bb28",
+      "hunks": 1
+    },
+    {
+      "path": "src/proto/retroNpcProto.ts",
+      "before": "ef67d1b056224ed9073ec487637293a8b3e329db3868dadf0036ad5e5ff7e24b",
+      "after": "5f585801f1b6509f372f88e59342b526be0e6dbcce357937ba7c4fd208a10645",
+      "hunks": 1
+    }
+  ]
+}

@@ -1,0 +1,485 @@
+{
+  "before": true,
+  "mode": "realistic",
+  "port": 23121,
+  "cdp": 30774,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:23121/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Mon, 19 Oct 2026 11:39:45 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 277,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 23121,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 29205.860766,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.412,
+        "sendEnd": 0.483,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 79.061,
+        "receiveHeadersEnd": 79.214
+      },
+      "responseTime": 1792409985171.933,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l1-interactions\\before-realistic\\qa-1792409970154-39600",
+    "--remote-debugging-port=30774",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 42716,
+    "server": 52688
+  },
+  "entryMs": 2627.4665999999997,
+  "initial": {
+    "world": [
+      15.5,
+      15.5,
+      0
+    ],
+    "mode": "realistic",
+    "camera": [
+      79.5,
+      1.5534187202376781,
+      79.5
+    ],
+    "yaw": 0,
+    "pitch": 0,
+    "fov": 72,
+    "memory": {
+      "geometries": 418,
+      "textures": 143
+    },
+    "held": "",
+    "cache": 0
+  },
+  "crate": {
+    "world": [
+      8.5,
+      9.5,
+      0
+    ],
+    "mode": "realistic",
+    "camera": [
+      72.5,
+      1.5463979562848678,
+      73.5
+    ],
+    "yaw": -1.5707963267948966,
+    "pitch": -0.85,
+    "fov": 72,
+    "memory": {
+      "geometries": 482,
+      "textures": 149
+    },
+    "held": "",
+    "cache": 0
+  },
+  "hands": {
+    "world": [
+      8.5,
+      9.5,
+      0
+    ],
+    "mode": "realistic",
+    "camera": [
+      72.5,
+      1.5557402908365416,
+      73.5
+    ],
+    "yaw": -1.5707963267948966,
+    "pitch": -0.06,
+    "fov": 72,
+    "memory": {
+      "geometries": 594,
+      "textures": 155
+    },
+    "held": "almond",
+    "cache": 2
+  },
+  "map": {
+    "openMs": 516.5,
+    "width": 480,
+    "height": 480,
+    "world": [
+      8.5,
+      9.5,
+      0
+    ],
+    "mode": "realistic",
+    "camera": [
+      72.5,
+      1.556305871876063,
+      73.5
+    ],
+    "yaw": -1.5707963267948966,
+    "pitch": -0.06,
+    "fov": 72,
+    "memory": {
+      "geometries": 594,
+      "textures": 155
+    },
+    "held": "almond",
+    "cache": 2
+  },
+  "corpse": {
+    "world": [
+      -18.75024815230273,
+      37.402440883409014,
+      0
+    ],
+    "mode": "realistic",
+    "camera": [
+      77.24975184769727,
+      0.9960375504893397,
+      69.40244088340901
+    ],
+    "yaw": -2.9173805439100993,
+    "pitch": -0.7349447672764141,
+    "fov": 35,
+    "memory": {
+      "geometries": 453,
+      "textures": 129
+    },
+    "held": "almond",
+    "cache": 2,
+    "faceTexture": "http://127.0.0.1:23121/textures/npc-retro/pool/m0-2/neutral.png",
+    "detailClip": {
+      "x": 1420,
+      "y": 0,
+      "width": 500,
+      "height": 500,
+      "scale": 1
+    }
+  },
+  "summary": {
+    "before": true,
+    "checks": [
+      "Actual App enters L1 on a live WebGL context",
+      "A naturally generated single shipping case is available",
+      "Production keyboard hotbar changes the selected and displayed item",
+      "A natural corpse has a collision-safe head close-up"
+    ],
+    "records": [
+      {
+        "kind": "case",
+        "stack": 2,
+        "supported": false,
+        "colliders": [
+          {
+            "x0": 66.95599997854232,
+            "y0": 67.17499999022485,
+            "x1": 68.04400002145768,
+            "y1": 67.82500000977518,
+            "bottom": 0.0949999988079071,
+            "top": 1.2649999856948853,
+            "stand": false
+          },
+          {
+            "x0": 66.85600001430511,
+            "y0": 67.17600000715257,
+            "x1": 68.14399998569489,
+            "y1": 67.82399999284746,
+            "top": 1.3600000143051147,
+            "stand": false
+          },
+          {
+            "x0": 66.85600001430511,
+            "y0": 67.14100001072885,
+            "x1": 68.14399998569489,
+            "y1": 67.85899998927118,
+            "top": 1.3600000143051147,
+            "stand": false
+          }
+        ],
+        "position": {
+          "world": [
+            3.5,
+            35.500000000000014,
+            0
+          ],
+          "mode": "realistic",
+          "camera": [
+            79.5,
+            1.5532967336873376,
+            79.5
+          ],
+          "yaw": 0,
+          "pitch": 0,
+          "fov": 72,
+          "memory": {
+            "geometries": 418,
+            "textures": 143
+          },
+          "held": "",
+          "cache": 0
+        }
+      },
+      {
+        "kind": "case",
+        "stack": 1,
+        "supported": false,
+        "colliders": [
+          {
+            "x0": 71.95599997854232,
+            "y0": 73.17499999022483,
+            "x1": 73.04400002145768,
+            "y1": 73.82500000977517,
+            "bottom": 0.0949999988079071,
+            "top": 0.5849999785423279,
+            "stand": false
+          },
+          {
+            "x0": 71.85600001430511,
+            "y0": 73.17600000715255,
+            "x1": 73.14399998569489,
+            "y1": 73.82399999284745,
+            "top": 0.6800000071525574,
+            "stand": false
+          },
+          {
+            "x0": 71.85600001430511,
+            "y0": 73.14100001072883,
+            "x1": 73.14399998569489,
+            "y1": 73.85899998927117,
+            "top": 0.6800000071525574,
+            "stand": false
+          }
+        ],
+        "position": {
+          "world": [
+            8.5,
+            9.5,
+            0
+          ],
+          "mode": "realistic",
+          "camera": [
+            79.5,
+            1.5532967336873376,
+            79.5
+          ],
+          "yaw": 0,
+          "pitch": 0,
+          "fov": 72,
+          "memory": {
+            "geometries": 418,
+            "textures": 143
+          },
+          "held": "",
+          "cache": 0
+        }
+      },
+      {
+        "kind": "hand-timeline",
+        "timeline": [
+          {
+            "time": 27008.699999999255,
+            "held": "crowbar",
+            "y": -0.3000180056488344,
+            "dip": 0
+          },
+          {
+            "time": 27014.60000000149,
+            "held": "crowbar",
+            "y": -0.3000171860265865,
+            "dip": 0
+          },
+          {
+            "time": 27020.400000002235,
+            "held": "crowbar",
+            "y": -0.3000156649124557,
+            "dip": 0
+          },
+          {
+            "time": 27025.300000000745,
+            "held": "crowbar",
+            "y": -0.3000149671022977,
+            "dip": 0
+          },
+          {
+            "time": 27032.10000000149,
+            "held": "crowbar",
+            "y": -0.3000143206737667,
+            "dip": 0
+          },
+          {
+            "time": 27037.60000000149,
+            "held": "crowbar",
+            "y": -0.3000130877622121,
+            "dip": 0
+          },
+          {
+            "time": 27053.10000000149,
+            "held": "crowbar",
+            "y": -0.3000125345830917,
+            "dip": 0
+          },
+          {
+            "time": 27063.10000000149,
+            "held": "crowbar",
+            "y": -0.3000105073658632,
+            "dip": 0
+          },
+          {
+            "time": 27080.900000002235,
+            "held": "almond",
+            "y": -0.3000096544776864,
+            "dip": 0
+          },
+          {
+            "time": 27086.60000000149,
+            "held": "almond",
+            "y": -0.3000078083461204,
+            "dip": 0
+          },
+          {
+            "time": 27092.10000000149,
+            "held": "almond",
+            "y": -0.3000074970390763,
+            "dip": 0
+          },
+          {
+            "time": 27097.5,
+            "held": "almond",
+            "y": -0.3000072071568397,
+            "dip": 0
+          },
+          {
+            "time": 27104.199999999255,
+            "held": "almond",
+            "y": -0.3000066487179079,
+            "dip": 0
+          },
+          {
+            "time": 27109.800000000745,
+            "held": "almond",
+            "y": -0.3000063967264221,
+            "dip": 0
+          },
+          {
+            "time": 27125,
+            "held": "almond",
+            "y": -0.30000614427458516,
+            "dip": 0
+          },
+          {
+            "time": 27133.10000000149,
+            "held": "almond",
+            "y": -0.30000525039470943,
+            "dip": 0
+          },
+          {
+            "time": 27139.10000000149,
+            "held": "almond",
+            "y": -0.30000486725916575,
+            "dip": 0
+          },
+          {
+            "time": 27145.10000000149,
+            "held": "almond",
+            "y": -0.3000045078383743,
+            "dip": 0
+          },
+          {
+            "time": 27150.199999999255,
+            "held": "almond",
+            "y": -0.3000043509986501,
+            "dip": 0
+          },
+          {
+            "time": 27157.10000000149,
+            "held": "almond",
+            "y": -0.30000419672746276,
+            "dip": 0
+          },
+          {
+            "time": 27162.10000000149,
+            "held": "almond",
+            "y": -0.30000389697858676,
+            "dip": 0
+          },
+          {
+            "time": 27167.10000000149,
+            "held": "almond",
+            "y": -0.300003757787299,
+            "dip": 0
+          }
+        ]
+      }
+    ],
+    "state": {
+      "world": [
+        -18.75024815230273,
+        37.402440883409014,
+        0
+      ],
+      "mode": "realistic",
+      "camera": [
+        77.24975184769727,
+        1.0004338387447633,
+        69.40244088340901
+      ],
+      "yaw": -2.9173805439100993,
+      "pitch": -0.7349447672764141,
+      "fov": 35,
+      "memory": {
+        "geometries": 453,
+        "textures": 129
+      },
+      "held": "almond",
+      "cache": 2
+    }
+  },
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

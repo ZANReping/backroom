@@ -1,6 +1,6 @@
 // 通用复古形象（v68）：AvatarCfg（玩家捏人 / 随机 NPC / 有名 NPC 的固定配置）→ retroNpc 的 RetroSpec + 共享贴图池。
 // · 脸：生成照片脸池（性别×肤色 5 档×3 张），玩家固定用每组第 0 张、表情（平静/微笑/严肃/困倦）换整张脸贴图；
-//   随机/有名 NPC 按种子取 3 张之一。贴图源与提示词见 art-source/npc-retro/manifest.json → pool。
+//   随机 NPC 按种子取池脸，固定 NPC 使用 named/<id>/ 专属脸。源图与提示词见 art-source/npc-retro/manifest.json。
 // · 衣物：上衣 8 款、裤子 6 款的中性灰照片面料图集，运行时用顶点色染成配置色（一个 body 材质）；
 // · 发型 16 款 = 发壳发际线参数 + 少量体块（发髻/马尾/脏辫/莫西干脊…），灰度发丝贴图 × 发色；
 // · 兼容旧动画：grp.userData.parts 映射到骨骼（torso→spine、head→head、armL/armR→upperArm、legL/legR→thigh；
@@ -11,6 +11,8 @@ import type { AvatarCfg } from '../core/avatar'
 import { SKIN_OPTIONS } from '../core/avatar'
 import type { EquipVisual } from './playerModel'
 import { retroTextureChanged } from './retroResources'
+import { RETRO_NAMED_FACE_IDS } from './retroNamedFaces'
+import { namedFaceMeta } from './retroFaceAlignment'
 import {
   buildRetroFigure, buildRetroNpc, retroNpcSpec, RETRO_NPC_META, retroNpcTexturesSync, retroTexture, RETRO_NPC_IDS,
   type RetroHair, type RetroNpc, type RetroNpcId, type RetroNpcMeta, type RetroNpcTextures, type RetroSpec,
@@ -148,6 +150,12 @@ export interface RetroAvatarOpts {
   stolen?: boolean
   /** 游戏内（默认）：四肢由外部动画驱动；预览/肖像传 false 走自带待机 */
   driven?: boolean
+  /** 固定 NPC 专属脸；随机 NPC、玩家及无脸角色继续使用原来的贴图选择。 */
+  faceId?: string
+  /** Object 70 静态俯卧体使用同一人物工厂，局部覆盖西装和腐化外观。 */
+  specPatch?: (s: RetroSpec) => void
+  /** Object 70 static corpses use the closed-eye face texture for every frame. */
+  closedEyes?: boolean
 }
 
 /** AvatarCfg → RetroSpec（纯数据，便于测试/对比）。 */
@@ -223,13 +231,21 @@ function wrap(npc: RetroNpc, name: string): THREE.Group {
 /** 通用形象（玩家 / 随机 NPC / 有名 NPC）。 */
 export function buildAvatarModel(cfg: AvatarCfg, opts: RetroAvatarOpts = {}): THREE.Group {
   const spec = avatarSpec(cfg, opts)
+  opts.specPatch?.(spec)
   const g = spec.fem ? 'f' : 'm'
   const tier = skinTier(cfg.skin)
   const v = opts.seed !== undefined ? (opts.seed >>> 0) % 3 : 0
-  const ft = faceTextures(g, tier, v, cfg.face)
+  const namedId = opts.faceId && !opts.faceless && RETRO_NAMED_FACE_IDS.has(opts.faceId) ? opts.faceId : undefined
+  const ft = namedId
+    ? { face: retroTexture(`${BASE}/named/${opts.faceId}/neutral.png`), faceBlink: retroTexture(`${BASE}/named/${opts.faceId}/neutral-blink.png`) }
+    : faceTextures(g, tier, v, cfg.face)
+  // Keep the blink atlas as the normal animation target, but let static
+  // corpse avatars start and remain on the closed-eye map. Living avatars
+  // retain their existing neutral/open face and blink behaviour.
+  if (opts.closedEyes) ft.face = ft.faceBlink
   const topStyle = opts.ev?.suit ? 3 : opts.ev?.cavingsuit ? 4 : cfg.topStyle
   const tex: RetroNpcTextures = { ...ft, ...(opts.faceless ? { faceless: retroTexture(`${BASE}/faceless/t${tier}.png`) } : {}), body: bodyAtlas(topStyle, opts.ev?.suit || opts.ev?.cavingsuit ? 0 : cfg.pantsStyle), hair: retroTexture(`${BASE}/cloth/hair-${hairTexName(spec.hair)}.png`) }
-  const npc = buildRetroFigure(spec, POOL_META, tex, { seed: opts.seed ?? 7, driven: opts.driven ?? true })
+  const npc = buildRetroFigure(spec, namedId ? namedFaceMeta(namedId, POOL_META) : POOL_META, tex, { seed: opts.seed ?? 7, driven: opts.driven ?? true })
   return wrap(npc, 'RetroAvatar')
 }
 

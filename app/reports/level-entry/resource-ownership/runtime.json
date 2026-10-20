@@ -1,0 +1,2508 @@
+{
+  "run": "qa-1792049035238-51980",
+  "label": "resource-ownership",
+  "mode": "realistic",
+  "production": false,
+  "port": 4877,
+  "cdp": 4878,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\level-entry\\resource-ownership\\qa-1792049035238-51980",
+  "levels": [
+    104
+  ],
+  "cases": [
+    {
+      "id": 104,
+      "cold": {
+        "id": 104,
+        "name": "Tom 的餐馆",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 2731.5999999996275,
+        "readyMs": 2731.5999999996275,
+        "loadMs": 2743.0999999996275,
+        "preparationMs": 0.19999999925494194,
+        "generationMs": 8.900000000372529,
+        "sceneMs": 2722.5,
+        "frames": 236,
+        "cpuTotalMs": 2095.799999985844,
+        "cpuMaxMs": 619.4000000003725,
+        "frameP95Ms": 22.300000000745058,
+        "metrics": {
+          "buildLevel": {
+            "calls": 215093,
+            "cpuMs": 1112.0000000093132,
+            "maxMs": 617.6999999992549
+          },
+          "warmSceneTextures": {
+            "calls": 29,
+            "cpuMs": 5.199999999254942,
+            "maxMs": 1.900000000372529
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 93.29999999888241,
+            "chunks": 0,
+            "finiteTask": true,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 1,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 0,
+              "textures": 1
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 0,
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 0,
+          "npcs": 9,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 144,
+            "textures": 83
+          }
+        },
+        "firstReady": {
+          "structures": 132,
+          "lights": 46,
+          "npcs": 10,
+          "nearNpcs": 9,
+          "npcMeshes": 9,
+          "meshes": 249,
+          "instances": 4546,
+          "materials": 143,
+          "memory": {
+            "geometries": 144,
+            "textures": 83
+          },
+          "programs": 82,
+          "drawCalls": 107,
+          "triangles": 39097,
+          "spawn": {
+            "x": 40.5,
+            "y": 25.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\level-entry\\resource-ownership\\qa-1792049035238-51980",
+    "--remote-debugging-port=4878",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.40",
+    "revision": "@cfaadc5a132d78e1828635aa8405a499f3e14864",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.20"
+  },
+  "pids": {
+    "server": 28044,
+    "browser": 56440
+  },
+  "setup": {
+    "mode": "realistic",
+    "viewport": [
+      1920,
+      1080
+    ],
+    "dpr": 1,
+    "seed": 424242,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "settings": {
+      "texture": 1,
+      "lights": 16,
+      "shadows": true,
+      "lightShadows": 1,
+      "loadingBudget": 6,
+      "chunkBudget": 3,
+      "detail": 1,
+      "bloom": true,
+      "ao": 1
+    },
+    "hardwareConcurrency": 32
+  },
+  "cancellation": {
+    "passed": 8,
+    "checks": [
+      "finite scene is pending during async compilation",
+      "pending scene has owned GPU materials",
+      "new level replaces the cancelled pending root",
+      "cancelled scene never becomes visible",
+      "materials stay alive while compiler completion is pending",
+      "owned materials release exactly once after compilation",
+      "next level still reaches readiness",
+      "compiler completion cannot publish a cancelled scene"
+    ],
+    "materials": 909
+  },
+  "cycles": [
+    {
+      "structures": 132,
+      "lights": 46,
+      "npcs": 10,
+      "nearNpcs": 9,
+      "npcMeshes": 9,
+      "meshes": 249,
+      "instances": 4546,
+      "materials": 143,
+      "memory": {
+        "geometries": 145,
+        "textures": 118
+      },
+      "programs": 91,
+      "drawCalls": 107,
+      "triangles": 39097,
+      "spawn": {
+        "x": 40.5,
+        "y": 25.5,
+        "z": 0
+      },
+      "mapSeed": 424242,
+      "ready": true
+    },
+    {
+      "structures": 132,
+      "lights": 46,
+      "npcs": 10,
+      "nearNpcs": 9,
+      "npcMeshes": 9,
+      "meshes": 249,
+      "instances": 4546,
+      "materials": 143,
+      "memory": {
+        "geometries": 145,
+        "textures": 122
+      },
+      "programs": 91,
+      "drawCalls": 107,
+      "triangles": 39097,
+      "spawn": {
+        "x": 40.5,
+        "y": 25.5,
+        "z": 0
+      },
+      "mapSeed": 424242,
+      "ready": true
+    },
+    {
+      "structures": 132,
+      "lights": 46,
+      "npcs": 10,
+      "nearNpcs": 9,
+      "npcMeshes": 9,
+      "meshes": 249,
+      "instances": 4546,
+      "materials": 143,
+      "memory": {
+        "geometries": 145,
+        "textures": 122
+      },
+      "programs": 91,
+      "drawCalls": 107,
+      "triangles": 39097,
+      "spawn": {
+        "x": 40.5,
+        "y": 25.5,
+        "z": 0
+      },
+      "mapSeed": 424242,
+      "ready": true
+    },
+    {
+      "structures": 132,
+      "lights": 46,
+      "npcs": 10,
+      "nearNpcs": 9,
+      "npcMeshes": 9,
+      "meshes": 249,
+      "instances": 4546,
+      "materials": 143,
+      "memory": {
+        "geometries": 145,
+        "textures": 123
+      },
+      "programs": 91,
+      "drawCalls": 107,
+      "triangles": 39097,
+      "spawn": {
+        "x": 40.5,
+        "y": 25.5,
+        "z": 0
+      },
+      "mapSeed": 424242,
+      "ready": true
+    }
+  ],
+  "textureAudit": [
+    {
+      "id": 256,
+      "cycle": 0,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35065:12)\n    at WebGLUniforms.upload (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35463:11)\n    at setProgram (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42626:23)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:41865:23)\n    at renderObject (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42318:15)\n    at renderObjects (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42300:11)"
+    },
+    {
+      "id": 258,
+      "cycle": 0,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35065:12)\n    at WebGLUniforms.upload (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35463:11)\n    at setProgram (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42626:23)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:41865:23)\n    at renderObject (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42318:15)\n    at renderObjects (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42300:11)"
+    },
+    {
+      "id": 260,
+      "cycle": 0,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35065:12)\n    at WebGLUniforms.upload (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35463:11)\n    at setProgram (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42626:23)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:41865:23)\n    at renderObject (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42318:15)\n    at renderObjects (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42300:11)"
+    },
+    {
+      "id": 261,
+      "cycle": 0,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35065:12)\n    at WebGLUniforms.upload (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35463:11)\n    at setProgram (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42626:23)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:41865:23)\n    at renderObject (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42318:15)\n    at renderObjects (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42300:11)"
+    },
+    {
+      "id": 262,
+      "cycle": 0,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35065:12)\n    at WebGLUniforms.upload (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35463:11)\n    at setProgram (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42626:23)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:41865:23)\n    at renderObject (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42318:15)\n    at renderObjects (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42300:11)"
+    },
+    {
+      "id": 293,
+      "cycle": 0,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35065:12)\n    at WebGLUniforms.upload (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35463:11)\n    at setProgram (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42626:23)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:41865:23)\n    at renderObject (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42318:15)\n    at renderObjects (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42300:11)"
+    },
+    {
+      "id": 302,
+      "cycle": 0,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35065:12)\n    at WebGLUniforms.upload (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35463:11)\n    at setProgram (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42626:23)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:41865:23)\n    at renderObject (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42318:15)\n    at renderObjects (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42300:11)"
+    },
+    {
+      "id": 303,
+      "cycle": 0,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35065:12)\n    at WebGLUniforms.upload (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35463:11)\n    at setProgram (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42626:23)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:41865:23)\n    at renderObject (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42318:15)\n    at renderObjects (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42300:11)"
+    },
+    {
+      "id": 599,
+      "cycle": 1,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35065:12)\n    at WebGLUniforms.upload (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35463:11)\n    at setProgram (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42626:23)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:41865:23)\n    at renderObject (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42318:15)\n    at renderObjects (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42300:11)"
+    },
+    {
+      "id": 600,
+      "cycle": 1,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35065:12)\n    at WebGLUniforms.upload (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35463:11)\n    at setProgram (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42626:23)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:41865:23)\n    at renderObject (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42318:15)\n    at renderObjects (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42300:11)"
+    },
+    {
+      "id": 601,
+      "cycle": 1,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35065:12)\n    at WebGLUniforms.upload (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35463:11)\n    at setProgram (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42626:23)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:41865:23)\n    at renderObject (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42318:15)\n    at renderObjects (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42300:11)"
+    },
+    {
+      "id": 602,
+      "cycle": 1,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35065:12)\n    at WebGLUniforms.upload (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35463:11)\n    at setProgram (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42626:23)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:41865:23)\n    at renderObject (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42318:15)\n    at renderObjects (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42300:11)"
+    },
+    {
+      "id": 1156,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1157,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1158,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1159,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1160,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1161,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1162,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1163,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1164,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1165,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1166,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1167,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1168,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1169,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1170,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1171,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1172,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1173,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1174,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1175,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1176,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1177,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1178,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1179,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1180,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1181,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1182,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1183,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:4877/src/game/renderer/renderer.ts?import:1961:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:4877/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:4877/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1184,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35065:12)\n    at WebGLUniforms.setValue (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35453:25)\n    at setProgram (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42583:22)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:41865:23)\n    at renderObject (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42318:15)\n    at renderObjects (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42300:11)"
+    },
+    {
+      "id": 1185,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35065:12)\n    at WebGLUniforms.setValue (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35453:25)\n    at setProgram (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42583:22)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:41865:23)\n    at renderObject (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42318:15)\n    at renderObjects (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42300:11)"
+    },
+    {
+      "id": 1186,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35065:12)\n    at WebGLUniforms.setValue (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35453:25)\n    at setProgram (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42583:22)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:41865:23)\n    at renderObject (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42318:15)\n    at renderObjects (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42300:11)"
+    },
+    {
+      "id": 1187,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35065:12)\n    at WebGLUniforms.setValue (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35453:25)\n    at setProgram (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42583:22)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:41865:23)\n    at renderObject (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42318:15)\n    at renderObjects (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42300:11)"
+    },
+    {
+      "id": 1188,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35065:12)\n    at WebGLUniforms.setValue (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35453:25)\n    at setProgram (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42583:22)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:41865:23)\n    at renderObject (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42318:15)\n    at renderObjects (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42300:11)"
+    },
+    {
+      "id": 1189,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35065:12)\n    at WebGLUniforms.setValue (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35453:25)\n    at setProgram (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42583:22)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:41865:23)\n    at renderObject (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42318:15)\n    at renderObjects (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42300:11)"
+    },
+    {
+      "id": 1190,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35065:12)\n    at WebGLUniforms.setValue (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35453:25)\n    at setProgram (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42583:22)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:41865:23)\n    at renderObject (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42318:15)\n    at renderObjects (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42300:11)"
+    },
+    {
+      "id": 1191,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35065:12)\n    at WebGLUniforms.setValue (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35453:25)\n    at setProgram (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42583:22)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:41865:23)\n    at renderObject (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42318:15)\n    at renderObjects (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42300:11)"
+    },
+    {
+      "id": 1192,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35065:12)\n    at WebGLUniforms.setValue (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35453:25)\n    at setProgram (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42583:22)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:41865:23)\n    at renderObject (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42318:15)\n    at renderObjects (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42300:11)"
+    },
+    {
+      "id": 1193,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:4877/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38751:24)\n    at uploadTexture (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35065:12)\n    at WebGLUniforms.upload (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:35463:11)\n    at setProgram (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42626:23)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:41865:23)\n    at renderObject (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42318:15)\n    at renderObjects (http://127.0.0.1:4877/reports/level-entry/resource-ownership/qa-1792049035238-51980/vite-cache/deps/chunk-BWT6IPVN.js?v=ba289215:42300:11)"
+    }
+  ],
+  "chunkRegression": {
+    "passed": 19,
+    "checks": [
+      "Entry overlaps chunk compiler waits within the four-job bound",
+      "Pending chunks own geometry",
+      "Switching level cancels every pending chunk job",
+      "Cancelled chunks never become visible",
+      "Pending compiler references keep geometry alive",
+      "Cancelled geometry releases exactly once after compiler completion",
+      "Late compiler completion cannot publish old chunks",
+      "Cycle 1: all four warmed moth templates retained",
+      "Cycle 1: leaving hotel releases warmed templates",
+      "Cycle 2: all four warmed moth templates retained",
+      "Cycle 2: leaving hotel releases warmed templates",
+      "Cycle 3: all four warmed moth templates retained",
+      "Cycle 3: leaving hotel releases warmed templates",
+      "Cycle 4: all four warmed moth templates retained",
+      "Cycle 4: leaving hotel releases warmed templates",
+      "Cycle 5: all four warmed moth templates retained",
+      "Cycle 5: leaving hotel releases warmed templates",
+      "Repeated hotel/outpost switches have stable geometry counts",
+      "Repeated hotel/outpost switches have stable texture counts"
+    ],
+    "cancelledGeometry": 16,
+    "cycles": [
+      {
+        "structures": 132,
+        "lights": 46,
+        "npcs": 10,
+        "nearNpcs": 9,
+        "npcMeshes": 9,
+        "meshes": 249,
+        "instances": 4546,
+        "materials": 143,
+        "memory": {
+          "geometries": 231,
+          "textures": 139
+        },
+        "programs": 162,
+        "drawCalls": 107,
+        "triangles": 39097,
+        "spawn": {
+          "x": 40.5,
+          "y": 25.5,
+          "z": 0
+        },
+        "mapSeed": 424242,
+        "ready": true,
+        "pool": [
+          {
+            "key": "realistic:cashew:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:disinfectant:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:battery:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:cashew:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:almond:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:disinfectant:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:crowbar:true",
+            "gpu": [
+              43775,
+              43776,
+              43777,
+              43778,
+              43779,
+              43780
+            ]
+          },
+          {
+            "key": "realistic:battery:true",
+            "gpu": [
+              43479,
+              43480,
+              43481,
+              43482,
+              43483,
+              43484,
+              43485,
+              43486,
+              43487,
+              43488,
+              43489
+            ]
+          },
+          {
+            "key": "realistic:battery:true",
+            "gpu": [
+              43492,
+              43493,
+              43494,
+              43495,
+              43496,
+              43497,
+              43498,
+              43499,
+              43500,
+              43501,
+              43502
+            ]
+          },
+          {
+            "key": "realistic:skeleton:true",
+            "gpu": [
+              74442,
+              74443
+            ]
+          },
+          {
+            "key": "realistic:bandage:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:sedative:true",
+            "gpu": [
+              75076,
+              75077
+            ]
+          },
+          {
+            "key": "realistic:battery:true",
+            "gpu": [
+              43606,
+              43607,
+              43608,
+              43609,
+              43610,
+              43611,
+              43612,
+              43613,
+              43614,
+              43615,
+              43616
+            ]
+          },
+          {
+            "key": "realistic:almond:true",
+            "gpu": [
+              43505,
+              43506,
+              43507,
+              43508,
+              43509,
+              43510,
+              43511,
+              43512,
+              43513,
+              43514,
+              43515,
+              43516
+            ]
+          },
+          {
+            "key": "realistic:almond:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:tape:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:sedative:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:tape:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:sedative:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:lighter:true",
+            "gpu": [
+              43645,
+              43646,
+              43647,
+              43648,
+              43649,
+              43650,
+              43651,
+              43652,
+              43653,
+              43654,
+              43655,
+              43656
+            ]
+          },
+          {
+            "key": "realistic:bandage:true",
+            "gpu": [
+              44316,
+              44317,
+              44318,
+              44319,
+              44320,
+              44321,
+              44322,
+              44323,
+              44324,
+              44325,
+              44326,
+              44327,
+              44328,
+              44329
+            ]
+          },
+          {
+            "key": "realistic:canned:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:rabbit:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:canned:true",
+            "gpu": []
+          }
+        ],
+        "sceneGpu": [
+          22,
+          87,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          89,
+          174115,
+          174120,
+          174233,
+          174237,
+          174241,
+          174256,
+          174260,
+          174264,
+          174268,
+          174096,
+          174122,
+          174123,
+          174124,
+          174125,
+          174126,
+          174127,
+          174128,
+          174129,
+          174130,
+          174131,
+          174132,
+          174133,
+          174134,
+          174135,
+          174136,
+          174137,
+          174138,
+          174139,
+          174140,
+          174141,
+          174142,
+          174143,
+          174144,
+          174145,
+          174152,
+          174153,
+          174154,
+          174155,
+          174156,
+          174157,
+          174158,
+          174159,
+          174160,
+          174161,
+          174162,
+          174163,
+          174164,
+          174165,
+          174166,
+          174167,
+          174168,
+          174169,
+          174170,
+          174171,
+          174172,
+          174173,
+          174174,
+          174175,
+          174176,
+          174177,
+          174178,
+          174179,
+          174180,
+          174181,
+          174182,
+          174183,
+          174184,
+          174185,
+          174186,
+          174187,
+          174188,
+          174189,
+          174190,
+          174191,
+          174192,
+          174193,
+          174194,
+          174195,
+          174196,
+          174197,
+          174198,
+          174199,
+          174200,
+          174201,
+          174202,
+          174203,
+          174204,
+          174205,
+          174206,
+          174207,
+          174208,
+          174209,
+          174210,
+          174211,
+          174212,
+          174213,
+          174214,
+          174215,
+          174216,
+          174217,
+          174218,
+          174219,
+          174220,
+          174221,
+          174222,
+          174223,
+          174224,
+          174225,
+          174226,
+          174227,
+          174228,
+          174229,
+          174230
+        ],
+        "retired": 0,
+        "entityMeshes": 0
+      },
+      {
+        "structures": 132,
+        "lights": 46,
+        "npcs": 10,
+        "nearNpcs": 9,
+        "npcMeshes": 9,
+        "meshes": 249,
+        "instances": 4546,
+        "materials": 143,
+        "memory": {
+          "geometries": 254,
+          "textures": 139
+        },
+        "programs": 162,
+        "drawCalls": 107,
+        "triangles": 39097,
+        "spawn": {
+          "x": 40.5,
+          "y": 25.5,
+          "z": 0
+        },
+        "mapSeed": 424242,
+        "ready": true,
+        "pool": [
+          {
+            "key": "realistic:cashew:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:disinfectant:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:cashew:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:disinfectant:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:battery:true",
+            "gpu": [
+              43606,
+              43607,
+              43608,
+              43609,
+              43610,
+              43611,
+              43612,
+              43613,
+              43614,
+              43615,
+              43616
+            ]
+          },
+          {
+            "key": "realistic:almond:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:crowbar:true",
+            "gpu": [
+              43775,
+              43776,
+              43777,
+              43778,
+              43779,
+              43780
+            ]
+          },
+          {
+            "key": "realistic:battery:true",
+            "gpu": [
+              43719,
+              43720,
+              43721,
+              43722,
+              43723,
+              43724,
+              43725,
+              43726,
+              43727,
+              43728,
+              43729
+            ]
+          },
+          {
+            "key": "realistic:battery:true",
+            "gpu": [
+              43479,
+              43480,
+              43481,
+              43482,
+              43483,
+              43484,
+              43485,
+              43486,
+              43487,
+              43488,
+              43489
+            ]
+          },
+          {
+            "key": "realistic:skeleton:true",
+            "gpu": [
+              74442,
+              74443
+            ]
+          },
+          {
+            "key": "realistic:bandage:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:sedative:true",
+            "gpu": [
+              75076,
+              75077
+            ]
+          },
+          {
+            "key": "realistic:battery:true",
+            "gpu": [
+              43492,
+              43493,
+              43494,
+              43495,
+              43496,
+              43497,
+              43498,
+              43499,
+              43500,
+              43501,
+              43502
+            ]
+          },
+          {
+            "key": "realistic:almond:true",
+            "gpu": [
+              43793,
+              43794,
+              43795,
+              43796,
+              43797,
+              43798,
+              43799,
+              43800,
+              43801,
+              43802,
+              43803,
+              43804
+            ]
+          },
+          {
+            "key": "realistic:almond:true",
+            "gpu": [
+              43505,
+              43506,
+              43507,
+              43508,
+              43509,
+              43510,
+              43511,
+              43512,
+              43513,
+              43514,
+              43515,
+              43516
+            ]
+          },
+          {
+            "key": "realistic:tape:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:sedative:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:tape:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:sedative:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:lighter:true",
+            "gpu": [
+              43645,
+              43646,
+              43647,
+              43648,
+              43649,
+              43650,
+              43651,
+              43652,
+              43653,
+              43654,
+              43655,
+              43656
+            ]
+          },
+          {
+            "key": "realistic:bandage:true",
+            "gpu": [
+              44316,
+              44317,
+              44318,
+              44319,
+              44320,
+              44321,
+              44322,
+              44323,
+              44324,
+              44325,
+              44326,
+              44327,
+              44328,
+              44329
+            ]
+          },
+          {
+            "key": "realistic:canned:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:rabbit:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:canned:true",
+            "gpu": []
+          }
+        ],
+        "sceneGpu": [
+          22,
+          87,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          89,
+          272610,
+          272664,
+          272728,
+          272732,
+          272736,
+          272751,
+          272755,
+          272759,
+          272763,
+          272591,
+          272612,
+          272613,
+          272614,
+          272615,
+          272616,
+          272617,
+          272618,
+          272619,
+          272620,
+          272621,
+          272622,
+          272623,
+          272624,
+          272625,
+          272626,
+          272627,
+          272628,
+          272629,
+          272630,
+          272631,
+          272632,
+          272633,
+          272634,
+          272635,
+          272642,
+          272643,
+          272644,
+          272645,
+          272646,
+          272647,
+          272648,
+          272649,
+          272650,
+          272651,
+          272652,
+          272653,
+          272654,
+          272655,
+          272656,
+          272657,
+          272658,
+          272659,
+          272660,
+          272666,
+          272667,
+          272668,
+          272669,
+          272670,
+          272671,
+          272672,
+          272673,
+          272674,
+          272675,
+          272676,
+          272677,
+          272678,
+          272679,
+          272680,
+          272681,
+          272682,
+          272683,
+          272684,
+          272685,
+          272686,
+          272687,
+          272688,
+          272689,
+          272690,
+          272691,
+          272692,
+          272693,
+          272694,
+          272695,
+          272696,
+          272697,
+          272698,
+          272699,
+          272700,
+          272701,
+          272702,
+          272703,
+          272704,
+          272705,
+          272706,
+          272707,
+          272708,
+          272709,
+          272710,
+          272711,
+          272712,
+          272713,
+          272714,
+          272715,
+          272716,
+          272717,
+          272718,
+          272719,
+          272720,
+          272721,
+          272722,
+          272723,
+          272724,
+          272725
+        ],
+        "retired": 0,
+        "entityMeshes": 0
+      },
+      {
+        "structures": 132,
+        "lights": 46,
+        "npcs": 10,
+        "nearNpcs": 9,
+        "npcMeshes": 9,
+        "meshes": 249,
+        "instances": 4546,
+        "materials": 143,
+        "memory": {
+          "geometries": 266,
+          "textures": 139
+        },
+        "programs": 162,
+        "drawCalls": 107,
+        "triangles": 39097,
+        "spawn": {
+          "x": 40.5,
+          "y": 25.5,
+          "z": 0
+        },
+        "mapSeed": 424242,
+        "ready": true,
+        "pool": [
+          {
+            "key": "realistic:cashew:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:disinfectant:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:cashew:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:disinfectant:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:battery:true",
+            "gpu": [
+              43492,
+              43493,
+              43494,
+              43495,
+              43496,
+              43497,
+              43498,
+              43499,
+              43500,
+              43501,
+              43502
+            ]
+          },
+          {
+            "key": "realistic:almond:true",
+            "gpu": [
+              43505,
+              43506,
+              43507,
+              43508,
+              43509,
+              43510,
+              43511,
+              43512,
+              43513,
+              43514,
+              43515,
+              43516
+            ]
+          },
+          {
+            "key": "realistic:crowbar:true",
+            "gpu": [
+              43775,
+              43776,
+              43777,
+              43778,
+              43779,
+              43780
+            ]
+          },
+          {
+            "key": "realistic:battery:true",
+            "gpu": [
+              43606,
+              43607,
+              43608,
+              43609,
+              43610,
+              43611,
+              43612,
+              43613,
+              43614,
+              43615,
+              43616
+            ]
+          },
+          {
+            "key": "realistic:battery:true",
+            "gpu": [
+              43719,
+              43720,
+              43721,
+              43722,
+              43723,
+              43724,
+              43725,
+              43726,
+              43727,
+              43728,
+              43729
+            ]
+          },
+          {
+            "key": "realistic:skeleton:true",
+            "gpu": [
+              74442,
+              74443
+            ]
+          },
+          {
+            "key": "realistic:bandage:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:sedative:true",
+            "gpu": [
+              75076,
+              75077
+            ]
+          },
+          {
+            "key": "realistic:battery:true",
+            "gpu": [
+              43479,
+              43480,
+              43481,
+              43482,
+              43483,
+              43484,
+              43485,
+              43486,
+              43487,
+              43488,
+              43489
+            ]
+          },
+          {
+            "key": "realistic:almond:true",
+            "gpu": [
+              43521,
+              43522,
+              43523,
+              43524,
+              43525,
+              43526,
+              43527,
+              43528,
+              43529,
+              43530,
+              43531,
+              43532
+            ]
+          },
+          {
+            "key": "realistic:almond:true",
+            "gpu": [
+              43793,
+              43794,
+              43795,
+              43796,
+              43797,
+              43798,
+              43799,
+              43800,
+              43801,
+              43802,
+              43803,
+              43804
+            ]
+          },
+          {
+            "key": "realistic:tape:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:sedative:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:tape:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:sedative:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:lighter:true",
+            "gpu": [
+              43645,
+              43646,
+              43647,
+              43648,
+              43649,
+              43650,
+              43651,
+              43652,
+              43653,
+              43654,
+              43655,
+              43656
+            ]
+          },
+          {
+            "key": "realistic:bandage:true",
+            "gpu": [
+              44316,
+              44317,
+              44318,
+              44319,
+              44320,
+              44321,
+              44322,
+              44323,
+              44324,
+              44325,
+              44326,
+              44327,
+              44328,
+              44329
+            ]
+          },
+          {
+            "key": "realistic:canned:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:rabbit:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:canned:true",
+            "gpu": []
+          }
+        ],
+        "sceneGpu": [
+          22,
+          87,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          89,
+          371103,
+          371140,
+          371221,
+          371225,
+          371229,
+          371244,
+          371248,
+          371252,
+          371256,
+          371084,
+          371105,
+          371106,
+          371107,
+          371108,
+          371109,
+          371110,
+          371111,
+          371112,
+          371113,
+          371114,
+          371115,
+          371116,
+          371117,
+          371118,
+          371119,
+          371120,
+          371121,
+          371122,
+          371123,
+          371124,
+          371125,
+          371126,
+          371127,
+          371128,
+          371135,
+          371136,
+          371142,
+          371143,
+          371144,
+          371145,
+          371146,
+          371147,
+          371148,
+          371149,
+          371150,
+          371151,
+          371152,
+          371153,
+          371154,
+          371155,
+          371156,
+          371157,
+          371158,
+          371159,
+          371160,
+          371161,
+          371162,
+          371163,
+          371164,
+          371165,
+          371166,
+          371167,
+          371168,
+          371169,
+          371170,
+          371171,
+          371172,
+          371173,
+          371174,
+          371175,
+          371176,
+          371177,
+          371178,
+          371179,
+          371180,
+          371181,
+          371182,
+          371183,
+          371184,
+          371185,
+          371186,
+          371187,
+          371188,
+          371189,
+          371190,
+          371191,
+          371192,
+          371193,
+          371194,
+          371195,
+          371196,
+          371197,
+          371198,
+          371199,
+          371200,
+          371201,
+          371202,
+          371203,
+          371204,
+          371205,
+          371206,
+          371207,
+          371208,
+          371209,
+          371210,
+          371211,
+          371212,
+          371213,
+          371214,
+          371215,
+          371216,
+          371217,
+          371218
+        ],
+        "retired": 0,
+        "entityMeshes": 0
+      },
+      {
+        "structures": 132,
+        "lights": 46,
+        "npcs": 10,
+        "nearNpcs": 9,
+        "npcMeshes": 9,
+        "meshes": 249,
+        "instances": 4546,
+        "materials": 143,
+        "memory": {
+          "geometries": 266,
+          "textures": 139
+        },
+        "programs": 162,
+        "drawCalls": 107,
+        "triangles": 39097,
+        "spawn": {
+          "x": 40.5,
+          "y": 25.5,
+          "z": 0
+        },
+        "mapSeed": 424242,
+        "ready": true,
+        "pool": [
+          {
+            "key": "realistic:cashew:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:disinfectant:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:cashew:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:disinfectant:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:battery:true",
+            "gpu": [
+              43479,
+              43480,
+              43481,
+              43482,
+              43483,
+              43484,
+              43485,
+              43486,
+              43487,
+              43488,
+              43489
+            ]
+          },
+          {
+            "key": "realistic:almond:true",
+            "gpu": [
+              43793,
+              43794,
+              43795,
+              43796,
+              43797,
+              43798,
+              43799,
+              43800,
+              43801,
+              43802,
+              43803,
+              43804
+            ]
+          },
+          {
+            "key": "realistic:crowbar:true",
+            "gpu": [
+              43775,
+              43776,
+              43777,
+              43778,
+              43779,
+              43780
+            ]
+          },
+          {
+            "key": "realistic:battery:true",
+            "gpu": [
+              43492,
+              43493,
+              43494,
+              43495,
+              43496,
+              43497,
+              43498,
+              43499,
+              43500,
+              43501,
+              43502
+            ]
+          },
+          {
+            "key": "realistic:battery:true",
+            "gpu": [
+              43606,
+              43607,
+              43608,
+              43609,
+              43610,
+              43611,
+              43612,
+              43613,
+              43614,
+              43615,
+              43616
+            ]
+          },
+          {
+            "key": "realistic:skeleton:true",
+            "gpu": [
+              74442,
+              74443
+            ]
+          },
+          {
+            "key": "realistic:bandage:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:sedative:true",
+            "gpu": [
+              75076,
+              75077
+            ]
+          },
+          {
+            "key": "realistic:battery:true",
+            "gpu": [
+              43719,
+              43720,
+              43721,
+              43722,
+              43723,
+              43724,
+              43725,
+              43726,
+              43727,
+              43728,
+              43729
+            ]
+          },
+          {
+            "key": "realistic:almond:true",
+            "gpu": [
+              43505,
+              43506,
+              43507,
+              43508,
+              43509,
+              43510,
+              43511,
+              43512,
+              43513,
+              43514,
+              43515,
+              43516
+            ]
+          },
+          {
+            "key": "realistic:almond:true",
+            "gpu": [
+              43521,
+              43522,
+              43523,
+              43524,
+              43525,
+              43526,
+              43527,
+              43528,
+              43529,
+              43530,
+              43531,
+              43532
+            ]
+          },
+          {
+            "key": "realistic:tape:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:sedative:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:tape:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:sedative:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:lighter:true",
+            "gpu": [
+              43645,
+              43646,
+              43647,
+              43648,
+              43649,
+              43650,
+              43651,
+              43652,
+              43653,
+              43654,
+              43655,
+              43656
+            ]
+          },
+          {
+            "key": "realistic:bandage:true",
+            "gpu": [
+              44316,
+              44317,
+              44318,
+              44319,
+              44320,
+              44321,
+              44322,
+              44323,
+              44324,
+              44325,
+              44326,
+              44327,
+              44328,
+              44329
+            ]
+          },
+          {
+            "key": "realistic:canned:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:rabbit:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:canned:true",
+            "gpu": []
+          }
+        ],
+        "sceneGpu": [
+          22,
+          87,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          89,
+          469598,
+          469635,
+          469716,
+          469720,
+          469724,
+          469739,
+          469743,
+          469747,
+          469751,
+          469579,
+          469600,
+          469601,
+          469602,
+          469603,
+          469604,
+          469605,
+          469606,
+          469607,
+          469608,
+          469609,
+          469610,
+          469611,
+          469612,
+          469613,
+          469614,
+          469615,
+          469616,
+          469617,
+          469618,
+          469619,
+          469620,
+          469621,
+          469622,
+          469623,
+          469630,
+          469631,
+          469637,
+          469638,
+          469639,
+          469640,
+          469641,
+          469642,
+          469643,
+          469644,
+          469645,
+          469646,
+          469647,
+          469648,
+          469649,
+          469650,
+          469651,
+          469652,
+          469653,
+          469654,
+          469655,
+          469656,
+          469657,
+          469658,
+          469659,
+          469660,
+          469661,
+          469662,
+          469663,
+          469664,
+          469665,
+          469666,
+          469667,
+          469668,
+          469669,
+          469670,
+          469671,
+          469672,
+          469673,
+          469674,
+          469675,
+          469676,
+          469677,
+          469678,
+          469679,
+          469680,
+          469681,
+          469682,
+          469683,
+          469684,
+          469685,
+          469686,
+          469687,
+          469688,
+          469689,
+          469690,
+          469691,
+          469692,
+          469693,
+          469694,
+          469695,
+          469696,
+          469697,
+          469698,
+          469699,
+          469700,
+          469701,
+          469702,
+          469703,
+          469704,
+          469705,
+          469706,
+          469707,
+          469708,
+          469709,
+          469710,
+          469711,
+          469712,
+          469713
+        ],
+        "retired": 0,
+        "entityMeshes": 0
+      },
+      {
+        "structures": 132,
+        "lights": 46,
+        "npcs": 10,
+        "nearNpcs": 9,
+        "npcMeshes": 9,
+        "meshes": 249,
+        "instances": 4546,
+        "materials": 143,
+        "memory": {
+          "geometries": 266,
+          "textures": 139
+        },
+        "programs": 162,
+        "drawCalls": 107,
+        "triangles": 39097,
+        "spawn": {
+          "x": 40.5,
+          "y": 25.5,
+          "z": 0
+        },
+        "mapSeed": 424242,
+        "ready": true,
+        "pool": [
+          {
+            "key": "realistic:cashew:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:disinfectant:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:cashew:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:disinfectant:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:battery:true",
+            "gpu": [
+              43719,
+              43720,
+              43721,
+              43722,
+              43723,
+              43724,
+              43725,
+              43726,
+              43727,
+              43728,
+              43729
+            ]
+          },
+          {
+            "key": "realistic:almond:true",
+            "gpu": [
+              43521,
+              43522,
+              43523,
+              43524,
+              43525,
+              43526,
+              43527,
+              43528,
+              43529,
+              43530,
+              43531,
+              43532
+            ]
+          },
+          {
+            "key": "realistic:crowbar:true",
+            "gpu": [
+              43775,
+              43776,
+              43777,
+              43778,
+              43779,
+              43780
+            ]
+          },
+          {
+            "key": "realistic:battery:true",
+            "gpu": [
+              43479,
+              43480,
+              43481,
+              43482,
+              43483,
+              43484,
+              43485,
+              43486,
+              43487,
+              43488,
+              43489
+            ]
+          },
+          {
+            "key": "realistic:battery:true",
+            "gpu": [
+              43492,
+              43493,
+              43494,
+              43495,
+              43496,
+              43497,
+              43498,
+              43499,
+              43500,
+              43501,
+              43502
+            ]
+          },
+          {
+            "key": "realistic:skeleton:true",
+            "gpu": [
+              74442,
+              74443
+            ]
+          },
+          {
+            "key": "realistic:bandage:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:sedative:true",
+            "gpu": [
+              75076,
+              75077
+            ]
+          },
+          {
+            "key": "realistic:battery:true",
+            "gpu": [
+              43606,
+              43607,
+              43608,
+              43609,
+              43610,
+              43611,
+              43612,
+              43613,
+              43614,
+              43615,
+              43616
+            ]
+          },
+          {
+            "key": "realistic:almond:true",
+            "gpu": [
+              43793,
+              43794,
+              43795,
+              43796,
+              43797,
+              43798,
+              43799,
+              43800,
+              43801,
+              43802,
+              43803,
+              43804
+            ]
+          },
+          {
+            "key": "realistic:almond:true",
+            "gpu": [
+              43505,
+              43506,
+              43507,
+              43508,
+              43509,
+              43510,
+              43511,
+              43512,
+              43513,
+              43514,
+              43515,
+              43516
+            ]
+          },
+          {
+            "key": "realistic:tape:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:sedative:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:tape:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:sedative:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:lighter:true",
+            "gpu": [
+              43645,
+              43646,
+              43647,
+              43648,
+              43649,
+              43650,
+              43651,
+              43652,
+              43653,
+              43654,
+              43655,
+              43656
+            ]
+          },
+          {
+            "key": "realistic:bandage:true",
+            "gpu": [
+              44316,
+              44317,
+              44318,
+              44319,
+              44320,
+              44321,
+              44322,
+              44323,
+              44324,
+              44325,
+              44326,
+              44327,
+              44328,
+              44329
+            ]
+          },
+          {
+            "key": "realistic:canned:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:rabbit:true",
+            "gpu": []
+          },
+          {
+            "key": "realistic:canned:true",
+            "gpu": []
+          }
+        ],
+        "sceneGpu": [
+          22,
+          87,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          89,
+          568091,
+          568148,
+          568209,
+          568213,
+          568217,
+          568232,
+          568236,
+          568240,
+          568244,
+          568072,
+          568093,
+          568094,
+          568095,
+          568096,
+          568097,
+          568098,
+          568099,
+          568100,
+          568101,
+          568102,
+          568103,
+          568104,
+          568105,
+          568106,
+          568107,
+          568108,
+          568109,
+          568110,
+          568111,
+          568112,
+          568113,
+          568114,
+          568115,
+          568116,
+          568123,
+          568124,
+          568125,
+          568126,
+          568127,
+          568128,
+          568129,
+          568130,
+          568131,
+          568132,
+          568133,
+          568134,
+          568135,
+          568136,
+          568137,
+          568138,
+          568139,
+          568140,
+          568141,
+          568142,
+          568143,
+          568144,
+          568150,
+          568151,
+          568152,
+          568153,
+          568154,
+          568155,
+          568156,
+          568157,
+          568158,
+          568159,
+          568160,
+          568161,
+          568162,
+          568163,
+          568164,
+          568165,
+          568166,
+          568167,
+          568168,
+          568169,
+          568170,
+          568171,
+          568172,
+          568173,
+          568174,
+          568175,
+          568176,
+          568177,
+          568178,
+          568179,
+          568180,
+          568181,
+          568182,
+          568183,
+          568184,
+          568185,
+          568186,
+          568187,
+          568188,
+          568189,
+          568190,
+          568191,
+          568192,
+          568193,
+          568194,
+          568195,
+          568196,
+          568197,
+          568198,
+          568199,
+          568200,
+          568201,
+          568202,
+          568203,
+          568204,
+          568205,
+          568206
+        ],
+        "retired": 0,
+        "entityMeshes": 0
+      }
+    ]
+  },
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [],
+  "networkErrors": [
+    {
+      "requestId": "54360.401",
+      "loaderId": "5C0DE5773E15221C1CB2304132CC94DE",
+      "timestamp": 13286.490481,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:4877/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Thu, 15 Oct 2026 07:24:11 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 222,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 4877,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 13286.480431,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.349,
+          "sendEnd": 0.387,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 9.317,
+          "receiveHeadersEnd": 9.465
+        },
+        "responseTime": 1792049051117.593,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "43C501DC24DAD7AD1A3A327F50869092"
+    }
+  ]
+}

@@ -5,7 +5,7 @@ import { newL1Dynamics,rememberL1Container,restoreL1Container,l1ContainerKey,l1C
 import { RemotePlayerViews } from '../renderer/remotePlayers'
 import {mapSight} from '../world/mapSight'
 import {L1_GENERATION_VERSION} from '../world/l1Spatial'
-export interface L1WorldSave {version:1;generation?:number;migration?:{from:number;to:4;applied:true};seed:number;dynamics:L1Dynamics;taken:number[];runtime?:{blackout:number;warning:number;pending:number;plant:number;stage:number}}
+export interface L1WorldSave {version:1;generation?:number;migration?:{from:number;to:number;applied:true};seed:number;dynamics:L1Dynamics;taken:number[];runtime?:{blackout:number;warning:number;pending:number;plant:number;stage:number}}
 export function captureL1(eng:Engine):L1WorldSave|undefined {
   const inf=eng.map?.inf
   if(eng.player.level!==1||!inf)return eng.l1World
@@ -64,8 +64,8 @@ export function restoreL1(eng:Engine){
   }
   for(const c of inf.chunks.values())for(const s of c.structures)restoreL1Container(inf.l1Dynamics,inf.seed,c.cx,c.cy,s,inf.ox,inf.oy)
   restitch(eng.map!);inf.redo=(inf.redo??0)+1
-  if((saved.generation??1)<4&&!saved.migration?.applied){
-    eng.l1World={...saved,generation:4,migration:{from:saved.generation??1,to:4,applied:true}}
+  if((saved.generation??1)<L1_GENERATION_VERSION){
+    eng.l1World={...saved,generation:L1_GENERATION_VERSION,migration:{from:saved.generation??1,to:L1_GENERATION_VERSION,applied:true}}
     eng.msg('Level 1 建筑已迁移至新版；背包、搜刮与事件进度保留，被墙柱覆盖的位置将调整至附近通路。','lore')
   }
 }

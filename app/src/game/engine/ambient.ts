@@ -287,7 +287,7 @@ export function spawnBlackoutSmilers(eng: Engine) {
       const style = l1StyleAt(m, tx + 0.5, ty + 0.5)
       const inf = m.inf
       const chunk = inf?.chunks.get(`${Math.floor((inf.ox + tx + 0.5) / 32)},${Math.floor((inf.oy + ty + 0.5) / 32)}`)
-      if (style === 'maintenance' || chunk?.variant === 'maintenance') continue
+      if (style === 'maintenance' || !style && chunk?.variant === 'maintenance') continue
       if (eng.entityWalkH(m, tx, ty, 0) === null) continue
       const e = makeEntity('smiler', tx + 0.5, ty + 0.5)
       e.blackoutSpawn = true

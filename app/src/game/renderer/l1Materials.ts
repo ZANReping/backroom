@@ -11,6 +11,7 @@ const cache=new Map<string,THREE.Material>()
 /** Repeats per metre. Colour, GL normal and roughness always use the same UV. */
 export function l1SurfaceScale(variant:string,surface:'floor'|'wall'|'ceiling'|'concrete'){
   if(variant==='maintenance'&&surface==='wall')return .18
+  if(variant==='fabled')return surface==='floor'?.45:surface==='ceiling'?.38:.32
   return surface==='floor'?.22:surface==='ceiling'?.24:.32
 }
 export function l1Texture(name:string,data=false):THREE.Texture {
@@ -19,7 +20,7 @@ export function l1Texture(name:string,data=false):THREE.Texture {
   if(t.userData.l1Space!==mark){t.colorSpace=data?THREE.NoColorSpace:THREE.SRGBColorSpace;t.anisotropy=4;t.userData.l1Space=mark;t.needsUpdate=true}
   return t
 }
-export function l1Material(variant:string,surface:'wall'|'brick'|'floor'|'ceiling'|'concrete'|'column'|'columnRaw'|'columnPaint'|'guard'|'metal'|'red'|'whitePipe'|'cable'|'peeling'|'leaf'|'ground'|'wet'|'line'):THREE.Material {
+export function l1Material(variant:string,surface:'wall'|'brick'|'floor'|'ceiling'|'concrete'|'column'|'columnRaw'|'columnPaint'|'guard'|'metal'|'red'|'whitePipe'|'cable'|'peeling'|'leaf'|'ground'|'wet'|'line'|'glass'):THREE.Material {
   const key=`${getMaterialMode()}:${variant}:${surface}`,hit=cache.get(key);if(hit)return hit
   const p=l1Profile(variant==='maintenance-plaster'?'maintenance':variant)
   let prefix='l11_concrete',color=surface==='wall'?p.wall:surface==='floor'?p.floor:surface==='ceiling'?p.ceiling:'#c4c2b4'
@@ -27,35 +28,47 @@ export function l1Material(variant:string,surface:'wall'|'brick'|'floor'|'ceilin
   if(variant==='maintenance-plaster'){prefix='l11_plaster';color='#b9cede'}
   if(surface==='metal'){prefix='l11_metal';color='#a6aaa7'}
   if(surface==='column')color=p.wall
-  if(variant==='gothic'&&(surface==='column'||surface==='ceiling'))color='#aaa9a0'
+  if(variant==='gothic'&&(surface==='column'||surface==='ceiling'))color='#8e877b'
+  if(surface==='column'&&variant==='storage')color='#8c7a62'
   if(surface==='columnRaw')color=variant==='ouroboros'?'#888b89':'#a7a69e'
   if(surface==='columnPaint'){prefix='l11_plaster';color='#d8d9d2'}
   if(surface==='guard'){prefix='l11_metal';color='#a59664'}
-  if(variant==='storage'&&(surface==='ceiling'||surface==='metal')){prefix=surface==='ceiling'?'l1/steel':'l11_metal';color=surface==='ceiling'?'#9b9e96':'#b0aca1'}
+  if(variant==='storage'&&(surface==='ceiling'||surface==='metal')){prefix=surface==='ceiling'?'l1/steel':'l11_metal';color=surface==='ceiling'?'#5f5044':'#76604a'}
   if(variant==='storage'&&surface==='concrete'){prefix='l11_plaster';color='#e3e3d8'}
   if(surface==='red'){prefix='l11_metal';color='#9f342b'}
   if(surface==='whitePipe'){prefix='l11_metal';color='#d4d5cc'}
   if(surface==='cable'){prefix='l11_metal';color='#343733'}
-  const continuous=surface==='floor'||surface==='ceiling'||surface==='wall'&&!variant.startsWith('maintenance')
+  // 传说段 = the L1 of the past (ref 传说段.webp): worn dark plank floor, dark board ceiling, ochre plaster, dark timber posts.
+  const fabled=variant==='fabled'&&['floor','ceiling','column','columnRaw','wall'].includes(surface)
+  const fabledWood=fabled&&surface!=='wall'
+  if(fabled)color=surface==='floor'?'#8c8579':surface==='ceiling'?'#5b4636':surface==='wall'?'#a6874e':'#5a4334'
+  if(fabled&&surface==='wall')prefix='l11_plaster'
+  if(surface==='glass'){prefix='l11_plaster';color='#a3a18c'}
+  if(variant==='gothic'&&surface==='columnPaint')color='#8f8a80' // v2 C: ref drums are dirty grey, not fresh paint
+  if(variant==='ouroboros'&&(surface==='peeling'||surface==='column'))color='#948e82'
+  if(variant==='ouroboros'&&surface==='whitePipe')color='#ebe8df'
+  const continuous=!fabledWood&&(surface==='floor'||surface==='ceiling'||surface==='wall'&&!variant.startsWith('maintenance'))
   const peeling=surface==='peeling'
   const ground=surface==='ground'
   const foliage=surface==='leaf'
   const custom=peeling?'peeling':ground?'ground':undefined
   if(custom||foliage)color='#ffffff'
   if(foliage)color='#506d38'
-  if(ground)color='#56743f'
+  if(ground)color='#7ea650'
   const masonry=variant==='maintenance'&&surface==='wall'||surface==='brick'
   if(surface==='brick')color='#c3c4bc'
-  const wornFloor=surface==='floor'&&!ground
+  const wornFloor=surface==='floor'&&!ground&&!fabledWood
   const plasterCeiling=surface==='ceiling'&&['parking','maintenance','aisle'].includes(variant)
   if(plasterCeiling)prefix='l11_plaster'
-  if(surface==='ceiling'&&variant==='parking')color='#7f837d'
+  if(surface==='ceiling'&&variant==='parking')color='#8e918a'
   // The reference paint is smooth, with faint mottling rather than exposed render.
   const plaster=prefix==='l11_plaster'
-  const map=l1Texture(foliage?'l1/polyhaven/leaves_diff.jpg':wornFloor?'l3/polyhaven/concrete_floor_worn_001_Color.jpg':masonry?'l3/polyhaven/painted_brick_Color.jpg':custom?`l1/${custom}.png`:`${prefix}.jpg`)
+  const woodName=surface==='floor'?'old_wood_floor':'dark_planks'
+  const map=fabledWood?l1Texture(`l1/fabled/${woodName}_diff.jpg`):l1Texture(foliage?'l1/polyhaven/leaves_diff.jpg':wornFloor?'l3/polyhaven/concrete_floor_worn_001_Color.jpg':masonry?'l3/polyhaven/painted_brick_Color.jpg':custom?`l1/${custom}.png`:`${prefix}.jpg`)
   const mat=litMaterial({map,color,side:foliage?THREE.DoubleSide:THREE.FrontSide,
     ...(foliage?{alphaTest:.45,alphaMap:l1Texture('l1/polyhaven/leaves_alpha.jpg',true),normalMap:l1Texture('l1/polyhaven/leaves_nor_gl.jpg',true),normalScale:new THREE.Vector2(.4,.4),roughnessMap:getMaterialMode()==='realistic'?l1Texture('l1/polyhaven/leaves_rough.jpg',true):undefined}:{normalMap:l1Texture(wornFloor?'l3/polyhaven/concrete_floor_worn_001_NormalGL.jpg':masonry?'l3/polyhaven/painted_brick_NormalGL.jpg':custom?`l1/${custom}-normal.png`:`${prefix}_normal.jpg`,true),normalScale:new THREE.Vector2(masonry?.1:plaster?.045:surface==='floor'?.14:.24,masonry?.1:plaster?.045:surface==='floor'?.14:.24),roughnessMap:getMaterialMode()==='realistic'?l1Texture(wornFloor?'l3/polyhaven/concrete_floor_worn_001_Roughness.jpg':masonry?'l3/polyhaven/painted_brick_Roughness.jpg':custom?`l1/${custom}-rough.png`:`${prefix}_roughness.jpg`,true):undefined}),
-    roughness:surface==='wet'?.12:surface==='metal'?.48:.86,metalness:surface==='metal'||surface==='red'?(variant==='storage'?.18:.55):0,envBase:surface==='wet'?.7:.12,
+    ...(fabledWood?{normalMap:l1Texture(`l1/fabled/${woodName}_nor_gl.jpg`,true),normalScale:new THREE.Vector2(.8,.8),...(getMaterialMode()==='realistic'?{roughnessMap:l1Texture(`l1/fabled/${woodName}_rough.jpg`,true)}:{})}:{}),
+    roughness:surface==='glass'?.32:surface==='wet'?.12:surface==='metal'?.48:.86,metalness:surface==='metal'||surface==='red'?(variant==='storage'?.18:.55):0,envBase:surface==='wet'?.7:.12,
   })
   if(plaster){
     const prior=mat.onBeforeCompile,key=mat.customProgramCacheKey()
@@ -87,7 +100,7 @@ export function l1Material(variant:string,surface:'wall'|'brick'|'floor'|'ceilin
       diffuseColor.rgb*=1.-footStain;`)}
     mat.customProgramCacheKey=()=>key+'|l1-column-footwear-v3'
   }
-  if(mat instanceof THREE.MeshStandardMaterial&&!['wet','metal','red','cable','whitePipe'].includes(surface)){
+  if(mat instanceof THREE.MeshStandardMaterial&&!['wet','metal','red','cable','whitePipe','glass'].includes(surface)){
     const prior=mat.onBeforeCompile,key=mat.customProgramCacheKey.bind(mat)
     mat.onBeforeCompile=(shader,renderer)=>{prior.call(mat,shader,renderer);shader.fragmentShader=shader.fragmentShader.replace('#include <roughnessmap_fragment>',`#include <roughnessmap_fragment>\nroughnessFactor=max(roughnessFactor,${plaster?'.52':surface==='floor'?'.55':'.72'});`)}
     const priorKey=key();mat.customProgramCacheKey=()=>priorKey+'|l1-matte-concrete-v2'

@@ -1,0 +1,145 @@
+{
+  "label": "before",
+  "before": true,
+  "port": 23441,
+  "cdp": 22197,
+  "views": [],
+  "checks": {
+    "checks": [
+      "Baseline App aliases use the same old engine singleton",
+      "Reference corpse survives deterministic density thinning",
+      "Natural corpse has a collision-safe viewing position",
+      "Production interaction ray selects the generated corpse"
+    ],
+    "state": {
+      "before": true,
+      "seed": 20261017,
+      "world": [
+        -10,
+        -23
+      ],
+      "position": [
+        -9.5,
+        -20.799999999999997,
+        0
+      ],
+      "yaw": 0,
+      "pitch": -0.6848212459426012,
+      "mode": "realistic",
+      "fov": 72,
+      "looted": false,
+      "open": 0,
+      "stats": {
+        "geometry": 266,
+        "textures": 83,
+        "programs": 71,
+        "chunks": 9
+      }
+    },
+    "records": [],
+    "memoryKeys": [
+      "br_settings",
+      "br_save_slot1"
+    ]
+  },
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:23441/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sat, 17 Oct 2026 12:12:32 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 222,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 23441,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 80565.269416,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.43,
+        "sendEnd": 0.474,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 13.557,
+        "receiveHeadersEnd": 13.739
+      },
+      "responseTime": 1792239152130.064,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\object70-v83\\before\\qa-object70-1792239140937-70400",
+    "--remote-debugging-port=22197",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "server": 66672,
+    "browser": 73140
+  },
+  "initial": {
+    "before": true,
+    "seed": 20261017,
+    "world": [
+      -10,
+      -23
+    ],
+    "position": [
+      -9.5,
+      -20.799999999999997,
+      0
+    ],
+    "yaw": 0,
+    "pitch": -0.6848212459426012,
+    "mode": "realistic",
+    "fov": 72,
+    "looted": false,
+    "open": 0,
+    "stats": {
+      "geometry": 259,
+      "textures": 74,
+      "programs": 68,
+      "chunks": 9
+    }
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

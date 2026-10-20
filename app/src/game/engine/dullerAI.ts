@@ -12,9 +12,10 @@ import { ITEMS } from '../content/items'
 import type { Entity } from '../entities'
 import type { Engine } from '../engine'
 import { canOccupy } from '../core/player'
+import { findShrimpPrey, devourShrimp } from './shrimpAI'
 import { bandOfPlayerZ, floorHeight, wallAt, structBlocksSight, structColliders } from '../world/mapgen'
 
-export type DullerPhase = 'roam' | 'lurk' | 'reach' | 'drag' | 'hold' | 'flee'
+export type DullerPhase = 'roam' | 'lurk' | 'reach' | 'drag' | 'hold' | 'flee' | 'feed'
 export interface DullerState {
   phase: DullerPhase
   t: number
@@ -35,6 +36,8 @@ export interface DullerState {
   wallD: number // 沿朝向到墙面的距离（米；<0 表示没有墙）
   sway: number // 摇晃幅度
   run: number // 奔逃姿态
+  prey?: Entity // v81：正在捕食的旱虾（feed 阶段）
+  preyScan?: number
 }
 
 const CARRY_POOL = ['canned', 'battery', 'bandage', 'glowstick', 'fuse', 'coffee', 'flashlight']
@@ -105,8 +108,14 @@ export function dullerDrop(e: Entity): string | undefined {
   return c
 }
 
+function releasePrey(s: DullerState) {
+  const q = s.prey
+  if (q?.sh && !q.dead && q.sh.phase === 'held') { q.sh.phase = 'startle'; q.sh.t = 0; q.sh.fx = Math.random() - 0.5; q.sh.fy = Math.random() - 0.5 }
+  s.prey = undefined
+}
 function flee(eng: Engine, e: Entity, s: DullerState, spook: number) {
   releaseDullerPlayer(eng,e)
+  releasePrey(s)
   setPhase(s, 'flee'); s.spook = Math.max(s.spook, spook); s.wait = 0
 }
 
@@ -267,6 +276,13 @@ export function updateDuller(eng: Engine, e: Entity, dt: number, d: number, dmgM
   switch (s.phase) {
     case 'roam': {
       e.state = 'wander'
+      // v81：游荡中顺手捕食旱虾（8m 内；玩家放生的「诱饵」12m 内优先）
+      s.preyScan = (s.preyScan ?? 0) - dt
+      if (s.preyScan <= 0 && s.spook <= 0) { // 受惊/刚吃完的冷却期内不捕食
+        s.preyScan = 0.5
+        const q = findShrimpPrey(eng, e, 8, 12)
+        if (q) { setPhase(s, 'feed'); s.prey = q; s.wait = 0; break }
+      }
       if (e.stateT <= 0 || Math.hypot(e.targetX - e.x, e.targetY - e.y) < 0.4) eng.wanderTarget(e)
       tx = e.targetX; ty = e.targetY; speed = def.speed * 0.45
       if (almondNear(eng, e.x, e.y)) { const a = Math.max(0.1, d); tx = e.x + (e.x - p.x) / a * 3; ty = e.y + (e.y - p.y) / a * 3 }
@@ -283,6 +299,13 @@ export function updateDuller(eng: Engine, e: Entity, dt: number, d: number, dmgM
         flee(eng, e, s, 15)
         once(eng, 'dnotice', '你注意到了它——那个没有脸的灰色人形僵了一瞬，随即一声不响地溜走了。')
         break
+      }
+      // v81：潜伏中只会被「诱饵」引开——放生的活旱虾 12m 内
+      s.preyScan = (s.preyScan ?? 0) - dt
+      if (s.preyScan <= 0) {
+        s.preyScan = 0.4
+        const q = findShrimpPrey(eng, e, 0, 12, true)
+        if (q) { setPhase(s, 'feed'); s.prey = q; s.wait = 0; break }
       }
       if (scented && d < 8) { flee(eng, e, s, 10); once(eng, 'dscent', '钝人在杏仁水的气味边缘停住，转身走开了。'); break }
       if (s.retarget <= 0) {
@@ -359,6 +382,28 @@ export function updateDuller(eng: Engine, e: Entity, dt: number, d: number, dmgM
       if (s.t >= 1.6) { flee(eng, e, s, 20); once(eng, 'dafter', '它松开手，像意识到自己被看清了一样，无声地退进墙里。') }
       break
     }
+    case 'feed': {
+      // v81：走到旱虾跟前，弯腰伸手按住它（旱虾停住挣扎），约 1.1 秒后整只吃掉；吃完一段时间内不打玩家的主意
+      e.state = 'investigate'
+      const q = s.prey
+      if (!q || q.dead || !eng.map?.entities.includes(q) || (q.sh?.eater && q.sh.eater !== e)) { s.prey = undefined; setPhase(s, 'roam'); eng.wanderTarget(e); break }
+      if (approach || (noticed && d < 3)) { flee(eng, e, s, 10); break }
+      const bait = (q.sh?.bait ?? 0) > 0
+      const dq = Math.hypot(q.x - e.x, q.y - e.y)
+      face = [q.x, q.y]
+      if (dq > 0.75 && s.wait <= 0) { tx = q.x; ty = q.y; speed = def.speed * (bait ? 1.15 : 0.8); if (s.t > 12) { s.prey = undefined; setPhase(s, 'roam') } }
+      else {
+        if (q.sh && q.sh.phase !== 'held') { q.sh.phase = 'held'; q.sh.t = 0 }
+        s.wait += dt
+        if (s.wait > 1.1) {
+          devourShrimp(eng, e, q)
+          s.prey = undefined; s.wait = 0
+          s.spook = Math.max(s.spook, bait ? 14 : 4)
+          setPhase(s, 'roam'); eng.wanderTarget(e)
+        }
+      }
+      break
+    }
     case 'flee': {
       e.state = 'stunned'
       // 急速奔逃（携物也不减速），穿墙而去
@@ -386,10 +431,10 @@ export function updateDuller(eng: Engine, e: Entity, dt: number, d: number, dmgM
 
   // 外观姿态量
   const k = Math.min(1, dt * 6)
-  const want = s.phase === 'reach' ? Math.min(1, s.t / 0.5) : s.phase === 'drag' || s.phase === 'hold' ? 1 : 0
+  const want = s.phase === 'reach' ? Math.min(1, s.t / 0.5) : s.phase === 'drag' || s.phase === 'hold' ? 1 : s.phase === 'feed' && s.wait > 0 ? Math.min(1, s.wait / 0.35) : 0
   s.reach += (want - s.reach) * (want > s.reach ? Math.min(1, dt * 8) : k)
-  s.reachLen = s.phase === 'drag' || s.phase === 'hold' ? Math.max(0.6, Math.hypot(p.x - e.x, p.y - e.y)) : Math.max(0.6, Math.min(3, d))
-  s.wallD = s.reach > 0.02 ? wallDist(eng, e, d) : -1
+  s.reachLen = s.phase === 'drag' || s.phase === 'hold' ? Math.max(0.6, Math.hypot(p.x - e.x, p.y - e.y)) : s.phase === 'feed' ? 0.75 : Math.max(0.6, Math.min(3, d))
+  s.wallD = s.reach > 0.02 && s.phase !== 'feed' ? wallDist(eng, e, d) : -1
   s.run += ((s.phase === 'flee' ? 1 : 0) - s.run) * k
   s.sway += ((s.phase === 'reach' || s.phase === 'drag' || s.phase === 'hold' ? 0.2 : 1) - s.sway) * k
 }

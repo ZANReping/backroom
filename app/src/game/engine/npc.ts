@@ -19,6 +19,7 @@ import { ALPHA_PLACEMENT_CLEARANCES } from '../content/alphaBlueprint'
 import { canOccupy } from '../core/player'
 import { HUMANOID_WINDUP, HUMANOID_RECOVERY } from '../core/humanoidMelee'
 import {updateAlphaDuty} from './alphaNpc'
+import { jerryInteractBox, updateJerryPlayer, updateFollower, updateBluebird, addIndoctrination, jerryTamed } from './jerryAI'
 
 // ---- v45：信众领地判定（HUD 声望显示，仿衔尾段 ouroboros）+ 教化诵咏 + 接触冷却 ----
 // （原 step 内联段，逐语句搬运）
@@ -36,6 +37,8 @@ export function updateJerry(eng: Engine, dt: number) {
   } else eng.chantT = 0
   // v47：接触杰瑞冷却（20s 防连点刷声望/教化；HUD 交互提示显示剩余秒数）
   if (eng.jerryContactCd > 0) eng.jerryContactCd = Math.max(0, eng.jerryContactCd - dt)
+  // 重制：木僵/残响/理智上限/击晕/飞石/辛克莱伏击/诱导标记（jerryAI）
+  updateJerryPlayer(eng, dt)
 }
 
 /** NPC 主循环（原 step「---- v35：NPC ----」内联段，逐语句搬运） */
@@ -75,8 +78,11 @@ export function updateNpcs(eng: Engine, dt: number) {
     }
     // v39：死亡动画计时（尸体由渲染层倒地/下沉，计时归零后在循环尾移除）
     if (n.dead) { n.deathT = (n.deathT ?? 0) - dt; continue }
-    // v45：杰瑞的信众敌意规则（全团体通用）——jerry 声望 ≤ -10 转敌对（主动攻击玩家），恢复后放下敌意
-    if (n.def.faction === 'jerry') n.hostile = (eng.rep.jerry ?? 0) <= -10 ? true : undefined
+    // v45：杰瑞的信众敌意规则（全团体通用）——jerry 声望 ≤ -10 转敌对，恢复后放下敌意；
+    // 重制（jerryAI.updateFollower）：中立时从不主动接触新人、只远远看着；敌对时投石索远程投石、近身打倒，
+    // 血量见底时击晕拖走（不杀人）；击晕后有一段休战。青鸟神父在 L274 周期讲道，杰瑞站上他的肩头。
+    if (n.id === 'bluebird' && updateBluebird(eng, n, dt, walkOk)) continue
+    if (n.def.faction === 'jerry' && updateFollower(eng, n, dt, walkOk)) continue
     // v39：敌对（被当面坦白的 BRC 员工）：追击玩家 + 近战；玩家可反击杀死
     if (n.hostile) {
       const hdx = p.x - n.x, hdy = p.y - n.y, hdd = Math.hypot(hdx, hdy)
@@ -113,7 +119,8 @@ export function updateNpcs(eng: Engine, dt: number) {
     // 不追出领地（玩家离岗位锚点 >10m 即放弃，回默认游荡）；
     // v47：仅野外随机信众（L2 宣传间）主动传教——L274 内的信众不主动靠近，需玩家主动交谈；
     // v54：蓝色救赎（L108 圣所）内的信众同样不主动靠近（圣地之内需玩家主动交谈，同 L274）
-    if (n.def.faction === 'jerry' && p.level !== 274 && p.level !== 108) {
+    // 重制：只有已是虔徒（jerry 声望 ≥30）时野外信众才会主动走来传教；中立时只远远看着（jerryAI.updateFollower）
+    if (n.def.faction === 'jerry' && p.level !== 274 && p.level !== 108 && (eng.rep.jerry ?? 0) >= 30) {
       const jdx = p.x - n.x, jdy = p.y - n.y, jdd = Math.hypot(jdx, jdy)
       if (jdd < 8 && Math.hypot(p.x - n.homeX, p.y - n.homeY) < 10) {
         if (jdd > 2.5) {
@@ -228,13 +235,9 @@ export function aimJerry(eng: Engine): Entity | null {
     if (e.dead || e.def.type !== 'jerry') continue
     const entityBand = bandOfZ(e.z)
     if (entityBand !== band) continue
-    const bodyRadius = 0.42
-    const bodyHeight = 1.6
-    const surfaceDistance = Math.max(0, Math.hypot(e.x - p.x, e.y - p.y) - bodyRadius)
-    const probe = eng.interactionProbe(e.x, e.y, e.z + bodyHeight * 0.5, entityBand, 2.5, bodyRadius, {
-      minX: e.x - bodyRadius, minY: e.y - bodyRadius, minZ: e.z,
-      maxX: e.x + bodyRadius, maxY: e.y + bodyRadius, maxZ: e.z + bodyHeight,
-    }, surfaceDistance, bodyHeight * 0.5)
+    // 重制：真实尺寸金刚鹦鹉站在约 1.48m 高的栖木横杆（或神父肩头）上——判定盒随 alt 抬高，且不被栖木自身遮挡
+    const box = jerryInteractBox(eng, e)
+    const probe = eng.interactionProbe(box.x, box.y, box.z, entityBand, 2.5, box.radius, box.volume, box.surfaceDistance, box.verticalRadius, box.perch)
     if (!probe) continue
     if (!best || probe.a < best.a - 1e-4 || (Math.abs(probe.a - best.a) <= 1e-4 && probe.d < best.d)) {
       best = { e, ...probe }
@@ -323,11 +326,9 @@ export function contactJerry(eng: Engine, ent?: Entity): boolean {
     return true
   }
   const before = eng.indoctrination
-  eng.indoctrination = Math.min(100, eng.indoctrination + 25)
   eng.msg('你触碰了鹉主。一股温热的蓝意在脑海深处散开——词语开始自己涌上舌尖。（声望 +5 · 教化 +25）', 'lore')
+  addIndoctrination(eng, 25, j) // 重制：统一入口——越过 25/50/75 触发木僵；满 100 提示教化完成
   if (before === 0) eng.chantT = 3 // 首次接触后很快开始诵咏
-  if (before < 100 && eng.indoctrination >= 100)
-    eng.msg('教化完成了。你望着穹顶下的蓝色身影，忽然明白：你属于这里。鹉主还需要你。', 'lore')
   return true
 }
 
@@ -351,6 +352,8 @@ export function tameJerry(eng: Engine): boolean {
   } else {
     eng.msg('鹉主啄食了杏仁水，满足地抖了抖羽毛。它不再凝视你的灵魂——教化消退了。（教化值清零）', 'loot')
   }
+  // 重制：驯服留下「木僵残响」（之后一段时间偶发短暂失神/镜头偏转，逐渐消失）；被目击 → 杰瑞同样尖啸扑击
+  jerryTamed(eng, witnessed)
   eng.emit({ kind: 'toast', text: '鹉主已被驯服（教化清零）' })
   return true
 }

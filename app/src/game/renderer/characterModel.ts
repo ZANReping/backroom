@@ -16,7 +16,7 @@ export function buildCharacterModel(cfg: AvatarCfg, o: { ev?: EquipVisual; npcId
     const plan=npcGearPlan(o.npcId,o.npcDef)
     const brc = o.npcDef?.faction === 'brc'
     const m = named ?? buildAvatarModel(plan.some(p=>p.kind==='glasses')?{...cfg,glasses:0}:cfg, {
-      seed:npcSeed(o.npcId),faceless:brc,driven,
+      seed:npcSeed(o.npcId),faceless:brc,driven,faceId:o.npcId,
       npcGloves:o.npcId==='faust'?0x819a98:undefined,npcBoots:brc,
       npcRobe:o.npcId==='bluebird',
     })

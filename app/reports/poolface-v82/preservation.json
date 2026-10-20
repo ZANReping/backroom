@@ -1,0 +1,178 @@
+{
+  "expectedChanged": [
+    {
+      "path": "src/App.tsx",
+      "exists": true,
+      "snapshotHash": "7516efda735f071471e4f297c62fe49920428b1c0b6de9561c292681afeeef21",
+      "currentHash": "926d597e6936338169857f7dcc074a585a24653db28dbb04b90a58732f3adaf3",
+      "changed": true,
+      "expected": true
+    },
+    {
+      "path": "src/components/HUD.tsx",
+      "exists": true,
+      "snapshotHash": "5040f330572f7cf613e95386fb9d0e408845466a5936b50445024ec27b7d4073",
+      "currentHash": "4619ff285fa969786194aec6ca522b87eeaabd338f6f12ff0162ef2a22d1e44e",
+      "changed": true,
+      "expected": true
+    },
+    {
+      "path": "src/components/TouchControls.tsx",
+      "exists": true,
+      "snapshotHash": "50fac4c5a08f27088a61ae2121c4c5e650684bb1f1560e055c5eaca8a180232b",
+      "currentHash": "06b8c45639fdc85c1ab20f7a8794c6f4bd4614451fc0295bc3fb90737a253a60",
+      "changed": true,
+      "expected": true
+    },
+    {
+      "path": "src/components/LayoutEditor.tsx",
+      "exists": true,
+      "snapshotHash": "5131a275dc10b83a6ecf7182074d812727055d998b4e531fac48e76291356bae",
+      "currentHash": "ecec9dd6f7981484da42655b004ac17826fc45ccddfea3d87dc66264d8ba663e",
+      "changed": true,
+      "expected": true
+    },
+    {
+      "path": "src/components/icons.tsx",
+      "exists": true,
+      "snapshotHash": "d6c2ee1423de9ea12f93a208e11d1c0bb17c48e9a2cd6ed24a8757237536bacf",
+      "currentHash": "95666f25fea6ed854f1fcca2e476fab4325f6b42f013f83d52537697638e9c47",
+      "changed": true,
+      "expected": true
+    },
+    {
+      "path": "src/components/HowToPlay.tsx",
+      "exists": true,
+      "snapshotHash": "46ebcec75dfd8a01f5579ec9c0408abb62e1c4775eb1e1794a131be31c3b2a45",
+      "currentHash": "2514641e6ad1838440c77d7cab1ac8e478c223b4086265d06a285e9d40d22d7e",
+      "changed": true,
+      "expected": true
+    },
+    {
+      "path": "src/game/core/keybinds.ts",
+      "exists": true,
+      "snapshotHash": "7c35708a8536eb7014cf2a2966481483a5392c1713df0961add9d1553c727697",
+      "currentHash": "c1e70120c93529e8213bb7d1983647c43d8b88788453e313b5b12f6a3badafaa",
+      "changed": true,
+      "expected": true
+    },
+    {
+      "path": "src/game/engine.ts",
+      "exists": true,
+      "snapshotHash": "e254536559fcebe46780410960cda195c7e4d2fc1da4849d976cf5f2bd7c9a4a",
+      "currentHash": "4d5cd9bbc92499206f94462afd3da0547204d8e182878dd9230ded237f8e73ee",
+      "changed": true,
+      "expected": true
+    },
+    {
+      "path": "src/game/engine/combat.ts",
+      "exists": true,
+      "snapshotHash": "5b38d1590cfcb62a0f2b065f86cc607ddf9b0618c5791e7e9dc3bfe6292e54bf",
+      "currentHash": "8a777d89bae6afa2ef1ce813aca9d2669a0fe0c2d0dfe5c61079e7bd9eff3b12",
+      "changed": true,
+      "expected": true
+    },
+    {
+      "path": "src/game/engine/inventory.ts",
+      "exists": true,
+      "snapshotHash": "7a9285ce49ad70ebbf4bf0cef2d830ef98c1458406acb55fcbbac898422ebf4c",
+      "currentHash": "8717118e53ee65d13a0043ccd8ba38bb5b3aad5c064adc77cf59d7dd444cc3c6",
+      "changed": true,
+      "expected": true
+    },
+    {
+      "path": "src/game/renderer/renderer.ts",
+      "exists": true,
+      "snapshotHash": "8a54c8e3d3b0f205f158dca1c47e907c295aa3c4af057292069f8b7469587c02",
+      "currentHash": "26b31a8eee249b76607a6f17e3ba782c689400cddee1cd6c7d17a206770b32c6",
+      "changed": true,
+      "expected": true
+    },
+    {
+      "path": "src/game/renderer/retroNpc.ts",
+      "exists": true,
+      "snapshotHash": "a50a0c45c46afaf64dd2b25bcdb6d7bc5c4623681682bf5edb0f6039ccfb4f2c",
+      "currentHash": "1e3227ba8506aac846bb163b2e9bea4d6ed17e52f45bed8783f8d65524e2723c",
+      "changed": true,
+      "expected": true
+    },
+    {
+      "path": "src/proto/retroNpcProto.ts",
+      "exists": true,
+      "snapshotHash": "ef67d1b056224ed9073ec487637293a8b3e329db3868dadf0036ad5e5ff7e24b",
+      "currentHash": "5f585801f1b6509f372f88e59342b526be0e6dbcce357937ba7c4fd208a10645",
+      "changed": true,
+      "expected": true
+    }
+  ],
+  "protected": [
+    {
+      "path": "src/game/renderer/retroAvatar.ts",
+      "exists": true,
+      "snapshotHash": "999c195d9a8ac3dad65e552433bad1a5418f833ee2ad847cd6937c48cdbf31e6",
+      "currentHash": "999c195d9a8ac3dad65e552433bad1a5418f833ee2ad847cd6937c48cdbf31e6",
+      "sameHash": true
+    },
+    {
+      "path": "src/game/renderer/retroFaceAlignment.ts",
+      "exists": true,
+      "snapshotHash": "2709d9ab27a417bd7956c1d048a5c4709114e49889d17ab0549956ea5f8eb988",
+      "currentHash": "2709d9ab27a417bd7956c1d048a5c4709114e49889d17ab0549956ea5f8eb988",
+      "sameHash": true
+    },
+    {
+      "path": "src/game/renderer/retroNamedFaceAlignment.json",
+      "exists": true,
+      "snapshotHash": "18d8a3b578f13309e3c886dc67da9455cc5334eb281bb629f8672a21697bafeb",
+      "currentHash": "18d8a3b578f13309e3c886dc67da9455cc5334eb281bb629f8672a21697bafeb",
+      "sameHash": true
+    },
+    {
+      "path": "src/components/AvatarEditor.tsx",
+      "exists": true,
+      "snapshotHash": "ea896b1b657de80f66773cc46d9df5359e26d3734c24dfbc2699cdec09e51e84",
+      "currentHash": "ea896b1b657de80f66773cc46d9df5359e26d3734c24dfbc2699cdec09e51e84",
+      "sameHash": true
+    },
+    {
+      "path": "src/components/AvatarPreview.tsx",
+      "exists": true,
+      "snapshotHash": "bbc799c19749133a8068fbee95a33b438e8aa5179fd8d5d56988f9ad081dc129",
+      "currentHash": "bbc799c19749133a8068fbee95a33b438e8aa5179fd8d5d56988f9ad081dc129",
+      "sameHash": true
+    },
+    {
+      "path": "src/components/NpcPortraitImage.tsx",
+      "exists": true,
+      "snapshotHash": "40391dcad0cfccce41964dc09756bcca29d9ac1c3f10b72304f876c88229fa73",
+      "currentHash": "40391dcad0cfccce41964dc09756bcca29d9ac1c3f10b72304f876c88229fa73",
+      "sameHash": true
+    },
+    {
+      "path": "src/components/npcPortrait.ts",
+      "exists": true,
+      "snapshotHash": "d5d4b6700d5ca61eddd0c17a2ce9ce484f125cc3154058001414096478e3ede5",
+      "currentHash": "d5d4b6700d5ca61eddd0c17a2ce9ce484f125cc3154058001414096478e3ede5",
+      "sameHash": true
+    },
+    {
+      "path": "src/game/engine/shrimpMesh.ts",
+      "exists": false,
+      "snapshotHash": null,
+      "currentHash": null,
+      "sameHash": true
+    },
+    {
+      "path": "src/game/engine/shrimpAI.ts",
+      "exists": true,
+      "snapshotHash": "e88cd7a10d4724496098e2e8eed21edead069d794fcaf1fc1d5a63efd6e0980b",
+      "currentHash": "e88cd7a10d4724496098e2e8eed21edead069d794fcaf1fc1d5a63efd6e0980b",
+      "sameHash": true
+    }
+  ],
+  "poolAssets": {
+    "count": 120,
+    "hashMismatches": [],
+    "allMatch": true
+  }
+}

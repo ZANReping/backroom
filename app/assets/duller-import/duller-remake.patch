@@ -1,0 +1,1230 @@
+diff --git a/app/DULLER-REMAKE.md b/app/DULLER-REMAKE.md
+new file mode 100644
+index 0000000..0ca052f
+--- /dev/null
++++ b/app/DULLER-REMAKE.md
+@@ -0,0 +1,53 @@
++# 钝人（Entity 6）重制 · v63
++
++依据：中文维基 [Entity 6 -「钝人」](https://backrooms-wiki-cn.wikidot.com/entity-6)（原作者匿名 Fandom/Reddit 用户，重写 Stretchsterz，译者 Eltrac，CC BY-SA 3.0）及其附图（停车场白柱中探出的无面灰色人形，仅作造型参考，未打包任何外部图片）。
++
++需先应用笑魇补丁、猎犬补丁，再应用本补丁（`houndMesh.ts` 导出的扫掠工具被钝人模型复用）。不改存档格式、联机协议与生成表；运行时状态保存在 `e.dl`。
++
++## 模型 `renderer/dullerMesh.ts`
++- 约 2.1 m 高、深灰近黑的类人体，骨架脆弱：极细的腰、外凸的肋笼（肋骨向前下方斜行，胸骨两侧淡出）、胸骨、脊突、锁骨、髋翼；细长四肢与外凸的肘、膝、踝骨节。
++- 没有脸，也没有耳朵（v63.1 对照附图修正）：头颅加大到约 0.46 m 高，几乎没有脖子，直接压在肩上；轮廓是竖长的圆角长方体，下端略收；正面一圈隆起的边框，框内是竖向骨棱和凹槽，中线有一道纵脊。头部用不带紫红破口的皮肤贴图，避免斑点被看成五官。
++- 手臂垂过膝盖，四根细长手指带指节，黑色指甲；前臂（`stretch` 组）可沿轴伸长 1～5.2 倍，手腕随之外移。
++- 头顶、肩背和小腿缠着卷曲的黑色须丝（对应附图中的卷须）。
++- 手臂穿墙时，墙面（玩家一侧）会晕开黑色污痕：浓黑中心、碎裂边缘、灰泥裂纹和向下的流痕，浓淡随伸臂程度变化。
++- 右手可攥着随机物品（复用 `buildItemMesh`），伸臂时隐藏。
++- 贴图在运行时用 Canvas 程序化生成：干皱的深灰皮肤，少量暗紫红「煮烂」破口，以及墙面污痕。所有钝人共享缓存。
++- 正面 +X，单只约 36 个网格。
++
++## 动作 `animateDuller`
++- 站立时左右摇晃，头部歪斜慢转，偶尔猛地抽动；行走时外八、膝盖反常弯折、踉跄。
++- 伸臂：躯干前倾，双臂抬平并伸长到恰好够到玩家；拖拽或按住时双臂下压。
++- 逃离：大幅前倾，长步幅，双臂后甩。
++- 卷须持续缓慢蠕动。
++
++## 行为与机制 `engine/dullerAI.ts`
++| 阶段 | 说明 |
++|---|---|
++| roam | 穿墙游荡，可隔墙听见刮擦声；附近有玩家时转入潜伏 |
++| lurk | 寻找与玩家一墙之隔、距离 1.6～2.4 m、可站立的点（避开地上杏仁水 3 m 范围），穿墙移动过去后等待片刻 |
++| reach | 手臂「切」出墙体（`audio.dullerReach`）。前摇 0.85 s；玩家身上带着杏仁水时为 1.25 s |
++| drag | 0.9 s 内把玩家拖穿墙壁，落到钝人所在走廊里可站立的位置。抓取时扣 50% 伤害并减 8 理智，落地再扣 100% 伤害 |
++| hold | 按住玩家撕扯 1.6 s（每 0.7 s 扣 40% 伤害），之后逃离 |
++| flee | 无声地以 2.6 倍速穿墙逃离，带物品也不减速；之后进入受惊冷却，期间不狩猎 |
++
++- **被注意到就逃**：视线内 9 m 被直视，或伸臂、潜伏时玩家朝它的方向看（5 m 内，穿墙也算），都会立刻逃离。
++- **刻意靠近就逃**：在它看得见的情况下朝它走过去（相对速度大于 1.1 m/s）。
++- **杏仁水**：
++  - 喝下后 60 s 内它不会抓你，8 m 内的钝人会离开；正被拖、被按时立即挣脱，拖拽中会回到墙这一侧。
++  - 用滋水枪的杏仁水滋中它，它会逃离并受惊 30 s。
++  - 地上的杏仁水 3 m 内不会被选作潜伏点；玩家站在杏仁水 2.5 m 内时，它不会伸手。
++- **还手**：抓取或拖拽中被打会立刻松手，拖拽中的玩家回到原位。平时挨打也会逃离。
++- **携物**：按实体 id 确定，约 40% 携带罐头、电池、绷带、荧光棒、保险丝、咖啡或手电筒之一，被击杀时掉落（含联机掉落同步，沿用原有 `mpDrop`）。
++- 钝人不走通用听觉、追击和近战分支；通用的穿墙刮擦声也跳过钝人，改由 dullerAI 自己发出（逃离时静音）。
++
++## 钩子
++- `entityAI.ts`：`beginDullerFrame`、`updateDuller`（`generic` 分支）；钝人跳过 `noiseEvent` 和通用刮擦声。
++- `combat.ts`：杏仁水滋中调用 `dullerSquirted`；`killCheck` 掉落携带物。
++- `inventory.ts`：饮用杏仁水（包括从滋水枪储罐里喝）调用 `dullerAlmondScent`。
++- `entitiesMesh.ts` / `renderer.ts`：新模型、动画、携带物挂载（携带物变化时重建模型）；旧的方块模型和闲置垂臂动画已移除。
++- `humanoid.ts`：图鉴文案按维基重写（行为、应对、生物学特征、「墙壁捕手」）。
++
++## 验证
++- `scripts/check-dullers.ts`：18 项无头行为验收，全部通过。
++- 预览页 `proto-duller.html?mode=poses|close|wall`；其中 `wall` 复刻附图构图。
++- 未进行实机游玩。需要人工检查：真实关卡里拖拽落点与碰撞、多层楼的楼层带、墙面污痕在薄墙或斜墙上的位置。
+diff --git a/app/proto-duller.html b/app/proto-duller.html
+new file mode 100644
+index 0000000..0adade2
+--- /dev/null
++++ b/app/proto-duller.html
+@@ -0,0 +1,5 @@
++<!doctype html>
++<html lang="zh-CN"><head><meta charset="UTF-8" /><title>钝人重制预览</title>
++<style>html,body{margin:0;background:#000;overflow:hidden;font-family:'Noto Sans CJK SC',sans-serif}#lab{position:fixed;inset:0;pointer-events:none}
++.l{position:absolute;transform:translateX(-50%);color:#f5ecc8;font-size:17px;font-weight:700;text-shadow:0 1px 3px #000;white-space:nowrap;text-align:center}.s{font-size:12px;font-weight:400;color:#d8d0b0}</style></head>
++<body><div id="lab"></div><script type="module" src="/src/proto/dullerProto.ts"></script></body></html>
+diff --git a/app/scripts/check-dullers.ts b/app/scripts/check-dullers.ts
+new file mode 100644
+index 0000000..8f0b63f
+--- /dev/null
++++ b/app/scripts/check-dullers.ts
+@@ -0,0 +1,120 @@
++// v63：钝人重制——行为机制无头验收（模拟引擎：x∈[1,2) 为一堵墙，玩家在左侧走廊，钝人从右侧走廊下手）
++// 运行：npx esbuild scripts/check-dullers.ts --bundle --platform=node --format=esm --outfile=.cache/check-dullers.mjs && node .cache/check-dullers.mjs
++import { makeEntity, type Entity } from '../src/game/entities'
++import { beginDullerFrame, dullerAlmondScent, dullerDrop, dullerSquirted, initDuller, resetDullerFrame, updateDuller } from '../src/game/engine/dullerAI'
++let fails = 0
++const ok = (c: boolean, m: string) => { console.log(`${c ? '✔' : '✘'} ${m}`); if (!c) fails++ }
++const inWall = (x: number) => x >= 1 && x < 2
++function world(wall = true) {
++  resetDullerFrame()
++  const msgs: string[] = []
++  const eng: any = {
++    levelDef: { id: 1 },
++    player: { x: 0.5, y: 0, z: 0, hp: 100, stamina: 100, sanity: 100, slowT: 0, crouching: false }, playerNoiseT: 0,
++    map: { entities: [] as Entity[], items: [] as any[], w: 0, h: 0 },
++    input: { sprint: false }, dev: { invisible: false }, camShake: 0,
++    yaw: Math.PI, hurt: 0, almond: 0,
++    msg: (t: string) => msgs.push(t),
++    los(x0: number, y0: number, x1: number, y1: number) {
++      if (!wall) return true
++      const n = Math.ceil(Math.hypot(x1 - x0, y1 - y0) * 20)
++      for (let i = 1; i < n; i++) { const t = i / n; if (inWall(x0 + (x1 - x0) * t)) return false }
++      return true
++    },
++    viewAngle(x: number, y: number) { const a = Math.atan2(y - this.player.y, x - this.player.x); let d = Math.abs(a - this.yaw); if (d > Math.PI) d = 2 * Math.PI - d; return d },
++    hasItem(t: string) { return t === 'almond' && this.almond > 0 },
++    entityWalkH: (_m: unknown, tx: number) => (wall && tx === 1 ? null : 0),
++    wanderTarget(e: Entity) { e.targetX = e.x + 0.5; e.targetY = e.y; e.stateT = 3 },
++    stepEntity(e: Entity, sp: number, dt: number) { const dx = e.targetX - e.x, dy = e.targetY - e.y, d = Math.hypot(dx, dy); if (d < 0.3) return true; const k = Math.min(d, sp * dt) / d; e.x += dx * k; e.y += dy * k; return false },
++    faceToward(e: Entity, x: number, y: number) { e.facing = Math.atan2(y - e.y, x - e.x) },
++    hurtPlayer(dmg: number) { this.hurt += dmg; this.player.hp -= dmg },
++  }
++  return { eng, msgs }
++}
++function spawn(eng: any, x: number, y: number, carry: string | null = null) { const e = makeEntity('duller', x, y); eng.map.entities.push(e); initDuller(eng, e, carry); return e }
++function run(eng: any, secs: number, each?: (t: number) => void) {
++  const dt = 1 / 30
++  for (let t = 0; t < secs; t += dt) {
++    each?.(t); beginDullerFrame(eng, dt)
++    for (const e of eng.map.entities) { if (e.dead) continue; e.attackCd -= dt; e.stateT -= dt; updateDuller(eng, e, dt, Math.hypot(e.x - eng.player.x, e.y - eng.player.y), 1) }
++  }
++}
++const phases = (e: Entity, eng: any, secs: number) => { const seen = new Set<string>(); run(eng, secs, () => seen.add(e.dl!.phase)); return seen }
++
++{ // 隔墙潜伏 → 伸臂 → 拖穿墙壁
++  const { eng, msgs } = world(); eng.yaw = Math.PI // 背对墙
++  const e = spawn(eng, 6, 1)
++  const seen = phases(e, eng, 8)
++  ok(seen.has('lurk') && seen.has('reach'), `潜伏到墙后并伸臂（${[...seen].join('→')}）`)
++  ok(seen.has('drag') && eng.player.x >= 2, `把玩家拖穿墙壁到另一侧走廊（x=${eng.player.x.toFixed(2)}）`)
++  ok(eng.hurt > 0 && eng.player.sanity < 100, `抓取/拖拽造成伤害与理智损失（${eng.hurt}）`)
++  ok(msgs.some((m: string) => m.includes('拖')), '提示：被拖进墙')
++  ok(seen.has('flee'), '得手后被看清，随即逃离')
++}
++{ // 伸臂时被注意到 → 缩回、无声逃离
++  const { eng, msgs } = world(); eng.yaw = Math.PI
++  const e = spawn(eng, 6, 1)
++  run(eng, 8, () => { if (e.dl!.phase === 'reach' && e.dl!.reach > 0.3) eng.yaw = Math.atan2(e.y - eng.player.y, e.x - eng.player.x) })
++  ok(eng.hurt === 0 && eng.player.x < 1, `回头看见伸出的手臂 → 未被抓（hurt=${eng.hurt}）`)
++  ok(msgs.some((m: string) => m.includes('缩了回去')), '提示：被盯住后缩回')
++}
++{ // 空旷处被直视 → 逃离；刻意走向它 → 逃离
++  const { eng } = world(false); eng.yaw = 0
++  const e = spawn(eng, 6, 0)
++  run(eng, 0.3)
++  ok(e.dl!.phase === 'flee', `视线内被直视即逃（${e.dl!.phase}）`)
++  const x0 = e.x; run(eng, 1); ok(e.x - x0 > 1.3 * 2, `逃离时急速奔跑（1 秒 ${(e.x - x0).toFixed(2)} 米）`)
++  const w2 = world(false); w2.eng.yaw = Math.PI / 2
++  const f = spawn(w2.eng, 5, 0)
++  run(w2.eng, 1, () => { w2.eng.player.x += 0.07 }) // 侧着身子朝它走（不直视）
++  ok(f.dl!.phase === 'flee', `刻意靠近 → 逃离（${f.dl!.phase}）`)
++}
++{ // 喝杏仁水：不会被抓；正在被拖时立即挣脱
++  const { eng } = world(); eng.yaw = Math.PI
++  spawn(eng, 6, 1)
++  dullerAlmondScent(eng)
++  run(eng, 8)
++  ok(eng.hurt === 0, '饮用杏仁水后不会被抓')
++  const w = world(); w.eng.yaw = Math.PI
++  const e = spawn(w.eng, 6, 1)
++  run(w.eng, 8, () => { if (e.dl!.phase === 'drag' && e.dl!.t > 0.3) dullerAlmondScent(w.eng) })
++  ok(w.eng.player.x < 1 && e.dl!.phase !== 'drag', `拖拽中喝杏仁水 → 挣脱并回到墙这一侧（x=${w.eng.player.x.toFixed(2)}）`)
++}
++{ // 杏仁水滋中 → 逃离 + 长时间不再狩猎
++  const { eng } = world()
++  const e = spawn(eng, 3, 1)
++  dullerSquirted(eng, e)
++  ok(e.dl!.phase === 'flee' && e.dl!.spook >= 30, '杏仁水滋中 → 缩回墙里逃走')
++}
++{ // 地上的杏仁水：玩家站在旁边就不会被伸手
++  const { eng } = world(); eng.yaw = Math.PI
++  eng.map.items.push({ id: 1, type: 'almond', x: 0.6, y: 0.3 })
++  spawn(eng, 6, 1)
++  run(eng, 8)
++  ok(eng.hurt === 0, '玩家站在地上的杏仁水旁 → 钝人不伸手')
++}
++{ // 身上带杏仁水：伸臂前摇更长
++  const a = world(); a.eng.yaw = Math.PI
++  const e1 = spawn(a.eng, 6, 1); let t1 = 0
++  run(a.eng, 8, () => { if (e1.dl!.phase === 'reach') t1 = Math.max(t1, e1.dl!.t) })
++  const b = world(); b.eng.yaw = Math.PI; b.eng.almond = 1
++  const e2 = spawn(b.eng, 6, 1); let t2 = 0
++  run(b.eng, 8, () => { if (e2.dl!.phase === 'reach') t2 = Math.max(t2, e2.dl!.t) })
++  ok(t2 > t1 + 0.25, `带着杏仁水时它伸手前会犹豫（${t1.toFixed(2)}s → ${t2.toFixed(2)}s）`)
++}
++{ // 拖拽中被攻击 → 松手，玩家回到原处
++  const { eng } = world(); eng.yaw = Math.PI
++  const e = spawn(eng, 6, 1)
++  run(eng, 8, () => { if (e.dl!.phase === 'drag' && e.dl!.t > 0.3 && e.hp === e.def.hp) e.hp -= 10 })
++  ok(eng.player.x < 1 && e.dl!.phase !== 'drag', `挨打即松手（x=${eng.player.x.toFixed(2)}）`)
++}
++{ // 携物：按 id 确定性约四成携带，击杀掉落
++  const { eng } = world()
++  let n = 0
++  for (let i = 0; i < 200; i++) { const e = makeEntity('duller', 0, 0); if (initDuller(eng, e).carry) n++ }
++  ok(n > 40 && n < 120, `约四成钝人攥着随机物品（${n}/200）`)
++  const e = spawn(eng, 3, 0, 'canned')
++  ok(dullerDrop(e) === 'canned' && !e.dl!.carry, '被杀时掉落携带物')
++}
++console.log(fails ? `\n${fails} 项失败` : '\n全部通过')
++process.exit(fails ? 1 : 0)
+diff --git a/app/src/game/core/audio.ts b/app/src/game/core/audio.ts
+index 925e51c..c52cede 100644
+--- a/app/src/game/core/audio.ts
++++ b/app/src/game/core/audio.ts
+@@ -594,6 +594,28 @@ export class GameAudio {
+     lfo.start(t); lfo.stop(t + dur + 0.02)
+   }
+ 
++  // v63：钝人手臂「切」出墙体——灰泥碎裂的闷响 + 关节咔哒 + 拉长的筋腱摩擦
++  dullerReach(vol = 1) {
++    if (!this.ctx || !this.sfx || vol <= 0.02) return
++    const t = this.ctx.currentTime
++    const n = this.noiseSrc()
++    const lp = this.ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.setValueAtTime(700, t); lp.frequency.exponentialRampToValueAtTime(180, t + 0.5)
++    const g = this.ctx.createGain()
++    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.16 * vol, t + 0.03); g.gain.exponentialRampToValueAtTime(0.001, t + 0.6)
++    n.connect(lp).connect(g).connect(this.sfx); n.start(t); n.stop(t + 0.62)
++    for (let i = 0; i < 5; i++) { // 关节咔哒
++      const ct = t + 0.12 + i * (0.07 + Math.random() * 0.05)
++      const o = this.ctx.createOscillator(); o.type = 'square'; o.frequency.setValueAtTime(1800 + Math.random() * 900, ct); o.frequency.exponentialRampToValueAtTime(300, ct + 0.025)
++      const cg = this.ctx.createGain(); cg.gain.setValueAtTime(0.05 * vol, ct); cg.gain.exponentialRampToValueAtTime(0.0005, ct + 0.03)
++      o.connect(cg).connect(this.sfx); o.start(ct); o.stop(ct + 0.035)
++    }
++    const s2 = this.ctx.createOscillator(); s2.type = 'sawtooth' // 筋腱拉伸
++    s2.frequency.setValueAtTime(70, t + 0.1); s2.frequency.linearRampToValueAtTime(140, t + 0.8)
++    const bp = this.ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 420; bp.Q.value = 4
++    const sg = this.ctx.createGain(); sg.gain.setValueAtTime(0.0001, t + 0.1); sg.gain.exponentialRampToValueAtTime(0.05 * vol, t + 0.3); sg.gain.exponentialRampToValueAtTime(0.0005, t + 0.85)
++    s2.connect(bp).connect(sg).connect(this.sfx); s2.start(t + 0.1); s2.stop(t + 0.86)
++  }
++
+   whisper(vol = 1) {
+     if (!this.ctx || !this.sfx) return
+     const t = this.ctx.currentTime
+diff --git a/app/src/game/engine/combat.ts b/app/src/game/engine/combat.ts
+index 87efbbd..6c968f8 100644
+--- a/app/src/game/engine/combat.ts
++++ b/app/src/game/engine/combat.ts
+@@ -8,6 +8,7 @@ import { audio } from '../core/audio'
+ import { recordEntityEncounter, type Entity } from '../entities'
+ import type { Engine, Projectile } from '../engine'
+ import { clearRunSlots } from './save'
++import { dullerDrop, dullerSquirted } from './dullerAI'
+ 
+ export function hurtPlayer(eng: Engine, dmg: number, source: string) {
+   if (eng.dev.god) return
+@@ -151,6 +152,16 @@ export function killCheck(eng: Engine, e: Entity) {
+     m.items.push({ id, type: 'dryshrimp', x: e.x, y: e.y })
+     mpDrop(eng, id, 'dryshrimp', e.x, e.y) // v59：联机掉落同步
+   }
++  // v63：钝人手里攥着的随机物品随尸体落地
++  if (e.def.type === 'duller') {
++    const c = dullerDrop(e)
++    if (c) {
++      const id = Date.now() % 100000 + Math.random()
++      m.items.push({ id, type: c, x: e.x, y: e.y })
++      mpDrop(eng, id, c, e.x, e.y)
++      eng.msg(`钝人攥着的${ITEMS[c]?.name ?? '东西'}掉在了地上。`, 'loot')
++    }
++  }
+ }
+ 
+ export function attack(eng: Engine) {
+@@ -495,6 +506,7 @@ export function squirt(eng: Engine) {
+       }
+       e.stunT = 0.4
+       audio.hit()
++      if (eng.squirtTank === 'almond' && e.def.type === 'duller' && !e.dead) dullerSquirted(eng, e) // v63：钝人厌恶杏仁水
+       eng.msg(eng.squirtTank === 'liquidpain' ? `水线正中${e.def.name}——液态痛苦嘶嘶地腐蚀着它的表皮。` : eng.squirtTank === 'cashew' ? `水线正中${e.def.name}——苦涩的腰果水把它灼得发颤。` : `水线正中${e.def.name}，甜腻的杏仁水四溅。`, 'system')
+     } else {
+       eng.msg(`水线滋了${e.def.name}一身清水——什么效果也没有。`, 'system')
+diff --git a/app/src/game/engine/dullerAI.ts b/app/src/game/engine/dullerAI.ts
+new file mode 100644
+index 0000000..02daf59
+--- /dev/null
++++ b/app/src/game/engine/dullerAI.ts
+@@ -0,0 +1,287 @@
++// v63：钝人（Entity 6）专属 AI——依据中文维基 Entity 6：
++//  · 胆怯：会逃离任何主动靠近它的东西；被流浪者「注意到」（直视）时狩猎战术失效，悄无声息地逃走。
++//  · 隔墙狩猎：在与猎物一墙之隔的走廊里潜伏，把修长的手臂「切」出墙体，抓住另一边的猎物拖进自己所在的走廊。
++//  · 拖入之后做什么未知：游戏里表现为把人按在地上撕扯片刻，随即因被看清而逃走。
++//  · 携物：有时手里攥着看似随机的物品，带着它照样急速奔跑；被杀死时掉落。
++//  · 厌恶杏仁水：避开地上的杏仁水；饮用杏仁水后一段时间内不会被它抓取，附近的钝人会逃离；
++//    用杏仁水滋它会让它缩回墙里逃走；身上带着杏仁水时它伸手前会犹豫（前摇更长，更容易被你注意到）。
++//  · 受到攻击（未在抓取中）会逃离威胁；体质异常强壮——拖拽无法挣脱，只能靠攻击它或杏仁水打断。
++// 运行时状态保存在 e.dl（不入存档/联机）。
++import { audio } from '../core/audio'
++import { ITEMS } from '../content/items'
++import type { Entity } from '../entities'
++import type { Engine } from '../engine'
++import { canOccupy } from '../core/player'
++import { bandOfPlayerZ } from '../world/mapgen'
++
++export type DullerPhase = 'roam' | 'lurk' | 'reach' | 'drag' | 'hold' | 'flee'
++export interface DullerState {
++  phase: DullerPhase
++  t: number
++  spook: number // 受惊冷却：期间不再对玩家狩猎
++  lastHp: number
++  carry?: string // 携带的随机物品
++  // 潜伏点（墙另一侧）与拖拽终点
++  lx: number; ly: number; retarget: number
++  wait: number
++  fromX: number; fromY: number // 抓取时玩家位置（拖拽起点/打断时回弹点）
++  toX: number; toY: number // 拖拽终点（钝人所在走廊里可站立的点）
++  hitT: number
++  // 渲染姿态量
++  reach: number // 0..1 手臂伸出程度
++  reachLen: number // 手臂需要伸到的水平距离（米）
++  wallD: number // 沿朝向到墙面的距离（米；<0 表示没有墙）
++  sway: number // 摇晃幅度
++  run: number // 奔逃姿态
++}
++
++const CARRY_POOL = ['canned', 'battery', 'bandage', 'glowstick', 'fuse', 'coffee', 'flashlight']
++const F = { px: 0, py: 0, vx: 0, vy: 0, init: false, scentT: 0, told: new Set<string>() }
++export function beginDullerFrame(eng: Engine, dt: number) {
++  const p = eng.player
++  if (!F.init || dt <= 0) { F.px = p.x; F.py = p.y; F.init = true }
++  const vx = dt > 0 ? (p.x - F.px) / dt : 0, vy = dt > 0 ? (p.y - F.py) / dt : 0
++  F.vx = F.vx * 0.7 + Math.max(-12, Math.min(12, vx)) * 0.3
++  F.vy = F.vy * 0.7 + Math.max(-12, Math.min(12, vy)) * 0.3
++  F.px = p.x; F.py = p.y
++  F.scentT = Math.max(0, F.scentT - dt)
++}
++/** 测试/重开关卡用：清除一次性提示与杏仁水气味 */
++export function resetDullerFrame() { F.init = false; F.scentT = 0; F.told.clear() }
++const once = (eng: Engine, key: string, text: string, kind: 'system' | 'damage' = 'system') => { if (!F.told.has(key)) { F.told.add(key); eng.msg(text, kind) } }
++const setPhase = (s: DullerState, ph: DullerPhase) => { if (s.phase !== ph) { s.phase = ph; s.t = 0 } }
++
++export function initDuller(eng: Engine, e: Entity, carry?: string | null): DullerState {
++  void eng
++  let c = carry === null ? undefined : carry
++  if (carry === undefined) {
++    const r = ((e.id * 2654435761) >>> 0) / 4294967296 // 按实体 id 确定性：约 40% 携带随机物品
++    if (r < 0.4) { const pick = CARRY_POOL[Math.floor(r / 0.4 * CARRY_POOL.length)]; if (ITEMS[pick]) c = pick }
++  }
++  const s: DullerState = { phase: 'roam', t: 0, spook: 0, lastHp: e.hp, carry: c, lx: e.x, ly: e.y, retarget: 0, wait: 0, fromX: 0, fromY: 0, toX: 0, toY: 0, hitT: 0, reach: 0, reachLen: 1, wallD: -1, sway: 1, run: 0 }
++  e.dl = s
++  return s
++}
++
++/** 饮用杏仁水（inventory 钩子）：60 秒内钝人不会抓你，靠近的会逃走；正被抓着时立刻挣脱 */
++export function dullerAlmondScent(eng: Engine) {
++  F.scentT = 60
++  for (const e of eng.map?.entities ?? []) {
++    if (e.dead || e.def.type !== 'duller' || !e.dl) continue
++    if (e.dl.phase === 'drag' || e.dl.phase === 'hold' || e.dl.phase === 'reach') {
++      if (e.dl.phase === 'drag') { eng.player.x = e.dl.fromX; eng.player.y = e.dl.fromY }
++      flee(eng, e, e.dl, 20)
++      eng.msg('甜腻的杏仁水气味一冒出来，那双灰色的手就像被烫到一样松开、缩了回去。', 'system')
++    }
++  }
++}
++/** 杏仁水滋中（combat 钩子） */
++export function dullerSquirted(eng: Engine, e: Entity) {
++  const s = e.dl ?? initDuller(eng, e)
++  if (s.phase === 'drag') { eng.player.x = s.fromX; eng.player.y = s.fromY }
++  flee(eng, e, s, 30)
++  once(eng, 'dsquirt', '杏仁水溅在钝人身上——它像被烫伤一样抽搐着缩回墙里，无声地逃远了。')
++}
++/** 击杀掉落携带物（combat.killCheck 钩子）；返回掉落的物品类型 */
++export function dullerDrop(e: Entity): string | undefined {
++  const c = e.dl?.carry
++  if (e.dl) e.dl.carry = undefined
++  return c
++}
++
++function flee(eng: Engine, e: Entity, s: DullerState, spook: number) {
++  void eng; void e
++  setPhase(s, 'flee'); s.spook = Math.max(s.spook, spook); s.wait = 0
++}
++
++/** 杏仁水驱避区：地上的杏仁水（含投掷落地）周围 3 米 */
++function almondNear(eng: Engine, x: number, y: number, r = 3): boolean {
++  for (const it of eng.map?.items ?? []) if ((it.type === 'almond') && Math.hypot(it.x - x, it.y - y) < r) return true
++  return false
++}
++
++/** 玩家能否站在 (x,y)：瓦片可走 + 真实碰撞体积（模拟地图无 tiles 时只看瓦片） */
++function standable(eng: Engine, x: number, y: number): boolean {
++  const m = eng.map!, p = eng.player
++  const band = m.tiles ? bandOfPlayerZ(m, p.z) : 0
++  if (eng.entityWalkH(m, Math.floor(x), Math.floor(y), band) === null) return false
++  return !m.tiles || canOccupy(m, x, y, undefined, { z: p.z, band })
++}
++/** 寻找墙另一侧的潜伏点：离玩家 1.5~2.5 米、与玩家之间被墙隔开、本身可站立 */
++function findLurk(eng: Engine, e: Entity): [number, number] | null {
++  const p = eng.player, m = eng.map!
++  let best: [number, number] | null = null, bestScore = Infinity
++  for (let i = 0; i < 24; i++) {
++    const a = (i / 24) * Math.PI * 2
++    for (const r of [1.6, 2.0, 2.4]) {
++      const x = p.x + Math.cos(a) * r, y = p.y + Math.sin(a) * r
++      if (x < 0.3 || y < 0.3 || (m.w && (x > m.w - 0.3 || y > m.h - 0.3))) continue
++      if (!standable(eng, x, y)) continue
++      if (eng.los(p.x, p.y, x, y)) continue // 必须隔着墙
++      if (almondNear(eng, x, y)) continue
++      // 越靠近钝人当前位置越好；更偏好正好在墙后（2m 左右）
++      const sc = Math.hypot(x - e.x, y - e.y) + Math.abs(r - 2) * 0.8
++      if (sc < bestScore) { bestScore = sc; best = [x, y] }
++    }
++  }
++  return best
++}
++
++/** 沿 (e→player) 方向估算墙面距离：从 e 出发步进，找到第一个「玩家可见」的点前的墙面 */
++function wallDist(eng: Engine, e: Entity, d: number): number {
++  const p = eng.player
++  if (d < 0.05) return -1
++  const ux = (p.x - e.x) / d, uy = (p.y - e.y) / d
++  for (let s = 0.2; s < d; s += 0.1) {
++    if (eng.los(p.x, p.y, e.x + ux * s, e.y + uy * s)) return Math.max(0.15, s - 0.05)
++  }
++  return -1
++}
++
++export function updateDuller(eng: Engine, e: Entity, dt: number, d: number, dmgMult: number) {
++  const p = eng.player, def = e.def
++  const s = e.dl ?? initDuller(eng, e)
++  s.t += dt; s.spook = Math.max(0, s.spook - dt); s.retarget -= dt
++  const hurt = e.hp < s.lastHp
++  s.lastHp = e.hp
++  const zOk = Math.abs(e.z - p.z) < 1.4
++  const los = zOk && d < 20 && eng.los(e.x, e.y, p.x, p.y)
++  // 「注意到它」：视线内直视；或它正把手伸出墙时朝它的方向看
++  const view = eng.viewAngle(e.x, e.y)
++  const noticed = zOk && ((los && d < 9 && view < 0.42) || ((s.phase === 'reach' || s.phase === 'lurk') && s.reach > 0.15 && d < 5 && view < 0.55))
++  // 「刻意靠近」：在它看得见的情况下朝它走/跑过去
++  const toX = (e.x - p.x) / Math.max(0.1, d), toY = (e.y - p.y) / Math.max(0.1, d)
++  const approach = los && d < 8 && F.vx * toX + F.vy * toY > 1.1
++  const scented = F.scentT > 0
++  const invisible = !!eng.dev?.invisible
++  let speed = 0, tx = e.x, ty = e.y, face: [number, number] | null = null
++
++  if (hurt && s.phase !== 'flee') {
++    if (s.phase === 'drag') { p.x = s.fromX; p.y = s.fromY } // 被打断：回到墙的这一侧
++    flee(eng, e, s, 25)
++    once(eng, 'dhurt', '钝人挨了一下就松手了——它不跟你缠斗，一转身没进墙里。')
++  }
++
++  switch (s.phase) {
++    case 'roam': {
++      e.state = 'wander'
++      if (e.stateT <= 0 || Math.hypot(e.targetX - e.x, e.targetY - e.y) < 0.4) eng.wanderTarget(e)
++      tx = e.targetX; ty = e.targetY; speed = def.speed * 0.45
++      if (almondNear(eng, e.x, e.y)) { const a = Math.max(0.1, d); tx = e.x + (e.x - p.x) / a * 3; ty = e.y + (e.y - p.y) / a * 3 }
++      if (!invisible && s.spook <= 0 && !scented && d < 14 && zOk) {
++        if (noticed || approach) { flee(eng, e, s, 12); break }
++        setPhase(s, 'lurk'); s.retarget = 0
++      }
++      break
++    }
++    case 'lurk': {
++      e.state = 'investigate'
++      if (invisible || d > 18 || !zOk) { setPhase(s, 'roam'); break }
++      if (noticed || approach) {
++        flee(eng, e, s, 15)
++        once(eng, 'dnotice', '你注意到了它——那个没有脸的灰色人形僵了一瞬，随即一声不响地溜走了。')
++        break
++      }
++      if (scented && d < 8) { flee(eng, e, s, 10); once(eng, 'dscent', '钝人在杏仁水的气味边缘停住，转身走开了。'); break }
++      if (s.retarget <= 0) {
++        const lp = findLurk(eng, e)
++        s.retarget = 0.6
++        if (lp) { s.lx = lp[0]; s.ly = lp[1] } else { s.lx = NaN }
++      }
++      if (Number.isNaN(s.lx)) {
++        // 附近没有可以隔墙下手的位置：远远躲在视线外跟着
++        if (los) { const a = Math.max(0.1, d); tx = e.x + (e.x - p.x) / a * 2; ty = e.y + (e.y - p.y) / a * 2; speed = def.speed * 0.5 }
++        else if (d > 7) { tx = p.x; ty = p.y; speed = def.speed * 0.6 }
++        break
++      }
++      const dl = Math.hypot(s.lx - e.x, s.ly - e.y)
++      if (dl > 0.35) { tx = s.lx; ty = s.ly; speed = def.speed * (dl > 4 ? 1.1 : 0.75); s.wait = 0 }
++      else {
++        face = [p.x, p.y]
++        s.wait += dt
++        if (!los && d < 2.8 && s.wait > 0.6 && !almondNear(eng, p.x, p.y, 2.5)) {
++          setPhase(s, 'reach')
++          audio.dullerReach(Math.max(0.3, 1 - d / 8))
++          if (eng.hasItem?.('almond')) once(eng, 'dhesit', '墙里传来一阵迟疑的刮擦声——它似乎嗅到了你身上的杏仁水。')
++        }
++      }
++      break
++    }
++    case 'reach': {
++      e.state = 'attack'; face = [p.x, p.y]
++      const wind = eng.hasItem?.('almond') ? 1.25 : 0.85
++      if (noticed) { flee(eng, e, s, 18); once(eng, 'dspot', '你正好看见两条灰色长臂从墙面里「切」了出来——被你盯住的瞬间，它们缩了回去。'); break }
++      if (scented) { flee(eng, e, s, 10); break }
++      if (d > 3.1 || los) { setPhase(s, 'lurk'); s.retarget = 0; break }
++      if (s.t >= wind) {
++        setPhase(s, 'drag'); s.fromX = p.x; s.fromY = p.y; s.hitT = 0
++        // 拖拽终点：钝人跟前朝向玩家一侧、可站立的点；找不到就落在钝人脚边
++        const ux = (p.x - e.x) / Math.max(0.1, d), uy = (p.y - e.y) / Math.max(0.1, d)
++        s.toX = e.x; s.toY = e.y
++        for (const [r, side] of [[0.7, 0], [0.5, 0], [0.5, 0.5], [0.5, -0.5], [0.35, 0]]) {
++          const x = e.x + ux * r - uy * side, y = e.y + uy * r + ux * side
++          if (standable(eng, x, y) && !eng.los(s.fromX, s.fromY, x, y)) { s.toX = x; s.toY = y; break }
++        }
++        eng.hurtPlayer(def.damage * 0.5 * dmgMult, def.name)
++        p.sanity = Math.max(0, p.sanity - 8)
++        eng.camShake = Math.min(1, (eng.camShake ?? 0) + 0.8)
++        eng.msg('墙里猛地伸出一双灰色的长手，攥住你往墙里拖！', 'damage')
++      }
++      break
++    }
++    case 'drag': {
++      e.state = 'attack'; face = [s.fromX, s.fromY]
++      // 拖过墙：0.9 秒内把玩家从原位拖到钝人跟前（墙的另一侧）
++      const k = Math.min(1, s.t / 0.9), ease = k * k * (3 - 2 * k)
++      p.x = s.fromX + (s.toX - s.fromX) * ease; p.y = s.fromY + (s.toY - s.fromY) * ease
++      p.slowT = Math.max(p.slowT ?? 0, 0.5)
++      if (k >= 1) {
++        setPhase(s, 'hold'); s.hitT = 0.4
++        eng.hurtPlayer(def.damage * dmgMult, def.name)
++        eng.camShake = Math.min(1, (eng.camShake ?? 0) + 0.6)
++        eng.msg('你被硬生生拖穿了墙壁，摔在另一条走廊里。它用那双长手把你按在地上。', 'damage')
++      }
++      break
++    }
++    case 'hold': {
++      e.state = 'attack'; face = [p.x, p.y]
++      p.slowT = Math.max(p.slowT ?? 0, 0.4)
++      s.hitT -= dt
++      if (s.hitT <= 0 && s.t < 1.5) { s.hitT = 0.7; eng.hurtPlayer(def.damage * 0.4 * dmgMult, def.name) }
++      if (s.t >= 1.6) { flee(eng, e, s, 20); once(eng, 'dafter', '它松开手，像意识到自己被看清了一样，无声地退进墙里。') }
++      break
++    }
++    case 'flee': {
++      e.state = 'stunned'
++      // 急速奔逃（携物也不减速），穿墙而去
++      const a = Math.max(0.1, d); tx = e.x + (e.x - p.x) / a * 6; ty = e.y + (e.y - p.y) / a * 6
++      speed = def.speed * 2.6
++      if (s.t > 5 || (d > 16 && s.t > 2)) { setPhase(s, 'roam'); eng.wanderTarget(e) }
++      break
++    }
++  }
++
++  if (speed > 0) {
++    e.targetX = tx; e.targetY = ty
++    const stuck = eng.stepEntity(e, speed, dt)
++    if (stuck && s.phase === 'roam') eng.wanderTarget(e)
++    e.animT += dt * speed
++  }
++  if (face) eng.faceToward(e, face[0], face[1], dt, 6)
++  else if (speed > 0) eng.faceToward(e, tx, ty, dt, 6)
++
++  // 穿墙沙沙声：潜伏/游荡时可隔墙听见；逃离时悄无声息
++  if ((s.phase === 'roam' || s.phase === 'lurk') && speed > 0 && d < 14) {
++    e.scrapeT = (e.scrapeT ?? Math.random() * 0.8) - dt
++    if (e.scrapeT <= 0) { e.scrapeT = 0.8; audio.scrape(Math.min(1, (1 - d / 14) * (s.phase === 'lurk' ? 0.8 : 1))) }
++  }
++
++  // 外观姿态量
++  const k = Math.min(1, dt * 6)
++  const want = s.phase === 'reach' ? Math.min(1, s.t / 0.5) : s.phase === 'drag' || s.phase === 'hold' ? 1 : 0
++  s.reach += (want - s.reach) * (want > s.reach ? Math.min(1, dt * 8) : k)
++  s.reachLen = s.phase === 'drag' || s.phase === 'hold' ? Math.max(0.6, Math.hypot(p.x - e.x, p.y - e.y)) : Math.max(0.6, Math.min(3, d))
++  s.wallD = s.reach > 0.02 ? wallDist(eng, e, d) : -1
++  s.run += ((s.phase === 'flee' ? 1 : 0) - s.run) * k
++  s.sway += ((s.phase === 'reach' || s.phase === 'drag' || s.phase === 'hold' ? 0.2 : 1) - s.sway) * k
++}
+diff --git a/app/src/game/engine/entityAI.ts b/app/src/game/engine/entityAI.ts
+index e92d9be..8818878 100644
+--- a/app/src/game/engine/entityAI.ts
++++ b/app/src/game/engine/entityAI.ts
+@@ -12,6 +12,7 @@ import { chunkKey, CS } from '../world/infinite'
+ import { audio } from '../core/audio'
+ import type { Engine } from '../engine'
+ import { beginHoundFrame, houndHear, updateHound } from './houndAI'
++import { beginDullerFrame, updateDuller } from './dullerAI'
+ import { beginSmilerFrame, flushSmilerSpawns, smilerHear, updateSmiler } from './smilerAI'
+ 
+ // v51：人制品售货机——看过背面后，玩家背对它（视线锥外且 10m 内）即活化追击；受到攻击也会活化
+@@ -67,6 +68,7 @@ export function noiseEvent(eng: Engine, x: number, y: number, radius: number, sp
+       continue
+     }
+     if (e.def.type === 'smiler') { smilerHear(eng, e, x, y, radius, sprint); continue }
++    if (e.def.type === 'duller') continue // v63：钝人不靠听觉追击，由 dullerAI 按距离潜伏
+     if (e.def.type === 'hound') { houndHear(eng, e, x, y, radius, sprint); continue } // v62 // v61：笑魇自有听觉
+     if (e.def.passive) continue // 被动实体（无面灵）不循声索敌——只有被攻击才反击
+     const d = Math.hypot(e.x - x, e.y - y)
+@@ -198,6 +200,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
+   updateMothDoors(eng)
+   beginSmilerFrame(eng, dt, lightOn)
+   beginHoundFrame(eng, dt)
++  beginDullerFrame(eng, dt)
+   for (const e of m.entities) {
+     // 死亡动画计时（倒地/消散后移除）
+     if (e.dead) { e.deathT -= dt; continue }
+@@ -396,6 +399,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
+     generic: {
+     if (def.type === 'smiler') { updateSmiler(eng, e, dt, d, dmgMult, l3); break generic }
+     if (def.type === 'hound') { updateHound(eng, e, dt, d, dmgMult, l3); break generic } // v62：猎犬专属 AI
++    if (def.type === 'duller') { updateDuller(eng, e, dt, d, dmgMult); break generic } // v63：钝人专属 AI（隔墙抓取/受注视逃离）
+     // —— 特殊行为 ——
+     // 笑魇：只在黑暗中逼近；手电照亮时后退
+     if (def.darkAmbusher && lightOn && d < 7 && eng.los(e.x, e.y, p.x, p.y)) {
+@@ -685,7 +689,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
+     } // generic
+ 
+     // 穿墙实体（钝人）：行动时发出刺耳的沙沙声，隔着墙也能听见
+-    if (def.phases && (e.state === 'wander' || e.state === 'investigate' || e.state === 'chase') && d < 14) {
++    if (def.phases && def.type !== 'duller' && (e.state === 'wander' || e.state === 'investigate' || e.state === 'chase') && d < 14) {
+       e.scrapeT = (e.scrapeT ?? Math.random() * 0.7) - dt
+       if (e.scrapeT <= 0) {
+         e.scrapeT = 0.7
+@@ -1001,4 +1005,4 @@ export function stepEntity(eng: Engine, e: Entity, speed: number, dt: number): b
+ export function meleeZOk(eng: Engine, e: Entity): boolean {
+   return Math.abs(e.z - eng.player.z) < 1
+ }
+-
++
+diff --git a/app/src/game/engine/inventory.ts b/app/src/game/engine/inventory.ts
+index 523d681..25cbe64 100644
+--- a/app/src/game/engine/inventory.ts
++++ b/app/src/game/engine/inventory.ts
+@@ -3,6 +3,7 @@
+ import { ITEMS, itemName, itemUseProfile, type ItemUseProfile } from '../content/items'
+ import { tileAt } from '../world/mapgen'
+ import { audio } from '../core/audio'
++import { dullerAlmondScent } from './dullerAI'
+ import type { Engine, InvSlot, SlotRef, SlotWhere } from '../engine'
+ 
+ // v51：天才糖的「冷知识」（简单但常被人认错）
+@@ -137,7 +138,7 @@ function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = f
+       }
+       eng.squirtAmmo--
+       audio.pickup()
+-      if (eng.squirtTank === 'almond') { eng.player.sanity = Math.min(100, eng.player.sanity + 10); eng.msg('你就着储罐喝了一口杏仁水——甜腻。（理智 +10）', 'loot') }
++      if (eng.squirtTank === 'almond') { eng.player.sanity = Math.min(100, eng.player.sanity + 10); eng.msg('你就着储罐喝了一口杏仁水——甜腻。（理智 +10）', 'loot'); dullerAlmondScent(eng) }
+       else if (eng.squirtTank === 'cashew') { eng.player.sanity = Math.max(0, eng.player.sanity - 10); eng.msg('你就着储罐喝了一口腰果水——苦涩烧喉。（理智 -10）', 'damage') }
+       else if (eng.squirtTank === 'liquidpain') {
+         // 液态痛苦（Object 48）：腐蚀性酸液——自饮重创
+@@ -251,7 +252,7 @@ function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = f
+       else eng.msg('你仔细地做了一遍预防性消毒。目前没有感染疫疾。', 'loot')
+       break
+     }
+-    case 'sanity': p.sanity = Math.min(100, p.sanity + (def.value ?? 30)); applyThirst(def.value3); if (s.type === 'almond' && p.infection < 100) eng.infectionRecoverT = 60; break // v54：杏仁水/市政自来水解渴，腰果水加剧口渴；v55：杏仁水（未满一阶）给 60s「恢复」buff
++    case 'sanity': p.sanity = Math.min(100, p.sanity + (def.value ?? 30)); applyThirst(def.value3); if (s.type === 'almond' && p.infection < 100) eng.infectionRecoverT = 60; if (s.type === 'almond') dullerAlmondScent(eng); break // v54：杏仁水/市政自来水解渴，腰果水加剧口渴；v55：杏仁水（未满一阶）给 60s「恢复」buff
+     case 'sanityeat': { // v54：幸运豆奶——理智 +value、饥饿 +value2、口渴 +value3
+       p.sanity = Math.min(100, p.sanity + (def.value ?? 40))
+       p.hunger = Math.min(100, p.hunger + (def.value2 ?? 20))
+diff --git a/app/src/game/entities/humanoid.ts b/app/src/game/entities/humanoid.ts
+index 2e980c5..5186ceb 100644
+--- a/app/src/game/entities/humanoid.ts
++++ b/app/src/game/entities/humanoid.ts
+@@ -5,17 +5,17 @@ import type { EntityDef } from './types'
+ export const HUMANOID_ENTITIES: Record<string, EntityDef> = {
+   duller: {
+     type: 'duller', name: '钝人', hp: 70, speed: 1.3, damage: 15, sight: 6, hearing: 5, phases: true, hunts: ['dryshrimp'], color: '#2f2f36', habitat: 'indoor',
+-    desc: '约两米高的深灰人形，接近黑但仍能分辨。没有面部，也没有耳朵。手臂长得不成比例，还能继续伸长。站姿摇晃，走法不像人。',
++    desc: '高大的深灰色类人生物，骨架脆弱，没有面部也没有耳朵。修长的手臂能伸出很远，站姿摇摆不定，走路的样子很不自然。',
+     codex: {
+-      no: 'Entity 6「Dullers」', danger: '3 级（中威胁）', habitat: 'Level 1 / Level 4',
+-      behavior: '缓慢但永不停歇地追踪目标，能够径直穿过墙壁——它行动时会产生刺耳的沙沙声，隔着墙也能听见。手臂能伸展到很远的距离，手持两倍自身体重的物品时仍能高速奔跑。',
+-      counter: '不要与它缠斗，也别指望墙壁能挡住它——听声辨位，朝沙沙声的反方向撤离。它畏惧杏仁水：泼出去或砸碎一瓶，通常能让它退开。',
++      no: 'Entity 6「钝人」', danger: '3 级（中威胁）', habitat: '大多数层级（常见于后室的前几个层级）',
++      behavior: '它通常会逃离任何靠近它的东西，但确实怀有敌意。它在与猎物一墙之隔的走廊里狩猎：把修长的手臂「切」出墙体，抓住另一边的猎物，拖进自己所在的走廊。一旦被你注意到，这套战术就无处可施，它会悄无声息地逃走。它有时会攥着看似随机的物品，带着比自身重一倍的东西也照样急速奔跑。',
++      counter: '不要待在钝人所在墙壁的另一侧——留意墙后的刮擦声，回头看清它，或者干脆刻意朝它走过去，它就会逃开。它讨厌杏仁水：喝下杏仁水后的一段时间里它不会碰你，用杏仁水滋它会让它缩回墙里，地上的杏仁水周围它也不会靠近。别丢掉你的杏仁水——身上带着它时，它伸手前会犹豫，给你留出发现它的时间。被抓住时还手，它会立刻松开。',
+       lore: [
+-        '外形为高大、深灰的人形，皮肤颜色接近黑色但仍可分辨；骨架脆弱，缺失若干显著特征——没有脸，也没有耳朵。',
+-        '皮肤深色多皱，局部撕裂或呈「煮烂」状，露出下面紫红色的肉。那层紫色肌肉具有超自然性质，它的速度与力量都来自那里。',
+-        '常见突变包括：多出一个躯干、肥胖体型、头部拉长、多出一条手臂。另有部分个体呈现为「由浓稠灰色液体构成的人形」。',
++        '高大、灰色的类人生物，骨骼结构脆弱，没有面部特征。手臂修长，能延伸出很长的距离，通常用来抓住墙另一边的猎物。',
++        '尽管外表如此，这类实体异常强壮。它们把猎物拖走之后会做什么，至今仍是未知。',
++        '没人说得清它是怎样在现代被发现的；一个名为「失落一族」的团体提到过一种叫「墙壁捕手」的存在，所指的应该就是钝人。',
+       ],
+-      sighting: '「它跟了我四十分钟。我停下来吃罐头，它也停下来，站在三米外。然后它的手伸过来了，人还在原地。」',
++      sighting: '「我背靠着墙歇脚，墙里有东西在刮。等我回过头，那两只灰手正从墙面里伸出来，离我的肩膀不到一拃——我盯着它们，它们就那样缩回去了。」',
+     },
+     aggroStinger: true,
+   },
+diff --git a/app/src/game/entities/types.ts b/app/src/game/entities/types.ts
+index 2540dc3..24f5fab 100644
+--- a/app/src/game/entities/types.ts
++++ b/app/src/game/entities/types.ts
+@@ -118,6 +118,7 @@ export interface Entity {
+   huntScanT?: number // 群落捕食目标扫描节流；避免高密度生态每帧进行实体数平方级 LOS 检查
+   encountered?: boolean // v54：图鉴遭遇已计数（按个体去重——看见/索敌/攻击命中/特殊交互，每只只计一次）
+   blackoutSpawn?: boolean // 停电期间生成（笑魇）：灯光恢复时消散
++  dl?: import('../engine/dullerAI').DullerState // v63：钝人运行时状态（潜伏/隔墙抓取/携物；不入存档/联机）
+   hd?: import('../engine/houndAI').HoundState // v62：猎犬（含 L11 中立变种）运行时状态（不入存档/联机）
+   sm?: import('./smilers').SmilerState // v61：笑魇变种与 AI 运行时状态（不入存档/联机）
+   l9FogSpawn?: boolean // L9 罕见浓雾期间生成的残缺者；雾散后随之退散
+diff --git a/app/src/game/renderer/dullerMesh.ts b/app/src/game/renderer/dullerMesh.ts
+new file mode 100644
+index 0000000..d674184
+--- /dev/null
++++ b/app/src/game/renderer/dullerMesh.ts
+@@ -0,0 +1,335 @@
++// v63：钝人（Entity 6）重制模型——参照中文维基 Entity 6 正文与附图（墙柱中探出的无面灰色人形）。
++// 约 2.1 m 高、深灰近黑的类人生物：骨架脆弱（极细的腰、外凸的肋笼与胸骨、脊突、髋翼、细长四肢与骨节），
++// 没有面部也没有耳朵（光滑的蛋形头颅，仅有极浅的骨相起伏）；修长的手臂垂过膝盖，前臂可伸缩到数米外；
++// 四指细长、带黑色指甲；头顶、肩背与膝侧缠着卷曲的黑色须丝（附图中那团卷须）。
++// 机制视觉：手臂穿墙时在墙面上晕开一圈黑色污痕（附图中柱面的黑渍），随伸臂程度浓淡变化；可在手中攥着随机物品。
++// 造型工具沿用猎犬的样条扫掠管体（UV + 骨突 AO 顶点色）；贴图运行时程序化生成（干皱深灰皮肤 / 墙面污痕），无外部资源。
++// 模型正面 +X；约 19 次绘制。
++import * as THREE from 'three'
++import type { Entity } from '../entities'
++import { rng, merge, V, gauss, sstep, cap, ell, sweep, limbSeg, canvasTex, type RF } from './houndMesh'
++
++let TEX: { skin: THREE.Texture | null; plain: THREE.Texture | null; stain: THREE.Texture | null } | null = null
++function textures() {
++  if (TEX) return TEX
++  const skinTex = (rips: boolean) => canvasTex(256, 256, (c, R) => {
++    c.fillStyle = '#5a5a60'; c.fillRect(0, 0, 256, 256)
++    const tile = (f: (ox: number, oy: number) => void) => { for (const ox of [-256, 0, 256]) for (const oy of [-256, 0, 256]) f(ox, oy) }
++    for (let i = 0; i < 140; i++) { // 斑驳的灰
++      const x = R() * 256, y = R() * 256, r = 5 + R() * 26, a = 0.05 + R() * 0.08
++      const col = R() < 0.6 ? `rgba(30,30,36,${a})` : `rgba(120,120,128,${a})`
++      tile((ox, oy) => { c.fillStyle = col; c.beginPath(); c.arc(x + ox, y + oy, r, 0, Math.PI * 2); c.fill() })
++    }
++    for (let i = 0; i < 70; i++) { // 干皱褶线（大致横向，像缩水的皮）
++      let x = R() * 256, y = R() * 256, a = (R() - 0.5) * 0.6
++      const pts: [number, number][] = [[x, y]]
++      for (let k = 0; k < 8; k++) { a += (R() - 0.5) * 0.5; x += Math.cos(a) * 6; y += Math.sin(a) * 6; pts.push([x, y]) }
++      const lw = 0.6 + R() * 1.4
++      tile((ox, oy) => {
++        c.strokeStyle = 'rgba(18,18,22,0.45)'; c.lineWidth = lw; c.beginPath(); pts.forEach(([px, py], k) => k ? c.lineTo(px + ox, py + oy) : c.moveTo(px + ox, py + oy)); c.stroke()
++        c.strokeStyle = 'rgba(150,150,158,0.18)'; c.lineWidth = lw * 0.7; c.beginPath(); pts.forEach(([px, py], k) => k ? c.lineTo(px + ox, py + oy + 1.4) : c.moveTo(px + ox, py + oy + 1.4)); c.stroke()
++      })
++    }
++    for (let i = 0; i < (rips ? 5 : 0); i++) { // 「煮烂」破口：少量暗紫红的肌肉
++      const x = R() * 256, y = R() * 256, rx = 3 + R() * 7, ry = 2 + R() * 5, rot = R() * 3
++      tile((ox, oy) => {
++        c.fillStyle = 'rgba(92,30,58,0.75)'; c.beginPath(); c.ellipse(x + ox, y + oy, rx, ry, rot, 0, Math.PI * 2); c.fill()
++        c.strokeStyle = 'rgba(20,18,22,0.6)'; c.lineWidth = 1.2; c.stroke()
++      })
++    }
++    const img = c.getImageData(0, 0, 256, 256), d = img.data
++    for (let i = 0; i < d.length; i += 4) { const n = (R() - 0.5) * 16; d[i] += n; d[i + 1] += n; d[i + 2] += n }
++    c.putImageData(img, 0, 0)
++  }, true)
++  const skin = skinTex(true), plain = skinTex(false) // 头部用无破口版本，免得紫红斑看起来像五官
++  // 墙面污痕：中心浓黑、边缘破碎晕开，带向下的流痕
++  const stain = canvasTex(256, 256, (c, R) => {
++    c.clearRect(0, 0, 256, 256)
++    const base = c.createRadialGradient(128, 118, 4, 128, 118, 105)
++    base.addColorStop(0, 'rgba(6,6,8,0.92)'); base.addColorStop(0.35, 'rgba(8,8,10,0.75)'); base.addColorStop(0.7, 'rgba(10,10,12,0.25)'); base.addColorStop(1, 'rgba(10,10,12,0)')
++    c.fillStyle = base; c.beginPath(); c.ellipse(128, 118, 100, 112, 0, 0, Math.PI * 2); c.fill()
++    for (let i = 0; i < 260; i++) { // 破碎的边缘：大量小而淡的晕点，越靠外越稀
++      const a = R() * Math.PI * 2, r = 40 + Math.pow(R(), 0.8) * 70
++      const x = 128 + Math.cos(a) * r, y = 118 + Math.sin(a) * r * 1.1, s = 3 + R() * 9
++      const g = c.createRadialGradient(x, y, 0, x, y, s)
++      g.addColorStop(0, `rgba(8,8,10,${0.25 * (1 - r / 115)})`); g.addColorStop(1, 'rgba(8,8,10,0)')
++      c.fillStyle = g; c.beginPath(); c.arc(x, y, s, 0, Math.PI * 2); c.fill()
++    }
++    c.strokeStyle = 'rgba(4,4,6,0.55)' // 灰泥裂纹
++    for (let i = 0; i < 10; i++) {
++      let x = 128 + (R() - 0.5) * 30, y = 118 + (R() - 0.5) * 30, a = R() * Math.PI * 2
++      c.lineWidth = 0.8 + R(); c.beginPath(); c.moveTo(x, y)
++      for (let k = 0; k < 9; k++) { a += (R() - 0.5) * 0.8; x += Math.cos(a) * 9; y += Math.sin(a) * 9; c.lineTo(x, y) }
++      c.stroke()
++    }
++    for (let i = 0; i < 12; i++) { // 流痕
++      const x = 80 + R() * 96, y0 = 140 + R() * 30, L = 25 + R() * 60, w = 1.2 + R() * 2.5
++      const g = c.createLinearGradient(0, y0, 0, y0 + L)
++      g.addColorStop(0, 'rgba(10,10,12,0.55)'); g.addColorStop(1, 'rgba(10,10,12,0)')
++      c.strokeStyle = g; c.lineWidth = w; c.beginPath(); c.moveTo(x, y0); c.lineTo(x + (R() - 0.5) * 3, y0 + L); c.stroke()
++    }
++  }, false)
++  TEX = { skin, plain, stain }
++  return TEX
++}
++
++export interface DullerRig {
++  root: THREE.Group; torso: THREE.Group; head: THREE.Group
++  legs: { hip: THREE.Group; knee: THREE.Group; side: number }[]
++  arms: { sh: THREE.Group; elbow: THREE.Group; stretch: THREE.Group; wrist: THREE.Group; side: number }[]
++  wisps: THREE.Group[]
++  carry: THREE.Group
++  stain: THREE.Mesh
++}
++
++/** 卷曲须丝：沿 dir 伸出的螺旋细管，末端越卷越紧 */
++function wisp(start: THREE.Vector3, dir: THREE.Vector3, len: number, R: () => number, thick = 0.0065) {
++  const d = dir.clone().normalize()
++  const a = Math.abs(d.y) < 0.9 ? V(0, 1, 0) : V(1, 0, 0)
++  const u = new THREE.Vector3().crossVectors(d, a).normalize(), w = new THREE.Vector3().crossVectors(d, u)
++  const pts: THREE.Vector3[] = [], ph = R() * 6.28, turns = 1.1 + R() * 1.2
++  const rk = 0.6 + R() * 0.4
++  for (let k = 0; k <= 16; k++) {
++    const t = k / 16, rr = 0.01 + 0.03 * t * rk
++    const ang = ph + t * turns * Math.PI * 2 * (0.6 + t)
++    pts.push(start.clone().addScaledVector(d, len * t * (1 - 0.25 * t)).addScaledVector(u, Math.cos(ang) * rr).addScaledVector(w, Math.sin(ang) * rr).add(V(0, -0.05 * t * t, 0)))
++  }
++  return sweep(pts, (t) => thick * (1 - 0.8 * t) + 0.0012, { radial: 5, seg: 30, shade: () => 0.6 })
++}
++
++export function buildDullerMesh(seed = 0): THREE.Group {
++  const grp = new THREE.Group()
++  grp.userData.entityType = 'duller'
++  grp.userData.parts = {}
++  const R = rng(0xd011 + seed * 977)
++  const tx = textures()
++  const skin = new THREE.MeshLambertMaterial({ color: '#8c8c94', map: tx.skin, vertexColors: true })
++  if (!tx.skin) skin.color.set('#3a3a41')
++  const headSkin = new THREE.MeshLambertMaterial({ color: '#a2a2aa', map: tx.plain, vertexColors: true })
++  if (!tx.plain) headSkin.color.set('#3a3a41')
++  const nail = new THREE.MeshLambertMaterial({ color: '#141416', vertexColors: true })
++  const wispM = new THREE.MeshLambertMaterial({ color: '#0c0c0e', vertexColors: true })
++  const stainM = new THREE.MeshBasicMaterial({ map: tx.stain, color: tx.stain ? '#ffffff' : '#0a0a0c', transparent: true, opacity: 0, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -6, side: THREE.DoubleSide })
++  const root = new THREE.Group(); grp.add(root)
++  const PELVIS = 0.98
++
++  // ---------- 躯干：极细的腰 + 外凸的肋笼（肋骨/胸骨/脊突/髋翼雕在表面） ----------
++  const torso = new THREE.Group(); torso.position.set(0, PELVIS, 0); root.add(torso)
++  {
++    const spine = [V(-0.02, -0.02, 0), V(-0.035, 0.17, 0), V(0, 0.38, 0), V(0.035, 0.57, 0), V(0.05, 0.72, 0)]
++    // [t, 半宽 Z, 厚度 X]
++    const prof = [[0, 0.11, 0.085], [0.12, 0.118, 0.09], [0.27, 0.082, 0.064], [0.42, 0.135, 0.1], [0.62, 0.165, 0.118], [0.82, 0.17, 0.1], [0.92, 0.2, 0.085], [1, 0.07, 0.055]]
++    const lerpP = (t: number, k: 1 | 2) => { for (let i = 1; i < prof.length; i++) if (t <= prof[i][0]) { const a = prof[i - 1], b = prof[i]; const s = sstep(0, 1, (t - a[0]) / (b[0] - a[0])); return a[k] + (b[k] - a[k]) * s } return prof[prof.length - 1][k] }
++    const det = (t: number, cs: number, sn: number) => {
++      // 肋骨由脊柱向前下方斜行：前侧相位下移；正前方（胸骨两侧肋软骨）与背面淡出
++      const tr = t + 0.07 * cs
++      const ribBand = tr > 0.42 && tr < 0.9 ? Math.sin((tr - 0.42) * Math.PI * 14) * sstep(0.42, 0.47, tr) * sstep(0.9, 0.84, tr) : 0
++      const ribs = 0.009 * ribBand * sstep(-0.5, 0.1, cs) * (1 - 0.85 * gauss(sn, 0, 0.3) * sstep(0.3, 0.9, cs))
++      const sternum = 0.012 * gauss(sn, 0, 0.12) * sstep(0.75, 1, cs) * gauss(t, 0.62, 0.14)
++      const spineB = cs < -0.85 ? 0.012 * Math.max(0, Math.sin(t * Math.PI * 22)) ** 2 : 0
++      const hips = 0.025 * gauss(t, 0.08, 0.06) * sstep(0.5, 0.9, Math.abs(sn))
++      const ribEdge = -0.02 * gauss(t, 0.36, 0.035) * sstep(-0.2, 0.6, cs) // 肋弓下缘的深凹
++      const clav = 0.012 * gauss(t, 0.9, 0.035) * sstep(0.2, 0.9, cs)
++      return { ribs, sternum, spineB, hips, ribEdge, clav, ribBand }
++    }
++    const torsoR: RF = (t, _d, cs, sn) => {
++      const rz = lerpP(t, 1), rx = lerpP(t, 2), k = det(t, cs, sn)
++      return rz * ell(cs, sn, rx / rz, 1) * cap(t, 0.06) + k.ribs + k.sternum + k.spineB + k.hips + k.ribEdge + k.clav
++    }
++    const tg = sweep(spine, torsoR, {
++      radial: 22, seg: 46, uRep: 2, vRep: 2.6,
++      shade: (t, _d, cs, sn) => {
++        const k = det(t, cs, sn)
++        const groove = Math.max(0, -k.ribBand) * 0.3 * sstep(-0.6, 0.2, cs)
++        return Math.min(1.12, 0.84 + k.ribs * 8 + k.sternum * 6 + k.spineB * 6 + k.hips * 4 + k.clav * 6 - groove + k.ribEdge * 6 - (t > 0.2 && t < 0.34 ? 0.12 : 0))
++      },
++    })
++    const neck = sweep([V(0.045, 0.64, 0), V(0.052, 0.69, 0), V(0.06, 0.74, 0)], (t, _d, cs, sn) => (0.05 - 0.006 * t) * cap(t, 0.15) * ell(cs, sn, 1.1, 0.9) + 0.006 * gauss(t, 0.5, 0.2) * sstep(0.6, 1, Math.abs(sn)), { radial: 10, seg: 8, shade: (t) => 0.82 + 0.08 * t })
++    torso.add(new THREE.Mesh(merge([tg, neck]), skin))
++  }
++
++  // ---------- 头：对照附图——直接压在肩上的大号竖长头颅（无脸、无耳），圆角长方体轮廓，
++  //            正面一圈隆起的边框，框内是竖向的骨棱与凹槽，中线一道纵脊 ----------
++  const HH = 0.46 // 头高
++  const head = new THREE.Group(); head.position.set(0.06, 0.66, 0); torso.add(head)
++  {
++    const g = new THREE.SphereGeometry(1, 72, 40)
++    const pa = g.attributes.position as THREE.BufferAttribute, col: number[] = []
++    const d = new THREE.Vector3()
++    const se = (v: number, n: number) => Math.sign(v) * Math.abs(v) ** (2 / n)
++    for (let i = 0; i < pa.count; i++) {
++      d.fromBufferAttribute(pa, i).normalize()
++      const u = se(d.x, 3.6), w = se(d.z, 3.6), h = se(d.y, d.y > 0 ? 2.6 : 3.2)
++      const hy = (h + 1) / 2 // 0 底 → 1 顶
++      const front = sstep(0.35, 0.9, d.x)
++      const zr = 0.105 * (1 - 0.18 * sstep(0.55, 0, hy)) * (1 + 0.04 * Math.sin(hy * Math.PI)) // 下端略收
++      const xr = 0.088 * (1 - 0.12 * sstep(0.5, 0, hy))
++      let x = u * xr, z = w * zr
++      const y = hy * HH
++      const az = Math.abs(w)
++      const rim = 0.02 * sstep(0.62, 0.86, az) * front + 0.01 * sstep(0.82, 0.96, hy) * front + 0.008 * sstep(0.2, 0.06, hy) * front
++      const slats = az < 0.7 ? 0.008 * Math.cos(w * Math.PI * 4.5) * front * sstep(0.06, 0.18, hy) * sstep(0.95, 0.82, hy) : 0
++      const ridge = 0.016 * gauss(w, 0, 0.07) * front * sstep(0.04, 0.2, hy)
++      const recess = -0.014 * sstep(0.7, 0.4, az) * front * sstep(0.08, 0.2, hy) * sstep(0.92, 0.8, hy)
++      x += rim + slats + ridge + recess
++      pa.setXYZ(i, x, y, z)
++      const c = Math.min(1.45, 0.78 + rim * 26 + Math.max(0, slats) * 28 + ridge * 16 + recess * 14 - (d.y < -0.6 ? 0.12 : 0))
++      col.push(c, c, c)
++    }
++    g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); g.computeVertexNormals()
++    head.add(new THREE.Mesh(g, headSkin))
++    // 头顶与后脑的卷须
++    const wg: THREE.BufferGeometry[] = []
++    for (let i = 0; i < 9; i++) {
++      const a = -0.6 + (i / 8) * 4.2 + (R() - 0.5) * 0.4, el = 0.35 + R() * 0.6
++      const s = V(Math.cos(a) * 0.07 * Math.cos(el) - 0.01, HH * (0.55 + 0.4 * Math.sin(el)), Math.sign(Math.sin(a) || 1) * 0.1)
++      wg.push(wisp(s, V(Math.cos(a) * 0.4 - 0.3, (R() - 0.3) * 0.9, Math.sign(Math.sin(a) || 1) * (0.8 + R() * 0.5)), 0.12 + R() * 0.14, R))
++    }
++    const wm = new THREE.Group(); wm.add(new THREE.Mesh(merge(wg), wispM)); head.add(wm)
++    grp.userData.headWisps = wm
++  }
++  head.rotation.set(0.08, 0, -0.05) // 微微歪斜
++
++  // 肩背卷须
++  const shoulderWisps = new THREE.Group(); torso.add(shoulderWisps)
++  {
++    const wg: THREE.BufferGeometry[] = []
++    for (const side of [-1, 1]) for (let i = 0; i < 3; i++) {
++      wg.push(wisp(V(-0.02 - R() * 0.05, 0.64 + R() * 0.06, side * (0.12 + R() * 0.06)), V(-0.3 - R() * 0.4, 0.3 + R() * 0.5, side * (0.6 + R() * 0.4)), 0.12 + R() * 0.14, R))
++    }
++    shoulderWisps.add(new THREE.Mesh(merge(wg), wispM))
++  }
++
++  // ---------- 腿：细长、骨节外凸、站姿外八 ----------
++  const legs: DullerRig['legs'] = []
++  const kneeWisps: THREE.Group[] = []
++  for (const side of [-1, 1]) {
++    const hip = new THREE.Group(); hip.position.set(-0.01, PELVIS - 0.02, side * 0.095); root.add(hip)
++    const thigh = limbSeg([V(0, 0.03, 0), V(0.025, -0.22, side * 0.01), V(0.03, -0.45, side * 0.012)], 0.058, 0.032, 0.2, 0.22, 0.95)
++    hip.add(new THREE.Mesh(thigh, skin))
++    const knee = new THREE.Group(); knee.position.set(0.03, -0.45, side * 0.012); hip.add(knee)
++    const kn = new THREE.SphereGeometry(0.04, 10, 8).scale(1.05, 1.2, 0.95).translate(0.006, 0, 0)
++    kn.setAttribute('color', new THREE.Float32BufferAttribute(new Array(kn.attributes.position.count * 3).fill(1), 3))
++    const shin = limbSeg([V(0, 0, 0), V(-0.018, -0.22, 0), V(-0.03, -0.43, 0)], 0.036, 0.022, 0.25, 0.18, 0.95, false)
++    const ank = new THREE.SphereGeometry(0.026, 8, 6).translate(-0.03, -0.43, 0)
++    ank.setAttribute('color', new THREE.Float32BufferAttribute(new Array(ank.attributes.position.count * 3).fill(0.95), 3))
++    const foot = sweep([V(-0.06, -0.43, 0), V(0.02, -0.485, 0), V(0.12, -0.5, side * 0.01), V(0.19, -0.505, side * 0.015)], (t, _d, cs, sn) => (0.03 - 0.012 * t) * cap(t, 0.12) * ell(cs, sn, 0.6, 1.15), { radial: 8, seg: 8, shade: (t) => 0.78 + 0.1 * t })
++    const toes: THREE.BufferGeometry[] = []
++    for (let i = 0; i < 4; i++) { const z = side * 0.01 + (i - 1.5) * 0.013; toes.push(new THREE.ConeGeometry(0.006, 0.025, 4).rotateZ(-Math.PI / 2).translate(0.205, -0.51, z)) }
++    knee.add(new THREE.Mesh(merge([kn, shin, ank, foot]), skin))
++    knee.add(new THREE.Mesh(merge(toes.map((g) => { g.setAttribute('color', new THREE.Float32BufferAttribute(new Array(g.attributes.position.count * 3).fill(1), 3)); return g })), nail))
++    // 小腿上的卷须（附图中下肢周围的黑色卷丝）
++    const kw = new THREE.Group()
++    const wg: THREE.BufferGeometry[] = []
++    for (let i = 0; i < 3; i++) wg.push(wisp(V(-0.02, -0.08 - R() * 0.2, side * 0.03), V(-0.3 - R() * 0.5, (R() - 0.5) * 0.6, side * (0.7 + R() * 0.5)), 0.1 + R() * 0.1, R, 0.005))
++    kw.add(new THREE.Mesh(merge(wg), wispM)); knee.add(kw); kneeWisps.push(kw)
++    legs.push({ hip, knee, side })
++  }
++
++  // ---------- 手臂：垂过膝盖；前臂可伸缩（stretch.scale.y），手腕随之外移 ----------
++  const arms: DullerRig['arms'] = []
++  const carry = new THREE.Group()
++  for (const side of [-1, 1]) {
++    const sh = new THREE.Group(); sh.position.set(0.035, 0.66, side * 0.205); torso.add(sh)
++    const knob = new THREE.SphereGeometry(0.048, 10, 8).scale(1, 0.9, 1)
++    knob.setAttribute('color', new THREE.Float32BufferAttribute(new Array(knob.attributes.position.count * 3).fill(0.95), 3))
++    const upper = limbSeg([V(0, 0, 0), V(0.006, -0.22, side * 0.012), V(0, -0.44, side * 0.014)], 0.042, 0.027, 0.18, 0.18, 0.95)
++    sh.add(new THREE.Mesh(merge([knob, upper]), skin))
++    const elbow = new THREE.Group(); elbow.position.set(0, -0.44, side * 0.014); sh.add(elbow)
++    const eb = new THREE.SphereGeometry(0.03, 8, 6).scale(1, 1.25, 1).translate(-0.008, 0, 0)
++    eb.setAttribute('color', new THREE.Float32BufferAttribute(new Array(eb.attributes.position.count * 3).fill(1), 3))
++    elbow.add(new THREE.Mesh(eb, skin))
++    const stretch = new THREE.Group(); elbow.add(stretch)
++    // 前臂：两根并行的细骨（尺骨/桡骨感）+ 筋，管体沿 -Y，单位长度 0.5
++    const fa = sweep([V(0, 0, 0), V(0.004, -0.25, 0), V(0, -0.5, 0)], (t, _d, cs, sn) => (0.028 - 0.008 * t) * (1 + 0.15 * gauss(t, 0.15, 0.1)) * ell(cs, sn, 0.85, 1) + 0.004 * Math.abs(Math.sin(t * Math.PI * 7)) * gauss(cs, 1, 0.4), { radial: 9, seg: 14, vRep: 2.5, shade: (t) => 0.82 + 0.06 * Math.sin(t * 20) })
++    stretch.add(new THREE.Mesh(fa, skin))
++    const wrist = new THREE.Group(); wrist.position.set(0, -0.5, 0); elbow.add(wrist)
++    // 手：窄长的掌 + 四根长指（含指节）+ 拇指，黑色指甲
++    const hs: THREE.BufferGeometry[] = [], hn: THREE.BufferGeometry[] = []
++    hs.push(sweep([V(0, 0.01, 0), V(0.004, -0.05, 0), V(0.002, -0.1, 0)], (t, _d, cs, sn) => (0.024 + 0.008 * Math.sin(t * Math.PI)) * cap(t, 0.15) * ell(cs, sn, 1.5, 0.55), { radial: 8, seg: 6, shade: () => 0.85 }))
++    for (let i = 0; i < 4; i++) {
++      const x = (i - 1.5) * 0.014, L = (0.16 - Math.abs(i - 1.5) * 0.02)
++      const a = V(x, -0.095, 0), b = V(x * 1.15, -0.095 - L * 0.5, side * -0.008), c = V(x * 1.25, -0.095 - L, side * -0.03)
++      hs.push(sweep([a, b, c], (t, _d, cs, sn) => 0.0075 * (1 - 0.35 * t) * (1 + 0.3 * gauss(t, 0.33, 0.06) + 0.3 * gauss(t, 0.66, 0.06)) * cap(t, 0.1) * ell(cs, sn, 1, 0.9), { radial: 6, seg: 9, shade: (t) => 0.8 + 0.12 * gauss(t, 0.33, 0.08) }))
++      hn.push(sweep([c.clone().add(V(0, 0.012, side * 0.004)), c.clone().add(V(0, -0.012, side * -0.012))], (t) => 0.006 * (1 - t * 0.85), { radial: 5, seg: 3, shade: () => 0.8 }))
++    }
++    hs.push(sweep([V(0.022, -0.02, 0), V(0.035, -0.06, side * -0.01), V(0.04, -0.1, side * -0.02)], (t, _d, cs, sn) => 0.0075 * (1 - 0.3 * t) * cap(t, 0.12) * ell(cs, sn, 1, 0.9), { radial: 6, seg: 6, shade: () => 0.82 }))
++    wrist.add(new THREE.Mesh(merge(hs), skin))
++    wrist.add(new THREE.Mesh(merge(hn), nail))
++    if (side > 0) { carry.position.set(0.0, -0.13, side * -0.035); wrist.add(carry) }
++    arms.push({ sh, elbow, stretch, wrist, side })
++  }
++
++  // ---------- 墙面污痕（穿墙伸臂时出现） ----------
++  const stain = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.9), stainM)
++  stain.rotation.y = Math.PI / 2; stain.position.set(0.8, 1.2, 0); stain.visible = false
++  grp.add(stain)
++
++  const rig: DullerRig = { root, torso, head, legs, arms, wisps: [grp.userData.headWisps, shoulderWisps, ...kneeWisps], carry, stain }
++  grp.userData.dullerRig = rig
++  return grp
++}
++
++const lerp = (a: number, b: number, k: number) => a + (b - a) * k
++
++export function animateDuller(grp: THREE.Group, e: Entity, time: number, gz: number) {
++  const r = grp.userData.dullerRig as DullerRig | undefined
++  if (!r) return
++  const s = e.dl
++  const t = time + e.id * 1.37
++  // 运动量：由 animT（AI 按步速累加）的变化率推得
++  const last = grp.userData.dlLast as [number, number] | undefined
++  const vel = last && time > last[1] ? Math.min(8, (e.animT - last[0]) / (time - last[1])) : 0
++  grp.userData.dlLast = [e.animT, time]
++  const mv = grp.userData.dlMv = lerp((grp.userData.dlMv as number) ?? 0, Math.min(1, vel / 1.2), 0.15)
++  const run = s?.run ?? 0, reach = s?.reach ?? 0, sway = s?.sway ?? 1
++  const g = e.animT * (Math.PI * 2 / (1.25 + run * 0.6))
++  const amp = mv * (0.42 + run * 0.5)
++  // 不自然的步态：偶发的抽搐与踉跄（基于时间的伪随机）
++  const twitch = Math.max(0, Math.sin(t * 0.83) * Math.sin(t * 2.17) - 0.7) * 3
++  const stagger = Math.sin(g * 0.5 + 0.7) * 0.12 * mv * sway
++  for (const L of r.legs) {
++    const ph = L.side < 0 ? 0 : Math.PI
++    L.hip.rotation.z = Math.sin(g + ph) * amp + (L.side < 0 ? stagger : -stagger) * 0.5
++    L.hip.rotation.x = L.side * (0.05 + 0.04 * sway * Math.sin(t * 0.6)) // 外八、摇晃
++    L.knee.rotation.z = -Math.max(0, Math.sin(g + ph + Math.PI / 2)) * amp * 1.4 - 0.06
++  }
++  r.root.position.y = Math.abs(Math.sin(g)) * amp * 0.06 - run * 0.06
++  grp.position.y = gz
++  // 躯干：左右摇摆（站不稳）+ 前倾（奔逃/伸臂）
++  r.torso.rotation.x = (Math.sin(g) * 0.1 * mv + Math.sin(t * 0.9) * 0.07 + Math.sin(t * 0.37) * 0.04) * sway
++  r.torso.rotation.z = -(0.06 + run * 0.42 + reach * 0.22) + twitch * 0.05 * sway
++  r.torso.rotation.y = Math.sin(t * 0.5) * 0.05 * sway
++  // 头：微歪、慢慢转动、偶发猛抽
++  r.head.rotation.x = 0.08 + Math.sin(t * 0.7) * 0.12 * sway + twitch * 0.25 * sway
++  r.head.rotation.y = Math.sin(t * 0.41) * 0.35 * (1 - reach) * (1 - run)
++  r.head.rotation.z = -0.05 + run * -0.2 + reach * -0.08
++  // 手臂
++  const S = s ? Math.max(1, Math.min(5.2, (s.reachLen - 0.75) / 0.5)) : 1
++  const holding = s?.phase === 'hold' || s?.phase === 'drag'
++  for (const A of r.arms) {
++    const ph = A.side < 0 ? Math.PI : 0
++    const dangle = -Math.sin(g + ph) * amp * 0.6 + Math.sin(t * 1.1 + A.side) * 0.05
++    const idleZ = dangle - run * 0.95
++    const reachZ = holding ? 1.15 : 1.47
++    A.sh.rotation.z = lerp(idleZ, reachZ + Math.sin(t * 9 + A.side) * 0.02, reach)
++    A.sh.rotation.x = lerp(A.side * -0.06 + run * A.side * -0.15, A.side * -0.02, reach)
++    A.elbow.rotation.z = lerp(0.16 + run * 0.6 + Math.max(0, Math.sin(g + ph)) * amp * 0.3, 0.02, reach)
++    const k = lerp(1, S, reach)
++    A.stretch.scale.set(1 - (k - 1) * 0.04, k, 1 - (k - 1) * 0.04)
++    A.wrist.position.y = -0.5 * k
++    A.wrist.rotation.z = lerp(0.05, -0.15, reach)
++  }
++  // 卷须缓慢蠕动
++  for (let i = 0; i < r.wisps.length; i++) { const w = r.wisps[i]; w.rotation.x = Math.sin(t * 1.3 + i) * 0.06; w.rotation.y = Math.sin(t * 0.9 + i * 2) * 0.08 }
++  // 墙面污痕：沿朝向放在墙面（玩家一侧），浓度随伸臂程度
++  const wd = s?.wallD ?? -1
++  const on = reach > 0.02 && wd > 0
++  r.stain.visible = on
++  if (on) {
++    r.stain.position.set(wd, 1.32, 0)
++    ;(r.stain.material as THREE.MeshBasicMaterial).opacity = Math.min(0.92, reach * 1.1)
++    r.stain.scale.setScalar(0.6 + reach * 0.4)
++  }
++  r.carry.visible = reach < 0.5
++}
+diff --git a/app/src/game/renderer/entitiesMesh.ts b/app/src/game/renderer/entitiesMesh.ts
+index 875ef7c..1e9cb74 100644
+--- a/app/src/game/renderer/entitiesMesh.ts
++++ b/app/src/game/renderer/entitiesMesh.ts
+@@ -13,6 +13,7 @@ import * as THREE from 'three'
+ import { buildMothMesh } from './mothMeshes'
+ import { buildSmilerMesh } from './smilerMesh'
+ import { buildHoundMesh } from './houndMesh'
++import { buildDullerMesh } from './dullerMesh'
+ import { ENTITIES } from '../entities'
+ import { box, cyl, glow, litMaterial, mulberry } from './shared'
+ import { buildPlayerModel } from './playerModel'
+@@ -102,6 +103,7 @@ function getThingSkinTextures() {
+ }
+ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Group {
+   if(type === 'deathmoth') return buildMothMesh(opts?.mothForm ?? 'male')
++  if (type === 'duller') return buildDullerMesh(opts?.seed ?? 0) // v63：重制钝人
+   if (type === 'hound') return buildHoundMesh(!!opts?.houndNeutral, opts?.seed ?? 0) // v62：重制猎犬
+   if (type === 'smiler') return buildSmilerMesh(opts?.smilerKind ?? 'common', opts?.seed ?? 0) // v61：重制笑魇（含 5 变种）
+   const grp = new THREE.Group()
+@@ -195,43 +197,7 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
+   }
+ 
+   switch (type) {
+-    case 'duller': { // 钝人（Entity 6）：约 2m；深灰近黑；皮肤干皱、局部「煮烂」破口露出紫红肌肉；
+-      //               没有脸也没有耳朵；手臂长得不成比例（过膝）；姿态扭曲、站姿摇晃。
+-      const dk = '#2f2f36', dl = '#26262c', dh = '#34343c', rip = '#6b2a4a'
+-      tag(box(0.42, 0.92, 0.28, dk, 0, 1.2, 0), 'torso')
+-      grp.add(box(0.5, 0.16, 0.3, dl, 0.02, 1.62, 0)) // 高低不齐的肩
+-      grp.add(box(0.12, 0.14, 0.12, dl, -0.24, 1.7, 0)) // 抬高的左肩（扭曲站姿）
+-      // 头：无面、无耳的拉长椭球——wiki 明确「没有脸也没有耳朵」，故不设眼睛
+-      const dhead = sph(0.15, dh, 8)
+-      dhead.scale.set(0.82, 1.42, 0.86)
+-      dhead.position.set(0.02, 1.82, 0)
+-      dhead.rotation.z = 0.17 // 歪斜的颈
+-      tag(dhead, 'head')
+-      // 无五官的正面平滑面：仅作朝向标记，不含任何五官（父级已带非等比缩放，此处按其比例配平）
+-      const blank = sph(0.13, '#3a3a43', 8)
+-      blank.scale.set(0.72, 0.9, 0.34)
+-      blank.position.set(0, 0, 0.12)
+-      face(blank); dhead.add(blank)
+-      // 不成比例的长臂（垂到膝下，wiki 称其还能继续伸长）
+-      joint(0.13, 1.3, 0.15, dl, -0.31, 1.5, 0, 'armL')
+-      joint(0.13, 1.36, 0.15, dl, 0.31, 1.47, 0, 'armR')
+-      tip(parts.armL, 0.12, 0.22, 0.13, dk, -1.32)
+-      tip(parts.armR, 0.12, 0.22, 0.13, dk, -1.38)
+-      joint(0.17, 0.74, 0.18, dl, -0.13, 0.76, 0, 'legL')
+-      joint(0.17, 0.74, 0.18, dl, 0.13, 0.74, 0, 'legR')
+-      tip(parts.legL, 0.19, 0.09, 0.26, dk, -0.72, 0.04)
+-      tip(parts.legR, 0.19, 0.09, 0.26, dk, -0.72, 0.04)
+-      for (let i = 0; i < 4; i++) grp.add(box(0.34 - i * 0.04, 0.02, 0.02, dl, 0, 1.5 - i * 0.16, 0.145)) // 干皱褶线
+-      // 破口/「煮烂」处露出的紫红肌肉——全身唯一的高彩度视觉锚点
+-      ebox(0.17, 0.13, 0.03, rip, -0.09, 1.36, 0.145, 0.5)
+-      ebox(0.1, 0.19, 0.03, rip, 0.14, 1.05, 0.145, 0.5)
+-      ebox(0.09, 0.11, 0.03, rip, -0.23, 1.55, 0.09, 0.5)
+-      ebox(0.12, 0.1, 0.03, rip, 0.06, 1.42, -0.15, 0.45)
+-      const armRip = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.17, 0.03), emat(rip, 0.5))
+-      armRip.position.set(0, -0.62, 0.08)
+-      parts.armL.add(armRip)
+-      break
+-    }
++    // v63：'duller' 已在函数开头交给 dullerMesh.buildDullerMesh（旧版方块模型移除）
+     case 'faceling': { // 无面灵（Entity 9）：与人类高度相似——直接复用玩家形象模型（随机肤色/发型/服装），
+       //                 唯独完全缺失面部特征：头部只剩一张没有五官的光滑平面。
+       const pm = buildPlayerModel(randomAvatar(), {})
+@@ -1867,7 +1833,7 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
+   }
+   // 统一正面到 +X：猎犬/运输车/管道蠕虫/电弧体/死亡飞蛾，以及 v23 的水生/蛇形/四足/眼球类
+   // 原生面向 +X（或各向对称）；其余按 +Z 建造的模型包一层 rotation.y=π/2 内层组把正面旋到 +X。
+-  const facesX = type === 'hound' || type === 'carrier' || type === 'pipeworm' || type === 'arcwraith' || type === 'deathmoth'
++  const facesX = type === 'hound' || type === 'duller' || type === 'carrier' || type === 'pipeworm' || type === 'arcwraith' || type === 'deathmoth'
+     || type === 'tiny' || type === 'thething' || type === 'wrangler' || type === 'camocrawler' || type === 'lightguide' || type === 'curabitur'
+     || type === 'corpserat' || type === 'watcher' || type === 'strider' || type === 'mangled' || type === 'soilworm'
+     || type === 'nguithr' || type === 'dryshrimp' || type === 'arachnid'
+diff --git a/app/src/game/renderer/houndMesh.ts b/app/src/game/renderer/houndMesh.ts
+index 385ca30..bb16e9d 100644
+--- a/app/src/game/renderer/houndMesh.ts
++++ b/app/src/game/renderer/houndMesh.ts
+@@ -405,3 +405,7 @@ export function animateHound(grp: THREE.Group, e: Entity, time: number, gz: numb
+   r.tail.rotation.y = (s?.wag ?? 0) > 0 ? Math.sin(t * 7) * 0.45 : Math.sin(t * 1.3) * 0.08
+   r.tail.rotation.z = -crouch * 0.5 + (fast ? 0.3 : 0) + sit * -0.3
+ }
++
++// v63：钝人等后续重制模型复用的扫掠/壳体/程序化贴图工具
++export { rng, merge, V, gauss, sstep, cap, ell, sweep, limbSeg, shell, canvasTex }
++export type { RF }
+diff --git a/app/src/game/renderer/renderer.ts b/app/src/game/renderer/renderer.ts
+index 25227d2..5bdcf46 100644
+--- a/app/src/game/renderer/renderer.ts
++++ b/app/src/game/renderer/renderer.ts
+@@ -78,6 +78,7 @@ import { l5StairWallDirection } from '../world/l5Topology'
+ import { L5NestLighting } from './l5NestLighting'
+ import { animateSmiler } from './smilerMesh'
+ import { animateHound } from './houndMesh'
++import { animateDuller } from './dullerMesh'
+ 
+ function disposeWorldGeometry(object: THREE.Object3D): void {
+   const instanced = object as THREE.InstancedMesh
+@@ -3232,7 +3233,7 @@ export class Renderer3D {
+       if (distance > (e.def.mothForm==='larva'?12:reach)) { if (grp) grp.visible = false; continue }
+       // v53：L3 高智能实体建模变体（无面灵错位器官/石器、水豚尸鼠；seed=实体 id 保证重建一致）；
+       // 尸鼠形态按层级固定：L2 灰白廊道种群 / L3 水豚 / 其余深褐（v53，替代原随机二选一）
+-      const eOpts = (e.def.l3face || e.def.tool || e.def.capybara || e.def.type === 'corpserat' || e.def.type === 'arachnid' || e.def.type === 'deathmoth' || e.def.type === 'smiler' || e.def.type === 'hound')
++      const eOpts = (e.def.l3face || e.def.tool || e.def.capybara || e.def.type === 'corpserat' || e.def.type === 'arachnid' || e.def.type === 'deathmoth' || e.def.type === 'smiler' || e.def.type === 'hound' || e.def.type === 'duller')
+         ? {
+           l3face: e.def.l3face, tool: e.def.tool, capybara: e.def.capybara, mothForm: e.def.mothForm,
+           ratMorph: (engine.levelDef.id === 2 ? 'gray' : engine.levelDef.id === 5 ? 'hotel' : 'brown') as 'gray' | 'brown' | 'hotel',
+@@ -3265,7 +3266,8 @@ export class Renderer3D {
+       // v51：人制品售货机活化——def 切换（vendingmachine→vmad）时重建模型（含骷髅手腿）
+       if (grp.userData.entType !== e.def.type || (e.def.type === 'deathmoth' && grp.userData.mothForm !== (e.def.mothForm ?? 'male'))
+         || (e.def.type === 'smiler' && e.sm && grp.userData.smilerKind !== e.sm.kind)
+-        || (e.def.type === 'hound' && e.hd && grp.userData.houndNeutral !== e.hd.neutral)) { // v61：笑魇变种在首个 AI tick 决定
++        || (e.def.type === 'hound' && e.hd && grp.userData.houndNeutral !== e.hd.neutral)
++        || (e.def.type === 'duller' && (grp.userData.dullerCarry ?? '') !== (e.dl?.carry ?? ''))) { // v61：笑魇变种在首个 AI tick 决定
+         this.scene.remove(grp)
+         this.disposeItemModel(grp)
+         grp = buildEntityMesh(e.def.type, eOpts)
+@@ -3274,6 +3276,13 @@ export class Renderer3D {
+         this.entityMeshes.set(e.id, grp)
+         this.scene.add(grp)
+       }
++      // v63：钝人手中攥着的随机物品（AI 首个 tick 决定；变化时上方会重建模型）
++      if (e.def.type === 'duller' && grp.userData.dullerCarryAttached !== true) {
++        const c = e.dl?.carry ?? ''
++        grp.userData.dullerCarry = c; grp.userData.dullerCarryAttached = true
++        const rig = grp.userData.dullerRig as { carry: THREE.Group } | undefined
++        if (c && rig) { const it = buildItemMesh(c); it.scale.multiplyScalar(0.85); rig.carry.add(it); this.enableShadows(it) }
++      }
+       const ceilingRat = !!e.def.ceilingCrawler && !!m.organicCave && !e.dead
+       const gz = ceilingRat ? caveCeilingAt(m, e.x, e.y) - 0.04 : (e.z ?? floorHeight(m, e.x, e.y))
+       grp.position.set(e.x, gz, e.y)
+@@ -3358,10 +3367,6 @@ export class Renderer3D {
+           if (parts.head && et !== 'thething') parts.head.rotation.y = Math.sin(t * 0.55) * 0.4
+           if (et === 'faceling' && parts.armR) parts.armR.rotation.x = -0.5 + Math.sin(t * 3.2) * 0.12 // 习惯性敲键
+           if (et === 'bellhop' && parts.torso) parts.torso.rotation.x = 0.08 + Math.sin(t * 1.1) * 0.06 // 殷勤微躬
+-          if (et === 'duller') { // 垂臂慢晃
+-            if (parts.armL) parts.armL.rotation.x = Math.sin(t * 1.2) * 0.08
+-            if (parts.armR) parts.armR.rotation.x = -Math.sin(t * 1.2) * 0.08
+-          }
+         } else {
+           if (parts.head) parts.head.rotation.y = 0
+           if (et === 'bellhop' && parts.torso) parts.torso.rotation.x = 0 // 脱离待机时收躬
+@@ -3713,6 +3718,7 @@ export class Renderer3D {
+       if (e.stunT > 0) grp.rotation.z = Math.sin(this.time * 40) * 0.1
+       else grp.rotation.z = 0
+       if (et === 'smiler' && !e.dead) animateSmiler(grp, e, this.time, gz)
++      if (et === 'duller' && !e.dead) animateDuller(grp, e, this.time, gz) // v63：钝人步态/伸臂/墙面污痕
+       if (et === 'hound' && !e.dead) animateHound(grp, e, this.time, gz) // v62 // v61：笑魇黑火/咧嘴/隐现
+       // ---------- 死亡动画（按实体差异化）----------
+       if (e.dead) {
+diff --git a/app/src/proto/dullerProto.ts b/app/src/proto/dullerProto.ts
+new file mode 100644
+index 0000000..7efce70
+--- /dev/null
++++ b/app/src/proto/dullerProto.ts
+@@ -0,0 +1,51 @@
++// 原型预览页：钝人重制（?mode=poses | close | wall）
++import * as THREE from 'three'
++import { buildEntityMesh } from '../game/renderer/entitiesMesh'
++import { animateDuller } from '../game/renderer/dullerMesh'
++import { buildItemMesh } from '../game/renderer/itemsMesh'
++const mode = new URLSearchParams(location.search).get('mode') ?? 'poses'
++const W = innerWidth, H = innerHeight
++const renderer = new THREE.WebGLRenderer({ antialias: true }); renderer.setSize(W, H); renderer.outputColorSpace = THREE.SRGBColorSpace
++document.body.appendChild(renderer.domElement)
++const park = mode === 'wall'
++const scene = new THREE.Scene(); scene.background = new THREE.Color(park ? '#8a8d8c' : '#5e5530'); scene.fog = new THREE.Fog(scene.background as THREE.Color, 9, 32)
++const fl = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.MeshLambertMaterial({ color: park ? '#6d706d' : '#6e5f36' })); fl.rotation.x = -Math.PI / 2; scene.add(fl)
++if (!park) { const wl = new THREE.Mesh(new THREE.PlaneGeometry(40, 6), new THREE.MeshLambertMaterial({ color: '#b8aa62' })); wl.position.set(0, 3, -2.5); scene.add(wl) }
++scene.add(new THREE.HemisphereLight('#fff6dc', '#3a3628', 1.15)); const sun = new THREE.DirectionalLight('#fff7e0', 1.2); sun.position.set(3, 6, 5); scene.add(sun)
++const cam = new THREE.PerspectiveCamera(34, W / H, 0.1, 60)
++const lab = document.getElementById('lab')!
++const label = (x: number, html: string) => { const p = new THREE.Vector3(x, 0, 0).project(cam); lab.insertAdjacentHTML('beforeend', `<div class="l" style="left:${(p.x * 0.5 + 0.5) * W}px;top:${H - 70}px">${html}</div>`) }
++const pose = (phase: string, st: string, dl: any, x: number, z: number, rotY: number, animT: number, carry?: string) => {
++  const g = buildEntityMesh('duller', { seed: 3 })
++  if (carry) { const it = buildItemMesh(carry); it.scale.multiplyScalar(0.85); (g.userData.dullerRig.carry as THREE.Group).add(it) }
++  g.position.set(x, 0, z); g.rotation.y = rotY; scene.add(g)
++  const e: any = { id: 3, state: st, animT, dl: { phase, reach: 0, reachLen: 1, wallD: -1, sway: 1, run: 0, ...dl } }
++  // 先跑两帧建立运动量（walk/run 姿态需要 animT 的变化率）
++  const v = dl.v ?? 0
++  for (let i = 0; i < 40; i++) { e.animT = animT - (40 - i) * v / 30; animateDuller(g, e, 1.3 + i / 30, 0) }
++  e.animT = animT; animateDuller(g, e, 1.3 + 40 / 30, 0)
++  let c = 0; g.traverse((m: any) => { if (m.isMesh) c++ }); return c
++}
++if (mode === 'wall') {
++  // 复刻附图：停车场白柱，柱后的钝人把双臂「切」出柱面，柱面晕开黑渍
++  const pillar = new THREE.Mesh(new THREE.BoxGeometry(1.6, 3.2, 0.7), new THREE.MeshLambertMaterial({ color: '#e7e5df' })); pillar.position.set(0, 1.6, 0.75); scene.add(pillar)
++  const ceil = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.MeshLambertMaterial({ color: '#4a4b48', side: THREE.DoubleSide })); ceil.rotation.x = Math.PI / 2; ceil.position.y = 3.2; scene.add(ceil)
++  const line = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 12), new THREE.MeshBasicMaterial({ color: '#c9b54a' })); line.rotation.x = -Math.PI / 2; line.rotation.z = 0.9; line.position.set(1.5, 0.005, 3); scene.add(line)
++  cam.position.set(-0.6, 1.45, 4.6); cam.lookAt(0.1, 1.2, 0.8)
++  pose('reach', 'attack', { reach: 1, reachLen: 2.5, wallD: 1.12, sway: 0.2 }, 0, 0, -Math.PI / 2, 0.3)
++} else if (mode === 'close') {
++  cam.position.set(1.7, 1.85, 1.6); cam.lookAt(0.05, 1.62, 0)
++  pose('lurk', 'investigate', {}, 0, 0, -0.35, 0.2)
++} else {
++  cam.position.set(0, 2.0, 15.5); cam.lookAt(0, 1.05, 0)
++  const items: [string, string, any, string, number, string?][] = [
++    ['roam', 'wander', {}, '站姿：摇晃、歪颈', 0],
++    ['roam', 'wander', { v: 1.4 }, '游荡：不自然的步态', 0.55],
++    ['lurk', 'investigate', { v: 0.6 }, '携带随机物品', 1.1, 'canned'],
++    ['reach', 'attack', { reach: 1, reachLen: 2.2, sway: 0.2 }, '伸臂：前臂伸长数倍', 0.3],
++    ['flee', 'stunned', { run: 1, v: 3.4 }, '被注意到：急速逃离', 0.4]]
++  let calls = 0
++  items.forEach(([ph, st, dl, name, aT, carry], i) => { const x = (i - 2) * 3.0; calls = Math.max(calls, pose(ph, st, dl, x - (i === 3 ? 0.9 : 0), 0, -0.6, aT, carry)); label(x, name) })
++  lab.insertAdjacentHTML('beforeend', `<div class="l" style="left:${W / 2}px;top:14px"><span class="s">单只约 ${calls} 次绘制</span></div>`)
++}
++cam.updateMatrixWorld(); renderer.render(scene, cam); (window as any).__ready = true

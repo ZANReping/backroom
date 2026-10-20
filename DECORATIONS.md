@@ -2,7 +2,7 @@
 
 > 由 `app/src/game/content/decorRegistry.ts` 统一注册表生成。修改模型先更新注册定义，再同步本表。尺寸以米计；交互不等同于可搜刮。
 
-## 有碰撞体积（213）
+## 有碰撞体积（308）
 
 | 名称 | ID | 交互 | 容器 | 生成层级 | 说明 |
 |---|---|---|---|---|---|
@@ -103,8 +103,105 @@
 | 户外厕所 | `l10outhouse` |  |  | L10 | infinite L10 附属建筑 |
 | 田间树列 | `l10tree` |  |  | L10 | infinite L10 地块分隔树列 |
 | 压缩干草块 | `l10haybale` |  |  | L10 | infinite L10 贴地生成，使用独立 PBR 干草材质与模型碰撞 |
+| 柏树 | `l11_cypress` |  |  | L11 | Level 11 waterfront 装饰；默认尺寸 0.8×0.8×6，放置条件：park、waterfront；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 办公椅 | `l11_task_chair` |  |  | L11 | Level 11 interior 装饰；默认尺寸 0.65×0.65×1.1，放置条件：interior；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 办公桌 | `l11_office_desk` |  |  | L11 | Level 11 interior 装饰；默认尺寸 1.6×0.8×0.76，放置条件：interior；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 报刊箱 | `l11_newspaper_box` |  |  | L11 | Level 11 commerce 装饰；默认尺寸 0.6×0.5×1.1，放置条件：storefront；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 变压器 | `l11_transformer` |  |  | L11 | Level 11 municipal 装饰；默认尺寸 1.4×0.9×1.4，放置条件：alley；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 冰箱 | `l11_refrigerator` |  |  | L11 | Level 11 interior 装饰；默认尺寸 0.75×0.7×1.9，放置条件：interior；正面 -Z，背面靠墙、正面朝室内；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 菜单牌 | `l11_menu_board` |  |  | L11 | Level 11 commerce 装饰；默认尺寸 0.65×0.6×1.1，放置条件：storefront；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 餐椅 | `l11_dining_chair` |  |  | L11 | Level 11 interior 装饰；默认尺寸 0.5×0.55×0.9，放置条件：interior；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 餐桌 | `l11_dining_table` |  |  | L11 | Level 11 interior 装饰；默认尺寸 1.5×0.9×0.75，放置条件：interior；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 茶几 | `l11_coffee_table` |  |  | L11 | Level 11 interior 装饰；默认尺寸 1.2×0.65×0.45，放置条件：interior；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 出租车 | `l11_taxi` |  |  | L11 | Level 11 commerce 装饰；默认尺寸 1.85×4.6×1.6，放置条件：road；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 厨房操作台 | `l11_kitchen_counter` |  |  | L11 | Level 11 interior 装饰；默认尺寸 2×0.65×0.9，放置条件：interior；正面 -Z，背面靠墙、正面朝室内；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 床 | `l11_bed` |  |  | L11 | Level 11 interior 装饰；默认尺寸 1.4×2×0.6，放置条件：interior；正面 -Z，背面靠墙、正面朝室内；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 档案架 | `l11_archive_shelf` |  |  | L11 | Level 11 interior 装饰；默认尺寸 2×0.7×2.4，放置条件：interior；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 道路标志牌 | `l11_road_sign` |  |  | L11 | Level 11 municipal 装饰；默认尺寸 0.45×0.15×2.3，放置条件：sidewalk；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
 | 地铁入口 | `subwayent` |  |  | L11 | mapgenDeep L11 |
+| 电动踏板车 | `l11_motor_scooter` |  |  | L11 | Level 11 commerce 装饰；默认尺寸 0.65×1.7×1.1，放置条件：sidewalk；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 电话亭 | `l11_phone_booth` |  |  | L11 | Level 11 commerce 装饰；默认尺寸 1×1×2.3，放置条件：sidewalk；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 电缆盘 | `l11_cable_reel` |  |  | L11 | Level 11 service 装饰；默认尺寸 1×1×1，放置条件：alley；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 扶手椅 | `l11_armchair` |  |  | L11 | Level 11 interior 装饰；默认尺寸 0.9×0.9×0.85，放置条件：interior；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 隔离柱 | `l11_bollard` |  |  | L11 | Level 11 municipal 装饰；默认尺寸 0.22×0.22×0.85，放置条件：sidewalk；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 工作台 | `l11_workbench` |  |  | L11 | Level 11 interior 装饰；默认尺寸 1.8×0.7×0.9，放置条件：interior；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 公交车 | `l11_bus` |  |  | L11 | Level 11 commerce 装饰；默认尺寸 2.5×9×3.1，放置条件：road；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 公交候车亭 | `l11_bus_shelter` |  |  | L11 | Level 11 municipal 装饰；默认尺寸 4×1.6×2.6，放置条件：sidewalk；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 公交站牌 | `l11_bus_stop` |  |  | L11 | Level 11 municipal 装饰；默认尺寸 0.5×0.2×2.5，放置条件：sidewalk；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 公用设施箱 | `l11_utility_box` |  |  | L11 | Level 11 municipal 装饰；默认尺寸 0.8×0.4×1.2，放置条件：sidewalk；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 公园灯 | `l11_park_lamp` |  |  | L11 | Level 11 waterfront 装饰；默认尺寸 0.3×0.3×3，放置条件：park；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 公园长椅 | `l11_park_bench` |  |  | L11 | Level 11 waterfront 装饰；默认尺寸 1.9×0.65×0.85，放置条件：park、waterfront；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 购物车 | `l11_shopping_cart` |  |  | L11 | Level 11 commerce 装饰；默认尺寸 0.65×1×0.95，放置条件：storefront；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 灌木花箱 | `l11_shrub_planter` |  |  | L11 | Level 11 waterfront 装饰；默认尺寸 1.8×0.8×1，放置条件：park；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 黑板 | `l11_chalkboard` |  |  | L11 | Level 11 interior 装饰；默认尺寸 2×0.12×1.2，放置条件：interior；正面 -Z，背面靠墙、正面朝室内，安装高度 0.85m；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 花卉花箱 | `l11_flower_planter` |  |  | L11 | Level 11 waterfront 装饰；默认尺寸 1×0.65×0.65，放置条件：park；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 回收箱 | `l11_recycling_bin` |  |  | L11 | Level 11 municipal 装饰；默认尺寸 1.2×0.7×1.1，放置条件：sidewalk；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 会议桌 | `l11_meeting_table` |  |  | L11 | Level 11 interior 装饰；默认尺寸 3×1.2×0.75，放置条件：interior；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 集市摊位 | `l11_market_stall` |  |  | L11 | Level 11 commerce 装饰；默认尺寸 3×2×2.6，放置条件：storefront；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 交通信号灯 | `l11_signal` |  |  | L11 | Level 11 municipal 装饰；默认尺寸 0.5×0.4×4.8，放置条件：road；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 交通锥 | `l11_cone` |  |  | L11 | Level 11 service 装饰；默认尺寸 0.35×0.35×0.7，放置条件：road；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 脚手架 | `l11_scaffold` |  |  | L11 | Level 11 service 装饰；默认尺寸 2×1×3，放置条件：alley；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 轿车 | `l11_sedan` |  |  | L11 | Level 11 commerce 装饰；默认尺寸 1.8×4.4×1.5，放置条件：road；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 街道名牌 | `l11_street_name` |  |  | L11 | Level 11 municipal 装饰；默认尺寸 1.65×0.15×2.6，放置条件：sidewalk；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 贴墙竖式广告牌 | `l11_vertical_wall_sign` |  |  | L11 | Level 11 commerce 装饰；默认尺寸 1.3×0.15×6.5，放置条件：facade；安装高度 4m；与悬挑双面竖式广告牌共享 Pegasus、hotel、clinic、cinema 四种完整牌面变体；仍计为一种装饰原型；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 悬挑双面竖式广告牌 | `l11_vertical_blade_sign` |  |  | L11 | Level 11 commerce 装饰；默认尺寸 0.16×1.6×6.5，放置条件：facade；安装高度 4m；与贴墙竖式广告牌共享 Pegasus、hotel、clinic、cinema 四种完整牌面变体；仍计为一种装饰原型；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 街灯 | `l11_streetlight` |  |  | L11 | Level 11 municipal 装饰；默认尺寸 0.5×0.5×6，放置条件：sidewalk；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
 | 街机柜 | `arcadecab` | ✓ |  | L11 | mapgenDeep L11（任何交互送去 Level 25） |
+| 救生圈 | `l11_life_ring` |  |  | L11 | Level 11 waterfront 装饰；默认尺寸 0.7×0.15×1.1，放置条件：waterfront；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 咖啡椅 | `l11_cafe_chair` |  |  | L11 | Level 11 commerce 装饰；默认尺寸 0.5×0.55×0.85，放置条件：storefront；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 咖啡桌 | `l11_cafe_table` |  |  | L11 | Level 11 commerce 装饰；默认尺寸 0.75×0.75×0.75，放置条件：storefront；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 课桌 | `l11_classroom_desk` |  |  | L11 | Level 11 interior 装饰；默认尺寸 0.8×0.6×0.75，放置条件：interior；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 空调机组 | `l11_hvac` |  |  | L11 | Level 11 service 装饰；默认尺寸 1.5×1.1×1，放置条件：alley；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 快递柜 | `l11_parcel_locker` |  |  | L11 | Level 11 commerce 装饰；默认尺寸 2×0.65×2，放置条件：storefront；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 垃圾集装箱 | `l11_dumpster` |  |  | L11 | Level 11 service 装饰；默认尺寸 1.7×1×0.9，放置条件：alley；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 垃圾桶 | `l11_trash_bin` |  |  | L11 | Level 11 municipal 装饰；默认尺寸 0.55×0.55×1，放置条件：sidewalk；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 廊架 | `l11_pergola` |  |  | L11 | Level 11 waterfront 装饰；默认尺寸 3.4×3.4×2.8，放置条件：park；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 炉灶 | `l11_stove` |  |  | L11 | Level 11 interior 装饰；默认尺寸 0.7×0.65×0.9，放置条件：interior；正面 -Z，背面靠墙、正面朝室内；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 路障 | `l11_road_barrier` |  |  | L11 | Level 11 service 装饰；默认尺寸 2×0.4×1，放置条件：road；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 落地灯 | `l11_floor_lamp` |  |  | L11 | Level 11 interior 装饰；默认尺寸 0.4×0.4×1.7，放置条件：interior；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 落水管 | `l11_downpipe` |  |  | L11 | Level 11 service 装饰；默认尺寸 0.12×0.12×3，放置条件：alley、storefront；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 暖气片 | `l11_radiator` |  |  | L11 | Level 11 interior 装饰；默认尺寸 1.2×0.15×0.7，放置条件：interior；正面 -Z，背面靠墙、正面朝室内，安装高度 0.16m；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 配送厢式车 | `l11_delivery_van` |  |  | L11 | Level 11 commerce 装饰；默认尺寸 2×5×2.4，放置条件：road；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 配送自行车 | `l11_delivery_bike` |  |  | L11 | Level 11 commerce 装饰；默认尺寸 0.6×1.8×1.2，放置条件：storefront；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 喷泉 | `l11_fountain` |  |  | L11 | Level 11 waterfront 装饰；默认尺寸 3×3×1.3，放置条件：park；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 前台接待桌 | `l11_reception_desk` |  |  | L11 | Level 11 interior 装饰；默认尺寸 2.5×0.8×1.1，放置条件：interior；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 沙发 | `l11_sofa` |  |  | L11 | Level 11 interior 装饰；默认尺寸 2.2×0.9×0.9，放置条件：interior；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 施工安全围栏 | `l11_safety_fence` |  |  | L11 | Level 11 service 装饰；默认尺寸 2×0.1×1.8，放置条件：alley；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 实验台 | `l11_lab_bench` |  |  | L11 | Level 11 interior 装饰；默认尺寸 2×0.8×0.9，放置条件：interior；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 售票机 | `l11_ticket_machine` |  |  | L11 | Level 11 municipal 装饰；默认尺寸 0.6×0.5×1.7，放置条件：sidewalk；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 书柜 | `l11_bookcase` |  |  | L11 | Level 11 interior 装饰；默认尺寸 1.8×0.4×2，放置条件：interior；正面 -Z，背面靠墙、正面朝室内；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 蔬果箱 | `l11_produce_crates` |  |  | L11 | Level 11 commerce 装饰；默认尺寸 1.5×0.8×0.8，放置条件：storefront；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 水槽 | `l11_sink` |  |  | L11 | Level 11 interior 装饰；默认尺寸 0.8×0.6×1.1，放置条件：interior；正面 -Z，背面靠墙、正面朝室内；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 水泥搅拌机 | `l11_cement_mixer` |  |  | L11 | Level 11 service 装饰；默认尺寸 1.1×1.4×1.4，放置条件：alley；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 水闸绞盘 | `l11_lock_winch` |  |  | L11 | Level 11 waterfront 装饰；默认尺寸 0.8×0.6×1，放置条件：waterfront；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 水闸门 | `l11_lock_gate` |  |  | L11 | Level 11 waterfront 装饰；默认尺寸 4×0.4×2.5，放置条件：waterfront；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 缩微胶片阅读器 | `l11_microfilm_reader` |  |  | L11 | Level 11 interior 装饰；默认尺寸 0.65×0.7×0.6，放置条件：interior；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 梯子 | `l11_ladder` |  |  | L11 | Level 11 service 装饰；默认尺寸 0.55×0.45×2.6，放置条件：alley；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 体育长凳 | `l11_gym_bench` |  |  | L11 | Level 11 interior 装饰；默认尺寸 2×0.5×0.5，放置条件：interior；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 停车计时器 | `l11_parking_meter` |  |  | L11 | Level 11 municipal 装饰；默认尺寸 0.3×0.25×1.3，放置条件：sidewalk；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 通风管道 | `l11_duct` |  |  | L11 | Level 11 service 装饰；默认尺寸 2×0.5×0.5，放置条件：alley；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 托盘 | `l11_pallet` |  |  | L11 | Level 11 service 装饰；默认尺寸 1.2×0.8×0.15，放置条件：alley；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 托盘堆 | `l11_pallet_stack` |  |  | L11 | Level 11 service 装饰；默认尺寸 1.2×0.8×0.8，放置条件：alley；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 文件柜 | `l11_file_cabinet` |  |  | L11 | Level 11 interior 装饰；默认尺寸 0.8×0.5×1.4，放置条件：interior；正面 -Z，背面靠墙、正面朝室内；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 洗手盆 | `l11_wash_basin` |  |  | L11 | Level 11 interior 装饰；默认尺寸 0.55×0.45×0.85，放置条件：interior；正面 -Z，背面靠墙、正面朝室内；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 系船柱 | `l11_mooring_bollard` |  |  | L11 | Level 11 waterfront 装饰；默认尺寸 0.5×0.5×0.6，放置条件：waterfront；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 厢式货车 | `l11_box_truck` |  |  | L11 | Level 11 commerce 装饰；默认尺寸 2.4×6.3×3.2，放置条件：road；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 消防栓 | `l11_hydrant` |  |  | L11 | Level 11 municipal 装饰；默认尺寸 0.5×0.4×0.8，放置条件：sidewalk；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 消防逃生梯 | `l11_fire_escape` |  |  | L11 | Level 11 service 装饰；默认尺寸 1.5×3×3.9，放置条件：alley；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 行道树 | `l11_plane_tree` |  |  | L11 | Level 11 waterfront 装饰；默认尺寸 1×1×7，放置条件：park、waterfront；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 行人信号灯 | `l11_pedestrian_signal` |  |  | L11 | Level 11 municipal 装饰；默认尺寸 0.25×0.25×2.7，放置条件：sidewalk；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 野餐桌 | `l11_picnic_table` |  |  | L11 | Level 11 waterfront 装饰；默认尺寸 2×1.6×0.8，放置条件：park；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 衣柜 | `l11_wardrobe` |  |  | L11 | Level 11 interior 装饰；默认尺寸 1.4×0.6×2.1，放置条件：interior；正面 -Z，背面靠墙、正面朝室内；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 饮水台 | `l11_drinking_fountain` |  |  | L11 | Level 11 waterfront 装饰；默认尺寸 0.4×0.4×0.9，放置条件：park、waterfront；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 邮政箱 | `l11_post_box` |  |  | L11 | Level 11 municipal 装饰；默认尺寸 0.6×0.5×1.2，放置条件：sidewalk；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 运河护栏 | `l11_canal_railing` |  |  | L11 | Level 11 waterfront 装饰；默认尺寸 4×0.12×1.1，放置条件：waterfront；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 展柜 | `l11_exhibit_case` |  |  | L11 | Level 11 interior 装饰；默认尺寸 1.3×0.65×1.5，放置条件：interior；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 展示货架 | `l11_display_rack` |  |  | L11 | Level 11 commerce 装饰；默认尺寸 1.2×0.55×1.5，放置条件：storefront；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 遮阳伞 | `l11_umbrella` |  |  | L11 | Level 11 commerce 装饰；默认尺寸 2.6×2.6×2.5，放置条件：storefront；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 装卸平台 | `l11_loading_dock` |  |  | L11 | Level 11 service 装饰；默认尺寸 3×2×1，放置条件：alley；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 自动售货机 | `l11_vending_machine` |  |  | L11 | Level 11 commerce 装饰；默认尺寸 0.9×0.8×1.9，放置条件：storefront；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 自行车架 | `l11_bike_rack` |  |  | L11 | Level 11 municipal 装饰；默认尺寸 2×0.7×0.8，放置条件：sidewalk；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 坐便器 | `l11_toilet` |  |  | L11 | Level 11 interior 装饰；默认尺寸 0.4×0.7×0.8，放置条件：interior；正面 -Z，背面靠墙、正面朝室内；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
 | 阿谢儿·利沃纪念陈列 | `alpha_memorial` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 2.2×0.4×1.9，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
 | 半透明玻璃窗与百叶帘 | `alpha_blinds` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 2.2×0.18×1.45，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
 | 编号值班储物柜 | `alpha_lockers` |  |  | 据点101 | Alpha 基地可复用静态装饰；默认尺寸 1.5×0.48×1.85，模型与碰撞来自 content/alphaDecor.ts；默认无交互，data.facility=1 时承接现场业务；始终非容器 |
@@ -220,7 +317,7 @@
 | 门（保留类型） | `door` |  |  |  | 无任何生成器放置（仅 mapgen 校验代码引用；L5 structures 列表为死文档） |
 | 圆形拱门（保留类型） | `roundarch` |  |  |  | 无任何生成器放置 |
 
-## 无碰撞体积（低模）（168）
+## 无碰撞体积（低模）（180）
 
 | 名称 | ID | 交互 | 容器 | 生成层级 | 说明 |
 |---|---|---|---|---|---|
@@ -232,6 +329,7 @@
 | 荧光灯阵列 | `lightgrid` |  |  | L0、L1、L5、L7 | infinite L0/L1 placeFree、infiniteL5 维修大厅/健身房灯板；mapgenDeep L7 入口房间 |
 | M.E.G. 文档 | `megdoc` | ✓ |  | L0、据点101、据点106 | infinite L0 马尼拉室桌上、Alpha 基地档案室 |
 | 办公转椅 | `officechair` |  |  | L1、L2、据点101、据点102、据点103、据点105、据点106 | infiniteL1 民居/L2 房间；据点手工 |
+| 液压理发椅 | `barberchair` |  |  | L1 | v2 小径理发椅房，支持坐下与起身 |
 | 定居点地标 | `landmark` | ✓ |  | L1、L2 | infiniteL1 各段（alpha/tom/bntg/ariane）、infiniteL2 tidy 段（el3a） |
 | 发光蘑菇 | `glowshroom` |  |  | L1、L8 | infiniteL1 花园段、mapgenDeep L8 罗特尼斯大丛林；高大变体实心 |
 | 废弃车（纯视觉） | `prop:l1_wreckcar` |  |  | L1 | buildDecorations gen=garage（仅 parking 段） |
@@ -301,10 +399,16 @@
 | 天然洞口 | `l6cave` |  |  | L6 | infiniteL6 地下稀有出口，通往 L8 |
 | 锈蚀管道网 | `hotpipe` |  |  | L6 | infiniteL6 地下廊道贴墙；旧 mapgenDeep L6 分支为死代码 |
 | 沿墙管道支架 | `prop:l6_pipebracket` |  |  | L6 | buildDecorations gen=darkhall |
+| 不可理解的巨鱼骨架 | `l7giantfish` |  |  | L7 | infiniteL7 v66 午夜带/深渊稀有地标 |
+| 臣服堡垒（废弃） | `l7fort` |  |  | L7 | infiniteL7 v66 约半数岩岛；内含可搜刮板条箱/木桶 |
 | 骨堆 | `bonepile` | ✓ | ✓ | L7、L8 | mapgenDeep L7/L8 散点 |
+| 海床地毯补丁 | `l7carpet` |  |  | L7 | infiniteL7 v66 午夜带/深渊海床 |
 | 巨鱼骨架 | `fishbones` |  |  | L7 | mapgenDeep L7 |
+| 类人骨架（巨颚鳍足） | `l7skeleton` |  |  | L7 | infiniteL7 v66 暮色带起出现，午夜带成群 |
+| 漂浮碎屑场 | `l7debris` |  |  | L7 | infiniteL7 v66 每 chunk 一组实例：书皮纸块/骨片/锈蚀废铁/纤维，按落点深度带 |
 | 散落骨头 | `prop:l7_bones` |  |  | L7 | buildDecorations gen=ocean |
 | 深渊焦油岩堆 | `seatarpit` |  |  | L7 | mapgenDeep L7 |
+| 深渊气泡柱 | `l7bubbles` |  |  | L7 | infiniteL7 v66 焦油岩堆与未知源头 |
 | 系缆桩（尼龙绳锚点） | `ropeanchor` |  |  | L7 | infiniteL7 门廊入口；data.deployed 持久化，绳索自门廊出口垂至海面，可靠近攀爬 |
 | 锈蚀金属碎片 | `prop:l7_rustscrap` |  |  | L7 | buildDecorations gen=ocean |
 | 岩石小岛 | `rockisle` |  |  | L7 | mapgenDeep L7 |
@@ -337,11 +441,16 @@
 | 田间棚屋 | `l10shed` |  |  | L10 | infinite L10 小型空置建筑 |
 | M.E.G. 临时作业点 | `l10worksite` |  |  | L10 | infinite L10 临时测量与收割作业点 |
 | 店面 | `shopfront` |  |  | L11 | mapgenDeep L11（招牌即传送门线索） |
+| 店铺雨棚 | `l11_shop_awning` |  |  | L11 | Level 11 commerce 装饰；默认尺寸 3×1.6×0.35，放置条件：storefront；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
+| 顶灯 | `l11_ceiling_light` |  |  | L11 | Level 11 interior 装饰；默认尺寸 1.2×0.3×0.12，放置条件：interior；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
 | 广告柱 | `prop:l11_adpillar` |  |  | L11 | buildDecorations gen=city |
 | 黑色镜面窗 | `blackwindow` |  |  | L11 | mapgenDeep L11 楼体外墙 |
 | 混凝土楼体（标记） | `towerblock` |  |  | L11 | mapgenDeep L11（墙体由瓦片雕刻） |
+| 交通岛 | `l11_traffic_island` |  |  | L11 | Level 11 municipal 装饰；默认尺寸 2×1×0.16，放置条件：road；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
 | 街道垃圾桶 | `prop:l11_trashcan` |  |  | L11 | buildDecorations gen=city |
+| 井盖 | `l11_manhole` |  |  | L11 | Level 11 municipal 装饰；默认尺寸 0.7×0.7×0.025，放置条件：road；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
 | 施工脚手架 | `prop:l11_scaffold` |  |  | L11 | buildDecorations gen=city |
+| 雨水篦子 | `l11_storm_drain` |  |  | L11 | Level 11 municipal 装饰；默认尺寸 0.8×0.35×0.025，放置条件：road；正面 -Z；模型与碰撞由 L11 装饰流程提供；无交互、非容器 |
 | M.E.G. 标记路牌 | `megsign` | ✓ |  | L11 | mapgenDeep L11（交互同 roadsign 通路） |
 | 「家门」 | `homedoor` |  |  | L601 | mapgenDeep L601 假现实入口（出口结构，不走 scanInteract） |
 | 金属字母 | `endletters` | ✓ |  | L601 | mapgenDeep L601 中央（the end is near） |
@@ -584,7 +693,154 @@
 | Alpha 房间导引牌 | `alpha_sign` | 1.5×0.04 | 0.3 |  |
 | 表面安装电线管 | `alpha_conduit` | 4×0.07 | 0.06 |  |
 
+## Level 11 城市装饰默认尺寸
+
+103 项构件按市政、商业、滨水、服务和室内用途登记。
+
+| 名称 | ID | 宽×深×高 | 碰撞 | 放置条件 |
+|---|---|---|---|---|
+| 交通信号灯 | `l11_signal` | 0.5×0.4×4.8 | ✓ | road |
+| 行人信号灯 | `l11_pedestrian_signal` | 0.25×0.25×2.7 | ✓ | sidewalk |
+| 街灯 | `l11_streetlight` | 0.5×0.5×6 | ✓ | sidewalk |
+| 隔离柱 | `l11_bollard` | 0.22×0.22×0.85 | ✓ | sidewalk |
+| 消防栓 | `l11_hydrant` | 0.5×0.4×0.8 | ✓ | sidewalk |
+| 停车计时器 | `l11_parking_meter` | 0.3×0.25×1.3 | ✓ | sidewalk |
+| 道路标志牌 | `l11_road_sign` | 0.45×0.15×2.3 | ✓ | sidewalk |
+| 街道名牌 | `l11_street_name` | 1.65×0.15×2.6 | ✓ | sidewalk |
+| 公用设施箱 | `l11_utility_box` | 0.8×0.4×1.2 | ✓ | sidewalk |
+| 变压器 | `l11_transformer` | 1.4×0.9×1.4 | ✓ | alley |
+| 公交候车亭 | `l11_bus_shelter` | 4×1.6×2.6 | ✓ | sidewalk |
+| 公交站牌 | `l11_bus_stop` | 0.5×0.2×2.5 | ✓ | sidewalk |
+| 自行车架 | `l11_bike_rack` | 2×0.7×0.8 | ✓ | sidewalk |
+| 垃圾桶 | `l11_trash_bin` | 0.55×0.55×1 | ✓ | sidewalk |
+| 回收箱 | `l11_recycling_bin` | 1.2×0.7×1.1 | ✓ | sidewalk |
+| 邮政箱 | `l11_post_box` | 0.6×0.5×1.2 | ✓ | sidewalk |
+| 井盖 | `l11_manhole` | 0.7×0.7×0.025 |  | road |
+| 雨水篦子 | `l11_storm_drain` | 0.8×0.35×0.025 |  | road |
+| 交通岛 | `l11_traffic_island` | 2×1×0.16 |  | road |
+| 售票机 | `l11_ticket_machine` | 0.6×0.5×1.7 | ✓ | sidewalk |
+| 店铺雨棚 | `l11_shop_awning` | 3×1.6×0.35 |  | storefront |
+| 咖啡桌 | `l11_cafe_table` | 0.75×0.75×0.75 | ✓ | storefront |
+| 咖啡椅 | `l11_cafe_chair` | 0.5×0.55×0.85 | ✓ | storefront |
+| 菜单牌 | `l11_menu_board` | 0.65×0.6×1.1 | ✓ | storefront |
+| 展示货架 | `l11_display_rack` | 1.2×0.55×1.5 | ✓ | storefront |
+| 报刊箱 | `l11_newspaper_box` | 0.6×0.5×1.1 | ✓ | storefront |
+| 自动售货机 | `l11_vending_machine` | 0.9×0.8×1.9 | ✓ | storefront |
+| 电话亭 | `l11_phone_booth` | 1×1×2.3 | ✓ | sidewalk |
+| 快递柜 | `l11_parcel_locker` | 2×0.65×2 | ✓ | storefront |
+| 集市摊位 | `l11_market_stall` | 3×2×2.6 | ✓ | storefront |
+| 遮阳伞 | `l11_umbrella` | 2.6×2.6×2.5 | ✓ | storefront |
+| 蔬果箱 | `l11_produce_crates` | 1.5×0.8×0.8 | ✓ | storefront |
+| 购物车 | `l11_shopping_cart` | 0.65×1×0.95 | ✓ | storefront |
+| 配送自行车 | `l11_delivery_bike` | 0.6×1.8×1.2 | ✓ | storefront |
+| 轿车 | `l11_sedan` | 1.8×4.4×1.5 | ✓ | road |
+| 配送厢式车 | `l11_delivery_van` | 2×5×2.4 | ✓ | road |
+| 厢式货车 | `l11_box_truck` | 2.4×6.3×3.2 | ✓ | road |
+| 出租车 | `l11_taxi` | 1.85×4.6×1.6 | ✓ | road |
+| 公交车 | `l11_bus` | 2.5×9×3.1 | ✓ | road |
+| 电动踏板车 | `l11_motor_scooter` | 0.65×1.7×1.1 | ✓ | sidewalk |
+| 行道树 | `l11_plane_tree` | 1×1×7 | ✓ | park、waterfront |
+| 柏树 | `l11_cypress` | 0.8×0.8×6 | ✓ | park、waterfront |
+| 灌木花箱 | `l11_shrub_planter` | 1.8×0.8×1 | ✓ | park |
+| 花卉花箱 | `l11_flower_planter` | 1×0.65×0.65 | ✓ | park |
+| 公园长椅 | `l11_park_bench` | 1.9×0.65×0.85 | ✓ | park、waterfront |
+| 野餐桌 | `l11_picnic_table` | 2×1.6×0.8 | ✓ | park |
+| 运河护栏 | `l11_canal_railing` | 4×0.12×1.1 | ✓ | waterfront |
+| 石柱滨水栏杆 | `l11_quay_balustrade` | 4×0.5×1.1 | ✓ | waterfront |
+| 系船柱 | `l11_mooring_bollard` | 0.5×0.5×0.6 | ✓ | waterfront |
+| 救生圈 | `l11_life_ring` | 0.7×0.15×1.1 | ✓ | waterfront |
+| 水闸绞盘 | `l11_lock_winch` | 0.8×0.6×1 | ✓ | waterfront |
+| 水闸门 | `l11_lock_gate` | 4×0.4×2.5 | ✓ | waterfront |
+| 饮水台 | `l11_drinking_fountain` | 0.4×0.4×0.9 | ✓ | park、waterfront |
+| 公园灯 | `l11_park_lamp` | 0.3×0.3×3 | ✓ | park |
+| 喷泉 | `l11_fountain` | 3×3×1.3 | ✓ | park |
+| 廊架 | `l11_pergola` | 3.4×3.4×2.8 | ✓ | park |
+| 空调机组 | `l11_hvac` | 1.5×1.1×1 | ✓ | alley |
+| 通风管道 | `l11_duct` | 2×0.5×0.5 | ✓ | alley |
+| 落水管 | `l11_downpipe` | 0.12×0.12×3 | ✓ | alley、storefront |
+| 消防逃生梯 | `l11_fire_escape` | 1.5×3×3.9 | ✓ | alley |
+| 装卸平台 | `l11_loading_dock` | 3×2×1 | ✓ | alley |
+| 托盘 | `l11_pallet` | 1.2×0.8×0.15 | ✓ | alley |
+| 托盘堆 | `l11_pallet_stack` | 1.2×0.8×0.8 | ✓ | alley |
+| 垃圾集装箱 | `l11_dumpster` | 1.7×1×0.9 | ✓ | alley |
+| 脚手架 | `l11_scaffold` | 2×1×3 | ✓ | alley |
+| 施工安全围栏 | `l11_safety_fence` | 2×0.1×1.8 | ✓ | alley |
+| 交通锥 | `l11_cone` | 0.35×0.35×0.7 | ✓ | road |
+| 路障 | `l11_road_barrier` | 2×0.4×1 | ✓ | road |
+| 电缆盘 | `l11_cable_reel` | 1×1×1 | ✓ | alley |
+| 水泥搅拌机 | `l11_cement_mixer` | 1.1×1.4×1.4 | ✓ | alley |
+| 梯子 | `l11_ladder` | 0.55×0.45×2.6 | ✓ | alley |
+| 办公桌 | `l11_office_desk` | 1.6×0.8×0.76 | ✓ | interior |
+| 办公椅 | `l11_task_chair` | 0.65×0.65×1.1 | ✓ | interior |
+| 会议桌 | `l11_meeting_table` | 3×1.2×0.75 | ✓ | interior |
+| 文件柜 | `l11_file_cabinet` | 0.8×0.5×1.4 | ✓ | interior |
+| 书柜 | `l11_bookcase` | 1.8×0.4×2 | ✓ | interior |
+| 前台接待桌 | `l11_reception_desk` | 2.5×0.8×1.1 | ✓ | interior |
+| 沙发 | `l11_sofa` | 2.2×0.9×0.9 | ✓ | interior |
+| 扶手椅 | `l11_armchair` | 0.9×0.9×0.85 | ✓ | interior |
+| 茶几 | `l11_coffee_table` | 1.2×0.65×0.45 | ✓ | interior |
+| 床 | `l11_bed` | 1.4×2×0.6 | ✓ | interior |
+| 衣柜 | `l11_wardrobe` | 1.4×0.6×2.1 | ✓ | interior |
+| 厨房操作台 | `l11_kitchen_counter` | 2×0.65×0.9 | ✓ | interior |
+| 水槽 | `l11_sink` | 0.8×0.6×1.1 | ✓ | interior |
+| 冰箱 | `l11_refrigerator` | 0.75×0.7×1.9 | ✓ | interior |
+| 炉灶 | `l11_stove` | 0.7×0.65×0.9 | ✓ | interior |
+| 餐桌 | `l11_dining_table` | 1.5×0.9×0.75 | ✓ | interior |
+| 餐椅 | `l11_dining_chair` | 0.5×0.55×0.9 | ✓ | interior |
+| 坐便器 | `l11_toilet` | 0.4×0.7×0.8 | ✓ | interior |
+| 洗手盆 | `l11_wash_basin` | 0.55×0.45×0.85 | ✓ | interior |
+| 暖气片 | `l11_radiator` | 1.2×0.15×0.7 | ✓ | interior |
+| 顶灯 | `l11_ceiling_light` | 1.2×0.3×0.12 |  | interior |
+| 落地灯 | `l11_floor_lamp` | 0.4×0.4×1.7 | ✓ | interior |
+| 课桌 | `l11_classroom_desk` | 0.8×0.6×0.75 | ✓ | interior |
+| 黑板 | `l11_chalkboard` | 2×0.12×1.2 | ✓ | interior |
+| 实验台 | `l11_lab_bench` | 2×0.8×0.9 | ✓ | interior |
+| 档案架 | `l11_archive_shelf` | 2×0.7×2.4 | ✓ | interior |
+| 缩微胶片阅读器 | `l11_microfilm_reader` | 0.65×0.7×0.6 | ✓ | interior |
+| 展柜 | `l11_exhibit_case` | 1.3×0.65×1.5 | ✓ | interior |
+| 体育长凳 | `l11_gym_bench` | 2×0.5×0.5 | ✓ | interior |
+| 工作台 | `l11_workbench` | 1.8×0.7×0.9 | ✓ | interior |
+
+## Level 11 标牌图集
+
+32 个完整的 2000 年代风格生成标牌面是已注册道具上的图形变体，不增加装饰原型数量。目录与图集数据见 `app/src/game/content/l11Signs.ts` 和 `app/src/game/content/l11SignAtlas.json`；来源与提示词见 `app/assets/l11-signage/FULL-SIGN-PROMPTS.md`。高质量图集为 4096×2048，低质量图集为 2048×1024。
+
+| ID | 文本 |
+|---|---|
+| `bakery` | 春禾面包房 |
+| `cafe` | 蓝岸咖啡 |
+| `produce` | 新鲜果蔬 |
+| `books` | 启明书店 |
+| `hotel` | 运河旅馆 |
+| `repair` | 大众维修 |
+| `supermarket` | 民生超市 |
+| `store` | 街角百货 |
+| `ginkgo` | 银杏公寓 |
+| `residence` | 春晖里 |
+| `business` | 汇景商务中心 |
+| `offices` | 天际写字楼 |
+| `warehouse` | 城市仓储 |
+| `workshop` | 街区工坊 |
+| `waterworks` | 运河水务 |
+| `sports` | 城市体育馆 |
+| `archive` | 城市公共档案馆 |
+| `museum` | 城市博物馆 |
+| `school` | 光华学校 |
+| `civic` | 市民服务中心 |
+| `metro` | 地下步行站台 |
+| `level9` | 郊区入口 |
+| `level10` | 乡间小路 |
+| `archive-entry` | 公共档案馆 |
+| `canal-road` | 运河路 |
+| `ginkgo-street` | 银杏街 |
+| `archive-road` | 档案馆路 |
+| `ring-road` | 环城路 |
+| `bus` | 城市公交 |
+| `parking` | 公共停车场 |
+| `riverside` | 滨河步道 |
+| `closed` | 上层暂停开放 |
+
 ## 统计
 
-- 条目总数 398；可交互 65，容器 17。
+- 条目总数 505；可交互 65，容器 17。
 - 重建命令：在 app 内运行 `npx esbuild scripts/sync-decorations.ts --bundle --platform=node --format=esm --outfile=.cache/sync-decorations.mjs` 后运行 `node .cache/sync-decorations.mjs`。

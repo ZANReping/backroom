@@ -1,0 +1,512 @@
+{
+  "run": "qa-1792046865991-51848",
+  "label": "regressions",
+  "mode": "realistic",
+  "production": false,
+  "port": 1912,
+  "cdp": 1913,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\level-entry\\regressions\\qa-1792046865991-51848",
+  "levels": [
+    1
+  ],
+  "cases": [
+    {
+      "id": 1,
+      "cold": {
+        "id": 1,
+        "name": "Level 1",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 10604.800000000745,
+        "readyMs": 10604.800000000745,
+        "loadMs": 10621.900000000373,
+        "preparationMs": 1491.5,
+        "generationMs": 8.100000001490116,
+        "sceneMs": 9105.199999999255,
+        "frames": 1681,
+        "cpuTotalMs": 3755.900000007823,
+        "cpuMaxMs": 772.8000000007451,
+        "frameP95Ms": 7.800000000745058,
+        "metrics": {
+          "buildInfiniteChunk": {
+            "calls": 94442,
+            "cpuMs": 995.2999999877065,
+            "maxMs": 37.40000000037253
+          },
+          "warmSceneTextures": {
+            "calls": 176,
+            "cpuMs": 142.40000000223517,
+            "maxMs": 37.40000000037253
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 2272.7000000011176,
+            "chunks": 0,
+            "finiteTask": false,
+            "flashlight": true,
+            "moth": true,
+            "items": 3,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 7,
+              "textures": 3
+            }
+          },
+          {
+            "atMs": 8300,
+            "chunks": 1,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 17,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 34,
+              "textures": 35
+            }
+          },
+          {
+            "atMs": 8778.10000000149,
+            "chunks": 3,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 17,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 42,
+              "textures": 37
+            }
+          },
+          {
+            "atMs": 8795.400000000373,
+            "chunks": 5,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 17,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 74,
+              "textures": 37
+            }
+          },
+          {
+            "atMs": 8851.60000000149,
+            "chunks": 6,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 17,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 99,
+              "textures": 39
+            }
+          },
+          {
+            "atMs": 8981.800000000745,
+            "chunks": 7,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 17,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 104,
+              "textures": 42
+            }
+          },
+          {
+            "atMs": 9361.900000000373,
+            "chunks": 8,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 17,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 114,
+              "textures": 45
+            }
+          },
+          {
+            "atMs": 10604.800000000745,
+            "chunks": 9,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 17,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": true,
+            "memory": {
+              "geometries": 209,
+              "textures": 73
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 9,
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 17,
+          "npcs": 0,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 209,
+            "textures": 74
+          }
+        },
+        "firstReady": {
+          "structures": 653,
+          "lights": 962,
+          "npcs": 0,
+          "nearNpcs": 0,
+          "npcMeshes": 0,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 209,
+            "textures": 74
+          },
+          "programs": 82,
+          "drawCalls": 142,
+          "triangles": 99825,
+          "spawn": {
+            "x": 79.5,
+            "y": 79.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        },
+        "bakes": {
+          "entries": 25,
+          "bytes": 48062816,
+          "hits": 1862,
+          "diskHits": 0,
+          "offlineLoads": 0,
+          "computations": 9,
+          "completed": 9,
+          "stale": 0,
+          "workers": 8,
+          "active": 8,
+          "queued": 16,
+          "stages": [
+            {
+              "key": "4:12:424242:0,0:da54c9b8:high",
+              "generationMs": 940.0999999996275,
+              "geometryMs": 53.40000000037253,
+              "bakeMs": 4464.200000001118,
+              "samples": 29585,
+              "rays": 635032,
+              "bytes": 4199864
+            },
+            {
+              "key": "4:12:424242:0,-1:ecd4dcd:high",
+              "generationMs": 985,
+              "geometryMs": 59.69999999925494,
+              "bakeMs": 3176.5,
+              "samples": 23462,
+              "rays": 516024,
+              "bytes": 4153864
+            },
+            {
+              "key": "4:12:424242:-1,0:55ff0724:high",
+              "generationMs": 848.7999999988824,
+              "geometryMs": 63.90000000037253,
+              "bakeMs": 2444.5,
+              "samples": 22382,
+              "rays": 399594,
+              "bytes": 6337128
+            },
+            {
+              "key": "4:12:424242:1,0:ebb7e90c:high",
+              "generationMs": 785.9000000003725,
+              "geometryMs": 59.59999999962747,
+              "bakeMs": 5462.4000000003725,
+              "samples": 30472,
+              "rays": 789958,
+              "bytes": 6294992
+            },
+            {
+              "key": "4:12:424242:0,1:3da95ec4:high",
+              "generationMs": 898.9000000003725,
+              "geometryMs": 60.20000000111759,
+              "bakeMs": 3642.4000000003725,
+              "samples": 22584,
+              "rays": 564754,
+              "bytes": 4114304
+            },
+            {
+              "key": "4:12:424242:-1,-1:ad835efd:high",
+              "generationMs": 944,
+              "geometryMs": 67.69999999925494,
+              "bakeMs": 3774.300000000745,
+              "samples": 25746,
+              "rays": 590166,
+              "bytes": 4198944
+            },
+            {
+              "key": "4:12:424242:1,-1:fe36531c:high",
+              "generationMs": 781,
+              "geometryMs": 57,
+              "bakeMs": 5672,
+              "samples": 31972,
+              "rays": 898468,
+              "bytes": 6240896
+            },
+            {
+              "key": "4:12:424242:-1,1:f48c7394:high",
+              "generationMs": 865,
+              "geometryMs": 56.5,
+              "bakeMs": 3702.5,
+              "samples": 25198,
+              "rays": 579056,
+              "bytes": 6287264
+            },
+            {
+              "key": "4:12:424242:1,1:4b109efc:high",
+              "generationMs": 314.09999999962747,
+              "geometryMs": 37.09999999962747,
+              "bakeMs": 3723.5,
+              "samples": 23814,
+              "rays": 632192,
+              "bytes": 6235560
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\level-entry\\regressions\\qa-1792046865991-51848",
+    "--remote-debugging-port=1913",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.40",
+    "revision": "@cfaadc5a132d78e1828635aa8405a499f3e14864",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.20"
+  },
+  "pids": {
+    "server": 39272,
+    "browser": 57152
+  },
+  "setup": {
+    "mode": "realistic",
+    "viewport": [
+      1920,
+      1080
+    ],
+    "dpr": 1,
+    "seed": 424242,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "settings": {
+      "texture": 1,
+      "lights": 16,
+      "shadows": true,
+      "lightShadows": 1,
+      "loadingBudget": 6,
+      "chunkBudget": 3,
+      "detail": 1,
+      "bloom": true,
+      "ao": 1
+    },
+    "hardwareConcurrency": 32
+  },
+  "cancellation": {
+    "passed": 8,
+    "checks": [
+      "finite scene is pending during async compilation",
+      "pending scene has owned GPU materials",
+      "new level replaces the cancelled pending root",
+      "cancelled scene never becomes visible",
+      "materials stay alive while compiler completion is pending",
+      "owned materials release exactly once after compilation",
+      "next level still reaches readiness",
+      "compiler completion cannot publish a cancelled scene"
+    ],
+    "materials": 909
+  },
+  "cycles": [
+    {
+      "structures": 132,
+      "lights": 46,
+      "npcs": 10,
+      "nearNpcs": 9,
+      "npcMeshes": 9,
+      "meshes": 249,
+      "instances": 4546,
+      "materials": 143,
+      "memory": {
+        "geometries": 201,
+        "textures": 132
+      },
+      "programs": 93,
+      "drawCalls": 107,
+      "triangles": 39097,
+      "spawn": {
+        "x": 40.5,
+        "y": 25.5,
+        "z": 0
+      },
+      "mapSeed": 424242,
+      "ready": true
+    },
+    {
+      "structures": 132,
+      "lights": 46,
+      "npcs": 10,
+      "nearNpcs": 9,
+      "npcMeshes": 9,
+      "meshes": 249,
+      "instances": 4546,
+      "materials": 143,
+      "memory": {
+        "geometries": 201,
+        "textures": 134
+      },
+      "programs": 93,
+      "drawCalls": 107,
+      "triangles": 39097,
+      "spawn": {
+        "x": 40.5,
+        "y": 25.5,
+        "z": 0
+      },
+      "mapSeed": 424242,
+      "ready": true
+    },
+    {
+      "structures": 132,
+      "lights": 46,
+      "npcs": 10,
+      "nearNpcs": 9,
+      "npcMeshes": 9,
+      "meshes": 249,
+      "instances": 4546,
+      "materials": 143,
+      "memory": {
+        "geometries": 201,
+        "textures": 136
+      },
+      "programs": 93,
+      "drawCalls": 107,
+      "triangles": 39097,
+      "spawn": {
+        "x": 40.5,
+        "y": 25.5,
+        "z": 0
+      },
+      "mapSeed": 424242,
+      "ready": true
+    }
+  ],
+  "ok": false,
+  "failure": "Error: Repeated outpost loads retain resources",
+  "failureState": {
+    "level": 104,
+    "paused": true,
+    "transition": null,
+    "ready": true,
+    "pending": false,
+    "root": false,
+    "text": ""
+  },
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [],
+  "networkErrors": [
+    {
+      "requestId": "59212.401",
+      "loaderId": "86CE2CB299E58049B3489E454394BACA",
+      "timestamp": 11119.450118,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:1912/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Thu, 15 Oct 2026 06:48:04 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 180,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 1912,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 11119.439756,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.708,
+          "sendEnd": 0.775,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 9.641,
+          "receiveHeadersEnd": 9.781
+        },
+        "responseTime": 1792046884077.242,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "93922043CA366348724DDAD0E26B07E2"
+    }
+  ]
+}

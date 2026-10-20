@@ -24,7 +24,7 @@ export function l1ParkingServices(p:L1Module,x0:number,z0:number,allowed:(x:numb
  for(const x of starts(x0-1.5,x0+33.5,phase,p.spacingX)){
   const owns=(xx:number)=>xx>=x0&&xx<x0+32
   const tubes=industrial?[-.6,0,.65]:rack?[-.48,-.25,0,.25,.48]:[-.16,.16]
-  for(const [i,offset]of tubes.entries())if(owns(x+offset))pipe(`main:${i}`,2,x+offset,p.height-drop,industrial?[.065,.045,.09][i]:rack?.021:i?.025:.043,rack&&!industrial?'red':'whitePipe',industrial?false:rack||i>0)
+  for(const [i,offset]of tubes.entries())if(owns(x+offset))pipe(`main:${i}`,2,x+offset,p.height-drop,industrial?[.065,.045,.09][i]:rack?.021:i?.025:.043,rack&&!industrial||!rack&&i===0?'red':'whitePipe',industrial?false:rack||i>0) // v2: refs show a red sprinkler main in ordinary bays too
   const trayX=x+(rack?.94:.58),half=rack?.22:.12,y=p.height-drop-.025
   for(const side of [-1,1])if(owns(trayX+side*half))segments(2,trayX+side*half,(a,b)=>add(`tray:${side}:${trayX}:${a}`,[trayX+side*half-.011,y-.025,a],[trayX+side*half+.011,y+.025,b],'metal',true,undefined,industrial))
   if(owns(trayX))for(const z of starts(z0,z0+32,p.phaseZ+.45,rack?.65:1.4))if(allowed(trayX,z))add(`rung:${trayX}:${z}`,[trayX-half,y-.025,z-.011],[trayX+half,y-.01,z+.011],'metal',true,undefined,industrial)

@@ -1,0 +1,530 @@
+{
+  "seed": 20261006,
+  "bakeRevision": 15,
+  "cases": [
+    {
+      "name": "parking-common",
+      "ref": {
+        "id": "parking-common",
+        "file": "天鹰段-合集/最普遍的天鹰段.jpg",
+        "variant": "parking",
+        "width": 800,
+        "height": 600,
+        "x": 111.94270000000006,
+        "y": 121.30369999999999,
+        "z": 0.0384,
+        "yaw": 0.3291,
+        "pitch": 0.0868,
+        "roll": 0.0084,
+        "fov": 55.9277,
+        "centerX": 112,
+        "centerY": 112,
+        "blackout": false
+      },
+      "cx": 3,
+      "cy": 3,
+      "column": {
+        "id": "column:116.800,120.000",
+        "min": [
+          116.27499999999999,
+          0,
+          119.375
+        ],
+        "max": [
+          117.325,
+          2.8,
+          120.625
+        ],
+        "style": "parking",
+        "surface": "column",
+        "solid": true,
+        "detail": false,
+        "occlude": true
+      },
+      "profile": {
+        "height": 2.8,
+        "spacingX": 10,
+        "spacingZ": 6.4,
+        "phaseX": 106.8,
+        "phaseZ": 113.6,
+        "columnWidth": 1.05,
+        "columnDepth": 1.25,
+        "round": false,
+        "beamDepth": 0.25,
+        "beamWidth": 0.42,
+        "lampSpacing": 7,
+        "wallTubes": true,
+        "power": 1.4,
+        "finish": "raw",
+        "serviceOffset": 0.44
+      },
+      "layout": {
+        "size": 512,
+        "density": 3,
+        "faces": 4509,
+        "minFloorWidth": 6,
+        "maxFloorWidth": 6
+      },
+      "elapsedMs": 3489.9613,
+      "metrics": {
+        "generationMs": 186.45900000000006,
+        "geometryMs": 25.89930000000004,
+        "bakeMs": 3267.3329,
+        "samples": 32244,
+        "rays": 884412,
+        "bytes": 3975384
+      }
+    },
+    {
+      "name": "parking-round",
+      "ref": {
+        "id": "parking-round",
+        "file": "天鹰段-合集/圆柱天鹰段，天鹰段的墙壁.png",
+        "variant": "parking",
+        "width": 835,
+        "height": 617,
+        "x": 497.4838,
+        "y": 182.7814,
+        "z": 0.2004,
+        "yaw": 0.1737,
+        "pitch": -0.2386,
+        "roll": -0.0462,
+        "fov": 58.3555,
+        "centerX": 496,
+        "centerY": 176,
+        "blackout": false
+      },
+      "cx": 15,
+      "cy": 5,
+      "column": {
+        "id": "column:493.500,180.800",
+        "min": [
+          493.15,
+          0,
+          180.45000000000002
+        ],
+        "max": [
+          493.85,
+          3.5,
+          181.15
+        ],
+        "style": "parking",
+        "surface": "column",
+        "solid": true,
+        "detail": false,
+        "occlude": true
+      },
+      "profile": {
+        "height": 3.5,
+        "spacingX": 6.4,
+        "spacingZ": 6,
+        "phaseX": 493.5,
+        "phaseZ": 174.8,
+        "columnWidth": 0.7,
+        "columnDepth": 0.7,
+        "round": true,
+        "beamDepth": 0.27,
+        "beamWidth": 0.42,
+        "lampSpacing": 7,
+        "wallTubes": false,
+        "power": 1,
+        "finish": "raw",
+        "columnPattern": "mixed",
+        "lighting": "wall-tubes",
+        "services": "red-rack"
+      },
+      "layout": {
+        "size": 512,
+        "density": 3,
+        "faces": 6703,
+        "minFloorWidth": 6,
+        "maxFloorWidth": 6
+      },
+      "elapsedMs": 2861.4058999999997,
+      "metrics": {
+        "generationMs": 235.5581000000002,
+        "geometryMs": 43.61610000000019,
+        "bakeMs": 2572.6126000000004,
+        "samples": 40848,
+        "rays": 614658,
+        "bytes": 6476232
+      }
+    },
+    {
+      "name": "parking-dim",
+      "ref": {
+        "id": "parking-dim",
+        "file": "天鹰段-合集/较为黑暗的天鹰段.png",
+        "variant": "parking",
+        "width": 2048,
+        "height": 1536,
+        "x": -781.4677999999999,
+        "y": 1019.1027,
+        "z": -0.0495,
+        "yaw": 0.0386,
+        "pitch": 0.0216,
+        "roll": 0.0026,
+        "fov": 42.5875,
+        "centerX": -784,
+        "centerY": 1008,
+        "blackout": false
+      },
+      "cx": -25,
+      "cy": 31,
+      "column": {
+        "id": "column:-786.500,1019.000",
+        "min": [
+          -787.1,
+          0,
+          1018.6
+        ],
+        "max": [
+          -785.9,
+          3.8,
+          1019.4
+        ],
+        "style": "parking",
+        "surface": "column",
+        "solid": true,
+        "detail": false,
+        "occlude": true
+      },
+      "profile": {
+        "height": 3.8,
+        "spacingX": 6.8,
+        "spacingZ": 7,
+        "phaseX": -786.5,
+        "phaseZ": 1005,
+        "columnWidth": 1.2,
+        "columnDepth": 0.8,
+        "round": false,
+        "beamDepth": 0.27,
+        "beamWidth": 0.42,
+        "lampSpacing": 7,
+        "wallTubes": false,
+        "power": 2.4,
+        "finish": "raw",
+        "lighting": "service-bay",
+        "services": "service-rack",
+        "serviceOffset": 0.51,
+        "serviceDrop": 0.32,
+        "serviceLight": {
+          "offsetX": 0.48,
+          "offsetZ": -1.5,
+          "drop": 0.06,
+          "range": 32,
+          "alongZ": true
+        }
+      },
+      "layout": {
+        "size": 512,
+        "density": 1.2288000000000006,
+        "faces": 6417,
+        "minFloorWidth": 3,
+        "maxFloorWidth": 3
+      },
+      "elapsedMs": 2557.8956,
+      "metrics": {
+        "generationMs": 351.5195999999996,
+        "geometryMs": 31.314500000000407,
+        "bakeMs": 2164.5860000000002,
+        "samples": 18167,
+        "rays": 440264,
+        "bytes": 6423608
+      }
+    },
+    {
+      "name": "storage",
+      "ref": {
+        "id": "storage",
+        "file": "跃金段.jpg",
+        "variant": "storage",
+        "width": 1199,
+        "height": 864,
+        "x": 344.23279999999977,
+        "y": -387.1125,
+        "z": -1.1933,
+        "yaw": 0.6645,
+        "pitch": 0.1619,
+        "roll": 0,
+        "fov": 55.3591,
+        "centerX": 336,
+        "centerY": -400,
+        "blackout": false
+      },
+      "cx": 10,
+      "cy": -13,
+      "column": {
+        "id": "column:349.500,-393.500:flange1",
+        "min": [
+          349.31,
+          0,
+          -393.36999999999995
+        ],
+        "max": [
+          349.69,
+          6.2,
+          -393.31
+        ],
+        "style": "storage",
+        "surface": "paint",
+        "solid": true,
+        "detail": false,
+        "occlude": true
+      },
+      "profile": {
+        "height": 6.2,
+        "spacingX": 18,
+        "spacingZ": 9.5,
+        "phaseX": 331.5,
+        "phaseZ": -393.5,
+        "columnWidth": 0.38,
+        "columnDepth": 0.38,
+        "round": false,
+        "beamDepth": 1.1,
+        "beamWidth": 0.3,
+        "lampSpacing": 7,
+        "wallTubes": false,
+        "power": 3.5,
+        "finish": "raw"
+      },
+      "layout": {
+        "size": 512,
+        "density": 3,
+        "faces": 3962,
+        "minFloorWidth": 6,
+        "maxFloorWidth": 6
+      },
+      "elapsedMs": 2572.9208,
+      "metrics": {
+        "generationMs": 100.28930000000037,
+        "geometryMs": 16.52390000000014,
+        "bakeMs": 2451.898000000001,
+        "samples": 29992,
+        "rays": 719968,
+        "bytes": 3874736
+      }
+    },
+    {
+      "name": "gothic",
+      "ref": {
+        "id": "gothic",
+        "file": "哥特段.png",
+        "variant": "gothic",
+        "width": 1358,
+        "height": 858,
+        "x": 304.29569999999967,
+        "y": -142.922,
+        "z": 1.0016,
+        "yaw": 0.0574,
+        "pitch": -0.0983,
+        "roll": 0.0236,
+        "fov": 61.2543,
+        "centerX": 304,
+        "centerY": -144,
+        "blackout": false
+      },
+      "cx": 9,
+      "cy": -5,
+      "column": {
+        "id": "column:303.000,-145.000",
+        "min": [
+          302.603,
+          0,
+          -145.397
+        ],
+        "max": [
+          303.397,
+          1.7184,
+          -144.603
+        ],
+        "style": "gothic",
+        "surface": "column",
+        "solid": true,
+        "detail": false,
+        "occlude": true,
+        "shape": "round"
+      },
+      "profile": {
+        "height": 3.65,
+        "spacingX": 6,
+        "spacingZ": 6,
+        "phaseX": 303,
+        "phaseZ": -145,
+        "columnWidth": 0.794,
+        "columnDepth": 0.794,
+        "round": true,
+        "beamDepth": 0,
+        "beamWidth": 0,
+        "lampSpacing": 6,
+        "wallTubes": false,
+        "power": 1.55,
+        "finish": "raw",
+        "springHeight": 1.7184,
+        "lampPhaseX": 0.86,
+        "lampPhaseZ": 0.18,
+        "lampAlongZ": true
+      },
+      "layout": {
+        "size": 512,
+        "density": 3,
+        "faces": 1292,
+        "minFloorWidth": 6,
+        "maxFloorWidth": 6
+      },
+      "elapsedMs": 4596.832299999998,
+      "metrics": {
+        "generationMs": 167.4445999999989,
+        "geometryMs": 613.5684000000001,
+        "bakeMs": 3804.8007,
+        "samples": 27157,
+        "rays": 800698,
+        "bytes": 6780648
+      }
+    },
+    {
+      "name": "ouroboros",
+      "ref": {
+        "id": "ouroboros",
+        "file": "衔尾段.png",
+        "variant": "ouroboros",
+        "width": 1482,
+        "height": 746,
+        "x": -365.0789999999997,
+        "y": -301.74,
+        "z": 0.4071,
+        "yaw": 0.1754,
+        "pitch": 0.0002,
+        "roll": 0,
+        "fov": 63.6509,
+        "centerX": -368,
+        "centerY": -304,
+        "blackout": false
+      },
+      "cx": -12,
+      "cy": -10,
+      "column": {
+        "id": "column:-363.200,-300.000",
+        "min": [
+          -363.55,
+          0,
+          -300.375
+        ],
+        "max": [
+          -362.84999999999997,
+          4.25,
+          -299.625
+        ],
+        "style": "ouroboros",
+        "surface": "peeling",
+        "solid": true,
+        "detail": false,
+        "occlude": true
+      },
+      "profile": {
+        "height": 4.25,
+        "spacingX": 6.8,
+        "spacingZ": 6,
+        "phaseX": -370,
+        "phaseZ": -306,
+        "columnWidth": 0.7,
+        "columnDepth": 0.75,
+        "round": false,
+        "beamDepth": 0.6,
+        "beamWidth": 0.55,
+        "lampSpacing": 7,
+        "wallTubes": false,
+        "power": 1.7,
+        "finish": "peeling"
+      },
+      "layout": {
+        "size": 512,
+        "density": 2.4000000000000004,
+        "faces": 10185,
+        "minFloorWidth": 5,
+        "maxFloorWidth": 5
+      },
+      "elapsedMs": 3118.7237000000023,
+      "metrics": {
+        "generationMs": 131.19930000000022,
+        "geometryMs": 27.95679999999993,
+        "bakeMs": 2949.177599999999,
+        "samples": 31560,
+        "rays": 870434,
+        "bytes": 7116920
+      }
+    },
+    {
+      "name": "garden",
+      "ref": {
+        "id": "garden",
+        "file": "花园段.png",
+        "variant": "garden",
+        "width": 1920,
+        "height": 1080,
+        "x": -141.73089999999956,
+        "y": -109.9105,
+        "z": -0.1062,
+        "yaw": -0.1282,
+        "pitch": -0.0353,
+        "roll": 0,
+        "fov": 64.2096,
+        "centerX": -144,
+        "centerY": -112,
+        "blackout": false
+      },
+      "cx": -5,
+      "cy": -4,
+      "column": {
+        "id": "column:-138.800,-112.000",
+        "min": [
+          -139.625,
+          0,
+          -112.825
+        ],
+        "max": [
+          -137.97500000000002,
+          7.8,
+          -111.175
+        ],
+        "style": "garden",
+        "surface": "column",
+        "solid": true,
+        "detail": false,
+        "occlude": true
+      },
+      "profile": {
+        "height": 7.8,
+        "spacingX": 7.2,
+        "spacingZ": 7.2,
+        "phaseX": -146,
+        "phaseZ": -112,
+        "columnWidth": 1.65,
+        "columnDepth": 1.65,
+        "round": false,
+        "beamDepth": 0.4,
+        "beamWidth": 0.65,
+        "lampSpacing": 7.2,
+        "wallTubes": false,
+        "power": 5.5,
+        "finish": "raw"
+      },
+      "layout": {
+        "size": 512,
+        "density": 3,
+        "faces": 28890,
+        "minFloorWidth": 6,
+        "maxFloorWidth": 6
+      },
+      "elapsedMs": 2708.1192999999985,
+      "metrics": {
+        "generationMs": 75.45119999999952,
+        "geometryMs": 107.30370000000039,
+        "bakeMs": 2502.3711000000003,
+        "samples": 31500,
+        "rays": 845870,
+        "bytes": 8461488
+      }
+    }
+  ]
+}

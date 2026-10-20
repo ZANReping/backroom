@@ -15,7 +15,7 @@ import * as THREE from 'three'
 import { audio } from '@/game/core/audio'
 import { randomSeed, parseSeedInput } from '@/game/core/rng'
 import { preloadGameResources } from '@/game/core/preload'
-import { getKeybinds, type KeyBindMap } from '@/game/core/keybinds'
+import { getKeybinds, isHolsterKey, type KeyBindMap } from '@/game/core/keybinds'
 import { levelLabel, levelNo, levelDefOf } from '@/game/levels'
 import { generateLevel, floorHeight } from '@/game/world/mapgen'
 import { prepareChunkWindow } from '@/game/world/chunkCache'
@@ -485,7 +485,7 @@ function Game() {
     const keys: Record<string, boolean> = {}
     type ReloadHold = { timer: number; wheelOpened: boolean }
     let reloadHold: ReloadHold | null = null
-    const heldSquirtGun = () => engine.player.hotbar[engine.player.selected]?.type === 'squirtgun'
+    const heldSquirtGun = () => !engine.handsStowed && engine.player.hotbar[engine.player.selected]?.type === 'squirtgun'
     const publishWheel = (wheel: SquirtWheelState | null) => {
       squirtWheelRef.current = wheel
       setSquirtWheel(wheel)
@@ -547,6 +547,15 @@ function Game() {
       const c = e.code
       keys[c] = true
       const b = getKeybinds()
+      if (isHolsterKey(c, b)) {
+        e.preventDefault()
+        if (!e.repeat) {
+          if (reloadHold) window.clearTimeout(reloadHold.timer)
+          reloadHold = null; publishWheel(null)
+          engine.toggleHands()
+        }
+        return
+      }
       // 攻击 / 快捷使用（默认在鼠标键上，改绑到键盘时由此分发）
       if (c === b.attack) engine.input.attack = true
       if (c === b.quickuse) engine.quickUse()
@@ -560,7 +569,7 @@ function Game() {
         } else engine.input.interact = true
       }
       if (c === b.flashlight) engine.input.toggleLight = true
-      if (c === b.inspect) engine.inspectHeld = true
+      if (c === b.inspect && !engine.handsStowed) engine.inspectHeld = true
       if (c === b.reload && !e.repeat && heldSquirtGun()) {
         e.preventDefault()
         if (!reloadHold) {
@@ -597,6 +606,7 @@ function Game() {
     const up = (e: KeyboardEvent) => {
       keys[e.code] = false
       const b = getKeybinds()
+      if (isHolsterKey(e.code, b)) e.preventDefault()
       if (e.code === b.jump) engine.input.jump = false // v57t：松键即停止持续上浮（深水跳跃是长按态，不能永远锁存）
       if (e.code === b.inspect) engine.inspectHeld = false
       if (e.code === b.reload && reloadHold) {
@@ -738,7 +748,8 @@ function Game() {
     // v18：离散动作（攻击/快捷使用/交互/手电/跳跃）按绑定码触发，鼠标与滚轮共用
     const fireDiscrete = (code: string) => {
       const b = getKeybinds()
-      if (code === b.attack) engine.input.attack = true
+      if (code === b.holster) engine.toggleHands()
+      else if (code === b.attack) engine.input.attack = true
       else if (code === b.quickuse) engine.quickUse()
       else if (code === b.quickdrop) engine.quickDrop()
       else if (code === b.interact) {

@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-15",
+  "commands": [
+    {
+      "group": "warmup-tests",
+      "chunk_id": "8517f1",
+      "wall_time_seconds": 2.0475586,
+      "exit_code": 0,
+      "original_token_count": 139,
+      "output": "\n> my-app@0.0.0 check:model-warmup\n> esbuild scripts/check-model-warmup.ts --bundle --platform=node --format=esm --outfile=.cache/check-model-warmup.mjs && node .cache/check-model-warmup.mjs\n\n\n  .cache\\check-model-warmup.mjs  617.4kb\n\nDone in 67ms\n{\"passed\":89}\n\n> my-app@0.0.0 check:program-completion\n> esbuild scripts/check-program-completion.ts --bundle --platform=node --format=esm --outfile=.cache/check-program-completion.mjs && node .cache/check-program-completion.mjs\n\n\n  .cache\\check-program-completion.mjs  617.6kb\n\nDone in 71ms\n{\"passed\":58}\n"
+    },
+    {
+      "group": "texture-batch-tests",
+      "chunk_id": "20f899",
+      "wall_time_seconds": 6.9984427,
+      "exit_code": 0,
+      "original_token_count": 151,
+      "output": "\n> my-app@0.0.0 check:texture-images\n> esbuild scripts/check-texture-images.ts --bundle --platform=node --format=esm --outfile=.cache/check-texture-images.mjs && node .cache/check-texture-images.mjs\n\n\n  .cache\\check-texture-images.mjs  451.3kb\n\nDone in 67ms\ntexture image lifecycle regression passed: 96 checks\n\n> my-app@0.0.0 check:item-batches\n> esbuild scripts/check-item-batches.ts --bundle --platform=node --format=esm --outfile=.cache/check-item-batches.mjs && node .cache/check-item-batches.mjs\n\n\n  .cache\\check-item-batches.mjs  599.5kb\n\nDone in 66ms\nitem batches regression passed: 29 checks\n"
+    },
+    {
+      "group": "queue-tests",
+      "chunk_id": "37569f",
+      "wall_time_seconds": 3.5952327,
+      "exit_code": 0,
+      "original_token_count": 43,
+      "output": "\n  .cache\\check-scene-warmup.mjs  626.2kb\n\nDone in 70ms\nscene warmup regression passed: 7 batches\n\n  .cache\\check-chunk-build-queue.mjs  3.7kb\n\nDone in 10ms\n{\"passed\":13}\n"
+    }
+  ]
+}

@@ -1,0 +1,948 @@
+{
+  "run": "qa-1791983333029-16496",
+  "port": 10605,
+  "cdp": 10606,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-reference\\interaction-regression\\qa-1791983333029-16496",
+  "label": "interaction-regression",
+  "baseline": false,
+  "low": false,
+  "mode": "realistic",
+  "quick": false,
+  "seed": 20261014,
+  "views": [
+    {
+      "id": "09-office-interior",
+      "world": [
+        247.2,
+        345.175,
+        0.14322298470013473
+      ],
+      "target": [
+        247.2,
+        340.15,
+        1.7432229847001348
+      ],
+      "yaw": 0,
+      "pitch": 0.00994992039280511,
+      "fov": 78,
+      "room": "workspace",
+      "lighting": {
+        "exposure": 1.7075200000000001,
+        "meter": 0.14230953561600465,
+        "outdoor": 2.1551703038736404e-17,
+        "fogNear": 300,
+        "fogFar": 1800,
+        "sun": 3.35,
+        "msaa": 4,
+        "buffer": [
+          1920,
+          1080
+        ]
+      },
+      "stats": {
+        "label": "11:open",
+        "median": 8.299999999999272,
+        "p95": 16.599999999998545,
+        "max": 62.5,
+        "p99": 20.899999999997817,
+        "frames": 1000,
+        "over16ms": 42,
+        "over33ms": 2,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 666,
+        "triangles": 1713445,
+        "memory": {
+          "geometries": 1446,
+          "textures": 80
+        },
+        "programs": 118,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "performance": {
+        "label": "11:open",
+        "median": 8.30000000000291,
+        "p95": 12.599999999998545,
+        "max": 16.700000000004366,
+        "p99": 16.69999999999709,
+        "frames": 180,
+        "over16ms": 3,
+        "over33ms": 0,
+        "cpuMedian": 7.4000000059604645,
+        "cpuP95": 12.599999994039536,
+        "gpuMedian": 7.656448,
+        "gpuP95": 12.224512,
+        "gpuSamples": 178,
+        "draws": 1504,
+        "triangles": 5037201,
+        "memory": {
+          "geometries": 1446,
+          "textures": 80
+        },
+        "programs": 118,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    }
+  ],
+  "command": [
+    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-reference\\interaction-regression\\qa-1791983333029-16496",
+    "--remote-debugging-port=10606",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/154.0.8037.98",
+    "revision": "@b859317bf11f6be47f9b7799ec690a0a42a1fb33",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+    "jsVersion": "15.4.80.20"
+  },
+  "pids": {
+    "server": 68856,
+    "browser": 48560
+  },
+  "setup": {
+    "seed": 20261014,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "low": false,
+    "baseline": false,
+    "weather": "calm",
+    "time": 10,
+    "shadows": true
+  },
+  "cases": [
+    {
+      "id": "09-office-interior",
+      "building": "west-piers"
+    }
+  ],
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: Locker can be targeted through building wall\",\"lineNumber\":8,\"columnNumber\":19,\"scriptId\":\"377\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"check\",\"scriptId\":\"377\",\"url\":\"http://127.0.0.1:10605/verifier/l11-reference-interaction.ts\",\"lineNumber\":7,\"columnNumber\":18},{\"functionName\":\"verifyL11ReferenceInteraction\",\"scriptId\":\"377\",\"url\":\"http://127.0.0.1:10605/verifier/l11-reference-interaction.ts\",\"lineNumber\":41,\"columnNumber\":2}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: Locker can be targeted through building wall\\n    at check (http://127.0.0.1:10605/verifier/l11-reference-interaction.ts:8:19)\\n    at Module.verifyL11ReferenceInteraction (http://127.0.0.1:10605/verifier/l11-reference-interaction.ts:42:3)\",\"objectId\":\"8986855990387685836.2.1\"}}",
+  "errors": [],
+  "failureState": {
+    "pending": {
+      "missing": 0,
+      "chunk": false,
+      "distant": false,
+      "finite": false,
+      "flash": false,
+      "moth": false,
+      "items": 0,
+      "compile": false,
+      "retired": 0,
+      "textures": 0
+    },
+    "stats": {
+      "label": "11:open",
+      "median": 8.30000000000291,
+      "p95": 12.69999999999709,
+      "max": 337.5,
+      "p99": 20.80000000000291,
+      "frames": 919,
+      "over16ms": 37,
+      "over33ms": 1,
+      "cpuMedian": 7.4000000059604645,
+      "cpuP95": 12.599999994039536,
+      "gpuMedian": 7.657472,
+      "gpuP95": 12.64128,
+      "gpuSamples": 180,
+      "draws": 559,
+      "triangles": 1840195,
+      "memory": {
+        "geometries": 1494,
+        "textures": 81
+      },
+      "programs": 118,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "revision": 1,
+    "contextLost": false,
+    "programs": [
+      {
+        "id": 57,
+        "name": "l11-metal:#7a8581:false:realistic",
+        "used": 4,
+        "ready": true
+      },
+      {
+        "id": 1,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 2,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 14,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 15,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 16,
+        "name": "OutputShader",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 17,
+        "name": "unspecified",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 18,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 19,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 20,
+        "name": "",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 21,
+        "name": "",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 22,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 23,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 24,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 25,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 26,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 27,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 28,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 29,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 30,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 56,
+        "name": "l11-rubber:#202728:false:realistic",
+        "used": 5,
+        "ready": true
+      },
+      {
+        "id": 32,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 33,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 34,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 55,
+        "name": "l11-glass:#f4f2da:false:realistic",
+        "used": 4,
+        "ready": true
+      },
+      {
+        "id": 36,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 37,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 38,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 39,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 40,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 41,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 42,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 43,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 58,
+        "name": "l11-metal:#4f5b57:false:realistic",
+        "used": 17,
+        "ready": true
+      },
+      {
+        "id": 62,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 60,
+        "name": "l11-generated-full-signs",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 61,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 59,
+        "name": "l11-paint:#404946:false:realistic",
+        "used": 14,
+        "ready": true
+      },
+      {
+        "id": 49,
+        "name": "l11-concrete:#8d918b:false:realistic",
+        "used": 5,
+        "ready": true
+      },
+      {
+        "id": 50,
+        "name": "l11-asphalt:#cad0d0:false:realistic",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 51,
+        "name": "l11-paint:#eee9d6:false:realistic",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 52,
+        "name": "EquirectangularToCubeUV",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 53,
+        "name": "EquirectangularToCubeUV",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 54,
+        "name": "PMREMGGXConvolution",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 68,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 69,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 70,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 71,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 72,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 73,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 74,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 75,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 76,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 77,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 78,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 79,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 80,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 81,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 82,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 83,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 84,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 85,
+        "name": "",
+        "used": 4,
+        "ready": true
+      },
+      {
+        "id": 86,
+        "name": "",
+        "used": 14,
+        "ready": true
+      },
+      {
+        "id": 87,
+        "name": "retro avatar / body",
+        "used": 9,
+        "ready": true
+      },
+      {
+        "id": 88,
+        "name": "retro avatar / solid",
+        "used": 6,
+        "ready": true
+      },
+      {
+        "id": 89,
+        "name": "retro avatar / hair",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 90,
+        "name": "retro avatar / glass",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 91,
+        "name": "retro avatar / glass",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 92,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 93,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 94,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 95,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 96,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 97,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 98,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 99,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 100,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 101,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 102,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 103,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 104,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 105,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 106,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 107,
+        "name": "",
+        "used": 5,
+        "ready": true
+      },
+      {
+        "id": 108,
+        "name": "l11-concrete:#8d918b:false:realistic",
+        "used": 174,
+        "ready": true
+      },
+      {
+        "id": 109,
+        "name": "l11-sealedglass:#91a8ab:true:realistic",
+        "used": 47,
+        "ready": true
+      },
+      {
+        "id": 110,
+        "name": "l11-metal:#c6d2ce:true:realistic",
+        "used": 39,
+        "ready": true
+      },
+      {
+        "id": 111,
+        "name": "l11-plastic:#363f3a:true:realistic",
+        "used": 167,
+        "ready": true
+      },
+      {
+        "id": 112,
+        "name": "",
+        "used": 4,
+        "ready": true
+      },
+      {
+        "id": 113,
+        "name": "l11-architectural-glass",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 114,
+        "name": "l11-generated-full-signs",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 115,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 116,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 117,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 118,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 119,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 120,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 121,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 122,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 123,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 124,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 125,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 126,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 127,
+        "name": "l11-brick:#acadaa:false:realistic",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 128,
+        "name": "l11-cc0-leaves",
+        "used": 4,
+        "ready": true
+      },
+      {
+        "id": 129,
+        "name": "l11-asphalt:#cad0d0:false:realistic",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 130,
+        "name": "l11-canal-water-realistic:true",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 131,
+        "name": "l11-canal-water-realistic:true",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 132,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 133,
+        "name": "l11-reference-complete-banner",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 134,
+        "name": "l11-cc0-leaves",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 135,
+        "name": "",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 136,
+        "name": "",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 137,
+        "name": "l11-glass:#b7c9c4:false:realistic",
+        "used": 6,
+        "ready": true
+      },
+      {
+        "id": 138,
+        "name": "l11-car-paint",
+        "used": 4,
+        "ready": true
+      },
+      {
+        "id": 139,
+        "name": "",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 140,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 141,
+        "name": "",
+        "used": 1,
+        "ready": true
+      }
+    ]
+  },
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "networkErrors": [
+    {
+      "requestId": "56348.12",
+      "loaderId": "11926FC6CD7F1B7CAC92BE8ACE78AED2",
+      "timestamp": 120822.880145,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:10605/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Wed, 14 Oct 2026 13:09:01 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 181,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 10605,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 120820.794547,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.721,
+          "sendEnd": 0.784,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 2084.719,
+          "receiveHeadersEnd": 2085.083
+        },
+        "responseTime": 1791983343823.653,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "E6CCB12553E9401DDA6AD5B351F67D6B"
+    }
+  ]
+}

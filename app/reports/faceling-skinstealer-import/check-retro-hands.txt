@@ -1,0 +1,13 @@
+
+> my-app@0.0.0 check:retro-hands
+> esbuild scripts/check-retro-hands.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-retro-hands.mjs && node .cache/check-retro-hands.mjs
+
+
+  .cache\check-retro-hands.mjs  956.9kb
+
+Done in 103ms
+{
+  "checks": 12032,
+  "itemTypes": 83,
+  "stats": 492
+}

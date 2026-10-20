@@ -1,0 +1,3661 @@
+{
+  "ok": true,
+  "run": "qa-1792137651679-33940",
+  "port": 4757,
+  "cdp": 4764,
+  "profile": "E:\\ZAN\\backroom\\app\\reports\\humanoid-motion\\qa-1792137651679-33940",
+  "command": [
+    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\humanoid-motion\\qa-1792137651679-33940",
+    "--remote-debugging-port=4764",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.40",
+    "revision": "@cfaadc5a132d78e1828635aa8405a499f3e14864",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.20"
+  },
+  "pids": {
+    "server": 39740,
+    "browser": 66508
+  },
+  "street": {
+    "checks": 13,
+    "npc": false,
+    "id": 3,
+    "x": 44.178658305478194,
+    "y": 20.94998125430456,
+    "z": 0.05936539276285881,
+    "speed": 0.8799999959632496,
+    "distance": 1.4080000000006905,
+    "phase": 1.8352641276049804,
+    "resets": 1,
+    "damage": [],
+    "stats": {
+      "label": "11:open",
+      "median": 4.200000000000728,
+      "p95": 8.399999999999636,
+      "max": 200,
+      "p99": 29.200000000000728,
+      "frames": 1000,
+      "over16ms": 10,
+      "over33ms": 9,
+      "cpuMedian": null,
+      "cpuP95": null,
+      "gpuMedian": null,
+      "gpuP95": null,
+      "gpuSamples": 0,
+      "draws": 1944,
+      "triangles": 12804076,
+      "memory": {
+        "geometries": 1991,
+        "textures": 103
+      },
+      "programs": 64,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "bones": [
+      {
+        "name": "thighL",
+        "rotation": [
+          -0.27042848143570725,
+          -0.00006768318317597792,
+          0.000611587895855307,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "shinL",
+        "rotation": [
+          0.5599912654687902,
+          -0.00020889174804671797,
+          0.00005071205111574622,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "footL",
+        "rotation": [
+          -0.3450767297214854,
+          0.0001494282501527733,
+          -0.000589013439152343,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "upperArmL",
+        "rotation": [
+          -0.22917713230828754,
+          0,
+          0.055,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "foreArmL",
+        "rotation": [
+          -0.2575833689514818,
+          0,
+          0,
+          "XYZ"
+        ]
+      }
+    ]
+  },
+  "streetFrames": [
+    {
+      "checks": 24,
+      "npc": false,
+      "id": 3,
+      "x": 44.23453781022468,
+      "y": 21.001768075603053,
+      "z": 0.059412465598208855,
+      "speed": 0.7023310641651521,
+      "distance": 1.554666666667421,
+      "phase": 1.3963536663220961,
+      "resets": 1,
+      "damage": [],
+      "stats": {
+        "label": "11:open",
+        "median": 4.200000000000728,
+        "p95": 8.399999999999636,
+        "max": 204.29999999999927,
+        "p99": 137.40000000000146,
+        "frames": 1000,
+        "over16ms": 19,
+        "over33ms": 18,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 232,
+        "triangles": 1045441,
+        "memory": {
+          "geometries": 1993,
+          "textures": 103
+        },
+        "programs": 64,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            -0.02650019437318606,
+            -0.0022839399289800895,
+            -0.1938474803994636,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            -0.0418266629722917,
+            0.010166992177812076,
+            0.0002593876676504937,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            0.06738885181979597,
+            -0.00281665500783273,
+            0.19414916627238696,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            0.09335617495023116,
+            0,
+            0.055,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.12,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 27,
+      "npc": false,
+      "id": 3,
+      "x": 44.3779096188201,
+      "y": 21.032681432121223,
+      "z": 0.05948475287395433,
+      "speed": 0.8559551242469317,
+      "distance": 1.7013333333341891,
+      "phase": 1.5625565532766827,
+      "resets": 1,
+      "damage": [],
+      "stats": {
+        "label": "11:open",
+        "median": 4.200000000000728,
+        "p95": 4.400000000001455,
+        "max": 204.29999999999927,
+        "p99": 162.5,
+        "frames": 1000,
+        "over16ms": 24,
+        "over33ms": 21,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 437,
+        "triangles": 1362729,
+        "memory": {
+          "geometries": 2046,
+          "textures": 103
+        },
+        "programs": 64,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            0.24781715981801153,
+            -0.036466757832725044,
+            -0.24192945785071027,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            -0.041849732614179444,
+            0.01293542510828817,
+            0.0014098174992599468,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            -0.2075429400660545,
+            -0.03681981112892416,
+            0.23936224831128183,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            -0.12426257282766215,
+            0,
+            0.055,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.18128187114739064,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 30,
+      "npc": false,
+      "id": 3,
+      "x": 44.52305566468462,
+      "y": 21.05239515569147,
+      "z": 0.059552403520748004,
+      "speed": 0.8767458799298993,
+      "distance": 1.8480000000009325,
+      "phase": 1.7260735484195677,
+      "resets": 1,
+      "damage": [],
+      "stats": {
+        "label": "11:open",
+        "median": 4.200000000000728,
+        "p95": 4.30000000000291,
+        "max": 204.29999999999927,
+        "p99": 162.5,
+        "frames": 1000,
+        "over16ms": 25,
+        "over33ms": 21,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 477,
+        "triangles": 1408325,
+        "memory": {
+          "geometries": 2107,
+          "textures": 103
+        },
+        "programs": 64,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            0.0654951941020967,
+            -0.008687325051776438,
+            -0.15000150104401558,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            0.4136656082893572,
+            0.04288443708180894,
+            0.0026354631824021114,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            -0.5218550889013049,
+            -0.04335729749329797,
+            0.1264094987801976,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            -0.25751863345778303,
+            0,
+            0.055,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.27819536978747855,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 33,
+      "npc": false,
+      "id": 3,
+      "x": 44.668962097950185,
+      "y": 21.067309036569753,
+      "z": 0.05961805396799749,
+      "speed": 0.8795596027389335,
+      "distance": 1.9946666666676651,
+      "phase": 1.8892357466189937,
+      "resets": 1,
+      "damage": [],
+      "stats": {
+        "label": "11:open",
+        "median": 4.200000000000728,
+        "p95": 4.30000000000291,
+        "max": 204.29999999999927,
+        "p99": 162.5,
+        "frames": 1000,
+        "over16ms": 26,
+        "over33ms": 21,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 520,
+        "triangles": 1432821,
+        "memory": {
+          "geometries": 2133,
+          "textures": 103
+        },
+        "programs": 64,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            -0.44041500697985797,
+            0.004330518818946712,
+            -0.021900240103551044,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            0.5353631824753607,
+            0.007464694428663684,
+            -0.0031109358317025844,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            -0.12998998245731078,
+            -0.003147761539745852,
+            0.02395013771727013,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            -0.18104564961345632,
+            0,
+            0.055,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.22257865426433188,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 36,
+      "npc": false,
+      "id": 3,
+      "x": 44.815223333011744,
+      "y": 21.07799874415653,
+      "z": 0.05968181611449447,
+      "speed": 0.8799403987116419,
+      "distance": 2.141333333334297,
+      "phase": 2.052350083002696,
+      "resets": 1,
+      "damage": [],
+      "stats": {
+        "label": "11:open",
+        "median": 4.200000000000728,
+        "p95": 4.299999999999272,
+        "max": 204.29999999999927,
+        "p99": 162.5,
+        "frames": 1000,
+        "over16ms": 28,
+        "over33ms": 23,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 531,
+        "triangles": 1440121,
+        "memory": {
+          "geometries": 2133,
+          "textures": 103
+        },
+        "programs": 64,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            -0.5316398314303772,
+            0.001934790066091382,
+            -0.007878046804199502,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            0.4531090161220326,
+            0.0025143361844118793,
+            -0.0012565290461464187,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            0.07852935094678058,
+            -0.00008198899885754808,
+            0.009221432377711425,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            0.031065742789086352,
+            0,
+            0.055,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.12,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 39,
+      "npc": false,
+      "id": 3,
+      "x": 44.9615732685223,
+      "y": 21.087632408420433,
+      "z": 0.059745089330419734,
+      "speed": 0.8799919338424135,
+      "distance": 2.288000000000903,
+      "phase": 2.2154579448169427,
+      "resets": 1,
+      "damage": [],
+      "stats": {
+        "label": "11:open",
+        "median": 4.200000000000728,
+        "p95": 4.30000000000291,
+        "max": 204.29999999999927,
+        "p99": 162.5,
+        "frames": 1000,
+        "over16ms": 29,
+        "over33ms": 24,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 539,
+        "triangles": 1471123,
+        "memory": {
+          "geometries": 2133,
+          "textures": 103
+        },
+        "programs": 64,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            -0.437972273657771,
+            0.004085739985294617,
+            -0.020795870025519705,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            0.6496101489709276,
+            0.008030622626164045,
+            -0.0034022596176485785,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            -0.21163574819121647,
+            -0.003446418165122999,
+            0.022205150574478607,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            0.1748388871454761,
+            0,
+            0.055,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.12,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 42,
+      "npc": false,
+      "id": 3,
+      "x": 45.108055744634584,
+      "y": 21.094939381255756,
+      "z": 0.05980728810553783,
+      "speed": 0.8799989083643251,
+      "distance": 2.434666666667581,
+      "phase": 2.3785649304452465,
+      "resets": 1,
+      "damage": [],
+      "stats": {
+        "label": "11:open",
+        "median": 4.200000000000728,
+        "p95": 4.299999999999272,
+        "max": 58.400000000001455,
+        "p99": 8.299999999999272,
+        "frames": 1000,
+        "over16ms": 8,
+        "over33ms": 5,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 543,
+        "triangles": 1472009,
+        "memory": {
+          "geometries": 2134,
+          "textures": 103
+        },
+        "programs": 64,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            0.10412788929285006,
+            -0.0016111068621414177,
+            -0.020865364564684,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            -0.04182572204115712,
+            0.0010917009560269116,
+            0.00007043269773218463,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            -0.06231324153709052,
+            -0.001651750084131496,
+            0.02078151485019279,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            0.11204027505753733,
+            0,
+            0.055,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.12,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 45,
+      "npc": false,
+      "id": 3,
+      "x": 45.25455294748039,
+      "y": 21.101987832821237,
+      "z": 0.059869347818756934,
+      "speed": 0.8799998522632376,
+      "distance": 2.581333333334267,
+      "phase": 2.541671797495615,
+      "resets": 1,
+      "damage": [],
+      "stats": {
+        "label": "11:open",
+        "median": 4.200000000000728,
+        "p95": 4.299999999999272,
+        "max": 58.400000000001455,
+        "p99": 8.299999999999272,
+        "frames": 1000,
+        "over16ms": 8,
+        "over33ms": 6,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 550,
+        "triangles": 1507715,
+        "memory": {
+          "geometries": 2134,
+          "textures": 103
+        },
+        "programs": 64,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            0.2913769190082126,
+            -0.0020573527196216294,
+            -0.011936212282659744,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            -0.041825744855820565,
+            0.0006403005932673943,
+            0.00007825783039485357,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            -0.24955512155836265,
+            -0.0020594973902383867,
+            0.011790128165911615,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            -0.0969470405758335,
+            0,
+            0.055,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.16141602950969708,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    }
+  ],
+  "streetStopped": {
+    "checks": 47,
+    "npc": false,
+    "id": 3,
+    "x": 45.25455294748039,
+    "y": 21.101987832821237,
+    "z": 0.059869347818756934,
+    "speed": 0.0000012064437934761246,
+    "distance": 2.581333333334267,
+    "phase": 2.541671797495615,
+    "resets": 1,
+    "damage": [],
+    "stats": {
+      "label": "11:open",
+      "median": 4.200000000000728,
+      "p95": 4.299999999999272,
+      "max": 58.400000000001455,
+      "p99": 8.299999999999272,
+      "frames": 1000,
+      "over16ms": 7,
+      "over33ms": 5,
+      "cpuMedian": null,
+      "cpuP95": null,
+      "gpuMedian": null,
+      "gpuP95": null,
+      "gpuSamples": 0,
+      "draws": 26406,
+      "triangles": 70661806,
+      "memory": {
+        "geometries": 2134,
+        "textures": 103
+      },
+      "programs": 64,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "bones": [
+      {
+        "name": "thighL",
+        "rotation": [
+          0.02085127350900881,
+          1.9889019452769798e-10,
+          5.612777968478018e-9,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "shinL",
+        "rotation": [
+          -0.041825668804770434,
+          -2.9307430436837036e-10,
+          -1.1558473574125013e-11,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "footL",
+        "rotation": [
+          0.020974395295761627,
+          2.1143038395797088e-10,
+          -5.610295350929376e-9,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "upperArmL",
+        "rotation": [
+          -0.04000013072414085,
+          0,
+          0.055,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "foreArmL",
+        "rotation": [
+          -0.12000009507210244,
+          0,
+          0,
+          "XYZ"
+        ]
+      }
+    ],
+    "oldTarget": [
+      56.125,
+      21.625
+    ]
+  },
+  "facelingAttack": [
+    {
+      "checks": 48,
+      "npc": false,
+      "id": 3,
+      "x": 45.25455294748039,
+      "y": 21.101987832821237,
+      "z": 0.059869347818756934,
+      "speed": 0.0000012064437934761246,
+      "distance": 2.581333333334267,
+      "phase": 2.541671797495615,
+      "resets": 1,
+      "attack": 0,
+      "damage": [],
+      "stats": {
+        "label": "11:open",
+        "median": 4.200000000000728,
+        "p95": 4.299999999999272,
+        "max": 58.400000000001455,
+        "p99": 8.299999999999272,
+        "frames": 1000,
+        "over16ms": 7,
+        "over33ms": 5,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 1087,
+        "triangles": 2978406,
+        "memory": {
+          "geometries": 2134,
+          "textures": 103
+        },
+        "programs": 64,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            0.02085127350900881,
+            1.9889019452769798e-10,
+            5.612777968478018e-9,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            -0.041825668804770434,
+            -2.9307430436837036e-10,
+            -1.1558473574125013e-11,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            0.020974395295761627,
+            2.1143038395797088e-10,
+            -5.610295350929376e-9,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            -0.04000013072414085,
+            0,
+            0.055,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.12000009507210244,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 50,
+      "npc": false,
+      "id": 3,
+      "x": 45.25455294748039,
+      "y": 21.101987832821237,
+      "z": 0.059869347818756934,
+      "speed": 1.094461117028556e-7,
+      "distance": 2.581333333334267,
+      "phase": 2.541671797495615,
+      "resets": 1,
+      "attack": 0.27083333333333326,
+      "damage": [],
+      "stats": {
+        "label": "11:open",
+        "median": 4.200000000000728,
+        "p95": 4.30000000000291,
+        "max": 179.09999999999854,
+        "p99": 8.400000000001455,
+        "frames": 1000,
+        "over16ms": 9,
+        "over33ms": 7,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 537,
+        "triangles": 1470691,
+        "memory": {
+          "geometries": 2134,
+          "textures": 103
+        },
+        "programs": 64,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            0.02085127347987902,
+            1.804309956507236e-11,
+            5.091850405398841e-10,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            -0.04182566880477043,
+            -2.658737897289666e-11,
+            -1.0485617223060041e-12,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            0.020974395324891416,
+            1.9180732137775017e-11,
+            -5.089598304991957e-10,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            0.13068431417322265,
+            -0.05689477253276382,
+            0.16878954506552765,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -1.3290139188121903,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 52,
+      "npc": false,
+      "id": 3,
+      "x": 45.25455294748039,
+      "y": 21.101987832821237,
+      "z": 0.059869347818756934,
+      "speed": 1.3402379925307179e-8,
+      "distance": 2.581333333334267,
+      "phase": 2.541671797495615,
+      "resets": 1,
+      "attack": 0.5078124999999999,
+      "damage": [],
+      "stats": {
+        "label": "11:open",
+        "median": 4.200000000000728,
+        "p95": 4.30000000000291,
+        "max": 179.09999999999854,
+        "p99": 25,
+        "frames": 1000,
+        "over16ms": 10,
+        "over33ms": 8,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 537,
+        "triangles": 1470691,
+        "memory": {
+          "geometries": 2134,
+          "textures": 103
+        },
+        "programs": 64,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            0.020851273477328656,
+            2.209676011592514e-12,
+            6.235813118059306e-11,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            -0.04182566880477045,
+            -3.2560625902613018e-12,
+            -1.2844395871917247e-13,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            0.020974395327441782,
+            2.348996798478164e-12,
+            -6.233052022464643e-11,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            -0.3313695113708079,
+            -0.08,
+            0.215,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -1.2918904242817737,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 54,
+      "npc": false,
+      "id": 3,
+      "x": 45.25455294748039,
+      "y": 21.101987832821237,
+      "z": 0.059869347818756934,
+      "speed": 2.990475179103668e-9,
+      "distance": 2.581333333334267,
+      "phase": 2.541671797495615,
+      "resets": 1,
+      "attack": 0.65,
+      "damage": [
+        {
+          "time": 10.450000000000099,
+          "amount": 10
+        }
+      ],
+      "stats": {
+        "label": "11:open",
+        "median": 4.200000000000728,
+        "p95": 4.30000000000291,
+        "max": 179.09999999999854,
+        "p99": 25.099999999998545,
+        "frames": 1000,
+        "over16ms": 11,
+        "over33ms": 8,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 537,
+        "triangles": 1470691,
+        "memory": {
+          "geometries": 2134,
+          "textures": 103
+        },
+        "programs": 64,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            0.02085127347705219,
+            4.932069603824467e-13,
+            1.3918540172169786e-11,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            -0.041825668804770434,
+            -7.26762004926916e-13,
+            -2.870121600631427e-14,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            0.020974395327718245,
+            5.243026076734544e-13,
+            -1.3912345181874001e-11,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            -1.43,
+            -0.08,
+            0.215,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.2,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 56,
+      "npc": false,
+      "id": 3,
+      "x": 45.38771721809232,
+      "y": 21.108700120819947,
+      "z": 0.029925885003450687,
+      "speed": 0.7981034826092503,
+      "distance": 2.714666666667625,
+      "phase": 2.413218251000029,
+      "resets": 1,
+      "attack": 0.8166666666666667,
+      "damage": [
+        {
+          "time": 10.450000000000099,
+          "amount": 10
+        }
+      ],
+      "stats": {
+        "label": "11:open",
+        "median": 4.200000000000728,
+        "p95": 4.30000000000291,
+        "max": 179.09999999999854,
+        "p99": 33.29999999999927,
+        "frames": 1000,
+        "over16ms": 13,
+        "over33ms": 9,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 537,
+        "triangles": 1470691,
+        "memory": {
+          "geometries": 2134,
+          "textures": 103
+        },
+        "programs": 64,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            -0.02784379707999033,
+            -0.00005894687372146932,
+            -0.005323298465714876,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            0.40298128626389146,
+            0.0014544025156294092,
+            -0.000025085582111363087,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            -0.3751384203275203,
+            -0.0011553261681151552,
+            0.0048100402575879326,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            -0.7316263337004387,
+            -0.04285498326314654,
+            0.14070996652629308,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.16285498326314654,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 58,
+      "npc": false,
+      "id": 3,
+      "x": 45.51821820329198,
+      "y": 21.115278163058687,
+      "z": 0.029985511691066537,
+      "speed": 0.6661494973790707,
+      "distance": 2.845333333334287,
+      "phase": 2.5590545365831674,
+      "resets": 1,
+      "damage": [
+        {
+          "time": 10.450000000000099,
+          "amount": 10
+        }
+      ],
+      "stats": {
+        "label": "11:open",
+        "median": 4.200000000000728,
+        "p95": 4.30000000000291,
+        "max": 179.09999999999854,
+        "p99": 33.29999999999927,
+        "frames": 1000,
+        "over16ms": 14,
+        "over33ms": 9,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 537,
+        "triangles": 1470691,
+        "memory": {
+          "geometries": 2134,
+          "textures": 103
+        },
+        "programs": 64,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            0.30062717879465745,
+            0.0006472457504962615,
+            0.003654136878039238,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            0.09230865128877197,
+            -0.00046179651119437757,
+            -0.00010174191288508553,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            -0.3929363603233079,
+            0.0008514900749487196,
+            -0.0034111028117025147,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            -0.11977084107079569,
+            0,
+            0.055,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.17801515714239685,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    }
+  ],
+  "facelingEvade": {
+    "checks": 61,
+    "npc": false,
+    "id": 3,
+    "x": 45.543717801696886,
+    "y": 21.136746316036994,
+    "z": 0.030001671008295306,
+    "speed": 0.3307867995068716,
+    "distance": 2.878666666667631,
+    "phase": 2.29449230040249,
+    "resets": 1,
+    "attack": 0.6916666666666667,
+    "damage": [],
+    "stats": {
+      "label": "11:open",
+      "median": 4.200000000000728,
+      "p95": 4.30000000000291,
+      "max": 179.09999999999854,
+      "p99": 37.5,
+      "frames": 1000,
+      "over16ms": 16,
+      "over33ms": 11,
+      "cpuMedian": null,
+      "cpuP95": null,
+      "gpuMedian": null,
+      "gpuP95": null,
+      "gpuSamples": 0,
+      "draws": 13581,
+      "triangles": 37602142,
+      "memory": {
+        "geometries": 2134,
+        "textures": 103
+      },
+      "programs": 64,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "bones": [
+      {
+        "name": "thighL",
+        "rotation": [
+          0.34852845485612716,
+          -0.048894352044704055,
+          -0.2409996726286837,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "shinL",
+        "rotation": [
+          0.07430235560111924,
+          0.028782709331790113,
+          0.007128536044588879,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "footL",
+        "rotation": [
+          -0.42523816380765195,
+          -0.06019865301656133,
+          0.22470674511919336,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "upperArmL",
+        "rotation": [
+          -1.3703821489985848,
+          -0.07686858870532341,
+          0.20873717741064682,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "foreArmL",
+        "rotation": [
+          -0.1968685887053234,
+          0,
+          0,
+          "XYZ"
+        ]
+      }
+    ]
+  },
+  "npc": {
+    "checks": 67,
+    "npc": true,
+    "id": "tom",
+    "x": 29.700000000000003,
+    "y": 24,
+    "speed": 0.6999956990513208,
+    "distance": 0.7000000000000028,
+    "phase": 1.050595023687851,
+    "resets": 1,
+    "damage": [],
+    "stats": {
+      "label": "104:open",
+      "median": 4.19999999999709,
+      "p95": 12.5,
+      "max": 529.0999999999985,
+      "p99": 41.700000000004366,
+      "frames": 445,
+      "over16ms": 17,
+      "over33ms": 5,
+      "cpuMedian": null,
+      "cpuP95": null,
+      "gpuMedian": null,
+      "gpuP95": null,
+      "gpuSamples": 0,
+      "draws": 3338,
+      "triangles": 1491440,
+      "memory": {
+        "geometries": 136,
+        "textures": 81
+      },
+      "programs": 89,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "bones": [
+      {
+        "name": "thighL",
+        "rotation": [
+          -0.8087462678285751,
+          0.0010020119775763436,
+          -0.0025132467314630974,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "shinL",
+        "rotation": [
+          0.9661398458286192,
+          0.001387041544153864,
+          -0.0013794721961384372,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "footL",
+        "rotation": [
+          -0.15739312919290355,
+          -0.0004597770743783194,
+          0.0036050475960930973,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "upperArmL",
+        "rotation": [
+          0.028765507422630558,
+          0,
+          0.055,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "foreArmL",
+        "rotation": [
+          -0.12,
+          0,
+          0,
+          "XYZ"
+        ]
+      }
+    ]
+  },
+  "npcFrames": [
+    {
+      "checks": 70,
+      "npc": true,
+      "id": "tom",
+      "x": 29.81666666666667,
+      "y": 24,
+      "speed": 0.6999994179298648,
+      "distance": 0.81666666666667,
+      "phase": 1.1819764647124873,
+      "resets": 1,
+      "damage": [],
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 12.5,
+        "max": 529.0999999999985,
+        "p99": 41.700000000004366,
+        "frames": 448,
+        "over16ms": 18,
+        "over33ms": 6,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 54,
+        "triangles": 23522,
+        "memory": {
+          "geometries": 136,
+          "textures": 81
+        },
+        "programs": 89,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            -0.7327041242129636,
+            0.002851450275431426,
+            -0.008026231634403197,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            1.1331143263263057,
+            0.004536536537835142,
+            -0.0039648774602715235,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            -0.40040328550774723,
+            -0.002474239023465581,
+            0.009756671588590048,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            0.1602098305445983,
+            0,
+            0.055,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.12,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 73,
+      "npc": true,
+      "id": "tom",
+      "x": 29.933333333333337,
+      "y": 24,
+      "speed": 0.6999999212253457,
+      "distance": 0.9333333333333371,
+      "phase": 1.3133578541657025,
+      "resets": 1,
+      "damage": [],
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 8.400000000001455,
+        "max": 529.0999999999985,
+        "p99": 37.5,
+        "frames": 608,
+        "over16ms": 20,
+        "over33ms": 7,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 54,
+        "triangles": 23522,
+        "memory": {
+          "geometries": 136,
+          "textures": 81
+        },
+        "programs": 89,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            -0.1723239929285743,
+            0.0005577246398341377,
+            -0.009106597053790836,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            0.36798750713736683,
+            0.0023067972885434224,
+            -0.0003300124114534301,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            -0.1956652013763928,
+            -0.0013148737621270841,
+            0.008942583215436749,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            0.16279675603754898,
+            0,
+            0.055,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.12,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 76,
+      "npc": true,
+      "id": "tom",
+      "x": 30.050000000000004,
+      "y": 24,
+      "speed": 0.6999999893389821,
+      "distance": 1.0500000000000043,
+      "phase": 1.4447392366394889,
+      "resets": 1,
+      "damage": [],
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 8.30000000000291,
+        "max": 529.0999999999985,
+        "p99": 29.200000000004366,
+        "frames": 758,
+        "over16ms": 20,
+        "over33ms": 7,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 54,
+        "triangles": 23522,
+        "memory": {
+          "geometries": 136,
+          "textures": 81
+        },
+        "programs": 89,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            -0.03290802195551189,
+            -0.000029678322976824677,
+            -0.0034748070209663215,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            0.3844595823543989,
+            0.0009163459057004494,
+            -0.000019635139374982148,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            -0.35155193895637793,
+            -0.0007230729101204518,
+            0.003174834995297208,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            0.03486138594300959,
+            0,
+            0.055,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.12,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 79,
+      "npc": true,
+      "id": "tom",
+      "x": 30.16666666666667,
+      "y": 24,
+      "speed": 0.6999999985571606,
+      "distance": 1.1666666666666714,
+      "phase": 1.5761206181687126,
+      "resets": 1,
+      "damage": [],
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "max": 529.0999999999985,
+        "p99": 29.200000000000728,
+        "frames": 900,
+        "over16ms": 20,
+        "over33ms": 7,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 53,
+        "triangles": 23474,
+        "memory": {
+          "geometries": 136,
+          "textures": 81
+        },
+        "programs": 89,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            0.2630046176138311,
+            0.0007287745439457965,
+            0.00461870531212174,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            0.08638970732320245,
+            -0.0005609508946123115,
+            -0.00010838607509190917,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            -0.34939510086403275,
+            0.0009870284678435025,
+            -0.004355483751306957,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            -0.14125561979803436,
+            0,
+            0.055,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.19364045076220682,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 82,
+      "npc": true,
+      "id": "tom",
+      "x": 30.28333333333334,
+      "y": 24,
+      "speed": 0.6999999998047053,
+      "distance": 1.2833333333333385,
+      "phase": 1.7075019995701035,
+      "resets": 1,
+      "damage": [],
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "max": 470.90000000000146,
+        "p99": 8.400000000001455,
+        "frames": 1000,
+        "over16ms": 6,
+        "over33ms": 4,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 53,
+        "triangles": 23474,
+        "memory": {
+          "geometries": 136,
+          "textures": 81
+        },
+        "programs": 89,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            0.038515740432575586,
+            0.0004687437043428188,
+            0.010585426464340403,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            0.5732260223319288,
+            -0.0038975638970988836,
+            -0.00015118599182995472,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            -0.6452744880633351,
+            0.0033174090727548433,
+            -0.008126860493536918,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            -0.25220336139100136,
+            0,
+            0.055,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.27432971737527373,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 85,
+      "npc": true,
+      "id": "tom",
+      "x": 30.400000000000006,
+      "y": 24,
+      "speed": 0.699999999973542,
+      "distance": 1.4000000000000057,
+      "phase": 1.838883380954194,
+      "resets": 1,
+      "damage": [],
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "max": 74.90000000000146,
+        "p99": 4.30000000000291,
+        "frames": 1000,
+        "over16ms": 3,
+        "over33ms": 2,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 58,
+        "triangles": 25262,
+        "memory": {
+          "geometries": 136,
+          "textures": 81
+        },
+        "programs": 89,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            -0.39072231049297185,
+            -0.001439947578259311,
+            0.008370086129314397,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            0.7651634691480181,
+            -0.003587178061883421,
+            0.0013376365598952277,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            -0.42901479332216835,
+            0.002416971858917035,
+            -0.008100834766447199,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            -0.22657461564784534,
+            0,
+            0.055,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.25569062956206934,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 88,
+      "npc": true,
+      "id": "tom",
+      "x": 30.516666666666673,
+      "y": 24,
+      "speed": 0.6999999999963916,
+      "distance": 1.5166666666666728,
+      "phase": 1.9702647623359437,
+      "resets": 1,
+      "damage": [],
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "max": 74.90000000000146,
+        "p99": 4.400000000001455,
+        "frames": 1000,
+        "over16ms": 3,
+        "over33ms": 2,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 58,
+        "triangles": 25262,
+        "memory": {
+          "geometries": 136,
+          "textures": 81
+        },
+        "programs": 89,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            -0.462821202768041,
+            -0.0003611929903874728,
+            0.0017249087529593939,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            0.2812040949729206,
+            -0.00039936773172689395,
+            0.00015651335636011825,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            0.1784036228784079,
+            -0.0000761987295104947,
+            -0.0019310335158889947,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            -0.08086433368584423,
+            0,
+            0.055,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.14971951540788672,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 91,
+      "npc": true,
+      "id": "tom",
+      "x": 30.63333333333334,
+      "y": 24,
+      "speed": 0.699999999999484,
+      "distance": 1.63333333333334,
+      "phase": 2.1016461437173772,
+      "resets": 1,
+      "damage": [],
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "max": 8.200000000004366,
+        "p99": 4.30000000000291,
+        "frames": 1000,
+        "over16ms": 0,
+        "over33ms": 0,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 59,
+        "triangles": 26486,
+        "memory": {
+          "geometries": 136,
+          "textures": 81
+        },
+        "programs": 89,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            -0.4843763271768539,
+            0.001209981089356875,
+            -0.0054830956243593605,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            0.5060120142462767,
+            0.0018317921484371522,
+            -0.000842159870414987,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            -0.021636060268808245,
+            -0.00036713135878088416,
+            0.006218118328595824,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            0.09114669636247294,
+            0,
+            0.055,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.12,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    }
+  ],
+  "npcStopped": {
+    "checks": 93,
+    "npc": true,
+    "id": "tom",
+    "x": 30.63333333333334,
+    "y": 24,
+    "speed": 9.596713604675054e-7,
+    "distance": 1.63333333333334,
+    "phase": 2.1016461437173772,
+    "resets": 1,
+    "damage": [],
+    "stats": {
+      "label": "104:open",
+      "median": 4.19999999999709,
+      "p95": 4.30000000000291,
+      "max": 8.400000000001455,
+      "p99": 4.30000000000291,
+      "frames": 1000,
+      "over16ms": 0,
+      "over33ms": 0,
+      "cpuMedian": null,
+      "cpuP95": null,
+      "gpuMedian": null,
+      "gpuP95": null,
+      "gpuSamples": 0,
+      "draws": 2714,
+      "triangles": 1218356,
+      "memory": {
+        "geometries": 136,
+        "textures": 81
+      },
+      "programs": 89,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "bones": [
+      {
+        "name": "thighL",
+        "rotation": [
+          -5.959794619750076e-8,
+          -2.5509096901695475e-10,
+          -1.0203650930612422e-8,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "shinL",
+        "rotation": [
+          1.1704174981593609e-7,
+          7.460012644516193e-10,
+          1.7280966272670702e-11,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "footL",
+        "rotation": [
+          -5.7443803621046696e-8,
+          -4.909096863253402e-10,
+          1.0186369906283686e-8,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "upperArmL",
+        "rotation": [
+          -0.03999977116776633,
+          0,
+          0.055,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "foreArmL",
+        "rotation": [
+          -0.12,
+          0,
+          0,
+          "XYZ"
+        ]
+      }
+    ],
+    "oldTarget": [
+      31,
+      24
+    ]
+  },
+  "npcAttack": [
+    {
+      "checks": 94,
+      "npc": true,
+      "id": "tom",
+      "x": 30.63333333333334,
+      "y": 24,
+      "speed": 7.109420297007302e-7,
+      "distance": 1.63333333333334,
+      "phase": 2.1016461437173772,
+      "resets": 1,
+      "attack": 0,
+      "damage": [],
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "max": 12.599999999998545,
+        "p99": 4.30000000000291,
+        "frames": 1000,
+        "over16ms": 0,
+        "over33ms": 0,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 108,
+        "triangles": 46704,
+        "memory": {
+          "geometries": 136,
+          "textures": 81
+        },
+        "programs": 89,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            -4.415125827163895e-8,
+            -1.889761028718788e-10,
+            -7.559050793878996e-9,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            8.670668796283592e-8,
+            5.526512332275974e-10,
+            1.2802083080747984e-11,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            -4.2555429692630105e-8,
+            -3.6367479606931624e-10,
+            7.546248678936397e-9,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            -0.039999830476911816,
+            0,
+            0.055,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.12,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 96,
+      "npc": true,
+      "id": "tom",
+      "x": 30.63333333333334,
+      "y": 24,
+      "speed": 6.449520584186323e-8,
+      "distance": 1.63333333333334,
+      "phase": 2.1016461437173772,
+      "resets": 1,
+      "attack": 0.27083333333333326,
+      "damage": [],
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "max": 183.20000000000437,
+        "p99": 4.30000000000291,
+        "frames": 1000,
+        "over16ms": 1,
+        "over33ms": 1,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 49,
+        "triangles": 20218,
+        "memory": {
+          "geometries": 136,
+          "textures": 81
+        },
+        "programs": 89,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            -4.005310100952169e-9,
+            -1.714356276455798e-11,
+            -6.857425655488843e-10,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            7.865849974819093e-9,
+            5.013543016155523e-11,
+            1.1614013674847162e-12,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            -3.860539873878719e-9,
+            -3.299186464590199e-11,
+            6.845811639191845e-10,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            0.1306843220399213,
+            -0.05689477253276382,
+            0.16878954506552765,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -1.3290139163212311,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 98,
+      "npc": true,
+      "id": "tom",
+      "x": 30.63333333333334,
+      "y": 24,
+      "speed": 7.897852546834596e-9,
+      "distance": 1.63333333333334,
+      "phase": 2.1016461437173772,
+      "resets": 1,
+      "attack": 0.5078124999999999,
+      "damage": [],
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "max": 183.20000000000437,
+        "p99": 4.30000000000291,
+        "frames": 1000,
+        "over16ms": 2,
+        "over33ms": 2,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 49,
+        "triangles": 20218,
+        "memory": {
+          "geometries": 136,
+          "textures": 81
+        },
+        "programs": 89,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            -4.904781407411899e-10,
+            -2.09936167991833e-12,
+            -8.397446802100086e-11,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            9.632281534885573e-10,
+            6.139472170795695e-12,
+            1.4217659953571137e-13,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            -4.727500127475442e-10,
+            -4.0401104496225105e-12,
+            8.383229141753303e-11,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            -0.3313695113708079,
+            -0.08,
+            0.215,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -1.2918904242817737,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 100,
+      "npc": true,
+      "id": "tom",
+      "x": 30.63333333333334,
+      "y": 24,
+      "speed": 1.7622491036037558e-9,
+      "distance": 1.63333333333334,
+      "phase": 2.1016461437173772,
+      "resets": 1,
+      "attack": 0.65,
+      "damage": [
+        {
+          "time": 14.550000000000303,
+          "amount": 9
+        }
+      ],
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "max": 183.20000000000437,
+        "p99": 4.30000000000291,
+        "frames": 1000,
+        "over16ms": 3,
+        "over33ms": 3,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 49,
+        "triangles": 20218,
+        "memory": {
+          "geometries": 136,
+          "textures": 81
+        },
+        "programs": 89,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            -1.0943705663902121e-10,
+            -4.684511842362762e-13,
+            -1.8738047410489415e-11,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            2.1491854823584112e-10,
+            1.3699603225412966e-12,
+            3.173285360382655e-14,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            -1.0548149159682875e-10,
+            -9.015091362510363e-13,
+            1.8706314556689816e-11,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            -1.43,
+            -0.08,
+            0.215,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.2,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 102,
+      "npc": true,
+      "id": "tom",
+      "x": 30.63333333333334,
+      "y": 24,
+      "speed": 1.5986763186501544e-10,
+      "distance": 1.63333333333334,
+      "phase": 2.1016461437173772,
+      "resets": 1,
+      "attack": 0.8166666666666667,
+      "damage": [
+        {
+          "time": 14.550000000000303,
+          "amount": 9
+        }
+      ],
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "max": 183.20000000000437,
+        "p99": 4.30000000000291,
+        "frames": 1000,
+        "over16ms": 4,
+        "over33ms": 4,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 49,
+        "triangles": 20218,
+        "memory": {
+          "geometries": 136,
+          "textures": 81
+        },
+        "programs": 89,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            -9.922514199178814e-12,
+            -4.2520120249945544e-14,
+            -1.7008048103355579e-12,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            1.94863847280401e-11,
+            1.2434862192920192e-13,
+            2.86340100899699e-15,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            -9.56387052886136e-12,
+            -8.182850166235275e-14,
+            1.6979414093249496e-12,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            -0.7846053341794713,
+            -0.04285498326314654,
+            0.14070996652629308,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.16285498326314654,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 104,
+      "npc": true,
+      "id": "tom",
+      "x": 30.63333333333334,
+      "y": 24,
+      "speed": 7.959340717470838e-12,
+      "distance": 1.63333333333334,
+      "phase": 2.1016461437173772,
+      "resets": 1,
+      "damage": [
+        {
+          "time": 14.550000000000303,
+          "amount": 9
+        }
+      ],
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "max": 183.20000000000437,
+        "p99": 4.400000000001455,
+        "frames": 1000,
+        "over16ms": 5,
+        "over33ms": 5,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 49,
+        "triangles": 20218,
+        "memory": {
+          "geometries": 136,
+          "textures": 81
+        },
+        "programs": 89,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            -4.900385652817364e-13,
+            -2.1419121594486838e-15,
+            -8.567648637878758e-14,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            9.623898900024128e-13,
+            6.262841358807507e-15,
+            1.6720549338084269e-16,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            -4.723513247206766e-13,
+            -4.120929199316759e-15,
+            8.550928088540272e-14,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            -0.03999999999810211,
+            0,
+            0.055,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.12,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    }
+  ],
+  "npcEvade": {
+    "checks": 107,
+    "npc": true,
+    "id": "tom",
+    "x": 30.63333333333334,
+    "y": 24,
+    "speed": 8.021307599896869e-15,
+    "distance": 1.63333333333334,
+    "phase": 2.1016461437173772,
+    "resets": 1,
+    "attack": 0.6916666666666667,
+    "damage": [],
+    "stats": {
+      "label": "104:open",
+      "median": 4.19999999999709,
+      "p95": 4.30000000000291,
+      "max": 183.20000000000437,
+      "p99": 4.400000000001455,
+      "frames": 1000,
+      "over16ms": 6,
+      "over33ms": 6,
+      "cpuMedian": null,
+      "cpuP95": null,
+      "gpuMedian": null,
+      "gpuP95": null,
+      "gpuSamples": 0,
+      "draws": 1560,
+      "triangles": 622576,
+      "memory": {
+        "geometries": 136,
+        "textures": 81
+      },
+      "programs": 89,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "bones": [
+      {
+        "name": "thighL",
+        "rotation": [
+          0.08914188694413833,
+          -0.0018129698077568757,
+          -0.026017731890042264,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "shinL",
+        "rotation": [
+          -0.03379492715125434,
+          0.0014648788277195457,
+          0.00009075820305703473,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "footL",
+        "rotation": [
+          -0.05536416523520697,
+          -0.001968390975755511,
+          0.025904126518480706,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "upperArmL",
+        "rotation": [
+          -1.375591728754994,
+          -0.07686858870532341,
+          0.20873717741064682,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "foreArmL",
+        "rotation": [
+          -0.1968685887053234,
+          0,
+          0,
+          "XYZ"
+        ]
+      }
+    ]
+  },
+  "toolNpc": {
+    "checks": 109,
+    "npc": true,
+    "id": "brc_motion_qa",
+    "x": 30.63333333333334,
+    "y": 24,
+    "speed": 0,
+    "distance": 0,
+    "phase": 0.25,
+    "resets": 1,
+    "damage": [],
+    "stats": {
+      "label": "104:open",
+      "median": 4.19999999999709,
+      "p95": 4.30000000000291,
+      "max": 183.20000000000437,
+      "p99": 8.299999999995634,
+      "frames": 1000,
+      "over16ms": 7,
+      "over33ms": 7,
+      "cpuMedian": null,
+      "cpuP95": null,
+      "gpuMedian": null,
+      "gpuP95": null,
+      "gpuSamples": 0,
+      "draws": 124,
+      "triangles": 47216,
+      "memory": {
+        "geometries": 145,
+        "textures": 81
+      },
+      "programs": 87,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "bones": [
+      {
+        "name": "thighL",
+        "rotation": [
+          0,
+          1.907003946108167e-17,
+          7.628015784432678e-16,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "shinL",
+        "rotation": [
+          -1.9671764217576992e-15,
+          -5.444282228766086e-17,
+          -2.8816334791734e-17,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "footL",
+        "rotation": [
+          2.033095913844818e-15,
+          3.53727828265792e-17,
+          -7.339852436515339e-16,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "upperArmL",
+        "rotation": [
+          -0.8896663150958035,
+          0,
+          0,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "foreArmL",
+        "rotation": [
+          -0.12,
+          0,
+          0,
+          "XYZ"
+        ]
+      }
+    ]
+  },
+  "toolAttack": [
+    {
+      "checks": 110,
+      "npc": true,
+      "id": "brc_motion_qa",
+      "x": 30.63333333333334,
+      "y": 24,
+      "speed": 0,
+      "distance": 0,
+      "phase": 0.25,
+      "resets": 1,
+      "attack": 0,
+      "damage": [],
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "max": 183.20000000000437,
+        "p99": 8.299999999995634,
+        "frames": 1000,
+        "over16ms": 7,
+        "over33ms": 7,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 110,
+        "triangles": 38372,
+        "memory": {
+          "geometries": 145,
+          "textures": 81
+        },
+        "programs": 87,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            9.020562075079396e-17,
+            1.907003946108173e-17,
+            7.628015784432678e-16,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            -1.970645868709653e-15,
+            -5.605067605250544e-17,
+            4.546630828790271e-18,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            1.880440247958859e-15,
+            3.698063659142377e-17,
+            -7.6734820927205815e-16,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            -0.04,
+            0,
+            0.055,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.12,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 112,
+      "npc": true,
+      "id": "brc_motion_qa",
+      "x": 30.63333333333334,
+      "y": 24,
+      "speed": 0,
+      "distance": 0,
+      "phase": 0.25,
+      "resets": 1,
+      "attack": 0.27083333333333326,
+      "damage": [],
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "max": 108.19999999999709,
+        "p99": 4.400000000001455,
+        "frames": 1000,
+        "over16ms": 7,
+        "over33ms": 7,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 49,
+        "triangles": 14800,
+        "memory": {
+          "geometries": 145,
+          "textures": 81
+        },
+        "programs": 87,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            9.020562075079396e-17,
+            1.907003946108173e-17,
+            7.628015784432678e-16,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            -1.970645868709653e-15,
+            -5.605067605250544e-17,
+            4.546630828790271e-18,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            1.880440247958859e-15,
+            3.698063659142377e-17,
+            -7.6734820927205815e-16,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            -1.5050403927186686,
+            -0.05689477253276382,
+            0.16878954506552765,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.6178292596616833,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 114,
+      "npc": true,
+      "id": "brc_motion_qa",
+      "x": 30.63333333333334,
+      "y": 24,
+      "speed": 0,
+      "distance": 0,
+      "phase": 0.25,
+      "resets": 1,
+      "attack": 0.5078124999999999,
+      "damage": [],
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "max": 108.19999999999709,
+        "p99": 4.400000000001455,
+        "frames": 1000,
+        "over16ms": 7,
+        "over33ms": 7,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 49,
+        "triangles": 14800,
+        "memory": {
+          "geometries": 145,
+          "textures": 81
+        },
+        "programs": 87,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            9.020562075079396e-17,
+            1.907003946108173e-17,
+            7.628015784432678e-16,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            -1.970645868709653e-15,
+            -5.605067605250544e-17,
+            4.546630828790271e-18,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            1.880440247958859e-15,
+            3.698063659142377e-17,
+            -7.6734820927205815e-16,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            -1.8815843112770299,
+            -0.08,
+            0.215,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.6178839895399381,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 116,
+      "npc": true,
+      "id": "brc_motion_qa",
+      "x": 30.63333333333334,
+      "y": 24,
+      "speed": 0,
+      "distance": 0,
+      "phase": 0.25,
+      "resets": 1,
+      "attack": 0.65,
+      "damage": [
+        {
+          "time": 15.583333333333687,
+          "amount": 9
+        }
+      ],
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "max": 108.19999999999709,
+        "p99": 8.299999999995634,
+        "frames": 1000,
+        "over16ms": 8,
+        "over33ms": 8,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 48,
+        "triangles": 14764,
+        "memory": {
+          "geometries": 145,
+          "textures": 81
+        },
+        "programs": 87,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            9.020562075079396e-17,
+            1.907003946108173e-17,
+            7.628015784432678e-16,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            -1.970645868709653e-15,
+            -5.605067605250544e-17,
+            4.546630828790271e-18,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            1.880440247958859e-15,
+            3.698063659142377e-17,
+            -7.6734820927205815e-16,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            -1.43,
+            -0.08,
+            0.215,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.2,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 118,
+      "npc": true,
+      "id": "brc_motion_qa",
+      "x": 30.63333333333334,
+      "y": 24,
+      "speed": 0,
+      "distance": 0,
+      "phase": 0.25,
+      "resets": 1,
+      "attack": 0.8166666666666667,
+      "damage": [
+        {
+          "time": 15.583333333333687,
+          "amount": 9
+        }
+      ],
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "max": 108.19999999999709,
+        "p99": 8.299999999995634,
+        "frames": 1000,
+        "over16ms": 8,
+        "over33ms": 8,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 48,
+        "triangles": 14764,
+        "memory": {
+          "geometries": 145,
+          "textures": 81
+        },
+        "programs": 87,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            9.020562075079396e-17,
+            1.907003946108173e-17,
+            7.628015784432678e-16,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            -1.970645868709653e-15,
+            -5.605067605250544e-17,
+            4.546630828790271e-18,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            1.880440247958859e-15,
+            3.698063659142377e-17,
+            -7.6734820927205815e-16,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            -0.784605334197171,
+            -0.04285498326314654,
+            0.14070996652629308,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.16285498326314654,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    },
+    {
+      "checks": 120,
+      "npc": true,
+      "id": "brc_motion_qa",
+      "x": 30.63333333333334,
+      "y": 24,
+      "speed": 0,
+      "distance": 0,
+      "phase": 0.25,
+      "resets": 1,
+      "damage": [
+        {
+          "time": 15.583333333333687,
+          "amount": 9
+        }
+      ],
+      "stats": {
+        "label": "104:open",
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "max": 108.19999999999709,
+        "p99": 8.299999999995634,
+        "frames": 1000,
+        "over16ms": 8,
+        "over33ms": 8,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 48,
+        "triangles": 14764,
+        "memory": {
+          "geometries": 145,
+          "textures": 81
+        },
+        "programs": 87,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "bones": [
+        {
+          "name": "thighL",
+          "rotation": [
+            9.020562075079396e-17,
+            1.907003946108173e-17,
+            7.628015784432678e-16,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "shinL",
+          "rotation": [
+            -1.970645868709653e-15,
+            -5.605067605250544e-17,
+            4.546630828790271e-18,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "footL",
+          "rotation": [
+            1.880440247958859e-15,
+            3.698063659142377e-17,
+            -7.6734820927205815e-16,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "upperArmL",
+          "rotation": [
+            -0.04,
+            0,
+            0.055,
+            "XYZ"
+          ]
+        },
+        {
+          "name": "foreArmL",
+          "rotation": [
+            -0.12,
+            0,
+            0,
+            "XYZ"
+          ]
+        }
+      ]
+    }
+  ],
+  "toolEvade": {
+    "checks": 123,
+    "npc": true,
+    "id": "brc_motion_qa",
+    "x": 30.63333333333334,
+    "y": 24,
+    "speed": 0,
+    "distance": 0,
+    "phase": 0.25,
+    "resets": 1,
+    "attack": 0.6916666666666667,
+    "damage": [],
+    "stats": {
+      "label": "104:open",
+      "median": 4.19999999999709,
+      "p95": 4.30000000000291,
+      "max": 104.19999999999709,
+      "p99": 8.299999999995634,
+      "frames": 1000,
+      "over16ms": 8,
+      "over33ms": 8,
+      "cpuMedian": null,
+      "cpuP95": null,
+      "gpuMedian": null,
+      "gpuP95": null,
+      "gpuSamples": 0,
+      "draws": 1363,
+      "triangles": 444876,
+      "memory": {
+        "geometries": 145,
+        "textures": 81
+      },
+      "programs": 87,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "bones": [
+      {
+        "name": "thighL",
+        "rotation": [
+          0.011582826995929473,
+          -0.00001059095197412877,
+          -0.00034390743935570553,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "shinL",
+        "rotation": [
+          -0.005743674921516442,
+          0.00002415306665008615,
+          7.184343054524095e-7,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "footL",
+        "rotation": [
+          -0.005839155045353481,
+          -0.000017541550187146896,
+          0.00034314758565009366,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "upperArmL",
+        "rotation": [
+          -1.3755917287549941,
+          -0.07686858870532341,
+          0.20873717741064682,
+          "XYZ"
+        ]
+      },
+      {
+        "name": "foreArmL",
+        "rotation": [
+          -0.1968685887053234,
+          0,
+          0,
+          "XYZ"
+        ]
+      }
+    ]
+  },
+  "stats": {
+    "label": "104:open",
+    "median": 4.19999999999709,
+    "p95": 4.30000000000291,
+    "max": 104.19999999999709,
+    "p99": 8.299999999995634,
+    "frames": 1000,
+    "over16ms": 8,
+    "over33ms": 8,
+    "cpuMedian": null,
+    "cpuP95": null,
+    "gpuMedian": null,
+    "gpuP95": null,
+    "gpuSamples": 0,
+    "draws": 61,
+    "triangles": 20416,
+    "memory": {
+      "geometries": 145,
+      "textures": 81
+    },
+    "programs": 87,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "errors": [],
+  "networkErrors": [
+    {
+      "requestId": "51508.12",
+      "loaderId": "EF18BFA2DD74AB0DD47AFDC8D4E384F7",
+      "timestamp": 101900.997894,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:4757/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Fri, 16 Oct 2026 08:00:57 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": false,
+        "connectionId": 158,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 4757,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 101899.776588,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": 0.233,
+          "dnsEnd": 0.241,
+          "connectStart": 0.241,
+          "connectEnd": 0.94,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.987,
+          "sendEnd": 1.036,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 1220.109,
+          "receiveHeadersEnd": 1220.661
+        },
+        "responseTime": 1792137657162.769,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "213A618F244B081471C7D562284AD622"
+    }
+  ],
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  }
+}

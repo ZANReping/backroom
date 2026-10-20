@@ -1,0 +1,9 @@
+
+> my-app@0.0.0 check:entity-forms
+> esbuild scripts/check-entity-forms.ts --bundle --platform=node --format=esm --outfile=.cache/check-entity-forms.mjs && node .cache/check-entity-forms.mjs
+
+
+  .cache\check-entity-forms.mjs  2.0mb
+
+Done in 96ms
+entity forms checks: 200 passed; 33 forms / 9 parents

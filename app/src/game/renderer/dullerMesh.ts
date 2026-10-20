@@ -311,7 +311,7 @@ export function animateDuller(grp: THREE.Group, e: Entity, time: number, gz: num
     const ph = A.side < 0 ? Math.PI : 0
     const dangle = -Math.sin(g + ph) * amp * 0.6 + Math.sin(t * 1.1 + A.side) * 0.05
     const idleZ = dangle - run * 0.95
-    const reachZ = holding ? 1.15 : 1.47
+    const reachZ = holding ? 1.15 : s?.phase === 'feed' ? 0.72 : 1.47 // v81：捕食旱虾时向前下方伸手
     A.sh.rotation.z = lerp(idleZ, reachZ + Math.sin(t * 9 + A.side) * 0.02, reach)
     A.sh.rotation.x = lerp(A.side * -0.06 + run * A.side * -0.15, A.side * -0.02, reach)
     A.elbow.rotation.z = lerp(0.16 + run * 0.6 + Math.max(0, Math.sin(g + ph)) * amp * 0.3, 0.02, reach)

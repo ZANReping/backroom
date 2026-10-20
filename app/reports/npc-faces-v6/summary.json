@@ -1,0 +1,47 @@
+{
+  "before": [
+    {
+      "mode": "realistic",
+      "median": 4.200000000000728,
+      "worstP95": 4.299999999999272,
+      "gpuMedian": 4.099072,
+      "draws": 212,
+      "triangles": 216549
+    },
+    {
+      "mode": "classic",
+      "median": 4.200000000000728,
+      "worstP95": 4.30000000000291,
+      "gpuMedian": 3.39968,
+      "draws": 198,
+      "triangles": 216535
+    }
+  ],
+  "after": [
+    {
+      "mode": "realistic",
+      "median": 4.19999999999709,
+      "worstP95": 4.299999999999272,
+      "gpuMedian": 3.953664,
+      "draws": 212,
+      "triangles": 216549
+    },
+    {
+      "mode": "classic",
+      "median": 4.19999999999709,
+      "worstP95": 4.299999999999272,
+      "gpuMedian": 3.675136,
+      "draws": 198,
+      "triangles": 216535
+    }
+  ],
+  "checks": 197,
+  "named": 91,
+  "errors": 0,
+  "assetFailures": [],
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

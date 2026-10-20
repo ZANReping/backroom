@@ -1,0 +1,3290 @@
+{
+  "run": "qa-sky-visibility-1792076997298-34256",
+  "baseline": false,
+  "classic": false,
+  "quick": false,
+  "mode": "realistic",
+  "port": 10313,
+  "cdp": 10314,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\sky-visibility\\after-realistic\\qa-sky-visibility-1792076997298-34256",
+  "cases": [
+    "l2-corridor",
+    "l3-corridor",
+    "l4-office",
+    "l4-window",
+    "l5-corridor",
+    "l2-fog-off",
+    "l11-metro-far",
+    "l11-entrance",
+    "l11-ramp",
+    "l11-street",
+    "l6-underground",
+    "l7-sea",
+    "l7-underwater",
+    "l9-street",
+    "l10-field"
+  ],
+  "views": [
+    {
+      "id": "l2-corridor",
+      "view": {
+        "id": "l2-corridor",
+        "detail": {
+          "x": 10.5,
+          "y": 2.5,
+          "dx": 0,
+          "dy": 1,
+          "len": 120
+        },
+        "level": 2,
+        "sky": false,
+        "visible": false,
+        "opening": null,
+        "amount": null,
+        "enclosure": 1,
+        "cloudSize": null,
+        "fog": {
+          "near": 2,
+          "far": 14.5,
+          "color": "0b0908"
+        },
+        "background": "0b0908",
+        "memory": {
+          "geometries": 1280,
+          "textures": 236
+        },
+        "pose": {
+          "x": -53.5,
+          "y": -61.5,
+          "z": 0,
+          "yaw": -3.141592653589793,
+          "pitch": 0.02,
+          "fov": 75
+        }
+      },
+      "measure": {
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 4.100000001490116,
+        "p95": 6.399999998509884,
+        "calls": 491,
+        "triangles": 218157,
+        "level": 2,
+        "sky": false,
+        "visible": false,
+        "opening": null,
+        "amount": null,
+        "enclosure": 1,
+        "cloudSize": null,
+        "fog": {
+          "near": 2,
+          "far": 14.5,
+          "color": "0b0908"
+        },
+        "background": "0b0908",
+        "memory": {
+          "geometries": 1280,
+          "textures": 236
+        },
+        "pose": {
+          "x": -53.5,
+          "y": -61.5,
+          "z": 0,
+          "yaw": -3.141592653589793,
+          "pitch": 0.02,
+          "fov": 75
+        }
+      }
+    },
+    {
+      "id": "l3-corridor",
+      "view": {
+        "id": "l3-corridor",
+        "detail": {
+          "x": 78.5,
+          "y": 2.5,
+          "dx": 0,
+          "dy": 1,
+          "len": 120
+        },
+        "level": 3,
+        "sky": false,
+        "visible": false,
+        "opening": null,
+        "amount": null,
+        "enclosure": 1,
+        "cloudSize": null,
+        "fog": {
+          "near": 2,
+          "far": 14.680000000000001,
+          "color": "1f1e1c"
+        },
+        "background": "1f1e1c",
+        "memory": {
+          "geometries": 465,
+          "textures": 53
+        },
+        "pose": {
+          "x": 14.5,
+          "y": -61.5,
+          "z": 0,
+          "yaw": -3.141592653589793,
+          "pitch": 0.02,
+          "fov": 75
+        }
+      },
+      "measure": {
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 4.100000001490116,
+        "p95": 5.199999995529652,
+        "calls": 274,
+        "triangles": 494829,
+        "level": 3,
+        "sky": false,
+        "visible": false,
+        "opening": null,
+        "amount": null,
+        "enclosure": 1,
+        "cloudSize": null,
+        "fog": {
+          "near": 2,
+          "far": 14.680000000000001,
+          "color": "1f1e1c"
+        },
+        "background": "1f1e1c",
+        "memory": {
+          "geometries": 465,
+          "textures": 53
+        },
+        "pose": {
+          "x": 14.5,
+          "y": -61.5,
+          "z": 0,
+          "yaw": -3.141592653589793,
+          "pitch": 0.02,
+          "fov": 75
+        }
+      }
+    },
+    {
+      "id": "l4-office",
+      "view": {
+        "id": "l4-office",
+        "detail": {
+          "x": 78.5,
+          "y": 2.5,
+          "dx": 0,
+          "dy": 1,
+          "len": 120
+        },
+        "level": 4,
+        "sky": false,
+        "visible": false,
+        "opening": null,
+        "amount": null,
+        "enclosure": 1,
+        "cloudSize": null,
+        "fog": {
+          "near": 30,
+          "far": 56.4,
+          "color": "59676d"
+        },
+        "background": "59676d",
+        "memory": {
+          "geometries": 1283,
+          "textures": 136
+        },
+        "pose": {
+          "x": 14.5,
+          "y": -61.5,
+          "z": 0,
+          "yaw": -3.141592653589793,
+          "pitch": 0.02,
+          "fov": 75
+        }
+      },
+      "measure": {
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 11.200000002980232,
+        "p95": 24.599999994039536,
+        "calls": 1058,
+        "triangles": 206869,
+        "level": 4,
+        "sky": false,
+        "visible": false,
+        "opening": null,
+        "amount": null,
+        "enclosure": 1,
+        "cloudSize": null,
+        "fog": {
+          "near": 30,
+          "far": 56.4,
+          "color": "59676d"
+        },
+        "background": "59676d",
+        "memory": {
+          "geometries": 1283,
+          "textures": 136
+        },
+        "pose": {
+          "x": 14.5,
+          "y": -61.5,
+          "z": 0,
+          "yaw": -3.141592653589793,
+          "pitch": 0.02,
+          "fov": 75
+        }
+      }
+    },
+    {
+      "id": "l4-window",
+      "view": {
+        "id": "l4-window",
+        "detail": {
+          "window": true,
+          "selected": true
+        },
+        "level": 4,
+        "sky": false,
+        "visible": false,
+        "opening": null,
+        "amount": null,
+        "enclosure": 1,
+        "cloudSize": null,
+        "fog": {
+          "near": 20.400000000000002,
+          "far": 56.4,
+          "color": "59676d"
+        },
+        "background": "59676d",
+        "memory": {
+          "geometries": 2797,
+          "textures": 146
+        },
+        "pose": {
+          "x": -38.5,
+          "y": -47.5,
+          "z": 0,
+          "yaw": 1.5707963267948966,
+          "pitch": 0.12,
+          "fov": 75
+        }
+      },
+      "measure": {
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 20.200000002980232,
+        "p95": 40.599999994039536,
+        "calls": 1789,
+        "triangles": 351679,
+        "level": 4,
+        "sky": false,
+        "visible": false,
+        "opening": null,
+        "amount": null,
+        "enclosure": 1,
+        "cloudSize": null,
+        "fog": {
+          "near": 20.400000000000002,
+          "far": 56.4,
+          "color": "59676d"
+        },
+        "background": "59676d",
+        "memory": {
+          "geometries": 2797,
+          "textures": 146
+        },
+        "pose": {
+          "x": -38.5,
+          "y": -47.5,
+          "z": 0,
+          "yaw": 1.5707963267948966,
+          "pitch": 0.12,
+          "fov": 75
+        }
+      }
+    },
+    {
+      "id": "l5-corridor",
+      "view": {
+        "id": "l5-corridor",
+        "detail": {
+          "x": 38.5,
+          "y": 2.5,
+          "dx": 0,
+          "dy": 1,
+          "len": 120
+        },
+        "level": 5,
+        "sky": false,
+        "visible": false,
+        "opening": null,
+        "amount": null,
+        "enclosure": 1,
+        "cloudSize": null,
+        "fog": {
+          "near": 7,
+          "far": 56.4,
+          "color": "1f0b0d"
+        },
+        "background": "1f0b0d",
+        "memory": {
+          "geometries": 1927,
+          "textures": 256
+        },
+        "pose": {
+          "x": -25.5,
+          "y": -61.5,
+          "z": 0,
+          "yaw": -3.141592653589793,
+          "pitch": 0.02,
+          "fov": 75
+        }
+      },
+      "measure": {
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 14.899999998509884,
+        "p95": 35.70000000298023,
+        "calls": 1582,
+        "triangles": 1253973,
+        "level": 5,
+        "sky": false,
+        "visible": false,
+        "opening": null,
+        "amount": null,
+        "enclosure": 1,
+        "cloudSize": null,
+        "fog": {
+          "near": 7,
+          "far": 56.4,
+          "color": "1f0b0d"
+        },
+        "background": "1f0b0d",
+        "memory": {
+          "geometries": 1927,
+          "textures": 256
+        },
+        "pose": {
+          "x": -25.5,
+          "y": -61.5,
+          "z": 0,
+          "yaw": -3.141592653589793,
+          "pitch": 0.02,
+          "fov": 75
+        }
+      }
+    },
+    {
+      "id": "l2-fog-off",
+      "view": {
+        "id": "l2-fog-off",
+        "detail": {
+          "x": 10.5,
+          "y": 2.5,
+          "dx": 0,
+          "dy": 1,
+          "len": 120
+        },
+        "level": 2,
+        "sky": false,
+        "visible": false,
+        "opening": null,
+        "amount": null,
+        "enclosure": 1,
+        "cloudSize": null,
+        "fog": {
+          "near": 9990,
+          "far": 9999,
+          "color": "0b0908"
+        },
+        "background": "0b0908",
+        "memory": {
+          "geometries": 1270,
+          "textures": 353
+        },
+        "pose": {
+          "x": -53.5,
+          "y": -61.5,
+          "z": 0,
+          "yaw": -3.141592653589793,
+          "pitch": 0.02,
+          "fov": 75
+        }
+      },
+      "measure": {
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 8.400000005960464,
+        "p95": 13.899999998509884,
+        "calls": 969,
+        "triangles": 636087,
+        "level": 2,
+        "sky": false,
+        "visible": false,
+        "opening": null,
+        "amount": null,
+        "enclosure": 1,
+        "cloudSize": null,
+        "fog": {
+          "near": 9990,
+          "far": 9999,
+          "color": "0b0908"
+        },
+        "background": "0b0908",
+        "memory": {
+          "geometries": 1270,
+          "textures": 353
+        },
+        "pose": {
+          "x": -53.5,
+          "y": -61.5,
+          "z": 0,
+          "yaw": -3.141592653589793,
+          "pitch": 0.02,
+          "fov": 75
+        }
+      }
+    },
+    {
+      "id": "l11-metro-far",
+      "view": {
+        "id": "l11-metro-far",
+        "level": 11,
+        "sky": true,
+        "visible": false,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 1,
+        "cloudSize": null,
+        "fog": {
+          "near": 4,
+          "far": 38,
+          "color": "16181a"
+        },
+        "background": "16181a",
+        "memory": {
+          "geometries": 1519,
+          "textures": 115
+        },
+        "pose": {
+          "x": 16,
+          "y": 164,
+          "z": -5,
+          "yaw": 3.141592653589793,
+          "pitch": 0.04,
+          "fov": 75
+        }
+      },
+      "measure": {
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 5.199999995529652,
+        "p95": 7.899999998509884,
+        "calls": 417,
+        "triangles": 1362120,
+        "level": 11,
+        "sky": true,
+        "visible": false,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 1,
+        "cloudSize": null,
+        "fog": {
+          "near": 4,
+          "far": 38,
+          "color": "16181a"
+        },
+        "background": "16181a",
+        "memory": {
+          "geometries": 1519,
+          "textures": 115
+        },
+        "pose": {
+          "x": 16,
+          "y": 164,
+          "z": -5,
+          "yaw": 3.141592653589793,
+          "pitch": 0.04,
+          "fov": 75
+        }
+      }
+    },
+    {
+      "id": "l11-entrance",
+      "view": {
+        "id": "l11-entrance",
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 1,
+        "cloudSize": null,
+        "fog": {
+          "near": 4,
+          "far": 38,
+          "color": "16181a"
+        },
+        "background": "16181a",
+        "memory": {
+          "geometries": 1635,
+          "textures": 120
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 132,
+          "z": -5,
+          "yaw": 0,
+          "pitch": 0.55,
+          "fov": 75
+        }
+      },
+      "measure": {
+        "frames": 90,
+        "skyDraws": 90,
+        "cloudDraws": 0,
+        "median": 5.799999997019768,
+        "p95": 8,
+        "calls": 596,
+        "triangles": 1466580,
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 1,
+        "cloudSize": null,
+        "fog": {
+          "near": 4,
+          "far": 38,
+          "color": "16181a"
+        },
+        "background": "16181a",
+        "memory": {
+          "geometries": 1635,
+          "textures": 120
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 132,
+          "z": -5,
+          "yaw": 0,
+          "pitch": 0.55,
+          "fov": 75
+        }
+      }
+    },
+    {
+      "id": "l11-ramp",
+      "view": {
+        "id": "l11-ramp",
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.16753218860073738,
+        "cloudSize": null,
+        "fog": {
+          "near": 208.8498561679332,
+          "far": 1290.031945935089,
+          "color": "b5c4cb"
+        },
+        "background": "b5c4cb",
+        "memory": {
+          "geometries": 1458,
+          "textures": 120
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 125,
+          "z": -2.5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      "measure": {
+        "frames": 90,
+        "skyDraws": 90,
+        "cloudDraws": 0,
+        "median": 6.5,
+        "p95": 17.299999997019768,
+        "calls": 617,
+        "triangles": 1609876,
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.17079634348858996,
+        "cloudSize": null,
+        "fog": {
+          "near": 207.24004647060116,
+          "far": 1280.9544158622475,
+          "color": "b4c3cb"
+        },
+        "background": "b4c3cb",
+        "memory": {
+          "geometries": 1458,
+          "textures": 120
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 125,
+          "z": -2.5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      }
+    },
+    {
+      "id": "l11-street",
+      "view": {
+        "id": "l11-street",
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 1.2073647105817225e-8,
+        "cloudSize": null,
+        "fog": {
+          "near": 299.99999282825365,
+          "far": 1799.9999601328175,
+          "color": "c4d4dc"
+        },
+        "background": "c4d4dc",
+        "memory": {
+          "geometries": 1492,
+          "textures": 120
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 116,
+          "z": 0,
+          "yaw": 3.141592653589793,
+          "pitch": 0.3,
+          "fov": 75
+        }
+      },
+      "measure": {
+        "frames": 90,
+        "skyDraws": 90,
+        "cloudDraws": 0,
+        "median": 6.100000001490116,
+        "p95": 11.200000002980232,
+        "calls": 443,
+        "triangles": 1632845,
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 3.961450497034457e-10,
+        "cloudSize": null,
+        "fog": {
+          "near": 299.99999976468985,
+          "far": 1799.999998691929,
+          "color": "c4d4dc"
+        },
+        "background": "c4d4dc",
+        "memory": {
+          "geometries": 1492,
+          "textures": 120
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 116,
+          "z": 0,
+          "yaw": 3.141592653589793,
+          "pitch": 0.3,
+          "fov": 75
+        }
+      }
+    },
+    {
+      "id": "l6-underground",
+      "view": {
+        "id": "l6-underground",
+        "detail": {
+          "x": 6.5,
+          "y": 2.5,
+          "dx": 0,
+          "dy": 1,
+          "len": 120
+        },
+        "level": 6,
+        "sky": true,
+        "visible": false,
+        "opening": 0,
+        "amount": 0,
+        "enclosure": 1,
+        "cloudSize": [
+          512,
+          192
+        ],
+        "fog": {
+          "near": 2,
+          "far": 13,
+          "color": "080809"
+        },
+        "background": "080809",
+        "memory": {
+          "geometries": 772,
+          "textures": 197
+        },
+        "pose": {
+          "x": -57.5,
+          "y": -61.5,
+          "z": -5,
+          "yaw": -3.141592653589793,
+          "pitch": 0.02,
+          "fov": 75
+        }
+      },
+      "measure": {
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 4.100000001490116,
+        "p95": 4.899999998509884,
+        "calls": 251,
+        "triangles": 32711,
+        "level": 6,
+        "sky": true,
+        "visible": false,
+        "opening": 0,
+        "amount": 0,
+        "enclosure": 1,
+        "cloudSize": [
+          512,
+          192
+        ],
+        "fog": {
+          "near": 2,
+          "far": 13,
+          "color": "080809"
+        },
+        "background": "080809",
+        "memory": {
+          "geometries": 772,
+          "textures": 197
+        },
+        "pose": {
+          "x": -57.5,
+          "y": -61.5,
+          "z": -5,
+          "yaw": -3.141592653589793,
+          "pitch": 0.02,
+          "fov": 75
+        }
+      }
+    },
+    {
+      "id": "l7-sea",
+      "view": {
+        "id": "l7-sea",
+        "level": 7,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "cloudSize": [
+          512,
+          192
+        ],
+        "fog": {
+          "near": 3.5,
+          "far": 28.12077282833464,
+          "color": "4a5e64"
+        },
+        "background": "4a5e64",
+        "memory": {
+          "geometries": 672,
+          "textures": 212
+        },
+        "pose": {
+          "x": 24,
+          "y": 26,
+          "z": 0,
+          "yaw": -1.6,
+          "pitch": 0.2,
+          "fov": 75
+        }
+      },
+      "measure": {
+        "frames": 90,
+        "skyDraws": 90,
+        "cloudDraws": 90,
+        "median": 4,
+        "p95": 6.700000002980232,
+        "calls": 381,
+        "triangles": 131157,
+        "level": 7,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "cloudSize": [
+          512,
+          192
+        ],
+        "fog": {
+          "near": 3.5,
+          "far": 28.12077282833464,
+          "color": "4a5e64"
+        },
+        "background": "4a5e64",
+        "memory": {
+          "geometries": 672,
+          "textures": 212
+        },
+        "pose": {
+          "x": 24,
+          "y": 26,
+          "z": 0,
+          "yaw": -1.6,
+          "pitch": 0.2,
+          "fov": 75
+        }
+      }
+    },
+    {
+      "id": "l7-underwater",
+      "view": {
+        "id": "l7-underwater",
+        "level": 7,
+        "sky": true,
+        "visible": false,
+        "opening": 0,
+        "amount": 0,
+        "enclosure": 0,
+        "cloudSize": [
+          512,
+          192
+        ],
+        "fog": {
+          "near": -0.01,
+          "far": 21.259365173243843,
+          "color": "124857"
+        },
+        "background": "124857",
+        "memory": {
+          "geometries": 675,
+          "textures": 212
+        },
+        "pose": {
+          "x": 24,
+          "y": 26,
+          "z": -8,
+          "yaw": -1.6,
+          "pitch": 0.05,
+          "fov": 75
+        }
+      },
+      "measure": {
+        "frames": 90,
+        "skyDraws": 0,
+        "cloudDraws": 0,
+        "median": 4.100000001490116,
+        "p95": 5.899999998509884,
+        "calls": 348,
+        "triangles": 125267,
+        "level": 7,
+        "sky": true,
+        "visible": false,
+        "opening": 0,
+        "amount": 0,
+        "enclosure": 0,
+        "cloudSize": [
+          512,
+          192
+        ],
+        "fog": {
+          "near": -0.01,
+          "far": 21.259365147756025,
+          "color": "124857"
+        },
+        "background": "124857",
+        "memory": {
+          "geometries": 675,
+          "textures": 212
+        },
+        "pose": {
+          "x": 24,
+          "y": 26,
+          "z": -8,
+          "yaw": -1.6,
+          "pitch": 0.05,
+          "fov": 75
+        }
+      }
+    },
+    {
+      "id": "l9-street",
+      "view": {
+        "id": "l9-street",
+        "level": 9,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "cloudSize": [
+          512,
+          192
+        ],
+        "fog": {
+          "near": 2.8,
+          "far": 38,
+          "color": "05070f"
+        },
+        "background": "05070f",
+        "memory": {
+          "geometries": 1410,
+          "textures": 243
+        },
+        "pose": {
+          "x": 4,
+          "y": 17,
+          "z": 0,
+          "yaw": 0.42,
+          "pitch": 0.26,
+          "fov": 75
+        }
+      },
+      "measure": {
+        "frames": 90,
+        "skyDraws": 90,
+        "cloudDraws": 90,
+        "median": 8.800000004470348,
+        "p95": 13.299999997019768,
+        "calls": 1317,
+        "triangles": 228599,
+        "level": 9,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "cloudSize": [
+          512,
+          192
+        ],
+        "fog": {
+          "near": 2.8,
+          "far": 38,
+          "color": "05070f"
+        },
+        "background": "05070f",
+        "memory": {
+          "geometries": 1410,
+          "textures": 243
+        },
+        "pose": {
+          "x": 4,
+          "y": 17,
+          "z": 0,
+          "yaw": 0.42,
+          "pitch": 0.26,
+          "fov": 75
+        }
+      }
+    },
+    {
+      "id": "l10-field",
+      "view": {
+        "id": "l10-field",
+        "level": 10,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "cloudSize": [
+          512,
+          192
+        ],
+        "fog": {
+          "near": 5,
+          "far": 48,
+          "color": "8d9195"
+        },
+        "background": "8d9195",
+        "memory": {
+          "geometries": 450,
+          "textures": 403
+        },
+        "pose": {
+          "x": 17,
+          "y": 21,
+          "z": 0,
+          "yaw": 0.42,
+          "pitch": 0.26,
+          "fov": 75
+        }
+      },
+      "measure": {
+        "frames": 90,
+        "skyDraws": 90,
+        "cloudDraws": 90,
+        "median": 4.100000001490116,
+        "p95": 4.700000002980232,
+        "calls": 324,
+        "triangles": 440035,
+        "level": 10,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "cloudSize": [
+          512,
+          192
+        ],
+        "fog": {
+          "near": 5,
+          "far": 48,
+          "color": "8d9195"
+        },
+        "background": "8d9195",
+        "memory": {
+          "geometries": 450,
+          "textures": 403
+        },
+        "pose": {
+          "x": 17,
+          "y": 21,
+          "z": 0,
+          "yaw": 0.42,
+          "pitch": 0.26,
+          "fov": 75
+        }
+      }
+    }
+  ],
+  "transitions": {
+    "samples": [
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "cloudSize": null,
+        "fog": {
+          "near": 300,
+          "far": 1800,
+          "color": "c4d4dc"
+        },
+        "background": "c4d4dc",
+        "memory": {
+          "geometries": 1297,
+          "textures": 141
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 116,
+          "z": 0,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "cloudSize": null,
+        "fog": {
+          "near": 300,
+          "far": 1800,
+          "color": "c4d4dc"
+        },
+        "background": "c4d4dc",
+        "memory": {
+          "geometries": 1297,
+          "textures": 141
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 116.5,
+          "z": 0,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "cloudSize": null,
+        "fog": {
+          "near": 300,
+          "far": 1800,
+          "color": "c4d4dc"
+        },
+        "background": "c4d4dc",
+        "memory": {
+          "geometries": 1297,
+          "textures": 141
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 117,
+          "z": 0,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "cloudSize": null,
+        "fog": {
+          "near": 300,
+          "far": 1800,
+          "color": "c4d4dc"
+        },
+        "background": "c4d4dc",
+        "memory": {
+          "geometries": 1308,
+          "textures": 141
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 117.5,
+          "z": 0,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "cloudSize": null,
+        "fog": {
+          "near": 300,
+          "far": 1800,
+          "color": "c4d4dc"
+        },
+        "background": "c4d4dc",
+        "memory": {
+          "geometries": 1308,
+          "textures": 141
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 118,
+          "z": 0,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "cloudSize": null,
+        "fog": {
+          "near": 300,
+          "far": 1800,
+          "color": "c4d4dc"
+        },
+        "background": "c4d4dc",
+        "memory": {
+          "geometries": 1313,
+          "textures": 141
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 118.5,
+          "z": 0,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "cloudSize": null,
+        "fog": {
+          "near": 300,
+          "far": 1800,
+          "color": "c4d4dc"
+        },
+        "background": "c4d4dc",
+        "memory": {
+          "geometries": 1315,
+          "textures": 141
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 119,
+          "z": 0,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "cloudSize": null,
+        "fog": {
+          "near": 300,
+          "far": 1800,
+          "color": "c4d4dc"
+        },
+        "background": "c4d4dc",
+        "memory": {
+          "geometries": 1315,
+          "textures": 141
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 119.5,
+          "z": 0,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "cloudSize": null,
+        "fog": {
+          "near": 300,
+          "far": 1800,
+          "color": "c4d4dc"
+        },
+        "background": "c4d4dc",
+        "memory": {
+          "geometries": 1317,
+          "textures": 141
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 120,
+          "z": 0,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "cloudSize": null,
+        "fog": {
+          "near": 300,
+          "far": 1800,
+          "color": "c4d4dc"
+        },
+        "background": "c4d4dc",
+        "memory": {
+          "geometries": 1317,
+          "textures": 141
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 120.5,
+          "z": -0.25,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "cloudSize": null,
+        "fog": {
+          "near": 300,
+          "far": 1800,
+          "color": "c4d4dc"
+        },
+        "background": "c4d4dc",
+        "memory": {
+          "geometries": 1317,
+          "textures": 141
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 121,
+          "z": -0.5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "cloudSize": null,
+        "fog": {
+          "near": 300,
+          "far": 1800,
+          "color": "c4d4dc"
+        },
+        "background": "c4d4dc",
+        "memory": {
+          "geometries": 1319,
+          "textures": 141
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 121.5,
+          "z": -0.75,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "cloudSize": null,
+        "fog": {
+          "near": 300,
+          "far": 1800,
+          "color": "c4d4dc"
+        },
+        "background": "c4d4dc",
+        "memory": {
+          "geometries": 1320,
+          "textures": 141
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 122,
+          "z": -1,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "cloudSize": null,
+        "fog": {
+          "near": 300,
+          "far": 1800,
+          "color": "c4d4dc"
+        },
+        "background": "c4d4dc",
+        "memory": {
+          "geometries": 1320,
+          "textures": 141
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 122.5,
+          "z": -1.25,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "cloudSize": null,
+        "fog": {
+          "near": 300,
+          "far": 1800,
+          "color": "c4d4dc"
+        },
+        "background": "c4d4dc",
+        "memory": {
+          "geometries": 1320,
+          "textures": 141
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 123,
+          "z": -1.5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.00024150786983485634,
+        "cloudSize": null,
+        "fog": {
+          "near": 299.85656170648133,
+          "far": 1799.202630835924,
+          "color": "c4d4dc"
+        },
+        "background": "c4d4dc",
+        "memory": {
+          "geometries": 1320,
+          "textures": 141
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 123.5,
+          "z": -1.75,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.0052865626486222886,
+        "cloudSize": null,
+        "fog": {
+          "near": 296.86811021462046,
+          "far": 1782.5868096609915,
+          "color": "c4d4db"
+        },
+        "background": "c4d4db",
+        "memory": {
+          "geometries": 1320,
+          "textures": 141
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 124,
+          "z": -2,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.028068135233395478,
+        "cloudSize": null,
+        "fog": {
+          "near": 283.5622980955762,
+          "far": 1708.5322605911676,
+          "color": "c2d1d9"
+        },
+        "background": "c2d1d9",
+        "memory": {
+          "geometries": 1321,
+          "textures": 141
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 124.5,
+          "z": -2.25,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.07044064830489011,
+        "cloudSize": null,
+        "fog": {
+          "near": 259.63689661711203,
+          "far": 1575.0462820950174,
+          "color": "becdd5"
+        },
+        "background": "becdd5",
+        "memory": {
+          "geometries": 1323,
+          "textures": 141
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 125,
+          "z": -2.5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.12490715677533074,
+        "cloudSize": null,
+        "fog": {
+          "near": 230.4544846239353,
+          "far": 1411.5833369609513,
+          "color": "b9c8d0"
+        },
+        "background": "b9c8d0",
+        "memory": {
+          "geometries": 1323,
+          "textures": 141
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 125.5,
+          "z": -2.75,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.18352490729517146,
+        "cloudSize": null,
+        "fog": {
+          "near": 201.02325976278314,
+          "far": 1245.8700991718038,
+          "color": "b3c2c9"
+        },
+        "background": "b3c2c9",
+        "memory": {
+          "geometries": 1328,
+          "textures": 141
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 126,
+          "z": -3,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.30426702262789973,
+        "cloudSize": null,
+        "fog": {
+          "near": 146.85375803456392,
+          "far": 937.8810597132992,
+          "color": "a7b5bc"
+        },
+        "background": "a7b5bc",
+        "memory": {
+          "geometries": 1328,
+          "textures": 141
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 126.5,
+          "z": -3.25,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.4163769204173434,
+        "cloudSize": null,
+        "fog": {
+          "near": 104.33629174925476,
+          "far": 692.1128081605275,
+          "color": "9ba7ae"
+        },
+        "background": "9ba7ae",
+        "memory": {
+          "geometries": 1328,
+          "textures": 141
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 127,
+          "z": -3.5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.5002888869618052,
+        "cloudSize": null,
+        "fog": {
+          "near": 77.41451432909733,
+          "far": 533.4911096950414,
+          "color": "909ca2"
+        },
+        "background": "909ca2",
+        "memory": {
+          "geometries": 1329,
+          "textures": 141
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 127.5,
+          "z": -3.75,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.705849346080978,
+        "cloudSize": null,
+        "fog": {
+          "near": 29.196031638056446,
+          "far": 236.54934025954475,
+          "color": "727c80"
+        },
+        "background": "727c80",
+        "memory": {
+          "geometries": 1255,
+          "textures": 141
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 128,
+          "z": -4,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.8114186133049133,
+        "cloudSize": null,
+        "fog": {
+          "near": 14.220593170146692,
+          "far": 134.63199453438568,
+          "color": "5e656a"
+        },
+        "background": "5e656a",
+        "memory": {
+          "geometries": 1256,
+          "textures": 142
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 128.5,
+          "z": -4.25,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.8822816412801907,
+        "cloudSize": null,
+        "fog": {
+          "near": 7.894131652506719,
+          "far": 85.47419808451366,
+          "color": "4c5256"
+        },
+        "background": "4c5256",
+        "memory": {
+          "geometries": 1258,
+          "textures": 143
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 129,
+          "z": -4.5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9223822465833872,
+        "cloudSize": null,
+        "fog": {
+          "near": 5.640070155508521,
+          "far": 64.50889535246887,
+          "color": "3f4548"
+        },
+        "background": "3f4548",
+        "memory": {
+          "geometries": 1259,
+          "textures": 143
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 129.5,
+          "z": -4.75,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.955752619048538,
+        "cloudSize": null,
+        "fog": {
+          "near": 4.494938792974088,
+          "far": 50.83797788166282,
+          "color": "323739"
+        },
+        "background": "323739",
+        "memory": {
+          "geometries": 1310,
+          "textures": 145
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 130,
+          "z": -5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9676279245559545,
+        "cloudSize": null,
+        "fog": {
+          "near": 4.2475453271412915,
+          "far": 46.800445702152786,
+          "color": "2d3033"
+        },
+        "background": "2d3033",
+        "memory": {
+          "geometries": 1310,
+          "textures": 145
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 130.5,
+          "z": -5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9768082599682165,
+        "cloudSize": null,
+        "fog": {
+          "near": 4.113897848035578,
+          "far": 43.976865767836756,
+          "color": "282b2d"
+        },
+        "background": "282b2d",
+        "memory": {
+          "geometries": 1315,
+          "textures": 145
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 131,
+          "z": -5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9840605657196478,
+        "cloudSize": null,
+        "fog": {
+          "near": 4.04383266986224,
+          "far": 41.929815380611785,
+          "color": "232628"
+        },
+        "background": "232628",
+        "memory": {
+          "geometries": 1315,
+          "textures": 145
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 131.5,
+          "z": -5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9885750885961404,
+        "cloudSize": null,
+        "fog": {
+          "near": 4.016047700166921,
+          "far": 40.73734437655932,
+          "color": "202225"
+        },
+        "background": "202225",
+        "memory": {
+          "geometries": 1316,
+          "textures": 145
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 132,
+          "z": -5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9916455345348208,
+        "cloudSize": null,
+        "fog": {
+          "near": 4.004090602845885,
+          "far": 39.96217885681142,
+          "color": "1e2022"
+        },
+        "background": "1e2022",
+        "memory": {
+          "geometries": 1316,
+          "textures": 145
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 132.5,
+          "z": -5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.99388774249418,
+        "cloudSize": null,
+        "fog": {
+          "near": 3.998908673149961,
+          "far": 39.41445509169091,
+          "color": "1c1e20"
+        },
+        "background": "1c1e20",
+        "memory": {
+          "geometries": 1316,
+          "textures": 145
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 133,
+          "z": -5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9956189160008233,
+        "cloudSize": null,
+        "fog": {
+          "near": 3.9969576133099833,
+          "far": 39.00215924920931,
+          "color": "1a1c1e"
+        },
+        "background": "1a1c1e",
+        "memory": {
+          "geometries": 1317,
+          "textures": 145
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 133.5,
+          "z": -5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9969265639133839,
+        "cloudSize": null,
+        "fog": {
+          "near": 3.996668038621565,
+          "far": 38.69684966567169,
+          "color": "191b1d"
+        },
+        "background": "191b1d",
+        "memory": {
+          "geometries": 1317,
+          "textures": 145
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 134,
+          "z": -5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9977503015564066,
+        "cloudSize": null,
+        "fog": {
+          "near": 3.997008823752771,
+          "far": 38.50722721483186,
+          "color": "191a1c"
+        },
+        "background": "191a1c",
+        "memory": {
+          "geometries": 1333,
+          "textures": 145
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 134,
+          "z": -5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9982843428549787,
+        "cloudSize": null,
+        "fog": {
+          "near": 3.9974458425828576,
+          "far": 38.385408844531185,
+          "color": "18191c"
+        },
+        "background": "18191c",
+        "memory": {
+          "geometries": 1333,
+          "textures": 145
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 133.5,
+          "z": -5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.998745425862705,
+        "cloudSize": null,
+        "fog": {
+          "near": 3.9979598906926688,
+          "far": 38.28093935112909,
+          "color": "18191b"
+        },
+        "background": "18191b",
+        "memory": {
+          "geometries": 1333,
+          "textures": 145
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 133,
+          "z": -5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9990821339534828,
+        "cloudSize": null,
+        "fog": {
+          "near": 3.9984153263746114,
+          "far": 38.20506367856902,
+          "color": "17191b"
+        },
+        "background": "17191b",
+        "memory": {
+          "geometries": 1333,
+          "textures": 145
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 132.5,
+          "z": -5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9995284375885668,
+        "cloudSize": null,
+        "fog": {
+          "near": 3.9991231417672806,
+          "far": 38.1050293068443,
+          "color": "17181a"
+        },
+        "background": "17181a",
+        "memory": {
+          "geometries": 1333,
+          "textures": 145
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 132,
+          "z": -5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9996890750822065,
+        "cloudSize": null,
+        "fog": {
+          "near": 3.9994069591071555,
+          "far": 38.069174210179085,
+          "color": "17181a"
+        },
+        "background": "17181a",
+        "memory": {
+          "geometries": 1333,
+          "textures": 145
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 131.5,
+          "z": -5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9997628835285474,
+        "cloudSize": null,
+        "fog": {
+          "near": 3.9995425218749627,
+          "far": 38.052726441962875,
+          "color": "17181a"
+        },
+        "background": "17181a",
+        "memory": {
+          "geometries": 1333,
+          "textures": 145
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 131,
+          "z": -5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9998075086031297,
+        "cloudSize": null,
+        "fog": {
+          "near": 3.9996260589817445,
+          "far": 38.04279015162953,
+          "color": "17181a"
+        },
+        "background": "17181a",
+        "memory": {
+          "geometries": 1333,
+          "textures": 145
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 130.5,
+          "z": -5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9998856742921429,
+        "cloudSize": null,
+        "fog": {
+          "near": 3.999775243553794,
+          "far": 38.02540043551019,
+          "color": "16181a"
+        },
+        "background": "16181a",
+        "memory": {
+          "geometries": 1333,
+          "textures": 145
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 130,
+          "z": -5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9999196991697612,
+        "cloudSize": null,
+        "fog": {
+          "near": 3.999841319910077,
+          "far": 38.01783671457696,
+          "color": "16181a"
+        },
+        "background": "16181a",
+        "memory": {
+          "geometries": 1333,
+          "textures": 145
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 129.5,
+          "z": -4.75,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9945106242213412,
+        "cloudSize": null,
+        "fog": {
+          "near": 3.9980009558816016,
+          "far": 39.26504662237883,
+          "color": "1b1d1f"
+        },
+        "background": "1b1d1f",
+        "memory": {
+          "geometries": 1333,
+          "textures": 145
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 129,
+          "z": -4.5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9756745547929785,
+        "cloudSize": null,
+        "fog": {
+          "near": 4.1276838403728595,
+          "far": 44.31150885411927,
+          "color": "282c2e"
+        },
+        "background": "282c2e",
+        "memory": {
+          "geometries": 1333,
+          "textures": 145
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 128.5,
+          "z": -4.25,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.9453995063671488,
+        "cloudSize": null,
+        "fog": {
+          "near": 4.779200756409704,
+          "far": 54.71237900011755,
+          "color": "373b3e"
+        },
+        "background": "373b3e",
+        "memory": {
+          "geometries": 1333,
+          "textures": 145
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 128,
+          "z": -4,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.8675523394035267,
+        "cloudSize": null,
+        "fog": {
+          "near": 8.962734752455674,
+          "far": 94.41865016053407,
+          "color": "50575b"
+        },
+        "background": "50575b",
+        "memory": {
+          "geometries": 1279,
+          "textures": 144
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 127.5,
+          "z": -3.75,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.7753787699376143,
+        "cloudSize": null,
+        "fog": {
+          "near": 18.58625724430751,
+          "far": 165.56614644574796,
+          "color": "656e72"
+        },
+        "background": "656e72",
+        "memory": {
+          "geometries": 1279,
+          "textures": 144
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 127,
+          "z": -3.5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.692992469879791,
+        "cloudSize": null,
+        "fog": {
+          "near": 31.473564757811864,
+          "far": 251.30625195447334,
+          "color": "747e83"
+        },
+        "background": "747e83",
+        "memory": {
+          "geometries": 1344,
+          "textures": 144
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 126.5,
+          "z": -3.25,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.5981746146399615,
+        "cloudSize": null,
+        "fog": {
+          "near": 51.31251404456347,
+          "far": 375.8592416423335,
+          "color": "838e93"
+        },
+        "background": "838e93",
+        "memory": {
+          "geometries": 1350,
+          "textures": 144
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 126,
+          "z": -3,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.52115101895674,
+        "cloudSize": null,
+        "fog": {
+          "near": 71.37261333847165,
+          "far": 497.42084762670305,
+          "color": "8e999f"
+        },
+        "background": "8e999f",
+        "memory": {
+          "geometries": 1351,
+          "textures": 144
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 125.5,
+          "z": -2.75,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.4436390196500639,
+        "cloudSize": null,
+        "fog": {
+          "near": 95.12946509517083,
+          "far": 638.1999499398364,
+          "color": "97a4aa"
+        },
+        "background": "97a4aa",
+        "memory": {
+          "geometries": 1351,
+          "textures": 144
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 125,
+          "z": -2.5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.3366518653147755,
+        "cloudSize": null,
+        "fog": {
+          "near": 133.80246657215886,
+          "far": 862.9106374972848,
+          "color": "a4b1b8"
+        },
+        "background": "a4b1b8",
+        "memory": {
+          "geometries": 1351,
+          "textures": 144
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 124.5,
+          "z": -2.25,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.2147842344416067,
+        "cloudSize": null,
+        "fog": {
+          "near": 186.16558041635642,
+          "far": 1161.8261496154018,
+          "color": "b0bfc6"
+        },
+        "background": "b0bfc6",
+        "memory": {
+          "geometries": 1351,
+          "textures": 144
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 124,
+          "z": -2,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 1,
+        "amount": 1,
+        "enclosure": 0.17089921997340446,
+        "cloudSize": null,
+        "fog": {
+          "near": 207.18941326527812,
+          "far": 1280.6688524645963,
+          "color": "b4c3cb"
+        },
+        "background": "b4c3cb",
+        "memory": {
+          "geometries": 1351,
+          "textures": 144
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 123.5,
+          "z": -1.75,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0.1250950722091628,
+        "cloudSize": null,
+        "fog": {
+          "near": 230.35686268087997,
+          "far": 1411.0351882855084,
+          "color": "b9c8d0"
+        },
+        "background": "b9c8d0",
+        "memory": {
+          "geometries": 1351,
+          "textures": 144
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 123,
+          "z": -1.5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0.08244026956774907,
+        "cloudSize": null,
+        "fog": {
+          "near": 253.0558064945852,
+          "far": 1538.2486828787532,
+          "color": "bdccd4"
+        },
+        "background": "bdccd4",
+        "memory": {
+          "geometries": 1351,
+          "textures": 144
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 122.5,
+          "z": -1.25,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0.05909072802433054,
+        "cloudSize": null,
+        "fog": {
+          "near": 265.94063836680436,
+          "far": 1610.2596558368664,
+          "color": "bfced6"
+        },
+        "background": "bfced6",
+        "memory": {
+          "geometries": 1351,
+          "textures": 144
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 122,
+          "z": -1,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0.04145357083510101,
+        "cloudSize": null,
+        "fog": {
+          "near": 275.8886616873743,
+          "far": 1665.7666428463667,
+          "color": "c0d0d8"
+        },
+        "background": "c0d0d8",
+        "memory": {
+          "geometries": 1351,
+          "textures": 144
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 121.5,
+          "z": -0.75,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0.03034324813039873,
+        "cloudSize": null,
+        "fog": {
+          "near": 282.25048299725984,
+          "far": 1701.224492242362,
+          "color": "c1d1d9"
+        },
+        "background": "c1d1d9",
+        "memory": {
+          "geometries": 1351,
+          "textures": 144
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 121,
+          "z": -0.5,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0.019581280354182128,
+        "cloudSize": null,
+        "fog": {
+          "near": 288.4829805786279,
+          "far": 1735.9330891425664,
+          "color": "c2d2da"
+        },
+        "background": "c2d2da",
+        "memory": {
+          "geometries": 1351,
+          "textures": 144
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 120.5,
+          "z": -0.25,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0.014637314060420058,
+        "cloudSize": null,
+        "fog": {
+          "near": 291.36928223505566,
+          "far": 1751.9975354553642,
+          "color": "c3d3db"
+        },
+        "background": "c3d3db",
+        "memory": {
+          "geometries": 1351,
+          "textures": 144
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 120,
+          "z": 0,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0.010481104094610366,
+        "cloudSize": null,
+        "fog": {
+          "near": 293.806960523628,
+          "far": 1765.5605687358814,
+          "color": "c3d3db"
+        },
+        "background": "c3d3db",
+        "memory": {
+          "geometries": 1351,
+          "textures": 144
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 119.5,
+          "z": 0,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0.006228116912559559,
+        "cloudSize": null,
+        "fog": {
+          "near": 296.312057807142,
+          "far": 1779.494493692754,
+          "color": "c3d3db"
+        },
+        "background": "c3d3db",
+        "memory": {
+          "geometries": 1351,
+          "textures": 144
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 119,
+          "z": 0,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0.003855782717184978,
+        "cloudSize": null,
+        "fog": {
+          "near": 297.71409544998,
+          "far": 1787.2911007408127,
+          "color": "c4d4dc"
+        },
+        "background": "c4d4dc",
+        "memory": {
+          "geometries": 1351,
+          "textures": 144
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 118.5,
+          "z": 0,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0.0030028865994968503,
+        "cloudSize": null,
+        "fog": {
+          "near": 298.2189725236218,
+          "far": 1790.0983551334725,
+          "color": "c4d4dc"
+        },
+        "background": "c4d4dc",
+        "memory": {
+          "geometries": 1351,
+          "textures": 144
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 118,
+          "z": 0,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0.0022424612296003408,
+        "cloudSize": null,
+        "fog": {
+          "near": 298.6694765620625,
+          "far": 1792.6031371137037,
+          "color": "c4d4dc"
+        },
+        "background": "c4d4dc",
+        "memory": {
+          "geometries": 1351,
+          "textures": 144
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 117.5,
+          "z": 0,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0.0014184631912765148,
+        "cloudSize": null,
+        "fog": {
+          "near": 299.15803245165364,
+          "far": 1795.3193330806555,
+          "color": "c4d4dc"
+        },
+        "background": "c4d4dc",
+        "memory": {
+          "geometries": 1351,
+          "textures": 144
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 117,
+          "z": 0,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0.0009551126626319092,
+        "cloudSize": null,
+        "fog": {
+          "near": 299.4329349259757,
+          "far": 1796.847622837895,
+          "color": "c4d4dc"
+        },
+        "background": "c4d4dc",
+        "memory": {
+          "geometries": 1351,
+          "textures": 144
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 116.5,
+          "z": 0,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      },
+      {
+        "level": 11,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0.0006700345678533058,
+        "cloudSize": null,
+        "fog": {
+          "near": 299.6021332526991,
+          "far": 1797.7882372342845,
+          "color": "c4d4dc"
+        },
+        "background": "c4d4dc",
+        "memory": {
+          "geometries": 1351,
+          "textures": 144
+        },
+        "pose": {
+          "x": 27.5,
+          "y": 116,
+          "z": 0,
+          "yaw": 0,
+          "pitch": 0.35,
+          "fov": 75
+        }
+      }
+    ],
+    "maxEnclosureStep": 0.20556045911917287,
+    "levels": [
+      {
+        "level": 2,
+        "sky": false,
+        "visible": false,
+        "opening": null,
+        "amount": null,
+        "enclosure": 1,
+        "cloudSize": null,
+        "fog": {
+          "near": 2,
+          "far": 14.5,
+          "color": "0b0908"
+        },
+        "background": "0b0908",
+        "memory": {
+          "geometries": 857,
+          "textures": 216
+        },
+        "pose": {
+          "x": 14.5,
+          "y": 15.5,
+          "z": 0,
+          "yaw": 0.42,
+          "pitch": 0.015,
+          "fov": 75
+        }
+      },
+      {
+        "level": 10,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "cloudSize": [
+          512,
+          192
+        ],
+        "fog": {
+          "near": 5,
+          "far": 48,
+          "color": "8d9195"
+        },
+        "background": "8d9195",
+        "memory": {
+          "geometries": 444,
+          "textures": 411
+        },
+        "pose": {
+          "x": 17,
+          "y": 21,
+          "z": 0,
+          "yaw": 0.42,
+          "pitch": 0.015,
+          "fov": 75
+        }
+      },
+      {
+        "level": 5,
+        "sky": false,
+        "visible": false,
+        "opening": null,
+        "amount": null,
+        "enclosure": 1,
+        "cloudSize": null,
+        "fog": {
+          "near": 7,
+          "far": 56.4,
+          "color": "1f0b0d"
+        },
+        "background": "1f0b0d",
+        "memory": {
+          "geometries": 1815,
+          "textures": 278
+        },
+        "pose": {
+          "x": 15.5,
+          "y": 15.5,
+          "z": 0,
+          "yaw": 0.42,
+          "pitch": 0.015,
+          "fov": 75
+        }
+      },
+      {
+        "level": 10,
+        "sky": true,
+        "visible": true,
+        "opening": 0,
+        "amount": 1,
+        "enclosure": 0,
+        "cloudSize": [
+          512,
+          192
+        ],
+        "fog": {
+          "near": 5,
+          "far": 48,
+          "color": "8d9195"
+        },
+        "background": "8d9195",
+        "memory": {
+          "geometries": 448,
+          "textures": 411
+        },
+        "pose": {
+          "x": 17,
+          "y": 21,
+          "z": 0,
+          "yaw": 0.42,
+          "pitch": 0.015,
+          "fov": 75
+        }
+      }
+    ]
+  },
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\sky-visibility\\after-realistic\\qa-sky-visibility-1792076997298-34256",
+    "--remote-debugging-port=10314",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.40",
+    "revision": "@cfaadc5a132d78e1828635aa8405a499f3e14864",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.20"
+  },
+  "pids": {
+    "server": 45108,
+    "browser": 44100
+  },
+  "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "ok": false,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [],
+  "networkErrors": [
+    {
+      "requestId": "54324.19",
+      "loaderId": "77B852F338D228545B431D7AA674CE49",
+      "timestamp": 41242.17693,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:10313/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Thu, 15 Oct 2026 15:10:06 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": false,
+        "connectionId": 241,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 10313,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 41242.15281,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": 0.413,
+          "dnsEnd": 0.426,
+          "connectStart": 0.426,
+          "connectEnd": 1.446,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 1.532,
+          "sendEnd": 1.616,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 22.81,
+          "receiveHeadersEnd": 23.221
+        },
+        "responseTime": 1792077006803.465,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "F1649661CCC09314C58BF3F9EE9907A2"
+    }
+  ]
+}

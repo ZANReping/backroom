@@ -1,4 +1,5 @@
 import {settlementColliders} from './settlementColliders'
+import { object70Keep, object70Sid } from '../decorations/object70'
 import {isL5DecorKind,L5_DECOR_DEFS} from '../content/l5Decor'
 import { appendLegacyStations, settlementCeiling } from './settlement'
 // 程序化地图生成：房间+走廊/迷宫混合，按层级 motif 放置结构
@@ -34,6 +35,7 @@ import { genOutpost } from './mapgenOutpost'
 import { CONTAINER_KINDS } from '../decorations/containers'
 import { l3AngelCollision } from './l3AngelCollision'
 import { generationObstacles } from './generationObstacles'
+import { l1CrateCollider } from './l1Crate'
 
 export interface GameMap {
   settlement?: import('../content/settlementTypes').SettlementMapData
@@ -386,6 +388,46 @@ export function walkableAt(m: GameMap, tx: number, ty: number, band: FloorBand):
 
 const idx = (m: { w: number }, x: number, y: number) => y * m.w + x
 
+/**
+ * 派对客群（Entity 67）：把同批生成的个体聚到领头者 1–2.6 格内（永不落单），
+ * 并在附近放 1–2 块「丝绒蛋糕」（陷阱物品）、1–2 张「TIME 4 FUN =)」派对海报（megposter data.party）和一面大红旗（partyflag）。
+ * 维基：「派对饰品一般是一面大红旗」「它们使用海报和假造数据库条目引诱流浪者至其死地」。
+ */
+export function placePartyPack(m: GameMap, pack: { x: number; y: number; targetX: number; targetY: number }[]) {
+  if (!pack.length || !m.tiles) return
+  const lead = pack[0]
+  let a = (Math.floor(lead.x) * 73856093) ^ (Math.floor(lead.y) * 19349663) ^ 0x6767
+  const R = () => { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296 }
+  const free = (x: number, y: number) => x > 0 && y > 0 && x < m.w - 1 && y < m.h - 1 && m.tiles[idx(m, x, y)] === 1 && !isSolidStruct(m, x, y) && !(m.stair[idx(m, x, y)] & 7) && m.liquid[idx(m, x, y)] !== 1
+  const near = (r0: number, r1: number, ok: (x: number, y: number) => boolean) => {
+    for (let t = 0; t < 60; t++) {
+      const ang = R() * Math.PI * 2, r = r0 + R() * (r1 - r0)
+      const x = Math.floor(lead.x + Math.cos(ang) * r), y = Math.floor(lead.y + Math.sin(ang) * r)
+      if (ok(x, y)) return { x, y }
+    }
+    return null
+  }
+  for (const e of pack.slice(1)) {
+    const q = near(1, 2.6, free)
+    if (q) { e.x = q.x + 0.5; e.y = q.y + 0.5; e.targetX = e.x; e.targetY = e.y }
+  }
+  const nCake = 1 + (R() < 0.5 ? 1 : 0)
+  for (let i = 0; i < nCake; i++) {
+    const q = near(1.2, 3.2, free)
+    if (q) m.items.push({ id: 870000 + Math.floor(R() * 99999), type: 'velvetcake', x: q.x + 0.3 + R() * 0.4, y: q.y + 0.3 + R() * 0.4 })
+  }
+  const wallHug = (x: number, y: number) => free(x, y) && [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => m.tiles[idx(m, x + dx, y + dy)] !== 1)
+    && !m.structures.some((s) => s.x === x && s.y === y)
+  const nPoster = 1 + (R() < 0.6 ? 1 : 0)
+  for (let i = 0; i < nPoster; i++) {
+    let q = near(1.5, 7, wallHug) ?? near(4, 12, wallHug)
+    for (let t = 0; t < 400 && !q; t++) { const x = 1 + Math.floor(R() * (m.w - 2)), y = 1 + Math.floor(R() * (m.h - 2)); if (wallHug(x, y)) q = { x, y } } // 群边没有墙：贴到本层任意一面墙上，作远处的诱饵
+    if (q) m.structures.push({ kind: 'megposter', x: q.x, y: q.y, w: 1, h: 1, solid: false, data: { party: 1, v: Math.floor(R() * 3) } })
+  }
+  const f = near(2, 4.5, (x, y) => free(x, y) && !m.structures.some((s) => x >= s.x && x < s.x + s.w && y >= s.y && y < s.y + s.h))
+  if (f) m.structures.push({ kind: 'partyflag', x: f.x, y: f.y, w: 1, h: 1, solid: false, data: { lean: Math.floor(R() * 4) } })
+}
+
 function isSolidStruct(m: GameMap, x: number, y: number): boolean {
   return m.structures.some((s) => s.solid && x >= s.x && x < s.x + s.w && y >= s.y && y < s.y + s.h)
 }
@@ -544,6 +586,7 @@ const modelCollidersFor = (s: Structure): ColliderBox[] | null => {
 //   （钳制不超出自身 footprint，1×1 据点锅炉不外扩）；罐顶 2.6m 不可站
 // - sphboiler 球罐：砖石基座 1.7×1.7 + 球罐 r0.85 @顶 ~2.2m → 盒 ±0.85；球顶不可站
 export function structColliders(s: Structure, m?: GameMap): ColliderBox[] {
+  if(s.kind==='crate'&&s.data?.l1Crate)return[l1CrateCollider(s)]
   if(s.kind==='l11subway')return l11MetroColliders(s)
   if(isL11DecorKind(s.kind))return l11PropColliders(s)
   if(s.data?.l1Static){
@@ -574,6 +617,15 @@ export function structColliders(s: Structure, m?: GameMap): ColliderBox[] {
   switch (s.kind) {
     case 'pillar':
       return s.data?.l4?[{x0:cx-.25,y0:cy-.25,x1:cx+.25,y1:cy+.25,top:FULL_BLOCK,stand:false}]:[{x0:s.x,y0:s.y,x1:s.x+s.w,y1:s.y+s.h,top:FULL_BLOCK,stand:false}]
+    case 'perch':
+      // 杰瑞的 T 形栖木（structures.ts case 'perch'）：石座 r0.36@0.22m + 细立柱 + 东西走向横杆 0.78m @1.40–1.48m。
+      // 原先回退为整格通高方块：生成期 BFS 把它的东/南/东南三格判为不可达并回填成墙（大厅中央凭空多出墙块），
+      // 也挡住了看向横杆上杰瑞的交互视线。
+      return [
+        { x0: cx - .36, y0: cy - .36, x1: cx + .36, y1: cy + .36, top: .22, stand: false },
+        { x0: cx - .06, y0: cy - .06, x1: cx + .06, y1: cy + .06, top: 1.4, stand: false },
+        { x0: cx - .39, y0: cy - .04, x1: cx + .39, y1: cy + .04, bottom: 1.4, top: 1.48, stand: false },
+      ]
     case 'stalagspike': {
       // L8 钟乳石/石笋：碰撞体随模型缩放，并对洞顶钟乳石使用悬挂高度带。
       // 半径略小于可见簇，既能阻挡穿模，也允许玩家从零碎尖刺之间擦身通过。
@@ -620,7 +672,6 @@ export function structColliders(s: Structure, m?: GameMap): ColliderBox[] {
     case 'desk':
       return [{ x0: cx - s.w * 0.45, y0: cy - 0.35, x1: cx + s.w * 0.45, y1: cy + 0.35, top: 0.77, stand: true }]
     case 'crate':
-      if(s.data?.l1Crate)return[{x0:s.x,y0:s.y,x1:s.x+s.w,y1:s.y+s.h,top:Number(s.data.l1Stack)===2?1.36:.68,stand:true}]
       return [{ x0: cx - 0.42, y0: cy - 0.42, x1: cx + 0.42, y1: cy + 0.42, top: 0.7, stand: true }]
     case 'l10haybale': {
       // 渲染器尚未建立模型碰撞时的确定性回退。按实际摆放角度求旋转长方体的平面 AABB；
@@ -926,11 +977,11 @@ export function structStandTopAt(m: GameMap, x: number, y: number, z: number, ba
   for(const b of l11BridgeCollidersAt(m,x,y,radius)){const h=l11SolidSurface(b,x+m.inf!.ox,y+m.inf!.oy,radius);if(h<=z+.225)best=Math.max(best,h)}
   // A foot can overlap a thin partition even when its centre is outside the tile.
   const center = structsNear(m, Math.floor(x), Math.floor(y))
-  const city=!!l11MapSpace(m,x,y,0)||center.some(citySolid)
-  const nearCubicles=city||m.tint[Math.floor(y)*m.w+Math.floor(x)]===51?new Set(center):null
-  if(nearCubicles)for(const dx of [-radius,radius])for(const dy of [-radius,radius])
-    for(const s of structsNear(m,Math.floor(x+dx),Math.floor(y+dy)))if(city||s.kind==='cubicle'&&s.data?.l4)nearCubicles.add(s)
-  const arr=nearCubicles??center
+  // Finite maps already return their complete structure list.
+  const neighbours=structGrid(m)?new Set(center):null
+  if(neighbours)for(const dx of [-radius,radius])for(const dy of [-radius,radius])
+    for(const s of structsNear(m,Math.floor(x+dx),Math.floor(y+dy)))neighbours.add(s)
+  const arr=neighbours??center
   for (const s of arr) {
     if (!s.solid || (!citySolid(s) && (s.floor ?? 0) !== band)) continue
     const base = colliderBase(s,m,band)
@@ -940,11 +991,41 @@ export function structStandTopAt(m: GameMap, x: number, y: number, z: number, ba
       if(s.kind==='cubicle'&&s.data?.l4){
         // Match the radius AND the conservative corner samples used by canOccupy.
         if(x+radius<b.x0||x-radius>b.x1||y+radius<b.y0||y-radius>b.y1)continue
-      }else if (x < b.x0 || x > b.x1 || y < b.y0 || y > b.y1 || b.polygon&&!inPolygon(x,y,b.polygon)) continue
+      }else {
+        // The same circular footprint supports a lid and collides with its
+        // side. Dropping support at the centre edge let the body fall into the
+        // side while up to one radius still overlapped the box.
+        const dx=x-Math.max(b.x0,Math.min(b.x1,x)),dy=y-Math.max(b.y0,Math.min(b.y1,y))
+        if(dx*dx+dy*dy>radius*radius+1e-9||b.polygon&&!circlePolygon(x,y,radius,b.polygon))continue
+      }
       if (base + b.top <= z + (s.kind==='cubicle'&&s.data?.l4 ? .06 : STEP_UP-.1)) best = Math.max(best, base + b.top)
     }
   }
   return best
+}
+
+/** Nearby minimum-translation candidates for a body already inside a model.
+ * The caller validates the whole map before accepting a candidate. */
+export function structEscapePoints(m:GameMap,x:number,y:number,z:number,band:FloorBand,radius=.32):{x:number;y:number}[]{
+ const nearby=new Set<Structure>(),points:{x:number;y:number}[]=[],pad=radius+.003
+ for(const dx of [-radius,0,radius])for(const dy of [-radius,0,radius])for(const s of structsNear(m,Math.floor(x+dx),Math.floor(y+dy)))nearby.add(s)
+ for(const s of nearby){
+  if(!s.solid||!citySolid(s)&&(s.floor??0)!==band)continue
+  const base=colliderBase(s,m,band)
+  for(const b of collidersAt(s,m,x,y,radius)){
+   if(!colliderBlocksBody(base,b,z)||x+radius<b.x0||x-radius>b.x1||y+radius<b.y0||y-radius>b.y1)continue
+   if(b.polygon&&!circlePolygon(x,y,radius,b.polygon))continue
+   points.push({x:b.x0-pad,y},{x:b.x1+pad,y},{x,y:b.y0-pad},{x,y:b.y1+pad})
+   for(const X of [b.x0-pad,b.x1+pad])for(const Y of [b.y0-pad,b.y1+pad])points.push({x:X,y:Y})
+   if(b.polygon)for(const ring of b.polygon)for(let i=0;i<ring.length;i++){
+    const a=ring[i],c=ring[(i+1)%ring.length],dx=c[0]-a[0],dy=c[1]-a[1],length=Math.hypot(dx,dy);if(length<1e-8)continue
+    const t=Math.max(0,Math.min(1,((x-a[0])*dx+(y-a[1])*dy)/(length*length))),qx=a[0]+dx*t,qy=a[1]+dy*t
+    let nx=-dy/length,ny=dx/length
+    if(inPolygon(qx+nx*.001,qy+ny*.001,b.polygon)){nx=-nx;ny=-ny}
+    points.push({x:qx+nx*pad,y:qy+ny*pad})
+   }
+  }
+ }return points
 }
 
 /** Swept upward head collision against the same solids used for lateral and
@@ -1429,16 +1510,23 @@ function validate(m: GameMap, def: LevelDef): boolean {
   return ratio <= (limit[def.gen] ?? 0.3)
 }
 
+/** v83：Object 70（容器「尸体」）生成概率减半（确定性坐标哈希，不改动生成器随机序列） */
+function thinObject70(m: GameMap, levelId: number): GameMap {
+  m.structures = m.structures.filter((s) => s.kind !== 'corpse' || object70Keep(levelId, s.x, s.y))
+  for (const s of m.structures) if (s.kind === 'corpse' && s.data?.sid === undefined) s.data = { ...s.data, sid: object70Sid(levelId, s.x, s.y, s.floor) }
+  return m
+}
+
 export function generateLevel(def: LevelDef, seed: number, firstVisit = true): GameMap {
   // v17：无限模式层级（L0/L1）走 chunk 流式生成路径，不做有限地图质量校验
   // v29：firstVisit=false 时跳过出生点物资散落（初始物资仅首次到层刷新）
   if (def.infinite) return generateInfinite(def, seed, firstVisit)
   // 质量校验重 roll（限 6 次，兜底返回最后一次结果；据点为手工布局，跳过校验）
   for (let attempt = 0; attempt < 6; attempt++) {
-    const m = genOnce(def, seed + attempt * 10007)
+    const m = thinObject70(genOnce(def, seed + attempt * 10007), def.id)
     if (attempt === 5 || def.gen === 'outpost' || validate(m, def)) return m
   }
-  return genOnce(def, seed)
+  return thinObject70(genOnce(def, seed), def.id)
 }
 
 function genOnce(def: LevelDef, seed: number): GameMap {
@@ -1942,16 +2030,27 @@ function genOnce(def: LevelDef, seed: number): GameMap {
   // 未能连通的孤立地板填成墙，避免误生成内容（室外景观保留）；
   // v8 修复：任何结构占据的瓦片一律跳过——BFS 不会踏入实心结构瓦片（reach=0），
   // 若回填会把箱子/前台/立柱等脚下地板变成墙，造成视觉嵌墙与 prefab 孤岛。
+  const touchesReach = (i: number) => {
+    const x = i % size, y = (i / size) | 0
+    return (x > 0 && reach[i - 1] === 1) || (x < size - 1 && reach[i + 1] === 1) || (y > 0 && reach[i - size] === 1) || (y < size - 1 && reach[i + size] === 1)
+      || (x > 0 && y > 0 && reach[i - size - 1] === 1) || (x < size - 1 && y < size - 1 && reach[i + size + 1] === 1)
+      || (x > 0 && y < size - 1 && reach[i + size - 1] === 1) || (x < size - 1 && y > 0 && reach[i - size + 1] === 1)
+  }
   const structMark = new Uint8Array(size * size)
   for (const s of m.structures) {
     for (let j = Math.max(0, Math.floor(s.y)); j <= Math.min(size - 1, Math.floor(s.y + s.h - 1e-6)); j++)
       for (let i = Math.max(0, Math.floor(s.x)); i <= Math.min(size - 1, Math.floor(s.x + s.w - 1e-6)); i++)
         structMark[j * size + i] = 1
   }
+  // 碰撞盒「含两端点」的生成期障碍掩码会把贴着整格实心结构（长椅/讲坛/圣水盆/栖木等 1×1 整格碰撞）
+  // 东、南、东南三格也标为不可走——它们只是被结构边缘擦到，不是孤岛。旧逻辑把这三格回填成通顶墙，
+  // 在大厅中央凭空长出 2×2 墙柱（Level 274 讲坛前的墙柱即此）。这里只跳过「被结构边缘擦到」的格子，真正的孤岛照旧回填。
+  const edgeBlocked = Number.isInteger(m.spawn.x) && Number.isInteger(m.spawn.y)
+    ? generationObstacles(size, size, m.structures, 0, s => structColliders(s, m)) : null
   for (let i = 0; i < size * size; i++) {
     // v54：楼梯坡道格不回填——2F→3F 坡道（base=FLOOR_H）的瓦片在 2D 主层 BFS 里必然不可达
     //（坡道高度 >JUMP_REACH），回填会把坡道填成墙、毁掉三层楼梯间（Gamma 基地）
-    if (m.tiles[i] === 1 && !reach[i] && m.outdoor[i] === 0 && !structMark[i] && m.stair[i] === 0) m.tiles[i] = 2
+    if (m.tiles[i] === 1 && !reach[i] && m.outdoor[i] === 0 && !structMark[i] && m.stair[i] === 0 && !(edgeBlocked && edgeBlocked[i] && touchesReach(i))) m.tiles[i] = 2
   }
   // 回填后重算连通（结构瓦片已保全），供出口/实体/物品选址
   bfs()
@@ -2075,6 +2174,9 @@ function genOnce(def: LevelDef, seed: number): GameMap {
       }
       m.entities.push(makeEntity(se.type, p.x + 0.5, p.y + 0.5))
     }
+    // 派对客永不落单：同一批生成的 2–4 只聚成一群，并在群边布置诱饵（蛋糕/海报/大红旗）。
+    // 只用独立的确定性小 RNG（按领头者坐标派生），不消耗主 rng——本层其余生成结果与旧版完全一致。
+    if (se.type === 'partygoer' && n > 0) placePartyPack(m, m.entities.slice(-n))
   }
   if (Object.keys(habMiss).length > 0) {
     m.habitatFallback = habMiss

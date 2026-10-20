@@ -1,0 +1,389 @@
+{
+  "label": "acceptance",
+  "port": 2822,
+  "cdp": 2823,
+  "models": [],
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:2822/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sat, 17 Oct 2026 09:02:44 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 279,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 2822,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 69177.37513,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.438,
+        "sendEnd": 0.502,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 10.023,
+        "receiveHeadersEnd": 10.138
+      },
+      "responseTime": 1792227764232.382,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\people-ui\\acceptance\\qa-people-1792227750043-55392",
+    "--remote-debugging-port=2823",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "server": 71364,
+    "browser": 77848
+  },
+  "setup": {
+    "people": 96
+  },
+  "cold": {
+    "people": 96,
+    "firstPaint": 308.59999999403954,
+    "captures": 5,
+    "images": 170,
+    "longTasks": [
+      {
+        "start": 10841.09999999404,
+        "duration": 61
+      },
+      {
+        "start": 10904,
+        "duration": 197
+      },
+      {
+        "start": 11212.39999999106,
+        "duration": 190
+      }
+    ],
+    "maxTask": 197,
+    "portraits": {
+      "builds": 5,
+      "renders": 5,
+      "cached": 5,
+      "cacheBytes": 168212,
+      "queued": 0,
+      "waiting": 0,
+      "memory": {
+        "geometries": 2,
+        "textures": 12
+      }
+    }
+  },
+  "warm": {
+    "people": 96,
+    "firstPaint": 45.20000000298023,
+    "captures": 0,
+    "images": 170,
+    "longTasks": [],
+    "maxTask": 0,
+    "portraits": {
+      "builds": 5,
+      "renders": 5,
+      "cached": 5,
+      "cacheBytes": 168212,
+      "queued": 0,
+      "waiting": 0,
+      "memory": {
+        "geometries": 2,
+        "textures": 12
+      }
+    }
+  },
+  "scroll": {
+    "before": {
+      "builds": 5,
+      "renders": 5,
+      "cached": 5,
+      "cacheBytes": 168212,
+      "queued": 0,
+      "waiting": 0,
+      "memory": {
+        "geometries": 2,
+        "textures": 12
+      }
+    },
+    "after": {
+      "builds": 11,
+      "renders": 11,
+      "cached": 11,
+      "cacheBytes": 362924,
+      "queued": 0,
+      "waiting": 0,
+      "memory": {
+        "geometries": 1,
+        "textures": 21
+      }
+    },
+    "bottom": 13179
+  },
+  "special": {
+    "builds": 18,
+    "renders": 18,
+    "cached": 18,
+    "cacheBytes": 562920,
+    "queued": 0,
+    "waiting": 0,
+    "memory": {
+      "geometries": 2,
+      "textures": 30
+    }
+  },
+  "cycles": [
+    {
+      "people": 96,
+      "firstPaint": 50.599999994039536,
+      "captures": 0,
+      "images": 170,
+      "longTasks": [],
+      "maxTask": 0,
+      "portraits": {
+        "builds": 18,
+        "renders": 18,
+        "cached": 18,
+        "cacheBytes": 562920,
+        "queued": 0,
+        "waiting": 0,
+        "memory": {
+          "geometries": 2,
+          "textures": 30
+        }
+      }
+    },
+    {
+      "people": 96,
+      "firstPaint": 72,
+      "captures": 0,
+      "images": 170,
+      "longTasks": [
+        {
+          "start": 25671.20000000298,
+          "duration": 63
+        }
+      ],
+      "maxTask": 63,
+      "portraits": {
+        "builds": 18,
+        "renders": 18,
+        "cached": 18,
+        "cacheBytes": 562920,
+        "queued": 0,
+        "waiting": 0,
+        "memory": {
+          "geometries": 2,
+          "textures": 30
+        }
+      }
+    },
+    {
+      "people": 96,
+      "firstPaint": 70.90000000596046,
+      "captures": 0,
+      "images": 170,
+      "longTasks": [],
+      "maxTask": 0,
+      "portraits": {
+        "builds": 18,
+        "renders": 18,
+        "cached": 18,
+        "cacheBytes": 562920,
+        "queued": 0,
+        "waiting": 0,
+        "memory": {
+          "geometries": 2,
+          "textures": 30
+        }
+      }
+    }
+  ],
+  "cancellation": {
+    "builds": 18,
+    "renders": 18,
+    "cached": 18,
+    "cacheBytes": 562920,
+    "queued": 0,
+    "waiting": 0,
+    "memory": {
+      "geometries": 2,
+      "textures": 30
+    }
+  },
+  "editor": {
+    "tabs": [
+      "头部",
+      "身体"
+    ],
+    "canvas": true
+  },
+  "editorChecks": {
+    "checks": 9,
+    "avatar": {
+      "skin": "#c9a58a",
+      "gender": 0,
+      "hair": 12,
+      "hairColor": "#232326",
+      "top": "#3a3f46",
+      "topStyle": 0,
+      "pants": "#2a2d33",
+      "pantsStyle": 0,
+      "face": 0,
+      "glasses": 0,
+      "beard": 0,
+      "shoes": 0
+    },
+    "matrix": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      -0.0015282261883839965,
+      -1.5763143301010132,
+      -0.9183933138847351,
+      1
+    ]
+  },
+  "drag": {
+    "before": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      -0.0015282261883839965,
+      -1.5763143301010132,
+      -0.9183933138847351,
+      1
+    ],
+    "after": [
+      0.5735200047492981,
+      0,
+      0.819191575050354,
+      0,
+      0,
+      1,
+      0,
+      0,
+      -0.819191575050354,
+      0,
+      0.5735200047492981,
+      0,
+      -0.024924594908952713,
+      -1.5763143301010132,
+      -0.9321649670600891,
+      1
+    ]
+  },
+  "mobile": {
+    "width": 390,
+    "height": 844,
+    "panel": {
+      "x": 17,
+      "y": 458.03125,
+      "width": 356,
+      "height": 367,
+      "top": 458.03125,
+      "right": 373,
+      "bottom": 825.03125,
+      "left": 17
+    },
+    "overflow": false
+  },
+  "touch": [
+    0.8869948983192444,
+    0,
+    0.4617791771888733,
+    0,
+    0,
+    1,
+    0,
+    0,
+    -0.4617791771888733,
+    0,
+    0.8869948983192444,
+    0,
+    -0.014911483973264694,
+    -1.5763143301010132,
+    -0.9224163889884949,
+    1
+  ],
+  "regression": {
+    "checks": 24,
+    "avatar": {
+      "skin": "#c9a58a",
+      "gender": 0,
+      "hair": 1,
+      "hairColor": "#232326",
+      "top": "#3a3f46",
+      "topStyle": 0,
+      "pants": "#2a2d33",
+      "pantsStyle": 0,
+      "face": 0,
+      "glasses": 0,
+      "beard": 2,
+      "shoes": 0
+    },
+    "storage": [
+      "br_avatar"
+    ]
+  },
+  "ok": false,
+  "failure": "Error: Timeout main title",
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

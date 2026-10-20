@@ -1,0 +1,36 @@
+{
+  "label": "fit-debug",
+  "port": 4449,
+  "cdp": 4450,
+  "models": [],
+  "errors": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\npc-gear\\fit-debug\\qa-gear-1792166461314-50388",
+    "--remote-debugging-port=4450",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "server": 39448,
+    "browser": 52376
+  },
+  "memory": {
+    "geometries": 4,
+    "textures": 40
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

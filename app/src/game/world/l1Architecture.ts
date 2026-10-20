@@ -6,16 +6,17 @@ import {l1ParkingAt,l1HallWall,l1ReferenceAt,l1PathRoom} from './l1Spatial'
 import {l1BuildingRoof,l1BuildingStyleAt} from './l1Building'
 import {L1_CRATE} from './l1Crate'
 
-export type L1Style = 'parking'|'storage'|'gothic'|'ouroboros'|'garden'|'aisle'|'maintenance'
+export type L1Style = 'parking'|'storage'|'gothic'|'ouroboros'|'garden'|'aisle'|'maintenance'|'fabled'
 export interface L1Profile { height:number; spacing:number; floor:string; wall:string; ceiling:string; lamp:string }
 export const L1_PROFILES:Record<L1Style,L1Profile> = {
   parking:{height:3.6,spacing:8,floor:'#aaa99f',wall:'#c3c4bc',ceiling:'#b6b8b0',lamp:'#eff8ff'},
   storage:{height:6.4,spacing:8,floor:'#b8ac96',wall:'#f2f1e7',ceiling:'#8c8b80',lamp:'#fff9eb'},
   gothic:{height:3.8,spacing:5,floor:'#89816b',wall:'#aca58f',ceiling:'#aaa18b',lamp:'#f4d59c'},
-  ouroboros:{height:4.8,spacing:8,floor:'#b6b6af',wall:'#c6c7c0',ceiling:'#40413f',lamp:'#f0f3f1'},
+  ouroboros:{height:4.8,spacing:8,floor:'#c8bda8',wall:'#c6c7c0',ceiling:'#575854',lamp:'#f0f3f1'},
   garden:{height:6.4,spacing:8,floor:'#506132',wall:'#d0d1b6',ceiling:'#b3b895',lamp:'#fff1bc'},
   aisle:{height:3.6,spacing:8,floor:'#aaa99f',wall:'#c3c4bc',ceiling:'#b6b8b0',lamp:'#e8eee8'},
-  maintenance:{height:3.6,spacing:8,floor:'#9ea7ad',wall:'#c0d3e1',ceiling:'#ced8de',lamp:'#eaf3ff'},
+  fabled:{height:3.3,spacing:6,floor:'#5e4a3a',wall:'#b8934f',ceiling:'#4a3426',lamp:'#fff0d8'},
+  maintenance:{height:3.6,spacing:8,floor:'#9ea7ad',wall:'#d0d8dd',ceiling:'#ced8de',lamp:'#eaf3ff'},
 }
 export const l1Profile=(v:string):L1Profile=>L1_PROFILES[v as L1Style]??L1_PROFILES.parking
 // Cosmetic stream; never consumes the gameplay RNG. Works across negative chunks and window rebases.
@@ -181,7 +182,7 @@ export function applyL1Architecture(c:GenChunk,cx:number,cy:number,seed=0,conten
   }
   // Sparse breadcrumbs lead towards the same existing outpost core; no discovery flags are set here.
   if(!photo&&!outpost&&v!=='maintenance'){
-    const d=l1District(seed,cx,cy),ax=d.gx===0&&d.gy===0?3:d.cx,ay=d.gx===0&&d.gy===0?3:d.cy
+    const d=l1District(seed,cx,cy),ax=d.cx,ay=d.cy
     const target=l1Outpost(seed,ax,ay),dist=Math.abs(cx-ax)+Math.abs(cy-ay)
     if(target&&dist>=1&&dist<=3&&(cx===ax||cy===ay)&&c.tiles[16*32+16]===1)c.structures.push({kind:'wallsign',x:wx+16,y:wz+16,w:1,h:1,solid:false,data:{text:target.toUpperCase()+' / SHELTER',l1Waymark:1,targetX:ax*32+20.5,targetY:ay*32+20.5}})
   }

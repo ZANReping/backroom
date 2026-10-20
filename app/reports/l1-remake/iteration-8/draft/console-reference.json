@@ -1,0 +1,30 @@
+{
+  "errors": [],
+  "consoleMessages": [],
+  "networkErrors": [
+    {
+      "requestId": "F42EDD22DB2CFAACD0EDB8A8FF0FD9F9",
+      "timestamp": 9462.304547,
+      "type": "Document",
+      "errorText": "net::ERR_CONNECTION_TIMED_OUT",
+      "canceled": false
+    },
+    {
+      "requestId": "12744.5",
+      "timestamp": 9613.197062,
+      "type": "Script",
+      "errorText": "",
+      "canceled": false,
+      "blockedReason": "other"
+    },
+    {
+      "requestId": "12744.6",
+      "timestamp": 9613.197969,
+      "type": "Script",
+      "errorText": "",
+      "canceled": false,
+      "blockedReason": "other"
+    }
+  ],
+  "stderr": "\r\nDevTools listening on ws://127.0.0.1:9264/devtools/browser/4a30a6f8-dab6-4896-846e-78dd59e7dca3\r\nCreated TensorFlow Lite XNNPACK delegate for CPU.\r\n[44364:52076:1009/120717.784:ERROR:google_apis\\gcm\\engine\\registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT\r\n[44364:49808:1009/120730.673:ERROR:chrome\\updater\\ipc\\update_service_dialer_win.cc:75] Failed to open named pipe server process 28864: 拒绝访问。 (0x5)\r\n[44364:38528:1009/120730.675:ERROR:chrome\\updater\\ipc\\update_service_dialer_win.cc:75] Failed to open named pipe server process 28864: 拒绝访问。 (0x5)\r\n[44364:49808:1009/120730.976:ERROR:chrome\\updater\\ipc\\update_service_dialer_win.cc:75] Failed to open named pipe server process 49008: 拒绝访问。 (0x5)\r\n[44364:38528:1009/120733.166:ERROR:chrome\\updater\\ipc\\update_service_dialer_win.cc:75] Failed to open named pipe server process 55836: 拒绝访问。 (0x5)\r\n[44364:49808:1009/120735.323:ERROR:chrome\\updater\\ipc\\update_service_dialer_win.cc:75] Failed to open named pipe server process 56592: 拒绝访问。 (0x5)\r\n[44364:38528:1009/120735.481:ERROR:chrome\\updater\\ipc\\update_service_dialer_win.cc:75] Failed to open named pipe server process 49356: 拒绝访问。 (0x5)\r\n[44364:52076:1009/120740.732:ERROR:google_apis\\gcm\\engine\\registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT\r\n[44364:52076:1009/120827.862:ERROR:google_apis\\gcm\\engine\\registration_request.cc:291] Registration response error message: DEPRECATED_ENDPOINT\r\n"
+}

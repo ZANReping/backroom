@@ -1,0 +1,467 @@
+{
+  "run": "qa-1792466911521-43776",
+  "label": "l1-entry-shrimp-after",
+  "mode": "realistic",
+  "production": false,
+  "port": 5317,
+  "cdp": 5319,
+  "profile": "E:\\ZAN\\backroom\\app\\reports\\level-entry\\l1-entry-shrimp-after\\qa-1792466911521-43776",
+  "levels": [
+    1
+  ],
+  "cases": [
+    {
+      "id": 1,
+      "cold": {
+        "id": 1,
+        "name": "Level 1",
+        "seed": 20261020,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 7386.200000000186,
+        "readyMs": 7386.200000000186,
+        "loadMs": 7415.5,
+        "preparationMs": 874.5,
+        "generationMs": 6.2000000001862645,
+        "sceneMs": 6505.5,
+        "frames": 1092,
+        "cpuTotalMs": 3287.500000019558,
+        "cpuMaxMs": 611,
+        "frameP95Ms": 8.200000000186265,
+        "metrics": {
+          "warmSceneTextures": {
+            "calls": 196,
+            "cpuMs": 107.3999999994412,
+            "maxMs": 19.299999999813735
+          },
+          "buildInfiniteChunk": {
+            "calls": 108970,
+            "cpuMs": 647.0999999875203,
+            "maxMs": 40.200000000186265
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 1390.6000000005588,
+            "chunks": 0,
+            "finiteTask": false,
+            "flashlight": true,
+            "moth": true,
+            "items": 3,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 7,
+              "textures": 3
+            }
+          },
+          {
+            "atMs": 4994.800000000745,
+            "chunks": 2,
+            "chunkTask": "0,-1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 16,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 105,
+              "textures": 49
+            }
+          },
+          {
+            "atMs": 5008.300000000745,
+            "chunks": 3,
+            "chunkTask": "0,-1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 16,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 108,
+              "textures": 52
+            }
+          },
+          {
+            "atMs": 5025.4000000003725,
+            "chunks": 4,
+            "chunkTask": "-1,-1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 16,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 148,
+              "textures": 55
+            }
+          },
+          {
+            "atMs": 5101.600000000559,
+            "chunks": 5,
+            "chunkTask": "0,1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 16,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 221,
+              "textures": 59
+            }
+          },
+          {
+            "atMs": 5113.800000000745,
+            "chunks": 6,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 16,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 221,
+              "textures": 63
+            }
+          },
+          {
+            "atMs": 5379,
+            "chunks": 7,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 16,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 262,
+              "textures": 66
+            }
+          },
+          {
+            "atMs": 6768.200000000186,
+            "chunks": 8,
+            "chunkTask": "1,1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 16,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 262,
+              "textures": 72
+            }
+          },
+          {
+            "atMs": 7386.200000000186,
+            "chunks": 9,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 16,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": true,
+            "memory": {
+              "geometries": 349,
+              "textures": 92
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 9,
+          "chunkTask": "-2,0",
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 16,
+          "npcs": 0,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 349,
+            "textures": 93
+          }
+        },
+        "firstReady": {
+          "structures": 869,
+          "lights": 938,
+          "npcs": 4,
+          "nearNpcs": 0,
+          "npcMeshes": 0,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 349,
+            "textures": 93
+          },
+          "programs": 97,
+          "drawCalls": 243,
+          "triangles": 73842,
+          "spawn": {
+            "x": 79.5,
+            "y": 79.5,
+            "z": 0
+          },
+          "mapSeed": 20261020,
+          "ready": true
+        },
+        "bakes": {
+          "entries": 25,
+          "bytes": 65334256,
+          "hits": 1526,
+          "diskHits": 0,
+          "offlineLoads": 0,
+          "computations": 0,
+          "completed": 11,
+          "stale": 0,
+          "previews": 11,
+          "workers": 4,
+          "active": 4,
+          "queued": 25,
+          "initialQueued": 14,
+          "refining": 11,
+          "stages": [
+            {
+              "key": "4:17:20261020:0,0:f65249f0:high",
+              "provisional": true,
+              "generationMs": 279.29999999981374,
+              "geometryMs": 64.79999999981374,
+              "bakeMs": 1609.7999999998137,
+              "samples": 80732,
+              "rays": 282524,
+              "bytes": 6263528
+            },
+            {
+              "key": "4:17:20261020:0,-1:ab8f2d9f:high",
+              "provisional": true,
+              "generationMs": 228,
+              "geometryMs": 54.09999999962747,
+              "bakeMs": 1404.2000000001863,
+              "samples": 91536,
+              "rays": 272446,
+              "bytes": 6043096
+            },
+            {
+              "key": "4:17:20261020:-1,0:7c40d03a:high",
+              "provisional": true,
+              "generationMs": 399.79999999981374,
+              "geometryMs": 43.90000000037253,
+              "bakeMs": 1522.2999999998137,
+              "samples": 80890,
+              "rays": 308067,
+              "bytes": 6274936
+            },
+            {
+              "key": "4:17:20261020:1,0:9d442f3e:high",
+              "provisional": true,
+              "generationMs": 346.30000000074506,
+              "geometryMs": 42.799999999813735,
+              "bakeMs": 1924.3999999994412,
+              "samples": 88075,
+              "rays": 400621,
+              "bytes": 5862592
+            },
+            {
+              "key": "4:17:20261020:0,1:90a68196:high",
+              "provisional": true,
+              "generationMs": 104.59999999962747,
+              "geometryMs": 17.299999999813735,
+              "bakeMs": 1619.800000000745,
+              "samples": 81383,
+              "rays": 305993,
+              "bytes": 6148528
+            },
+            {
+              "key": "4:17:20261020:-1,-1:809c0b9e:high",
+              "provisional": true,
+              "generationMs": 102.70000000018626,
+              "geometryMs": 17.799999999813735,
+              "bakeMs": 1282.5999999996275,
+              "samples": 86915,
+              "rays": 232611,
+              "bytes": 5890192
+            },
+            {
+              "key": "4:17:20261020:1,-1:d12a130c:high",
+              "provisional": true,
+              "generationMs": 133.1000000005588,
+              "geometryMs": 23.699999999254942,
+              "bakeMs": 1568.9000000003725,
+              "samples": 93065,
+              "rays": 379973,
+              "bytes": 6190296
+            },
+            {
+              "key": "4:17:20261020:-1,1:e5b9c09:high",
+              "provisional": true,
+              "generationMs": 149.80000000074506,
+              "geometryMs": 23.399999999441206,
+              "bakeMs": 1535.7000000001863,
+              "samples": 83824,
+              "rays": 403378,
+              "bytes": 4084128
+            },
+            {
+              "key": "4:17:20261020:1,1:8a6a8970:high",
+              "provisional": true,
+              "generationMs": 71.19999999925494,
+              "geometryMs": 7.1000000005587935,
+              "bakeMs": 1424.5,
+              "samples": 87355,
+              "rays": 389547,
+              "bytes": 5794328
+            },
+            {
+              "key": "4:17:20261020:0,-2:2478ba34:high",
+              "provisional": true,
+              "generationMs": 30.799999999813735,
+              "geometryMs": 17.09999999962747,
+              "bakeMs": 1441.9000000003725,
+              "samples": 90156,
+              "rays": 371175,
+              "bytes": 6527568
+            },
+            {
+              "key": "4:17:20261020:-2,0:76d5a9f2:high",
+              "provisional": true,
+              "generationMs": 55.299999999813735,
+              "geometryMs": 14.700000000186265,
+              "bakeMs": 1558,
+              "samples": 83796,
+              "rays": 335872,
+              "bytes": 6255064
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\level-entry\\l1-entry-shrimp-after\\qa-1792466911521-43776",
+    "--remote-debugging-port=5319",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.85",
+    "revision": "@0e66b94549a8bd85f03fbdf189b752d6e7b63c32",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.25"
+  },
+  "pids": {
+    "server": 23484,
+    "browser": 52264
+  },
+  "setup": {
+    "mode": "realistic",
+    "viewport": [
+      1920,
+      1080
+    ],
+    "dpr": 1,
+    "seed": 424242,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "settings": {
+      "texture": 1,
+      "lights": 16,
+      "shadows": true,
+      "lightShadows": 1,
+      "loadingBudget": 6,
+      "chunkBudget": 3,
+      "detail": 1,
+      "bloom": true,
+      "ao": 1
+    },
+    "hardwareConcurrency": 32
+  },
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [],
+  "networkErrors": [
+    {
+      "requestId": "59044.469",
+      "loaderId": "53A63E686E20C397F2B5F70FC369D556",
+      "timestamp": 5653.020034,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:5317/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Tue, 20 Oct 2026 03:28:42 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 116,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 5317,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 5653.008564,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.767,
+          "sendEnd": 0.828,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 10.74,
+          "receiveHeadersEnd": 10.88
+        },
+        "responseTime": 1792466922251.27,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "0531B24BFDEC3F8C9F14EF56104362AB"
+    }
+  ]
+}

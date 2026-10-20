@@ -1,0 +1,700 @@
+{
+  "before": false,
+  "mode": "realistic",
+  "port": 16078,
+  "cdp": 26194,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:16078/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Mon, 19 Oct 2026 11:43:36 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 270,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 16078,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 29437.574261,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.247,
+        "sendEnd": 0.286,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 73.731,
+        "receiveHeadersEnd": 73.877
+      },
+      "responseTime": 1792410216880.097,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l1-interactions\\after-realistic\\qa-1792410201642-8284",
+    "--remote-debugging-port=26194",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 28288,
+    "server": 39664
+  },
+  "entryMs": 2739.8728999999985,
+  "initial": {
+    "world": [
+      15.5,
+      15.5,
+      0
+    ],
+    "mode": "realistic",
+    "camera": [
+      79.5,
+      1.5555017879521942,
+      79.5
+    ],
+    "yaw": 0,
+    "pitch": 0,
+    "fov": 72,
+    "memory": {
+      "geometries": 393,
+      "textures": 135
+    },
+    "held": "",
+    "cache": 0
+  },
+  "crate": {
+    "world": [
+      8.5,
+      9.5,
+      0.68
+    ],
+    "mode": "realistic",
+    "camera": [
+      72.5,
+      2.2285421798774916,
+      73.5
+    ],
+    "yaw": -1.5707963267948966,
+    "pitch": -0.85,
+    "fov": 72,
+    "memory": {
+      "geometries": 482,
+      "textures": 147
+    },
+    "held": "",
+    "cache": 0
+  },
+  "hands": {
+    "world": [
+      8.5,
+      9.5,
+      0.68
+    ],
+    "mode": "realistic",
+    "camera": [
+      72.5,
+      2.2356450815807354,
+      73.5
+    ],
+    "yaw": -1.5707963267948966,
+    "pitch": -0.06,
+    "fov": 72,
+    "memory": {
+      "geometries": 592,
+      "textures": 152
+    },
+    "held": "wrench",
+    "cache": 3
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: No legend is inserted underneath the HUD minimap\",\"lineNumber\":22,\"columnNumber\":23,\"scriptId\":\"556\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"ok\",\"scriptId\":\"556\",\"url\":\"http://127.0.0.1:16078/verifier/l1-interactions-check.ts\",\"lineNumber\":21,\"columnNumber\":22},{\"functionName\":\"map\",\"scriptId\":\"556\",\"url\":\"http://127.0.0.1:16078/verifier/l1-interactions-check.ts\",\"lineNumber\":187,\"columnNumber\":6}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: No legend is inserted underneath the HUD minimap\\n    at ok (http://127.0.0.1:16078/verifier/l1-interactions-check.ts:22:23)\\n    at Object.map (http://127.0.0.1:16078/verifier/l1-interactions-check.ts:188:7)\",\"objectId\":\"-483677908577200041.2.1\"}}",
+  "partial": {
+    "before": false,
+    "checks": [
+      "Actual App enters L1 on a live WebGL context",
+      "A naturally generated single shipping case is available",
+      "Actual falling physics lands on case lid at 1.36m",
+      "Standing body is outside case collision at 1.36m",
+      "Production support query agrees with rendered lid",
+      "Actual falling physics lands on case lid at 0.68m",
+      "Standing body is outside case collision at 0.68m",
+      "Production support query agrees with rendered lid",
+      "A real jump from surrounding floor settles on the single case",
+      "Walking off the case returns to the real floor",
+      "Actual falling physics lands on case lid at 0.68m",
+      "Standing body is outside case collision at 0.68m",
+      "Production support query agrees with rendered lid",
+      "Production keyboard hotbar changes the selected and displayed item",
+      "Old item lowers before model swap",
+      "Hand moves visibly below resting pose",
+      "Hand returns to idle after a short switch",
+      "Rapid slot changes settle on the latest real selection",
+      "Actual attack immediately takes priority over switching",
+      "Actual timed use takes priority over switching",
+      "Switching does not change consumable settlement",
+      "Selecting a slot while stowed keeps the hand hidden",
+      "Switches preserve the bounded held-model cache",
+      "Actual map displays seven region symbols and feature legends"
+    ],
+    "records": [
+      {
+        "kind": "case",
+        "stack": 2,
+        "supported": true,
+        "colliders": [
+          {
+            "x0": 66.86,
+            "y0": 67.14500000000001,
+            "x1": 68.14,
+            "y1": 67.85500000000002,
+            "top": 1.36,
+            "stand": true,
+            "polygon": [
+              [
+                [
+                  66.86,
+                  67.14500000000001
+                ],
+                [
+                  68.14,
+                  67.14500000000001
+                ],
+                [
+                  68.14,
+                  67.85500000000002
+                ],
+                [
+                  66.86,
+                  67.85500000000002
+                ]
+              ]
+            ]
+          }
+        ],
+        "position": {
+          "world": [
+            3.5,
+            35.500000000000014,
+            1.36
+          ],
+          "mode": "realistic",
+          "camera": [
+            79.5,
+            1.5554046251832214,
+            79.5
+          ],
+          "yaw": 0,
+          "pitch": 0,
+          "fov": 72,
+          "memory": {
+            "geometries": 412,
+            "textures": 135
+          },
+          "held": "",
+          "cache": 0
+        }
+      },
+      {
+        "kind": "case",
+        "stack": 1,
+        "supported": true,
+        "colliders": [
+          {
+            "x0": 71.86,
+            "y0": 73.145,
+            "x1": 73.14,
+            "y1": 73.855,
+            "top": 0.68,
+            "stand": true,
+            "polygon": [
+              [
+                [
+                  71.86,
+                  73.145
+                ],
+                [
+                  73.14,
+                  73.145
+                ],
+                [
+                  73.14,
+                  73.855
+                ],
+                [
+                  71.86,
+                  73.855
+                ]
+              ]
+            ]
+          }
+        ],
+        "position": {
+          "world": [
+            8.5,
+            9.5,
+            0.68
+          ],
+          "mode": "realistic",
+          "camera": [
+            79.5,
+            1.5554046251832214,
+            79.5
+          ],
+          "yaw": 0,
+          "pitch": 0,
+          "fov": 72,
+          "memory": {
+            "geometries": 412,
+            "textures": 135
+          },
+          "held": "",
+          "cache": 0
+        }
+      },
+      {
+        "kind": "case",
+        "stack": 1,
+        "supported": true,
+        "colliders": [
+          {
+            "x0": 71.86,
+            "y0": 73.145,
+            "x1": 73.14,
+            "y1": 73.855,
+            "top": 0.68,
+            "stand": true,
+            "polygon": [
+              [
+                [
+                  71.86,
+                  73.145
+                ],
+                [
+                  73.14,
+                  73.145
+                ],
+                [
+                  73.14,
+                  73.855
+                ],
+                [
+                  71.86,
+                  73.855
+                ]
+              ]
+            ]
+          }
+        ],
+        "position": {
+          "world": [
+            8.5,
+            9.5,
+            0.68
+          ],
+          "mode": "realistic",
+          "camera": [
+            79.5,
+            1.5554046251832214,
+            79.5
+          ],
+          "yaw": 0,
+          "pitch": 0,
+          "fov": 72,
+          "memory": {
+            "geometries": 412,
+            "textures": 135
+          },
+          "held": "",
+          "cache": 0
+        }
+      },
+      {
+        "kind": "hand-timeline",
+        "timeline": [
+          {
+            "time": 26332.300000000745,
+            "held": "crowbar",
+            "y": -0.3000159832876367,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 26337.300000000745,
+            "held": "crowbar",
+            "y": -0.3000152596253376,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 26342.39999999851,
+            "held": "crowbar",
+            "y": -0.30001457373062085,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 26349,
+            "held": "crowbar",
+            "y": -0.3000132994394814,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 26361.099999997765,
+            "held": "crowbar",
+            "y": -0.3000127418134598,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 26370.099999997765,
+            "held": "crowbar",
+            "y": -0.30001114762476117,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 26376.300000000745,
+            "held": "crowbar",
+            "y": -0.3000102119345029,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 26382.39999999851,
+            "held": "crowbar",
+            "y": -0.3000093762108881,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 26388.099999997765,
+            "held": "crowbar",
+            "y": -0.3031085904500148,
+            "phase": "lower",
+            "dip": 0.045263157894767474
+          },
+          {
+            "time": 26393.5,
+            "held": "crowbar",
+            "y": -0.32502396371521325,
+            "phase": "lower",
+            "dip": 0.13263157894739142
+          },
+          {
+            "time": 26398.599999997765,
+            "held": "crowbar",
+            "y": -0.3420907182139955,
+            "phase": "lower",
+            "dip": 0.17473684210528614
+          },
+          {
+            "time": 26403.5,
+            "held": "crowbar",
+            "y": -0.36443768915418767,
+            "phase": "lower",
+            "dip": 0.22000000000001532
+          },
+          {
+            "time": 26408.699999999255,
+            "held": "crowbar",
+            "y": -0.3890873518107259,
+            "phase": "lower",
+            "dip": 0.2631578947368421
+          },
+          {
+            "time": 26414.199999999255,
+            "held": "crowbar",
+            "y": -0.44763863682169186,
+            "phase": "lower",
+            "dip": 0.35157894736843637
+          },
+          {
+            "time": 26419.599999997765,
+            "held": "crowbar",
+            "y": -0.4791142202860408,
+            "phase": "lower",
+            "dip": 0.39473684210526316
+          },
+          {
+            "time": 26430.39999999851,
+            "held": "crowbar",
+            "y": -0.5126218447492074,
+            "phase": "lower",
+            "dip": 0.4389473684210603
+          },
+          {
+            "time": 26444.300000000745,
+            "held": "crowbar",
+            "y": -0.6146512260533838,
+            "phase": "lower",
+            "dip": 0.5705263157894813
+          },
+          {
+            "time": 26452.89999999851,
+            "held": "crowbar",
+            "y": -0.7090615099809472,
+            "phase": "lower",
+            "dip": 0.7021052631579023
+          },
+          {
+            "time": 26459.89999999851,
+            "held": "crowbar",
+            "y": -0.7605673224809354,
+            "phase": "lower",
+            "dip": 0.7894736842105263
+          },
+          {
+            "time": 26466.89999999851,
+            "held": "crowbar",
+            "y": -0.7982851211622278,
+            "phase": "lower",
+            "dip": 0.8768421052631885
+          },
+          {
+            "time": 26472.099999997765,
+            "held": "crowbar",
+            "y": -0.8181651447606099,
+            "phase": "lower",
+            "dip": 0.9652631578947445
+          },
+          {
+            "time": 26489.300000000745,
+            "held": "almond",
+            "y": -0.8199233003149987,
+            "phase": "raise",
+            "dip": 0.9927999999999884
+          },
+          {
+            "time": 26500.199999999255,
+            "held": "almond",
+            "y": -0.7919797824387299,
+            "phase": "raise",
+            "dip": 0.8591999999999825
+          },
+          {
+            "time": 26508.89999999851,
+            "held": "almond",
+            "y": -0.7445238870077883,
+            "phase": "raise",
+            "dip": 0.76
+          },
+          {
+            "time": 26516.199999999255,
+            "held": "almond",
+            "y": -0.7029333258873736,
+            "phase": "raise",
+            "dip": 0.6927999999999883
+          },
+          {
+            "time": 26524,
+            "held": "almond",
+            "y": -0.655909899584249,
+            "phase": "raise",
+            "dip": 0.6255999999999766
+          },
+          {
+            "time": 26530.300000000745,
+            "held": "almond",
+            "y": -0.6065777326777756,
+            "phase": "raise",
+            "dip": 0.5599999999999999
+          },
+          {
+            "time": 26536.199999999255,
+            "held": "almond",
+            "y": -0.5805751568437267,
+            "phase": "raise",
+            "dip": 0.5263999999999941
+          },
+          {
+            "time": 26542.5,
+            "held": "almond",
+            "y": -0.5543866036823129,
+            "phase": "raise",
+            "dip": 0.49279999999998825
+          },
+          {
+            "time": 26549.599999997765,
+            "held": "almond",
+            "y": -0.5030087057353138,
+            "phase": "raise",
+            "dip": 0.42639999999999406
+          },
+          {
+            "time": 26557.199999999255,
+            "held": "almond",
+            "y": -0.45308089502384974,
+            "phase": "raise",
+            "dip": 0.3591999999999824
+          },
+          {
+            "time": 26576.099999997765,
+            "held": "almond",
+            "y": -0.42948648591213917,
+            "phase": "raise",
+            "dip": 0.3255999999999766
+          },
+          {
+            "time": 26585.599999997765,
+            "held": "almond",
+            "y": -0.33567773375414606,
+            "phase": "raise",
+            "dip": 0.15999999999999986
+          },
+          {
+            "time": 26591.699999999255,
+            "held": "almond",
+            "y": -0.3126047969715702,
+            "phase": "raise",
+            "dip": 0.09279999999998823
+          },
+          {
+            "time": 26597.39999999851,
+            "held": "almond",
+            "y": -0.3010695012249371,
+            "phase": "raise",
+            "dip": 0.02639999999999404
+          },
+          {
+            "time": 26604.39999999851,
+            "held": "almond",
+            "y": -0.30000133629291825,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 26611.5,
+            "held": "almond",
+            "y": -0.3000012504496645,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 26617.300000000745,
+            "held": "almond",
+            "y": -0.30000121171861505,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 26623.300000000745,
+            "held": "almond",
+            "y": -0.3000011362473042,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 26628.599999997765,
+            "held": "almond",
+            "y": -0.30000110045671746,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 26634.199999999255,
+            "held": "almond",
+            "y": -0.300001065873374,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 26651.099999997765,
+            "held": "almond",
+            "y": -0.3000010000645932,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 26659.89999999851,
+            "held": "almond",
+            "y": -0.30000087712571294,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 26665.5,
+            "held": "almond",
+            "y": -0.300000822279981,
+            "phase": "idle",
+            "dip": 0
+          },
+          {
+            "time": 26670.5,
+            "held": "almond",
+            "y": -0.3000007986940624,
+            "phase": "idle",
+            "dip": 0
+          }
+        ]
+      }
+    ],
+    "state": {
+      "world": [
+        8.5,
+        9.5,
+        0.68
+      ],
+      "mode": "realistic",
+      "camera": [
+        72.5,
+        2.2248973391930145,
+        73.5
+      ],
+      "yaw": -1.5707963267948966,
+      "pitch": -0.06,
+      "fov": 72,
+      "memory": {
+        "geometries": 592,
+        "textures": 152
+      },
+      "held": "wrench",
+      "cache": 3
+    }
+  },
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 10313.5
+    },
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\nLEVEL 1\n宜居地带\nB1\n磁带\n0/6\n天鹰段\n100%\n你渴得喉咙发干。\n已收起主手，可继续交互。\n已取出主手。\n使用了 杏仁水\n扳手\n1\n2\n3\n4\n5\n6\n7\nE 搜索 补给箱\n空格\n跳跃\nC\n蹲伏\nF\n手电\n左Alt\n取出主手\n开发者模式\n🛠 开发者模式 · DEV\n▴\nFIELD KIT · 档案工作台\n磁带 0/6\n背包\nI\n图鉴\nG\n状态\nU\n地图\nM\n日志\nL\n任务\nJ\n✕\nEsc\n 地图全开\n右键安全传送 · 拖动平移\n天鹰段\n跃金段\n哥特段\n衔尾段\n花园段\n小径\n传说段\n玩家／朝向\n视线（墙遮挡）\n墙柱\n金属门\n积水\n容器／已搜\n掉落物\n人士\n已发现出口\n据点地标\n－\n＋\n回正"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

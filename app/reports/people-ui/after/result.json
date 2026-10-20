@@ -1,0 +1,140 @@
+{
+  "label": "after",
+  "port": 2869,
+  "cdp": 2870,
+  "models": [],
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:2869/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Sat, 17 Oct 2026 08:51:47 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 290,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 2869,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 68520.153805,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.514,
+        "sendEnd": 0.552,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 11.709,
+        "receiveHeadersEnd": 12.03
+      },
+      "responseTime": 1792227107012.744,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\people-ui\\after\\qa-people-1792227089367-81464",
+    "--remote-debugging-port=2870",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "server": 80028,
+    "browser": 82904
+  },
+  "setup": {
+    "people": 96
+  },
+  "cold": {
+    "people": 96,
+    "firstPaint": 436.59999999403954,
+    "captures": 5,
+    "images": 170,
+    "longTasks": [
+      {
+        "start": 14129.20000000298,
+        "duration": 75
+      },
+      {
+        "start": 14204.5,
+        "duration": 353
+      },
+      {
+        "start": 14628.5,
+        "duration": 207
+      },
+      {
+        "start": 14839.5,
+        "duration": 135
+      },
+      {
+        "start": 15002.29999999702,
+        "duration": 54
+      },
+      {
+        "start": 15060.40000000596,
+        "duration": 158
+      },
+      {
+        "start": 15245.20000000298,
+        "duration": 142
+      },
+      {
+        "start": 15390.59999999404,
+        "duration": 127
+      }
+    ],
+    "maxTask": 353
+  },
+  "warm": {
+    "people": 96,
+    "firstPaint": 84.29999999701977,
+    "captures": 0,
+    "images": 170,
+    "longTasks": [],
+    "maxTask": 0
+  },
+  "editor": {
+    "tabs": [
+      "头部",
+      "身体"
+    ],
+    "canvas": true
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

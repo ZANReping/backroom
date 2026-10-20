@@ -1147,6 +1147,7 @@ export const NPCS: Record<string, NpcDef> = {
       { give: 'canned', giveN: 2, get: 'pasta', getN: 1 },
       { give: 'thingmeat', giveN: 1, get: 'meatstew', getN: 1 },
       { give: 'dryshrimp', giveN: 1, get: 'friedshrimp', getN: 1 },
+      { give: 'liveshrimp', giveN: 1, get: 'friedshrimp', getN: 1 }, // v81：活抓的旱虾同样可以
       { give: 'almond', giveN: 1, give2: 'canned', give2N: 1, get: 'pizza', getN: 1 },
       // 复杂（巨兽之肉×2 / 皇家口粮×1 / 杏仁水×2+罐装×2）
       { give: 'thingmeat', giveN: 2, get: 'lasagna', getN: 1 },
@@ -2210,6 +2211,7 @@ export const NPCS: Record<string, NpcDef> = {
         opts: [
           { text: '您与鹉主很亲近？', next: 1 },
           { text: '这座圣堂是您主持修建的？', next: 2 },
+          { text: '辛克莱·贝克特是怎样的人？', next: 3 },
           { text: '叨扰了，神父。', action: 'leave' },
         ],
       },
@@ -2221,13 +2223,22 @@ export const NPCS: Record<string, NpcDef> = {
         npc: '穹顶、长椅、彩玻、圣水盆——一梁一柱，皆是信众亲手立起。居住区收容疲惫的兄弟姐妹，告解室倾听迷途的灵魂。这里不只是一个房间——是后室之中，唯一配称作「家」的地方。',
         opts: [{ text: '我会怀着敬意参观。', action: 'leave' }],
       },
+      {
+        // 重制杰瑞：辛克莱与青鸟神父不和（维基：她自认最忠诚，两人公开争执）
+        npc: '……辛克莱。她爱鹉主，这一点我从不怀疑。可她把爱变成了拳头和投石索，把「收留」变成了「围猎」。她说我软弱，说我只会讲道；我说鹉主从不需要我们去打断谁的骨头。我们为此争吵过不止一次——在祂面前。',
+        opts: [{ text: '鹉主怎么看？', next: 4 }, { text: '我明白了。', action: 'leave' }],
+      },
+      {
+        npc: '祂只是看着我们吵，然后歪着头说：「你们都很爱我。」……孩子，你知道吗？那句话让我整夜没睡着。',
+        opts: [{ text: '……', action: 'leave' }],
+      },
     ],
     idle: ['青鸟与我们同在，直到永远。', '祂的目光自穹顶而下，从未移开分毫。', '今晚的诵咏，由年长的兄弟姐妹领唱。', '愿迷途者都能听见蓝羽的声音。'],
   },
   sinclair: {
     // v47：辛克莱·贝克特（wikidot 杰瑞的信众：最臭名昭著的成员——便装、狂热，曾领导对 M.E.G. 等团体的攻击）
-    id: 'sinclair', name: '辛克莱·贝克特', role: '信众 · 狂热者', faction: 'jerry',
-    personality: '狂热、锋利、不知疲倦；便装之下是信众中最臭名昭著的执行力。',
+    id: 'sinclair', name: '辛克莱·贝克特', role: '信众 · 激进派头目', faction: 'jerry',
+    personality: '狂热、锋利、不知疲倦；信众激进派的头目，自认是鹉主最忠诚的仆人，与青鸟神父公开不和。',
     background: '杰瑞的信众中最臭名昭著的成员之一。便装出行的她曾领导多次对 M.E.G. 与其他团体的攻击——「我曾认为此处没有希望，但杰瑞找到并指引了我。」如今她在圣地静修，锋芒未减。',
     uniform: { top: '#4a4a52', topStyle: 1, badge: '#4142a5' }, // 便装（灰蓝便服 + 信众色胸章；蓝羽胸针/日记本见 npcGear）
     avatar: { gender: 1, hair: 2, hairColor: '#2a2018', skin: '#e8c8a8', pants: '#2a2d33', pantsStyle: 0, face: 0 },
@@ -2237,6 +2248,7 @@ export const NPCS: Record<string, NpcDef> = {
         opts: [
           { text: '你攻击过 M.E.G.？', next: 1 },
           { text: '是什么让你追随鹉主？', next: 2 },
+          { text: '你和青鸟神父合得来吗？', next: 3 },
           { text: '先不聊了。', action: 'leave' },
         ],
       },
@@ -2248,8 +2260,17 @@ export const NPCS: Record<string, NpcDef> = {
         npc: '我曾以为此处没有希望——后室只会吃人。但杰瑞寻见了我，指引了我。第一次接触祂时我便明白：我存在的理由，就是让更多迷路的灵魂听见祂的名。',
         opts: [{ text: '愿祂也指引我。', action: 'leave' }],
       },
+      {
+        // 重制杰瑞：激进派头目，与青鸟神父不和
+        npc: '青鸟？他是个好牧者——如果羊群只需要听故事的话。外面的人撕我们的传单、烧我们的海报、把新来的人从我们门口拖走，他却还在讲坛上念「收留」。总得有人去外面把路清干净。我比他更爱鹉主，鹉主知道。',
+        opts: [{ text: '你在外面……清路？', next: 4 }, { text: '我不打扰了。', action: 'leave' }],
+      },
+      {
+        npc: '别担心，我们不杀人。杀人会让人害怕，害怕的人不会来。我们只让插手的人睡一觉——醒来时少了几样东西，多了一点教训。要是哪天你也成了插手的人……我会亲自带队。',
+        opts: [{ text: '……记住了。', action: 'leave' }],
+      },
     ],
-    idle: ['祂指引了我，也必指引你。', '便装便于行事——袍子会拖慢拳头。', 'Level 11 那次？是他们不敬在先。', '日记快写满了，该寻一本新的了。'],
+    idle: ['祂指引了我，也必指引你。', '便装便于行事——袍子会拖慢拳头。', 'Level 11 那次？是他们不敬在先。', '日记快写满了，该寻一本新的了。', '讲道救不了人，投石索能。', '青鸟又在念他的「收留」了。'],
   },
 
   // ================= v54：蓝色救赎（Level 3 信众圣所，id 108）——仍在注册表末尾（jerry 系之后） =================

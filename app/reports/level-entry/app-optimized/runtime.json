@@ -1,0 +1,222 @@
+{
+  "run": "qa-1792045430711-44520",
+  "label": "app-optimized",
+  "mode": "realistic",
+  "port": 12682,
+  "cdp": 12683,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\level-entry\\app-optimized\\qa-1792045430711-44520",
+  "levels": [
+    104
+  ],
+  "cases": [
+    {
+      "id": 104,
+      "cold": {
+        "id": 104,
+        "name": "Tom 的餐馆",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 4096.9000000003725,
+        "readyMs": 4097,
+        "loadMs": 4110.199999999255,
+        "preparationMs": 0.30000000074505806,
+        "generationMs": 13,
+        "sceneMs": 4083.699999999255,
+        "frames": 337,
+        "cpuTotalMs": 3384.6000000201166,
+        "cpuMaxMs": 897.9000000003725,
+        "frameP95Ms": 19.59999999962747,
+        "metrics": {
+          "buildLevel": {
+            "calls": 312209,
+            "cpuMs": 1772.5999999530613,
+            "maxMs": 883.1999999992549
+          },
+          "warmSceneTextures": {
+            "calls": 29,
+            "cpuMs": 8.599999999627471,
+            "maxMs": 4.400000000372529
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 105,
+            "chunks": 0,
+            "finiteTask": true,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 1,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 0,
+              "textures": 1
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 0,
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 0,
+          "npcs": 9,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 144,
+            "textures": 83
+          }
+        },
+        "firstReady": {
+          "structures": 132,
+          "lights": 46,
+          "npcs": 10,
+          "nearNpcs": 9,
+          "npcMeshes": 9,
+          "meshes": 249,
+          "instances": 4546,
+          "materials": 143,
+          "memory": {
+            "geometries": 144,
+            "textures": 83
+          },
+          "programs": 82,
+          "drawCalls": 107,
+          "triangles": 39097,
+          "spawn": {
+            "x": 40.5,
+            "y": 25.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\level-entry\\app-optimized\\qa-1792045430711-44520",
+    "--remote-debugging-port=12683",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.40",
+    "revision": "@cfaadc5a132d78e1828635aa8405a499f3e14864",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.20"
+  },
+  "pids": {
+    "server": 48360,
+    "browser": 49240
+  },
+  "setup": {
+    "mode": "realistic",
+    "viewport": [
+      1920,
+      1080
+    ],
+    "dpr": 1,
+    "seed": 424242,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "settings": {
+      "texture": 1,
+      "lights": 16,
+      "shadows": true,
+      "lightShadows": 1,
+      "loadingBudget": 6,
+      "chunkBudget": 3,
+      "detail": 1,
+      "bloom": true,
+      "ao": 1
+    },
+    "hardwareConcurrency": 32
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: No safe walk direction\",\"lineNumber\":1,\"columnNumber\":298,\"scriptId\":\"1289\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"\",\"scriptId\":\"1289\",\"url\":\"\",\"lineNumber\":0,\"columnNumber\":297}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: No safe walk direction\\n    at <anonymous>:1:298\",\"objectId\":\"-879691518087362518.4.1\"}}",
+  "failureState": {
+    "level": 10,
+    "paused": false,
+    "transition": null,
+    "ready": true,
+    "pending": false,
+    "root": false,
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\nLEVEL 10\n丰裕\nB10\n磁带\n0/6\n混合农田\n100%\nLevel 10「丰裕」\nSurvival Difficulty: Class 1 · 逃脱 2/5 · 环境 1/5 · 敌对实体 0/5\n入口：Level 9 田野边缘步道 / Level 11 乡间小路\n出口线索：双车辙的土路笔直伸向地平线。它通向一座城市。\n1\n2\n3\n4\n5\n6\n7\n左键\n攻击\n空格\n跳跃\nC\n蹲伏\nF\n手电\n右键\n使用\nQ\n丢弃\nV\n检视\n➤\n你感觉到一丝气流（21m）\n开发者模式\n🛠 开发者模式 · DEV\n▾\n召唤\n状态\n传送\n世界\n信息\n实体\n物品\n装饰物\n召唤实体（前方 3 格 · 共 38 种 · 按层分页，末页全部层）\n‹\nLevel 0 · 教学关卡（0 种）\n›\n本层无自然生成实体\n⚠ 每种一只（环绕召唤）"
+  },
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [],
+  "networkErrors": [
+    {
+      "requestId": "3040.403",
+      "loaderId": "41BA2E957A0CE3C1B4A04F91F084A061",
+      "timestamp": 9687.62875,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:12682/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Thu, 15 Oct 2026 06:24:12 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 210,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 12682,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 9687.616773,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.458,
+          "sendEnd": 0.508,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 11.085,
+          "receiveHeadersEnd": 11.243
+        },
+        "responseTime": 1792045452255.703,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "71407980BD478C60BA8840527D9F1712"
+    }
+  ]
+}

@@ -1,0 +1,381 @@
+{
+  "run": "qa-1792071099588-53800",
+  "port": 4991,
+  "cdp": 4992,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-reference\\retail-v16-shadow-budget\\qa-1792071099588-53800",
+  "label": "retail-v16-shadow-budget",
+  "baseline": false,
+  "low": false,
+  "mode": "realistic",
+  "quick": false,
+  "seed": 20261014,
+  "views": [
+    {
+      "id": "14-storefront-corner",
+      "world": [
+        264,
+        392,
+        0.164588028842993
+      ],
+      "target": [
+        250,
+        378,
+        1.7
+      ],
+      "yaw": 0.7853981633974483,
+      "pitch": -0.0007368065894540092,
+      "fov": 64,
+      "lighting": {
+        "exposure": 1.1789456929144777,
+        "meter": 0.4708359999999994,
+        "outdoor": 0.9999999999999984,
+        "fogNear": 300,
+        "fogFar": 1800,
+        "sun": 3.35,
+        "msaa": 4,
+        "buffer": [
+          1920,
+          1080
+        ]
+      },
+      "stats": {
+        "label": "11:open",
+        "median": 8.30000000000291,
+        "p95": 20.80000000000291,
+        "max": 1149.8999999999978,
+        "p99": 33.30000000000291,
+        "frames": 1000,
+        "over16ms": 110,
+        "over33ms": 9,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 1922,
+        "triangles": 4338434,
+        "memory": {
+          "geometries": 1637,
+          "textures": 79
+        },
+        "programs": 92,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "performance": {
+        "label": "11:open",
+        "median": 8.30000000000291,
+        "p95": 16.700000000004366,
+        "max": 33.299999999995634,
+        "p99": 27.10000000000582,
+        "frames": 169,
+        "over16ms": 14,
+        "over33ms": 0,
+        "cpuMedian": 6.799999997019768,
+        "cpuP95": 16.5,
+        "gpuMedian": 9.879552,
+        "gpuP95": 15.419392,
+        "gpuSamples": 165,
+        "draws": 639,
+        "triangles": 2091672,
+        "memory": {
+          "geometries": 1637,
+          "textures": 79
+        },
+        "programs": 92,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    }
+  ],
+  "command": [
+    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-reference\\retail-v16-shadow-budget\\qa-1792071099588-53800",
+    "--remote-debugging-port=4992",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.40",
+    "revision": "@cfaadc5a132d78e1828635aa8405a499f3e14864",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.20"
+  },
+  "pids": {
+    "server": 59328,
+    "browser": 41816
+  },
+  "setup": {
+    "seed": 20261014,
+    "newGameSeed": 20259573,
+    "version": 16,
+    "buildings": 29,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "low": false,
+    "baseline": false,
+    "weather": "calm",
+    "time": 10,
+    "shadows": true
+  },
+  "cases": [
+    {
+      "id": "14-storefront-corner",
+      "x": 264,
+      "y": 392,
+      "z": 0,
+      "tx": 250,
+      "ty": 378,
+      "th": 1.7,
+      "fov": 64,
+      "reference": "11iconic.jpg"
+    }
+  ],
+  "hardware": {
+    "vendor": "Google Inc. (NVIDIA)",
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+  },
+  "retail": {
+    "ok": true,
+    "building": "l11v2:20261014:0:0:reference:west-piers",
+    "room": "l11v2:20261014:0:0:reference:west-piers:f0:room:18",
+    "walks": [
+      {
+        "u": 5.925,
+        "v": 10.35,
+        "error": 0.04333333333244127
+      },
+      {
+        "u": 3.9124999999999996,
+        "v": 10.35,
+        "error": 0.029633141245708764
+      },
+      {
+        "u": 3.9124999999999996,
+        "v": 2.6,
+        "error": 0.04275204899892702
+      },
+      {
+        "u": 5.925,
+        "v": 2.6,
+        "error": 0.029457299559740743
+      },
+      {
+        "u": 5.925,
+        "v": 0.9,
+        "error": 0.05754732797272353
+      }
+    ],
+    "checkoutLanded": 1.2516729187995042,
+    "fixtures": {
+      "retail_checkout": 1,
+      "retail_gondola": 10,
+      "retail_cooler": 3,
+      "ceiling_light": 16
+    },
+    "outsideLights": [
+      {
+        "x": 63.36874999999998,
+        "y": 92.44375000000002,
+        "power": 3.6787199999999998
+      },
+      {
+        "x": 63.36874999999998,
+        "y": 95.40625,
+        "power": 3.6787199999999998
+      }
+    ],
+    "mode": "realistic",
+    "shadowSlots": 2,
+    "shadowBudgets": [
+      {
+        "requested": 0,
+        "limit": 0,
+        "lights": [],
+        "active": [],
+        "shadowEnabled": true
+      },
+      {
+        "requested": 1,
+        "limit": 1,
+        "lights": [
+          {
+            "x": 63.36874999999998,
+            "y": 92.44375000000002,
+            "power": 3.6787199999999998
+          }
+        ],
+        "active": [
+          {
+            "slot": 0,
+            "castShadow": true,
+            "shadowIntensity": 1,
+            "shadowMap": true
+          }
+        ],
+        "shadowEnabled": true
+      },
+      {
+        "requested": 2,
+        "limit": 2,
+        "lights": [
+          {
+            "x": 63.36874999999998,
+            "y": 92.44375000000002,
+            "power": 3.6787199999999998
+          },
+          {
+            "x": 63.36874999999998,
+            "y": 95.40625,
+            "power": 3.6787199999999998
+          }
+        ],
+        "active": [
+          {
+            "slot": 0,
+            "castShadow": true,
+            "shadowIntensity": 1,
+            "shadowMap": true
+          },
+          {
+            "slot": 1,
+            "castShadow": true,
+            "shadowIntensity": 1,
+            "shadowMap": true
+          }
+        ],
+        "shadowEnabled": true
+      },
+      {
+        "requested": 4,
+        "limit": 2,
+        "lights": [
+          {
+            "x": 63.36874999999998,
+            "y": 92.44375000000002,
+            "power": 3.6787199999999998
+          },
+          {
+            "x": 63.36874999999998,
+            "y": 95.40625,
+            "power": 3.6787199999999998
+          }
+        ],
+        "active": [
+          {
+            "slot": 0,
+            "castShadow": true,
+            "shadowIntensity": 1,
+            "shadowMap": true
+          },
+          {
+            "slot": 1,
+            "castShadow": true,
+            "shadowIntensity": 1,
+            "shadowMap": true
+          }
+        ],
+        "shadowEnabled": true
+      }
+    ],
+    "backWallLights": 0
+  },
+  "validationSkipped": true,
+  "performance": {
+    "label": "11:open",
+    "median": 8.299999999988358,
+    "p95": 25,
+    "max": 41.60000000000582,
+    "p99": 41.59999999999127,
+    "frames": 180,
+    "over16ms": 19,
+    "over33ms": 2,
+    "cpuMedian": 5.899999998509884,
+    "cpuP95": 24.099999994039536,
+    "gpuMedian": 8.40192,
+    "gpuP95": 12.122112,
+    "gpuSamples": 178,
+    "draws": 1232,
+    "triangles": 5672832,
+    "memory": {
+      "geometries": 1716,
+      "textures": 95
+    },
+    "programs": 234,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "errors": [],
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "networkErrors": [
+    {
+      "requestId": "5444.12",
+      "loaderId": "D4E9CA8CF87C96205AF5C7BA40974A55",
+      "timestamp": 35344.242745,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:4991/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Thu, 15 Oct 2026 13:31:48 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 145,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 4991,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 35343.816094,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.481,
+          "sendEnd": 0.547,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 425.822,
+          "receiveHeadersEnd": 425.968
+        },
+        "responseTime": 1792071108869.761,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "2194B4EB61EEB766F7CD561F1D1B7A6B"
+    }
+  ]
+}

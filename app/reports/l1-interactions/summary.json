@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-19",
+  "seed": 20261006,
+  "viewport": {
+    "width": 1920,
+    "height": 1080,
+    "dpr": 1
+  },
+  "scope": [
+    "L1 crate support",
+    "hotbar hand transition",
+    "L1 map regions and features",
+    "Object70 closed eyes"
+  ],
+  "static": {
+    "l1Interactions": 147,
+    "object70": 40,
+    "seating": 310,
+    "l1Props": "passed",
+    "l1Offline": {
+      "status": "passed",
+      "revision": 14,
+      "chunks": 99
+    },
+    "productionBuild": "passed",
+    "buildLog": "build.log"
+  },
+  "runs": {
+    "before": {
+      "file": "before-realistic/result.json",
+      "ok": true,
+      "checks": 4,
+      "entryMs": 2627.4665999999997,
+      "visibleSwitchMs": null,
+      "cases": [
+        {
+          "stack": 2,
+          "supported": false,
+          "height": 0
+        },
+        {
+          "stack": 1,
+          "supported": false,
+          "height": 0
+        }
+      ],
+      "remotePreview": [],
+      "faceTexture": "http://127.0.0.1:23121/textures/npc-retro/pool/m0-2/neutral.png",
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "runtimeErrors": 0,
+      "assetFailures": 0,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    "realistic": {
+      "file": "after-realistic/result.json",
+      "ok": true,
+      "checks": 31,
+      "entryMs": 3217.2874999999985,
+      "visibleSwitchMs": 232.5,
+      "cases": [
+        {
+          "stack": 2,
+          "supported": true,
+          "height": 1.36
+        },
+        {
+          "stack": 1,
+          "supported": true,
+          "height": 0.68
+        },
+        {
+          "stack": 1,
+          "supported": true,
+          "height": 0.68
+        }
+      ],
+      "remotePreview": [
+        {
+          "kind": "remote-preview",
+          "elapsedMs": 868.8000000007451,
+          "chunks": 16
+        }
+      ],
+      "faceTexture": "http://127.0.0.1:23145/textures/npc-retro/pool/m0-2/neutral-blink.png",
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "runtimeErrors": 0,
+      "assetFailures": 0,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    "classic": {
+      "file": "after-classic/result.json",
+      "ok": true,
+      "checks": 31,
+      "entryMs": 2098.2818000000007,
+      "visibleSwitchMs": 216,
+      "cases": [
+        {
+          "stack": 2,
+          "supported": true,
+          "height": 1.36
+        },
+        {
+          "stack": 1,
+          "supported": true,
+          "height": 0.68
+        },
+        {
+          "stack": 1,
+          "supported": true,
+          "height": 0.68
+        }
+      ],
+      "remotePreview": [
+        {
+          "kind": "remote-preview",
+          "elapsedMs": 703.1999999992549,
+          "chunks": 16
+        }
+      ],
+      "faceTexture": "http://127.0.0.1:23587/textures/npc-retro/pool/m0-2/neutral-blink.png",
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "runtimeErrors": 0,
+      "assetFailures": 0,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    }
+  },
+  "methodology": [
+    "Actual production App, generated natural containers, existing physics and combat/use paths; independent in-memory saves.",
+    "True headless Chrome with native RTX 4060 Laptop ANGLE/D3D11.",
+    "Hotbar sequence copies three real WebGL frames into a filmstrip, without adding scene objects.",
+    "Map openMs in raw data measures the full verification method including an intentional 500ms wait and a far-preview request; it is not UI opening latency.",
+    "No background-photo substitutes or added game textures."
+  ],
+  "review": {
+    "react": [
+      "Shared map drawing function for big map and minimap",
+      "Static accessible SVG legend, no new global UI listeners",
+      "Existing viewport worker cancellation and bounded cache reused",
+      "Ordinary previews limited to explored chunks and raster-clipped at draw time"
+    ],
+    "compatibility": [
+      "No save schema or layout/bake version change",
+      "Default living-avatar blinking preserved",
+      "Existing held model cache reused",
+      "Multiplayer unchanged and closed"
+    ]
+  },
+  "limits": [
+    "No Android device or direct touch gameplay test; mouse/touch hotbar paths were inspected to confirm the common player.selected route.",
+    "No long-duration GPU resource or all-level performance stress test in this task."
+  ],
+  "harnessDiagnostics": [
+    "baseline-escape-harness-failure.json",
+    "minimap-selector-harness-failure.json"
+  ]
+}

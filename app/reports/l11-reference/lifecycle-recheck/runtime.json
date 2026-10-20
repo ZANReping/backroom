@@ -1,0 +1,3606 @@
+{
+  "run": "qa-1791978797551-54716",
+  "port": 14659,
+  "cdp": 14660,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-reference\\lifecycle-recheck\\qa-1791978797551-54716",
+  "label": "lifecycle-recheck",
+  "baseline": false,
+  "low": false,
+  "mode": "realistic",
+  "quick": false,
+  "seed": 20261014,
+  "views": [
+    {
+      "id": "01-office-street",
+      "world": [
+        272,
+        415,
+        0.17315159930199545
+      ],
+      "target": [
+        270,
+        220,
+        12
+      ],
+      "yaw": 0.010256050641667055,
+      "pitch": 0.05265031107251866,
+      "fov": 42,
+      "lighting": {
+        "exposure": 1.1789468532669156,
+        "meter": 0.4708359999986828,
+        "outdoor": 0.999999999999994,
+        "fogNear": 150,
+        "fogFar": 650,
+        "sun": 3.35
+      },
+      "stats": {
+        "label": "11:open",
+        "median": 8.30000000000291,
+        "p95": 16.69999999999709,
+        "max": 104.20000000000073,
+        "p99": 20.80000000000291,
+        "frames": 1000,
+        "over16ms": 51,
+        "over33ms": 2,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 1697,
+        "triangles": 2972618,
+        "memory": {
+          "geometries": 1553,
+          "textures": 74
+        },
+        "programs": 129,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "performance": {
+        "label": "11:open",
+        "median": 8.400000000001455,
+        "p95": 16.69999999999709,
+        "max": 25,
+        "p99": 16.799999999995634,
+        "frames": 144,
+        "over16ms": 9,
+        "over33ms": 0,
+        "cpuMedian": 10,
+        "cpuP95": 15.600000008940697,
+        "gpuMedian": 9.577472,
+        "gpuP95": 14.569472,
+        "gpuSamples": 142,
+        "draws": 602,
+        "triangles": 1173064,
+        "memory": {
+          "geometries": 1553,
+          "textures": 74
+        },
+        "programs": 129,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    }
+  ],
+  "command": [
+    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-reference\\lifecycle-recheck\\qa-1791978797551-54716",
+    "--remote-debugging-port=14660",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/154.0.8037.98",
+    "revision": "@b859317bf11f6be47f9b7799ec690a0a42a1fb33",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+    "jsVersion": "15.4.80.20"
+  },
+  "pids": {
+    "server": 51540,
+    "browser": 51960
+  },
+  "setup": {
+    "seed": 20261014,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "low": false,
+    "baseline": false,
+    "weather": "calm",
+    "time": 10,
+    "shadows": true
+  },
+  "cases": [
+    {
+      "id": "01-office-street",
+      "x": 272,
+      "y": 415,
+      "z": 0,
+      "tx": 270,
+      "ty": 220,
+      "th": 12,
+      "fov": 42,
+      "reference": "11iconic.jpg"
+    }
+  ],
+  "validationSkipped": true,
+  "roomWalks": [
+    {
+      "ok": true,
+      "checks": [
+        {
+          "building": "l11v2:20261014:0:0:reference:west-piers",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-piers:f0:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334724102,
+          "heightError": 0.01899999999999999
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-piers",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-piers:f0:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-piers",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-piers:f0:room:1",
+          "direction": "forward",
+          "error": 0.0033333333334724102,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-piers",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-piers:f0:room:1",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.01899999999999999
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-piers",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-piers:f0:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334724102,
+          "heightError": 0.01899999999999999
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-piers",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-piers:f0:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-piers",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-piers:f0:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334724102,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-piers",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-piers:f0:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.01899999999999999
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-piers",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-piers:f0:room:4",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.01899999999999999
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-piers",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-piers:f0:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-piers",
+          "kind": "workspace",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:west-piers:f1:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334724102,
+          "heightError": 0.019000000000000128
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-piers",
+          "kind": "workspace",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:west-piers:f1:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000568
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-piers",
+          "kind": "meeting",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:west-piers:f1:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334724102,
+          "heightError": 0.019000000000000128
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-piers",
+          "kind": "meeting",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:west-piers:f1:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000568
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-piers",
+          "kind": "breakroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:west-piers:f1:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334724102,
+          "heightError": 0.015000000000000568
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-piers",
+          "kind": "breakroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:west-piers:f1:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.019000000000000128
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-piers",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:west-piers:f1:room:4",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.019000000000000128
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-piers",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:west-piers:f1:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000568
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "checks": [
+        {
+          "building": "l11v2:20261014:0:0:reference:west-limestone",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-limestone:f0:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334724102,
+          "heightError": 0.01899999999999999
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-limestone",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-limestone:f0:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-limestone",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-limestone:f0:room:1",
+          "direction": "forward",
+          "error": 0.0033333333334724102,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-limestone",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-limestone:f0:room:1",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.01899999999999999
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-limestone",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-limestone:f0:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.01899999999999999
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-limestone",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-limestone:f0:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-limestone",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-limestone:f0:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.01899999999999999
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-limestone",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-limestone:f0:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-limestone",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-limestone:f0:room:4",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-limestone",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-limestone:f0:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.01899999999999999
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-limestone",
+          "kind": "workspace",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:west-limestone:f1:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334724102,
+          "heightError": 0.019000000000000128
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-limestone",
+          "kind": "workspace",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:west-limestone:f1:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-limestone",
+          "kind": "meeting",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:west-limestone:f1:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.019000000000000128
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-limestone",
+          "kind": "meeting",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:west-limestone:f1:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-limestone",
+          "kind": "breakroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:west-limestone:f1:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.019000000000000128
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-limestone",
+          "kind": "breakroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:west-limestone:f1:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-limestone",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:west-limestone:f1:room:4",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-limestone",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:west-limestone:f1:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.019000000000000128
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "checks": [
+        {
+          "building": "l11v2:20261014:0:0:reference:east-stone",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-stone:f0:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.01899999999999999
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-stone",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-stone:f0:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-stone",
+          "kind": "living",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-stone:f0:room:1",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-stone",
+          "kind": "living",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-stone:f0:room:1",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.01899999999999999
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-stone",
+          "kind": "bedroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-stone:f0:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.01899999999999999
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-stone",
+          "kind": "bedroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-stone:f0:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.01899999999999999
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-stone",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-stone:f0:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.01899999999999999
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-stone",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-stone:f0:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.01899999999999999
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-stone",
+          "kind": "living",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:east-stone:f1:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.019000000000000128
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-stone",
+          "kind": "living",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:east-stone:f1:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-stone",
+          "kind": "bedroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:east-stone:f1:room:1",
+          "direction": "forward",
+          "error": 0.003333333333500832,
+          "heightError": 0.019000000000000128
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-stone",
+          "kind": "bedroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:east-stone:f1:room:1",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.019000000000000128
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-stone",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:east-stone:f1:room:2",
+          "direction": "forward",
+          "error": 0.003333333333500832,
+          "heightError": 0.019000000000000128
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-stone",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:east-stone:f1:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.019000000000000128
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "checks": [
+        {
+          "building": "l11v2:20261014:0:0:reference:east-ribbon",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-ribbon:f0:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.01899999999999999
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-ribbon",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-ribbon:f0:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-ribbon",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-ribbon:f0:room:1",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-ribbon",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-ribbon:f0:room:1",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.01899999999999999
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-ribbon",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-ribbon:f0:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.01899999999999999
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-ribbon",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-ribbon:f0:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-ribbon",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-ribbon:f0:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.01899999999999999
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-ribbon",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-ribbon:f0:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-ribbon",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-ribbon:f0:room:4",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.01899999999999999
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-ribbon",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-ribbon:f0:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-ribbon",
+          "kind": "workspace",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:east-ribbon:f1:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.019000000000000128
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-ribbon",
+          "kind": "workspace",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:east-ribbon:f1:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-ribbon",
+          "kind": "meeting",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:east-ribbon:f1:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.019000000000000128
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-ribbon",
+          "kind": "meeting",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:east-ribbon:f1:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-ribbon",
+          "kind": "breakroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:east-ribbon:f1:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.019000000000000128
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-ribbon",
+          "kind": "breakroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:east-ribbon:f1:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-ribbon",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:east-ribbon:f1:room:4",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.019000000000000128
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-ribbon",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:east-ribbon:f1:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "checks": [
+        {
+          "building": "l11v2:20261014:0:0:reference:west-ribbon",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-ribbon:f0:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334724102,
+          "heightError": 0.014999999999999993
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-ribbon",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-ribbon:f0:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.014999999999999993
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-ribbon",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-ribbon:f0:room:1",
+          "direction": "forward",
+          "error": 0.0033333333334724102,
+          "heightError": 0.014999999999999993
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-ribbon",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-ribbon:f0:room:1",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.014999999999999993
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-ribbon",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-ribbon:f0:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334724102,
+          "heightError": 0.014999999999999993
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-ribbon",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-ribbon:f0:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.014999999999999993
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-ribbon",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-ribbon:f0:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334724102,
+          "heightError": 0.014999999999999993
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-ribbon",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-ribbon:f0:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.014999999999999993
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-ribbon",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-ribbon:f0:room:4",
+          "direction": "forward",
+          "error": 0.0033333333334724102,
+          "heightError": 0.014999999999999993
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-ribbon",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-ribbon:f0:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.014999999999999993
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-ribbon",
+          "kind": "workspace",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:west-ribbon:f1:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334724102,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-ribbon",
+          "kind": "workspace",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:west-ribbon:f1:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-ribbon",
+          "kind": "meeting",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:west-ribbon:f1:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334724102,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-ribbon",
+          "kind": "meeting",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:west-ribbon:f1:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-ribbon",
+          "kind": "breakroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:west-ribbon:f1:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334724102,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-ribbon",
+          "kind": "breakroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:west-ribbon:f1:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-ribbon",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:west-ribbon:f1:room:4",
+          "direction": "forward",
+          "error": 0.0033333333334724102,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-ribbon",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:west-ribbon:f1:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "checks": [
+        {
+          "building": "l11v2:20261014:0:0:reference:east-glass",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-glass:f0:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-glass",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-glass:f0:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-glass",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-glass:f0:room:1",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-glass",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-glass:f0:room:1",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-glass",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-glass:f0:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-glass",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-glass:f0:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-glass",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-glass:f0:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-glass",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-glass:f0:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-glass",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-glass:f0:room:4",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-glass",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-glass:f0:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-glass",
+          "kind": "workspace",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:east-glass:f1:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-glass",
+          "kind": "workspace",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:east-glass:f1:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-glass",
+          "kind": "meeting",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:east-glass:f1:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-glass",
+          "kind": "meeting",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:east-glass:f1:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-glass",
+          "kind": "breakroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:east-glass:f1:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-glass",
+          "kind": "breakroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:east-glass:f1:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-glass",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:east-glass:f1:room:4",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-glass",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:east-glass:f1:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "checks": [
+        {
+          "building": "l11v2:20261014:0:0:reference:west-south",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-south:f0:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334724102,
+          "heightError": 0.014999999999999986
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-south",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-south:f0:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.014999999999999986
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-south",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-south:f0:room:1",
+          "direction": "forward",
+          "error": 0.0033333333334724102,
+          "heightError": 0.014999999999999986
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-south",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-south:f0:room:1",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.014999999999999986
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-south",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-south:f0:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334724102,
+          "heightError": 0.014999999999999986
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-south",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-south:f0:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.014999999999999986
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-south",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-south:f0:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334724102,
+          "heightError": 0.014999999999999986
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-south",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-south:f0:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.014999999999999986
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-south",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-south:f0:room:4",
+          "direction": "forward",
+          "error": 0.0033333333334724102,
+          "heightError": 0.014999999999999986
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:west-south",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:west-south:f0:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.014999999999999986
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "checks": [
+        {
+          "building": "l11v2:20261014:0:0:reference:east-south",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-south:f0:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-south",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-south:f0:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-south",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-south:f0:room:1",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-south",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-south:f0:room:1",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-south",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-south:f0:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-south",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-south:f0:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-south",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-south:f0:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-south",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-south:f0:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-south",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-south:f0:room:4",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:east-south",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:east-south:f0:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "checks": [
+        {
+          "building": "l11v2:20261014:0:0:reference:brick-housing",
+          "kind": "living",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:brick-housing:f0:room:0",
+          "direction": "forward",
+          "error": 0.0033333333333303017,
+          "heightError": 0.014999999999999986
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:brick-housing",
+          "kind": "living",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:brick-housing:f0:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.014999999999999986
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:brick-housing",
+          "kind": "bedroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:brick-housing:f0:room:1",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.014999999999999986
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:brick-housing",
+          "kind": "bedroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:brick-housing:f0:room:1",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.014999999999999986
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:brick-housing",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:brick-housing:f0:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.014999999999999986
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:brick-housing",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:brick-housing:f0:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.014999999999999986
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:brick-housing",
+          "kind": "studio",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:brick-housing:f0:room:25",
+          "direction": "forward",
+          "error": 0.0033333333333303017,
+          "heightError": 0.014999999999999986
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:brick-housing",
+          "kind": "studio",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:brick-housing:f0:room:25",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.014999999999999986
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:brick-housing",
+          "kind": "living",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:brick-housing:f1:room:0",
+          "direction": "forward",
+          "error": 0.0033333333333303017,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:brick-housing",
+          "kind": "living",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:brick-housing:f1:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:brick-housing",
+          "kind": "bedroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:brick-housing:f1:room:1",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:brick-housing",
+          "kind": "bedroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:brick-housing:f1:room:1",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:brick-housing",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:brick-housing:f1:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:brick-housing",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:brick-housing:f1:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:brick-housing",
+          "kind": "studio",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:brick-housing:f1:room:25",
+          "direction": "forward",
+          "error": 0.0033333333333303017,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:brick-housing",
+          "kind": "studio",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:brick-housing:f1:room:25",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:brick-housing",
+          "kind": "living",
+          "floor": 2,
+          "room": "l11v2:20261014:0:0:reference:brick-housing:f2:room:0",
+          "direction": "forward",
+          "error": 0.0033333333333303017,
+          "heightError": 0.01499999999999968
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:brick-housing",
+          "kind": "living",
+          "floor": 2,
+          "room": "l11v2:20261014:0:0:reference:brick-housing:f2:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.01499999999999968
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:brick-housing",
+          "kind": "bedroom",
+          "floor": 2,
+          "room": "l11v2:20261014:0:0:reference:brick-housing:f2:room:1",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.01499999999999968
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:brick-housing",
+          "kind": "bedroom",
+          "floor": 2,
+          "room": "l11v2:20261014:0:0:reference:brick-housing:f2:room:1",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.01499999999999968
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:brick-housing",
+          "kind": "bathroom",
+          "floor": 2,
+          "room": "l11v2:20261014:0:0:reference:brick-housing:f2:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.01499999999999968
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:brick-housing",
+          "kind": "bathroom",
+          "floor": 2,
+          "room": "l11v2:20261014:0:0:reference:brick-housing:f2:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.01499999999999968
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:brick-housing",
+          "kind": "studio",
+          "floor": 2,
+          "room": "l11v2:20261014:0:0:reference:brick-housing:f2:room:25",
+          "direction": "forward",
+          "error": 0.0033333333333303017,
+          "heightError": 0.01499999999999968
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:brick-housing",
+          "kind": "studio",
+          "floor": 2,
+          "room": "l11v2:20261014:0:0:reference:brick-housing:f2:room:25",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.01499999999999968
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "checks": [
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f0:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f0:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f0:room:1",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f0:room:1",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f0:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f0:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f0:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f0:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f0:room:4",
+          "direction": "forward",
+          "error": 0.0033333333333303017,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f0:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "workspace",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f1:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000568
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "workspace",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f1:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000568
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "meeting",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f1:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000568
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "meeting",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f1:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000568
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "breakroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f1:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000568
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "breakroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f1:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000568
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f1:room:4",
+          "direction": "forward",
+          "error": 0.0033333333333303017,
+          "heightError": 0.015000000000000568
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f1:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000568
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "checks": [
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f0:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f0:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f0:room:1",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f0:room:1",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f0:room:2",
+          "direction": "forward",
+          "error": 0.0033333333333303017,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f0:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f0:room:3",
+          "direction": "forward",
+          "error": 0.0033333333333303017,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f0:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f0:room:4",
+          "direction": "forward",
+          "error": 0.0033333333333303017,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f0:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "workspace",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f1:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "workspace",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f1:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "meeting",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f1:room:2",
+          "direction": "forward",
+          "error": 0.0033333333333303017,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "meeting",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f1:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "breakroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f1:room:3",
+          "direction": "forward",
+          "error": 0.0033333333333303017,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "breakroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f1:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f1:room:4",
+          "direction": "forward",
+          "error": 0.0033333333333303017,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f1:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "checks": [
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f0:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f0:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f0:room:1",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f0:room:1",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f0:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f0:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f0:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f0:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f0:room:4",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f0:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "workspace",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f1:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "workspace",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f1:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "meeting",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f1:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "meeting",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f1:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "breakroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f1:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "breakroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f1:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f1:room:4",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f1:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "checks": [
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-mid",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-mid:f0:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-mid",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-mid:f0:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-mid",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-mid:f0:room:1",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-mid",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-mid:f0:room:1",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-mid",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-mid:f0:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-mid",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-mid:f0:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-mid",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-mid:f0:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-mid",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-mid:f0:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-mid",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-mid:f0:room:4",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-mid",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-mid:f0:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "checks": [
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-mid",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-mid:f0:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-mid",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-mid:f0:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-mid",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-mid:f0:room:1",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-mid",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-mid:f0:room:1",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-mid",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-mid:f0:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-mid",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-mid:f0:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-mid",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-mid:f0:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-mid",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-mid:f0:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-mid",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-mid:f0:room:4",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-mid",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-mid:f0:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-mid",
+          "kind": "workspace",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-east-mid:f1:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-mid",
+          "kind": "workspace",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-east-mid:f1:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-mid",
+          "kind": "meeting",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-east-mid:f1:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-mid",
+          "kind": "meeting",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-east-mid:f1:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-mid",
+          "kind": "breakroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-east-mid:f1:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-mid",
+          "kind": "breakroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-east-mid:f1:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-mid",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-east-mid:f1:room:4",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-mid",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-east-mid:f1:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "checks": [
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-far",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-far:f0:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-far",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-far:f0:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-far",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-far:f0:room:1",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-far",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-far:f0:room:1",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-far",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-far:f0:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-far",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-far:f0:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-far",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-far:f0:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-far",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-far:f0:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-far",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-far:f0:room:4",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-far",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-far:f0:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "checks": [
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-far",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-far:f0:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-far",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-far:f0:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-far",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-far:f0:room:1",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-far",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-far:f0:room:1",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-far",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-far:f0:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-far",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-far:f0:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-far",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-far:f0:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-far",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-far:f0:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-far",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-far:f0:room:4",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-far",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-far:f0:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        }
+      ]
+    }
+  ],
+  "walkStart": {
+    "x": 272,
+    "y": 403,
+    "revision": 95
+  },
+  "walking": {
+    "label": "11:open",
+    "median": 8.30000000000291,
+    "p95": 16.80000000000291,
+    "max": 1016.9000000000087,
+    "p99": 41.70000000001164,
+    "frames": 2365,
+    "over16ms": 206,
+    "over33ms": 40,
+    "cpuMedian": 7.200000002980232,
+    "cpuP95": 11.700000002980232,
+    "gpuMedian": 7.837696,
+    "gpuP95": 11.76576,
+    "gpuSamples": 2363,
+    "draws": 269,
+    "triangles": 844273,
+    "memory": {
+      "geometries": 1732,
+      "textures": 89
+    },
+    "programs": 128,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "walkEnd": {
+    "x": 272,
+    "y": 327.32166666665955,
+    "revision": 97
+  },
+  "cycles": [
+    {
+      "memory": {
+        "geometries": 1533,
+        "textures": 97
+      },
+      "programs": 128,
+      "buildings": 6,
+      "references": 6,
+      "roots": 32,
+      "pending": {
+        "missing": 0,
+        "chunk": false,
+        "distant": false,
+        "finite": false,
+        "flash": false,
+        "moth": false,
+        "items": 0,
+        "compile": false,
+        "retired": 0,
+        "textures": 0
+      },
+      "geometryAudit": {
+        "scene": {
+          "cpu": 2002,
+          "gpu": 1514
+        },
+        "entities": {
+          "cpu": 30,
+          "gpu": 30,
+          "byType": {
+            "hound": {
+              "models": 1,
+              "cpu": 24,
+              "gpu": 24
+            },
+            "deathmoth": {
+              "models": 1,
+              "cpu": 5,
+              "gpu": 5
+            },
+            "faceling": {
+              "models": 1,
+              "cpu": 1,
+              "gpu": 1
+            }
+          }
+        },
+        "city": {
+          "cpu": 1543,
+          "gpu": 1147
+        },
+        "buildings": {
+          "cpu": 358,
+          "gpu": 275
+        },
+        "offScene": 19
+      }
+    },
+    {
+      "memory": {
+        "geometries": 1533,
+        "textures": 103
+      },
+      "programs": 128,
+      "buildings": 6,
+      "references": 6,
+      "roots": 32,
+      "pending": {
+        "missing": 0,
+        "chunk": false,
+        "distant": false,
+        "finite": false,
+        "flash": false,
+        "moth": false,
+        "items": 0,
+        "compile": false,
+        "retired": 0,
+        "textures": 0
+      },
+      "geometryAudit": {
+        "scene": {
+          "cpu": 2002,
+          "gpu": 1514
+        },
+        "entities": {
+          "cpu": 30,
+          "gpu": 30,
+          "byType": {
+            "hound": {
+              "models": 1,
+              "cpu": 24,
+              "gpu": 24
+            },
+            "deathmoth": {
+              "models": 1,
+              "cpu": 5,
+              "gpu": 5
+            },
+            "faceling": {
+              "models": 1,
+              "cpu": 1,
+              "gpu": 1
+            }
+          }
+        },
+        "city": {
+          "cpu": 1543,
+          "gpu": 1147
+        },
+        "buildings": {
+          "cpu": 358,
+          "gpu": 275
+        },
+        "offScene": 19
+      }
+    },
+    {
+      "memory": {
+        "geometries": 1533,
+        "textures": 108
+      },
+      "programs": 128,
+      "buildings": 6,
+      "references": 6,
+      "roots": 32,
+      "pending": {
+        "missing": 0,
+        "chunk": false,
+        "distant": false,
+        "finite": false,
+        "flash": false,
+        "moth": false,
+        "items": 0,
+        "compile": false,
+        "retired": 0,
+        "textures": 0
+      },
+      "geometryAudit": {
+        "scene": {
+          "cpu": 2002,
+          "gpu": 1514
+        },
+        "entities": {
+          "cpu": 30,
+          "gpu": 30,
+          "byType": {
+            "hound": {
+              "models": 1,
+              "cpu": 24,
+              "gpu": 24
+            },
+            "deathmoth": {
+              "models": 1,
+              "cpu": 5,
+              "gpu": 5
+            },
+            "faceling": {
+              "models": 1,
+              "cpu": 1,
+              "gpu": 1
+            }
+          }
+        },
+        "city": {
+          "cpu": 1543,
+          "gpu": 1147
+        },
+        "buildings": {
+          "cpu": 358,
+          "gpu": 275
+        },
+        "offScene": 19
+      }
+    }
+  ],
+  "ok": false,
+  "failure": "Error: Reference district resource lifetime/dedup regression",
+  "errors": [],
+  "failureState": {
+    "pending": {
+      "missing": 0,
+      "chunk": false,
+      "distant": false,
+      "finite": false,
+      "flash": false,
+      "moth": false,
+      "items": 0,
+      "compile": false,
+      "retired": 0,
+      "textures": 0
+    },
+    "stats": {
+      "label": "11:open",
+      "median": 8.299999999988358,
+      "p95": 16.70000000001164,
+      "max": 245.69999999998254,
+      "p99": 29.20000000001164,
+      "frames": 2365,
+      "over16ms": 159,
+      "over33ms": 20,
+      "cpuMedian": 7.200000002980232,
+      "cpuP95": 11.700000002980232,
+      "gpuMedian": 7.837696,
+      "gpuP95": 11.76576,
+      "gpuSamples": 2365,
+      "draws": 1677,
+      "triangles": 2999666,
+      "memory": {
+        "geometries": 1533,
+        "textures": 108
+      },
+      "programs": 128,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "revision": 107,
+    "contextLost": false,
+    "programs": [
+      {
+        "id": 0,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 1,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 2,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 14,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 15,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 16,
+        "name": "OutputShader",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 17,
+        "name": "unspecified",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 18,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 19,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 20,
+        "name": "",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 21,
+        "name": "",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 22,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 23,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 24,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 25,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 26,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 27,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 28,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 29,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 30,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 54,
+        "name": "l11-metal:#7a8581:false:realistic",
+        "used": 4,
+        "ready": true
+      },
+      {
+        "id": 32,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 53,
+        "name": "l11-rubber:#202728:false:realistic",
+        "used": 5,
+        "ready": true
+      },
+      {
+        "id": 34,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 35,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 36,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 37,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 38,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 39,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 40,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 41,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 42,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 43,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 59,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 58,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 57,
+        "name": "l11-canal-water-realistic:false",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 56,
+        "name": "l11-canal-water-realistic:false",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 55,
+        "name": "l11-generated-full-signs",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 49,
+        "name": "l11-concrete:#8d918b:false:realistic",
+        "used": 39,
+        "ready": true
+      },
+      {
+        "id": 50,
+        "name": "l11-asphalt:#cad0d0:false:realistic",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 51,
+        "name": "l11-paint:#eee9d6:false:realistic",
+        "used": 18,
+        "ready": true
+      },
+      {
+        "id": 52,
+        "name": "l11-glass:#f4f2da:false:realistic",
+        "used": 4,
+        "ready": true
+      },
+      {
+        "id": 60,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 61,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 62,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 63,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 64,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 65,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 66,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 67,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 68,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 139,
+        "name": "l11-cc0-leaves",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 137,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 134,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 135,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 73,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 74,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 75,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 76,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 77,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 140,
+        "name": "",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 146,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 141,
+        "name": "",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 145,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 144,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 133,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 84,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 85,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 86,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 87,
+        "name": "",
+        "used": 5,
+        "ready": true
+      },
+      {
+        "id": 88,
+        "name": "l11-plaster:#ede5d3:false:realistic",
+        "used": 56,
+        "ready": true
+      },
+      {
+        "id": 89,
+        "name": "l11-sealedglass:#29424c:false:realistic",
+        "used": 33,
+        "ready": true
+      },
+      {
+        "id": 90,
+        "name": "l11-brick:#acadaa:false:realistic",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 91,
+        "name": "l11-cc0-leaves",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 92,
+        "name": "l11-asphalt:#cad0d0:false:realistic",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 93,
+        "name": "l11-architectural-glass",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 94,
+        "name": "l11-canal-water-realistic:true",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 95,
+        "name": "l11-canal-water-realistic:true",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 96,
+        "name": "l11-generated-full-signs",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 97,
+        "name": "l11-glass:#f4f2da:false:realistic",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 98,
+        "name": "EquirectangularToCubeUV",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 99,
+        "name": "EquirectangularToCubeUV",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 100,
+        "name": "PMREMGGXConvolution",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 138,
+        "name": "l11-car-paint",
+        "used": 5,
+        "ready": true
+      },
+      {
+        "id": 136,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 132,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 104,
+        "name": "",
+        "used": 154,
+        "ready": true
+      },
+      {
+        "id": 149,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 142,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 143,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 108,
+        "name": "l11-sealedglass:#29424c:false:realistic",
+        "used": 214,
+        "ready": true
+      },
+      {
+        "id": 109,
+        "name": "l11-plaster:#ede5d3:false:realistic",
+        "used": 257,
+        "ready": true
+      },
+      {
+        "id": 110,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 111,
+        "name": "l11-asphalt:#cad0d0:false:realistic",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 112,
+        "name": "l11-brick:#acadaa:false:realistic",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 113,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 114,
+        "name": "l11-architectural-glass",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 115,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 116,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 117,
+        "name": "l11-cc0-leaves",
+        "used": 4,
+        "ready": true
+      },
+      {
+        "id": 118,
+        "name": "l11-generated-full-signs",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 119,
+        "name": "l11-canal-water-realistic:true",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 120,
+        "name": "l11-canal-water-realistic:true",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 121,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 122,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 123,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 124,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 125,
+        "name": "l11-glass:#f4f2da:false:realistic",
+        "used": 9,
+        "ready": true
+      },
+      {
+        "id": 126,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 127,
+        "name": "",
+        "used": 4,
+        "ready": true
+      },
+      {
+        "id": 128,
+        "name": "",
+        "used": 51,
+        "ready": true
+      },
+      {
+        "id": 129,
+        "name": "l11-propwood:#f5f2ee:true:realistic",
+        "used": 55,
+        "ready": true
+      },
+      {
+        "id": 130,
+        "name": "l11-plastic:#393b2f:true:realistic",
+        "used": 54,
+        "ready": true
+      },
+      {
+        "id": 131,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 308,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 309,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 310,
+        "name": "",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 311,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 312,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 313,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 314,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 315,
+        "name": "",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 316,
+        "name": "retro avatar / body",
+        "used": 3,
+        "ready": true
+      },
+      {
+        "id": 317,
+        "name": "retro avatar / solid",
+        "used": 2,
+        "ready": true
+      },
+      {
+        "id": 318,
+        "name": "retro avatar / hair",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 319,
+        "name": "retro avatar / glass",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 320,
+        "name": "retro avatar / glass",
+        "used": 1,
+        "ready": true
+      },
+      {
+        "id": 321,
+        "name": "",
+        "used": 1,
+        "ready": true
+      }
+    ]
+  },
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "networkErrors": [
+    {
+      "requestId": "74564.12",
+      "loaderId": "E28A642F20924ACA24927E4C76C299DD",
+      "timestamp": 116284.510389,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:14659/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Wed, 14 Oct 2026 11:53:25 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 169,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 14659,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 116284.357752,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.314,
+          "sendEnd": 0.37,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 152.039,
+          "receiveHeadersEnd": 152.121
+        },
+        "responseTime": 1791978805454.178,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "18F75F309FEB7B808123C68A4CDE9A23"
+    },
+    {
+      "requestId": "74564.583",
+      "loaderId": "E28A642F20924ACA24927E4C76C299DD",
+      "timestamp": 116360.961702,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:14659/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Wed, 14 Oct 2026 11:54:41 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": false,
+        "connectionId": 2644,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 14659,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 116360.944187,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": 0.674,
+          "dnsEnd": 0.684,
+          "connectStart": 0.684,
+          "connectEnd": 1.221,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 1.272,
+          "sendEnd": 1.314,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 14.141,
+          "receiveHeadersEnd": 14.31
+        },
+        "responseTime": 1791978881902.715,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "18F75F309FEB7B808123C68A4CDE9A23"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-07",
+  "scope": "CPU-only regressions; no browser, performance, or multiplayer tests",
+  "results": [
+    { "command": "npm run check:item-batches", "exitCode": 0, "summary": "item batches regression passed: 29 checks" },
+    { "command": "npm run check:static-colors", "exitCode": 0, "summary": "static colors regression passed: 29 checks" },
+    { "command": "npm run check:instance-colors", "exitCode": 0, "summary": { "checks": 747, "cancellationPoints": 9, "cancelledGeometries": 5, "cancelledInstances": 5, "totalYields": 8 } },
+    { "command": "npm run check:texture-images", "exitCode": 0, "summary": "texture image lifecycle regression passed: 96 checks" },
+    { "command": "npm run check:model-warmup", "exitCode": 0, "summary": { "passed": 66 } },
+    { "command": "npm run check:program-completion", "exitCode": 0, "summary": { "passed": 54 } },
+    { "command": "npm run check:static-batch-job", "exitCode": 0, "summary": { "passed": 11621, "yields": 145, "cancelledGeometries": 1247, "cancelledInstances": 15, "partialInstanceCancellation": true, "sourceDisposals": 0 } },
+    { "command": "npm run check:six-items", "exitCode": 0, "summary": {
+      "luckymilk": { "classicTriangles": 608, "realisticTriangles": 608, "meshes": 3 },
+      "capacitor": { "classicTriangles": 464, "realisticTriangles": 464, "meshes": 3 },
+      "skeleton": { "classicTriangles": 388, "realisticTriangles": 388, "meshes": 1 },
+      "rabbit": { "classicTriangles": 656, "realisticTriangles": 656, "meshes": 2 },
+      "pockets": { "classicTriangles": 1184, "realisticTriangles": 1184, "meshes": 2 },
+      "fuyouyu": { "classicTriangles": 640, "realisticTriangles": 640, "meshes": 2 }
+    } }
+  ]
+}

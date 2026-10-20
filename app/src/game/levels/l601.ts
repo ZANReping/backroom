@@ -27,7 +27,7 @@ export const L601: LevelDef = {
   entryAnim: 'step',
   containerBias: 0.35,
   entities: [
-    { type: 'partygoer', w: 20, min: 2, max: 4 },
+    { type: 'partygoer', w: 20, min: 2, max: 4 }, // 派对客：同批 2–4 只聚成一群（mapgen.placePartyPack，附带蛋糕/海报/大红旗诱饵）
     { type: 'windowent', w: 8, min: 1, max: 2 },
   ],
   items: [

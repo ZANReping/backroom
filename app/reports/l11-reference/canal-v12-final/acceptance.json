@@ -1,0 +1,984 @@
+{
+  "version": 12,
+  "runtime": "canal-v12-final",
+  "referenceSeed": 20261014,
+  "setup": {
+    "seed": 20261014,
+    "newGameSeed": 20259573,
+    "version": 12,
+    "buildings": 29,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "low": false,
+    "baseline": false,
+    "weather": "calm",
+    "time": 10,
+    "shadows": true
+  },
+  "originals": 9,
+  "crops": 27,
+  "checks": [
+    {
+      "command": "npm run build",
+      "status": "passed",
+      "log": "build.log",
+      "completed": "2026-10-15T06:44:30.039Z"
+    },
+    {
+      "command": "npm run check:l11",
+      "status": "passed",
+      "log": "generation.log",
+      "completed": "2026-10-15T06:25:36.934Z"
+    },
+    {
+      "command": "npm run check:l11-reference",
+      "status": "passed",
+      "log": "reference.log",
+      "completed": "2026-10-15T06:42:19.422Z"
+    },
+    {
+      "command": "npm run check:l11-architecture",
+      "status": "passed",
+      "log": "architecture.log",
+      "completed": "2026-10-15T06:42:25.611Z"
+    },
+    {
+      "command": "npm run check:l11-meshes",
+      "status": "passed",
+      "log": "meshes.log",
+      "completed": "2026-10-15T06:42:24.653Z"
+    },
+    {
+      "command": "npm run check:l11-collision",
+      "status": "passed",
+      "log": "collision.log",
+      "completed": "2026-10-15T06:40:36.344Z"
+    },
+    {
+      "command": "npm run check:l11-urban",
+      "status": "passed",
+      "log": "urban.log",
+      "completed": "2026-10-15T06:41:03.724Z"
+    },
+    {
+      "command": "npm run check:l11-map",
+      "status": "passed",
+      "log": "map.log",
+      "completed": "2026-10-15T06:40:35.129Z"
+    }
+  ],
+  "runtimeCommand": "node scripts/verify-l11-reference.mjs --label=canal-v12-final --case=03,31,34,35,36,37,38 --validate=quay-west-near,quay-west-annex,quay-east-near --rooms --architecture --random-cases=quay-service-wing,green-curtain --map --lifecycle",
+  "views": [
+    {
+      "id": "03-canal",
+      "world": [
+        760,
+        967.8,
+        1.3488329107481563
+      ],
+      "target": [
+        760,
+        780,
+        12
+      ],
+      "fov": 56,
+      "lighting": {
+        "exposure": 1.1789468532661187,
+        "meter": 0.470835999999677,
+        "outdoor": 0.9999999999999953,
+        "fogNear": 300,
+        "fogFar": 1800,
+        "sun": 3.35,
+        "msaa": 4,
+        "buffer": [
+          1920,
+          1080
+        ]
+      },
+      "performance": {
+        "label": "11:open",
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "max": 8.400000000001455,
+        "p99": 8.400000000001455,
+        "frames": 362,
+        "over16ms": 0,
+        "over33ms": 0,
+        "cpuMedian": 2.799999998882413,
+        "cpuP95": 5.700000001117587,
+        "gpuMedian": 3.540992,
+        "gpuP95": 8.311808,
+        "gpuSamples": 356,
+        "draws": 237,
+        "triangles": 1595391,
+        "memory": {
+          "geometries": 814,
+          "textures": 64
+        },
+        "programs": 87,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "id": "31-roof-link-oblique",
+      "world": [
+        795,
+        868,
+        0.3582002918577347
+      ],
+      "target": [
+        812,
+        894,
+        62
+      ],
+      "fov": 64,
+      "lighting": {
+        "exposure": 1.1789232453720073,
+        "meter": 0.4708359999999998,
+        "outdoor": 0.9999999999999996,
+        "fogNear": 300,
+        "fogFar": 1800,
+        "sun": 3.35,
+        "msaa": 4,
+        "buffer": [
+          1920,
+          1080
+        ]
+      },
+      "performance": {
+        "label": "11:open",
+        "median": 4.19999999999709,
+        "p95": 4.30000000000291,
+        "max": 4.400000000001455,
+        "p99": 4.30000000000291,
+        "frames": 372,
+        "over16ms": 0,
+        "over33ms": 0,
+        "cpuMedian": 2.099999999627471,
+        "cpuP95": 4.299999998882413,
+        "gpuMedian": 3.663872,
+        "gpuP95": 6.412288,
+        "gpuSamples": 368,
+        "draws": 144,
+        "triangles": 1477209,
+        "memory": {
+          "geometries": 830,
+          "textures": 70
+        },
+        "programs": 96,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "id": "34-quay-service-side",
+      "world": [
+        737,
+        880,
+        0.3449629942554685
+      ],
+      "target": [
+        713,
+        848,
+        14
+      ],
+      "fov": 68,
+      "lighting": {
+        "exposure": 1.1789232453720038,
+        "meter": 0.4708359999999998,
+        "outdoor": 0.9999999999999996,
+        "fogNear": 300,
+        "fogFar": 1800,
+        "sun": 3.35,
+        "msaa": 4,
+        "buffer": [
+          1920,
+          1080
+        ]
+      },
+      "performance": {
+        "label": "11:open",
+        "median": 4.299999999995634,
+        "p95": 12.5,
+        "max": 16.799999999995634,
+        "p99": 12.599999999998545,
+        "frames": 237,
+        "over16ms": 2,
+        "over33ms": 0,
+        "cpuMedian": 5.400000000372529,
+        "cpuP95": 11.800000000745058,
+        "gpuMedian": 6.152192,
+        "gpuP95": 9.870336,
+        "gpuSamples": 235,
+        "draws": 994,
+        "triangles": 3172638,
+        "memory": {
+          "geometries": 1177,
+          "textures": 73
+        },
+        "programs": 98,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "id": "35-quay-balcony-front",
+      "world": [
+        738,
+        825,
+        0.45933213784506677
+      ],
+      "target": [
+        710,
+        852,
+        16
+      ],
+      "fov": 72,
+      "lighting": {
+        "exposure": 1.1789232453720038,
+        "meter": 0.4708359999999998,
+        "outdoor": 0.9999999999999996,
+        "fogNear": 300,
+        "fogFar": 1800,
+        "sun": 3.35,
+        "msaa": 4,
+        "buffer": [
+          1920,
+          1080
+        ]
+      },
+      "performance": {
+        "label": "11:open",
+        "median": 8.10000000000582,
+        "p95": 12.5,
+        "max": 16.69999999999709,
+        "p99": 16.60000000000582,
+        "frames": 229,
+        "over16ms": 2,
+        "over33ms": 0,
+        "cpuMedian": 5.5,
+        "cpuP95": 12.299999998882413,
+        "gpuMedian": 6.897664,
+        "gpuP95": 9.688064,
+        "gpuSamples": 226,
+        "draws": 919,
+        "triangles": 3069766,
+        "memory": {
+          "geometries": 1174,
+          "textures": 76
+        },
+        "programs": 100,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "id": "36-green-mullions",
+      "world": [
+        720,
+        931,
+        0.3343744434119065
+      ],
+      "target": [
+        701,
+        916,
+        17
+      ],
+      "fov": 70,
+      "lighting": {
+        "exposure": 1.1789232453720038,
+        "meter": 0.4708359999999998,
+        "outdoor": 0.9999999999999996,
+        "fogNear": 300,
+        "fogFar": 1800,
+        "sun": 3.35,
+        "msaa": 4,
+        "buffer": [
+          1920,
+          1080
+        ]
+      },
+      "performance": {
+        "label": "11:open",
+        "median": 8.19999999999709,
+        "p95": 12.599999999991269,
+        "max": 100.10000000000582,
+        "p99": 20.89999999999418,
+        "frames": 205,
+        "over16ms": 4,
+        "over33ms": 2,
+        "cpuMedian": 5.699999999254942,
+        "cpuP95": 10.400000000372529,
+        "gpuMedian": 7.675904,
+        "gpuP95": 10.91072,
+        "gpuSamples": 203,
+        "draws": 1124,
+        "triangles": 2567940,
+        "memory": {
+          "geometries": 925,
+          "textures": 81
+        },
+        "programs": 100,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "id": "37-quay-annex-interior",
+      "world": [
+        707.2,
+        834.175,
+        0.33789822019919175
+      ],
+      "target": [
+        707.2,
+        829.15,
+        1.937898220199192
+      ],
+      "fov": 78,
+      "lighting": {
+        "exposure": 1.6511795962107187,
+        "meter": 0.14231457271060205,
+        "outdoor": 2.370153086455075e-8,
+        "fogNear": 300,
+        "fogFar": 1800,
+        "sun": 3.35,
+        "msaa": 4,
+        "buffer": [
+          1920,
+          1080
+        ]
+      },
+      "performance": {
+        "label": "11:open",
+        "median": 4.19999999999709,
+        "p95": 8.39999999999418,
+        "max": 12.5,
+        "p99": 12.39999999999418,
+        "frames": 320,
+        "over16ms": 0,
+        "over33ms": 0,
+        "cpuMedian": 3.700000001117587,
+        "cpuP95": 8.300000000745058,
+        "gpuMedian": 4.092928,
+        "gpuP95": 7.647232,
+        "gpuSamples": 315,
+        "draws": 327,
+        "triangles": 1442061,
+        "memory": {
+          "geometries": 1123,
+          "textures": 82
+        },
+        "programs": 101,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "id": "38-quay-annex-rear",
+      "world": [
+        659,
+        850,
+        0.3296155234865972
+      ],
+      "target": [
+        669,
+        846,
+        13
+      ],
+      "fov": 75,
+      "lighting": {
+        "exposure": 1.1789359367625867,
+        "meter": 0.47082016228395657,
+        "outdoor": 0.999999924443696,
+        "fogNear": 300,
+        "fogFar": 1800,
+        "sun": 3.35,
+        "msaa": 4,
+        "buffer": [
+          1920,
+          1080
+        ]
+      },
+      "performance": {
+        "label": "11:open",
+        "median": 4.19999999999709,
+        "p95": 8.30000000000291,
+        "max": 8.5,
+        "p99": 8.400000000008731,
+        "frames": 334,
+        "over16ms": 0,
+        "over33ms": 0,
+        "cpuMedian": 4,
+        "cpuP95": 6.899999998509884,
+        "gpuMedian": 3.588096,
+        "gpuP95": 8.14592,
+        "gpuSamples": 331,
+        "draws": 313,
+        "triangles": 1586583,
+        "memory": {
+          "geometries": 1073,
+          "textures": 88
+        },
+        "programs": 100,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    }
+  ],
+  "ordinary": [
+    {
+      "kind": "quay-service-wing",
+      "seed": 42,
+      "id": "l11v2:42:0:0:block:9:lot:0:1",
+      "recipe": "quay-west-annex",
+      "architecture": "quay-service-wing",
+      "validation": {
+        "ok": true,
+        "entrances": [
+          {
+            "id": "l11v2:42:0:0:block:9:lot:0:1",
+            "error": 0.05333333333305745,
+            "local": [
+              6.4466666666669425,
+              5.723333333333358
+            ],
+            "rooms": [
+              9
+            ],
+            "doors": 9,
+            "flights": []
+          }
+        ]
+      },
+      "world": [
+        146,
+        325.39000000000004,
+        0.23484893814039373
+      ],
+      "target": [
+        169.83333333333334,
+        336.5,
+        16.099999999999998
+      ],
+      "stats": {
+        "label": "11:open",
+        "median": 8.400000000023283,
+        "p95": 16.70000000001164,
+        "max": 154.10000000003492,
+        "p99": 21,
+        "frames": 1000,
+        "over16ms": 98,
+        "over33ms": 1,
+        "cpuMedian": 13.600000001490116,
+        "cpuP95": 40.09999999962747,
+        "gpuMedian": 13.292544,
+        "gpuP95": 26.46016,
+        "gpuSamples": 1165,
+        "draws": 745,
+        "triangles": 1787661,
+        "memory": {
+          "geometries": 2328,
+          "textures": 112
+        },
+        "programs": 107,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "kind": "green-curtain",
+      "seed": 42,
+      "id": "l11v2:42:-1:-1:block:11:lot:0:2",
+      "recipe": "quay-west-near",
+      "architecture": "canal-portico",
+      "sign": {
+        "id": "clinic",
+        "mount": "blade",
+        "side": "w"
+      },
+      "validation": {
+        "ok": true,
+        "entrances": [
+          {
+            "id": "l11v2:42:-1:-1:block:11:lot:0:2",
+            "error": 0.05333333333305745,
+            "local": [
+              1.4466666666669425,
+              16.833349999999996
+            ],
+            "rooms": [
+              8,
+              8
+            ],
+            "doors": 16,
+            "flights": [
+              {
+                "flight": 0,
+                "error": 0.0399999999992815,
+                "height": 3.015,
+                "returnError": 0.05666666666661513,
+                "returnHeight": 0.015
+              }
+            ]
+          }
+        ]
+      },
+      "world": [
+        -627,
+        -649.8333166666666,
+        -0.034167317201729164
+      ],
+      "target": [
+        -598.5,
+        -649.8333333333333,
+        36.8
+      ],
+      "stats": {
+        "label": "11:open",
+        "median": 4.2999999999883585,
+        "p95": 12.5,
+        "max": 683.2999999999884,
+        "p99": 16.70000000001164,
+        "frames": 1000,
+        "over16ms": 13,
+        "over33ms": 1,
+        "cpuMedian": 13.600000001490116,
+        "cpuP95": 40.09999999962747,
+        "gpuMedian": 13.292544,
+        "gpuP95": 26.46016,
+        "gpuSamples": 1165,
+        "draws": 431,
+        "triangles": 2046004,
+        "memory": {
+          "geometries": 1960,
+          "textures": 114
+        },
+        "programs": 107,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    }
+  ],
+  "entrances": [
+    {
+      "ok": true,
+      "entrances": [
+        {
+          "id": "l11v2:20261014:0:0:reference:quay-west-near",
+          "error": 0.05333333333305745,
+          "local": [
+            56.55333333333306,
+            26
+          ],
+          "rooms": [
+            13,
+            13
+          ],
+          "doors": 26,
+          "flights": [
+            {
+              "flight": 0,
+              "error": 0.0399999999992815,
+              "height": 3.0150000000000006,
+              "returnError": 0.056666666666728815,
+              "returnHeight": 0.015000000000000013
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "entrances": [
+        {
+          "id": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "error": 0.05333333333305745,
+          "local": [
+            45.55333333333306,
+            31.539999999999964
+          ],
+          "rooms": [
+            12,
+            12
+          ],
+          "doors": 24,
+          "flights": [
+            {
+              "flight": 0,
+              "error": 0.0399999999992815,
+              "height": 3.015,
+              "returnError": 0.056666666666728815,
+              "returnHeight": 0.015000000000000013
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "entrances": [
+        {
+          "id": "l11v2:20261014:0:0:reference:quay-east-near",
+          "error": 0.046666666665828416,
+          "local": [
+            -7.443333333333385,
+            58.289999999999964
+          ],
+          "rooms": [
+            26,
+            26
+          ],
+          "doors": 52,
+          "flights": [
+            {
+              "flight": 0,
+              "error": 0.0399999999992815,
+              "height": 3.0149999999999997,
+              "returnError": 0.056666666666728815,
+              "returnHeight": 0.014999999999999902
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "roomWalks": 54,
+  "civil": {
+    "ok": true,
+    "walks": [
+      {
+        "start": 724,
+        "end": 800,
+        "error": 0.06666666665955745
+      },
+      {
+        "start": 800,
+        "end": 724,
+        "error": 0.06666666665955745
+      }
+    ],
+    "piers": 2,
+    "promenades": [
+      {
+        "x": 726,
+        "start": 838,
+        "end": 905,
+        "error": 0.07666666666045785
+      },
+      {
+        "x": 726,
+        "start": 905,
+        "end": 838,
+        "error": 0.07666666666045785
+      },
+      {
+        "x": 794,
+        "start": 838,
+        "end": 905,
+        "error": 0.07666666666045785
+      },
+      {
+        "x": 794,
+        "start": 905,
+        "end": 838,
+        "error": 0.07666666666045785
+      }
+    ],
+    "externalStairs": [
+      {
+        "target": [
+          716.695,
+          842.925,
+          1.8378982201991918
+        ],
+        "error": 0.05666666666616038,
+        "height": 1.8378982201991918
+      },
+      {
+        "target": [
+          714.445,
+          842.925,
+          1.8378982201991918
+        ],
+        "error": 0.040713467127854196,
+        "height": 1.8378982201991918
+      },
+      {
+        "target": [
+          714.445,
+          848.875,
+          3.337898220199192
+        ],
+        "error": 0.05578084253346431,
+        "height": 3.337898220199192
+      },
+      {
+        "target": [
+          714.445,
+          842.925,
+          1.8378982201991918
+        ],
+        "error": 0.05755380859194228,
+        "height": 1.969842664643636
+      },
+      {
+        "target": [
+          716.695,
+          842.925,
+          1.8378982201991918
+        ],
+        "error": 0.04073225249446638,
+        "height": 1.8378982201991918
+      },
+      {
+        "target": [
+          716.695,
+          848.875,
+          0.33789822019919175
+        ],
+        "error": 0.05576444933537603,
+        "height": 0.4698426646436362
+      }
+    ]
+  },
+  "map": {
+    "context": {
+      "kind": "city",
+      "id": "city",
+      "floor": 0,
+      "title": "无限城市"
+    },
+    "legend": "LEVEL 11 / CITY ATLAS无限城市城市地图街区 · 道路 · 建筑＋−跟随位置图例 LEGEND住宅办公商业工业公共道路主干道巷道步行岸道水系公园未探索▲当前位置↗已发现出口M地铁入口A档案馆●建筑入口▪可搜刮▪已搜刮区域图例 · 街区底色多层住宅区中层公寓区混合街区高层办公区工业与运河区市政公园区交通枢纽区仅显示已探索范围 · 街区底色表示区域用途拖动平移 · 滚轮 / ＋− 缩放 · 北向上开发：显示未探索城区 右键安全传送",
+    "worker": {
+      "clients": 2,
+      "worker": false,
+      "pending": 0,
+      "cached": 0,
+      "failed": 0
+    }
+  },
+  "walking": {
+    "label": "11:open",
+    "median": 16.60000000000582,
+    "p95": 45.80000000001746,
+    "max": 320.80000000001746,
+    "p99": 141.70000000001164,
+    "frames": 1165,
+    "over16ms": 552,
+    "over33ms": 115,
+    "cpuMedian": 13.600000001490116,
+    "cpuP95": 40.09999999962747,
+    "gpuMedian": 13.29152,
+    "gpuP95": 26.46016,
+    "gpuSamples": 1163,
+    "draws": 1048,
+    "triangles": 5946159,
+    "memory": {
+      "geometries": 1800,
+      "textures": 94
+    },
+    "programs": 107,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "cycles": [
+    {
+      "memory": {
+        "geometries": 1814,
+        "textures": 98
+      },
+      "nonPooledTextures": 77,
+      "cachedAvatarTextures": 21,
+      "pending": {
+        "missing": 0,
+        "chunk": false,
+        "distant": false,
+        "finite": false,
+        "flash": false,
+        "moth": false,
+        "items": 0,
+        "compile": false,
+        "retired": 0,
+        "textures": 0
+      },
+      "geometryAudit": {
+        "scene": {
+          "cpu": 2078,
+          "gpu": 1795
+        },
+        "entities": {
+          "cpu": 30,
+          "gpu": 25,
+          "byType": {
+            "hound": {
+              "models": 1,
+              "cpu": 24,
+              "gpu": 24
+            },
+            "deathmoth": {
+              "models": 1,
+              "cpu": 5,
+              "gpu": 0
+            },
+            "faceling": {
+              "models": 1,
+              "cpu": 1,
+              "gpu": 1
+            }
+          }
+        },
+        "city": {
+          "cpu": 1503,
+          "gpu": 1305
+        },
+        "buildings": {
+          "cpu": 425,
+          "gpu": 354
+        },
+        "offScene": 19
+      }
+    },
+    {
+      "memory": {
+        "geometries": 1814,
+        "textures": 101
+      },
+      "nonPooledTextures": 77,
+      "cachedAvatarTextures": 24,
+      "pending": {
+        "missing": 0,
+        "chunk": false,
+        "distant": false,
+        "finite": false,
+        "flash": false,
+        "moth": false,
+        "items": 0,
+        "compile": false,
+        "retired": 0,
+        "textures": 0
+      },
+      "geometryAudit": {
+        "scene": {
+          "cpu": 2078,
+          "gpu": 1795
+        },
+        "entities": {
+          "cpu": 30,
+          "gpu": 25,
+          "byType": {
+            "hound": {
+              "models": 1,
+              "cpu": 24,
+              "gpu": 24
+            },
+            "deathmoth": {
+              "models": 1,
+              "cpu": 5,
+              "gpu": 0
+            },
+            "faceling": {
+              "models": 1,
+              "cpu": 1,
+              "gpu": 1
+            }
+          }
+        },
+        "city": {
+          "cpu": 1503,
+          "gpu": 1305
+        },
+        "buildings": {
+          "cpu": 425,
+          "gpu": 354
+        },
+        "offScene": 19
+      }
+    },
+    {
+      "memory": {
+        "geometries": 1814,
+        "textures": 103
+      },
+      "nonPooledTextures": 77,
+      "cachedAvatarTextures": 26,
+      "pending": {
+        "missing": 0,
+        "chunk": false,
+        "distant": false,
+        "finite": false,
+        "flash": false,
+        "moth": false,
+        "items": 0,
+        "compile": false,
+        "retired": 0,
+        "textures": 0
+      },
+      "geometryAudit": {
+        "scene": {
+          "cpu": 2078,
+          "gpu": 1795
+        },
+        "entities": {
+          "cpu": 30,
+          "gpu": 25,
+          "byType": {
+            "hound": {
+              "models": 1,
+              "cpu": 24,
+              "gpu": 24
+            },
+            "deathmoth": {
+              "models": 1,
+              "cpu": 5,
+              "gpu": 0
+            },
+            "faceling": {
+              "models": 1,
+              "cpu": 1,
+              "gpu": 1
+            }
+          }
+        },
+        "city": {
+          "cpu": 1503,
+          "gpu": 1305
+        },
+        "buildings": {
+          "cpu": 425,
+          "gpu": 354
+        },
+        "offScene": 19
+      }
+    }
+  ],
+  "browser": "Chrome/155.0.8059.40",
+  "hardware": {
+    "vendor": "Google Inc. (NVIDIA)",
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+  },
+  "errors": [],
+  "networkErrors": [
+    {
+      "url": "http://127.0.0.1:8223/favicon.ico",
+      "status": 404
+    },
+    {
+      "url": "http://127.0.0.1:8223/favicon.ico",
+      "status": 404
+    }
+  ],
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "changes": [
+    "左岸小楼改为真实 L 形占地：少窗长墙沿岸延伸，玻璃翼楼向岸边凸出，折返外梯位于两体量之间。外梯的踏步、平台、斜向扶手和碰撞使用同一几何描述，平台接到墙面。",
+    "近处高楼改为更密的浅绿灰幕墙竖框；小楼长墙区分窄竖窗和短横窗，玻璃翼楼单独使用幕墙。移除这两类楼入口处未经照片支持的通用大招牌。",
+    "参考区两岸改为连续步行铺装；普通城市也会确定性生成步行岸道。机动车道交叉口保持连续，步道不生成车辆、停车标线或公交设施。外梯范围不再投放街道杂物。",
+    "可进入楼层、房间、门窗、内部楼梯和地图随实际 L 形占地生成，四种朝向共用同一规则。地图新增步行岸道颜色与图例。",
+    "保留上一轮店铺与屋顶连廊的结构修正，并复核连廊反向仰视。本轮没有重新生成标牌或添加噪点纹理。"
+  ],
+  "remaining": [
+    "原图中可观察的是长墙、凸出玻璃翼楼与暗槽楼梯的位置关系。当前 11 层、52×38m 占地、5m 凸出和外梯净宽是推定参数；背立面、室内房间、封闭服务门的位置也不是照片实测结果。",
+    "楼梯和立面结构已更正，但原图的细框比例、外梯实体侧板、窗帘与玻璃反光仍有差异。当前玻璃翼楼没有达到逐像素相同。",
+    "原图桥梁的绿色梁、岸边石柱分段栏杆、成片绿化与树冠形态仍需继续细化；当前运河总览的远景密度、岸线尺度及光照也与原图不同。",
+    "其余七张参考图已有原像素观察记录，尚未逐项完成新的模型还原。店铺和连廊的历史修正、文字可辨识边界见 v11 报告；本轮不能代表这些部分全部验收完成。",
+    "运行使用高画质与真实光照。移动长帧仍存在，不能宣称全场景稳定 60 FPS；本轮没有重新做低画质、经典光照和完整存档迁移的实机验收。"
+  ]
+}

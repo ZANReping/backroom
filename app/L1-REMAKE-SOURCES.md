@@ -22,6 +22,7 @@
 | 哥特段 | Canley，CC BY 4.0 | [Melbourne Uni underground carpark interior](https://commons.wikimedia.org/wiki/File:Melbourne_Uni_underground_carpark_interior.jpg) |
 | 衔尾段 | endrew，CC BY 3.0 | 原文署名 |
 | 花园段 | LaundryFan_04，CC BY 3.0 | 原文署名 |
+| 传说段（本次新增 `reference/L1/传说段.webp`） | Ohio Redevelopment Projects - ODSA，CC BY 2.0 | [Akron-Cascade Lofts (OHPTC)](https://www.flickr.com/photos/63837784@N08/6582904879/)；[Wikidot 授权记录](https://backrooms-wiki-cn.wikidot.com/level-1)，仅参考，不作游戏背景或材质 |
 | 小径走廊 | Municipal Archives of Trondheim，CC BY 2.0 | [Flickr 10998312184](https://www.flickr.com/photos/trondheim_byarkiv/10998312184/) |
 | 小径房间 | mythylcymene，CC0 | 原文署名 |
 | 板条箱 | Thelmadatter，CC BY 3.0 | [CratesHidalgoExpoMAP](https://commons.wikimedia.org/wiki/File:CratesHidalgoExpoMAP.jpg) |
@@ -31,6 +32,7 @@
 
 - Level 1 纹理来源与本地文件记录：[public/textures/l1/SOURCES.md](public/textures/l1/SOURCES.md)
 - Level 1 Poly Haven 植物叶片纹理来源与复现脚本：[public/textures/l1/polyhaven/SOURCES.md](public/textures/l1/polyhaven/SOURCES.md)
+- 传说段新增两套木材的颜色、OpenGL 法线、粗糙度（1K）：[来源及作者](public/textures/l1/fabled/SOURCES.md)，Guillaume Monsergent / Rob Tuytel，Poly Haven CC0；原图未修改，运行时调整色调与世界尺度 UV。
 
 ## 第四轮实现参考与原创资产
 

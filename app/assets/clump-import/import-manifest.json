@@ -1,0 +1,58 @@
+{
+  "archive": {
+    "path": "C:/Users/ZANRe/Downloads/clump-remake-v67.zip",
+    "sha256": "50763BC1A2A19CFF3CA3D4C38FC405249AFBB237E773538D5F485A9CBB33519C",
+    "bytes": 1802536
+  },
+  "copiedFileCount": 7,
+  "copiedBytes": 146803,
+  "externalImages": false,
+  "license": "Author and independent license not declared in package; no license inferred.",
+  "wiki": "Setting reference only; no images downloaded.",
+  "files": [
+    {
+      "path": "src/game/renderer/clumpBlob.ts",
+      "bytes": 32486,
+      "sha256": "98c514387a991e7ffab6ddd9fd02cca25d387fe115c77783a1b21c07c722b97d",
+      "integratedSha256": "98c514387a991e7ffab6ddd9fd02cca25d387fe115c77783a1b21c07c722b97d"
+    },
+    {
+      "path": "src/game/renderer/clumpMesh.ts",
+      "bytes": 41694,
+      "sha256": "6a119f53283cdc90a5cd3948d36f07b434af4e8b5e40be8eee15cac38b27f204",
+      "integratedSha256": "3b423072ed31759885fc70094072ef43d29f0b0e54a23eebee211cabcd468d43"
+    },
+    {
+      "path": "src/game/engine/clumpAI.ts",
+      "bytes": 25318,
+      "sha256": "7b15a87ccf095a3b65114642b61d8d2e45d03f97b165ffaca6d93cd88ecaf249",
+      "integratedSha256": "93941c2397dc23f619bf62857138a08b7d3a506029d62b9f3557b2343530acef"
+    },
+    {
+      "path": "src/proto/clumpProto.ts",
+      "bytes": 8938,
+      "sha256": "f7bf29e75479b8397b8c52e262e1ec383d52bfe8a7ca4e991ee6c63682b3823f",
+      "integratedSha256": "f7bf29e75479b8397b8c52e262e1ec383d52bfe8a7ca4e991ee6c63682b3823f"
+    },
+    {
+      "path": "proto-clump.html",
+      "bytes": 605,
+      "sha256": "1d7110b7af060beef3343e70b2e499636ddf7cb6a66adc9f7dfa819a45ff68ae",
+      "integratedSha256": "1d7110b7af060beef3343e70b2e499636ddf7cb6a66adc9f7dfa819a45ff68ae"
+    },
+    {
+      "path": "scripts/check-clumps.ts",
+      "bytes": 15819,
+      "sha256": "9d71c4abcc88de1d330f76ec7f66a1347c6134f12aff6ad188c75075cb0255af",
+      "integratedSha256": "9d71c4abcc88de1d330f76ec7f66a1347c6134f12aff6ad188c75075cb0255af"
+    },
+    {
+      "path": "CLUMP-REMAKE.md",
+      "bytes": 21943,
+      "sha256": "b886f15034b2cb071bde5bad9329b9714ab10b003181d405d8f4fa50ec5bdfd6",
+      "integratedSha256": "711e59ef209c30099d9803f7025d09c0f2f5dcfe6a752098dfa94f4f72c2222a"
+    }
+  ],
+  "hashScope": "files.sha256 and bytes describe the supplied source; integratedSha256 describes final local code.",
+  "integration": "Incremental merge of archive patch; no whole-project overwrite. See reports/clump-import/REPORT.md for adaptations."
+}

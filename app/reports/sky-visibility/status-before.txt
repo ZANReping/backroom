@@ -1,0 +1,950 @@
+ M AGENTS.md
+ M DECORATIONS.md
+ M app-lite/README-LITE.md
+ M app-lite/index.html
+ M app-lite/package.json
+ M app-lite/public/fonts/chillgsans.woff2
+ M app-lite/public/fonts/fantasque-sans-mono-400.woff2
+ M app-lite/public/fonts/fantasque-sans-mono-700.woff2
+ M app-lite/public/fonts/glow-sans-sc-ext-400.woff2
+ M app-lite/public/fonts/glow-sans-sc-ext-700.woff2
+ M app-lite/public/fonts/metropolis-400.woff2
+ M app-lite/public/fonts/metropolis-700.woff2
+ M app-lite/public/fonts/zhimangxing.ttf
+ M app-lite/public/fonts/zihunbiantaoti.woff2
+ M app-lite/public/textures/L10-ASSET-SOURCES.md
+ M app-lite/public/textures/icons/gloves.png
+ M app-lite/public/textures/icons/pixel/item_fuyouyu.png
+ M app-lite/public/textures/icons/pixel/item_luckymilk.png
+ M app-lite/public/textures/icons/pixel/item_pockets.png
+ M app-lite/public/textures/l1/SOURCES.md
+ M app-lite/public/textures/l5_homelysign.png
+ M app-lite/public/textures/l5_notice.png
+ M app-lite/public/textures/manila_wallpaper.png
+ M app-lite/reports/images-fonts.json
+ M app-lite/reports/package.json
+ M app-lite/scripts/check-l1-architecture.ts
+ M app-lite/scripts/check-l10-generation.ts
+ M app-lite/scripts/check-l5-nest-lighting.ts
+ M app-lite/scripts/check-model-warmup.ts
+ M app-lite/scripts/check-program-completion.ts
+ M app-lite/src/App.tsx
+ M app-lite/src/components/AlphaMapPanel.tsx
+ M app-lite/src/components/DeathScreen.tsx
+ M app-lite/src/components/DialogOverlay.tsx
+ M app-lite/src/components/DocOverlay.tsx
+ M app-lite/src/components/HUD.tsx
+ M app-lite/src/components/InventoryOverlay.tsx
+ M app-lite/src/components/LoadingScreen.tsx
+ M app-lite/src/components/LootPanel.tsx
+ M app-lite/src/components/PauseMenu.tsx
+ M app-lite/src/components/SettingsModal.tsx
+ M app-lite/src/components/TitleScreen.tsx
+ M app-lite/src/components/TouchControls.tsx
+ M app-lite/src/components/VictoryScreen.tsx
+ M app-lite/src/components/npcPortrait.ts
+ M app-lite/src/game/content/alphaMap.ts
+ M app-lite/src/game/content/decorRegistry.ts
+ M app-lite/src/game/content/docs.ts
+ M app-lite/src/game/content/items.ts
+ M app-lite/src/game/content/phenomena.ts
+ M app-lite/src/game/core/audio.ts
+ M app-lite/src/game/core/preload.ts
+ M app-lite/src/game/core/rng.ts
+ M app-lite/src/game/core/types.ts
+ M app-lite/src/game/design/extractLayouts.ts
+ M app-lite/src/game/engine.ts
+ M app-lite/src/game/engine/ambient.ts
+ M app-lite/src/game/engine/combat.ts
+ M app-lite/src/game/engine/dev.ts
+ M app-lite/src/game/engine/entityAI.ts
+ M app-lite/src/game/engine/interact.ts
+ M app-lite/src/game/engine/inventory.ts
+ M app-lite/src/game/engine/l1State.ts
+ M app-lite/src/game/engine/level.ts
+ M app-lite/src/game/engine/movement.ts
+ M app-lite/src/game/engine/save.ts
+ M app-lite/src/game/engine/survival.ts
+ M app-lite/src/game/entities/critters.ts
+ M app-lite/src/game/entities/deep.ts
+ M app-lite/src/game/entities/humanoid.ts
+ M app-lite/src/game/entities/index.ts
+ M app-lite/src/game/entities/special.ts
+ M app-lite/src/game/entities/types.ts
+ M app-lite/src/game/levels/l0.ts
+ M app-lite/src/game/levels/l1.ts
+ M app-lite/src/game/levels/l10.ts
+ M app-lite/src/game/levels/l7.ts
+ M app-lite/src/game/levels/l9.ts
+ M app-lite/src/game/levels/shared.ts
+ M app-lite/src/game/net/apply.ts
+ M app-lite/src/game/net/protocol.ts
+ M app-lite/src/game/net/session.ts
+ M app-lite/src/game/renderer/entitiesMesh.ts
+ M app-lite/src/game/renderer/envProbe.ts
+ M app-lite/src/game/renderer/geometry.ts
+ M app-lite/src/game/renderer/itemsMesh.ts
+ M app-lite/src/game/renderer/l1Architecture.ts
+ M app-lite/src/game/renderer/l1Materials.ts
+ M app-lite/src/game/renderer/l1RoofGeometry.ts
+ M app-lite/src/game/renderer/l1Water.ts
+ M app-lite/src/game/renderer/l5NestLighting.ts
+ M app-lite/src/game/renderer/liquidsSky.ts
+ M app-lite/src/game/renderer/remotePlayers.ts
+ M app-lite/src/game/renderer/renderer.ts
+ M app-lite/src/game/renderer/sceneWarmup.ts
+ M app-lite/src/game/renderer/shared.ts
+ M app-lite/src/game/renderer/skybox.ts
+ M app-lite/src/game/renderer/structures.ts
+ M app-lite/src/game/renderer/viewmodel.ts
+ M app-lite/src/game/world/infinite.ts
+ M app-lite/src/game/world/infiniteL1.ts
+ M app-lite/src/game/world/infiniteL10.ts
+ M app-lite/src/game/world/infiniteL7.ts
+ M app-lite/src/game/world/infiniteRegistry.ts
+ M app-lite/src/game/world/l1Architecture.ts
+ M app-lite/src/game/world/l1Dynamics.ts
+ M app-lite/src/game/world/l1Layout.ts
+ M app-lite/src/game/world/l1Puddles.ts
+ M app-lite/src/game/world/mapgen.ts
+ M app-lite/src/index.css
+ M app-lite/src/main.tsx
+ M app-lite/vite.config.ts
+ M app/package-lock.json
+ M app/package.json
+ M app/public/textures/L10-ASSET-SOURCES.md
+ M app/public/textures/L11-ASSET-SOURCES.md
+ M app/public/textures/l1/SOURCES.md
+ D "app/reference/\346\213\261\351\227\250.jpg"
+ D "app/reference/\346\237\261\345\216\205.jpg"
+ D "app/reference/\346\267\261\345\235\221.webp"
+ D "app/reference/\347\206\204\347\201\257\345\214\272.jpg"
+ D "app/reference/\347\272\242\345\256\244.webp"
+ D "app/reference/\347\272\242\345\256\244\357\274\214\347\216\251\345\256\266\350\277\267\345\244\261\345\211\215.png"
+ D "app/reference/\351\251\254\345\260\274\346\213\211\346\210\277\351\227\264\345\206\205\351\203\250.avif"
+ D "app/reference/\351\251\254\345\260\274\346\213\211\346\210\277\351\227\264\345\242\231\347\272\270.avif"
+ D "app/reference/\351\251\254\345\260\274\346\213\211\346\210\277\351\227\264\345\270\203\345\261\200.avif"
+ D "app/reference/\351\251\254\345\260\274\346\213\211\346\210\277\351\227\264\351\231\204\350\277\221.avif"
+ D "app/reference/\351\251\254\345\260\274\346\213\211\346\210\277\351\227\264\357\274\214\344\273\216\351\227\250\345\220\221\345\206\205.avif"
+ D "app/reference/\351\273\204\345\256\244.jpg"
+ M app/scripts/check-l1-architecture.ts
+ M app/scripts/check-l10-generation.ts
+ M app/scripts/check-l11-generation.ts
+ M app/scripts/check-l11-meshes.ts
+ M app/scripts/check-l5-nest-lighting.ts
+ M app/scripts/check-model-warmup.ts
+ M app/scripts/check-program-completion.ts
+ M app/scripts/check-scene-warmup.ts
+ M app/scripts/fetch-l11-assets.ps1
+ M app/scripts/gen-item-icons.py
+ M app/scripts/sync-decorations.ts
+ M app/src/App.tsx
+ M app/src/components/AvatarPreview.tsx
+ M app/src/components/DeathScreen.tsx
+ M app/src/components/DialogOverlay.tsx
+ M app/src/components/FactionTerminal.tsx
+ M app/src/components/HUD.tsx
+ M app/src/components/HowToPlay.tsx
+ M app/src/components/InventoryOverlay.tsx
+ M app/src/components/LoadingScreen.tsx
+ M app/src/components/LootPanel.tsx
+ M app/src/components/MegContacts.tsx
+ M app/src/components/MegMissions.tsx
+ M app/src/components/MegTerminal.tsx
+ M app/src/components/PauseMenu.tsx
+ M app/src/components/SettingsModal.tsx
+ M app/src/components/TitleScreen.tsx
+ M app/src/components/TouchControls.tsx
+ M app/src/components/VictoryScreen.tsx
+ M app/src/components/npcPortrait.ts
+ M app/src/game/content/codexScores.ts
+ M app/src/game/content/decorRegistry.ts
+ M app/src/game/content/items.ts
+ M app/src/game/content/megMissions.ts
+ M app/src/game/content/npcs.ts
+ M app/src/game/content/outposts.ts
+ M app/src/game/content/phenomena.ts
+ M app/src/game/core/audio.ts
+ M app/src/game/core/avatar.ts
+ M app/src/game/core/player.ts
+ M app/src/game/core/preload.ts
+ M app/src/game/core/types.ts
+ M app/src/game/design/extractLayouts.ts
+ M app/src/game/design/types.ts
+ M app/src/game/engine.ts
+ M app/src/game/engine/ambient.ts
+ M app/src/game/engine/combat.ts
+ M app/src/game/engine/dev.ts
+ M app/src/game/engine/entityAI.ts
+ M app/src/game/engine/factionMissions.ts
+ M app/src/game/engine/interact.ts
+ M app/src/game/engine/inventory.ts
+ M app/src/game/engine/l11State.ts
+ M app/src/game/engine/l1State.ts
+ M app/src/game/engine/level.ts
+ M app/src/game/engine/megMissions.ts
+ M app/src/game/engine/movement.ts
+ M app/src/game/engine/npc.ts
+ M app/src/game/engine/save.ts
+ M app/src/game/engine/unstuck.ts
+ M app/src/game/entities/critters.ts
+ M app/src/game/entities/deep.ts
+ M app/src/game/entities/humanoid.ts
+ M app/src/game/entities/index.ts
+ M app/src/game/entities/special.ts
+ M app/src/game/entities/types.ts
+ M app/src/game/levels/index.ts
+ M app/src/game/levels/l1.ts
+ M app/src/game/levels/l10.ts
+ M app/src/game/levels/l11.ts
+ M app/src/game/levels/l601.ts
+ M app/src/game/levels/l7.ts
+ M app/src/game/renderer/entitiesMesh.ts
+ M app/src/game/renderer/envProbe.ts
+ M app/src/game/renderer/eyeAdaptation.ts
+ M app/src/game/renderer/geometry.ts
+ M app/src/game/renderer/itemsMesh.ts
+ M app/src/game/renderer/l11Materials.ts
+ M app/src/game/renderer/l11Meshes.ts
+ M app/src/game/renderer/l1Architecture.ts
+ M app/src/game/renderer/l1Materials.ts
+ M app/src/game/renderer/l1RoofGeometry.ts
+ M app/src/game/renderer/l1Water.ts
+ M app/src/game/renderer/l5NestLighting.ts
+ M app/src/game/renderer/lightingProfiles.ts
+ M app/src/game/renderer/liquidsSky.ts
+ M app/src/game/renderer/modelWarmup.ts
+ M app/src/game/renderer/mothTextures.ts
+ M app/src/game/renderer/renderer.ts
+ M app/src/game/renderer/sceneWarmup.ts
+ M app/src/game/renderer/shared.ts
+ M app/src/game/renderer/skyPixels.ts
+ M app/src/game/renderer/skybox.ts
+ M app/src/game/renderer/structures.ts
+ M app/src/game/renderer/viewmodel.ts
+ M app/src/game/world/chunkCache.ts
+ M app/src/game/world/infinite.ts
+ M app/src/game/world/infiniteL1.ts
+ M app/src/game/world/infiniteL10.ts
+ M app/src/game/world/infiniteL2.ts
+ M app/src/game/world/infiniteL3.ts
+ M app/src/game/world/infiniteL7.ts
+ M app/src/game/world/infiniteRegistry.ts
+ M app/src/game/world/l11.worker.ts
+ M app/src/game/world/l11ChunkCache.ts
+ M app/src/game/world/l11Layout.ts
+ M app/src/game/world/l11Raw.ts
+ M app/src/game/world/l1Architecture.ts
+ M app/src/game/world/l1Dynamics.ts
+ M app/src/game/world/l1Layout.ts
+ M app/src/game/world/l1Puddles.ts
+ M app/src/game/world/mapSight.ts
+ M app/src/game/world/mapgen.ts
+ M app/src/game/world/mapgenOutpost.ts
+ M app/src/game/world/settlement.ts
+ M app/src/index.css
+ M app/src/main.tsx
+ M app/verifier/l0-remake.ts
+ M info.md
+?? app-lite/public/textures/LITE-MODIFICATIONS.md
+?? app-lite/public/textures/documents/
+?? app-lite/public/textures/items-refined/
+?? app-lite/public/textures/items-six/
+?? app-lite/public/textures/l0-remake/
+?? app-lite/public/textures/l1/crate-marks.png
+?? app-lite/public/textures/l1/polyhaven/
+?? app-lite/public/textures/l1/steel.jpg
+?? app-lite/public/textures/l1/steel_normal.jpg
+?? app-lite/public/textures/l1/steel_roughness.jpg
+?? app-lite/public/textures/l10_canola_clump.png
+?? app-lite/public/textures/l10_corrugated_normal.png
+?? app-lite/public/textures/l10_leafcard.png
+?? app-lite/public/textures/l10_siding_diff.jpg
+?? app-lite/reports/l0-remake/
+?? app-lite/reports/l1-remake/
+?? app-lite/reports/sync-20261009-checks.json
+?? app-lite/reports/sync-20261009/
+?? app-lite/reports/sync-original-hashes-20261009.json
+?? app-lite/reports/sync-upstream-20261009.json
+?? app-lite/reports/sync-verification-20261009.json
+?? app-lite/scripts/calibrate-l0-fixtures.mjs
+?? app-lite/scripts/check-duller-integration.ts
+?? app-lite/scripts/check-dullers.ts
+?? app-lite/scripts/check-hound-integration.ts
+?? app-lite/scripts/check-hounds.ts
+?? app-lite/scripts/check-l0-architecture.ts
+?? app-lite/scripts/check-l0-continuity.ts
+?? app-lite/scripts/check-l0-experience.ts
+?? app-lite/scripts/check-l0-meshes.ts
+?? app-lite/scripts/check-l0-presentation.ts
+?? app-lite/scripts/check-l0-refinements.ts
+?? app-lite/scripts/check-l0-state.ts
+?? app-lite/scripts/check-l0-visibility.ts
+?? app-lite/scripts/check-l1-atlas-capacity.ts
+?? app-lite/scripts/check-l1-bake-visibility.mjs
+?? app-lite/scripts/check-l1-bake-visibility.ts
+?? app-lite/scripts/check-l1-bake.ts
+?? app-lite/scripts/check-l1-camera-directions.mjs
+?? app-lite/scripts/check-l1-crate-stack.ts
+?? app-lite/scripts/check-l1-detail.ts
+?? app-lite/scripts/check-l1-exposure.ts
+?? app-lite/scripts/check-l1-offline.ts
+?? app-lite/scripts/check-l1-parking-services.ts
+?? app-lite/scripts/check-l1-portals.ts
+?? app-lite/scripts/check-l1-props.ts
+?? app-lite/scripts/check-l1-reference-aspects.mjs
+?? app-lite/scripts/check-l1-refinements.ts
+?? app-lite/scripts/check-l1-room-dressing.ts
+?? app-lite/scripts/check-l1-round-lighting.ts
+?? app-lite/scripts/check-l1-service-runs.ts
+?? app-lite/scripts/check-l1-services.ts
+?? app-lite/scripts/check-l1-v4-placement.ts
+?? app-lite/scripts/check-l1-vault-mesh.ts
+?? app-lite/scripts/check-l10-model-import.ts
+?? app-lite/scripts/check-l7-generation.ts
+?? app-lite/scripts/check-refined-item-meshes.ts
+?? app-lite/scripts/check-seed-input.ts
+?? app-lite/scripts/check-six-item-meshes.ts
+?? app-lite/scripts/check-smiler-forms.ts
+?? app-lite/scripts/check-smiler-integration.ts
+?? app-lite/scripts/check-smiler-spacing.ts
+?? app-lite/scripts/check-smilers.ts
+?? app-lite/scripts/compare-l0-references.py
+?? app-lite/scripts/compare-l1-iteration3.mjs
+?? app-lite/scripts/compare-l1-iteration4.mjs
+?? app-lite/scripts/compare-l1-shader-output.mjs
+?? app-lite/scripts/compare-l1-v4.mjs
+?? app-lite/scripts/export-l1-v4-references.ts
+?? app-lite/scripts/fetch-l1-open-assets.mjs
+?? app-lite/scripts/fetch-manila-logo.mjs
+?? app-lite/scripts/fit-l1-cameras.ts
+?? app-lite/scripts/gen-l0-materials.mjs
+?? app-lite/scripts/gen-l1-crate-marks.mjs
+?? app-lite/scripts/gen-l10-v64-textures.py
+?? app-lite/scripts/gen-refined-item-atlas.mjs
+?? app-lite/scripts/gen-six-item-atlas.mjs
+?? app-lite/scripts/gen-six-item-icons.mjs
+?? app-lite/scripts/l0-eval.mjs
+?? app-lite/scripts/l1-reference-plane.mjs
+?? app-lite/scripts/l1-reference-projection.mjs
+?? app-lite/scripts/measure-l1-services.ts
+?? app-lite/scripts/prebake-l1.ts
+?? app-lite/scripts/prepare-l1-steel.mjs
+?? app-lite/scripts/profile-l0-build.mjs
+?? app-lite/scripts/summarize-l0-continuity.mjs
+?? app-lite/scripts/summarize-l0-presentation.mjs
+?? app-lite/scripts/summarize-l0-refinements.mjs
+?? app-lite/scripts/summarize-l0-remake.mjs
+?? app-lite/scripts/summarize-l1-remake.mjs
+?? app-lite/scripts/summarize-l1-v4.mjs
+?? app-lite/scripts/summarize-six-items.mjs
+?? app-lite/scripts/verify-duller-import.mjs
+?? app-lite/scripts/verify-hound-import.mjs
+?? app-lite/scripts/verify-l0-controls.mjs
+?? app-lite/scripts/verify-l0-experience-render.mjs
+?? app-lite/scripts/verify-l0-experience.mjs
+?? app-lite/scripts/verify-l0-remake.mjs
+?? app-lite/scripts/verify-l0-settings.mjs
+?? app-lite/scripts/verify-l0-visibility.mjs
+?? app-lite/scripts/verify-l1-detail-runtime.mjs
+?? app-lite/scripts/verify-l1-remake.mjs
+?? app-lite/scripts/verify-l10-import.mjs
+?? app-lite/scripts/verify-l5-entry.mjs
+?? app-lite/scripts/verify-l7-import.mjs
+?? app-lite/scripts/verify-refined-items.mjs
+?? app-lite/scripts/verify-six-items.mjs
+?? app-lite/scripts/verify-sky-import.mjs
+?? app-lite/scripts/verify-smiler-forms.mjs
+?? app-lite/scripts/verify-smiler-import.mjs
+?? app-lite/scripts/verify-smiler-spacing.mjs
+?? app-lite/scripts/verify-sync-20261009.cjs
+?? app-lite/scripts/verify-title-save.mjs
+?? app-lite/scripts/verify-ui-import.mjs
+?? app-lite/src/components/L0MapLegend.tsx
+?? app-lite/src/components/ManilaLetter.tsx
+?? app-lite/src/game/content/l0Map.ts
+?? app-lite/src/game/content/mapPlayer.ts
+?? app-lite/src/game/core/features.ts
+?? app-lite/src/game/core/graphicsPresets.ts
+?? app-lite/src/game/core/titleSave.ts
+?? app-lite/src/game/engine/devMap.ts
+?? app-lite/src/game/engine/dullerAI.ts
+?? app-lite/src/game/engine/glowsticks.ts
+?? app-lite/src/game/engine/houndAI.ts
+?? app-lite/src/game/engine/l0State.ts
+?? app-lite/src/game/engine/l7Events.ts
+?? app-lite/src/game/engine/smilerAI.ts
+?? app-lite/src/game/entities/smilerPose.ts
+?? app-lite/src/game/entities/smilers.ts
+?? app-lite/src/game/renderer/dullerMesh.ts
+?? app-lite/src/game/renderer/eyeAdaptation.ts
+?? app-lite/src/game/renderer/glowstickLights.ts
+?? app-lite/src/game/renderer/houndMesh.ts
+?? app-lite/src/game/renderer/l0Architecture.ts
+?? app-lite/src/game/renderer/l0EnvironmentShader.ts
+?? app-lite/src/game/renderer/l0Fixtures.ts
+?? app-lite/src/game/renderer/l0Flicker.ts
+?? app-lite/src/game/renderer/l0Furniture.ts
+?? app-lite/src/game/renderer/l0Light.ts
+?? app-lite/src/game/renderer/l0LightingBake.ts
+?? app-lite/src/game/renderer/l0PointMask.ts
+?? app-lite/src/game/renderer/l10Ground.ts
+?? app-lite/src/game/renderer/l10Meshes.ts
+?? app-lite/src/game/renderer/l10Wind.ts
+?? app-lite/src/game/renderer/l1BakeQueue.ts
+?? app-lite/src/game/renderer/l1BakeStorage.ts
+?? app-lite/src/game/renderer/l1BakedScene.ts
+?? app-lite/src/game/renderer/l1BakedShader.ts
+?? app-lite/src/game/renderer/l1BuildMetrics.ts
+?? app-lite/src/game/renderer/l1Lighting.ts
+?? app-lite/src/game/renderer/l1PortalLighting.ts
+?? app-lite/src/game/renderer/l1Probes.ts
+?? app-lite/src/game/renderer/l1Props.ts
+?? app-lite/src/game/renderer/l1ServiceRuns.ts
+?? app-lite/src/game/renderer/l1Shafts.ts
+?? app-lite/src/game/renderer/l1SurfaceField.ts
+?? app-lite/src/game/renderer/l1VaultMaterial.ts
+?? app-lite/src/game/renderer/l7Meshes.ts
+?? app-lite/src/game/renderer/l7Ocean.ts
+?? app-lite/src/game/renderer/lightingProfiles.ts
+?? app-lite/src/game/renderer/photoPass.ts
+?? app-lite/src/game/renderer/refinedItemMesh.ts
+?? app-lite/src/game/renderer/sixItemMesh.ts
+?? app-lite/src/game/renderer/skySystem.ts
+?? app-lite/src/game/renderer/smilerMesh.ts
+?? app-lite/src/game/renderer/water.ts
+?? app-lite/src/game/world/devMap.worker.ts
+?? app-lite/src/game/world/l0Architecture.ts
+?? app-lite/src/game/world/l0Maze.ts
+?? app-lite/src/game/world/l0Neighbourhood.ts
+?? app-lite/src/game/world/l0Partitions.ts
+?? app-lite/src/game/world/l0RedZone.ts
+?? app-lite/src/game/world/l0Regions.ts
+?? app-lite/src/game/world/l0WallDetails.ts
+?? app-lite/src/game/world/l0WallFaces.ts
+?? app-lite/src/game/world/l1Bake.ts
+?? app-lite/src/game/world/l1Bake.worker.ts
+?? app-lite/src/game/world/l1BakeTypes.ts
+?? app-lite/src/game/world/l1Building.ts
+?? app-lite/src/game/world/l1BuildingTypes.ts
+?? app-lite/src/game/world/l1Crate.ts
+?? app-lite/src/game/world/l1Dressing.ts
+?? app-lite/src/game/world/l1ParkingServices.ts
+?? app-lite/src/game/world/l1Placement.ts
+?? app-lite/src/game/world/l1ReferenceCases.ts
+?? app-lite/src/game/world/l1Spatial.ts
+?? app-lite/src/game/world/l1VaultMesh.ts
+?? app-lite/src/game/world/mapSight.ts
+?? app-lite/src/game/world/smilerClearance.ts
+?? app-lite/src/game/world/starterSupplies.ts
+?? app-lite/src/proto/
+?? app/CLUMP-REMAKE.md
+?? app/DULLER-REMAKE.md
+?? app/HOUND-REMAKE.md
+?? app/L1-REMAKE-SOURCES.md
+?? app/L1-REMAKE.md
+?? app/L10-REMAKE.md
+?? app/L11-MAPS.md
+?? app/L11-PROPS.md
+?? app/L11-REFINEMENT.md
+?? app/L11-REMAKE.md
+?? app/L11-URBAN.md
+?? app/L7-REMAKE.md
+?? app/RAT-REMAKE.md
+?? app/REFINED-ITEM-MODELS.md
+?? app/RETRO-NPC-PROTO.md
+?? app/SKINSTEALER-REMAKE.md
+?? app/SKY-REMAKE.md
+?? app/SMILER-REMAKE.md
+?? app/WRETCH-REMAKE.md
+?? app/art-source/npc-retro/
+?? app/assets/clump-import/
+?? app/assets/duller-import/
+?? app/assets/faceling-skinstealer-import/
+?? app/assets/hands-import/
+?? app/assets/hound-import/
+?? app/assets/l10-import/
+?? app/assets/l11-bark/
+?? app/assets/l11-foliage/
+?? app/assets/l11-props/
+?? app/assets/l11-reference-audit.json
+?? app/assets/l11-reference-signs-v2/
+?? app/assets/l11-reference-signs/
+?? app/assets/l11-reference-sky/
+?? app/assets/l11-signage/
+?? app/assets/l11-vertical-signs/
+?? app/assets/l7-import/
+?? app/assets/rat-import/
+?? app/assets/refined-items/
+?? app/assets/retro-avatar-import/
+?? app/assets/sky-import/
+?? app/assets/smiler-import/
+?? app/assets/sources/
+?? app/assets/ui-import/
+?? app/assets/wretch-import/
+?? app/proto-clump.html
+?? app/proto-duller.html
+?? app/proto-hound.html
+?? app/proto-rat.html
+?? app/proto-retro-npc.html
+?? app/proto-skinstealer.html
+?? app/proto-sky.html
+?? app/proto-smiler.html
+?? app/proto-wretch.html
+?? app/public/assets/
+?? app/public/textures/icons/pixel/item_ratmeat.png
+?? app/public/textures/items-refined/
+?? app/public/textures/l1/crate-marks.png
+?? app/public/textures/l1/polyhaven/
+?? app/public/textures/l1/steel.jpg
+?? app/public/textures/l1/steel_normal.jpg
+?? app/public/textures/l1/steel_roughness.jpg
+?? app/public/textures/l10_canola_clump.png
+?? app/public/textures/l10_corrugated_normal.png
+?? app/public/textures/l10_leafcard.png
+?? app/public/textures/l10_siding_diff.jpg
+?? app/public/textures/l11-bark/
+?? app/public/textures/l11-foliage/
+?? app/public/textures/l11-inspected-famima-round.png
+?? app/public/textures/l11-inspected-famima-round_low.png
+?? app/public/textures/l11-inspected-famima-round_low_normal.png
+?? app/public/textures/l11-inspected-famima-round_low_roughness.png
+?? app/public/textures/l11-inspected-famima-round_normal.png
+?? app/public/textures/l11-inspected-famima-round_roughness.png
+?? app/public/textures/l11-inspected-famima.png
+?? app/public/textures/l11-inspected-famima_low.png
+?? app/public/textures/l11-inspected-famima_low_normal.png
+?? app/public/textures/l11-inspected-famima_low_roughness.png
+?? app/public/textures/l11-inspected-famima_normal.png
+?? app/public/textures/l11-inspected-famima_roughness.png
+?? app/public/textures/l11-inspected-hope.png
+?? app/public/textures/l11-inspected-hope_low.png
+?? app/public/textures/l11-inspected-hope_low_normal.png
+?? app/public/textures/l11-inspected-hope_low_roughness.png
+?? app/public/textures/l11-inspected-hope_normal.png
+?? app/public/textures/l11-inspected-hope_roughness.png
+?? app/public/textures/l11-inspected-pegasus.png
+?? app/public/textures/l11-inspected-pegasus_low.png
+?? app/public/textures/l11-inspected-pegasus_low_normal.png
+?? app/public/textures/l11-inspected-pegasus_low_roughness.png
+?? app/public/textures/l11-inspected-pegasus_normal.png
+?? app/public/textures/l11-inspected-pegasus_roughness.png
+?? app/public/textures/l11-reference-banner.png
+?? app/public/textures/l11-reference-banner_low.png
+?? app/public/textures/l11-reference-banner_low_normal.png
+?? app/public/textures/l11-reference-banner_low_roughness.png
+?? app/public/textures/l11-reference-banner_normal.png
+?? app/public/textures/l11-reference-banner_roughness.png
+?? app/public/textures/l11-sky/
+?? app/public/textures/l11-vertical-cinema.png
+?? app/public/textures/l11-vertical-cinema_low.png
+?? app/public/textures/l11-vertical-cinema_low_normal.png
+?? app/public/textures/l11-vertical-cinema_low_roughness.png
+?? app/public/textures/l11-vertical-cinema_normal.png
+?? app/public/textures/l11-vertical-cinema_roughness.png
+?? app/public/textures/l11-vertical-clinic.png
+?? app/public/textures/l11-vertical-clinic_low.png
+?? app/public/textures/l11-vertical-clinic_low_normal.png
+?? app/public/textures/l11-vertical-clinic_low_roughness.png
+?? app/public/textures/l11-vertical-clinic_normal.png
+?? app/public/textures/l11-vertical-clinic_roughness.png
+?? app/public/textures/l11-vertical-hotel.png
+?? app/public/textures/l11-vertical-hotel_low.png
+?? app/public/textures/l11-vertical-hotel_low_normal.png
+?? app/public/textures/l11-vertical-hotel_low_roughness.png
+?? app/public/textures/l11-vertical-hotel_normal.png
+?? app/public/textures/l11-vertical-hotel_roughness.png
+?? app/public/textures/l11_ceramic.jpg
+?? app/public/textures/l11_ceramic_normal.jpg
+?? app/public/textures/l11_ceramic_roughness.jpg
+?? app/public/textures/l11_fabric.jpg
+?? app/public/textures/l11_fabric_normal.jpg
+?? app/public/textures/l11_fabric_roughness.jpg
+?? app/public/textures/l11_grass.jpg
+?? app/public/textures/l11_grass_normal.jpg
+?? app/public/textures/l11_grass_roughness.jpg
+?? app/public/textures/l11_limestone.jpg
+?? app/public/textures/l11_limestone_normal.jpg
+?? app/public/textures/l11_limestone_roughness.jpg
+?? app/public/textures/l11_paving.jpg
+?? app/public/textures/l11_paving_normal.jpg
+?? app/public/textures/l11_paving_roughness.jpg
+?? app/public/textures/l11_propwood.jpg
+?? app/public/textures/l11_propwood_normal.jpg
+?? app/public/textures/l11_propwood_roughness.jpg
+?? app/public/textures/l11_rawwood.jpg
+?? app/public/textures/l11_rawwood_normal.jpg
+?? app/public/textures/l11_rawwood_roughness.jpg
+?? app/public/textures/l11_signs.png
+?? app/public/textures/l11_signs_low.png
+?? app/public/textures/l11_signs_normal.png
+?? app/public/textures/l11_signs_normal_low.png
+?? app/public/textures/l11_signs_roughness.png
+?? app/public/textures/l11_signs_roughness_low.png
+?? app/public/textures/l11_tactile.jpg
+?? app/public/textures/l11_tactile_normal.jpg
+?? app/public/textures/l11_tactile_roughness.jpg
+?? app/public/textures/npc-retro/
+?? app/reference/L0/
+?? app/reference/L1/
+?? app/reference/L11/
+?? app/reports/clump-import/
+?? app/reports/dev-forms-flight/
+?? app/reports/duller-import/
+?? app/reports/faceling-skinstealer-import/
+?? app/reports/hands-import/
+?? app/reports/hound-import/
+?? app/reports/l1-remake/
+?? app/reports/l10-import/
+?? app/reports/l11-access-fixes/
+?? app/reports/l11-map/
+?? app/reports/l11-props/
+?? app/reports/l11-reference/
+?? app/reports/l11-refinement/
+?? app/reports/l11-remake/
+?? app/reports/l11-urban/
+?? app/reports/l11-water-collision/
+?? app/reports/l11-waterways/
+?? app/reports/l5-entry/
+?? app/reports/l7-import/
+?? app/reports/level-entry/
+?? app/reports/outpost-loading/
+?? app/reports/rat-v80/
+?? app/reports/refined-items/
+?? app/reports/retro-avatar-import/
+?? app/reports/retro-npc/
+?? app/reports/skinstealer-v77/
+?? app/reports/sky-import/
+?? app/reports/smiler-forms/
+?? app/reports/smiler-import/
+?? app/reports/smiler-spacing/
+?? app/reports/title-save/
+?? app/reports/ui-import/
+?? app/reports/wretch-import/
+?? app/scripts/build-l11-inspection-report.mjs
+?? app/scripts/check-chunk-build-queue.ts
+?? app/scripts/check-clump-integration.ts
+?? app/scripts/check-clumps.ts
+?? app/scripts/check-dev-flight.ts
+?? app/scripts/check-duller-integration.ts
+?? app/scripts/check-dullers.ts
+?? app/scripts/check-entity-forms.ts
+?? app/scripts/check-entity-preparation.ts
+?? app/scripts/check-faceling-skinstealer-models.ts
+?? app/scripts/check-hound-integration.ts
+?? app/scripts/check-hounds.ts
+?? app/scripts/check-l1-atlas-capacity.ts
+?? app/scripts/check-l1-bake-visibility.mjs
+?? app/scripts/check-l1-bake-visibility.ts
+?? app/scripts/check-l1-bake.ts
+?? app/scripts/check-l1-camera-directions.mjs
+?? app/scripts/check-l1-crate-stack.ts
+?? app/scripts/check-l1-detail.ts
+?? app/scripts/check-l1-exposure.ts
+?? app/scripts/check-l1-offline.ts
+?? app/scripts/check-l1-parking-services.ts
+?? app/scripts/check-l1-portals.ts
+?? app/scripts/check-l1-props.ts
+?? app/scripts/check-l1-reference-aspects.mjs
+?? app/scripts/check-l1-refinements.ts
+?? app/scripts/check-l1-room-dressing.ts
+?? app/scripts/check-l1-round-lighting.ts
+?? app/scripts/check-l1-service-runs.ts
+?? app/scripts/check-l1-services.ts
+?? app/scripts/check-l1-v4-placement.ts
+?? app/scripts/check-l1-vault-mesh.ts
+?? app/scripts/check-l10-model-import.ts
+?? app/scripts/check-l11-architecture.ts
+?? app/scripts/check-l11-collision.ts
+?? app/scripts/check-l11-dressing.ts
+?? app/scripts/check-l11-greenery.ts
+?? app/scripts/check-l11-inspection-report.mjs
+?? app/scripts/check-l11-map.ts
+?? app/scripts/check-l11-migration.ts
+?? app/scripts/check-l11-missions.ts
+?? app/scripts/check-l11-props.ts
+?? app/scripts/check-l11-qa-cleanup.ps1
+?? app/scripts/check-l11-reference-interior.ts
+?? app/scripts/check-l11-reference-props.ts
+?? app/scripts/check-l11-reference.ts
+?? app/scripts/check-l11-retail.ts
+?? app/scripts/check-l11-road-markings.ts
+?? app/scripts/check-l11-surfaces.ts
+?? app/scripts/check-l11-twins.ts
+?? app/scripts/check-l11-urban.ts
+?? app/scripts/check-l11-waterways.ts
+?? app/scripts/check-l7-generation.ts
+?? app/scripts/check-outpost-colliders.ts
+?? app/scripts/check-rat-mesh.ts
+?? app/scripts/check-rats.ts
+?? app/scripts/check-refined-item-meshes.ts
+?? app/scripts/check-retro-avatar.ts
+?? app/scripts/check-retro-hands.ts
+?? app/scripts/check-skinstealers.ts
+?? app/scripts/check-smiler-forms.ts
+?? app/scripts/check-smiler-integration.ts
+?? app/scripts/check-smiler-spacing.ts
+?? app/scripts/check-smilers.ts
+?? app/scripts/check-wretch-mesh.ts
+?? app/scripts/check-wretches.ts
+?? app/scripts/compare-l1-iteration3.mjs
+?? app/scripts/compare-l1-iteration4.mjs
+?? app/scripts/compare-l1-shader-output.mjs
+?? app/scripts/compare-l1-v4.mjs
+?? app/scripts/export-l1-v4-references.ts
+?? app/scripts/fetch-l1-open-assets.mjs
+?? app/scripts/fetch-l11-bark.mjs
+?? app/scripts/fetch-l11-foliage.mjs
+?? app/scripts/fetch-l11-reference-sky.mjs
+?? app/scripts/fit-l1-cameras.ts
+?? app/scripts/gen-faceless-textures.py
+?? app/scripts/gen-l1-crate-marks.mjs
+?? app/scripts/gen-l10-v64-textures.py
+?? app/scripts/gen-refined-item-atlas.mjs
+?? app/scripts/gen-retro-avatar-textures.py
+?? app/scripts/gen-retro-npc-textures.py
+?? app/scripts/inspect-l11-references.mjs
+?? app/scripts/l1-reference-plane.mjs
+?? app/scripts/l1-reference-projection.mjs
+?? app/scripts/l11-map-server.mjs
+?? app/scripts/l11-prop-contact-sheet.mjs
+?? app/scripts/level-entry-app-check.mjs
+?? app/scripts/level-entry-contact-sheet.mjs
+?? app/scripts/level-entry-preview.mjs
+?? app/scripts/measure-l1-services.ts
+?? app/scripts/outpost-app-check.mjs
+?? app/scripts/prebake-l1.ts
+?? app/scripts/prepare-l1-steel.mjs
+?? app/scripts/prepare-l11-inspected-signs.mjs
+?? app/scripts/prepare-l11-reference-banner.mjs
+?? app/scripts/prepare-l11-signage.mjs
+?? app/scripts/prepare-l11-vertical-signs.mjs
+?? app/scripts/profile-l11-highrise-mesh.ts
+?? app/scripts/profile-l11-highrise.ts
+?? app/scripts/summarize-entity-entry.mjs
+?? app/scripts/summarize-l1-remake.mjs
+?? app/scripts/summarize-l1-v4.mjs
+?? app/scripts/summarize-l11-architecture.mjs
+?? app/scripts/summarize-l11-canal.mjs
+?? app/scripts/summarize-l11-details.mjs
+?? app/scripts/summarize-l11-facades.mjs
+?? app/scripts/summarize-l11-greenery.mjs
+?? app/scripts/summarize-l11-inspection.mjs
+?? app/scripts/summarize-l11-reference.mjs
+?? app/scripts/summarize-l11-retail.mjs
+?? app/scripts/summarize-level-entry.mjs
+?? app/scripts/summarize-outpost-loading.mjs
+?? app/scripts/verify-clump-import.mjs
+?? app/scripts/verify-dev-tools.mjs
+?? app/scripts/verify-duller-import.mjs
+?? app/scripts/verify-entity-entry.mjs
+?? app/scripts/verify-faceling-skinstealer.mjs
+?? app/scripts/verify-hands.mjs
+?? app/scripts/verify-hound-import.mjs
+?? app/scripts/verify-l1-detail-runtime.mjs
+?? app/scripts/verify-l1-remake.mjs
+?? app/scripts/verify-l10-import.mjs
+?? app/scripts/verify-l11-access.mjs
+?? app/scripts/verify-l11-map.mjs
+?? app/scripts/verify-l11-reference.mjs
+?? app/scripts/verify-l11-water-collision.mjs
+?? app/scripts/verify-l11-waterways.mjs
+?? app/scripts/verify-l11.mjs
+?? app/scripts/verify-l5-entry.mjs
+?? app/scripts/verify-l7-import.mjs
+?? app/scripts/verify-level-entry.mjs
+?? app/scripts/verify-outpost-loading.mjs
+?? app/scripts/verify-rat-import.mjs
+?? app/scripts/verify-refined-items.mjs
+?? app/scripts/verify-retro-avatar.mjs
+?? app/scripts/verify-sky-import.mjs
+?? app/scripts/verify-smiler-forms.mjs
+?? app/scripts/verify-smiler-import.mjs
+?? app/scripts/verify-smiler-spacing.mjs
+?? app/scripts/verify-title-save.mjs
+?? app/scripts/verify-ui-import.mjs
+?? app/scripts/verify-wretch-import.mjs
+?? app/src/components/DevEntitySpawner.tsx
+?? app/src/components/L11MapPanel.css
+?? app/src/components/L11MapPanel.tsx
+?? app/src/components/NpcPortraitImage.tsx
+?? app/src/game/content/l11Architecture.ts
+?? app/src/game/content/l11Buildings.ts
+?? app/src/game/content/l11CommerceParts.ts
+?? app/src/game/content/l11Decor.ts
+?? app/src/game/content/l11InteriorParts.ts
+?? app/src/game/content/l11Map.ts
+?? app/src/game/content/l11MapModel.ts
+?? app/src/game/content/l11MapPlans.ts
+?? app/src/game/content/l11MunicipalParts.ts
+?? app/src/game/content/l11PropKit.ts
+?? app/src/game/content/l11PropParts.ts
+?? app/src/game/content/l11PropShapes.ts
+?? app/src/game/content/l11ReferenceSigns.ts
+?? app/src/game/content/l11RetailParts.ts
+?? app/src/game/content/l11ServiceParts.ts
+?? app/src/game/content/l11SignAtlas.json
+?? app/src/game/content/l11Signs.ts
+?? app/src/game/content/l11VerticalSignParts.ts
+?? app/src/game/content/l11VerticalSigns.ts
+?? app/src/game/content/l11WaterfrontParts.ts
+?? app/src/game/core/flight.ts
+?? app/src/game/core/titleSave.ts
+?? app/src/game/engine/clumpAI.ts
+?? app/src/game/engine/dullerAI.ts
+?? app/src/game/engine/houndAI.ts
+?? app/src/game/engine/l11Canal.ts
+?? app/src/game/engine/l11Migration.ts
+?? app/src/game/engine/l7Events.ts
+?? app/src/game/engine/ratAI.ts
+?? app/src/game/engine/skinStealerAI.ts
+?? app/src/game/engine/smilerAI.ts
+?? app/src/game/engine/wretchAI.ts
+?? app/src/game/entities/forms.ts
+?? app/src/game/entities/rats.ts
+?? app/src/game/entities/smilerPose.ts
+?? app/src/game/entities/smilers.ts
+?? app/src/game/entities/wretches.ts
+?? app/src/game/renderer/characterModel.ts
+?? app/src/game/renderer/chunkBuildQueue.ts
+?? app/src/game/renderer/clumpBlob.ts
+?? app/src/game/renderer/clumpMesh.ts
+?? app/src/game/renderer/dullerMesh.ts
+?? app/src/game/renderer/entityPreparation.ts
+?? app/src/game/renderer/facelingFace.ts
+?? app/src/game/renderer/houndMesh.ts
+?? app/src/game/renderer/l10Ground.ts
+?? app/src/game/renderer/l10Meshes.ts
+?? app/src/game/renderer/l10Wind.ts
+?? app/src/game/renderer/l11Batch.ts
+?? app/src/game/renderer/l11BridgeSkin.ts
+?? app/src/game/renderer/l11Bridges.ts
+?? app/src/game/renderer/l11BuildingLOD.ts
+?? app/src/game/renderer/l11DistantTerrain.ts
+?? app/src/game/renderer/l11FoliageGeometry.ts
+?? app/src/game/renderer/l11PropGeometry.ts
+?? app/src/game/renderer/l11ReferenceFacades.ts
+?? app/src/game/renderer/l11RoofDetails.ts
+?? app/src/game/renderer/l11Signs.ts
+?? app/src/game/renderer/l11Sky.ts
+?? app/src/game/renderer/l11Water.ts
+?? app/src/game/renderer/l1BakeQueue.ts
+?? app/src/game/renderer/l1BakeStorage.ts
+?? app/src/game/renderer/l1BakedScene.ts
+?? app/src/game/renderer/l1BakedShader.ts
+?? app/src/game/renderer/l1BuildMetrics.ts
+?? app/src/game/renderer/l1Lighting.ts
+?? app/src/game/renderer/l1PortalLighting.ts
+?? app/src/game/renderer/l1Probes.ts
+?? app/src/game/renderer/l1Props.ts
+?? app/src/game/renderer/l1ServiceRuns.ts
+?? app/src/game/renderer/l1Shafts.ts
+?? app/src/game/renderer/l1SurfaceField.ts
+?? app/src/game/renderer/l1VaultMaterial.ts
+?? app/src/game/renderer/l7Meshes.ts
+?? app/src/game/renderer/l7Ocean.ts
+?? app/src/game/renderer/ratMesh.ts
+?? app/src/game/renderer/refinedItemMesh.ts
+?? app/src/game/renderer/retroAvatar.ts
+?? app/src/game/renderer/retroNpc.ts
+?? app/src/game/renderer/retroResources.ts
+?? app/src/game/renderer/retroViewHand.ts
+?? app/src/game/renderer/skinStealerMesh.ts
+?? app/src/game/renderer/skySystem.ts
+?? app/src/game/renderer/smilerMesh.ts
+?? app/src/game/renderer/water.ts
+?? app/src/game/renderer/wretchMesh.ts
+?? app/src/game/world/l11BridgeRails.ts
+?? app/src/game/world/l11CanalAccess.ts
+?? app/src/game/world/l11Collision.ts
+?? app/src/game/world/l11Dressing.ts
+?? app/src/game/world/l11Entrance.ts
+?? app/src/game/world/l11Geometry.ts
+?? app/src/game/world/l11Hydrology.ts
+?? app/src/game/world/l11Interiors.ts
+?? app/src/game/world/l11Map.worker.ts
+?? app/src/game/world/l11Metro.ts
+?? app/src/game/world/l11PropPlacement.ts
+?? app/src/game/world/l11QuayPlanting.ts
+?? app/src/game/world/l11QuayRails.ts
+?? app/src/game/world/l11QuayWing.ts
+?? app/src/game/world/l11ReferenceDetails.ts
+?? app/src/game/world/l11ReferenceDistrict.ts
+?? app/src/game/world/l11RetailFacade.ts
+?? app/src/game/world/l11RetailLayout.ts
+?? app/src/game/world/l11RoadMarkings.ts
+?? app/src/game/world/l11RoomFurnishing.ts
+?? app/src/game/world/l11ShopSigns.ts
+?? app/src/game/world/l11Shopfront.ts
+?? app/src/game/world/l11Solid.ts
+?? app/src/game/world/l11StreetSignSolids.ts
+?? app/src/game/world/l11Twins.ts
+?? app/src/game/world/l11Types.ts
+?? app/src/game/world/l11VerticalSignMounts.ts
+?? app/src/game/world/l1Bake.ts
+?? app/src/game/world/l1Bake.worker.ts
+?? app/src/game/world/l1BakeTypes.ts
+?? app/src/game/world/l1Building.ts
+?? app/src/game/world/l1BuildingTypes.ts
+?? app/src/game/world/l1Crate.ts
+?? app/src/game/world/l1Dressing.ts
+?? app/src/game/world/l1ParkingServices.ts
+?? app/src/game/world/l1Placement.ts
+?? app/src/game/world/l1ReferenceCases.ts
+?? app/src/game/world/l1Spatial.ts
+?? app/src/game/world/l1VaultMesh.ts
+?? app/src/game/world/settlementColliders.ts
+?? app/src/game/world/smilerClearance.ts
+?? app/src/proto/
+?? app/verifier/clump-import.ts
+?? app/verifier/dev-tools.tsx
+?? app/verifier/duller-import.ts
+?? app/verifier/entity-entry.ts
+?? app/verifier/entry-program-audit.js
+?? app/verifier/entry-texture-audit.js
+?? app/verifier/faceling-skinstealer.ts
+?? app/verifier/hands.ts
+?? app/verifier/hound-import.ts
+?? app/verifier/l1-bake-cache-runtime.ts
+?? app/verifier/l1-controls.ts
+?? app/verifier/l1-partitions-runtime.ts
+?? app/verifier/l1-portals-runtime.ts
+?? app/verifier/l1-remake-runtime.ts
+?? app/verifier/l1-v4-cross-level.ts
+?? app/verifier/l1-v4-runtime.ts
+?? app/verifier/l10-import.ts
+?? app/verifier/l11-access.ts
+?? app/verifier/l11-map.html
+?? app/verifier/l11-map.tsx
+?? app/verifier/l11-props.ts
+?? app/verifier/l11-reference-greenery.ts
+?? app/verifier/l11-reference-interaction.ts
+?? app/verifier/l11-reference-rooms.ts
+?? app/verifier/l11-reference.ts
+?? app/verifier/l11-resources.ts
+?? app/verifier/l11-retail.ts
+?? app/verifier/l11-runtime.ts
+?? app/verifier/l11-urban.ts
+?? app/verifier/l11-water-collision.ts
+?? app/verifier/l11-waterways.ts
+?? app/verifier/l7-import.ts
+?? app/verifier/level-entry-regressions.js
+?? app/verifier/level-entry.js
+?? app/verifier/outpost-loading.js
+?? app/verifier/rat-import.ts
+?? app/verifier/refined-items-game.ts
+?? app/verifier/refined-items-runtime.ts
+?? app/verifier/refined-items.html
+?? app/verifier/refined-items.ts
+?? app/verifier/refined-itemsMesh-baseline.ts
+?? app/verifier/refined-viewmodel-baseline.ts
+?? app/verifier/retro-avatar-ui.html
+?? app/verifier/retro-avatar-ui.tsx
+?? app/verifier/retro-avatar.ts
+?? app/verifier/sky-import.ts
+?? app/verifier/smiler-import.ts
+?? app/verifier/smiler-spacing.ts
+?? app/verifier/ui-import.html
+?? app/verifier/ui-import.tsx
+?? app/verifier/wretch-import.ts
+?? reports/

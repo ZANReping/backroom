@@ -1,0 +1,23 @@
+
+> my-app@0.0.0 check:hounds
+> esbuild scripts/check-hounds.ts --bundle --platform=node --format=esm --outfile=.cache/check-hounds.mjs && node .cache/check-hounds.mjs
+
+
+  .cache\check-hounds.mjs  343.7kb
+
+Done in 50ms
+✔ 目击后仰头嚎叫（howl）
+✔ 远处同类被召集搜寻（search）
+✔ 提示：嚎叫
+✔ 直视 → 伏低后退（cower）
+✔ 伏低时向后退
+✔ 目光失效后重新扑来（charge）
+✔ 提示：习惯目光
+✔ 逃跑触发冲锋（charge）
+✔ 扑击命中并减速（伤害 36）
+✔ 中立猎犬只观察不攻击（sit）
+✔ 被攻击后转为敌对，附近中立同类一起转变
+✔ 转敌对后会攻击
+✔ 中立猎犬被奔跑吓跑（flee）
+
+猎犬行为验收全部通过

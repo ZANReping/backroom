@@ -1,0 +1,171 @@
+{
+  "run": "qa-1791966873950-48592",
+  "port": 7331,
+  "cdp": 7332,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-reference\\baseline\\qa-1791966873950-48592",
+  "label": "baseline",
+  "baseline": true,
+  "low": false,
+  "quick": false,
+  "seed": 20261006,
+  "command": [
+    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-reference\\baseline\\qa-1791966873950-48592",
+    "--remote-debugging-port=7332",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/154.0.8037.98",
+    "revision": "@b859317bf11f6be47f9b7799ec690a0a42a1fb33",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+    "jsVersion": "15.4.80.20"
+  },
+  "pids": {
+    "server": 19140,
+    "browser": 3000
+  },
+  "setup": {
+    "seed": 20261014,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "low": false,
+    "baseline": true,
+    "weather": "calm",
+    "time": 10,
+    "shadows": true
+  },
+  "cases": [
+    {
+      "id": "01-office-street",
+      "x": 272,
+      "y": 403,
+      "z": 0,
+      "tx": 272,
+      "ty": 220,
+      "th": 8,
+      "fov": 65,
+      "reference": "11iconic.jpg"
+    },
+    {
+      "id": "02-brick-apartments",
+      "x": 146,
+      "y": 642,
+      "z": 0,
+      "tx": 120,
+      "ty": 590,
+      "th": 8,
+      "fov": 78,
+      "reference": "11scenes.jpg"
+    },
+    {
+      "id": "03-canal",
+      "x": 760,
+      "y": 944,
+      "z": 0,
+      "tx": 760,
+      "ty": 780,
+      "th": 8,
+      "fov": 70,
+      "reference": "11canal.png"
+    }
+  ],
+  "performance": {
+    "label": "11:open",
+    "median": 4.19999999999709,
+    "p95": 8.299999999995634,
+    "max": 12.60000000000582,
+    "p99": 8.400000000001455,
+    "frames": 350,
+    "over16ms": 0,
+    "over33ms": 0,
+    "cpuMedian": 4.199999988079071,
+    "cpuP95": 6.5,
+    "gpuMedian": 4.221952,
+    "gpuP95": 6.358016,
+    "gpuSamples": 348,
+    "draws": 1163,
+    "triangles": 697185,
+    "memory": {
+      "geometries": 1223,
+      "textures": 74
+    },
+    "programs": 89,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "errors": [],
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "networkErrors": [
+    {
+      "requestId": "28752.12",
+      "loaderId": "22AEE136BDA608DEF4B37B0C71D6CD17",
+      "timestamp": 104367.313305,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:7331/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Wed, 14 Oct 2026 08:34:48 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 76,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 7331,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 104366.587014,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.569,
+          "sendEnd": 0.639,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 725.444,
+          "receiveHeadersEnd": 725.684
+        },
+        "responseTime": 1791966888257.166,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "BF9740C9CE458E3B327687077D11E52C"
+    }
+  ]
+}

@@ -4,6 +4,9 @@ import { ITEMS, itemName, itemUseProfile, type ItemUseProfile } from '../content
 import { tileAt } from '../world/mapgen'
 import { audio } from '../core/audio'
 import { dullerAlmondScent } from './dullerAI'
+import {jerryLureRead,jerryInputLock} from './jerryAI'
+import { addPartyConversion, PARTY } from './partygoerAI'
+import { releaseShrimp, SHRIMP_BAIT_TIME } from './shrimpAI'
 import type { Engine, InvSlot, SlotRef, SlotWhere } from '../engine'
 
 // v51：天才糖的「冷知识」（简单但常被人认错）
@@ -68,6 +71,8 @@ export function consumeItem(eng: Engine, type: string): boolean {
 }
 /** 开始使用物品。返回 true 表示进入了需要回到游戏画面播放的计时动作。 */
 export function useSlot(eng: Engine, where: SlotWhere, i: number): boolean {
+  if (jerryInputLock(eng)) return false
+  if (eng.handsStowed) { eng.msg('主手已收起，取出后才能使用物品。', 'system'); return false }
   const s = eng.slotGet({ w: where, i })
   if (!s) return false
   const def = ITEMS[s.type]
@@ -96,6 +101,7 @@ export function useSlot(eng: Engine, where: SlotWhere, i: number): boolean {
 
 /** 主循环推进消耗品动作；只有完整结束且原槽位仍是同一件物品时才结算。 */
 export function updateItemUse(eng: Engine, dt: number) {
+  if (eng.handsStowed || jerryInputLock(eng)) { eng.usingItem = null; return }
   const u = eng.usingItem
   if (!u) return
   const s = eng.slotGet({ w: u.where, i: u.i })
@@ -212,6 +218,13 @@ function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = f
         eng.msg('你喝下了液态痛苦——盐酸般的灼烧从喉咙一路烧进胃里，眼前一阵发黑。（生命 -35 · 理智 -55 · 口渴 -30）', 'damage')
         break
       }
+      // 派对客的「丝绒蛋糕」（切勿食用）：甜得发腻，什么也填不饱——转化值 +30（不消退、无解药）
+      if (s.type === 'velvetcake') {
+        eng.msg('甜得发腻，像红丝绒，又不像。咽下去之后，你的嘴角自己往上翘了一下。=)（切勿食用）', 'damage')
+        addPartyConversion(eng, PARTY.CAKE_CONV, 'cake')
+        if (eng.partyConv < PARTY.CONV_MAX) eng.msg('皮肤底下有什么东西在发硬、发亮。你觉得自己该去参加派对了。', 'damage')
+        break
+      }
       // v32：皇家口粮——饥饿全满 + 理智下限锁定 + 成瘾机制（可多次食用，逐次加长成瘾）
       if (s.type === 'royalration') {
         p.hunger = 100
@@ -261,7 +274,8 @@ function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = f
       else eng.msg('你仔细地做了一遍预防性消毒。目前没有感染疫疾。', 'loot')
       break
     }
-    case 'sanity': p.sanity = Math.min(100, p.sanity + (def.value ?? 30)); applyThirst(def.value3); if (s.type === 'almond' && p.infection < 100) eng.infectionRecoverT = 60; if (s.type === 'almond') dullerAlmondScent(eng); break // v54：杏仁水/市政自来水解渴，腰果水加剧口渴；v55：杏仁水（未满一阶）给 60s「恢复」buff
+    case 'sanity': p.sanity = Math.min(100, p.sanity + (def.value ?? 30)); applyThirst(def.value3); if (s.type === 'jerryflyer' || s.type === 'fakelog') jerryLureRead(eng, s.type); // 重制杰瑞：信众诱导材料——读完在地图上标出「据点」
+    if (s.type === 'almond' && p.infection < 100) eng.infectionRecoverT = 60; if (s.type === 'almond') dullerAlmondScent(eng); break // v54：杏仁水/市政自来水解渴，腰果水加剧口渴；v55：杏仁水（未满一阶）给 60s「恢复」buff
     case 'sanityeat': { // v54：幸运豆奶——理智 +value、饥饿 +value2、口渴 +value3
       p.sanity = Math.min(100, p.sanity + (def.value ?? 40))
       p.hunger = Math.min(100, p.hunger + (def.value2 ?? 20))
@@ -296,6 +310,7 @@ function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = f
 // ---------- 粉笔头：在墙上画白色记号 ----------
 /** 手持粉笔头右键：在面前墙上画记号（消耗 1 支；同一墙面不重复消耗） */
 export function drawChalk(eng: Engine) {
+  if (eng.handsStowed) return
   const p = eng.player, m = eng.map!
   const ox = m.inf ? m.inf.ox : 0, oy = m.inf ? m.inf.oy : 0
   // 沿朝向由近及远探测墙面
@@ -327,6 +342,7 @@ export function drawChalk(eng: Engine) {
 // （占位则互换——v23b 曾实现后随仓库同步丢失，玩家反馈"没有实现"，此为断链修复）；
 // 武器（撬棍/扳手/木板）本就握在主手，右键提示用法；其余物品 = 使用（吃/喝/治疗…）
 export function quickUse(eng: Engine) {
+  if (eng.handsStowed) return
   const p = eng.player
   const s = p.hotbar[p.selected]
   if (!s) return
@@ -348,6 +364,7 @@ export function quickUse(eng: Engine) {
 }
 // v20：快捷丢弃当前手持物品（默认 Q，整叠丢到脚下地面；空手无效）
 export function quickDrop(eng: Engine) {
+  if (eng.handsStowed) return
   const p = eng.player
   if (!p.hotbar[p.selected]) return
   eng.dropSlot('hotbar', p.selected)
@@ -377,6 +394,20 @@ export function dropSlot(eng: Engine, where: SlotWhere, i: number) {
   const r = { w: where, i }
   const s = eng.slotGet(r)
   if (!s || !eng.map) return
+  // v81：放生活旱虾——落地即变回实体爬走，并作为诱饵 40 秒（钝人/死亡飞蛾优先去吃它）
+  if (s.type === 'liveshrimp') {
+    const n = Math.max(1, s.count ?? 1)
+    for (let k = 0; k < n; k++) {
+      const a = p.facing + (k - (n - 1) / 2) * 0.5 // 玩家朝向已从相机换算为游戏平面方向
+      let x = p.x + Math.cos(a) * 0.55, y = p.y + Math.sin(a) * 0.55
+      if (!eng.los(p.x, p.y, x, y)) { x = p.x; y = p.y }
+      releaseShrimp(eng, x, y, p.z, a)
+    }
+    eng.slotSet(r, null)
+    eng.syncPassives()
+    eng.msg(n > 1 ? `放下了 ${n} 只活旱虾，它们慢慢爬开了。（诱饵 ${SHRIMP_BAIT_TIME} 秒）` : `放下了活旱虾，它慢慢爬开了。（诱饵 ${SHRIMP_BAIT_TIME} 秒）`, 'system')
+    return
+  }
   eng.map.items.push({ id: Math.random(), type: s.type, count: s.count, x: p.x + 0.3, y: p.y + 0.3 })
   eng.slotSet(r, null)
   eng.syncPassives()

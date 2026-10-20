@@ -69,6 +69,8 @@ function wallMatchBox(w: number, h: number, d: number, def: LevelDef, tintK = 1,
   return m
 }
 import { graffitiTextures } from './textures'
+import { buildObject70 } from './object70Mesh'
+import { buildL1OutpostEntrance, type L1OutpostOrg } from './l1OutpostEntrance'
 
 // 贴图 Lambert 材质（v34：容器木纹/金属贴图）——磁盘贴图经 levelTexture 缓存，离线自动回退程序噪点；
 // tint 近白叠乘保留贴图本色（looted 时传暗色达成变暗）
@@ -449,6 +451,7 @@ const PHOTO_POOL = ['photo_mountain.png', 'photo_lake.png', 'photo_forest.png',
 
 // 贴墙方向：返回随机一个相邻非地板方向（0北 1东 2南 3西），无墙返回 null
 export function wallDir(s: Structure, m: GameMap): number | null {
+  if (typeof s.data?.l1WallDir === 'number') return Number(s.data.l1WallDir) & 3
   if(typeof s.data?.l2WallDir==='number')return Number(s.data.l2WallDir)
   const opts: number[] = []
   const nb: [number, number, number][] = [[0, -1, 0], [1, 0, 1], [0, 1, 2], [-1, 0, 3]]
@@ -524,6 +527,7 @@ function bandWall(m: GameMap, x: number, y: number, f: number): boolean {
 // 实心面即墙（tile!==1：砌墙或虚空——虚空在渲染层同样立起墙盒，装饰贴上不算浮空）
 // v54：按结构楼层带判定（floor≥1 认对应层 upWall/upWall2，多层内部墙不再漏判）
 function wallDirs(s: Structure, m: GameMap): number[] {
+  if (typeof s.data?.l1WallDir === 'number') return [Number(s.data.l1WallDir) & 3]
   if(typeof s.data?.l2WallDir==='number')return [Number(s.data.l2WallDir)]
   const tx = Math.floor(s.x + s.w / 2), ty = Math.floor(s.y + s.h / 2)
   const f = s.floor ?? 0
@@ -559,6 +563,13 @@ function flushToWall(grp: THREE.Group, s: Structure, m: GameMap, depth: number, 
 // （取代旧 faceOutward+hugWall 组合：旧实现只认砌墙 tile===2，虚空旁装饰停留在瓦片中心悬浮）
 // v54：按结构楼层带判定（bandWall）——floor 1/2 认 upWall/upWall2，2F/3F 贴墙装饰不再浮空/错贴主层
 function mountOnWall(o: THREE.Object3D, parent: THREE.Object3D, s: Structure, m: GameMap, dist = 0.42) {
+  if (typeof s.data?.l1WallDir === 'number') {
+    const d = Number(s.data.l1WallDir) & 3
+    // This frame has an exact wall at half a metre. The old .42m estimate
+    // leaves thin signs/photos visibly floating in front of that real plane.
+    faceMount(o, d, .5-Math.max(dist,.485), o.position.y)
+    return
+  }
   const tx = Math.floor(s.x + s.w / 2), ty = Math.floor(s.y + s.h / 2)
   const bf = s.floor ?? 0
   let dir = -1, r = 1
@@ -1152,6 +1163,39 @@ function hangingCeil(s: Structure, m: GameMap, H: number): number {
 }
 
 // ---------- 结构低模 ----------
+// 派对客（Entity 67）诱饵海报「TIME 4 FUN =)」：奶油色纸、彩纸屑、气球、粉红大字，以及派对客的「手印」——
+// 一枚带一圈钩牙的吸盘口红印（它们没有手）。维基 FUNposter：8.5"×11"，海报上可见派对客「手印」。3 种文案变体，模块级缓存。
+const PARTY_POSTERS = new Map<number, THREE.Texture>()
+function partyPosterTexture(v: number): THREE.Texture | null {
+  if (typeof document === 'undefined') return null
+  const key = ((v % 3) + 3) % 3
+  const hit = PARTY_POSTERS.get(key); if (hit) return hit
+  const cv = document.createElement('canvas'); cv.width = 256; cv.height = 330
+  const c = cv.getContext('2d'); if (!c) return null
+  const R = mulberry(0x67 + key * 31)
+  c.fillStyle = '#f6eed8'; c.fillRect(0, 0, 256, 330)
+  const conf = ['#e8455a', '#3fa7d6', '#f2c230', '#6cc46a', '#b65ad8']
+  for (let i = 0; i < 90; i++) { c.fillStyle = conf[i % conf.length]; c.save(); c.translate(R() * 256, R() * 330); c.rotate(R() * 3); c.fillRect(-4, -2, 8, 4); c.restore() }
+  for (let i = 0; i < 3; i++) { // 气球
+    const x = 46 + i * 82, y = 70 + (i % 2) * 22
+    c.strokeStyle = '#7a6a58'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(x, y + 30); c.quadraticCurveTo(x + 8, y + 70, x - 4, y + 110); c.stroke()
+    c.fillStyle = conf[(i * 2) % conf.length]; c.beginPath(); c.ellipse(x, y, 24, 30, 0, 0, Math.PI * 2); c.fill()
+    c.fillStyle = 'rgba(255,255,255,0.45)'; c.beginPath(); c.ellipse(x - 8, y - 10, 6, 9, -0.4, 0, Math.PI * 2); c.fill()
+  }
+  const lines = [['TIME 4', 'FUN =)'], ['PARTY!', '=) =)'], ['你被邀请了', '=)']][key]
+  c.textAlign = 'center'; c.fillStyle = '#d8236a'; c.strokeStyle = '#3a1020'; c.lineWidth = 3
+  c.font = `bold ${key === 2 ? 36 : 50}px "Noto Sans CJK SC", sans-serif`
+  lines.forEach((t, i) => { c.strokeText(t, 128, 200 + i * 54); c.fillText(t, 128, 200 + i * 54) })
+  // 派对客「手印」：吸盘口红印
+  const hx = 70 + R() * 120, hy = 262 + R() * 30
+  c.strokeStyle = 'rgba(150,14,20,0.85)'; c.lineWidth = 7; c.beginPath(); c.arc(hx, hy, 22, 0, Math.PI * 2); c.stroke()
+  for (let k = 0; k < 12; k++) { const a = (k / 12) * Math.PI * 2; c.fillStyle = 'rgba(120,10,16,0.9)'; c.beginPath(); c.arc(hx + Math.cos(a) * 13, hy + Math.sin(a) * 13, 2.2, 0, Math.PI * 2); c.fill() }
+  c.fillStyle = 'rgba(150,14,20,0.5)'; c.fillRect(hx - 2, hy + 22, 3, 14 + R() * 10)
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace
+  PARTY_POSTERS.set(key, t)
+  return t
+}
+
 export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: number): THREE.Object3D | null {
   if(_def.id===0){const furniture=buildL0Furniture(s);if(furniture)return furniture}
   if(isAlphaKind(s.kind))return m.settlement?.blueprint.id==='alpha'?null:buildAlphaDecor(s)
@@ -1784,14 +1828,27 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       break
     }
     case 'corpse': {
-      grp.add(box(0.5, 0.18, 1.2, '#4a4038', 0, 0.09, 0))
-      grp.add(box(0.3, 0.14, 0.3, '#8a8078', 0, 0.12, -0.6))
-      grp.add(box(0.2, 0.1, 0.5, '#3a332c', 0.15, 0.08, 0.3)) // 伸出的腿
-      // 盖布（搜索后掀开：侧滑 + 微倾）
-      const sheet = box(0.56, 0.06, 1.0, '#5a5348', 0, 0.2, 0.1)
-      movable(sheet, 'lid')
-      grp.add(sheet)
-      if (s.looted) grp.userData.open = 1
+      // v83：Object 70——面朝下趴着、穿三件套西装、手提老式公文包的同一位中老年男子（object70Mesh.ts）
+      const wx = Math.floor(s.x) + (m.inf?.ox ?? 0), wy = Math.floor(s.y) + (m.inf?.oy ?? 0)
+      const seed = ((wx * 73856093) ^ (wy * 19349663) ^ (_def.id * 83492791)) >>> 0
+      const o70 = buildObject70(seed)
+      // 身长约 1.9m（跨 2 格）：挑一个头脚两端都不是墙的朝向（种子决定先试哪个方向）
+      const tx = Math.floor(cx), ty = Math.floor(cz), f = s.floor ?? 0
+      const free = (x: number, y: number) => x >= 0 && y >= 0 && x < m.w && y < m.h && !bandWall(m, x, y, f)
+      const dirs: [number, number][] = [[0, 1], [1, 0], [0, -1], [-1, 0]]
+      const d0 = seed % 4
+      let pick = dirs[d0]
+      for (let i = 0; i < 4; i++) { const [dx, dy] = dirs[(d0 + i) % 4]; if (free(tx + dx, ty + dy) && free(tx - dx, ty - dy)) { pick = [dx, dy]; break } }
+      const holder = new THREE.Group()
+      holder.rotation.y = Math.atan2(pick[0], pick[1])
+      holder.add(o70.group)
+      grp.add(holder)
+      const P = o70.parts
+      movable(P.caseG, 'case'); movable(P.lid, 'lid')
+      P.latches.forEach((l, i) => movable(l, 'latch', i))
+      movable(P.goods, 'goods')
+      grp.userData.o70 = o70.variant
+      if (s.looted || s.data?.opened) grp.userData.open = 1
       break
     }
     case 'stairrail':
@@ -5120,6 +5177,15 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
         break
       }
       if(m.l1Architecture){
+        if (s.data?.l1Entrance) {
+          const org = (s.data?.outpost ?? 'alpha') as L1OutpostOrg
+          const entrance = buildL1OutpostEntrance(org)
+          // Explicit L1 wall direction is resolved by mountOnWall; no random
+          // wall search is allowed for generated entrance structures.
+          grp.add(entrance)
+          mountOnWall(entrance, grp, s, m, .485)
+          break
+        }
         // Industrial portal backing. The existing organization marker remains the interaction target.
         grp.add(box(2.8,2.9,.28,'#b9bbb5',0,1.45,.86))
         grp.add(box(2.25,2.48,.06,'#505a56',0,1.24,.69))
@@ -5194,6 +5260,32 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
         grp.add(glow(0.018, 0.018, 0.012, i % 3 === 0 ? '#e8b93c' : '#6f9a55', 0.29, 0.42 + i * 0.15, 0.205)) // 指示灯列
       for (let i = 0; i < 3; i++)
         grp.add(cyl(0.018, 0.018, 1.5, ['#3a3f46', '#5a3a3a', '#2e3238'][i], -0.2 + i * 0.2, 0.9, -0.21, 6)) // 背部走线
+      break
+    }
+    case 'barberchair': {
+      // L1 v2 小径房间（参考「小径的房间之一」）：老式液压理发椅——圆底座 + 镀铬升降柱 + 奶白人造革座/靠背/头枕 + 镀铬扶手与脚踏
+      const vinyl = '#e4ddc9', vinylD = '#c9c0a8', chrome = '#b9bcc0', dark = '#2d2f33'
+      grp.add(cyl(0.27, 0.3, 0.06, dark, 0, 0.03, 0, 20)) // 圆底座
+      grp.add(cyl(0.07, 0.09, 0.26, chrome, 0, 0.19, 0, 14)) // 液压柱
+      grp.add(box(0.07, 0.03, 0.16, dark, 0.22, 0.05, 0.12)) // 油泵脚踏
+      grp.add(box(0.5, 0.06, 0.5, dark, 0, 0.34, 0)) // 座盘
+      const seat = box(0.52, 0.13, 0.52, vinyl, 0, 0.43, 0.02) // 座垫
+      grp.add(seat)
+      grp.add(box(0.5, 0.025, 0.5, vinylD, 0, 0.5, 0.02)) // 座面缝线层
+      const back = new THREE.Group(); back.position.set(0, 0.48, -0.22); back.rotation.x = -0.2
+      back.add(box(0.5, 0.62, 0.12, vinyl, 0, 0.33, 0)) // 靠背
+      back.add(box(0.46, 0.5, 0.02, vinylD, 0, 0.33, 0.065)) // 靠背面
+      back.add(box(0.06, 0.18, 0.05, chrome, 0, 0.72, -0.01)) // 头枕杆
+      back.add(box(0.3, 0.13, 0.1, vinyl, 0, 0.84, 0.02)) // 头枕
+      grp.add(back)
+      for (const sx of [-0.29, 0.29]) {
+        grp.add(box(0.07, 0.07, 0.46, vinyl, sx, 0.66, 0.04)) // 扶手垫
+        grp.add(box(0.03, 0.17, 0.03, chrome, sx, 0.55, 0.2)) // 扶手前撑
+        grp.add(box(0.03, 0.17, 0.03, chrome, sx, 0.55, -0.15)) // 扶手后撑
+      }
+      grp.add(box(0.04, 0.04, 0.34, chrome, 0, 0.3, 0.42)) // 脚踏杆
+      grp.add(box(0.4, 0.03, 0.16, dark, 0, 0.18, 0.56)) // 脚踏板
+      if (s.data?.deg !== undefined) grp.rotation.y = ((Number(s.data.deg) || 0) * Math.PI) / 180
       break
     }
     case 'officechair': {
@@ -5290,6 +5382,20 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       mountOnWall(inner, grp, s, m) // 强制贴最近墙（含虚空墙），不浮空
       break
     }
+    case 'partyflag': { // 派对客（Entity 67）的大红旗诱饵：金属旗杆 + 底座 + 带波纹的大红旗面（顶点直接烘出波浪）
+      const lean = Number(s.data?.lean ?? 0)
+      const g2 = new THREE.Group(); g2.rotation.y = lean * Math.PI / 2 + 0.3; grp.add(g2)
+      g2.add(cyl(0.022, 0.026, 2.7, '#8d8a84', 0, 1.35, 0, 8))
+      g2.add(cyl(0.16, 0.2, 0.08, '#3a3632', 0, 0.04, 0, 10))
+      g2.add(cyl(0.04, 0.04, 0.05, '#c9a43a', 0, 2.72, 0, 8))
+      const fg = new THREE.PlaneGeometry(1.25, 0.82, 12, 4)
+      const fp = fg.attributes.position as THREE.BufferAttribute
+      for (let i = 0; i < fp.count; i++) { const x = fp.getX(i) + 0.625; fp.setXYZ(i, x + 0.02, fp.getY(i) + 2.22, Math.sin(x * 4.6) * 0.07 * Math.min(1, x * 1.6) - x * 0.04) }
+      fg.computeVertexNormals()
+      const flag = new THREE.Mesh(fg, new THREE.MeshLambertMaterial({ color: '#c8161c', side: THREE.DoubleSide }))
+      g2.add(flag)
+      break
+    }
     case 'noticeboard': case 'megposter': case 'photo': {
       // 据点墙面装饰：贴图画板（公告栏/标语海报/相片，磁盘贴图 + 程序兜底，背板贴墙面）
       // data.tex 可指定替代贴图（如 bntg_poster.png）
@@ -5311,7 +5417,8 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
         grp.add(panel)
         break
       }
-      const tall = s.kind === 'megposter' && !!s.data?.tall // v51：竖幅画布（L3 天使宗教画 512×640 竖版）
+      const partyMap = s.kind === 'megposter' && s.data?.party ? partyPosterTexture(Number(s.data.v ?? 0)) : null // 派对客诱饵海报（程序化）
+      const tall = s.kind === 'megposter' && (!!s.data?.tall || !!partyMap) // v51：竖幅画布（L3 天使宗教画 512×640 竖版）；派对海报 8.5×11 竖版
       const w = s.kind === 'photo' ? 0.62 : tall ? 0.66 : 0.92, h = s.kind === 'photo' ? 0.5 : tall ? 0.88 : 0.72
       const inner = new THREE.Group()
       grp.add(inner)
@@ -5328,7 +5435,7 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       }
       const panel = new THREE.Mesh(
         new THREE.PlaneGeometry(w, h),
-        new THREE.MeshLambertMaterial({ map: levelTexture(tex, () => noiseTexture(fb, '#5a4e34')) }),
+        new THREE.MeshLambertMaterial({ map: partyMap ?? levelTexture(tex, () => noiseTexture(fb, '#5a4e34')) }),
       )
       panel.position.set(0, 1.3, 0.021)
       inner.add(panel)
@@ -5845,14 +5952,19 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       break
     }
     case 'perch': {
-      // 杰瑞的栖木：石座 + 木立柱 + 顶部横杆（鹉主 Entity 7 栖息于横杆上）+ 金饰环 + 供品小碟
+      // 杰瑞的栖木（重制：按真实尺寸金刚鹦鹉加高的 T 形立架）：石座 + 1.4m 木立柱 + 顶部横杆（东西走向，
+      // 杆顶面 ≈1.48m = jerryAI.JERRY.perchAlt；鹉主双爪环抱横杆、长尾羽垂在杆后）+ 金饰环 + 杆两端的供品小碟
       grp.add(cyl(0.3, 0.36, 0.14, '#c8ccd8', 0, 0.07, 0, 12)) // 石座
-      grp.add(cyl(0.06, 0.09, 0.44, '#6a4e34', 0, 0.36, 0, 8)) // 木立柱
-      const bar = cyl(0.035, 0.035, 0.72, '#7a5a3a', 0, 0.55, 0, 8) // 顶部横杆
+      grp.add(cyl(0.16, 0.2, 0.08, '#b8bccb', 0, 0.18, 0, 12)) // 石座上台
+      grp.add(cyl(0.035, 0.05, 1.24, '#6a4e34', 0, 0.84, 0, 8)) // 木立柱
+      grp.add(cyl(0.06, 0.06, 0.05, '#d4af37', 0, 1.39, 0, 10)) // 金饰环（横杆托座）
+      const bar = cyl(0.036, 0.036, 0.78, '#7a5a3a', 0, 1.444, 0, 10) // 顶部横杆
       bar.rotation.z = Math.PI / 2
       grp.add(bar)
-      grp.add(cyl(0.1, 0.1, 0.03, '#d4af37', 0, 0.5, 0, 10)) // 金饰环
-      grp.add(cyl(0.07, 0.05, 0.035, '#d8b060', 0.22, 0.16, 0.1, 8)) // 供品小碟（杏仁水色）
+      for (const sx of [-1, 1]) {
+        grp.add(cyl(0.012, 0.012, 0.08, '#9a7a3a', sx * 0.36, 1.4, 0, 6)) // 小碟托杆
+        grp.add(cyl(0.055, 0.04, 0.035, sx < 0 ? '#d8b060' : '#c9cfdc', sx * 0.36, 1.36, 0, 10)) // 供品小碟：杏仁水 / 清水
+      }
       break
     }
 

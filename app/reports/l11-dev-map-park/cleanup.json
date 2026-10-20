@@ -1,0 +1,55 @@
+{
+  "passed": true,
+  "method": "Read-only process, child process, listener and isolated profile inspection",
+  "reports": [
+    {
+      "report": "park",
+      "run": "qa-1792125752180-66536",
+      "ports": [
+        11531,
+        11532
+      ],
+      "pids": [
+        49172,
+        39568
+      ],
+      "ownedProcesses": [],
+      "listeners": [],
+      "serverChildren": [],
+      "profileExists": false
+    },
+    {
+      "report": "runtime",
+      "run": "qa-1792126299516-51132",
+      "ports": [
+        4471,
+        4472
+      ],
+      "pids": [
+        67964,
+        66704
+      ],
+      "ownedProcesses": [],
+      "listeners": [],
+      "serverChildren": [],
+      "profileExists": false
+    },
+    {
+      "report": "summon",
+      "run": "qa-1792126179419-61620",
+      "ports": [
+        8538,
+        8539
+      ],
+      "pids": [
+        65484,
+        70420
+      ],
+      "ownedProcesses": [],
+      "listeners": [],
+      "serverChildren": [],
+      "profileExists": false
+    }
+  ],
+  "residual": []
+}

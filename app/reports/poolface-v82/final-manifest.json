@@ -1,0 +1,188 @@
+{
+  "archiveSha256": "e6a7ebfb6065b1d43bef9d62c05212aa8b19da5b4d2633201e8126eb7d1cc87a",
+  "changedExisting": [
+    {
+      "path": "src/App.tsx",
+      "exists": true,
+      "snapshotHash": "7516efda735f071471e4f297c62fe49920428b1c0b6de9561c292681afeeef21",
+      "currentHash": "926d597e6936338169857f7dcc074a585a24653db28dbb04b90a58732f3adaf3",
+      "changed": true,
+      "expected": true
+    },
+    {
+      "path": "src/components/HUD.tsx",
+      "exists": true,
+      "snapshotHash": "5040f330572f7cf613e95386fb9d0e408845466a5936b50445024ec27b7d4073",
+      "currentHash": "4619ff285fa969786194aec6ca522b87eeaabd338f6f12ff0162ef2a22d1e44e",
+      "changed": true,
+      "expected": true
+    },
+    {
+      "path": "src/components/TouchControls.tsx",
+      "exists": true,
+      "snapshotHash": "50fac4c5a08f27088a61ae2121c4c5e650684bb1f1560e055c5eaca8a180232b",
+      "currentHash": "06b8c45639fdc85c1ab20f7a8794c6f4bd4614451fc0295bc3fb90737a253a60",
+      "changed": true,
+      "expected": true
+    },
+    {
+      "path": "src/components/LayoutEditor.tsx",
+      "exists": true,
+      "snapshotHash": "5131a275dc10b83a6ecf7182074d812727055d998b4e531fac48e76291356bae",
+      "currentHash": "ecec9dd6f7981484da42655b004ac17826fc45ccddfea3d87dc66264d8ba663e",
+      "changed": true,
+      "expected": true
+    },
+    {
+      "path": "src/components/icons.tsx",
+      "exists": true,
+      "snapshotHash": "d6c2ee1423de9ea12f93a208e11d1c0bb17c48e9a2cd6ed24a8757237536bacf",
+      "currentHash": "95666f25fea6ed854f1fcca2e476fab4325f6b42f013f83d52537697638e9c47",
+      "changed": true,
+      "expected": true
+    },
+    {
+      "path": "src/components/HowToPlay.tsx",
+      "exists": true,
+      "snapshotHash": "46ebcec75dfd8a01f5579ec9c0408abb62e1c4775eb1e1794a131be31c3b2a45",
+      "currentHash": "2514641e6ad1838440c77d7cab1ac8e478c223b4086265d06a285e9d40d22d7e",
+      "changed": true,
+      "expected": true
+    },
+    {
+      "path": "src/game/core/keybinds.ts",
+      "exists": true,
+      "snapshotHash": "7c35708a8536eb7014cf2a2966481483a5392c1713df0961add9d1553c727697",
+      "currentHash": "c1e70120c93529e8213bb7d1983647c43d8b88788453e313b5b12f6a3badafaa",
+      "changed": true,
+      "expected": true
+    },
+    {
+      "path": "src/game/engine.ts",
+      "exists": true,
+      "snapshotHash": "e254536559fcebe46780410960cda195c7e4d2fc1da4849d976cf5f2bd7c9a4a",
+      "currentHash": "4d5cd9bbc92499206f94462afd3da0547204d8e182878dd9230ded237f8e73ee",
+      "changed": true,
+      "expected": true
+    },
+    {
+      "path": "src/game/engine/combat.ts",
+      "exists": true,
+      "snapshotHash": "5b38d1590cfcb62a0f2b065f86cc607ddf9b0618c5791e7e9dc3bfe6292e54bf",
+      "currentHash": "8a777d89bae6afa2ef1ce813aca9d2669a0fe0c2d0dfe5c61079e7bd9eff3b12",
+      "changed": true,
+      "expected": true
+    },
+    {
+      "path": "src/game/engine/inventory.ts",
+      "exists": true,
+      "snapshotHash": "7a9285ce49ad70ebbf4bf0cef2d830ef98c1458406acb55fcbbac898422ebf4c",
+      "currentHash": "8717118e53ee65d13a0043ccd8ba38bb5b3aad5c064adc77cf59d7dd444cc3c6",
+      "changed": true,
+      "expected": true
+    },
+    {
+      "path": "src/game/renderer/renderer.ts",
+      "exists": true,
+      "snapshotHash": "8a54c8e3d3b0f205f158dca1c47e907c295aa3c4af057292069f8b7469587c02",
+      "currentHash": "26b31a8eee249b76607a6f17e3ba782c689400cddee1cd6c7d17a206770b32c6",
+      "changed": true,
+      "expected": true
+    },
+    {
+      "path": "src/game/renderer/retroNpc.ts",
+      "exists": true,
+      "snapshotHash": "a50a0c45c46afaf64dd2b25bcdb6d7bc5c4623681682bf5edb0f6039ccfb4f2c",
+      "currentHash": "1e3227ba8506aac846bb163b2e9bea4d6ed17e52f45bed8783f8d65524e2723c",
+      "changed": true,
+      "expected": true
+    },
+    {
+      "path": "src/proto/retroNpcProto.ts",
+      "exists": true,
+      "snapshotHash": "ef67d1b056224ed9073ec487637293a8b3e329db3868dadf0036ad5e5ff7e24b",
+      "currentHash": "5f585801f1b6509f372f88e59342b526be0e6dbcce357937ba7c4fd208a10645",
+      "changed": true,
+      "expected": true
+    }
+  ],
+  "importedText": [
+    {
+      "path": "README.md",
+      "exists": true,
+      "sha256": "f58b5b17f83db63c09a9f2c059ec435ac8a3feb66f9337391ed5f3f62cff4e63"
+    },
+    {
+      "path": "scripts/gen-retro-avatar-textures.py",
+      "exists": true,
+      "sha256": "274f891c2054eccf19d0ac985b3e615d1a6454f97fd16796860111db4f687bdd"
+    },
+    {
+      "path": "scripts/retro_face_clean.py",
+      "exists": true,
+      "sha256": "0d9eb8f4fed705a2f796ece5856846847147cf937432a0bf8ee9e34f36f09046"
+    },
+    {
+      "path": "scripts/import-poolface-v82.mjs",
+      "exists": true,
+      "sha256": "da158949573147b86e61711c6b036b9209238df54acac35a1b83c1a536356249"
+    }
+  ],
+  "packageAndTaskFiles": [
+    {
+      "path": "package.json",
+      "exists": true,
+      "sha256": "59f3a67c1489616f5e7d1e0561894cd8e4a7f0dae809aeeb163170a0867c9e53"
+    },
+    {
+      "path": "scripts/verify-poolface-v82.mjs",
+      "exists": true,
+      "sha256": "2a43d911e35ba30d0d497dee20016a837640e11c414a78f1b0f8398998586a69"
+    },
+    {
+      "path": "scripts/verify-holster.mjs",
+      "exists": true,
+      "sha256": "3bcfbeaebef2d69122c95916254d0dc7c00dd05b00d3b39e97683d48158aa74e"
+    },
+    {
+      "path": "verifier/poolface-v82.html",
+      "exists": true,
+      "sha256": "5fc07765d9a7afcbaa059b9d254ed26b76375fdc3589f6df2d2503fd82741c6c"
+    },
+    {
+      "path": "verifier/poolface-v82.ts",
+      "exists": true,
+      "sha256": "4da368cd8cffe66a07700d1c4357194a4c68f922d4cc70b0fa8b20ea883854be"
+    },
+    {
+      "path": "verifier/holster-app.html",
+      "exists": true,
+      "sha256": "c89af0d5a18241144c7dfb678d03d076d225af7892f077ec5fafde09bf7bc83a"
+    },
+    {
+      "path": "verifier/holster-app.tsx",
+      "exists": true,
+      "sha256": "f87c624d8048638bf574832f8569afa84c2437f69b95c2975f0837eeb95ae334"
+    },
+    {
+      "path": "verifier/holster-check.ts",
+      "exists": true,
+      "sha256": "59e87aae6b7ff6a16da1b26a7b5f2632794e6e396d05180eab0c6193cc8d77c4"
+    },
+    {
+      "path": "HOLSTER.md",
+      "exists": true,
+      "sha256": "30c876e064e31e079120b27fd1a30805707b327972b80c2c7ec3b8cf8d1135fb"
+    },
+    {
+      "path": "POOLFACE-V82.md",
+      "exists": true,
+      "sha256": "4b5fd36a2ebd636afd7078761451b87941b434f89aa882f6828e976a47c183e8"
+    }
+  ],
+  "infoMd": {
+    "path": "../info.md",
+    "exists": true,
+    "sha256": "66dee9c5e43251b37705ed4bd9caf41189497a936ba4dc981ba9d0c8ee1d9bee"
+  }
+}

@@ -15,6 +15,7 @@ import { NORMAL_LEVELS, levelLabel, levelDefOf } from './levels'
 import { type Entity } from './entities'
 import { createIntegrator, type MoveIntegrator } from './core/player'
 import { look } from './core/renderer3d'
+import { freshJerryRun, jerryInputLock, type JerryRunState } from './engine/jerryAI'
 import type { ExitDef, FloorBand, LightSource, Structure } from './core/types'
 import { audio } from './core/audio'
 import { ROCK_SONG_IDS, musicName, setRadioCfg } from './core/midi'
@@ -147,6 +148,8 @@ export class Engine {
   // F1 全沉浸（hudHidden+handsHidden）/ F2 半沉浸（仅 hudHidden，保留手部建模与准星）；
   // 按当前生效的键恢复，按另一个键直接切换到另一种模式（互不叠加）。
   handsHidden = false
+  // 收起主手是玩法状态，与 F1 仅隐藏画面的沉浸模式分开；不改变选中槽或副手照明。
+  handsStowed = false
   // 主手检视只驱动第一人称模型姿态，不参与移动、攻击、交互或物品使用判定。
   inspectHeld = false
   // v29a：存档/读档状态
@@ -298,6 +301,7 @@ export class Engine {
   // v56：乐手（乔伊）演奏中标记（渲染层弹奏动画 + 对话「停下」选项；播完/叫停/切层自动清除）
   joeyPlaying = false
   jerryContactCd = 0 // v47：接触杰瑞冷却剩余秒数（20s 防连点刷声望/教化；HUD 交互提示显示剩余）
+  jerryRun: JerryRunState = freshJerryRun() // 重制杰瑞/信众的局内状态（木僵、残响、理智上限、击晕、飞石、伏击、诱导标记）——只在内存，不写存档（effects 表 resetOnNewRun、无 saveKey）
   jerryTerritory = false // 玩家身处信众宣传间矩形内（HUD 显示 jerry 声望；引擎每帧维护）
   chantT = 0 // 诵咏计时（L274 内被教化后周期性咏出崇拜词）
   // v29：玩家当前在可行走阶梯上（碰撞 z 按地面处理、跳过重力贴地；由 updateStairs 每帧维护）
@@ -342,6 +346,7 @@ export class Engine {
   // v55：「恢复」buff 剩余秒数（杏仁水/幸运豆奶/消毒液/皇家口粮 60s；重复服用重置计时）——
   // 持续期间感染值不再增长，且在非感染区（非湿地/非锅炉房）每 5s 自然 -1
   infectionRecoverT = 0
+  partyConv = 0 // 派对客（Entity 67）转化值 0–100：咬伤/丝绒蛋糕累积、不消退、无解药；满值即「加入派对」。只存在当局内存，不写进存档（effects 表 resetOnNewRun、无 saveKey）
 
   constructor() {
     this.player = this.freshPlayer()
@@ -455,6 +460,7 @@ export class Engine {
     this.attackCooldownT = 0
     this.attackCooldownDur = 0
     this.inspectHeld = false
+    this.handsStowed = false
     this.squirtTank = 'none'
     this.squirtAmmo = 0
     this.squirtQuickLiquid = 'water'
@@ -667,6 +673,15 @@ export class Engine {
   aimEntity(): Entity | null { return combat.aimEntity(this) }
   killCheck(e: Entity) { combat.killCheck(this, e) }
   attack() { combat.attack(this) }
+  toggleHands() {
+    if (!this.map || this.over) return
+    this.handsStowed = !this.handsStowed
+    this.input.attack = false
+    this.inspectHeld = false
+    this.usingItem = null // 中断未完成的使用动作，不消耗物品。
+    this.attackAnimT = 0 // 仅取消姿势；保留实际攻击冷却，防止反复收放绕过间隔。
+    this.msg(this.handsStowed ? '已收起主手，可继续交互。' : '已取出主手。', 'system')
+  }
   throwHeld(type: string) { combat.throwHeld(this, type) }
   /** 往滋水枪储罐装入 1 瓶液体（3 份喷射量；储罐只能装一种液体，清水无需对应物品） */
   loadSquirt(liquid: 'water' | 'almond' | 'cashew' | 'liquidpain'): boolean { return combat.loadSquirt(this, liquid) }
@@ -693,9 +708,9 @@ export class Engine {
   viewAngle(x: number, y: number): number { return interact.viewAngle(this, x, y) }
   interactionProbe(
     x: number, y: number, z: number, band: FloorBand, maxDistance: number, radius = 0.25,
-    volume?: interact.InteractionVolume, surfaceDistance?: number, verticalRadius = radius,
+    volume?: interact.InteractionVolume, surfaceDistance?: number, verticalRadius = radius, target?: Structure,
   ) {
-    return interact.interactionProbe(this, x, y, z, band, maxDistance, radius, volume, undefined, surfaceDistance, verticalRadius)
+    return interact.interactionProbe(this, x, y, z, band, maxDistance, radius, volume, target, surfaceDistance, verticalRadius)
   }
   scanInteract() { interact.scanInteract(this) }
   doInteract() { interact.doInteract(this) }
@@ -884,7 +899,7 @@ export class Engine {
       const skip = Math.hypot(this.input.mx, this.input.my) > 0.1 || this.input.jump || this.input.attack
       this.introT = skip ? 0 : Math.max(0, this.introT - dt)
     }
-    const introLock = this.introT > 0
+    const introLock = this.introT > 0 || jerryInputLock(this) // 杰瑞木僵/信众击晕/残响失神：锁定移动、攻击与跳跃
 
     // ---- 移动 ----（engine/movement.ts；返回 null=本帧已死亡/终止，同原 step 内 return）
     const mag = this.updateMovement(dt, dm, introLock)

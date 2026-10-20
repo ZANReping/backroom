@@ -13,7 +13,8 @@ export const REFINED_ITEM_ATLAS = {
   housekey: 'tools', presses: 'tools', eaglecoin: 'tools', sedative: 'tools', uvlamp: 'tools', headlamp: 'tools', nightvision: 'tools', silverware: 'tools',
   gloves: 'gear', suit: 'gear', cavingsuit: 'gear', rope: 'gear', divemask: 'gear', chalkstub: 'gear', stonekazoo: 'gear', wheatgrain: 'gear',
   xenonmarble: 'gear', driedfruit: 'gear',
-  thingmeat: 'food', ratmeat: 'food', dryshrimp: 'food', friedshrimp: 'food', tomatosoup: 'food', gardensalad: 'food', garlicbread: 'food', pasta: 'food',
+  thingmeat: 'food', ratmeat: 'food', // v81：旱虾 / 酥炸旱虾改由 shrimpMesh 与实体共用奇虾几何
+  tomatosoup: 'food', gardensalad: 'food', garlicbread: 'food', pasta: 'food',
   meatstew: 'food', pizza: 'food', lasagna: 'food', tomsspecial: 'food', grilledsteak: 'food', jambread: 'food',
   megfolder: 'paper', oddbook: 'paper', pamphlet: 'paper', endnote: 'paper', welcomenote: 'paper', notebook: 'paper', parcel: 'paper',
   candysilver: 'paper', candybullet: 'paper', candygun: 'paper', candystanley: 'paper', candywaste: 'paper', candygenius: 'paper',
@@ -696,46 +697,6 @@ function ratmeat(p: Parts) {
 }
 
 /** 虾体沿弧线：头在 -X，背部拱起，尾扇在 +X 向下卷。返回头部位置与朝向。 */
-function shrimpPath(t: number) {
-  const ang = PI * (.92 - .98 * t), rad = .095
-  return { x: Math.cos(ang) * rad, y: Math.sin(ang) * rad * .72 - .02, rz: ang - PI }
-}
-function shrimpBody(p: Parts, mat: THREE.Material, battered: boolean) {
-  const segs = 7
-  for (let i = 0; i < segs; i++) {
-    const t = (i + .5) / segs, { x, y, rz } = shrimpPath(t), r = .04 - t * .02
-    const g = battered ? lumpyWelded(sphere(r * 1.3, 10, 7), r * .18, 90, i * 3) : lathe([[0, -.017], [r * .82, -.017], [r, -.006], [r * .96, .014], [r * .74, .02], [0, .02]], 10)
-    p.add(g, mat, battered ? C.batter : C.shell, { p: [x, y, 0], r: [0, 0, rz], s: battered ? [1, 1.25, .9] : [1, 1, .85], rect: battered ? FULL : SUB.shellBody })
-  }
-  // 尾扇：三片沿尾端切线向外张开
-  const end = shrimpPath(1.02)
-  for (const s of [1, -1, 0]) {
-    const fan = extrude(shape([[0, 0], [.06, -.016], [.07, 0], [.06, .016]]), .004, { bevel: .001, front: SUB.shellBody })
-    p.add(fan, mat, C.shell, { p: [end.x, end.y, s * .012], r: [HP, s * .45, end.rz - HP] })
-  }
-  return shrimpPath(0)
-}
-function dryshrimp(p: Parts) {
-  const shell = surface('food', 0, .4)
-  const head = shrimpBody(p, shell, false)
-  const hx = head.x - .03, hy = head.y - .004
-  p.add(lathe([[0, -.04], [.028, -.032], [.044, -.005], [.04, .025], [.02, .045], [0, .05]], 12), shell, C.shell, { p: [hx, hy, 0], r: [0, 0, HP * .8], s: [1, 1, .85], rect: SUB.shellBody })
-  for (const s of [1, -1]) {
-    p.add(sphere(.008, 8, 5), shell, C.shell, { p: [hx - .028, hy + .02, s * .022], rect: SUB.shellDark })
-    p.add(tube([[hx - .04, hy + .005, s * .01], [hx - .09, hy + .05, s * .04], [hx - .14, hy + .045, s * .08], [hx - .18, hy + .01, s * .1]], .0018, 8, 3), shell, C.shell, { rect: SUB.shellDark })
-    for (let k = 0; k < 5; k++) {
-      const q = shrimpPath(.12 + k * .13)
-      p.add(tube([[q.x, q.y - .022, s * .015], [q.x - .004, q.y - .045, s * .035], [q.x - .01, q.y - .058, s * .04]], .002, 2, 3), shell, C.shell, { rect: SUB.shellBody })
-    }
-  }
-}
-function friedshrimp(p: Parts) {
-  const fried = surface('food', 0, .7)
-  const head = shrimpBody(p, fried, true)
-  p.add(lumpyWelded(sphere(.05, 12, 8), .008, 80, 7), fried, C.batter, { p: [head.x - .035, head.y, 0], s: [1.15, 1, .95] })
-  for (const [x, z] of [[-.05, .06], [.04, -.06], [-.13, -.04]]) p.add(lumpyWelded(sphere(.012, 6, 4), .003, 200, x * 90), fried, C.batter, { p: [x, -.07, z] })
-}
-
 function tomatosoup(p: Parts) {
   const food = surface('food', 0, .35)
   bowl(p, food, C.ceramic, .13, .1)
@@ -1022,7 +983,7 @@ function citywater(p: Parts) {
 const BUILDERS: Record<RefinedItemType, (p: Parts) => void> = {
   carkey, gas, wrench, fuse, stapler, keycard, nails, timber, housekey, presses, eaglecoin, sedative, uvlamp, headlamp, nightvision, silverware,
   gloves, suit, cavingsuit, rope, divemask, chalkstub, stonekazoo, wheatgrain, xenonmarble, driedfruit,
-  thingmeat, ratmeat, dryshrimp, friedshrimp, tomatosoup, gardensalad, garlicbread, pasta, meatstew, pizza, lasagna, tomsspecial, grilledsteak, jambread,
+  thingmeat, ratmeat, tomatosoup, gardensalad, garlicbread, pasta, meatstew, pizza, lasagna, tomsspecial, grilledsteak, jambread,
   megfolder, oddbook, pamphlet, endnote, welcomenote, notebook, parcel, candysilver, candybullet, candygun, candystanley, candywaste, candygenius, candymint, manmade, citywater,
 }
 

@@ -1,0 +1,336 @@
+{
+  "run": "qa-1791952891815-74500",
+  "port": 5592,
+  "cdp": 5593,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-water-collision\\qa-1791952891815-74500",
+  "seed": 20261006,
+  "command": [
+    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-water-collision\\qa-1791952891815-74500",
+    "--remote-debugging-port=5593",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/154.0.8037.98",
+    "revision": "@b859317bf11f6be47f9b7799ec690a0a42a1fb33",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+    "jsVersion": "15.4.80.20"
+  },
+  "pids": {
+    "server": 66376,
+    "browser": 63112
+  },
+  "water": {
+    "x": 754.9217678737609,
+    "y": 32.58361198207933,
+    "target": [
+      738.9324152585243,
+      32
+    ],
+    "yaw": 1.534312484691171,
+    "pitch": -0.19,
+    "state": {
+      "meshes": 10,
+      "reflection": true,
+      "exposure": 1.6977697118534836,
+      "materials": [
+        "l11-canal-water-realistic:true"
+      ],
+      "depth": [
+        1.5,
+        1.5
+      ],
+      "time": 10.004199999999997,
+      "rain": 0,
+      "origin": [
+        672,
+        -32
+      ],
+      "transparent": true,
+      "depthWrite": false
+    }
+  },
+  "high": {
+    "meshes": 10,
+    "reflection": true,
+    "exposure": 1.2085788673808453,
+    "materials": [
+      "l11-canal-water-realistic:true"
+    ],
+    "depth": [
+      1.5,
+      1.5
+    ],
+    "time": 13.008299999999998,
+    "rain": 0,
+    "origin": [
+      672,
+      -32
+    ],
+    "transparent": true,
+    "depthWrite": false
+  },
+  "highPerformance": {
+    "label": "11:open",
+    "median": 4.200000000000728,
+    "p95": 12.399999999997817,
+    "max": 16.700000000000728,
+    "p99": 12.599999999998545,
+    "frames": 227,
+    "over16ms": 2,
+    "over33ms": 0,
+    "cpuMedian": 4.299999997019768,
+    "cpuP95": 10.299999997019768,
+    "gpuMedian": 4.815872,
+    "gpuP95": 8.50944,
+    "gpuSamples": 225,
+    "draws": 966,
+    "triangles": 419576,
+    "memory": {
+      "geometries": 733,
+      "textures": 69
+    },
+    "programs": 74,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "rain": {
+    "meshes": 10,
+    "reflection": true,
+    "exposure": 1.201849163330963,
+    "materials": [
+      "l11-canal-water-realistic:true"
+    ],
+    "depth": [
+      1.5,
+      1.5
+    ],
+    "time": 14.0041,
+    "rain": 1,
+    "origin": [
+      672,
+      -32
+    ],
+    "transparent": true,
+    "depthWrite": false
+  },
+  "low": {
+    "meshes": 10,
+    "reflection": false,
+    "exposure": 1.2018472196655683,
+    "materials": [
+      "l11-canal-water-realistic:false"
+    ],
+    "depth": [
+      1.5,
+      1.5
+    ],
+    "time": 10.011599999999998,
+    "rain": 0,
+    "origin": [
+      672,
+      -32
+    ],
+    "transparent": true,
+    "depthWrite": false
+  },
+  "reflectionDisposal": {
+    "geometry": 1,
+    "target": 1,
+    "material": 1
+  },
+  "drops": [
+    {
+      "kind": "l11_cafe_table",
+      "id": "l11v2:20261006:0:0:block:4:lot:0:2:table",
+      "world": [
+        51.166650000000004,
+        264.0000333333333
+      ],
+      "base": 0.08323423026074532,
+      "modelTop": 0.8327342302607452,
+      "landed": 0.8327342302607452,
+      "blockedAtBase": true
+    },
+    {
+      "kind": "l11_sedan",
+      "id": "h:20261006:0:0:street:1:192:1:vehicle",
+      "world": [
+        208,
+        23.5
+      ],
+      "base": 0.010881387743577622,
+      "modelTop": 1.5108813877435776,
+      "landed": 1.5108813877435776,
+      "blockedAtBase": true
+    },
+    {
+      "kind": "l11_box_truck",
+      "id": "h:20261006:0:0:street:1:216:1:vehicle",
+      "world": [
+        232,
+        23.5
+      ],
+      "base": 0.017966133387681306,
+      "modelTop": 3.1059661333876813,
+      "landed": 3.1059661333876813,
+      "blockedAtBase": true
+    }
+  ],
+  "stairs": {
+    "building": "l11v2:20261006:0:0:block:90:lot:0:0",
+    "angle": -0.3141592653589793,
+    "flight": 0,
+    "distance": 0.19666666666774338,
+    "height": 3
+  },
+  "canopy": {
+    "kind": "l11_bus_shelter",
+    "underside": 2.44,
+    "peakHead": 2.44,
+    "stopped": true
+  },
+  "roof": {
+    "building": "l11v2:20261006:0:0:block:0:lot:2:1",
+    "shape": "gable",
+    "angle": 0,
+    "collisionTop": 16.4209040444092,
+    "meshTop": 16.42090402633956,
+    "landed": 16.4209040444092,
+    "physicsMs": {
+      "median": 0.09999999403953552,
+      "p95": 0.20000000298023224,
+      "max": 0.20000000298023224
+    }
+  },
+  "render": {
+    "label": "11:open",
+    "median": 12.5,
+    "p95": 20.90000000000873,
+    "max": 787.4000000000087,
+    "p99": 33.39999999999418,
+    "frames": 1000,
+    "over16ms": 214,
+    "over33ms": 10,
+    "cpuMedian": 4.299999997019768,
+    "cpuP95": 10.299999997019768,
+    "gpuMedian": 4.815872,
+    "gpuP95": 8.50944,
+    "gpuSamples": 227,
+    "draws": 1399,
+    "triangles": 853136,
+    "memory": {
+      "geometries": 1396,
+      "textures": 91
+    },
+    "programs": 81,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "rooms": {
+    "ok": true,
+    "checks": [
+      {
+        "kind": "workspace",
+        "floor": 0,
+        "room": "l11v2:20261006:0:0:block:88:lot:1:1:f0:room:1",
+        "building": "l11v2:20261006:0:0:block:88:lot:1:1",
+        "angle": -0.3141592653589793,
+        "doorWidth": 1.3999999999999986,
+        "twoWay": true
+      }
+    ]
+  },
+  "classic": {
+    "meshes": 10,
+    "reflection": false,
+    "exposure": 1.3063556735495265,
+    "materials": [
+      "l11-canal-water-classic:true"
+    ],
+    "depth": [
+      1.5,
+      1.5
+    ],
+    "time": 10.004200000000012,
+    "rain": 0,
+    "origin": [
+      672,
+      -32
+    ],
+    "transparent": true,
+    "depthWrite": false
+  },
+  "errors": [],
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "networkErrors": [
+    {
+      "requestId": "52860.13",
+      "loaderId": "FC504207BE30BD69FB7ADAF9A6A2B8B8",
+      "timestamp": 90382.210637,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:5592/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Wed, 14 Oct 2026 04:41:42 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 183,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 5592,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 90381.714064,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.398,
+          "sendEnd": 0.457,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 495.559,
+          "receiveHeadersEnd": 495.731
+        },
+        "responseTime": 1791952903154.331,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "0C81C62D76117580BC360F66B7E5EC5E"
+    }
+  ]
+}

@@ -1,0 +1,1547 @@
+{
+  "run": "qa-1791987915507-3108",
+  "label": "classic-all",
+  "mode": "classic",
+  "port": 10971,
+  "cdp": 10972,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\outpost-loading\\classic-all\\qa-1791987915507-3108",
+  "levels": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111,
+    112,
+    113,
+    114,
+    116,
+    274
+  ],
+  "cases": [
+    {
+      "id": 101,
+      "cold": {
+        "id": 101,
+        "transition": false,
+        "loadMs": 2986.2999999970198,
+        "sceneMs": 2947.699999988079,
+        "generationMs": 38.6000000089407,
+        "frames": 346,
+        "cpuTotalMs": 1646.2000000476837,
+        "cpuMaxMs": 545.4000000059605,
+        "frameP95Ms": 16,
+        "firstRevealMs": [
+          5.700000002980232,
+          5.799999997019768
+        ],
+        "metrics": {
+          "buildLevel": {
+            "cpuMs": 811.2999999672174,
+            "calls": 267157,
+            "maxMs": 21.799999997019768
+          },
+          "warmSceneTextures": {
+            "cpuMs": 52,
+            "calls": 247,
+            "maxMs": 21.799999997019768
+          }
+        },
+        "compile": {
+          "calls": 586,
+          "submitMs": 101.09999996423721,
+          "maxSubmitMs": 6.200000002980232,
+          "targets": 0
+        },
+        "firstReady": {
+          "structures": 6825,
+          "lights": 488,
+          "npcs": 29,
+          "nearNpcs": 4,
+          "npcMeshes": 4,
+          "meshes": 4657,
+          "instances": 78507,
+          "materials": 952,
+          "memory": {
+            "geometries": 85,
+            "textures": 266
+          },
+          "programs": 64,
+          "drawCalls": 248,
+          "triangles": 27368,
+          "spawn": {
+            "x": 61,
+            "y": 13.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      },
+      "survey": {
+        "frameP95Ms": 10.5,
+        "cpuP95Ms": 10.299999997019768,
+        "snapshot": {
+          "structures": 6825,
+          "lights": 488,
+          "npcs": 29,
+          "nearNpcs": 4,
+          "npcMeshes": 4,
+          "meshes": 4657,
+          "instances": 78507,
+          "materials": 952,
+          "memory": {
+            "geometries": 87,
+            "textures": 269
+          },
+          "programs": 64,
+          "drawCalls": 183,
+          "triangles": 27368,
+          "spawn": {
+            "x": 61,
+            "y": 13.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 102,
+      "cold": {
+        "id": 102,
+        "transition": false,
+        "loadMs": 1315.5999999940395,
+        "sceneMs": 1281.2000000029802,
+        "generationMs": 34.3999999910593,
+        "frames": 102,
+        "cpuTotalMs": 1073.7000000327826,
+        "cpuMaxMs": 596.2000000029802,
+        "frameP95Ms": 13.400000005960464,
+        "firstRevealMs": [
+          2.0999999940395355,
+          1.9000000059604645
+        ],
+        "metrics": {
+          "buildLevel": {
+            "cpuMs": 254.4000000357628,
+            "calls": 79368,
+            "maxMs": 15.399999991059303
+          },
+          "warmSceneTextures": {
+            "cpuMs": 3.9000000059604645,
+            "calls": 20,
+            "maxMs": 2.6000000089406967
+          }
+        },
+        "compile": {
+          "calls": 90,
+          "submitMs": 39.10000002384186,
+          "maxSubmitMs": 7.799999997019768,
+          "targets": 0
+        },
+        "firstReady": {
+          "structures": 9944,
+          "lights": 124,
+          "npcs": 18,
+          "nearNpcs": 7,
+          "npcMeshes": 7,
+          "meshes": 695,
+          "instances": 11574,
+          "materials": 237,
+          "memory": {
+            "geometries": 293,
+            "textures": 42
+          },
+          "programs": 54,
+          "drawCalls": 78,
+          "triangles": 35682,
+          "spawn": {
+            "x": 40.5,
+            "y": 12.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      },
+      "survey": {
+        "frameP95Ms": 9,
+        "cpuP95Ms": 2.9000000059604645,
+        "snapshot": {
+          "structures": 9944,
+          "lights": 124,
+          "npcs": 18,
+          "nearNpcs": 7,
+          "npcMeshes": 7,
+          "meshes": 695,
+          "instances": 11574,
+          "materials": 237,
+          "memory": {
+            "geometries": 300,
+            "textures": 46
+          },
+          "programs": 54,
+          "drawCalls": 65,
+          "triangles": 35682,
+          "spawn": {
+            "x": 40.5,
+            "y": 12.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 103,
+      "cold": {
+        "id": 103,
+        "transition": false,
+        "loadMs": 672.8999999910593,
+        "sceneMs": 670,
+        "generationMs": 2.8999999910593033,
+        "frames": 61,
+        "cpuTotalMs": 535.3999999910593,
+        "cpuMaxMs": 180.70000000298023,
+        "frameP95Ms": 21.899999991059303,
+        "firstRevealMs": [
+          2.3999999910593033,
+          1.2999999970197678
+        ],
+        "metrics": {
+          "buildLevel": {
+            "cpuMs": 227.8999998420477,
+            "calls": 38471,
+            "maxMs": 32
+          },
+          "warmSceneTextures": {
+            "cpuMs": 1.7999999970197678,
+            "calls": 24,
+            "maxMs": 1.0999999940395355
+          }
+        },
+        "compile": {
+          "calls": 65,
+          "submitMs": 28.80000001192093,
+          "maxSubmitMs": 5.600000008940697,
+          "targets": 0
+        },
+        "firstReady": {
+          "structures": 207,
+          "lights": 114,
+          "npcs": 14,
+          "nearNpcs": 3,
+          "npcMeshes": 3,
+          "meshes": 496,
+          "instances": 9426,
+          "materials": 206,
+          "memory": {
+            "geometries": 189,
+            "textures": 38
+          },
+          "programs": 53,
+          "drawCalls": 123,
+          "triangles": 93206,
+          "spawn": {
+            "x": 40.5,
+            "y": 13.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      },
+      "survey": {
+        "frameP95Ms": 5.5,
+        "cpuP95Ms": 2.2000000029802322,
+        "snapshot": {
+          "structures": 207,
+          "lights": 114,
+          "npcs": 14,
+          "nearNpcs": 3,
+          "npcMeshes": 3,
+          "meshes": 496,
+          "instances": 9426,
+          "materials": 206,
+          "memory": {
+            "geometries": 195,
+            "textures": 41
+          },
+          "programs": 53,
+          "drawCalls": 59,
+          "triangles": 93206,
+          "spawn": {
+            "x": 40.5,
+            "y": 13.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 104,
+      "cold": {
+        "id": 104,
+        "transition": false,
+        "loadMs": 534.1999999880791,
+        "sceneMs": 530,
+        "generationMs": 4.199999988079071,
+        "frames": 27,
+        "cpuTotalMs": 453.5999999791384,
+        "cpuMaxMs": 211.79999999701977,
+        "frameP95Ms": 25.600000008940697,
+        "firstRevealMs": [
+          4.299999997019768,
+          2.5999999940395355
+        ],
+        "metrics": {
+          "buildLevel": {
+            "cpuMs": 110.6999998986721,
+            "calls": 14375,
+            "maxMs": 16.5
+          },
+          "warmSceneTextures": {
+            "cpuMs": 3.2999999821186066,
+            "calls": 22,
+            "maxMs": 2.3999999910593033
+          }
+        },
+        "compile": {
+          "calls": 35,
+          "submitMs": 31.49999998509884,
+          "maxSubmitMs": 6.5999999940395355,
+          "targets": 0
+        },
+        "firstReady": {
+          "structures": 132,
+          "lights": 46,
+          "npcs": 10,
+          "nearNpcs": 9,
+          "npcMeshes": 9,
+          "meshes": 249,
+          "instances": 4546,
+          "materials": 143,
+          "memory": {
+            "geometries": 136,
+            "textures": 57
+          },
+          "programs": 51,
+          "drawCalls": 107,
+          "triangles": 39080,
+          "spawn": {
+            "x": 40.5,
+            "y": 25.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      },
+      "survey": {
+        "frameP95Ms": 4.9000000059604645,
+        "cpuP95Ms": 2.5999999940395355,
+        "snapshot": {
+          "structures": 132,
+          "lights": 46,
+          "npcs": 10,
+          "nearNpcs": 9,
+          "npcMeshes": 9,
+          "meshes": 249,
+          "instances": 4546,
+          "materials": 143,
+          "memory": {
+            "geometries": 136,
+            "textures": 60
+          },
+          "programs": 51,
+          "drawCalls": 90,
+          "triangles": 39080,
+          "spawn": {
+            "x": 40.5,
+            "y": 25.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 105,
+      "cold": {
+        "id": 105,
+        "transition": false,
+        "loadMs": 908.7999999970198,
+        "sceneMs": 897,
+        "generationMs": 11.799999997019768,
+        "frames": 87,
+        "cpuTotalMs": 767.0999998599291,
+        "cpuMaxMs": 206.8999999910593,
+        "frameP95Ms": 16.599999994039536,
+        "firstRevealMs": [
+          2.0999999940395355,
+          2.4000000059604645
+        ],
+        "metrics": {
+          "buildLevel": {
+            "cpuMs": 395.30000001192093,
+            "calls": 41039,
+            "maxMs": 15.400000005960464
+          },
+          "warmSceneTextures": {
+            "cpuMs": 8.900000005960464,
+            "calls": 12,
+            "maxMs": 4.799999997019768
+          }
+        },
+        "compile": {
+          "calls": 72,
+          "submitMs": 41.40000003576279,
+          "maxSubmitMs": 7.600000008940697,
+          "targets": 0
+        },
+        "firstReady": {
+          "structures": 221,
+          "lights": 59,
+          "npcs": 9,
+          "nearNpcs": 5,
+          "npcMeshes": 9,
+          "meshes": 551,
+          "instances": 1445,
+          "materials": 545,
+          "memory": {
+            "geometries": 583,
+            "textures": 43
+          },
+          "programs": 54,
+          "drawCalls": 138,
+          "triangles": 43060,
+          "spawn": {
+            "x": 40.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      },
+      "survey": {
+        "frameP95Ms": 5.100000008940697,
+        "cpuP95Ms": 3.7999999970197678,
+        "snapshot": {
+          "structures": 221,
+          "lights": 59,
+          "npcs": 9,
+          "nearNpcs": 5,
+          "npcMeshes": 9,
+          "meshes": 551,
+          "instances": 1445,
+          "materials": 545,
+          "memory": {
+            "geometries": 596,
+            "textures": 46
+          },
+          "programs": 54,
+          "drawCalls": 59,
+          "triangles": 43060,
+          "spawn": {
+            "x": 40.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 106,
+      "cold": {
+        "id": 106,
+        "transition": false,
+        "loadMs": 808.0999999940395,
+        "sceneMs": 798.2000000029802,
+        "generationMs": 9.899999991059303,
+        "frames": 71,
+        "cpuTotalMs": 749.3000000417233,
+        "cpuMaxMs": 206,
+        "frameP95Ms": 14.400000005960464,
+        "firstRevealMs": [
+          3.300000011920929,
+          1.5999999940395355
+        ],
+        "metrics": {
+          "buildLevel": {
+            "cpuMs": 406.20000003278255,
+            "calls": 18577,
+            "maxMs": 14.299999997019768
+          },
+          "warmSceneTextures": {
+            "cpuMs": 4.900000020861626,
+            "calls": 9,
+            "maxMs": 3.6000000089406967
+          }
+        },
+        "compile": {
+          "calls": 77,
+          "submitMs": 37.60000002384186,
+          "maxSubmitMs": 6.200000002980232,
+          "targets": 0
+        },
+        "firstReady": {
+          "structures": 208,
+          "lights": 233,
+          "npcs": 10,
+          "nearNpcs": 4,
+          "npcMeshes": 10,
+          "meshes": 590,
+          "instances": 1034,
+          "materials": 577,
+          "memory": {
+            "geometries": 623,
+            "textures": 42
+          },
+          "programs": 54,
+          "drawCalls": 227,
+          "triangles": 100858,
+          "spawn": {
+            "x": 39.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      },
+      "survey": {
+        "frameP95Ms": 4.9000000059604645,
+        "cpuP95Ms": 3.4000000059604645,
+        "snapshot": {
+          "structures": 208,
+          "lights": 233,
+          "npcs": 10,
+          "nearNpcs": 4,
+          "npcMeshes": 10,
+          "meshes": 590,
+          "instances": 1034,
+          "materials": 577,
+          "memory": {
+            "geometries": 634,
+            "textures": 46
+          },
+          "programs": 54,
+          "drawCalls": 69,
+          "triangles": 100858,
+          "spawn": {
+            "x": 39.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 107,
+      "cold": {
+        "id": 107,
+        "transition": false,
+        "loadMs": 619.7999999970198,
+        "sceneMs": 609.9000000059605,
+        "generationMs": 9.799999997019768,
+        "frames": 45,
+        "cpuTotalMs": 570.099999949336,
+        "cpuMaxMs": 199.20000000298023,
+        "frameP95Ms": 17.799999997019768,
+        "firstRevealMs": [
+          2.9000000059604645,
+          2.5
+        ],
+        "metrics": {
+          "buildLevel": {
+            "cpuMs": 264.80000004172325,
+            "calls": 11997,
+            "maxMs": 22.5
+          },
+          "warmSceneTextures": {
+            "cpuMs": 3.7000000029802322,
+            "calls": 8,
+            "maxMs": 3.5
+          }
+        },
+        "compile": {
+          "calls": 75,
+          "submitMs": 35.09999996423721,
+          "maxSubmitMs": 5.5,
+          "targets": 0
+        },
+        "firstReady": {
+          "structures": 87,
+          "lights": 185,
+          "npcs": 6,
+          "nearNpcs": 1,
+          "npcMeshes": 6,
+          "meshes": 576,
+          "instances": 1320,
+          "materials": 576,
+          "memory": {
+            "geometries": 605,
+            "textures": 30
+          },
+          "programs": 52,
+          "drawCalls": 90,
+          "triangles": 27040,
+          "spawn": {
+            "x": 39.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      },
+      "survey": {
+        "frameP95Ms": 5.300000011920929,
+        "cpuP95Ms": 3.5,
+        "snapshot": {
+          "structures": 87,
+          "lights": 185,
+          "npcs": 6,
+          "nearNpcs": 1,
+          "npcMeshes": 6,
+          "meshes": 576,
+          "instances": 1320,
+          "materials": 576,
+          "memory": {
+            "geometries": 610,
+            "textures": 34
+          },
+          "programs": 52,
+          "drawCalls": 45,
+          "triangles": 27040,
+          "spawn": {
+            "x": 39.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 108,
+      "cold": {
+        "id": 108,
+        "transition": false,
+        "loadMs": 502,
+        "sceneMs": 496,
+        "generationMs": 5.899999991059303,
+        "frames": 33,
+        "cpuTotalMs": 459.69999991357327,
+        "cpuMaxMs": 214.19999998807907,
+        "frameP95Ms": 16.899999991059303,
+        "firstRevealMs": [
+          2.2000000029802322,
+          1.2999999970197678
+        ],
+        "metrics": {
+          "buildLevel": {
+            "cpuMs": 159.20000000298023,
+            "calls": 15978,
+            "maxMs": 15.299999997019768
+          },
+          "warmSceneTextures": {
+            "cpuMs": 2.0999999940395355,
+            "calls": 11,
+            "maxMs": 2
+          }
+        },
+        "compile": {
+          "calls": 25,
+          "submitMs": 17,
+          "maxSubmitMs": 5.700000002980232,
+          "targets": 0
+        },
+        "firstReady": {
+          "structures": 47,
+          "lights": 99,
+          "npcs": 2,
+          "nearNpcs": 0,
+          "npcMeshes": 2,
+          "meshes": 175,
+          "instances": 94,
+          "materials": 175,
+          "memory": {
+            "geometries": 200,
+            "textures": 21
+          },
+          "programs": 49,
+          "drawCalls": 63,
+          "triangles": 14010,
+          "spawn": {
+            "x": 39.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      },
+      "survey": {
+        "frameP95Ms": 4.5999999940395355,
+        "cpuP95Ms": 1.3999999910593033,
+        "snapshot": {
+          "structures": 47,
+          "lights": 99,
+          "npcs": 2,
+          "nearNpcs": 0,
+          "npcMeshes": 2,
+          "meshes": 175,
+          "instances": 94,
+          "materials": 175,
+          "memory": {
+            "geometries": 204,
+            "textures": 21
+          },
+          "programs": 49,
+          "drawCalls": 24,
+          "triangles": 14010,
+          "spawn": {
+            "x": 39.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 109,
+      "cold": {
+        "id": 109,
+        "transition": false,
+        "loadMs": 727.0999999940395,
+        "sceneMs": 720.7999999970198,
+        "generationMs": 6.299999997019768,
+        "frames": 56,
+        "cpuTotalMs": 674.4000000059605,
+        "cpuMaxMs": 201.40000000596046,
+        "frameP95Ms": 17.900000005960464,
+        "firstRevealMs": [
+          3.5999999940395355,
+          1.7999999970197678
+        ],
+        "metrics": {
+          "buildLevel": {
+            "cpuMs": 321.4999998807907,
+            "calls": 18171,
+            "maxMs": 16.700000002980232
+          },
+          "warmSceneTextures": {
+            "cpuMs": 5.799999997019768,
+            "calls": 8,
+            "maxMs": 4
+          }
+        },
+        "compile": {
+          "calls": 67,
+          "submitMs": 29.30000002682209,
+          "maxSubmitMs": 5.100000008940697,
+          "targets": 0
+        },
+        "firstReady": {
+          "structures": 162,
+          "lights": 194,
+          "npcs": 10,
+          "nearNpcs": 2,
+          "npcMeshes": 10,
+          "meshes": 510,
+          "instances": 1069,
+          "materials": 505,
+          "memory": {
+            "geometries": 543,
+            "textures": 41
+          },
+          "programs": 53,
+          "drawCalls": 106,
+          "triangles": 59564,
+          "spawn": {
+            "x": 39.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      },
+      "survey": {
+        "frameP95Ms": 4.9000000059604645,
+        "cpuP95Ms": 2.9000000059604645,
+        "snapshot": {
+          "structures": 162,
+          "lights": 194,
+          "npcs": 10,
+          "nearNpcs": 2,
+          "npcMeshes": 10,
+          "meshes": 510,
+          "instances": 1069,
+          "materials": 505,
+          "memory": {
+            "geometries": 556,
+            "textures": 43
+          },
+          "programs": 53,
+          "drawCalls": 63,
+          "triangles": 59564,
+          "spawn": {
+            "x": 39.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 110,
+      "cold": {
+        "id": 110,
+        "transition": false,
+        "loadMs": 453.3999999910593,
+        "sceneMs": 449.3999999910593,
+        "generationMs": 3.9000000059604645,
+        "frames": 30,
+        "cpuTotalMs": 414.20000000298023,
+        "cpuMaxMs": 190,
+        "frameP95Ms": 16.400000005960464,
+        "firstRevealMs": [
+          3,
+          3.7999999970197678
+        ],
+        "metrics": {
+          "buildLevel": {
+            "cpuMs": 123.19999992847443,
+            "calls": 15793,
+            "maxMs": 9.5
+          },
+          "warmSceneTextures": {
+            "cpuMs": 1.0999999940395355,
+            "calls": 9,
+            "maxMs": 1
+          }
+        },
+        "compile": {
+          "calls": 20,
+          "submitMs": 19.600000008940697,
+          "maxSubmitMs": 6.0999999940395355,
+          "targets": 0
+        },
+        "firstReady": {
+          "structures": 23,
+          "lights": 31,
+          "npcs": 4,
+          "nearNpcs": 3,
+          "npcMeshes": 4,
+          "meshes": 129,
+          "instances": 114,
+          "materials": 129,
+          "memory": {
+            "geometries": 156,
+            "textures": 28
+          },
+          "programs": 49,
+          "drawCalls": 38,
+          "triangles": 20812,
+          "spawn": {
+            "x": 26.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      },
+      "survey": {
+        "frameP95Ms": 4.5,
+        "cpuP95Ms": 1.2999999970197678,
+        "snapshot": {
+          "structures": 23,
+          "lights": 31,
+          "npcs": 4,
+          "nearNpcs": 3,
+          "npcMeshes": 4,
+          "meshes": 129,
+          "instances": 114,
+          "materials": 129,
+          "memory": {
+            "geometries": 161,
+            "textures": 28
+          },
+          "programs": 49,
+          "drawCalls": 36,
+          "triangles": 20812,
+          "spawn": {
+            "x": 26.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 111,
+      "cold": {
+        "id": 111,
+        "transition": false,
+        "loadMs": 553.1000000089407,
+        "sceneMs": 549,
+        "generationMs": 4.100000008940697,
+        "frames": 45,
+        "cpuTotalMs": 454.6000000834465,
+        "cpuMaxMs": 184.80000001192093,
+        "frameP95Ms": 19.5,
+        "firstRevealMs": [
+          1.9000000059604645,
+          1.3999999910593033
+        ],
+        "metrics": {
+          "buildLevel": {
+            "cpuMs": 154.80000019073486,
+            "calls": 29770,
+            "maxMs": 27
+          },
+          "warmSceneTextures": {
+            "cpuMs": 1.1000000089406967,
+            "calls": 9,
+            "maxMs": 0.9000000059604645
+          }
+        },
+        "compile": {
+          "calls": 15,
+          "submitMs": 16.899999976158142,
+          "maxSubmitMs": 5.399999991059303,
+          "targets": 0
+        },
+        "firstReady": {
+          "structures": 23,
+          "lights": 34,
+          "npcs": 5,
+          "nearNpcs": 5,
+          "npcMeshes": 5,
+          "meshes": 91,
+          "instances": 112,
+          "materials": 91,
+          "memory": {
+            "geometries": 119,
+            "textures": 27
+          },
+          "programs": 40,
+          "drawCalls": 47,
+          "triangles": 24264,
+          "spawn": {
+            "x": 26.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      },
+      "survey": {
+        "frameP95Ms": 4.4000000059604645,
+        "cpuP95Ms": 1.1000000089406967,
+        "snapshot": {
+          "structures": 23,
+          "lights": 34,
+          "npcs": 5,
+          "nearNpcs": 5,
+          "npcMeshes": 5,
+          "meshes": 91,
+          "instances": 112,
+          "materials": 91,
+          "memory": {
+            "geometries": 124,
+            "textures": 27
+          },
+          "programs": 40,
+          "drawCalls": 41,
+          "triangles": 24264,
+          "spawn": {
+            "x": 26.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 112,
+      "cold": {
+        "id": 112,
+        "transition": false,
+        "loadMs": 502.1000000089407,
+        "sceneMs": 498.6000000089407,
+        "generationMs": 3.3999999910593033,
+        "frames": 28,
+        "cpuTotalMs": 457.19999998807907,
+        "cpuMaxMs": 199.90000000596046,
+        "frameP95Ms": 19.899999991059303,
+        "firstRevealMs": [
+          2.2000000029802322,
+          2.5999999940395355
+        ],
+        "metrics": {
+          "buildLevel": {
+            "cpuMs": 134.59999987483025,
+            "calls": 14042,
+            "maxMs": 15.699999988079071
+          },
+          "warmSceneTextures": {
+            "cpuMs": 2.7999999970197678,
+            "calls": 8,
+            "maxMs": 1.5999999940395355
+          }
+        },
+        "compile": {
+          "calls": 17,
+          "submitMs": 23.400000005960464,
+          "maxSubmitMs": 5.5,
+          "targets": 0
+        },
+        "firstReady": {
+          "structures": 26,
+          "lights": 46,
+          "npcs": 7,
+          "nearNpcs": 7,
+          "npcMeshes": 7,
+          "meshes": 112,
+          "instances": 73,
+          "materials": 111,
+          "memory": {
+            "geometries": 142,
+            "textures": 30
+          },
+          "programs": 50,
+          "drawCalls": 148,
+          "triangles": 27678,
+          "spawn": {
+            "x": 26.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      },
+      "survey": {
+        "frameP95Ms": 4.5999999940395355,
+        "cpuP95Ms": 1.4000000059604645,
+        "snapshot": {
+          "structures": 26,
+          "lights": 46,
+          "npcs": 7,
+          "nearNpcs": 7,
+          "npcMeshes": 7,
+          "meshes": 112,
+          "instances": 73,
+          "materials": 111,
+          "memory": {
+            "geometries": 154,
+            "textures": 34
+          },
+          "programs": 50,
+          "drawCalls": 54,
+          "triangles": 27678,
+          "spawn": {
+            "x": 26.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 113,
+      "cold": {
+        "id": 113,
+        "transition": false,
+        "loadMs": 543.3999999910593,
+        "sceneMs": 539,
+        "generationMs": 4.399999991059303,
+        "frames": 50,
+        "cpuTotalMs": 447.7999999523163,
+        "cpuMaxMs": 188.59999999403954,
+        "frameP95Ms": 13.400000005960464,
+        "firstRevealMs": [
+          4.5,
+          2.2000000029802322
+        ],
+        "metrics": {
+          "buildLevel": {
+            "cpuMs": 150.79999984800816,
+            "calls": 32639,
+            "maxMs": 10.599999994039536
+          },
+          "warmSceneTextures": {
+            "cpuMs": 1.2999999970197678,
+            "calls": 12,
+            "maxMs": 1
+          }
+        },
+        "compile": {
+          "calls": 15,
+          "submitMs": 18.30000001192093,
+          "maxSubmitMs": 6.100000008940697,
+          "targets": 0
+        },
+        "firstReady": {
+          "structures": 31,
+          "lights": 6,
+          "npcs": 3,
+          "nearNpcs": 3,
+          "npcMeshes": 3,
+          "meshes": 96,
+          "instances": 88,
+          "materials": 94,
+          "memory": {
+            "geometries": 122,
+            "textures": 26
+          },
+          "programs": 50,
+          "drawCalls": 44,
+          "triangles": 11758,
+          "spawn": {
+            "x": 26.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      },
+      "survey": {
+        "frameP95Ms": 4.5999999940395355,
+        "cpuP95Ms": 1.5999999940395355,
+        "snapshot": {
+          "structures": 31,
+          "lights": 6,
+          "npcs": 3,
+          "nearNpcs": 3,
+          "npcMeshes": 3,
+          "meshes": 96,
+          "instances": 88,
+          "materials": 94,
+          "memory": {
+            "geometries": 122,
+            "textures": 28
+          },
+          "programs": 50,
+          "drawCalls": 29,
+          "triangles": 11758,
+          "spawn": {
+            "x": 26.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 114,
+      "cold": {
+        "id": 114,
+        "transition": false,
+        "loadMs": 619.3999999910593,
+        "sceneMs": 615.2000000029802,
+        "generationMs": 4.199999988079071,
+        "frames": 40,
+        "cpuTotalMs": 555.900000050664,
+        "cpuMaxMs": 215.90000000596046,
+        "frameP95Ms": 21.299999997019768,
+        "firstRevealMs": [
+          3.0999999940395355,
+          2.4000000059604645
+        ],
+        "metrics": {
+          "buildLevel": {
+            "cpuMs": 206.39999996125698,
+            "calls": 15678,
+            "maxMs": 18.100000008940697
+          },
+          "warmSceneTextures": {
+            "cpuMs": 3.0999999940395355,
+            "calls": 10,
+            "maxMs": 1.2000000029802322
+          }
+        },
+        "compile": {
+          "calls": 15,
+          "submitMs": 26.899999976158142,
+          "maxSubmitMs": 8.700000002980232,
+          "targets": 0
+        },
+        "firstReady": {
+          "structures": 34,
+          "lights": 7,
+          "npcs": 3,
+          "nearNpcs": 2,
+          "npcMeshes": 3,
+          "meshes": 92,
+          "instances": 101,
+          "materials": 90,
+          "memory": {
+            "geometries": 118,
+            "textures": 24
+          },
+          "programs": 51,
+          "drawCalls": 37,
+          "triangles": 13380,
+          "spawn": {
+            "x": 26.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      },
+      "survey": {
+        "frameP95Ms": 5,
+        "cpuP95Ms": 2,
+        "snapshot": {
+          "structures": 34,
+          "lights": 7,
+          "npcs": 3,
+          "nearNpcs": 2,
+          "npcMeshes": 3,
+          "meshes": 92,
+          "instances": 101,
+          "materials": 90,
+          "memory": {
+            "geometries": 118,
+            "textures": 26
+          },
+          "programs": 51,
+          "drawCalls": 29,
+          "triangles": 13380,
+          "spawn": {
+            "x": 26.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 116,
+      "cold": {
+        "id": 116,
+        "transition": false,
+        "loadMs": 516.5999999940395,
+        "sceneMs": 513.8999999910593,
+        "generationMs": 2.7000000029802322,
+        "frames": 35,
+        "cpuTotalMs": 440.6000000089407,
+        "cpuMaxMs": 188.5,
+        "frameP95Ms": 25.5,
+        "firstRevealMs": [
+          7.799999997019768,
+          1.6000000089406967
+        ],
+        "metrics": {
+          "buildLevel": {
+            "cpuMs": 148.70000000298023,
+            "calls": 17823,
+            "maxMs": 20
+          },
+          "warmSceneTextures": {
+            "cpuMs": 2.699999988079071,
+            "calls": 25,
+            "maxMs": 1.8999999910593033
+          }
+        },
+        "compile": {
+          "calls": 58,
+          "submitMs": 38.29999999701977,
+          "maxSubmitMs": 10.5,
+          "targets": 0
+        },
+        "firstReady": {
+          "structures": 174,
+          "lights": 114,
+          "npcs": 13,
+          "nearNpcs": 2,
+          "npcMeshes": 2,
+          "meshes": 440,
+          "instances": 9556,
+          "materials": 201,
+          "memory": {
+            "geometries": 188,
+            "textures": 36
+          },
+          "programs": 51,
+          "drawCalls": 100,
+          "triangles": 20296,
+          "spawn": {
+            "x": 40.5,
+            "y": 13.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      },
+      "survey": {
+        "frameP95Ms": 6.5,
+        "cpuP95Ms": 3.7000000029802322,
+        "snapshot": {
+          "structures": 174,
+          "lights": 114,
+          "npcs": 13,
+          "nearNpcs": 2,
+          "npcMeshes": 2,
+          "meshes": 440,
+          "instances": 9556,
+          "materials": 201,
+          "memory": {
+            "geometries": 188,
+            "textures": 38
+          },
+          "programs": 51,
+          "drawCalls": 55,
+          "triangles": 20296,
+          "spawn": {
+            "x": 40.5,
+            "y": 13.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 274,
+      "cold": {
+        "id": 274,
+        "transition": false,
+        "loadMs": 566.5999999940395,
+        "sceneMs": 558.5,
+        "generationMs": 8.099999994039536,
+        "frames": 37,
+        "cpuTotalMs": 520.6999999731779,
+        "cpuMaxMs": 203.8999999910593,
+        "frameP95Ms": 17.700000002980232,
+        "firstRevealMs": [
+          3.7999999970197678,
+          3
+        ],
+        "metrics": {
+          "buildLevel": {
+            "cpuMs": 194.29999987781048,
+            "calls": 13328,
+            "maxMs": 10.799999997019768
+          },
+          "warmSceneTextures": {
+            "cpuMs": 2.800000011920929,
+            "calls": 7,
+            "maxMs": 2.6000000089406967
+          }
+        },
+        "compile": {
+          "calls": 41,
+          "submitMs": 30.69999998807907,
+          "maxSubmitMs": 9.700000002980232,
+          "targets": 0
+        },
+        "firstReady": {
+          "structures": 82,
+          "lights": 24,
+          "npcs": 7,
+          "nearNpcs": 0,
+          "npcMeshes": 7,
+          "meshes": 304,
+          "instances": 357,
+          "materials": 304,
+          "memory": {
+            "geometries": 334,
+            "textures": 30
+          },
+          "programs": 49,
+          "drawCalls": 227,
+          "triangles": 30624,
+          "spawn": {
+            "x": 40.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      },
+      "survey": {
+        "frameP95Ms": 4.799999997019768,
+        "cpuP95Ms": 3.2999999970197678,
+        "snapshot": {
+          "structures": 82,
+          "lights": 24,
+          "npcs": 7,
+          "nearNpcs": 0,
+          "npcMeshes": 7,
+          "meshes": 304,
+          "instances": 357,
+          "materials": 304,
+          "memory": {
+            "geometries": 353,
+            "textures": 30
+          },
+          "programs": 49,
+          "drawCalls": 48,
+          "triangles": 30624,
+          "spawn": {
+            "x": 40.5,
+            "y": 4.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\outpost-loading\\classic-all\\qa-1791987915507-3108",
+    "--remote-debugging-port=10972",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/154.0.8037.98",
+    "revision": "@b859317bf11f6be47f9b7799ec690a0a42a1fb33",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+    "jsVersion": "15.4.80.20"
+  },
+  "pids": {
+    "server": 42840,
+    "browser": 58288
+  },
+  "setup": {
+    "mode": "classic",
+    "viewport": [
+      1920,
+      1080
+    ],
+    "dpr": 1,
+    "seed": 424242,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "settings": {
+      "texture": 1,
+      "lights": 16,
+      "shadows": true,
+      "lightShadows": 1,
+      "loadingBudget": 6,
+      "chunkBudget": 3,
+      "detail": 1,
+      "bloom": true,
+      "ao": 1
+    }
+  },
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [],
+  "networkErrors": [
+    {
+      "requestId": "15768.385",
+      "loaderId": "96C193463421876EDA9A539AFFD76F4D",
+      "timestamp": 125409.807097,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:10971/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Wed, 14 Oct 2026 14:25:30 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 181,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 10971,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 125409.792916,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.48,
+          "sendEnd": 0.535,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 13.445,
+          "receiveHeadersEnd": 13.545
+        },
+        "responseTime": 1791987930750.748,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "03EEF4D4A3A9F2133B4A3F2C7AB94D23"
+    }
+  ]
+}

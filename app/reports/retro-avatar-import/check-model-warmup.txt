@@ -1,0 +1,14 @@
+
+> my-app@0.0.0 check:model-warmup
+> esbuild scripts/check-model-warmup.ts --bundle --platform=node --format=esm --outfile=.cache/check-model-warmup.mjs && node .cache/check-model-warmup.mjs
+
+
+  .cache\check-model-warmup.mjs  616.7kb
+
+Done in 91ms
+{"passed":83}
+npm notice
+npm notice New minor version of npm available! 11.6.2 -> 11.21.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.21.0
+npm notice To update run: npm install -g npm@11.21.0
+npm notice

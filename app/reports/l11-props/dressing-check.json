@@ -1,0 +1,277 @@
+{
+  "seeds": [
+    42,
+    20261006
+  ],
+  "macroregion": {
+    "mx": 0,
+    "my": 0,
+    "chunksPerAxis": 32,
+    "worldBounds": {
+      "x0": 0,
+      "y0": 0,
+      "x1": 1024,
+      "y1": 1024
+    },
+    "extraNegativeSamples": 2
+  },
+  "scannedChunks": 2052,
+  "byCategory": {
+    "municipal": {
+      "kinds": 20,
+      "quantities": {
+        "l11_signal": 90,
+        "l11_pedestrian_signal": 90,
+        "l11_streetlight": 2166,
+        "l11_bollard": 152,
+        "l11_hydrant": 151,
+        "l11_parking_meter": 133,
+        "l11_road_sign": 136,
+        "l11_street_name": 133,
+        "l11_utility_box": 134,
+        "l11_transformer": 19,
+        "l11_bus_shelter": 221,
+        "l11_bus_stop": 394,
+        "l11_bike_rack": 141,
+        "l11_trash_bin": 118,
+        "l11_recycling_bin": 147,
+        "l11_post_box": 127,
+        "l11_manhole": 289,
+        "l11_storm_drain": 566,
+        "l11_traffic_island": 47,
+        "l11_ticket_machine": 134
+      }
+    },
+    "commerce": {
+      "kinds": 20,
+      "quantities": {
+        "l11_shop_awning": 34,
+        "l11_cafe_table": 10,
+        "l11_cafe_chair": 8,
+        "l11_menu_board": 10,
+        "l11_display_rack": 417,
+        "l11_newspaper_box": 9,
+        "l11_vending_machine": 9,
+        "l11_phone_booth": 120,
+        "l11_parcel_locker": 6,
+        "l11_market_stall": 9,
+        "l11_umbrella": 4,
+        "l11_produce_crates": 9,
+        "l11_shopping_cart": 15,
+        "l11_delivery_bike": 9,
+        "l11_sedan": 192,
+        "l11_delivery_van": 172,
+        "l11_box_truck": 163,
+        "l11_taxi": 173,
+        "l11_bus": 153,
+        "l11_motor_scooter": 128
+      }
+    },
+    "waterfront": {
+      "kinds": 15,
+      "quantities": {
+        "l11_plane_tree": 2020,
+        "l11_cypress": 59,
+        "l11_shrub_planter": 50,
+        "l11_flower_planter": 49,
+        "l11_park_bench": 121,
+        "l11_picnic_table": 47,
+        "l11_canal_railing": 1133,
+        "l11_mooring_bollard": 35,
+        "l11_life_ring": 31,
+        "l11_lock_winch": 16,
+        "l11_lock_gate": 14,
+        "l11_drinking_fountain": 54,
+        "l11_park_lamp": 53,
+        "l11_fountain": 49,
+        "l11_pergola": 56
+      }
+    },
+    "service": {
+      "kinds": 15,
+      "quantities": {
+        "l11_hvac": 164,
+        "l11_duct": 150,
+        "l11_downpipe": 157,
+        "l11_fire_escape": 117,
+        "l11_loading_dock": 127,
+        "l11_pallet": 157,
+        "l11_pallet_stack": 163,
+        "l11_dumpster": 154,
+        "l11_scaffold": 144,
+        "l11_safety_fence": 162,
+        "l11_cone": 162,
+        "l11_road_barrier": 171,
+        "l11_cable_reel": 147,
+        "l11_cement_mixer": 141,
+        "l11_ladder": 157
+      }
+    },
+    "interior": {
+      "kinds": 30,
+      "quantities": {
+        "l11_office_desk": 526,
+        "l11_task_chair": 1105,
+        "l11_meeting_table": 444,
+        "l11_file_cabinet": 960,
+        "l11_bookcase": 510,
+        "l11_reception_desk": 870,
+        "l11_sofa": 623,
+        "l11_armchair": 753,
+        "l11_coffee_table": 1187,
+        "l11_bed": 454,
+        "l11_wardrobe": 992,
+        "l11_kitchen_counter": 519,
+        "l11_sink": 767,
+        "l11_refrigerator": 901,
+        "l11_stove": 520,
+        "l11_dining_table": 1129,
+        "l11_dining_chair": 4194,
+        "l11_toilet": 505,
+        "l11_wash_basin": 523,
+        "l11_radiator": 994,
+        "l11_ceiling_light": 628,
+        "l11_floor_lamp": 472,
+        "l11_classroom_desk": 67,
+        "l11_chalkboard": 69,
+        "l11_lab_bench": 573,
+        "l11_archive_shelf": 195,
+        "l11_microfilm_reader": 102,
+        "l11_exhibit_case": 243,
+        "l11_gym_bench": 424,
+        "l11_workbench": 590
+      }
+    }
+  },
+  "missingKinds": [],
+  "buildingCount": 680,
+  "buildingDistribution": {
+    "open": 457,
+    "sealed": 223,
+    "accessible1": 305,
+    "accessible2": 131,
+    "accessible3": 21
+  },
+  "openness": {
+    "townhouse": {
+      "open": 41,
+      "sealed": 18
+    },
+    "balcony": {
+      "open": 52,
+      "sealed": 15
+    },
+    "corner-home": {
+      "open": 34,
+      "sealed": 18
+    },
+    "archive": {
+      "open": 8,
+      "sealed": 1
+    },
+    "courtyard": {
+      "open": 46,
+      "sealed": 26
+    },
+    "slab": {
+      "open": 29,
+      "sealed": 17
+    },
+    "detached": {
+      "open": 42,
+      "sealed": 27
+    },
+    "supermarket": {
+      "open": 4,
+      "sealed": 3
+    },
+    "museum": {
+      "open": 9,
+      "sealed": 2
+    },
+    "school": {
+      "open": 8,
+      "sealed": 5
+    },
+    "strip-shops": {
+      "open": 5,
+      "sealed": 2
+    },
+    "rounded-office": {
+      "open": 12,
+      "sealed": 5
+    },
+    "parking": {
+      "open": 6,
+      "sealed": 3
+    },
+    "fin-office": {
+      "open": 13,
+      "sealed": 1
+    },
+    "ribbon-office": {
+      "open": 11,
+      "sealed": 8
+    },
+    "curtain-tower": {
+      "open": 12,
+      "sealed": 5
+    },
+    "setback-office": {
+      "open": 11,
+      "sealed": 5
+    },
+    "pump-house": {
+      "open": 10,
+      "sealed": 8
+    },
+    "substation": {
+      "open": 11,
+      "sealed": 8
+    },
+    "corner-shops": {
+      "open": 8,
+      "sealed": 2
+    },
+    "twin-office": {
+      "open": 7,
+      "sealed": 6
+    },
+    "court-shops": {
+      "open": 4,
+      "sealed": 3
+    },
+    "warehouse": {
+      "open": 13,
+      "sealed": 7
+    },
+    "brick-factory": {
+      "open": 11,
+      "sealed": 6
+    },
+    "transit-station": {
+      "open": 7,
+      "sealed": 2
+    },
+    "sports-hall": {
+      "open": 9,
+      "sealed": 2
+    },
+    "municipal": {
+      "open": 8,
+      "sealed": 4
+    },
+    "workshop": {
+      "open": 14,
+      "sealed": 5
+    },
+    "sawtooth": {
+      "open": 7,
+      "sealed": 8
+    },
+    "hotel": {
+      "open": 5,
+      "sealed": 1
+    }
+  }
+}

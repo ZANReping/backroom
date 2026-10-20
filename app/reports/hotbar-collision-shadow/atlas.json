@@ -1,0 +1,282 @@
+{
+  "passed": true,
+  "assertions": 2024785,
+  "bakeRevision": 17,
+  "seamCount": 119,
+  "seamMax": 0.0009765625,
+  "cases": [
+    {
+      "name": "parking-common",
+      "cx": 3,
+      "cy": 3,
+      "before": {
+        "covered": 1016,
+        "litUnder": 0,
+        "maxUnder": 0,
+        "texels": 25600,
+        "mean": 0.5784184336013699,
+        "max": 3.542039453125,
+        "leaks": []
+      },
+      "after": {
+        "covered": 1804,
+        "litUnder": 0,
+        "maxUnder": 0,
+        "texels": 43264,
+        "mean": 0.5756069890310059,
+        "max": 3.5418984375,
+        "leaks": []
+      },
+      "metrics": {
+        "generationMs": 405.2172000000137,
+        "geometryMs": 59.65220000001136,
+        "bakeMs": 28737.745799999975,
+        "samples": 76016,
+        "rays": 4024429,
+        "bytes": 3975384
+      },
+      "highFloorDensity": 3,
+      "floorTileBounds": {
+        "minW": 13,
+        "maxW": 13,
+        "minH": 13,
+        "maxH": 13,
+        "samples": 256
+      }
+    },
+    {
+      "name": "parking-round",
+      "cx": 15,
+      "cy": 5,
+      "before": {
+        "covered": 1362,
+        "litUnder": 0,
+        "maxUnder": 0,
+        "texels": 25600,
+        "mean": 0.25434403930139465,
+        "max": 1.05729453125,
+        "leaks": []
+      },
+      "after": {
+        "covered": 2262,
+        "litUnder": 0,
+        "maxUnder": 0,
+        "texels": 43264,
+        "mean": 0.253944729243219,
+        "max": 1.0593181640625,
+        "leaks": []
+      },
+      "metrics": {
+        "generationMs": 378.20470000000205,
+        "geometryMs": 50.490600000019185,
+        "bakeMs": 19380.871999999974,
+        "samples": 87388,
+        "rays": 4049690,
+        "bytes": 6476232
+      },
+      "highFloorDensity": 3,
+      "floorTileBounds": {
+        "minW": 13,
+        "maxW": 13,
+        "minH": 13,
+        "maxH": 13,
+        "samples": 256
+      }
+    },
+    {
+      "name": "parking-dim",
+      "cx": -25,
+      "cy": 31,
+      "before": {
+        "covered": 801,
+        "litUnder": 0,
+        "maxUnder": 0,
+        "texels": 25600,
+        "mean": 0.5711800484909846,
+        "max": 6.07393984375,
+        "leaks": []
+      },
+      "after": {
+        "covered": 1362,
+        "litUnder": 0,
+        "maxUnder": 0,
+        "texels": 43264,
+        "mean": 0.567702547062851,
+        "max": 9.243749999999999,
+        "leaks": []
+      },
+      "metrics": {
+        "generationMs": 734.5654000000213,
+        "geometryMs": 72.92510000005132,
+        "bakeMs": 21219.892700000026,
+        "samples": 105299,
+        "rays": 3968469,
+        "bytes": 6423608
+      },
+      "highFloorDensity": 3,
+      "floorTileBounds": {
+        "minW": 13,
+        "maxW": 13,
+        "minH": 13,
+        "maxH": 13,
+        "samples": 256
+      }
+    },
+    {
+      "name": "storage",
+      "cx": 10,
+      "cy": -13,
+      "before": {
+        "covered": 8,
+        "litUnder": 0,
+        "maxUnder": 0,
+        "texels": 25600,
+        "mean": 1.574926438163339,
+        "max": 2.639451171875,
+        "leaks": []
+      },
+      "after": {
+        "covered": 42,
+        "litUnder": 0,
+        "maxUnder": 0,
+        "texels": 43264,
+        "mean": 1.5695510734818408,
+        "max": 2.7215999999999996,
+        "leaks": []
+      },
+      "metrics": {
+        "generationMs": 232.04330000001937,
+        "geometryMs": 36.68800000002375,
+        "bakeMs": 23606.712899999984,
+        "samples": 75740,
+        "rays": 5921907,
+        "bytes": 3874736
+      },
+      "highFloorDensity": 3,
+      "floorTileBounds": {
+        "minW": 13,
+        "maxW": 13,
+        "minH": 13,
+        "maxH": 13,
+        "samples": 256
+      }
+    },
+    {
+      "name": "gothic",
+      "cx": 9,
+      "cy": -5,
+      "before": {
+        "covered": 300,
+        "litUnder": 0,
+        "maxUnder": 0,
+        "texels": 25600,
+        "mean": 1.126785405109399,
+        "max": 1.9853783203124997,
+        "leaks": []
+      },
+      "after": {
+        "covered": 525,
+        "litUnder": 0,
+        "maxUnder": 0,
+        "texels": 43264,
+        "mean": 1.1246771542498093,
+        "max": 1.9873314453125,
+        "leaks": []
+      },
+      "metrics": {
+        "generationMs": 253.6121999999741,
+        "geometryMs": 737.5112000000081,
+        "bakeMs": 25979.376099999994,
+        "samples": 65953,
+        "rays": 6283192,
+        "bytes": 6780648
+      },
+      "highFloorDensity": 3,
+      "floorTileBounds": {
+        "minW": 13,
+        "maxW": 13,
+        "minH": 13,
+        "maxH": 13,
+        "samples": 256
+      }
+    },
+    {
+      "name": "ouroboros",
+      "cx": -12,
+      "cy": -10,
+      "before": {
+        "covered": 320,
+        "litUnder": 0,
+        "maxUnder": 0,
+        "texels": 25600,
+        "mean": 0.676727723701698,
+        "max": 1.4711634765625,
+        "leaks": []
+      },
+      "after": {
+        "covered": 660,
+        "litUnder": 0,
+        "maxUnder": 0,
+        "texels": 43264,
+        "mean": 0.6722047547587476,
+        "max": 1.4773009765625,
+        "leaks": []
+      },
+      "metrics": {
+        "generationMs": 294.7854000000516,
+        "geometryMs": 80.71880000003148,
+        "bakeMs": 32839.947000000044,
+        "samples": 90860,
+        "rays": 7930362,
+        "bytes": 7116920
+      },
+      "highFloorDensity": 3,
+      "floorTileBounds": {
+        "minW": 13,
+        "maxW": 13,
+        "minH": 13,
+        "maxH": 13,
+        "samples": 256
+      }
+    },
+    {
+      "name": "garden",
+      "cx": -5,
+      "cy": -4,
+      "before": {
+        "covered": 1428,
+        "litUnder": 0,
+        "maxUnder": 0,
+        "texels": 25600,
+        "mean": 1.3256257568464318,
+        "max": 2.7252890625,
+        "leaks": []
+      },
+      "after": {
+        "covered": 2322,
+        "litUnder": 0,
+        "maxUnder": 0,
+        "texels": 43264,
+        "mean": 1.3236363639290003,
+        "max": 2.7247328125,
+        "leaks": []
+      },
+      "metrics": {
+        "generationMs": 324.1526999999769,
+        "geometryMs": 214.7909000000218,
+        "bakeMs": 28547.93889999995,
+        "samples": 74630,
+        "rays": 7529457,
+        "bytes": 8461488
+      },
+      "highFloorDensity": 3,
+      "floorTileBounds": {
+        "minW": 13,
+        "maxW": 13,
+        "minH": 13,
+        "maxH": 13,
+        "samples": 256
+      }
+    }
+  ]
+}

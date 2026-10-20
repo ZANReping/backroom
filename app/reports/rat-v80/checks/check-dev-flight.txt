@@ -1,0 +1,9 @@
+
+> my-app@0.0.0 check:dev-flight
+> esbuild scripts/check-dev-flight.ts --bundle --platform=node --format=esm --outfile=.cache/check-dev-flight.mjs && node .cache/check-dev-flight.mjs
+
+
+  .cache\check-dev-flight.mjs  2.3mb
+
+Done in 178ms
+{"ok":true,"checks":19}

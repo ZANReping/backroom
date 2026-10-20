@@ -1,0 +1,9 @@
+
+> my-app@0.0.0 check:l2
+> esbuild scripts/check-l2-architecture.ts --bundle --platform=node --format=esm --outfile=.cache/check-l2-architecture.mjs && node .cache/check-l2-architecture.mjs
+
+
+  .cache\check-l2-architecture.mjs  2.3mb
+
+Done in 139ms
+{"pass":true,"chunks":75,"services":2541,"fixtures":595,"skew":48,"colored":40,"spawns":15,"crossings":150,"biomes":["tidy","warped","dim","narrow","dirty"],"reachableTiles":6254}

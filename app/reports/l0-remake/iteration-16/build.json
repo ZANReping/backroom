@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-07",
+  "command": "npm run build",
+  "stages": ["tsc -b", "vite build"],
+  "exitCode": 0,
+  "viteVersion": "7.3.0",
+  "viteDurationSeconds": 32.14,
+  "warnings": [
+    "Existing relative font URLs are resolved at runtime.",
+    "Browserslist data is outdated.",
+    "A PostCSS plugin does not pass the from option.",
+    "l11Materials is imported both statically and dynamically.",
+    "Some output chunks exceed 500 kB."
+  ]
+}

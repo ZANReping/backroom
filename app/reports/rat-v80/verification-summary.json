@@ -1,0 +1,66 @@
+{
+  "date": "2026-10-15",
+  "runtime": [
+    {
+      "mode": "classic",
+      "ok": true,
+      "checks": 35,
+      "errors": 0,
+      "resources": [
+        {
+          "geometries": 140,
+          "textures": 81
+        },
+        {
+          "geometries": 140,
+          "textures": 81
+        },
+        {
+          "geometries": 140,
+          "textures": 81
+        },
+        {
+          "geometries": 140,
+          "textures": 81
+        }
+      ],
+      "cleanup": {
+        "browserExit": "SIGTERM",
+        "serverExit": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "mode": "realistic",
+      "ok": true,
+      "checks": 35,
+      "errors": 0,
+      "resources": [
+        {
+          "geometries": 147,
+          "textures": 107
+        },
+        {
+          "geometries": 147,
+          "textures": 107
+        },
+        {
+          "geometries": 147,
+          "textures": 107
+        },
+        {
+          "geometries": 147,
+          "textures": 107
+        }
+      ],
+      "cleanup": {
+        "browserExit": "SIGTERM",
+        "serverExit": "SIGTERM",
+        "profileRemoved": true
+      }
+    }
+  ],
+  "finalOwnedQaProcessScan": [],
+  "uiReview": "HUD changes add rat meat icon/color; HowToPlay clarifies hostile Level 3 facelings. No new hook or render-path allocation.",
+  "sourceZipSha256": "008ee59aca1fb7bf272f949316b38fc76dd6c049f4722db9e8807a5b51fe412c"
+}

@@ -1,0 +1,290 @@
+{
+  "run": "qa-1792046186902-56440",
+  "label": "app-prefetch",
+  "mode": "realistic",
+  "port": 9642,
+  "cdp": 9643,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\level-entry\\app-prefetch\\qa-1792046186902-56440",
+  "levels": [
+    104
+  ],
+  "cases": [
+    {
+      "id": 104,
+      "cold": {
+        "id": 104,
+        "name": "Tom 的餐馆",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 3700.5999999996275,
+        "readyMs": 3700.5999999996275,
+        "loadMs": 3712.199999999255,
+        "preparationMs": 0.09999999962747097,
+        "generationMs": 10.900000000372529,
+        "sceneMs": 3689.5999999996275,
+        "frames": 292,
+        "cpuTotalMs": 3046.0000000037253,
+        "cpuMaxMs": 823.6999999992549,
+        "frameP95Ms": 20.199999999254942,
+        "metrics": {
+          "buildLevel": {
+            "calls": 265108,
+            "cpuMs": 1621.1000000033528,
+            "maxMs": 819.6999999992549
+          },
+          "warmSceneTextures": {
+            "calls": 29,
+            "cpuMs": 8.300000000745058,
+            "maxMs": 5.100000001490116
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 105.39999999850988,
+            "chunks": 0,
+            "finiteTask": true,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 1,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 0,
+              "textures": 1
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 0,
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 0,
+          "npcs": 9,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 144,
+            "textures": 83
+          }
+        },
+        "firstReady": {
+          "structures": 132,
+          "lights": 46,
+          "npcs": 10,
+          "nearNpcs": 9,
+          "npcMeshes": 9,
+          "meshes": 249,
+          "instances": 4546,
+          "materials": 143,
+          "memory": {
+            "geometries": 144,
+            "textures": 83
+          },
+          "programs": 82,
+          "drawCalls": 107,
+          "triangles": 39097,
+          "spawn": {
+            "x": 40.5,
+            "y": 25.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\level-entry\\app-prefetch\\qa-1792046186902-56440",
+    "--remote-debugging-port=9643",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.40",
+    "revision": "@cfaadc5a132d78e1828635aa8405a499f3e14864",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.20"
+  },
+  "pids": {
+    "server": 40724,
+    "browser": 51488
+  },
+  "setup": {
+    "mode": "realistic",
+    "viewport": [
+      1920,
+      1080
+    ],
+    "dpr": 1,
+    "seed": 424242,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "settings": {
+      "texture": 1,
+      "lights": 16,
+      "shadows": true,
+      "lightShadows": 1,
+      "loadingBudget": 6,
+      "chunkBudget": 3,
+      "detail": 1,
+      "bloom": true,
+      "ao": 1
+    },
+    "hardwareConcurrency": 32
+  },
+  "appLevels": {
+    "checks": [
+      "Level 1 accepts movement after entry",
+      "Level 5 accepts movement after entry",
+      "Level 11 accepts movement after entry",
+      "Level 12 accepts movement after entry"
+    ],
+    "entries": [
+      {
+        "id": 1,
+        "sceneReadyMs": 11383.89999999851,
+        "playableMs": 11899.39999999851,
+        "mapLoadedMs": 2288,
+        "generationMs": 13.900000000372529,
+        "renderCpuMs": 3354.2999999709427,
+        "frames": 2005,
+        "mapSeed": 424373,
+        "memory": {
+          "geometries": 204,
+          "textures": 98
+        },
+        "programs": 65,
+        "moved": 1.0752500000003948,
+        "movementPassed": true
+      },
+      {
+        "id": 5,
+        "sceneReadyMs": 12152.099999999627,
+        "playableMs": 12638.5,
+        "mapLoadedMs": 1303.5,
+        "generationMs": 9.900000000372529,
+        "renderCpuMs": 8372.899999976158,
+        "frames": 1051,
+        "mapSeed": 424897,
+        "memory": {
+          "geometries": 1350,
+          "textures": 177
+        },
+        "programs": 111,
+        "moved": 1.870000000000175,
+        "movementPassed": true
+      },
+      {
+        "id": 11,
+        "sceneReadyMs": 7169.9000000003725,
+        "playableMs": 8183.5,
+        "mapLoadedMs": 1299.9000000003725,
+        "generationMs": 14.400000000372529,
+        "renderCpuMs": 4319.299999970943,
+        "frames": 273,
+        "mapSeed": 425683,
+        "memory": {
+          "geometries": 401,
+          "textures": 108
+        },
+        "programs": 128,
+        "moved": 1.7566666666668311,
+        "movementPassed": true
+      },
+      {
+        "id": 12,
+        "sceneReadyMs": 4151.699999999255,
+        "playableMs": 5068.0999999996275,
+        "mapLoadedMs": 1308.5,
+        "generationMs": 17.59999999962747,
+        "renderCpuMs": 2031.100000018254,
+        "frames": 379,
+        "mapSeed": 425814.0287,
+        "memory": {
+          "geometries": 700,
+          "textures": 89
+        },
+        "programs": 147,
+        "moved": 1.7283333333334951,
+        "movementPassed": true
+      }
+    ]
+  },
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [],
+  "networkErrors": [
+    {
+      "requestId": "58512.403",
+      "loaderId": "627D3A6E63A74613F4C2E6DFE539F0D2",
+      "timestamp": 10446.667746,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:9642/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Thu, 15 Oct 2026 06:36:51 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 174,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 9642,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 10446.656141,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.565,
+          "sendEnd": 0.616,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 10.722,
+          "receiveHeadersEnd": 10.886
+        },
+        "responseTime": 1792046211294.708,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "DAD8130B9AD5F35824895CAECF88B3EF"
+    }
+  ]
+}

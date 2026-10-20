@@ -1,0 +1,175 @@
+{
+  "passed": true,
+  "bakeRevision": 16,
+  "assertions": 1620512,
+  "publishedChunks": 108,
+  "coveredSamples": 5235,
+  "litUnderSolids": 0,
+  "entryMs": {
+    "before": 4899.1463,
+    "after": 2514.7451999999976
+  },
+  "performance": {
+    "before": {
+      "scope": "Fixed-state actual App renderer, headless native GPU; simulation frozen only for five warmed render samples. rAF cadence, not a GPU timer query.",
+      "rounds": [
+        {
+          "median": 4.200000000004366,
+          "p95": 12.5,
+          "cpuMedian": 4.600000001490116,
+          "cpuP95": 12.399999998509884,
+          "drawsMedian": 304,
+          "trianglesMedian": 161036,
+          "memory": {
+            "geometries": 472,
+            "textures": 110
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 12.599999999998545,
+          "cpuMedian": 4.700000002980232,
+          "cpuP95": 11.299999997019768,
+          "drawsMedian": 304,
+          "trianglesMedian": 161036,
+          "memory": {
+            "geometries": 472,
+            "textures": 110
+          }
+        },
+        {
+          "median": 4.30000000000291,
+          "p95": 21,
+          "cpuMedian": 5,
+          "cpuP95": 22.5,
+          "drawsMedian": 304,
+          "trianglesMedian": 161036,
+          "memory": {
+            "geometries": 472,
+            "textures": 110
+          }
+        },
+        {
+          "median": 8.400000000001455,
+          "p95": 20.80000000000291,
+          "cpuMedian": 7.5,
+          "cpuP95": 20.30000000447035,
+          "drawsMedian": 304,
+          "trianglesMedian": 161036,
+          "memory": {
+            "geometries": 472,
+            "textures": 110
+          }
+        },
+        {
+          "median": 4.200000000004366,
+          "p95": 16.10000000000582,
+          "cpuMedian": 4.200000002980232,
+          "cpuP95": 14.299999997019768,
+          "drawsMedian": 304,
+          "trianglesMedian": 161036,
+          "memory": {
+            "geometries": 472,
+            "textures": 110
+          }
+        }
+      ],
+      "medianOfMedians": 4.200000000004366,
+      "medianP95": 16.10000000000582,
+      "worstP95": 21,
+      "cpuMedian": 4.700000002980232,
+      "cpuP95": 14.299999997019768
+    },
+    "after": {
+      "scope": "Fixed-state actual App renderer, headless native GPU; simulation frozen only for five warmed render samples. rAF cadence, not a GPU timer query.",
+      "rounds": [
+        {
+          "median": 4.199999999982538,
+          "p95": 8.299999999988358,
+          "cpuMedian": 3.2000000029802322,
+          "cpuP95": 7.5,
+          "drawsMedian": 304,
+          "trianglesMedian": 161036,
+          "memory": {
+            "geometries": 581,
+            "textures": 125
+          }
+        },
+        {
+          "median": 4.199999999982538,
+          "p95": 4.2999999999883585,
+          "cpuMedian": 3,
+          "cpuP95": 6.5,
+          "drawsMedian": 304,
+          "trianglesMedian": 161036,
+          "memory": {
+            "geometries": 581,
+            "textures": 125
+          }
+        },
+        {
+          "median": 4.199999999982538,
+          "p95": 4.300000000017462,
+          "cpuMedian": 2.7999999970197678,
+          "cpuP95": 6.899999998509884,
+          "drawsMedian": 304,
+          "trianglesMedian": 161036,
+          "memory": {
+            "geometries": 581,
+            "textures": 125
+          }
+        },
+        {
+          "median": 4.199999999982538,
+          "p95": 4.300000000017462,
+          "cpuMedian": 2.9000000059604645,
+          "cpuP95": 6.699999995529652,
+          "drawsMedian": 304,
+          "trianglesMedian": 161036,
+          "memory": {
+            "geometries": 581,
+            "textures": 125
+          }
+        },
+        {
+          "median": 4.199999999982538,
+          "p95": 8.299999999988358,
+          "cpuMedian": 3.1999999955296516,
+          "cpuP95": 7.299999997019768,
+          "drawsMedian": 304,
+          "trianglesMedian": 161036,
+          "memory": {
+            "geometries": 581,
+            "textures": 125
+          }
+        }
+      ],
+      "medianOfMedians": 4.199999999982538,
+      "medianP95": 4.300000000017462,
+      "worstP95": 8.299999999988358,
+      "cpuMedian": 3,
+      "cpuP95": 6.899999998509884
+    },
+    "desktopTarget": {
+      "median": true,
+      "p95": true
+    }
+  },
+  "hashes": {
+    "src/game/world/l1Bake.ts": "d11848342e2959a6a3ca78a5a62f6a32194e132f94c5011d8e3e8f30bc4c219e",
+    "src/game/world/l1BakeTypes.ts": "e3a2bcc7f66a9ba296b355bf439f215045058483eb1a8eddc2cb950cb04c3875",
+    "public/assets/l1-bakes/manifest.json": "d29f0072562d977600dec67d83166b6dfe5b3a5b39504d023ecd8d6a9ed093ae"
+  },
+  "logs": {
+    "bake": true,
+    "offline": true,
+    "generation": true,
+    "placement": true,
+    "vault": true,
+    "services": true,
+    "detail": true,
+    "import": true,
+    "interactions": true,
+    "build": true
+  }
+}

@@ -85,7 +85,13 @@ export interface WretchSpec {
 export const RETRO_NPC_IDS = Object.keys(PROFILES) as RetroNpcId[]
 export const retroNpcSpec = (id: RetroNpcId): RetroSpec => PROFILES[id]
 
-export interface RetroNpcMeta { landmarks: number[]; skinUV: [number, number]; faceFill?: [number, number] } // faceFill：照片里脸宽占比（下半脸, 上半脸）
+export interface RetroNpcMeta {
+  landmarks: number[]; skinUV: [number, number]; faceFill?: [number, number]
+  /** Leveled face → source photo affine UV, V downward: [xx, xy, x0, yx, yy, y0]. */
+  faceUV?: readonly [number, number, number, number, number, number]
+  /** Source eye line; UV correction only, with forehead/nose/chin geometry unchanged. */
+  faceEyeV?: number
+} // faceFill：照片里脸宽占比（下半脸, 上半脸）
 
 export const RETRO_NPC_META: Record<RetroNpcId, RetroNpcMeta> = {
   kat: { landmarks: [0.36, 0.6, 0.78, 0.97, 0.29, 0.71], skinUV: [0.22, 0.48], faceFill: [0.86, 0.95] },
@@ -207,6 +213,13 @@ export function buildRetroFigure(P: RetroSpec, meta: RetroNpcMeta, tex: RetroNpc
   const vert = (m: number, p: V3, uv: [number, number], col: V3, w: Wt) => {
     const b = bins[m]
     if (WR && m === MAT.skin) uv = [(p[0] * 0.9 + p[2] * 0.75) * 3.2, p[1] * 3.2 + p[2] * 0.8] // v78：悲尸皮肤按位置平铺（干裂/脓疱纹理）
+    if (m === MAT.face && meta.faceUV) {
+      const [xx, xy, x0, yx, yy, y0] = meta.faceUV, u = uv[0]
+      let v = 1 - uv[1]
+      const eyeWeight = v <= lm[0] ? v / lm[0] : Math.max(0, (lm[1] - v) / (lm[1] - lm[0]))
+      v += ((meta.faceEyeV ?? lm[0]) - lm[0]) * eyeWeight
+      uv = [clamp(xx * u + xy * v + x0, 0.004, 0.996), 1 - clamp(yx * u + yy * v + y0, 0.004, 0.996)]
+    }
     b.p.push(p[0], p[1], p[2]); b.uv.push(uv[0], uv[1]); b.c.push(col[0], col[1], col[2])
     for (let k = 0; k < 4; k++) { b.si.push(w[k]?.[0] ?? 0); b.sw.push(w[k]?.[1] ?? 0) }
   }
@@ -1737,6 +1750,24 @@ export function buildRetroFigure(P: RetroSpec, meta: RetroNpcMeta, tex: RetroNpc
   // 无面灵：皮肤组（脸面 + 颈/手/耳等单点采样）整体用通用无五官脸面；脸照只留给 L3 的写实器官（face 组，照常眨眼）
   const skinTex = P.faceless && tex.faceless ? tex.faceless : tex.face
   const faceMat = mk('face', faceTex, 0.34)
+  // The face alpha channel marks source-image hair, rather than transparency.
+  // Replace it with the avatar's own hair color; bald/faceless figures use the cleaned skin RGB.
+  {
+    const hairOn = P.hair !== 'none' && !P.faceless ? 1 : 0
+    const hc = new THREE.Color(HAIRC[0] * 0.62, HAIRC[1] * 0.62, HAIRC[2] * 0.62)
+    const prev = faceMat.onBeforeCompile
+    faceMat.onBeforeCompile = (sh, r) => {
+      prev.call(faceMat, sh, r)
+      sh.uniforms.uRetroHair = { value: hc }
+      sh.uniforms.uRetroHairOn = { value: hairOn }
+      sh.fragmentShader = 'uniform vec3 uRetroHair;\nuniform float uRetroHairOn;\n' + sh.fragmentShader
+        // v82：发区不再是一块平涂——发色带竖向发丝明暗；发际线下方的皮肤压一道浅阴影，两者羽化过渡
+        .replace('#include <map_fragment>', '#include <map_fragment>\n\tfloat retroSkinA = mix(1.0, sampledDiffuseColor.a, uRetroHairOn);\n\tfloat retroStrand = 0.84 + 0.16 * sin(vMapUv.x * 190.0 + sin(vMapUv.x * 41.0) * 2.4 + vMapUv.y * 9.0);\n\tfloat retroFringe = mix(0.82, 1.0, smoothstep(0.3, 1.0, retroSkinA));\n\tdiffuseColor.rgb = mix(uRetroHair * retroStrand, diffuseColor.rgb * retroFringe, smoothstep(0.0, 1.0, retroSkinA));\n\tdiffuseColor.a = 1.0;')
+        .replace('totalEmissiveRadiance *= vColor.rgb;', 'totalEmissiveRadiance *= vColor.rgb;\n\ttotalEmissiveRadiance = mix(uRetroHair * emissive, totalEmissiveRadiance, retroSkinA);')
+    }
+    const prevKey = faceMat.customProgramCacheKey()
+    faceMat.customProgramCacheKey = () => prevKey + '|retro-face-hair-v82'
+  }
   const skinMap = WR && tex.skinTile ? tex.skinTile : skinTex
   const mats = [
     mk('body', tex.body, 0.2, WR ? { alphaTest: 0.5, side: THREE.DoubleSide } : P.top.drapedHem ? {side:THREE.DoubleSide} : {}), faceMat, mk('skin', skinMap, 0.26), mk('solid', null), mk('hair', tex.hair, 0.16, { side: THREE.DoubleSide }),

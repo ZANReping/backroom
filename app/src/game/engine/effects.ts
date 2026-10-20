@@ -8,6 +8,7 @@
 import type { Engine } from '../engine'
 import type { SaveSnapshot } from './save'
 import { freshWarehouses } from './warehouse'
+import { freshJerryRun } from './jerryAI'
 
 export interface EffectDef {
   id: string // 唯一 id
@@ -74,6 +75,7 @@ export const EFFECTS: EffectDef[] = [
   { id: 'indoctrination', field: 'indoctrination', def: 0, cat: 'jerry', resetOnNewRun: true, saveKey: 'indoctrination', mount: 'npc.contactJerry/tameJerry（教化 0~100）' },
   { id: 'jerry-tamed', field: 'jerryTamed', def: false, cat: 'jerry', resetOnNewRun: true, saveKey: 'jerryTamed', mount: 'npc.tameJerry（驯服后教化不再积累）' },
   { id: 'jerry-territory', field: 'jerryTerritory', def: false, cat: 'jerry', resetOnNewRun: true, mount: 'npc.updateJerry（每帧按信众宣传间矩形重算）' },
+  { id: 'jerry-run', field: 'jerryRun', def: () => freshJerryRun(), cat: 'jerry', resetOnNewRun: true, mount: 'jerryAI.updateJerryPlayer（木僵/残响/理智上限/击晕/飞石/伏击/诱导标记；不写存档）' },
   { id: 'chant-t', field: 'chantT', def: 0, cat: 'jerry', resetOnNewRun: true, mount: 'npc.updateJerry（L274 诵咏计时）' },
   // ===== BRC 后室装修公司 =====
   { id: 'brc-sin', field: 'brcSin', def: () => ({ hurt: 0, killed: 0 }), cat: 'brc', resetOnNewRun: true, saveKey: 'brcSin', mount: 'combat.attack（记罪）/ npc.confessBrc（坦白结清）' },
@@ -90,6 +92,8 @@ export const EFFECTS: EffectDef[] = [
   { id: 'malady-stage', field: 'infectionStage', def: 0, cat: 'misc', resetOnNewRun: true, mount: 'survival.updateSurvival（升阶计图鉴遭遇；读档按快照感染值推导）' },
   { id: 'malady-cough', field: 'coughT', def: 0, cat: 'misc', resetOnNewRun: true, mount: 'survival.updateSurvival（潜藏期咳嗽计时→noiseEvent）' },
   { id: 'malady-recover', field: 'infectionRecoverT', def: 0, cat: 'misc', resetOnNewRun: true, mount: 'survival.updateSurvival（「恢复」buff：阻增长+非感染区每 5s -1）' },
+  // ===== 派对客（Entity 67）转化值：引擎字段（不入 PlayerState、无 saveKey——不写进存档；新一局清零，换层保留）=====
+  { id: 'party-conversion', field: 'partyConv', def: 0, cat: 'misc', resetOnNewRun: true, mount: 'partygoerAI.addPartyConversion（咬伤/丝绒蛋糕）；combat.hurtPlayer 痛觉减弱；HUD/renderer 视力变差' },
   // ===== 开发者现象开关（dev 子字段，仅登记）=====
   { id: 'phen-on', field: 'dev.phenOn', def: () => new Set<string>(), cat: 'phen', mount: 'DevPanel 世界页强制开；step 现象判定读取' },
   { id: 'phen-off', field: 'dev.phenOff', def: () => new Set<string>(), cat: 'phen', mount: 'DevPanel 世界页强制关；step 现象判定读取' },

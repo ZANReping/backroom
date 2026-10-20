@@ -1,0 +1,9 @@
+
+> my-app@0.0.0 check:program-completion
+> esbuild scripts/check-program-completion.ts --bundle --platform=node --format=esm --outfile=.cache/check-program-completion.mjs && node .cache/check-program-completion.mjs
+
+
+  .cache\check-program-completion.mjs  617.5kb
+
+Done in 87ms
+{"passed":58}

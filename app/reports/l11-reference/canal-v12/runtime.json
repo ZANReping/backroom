@@ -1,0 +1,1782 @@
+{
+  "run": "qa-1792045441635-57512",
+  "port": 10792,
+  "cdp": 10793,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-reference\\canal-v12\\qa-1792045441635-57512",
+  "label": "canal-v12",
+  "baseline": false,
+  "low": false,
+  "mode": "realistic",
+  "quick": false,
+  "seed": 20261014,
+  "views": [
+    {
+      "id": "03-canal",
+      "world": [
+        760,
+        967.8,
+        1.3488329107481563
+      ],
+      "target": [
+        760,
+        780,
+        12
+      ],
+      "yaw": 0,
+      "pitch": 0.048424133181329244,
+      "fov": 56,
+      "lighting": {
+        "exposure": 1.224537755140781,
+        "meter": 0.4708359999999998,
+        "outdoor": 0.9999999999999996,
+        "fogNear": 300,
+        "fogFar": 1800,
+        "sun": 3.35,
+        "msaa": 4,
+        "buffer": [
+          1920,
+          1080
+        ]
+      },
+      "stats": {
+        "label": "11:open",
+        "median": 8.400000000001455,
+        "p95": 37.5,
+        "max": 2191.5999999999985,
+        "p99": 70.90000000000146,
+        "frames": 1000,
+        "over16ms": 227,
+        "over33ms": 66,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 1076,
+        "triangles": 4563550,
+        "memory": {
+          "geometries": 812,
+          "textures": 64
+        },
+        "programs": 80,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "performance": {
+        "label": "11:open",
+        "median": 16.599999999998545,
+        "p95": 50,
+        "max": 120.90000000000146,
+        "p99": 120.90000000000146,
+        "frames": 100,
+        "over16ms": 46,
+        "over33ms": 14,
+        "cpuMedian": 12.5,
+        "cpuP95": 46.30000000074506,
+        "gpuMedian": 15.305728,
+        "gpuP95": 43.83232,
+        "gpuSamples": 98,
+        "draws": 237,
+        "triangles": 1595391,
+        "memory": {
+          "geometries": 812,
+          "textures": 64
+        },
+        "programs": 80,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "id": "31-roof-link-oblique",
+      "world": [
+        795,
+        868,
+        0.3582002918577347
+      ],
+      "target": [
+        812,
+        894,
+        62
+      ],
+      "yaw": -2.5625183842220625,
+      "pitch": 1.0936809381155415,
+      "fov": 64,
+      "lighting": {
+        "exposure": 1.1789232453720038,
+        "meter": 0.4708359999999998,
+        "outdoor": 0.9999999999999996,
+        "fogNear": 300,
+        "fogFar": 1800,
+        "sun": 3.35,
+        "msaa": 4,
+        "buffer": [
+          1920,
+          1080
+        ]
+      },
+      "stats": {
+        "label": "11:open",
+        "median": 16.60000000000582,
+        "p95": 79.09999999999127,
+        "max": 5308.100000000006,
+        "p99": 604.1999999999971,
+        "frames": 576,
+        "over16ms": 286,
+        "over33ms": 100,
+        "cpuMedian": 12.5,
+        "cpuP95": 46.30000000074506,
+        "gpuMedian": 15.305728,
+        "gpuP95": 43.83232,
+        "gpuSamples": 100,
+        "draws": 1239,
+        "triangles": 5390124,
+        "memory": {
+          "geometries": 834,
+          "textures": 70
+        },
+        "programs": 91,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "performance": {
+        "label": "11:open",
+        "median": 8.5,
+        "p95": 37.5,
+        "max": 79.20000000001164,
+        "p99": 71,
+        "frames": 108,
+        "over16ms": 29,
+        "over33ms": 8,
+        "cpuMedian": 9,
+        "cpuP95": 35.69999999925494,
+        "gpuMedian": 9.66656,
+        "gpuP95": 31.383552,
+        "gpuSamples": 106,
+        "draws": 144,
+        "triangles": 1477209,
+        "memory": {
+          "geometries": 834,
+          "textures": 70
+        },
+        "programs": 91,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "id": "34-quay-service-side",
+      "world": [
+        737,
+        880,
+        0.3449629942554685
+      ],
+      "target": [
+        713,
+        848,
+        14
+      ],
+      "yaw": 0.6435011087932844,
+      "pitch": 0.2938641555841446,
+      "fov": 68,
+      "lighting": {
+        "exposure": 1.1789232453720038,
+        "meter": 0.4708359999999998,
+        "outdoor": 0.9999999999999996,
+        "fogNear": 300,
+        "fogFar": 1800,
+        "sun": 3.35,
+        "msaa": 4,
+        "buffer": [
+          1920,
+          1080
+        ]
+      },
+      "stats": {
+        "label": "11:open",
+        "median": 37.5,
+        "p95": 112.5,
+        "max": 2137.5999999999913,
+        "p99": 824.8999999999942,
+        "frames": 572,
+        "over16ms": 487,
+        "over33ms": 335,
+        "cpuMedian": 9,
+        "cpuP95": 35.69999999925494,
+        "gpuMedian": 9.6256,
+        "gpuP95": 31.383552,
+        "gpuSamples": 108,
+        "draws": 1245,
+        "triangles": 2819259,
+        "memory": {
+          "geometries": 1181,
+          "textures": 73
+        },
+        "programs": 93,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "performance": {
+        "label": "11:open",
+        "median": 54.09999999999127,
+        "p95": 179.10000000000582,
+        "max": 1537.3999999999942,
+        "p99": 483.3999999999942,
+        "frames": 101,
+        "over16ms": 101,
+        "over33ms": 89,
+        "cpuMedian": 50.70000000111759,
+        "cpuP95": 167.90000000037253,
+        "gpuMedian": 49.05984,
+        "gpuP95": 176.361472,
+        "gpuSamples": 99,
+        "draws": 2423,
+        "triangles": 5096138,
+        "memory": {
+          "geometries": 1181,
+          "textures": 73
+        },
+        "programs": 93,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "id": "35-quay-balcony-front",
+      "world": [
+        738,
+        825,
+        0.45933213784506677
+      ],
+      "target": [
+        710,
+        852,
+        16
+      ],
+      "yaw": 2.3380146751193664,
+      "pitch": 0.3452742404349717,
+      "fov": 72,
+      "lighting": {
+        "exposure": 1.1789232453720038,
+        "meter": 0.4708359999999998,
+        "outdoor": 0.9999999999999996,
+        "fogNear": 300,
+        "fogFar": 1800,
+        "sun": 3.35,
+        "msaa": 4,
+        "buffer": [
+          1920,
+          1080
+        ]
+      },
+      "stats": {
+        "label": "11:open",
+        "median": 49.90000000000873,
+        "p95": 183.30000000001746,
+        "max": 2354.100000000006,
+        "p99": 887.5,
+        "frames": 575,
+        "over16ms": 564,
+        "over33ms": 472,
+        "cpuMedian": 50.70000000111759,
+        "cpuP95": 167.90000000037253,
+        "gpuMedian": 49.096704,
+        "gpuP95": 169.03168,
+        "gpuSamples": 101,
+        "draws": 919,
+        "triangles": 3069766,
+        "memory": {
+          "geometries": 1178,
+          "textures": 76
+        },
+        "programs": 95,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "performance": {
+        "label": "11:open",
+        "median": 24.89999999999418,
+        "p95": 33.40000000002328,
+        "max": 41.70000000001164,
+        "p99": 37.5,
+        "frames": 102,
+        "over16ms": 82,
+        "over33ms": 7,
+        "cpuMedian": 23.200000001117587,
+        "cpuP95": 33,
+        "gpuMedian": 22.320128,
+        "gpuP95": 32.47616,
+        "gpuSamples": 100,
+        "draws": 1829,
+        "triangles": 3527667,
+        "memory": {
+          "geometries": 1178,
+          "textures": 76
+        },
+        "programs": 95,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "id": "36-green-mullions",
+      "world": [
+        720,
+        931,
+        0.3343744434119065
+      ],
+      "target": [
+        701,
+        916,
+        17
+      ],
+      "yaw": 0.9025069079643125,
+      "pitch": 0.5581826577132131,
+      "fov": 70,
+      "lighting": {
+        "exposure": 1.1789232453720038,
+        "meter": 0.4708359999999998,
+        "outdoor": 0.9999999999999996,
+        "fogNear": 300,
+        "fogFar": 1800,
+        "sun": 3.35,
+        "msaa": 4,
+        "buffer": [
+          1920,
+          1080
+        ]
+      },
+      "stats": {
+        "label": "11:open",
+        "median": 21.10000000000582,
+        "p95": 45.90000000002328,
+        "max": 383.3999999999942,
+        "p99": 125,
+        "frames": 617,
+        "over16ms": 476,
+        "over33ms": 96,
+        "cpuMedian": 23.200000001117587,
+        "cpuP95": 33,
+        "gpuMedian": 22.766592,
+        "gpuP95": 31.492096,
+        "gpuSamples": 102,
+        "draws": 546,
+        "triangles": 1567069,
+        "memory": {
+          "geometries": 925,
+          "textures": 81
+        },
+        "programs": 95,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "performance": {
+        "label": "11:open",
+        "median": 20.800000000017462,
+        "p95": 33.40000000002328,
+        "max": 41.60000000000582,
+        "p99": 37.5,
+        "frames": 101,
+        "over16ms": 86,
+        "over33ms": 11,
+        "cpuMedian": 20.90000000037253,
+        "cpuP95": 34.40000000037253,
+        "gpuMedian": 21.337088,
+        "gpuP95": 34.09408,
+        "gpuSamples": 99,
+        "draws": 546,
+        "triangles": 1567069,
+        "memory": {
+          "geometries": 925,
+          "textures": 81
+        },
+        "programs": 95,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "id": "37-quay-annex-interior",
+      "world": [
+        707.2,
+        834.175,
+        0.33789822019919175
+      ],
+      "target": [
+        707.2,
+        829.15,
+        1.937898220199192
+      ],
+      "yaw": 0,
+      "pitch": 0.009949920392805223,
+      "fov": 78,
+      "room": "workspace",
+      "lighting": {
+        "exposure": 1.6960275213395986,
+        "meter": 0.14230953565443022,
+        "outdoor": 1.5897830577692456e-13,
+        "fogNear": 300,
+        "fogFar": 1800,
+        "sun": 3.35,
+        "msaa": 4,
+        "buffer": [
+          1920,
+          1080
+        ]
+      },
+      "stats": {
+        "label": "11:open",
+        "median": 20.79999999998836,
+        "p95": 41.60000000000582,
+        "max": 795.8999999999942,
+        "p99": 108.10000000000582,
+        "frames": 647,
+        "over16ms": 430,
+        "over33ms": 74,
+        "cpuMedian": 20.90000000037253,
+        "cpuP95": 34.40000000037253,
+        "gpuMedian": 21.337088,
+        "gpuP95": 34.025472,
+        "gpuSamples": 101,
+        "draws": 327,
+        "triangles": 1442061,
+        "memory": {
+          "geometries": 1123,
+          "textures": 82
+        },
+        "programs": 96,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "performance": {
+        "label": "11:open",
+        "median": 16.699999999982538,
+        "p95": 33.39999999999418,
+        "max": 41.69999999998254,
+        "p99": 37.5,
+        "frames": 101,
+        "over16ms": 54,
+        "over33ms": 6,
+        "cpuMedian": 15.599999999627471,
+        "cpuP95": 33.59999999962747,
+        "gpuMedian": 17.185792,
+        "gpuP95": 30.76096,
+        "gpuSamples": 99,
+        "draws": 1801,
+        "triangles": 3128571,
+        "memory": {
+          "geometries": 1123,
+          "textures": 82
+        },
+        "programs": 96,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "id": "38-quay-annex-rear",
+      "world": [
+        659,
+        850,
+        0.3296155234865972
+      ],
+      "target": [
+        669,
+        846,
+        13
+      ],
+      "yaw": -1.1902899496825317,
+      "pitch": 0.8013878212743103,
+      "fov": 75,
+      "lighting": {
+        "exposure": 1.1789232454582323,
+        "meter": 0.4708359998923916,
+        "outdoor": 0.9999999999995093,
+        "fogNear": 300,
+        "fogFar": 1800,
+        "sun": 3.35,
+        "msaa": 4,
+        "buffer": [
+          1920,
+          1080
+        ]
+      },
+      "stats": {
+        "label": "11:open",
+        "median": 12.60000000000582,
+        "p95": 33.39999999999418,
+        "max": 645.6999999999825,
+        "p99": 58.30000000001746,
+        "frames": 799,
+        "over16ms": 313,
+        "over33ms": 42,
+        "cpuMedian": 15.599999999627471,
+        "cpuP95": 33.59999999962747,
+        "gpuMedian": 17.185792,
+        "gpuP95": 30.659584,
+        "gpuSamples": 101,
+        "draws": 312,
+        "triangles": 1586535,
+        "memory": {
+          "geometries": 1073,
+          "textures": 88
+        },
+        "programs": 95,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "performance": {
+        "label": "11:open",
+        "median": 8.5,
+        "p95": 20.89999999999418,
+        "max": 33.29999999998836,
+        "p99": 25.10000000000582,
+        "frames": 135,
+        "over16ms": 17,
+        "over33ms": 0,
+        "cpuMedian": 9.199999999254942,
+        "cpuP95": 16.800000000745058,
+        "gpuMedian": 10.208256,
+        "gpuP95": 19.032064,
+        "gpuSamples": 133,
+        "draws": 312,
+        "triangles": 1586535,
+        "memory": {
+          "geometries": 1073,
+          "textures": 88
+        },
+        "programs": 95,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    }
+  ],
+  "command": [
+    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-reference\\canal-v12\\qa-1792045441635-57512",
+    "--remote-debugging-port=10793",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.40",
+    "revision": "@cfaadc5a132d78e1828635aa8405a499f3e14864",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.20"
+  },
+  "pids": {
+    "server": 55192,
+    "browser": 52404
+  },
+  "setup": {
+    "seed": 20261014,
+    "newGameSeed": 20259573,
+    "version": 12,
+    "buildings": 29,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "low": false,
+    "baseline": false,
+    "weather": "calm",
+    "time": 10,
+    "shadows": true
+  },
+  "cases": [
+    {
+      "id": "03-canal",
+      "x": 760,
+      "y": 967.8,
+      "z": 0,
+      "tx": 760,
+      "ty": 780,
+      "th": 12,
+      "fov": 56,
+      "reference": "11canal.png"
+    },
+    {
+      "id": "31-roof-link-oblique",
+      "x": 795,
+      "y": 868,
+      "z": 0,
+      "tx": 812,
+      "ty": 894,
+      "th": 62,
+      "fov": 64,
+      "reference": "11canal.png"
+    },
+    {
+      "id": "34-quay-service-side",
+      "x": 737,
+      "y": 880,
+      "z": 0,
+      "tx": 713,
+      "ty": 848,
+      "th": 14,
+      "fov": 68,
+      "reference": "11canal.png"
+    },
+    {
+      "id": "35-quay-balcony-front",
+      "x": 738,
+      "y": 825,
+      "z": 0,
+      "tx": 710,
+      "ty": 852,
+      "th": 16,
+      "fov": 72,
+      "reference": "11canal.png"
+    },
+    {
+      "id": "36-green-mullions",
+      "x": 720,
+      "y": 931,
+      "z": 0,
+      "tx": 701,
+      "ty": 916,
+      "th": 17,
+      "fov": 70,
+      "reference": "11canal.png"
+    },
+    {
+      "id": "37-quay-annex-interior",
+      "building": "quay-west-annex",
+      "reference": "11canal.png"
+    },
+    {
+      "id": "38-quay-annex-rear",
+      "x": 659,
+      "y": 850,
+      "z": 0,
+      "tx": 669,
+      "ty": 846,
+      "th": 13,
+      "fov": 75,
+      "reference": "11canal.png"
+    }
+  ],
+  "hardware": {
+    "vendor": "Google Inc. (NVIDIA)",
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+  },
+  "validation": [
+    {
+      "ok": true,
+      "entrances": [
+        {
+          "id": "l11v2:20261014:0:0:reference:quay-west-near",
+          "error": 0.05333333333305745,
+          "local": [
+            56.55333333333306,
+            26
+          ],
+          "rooms": [
+            13,
+            13
+          ],
+          "doors": 26,
+          "flights": [
+            {
+              "flight": 0,
+              "error": 0.0399999999992815,
+              "height": 3.0150000000000006,
+              "returnError": 0.056666666666728815,
+              "returnHeight": 0.015000000000000013
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "entrances": [
+        {
+          "id": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "error": 0.05333333333305745,
+          "local": [
+            45.55333333333306,
+            31.539999999999964
+          ],
+          "rooms": [
+            12,
+            12
+          ],
+          "doors": 24,
+          "flights": [
+            {
+              "flight": 0,
+              "error": 0.0399999999992815,
+              "height": 3.015,
+              "returnError": 0.056666666666728815,
+              "returnHeight": 0.015000000000000013
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "entrances": [
+        {
+          "id": "l11v2:20261014:0:0:reference:quay-east-near",
+          "error": 0.046666666665828416,
+          "local": [
+            -7.443333333333385,
+            58.289999999999964
+          ],
+          "rooms": [
+            26,
+            26
+          ],
+          "doors": 52,
+          "flights": [
+            {
+              "flight": 0,
+              "error": 0.0399999999992815,
+              "height": 3.0149999999999997,
+              "returnError": 0.056666666666728815,
+              "returnHeight": 0.014999999999999902
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "roomWalks": [
+    {
+      "ok": true,
+      "checks": [
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f0:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f0:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f0:room:1",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f0:room:1",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f0:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f0:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f0:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f0:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f0:room:4",
+          "direction": "forward",
+          "error": 0.0033333333333303017,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f0:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "workspace",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f1:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000568
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "workspace",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f1:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000568
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "meeting",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f1:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000568
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "meeting",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f1:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000568
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "breakroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f1:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000568
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "breakroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f1:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000568
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f1:room:4",
+          "direction": "forward",
+          "error": 0.0033333333333303017,
+          "heightError": 0.015000000000000568
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-near",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-near:f1:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000568
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "checks": [
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f0:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f0:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f0:room:1",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f0:room:1",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f0:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f0:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f0:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f0:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f0:room:4",
+          "direction": "forward",
+          "error": 0.0033333333333303017,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f0:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000013
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "workspace",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f1:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "workspace",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f1:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "meeting",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f1:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "meeting",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f1:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "breakroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f1:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "breakroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f1:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f1:room:4",
+          "direction": "forward",
+          "error": 0.0033333333333303017,
+          "heightError": 0.015000000000000124
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-west-annex",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-west-annex:f1:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.015000000000000124
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "checks": [
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f0:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.014999999999999902
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "reception",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f0:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.014999999999999902
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f0:room:1",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.014999999999999902
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "workspace",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f0:room:1",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.014999999999999902
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f0:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.014999999999999902
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "meeting",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f0:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.014999999999999902
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f0:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.014999999999999902
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "breakroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f0:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.014999999999999902
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f0:room:4",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.014999999999999902
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "bathroom",
+          "floor": 0,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f0:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.014999999999999902
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "workspace",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f1:room:0",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.01499999999999968
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "workspace",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f1:room:0",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.01499999999999968
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "meeting",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f1:room:2",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.01499999999999968
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "meeting",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f1:room:2",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.01499999999999968
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "breakroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f1:room:3",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.01499999999999968
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "breakroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f1:room:3",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.01499999999999968
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f1:room:4",
+          "direction": "forward",
+          "error": 0.0033333333334439885,
+          "heightError": 0.01499999999999968
+        },
+        {
+          "building": "l11v2:20261014:0:0:reference:quay-east-near",
+          "kind": "bathroom",
+          "floor": 1,
+          "room": "l11v2:20261014:0:0:reference:quay-east-near:f1:room:4",
+          "direction": "reverse",
+          "error": 0,
+          "heightError": 0.01499999999999968
+        }
+      ]
+    }
+  ],
+  "inspected": {
+    "available": true,
+    "building": "l11v2:20261014:0:0:reference:west-piers",
+    "side": "e",
+    "returnSide": "s",
+    "door": [
+      65,
+      41.925
+    ],
+    "walks": [
+      {
+        "target": [
+          255.7,
+          381.925
+        ],
+        "error": 0.049999999999783995
+      },
+      {
+        "target": [
+          258.3,
+          381.925
+        ],
+        "error": 0
+      }
+    ]
+  },
+  "civil": {
+    "ok": true,
+    "walks": [
+      {
+        "start": 724,
+        "end": 800,
+        "error": 0.06666666665955745,
+        "heights": [
+          {
+            "x": 724.0566666666666,
+            "z": 0.34775648578471097
+          },
+          {
+            "x": 726.3233333333335,
+            "z": 0.34826492163264
+          },
+          {
+            "x": 728.5900000000004,
+            "z": 0.34877107568046384
+          },
+          {
+            "x": 730.8566666666673,
+            "z": 0.34927494116308344
+          },
+          {
+            "x": 733.1233333333341,
+            "z": 0.3568175893415974
+          },
+          {
+            "x": 735.390000000001,
+            "z": 0.3885125913215442
+          },
+          {
+            "x": 737.6566666666679,
+            "z": 0.4496310388776579
+          },
+          {
+            "x": 739.9233333333348,
+            "z": 0.5790938628735062
+          },
+          {
+            "x": 742.1900000000016,
+            "z": 0.6898031999911673
+          },
+          {
+            "x": 744.4566666666685,
+            "z": 0.8122316131117769
+          },
+          {
+            "x": 746.7233333333354,
+            "z": 0.9388141260264312
+          },
+          {
+            "x": 748.9900000000023,
+            "z": 1.0617400423147412
+          },
+          {
+            "x": 751.2566666666692,
+            "z": 1.173419207986698
+          },
+          {
+            "x": 753.523333333336,
+            "z": 1.2669353449274874
+          },
+          {
+            "x": 755.7900000000029,
+            "z": 1.3352175833538988
+          },
+          {
+            "x": 758.0566666666698,
+            "z": 1.372999708980166
+          },
+          {
+            "x": 760.3233333333367,
+            "z": 1.3834938661125704
+          },
+          {
+            "x": 762.5900000000036,
+            "z": 1.366457771927855
+          },
+          {
+            "x": 764.8566666666704,
+            "z": 1.3189552152354258
+          },
+          {
+            "x": 767.1233333333373,
+            "z": 1.244037145779702
+          },
+          {
+            "x": 769.3900000000042,
+            "z": 1.1464112539338343
+          },
+          {
+            "x": 771.6566666666711,
+            "z": 1.0321593534604212
+          },
+          {
+            "x": 773.923333333338,
+            "z": 0.9083740844321994
+          },
+          {
+            "x": 776.1900000000048,
+            "z": 0.7827360436443069
+          },
+          {
+            "x": 778.4566666666717,
+            "z": 0.6637991429466491
+          },
+          {
+            "x": 780.7233333333386,
+            "z": 0.5193893190341188
+          },
+          {
+            "x": 782.9900000000055,
+            "z": 0.43981486252987645
+          },
+          {
+            "x": 785.2566666666723,
+            "z": 0.38694419753249853
+          },
+          {
+            "x": 787.5233333333392,
+            "z": 0.3640963987387378
+          },
+          {
+            "x": 789.7900000000061,
+            "z": 0.3615507318539794
+          },
+          {
+            "x": 792.056666666673,
+            "z": 0.3619903627266957
+          },
+          {
+            "x": 794.3233333333399,
+            "z": 0.3624275283492868
+          },
+          {
+            "x": 796.5900000000067,
+            "z": 0.3628622228787317
+          },
+          {
+            "x": 798.8566666666736,
+            "z": 0.363294440505037
+          }
+        ]
+      },
+      {
+        "start": 800,
+        "end": 724,
+        "error": 0.06666666665955745,
+        "heights": [
+          {
+            "x": 799.9433333333334,
+            "z": 0.36350077065704767
+          },
+          {
+            "x": 797.6766666666665,
+            "z": 0.363069742537909
+          },
+          {
+            "x": 795.4099999999996,
+            "z": 0.3626362347419869
+          },
+          {
+            "x": 793.1433333333327,
+            "z": 0.3622002530634132
+          },
+          {
+            "x": 790.8766666666659,
+            "z": 0.3617618033293846
+          },
+          {
+            "x": 788.609999999999,
+            "z": 0.3613208914000854
+          },
+          {
+            "x": 786.3433333333321,
+            "z": 0.3712615462066443
+          },
+          {
+            "x": 784.0766666666652,
+            "z": 0.4085297222610058
+          },
+          {
+            "x": 781.8099999999984,
+            "z": 0.47658893013055853
+          },
+          {
+            "x": 779.5433333333315,
+            "z": 0.6125064303736873
+          },
+          {
+            "x": 777.2766666666646,
+            "z": 0.7251712606045134
+          },
+          {
+            "x": 775.0099999999977,
+            "z": 0.8481419239175196
+          },
+          {
+            "x": 772.7433333333308,
+            "z": 0.9737788542291483
+          },
+          {
+            "x": 770.476666666664,
+            "z": 1.09427136727255
+          },
+          {
+            "x": 768.2099999999971,
+            "z": 1.2012440525845822
+          },
+          {
+            "x": 765.9433333333302,
+            "z": 1.2868136356502906
+          },
+          {
+            "x": 763.6766666666633,
+            "z": 1.3465906527789135
+          },
+          {
+            "x": 761.4099999999964,
+            "z": 1.3769087122157886
+          },
+          {
+            "x": 759.1433333333296,
+            "z": 1.3800380625253967
+          },
+          {
+            "x": 756.8766666666627,
+            "z": 1.355537897435376
+          },
+          {
+            "x": 754.6099999999958,
+            "z": 1.3010657608629048
+          },
+          {
+            "x": 752.3433333333289,
+            "z": 1.2199746772885305
+          },
+          {
+            "x": 750.076666666662,
+            "z": 1.117234465118419
+          },
+          {
+            "x": 747.8099999999952,
+            "z": 0.9991359805435268
+          },
+          {
+            "x": 745.5433333333283,
+            "z": 0.8729172145310194
+          },
+          {
+            "x": 743.2766666666614,
+            "z": 0.7474584969519693
+          },
+          {
+            "x": 741.0099999999945,
+            "z": 0.6308395628950179
+          },
+          {
+            "x": 738.7433333333277,
+            "z": 0.4895195876799062
+          },
+          {
+            "x": 736.4766666666608,
+            "z": 0.41422708740850306
+          },
+          {
+            "x": 734.2099999999939,
+            "z": 0.36643504779248465
+          },
+          {
+            "x": 731.943333333327,
+            "z": 0.34951568664885246
+          },
+          {
+            "x": 729.6766666666601,
+            "z": 0.3490129207214191
+          },
+          {
+            "x": 727.4099999999933,
+            "z": 0.34850786299635506
+          },
+          {
+            "x": 725.1433333333264,
+            "z": 0.34800052022410644
+          }
+        ]
+      }
+    ],
+    "piers": 2
+  },
+  "random": [
+    {
+      "kind": "quay-service-wing",
+      "seed": 42,
+      "id": "l11v2:42:0:0:block:9:lot:0:1",
+      "recipe": "quay-west-annex",
+      "architecture": "quay-service-wing",
+      "validation": {
+        "ok": true,
+        "entrances": [
+          {
+            "id": "l11v2:42:0:0:block:9:lot:0:1",
+            "error": 0.05333333333305745,
+            "local": [
+              6.4466666666669425,
+              5.723333333333358
+            ],
+            "rooms": [
+              9
+            ],
+            "doors": 9,
+            "flights": []
+          }
+        ]
+      },
+      "world": [
+        146,
+        325.39000000000004,
+        0.23484893814039373
+      ],
+      "target": [
+        169.83333333333334,
+        336.5,
+        16.099999999999998
+      ],
+      "stats": {
+        "label": "11:open",
+        "median": 20.79999999998836,
+        "p95": 37.59999999997672,
+        "max": 308.29999999998836,
+        "p99": 62.59999999997672,
+        "frames": 1000,
+        "over16ms": 737,
+        "over33ms": 107,
+        "cpuMedian": 9.199999999254942,
+        "cpuP95": 16.800000000745058,
+        "gpuMedian": 10.271744,
+        "gpuP95": 19.032064,
+        "gpuSamples": 135,
+        "draws": 745,
+        "triangles": 1787271,
+        "memory": {
+          "geometries": 2322,
+          "textures": 103
+        },
+        "programs": 101,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    {
+      "kind": "green-curtain",
+      "seed": 42,
+      "id": "l11v2:42:-1:-1:block:11:lot:0:2",
+      "recipe": "quay-west-near",
+      "architecture": "canal-portico",
+      "sign": {
+        "id": "clinic",
+        "mount": "blade",
+        "side": "w"
+      },
+      "validation": {
+        "ok": true,
+        "entrances": [
+          {
+            "id": "l11v2:42:-1:-1:block:11:lot:0:2",
+            "error": 0.05333333333305745,
+            "local": [
+              1.4466666666669425,
+              16.833349999999996
+            ],
+            "rooms": [
+              8,
+              8
+            ],
+            "doors": 16,
+            "flights": [
+              {
+                "flight": 0,
+                "error": 0.0399999999992815,
+                "height": 3.015,
+                "returnError": 0.05666666666661513,
+                "returnHeight": 0.015
+              }
+            ]
+          }
+        ]
+      },
+      "world": [
+        -627,
+        -649.8333166666666,
+        -0.034167317201729164
+      ],
+      "target": [
+        -598.5,
+        -649.8333333333333,
+        36.8
+      ],
+      "stats": {
+        "label": "11:open",
+        "median": 16.79999999998836,
+        "p95": 41.600000000034925,
+        "max": 1041.5999999999767,
+        "p99": 66.5,
+        "frames": 1000,
+        "over16ms": 563,
+        "over33ms": 126,
+        "cpuMedian": 9.199999999254942,
+        "cpuP95": 16.800000000745058,
+        "gpuMedian": 10.271744,
+        "gpuP95": 19.032064,
+        "gpuSamples": 135,
+        "draws": 430,
+        "triangles": 2046070,
+        "memory": {
+          "geometries": 1940,
+          "textures": 107
+        },
+        "programs": 102,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    }
+  ],
+  "performance": {
+    "label": "11:open",
+    "median": 12.600000000034925,
+    "p95": 25,
+    "max": 29.199999999953434,
+    "p99": 29.199999999953434,
+    "frames": 100,
+    "over16ms": 38,
+    "over33ms": 0,
+    "cpuMedian": 12.699999999254942,
+    "cpuP95": 25.5,
+    "gpuMedian": 13.821952,
+    "gpuP95": 26.201088,
+    "gpuSamples": 98,
+    "draws": 1746,
+    "triangles": 3726650,
+    "memory": {
+      "geometries": 1940,
+      "textures": 107
+    },
+    "programs": 102,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "errors": [],
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "networkErrors": [
+    {
+      "requestId": "52868.18",
+      "loaderId": "6EF44346C041244265612D70A68DE4FD",
+      "timestamp": 9693.200989,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:10792/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Thu, 15 Oct 2026 06:24:17 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 191,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 10792,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 9693.144223,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.546,
+          "sendEnd": 0.609,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 55.471,
+          "receiveHeadersEnd": 55.695
+        },
+        "responseTime": 1792045457827.539,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "904E1DFE456B62C2D00141D31DCE14AC"
+    }
+  ]
+}

@@ -1,0 +1,283 @@
+{
+  "error": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: Warmup timed out: {\\\"missing\\\":7,\\\"chunk\\\":true,\\\"finite\\\":false,\\\"flash\\\":false,\\\"moth\\\":false,\\\"items\\\":0,\\\"compile\\\":false,\\\"retired\\\":0,\\\"textures\\\":0}\",\"lineNumber\":113,\"columnNumber\":68,\"scriptId\":\"5\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"warm\",\"scriptId\":\"5\",\"url\":\"http://127.0.0.1:3013/verifier/l0-remake.ts\",\"lineNumber\":112,\"columnNumber\":67}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: Warmup timed out: {\\\"missing\\\":7,\\\"chunk\\\":true,\\\"finite\\\":false,\\\"flash\\\":false,\\\"moth\\\":false,\\\"items\\\":0,\\\"compile\\\":false,\\\"retired\\\":0,\\\"textures\\\":0}\\n    at Object.warm (http://127.0.0.1:3013/verifier/l0-remake.ts:113:68)\\n    at async <anonymous>:1:246\",\"objectId\":\"1948246616675246591.2.1\"}}",
+  "pending": {
+    "missing": 7,
+    "chunk": true,
+    "finite": false,
+    "flash": false,
+    "moth": false,
+    "items": 0,
+    "compile": false,
+    "retired": 0,
+    "textures": 0
+  },
+  "stats": {
+    "label": "1:open",
+    "median": 16.699999999953434,
+    "p95": 33.5,
+    "max": 70.80000000004657,
+    "cpuMedian": null,
+    "cpuP95": null,
+    "gpuMedian": null,
+    "gpuP95": null,
+    "gpuSamples": 0,
+    "draws": 228,
+    "triangles": 101637,
+    "memory": {
+      "geometries": 402,
+      "textures": 117
+    },
+    "programs": 79,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "bake": {
+    "entries": 25,
+    "bytes": 100278048,
+    "hits": 28131,
+    "diskHits": 23,
+    "offlineLoads": 162,
+    "computations": 304,
+    "completed": 466,
+    "stale": 6,
+    "active": 2,
+    "queued": 6,
+    "stages": [
+      {
+        "key": "4:10:20261006:202,-2:5ca05aff:high",
+        "generationMs": 57.29999999888241,
+        "geometryMs": 62.5,
+        "bakeMs": 12895.200000001118,
+        "samples": 34518,
+        "rays": 777648,
+        "bytes": 6034264
+      },
+      {
+        "key": "4:10:20261006:198,-2:9a17104e:high",
+        "generationMs": 43.40000000037253,
+        "geometryMs": 58,
+        "bakeMs": 11248.799999998882,
+        "samples": 33893,
+        "rays": 763428,
+        "bytes": 6069592
+      },
+      {
+        "key": "4:10:1:0,0:73c48823:high",
+        "generationMs": 774.5,
+        "geometryMs": 34,
+        "bakeMs": 10113.900000000373,
+        "samples": 29421,
+        "rays": 696184,
+        "bytes": 3929568
+      },
+      {
+        "key": "4:10:1:1,0:60d80560:high",
+        "generationMs": 1880.9000000003725,
+        "geometryMs": 129.40000000037253,
+        "bakeMs": 18953.400000000373,
+        "samples": 31528,
+        "rays": 765474,
+        "bytes": 6093880
+      },
+      {
+        "key": "4:10:1:0,1:58c0d59d:high",
+        "generationMs": 170,
+        "geometryMs": 63.59999999962747,
+        "bakeMs": 11308.200000001118,
+        "samples": 32640,
+        "rays": 780344,
+        "bytes": 3948888
+      },
+      {
+        "key": "4:10:1:1,1:1c369169:high",
+        "generationMs": 101,
+        "geometryMs": 48.30000000074506,
+        "bakeMs": 17167.199999999255,
+        "samples": 33292,
+        "rays": 809960,
+        "bytes": 6170424
+      },
+      {
+        "key": "4:10:1:0,-1:c1c7dda8:high",
+        "generationMs": 113.90000000037253,
+        "geometryMs": 116.40000000037253,
+        "bakeMs": 10523.199999999255,
+        "samples": 31628,
+        "rays": 672034,
+        "bytes": 4002432
+      },
+      {
+        "key": "4:10:1:1,-1:2e2b4789:high",
+        "generationMs": 192.90000000037253,
+        "geometryMs": 78.80000000074506,
+        "bakeMs": 12484.699999999255,
+        "samples": 33983,
+        "rays": 810796,
+        "bytes": 3989368
+      },
+      {
+        "key": "4:10:1:-1,0:95e02bc4:high",
+        "generationMs": 256.7000000011176,
+        "geometryMs": 78.79999999888241,
+        "bakeMs": 13967.5,
+        "samples": 32201,
+        "rays": 755320,
+        "bytes": 6089648
+      },
+      {
+        "key": "4:10:1:-1,1:af83467:high",
+        "generationMs": 143.5,
+        "geometryMs": 43,
+        "bakeMs": 12827.299999998882,
+        "samples": 33414,
+        "rays": 807416,
+        "bytes": 6168216
+      },
+      {
+        "key": "4:10:1:2,0:71ab2716:high",
+        "generationMs": 142,
+        "geometryMs": 60.5,
+        "bakeMs": 13876.199999999255,
+        "samples": 31796,
+        "rays": 701296,
+        "bytes": 6037576
+      },
+      {
+        "key": "4:10:1:2,1:30c89f30:high",
+        "generationMs": 164.59999999962747,
+        "geometryMs": 11.900000000372529,
+        "bakeMs": 10236.5,
+        "samples": 37734,
+        "rays": 655350,
+        "bytes": 5357328
+      },
+      {
+        "key": "4:10:1:-1,-1:2530a139:high",
+        "generationMs": 180.5,
+        "geometryMs": 76.59999999962747,
+        "bakeMs": 15039.299999998882,
+        "samples": 34702,
+        "rays": 754742,
+        "bytes": 4045856
+      },
+      {
+        "key": "4:10:1:0,2:71d5d8b3:high",
+        "generationMs": 173,
+        "geometryMs": 44.30000000074506,
+        "bakeMs": 11420.900000000373,
+        "samples": 31293,
+        "rays": 657652,
+        "bytes": 3912272
+      },
+      {
+        "key": "4:10:1:1,2:461569f9:high",
+        "generationMs": 58.40000000037253,
+        "geometryMs": 29.300000000745058,
+        "bakeMs": 9377.699999999255,
+        "samples": 30978,
+        "rays": 607706,
+        "bytes": 6127184
+      },
+      {
+        "key": "4:10:1:2,-1:15d999e:high",
+        "generationMs": 136.40000000037253,
+        "geometryMs": 56.79999999888241,
+        "bakeMs": 12119.60000000149,
+        "samples": 34114,
+        "rays": 649692,
+        "bytes": 4016232
+      },
+      {
+        "key": "4:10:1:-1,2:f8aef9c9:high",
+        "generationMs": 66.5,
+        "geometryMs": 38.69999999925494,
+        "bakeMs": 12621.400000000373,
+        "samples": 33085,
+        "rays": 772534,
+        "bytes": 6122768
+      },
+      {
+        "key": "4:10:1:2,2:4838c4b4:high",
+        "generationMs": 221,
+        "geometryMs": 67.09999999962747,
+        "bakeMs": 16062.699999999255,
+        "samples": 33341,
+        "rays": 912014,
+        "bytes": 6133072
+      },
+      {
+        "key": "4:10:1:0,-2:dbe6b6e3:high",
+        "generationMs": 119.29999999888241,
+        "geometryMs": 36.5,
+        "bakeMs": 14261.300000000745,
+        "samples": 34160,
+        "rays": 931150,
+        "bytes": 6029480
+      }
+    ]
+  },
+  "mainStages": {
+    "meshAndMaterialCpu": {
+      "count": 3202,
+      "total": 512.7000000141561,
+      "max": 21.90000000037253,
+      "last": 0.09999999962747097,
+      "mean": 0.16011867583202877
+    },
+    "texturePrepareCpu": {
+      "count": 8958,
+      "total": 4186.999999994412,
+      "max": 53.399999998509884,
+      "last": 0,
+      "mean": 0.4674034382668466
+    },
+    "texturePrepareElapsed": {
+      "count": 491,
+      "total": 8016.199999982491,
+      "max": 419.09999999962747,
+      "last": 19.799999998882413,
+      "mean": 16.326272912387967
+    },
+    "compileCpu": {
+      "count": 176914,
+      "total": 2721.199999999255,
+      "max": 411,
+      "last": 0,
+      "mean": 0.015381484789215409
+    },
+    "compileElapsed": {
+      "count": 491,
+      "total": 24034.30000001006,
+      "max": 1421.4000000003725,
+      "last": 65.40000000037253,
+      "mean": 48.94969450103881
+    },
+    "uploadCpu": {
+      "count": 923,
+      "total": 1144.1000000089407,
+      "max": 50.59999999962747,
+      "last": 2.700000001117587,
+      "mean": 1.23954496208986
+    },
+    "uploadElapsed": {
+      "count": 491,
+      "total": 1880.2000000178814,
+      "max": 63,
+      "last": 3.600000001490116,
+      "mean": 3.829327902276744
+    },
+    "installCpu": {
+      "count": 491,
+      "total": 4.099999997764826,
+      "max": 0.19999999925494194,
+      "last": 0,
+      "mean": 0.00835030549442938
+    },
+    "reflectionReuseCpu": {
+      "count": 13,
+      "total": 29.699999999254942,
+      "max": 5.900000000372529,
+      "last": 5.900000000372529,
+      "mean": 2.2846153845580726
+    }
+  }
+}

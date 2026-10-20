@@ -1,0 +1,2964 @@
+{
+  "version": 14,
+  "changes": [
+    "店铺补齐深色落地柱，柱网贯穿首层、上层和两侧转角；入口切开立面后，窗格不再重新起算。模型、旋转碰撞和普通城市使用同一组实体柱。",
+    "完整 Famima!! 横招落在实际柱间，圆形挑牌的支架固定在柱子上并留出板面距离。保留既有文字与图案，没有重画或补写原图中看不清的海报小字。",
+    "沿岸新增登记的石柱金属栏杆，包含柱脚、柱身、压顶、横杆和细竖杆；近景、远景和区块加载共用放置规则，普通步行岸道也能生成。",
+    "拱桥侧面改为绿色中带与上下边带，保留真实桥板厚度、弧度和桥墩；远景补齐朝下的桥底面。",
+    "保留并复核两栋楼的相向蓝色侧面、真实楼间空隙和楼顶连廊；反向仰视与普通种子双塔均检查，未通过移动相机掩盖结构问题。"
+  ],
+  "remaining": [
+    "照片没有米制尺寸、完整室内平面和连廊内部。当前柱宽、4m 栏杆模块、楼高、店内货架与后部房间为推定，不能视为实测还原。",
+    "店铺海报、商品包装、室内照明密度、字体字重与照片仍有差异；横招文字已不被实体柱截断，特定观察角度仍可能被前景树干遮住。",
+    "运河桥梁目前完成绿色梁侧分带，尚未逐项复刻所有连接件；石柱颜色、栏杆细部、树冠形态、成片绿化、岸线尺度和远处城市密度仍需继续对照。",
+    "玻璃、铺装、天空与光照尚未达到照片观感。其余七张参考图保留原像素观察记录，不能据这轮两个场景的检查宣称全部还原。",
+    "本轮实机使用高画质、真实光照；没有重跑低画质和经典光照全套验收。移动仍有长帧，尚未实现全场景稳定 60 FPS。"
+  ],
+  "checks": [
+    {
+      "command": "npm run build",
+      "status": "passed",
+      "log": "build.log",
+      "completed": "2026-10-15T08:38:39.600Z"
+    },
+    {
+      "command": "npm run check:l11-reference",
+      "status": "passed",
+      "log": "reference.log",
+      "completed": "2026-10-15T08:38:10.207Z"
+    },
+    {
+      "command": "npm run check:l11-architecture",
+      "status": "passed",
+      "log": "architecture.log",
+      "completed": "2026-10-15T08:40:11.720Z"
+    },
+    {
+      "command": "npm run check:l11-meshes",
+      "status": "passed",
+      "log": "meshes.log",
+      "completed": "2026-10-15T08:49:20.060Z"
+    },
+    {
+      "command": "npm run check:l11-collision",
+      "status": "passed",
+      "log": "collision.log",
+      "completed": "2026-10-15T08:49:11.780Z"
+    }
+  ],
+  "canalChecks": {
+    "label": "canal-v13",
+    "logs": [
+      {
+        "command": "npm run build",
+        "exit": 0,
+        "file": "../v13-build.log"
+      },
+      {
+        "command": "npm run check:l11-waterways",
+        "exit": 0,
+        "file": "../v13-waterways.log"
+      },
+      {
+        "command": "npm run check:l11-meshes",
+        "exit": 0,
+        "file": "../v13-meshes.log"
+      },
+      {
+        "command": "npm run check:l11-collision",
+        "exit": 0,
+        "file": "../v13-collision.log"
+      },
+      {
+        "command": "npm run check:l11",
+        "exit": 0,
+        "file": "../v13-generation.log"
+      }
+    ],
+    "staticSnapshots": [
+      {
+        "present": true,
+        "source": "../../l11-waterways/static.json",
+        "file": "waterways.json"
+      },
+      {
+        "present": true,
+        "source": "../../l11-remake/mesh-check.json",
+        "file": "meshes.json"
+      },
+      {
+        "present": true,
+        "source": "../../l11-water-collision/static-collision.json",
+        "file": "collision.json"
+      },
+      {
+        "present": true,
+        "source": "../../l11-remake/generation-check.json",
+        "file": "generation.json"
+      }
+    ],
+    "allExitSuccessful": true
+  },
+  "runs": [
+    {
+      "label": "canal-v13",
+      "version": 13,
+      "setup": {
+        "seed": 20261014,
+        "newGameSeed": 20259573,
+        "version": 13,
+        "buildings": 29,
+        "viewport": [
+          1920,
+          1080
+        ],
+        "low": false,
+        "baseline": false,
+        "weather": "calm",
+        "time": 10,
+        "shadows": true
+      },
+      "command": "node scripts/verify-l11-reference.mjs --label=canal-v13 --case=03,17,40,41,42 --validate=quay-west-annex --architecture --random-cases=stone-quay --lifecycle",
+      "views": [
+        {
+          "id": "03-canal",
+          "world": [
+            760,
+            967.8,
+            1.3488329107481563
+          ],
+          "target": [
+            760,
+            780,
+            12
+          ],
+          "fov": 56,
+          "lighting": {
+            "exposure": 1.1789468344392016,
+            "meter": 0.47083599993496905,
+            "outdoor": 0.9999999999996928,
+            "fogNear": 300,
+            "fogFar": 1800,
+            "sun": 3.35,
+            "msaa": 4,
+            "buffer": [
+              1920,
+              1080
+            ]
+          },
+          "performance": {
+            "label": "11:open",
+            "median": 4.200000000000728,
+            "p95": 4.299999999999272,
+            "max": 8.400000000001455,
+            "p99": 8.299999999999272,
+            "frames": 359,
+            "over16ms": 0,
+            "over33ms": 0,
+            "cpuMedian": 2.5,
+            "cpuP95": 5.599999999627471,
+            "gpuMedian": 3.26656,
+            "gpuP95": 7.46496,
+            "gpuSamples": 356,
+            "draws": 262,
+            "triangles": 1695593,
+            "memory": {
+              "geometries": 873,
+              "textures": 64
+            },
+            "programs": 72,
+            "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+          }
+        },
+        {
+          "id": "17-arch-side",
+          "world": [
+            733,
+            834,
+            0.3484845330238328
+          ],
+          "target": [
+            763,
+            816,
+            0.15
+          ],
+          "fov": 68,
+          "lighting": {
+            "exposure": 1.178923245372006,
+            "meter": 0.4708359999999998,
+            "outdoor": 0.9999999999999996,
+            "fogNear": 300,
+            "fogFar": 1800,
+            "sun": 3.35,
+            "msaa": 4,
+            "buffer": [
+              1920,
+              1080
+            ]
+          },
+          "performance": {
+            "label": "11:open",
+            "median": 4.19999999999709,
+            "p95": 4.30000000000291,
+            "max": 8.5,
+            "p99": 8.30000000000291,
+            "frames": 361,
+            "over16ms": 0,
+            "over33ms": 0,
+            "cpuMedian": 2.099999999627471,
+            "cpuP95": 4.799999998882413,
+            "gpuMedian": 3.525632,
+            "gpuP95": 7.4752,
+            "gpuSamples": 356,
+            "draws": 221,
+            "triangles": 1483261,
+            "memory": {
+              "geometries": 992,
+              "textures": 68
+            },
+            "programs": 84,
+            "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+          }
+        },
+        {
+          "id": "40-stone-quay-rail",
+          "world": [
+            786,
+            882,
+            0.3549151004813923
+          ],
+          "target": [
+            780.35,
+            891,
+            1.1
+          ],
+          "fov": 68,
+          "lighting": {
+            "exposure": 1.1789232453720038,
+            "meter": 0.4708359999999998,
+            "outdoor": 0.9999999999999996,
+            "fogNear": 300,
+            "fogFar": 1800,
+            "sun": 3.35,
+            "msaa": 4,
+            "buffer": [
+              1920,
+              1080
+            ]
+          },
+          "performance": {
+            "label": "11:open",
+            "median": 4.19999999999709,
+            "p95": 4.30000000000291,
+            "max": 12.599999999998545,
+            "p99": 8.400000000001455,
+            "frames": 356,
+            "over16ms": 0,
+            "over33ms": 0,
+            "cpuMedian": 2.699999999254942,
+            "cpuP95": 6.300000000745058,
+            "gpuMedian": 3.658752,
+            "gpuP95": 7.17312,
+            "gpuSamples": 353,
+            "draws": 266,
+            "triangles": 1692192,
+            "memory": {
+              "geometries": 1031,
+              "textures": 70
+            },
+            "programs": 85,
+            "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+          }
+        },
+        {
+          "id": "41-green-bridge",
+          "world": [
+            733,
+            837,
+            0.34824855223116147
+          ],
+          "target": [
+            761,
+            816,
+            0.4
+          ],
+          "fov": 56,
+          "lighting": {
+            "exposure": 1.1789232453720038,
+            "meter": 0.4708359999999998,
+            "outdoor": 0.9999999999999996,
+            "fogNear": 300,
+            "fogFar": 1800,
+            "sun": 3.35,
+            "msaa": 4,
+            "buffer": [
+              1920,
+              1080
+            ]
+          },
+          "performance": {
+            "label": "11:open",
+            "median": 4.19999999999709,
+            "p95": 4.30000000000291,
+            "max": 12.5,
+            "p99": 8.400000000001455,
+            "frames": 357,
+            "over16ms": 0,
+            "over33ms": 0,
+            "cpuMedian": 2.099999999627471,
+            "cpuP95": 4.5,
+            "gpuMedian": 3.577856,
+            "gpuP95": 7.732224,
+            "gpuSamples": 351,
+            "draws": 206,
+            "triangles": 1473901,
+            "memory": {
+              "geometries": 1049,
+              "textures": 73
+            },
+            "programs": 85,
+            "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+          }
+        },
+        {
+          "id": "42-bridge-under",
+          "world": [
+            760,
+            828,
+            -1.6452678288229405
+          ],
+          "target": [
+            760,
+            816,
+            0.65
+          ],
+          "fov": 80,
+          "lighting": {
+            "exposure": 1.1789232453720038,
+            "meter": 0.4708359999999998,
+            "outdoor": 0.9999999999999996,
+            "fogNear": 299.9999999999999,
+            "fogFar": 1799.9999999999993,
+            "sun": 3.35,
+            "msaa": 4,
+            "buffer": [
+              1920,
+              1080
+            ]
+          },
+          "performance": {
+            "label": "11:open",
+            "median": 4.19999999999709,
+            "p95": 4.30000000000291,
+            "max": 12.5,
+            "p99": 8.39999999999418,
+            "frames": 349,
+            "over16ms": 0,
+            "over33ms": 0,
+            "cpuMedian": 3,
+            "cpuP95": 6.699999999254942,
+            "gpuMedian": 3.801088,
+            "gpuP95": 7.140352,
+            "gpuSamples": 346,
+            "draws": 326,
+            "triangles": 1533425,
+            "memory": {
+              "geometries": 1294,
+              "textures": 77
+            },
+            "programs": 86,
+            "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+          }
+        }
+      ],
+      "ordinary": [
+        {
+          "kind": "stone-quay",
+          "seed": 42,
+          "id": "canal:42:rail:1684:400",
+          "rail": "quay_balustrade",
+          "validation": {
+            "ok": true
+          },
+          "world": [
+            1681.1968599272261,
+            397,
+            -0.07659271664261114
+          ],
+          "target": [
+            1684.1968599272261,
+            408,
+            0.8258715492916776
+          ],
+          "stats": {
+            "label": "11:open",
+            "median": 4.2000000000116415,
+            "p95": 20.89999999999418,
+            "max": 883.2999999999884,
+            "p99": 50.29999999998836,
+            "frames": 942,
+            "over16ms": 84,
+            "over33ms": 18,
+            "cpuMedian": 8.5,
+            "cpuP95": 18.09999999962747,
+            "gpuMedian": 10.35776,
+            "gpuP95": 16.237568,
+            "gpuSamples": 2051,
+            "draws": 878,
+            "triangles": 2550154,
+            "memory": {
+              "geometries": 1030,
+              "textures": 95
+            },
+            "programs": 89,
+            "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+          }
+        }
+      ],
+      "entrances": [
+        {
+          "ok": true,
+          "entrances": [
+            {
+              "id": "l11v2:20261014:0:0:reference:quay-west-annex",
+              "error": 0.05333333333305745,
+              "local": [
+                45.55333333333306,
+                31.539999999999964
+              ],
+              "rooms": [
+                12,
+                12
+              ],
+              "doors": 24,
+              "flights": [
+                {
+                  "flight": 0,
+                  "error": 0.0399999999992815,
+                  "height": 3.015,
+                  "returnError": 0.056666666666728815,
+                  "returnHeight": 0.015000000000000013
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "roomDoorSamples": 0,
+      "shop": {
+        "available": true,
+        "building": "l11v2:20261014:0:0:reference:west-piers",
+        "side": "e",
+        "returnSide": "s",
+        "door": [
+          65,
+          41.925
+        ],
+        "walks": [
+          {
+            "target": [
+              255.7,
+              381.925
+            ],
+            "error": 0.049999999999783995
+          },
+          {
+            "target": [
+              258.3,
+              381.925
+            ],
+            "error": 0
+          }
+        ]
+      },
+      "civil": {
+        "ok": true,
+        "walks": [
+          {
+            "start": 724,
+            "end": 800,
+            "error": 0.06666666665955745,
+            "heights": [
+              {
+                "x": 724.0566666666666,
+                "z": 0.34775648578471097
+              },
+              {
+                "x": 726.3233333333335,
+                "z": 0.34826492163264
+              },
+              {
+                "x": 728.5900000000004,
+                "z": 0.34877107568046384
+              },
+              {
+                "x": 730.8566666666673,
+                "z": 0.34927494116308344
+              },
+              {
+                "x": 733.1233333333341,
+                "z": 0.3568175893415974
+              },
+              {
+                "x": 735.390000000001,
+                "z": 0.3885125913215442
+              },
+              {
+                "x": 737.6566666666679,
+                "z": 0.4496310388776579
+              },
+              {
+                "x": 739.9233333333348,
+                "z": 0.5790938628735062
+              },
+              {
+                "x": 742.1900000000016,
+                "z": 0.6898031999911673
+              },
+              {
+                "x": 744.4566666666685,
+                "z": 0.8122316131117769
+              },
+              {
+                "x": 746.7233333333354,
+                "z": 0.9388141260264312
+              },
+              {
+                "x": 748.9900000000023,
+                "z": 1.0617400423147412
+              },
+              {
+                "x": 751.2566666666692,
+                "z": 1.173419207986698
+              },
+              {
+                "x": 753.523333333336,
+                "z": 1.2669353449274874
+              },
+              {
+                "x": 755.7900000000029,
+                "z": 1.3352175833538988
+              },
+              {
+                "x": 758.0566666666698,
+                "z": 1.372999708980166
+              },
+              {
+                "x": 760.3233333333367,
+                "z": 1.3834938661125704
+              },
+              {
+                "x": 762.5900000000036,
+                "z": 1.366457771927855
+              },
+              {
+                "x": 764.8566666666704,
+                "z": 1.3189552152354258
+              },
+              {
+                "x": 767.1233333333373,
+                "z": 1.244037145779702
+              },
+              {
+                "x": 769.3900000000042,
+                "z": 1.1464112539338343
+              },
+              {
+                "x": 771.6566666666711,
+                "z": 1.0321593534604212
+              },
+              {
+                "x": 773.923333333338,
+                "z": 0.9083740844321994
+              },
+              {
+                "x": 776.1900000000048,
+                "z": 0.7827360436443069
+              },
+              {
+                "x": 778.4566666666717,
+                "z": 0.6637991429466491
+              },
+              {
+                "x": 780.7233333333386,
+                "z": 0.5193893190341188
+              },
+              {
+                "x": 782.9900000000055,
+                "z": 0.43981486252987645
+              },
+              {
+                "x": 785.2566666666723,
+                "z": 0.38694419753249853
+              },
+              {
+                "x": 787.5233333333392,
+                "z": 0.3640963987387378
+              },
+              {
+                "x": 789.7900000000061,
+                "z": 0.3615507318539794
+              },
+              {
+                "x": 792.056666666673,
+                "z": 0.3619903627266957
+              },
+              {
+                "x": 794.3233333333399,
+                "z": 0.3624275283492868
+              },
+              {
+                "x": 796.5900000000067,
+                "z": 0.3628622228787317
+              },
+              {
+                "x": 798.8566666666736,
+                "z": 0.363294440505037
+              }
+            ]
+          },
+          {
+            "start": 800,
+            "end": 724,
+            "error": 0.06666666665955745,
+            "heights": [
+              {
+                "x": 799.9433333333334,
+                "z": 0.36350077065704767
+              },
+              {
+                "x": 797.6766666666665,
+                "z": 0.363069742537909
+              },
+              {
+                "x": 795.4099999999996,
+                "z": 0.3626362347419869
+              },
+              {
+                "x": 793.1433333333327,
+                "z": 0.3622002530634132
+              },
+              {
+                "x": 790.8766666666659,
+                "z": 0.3617618033293846
+              },
+              {
+                "x": 788.609999999999,
+                "z": 0.3613208914000854
+              },
+              {
+                "x": 786.3433333333321,
+                "z": 0.3712615462066443
+              },
+              {
+                "x": 784.0766666666652,
+                "z": 0.4085297222610058
+              },
+              {
+                "x": 781.8099999999984,
+                "z": 0.47658893013055853
+              },
+              {
+                "x": 779.5433333333315,
+                "z": 0.6125064303736873
+              },
+              {
+                "x": 777.2766666666646,
+                "z": 0.7251712606045134
+              },
+              {
+                "x": 775.0099999999977,
+                "z": 0.8481419239175196
+              },
+              {
+                "x": 772.7433333333308,
+                "z": 0.9737788542291483
+              },
+              {
+                "x": 770.476666666664,
+                "z": 1.09427136727255
+              },
+              {
+                "x": 768.2099999999971,
+                "z": 1.2012440525845822
+              },
+              {
+                "x": 765.9433333333302,
+                "z": 1.2868136356502906
+              },
+              {
+                "x": 763.6766666666633,
+                "z": 1.3465906527789135
+              },
+              {
+                "x": 761.4099999999964,
+                "z": 1.3769087122157886
+              },
+              {
+                "x": 759.1433333333296,
+                "z": 1.3800380625253967
+              },
+              {
+                "x": 756.8766666666627,
+                "z": 1.355537897435376
+              },
+              {
+                "x": 754.6099999999958,
+                "z": 1.3010657608629048
+              },
+              {
+                "x": 752.3433333333289,
+                "z": 1.2199746772885305
+              },
+              {
+                "x": 750.076666666662,
+                "z": 1.117234465118419
+              },
+              {
+                "x": 747.8099999999952,
+                "z": 0.9991359805435268
+              },
+              {
+                "x": 745.5433333333283,
+                "z": 0.8729172145310194
+              },
+              {
+                "x": 743.2766666666614,
+                "z": 0.7474584969519693
+              },
+              {
+                "x": 741.0099999999945,
+                "z": 0.6308395628950179
+              },
+              {
+                "x": 738.7433333333277,
+                "z": 0.4895195876799062
+              },
+              {
+                "x": 736.4766666666608,
+                "z": 0.41422708740850306
+              },
+              {
+                "x": 734.2099999999939,
+                "z": 0.36643504779248465
+              },
+              {
+                "x": 731.943333333327,
+                "z": 0.34951568664885246
+              },
+              {
+                "x": 729.6766666666601,
+                "z": 0.3490129207214191
+              },
+              {
+                "x": 727.4099999999933,
+                "z": 0.34850786299635506
+              },
+              {
+                "x": 725.1433333333264,
+                "z": 0.34800052022410644
+              }
+            ]
+          }
+        ],
+        "piers": 2,
+        "promenades": [
+          {
+            "x": 726,
+            "start": 838,
+            "end": 905,
+            "error": 0.07666666666045785
+          },
+          {
+            "x": 726,
+            "start": 905,
+            "end": 838,
+            "error": 0.07666666666045785
+          },
+          {
+            "x": 794,
+            "start": 838,
+            "end": 905,
+            "error": 0.07666666666045785
+          },
+          {
+            "x": 794,
+            "start": 905,
+            "end": 838,
+            "error": 0.07666666666045785
+          }
+        ],
+        "quayCap": {
+          "x": 780.35,
+          "y": 884,
+          "height": 1.1000268756329872
+        },
+        "externalStairs": [
+          {
+            "target": [
+              716.695,
+              842.925,
+              1.8378982201991918
+            ],
+            "error": 0.05666666666616038,
+            "height": 1.8378982201991918
+          },
+          {
+            "target": [
+              714.445,
+              842.925,
+              1.8378982201991918
+            ],
+            "error": 0.040713467127854196,
+            "height": 1.8378982201991918
+          },
+          {
+            "target": [
+              714.445,
+              848.875,
+              3.337898220199192
+            ],
+            "error": 0.05578084253346431,
+            "height": 3.337898220199192
+          },
+          {
+            "target": [
+              714.445,
+              842.925,
+              1.8378982201991918
+            ],
+            "error": 0.05755380859194228,
+            "height": 1.969842664643636
+          },
+          {
+            "target": [
+              716.695,
+              842.925,
+              1.8378982201991918
+            ],
+            "error": 0.04073225249446638,
+            "height": 1.8378982201991918
+          },
+          {
+            "target": [
+              716.695,
+              848.875,
+              0.33789822019919175
+            ],
+            "error": 0.05576444933537603,
+            "height": 0.4698426646436362
+          }
+        ]
+      },
+      "walking": {
+        "label": "11:open",
+        "median": 8.400000000008731,
+        "p95": 20.80000000000291,
+        "max": 258.3000000000029,
+        "p99": 33.5,
+        "frames": 2051,
+        "over16ms": 270,
+        "over33ms": 22,
+        "cpuMedian": 8.5,
+        "cpuP95": 18.09999999962747,
+        "gpuMedian": 10.358784,
+        "gpuP95": 16.237568,
+        "gpuSamples": 2047,
+        "draws": 407,
+        "triangles": 2204756,
+        "memory": {
+          "geometries": 1816,
+          "textures": 85
+        },
+        "programs": 92,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "cycles": [
+        {
+          "memory": {
+            "geometries": 1849,
+            "textures": 92
+          },
+          "nonPooledTextures": 77,
+          "cachedAvatarTextures": 15,
+          "geometryAudit": {
+            "scene": {
+              "cpu": 2081,
+              "gpu": 1830
+            },
+            "entities": {
+              "cpu": 30,
+              "gpu": 25,
+              "byType": {
+                "hound": {
+                  "models": 1,
+                  "cpu": 24,
+                  "gpu": 24
+                },
+                "deathmoth": {
+                  "models": 1,
+                  "cpu": 5,
+                  "gpu": 0
+                },
+                "faceling": {
+                  "models": 1,
+                  "cpu": 1,
+                  "gpu": 1
+                }
+              }
+            },
+            "city": {
+              "cpu": 1503,
+              "gpu": 1337
+            },
+            "buildings": {
+              "cpu": 425,
+              "gpu": 354
+            },
+            "offScene": 19
+          }
+        },
+        {
+          "memory": {
+            "geometries": 1849,
+            "textures": 94
+          },
+          "nonPooledTextures": 77,
+          "cachedAvatarTextures": 17,
+          "geometryAudit": {
+            "scene": {
+              "cpu": 2081,
+              "gpu": 1830
+            },
+            "entities": {
+              "cpu": 30,
+              "gpu": 25,
+              "byType": {
+                "hound": {
+                  "models": 1,
+                  "cpu": 24,
+                  "gpu": 24
+                },
+                "deathmoth": {
+                  "models": 1,
+                  "cpu": 5,
+                  "gpu": 0
+                },
+                "faceling": {
+                  "models": 1,
+                  "cpu": 1,
+                  "gpu": 1
+                }
+              }
+            },
+            "city": {
+              "cpu": 1503,
+              "gpu": 1337
+            },
+            "buildings": {
+              "cpu": 425,
+              "gpu": 354
+            },
+            "offScene": 19
+          }
+        },
+        {
+          "memory": {
+            "geometries": 1849,
+            "textures": 97
+          },
+          "nonPooledTextures": 77,
+          "cachedAvatarTextures": 20,
+          "geometryAudit": {
+            "scene": {
+              "cpu": 2081,
+              "gpu": 1830
+            },
+            "entities": {
+              "cpu": 30,
+              "gpu": 25,
+              "byType": {
+                "hound": {
+                  "models": 1,
+                  "cpu": 24,
+                  "gpu": 24
+                },
+                "deathmoth": {
+                  "models": 1,
+                  "cpu": 5,
+                  "gpu": 0
+                },
+                "faceling": {
+                  "models": 1,
+                  "cpu": 1,
+                  "gpu": 1
+                }
+              }
+            },
+            "city": {
+              "cpu": 1503,
+              "gpu": 1337
+            },
+            "buildings": {
+              "cpu": 425,
+              "gpu": 354
+            },
+            "offScene": 19
+          }
+        }
+      ],
+      "browser": "Chrome/155.0.8059.40",
+      "hardware": {
+        "vendor": "Google Inc. (NVIDIA)",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+      },
+      "errors": [],
+      "networkErrors": [
+        {
+          "url": "http://127.0.0.1:1760/favicon.ico",
+          "status": 404
+        },
+        {
+          "url": "http://127.0.0.1:1760/favicon.ico",
+          "status": 404
+        }
+      ],
+      "cleanup": {
+        "browserExit": "SIGTERM",
+        "serverExit": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "label": "storefront-v14",
+      "version": 14,
+      "setup": {
+        "seed": 20261014,
+        "newGameSeed": 20259573,
+        "version": 14,
+        "buildings": 29,
+        "viewport": [
+          1920,
+          1080
+        ],
+        "low": false,
+        "baseline": false,
+        "weather": "calm",
+        "time": 10,
+        "shadows": true
+      },
+      "command": "node scripts/verify-l11-reference.mjs --label=storefront-v14 --case=01,14,15,30,31,33 --validate=west-piers,quay-east-near --rooms --architecture --random-cases=retail,twins --lifecycle",
+      "views": [
+        {
+          "id": "01-office-street",
+          "world": [
+            272,
+            415,
+            0.17315159930199545
+          ],
+          "target": [
+            270,
+            220,
+            12
+          ],
+          "fov": 42,
+          "lighting": {
+            "exposure": 1.1789460732188048,
+            "meter": 0.47083599999999726,
+            "outdoor": 0.9999999999999983,
+            "fogNear": 300,
+            "fogFar": 1800,
+            "sun": 3.35,
+            "msaa": 4,
+            "buffer": [
+              1920,
+              1080
+            ]
+          },
+          "performance": {
+            "label": "11:open",
+            "median": 4.30000000000291,
+            "p95": 8.5,
+            "max": 12.60000000000582,
+            "p99": 12.599999999998545,
+            "frames": 245,
+            "over16ms": 0,
+            "over33ms": 0,
+            "cpuMedian": 5.400000000372529,
+            "cpuP95": 8,
+            "gpuMedian": 4.62848,
+            "gpuP95": 12.38016,
+            "gpuSamples": 242,
+            "draws": 596,
+            "triangles": 1948258,
+            "memory": {
+              "geometries": 1685,
+              "textures": 78
+            },
+            "programs": 89,
+            "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+          }
+        },
+        {
+          "id": "14-storefront-corner",
+          "world": [
+            264,
+            392,
+            0.164588028842993
+          ],
+          "target": [
+            250,
+            378,
+            1.7
+          ],
+          "fov": 64,
+          "lighting": {
+            "exposure": 1.1789232453720049,
+            "meter": 0.4708359999999996,
+            "outdoor": 0.999999999999999,
+            "fogNear": 300,
+            "fogFar": 1800,
+            "sun": 3.35,
+            "msaa": 4,
+            "buffer": [
+              1920,
+              1080
+            ]
+          },
+          "performance": {
+            "label": "11:open",
+            "median": 4.30000000000291,
+            "p95": 12.599999999998545,
+            "max": 25,
+            "p99": 16.700000000004366,
+            "frames": 225,
+            "over16ms": 5,
+            "over33ms": 0,
+            "cpuMedian": 5.5,
+            "cpuP95": 10.5,
+            "gpuMedian": 5.0176,
+            "gpuP95": 11.380736,
+            "gpuSamples": 222,
+            "draws": 1303,
+            "triangles": 4551522,
+            "memory": {
+              "geometries": 1738,
+              "textures": 79
+            },
+            "programs": 90,
+            "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+          }
+        },
+        {
+          "id": "15-storefront-interior",
+          "world": [
+            245,
+            381.925,
+            0.14322298470013473
+          ],
+          "target": [
+            250.925,
+            381.925,
+            1.7432229847001348
+          ],
+          "fov": 78,
+          "lighting": {
+            "exposure": 1.6595806998269833,
+            "meter": 0.08515827488837276,
+            "outdoor": 1.4408450555985378e-8,
+            "fogNear": 300,
+            "fogFar": 1800,
+            "sun": 3.35,
+            "msaa": 4,
+            "buffer": [
+              1920,
+              1080
+            ]
+          },
+          "performance": {
+            "label": "11:open",
+            "median": 4.19999999999709,
+            "p95": 12.400000000001455,
+            "max": 20.700000000004366,
+            "p99": 12.60000000000582,
+            "frames": 280,
+            "over16ms": 1,
+            "over33ms": 0,
+            "cpuMedian": 4.400000000372529,
+            "cpuP95": 10.599999999627471,
+            "gpuMedian": 4.516864,
+            "gpuP95": 10.360832,
+            "gpuSamples": 275,
+            "draws": 487,
+            "triangles": 2370875,
+            "memory": {
+              "geometries": 1711,
+              "textures": 87
+            },
+            "programs": 91,
+            "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+          }
+        },
+        {
+          "id": "30-shop-looking-out",
+          "world": [
+            250.925,
+            381.925,
+            0.14322298470013473
+          ],
+          "target": [
+            259,
+            390,
+            1.7432229847001348
+          ],
+          "fov": 78,
+          "lighting": {
+            "exposure": 1.7044091378182236,
+            "meter": 0.1423095356160131,
+            "outdoor": 6.051401855796298e-17,
+            "fogNear": 300,
+            "fogFar": 1800,
+            "sun": 3.35,
+            "msaa": 4,
+            "buffer": [
+              1920,
+              1080
+            ]
+          },
+          "performance": {
+            "label": "11:open",
+            "median": 4.19999999999709,
+            "p95": 8.400000000001455,
+            "max": 12.599999999998545,
+            "p99": 12.400000000001455,
+            "frames": 290,
+            "over16ms": 0,
+            "over33ms": 0,
+            "cpuMedian": 4.5,
+            "cpuP95": 7.300000000745058,
+            "gpuMedian": 4.460544,
+            "gpuP95": 9.68192,
+            "gpuSamples": 285,
+            "draws": 468,
+            "triangles": 2338669,
+            "memory": {
+              "geometries": 1719,
+              "textures": 87
+            },
+            "programs": 91,
+            "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+          }
+        },
+        {
+          "id": "31-roof-link-oblique",
+          "world": [
+            795,
+            868,
+            0.3582002918577347
+          ],
+          "target": [
+            812,
+            894,
+            62
+          ],
+          "fov": 64,
+          "lighting": {
+            "exposure": 1.1789253410350673,
+            "meter": 0.47083338475101055,
+            "outdoor": 0.9999999874873464,
+            "fogNear": 300,
+            "fogFar": 1800,
+            "sun": 3.35,
+            "msaa": 4,
+            "buffer": [
+              1920,
+              1080
+            ]
+          },
+          "performance": {
+            "label": "11:open",
+            "median": 4.19999999999709,
+            "p95": 4.30000000000291,
+            "max": 4.30000000000291,
+            "p99": 4.30000000000291,
+            "frames": 370,
+            "over16ms": 0,
+            "over33ms": 0,
+            "cpuMedian": 2.099999999627471,
+            "cpuP95": 4,
+            "gpuMedian": 3.508224,
+            "gpuP95": 6.38464,
+            "gpuSamples": 366,
+            "draws": 159,
+            "triangles": 1579871,
+            "memory": {
+              "geometries": 731,
+              "textures": 78
+            },
+            "programs": 93,
+            "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+          }
+        },
+        {
+          "id": "33-shop-blade-reverse",
+          "world": [
+            263,
+            380,
+            0.16110581502562185
+          ],
+          "target": [
+            257,
+            386.5,
+            2.6
+          ],
+          "fov": 72,
+          "lighting": {
+            "exposure": 1.1789232453720038,
+            "meter": 0.4708359999999998,
+            "outdoor": 0.9999999999999996,
+            "fogNear": 300,
+            "fogFar": 1800,
+            "sun": 3.35,
+            "msaa": 4,
+            "buffer": [
+              1920,
+              1080
+            ]
+          },
+          "performance": {
+            "label": "11:open",
+            "median": 8.19999999999709,
+            "p95": 12.5,
+            "max": 25,
+            "p99": 12.60000000000582,
+            "frames": 227,
+            "over16ms": 2,
+            "over33ms": 0,
+            "cpuMedian": 5.800000000745058,
+            "cpuP95": 10.300000000745058,
+            "gpuMedian": 5.515264,
+            "gpuP95": 11.103232,
+            "gpuSamples": 224,
+            "draws": 564,
+            "triangles": 2386923,
+            "memory": {
+              "geometries": 1627,
+              "textures": 89
+            },
+            "programs": 92,
+            "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+          }
+        }
+      ],
+      "ordinary": [
+        {
+          "kind": "retail",
+          "seed": 42,
+          "id": "l11v2:42:-1:-1:block:51:lot:1:2",
+          "recipe": "west-piers",
+          "architecture": "pier-retail",
+          "validation": {
+            "available": true,
+            "building": "l11v2:42:-1:-1:block:51:lot:1:2",
+            "side": "s",
+            "returnSide": "w",
+            "door": [
+              5.53667153313063,
+              34.0000118295933
+            ],
+            "walks": [
+              {
+                "target": [
+                  -789.4193024782032,
+                  -393.20513823919043
+                ],
+                "error": 0.049999999999714544
+              },
+              {
+                "target": [
+                  -790.0922319954698,
+                  -390.69373109083887
+                ],
+                "error": 0
+              }
+            ],
+            "pier": {
+              "x": 2.244446666666665,
+              "z": 34.08,
+              "w": 0.52,
+              "d": 0.68,
+              "outerFaceBlocked": true,
+              "pavementClear": true
+            }
+          },
+          "world": [
+            -781.9498392339101,
+            -377.4345406424302,
+            -0.03270495981040854
+          ],
+          "target": [
+            -774.4440898660526,
+            -405.44638426916674,
+            2.5
+          ],
+          "stats": {
+            "label": "11:open",
+            "median": 8.400000000023283,
+            "p95": 20.900000000023283,
+            "max": 220.79999999998836,
+            "p99": 37.40000000002328,
+            "frames": 1000,
+            "over16ms": 177,
+            "over33ms": 12,
+            "cpuMedian": 6.699999999254942,
+            "cpuP95": 16.700000001117587,
+            "gpuMedian": 8.521728,
+            "gpuP95": 14.717952,
+            "gpuSamples": 2488,
+            "draws": 614,
+            "triangles": 2081831,
+            "memory": {
+              "geometries": 1897,
+              "textures": 116
+            },
+            "programs": 93,
+            "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+          }
+        },
+        {
+          "kind": "twins",
+          "seed": 42,
+          "id": "l11v2:42:0:0:block:14:lot:0:2",
+          "recipe": "quay-east-near",
+          "architecture": "ribbon-twins",
+          "entrance": {
+            "rise": 1.2,
+            "run": 4,
+            "width": 11.22,
+            "gardens": false
+          },
+          "validation": {
+            "ok": true,
+            "entrances": [
+              {
+                "id": "l11v2:42:0:0:block:14:lot:0:2",
+                "error": 0.08666666666601941,
+                "local": [
+                  -5.443333333333328,
+                  22.110000000000014
+                ],
+                "rooms": [
+                  6,
+                  6
+                ],
+                "doors": 12,
+                "flights": [
+                  {
+                    "flight": 0,
+                    "error": 0.0399999999992815,
+                    "height": 3.015,
+                    "returnError": 0.05666666666667197,
+                    "returnHeight": 0.014999999999999902
+                  }
+                ]
+              }
+            ]
+          },
+          "world": [
+            275,
+            505.11,
+            0.3411606741210884
+          ],
+          "target": [
+            289.15,
+            505.11,
+            37.834768072405744
+          ],
+          "stats": {
+            "label": "11:open",
+            "median": 4.199999999953434,
+            "p95": 4.2999999999883585,
+            "max": 8.5,
+            "p99": 8.299999999988358,
+            "frames": 1000,
+            "over16ms": 0,
+            "over33ms": 0,
+            "cpuMedian": 6.699999999254942,
+            "cpuP95": 16.700000001117587,
+            "gpuMedian": 8.521728,
+            "gpuP95": 14.717952,
+            "gpuSamples": 2488,
+            "draws": 255,
+            "triangles": 1475396,
+            "memory": {
+              "geometries": 1723,
+              "textures": 110
+            },
+            "programs": 93,
+            "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+          }
+        }
+      ],
+      "entrances": [
+        {
+          "ok": true,
+          "entrances": [
+            {
+              "id": "l11v2:20261014:0:0:reference:west-piers",
+              "error": 0.05333333333305745,
+              "local": [
+                63.55333333333306,
+                24
+              ],
+              "rooms": [
+                20,
+                20
+              ],
+              "doors": 41,
+              "flights": [
+                {
+                  "flight": 0,
+                  "error": 0.0399999999992815,
+                  "height": 3.0150000000000006,
+                  "returnError": 0.05666666666667197,
+                  "returnHeight": 0.015000000000000013
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ok": true,
+          "entrances": [
+            {
+              "id": "l11v2:20261014:0:0:reference:quay-east-near",
+              "error": 0.046666666665828416,
+              "local": [
+                -7.443333333333385,
+                58.289999999999964
+              ],
+              "rooms": [
+                26,
+                26
+              ],
+              "doors": 52,
+              "flights": [
+                {
+                  "flight": 0,
+                  "error": 0.0399999999992815,
+                  "height": 3.0149999999999997,
+                  "returnError": 0.056666666666728815,
+                  "returnHeight": 0.014999999999999902
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "roomDoorSamples": 38,
+      "shop": {
+        "available": true,
+        "building": "l11v2:20261014:0:0:reference:west-piers",
+        "side": "e",
+        "returnSide": "s",
+        "door": [
+          65,
+          41.925
+        ],
+        "walks": [
+          {
+            "target": [
+              255.7,
+              381.925
+            ],
+            "error": 0.049999999999783995
+          },
+          {
+            "target": [
+              258.3,
+              381.925
+            ],
+            "error": 0
+          }
+        ],
+        "pier": {
+          "x": 65.08,
+          "z": 45.71428571428571,
+          "w": 0.68,
+          "d": 0.52,
+          "outerFaceBlocked": true,
+          "pavementClear": true
+        }
+      },
+      "civil": {
+        "ok": true,
+        "walks": [
+          {
+            "start": 724,
+            "end": 800,
+            "error": 0.06666666665955745,
+            "heights": [
+              {
+                "x": 724.0566666666666,
+                "z": 0.34775648578471097
+              },
+              {
+                "x": 726.3233333333335,
+                "z": 0.34826492163264
+              },
+              {
+                "x": 728.5900000000004,
+                "z": 0.34877107568046384
+              },
+              {
+                "x": 730.8566666666673,
+                "z": 0.34927494116308344
+              },
+              {
+                "x": 733.1233333333341,
+                "z": 0.3568175893415974
+              },
+              {
+                "x": 735.390000000001,
+                "z": 0.3885125913215442
+              },
+              {
+                "x": 737.6566666666679,
+                "z": 0.4496310388776579
+              },
+              {
+                "x": 739.9233333333348,
+                "z": 0.5790938628735062
+              },
+              {
+                "x": 742.1900000000016,
+                "z": 0.6898031999911673
+              },
+              {
+                "x": 744.4566666666685,
+                "z": 0.8122316131117769
+              },
+              {
+                "x": 746.7233333333354,
+                "z": 0.9388141260264312
+              },
+              {
+                "x": 748.9900000000023,
+                "z": 1.0617400423147412
+              },
+              {
+                "x": 751.2566666666692,
+                "z": 1.173419207986698
+              },
+              {
+                "x": 753.523333333336,
+                "z": 1.2669353449274874
+              },
+              {
+                "x": 755.7900000000029,
+                "z": 1.3352175833538988
+              },
+              {
+                "x": 758.0566666666698,
+                "z": 1.372999708980166
+              },
+              {
+                "x": 760.3233333333367,
+                "z": 1.3834938661125704
+              },
+              {
+                "x": 762.5900000000036,
+                "z": 1.366457771927855
+              },
+              {
+                "x": 764.8566666666704,
+                "z": 1.3189552152354258
+              },
+              {
+                "x": 767.1233333333373,
+                "z": 1.244037145779702
+              },
+              {
+                "x": 769.3900000000042,
+                "z": 1.1464112539338343
+              },
+              {
+                "x": 771.6566666666711,
+                "z": 1.0321593534604212
+              },
+              {
+                "x": 773.923333333338,
+                "z": 0.9083740844321994
+              },
+              {
+                "x": 776.1900000000048,
+                "z": 0.7827360436443069
+              },
+              {
+                "x": 778.4566666666717,
+                "z": 0.6637991429466491
+              },
+              {
+                "x": 780.7233333333386,
+                "z": 0.5193893190341188
+              },
+              {
+                "x": 782.9900000000055,
+                "z": 0.43981486252987645
+              },
+              {
+                "x": 785.2566666666723,
+                "z": 0.38694419753249853
+              },
+              {
+                "x": 787.5233333333392,
+                "z": 0.3640963987387378
+              },
+              {
+                "x": 789.7900000000061,
+                "z": 0.3615507318539794
+              },
+              {
+                "x": 792.056666666673,
+                "z": 0.3619903627266957
+              },
+              {
+                "x": 794.3233333333399,
+                "z": 0.3624275283492868
+              },
+              {
+                "x": 796.5900000000067,
+                "z": 0.3628622228787317
+              },
+              {
+                "x": 798.8566666666736,
+                "z": 0.363294440505037
+              }
+            ]
+          },
+          {
+            "start": 800,
+            "end": 724,
+            "error": 0.06666666665955745,
+            "heights": [
+              {
+                "x": 799.9433333333334,
+                "z": 0.36350077065704767
+              },
+              {
+                "x": 797.6766666666665,
+                "z": 0.363069742537909
+              },
+              {
+                "x": 795.4099999999996,
+                "z": 0.3626362347419869
+              },
+              {
+                "x": 793.1433333333327,
+                "z": 0.3622002530634132
+              },
+              {
+                "x": 790.8766666666659,
+                "z": 0.3617618033293846
+              },
+              {
+                "x": 788.609999999999,
+                "z": 0.3613208914000854
+              },
+              {
+                "x": 786.3433333333321,
+                "z": 0.3712615462066443
+              },
+              {
+                "x": 784.0766666666652,
+                "z": 0.4085297222610058
+              },
+              {
+                "x": 781.8099999999984,
+                "z": 0.47658893013055853
+              },
+              {
+                "x": 779.5433333333315,
+                "z": 0.6125064303736873
+              },
+              {
+                "x": 777.2766666666646,
+                "z": 0.7251712606045134
+              },
+              {
+                "x": 775.0099999999977,
+                "z": 0.8481419239175196
+              },
+              {
+                "x": 772.7433333333308,
+                "z": 0.9737788542291483
+              },
+              {
+                "x": 770.476666666664,
+                "z": 1.09427136727255
+              },
+              {
+                "x": 768.2099999999971,
+                "z": 1.2012440525845822
+              },
+              {
+                "x": 765.9433333333302,
+                "z": 1.2868136356502906
+              },
+              {
+                "x": 763.6766666666633,
+                "z": 1.3465906527789135
+              },
+              {
+                "x": 761.4099999999964,
+                "z": 1.3769087122157886
+              },
+              {
+                "x": 759.1433333333296,
+                "z": 1.3800380625253967
+              },
+              {
+                "x": 756.8766666666627,
+                "z": 1.355537897435376
+              },
+              {
+                "x": 754.6099999999958,
+                "z": 1.3010657608629048
+              },
+              {
+                "x": 752.3433333333289,
+                "z": 1.2199746772885305
+              },
+              {
+                "x": 750.076666666662,
+                "z": 1.117234465118419
+              },
+              {
+                "x": 747.8099999999952,
+                "z": 0.9991359805435268
+              },
+              {
+                "x": 745.5433333333283,
+                "z": 0.8729172145310194
+              },
+              {
+                "x": 743.2766666666614,
+                "z": 0.7474584969519693
+              },
+              {
+                "x": 741.0099999999945,
+                "z": 0.6308395628950179
+              },
+              {
+                "x": 738.7433333333277,
+                "z": 0.4895195876799062
+              },
+              {
+                "x": 736.4766666666608,
+                "z": 0.41422708740850306
+              },
+              {
+                "x": 734.2099999999939,
+                "z": 0.36643504779248465
+              },
+              {
+                "x": 731.943333333327,
+                "z": 0.34951568664885246
+              },
+              {
+                "x": 729.6766666666601,
+                "z": 0.3490129207214191
+              },
+              {
+                "x": 727.4099999999933,
+                "z": 0.34850786299635506
+              },
+              {
+                "x": 725.1433333333264,
+                "z": 0.34800052022410644
+              }
+            ]
+          }
+        ],
+        "piers": 2,
+        "promenades": [
+          {
+            "x": 726,
+            "start": 838,
+            "end": 905,
+            "error": 0.07666666666045785
+          },
+          {
+            "x": 726,
+            "start": 905,
+            "end": 838,
+            "error": 0.07666666666045785
+          },
+          {
+            "x": 794,
+            "start": 838,
+            "end": 905,
+            "error": 0.07666666666045785
+          },
+          {
+            "x": 794,
+            "start": 905,
+            "end": 838,
+            "error": 0.07666666666045785
+          }
+        ],
+        "quayCap": {
+          "x": 780.35,
+          "y": 884,
+          "height": 1.1000268756329872
+        },
+        "externalStairs": [
+          {
+            "target": [
+              716.695,
+              842.925,
+              1.8378982201991918
+            ],
+            "error": 0.05666666666616038,
+            "height": 1.8378982201991918
+          },
+          {
+            "target": [
+              714.445,
+              842.925,
+              1.8378982201991918
+            ],
+            "error": 0.040713467127854196,
+            "height": 1.8378982201991918
+          },
+          {
+            "target": [
+              714.445,
+              848.875,
+              3.337898220199192
+            ],
+            "error": 0.05578084253346431,
+            "height": 3.337898220199192
+          },
+          {
+            "target": [
+              714.445,
+              842.925,
+              1.8378982201991918
+            ],
+            "error": 0.05755380859194228,
+            "height": 1.969842664643636
+          },
+          {
+            "target": [
+              716.695,
+              842.925,
+              1.8378982201991918
+            ],
+            "error": 0.04073225249446638,
+            "height": 1.8378982201991918
+          },
+          {
+            "target": [
+              716.695,
+              848.875,
+              0.33789822019919175
+            ],
+            "error": 0.05576444933537603,
+            "height": 0.4698426646436362
+          }
+        ]
+      },
+      "walking": {
+        "label": "11:open",
+        "median": 8.30000000000291,
+        "p95": 16.90000000000873,
+        "max": 220.79999999998836,
+        "p99": 29.199999999982538,
+        "frames": 2488,
+        "over16ms": 206,
+        "over33ms": 16,
+        "cpuMedian": 6.699999999254942,
+        "cpuP95": 16.700000001117587,
+        "gpuMedian": 8.5504,
+        "gpuP95": 14.717952,
+        "gpuSamples": 2484,
+        "draws": 357,
+        "triangles": 2193814,
+        "memory": {
+          "geometries": 1804,
+          "textures": 90
+        },
+        "programs": 92,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      "cycles": [
+        {
+          "memory": {
+            "geometries": 1817,
+            "textures": 94
+          },
+          "nonPooledTextures": 77,
+          "cachedAvatarTextures": 17,
+          "geometryAudit": {
+            "scene": {
+              "cpu": 2083,
+              "gpu": 1798
+            },
+            "entities": {
+              "cpu": 30,
+              "gpu": 25,
+              "byType": {
+                "hound": {
+                  "models": 1,
+                  "cpu": 24,
+                  "gpu": 24
+                },
+                "deathmoth": {
+                  "models": 1,
+                  "cpu": 5,
+                  "gpu": 0
+                },
+                "faceling": {
+                  "models": 1,
+                  "cpu": 1,
+                  "gpu": 1
+                }
+              }
+            },
+            "city": {
+              "cpu": 1503,
+              "gpu": 1303
+            },
+            "buildings": {
+              "cpu": 426,
+              "gpu": 355
+            },
+            "offScene": 19
+          }
+        },
+        {
+          "memory": {
+            "geometries": 1817,
+            "textures": 97
+          },
+          "nonPooledTextures": 77,
+          "cachedAvatarTextures": 20,
+          "geometryAudit": {
+            "scene": {
+              "cpu": 2083,
+              "gpu": 1798
+            },
+            "entities": {
+              "cpu": 30,
+              "gpu": 25,
+              "byType": {
+                "hound": {
+                  "models": 1,
+                  "cpu": 24,
+                  "gpu": 24
+                },
+                "deathmoth": {
+                  "models": 1,
+                  "cpu": 5,
+                  "gpu": 0
+                },
+                "faceling": {
+                  "models": 1,
+                  "cpu": 1,
+                  "gpu": 1
+                }
+              }
+            },
+            "city": {
+              "cpu": 1503,
+              "gpu": 1303
+            },
+            "buildings": {
+              "cpu": 426,
+              "gpu": 355
+            },
+            "offScene": 19
+          }
+        },
+        {
+          "memory": {
+            "geometries": 1817,
+            "textures": 100
+          },
+          "nonPooledTextures": 77,
+          "cachedAvatarTextures": 23,
+          "geometryAudit": {
+            "scene": {
+              "cpu": 2083,
+              "gpu": 1798
+            },
+            "entities": {
+              "cpu": 30,
+              "gpu": 25,
+              "byType": {
+                "hound": {
+                  "models": 1,
+                  "cpu": 24,
+                  "gpu": 24
+                },
+                "deathmoth": {
+                  "models": 1,
+                  "cpu": 5,
+                  "gpu": 0
+                },
+                "faceling": {
+                  "models": 1,
+                  "cpu": 1,
+                  "gpu": 1
+                }
+              }
+            },
+            "city": {
+              "cpu": 1503,
+              "gpu": 1303
+            },
+            "buildings": {
+              "cpu": 426,
+              "gpu": 355
+            },
+            "offScene": 19
+          }
+        }
+      ],
+      "browser": "Chrome/155.0.8059.40",
+      "hardware": {
+        "vendor": "Google Inc. (NVIDIA)",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+      },
+      "errors": [],
+      "networkErrors": [
+        {
+          "url": "http://127.0.0.1:5876/favicon.ico",
+          "status": 404
+        },
+        {
+          "url": "http://127.0.0.1:5876/favicon.ico",
+          "status": 404
+        }
+      ],
+      "cleanup": {
+        "browserExit": "SIGTERM",
+        "serverExit": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "label": "storefront-v14-final",
+      "version": 14,
+      "setup": {
+        "seed": 20261014,
+        "newGameSeed": 20259573,
+        "version": 14,
+        "buildings": 29,
+        "viewport": [
+          1920,
+          1080
+        ],
+        "low": false,
+        "baseline": false,
+        "weather": "calm",
+        "time": 10,
+        "shadows": true
+      },
+      "command": "node scripts/verify-l11-reference.mjs --label=storefront-v14-final --case=01,14,15,30,33 --validate=west-piers --rooms --architecture --random-cases=retail",
+      "views": [
+        {
+          "id": "01-office-street",
+          "world": [
+            272,
+            415,
+            0.17315159930199545
+          ],
+          "target": [
+            270,
+            220,
+            12
+          ],
+          "fov": 42,
+          "lighting": {
+            "exposure": 1.1789464506822525,
+            "meter": 0.4708359999999726,
+            "outdoor": 0.999999999999998,
+            "fogNear": 300,
+            "fogFar": 1800,
+            "sun": 3.35,
+            "msaa": 4,
+            "buffer": [
+              1920,
+              1080
+            ]
+          },
+          "performance": {
+            "label": "11:open",
+            "median": 8.19999999999709,
+            "p95": 12.400000000001455,
+            "max": 16.599999999998545,
+            "p99": 12.599999999998545,
+            "frames": 229,
+            "over16ms": 0,
+            "over33ms": 0,
+            "cpuMedian": 5.700000002980232,
+            "cpuP95": 9,
+            "gpuMedian": 4.671488,
+            "gpuP95": 13.297664,
+            "gpuSamples": 225,
+            "draws": 1194,
+            "triangles": 4714634,
+            "memory": {
+              "geometries": 1685,
+              "textures": 78
+            },
+            "programs": 100,
+            "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+          }
+        },
+        {
+          "id": "14-storefront-corner",
+          "world": [
+            264,
+            392,
+            0.164588028842993
+          ],
+          "target": [
+            250,
+            378,
+            1.7
+          ],
+          "fov": 64,
+          "lighting": {
+            "exposure": 1.1789232453720049,
+            "meter": 0.47083599999999953,
+            "outdoor": 0.9999999999999989,
+            "fogNear": 300,
+            "fogFar": 1800,
+            "sun": 3.35,
+            "msaa": 4,
+            "buffer": [
+              1920,
+              1080
+            ]
+          },
+          "performance": {
+            "label": "11:open",
+            "median": 8.30000000000291,
+            "p95": 12.5,
+            "max": 25.099999999998545,
+            "p99": 12.599999999998545,
+            "frames": 218,
+            "over16ms": 1,
+            "over33ms": 0,
+            "cpuMedian": 6.100000001490116,
+            "cpuP95": 10.5,
+            "gpuMedian": 5.352448,
+            "gpuP95": 12.425216,
+            "gpuSamples": 214,
+            "draws": 556,
+            "triangles": 1759638,
+            "memory": {
+              "geometries": 1738,
+              "textures": 79
+            },
+            "programs": 101,
+            "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+          }
+        },
+        {
+          "id": "15-storefront-interior",
+          "world": [
+            245,
+            381.925,
+            0.14322298470013473
+          ],
+          "target": [
+            250.925,
+            381.925,
+            1.7432229847001348
+          ],
+          "fov": 78,
+          "lighting": {
+            "exposure": 1.662042751547659,
+            "meter": 0.0851572761194097,
+            "outdoor": 9.61854996808156e-9,
+            "fogNear": 300,
+            "fogFar": 1800,
+            "sun": 3.35,
+            "msaa": 4,
+            "buffer": [
+              1920,
+              1080
+            ]
+          },
+          "performance": {
+            "label": "11:open",
+            "median": 4.200000000004366,
+            "p95": 12.5,
+            "max": 16.80000000000291,
+            "p99": 16.69999999999709,
+            "frames": 251,
+            "over16ms": 7,
+            "over33ms": 0,
+            "cpuMedian": 5,
+            "cpuP95": 13.199999999254942,
+            "gpuMedian": 4.944896,
+            "gpuP95": 10.814464,
+            "gpuSamples": 248,
+            "draws": 487,
+            "triangles": 2370875,
+            "memory": {
+              "geometries": 1711,
+              "textures": 87
+            },
+            "programs": 101,
+            "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+          }
+        },
+        {
+          "id": "30-shop-looking-out",
+          "world": [
+            250.925,
+            381.925,
+            0.14322298470013473
+          ],
+          "target": [
+            259,
+            390,
+            1.7432229847001348
+          ],
+          "fov": 78,
+          "lighting": {
+            "exposure": 1.7046853273798857,
+            "meter": 0.14230953561600648,
+            "outdoor": 2.990964993586139e-17,
+            "fogNear": 300,
+            "fogFar": 1800,
+            "sun": 3.35,
+            "msaa": 4,
+            "buffer": [
+              1920,
+              1080
+            ]
+          },
+          "performance": {
+            "label": "11:open",
+            "median": 4.19999999999709,
+            "p95": 8.400000000001455,
+            "max": 12.599999999998545,
+            "p99": 12.5,
+            "frames": 299,
+            "over16ms": 0,
+            "over33ms": 0,
+            "cpuMedian": 4.399999998509884,
+            "cpuP95": 7.399999998509884,
+            "gpuMedian": 4.349952,
+            "gpuP95": 9.874432,
+            "gpuSamples": 293,
+            "draws": 468,
+            "triangles": 2338669,
+            "memory": {
+              "geometries": 1719,
+              "textures": 87
+            },
+            "programs": 101,
+            "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+          }
+        },
+        {
+          "id": "33-shop-blade-reverse",
+          "world": [
+            263,
+            380,
+            0.16110581502562185
+          ],
+          "target": [
+            257,
+            386.5,
+            2.6
+          ],
+          "fov": 72,
+          "lighting": {
+            "exposure": 1.178925990589531,
+            "meter": 0.47083257414776675,
+            "outdoor": 0.9999999841640237,
+            "fogNear": 300,
+            "fogFar": 1800,
+            "sun": 3.35,
+            "msaa": 4,
+            "buffer": [
+              1920,
+              1080
+            ]
+          },
+          "performance": {
+            "label": "11:open",
+            "median": 4.2000000000116415,
+            "p95": 8.400000000008731,
+            "max": 12.599999999991269,
+            "p99": 8.5,
+            "frames": 258,
+            "over16ms": 0,
+            "over33ms": 0,
+            "cpuMedian": 5.400000002235174,
+            "cpuP95": 8.200000002980232,
+            "gpuMedian": 4.937728,
+            "gpuP95": 9.460736,
+            "gpuSamples": 254,
+            "draws": 564,
+            "triangles": 2387137,
+            "memory": {
+              "geometries": 1770,
+              "textures": 84
+            },
+            "programs": 101,
+            "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+          }
+        }
+      ],
+      "ordinary": [
+        {
+          "kind": "retail",
+          "seed": 42,
+          "id": "l11v2:42:-1:-1:block:51:lot:1:2",
+          "recipe": "west-piers",
+          "architecture": "pier-retail",
+          "validation": {
+            "available": true,
+            "building": "l11v2:42:-1:-1:block:51:lot:1:2",
+            "side": "s",
+            "returnSide": "w",
+            "door": [
+              5.53667153313063,
+              34.0000118295933
+            ],
+            "walks": [
+              {
+                "target": [
+                  -789.4193024782032,
+                  -393.20513823919043
+                ],
+                "error": 0.049999999999714544
+              },
+              {
+                "target": [
+                  -790.0922319954698,
+                  -390.69373109083887
+                ],
+                "error": 0
+              }
+            ],
+            "pier": {
+              "x": 2.244446666666665,
+              "z": 34.08,
+              "w": 0.52,
+              "d": 0.68,
+              "outerFaceBlocked": true,
+              "pavementClear": true
+            }
+          },
+          "world": [
+            -781.9498392339101,
+            -377.4345406424302,
+            -0.03270495981040854
+          ],
+          "target": [
+            -774.4440898660526,
+            -405.44638426916674,
+            2.5
+          ],
+          "stats": {
+            "label": "11:open",
+            "median": 8.39999999999418,
+            "p95": 20.79999999998836,
+            "max": 150,
+            "p99": 33.29999999998836,
+            "frames": 1000,
+            "over16ms": 107,
+            "over33ms": 9,
+            "cpuMedian": 5.400000002235174,
+            "cpuP95": 8.200000002980232,
+            "gpuMedian": 4.909056,
+            "gpuP95": 9.460736,
+            "gpuSamples": 258,
+            "draws": 615,
+            "triangles": 2081925,
+            "memory": {
+              "geometries": 1874,
+              "textures": 104
+            },
+            "programs": 103,
+            "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+          }
+        }
+      ],
+      "entrances": [
+        {
+          "ok": true,
+          "entrances": [
+            {
+              "id": "l11v2:20261014:0:0:reference:west-piers",
+              "error": 0.05333333333305745,
+              "local": [
+                63.55333333333306,
+                24
+              ],
+              "rooms": [
+                20,
+                20
+              ],
+              "doors": 41,
+              "flights": [
+                {
+                  "flight": 0,
+                  "error": 0.0399999999992815,
+                  "height": 3.0150000000000006,
+                  "returnError": 0.05666666666667197,
+                  "returnHeight": 0.015000000000000013
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "roomDoorSamples": 20,
+      "shop": {
+        "available": true,
+        "building": "l11v2:20261014:0:0:reference:west-piers",
+        "side": "e",
+        "returnSide": "s",
+        "door": [
+          65,
+          41.925
+        ],
+        "walks": [
+          {
+            "target": [
+              255.7,
+              381.925
+            ],
+            "error": 0.049999999999783995
+          },
+          {
+            "target": [
+              258.3,
+              381.925
+            ],
+            "error": 0
+          }
+        ],
+        "pier": {
+          "x": 65.08,
+          "z": 45.71428571428571,
+          "w": 0.68,
+          "d": 0.52,
+          "outerFaceBlocked": true,
+          "pavementClear": true
+        }
+      },
+      "civil": {
+        "ok": true,
+        "walks": [
+          {
+            "start": 724,
+            "end": 800,
+            "error": 0.06666666665955745,
+            "heights": [
+              {
+                "x": 724.0566666666666,
+                "z": 0.34775648578471097
+              },
+              {
+                "x": 726.3233333333335,
+                "z": 0.34826492163264
+              },
+              {
+                "x": 728.5900000000004,
+                "z": 0.34877107568046384
+              },
+              {
+                "x": 730.8566666666673,
+                "z": 0.34927494116308344
+              },
+              {
+                "x": 733.1233333333341,
+                "z": 0.3568175893415974
+              },
+              {
+                "x": 735.390000000001,
+                "z": 0.3885125913215442
+              },
+              {
+                "x": 737.6566666666679,
+                "z": 0.4496310388776579
+              },
+              {
+                "x": 739.9233333333348,
+                "z": 0.5790938628735062
+              },
+              {
+                "x": 742.1900000000016,
+                "z": 0.6898031999911673
+              },
+              {
+                "x": 744.4566666666685,
+                "z": 0.8122316131117769
+              },
+              {
+                "x": 746.7233333333354,
+                "z": 0.9388141260264312
+              },
+              {
+                "x": 748.9900000000023,
+                "z": 1.0617400423147412
+              },
+              {
+                "x": 751.2566666666692,
+                "z": 1.173419207986698
+              },
+              {
+                "x": 753.523333333336,
+                "z": 1.2669353449274874
+              },
+              {
+                "x": 755.7900000000029,
+                "z": 1.3352175833538988
+              },
+              {
+                "x": 758.0566666666698,
+                "z": 1.372999708980166
+              },
+              {
+                "x": 760.3233333333367,
+                "z": 1.3834938661125704
+              },
+              {
+                "x": 762.5900000000036,
+                "z": 1.366457771927855
+              },
+              {
+                "x": 764.8566666666704,
+                "z": 1.3189552152354258
+              },
+              {
+                "x": 767.1233333333373,
+                "z": 1.244037145779702
+              },
+              {
+                "x": 769.3900000000042,
+                "z": 1.1464112539338343
+              },
+              {
+                "x": 771.6566666666711,
+                "z": 1.0321593534604212
+              },
+              {
+                "x": 773.923333333338,
+                "z": 0.9083740844321994
+              },
+              {
+                "x": 776.1900000000048,
+                "z": 0.7827360436443069
+              },
+              {
+                "x": 778.4566666666717,
+                "z": 0.6637991429466491
+              },
+              {
+                "x": 780.7233333333386,
+                "z": 0.5193893190341188
+              },
+              {
+                "x": 782.9900000000055,
+                "z": 0.43981486252987645
+              },
+              {
+                "x": 785.2566666666723,
+                "z": 0.38694419753249853
+              },
+              {
+                "x": 787.5233333333392,
+                "z": 0.3640963987387378
+              },
+              {
+                "x": 789.7900000000061,
+                "z": 0.3615507318539794
+              },
+              {
+                "x": 792.056666666673,
+                "z": 0.3619903627266957
+              },
+              {
+                "x": 794.3233333333399,
+                "z": 0.3624275283492868
+              },
+              {
+                "x": 796.5900000000067,
+                "z": 0.3628622228787317
+              },
+              {
+                "x": 798.8566666666736,
+                "z": 0.363294440505037
+              }
+            ]
+          },
+          {
+            "start": 800,
+            "end": 724,
+            "error": 0.06666666665955745,
+            "heights": [
+              {
+                "x": 799.9433333333334,
+                "z": 0.36350077065704767
+              },
+              {
+                "x": 797.6766666666665,
+                "z": 0.363069742537909
+              },
+              {
+                "x": 795.4099999999996,
+                "z": 0.3626362347419869
+              },
+              {
+                "x": 793.1433333333327,
+                "z": 0.3622002530634132
+              },
+              {
+                "x": 790.8766666666659,
+                "z": 0.3617618033293846
+              },
+              {
+                "x": 788.609999999999,
+                "z": 0.3613208914000854
+              },
+              {
+                "x": 786.3433333333321,
+                "z": 0.3712615462066443
+              },
+              {
+                "x": 784.0766666666652,
+                "z": 0.4085297222610058
+              },
+              {
+                "x": 781.8099999999984,
+                "z": 0.47658893013055853
+              },
+              {
+                "x": 779.5433333333315,
+                "z": 0.6125064303736873
+              },
+              {
+                "x": 777.2766666666646,
+                "z": 0.7251712606045134
+              },
+              {
+                "x": 775.0099999999977,
+                "z": 0.8481419239175196
+              },
+              {
+                "x": 772.7433333333308,
+                "z": 0.9737788542291483
+              },
+              {
+                "x": 770.476666666664,
+                "z": 1.09427136727255
+              },
+              {
+                "x": 768.2099999999971,
+                "z": 1.2012440525845822
+              },
+              {
+                "x": 765.9433333333302,
+                "z": 1.2868136356502906
+              },
+              {
+                "x": 763.6766666666633,
+                "z": 1.3465906527789135
+              },
+              {
+                "x": 761.4099999999964,
+                "z": 1.3769087122157886
+              },
+              {
+                "x": 759.1433333333296,
+                "z": 1.3800380625253967
+              },
+              {
+                "x": 756.8766666666627,
+                "z": 1.355537897435376
+              },
+              {
+                "x": 754.6099999999958,
+                "z": 1.3010657608629048
+              },
+              {
+                "x": 752.3433333333289,
+                "z": 1.2199746772885305
+              },
+              {
+                "x": 750.076666666662,
+                "z": 1.117234465118419
+              },
+              {
+                "x": 747.8099999999952,
+                "z": 0.9991359805435268
+              },
+              {
+                "x": 745.5433333333283,
+                "z": 0.8729172145310194
+              },
+              {
+                "x": 743.2766666666614,
+                "z": 0.7474584969519693
+              },
+              {
+                "x": 741.0099999999945,
+                "z": 0.6308395628950179
+              },
+              {
+                "x": 738.7433333333277,
+                "z": 0.4895195876799062
+              },
+              {
+                "x": 736.4766666666608,
+                "z": 0.41422708740850306
+              },
+              {
+                "x": 734.2099999999939,
+                "z": 0.36643504779248465
+              },
+              {
+                "x": 731.943333333327,
+                "z": 0.34951568664885246
+              },
+              {
+                "x": 729.6766666666601,
+                "z": 0.3490129207214191
+              },
+              {
+                "x": 727.4099999999933,
+                "z": 0.34850786299635506
+              },
+              {
+                "x": 725.1433333333264,
+                "z": 0.34800052022410644
+              }
+            ]
+          }
+        ],
+        "piers": 2,
+        "promenades": [
+          {
+            "x": 726,
+            "start": 838,
+            "end": 905,
+            "error": 0.07666666666045785
+          },
+          {
+            "x": 726,
+            "start": 905,
+            "end": 838,
+            "error": 0.07666666666045785
+          },
+          {
+            "x": 794,
+            "start": 838,
+            "end": 905,
+            "error": 0.07666666666045785
+          },
+          {
+            "x": 794,
+            "start": 905,
+            "end": 838,
+            "error": 0.07666666666045785
+          }
+        ],
+        "quayCap": {
+          "x": 780.35,
+          "y": 884,
+          "height": 1.1000268756329872
+        },
+        "externalStairs": [
+          {
+            "target": [
+              716.695,
+              842.925,
+              1.8378982201991918
+            ],
+            "error": 0.05666666666616038,
+            "height": 1.8378982201991918
+          },
+          {
+            "target": [
+              714.445,
+              842.925,
+              1.8378982201991918
+            ],
+            "error": 0.040713467127854196,
+            "height": 1.8378982201991918
+          },
+          {
+            "target": [
+              714.445,
+              848.875,
+              3.337898220199192
+            ],
+            "error": 0.05578084253346431,
+            "height": 3.337898220199192
+          },
+          {
+            "target": [
+              714.445,
+              842.925,
+              1.8378982201991918
+            ],
+            "error": 0.05755380859194228,
+            "height": 1.969842664643636
+          },
+          {
+            "target": [
+              716.695,
+              842.925,
+              1.8378982201991918
+            ],
+            "error": 0.04073225249446638,
+            "height": 1.8378982201991918
+          },
+          {
+            "target": [
+              716.695,
+              848.875,
+              0.33789822019919175
+            ],
+            "error": 0.05576444933537603,
+            "height": 0.4698426646436362
+          }
+        ]
+      },
+      "browser": "Chrome/155.0.8059.40",
+      "hardware": {
+        "vendor": "Google Inc. (NVIDIA)",
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+      },
+      "errors": [],
+      "networkErrors": [
+        {
+          "url": "http://127.0.0.1:4881/favicon.ico",
+          "status": 404
+        }
+      ],
+      "cleanup": {
+        "browserExit": "SIGTERM",
+        "serverExit": "SIGTERM",
+        "profileRemoved": true
+      }
+    }
+  ],
+  "comparison": "Runs have different view/asset residency; frame times are not a controlled before/after performance comparison."
+}

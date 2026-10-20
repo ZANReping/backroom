@@ -1,0 +1,233 @@
+{
+  "run": "qa-1792078187977-60732",
+  "port": 8881,
+  "cdp": 8882,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-exits\\visual-final\\qa-1792078187977-60732",
+  "seed": 20261006,
+  "command": [
+    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-exits\\visual-final\\qa-1792078187977-60732",
+    "--remote-debugging-port=8882",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.40",
+    "revision": "@cfaadc5a132d78e1828635aa8405a499f3e14864",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.20"
+  },
+  "pids": {
+    "server": 54732,
+    "browser": 33348
+  },
+  "scenes": {
+    "l11unfinisheddoor": {
+      "id": "l11v2:20261006:0:0:block:90:lot:1:2",
+      "front": "s",
+      "angle": -0.3141592653589793,
+      "position": [
+        804.9788710427443,
+        665.7286075358254,
+        4.057635828920962
+      ],
+      "floors": 13,
+      "stats": {
+        "label": "11:open",
+        "median": 28.5,
+        "p95": 47.69999999999709,
+        "max": 1184.5999999999985,
+        "p99": 57.40000000000873,
+        "frames": 1000,
+        "over16ms": 964,
+        "over33ms": 192,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 8493,
+        "triangles": 21561830,
+        "memory": {
+          "geometries": 2212,
+          "textures": 83
+        },
+        "programs": 70,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    "l11brickdoor": {
+      "id": "l11v2:20261006:-1:-1:block:11:lot:1:2",
+      "front": "s",
+      "angle": 0.2617993877991494,
+      "position": [
+        -567.8794924504281,
+        -697.3160954333526,
+        4.03990467358261
+      ],
+      "floors": 4,
+      "stats": {
+        "label": "11:open",
+        "median": 19.29999999998836,
+        "p95": 47.90000000002328,
+        "max": 1967.7999999999884,
+        "p99": 172,
+        "frames": 1000,
+        "over16ms": 885,
+        "over33ms": 204,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 3241,
+        "triangles": 11447658,
+        "memory": {
+          "geometries": 1627,
+          "textures": 92
+        },
+        "programs": 74,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    },
+    "l11liftshaft": {
+      "id": "l11v2:20261006:0:0:block:11:lot:1:2",
+      "front": "s",
+      "angle": 0,
+      "position": [
+        462.5,
+        405.99999999999994,
+        4.120274966468179
+      ],
+      "floors": 13,
+      "stats": {
+        "label": "11:open",
+        "median": 19.199999999982538,
+        "p95": 57.40000000002328,
+        "max": 974.5,
+        "p99": 210.20000000001164,
+        "frames": 1000,
+        "over16ms": 851,
+        "over33ms": 182,
+        "cpuMedian": null,
+        "cpuP95": null,
+        "gpuMedian": null,
+        "gpuP95": null,
+        "gpuSamples": 0,
+        "draws": 5140,
+        "triangles": 19241516,
+        "memory": {
+          "geometries": 1675,
+          "textures": 106
+        },
+        "programs": 74,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    }
+  },
+  "office": {
+    "id": "l11v2:20261006:1:-1:block:5:lot:2:0",
+    "kind": "l11officedoor",
+    "archetype": "setback-office",
+    "accessible": 2,
+    "floor": 1,
+    "world": [
+      1282.5333333333333,
+      -860.8
+    ],
+    "angle": 1.5707963267948966,
+    "target": "进入 上层办公间门"
+  },
+  "archive": {
+    "before": 0,
+    "after": 0,
+    "sealsVisible": true,
+    "label": "提交六盘磁带并撕下封条（0/6）"
+  },
+  "archiveSubmit": {
+    "before": 6,
+    "after": 0,
+    "unlocked": true,
+    "sealsVisible": false,
+    "label": "提交六盘磁带并撕下封条（6/6）"
+  },
+  "archiveReload": {
+    "persisted": true,
+    "unlocked": true,
+    "tapes": 0,
+    "label": "进入 公共档案馆的封条木门"
+  },
+  "errors": [],
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "networkErrors": [
+    {
+      "requestId": "65960.13",
+      "loaderId": "6B8BE2391883C6C669526D3EC105E789",
+      "timestamp": 42442.053203,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:8881/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Thu, 15 Oct 2026 15:30:06 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 196,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 8881,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 42441.97257,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.657,
+          "sendEnd": 0.757,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 79.739,
+          "receiveHeadersEnd": 79.877
+        },
+        "responseTime": 1792078206680.155,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "55CB7FBECBFAD79E5A722995A873BFAB"
+    }
+  ]
+}

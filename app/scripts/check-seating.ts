@@ -36,6 +36,9 @@ check(furnitureSeats(s('table', { chair: 1 }), 0).length === 1, 'legacy chair me
 check(furnitureSeats(s('table', { chair: 1, fallen: 1 }), 0).length === 0, 'fallen chairs are excluded')
 check(furnitureSeats(s('labbench'), 0).length === 0, 'lab workbench is not a stool')
 check(furnitureSeats(s('officechair'), 4)[0].yaw === Math.PI, 'L4 replacement faces opposite the legacy office chair')
+const barberSeat = furnitureSeats(s('barberchair'), 1)[0]
+check(barberSeat.y === .5125, 'barber chair seat surface is 0.5125m high')
+check(barberSeat.x === 0 && barberSeat.z === .02 && barberSeat.yaw === 0, 'barber chair seat is centered, slightly forward on +Z, and faces the model front')
 check(furnitureSeats(s('sofa'), 5).length === 3 && furnitureSeats(s('sofa'), 108).length === 2, 'sofa cushions retain distinct seat positions')
 check(furnitureSeats(s('settlementprop', { height: 1 }), 103).length === 0, 'generic props need explicit seat metadata')
 check(furnitureSeats(s('settlementprop', { seatHeight: .58, seatCount: 3 }), 103).length === 3, 'batched settlement furniture has explicit cushions')

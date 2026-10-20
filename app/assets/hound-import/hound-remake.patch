@@ -1,0 +1,1103 @@
+diff --git a/app/HOUND-REMAKE.md b/app/HOUND-REMAKE.md
+new file mode 100644
+index 0000000..92f8d3b
+--- /dev/null
++++ b/app/HOUND-REMAKE.md
+@@ -0,0 +1,41 @@
++# 猎犬（Entity 8）重制 · v62
++
++参考：中文维基 Entity 8（https://backrooms-wiki-cn.wikidot.com/entity-8），附图作者 chompgwenarts（CC BY-SA 4.0，仅作造型参考，未使用其图像资源）。
++
++## 机制
++| 规则 | 实现 |
++| --- | --- |
++| 目击即敌对 | 视野内看见玩家（视距 6m，召集后 ×1.7）→ 首次锁定仰头嚎叫 1.1s |
++| 嚎叫召集 | 25m 内同类进入 search，带 10s 增强视野前往嚎叫处——躲出视线最安全 |
++| 直视退缩 | 10m 内直视 → cower（伏低后退 0.22× 速度）；有效约 4s，持续噪音 +2s；之后 6s 内无效并冲锋 |
++| 别逃跑 | 可见时奔跑 → charge（1.55× ≈ 5.3m/s，慢于冲刺快于步行） |
++| 扑击 | 2.4m 内 0.3s 前扑，命中造成伤害 + 镜头震动 + 0.8s 减速；冷却 1.5s |
++| 听觉 | 奔跑声半径 ×1.6，循声搜寻 |
++| 重伤 | <30% 血量逃离 4s |
++| L3 | 保留原伏击逻辑；追击中被直视完全僵住（无时限） |
++
++## 唯一新增变种：L11 中立猎犬
++- Level 11 中生成的猎犬默认中立（运行时 `e.hd.neutral`），名称「中立猎犬」，肤色略浅。
++- 保持 4.5m（玩家蹲下且静止时 2.6m，会好奇凑近）；坐下、歪头、摇尾。被盯 3s 扭头走开；5m 内奔跑声 → 受惊呜咽逃开。
++- 被攻击 → 永久敌对（`provoked`），10m 内中立同类一起转变。从不主动攻击。
++
++## 文件
++- `src/game/engine/houndAI.ts` 专属 AI；`src/game/renderer/houndMesh.ts` 模型 + `animateHound`
++- 接入：`entityAI.ts`（noise / 帧初始化 / generic 分支）、`renderer.ts`、`entitiesMesh.ts`（旧方块模型移除）、`audio.ts`（`houndHowl`）、`types.ts`（`hd`）、`critters.ts`（去掉 `intimidatable`，改图鉴）
++- 验收 `scripts/check-hounds.ts`（13 项）；预览 `proto-hound.html?mode=poses|close`
++- 不改存档、联机协议、生成表。单只约 24 次绘制。
++
++## 待实机验证
++冲锋速度与目光时长调参；狭窄走廊中尾巴与发丝穿墙；L11 中立个体在人群/NPC 附近的表现。
++
++## v62.1 模型细化 + UV 贴图
++- 去掉圆柱/方块拼接：躯干、颈、四肢、掌/足、指/趾、爪、耳、下颌全部改为沿 Catmull-Rom 样条扫掠的平滑管体（肌肉鼓包、圆头端盖、椭圆截面），每个都带 UV（u 环向、v 沿长度）。
++- 肋骨、脊椎节、肩胛、髋骨、凹陷腹部直接雕刻在躯干表面，并写入顶点色作为 AO（肋间沟变暗、骨突提亮）。
++- 头部由 28×20 球体逐顶点雕刻：前突口鼻、眉弓、眼窝（顶点色加深）、颧骨，眼球嵌入眼窝。
++- 毛发（v62.2）：不再用分散发片，改为低模壳体 + 毛发纹理：头套壳按雕刻颅骨外扩 13%（前额刘海、两侧直垂、后脑沿颈背铺下）、背鬃壳按躯干实际表面外扩 2.2cm（肩部垂边收短避开上臂）、尾巴为 7 边低模毛束；三次绘制。壳体从皮肤表面函数直接外扩生成，因此不会穿进躯干/颈部。
++- 贴图：运行时 Canvas 程序化生成并全局缓存——皮肤 256² 可平铺（斑驳、青灰静脉、污渍、毛孔噪点），毛发 256² 横向可平铺的顺向发束，底部约 22% 为参差发梢镂空（alphaTest 0.5，flipY=false 使 v=1 为发梢）。无外部图片资源，无需登记素材来源。Node 环境（无 document）自动退化为纯色材质。
++- 后肢加长以真正着地；关节处加骨突关节块填缝；伏低时躯干下沉减小以免脚陷地。
++- 预览：`proto-hound.html?mode=poses|close|side`。
++
++## v62.3 犬类头部
++- 按维基附图改为犬头：颅腔缩小（额段/眉弓、矢状嵴、眼窝、颧弓外张），前伸长吻部扫掠体（鼻梁、平直口裂下缘），吻端黑色鼻头；17 齿 U 形上齿弓（犬齿最长）、15 齿下齿弓；下颌与吻部等长；耳改为宽底竖立犬耳。绘制次数不变。
+diff --git a/app/proto-hound.html b/app/proto-hound.html
+new file mode 100644
+index 0000000..1dcb25b
+--- /dev/null
++++ b/app/proto-hound.html
+@@ -0,0 +1,5 @@
++<!doctype html>
++<html lang="zh-CN"><head><meta charset="UTF-8" /><title>猎犬重制预览</title>
++<style>html,body{margin:0;background:#000;overflow:hidden;font-family:'Noto Sans CJK SC',sans-serif}#lab{position:fixed;inset:0;pointer-events:none}
++.l{position:absolute;transform:translateX(-50%);color:#f5ecc8;font-size:17px;font-weight:700;text-shadow:0 1px 3px #000;white-space:nowrap;text-align:center}.s{font-size:12px;font-weight:400;color:#d8d0b0}</style></head>
++<body><div id="lab"></div><script type="module" src="/src/proto/houndProto.ts"></script></body></html>
+diff --git a/app/scripts/check-hounds.ts b/app/scripts/check-hounds.ts
+new file mode 100644
+index 0000000..076d10a
+--- /dev/null
++++ b/app/scripts/check-hounds.ts
+@@ -0,0 +1,87 @@
++// v62：猎犬重制——行为机制无头验收（模拟引擎，空旷平面）
++// 运行：npx esbuild scripts/check-hounds.ts --bundle --platform=node --format=esm --outfile=.cache/check-hounds.mjs && node .cache/check-hounds.mjs
++import { makeEntity, type Entity } from '../src/game/entities'
++import { beginHoundFrame, initHound, updateHound } from '../src/game/engine/houndAI'
++let fails = 0
++const ok = (c: boolean, m: string) => { console.log(`${c ? '✔' : '✘'} ${m}`); if (!c) fails++ }
++function world(levelId = 2) {
++  const msgs: string[] = []
++  const eng: any = {
++    levelDef: { id: levelId },
++    player: { x: 0, y: 0, z: 0, hp: 100, stamina: 100, sanity: 100, slowT: 0, crouching: false }, playerNoiseT: 0,
++    map: { entities: [] as Entity[], items: [] as any[] },
++    projectiles: [] as any[],
++    input: { sprint: false },
++    dev: { invisible: false },
++    camShake: 0,
++    yaw: 0, // 玩家朝向（弧度，游戏 x/y 平面）
++    hurt: 0,
++    msg: (t: string) => msgs.push(t),
++    los: () => true,
++    lookingAt(e: Entity) { const a = Math.atan2(e.y - this.player.y, e.x - this.player.x); let d = Math.abs(a - this.yaw); if (d > Math.PI) d = 2 * Math.PI - d; return d < 0.4 },
++    viewAngle(x: number, y: number) { const a = Math.atan2(y - this.player.y, x - this.player.x); let d = Math.abs(a - this.yaw); if (d > Math.PI) d = 2 * Math.PI - d; return d },
++    entityWalkH: () => 0,
++    wanderTarget(e: Entity) { e.targetX = e.x + 1; e.targetY = e.y; e.stateT = 3 },
++    stepEntity(e: Entity, sp: number, dt: number) { const dx = e.targetX - e.x, dy = e.targetY - e.y, d = Math.hypot(dx, dy); if (d < 0.3) return true; const k = Math.min(d, sp * dt) / d; e.x += dx * k; e.y += dy * k; return false },
++    faceToward(e: Entity, x: number, y: number) { e.facing = Math.atan2(y - e.y, x - e.x) },
++    meleeZOk: () => true,
++    hurtPlayer(dmg: number) { this.hurt += dmg; this.player.hp -= dmg },
++  }
++  return { eng, msgs }
++}
++function spawn(eng: any, x: number, y: number, neutral = false) { const e = makeEntity('hound', x, y); eng.map.entities.push(e); initHound(eng, e, neutral); return e }
++function run(eng: any, secs: number, each?: (t: number) => void) {
++  const dt = 1 / 30
++  for (let t = 0; t < secs; t += dt) {
++    each?.(t); beginHoundFrame(eng, dt)
++    for (const e of eng.map.entities) { if (e.dead) continue; e.attackCd -= dt; e.stateT -= dt; updateHound(eng, e, dt, Math.hypot(e.x - eng.player.x, e.y - eng.player.y), 1, false) }
++  }
++}
++{ // 目击→嚎叫召集
++  const { eng, msgs } = world(1); eng.yaw = Math.PI
++  const a = spawn(eng, 5, 0), b = spawn(eng, 18, 6)
++  run(eng, 0.2)
++  ok(a.hd!.phase === 'howl' && a.hd!.howled === true, `目击后仰头嚎叫（${a.hd!.phase}）`)
++  ok(b.hd!.alert > 0 && b.hd!.phase === 'search', `远处同类被召集搜寻（${b.hd!.phase}）`)
++  ok(msgs.some((m: string) => m.includes('嚎叫')), '提示：嚎叫')
++}
++{ // 直视：伏低后退，约 4s 后失效并冲锋
++  const { eng, msgs } = world(1); eng.yaw = 0
++  const e = spawn(eng, 4.5, 0); e.hd!.howled = true
++  run(eng, 1)
++  ok(e.hd!.phase === 'cower', `直视 → 伏低后退（${e.hd!.phase}）`)
++  const x1 = e.x; run(eng, 2); ok(e.x > x1, '伏低时向后退')
++  run(eng, 2)
++  ok(e.hd!.phase === 'charge' || e.hd!.strikeT !== undefined || eng.hurt > 0, `目光失效后重新扑来（${e.hd!.phase}）`)
++  ok(msgs.some((m: string) => m.includes('习惯了你的目光')), '提示：习惯目光')
++}
++{ // 看见就逃跑 → 冲锋，扑击命中
++  const { eng } = world(1); eng.yaw = Math.PI
++  const e = spawn(eng, 4.5, 0); e.hd!.howled = true
++  eng.input.sprint = true
++  run(eng, 0.5, () => { eng.player.x -= 0.2 })
++  ok(e.hd!.phase === 'charge', `逃跑触发冲锋（${e.hd!.phase}）`)
++  eng.input.sprint = false
++  run(eng, 3)
++  ok(eng.hurt > 0 && eng.player.slowT > 0, `扑击命中并击退（伤害 ${eng.hurt}）`)
++}
++{ // L11 中立：观察、坐下、不攻击；被攻击后转敌对并带动同类
++  const { eng } = world(11); eng.yaw = Math.PI
++  const e = spawn(eng, 5, 0, true), f = spawn(eng, 7, 3, true)
++  run(eng, 6)
++  ok(eng.hurt === 0 && (e.hd!.phase === 'sit' || e.hd!.phase === 'watch'), `中立猎犬只观察不攻击（${e.hd!.phase}）`)
++  e.hp -= 5
++  run(eng, 0.1)
++  ok(!e.hd!.neutral && !f.hd!.neutral, '被攻击后转为敌对，附近中立同类一起转变')
++  eng.yaw = Math.PI; run(eng, 4)
++  ok(eng.hurt > 0, '转敌对后会攻击')
++}
++{ // 中立：近处奔跑会被吓跑
++  const { eng } = world(11)
++  const e = spawn(eng, 3, 0, true)
++  run(eng, 1)
++  eng.input.sprint = true; run(eng, 0.3, () => { eng.player.y += 0.2 })
++  ok(e.hd!.phase === 'flee' || Math.hypot(e.x, e.y) > 3.5, `中立猎犬被奔跑吓跑（${e.hd!.phase}）`)
++}
++if (fails) { console.error(`\n${fails} 项未通过`); process.exit(1) }
++console.log('\n猎犬行为验收全部通过')
+diff --git a/app/src/game/core/audio.ts b/app/src/game/core/audio.ts
+index 3bd952c..925e51c 100644
+--- a/app/src/game/core/audio.ts
++++ b/app/src/game/core/audio.ts
+@@ -569,6 +569,31 @@ export class GameAudio {
+     }
+   }
+ 
++  /** v62：猎犬嚎叫——两个略失谐的锯齿波沿「低→高→回落」滑音，带颤音与低通；pitch>1 为中立个体受惊的短促呜咽 */
++  houndHowl(vol = 1, pitch = 1, dur = 1.3) {
++    if (!this.ctx || !this.sfx || vol <= 0.02) return
++    const t = this.ctx.currentTime
++    const lp = this.ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1400 * pitch; lp.Q.value = 3
++    const g = this.ctx.createGain()
++    g.gain.setValueAtTime(0.0001, t)
++    g.gain.exponentialRampToValueAtTime(0.07 * vol, t + dur * 0.25)
++    g.gain.setValueAtTime(0.07 * vol, t + dur * 0.7)
++    g.gain.exponentialRampToValueAtTime(0.0005, t + dur)
++    const lfo = this.ctx.createOscillator(); lfo.frequency.value = 6.5
++    const lg = this.ctx.createGain(); lg.gain.value = 9 * pitch
++    lfo.connect(lg)
++    for (const det of [0, 7]) {
++      const o = this.ctx.createOscillator(); o.type = 'sawtooth'
++      o.frequency.setValueAtTime(260 * pitch + det, t)
++      o.frequency.exponentialRampToValueAtTime(520 * pitch + det, t + dur * 0.35)
++      o.frequency.exponentialRampToValueAtTime(380 * pitch + det, t + dur)
++      lg.connect(o.frequency)
++      o.connect(lp); o.start(t); o.stop(t + dur + 0.02)
++    }
++    lp.connect(g).connect(this.sfx)
++    lfo.start(t); lfo.stop(t + dur + 0.02)
++  }
++
+   whisper(vol = 1) {
+     if (!this.ctx || !this.sfx) return
+     const t = this.ctx.currentTime
+diff --git a/app/src/game/engine/entityAI.ts b/app/src/game/engine/entityAI.ts
+index 290cdac..e92d9be 100644
+--- a/app/src/game/engine/entityAI.ts
++++ b/app/src/game/engine/entityAI.ts
+@@ -11,6 +11,7 @@ import { recordEntityEncounter, ENTITIES, type Entity } from '../entities'
+ import { chunkKey, CS } from '../world/infinite'
+ import { audio } from '../core/audio'
+ import type { Engine } from '../engine'
++import { beginHoundFrame, houndHear, updateHound } from './houndAI'
+ import { beginSmilerFrame, flushSmilerSpawns, smilerHear, updateSmiler } from './smilerAI'
+ 
+ // v51：人制品售货机——看过背面后，玩家背对它（视线锥外且 10m 内）即活化追击；受到攻击也会活化
+@@ -65,7 +66,8 @@ export function noiseEvent(eng: Engine, x: number, y: number, radius: number, sp
+       }
+       continue
+     }
+-    if (e.def.type === 'smiler') { smilerHear(eng, e, x, y, radius, sprint); continue } // v61：笑魇自有听觉
++    if (e.def.type === 'smiler') { smilerHear(eng, e, x, y, radius, sprint); continue }
++    if (e.def.type === 'hound') { houndHear(eng, e, x, y, radius, sprint); continue } // v62 // v61：笑魇自有听觉
+     if (e.def.passive) continue // 被动实体（无面灵）不循声索敌——只有被攻击才反击
+     const d = Math.hypot(e.x - x, e.y - y)
+     // v57o：tiny 对水下/水面噪音极敏感——投掷物落水、爆炸与游泳声都能从更远处把它引开
+@@ -195,6 +197,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
+   }
+   updateMothDoors(eng)
+   beginSmilerFrame(eng, dt, lightOn)
++  beginHoundFrame(eng, dt)
+   for (const e of m.entities) {
+     // 死亡动画计时（倒地/消散后移除）
+     if (e.dead) { e.deathT -= dt; continue }
+@@ -392,6 +395,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
+     // v61：笑魇（含变种）走专属状态机 smilerAI，跳过下方通用特殊行为与状态机；末尾的碰撞分离照常执行
+     generic: {
+     if (def.type === 'smiler') { updateSmiler(eng, e, dt, d, dmgMult, l3); break generic }
++    if (def.type === 'hound') { updateHound(eng, e, dt, d, dmgMult, l3); break generic } // v62：猎犬专属 AI
+     // —— 特殊行为 ——
+     // 笑魇：只在黑暗中逼近；手电照亮时后退
+     if (def.darkAmbusher && lightOn && d < 7 && eng.los(e.x, e.y, p.x, p.y)) {
+diff --git a/app/src/game/engine/houndAI.ts b/app/src/game/engine/houndAI.ts
+new file mode 100644
+index 0000000..845d9f2
+--- /dev/null
++++ b/app/src/game/engine/houndAI.ts
+@@ -0,0 +1,228 @@
++// v62：猎犬（Entity 8）专属 AI——依据中文维基 Entity 8：
++//  · 目击即敌对：一旦在视野内看见人类就被激怒；第一次锁定时仰头嚎叫，召集附近同类。
++//  · 嚎叫：被召集的猎犬带着增强的视野搜寻嚎叫处——此时躲在它们视线之外最安全。
++//  · 直视：直接、持续的眼神接触会让它伏低后退；但只能短暂生效（约 4 秒，持续制造噪音可延长到 6 秒），
++//    之后它习惯了你的目光，6 秒内不再惧怕——足够规划路线逃跑。
++//  · 逃跑：看见它就跑会立刻触发冲锋；冲锋速度快于步行，扑击带击退（瘦骨嶙峋却力大无比）。
++//  · L3：高智能个体沿用伏击逻辑（entityAI），被直视时完全僵住。
++//  · L11 中立变种：城市效应下不主动攻击；保持距离观察、坐下、摇尾，被盯久了会扭头走开，
++//    近处奔跑会把它吓跑；一旦被攻击即永久转为敌对，并带动附近的中立同类。
++import { audio } from '../core/audio'
++import type { Entity } from '../entities'
++import type { Engine } from '../engine'
++
++export type HoundPhase = 'roam' | 'howl' | 'search' | 'stalk' | 'charge' | 'cower' | 'flee' | 'watch' | 'sit'
++export interface HoundState {
++  neutral: boolean
++  phase: HoundPhase
++  t: number
++  gazeT: number
++  gazeCd: number
++  alert: number // 被嚎叫召集后的搜寻剩余时间（视野增强）
++  lostT: number // 失去视线累计
++  lastX: number; lastY: number // 最后目击/听见位置
++  lastHp: number
++  strikeT?: number
++  howled?: boolean
++  // 渲染姿态量 0..1
++  crouch: number; howlPose: number; sit: number; jaw: number; wag: number
++}
++
++const F = { px: 0, py: 0, speed: 0, init: false, told: new Set<string>() }
++export function beginHoundFrame(eng: Engine, dt: number) {
++  const p = eng.player
++  if (!F.init || dt <= 0) { F.px = p.x; F.py = p.y; F.init = true }
++  const sp = dt > 0 ? Math.hypot(p.x - F.px, p.y - F.py) / dt : 0
++  F.speed = F.speed * 0.7 + Math.min(12, sp) * 0.3
++  F.px = p.x; F.py = p.y
++}
++const once = (eng: Engine, key: string, text: string, kind: 'system' | 'damage' = 'system') => { if (!F.told.has(key)) { F.told.add(key); eng.msg(text, kind) } }
++
++export function initHound(eng: Engine, e: Entity, neutral = eng.levelDef.id === 11): HoundState {
++  const s: HoundState = { neutral, phase: neutral ? 'roam' : 'roam', t: 0, gazeT: 0, gazeCd: 0, alert: 0, lostT: 0, lastX: e.x, lastY: e.y, lastHp: e.hp, crouch: 0, howlPose: 0, sit: 0, jaw: 0, wag: 0 }
++  if (neutral) e.def = { ...e.def, name: '中立猎犬' }
++  e.hd = s
++  return s
++}
++const setPhase = (s: HoundState, ph: HoundPhase) => { if (s.phase !== ph) { s.phase = ph; s.t = 0 } }
++
++/** noiseEvent 钩子 */
++export function houndHear(eng: Engine, e: Entity, x: number, y: number, radius: number, sprint: boolean) {
++  const s = e.hd ?? initHound(eng, e)
++  const r = Math.max(radius, e.def.hearing * (sprint ? 1.6 : 1))
++  if (Math.hypot(e.x - x, e.y - y) >= r) return
++  if (s.neutral) { if (sprint && Math.hypot(e.x - x, e.y - y) < 5) { setPhase(s, 'flee'); audio.houndHowl(0.25, 1.9, 0.35) } return }
++  s.lastX = x; s.lastY = y
++  if (s.phase === 'roam') { setPhase(s, 'search'); s.alert = Math.max(s.alert, 5) }
++}
++
++function turnHostile(eng: Engine, e: Entity, s: HoundState, d: number) {
++  if (!s.neutral) return
++  s.neutral = false
++  e.provoked = true
++  e.def = { ...e.def, name: '猎犬' }
++  setPhase(s, 'howl')
++  if (d < 14) eng.msg('中立猎犬龇出满口利齿——它不再中立了。', 'damage')
++  for (const q of eng.map!.entities) {
++    if (q === e || q.dead || q.def.type !== 'hound' || !q.hd?.neutral) continue
++    if (Math.hypot(q.x - e.x, q.y - e.y) < 10) { q.hd.neutral = false; q.provoked = true; q.def = { ...q.def, name: '猎犬' }; setPhase(q.hd, 'charge') }
++  }
++}
++
++export function updateHound(eng: Engine, e: Entity, dt: number, d: number, dmgMult: number, l3: boolean) {
++  const p = eng.player, m = eng.map!, def = e.def
++  const s = e.hd ?? initHound(eng, e)
++  s.t += dt; s.gazeCd -= dt; s.alert = Math.max(0, s.alert - dt)
++  const hurt = e.hp < s.lastHp
++  s.lastHp = e.hp
++  const zOk = Math.abs(e.z - p.z) < 1.4
++  const los = d < 22 && zOk && eng.los(e.x, e.y, p.x, p.y)
++  const gazing = los && d < 10 && eng.lookingAt(e)
++  const sight = def.sight * (s.alert > 0 ? 1.7 : 1)
++  const sees = los && d < sight
++  const panic = eng.input.sprint && F.speed > 4.4
++  let speed = 0, tx = e.x, ty = e.y, face: [number, number] | null = null
++
++  if (hurt) {
++    if (s.neutral) turnHostile(eng, e, s, d)
++    else if (e.hp < def.hp * 0.3) { setPhase(s, 'flee'); once(eng, 'hflee', '猎犬哀嚎一声，拖着身子逃进了黑暗。') }
++    else setPhase(s, 'charge')
++  }
++
++  if (s.neutral) {
++    // ---------- L11 中立变种 ----------
++    e.state = 'wander'
++    if (s.phase === 'flee') {
++      const a = Math.max(0.1, d); tx = e.x + (e.x - p.x) / a * 5; ty = e.y + (e.y - p.y) / a * 5; speed = def.speed * 0.9
++      if (s.t > 2.5) setPhase(s, 'roam')
++    } else if (los && d < 9) {
++      once(eng, 'hneutral', '一只猎犬远远蹲坐着打量你，尾巴慢慢摆动。城市里的它们似乎没有敌意。')
++      const keep = p.crouching ? 2.6 : 4.5
++      if (gazing) s.gazeT += dt; else s.gazeT = Math.max(0, s.gazeT - dt * 0.5)
++      if (s.gazeT > 3) { setPhase(s, 'roam'); s.gazeT = 0; eng.wanderTarget(e); e.stateT = 5 } // 被盯久了，扭头走开
++      else if (d < keep - 0.4) { setPhase(s, 'watch'); const a = Math.max(0.1, d); tx = e.x + (e.x - p.x) / a * 2; ty = e.y + (e.y - p.y) / a * 2; speed = def.speed * 0.35; face = [p.x, p.y] }
++      else if (p.crouching && d > keep + 0.6 && F.speed < 0.3) { setPhase(s, 'watch'); tx = p.x; ty = p.y; speed = def.speed * 0.18; face = [p.x, p.y] } // 蹲下不动时好奇地凑近
++      else { setPhase(s, 'sit'); face = [p.x, p.y] }
++    } else {
++      setPhase(s, 'roam')
++      if (e.stateT <= 0 || Math.hypot(e.targetX - e.x, e.targetY - e.y) < 0.4) eng.wanderTarget(e)
++      tx = e.targetX; ty = e.targetY; speed = def.speed * 0.3
++    }
++  } else {
++    // ---------- 敌对 ----------
++    if (sees) { s.lastX = p.x; s.lastY = p.y; s.lostT = 0 } else s.lostT += dt
++    // 首次目击：嚎叫召集
++    if (sees && (s.phase === 'roam' || s.phase === 'search')) {
++      if (!s.howled) setPhase(s, 'howl')
++      else setPhase(s, panic || d < 5 ? 'charge' : 'stalk')
++    }
++    // 看见它就逃跑 → 冲锋
++    if (sees && panic && d < 14 && (s.phase === 'stalk' || s.phase === 'cower')) { setPhase(s, 'charge'); once(eng, 'hpanic', '你转身就跑——猎犬四肢着地猛冲过来！', 'damage') }
++    // 直视：伏低后退，短暂有效
++    const limit = l3 ? Infinity : 4 + (eng.playerNoiseT > 0 ? 2 : 0)
++    if (gazing && s.gazeCd <= 0 && (s.phase === 'stalk' || s.phase === 'charge' || s.phase === 'search')) {
++      setPhase(s, 'cower')
++      once(eng, 'hgaze', '你死死盯住猎犬的眼睛——它伏低身子，一步步向后退。别指望这能撑多久。')
++    }
++    if (s.phase === 'cower') {
++      if (gazing) s.gazeT += dt
++      if (s.gazeT > limit) { s.gazeT = 0; s.gazeCd = 6; setPhase(s, 'charge'); eng.msg('猎犬习惯了你的目光，低吼着再次扑来！', 'damage'); audio.aggro() }
++      else if (!gazing && s.t > 0.8) { setPhase(s, 'stalk') }
++    } else s.gazeT = Math.max(0, s.gazeT - dt * 0.35)
++
++    switch (s.phase) {
++      case 'roam': {
++        e.state = 'wander'
++        if (e.stateT <= 0 || Math.hypot(e.targetX - e.x, e.targetY - e.y) < 0.4) eng.wanderTarget(e)
++        tx = e.targetX; ty = e.targetY; speed = def.speed * 0.4
++        break
++      }
++      case 'howl': {
++        e.state = 'chase'; face = [p.x, p.y]
++        if (!s.howled) {
++          s.howled = true
++          audio.houndHowl(Math.max(0.2, 1 - d / 26), 1, 1.3)
++          once(eng, 'hhowl', '一声拖长的嚎叫在走廊里回荡——其他猎犬会循声而来。躲到它们的视线之外！', 'damage')
++          for (const q of m.entities) {
++            if (q === e || q.dead || q.def.type !== 'hound') continue
++            if (Math.hypot(q.x - e.x, q.y - e.y) > 25) continue
++            const qs = q.hd ?? initHound(eng, q)
++            if (qs.neutral) continue
++            qs.alert = 10; qs.lastX = p.x; qs.lastY = p.y; qs.howled = true
++            if (qs.phase === 'roam') setPhase(qs, 'search')
++          }
++        }
++        if (s.t > 1.1) setPhase(s, d < 6 ? 'charge' : 'stalk')
++        break
++      }
++      case 'search': {
++        e.state = 'investigate'
++        tx = s.lastX; ty = s.lastY; speed = def.speed * 0.8
++        if (Math.hypot(tx - e.x, ty - e.y) < 0.6 && s.alert <= 0) setPhase(s, 'roam')
++        if (s.t > 12) setPhase(s, 'roam')
++        break
++      }
++      case 'stalk': {
++        e.state = 'chase'
++        tx = sees ? p.x : s.lastX; ty = sees ? p.y : s.lastY; speed = def.speed * 0.75; face = sees ? [p.x, p.y] : null
++        if (sees && d < 5) setPhase(s, 'charge')
++        if (s.lostT > 6) { setPhase(s, 'search'); s.alert = 4 }
++        break
++      }
++      case 'charge': {
++        e.state = 'chase'
++        tx = sees || d < 3 ? p.x : s.lastX; ty = sees || d < 3 ? p.y : s.lastY
++        speed = def.speed * (l3 ? 1.7 : 1.55)
++        face = [p.x, p.y]
++        if (s.lostT > 4 && d > 6) { setPhase(s, 'search'); s.alert = 6 }
++        break
++      }
++      case 'cower': {
++        e.state = 'stunned'
++        face = [p.x, p.y]
++        if (!l3) { const a = Math.max(0.1, d); tx = e.x + (e.x - p.x) / a * 2; ty = e.y + (e.y - p.y) / a * 2; speed = def.speed * 0.22 }
++        break
++      }
++      case 'flee': {
++        e.state = 'investigate'
++        const a = Math.max(0.1, d); tx = e.x + (e.x - p.x) / a * 5; ty = e.y + (e.y - p.y) / a * 5; speed = def.speed * 1.1
++        if (s.t > 4) setPhase(s, 'roam')
++        break
++      }
++      default: setPhase(s, 'roam')
++    }
++
++    // 扑击：2.4m 内起跳（前摇 0.3s 带前冲），命中击退
++    if (s.strikeT !== undefined) {
++      s.strikeT -= dt
++      tx = p.x; ty = p.y; speed = 7; face = [p.x, p.y]
++      if (s.strikeT <= 0) {
++        s.strikeT = undefined
++        if (d < 1.5 && eng.meleeZOk(e) && !eng.dev.invisible) {
++          eng.hurtPlayer(def.damage * dmgMult, def.name)
++          eng.camShake = Math.min(1, eng.camShake + 0.7)
++          p.slowT = Math.max(p.slowT, 0.8)
++        }
++        setPhase(s, 'stalk')
++      }
++    } else if (s.phase === 'charge' && d < 2.4 && e.attackCd <= 0 && eng.meleeZOk(e)) {
++      e.attackCd = 1.5; e.lungeT = 0.32; s.strikeT = 0.3
++    }
++  }
++
++  if (speed > 0) {
++    e.targetX = tx; e.targetY = ty
++    const stuck = eng.stepEntity(e, speed, dt)
++    if (stuck && (s.phase === 'roam')) eng.wanderTarget(e)
++    e.animT += dt * speed
++  }
++  if (face) eng.faceToward(e, face[0], face[1], dt, 8)
++  else if (speed > 0) eng.faceToward(e, tx, ty, dt, 8)
++  // 外观姿态量
++  const k = Math.min(1, dt * 5)
++  s.crouch += ((s.phase === 'cower' ? 1 : s.phase === 'stalk' ? 0.45 : 0) - s.crouch) * k
++  s.howlPose += ((s.phase === 'howl' ? 1 : 0) - s.howlPose) * k
++  s.sit += ((s.phase === 'sit' ? 1 : 0) - s.sit) * k * 0.6
++  s.jaw += ((s.phase === 'howl' || s.strikeT !== undefined ? 1 : s.phase === 'charge' ? 0.55 : s.phase === 'cower' ? 0.25 : 0) - s.jaw) * k
++  s.wag = s.neutral && (s.phase === 'sit' || s.phase === 'watch') ? 1 : 0
++}
+diff --git a/app/src/game/entities/critters.ts b/app/src/game/entities/critters.ts
+index a94d164..1ba3133 100644
+--- a/app/src/game/entities/critters.ts
++++ b/app/src/game/entities/critters.ts
+@@ -39,12 +39,12 @@ export const CRITTER_ENTITIES: Record<string, EntityDef> = {
+     aggroStinger: true,
+   },
+   hound: {
+-    type: 'hound', name: '猎犬', hp: 35, speed: 3.4, damage: 18, sight: 6, hearing: 12, hearsSprint: true, intimidatable: true, color: '#7e6c58', habitat: 'any',
+-    desc: '四肢着地的人形掠食者，听觉极其灵敏，速度全实体中最快。',
++    type: 'hound', name: '猎犬', hp: 35, speed: 3.4, damage: 18, sight: 6, hearing: 12, hearsSprint: true, color: '#7e6c58', habitat: 'any',
++    desc: '灰白皮包骨的人形四足掠食者，长发垂过脸，满口利齿。看见人就会被激怒。',
+     codex: {
+       no: 'Entity 8「Hound」', danger: '4 级（高威胁）', habitat: 'Level 1 / Level 4 / Level 5 / Level 9 / Level 11 等多个层级',
+-      behavior: '视力平平，但听觉半径极大，对奔跑脚步声尤其敏感——冲刺会把半个楼层外的它引来。Level 3 的个体智能显著更高：平日潜伏伏击，只在流浪者背对它们的瞬间发起攻击；被直视时会僵住不动。',
+-      counter: '在它附近慢走，不要冲刺。若被盯上，直视它的眼睛并持续制造噪声（奔踏、反复挥击）可将它震慑在原地——但一旦移开视线或停止发声，它立刻恢复行动。',
++      behavior: '目击人类即被激怒，第一次锁定时会仰头嚎叫，召集附近同类带着更远的视野搜寻嚎叫处。听觉灵敏，奔跑声会把远处的它引来。看见它就逃跑会触发冲锋——冲锋快于步行，扑击带击退。直接、持续的眼神接触能让它伏低后退，但只维持约 4 秒（持续制造噪音可延长），之后它会习惯你的目光，6 秒内不再惧怕。Level 3 的个体潜伏伏击，被直视时完全僵住。Level 11 的城市效应下存在中立个体：它们只远远观察，被攻击才会转为敌对。',
++      counter: '别跑。它靠近时盯住它的眼睛，趁它后退的几秒规划路线、慢慢离开。听见嚎叫就立刻躲到猎犬视线之外。Level 11 的中立猎犬别去招惹——打了一只，附近的都会扑上来。',
+       lore: [
+         '「猎犬」指一类四肢着地、骨骼结构明显异于人类的人形掠食者。其颈椎可以 180 度旋转，奔跑时关节发出湿响。',
+         '它的内耳结构异常发达。实验记录显示，它对 12 米外的奔跑声的反应时间不足一秒，但对同距离慢速拖行声几乎无反应。',
+diff --git a/app/src/game/entities/types.ts b/app/src/game/entities/types.ts
+index a429f5e..2540dc3 100644
+--- a/app/src/game/entities/types.ts
++++ b/app/src/game/entities/types.ts
+@@ -118,6 +118,7 @@ export interface Entity {
+   huntScanT?: number // 群落捕食目标扫描节流；避免高密度生态每帧进行实体数平方级 LOS 检查
+   encountered?: boolean // v54：图鉴遭遇已计数（按个体去重——看见/索敌/攻击命中/特殊交互，每只只计一次）
+   blackoutSpawn?: boolean // 停电期间生成（笑魇）：灯光恢复时消散
++  hd?: import('../engine/houndAI').HoundState // v62：猎犬（含 L11 中立变种）运行时状态（不入存档/联机）
+   sm?: import('./smilers').SmilerState // v61：笑魇变种与 AI 运行时状态（不入存档/联机）
+   l9FogSpawn?: boolean // L9 罕见浓雾期间生成的残缺者；雾散后随之退散
+   l10BurrowT?: number // L10 旧挖掘点事件蠕虫：离开现场后在 15～25 秒内退回地下
+diff --git a/app/src/game/renderer/entitiesMesh.ts b/app/src/game/renderer/entitiesMesh.ts
+index 41e43a8..875ef7c 100644
+--- a/app/src/game/renderer/entitiesMesh.ts
++++ b/app/src/game/renderer/entitiesMesh.ts
+@@ -12,6 +12,7 @@
+ import * as THREE from 'three'
+ import { buildMothMesh } from './mothMeshes'
+ import { buildSmilerMesh } from './smilerMesh'
++import { buildHoundMesh } from './houndMesh'
+ import { ENTITIES } from '../entities'
+ import { box, cyl, glow, litMaterial, mulberry } from './shared'
+ import { buildPlayerModel } from './playerModel'
+@@ -35,6 +36,7 @@ export interface EntityMeshOpts {
+   arachnidBreed?: number
+   herbivore?: boolean
+   smilerKind?: import('../entities/smilers').SmilerKind // v61：笑魇变种
++  houndNeutral?: boolean // v62：L11 中立猎犬
+ }
+ 
+ // 七层之物使用纯程序化 UV：DataTexture 在浏览器与 Node 验收脚本中都可创建，
+@@ -100,6 +102,7 @@ function getThingSkinTextures() {
+ }
+ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Group {
+   if(type === 'deathmoth') return buildMothMesh(opts?.mothForm ?? 'male')
++  if (type === 'hound') return buildHoundMesh(!!opts?.houndNeutral, opts?.seed ?? 0) // v62：重制猎犬
+   if (type === 'smiler') return buildSmilerMesh(opts?.smilerKind ?? 'common', opts?.seed ?? 0) // v61：重制笑魇（含 5 变种）
+   const grp = new THREE.Group()
+   grp.userData.entityType = type
+@@ -378,66 +381,7 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
+       }
+       break
+     }
+-    case 'hound': { // 猎犬（Entity 8）：wiki 明确它是「人类」——病态消瘦的人形四足爬行者。
+-      //              前肢（手臂）加长到与后肢接近等长、肩胛高耸、脊柱前倾、肋骨与关节突出；
+-      //              头顶生出一大团垂落的黑色长发遮住整张脸，发帘之下是极大的嘴与尖牙；手部为利爪。（原生 +X）
+-      const sk = '#a1907c', sd = '#8a7867', hair = '#0a0a0d'
+-      // 躯干组：pivot 必须落在 y=0.55（renderer 按状态改写 torso.position.y=0.55/0.45 压低身位）
+-      const tg = new THREE.Group()
+-      tg.position.set(0, 0.55, 0)
+-      tg.add(box(0.46, 0.34, 0.34, sk, 0.16, 0.12, 0)) // 胸廓（前高——脊柱前倾）
+-      tg.add(box(0.36, 0.26, 0.3, sd, -0.2, 0.02, 0)) // 塌陷的腰
+-      tg.add(box(0.3, 0.32, 0.34, sk, -0.44, -0.01, 0)) // 骨盆
+-      tg.add(box(0.17, 0.16, 0.1, sd, 0.21, 0.3, -0.13)) // 高耸的肩胛
+-      tg.add(box(0.17, 0.16, 0.1, sd, 0.21, 0.3, 0.13))
+-      for (let i = 0; i < 4; i++) tg.add(box(0.03, 0.22, 0.36, sd, 0.3 - i * 0.11, 0.1, 0)) // 突出的肋骨
+-      for (let i = 0; i < 6; i++) tg.add(box(0.07, 0.08, 0.07, sd, 0.26 - i * 0.14, 0.29 - i * 0.035, 0)) // 前倾的脊线
+-      tag(tg, 'torso')
+-      // 头（pivot 在头中心）：人头轮廓 + 遮脸的黑色长发团 + 发帘下的巨口尖牙
+-      const hg = new THREE.Group()
+-      hg.position.set(0.52, 0.78, 0)
+-      hg.add(box(0.2, 0.24, 0.22, sk, 0, 0, 0)) // 人头颅
+-      hg.add(box(0.14, 0.1, 0.18, sd, 0.07, -0.1, 0)) // 颧/上颌
+-      const maw = box(0.17, 0.17, 0.25, '#1a0f0d', 0.1, -0.21, 0) // 极大的嘴
+-      face(maw); hg.add(maw)
+-      for (let i = 0; i < 6; i++) { // 上下两排尖牙
+-        const z = (i / 5 - 0.5) * 0.2
+-        hg.add(face(glow(0.03, 0.075, 0.028, '#efe8d8', 0.14, -0.15, z)))
+-        hg.add(face(glow(0.028, 0.062, 0.026, '#e0d8c6', 0.13, -0.27, z)))
+-      }
+-      hg.add(box(0.32, 0.28, 0.36, hair, -0.02, 0.15, 0)) // 头顶发团（头部最大的视觉体积）
+-      hg.add(box(0.13, 0.3, 0.35, hair, 0.11, 0.02, 0)) // 前垂发帘（遮住整张脸）
+-      hg.add(box(0.18, 0.52, 0.11, hair, 0.04, -0.1, -0.16)) // 两侧长发
+-      hg.add(box(0.18, 0.52, 0.11, hair, 0.04, -0.1, 0.16))
+-      hg.add(box(0.22, 0.54, 0.3, hair, -0.15, -0.06, 0)) // 后垂长发
+-      tag(hg, 'head')
+-      // 四肢：前肢=加长的人类手臂，与后肢接近等长（renderer 用 rotation.z 做对角步态）
+-      const fl = joint(0.11, 0.66, 0.12, sd, 0.3, 0.68, -0.16, 'armL')
+-      const fr = joint(0.11, 0.66, 0.12, sd, 0.3, 0.68, 0.16, 'armR')
+-      const bl = joint(0.13, 0.62, 0.14, sd, -0.42, 0.64, -0.15, 'legL')
+-      const br = joint(0.13, 0.62, 0.14, sd, -0.42, 0.64, 0.15, 'legR')
+-      for (const l of [fl, fr]) {
+-        tip(l, 0.13, 0.09, 0.13, sd, -0.33) // 突出的肘关节
+-        tip(l, 0.12, 0.07, 0.13, sk, -0.63) // 掌
+-        for (let i = 0; i < 4; i++) { // 利爪：向前撑地
+-          const cl = box(0.12, 0.022, 0.022, '#2e2620', 0.07, -0.65, (i - 1.5) * 0.036)
+-          cl.rotation.z = -0.3
+-          l.add(cl)
+-        }
+-      }
+-      for (const l of [bl, br]) {
+-        tip(l, 0.15, 0.1, 0.15, sd, -0.31) // 突出的膝关节
+-        l.add(box(0.22, 0.07, 0.13, sk, 0.05, -0.59, 0)) // 消瘦的脚（沿 +X 前伸）
+-      }
+-      // 保留 tail 部件名（renderer 会摆动它）：病态消瘦者外突拖曳的尾椎骨
+-      const tgeo = new THREE.BoxGeometry(0.26, 0.05, 0.05)
+-      tgeo.translate(-0.13, 0, 0)
+-      const tl = new THREE.Mesh(tgeo, lam(sd))
+-      tl.position.set(-0.6, 0.5, 0)
+-      tl.rotation.z = -0.32
+-      tag(tl, 'tail')
+-      break
+-    }
++    // v62：'hound' 已在函数开头交给 houndMesh.buildHoundMesh（旧版方块模型移除）
+     case 'carrier': { // 运输车：机械厢体（底盘/货厢/驾驶室/风挡/保险杠/四轮/前后灯，原生 +X）
+       // 修复 v15：v14 底盘（torso）从未挂入场景 → 车身悬浮于四轮之上、保险杠/车灯悬空。
+       // 现把上部车体整合进 body 组并 tag 为 torso（冲撞时整体绕 z 微俯仰，轮组独立）。
+diff --git a/app/src/game/renderer/houndMesh.ts b/app/src/game/renderer/houndMesh.ts
+new file mode 100644
+index 0000000..385ca30
+--- /dev/null
++++ b/app/src/game/renderer/houndMesh.ts
+@@ -0,0 +1,407 @@
++// v62.1：猎犬（Entity 8）重制模型·细化版——参照中文维基附图（chompgwenarts，CC BY-SA 4.0，仅作造型参考）。
++// 病态消瘦的人形四足爬行者：灰白皮包骨，肋骨/脊椎/肩胛/髋骨直接雕在皮肤表面；人脸、黑色长发垂过脸、尖耳、
++// 白眼、巨口利齿；细长人臂与长指爪手、人腿与长趾足；臀后一把乱蓬蓬的黑毛尾。
++// 造型：所有躯体/四肢/指趾/爪均为沿样条扫掠的平滑管体（带肌肉起伏与圆头端盖，含 UV 与骨突 AO 顶点色）；
++// 头部由球体逐顶点雕刻（口鼻、眉弓、眼窝、颧骨）；毛发为贴合皮肤外扩的低模壳体（头套/背鬃/尾束）+ 发梢镂空毛发纹理。
++// 贴图：运行时程序化生成（可平铺皮肤：斑驳/静脉/污渍/毛孔；发丝：渐细发束），无外部资源；全部猎犬共享缓存。
++// 模型正面 +X；约 25 次绘制。
++import * as THREE from 'three'
++import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
++import type { Entity } from '../entities'
++
++function rng(a: number) { return () => { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296 } }
++const merge = (g: THREE.BufferGeometry[]) => mergeGeometries(g.map((x) => x.index ? x.toNonIndexed() : x))!
++const V = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z)
++const gauss = (x: number, c: number, w: number) => Math.exp(-((x - c) * (x - c)) / (2 * w * w))
++const sstep = (a: number, b: number, x: number) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t) }
++/** 圆头端盖：两端半球式收口 */
++const cap = (t: number, e = 0.1) => Math.sqrt(Math.max(0.0001, Math.min(1, t / e, (1 - t) / e)))
++/** 椭圆截面：管体自身截面坐标 (cs=面内法向分量, sn=Z 向分量) 的半径系数 */
++const ell = (cs: number, sn: number, a: number, b: number) => 1 / Math.sqrt((cs / a) ** 2 + (sn / b) ** 2)
++
++type RF = (t: number, d: THREE.Vector3, cs: number, sn: number) => number
++/** 沿样条扫掠的管体（含 UV 与顶点色）。rf 给半径，shade 给顶点色明度（AO/骨突）。 */
++function sweep(pts: THREE.Vector3[], rf: RF, o: { radial?: number; seg?: number; vRep?: number; uRep?: number; shade?: RF } = {}) {
++  const radial = o.radial ?? 10, seg = o.seg ?? 12
++  const curve = new THREE.CatmullRomCurve3(pts, false, 'centripetal')
++  const pos: number[] = [], uv: number[] = [], col: number[] = [], idx: number[] = []
++  const T = new THREE.Vector3(), n1 = new THREE.Vector3(), n2 = new THREE.Vector3(), d = new THREE.Vector3(), P = new THREE.Vector3()
++  const Z = V(0, 0, 1), X = V(1, 0, 0)
++  for (let i = 0; i <= seg; i++) {
++    const t = i / seg
++    curve.getPointAt(t, P); curve.getTangentAt(t, T)
++    n1.crossVectors(T, Math.abs(T.z) < 0.9 ? Z : X).normalize(); n2.crossVectors(n1, T).normalize()
++    for (let j = 0; j <= radial; j++) {
++      const a = (j / radial) * Math.PI * 2
++      d.copy(n1).multiplyScalar(Math.cos(a)).addScaledVector(n2, Math.sin(a))
++      const cs = Math.cos(a), sn = Math.sin(a)
++      const r = rf(t, d, cs, sn)
++      pos.push(P.x + d.x * r, P.y + d.y * r, P.z + d.z * r)
++      uv.push((j / radial) * (o.uRep ?? 1), t * (o.vRep ?? 1))
++      const c = o.shade ? o.shade(t, d, cs, sn) : 1
++      col.push(c, c, c)
++    }
++  }
++  for (let i = 0; i < seg; i++) for (let j = 0; j < radial; j++) {
++    const a = i * (radial + 1) + j, b = a + radial + 1
++    idx.push(a, b, a + 1, b, b + 1, a + 1)
++  }
++  const g = new THREE.BufferGeometry()
++  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3))
++  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2))
++  g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3))
++  g.setIndex(idx); g.computeVertexNormals()
++  return g
++}
++/** 简单肢段：起点→终点（可带中间弯点），肌肉鼓包位置 bulgeAt */
++function limbSeg(pts: THREE.Vector3[], r0: number, r1: number, bulge = 0.2, bulgeAt = 0.3, flat = 1, endCap = true) {
++  return sweep(pts, (t, _d, cs, sn) => (r0 + (r1 - r0) * t) * (1 + bulge * gauss(t, bulgeAt, 0.16)) * (endCap || t < 0.5 ? cap(t, 0.12) : 1) * ell(cs, sn, 1, flat), {
++    radial: 8, seg: 9, vRep: 1.5,
++    shade: (t) => 0.82 + 0.18 * gauss(t, bulgeAt, 0.25),
++  })
++}
++/** 低模网格壳：rows×cols 个点由 pt(i,j) 给出，UV 由 uvf(i,j) 给出；用于毛发壳体 */
++function shell(rows: number, cols: number, pt: (i: number, j: number) => THREE.Vector3, uvf: (i: number, j: number) => [number, number], shade: (i: number, j: number) => number) {
++  const pos: number[] = [], uv: number[] = [], col: number[] = [], idx: number[] = []
++  for (let i = 0; i <= rows; i++) for (let j = 0; j <= cols; j++) {
++    const p = pt(i, j), [u, v] = uvf(i, j), c = shade(i, j)
++    pos.push(p.x, p.y, p.z); uv.push(u, v); col.push(c, c, c)
++  }
++  for (let i = 0; i < rows; i++) for (let j = 0; j < cols; j++) {
++    const a = i * (cols + 1) + j, b = a + cols + 1
++    idx.push(a, b, a + 1, b, b + 1, a + 1)
++  }
++  const g = new THREE.BufferGeometry()
++  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3))
++  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2))
++  g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3))
++  g.setIndex(idx); g.computeVertexNormals()
++  return g
++}
++
++// ---------- 程序化贴图（共享缓存） ----------
++let TEX: { skin: THREE.Texture | null; hair: THREE.Texture | null } | null = null
++function canvasTex(w: number, h: number, draw: (c: CanvasRenderingContext2D, R: () => number) => void, repeat: boolean) {
++  if (typeof document === 'undefined') return null
++  const cv = document.createElement('canvas'); cv.width = w; cv.height = h
++  const c = cv.getContext('2d'); if (!c) return null
++  draw(c, rng(0x5eed))
++  const t = new THREE.CanvasTexture(cv)
++  t.colorSpace = THREE.SRGBColorSpace
++  if (repeat) t.wrapS = t.wrapT = THREE.RepeatWrapping
++  t.anisotropy = 4
++  return t
++}
++function textures() {
++  if (TEX) return TEX
++  const skin = canvasTex(256, 256, (c, R) => {
++    c.fillStyle = '#b9b2a5'; c.fillRect(0, 0, 256, 256)
++    // 可平铺地画：每个元素在 3×3 位置各画一次
++    const tile = (f: (ox: number, oy: number) => void) => { for (const ox of [-256, 0, 256]) for (const oy of [-256, 0, 256]) f(ox, oy) }
++    for (let i = 0; i < 160; i++) { // 斑驳
++      const x = R() * 256, y = R() * 256, r = 6 + R() * 30, a = 0.04 + R() * 0.07
++      const col = R() < 0.5 ? `rgba(120,108,96,${a})` : `rgba(214,206,190,${a})`
++      tile((ox, oy) => { c.fillStyle = col; c.beginPath(); c.arc(x + ox, y + oy, r, 0, Math.PI * 2); c.fill() })
++    }
++    for (let i = 0; i < 14; i++) { // 透出皮下的青灰静脉
++      let x = R() * 256, y = R() * 256, a = R() * Math.PI * 2
++      const pts: [number, number][] = [[x, y]]
++      for (let k = 0; k < 14; k++) { a += (R() - 0.5) * 0.9; x += Math.cos(a) * 7; y += Math.sin(a) * 7; pts.push([x, y]) }
++      const lw = 0.6 + R() * 1.2
++      tile((ox, oy) => { c.strokeStyle = 'rgba(88,98,118,0.22)'; c.lineWidth = lw; c.beginPath(); pts.forEach(([px, py], k) => k ? c.lineTo(px + ox, py + oy) : c.moveTo(px + ox, py + oy)); c.stroke() })
++    }
++    for (let i = 0; i < 40; i++) { // 污渍
++      const x = R() * 256, y = R() * 256, r = 2 + R() * 7
++      tile((ox, oy) => { c.fillStyle = 'rgba(70,58,44,0.12)'; c.beginPath(); c.ellipse(x + ox, y + oy, r, r * 0.6, R() * 3, 0, Math.PI * 2); c.fill() })
++    }
++    const img = c.getImageData(0, 0, 256, 256), d = img.data
++    for (let i = 0; i < d.length; i += 4) { const n = (R() - 0.5) * 14; d[i] += n; d[i + 1] += n; d[i + 2] += n } // 毛孔噪点
++    c.putImageData(img, 0, 0)
++  }, true)
++  // 毛发纹理：上部不透明的顺向发束（横向可平铺），底部约 22% 为参差发梢镂空（alphaTest 裁切）
++  const hair = canvasTex(256, 256, (c, R) => {
++    c.fillStyle = '#1d1712'; c.fillRect(0, 0, 256, 256)
++    for (let i = 0; i < 220; i++) {
++      const x = R() * 256, w = 1 + R() * 3, tone = 14 + R() * 34, a = 0.35 + R() * 0.5
++      for (const ox of [-256, 0, 256]) {
++        c.strokeStyle = `rgba(${tone},${tone * 0.82},${tone * 0.66},${a})`; c.lineWidth = w; c.beginPath(); c.moveTo(x + ox, 0)
++        c.bezierCurveTo(x + ox + (R() - 0.5) * 8, 90, x + ox + (R() - 0.5) * 10, 170, x + ox + (R() - 0.5) * 12, 256); c.stroke()
++      }
++    }
++    for (let y = 0; y < 256; y += 2) { c.fillStyle = `rgba(0,0,0,${0.18 * (y / 256)})`; c.fillRect(0, y, 256, 2) } // 发梢方向略暗
++    c.globalCompositeOperation = 'destination-out'; c.fillStyle = '#000' // 参差发梢
++    for (let x = -6; x < 262; x += 5 + R() * 6) {
++      const top = 196 + R() * 46
++      c.beginPath(); c.moveTo(x - 4 - R() * 4, 257); c.lineTo(x + 3 + R() * 4, 257); c.lineTo(x + (R() - 0.5) * 3, top); c.closePath(); c.fill()
++    }
++    c.fillRect(0, 250, 256, 6)
++    c.globalCompositeOperation = 'source-over'
++  }, false)
++  if (hair) { hair.wrapS = THREE.RepeatWrapping; hair.flipY = false } // v=0 发根（画布顶）→ v=1 发梢（画布底）
++  TEX = { skin, hair }
++  return TEX
++}
++
++export interface HoundRig {
++  body: THREE.Group; head: THREE.Group; jaw: THREE.Group; tail: THREE.Group
++  legs: { hip: THREE.Group; knee: THREE.Group; front: boolean; side: number }[]
++  earL: THREE.Mesh; earR: THREE.Mesh
++}
++
++export function buildHoundMesh(neutral = false, seed = 0): THREE.Group {
++  const grp = new THREE.Group()
++  grp.userData.entityType = 'hound'
++  grp.userData.parts = {}
++  const R = rng(0x8a11 + seed * 131)
++  const jit = Array.from({ length: 32 }, () => 0.75 + R() * 0.5) // 逐列长度起伏，让垂边成缕
++  const tx = textures()
++  const skin = new THREE.MeshLambertMaterial({ color: neutral ? '#e6dccb' : '#d6d0c6', map: tx.skin, vertexColors: true })
++  const hair = new THREE.MeshLambertMaterial({ color: '#ffffff', map: tx.hair, vertexColors: true, side: THREE.DoubleSide, alphaTest: 0.5, transparent: false })
++  if (!tx.hair) hair.color.set('#15110e')
++  hair.alphaTest = tx.hair ? 0.5 : 0
++  const claw = new THREE.MeshLambertMaterial({ color: '#2f2822', vertexColors: true })
++  const eyeM = new THREE.MeshBasicMaterial({ color: '#efece2' })
++  const toothM = new THREE.MeshLambertMaterial({ color: '#d9cfb6', emissive: '#2a261c' })
++  const mouthM = new THREE.MeshBasicMaterial({ color: '#1c0d0b' })
++
++  // ---------- 躯干：沿弓起脊线扫掠，骨突雕在表面 ----------
++  const body = new THREE.Group(); body.position.set(0, 0.66, 0); grp.add(body)
++  {
++    const spine = [V(-0.55, 0.02, 0), V(-0.38, 0.05, 0), V(-0.15, 0.0, 0), V(0.1, 0.03, 0), V(0.34, 0.06, 0), V(0.5, 0.06, 0)]
++    const prof = [[0, 0.07], [0.1, 0.125], [0.2, 0.12], [0.36, 0.088], [0.48, 0.09], [0.62, 0.135], [0.8, 0.15], [0.93, 0.12], [1, 0.08]]
++    const base = (t: number) => { for (let i = 1; i < prof.length; i++) if (t <= prof[i][0]) { const [t0, r0] = prof[i - 1], [t1, r1] = prof[i]; const k = sstep(0, 1, (t - t0) / (t1 - t0)); return r0 + (r1 - r0) * k } return 0.08 }
++    const detail = (t: number, d: THREE.Vector3) => {
++      const side = Math.abs(d.z), top = Math.max(0, d.y)
++      const ribPhase = Math.sin((t - 0.5) * Math.PI * 16)
++      const ribs = t > 0.5 && t < 0.9 && d.y > -0.7 ? 0.02 * ribPhase * sstep(0.2, 0.7, side + top * 0.3) * gauss(t, 0.7, 0.13) : 0
++      const spineB = top > 0.88 ? 0.016 * Math.max(0, Math.sin(t * Math.PI * 24)) ** 2 * sstep(0.88, 1, top) : 0
++      const blades = 0.04 * gauss(t, 0.78, 0.06) * gauss(d.y, 0.6, 0.22) * sstep(0.3, 0.8, side)
++      const hips = 0.035 * gauss(t, 0.14, 0.06) * gauss(d.y, 0.5, 0.25) * sstep(0.3, 0.8, side)
++      const tuck = d.y < -0.4 ? -0.025 * gauss(t, 0.4, 0.1) : 0 // 凹陷的腹部
++      return { ribs, spineB, blades, hips, tuck, ribPhase }
++    }
++    const torsoR: RF = (t, d, cs, sn) => {
++      const k = detail(t, d)
++      return base(t) * cap(t, 0.08) * ell(cs, sn, 1, 0.82) + k.ribs + k.spineB + k.blades + k.hips + k.tuck
++    }
++    const torso = sweep(spine, torsoR, {
++      radial: 22, seg: 44, vRep: 2.5, uRep: 2,
++      shade: (t, d) => {
++        const k = detail(t, d)
++        const groove = t > 0.5 && t < 0.9 && d.y > -0.7 ? Math.max(0, -k.ribPhase) * 0.38 * gauss(t, 0.7, 0.13) * sstep(0.2, 0.7, Math.abs(d.z)) : 0
++        return Math.min(1.1, 0.88 + (k.ribs > 0 ? k.ribs * 6 : 0) + k.spineB * 6 + k.blades * 3 + k.hips * 3 - groove - (d.y < -0.5 ? 0.1 : 0))
++      },
++    })
++    const neck = sweep([V(0.4, 0.05, 0), V(0.52, 0.08, 0), V(0.64, 0.1, 0)], (t, _d, cs, sn) => (0.062 - t * 0.016) * cap(t, 0.15) * ell(cs, sn, 1.05, 0.9), { radial: 10, seg: 8, shade: () => 0.9 })
++    body.add(new THREE.Mesh(merge([torso, neck]), skin))
++    // 背鬃：沿脊线的低模毛发壳，按躯干实际表面（含肩胛/脊突）外扩 2.2cm 贴合，两侧短垂；肩部前肢处垂边收短以免穿进上臂
++    {
++      const curve = new THREE.CatmullRomCurve3(spine, false, 'centripetal')
++      const P = new THREE.Vector3(), T = new THREE.Vector3(), n1 = new THREE.Vector3(), n2 = new THREE.Vector3(), d = new THREE.Vector3()
++      const rows = 12, half = 4, drape = 2, cols = 2 * (half + drape), A = 1.45
++      const t0 = 0.4, t1 = 0.99
++      const edge: THREE.Vector3[] = []
++      const maneG = shell(rows, cols, (i, j) => {
++        const t = t0 + (t1 - t0) * (i / rows)
++        curve.getPointAt(t, P); curve.getTangentAt(t, T)
++        n1.crossVectors(T, V(0, 0, 1)).normalize(); n2.crossVectors(n1, T).normalize()
++        const k = j - (half + drape), kc = Math.max(-half, Math.min(half, k))
++        const a = Math.PI + (kc / half) * A * (0.3 + 0.7 * sstep(0, 0.16, t - t0)) // 后端收窄，鬃毛自然起头
++        const cs = Math.cos(a), sn = Math.sin(a)
++        d.copy(n1).multiplyScalar(cs).addScaledVector(n2, sn)
++        const p = P.clone().addScaledVector(d, torsoR(t, d, cs, sn) + 0.022)
++        if (Math.abs(k) <= half) { if (Math.abs(k) === half) edge[i] = p; return p }
++        const step = Math.abs(k) - half, side = Math.sign(k) * Math.sign(n2.z || 1)
++        const len = (0.05 * (1 - 0.9 * gauss(t, 0.84, 0.07)) * sstep(0, 0.12, t - t0) + 0.006) * jit[i]
++        return p.add(V(0, -len * step, side * 0.008 * step))
++      }, (i, j) => [i / rows * 3, Math.abs(j - (half + drape)) / (half + drape) * 0.98], (_i, j) => 0.75 + 0.3 * (1 - Math.abs(j - (half + drape)) / (half + drape)))
++      void edge
++      body.add(new THREE.Mesh(maneG, hair))
++    }
++  }
++  // ---------- 尾：一条低模毛束，从臀部内侧长出、蓬起后收尖下垂 ----------
++  const tail = new THREE.Group(); tail.position.set(-0.53, 0.05, 0); body.add(tail)
++  {
++    const tg = sweep([V(0.05, 0, 0), V(-0.15, -0.04, 0), V(-0.38, -0.13, 0), V(-0.62, -0.26, 0), V(-0.8, -0.36, 0)],
++      (t, _d, cs, sn) => (0.035 + 0.06 * Math.sin(Math.min(1, t * 1.15) * Math.PI) ** 0.8 + 0.012 * (1 - t)) * ell(cs, sn, 0.8, 1) * (t > 0.9 ? 1 - (t - 0.9) * 6 : 1),
++      { radial: 7, seg: 8, uRep: 2, vRep: 0.98, shade: (t) => 0.7 + 0.3 * Math.min(1, t * 3) })
++    tail.add(new THREE.Mesh(tg, hair))
++  }
++  // ---------- 头：球体逐顶点雕刻 ----------
++  const head = new THREE.Group(); head.position.set(0.68, 0.11, 0); head.scale.setScalar(1.22); body.add(head)
++  // 犬类头骨：较小的颅腔（含额段/眉弓/眼窝/颧弓）+ 前伸的长吻部（上颌扫掠体，底面平直为口裂线）+ 吻端黑鼻头
++  const sockets = [V(0.72, 0.3, 0.52).normalize(), V(0.72, 0.3, -0.52).normalize()]
++  const carve = (d: THREE.Vector3) => {
++    let x = d.x * 0.088, y = d.y * 0.08, z = d.z * 0.075
++    y += 0.014 * gauss(d.x, 0.6, 0.18) * gauss(d.y, 0.45, 0.16) // 额段/眉弓隆起
++    y += 0.008 * gauss(d.x, -0.2, 0.3) * sstep(0.7, 1, d.y) // 矢状嵴
++    let dark = 0
++    for (const s of sockets) { const k = gauss(d.distanceTo(s), 0, 0.14); x -= 0.012 * k; dark = Math.max(dark, k) } // 眼窝
++    z *= 1 + 0.18 * gauss(d.x, 0.35, 0.25) * gauss(d.y, -0.2, 0.22) // 颧弓外张
++    y -= 0.012 * sstep(0, -1, d.y) // 下颌底更平
++    return { p: V(x, y, z), dark }
++  }
++  // 吻部中心线：根部埋进颅腔前下方，向前略下垂；底面基本落在 y≈-0.062 的口裂线上
++  const SN0 = 0.025, SN1 = 0.215
++  const snoutY = (t: number) => -0.012 - 0.024 * t
++  const snoutRV = (t: number) => (0.05 - 0.024 * t) * (1 - 0.15 * sstep(0.85, 1, t))
++  const snoutRZ = (t: number) => 0.05 - 0.026 * t * t - 0.004 * t
++  {
++    const g = new THREE.SphereGeometry(1, 24, 18)
++    const pa = g.attributes.position as THREE.BufferAttribute, col: number[] = []
++    const d = new THREE.Vector3()
++    for (let i = 0; i < pa.count; i++) {
++      d.fromBufferAttribute(pa, i).normalize()
++      const { p, dark } = carve(d)
++      pa.setXYZ(i, p.x, p.y, p.z)
++      const c = 0.92 - dark * 0.45
++      col.push(c, c, c)
++    }
++    g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); g.computeVertexNormals()
++    const snout = sweep([0, 0.33, 0.66, 1].map((t) => V(SN0 + (SN1 - SN0) * t, snoutY(t), 0)), (t, d, cs, sn) => {
++      const rz = snoutRZ(t), rv = snoutRV(t)
++      const bridge = d.y > 0.6 ? 0.004 * Math.sin(t * Math.PI) : 0 // 鼻梁
++      const flat = d.y < -0.5 ? 0.82 : 1 // 平直下缘
++      return rz * ell(cs, sn, rv / rz, 1) * flat * (t > 0.92 ? Math.sqrt(Math.max(0.05, 1 - (t - 0.92) / 0.08 * 0.75)) : 1) + bridge
++    }, { radial: 14, seg: 14, vRep: 1, shade: (t, d) => (d.y < -0.4 ? 0.78 : 0.9) - 0.08 * sstep(0.7, 1, t) + (d.y > 0.7 ? 0.04 : 0) })
++    const nose = sweep([V(SN1 - 0.012, snoutY(1) + 0.012, 0), V(SN1 + 0.008, snoutY(1) + 0.006, 0)], (t, _d, cs, sn) => 0.019 * cap(t, 0.35) * ell(cs, sn, 0.75, 1.15), { radial: 10, seg: 5, shade: () => 0.22 })
++    head.add(new THREE.Mesh(merge([g, snout, nose]), skin))
++    const eyes = new THREE.Mesh(merge(sockets.map((s) => { const q = carve(s).p.multiplyScalar(0.93); return new THREE.SphereGeometry(0.021, 10, 8).scale(0.55, 0.85, 1).translate(q.x, q.y, q.z) })), eyeM)
++    eyes.userData.face = 1; head.add(eyes)
++    // 上牙列：沿吻部的 U 形齿弓，前门齿短、犬齿最长、后排臼齿
++    const up: THREE.BufferGeometry[] = []
++    for (let i = 0; i < 17; i++) {
++      const u = i / 16 * 2 - 1, au = Math.abs(u)
++      const x = SN1 - 0.012 - au * au * 0.16, z = u * 0.034
++      const len = 0.016 + 0.02 * gauss(au, 0.3, 0.1) + 0.006 * (1 - au)
++      up.push(new THREE.ConeGeometry(0.0055, len, 5).rotateX(Math.PI).translate(x, -0.058 - len / 2, z))
++    }
++    const upper = new THREE.Mesh(merge(up), toothM); upper.userData.face = 1; head.add(upper)
++    const mouth = new THREE.Mesh(new THREE.SphereGeometry(1, 12, 8).scale(0.09, 0.012, 0.03).translate(0.12, -0.064, 0), mouthM); mouth.userData.face = 1; head.add(mouth)
++    // 犬耳：宽底三角，竖立略外撇
++    for (const z of [-1, 1]) {
++      const ear = new THREE.Mesh(sweep([V(0, 0, 0), V(-0.012, 0.055, z * 0.014), V(-0.03, 0.115, z * 0.026)], (t, _dd, cs, sn) => 0.05 * (1 - t) ** 0.85 * cap(t, 0.06) * ell(cs, sn, 0.22, 1), { radial: 8, seg: 8, shade: (t) => 0.72 + t * 0.18 }), skin)
++      ear.position.set(-0.025, 0.06, z * 0.052); ear.rotation.x = z * 0.3
++      head.add(ear)
++      if (z < 0) grp.userData.earL = ear; else grp.userData.earR = ear
++    }
++    // 下颌（可开合）：与吻部等长，下缘略弧
++    const jaw = new THREE.Group(); jaw.position.set(0.02, -0.066, 0); head.add(jaw)
++    jaw.add(new THREE.Mesh(sweep([V(-0.03, 0.004, 0), V(0.06, -0.008, 0), V(0.14, -0.006, 0), V(SN1 - 0.03, 0.002, 0)], (t, _dd, cs, sn) => {
++      const rz = 0.045 - 0.025 * t, rv = 0.026 - 0.012 * t
++      return rz * ell(cs, sn, rv / rz, 1) * cap(t, 0.08)
++    }, { radial: 12, seg: 12, shade: (t, d) => (d.y < 0 ? 0.76 : 0.88) + 0.06 * t }), skin))
++    const lo: THREE.BufferGeometry[] = []
++    for (let i = 0; i < 15; i++) {
++      const u = i / 14 * 2 - 1, au = Math.abs(u)
++      const x = SN1 - 0.04 - au * au * 0.15, z = u * 0.029
++      const len = 0.014 + 0.016 * gauss(au, 0.3, 0.1) + 0.004 * (1 - au)
++      lo.push(new THREE.ConeGeometry(0.005, len, 5).translate(x, 0.008 + len / 2, z))
++    }
++    const lower = new THREE.Mesh(merge(lo), toothM); lower.userData.face = 1; jaw.add(lower)
++    grp.userData.jaw = jaw
++    // 头发：低模头套壳，按雕刻后的颅骨外扩 13% 贴合；前额只留刘海，两侧直垂盖过脸颊，后脑沿颈背铺下（不穿进颈部）
++    {
++      const rows = 7, cols = 20, skull = 4
++      const hairG = shell(rows, cols, (i, j) => {
++        const th = (j / cols) * Math.PI * 2 - Math.PI
++        const c0 = Math.cos(th), s0 = Math.sin(th)
++        const f = sstep(0.3, 0.8, c0), b = sstep(0.1, 0.7, -c0)
++        const phiMin = (-6 * (1 - f - b) + 32 * b + 38 * f) * Math.PI / 180, phiMax = 80 * Math.PI / 180
++        const ii = Math.min(i, skull)
++        const phi = phiMax + (phiMin - phiMax) * (ii / skull)
++        const dir = V(Math.cos(phi) * c0, Math.sin(phi), Math.cos(phi) * s0)
++        const p = carve(dir).p.multiplyScalar(1.13).add(V(0, 0.004, 0))
++        if (i <= skull) return p
++        const step = (i - skull) / (rows - skull)
++        const len = (0.22 * (1 - f) + 0.025) * jit[j % cols]
++        const dd = V(-1.0 * b + c0 * 0.12 * (1 - b), -(1 - b) - 0.16 * b, s0 * 0.14 * (1 - b)).normalize()
++        return p.addScaledVector(dd, len * step)
++      }, (i, j) => [j / cols * 2, i <= skull ? (i / skull) * 0.45 : 0.45 + ((i - skull) / (rows - skull)) * 0.53], (i) => 0.8 + 0.2 * (1 - i / rows))
++      head.add(new THREE.Mesh(hairG, hair))
++    }
++  }
++  // ---------- 四肢：平滑肌肉段 + 长指/趾 + 弯爪 ----------
++  const legs: HoundRig['legs'] = []
++  const digits = (wrist: THREE.Vector3, front: boolean) => {
++    const skinG: THREE.BufferGeometry[] = [], clawG: THREE.BufferGeometry[] = []
++    const palmEnd = wrist.clone().add(V(front ? 0.075 : 0.13, -0.035, 0))
++    skinG.push(sweep([wrist, wrist.clone().lerp(palmEnd, 0.5).add(V(0, 0.004, 0)), palmEnd], (t, _d, cs, sn) => (front ? 0.03 : 0.034) * (1 - 0.25 * t) * (t < 0.5 ? 1 : cap(t, 0.15)) * ell(cs, sn, 0.45, 1), { radial: 10, seg: 8, shade: () => 0.85 }))
++    for (let i = 0; i < 4; i++) {
++      const z = (i - 1.5) * (front ? 0.017 : 0.019), L = (front ? 0.085 : 0.055) * (1 - Math.abs(i - 1.5) * 0.12)
++      const a = palmEnd.clone().add(V(-0.01, 0, z)), b = a.clone().add(V(L * 0.6, 0.004, z * 0.35)), c = a.clone().add(V(L, -0.012, z * 0.6))
++      skinG.push(sweep([a, b, c], (t, _d, cs, sn) => 0.0085 * (1 - 0.3 * t) * (1 + 0.25 * gauss(t, 0.5, 0.08)) * cap(t, 0.12) * ell(cs, sn, 0.85, 1), { radial: 6, seg: 6, shade: (t) => 0.8 + 0.1 * Math.cos(t * 9) }))
++      const ce = c.clone().add(V(front ? 0.05 : 0.035, -0.008, z * 0.2)), cm = c.clone().lerp(ce, 0.5).add(V(0, 0.01, 0))
++      clawG.push(sweep([c.clone().add(V(-0.006, 0, 0)), cm, ce.add(V(0, -0.018, 0))], (t, _d, cs, sn) => 0.006 * (1 - t) ** 1.2 * ell(cs, sn, 1, 0.7), { radial: 6, seg: 6, shade: (t) => 0.7 + t * 0.6 }))
++    }
++    return { skinG, clawG }
++  }
++  const limb = (front: boolean, side: number) => {
++    const hip = new THREE.Group()
++    hip.position.set(front ? 0.33 : -0.42, front ? 0.02 : 0.04, side * (front ? 0.12 : 0.105))
++    body.add(hip)
++    const L1 = front ? 0.34 : 0.36, L2 = front ? 0.3 : 0.38
++    const a1 = front ? -0.25 : 0.45
++    const p1 = V(Math.sin(a1) * L1, -Math.cos(a1) * L1, side * 0.02)
++    const up = front
++      ? limbSeg([V(0, 0.03, 0), V(p1.x * 0.5 + 0.01, p1.y * 0.5, p1.z * 0.5), p1.clone().add(V(0, -0.02, 0))], 0.05, 0.03, 0.35, 0.28, 0.85)
++      : limbSeg([V(0.02, 0.04, 0), V(p1.x * 0.5 + 0.03, p1.y * 0.5, p1.z * 0.5), p1.clone().add(V(-0.01, -0.02, 0))], 0.078, 0.038, 0.3, 0.3, 0.8)
++    // 肘/膝：骨突关节块，填平上下段之间的缝
++    const jr = front ? 0.036 : 0.046
++    const joint = new THREE.SphereGeometry(jr, 10, 8).scale(1, 1.15, 0.9).translate(p1.x, p1.y - 0.005, p1.z)
++    joint.setAttribute('color', new THREE.Float32BufferAttribute(new Array(joint.attributes.position.count * 3).fill(0.95), 3))
++    hip.add(new THREE.Mesh(merge([up, joint]), skin))
++    const knee = new THREE.Group(); knee.position.copy(p1); hip.add(knee)
++    const a2 = front ? 0.3 : -0.6
++    const p2 = V(Math.sin(a2) * L2, -Math.cos(a2) * L2, 0)
++    const lo = front
++      ? limbSeg([V(0, 0.015, 0), p2.clone().multiplyScalar(0.5).add(V(-0.008, 0, 0)), p2], 0.034, 0.022, 0.3, 0.25, 0.85, false)
++      : limbSeg([V(0, 0.015, 0), p2.clone().multiplyScalar(0.5).add(V(0.01, 0, 0)), p2], 0.042, 0.026, 0.35, 0.22, 0.8, false)
++    const { skinG, clawG } = digits(p2.clone().add(V(0, -0.005, 0)), front)
++    knee.add(new THREE.Mesh(merge([lo, ...skinG]), skin))
++    knee.add(new THREE.Mesh(merge(clawG), claw))
++    legs.push({ hip, knee, front, side })
++  }
++  limb(true, -1); limb(true, 1); limb(false, -1); limb(false, 1)
++  const rig: HoundRig = { body, head, jaw: grp.userData.jaw, tail, legs, earL: grp.userData.earL, earR: grp.userData.earR }
++  grp.userData.houndRig = rig
++  grp.userData.houndNeutral = neutral
++  return grp
++}
++
++export function animateHound(grp: THREE.Group, e: Entity, time: number, gz: number) {
++  const r = grp.userData.houndRig as HoundRig | undefined
++  if (!r) return
++  const s = e.hd
++  const t = time + e.id * 0.9
++  const crouch = s?.crouch ?? 0, howl = s?.howlPose ?? 0, sit = s?.sit ?? 0, jaw = s?.jaw ?? 0
++  const moving = e.state !== 'stunned' && (e.state === 'chase' || e.state === 'wander' || e.state === 'investigate')
++  const fast = e.state === 'chase' && s?.phase === 'charge'
++  const g = e.animT * (fast ? 5.2 : 6.5)
++  const amp = moving ? (fast ? 0.75 : 0.42) : 0.06
++  // 对角步态：左前+右后同相
++  for (const L of r.legs) {
++    const ph = (L.front ? (L.side < 0 ? 0 : Math.PI) : (L.side < 0 ? Math.PI : 0)) + (fast && !L.front ? 0.6 : 0) // 冲锋时近似跳跃步（后肢略滞后）
++    const sw = Math.sin(g + ph) * amp
++    L.hip.rotation.z = sw
++    L.knee.rotation.z = (L.front ? -1 : 1) * Math.max(0, Math.cos(g + ph)) * amp * 0.9
++    // 坐姿：后腿折叠
++    if (!L.front && sit > 0.01) { L.hip.rotation.z = sw * (1 - sit) + sit * 1.2; L.knee.rotation.z = sit * -1.9 }
++    if (crouch > 0.01) L.knee.rotation.z += (L.front ? -0.6 : 0.7) * crouch
++  }
++  // 躯干：伏低 / 坐下后倾 / 跑动起伏
++  r.body.position.y = 0.66 - crouch * 0.07 - sit * 0.12 + Math.abs(Math.sin(g)) * amp * 0.05
++  r.body.rotation.z = sit * 0.42 + (fast ? Math.sin(g * 2) * 0.05 : 0) - crouch * 0.05
++  grp.position.y = gz
++  // 头：嚎叫仰头 / 伏低时压低 / 闲时转动张望
++  r.head.rotation.z = howl * 1.25 - crouch * 0.35 - sit * 0.25 + (fast ? -0.15 : 0)
++  r.head.rotation.y = moving || howl > 0.1 ? 0 : Math.sin(t * 0.5) * 0.5
++  r.head.rotation.x = (s?.phase === 'watch' || s?.phase === 'sit') ? Math.sin(t * 0.7) * 0.25 : 0 // 歪头打量
++  r.jaw.rotation.z = -jaw * 0.55 - Math.max(0, Math.sin(t * 9)) * 0.08 * (fast ? 1 : 0)
++  // 耳：伏低时贴后，中立/警觉时竖起
++  const earBack = crouch * 0.9
++  r.earL.rotation.z = 0.1 + earBack; r.earR.rotation.z = 0.1 + earBack
++  // 尾：中立摇尾、伏低夹尾、冲锋拖直
++  r.tail.rotation.y = (s?.wag ?? 0) > 0 ? Math.sin(t * 7) * 0.45 : Math.sin(t * 1.3) * 0.08
++  r.tail.rotation.z = -crouch * 0.5 + (fast ? 0.3 : 0) + sit * -0.3
++}
+diff --git a/app/src/game/renderer/renderer.ts b/app/src/game/renderer/renderer.ts
+index db3451d..25227d2 100644
+--- a/app/src/game/renderer/renderer.ts
++++ b/app/src/game/renderer/renderer.ts
+@@ -77,6 +77,7 @@ import { WallOcclusion } from './occlusion'
+ import { l5StairWallDirection } from '../world/l5Topology'
+ import { L5NestLighting } from './l5NestLighting'
+ import { animateSmiler } from './smilerMesh'
++import { animateHound } from './houndMesh'
+ 
+ function disposeWorldGeometry(object: THREE.Object3D): void {
+   const instanced = object as THREE.InstancedMesh
+@@ -3231,13 +3232,13 @@ export class Renderer3D {
+       if (distance > (e.def.mothForm==='larva'?12:reach)) { if (grp) grp.visible = false; continue }
+       // v53：L3 高智能实体建模变体（无面灵错位器官/石器、水豚尸鼠；seed=实体 id 保证重建一致）；
+       // 尸鼠形态按层级固定：L2 灰白廊道种群 / L3 水豚 / 其余深褐（v53，替代原随机二选一）
+-      const eOpts = (e.def.l3face || e.def.tool || e.def.capybara || e.def.type === 'corpserat' || e.def.type === 'arachnid' || e.def.type === 'deathmoth' || e.def.type === 'smiler')
++      const eOpts = (e.def.l3face || e.def.tool || e.def.capybara || e.def.type === 'corpserat' || e.def.type === 'arachnid' || e.def.type === 'deathmoth' || e.def.type === 'smiler' || e.def.type === 'hound')
+         ? {
+           l3face: e.def.l3face, tool: e.def.tool, capybara: e.def.capybara, mothForm: e.def.mothForm,
+           ratMorph: (engine.levelDef.id === 2 ? 'gray' : engine.levelDef.id === 5 ? 'hotel' : 'brown') as 'gray' | 'brown' | 'hotel',
+           seed: e.id, ceilingCrawler: e.def.ceilingCrawler,
+           arachnidMorph: e.def.arachnidMorph, arachnidBreed: e.def.arachnidBreed, herbivore: e.def.herbivore,
+-          smilerKind: e.sm?.kind,
++          smilerKind: e.sm?.kind, houndNeutral: !!e.hd?.neutral,
+         } : undefined // v60：L8 洞顶尸鼠与蛛形纲生态变体随实例固定
+       if (!grp) {
+         if(engine.levelDef.id===5&&entityBuilds>0&&(entityBuilds>=2||performance.now()>entityBuildDeadline))continue
+@@ -3263,7 +3264,8 @@ export class Renderer3D {
+       }
+       // v51：人制品售货机活化——def 切换（vendingmachine→vmad）时重建模型（含骷髅手腿）
+       if (grp.userData.entType !== e.def.type || (e.def.type === 'deathmoth' && grp.userData.mothForm !== (e.def.mothForm ?? 'male'))
+-        || (e.def.type === 'smiler' && e.sm && grp.userData.smilerKind !== e.sm.kind)) { // v61：笑魇变种在首个 AI tick 决定
++        || (e.def.type === 'smiler' && e.sm && grp.userData.smilerKind !== e.sm.kind)
++        || (e.def.type === 'hound' && e.hd && grp.userData.houndNeutral !== e.hd.neutral)) { // v61：笑魇变种在首个 AI tick 决定
+         this.scene.remove(grp)
+         this.disposeItemModel(grp)
+         grp = buildEntityMesh(e.def.type, eOpts)
+@@ -3331,7 +3333,7 @@ export class Renderer3D {
+       }
+       if (parts) {
+         // 四肢摆动（行走循环）：双足左右交替；猎犬四足对角步态；v58：小小走专属泳姿（下方分支）
+-        if (et === 'hound') {
++        if (et === 'hound' && parts.legL) { // v62：新猎犬模型由 animateHound 驱动，旧部件不存在
+           const g2 = e.animT * 7 // 猎犬步频更快
+           parts.legL!.rotation.z = Math.sin(g2) * gaitAmp * 0.9 // 后左 + 前右
+           parts.armR!.rotation.z = Math.sin(g2) * gaitAmp * 0.9
+@@ -3710,7 +3712,8 @@ export class Renderer3D {
+       if (lunging && et !== 'thething' && et !== 'deathmoth') grp.scale.setScalar(esc * 1.14)
+       if (e.stunT > 0) grp.rotation.z = Math.sin(this.time * 40) * 0.1
+       else grp.rotation.z = 0
+-      if (et === 'smiler' && !e.dead) animateSmiler(grp, e, this.time, gz) // v61：笑魇黑火/咧嘴/隐现
++      if (et === 'smiler' && !e.dead) animateSmiler(grp, e, this.time, gz)
++      if (et === 'hound' && !e.dead) animateHound(grp, e, this.time, gz) // v62 // v61：笑魇黑火/咧嘴/隐现
+       // ---------- 死亡动画（按实体差异化）----------
+       if (e.dead) {
+         const k = Math.max(0, e.deathT) / 1.4 // 1 → 0
+diff --git a/app/src/proto/houndProto.ts b/app/src/proto/houndProto.ts
+new file mode 100644
+index 0000000..438aa9d
+--- /dev/null
++++ b/app/src/proto/houndProto.ts
+@@ -0,0 +1,39 @@
++// 原型预览页：猎犬重制（?mode=poses | close）
++import * as THREE from 'three'
++import { buildEntityMesh } from '../game/renderer/entitiesMesh'
++import { animateHound } from '../game/renderer/houndMesh'
++const mode = new URLSearchParams(location.search).get('mode') ?? 'poses'
++const W = innerWidth, H = innerHeight
++const renderer = new THREE.WebGLRenderer({ antialias: true }); renderer.setSize(W, H); renderer.outputColorSpace = THREE.SRGBColorSpace
++document.body.appendChild(renderer.domElement)
++const scene = new THREE.Scene(); scene.background = new THREE.Color('#5e5530'); scene.fog = new THREE.Fog(scene.background as THREE.Color, 8, 30)
++const fl = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.MeshLambertMaterial({ color: '#6e5f36' })); fl.rotation.x = -Math.PI / 2; scene.add(fl)
++const wl = new THREE.Mesh(new THREE.PlaneGeometry(40, 6), new THREE.MeshLambertMaterial({ color: '#b8aa62' })); wl.position.set(0, 3, -2.5); scene.add(wl)
++scene.add(new THREE.HemisphereLight('#fff2c0', '#3a321a', 1.1)); const sun = new THREE.DirectionalLight('#fff3c8', 1.3); sun.position.set(3, 5, 4); scene.add(sun)
++const cam = new THREE.PerspectiveCamera(34, W / H, 0.1, 60)
++const lab = document.getElementById('lab')!
++const label = (x: number, html: string) => { const p = new THREE.Vector3(x, 0, 0).project(cam); lab.insertAdjacentHTML('beforeend', `<div class="l" style="left:${(p.x * 0.5 + 0.5) * W}px;top:${H - 70}px">${html}</div>`) }
++const pose = (neutral: boolean, phase: string, st: string, hd: any, x: number, z: number, rotY: number, animT = 0.6) => {
++  const g = buildEntityMesh('hound', { houndNeutral: neutral, seed: 2 })
++  g.position.set(x, 0, z); g.rotation.y = rotY; scene.add(g)
++  const e: any = { id: 1, state: st, animT, hd: { neutral, phase, crouch: 0, howlPose: 0, sit: 0, jaw: 0, wag: 0, ...hd } }
++  animateHound(g, e, 1.7, 0); g.position.x = x; g.position.z = z
++  let c = 0; g.traverse((m: any) => { if (m.isMesh) c++ }); return c
++}
++if (mode === 'side') {
++  cam.position.set(0.1, 0.85, 2.3); cam.lookAt(0.05, 0.58, 0)
++  pose(false, 'stalk', 'wander', { crouch: 0.2 }, 0, 0, 0, 0.5)
++} else if (mode === 'close') {
++  cam.position.set(0.9, 0.95, 1.9); cam.lookAt(0.45, 0.68, 0)
++  pose(false, 'charge', 'chase', { jaw: 0.7 }, 0, 0, -0.55, 0.2)
++} else {
++  cam.position.set(0, 2.2, 13); cam.lookAt(0, 0.55, 0)
++  const items: [boolean, string, string, any, string, number][] = [
++    [false, 'stalk', 'chase', { crouch: 0.45 }, '潜行逼近', 0.7], [false, 'charge', 'chase', { jaw: 0.6 }, '冲锋', 0.35],
++    [false, 'howl', 'chase', { howlPose: 1, jaw: 1 }, '仰头嚎叫', 0], [false, 'cower', 'stunned', { crouch: 1, jaw: 0.25 }, '被直视：伏低后退', 0],
++    [true, 'sit', 'wander', { sit: 1, wag: 1 }, 'L11 中立：坐下观察', 0]]
++  let calls = 0
++  items.forEach(([n, ph, st, hd, name, aT], i) => { const x = (i - 2) * 2.6; calls = pose(n, ph, st, hd, x - 0.35, 0, -0.5, aT); label(x, name) })
++  lab.insertAdjacentHTML('beforeend', `<div class="l" style="left:${W / 2}px;top:14px"><span class="s">单只 ${calls} 次绘制</span></div>`)
++}
++cam.updateMatrixWorld(); renderer.render(scene, cam); (window as any).__ready = true

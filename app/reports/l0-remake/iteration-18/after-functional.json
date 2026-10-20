@@ -1,0 +1,71 @@
+{
+  "checks": [
+    "Manila has four physical doors",
+    "closed door blocks movement",
+    "crosshair selects the corresponding door",
+    "opening door releases its collision",
+    "replacement model preserves 1 animated pivots for hoteldoor",
+    "replacement hoteldoor visibly opens through production animation",
+    "open door can be selected while in its doorway",
+    "closing inside doorway pushes player clear of the actual jambs",
+    "closed door blocks movement",
+    "crosshair selects the corresponding door",
+    "opening door releases its collision",
+    "replacement model preserves 1 animated pivots for hoteldoor",
+    "replacement hoteldoor visibly opens through production animation",
+    "open door can be selected while in its doorway",
+    "closing inside doorway pushes player clear of the actual jambs",
+    "closed door blocks movement",
+    "crosshair selects the corresponding door",
+    "opening door releases its collision",
+    "replacement model preserves 1 animated pivots for hoteldoor",
+    "replacement hoteldoor visibly opens through production animation",
+    "open door can be selected while in its doorway",
+    "closing inside doorway pushes player clear of the actual jambs",
+    "closed door blocks movement",
+    "crosshair selects the corresponding door",
+    "opening door releases its collision",
+    "replacement model preserves 1 animated pivots for hoteldoor",
+    "replacement hoteldoor visibly opens through production animation",
+    "open door can be selected while in its doorway",
+    "closing inside doorway pushes player clear of the actual jambs",
+    "cabinet selectable below tabletop",
+    "cabinet search starts through ordinary interaction",
+    "cabinet contains the four fixed supplies",
+    "replacement model preserves 2 animated pivots for dresser",
+    "replacement dresser visibly opens through production animation",
+    "cabinet supply can be taken",
+    "partial cabinet loot survives rebuild",
+    "Manila wall exit still exists",
+    "opaque flickering wall retains ordinary exit targeting",
+    "opaque flickering wall retains exit transition",
+    "an unobserved connected revision is available",
+    "live prepared revision commits geometry and collision atomically",
+    "reference red room belongs to a physical enclosure",
+    "red closure GPU preparation completes",
+    "red closure GPU preparation completes",
+    "turning away eventually seals every opening",
+    "sealing neither replaces the world nor teleports the player",
+    "all sealed openings have solid collision"
+  ],
+  "revision": {
+    "key": "-1,-2",
+    "frames": 211
+  },
+  "red": {
+    "gates": 30,
+    "swaps": [
+      {
+        "frames": 412,
+        "affected": 12,
+        "closed": 28
+      },
+      {
+        "frames": 146,
+        "affected": 4,
+        "closed": 30
+      }
+    ]
+  },
+  "limits": "Single-player production interaction, observation-driven enclosure and atomic GPU/collision swaps."
+}

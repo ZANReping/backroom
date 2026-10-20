@@ -40,7 +40,7 @@ export default function MegContacts({ engine, codex, faction = 'meg' }: { engine
             const chat = loadChat(npc.id)
             return (
               <article className="meg-contact" key={npc.id}>
-                <NpcPortraitImage loading="lazy" avatar={npcAvatar(npc)} npcId={npc.id} npcDef={npc} alt={`${npc.name} 的证件照`} width={64} height={93} />
+                <NpcPortraitImage loading="lazy" avatar={npcAvatar(npc)} npcId={npc.id} npcDef={npc} framing="identity" alt={`${npc.name} 的证件照`} width={64} height={93} />
                 <div className="meg-contact-copy">
                   <div className="meg-contact-heading">
                     <strong>{npc.name}</strong><span className="meg-muted">{npc.role}</span>

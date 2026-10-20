@@ -1,0 +1,69 @@
+{
+  "commands": [
+    {
+      "command": "npm run check:clumps",
+      "passed": true
+    },
+    {
+      "command": "npm run check:clump-integration",
+      "passed": true
+    },
+    {
+      "command": "npm run check:l3",
+      "passed": true
+    },
+    {
+      "command": "npm run check:skinstealers",
+      "passed": true
+    },
+    {
+      "command": "npm run check:hounds",
+      "passed": true
+    },
+    {
+      "command": "npm run check:dullers",
+      "passed": true
+    },
+    {
+      "command": "npm run check:smilers",
+      "passed": true
+    },
+    {
+      "command": "npm run check:retro-hands",
+      "passed": true
+    },
+    {
+      "command": "npm run check:faceling-skinstealer-models",
+      "passed": true
+    },
+    {
+      "command": "npm run check:model-warmup",
+      "passed": true
+    },
+    {
+      "command": "npm run verify:clump",
+      "passed": true
+    },
+    {
+      "command": "npm run build",
+      "passed": true
+    }
+  ],
+  "scope": "Single-player app only",
+  "browser": "Chrome --headless=new, isolated clump-qa profile, RTX 4060 Laptop GPU",
+  "cleanup": {
+    "stoppedServerPids": [
+      40728,
+      32132
+    ],
+    "clean": true,
+    "remainingPorts": [],
+    "remainingBrowsers": []
+  },
+  "notVerified": [
+    "Android hardware",
+    "large-population endurance",
+    "subjective audio listening",
+    "long-term pursuit tuning"
+  ]
+}

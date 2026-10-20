@@ -1,0 +1,38 @@
+{
+  "checks": [
+    "preload option replaced by seed input",
+    "invalid seed rejected",
+    "decimal seed stored in displayed format",
+    "original map exposes reveal and no separate developer map",
+    "big map opens at full available size",
+    "original map legend lists L0 regions",
+    "map preview does not spawn or explore the world",
+    "drag does not teleport",
+    "big map size stays fixed after dragging",
+    "right click safely teleports",
+    "minimap has no legend below it",
+    "world panel disables the shared reveal switch",
+    "world panel reveals without writing exploration",
+    "original map reflects the world panel switch",
+    "arch map target reachable",
+    "minimap has no legend below it"
+  ],
+  "mapDraw": [
+    {
+      "name": "mini",
+      "median": 0.6000000014901161,
+      "p95": 0.7000000029802322,
+      "samples": 100,
+      "cadence": "one redraw per RAF after 20 warmup frames"
+    },
+    {
+      "name": "large",
+      "median": 1.300000000745058,
+      "p95": 1.7000000029802322,
+      "samples": 100,
+      "cadence": "one redraw per RAF after 20 warmup frames"
+    }
+  ],
+  "pass": true,
+  "errors": []
+}

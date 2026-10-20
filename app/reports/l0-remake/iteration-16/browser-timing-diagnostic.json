@@ -1,0 +1,1 @@
+{"emptyRenderMedianMs":38.2,"emptyRenderP95Ms":38.4,"method":"Replace isolated verifier renderer with no-op for 140 requestAnimationFrame callbacks; discard first 20; restore renderer in finally.","conclusion":"The 38ms timing floor persists without drawing. browser-throttled files are retained as environment diagnostics, not valid game benchmark results."}

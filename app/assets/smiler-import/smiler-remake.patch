@@ -1,0 +1,1387 @@
+diff --git a/app/SMILER-REMAKE.md b/app/SMILER-REMAKE.md
+new file mode 100644
+index 0000000..ba3b6f3
+--- /dev/null
++++ b/app/SMILER-REMAKE.md
+@@ -0,0 +1,47 @@
++# 笑魇（Entity 3）重制 · v61
++
++只改单机逻辑与渲染；不改存档格式、联机协议、生成表。所有变种仍是 `type: 'smiler'`，变种与 AI 状态只存于实体运行时字段 `e.sm`。
++
++## 文件
++| 文件 | 内容 |
++| --- | --- |
++| `src/game/entities/smilers.ts` | 5 个变种的数值、各层级权重、运行时状态类型 |
++| `src/game/engine/smilerAI.ts` | 专属状态机（取代 entityAI 中旧 lightHunter 分支） |
++| `src/game/renderer/smilerMesh.ts` | 新模型（黑火着色器、合并齿列、咧嘴/隐现动画） |
++| `src/game/engine/entityAI.ts` | 钩子：`beginSmilerFrame` / `updateSmiler`（labeled block 跳过通用分支，碰撞分离照常）/ `flushSmilerSpawns` / `noiseEvent` 转交 `smilerHear` |
++| `src/game/renderer/entitiesMesh.ts` | `smiler` 交给 `buildSmilerMesh`，旧方块模型移除 |
++| `src/game/renderer/renderer.ts` | 传入变种、变种确定后重建模型、每帧 `animateSmiler` |
++| `src/game/core/audio.ts` | `smilerGiggle(vol, pitch)` 程序化咯咯笑 |
++| `src/game/entities/special.ts` | 图鉴文案更新 |
++| `scripts/check-smilers.ts` | 行为验收（模拟引擎） |
++| `proto-smiler.html`、`src/proto/smilerProto.ts` | 独立预览页（`?mode=lineup|grin|dark`），不进正式入口 |
++
++## 机制
++- **趋光**：手电亮时，视野内（sight）或光晕半径内（lightPull，可隔转角）的笑魇会察觉并逼近；关灯后只凭光锁定的个体约 1.2s 内失去目标。
++- **对峙**：玩家直视（视线锥 ±0.4rad）且不奔跑 → 停下。黑暗中持续对视 3.5s → 沉回黑暗；亮灯时只会被光牵着蠕近，停在 2.2m。
++- **恐慌**：已察觉且 8m 内奔跑、9m 内巨响、攻击它、对峙中移开视线 → 扑击：0.6s 约 8m/s 的弹射扑跃，之后 1.6 倍速追猎（快于步行、慢于奔跑），持续 3.2s。
++- **诱饵**：10m 内的荧光棒（含飞行中的）会把它引开；到达后盯着咧嘴 6s 再咬碎（物品被移除）。玩家亮灯且贴脸 3m 内时，诱饵须比玩家更近才有效。
++- **群猎**：扑击会唤醒 12m 内同类及同群犬形。
++- **扼颈**：命中后减速 1.1s、体力 −25。
++- **受伤**：普通变种血量 < 35% 退回黑暗；其余情况被打即扑击。
++- **L3**：不受光照与目光约束（对峙无效）。
++- **停电**：L1 停电生成的个体仍随灯光恢复消散（`blackoutSpawn` 逻辑不变）。
++
++## 变种
++| 变种 | 血/速/伤 | 特点 | 应对 | 出现层级（权重） |
++| --- | --- | --- | --- | --- |
++| 笑魇 | 40 / 2.5 / 20 | 标准行为 | 关灯、对视、慢退、荧光棒 | L1 64–80%、L2 52%、L3 38%、L8 46% |
++| 幽影笑魇 | 26 / 3.6 / 17 | 环形眼、方齿；远处几乎不可见（4.5m 内或被照到才现形）；附近开手电的瞬间扑击；对视无效；1.6s 就咬碎荧光棒 | 在它附近别开灯 | L1 停电 22%、L2 16%、L3 14%、L8 12% |
++| 饥饿笑魇 | 30 / 1.95 / 15 | 高瘦、拖地长臂、牙齿打颤；循声锁定 10–12s；对视只稳得住 2.4s；会吃地上的食物 | 丢食物、别出声 | L1 14–20%、L2 24%、L3 8% |
++| 犬形笑魇 | 30 / 3.25 / 13 | 四足；2–3 只成群；绕到侧后方，从视线外扑；被盯住的那只后退 | 背靠墙、轮流盯 | L2 8%、L3 30%、L8 22% |
++| 巨笑魇 | 140 / 1.55 / 34 | 体型 ×1.65、长角、四眼、双排齿；对视无效；脚步震屏，踩碎荧光棒；被手电持续直射 1.3s → 踉跄 2.4s（冷却 7s） | 手电照眼后绕开 | L3 10%、L8 20% |
++
++## 模型与性能
++- 单只 10–21 次绘制、约 900–1600 面（旧版 37 次绘制）。齿列、火舌、口腔均合并为单个几何体。
++- 黑火：`MeshLambertMaterial.onBeforeCompile` 做沿法线的多频位移（保留雾效，program 按振幅缓存）。阴影深度材质不跟随位移，影响很小。
++- 动画量由 AI 给出：`sm.grin`（咧嘴）、`sm.glow`（眼齿亮度）、`sm.vis`（幽影隐现）。
++
++## 验收
++- `npx tsc -p tsconfig.app.json --noEmit` 通过；`npm run build` 通过（仅 chunk size 提示）。
++- `npx esbuild scripts/check-smilers.ts --bundle --platform=node --format=esm --outfile=.cache/check-smilers.mjs && node .cache/check-smilers.mjs`：22 项全部通过。
++- 未在真实关卡中实机游玩；寻路仍沿用 `stepEntity`（无 A*），复杂走廊里的包抄效果需实机调参。
+diff --git a/app/proto-smiler.html b/app/proto-smiler.html
+new file mode 100644
+index 0000000..62224d4
+--- /dev/null
++++ b/app/proto-smiler.html
+@@ -0,0 +1,5 @@
++<!doctype html>
++<html lang="zh-CN"><head><meta charset="UTF-8" /><title>笑魇重制预览</title>
++<style>html,body{margin:0;background:#000;overflow:hidden;font-family:'Noto Sans CJK SC',sans-serif}#lab{position:fixed;inset:0;pointer-events:none}
++.l{position:absolute;transform:translateX(-50%);color:#f5ecc8;font-size:17px;font-weight:700;text-shadow:0 1px 3px #000;white-space:nowrap;text-align:center}.s{font-size:12px;font-weight:400;color:#d8d0b0}</style></head>
++<body><div id="lab"></div><script type="module" src="/src/proto/smilerProto.ts"></script></body></html>
+diff --git a/app/scripts/check-smilers.ts b/app/scripts/check-smilers.ts
+new file mode 100644
+index 0000000..85b8388
+--- /dev/null
++++ b/app/scripts/check-smilers.ts
+@@ -0,0 +1,165 @@
++// v61：笑魇重制——行为机制无头验收（模拟引擎，空旷平面，无墙）。
++// 运行：npx esbuild scripts/check-smilers.ts --bundle --platform=node --format=esm --outfile=.cache/check-smilers.mjs && node .cache/check-smilers.mjs
++import { makeEntity, type Entity } from '../src/game/entities'
++import { beginSmilerFrame, flushSmilerSpawns, initSmiler, smilerHear, updateSmiler } from '../src/game/engine/smilerAI'
++import { SMILER_KINDS, pickSmilerKind, type SmilerKind } from '../src/game/entities/smilers'
++
++let fails = 0
++const ok = (c: boolean, m: string) => { console.log(`${c ? '✔' : '✘'} ${m}`); if (!c) fails++ }
++
++function world(levelId = 2) {
++  const msgs: string[] = []
++  const eng: any = {
++    levelDef: { id: levelId },
++    player: { x: 0, y: 0, z: 0, hp: 100, stamina: 100, sanity: 100, slowT: 0 },
++    map: { entities: [] as Entity[], items: [] as any[] },
++    projectiles: [] as any[],
++    input: { sprint: false },
++    dev: { invisible: false },
++    camShake: 0,
++    yaw: 0, // 玩家朝向（弧度，游戏 x/y 平面）
++    hurt: 0,
++    msg: (t: string) => msgs.push(t),
++    los: () => true,
++    lookingAt(e: Entity) { const a = Math.atan2(e.y - this.player.y, e.x - this.player.x); let d = Math.abs(a - this.yaw); if (d > Math.PI) d = 2 * Math.PI - d; return d < 0.4 },
++    viewAngle(x: number, y: number) { const a = Math.atan2(y - this.player.y, x - this.player.x); let d = Math.abs(a - this.yaw); if (d > Math.PI) d = 2 * Math.PI - d; return d },
++    entityWalkH: () => 0,
++    wanderTarget(e: Entity) { e.targetX = e.x + 1; e.targetY = e.y; e.stateT = 3 },
++    stepEntity(e: Entity, sp: number, dt: number) { const dx = e.targetX - e.x, dy = e.targetY - e.y, d = Math.hypot(dx, dy); if (d < 0.3) return true; const k = Math.min(d, sp * dt) / d; e.x += dx * k; e.y += dy * k; return false },
++    faceToward(e: Entity, x: number, y: number) { e.facing = Math.atan2(y - e.y, x - e.x) },
++    meleeZOk: () => true,
++    hurtPlayer(dmg: number) { this.hurt += dmg; this.player.hp -= dmg },
++  }
++  return { eng, msgs }
++}
++function spawn(eng: any, kind: SmilerKind, x: number, y: number) {
++  const e = makeEntity('smiler', x, y)
++  eng.map.entities.push(e)
++  initSmiler(eng, e, kind)
++  return e
++}
++function run(eng: any, secs: number, light: boolean, each?: (t: number) => void) {
++  const dt = 1 / 30
++  for (let t = 0; t < secs; t += dt) {
++    each?.(t)
++    beginSmilerFrame(eng, dt, light)
++    for (const e of eng.map.entities) { if (e.dead) continue; e.attackCd -= dt; e.stateT -= dt; if (e.stunT > 0) { e.stunT -= dt; continue } updateSmiler(eng, e, dt, Math.hypot(e.x - eng.player.x, e.y - eng.player.y), 1, eng.levelDef.id === 3) }
++    flushSmilerSpawns(eng)
++  }
++}
++
++// 1) 分布
++{
++  const c: Record<string, number> = {}
++  for (let i = 0; i < 4000; i++) { const k = pickSmilerKind(3, false); c[k] = (c[k] ?? 0) + 1 }
++  ok(Object.keys(c).length === 5, `L3 出现全部 5 种变种：${JSON.stringify(c)}`)
++  ok(pickSmilerKind(0, false) === 'common', '未配置层级只出普通笑魇')
++}
++// 2) 趋光：亮灯被引来，关灯不靠近
++{
++  const { eng } = world(2)
++  const e = spawn(eng, 'common', 9, 0)
++  eng.yaw = Math.PI // 背对
++  run(eng, 2, false)
++  ok(Math.hypot(e.x, e.y) > 8, `关灯：笑魇未靠近（距离 ${Math.hypot(e.x, e.y).toFixed(1)}）`)
++  run(eng, 2.5, true)
++  ok(e.sm!.aware > 0 && Math.hypot(e.x, e.y) < 7, `亮灯：笑魇察觉并逼近（距离 ${Math.hypot(e.x, e.y).toFixed(1)}，阶段 ${e.sm!.phase}）`)
++}
++// 3) 对峙：直视时停住；黑暗中对视会让它退去
++{
++  const { eng, msgs } = world(2)
++  const e = spawn(eng, 'common', 4, 0)
++  eng.yaw = 0 // 直视
++  run(eng, 1, true)
++  const d0 = Math.hypot(e.x, e.y)
++  ok(e.sm!.phase === 'standoff', `直视 → 对峙（${e.sm!.phase}）`)
++  run(eng, 4.5, false, (t) => { if (process.env.DBG && Math.abs(t % 0.5) < 0.034) console.log('S', t.toFixed(1), e.sm!.phase, e.x.toFixed(2), e.sm!.aware.toFixed(2), e.sm!.gaze.toFixed(2)) })
++  ok(e.sm!.phase === 'retreat' || e.sm!.phase === 'drift', `关灯继续对视 → 退回黑暗（${e.sm!.phase}）`)
++  ok(eng.hurt === 0 && d0 > 2, '对峙期间没有受到攻击')
++  ok(msgs.some((m) => m.includes('沉回黑暗')), '提示：它沉回黑暗')
++}
++// 4) 恐慌：近距离奔跑 → 扑击并命中扼颈
++{
++  const { eng } = world(2)
++  const e = spawn(eng, 'common', 4, 0)
++  eng.yaw = 0
++  run(eng, 0.5, true)
++  eng.input.sprint = true
++  run(eng, 0.4, true, () => { eng.player.x -= 0.2 }) // 6m/s 转身逃跑
++  ok(e.sm!.phase === 'pounce', `奔跑触发扑击（${e.sm!.phase}）`)
++  eng.input.sprint = false
++  run(eng, 2.5, true) // 体力耗尽停下
++  ok(eng.hurt > 0, `转身奔跑被扑中（伤害 ${eng.hurt}）`)
++  ok(eng.player.slowT > 0 || eng.player.stamina < 100, '扼颈：减速/体力被抽空')
++  void e
++}
++// 5) 移开视线：对峙中背过身会加速逼近
++{
++  const { eng } = world(2)
++  const e = spawn(eng, 'common', 5, 0)
++  eng.yaw = 0
++  run(eng, 1, true)
++  eng.yaw = Math.PI
++  run(eng, 0.2, true)
++  ok((e.sm!.brokeGaze ?? 0) > 0 && e.sm!.phase === 'stalk', `移开视线 → 加速逼近（${e.sm!.phase}）`)
++}
++// 6) 荧光棒诱饵：被引开并咬碎
++{
++  const { eng, msgs } = world(2)
++  const e = spawn(eng, 'common', 6, 0)
++  eng.yaw = Math.PI
++  eng.map.items.push({ id: 77, type: 'glowstick', x: 9, y: 4 })
++  run(eng, 12, false)
++  ok(!eng.map.items.some((i: any) => i.id === 77), '荧光棒被笑魇咬碎')
++  ok(msgs.some((m) => m.includes('咬碎了荧光棒')), '提示：咬碎荧光棒')
++  void e
++}
++// 7) 幽影笑魇：开手电瞬间扑击；远处几乎不可见
++{
++  const { eng } = world(1)
++  const e = spawn(eng, 'phantom', 6, 0)
++  eng.yaw = Math.PI
++  run(eng, 1.5, false)
++  ok(Math.hypot(e.x, e.y) > 4.5 && e.sm!.vis < 0.3, `幽影笑魇远处不可见（vis ${e.sm!.vis.toFixed(2)}）`)
++  run(eng, 0.1, true)
++  ok(e.sm!.phase === 'pounce', `开手电瞬间扑击（${e.sm!.phase}）`)
++}
++// 8) 饥饿笑魇：循声锁定；地上食物能拖住它
++{
++  const { eng } = world(2)
++  const e = spawn(eng, 'starved', 8, 0)
++  smilerHear(eng, e, 0, 0, 10, true)
++  ok(e.sm!.aware > 5, '听见奔跑声后长时间锁定')
++  eng.map.items.push({ id: 5, type: 'canned', x: 6, y: 2 })
++  run(eng, 13, false, (t) => { if (process.env.DBG && Math.abs(t % 1) < 0.034) console.log(t.toFixed(1), e.sm!.phase, e.x.toFixed(2), e.y.toFixed(2), e.sm!.aware.toFixed(1)) })
++  ok(!eng.map.items.some((i: any) => i.id === 5), '饥饿笑魇吃掉了地上的罐头')
++}
++// 9) 犬形：成群出现
++{
++  const { eng } = world(3)
++  spawn(eng, 'canid', 6, 0)
++  run(eng, 0.1, false)
++  const pack = eng.map.entities.filter((q: Entity) => q.sm?.kind === 'canid')
++  ok(pack.length >= 2 && new Set(pack.map((q: Entity) => q.sm!.packId)).size === 1, `犬形笑魇成群（${pack.length} 只，同一 packId）`)
++}
++// 10) 巨笑魇：手电持续直射 → 踉跄
++{
++  const { eng, msgs } = world(3)
++  const e = spawn(eng, 'great', 6, 0)
++  eng.yaw = 0
++  run(eng, 2.2, true)
++  ok(e.stunT > 0 || e.sm!.phase === 'stagger' || msgs.some((m) => m.includes('踉跄')), `巨笑魇被强光灼眼踉跄（${e.sm!.phase}）`)
++  ok(e.def.hp === SMILER_KINDS.great.hp && (e.def.scale ?? 1) > 1.5, '巨笑魇数值与体型')
++}
++// 11) 受伤过重 → 退缩
++{
++  const { eng } = world(2)
++  const e = spawn(eng, 'common', 3, 0)
++  run(eng, 0.2, true)
++  e.hp = 10
++  run(eng, 0.1, true)
++  ok(e.sm!.phase === 'retreat', `重伤后退回黑暗（${e.sm!.phase}）`)
++}
++
++if (fails) { console.error(`\n${fails} 项未通过`); process.exit(1) }
++console.log('\n笑魇行为验收全部通过')
+diff --git a/app/src/game/core/audio.ts b/app/src/game/core/audio.ts
+index 7b7bdd6..3bd952c 100644
+--- a/app/src/game/core/audio.ts
++++ b/app/src/game/core/audio.ts
+@@ -536,6 +536,39 @@ export class GameAudio {
+     }
+   }
+ 
++  /** v61：笑魇的咯咯笑——几声短促、带共振峰的气声，pitch 区分变种（巨笑魇低沉、幽影尖细） */
++  smilerGiggle(vol = 1, pitch = 1) {
++    if (!this.ctx || !this.sfx || vol <= 0.02) return
++    const t0 = this.ctx.currentTime
++    const pan = this.ctx.createStereoPanner()
++    pan.pan.value = Math.random() * 1.6 - 0.8
++    pan.connect(this.sfx)
++    const n = 3 + Math.floor(Math.random() * 3)
++    for (let i = 0; i < n; i++) {
++      const t = t0 + i * (0.11 + Math.random() * 0.05) / pitch
++      const src = this.noiseSrc()
++      const bp = this.ctx.createBiquadFilter()
++      bp.type = 'bandpass'; bp.Q.value = 6
++      bp.frequency.setValueAtTime((1100 + Math.random() * 300) * pitch, t)
++      bp.frequency.exponentialRampToValueAtTime(700 * pitch, t + 0.09)
++      const g = this.ctx.createGain()
++      g.gain.setValueAtTime(0.0001, t)
++      g.gain.exponentialRampToValueAtTime(0.06 * vol, t + 0.015)
++      g.gain.exponentialRampToValueAtTime(0.0008, t + 0.1)
++      src.connect(bp).connect(g).connect(pan)
++      src.start(t); src.stop(t + 0.11)
++      const o = this.ctx.createOscillator()
++      o.type = 'triangle'
++      o.frequency.setValueAtTime(330 * pitch * (1 + i * 0.04), t)
++      o.frequency.exponentialRampToValueAtTime(240 * pitch, t + 0.09)
++      const og = this.ctx.createGain()
++      og.gain.setValueAtTime(0.0001, t)
++      og.gain.exponentialRampToValueAtTime(0.025 * vol, t + 0.02)
++      og.gain.exponentialRampToValueAtTime(0.0005, t + 0.1)
++      o.connect(og).connect(pan); o.start(t); o.stop(t + 0.11)
++    }
++  }
++
+   whisper(vol = 1) {
+     if (!this.ctx || !this.sfx) return
+     const t = this.ctx.currentTime
+diff --git a/app/src/game/engine/entityAI.ts b/app/src/game/engine/entityAI.ts
+index 5fb12c9..290cdac 100644
+--- a/app/src/game/engine/entityAI.ts
++++ b/app/src/game/engine/entityAI.ts
+@@ -11,6 +11,7 @@ import { recordEntityEncounter, ENTITIES, type Entity } from '../entities'
+ import { chunkKey, CS } from '../world/infinite'
+ import { audio } from '../core/audio'
+ import type { Engine } from '../engine'
++import { beginSmilerFrame, flushSmilerSpawns, smilerHear, updateSmiler } from './smilerAI'
+ 
+ // v51：人制品售货机——看过背面后，玩家背对它（视线锥外且 10m 内）即活化追击；受到攻击也会活化
+ // （原 step 内联段，逐语句搬运；位于糖果计时器 pre 组与人制品/麻痹 post 组之间）
+@@ -64,6 +65,7 @@ export function noiseEvent(eng: Engine, x: number, y: number, radius: number, sp
+       }
+       continue
+     }
++    if (e.def.type === 'smiler') { smilerHear(eng, e, x, y, radius, sprint); continue } // v61：笑魇自有听觉
+     if (e.def.passive) continue // 被动实体（无面灵）不循声索敌——只有被攻击才反击
+     const d = Math.hypot(e.x - x, e.y - y)
+     // v57o：tiny 对水下/水面噪音极敏感——投掷物落水、爆炸与游泳声都能从更远处把它引开
+@@ -192,6 +194,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
+     return
+   }
+   updateMothDoors(eng)
++  beginSmilerFrame(eng, dt, lightOn)
+   for (const e of m.entities) {
+     // 死亡动画计时（倒地/消散后移除）
+     if (e.dead) { e.deathT -= dt; continue }
+@@ -386,6 +389,9 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
+       continue
+     }
+ 
++    // v61：笑魇（含变种）走专属状态机 smilerAI，跳过下方通用特殊行为与状态机；末尾的碰撞分离照常执行
++    generic: {
++    if (def.type === 'smiler') { updateSmiler(eng, e, dt, d, dmgMult, l3); break generic }
+     // —— 特殊行为 ——
+     // 笑魇：只在黑暗中逼近；手电照亮时后退
+     if (def.darkAmbusher && lightOn && d < 7 && eng.los(e.x, e.y, p.x, p.y)) {
+@@ -672,6 +678,8 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
+       }
+     }
+ 
++    } // generic
++
+     // 穿墙实体（钝人）：行动时发出刺耳的沙沙声，隔着墙也能听见
+     if (def.phases && (e.state === 'wander' || e.state === 'investigate' || e.state === 'chase') && d < 14) {
+       e.scrapeT = (e.scrapeT ?? Math.random() * 0.7) - dt
+@@ -706,6 +714,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
+       }
+     }
+   }
++  flushSmilerSpawns(eng)
+   m.entities = m.entities.filter((e) => !e.dead || e.deathT > 0)
+ }
+ export function wanderTarget(eng: Engine, e: Entity) {
+diff --git a/app/src/game/engine/smilerAI.ts b/app/src/game/engine/smilerAI.ts
+new file mode 100644
+index 0000000..dee7805
+--- /dev/null
++++ b/app/src/game/engine/smilerAI.ts
+@@ -0,0 +1,352 @@
++// v61：笑魇（Entity 3）专属 AI——取代 entityAI 中旧的 lightHunter 分支。
++// 核心机制（按 Wikidot 条目）：
++//  · 趋光：手电亮着就会被远处的笑魇察觉并引来；关灯后失去光源目标。
++//  · 对峙：盯住它（视线锥内）且不奔跑——它停下；黑暗中持续对视会让它沉回黑暗，亮灯时只会缓慢蠕近。
++//  · 恐慌：近距离奔跑、巨响、攻击它，或在对峙中移开视线，都会触发扑击。
++//  · 诱饵：抛出的荧光棒（饥饿笑魇还认地上的食物）会把它引开，它会盯着诱饵咧嘴，随后咬碎。
++//  · 群猎：一只扑击时会唤醒附近同类；犬形笑魇成群包抄，从你背后扑。
++//  · 扼颈：命中后减速并抽空体力。
++// 变种差异见 entities/smilers.ts。状态只存于 e.sm（不入存档/联机）。
++import { audio } from '../core/audio'
++import { ITEMS } from '../content/items'
++import { makeEntity, type Entity } from '../entities'
++import { SMILER_KINDS, pickSmilerKind, type SmilerKind, type SmilerPhase, type SmilerState } from '../entities/smilers'
++import type { Engine } from '../engine'
++
++interface Lure { key: string; x: number; y: number; landed: boolean; food: boolean; itemId?: number }
++const F = {
++  lightOn: false, prevLight: false, flashOnEdge: false,
++  px: 0, py: 0, speed: 0, panic: false, init: false,
++  lures: [] as Lure[],
++  spawns: [] as Entity[],
++  announced: new Set<SmilerKind>(),
++  packSeq: 1,
++}
++
++/** 每帧在实体循环前调用一次：缓存玩家光照/恐慌状态与诱饵列表 */
++export function beginSmilerFrame(eng: Engine, dt: number, lightOn: boolean) {
++  const p = eng.player, m = eng.map!
++  if (!F.init || dt <= 0) { F.px = p.x; F.py = p.y; F.init = true }
++  const sp = dt > 0 ? Math.hypot(p.x - F.px, p.y - F.py) / dt : 0
++  F.speed = F.speed * 0.7 + Math.min(12, sp) * 0.3
++  F.px = p.x; F.py = p.y
++  F.panic = eng.input.sprint && F.speed > 4.4
++  F.flashOnEdge = lightOn && !F.prevLight
++  F.prevLight = F.lightOn = lightOn
++  F.lures.length = 0
++  if (!m.entities.some((e) => e.def.type === 'smiler' && !e.dead)) return
++  for (const it of m.items) {
++    if (it.fake) continue
++    if (it.type === 'glowstick') F.lures.push({ key: `i${it.id}`, x: it.x, y: it.y, landed: true, food: false, itemId: it.id })
++    else if (ITEMS[it.type]?.use === 'eat') F.lures.push({ key: `i${it.id}`, x: it.x, y: it.y, landed: true, food: true, itemId: it.id })
++  }
++  for (const pr of eng.projectiles) if (pr.type === 'glowstick' && !pr.done) F.lures.push({ key: `p${pr.id}`, x: pr.x, y: pr.y, landed: false, food: false })
++}
++
++/** 实体循环后调用：把犬形笑魇的同群个体加入地图 */
++export function flushSmilerSpawns(eng: Engine) {
++  if (!F.spawns.length) return
++  eng.map!.entities.push(...F.spawns)
++  F.spawns.length = 0
++}
++
++export function initSmiler(eng: Engine, e: Entity, kind?: SmilerKind, packId = 0): SmilerState {
++  const k = kind ?? pickSmilerKind(eng.levelDef.id, !!e.blackoutSpawn)
++  const K = SMILER_KINDS[k]
++  e.def = { ...e.def, name: K.name, hp: K.hp, speed: K.speed, damage: K.damage, sight: K.sight, hearing: K.hearing, scale: K.scale === 1 ? undefined : K.scale }
++  e.hp = K.hp
++  const s: SmilerState = {
++    kind: k, phase: 'drift', t: 0, aware: 0, gaze: 0, glare: 0, glareCd: 0, lastHp: K.hp,
++    lureX: 0, lureY: 0, orbit: (e.id * 2.399) % (Math.PI * 2), packId, vis: k === 'phantom' ? 0 : 1, grin: 0.1, glow: 0.8,
++    giggleT: 2 + (e.id % 5),
++  }
++  e.sm = s
++  // 犬形：成群出现（2~3 只），同群共享 packId
++  if (k === 'canid' && packId === 0) {
++    s.packId = F.packSeq++
++    const m = eng.map!
++    const n = 1 + (Math.random() < 0.55 ? 1 : 0)
++    for (let i = 0; i < n; i++) {
++      for (let t = 0; t < 12; t++) {
++        const a = Math.random() * Math.PI * 2, r = 1.2 + Math.random() * 1.8
++        const x = e.x + Math.cos(a) * r, y = e.y + Math.sin(a) * r
++        if (eng.entityWalkH(m, Math.floor(x), Math.floor(y), 0) === null) continue
++        const c = makeEntity('smiler', x, y, e.z)
++        c.blackoutSpawn = e.blackoutSpawn
++        initSmiler(eng, c, 'canid', s.packId)
++        F.spawns.push(c)
++        break
++      }
++    }
++  }
++  return s
++}
++
++/** noiseEvent 钩子：笑魇记下声源（大声或奔跑声会在近距离触发扑击） */
++export function smilerHear(eng: Engine, e: Entity, x: number, y: number, radius: number, sprint: boolean) {
++  const s = e.sm ?? initSmiler(eng, e)
++  const K = SMILER_KINDS[s.kind]
++  const d0 = Math.hypot(e.x - x, e.y - y)
++  const effR = Math.max(radius, K.hearing * (sprint ? 1.5 : 1))
++  if (d0 >= effR) return
++  s.heardX = x; s.heardY = y; s.heardT = s.kind === 'starved' ? 12 : 5
++  s.heardLoud = radius >= 10 || sprint
++  if (s.kind === 'starved') s.aware = Math.max(s.aware, 8)
++}
++
++const setPhase = (s: SmilerState, ph: SmilerPhase) => { if (s.phase !== ph) { s.phase = ph; s.t = 0 } }
++
++export function updateSmiler(eng: Engine, e: Entity, dt: number, d: number, dmgMult: number, l3: boolean) {
++  const p = eng.player, m = eng.map!
++  const s = e.sm ?? initSmiler(eng, e)
++  const K = SMILER_KINDS[s.kind]
++  const def = e.def
++  s.t += dt; s.aware = Math.max(0, s.aware - dt); s.glareCd -= dt; s.giggleT -= dt
++  if (s.heardT !== undefined) { s.heardT -= dt; if (s.heardT <= 0) { s.heardT = undefined; s.heardLoud = false } }
++  const hurt = e.hp < s.lastHp
++  s.lastHp = e.hp
++
++  const near = d < 18
++  const los = near && eng.los(e.x, e.y, p.x, p.y)
++  const gazing = d < 10 && los && eng.lookingAt(e)
++  const lit = F.lightOn
++  const beamOnIt = lit && gazing && d < 11
++  const zOk = Math.abs(e.z - p.z) < 1.4
++
++  // ---------- 感知 ----------
++  let sensed = false
++  if (zOk) {
++    if (lit && los && d < K.sight + (beamOnIt ? 3 : 0)) sensed = true // 看见光源
++    if (lit && d < K.lightPull && (los || d < 5)) sensed = true // 被光晕吸引（隔着转角也能感到）
++    if (d < 1.8) sensed = true
++    if (l3 && los && d < K.sight) sensed = true // L3：高智能个体无视光照
++  }
++  if (sensed) s.aware = Math.max(s.aware, s.kind === 'starved' ? 10 : 3.5)
++  // 关灯：仅凭光源锁定的个体很快失去目标（L3/饥饿/听见声音除外）
++  if (!lit && !l3 && s.kind !== 'starved' && !s.heardT && d > 2.2 && s.aware > 1.2 && s.phase !== 'pounce' && s.phase !== 'standoff') s.aware = 1.2
++
++  const beginPounce = (why: string) => {
++    if (s.phase === 'pounce') return
++    setPhase(s, 'pounce'); s.aware = Math.max(s.aware, 6); s.gaze = 0
++    if (def.aggroStinger && d < 16) audio.aggro()
++    if (d < 14) audio.smilerGiggle(Math.max(0.25, 1 - d / 14), s.kind === 'great' ? 0.6 : s.kind === 'phantom' ? 1.5 : 1)
++    if (why && d < 12) eng.msg(why, 'damage')
++    // 群猎：唤醒附近同类
++    for (const q of m.entities) {
++      if (q === e || q.dead || q.def.type !== 'smiler' || !q.sm) continue
++      const qd = Math.hypot(q.x - e.x, q.y - e.y)
++      if (qd < 12 || (s.packId && q.sm.packId === s.packId)) {
++        q.sm.aware = Math.max(q.sm.aware, 6)
++        if (q.sm.phase === 'drift' || q.sm.phase === 'lure' || q.sm.phase === 'feed') setPhase(q.sm, 'stalk')
++      }
++    }
++  }
++
++  // 首次遭遇某变种：给出可读的提示
++  if (!F.announced.has(s.kind) && (sensed || (los && d < 8)) && (s.kind !== 'phantom' || s.vis > 0.5)) {
++    F.announced.add(s.kind)
++    eng.msg(K.blurb, 'system')
++  }
++
++  // ---------- 事件触发 ----------
++  if (hurt) {
++    if (s.kind === 'great') { s.aware = 8; if (d < 5) beginPounce('') }
++    else if (e.hp < K.hp * 0.35) { setPhase(s, 'retreat'); s.aware = 0; if (d < 12) eng.msg(`${K.name}的笑容碎裂了一瞬——它缩回黑暗里。`, 'system') }
++    else beginPounce('')
++  }
++  if (s.kind === 'phantom' && F.flashOnEdge && d < 9 && (los || d < 4) && zOk) beginPounce('手电亮起的瞬间，一对环形的眼睛冲你扑了过来！')
++  if (s.aware > 0 && d < 8 && F.panic && s.phase !== 'retreat' && s.phase !== 'stagger') beginPounce(s.phase === 'standoff' ? '你转身就跑——它不再忍耐。' : '')
++  if (s.aware > 0 && d < 9 && s.heardLoud && s.phase !== 'retreat') { s.heardLoud = false; beginPounce('') }
++
++  // 巨笑魇：持续强光灼眼 → 踉跄
++  if (s.kind === 'great') {
++    if (beamOnIt && s.glareCd <= 0) s.glare += dt
++    else s.glare = Math.max(0, s.glare - dt * 0.6)
++    if (s.glare > 1.3) {
++      s.glare = 0; s.glareCd = 7
++      e.stunT = 2.4
++      setPhase(s, 'stagger')
++      eng.msg('强光灌进那几只巨大的眼睛——巨笑魇抱头踉跄。', 'system')
++    }
++  }
++
++  // ---------- 诱饵 ----------
++  let lure: Lure | null = null
++  if (F.lures.length && s.phase !== 'pounce' && s.phase !== 'retreat') {
++    let best = 1e9
++    for (const L of F.lures) {
++      if (L.food && s.kind !== 'starved') continue
++      if (!L.food && s.kind === 'starved' && s.aware > 0) continue // 饥饿笑魇被声音/食物驱动，锁定后不理荧光棒
++      const ld = Math.hypot(L.x - e.x, L.y - e.y)
++      const reach = L.food ? 9 : s.kind === 'great' ? 5 : 10
++      if (ld > reach) continue
++      // 玩家近在眼前且光亮时，诱饵必须比玩家更近才有效
++      if (s.aware > 0 && lit && d < 3 && ld > d) continue
++      if (ld < best) { best = ld; lure = L }
++    }
++  }
++  if (lure && s.phase !== 'feed') { setPhase(s, 'lure'); s.lureKey = lure.key; s.lureX = lure.x; s.lureY = lure.y }
++
++  // ---------- 对峙 / 移开视线 ----------
++  const gazeWorks = K.gazeHold > 0 && !l3
++  if (s.aware > 0 && gazing && gazeWorks && d < 8 && !F.panic && (s.phase === 'stalk' || s.phase === 'standoff' || s.phase === 'flank')) {
++    if (s.kind === 'canid') { setPhase(s, 'retreat'); s.t = 2.6 } // 被盯住的那只退开（retreat 只持续 1.4s）
++    else { setPhase(s, 'standoff'); s.gaze += dt }
++  }
++  if (s.phase === 'standoff' && !gazing) {
++    if (d < 7 && s.aware > 0) { setPhase(s, 'stalk'); s.gaze = 0; s.brokeGaze = 1.6 } // 一移开视线就加速逼近
++    else setPhase(s, 'drift')
++  }
++  if (s.phase === 'standoff') {
++    if (K.gazeHold === Infinity) {
++      if (!lit && s.gaze > 3.5) { setPhase(s, 'retreat'); s.aware = 0; if (d < 12) eng.msg('它在你的注视下一点点沉回黑暗。', 'system') }
++    } else if (s.gaze > K.gazeHold) beginPounce(s.kind === 'starved' ? '饥饿压过了畏惧——它不再理会你的目光。' : '')
++  }
++  if (s.brokeGaze) s.brokeGaze = Math.max(0, s.brokeGaze - dt)
++
++  // ---------- 状态推进 ----------
++  if (s.aware > 0 && (s.phase === 'drift')) setPhase(s, s.kind === 'canid' ? 'flank' : 'stalk')
++  if (s.aware <= 0 && (s.phase === 'stalk' || s.phase === 'standoff' || s.phase === 'flank')) setPhase(s, 'drift')
++
++  let speed = 0, tx = e.x, ty = e.y
++  switch (s.phase) {
++    case 'drift': {
++      e.state = 'wander'
++      if (s.heardT && s.heardX !== undefined) { tx = s.heardX; ty = s.heardY!; speed = def.speed * 0.6 }
++      else {
++        if (e.stateT <= 0 || Math.hypot(e.targetX - e.x, e.targetY - e.y) < 0.4) eng.wanderTarget(e)
++        tx = e.targetX; ty = e.targetY; speed = def.speed * 0.38
++      }
++      break
++    }
++    case 'lure': {
++      e.state = 'investigate'
++      const L = F.lures.find((x) => x.key === s.lureKey)
++      if (!L) { setPhase(s, 'drift'); break }
++      tx = L.x; ty = L.y; speed = def.speed * 0.95
++      if (Math.hypot(L.x - e.x, L.y - e.y) < (s.kind === 'great' ? 1.4 : 0.75) && L.landed) setPhase(s, 'feed')
++      break
++    }
++    case 'feed': {
++      e.state = 'investigate'
++      const L = F.lures.find((x) => x.key === s.lureKey)
++      if (!L) { setPhase(s, 'drift'); break }
++      eng.faceToward(e, L.x, L.y, dt, 6)
++      const dur = L.food ? 4.5 : s.kind === 'common' ? 6 : s.kind === 'canid' ? 3 : s.kind === 'phantom' ? 1.6 : s.kind === 'great' ? 0.4 : 4
++      if (s.t > dur) {
++        const idx = m.items.findIndex((it) => it.id === L.itemId)
++        if (idx >= 0) m.items.splice(idx, 1)
++        if (d < 14) {
++          eng.msg(L.food ? `${K.name}把地上的食物连包装一起嚼碎了。` : `「咔嚓」——${K.name}咬碎了荧光棒，四下重归黑暗。`, 'system')
++          audio.smilerGiggle(Math.max(0.2, 1 - d / 14), 1.2)
++        }
++        setPhase(s, 'drift'); s.aware = Math.min(s.aware, 1)
++      }
++      break
++    }
++    case 'stalk': {
++      e.state = 'chase'
++      const seen = lit || l3 || d < 2.2 || s.kind === 'starved'
++      if (seen || !s.heardT) { tx = p.x; ty = p.y } else { tx = s.heardX!; ty = s.heardY! }
++      speed = def.speed * (s.brokeGaze ? 1.3 : 0.82)
++      break
++    }
++    case 'standoff': {
++      e.state = 'chase'
++      eng.faceToward(e, p.x, p.y, dt, 6)
++      // 亮灯：被光牵引着缓慢蠕近（停在 2.2m）；黑暗：原地不动
++      if (lit && d > 2.2) { tx = p.x; ty = p.y; speed = def.speed * 0.2 }
++      break
++    }
++    case 'flank': {
++      e.state = 'chase'
++      // 绕到玩家侧后方：目标角向玩家视线反方向偏移
++      const behind = eng.viewAngle(e.x, e.y) > 1.3
++      const a0 = Math.atan2(e.y - p.y, e.x - p.x)
++      s.orbit += dt * (behind ? 0.2 : 0.9) * (e.id % 2 ? 1 : -1)
++      const a = a0 + (behind ? 0 : 0.6 * (e.id % 2 ? 1 : -1))
++      const r = 3.1 + Math.sin(s.orbit) * 0.5
++      tx = p.x + Math.cos(a) * r; ty = p.y + Math.sin(a) * r
++      speed = def.speed * 0.8
++      if (behind && d < 5 && s.t > 1.6 + (e.id % 3) * 0.7) beginPounce('')
++      if (d > 9) { tx = p.x; ty = p.y }
++      break
++    }
++    case 'pounce': {
++      // 前 0.6s 是一次弹射式扑跃（约 8 m/s，快过奔跑），之后转为快过步行的追猎；
++      // 体力耗尽前全力奔跑仍能甩开，但停下或撞进死角就会被追上
++      e.state = 'chase'
++      tx = p.x; ty = p.y
++      const leap = s.t < 0.6
++      speed = def.speed * (s.kind === 'great' ? (leap ? 2.2 : 1.25) : s.kind === 'phantom' ? (leap ? 2.3 : 1.35) : (leap ? 3.3 : 1.6))
++      if (s.t > 3.2) setPhase(s, s.kind === 'canid' ? 'flank' : 'stalk')
++      break
++    }
++    case 'retreat': {
++      e.state = 'investigate'
++      const away = Math.max(0.1, d)
++      tx = e.x + ((e.x - p.x) / away) * 4; ty = e.y + ((e.y - p.y) / away) * 4
++      speed = def.speed * 0.9
++      if (s.t > (s.kind === 'canid' ? 4 : 3.5)) setPhase(s, s.aware > 0 ? (s.kind === 'canid' ? 'flank' : 'stalk') : 'drift')
++      break
++    }
++    case 'stagger': {
++      e.state = 'stunned'
++      if (e.stunT <= 0) { setPhase(s, 'stalk'); s.aware = 6 }
++      break
++    }
++  }
++
++  if (speed > 0) {
++    e.targetX = tx; e.targetY = ty
++    const stuck = eng.stepEntity(e, speed, dt)
++    if (stuck && s.phase === 'drift') eng.wanderTarget(e)
++    e.animT += dt * speed
++    if (s.phase !== 'feed') eng.faceToward(e, s.phase === 'drift' || s.phase === 'lure' || s.phase === 'retreat' ? tx : p.x, s.phase === 'drift' || s.phase === 'lure' || s.phase === 'retreat' ? ty : p.y, dt, 7)
++  }
++  // 巨笑魇：沉重脚步震动镜头 + 踩碎脚下荧光棒
++  if (s.kind === 'great' && speed > 0 && d < 9) eng.camShake = Math.min(0.35, eng.camShake + dt * 0.25 * (1 - d / 9))
++  if (s.kind === 'great') for (const L of F.lures) if (L.landed && !L.food && Math.hypot(L.x - e.x, L.y - e.y) < 0.9) {
++    const idx = m.items.findIndex((it) => it.id === L.itemId)
++    if (idx >= 0) { m.items.splice(idx, 1); if (d < 12) eng.msg('巨笑魇一脚踩灭了荧光棒。', 'system') }
++  }
++
++  // ---------- 攻击（前摇 0.3s → 扼颈/撕咬）----------
++  const reach = s.kind === 'great' ? 1.7 : 1.0
++  if (s.strikeT !== undefined) {
++    s.strikeT -= dt
++    eng.faceToward(e, p.x, p.y, dt, 12)
++    if (s.strikeT <= 0) {
++      s.strikeT = undefined
++      if (d < reach + (s.phase === 'pounce' ? 0.7 : 0.35) && eng.meleeZOk(e) && !eng.dev.invisible) {
++        eng.hurtPlayer(def.damage * dmgMult, K.name)
++        if (s.kind === 'canid') p.sanity = Math.max(0, p.sanity - 3)
++        else if (s.kind === 'great') eng.camShake = Math.min(1, eng.camShake + 0.6)
++        else {
++          p.slowT = Math.max(p.slowT, 1.1)
++          p.stamina = Math.max(0, p.stamina - 25)
++          if (Math.random() < 0.35) eng.msg('冰冷的手指扣住了你的脖子——喘不上气！', 'damage')
++        }
++      }
++    }
++  } else if ((s.phase === 'stalk' || s.phase === 'pounce' || s.phase === 'flank' || s.phase === 'standoff') && d < reach && e.attackCd <= 0 && zOk) {
++    e.attackCd = s.kind === 'great' ? 2.2 : 1.3
++    e.lungeT = 0.32
++    s.strikeT = 0.3
++  }
++
++  // ---------- 渲染提示量 ----------
++  const k = Math.min(1, dt * 4)
++  const visT = s.kind !== 'phantom' ? 1 : (d < 4.5 || beamOnIt || s.phase === 'pounce' || s.strikeT !== undefined ? 1 : 0.04)
++  s.vis += (visT - s.vis) * k
++  const grinT = s.strikeT !== undefined || s.phase === 'pounce' ? 1 : s.phase === 'feed' ? 0.75 : s.phase === 'standoff' ? 0.3 : s.phase === 'retreat' ? 0 : s.aware > 0 ? 0.45 : 0.12
++  s.grin += (grinT - s.grin) * k
++  const glowT = s.phase === 'retreat' ? 0.25 : s.phase === 'drift' ? 0.7 : 1
++  s.glow += (glowT - s.glow) * k
++
++  // 咯咯笑（已察觉时间歇发出）
++  if (s.aware > 0 && s.giggleT <= 0 && d < 15) {
++    s.giggleT = 4 + Math.random() * 5
++    audio.smilerGiggle(Math.max(0.15, 0.8 * (1 - d / 15)), s.kind === 'great' ? 0.6 : s.kind === 'phantom' ? 1.5 : s.kind === 'starved' ? 1.25 : 1)
++  }
++}
+diff --git a/app/src/game/entities/smilers.ts b/app/src/game/entities/smilers.ts
+new file mode 100644
+index 0000000..a8dd3b3
+--- /dev/null
++++ b/app/src/game/entities/smilers.ts
+@@ -0,0 +1,99 @@
++// v61：笑魇（Entity 3）重制——变种定义与层级分布。
++// 依据：Backrooms Wikidot Entity 3（趋光、直视并缓慢后退可免于攻击、恐慌逃跑/巨响会引发攻击、
++// 抛出光源可引开）、Liminal Archives（会主动破坏光源、偶尔成群、以扼颈为主要攻击方式）、
++// 各 Fandom 分支中的幽影笑魇 / 饥饿笑魇 / 犬形笑魇 / 巨笑魇。
++// 所有变种共用 type='smiler'（图鉴、生成表、存档均不变）；变种只存在于实体运行时 e.sm。
++
++export type SmilerKind = 'common' | 'phantom' | 'starved' | 'canid' | 'great'
++
++export interface SmilerKindDef {
++  name: string
++  hp: number
++  speed: number // 瓦片/秒（追击基准）
++  damage: number
++  sight: number // 手电光照下的发现距离
++  hearing: number
++  lightPull: number // 手电光吸引半径
++  gazeHold: number // 被直视时能稳住它的秒数（0=直视无效；Infinity=始终有效）
++  scale: number
++  blurb: string // 首次遭遇提示
++}
++
++export const SMILER_KINDS: Record<SmilerKind, SmilerKindDef> = {
++  common: {
++    name: '笑魇', hp: 40, speed: 2.5, damage: 20, sight: 9, hearing: 5, lightPull: 13, gazeHold: Infinity, scale: 1,
++    blurb: '黑暗里浮出一排发亮的牙。别跑——盯住它，慢慢退。',
++  },
++  phantom: {
++    name: '幽影笑魇', hp: 26, speed: 3.6, damage: 17, sight: 8, hearing: 3, lightPull: 9, gazeHold: 0, scale: 0.92,
++    blurb: '一对环形的眼在半空亮起又熄灭。幽影笑魇会在手电亮起的那一刻扑上来。',
++  },
++  starved: {
++    name: '饥饿笑魇', hp: 30, speed: 1.95, damage: 15, sight: 6, hearing: 10, lightPull: 6, gazeHold: 2.4, scale: 1.12,
++    blurb: '细长的影子拖着够到地面的手臂，牙齿不停打颤。它循着声音来，也会被食物引开。',
++  },
++  canid: {
++    name: '犬形笑魇', hp: 30, speed: 3.25, damage: 13, sight: 10, hearing: 7, lightPull: 12, gazeHold: 1.6, scale: 1,
++    blurb: '低伏的四足黑影成群绕到你身侧。被你盯住的那只会退开，别让背后空着。',
++  },
++  great: {
++    name: '巨笑魇', hp: 140, speed: 1.55, damage: 34, sight: 11, hearing: 6, lightPull: 15, gazeHold: 0, scale: 1.65,
++    blurb: '长角的巨大笑脸压低身子挤进走廊。直视没用——用手电持续照它的眼睛。',
++  },
++}
++
++/** 各层级的变种权重（L1 区分停电生成；未列出的层级只出普通笑魇） */
++export function smilerWeights(levelId: number, blackout: boolean): [SmilerKind, number][] {
++  switch (levelId) {
++    case 1: return blackout ? [['common', 64], ['phantom', 22], ['starved', 14]] : [['common', 80], ['starved', 20]]
++    case 2: return [['common', 52], ['starved', 24], ['phantom', 16], ['canid', 8]]
++    case 3: return [['common', 38], ['canid', 30], ['phantom', 14], ['great', 10], ['starved', 8]]
++    case 8: return [['common', 46], ['canid', 22], ['great', 20], ['phantom', 12]]
++    default: return [['common', 100]]
++  }
++}
++
++export function pickSmilerKind(levelId: number, blackout: boolean, rand: () => number = Math.random): SmilerKind {
++  const w = smilerWeights(levelId, blackout)
++  let r = rand() * w.reduce((s, [, x]) => s + x, 0)
++  for (const [k, x] of w) { r -= x; if (r <= 0) return k }
++  return 'common'
++}
++
++/** 运行时状态（不入存档、不入联机快照） */
++export type SmilerPhase =
++  | 'drift' // 游荡：黑暗中缓慢漂移
++  | 'lure' // 被荧光棒/食物吸引，前往诱饵
++  | 'feed' // 盯着诱饵咧嘴，然后咬碎它
++  | 'stalk' // 已察觉：向光源/声源逼近
++  | 'standoff' // 被直视：僵持（光亮时缓慢蠕近，黑暗中原地不动）
++  | 'flank' // 犬形：绕到玩家侧后方
++  | 'pounce' // 扑击：短时高速冲刺
++  | 'retreat' // 退回黑暗（受伤、被瞪退、灯亮）
++  | 'stagger' // 巨笑魇被强光灼眼，踉跄
++
++export interface SmilerState {
++  kind: SmilerKind
++  phase: SmilerPhase
++  t: number // 当前阶段计时
++  aware: number // 对玩家的锁定剩余秒数
++  gaze: number // 本次僵持累计秒数
++  glare: number // 巨笑魇：被手电持续直射的累计秒数
++  glareCd: number
++  lastHp: number
++  lureKey?: string // 诱饵标识（地面物品 id 或 'p'+投射物序号）
++  lureX: number
++  lureY: number
++  orbit: number // 犬形：绕行角偏移
++  packId: number
++  vis: number // 0..1 渲染可见度（幽影笑魇）
++  grin: number // 0..1 咧嘴张开程度（渲染）
++  glow: number // 0..1 眼齿亮度（渲染）
++  giggleT: number
++  heardX?: number // 最近听见的声源
++  heardY?: number
++  heardT?: number
++  heardLoud?: boolean
++  brokeGaze?: number // 对峙中被移开视线后的加速窗口
++  strikeT?: number // 攻击前摇剩余
++}
+diff --git a/app/src/game/entities/special.ts b/app/src/game/entities/special.ts
+index 9d93130..6670e9d 100644
+--- a/app/src/game/entities/special.ts
++++ b/app/src/game/entities/special.ts
+@@ -4,18 +4,18 @@ import type { EntityDef } from './types'
+ // 黑暗/能量特殊实体（笑魇/电弧体）
+ export const SPECIAL_ENTITIES: Record<string, EntityDef> = {
+   smiler: {
+-    type: 'smiler', name: '笑魇', hp: 40, speed: 2.4, damage: 22, sight: 7, hearing: 4, lightHunter: true, color: '#e8e8e0', habitat: 'any',
+-    desc: '黑暗中浮现的反光笑脸与齿列，身形近乎不可见。停电时倾巢而出。',
++    type: 'smiler', name: '笑魇', hp: 40, speed: 2.5, damage: 20, sight: 9, hearing: 5, lightHunter: true, color: '#e8e8e0', habitat: 'any',
++    desc: '黑暗中浮现的反光笑脸与齿列，身形是一团翻卷的黑火。已记录五种形态。',
+     codex: {
+-      no: 'Entity 3「Smilers」', danger: '4 级（高威胁）', habitat: 'Level 1 停电区 / Level 2 / Level 3 的无光角落 · Level 8 巨臂林地',
+-      behavior: '在层级灯光熄灭时生成。具有趋光性——会被你的手电光吸引并径直扑来；关掉手电，它便失去目标、不再靠近。灯光恢复的瞬间，它退回黑暗。Level 3 的笑魇不再受制于光照条件——在任何情况下都会主动发起攻击。',
+-      counter: '停电时关掉手电、摸黑绕行，它不会接近无光的目标；若已被盯上，照亮它并拉开距离，或熄灭光源趁其迷失时脱身。',
++      no: 'Entity 3「Smilers」', danger: '4 级（高威胁）', habitat: 'Level 1 停电区 / Level 2 / Level 3 的无光角落 · Level 8 巨臂林地',
++      behavior: '趋光：手电亮着，远处的笑魇也会被引来；关灯后它很快失去目标。被直视时它会停下——黑暗中持续对视，它会沉回黑暗；亮着灯，它只会被光牵着一点点蠕近。转身奔跑、制造巨响、攻击它，或在对峙中移开视线，都会让它扑上来。一只扑击时，附近的同类会一起醒来。命中会扼住你的脖子：减速并抽空体力。Level 3 的笑魇不受光照与目光约束。',
++      counter: '停电时关掉手电；撞见了就盯住它、慢慢退，别跑。抛出荧光棒能把它引开——它会盯着荧光棒咧嘴，几秒后咬碎。幽影笑魇：在它附近千万别开手电。饥饿笑魇：循声而来，丢下食物能拖住它。犬形笑魇：背靠墙，盯住扑来的那只。巨笑魇：直视无效，用手电持续照它的眼睛，可令其踉跄。',
+       lore: [
+-        '「笑魇」是后室中最广为人知的敌对实体之一。它没有可见的躯干——目击报告一致描述为「黑暗中悬浮的一排牙齿和两只反光的眼睛」。',
+-        '该实体表现出强烈的趋光性：它会扑向任何移动的光源。Level 1「闪烁」停电期间，笑魇目击率上升 400%，灯光恢复后所有个体同时消失，去向不明。',
+-        'M.E.G. 外勤记录相互矛盾的一点在于：幸存者清一色是「当时关了灯」的人。它被假设与层级供电系统存在某种共生关系，但所有接近取证的尝试均以人员失踪告终。',
++        '「笑魇」是后室中最广为人知的敌对实体之一。它没有可见的躯干——目击报告一致描述为「黑暗中悬浮的一排牙齿和两只反光的眼睛」，身体是被称作 Nigrum ignem 的黑色幽质，形态近乎火焰。',
++        '该实体表现出强烈的趋光性，并会主动破坏光源。Level 1「闪烁」停电期间目击率上升 400%，灯光恢复后所有个体同时消失。幸存者清一色是「当时关了灯、没有跑」的人。',
++        'M.E.G. 目前区分五种形态：常见笑魇；环形眼、方齿、几乎不可见的「幽影」；高瘦、循声觅食的「饥饿」；成群包抄的四足「犬形」；以及长角的「巨笑魇」。它们是否属于同一物种仍有争议。',
+       ],
+-      sighting: '「我把手电关了，贴着墙走。那排牙从我面前飘过去，奔着别人的光去了。」——Level 1 幸存者访谈。',
++      sighting: '「我把手电关了，盯着那排牙往后退。它就停在那儿，笑着，一直到我转过拐角。」——Level 1 幸存者访谈。',
+     },
+     aggroStinger: true,
+   },
+@@ -74,7 +74,7 @@ export const SPECIAL_ENTITIES: Record<string, EntityDef> = {
+     type: 'nguithr', name: "Nguithr'xurh", hp: 30, speed: 1.2, damage: 8, sight: 4, hearing: 2, color: '#5a4a3a', habitat: 'indoor',
+     desc: '天花板垂下的球状网囊。别从它正下方走过。',
+     codex: {
+-      no: 'Entity 16「Nguithr\'xurh」', danger: '3 级（中威胁）', habitat: 'Level 1 / Level 2 / Level 3 的天花板 · Level 8 巨臂林地高洞厅',
++      no: 'Entity 16「Nguithr\'xurh」', danger: '3 级（中威胁）', habitat: 'Level 1 / Level 2 / Level 3 的天花板 · Level 8 巨臂林地高洞厅',
+       behavior: '在天花板上织出球状网囊并注入镇静剂。有猎物从正下方经过时切下一个球——球爆开后镇静剂生效，它便顺着丝降到猎物旁边开始进食。它很慢，也不爱追远。',
+       counter: '留意天花板上的球状网囊并绕开走。若已被洒中：麻痹感退去前立刻离开那一格，它就不会下来；若它已经下来了，拉开距离——它不会追远。',
+       lore: [
+diff --git a/app/src/game/entities/types.ts b/app/src/game/entities/types.ts
+index 8e70f0c..a429f5e 100644
+--- a/app/src/game/entities/types.ts
++++ b/app/src/game/entities/types.ts
+@@ -118,6 +118,7 @@ export interface Entity {
+   huntScanT?: number // 群落捕食目标扫描节流；避免高密度生态每帧进行实体数平方级 LOS 检查
+   encountered?: boolean // v54：图鉴遭遇已计数（按个体去重——看见/索敌/攻击命中/特殊交互，每只只计一次）
+   blackoutSpawn?: boolean // 停电期间生成（笑魇）：灯光恢复时消散
++  sm?: import('./smilers').SmilerState // v61：笑魇变种与 AI 运行时状态（不入存档/联机）
+   l9FogSpawn?: boolean // L9 罕见浓雾期间生成的残缺者；雾散后随之退散
+   l10BurrowT?: number // L10 旧挖掘点事件蠕虫：离开现场后在 15～25 秒内退回地下
+   flightBand?: import('../core/types').FloorBand // 飞行所依附楼层；避免高度越过 band 中线后误判跨层
+diff --git a/app/src/game/renderer/entitiesMesh.ts b/app/src/game/renderer/entitiesMesh.ts
+index 0c7b984..41e43a8 100644
+--- a/app/src/game/renderer/entitiesMesh.ts
++++ b/app/src/game/renderer/entitiesMesh.ts
+@@ -11,6 +11,7 @@
+ // 新实体请先读这些 case 再动手；设定依据在 entities/ 各定义的 codex 注释里。
+ import * as THREE from 'three'
+ import { buildMothMesh } from './mothMeshes'
++import { buildSmilerMesh } from './smilerMesh'
+ import { ENTITIES } from '../entities'
+ import { box, cyl, glow, litMaterial, mulberry } from './shared'
+ import { buildPlayerModel } from './playerModel'
+@@ -33,6 +34,7 @@ export interface EntityMeshOpts {
+   arachnidMorph?: 'spider' | 'scorpion' | 'tick' | 'mite'
+   arachnidBreed?: number
+   herbivore?: boolean
++  smilerKind?: import('../entities/smilers').SmilerKind // v61：笑魇变种
+ }
+ 
+ // 七层之物使用纯程序化 UV：DataTexture 在浏览器与 Node 验收脚本中都可创建，
+@@ -98,6 +100,7 @@ function getThingSkinTextures() {
+ }
+ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Group {
+   if(type === 'deathmoth') return buildMothMesh(opts?.mothForm ?? 'male')
++  if (type === 'smiler') return buildSmilerMesh(opts?.smilerKind ?? 'common', opts?.seed ?? 0) // v61：重制笑魇（含 5 变种）
+   const grp = new THREE.Group()
+   grp.userData.entityType = type
+   const def = ENTITIES[type]
+@@ -319,55 +322,7 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
+       grp.add(box(0.03, 0.05, 0.05, '#8a8a8e', 0.04, 0.04, 0.02))
+       break
+     }
+-    case 'smiler': { // 笑魇（Entity 3）：完全无定形。主体 Nigrum ignem——纯黑、形态最接近「火」的
+-      //               不明幽质；发光的眼与齿是 Ardenti risu。
+-      const flame = new THREE.Group()
+-      flame.position.set(0, 0.95, 0)
+-      // 上窄下宽的火焰剪影：大小不一、带随机偏移与倾斜的黑块堆叠
+-      const fb = (w: number, h: number, d: number, x: number, y: number, z: number, rz: number, cc: string) => {
+-        const m = box(w, h, d, cc, x, y, z)
+-        m.rotation.z = rz; m.rotation.y = rz * 0.6
+-        flame.add(m)
+-      }
+-      fb(0.14, 0.34, 0.13, 0.03, 0.66, 0.01, 0.24, '#050505')
+-      fb(0.28, 0.4, 0.22, -0.05, 0.38, 0.02, -0.16, '#040404')
+-      fb(0.5, 0.5, 0.34, 0.03, 0.02, -0.02, 0.1, '#050505')
+-      fb(0.68, 0.46, 0.42, -0.02, -0.36, 0.01, -0.07, '#030303')
+-      fb(0.82, 0.36, 0.5, 0.04, -0.72, -0.03, 0.05, '#040404')
+-      const rng = mulberry(0x5311)
+-      for (let i = 0; i < 9; i++) { // 撕裂外缘的「火舌/烟缕」
+-        const a = rng() * Math.PI * 2
+-        const rr = 0.24 + rng() * 0.2
+-        fb(0.07 + rng() * 0.09, 0.18 + rng() * 0.26, 0.07 + rng() * 0.07,
+-          Math.cos(a) * rr, -0.6 + rng() * 1.3, Math.sin(a) * rr * 0.8, (rng() - 0.5) * 1.1, '#050505')
+-      }
+-      tag(flame, 'torso')
+-      eyes(1.36, 0.15, '#ffffff', 0.095)
+-      const teeth = new THREE.Group() // 齿列：细长上翘的长笑弧（比旧版更宽更弯）
+-      for (let i = 0; i < 11; i++) {
+-        const a = (i / 10 - 0.5) * 1.9
+-        const t = glow(0.048, 0.09 - Math.abs(a) * 0.025, 0.02, '#ffffff',
+-          Math.sin(a) * 0.28, 1.0 + (1 - Math.cos(a)) * 0.3, 0.2 - Math.abs(a) * 0.035)
+-        t.rotation.z = -a * 0.55
+-        face(t)
+-        teeth.add(t)
+-      }
+-      tag(teeth, 'teeth')
+-      grp.add(teeth)
+-      // 人形四肢：关节以非自然角度反折（悬浮，无腿）
+-      const sarm = (side: number, part: string) => {
+-        const a = joint(0.085, 0.34, 0.085, '#050505', side * 0.29, 1.24, 0, part)
+-        const fore = new THREE.Group()
+-        fore.position.y = -0.34; fore.rotation.x = 2.15 // 肘部反折
+-        fore.add(box(0.075, 0.33, 0.075, '#040404', 0, -0.165, 0))
+-        const hand = new THREE.Group()
+-        hand.position.y = -0.33; hand.rotation.x = -1.5 // 腕部再反折
+-        for (let i = 0; i < 3; i++) hand.add(box(0.02, 0.15, 0.02, '#050505', (i - 1) * 0.035, -0.075, 0))
+-        fore.add(hand); a.add(fore)
+-      }
+-      sarm(-1, 'armL'); sarm(1, 'armR')
+-      break
+-    }
++    // v61：'smiler' 已在函数开头交给 smilerMesh.buildSmilerMesh（旧版方块模型移除）
+     case 'arms': { // 手臂（Level 1 特有）：自天花板通风管垂下的苍白长臂，指节反曲；
+       //             停电时伸出管口猎捕（平时 hidden 缩回管内，渲染层不可见）。
+       const sk = '#c9a684', sk2 = '#b08d6a'
+diff --git a/app/src/game/renderer/renderer.ts b/app/src/game/renderer/renderer.ts
+index 8bdf20b..db3451d 100644
+--- a/app/src/game/renderer/renderer.ts
++++ b/app/src/game/renderer/renderer.ts
+@@ -76,6 +76,7 @@ import { setSquirtGunLiquid } from './squirtGunMesh'
+ import { WallOcclusion } from './occlusion'
+ import { l5StairWallDirection } from '../world/l5Topology'
+ import { L5NestLighting } from './l5NestLighting'
++import { animateSmiler } from './smilerMesh'
+ 
+ function disposeWorldGeometry(object: THREE.Object3D): void {
+   const instanced = object as THREE.InstancedMesh
+@@ -3230,12 +3231,13 @@ export class Renderer3D {
+       if (distance > (e.def.mothForm==='larva'?12:reach)) { if (grp) grp.visible = false; continue }
+       // v53：L3 高智能实体建模变体（无面灵错位器官/石器、水豚尸鼠；seed=实体 id 保证重建一致）；
+       // 尸鼠形态按层级固定：L2 灰白廊道种群 / L3 水豚 / 其余深褐（v53，替代原随机二选一）
+-      const eOpts = (e.def.l3face || e.def.tool || e.def.capybara || e.def.type === 'corpserat' || e.def.type === 'arachnid' || e.def.type === 'deathmoth')
++      const eOpts = (e.def.l3face || e.def.tool || e.def.capybara || e.def.type === 'corpserat' || e.def.type === 'arachnid' || e.def.type === 'deathmoth' || e.def.type === 'smiler')
+         ? {
+           l3face: e.def.l3face, tool: e.def.tool, capybara: e.def.capybara, mothForm: e.def.mothForm,
+           ratMorph: (engine.levelDef.id === 2 ? 'gray' : engine.levelDef.id === 5 ? 'hotel' : 'brown') as 'gray' | 'brown' | 'hotel',
+           seed: e.id, ceilingCrawler: e.def.ceilingCrawler,
+           arachnidMorph: e.def.arachnidMorph, arachnidBreed: e.def.arachnidBreed, herbivore: e.def.herbivore,
++          smilerKind: e.sm?.kind,
+         } : undefined // v60：L8 洞顶尸鼠与蛛形纲生态变体随实例固定
+       if (!grp) {
+         if(engine.levelDef.id===5&&entityBuilds>0&&(entityBuilds>=2||performance.now()>entityBuildDeadline))continue
+@@ -3260,7 +3262,8 @@ export class Renderer3D {
+         this.scene.add(grp)
+       }
+       // v51：人制品售货机活化——def 切换（vendingmachine→vmad）时重建模型（含骷髅手腿）
+-      if (grp.userData.entType !== e.def.type || (e.def.type === 'deathmoth' && grp.userData.mothForm !== (e.def.mothForm ?? 'male'))) {
++      if (grp.userData.entType !== e.def.type || (e.def.type === 'deathmoth' && grp.userData.mothForm !== (e.def.mothForm ?? 'male'))
++        || (e.def.type === 'smiler' && e.sm && grp.userData.smilerKind !== e.sm.kind)) { // v61：笑魇变种在首个 AI tick 决定
+         this.scene.remove(grp)
+         this.disposeItemModel(grp)
+         grp = buildEntityMesh(e.def.type, eOpts)
+@@ -3707,6 +3710,7 @@ export class Renderer3D {
+       if (lunging && et !== 'thething' && et !== 'deathmoth') grp.scale.setScalar(esc * 1.14)
+       if (e.stunT > 0) grp.rotation.z = Math.sin(this.time * 40) * 0.1
+       else grp.rotation.z = 0
++      if (et === 'smiler' && !e.dead) animateSmiler(grp, e, this.time, gz) // v61：笑魇黑火/咧嘴/隐现
+       // ---------- 死亡动画（按实体差异化）----------
+       if (e.dead) {
+         const k = Math.max(0, e.deathT) / 1.4 // 1 → 0
+diff --git a/app/src/game/renderer/smilerMesh.ts b/app/src/game/renderer/smilerMesh.ts
+new file mode 100644
+index 0000000..ea9b3ea
+--- /dev/null
++++ b/app/src/game/renderer/smilerMesh.ts
+@@ -0,0 +1,336 @@
++// v61：笑魇（Entity 3）重制模型——5 个变种，模型正面 +X。
++// 主体 Nigrum ignem：纯黑、边缘随时间翻卷的「黑火」，用 Lambert + 顶点着色器位移实现（保留雾效）；
++// 发光的眼与齿（Ardenti risu）为 MeshBasic，可随 AI 的 grin / glow / vis 动画开合、明暗、隐现。
++// 齿列等重复小件合并为单个几何体，单只 6~14 次绘制（旧版 30+ 次）。
++import * as THREE from 'three'
++import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
++import type { Entity } from '../entities'
++import type { SmilerKind } from '../entities/smilers'
++
++const SMILER_TIME = { value: 0 }
++
++function mulberry(a: number) {
++  return () => { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296 }
++}
++
++/** 黑火材质：沿法线的多频位移，越往上越剧烈，形成翻卷的火舌轮廓 */
++function flameMat(color: string, amp: number, opacity = 1) {
++  const mat = new THREE.MeshLambertMaterial({ color, transparent: opacity < 1, opacity, depthWrite: opacity >= 1 })
++  mat.onBeforeCompile = (sh) => {
++    sh.uniforms.uSmTime = SMILER_TIME
++    sh.uniforms.uSmAmp = { value: amp }
++    sh.vertexShader = sh.vertexShader
++      .replace('#include <common>', '#include <common>\nuniform float uSmTime;\nuniform float uSmAmp;')
++      .replace('#include <begin_vertex>', `#include <begin_vertex>
++        float smUp = clamp(position.y * 0.6 + 0.2, 0.15, 1.6);
++        float smN = sin(position.y * 9.0 - uSmTime * 6.0 + position.x * 7.0)
++                  + 0.6 * sin(position.z * 13.0 + uSmTime * 8.3 + position.y * 4.0)
++                  + 0.35 * sin((position.x + position.z) * 21.0 - uSmTime * 11.0);
++        transformed += normal * smN * uSmAmp * smUp;
++        transformed.y += max(0.0, smN) * uSmAmp * 0.8 * smUp;`)
++  }
++  mat.customProgramCacheKey = () => `smilerFlame${amp.toFixed(3)}`
++  return mat
++}
++const glowMat = (color: string) => new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 1 })
++
++/** 车削轮廓 + 种子化不规则扰动（静态），返回几何体 */
++function lumpyLathe(profile: [number, number][], seg: number, seed: number, jitter: number, sz = 1) {
++  const pts = profile.map(([r, y]) => new THREE.Vector2(r, y))
++  const g = new THREE.LatheGeometry(pts, seg)
++  g.scale(1, 1, sz)
++  const rnd = mulberry(seed), pos = g.attributes.position as THREE.BufferAttribute
++  const cache = new Map<string, number>()
++  for (let i = 0; i < pos.count; i++) {
++    const key = `${pos.getX(i).toFixed(3)},${pos.getY(i).toFixed(3)},${pos.getZ(i).toFixed(3)}`
++    let k = cache.get(key)
++    if (k === undefined) { k = 1 + (rnd() - 0.5) * jitter; cache.set(key, k) } // 接缝顶点同值，避免裂缝
++    pos.setX(i, pos.getX(i) * k); pos.setZ(i, pos.getZ(i) * k)
++  }
++  g.computeVertexNormals()
++  return g
++}
++
++/** 齿列：沿 smile 曲线排布的锥形/方形齿，合并为一个几何体。dir=-1 上排齿尖朝下，+1 下排齿尖朝上 */
++function teethRow(n: number, width: number, curve: number, len: number, dir: number, shape: 'fang' | 'square' | 'needle', x0: number) {
++  const gs: THREE.BufferGeometry[] = []
++  for (let i = 0; i < n; i++) {
++    const u = n === 1 ? 0 : i / (n - 1) - 0.5 // -0.5..0.5
++    const z = u * width
++    const y = curve * (u * 2) ** 2 // 嘴角上翘
++    const l = len * (shape === 'square' ? 1 : 1 - Math.abs(u) * 0.55)
++    let g: THREE.BufferGeometry
++    if (shape === 'square') g = new THREE.BoxGeometry(0.02, l, width / n * 0.78)
++    else { g = new THREE.ConeGeometry(shape === 'needle' ? 0.009 : 0.017, l, 4); if (dir > 0) g.rotateX(Math.PI) }
++    g.translate(x0 - Math.abs(u) * width * 0.35, y + (dir < 0 ? -l / 2 : l / 2), z)
++    gs.push(g)
++  }
++  return mergeGeometries(gs)!
++}
++
++/** 口腔：沿笑弧排布的一串黑色薄块（位于齿列之后），随 grin 纵向拉开 */
++function mouthStrip(n: number, width: number, curve: number, h: number, x0: number) {
++  const gs: THREE.BufferGeometry[] = []
++  for (let i = 0; i < n; i++) {
++    const u = i / (n - 1) - 0.5
++    const hh = h * (1 - Math.abs(u) * 1.2)
++    const cy = curve * (u * 2) ** 2
++    const b = new THREE.BoxGeometry(0.012, Math.max(0.01, hh), width / (n - 1) * 1.15).translate(x0 - Math.abs(u) * width * 0.35, cy, u * width)
++    b.setAttribute('cy', new THREE.Float32BufferAttribute(new Array(b.attributes.position.count).fill(cy), 1))
++    gs.push(b)
++  }
++  const g = mergeGeometries(gs)!
++  g.userData.baseY = Float32Array.from((g.attributes.position as THREE.BufferAttribute).array as Float32Array).filter((_, i) => i % 3 === 1)
++  return g
++}
++/** 只在各块自身中心处纵向拉开（嘴角不会被整体缩放甩出脸外） */
++function openMouth(m: THREE.Mesh, k: number) {
++  const g = m.geometry, pos = g.attributes.position as THREE.BufferAttribute, cy = g.attributes.cy as THREE.BufferAttribute
++  const base = g.userData.baseY as Float32Array
++  if (!cy || !base || g.userData.k === k) return
++  g.userData.k = k
++  for (let i = 0; i < pos.count; i++) pos.setY(i, cy.getX(i) + (base[i] - cy.getX(i)) * k)
++  pos.needsUpdate = true
++}
++
++/** 关节肢：一段段圆柱合并到 pivot 下，pivot 位于肩/髋；segments 为 [长度, 绕 z 弯折角, 粗细] */
++function limb(segs: [number, number, number][], mat: THREE.Material, claws = 0) {
++  const pivot = new THREE.Group()
++  let parent: THREE.Object3D = pivot
++  for (const [len, bend, r] of segs) {
++    const j = new THREE.Group()
++    j.rotation.z = bend
++    parent.add(j)
++    const m = new THREE.Mesh(new THREE.CylinderGeometry(r * 0.75, r, len, 5).translate(0, -len / 2, 0), mat)
++    j.add(m)
++    const next = new THREE.Group(); next.position.y = -len; j.add(next)
++    parent = next
++  }
++  if (claws) {
++    const cg: THREE.BufferGeometry[] = []
++    for (let i = 0; i < claws; i++) cg.push(new THREE.ConeGeometry(0.012, 0.14, 4).rotateZ(Math.PI).rotateX((i - (claws - 1) / 2) * 0.35).translate(0.02, -0.06, (i - (claws - 1) / 2) * 0.03))
++    parent.add(new THREE.Mesh(mergeGeometries(cg)!, mat))
++  }
++  return pivot
++}
++
++const rig0Float = (k: SmilerKind) => k === 'common' || k === 'phantom'
++
++export interface SmilerRig {
++  kind: SmilerKind
++  body: THREE.Object3D
++  face: THREE.Group
++  upper: THREE.Mesh
++  lower: THREE.Mesh
++  eyes: THREE.Mesh
++  limbs: THREE.Object3D[]
++  bodyMats: THREE.Material[]
++  glowMats: THREE.MeshBasicMaterial[]
++  glowBase: THREE.Color[]
++  float: number // 悬浮高度（0=着地行走）
++  mouthY: number
++}
++
++export function buildSmilerMesh(kind: SmilerKind, seed = 0): THREE.Group {
++  const grp = new THREE.Group()
++  grp.userData.entityType = 'smiler'
++  grp.userData.parts = {}
++  const rnd = mulberry(0x5311 + seed * 7919)
++  const glowC = kind === 'phantom' ? '#d6ecff' : kind === 'starved' ? '#ece4bf' : '#f6f3ea'
++  const bodyOpacity = kind === 'phantom' ? 0.82 : 1
++  const fm = flameMat(kind === 'phantom' ? '#07080c' : '#040404', kind === 'phantom' ? 0.05 : kind === 'great' ? 0.05 : 0.035, bodyOpacity)
++  const limbMat = new THREE.MeshLambertMaterial({ color: '#050505', transparent: bodyOpacity < 1, opacity: bodyOpacity })
++  const gm = glowMat(glowC)
++  const mouthMat = new THREE.MeshBasicMaterial({ color: '#000000', transparent: true })
++  const face = new THREE.Group()
++  const limbs: THREE.Object3D[] = []
++  let body: THREE.Object3D
++  let upper: THREE.Mesh, lower: THREE.Mesh, eyes: THREE.Mesh
++  let float = 0.12, mouthY = 0
++
++  const eyeGeo = (pts: [number, number, number][], r: number, ring = false) => mergeGeometries(pts.map(([x, y, z]) => {
++    const g = ring ? new THREE.TorusGeometry(r, r * 0.28, 4, 12).rotateY(Math.PI / 2) : new THREE.SphereGeometry(r, 8, 6).scale(0.45, 0.8, 1)
++    return g.translate(x, y, z)
++  }))!
++
++  if (kind === 'canid') {
++    // 四足：水平拉长的黑火躯体 + 前伸长吻；吻部两侧排齿
++    const g = lumpyLathe([[0.001, -0.55], [0.17, -0.45], [0.24, -0.15], [0.26, 0.15], [0.2, 0.42], [0.1, 0.56], [0.001, 0.6]], 9, seed + 3, 0.22, 0.8)
++    g.rotateZ(-Math.PI / 2) // 轴向转到 +X
++    body = new THREE.Mesh(g, fm)
++    body.position.set(-0.05, 0.62, 0)
++    grp.add(body)
++    const head = new THREE.Mesh(lumpyLathe([[0.001, -0.18], [0.13, -0.1], [0.13, 0.08], [0.08, 0.22], [0.04, 0.3], [0.001, 0.32]], 8, seed + 5, 0.15, 0.85).rotateZ(-Math.PI / 2), fm)
++    head.position.set(0.55, 0.72, 0)
++    grp.add(head)
++    for (const z of [-0.07, 0.07]) { const ear = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.16, 4), fm); ear.position.set(0.5, 0.88, z); ear.rotation.z = 0.35; grp.add(ear) }
++    face.position.set(0.66, 0.68, 0)
++    eyes = new THREE.Mesh(eyeGeo([[0.02, 0.11, -0.065], [0.02, 0.11, 0.065]], 0.032), gm)
++    upper = new THREE.Mesh(teethRow(9, 0.17, 0.035, 0.05, -1, 'fang', 0.1), gm)
++    lower = new THREE.Mesh(teethRow(8, 0.15, 0.03, 0.045, 1, 'fang', 0.09), gm)
++    const mouth = new THREE.Mesh(mouthStrip(9, 0.17, 0.035, 0.04, 0.07), mouthMat)
++    mouth.userData.mouth = 1
++    face.add(mouth, eyes, upper, lower)
++    // 四肢：前后各两条，反折关节
++    for (const [x, z, front] of [[0.32, -0.14, 1], [0.32, 0.14, 1], [-0.42, -0.14, 0], [-0.42, 0.14, 0]] as const) {
++      const L = limb([[0.32, front ? 0.25 : -0.35, 0.05], [0.34, front ? -0.55 : 0.75, 0.04]], limbMat, 3)
++      L.position.set(x, 0.62, z)
++      grp.add(L); limbs.push(L)
++    }
++    const tail = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.55, 5).rotateZ(Math.PI / 2 + 0.5), fm)
++    tail.position.set(-0.75, 0.75, 0); grp.add(tail); limbs.push(tail)
++    float = 0
++  } else {
++    const H = kind === 'starved' ? 2.05 : kind === 'great' ? 1.75 : kind === 'phantom' ? 1.6 : 1.7
++    const prof: [number, number][] = kind === 'starved'
++      ? [[0.001, 0.35], [0.12, 0.45], [0.15, 0.8], [0.11, 1.15], [0.16, 1.45], [0.17, 1.62], [0.14, 1.78], [0.16, 1.9], [0.08, 2.02], [0.001, 2.05]]
++      : kind === 'phantom'
++        ? [[0.001, 0.1], [0.12, 0.25], [0.22, 0.6], [0.2, 1.0], [0.23, 1.3], [0.22, 1.46], [0.14, 1.56], [0.001, H]]
++        : kind === 'great'
++          ? [[0.001, 0.05], [0.42, 0.2], [0.5, 0.6], [0.46, 1.0], [0.38, 1.3], [0.34, 1.5], [0.25, 1.68], [0.001, H]]
++          : [[0.001, 0.05], [0.2, 0.2], [0.3, 0.5], [0.26, 0.85], [0.3, 1.12], [0.27, 1.32], [0.24, 1.48], [0.15, 1.6], [0.001, H]]
++    body = new THREE.Mesh(lumpyLathe(prof, kind === 'great' ? 12 : 10, seed + 11, kind === 'starved' ? 0.12 : 0.32, 0.82), fm)
++    grp.add(body)
++    // 外缘火舌（合并成一个网格）
++    const tongues: THREE.BufferGeometry[] = []
++    const nT = kind === 'starved' ? 5 : kind === 'great' ? 14 : 9
++    for (let i = 0; i < nT; i++) {
++      const a = rnd() * Math.PI * 2, y = 0.3 + rnd() * (H - 0.5), r = (kind === 'great' ? 0.36 : 0.2) + rnd() * 0.1
++      tongues.push(new THREE.ConeGeometry(0.04 + rnd() * 0.05, 0.2 + rnd() * 0.3, 4).rotateZ((rnd() - 0.5) * 1.2).translate(Math.cos(a) * r, y, Math.sin(a) * r * 0.82))
++    }
++    // 头顶火舌：几根向上翻卷的尖锥，让轮廓像火而不是墓碑
++    const nC = kind === 'starved' ? 3 : kind === 'great' ? 6 : 5
++    const topR = prof[prof.length - 2][0]
++    for (let i = 0; i < nC; i++) {
++      const a = (i / nC) * Math.PI * 2 + rnd() * 0.6
++      const hgt = (kind === 'great' ? 0.35 : 0.22) + rnd() * 0.3
++      tongues.push(new THREE.ConeGeometry(0.05 + rnd() * 0.05, hgt, 5).rotateZ((rnd() - 0.5) * 0.8).rotateX((rnd() - 0.5) * 0.6)
++        .translate(Math.cos(a) * topR * 0.7, H - 0.12 + hgt / 2 - rnd() * 0.1, Math.sin(a) * topR * 0.6))
++    }
++    // 下摆烟缕：底部向外飘散的短锥
++    if (rig0Float(kind)) for (let i = 0; i < 6; i++) {
++      const a = rnd() * Math.PI * 2
++      tongues.push(new THREE.ConeGeometry(0.06, 0.3 + rnd() * 0.2, 4).rotateZ(Math.PI + (rnd() - 0.5) * 0.9).translate(Math.cos(a) * 0.22, 0.12, Math.sin(a) * 0.2))
++    }
++    grp.add(new THREE.Mesh(mergeGeometries(tongues)!, fm))
++    mouthY = kind === 'starved' ? 1.78 : kind === 'great' ? 1.32 : 1.3
++    const fx = kind === 'great' ? 0.36 : kind === 'starved' ? 0.15 : 0.24
++    face.position.set(fx, mouthY, 0)
++    if (kind === 'phantom') {
++      eyes = new THREE.Mesh(eyeGeo([[0.02, 0.2, -0.09], [0.02, 0.2, 0.09]], 0.05, true), gm)
++      upper = new THREE.Mesh(teethRow(8, 0.36, 0.05, 0.045, -1, 'square', 0.03), gm)
++      lower = new THREE.Mesh(teethRow(8, 0.34, 0.045, 0.04, 1, 'square', 0.02), gm)
++    } else if (kind === 'starved') {
++      eyes = new THREE.Mesh(eyeGeo([[0.015, 0.13, -0.05], [0.015, 0.13, 0.05]], 0.025), gm)
++      upper = new THREE.Mesh(teethRow(13, 0.24, 0.035, 0.07, -1, 'needle', 0.03), gm)
++      lower = new THREE.Mesh(teethRow(12, 0.22, 0.03, 0.065, 1, 'needle', 0.025), gm)
++    } else if (kind === 'great') {
++      eyes = new THREE.Mesh(eyeGeo([[0.02, 0.26, -0.11], [0.02, 0.26, 0.11], [0.0, 0.36, -0.2], [0.0, 0.36, 0.2]], 0.05), gm)
++      upper = new THREE.Mesh(mergeGeometries([teethRow(15, 0.62, 0.11, 0.1, -1, 'fang', 0.04), teethRow(11, 0.48, 0.09, 0.07, -1, 'fang', -0.01).translate(0, -0.01, 0)])!, gm)
++      lower = new THREE.Mesh(mergeGeometries([teethRow(14, 0.58, 0.1, 0.09, 1, 'fang', 0.035), teethRow(10, 0.44, 0.08, 0.06, 1, 'fang', -0.015)])!, gm)
++      const horns: THREE.BufferGeometry[] = []
++      for (const s of [-1, 1]) {
++        let prev = new THREE.Vector3(0.1, 1.62, s * 0.2)
++        for (let i = 0; i < 4; i++) { // 弯角：4 节锥段向后上方弯曲
++          const next = prev.clone().add(new THREE.Vector3(-0.06 - i * 0.03, 0.14 - i * 0.02, s * 0.06))
++          const len = prev.distanceTo(next) + 0.02
++          const seg = new THREE.CylinderGeometry(0.05 - i * 0.012, 0.065 - i * 0.012, len, 6)
++          const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), next.clone().sub(prev).normalize())
++          seg.applyQuaternion(q).translate((prev.x + next.x) / 2, (prev.y + next.y) / 2, (prev.z + next.z) / 2)
++          horns.push(seg); prev = next
++        }
++        horns.push(new THREE.ConeGeometry(0.03, 0.12, 6).translate(prev.x - 0.03, prev.y + 0.05, prev.z))
++      }
++      grp.add(new THREE.Mesh(mergeGeometries(horns)!, new THREE.MeshLambertMaterial({ color: '#16130f' })))
++    } else {
++      eyes = new THREE.Mesh(eyeGeo([[0.02, 0.21, -0.1], [0.02, 0.21, 0.1]], 0.05), gm)
++      upper = new THREE.Mesh(teethRow(13, 0.44, 0.09, 0.075, -1, 'fang', 0.03), gm)
++      lower = new THREE.Mesh(teethRow(12, 0.4, 0.08, 0.065, 1, 'fang', 0.025), gm)
++    }
++    const mw = kind === 'great' ? 0.62 : kind === 'starved' ? 0.24 : kind === 'phantom' ? 0.36 : 0.44
++    const mc = kind === 'great' ? 0.11 : kind === 'starved' ? 0.035 : kind === 'phantom' ? 0.05 : 0.09
++    const mouth = new THREE.Mesh(mouthStrip(13, mw, mc, 0.05, 0.0), mouthMat)
++    mouth.userData.mouth = 1
++    face.add(mouth, eyes, upper, lower)
++    // 手臂：普通/幽影为悬浮的反折细臂；饥饿为拖地长臂；巨笑魇为撑地巨臂
++    const armSpec: Record<string, [number, number, number][]> = {
++      common: [[0.38, 0.35, 0.045], [0.36, -2.0, 0.038], [0.12, 1.1, 0.03]],
++      phantom: [[0.34, 0.4, 0.035], [0.34, -2.1, 0.03]],
++      starved: [[0.6, 0.18, 0.04], [0.62, -0.35, 0.033], [0.18, 0.4, 0.025]],
++      great: [[0.6, 0.45, 0.11], [0.62, -0.8, 0.09]],
++    }
++    const shY = kind === 'starved' ? 1.62 : kind === 'great' ? 1.35 : 1.22
++    const shZ = kind === 'great' ? 0.5 : kind === 'starved' ? 0.2 : 0.3
++    for (const s of [-1, 1]) {
++      const L = limb(armSpec[kind], limbMat, kind === 'phantom' ? 0 : kind === 'great' ? 4 : 3)
++      L.position.set(0.02, shY, s * shZ)
++      L.rotation.x = s * (kind === 'great' ? 0.55 : 0.32)
++      grp.add(L); limbs.push(L)
++    }
++    if (kind === 'starved' || kind === 'great') float = 0
++  }
++  grp.add(face)
++
++  const rig: SmilerRig = {
++    kind, body, face, upper, lower, eyes, limbs,
++    bodyMats: [fm, limbMat], glowMats: [gm], glowBase: [gm.color.clone()], float, mouthY,
++  }
++  grp.userData.smilerRig = rig
++  grp.userData.smilerKind = kind
++  // 冒烟脚本按 Basic 材质质心判正面：眼齿全在 +X 一侧
++  for (const m of [eyes, upper, lower]) m.userData.face = 1
++  return grp
++}
++
++/** 每帧由 renderer 调用（死亡动画之前） */
++export function animateSmiler(grp: THREE.Group, e: Entity, time: number, gz: number) {
++  const rig = grp.userData.smilerRig as SmilerRig | undefined
++  if (!rig) return
++  SMILER_TIME.value = time
++  const s = e.sm
++  const t = time + e.id * 1.7
++  const vis = s?.vis ?? 1, grin = s?.grin ?? 0.15, glow = s?.glow ?? 0.8
++  // 可见度（幽影笑魇）：身体先于眼齿消失，留下一点余光
++  const bodyA = rig.kind === 'phantom' ? 0.82 * vis : 1
++  for (const mtl of rig.bodyMats) { const m = mtl as THREE.MeshLambertMaterial; m.opacity = bodyA; m.transparent = bodyA < 1; m.depthWrite = bodyA >= 1 }
++  const flick = rig.kind === 'phantom' ? 1 : 0.9 + Math.sin(t * 13) * 0.05 + Math.sin(t * 31) * 0.05
++  const gA = Math.min(1, Math.max(0, rig.kind === 'phantom' ? vis * 1.2 : 1))
++  rig.glowMats.forEach((m, i) => { m.opacity = gA; m.color.copy(rig.glowBase[i]).multiplyScalar(Math.max(0.15, glow * flick)) })
++  // 咧嘴：上排抬、下排落、嘴角拉宽
++  const open = grin
++  rig.upper.position.y = open * 0.035
++  rig.lower.position.y = -open * (rig.kind === 'great' ? 0.12 : 0.075)
++  if (rig.kind === 'starved') rig.lower.position.y += Math.sin(t * 38) * 0.006 * (0.4 + open) // 牙齿打颤
++  const wide = 1 + open * 0.22
++  rig.upper.scale.set(1, 1, wide); rig.lower.scale.set(1, 1, wide)
++  const mouth = rig.face.children.find((c) => c.userData.mouth)
++  if (mouth) { openMouth(mouth as THREE.Mesh, Math.round((0.3 + open * (rig.kind === 'great' ? 4.2 : 2.8)) * 20) / 20); mouth.scale.set(1, 1, wide); ((mouth as THREE.Mesh).material as THREE.MeshBasicMaterial).opacity = bodyA }
++  // 眼：偶尔眨（短暂熄灭）
++  rig.eyes.scale.y = (Math.sin(t * 0.7) > 0.985 ? 0.1 : 1)
++  // 身体呼吸 / 翻涌
++  const chase = e.state === 'chase' || e.state === 'attack'
++  rig.body.scale.set(1 + Math.sin(t * 2.1) * 0.03, 1 + Math.sin(t * 1.7 + 1) * 0.025, 1 + Math.sin(t * 2.4 + 2) * 0.03)
++  const gait = e.animT * (rig.kind === 'canid' ? 6.5 : 4)
++  if (rig.kind === 'canid') {
++    rig.limbs.slice(0, 4).forEach((L, i) => { L.rotation.z = Math.sin(gait + (i === 0 || i === 3 ? 0 : Math.PI)) * (chase ? 0.6 : 0.35) })
++    rig.limbs[4].rotation.y = Math.sin(t * (chase ? 9 : 3)) * 0.35
++    grp.position.y = gz + Math.abs(Math.sin(gait)) * 0.04
++    rig.face.rotation.z = chase ? -0.1 : Math.sin(t * 0.6) * 0.08
++  } else {
++    // 手臂：悬浮个体缓慢抽搐摆动；饥饿/巨笑魇随步伐拖动
++    rig.limbs.forEach((L, i) => {
++      const s2 = i ? 1 : -1
++      if (rig.float > 0) L.rotation.z = Math.sin(t * 1.3 + i) * 0.18 + (chase ? -0.5 : 0)
++      else L.rotation.z = Math.sin(gait + i * Math.PI) * (chase ? 0.45 : 0.25) - (rig.kind === 'great' ? 0.25 : 0.1)
++      void s2
++    })
++    if (rig.float > 0) grp.position.y = gz + rig.float + Math.sin(t * 2.2) * 0.1
++    else grp.position.y = gz + Math.abs(Math.sin(gait)) * (rig.kind === 'great' ? 0.05 : 0.03)
++    // 前倾：追击时上身压低前冲
++    rig.face.position.x = (rig.kind === 'great' ? 0.36 : rig.kind === 'starved' ? 0.15 : 0.24) + (chase ? 0.04 : 0)
++    grp.rotation.z = chase ? -0.12 : 0
++  }
++  // 面部轻微歪头（对峙时缓慢倾斜，更瘆人）
++  if (s?.phase === 'standoff') rig.face.rotation.x = Math.sin(t * 0.5) * 0.25
++  else rig.face.rotation.x *= 0.9
++}
+diff --git a/app/src/proto/smilerProto.ts b/app/src/proto/smilerProto.ts
+new file mode 100644
+index 0000000..cf37fb0
+--- /dev/null
++++ b/app/src/proto/smilerProto.ts
+@@ -0,0 +1,59 @@
++// 原型预览页：笑魇重制（?mode=lineup | grin | dark | old）
++import * as THREE from 'three'
++import { buildEntityMesh } from '../game/renderer/entitiesMesh'
++import { animateSmiler } from '../game/renderer/smilerMesh'
++import { SMILER_KINDS, type SmilerKind } from '../game/entities/smilers'
++
++const mode = new URLSearchParams(location.search).get('mode') ?? 'lineup'
++const W = innerWidth, H = innerHeight
++const renderer = new THREE.WebGLRenderer({ antialias: true })
++renderer.setSize(W, H); renderer.outputColorSpace = THREE.SRGBColorSpace
++document.body.appendChild(renderer.domElement)
++const scene = new THREE.Scene()
++const dark = mode === 'dark'
++scene.background = new THREE.Color(dark ? '#0a0905' : '#5e5530')
++scene.fog = new THREE.Fog(scene.background as THREE.Color, 6, dark ? 16 : 30)
++const floor = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.MeshLambertMaterial({ color: '#6e5f36' }))
++floor.rotation.x = -Math.PI / 2; scene.add(floor)
++const wall = new THREE.Mesh(new THREE.PlaneGeometry(40, 6), new THREE.MeshLambertMaterial({ color: '#b8aa62' }))
++wall.position.set(0, 3, -2.2); scene.add(wall)
++scene.add(new THREE.HemisphereLight('#fff2c0', '#3a321a', dark ? 0.12 : 1.0))
++const sun = new THREE.DirectionalLight('#fff3c8', dark ? 0 : 1.2); sun.position.set(2, 5, 4); scene.add(sun)
++const cam = new THREE.PerspectiveCamera(36, W / H, 0.1, 60)
++if (dark) { const sp = new THREE.SpotLight('#fff1cc', 30, 14, 0.42, 0.6, 1.4); sp.position.set(-0.3, 1.5, 7); sp.target.position.set(0.4, 1.2, 0); scene.add(sp, sp.target) }
++const lab = document.getElementById('lab')!
++const label = (x: number, y: number, z: number, html: string, top?: number) => {
++  const p = new THREE.Vector3(x, y, z).project(cam)
++  lab.insertAdjacentHTML('beforeend', `<div class="l" style="left:${(p.x * 0.5 + 0.5) * W}px;top:${top ?? (-p.y * 0.5 + 0.5) * H}px">${html}</div>`)
++}
++const fakeE = (kind: SmilerKind, grin: number, phase = 'stalk', vis = 1): any => ({ id: 3, x: 0, y: 0, state: 'chase', animT: 1.3, dead: false, sm: { kind, grin, glow: 1, vis, phase } })
++const place = (kind: SmilerKind, x: number, z: number, grin: number, rotY = -Math.PI / 2 + 0.35, vis = 1, phase = 'stalk') => {
++  const g = buildEntityMesh('smiler', { smilerKind: kind, seed: 3 })
++  g.position.set(x, 0, z); g.rotation.y = rotY
++  g.scale.setScalar(SMILER_KINDS[kind].scale)
++  scene.add(g); animateSmiler(g, fakeE(kind, grin, phase, vis), 2.3, 0)
++  g.position.x = x; g.position.z = z
++  return g
++}
++const stats = (o: THREE.Object3D) => { let calls = 0, tris = 0; o.traverse((m: any) => { if (m.isMesh) { calls++; const g = m.geometry; tris += (g.index ? g.index.count : g.attributes.position.count) / 3 } }); return { calls, tris: Math.round(tris) } }
++
++if (mode === 'lineup' || mode === 'dark') {
++  cam.position.set(0, 1.35, 8.6); cam.lookAt(0, 1.0, 0); cam.updateMatrixWorld()
++  const ks: SmilerKind[] = ['common', 'phantom', 'starved', 'canid', 'great']
++  ks.forEach((k, i) => {
++    const x = (i - 2) * 1.75
++    const g = place(k, x, 0, dark ? 0.55 : 0.4, k === 'canid' ? -Math.PI / 2 + 0.9 : -Math.PI / 2 + 0.3, 1)
++    const st = stats(g)
++    if (!dark) label(x, 0, 0, `${SMILER_KINDS[k].name}<div class="s">${st.calls} 次绘制 · ${st.tris} 面</div>`, H - 92)
++  })
++} else if (mode === 'grin') {
++  cam.position.set(0, 1.45, 3.4); cam.lookAt(0, 1.32, 0); cam.updateMatrixWorld()
++  const items: [SmilerKind, number, string, number][] = [['common', 0.05, '游荡：闭嘴', 1], ['common', 0.45, '察觉：咧嘴', 1], ['common', 1, '扑击：张到最大', 1], ['phantom', 1, '幽影：近身现形', 1], ['phantom', 1, '幽影：远处只剩余光', 0.15]]
++  items.forEach(([k, gr, name, vis], i) => {
++    const x = (i - 2) * 0.95
++    place(k, x, 0, gr, -Math.PI / 2, vis)
++    label(x, 0, 0, name, H - 70)
++  })
++}
++renderer.render(scene, cam)
++;(window as any).__ready = true

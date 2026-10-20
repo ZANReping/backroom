@@ -567,10 +567,16 @@ export function takeExit(eng: Engine, def: ExitDef) {  const p = eng.player
   // v45：Level 274 教化规则——教化满（≥100）成为信众一员：无法主动离开（开发者传送除外）；
   // 未满时主动离开 → jerry 声望 -5；有进行中的传教委托（v47 标准委托化）离开不受声望惩罚
   if (p.level === 274 && def.dest === 'back') {
-    if (eng.indoctrination >= 100) {
-      eng.msg('诵咏的冲动仍在，但出口保持开放。你可以向外界请求帮助。', 'lore')
+    const mission = hasFactionFieldwork(eng, 'jerry') || eng.quests.some((q) => q.def.kind === 'preach' && !q.done)
+    // 重制杰瑞（ZAN 确认）：教化满 100 且鹉主未被驯服——你已是信众的一员，无法主动离开；
+    // 唯一的例外是肩负传教使命「为鹉主远行」。想要自由：用杏仁水驯服鹉主（教化清零）。
+    if (eng.indoctrination >= 100 && !eng.jerryTamed && !mission) {
+      eng.msg('你走到门口，脚却自己停住了。身后传来诵咏声——你转过身，又走了回去。（教化已满：无法主动离开 Level 274）', 'lore')
+      audio.uiTick()
+      return
     }
-    if (hasFactionFieldwork(eng, 'jerry') || eng.quests.some((q) => q.def.kind === 'preach' && !q.done)) eng.msg('你肩负圣所任务离开圣地——本次远行免于声望惩罚。', 'system')
+    if (eng.indoctrination >= 100) eng.msg('诵咏的冲动仍在。你以传教的名义离开——你可以向外界请求帮助。', 'lore')
+    if (mission) eng.msg('你肩负圣所任务离开圣地——本次远行免于声望惩罚。', 'system')
     else {
       eng.changeRep('jerry', -5)
       eng.msg('你转身离开了圣地。信众的目光在你背后发凉。（杰瑞的信众 声望 -5）', 'damage')

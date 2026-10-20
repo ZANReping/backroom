@@ -27,6 +27,8 @@ export interface RetroHand {
   sleeve: THREE.Mesh
   /** item：手里的物体（其父节点坐标 = 手的父节点坐标）；给出时手指按物体真实网格接触求解。 */
   setPose(p: HandPose, item?: THREE.Object3D | null): void
+  /** Cache contact geometry without changing the visible hand. Borrowed meshes; do not dispose. */
+  preparePose(p: HandPose, item?: THREE.Object3D | null): THREE.Group
   setLook(l: RetroHandLook): void
   /** Release all cached poses and private materials; clothing textures remain shared. */
   dispose(): void
@@ -326,40 +328,42 @@ export function buildRetroHand(opts: { left?: boolean } = {}): RetroHand {
   // 求解结果缓存（物体 × 握法 × 袖长）：快捷栏来回切换不重复采样/求解
   const cache = new Map<string, { skin: THREE.BufferGeometry; sleeve: THREE.BufferGeometry; shift: V3 }>()
   let shift: V3 = [0, 0, 0]
-  const basis = () => {
-    const ax = new THREE.Vector3(...(pose.ax ?? [1, 0, 0])).normalize()
-    const ay = new THREE.Vector3(...(pose.ay ?? [0, 1, 0]))
+  const basis = (p = pose) => {
+    const ax = new THREE.Vector3(...(p.ax ?? [1, 0, 0])).normalize()
+    const ay = new THREE.Vector3(...(p.ay ?? [0, 1, 0]))
     ay.addScaledVector(ax, -ay.dot(ax)).normalize()
     const az = new THREE.Vector3().crossVectors(ax, ay)
     // 镜像后的左手：H.X 在几何里已取反，基底保持右手系即可
     return new THREE.Matrix4().makeBasis(ax, ay, az)
+  }
+  const prepare = (p: HandPose, it: THREE.Object3D | null, B: THREE.Matrix4) => {
+    const key = JSON.stringify([p, look.sleeveKind, it?.uuid ?? ''])
+    let g = cache.get(key)
+    if (!g) {
+      const M = B.clone().setPosition(...p.at)
+      const col = it ? buildHandCollider(it, M.invert(), !!opts.left) : undefined
+      g = buildHandGeo(p, !!opts.left, look.sleeveKind, col?.count ? col : undefined)
+    }
+    cache.delete(key); cache.set(key, g)
+    while (cache.size > 16) {
+      // Background preparation must not retire the currently displayed pose.
+      const k0 = [...cache.keys()].find(k => k !== geoKey)!
+      const old = cache.get(k0)!
+      cache.delete(k0); old.skin.dispose(); old.sleeve.dispose()
+    }
+    return { key, g }
   }
   const rebuild = () => {
     if (disposed) return
     const B = basis()
     const key = JSON.stringify([pose, look.sleeveKind, item?.uuid ?? ''])
     if (key !== geoKey) {
+      const { g } = prepare(pose, item, B)
       geoKey = key
-      let g = cache.get(key)
-      if (!g) {
-        let col: HandCollider | undefined
-        if (item) {
-          const M = B.clone().setPosition(...pose.at)
-          col = buildHandCollider(item, M.invert(), !!opts.left)
-          if (col.count === 0) col = undefined
-        }
-        g = buildHandGeo(pose, !!opts.left, look.sleeveKind, col)
-        cache.set(key, g)
-      }
       // Dispose the initial empty buffers, then keep a true bounded LRU.
       if (!geoKeyInitialized) { skin.geometry.dispose(); sleeve.geometry.dispose(); geoKeyInitialized = true }
-      cache.delete(key); cache.set(key, g)
       skin.geometry = g.skin; sleeve.geometry = g.sleeve
       shift = g.shift
-      while (cache.size > 16) {
-        const [k0, old] = cache.entries().next().value!
-        cache.delete(k0); old.skin.dispose(); old.sleeve.dispose()
-      }
     }
     group.quaternion.setFromRotationMatrix(B)
     // 外推量在 H 内求得（左手几何镜像 → X 取反），换到父节点坐标叠加到握持点
@@ -374,6 +378,15 @@ export function buildRetroHand(opts: { left?: boolean } = {}): RetroHand {
   return {
     group, skin, sleeve,
     setPose(p, it) { pose = p; item = it ?? null; rebuild() },
+    preparePose(p, it) {
+      const B = basis(p), { g } = prepare(p, it ?? null, B), root = new THREE.Group()
+      root.add(new THREE.Mesh(g.skin, skinMat))
+      if (look.sleeveKind === 'long') root.add(new THREE.Mesh(g.sleeve, sleeveMat))
+      root.quaternion.setFromRotationMatrix(B)
+      const sv = new THREE.Vector3(opts.left ? -g.shift[0] : g.shift[0], g.shift[1], g.shift[2]).applyQuaternion(root.quaternion)
+      root.position.set(p.at[0] + sv.x, p.at[1] + sv.y, p.at[2] + sv.z)
+      return root
+    },
     setLook(l) {
       if (disposed) return
       const key = JSON.stringify(l)

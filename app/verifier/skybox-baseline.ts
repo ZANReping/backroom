@@ -1,0 +1,835 @@
+// v35 精致天空盒（系统重置）：2048×1024 等距柱状投影程序化天空——
+//   · 三段大气垂直渐变 + 日/月方位前向散射暖调
+//   · 日光盘（柔和边缘 + 内晕 + 广域光轮）/ 月盘（环形山 + 明暗交界 + 冷晕）
+//   · 分级星野（暗星尘 / 亮星十字芒 / 蓝橙双色，水平无缝）
+//   · 银河光带（大圆弧轨道 + fBm 尘埃纹理 + 暗尘带，仅夜空层）
+//   · 双层云：低层 fBm 积云（向阳银边 + 地平霾化）+ 高层拉伸卷云，x 向晶格周期化保证 360° 无缝
+//   · 地平辉光带沿方位起伏（霓虹/工业光），亮度噪声调制
+//   · 全图抖动去色带；逐层确定性生成（同层恒定），CanvasTexture 按层缓存
+import * as THREE from 'three'
+import type { GameMap } from '../world/mapgen'
+import type { LevelDef } from '../core/types'
+
+export interface SkyProfile {
+  zenith: string
+  zenithMid?: string
+  horizon: string
+  haze: string
+  stars?: number // 星野密度 0..1
+  milkyWay?: number // 银河光带强度 0..1（仅夜空层）
+  clouds?: {
+    density: number
+    color: string
+    alpha: number
+    cirrus?: number
+    overcast?: number // 0..1：加入连续低云底层，避免高密度噪声被压成一整块纯色
+    moonVeil?: number // 0..1：厚云后仍可见的月盘与散射光晕
+  }
+  sun?: { az: number; elv: number; size: number; color: string; glow: string }
+  moon?: { az: number; elv: number; size: number; color: string }
+  horizonGlow?: { color: string; alpha: number }[] // 低角度地平光晕（霓虹/工业光）
+  sunLight?: number
+  sunColor?: string
+  mirages?: boolean // v58：蜃楼船队——巨大迷雾中可见但永远无法靠近的幽灵船（仅 L7）
+}
+
+// 有室外场景的层级：L2 管道（昏灰工业霾）/ L3 发电站（工业夜）/ L4 办公室（雾灰）/
+// L5 酒店（夜蓝霓虹）/ L7 深海（海面阴云）/ L9 郊区（午夜银河）/ L10 丰收（阴沉铅灰）/ L11 不夜城（白昼）
+export const SKY_PROFILES: Record<number, SkyProfile> = {
+  2: {
+    zenith: '#4c463e', zenithMid: '#5a5348', horizon: '#6e6355', haze: '#38342d',
+    clouds: { density: 0.55, color: '#756c5e', alpha: 0.24, cirrus: 0.15 },
+    sun: { az: 210, elv: 22, size: 13, color: '#e8dcc4', glow: '#b3a488' },
+    horizonGlow: [{ color: '#c98850', alpha: 0.07 }],
+    sunLight: 0.3, sunColor: '#d8cbb2',
+  },
+  3: {
+    zenith: '#070a12', zenithMid: '#101523', horizon: '#232f45', haze: '#0a0e16',
+    stars: 0.8, milkyWay: 0.35,
+    clouds: { density: 0.14, color: '#161d2e', alpha: 0.18 },
+    moon: { az: 300, elv: 38, size: 14, color: '#e8edf5' },
+    horizonGlow: [
+      { color: '#e8a24c', alpha: 0.13 },
+      { color: '#ff7a3c', alpha: 0.07 },
+    ],
+    sunLight: 0.06, sunColor: '#b8c4d8',
+  },
+  4: {
+    zenith: '#868e93', zenithMid: '#798185', horizon: '#6a7276', haze: '#4e5458',
+    clouds: { density: 0.62, color: '#939ca0', alpha: 0.28, cirrus: 0.2 },
+    sun: { az: 160, elv: 30, size: 13, color: '#eef3f4', glow: '#c3cbce' },
+    sunLight: 0.5, sunColor: '#e6ecee',
+  },
+  5: {
+    zenith: '#0a1226', zenithMid: '#16264a', horizon: '#31487c', haze: '#121a30',
+    stars: 0.55, milkyWay: 0.3,
+    clouds: { density: 0.18, color: '#1a2a50', alpha: 0.2 },
+    moon: { az: 280, elv: 42, size: 16, color: '#ecf1f8' },
+    horizonGlow: [
+      { color: '#ff5f9e', alpha: 0.16 },
+      { color: '#78b4ff', alpha: 0.12 },
+    ],
+    sunLight: 0.08, sunColor: '#9fb0d8',
+  },
+  // L6：近乎无光的苔原夜空。低空小月亮藏在厚云后，云层只保留冷灰轮廓；
+  // 实际可见度由 renderer 的暗适应曲线逐渐抬升，而不是把天空/地面做成自发光。
+  6: {
+    zenith: '#010208', zenithMid: '#030610', horizon: '#080b12', haze: '#010207',
+    stars: 0.025,
+    clouds: { density: 0.72, color: '#101722', alpha: 0.42, cirrus: 0.34 },
+    moon: { az: 252, elv: 14, size: 7, color: '#c4ccd8' },
+    horizonGlow: [{ color: '#263044', alpha: 0.025 }],
+    sunLight: 0.045, sunColor: '#75849a',
+  },
+  // L7 v58：巨大迷雾之海——低空亮雾墙、高空暗灰蓝的阴郁暮色；浓云满铺无日轮（顶光照明保留），
+  // 蜃楼船队（mirages）由 makeMirageFleet 生成立体低模幽灵船，永远无法靠近
+  7: {
+    zenith: '#2c3843', zenithMid: '#354550', horizon: '#54666d', haze: '#5f7177',
+    clouds: { density: 0.85, color: '#46585f', alpha: 0.3, cirrus: 0.03 },
+    horizonGlow: [{ color: '#93a8ae', alpha: 0.05 }],
+    sunLight: 0.35, sunColor: '#c2ccd2',
+    mirages: true,
+  },
+  9: {
+    zenith: '#050a11', zenithMid: '#0d141c', horizon: '#1b2229', haze: '#0b0e12',
+    // 无星阴天：低层大片雨云保留清晰团块和层次，较高月盘从云后透出冷色散射光。
+    stars: 0,
+    clouds: { density: 0.88, color: '#283139', alpha: 0.78, cirrus: 0.2, overcast: 0.9, moonVeil: 0.68 },
+    moon: { az: 67, elv: 29, size: 4.3, color: '#d9dde2' },
+    horizonGlow: [
+      { color: '#59636d', alpha: 0.035 },
+      { color: '#332f3d', alpha: 0.025 },
+    ],
+    sunLight: 0.085, sunColor: '#aab7c7',
+  },
+  10: {
+    zenith: '#9ea2a6', zenithMid: '#8f9398', horizon: '#83878b', haze: '#5c6165',
+    clouds: { density: 0.82, color: '#b0b4b7', alpha: 0.32, cirrus: 0.25 },
+    sun: { az: 218, elv: 34, size: 8, color: '#fff8e8', glow: '#e7ddc7' },
+    sunLight: 0.72, sunColor: '#f1eadb',
+  },
+  11: {
+    zenith: '#9aa3a7', zenithMid: '#a9b0b2', horizon: '#bec2bf', haze: '#a1aaac',
+    clouds: { density: 0.93, color: '#d5d8d5', alpha: 0.75, cirrus: 0.15, overcast: 1 },
+    sunLight: .72, sunColor: '#e8e9e1',
+  },
+}
+
+const CW = 2048
+const CH = 1024
+// 贴图布局：行 0 = 天顶 → 行 CH = 地平线（半球网格 uv.y 从 1 到 0 覆盖整张贴图高度，
+// 不是旧版误以为的"只取上半张"——旧布局导致下半张霾色渲染在 el<45° 的低空、天顶暗色压成黑色圆盖）
+
+type RGB = [number, number, number]
+
+// 手工解析 hex（不走 THREE.Color，避免色彩管理把 sRGB 转成线性值写进 sRGB 纹理）
+function rgb(hex: string): RGB {
+  const n = parseInt(hex.slice(1), 16)
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255]
+}
+const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
+const smoothstep = (a: number, b: number, v: number) => {
+  const t = clamp01((v - a) / (b - a))
+  return t * t * (3 - 2 * t)
+}
+const wrapDeg = (d: number) => ((d + 540) % 360) - 180
+const D2R = Math.PI / 180
+
+// 确定性伪随机（按层恒定，天空每次重建一致）
+function rngFrom(seed: number) {
+  let s = (seed >>> 0) || 1
+  return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296)
+}
+
+// x 向晶格周期化的 value noise / fBm：period 为 x 向周期（八度翻倍仍为整数周期），
+// 采样跨 360° 接缝时图案连续——云/银河/辉光调制环绕无缝
+function makeNoise(seed: number) {
+  const s = seed | 0
+  const hash = (x: number, y: number) => {
+    let h = Math.imul(x, 374761393) ^ Math.imul(y, 668265263) ^ s
+    h = Math.imul(h ^ (h >>> 13), 1274126177)
+    return ((h ^ (h >>> 16)) >>> 0) / 4294967296
+  }
+  const vn = (x: number, y: number, period: number) => {
+    const ix = Math.floor(x), iy = Math.floor(y)
+    const fx = x - ix, fy = y - iy
+    const ux = fx * fx * (3 - 2 * fx), uy = fy * fy * (3 - 2 * fy)
+    const xa = ((ix % period) + period) % period
+    const xb = (xa + 1) % period
+    const a = hash(xa, iy), b = hash(xb, iy), c = hash(xa, iy + 1), d = hash(xb, iy + 1)
+    return a + (b - a) * ux + (c - a) * uy + (a - b - c + d) * ux * uy
+  }
+  const fbm = (x: number, y: number, period: number, oct: number) => {
+    let v = 0, amp = 0.5, norm = 0, p = period, fx = x, fy = y
+    for (let i = 0; i < oct; i++) {
+      v += vn(fx, fy, p) * amp
+      norm += amp
+      amp *= 0.5; fx *= 2; fy *= 2; p *= 2
+    }
+    return v / norm
+  }
+  return { hash, vn, fbm }
+}
+
+// 双线性采样浮点网格（x 环绕）——云/银河纹理先低分辨率算好再放大，柔软元素无可见损耗
+function sampleGrid(buf: Float32Array, gw: number, gh: number, x: number, y: number) {
+  const fx = clamp01(x / (gw - 1)) * (gw - 1)
+  const fy = clamp01(y / (gh - 1)) * (gh - 1)
+  const ix = Math.floor(fx), iy = Math.floor(fy)
+  const tx = fx - ix, ty = fy - iy
+  const ix1 = (ix + 1) % gw
+  const i00 = iy * gw + ix, i10 = iy * gw + ix1, i01 = i00 + gw, i11 = i10 + gw
+  const top = buf[i00] + (buf[i10] - buf[i00]) * tx
+  const bot = buf[i01] + (buf[i11] - buf[i01]) * tx
+  return top + (bot - top) * ty
+}
+
+interface Splatter {
+  add: (x: number, y: number, c: RGB, k: number) => void
+  over: (x: number, y: number, c: RGB, a: number) => void
+}
+
+function makeSplatter(d: Uint8ClampedArray): Splatter {
+  const at = (x: number, y: number) => (y * CW + (((x % CW) + CW) % CW)) * 4
+  return {
+    add(x, y, c, k) {
+      const i = at(x | 0, y | 0)
+      d[i] = Math.min(255, d[i] + c[0] * k)
+      d[i + 1] = Math.min(255, d[i + 1] + c[1] * k)
+      d[i + 2] = Math.min(255, d[i + 2] + c[2] * k)
+    },
+    over(x, y, c, a) {
+      const i = at(x | 0, y | 0)
+      d[i] += (c[0] - d[i]) * a
+      d[i + 1] += (c[1] - d[i + 1]) * a
+      d[i + 2] += (c[2] - d[i + 2]) * a
+    },
+  }
+}
+
+function renderSky(ctx: CanvasRenderingContext2D, p: SkyProfile, seed: number) {
+  const img = ctx.createImageData(CW, CH)
+  const d = img.data
+  const zen = rgb(p.zenith), mid = rgb(p.zenithMid ?? p.zenith), hor = rgb(p.horizon), haze = rgb(p.haze)
+  const noise = makeNoise(seed * 2654435761 + 97)
+  const rnd = rngFrom(seed * 7919 + 17)
+  const { sun, moon } = p
+  const sunGlow = sun ? rgb(sun.glow) : null
+  const moonGlow: RGB = [196, 214, 244]
+  const glows = (p.horizonGlow ?? []).map((g) => ({ c: rgb(g.color), a: g.alpha }))
+  const mwTint: RGB = [150, 168, 206]
+  const mwCore: RGB = [226, 208, 184]
+
+  // ---------- 1. 基础渐变 + 日月散射 + 地平辉光 + 银河 + 抖动 ----------
+  // 银河纹理网格（低频起伏 + 暗尘带）
+  const MW_GW = 512, MW_GH = 192
+  const mwTex = p.milkyWay ? new Float32Array(MW_GW * MW_GH) : null
+  const mwLane = p.milkyWay ? new Float32Array(MW_GW * MW_GH) : null
+  if (mwTex && mwLane) {
+    for (let gy = 0; gy < MW_GH; gy++)
+      for (let gx = 0; gx < MW_GW; gx++) {
+        const u = (gx / MW_GW) * 9, v = (gy / MW_GH) * 4.5
+        mwTex[gy * MW_GW + gx] = noise.fbm(u, v, 9, 3)
+        mwLane[gy * MW_GW + gx] = noise.fbm(u * 1.7 + 31, v * 1.7 + 11, 16, 3)
+      }
+  }
+  for (let y = 0; y < CH; y++) {
+    // 行基色：zenith→mid→horizon 铺满全高，末端 6% 混入地平霾色（与地面雾衔接）
+    let r0: number, g0: number, b0: number
+    const t = y / CH
+    if (t < 0.55) { const k = t / 0.55; r0 = zen[0] + (mid[0] - zen[0]) * k; g0 = zen[1] + (mid[1] - zen[1]) * k; b0 = zen[2] + (mid[2] - zen[2]) * k }
+    else if (t < 0.94) { const k = (t - 0.55) / 0.39; r0 = mid[0] + (hor[0] - mid[0]) * k; g0 = mid[1] + (hor[1] - mid[1]) * k; b0 = mid[2] + (hor[2] - mid[2]) * k }
+    else { const k = (t - 0.94) / 0.06; r0 = hor[0] + (haze[0] - hor[0]) * k; g0 = hor[1] + (haze[1] - hor[1]) * k; b0 = hor[2] + (haze[2] - hor[2]) * k }
+    const el = (1 - t) * 90
+    const cosEl = Math.cos(el * D2R)
+    const glowBand = glows.length ? Math.exp(-(((el - 3) / 9) ** 2)) : 0
+    for (let x = 0; x < CW; x++) {
+      let r = r0, g = g0, b = b0
+      const i = (y * CW + x) * 4
+      {
+        const az = (x / CW) * 360
+        // 太阳前向散射：日轮周围暖调增亮（近地平线更强）
+        if (sun && sunGlow) {
+          const dAz = wrapDeg(az - sun.az) * cosEl
+          const dEl = el - sun.elv
+          const a2 = dAz * dAz + dEl * dEl
+          if (a2 < 8100) {
+            const sc = (Math.exp(-a2 / 3025) * 0.15 + Math.exp(-a2 / 256) * 0.22) * (1.15 - el / 120)
+            r += sunGlow[0] * sc; g += sunGlow[1] * sc; b += sunGlow[2] * sc
+          }
+        }
+        // 月亮冷晕（弱、窄）
+        if (moon) {
+          const dAz = wrapDeg(az - moon.az) * cosEl
+          const dEl = el - moon.elv
+          const a2 = dAz * dAz + dEl * dEl
+          if (a2 < 1200) {
+            const sc = Math.exp(-a2 / 400) * 0.1
+            r += moonGlow[0] * sc; g += moonGlow[1] * sc; b += moonGlow[2] * sc
+          }
+        }
+        // 地平辉光带（沿方位噪声起伏 → 城市灯光的斑块感）
+        if (glowBand > 0.01) {
+          const mod = 0.55 + 0.45 * noise.fbm((x / CW) * 24, 7.3, 24, 2)
+          for (const gl of glows) {
+            const k = gl.a * glowBand * mod
+            r += gl.c[0] * k; g += gl.c[1] * k; b += gl.c[2] * k
+          }
+        }
+        // 银河光带 + 暗尘带（团块化破碎 + 地平线淡出，避免均匀光弧）
+        if (mwTex && mwLane) {
+          const elB = 26 * Math.sin((az + 25) * D2R) + 14
+          const dd = el - elB
+          if (dd > -34 && dd < 34) {
+            const gx = (x / CW) * (MW_GW - 1), gy = (y / CH) * (MW_GH - 1)
+            const tex = sampleGrid(mwTex, MW_GW, MW_GH, gx, gy)
+            const lane = sampleGrid(mwLane, MW_GW, MW_GH, gx, gy)
+            const patch = smoothstep(0.36, 0.72, tex) // 团块化：只在尘埃浓处显现
+            const band = Math.exp(-((dd / 10) ** 2)) * patch * (1 - Math.exp(-(((dd + 4) / 2.6) ** 2)) * lane * 0.9)
+            const core = Math.exp(-((dd / 4) ** 2)) * patch * 0.4
+            const k = p.milkyWay! * 0.24 * smoothstep(4, 18, el)
+            r += (mwTint[0] * band + mwCore[0] * core) * k
+            g += (mwTint[1] * band + mwCore[1] * core) * k
+            b += (mwTint[2] * band + mwCore[2] * core) * k
+          }
+        }
+      }
+      // 抖动去色带
+      const dz = (noise.hash(x, y) - 0.5) * 2.2
+      d[i] = r + dz; d[i + 1] = g + dz; d[i + 2] = b + dz; d[i + 3] = 255
+    }
+  }
+
+  const splat = makeSplatter(d)
+
+  // ---------- 2. 星野：暗星尘 + 亮星十字芒（边缘环绕复制，跨缝不断星） ----------
+  if (p.stars) {
+    const WHITE: RGB = [235, 240, 255], WARM: RGB = [255, 226, 188], BLUE: RGB = [188, 216, 255]
+    const n = Math.round(p.stars * 1800)
+    for (let s = 0; s < n; s++) {
+      const x = rnd() * CW
+      const y = 3 + Math.pow(rnd(), 1.35) * (CH - 20) // 略偏高空分布
+      const mag = rnd()
+      const elS = (1 - y / CH) * 90
+      const a = (0.22 + Math.pow(rnd(), 2.2) * 0.78) * (0.3 + 0.7 * (1 - y / CH)) // 近地平线渐隐
+        * (0.3 + 0.7 * clamp01((86 - elS) / 12)) // 近天极淡出（缓解极点 UV 汇聚处的 mip 平均环）
+      const c = mag > 0.9 ? WARM : mag > 0.78 ? BLUE : WHITE
+      const rad = 0.5 + mag * 1.1
+      // 高斯小核（3×3，亮星 5×5）+ 水平环绕复制
+      const ext = mag > 0.93 ? 2 : 1
+      for (let oy = -ext; oy <= ext; oy++)
+        for (let ox = -ext; ox <= ext; ox++) {
+          const dd = (ox * ox + oy * oy) / (rad * rad)
+          const k = a * Math.exp(-dd * 1.6)
+          if (k < 0.01) continue
+          const px = x + ox, py = y + oy
+          if (py < 0 || py >= CH) continue
+          splat.add(px, py, c, k)
+          if (px < 4) splat.add(px + CW, py, c, k)
+          else if (px > CW - 4) splat.add(px - CW, py, c, k)
+        }
+      // 亮星十字芒
+      if (mag > 0.93) {
+        const arm = 4 + rnd() * 4
+        for (let t = 1; t <= arm; t++) {
+          const k = a * 0.5 * (1 - t / arm)
+          for (const [ox, oy] of [[t, 0], [-t, 0], [0, t], [0, -t]] as const) {
+            const px = x + ox, py = y + oy
+            if (py < 0 || py >= CH) continue
+            splat.add(px, py, c, k)
+            if (px < 8) splat.add(px + CW, py, c, k)
+            else if (px > CW - 8) splat.add(px - CW, py, c, k)
+          }
+        }
+      }
+    }
+  }
+
+  // ---------- 3. 日/月光盘（柔和边缘 + 内晕；月面环形山与明暗交界） ----------
+  const drawBody = (az: number, elv: number, size: number, color: RGB, halo: RGB, isMoon: boolean) => {
+    const cx = (az / 360) * CW, cy = (1 - elv / 90) * CH
+    const R = size * (CW / 512) // size 语义沿用旧版（512 宽参考像素），按分辨率放大
+    const ext = Math.ceil(R * 6)
+    // 广域内晕（加性）
+    for (let oy = -ext; oy <= ext; oy++) {
+      const py = cy + oy
+      if (py < 0 || py >= CH) continue
+      for (let ox = -ext; ox <= ext; ox++) {
+        const dd = Math.sqrt(ox * ox + oy * oy) / R
+        if (dd > 6) continue
+        const k = Math.exp(-dd * dd * 0.55) * (isMoon ? 0.12 : 0.26)
+        if (k < 0.004) continue
+        const px = cx + ox
+        splat.add(px, py, halo, k)
+        if (px < ext) splat.add(px + CW, py, halo, k)
+        else if (px > CW - ext) splat.add(px - CW, py, halo, k)
+      }
+    }
+    // 盘体（覆盖混合，边缘羽化）
+    const ri = Math.ceil(R * 1.05)
+    for (let oy = -ri; oy <= ri; oy++) {
+      const py = cy + oy
+      if (py < 0 || py >= CH) continue
+      for (let ox = -ri; ox <= ri; ox++) {
+        const dd = Math.sqrt(ox * ox + oy * oy) / R
+        if (dd > 1.05) continue
+        const a = 1 - smoothstep(0.88, 1.02, dd)
+        if (a <= 0) continue
+        let sh = 1
+        if (isMoon) sh = 0.8 + 0.2 * clamp01(ox / R * 0.5 + 0.5) // 明暗交界（+x 侧受光）
+        const px = cx + ox
+        const cc: RGB = [color[0] * sh, color[1] * sh, color[2] * sh]
+        splat.over(px, py, cc, a)
+        if (px < ri) splat.over(px + CW, py, cc, a)
+        else if (px > CW - ri) splat.over(px - CW, py, cc, a)
+      }
+    }
+    // 月面环形山（确定性四点，暗化高斯斑）
+    if (isMoon) {
+      const CRATER: RGB = [168, 182, 212]
+      const spots = [[-0.32, -0.28, 0.2], [0.28, 0.22, 0.14], [0.05, -0.42, 0.11], [-0.1, 0.38, 0.09]] as const
+      for (const [sx, sy, sr] of spots) {
+        const cx2 = cx + sx * R, cy2 = cy + sy * R, rr = Math.ceil(sr * R * 2.2)
+        for (let oy = -rr; oy <= rr; oy++) {
+          const py = cy2 + oy
+          if (py < 0 || py >= CH) continue
+          for (let ox = -rr; ox <= rr; ox++) {
+            const dd = Math.sqrt(ox * ox + oy * oy) / (sr * R)
+            if (dd > 2.2) continue
+            const k = Math.exp(-dd * dd * 1.4) * 0.3
+            splat.over(cx2 + ox, py, CRATER, Math.min(0.5, k))
+          }
+        }
+      }
+    }
+  }
+  if (sun) drawBody(sun.az, sun.elv, sun.size, rgb(sun.color), sunGlow!, false)
+  if (moon) drawBody(moon.az, moon.elv, moon.size, rgb(moon.color), moonGlow, true)
+
+  // ---------- 4. 云层（低分辨率 fBm 网格 → 双线性放大混合；低层积云 + 高层卷云） ----------
+  if (p.clouds && p.clouds.density > 0) {
+    const cl = p.clouds
+    const clRGB = rgb(cl.color)
+    const sunU = sun ? sun.az / 360 : moon ? moon.az / 360 : 0.5
+    const GW = 1024, GH = 288, Y_TOP = 24, Y_BOT = CH - 6
+    const overcast = clamp01(cl.overcast ?? 0)
+    const cA = new Float32Array(GW * GH) // 积云覆盖度
+    const cL = new Float32Array(GW * GH) // 向阳侧亮度差（银边）
+    for (let gy = 0; gy < GH; gy++) {
+      const v = (((Y_TOP + (gy / (GH - 1)) * (Y_BOT - Y_TOP)) / CH) * 13)
+      for (let gx = 0; gx < GW; gx++) {
+        const u = (gx / GW) * 12
+        const detail = noise.fbm(u, v, 12, 4)
+        // 阴云同时包含宽阔云团和细部褶皱。旧版 density=0.9 时阈值仅 0.1，几乎
+        // 所有像素都达到最大透明度，结果反而是一块没有云形的暗色平面。
+        const macro = noise.fbm(u * 0.42 + 17.3, v * 0.34 + 5.7, 53, 4)
+        const f = detail * (1 - overcast * 0.46) + macro * overcast * 0.46
+        cA[gy * GW + gx] = f
+        // 向阳偏移采样：f 与偏移样本之差 → 朝阳边缘提亮
+        const du = (u / 12 - sunU + 1.5) % 1 - 0.5
+        const f2 = noise.fbm(u - Math.sign(du) * 0.4, v - 0.3, 12, 2)
+        cL[gy * GW + gx] = f2 - f
+      }
+    }
+    const cov = overcast > 0
+      ? 0.47 - cl.density * 0.17
+      : 1 - cl.density
+    const cir = cl.cirrus ?? 0
+    const lin = sun ? rgb(sun.glow) : moonGlow // 银边光色（日光色 / 月冷色）
+    for (let y = Y_TOP; y < Y_BOT; y++) {
+      const el = (1 - y / CH) * 90
+      const horizFade = clamp01(el / 22) // 近地平线云体霾化变薄
+      const gy = ((y - Y_TOP) / (Y_BOT - Y_TOP)) * (GH - 1)
+      for (let x = 0; x < CW; x++) {
+        const gx = (x / CW) * (GW - 1)
+        const f = sampleGrid(cA, GW, GH, gx, gy)
+        const shaped = smoothstep(cov, cov + (overcast > 0 ? 0.38 : 0.32), f)
+        const cloudMass = overcast > 0 ? Math.min(1, overcast * 0.16 + shaped * 0.84) : shaped
+        let a = cloudMass * cl.alpha * (0.35 + 0.65 * horizFade)
+        // 卷云：强拉伸细丝，仅高空
+        if (cir > 0 && y < CH * 0.72) {
+          const uc = (x / CW) * 7, vc = (y / CH) * 45
+          a += smoothstep(0.58, 0.92, noise.fbm(uc, vc, 7, 3)) * cir * cl.alpha * 0.4
+        }
+        if (a <= 0.004) continue
+        a = Math.min(0.92, a)
+        const lit = sampleGrid(cL, GW, GH, gx, gy)
+        const silver = clamp01(lit * 2.6) * (sun || moon ? 1 : 0)
+        const i = (y * CW + x) * 4
+        // 云色：近地平线混入霾色；向阳边缘混入光色（银边）
+        const hm = 1 - horizFade * 0.85
+        const relief = overcast > 0 ? 0.76 + shaped * 0.3 + Math.max(-0.12, Math.min(0.12, lit * 0.9)) : 1
+        const cr = clRGB[0] * hm * relief + haze[0] * (1 - hm) + lin[0] * silver * 0.45
+        const cg = clRGB[1] * hm * relief + haze[1] * (1 - hm) + lin[1] * silver * 0.45
+        const cb = clRGB[2] * hm * relief + haze[2] * (1 - hm) + lin[2] * silver * 0.45
+        d[i] += (Math.min(255, cr) - d[i]) * a
+        d[i + 1] += (Math.min(255, cg) - d[i + 1]) * a
+        d[i + 2] += (Math.min(255, cb) - d[i + 2]) * a
+      }
+    }
+  }
+
+  // 厚云层应遮住月面细节，但不能把整个月亮彻底擦除。重绘一层低透明度月盘，并添加
+  // 比实体月面宽得多的冷色米氏散射晕，得到“月亮藏在阴云后”的可辨轮廓。
+  if (moon && (p.clouds?.moonVeil ?? 0) > 0) {
+    const veil = clamp01(p.clouds!.moonVeil!)
+    const cx = (moon.az / 360) * CW, cy = (1 - moon.elv / 90) * CH
+    const R = moon.size * (CW / 512)
+    const haloR = Math.ceil(R * 13)
+    for (let oy = -haloR; oy <= haloR; oy++) {
+      const py = cy + oy
+      if (py < 0 || py >= CH) continue
+      for (let ox = -haloR; ox <= haloR; ox++) {
+        const dd = Math.sqrt(ox * ox + oy * oy) / R
+        if (dd > 13) continue
+        const k = Math.exp(-dd * dd * 0.045) * 0.075 * veil
+        if (k < 0.002) continue
+        const px = cx + ox
+        splat.add(px, py, moonGlow, k)
+        if (px < haloR) splat.add(px + CW, py, moonGlow, k)
+        else if (px > CW - haloR) splat.add(px - CW, py, moonGlow, k)
+      }
+    }
+    const ri = Math.ceil(R * 1.08)
+    const moonRGB = rgb(moon.color)
+    for (let oy = -ri; oy <= ri; oy++) for (let ox = -ri; ox <= ri; ox++) {
+      const py = cy + oy
+      if (py < 0 || py >= CH) continue
+      const dd = Math.sqrt(ox * ox + oy * oy) / R
+      if (dd > 1.06) continue
+      const a = (1 - smoothstep(0.78, 1.04, dd)) * 0.34 * veil
+      const px = cx + ox
+      splat.over(px, py, moonRGB, a)
+      if (px < ri) splat.over(px + CW, py, moonRGB, a)
+      else if (px > CW - ri) splat.over(px - CW, py, moonRGB, a)
+    }
+  }
+
+  ctx.putImageData(img, 0, 0)
+}
+
+const texCache = new Map<number, THREE.CanvasTexture>()
+
+export function skyTexture(defId: number): THREE.CanvasTexture {
+  const hit = texCache.get(defId)
+  if (hit) return hit
+  const c = document.createElement('canvas')
+  c.width = CW
+  c.height = CH
+  const ctx = c.getContext('2d')!
+  renderSky(ctx, SKY_PROFILES[defId], defId)
+  const tex = new THREE.CanvasTexture(c)
+  tex.colorSpace = THREE.SRGBColorSpace
+  // 禁用 mipmap：等距柱状贴图在天极处 u 向导数发散，mip 选择会把星点/银河平均成
+  // 一个黑色圆盖（"巨大圆形遮挡"）；双线性即可，天空元素本身柔和、走样可忽略
+  tex.generateMipmaps = false
+  tex.minFilter = THREE.LinearFilter
+  texCache.set(defId, tex)
+  return tex
+}
+
+/** 天空盒网格：上半球（地平线以上），BackSide + fog:false + depthWrite:false。
+ *  半径恒定 42 < 相机 far 60——旧版按地图外包取半径（大地图 r≈80+），球面超出远平面
+ *  被裁剪，与相机等距的球壳交界在视野里形成一个巨大黑色圆盖；改小后由 renderer
+ *  每帧把球心移到玩家头顶（大气无视差，跟随即无限天空），任意尺寸地图均不再被裁。 */
+export function makeSkyMesh(m: GameMap, def: LevelDef): THREE.Mesh | null {
+  const prof = SKY_PROFILES[def.id]
+  if (!prof) return null
+  if (def.id === 9 || def.id === 10 || def.id === 11) {
+    // L9 使用完整球壳上的方向采样，并叠加两层连续三维噪声阴云。旧立方体即使按方向
+    // 采样，低亮度时六个盒面和每面的三角对角线仍会被辨认成“贴图接缝”。
+    const body = prof.moon
+    const phi = body ? (body.az / 360 - .5) * Math.PI * 2 : 0
+    const elv = body ? body.elv * Math.PI / 180 : Math.PI / 4
+    const moonDir = new THREE.Vector3(Math.cos(phi) * Math.cos(elv), Math.sin(elv), Math.sin(phi) * Math.cos(elv))
+    const mat = new THREE.ShaderMaterial({
+      uniforms: {
+        uTime: { value: 0 },
+        uBody: { value: def.id === 11 ? 0 : 1 },
+        uMoonDir: { value: moonDir },
+        uFarm: { value: def.id === 10 || def.id === 11 ? 1 : 0 },
+        uFogMix: { value: 0 },
+        uFogColor: { value: new THREE.Color('#697278') },
+      },
+      vertexShader: `
+        varying vec3 vSkyDir;
+        void main() {
+          vSkyDir = normalize(position);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform float uTime;
+        uniform float uBody;
+        uniform float uFarm;
+        uniform vec3 uMoonDir;
+        uniform float uFogMix;
+        uniform vec3 uFogColor;
+        varying vec3 vSkyDir;
+        float hash31(vec3 p) {
+          p = fract(p * 0.1031);
+          p += dot(p, p.yzx + 33.33);
+          return fract((p.x + p.y) * p.z);
+        }
+        float noise3(vec3 p) {
+          vec3 i = floor(p), f = fract(p);
+          f = f * f * (3.0 - 2.0 * f);
+          float n000 = hash31(i + vec3(0.0,0.0,0.0));
+          float n100 = hash31(i + vec3(1.0,0.0,0.0));
+          float n010 = hash31(i + vec3(0.0,1.0,0.0));
+          float n110 = hash31(i + vec3(1.0,1.0,0.0));
+          float n001 = hash31(i + vec3(0.0,0.0,1.0));
+          float n101 = hash31(i + vec3(1.0,0.0,1.0));
+          float n011 = hash31(i + vec3(0.0,1.0,1.0));
+          float n111 = hash31(i + vec3(1.0,1.0,1.0));
+          return mix(mix(mix(n000,n100,f.x),mix(n010,n110,f.x),f.y),
+                     mix(mix(n001,n101,f.x),mix(n011,n111,f.x),f.y),f.z);
+        }
+        void main() {
+          vec3 d = normalize(vSkyDir);
+          // L9 不再读取 skyTexture(9) 的旧等距柱状画布。底色直接按真实仰角生成，
+          // 地平线、低云与天顶之间没有任何图片边界或旧月盘残留。
+          float height = clamp(d.y, 0.0, 1.0);
+          float vertical = smoothstep(0.0, 0.82, pow(height, .62));
+          vec3 horizonColor = mix(vec3(.066, .079, .088), vec3(.43, .46, .47), uFarm);
+          vec3 zenithColor = mix(vec3(.012, .022, .032), vec3(.29, .32, .34), uFarm);
+          vec3 sky = mix(horizonColor, zenithColor, vertical);
+          sky += mix(vec3(.035, .039, .043), vec3(.10, .105, .105), uFarm) * exp(-height * 9.0);
+          // 球面方向上的噪声没有经纬接缝；两层以不同速度/高度漂移，产生真实的云层视差。
+          float upper = smoothstep(-0.04, 0.22, d.y);
+          // 每像素只进行一次三维 value-noise；细节层用连续方向波补足，避免天空着色器
+          // 在高分辨率下成为新的性能瓶颈。
+          float slow = noise3(d * 3.8 + vec3(uTime * .005, .7, -uTime * .002));
+          float fast = .5 + .5 * sin(d.x * 17.0 + sin(d.z * 11.0 - uTime * .013) + d.y * 8.0 + uTime * .009);
+          float cloudField = slow * .74 + fast * .26;
+          float cloud = mix(smoothstep(.35, .73, cloudField), smoothstep(.18, .58, cloudField), uFarm) * upper;
+          vec3 cloudDark = mix(vec3(.055, .066, .074), vec3(.25, .28, .29), uFarm);
+          vec3 cloudSilver = mix(vec3(.145, .158, .166), vec3(.52, .54, .54), uFarm);
+          vec3 cloudColor = mix(cloudDark, cloudSilver, smoothstep(.35, .82, fast));
+
+          // L9 月盘 / L10 云后太阳都按真实天空方向重建，不使用始终正对镜头的白色圆片。
+          vec3 md = normalize(uMoonDir);
+          vec3 mr = normalize(cross(vec3(0.0,1.0,0.0), md));
+          vec3 mu = normalize(cross(md, mr));
+          float moonRad = mix(.040, .052, uFarm);
+          float moonDot = dot(d, md);
+          vec2 mp = vec2(dot(d, mr), dot(d, mu)) / sin(moonRad);
+          float disc = 1.0 - smoothstep(.91, 1.045, length(mp));
+          float crater = .5;
+          if (disc > .001) crater = noise3(vec3(mp * 3.6, 11.0));
+          vec3 moonColor = mix(vec3(.56,.59,.62), vec3(.86,.88,.90), smoothstep(.24,.78,crater));
+          vec3 sunColor = vec3(1.0, .965, .87);
+          float moonHalo = pow(max(moonDot, 0.0), 170.0) * .2 + pow(max(moonDot, 0.0), 620.0) * .34;
+          float sunHalo = pow(max(moonDot, 0.0), 38.0) * .23 + pow(max(moonDot, 0.0), 260.0) * .28;
+          sky += mix(vec3(.43,.50,.57) * moonHalo, vec3(.78,.72,.60) * sunHalo, uFarm) * uBody;
+          sky = mix(sky, mix(moonColor, sunColor, uFarm), disc * mix(.86, .38, uFarm) * uBody);
+          // 阴云最后覆盖天体：L10 太阳会随云层厚度变成真实的漫射亮斑。
+          sky = mix(sky, cloudColor, cloud * mix(.34 + .28 * slow, .62 + .24 * slow, uFarm));
+          // 浓雾事件直接作用于天空本身；否则 fog:false 的远景会永远清晰地浮在雾墙后。
+          float fk = smoothstep(0.02, 0.96, uFogMix);
+          sky = mix(sky, uFogColor, fk);
+          gl_FragColor = vec4(sky, 1.0);
+        }
+      `,
+      side: THREE.BackSide,
+      depthWrite: false,
+      depthTest: true,
+      fog: false,
+    })
+    const mesh = new THREE.Mesh(new THREE.SphereGeometry(42, 64, 32), mat)
+    mesh.name = 'skybox'
+    mesh.renderOrder = -1000
+    mesh.frustumCulled = false
+    mesh.position.set(m.w / 2, 1.65, m.h / 2)
+    return mesh
+  }
+  const geo = new THREE.SphereGeometry(42, 48, 24, 0, Math.PI * 2, 0, Math.PI / 2)
+  const mat = new THREE.MeshBasicMaterial({ map: skyTexture(def.id), side: THREE.BackSide, fog: false, depthWrite: false })
+  const mesh = new THREE.Mesh(geo, mat)
+  mesh.name = 'skybox'
+  mesh.position.set(m.w / 2, 5.5, m.h / 2)
+  return mesh
+}
+
+/** 日/月光照方向（世界单位向量），与天空盒上的光源方位一致 */
+export function skyLightDir(defId: number): THREE.Vector3 {
+  const p = SKY_PROFILES[defId]
+  const body = p?.moon ?? p?.sun
+  if (!body) return new THREE.Vector3(0, 1, 0)
+  // three 球体 u→世界方位为 az_world = 180° - u·360°（x 取 -cos）：贴图上的天体方位需镜像还原
+  const az = ((180 - body.az) * Math.PI) / 180
+  const elv = (body.elv * Math.PI) / 180
+  return new THREE.Vector3(Math.cos(az) * Math.cos(elv), Math.sin(elv), Math.sin(az) * Math.cos(elv))
+}
+
+// ---------- v58：L7 蜃楼船队——巨大迷雾中若隐若现、永远无法靠近的幽灵船 ----------
+// 立体低模（无灯）：挤出侧影船体 + 盒式上层建筑 + 细柱桅杆/吊杆；Lambert 受光取层级环境光，
+// fog:false（雾远 27m 下真雾会把它完全吞没，蜃楼的"雾中感"由半透明、雾幕与随机显隐承担）。
+// 每帧以玩家为锚重新摆放到固定方位/距离（~38m），所以朝它游多久都不会变近——海市蜃楼。
+// 显隐节奏：120s 一周期，窗口起点/长度按（船,周期）哈希随机，占空 ~15~38%——大部分时间看不见；
+// 每艘船前方挂一片缓慢漂流的软雾幕，让船始终像被真实迷雾笼盖着。
+export interface MirageShip {
+  grp: THREE.Group; veil: THREE.Mesh; az: number; dist: number; phase: number; seed: number; baseY: number
+  mat: THREE.MeshLambertMaterial; veilMat: THREE.MeshBasicMaterial
+}
+export interface MirageFleet { group: THREE.Group; ships: MirageShip[] }
+
+/** 软雾团贴图（船前流动雾幕）：径向渐隐白斑，水平略拉伸 */
+let mistBlobTex: THREE.CanvasTexture | null = null
+function mistBlobTexture(): THREE.CanvasTexture {
+  if (mistBlobTex) return mistBlobTex
+  const S = 128
+  const c = document.createElement('canvas')
+  c.width = c.height = S
+  const ctx = c.getContext('2d')!
+  ctx.translate(S / 2, S / 2)
+  ctx.scale(1, 0.62) // 水平拉伸的雾团
+  const g = ctx.createRadialGradient(0, 0, 0, 0, 0, S / 2)
+  g.addColorStop(0, 'rgba(255,255,255,0.8)')
+  g.addColorStop(0.42, 'rgba(255,255,255,0.34)')
+  g.addColorStop(1, 'rgba(255,255,255,0)')
+  ctx.fillStyle = g
+  ctx.fillRect(-S / 2, -S / 2, S, S * 2)
+  mistBlobTex = new THREE.CanvasTexture(c)
+  mistBlobTex.colorSpace = THREE.SRGBColorSpace
+  return mistBlobTex
+}
+
+/** 低模幽灵船：variant 0=带吊杆的货轮 / 1=高艏油轮；全部件共享同一材质（统一透明度呼吸） */
+function lowPolyShip(variant: number, mat: THREE.Material): THREE.Group {
+  const g = new THREE.Group()
+  const add = (geo: THREE.BufferGeometry, x: number, y: number, z: number, rz = 0) => {
+    const mesh = new THREE.Mesh(geo, mat)
+    mesh.position.set(x, y, z)
+    if (rz) mesh.rotation.z = rz
+    g.add(mesh)
+    return mesh
+  }
+  if (variant === 0) {
+    // 货轮：长甲板 + 艏楼微翘 + 中部三层退台上层建筑 + 前后桅与 V 形吊杆
+    const hull = new THREE.Shape()
+    hull.moveTo(-16, -1.2)   // 艉底
+    hull.lineTo(-16, 2.2)    // 艉部甲板
+    hull.lineTo(11.5, 2.2)   // 主甲板
+    hull.lineTo(15.5, 3.4)   // 艏楼抬升
+    hull.lineTo(17.2, 0.8)   // 艏柱
+    hull.lineTo(14.5, -1.2)  // 艏底
+    hull.closePath()
+    const hullGeo = new THREE.ExtrudeGeometry(hull, { depth: 4.4, bevelEnabled: false })
+    hullGeo.translate(0, 0, -2.2)
+    add(hullGeo, 0, 0, 0)
+    add(new THREE.BoxGeometry(7.5, 1.8, 4.0), -4.5, 3.1, 0)  // 桥楼一层
+    add(new THREE.BoxGeometry(5.2, 1.6, 3.4), -4.9, 4.8, 0)  // 二层
+    add(new THREE.BoxGeometry(3.2, 1.5, 2.8), -5.2, 6.3, 0)  // 驾驶台
+    const mast = new THREE.CylinderGeometry(0.09, 0.13, 7.5, 5)
+    add(mast, -5.2, 10.8, 0)                                  // 主桅（驾台之上）
+    add(new THREE.CylinderGeometry(0.05, 0.07, 6.5, 4), -7.6, 9.6, 0, 0.72)   // 吊杆·艉向
+    add(new THREE.CylinderGeometry(0.05, 0.07, 6.5, 4), -2.6, 9.6, 0, -0.72)  // 吊杆·艏向
+    add(new THREE.CylinderGeometry(0.08, 0.11, 6.5, 5), 7.5, 5.4, 0)          // 前桅
+    add(new THREE.CylinderGeometry(0.05, 0.06, 5.5, 4), 9.3, 5.0, 0, -0.6)    // 前桅吊杆
+  } else {
+    // 油轮：高艏楼 + 低平管线甲板 + 艉部桥楼 + 烟囱 + 艏艉桅
+    const hull = new THREE.Shape()
+    hull.moveTo(-17, -1.2)
+    hull.lineTo(-17, 2.4)
+    hull.lineTo(11, 2.4)
+    hull.lineTo(15.5, 4.4)   // 高艏楼
+    hull.lineTo(17.8, 1.2)
+    hull.lineTo(15, -1.2)
+    hull.closePath()
+    const hullGeo = new THREE.ExtrudeGeometry(hull, { depth: 4.8, bevelEnabled: false })
+    hullGeo.translate(0, 0, -2.4)
+    add(hullGeo, 0, 0, 0)
+    add(new THREE.BoxGeometry(8.5, 2.0, 4.4), -11.5, 3.4, 0) // 艉桥楼
+    add(new THREE.BoxGeometry(6.2, 1.7, 3.8), -11.9, 5.2, 0)
+    add(new THREE.BoxGeometry(4.0, 1.5, 3.2), -12.2, 6.8, 0)
+    add(new THREE.BoxGeometry(2.0, 2.6, 2.2), -7.6, 3.7, 0)  // 烟囱
+    add(new THREE.CylinderGeometry(0.08, 0.11, 6.5, 5), -12.2, 10.4, 0) // 后桅
+    add(new THREE.CylinderGeometry(0.06, 0.09, 5.0, 5), 15.2, 6.4, 0)   // 艏旗杆
+    // 管线甲板纵梁
+    add(new THREE.BoxGeometry(24, 0.5, 0.9), -1, 2.8, 0)
+  }
+  return g
+}
+
+/** 生成蜃楼船队（3 艘，方位/体量固定，各挂一片流动雾幕）；无 mirages 配置的层级返回 null */
+export function makeMirageFleet(defId: number): MirageFleet | null {
+  if (!SKY_PROFILES[defId]?.mirages) return null
+  const group = new THREE.Group()
+  group.name = 'mirageFleet'
+  const ships: MirageShip[] = []
+  const defs = [
+    { az: 36, dist: 38, v: 0 },
+    { az: 164, dist: 40, v: 1 },
+    { az: 289, dist: 39, v: 0 },
+  ]
+  defs.forEach((d, i) => {
+    // 雾中鬼影：颜色大幅混入地平霾色（像隔着厚雾看），微自发光保证剪影可辨；
+    // 不写深度避免自身部件互相遮挡出内缝
+    const mat = new THREE.MeshLambertMaterial({
+      color: '#43555f', emissive: '#1b2730', transparent: true, opacity: 0,
+      fog: false, depthWrite: false, side: THREE.DoubleSide,
+    })
+    const grp = lowPolyShip(d.v, mat)
+    grp.visible = false
+    // 默认 renderOrder 0：透明按深度排序——船（远）先画、海面（近）后画，
+    // 海水混色盖住水线以下的船体，幽灵船才是「浮」在雾里而不是贴在天上
+    group.add(grp)
+    // 船前流动雾幕：水平拉伸的软雾团，比船略大，缓慢横向漂过船体——迷雾笼盖
+    const veilMat = new THREE.MeshBasicMaterial({
+      map: mistBlobTexture(), color: '#66787f', transparent: true, opacity: 0,
+      fog: false, depthWrite: false, side: THREE.DoubleSide,
+    })
+    const veil = new THREE.Mesh(new THREE.PlaneGeometry(52, 15), veilMat)
+    group.add(veil)
+    ships.push({ grp, veil, az: d.az, dist: d.dist, phase: i * 2.17 + d.v * 0.83, seed: 41 + i * 17 + d.v * 7, baseY: 0.25, mat, veilMat })
+  })
+  return { group, ships }
+}
+
+/**
+ * 每帧更新蜃楼船队：以玩家为锚重新摆放到固定方位（缓慢游移 ±4.5°），永远无法靠近。
+ * 显隐：120s 周期内按（船,周期）哈希随机开一扇 16~46s 的显现窗（带 7~13s 淡入淡出），
+ * 占空约 15~38%——大部分时间完全隐没；雾幕即使船隐没也缓慢漂流（更淡），hideK=1（水下）全隐。
+ */
+export function updateMirageFleet(fleet: MirageFleet, t: number, camPos: THREE.Vector3, hideK: number) {
+  for (const s of fleet.ships) {
+    // —— 随机慢频率显隐窗口（确定性：同船同周期恒定） ——
+    const CYCLE = 120
+    const lt0 = t + s.phase * 37.3
+    const cyc = Math.floor(lt0 / CYCLE)
+    const lt = lt0 - cyc * CYCLE
+    const rnd = rngFrom((s.seed * 7919 + cyc * 131) >>> 0)
+    const start = 14 + rnd() * 50
+    const dur = 16 + rnd() * 30
+    const fade = 7 + rnd() * 6
+    let vis = smoothstep(start, start + fade, lt) * (1 - smoothstep(start + dur - fade, start + dur, lt))
+    vis *= 0.85 + 0.15 * Math.sin(t * 0.11 + s.phase * 2.0) // 显现中的轻微呼吸
+    // —— 方位/距离：以玩家为锚，永不靠近 ——
+    const az = (s.az + Math.sin(t * 0.011 + s.phase * 3.1) * 4.5) * D2R
+    const dist = s.dist + Math.sin(t * 0.017 + s.phase) * 2.5
+    const g = s.grp
+    g.position.set(camPos.x + Math.cos(az) * dist, s.baseY + Math.sin(t * 0.05 + s.phase * 2.0) * 0.22, camPos.z + Math.sin(az) * dist)
+    g.lookAt(camPos.x, g.position.y, camPos.z) // 圆柱式朝向（始终舷侧对玩家，剪影完整）
+    g.rotateZ(Math.sin(t * 0.043 + s.phase * 1.7) * 0.022) // 幽灵船般的缓慢横摇
+    const op = vis * 0.34 * (1 - hideK)
+    s.mat.opacity = op
+    g.visible = op > 0.004
+    // —— 雾幕：船前 3~5m 的软雾团，沿舷侧缓慢漂过；船隐没时雾幕仍在（更淡）——迷雾笼盖 ——
+    const toCamX = camPos.x - g.position.x, toCamZ = camPos.z - g.position.z
+    const toCamL = Math.hypot(toCamX, toCamZ) || 1
+    const dirX = toCamX / toCamL, dirZ = toCamZ / toCamL
+    const vd = 3.2 + Math.sin(t * 0.013 + s.phase * 5.3) * 1.4 // 船前距离漂移
+    const vx = Math.sin(t * 0.021 + s.phase * 3.7) * 11 // 沿舷侧（垂直于视线）漂移
+    const v = s.veil
+    v.position.set(
+      g.position.x + dirX * vd - dirZ * vx,
+      s.baseY + 4.6 + Math.sin(t * 0.017 + s.phase * 4.1) * 1.2,
+      g.position.z + dirZ * vd + dirX * vx,
+    )
+    v.lookAt(camPos.x, v.position.y, camPos.z)
+    const veilPulse = 0.5 + 0.5 * Math.sin(t * 0.031 + s.phase * 6.1)
+    s.veilMat.opacity = (0.07 + 0.13 * veilPulse + vis * 0.14) * (1 - hideK)
+    v.visible = s.veilMat.opacity > 0.01
+  }
+}

@@ -70,6 +70,26 @@ def draw_welcomenote(d):
         d.line([(11, y), (20, y)], fill='#8a94a8', width=1)
     d.point([(12, 24), (13, 24), (14, 24)], fill='#6a6258')  # 落款墨点
 
+def draw_jerryflyer(d):
+    # 蓝羽传单：纵向折纸、蓝色鹦鹉剪影、黄色眼点和底部短线
+    obox(d, [8, 3, 23, 28], '#f0ead8')
+    d.polygon([(18, 3), (23, 8), (18, 8)], fill='#d6ccb5', outline=INK)
+    d.polygon([(15, 9), (20, 12), (19, 19), (15, 22), (11, 18), (12, 12)], fill='#315d91', outline=INK)
+    d.polygon([(14, 12), (9, 15), (12, 18), (16, 16)], fill='#477db2', outline=INK)
+    d.polygon([(19, 13), (23, 14), (20, 16)], fill='#264b7a', outline=INK)
+    d.point([(19, 11)], fill='#e8c94d')
+    for y, x in ((22, 11), (24, 10), (26, 12)):
+        d.line([(x, y), (x + 9, y)], fill='#477db2')
+
+def draw_fakelog(d):
+    # 流浪者日志残页：泛黄撕边纸、褐灰笔记线和蓝色路线箭头
+    d.polygon([(7, 4), (24, 3), (23, 27), (19, 29), (15, 27), (11, 29), (8, 26)], fill='#e6d8b6', outline=INK)
+    for y in (9, 13, 17, 21):
+        d.line([(10, y), (21, y)], fill='#8f8270')
+    d.line([(12, 24), (17, 24), (20, 22)], fill='#3e78b2')
+    d.line([(20, 22), (18, 22)], fill='#3e78b2')
+    d.line([(20, 22), (19, 24)], fill='#3e78b2')
+
 def bowl(d, xy, body='#e8e2d2', rim='#c9c2ae'):
     # 通用碗体：半球碗 + 碗沿
     x0, y0, x1, y1 = xy
@@ -177,6 +197,20 @@ def draw_jambread(d):
     d.rectangle([18, 18, 19, 21], fill='#b03048')
     d.point([(11, 13), (16, 14), (20, 13)], fill='#e06a80')   # 果酱高光
 
+def draw_velvetcake(d):
+    # 丝绒蛋糕：米白褶纸托、深红分层糕体、奶油夹心、椭圆奶油顶和短蜡烛
+    d.polygon([(7, 19), (25, 19), (23, 28), (9, 28)], fill='#e8dfcf', outline=INK)
+    for x in (10, 13, 17, 21):
+        d.line([(x, 20), (x + 1, 27)], fill='#b8ad9c')
+    d.rectangle([8, 14, 24, 20], fill='#8e1424', outline=INK)
+    d.rectangle([9, 18, 23, 20], fill='#6f101d')
+    d.rectangle([9, 12, 23, 15], fill='#f3e7d6', outline=INK)
+    d.rectangle([10, 8, 22, 13], fill='#8e1424', outline=INK)
+    d.ellipse([9, 5, 23, 11], fill='#f3e7d6', outline=INK)
+    d.point([(12, 7), (16, 6), (20, 8)], fill='#fff7e9')
+    d.rectangle([15, 2, 17, 6], fill='#e8c36a', outline=INK)
+    d.point([(16, 1)], fill='#f4a33a')
+
 def draw_capacitor(d):
     # 电容器「瓶装闪电」（Object 42）：玻璃烧瓶 + 软木塞 + 瓶中疾走的蓝色闪电
     obox(d, [13, 2, 18, 6], '#a8865a')                             # 软木塞
@@ -200,26 +234,50 @@ def draw_parcel(d):
     d.line([(9, 20), (10, 20)], fill='#d8cfb0')        # 天平横杆
     d.point([(9, 21), (8, 22), (11, 22)], fill='#d8cfb0')
 
+def _anomalocaris(d, body, dark, fin, eye, tail='#9fb6d8', crumbs=None, motion=False, droop=0):
+    # v81：旱虾（Entity 20）奇虾体型俯视：叶状鳍片两排 + 分节躯干 + 长柄黑眼 + 弯钩前附肢 + 竖起的尾扇
+    for i, x in enumerate(range(7, 22, 3)):          # 两侧鳍片（中段最长）
+        L = 6 + (3 if 2 <= i <= 3 else 2 if i in (1, 4) else 0)
+        d.polygon([(x + 1, 14), (x - 3, 14 - L + droop), (x - 1, 14 - L + droop), (x + 3, 13)], fill=fin, outline=INK)
+        d.polygon([(x + 1, 18), (x - 3, 18 + L - droop), (x - 1, 18 + L - droop), (x + 3, 19)], fill=fin, outline=INK)
+    d.polygon([(5, 14), (1, 10), (3, 16), (1, 22), (5, 18)], fill=tail, outline=INK)   # 尾扇（尖端蓝灰）
+    d.polygon([(23, 14), (16, 13), (8, 14), (5, 16), (8, 18), (16, 19), (23, 18)], fill=body, outline=INK)  # 躯干
+    for x in (8, 10, 12, 14, 16, 18, 20):              # 节间暗缝
+        d.line([(x, 14), (x, 18)], fill=dark)
+    d.ellipse([21, 13, 27, 19], fill=body, outline=INK)  # 头甲
+    d.line([(24, 14), (25, 11)], fill=dark); d.line([(24, 18), (25, 21)], fill=dark)   # 眼柄
+    d.ellipse([24, 8, 27, 11], fill=eye, outline=INK); d.ellipse([24, 21, 27, 24], fill=eye, outline=INK)
+    if eye == '#101216':
+        d.point([(25, 9), (25, 22)], fill='#e8eef8')    # 眼球高光
+    d.line([(27, 15), (29, 14), (30, 15), (30, 17)], fill=body)    # 前附肢（向下卷）
+    d.line([(27, 17), (29, 18), (30, 19), (29, 21)], fill=body)
+    d.point([(29, 16), (29, 20), (28, 19)], fill=dark)
+    if crumbs:
+        for (x, y) in ((9, 15), (12, 17), (15, 15), (18, 17), (20, 15), (11, 16), (17, 14), (23, 16)):
+            d.point([(x, y), (x + 1, y)], fill=crumbs)
+    if motion:
+        d.line([(1, 4), (4, 4)], fill='#e8d8b0'); d.line([(2, 27), (5, 27)], fill='#e8d8b0')  # 划动的小短线
+
 def draw_shrimp(d):
-    # 旱虾（Entity 20）：分节橙褐躯体 + 两侧鳍叶 + 黑眼 + 扇尾
-    d.polygon([(20, 12), (10, 10), (4, 16), (10, 21), (20, 19)], fill='#b3612e', outline=INK)  # 躯体
-    for x in (9, 12, 15, 18):                            # 分节线
-        d.line([(x, 11), (x - 2, 20)], fill='#8f4a22')
-    d.polygon([(4, 16), (1, 12), (1, 20)], fill='#d9a86a', outline=INK)  # 扇尾
-    for z in (0, 1):                                     # 两侧鳍叶
-        d.polygon([(10 + z * 4, 21), (6 + z * 4, 26), (13 + z * 4, 22)], fill='#d9a86a', outline=INK)
-        d.polygon([(10 + z * 4, 10), (6 + z * 4, 5), (13 + z * 4, 9)], fill='#d9a86a', outline=INK)
-    d.point([(21, 13), (22, 13), (21, 14)], fill='#101216')  # 黑眼
-    d.line([(22, 11), (26, 6)], fill='#d9a86a')          # 触须
-    d.line([(22, 12), (27, 10)], fill='#d9a86a')
+    # 旱虾（已死）：颜色发暗、鳍片耷拉、眼睛无光
+    _anomalocaris(d, '#a35632', '#6e3018', '#cfa07a', '#2a2a2e', tail='#a8b0bc', droop=2)
+
+def draw_liveshrimp(d):
+    # 活旱虾：鲜亮的红褐背甲、张开的浅杏色鳍片、亮黑眼
+    _anomalocaris(d, '#c25a2c', '#7a3218', '#f0b98a', '#101216', motion=True)
 
 def draw_friedshrimp(d):
-    # 酥炸旱虾：金黄炸衣（裹粉颗粒）+ 露出的虾尾
-    d.polygon([(20, 12), (10, 10), (4, 16), (10, 21), (20, 19)], fill='#e8b04a', outline=INK)
-    d.polygon([(4, 16), (1, 12), (1, 20)], fill='#d9a86a', outline=INK)  # 扇尾（未裹粉）
-    for (x, y) in ((10, 13), (14, 16), (17, 12), (12, 18), (18, 17), (8, 15)):
-        d.point([(x, y), (x + 1, y)], fill='#c9862e')    # 炸衣颗粒
-    d.point([(21, 13)], fill='#101216')
+    # 酥炸旱虾：金黄裹粉 + 炸脆的鳍片，眼睛炸白
+    _anomalocaris(d, '#e0a448', '#a86a22', '#d99a4a', '#efe6d0', tail='#c98a3a', crumbs='#a86a22')
+
+def draw_bento(d):
+    # 自制便当（Object 70 公文包）：蓝盒身 + 米白盒盖 + 红橡皮筋 + 胶布名签
+    obox(d, [5, 13, 27, 26], '#3c6a8a')                    # 盒身
+    d.rectangle([6, 22, 26, 25], fill='#2e5470')           # 盒身下缘阴影
+    obox(d, [4, 9, 28, 14], '#d8d2bf')                     # 盒盖
+    d.rectangle([5, 10, 27, 10], fill='#f0ecdf')           # 盒盖高光
+    d.rectangle([17, 8, 19, 26], fill='#a83a2a')           # 橡皮筋
+    d.rectangle([8, 11, 13, 12], fill='#8a8270')           # 名签胶布
 
 def draw_firesalt(d):
     # 火盐晶体（Object 15）：三枚橙色半透明碎晶
@@ -308,6 +366,8 @@ DRAW = {
     'luckymilk': draw_luckymilk,  # v54
     'nightvision': draw_nightvision,
     'welcomenote': draw_welcomenote,
+    'jerryflyer': draw_jerryflyer,
+    'fakelog': draw_fakelog,
     'tomatosoup': draw_tomatosoup,
     'gardensalad': draw_gardensalad,
     'garlicbread': draw_garlicbread,
@@ -318,11 +378,14 @@ DRAW = {
     'tomsspecial': draw_tomsspecial,
     'grilledsteak': draw_grilledsteak,
     'jambread': draw_jambread,
+    'velvetcake': draw_velvetcake,
     'ratmeat': draw_ratmeat,  # v79
     'capacitor': draw_capacitor,
     'parcel': draw_parcel,
     'dryshrimp': draw_shrimp,
+    'liveshrimp': draw_liveshrimp,  # v81
     'friedshrimp': draw_friedshrimp,
+    'bento': draw_bento,  # v83
     'firesalt': draw_firesalt,
     'liquidpain': draw_liquidpain,
     'candysilver': draw_candysilver,

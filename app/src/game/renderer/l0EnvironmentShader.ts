@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import type {GameMap} from '../world/mapgen'
 import {l0EnvironmentAt,l0LayoutEnvironment} from '../world/l0Regions'
+import {l0FieldContains} from '../world/l0TestField'
 
 const SIZE=128,STEP=2,data=new Uint8Array(SIZE*SIZE*4)
 data.fill(255)
@@ -14,12 +15,13 @@ export function updateL0EnvironmentShader(m:GameMap,level:number,bright:boolean,
  const inf=m.inf,active=level===0&&!!inf?.l0
  l0WorldLighting.enabled.value=active&&!bright&&!nightVision?1:0;l0WorldLighting.perception.value=active&&!bright&&!nightVision?1:0
  if(!active||!inf)return
- const key=`${inf.seed}:${inf.ox},${inf.oy}:${inf.l0!.space}`;if(key===lastKey)return;lastKey=key
+ const field=inf.l0TestField,fieldKey=field?`${field.x},${field.y},${field.w},${field.h}`:''
+ const key=`${inf.seed}:${inf.ox},${inf.oy}:${inf.l0!.space}:${fieldKey}`;if(key===lastKey)return;lastKey=key
  for(let y=0;y<SIZE;y++)for(let x=0;x<SIZE;x++){
   const wx=inf.ox-48+(x+.5)*STEP,wy=inf.oy-48+(y+.5)*STEP,chunk=inf.chunks.get(`${Math.floor(wx/32)},${Math.floor(wy/32)}`)
-  const sampleKey=`${inf.seed}:${wx},${wy}:${chunk?.l0?.effectOverride??''}`
+  const sampleKey=`${inf.seed}:${wx},${wy}:${chunk?.l0?.effectOverride??''}:${fieldKey}`
   let value=samples.get(sampleKey)
-  if(value===undefined){const e=chunk?.l0?l0LayoutEnvironment(chunk.l0,wx,wy):l0EnvironmentAt(inf.seed,wx,wy);value=Math.round(255*(1-e.blackout));if(samples.size>=32768)samples.delete(samples.keys().next().value!);samples.set(sampleKey,value)}
+  if(value===undefined){const e=chunk?.l0?l0LayoutEnvironment(chunk.l0,wx,wy):l0EnvironmentAt(inf.seed,wx,wy);value=field&&l0FieldContains(field,wx,wy)?255:Math.round(255*(1-e.blackout));if(samples.size>=32768)samples.delete(samples.keys().next().value!);samples.set(sampleKey,value)}
   const i=(y*SIZE+x)*4;data[i]=value;data[i+1]=data[i+2]=0;data[i+3]=255
  }
  texture.needsUpdate=true

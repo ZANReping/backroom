@@ -1,0 +1,9 @@
+
+> my-app@0.0.0 check:entity-preparation
+> esbuild scripts/check-entity-preparation.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-entity-preparation.mjs && node .cache/check-entity-preparation.mjs
+
+
+  .cache\check-entity-preparation.mjs  551.7kb
+
+Done in 72ms
+entity preparation checks: 17 passed

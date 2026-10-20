@@ -1,0 +1,53 @@
+{
+  "named": 91,
+  "previewModels": 95,
+  "checks": 549,
+  "originalAssetsUnchanged": 273,
+  "manualIdentical": true,
+  "before": {
+    "maxRollDegrees": 7.529416845079131,
+    "maxCenterError": 0.0034429729149508034,
+    "maxEyeHeightError": 0.0108896814467907,
+    "memory": {
+      "geometries": 16,
+      "textures": 127,
+      "programs": 4
+    }
+  },
+  "after": {
+    "maxRollDegrees": 0.000009801845074471958,
+    "maxCenterError": 3.98895652967135e-9,
+    "maxEyeHeightError": 0.0009587774369931301,
+    "memory": {
+      "geometries": 16,
+      "textures": 127,
+      "programs": 4
+    }
+  },
+  "game": [
+    {
+      "mode": "realistic",
+      "draws": 212,
+      "triangles": 216549,
+      "memory": {
+        "geometries": 2518,
+        "textures": 67
+      }
+    },
+    {
+      "mode": "classic",
+      "draws": 198,
+      "triangles": 216535,
+      "memory": {
+        "geometries": 2518,
+        "textures": 45
+      }
+    }
+  ],
+  "errors": 0,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

@@ -1,0 +1,2321 @@
+{
+  "before": false,
+  "mode": "realistic",
+  "port": 20972,
+  "cdp": 28463,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:20972/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Mon, 19 Oct 2026 15:31:33 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 269,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 20972,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 43113.751098,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.49,
+        "sendEnd": 0.565,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 96.019,
+        "receiveHeadersEnd": 96.219
+      },
+      "responseTime": 1792423893079.223,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "scenes": [
+    {
+      "name": "parking-common-contact",
+      "ao": 1,
+      "world": [
+        119,
+        122.5,
+        0
+      ],
+      "yaw": 0.7216548508647613,
+      "pitch": -0.43,
+      "fov": 70,
+      "draws": 305,
+      "triangles": 161037,
+      "memory": {
+        "geometries": 472,
+        "textures": 113
+      },
+      "bakes": {
+        "entries": 23,
+        "bytes": 95162696,
+        "hits": 6178,
+        "diskHits": 12,
+        "offlineLoads": 33,
+        "computations": 13,
+        "completed": 46,
+        "stale": 0,
+        "workers": 8,
+        "active": 0,
+        "queued": 0,
+        "stages": [
+          {
+            "key": "4:17:20261006:-2,2:99840001:high",
+            "generationMs": 383.79159999999683,
+            "geometryMs": 48.812000000005355,
+            "bakeMs": 28051.6299,
+            "samples": 83673,
+            "rays": 4610391,
+            "bytes": 5944472,
+            "decodeMs": 43.30000000447035
+          },
+          {
+            "key": "4:17:20261006:2,2:91784a87:high",
+            "generationMs": 477.7663000000175,
+            "geometryMs": 59.89660000000731,
+            "bakeMs": 32367.645699999965,
+            "samples": 76933,
+            "rays": 4389077,
+            "bytes": 3988816,
+            "decodeMs": 29.799999997019768
+          },
+          {
+            "key": "4:17:20261006:3,3:adc860d8:high",
+            "generationMs": 405.2172000000137,
+            "geometryMs": 59.65220000001136,
+            "bakeMs": 28737.745799999975,
+            "samples": 76016,
+            "rays": 4024429,
+            "bytes": 3975384,
+            "decodeMs": 32
+          },
+          {
+            "key": "4:17:20261006:3,4:c61a1877:high",
+            "generationMs": 450.1952000000165,
+            "geometryMs": 61.81469999998808,
+            "bakeMs": 41608.09409999999,
+            "samples": 76998,
+            "rays": 4623684,
+            "bytes": 4027640,
+            "decodeMs": 27.899999998509884
+          },
+          {
+            "key": "4:17:20261006:4,3:27307568:high",
+            "generationMs": 419.8391999999876,
+            "geometryMs": 57.87729999999283,
+            "bakeMs": 30532.926799999957,
+            "samples": 75677,
+            "rays": 4356140,
+            "bytes": 4023224,
+            "decodeMs": 28.299999997019768
+          },
+          {
+            "key": "4:17:20261006:4,4:aa7d1e55:high",
+            "generationMs": 456.02840000001015,
+            "geometryMs": 58.90349999995669,
+            "bakeMs": 37603.84700000001,
+            "samples": 75671,
+            "rays": 4093128,
+            "bytes": 4022120,
+            "decodeMs": 31.200000002980232
+          },
+          {
+            "key": "4:17:20261006:2,3:22a8965f:high",
+            "generationMs": 459.60739999997895,
+            "geometryMs": 70.18210000003455,
+            "bakeMs": 36985.004200000025,
+            "samples": 76897,
+            "rays": 4951044,
+            "bytes": 3982192,
+            "decodeMs": 31.399999998509884
+          },
+          {
+            "key": "4:17:20261006:2,4:fd255a78:high",
+            "generationMs": 505.7179999999935,
+            "geometryMs": 66.43619999999646,
+            "bakeMs": 34578.40000000002,
+            "samples": 75659,
+            "rays": 4525581,
+            "bytes": 4019912,
+            "decodeMs": 30.200000002980232
+          },
+          {
+            "key": "4:17:20261006:3,2:48aba82d:high",
+            "generationMs": 435.3914999999979,
+            "geometryMs": 54.174399999988964,
+            "bakeMs": 26636.07760000002,
+            "samples": 75986,
+            "rays": 3916977,
+            "bytes": 3969864,
+            "decodeMs": 29
+          },
+          {
+            "key": "4:17:20261006:4,2:473b0a68:high",
+            "generationMs": 469.469700000016,
+            "geometryMs": 59.58140000002459,
+            "bakeMs": 26891.9743,
+            "samples": 75683,
+            "rays": 3709276,
+            "bytes": 4024328,
+            "decodeMs": 35.400000005960464
+          },
+          {
+            "key": "4:17:20261006:3,5:4d062086:high",
+            "generationMs": 345.6000000014901,
+            "geometryMs": 56.29999999701977,
+            "bakeMs": 27779.10000000149,
+            "samples": 81638,
+            "rays": 5571719,
+            "bytes": 4127368
+          },
+          {
+            "key": "4:17:20261006:4,5:50c4c0d1:high",
+            "generationMs": 339.5,
+            "geometryMs": 51.29999999701977,
+            "bakeMs": 29840.29999999702,
+            "samples": 80683,
+            "rays": 5649800,
+            "bytes": 4167848
+          },
+          {
+            "key": "4:17:20261006:5,3:aaf1fdcd:high",
+            "generationMs": 298.29999999701977,
+            "geometryMs": 45,
+            "bakeMs": 26635.5,
+            "samples": 80999,
+            "rays": 5324417,
+            "bytes": 4003352
+          },
+          {
+            "key": "4:17:20261006:5,4:bd214a0e:high",
+            "generationMs": 340.5,
+            "geometryMs": 54,
+            "bakeMs": 24032.79999999702,
+            "samples": 78969,
+            "rays": 4458194,
+            "bytes": 4103264
+          },
+          {
+            "key": "4:17:20261006:2,5:502182b9:high",
+            "generationMs": 418.09999999403954,
+            "geometryMs": 53.80000000447035,
+            "bakeMs": 25442,
+            "samples": 81325,
+            "rays": 4923226,
+            "bytes": 4166560
+          },
+          {
+            "key": "4:17:20261006:5,2:2623b59e:high",
+            "generationMs": 394.20000000298023,
+            "geometryMs": 50.19999999552965,
+            "bakeMs": 27757.70000000298,
+            "samples": 79833,
+            "rays": 5145918,
+            "bytes": 4088544
+          },
+          {
+            "key": "4:17:20261006:1,3:6e92adf3:high",
+            "generationMs": 347.09999999403954,
+            "geometryMs": 55.100000001490116,
+            "bakeMs": 28259.70000000298,
+            "samples": 81477,
+            "rays": 5604436,
+            "bytes": 4052664
+          },
+          {
+            "key": "4:17:20261006:1,4:a37b7b0d:high",
+            "generationMs": 367.1000000014901,
+            "geometryMs": 57.70000000298023,
+            "bakeMs": 31909.79999999702,
+            "samples": 80262,
+            "rays": 6381293,
+            "bytes": 4134176
+          },
+          {
+            "key": "4:17:20261006:5,5:629bae4:high",
+            "generationMs": 121.79999999701977,
+            "geometryMs": 30.100000001490116,
+            "bakeMs": 24633.70000000298,
+            "samples": 80385,
+            "rays": 6087537,
+            "bytes": 4100688
+          },
+          {
+            "key": "4:17:20261006:3,1:9b454dfb:high",
+            "generationMs": 229.20000000298023,
+            "geometryMs": 19.399999998509884,
+            "bakeMs": 20533.60000000149,
+            "samples": 81168,
+            "rays": 4399517,
+            "bytes": 3996544
+          },
+          {
+            "key": "4:17:20261006:4,1:b922064:high",
+            "generationMs": 203.39999999850988,
+            "geometryMs": 29,
+            "bakeMs": 18729.70000000298,
+            "samples": 81843,
+            "rays": 4297276,
+            "bytes": 4087992
+          },
+          {
+            "key": "4:17:20261006:1,5:8b2d3f6b:high",
+            "generationMs": 215.10000000149012,
+            "geometryMs": 22.399999998509884,
+            "bakeMs": 23281,
+            "samples": 81192,
+            "rays": 6029376,
+            "bytes": 4135280
+          },
+          {
+            "key": "4:17:20261006:5,1:d21b6c7d:high",
+            "generationMs": 109.39999999850988,
+            "geometryMs": 23.5,
+            "bakeMs": 19794.89999999851,
+            "samples": 79633,
+            "rays": 4845322,
+            "bytes": 4020464
+          }
+        ]
+      }
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\hotbar-collision-shadow\\after-realistic-benchmark\\qa-1792423876060-54708",
+    "--remote-debugging-port=28463",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 63608,
+    "server": 9836
+  },
+  "entryMs": 3563.615600000001,
+  "initial": {
+    "world": [
+      15.5,
+      15.5,
+      0
+    ],
+    "yaw": 0,
+    "pitch": 0,
+    "fov": 72,
+    "draws": 336,
+    "triangles": 156687,
+    "memory": {
+      "geometries": 444,
+      "textures": 152
+    },
+    "bakes": {
+      "entries": 16,
+      "bytes": 98799704,
+      "hits": 5219,
+      "diskHits": 12,
+      "offlineLoads": 25,
+      "computations": 0,
+      "completed": 25,
+      "stale": 0,
+      "workers": 8,
+      "active": 0,
+      "queued": 0,
+      "stages": [
+        {
+          "key": "4:17:20261006:-1,-2:18c0b94e:high",
+          "generationMs": 210.60190000000011,
+          "geometryMs": 43.88810000000012,
+          "bakeMs": 22318.261599999998,
+          "samples": 100209,
+          "rays": 5791227,
+          "bytes": 6012368,
+          "decodeMs": 75.5
+        },
+        {
+          "key": "4:17:20261006:-1,2:a8ac6130:high",
+          "generationMs": 353.56789999999455,
+          "geometryMs": 45.490600000019185,
+          "bakeMs": 23535.281000000017,
+          "samples": 82060,
+          "rays": 4742419,
+          "bytes": 5923864,
+          "decodeMs": 41.100000001490116
+        },
+        {
+          "key": "4:17:20261006:2,1:b0d913ea:high",
+          "generationMs": 240.62270000000717,
+          "geometryMs": 53.327900000003865,
+          "bakeMs": 26066.099799999996,
+          "samples": 83217,
+          "rays": 5120651,
+          "bytes": 4109888,
+          "decodeMs": 32.70000000298023
+        },
+        {
+          "key": "4:17:20261006:1,2:3d973e70:high",
+          "generationMs": 438.3635999999824,
+          "geometryMs": 58.17029999999795,
+          "bakeMs": 33933.39420000001,
+          "samples": 80951,
+          "rays": 4900845,
+          "bytes": 4145952,
+          "decodeMs": 33.79999999701977
+        },
+        {
+          "key": "4:17:20261006:0,-2:3165bcec:high",
+          "generationMs": 212.95620000000008,
+          "geometryMs": 68.0933,
+          "bakeMs": 41150.9609,
+          "samples": 93594,
+          "rays": 8579253,
+          "bytes": 6898696,
+          "decodeMs": 81.5
+        },
+        {
+          "key": "4:17:20261006:-2,0:a61b5ac:high",
+          "generationMs": 374.696299999996,
+          "geometryMs": 67.53789999999572,
+          "bakeMs": 40396.0462,
+          "samples": 83587,
+          "rays": 4844560,
+          "bytes": 5945576,
+          "decodeMs": 67.60000000149012
+        },
+        {
+          "key": "4:17:20261006:2,0:12335f7:high",
+          "generationMs": 332.5703999999969,
+          "geometryMs": 51.1533000000054,
+          "bakeMs": 27191.88679999998,
+          "samples": 78402,
+          "rays": 5299658,
+          "bytes": 6241632,
+          "decodeMs": 70.59999999403954
+        },
+        {
+          "key": "4:17:20261006:0,2:d845b69e:high",
+          "generationMs": 426.5219999999972,
+          "geometryMs": 52.88589999999385,
+          "bakeMs": 39010.433099999995,
+          "samples": 77780,
+          "rays": 6009703,
+          "bytes": 6201888,
+          "decodeMs": 65.5
+        },
+        {
+          "key": "4:17:20261006:-2,-1:27206704:high",
+          "generationMs": 294.5888999999952,
+          "geometryMs": 113.27320000000327,
+          "bakeMs": 22187.086000000003,
+          "samples": 93801,
+          "rays": 3631685,
+          "bytes": 7580048,
+          "decodeMs": 102.10000000149012
+        },
+        {
+          "key": "4:17:20261006:1,-2:e3dfafd1:high",
+          "generationMs": 269.39500000000044,
+          "geometryMs": 73.28469999999652,
+          "bakeMs": 45073.1544,
+          "samples": 97570,
+          "rays": 8151823,
+          "bytes": 6883976,
+          "decodeMs": 94.29999999701977
+        },
+        {
+          "key": "4:17:20261006:-2,1:9a61e48d:high",
+          "generationMs": 282.0646999999881,
+          "geometryMs": 31.153299999976298,
+          "bakeMs": 22016.90420000002,
+          "samples": 85026,
+          "rays": 4802303,
+          "bytes": 5858728,
+          "decodeMs": 54.399999998509884
+        },
+        {
+          "key": "4:17:20261006:2,-1:f8253389:high",
+          "generationMs": 373.49980000000505,
+          "geometryMs": 66.76339999999618,
+          "bakeMs": 42752.00690000001,
+          "samples": 96143,
+          "rays": 5415841,
+          "bytes": 6205936,
+          "decodeMs": 49.100000001490116
+        },
+        {
+          "key": "4:17:20261006:-2,-2:24c94c2d:high",
+          "generationMs": 173.59829999999965,
+          "geometryMs": 149.75800000000027,
+          "bakeMs": 25725.41,
+          "samples": 70111,
+          "rays": 5782725,
+          "bytes": 10133416,
+          "decodeMs": 85.29999999701977
+        },
+        {
+          "key": "4:17:20261006:2,-2:bf7cf2f:high",
+          "generationMs": 306.1702000000005,
+          "geometryMs": 74.65699999999924,
+          "bakeMs": 42834.6394,
+          "samples": 96516,
+          "rays": 7733300,
+          "bytes": 6724448,
+          "decodeMs": 50.599999994039536
+        },
+        {
+          "key": "4:17:20261006:-2,2:99840001:high",
+          "generationMs": 383.79159999999683,
+          "geometryMs": 48.812000000005355,
+          "bakeMs": 28051.6299,
+          "samples": 83673,
+          "rays": 4610391,
+          "bytes": 5944472,
+          "decodeMs": 43.30000000447035
+        },
+        {
+          "key": "4:17:20261006:2,2:91784a87:high",
+          "generationMs": 477.7663000000175,
+          "geometryMs": 59.89660000000731,
+          "bakeMs": 32367.645699999965,
+          "samples": 76933,
+          "rays": 4389077,
+          "bytes": 3988816,
+          "decodeMs": 29.799999997019768
+        }
+      ]
+    },
+    "ao": 1
+  },
+  "bench": {
+    "scope": "Fixed-state actual App renderer, headless native GPU; simulation frozen only for five warmed render samples. rAF cadence, not a GPU timer query.",
+    "rounds": [
+      {
+        "median": 9.5,
+        "p95": 9.700000000011642,
+        "cpuMedian": 4,
+        "cpuP95": 8.699999995529652,
+        "drawsMedian": 304,
+        "trianglesMedian": 161036,
+        "world": [
+          119,
+          122.5,
+          0
+        ],
+        "yaw": 0.7216548508647613,
+        "pitch": -0.43,
+        "fov": 70,
+        "draws": 304,
+        "triangles": 161036,
+        "memory": {
+          "geometries": 472,
+          "textures": 110
+        },
+        "bakes": {
+          "entries": 23,
+          "bytes": 95162696,
+          "hits": 6178,
+          "diskHits": 12,
+          "offlineLoads": 33,
+          "computations": 13,
+          "completed": 46,
+          "stale": 0,
+          "workers": 8,
+          "active": 0,
+          "queued": 0,
+          "stages": [
+            {
+              "key": "4:17:20261006:-2,2:99840001:high",
+              "generationMs": 383.79159999999683,
+              "geometryMs": 48.812000000005355,
+              "bakeMs": 28051.6299,
+              "samples": 83673,
+              "rays": 4610391,
+              "bytes": 5944472,
+              "decodeMs": 43.30000000447035
+            },
+            {
+              "key": "4:17:20261006:2,2:91784a87:high",
+              "generationMs": 477.7663000000175,
+              "geometryMs": 59.89660000000731,
+              "bakeMs": 32367.645699999965,
+              "samples": 76933,
+              "rays": 4389077,
+              "bytes": 3988816,
+              "decodeMs": 29.799999997019768
+            },
+            {
+              "key": "4:17:20261006:3,3:adc860d8:high",
+              "generationMs": 405.2172000000137,
+              "geometryMs": 59.65220000001136,
+              "bakeMs": 28737.745799999975,
+              "samples": 76016,
+              "rays": 4024429,
+              "bytes": 3975384,
+              "decodeMs": 32
+            },
+            {
+              "key": "4:17:20261006:3,4:c61a1877:high",
+              "generationMs": 450.1952000000165,
+              "geometryMs": 61.81469999998808,
+              "bakeMs": 41608.09409999999,
+              "samples": 76998,
+              "rays": 4623684,
+              "bytes": 4027640,
+              "decodeMs": 27.899999998509884
+            },
+            {
+              "key": "4:17:20261006:4,3:27307568:high",
+              "generationMs": 419.8391999999876,
+              "geometryMs": 57.87729999999283,
+              "bakeMs": 30532.926799999957,
+              "samples": 75677,
+              "rays": 4356140,
+              "bytes": 4023224,
+              "decodeMs": 28.299999997019768
+            },
+            {
+              "key": "4:17:20261006:4,4:aa7d1e55:high",
+              "generationMs": 456.02840000001015,
+              "geometryMs": 58.90349999995669,
+              "bakeMs": 37603.84700000001,
+              "samples": 75671,
+              "rays": 4093128,
+              "bytes": 4022120,
+              "decodeMs": 31.200000002980232
+            },
+            {
+              "key": "4:17:20261006:2,3:22a8965f:high",
+              "generationMs": 459.60739999997895,
+              "geometryMs": 70.18210000003455,
+              "bakeMs": 36985.004200000025,
+              "samples": 76897,
+              "rays": 4951044,
+              "bytes": 3982192,
+              "decodeMs": 31.399999998509884
+            },
+            {
+              "key": "4:17:20261006:2,4:fd255a78:high",
+              "generationMs": 505.7179999999935,
+              "geometryMs": 66.43619999999646,
+              "bakeMs": 34578.40000000002,
+              "samples": 75659,
+              "rays": 4525581,
+              "bytes": 4019912,
+              "decodeMs": 30.200000002980232
+            },
+            {
+              "key": "4:17:20261006:3,2:48aba82d:high",
+              "generationMs": 435.3914999999979,
+              "geometryMs": 54.174399999988964,
+              "bakeMs": 26636.07760000002,
+              "samples": 75986,
+              "rays": 3916977,
+              "bytes": 3969864,
+              "decodeMs": 29
+            },
+            {
+              "key": "4:17:20261006:4,2:473b0a68:high",
+              "generationMs": 469.469700000016,
+              "geometryMs": 59.58140000002459,
+              "bakeMs": 26891.9743,
+              "samples": 75683,
+              "rays": 3709276,
+              "bytes": 4024328,
+              "decodeMs": 35.400000005960464
+            },
+            {
+              "key": "4:17:20261006:3,5:4d062086:high",
+              "generationMs": 345.6000000014901,
+              "geometryMs": 56.29999999701977,
+              "bakeMs": 27779.10000000149,
+              "samples": 81638,
+              "rays": 5571719,
+              "bytes": 4127368
+            },
+            {
+              "key": "4:17:20261006:4,5:50c4c0d1:high",
+              "generationMs": 339.5,
+              "geometryMs": 51.29999999701977,
+              "bakeMs": 29840.29999999702,
+              "samples": 80683,
+              "rays": 5649800,
+              "bytes": 4167848
+            },
+            {
+              "key": "4:17:20261006:5,3:aaf1fdcd:high",
+              "generationMs": 298.29999999701977,
+              "geometryMs": 45,
+              "bakeMs": 26635.5,
+              "samples": 80999,
+              "rays": 5324417,
+              "bytes": 4003352
+            },
+            {
+              "key": "4:17:20261006:5,4:bd214a0e:high",
+              "generationMs": 340.5,
+              "geometryMs": 54,
+              "bakeMs": 24032.79999999702,
+              "samples": 78969,
+              "rays": 4458194,
+              "bytes": 4103264
+            },
+            {
+              "key": "4:17:20261006:2,5:502182b9:high",
+              "generationMs": 418.09999999403954,
+              "geometryMs": 53.80000000447035,
+              "bakeMs": 25442,
+              "samples": 81325,
+              "rays": 4923226,
+              "bytes": 4166560
+            },
+            {
+              "key": "4:17:20261006:5,2:2623b59e:high",
+              "generationMs": 394.20000000298023,
+              "geometryMs": 50.19999999552965,
+              "bakeMs": 27757.70000000298,
+              "samples": 79833,
+              "rays": 5145918,
+              "bytes": 4088544
+            },
+            {
+              "key": "4:17:20261006:1,3:6e92adf3:high",
+              "generationMs": 347.09999999403954,
+              "geometryMs": 55.100000001490116,
+              "bakeMs": 28259.70000000298,
+              "samples": 81477,
+              "rays": 5604436,
+              "bytes": 4052664
+            },
+            {
+              "key": "4:17:20261006:1,4:a37b7b0d:high",
+              "generationMs": 367.1000000014901,
+              "geometryMs": 57.70000000298023,
+              "bakeMs": 31909.79999999702,
+              "samples": 80262,
+              "rays": 6381293,
+              "bytes": 4134176
+            },
+            {
+              "key": "4:17:20261006:5,5:629bae4:high",
+              "generationMs": 121.79999999701977,
+              "geometryMs": 30.100000001490116,
+              "bakeMs": 24633.70000000298,
+              "samples": 80385,
+              "rays": 6087537,
+              "bytes": 4100688
+            },
+            {
+              "key": "4:17:20261006:3,1:9b454dfb:high",
+              "generationMs": 229.20000000298023,
+              "geometryMs": 19.399999998509884,
+              "bakeMs": 20533.60000000149,
+              "samples": 81168,
+              "rays": 4399517,
+              "bytes": 3996544
+            },
+            {
+              "key": "4:17:20261006:4,1:b922064:high",
+              "generationMs": 203.39999999850988,
+              "geometryMs": 29,
+              "bakeMs": 18729.70000000298,
+              "samples": 81843,
+              "rays": 4297276,
+              "bytes": 4087992
+            },
+            {
+              "key": "4:17:20261006:1,5:8b2d3f6b:high",
+              "generationMs": 215.10000000149012,
+              "geometryMs": 22.399999998509884,
+              "bakeMs": 23281,
+              "samples": 81192,
+              "rays": 6029376,
+              "bytes": 4135280
+            },
+            {
+              "key": "4:17:20261006:5,1:d21b6c7d:high",
+              "generationMs": 109.39999999850988,
+              "geometryMs": 23.5,
+              "bakeMs": 19794.89999999851,
+              "samples": 79633,
+              "rays": 4845322,
+              "bytes": 4020464
+            }
+          ]
+        },
+        "ao": 0
+      },
+      {
+        "median": 9.599999999991269,
+        "p95": 9.69999999999709,
+        "cpuMedian": 3.899999998509884,
+        "cpuP95": 8.5,
+        "drawsMedian": 304,
+        "trianglesMedian": 161036,
+        "world": [
+          119,
+          122.5,
+          0
+        ],
+        "yaw": 0.7216548508647613,
+        "pitch": -0.43,
+        "fov": 70,
+        "draws": 618,
+        "triangles": 322688,
+        "memory": {
+          "geometries": 472,
+          "textures": 110
+        },
+        "bakes": {
+          "entries": 23,
+          "bytes": 95162696,
+          "hits": 6178,
+          "diskHits": 12,
+          "offlineLoads": 33,
+          "computations": 13,
+          "completed": 46,
+          "stale": 0,
+          "workers": 8,
+          "active": 0,
+          "queued": 0,
+          "stages": [
+            {
+              "key": "4:17:20261006:-2,2:99840001:high",
+              "generationMs": 383.79159999999683,
+              "geometryMs": 48.812000000005355,
+              "bakeMs": 28051.6299,
+              "samples": 83673,
+              "rays": 4610391,
+              "bytes": 5944472,
+              "decodeMs": 43.30000000447035
+            },
+            {
+              "key": "4:17:20261006:2,2:91784a87:high",
+              "generationMs": 477.7663000000175,
+              "geometryMs": 59.89660000000731,
+              "bakeMs": 32367.645699999965,
+              "samples": 76933,
+              "rays": 4389077,
+              "bytes": 3988816,
+              "decodeMs": 29.799999997019768
+            },
+            {
+              "key": "4:17:20261006:3,3:adc860d8:high",
+              "generationMs": 405.2172000000137,
+              "geometryMs": 59.65220000001136,
+              "bakeMs": 28737.745799999975,
+              "samples": 76016,
+              "rays": 4024429,
+              "bytes": 3975384,
+              "decodeMs": 32
+            },
+            {
+              "key": "4:17:20261006:3,4:c61a1877:high",
+              "generationMs": 450.1952000000165,
+              "geometryMs": 61.81469999998808,
+              "bakeMs": 41608.09409999999,
+              "samples": 76998,
+              "rays": 4623684,
+              "bytes": 4027640,
+              "decodeMs": 27.899999998509884
+            },
+            {
+              "key": "4:17:20261006:4,3:27307568:high",
+              "generationMs": 419.8391999999876,
+              "geometryMs": 57.87729999999283,
+              "bakeMs": 30532.926799999957,
+              "samples": 75677,
+              "rays": 4356140,
+              "bytes": 4023224,
+              "decodeMs": 28.299999997019768
+            },
+            {
+              "key": "4:17:20261006:4,4:aa7d1e55:high",
+              "generationMs": 456.02840000001015,
+              "geometryMs": 58.90349999995669,
+              "bakeMs": 37603.84700000001,
+              "samples": 75671,
+              "rays": 4093128,
+              "bytes": 4022120,
+              "decodeMs": 31.200000002980232
+            },
+            {
+              "key": "4:17:20261006:2,3:22a8965f:high",
+              "generationMs": 459.60739999997895,
+              "geometryMs": 70.18210000003455,
+              "bakeMs": 36985.004200000025,
+              "samples": 76897,
+              "rays": 4951044,
+              "bytes": 3982192,
+              "decodeMs": 31.399999998509884
+            },
+            {
+              "key": "4:17:20261006:2,4:fd255a78:high",
+              "generationMs": 505.7179999999935,
+              "geometryMs": 66.43619999999646,
+              "bakeMs": 34578.40000000002,
+              "samples": 75659,
+              "rays": 4525581,
+              "bytes": 4019912,
+              "decodeMs": 30.200000002980232
+            },
+            {
+              "key": "4:17:20261006:3,2:48aba82d:high",
+              "generationMs": 435.3914999999979,
+              "geometryMs": 54.174399999988964,
+              "bakeMs": 26636.07760000002,
+              "samples": 75986,
+              "rays": 3916977,
+              "bytes": 3969864,
+              "decodeMs": 29
+            },
+            {
+              "key": "4:17:20261006:4,2:473b0a68:high",
+              "generationMs": 469.469700000016,
+              "geometryMs": 59.58140000002459,
+              "bakeMs": 26891.9743,
+              "samples": 75683,
+              "rays": 3709276,
+              "bytes": 4024328,
+              "decodeMs": 35.400000005960464
+            },
+            {
+              "key": "4:17:20261006:3,5:4d062086:high",
+              "generationMs": 345.6000000014901,
+              "geometryMs": 56.29999999701977,
+              "bakeMs": 27779.10000000149,
+              "samples": 81638,
+              "rays": 5571719,
+              "bytes": 4127368
+            },
+            {
+              "key": "4:17:20261006:4,5:50c4c0d1:high",
+              "generationMs": 339.5,
+              "geometryMs": 51.29999999701977,
+              "bakeMs": 29840.29999999702,
+              "samples": 80683,
+              "rays": 5649800,
+              "bytes": 4167848
+            },
+            {
+              "key": "4:17:20261006:5,3:aaf1fdcd:high",
+              "generationMs": 298.29999999701977,
+              "geometryMs": 45,
+              "bakeMs": 26635.5,
+              "samples": 80999,
+              "rays": 5324417,
+              "bytes": 4003352
+            },
+            {
+              "key": "4:17:20261006:5,4:bd214a0e:high",
+              "generationMs": 340.5,
+              "geometryMs": 54,
+              "bakeMs": 24032.79999999702,
+              "samples": 78969,
+              "rays": 4458194,
+              "bytes": 4103264
+            },
+            {
+              "key": "4:17:20261006:2,5:502182b9:high",
+              "generationMs": 418.09999999403954,
+              "geometryMs": 53.80000000447035,
+              "bakeMs": 25442,
+              "samples": 81325,
+              "rays": 4923226,
+              "bytes": 4166560
+            },
+            {
+              "key": "4:17:20261006:5,2:2623b59e:high",
+              "generationMs": 394.20000000298023,
+              "geometryMs": 50.19999999552965,
+              "bakeMs": 27757.70000000298,
+              "samples": 79833,
+              "rays": 5145918,
+              "bytes": 4088544
+            },
+            {
+              "key": "4:17:20261006:1,3:6e92adf3:high",
+              "generationMs": 347.09999999403954,
+              "geometryMs": 55.100000001490116,
+              "bakeMs": 28259.70000000298,
+              "samples": 81477,
+              "rays": 5604436,
+              "bytes": 4052664
+            },
+            {
+              "key": "4:17:20261006:1,4:a37b7b0d:high",
+              "generationMs": 367.1000000014901,
+              "geometryMs": 57.70000000298023,
+              "bakeMs": 31909.79999999702,
+              "samples": 80262,
+              "rays": 6381293,
+              "bytes": 4134176
+            },
+            {
+              "key": "4:17:20261006:5,5:629bae4:high",
+              "generationMs": 121.79999999701977,
+              "geometryMs": 30.100000001490116,
+              "bakeMs": 24633.70000000298,
+              "samples": 80385,
+              "rays": 6087537,
+              "bytes": 4100688
+            },
+            {
+              "key": "4:17:20261006:3,1:9b454dfb:high",
+              "generationMs": 229.20000000298023,
+              "geometryMs": 19.399999998509884,
+              "bakeMs": 20533.60000000149,
+              "samples": 81168,
+              "rays": 4399517,
+              "bytes": 3996544
+            },
+            {
+              "key": "4:17:20261006:4,1:b922064:high",
+              "generationMs": 203.39999999850988,
+              "geometryMs": 29,
+              "bakeMs": 18729.70000000298,
+              "samples": 81843,
+              "rays": 4297276,
+              "bytes": 4087992
+            },
+            {
+              "key": "4:17:20261006:1,5:8b2d3f6b:high",
+              "generationMs": 215.10000000149012,
+              "geometryMs": 22.399999998509884,
+              "bakeMs": 23281,
+              "samples": 81192,
+              "rays": 6029376,
+              "bytes": 4135280
+            },
+            {
+              "key": "4:17:20261006:5,1:d21b6c7d:high",
+              "generationMs": 109.39999999850988,
+              "geometryMs": 23.5,
+              "bakeMs": 19794.89999999851,
+              "samples": 79633,
+              "rays": 4845322,
+              "bytes": 4020464
+            }
+          ]
+        },
+        "ao": 0
+      },
+      {
+        "median": 9.5,
+        "p95": 9.700000000011642,
+        "cpuMedian": 4.100000001490116,
+        "cpuP95": 8.899999998509884,
+        "drawsMedian": 304,
+        "trianglesMedian": 161036,
+        "world": [
+          119,
+          122.5,
+          0
+        ],
+        "yaw": 0.7216548508647613,
+        "pitch": -0.43,
+        "fov": 70,
+        "draws": 304,
+        "triangles": 161036,
+        "memory": {
+          "geometries": 472,
+          "textures": 110
+        },
+        "bakes": {
+          "entries": 23,
+          "bytes": 95162696,
+          "hits": 6178,
+          "diskHits": 12,
+          "offlineLoads": 33,
+          "computations": 13,
+          "completed": 46,
+          "stale": 0,
+          "workers": 8,
+          "active": 0,
+          "queued": 0,
+          "stages": [
+            {
+              "key": "4:17:20261006:-2,2:99840001:high",
+              "generationMs": 383.79159999999683,
+              "geometryMs": 48.812000000005355,
+              "bakeMs": 28051.6299,
+              "samples": 83673,
+              "rays": 4610391,
+              "bytes": 5944472,
+              "decodeMs": 43.30000000447035
+            },
+            {
+              "key": "4:17:20261006:2,2:91784a87:high",
+              "generationMs": 477.7663000000175,
+              "geometryMs": 59.89660000000731,
+              "bakeMs": 32367.645699999965,
+              "samples": 76933,
+              "rays": 4389077,
+              "bytes": 3988816,
+              "decodeMs": 29.799999997019768
+            },
+            {
+              "key": "4:17:20261006:3,3:adc860d8:high",
+              "generationMs": 405.2172000000137,
+              "geometryMs": 59.65220000001136,
+              "bakeMs": 28737.745799999975,
+              "samples": 76016,
+              "rays": 4024429,
+              "bytes": 3975384,
+              "decodeMs": 32
+            },
+            {
+              "key": "4:17:20261006:3,4:c61a1877:high",
+              "generationMs": 450.1952000000165,
+              "geometryMs": 61.81469999998808,
+              "bakeMs": 41608.09409999999,
+              "samples": 76998,
+              "rays": 4623684,
+              "bytes": 4027640,
+              "decodeMs": 27.899999998509884
+            },
+            {
+              "key": "4:17:20261006:4,3:27307568:high",
+              "generationMs": 419.8391999999876,
+              "geometryMs": 57.87729999999283,
+              "bakeMs": 30532.926799999957,
+              "samples": 75677,
+              "rays": 4356140,
+              "bytes": 4023224,
+              "decodeMs": 28.299999997019768
+            },
+            {
+              "key": "4:17:20261006:4,4:aa7d1e55:high",
+              "generationMs": 456.02840000001015,
+              "geometryMs": 58.90349999995669,
+              "bakeMs": 37603.84700000001,
+              "samples": 75671,
+              "rays": 4093128,
+              "bytes": 4022120,
+              "decodeMs": 31.200000002980232
+            },
+            {
+              "key": "4:17:20261006:2,3:22a8965f:high",
+              "generationMs": 459.60739999997895,
+              "geometryMs": 70.18210000003455,
+              "bakeMs": 36985.004200000025,
+              "samples": 76897,
+              "rays": 4951044,
+              "bytes": 3982192,
+              "decodeMs": 31.399999998509884
+            },
+            {
+              "key": "4:17:20261006:2,4:fd255a78:high",
+              "generationMs": 505.7179999999935,
+              "geometryMs": 66.43619999999646,
+              "bakeMs": 34578.40000000002,
+              "samples": 75659,
+              "rays": 4525581,
+              "bytes": 4019912,
+              "decodeMs": 30.200000002980232
+            },
+            {
+              "key": "4:17:20261006:3,2:48aba82d:high",
+              "generationMs": 435.3914999999979,
+              "geometryMs": 54.174399999988964,
+              "bakeMs": 26636.07760000002,
+              "samples": 75986,
+              "rays": 3916977,
+              "bytes": 3969864,
+              "decodeMs": 29
+            },
+            {
+              "key": "4:17:20261006:4,2:473b0a68:high",
+              "generationMs": 469.469700000016,
+              "geometryMs": 59.58140000002459,
+              "bakeMs": 26891.9743,
+              "samples": 75683,
+              "rays": 3709276,
+              "bytes": 4024328,
+              "decodeMs": 35.400000005960464
+            },
+            {
+              "key": "4:17:20261006:3,5:4d062086:high",
+              "generationMs": 345.6000000014901,
+              "geometryMs": 56.29999999701977,
+              "bakeMs": 27779.10000000149,
+              "samples": 81638,
+              "rays": 5571719,
+              "bytes": 4127368
+            },
+            {
+              "key": "4:17:20261006:4,5:50c4c0d1:high",
+              "generationMs": 339.5,
+              "geometryMs": 51.29999999701977,
+              "bakeMs": 29840.29999999702,
+              "samples": 80683,
+              "rays": 5649800,
+              "bytes": 4167848
+            },
+            {
+              "key": "4:17:20261006:5,3:aaf1fdcd:high",
+              "generationMs": 298.29999999701977,
+              "geometryMs": 45,
+              "bakeMs": 26635.5,
+              "samples": 80999,
+              "rays": 5324417,
+              "bytes": 4003352
+            },
+            {
+              "key": "4:17:20261006:5,4:bd214a0e:high",
+              "generationMs": 340.5,
+              "geometryMs": 54,
+              "bakeMs": 24032.79999999702,
+              "samples": 78969,
+              "rays": 4458194,
+              "bytes": 4103264
+            },
+            {
+              "key": "4:17:20261006:2,5:502182b9:high",
+              "generationMs": 418.09999999403954,
+              "geometryMs": 53.80000000447035,
+              "bakeMs": 25442,
+              "samples": 81325,
+              "rays": 4923226,
+              "bytes": 4166560
+            },
+            {
+              "key": "4:17:20261006:5,2:2623b59e:high",
+              "generationMs": 394.20000000298023,
+              "geometryMs": 50.19999999552965,
+              "bakeMs": 27757.70000000298,
+              "samples": 79833,
+              "rays": 5145918,
+              "bytes": 4088544
+            },
+            {
+              "key": "4:17:20261006:1,3:6e92adf3:high",
+              "generationMs": 347.09999999403954,
+              "geometryMs": 55.100000001490116,
+              "bakeMs": 28259.70000000298,
+              "samples": 81477,
+              "rays": 5604436,
+              "bytes": 4052664
+            },
+            {
+              "key": "4:17:20261006:1,4:a37b7b0d:high",
+              "generationMs": 367.1000000014901,
+              "geometryMs": 57.70000000298023,
+              "bakeMs": 31909.79999999702,
+              "samples": 80262,
+              "rays": 6381293,
+              "bytes": 4134176
+            },
+            {
+              "key": "4:17:20261006:5,5:629bae4:high",
+              "generationMs": 121.79999999701977,
+              "geometryMs": 30.100000001490116,
+              "bakeMs": 24633.70000000298,
+              "samples": 80385,
+              "rays": 6087537,
+              "bytes": 4100688
+            },
+            {
+              "key": "4:17:20261006:3,1:9b454dfb:high",
+              "generationMs": 229.20000000298023,
+              "geometryMs": 19.399999998509884,
+              "bakeMs": 20533.60000000149,
+              "samples": 81168,
+              "rays": 4399517,
+              "bytes": 3996544
+            },
+            {
+              "key": "4:17:20261006:4,1:b922064:high",
+              "generationMs": 203.39999999850988,
+              "geometryMs": 29,
+              "bakeMs": 18729.70000000298,
+              "samples": 81843,
+              "rays": 4297276,
+              "bytes": 4087992
+            },
+            {
+              "key": "4:17:20261006:1,5:8b2d3f6b:high",
+              "generationMs": 215.10000000149012,
+              "geometryMs": 22.399999998509884,
+              "bakeMs": 23281,
+              "samples": 81192,
+              "rays": 6029376,
+              "bytes": 4135280
+            },
+            {
+              "key": "4:17:20261006:5,1:d21b6c7d:high",
+              "generationMs": 109.39999999850988,
+              "geometryMs": 23.5,
+              "bakeMs": 19794.89999999851,
+              "samples": 79633,
+              "rays": 4845322,
+              "bytes": 4020464
+            }
+          ]
+        },
+        "ao": 0
+      },
+      {
+        "median": 9.599999999991269,
+        "p95": 9.700000000011642,
+        "cpuMedian": 4.5,
+        "cpuP95": 9.100000001490116,
+        "drawsMedian": 304,
+        "trianglesMedian": 161036,
+        "world": [
+          119,
+          122.5,
+          0
+        ],
+        "yaw": 0.7216548508647613,
+        "pitch": -0.43,
+        "fov": 70,
+        "draws": 618,
+        "triangles": 322688,
+        "memory": {
+          "geometries": 472,
+          "textures": 110
+        },
+        "bakes": {
+          "entries": 23,
+          "bytes": 95162696,
+          "hits": 6178,
+          "diskHits": 12,
+          "offlineLoads": 33,
+          "computations": 13,
+          "completed": 46,
+          "stale": 0,
+          "workers": 8,
+          "active": 0,
+          "queued": 0,
+          "stages": [
+            {
+              "key": "4:17:20261006:-2,2:99840001:high",
+              "generationMs": 383.79159999999683,
+              "geometryMs": 48.812000000005355,
+              "bakeMs": 28051.6299,
+              "samples": 83673,
+              "rays": 4610391,
+              "bytes": 5944472,
+              "decodeMs": 43.30000000447035
+            },
+            {
+              "key": "4:17:20261006:2,2:91784a87:high",
+              "generationMs": 477.7663000000175,
+              "geometryMs": 59.89660000000731,
+              "bakeMs": 32367.645699999965,
+              "samples": 76933,
+              "rays": 4389077,
+              "bytes": 3988816,
+              "decodeMs": 29.799999997019768
+            },
+            {
+              "key": "4:17:20261006:3,3:adc860d8:high",
+              "generationMs": 405.2172000000137,
+              "geometryMs": 59.65220000001136,
+              "bakeMs": 28737.745799999975,
+              "samples": 76016,
+              "rays": 4024429,
+              "bytes": 3975384,
+              "decodeMs": 32
+            },
+            {
+              "key": "4:17:20261006:3,4:c61a1877:high",
+              "generationMs": 450.1952000000165,
+              "geometryMs": 61.81469999998808,
+              "bakeMs": 41608.09409999999,
+              "samples": 76998,
+              "rays": 4623684,
+              "bytes": 4027640,
+              "decodeMs": 27.899999998509884
+            },
+            {
+              "key": "4:17:20261006:4,3:27307568:high",
+              "generationMs": 419.8391999999876,
+              "geometryMs": 57.87729999999283,
+              "bakeMs": 30532.926799999957,
+              "samples": 75677,
+              "rays": 4356140,
+              "bytes": 4023224,
+              "decodeMs": 28.299999997019768
+            },
+            {
+              "key": "4:17:20261006:4,4:aa7d1e55:high",
+              "generationMs": 456.02840000001015,
+              "geometryMs": 58.90349999995669,
+              "bakeMs": 37603.84700000001,
+              "samples": 75671,
+              "rays": 4093128,
+              "bytes": 4022120,
+              "decodeMs": 31.200000002980232
+            },
+            {
+              "key": "4:17:20261006:2,3:22a8965f:high",
+              "generationMs": 459.60739999997895,
+              "geometryMs": 70.18210000003455,
+              "bakeMs": 36985.004200000025,
+              "samples": 76897,
+              "rays": 4951044,
+              "bytes": 3982192,
+              "decodeMs": 31.399999998509884
+            },
+            {
+              "key": "4:17:20261006:2,4:fd255a78:high",
+              "generationMs": 505.7179999999935,
+              "geometryMs": 66.43619999999646,
+              "bakeMs": 34578.40000000002,
+              "samples": 75659,
+              "rays": 4525581,
+              "bytes": 4019912,
+              "decodeMs": 30.200000002980232
+            },
+            {
+              "key": "4:17:20261006:3,2:48aba82d:high",
+              "generationMs": 435.3914999999979,
+              "geometryMs": 54.174399999988964,
+              "bakeMs": 26636.07760000002,
+              "samples": 75986,
+              "rays": 3916977,
+              "bytes": 3969864,
+              "decodeMs": 29
+            },
+            {
+              "key": "4:17:20261006:4,2:473b0a68:high",
+              "generationMs": 469.469700000016,
+              "geometryMs": 59.58140000002459,
+              "bakeMs": 26891.9743,
+              "samples": 75683,
+              "rays": 3709276,
+              "bytes": 4024328,
+              "decodeMs": 35.400000005960464
+            },
+            {
+              "key": "4:17:20261006:3,5:4d062086:high",
+              "generationMs": 345.6000000014901,
+              "geometryMs": 56.29999999701977,
+              "bakeMs": 27779.10000000149,
+              "samples": 81638,
+              "rays": 5571719,
+              "bytes": 4127368
+            },
+            {
+              "key": "4:17:20261006:4,5:50c4c0d1:high",
+              "generationMs": 339.5,
+              "geometryMs": 51.29999999701977,
+              "bakeMs": 29840.29999999702,
+              "samples": 80683,
+              "rays": 5649800,
+              "bytes": 4167848
+            },
+            {
+              "key": "4:17:20261006:5,3:aaf1fdcd:high",
+              "generationMs": 298.29999999701977,
+              "geometryMs": 45,
+              "bakeMs": 26635.5,
+              "samples": 80999,
+              "rays": 5324417,
+              "bytes": 4003352
+            },
+            {
+              "key": "4:17:20261006:5,4:bd214a0e:high",
+              "generationMs": 340.5,
+              "geometryMs": 54,
+              "bakeMs": 24032.79999999702,
+              "samples": 78969,
+              "rays": 4458194,
+              "bytes": 4103264
+            },
+            {
+              "key": "4:17:20261006:2,5:502182b9:high",
+              "generationMs": 418.09999999403954,
+              "geometryMs": 53.80000000447035,
+              "bakeMs": 25442,
+              "samples": 81325,
+              "rays": 4923226,
+              "bytes": 4166560
+            },
+            {
+              "key": "4:17:20261006:5,2:2623b59e:high",
+              "generationMs": 394.20000000298023,
+              "geometryMs": 50.19999999552965,
+              "bakeMs": 27757.70000000298,
+              "samples": 79833,
+              "rays": 5145918,
+              "bytes": 4088544
+            },
+            {
+              "key": "4:17:20261006:1,3:6e92adf3:high",
+              "generationMs": 347.09999999403954,
+              "geometryMs": 55.100000001490116,
+              "bakeMs": 28259.70000000298,
+              "samples": 81477,
+              "rays": 5604436,
+              "bytes": 4052664
+            },
+            {
+              "key": "4:17:20261006:1,4:a37b7b0d:high",
+              "generationMs": 367.1000000014901,
+              "geometryMs": 57.70000000298023,
+              "bakeMs": 31909.79999999702,
+              "samples": 80262,
+              "rays": 6381293,
+              "bytes": 4134176
+            },
+            {
+              "key": "4:17:20261006:5,5:629bae4:high",
+              "generationMs": 121.79999999701977,
+              "geometryMs": 30.100000001490116,
+              "bakeMs": 24633.70000000298,
+              "samples": 80385,
+              "rays": 6087537,
+              "bytes": 4100688
+            },
+            {
+              "key": "4:17:20261006:3,1:9b454dfb:high",
+              "generationMs": 229.20000000298023,
+              "geometryMs": 19.399999998509884,
+              "bakeMs": 20533.60000000149,
+              "samples": 81168,
+              "rays": 4399517,
+              "bytes": 3996544
+            },
+            {
+              "key": "4:17:20261006:4,1:b922064:high",
+              "generationMs": 203.39999999850988,
+              "geometryMs": 29,
+              "bakeMs": 18729.70000000298,
+              "samples": 81843,
+              "rays": 4297276,
+              "bytes": 4087992
+            },
+            {
+              "key": "4:17:20261006:1,5:8b2d3f6b:high",
+              "generationMs": 215.10000000149012,
+              "geometryMs": 22.399999998509884,
+              "bakeMs": 23281,
+              "samples": 81192,
+              "rays": 6029376,
+              "bytes": 4135280
+            },
+            {
+              "key": "4:17:20261006:5,1:d21b6c7d:high",
+              "generationMs": 109.39999999850988,
+              "geometryMs": 23.5,
+              "bakeMs": 19794.89999999851,
+              "samples": 79633,
+              "rays": 4845322,
+              "bytes": 4020464
+            }
+          ]
+        },
+        "ao": 0
+      },
+      {
+        "median": 9.599999999991269,
+        "p95": 9.700000000011642,
+        "cpuMedian": 4.5,
+        "cpuP95": 9.600000001490116,
+        "drawsMedian": 304,
+        "trianglesMedian": 161036,
+        "world": [
+          119,
+          122.5,
+          0
+        ],
+        "yaw": 0.7216548508647613,
+        "pitch": -0.43,
+        "fov": 70,
+        "draws": 618,
+        "triangles": 322688,
+        "memory": {
+          "geometries": 472,
+          "textures": 110
+        },
+        "bakes": {
+          "entries": 23,
+          "bytes": 95162696,
+          "hits": 6178,
+          "diskHits": 12,
+          "offlineLoads": 33,
+          "computations": 13,
+          "completed": 46,
+          "stale": 0,
+          "workers": 8,
+          "active": 0,
+          "queued": 0,
+          "stages": [
+            {
+              "key": "4:17:20261006:-2,2:99840001:high",
+              "generationMs": 383.79159999999683,
+              "geometryMs": 48.812000000005355,
+              "bakeMs": 28051.6299,
+              "samples": 83673,
+              "rays": 4610391,
+              "bytes": 5944472,
+              "decodeMs": 43.30000000447035
+            },
+            {
+              "key": "4:17:20261006:2,2:91784a87:high",
+              "generationMs": 477.7663000000175,
+              "geometryMs": 59.89660000000731,
+              "bakeMs": 32367.645699999965,
+              "samples": 76933,
+              "rays": 4389077,
+              "bytes": 3988816,
+              "decodeMs": 29.799999997019768
+            },
+            {
+              "key": "4:17:20261006:3,3:adc860d8:high",
+              "generationMs": 405.2172000000137,
+              "geometryMs": 59.65220000001136,
+              "bakeMs": 28737.745799999975,
+              "samples": 76016,
+              "rays": 4024429,
+              "bytes": 3975384,
+              "decodeMs": 32
+            },
+            {
+              "key": "4:17:20261006:3,4:c61a1877:high",
+              "generationMs": 450.1952000000165,
+              "geometryMs": 61.81469999998808,
+              "bakeMs": 41608.09409999999,
+              "samples": 76998,
+              "rays": 4623684,
+              "bytes": 4027640,
+              "decodeMs": 27.899999998509884
+            },
+            {
+              "key": "4:17:20261006:4,3:27307568:high",
+              "generationMs": 419.8391999999876,
+              "geometryMs": 57.87729999999283,
+              "bakeMs": 30532.926799999957,
+              "samples": 75677,
+              "rays": 4356140,
+              "bytes": 4023224,
+              "decodeMs": 28.299999997019768
+            },
+            {
+              "key": "4:17:20261006:4,4:aa7d1e55:high",
+              "generationMs": 456.02840000001015,
+              "geometryMs": 58.90349999995669,
+              "bakeMs": 37603.84700000001,
+              "samples": 75671,
+              "rays": 4093128,
+              "bytes": 4022120,
+              "decodeMs": 31.200000002980232
+            },
+            {
+              "key": "4:17:20261006:2,3:22a8965f:high",
+              "generationMs": 459.60739999997895,
+              "geometryMs": 70.18210000003455,
+              "bakeMs": 36985.004200000025,
+              "samples": 76897,
+              "rays": 4951044,
+              "bytes": 3982192,
+              "decodeMs": 31.399999998509884
+            },
+            {
+              "key": "4:17:20261006:2,4:fd255a78:high",
+              "generationMs": 505.7179999999935,
+              "geometryMs": 66.43619999999646,
+              "bakeMs": 34578.40000000002,
+              "samples": 75659,
+              "rays": 4525581,
+              "bytes": 4019912,
+              "decodeMs": 30.200000002980232
+            },
+            {
+              "key": "4:17:20261006:3,2:48aba82d:high",
+              "generationMs": 435.3914999999979,
+              "geometryMs": 54.174399999988964,
+              "bakeMs": 26636.07760000002,
+              "samples": 75986,
+              "rays": 3916977,
+              "bytes": 3969864,
+              "decodeMs": 29
+            },
+            {
+              "key": "4:17:20261006:4,2:473b0a68:high",
+              "generationMs": 469.469700000016,
+              "geometryMs": 59.58140000002459,
+              "bakeMs": 26891.9743,
+              "samples": 75683,
+              "rays": 3709276,
+              "bytes": 4024328,
+              "decodeMs": 35.400000005960464
+            },
+            {
+              "key": "4:17:20261006:3,5:4d062086:high",
+              "generationMs": 345.6000000014901,
+              "geometryMs": 56.29999999701977,
+              "bakeMs": 27779.10000000149,
+              "samples": 81638,
+              "rays": 5571719,
+              "bytes": 4127368
+            },
+            {
+              "key": "4:17:20261006:4,5:50c4c0d1:high",
+              "generationMs": 339.5,
+              "geometryMs": 51.29999999701977,
+              "bakeMs": 29840.29999999702,
+              "samples": 80683,
+              "rays": 5649800,
+              "bytes": 4167848
+            },
+            {
+              "key": "4:17:20261006:5,3:aaf1fdcd:high",
+              "generationMs": 298.29999999701977,
+              "geometryMs": 45,
+              "bakeMs": 26635.5,
+              "samples": 80999,
+              "rays": 5324417,
+              "bytes": 4003352
+            },
+            {
+              "key": "4:17:20261006:5,4:bd214a0e:high",
+              "generationMs": 340.5,
+              "geometryMs": 54,
+              "bakeMs": 24032.79999999702,
+              "samples": 78969,
+              "rays": 4458194,
+              "bytes": 4103264
+            },
+            {
+              "key": "4:17:20261006:2,5:502182b9:high",
+              "generationMs": 418.09999999403954,
+              "geometryMs": 53.80000000447035,
+              "bakeMs": 25442,
+              "samples": 81325,
+              "rays": 4923226,
+              "bytes": 4166560
+            },
+            {
+              "key": "4:17:20261006:5,2:2623b59e:high",
+              "generationMs": 394.20000000298023,
+              "geometryMs": 50.19999999552965,
+              "bakeMs": 27757.70000000298,
+              "samples": 79833,
+              "rays": 5145918,
+              "bytes": 4088544
+            },
+            {
+              "key": "4:17:20261006:1,3:6e92adf3:high",
+              "generationMs": 347.09999999403954,
+              "geometryMs": 55.100000001490116,
+              "bakeMs": 28259.70000000298,
+              "samples": 81477,
+              "rays": 5604436,
+              "bytes": 4052664
+            },
+            {
+              "key": "4:17:20261006:1,4:a37b7b0d:high",
+              "generationMs": 367.1000000014901,
+              "geometryMs": 57.70000000298023,
+              "bakeMs": 31909.79999999702,
+              "samples": 80262,
+              "rays": 6381293,
+              "bytes": 4134176
+            },
+            {
+              "key": "4:17:20261006:5,5:629bae4:high",
+              "generationMs": 121.79999999701977,
+              "geometryMs": 30.100000001490116,
+              "bakeMs": 24633.70000000298,
+              "samples": 80385,
+              "rays": 6087537,
+              "bytes": 4100688
+            },
+            {
+              "key": "4:17:20261006:3,1:9b454dfb:high",
+              "generationMs": 229.20000000298023,
+              "geometryMs": 19.399999998509884,
+              "bakeMs": 20533.60000000149,
+              "samples": 81168,
+              "rays": 4399517,
+              "bytes": 3996544
+            },
+            {
+              "key": "4:17:20261006:4,1:b922064:high",
+              "generationMs": 203.39999999850988,
+              "geometryMs": 29,
+              "bakeMs": 18729.70000000298,
+              "samples": 81843,
+              "rays": 4297276,
+              "bytes": 4087992
+            },
+            {
+              "key": "4:17:20261006:1,5:8b2d3f6b:high",
+              "generationMs": 215.10000000149012,
+              "geometryMs": 22.399999998509884,
+              "bakeMs": 23281,
+              "samples": 81192,
+              "rays": 6029376,
+              "bytes": 4135280
+            },
+            {
+              "key": "4:17:20261006:5,1:d21b6c7d:high",
+              "generationMs": 109.39999999850988,
+              "geometryMs": 23.5,
+              "bakeMs": 19794.89999999851,
+              "samples": 79633,
+              "rays": 4845322,
+              "bytes": 4020464
+            }
+          ]
+        },
+        "ao": 0
+      }
+    ]
+  },
+  "summary": {
+    "checks": [
+      "Actual App enters L1 with live renderer",
+      "parking-common-contact camera has player clearance",
+      "parking-common-contact camera has player clearance"
+    ],
+    "records": [
+      {
+        "name": "parking-common-contact",
+        "ao": 1,
+        "world": [
+          119,
+          122.5,
+          0
+        ],
+        "yaw": 0.7216548508647613,
+        "pitch": -0.43,
+        "fov": 70,
+        "draws": 305,
+        "triangles": 161037,
+        "memory": {
+          "geometries": 472,
+          "textures": 113
+        },
+        "bakes": {
+          "entries": 23,
+          "bytes": 95162696,
+          "hits": 6178,
+          "diskHits": 12,
+          "offlineLoads": 33,
+          "computations": 13,
+          "completed": 46,
+          "stale": 0,
+          "workers": 8,
+          "active": 0,
+          "queued": 0,
+          "stages": [
+            {
+              "key": "4:17:20261006:-2,2:99840001:high",
+              "generationMs": 383.79159999999683,
+              "geometryMs": 48.812000000005355,
+              "bakeMs": 28051.6299,
+              "samples": 83673,
+              "rays": 4610391,
+              "bytes": 5944472,
+              "decodeMs": 43.30000000447035
+            },
+            {
+              "key": "4:17:20261006:2,2:91784a87:high",
+              "generationMs": 477.7663000000175,
+              "geometryMs": 59.89660000000731,
+              "bakeMs": 32367.645699999965,
+              "samples": 76933,
+              "rays": 4389077,
+              "bytes": 3988816,
+              "decodeMs": 29.799999997019768
+            },
+            {
+              "key": "4:17:20261006:3,3:adc860d8:high",
+              "generationMs": 405.2172000000137,
+              "geometryMs": 59.65220000001136,
+              "bakeMs": 28737.745799999975,
+              "samples": 76016,
+              "rays": 4024429,
+              "bytes": 3975384,
+              "decodeMs": 32
+            },
+            {
+              "key": "4:17:20261006:3,4:c61a1877:high",
+              "generationMs": 450.1952000000165,
+              "geometryMs": 61.81469999998808,
+              "bakeMs": 41608.09409999999,
+              "samples": 76998,
+              "rays": 4623684,
+              "bytes": 4027640,
+              "decodeMs": 27.899999998509884
+            },
+            {
+              "key": "4:17:20261006:4,3:27307568:high",
+              "generationMs": 419.8391999999876,
+              "geometryMs": 57.87729999999283,
+              "bakeMs": 30532.926799999957,
+              "samples": 75677,
+              "rays": 4356140,
+              "bytes": 4023224,
+              "decodeMs": 28.299999997019768
+            },
+            {
+              "key": "4:17:20261006:4,4:aa7d1e55:high",
+              "generationMs": 456.02840000001015,
+              "geometryMs": 58.90349999995669,
+              "bakeMs": 37603.84700000001,
+              "samples": 75671,
+              "rays": 4093128,
+              "bytes": 4022120,
+              "decodeMs": 31.200000002980232
+            },
+            {
+              "key": "4:17:20261006:2,3:22a8965f:high",
+              "generationMs": 459.60739999997895,
+              "geometryMs": 70.18210000003455,
+              "bakeMs": 36985.004200000025,
+              "samples": 76897,
+              "rays": 4951044,
+              "bytes": 3982192,
+              "decodeMs": 31.399999998509884
+            },
+            {
+              "key": "4:17:20261006:2,4:fd255a78:high",
+              "generationMs": 505.7179999999935,
+              "geometryMs": 66.43619999999646,
+              "bakeMs": 34578.40000000002,
+              "samples": 75659,
+              "rays": 4525581,
+              "bytes": 4019912,
+              "decodeMs": 30.200000002980232
+            },
+            {
+              "key": "4:17:20261006:3,2:48aba82d:high",
+              "generationMs": 435.3914999999979,
+              "geometryMs": 54.174399999988964,
+              "bakeMs": 26636.07760000002,
+              "samples": 75986,
+              "rays": 3916977,
+              "bytes": 3969864,
+              "decodeMs": 29
+            },
+            {
+              "key": "4:17:20261006:4,2:473b0a68:high",
+              "generationMs": 469.469700000016,
+              "geometryMs": 59.58140000002459,
+              "bakeMs": 26891.9743,
+              "samples": 75683,
+              "rays": 3709276,
+              "bytes": 4024328,
+              "decodeMs": 35.400000005960464
+            },
+            {
+              "key": "4:17:20261006:3,5:4d062086:high",
+              "generationMs": 345.6000000014901,
+              "geometryMs": 56.29999999701977,
+              "bakeMs": 27779.10000000149,
+              "samples": 81638,
+              "rays": 5571719,
+              "bytes": 4127368
+            },
+            {
+              "key": "4:17:20261006:4,5:50c4c0d1:high",
+              "generationMs": 339.5,
+              "geometryMs": 51.29999999701977,
+              "bakeMs": 29840.29999999702,
+              "samples": 80683,
+              "rays": 5649800,
+              "bytes": 4167848
+            },
+            {
+              "key": "4:17:20261006:5,3:aaf1fdcd:high",
+              "generationMs": 298.29999999701977,
+              "geometryMs": 45,
+              "bakeMs": 26635.5,
+              "samples": 80999,
+              "rays": 5324417,
+              "bytes": 4003352
+            },
+            {
+              "key": "4:17:20261006:5,4:bd214a0e:high",
+              "generationMs": 340.5,
+              "geometryMs": 54,
+              "bakeMs": 24032.79999999702,
+              "samples": 78969,
+              "rays": 4458194,
+              "bytes": 4103264
+            },
+            {
+              "key": "4:17:20261006:2,5:502182b9:high",
+              "generationMs": 418.09999999403954,
+              "geometryMs": 53.80000000447035,
+              "bakeMs": 25442,
+              "samples": 81325,
+              "rays": 4923226,
+              "bytes": 4166560
+            },
+            {
+              "key": "4:17:20261006:5,2:2623b59e:high",
+              "generationMs": 394.20000000298023,
+              "geometryMs": 50.19999999552965,
+              "bakeMs": 27757.70000000298,
+              "samples": 79833,
+              "rays": 5145918,
+              "bytes": 4088544
+            },
+            {
+              "key": "4:17:20261006:1,3:6e92adf3:high",
+              "generationMs": 347.09999999403954,
+              "geometryMs": 55.100000001490116,
+              "bakeMs": 28259.70000000298,
+              "samples": 81477,
+              "rays": 5604436,
+              "bytes": 4052664
+            },
+            {
+              "key": "4:17:20261006:1,4:a37b7b0d:high",
+              "generationMs": 367.1000000014901,
+              "geometryMs": 57.70000000298023,
+              "bakeMs": 31909.79999999702,
+              "samples": 80262,
+              "rays": 6381293,
+              "bytes": 4134176
+            },
+            {
+              "key": "4:17:20261006:5,5:629bae4:high",
+              "generationMs": 121.79999999701977,
+              "geometryMs": 30.100000001490116,
+              "bakeMs": 24633.70000000298,
+              "samples": 80385,
+              "rays": 6087537,
+              "bytes": 4100688
+            },
+            {
+              "key": "4:17:20261006:3,1:9b454dfb:high",
+              "generationMs": 229.20000000298023,
+              "geometryMs": 19.399999998509884,
+              "bakeMs": 20533.60000000149,
+              "samples": 81168,
+              "rays": 4399517,
+              "bytes": 3996544
+            },
+            {
+              "key": "4:17:20261006:4,1:b922064:high",
+              "generationMs": 203.39999999850988,
+              "geometryMs": 29,
+              "bakeMs": 18729.70000000298,
+              "samples": 81843,
+              "rays": 4297276,
+              "bytes": 4087992
+            },
+            {
+              "key": "4:17:20261006:1,5:8b2d3f6b:high",
+              "generationMs": 215.10000000149012,
+              "geometryMs": 22.399999998509884,
+              "bakeMs": 23281,
+              "samples": 81192,
+              "rays": 6029376,
+              "bytes": 4135280
+            },
+            {
+              "key": "4:17:20261006:5,1:d21b6c7d:high",
+              "generationMs": 109.39999999850988,
+              "geometryMs": 23.5,
+              "bakeMs": 19794.89999999851,
+              "samples": 79633,
+              "rays": 4845322,
+              "bytes": 4020464
+            }
+          ]
+        }
+      },
+      {
+        "name": "parking-common-contact",
+        "ao": 0,
+        "world": [
+          119,
+          122.5,
+          0
+        ],
+        "yaw": 0.7216548508647613,
+        "pitch": -0.43,
+        "fov": 70,
+        "draws": 304,
+        "triangles": 161036,
+        "memory": {
+          "geometries": 472,
+          "textures": 110
+        },
+        "bakes": {
+          "entries": 23,
+          "bytes": 95162696,
+          "hits": 6178,
+          "diskHits": 12,
+          "offlineLoads": 33,
+          "computations": 13,
+          "completed": 46,
+          "stale": 0,
+          "workers": 8,
+          "active": 0,
+          "queued": 0,
+          "stages": [
+            {
+              "key": "4:17:20261006:-2,2:99840001:high",
+              "generationMs": 383.79159999999683,
+              "geometryMs": 48.812000000005355,
+              "bakeMs": 28051.6299,
+              "samples": 83673,
+              "rays": 4610391,
+              "bytes": 5944472,
+              "decodeMs": 43.30000000447035
+            },
+            {
+              "key": "4:17:20261006:2,2:91784a87:high",
+              "generationMs": 477.7663000000175,
+              "geometryMs": 59.89660000000731,
+              "bakeMs": 32367.645699999965,
+              "samples": 76933,
+              "rays": 4389077,
+              "bytes": 3988816,
+              "decodeMs": 29.799999997019768
+            },
+            {
+              "key": "4:17:20261006:3,3:adc860d8:high",
+              "generationMs": 405.2172000000137,
+              "geometryMs": 59.65220000001136,
+              "bakeMs": 28737.745799999975,
+              "samples": 76016,
+              "rays": 4024429,
+              "bytes": 3975384,
+              "decodeMs": 32
+            },
+            {
+              "key": "4:17:20261006:3,4:c61a1877:high",
+              "generationMs": 450.1952000000165,
+              "geometryMs": 61.81469999998808,
+              "bakeMs": 41608.09409999999,
+              "samples": 76998,
+              "rays": 4623684,
+              "bytes": 4027640,
+              "decodeMs": 27.899999998509884
+            },
+            {
+              "key": "4:17:20261006:4,3:27307568:high",
+              "generationMs": 419.8391999999876,
+              "geometryMs": 57.87729999999283,
+              "bakeMs": 30532.926799999957,
+              "samples": 75677,
+              "rays": 4356140,
+              "bytes": 4023224,
+              "decodeMs": 28.299999997019768
+            },
+            {
+              "key": "4:17:20261006:4,4:aa7d1e55:high",
+              "generationMs": 456.02840000001015,
+              "geometryMs": 58.90349999995669,
+              "bakeMs": 37603.84700000001,
+              "samples": 75671,
+              "rays": 4093128,
+              "bytes": 4022120,
+              "decodeMs": 31.200000002980232
+            },
+            {
+              "key": "4:17:20261006:2,3:22a8965f:high",
+              "generationMs": 459.60739999997895,
+              "geometryMs": 70.18210000003455,
+              "bakeMs": 36985.004200000025,
+              "samples": 76897,
+              "rays": 4951044,
+              "bytes": 3982192,
+              "decodeMs": 31.399999998509884
+            },
+            {
+              "key": "4:17:20261006:2,4:fd255a78:high",
+              "generationMs": 505.7179999999935,
+              "geometryMs": 66.43619999999646,
+              "bakeMs": 34578.40000000002,
+              "samples": 75659,
+              "rays": 4525581,
+              "bytes": 4019912,
+              "decodeMs": 30.200000002980232
+            },
+            {
+              "key": "4:17:20261006:3,2:48aba82d:high",
+              "generationMs": 435.3914999999979,
+              "geometryMs": 54.174399999988964,
+              "bakeMs": 26636.07760000002,
+              "samples": 75986,
+              "rays": 3916977,
+              "bytes": 3969864,
+              "decodeMs": 29
+            },
+            {
+              "key": "4:17:20261006:4,2:473b0a68:high",
+              "generationMs": 469.469700000016,
+              "geometryMs": 59.58140000002459,
+              "bakeMs": 26891.9743,
+              "samples": 75683,
+              "rays": 3709276,
+              "bytes": 4024328,
+              "decodeMs": 35.400000005960464
+            },
+            {
+              "key": "4:17:20261006:3,5:4d062086:high",
+              "generationMs": 345.6000000014901,
+              "geometryMs": 56.29999999701977,
+              "bakeMs": 27779.10000000149,
+              "samples": 81638,
+              "rays": 5571719,
+              "bytes": 4127368
+            },
+            {
+              "key": "4:17:20261006:4,5:50c4c0d1:high",
+              "generationMs": 339.5,
+              "geometryMs": 51.29999999701977,
+              "bakeMs": 29840.29999999702,
+              "samples": 80683,
+              "rays": 5649800,
+              "bytes": 4167848
+            },
+            {
+              "key": "4:17:20261006:5,3:aaf1fdcd:high",
+              "generationMs": 298.29999999701977,
+              "geometryMs": 45,
+              "bakeMs": 26635.5,
+              "samples": 80999,
+              "rays": 5324417,
+              "bytes": 4003352
+            },
+            {
+              "key": "4:17:20261006:5,4:bd214a0e:high",
+              "generationMs": 340.5,
+              "geometryMs": 54,
+              "bakeMs": 24032.79999999702,
+              "samples": 78969,
+              "rays": 4458194,
+              "bytes": 4103264
+            },
+            {
+              "key": "4:17:20261006:2,5:502182b9:high",
+              "generationMs": 418.09999999403954,
+              "geometryMs": 53.80000000447035,
+              "bakeMs": 25442,
+              "samples": 81325,
+              "rays": 4923226,
+              "bytes": 4166560
+            },
+            {
+              "key": "4:17:20261006:5,2:2623b59e:high",
+              "generationMs": 394.20000000298023,
+              "geometryMs": 50.19999999552965,
+              "bakeMs": 27757.70000000298,
+              "samples": 79833,
+              "rays": 5145918,
+              "bytes": 4088544
+            },
+            {
+              "key": "4:17:20261006:1,3:6e92adf3:high",
+              "generationMs": 347.09999999403954,
+              "geometryMs": 55.100000001490116,
+              "bakeMs": 28259.70000000298,
+              "samples": 81477,
+              "rays": 5604436,
+              "bytes": 4052664
+            },
+            {
+              "key": "4:17:20261006:1,4:a37b7b0d:high",
+              "generationMs": 367.1000000014901,
+              "geometryMs": 57.70000000298023,
+              "bakeMs": 31909.79999999702,
+              "samples": 80262,
+              "rays": 6381293,
+              "bytes": 4134176
+            },
+            {
+              "key": "4:17:20261006:5,5:629bae4:high",
+              "generationMs": 121.79999999701977,
+              "geometryMs": 30.100000001490116,
+              "bakeMs": 24633.70000000298,
+              "samples": 80385,
+              "rays": 6087537,
+              "bytes": 4100688
+            },
+            {
+              "key": "4:17:20261006:3,1:9b454dfb:high",
+              "generationMs": 229.20000000298023,
+              "geometryMs": 19.399999998509884,
+              "bakeMs": 20533.60000000149,
+              "samples": 81168,
+              "rays": 4399517,
+              "bytes": 3996544
+            },
+            {
+              "key": "4:17:20261006:4,1:b922064:high",
+              "generationMs": 203.39999999850988,
+              "geometryMs": 29,
+              "bakeMs": 18729.70000000298,
+              "samples": 81843,
+              "rays": 4297276,
+              "bytes": 4087992
+            },
+            {
+              "key": "4:17:20261006:1,5:8b2d3f6b:high",
+              "generationMs": 215.10000000149012,
+              "geometryMs": 22.399999998509884,
+              "bakeMs": 23281,
+              "samples": 81192,
+              "rays": 6029376,
+              "bytes": 4135280
+            },
+            {
+              "key": "4:17:20261006:5,1:d21b6c7d:high",
+              "generationMs": 109.39999999850988,
+              "geometryMs": 23.5,
+              "bakeMs": 19794.89999999851,
+              "samples": 79633,
+              "rays": 4845322,
+              "bytes": 4020464
+            }
+          ]
+        }
+      }
+    ],
+    "interactionChecks": [],
+    "interactions": []
+  },
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "version": 10,
+  "commands": [
+    {
+      "command": "npm run check:l11",
+      "status": "passed",
+      "log": "reports/l11-reference/facade-check-l11.log"
+    },
+    {
+      "command": "npm run check:l11-dressing",
+      "status": "passed",
+      "log": "reports/l11-reference/facade-check-l11-dressing.log"
+    },
+    {
+      "command": "npm run check:l11-collision",
+      "status": "passed",
+      "log": "reports/l11-reference/facade-check-l11-collision.log"
+    },
+    {
+      "command": "npm run check:l11-reference",
+      "status": "passed",
+      "log": "reports/l11-reference/facade-reference-check.log"
+    },
+    {
+      "command": "npm run check:l11-architecture",
+      "status": "passed",
+      "result": "reports/l11-reference/architecture/static.json"
+    },
+    {
+      "command": "npm run check:l11-meshes",
+      "status": "passed",
+      "log": "reports/l11-reference/facade-mesh-check.log"
+    },
+    {
+      "command": "npm run check:l11-urban",
+      "status": "passed",
+      "log": "reports/l11-reference/facade-urban-check.log"
+    },
+    {
+      "command": "node node_modules/esbuild/bin/esbuild scripts/check-l11-road-markings.ts --bundle --platform=node --format=esm --outfile=.cache/check-l11-road-markings.mjs",
+      "status": "passed",
+      "note": "Executed with the following bundled check."
+    },
+    {
+      "command": "node .cache/check-l11-road-markings.mjs",
+      "status": "passed",
+      "note": "Perpendicular/T/skew/negative coordinates/duplicate roads/reference and ordinary generation cases passed."
+    },
+    {
+      "command": "npm run build",
+      "status": "passed",
+      "log": "reports/l11-reference/facade-build.log"
+    }
+  ],
+  "limitations": [
+    "Git whitespace diff check unavailable in this workspace session; Git configuration was not changed.",
+    "Original facade-accepted QA was interrupted before runtime results were saved; screenshots preserved in facade-interrupted-v10 and its owned temporary profile removed.",
+    "The first final-facade 24-second walking check reached only 43.3m at low FPS and failed; full result preserved in facade-surface-fix/runtime.json. Distance coverage now permits bounded extra walking while preserving the original performance sample."
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "zip": "C:/Users/ZANRe/Downloads/backroom-shrimp-v81.zip",
+  "zipSha256": "d52f9258f60d5f1c5bcf366100a08b07b2e6a269e95c272af3638cbe15576733",
+  "baseline": ".cache/shrimp-v81-baseline",
+  "text": [
+    {
+      "path": "package.json",
+      "hunks": 1,
+      "before": "8686ccf651e185172c7537d8e76579ae5714e9d69d80a0e8d679b4e080f3bd12",
+      "after": "97598fc13fd8982c1a157c005e27492c88d95a3fbb349c0c98ca335c98862703"
+    },
+    {
+      "path": "scripts/check-refined-item-meshes.ts",
+      "hunks": 1,
+      "before": "b8373b3119b7646396a46f0147fe33b46d54ad7fdd8581984237fe70d2102a8e",
+      "after": "f55ce491630adf2aa77910ca2ba1236c47a70eedad8127d6c02e6dbb4b3e7752"
+    },
+    {
+      "path": "scripts/gen-item-icons.py",
+      "hunks": 2,
+      "before": "cf32595c9d9a39de46e1ce231db8517b4e6a9beee9d366d6f16d01204badba85",
+      "after": "e35cb3f3796c8c57b77a7b4bb93c933804d13611f79af5bc0a7ef30fd50ea2f2"
+    },
+    {
+      "path": "src/components/HUD.tsx",
+      "hunks": 1,
+      "before": "2223c63dddb3c1b194a01d7ed0cbe771c2ba3436e32aa1421cb6e5850c1c390c",
+      "after": "5040f330572f7cf613e95386fb9d0e408845466a5936b50445024ec27b7d4073"
+    },
+    {
+      "path": "src/game/content/codexScores.ts",
+      "hunks": 2,
+      "before": "9ee0a0dc2511157512237350831f7c819357d12db0ae391fbf5e289b6c6352b9",
+      "after": "02df68804650b89301be5cebc8170de1be5a14ba8b24f35923a106dd96193f2a"
+    },
+    {
+      "path": "src/game/content/items.ts",
+      "hunks": 1,
+      "before": "7555a21e1b7a89c8714e9eb65e17011f535beeee45386bb308daa3664c38b314",
+      "after": "ed4d168a521abef41c7d9f6ff3936dd3f15d6d343bf15963268b1aadb71cc94d"
+    },
+    {
+      "path": "src/game/content/npcs.ts",
+      "hunks": 1,
+      "before": "058d852a79e8ed18ac6409855e5161e4c22f7cf9e250f80d279256869180e220",
+      "after": "5e9e909b9c3240f4e5c2b53970a78c05123176d5ac753d97c6a69b8c71125904"
+    },
+    {
+      "path": "src/game/engine/dullerAI.ts",
+      "hunks": 7,
+      "before": "250c1155732bd21730eb2f52a81bf1f8d23008ebf15282c33da783b1dcc34e63",
+      "after": "54bd1826a8ee3537396c648809757dad0567da8002367f09022ff712a0250ea0"
+    },
+    {
+      "path": "src/game/engine/entityAI.ts",
+      "hunks": 3,
+      "before": "445d94587a2f01cfe2beeabbe2462fca3d386c82a5c1931f2ca91dfbff5ffa5f",
+      "after": "c8a47c66e76bee0b03e9f855ea8a059a753267b7220e689399613973c3f0b9bd"
+    },
+    {
+      "path": "src/game/engine/interact.ts",
+      "hunks": 3,
+      "before": "675b5d9a4ff89c0c388da5c47897d7412d7ca6bdb3ea8d92b39733680d5fff4d",
+      "after": "394fba20ec17820fd018a0f0a09c1cba74ba0b09b1c9d83736d7e05294c18c88"
+    },
+    {
+      "path": "src/game/engine/inventory.ts",
+      "hunks": 2,
+      "before": "36c6276a37115ee7a70e98bc6e9a6addaa59abf68b07fe8d85af5ba1bec2d6ce",
+      "after": "a3477cddb283e3948b2416fe1ab34ec1e0cd616f025680eaadbf8815e7322e2f"
+    },
+    {
+      "path": "src/game/entities/critters.ts",
+      "hunks": 1,
+      "before": "de62341ab1db1866bd3b208588341dc1aa8cccb1eecafcfbb6d5a0f38ef20d9a",
+      "after": "4ce92de4b87903e82944873c06be3dfbd7e31f3631c11f0e33ebab3982538c1c"
+    },
+    {
+      "path": "src/game/entities/types.ts",
+      "hunks": 1,
+      "before": "fca9b72f395368f9144a49980f13bffbb413e7d899f87eb85907431fb676c721",
+      "after": "ed8a22333dacea61d2d48539afc3b59a1f12de8243c9ff310e04a777b433d0ed"
+    },
+    {
+      "path": "src/game/renderer/dullerMesh.ts",
+      "hunks": 1,
+      "before": "d4bdd4bb6bf4a0c9103e9a04b7741adc63c918d08577dea103c979359be0fbef",
+      "after": "aaa053019285aad3bdfb8dbf13aa29aa6d3d98ce0db805bc6a0ee9b5cd0aafb8"
+    },
+    {
+      "path": "src/game/renderer/entitiesMesh.ts",
+      "hunks": 3,
+      "before": "0ba91a0b77ca0cdbd5837e92393a1d2143dad9c35def70a58bd607f595d0370e",
+      "after": "d1aa4fc7a45e05df466277711881365912c9fe47299fef13cb5cb5decd658d9a"
+    },
+    {
+      "path": "src/game/renderer/itemsMesh.ts",
+      "hunks": 3,
+      "before": "8daba3f157c0c563cc9a42e219b54dae1e1996699ece6a29d36ac7ee721294c5",
+      "after": "b86fc546962e62d4edd8f31b247a432cc01fe8f727ebf6b60f8d85dd3cdb3b56"
+    },
+    {
+      "path": "src/game/renderer/refinedItemMesh.ts",
+      "hunks": 3,
+      "before": "1452bfa7b6c23b28b07f09b32804fd303949900426a180c0436e06cfb887ec36",
+      "after": "6cf0e52ba748890d4772510d279e3390b02cd70bf6eea3d395585c61915ba1e1"
+    },
+    {
+      "path": "src/game/renderer/renderer.ts",
+      "hunks": 6,
+      "before": "ee8e818a869c82d3d4034f84a2296fb72c0391614a3b58d1299f038012cf4964",
+      "after": "8a54c8e3d3b0f205f158dca1c47e907c295aa3c4af057292069f8b7469587c02"
+    }
+  ],
+  "newFiles": [
+    {
+      "path": "src/game/engine/shrimpAI.ts",
+      "source": "352f8031579e47011194095f6bf340d151efbea465a3e30472e5e3d3b7621bf7",
+      "after": "682e282d471dc81a0b89ec0e948410310246c0fe028b2de03919ea8472d6a30a"
+    },
+    {
+      "path": "scripts/check-shrimp.ts",
+      "source": "d1212291302b7b7c127830b2761c0d4e872116320609d1e33e72125175af969a",
+      "after": "22d9cc5593b21595bd3afab637c18a7c3f5cd5f9b3509659fd4f8cf8651ec4b7"
+    }
+  ],
+  "scope": "Reviewed incremental hunks only; package multiplayer additions omitted under the project freeze."
+}

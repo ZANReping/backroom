@@ -1,0 +1,594 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-19",
+  "scope": "Level 1 v2 C and D import; app and root documentation; existing work preserved",
+  "generation": 5,
+  "bakeFormatVersion": 4,
+  "bakeRevision": 14,
+  "publishedHighQualityChunks": 99,
+  "integrationAudit": {
+    "dSourceArchive": true,
+    "files": [
+      {
+        "path": "app/src/game/content/decorRegistry.ts",
+        "ok": true
+      },
+      {
+        "path": "app/src/game/core/types.ts",
+        "ok": true
+      },
+      {
+        "path": "app/src/game/renderer/l1Architecture.ts",
+        "ok": true
+      },
+      {
+        "path": "app/src/game/renderer/l1Materials.ts",
+        "ok": true
+      },
+      {
+        "path": "app/src/game/renderer/structures.ts",
+        "ok": true
+      },
+      {
+        "path": "app/src/game/world/l1Bake.ts",
+        "ok": true
+      },
+      {
+        "path": "app/src/game/world/l1Building.ts",
+        "ok": true
+      },
+      {
+        "path": "app/src/game/world/l1Dressing.ts",
+        "ok": true
+      },
+      {
+        "path": "app/src/game/world/l1Placement.ts",
+        "ok": true
+      },
+      {
+        "path": "app/src/game/world/l1BakeTypes.ts",
+        "ok": true
+      },
+      {
+        "path": "app/src/game/content/furnitureSeats.ts",
+        "ok": true
+      }
+    ],
+    "bakes": {
+      "revision": 14,
+      "count": 99,
+      "publicDistManifestEqual": true,
+      "missing": []
+    }
+  },
+  "staticChecks": {
+    "l1V2": 448,
+    "dImport": {
+      "checks": 33698,
+      "bakeRevision": 14,
+      "manifestBakeRevision": 14,
+      "ouroboros": {
+        "litter": 369,
+        "boards": 29
+      },
+      "groundLeafVertices": 33120,
+      "status": "passed"
+    },
+    "seating": 310,
+    "jerry": 120,
+    "partygoers": 113,
+    "l0Testfield": 70,
+    "logs": "checks/",
+    "l1Regressions": [
+      "l1",
+      "l1-props",
+      "l1-services",
+      "l1-detail",
+      "l1-exposure",
+      "l1-bake",
+      "l1-vault-mesh",
+      "l1-room-dressing",
+      "l1-offline"
+    ],
+    "buildPassed": true,
+    "buildLog": "build.log"
+  },
+  "runs": {
+    "beforeRealistic": {
+      "file": "before-realistic/result.json",
+      "ok": true,
+      "checks": 9,
+      "scenes": [
+        "parking-common",
+        "storage"
+      ],
+      "entryMs": 2485.5521999999983,
+      "fullyWarmedMs": 7695.547400000003,
+      "gpu": {
+        "vendor": "WebKit",
+        "renderer": "WebKit WebGL",
+        "unmaskedVendor": "Google Inc. (NVIDIA)",
+        "unmaskedRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "frames": [
+        {
+          "median": 4.19999999999709,
+          "p95": 8.30000000000291,
+          "draws": 229,
+          "triangles": 139036,
+          "resources": {
+            "geometries": 368,
+            "textures": 140,
+            "programs": 71,
+            "groups": 25
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 8.19999999999709,
+          "draws": 229,
+          "triangles": 139036,
+          "resources": {
+            "geometries": 368,
+            "textures": 140,
+            "programs": 71,
+            "groups": 25
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 8.30000000000291,
+          "draws": 229,
+          "triangles": 139036,
+          "resources": {
+            "geometries": 368,
+            "textures": 140,
+            "programs": 71,
+            "groups": 25
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 8.400000000008731,
+          "draws": 229,
+          "triangles": 139036,
+          "resources": {
+            "geometries": 368,
+            "textures": 140,
+            "programs": 71,
+            "groups": 25
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 8.5,
+          "draws": 229,
+          "triangles": 139036,
+          "resources": {
+            "geometries": 368,
+            "textures": 140,
+            "programs": 71,
+            "groups": 25
+          }
+        }
+      ],
+      "resources": null,
+      "runtimeErrors": 0,
+      "assetFailures": 0,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    "afterClassic": {
+      "file": "after-classic/result.json",
+      "ok": true,
+      "checks": 57,
+      "scenes": [
+        "parking-common",
+        "storage",
+        "gothic",
+        "garden",
+        "path-room",
+        "barber-room",
+        "fabled",
+        "power-out"
+      ],
+      "entryMs": 2281.155499999997,
+      "fullyWarmedMs": 3953.1997999999985,
+      "gpu": {
+        "vendor": "WebKit",
+        "renderer": "WebKit WebGL",
+        "unmaskedVendor": "Google Inc. (NVIDIA)",
+        "unmaskedRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "frames": [
+        {
+          "median": 4.19999999999709,
+          "p95": 8.299999999995634,
+          "renderCpuMedian": 3.5,
+          "renderCpuP95": 4.199999999720603,
+          "draws": 281,
+          "triangles": 107177,
+          "resources": {
+            "geometries": 475,
+            "textures": 138,
+            "programs": 78,
+            "groups": 25
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.299999999995634,
+          "renderCpuMedian": 2.900000000372529,
+          "renderCpuP95": 3.5,
+          "draws": 281,
+          "triangles": 107177,
+          "resources": {
+            "geometries": 475,
+            "textures": 138,
+            "programs": 78,
+            "groups": 25
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.299999999995634,
+          "renderCpuMedian": 2.6000000000931323,
+          "renderCpuP95": 3.1000000000931323,
+          "draws": 281,
+          "triangles": 107177,
+          "resources": {
+            "geometries": 475,
+            "textures": 138,
+            "programs": 78,
+            "groups": 25
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.299999999995634,
+          "renderCpuMedian": 2.5,
+          "renderCpuP95": 2.900000000372529,
+          "draws": 281,
+          "triangles": 107177,
+          "resources": {
+            "geometries": 475,
+            "textures": 138,
+            "programs": 78,
+            "groups": 25
+          }
+        },
+        {
+          "median": 4.19999999999709,
+          "p95": 4.30000000000291,
+          "renderCpuMedian": 2.3999999999068677,
+          "renderCpuP95": 2.900000000372529,
+          "draws": 281,
+          "triangles": 107177,
+          "resources": {
+            "geometries": 475,
+            "textures": 138,
+            "programs": 78,
+            "groups": 25
+          }
+        }
+      ],
+      "resources": {
+        "rounds": [
+          {
+            "geometries": 668,
+            "textures": 141,
+            "programs": 80,
+            "groups": 25,
+            "npcs": 0,
+            "entities": 3,
+            "items": 13
+          },
+          {
+            "geometries": 668,
+            "textures": 142,
+            "programs": 80,
+            "groups": 25,
+            "npcs": 0,
+            "entities": 3,
+            "items": 13
+          },
+          {
+            "geometries": 679,
+            "textures": 141,
+            "programs": 80,
+            "groups": 25,
+            "npcs": 0,
+            "entities": 3,
+            "items": 13
+          },
+          {
+            "geometries": 679,
+            "textures": 141,
+            "programs": 80,
+            "groups": 25,
+            "npcs": 0,
+            "entities": 3,
+            "items": 13
+          },
+          {
+            "geometries": 679,
+            "textures": 141,
+            "programs": 80,
+            "groups": 25,
+            "npcs": 0,
+            "entities": 3,
+            "items": 13
+          }
+        ],
+        "scope": "Fixed NPC positions/speech timers; actual chunk streaming and renderer disposal"
+      },
+      "runtimeErrors": 0,
+      "assetFailures": 0,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    "afterRealistic": {
+      "file": "after-realistic/result.json",
+      "ok": true,
+      "checks": 72,
+      "scenes": [
+        "parking-common",
+        "parking-round",
+        "parking-water",
+        "parking-dark",
+        "storage",
+        "gothic",
+        "ouroboros",
+        "garden",
+        "path-corridor",
+        "path-room",
+        "barber-room",
+        "fabled",
+        "power-out"
+      ],
+      "entryMs": 2196.3104999999996,
+      "fullyWarmedMs": 3808.493200000001,
+      "gpu": {
+        "vendor": "WebKit",
+        "renderer": "WebKit WebGL",
+        "unmaskedVendor": "Google Inc. (NVIDIA)",
+        "unmaskedRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "frames": [
+        {
+          "median": 12.700000000011642,
+          "p95": 25,
+          "renderCpuMedian": 9.400000000372529,
+          "renderCpuP95": 20.09999999962747,
+          "draws": 624,
+          "triangles": 285666,
+          "resources": {
+            "geometries": 556,
+            "textures": 178,
+            "programs": 87,
+            "groups": 25
+          }
+        },
+        {
+          "median": 16.600000000034925,
+          "p95": 25.20000000001164,
+          "renderCpuMedian": 11.299999999813735,
+          "renderCpuP95": 22.59999999962747,
+          "draws": 303,
+          "triangles": 141862,
+          "resources": {
+            "geometries": 556,
+            "textures": 178,
+            "programs": 87,
+            "groups": 25
+          }
+        },
+        {
+          "median": 16.600000000034925,
+          "p95": 29.099999999976717,
+          "renderCpuMedian": 11.300000000745058,
+          "renderCpuP95": 23.09999999962747,
+          "draws": 303,
+          "triangles": 141862,
+          "resources": {
+            "geometries": 556,
+            "textures": 178,
+            "programs": 87,
+            "groups": 25
+          }
+        },
+        {
+          "median": 16.599999999976717,
+          "p95": 25,
+          "renderCpuMedian": 10.5,
+          "renderCpuP95": 21.59999999962747,
+          "draws": 303,
+          "triangles": 141862,
+          "resources": {
+            "geometries": 556,
+            "textures": 178,
+            "programs": 87,
+            "groups": 25
+          }
+        },
+        {
+          "median": 12.600000000034925,
+          "p95": 24.900000000023283,
+          "renderCpuMedian": 9.5,
+          "renderCpuP95": 19.200000000186265,
+          "draws": 303,
+          "triangles": 141862,
+          "resources": {
+            "geometries": 556,
+            "textures": 178,
+            "programs": 87,
+            "groups": 25
+          }
+        }
+      ],
+      "resources": {
+        "rounds": [
+          {
+            "geometries": 761,
+            "textures": 183,
+            "programs": 89,
+            "groups": 25,
+            "textureOwners": 113,
+            "nonGraffitiOwners": 108,
+            "nonGraffitiGpuTextures": 178,
+            "graffitiVariants": [
+              1,
+              2,
+              4,
+              5,
+              9
+            ],
+            "retiredTextures": 0,
+            "npcs": 0,
+            "entities": 3,
+            "items": 13,
+            "dynamics": {
+              "epoch": 11,
+              "hidden": 574
+            }
+          },
+          {
+            "geometries": 761,
+            "textures": 181,
+            "programs": 89,
+            "groups": 25,
+            "textureOwners": 111,
+            "nonGraffitiOwners": 108,
+            "nonGraffitiGpuTextures": 178,
+            "graffitiVariants": [
+              1,
+              2,
+              5
+            ],
+            "retiredTextures": 0,
+            "npcs": 0,
+            "entities": 3,
+            "items": 13,
+            "dynamics": {
+              "epoch": 12,
+              "hidden": 574
+            }
+          },
+          {
+            "geometries": 772,
+            "textures": 182,
+            "programs": 89,
+            "groups": 25,
+            "textureOwners": 112,
+            "nonGraffitiOwners": 108,
+            "nonGraffitiGpuTextures": 178,
+            "graffitiVariants": [
+              1,
+              2,
+              5,
+              9
+            ],
+            "retiredTextures": 0,
+            "npcs": 0,
+            "entities": 3,
+            "items": 13,
+            "dynamics": {
+              "epoch": 13,
+              "hidden": 574
+            }
+          },
+          {
+            "geometries": 772,
+            "textures": 183,
+            "programs": 89,
+            "groups": 25,
+            "textureOwners": 113,
+            "nonGraffitiOwners": 108,
+            "nonGraffitiGpuTextures": 178,
+            "graffitiVariants": [
+              1,
+              2,
+              3,
+              5,
+              9
+            ],
+            "retiredTextures": 0,
+            "npcs": 0,
+            "entities": 3,
+            "items": 13,
+            "dynamics": {
+              "epoch": 13,
+              "hidden": 574
+            }
+          },
+          {
+            "geometries": 772,
+            "textures": 183,
+            "programs": 89,
+            "groups": 25,
+            "textureOwners": 113,
+            "nonGraffitiOwners": 108,
+            "nonGraffitiGpuTextures": 178,
+            "graffitiVariants": [
+              0,
+              1,
+              2,
+              5,
+              9
+            ],
+            "retiredTextures": 0,
+            "npcs": 0,
+            "entities": 3,
+            "items": 13,
+            "dynamics": {
+              "epoch": 14,
+              "hidden": 574
+            }
+          }
+        ],
+        "scope": "Fixed NPC positions/speech timers; actual streaming; wait beyond the four-second texture handoff; three settled samples; legacy random graffiti verified separately by texture identity",
+        "graffitiPoolSize": 10
+      },
+      "runtimeErrors": 0,
+      "assetFailures": 0,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    }
+  },
+  "performanceScreening": {
+    "frameMetric": "RAF intervals, five groups of 90 warmed intervals; renderCpu is CPU submission only, no GPU timer query",
+    "mode": "realistic",
+    "medianTargetMs": 16.7,
+    "p95TargetMs": 20,
+    "medianPassed": true,
+    "p95Passed": false,
+    "steady60FpsProven": false,
+    "entryScope": "Continue button through save-slot selection to playable nearby world; excludes initial browser/module bootstrap; seed 20261006 only"
+  },
+  "limits": [
+    "Latest realistic P95 24.9–29.1 ms exceeds the 20 ms screening target; no claim of steady 60 FPS.",
+    "Earlier same-device sampling batches varied, including approximately 9.6 ms and 38.2 ms medians; those raw reports are retained.",
+    "Not pixel-exact reproduction of all source photographs; garden, ouroboros and dry area retain upstream composition/tonal differences.",
+    "No Android device or long-duration full-map stress test.",
+    "Multiplayer remains closed and was not modified or tested."
+  ],
+  "diagnostics": {
+    "bootstrap": "bootstrap-timeout.json",
+    "strictGpuCount": "resource-exact-count-failure.json",
+    "strictOwnershipCount": "resource-owner-count-failure.json",
+    "textureTrace": "resource-diagnostic-realistic/result.json",
+    "cause": "Legacy graffiti randomly chooses from 10 shared textures during chunk rebuild. Final QA classifies those texture objects separately and requires exact non-graffiti GPU/reference, geometry and program convergence, with empty retirement queues."
+  }
+}

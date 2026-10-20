@@ -1,0 +1,385 @@
+diff --git a/app/src/game/renderer/l7Ocean.ts b/app/src/game/renderer/l7Ocean.ts
+index 09af9c4..5554272 100644
+--- a/app/src/game/renderer/l7Ocean.ts
++++ b/app/src/game/renderer/l7Ocean.ts
+@@ -6,7 +6,7 @@
+ //   · 海床焦散：注入 L7 海床材质的自发光项，随水深指数衰减，约 30m 以下消失（0 次额外绘制）。
+ //   · 悬浮颗粒（1）：相机周围 22m 立方体内循环复用的 2200 个点精灵——水下是骨粉「海雪」，
+ //     水面以上是悬浮在空气里的骨质雾霾微粒（Fandom）。被手电光锥照到会亮起。
+-//   · 水下光柱（1）：7 片竖直加法面片，从海面斜插下来，随深度淡出（约 45m 以下消失）。
++//   · 水下光柱（1）：48 条实例化轴向公告板光束，方向=折射后的阳光，高斯截面+前向散射，随深度淡出。
+ //   · 手电体积光锥（1）：仅水下+开手电时出现，加法混合，强度沿锥长衰减。
+ //   · 屏幕叠加（1）：半入水时的分屏水线与弯月面、随深度加深的压迫暗角、致幻时的边缘呼吸。
+ //   · 重力交界区（每区 2）：竖直水墙 + 倒悬水面（自带更远的雾距，在雾中可见轮廓）。
+@@ -15,6 +15,7 @@
+ // 全部共享一套 uniforms，每帧只做常数级 CPU 工作。
+ import * as THREE from 'three'
+ import { waterUniforms } from './water'
++import { skyLightDir } from './skybox'
+ 
+ // ---------------- 分通道水下雾（全局一次性补丁） ----------------
+ let fogPatched = false
+@@ -112,7 +113,8 @@ export class L7OceanFx {
+     uEyeAbove: { value: 1 }, uInvP: { value: new THREE.Matrix4() }, uCamW: { value: new THREE.Matrix4() }, uRay: { value: 0 },
+   }
+   private snow: THREE.Points
+-  private rays: THREE.Mesh[] = []
++  private rayMesh!: THREE.Mesh
++  private rayDir = new THREE.Vector3(0, -1, 0)
+   private cone: THREE.Mesh
+   private overlay: THREE.Mesh
+   private shards: THREE.InstancedMesh
+@@ -122,6 +124,7 @@ export class L7OceanFx {
+   private wallMat: THREE.ShaderMaterial
+   private skySeaMat: THREE.ShaderMaterial
+   private disposables: { dispose(): void }[] = []
++  private tmpM = new THREE.Matrix4()
+ 
+   constructor() {
+     patchL7Fog()
+@@ -164,34 +167,94 @@ void main(){ vec2 q = gl_PointCoord * 2.0 - 1.0; float d = dot(q, q); if (d > 1.
+       this.group.add(this.snow)
+       this.disposables.push(g, mat)
+     }
+-    // ---- 水下光柱 ----
++    // ---- 水下光柱（v66.1：体积光束）----
++    // 真实的水下光柱是阳光穿过起伏海面后被聚焦成的一束束「焦散光管」：
++    //   · 所有光束彼此平行，方向 = 太阳方向经斯涅尔折射（n=1.33）后的水中光线方向（透视下汇聚到一个灭点）；
++    //   · 截面是柔和的高斯分布，没有硬边；随海面波动缓慢明灭、粗细不一、成簇出现；
++    //   · 前向散射（Henyey–Greenstein g≈0.7）：朝光源方向（仰望海面）看最亮，俯视几乎看不见；
++    //   · 离海面越远越暗，并被水体雾吞没。
++    // 实现：48 条实例化的「轴向公告板」——绕光束自身轴旋转以始终正对相机，因此从任何角度看都不会露出面片的薄边。
+     {
+-      const g = new THREE.PlaneGeometry(1, 1, 1, 8)
+-      g.translate(0, -0.5, 0)
++      const N = 48
++      const g = new THREE.InstancedBufferGeometry()
++      const base = new THREE.PlaneGeometry(1, 1, 1, 20)
++      base.translate(0, -0.5, 0) // y: 0(海面) → -1(末端)
++      g.index = base.index
++      g.setAttribute('position', base.attributes.position)
++      g.setAttribute('uv', base.attributes.uv)
++      const sh = new Float32Array(N * 4)
++      for (let i = 0; i < N; i++) {
++        // 成簇：每 4 条共享一个簇心，簇内小偏移
++        const c = Math.floor(i / 4)
++        const cx = (c * 0.6180339) % 1, cz = (c * 0.7548777 + 0.31) % 1
++        sh[i * 4] = (cx + (Math.random() - 0.5) * 0.06 + 1) % 1
++        sh[i * 4 + 1] = (cz + (Math.random() - 0.5) * 0.06 + 1) % 1
++        sh[i * 4 + 2] = 0.18 + Math.pow(Math.random(), 2.2) * 1.6 // 宽度：多数细、少数粗
++        sh[i * 4 + 3] = Math.random() * 100
++      }
++      g.setAttribute('aShaft', new THREE.InstancedBufferAttribute(sh, 4))
++      g.instanceCount = N
++      // 太阳方向（天空系统同源）→ 折射后的水中光线方向（指向下方）
++      const sun = skyLightDir(7).normalize()
++      const inc = sun.clone().negate()
++      const nUp = new THREE.Vector3(0, 1, 0), eta = 1 / 1.33
++      const cosi = -nUp.dot(inc), k = 1 - eta * eta * (1 - cosi * cosi)
++      const refr = inc.clone().multiplyScalar(eta).add(nUp.clone().multiplyScalar(eta * cosi - Math.sqrt(Math.max(0, k)))).normalize()
++      // 阴天天光漫射：光束比直射更接近竖直，取折射方向与竖直的折中
++      this.rayDir = refr.lerp(new THREE.Vector3(0, -1, 0), 0.45).normalize()
+       const mat = new THREE.ShaderMaterial({
+-        uniforms: U, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false,
+-        vertexShader: `varying vec2 vUv; varying vec3 vW; void main(){ vUv = uv; vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`,
+-        fragmentShader: `uniform float uTime; uniform float uRay; uniform vec3 uCam; varying vec2 vUv; varying vec3 vW;
++        uniforms: Object.assign(U, { uRayDir: { value: this.rayDir } }),
++        transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false,
++        vertexShader: `uniform vec3 uCam; uniform vec3 uRayDir; uniform float uWaterY; uniform float uTime;
++attribute vec4 aShaft; varying vec2 vUv; varying float vDist; varying float vPh; varying float vAlong; varying float vCosV; varying float vW;
++const float B = 34.0;   // 光束分布范围（随相机循环复用）
++const float L = 46.0;   // 光束长度
++void main(){
++  vec3 D = uRayDir;
++  // 光束在相机深度处的穿越点：绕相机循环分布，并随海流极缓慢漂移
++  vec2 drift = vec2(uTime * 0.035, uTime * 0.021);
++  vec2 q = uCam.xz + (fract(aShaft.xy + (drift - uCam.xz) / B) - 0.5) * B;
++  vec3 Q = vec3(q.x, uCam.y, q.y);
++  vec3 P0 = Q - D * ((Q.y - uWaterY) / D.y); // 海面入射点
++  float along = -position.y * L;              // 0..L
++  vec3 C = P0 + D * along;
++  vec3 toC = normalize(C - uCam);
++  vec3 side = normalize(cross(D, toC));
++  // 宽度随深度略微展开（光束发散），并随海面起伏「呼吸」
++  float w = aShaft.z * (1.0 + along * 0.012) * (0.85 + 0.15 * sin(uTime * 0.7 + aShaft.w));
++  vec3 P = C + side * position.x * w * 2.0;
++  vUv = vec2(position.x * 2.0, along / L);
++  vDist = length(P - uCam);
++  vPh = aShaft.w; vAlong = along; vW = w;
++  vCosV = dot(normalize(P - uCam), -D);
++  gl_Position = projectionMatrix * viewMatrix * vec4(P, 1.0);
++}`,
++        fragmentShader: `uniform float uTime; uniform float uRay; uniform float uFogFar; varying vec2 vUv; varying float vDist; varying float vPh; varying float vAlong; varying float vCosV; varying float vW;
+ void main(){
+-  float x = vUv.x, y = vUv.y; // y=1 海面，y=0 底端
+-  float edge = smoothstep(0.0, 0.35, x) * smoothstep(1.0, 0.65, x);
+-  float shimmer = 0.6 + 0.4 * sin(vW.x * 0.7 + vW.z * 0.5 + uTime * 0.9) * sin(uTime * 0.37 + vW.z * 0.3);
+-  float fall = pow(y, 2.2);
+-  float nearFade = smoothstep(1.5, 5.0, length(vW - uCam));
+-  gl_FragColor = vec4(vec3(0.42, 0.62, 0.66) * edge * fall * shimmer * uRay * nearFade * 0.22, 1.0);
++  float x = vUv.x;
++  float across = exp(-x * x * 3.2) * (1.0 - x * x);                 // 高斯截面，无硬边
++  float top = smoothstep(0.0, 1.5, vAlong);                          // 贴海面处淡入
++  float fall = exp(-vAlong / 17.0);                                   // 远离海面衰减
++  // 海面波动造成的明灭：两组慢频相乘，偶尔整束熄灭
++  float flick = clamp(0.35 + 0.65 * sin(uTime * (0.45 + fract(vPh) * 0.5) + vPh * 6.0) * sin(uTime * 0.23 + vPh * 2.3), 0.0, 1.0);
++  // 沿光束方向的细密明暗（悬浮颗粒的散射不均匀）
++  float grain = 0.82 + 0.18 * sin(vAlong * 0.8 + vPh * 11.0 - uTime * 0.6);
++  // Henyey–Greenstein 前向散射（g=0.7），归一到朝光看=1
++  float g = 0.7, c = clamp(vCosV, -1.0, 1.0);
++  float hg = (1.0 - g * g) / pow(1.0 + g * g - 2.0 * g * c, 1.5) / ((1.0 - g * g) / pow(1.0 - g, 3.0) * 1.0);
++  float phase = 0.08 + 0.92 * pow(hg, 0.45);
++  float nearF = smoothstep(0.6, 3.5, vDist);
++  float farF = 1.0 - smoothstep(uFogFar * 0.35, uFogFar * 1.1, vDist);
++  float thin = 0.75 + 0.5 / (0.5 + vW);                               // 细光束单位亮度更高
++  float I = across * top * fall * flick * grain * phase * nearF * farF * thin * uRay;
++  gl_FragColor = vec4(vec3(0.58, 0.8, 0.82) * I * 0.21, 1.0);
+ }`,
+       })
+-      for (let i = 0; i < 7; i++) {
+-        const m = new THREE.Mesh(g, mat)
+-        m.frustumCulled = false
+-        m.renderOrder = 6
+-        m.userData.a = (i / 7) * Math.PI * 2 + Math.random() * 0.6
+-        m.userData.r = 5 + Math.random() * 12
+-        m.userData.w = 1.4 + Math.random() * 2.4
+-        this.rays.push(m)
+-        this.group.add(m)
+-      }
+-      this.disposables.push(g, mat)
++      this.rayMesh = new THREE.Mesh(g, mat)
++      this.rayMesh.frustumCulled = false
++      this.rayMesh.renderOrder = 6
++      this.group.add(this.rayMesh)
++      this.disposables.push(g, base, mat)
+     }
+     // ---- 手电体积光锥 ----
+     {
+@@ -224,9 +287,17 @@ void main(){
+         uniforms: U, transparent: true, depthTest: false, depthWrite: false, fog: false,
+         vertexShader: `varying vec2 vNdc; void main(){ vNdc = position.xy; gl_Position = vec4(position.xy, 0.0, 1.0); }`,
+         fragmentShader: `uniform mat4 uInvP; uniform mat4 uCamW; uniform vec3 uCam; uniform float uWaterY; uniform float uEyeAbove; uniform float uTime;
+-uniform float uDepthK; uniform float uHalluc; uniform float uUw; uniform vec3 uFogC; varying vec2 vNdc;
++uniform float uDepthK; uniform float uHalluc; uniform float uUw; uniform vec3 uFogC; uniform vec3 uRayDir; uniform float uKeep; varying vec2 vNdc;
+ void main(){
+   vec4 col = vec4(0.0);
++  // v66.1 水下天光散射：朝光源方向（海面）看，整片水体被向前散射的天光照亮——仰望更亮、俯视更暗
++  if (uUw > 0.5) {
++    vec4 hv = uInvP * vec4(vNdc, 1.0, 1.0); hv /= hv.w;
++    vec3 hd = normalize((uCamW * vec4(hv.xyz, 0.0)).xyz);
++    float up = max(dot(hd, -uRayDir), 0.0);
++    float hz = (pow(up, 2.5) * 0.55 + pow(up, 24.0) * 0.45) * pow(1.0 - uDepthK, 3.0) * uKeep * 0.32;
++    col = vec4(vec3(0.42, 0.62, 0.64), hz);
++  }
+   // 近平面上该像素的世界坐标（取相机前 0.12m 处的切面），与海面高度比较得到分屏水线
+   if (abs(uEyeAbove) < 0.45) {
+     vec4 v = uInvP * vec4(vNdc, -1.0, 1.0); v /= v.w;
+@@ -349,24 +420,93 @@ void main(){
+       this.disposables.push(merged, mat, body)
+     }
+     // ---- 重力交界区材质 ----
++    // v66.1：水墙改为「体积水体」——按视线穿过水墙的厚度做 Beer–Lambert 分通道吸收（边缘薄处通透、
++    // 正对墙心最厚处浓青近乎不透明），表面是沿墙面水平流动的多组波（侧向重力），菲涅尔反射天光、
++    // 窄高光、墙根与海面相接处翻涌泡沫、墙内透出的微弱焦散；轮廓随波起伏而不是直尺般笔直。
++    // 摄像机进入墙体后改画背面：在临界角内看得见墙外（透明青色），之外发生全内反射。
+     this.wallMat = new THREE.ShaderMaterial({
+-      uniforms: U, transparent: true, depthWrite: false, side: THREE.DoubleSide, fog: false,
+-      vertexShader: `varying vec3 vW; varying vec3 vN; void main(){ vN = normalize(mat3(modelMatrix) * normal); vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`,
+-      fragmentShader: `${FOG_GLSL} uniform vec3 uCam; uniform float uTime; varying vec3 vW; varying vec3 vN;
++      uniforms: { ...U, uHalf: { value: new THREE.Vector3(1, 1, 1) }, uCamL: { value: new THREE.Vector3() }, uInside: { value: 0 } },
++      transparent: true, depthWrite: false, side: THREE.FrontSide, fog: false,
++      vertexShader: `uniform float uTime; uniform vec3 uHalf;
++varying vec3 vL; varying vec3 vW; varying vec3 vNL; varying mat3 vM;
++float wv(vec3 p){ // 沿墙面水平流动的起伏（米）
++  return sin(p.x * 0.42 - uTime * 1.25 + p.y * 0.13) * 0.22 + sin(p.x * 1.17 + p.y * 0.61 - uTime * 2.1) * 0.08 + sin(p.y * 0.9 - p.x * 0.3 + uTime * 0.7) * 0.06;
++}
+ void main(){
++  vec3 p = position;
++  // 侧面（局部 ±z）按波起伏外鼓；端面（±x）做较弱的晃动；上下端不动（与海面/倒悬海面相接）
++  float keep = smoothstep(0.0, 2.5, uHalf.y - abs(p.y));
++  // 角棱处位移归零，避免相邻面各自位移裂开
++  if (abs(normal.z) > 0.5) p.z += sign(normal.z) * wv(p) * keep * smoothstep(0.0, 1.5, uHalf.x - abs(p.x));
++  else if (abs(normal.x) > 0.5) p.x += sign(normal.x) * wv(p.zyx * 2.0) * 0.6 * keep * smoothstep(0.0, 0.8, uHalf.z - abs(p.z));
++  vL = p; vNL = normal; vM = mat3(modelMatrix);
++  vec4 w = modelMatrix * vec4(p, 1.0); vW = w.xyz;
++  gl_Position = projectionMatrix * viewMatrix * w;
++}`,
++      fragmentShader: `${FOG_GLSL} uniform vec3 uCam; uniform float uTime; uniform vec3 uHalf; uniform vec3 uCamL; uniform float uInside; uniform vec3 uRayDir;
++varying vec3 vL; varying vec3 vW; varying vec3 vNL; varying mat3 vM;
++vec2 wg(vec3 p){ // 表面波梯度（沿局部 x / y）
++  float a = cos(p.x * 0.42 - uTime * 1.25 + p.y * 0.13), b = cos(p.x * 1.17 + p.y * 0.61 - uTime * 2.1), c = cos(p.y * 0.9 - p.x * 0.3 + uTime * 0.7);
++  float d = cos(p.x * 3.1 - uTime * 3.4 + p.y * 1.7), e = cos(p.x * 5.3 + p.y * 2.9 - uTime * 4.6);
++  return vec2(a * 0.092 + b * 0.094 - c * 0.018 + d * 0.05 + e * 0.025, a * 0.029 + b * 0.049 + c * 0.054 + d * 0.028 + e * 0.014);
++}
++float h21(vec2 p){ p = fract(p * vec2(123.34, 456.21)); p += dot(p, p + 45.32); return fract(p.x * p.y); }
++float vn(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
++  return mix(mix(h21(i), h21(i + vec2(1, 0)), f.x), mix(h21(i + vec2(0, 1)), h21(i + vec2(1, 1)), f.x), f.y); }
++float fbm(vec2 p){ return vn(p) * 0.5 + vn(p * 2.03 + 7.1) * 0.27 + vn(p * 4.1 - 3.7) * 0.15 + vn(p * 8.3 + 1.3) * 0.08; }
++float cau(vec2 p, float t){ float a = sin(p.x * 1.3 + sin(p.y * 1.1 + t) * 1.4 + t * 0.6), b = sin(p.y * 1.5 + sin(p.x * 0.9 - t * 0.8) * 1.3); return pow(clamp(1.0 - abs(a + b) * 0.6, 0.0, 1.0), 6.0); }
++void main(){
++  // 上下两个端面与海面/倒悬海面融为一体，不单独画
++  if (abs(vNL.y) > 0.5) discard;
++  vec3 rd = normalize(vL - uCamL);
++  // 视线与水墙长方体的相交区间（slab 法）
++  vec3 inv = 1.0 / (rd + vec3(1e-5));
++  vec3 t0 = (-uHalf - uCamL) * inv, t1 = (uHalf - uCamL) * inv;
++  vec3 tn3 = min(t0, t1), tf3 = max(t0, t1);
++  float tn = max(max(tn3.x, tn3.y), tn3.z), tf = min(min(tf3.x, tf3.y), tf3.z);
++  float thick = max(0.0, tf - max(tn, 0.0));
++  vec3 Tr = exp(-vec3(0.62, 0.24, 0.17) * thick);
++  // 表面法线（局部）：面法线 + 波梯度扰动
++  vec3 N = normalize(vNL);
++  vec2 g = wg(vL);
++  if (abs(vNL.z) > 0.5) N = normalize(N + vec3(-g.x, -g.y, 0.0) * sign(vNL.z) * 1.6 * sign(vNL.z));
++  else if (abs(vNL.x) > 0.5) N = normalize(N + vec3(0.0, -g.y, -g.x) * 1.2);
++  vec3 Nw = normalize(vM * N);
+   vec3 V = normalize(vW - uCam);
+-  float ndv = abs(dot(vN, V));
+-  float F = 0.03 + 0.97 * pow(1.0 - ndv, 5.0);
+-  // 侧向重力：水墙表面的波纹沿墙面水平流动（而不是向下流）
+-  float rip = sin(vW.y * 1.7 + (vW.x + vW.z) * 0.9 - uTime * 1.1) * 0.5 + sin(vW.y * 4.3 - (vW.x - vW.z) * 2.1 + uTime * 1.9) * 0.25;
+-  // 墙体越往上越暗（光要穿过更厚的水才能到达），表面只留细弱的横向流纹
+-  vec3 body = mix(vec3(0.05, 0.19, 0.24), vec3(0.015, 0.07, 0.1), smoothstep(0.0, 30.0, vW.y));
+-  vec3 c = mix(body, uFogC * 0.95, F * 0.85) + vec3(0.06, 0.09, 0.1) * rip * 0.18;
+-  float a = 0.62 + F * 0.3;
++  float ndv = abs(dot(Nw, V));
++  float F = 0.02 + 0.98 * pow(1.0 - ndv, 5.0);
++  vec3 R = reflect(V, Nw);
++  vec3 skyR = mix(uFogC * 0.9, uFogC * 1.55 + vec3(0.04, 0.05, 0.05), smoothstep(-0.15, 0.7, R.y));
++  float spec = pow(max(dot(R, -uRayDir), 0.0), 180.0) * 0.9 + pow(max(dot(R, -uRayDir), 0.0), 12.0) * 0.08;
++  // 体内散射色：越厚越深；高处离两侧受光面都远，略暗
++  vec3 shallow = vec3(0.06, 0.34, 0.36), deep = vec3(0.01, 0.09, 0.115);
++  vec3 body = mix(deep, shallow, Tr.g) * (0.75 + 0.25 * smoothstep(uHalf.y, -uHalf.y, vL.y));
++  body += vec3(0.25, 0.4, 0.42) * cau(vL.xy * 1.1 + vL.z, uTime * 0.8) * Tr.g * 0.08 * smoothstep(uHalf.y, -uHalf.y * 0.3, vL.y);
++  vec3 col; float a;
++  if (uInside < 0.5) {
++    col = mix(body, skyR, F) + vec3(0.9, 0.95, 0.95) * spec;
++    a = clamp(1.0 - Tr.g * (1.0 - F), 0.0, 0.97);
++    a = max(a, spec);
++  } else {
++    // 墙内向外看：临界角（48.6°）内看得见墙外，之外全内反射成墙体内部的暗青色
++    float cosi = abs(dot(Nw, V));
++    float win = smoothstep(0.62, 0.7, cosi);
++    col = mix(deep * 1.4, mix(body, uFogC, 0.4), win);
++    a = mix(0.92, 0.35, win);
++  }
++  // 墙根：与海面相接处翻涌的白沫（随波浪流动的噪声带），墙顶与倒悬海面相接处一圈亮线
++  float foot = vL.y + uHalf.y;
++  float along = abs(vNL.z) > 0.5 ? vL.x : vL.z;
++  float fn = fbm(vec2(along * 0.9 - uTime * 0.8, foot * 1.6 - uTime * 0.35));
++  float fz = smoothstep(0.42, 0.75, fn + 0.55 - foot * 0.45) * smoothstep(0.0, 0.15, foot + 0.15);
++  fz += exp(-foot * 6.0) * 0.5 * fbm(vec2(along * 2.3 + uTime * 0.5, uTime * 0.7));
++  col = mix(col, vec3(0.72, 0.78, 0.77) * (0.5 + uFogC.g * 0.6), clamp(fz, 0.0, 1.0) * 0.6);
++  a = max(a, clamp(fz, 0.0, 1.0) * 0.6);
++  col += vec3(0.3, 0.38, 0.4) * exp(-(uHalf.y - vL.y) * 2.0) * 0.4;
++  // 两端 1.5m 内略微收薄（水墙端头是圆钝的，而不是刀切）
++  a *= 0.55 + 0.45 * smoothstep(0.0, 1.5, uHalf.x - abs(vL.x));
+   float d = length(vW - uCam);
+-  // 墙底与海面相接处、墙顶与倒悬海面相接处略亮（两种重力的交界线）
+-  c += vec3(0.25, 0.32, 0.34) * exp(-abs(vW.y) * 1.6) * 0.5;
+-  gl_FragColor = vec4(l7Fog(c, d, 2.6), a * (1.0 - smoothstep(uFogFar * 2.0, uFogFar * 2.6, d) * 0.5));
++  gl_FragColor = vec4(l7Fog(col, d, uInside > 0.5 ? 1.0 : 4.5), a);
+ }`,
+     })
+     this.skySeaMat = new THREE.ShaderMaterial({
+@@ -375,17 +515,27 @@ void main(){
+       fragmentShader: `${FOG_GLSL} uniform vec3 uCam; uniform float uTime; uniform float uR; varying vec3 vW; varying vec2 vL;
+ void main(){
+   vec3 V = normalize(vW - uCam);
+-  // 倒悬海面：从下往上看，法线朝下；细浪法线
+-  vec2 p = vW.xz * 0.35;
+-  vec2 g = vec2(cos(p.x * 1.3 + uTime * 0.6) * 0.3 + cos(dot(p, vec2(0.7, 1.1)) - uTime * 0.45) * 0.25,
+-                cos(p.y * 1.1 - uTime * 0.5) * 0.3 + cos(dot(p, vec2(-1.2, 0.6)) + uTime * 0.7) * 0.2) * 0.25;
+-  vec3 N = normalize(vec3(g.x, -1.0, g.y));
++  // 倒悬海面：从下往上看，法线朝下。6 组不同方向/波长的细浪叠加（避免单向条纹），远处细浪淡出
++  vec2 p = vW.xz;
++  float dd = length(vW - uCam);
++  float fine = 1.0 - smoothstep(15.0, 60.0, dd);
++  vec2 g = vec2(0.0);
++  g += vec2(0.21, 0.07) * cos(dot(p, vec2(0.21, 0.07)) + uTime * 0.55) * 1.0;
++  g += vec2(-0.11, 0.19) * cos(dot(p, vec2(-0.11, 0.19)) - uTime * 0.42) * 1.1;
++  g += vec2(0.37, -0.29) * cos(dot(p, vec2(0.37, -0.29)) + uTime * 0.9) * 0.45;
++  g += vec2(-0.63, -0.41) * cos(dot(p, vec2(-0.63, -0.41)) - uTime * 1.3) * 0.22 * fine;
++  g += vec2(1.07, 0.52) * cos(dot(p, vec2(1.07, 0.52)) + uTime * 1.7) * 0.1 * fine;
++  g += vec2(-0.48, 1.31) * cos(dot(p, vec2(-0.48, 1.31)) - uTime * 2.1) * 0.07 * fine;
++  vec3 N = normalize(vec3(g.x * 0.6, -1.0, g.y * 0.6));
+   float ndv = clamp(dot(N, -V), 0.0, 1.0);
+   float F = 0.02 + 0.98 * pow(1.0 - ndv, 5.0);
+-  vec3 c = mix(vec3(0.02, 0.08, 0.11), uFogC * 0.9, F) + vec3(0.03, 0.05, 0.05) * (g.x + g.y); // 近乎垂直仰望时看进「天上的海」的暗色水体
++  // 仰望「天上的海」：窗内透进对面那片海的暗青水体，掠射角处反射下方雾海
++  float cosv = clamp(V.y, 0.0, 1.0);
++  vec3 deep = mix(vec3(0.015, 0.06, 0.085), vec3(0.05, 0.17, 0.2), smoothstep(0.66, 0.95, cosv));
++  vec3 c = mix(deep, uFogC * 0.85, F);
++  c += vec3(0.1, 0.14, 0.15) * pow(max(0.0, dot(normalize(reflect(V, N)), vec3(0.0, -1.0, 0.0))), 40.0) * fine;
+   float rim = smoothstep(uR, uR * 0.55, length(vL));
+-  float d = length(vW - uCam);
+-  gl_FragColor = vec4(l7Fog(c, d, 3.2), (0.55 + F * 0.4) * rim);
++  gl_FragColor = vec4(l7Fog(c, dd, 3.2), (0.7 + F * 0.28) * rim);
+ }`,
+     })
+     this.disposables.push(this.wallMat, this.skySeaMat)
+@@ -395,12 +545,16 @@ void main(){
+     let g = this.zoneMeshes.get(z.id)
+     if (g) return g
+     g = new THREE.Group()
+-    const wallG = new THREE.BoxGeometry(z.len, z.top, z.thick, 24, 12, 1)
+-    wallG.translate(0, z.top / 2, 0)
+-    const wall = new THREE.Mesh(wallG, this.wallMat)
++    const wallG = new THREE.BoxGeometry(z.len, z.top, z.thick, Math.ceil(z.len / 1.2), Math.ceil(z.top / 1.5), 2)
++    const wm = this.wallMat.clone()
++    wm.uniforms = { ...this.U, uHalf: { value: new THREE.Vector3(z.len / 2, z.top / 2, z.thick / 2) }, uCamL: { value: new THREE.Vector3() }, uInside: { value: 0 } }
++    const wall = new THREE.Mesh(wallG, wm)
++    wall.position.y = z.top / 2
+     wall.frustumCulled = false
+     wall.renderOrder = 3
++    wall.name = 'l7-gravwall'
+     g.add(wall)
++    g.userData.wall = wall
+     const sea = new THREE.Mesh(new THREE.CircleGeometry(z.r, 48), this.skySeaMat.clone())
+     ;(sea.material as THREE.ShaderMaterial).uniforms = { ...this.U, uR: { value: z.r } }
+     sea.rotation.x = Math.PI / 2
+@@ -408,7 +562,7 @@ void main(){
+     sea.frustumCulled = false
+     sea.renderOrder = 2
+     g.add(sea)
+-    g.userData.dispose = () => { wallG.dispose(); sea.geometry.dispose(); (sea.material as THREE.Material).dispose() }
++    g.userData.dispose = () => { wallG.dispose(); wm.dispose(); sea.geometry.dispose(); (sea.material as THREE.Material).dispose() }
+     this.zoneMeshes.set(z.id, g)
+     this.group.add(g)
+     return g
+@@ -434,17 +588,7 @@ void main(){
+     U.uInvP.value.copy(i.cam.projectionMatrixInverse)
+     U.uCamW.value.copy(i.cam.matrixWorld)
+     U.uRay.value = i.uw * (1 - smoothstep(4, 45, i.depth)) * i.lightKeep * (i.hi ? 1 : 0)
+-    // 光柱：围绕相机缓慢公转的斜插面片，顶端贴着海面
+-    const rayOn = U.uRay.value > 0.01
+-    for (const m of this.rays) {
+-      m.visible = rayOn
+-      if (!rayOn) continue
+-      const a = m.userData.a + i.time * 0.012
+-      const x = i.cam.position.x + Math.cos(a) * m.userData.r, z = i.cam.position.z + Math.sin(a) * m.userData.r
+-      m.position.set(x, i.waterY - 0.05, z)
+-      m.scale.set(m.userData.w, 26 + Math.min(20, i.depth), 1)
+-      m.rotation.set(0, Math.atan2(i.cam.position.x - x, i.cam.position.z - z), 0.22)
+-    }
++    this.rayMesh.visible = U.uRay.value > 0.01
+     // 手电光锥
+     this.cone.visible = i.flashOn && i.uw > 0.5
+     if (this.cone.visible) {
+@@ -471,6 +615,16 @@ void main(){
+       const g = this.zoneGroup(z)
+       g.position.set(z.x, 0, z.z)
+       g.rotation.y = -z.ang
++      // 相机换到水墙局部坐标；在墙体内时改画背面
++      const wall = g.userData.wall as THREE.Mesh
++      g.updateMatrixWorld(true)
++      const wu = (wall.material as THREE.ShaderMaterial).uniforms
++      const camL = wu.uCamL.value as THREE.Vector3
++      camL.copy(i.cam.position).applyMatrix4(this.tmpM.copy(wall.matrixWorld).invert())
++      const h = wu.uHalf.value as THREE.Vector3
++      const inside = Math.abs(camL.x) < h.x && Math.abs(camL.y) < h.y && Math.abs(camL.z) < h.z
++      wu.uInside.value = inside ? 1 : 0
++      ;(wall.material as THREE.Material).side = inside ? THREE.BackSide : THREE.FrontSide
+     }
+     for (const [id, g] of this.zoneMeshes) if (!live.has(id)) { this.group.remove(g); g.userData.dispose?.(); this.zoneMeshes.delete(id) }
+   }

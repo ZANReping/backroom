@@ -1,0 +1,68 @@
+[
+  {
+    "ProcessId": 49320,
+    "ParentProcessId": 68792,
+    "Name": "chrome.exe",
+    "CommandLine": "\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --headless=new --enable-automation --no-first-run --no-default-browser-check --remote-debugging-port=9243 --user-data-dir=\"C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\.cache\\clump-qa\" --noerrdialogs --flag-switches-begin --flag-switches-end http://127.0.0.1:3012/verifier/l0-remake.html?level=104"
+  },
+  {
+    "ProcessId": 53668,
+    "ParentProcessId": 49320,
+    "Name": "chrome.exe",
+    "CommandLine": "\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=crashpad-handler \"--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\.cache\\clump-qa\" /prefetch:4 --monitor-self-annotation=ptype=crashpad-handler \"--database=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\.cache\\clump-qa\\Crashpad\" \"--metrics-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\.cache\\clump-qa\" --url=https://clients2.google.com/cr/report --annotation=channel= --annotation=plat=Win64 --annotation=prod=Chrome --annotation=ver=155.0.8059.40 --initial-client-data=0x120,0x124,0x128,0xfc,0x12c,0x7ffdaff5fed0,0x7ffdaff5fee0,0x7ffdaff5fef0"
+  },
+  {
+    "ProcessId": 73380,
+    "ParentProcessId": 49320,
+    "Name": "chrome.exe",
+    "CommandLine": "\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=gpu-process --gpu-recent-crash-count=0 --headless=new --noerrdialogs --user-data-dir=\"C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\.cache\\clump-qa\" --no-pre-read-main-dll --gpu-preferences=WAAAAAAAAADgAAAEAAAAAAAAAAAAAGAAQAAAAAAAAAADAAAAAAAAADgAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAoAAAAAAAAAAgAAAAAAAAAEAAAAAIAAAABAAAAAAAAAAgAAAAAAAAACAAAAAAAAAA= --field-trial-handle=1728,i,16186854319696539117,12971471803325282253,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1744,i,5110897232164798927,3507063124767495284,4 --trace-process-track-uuid=3190708988185955192 --mojo-platform-channel-handle=1716 /prefetch:2"
+  },
+  {
+    "ProcessId": 56184,
+    "ParentProcessId": 49320,
+    "Name": "chrome.exe",
+    "CommandLine": "\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=utility --utility-sub-type=network.mojom.NetworkService --lang=zh-CN --service-sandbox-type=none --noerrdialogs --user-data-dir=\"C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\.cache\\clump-qa\" --no-pre-read-main-dll --field-trial-handle=1728,i,16186854319696539117,12971471803325282253,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1744,i,5110897232164798927,3507063124767495284,4 --trace-process-track-uuid=3190708989122997041 --mojo-platform-channel-handle=2176 /prefetch:11"
+  },
+  {
+    "ProcessId": 40468,
+    "ParentProcessId": 49320,
+    "Name": "chrome.exe",
+    "CommandLine": "\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=utility --utility-sub-type=storage.mojom.StorageService --lang=zh-CN --service-sandbox-type=service --noerrdialogs --user-data-dir=\"C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\.cache\\clump-qa\" --no-pre-read-main-dll --field-trial-handle=1728,i,16186854319696539117,12971471803325282253,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1744,i,5110897232164798927,3507063124767495284,4 --trace-process-track-uuid=3190708990060038890 --mojo-platform-channel-handle=2544 /prefetch:13"
+  },
+  {
+    "ProcessId": 70068,
+    "ParentProcessId": 49320,
+    "Name": "chrome.exe",
+    "CommandLine": "\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=renderer --top-chrome-webui --noerrdialogs --user-data-dir=\"C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\.cache\\clump-qa\" --no-pre-read-main-dll --enable-automation --remote-debugging-port=9243 --video-capture-use-gpu-memory-buffer --lang=zh-CN --device-scale-factor=1.5 --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=5 --launch-time-ticks=129752489974 --field-trial-handle=1728,i,16186854319696539117,12971471803325282253,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1744,i,5110897232164798927,3507063124767495284,4 --trace-process-track-uuid=3190708990997080739 --mojo-platform-channel-handle=3656 /prefetch:1"
+  },
+  {
+    "ProcessId": 70064,
+    "ParentProcessId": 49320,
+    "Name": "chrome.exe",
+    "CommandLine": "\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=renderer --noerrdialogs --user-data-dir=\"C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\.cache\\clump-qa\" --no-pre-read-main-dll --enable-automation --remote-debugging-port=9243 --video-capture-use-gpu-memory-buffer --lang=zh-CN --device-scale-factor=1.5 --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=60 --launch-time-ticks=129869935637 --field-trial-handle=1728,i,16186854319696539117,12971471803325282253,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1744,i,5110897232164798927,3507063124767495284,4 --trace-process-track-uuid=3190709042534382434 --mojo-platform-channel-handle=4724 /prefetch:1"
+  },
+  {
+    "ProcessId": 40728,
+    "ParentProcessId": 64808,
+    "Name": "node.exe",
+    "CommandLine": "\"C:\\Program Files\\nodejs\\node.exe\" \"C:\\Program Files\\nodejs/node_modules/npm/bin/npm-cli.js\" run dev -- --host 127.0.0.1 --port 3012 --strictPort"
+  },
+  {
+    "ProcessId": 32132,
+    "ParentProcessId": 37068,
+    "Name": "node.exe",
+    "CommandLine": "\"node\"   \"C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\node_modules\\.bin\\\\..\\vite\\bin\\vite.js\" --host 127.0.0.1 --port 3012 --strictPort"
+  },
+  {
+    "ProcessId": 31064,
+    "ParentProcessId": 49320,
+    "Name": "chrome.exe",
+    "CommandLine": "\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=renderer --noerrdialogs --user-data-dir=\"C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\.cache\\clump-qa\" --no-pre-read-main-dll --enable-automation --remote-debugging-port=9243 --video-capture-use-gpu-memory-buffer --lang=zh-CN --device-scale-factor=1.5 --num-raster-threads=4 --enable-main-frame-before-activation --renderer-client-id=73 --launch-time-ticks=130052434391 --field-trial-handle=1728,i,16186854319696539117,12971471803325282253,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1744,i,5110897232164798927,3507063124767495284,4 --trace-process-track-uuid=3190709054715926471 --mojo-platform-channel-handle=5916 /prefetch:1"
+  },
+  {
+    "ProcessId": 47232,
+    "ParentProcessId": 49320,
+    "Name": "chrome.exe",
+    "CommandLine": "\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --type=utility --utility-sub-type=audio.mojom.AudioService --lang=zh-CN --service-sandbox-type=audio --video-capture-use-gpu-memory-buffer --noerrdialogs --user-data-dir=\"C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\.cache\\clump-qa\" --no-pre-read-main-dll --field-trial-handle=1728,i,16186854319696539117,12971471803325282253,262144 --disable-features=PaintHolding --variations-seed-version --pseudonymization-salt-handle=1744,i,5110897232164798927,3507063124767495284,4 --trace-process-track-uuid=3190709055652968320 --mojo-platform-channel-handle=4116 /prefetch:12"
+  }
+]

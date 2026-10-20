@@ -1,0 +1,83 @@
+[
+  {
+    "id": "parking-round",
+    "initial": [
+      1.0552999999999884,
+      8.7088,
+      -0.162,
+      0.0827,
+      -0.1577,
+      53.4441,
+      0
+    ],
+    "proposed": [
+      1.4838,
+      6.7814,
+      0.2004,
+      0.1737,
+      -0.2386,
+      58.3555,
+      -0.0462
+    ],
+    "safe": true,
+    "parallels": [
+      {
+        "id": "near-column-left-edge",
+        "angleDegrees": -0.37397051452535485,
+        "endpointError": 0.0011927529662765141,
+        "vanishingPoint": [
+          0.6256347251439333,
+          4.177560990765563
+        ]
+      },
+      {
+        "id": "next-post-left-edge",
+        "angleDegrees": 1.1834398966171624,
+        "endpointError": 0.002406521740916548,
+        "vanishingPoint": [
+          0.6256347251439333,
+          4.177560990765563
+        ]
+      },
+      {
+        "id": "rear-post-left-edge",
+        "angleDegrees": 2.2261730713819676,
+        "endpointError": 0.0024965322407144016,
+        "vanishingPoint": [
+          0.6256347251439333,
+          4.177560990765563
+        ]
+      },
+      {
+        "id": "right-wall-floor",
+        "angleDegrees": 2.110615912434114,
+        "endpointError": 0.007611497930412632,
+        "vanishingPoint": [
+          0.6119279199365787,
+          0.27495823321953217
+        ]
+      },
+      {
+        "id": "column-row-floor",
+        "angleDegrees": -1.7036180633013611,
+        "endpointError": 0.004343089372612675,
+        "vanishingPoint": [
+          0.6119279199365787,
+          0.27495823321953217
+        ]
+      },
+      {
+        "id": "ceiling-longitudinal-beam",
+        "angleDegrees": 5.139136427258783,
+        "endpointError": 0.012168107278976418,
+        "vanishingPoint": [
+          0.6119279199365787,
+          0.27495823321953217
+        ]
+      }
+    ],
+    "landmarks": 4,
+    "underdetermined": false,
+    "maxErrorPercent": 2.0698456951984303
+  }
+]

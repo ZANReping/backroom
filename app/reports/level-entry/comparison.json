@@ -1,0 +1,1821 @@
+{
+  "setup": {
+    "mode": "realistic",
+    "viewport": [
+      1920,
+      1080
+    ],
+    "dpr": 1,
+    "seed": 424242,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "settings": {
+      "texture": 1,
+      "lights": 16,
+      "shadows": true,
+      "lightShadows": 1,
+      "loadingBudget": 6,
+      "chunkBudget": 3,
+      "detail": 1,
+      "bloom": true,
+      "ao": 1
+    },
+    "hardwareConcurrency": 32,
+    "beforeLabel": "baseline",
+    "afterLabel": "final",
+    "before": {
+      "mode": "realistic",
+      "viewport": [
+        1920,
+        1080
+      ],
+      "dpr": 1,
+      "seed": 424242,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "settings": {
+        "texture": 1,
+        "lights": 16,
+        "shadows": true,
+        "lightShadows": 1,
+        "loadingBudget": 6,
+        "chunkBudget": 3,
+        "detail": 1,
+        "bloom": true,
+        "ao": 1
+      }
+    },
+    "after": {
+      "mode": "realistic",
+      "viewport": [
+        1920,
+        1080
+      ],
+      "dpr": 1,
+      "seed": 424242,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "settings": {
+        "texture": 1,
+        "lights": 16,
+        "shadows": true,
+        "lightShadows": 1,
+        "loadingBudget": 6,
+        "chunkBudget": 3,
+        "detail": 1,
+        "bloom": true,
+        "ao": 1
+      },
+      "hardwareConcurrency": 32
+    }
+  },
+  "cases": [
+    {
+      "id": 0,
+      "name": "Level 0",
+      "before": {
+        "name": "Level 0",
+        "status": "ready",
+        "totalSeconds": 14.536,
+        "loadMs": 14536
+      },
+      "after": {
+        "name": "Level 0",
+        "status": "ready",
+        "totalSeconds": 4.71,
+        "loadMs": 4709.9000000003725
+      },
+      "totalSeconds": 4.71,
+      "improvementSeconds": 9.826,
+      "finalMapPreparationSeconds": 0.721,
+      "finalGenerationSeconds": 0.051,
+      "finalRenderPreparationSeconds": 3.912,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 3.317,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "Level 0",
+        "status": "ready",
+        "loadMs": 2871.7000000011176,
+        "totalSeconds": 2.872,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 1,
+      "name": "Level 1",
+      "before": {
+        "name": "Level 1",
+        "status": "ready",
+        "totalSeconds": 21.649,
+        "loadMs": 21649.5
+      },
+      "after": {
+        "name": "Level 1",
+        "status": "ready",
+        "totalSeconds": 9.477,
+        "loadMs": 9476.799999998882
+      },
+      "totalSeconds": 9.477,
+      "improvementSeconds": 12.173,
+      "finalMapPreparationSeconds": 1.208,
+      "finalGenerationSeconds": 0.006,
+      "finalRenderPreparationSeconds": 8.243,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 8.144,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "Level 1",
+        "status": "ready",
+        "loadMs": 4033.7000000011176,
+        "totalSeconds": 4.034,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 2,
+      "name": "Level 2",
+      "before": {
+        "name": "Level 2",
+        "status": "ready",
+        "totalSeconds": 10.634,
+        "loadMs": 10633.900000000373
+      },
+      "after": {
+        "name": "Level 2",
+        "status": "ready",
+        "totalSeconds": 4.706,
+        "loadMs": 4706
+      },
+      "totalSeconds": 4.706,
+      "improvementSeconds": 5.928,
+      "finalMapPreparationSeconds": 0.516,
+      "finalGenerationSeconds": 0.009,
+      "finalRenderPreparationSeconds": 4.153,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 4.42,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "Level 2",
+        "status": "ready",
+        "loadMs": 1991,
+        "totalSeconds": 1.991,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 3,
+      "name": "Level 3",
+      "before": {
+        "name": "Level 3",
+        "status": "ready",
+        "totalSeconds": 20.508,
+        "loadMs": 20508.099999999627
+      },
+      "after": {
+        "name": "Level 3",
+        "status": "ready",
+        "totalSeconds": 4.368,
+        "loadMs": 4367.5999999996275
+      },
+      "totalSeconds": 4.368,
+      "improvementSeconds": 16.14,
+      "finalMapPreparationSeconds": 0.503,
+      "finalGenerationSeconds": 0.006,
+      "finalRenderPreparationSeconds": 3.846,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 6.099,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "Level 3",
+        "status": "ready",
+        "loadMs": 1941.0999999996275,
+        "totalSeconds": 1.941,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 4,
+      "name": "Level 4",
+      "before": {
+        "name": "Level 4",
+        "status": "ready",
+        "totalSeconds": 19.751,
+        "loadMs": 19750.699999999255
+      },
+      "after": {
+        "name": "Level 4",
+        "status": "ready",
+        "totalSeconds": 4.017,
+        "loadMs": 4017
+      },
+      "totalSeconds": 4.017,
+      "improvementSeconds": 15.734,
+      "finalMapPreparationSeconds": 0.573,
+      "finalGenerationSeconds": 0.007,
+      "finalRenderPreparationSeconds": 3.402,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 4.068,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "Level 4",
+        "status": "ready",
+        "loadMs": 2388.699999999255,
+        "totalSeconds": 2.389,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 5,
+      "name": "Level 5",
+      "before": {
+        "name": "Level 5",
+        "status": "ready",
+        "totalSeconds": 34.971,
+        "loadMs": 34970.700000000186
+      },
+      "after": {
+        "name": "Level 5",
+        "status": "ready",
+        "totalSeconds": 8.769,
+        "loadMs": 8768.800000000745
+      },
+      "totalSeconds": 8.769,
+      "improvementSeconds": 26.202,
+      "finalMapPreparationSeconds": 0.52,
+      "finalGenerationSeconds": 0.008,
+      "finalRenderPreparationSeconds": 8.197,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 7.852,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "Level 5",
+        "status": "ready",
+        "loadMs": 5817.200000001118,
+        "totalSeconds": 5.817,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 6,
+      "name": "Level 6",
+      "before": {
+        "name": "Level 6",
+        "status": "ready",
+        "totalSeconds": 8.649,
+        "loadMs": 8649.099999999627
+      },
+      "after": {
+        "name": "Level 6",
+        "status": "ready",
+        "totalSeconds": 2.458,
+        "loadMs": 2458.2000000011176
+      },
+      "totalSeconds": 2.458,
+      "improvementSeconds": 6.191,
+      "finalMapPreparationSeconds": 0.448,
+      "finalGenerationSeconds": 0.004,
+      "finalRenderPreparationSeconds": 1.986,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 3.233,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "Level 6",
+        "status": "ready",
+        "loadMs": 1297,
+        "totalSeconds": 1.297,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 7,
+      "name": "Level 7",
+      "before": {
+        "name": "Level 7",
+        "status": "ready",
+        "totalSeconds": 26.415,
+        "loadMs": 26415.299999999814
+      },
+      "after": {
+        "name": "Level 7",
+        "status": "ready",
+        "totalSeconds": 5.359,
+        "loadMs": 5359.300000000745
+      },
+      "totalSeconds": 5.359,
+      "improvementSeconds": 21.056,
+      "finalMapPreparationSeconds": 0.727,
+      "finalGenerationSeconds": 0.006,
+      "finalRenderPreparationSeconds": 4.606,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 6.239,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "Level 7",
+        "status": "ready",
+        "loadMs": 2438.199999999255,
+        "totalSeconds": 2.438,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 8,
+      "name": "Level 8",
+      "before": {
+        "name": "Level 8",
+        "status": "ready",
+        "totalSeconds": 8.318,
+        "loadMs": 8318.200000000186
+      },
+      "after": {
+        "name": "Level 8",
+        "status": "ready",
+        "totalSeconds": 3.55,
+        "loadMs": 3550.4000000003725
+      },
+      "totalSeconds": 3.55,
+      "improvementSeconds": 4.768,
+      "finalMapPreparationSeconds": 0.853,
+      "finalGenerationSeconds": 0.007,
+      "finalRenderPreparationSeconds": 2.677,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 5.314,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "Level 8",
+        "status": "ready",
+        "loadMs": 1910.8999999985099,
+        "totalSeconds": 1.911,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 9,
+      "name": "Level 9",
+      "before": {
+        "name": "Level 9",
+        "status": "ready",
+        "totalSeconds": 20.125,
+        "loadMs": 20125.10000000056
+      },
+      "after": {
+        "name": "Level 9",
+        "status": "ready",
+        "totalSeconds": 4.611,
+        "loadMs": 4610.700000001118
+      },
+      "totalSeconds": 4.611,
+      "improvementSeconds": 15.514,
+      "finalMapPreparationSeconds": 0.435,
+      "finalGenerationSeconds": 0.007,
+      "finalRenderPreparationSeconds": 4.139,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 5.41,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "Level 9",
+        "status": "ready",
+        "loadMs": 2781.0999999996275,
+        "totalSeconds": 2.781,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 10,
+      "name": "Level 10",
+      "before": {
+        "name": "Level 10",
+        "status": "ready",
+        "totalSeconds": 20.114,
+        "loadMs": 20113.599999999627
+      },
+      "after": {
+        "name": "Level 10",
+        "status": "ready",
+        "totalSeconds": 4.582,
+        "loadMs": 4582.199999999255
+      },
+      "totalSeconds": 4.582,
+      "improvementSeconds": 15.531,
+      "finalMapPreparationSeconds": 0.552,
+      "finalGenerationSeconds": 0.006,
+      "finalRenderPreparationSeconds": 4.011,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 4.062,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "Level 10",
+        "status": "ready",
+        "loadMs": 2051.699999999255,
+        "totalSeconds": 2.052,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 11,
+      "name": "Level 11",
+      "before": {
+        "name": "Level 11",
+        "status": "ready",
+        "totalSeconds": 12.282,
+        "loadMs": 12281.600000000559
+      },
+      "after": {
+        "name": "Level 11",
+        "status": "ready",
+        "totalSeconds": 7.751,
+        "loadMs": 7750.89999999851
+      },
+      "totalSeconds": 7.751,
+      "improvementSeconds": 4.531,
+      "finalMapPreparationSeconds": 0.587,
+      "finalGenerationSeconds": 0.01,
+      "finalRenderPreparationSeconds": 7.102,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 8.572,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "Level 11",
+        "status": "ready",
+        "loadMs": 3610.7000000011176,
+        "totalSeconds": 3.611,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 12,
+      "name": "Level 601",
+      "before": {
+        "name": "Level 601",
+        "status": "ready",
+        "totalSeconds": 8.095,
+        "loadMs": 8094.5
+      },
+      "after": {
+        "name": "Level 601",
+        "status": "ready",
+        "totalSeconds": 2.596,
+        "loadMs": 2596.300000000745
+      },
+      "totalSeconds": 2.596,
+      "improvementSeconds": 5.498,
+      "finalMapPreparationSeconds": 0,
+      "finalGenerationSeconds": 0.028,
+      "finalRenderPreparationSeconds": 2.554,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 3.983,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "Level 601",
+        "status": "ready",
+        "loadMs": 1091.5,
+        "totalSeconds": 1.091,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 101,
+      "name": "Alpha 基地",
+      "before": {
+        "name": "Alpha 基地",
+        "status": "ready",
+        "totalSeconds": 27.083,
+        "loadMs": 27082.89999999944
+      },
+      "after": {
+        "name": "Alpha 基地",
+        "status": "ready",
+        "totalSeconds": 6.841,
+        "loadMs": 6840.5999999996275
+      },
+      "totalSeconds": 6.841,
+      "improvementSeconds": 20.242,
+      "finalMapPreparationSeconds": 0,
+      "finalGenerationSeconds": 0.068,
+      "finalRenderPreparationSeconds": 6.702,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 6.223,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "Alpha 基地",
+        "status": "ready",
+        "loadMs": 2752.5,
+        "totalSeconds": 2.752,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 102,
+      "name": "商人之家",
+      "before": {
+        "name": "商人之家",
+        "status": "ready",
+        "totalSeconds": 5.239,
+        "loadMs": 5239.0999999996275
+      },
+      "after": {
+        "name": "商人之家",
+        "status": "ready",
+        "totalSeconds": 2.923,
+        "loadMs": 2922.5999999996275
+      },
+      "totalSeconds": 2.923,
+      "improvementSeconds": 2.317,
+      "finalMapPreparationSeconds": 0,
+      "finalGenerationSeconds": 0.03,
+      "finalRenderPreparationSeconds": 2.879,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 3.354,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "商人之家",
+        "status": "ready",
+        "loadMs": 795.2999999988824,
+        "totalSeconds": 0.795,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 103,
+      "name": "希波克拉底 - 1",
+      "before": {
+        "name": "希波克拉底 - 1",
+        "status": "ready",
+        "totalSeconds": 4.565,
+        "loadMs": 4565.0999999996275
+      },
+      "after": {
+        "name": "希波克拉底 - 1",
+        "status": "ready",
+        "totalSeconds": 2.845,
+        "loadMs": 2844.5999999996275
+      },
+      "totalSeconds": 2.845,
+      "improvementSeconds": 1.72,
+      "finalMapPreparationSeconds": 0,
+      "finalGenerationSeconds": 0.006,
+      "finalRenderPreparationSeconds": 2.827,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 3.511,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "希波克拉底 - 1",
+        "status": "ready",
+        "loadMs": 626.4000000003725,
+        "totalSeconds": 0.626,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 104,
+      "name": "Tom 的餐馆",
+      "before": {
+        "name": "Tom 的餐馆",
+        "status": "ready",
+        "totalSeconds": 2.583,
+        "loadMs": 2583.5
+      },
+      "after": {
+        "name": "Tom 的餐馆",
+        "status": "ready",
+        "totalSeconds": 1.813,
+        "loadMs": 1813.5
+      },
+      "totalSeconds": 1.813,
+      "improvementSeconds": 0.77,
+      "finalMapPreparationSeconds": 0,
+      "finalGenerationSeconds": 0.006,
+      "finalRenderPreparationSeconds": 1.774,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 2.872,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "Tom 的餐馆",
+        "status": "ready",
+        "loadMs": 474.90000000037253,
+        "totalSeconds": 0.475,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 105,
+      "name": "办公区EL3A",
+      "before": {
+        "name": "办公区EL3A",
+        "status": "ready",
+        "totalSeconds": 3.772,
+        "loadMs": 3771.5999999996275
+      },
+      "after": {
+        "name": "办公区EL3A",
+        "status": "ready",
+        "totalSeconds": 2.621,
+        "loadMs": 2621.4000000003725
+      },
+      "totalSeconds": 2.621,
+      "improvementSeconds": 1.15,
+      "finalMapPreparationSeconds": 0,
+      "finalGenerationSeconds": 0.017,
+      "finalRenderPreparationSeconds": 2.592,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 3.112,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "办公区EL3A",
+        "status": "ready",
+        "loadMs": 774.9000000003725,
+        "totalSeconds": 0.775,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 106,
+      "name": "M.E.G. Gemma 基地",
+      "before": {
+        "name": "M.E.G. Gemma 基地",
+        "status": "ready",
+        "totalSeconds": 2.472,
+        "loadMs": 2472
+      },
+      "after": {
+        "name": "M.E.G. Gemma 基地",
+        "status": "ready",
+        "totalSeconds": 1.77,
+        "loadMs": 1769.7999999988824
+      },
+      "totalSeconds": 1.77,
+      "improvementSeconds": 0.702,
+      "finalMapPreparationSeconds": 0,
+      "finalGenerationSeconds": 0.017,
+      "finalRenderPreparationSeconds": 1.737,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 2.701,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "M.E.G. Gemma 基地",
+        "status": "ready",
+        "loadMs": 755.2000000011176,
+        "totalSeconds": 0.755,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 107,
+      "name": "存储设施",
+      "before": {
+        "name": "存储设施",
+        "status": "ready",
+        "totalSeconds": 1.939,
+        "loadMs": 1938.800000000745
+      },
+      "after": {
+        "name": "存储设施",
+        "status": "ready",
+        "totalSeconds": 1.359,
+        "loadMs": 1358.5999999996275
+      },
+      "totalSeconds": 1.359,
+      "improvementSeconds": 0.58,
+      "finalMapPreparationSeconds": 0,
+      "finalGenerationSeconds": 0.01,
+      "finalRenderPreparationSeconds": 1.338,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 2.677,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "存储设施",
+        "status": "ready",
+        "loadMs": 558.3000000007451,
+        "totalSeconds": 0.558,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 108,
+      "name": "蓝色救赎",
+      "before": {
+        "name": "蓝色救赎",
+        "status": "ready",
+        "totalSeconds": 1.653,
+        "loadMs": 1652.6000000005588
+      },
+      "after": {
+        "name": "蓝色救赎",
+        "status": "ready",
+        "totalSeconds": 1.145,
+        "loadMs": 1144.7999999988824
+      },
+      "totalSeconds": 1.145,
+      "improvementSeconds": 0.508,
+      "finalMapPreparationSeconds": 0,
+      "finalGenerationSeconds": 0.009,
+      "finalRenderPreparationSeconds": 1.128,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 2.618,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "蓝色救赎",
+        "status": "ready",
+        "loadMs": 377.2999999988824,
+        "totalSeconds": 0.377,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 109,
+      "name": "M.E.G. Omega 基地",
+      "before": {
+        "name": "M.E.G. Omega 基地",
+        "status": "ready",
+        "totalSeconds": 2.161,
+        "loadMs": 2161.2999999998137
+      },
+      "after": {
+        "name": "M.E.G. Omega 基地",
+        "status": "ready",
+        "totalSeconds": 1.57,
+        "loadMs": 1570.0999999996275
+      },
+      "totalSeconds": 1.57,
+      "improvementSeconds": 0.591,
+      "finalMapPreparationSeconds": 0,
+      "finalGenerationSeconds": 0.011,
+      "finalRenderPreparationSeconds": 1.544,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 2.672,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "M.E.G. Omega 基地",
+        "status": "ready",
+        "loadMs": 726.1000000014901,
+        "totalSeconds": 0.726,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 110,
+      "name": "M.E.G. 哨所「家政服务」",
+      "before": {
+        "name": "M.E.G. 哨所「家政服务」",
+        "status": "ready",
+        "totalSeconds": 1.639,
+        "loadMs": 1639.2000000001863
+      },
+      "after": {
+        "name": "M.E.G. 哨所「家政服务」",
+        "status": "ready",
+        "totalSeconds": 1.023,
+        "loadMs": 1023.2999999988824
+      },
+      "totalSeconds": 1.023,
+      "improvementSeconds": 0.616,
+      "finalMapPreparationSeconds": 0,
+      "finalGenerationSeconds": 0.006,
+      "finalRenderPreparationSeconds": 1.008,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 2.673,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "M.E.G. 哨所「家政服务」",
+        "status": "ready",
+        "loadMs": 405.8999999985099,
+        "totalSeconds": 0.406,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 111,
+      "name": "家常酒店",
+      "before": {
+        "name": "家常酒店",
+        "status": "ready",
+        "totalSeconds": 2.186,
+        "loadMs": 2185.5999999996275
+      },
+      "after": {
+        "name": "家常酒店",
+        "status": "ready",
+        "totalSeconds": 1.11,
+        "loadMs": 1110.300000000745
+      },
+      "totalSeconds": 1.11,
+      "improvementSeconds": 1.075,
+      "finalMapPreparationSeconds": 0,
+      "finalGenerationSeconds": 0.005,
+      "finalRenderPreparationSeconds": 1.095,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 2.861,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "家常酒店",
+        "status": "ready",
+        "loadMs": 385.90000000037253,
+        "totalSeconds": 0.386,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 112,
+      "name": "原住民",
+      "before": {
+        "name": "原住民",
+        "status": "ready",
+        "totalSeconds": 1.763,
+        "loadMs": 1763.4000000003725
+      },
+      "after": {
+        "name": "原住民",
+        "status": "ready",
+        "totalSeconds": 1.095,
+        "loadMs": 1095.0999999996275
+      },
+      "totalSeconds": 1.095,
+      "improvementSeconds": 0.668,
+      "finalMapPreparationSeconds": 0,
+      "finalGenerationSeconds": 0.005,
+      "finalRenderPreparationSeconds": 1.079,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 2.672,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "原住民",
+        "status": "ready",
+        "loadMs": 396.19999999925494,
+        "totalSeconds": 0.396,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 113,
+      "name": "M.E.G.“空巢”前哨站",
+      "before": {
+        "name": "M.E.G.“空巢”前哨站",
+        "status": "ready",
+        "totalSeconds": 2.759,
+        "loadMs": 2758.7000000001863
+      },
+      "after": {
+        "name": "M.E.G.“空巢”前哨站",
+        "status": "ready",
+        "totalSeconds": 1.784,
+        "loadMs": 1784.4000000003725
+      },
+      "totalSeconds": 1.784,
+      "improvementSeconds": 0.974,
+      "finalMapPreparationSeconds": 0,
+      "finalGenerationSeconds": 0.005,
+      "finalRenderPreparationSeconds": 1.77,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 2.869,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "M.E.G.“空巢”前哨站",
+        "status": "ready",
+        "loadMs": 419.40000000037253,
+        "totalSeconds": 0.419,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 114,
+      "name": "哈莫兹洞穴社群",
+      "before": {
+        "name": "哈莫兹洞穴社群",
+        "status": "ready",
+        "totalSeconds": 1.77,
+        "loadMs": 1770
+      },
+      "after": {
+        "name": "哈莫兹洞穴社群",
+        "status": "ready",
+        "totalSeconds": 1.236,
+        "loadMs": 1236.300000000745
+      },
+      "totalSeconds": 1.236,
+      "improvementSeconds": 0.534,
+      "finalMapPreparationSeconds": 0,
+      "finalGenerationSeconds": 0.004,
+      "finalRenderPreparationSeconds": 1.22,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 2.676,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "哈莫兹洞穴社群",
+        "status": "ready",
+        "loadMs": 372.59999999962747,
+        "totalSeconds": 0.373,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 116,
+      "name": "丰饶角",
+      "before": {
+        "name": "丰饶角",
+        "status": "ready",
+        "totalSeconds": 2.393,
+        "loadMs": 2392.899999999441
+      },
+      "after": {
+        "name": "丰饶角",
+        "status": "ready",
+        "totalSeconds": 1.222,
+        "loadMs": 1221.9000000003725
+      },
+      "totalSeconds": 1.222,
+      "improvementSeconds": 1.171,
+      "finalMapPreparationSeconds": 0,
+      "finalGenerationSeconds": 0.004,
+      "finalRenderPreparationSeconds": 1.194,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 2.864,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "丰饶角",
+        "status": "ready",
+        "loadMs": 380.2999999988824,
+        "totalSeconds": 0.38,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    },
+    {
+      "id": 274,
+      "name": "Level 274 · 杰瑞的房间",
+      "before": {
+        "name": "Level 274 · 杰瑞的房间",
+        "status": "ready",
+        "totalSeconds": 1.689,
+        "loadMs": 1689.3999999994412
+      },
+      "after": {
+        "name": "Level 274 · 杰瑞的房间",
+        "status": "ready",
+        "totalSeconds": 1.225,
+        "loadMs": 1225.4000000003725
+      },
+      "totalSeconds": 1.225,
+      "improvementSeconds": 0.464,
+      "finalMapPreparationSeconds": 0,
+      "finalGenerationSeconds": 0.009,
+      "finalRenderPreparationSeconds": 1.202,
+      "within10SecondsAndReady": true,
+      "production": {
+        "playableSeconds": 2.639,
+        "within10Seconds": true,
+        "movementPassed": true,
+        "timeout": false
+      },
+      "classic": {
+        "name": "Level 274 · 杰瑞的房间",
+        "status": "ready",
+        "loadMs": 503.59999999962747,
+        "totalSeconds": 0.504,
+        "within10SecondsAndReady": true
+      },
+      "measured": true
+    }
+  ],
+  "ok": true,
+  "errors": [],
+  "networkErrors": [
+    {
+      "requestId": "3044.402",
+      "loaderId": "CABCA7579F71DAD87CDF5A80CA912E00",
+      "timestamp": 6255.948888,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:5764/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Thu, 15 Oct 2026 05:26:59 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 221,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 5764,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 6255.93664,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 1.931,
+          "sendEnd": 1.96,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 11.288,
+          "receiveHeadersEnd": 11.495
+        },
+        "responseTime": 1792042019101.265,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "6DA61015D6619C6DB498BBD435D2B273"
+    },
+    {
+      "requestId": "59364.400",
+      "loaderId": "1097D06E464CEB135389DCE81986E102",
+      "timestamp": 8716.711605,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:1545/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Thu, 15 Oct 2026 06:08:01 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 191,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 1545,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 8716.699056,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.499,
+          "sendEnd": 0.55,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 11.384,
+          "receiveHeadersEnd": 11.742
+        },
+        "responseTime": 1792044481338.285,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "CAA1256DC854A36D68B6DE74B3A8F3C2"
+    }
+  ],
+  "cleanup": {
+    "before": {
+      "browserExit": "SIGTERM",
+      "serverExit": "SIGTERM",
+      "profileRemoved": true
+    },
+    "after": {
+      "browserExit": "SIGTERM",
+      "serverExit": "SIGTERM",
+      "profileRemoved": true
+    }
+  },
+  "source": {
+    "before": "baseline",
+    "after": "final"
+  },
+  "production": {
+    "source": "production-final",
+    "ok": true,
+    "errors": [],
+    "cleanup": {
+      "browserExit": "SIGTERM",
+      "serverExit": "SIGTERM",
+      "profileRemoved": true
+    },
+    "entries": [
+      {
+        "id": 0,
+        "sceneReadyMs": 2898.4000000003725,
+        "playableMs": 3316.7000000011176,
+        "mapLoadedMs": 1374.800000000745,
+        "generationMs": 63.19999999925494,
+        "renderCpuMs": 1306.199999999255,
+        "frames": 153,
+        "mapSeed": 424242,
+        "memory": {
+          "geometries": 133,
+          "textures": 77
+        },
+        "programs": 55,
+        "moved": 1.4450000000001353,
+        "movementPassed": true
+      },
+      {
+        "id": 1,
+        "sceneReadyMs": 7673.0999999996275,
+        "playableMs": 8143.800000000745,
+        "mapLoadedMs": 1290.4000000003725,
+        "generationMs": 11.800000000745058,
+        "renderCpuMs": 1891.3000000175089,
+        "frames": 1346,
+        "mapSeed": 424373,
+        "memory": {
+          "geometries": 261,
+          "textures": 106
+        },
+        "programs": 67,
+        "moved": 0.7947500000002918,
+        "movementPassed": true
+      },
+      {
+        "id": 2,
+        "sceneReadyMs": 3902.9000000003725,
+        "playableMs": 4419.699999999255,
+        "mapLoadedMs": 1283.699999999255,
+        "generationMs": 5.799999998882413,
+        "renderCpuMs": 1812.199999999255,
+        "frames": 301,
+        "mapSeed": 424504,
+        "memory": {
+          "geometries": 531,
+          "textures": 187
+        },
+        "programs": 75,
+        "moved": 1.3600000000001273,
+        "movementPassed": true
+      },
+      {
+        "id": 3,
+        "sceneReadyMs": 5687,
+        "playableMs": 6099.4000000003725,
+        "mapLoadedMs": 1290.300000000745,
+        "generationMs": 5,
+        "renderCpuMs": 3236.6000000089407,
+        "frames": 409,
+        "mapSeed": 424635,
+        "memory": {
+          "geometries": 417,
+          "textures": 97
+        },
+        "programs": 95,
+        "moved": 1.4166666666667993,
+        "movementPassed": true
+      },
+      {
+        "id": 4,
+        "sceneReadyMs": 3635.0999999996275,
+        "playableMs": 4068,
+        "mapLoadedMs": 1282.2000000011176,
+        "generationMs": 4.700000001117587,
+        "renderCpuMs": 1701.7000000029802,
+        "frames": 301,
+        "mapSeed": 424766,
+        "memory": {
+          "geometries": 999,
+          "textures": 150
+        },
+        "programs": 118,
+        "moved": 1.3883333333334633,
+        "movementPassed": true
+      },
+      {
+        "id": 5,
+        "sceneReadyMs": 7388.0999999996275,
+        "playableMs": 7852.0999999996275,
+        "mapLoadedMs": 1286.300000000745,
+        "generationMs": 6,
+        "renderCpuMs": 4280.7999999877065,
+        "frames": 902,
+        "mapSeed": 424897,
+        "memory": {
+          "geometries": 1502,
+          "textures": 196
+        },
+        "programs": 151,
+        "moved": 1.4733333333334713,
+        "movementPassed": true
+      },
+      {
+        "id": 6,
+        "sceneReadyMs": 2345.5999999996275,
+        "playableMs": 3232.7999999988824,
+        "mapLoadedMs": 1286.2999999988824,
+        "generationMs": 6.299999998882413,
+        "renderCpuMs": 352.9000000022352,
+        "frames": 200,
+        "mapSeed": 425028,
+        "memory": {
+          "geometries": 529,
+          "textures": 159
+        },
+        "programs": 143,
+        "moved": 1.4733333333334713,
+        "movementPassed": true
+      },
+      {
+        "id": 7,
+        "sceneReadyMs": 5213.0999999996275,
+        "playableMs": 6238.700000001118,
+        "mapLoadedMs": 1281.7000000011176,
+        "generationMs": 4.700000001117587,
+        "renderCpuMs": 2434.1999999713153,
+        "frames": 454,
+        "mapSeed": 425159,
+        "memory": {
+          "geometries": 427,
+          "textures": 169
+        },
+        "programs": 163,
+        "moved": 0.7791666666669528,
+        "movementPassed": true
+      },
+      {
+        "id": 8,
+        "sceneReadyMs": 4172,
+        "playableMs": 5314.199999999255,
+        "mapLoadedMs": 1285.699999999255,
+        "generationMs": 7.299999998882413,
+        "renderCpuMs": 1593.7999999839813,
+        "frames": 522,
+        "mapSeed": 425290,
+        "memory": {
+          "geometries": 230,
+          "textures": 103
+        },
+        "programs": 160,
+        "moved": 0.8783333333334156,
+        "movementPassed": true
+      },
+      {
+        "id": 9,
+        "sceneReadyMs": 4244.4000000003725,
+        "playableMs": 5410.200000001118,
+        "mapLoadedMs": 1283.800000000745,
+        "generationMs": 6,
+        "renderCpuMs": 1700.099999975413,
+        "frames": 484,
+        "mapSeed": 425421,
+        "memory": {
+          "geometries": 953,
+          "textures": 224
+        },
+        "programs": 192,
+        "moved": 1.4450000000001353,
+        "movementPassed": true
+      },
+      {
+        "id": 10,
+        "sceneReadyMs": 3174.800000000745,
+        "playableMs": 4062.199999999255,
+        "mapLoadedMs": 1281.300000000745,
+        "generationMs": 3.800000000745058,
+        "renderCpuMs": 885.4999999944121,
+        "frames": 343,
+        "mapSeed": 425552,
+        "memory": {
+          "geometries": 223,
+          "textures": 207
+        },
+        "programs": 201,
+        "moved": 0.9831666666669037,
+        "movementPassed": true
+      },
+      {
+        "id": 11,
+        "sceneReadyMs": 7663.300000000745,
+        "playableMs": 8572.099999999627,
+        "mapLoadedMs": 1289.4000000003725,
+        "generationMs": 7.5,
+        "renderCpuMs": 4516.799999991432,
+        "frames": 690,
+        "mapSeed": 425683,
+        "memory": {
+          "geometries": 465,
+          "textures": 144
+        },
+        "programs": 235,
+        "moved": 1.5016666666668073,
+        "movementPassed": true
+      },
+      {
+        "id": 12,
+        "sceneReadyMs": 3096.4000000003725,
+        "playableMs": 3982.7000000011176,
+        "mapLoadedMs": 1292.2000000011176,
+        "generationMs": 10.700000001117587,
+        "renderCpuMs": 1332.5000000074506,
+        "frames": 277,
+        "mapSeed": 425814.0287,
+        "memory": {
+          "geometries": 682,
+          "textures": 130
+        },
+        "programs": 249,
+        "moved": 1.3883333333333496,
+        "movementPassed": true
+      },
+      {
+        "id": 101,
+        "sceneReadyMs": 5423.9000000003725,
+        "playableMs": 6222.800000000745,
+        "mapLoadedMs": 1314.5,
+        "generationMs": 36.69999999925494,
+        "renderCpuMs": 1843.2999999970198,
+        "frames": 421,
+        "mapSeed": 437473.0287,
+        "memory": {
+          "geometries": 167,
+          "textures": 380
+        },
+        "programs": 282,
+        "moved": 1.3883333333333763,
+        "movementPassed": true
+      },
+      {
+        "id": 102,
+        "sceneReadyMs": 2523.699999999255,
+        "playableMs": 3354.5,
+        "mapLoadedMs": 1295.699999999255,
+        "generationMs": 14.199999999254942,
+        "renderCpuMs": 759.4000000003725,
+        "frames": 191,
+        "mapSeed": 437604.0287,
+        "memory": {
+          "geometries": 378,
+          "textures": 160
+        },
+        "programs": 257,
+        "moved": 1.3883333333333763,
+        "movementPassed": true
+      },
+      {
+        "id": 103,
+        "sceneReadyMs": 2712.699999999255,
+        "playableMs": 3511,
+        "mapLoadedMs": 1278.5,
+        "generationMs": 1.800000000745058,
+        "renderCpuMs": 747.8999999817461,
+        "frames": 235,
+        "mapSeed": 437735.0294,
+        "memory": {
+          "geometries": 272,
+          "textures": 168
+        },
+        "programs": 265,
+        "moved": 1.360000000000042,
+        "movementPassed": true
+      },
+      {
+        "id": 104,
+        "sceneReadyMs": 2059.5999999996275,
+        "playableMs": 2872.4000000003725,
+        "mapLoadedMs": 1278.4000000003725,
+        "generationMs": 1.300000000745058,
+        "renderCpuMs": 658.6000000089407,
+        "frames": 95,
+        "mapSeed": 437866.0287,
+        "memory": {
+          "geometries": 216,
+          "textures": 172
+        },
+        "programs": 263,
+        "moved": 1.3599999999999568,
+        "movementPassed": true
+      },
+      {
+        "id": 105,
+        "sceneReadyMs": 2302.699999999255,
+        "playableMs": 3112.199999999255,
+        "mapLoadedMs": 1287.9000000003725,
+        "generationMs": 8.099999999627471,
+        "renderCpuMs": 611.3000000026077,
+        "frames": 157,
+        "mapSeed": 437997.0287,
+        "memory": {
+          "geometries": 667,
+          "textures": 164
+        },
+        "programs": 260,
+        "moved": 1.3599999999999994,
+        "movementPassed": true
+      },
+      {
+        "id": 106,
+        "sceneReadyMs": 1919.1000000014901,
+        "playableMs": 2700.800000000745,
+        "mapLoadedMs": 1284.300000000745,
+        "generationMs": 4.5,
+        "renderCpuMs": 601.7000000067055,
+        "frames": 72,
+        "mapSeed": 438128.0301,
+        "memory": {
+          "geometries": 703,
+          "textures": 173
+        },
+        "programs": 260,
+        "moved": 1.3883333333333328,
+        "movementPassed": true
+      },
+      {
+        "id": 107,
+        "sceneReadyMs": 1671,
+        "playableMs": 2676.5999999996275,
+        "mapLoadedMs": 1279.8999999985099,
+        "generationMs": 2.699999999254942,
+        "renderCpuMs": 455.70000000298023,
+        "frames": 100,
+        "mapSeed": 438259.0287,
+        "memory": {
+          "geometries": 686,
+          "textures": 174
+        },
+        "programs": 258,
+        "moved": 1.3883333333333328,
+        "movementPassed": true
+      },
+      {
+        "id": 108,
+        "sceneReadyMs": 1563.8999999985099,
+        "playableMs": 2618.199999999255,
+        "mapLoadedMs": 1282.7999999988824,
+        "generationMs": 2.900000000372529,
+        "renderCpuMs": 302.7999999895692,
+        "frames": 107,
+        "mapSeed": 438390.0287,
+        "memory": {
+          "geometries": 280,
+          "textures": 171
+        },
+        "programs": 258,
+        "moved": 1.3599999999999994,
+        "movementPassed": true
+      },
+      {
+        "id": 109,
+        "sceneReadyMs": 1794.300000000745,
+        "playableMs": 2671.9000000003725,
+        "mapLoadedMs": 1281.5,
+        "generationMs": 3.199999999254942,
+        "renderCpuMs": 533.3000000081956,
+        "frames": 82,
+        "mapSeed": 438521.0287,
+        "memory": {
+          "geometries": 624,
+          "textures": 184
+        },
+        "programs": 259,
+        "moved": 1.3883333333333328,
+        "movementPassed": true
+      },
+      {
+        "id": 110,
+        "sceneReadyMs": 1615,
+        "playableMs": 2672.7000000011176,
+        "mapLoadedMs": 1282,
+        "generationMs": 2.400000000372529,
+        "renderCpuMs": 399.99999999441206,
+        "frames": 104,
+        "mapSeed": 438652.0287,
+        "memory": {
+          "geometries": 237,
+          "textures": 181
+        },
+        "programs": 258,
+        "moved": 1.3599999999999994,
+        "movementPassed": true
+      },
+      {
+        "id": 111,
+        "sceneReadyMs": 2042,
+        "playableMs": 2860.60000000149,
+        "mapLoadedMs": 1281.7000000011176,
+        "generationMs": 1.800000000745058,
+        "renderCpuMs": 361.4000000115484,
+        "frames": 152,
+        "mapSeed": 438783.0294,
+        "memory": {
+          "geometries": 203,
+          "textures": 184
+        },
+        "programs": 260,
+        "moved": 1.3599999999999994,
+        "movementPassed": true
+      },
+      {
+        "id": 112,
+        "sceneReadyMs": 1647.7000000011176,
+        "playableMs": 2671.60000000149,
+        "mapLoadedMs": 1279.800000000745,
+        "generationMs": 1.900000000372529,
+        "renderCpuMs": 407.49999998882413,
+        "frames": 98,
+        "mapSeed": 438914.0287,
+        "memory": {
+          "geometries": 229,
+          "textures": 190
+        },
+        "programs": 259,
+        "moved": 1.3883333333333328,
+        "movementPassed": true
+      },
+      {
+        "id": 113,
+        "sceneReadyMs": 2044.7000000011176,
+        "playableMs": 2869.300000000745,
+        "mapLoadedMs": 1278.2000000011176,
+        "generationMs": 1.800000000745058,
+        "renderCpuMs": 335.30000000819564,
+        "frames": 149,
+        "mapSeed": 439045.0294,
+        "memory": {
+          "geometries": 202,
+          "textures": 198
+        },
+        "programs": 260,
+        "moved": 1.3599999999999994,
+        "movementPassed": true
+      },
+      {
+        "id": 114,
+        "sceneReadyMs": 1610.199999999255,
+        "playableMs": 2675.9000000003725,
+        "mapLoadedMs": 1282,
+        "generationMs": 1.5,
+        "renderCpuMs": 355.39999998547137,
+        "frames": 108,
+        "mapSeed": 439176.0294,
+        "memory": {
+          "geometries": 198,
+          "textures": 199
+        },
+        "programs": 260,
+        "moved": 1.3883333333333328,
+        "movementPassed": true
+      },
+      {
+        "id": 116,
+        "sceneReadyMs": 2069.9000000003725,
+        "playableMs": 2863.5,
+        "mapLoadedMs": 1282.2999999988824,
+        "generationMs": 2,
+        "renderCpuMs": 578.3000000100583,
+        "frames": 91,
+        "mapSeed": 439438.0301,
+        "memory": {
+          "geometries": 268,
+          "textures": 221
+        },
+        "programs": 268,
+        "moved": 1.360000000000042,
+        "movementPassed": true
+      },
+      {
+        "id": 274,
+        "sceneReadyMs": 1633,
+        "playableMs": 2639,
+        "mapLoadedMs": 1281,
+        "generationMs": 4,
+        "renderCpuMs": 414.0999999977648,
+        "frames": 92,
+        "mapSeed": 460136.0294,
+        "memory": {
+          "geometries": 414,
+          "textures": 202
+        },
+        "programs": 261,
+        "moved": 1.3883333333333328,
+        "movementPassed": true
+      }
+    ]
+  },
+  "classic": {
+    "source": "classic",
+    "ok": true,
+    "errors": [],
+    "networkErrors": [
+      {
+        "requestId": "14760.404",
+        "loaderId": "99D5EDFE145F928E2B2D353DEF0E084B",
+        "timestamp": 14265.648974,
+        "type": "Other",
+        "response": {
+          "url": "http://127.0.0.1:9688/favicon.ico",
+          "status": 404,
+          "statusText": "Not Found",
+          "headers": {
+            "Keep-Alive": "timeout=5",
+            "Content-Length": "0",
+            "Date": "Thu, 15 Oct 2026 07:40:30 GMT",
+            "Vary": "Origin",
+            "Connection": "keep-alive"
+          },
+          "mimeType": "text/plain",
+          "charset": "",
+          "connectionReused": true,
+          "connectionId": 169,
+          "remoteIPAddress": "127.0.0.1",
+          "remotePort": 9688,
+          "fromDiskCache": false,
+          "fromServiceWorker": false,
+          "fromPrefetchCache": false,
+          "encodedDataLength": 143,
+          "timing": {
+            "requestTime": 14265.637278,
+            "proxyStart": -1,
+            "proxyEnd": -1,
+            "dnsStart": -1,
+            "dnsEnd": -1,
+            "connectStart": -1,
+            "connectEnd": -1,
+            "sslStart": -1,
+            "sslEnd": -1,
+            "workerStart": -1,
+            "workerReady": -1,
+            "workerFetchStart": -1,
+            "workerRespondWithSettled": -1,
+            "sendStart": 0.666,
+            "sendEnd": 0.689,
+            "pushStart": 0,
+            "pushEnd": 0,
+            "receiveHeadersStart": 10.531,
+            "receiveHeadersEnd": 10.876
+          },
+          "responseTime": 1792050030275.655,
+          "protocol": "http/1.1",
+          "alternateProtocolUsage": "unspecifiedReason",
+          "securityState": "secure"
+        },
+        "hasExtraInfo": true,
+        "frameId": "5DC2FF8C710CE13DC86E4C2E2C9532CC"
+      }
+    ],
+    "cleanup": {
+      "browserExit": "SIGTERM",
+      "serverExit": "SIGTERM",
+      "profileRemoved": true
+    }
+  },
+  "measurement": {
+    "loadMs": "Called from map preparation start through two frames after Renderer3D.isNearWorldReady.",
+    "caveat": "A single run is an observation and cannot guarantee performance across devices."
+  }
+}

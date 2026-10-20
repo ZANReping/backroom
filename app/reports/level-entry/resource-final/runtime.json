@@ -1,0 +1,768 @@
+{
+  "run": "qa-1792048104431-55800",
+  "label": "resource-final",
+  "mode": "realistic",
+  "production": false,
+  "port": 8311,
+  "cdp": 8312,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\level-entry\\resource-final\\qa-1792048104431-55800",
+  "levels": [
+    104
+  ],
+  "cases": [
+    {
+      "id": 104,
+      "cold": {
+        "id": 104,
+        "name": "Tom 的餐馆",
+        "seed": 424242,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 3013.300000000745,
+        "readyMs": 3013.4000000003725,
+        "loadMs": 3023.800000000745,
+        "preparationMs": 0.09999999962747097,
+        "generationMs": 8.900000000372529,
+        "sceneMs": 3004.4000000003725,
+        "frames": 277,
+        "cpuTotalMs": 2401.5999999940395,
+        "cpuMaxMs": 681.1999999992549,
+        "frameP95Ms": 16,
+        "metrics": {
+          "buildLevel": {
+            "calls": 257639,
+            "cpuMs": 1329.7000000011176,
+            "maxMs": 670.5
+          },
+          "warmSceneTextures": {
+            "calls": 29,
+            "cpuMs": 9.199999999254942,
+            "maxMs": 4.699999999254942
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 75.70000000111759,
+            "chunks": 0,
+            "finiteTask": true,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 1,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 0,
+              "textures": 1
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 0,
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 0,
+          "npcs": 9,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 144,
+            "textures": 84
+          }
+        },
+        "firstReady": {
+          "structures": 132,
+          "lights": 46,
+          "npcs": 10,
+          "nearNpcs": 9,
+          "npcMeshes": 9,
+          "meshes": 249,
+          "instances": 4546,
+          "materials": 143,
+          "memory": {
+            "geometries": 144,
+            "textures": 84
+          },
+          "programs": 82,
+          "drawCalls": 107,
+          "triangles": 39097,
+          "spawn": {
+            "x": 40.5,
+            "y": 25.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\level-entry\\resource-final\\qa-1792048104431-55800",
+    "--remote-debugging-port=8312",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.40",
+    "revision": "@cfaadc5a132d78e1828635aa8405a499f3e14864",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.20"
+  },
+  "pids": {
+    "server": 39712,
+    "browser": 17276
+  },
+  "setup": {
+    "mode": "realistic",
+    "viewport": [
+      1920,
+      1080
+    ],
+    "dpr": 1,
+    "seed": 424242,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "settings": {
+      "texture": 1,
+      "lights": 16,
+      "shadows": true,
+      "lightShadows": 1,
+      "loadingBudget": 6,
+      "chunkBudget": 3,
+      "detail": 1,
+      "bloom": true,
+      "ao": 1
+    },
+    "hardwareConcurrency": 32
+  },
+  "cancellation": {
+    "passed": 8,
+    "checks": [
+      "finite scene is pending during async compilation",
+      "pending scene has owned GPU materials",
+      "new level replaces the cancelled pending root",
+      "cancelled scene never becomes visible",
+      "materials stay alive while compiler completion is pending",
+      "owned materials release exactly once after compilation",
+      "next level still reaches readiness",
+      "compiler completion cannot publish a cancelled scene"
+    ],
+    "materials": 909
+  },
+  "cycles": [
+    {
+      "structures": 132,
+      "lights": 46,
+      "npcs": 10,
+      "nearNpcs": 9,
+      "npcMeshes": 9,
+      "meshes": 249,
+      "instances": 4546,
+      "materials": 143,
+      "memory": {
+        "geometries": 145,
+        "textures": 121
+      },
+      "programs": 91,
+      "drawCalls": 672,
+      "triangles": 302173,
+      "spawn": {
+        "x": 40.5,
+        "y": 25.5,
+        "z": 0
+      },
+      "mapSeed": 424242,
+      "ready": true
+    },
+    {
+      "structures": 132,
+      "lights": 46,
+      "npcs": 10,
+      "nearNpcs": 9,
+      "npcMeshes": 9,
+      "meshes": 249,
+      "instances": 4546,
+      "materials": 143,
+      "memory": {
+        "geometries": 145,
+        "textures": 123
+      },
+      "programs": 91,
+      "drawCalls": 107,
+      "triangles": 39097,
+      "spawn": {
+        "x": 40.5,
+        "y": 25.5,
+        "z": 0
+      },
+      "mapSeed": 424242,
+      "ready": true
+    },
+    {
+      "structures": 132,
+      "lights": 46,
+      "npcs": 10,
+      "nearNpcs": 9,
+      "npcMeshes": 9,
+      "meshes": 249,
+      "instances": 4546,
+      "materials": 143,
+      "memory": {
+        "geometries": 145,
+        "textures": 124
+      },
+      "programs": 91,
+      "drawCalls": 107,
+      "triangles": 39097,
+      "spawn": {
+        "x": 40.5,
+        "y": 25.5,
+        "z": 0
+      },
+      "mapSeed": 424242,
+      "ready": true
+    },
+    {
+      "structures": 132,
+      "lights": 46,
+      "npcs": 10,
+      "nearNpcs": 9,
+      "npcMeshes": 9,
+      "meshes": 249,
+      "instances": 4546,
+      "materials": 143,
+      "memory": {
+        "geometries": 145,
+        "textures": 124
+      },
+      "programs": 91,
+      "drawCalls": 672,
+      "triangles": 302173,
+      "spawn": {
+        "x": 40.5,
+        "y": 25.5,
+        "z": 0
+      },
+      "mapSeed": 424242,
+      "ready": true
+    }
+  ],
+  "textureAudit": [
+    {
+      "id": 256,
+      "cycle": 0,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35065:12)\n    at WebGLUniforms.upload (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35463:11)\n    at setProgram (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42626:23)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:41865:23)\n    at renderObject (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42318:15)\n    at renderObjects (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42300:11)"
+    },
+    {
+      "id": 257,
+      "cycle": 0,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35065:12)\n    at WebGLUniforms.upload (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35463:11)\n    at setProgram (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42626:23)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:41865:23)\n    at renderObject (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42318:15)\n    at renderObjects (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42300:11)"
+    },
+    {
+      "id": 259,
+      "cycle": 0,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35065:12)\n    at WebGLUniforms.upload (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35463:11)\n    at setProgram (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42626:23)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:41865:23)\n    at renderObject (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42318:15)\n    at renderObjects (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42300:11)"
+    },
+    {
+      "id": 261,
+      "cycle": 0,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35065:12)\n    at WebGLUniforms.upload (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35463:11)\n    at setProgram (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42626:23)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:41865:23)\n    at renderObject (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42318:15)\n    at renderObjects (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42300:11)"
+    },
+    {
+      "id": 262,
+      "cycle": 0,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35065:12)\n    at WebGLUniforms.upload (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35463:11)\n    at setProgram (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42626:23)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:41865:23)\n    at renderObject (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42318:15)\n    at renderObjects (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42300:11)"
+    },
+    {
+      "id": 263,
+      "cycle": 0,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35065:12)\n    at WebGLUniforms.upload (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35463:11)\n    at setProgram (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42626:23)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:41865:23)\n    at renderObject (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42318:15)\n    at renderObjects (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42300:11)"
+    },
+    {
+      "id": 296,
+      "cycle": 0,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35065:12)\n    at WebGLUniforms.upload (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35463:11)\n    at setProgram (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42626:23)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:41865:23)\n    at renderObject (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42318:15)\n    at renderObjects (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42300:11)"
+    },
+    {
+      "id": 303,
+      "cycle": 0,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35065:12)\n    at WebGLUniforms.upload (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35463:11)\n    at setProgram (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42626:23)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:41865:23)\n    at renderObject (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42318:15)\n    at renderObjects (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42300:11)"
+    },
+    {
+      "id": 304,
+      "cycle": 0,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35065:12)\n    at WebGLUniforms.upload (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35463:11)\n    at setProgram (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42626:23)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:41865:23)\n    at renderObject (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42318:15)\n    at renderObjects (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42300:11)"
+    },
+    {
+      "id": 305,
+      "cycle": 0,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35065:12)\n    at WebGLUniforms.upload (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35463:11)\n    at setProgram (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42626:23)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:41865:23)\n    at renderObject (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42318:15)\n    at renderObjects (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42300:11)"
+    },
+    {
+      "id": 306,
+      "cycle": 0,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35065:12)\n    at WebGLUniforms.upload (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35463:11)\n    at setProgram (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42626:23)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:41865:23)\n    at renderObject (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42318:15)\n    at renderObjects (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42300:11)"
+    },
+    {
+      "id": 602,
+      "cycle": 1,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35065:12)\n    at WebGLUniforms.upload (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35463:11)\n    at setProgram (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42626:23)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:41865:23)\n    at renderObject (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42318:15)\n    at renderObjects (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42300:11)"
+    },
+    {
+      "id": 603,
+      "cycle": 1,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35065:12)\n    at WebGLUniforms.upload (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35463:11)\n    at setProgram (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42626:23)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:41865:23)\n    at renderObject (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42318:15)\n    at renderObjects (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42300:11)"
+    },
+    {
+      "id": 899,
+      "cycle": 2,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35065:12)\n    at WebGLUniforms.upload (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35463:11)\n    at setProgram (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42626:23)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:41865:23)\n    at renderObject (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42318:15)\n    at renderObjects (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42300:11)"
+    },
+    {
+      "id": 1158,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1159,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1160,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1161,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1162,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1163,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1164,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1165,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1166,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1167,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1168,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1169,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1170,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1171,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1172,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1173,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1174,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1175,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1176,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1177,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1178,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1179,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1180,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1181,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1182,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1183,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1184,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1185,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at WebGLRenderer.initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:43004:18)\n    at Renderer3D.warmSceneTextures (http://127.0.0.1:8311/src/game/renderer/renderer.ts?import:1957:18)\n    at warmSceneTextures.next (<anonymous>)\n    at r.<computed> (http://127.0.0.1:8311/verifier/outpost-loading.js:21:49)\n    at r.<computed>.next (<anonymous>)\n    at r.<computed> [as warmSceneTextures] (http://127.0.0.1:8311/verifier/level-entry.js:18:51)"
+    },
+    {
+      "id": 1186,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35065:12)\n    at WebGLUniforms.setValue (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35453:25)\n    at setProgram (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42583:22)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:41865:23)\n    at renderObject (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42318:15)\n    at renderObjects (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42300:11)"
+    },
+    {
+      "id": 1187,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35065:12)\n    at WebGLUniforms.setValue (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35453:25)\n    at setProgram (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42583:22)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:41865:23)\n    at renderObject (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42318:15)\n    at renderObjects (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42300:11)"
+    },
+    {
+      "id": 1188,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35065:12)\n    at WebGLUniforms.setValue (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35453:25)\n    at setProgram (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42583:22)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:41865:23)\n    at renderObject (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42318:15)\n    at renderObjects (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42300:11)"
+    },
+    {
+      "id": 1189,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35065:12)\n    at WebGLUniforms.setValue (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35453:25)\n    at setProgram (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42583:22)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:41865:23)\n    at renderObject (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42318:15)\n    at renderObjects (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42300:11)"
+    },
+    {
+      "id": 1190,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35065:12)\n    at WebGLUniforms.setValue (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35453:25)\n    at setProgram (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42583:22)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:41865:23)\n    at renderObject (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42318:15)\n    at renderObjects (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42300:11)"
+    },
+    {
+      "id": 1191,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35065:12)\n    at WebGLUniforms.setValue (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35453:25)\n    at setProgram (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42583:22)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:41865:23)\n    at renderObject (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42318:15)\n    at renderObjects (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42300:11)"
+    },
+    {
+      "id": 1192,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35065:12)\n    at WebGLUniforms.setValue (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35453:25)\n    at setProgram (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42583:22)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:41865:23)\n    at renderObject (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42318:15)\n    at renderObjects (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42300:11)"
+    },
+    {
+      "id": 1193,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35065:12)\n    at WebGLUniforms.setValue (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35453:25)\n    at setProgram (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42583:22)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:41865:23)\n    at renderObject (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42318:15)\n    at renderObjects (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42300:11)"
+    },
+    {
+      "id": 1194,
+      "cycle": 3,
+      "stack": "Error\n    at gl.createTexture (http://127.0.0.1:8311/verifier/entry-texture-audit.js:4:116)\n    at initTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38751:24)\n    at uploadTexture (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38824:25)\n    at WebGLTextures.setTexture2D (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:38652:9)\n    at SingleUniform.setValueT1 [as setValue] (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35065:12)\n    at WebGLUniforms.setValue (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:35453:25)\n    at setProgram (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42583:22)\n    at WebGLRenderer.renderBufferDirect (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:41865:23)\n    at renderObject (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42318:15)\n    at renderObjects (http://127.0.0.1:8311/reports/level-entry/resource-final/qa-1792048104431-55800/vite-cache/deps/chunk-BWT6IPVN.js?v=edd79336:42300:11)"
+    }
+  ],
+  "chunkRegression": {
+    "checks": [
+      "Entry overlaps chunk compiler waits within the four-job bound",
+      "Pending chunks own geometry",
+      "Switching level cancels every pending chunk job",
+      "Cancelled chunks never become visible",
+      "Pending compiler references keep geometry alive",
+      "Cancelled geometry releases exactly once after compiler completion",
+      "Late compiler completion cannot publish old chunks",
+      "Cycle 1: all four warmed moth templates retained",
+      "Cycle 1: leaving hotel releases warmed templates",
+      "Cycle 2: all four warmed moth templates retained",
+      "Cycle 2: leaving hotel releases warmed templates",
+      "Cycle 3: all four warmed moth templates retained",
+      "Cycle 3: leaving hotel releases warmed templates"
+    ],
+    "cycles": [
+      {
+        "structures": 132,
+        "lights": 46,
+        "npcs": 10,
+        "nearNpcs": 9,
+        "npcMeshes": 9,
+        "meshes": 249,
+        "instances": 4546,
+        "materials": 143,
+        "memory": {
+          "geometries": 231,
+          "textures": 140
+        },
+        "programs": 162,
+        "drawCalls": 107,
+        "triangles": 39097,
+        "spawn": {
+          "x": 40.5,
+          "y": 25.5,
+          "z": 0
+        },
+        "mapSeed": 424242,
+        "ready": true,
+        "pool": [
+          "realistic:cashew:true",
+          "realistic:disinfectant:true",
+          "realistic:battery:true",
+          "realistic:cashew:true",
+          "realistic:almond:true",
+          "realistic:disinfectant:true",
+          "realistic:crowbar:true",
+          "realistic:battery:true",
+          "realistic:battery:true",
+          "realistic:skeleton:true",
+          "realistic:bandage:true",
+          "realistic:sedative:true",
+          "realistic:battery:true",
+          "realistic:almond:true",
+          "realistic:almond:true",
+          "realistic:tape:true",
+          "realistic:sedative:true",
+          "realistic:tape:true",
+          "realistic:sedative:true",
+          "realistic:lighter:true",
+          "realistic:bandage:true",
+          "realistic:canned:true",
+          "realistic:rabbit:true",
+          "realistic:canned:true"
+        ],
+        "retired": 0,
+        "entityMeshes": 0
+      },
+      {
+        "structures": 132,
+        "lights": 46,
+        "npcs": 10,
+        "nearNpcs": 9,
+        "npcMeshes": 9,
+        "meshes": 249,
+        "instances": 4546,
+        "materials": 143,
+        "memory": {
+          "geometries": 254,
+          "textures": 140
+        },
+        "programs": 160,
+        "drawCalls": 107,
+        "triangles": 39097,
+        "spawn": {
+          "x": 40.5,
+          "y": 25.5,
+          "z": 0
+        },
+        "mapSeed": 424242,
+        "ready": true,
+        "pool": [
+          "realistic:cashew:true",
+          "realistic:disinfectant:true",
+          "realistic:cashew:true",
+          "realistic:disinfectant:true",
+          "realistic:battery:true",
+          "realistic:almond:true",
+          "realistic:crowbar:true",
+          "realistic:battery:true",
+          "realistic:battery:true",
+          "realistic:skeleton:true",
+          "realistic:bandage:true",
+          "realistic:sedative:true",
+          "realistic:battery:true",
+          "realistic:almond:true",
+          "realistic:almond:true",
+          "realistic:tape:true",
+          "realistic:sedative:true",
+          "realistic:tape:true",
+          "realistic:sedative:true",
+          "realistic:lighter:true",
+          "realistic:bandage:true",
+          "realistic:canned:true",
+          "realistic:rabbit:true",
+          "realistic:canned:true"
+        ],
+        "retired": 0,
+        "entityMeshes": 0
+      },
+      {
+        "structures": 132,
+        "lights": 46,
+        "npcs": 10,
+        "nearNpcs": 9,
+        "npcMeshes": 9,
+        "meshes": 249,
+        "instances": 4546,
+        "materials": 143,
+        "memory": {
+          "geometries": 266,
+          "textures": 140
+        },
+        "programs": 160,
+        "drawCalls": 107,
+        "triangles": 39097,
+        "spawn": {
+          "x": 40.5,
+          "y": 25.5,
+          "z": 0
+        },
+        "mapSeed": 424242,
+        "ready": true,
+        "pool": [
+          "realistic:cashew:true",
+          "realistic:disinfectant:true",
+          "realistic:cashew:true",
+          "realistic:disinfectant:true",
+          "realistic:battery:true",
+          "realistic:almond:true",
+          "realistic:crowbar:true",
+          "realistic:battery:true",
+          "realistic:battery:true",
+          "realistic:skeleton:true",
+          "realistic:bandage:true",
+          "realistic:sedative:true",
+          "realistic:battery:true",
+          "realistic:almond:true",
+          "realistic:almond:true",
+          "realistic:tape:true",
+          "realistic:sedative:true",
+          "realistic:tape:true",
+          "realistic:sedative:true",
+          "realistic:lighter:true",
+          "realistic:bandage:true",
+          "realistic:canned:true",
+          "realistic:rabbit:true",
+          "realistic:canned:true"
+        ],
+        "retired": 0,
+        "entityMeshes": 0
+      }
+    ],
+    "cancelledGeometry": 16
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: Repeated hotel/outpost switches have stable geometry counts\",\"lineNumber\":16,\"columnNumber\":50,\"scriptId\":\"394\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"assert\",\"scriptId\":\"394\",\"url\":\"http://127.0.0.1:8311/verifier/level-entry-regressions.js\",\"lineNumber\":15,\"columnNumber\":49},{\"functionName\":\"verifyLevelEntryRegressions\",\"scriptId\":\"394\",\"url\":\"http://127.0.0.1:8311/verifier/level-entry-regressions.js\",\"lineNumber\":66,\"columnNumber\":2}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: Repeated hotel/outpost switches have stable geometry counts\\n    at assert (http://127.0.0.1:8311/verifier/level-entry-regressions.js:16:50)\\n    at Module.verifyLevelEntryRegressions (http://127.0.0.1:8311/verifier/level-entry-regressions.js:67:3)\",\"objectId\":\"-4874519545915885220.2.1\"}}",
+  "failureState": {
+    "level": 104,
+    "paused": true,
+    "transition": null,
+    "ready": true,
+    "pending": false,
+    "root": false,
+    "text": ""
+  },
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [],
+  "networkErrors": [
+    {
+      "requestId": "54724.401",
+      "loaderId": "DBFC3EDD897968FF2ECE52519C7A93EA",
+      "timestamp": 12363.207879,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:8311/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Thu, 15 Oct 2026 07:08:47 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 196,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 8311,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 12363.196261,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.403,
+          "sendEnd": 0.432,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 10.888,
+          "receiveHeadersEnd": 11.051
+        },
+        "responseTime": 1792048127834.995,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "3D9BB12752FD204B2633193839705184"
+    }
+  ]
+}

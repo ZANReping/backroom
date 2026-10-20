@@ -1,0 +1,83 @@
+[
+  {
+    "id": "parking-dim",
+    "initial": [
+      -2.2752000000000407,
+      9.1207,
+      -0.5,
+      -0.3217,
+      0.0659,
+      48.023,
+      0
+    ],
+    "proposed": [
+      2.5322,
+      11.1027,
+      -0.0495,
+      0.0386,
+      0.0216,
+      42.5875,
+      0.0026
+    ],
+    "safe": true,
+    "parallels": [
+      {
+        "id": "left-pier-inner-edge",
+        "angleDegrees": 0.49317853819680396,
+        "endpointError": 0.0013169448992857303,
+        "vanishingPoint": [
+          0.6157944473182457,
+          -58.8816340485334
+        ]
+      },
+      {
+        "id": "rear-left-pier-edge",
+        "angleDegrees": 0.3458197897112798,
+        "endpointError": 0.0006005479016248346,
+        "vanishingPoint": [
+          0.6157944473182457,
+          -58.8816340485334
+        ]
+      },
+      {
+        "id": "right-pier-inner-edge",
+        "angleDegrees": 0.017751614788374163,
+        "endpointError": 0.00004337537689045748,
+        "vanishingPoint": [
+          0.6157944473182457,
+          -58.8816340485334
+        ]
+      },
+      {
+        "id": "front-cross-beam",
+        "angleDegrees": -0.4016842032698014,
+        "endpointError": 0.0016873218719147243,
+        "vanishingPoint": [
+          -24.41918854316441,
+          0.4413271872577785
+        ]
+      },
+      {
+        "id": "left-longitudinal-tray",
+        "angleDegrees": -0.0423011882564358,
+        "endpointError": 0.0001034667824899381,
+        "vanishingPoint": [
+          0.5371113829383075,
+          0.5278425552829851
+        ]
+      },
+      {
+        "id": "right-longitudinal-pipe",
+        "angleDegrees": 0.03977633917743476,
+        "endpointError": 0.00005433193713030785,
+        "vanishingPoint": [
+          0.5371113829383075,
+          0.5278425552829851
+        ]
+      }
+    ],
+    "landmarks": 3,
+    "underdetermined": false,
+    "maxErrorPercent": 1.6904085753732867
+  }
+]

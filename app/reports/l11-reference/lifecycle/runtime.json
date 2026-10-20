@@ -1,0 +1,129 @@
+{
+  "run": "qa-1791978470876-59636",
+  "port": 1547,
+  "cdp": 1548,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-reference\\lifecycle\\qa-1791978470876-59636",
+  "label": "lifecycle",
+  "baseline": false,
+  "low": false,
+  "mode": "realistic",
+  "quick": false,
+  "seed": 20261014,
+  "views": [],
+  "command": [
+    "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\l11-reference\\lifecycle\\qa-1791978470876-59636",
+    "--remote-debugging-port=1548",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/154.0.8037.98",
+    "revision": "@b859317bf11f6be47f9b7799ec690a0a42a1fb33",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+    "jsVersion": "15.4.80.20"
+  },
+  "pids": {
+    "server": 60372,
+    "browser": 59236
+  },
+  "setup": {
+    "seed": 20261014,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "low": false,
+    "baseline": false,
+    "weather": "calm",
+    "time": 10,
+    "shadows": true
+  },
+  "cases": [
+    {
+      "id": "01-office-street",
+      "x": 272,
+      "y": 415,
+      "z": 0,
+      "tx": 270,
+      "ty": 220,
+      "th": 12,
+      "fov": 42,
+      "reference": "11iconic.jpg"
+    }
+  ],
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: Warmup timed out: {\\\"missing\\\":8,\\\"chunk\\\":true,\\\"distant\\\":false,\\\"finite\\\":false,\\\"flash\\\":false,\\\"moth\\\":false,\\\"items\\\":0,\\\"compile\\\":false,\\\"retired\\\":0,\\\"textures\\\":0}\",\"lineNumber\":113,\"columnNumber\":95,\"scriptId\":\"5\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"warm\",\"scriptId\":\"5\",\"url\":\"http://127.0.0.1:1547/verifier/l0-remake.ts\",\"lineNumber\":112,\"columnNumber\":94}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: Warmup timed out: {\\\"missing\\\":8,\\\"chunk\\\":true,\\\"distant\\\":false,\\\"finite\\\":false,\\\"flash\\\":false,\\\"moth\\\":false,\\\"items\\\":0,\\\"compile\\\":false,\\\"retired\\\":0,\\\"textures\\\":0}\\n    at Object.warm (http://127.0.0.1:1547/verifier/l0-remake.ts:113:95)\\n    at async Object.view (http://127.0.0.1:1547/verifier/l11-reference.ts:86:7)\",\"objectId\":\"-8958145562540393679.2.1\"}}",
+  "errors": [],
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "networkErrors": [
+    {
+      "requestId": "71416.25",
+      "loaderId": "471D433A9F7122318A471045DAE66B56",
+      "timestamp": 115969.745554,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:1547/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Wed, 14 Oct 2026 11:48:10 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": false,
+        "connectionId": 304,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 1547,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 115969.691986,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": 0.383,
+          "dnsEnd": 0.394,
+          "connectStart": 0.394,
+          "connectEnd": 1.355,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 1.478,
+          "sendEnd": 1.553,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 52.537,
+          "receiveHeadersEnd": 52.723
+        },
+        "responseTime": 1791978490688.909,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "9F0099AD8151C47887CE160157D17098"
+    }
+  ]
+}

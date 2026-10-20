@@ -1,77 +1,65 @@
-import { l1PathChunk,l1ReferenceAt } from './l1Spatial'
-// Large seed-shaped districts; paths are local branches inside these five districts.
-export type L1District = 'parking'|'storage'|'gothic'|'ouroboros'|'garden'|'maintenance'
-const TYPES:L1District[]=['parking','storage','garden','gothic','ouroboros','parking']
-const mod=(n:number,d:number)=>(n%d+d)%d
+import {l1PlanTile,l1RegionAt,l1PlanHash,type L1Region} from './l1Plan'
+// v2: 过道 regions (one 区段 each) separated by 小径 belts; see l1Plan.ts.
+export type L1District = 'parking'|'storage'|'gothic'|'ouroboros'|'garden'|'maintenance'|'fabled'
 export const L1_DISTRICT_SIZE=16
-const compact=(variant:L1District)=>variant==='ouroboros'||variant==='garden'
-type District={gx:number;gy:number;key:string;variant:L1District;cx:number;cy:number}
-const districtCache=new Map<string,District>()
+const mod=(n:number,d:number)=>(n%d+d)%d
+/** The spawn hall's base sits ~100 m from the arrival point. */
 export const L1_START_OUTPOST_CHUNK={cx:3,cy:3} as const
-function warped(seed:number,x:number,y:number){
-  const phase=(seed>>>0)%997/997*Math.PI*2
-  return [x+1.25*Math.sin(y/9+phase)-1.25*Math.sin(phase),y+1.25*Math.sin(x/11+phase)-1.25*Math.sin(phase)]
+type District={gx:number;gy:number;key:string;variant:L1District;cx:number;cy:number;region?:L1Region}
+/** The region (or path) that owns a chunk's centre. cx/cy point to the region's anchor chunk. */
+export function l1District(seed:number,cx:number,cy:number):District{
+  const x=cx*32+16,y=cy*32+16,r=l1RegionAt(seed,x,y)
+  if(!r)return {gx:cx,gy:cy,key:`path:${cx},${cy}`,variant:'maintenance',cx,cy}
+  const a=regionAnchor(r)
+  return {gx:r.sx*64+r.index,gy:r.sy,key:r.id,variant:r.section,cx:a?.cx??cx,cy:a?.cy??cy,region:r}
 }
-export function l1District(seed:number,cx:number,cy:number){
-  const cacheKey=`${seed>>>0}:${cx},${cy}`,cached=districtCache.get(cacheKey)
-  if(cached)return cached
-  const [x,y]=warped(seed,cx,cy),bx=Math.floor((x+8)/16),by=Math.floor((y+8)/16)
-  let best=Infinity,result!:District
-  // Row-wise warping gives each compact core 10 contiguous columns over 12 rows.
-  // Keeping its north/south bounds independent of x avoids isolated diagonal corner cells.
-  for(let gy=by-1;gy<=by+1;gy++)for(let gx=bx-1;gx<=bx+1;gx++){
-    const variant=TYPES[mod(gx+2*gy,6)]
-    if(compact(variant)){
-      const centerY=gy*32-warped(seed,gx*16,gy*16)[1]
-      if(Math.abs(x-gx*16)<3&&Math.abs(cy-centerY)<4){
-        result={gx,gy,key:`${gx},${gy}`,variant,cx:gx*16,cy:gy*16};best=-Infinity
-      }
-      continue
-    }
-    const score=(x-gx*16)**2+(y-gy*16)**2
-    if(score<best){best=score;result={gx,gy,key:`${gx},${gy}`,variant,cx:gx*16,cy:gy*16}}
+// Keep the legacy terrain fallback typed; v2 uses real hall/path doorways.
+export function l1Transition(_seed:number,_cx:number,_cy:number):{a:L1District;b:L1District;axis:'x'|'y'}|null{return null}
+export function l1LayoutVariant(seed:number,cx:number,cy:number):L1District{
+  return l1PlanTile(seed,cx*32+16,cy*32+16).style as L1District
+}
+export function l1TransitionStyle(seed:number,wx:number,wy:number):L1District{
+  return l1PlanTile(seed,wx,wy).style as L1District
+}
+/** A chunk whose 9..23 core lies wholly inside a hall can host the region's settlement. */
+function coreInside(r:L1Region,cx:number,cy:number){
+  return cx*32+8>r.ix0+4&&cx*32+24<r.ix1-4&&cy*32+8>r.iy0+4&&cy*32+24<r.iy1-4
+}
+function regionAnchor(r:L1Region){
+  const spawn=r.ix0<=15&&r.ix1>=15&&r.iy0<=15&&r.iy1>=15
+  if(spawn&&coreInside(r,L1_START_OUTPOST_CHUNK.cx,L1_START_OUTPOST_CHUNK.cy))return L1_START_OUTPOST_CHUNK
+  const cx=Math.floor(((r.ix0+r.ix1)/2-16)/32+.5),cy=Math.floor(((r.iy0+r.iy1)/2-16)/32+.5)
+  for(const [dx,dy] of [[0,0],[1,0],[0,1],[-1,0],[0,-1],[1,1],[-1,-1]])if(coreInside(r,cx+dx,cy+dy)){
+    if(spawn&&Math.hypot(cx+dx,cy+dy)<3)continue
+    return {cx:cx+dx,cy:cy+dy}
   }
-  if(districtCache.size>=8192)districtCache.delete(districtCache.keys().next().value!)
-  districtCache.set(cacheKey,result)
-  return result
-}
-export function l1Transition(seed:number,cx:number,cy:number){
-  if(l1ReferenceAt(seed,cx*32+16,cy*32+16)||l1PathChunk(seed,cx,cy))return null
-  const a=l1District(seed,cx,cy)
-  // Only the boundary owner's chunk becomes a passage; never randomly selected.
-  for(const [dx,dy] of [[1,0],[0,1]]){
-    const b=l1District(seed,cx+dx,cy+dy)
-    if(a.key!==b.key)return {a:a.variant,b:b.variant,axis:dx?'x' as const:'y' as const}
-  }
-  return null
-}
-export function l1LayoutVariant(seed:number,cx:number,cy:number){
- const ref=l1ReferenceAt(seed,cx*32+16,cy*32+16);if(ref)return ref.variant
- return l1PathChunk(seed,cx,cy)?'maintenance':l1Transition(seed,cx,cy)?'aisle':l1District(seed,cx,cy).variant
-}
-export function l1TransitionStyle(seed:number,wx:number,wy:number){
-  const cx=Math.floor(wx/32),cy=Math.floor(wy/32),t=l1Transition(seed,cx,cy)
-  // The connection is owned by an eight-metre structural bay, with a stable
-  // seed-selected frame. It need not bisect the streaming chunk.
-  const frame=8+8*mod(Math.imul(cx,31)^Math.imul(cy,17)^seed,3)
-  return t?(mod(t.axis==='x'?wx:wy,32)<frame?t.a:t.b):l1District(seed,cx,cy).variant
+  return undefined
 }
 export function l1Outpost(seed:number,cx:number,cy:number){
-  if(l1ReferenceAt(seed,cx*32+16,cy*32+16))return undefined
-  const d=l1District(seed,cx,cy)
-  // The first base stays deep inside the starting parking district, over 125 m from (15.5,15.5).
-  const anchor=d.gx===0&&d.gy===0?L1_START_OUTPOST_CHUNK:{cx:d.cx,cy:d.cy}
-  if(cx!==anchor.cx||cy!==anchor.cy)return undefined
-  if(d.variant==='parking')return (['alpha','tom','cornucopia'] as const)[mod((d.gx+2*d.gy)/6,3)]
-  return d.variant==='storage'?'bntg':d.variant==='gothic'?'ariane':undefined
+  const r=l1RegionAt(seed,cx*32+16,cy*32+16)
+  if(!r)return undefined
+  const a=regionAnchor(r)
+  if(!a||a.cx!==cx||a.cy!==cy)return undefined
+  return l1RegionOutpost(seed,r)
+}
+/** Settlement quota belongs to the hall; its visible entrance belongs to the path wall. */
+export function l1RegionOutpost(seed:number,r:L1Region){
+  if(!regionAnchor(r))return undefined
+  const spawn=r.ix0<=15&&r.ix1>=15&&r.iy0<=15&&r.iy1>=15
+  if(spawn)return 'alpha' as const
+  // Settlements are sparse: roughly one large hall in three hosts one.
+  const area=(r.ix1-r.ix0)*(r.iy1-r.iy0),u=l1PlanHash(seed,0x0b5,r.sx,r.sy,r.index)
+  if(area<110*110||u>.45)return undefined
+  if(r.section==='parking')return (['alpha','tom','cornucopia'] as const)[mod(Math.floor(u*1000),3)]
+  return r.section==='storage'?'bntg' as const:r.section==='gothic'?'ariane' as const:undefined
 }
 /** A finite spatial metric: no teleport or camera rotation; footsteps use travelled proper distance. */
 export function l1DistanceScale(seed:number,wx:number,wy:number){
-  const cx=Math.floor(wx/32),cy=Math.floor(wy/32),t=l1Transition(seed,cx,cy)
-  if(!t||t.a==='maintenance'||t.b==='maintenance')return 1
-  const u=mod(t.axis==='x'?wx:wy,32),v=mod(t.axis==='x'?wy:wx,32)
-  const envelope=Math.sin(Math.PI*u/32)**2*Math.sin(Math.PI*v/32)**2
-  const stretch=mod(cx+cy+(seed>>>0),2)===0
+  // 过道 are non-Euclidean, 小径 are not (wiki). Distances breathe gently across each hall.
+  const r=l1RegionAt(seed,wx,wy)
+  if(!r)return 1
+  const u=(wx-r.ix0)/Math.max(1,r.ix1-r.ix0),v=(wy-r.iy0)/Math.max(1,r.iy1-r.iy0)
+  const envelope=Math.sin(Math.PI*u)**2*Math.sin(Math.PI*v)**2
+  const stretch=l1PlanHash(seed,0xd15,r.sx,r.sy,r.index)<.5
   return 1+envelope*(stretch?-.28:.35)
 }
-

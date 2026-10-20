@@ -15,7 +15,7 @@ const database=()=>dbPromise??=new Promise(resolve=>{
 })
 export async function readL1Bake(key:string,seed:number,cx:number,cy:number,quality:string,fingerprint:string):Promise<L1BakeResult|{compressed:ArrayBuffer}|undefined>{
  const db=await database()
- if(db){const found=await new Promise<L1BakeResult|undefined>(resolve=>{const q=db.transaction('bakes').objectStore('bakes').get(key);q.onsuccess=()=>resolve(q.result?.result);q.onerror=()=>resolve(undefined)});if(found?.fingerprint===fingerprint&&found.bakeRevision===L1_BAKE_REVISION){const t=db.transaction('usage','readwrite');t.objectStore('usage').put({key,used:Date.now(),bytes:found.metrics.bytes});return found}}
+ if(db){const found=await new Promise<L1BakeResult|undefined>(resolve=>{const q=db.transaction('bakes').objectStore('bakes').get(key);q.onsuccess=()=>resolve(q.result?.result);q.onerror=()=>resolve(undefined)});if(found?.fingerprint===fingerprint&&found.bakeRevision===L1_BAKE_REVISION&&!found.provisional){const t=db.transaction('usage','readwrite');t.objectStore('usage').put({key,used:Date.now(),bytes:found.metrics.bytes});return found}}
  if(seed!==20261006)return
  try{
   manifest??=fetch('/assets/l1-bakes/manifest.json').then(r=>r.ok?r.json():{chunks:[]}).catch(()=>({chunks:[]}))
@@ -26,6 +26,7 @@ export async function readL1Bake(key:string,seed:number,cx:number,cy:number,qual
  }catch{return undefined}
 }
 export async function saveL1Bake(key:string,result:L1BakeResult){
+ if(result.provisional)return
  const db=await database();if(!db)return
  try{
   const t=db.transaction(['bakes','usage'],'readwrite'),s=t.objectStore('bakes'),meta=t.objectStore('usage');s.put({key,result});meta.put({key,used:Date.now(),bytes:result.metrics.bytes})

@@ -1,0 +1,788 @@
+[
+  {
+    "variant": "parking",
+    "camera": {
+      "x": -47.5,
+      "y": -47.5,
+      "yaw": 0.42,
+      "pitch": 0.015,
+      "fov": 75
+    },
+    "warm": {
+      "elapsed": 5030.199999999255,
+      "pending": {
+        "missing": 0,
+        "chunk": false,
+        "finite": false,
+        "flash": false,
+        "moth": false,
+        "items": 0,
+        "compile": false,
+        "retired": 0,
+        "textures": 0
+      },
+      "groups": 11,
+      "memory": {
+        "geometries": 137,
+        "textures": 43
+      },
+      "programs": 48
+    },
+    "build": {
+      "elapsed": 12781.400000002235,
+      "maxFrame": 641.6999999999998
+    },
+    "rounds": [
+      {
+        "label": "1:open",
+        "median": 4.199999999999818,
+        "p95": 8.399999999999636,
+        "max": 12.599999999999454,
+        "cpuMedian": 1.7000000029802322,
+        "cpuP95": 4.600000001490116,
+        "gpuMedian": 2.980864,
+        "gpuP95": 7.817216,
+        "gpuSamples": 246,
+        "draws": 59,
+        "triangles": 46279,
+        "memory": {
+          "geometries": 137,
+          "textures": 43
+        },
+        "programs": 48,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "1:open",
+        "median": 4.200000000000728,
+        "p95": 8.400000000001455,
+        "max": 12.700000000000728,
+        "cpuMedian": 1.8999999985098839,
+        "cpuP95": 3.600000001490116,
+        "gpuMedian": 3.150848,
+        "gpuP95": 8.249344,
+        "gpuSamples": 218,
+        "draws": 59,
+        "triangles": 46279,
+        "memory": {
+          "geometries": 137,
+          "textures": 43
+        },
+        "programs": 48,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "1:open",
+        "median": 4.200000000000728,
+        "p95": 8.599999999998545,
+        "max": 12.799999999999272,
+        "cpuMedian": 1.9000000022351742,
+        "cpuP95": 4.199999999254942,
+        "gpuMedian": 3.643392,
+        "gpuP95": 10.353664,
+        "gpuSamples": 203,
+        "draws": 59,
+        "triangles": 46279,
+        "memory": {
+          "geometries": 137,
+          "textures": 43
+        },
+        "programs": 48,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "1:open",
+        "median": 4.299999999999272,
+        "p95": 8.5,
+        "max": 16.700000000000728,
+        "cpuMedian": 2,
+        "cpuP95": 4.300000000745058,
+        "gpuMedian": 4.154368,
+        "gpuP95": 9.78432,
+        "gpuSamples": 197,
+        "draws": 240,
+        "triangles": 256595,
+        "memory": {
+          "geometries": 137,
+          "textures": 43
+        },
+        "programs": 48,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "1:open",
+        "median": 4.300000000001091,
+        "p95": 12.5,
+        "max": 12.600000000000364,
+        "cpuMedian": 2,
+        "cpuP95": 4,
+        "gpuMedian": 4.258816,
+        "gpuP95": 10.744832,
+        "gpuSamples": 189,
+        "draws": 59,
+        "triangles": 46279,
+        "memory": {
+          "geometries": 137,
+          "textures": 43
+        },
+        "programs": 48,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    ]
+  },
+  {
+    "variant": "storage",
+    "camera": {
+      "x": 272.5,
+      "y": 48.5,
+      "yaw": 0.42,
+      "pitch": 0.015,
+      "fov": 75
+    },
+    "warm": {
+      "elapsed": 8048.300000000745,
+      "pending": {
+        "missing": 0,
+        "chunk": false,
+        "finite": false,
+        "flash": false,
+        "moth": false,
+        "items": 0,
+        "compile": false,
+        "retired": 0,
+        "textures": 0
+      },
+      "groups": 25,
+      "memory": {
+        "geometries": 606,
+        "textures": 54
+      },
+      "programs": 61
+    },
+    "build": {
+      "elapsed": 16220.300000000745,
+      "maxFrame": 937.5
+    },
+    "rounds": [
+      {
+        "label": "1:open",
+        "median": 8.400000000001455,
+        "p95": 16.700000000000728,
+        "max": 21,
+        "cpuMedian": 7,
+        "cpuP95": 13,
+        "gpuMedian": 7.815168,
+        "gpuP95": 13.236224,
+        "gpuSamples": 121,
+        "draws": 493,
+        "triangles": 648898,
+        "memory": {
+          "geometries": 606,
+          "textures": 54
+        },
+        "programs": 61,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "1:open",
+        "median": 8.299999999999272,
+        "p95": 12.5,
+        "max": 20.899999999997817,
+        "cpuMedian": 3.399999998509884,
+        "cpuP95": 5.699999999254942,
+        "gpuMedian": 5.82144,
+        "gpuP95": 11.094016,
+        "gpuSamples": 173,
+        "draws": 732,
+        "triangles": 900408,
+        "memory": {
+          "geometries": 606,
+          "textures": 54
+        },
+        "programs": 61,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "1:open",
+        "median": 8.299999999999272,
+        "p95": 12.5,
+        "max": 16.799999999999272,
+        "cpuMedian": 3.5,
+        "cpuP95": 5.800000000745058,
+        "gpuMedian": 4.740096,
+        "gpuP95": 10.497024,
+        "gpuSamples": 168,
+        "draws": 493,
+        "triangles": 648898,
+        "memory": {
+          "geometries": 606,
+          "textures": 54
+        },
+        "programs": 61,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "1:open",
+        "median": 8.200000000000728,
+        "p95": 12.5,
+        "max": 12.69999999999709,
+        "cpuMedian": 3.5,
+        "cpuP95": 6.399999998509884,
+        "gpuMedian": 4.707328,
+        "gpuP95": 8.776704,
+        "gpuSamples": 181,
+        "draws": 493,
+        "triangles": 648898,
+        "memory": {
+          "geometries": 606,
+          "textures": 54
+        },
+        "programs": 61,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "1:open",
+        "median": 8.299999999999272,
+        "p95": 12.600000000002183,
+        "max": 16.799999999999272,
+        "cpuMedian": 3.899999998509884,
+        "cpuP95": 7.900000002235174,
+        "gpuMedian": 5.75488,
+        "gpuP95": 11.59168,
+        "gpuSamples": 160,
+        "draws": 710,
+        "triangles": 896612,
+        "memory": {
+          "geometries": 606,
+          "textures": 54
+        },
+        "programs": 61,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    ]
+  },
+  {
+    "variant": "gothic",
+    "camera": {
+      "x": 240.5,
+      "y": 272.5,
+      "yaw": 0.42,
+      "pitch": 0.015,
+      "fov": 75
+    },
+    "warm": {
+      "elapsed": 5628.599999997765,
+      "pending": {
+        "missing": 0,
+        "chunk": false,
+        "finite": false,
+        "flash": false,
+        "moth": false,
+        "items": 0,
+        "compile": false,
+        "retired": 0,
+        "textures": 0
+      },
+      "groups": 25,
+      "memory": {
+        "geometries": 691,
+        "textures": 55
+      },
+      "programs": 63
+    },
+    "build": {
+      "elapsed": 13378.199999999255,
+      "maxFrame": 50
+    },
+    "rounds": [
+      {
+        "label": "1:open",
+        "median": 8.299999999995634,
+        "p95": 12.599999999998545,
+        "max": 16.5,
+        "cpuMedian": 3.7999999970197678,
+        "cpuP95": 5.099999997764826,
+        "gpuMedian": 7.09632,
+        "gpuP95": 11.82208,
+        "gpuSamples": 163,
+        "draws": 595,
+        "triangles": 506061,
+        "memory": {
+          "geometries": 691,
+          "textures": 55
+        },
+        "programs": 63,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "1:open",
+        "median": 8.299999999995634,
+        "p95": 12.5,
+        "max": 16.900000000001455,
+        "cpuMedian": 3.800000000745058,
+        "cpuP95": 5,
+        "gpuMedian": 7.205888,
+        "gpuP95": 11.572224,
+        "gpuSamples": 166,
+        "draws": 595,
+        "triangles": 506061,
+        "memory": {
+          "geometries": 691,
+          "textures": 55
+        },
+        "programs": 63,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "1:open",
+        "median": 8.299999999995634,
+        "p95": 12.599999999998545,
+        "max": 16.60000000000582,
+        "cpuMedian": 3.800000000745058,
+        "cpuP95": 5.099999997764826,
+        "gpuMedian": 6.723584,
+        "gpuP95": 12.02176,
+        "gpuSamples": 160,
+        "draws": 595,
+        "triangles": 506061,
+        "memory": {
+          "geometries": 691,
+          "textures": 55
+        },
+        "programs": 63,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "1:open",
+        "median": 8.299999999995634,
+        "p95": 12.5,
+        "max": 16.599999999998545,
+        "cpuMedian": 3.7000000029802322,
+        "cpuP95": 4.900000002235174,
+        "gpuMedian": 7.13728,
+        "gpuP95": 11.403264,
+        "gpuSamples": 172,
+        "draws": 595,
+        "triangles": 506061,
+        "memory": {
+          "geometries": 691,
+          "textures": 55
+        },
+        "programs": 63,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "1:open",
+        "median": 8.30000000000291,
+        "p95": 12.5,
+        "max": 20.89999999999418,
+        "cpuMedian": 4,
+        "cpuP95": 5.800000000745058,
+        "gpuMedian": 7.251968,
+        "gpuP95": 11.998208,
+        "gpuSamples": 151,
+        "draws": 595,
+        "triangles": 506061,
+        "memory": {
+          "geometries": 691,
+          "textures": 55
+        },
+        "programs": 63,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    ]
+  },
+  {
+    "variant": "ouroboros",
+    "camera": {
+      "x": 16.5,
+      "y": -367.5,
+      "yaw": 0.42,
+      "pitch": 0.015,
+      "fov": 75
+    },
+    "warm": {
+      "elapsed": 11422.39999999851,
+      "pending": {
+        "missing": 0,
+        "chunk": false,
+        "finite": false,
+        "flash": false,
+        "moth": false,
+        "items": 0,
+        "compile": false,
+        "retired": 0,
+        "textures": 0
+      },
+      "groups": 25,
+      "memory": {
+        "geometries": 1526,
+        "textures": 81
+      },
+      "programs": 64
+    },
+    "build": {
+      "elapsed": 20887.300000000745,
+      "maxFrame": 212.5
+    },
+    "rounds": [
+      {
+        "label": "1:open",
+        "median": 29.099999999998545,
+        "p95": 41.69999999999709,
+        "max": 50.099999999998545,
+        "cpuMedian": 28.100000001490116,
+        "cpuP95": 39,
+        "gpuMedian": 22.756352,
+        "gpuP95": 38.76864,
+        "gpuSamples": 89,
+        "draws": 1614,
+        "triangles": 844905,
+        "memory": {
+          "geometries": 1526,
+          "textures": 81
+        },
+        "programs": 64,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "1:open",
+        "median": 12.599999999998545,
+        "p95": 33.400000000001455,
+        "max": 54.099999999998545,
+        "cpuMedian": 14.5,
+        "cpuP95": 30.599999997764826,
+        "gpuMedian": 11.561984,
+        "gpuP95": 29.718528,
+        "gpuSamples": 92,
+        "draws": 1214,
+        "triangles": 569495,
+        "memory": {
+          "geometries": 1526,
+          "textures": 81
+        },
+        "programs": 64,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "1:open",
+        "median": 12.400000000001455,
+        "p95": 16.700000000004366,
+        "max": 20.900000000001455,
+        "cpuMedian": 10.5,
+        "cpuP95": 16,
+        "gpuMedian": 8.0128,
+        "gpuP95": 14.472192,
+        "gpuSamples": 104,
+        "draws": 1214,
+        "triangles": 569495,
+        "memory": {
+          "geometries": 1526,
+          "textures": 81
+        },
+        "programs": 64,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "1:open",
+        "median": 12.5,
+        "p95": 20.89999999999418,
+        "max": 29.299999999995634,
+        "cpuMedian": 12.399999998509884,
+        "cpuP95": 23.800000000745058,
+        "gpuMedian": 9.598976,
+        "gpuP95": 19.857408,
+        "gpuSamples": 94,
+        "draws": 1214,
+        "triangles": 569495,
+        "memory": {
+          "geometries": 1526,
+          "textures": 81
+        },
+        "programs": 64,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "1:open",
+        "median": 12.400000000001455,
+        "p95": 16.69999999999709,
+        "max": 16.700000000004366,
+        "cpuMedian": 9.299999997019768,
+        "cpuP95": 14.099999997764826,
+        "gpuMedian": 7.273472,
+        "gpuP95": 11.840512,
+        "gpuSamples": 115,
+        "draws": 1214,
+        "triangles": 569495,
+        "memory": {
+          "geometries": 1526,
+          "textures": 81
+        },
+        "programs": 64,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    ]
+  },
+  {
+    "variant": "garden",
+    "camera": {
+      "x": 16.5,
+      "y": 368.5,
+      "yaw": 0.42,
+      "pitch": 0.015,
+      "fov": 75
+    },
+    "warm": {
+      "elapsed": 5464.300000000745,
+      "pending": {
+        "missing": 0,
+        "chunk": false,
+        "finite": false,
+        "flash": false,
+        "moth": false,
+        "items": 0,
+        "compile": false,
+        "retired": 0,
+        "textures": 0
+      },
+      "groups": 25,
+      "memory": {
+        "geometries": 849,
+        "textures": 59
+      },
+      "programs": 68
+    },
+    "build": {
+      "elapsed": 12359.699999999255,
+      "maxFrame": 83.30000000000291
+    },
+    "rounds": [
+      {
+        "label": "1:open",
+        "median": 4.19999999999709,
+        "p95": 8.39999999999418,
+        "max": 8.5,
+        "cpuMedian": 4.599999997764826,
+        "cpuP95": 7,
+        "gpuMedian": 4.596736,
+        "gpuP95": 6.810624,
+        "gpuSamples": 241,
+        "draws": 712,
+        "triangles": 343859,
+        "memory": {
+          "geometries": 849,
+          "textures": 59
+        },
+        "programs": 68,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "1:open",
+        "median": 4.19999999999709,
+        "p95": 8.30000000000291,
+        "max": 8.400000000008731,
+        "cpuMedian": 4,
+        "cpuP95": 6.199999999254942,
+        "gpuMedian": 4.006912,
+        "gpuP95": 6.401024,
+        "gpuSamples": 267,
+        "draws": 712,
+        "triangles": 343859,
+        "memory": {
+          "geometries": 849,
+          "textures": 59
+        },
+        "programs": 68,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "1:open",
+        "median": 4.19999999999709,
+        "p95": 8.400000000008731,
+        "max": 11.10000000000582,
+        "cpuMedian": 4.399999998509884,
+        "cpuP95": 6.600000001490116,
+        "gpuMedian": 4.478976,
+        "gpuP95": 6.706176,
+        "gpuSamples": 249,
+        "draws": 712,
+        "triangles": 343859,
+        "memory": {
+          "geometries": 849,
+          "textures": 59
+        },
+        "programs": 68,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "1:open",
+        "median": 4.2000000000116415,
+        "p95": 8.400000000008731,
+        "max": 12.5,
+        "cpuMedian": 5.300000000745058,
+        "cpuP95": 8.5,
+        "gpuMedian": 4.801536,
+        "gpuP95": 8.07424,
+        "gpuSamples": 200,
+        "draws": 712,
+        "triangles": 343859,
+        "memory": {
+          "geometries": 849,
+          "textures": 59
+        },
+        "programs": 68,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "1:open",
+        "median": 8.299999999988358,
+        "p95": 12.5,
+        "max": 16.69999999999709,
+        "cpuMedian": 6.199999999254942,
+        "cpuP95": 10.699999999254942,
+        "gpuMedian": 5.2992,
+        "gpuP95": 8.88832,
+        "gpuSamples": 172,
+        "draws": 712,
+        "triangles": 343859,
+        "memory": {
+          "geometries": 849,
+          "textures": 59
+        },
+        "programs": 68,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    ]
+  },
+  {
+    "variant": "maintenance",
+    "camera": {
+      "x": -272.5,
+      "y": 15.5,
+      "yaw": 0.42,
+      "pitch": 0.015,
+      "fov": 75
+    },
+    "warm": {
+      "elapsed": 5477.5,
+      "pending": {
+        "missing": 0,
+        "chunk": false,
+        "finite": false,
+        "flash": false,
+        "moth": false,
+        "items": 0,
+        "compile": false,
+        "retired": 0,
+        "textures": 0
+      },
+      "groups": 25,
+      "memory": {
+        "geometries": 745,
+        "textures": 67
+      },
+      "programs": 73
+    },
+    "build": {
+      "elapsed": 12671.099999997765,
+      "maxFrame": 275.1000000000058
+    },
+    "rounds": [
+      {
+        "label": "1:open",
+        "median": 4.19999999999709,
+        "p95": 8.39999999999418,
+        "max": 8.400000000008731,
+        "cpuMedian": 4.300000000745058,
+        "cpuP95": 7,
+        "gpuMedian": 4.552704,
+        "gpuP95": 7.118848,
+        "gpuSamples": 238,
+        "draws": 502,
+        "triangles": 69140,
+        "memory": {
+          "geometries": 745,
+          "textures": 67
+        },
+        "programs": 73,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "1:open",
+        "median": 4.19999999999709,
+        "p95": 8.400000000008731,
+        "max": 16.69999999999709,
+        "cpuMedian": 4.699999999254942,
+        "cpuP95": 8.300000000745058,
+        "gpuMedian": 4.950016,
+        "gpuP95": 8.016896,
+        "gpuSamples": 217,
+        "draws": 502,
+        "triangles": 69140,
+        "memory": {
+          "geometries": 745,
+          "textures": 67
+        },
+        "programs": 73,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "1:open",
+        "median": 4.19999999999709,
+        "p95": 8.400000000008731,
+        "max": 12.60000000000582,
+        "cpuMedian": 4.399999998509884,
+        "cpuP95": 7.100000001490116,
+        "gpuMedian": 4.60288,
+        "gpuP95": 7.507968,
+        "gpuSamples": 235,
+        "draws": 502,
+        "triangles": 69140,
+        "memory": {
+          "geometries": 745,
+          "textures": 67
+        },
+        "programs": 73,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "1:open",
+        "median": 4.19999999999709,
+        "p95": 8.39999999999418,
+        "max": 12.5,
+        "cpuMedian": 4.200000002980232,
+        "cpuP95": 7.100000001490116,
+        "gpuMedian": 4.516864,
+        "gpuP95": 7.015424,
+        "gpuSamples": 253,
+        "draws": 787,
+        "triangles": 169936,
+        "memory": {
+          "geometries": 745,
+          "textures": 67
+        },
+        "programs": 73,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      },
+      {
+        "label": "1:open",
+        "median": 4.19999999999709,
+        "p95": 8.400000000008731,
+        "max": 16.69999999999709,
+        "cpuMedian": 4.899999998509884,
+        "cpuP95": 9.299999997019768,
+        "gpuMedian": 5.234688,
+        "gpuP95": 8.614912,
+        "gpuSamples": 213,
+        "draws": 790,
+        "triangles": 169972,
+        "memory": {
+          "geometries": 745,
+          "textures": 67
+        },
+        "programs": 73,
+        "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+      }
+    ]
+  }
+]

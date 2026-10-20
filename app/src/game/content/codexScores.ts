@@ -116,27 +116,36 @@ const IOTS_UTILITY_OVERRIDE: Record<string, string> = {
   royalration: '高风险实用', // 成瘾 + 理智崩塌
   warpberry: '高风险实用', // 不可控传送
   thingmeat: '不建议使用', // 7 层之物的肉
+  velvetcake: '不建议使用', // 派对客的丝绒蛋糕：切勿食用
   ratmeat: '高风险实用', // v79 尸鼠肉（顶饿但可能染病）
   liquidpain: '不建议使用', // 液态痛苦：饮用致命（仅作武器使用）
   manmade: '不建议使用', // 人制品：高多巴胺成瘾食品
   tape: '情境实用', // 集齐 6 盘揭示真相（胜利条件）
   notebook: '低实用性', // 书写记录
   pamphlet: '不建议使用', // 信众宣传册——读了可能招来「教化」
+  jerryflyer: '不建议使用', // 信众传单：方位图指向信众宣传间
+  fakelog: '不建议使用', // 伪装成生存日志的诱导材料
   megfolder: '低实用性', welcomenote: '低实用性', endnote: '低实用性', // 文书类
   squirtgun: '情境实用', uvlamp: '情境实用', // 特殊场景装备
   friedshrimp: '高实用性',
+  liveshrimp: '实用', // v81 活旱虾：口粮 + 诱饵
 }
 /** 产地来源个例 */
 const IOTS_ORIGIN_OVERRIDE: Record<string, string> = {
   thingmeat: '实体相关', // 7 层之物身上割下
+  velvetcake: '实体相关', // 派对客反刍制成
   ratmeat: '实体相关', // v79 尸鼠身上割下
   manmade: '实体相关', // 人制品售货机（Entity 36）的产品
   pamphlet: '实体相关', // 杰瑞的信众张贴（鹉主教义）
+  jerryflyer: '实体相关', // 杰瑞的信众散发
+  fakelog: '实体相关', // 杰瑞的信众伪造
   candysilver: '交易流通', candybullet: '交易流通', candygun: '交易流通',
   candystanley: '交易流通', candywaste: '交易流通', candygenius: '交易流通', candymint: '交易流通', // Object 5：B.N.T.G. 糖果矿
   presses: '交易流通', eaglecoin: '交易流通', // BNTG 压印币 / MEG 天鹰币
   megfolder: '人为制造', welcomenote: '人为制造', endnote: '人为制造',
   friedshrimp: '人为制造', // Tom 餐厅加工
+  dryshrimp: '实体相关', liveshrimp: '实体相关', // v81 旱虾（Entity 20）
+  bento: '人为制造', // v83 Object 70 公文包里的自制便当
 }
 
 /** 物品的 IOTS 三栏分类：罕见度 / 实用性 / 产地来源（均为 IOTS 建议标准用语） */

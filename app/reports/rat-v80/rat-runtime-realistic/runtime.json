@@ -1,0 +1,537 @@
+{
+  "run": "qa-rat-runtime-1792075060522-53108",
+  "baseline": false,
+  "classic": false,
+  "port": 10846,
+  "cdp": 10847,
+  "profile": "C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\rat-v80\\rat-runtime-realistic\\qa-rat-runtime-1792075060522-53108",
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\Default Project\\backroom\\app\\reports\\rat-v80\\rat-runtime-realistic\\qa-rat-runtime-1792075060522-53108",
+    "--remote-debugging-port=10847",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.40",
+    "revision": "@cfaadc5a132d78e1828635aa8405a499f3e14864",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.20"
+  },
+  "pids": {
+    "server": 65052,
+    "browser": 59468
+  },
+  "registry": {
+    "checks": [
+      "Clump has only two variants",
+      "Faceling has common/hostile variants",
+      "Duller has no subvariants",
+      "Shared registry has 33 entries across nine parent types",
+      "clump: production HUD options reflect simplified taxonomy",
+      "faceling: production HUD options reflect simplified taxonomy",
+      "duller: production HUD options reflect simplified taxonomy",
+      "corpserat-brown: UI → entity factory → AI → model agree",
+      "corpserat-gray: UI → entity factory → AI → model agree",
+      "corpserat-hotel: UI → entity factory → AI → model agree",
+      "corpserat-capybara: UI → entity factory → AI → model agree",
+      "corpserat-ceiling: UI → entity factory → AI → model agree"
+    ],
+    "manifest": {
+      "parents": [
+        "deathmoth",
+        "smiler",
+        "hound",
+        "faceling",
+        "skinstealer",
+        "clump",
+        "wretch",
+        "corpserat",
+        "arachnid"
+      ],
+      "forms": [
+        {
+          "type": "deathmoth",
+          "id": "male"
+        },
+        {
+          "type": "deathmoth",
+          "id": "female"
+        },
+        {
+          "type": "deathmoth",
+          "id": "larva"
+        },
+        {
+          "type": "deathmoth",
+          "id": "guard"
+        },
+        {
+          "type": "smiler",
+          "id": "common"
+        },
+        {
+          "type": "smiler",
+          "id": "phantom"
+        },
+        {
+          "type": "smiler",
+          "id": "starved"
+        },
+        {
+          "type": "smiler",
+          "id": "canid"
+        },
+        {
+          "type": "smiler",
+          "id": "great"
+        },
+        {
+          "type": "hound",
+          "id": "hound-hostile"
+        },
+        {
+          "type": "hound",
+          "id": "hound-neutral"
+        },
+        {
+          "type": "hound",
+          "id": "hound-ambusher"
+        },
+        {
+          "type": "faceling",
+          "id": "faceling-common"
+        },
+        {
+          "type": "faceling",
+          "id": "faceling-anomaly"
+        },
+        {
+          "type": "skinstealer",
+          "id": "skinstealer-skinned"
+        },
+        {
+          "type": "skinstealer",
+          "id": "skinstealer-docile"
+        },
+        {
+          "type": "skinstealer",
+          "id": "skinstealer-hunt"
+        },
+        {
+          "type": "clump",
+          "id": "clump-common"
+        },
+        {
+          "type": "clump",
+          "id": "clump-intelligent"
+        },
+        {
+          "type": "wretch",
+          "id": "wretch-shambler"
+        },
+        {
+          "type": "wretch",
+          "id": "wretch-sprinter"
+        },
+        {
+          "type": "wretch",
+          "id": "wretch-smart"
+        },
+        {
+          "type": "wretch",
+          "id": "wretch-mutant"
+        },
+        {
+          "type": "corpserat",
+          "id": "corpserat-brown"
+        },
+        {
+          "type": "corpserat",
+          "id": "corpserat-gray"
+        },
+        {
+          "type": "corpserat",
+          "id": "corpserat-hotel"
+        },
+        {
+          "type": "corpserat",
+          "id": "corpserat-capybara"
+        },
+        {
+          "type": "corpserat",
+          "id": "corpserat-ceiling"
+        },
+        {
+          "type": "arachnid",
+          "id": "arachnid-spider"
+        },
+        {
+          "type": "arachnid",
+          "id": "arachnid-scorpion"
+        },
+        {
+          "type": "arachnid",
+          "id": "arachnid-tick"
+        },
+        {
+          "type": "arachnid",
+          "id": "arachnid-mite"
+        },
+        {
+          "type": "arachnid",
+          "id": "arachnid-herbivore"
+        }
+      ]
+    },
+    "seed": 20261006,
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  "views": [
+    {
+      "kind": "common",
+      "pose": "side",
+      "id": 8100,
+      "position": [
+        43.3,
+        0,
+        25.5
+      ],
+      "morph": "common",
+      "meshes": 27,
+      "triangles": 9338,
+      "eye": [
+        41.7,
+        1.0295654113262964,
+        25.5
+      ],
+      "yaw": -1.5707963267948966,
+      "pitch": -0.45,
+      "fov": 60,
+      "memory": {
+        "geometries": 170,
+        "textures": 104
+      }
+    },
+    {
+      "kind": "hairless",
+      "pose": "side",
+      "id": 8101,
+      "position": [
+        43.3,
+        0,
+        25.5
+      ],
+      "morph": "hairless",
+      "meshes": 20,
+      "triangles": 3378,
+      "eye": [
+        41.7,
+        0.9995767026621405,
+        25.5
+      ],
+      "yaw": -1.5707963267948966,
+      "pitch": -0.45,
+      "fov": 60,
+      "memory": {
+        "geometries": 163,
+        "textures": 104
+      }
+    },
+    {
+      "kind": "hairless",
+      "pose": "front",
+      "id": 8101,
+      "position": [
+        43.3,
+        0,
+        25.5
+      ],
+      "morph": "hairless",
+      "meshes": 20,
+      "triangles": 3378,
+      "eye": [
+        41.7,
+        1.0033611884396934,
+        25.5
+      ],
+      "yaw": -1.5707963267948966,
+      "pitch": -0.45,
+      "fov": 60,
+      "memory": {
+        "geometries": 163,
+        "textures": 104
+      }
+    },
+    {
+      "kind": "hotel",
+      "pose": "side",
+      "id": 8102,
+      "position": [
+        43.3,
+        0,
+        25.5
+      ],
+      "morph": "hotel",
+      "meshes": 29,
+      "triangles": 9554,
+      "eye": [
+        41.7,
+        0.9960993764385484,
+        25.5
+      ],
+      "yaw": -1.5707963267948966,
+      "pitch": -0.45,
+      "fov": 60,
+      "memory": {
+        "geometries": 172,
+        "textures": 104
+      }
+    },
+    {
+      "kind": "capybara",
+      "pose": "side",
+      "id": 8103,
+      "position": [
+        43.3,
+        0,
+        25.5
+      ],
+      "morph": "capybara",
+      "meshes": 37,
+      "triangles": 14704,
+      "eye": [
+        40.3,
+        1.0032089085168054,
+        25.5
+      ],
+      "yaw": -1.5707963267948966,
+      "pitch": -0.12,
+      "fov": 60,
+      "memory": {
+        "geometries": 181,
+        "textures": 105
+      }
+    },
+    {
+      "kind": "capybara",
+      "pose": "front",
+      "id": 8103,
+      "position": [
+        43.3,
+        0,
+        25.5
+      ],
+      "morph": "capybara",
+      "meshes": 37,
+      "triangles": 14704,
+      "eye": [
+        40.3,
+        0.9967603951939121,
+        25.5
+      ],
+      "yaw": -1.5707963267948966,
+      "pitch": -0.12,
+      "fov": 60,
+      "memory": {
+        "geometries": 181,
+        "textures": 105
+      }
+    },
+    {
+      "kind": "cave",
+      "pose": "side",
+      "id": 8104,
+      "position": [
+        43.3,
+        2.96,
+        25.5
+      ],
+      "morph": "cave",
+      "meshes": 28,
+      "triangles": 9386,
+      "eye": [
+        41.7,
+        1.4726415619684643,
+        25.5
+      ],
+      "yaw": -1.5707963267948966,
+      "pitch": 0.45,
+      "fov": 60,
+      "memory": {
+        "geometries": 170,
+        "textures": 104
+      }
+    }
+  ],
+  "gears": {
+    "checks": [
+      "Clump has only two variants",
+      "Faceling has common/hostile variants",
+      "Duller has no subvariants",
+      "Shared registry has 33 entries across nine parent types",
+      "clump: production HUD options reflect simplified taxonomy",
+      "faceling: production HUD options reflect simplified taxonomy",
+      "duller: production HUD options reflect simplified taxonomy",
+      "corpserat-brown: UI → entity factory → AI → model agree",
+      "corpserat-gray: UI → entity factory → AI → model agree",
+      "corpserat-hotel: UI → entity factory → AI → model agree",
+      "corpserat-capybara: UI → entity factory → AI → model agree",
+      "corpserat-ceiling: UI → entity factory → AI → model agree",
+      "Actual renderer displays both world-coordinate rat devices"
+    ],
+    "gears": [
+      {
+        "kind": "trap",
+        "position": [
+          42.3,
+          25.1,
+          0
+        ]
+      },
+      {
+        "kind": "bomb",
+        "position": [
+          42.3,
+          25.8,
+          0
+        ]
+      }
+    ]
+  },
+  "data": {
+    "checks": [
+      "Clump has only two variants",
+      "Faceling has common/hostile variants",
+      "Duller has no subvariants",
+      "Shared registry has 33 entries across nine parent types",
+      "clump: production HUD options reflect simplified taxonomy",
+      "faceling: production HUD options reflect simplified taxonomy",
+      "duller: production HUD options reflect simplified taxonomy",
+      "corpserat-brown: UI → entity factory → AI → model agree",
+      "corpserat-gray: UI → entity factory → AI → model agree",
+      "corpserat-hotel: UI → entity factory → AI → model agree",
+      "corpserat-capybara: UI → entity factory → AI → model agree",
+      "corpserat-ceiling: UI → entity factory → AI → model agree",
+      "Actual renderer displays both world-coordinate rat devices",
+      "Actual AI leaves unprovoked player unharmed",
+      "Actual AI flees nearby sprinting player",
+      "Actual AI retaliates and applies ankle slowdown",
+      "Pending model cannot move/attack invisibly",
+      "Capybara fixture provides an unobstructed seven-metre sightline",
+      "Actual capybara keeps distance and commands (command, HP 45, damage 10, player HP 100)",
+      "Actual trap damages, slows and jams flashlight",
+      "Actual bomb triggers, explodes and retires",
+      "Capybara kill drops one corpse-rat meat item",
+      "Repeated death check cannot duplicate meat",
+      "Actual inventory consumes meat once and restores 18 hunger",
+      "L2 corpse positions deterministic at -1,-1",
+      "L2 corpse positions deterministic at 0,-1",
+      "L2 corpse positions deterministic at 1,-1",
+      "L2 corpse positions deterministic at -1,0",
+      "L2 corpse positions deterministic at 0,0",
+      "L2 corpse positions deterministic at 1,0",
+      "L2 corpse positions deterministic at -1,1",
+      "L2 corpse positions deterministic at 0,1",
+      "L2 corpse positions deterministic at 1,1",
+      "L2 generates decorative rat corpses without blocking corridors",
+      "Four rebuild/disposal cycles stabilize GPU resources"
+    ],
+    "memory": [
+      {
+        "geometries": 147,
+        "textures": 107
+      },
+      {
+        "geometries": 147,
+        "textures": 107
+      },
+      {
+        "geometries": 147,
+        "textures": 107
+      },
+      {
+        "geometries": 147,
+        "textures": 107
+      }
+    ],
+    "corpses": 12
+  },
+  "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [],
+  "networkErrors": [
+    {
+      "requestId": "22912.12",
+      "loaderId": "F34891F34D7D3181E9591633B284571B",
+      "timestamp": 39305.001182,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:10846/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Thu, 15 Oct 2026 14:37:49 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 185,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 10846,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 39304.842783,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.412,
+          "sendEnd": 0.535,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 157.571,
+          "receiveHeadersEnd": 157.757
+        },
+        "responseTime": 1792075069628.199,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "76C1841D33D4EA6331F0157148026FE4"
+    }
+  ]
+}

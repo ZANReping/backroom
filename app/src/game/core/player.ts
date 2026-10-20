@@ -7,7 +7,7 @@
 // v7：z 轴高度系统——canOccupy 增加 z/crouch 选项：
 //   - 高差 > STEP_UP(0.65m) 的瓦片不可直接踏上（跳跃滞空时 p.z 抬高后可通过）；
 //   - 蹲伏低通道（crawl=1）未蹲伏不可进入。
-import { l11MapSpace, caveVolumeFieldAt, floorHeight, structBlocksCircle, structBlocksPoint, bandOfZ, stairServesBand, walkableAt, STEP_UP, l4CubicleEscapePoints, type GameMap } from '../world/mapgen'
+import { l11MapSpace, caveVolumeFieldAt, floorHeight, structBlocksCircle, structBlocksPoint, structEscapePoints, bandOfZ, stairServesBand, walkableAt, STEP_UP, l4CubicleEscapePoints, type GameMap } from '../world/mapgen'
 import type { FloorBand } from './types'
 
 export const PLAYER_RADIUS = 0.32
@@ -45,6 +45,9 @@ export function canOccupy(m: GameMap, x: number, y: number, r = PLAYER_RADIUS, o
     [-r, 0], [r, 0], [0, -r], [0, r],
   ]
   for (const [ox, oy] of offs) {
+    // Structures already use an exact circular test above. The four legacy
+    // terrain corner probes lie outside that circle and must not enlarge props.
+    const bodyProbe=ox*ox+oy*oy<=r*r+1e-9
     const sx = x + ox, sy = y + oy
     const tx = Math.floor(sx), ty = Math.floor(sy)
     if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return false
@@ -55,7 +58,7 @@ export function canOccupy(m: GameMap, x: number, y: number, r = PLAYER_RADIUS, o
       // v54 跌井守卫：从非坡道格（楼板）踏入不到达本层带的坡道段=跌进楼梯井，拦截；
       // 中心已在坡道上（centerStair）则不受限——3F 沿 2F→3F 坡道连续下行时坡道中段本就不服务 band2
       if (!centerStair && !stairServesBand(m.stair[i], band)) return false
-      if (structBlocksPoint(m, sx, sy, z, band,opts.ignoreStructure)) return false
+      if (bodyProbe&&structBlocksPoint(m, sx, sy, z, band,opts.ignoreStructure)) return false
     } else if (band >= 1) {
       if (!walkableAt(m, tx, ty, band)) {
         // v46 楼梯溢出放行：中心在坡道、采样格是普通主层地板（上空无物）→ 放行
@@ -63,9 +66,9 @@ export function canOccupy(m: GameMap, x: number, y: number, r = PLAYER_RADIUS, o
         // 一层地板即卡死，是「阶梯边缘移动卡死 / 多层交界处无法跳跃」的根因）；
         // 跌落保护不变：中心不在坡道时，悬出夹楼边缘仍被拦截
         if (!centerStair || m.tiles[i] !== 1) return false
-        if (structBlocksPoint(m, sx, sy, z, 0,opts.ignoreStructure) || structBlocksPoint(m, sx, sy, z, 1,opts.ignoreStructure) || structBlocksPoint(m, sx, sy, z, 2,opts.ignoreStructure)) return false // v54：三个层带结构都挡（主层立柱/楼梯口实心侧挡）
+        if (bodyProbe&&(structBlocksPoint(m, sx, sy, z, 0,opts.ignoreStructure) || structBlocksPoint(m, sx, sy, z, 1,opts.ignoreStructure) || structBlocksPoint(m, sx, sy, z, 2,opts.ignoreStructure))) return false // v54：三个层带结构都挡（主层立柱/楼梯口实心侧挡）
         spill = true
-      } else if (structBlocksPoint(m, sx, sy, z, band,opts.ignoreStructure)) return false
+      } else if (bodyProbe&&structBlocksPoint(m, sx, sy, z, band,opts.ignoreStructure)) return false
     } else {
       if (band === 0 && m.caveVolumeId !== undefined) {
         // 洞穴类层级按真实三维岩体表面碰撞，不再把整块「墙瓦片」当成 1m 方盒。
@@ -75,7 +78,7 @@ export function canOccupy(m: GameMap, x: number, y: number, r = PLAYER_RADIUS, o
           || caveVolumeFieldAt(m, sx, ground + head * 0.55, sy) <= 0.025
           || caveVolumeFieldAt(m, sx, ground + head, sy) <= 0.025) return false
       } else if (!walkableAt(m, tx, ty, band)) return false
-      if (structBlocksPoint(m, sx, sy, z, band,opts.ignoreStructure)) return false
+      if (bodyProbe&&structBlocksPoint(m, sx, sy, z, band,opts.ignoreStructure)) return false
       // 蹲伏低通道：头顶风道，未蹲伏不可进入
       if (band === 0 && m.crawl && m.crawl[i] === 1 && !opts.crouch) return false
     }
@@ -87,11 +90,29 @@ export function canOccupy(m: GameMap, x: number, y: number, r = PLAYER_RADIUS, o
   return true
 }
 
+/** Bounded recovery for late model colliders or a body embedded by vertical
+ * motion. Never changes height, crosses floors, or rescues a fall into void. */
+export function resolvePlayerPenetration(m:GameMap,pos:Vec2,r=PLAYER_RADIUS,opts:OccupyOpts={}):Vec2 {
+ const zero={x:0,y:0},z=opts.z??0,band=opts.band??bandOfZ(z)
+ if(!Number.isFinite(pos.x+pos.y+z)||canOccupy(m,pos.x,pos.y,r,opts))return zero
+ const tx=Math.floor(pos.x),ty=Math.floor(pos.y),wall=tx>=0&&ty>=0&&tx<m.w&&ty<m.h&&m.tiles[ty*m.w+tx]===2
+ if(!wall&&!structBlocksCircle(m,pos.x,pos.y,r,z,band,opts.crouch?.88:1.48,undefined,opts.ignoreStructure))return zero
+ const candidates=structEscapePoints(m,pos.x,pos.y,z,band,r),pad=r+.003
+ if(wall)for(let y=ty-1;y<=ty+1;y++)for(let x=tx-1;x<=tx+1;x++)if(x>=0&&y>=0&&x<m.w&&y<m.h&&m.tiles[y*m.w+x]===2)candidates.push({x:x-pad,y:pos.y},{x:x+1+pad,y:pos.y},{x:pos.x,y:y-pad},{x:pos.x,y:y+1+pad})
+ const distance=(p:Vec2)=>(p.x-pos.x)**2+(p.y-pos.y)**2
+ candidates.sort((a,b)=>distance(a)-distance(b))
+ for(const p of candidates){
+  if(distance(p)>4||!canOccupy(m,p.x,p.y,r,opts))continue
+  const d={x:p.x-pos.x,y:p.y-pos.y};pos.x=p.x;pos.y=p.y;return d
+ }return zero
+}
+
 // 单个子步的移动：先 x 分量后 y 分量（轴分离 → 沿墙滑动），返回实际位移
 export function moveStep(m: GameMap, pos: Vec2, dx: number, dy: number, r = PLAYER_RADIUS, opts: OccupyOpts = {}): Vec2 {
   let mx = 0, my = 0
   if (dx !== 0 && canOccupy(m, pos.x + dx, pos.y, r, opts)) { pos.x += dx; mx = dx }
   if (dy !== 0 && canOccupy(m, pos.x, pos.y + dy, r, opts)) { pos.y += dy; my = dy }
+  if(!mx&&!my&&(dx||dy))resolvePlayerPenetration(m,pos,r,opts)
   if(!mx&&!my&&(dx||dy)&&m.tint[Math.floor(pos.y)*m.w+Math.floor(pos.x)]===51&&!canOccupy(m,pos.x,pos.y,r,opts)){
     const escape=l4CubicleEscapePoints(m,pos.x,pos.y,opts.z??0,r).find(p=>canOccupy(m,p.x,p.y,r,opts))
     if(escape){pos.x=escape.x;pos.y=escape.y}

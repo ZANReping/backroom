@@ -1,0 +1,593 @@
+{
+  "schemaVersion": 2,
+  "capturedAtUtc": "2026-10-18T06:29:15.1855420Z",
+  "notes": [
+    "zipEntries preserves hashes of original archive entries, including empty directory entries.",
+    "initialImports records the first byte-for-byte copy before integration fixes; targetSha256 in that section is historical.",
+    "integratedFiles records current merged bytes. A null source or baseline hash means that snapshot is not available; it does not mean the file was absent.",
+    "Runtime sources were merged selectively into the existing app. Multiplayer and app-lite were not updated.",
+    "The supplied archive has no standalone code license declaration. Wikidot adaptation credits and licensing are recorded in PARTYGOER-REMAKE.md."
+  ],
+  "sourceZip": {
+    "path": "partygoer-remake.zip",
+    "sha256": "a796e28c96e0b3d27657a712ed473bf0460680b6c4089080d6eb0717cb72634d"
+  },
+  "zipEntries": [
+    {
+      "path": "files/",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "files/app/",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "files/app/src/",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "files/app/src/proto/",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "files/app/src/proto/partygoerProto.ts",
+      "size": 10776,
+      "sha256": "6b58d47ec1c694ce0e8b31e5559c41c2cb6bfc26bc9e5aace36f586b524678a0"
+    },
+    {
+      "path": "files/app/src/game/",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "files/app/src/game/world/",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "files/app/src/game/world/mapgen.ts",
+      "size": 163847,
+      "sha256": "d1dba1b55d8c881fc62a2c1d0f8cb072f605635fa986f456ac8cf9808c9d81aa"
+    },
+    {
+      "path": "files/app/src/game/renderer/",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "files/app/src/game/renderer/structures.ts",
+      "size": 411870,
+      "sha256": "d8c3cdac4ac327928641169fd4b7284c316587a7b0040a19515d5c5cf74914ea"
+    },
+    {
+      "path": "files/app/src/game/renderer/renderer.ts",
+      "size": 290054,
+      "sha256": "cabea778bada6b2b25a9c6b83b735a7c2fe59212a64e414b1ce306d4b83f7183"
+    },
+    {
+      "path": "files/app/src/game/renderer/partygoerMesh.ts",
+      "size": 51156,
+      "sha256": "c2f672d521104e859a1207bc349b9eb879fd23af8a10e0274b838ba5f7f2372f"
+    },
+    {
+      "path": "files/app/src/game/renderer/itemsMesh.ts",
+      "size": 8696,
+      "sha256": "607eeff0427a50e4bad79f2d1a172097759a4908fac354c312213ea168abc2d6"
+    },
+    {
+      "path": "files/app/src/game/renderer/entitiesMesh.ts",
+      "size": 88657,
+      "sha256": "7f56d0fbd104110bf042b6f21a29c80e23c4af94f87b385b032480e9221cf4a6"
+    },
+    {
+      "path": "files/app/src/game/levels/",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "files/app/src/game/levels/l601.ts",
+      "size": 3473,
+      "sha256": "1e7f4ca6856184b47969ab0eed9473990868ebde3ba4735f92ce452e752f621d"
+    },
+    {
+      "path": "files/app/src/game/entities/",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "files/app/src/game/entities/types.ts",
+      "size": 10833,
+      "sha256": "13a070c1ad8ab469f4e20a85e416223decfc9435e73022cbfee5688c0700d731"
+    },
+    {
+      "path": "files/app/src/game/entities/partygoerLook.ts",
+      "size": 1959,
+      "sha256": "87d046261eae156d91288dfced60f899f65b5973fd41923daac2472ed2509c48"
+    },
+    {
+      "path": "files/app/src/game/entities/deep.ts",
+      "size": 26804,
+      "sha256": "5c4fac761e56589bdeddbb59805a9e3b36bb9ee61a51c61e9746162219cc25a5"
+    },
+    {
+      "path": "files/app/src/game/engine/",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "files/app/src/game/engine/partygoerAI.ts",
+      "size": 28375,
+      "sha256": "7d3d2b3baa80152ece46e179b236fe600f040d18725b73dfb2dca064d50bcd5e"
+    },
+    {
+      "path": "files/app/src/game/engine/inventory.ts",
+      "size": 25532,
+      "sha256": "7a47317202ceea7a2b51cef192fc5292873f01152158a09fb552b91e1ed37e20"
+    },
+    {
+      "path": "files/app/src/game/engine/entityAI.ts",
+      "size": 54981,
+      "sha256": "4f56ad6e96c0f6a063be3086d793293efade512fd8b4877559a5045de2b8ff8a"
+    },
+    {
+      "path": "files/app/src/game/engine/effects.ts",
+      "size": 10508,
+      "sha256": "3cc70b6fe32100b5f7f5266daf667f4a1b0e02eafe77559b16474c237ce57b92"
+    },
+    {
+      "path": "files/app/src/game/engine/dev.ts",
+      "size": 33734,
+      "sha256": "a58ace6fd9b8d17ce7fe0b5251be5309bc9d1d7be73b7885c5d6de36ef500d14"
+    },
+    {
+      "path": "files/app/src/game/engine/combat.ts",
+      "size": 37621,
+      "sha256": "01d27e201e4e028d63703f7861b5caa08142e147309638aaa42e5f0405d7d911"
+    },
+    {
+      "path": "files/app/src/game/engine.ts",
+      "size": 63969,
+      "sha256": "e3e9b87b43f772d246583c6ebe55db140aff6c8192f75ddb92f64fa84b44b785"
+    },
+    {
+      "path": "files/app/src/game/core/",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "files/app/src/game/core/types.ts",
+      "size": 27086,
+      "sha256": "a431627daa0d8905088dd4ee2abfc98704963d389333c70b3cd58dc20c17c27b"
+    },
+    {
+      "path": "files/app/src/game/content/",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "files/app/src/game/content/items.ts",
+      "size": 27547,
+      "sha256": "7d4164333556ce2f27b03749de08ab49c696043aea04f007d94614ace19923fe"
+    },
+    {
+      "path": "files/app/src/game/content/decorRegistry.ts",
+      "size": 39123,
+      "sha256": "18a8aead67549f24539ba0e853db15436a1211a2234d3c2c7b2bbdbdd8afcf42"
+    },
+    {
+      "path": "files/app/src/game/content/codexScores.ts",
+      "size": 15316,
+      "sha256": "58c329869419c7f4a4c8797d220006d12826fdb03c2f530cdb2c1dac8c8a57f8"
+    },
+    {
+      "path": "files/app/src/components/",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "files/app/src/components/HUD.tsx",
+      "size": 101973,
+      "sha256": "7aa35c0defddf5fff6ec374a975fb98b96c02872e868fedbd21b6a7beb92acc5"
+    },
+    {
+      "path": "files/app/scripts/",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "files/app/scripts/verify-partygoer.mjs",
+      "size": 4350,
+      "sha256": "514a4af094dad5708306f029ef30c2bc8880def572443ae9ef1afab6d6795ead"
+    },
+    {
+      "path": "files/app/scripts/verify-partygoer-game.mjs",
+      "size": 17832,
+      "sha256": "0150cce9bf354dc6c707b532a1c306a735ec3ffea7e48f0216cb0ed63a23ed79"
+    },
+    {
+      "path": "files/app/scripts/check-partygoers.ts",
+      "size": 26032,
+      "sha256": "10a3f9d92a6868a938fe2e141751157f7579450ed790c4669fae7621e9196272"
+    },
+    {
+      "path": "files/app/proto-partygoer.html",
+      "size": 612,
+      "sha256": "afe197e48a157f6b8bef751710d175869767f4788e7885c15943870e9950c41f"
+    },
+    {
+      "path": "files/app/package.json",
+      "size": 25871,
+      "sha256": "ee2acbbd33c6a99f08adceb634e6521de317534e50a1b824d55e97d74b90db7b"
+    },
+    {
+      "path": "files/app/PARTYGOER-REMAKE.md",
+      "size": 9251,
+      "sha256": "fc2d0501888366d2e9a3973bd8954e11b5e65f6b4bb03a1b0edb95309b63e310"
+    },
+    {
+      "path": "screenshots/",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "screenshots/side.png",
+      "size": 138170,
+      "sha256": "c087ced5e4b7785fe941b979d6460b3639025d34ca06924a00de86376447225a"
+    },
+    {
+      "path": "screenshots/poses.png",
+      "size": 533032,
+      "sha256": "e37f79f432d71755fa337aa931f37cd77e0870502cdfda6dfdde33f5c209b310"
+    },
+    {
+      "path": "screenshots/game2-realistic-reveal-bite.png",
+      "size": 1437144,
+      "sha256": "7da824d2d2b25346ad9d48cf3f03e3244f577807bb0d1fcb0355988b522e1af2"
+    },
+    {
+      "path": "screenshots/game2-realistic-feign-cake.png",
+      "size": 1363653,
+      "sha256": "28f7ad43879cbf8dbef9a631da658ff13f418a35990a9c3773b1365154afc753"
+    },
+    {
+      "path": "screenshots/game2-realistic-down-crawl.png",
+      "size": 1456601,
+      "sha256": "027084d91c418d021abef1a0f4a59d81c0abf0e4c27d3fb6d4d162257017b1f9"
+    },
+    {
+      "path": "screenshots/game2-realistic-burn.png",
+      "size": 1438084,
+      "sha256": "a40028689428db7b7ecd36dedf341054cf354fb1a9356433664f8649cf578bf8"
+    },
+    {
+      "path": "screenshots/game2-realistic-berserk-chest.png",
+      "size": 1418911,
+      "sha256": "472bfd1d419959a7c9612af40322dd35ed592baab745589333997ccf1fa4f757"
+    },
+    {
+      "path": "screenshots/game2-classic-reveal-bite.png",
+      "size": 1395102,
+      "sha256": "d784b5b5f7bb69463a7b2838876aeffffa3aa76f5322041d04ec20252560c768"
+    },
+    {
+      "path": "screenshots/game2-classic-feign-cake.png",
+      "size": 1363825,
+      "sha256": "dbcaf3a634c0a4c17ecf295e368845348463579ee953cd2c95fe2aba46728530"
+    },
+    {
+      "path": "screenshots/game2-classic-down-crawl.png",
+      "size": 1427699,
+      "sha256": "82e2a77b4b4416eeb380d418adf7afc7ce0fb45268e7f55e83e7f4567b465281"
+    },
+    {
+      "path": "screenshots/game2-classic-burn.png",
+      "size": 1343736,
+      "sha256": "be38db01e6fc8a06bf974814532af8cd55a590525710a182cb9e701df261972f"
+    },
+    {
+      "path": "screenshots/game2-classic-berserk-chest.png",
+      "size": 1326899,
+      "sha256": "2d9f382c442ea020836e26ce01451537e1f448057e398f07ed7cd337313d2fb6"
+    },
+    {
+      "path": "screenshots/game-reveal.png",
+      "size": 1162552,
+      "sha256": "b7fb75f196f6b4df6e0feca593de93a730deb0c0cd4d86e0489d1bfc9190eeae"
+    },
+    {
+      "path": "screenshots/game-feign.png",
+      "size": 1155449,
+      "sha256": "b5b06701898217dae11667e5d59d693c0e563ebb6c1fc02f0256ad328632c29b"
+    },
+    {
+      "path": "screenshots/game-down.png",
+      "size": 1175093,
+      "sha256": "aea2d876cad0622580c9ccc4f7c85581d34fa190c16721e96328dc1d90905942"
+    },
+    {
+      "path": "screenshots/game-berserk.png",
+      "size": 1175243,
+      "sha256": "84880d2dc60edc42bdfe67f15dcec0c0ed98f0451e4caec1fea3b6d5b52b1fd5"
+    },
+    {
+      "path": "screenshots/front.png",
+      "size": 197711,
+      "sha256": "682f6825df3a07eac930b6182ab253111bbe61c2db846625be996dd03b9bf924"
+    },
+    {
+      "path": "screenshots/colors.png",
+      "size": 388907,
+      "sha256": "97e6f00c4bd26a3cc2bb20473e7c291e24c181a6b67452253b3d4a714e9fa139"
+    },
+    {
+      "path": "screenshots/close.png",
+      "size": 639630,
+      "sha256": "121709bd6bbe09e7752a10a931296d9f083f86b3ff6a17093bc95dc2ff6b04e5"
+    },
+    {
+      "path": "screenshots/chest.png",
+      "size": 401308,
+      "sha256": "b07e96ada195360615799e8b38a72421b1e57374cbc2b491fa23c94e6ff29816"
+    },
+    {
+      "path": "partygoer-remake.patch",
+      "size": 210359,
+      "sha256": "165f4359fc9855cb6b3b809d46e029087d9d72c644ddd387ee2eca5e1bdb62e5"
+    }
+  ],
+  "initialImports": [
+    {
+      "path": "app/src/game/entities/partygoerLook.ts",
+      "sourceSha256": "87d046261eae156d91288dfced60f899f65b5973fd41923daac2472ed2509c48",
+      "targetSha256": "87d046261eae156d91288dfced60f899f65b5973fd41923daac2472ed2509c48"
+    },
+    {
+      "path": "app/src/game/renderer/partygoerMesh.ts",
+      "sourceSha256": "c2f672d521104e859a1207bc349b9eb879fd23af8a10e0274b838ba5f7f2372f",
+      "targetSha256": "c2f672d521104e859a1207bc349b9eb879fd23af8a10e0274b838ba5f7f2372f"
+    },
+    {
+      "path": "app/src/game/engine/partygoerAI.ts",
+      "sourceSha256": "7d3d2b3baa80152ece46e179b236fe600f040d18725b73dfb2dca064d50bcd5e",
+      "targetSha256": "7d3d2b3baa80152ece46e179b236fe600f040d18725b73dfb2dca064d50bcd5e"
+    },
+    {
+      "path": "app/src/proto/partygoerProto.ts",
+      "sourceSha256": "6b58d47ec1c694ce0e8b31e5559c41c2cb6bfc26bc9e5aace36f586b524678a0",
+      "targetSha256": "6b58d47ec1c694ce0e8b31e5559c41c2cb6bfc26bc9e5aace36f586b524678a0"
+    },
+    {
+      "path": "app/proto-partygoer.html",
+      "sourceSha256": "afe197e48a157f6b8bef751710d175869767f4788e7885c15943870e9950c41f",
+      "targetSha256": "afe197e48a157f6b8bef751710d175869767f4788e7885c15943870e9950c41f"
+    },
+    {
+      "path": "app/scripts/check-partygoers.ts",
+      "sourceSha256": "10a3f9d92a6868a938fe2e141751157f7579450ed790c4669fae7621e9196272",
+      "targetSha256": "10a3f9d92a6868a938fe2e141751157f7579450ed790c4669fae7621e9196272"
+    }
+  ],
+  "integratedFiles": [
+    {
+      "path": "app/assets/partygoer-import/UPSTREAM.md",
+      "sourceSha256": null,
+      "beforeIntegrationSha256": null,
+      "integratedSha256": "fc2d0501888366d2e9a3973bd8954e11b5e65f6b4bb03a1b0edb95309b63e310"
+    },
+    {
+      "path": "app/package.json",
+      "sourceSha256": "ee2acbbd33c6a99f08adceb634e6521de317534e50a1b824d55e97d74b90db7b",
+      "beforeIntegrationSha256": "b12c43ea9926b0ed1ef4703737dfa0a5279a4e412bd2dd18575911edd735d885",
+      "integratedSha256": "7216a09d918a5c48de66bf3164a7a7eda60b7f176da90282fab9cb93dd8483fb"
+    },
+    {
+      "path": "app/PARTYGOER-REMAKE.md",
+      "sourceSha256": "fc2d0501888366d2e9a3973bd8954e11b5e65f6b4bb03a1b0edb95309b63e310",
+      "beforeIntegrationSha256": null,
+      "integratedSha256": "197175bac8bda9edb26e7f55d0e2741b703797f976dd2fdee703938eed6cfe8d"
+    },
+    {
+      "path": "app/proto-partygoer.html",
+      "sourceSha256": "afe197e48a157f6b8bef751710d175869767f4788e7885c15943870e9950c41f",
+      "beforeIntegrationSha256": null,
+      "integratedSha256": "afe197e48a157f6b8bef751710d175869767f4788e7885c15943870e9950c41f"
+    },
+    {
+      "path": "app/reports/partygoer/README.md",
+      "sourceSha256": null,
+      "beforeIntegrationSha256": null,
+      "integratedSha256": "710c7e7c0fd55fbd03650ce9402716253e12d65fa30ff6ed82fcb0f64c329ed3"
+    },
+    {
+      "path": "app/scripts/check-partygoers.ts",
+      "sourceSha256": "10a3f9d92a6868a938fe2e141751157f7579450ed790c4669fae7621e9196272",
+      "beforeIntegrationSha256": null,
+      "integratedSha256": "43d05a3fba686a54c2cbef9737312044ca496b83a24d244f2cd23d7afbcb1283"
+    },
+    {
+      "path": "app/scripts/verify-partygoer.mjs",
+      "sourceSha256": "514a4af094dad5708306f029ef30c2bc8880def572443ae9ef1afab6d6795ead",
+      "beforeIntegrationSha256": null,
+      "integratedSha256": "54d09ed1c8770fbc3a12496bbeff310144a957467f22810e7717a0b83fc2fc1f"
+    },
+    {
+      "path": "app/src/components/entityPortrait.ts",
+      "sourceSha256": null,
+      "beforeIntegrationSha256": null,
+      "integratedSha256": "bb7ecc3794005f3fd45e1ed0d93596c9cd631a71082b0e406add87021e7413bf"
+    },
+    {
+      "path": "app/src/components/HUD.tsx",
+      "sourceSha256": "7aa35c0defddf5fff6ec374a975fb98b96c02872e868fedbd21b6a7beb92acc5",
+      "beforeIntegrationSha256": "0244a51db5a63621b187ed4a23733790fd36ee934bd6f1e43b991fc3c45c3641",
+      "integratedSha256": "ce543bd79589282498f12d23db0143faecbcf3286b566d5feb0cb440c9cdab2a"
+    },
+    {
+      "path": "app/src/game/content/codexScores.ts",
+      "sourceSha256": "58c329869419c7f4a4c8797d220006d12826fdb03c2f530cdb2c1dac8c8a57f8",
+      "beforeIntegrationSha256": "6ed903c66fdfa50e8b8c913eadea6856914444195df9cdaab903f1473a7c9868",
+      "integratedSha256": "19e31712b5a80c3703ec2e669ed0834fcd815e23d3e97c325b6d7e98db834fb5"
+    },
+    {
+      "path": "app/src/game/content/decorRegistry.ts",
+      "sourceSha256": "18a8aead67549f24539ba0e853db15436a1211a2234d3c2c7b2bbdbdd8afcf42",
+      "beforeIntegrationSha256": "12d4856e5ac666d5035572bc061a8908bfee30cc6f4d3cd85f7e47578c1106e8",
+      "integratedSha256": "18a8aead67549f24539ba0e853db15436a1211a2234d3c2c7b2bbdbdd8afcf42"
+    },
+    {
+      "path": "app/src/game/content/items.ts",
+      "sourceSha256": "7d4164333556ce2f27b03749de08ab49c696043aea04f007d94614ace19923fe",
+      "beforeIntegrationSha256": "6c51c5dd1e1c3ac3ed5f561639d49f1c2835f7fabeccffbd30c35cbc41d47de8",
+      "integratedSha256": "b424dbe46651683b4842776e06bef47d959ebd215967522eb15962b301463e07"
+    },
+    {
+      "path": "app/src/game/core/types.ts",
+      "sourceSha256": "a431627daa0d8905088dd4ee2abfc98704963d389333c70b3cd58dc20c17c27b",
+      "beforeIntegrationSha256": "94dd2cbb43ef3176285afa273913b48354e7025a1bd9c0fc969fb7b7541a30f2",
+      "integratedSha256": "a431627daa0d8905088dd4ee2abfc98704963d389333c70b3cd58dc20c17c27b"
+    },
+    {
+      "path": "app/src/game/engine.ts",
+      "sourceSha256": "e3e9b87b43f772d246583c6ebe55db140aff6c8192f75ddb92f64fa84b44b785",
+      "beforeIntegrationSha256": "4d5cd9bbc92499206f94462afd3da0547204d8e182878dd9230ded237f8e73ee",
+      "integratedSha256": "fc609bf0109ea85cc5d3ab5c5013772306e2dfc30a12ef95699f5dfaab149e15"
+    },
+    {
+      "path": "app/src/game/engine/combat.ts",
+      "sourceSha256": "01d27e201e4e028d63703f7861b5caa08142e147309638aaa42e5f0405d7d911",
+      "beforeIntegrationSha256": "8a777d89bae6afa2ef1ce813aca9d2669a0fe0c2d0dfe5c61079e7bd9eff3b12",
+      "integratedSha256": "f49bd2d4cb307bc498abaefef86e232a8939d7963202f72ba3a6233b352e7354"
+    },
+    {
+      "path": "app/src/game/engine/dev.ts",
+      "sourceSha256": "a58ace6fd9b8d17ce7fe0b5251be5309bc9d1d7be73b7885c5d6de36ef500d14",
+      "beforeIntegrationSha256": "824971fcc332fee90ae0028a8d7628cc4e31921faa7295957c5d30aff6fa6d2f",
+      "integratedSha256": "a58ace6fd9b8d17ce7fe0b5251be5309bc9d1d7be73b7885c5d6de36ef500d14"
+    },
+    {
+      "path": "app/src/game/engine/effects.ts",
+      "sourceSha256": "3cc70b6fe32100b5f7f5266daf667f4a1b0e02eafe77559b16474c237ce57b92",
+      "beforeIntegrationSha256": "26efa24b0fa5654f3cd32ce4d3fe49cb46e4c2b01a3e6f55971177c8f11e54cd",
+      "integratedSha256": "3cc70b6fe32100b5f7f5266daf667f4a1b0e02eafe77559b16474c237ce57b92"
+    },
+    {
+      "path": "app/src/game/engine/entityAI.ts",
+      "sourceSha256": "4f56ad6e96c0f6a063be3086d793293efade512fd8b4877559a5045de2b8ff8a",
+      "beforeIntegrationSha256": "fd66c4eb17c52be96f4f126768a6e06538ca5762dd2e202f1f2f0a1a8ddd3bed",
+      "integratedSha256": "60a939d3f072b2d3c8516d2cdb8b28fd6c596485d4a6510c5fc465744dca7832"
+    },
+    {
+      "path": "app/src/game/engine/inventory.ts",
+      "sourceSha256": "7a47317202ceea7a2b51cef192fc5292873f01152158a09fb552b91e1ed37e20",
+      "beforeIntegrationSha256": "8717118e53ee65d13a0043ccd8ba38bb5b3aad5c064adc77cf59d7dd444cc3c6",
+      "integratedSha256": "f2e04f1a51be62df5dab9a16ce50dfca4e9ee57ed97307d4cdca1e03d782bb62"
+    },
+    {
+      "path": "app/src/game/engine/partygoerAI.ts",
+      "sourceSha256": "7d3d2b3baa80152ece46e179b236fe600f040d18725b73dfb2dca064d50bcd5e",
+      "beforeIntegrationSha256": null,
+      "integratedSha256": "7d3d2b3baa80152ece46e179b236fe600f040d18725b73dfb2dca064d50bcd5e"
+    },
+    {
+      "path": "app/src/game/entities/deep.ts",
+      "sourceSha256": "5c4fac761e56589bdeddbb59805a9e3b36bb9ee61a51c61e9746162219cc25a5",
+      "beforeIntegrationSha256": "f6cceaf5cd2c78be8d0e3a351194bc0e358c0cd8515ae8df142a0240d91d2dfe",
+      "integratedSha256": "5c4fac761e56589bdeddbb59805a9e3b36bb9ee61a51c61e9746162219cc25a5"
+    },
+    {
+      "path": "app/src/game/entities/partygoerLook.ts",
+      "sourceSha256": "87d046261eae156d91288dfced60f899f65b5973fd41923daac2472ed2509c48",
+      "beforeIntegrationSha256": null,
+      "integratedSha256": "87d046261eae156d91288dfced60f899f65b5973fd41923daac2472ed2509c48"
+    },
+    {
+      "path": "app/src/game/entities/types.ts",
+      "sourceSha256": "13a070c1ad8ab469f4e20a85e416223decfc9435e73022cbfee5688c0700d731",
+      "beforeIntegrationSha256": "ed8a22333dacea61d2d48539afc3b59a1f12de8243c9ff310e04a777b433d0ed",
+      "integratedSha256": "f43e416bcfa62dd13c3f57014068dcd51ba3bb835c92f623f777eb04ce7b6fa0"
+    },
+    {
+      "path": "app/src/game/levels/l601.ts",
+      "sourceSha256": "1e7f4ca6856184b47969ab0eed9473990868ebde3ba4735f92ce452e752f621d",
+      "beforeIntegrationSha256": "29344a1061ee3f2f2d005502b1c0c7402bfc7eb233a6d16cc1d726dc6fe6b24f",
+      "integratedSha256": "1e7f4ca6856184b47969ab0eed9473990868ebde3ba4735f92ce452e752f621d"
+    },
+    {
+      "path": "app/src/game/renderer/entitiesMesh.ts",
+      "sourceSha256": "7f56d0fbd104110bf042b6f21a29c80e23c4af94f87b385b032480e9221cf4a6",
+      "beforeIntegrationSha256": "d1aa4fc7a45e05df466277711881365912c9fe47299fef13cb5cb5decd658d9a",
+      "integratedSha256": "ecb2e1eb0db1dd7171348b2d2eadd12f20108fad1afbbd92020b62586085411c"
+    },
+    {
+      "path": "app/src/game/renderer/itemsMesh.ts",
+      "sourceSha256": "607eeff0427a50e4bad79f2d1a172097759a4908fac354c312213ea168abc2d6",
+      "beforeIntegrationSha256": "ae31c9b686ec3a448e457e97566a4429cc333393a5b9d64e2157acd340f46cc8",
+      "integratedSha256": "c58cac94c9c52b78e4e10a2814f02ceb984d0f75f573329fb612223877c85f21"
+    },
+    {
+      "path": "app/src/game/renderer/partygoerMesh.ts",
+      "sourceSha256": "c2f672d521104e859a1207bc349b9eb879fd23af8a10e0274b838ba5f7f2372f",
+      "beforeIntegrationSha256": null,
+      "integratedSha256": "69c7b50cf31669626745ac8f7cff7e9339183dc2c73b6bec0342754044ac0c7c"
+    },
+    {
+      "path": "app/src/game/renderer/renderer.ts",
+      "sourceSha256": "cabea778bada6b2b25a9c6b83b735a7c2fe59212a64e414b1ce306d4b83f7183",
+      "beforeIntegrationSha256": "0436448eb4d99c06d971573848559fa3b91fc325485ad10ecd4dd68c17fc82ee",
+      "integratedSha256": "4b8ccd87cdbf386f3374b0bcd3e6beaf1b09356f447f1225f763f3a83efc4bc9"
+    },
+    {
+      "path": "app/src/game/renderer/structures.ts",
+      "sourceSha256": "d8c3cdac4ac327928641169fd4b7284c316587a7b0040a19515d5c5cf74914ea",
+      "beforeIntegrationSha256": "bc908f0f2ccf085472837d31fab127886a025b9ac87f1d61844d771485c26956",
+      "integratedSha256": "34772a3365201f3939d862bbfb432e7b00576768249308f829c425823936c1bd"
+    },
+    {
+      "path": "app/src/game/world/mapgen.ts",
+      "sourceSha256": "d1dba1b55d8c881fc62a2c1d0f8cb072f605635fa986f456ac8cf9808c9d81aa",
+      "beforeIntegrationSha256": "6f528c2827c794c486783d58cc1efa5f761f3bc334cca58d2c606e6adcce1518",
+      "integratedSha256": "97d3ce8da9be0140e63d2ea8ca7a8e13211e48e9620914cc3e75f6c9b17e821c"
+    },
+    {
+      "path": "app/src/proto/partygoerProto.ts",
+      "sourceSha256": "6b58d47ec1c694ce0e8b31e5559c41c2cb6bfc26bc9e5aace36f586b524678a0",
+      "beforeIntegrationSha256": null,
+      "integratedSha256": "6b58d47ec1c694ce0e8b31e5559c41c2cb6bfc26bc9e5aace36f586b524678a0"
+    },
+    {
+      "path": "app/verifier/partygoer-app.html",
+      "sourceSha256": null,
+      "beforeIntegrationSha256": null,
+      "integratedSha256": "4cc82c65ab1d89a4c169d8a21783553ac9712687b3acacb98f781fd1acce3239"
+    },
+    {
+      "path": "app/verifier/partygoer-app.tsx",
+      "sourceSha256": null,
+      "beforeIntegrationSha256": null,
+      "integratedSha256": "38c9fc71bcb7f982b85e202d2a093a3cef038d1a6b8d55fb368edb68a70c7dd0"
+    },
+    {
+      "path": "app/verifier/partygoer-check.ts",
+      "sourceSha256": null,
+      "beforeIntegrationSha256": null,
+      "integratedSha256": "96f6d83c60e44c9fdbfc46ff74a21f03b5a13da018442589c8e25c41c0abcbdc"
+    },
+    {
+      "path": "info.md",
+      "sourceSha256": null,
+      "beforeIntegrationSha256": "4e3490b664024c691d0b30ac51192ff0e236e57bd9382e3072546deabf350ad7",
+      "integratedSha256": "172bbc3019162b967f248e810a7376f3fc9e02ed79c908c6e3f1549bc2cc7278"
+    }
+  ],
+  "verification": {
+    "staticChecks": "reports/partygoer/static.log",
+    "build": "reports/partygoer/build.log",
+    "classic": "reports/partygoer/classic/result.json",
+    "realistic": "reports/partygoer/realistic/result.json",
+    "instructions": "reports/partygoer/README.md"
+  }
+}
