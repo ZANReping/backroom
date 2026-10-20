@@ -1,0 +1,53 @@
+{
+  "nodeVersion": "v24.11.1",
+  "npmVersion": "11.6.2",
+  "install": {
+    "command": "npm ci --no-audit --no-fund --registry=https://registry.npmjs.org",
+    "exitCode": 0,
+    "finishedAt": "2026-10-20T05:22:49.2111715Z"
+  },
+  "build": {
+    "command": "npm run build",
+    "exitCode": 0,
+    "finishedAt": "2026-10-20T05:25:30.2522114Z"
+  },
+  "checks": [
+    {
+      "command": "npm run check:shrimp-item-cache",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run check:model-warmup",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run check:l1-offline",
+      "exitCode": 0
+    }
+  ],
+  "app": {
+    "ok": true,
+    "report": "app/reports/l1-entry-shrimp/after-realistic-20261020-entry/result.json",
+    "gpu": {
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "contextLost": false
+    },
+    "cleanup": {
+      "browser": "SIGTERM",
+      "server": "SIGTERM",
+      "profileRemoved": true
+    }
+  },
+  "userServer": {
+    "url": "http://localhost:3000/",
+    "pid": 44704,
+    "http": 200,
+    "hasAppEntry": true,
+    "bakeRevision": 17,
+    "bakedChunks": 108,
+    "hasCurrentShrimpWarmup": true,
+    "hasBackgroundCancel": true,
+    "checkedAt": "2026-10-20T05:28:26.7951077Z"
+  },
+  "passed": true
+}

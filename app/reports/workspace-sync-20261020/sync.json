@@ -4309,10 +4309,11 @@
     },
     {
       "relative": "app/package-lock.json",
-      "bytes": 317797,
-      "sha256": "961b3cf7db78e6762e591e29b6bd48b879fead553fa2aa9a9a1cce55066b1664",
+      "bytes": 317775,
+      "sha256": "bb75668709cb044617a75b6984dc343e3fe09be8b398bb1dc1a37fc52ad91b73",
       "prior": "961b3cf7db78e6762e591e29b6bd48b879fead553fa2aa9a9a1cce55066b1664",
-      "action": "same"
+      "action": "same",
+      "transferSha256": "961b3cf7db78e6762e591e29b6bd48b879fead553fa2aa9a9a1cce55066b1664"
     },
     {
       "relative": "app/package.json",
@@ -39427,7 +39428,18 @@
       "action": "update"
     }
   ],
-  "verified": "2026-10-20T05:12:23.861Z",
+  "postTransferChanges": [
+    {
+      "file": "app/package-lock.json",
+      "kind": "npm registry URL normalization",
+      "count": 11,
+      "from": "npm.mirrors.msh.team",
+      "to": "registry.npmjs.org",
+      "versionsAndIntegrityUnchanged": true,
+      "backup": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\.cache\\workspace-sync\\2026-10-20T05-11-00-080Z\\backup\\app\\package-lock.json"
+    }
+  ],
+  "verified": "2026-10-20T05:24:10.311Z",
   "mismatches": [],
   "success": true
 }
