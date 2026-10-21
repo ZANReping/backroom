@@ -121,7 +121,7 @@ export function applyL1Architecture(c:GenChunk,cx:number,cy:number,seed=0,conten
     for(let z=9;z<=23;z++)for(let x=9;x<=23;x++)c.tiles[z*32+x]=1
     c.structures=c.structures.filter(s=>!(s.x>=wx+10&&s.x<wx+23&&s.y>=wz+10&&s.y<wz+23&&!s.data?.sid))
     c.structures.push({kind:'landmark',x:wx+20,y:wz+20,w:1,h:1,solid:false,data:{outpost}})
-    for(const [x,z] of [[11,11],[21,11],[11,21],[23,22]])c.structures.push({kind:'wallsign',x:wx+x,y:wz+z,w:1,h:1,solid:false,data:{text:names[outpost]+' / CORE',l1Waymark:1,targetX:wx+20.5,targetY:wz+20.5}})
+    for(const [x,z] of [[11,11],[21,11],[11,21],[23,22]])c.structures.push({kind:'wallsign',x:wx+x,y:wz+z,w:1,h:1,solid:false,data:{text:names[outpost]+' / CORE',org:outpost,l1Waymark:1,targetX:wx+20.5,targetY:wz+20.5}})
   }
   if(v!=='maintenance'&&v!=='aisle')for(let j=0;j<(v==='storage'?5:3);j++){
     for(let trial=0;trial<20;trial++){
@@ -133,7 +133,7 @@ export function applyL1Architecture(c:GenChunk,cx:number,cy:number,seed=0,conten
   }
   // Stable reserve slots: hidden crates retain their identities and inventories.
   for(const s of c.structures)if(s.kind==='crate'&&s.data?.sid!==undefined){s.data.l1Prop='crate';s.data.l1Crate=1;s.data.l1Stack=l1Hash(s.x,s.y,seed^929)<.13?2:1;s.data.l1Hidden=l1Hash(s.x,s.y,seed^919)<.3?1:0}
-  if(v==='aisle')for(const [x,z] of [[5,8],[5,24]])if(c.tiles[z*32+x]===1)c.structures.push({kind:'wallsign',x:wx+x,y:wz+z,w:1,h:1,solid:false,data:{text:'REF 08 / KEEP IN SIGHT',l1Waymark:1}})
+  if(v==='aisle')for(const [x,z] of [[5,8],[5,24]])if(c.tiles[z*32+x]===1)c.structures.push({kind:'wallsign',x:wx+x,y:wz+z,w:1,h:1,solid:false,data:{text:'REF 08 / KEEP IN SIGHT',org:'meg',l1Waymark:1}})
   // Remove obsolete non-interactive scenery. Loot containers and NPC work anchors stay intact.
   c.structures=c.structures.filter(s=>s.kind!=='vaultcol' && !((v==='parking'||v==='aisle')&&s.kind==='pillar') &&
     !(v==='garden'&&['wheatpatch','hedgerow','glowshroom'].includes(s.kind)))
@@ -184,7 +184,7 @@ export function applyL1Architecture(c:GenChunk,cx:number,cy:number,seed=0,conten
   if(!photo&&!outpost&&v!=='maintenance'){
     const d=l1District(seed,cx,cy),ax=d.cx,ay=d.cy
     const target=l1Outpost(seed,ax,ay),dist=Math.abs(cx-ax)+Math.abs(cy-ay)
-    if(target&&dist>=1&&dist<=3&&(cx===ax||cy===ay)&&c.tiles[16*32+16]===1)c.structures.push({kind:'wallsign',x:wx+16,y:wz+16,w:1,h:1,solid:false,data:{text:target.toUpperCase()+' / SHELTER',l1Waymark:1,targetX:ax*32+20.5,targetY:ay*32+20.5}})
+    if(target&&dist>=1&&dist<=3&&(cx===ax||cy===ay)&&c.tiles[16*32+16]===1)c.structures.push({kind:'wallsign',x:wx+16,y:wz+16,w:1,h:1,solid:false,data:{text:target.toUpperCase()+' / SHELTER',org:target,l1Waymark:1,targetX:ax*32+20.5,targetY:ay*32+20.5}})
   }
   c.lights=[]
   for(let z=0;z<32;z++)for(let x=0;x<32;x++){
@@ -223,4 +223,3 @@ export function applyL1Architecture(c:GenChunk,cx:number,cy:number,seed=0,conten
   for(const s of c.structures)if(s.data?.l1Crate){s.x+=(s.w-L1_CRATE.width)/2;s.y+=(s.h-L1_CRATE.depth)/2;s.w=L1_CRATE.width;s.h=L1_CRATE.depth}
   return c
 }
-

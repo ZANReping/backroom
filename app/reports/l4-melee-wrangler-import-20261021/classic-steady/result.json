@@ -1,0 +1,842 @@
+{
+  "seed": 424242,
+  "mode": "classic",
+  "port": 11414,
+  "cdp": 11415,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l4-melee-wrangler-import-20261021\\classic-steady\\qa-1792590503707-49420",
+    "--remote-debugging-port=11415",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 73652,
+    "server": 12140
+  },
+  "appBootMs": 14746.1238,
+  "entryMs": 6275.189300000002,
+  "firstPlayableMs": 27793.964200000002,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 4,
+    "paused": false,
+    "near": true,
+    "chunks": 9,
+    "tasks": 4,
+    "memory": {
+      "geometries": 813,
+      "textures": 43,
+      "programs": 69
+    },
+    "world": [
+      15.5,
+      15.5,
+      0
+    ]
+  },
+  "l4": [
+    {
+      "name": "hall",
+      "block": {
+        "i": -1,
+        "j": 1,
+        "type": "hall"
+      },
+      "target": {
+        "x": 69.5,
+        "y": 84.5,
+        "wx": 69.5,
+        "wy": 71.5,
+        "deg": 180
+      },
+      "world": [
+        -26.5,
+        84.5,
+        0
+      ],
+      "look": {
+        "yaw": 0,
+        "pitch": -0.005384563344859186,
+        "locked": false,
+        "rayX": 0,
+        "rayY": -0.9999855032738186,
+        "rayZ": -0.005384537325320567,
+        "visualHit": null,
+        "roll": 0
+      },
+      "fov": 58,
+      "prepareMs": 5389.29999999702,
+      "level": 4,
+      "paused": false,
+      "near": true,
+      "chunks": 13,
+      "tasks": 1,
+      "memory": {
+        "geometries": 1304,
+        "textures": 59,
+        "programs": 73
+      }
+    },
+    {
+      "name": "open",
+      "block": {
+        "i": 0,
+        "j": 0,
+        "type": "open"
+      },
+      "target": {
+        "x": 69.5,
+        "y": 73.5,
+        "wx": 73.5,
+        "wy": 73.5
+      },
+      "world": [
+        5.5,
+        9.5,
+        0
+      ],
+      "look": {
+        "yaw": -1.5707963267948966,
+        "pitch": -0.017498213869856612,
+        "locked": false,
+        "rayX": 0.9998469101619251,
+        "rayY": -3.3306690738754706e-16,
+        "rayZ": -0.017497320927833706,
+        "visualHit": null,
+        "roll": 0
+      },
+      "fov": 66,
+      "prepareMs": 3053.5,
+      "level": 4,
+      "paused": false,
+      "near": true,
+      "chunks": 14,
+      "tasks": 1,
+      "memory": {
+        "geometries": 2268,
+        "textures": 70,
+        "programs": 73
+      }
+    },
+    {
+      "name": "cubicle",
+      "block": {
+        "i": -1,
+        "j": -1,
+        "type": "cubicle"
+      },
+      "target": {
+        "x": 72.5,
+        "y": 78.5,
+        "wx": 70,
+        "wy": 79
+      },
+      "world": [
+        -23.5,
+        -49.5,
+        0
+      ],
+      "look": {
+        "yaw": 1.7681918866447774,
+        "pitch": -0.027449362773195325,
+        "locked": false,
+        "rayX": -0.9802112810424036,
+        "rayY": 0.19604225620848054,
+        "rayZ": -0.027445915869187324,
+        "visualHit": null,
+        "roll": 0
+      },
+      "fov": 58,
+      "prepareMs": 5322,
+      "level": 4,
+      "paused": false,
+      "near": true,
+      "chunks": 14,
+      "tasks": 1,
+      "memory": {
+        "geometries": 2536,
+        "textures": 67,
+        "programs": 73
+      }
+    },
+    {
+      "name": "rooms",
+      "block": {
+        "i": -1,
+        "j": 0,
+        "type": "rooms"
+      },
+      "target": {
+        "x": 63.5,
+        "y": 71.5,
+        "wx": 68,
+        "wy": 71.5
+      },
+      "world": [
+        -64.5,
+        7.5,
+        0
+      ],
+      "look": {
+        "yaw": -1.5707963267948966,
+        "pitch": -0.015554301050900473,
+        "locked": false,
+        "rayX": 0.9998790342982713,
+        "rayY": -1.1102230246251568e-16,
+        "rayZ": -0.015553673866862013,
+        "visualHit": {
+          "kind": "structure",
+          "structure": {
+            "kind": "hoteldoor",
+            "x": 97,
+            "y": 71,
+            "w": 1,
+            "h": 1,
+            "solid": true,
+            "data": {
+              "l4": 1,
+              "open": 0,
+              "axis": "y",
+              "officeDoor": 1,
+              "sid": 3537295919
+            }
+          },
+          "x": 97.47250000014901,
+          "y": 71.50000000000001,
+          "z": 1.5272311454784437,
+          "rayT": 1.9727386338621844,
+          "yaw": -1.5707963267948966,
+          "pitch": -0.015554301050900473,
+          "playerX": 95.5,
+          "playerY": 71.5,
+          "playerZ": 0,
+          "at": 1792590557204
+        },
+        "roll": 0
+      },
+      "fov": 58,
+      "prepareMs": 3625.7999999970198,
+      "level": 4,
+      "paused": false,
+      "near": true,
+      "chunks": 10,
+      "tasks": 1,
+      "memory": {
+        "geometries": 2513,
+        "textures": 72,
+        "programs": 73
+      }
+    },
+    {
+      "name": "window-north",
+      "block": {
+        "i": -1,
+        "j": 1,
+        "type": "hall"
+      },
+      "target": {
+        "x": 69.5,
+        "y": 76,
+        "wx": 69.5,
+        "wy": 71.5,
+        "deg": 180
+      },
+      "world": [
+        -26.5,
+        76,
+        0
+      ],
+      "look": {
+        "yaw": 0,
+        "pitch": -0.015554301050900473,
+        "locked": false,
+        "rayX": 0,
+        "rayY": -0.9998790342982712,
+        "rayZ": -0.01555367386686201,
+        "visualHit": null,
+        "roll": 0
+      },
+      "fov": 58,
+      "prepareMs": 3988.7000000029802,
+      "level": 4,
+      "paused": false,
+      "near": true,
+      "chunks": 12,
+      "tasks": 1,
+      "memory": {
+        "geometries": 2191,
+        "textures": 69,
+        "programs": 75
+      }
+    },
+    {
+      "name": "window-east",
+      "block": {
+        "i": -1,
+        "j": 1,
+        "type": "hall"
+      },
+      "target": {
+        "x": 71,
+        "y": 76
+      },
+      "world": [
+        -25,
+        76,
+        0
+      ],
+      "look": {
+        "yaw": -2.5535900500422257,
+        "pitch": -0.016639470049083064,
+        "locked": false,
+        "rayX": 0.5546234075307281,
+        "rayY": 0.8319351112960922,
+        "rayZ": -0.01663870222592186,
+        "visualHit": null,
+        "roll": 0
+      },
+      "fov": 58,
+      "prepareMs": 800.7000000029802,
+      "level": 4,
+      "paused": false,
+      "near": true,
+      "chunks": 15,
+      "tasks": 0,
+      "memory": {
+        "geometries": 2644,
+        "textures": 69,
+        "programs": 75
+      }
+    },
+    {
+      "name": "watercooler",
+      "block": {
+        "i": 0,
+        "j": 0,
+        "type": "open"
+      },
+      "target": {
+        "kind": "watercooler",
+        "x": 86,
+        "y": 72,
+        "w": 1,
+        "h": 1,
+        "solid": true,
+        "data": {
+          "l4": 1,
+          "deg": 270,
+          "almond": 1,
+          "water": 4,
+          "sid": 1059301257
+        }
+      },
+      "world": [
+        -43.3,
+        40.5,
+        0
+      ],
+      "look": {
+        "yaw": -1.5707963267948966,
+        "pitch": -0.3563331370116412,
+        "locked": false,
+        "rayX": 0.9371822701578227,
+        "rayY": -3.3306690738754706e-16,
+        "rayZ": -0.3488400672254118,
+        "visualHit": {
+          "kind": "structure",
+          "structure": {
+            "kind": "watercooler",
+            "x": 86,
+            "y": 72,
+            "w": 1,
+            "h": 1,
+            "solid": true,
+            "data": {
+              "l4": 1,
+              "deg": 270,
+              "almond": 1,
+              "water": 4,
+              "sid": 1059301257
+            }
+          },
+          "x": 86.51299999994785,
+          "y": 72.5,
+          "z": 0.869760936427624,
+          "rayT": 1.9345222991068076,
+          "yaw": -1.5707963267948966,
+          "pitch": -0.3563331370116412,
+          "playerX": 84.7,
+          "playerY": 72.5,
+          "playerZ": 0,
+          "at": 1792590568544
+        },
+        "roll": 0
+      },
+      "fov": 58,
+      "prepareMs": 4788.5,
+      "level": 4,
+      "paused": false,
+      "near": false,
+      "chunks": 11,
+      "tasks": 1,
+      "memory": {
+        "geometries": 2357,
+        "textures": 68,
+        "programs": 75
+      }
+    }
+  ],
+  "coolerMechanics": {
+    "water": 3,
+    "oneAlmond": true
+  },
+  "l4Performance": {
+    "settleMs": 16047.59999999404,
+    "chunks": 25,
+    "tasks": 0,
+    "scope": "Native GPU requestAnimationFrame cadence; full frame includes world/shadows/post; not a GPU timer or Android result",
+    "rounds": [
+      {
+        "median": 9.700000002980232,
+        "p95": 13.700000002980232,
+        "draws": 1037,
+        "triangles": 716651
+      },
+      {
+        "median": 9.799999997019768,
+        "p95": 14.900000005960464,
+        "draws": 1037,
+        "triangles": 716651
+      },
+      {
+        "median": 17.69999998807907,
+        "p95": 25.299999997019768,
+        "draws": 1037,
+        "triangles": 716651
+      },
+      {
+        "median": 10.5,
+        "p95": 21,
+        "draws": 1037,
+        "triangles": 716651
+      },
+      {
+        "median": 10,
+        "p95": 17.599999994039536,
+        "draws": 1037,
+        "triangles": 716651
+      }
+    ],
+    "memory": {
+      "geometries": 2367,
+      "textures": 78,
+      "programs": 75
+    }
+  },
+  "summary": {
+    "checks": [
+      "L4 deterministic block hall",
+      "L4 deterministic block open",
+      "L4 deterministic block cubicle",
+      "L4 deterministic block rooms",
+      "L4 deterministic block hall",
+      "L4 deterministic block hall",
+      "safe L4 interior view",
+      "L4 deterministic block open",
+      "real generated water cooler",
+      "safe water cooler viewpoint",
+      "generated water cooler for interaction",
+      "actual cooler consumes a drink and restores thirst",
+      "almond cooler gives only one bottle"
+    ],
+    "records": [
+      {
+        "name": "hall",
+        "block": {
+          "i": -1,
+          "j": 1,
+          "type": "hall"
+        },
+        "target": {
+          "x": 69.5,
+          "y": 84.5,
+          "wx": 69.5,
+          "wy": 71.5,
+          "deg": 180
+        },
+        "world": [
+          -26.5,
+          84.5,
+          0
+        ],
+        "look": {
+          "yaw": 0,
+          "pitch": -0.005384563344859186,
+          "locked": false,
+          "rayX": 0,
+          "rayY": -0.9999855032738186,
+          "rayZ": -0.005384537325320567,
+          "visualHit": null,
+          "roll": 0
+        },
+        "fov": 58,
+        "prepareMs": 5389.29999999702,
+        "level": 4,
+        "paused": false,
+        "near": true,
+        "chunks": 13,
+        "tasks": 1,
+        "memory": {
+          "geometries": 1304,
+          "textures": 59,
+          "programs": 73
+        }
+      },
+      {
+        "name": "open",
+        "block": {
+          "i": 0,
+          "j": 0,
+          "type": "open"
+        },
+        "target": {
+          "x": 69.5,
+          "y": 73.5,
+          "wx": 73.5,
+          "wy": 73.5
+        },
+        "world": [
+          5.5,
+          9.5,
+          0
+        ],
+        "look": {
+          "yaw": -1.5707963267948966,
+          "pitch": -0.017498213869856612,
+          "locked": false,
+          "rayX": 0.9998469101619251,
+          "rayY": -3.3306690738754706e-16,
+          "rayZ": -0.017497320927833706,
+          "visualHit": null,
+          "roll": 0
+        },
+        "fov": 66,
+        "prepareMs": 3053.5,
+        "level": 4,
+        "paused": false,
+        "near": true,
+        "chunks": 14,
+        "tasks": 1,
+        "memory": {
+          "geometries": 2268,
+          "textures": 70,
+          "programs": 73
+        }
+      },
+      {
+        "name": "cubicle",
+        "block": {
+          "i": -1,
+          "j": -1,
+          "type": "cubicle"
+        },
+        "target": {
+          "x": 72.5,
+          "y": 78.5,
+          "wx": 70,
+          "wy": 79
+        },
+        "world": [
+          -23.5,
+          -49.5,
+          0
+        ],
+        "look": {
+          "yaw": 1.7681918866447774,
+          "pitch": -0.027449362773195325,
+          "locked": false,
+          "rayX": -0.9802112810424036,
+          "rayY": 0.19604225620848054,
+          "rayZ": -0.027445915869187324,
+          "visualHit": null,
+          "roll": 0
+        },
+        "fov": 58,
+        "prepareMs": 5322,
+        "level": 4,
+        "paused": false,
+        "near": true,
+        "chunks": 14,
+        "tasks": 1,
+        "memory": {
+          "geometries": 2536,
+          "textures": 67,
+          "programs": 73
+        }
+      },
+      {
+        "name": "rooms",
+        "block": {
+          "i": -1,
+          "j": 0,
+          "type": "rooms"
+        },
+        "target": {
+          "x": 63.5,
+          "y": 71.5,
+          "wx": 68,
+          "wy": 71.5
+        },
+        "world": [
+          -64.5,
+          7.5,
+          0
+        ],
+        "look": {
+          "yaw": -1.5707963267948966,
+          "pitch": -0.015554301050900473,
+          "locked": false,
+          "rayX": 0.9998790342982713,
+          "rayY": -1.1102230246251568e-16,
+          "rayZ": -0.015553673866862013,
+          "visualHit": {
+            "kind": "structure",
+            "structure": {
+              "kind": "hoteldoor",
+              "x": 65,
+              "y": 39,
+              "w": 1,
+              "h": 1,
+              "solid": true,
+              "data": {
+                "l4": 1,
+                "open": 0,
+                "axis": "y",
+                "officeDoor": 1,
+                "sid": 3537295919
+              }
+            },
+            "x": 97.47250000014901,
+            "y": 71.50000000000001,
+            "z": 1.5272311454784437,
+            "rayT": 1.9727386338621844,
+            "yaw": -1.5707963267948966,
+            "pitch": -0.015554301050900473,
+            "playerX": 95.5,
+            "playerY": 71.5,
+            "playerZ": 0,
+            "at": 1792590557204
+          },
+          "roll": 0
+        },
+        "fov": 58,
+        "prepareMs": 3625.7999999970198,
+        "level": 4,
+        "paused": false,
+        "near": true,
+        "chunks": 10,
+        "tasks": 1,
+        "memory": {
+          "geometries": 2513,
+          "textures": 72,
+          "programs": 73
+        }
+      },
+      {
+        "name": "window-north",
+        "block": {
+          "i": -1,
+          "j": 1,
+          "type": "hall"
+        },
+        "target": {
+          "x": 69.5,
+          "y": 76,
+          "wx": 69.5,
+          "wy": 71.5,
+          "deg": 180
+        },
+        "world": [
+          -26.5,
+          76,
+          0
+        ],
+        "look": {
+          "yaw": 0,
+          "pitch": -0.015554301050900473,
+          "locked": false,
+          "rayX": 0,
+          "rayY": -0.9998790342982712,
+          "rayZ": -0.01555367386686201,
+          "visualHit": null,
+          "roll": 0
+        },
+        "fov": 58,
+        "prepareMs": 3988.7000000029802,
+        "level": 4,
+        "paused": false,
+        "near": true,
+        "chunks": 12,
+        "tasks": 1,
+        "memory": {
+          "geometries": 2191,
+          "textures": 69,
+          "programs": 75
+        }
+      },
+      {
+        "name": "window-east",
+        "block": {
+          "i": -1,
+          "j": 1,
+          "type": "hall"
+        },
+        "target": {
+          "x": 71,
+          "y": 76
+        },
+        "world": [
+          -25,
+          76,
+          0
+        ],
+        "look": {
+          "yaw": -2.5535900500422257,
+          "pitch": -0.016639470049083064,
+          "locked": false,
+          "rayX": 0.5546234075307281,
+          "rayY": 0.8319351112960922,
+          "rayZ": -0.01663870222592186,
+          "visualHit": null,
+          "roll": 0
+        },
+        "fov": 58,
+        "prepareMs": 800.7000000029802,
+        "level": 4,
+        "paused": false,
+        "near": true,
+        "chunks": 15,
+        "tasks": 0,
+        "memory": {
+          "geometries": 2644,
+          "textures": 69,
+          "programs": 75
+        }
+      },
+      {
+        "name": "watercooler",
+        "block": {
+          "i": 0,
+          "j": 0,
+          "type": "open"
+        },
+        "target": {
+          "kind": "watercooler",
+          "x": 86,
+          "y": 72,
+          "w": 1,
+          "h": 1,
+          "solid": true,
+          "data": {
+            "l4": 1,
+            "deg": 270,
+            "almond": 1,
+            "water": 4,
+            "sid": 1059301257
+          }
+        },
+        "world": [
+          -43.3,
+          40.5,
+          0
+        ],
+        "look": {
+          "yaw": -1.5707963267948966,
+          "pitch": -0.3563331370116412,
+          "locked": false,
+          "rayX": 0.9371822701578227,
+          "rayY": -3.3306690738754706e-16,
+          "rayZ": -0.3488400672254118,
+          "visualHit": {
+            "kind": "structure",
+            "structure": {
+              "kind": "watercooler",
+              "x": 86,
+              "y": 72,
+              "w": 1,
+              "h": 1,
+              "solid": true,
+              "data": {
+                "l4": 1,
+                "deg": 270,
+                "almond": 1,
+                "water": 4,
+                "sid": 1059301257
+              }
+            },
+            "x": 86.51299999994785,
+            "y": 72.5,
+            "z": 0.869760936427624,
+            "rayT": 1.9345222991068076,
+            "yaw": -1.5707963267948966,
+            "pitch": -0.3563331370116412,
+            "playerX": 84.7,
+            "playerY": 72.5,
+            "playerZ": 0,
+            "at": 1792590568544
+          },
+          "roll": 0
+        },
+        "fov": 58,
+        "prepareMs": 4788.5,
+        "level": 4,
+        "paused": false,
+        "near": false,
+        "chunks": 11,
+        "tasks": 1,
+        "memory": {
+          "geometries": 2357,
+          "textures": 68,
+          "programs": 75
+        }
+      }
+    ],
+    "status": {
+      "level": 4,
+      "paused": false,
+      "near": true,
+      "chunks": 25,
+      "tasks": 0,
+      "memory": {
+        "geometries": 2367,
+        "textures": 78,
+        "programs": 75
+      },
+      "world": [
+        -43.3,
+        40.5,
+        0
+      ]
+    }
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

@@ -1,0 +1,9 @@
+
+> my-app@0.0.0 check:ouro-import
+> esbuild scripts/check-ouro-import.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-ouro-import.mjs && node .cache/check-ouro-import.mjs
+
+
+  .cache\check-ouro-import.mjs  875.8kb
+
+Done in 66ms
+{"checks":137261,"baselineSamples":96,"layoutSamples":12,"generation":6,"bakeRevision":19,"status":"passed"}

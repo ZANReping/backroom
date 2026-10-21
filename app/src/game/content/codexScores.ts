@@ -59,7 +59,7 @@ export const ENTITY_INTEL: Record<string, string> = {
   carrier: 'D', // 运输车
   pipeworm: 'E', // 管道蠕虫
   soilworm: 'E', // 土壤蠕虫
-  arms: 'E', // 手臂
+  arms: 'D', // 手臂（Entité 15-FR）：循声出动、挑最近的连通风口、怕光会退——比本能稍多一点
   ferren: 'C', // 费伦
   jerry: 'B', // 鹉主杰瑞
   duller: 'C', // 钝人
@@ -135,6 +135,7 @@ const IOTS_ORIGIN_OVERRIDE: Record<string, string> = {
   thingmeat: '实体相关', // 7 层之物身上割下
   velvetcake: '实体相关', // 派对客反刍制成
   ratmeat: '实体相关', // v79 尸鼠身上割下
+  ashpile: '实体相关', // 观察者光束化灰留下
   manmade: '实体相关', // 人制品售货机（Entity 36）的产品
   pamphlet: '实体相关', // 杰瑞的信众张贴（鹉主教义）
   jerryflyer: '实体相关', // 杰瑞的信众散发
@@ -254,7 +255,8 @@ export const ENTITY_CECS_CLASS: Record<string, string> = {
   faceling: 'Anthropoid', duller: 'Anthropoid', skinstealer: 'Anthropoid', bellhop: 'Anthropoid',
   mimicry: 'Anthropoid', seated: 'Anthropoid', wretch: 'Anthropoid', strider: 'Anthropoid',
   mangled: 'Anthropoid', partygoer: 'Anthropoid', wrangler: 'Anthropoid',
-  smiler: 'Spectrous', arms: 'Spectrous', arcwraith: 'Spectrous', copierwraith: 'Spectrous',
+  smiler: 'Spectrous', arms: 'Enigmatic', // 手臂：只见长臂、不见本体（隐秘）
+  arcwraith: 'Spectrous', copierwraith: 'Spectrous',
   clump: 'Chimeric', thething: 'Leviathan',
   carrier: 'MCH', watcher: 'MCH', windowent: 'Itemic',
   mirrorself: 'Enigmatic', lightguide: 'Enigmatic',

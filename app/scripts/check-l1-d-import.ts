@@ -12,6 +12,7 @@ import { l1FindReference } from '../src/game/world/l1Spatial'
 import { L1_BAKE_REVISION } from '../src/game/world/l1BakeTypes'
 import {l1PlanRooms} from '../src/game/world/l1Plan'
 import {genL1ChunkRaw} from '../src/game/world/infiniteL1'
+import {l1OuroDressing} from '../src/game/world/l1Dressing'
 
 let checks = 0
 const check = (v: unknown, msg: string) => { checks++; assert(v, msg) }
@@ -49,11 +50,11 @@ for(const seed of [1,42,20261006])for(const room of l1PlanRooms(seed,-500,-500,5
  }
 }
 const ref = l1FindReference(20261006, 'ouroboros', 2400)!; check(!!ref, 'ouroboros reference exists')
-const fingerprints: string[] = []; let litter = 0, boards = 0
+const fingerprints: string[] = []; let litter = 0, grates = 0, matpiles = 0
 for (let cy = Math.floor(ref.centerY / 32) - 1; cy <= Math.floor(ref.centerY / 32) + 1; cy++) for (let cx = Math.floor(ref.centerX / 32) - 1; cx <= Math.floor(ref.centerX / 32) + 1; cx++) {
-  const d = buildL1Data(20261006, cx, cy), again = buildL1Data(20261006, cx, cy); fingerprints.push(d.fingerprint); check(d.fingerprint === again.fingerprint, `ouroboros fingerprint stable ${cx},${cy}`); const ls = d.boxes.filter(b => b.id.startsWith('our-litter:')), bs = d.boxes.filter(b => b.id.startsWith('our-board:')); check(ls.length <= 46, `litter cap ${cx},${cy}`); for (const b of [...ls, ...bs]) check(b.detail === true && b.occlude === false && b.solid === false, `${b.id} detail flags`); litter += ls.length; boards += bs.length
+  const d = buildL1Data(20261006, cx, cy), again = buildL1Data(20261006, cx, cy); fingerprints.push(d.fingerprint); check(d.fingerprint === again.fingerprint, `ouroboros fingerprint stable ${cx},${cy}`); const ls = d.boxes.filter(b => b.id.startsWith('our-litter:')), dressing = l1OuroDressing(d), gs = dressing.filter(x => x.data?.l1Prop === 'grate'), ms = dressing.filter(x => x.data?.l1Prop === 'matpile'); check(ls.length <= 40, `litter cap ${cx},${cy}`); check(gs.length + ms.length <= d.boxes.filter(b => b.solid && b.id.startsWith('column:') && !b.id.includes(':',7)).length, `ouro dressing caps ${cx},${cy}`); for (const b of ls) check(b.detail === true && b.occlude === false && b.solid === false, `${b.id} detail flags`); litter += ls.length; grates += gs.length; matpiles += ms.length
 }
-check(boards > 0, 'ouroboros board decorations present')
+check(grates + matpiles > 0, 'ouroboros grate/material-pile decorations present')
 const manifest = JSON.parse(readFileSync('public/assets/l1-bakes/manifest.json', 'utf8')); check(manifest.bakeRevision >= 14, 'bake revision >= 14')
 const gardenRef=l1FindReference(20261006,'garden',2400)!,garden=manifest.chunks.find((x:any)=>x.quality==='high'&&x.cx===Math.floor(gardenRef.centerX/32)&&x.cy===Math.floor(gardenRef.centerY/32))
 check(!!garden,'actual garden high bake present')
@@ -69,4 +70,4 @@ for(const m of raw.meshes)if(m.style==='garden'&&m.surface==='leaf'){
  }
 }
 check(groundLeafVertices>=100,'active baked renderer contains the dense low moss carpet')
-mkdirSync('reports/l1v2-import/checks', { recursive: true }); const report = { checks, bakeRevision: L1_BAKE_REVISION, manifestBakeRevision: manifest.bakeRevision, ouroboros: { litter, boards },groundLeafVertices, status: 'passed' }; writeFileSync('reports/l1v2-import/checks/l1-d-import.json', JSON.stringify(report, null, 2) + '\n'); console.log(JSON.stringify(report))
+ mkdirSync('reports/l1v2-import/checks', { recursive: true }); const report = { checks, bakeRevision: L1_BAKE_REVISION, manifestBakeRevision: manifest.bakeRevision, ouroboros: { litter, grates, matpiles },groundLeafVertices, status: 'passed' }; writeFileSync('reports/l1v2-import/checks/l1-d-import.json', JSON.stringify(report, null, 2) + '\n'); console.log(JSON.stringify(report))

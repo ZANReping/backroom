@@ -16,6 +16,11 @@ const form = (id: RefinedEntityForm, name: string, desc: string, behavior: strin
   ({ id, name, desc, behavior, traits, ...(initial ? { initial: true } : {}) })
 
 export const ENTITY_FORMS: Readonly<Record<string, readonly EntitySubform[]>> = {
+  wrangler:[
+    form('wrangler-male','雄性牧蛇','灰黑褶皱躯体，白色斜眼与宽阔笑口。','循震动从岩壁切出；注视会被催眠，张嘴蓄力后前扑。',{wranglerKind:'male'}),
+    form('wrangler-female','雌性牧蛇','体节躯体、圆眼和钳状口器，部分个体受孕。','通常啃食岩石，靠近或伤害幼体、卵枝后激怒。',{wranglerKind:'female'}),
+    form('wrangler-juvenile','牧蛇幼体','短小半透明躯体，可见体内器官。','在卵枝附近活动，怕人；刀砍无效，受火焚伤害。',{wranglerKind:'juvenile',passive:true}),
+  ],
   deathmoth: Object.entries(MOTH_FORMS).map(([id, v]) => ({ ...v, id: id as EntityForm })),
   smiler: Object.entries(SMILER_KINDS).map(([id, v]) => ({ id: id as EntityForm, name: id === 'common' ? '普通笑魇' : v.name, desc: v.desc, behavior: v.behavior })),
   hound: [

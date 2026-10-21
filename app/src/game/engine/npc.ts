@@ -1,5 +1,6 @@
 // v53：NPC/对话/委托/声望（游荡步进、杰瑞教化、BRC 模仿/坦白、传教、EL3A 物流与补给）——
 // 自 engine.ts 拆分，逻辑逐语句搬运。
+import {updateTradersDuty} from './tradersDuty'
 import { bandOfPlayerZ, bandOfZ, floorHeight, structBlocksPoint, walkableAt } from '../world/mapgen'
 import { NPCS, JERRY_PREACH_LINES, JERRY_CHANT_LINES } from '../content/npcs'
 import { OUTPOSTS } from '../content/outposts'
@@ -70,8 +71,8 @@ export function updateNpcs(eng: Engine, dt: number) {
       const nf = n.floor ?? 0
       const tx = Math.floor(nx), ty = Math.floor(ny)
       if (!walkableAt(m, tx, ty, nf)) return false
-      if(p.level===101){
-        if(ALPHA_PLACEMENT_CLEARANCES.some(r=>nx>r.x-.22&&nx<r.x+r.w+.22&&ny>r.y-.22&&ny<r.y+r.h+.22))return false
+      if(p.level===101||m.traders){
+        if(p.level===101&&ALPHA_PLACEMENT_CLEARANCES.some(r=>nx>r.x-.22&&nx<r.x+r.w+.22&&ny>r.y-.22&&ny<r.y+r.h+.22))return false
         return canOccupy(m,nx,ny,.24,{z:floorHeight(m,nx,ny,nf),band:nf,crouch:false})
       }
       return !structBlocksPoint(m, nx, ny, floorHeight(m, nx, ny, nf), nf)
@@ -115,6 +116,7 @@ export function updateNpcs(eng: Engine, dt: number) {
     }
     n.lungeT = 0; n.meleeRecoveryT = 0
     if(p.level===101&&updateAlphaDuty(eng,n,dt,walkOk))continue
+    if(m.traders&&updateTradersDuty(eng,n,dt,walkOk))continue
     // v45：杰瑞的信众——看见玩家（~8m）主动靠近（approach 走向玩家），到 ~2.5m 停下后高频自言自语传教；
     // 不追出领地（玩家离岗位锚点 >10m 即放弃，回默认游荡）；
     // v47：仅野外随机信众（L2 宣传间）主动传教——L274 内的信众不主动靠近，需玩家主动交谈；

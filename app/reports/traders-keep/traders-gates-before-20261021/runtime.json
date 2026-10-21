@@ -1,0 +1,278 @@
+{
+  "run": "qa-1792571404651-73388",
+  "label": "traders-gates-before-20261021",
+  "mode": "realistic",
+  "port": 9627,
+  "cdp": 9628,
+  "profile": "E:\\ZAN\\backroom\\app\\reports\\traders-keep\\traders-gates-before-20261021\\qa-1792571404651-73388",
+  "levels": [
+    102
+  ],
+  "cases": [
+    {
+      "id": 102,
+      "cold": {
+        "id": 102,
+        "transition": false,
+        "loadMs": 7118.5,
+        "sceneMs": 6959.79999999702,
+        "generationMs": 158.59999999403954,
+        "frames": 724,
+        "cpuTotalMs": 5261.199999973178,
+        "cpuMaxMs": 1026,
+        "frameP95Ms": 14.099999994039536,
+        "firstRevealMs": [
+          11.200000002980232,
+          10.5
+        ],
+        "metrics": {
+          "warmSceneTextures": {
+            "cpuMs": 119.30000002682209,
+            "calls": 162,
+            "maxMs": 18.5
+          }
+        },
+        "compile": {
+          "calls": 37,
+          "submitMs": 165,
+          "maxSubmitMs": 51.099999994039536,
+          "targets": 37
+        },
+        "firstReady": {
+          "structures": 1422,
+          "lights": 352,
+          "npcs": 13,
+          "nearNpcs": 5,
+          "npcMeshes": 5,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 224,
+            "textures": 71
+          },
+          "programs": 87,
+          "drawCalls": 659,
+          "triangles": 346663,
+          "spawn": {
+            "x": 9,
+            "y": 109,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      },
+      "survey": {
+        "frameP95Ms": 9.900000005960464,
+        "cpuP95Ms": 9.399999991059303,
+        "snapshot": {
+          "structures": 1422,
+          "lights": 352,
+          "npcs": 13,
+          "nearNpcs": 5,
+          "npcMeshes": 5,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 244,
+            "textures": 75
+          },
+          "programs": 87,
+          "drawCalls": 130,
+          "triangles": 65509,
+          "spawn": {
+            "x": 9,
+            "y": 109,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\traders-keep\\traders-gates-before-20261021\\qa-1792571404651-73388",
+    "--remote-debugging-port=9628",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.85",
+    "revision": "@0e66b94549a8bd85f03fbdf189b752d6e7b63c32",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.25"
+  },
+  "pids": {
+    "server": 13448,
+    "browser": 40056
+  },
+  "setup": {
+    "mode": "realistic",
+    "viewport": [
+      1920,
+      1080
+    ],
+    "dpr": 1,
+    "seed": 424242,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "settings": {
+      "texture": 1,
+      "lights": 16,
+      "shadows": true,
+      "lightShadows": 1,
+      "loadingBudget": 6,
+      "chunkBudget": 3,
+      "detail": 1,
+      "bloom": true,
+      "ao": 1
+    }
+  },
+  "gates": {
+    "ok": true,
+    "baseline": true,
+    "rows": [
+      {
+        "id": "west",
+        "position": {
+          "x": 5,
+          "y": 109
+        },
+        "size": [
+          1.3552002794355262,
+          2.3100000245869157,
+          1.0599999973177887
+        ],
+        "model": null,
+        "returnTarget": "back"
+      },
+      {
+        "id": "north",
+        "position": {
+          "x": 214,
+          "y": 5
+        },
+        "size": [
+          1.0599999973177887,
+          2.3100000245869157,
+          1.3552002794355262
+        ],
+        "model": null,
+        "returnTarget": "back"
+      },
+      {
+        "id": "east",
+        "position": {
+          "x": 423,
+          "y": 109
+        },
+        "size": [
+          1.3552002794355644,
+          2.3100000245869157,
+          1.0599999973177887
+        ],
+        "model": null,
+        "returnTarget": "back"
+      }
+    ],
+    "decorations": [
+      {
+        "id": "fitout.west.planter.0.0",
+        "target": null
+      },
+      {
+        "id": "fitout.west.directory",
+        "target": null
+      },
+      {
+        "id": "fitout.west.water",
+        "target": null
+      },
+      {
+        "id": "fitout.west.notices",
+        "target": null
+      },
+      {
+        "id": "fitout.bank.queue.71",
+        "target": "雇佣与业务登记"
+      }
+    ],
+    "service": "公共交易柜台"
+  },
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [],
+  "networkErrors": [
+    {
+      "requestId": "66196.510",
+      "loaderId": "9A1A52A666AA05E561EDFDA970875851",
+      "timestamp": 103389.975621,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:9627/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Wed, 21 Oct 2026 08:30:21 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 460,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 9627,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 103389.961749,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.424,
+          "sendEnd": 0.496,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 12.924,
+          "receiveHeadersEnd": 13.063
+        },
+        "responseTime": 1792571421413.178,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "05141D1224A97E2A8D7D86B53EA1D6E5"
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+import {captureTradersWorld,restoreTradersWorld} from '../world/tradersWorld'
 import { newL7Fx } from './l7Events'
 import { captureL0,restoreL0 } from './l0State'
 import {settleGlowFlight} from './glowsticks'
@@ -27,10 +28,11 @@ import { resetEffects } from './effects'
 import { persist as persistSave } from './save'
 
 export function nextMapSeed(eng: Engine, id: number): number {
-  return eng.mpMapSeed?.(id) ?? (id === 0 ? eng.l0World?.seed ?? eng.seed : id === 1 ? eng.l1World?.seed ?? (eng.seed===20261006?eng.seed:eng.seed+131) : id === 11 ? eng.l11World?.seed ?? (eng.seed+1441) : eng.seed+eng.time*7+id*131)
+  return eng.mpMapSeed?.(id) ?? (id === 0 ? eng.l0World?.seed ?? eng.seed : id === 1 ? eng.l1World?.seed ?? (eng.seed===20261006?eng.seed:eng.seed+131) : id === 11 ? eng.l11World?.seed ?? (eng.seed+1441) : id===102 ? eng.tradersWorld?.seed??(eng.seed+13362) : eng.seed+eng.time*7+id*131)
 }
 
 export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; firstVisit: boolean }, preparedMapSeed?: number) {
+  if(!restore&&eng.map?.traders)eng.tradersWorld=captureTradersWorld(eng.map)
   eng.seating = null
   settleGlowFlight(eng)
   if (!restore && eng.player.level === 0 && eng.map?.inf) eng.l0World=captureL0(eng)
@@ -65,6 +67,7 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   const mapSeed = restore?.mapSeed ?? preparedMapSeed ?? nextMapSeed(eng, id)
   const fv = restore?.firstVisit ?? firstVisit
   eng.map = generateLevel(def, mapSeed, fv)
+  if(id===102)restoreTradersWorld(eng.map,eng.tradersWorld)
   eng.mapSeed = mapSeed
   eng.mapFirstVisit = fv
   eng.bonusExit = null
@@ -74,6 +77,7 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   eng.player.level = id
   eng.player.x = eng.map.spawn.x + 0.5
   eng.player.y = eng.map.spawn.y + 0.5
+  if(id===102&&!restore)look.yaw=-Math.PI/2
   // v51：乘电梯抵达——出生点改到本层电梯（elevatorshaft 出口）邻格；找不到可站邻格则保留默认出生点
   if (viaElevator) {
     const elev = eng.map.exits.find((e) => e.def.kind === 'elevatorshaft')
@@ -706,7 +710,7 @@ export function updateStairs(eng: Engine, dt: number) {
       for (let k = 1; k <= 4; k++) if (at(tx - wx * k, ty - wy * k) !== 1 || solidAtT(tx - wx * k, ty - wy * k)) { clear = false; break }
       if (clear) { dx = -wx; dy = -wy; break }
     }
-    if(eng.levelDef.id===4&&e.def.kind==='oldstairs'){dx=0;dy=-1}
+    if(eng.levelDef.id===4&&e.def.kind==='oldstairs'){const yaw=e.l4?.yaw??0;dx=-Math.round(Math.sin(yaw));dy=-Math.round(Math.cos(yaw))}
     if(eng.levelDef.id===5&&e.def.kind==='oldstairs'){
       const wall=l5StairWallDirection(m,e);if(wall){dx=-wall[0];dy=-wall[1]}
     }

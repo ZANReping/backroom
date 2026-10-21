@@ -105,6 +105,8 @@ export interface ExitInstance {
   floor?: FloorBand
   z?: number // v57t：出口自身所在高度（如 L7 深水中漂浮的门）；缺省按所在地面高度
   discovered: boolean
+  /** L4 exits use an explicit frame shared by the model and stair movement. */
+  l4?: {yaw:number}
   /** L11 portals retain their building frame through worker transfer/window shifts. */
   l11?: {id:string;buildingId:string;blockId:string;angle:number;width:number}
   /** L1 portal approach and carved wall use the same explicit mounting frame. */
@@ -113,7 +115,7 @@ export interface ExitInstance {
 
 export type StructKind = import('../content/tradeDecor').TradeKind | import('../content/l5Decor').L5DecorKind | import('../content/alphaDecor').AlphaKind | import('../content/l11Decor').L11DecorKind | 'settlementprop' | 'settlementstation' | 'l4stairs' | 'l4prop'
   | 'pillar' | 'car' | 'booth' | 'pipes' | 'valve' | 'gauge' | 'boiler'
-  | 'generator' | 'cabinet' | 'trench' | 'cubicle' | 'copier' | 'server' | 'vending'
+  | 'generator' | 'cabinet' | 'trench' | 'cubicle' | 'copier' | 'server' | 'vending' | 'watercooler'
   | 'desk' | 'door' | 'ballroom' | 'lightgrid' | 'wet'   | 'graffiti' | 'crate'
   | 'corpse' | 'ladder' | 'vent' | 'mirror' | 'elevator' | 'frontdesk' | 'bed' | 'sconce'
   | 'socket' // 墙上插板（L0 装饰：米色插座面板）
@@ -245,7 +247,7 @@ export type StructKind = import('../content/tradeDecor').TradeKind | import('../
   | 'inkdoor'      // 维护通廊墨黑色金属门框（非实心，可通行）
   | 'megdoc'       // M.E.G. 文档（可交互打开文档视图；查看后存入图鉴「文档」）
   // ===== v33：Level 1 实体扩展 =====
-  | 'ceilvent'     // 自天花板向下伸出的通风管道（停电时「手臂」由此伸出猎捕）
+  | 'ceilvent'     // 天花板通风管（data.arms=1：「手臂」入住，由手臂实体渲染风口；黑暗 + 噪音时伸出抓人）
   | 'landmark'     // 定居点地标（亮色布料挂物资+纸条；交互显示据点介绍，可前往对应据点）
   // ===== v35：据点（Alpha 基地）家具 =====
   | 'serverrack'   // 中控室无线电机柜（表盘/指示灯/线缆）
@@ -370,9 +372,12 @@ export interface GroundItem {
   y: number
   fake?: boolean
   z?: number // v13：所在高度（米；缺省=所在地面高度，上层物品=FLOOR_H）
+  dur?: number // 近战重制：丢下的近战武器保留单件耐久（0=残件）
+  blood?: number
 }
 
 export interface LightSource {
+  on?: boolean // 部分层级灯具状态；缺省保持原先常亮。
   x: number
   y: number
   r: number

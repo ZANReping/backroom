@@ -1,0 +1,1539 @@
+{
+  "task": "sync-l1v3-nguithr-20261020",
+  "sourceRoot": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom",
+  "targetRoot": "E:\\ZAN\\backroom",
+  "total": 212,
+  "passed": 212,
+  "errors": 0,
+  "backups": [
+    "app/package.json",
+    "app/public/textures/l1/SOURCES.md",
+    "app/scripts/check-l1-placement-fixes.ts",
+    "app/scripts/gen-item-icons.py",
+    "app/scripts/verify-holster.mjs",
+    "app/src/components/HUD.tsx",
+    "app/src/game/content/items.ts",
+    "app/src/game/core/audio.ts",
+    "app/src/game/design/extractLayouts.ts",
+    "app/src/game/engine.ts",
+    "app/src/game/engine/combat.ts",
+    "app/src/game/engine/effects.ts",
+    "app/src/game/engine/entityAI.ts",
+    "app/src/game/engine/inventory.ts",
+    "app/src/game/engine/movement.ts",
+    "app/src/game/entities/spawns.ts",
+    "app/src/game/entities/special.ts",
+    "app/src/game/entities/types.ts",
+    "app/src/game/levels/l3.ts",
+    "app/src/game/levels/l5.ts",
+    "app/src/game/renderer/alphaMeshes.ts",
+    "app/src/game/renderer/entitiesMesh.ts",
+    "app/src/game/renderer/itemsMesh.ts",
+    "app/src/game/renderer/l11Exits.ts",
+    "app/src/game/renderer/l1Architecture.ts",
+    "app/src/game/renderer/l1BakedScene.ts",
+    "app/src/game/renderer/l1Materials.ts",
+    "app/src/game/renderer/l1OutpostEntrance.ts",
+    "app/src/game/renderer/l1Props.ts",
+    "app/src/game/renderer/renderer.ts",
+    "app/src/game/renderer/settlementMeshes.ts",
+    "app/src/game/renderer/structures.ts",
+    "app/src/game/renderer/tradeMeshes.ts",
+    "app/src/game/world/infinite.ts",
+    "app/src/game/world/infiniteL1.ts",
+    "app/src/game/world/infiniteL2.ts",
+    "app/src/game/world/infiniteL3.ts",
+    "app/src/game/world/infiniteL8.ts",
+    "app/src/game/world/l1Architecture.ts",
+    "app/src/game/world/l1Spatial.ts",
+    "app/src/game/world/settlement.ts",
+    "info.md"
+  ],
+  "results": [
+    {
+      "path": "app/package.json",
+      "status": "passed",
+      "sourceSha256": "25ab62d142328549f18cef5a230e9300341a961410dcb054d13c28533ed1c7ff",
+      "targetSha256": "25ab62d142328549f18cef5a230e9300341a961410dcb054d13c28533ed1c7ff",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/SOURCES.md",
+      "status": "passed",
+      "sourceSha256": "aa594e602df40af34817bc8e4365359d03462780abc6fdca838afb8f459b38cf",
+      "targetSha256": "aa594e602df40af34817bc8e4365359d03462780abc6fdca838afb8f459b38cf",
+      "error": null
+    },
+    {
+      "path": "app/scripts/check-l1-placement-fixes.ts",
+      "status": "passed",
+      "sourceSha256": "21f48e58a03de8c5173f8778c05c492a77d9a26124f3ebd56592ccf99d3e654c",
+      "targetSha256": "21f48e58a03de8c5173f8778c05c492a77d9a26124f3ebd56592ccf99d3e654c",
+      "error": null
+    },
+    {
+      "path": "app/scripts/gen-item-icons.py",
+      "status": "passed",
+      "sourceSha256": "23a43881323bbe46d11714abfc27ac439fb467124752c1b4756a5a38b6b58155",
+      "targetSha256": "23a43881323bbe46d11714abfc27ac439fb467124752c1b4756a5a38b6b58155",
+      "error": null
+    },
+    {
+      "path": "app/scripts/verify-holster.mjs",
+      "status": "passed",
+      "sourceSha256": "6c29906ec4b4f8ac9c54420ac8ab2925ffc4610a1f9008877890080a96b5661e",
+      "targetSha256": "6c29906ec4b4f8ac9c54420ac8ab2925ffc4610a1f9008877890080a96b5661e",
+      "error": null
+    },
+    {
+      "path": "app/src/components/HUD.tsx",
+      "status": "passed",
+      "sourceSha256": "6cebfd7c6274219e762403945b087ccfd9784adf1a3c11b646eb5a0a6e59f317",
+      "targetSha256": "6cebfd7c6274219e762403945b087ccfd9784adf1a3c11b646eb5a0a6e59f317",
+      "error": null
+    },
+    {
+      "path": "app/src/game/content/items.ts",
+      "status": "passed",
+      "sourceSha256": "163d2695b4fac86b0a2198a51c2a2267a94e6b8ef7e4f752fde51f59f28f0b14",
+      "targetSha256": "163d2695b4fac86b0a2198a51c2a2267a94e6b8ef7e4f752fde51f59f28f0b14",
+      "error": null
+    },
+    {
+      "path": "app/src/game/core/audio.ts",
+      "status": "passed",
+      "sourceSha256": "bd3ddd71ea98c1c65b56a89cba1239f13dcefa66ad9e03114a3627b559762df3",
+      "targetSha256": "bd3ddd71ea98c1c65b56a89cba1239f13dcefa66ad9e03114a3627b559762df3",
+      "error": null
+    },
+    {
+      "path": "app/src/game/design/extractLayouts.ts",
+      "status": "passed",
+      "sourceSha256": "bf415a993a163c7eb4d64a14096d91faf142dacc9aaaddc49f1377e916756519",
+      "targetSha256": "bf415a993a163c7eb4d64a14096d91faf142dacc9aaaddc49f1377e916756519",
+      "error": null
+    },
+    {
+      "path": "app/src/game/engine.ts",
+      "status": "passed",
+      "sourceSha256": "28c00a9e86a7c6fe07e80add4e46ec93e8cf41dc9831a4bb9ce2cc53eae5ef3d",
+      "targetSha256": "28c00a9e86a7c6fe07e80add4e46ec93e8cf41dc9831a4bb9ce2cc53eae5ef3d",
+      "error": null
+    },
+    {
+      "path": "app/src/game/engine/combat.ts",
+      "status": "passed",
+      "sourceSha256": "74d68cfc0f484140ec4384b121d080c2c3a25cf2ed299fa4f9df18b861364a7d",
+      "targetSha256": "74d68cfc0f484140ec4384b121d080c2c3a25cf2ed299fa4f9df18b861364a7d",
+      "error": null
+    },
+    {
+      "path": "app/src/game/engine/effects.ts",
+      "status": "passed",
+      "sourceSha256": "457680661515b9ecb05f1ef7be92edd5712a93f2deff69aea2427fe77f7bc92f",
+      "targetSha256": "457680661515b9ecb05f1ef7be92edd5712a93f2deff69aea2427fe77f7bc92f",
+      "error": null
+    },
+    {
+      "path": "app/src/game/engine/entityAI.ts",
+      "status": "passed",
+      "sourceSha256": "9130fee8d25c37e61fa4e2c420f2f026b1136b74d6ea46f7370fa590665a79d0",
+      "targetSha256": "9130fee8d25c37e61fa4e2c420f2f026b1136b74d6ea46f7370fa590665a79d0",
+      "error": null
+    },
+    {
+      "path": "app/src/game/engine/inventory.ts",
+      "status": "passed",
+      "sourceSha256": "ab48b1463bcda4700c7996e8ef8aae7921613e20dbbc654f7ddf2f4668c7627d",
+      "targetSha256": "ab48b1463bcda4700c7996e8ef8aae7921613e20dbbc654f7ddf2f4668c7627d",
+      "error": null
+    },
+    {
+      "path": "app/src/game/engine/movement.ts",
+      "status": "passed",
+      "sourceSha256": "367af372646aea868219a3f1ba827aa3853974956dea91c4e00309cfdb4ca1c2",
+      "targetSha256": "367af372646aea868219a3f1ba827aa3853974956dea91c4e00309cfdb4ca1c2",
+      "error": null
+    },
+    {
+      "path": "app/src/game/entities/spawns.ts",
+      "status": "passed",
+      "sourceSha256": "28ef8886ced844d16d251fc2f896a87ab15d472cb467b6d85217f14749472cff",
+      "targetSha256": "28ef8886ced844d16d251fc2f896a87ab15d472cb467b6d85217f14749472cff",
+      "error": null
+    },
+    {
+      "path": "app/src/game/entities/special.ts",
+      "status": "passed",
+      "sourceSha256": "2db658204e97395f1f75e7b749ccb6d5fc04f606d13cd6e80df6bdfa71f24b17",
+      "targetSha256": "2db658204e97395f1f75e7b749ccb6d5fc04f606d13cd6e80df6bdfa71f24b17",
+      "error": null
+    },
+    {
+      "path": "app/src/game/entities/types.ts",
+      "status": "passed",
+      "sourceSha256": "77ceb108b338792c4bd9ed3993d35ec9a94c2af2b1f171660560fc2cf0b713a4",
+      "targetSha256": "77ceb108b338792c4bd9ed3993d35ec9a94c2af2b1f171660560fc2cf0b713a4",
+      "error": null
+    },
+    {
+      "path": "app/src/game/levels/l3.ts",
+      "status": "passed",
+      "sourceSha256": "4373e663d31e543b1c0697c4d0ace7838927e05ecbf26b7d6236089f8bfb1eb5",
+      "targetSha256": "4373e663d31e543b1c0697c4d0ace7838927e05ecbf26b7d6236089f8bfb1eb5",
+      "error": null
+    },
+    {
+      "path": "app/src/game/levels/l5.ts",
+      "status": "passed",
+      "sourceSha256": "02bfbad2beeba97303bcfe50b45c0fb9ae628304badef93b5f2b6d1a42515788",
+      "targetSha256": "02bfbad2beeba97303bcfe50b45c0fb9ae628304badef93b5f2b6d1a42515788",
+      "error": null
+    },
+    {
+      "path": "app/src/game/renderer/alphaMeshes.ts",
+      "status": "passed",
+      "sourceSha256": "0abeeb8d80061b255f48bf0b76cd303c845e55d74cfa0c7f1d98b0383db8543e",
+      "targetSha256": "0abeeb8d80061b255f48bf0b76cd303c845e55d74cfa0c7f1d98b0383db8543e",
+      "error": null
+    },
+    {
+      "path": "app/src/game/renderer/entitiesMesh.ts",
+      "status": "passed",
+      "sourceSha256": "3fb8cb7382274ab537c83a4737185e241e3f3edd554702a8fea219d7ba83a607",
+      "targetSha256": "3fb8cb7382274ab537c83a4737185e241e3f3edd554702a8fea219d7ba83a607",
+      "error": null
+    },
+    {
+      "path": "app/src/game/renderer/itemsMesh.ts",
+      "status": "passed",
+      "sourceSha256": "c3a356d27a6d9823abcbfeae17eda06fba91215918aa3cc25ce2033d9c7dd171",
+      "targetSha256": "c3a356d27a6d9823abcbfeae17eda06fba91215918aa3cc25ce2033d9c7dd171",
+      "error": null
+    },
+    {
+      "path": "app/src/game/renderer/l11Exits.ts",
+      "status": "passed",
+      "sourceSha256": "d50a53d58f9c36de840b1e206be698a8d51736d24ede93d2226bb5ccfbcb4745",
+      "targetSha256": "d50a53d58f9c36de840b1e206be698a8d51736d24ede93d2226bb5ccfbcb4745",
+      "error": null
+    },
+    {
+      "path": "app/src/game/renderer/l1Architecture.ts",
+      "status": "passed",
+      "sourceSha256": "c511bb3adff5befdf6afb5a4e36a5f9c5115864f4563f2ed299e6353c221cf88",
+      "targetSha256": "c511bb3adff5befdf6afb5a4e36a5f9c5115864f4563f2ed299e6353c221cf88",
+      "error": null
+    },
+    {
+      "path": "app/src/game/renderer/l1BakedScene.ts",
+      "status": "passed",
+      "sourceSha256": "2ed120d1dfeb030c45e117666eafee3a62e0646709bf5948210930d97d5a7621",
+      "targetSha256": "2ed120d1dfeb030c45e117666eafee3a62e0646709bf5948210930d97d5a7621",
+      "error": null
+    },
+    {
+      "path": "app/src/game/renderer/l1Materials.ts",
+      "status": "passed",
+      "sourceSha256": "4cdc6310ff59d83728f065c6aaa6e76a2b60f47829a76746e924bd395b16a2a0",
+      "targetSha256": "4cdc6310ff59d83728f065c6aaa6e76a2b60f47829a76746e924bd395b16a2a0",
+      "error": null
+    },
+    {
+      "path": "app/src/game/renderer/l1OutpostEntrance.ts",
+      "status": "passed",
+      "sourceSha256": "f616314a1cbf63e4644794bdcc8a5b69626b9a1be380df409f2ed9dc2d447a8b",
+      "targetSha256": "f616314a1cbf63e4644794bdcc8a5b69626b9a1be380df409f2ed9dc2d447a8b",
+      "error": null
+    },
+    {
+      "path": "app/src/game/renderer/l1Props.ts",
+      "status": "passed",
+      "sourceSha256": "5a8ed1c9a8c038c9eafaddfe57ce1a4d12ff6f6cd8c51c89e1019e8bf5c84c65",
+      "targetSha256": "5a8ed1c9a8c038c9eafaddfe57ce1a4d12ff6f6cd8c51c89e1019e8bf5c84c65",
+      "error": null
+    },
+    {
+      "path": "app/src/game/renderer/renderer.ts",
+      "status": "passed",
+      "sourceSha256": "90c5b1f6a843bc9a1f70b899cfa8db09fb41b950c6f393e56070998b740f0bf0",
+      "targetSha256": "90c5b1f6a843bc9a1f70b899cfa8db09fb41b950c6f393e56070998b740f0bf0",
+      "error": null
+    },
+    {
+      "path": "app/src/game/renderer/settlementMeshes.ts",
+      "status": "passed",
+      "sourceSha256": "ed5a302d5bf322e2282ae92f4de0a412e8c46076c3780cc41bbb99fa09f98ee5",
+      "targetSha256": "ed5a302d5bf322e2282ae92f4de0a412e8c46076c3780cc41bbb99fa09f98ee5",
+      "error": null
+    },
+    {
+      "path": "app/src/game/renderer/structures.ts",
+      "status": "passed",
+      "sourceSha256": "5c903b050bb99c96c97ecc4e7159e39c70e930d10b05339b618b814d1a5f29cf",
+      "targetSha256": "5c903b050bb99c96c97ecc4e7159e39c70e930d10b05339b618b814d1a5f29cf",
+      "error": null
+    },
+    {
+      "path": "app/src/game/renderer/tradeMeshes.ts",
+      "status": "passed",
+      "sourceSha256": "a78ecba5b300a3bdeb348adaa6ddd524c7aa2b1a212034414d19e0039005f496",
+      "targetSha256": "a78ecba5b300a3bdeb348adaa6ddd524c7aa2b1a212034414d19e0039005f496",
+      "error": null
+    },
+    {
+      "path": "app/src/game/world/infinite.ts",
+      "status": "passed",
+      "sourceSha256": "0899f5a89e764298bfcbf5028555eac3c9e1a2efe767d1553e320f78c66ffd56",
+      "targetSha256": "0899f5a89e764298bfcbf5028555eac3c9e1a2efe767d1553e320f78c66ffd56",
+      "error": null
+    },
+    {
+      "path": "app/src/game/world/infiniteL1.ts",
+      "status": "passed",
+      "sourceSha256": "1a08a3bbb0d0225497167cff6cde370023f6ac3a1a9c4a21fbf645b25b9b00cf",
+      "targetSha256": "1a08a3bbb0d0225497167cff6cde370023f6ac3a1a9c4a21fbf645b25b9b00cf",
+      "error": null
+    },
+    {
+      "path": "app/src/game/world/infiniteL2.ts",
+      "status": "passed",
+      "sourceSha256": "c312ce1175753a1f3b281a94ae5d6792fef233d7dea80fe7d379cab1dd0922c6",
+      "targetSha256": "c312ce1175753a1f3b281a94ae5d6792fef233d7dea80fe7d379cab1dd0922c6",
+      "error": null
+    },
+    {
+      "path": "app/src/game/world/infiniteL3.ts",
+      "status": "passed",
+      "sourceSha256": "1e6e826a0b19b9dbe7010fffb35b9d337ee1da02e60040f7885394e823578248",
+      "targetSha256": "1e6e826a0b19b9dbe7010fffb35b9d337ee1da02e60040f7885394e823578248",
+      "error": null
+    },
+    {
+      "path": "app/src/game/world/infiniteL8.ts",
+      "status": "passed",
+      "sourceSha256": "40e69f49bf0fa1482ec34f263c287548fe5a981b48c2861a8fb7182b79ffa612",
+      "targetSha256": "40e69f49bf0fa1482ec34f263c287548fe5a981b48c2861a8fb7182b79ffa612",
+      "error": null
+    },
+    {
+      "path": "app/src/game/world/l1Architecture.ts",
+      "status": "passed",
+      "sourceSha256": "12b699901df0a92f06906bade8c037528a74261adaf0ea10aaba18ca74beb79c",
+      "targetSha256": "12b699901df0a92f06906bade8c037528a74261adaf0ea10aaba18ca74beb79c",
+      "error": null
+    },
+    {
+      "path": "app/src/game/world/l1Spatial.ts",
+      "status": "passed",
+      "sourceSha256": "5684499e8cde667f08ebcc07bcc827de350d6160944a7aade024078d1f1b0d5f",
+      "targetSha256": "5684499e8cde667f08ebcc07bcc827de350d6160944a7aade024078d1f1b0d5f",
+      "error": null
+    },
+    {
+      "path": "app/src/game/world/settlement.ts",
+      "status": "passed",
+      "sourceSha256": "aee8333e03952fe434f7cb0168aab8e87c5e261d3ae391a387455a1086e5f6fe",
+      "targetSha256": "aee8333e03952fe434f7cb0168aab8e87c5e261d3ae391a387455a1086e5f6fe",
+      "error": null
+    },
+    {
+      "path": "info.md",
+      "status": "passed",
+      "sourceSha256": "d1c9d73e6e07604f5c65d82d5c5012f70b04b5573287534faa90e1af282fe154",
+      "targetSha256": "d1c9d73e6e07604f5c65d82d5c5012f70b04b5573287534faa90e1af282fe154",
+      "error": null
+    },
+    {
+      "path": "app/L1V3-NGUITHR-IMPORT.md",
+      "status": "passed",
+      "sourceSha256": "f35fd992d8b6df5930b2a9aca51b22aacb9a8d39869c5105ba51f1148617c8f0",
+      "targetSha256": "f35fd992d8b6df5930b2a9aca51b22aacb9a8d39869c5105ba51f1148617c8f0",
+      "error": null
+    },
+    {
+      "path": "app/NGUITHR-REMAKE.md",
+      "status": "passed",
+      "sourceSha256": "6357e7c582b8f4b0b08b7a11247be684a40c8e5c7d58dc85211a6b599e4c5b26",
+      "targetSha256": "6357e7c582b8f4b0b08b7a11247be684a40c8e5c7d58dc85211a6b599e4c5b26",
+      "error": null
+    },
+    {
+      "path": "app/assets/sources/l1v3-nguithr/L1-UPSTREAM.md",
+      "status": "passed",
+      "sourceSha256": "74e0a9610317b204e1a9971fb9cd6786d82c6e8846ed88e71b73c30c17b78a0b",
+      "targetSha256": "74e0a9610317b204e1a9971fb9cd6786d82c6e8846ed88e71b73c30c17b78a0b",
+      "error": null
+    },
+    {
+      "path": "app/assets/sources/l1v3-nguithr/NGUITHR-UPSTREAM.md",
+      "status": "passed",
+      "sourceSha256": "4ed0b8b720251b28a7aacb56693a381971188a6a32dc1ac360b27a38515e69d4",
+      "targetSha256": "4ed0b8b720251b28a7aacb56693a381971188a6a32dc1ac360b27a38515e69d4",
+      "error": null
+    },
+    {
+      "path": "app/assets/sources/l1v3-nguithr/README.md",
+      "status": "passed",
+      "sourceSha256": "3ab2fbbb8b799b769925151fd7276890e46eacd24293f8af403f981716635a1b",
+      "targetSha256": "3ab2fbbb8b799b769925151fd7276890e46eacd24293f8af403f981716635a1b",
+      "error": null
+    },
+    {
+      "path": "app/assets/sources/l1v3-nguithr/archives.json",
+      "status": "passed",
+      "sourceSha256": "3feaefdf8bc5dbdd025b81294809e28b85a3a237105ef36b75ac3f9ef2b1cdc2",
+      "targetSha256": "3feaefdf8bc5dbdd025b81294809e28b85a3a237105ef36b75ac3f9ef2b1cdc2",
+      "error": null
+    },
+    {
+      "path": "app/assets/sources/l1v3-nguithr/assets.json",
+      "status": "passed",
+      "sourceSha256": "63096063e59e64913a6ca1b4b25992ce20f82d78013498f2f0958d634e842ad5",
+      "targetSha256": "63096063e59e64913a6ca1b4b25992ce20f82d78013498f2f0958d634e842ad5",
+      "error": null
+    },
+    {
+      "path": "app/proto-boards.html",
+      "status": "passed",
+      "sourceSha256": "65313b5c07365c7556b4ccbcae536d96049a4544cd168f0c5dec0bbfbbc05ab4",
+      "targetSha256": "65313b5c07365c7556b4ccbcae536d96049a4544cd168f0c5dec0bbfbbc05ab4",
+      "error": null
+    },
+    {
+      "path": "app/proto-l1props.html",
+      "status": "passed",
+      "sourceSha256": "66b20cc7aa5b5a8961484f035882ef44e3667ab2a0fb541efc3f4dd888474646",
+      "targetSha256": "66b20cc7aa5b5a8961484f035882ef44e3667ab2a0fb541efc3f4dd888474646",
+      "error": null
+    },
+    {
+      "path": "app/proto-nguithr.html",
+      "status": "passed",
+      "sourceSha256": "6d03a955ea465552981edf9b221c58dc45be45e248c0102613099cac316bbbc4",
+      "targetSha256": "6d03a955ea465552981edf9b221c58dc45be45e248c0102613099cac316bbbc4",
+      "error": null
+    },
+    {
+      "path": "app/proto-signs.html",
+      "status": "passed",
+      "sourceSha256": "6bdcb85739bc73034866f434e67417787d6dd656c3e85302161ef31d7af780bc",
+      "targetSha256": "6bdcb85739bc73034866f434e67417787d6dd656c3e85302161ef31d7af780bc",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/icons/pixel/item_sedgland.png",
+      "status": "passed",
+      "sourceSha256": "d9ee4d24361e99737de458633a4140413945c065c0fa94253f68f0576a3d1113",
+      "targetSha256": "d9ee4d24361e99737de458633a4140413945c065c0fa94253f68f0576a3d1113",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/eagle/bright_floor.jpg",
+      "status": "passed",
+      "sourceSha256": "1642e049d4fb391901156a921d4c7a1fe404e9a2938beb538a2609037f55e153",
+      "targetSha256": "1642e049d4fb391901156a921d4c7a1fe404e9a2938beb538a2609037f55e153",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/eagle/bright_wall.jpg",
+      "status": "passed",
+      "sourceSha256": "663e6bdab8bfae27f576708e8a3133a15839f7bece2d17944a22e05fe53d14d3",
+      "targetSha256": "663e6bdab8bfae27f576708e8a3133a15839f7bece2d17944a22e05fe53d14d3",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/eagle/clean_floor.jpg",
+      "status": "passed",
+      "sourceSha256": "c0960cd1a1488aec3546517056fef424612789207f4fc7d4ec4ec6ce81f4a205",
+      "targetSha256": "c0960cd1a1488aec3546517056fef424612789207f4fc7d4ec4ec6ce81f4a205",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/eagle/clean_wall.jpg",
+      "status": "passed",
+      "sourceSha256": "3c74fb520769c19dedadcb9b1f56bf39a606a05b66eb8d364dae7d968b5d2ab2",
+      "targetSha256": "3c74fb520769c19dedadcb9b1f56bf39a606a05b66eb8d364dae7d968b5d2ab2",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/eagle/common_ceil.jpg",
+      "status": "passed",
+      "sourceSha256": "14879501998ff072e933d0be1be8a633f4f3e5108ef7342489548cbdadc74461",
+      "targetSha256": "14879501998ff072e933d0be1be8a633f4f3e5108ef7342489548cbdadc74461",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/eagle/common_floor.jpg",
+      "status": "passed",
+      "sourceSha256": "8cd8914ee0b3dc159bfe86ea72b90165573682f627987da6189c8fe138dbaf93",
+      "targetSha256": "8cd8914ee0b3dc159bfe86ea72b90165573682f627987da6189c8fe138dbaf93",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/eagle/common_wall.jpg",
+      "status": "passed",
+      "sourceSha256": "0a67267e1a7a7d206355c4890bc454f7fc478ad73cd49af6214f0b722adfc0b6",
+      "targetSha256": "0a67267e1a7a7d206355c4890bc454f7fc478ad73cd49af6214f0b722adfc0b6",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/eagle/dark_ceil.jpg",
+      "status": "passed",
+      "sourceSha256": "072fda45ac1fe91c44a109c43acb90296e5f5109401e8598a4eebe3db49f11b7",
+      "targetSha256": "072fda45ac1fe91c44a109c43acb90296e5f5109401e8598a4eebe3db49f11b7",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/eagle/dark_floor.jpg",
+      "status": "passed",
+      "sourceSha256": "15e941eb41f30281a0437140163803ec34b009f80403a9be7a29dc7d19d86162",
+      "targetSha256": "15e941eb41f30281a0437140163803ec34b009f80403a9be7a29dc7d19d86162",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/eagle/dark_wall.jpg",
+      "status": "passed",
+      "sourceSha256": "e873675d8e758abb03cd953c5b9c650a88c71f19185db97338b1ca9a121f64c0",
+      "targetSha256": "e873675d8e758abb03cd953c5b9c650a88c71f19185db97338b1ca9a121f64c0",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/eagle/dim_floor.jpg",
+      "status": "passed",
+      "sourceSha256": "e33839d7a0c31baf79a4a3313f50fcf02f05cab5571254280a19611d77df1811",
+      "targetSha256": "e33839d7a0c31baf79a4a3313f50fcf02f05cab5571254280a19611d77df1811",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/eagle/dim_wall.jpg",
+      "status": "passed",
+      "sourceSha256": "0086d2ee79973caee353da72d012e72ac6186be646cf7e5d7cd668e24cf2aa3a",
+      "targetSha256": "0086d2ee79973caee353da72d012e72ac6186be646cf7e5d7cd668e24cf2aa3a",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/eagle/dry_ceil.jpg",
+      "status": "passed",
+      "sourceSha256": "c281fced0c6a935f9bbf19c3f403faee872d5d5df88da103d83c53948bd402d5",
+      "targetSha256": "c281fced0c6a935f9bbf19c3f403faee872d5d5df88da103d83c53948bd402d5",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/eagle/dry_floor.jpg",
+      "status": "passed",
+      "sourceSha256": "ef50850bc5c92ebd85f2be17d36f30e5ef1d7b6bd5760295481e7104978a89d1",
+      "targetSha256": "ef50850bc5c92ebd85f2be17d36f30e5ef1d7b6bd5760295481e7104978a89d1",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/eagle/dry_wall.jpg",
+      "status": "passed",
+      "sourceSha256": "f66c39b74a8f458c1273c4b435c55fcb893dd3800dc564de4ff2a97bf2b0d5eb",
+      "targetSha256": "f66c39b74a8f458c1273c4b435c55fcb893dd3800dc564de4ff2a97bf2b0d5eb",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/eagle/room_floor.jpg",
+      "status": "passed",
+      "sourceSha256": "474fcee376fbcae1948f1f8e805ff6a92af6caafe3bb6ffa42cbdc839866889c",
+      "targetSha256": "474fcee376fbcae1948f1f8e805ff6a92af6caafe3bb6ffa42cbdc839866889c",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/eagle/room_wall.jpg",
+      "status": "passed",
+      "sourceSha256": "7d03d9edf48e3a847d9b5725157d08a37a59f80a1ebeae69e1948ee545d6149c",
+      "targetSha256": "7d03d9edf48e3a847d9b5725157d08a37a59f80a1ebeae69e1948ee545d6149c",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/eagle/round_ceil.jpg",
+      "status": "passed",
+      "sourceSha256": "be4b1a5d8f4b036137d29886cca628381a5c39edae7b69fcdcbe26f622852318",
+      "targetSha256": "be4b1a5d8f4b036137d29886cca628381a5c39edae7b69fcdcbe26f622852318",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/eagle/round_floor.jpg",
+      "status": "passed",
+      "sourceSha256": "a17bcdbd35c27d3826eef3100e8ec2af0010b05ed90b8bfd5924c579c77c1f4d",
+      "targetSha256": "a17bcdbd35c27d3826eef3100e8ec2af0010b05ed90b8bfd5924c579c77c1f4d",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/eagle/round_wall.jpg",
+      "status": "passed",
+      "sourceSha256": "e39315802f57b570d7b1d68ac001ee73202b07ba36ae2c6727d6d799bc577833",
+      "targetSha256": "e39315802f57b570d7b1d68ac001ee73202b07ba36ae2c6727d6d799bc577833",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/eagle/water_floor.jpg",
+      "status": "passed",
+      "sourceSha256": "e592568290e12ba2630172b70e15088c3613fe85275ac38779e63e9297ac48f7",
+      "targetSha256": "e592568290e12ba2630172b70e15088c3613fe85275ac38779e63e9297ac48f7",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/eagle/water_wall.jpg",
+      "status": "passed",
+      "sourceSha256": "cbd3941587eaed59906fa5a689c2672722eab4ff72f09d4fc9f22523d18a59d7",
+      "targetSha256": "cbd3941587eaed59906fa5a689c2672722eab4ff72f09d4fc9f22523d18a59d7",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/eagle/white_ceil.jpg",
+      "status": "passed",
+      "sourceSha256": "abc7c6bc01ba297e94035bd12d453ccd6eb216b4db80690dd35fb3087832a567",
+      "targetSha256": "abc7c6bc01ba297e94035bd12d453ccd6eb216b4db80690dd35fb3087832a567",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/garden/atlas.png",
+      "status": "passed",
+      "sourceSha256": "2b0d389968317d2c332beb28b8603821e6cf47e997d71b4c9f367c380e0ac8be",
+      "targetSha256": "2b0d389968317d2c332beb28b8603821e6cf47e997d71b4c9f367c380e0ac8be",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/garden/ivyground.jpg",
+      "status": "passed",
+      "sourceSha256": "e5db358838cabc7dcbdf95194c135c004ac01b846515c6cca7f0b0f6dbed8ee3",
+      "targetSha256": "e5db358838cabc7dcbdf95194c135c004ac01b846515c6cca7f0b0f6dbed8ee3",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/garden/ivyground_nor.jpg",
+      "status": "passed",
+      "sourceSha256": "b2a6999b718ebcab33b791a5d726efb8de8e933811eb1534663d919c21992446",
+      "targetSha256": "b2a6999b718ebcab33b791a5d726efb8de8e933811eb1534663d919c21992446",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/garden/litter.jpg",
+      "status": "passed",
+      "sourceSha256": "f5df796d960777f5bf76a3cfe3ed72b4b36984891a8dff199b2bdc9b365231c3",
+      "targetSha256": "f5df796d960777f5bf76a3cfe3ed72b4b36984891a8dff199b2bdc9b365231c3",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/garden/litter_nor.jpg",
+      "status": "passed",
+      "sourceSha256": "0aa70dc5d00fd3342fc16f59a4f3beedc59f61c29c29cf321c8a5b5c1c1864f0",
+      "targetSha256": "0aa70dc5d00fd3342fc16f59a4f3beedc59f61c29c29cf321c8a5b5c1c1864f0",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/garden/moss.jpg",
+      "status": "passed",
+      "sourceSha256": "32b9e022149cd5ce47991fde7be577ee4372a1a82ed6034264ae17e5b4ff5df0",
+      "targetSha256": "32b9e022149cd5ce47991fde7be577ee4372a1a82ed6034264ae17e5b4ff5df0",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/garden/moss_nor.jpg",
+      "status": "passed",
+      "sourceSha256": "a42dab2346c987eb0e4d078c6403dc5d5e70a6dc2f1803db2e512df824ac58fe",
+      "targetSha256": "a42dab2346c987eb0e4d078c6403dc5d5e70a6dc2f1803db2e512df824ac58fe",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/ouro/black.jpg",
+      "status": "passed",
+      "sourceSha256": "f473206f6695a6e0d641762857c1bfa645efdf7803422567f0078023097b8fa0",
+      "targetSha256": "f473206f6695a6e0d641762857c1bfa645efdf7803422567f0078023097b8fa0",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/ouro/black_nor.jpg",
+      "status": "passed",
+      "sourceSha256": "f8b7c860bcec507aa9697767d08cd08c7c0099b239652e5bfc246d47b9cb26cd",
+      "targetSha256": "f8b7c860bcec507aa9697767d08cd08c7c0099b239652e5bfc246d47b9cb26cd",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/ouro/block.jpg",
+      "status": "passed",
+      "sourceSha256": "b88319b178c12b89455b73dbc2385b01cd69ac9b577598e7a1023772272f7f90",
+      "targetSha256": "b88319b178c12b89455b73dbc2385b01cd69ac9b577598e7a1023772272f7f90",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/ouro/block_nor.jpg",
+      "status": "passed",
+      "sourceSha256": "4ab70db97b52369f364c3d7b76252ac5850537f5ca03982438479911fb96a7af",
+      "targetSha256": "4ab70db97b52369f364c3d7b76252ac5850537f5ca03982438479911fb96a7af",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/ouro/column.jpg",
+      "status": "passed",
+      "sourceSha256": "2d1212e0e7d05d31b2b0caa463915a0c5104d66d1fa4cb4aea669c9c9fb9e63d",
+      "targetSha256": "2d1212e0e7d05d31b2b0caa463915a0c5104d66d1fa4cb4aea669c9c9fb9e63d",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/ouro/column_nor.jpg",
+      "status": "passed",
+      "sourceSha256": "5349f21fb2d76a4a84ef16fa84baa70a5a8b7e87478e77e4e838709b9ad7b4bc",
+      "targetSha256": "5349f21fb2d76a4a84ef16fa84baa70a5a8b7e87478e77e4e838709b9ad7b4bc",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/ouro/floor.jpg",
+      "status": "passed",
+      "sourceSha256": "c33acae71ea91071fff543af3172c863a3c43356134cb9e491c64aed7a71549e",
+      "targetSha256": "c33acae71ea91071fff543af3172c863a3c43356134cb9e491c64aed7a71549e",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/ouro/floor_nor.jpg",
+      "status": "passed",
+      "sourceSha256": "ca9de2bfdd518c5d035435b62202c74e414d517f5aed4be5d57737a5ac0b3129",
+      "targetSha256": "ca9de2bfdd518c5d035435b62202c74e414d517f5aed4be5d57737a5ac0b3129",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/ouro/insul.jpg",
+      "status": "passed",
+      "sourceSha256": "10ab639d1688c046f1653cbf1d649987e0516ccb10288403b7bc22a96f16d864",
+      "targetSha256": "10ab639d1688c046f1653cbf1d649987e0516ccb10288403b7bc22a96f16d864",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/ouro/insul_nor.jpg",
+      "status": "passed",
+      "sourceSha256": "6683d03614aaa89b7230d92236daeb7296483dee085a12389e12c7ac89c9389b",
+      "targetSha256": "6683d03614aaa89b7230d92236daeb7296483dee085a12389e12c7ac89c9389b",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/ouro/patch.jpg",
+      "status": "passed",
+      "sourceSha256": "1a3601c95980e9df595bc4bf53136d2da7e35b5a156c7c349ec672d44d42afe9",
+      "targetSha256": "1a3601c95980e9df595bc4bf53136d2da7e35b5a156c7c349ec672d44d42afe9",
+      "error": null
+    },
+    {
+      "path": "app/public/textures/l1/ouro/patch_nor.jpg",
+      "status": "passed",
+      "sourceSha256": "d172d84f907c8cf5e25a258db04ef834d042f046a9da8cc6f86b6a135062b4f0",
+      "targetSha256": "d172d84f907c8cf5e25a258db04ef834d042f046a9da8cc6f86b6a135062b4f0",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/README.md",
+      "status": "passed",
+      "sourceSha256": "5bc771802fb13af667d71bccbb6c38b9cd21342e24ac154b550ae0000090ac17",
+      "targetSha256": "5bc771802fb13af667d71bccbb6c38b9cd21342e24ac154b550ae0000090ac17",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006-entity/entry.png",
+      "status": "passed",
+      "sourceSha256": "3f7b8067ae3c88122fca74187c881200a3dc4c66cd15dcecbd10adf512f24f67",
+      "targetSha256": "3f7b8067ae3c88122fca74187c881200a3dc4c66cd15dcecbd10adf512f24f67",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006-entity/escaped.png",
+      "status": "passed",
+      "sourceSha256": "4403eb5802a4b33444f7c743851e237db70ae2b03f55894d8d0520188ccd3646",
+      "targetSha256": "4403eb5802a4b33444f7c743851e237db70ae2b03f55894d8d0520188ccd3646",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006-entity/live-feeding.png",
+      "status": "passed",
+      "sourceSha256": "eff47f1b894059abc27e39e877d11321b3a9a048e7238f15e62ad969be179bfe",
+      "targetSha256": "eff47f1b894059abc27e39e877d11321b3a9a048e7238f15e62ad969be179bfe",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006-entity/nguithr-cut.png",
+      "status": "passed",
+      "sourceSha256": "7eba5edbfcd409f829423d2fdb18583647927e16ab40f9ea8a27ed177438540d",
+      "targetSha256": "7eba5edbfcd409f829423d2fdb18583647927e16ab40f9ea8a27ed177438540d",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006-entity/nguithr-descend.png",
+      "status": "passed",
+      "sourceSha256": "09f9f47b51254b42057cfd654676aa4ea228887c86e80ed88fd220ea9efaefc7",
+      "targetSha256": "09f9f47b51254b42057cfd654676aa4ea228887c86e80ed88fd220ea9efaefc7",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006-entity/nguithr-feed.png",
+      "status": "passed",
+      "sourceSha256": "938956ea8a08228104c8dcf0c4e3195b04eb0a2260fc8e6fb08dc3ec966b8e01",
+      "targetSha256": "938956ea8a08228104c8dcf0c4e3195b04eb0a2260fc8e6fb08dc3ec966b8e01",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006-entity/nguithr-idle.png",
+      "status": "passed",
+      "sourceSha256": "31ffcccfd30e3b17b80b85054637a2597884a328afc0afb9be0a131d555031be",
+      "targetSha256": "31ffcccfd30e3b17b80b85054637a2597884a328afc0afb9be0a131d555031be",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006-entity/nguithr-nest.png",
+      "status": "passed",
+      "sourceSha256": "5f34d93ea0cf66df2d1ccc9e63c5685f934addd9a5a5e1903474dbd596a00c1b",
+      "targetSha256": "5f34d93ea0cf66df2d1ccc9e63c5685f934addd9a5a5e1903474dbd596a00c1b",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006-entity/nguithr-sleep.png",
+      "status": "passed",
+      "sourceSha256": "61fd1b9f0f1bf7c623e4bce95cae72bba95b446f679aae13fa4266afd33ec034",
+      "targetSha256": "61fd1b9f0f1bf7c623e4bce95cae72bba95b446f679aae13fa4266afd33ec034",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006-entity/result.json",
+      "status": "passed",
+      "sourceSha256": "dab74056231371818a88aee1d8e13d2066950498f66142c4c8fa969652c002ac",
+      "targetSha256": "dab74056231371818a88aee1d8e13d2066950498f66142c4c8fa969652c002ac",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006-entity/sedgland-drop.png",
+      "status": "passed",
+      "sourceSha256": "6f85a5754036f4b63d69c5923322a3e6b0c316cfa6e0c41bab2f52f7fc2e525c",
+      "targetSha256": "6f85a5754036f4b63d69c5923322a3e6b0c316cfa6e0c41bab2f52f7fc2e525c",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006-entity/session.json",
+      "status": "passed",
+      "sourceSha256": "806c45a5676bf258a406fd11b0b4ab366289bce9cef755749d121cdc1daef964",
+      "targetSha256": "806c45a5676bf258a406fd11b0b4ab366289bce9cef755749d121cdc1daef964",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006-scenes/entry.png",
+      "status": "passed",
+      "sourceSha256": "4fa4b56628218df00367f43ff5e4c722506fc05660cbe7b4adf80864f81ddebc",
+      "targetSha256": "4fa4b56628218df00367f43ff5e4c722506fc05660cbe7b4adf80864f81ddebc",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006-scenes/garden.png",
+      "status": "passed",
+      "sourceSha256": "33fde567dbde8d4afee1e5af7d854df7c5f0ad2c73dd4c1c3af0c9e9fb550cdd",
+      "targetSha256": "33fde567dbde8d4afee1e5af7d854df7c5f0ad2c73dd4c1c3af0c9e9fb550cdd",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006-scenes/ouroboros.png",
+      "status": "passed",
+      "sourceSha256": "f3931673d8b9e3ce733b5ff3756312c13d77ae665bc05a19eb258bd5081742bd",
+      "targetSha256": "f3931673d8b9e3ce733b5ff3756312c13d77ae665bc05a19eb258bd5081742bd",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006-scenes/parking-bright.png",
+      "status": "passed",
+      "sourceSha256": "989c0dd59472776f7197bf19ecdb381e744d1daa13a4cb482aaf47a1a276b004",
+      "targetSha256": "989c0dd59472776f7197bf19ecdb381e744d1daa13a4cb482aaf47a1a276b004",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006-scenes/parking-dark.png",
+      "status": "passed",
+      "sourceSha256": "fbc57e337fef2388ec353509abc039d5d29b80b01d4140bf60989286992a79f9",
+      "targetSha256": "fbc57e337fef2388ec353509abc039d5d29b80b01d4140bf60989286992a79f9",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006-scenes/result.json",
+      "status": "passed",
+      "sourceSha256": "c6979c6ce8cdde30494b5f333399df8f565a0e34ba0bd336371a92efc52f0e8a",
+      "targetSha256": "c6979c6ce8cdde30494b5f333399df8f565a0e34ba0bd336371a92efc52f0e8a",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006-scenes/session.json",
+      "status": "passed",
+      "sourceSha256": "9b150c5c4ff7d49cd45c30f88086c2d7cb63cffc11432cf474c8023bf2fe397a",
+      "targetSha256": "9b150c5c4ff7d49cd45c30f88086c2d7cb63cffc11432cf474c8023bf2fe397a",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006-scenes/spawn.png",
+      "status": "passed",
+      "sourceSha256": "8b301f4883e1139cc45b0fb8f9b1d1741ef487ff190542df874cfd37c369730b",
+      "targetSha256": "8b301f4883e1139cc45b0fb8f9b1d1741ef487ff190542df874cfd37c369730b",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006/entry.png",
+      "status": "passed",
+      "sourceSha256": "431468411b6055871d301ced21a94e4a98d8bd4a3404187e4322a065a010cb6c",
+      "targetSha256": "431468411b6055871d301ced21a94e4a98d8bd4a3404187e4322a065a010cb6c",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006/failure.png",
+      "status": "passed",
+      "sourceSha256": "4d8ce3e7ec9f208bdfbf6a01e68e15e63ab7c3005d7176f2b9266a14a8609ca6",
+      "targetSha256": "4d8ce3e7ec9f208bdfbf6a01e68e15e63ab7c3005d7176f2b9266a14a8609ca6",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006/nguithr-cut.png",
+      "status": "passed",
+      "sourceSha256": "32f1157767d124586b3aa6a705649a6c47c5801decff4340700a7c71bf713704",
+      "targetSha256": "32f1157767d124586b3aa6a705649a6c47c5801decff4340700a7c71bf713704",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006/nguithr-descend.png",
+      "status": "passed",
+      "sourceSha256": "9d6aa0d6c84bcc8c0100b825c115cae4f8b22c90334a4b7a6636d07c818ada97",
+      "targetSha256": "9d6aa0d6c84bcc8c0100b825c115cae4f8b22c90334a4b7a6636d07c818ada97",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006/nguithr-feed.png",
+      "status": "passed",
+      "sourceSha256": "ba10fa941befa87fabcca672e3f53885ffd38367b1d6ed7a2a282974b2eaff3d",
+      "targetSha256": "ba10fa941befa87fabcca672e3f53885ffd38367b1d6ed7a2a282974b2eaff3d",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006/nguithr-idle.png",
+      "status": "passed",
+      "sourceSha256": "4623fd59fe33488c748397c839ed0049a728f4d4da6b8a73ea04929bbf227d8d",
+      "targetSha256": "4623fd59fe33488c748397c839ed0049a728f4d4da6b8a73ea04929bbf227d8d",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006/nguithr-nest.png",
+      "status": "passed",
+      "sourceSha256": "266519873f72693b366e10edba5f40c96ed8818541ddb2f15457d94cc3b3bbde",
+      "targetSha256": "266519873f72693b366e10edba5f40c96ed8818541ddb2f15457d94cc3b3bbde",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006/nguithr-sleep.png",
+      "status": "passed",
+      "sourceSha256": "607ca05ff29699aff05987fed6df63e7690b7f32f3e369059737f8ecc49eb117",
+      "targetSha256": "607ca05ff29699aff05987fed6df63e7690b7f32f3e369059737f8ecc49eb117",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006/result.json",
+      "status": "passed",
+      "sourceSha256": "d9e7c7af2ae9879617ad4b7e063680d75721ae6ad83053c2787c45609e21579d",
+      "targetSha256": "d9e7c7af2ae9879617ad4b7e063680d75721ae6ad83053c2787c45609e21579d",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/after-realistic-20261006/session.json",
+      "status": "passed",
+      "sourceSha256": "c4e904c54c25639775e1f0157fa6e0918dc53807067972aa66a0e3aa5a212d54",
+      "targetSha256": "c4e904c54c25639775e1f0157fa6e0918dc53807067972aa66a0e3aa5a212d54",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/cleanup.json",
+      "status": "passed",
+      "sourceSha256": "5aa71b4af7986ed8885eee478e2e8af58fbcd140b3dba6b370aac95b5ca8a334",
+      "targetSha256": "5aa71b4af7986ed8885eee478e2e8af58fbcd140b3dba6b370aac95b5ca8a334",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/combat-regressions.json",
+      "status": "passed",
+      "sourceSha256": "28bc0d1d675c906eea178ca0f5d4644cce4995ee64f5f94b78d5aad927627f7a",
+      "targetSha256": "28bc0d1d675c906eea178ca0f5d4644cce4995ee64f5f94b78d5aad927627f7a",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-classic/entry.png",
+      "status": "passed",
+      "sourceSha256": "d81bdefc3e15476ee8e6edc5dcd2a687c1410f4e100b0c0350053ad6e4992410",
+      "targetSha256": "d81bdefc3e15476ee8e6edc5dcd2a687c1410f4e100b0c0350053ad6e4992410",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-classic/escaped.png",
+      "status": "passed",
+      "sourceSha256": "6240d6acf4c64f67e0a40a6b2ad1dcd01964252be694fd4acb00532e43ac895c",
+      "targetSha256": "6240d6acf4c64f67e0a40a6b2ad1dcd01964252be694fd4acb00532e43ac895c",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-classic/garden.png",
+      "status": "passed",
+      "sourceSha256": "885d9e7c4e10c293d248a872e736740c8fe1fdda90a52c6e49f76134212ed336",
+      "targetSha256": "885d9e7c4e10c293d248a872e736740c8fe1fdda90a52c6e49f76134212ed336",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-classic/live-feeding.png",
+      "status": "passed",
+      "sourceSha256": "723ec6a6655b9dcf6e6aea6304d59a2c6404e67b1861128443fbbac8132d9c70",
+      "targetSha256": "723ec6a6655b9dcf6e6aea6304d59a2c6404e67b1861128443fbbac8132d9c70",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-classic/nguithr-cut.png",
+      "status": "passed",
+      "sourceSha256": "b62a1ee040edae244d20fad7cc3c4cbd222c2ebf05f93e734f37cedc2dc790b5",
+      "targetSha256": "b62a1ee040edae244d20fad7cc3c4cbd222c2ebf05f93e734f37cedc2dc790b5",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-classic/nguithr-descend.png",
+      "status": "passed",
+      "sourceSha256": "c9e2559593296990050d52c4eb34a78eaead2661baa93056d165ce9e51dcaa1c",
+      "targetSha256": "c9e2559593296990050d52c4eb34a78eaead2661baa93056d165ce9e51dcaa1c",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-classic/nguithr-feed.png",
+      "status": "passed",
+      "sourceSha256": "0f05e080e0e732737f4af4b690f6cd1296f2c82efc1ec1649806c6f7b38b6613",
+      "targetSha256": "0f05e080e0e732737f4af4b690f6cd1296f2c82efc1ec1649806c6f7b38b6613",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-classic/nguithr-idle.png",
+      "status": "passed",
+      "sourceSha256": "877077c81c1b74a41622af98e7c7bcf0b3a1dff26ff53f9579dd5a8d351cd8fa",
+      "targetSha256": "877077c81c1b74a41622af98e7c7bcf0b3a1dff26ff53f9579dd5a8d351cd8fa",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-classic/nguithr-nest.png",
+      "status": "passed",
+      "sourceSha256": "8aef1d9d3b8eea7a0aa63a8155450c8eea91ee968dc78ad9c058391fdf510a34",
+      "targetSha256": "8aef1d9d3b8eea7a0aa63a8155450c8eea91ee968dc78ad9c058391fdf510a34",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-classic/nguithr-sleep.png",
+      "status": "passed",
+      "sourceSha256": "1fa6807b770288e781c1a0c9f439d8f57bbeba557b11b1f6e9db4e319291dc54",
+      "targetSha256": "1fa6807b770288e781c1a0c9f439d8f57bbeba557b11b1f6e9db4e319291dc54",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-classic/parking-props.png",
+      "status": "passed",
+      "sourceSha256": "9ef7df480499ddd43d06947da25fa10415e7b2b4e9bc7c12a33355490875f695",
+      "targetSha256": "9ef7df480499ddd43d06947da25fa10415e7b2b4e9bc7c12a33355490875f695",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-classic/result.json",
+      "status": "passed",
+      "sourceSha256": "e6e4c182080c3d4c66fccde2e6d5204e0cefeee5de2184a5fcbfd3ac2dd5e503",
+      "targetSha256": "e6e4c182080c3d4c66fccde2e6d5204e0cefeee5de2184a5fcbfd3ac2dd5e503",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-classic/sedgland-drop.png",
+      "status": "passed",
+      "sourceSha256": "92e4150c684e3446490b06bf80f1b2d397e4e3d3f90f29c63796eefe32cda130",
+      "targetSha256": "92e4150c684e3446490b06bf80f1b2d397e4e3d3f90f29c63796eefe32cda130",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-classic/session.json",
+      "status": "passed",
+      "sourceSha256": "bca02e9e5ecf5157448988377cab918146361d8ef82e8f659fed51d01a120123",
+      "targetSha256": "bca02e9e5ecf5157448988377cab918146361d8ef82e8f659fed51d01a120123",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-classic/spawn.png",
+      "status": "passed",
+      "sourceSha256": "5a683fe12a716b5f72811b3bc7be66a66ae4392240f00e20d1707071a6bce054",
+      "targetSha256": "5a683fe12a716b5f72811b3bc7be66a66ae4392240f00e20d1707071a6bce054",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-input-collision/entry.png",
+      "status": "passed",
+      "sourceSha256": "792c208b418fc9703121248b2b36a04abc65c1f3a5642b907bb763cc51571b18",
+      "targetSha256": "792c208b418fc9703121248b2b36a04abc65c1f3a5642b907bb763cc51571b18",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-input-collision/escaped.png",
+      "status": "passed",
+      "sourceSha256": "0bf43485c41f2e718401d61dd86d4f43a39897811661d335deeb9f98df2c4b76",
+      "targetSha256": "0bf43485c41f2e718401d61dd86d4f43a39897811661d335deeb9f98df2c4b76",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-input-collision/live-feeding.png",
+      "status": "passed",
+      "sourceSha256": "c696d0faad1384f0ae568bbc268f733f8346846221b5786048b948a05c882412",
+      "targetSha256": "c696d0faad1384f0ae568bbc268f733f8346846221b5786048b948a05c882412",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-input-collision/nguithr-cut.png",
+      "status": "passed",
+      "sourceSha256": "30d1299ae1a70f9e643b6c58f3abdead2ee8c8ab1348025aa8f356a65d472f11",
+      "targetSha256": "30d1299ae1a70f9e643b6c58f3abdead2ee8c8ab1348025aa8f356a65d472f11",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-input-collision/nguithr-descend.png",
+      "status": "passed",
+      "sourceSha256": "dd52e4b664ec4fc3daa496d979a02018f8d216c1f34a08ef143e9fb74aeab660",
+      "targetSha256": "dd52e4b664ec4fc3daa496d979a02018f8d216c1f34a08ef143e9fb74aeab660",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-input-collision/nguithr-feed.png",
+      "status": "passed",
+      "sourceSha256": "9b9e2c4d9242ad9e2adecc2b54160354f780d323b37fd466136ea5603d9fb9be",
+      "targetSha256": "9b9e2c4d9242ad9e2adecc2b54160354f780d323b37fd466136ea5603d9fb9be",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-input-collision/nguithr-idle.png",
+      "status": "passed",
+      "sourceSha256": "485227e2adb4f39b31ad0a6c1f3ff14af652f21c75a3a81b72bfb4315ab8f160",
+      "targetSha256": "485227e2adb4f39b31ad0a6c1f3ff14af652f21c75a3a81b72bfb4315ab8f160",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-input-collision/nguithr-nest.png",
+      "status": "passed",
+      "sourceSha256": "4eba77272b8bd719b1845ecb43745293973790088a68d1f8594a31606d51bc00",
+      "targetSha256": "4eba77272b8bd719b1845ecb43745293973790088a68d1f8594a31606d51bc00",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-input-collision/nguithr-sleep.png",
+      "status": "passed",
+      "sourceSha256": "52ded32e63a6000121ef564ae4e5c3ae8ede2072ef9347b73064c2725b680d66",
+      "targetSha256": "52ded32e63a6000121ef564ae4e5c3ae8ede2072ef9347b73064c2725b680d66",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-input-collision/result.json",
+      "status": "passed",
+      "sourceSha256": "c1af3d306e41ce3bf33db5594345e454169096860e4ad522cacce4e46b0d52c6",
+      "targetSha256": "c1af3d306e41ce3bf33db5594345e454169096860e4ad522cacce4e46b0d52c6",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-input-collision/sedgland-drop.png",
+      "status": "passed",
+      "sourceSha256": "7d50c51ad9f5841fef1dd18cde64d924aea0556eccd07450fb257f7a318e62e7",
+      "targetSha256": "7d50c51ad9f5841fef1dd18cde64d924aea0556eccd07450fb257f7a318e62e7",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-input-collision/session.json",
+      "status": "passed",
+      "sourceSha256": "5096e0038360ccb226b5b2c3a0604f7b07beddeec260b856c85339003d57379b",
+      "targetSha256": "5096e0038360ccb226b5b2c3a0604f7b07beddeec260b856c85339003d57379b",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-realistic/entry.png",
+      "status": "passed",
+      "sourceSha256": "5b2ae578b46475dcf9a2c33ca1ec4f78072c0408b352c2b91beaa264938e63be",
+      "targetSha256": "5b2ae578b46475dcf9a2c33ca1ec4f78072c0408b352c2b91beaa264938e63be",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-realistic/escaped.png",
+      "status": "passed",
+      "sourceSha256": "aeb06467223d91e8a9dc891325aa979f24d24169f188c8675684cceef15d1f80",
+      "targetSha256": "aeb06467223d91e8a9dc891325aa979f24d24169f188c8675684cceef15d1f80",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-realistic/garden.png",
+      "status": "passed",
+      "sourceSha256": "797e30777f2db46fb18c6e097e6481240a352876dae0cd827307a514661be52b",
+      "targetSha256": "797e30777f2db46fb18c6e097e6481240a352876dae0cd827307a514661be52b",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-realistic/live-feeding.png",
+      "status": "passed",
+      "sourceSha256": "8357ce01e46bf73f4d73ebad1d1a785d2bae50cdb6aca00664dec0dbf50a65ce",
+      "targetSha256": "8357ce01e46bf73f4d73ebad1d1a785d2bae50cdb6aca00664dec0dbf50a65ce",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-realistic/nguithr-cut.png",
+      "status": "passed",
+      "sourceSha256": "39ec1f02f38eaddbe4c25a2cb488356d48902858304f5dfb17bc08e471d89b8c",
+      "targetSha256": "39ec1f02f38eaddbe4c25a2cb488356d48902858304f5dfb17bc08e471d89b8c",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-realistic/nguithr-descend.png",
+      "status": "passed",
+      "sourceSha256": "3ebc0b6e0b6aae99ba12009eab3b1e0037c3ecff2eb8535d9dc65e8232fc1dd8",
+      "targetSha256": "3ebc0b6e0b6aae99ba12009eab3b1e0037c3ecff2eb8535d9dc65e8232fc1dd8",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-realistic/nguithr-feed.png",
+      "status": "passed",
+      "sourceSha256": "6405dce556411e0030bdb6a4c86261fe1be846b1006995dd3722cc4debf9b24b",
+      "targetSha256": "6405dce556411e0030bdb6a4c86261fe1be846b1006995dd3722cc4debf9b24b",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-realistic/nguithr-idle.png",
+      "status": "passed",
+      "sourceSha256": "2cc3bcdfb7ee2d0eba5534541875c4556208ac6f929c09cc865d7976f7cdade0",
+      "targetSha256": "2cc3bcdfb7ee2d0eba5534541875c4556208ac6f929c09cc865d7976f7cdade0",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-realistic/nguithr-nest.png",
+      "status": "passed",
+      "sourceSha256": "a48119439476591dbf543943cbc2eb625cb516455cae06af9da5b1d53b407926",
+      "targetSha256": "a48119439476591dbf543943cbc2eb625cb516455cae06af9da5b1d53b407926",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-realistic/nguithr-sleep.png",
+      "status": "passed",
+      "sourceSha256": "a23168cc61f2a2d2c60006d581336830edc451144fb802e4b09d5457d53229b5",
+      "targetSha256": "a23168cc61f2a2d2c60006d581336830edc451144fb802e4b09d5457d53229b5",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-realistic/parking-props.png",
+      "status": "passed",
+      "sourceSha256": "fd45d8fc8404d06dcb87ff903614d00a0a33675e4595ded06d0ac4e7f3bc0032",
+      "targetSha256": "fd45d8fc8404d06dcb87ff903614d00a0a33675e4595ded06d0ac4e7f3bc0032",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-realistic/result.json",
+      "status": "passed",
+      "sourceSha256": "23ae4bb59bd4cce210eb6d170d4055329f3bf4a5a835c5f55d5c41d5ccbb39a0",
+      "targetSha256": "23ae4bb59bd4cce210eb6d170d4055329f3bf4a5a835c5f55d5c41d5ccbb39a0",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-realistic/sedgland-drop.png",
+      "status": "passed",
+      "sourceSha256": "72e1f1ff9add914fbd3479382dace12c89e166ab80e74dcd0dd11665b36a5dff",
+      "targetSha256": "72e1f1ff9add914fbd3479382dace12c89e166ab80e74dcd0dd11665b36a5dff",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-realistic/session.json",
+      "status": "passed",
+      "sourceSha256": "eca5017d90b1b32cfcdcdafdf664263620254093ee44939a063b9f06440b37cf",
+      "targetSha256": "eca5017d90b1b32cfcdcdafdf664263620254093ee44939a063b9f06440b37cf",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/final-realistic/spawn.png",
+      "status": "passed",
+      "sourceSha256": "9f5012a7bfa2113582256f83e60976814b47f083a86db57d146f7fd22229449d",
+      "targetSha256": "9f5012a7bfa2113582256f83e60976814b47f083a86db57d146f7fd22229449d",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/holster/desktop/drawn.png",
+      "status": "passed",
+      "sourceSha256": "bdf15d48d3cc061a23b7365bc487abf220c960a4980c0692bbf8cdf1b3f66ef5",
+      "targetSha256": "bdf15d48d3cc061a23b7365bc487abf220c960a4980c0692bbf8cdf1b3f66ef5",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/holster/desktop/poolfaces-in-game.png",
+      "status": "passed",
+      "sourceSha256": "f875c29c773d5da27c013a77262b3ce41c2c9f0ab35270e652311b324a974856",
+      "targetSha256": "f875c29c773d5da27c013a77262b3ce41c2c9f0ab35270e652311b324a974856",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/holster/desktop/restored.png",
+      "status": "passed",
+      "sourceSha256": "1b2d0bf892c7d53e9699b3a10c9ec72008d3fd33d00a5868c18a31e70814369c",
+      "targetSha256": "1b2d0bf892c7d53e9699b3a10c9ec72008d3fd33d00a5868c18a31e70814369c",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/holster/desktop/result.json",
+      "status": "passed",
+      "sourceSha256": "79541b617d461c90836d44c7c05e2785c7ff93632d5243a988a2d9501bbed412",
+      "targetSha256": "79541b617d461c90836d44c7c05e2785c7ff93632d5243a988a2d9501bbed412",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/holster/desktop/stowed.png",
+      "status": "passed",
+      "sourceSha256": "f74907e584a377853a1ce9680de0fa701675b8a0dcb8aa487139203009115e97",
+      "targetSha256": "f74907e584a377853a1ce9680de0fa701675b8a0dcb8aa487139203009115e97",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/regressions.json",
+      "status": "passed",
+      "sourceSha256": "a67ac61b0db1df847430d024a1eb8b17736d42c004f90e2b5c5f5c6353c9944d",
+      "targetSha256": "a67ac61b0db1df847430d024a1eb8b17736d42c004f90e2b5c5f5c6353c9944d",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/static.json",
+      "status": "passed",
+      "sourceSha256": "a5ec4c0f604dd821c3184029c3e8384fbc02da19d5792b0642d7b6c98377b6ee",
+      "targetSha256": "a5ec4c0f604dd821c3184029c3e8384fbc02da19d5792b0642d7b6c98377b6ee",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/summary.json",
+      "status": "passed",
+      "sourceSha256": "bd2a2a1c8dd3d50ada7b28aa24bf7446572e0454ad9e05001e1d66c7e13878f6",
+      "targetSha256": "bd2a2a1c8dd3d50ada7b28aa24bf7446572e0454ad9e05001e1d66c7e13878f6",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/web-shadow-after.png",
+      "status": "passed",
+      "sourceSha256": "2cc3bcdfb7ee2d0eba5534541875c4556208ac6f929c09cc865d7976f7cdade0",
+      "targetSha256": "2cc3bcdfb7ee2d0eba5534541875c4556208ac6f929c09cc865d7976f7cdade0",
+      "error": null
+    },
+    {
+      "path": "app/reports/l1v3-nguithr-20261020/web-shadow-before.png",
+      "status": "passed",
+      "sourceSha256": "4623fd59fe33488c748397c839ed0049a728f4d4da6b8a73ea04929bbf227d8d",
+      "targetSha256": "4623fd59fe33488c748397c839ed0049a728f4d4da6b8a73ea04929bbf227d8d",
+      "error": null
+    },
+    {
+      "path": "app/reports/level-entry/l1v3-nguithr-entry/1-entry.png",
+      "status": "passed",
+      "sourceSha256": "03dfea365f0144df4a7ea5b917f0c333a348369e6dd458bf98f648ed668c43a8",
+      "targetSha256": "03dfea365f0144df4a7ea5b917f0c333a348369e6dd458bf98f648ed668c43a8",
+      "error": null
+    },
+    {
+      "path": "app/reports/level-entry/l1v3-nguithr-entry/2-entry.png",
+      "status": "passed",
+      "sourceSha256": "a78dfdc7fa0d7a20c0e95dcf4df16c733e51bb9ab66166fe8ac9a47de2bdd602",
+      "targetSha256": "a78dfdc7fa0d7a20c0e95dcf4df16c733e51bb9ab66166fe8ac9a47de2bdd602",
+      "error": null
+    },
+    {
+      "path": "app/reports/level-entry/l1v3-nguithr-entry/3-entry.png",
+      "status": "passed",
+      "sourceSha256": "820589fdc128a275ce9d7c1572757468a29891dd45d4f756bd9a89e25deff027",
+      "targetSha256": "820589fdc128a275ce9d7c1572757468a29891dd45d4f756bd9a89e25deff027",
+      "error": null
+    },
+    {
+      "path": "app/reports/level-entry/l1v3-nguithr-entry/5-entry.png",
+      "status": "passed",
+      "sourceSha256": "1b75bfd689aa1cccb622dc5d2c14d8798e48fafe065596a241adecc81c28814b",
+      "targetSha256": "1b75bfd689aa1cccb622dc5d2c14d8798e48fafe065596a241adecc81c28814b",
+      "error": null
+    },
+    {
+      "path": "app/reports/level-entry/l1v3-nguithr-entry/8-entry.png",
+      "status": "passed",
+      "sourceSha256": "88758f8ad11f25a7170bef26c33fbf24ed758068c26bb517a706555716de6d6a",
+      "targetSha256": "88758f8ad11f25a7170bef26c33fbf24ed758068c26bb517a706555716de6d6a",
+      "error": null
+    },
+    {
+      "path": "app/reports/level-entry/l1v3-nguithr-entry/console.json",
+      "status": "passed",
+      "sourceSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "targetSha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "error": null
+    },
+    {
+      "path": "app/reports/level-entry/l1v3-nguithr-entry/runtime.json",
+      "status": "passed",
+      "sourceSha256": "c2d4590b36f605ca1ae62795951e82f107ba77255e1cf9d22eec3f86a1a85bcc",
+      "targetSha256": "c2d4590b36f605ca1ae62795951e82f107ba77255e1cf9d22eec3f86a1a85bcc",
+      "error": null
+    },
+    {
+      "path": "app/reports/nguithr/anim-descend-mid.png",
+      "status": "passed",
+      "sourceSha256": "59aa4fe150c02240803b990370ba4a5c8ae0c642a75f4af7b8c684a3fcd8882f",
+      "targetSha256": "59aa4fe150c02240803b990370ba4a5c8ae0c642a75f4af7b8c684a3fcd8882f",
+      "error": null
+    },
+    {
+      "path": "app/reports/nguithr/mechanics-check.txt",
+      "status": "passed",
+      "sourceSha256": "e4bb5e3f8bd643fae7b3401d57516b47420efccd9ca6ebf11fc4bc34b623be45",
+      "targetSha256": "e4bb5e3f8bd643fae7b3401d57516b47420efccd9ca6ebf11fc4bc34b623be45",
+      "error": null
+    },
+    {
+      "path": "app/reports/nguithr/nest-real.png",
+      "status": "passed",
+      "sourceSha256": "a819a2ab91f3ea8d0a339f6186338d25a40f42d30cad69d614189e670df28997",
+      "targetSha256": "a819a2ab91f3ea8d0a339f6186338d25a40f42d30cad69d614189e670df28997",
+      "error": null
+    },
+    {
+      "path": "app/reports/nguithr/under-real.png",
+      "status": "passed",
+      "sourceSha256": "68ba3bf40021bda3d352f54e38017e96f7dfd8aa59454f1ad4365a09cf8961ce",
+      "targetSha256": "68ba3bf40021bda3d352f54e38017e96f7dfd8aa59454f1ad4365a09cf8961ce",
+      "error": null
+    },
+    {
+      "path": "app/reports/nguithr/verify-result.json",
+      "status": "passed",
+      "sourceSha256": "25b1e9c0a8d0ecd68b233324776e719c4ff59a443831f6b1cb3ff6f7c1102162",
+      "targetSha256": "25b1e9c0a8d0ecd68b233324776e719c4ff59a443831f6b1cb3ff6f7c1102162",
+      "error": null
+    },
+    {
+      "path": "app/scripts/check-l1v3-nguithr.ts",
+      "status": "passed",
+      "sourceSha256": "2ec9d05e6a51aa3a7cf1b374fc22b2fe33c05e4bff9489a47c3b67706d41bdf0",
+      "targetSha256": "2ec9d05e6a51aa3a7cf1b374fc22b2fe33c05e4bff9489a47c3b67706d41bdf0",
+      "error": null
+    },
+    {
+      "path": "app/scripts/check-nguithr-anim.ts",
+      "status": "passed",
+      "sourceSha256": "8970208ba4938b92ac0376992ba010e46a75886f618245cce37b9c0ce5608e23",
+      "targetSha256": "8970208ba4938b92ac0376992ba010e46a75886f618245cce37b9c0ce5608e23",
+      "error": null
+    },
+    {
+      "path": "app/scripts/check-nguithr.ts",
+      "status": "passed",
+      "sourceSha256": "9f004261afc2ccf4fda35f19b6a1087cc8f9bb78968ccce3c9f9a4adcb83c6f3",
+      "targetSha256": "9f004261afc2ccf4fda35f19b6a1087cc8f9bb78968ccce3c9f9a4adcb83c6f3",
+      "error": null
+    },
+    {
+      "path": "app/scripts/verify-l1v3-nguithr.mjs",
+      "status": "passed",
+      "sourceSha256": "ce79b992722a35a00abb937f4f7012a5200666ead6abd9e18e2b7b5b19b2ec17",
+      "targetSha256": "ce79b992722a35a00abb937f4f7012a5200666ead6abd9e18e2b7b5b19b2ec17",
+      "error": null
+    },
+    {
+      "path": "app/scripts/verify-nguithr-game.mjs",
+      "status": "passed",
+      "sourceSha256": "22781f1ca4db2dbd82d8947eaf668f5f7001e9b0f0d569440c312efbc59af182",
+      "targetSha256": "22781f1ca4db2dbd82d8947eaf668f5f7001e9b0f0d569440c312efbc59af182",
+      "error": null
+    },
+    {
+      "path": "app/scripts/verify-nguithr.mjs",
+      "status": "passed",
+      "sourceSha256": "159b3f31b3412941639fc25dc866a793f1a399a8d5e82c876aceb9fa87ccd371",
+      "targetSha256": "159b3f31b3412941639fc25dc866a793f1a399a8d5e82c876aceb9fa87ccd371",
+      "error": null
+    },
+    {
+      "path": "app/src/game/engine/nguithrAI.ts",
+      "status": "passed",
+      "sourceSha256": "15b837920ed11048386447e6125d97ae389b97d3a1bc9510949e46e05507cda7",
+      "targetSha256": "15b837920ed11048386447e6125d97ae389b97d3a1bc9510949e46e05507cda7",
+      "error": null
+    },
+    {
+      "path": "app/src/game/renderer/factionSigns.ts",
+      "status": "passed",
+      "sourceSha256": "0ca52c22731198cb40789c45b02491cac7d55ab3b49d4ae1a48d499c6e5a59c0",
+      "targetSha256": "0ca52c22731198cb40789c45b02491cac7d55ab3b49d4ae1a48d499c6e5a59c0",
+      "error": null
+    },
+    {
+      "path": "app/src/game/renderer/l1GardenPlants.ts",
+      "status": "passed",
+      "sourceSha256": "38dbd1709246ba1160028087e3edae917209a70a5e48e34a07c061c6172b7592",
+      "targetSha256": "38dbd1709246ba1160028087e3edae917209a70a5e48e34a07c061c6172b7592",
+      "error": null
+    },
+    {
+      "path": "app/src/game/renderer/l1PropDetail.ts",
+      "status": "passed",
+      "sourceSha256": "9410ff9e7a7fc032a531c9e88037199e8c3d97e5c131b3d892e23c41e0aff094",
+      "targetSha256": "9410ff9e7a7fc032a531c9e88037199e8c3d97e5c131b3d892e23c41e0aff094",
+      "error": null
+    },
+    {
+      "path": "app/src/game/renderer/l1SurfaceMeshes.ts",
+      "status": "passed",
+      "sourceSha256": "443495c1faf43d909ead487aa707fa21df326af845d35f9add8fcf32bdf62868",
+      "targetSha256": "443495c1faf43d909ead487aa707fa21df326af845d35f9add8fcf32bdf62868",
+      "error": null
+    },
+    {
+      "path": "app/src/game/renderer/nguithrAnim.ts",
+      "status": "passed",
+      "sourceSha256": "be9145ff5a116b13cc210db264e131964367bf0e86d32be3111c675bae5d4454",
+      "targetSha256": "be9145ff5a116b13cc210db264e131964367bf0e86d32be3111c675bae5d4454",
+      "error": null
+    },
+    {
+      "path": "app/src/game/renderer/nguithrMesh.ts",
+      "status": "passed",
+      "sourceSha256": "61a9a0ee813b612bbdf0b7277b758b8b5d6556dd415aefc227684dfb9e4498db",
+      "targetSha256": "61a9a0ee813b612bbdf0b7277b758b8b5d6556dd415aefc227684dfb9e4498db",
+      "error": null
+    },
+    {
+      "path": "app/src/proto/boardsProto.ts",
+      "status": "passed",
+      "sourceSha256": "5231b2ef819fd8b764905128aabcd59b9cd1e6d078a937b5187f29ea2158952f",
+      "targetSha256": "5231b2ef819fd8b764905128aabcd59b9cd1e6d078a937b5187f29ea2158952f",
+      "error": null
+    },
+    {
+      "path": "app/src/proto/nguithrAnimProto.ts",
+      "status": "passed",
+      "sourceSha256": "4cc559fd4fe8b69ef353dcaf6fb7e44c9623e4debe34b7c175e88f50438858f0",
+      "targetSha256": "4cc559fd4fe8b69ef353dcaf6fb7e44c9623e4debe34b7c175e88f50438858f0",
+      "error": null
+    },
+    {
+      "path": "app/src/proto/nguithrProto.ts",
+      "status": "passed",
+      "sourceSha256": "7ac936b28657364fc12986e0aa4033d89ac06b4eb9b800d9b0be177198d9486c",
+      "targetSha256": "7ac936b28657364fc12986e0aa4033d89ac06b4eb9b800d9b0be177198d9486c",
+      "error": null
+    },
+    {
+      "path": "app/src/proto/propsProto.ts",
+      "status": "passed",
+      "sourceSha256": "b7532c0fd964b7f0c0dab5b3c9127500390f61063568f9aaab89d73baf9af9c5",
+      "targetSha256": "b7532c0fd964b7f0c0dab5b3c9127500390f61063568f9aaab89d73baf9af9c5",
+      "error": null
+    },
+    {
+      "path": "app/src/proto/signsProto.ts",
+      "status": "passed",
+      "sourceSha256": "a4e50b8b58b237c96d58ee2d58a2476593e12653187118799c95a9596eb0a8f5",
+      "targetSha256": "a4e50b8b58b237c96d58ee2d58a2476593e12653187118799c95a9596eb0a8f5",
+      "error": null
+    },
+    {
+      "path": "app/verifier/l1v3-nguithr-check.ts",
+      "status": "passed",
+      "sourceSha256": "f4e5b7b1f1084ecf8a34fcbb3391a0916b299e4f716796e2e3d051d7cf6d03ef",
+      "targetSha256": "f4e5b7b1f1084ecf8a34fcbb3391a0916b299e4f716796e2e3d051d7cf6d03ef",
+      "error": null
+    }
+  ],
+  "completedAt": "2026-10-20T11:17:23.8701870Z"
+}

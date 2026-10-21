@@ -1,5 +1,9 @@
+import { heldMelee, startMeleeSwing } from './melee'
+import { isWrangler, wranglerFire, wranglerFireEggs, wranglerKillGuard, wranglerMelee } from './wranglerAI'
 import { witnessedOffense } from './career'
+import { nwInvulnerable, nwKilled, releaseNW } from './watchAI'
 import { provokeMoths } from './moths'
+import { mothEggSwing, mothHurt } from './mothAI'
 import { provokeHound } from './houndAI'
 // v53：战斗/投掷/击退 + 伤害/死亡结算 + 粒子生成 —— 自 engine.ts 拆分，逻辑逐语句搬运。
 import { ITEMS } from '../content/items'
@@ -15,9 +19,12 @@ import { partygoerAimPart, partygoerDamage, partygoerKillGuard, partyPainK, part
 import { seatedEyeHeight, seatedEyeOffset } from './seating'
 import { skinStealerHit } from './skinStealerAI'
 import { dullerDrop, dullerSquirted, dullerHurt, dullerDropPosition, releaseDullerPlayer } from './dullerAI'
+import { armsGunshot, armsHittable, armsKillGuard, armsPlayerShielded, armsInputLock } from './armsAI'
+import { nguithrKilled, nguithrProjectileHit,nguithrInputLock } from './nguithrAI'
 
 export function hurtPlayer(eng: Engine, dmg: number, source: string) {
   if (eng.dev.god) return
+  if (armsPlayerShielded(eng)) return // 手臂：被拖进风口 / 在管道里 / 正被吐出时，外界伤不到玩家
   const p = eng.player
   p.hp -= dmg * (eng.manmadeT > 0 ? 0.9 : 1) // v51：人制品效应中受到的伤害 -10%
   // 派对客转化：转化值越高痛觉越弱——伤害照扣，但镜头震动/红闪/理智损失逐步减弱，高转化时不再红闪
@@ -35,6 +42,7 @@ export function die(eng: Engine, cause: string, force = false) {
   if (eng.dev.god && !force) { eng.player.hp = Math.max(eng.player.hp, 20); return }
   releaseDullerPlayer(eng)
   releaseClumpPlayer(eng)
+  releaseNW(eng)
   eng.over = true
   eng.player.hp = 0
   eng.usingItem = null
@@ -45,7 +53,7 @@ export function die(eng: Engine, cause: string, force = false) {
 
 // 攻击距离：基础 1.9m，巨型实体按体量加成（v28：原 1.6 过短，近身常常够不到）
 export function attackReach(_eng: Engine, e: Entity): number {
-  return 1.9 + Math.max(0, (e.def.huge ?? 1) - 1) * 0.6
+  return (_eng.meleeReach > 0 ? _eng.meleeReach : 1.9) + Math.max(0, (e.def.huge ?? 1) - 1) * 0.6
 }
 
 /** v59 联机：客人攻击房主权威实体（带 netId）——伤害改报房主结算（快照回同步 hp/死亡/激怒），
@@ -67,6 +75,7 @@ function mpDrop(eng: Engine, id: number, it: string, x: number, y: number) {
  *  实体与玩家几乎重合时 atan2 方向退化，旧判定会永远 miss，这就是"近身打不到"的根因） */
 export function canHit(eng: Engine, e: Entity): boolean {
   const p = eng.player
+  if (e.def.type === 'arms' && !armsHittable(e)) return false // 手臂：缩在管内 / 被赶走时打不到
   if (e.dead || (e.disguised && e.disguised !== 'human')) return false // v77：穿着人皮的窃皮者是真实的身体，可以被击中
   const d = Math.hypot(e.x - p.x, e.y - p.y)
   if (d > eng.attackReach(e)) return false
@@ -82,7 +91,7 @@ export function canHit(eng: Engine, e: Entity): boolean {
 
 /** 准星当前可命中的最近实体（渲染层据此改变准星样式） */
 export function aimEntity(eng: Engine): Entity | null {
-  if (eng.handsStowed) return null
+  if (eng.handsStowed||(nguithrInputLock(eng)||armsInputLock(eng))) return null
   const m = eng.map
   if (!m) return null
   let best: Entity | null = null, bd = 1e9
@@ -143,15 +152,20 @@ function startAttackAnimation(eng: Engine, kind: Engine['attackAnimKind'], durat
 }
 
 export function killCheck(eng: Engine, e: Entity) {
+  if (isWrangler(e.def.type) && wranglerKillGuard(e)) return
+  if (nwInvulnerable(e.def.type)) { e.hp = e.def.hp; return } // 观察者 / 残缺者：常规方式杀不死
+  if (armsKillGuard(eng, e)) return // 手臂：永不死亡、不计击杀——血量清零 = 被赶走 90–120s 后回满
   if (partygoerKillGuard(eng, e)) return // 派对客：击杀必须按顺序（断臂→狂战士→倒地→火烧），血量见底只会倒地
   skinStealerHit(eng, e)
-  if(!e.dead)provokeMoths(eng,e)
+  if(!e.dead){provokeMoths(eng,e);mothHurt(eng,e,true)}
   provokeHound(eng,e)
   dullerHurt(eng,e)
   if (e.hp > 0 || e.dead) return
   const p = eng.player, m = eng.map!
   e.dead = true; e.deathT = 1.4
   if (e.def.type === 'clump') releaseClumpPlayer(eng, e)
+  if (e.def.type === 'strider') nwKilled(eng, e)
+  if (e.def.type === 'nguithr') nguithrKilled(eng, e) // 掉落镇静腺；释放被它重度镇静的玩家
   if(e.def.type==='duller'){
     const type=dullerDrop(e)
     if(type){
@@ -190,8 +204,8 @@ export function killCheck(eng: Engine, e: Entity) {
 }
 
 export function attack(eng: Engine) {
-  if (eng.handsStowed || jerryInputLock(eng)) return
-  const p = eng.player, m = eng.map!
+  if (eng.handsStowed || jerryInputLock(eng)||(nguithrInputLock(eng)||armsInputLock(eng))) return
+  const p = eng.player
   const held = p.hotbar[p.selected]
   // An empty squirt gun is not an attack: keep its existing feedback, but do
   // not spend stamina or start the shared attack cooldown.
@@ -200,6 +214,8 @@ export function attack(eng: Engine) {
     return
   }
   if (!eng.dev.noAttackCooldown && eng.attackCooldownT > 0) return
+  // 近战重制：五把近战武器走三段式挥砍（前摇结束才判定，见 engine/melee.ts）
+  if (heldMelee(eng)) { startMeleeSwing(eng, false, 0); return }
   const def = held ? ITEMS[held.type] : undefined
   // 所有左键攻击共用冷却入口；近战武器从物品定义读取独立间隔/体力，特殊攻击使用轻量模板。
   const interval = eng.gunCandyT > 0 ? 0.24
@@ -217,6 +233,7 @@ export function attack(eng: Engine) {
   const duration = exhausted ? Math.max(3.1, interval * 4.5) : interval
   eng.attackCooldownDur = eng.dev.noAttackCooldown ? 0 : duration
   eng.attackCooldownT = eng.attackCooldownDur
+  if (def?.weapon && eng.gunCandyT <= 0) eng.meleeSide = -eng.meleeSide // 近战重制：刀左右交替快划
   startAttackAnimation(eng,
     eng.gunCandyT > 0 || held?.type === 'squirtgun' ? 'spray'
       : def?.throw ? 'throw'
@@ -234,8 +251,30 @@ export function attack(eng: Engine) {
   // v32：滋水枪——左键喷射储罐液体
   if (held?.type === 'squirtgun') { eng.squirt(); return }
   audio.swing()
-  // 开发者模式：一击必杀
-  const dmg = eng.dev.oneHit ? 99999 : held ? (ITEMS[held.type].weapon ?? 8) : 8
+  const r = strike(eng, eng.dev.oneHit ? 99999 : held ? (ITEMS[held.type].weapon ?? 8) : 8)
+  void r
+}
+
+export interface MeleeStrike { kind: string; heavy: boolean; broken: boolean; targets: number; stun: number; backstab?: number; reach: number }
+/** 一次近战结算（空手/旧路径立即调用；五把近战武器在前摇结束时由 engine/melee.ts 调用）。 */
+export function strike(eng: Engine, dmgIn: number, melee?: MeleeStrike): { hit: boolean; wall: boolean } {
+  const p = eng.player, m = eng.map!
+  if (melee) audio.swing()
+  // 目标数限制：只取最近的 N 个可命中实体（木板 3，其余 1）
+  let allowed: Set<Entity> | null = null
+  if (melee) {
+    const c = m.entities.filter((e) => eng.canHit(e)).sort((a, b) => Math.hypot(a.x - p.x, a.y - p.y) - Math.hypot(b.x - p.x, b.y - p.y))
+    allowed = new Set(c.slice(0, melee.targets))
+  }
+  // 背刺：刀从目标背后（目标未在追击/攻击）出手 ×2
+  const dmgFor = (e: Entity) => {
+    if (!melee?.backstab || e.state === 'chase' || e.state === 'attack') return dmgIn
+    const toP = Math.atan2(p.y - e.y, p.x - e.x)
+    let d = Math.abs(toP - e.facing); if (d > Math.PI) d = Math.PI * 2 - d
+    if (d < 2.1) return dmgIn
+    if (eng.statusMsgT.backstab <= 0) { eng.msg('背刺！刀从它背后捅了进去。（伤害 ×2）', 'loot'); eng.statusMsgT.backstab = 4 }
+    return dmgIn * melee.backstab
+  }
   let hit = false
   let blockedJerry = false // v47：教化约束——被拦下的对鹉主挥击（提示「你下不去手」）
   for (const e of m.entities) {
@@ -257,34 +296,43 @@ export function attack(eng: Engine) {
       }
       if (!thingBody) continue
     } else if (!eng.canHit(e)) continue
+    if (allowed && !allowed.has(e) && !thingBody) continue
+    const edmg = dmgFor(e)
     recordEntityEncounter(e) // v54：攻击命中计一次遭遇（按个体去重）
     // v47：教化约束——教化值 >0 后无法再对鹉主出手（驯服清零后解除约束）
     if (e.def.type === 'jerry' && eng.indoctrination > 0) { blockedJerry = true; continue }
     const ang = Math.atan2(e.y - p.y, e.x - p.x)
     // v59 联机：客人挥中房主权威实体——伤害上报房主结算（快照回同步 hp/死亡/激怒），
     // 本地只做打击反馈（血迹/挥中音效），不扣血不击杀（防两端状态与掉落分叉）
-    if (mpHurtEntity(eng, e, thingBody ? dmg * 0.25 : dmg)) {
+    if (mpHurtEntity(eng, e, thingBody ? edmg * 0.25 : edmg)) {
       if (thingBody && (e.turnSlowT ?? 0) <= 0) eng.msg('刀刃没入它皮革般的身体——伤害甚微，但它转头的动作滞涩了一瞬。', 'system')
       hit = true
       eng.bloodParticles(e.x, e.y)
       eng.provoked = true
       continue
     }
+    if (nwInvulnerable(e.def.type)) {
+      hit = true
+      if ((e.turnSlowT ?? 0) <= 0) eng.msg(e.def.type === 'watcher' ? '刀刃从湿滑的巩膜上滑开了。它甚至没有眨眼——它没有眼睑。' : '你砍进了烟雾里。什么也没砍到。', 'system')
+      e.turnSlowT = 2
+      continue
+    }
+    if (isWrangler(e.def.type) && wranglerMelee(eng, e)) { hit = true; continue }
     if (e.def.type === 'partygoer') {
       // 派对客：按准星打中的部位结算（面条臂 / 头脸 / 躯干），胸甲闭合时躯体减伤 90%，倒地后只能用火烧尽
       const dir = crosshairDirection(), off = seatedEyeOffset(eng)
       const part = partygoerAimPart(eng, e, { ox: p.x + off.x, oy: p.y + off.y, oz: p.z + seatedEyeHeight(eng), dx: dir.x, dy: dir.y, dz: dir.z })
-      partygoerDamage(eng, e, dmg, 'melee', part)
+      partygoerDamage(eng, e, edmg, 'melee', part)
     } else if (thingBody) {
       // v58：体节命中——伤害大减，但让它转头迟滞 3 秒；巨躯不被击退
-      e.hp -= dmg * 0.25
+      e.hp -= edmg * 0.25
       if ((e.turnSlowT ?? 0) <= 0) eng.msg('刀刃没入它皮革般的身体——伤害甚微，但它转头的动作滞涩了一瞬。', 'system')
       e.turnSlowT = 3
     } else if (e.def.type === 'jerry') {
-      e.hp -= dmg // 鹉主杰瑞：不被击退（它在栖木/神父肩上），受伤后尖啸反扑（jerryAI.jerryHurt）
+      e.hp -= edmg // 鹉主杰瑞：不被击退（它在栖木/神父肩上），受伤后尖啸反扑（jerryAI.jerryHurt）
       jerryHurt(eng, e)
     } else {
-      e.hp -= dmg
+      e.hp -= edmg
       // 击退位移做墙体校验：落点不可走（墙/实心结构/不可达高差）则不位移——
       // 击杀后的尸体同样不会被钉进墙里（尸体落点即击退落点）
       const kx = e.x + Math.cos(ang) * 0.4, ky = e.y + Math.sin(ang) * 0.4
@@ -294,7 +342,7 @@ export function attack(eng: Engine) {
       if (eng.entityWalkH(m, ktx, kty, bandOfZ(e.z)) !== null
         && (!l9StreetBound || m.outdoor[kty * m.w + ktx] === 1)) { e.x = kx; e.y = ky }
     }
-    e.stunT = 0.35
+    e.stunT = melee ? melee.stun : 0.35
     // v47：伤害鹉主杰瑞——信众哗然：jerry 声望立即 -50（每次）
     if (e.def.type === 'jerry') eng.hurtJerryRep()
     hit = true
@@ -306,7 +354,8 @@ export function attack(eng: Engine) {
     if (e.def.type === 'corpserat' && e.provoked) eng.provokeRatPack(e) // v44：尸鼠群体激怒——周围同伴一同反击同一目标
     eng.killCheck(e)
   }
-  if (hit) { audio.hit(); eng.camShake = Math.min(1, eng.camShake + 0.15) }
+  if (hit) { audio.hit(); eng.camShake = Math.min(1, eng.camShake + (melee?.heavy ? 0.3 : 0.15)) }
+  else if (mothEggSwing(eng)) { audio.hit() }
   else if (blockedJerry) eng.msg('你下不去手——鹉主的蓝羽在你眼中只剩神圣。（教化约束：驯服祂才能解除）', 'system')
   // v35：挥击波及 NPC——降低其所属团体声望（NPC 是居民不是实体：不会受伤、不会死亡）
   let blockedFollower = false // v47：教化约束——被拦下的对信众挥击
@@ -324,7 +373,7 @@ export function attack(eng: Engine) {
     // v39：BRC 员工——跳过 changeRep(-15)：不立即降声望，改记未告发次数（坦白时结清）。
     // 员工不受攻击影响（不逃跑/不反击/不停手），但可被杀死；敌对员工被杀死不另记罪（已坦白结清）
     if (n.def.faction === 'brc') {
-      const dmg2 = eng.dev.oneHit ? 99999 : held ? (ITEMS[held.type].weapon ?? 8) : 8
+      const dmg2 = dmgIn
       n.hp = (n.hp ?? 55) - dmg2
       eng.bloodParticles(n.x, n.y)
       audio.hit()
@@ -346,7 +395,7 @@ export function attack(eng: Engine) {
     if (n.def.faction === 'jerry') {
       // v47：教化约束——教化值 ≥50 后无法再攻击信众 NPC（他们是你的兄弟姐妹；驯服清零后解除）
       if (eng.indoctrination >= 50) { blockedFollower = true; continue }
-      const dmg2 = eng.dev.oneHit ? 99999 : held ? (ITEMS[held.type].weapon ?? 8) : 8
+      const dmg2 = dmgIn
       n.hp = (n.hp ?? 45) - dmg2
       eng.bloodParticles(n.x, n.y)
       audio.hit()
@@ -374,13 +423,20 @@ export function attack(eng: Engine) {
   }
   if (blockedFollower) eng.msg('你下不去手——他们是你的兄弟姐妹。（教化约束：驯服鹉主才能解除）', 'system')
   // 空手/武器挥击也产生噪音（可主动威慑猎犬）
-  eng.noiseEvent(p.x, p.y, 8, false)
+  eng.noiseEvent(p.x, p.y, melee?.heavy ? 11 : 8, false)
+  // 近战重制：什么都没打中时，沿准星检查是否砸到了墙（弹刀）
+  let wall = false
+  if (melee && !hit && !blockedJerry) {
+    const tr = traceCrosshair(eng, melee.reach)
+    wall = !tr.entity && tr.travel < melee.reach - 0.05
+  }
+  return { hit, wall }
 }
 
 // ---------- v28：可投掷道具 ----------
 /** 掷出手持的可投掷物品（消耗 1 个；订书机/玻璃珠落地后可捡回） */
 export function throwHeld(eng: Engine, type: string) {
-  if (eng.handsStowed) return
+  if (eng.handsStowed||(nguithrInputLock(eng)||armsInputLock(eng))) return
   const p = eng.player
   const slot = p.hotbar[p.selected]
   if (!slot || slot.type !== type) return
@@ -406,7 +462,7 @@ export function throwHeld(eng: Engine, type: string) {
 export const SQUIRT_CAP = 27
 /** 往滋水枪储罐装入 1 瓶液体（3 份喷射量；储罐只能装一种液体，清水无需对应物品） */
 export function loadSquirt(eng: Engine, liquid: 'water' | 'almond' | 'cashew' | 'liquidpain'): boolean {
-  if (eng.handsStowed) return false
+  if (eng.handsStowed||(nguithrInputLock(eng)||armsInputLock(eng))) return false
   const NAME = { water: '清水', almond: '杏仁水', cashew: '腰果水', liquidpain: '液态痛苦' } as const
   if (eng.squirtTank !== 'none' && eng.squirtTank !== liquid) {
     eng.msg(`储罐里还有别的液体——喷完或喝完才能换。`, 'system')
@@ -424,7 +480,7 @@ export function loadSquirt(eng: Engine, liquid: 'water' | 'almond' | 'cashew' | 
 
 /** 清空储罐（把残液倒掉，换液体免喷完） */
 export function clearSquirt(eng: Engine) {
-  if (eng.handsStowed) return
+  if (eng.handsStowed||(nguithrInputLock(eng)||armsInputLock(eng))) return
   if (eng.squirtTank === 'none') { eng.msg('储罐本来就是空的。', 'system'); return }
   const NAME = { water: '清水', almond: '杏仁水', cashew: '腰果水', liquidpain: '液态痛苦' } as const
   eng.msg(`倒空了储罐里的${NAME[eng.squirtTank]}（${eng.squirtAmmo} 份残液）。`, 'system')
@@ -461,11 +517,12 @@ export function stanleyTeleport(eng: Engine) {
 
 /** 枪糖：左键发射巧克力子弹（直线 12m，1 点伤害，命中也只是糊一脸） */
 export function shootChocolate(eng: Engine) {
-  if (eng.handsStowed) return
+  if (eng.handsStowed||(nguithrInputLock(eng)||armsInputLock(eng))) return
   const p = eng.player
   if (!eng.dev.noAttackCooldown && eng.chocoCd > 0) return
   eng.chocoCd = eng.dev.noAttackCooldown ? 0 : 0.22
   audio.swing()
+  armsGunshot(eng) // 开枪声：通风管里的手臂听得见
   const aim = crosshairDirection()
   const flat = Math.hypot(aim.x, aim.y) || 1
   const dx = aim.x / flat, dy = aim.y / flat
@@ -496,7 +553,7 @@ export function shootChocolate(eng: Engine) {
 
 /** 滋水枪喷射：清水无效果；杏仁水雾轻伤实体，腰果水雾造成更大伤害 */
 export function squirt(eng: Engine) {
-  if (eng.handsStowed) return
+  if (eng.handsStowed||(nguithrInputLock(eng)||armsInputLock(eng))) return
   const p = eng.player
   if (eng.squirtAmmo <= 0 || eng.squirtTank === 'none') {
     eng.msg('储罐是空的——先装入液体。', 'system')
@@ -579,6 +636,7 @@ export function updateProjectiles(eng: Engine, dt: number) {
       const t = i / steps
       const sx = pr.x + (nx - pr.x) * t, sy = pr.y + (ny - pr.y) * t, sz = oldZ + (nz - oldZ) * t
       if (wallAt(m, Math.floor(sx), Math.floor(sy), band) || structBlocksSight(m, sx, sy, sz, band)) { blocked = true; break }
+      if (nguithrProjectileHit(eng, sx, sy, sz)) { pr.x = sx; pr.y = sy; blocked = true; break } // Nguithr'xurh：砸破网囊 / 命中本体
     }
     if (blocked) { pr.done = true; eng.landProjectile(pr, pr.x, pr.y); continue }
     pr.x = nx; pr.y = ny; pr.z = nz
@@ -614,6 +672,7 @@ export function landProjectile(eng: Engine, pr: Projectile, x: number, y: number
         const d = Math.hypot(e.x - x, e.y - y)
         if (d > 3.2 || Math.abs(e.z - pr.floorZ) >= 1) continue
         if (e.def.type === 'jerry' && eng.indoctrination > 0) continue // v47：教化约束——投掷波及对鹉主无效
+        if (isWrangler(e.def.type)) { if (wranglerFire(eng, e, d)) n++; continue } // 牧蛇：只有幼体会被烧死，死了引来母亲
         if (e.def.type === 'partygoer') { partygoerDamage(eng, e, d < 2.2 ? 45 : 20, 'fire'); e.stunT = Math.max(e.stunT, e.pg?.phase === 'burn' ? 0 : 0.6); n++; continue } // 派对客：皮肤防火；倒地/爬行的「尸体」被点燃即烧尽
         if (!mpHurtEntity(eng, e, d < 2.2 ? 45 : 20)) { e.hp -= d < 2.2 ? 45 : 20; eng.killCheck(e) } // v59：联机走房主结算
         e.stunT = Math.max(e.stunT, 0.6)
@@ -621,6 +680,7 @@ export function landProjectile(eng: Engine, pr: Projectile, x: number, y: number
         if (e.def.type === 'jerry') { eng.hurtJerryRep(); if (!e.dead) jerryHurt(eng, e) } // v47：伤害鹉主 → 信众哗然 -50；重制：尖啸反扑
         n++
       }
+      wranglerFireEggs(eng, x, y)
       eng.msg(n > 0 ? `汽油罐轰然炸开——火焰吞没了 ${n} 个实体。` : '汽油罐轰然炸开，火焰很快熄灭了。', n > 0 ? 'damage' : 'system')
       break
     }
@@ -705,4 +765,3 @@ export function updateParticles(eng: Engine, dt: number) {
   for (const pt of eng.particles) { pt.t += dt; pt.x += pt.vx * dt; pt.y += pt.vy * dt; if (pt.z !== undefined) pt.z += (pt.vz ?? 0) * dt }
   eng.particles = eng.particles.filter((pt) => pt.t < pt.life).slice(-120)
 }
-

@@ -1,5 +1,11 @@
 # Codex agent routing
 
+## Primary development directory (user requirement, 2026-10-20)
+
+- The original project at `E:\ZAN\backroom` is the primary development target. Apply subsequent game changes here.
+- `C:\Users\ZANRe\Documents\GitHub\backroom` is a separate copy. Keep the changes already made there, but do not update it again unless the human user explicitly requests a new sync.
+- Verify the working directory before edits and QA. An unavailable saved workspace path is not a reason to silently switch to the GitHub copy.
+
 ## Multiplayer freeze (user requirement, 2026-10-06)
 
 - Multiplayer is temporarily disabled. Keep its entry points closed and retain its existing implementation for possible later use.

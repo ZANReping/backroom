@@ -1,0 +1,9 @@
+
+> my-app@0.0.0 check:shrimp-item-cache
+> esbuild scripts/check-shrimp-item-cache.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-shrimp-item-cache.mjs && node .cache/check-shrimp-item-cache.mjs
+
+
+  .cache\check-shrimp-item-cache.mjs  647.4kb
+
+Done in 66ms
+Shrimp item cache checks passed: 3 poses, 3 batches, bounded preparation

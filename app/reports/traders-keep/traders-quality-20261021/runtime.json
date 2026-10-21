@@ -1,0 +1,315 @@
+{
+  "run": "qa-1792557453707-63824",
+  "label": "traders-quality-20261021",
+  "mode": "realistic",
+  "port": 13346,
+  "cdp": 13347,
+  "profile": "E:\\ZAN\\backroom\\app\\reports\\traders-keep\\traders-quality-20261021\\qa-1792557453707-63824",
+  "levels": [
+    102
+  ],
+  "cases": [
+    {
+      "id": 102,
+      "cold": {
+        "id": 102,
+        "transition": false,
+        "loadMs": 5329.4000000059605,
+        "sceneMs": 5178.4000000059605,
+        "generationMs": 151,
+        "frames": 403,
+        "cpuTotalMs": 4351.799999818206,
+        "cpuMaxMs": 1156.7999999970198,
+        "frameP95Ms": 16.30000001192093,
+        "firstRevealMs": [
+          9.799999997019768,
+          9.5
+        ],
+        "metrics": {
+          "warmSceneTextures": {
+            "cpuMs": 51.70000000298023,
+            "calls": 63,
+            "maxMs": 8.200000002980232
+          }
+        },
+        "compile": {
+          "calls": 31,
+          "submitMs": 69.80000004172325,
+          "maxSubmitMs": 12.5,
+          "targets": 31
+        },
+        "firstReady": {
+          "structures": 1431,
+          "lights": 352,
+          "npcs": 25,
+          "nearNpcs": 14,
+          "npcMeshes": 14,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 133,
+            "textures": 84
+          },
+          "programs": 74,
+          "drawCalls": 904,
+          "triangles": 395559,
+          "spawn": {
+            "x": 9,
+            "y": 109,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      },
+      "survey": {
+        "frameP95Ms": 9.700000002980232,
+        "cpuP95Ms": 9,
+        "snapshot": {
+          "structures": 1431,
+          "lights": 352,
+          "npcs": 25,
+          "nearNpcs": 14,
+          "npcMeshes": 14,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 175,
+            "textures": 92
+          },
+          "programs": 74,
+          "drawCalls": 158,
+          "triangles": 73175,
+          "spawn": {
+            "x": 9,
+            "y": 109,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\traders-keep\\traders-quality-20261021\\qa-1792557453707-63824",
+    "--remote-debugging-port=13347",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.85",
+    "revision": "@0e66b94549a8bd85f03fbdf189b752d6e7b63c32",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.25"
+  },
+  "pids": {
+    "server": 40148,
+    "browser": 72532
+  },
+  "setup": {
+    "mode": "realistic",
+    "viewport": [
+      1920,
+      1080
+    ],
+    "dpr": 1,
+    "seed": 424242,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "settings": {
+      "texture": 1,
+      "lights": 16,
+      "shadows": true,
+      "lightShadows": 1,
+      "loadingBudget": 6,
+      "chunkBudget": 3,
+      "detail": 1,
+      "bloom": true,
+      "ao": 1
+    }
+  },
+  "quality": {
+    "ok": true,
+    "rows": [
+      {
+        "label": "classic-texture-0",
+        "readyMs": 1752.2000000029802,
+        "groups": 7,
+        "jobs": 3,
+        "memory": {
+          "geometries": 153,
+          "textures": 72
+        },
+        "programs": 79,
+        "proxies": 8,
+        "geometriesChecked": 123,
+        "calls": 155,
+        "triangles": 79578
+      },
+      {
+        "label": "realistic-texture-1",
+        "readyMs": 1061.5,
+        "groups": 7,
+        "jobs": 3,
+        "memory": {
+          "geometries": 154,
+          "textures": 92
+        },
+        "programs": 90,
+        "proxies": 8,
+        "geometriesChecked": 123,
+        "calls": 172,
+        "triangles": 79595
+      },
+      {
+        "label": "classic-texture-1",
+        "readyMs": 730.3999999910593,
+        "groups": 7,
+        "jobs": 3,
+        "memory": {
+          "geometries": 153,
+          "textures": 73
+        },
+        "programs": 79,
+        "proxies": 8,
+        "geometriesChecked": 123,
+        "calls": 155,
+        "triangles": 79578
+      },
+      {
+        "label": "realistic-texture-0",
+        "readyMs": 1015.2999999970198,
+        "groups": 7,
+        "jobs": 2,
+        "memory": {
+          "geometries": 154,
+          "textures": 90
+        },
+        "programs": 89,
+        "proxies": 8,
+        "geometriesChecked": 123,
+        "calls": 299,
+        "triangles": 141168
+      },
+      {
+        "label": "realistic-texture-1",
+        "readyMs": 338.20000000298023,
+        "groups": 7,
+        "jobs": 3,
+        "memory": {
+          "geometries": 154,
+          "textures": 93
+        },
+        "programs": 90,
+        "proxies": 8,
+        "geometriesChecked": 123,
+        "calls": 172,
+        "triangles": 79595
+      },
+      {
+        "label": "cancel-to-other-outpost",
+        "readyMs": 2599,
+        "memory": {
+          "geometries": 160,
+          "textures": 118
+        },
+        "programs": 97,
+        "proxies": 0,
+        "geometriesChecked": 0,
+        "calls": 760,
+        "triangles": 316817
+      },
+      {
+        "label": "return-after-cancel",
+        "readyMs": 6646.79999999702,
+        "groups": 23,
+        "jobs": 0,
+        "memory": {
+          "geometries": 377,
+          "textures": 114
+        },
+        "programs": 96,
+        "proxies": 28,
+        "geometriesChecked": 444,
+        "calls": 315,
+        "triangles": 171461
+      }
+    ]
+  },
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [],
+  "networkErrors": [
+    {
+      "requestId": "74336.497",
+      "loaderId": "2CEFE90BE4B7423765BB8C22F4654E42",
+      "timestamp": 89442.934801,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:13346/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Wed, 21 Oct 2026 04:37:54 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 137,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 13346,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 89442.918955,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.638,
+          "sendEnd": 0.713,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 14.93,
+          "receiveHeadersEnd": 15.171
+        },
+        "responseTime": 1792557474372.39,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "1B7060E3018FAA6C378DAF74DE327752"
+    }
+  ]
+}

@@ -2,6 +2,8 @@ import * as THREE from 'three'
 import {mergeGeometries} from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import {materialBatchKey} from './materialBatch'
 import {cloneRenderGeometry} from './renderGeometry'
+import {bakeL4Coarse,type L4Sampler} from './l4Bake'
+/** Each build captures its sampler so interleaved chunk jobs keep independent lighting. */
 
 // Small spatial buckets keep culling useful. All opaque parts sharing a material
 // merge, irrespective of box dimensions; unique phone/key/vent shapes don't each
@@ -11,7 +13,7 @@ export function batchL4Static(target:THREE.Group,roots:THREE.Object3D[]){
   while(!job.next().done){/* synchronous callers retain the same complete result */}
 }
 
-export function* batchL4StaticJob(target:THREE.Group,roots:THREE.Object3D[]):Generator<void,void,unknown>{
+export function* batchL4StaticJob(target:THREE.Group,roots:THREE.Object3D[],sampler?:L4Sampler):Generator<void,void,unknown>{
   const groups=new Map<string,{mat:THREE.Material;cast:boolean;noCast:boolean;order:number;geos:THREE.BufferGeometry[]}>()
   const materialKeys=new Map<THREE.Material,string>()
   const staged=new THREE.Group(),owned=new Set<THREE.BufferGeometry>()
@@ -34,6 +36,7 @@ export function* batchL4StaticJob(target:THREE.Group,roots:THREE.Object3D[]):Gen
       owned.add(geo);geo.applyMatrix4(mesh.matrixWorld)
       if(mat.transparent){const pane=new THREE.Mesh(geo,mat);pane.renderOrder=mesh.renderOrder;staged.add(pane);continue}
       const normalized=geo.index?geo.toNonIndexed():geo
+      if(sampler&&!normalized.getAttribute('l4Bake'))bakeL4Coarse(normalized,sampler)
       owned.add(normalized)
       if(normalized!==geo){geo.dispose();owned.delete(geo)}
       const layout=Object.keys(normalized.attributes).sort().map(key=>{const a=normalized.getAttribute(key);return `${key}:${a.itemSize}:${a.normalized}:${a.array.constructor.name}`}).join('|')

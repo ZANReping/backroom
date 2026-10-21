@@ -1,0 +1,7399 @@
+{
+  "before": false,
+  "seed": 20261006,
+  "mode": "realistic",
+  "port": 8445,
+  "cdp": 8446,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:8445/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Wed, 21 Oct 2026 04:39:27 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 274,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 8445,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 89536.397568,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.639,
+        "sendEnd": 0.683,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 96.141,
+        "receiveHeadersEnd": 96.26
+      },
+      "responseTime": 1792557567932.214,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\ouro-import-20261021\\final-realistic\\qa-1792557552112-46816",
+    "--remote-debugging-port=8446",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 72068,
+    "server": 50420
+  },
+  "appBootMs": 13318.4771,
+  "entryMs": 7006.6371,
+  "firstPlayableMs": 32563.5465,
+  "initial": {
+    "level": 1,
+    "world": [
+      15.5,
+      15.5,
+      0
+    ],
+    "camera": [
+      79.5,
+      1.5447967943703311,
+      79.5
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": 0,
+      "locked": false,
+      "rayX": 0,
+      "rayY": -1,
+      "rayZ": 0,
+      "visualHit": null,
+      "roll": 0
+    },
+    "near": true,
+    "chunks": 9,
+    "tasks": 4,
+    "bake": {
+      "entries": 16,
+      "bytes": 98799704,
+      "hits": 8950,
+      "diskHits": 423,
+      "offlineLoads": 33,
+      "computations": 0,
+      "completed": 33,
+      "stale": 0,
+      "previews": 0,
+      "workers": 4,
+      "active": 0,
+      "queued": 0,
+      "initialQueued": 0,
+      "refining": 0,
+      "stages": [
+        {
+          "key": "4:19:20261006:2,-1:f8253389:high",
+          "provisional": false,
+          "generationMs": 319.16270000000077,
+          "geometryMs": 61.43900000000576,
+          "bakeMs": 23405.979,
+          "samples": 96143,
+          "rays": 5415841,
+          "bytes": 6205936,
+          "decodeMs": 49.3999999910593
+        },
+        {
+          "key": "4:19:20261006:-1,2:a8ac6130:high",
+          "provisional": false,
+          "generationMs": 248.10030000002007,
+          "geometryMs": 37.15830000001006,
+          "bakeMs": 15781.030600000027,
+          "samples": 82060,
+          "rays": 4742419,
+          "bytes": 5923864,
+          "decodeMs": 55.400000005960464
+        },
+        {
+          "key": "4:19:20261006:2,1:b0d913ea:high",
+          "provisional": false,
+          "generationMs": 352.3631999999925,
+          "geometryMs": 39.67410000000382,
+          "bakeMs": 20793.886400000018,
+          "samples": 83217,
+          "rays": 5120651,
+          "bytes": 4109888,
+          "decodeMs": 39
+        },
+        {
+          "key": "4:19:20261006:1,2:3d973e70:high",
+          "provisional": false,
+          "generationMs": 228.08220000000438,
+          "geometryMs": 37.557399999990594,
+          "bakeMs": 19926.731699999975,
+          "samples": 80951,
+          "rays": 4900845,
+          "bytes": 4145952,
+          "decodeMs": 38.5
+        },
+        {
+          "key": "4:19:20261006:-2,-2:24c94c2d:high",
+          "provisional": false,
+          "generationMs": 165.67419999999993,
+          "geometryMs": 163.01229999999987,
+          "bakeMs": 17202.2326,
+          "samples": 70111,
+          "rays": 5782725,
+          "bytes": 10133416,
+          "decodeMs": 99
+        },
+        {
+          "key": "4:19:20261006:2,-2:bf7cf2f:high",
+          "provisional": false,
+          "generationMs": 177.3768999999993,
+          "geometryMs": 42.066500000000815,
+          "bakeMs": 28026.980700000004,
+          "samples": 96516,
+          "rays": 7733300,
+          "bytes": 6724448,
+          "decodeMs": 58.5
+        },
+        {
+          "key": "4:19:20261006:-2,2:99840001:high",
+          "provisional": false,
+          "generationMs": 230.37299999999232,
+          "geometryMs": 27.260100000014063,
+          "bakeMs": 19235.377799999987,
+          "samples": 83673,
+          "rays": 4610391,
+          "bytes": 5944472,
+          "decodeMs": 54.599999994039536
+        },
+        {
+          "key": "4:19:20261006:2,2:91784a87:high",
+          "provisional": false,
+          "generationMs": 237.40460000000894,
+          "geometryMs": 41.233399999997346,
+          "bakeMs": 19120.184500000003,
+          "samples": 76933,
+          "rays": 4389077,
+          "bytes": 3988816,
+          "decodeMs": 35.099999994039536
+        },
+        {
+          "key": "4:19:20261006:-2,1:9a61e48d:high",
+          "provisional": false,
+          "generationMs": 282.1420999999973,
+          "geometryMs": 33.116399999998976,
+          "bakeMs": 21376.28790000001,
+          "samples": 85026,
+          "rays": 4802303,
+          "bytes": 5858728,
+          "decodeMs": 43.70000000298023
+        },
+        {
+          "key": "4:19:20261006:0,2:d845b69e:high",
+          "provisional": false,
+          "generationMs": 256.4952999999805,
+          "geometryMs": 28.992499999993015,
+          "bakeMs": 24124.42849999998,
+          "samples": 77780,
+          "rays": 6009703,
+          "bytes": 6201888,
+          "decodeMs": 32.19999998807907
+        },
+        {
+          "key": "4:19:20261006:-1,-2:18c0b94e:high",
+          "provisional": false,
+          "generationMs": 183.0426,
+          "geometryMs": 49.27409999999986,
+          "bakeMs": 15018.001400000001,
+          "samples": 100209,
+          "rays": 5791227,
+          "bytes": 6012368,
+          "decodeMs": 52.29999999701977
+        },
+        {
+          "key": "4:19:20261006:-2,-1:27206704:high",
+          "provisional": false,
+          "generationMs": 168.33410000000003,
+          "geometryMs": 70.68189999999959,
+          "bakeMs": 13379.092299999997,
+          "samples": 93801,
+          "rays": 3631685,
+          "bytes": 7580048,
+          "decodeMs": 74.09999999403954
+        },
+        {
+          "key": "4:19:20261006:1,-2:e3dfafd1:high",
+          "provisional": false,
+          "generationMs": 188.07110000000102,
+          "geometryMs": 50.37719999999899,
+          "bakeMs": 29086.858700000004,
+          "samples": 97570,
+          "rays": 8151823,
+          "bytes": 6883976,
+          "decodeMs": 72.8999999910593
+        },
+        {
+          "key": "4:19:20261006:-2,0:a61b5ac:high",
+          "provisional": false,
+          "generationMs": 297.7456999999995,
+          "geometryMs": 32.68110000000161,
+          "bakeMs": 21622.670299999998,
+          "samples": 83587,
+          "rays": 4844560,
+          "bytes": 5945576,
+          "decodeMs": 34.29999999701977
+        },
+        {
+          "key": "4:19:20261006:2,0:12335f7:high",
+          "provisional": false,
+          "generationMs": 356.4948000000004,
+          "geometryMs": 51.5280999999959,
+          "bakeMs": 26286.09270000001,
+          "samples": 78402,
+          "rays": 5299658,
+          "bytes": 6241632,
+          "decodeMs": 58.5
+        },
+        {
+          "key": "4:19:20261006:0,-2:3165bcec:high",
+          "provisional": false,
+          "generationMs": 194.97119999999995,
+          "geometryMs": 63.071500000000015,
+          "bakeMs": 25580.6911,
+          "samples": 93594,
+          "rays": 8579253,
+          "bytes": 6898696,
+          "decodeMs": 43.900000005960464
+        }
+      ]
+    },
+    "memory": {
+      "geometries": 282,
+      "textures": 121,
+      "programs": 103
+    },
+    "draws": 415,
+    "triangles": 153714
+  },
+  "scenes": [
+    {
+      "name": "ouroboros",
+      "anchor": {
+        "id": "ouroboros",
+        "file": "衔尾段.png",
+        "variant": "ouroboros",
+        "width": 1482,
+        "height": 746,
+        "x": -365.0789999999997,
+        "y": -301.74,
+        "z": 0.4071,
+        "yaw": 0.1754,
+        "pitch": 0.0002,
+        "roll": 0,
+        "fov": 63.6509,
+        "centerX": -368,
+        "centerY": -304,
+        "blackout": false
+      },
+      "readyMs": 9007,
+      "props": [
+        {
+          "kind": "grate",
+          "x": -417.13,
+          "y": -330.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -412.75000000000006,
+          "y": -336.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -396.72999999999996,
+          "y": -330.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -389.92999999999995,
+          "y": -324.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -383.13,
+          "y": -330.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -362.72999999999996,
+          "y": -324.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -344.75000000000006,
+          "y": -330.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -349.13,
+          "y": -324.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -317.55000000000007,
+          "y": -324.6,
+          "deg": 0
+        },
+        {
+          "kind": "matpile",
+          "x": -303.49,
+          "y": -323.1,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -293.99,
+          "y": -323.25,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -443.49,
+          "y": -309.1,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -417.13,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -417.13,
+          "y": -312.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -410.33,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -399.15000000000003,
+          "y": -312.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -410.33,
+          "y": -306.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -405.95000000000005,
+          "y": -306.6,
+          "deg": 0
+        },
+        {
+          "kind": "matpile",
+          "x": -412.75000000000006,
+          "y": -300.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -403.53,
+          "y": -300.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -396.72999999999996,
+          "y": -300.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -383.13,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -376.33,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -355.92999999999995,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -376.33,
+          "y": -312.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -369.53,
+          "y": -312.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -358.35,
+          "y": -312.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -369.53,
+          "y": -300.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -355.92999999999995,
+          "y": -300.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -378.75000000000006,
+          "y": -294.6,
+          "deg": 180
+        },
+        {
+          "kind": "matpile",
+          "x": -365.15000000000003,
+          "y": -294.6,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -335.53,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -328.72999999999996,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -321.92999999999995,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -337.95000000000005,
+          "y": -306.6,
+          "deg": 180
+        },
+        {
+          "kind": "matpile",
+          "x": -331.15000000000003,
+          "y": -306.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -307.99,
+          "y": -316.25,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -310.49,
+          "y": -302.1,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -293.99,
+          "y": -295.25,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -443.49,
+          "y": -281.1,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -433.99,
+          "y": -267.25,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -417.13,
+          "y": -276.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -412.75000000000006,
+          "y": -282.6,
+          "deg": 0
+        },
+        {
+          "kind": "matpile",
+          "x": -399.15000000000003,
+          "y": -282.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -410.33,
+          "y": -276.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -412.75000000000006,
+          "y": -270.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -403.53,
+          "y": -270.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -410.33,
+          "y": -258.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -378.75000000000006,
+          "y": -282.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -355.92999999999995,
+          "y": -282.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -383.13,
+          "y": -270.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -383.13,
+          "y": -264.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -362.72999999999996,
+          "y": -264.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -349.13,
+          "y": -270.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -335.53,
+          "y": -270.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -328.72999999999996,
+          "y": -270.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -337.95000000000005,
+          "y": -264.6,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -349.13,
+          "y": -258.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -344.75000000000006,
+          "y": -258.6,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -315.13,
+          "y": -282.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -317.55000000000007,
+          "y": -270.6,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -307.99,
+          "y": -281.25,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -300.99,
+          "y": -281.25,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -440.99,
+          "y": -253.25,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -417.13,
+          "y": -252.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -392.35,
+          "y": -252.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -355.92999999999995,
+          "y": -252.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -335.53,
+          "y": -252.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -331.15000000000003,
+          "y": -252.6,
+          "deg": 180
+        },
+        {
+          "kind": "matpile",
+          "x": -317.55000000000007,
+          "y": -252.6,
+          "deg": 0
+        }
+      ],
+      "propMeshes": 316,
+      "emitterBatches": 32,
+      "level": 1,
+      "world": [
+        -365.0789999999997,
+        -301.74,
+        0
+      ],
+      "camera": [
+        82.92100000000028,
+        1.5579057350942824,
+        82.25999999999999
+      ],
+      "look": {
+        "yaw": 0.1754,
+        "pitch": 0.0002,
+        "locked": false,
+        "rayX": -0.1745020107799631,
+        "rayY": -0.9846567971804948,
+        "rayZ": 0.0001999999986666667,
+        "visualHit": null,
+        "roll": 0
+      },
+      "near": true,
+      "chunks": 16,
+      "tasks": 1,
+      "bake": {
+        "entries": 16,
+        "bytes": 96555216,
+        "hits": 18428,
+        "diskHits": 423,
+        "offlineLoads": 42,
+        "computations": 0,
+        "completed": 58,
+        "stale": 0,
+        "previews": 16,
+        "workers": 4,
+        "active": 2,
+        "queued": 16,
+        "initialQueued": 0,
+        "refining": 16,
+        "stages": [
+          {
+            "key": "4:19:20261006:-10,-10:1fdcf17b:high",
+            "provisional": true,
+            "generationMs": 223.70000000298023,
+            "geometryMs": 46.70000000298023,
+            "bakeMs": 1658.4000000059605,
+            "samples": 79443,
+            "rays": 280313,
+            "bytes": 6307136
+          },
+          {
+            "key": "4:19:20261006:-12,-8:fb076929:high",
+            "provisional": true,
+            "generationMs": 285,
+            "geometryMs": 32.6000000089407,
+            "bakeMs": 1812.5,
+            "samples": 88013,
+            "rays": 336425,
+            "bytes": 5981456
+          },
+          {
+            "key": "4:19:20261006:-10,-9:99b8df52:high",
+            "provisional": true,
+            "generationMs": 258.20000000298023,
+            "geometryMs": 83.5,
+            "bakeMs": 1563.699999988079,
+            "samples": 82376,
+            "rays": 280622,
+            "bytes": 6391224
+          },
+          {
+            "key": "4:19:20261006:-11,-8:5de380bd:high",
+            "provisional": true,
+            "generationMs": 261,
+            "geometryMs": 32.8999999910593,
+            "bakeMs": 1834.7000000029802,
+            "samples": 88834,
+            "rays": 344265,
+            "bytes": 5998016
+          },
+          {
+            "key": "4:19:20261006:-10,-11:6c06c0f1:high",
+            "provisional": true,
+            "generationMs": 131.90000000596046,
+            "geometryMs": 19,
+            "bakeMs": 1717.8999999910593,
+            "samples": 84637,
+            "rays": 305943,
+            "bytes": 6079896
+          },
+          {
+            "key": "4:19:20261006:-13,-8:d651953:high",
+            "provisional": true,
+            "generationMs": 177.90000000596046,
+            "geometryMs": 26.200000002980232,
+            "bakeMs": 1989.5999999940395,
+            "samples": 87882,
+            "rays": 336659,
+            "bytes": 6020832
+          },
+          {
+            "key": "4:19:20261006:-12,-12:b7ef9068:high",
+            "provisional": true,
+            "generationMs": 181.3999999910593,
+            "geometryMs": 22.700000002980232,
+            "bakeMs": 1407.7000000029802,
+            "samples": 82849,
+            "rays": 253306,
+            "bytes": 5793040
+          },
+          {
+            "key": "4:19:20261006:-14,-10:8bb15719:high",
+            "provisional": true,
+            "generationMs": 142.1000000089407,
+            "geometryMs": 39.70000000298023,
+            "bakeMs": 1619.5,
+            "samples": 78562,
+            "rays": 285997,
+            "bytes": 6415880
+          },
+          {
+            "key": "4:19:20261006:-11,-12:3ab92a16:high",
+            "provisional": true,
+            "generationMs": 66.5,
+            "geometryMs": 13.300000011920929,
+            "bakeMs": 1392.7999999970198,
+            "samples": 82623,
+            "rays": 255176,
+            "bytes": 5762128
+          },
+          {
+            "key": "4:19:20261006:-14,-9:cde68d83:high",
+            "provisional": true,
+            "generationMs": 48.70000000298023,
+            "geometryMs": 33.20000000298023,
+            "bakeMs": 1498.2999999970198,
+            "samples": 80764,
+            "rays": 284168,
+            "bytes": 6477336
+          },
+          {
+            "key": "4:19:20261006:-13,-12:d9912225:high",
+            "provisional": true,
+            "generationMs": 121.09999999403954,
+            "geometryMs": 8.799999997019768,
+            "bakeMs": 1070.6000000089407,
+            "samples": 82126,
+            "rays": 196299,
+            "bytes": 5739312
+          },
+          {
+            "key": "4:19:20261006:-14,-11:5420142a:high",
+            "provisional": true,
+            "generationMs": 153.29999999701977,
+            "geometryMs": 28.30000001192093,
+            "bakeMs": 1395.199999988079,
+            "samples": 84120,
+            "rays": 288580,
+            "bytes": 6185144
+          },
+          {
+            "key": "4:19:20261006:-10,-8:1e5a0272:high",
+            "provisional": true,
+            "generationMs": 117.3999999910593,
+            "geometryMs": 12.600000008940697,
+            "bakeMs": 1596.5999999940395,
+            "samples": 88190,
+            "rays": 342283,
+            "bytes": 5986424
+          },
+          {
+            "key": "4:19:20261006:-10,-12:867bcfa4:high",
+            "provisional": true,
+            "generationMs": 31.200000002980232,
+            "geometryMs": 14.199999988079071,
+            "bakeMs": 1132.300000011921,
+            "samples": 82296,
+            "rays": 243892,
+            "bytes": 5757160
+          },
+          {
+            "key": "4:19:20261006:-14,-8:fca71b54:high",
+            "provisional": true,
+            "generationMs": 87.40000000596046,
+            "geometryMs": 12,
+            "bakeMs": 1504.2000000029802,
+            "samples": 87698,
+            "rays": 306001,
+            "bytes": 5918712
+          },
+          {
+            "key": "4:19:20261006:-14,-12:4eb83a98:high",
+            "provisional": true,
+            "generationMs": 69.09999999403954,
+            "geometryMs": 11.200000002980232,
+            "bakeMs": 1434,
+            "samples": 81932,
+            "rays": 285349,
+            "bytes": 5741520
+          }
+        ]
+      },
+      "memory": {
+        "geometries": 383,
+        "textures": 162,
+        "programs": 107
+      },
+      "draws": 269,
+      "triangles": 125589
+    },
+    {
+      "name": "ouro-left",
+      "anchor": {
+        "id": "ouroboros",
+        "file": "衔尾段.png",
+        "variant": "ouroboros",
+        "width": 1482,
+        "height": 746,
+        "x": -365.0789999999997,
+        "y": -301.74,
+        "z": 0.4071,
+        "yaw": 0.1754,
+        "pitch": 0.0002,
+        "roll": 0,
+        "fov": 63.6509,
+        "centerX": -368,
+        "centerY": -304,
+        "blackout": false
+      },
+      "readyMs": 2638.0999999940395,
+      "props": [
+        {
+          "kind": "grate",
+          "x": -417.13,
+          "y": -330.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -412.75000000000006,
+          "y": -336.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -396.72999999999996,
+          "y": -330.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -389.92999999999995,
+          "y": -324.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -383.13,
+          "y": -330.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -362.72999999999996,
+          "y": -324.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -344.75000000000006,
+          "y": -330.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -349.13,
+          "y": -324.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -317.55000000000007,
+          "y": -324.6,
+          "deg": 0
+        },
+        {
+          "kind": "matpile",
+          "x": -303.49,
+          "y": -323.1,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -293.99,
+          "y": -323.25,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -443.49,
+          "y": -309.1,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -417.13,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -417.13,
+          "y": -312.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -410.33,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -399.15000000000003,
+          "y": -312.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -410.33,
+          "y": -306.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -405.95000000000005,
+          "y": -306.6,
+          "deg": 0
+        },
+        {
+          "kind": "matpile",
+          "x": -412.75000000000006,
+          "y": -300.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -403.53,
+          "y": -300.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -396.72999999999996,
+          "y": -300.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -383.13,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -376.33,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -355.92999999999995,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -376.33,
+          "y": -312.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -369.53,
+          "y": -312.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -358.35,
+          "y": -312.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -369.53,
+          "y": -300.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -355.92999999999995,
+          "y": -300.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -378.75000000000006,
+          "y": -294.6,
+          "deg": 180
+        },
+        {
+          "kind": "matpile",
+          "x": -365.15000000000003,
+          "y": -294.6,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -335.53,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -328.72999999999996,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -321.92999999999995,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -337.95000000000005,
+          "y": -306.6,
+          "deg": 180
+        },
+        {
+          "kind": "matpile",
+          "x": -331.15000000000003,
+          "y": -306.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -307.99,
+          "y": -316.25,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -310.49,
+          "y": -302.1,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -293.99,
+          "y": -295.25,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -443.49,
+          "y": -281.1,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -433.99,
+          "y": -267.25,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -417.13,
+          "y": -276.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -412.75000000000006,
+          "y": -282.6,
+          "deg": 0
+        },
+        {
+          "kind": "matpile",
+          "x": -399.15000000000003,
+          "y": -282.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -410.33,
+          "y": -276.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -412.75000000000006,
+          "y": -270.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -403.53,
+          "y": -270.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -410.33,
+          "y": -258.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -378.75000000000006,
+          "y": -282.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -355.92999999999995,
+          "y": -282.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -383.13,
+          "y": -270.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -383.13,
+          "y": -264.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -362.72999999999996,
+          "y": -264.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -349.13,
+          "y": -270.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -335.53,
+          "y": -270.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -328.72999999999996,
+          "y": -270.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -337.95000000000005,
+          "y": -264.6,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -349.13,
+          "y": -258.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -344.75000000000006,
+          "y": -258.6,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -315.13,
+          "y": -282.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -317.55000000000007,
+          "y": -270.6,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -307.99,
+          "y": -281.25,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -300.99,
+          "y": -281.25,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -440.99,
+          "y": -253.25,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -417.13,
+          "y": -252.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -392.35,
+          "y": -252.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -355.92999999999995,
+          "y": -252.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -335.53,
+          "y": -252.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -331.15000000000003,
+          "y": -252.6,
+          "deg": 180
+        },
+        {
+          "kind": "matpile",
+          "x": -317.55000000000007,
+          "y": -252.6,
+          "deg": 0
+        }
+      ],
+      "propMeshes": 397,
+      "emitterBatches": 52,
+      "level": 1,
+      "world": [
+        -365.0789999999997,
+        -301.74,
+        0
+      ],
+      "camera": [
+        82.92100000000028,
+        1.5535361338812117,
+        82.25999999999999
+      ],
+      "look": {
+        "yaw": 1.2754,
+        "pitch": 0.0002,
+        "locked": false,
+        "rayX": -0.9566868200525326,
+        "rayY": -0.29111902778378074,
+        "rayZ": 0.0001999999986666667,
+        "visualHit": null,
+        "roll": 0
+      },
+      "near": true,
+      "chunks": 25,
+      "tasks": 0,
+      "bake": {
+        "entries": 16,
+        "bytes": 96555216,
+        "hits": 19008,
+        "diskHits": 423,
+        "offlineLoads": 42,
+        "computations": 0,
+        "completed": 58,
+        "stale": 0,
+        "previews": 16,
+        "workers": 4,
+        "active": 2,
+        "queued": 16,
+        "initialQueued": 0,
+        "refining": 16,
+        "stages": [
+          {
+            "key": "4:19:20261006:-10,-10:1fdcf17b:high",
+            "provisional": true,
+            "generationMs": 223.70000000298023,
+            "geometryMs": 46.70000000298023,
+            "bakeMs": 1658.4000000059605,
+            "samples": 79443,
+            "rays": 280313,
+            "bytes": 6307136
+          },
+          {
+            "key": "4:19:20261006:-12,-8:fb076929:high",
+            "provisional": true,
+            "generationMs": 285,
+            "geometryMs": 32.6000000089407,
+            "bakeMs": 1812.5,
+            "samples": 88013,
+            "rays": 336425,
+            "bytes": 5981456
+          },
+          {
+            "key": "4:19:20261006:-10,-9:99b8df52:high",
+            "provisional": true,
+            "generationMs": 258.20000000298023,
+            "geometryMs": 83.5,
+            "bakeMs": 1563.699999988079,
+            "samples": 82376,
+            "rays": 280622,
+            "bytes": 6391224
+          },
+          {
+            "key": "4:19:20261006:-11,-8:5de380bd:high",
+            "provisional": true,
+            "generationMs": 261,
+            "geometryMs": 32.8999999910593,
+            "bakeMs": 1834.7000000029802,
+            "samples": 88834,
+            "rays": 344265,
+            "bytes": 5998016
+          },
+          {
+            "key": "4:19:20261006:-10,-11:6c06c0f1:high",
+            "provisional": true,
+            "generationMs": 131.90000000596046,
+            "geometryMs": 19,
+            "bakeMs": 1717.8999999910593,
+            "samples": 84637,
+            "rays": 305943,
+            "bytes": 6079896
+          },
+          {
+            "key": "4:19:20261006:-13,-8:d651953:high",
+            "provisional": true,
+            "generationMs": 177.90000000596046,
+            "geometryMs": 26.200000002980232,
+            "bakeMs": 1989.5999999940395,
+            "samples": 87882,
+            "rays": 336659,
+            "bytes": 6020832
+          },
+          {
+            "key": "4:19:20261006:-12,-12:b7ef9068:high",
+            "provisional": true,
+            "generationMs": 181.3999999910593,
+            "geometryMs": 22.700000002980232,
+            "bakeMs": 1407.7000000029802,
+            "samples": 82849,
+            "rays": 253306,
+            "bytes": 5793040
+          },
+          {
+            "key": "4:19:20261006:-14,-10:8bb15719:high",
+            "provisional": true,
+            "generationMs": 142.1000000089407,
+            "geometryMs": 39.70000000298023,
+            "bakeMs": 1619.5,
+            "samples": 78562,
+            "rays": 285997,
+            "bytes": 6415880
+          },
+          {
+            "key": "4:19:20261006:-11,-12:3ab92a16:high",
+            "provisional": true,
+            "generationMs": 66.5,
+            "geometryMs": 13.300000011920929,
+            "bakeMs": 1392.7999999970198,
+            "samples": 82623,
+            "rays": 255176,
+            "bytes": 5762128
+          },
+          {
+            "key": "4:19:20261006:-14,-9:cde68d83:high",
+            "provisional": true,
+            "generationMs": 48.70000000298023,
+            "geometryMs": 33.20000000298023,
+            "bakeMs": 1498.2999999970198,
+            "samples": 80764,
+            "rays": 284168,
+            "bytes": 6477336
+          },
+          {
+            "key": "4:19:20261006:-13,-12:d9912225:high",
+            "provisional": true,
+            "generationMs": 121.09999999403954,
+            "geometryMs": 8.799999997019768,
+            "bakeMs": 1070.6000000089407,
+            "samples": 82126,
+            "rays": 196299,
+            "bytes": 5739312
+          },
+          {
+            "key": "4:19:20261006:-14,-11:5420142a:high",
+            "provisional": true,
+            "generationMs": 153.29999999701977,
+            "geometryMs": 28.30000001192093,
+            "bakeMs": 1395.199999988079,
+            "samples": 84120,
+            "rays": 288580,
+            "bytes": 6185144
+          },
+          {
+            "key": "4:19:20261006:-10,-8:1e5a0272:high",
+            "provisional": true,
+            "generationMs": 117.3999999910593,
+            "geometryMs": 12.600000008940697,
+            "bakeMs": 1596.5999999940395,
+            "samples": 88190,
+            "rays": 342283,
+            "bytes": 5986424
+          },
+          {
+            "key": "4:19:20261006:-10,-12:867bcfa4:high",
+            "provisional": true,
+            "generationMs": 31.200000002980232,
+            "geometryMs": 14.199999988079071,
+            "bakeMs": 1132.300000011921,
+            "samples": 82296,
+            "rays": 243892,
+            "bytes": 5757160
+          },
+          {
+            "key": "4:19:20261006:-14,-8:fca71b54:high",
+            "provisional": true,
+            "generationMs": 87.40000000596046,
+            "geometryMs": 12,
+            "bakeMs": 1504.2000000029802,
+            "samples": 87698,
+            "rays": 306001,
+            "bytes": 5918712
+          },
+          {
+            "key": "4:19:20261006:-14,-12:4eb83a98:high",
+            "provisional": true,
+            "generationMs": 69.09999999403954,
+            "geometryMs": 11.200000002980232,
+            "bakeMs": 1434,
+            "samples": 81932,
+            "rays": 285349,
+            "bytes": 5741520
+          }
+        ]
+      },
+      "memory": {
+        "geometries": 553,
+        "textures": 187,
+        "programs": 107
+      },
+      "draws": 287,
+      "triangles": 170677
+    },
+    {
+      "name": "ouro-ceiling",
+      "anchor": {
+        "id": "ouroboros",
+        "file": "衔尾段.png",
+        "variant": "ouroboros",
+        "width": 1482,
+        "height": 746,
+        "x": -365.0789999999997,
+        "y": -301.74,
+        "z": 0.4071,
+        "yaw": 0.1754,
+        "pitch": 0.0002,
+        "roll": 0,
+        "fov": 63.6509,
+        "centerX": -368,
+        "centerY": -304,
+        "blackout": false
+      },
+      "readyMs": 1206.2000000029802,
+      "props": [
+        {
+          "kind": "grate",
+          "x": -417.13,
+          "y": -330.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -412.75000000000006,
+          "y": -336.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -396.72999999999996,
+          "y": -330.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -389.92999999999995,
+          "y": -324.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -383.13,
+          "y": -330.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -362.72999999999996,
+          "y": -324.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -344.75000000000006,
+          "y": -330.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -349.13,
+          "y": -324.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -317.55000000000007,
+          "y": -324.6,
+          "deg": 0
+        },
+        {
+          "kind": "matpile",
+          "x": -303.49,
+          "y": -323.1,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -293.99,
+          "y": -323.25,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -443.49,
+          "y": -309.1,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -417.13,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -417.13,
+          "y": -312.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -410.33,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -399.15000000000003,
+          "y": -312.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -410.33,
+          "y": -306.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -405.95000000000005,
+          "y": -306.6,
+          "deg": 0
+        },
+        {
+          "kind": "matpile",
+          "x": -412.75000000000006,
+          "y": -300.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -403.53,
+          "y": -300.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -396.72999999999996,
+          "y": -300.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -383.13,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -376.33,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -355.92999999999995,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -376.33,
+          "y": -312.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -369.53,
+          "y": -312.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -358.35,
+          "y": -312.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -369.53,
+          "y": -300.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -355.92999999999995,
+          "y": -300.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -378.75000000000006,
+          "y": -294.6,
+          "deg": 180
+        },
+        {
+          "kind": "matpile",
+          "x": -365.15000000000003,
+          "y": -294.6,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -335.53,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -328.72999999999996,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -321.92999999999995,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -337.95000000000005,
+          "y": -306.6,
+          "deg": 180
+        },
+        {
+          "kind": "matpile",
+          "x": -331.15000000000003,
+          "y": -306.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -307.99,
+          "y": -316.25,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -310.49,
+          "y": -302.1,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -293.99,
+          "y": -295.25,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -443.49,
+          "y": -281.1,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -433.99,
+          "y": -267.25,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -417.13,
+          "y": -276.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -412.75000000000006,
+          "y": -282.6,
+          "deg": 0
+        },
+        {
+          "kind": "matpile",
+          "x": -399.15000000000003,
+          "y": -282.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -410.33,
+          "y": -276.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -412.75000000000006,
+          "y": -270.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -403.53,
+          "y": -270.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -410.33,
+          "y": -258.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -378.75000000000006,
+          "y": -282.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -355.92999999999995,
+          "y": -282.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -383.13,
+          "y": -270.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -383.13,
+          "y": -264.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -362.72999999999996,
+          "y": -264.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -349.13,
+          "y": -270.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -335.53,
+          "y": -270.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -328.72999999999996,
+          "y": -270.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -337.95000000000005,
+          "y": -264.6,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -349.13,
+          "y": -258.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -344.75000000000006,
+          "y": -258.6,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -315.13,
+          "y": -282.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -317.55000000000007,
+          "y": -270.6,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -307.99,
+          "y": -281.25,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -300.99,
+          "y": -281.25,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -440.99,
+          "y": -253.25,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -417.13,
+          "y": -252.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -392.35,
+          "y": -252.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -355.92999999999995,
+          "y": -252.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -335.53,
+          "y": -252.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -331.15000000000003,
+          "y": -252.6,
+          "deg": 180
+        },
+        {
+          "kind": "matpile",
+          "x": -317.55000000000007,
+          "y": -252.6,
+          "deg": 0
+        }
+      ],
+      "propMeshes": 397,
+      "emitterBatches": 52,
+      "level": 1,
+      "world": [
+        -365.0789999999997,
+        -301.74,
+        0
+      ],
+      "camera": [
+        82.92100000000028,
+        1.5565862228671083,
+        82.25999999999999
+      ],
+      "look": {
+        "yaw": 0.1754,
+        "pitch": 0.65,
+        "locked": false,
+        "rayX": -0.13891822637452583,
+        "rayY": -0.7838693390439825,
+        "rayZ": 0.6051864057360397,
+        "visualHit": null,
+        "roll": 0
+      },
+      "near": true,
+      "chunks": 25,
+      "tasks": 0,
+      "bake": {
+        "entries": 16,
+        "bytes": 96555216,
+        "hits": 19008,
+        "diskHits": 423,
+        "offlineLoads": 42,
+        "computations": 0,
+        "completed": 58,
+        "stale": 0,
+        "previews": 16,
+        "workers": 4,
+        "active": 2,
+        "queued": 16,
+        "initialQueued": 0,
+        "refining": 16,
+        "stages": [
+          {
+            "key": "4:19:20261006:-10,-10:1fdcf17b:high",
+            "provisional": true,
+            "generationMs": 223.70000000298023,
+            "geometryMs": 46.70000000298023,
+            "bakeMs": 1658.4000000059605,
+            "samples": 79443,
+            "rays": 280313,
+            "bytes": 6307136
+          },
+          {
+            "key": "4:19:20261006:-12,-8:fb076929:high",
+            "provisional": true,
+            "generationMs": 285,
+            "geometryMs": 32.6000000089407,
+            "bakeMs": 1812.5,
+            "samples": 88013,
+            "rays": 336425,
+            "bytes": 5981456
+          },
+          {
+            "key": "4:19:20261006:-10,-9:99b8df52:high",
+            "provisional": true,
+            "generationMs": 258.20000000298023,
+            "geometryMs": 83.5,
+            "bakeMs": 1563.699999988079,
+            "samples": 82376,
+            "rays": 280622,
+            "bytes": 6391224
+          },
+          {
+            "key": "4:19:20261006:-11,-8:5de380bd:high",
+            "provisional": true,
+            "generationMs": 261,
+            "geometryMs": 32.8999999910593,
+            "bakeMs": 1834.7000000029802,
+            "samples": 88834,
+            "rays": 344265,
+            "bytes": 5998016
+          },
+          {
+            "key": "4:19:20261006:-10,-11:6c06c0f1:high",
+            "provisional": true,
+            "generationMs": 131.90000000596046,
+            "geometryMs": 19,
+            "bakeMs": 1717.8999999910593,
+            "samples": 84637,
+            "rays": 305943,
+            "bytes": 6079896
+          },
+          {
+            "key": "4:19:20261006:-13,-8:d651953:high",
+            "provisional": true,
+            "generationMs": 177.90000000596046,
+            "geometryMs": 26.200000002980232,
+            "bakeMs": 1989.5999999940395,
+            "samples": 87882,
+            "rays": 336659,
+            "bytes": 6020832
+          },
+          {
+            "key": "4:19:20261006:-12,-12:b7ef9068:high",
+            "provisional": true,
+            "generationMs": 181.3999999910593,
+            "geometryMs": 22.700000002980232,
+            "bakeMs": 1407.7000000029802,
+            "samples": 82849,
+            "rays": 253306,
+            "bytes": 5793040
+          },
+          {
+            "key": "4:19:20261006:-14,-10:8bb15719:high",
+            "provisional": true,
+            "generationMs": 142.1000000089407,
+            "geometryMs": 39.70000000298023,
+            "bakeMs": 1619.5,
+            "samples": 78562,
+            "rays": 285997,
+            "bytes": 6415880
+          },
+          {
+            "key": "4:19:20261006:-11,-12:3ab92a16:high",
+            "provisional": true,
+            "generationMs": 66.5,
+            "geometryMs": 13.300000011920929,
+            "bakeMs": 1392.7999999970198,
+            "samples": 82623,
+            "rays": 255176,
+            "bytes": 5762128
+          },
+          {
+            "key": "4:19:20261006:-14,-9:cde68d83:high",
+            "provisional": true,
+            "generationMs": 48.70000000298023,
+            "geometryMs": 33.20000000298023,
+            "bakeMs": 1498.2999999970198,
+            "samples": 80764,
+            "rays": 284168,
+            "bytes": 6477336
+          },
+          {
+            "key": "4:19:20261006:-13,-12:d9912225:high",
+            "provisional": true,
+            "generationMs": 121.09999999403954,
+            "geometryMs": 8.799999997019768,
+            "bakeMs": 1070.6000000089407,
+            "samples": 82126,
+            "rays": 196299,
+            "bytes": 5739312
+          },
+          {
+            "key": "4:19:20261006:-14,-11:5420142a:high",
+            "provisional": true,
+            "generationMs": 153.29999999701977,
+            "geometryMs": 28.30000001192093,
+            "bakeMs": 1395.199999988079,
+            "samples": 84120,
+            "rays": 288580,
+            "bytes": 6185144
+          },
+          {
+            "key": "4:19:20261006:-10,-8:1e5a0272:high",
+            "provisional": true,
+            "generationMs": 117.3999999910593,
+            "geometryMs": 12.600000008940697,
+            "bakeMs": 1596.5999999940395,
+            "samples": 88190,
+            "rays": 342283,
+            "bytes": 5986424
+          },
+          {
+            "key": "4:19:20261006:-10,-12:867bcfa4:high",
+            "provisional": true,
+            "generationMs": 31.200000002980232,
+            "geometryMs": 14.199999988079071,
+            "bakeMs": 1132.300000011921,
+            "samples": 82296,
+            "rays": 243892,
+            "bytes": 5757160
+          },
+          {
+            "key": "4:19:20261006:-14,-8:fca71b54:high",
+            "provisional": true,
+            "generationMs": 87.40000000596046,
+            "geometryMs": 12,
+            "bakeMs": 1504.2000000029802,
+            "samples": 87698,
+            "rays": 306001,
+            "bytes": 5918712
+          },
+          {
+            "key": "4:19:20261006:-14,-12:4eb83a98:high",
+            "provisional": true,
+            "generationMs": 69.09999999403954,
+            "geometryMs": 11.200000002980232,
+            "bakeMs": 1434,
+            "samples": 81932,
+            "rays": 285349,
+            "bytes": 5741520
+          }
+        ]
+      },
+      "memory": {
+        "geometries": 560,
+        "textures": 187,
+        "programs": 107
+      },
+      "draws": 447,
+      "triangles": 509707
+    },
+    {
+      "name": "ouro-back",
+      "anchor": {
+        "id": "ouroboros",
+        "file": "衔尾段.png",
+        "variant": "ouroboros",
+        "width": 1482,
+        "height": 746,
+        "x": -365.0789999999997,
+        "y": -301.74,
+        "z": 0.4071,
+        "yaw": 0.1754,
+        "pitch": 0.0002,
+        "roll": 0,
+        "fov": 63.6509,
+        "centerX": -368,
+        "centerY": -304,
+        "blackout": false
+      },
+      "readyMs": 1207.5,
+      "props": [
+        {
+          "kind": "grate",
+          "x": -417.13,
+          "y": -330.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -412.75000000000006,
+          "y": -336.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -396.72999999999996,
+          "y": -330.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -389.92999999999995,
+          "y": -324.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -383.13,
+          "y": -330.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -362.72999999999996,
+          "y": -324.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -344.75000000000006,
+          "y": -330.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -349.13,
+          "y": -324.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -317.55000000000007,
+          "y": -324.6,
+          "deg": 0
+        },
+        {
+          "kind": "matpile",
+          "x": -303.49,
+          "y": -323.1,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -293.99,
+          "y": -323.25,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -443.49,
+          "y": -309.1,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -417.13,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -417.13,
+          "y": -312.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -410.33,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -399.15000000000003,
+          "y": -312.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -410.33,
+          "y": -306.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -405.95000000000005,
+          "y": -306.6,
+          "deg": 0
+        },
+        {
+          "kind": "matpile",
+          "x": -412.75000000000006,
+          "y": -300.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -403.53,
+          "y": -300.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -396.72999999999996,
+          "y": -300.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -383.13,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -376.33,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -355.92999999999995,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -376.33,
+          "y": -312.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -369.53,
+          "y": -312.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -358.35,
+          "y": -312.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -369.53,
+          "y": -300.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -355.92999999999995,
+          "y": -300.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -378.75000000000006,
+          "y": -294.6,
+          "deg": 180
+        },
+        {
+          "kind": "matpile",
+          "x": -365.15000000000003,
+          "y": -294.6,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -335.53,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -328.72999999999996,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -321.92999999999995,
+          "y": -318.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -337.95000000000005,
+          "y": -306.6,
+          "deg": 180
+        },
+        {
+          "kind": "matpile",
+          "x": -331.15000000000003,
+          "y": -306.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -307.99,
+          "y": -316.25,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -310.49,
+          "y": -302.1,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -293.99,
+          "y": -295.25,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -443.49,
+          "y": -281.1,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -433.99,
+          "y": -267.25,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -417.13,
+          "y": -276.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -412.75000000000006,
+          "y": -282.6,
+          "deg": 0
+        },
+        {
+          "kind": "matpile",
+          "x": -399.15000000000003,
+          "y": -282.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -410.33,
+          "y": -276.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -412.75000000000006,
+          "y": -270.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -403.53,
+          "y": -270.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -410.33,
+          "y": -258.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -378.75000000000006,
+          "y": -282.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -355.92999999999995,
+          "y": -282.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -383.13,
+          "y": -270.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -383.13,
+          "y": -264.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -362.72999999999996,
+          "y": -264.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -349.13,
+          "y": -270.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -335.53,
+          "y": -270.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -328.72999999999996,
+          "y": -270.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -337.95000000000005,
+          "y": -264.6,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -349.13,
+          "y": -258.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -344.75000000000006,
+          "y": -258.6,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -315.13,
+          "y": -282.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -317.55000000000007,
+          "y": -270.6,
+          "deg": 180
+        },
+        {
+          "kind": "grate",
+          "x": -307.99,
+          "y": -281.25,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -300.99,
+          "y": -281.25,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -440.99,
+          "y": -253.25,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -417.13,
+          "y": -252.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -392.35,
+          "y": -252.6,
+          "deg": 0
+        },
+        {
+          "kind": "grate",
+          "x": -355.92999999999995,
+          "y": -252.75,
+          "deg": 90
+        },
+        {
+          "kind": "grate",
+          "x": -335.53,
+          "y": -252.75,
+          "deg": 90
+        },
+        {
+          "kind": "matpile",
+          "x": -331.15000000000003,
+          "y": -252.6,
+          "deg": 180
+        },
+        {
+          "kind": "matpile",
+          "x": -317.55000000000007,
+          "y": -252.6,
+          "deg": 0
+        }
+      ],
+      "propMeshes": 397,
+      "emitterBatches": 52,
+      "level": 1,
+      "world": [
+        -365.0789999999997,
+        -301.74,
+        0
+      ],
+      "camera": [
+        82.92100000000028,
+        1.543862608324583,
+        82.25999999999999
+      ],
+      "look": {
+        "yaw": 3.316992653589793,
+        "pitch": 0.0002,
+        "locked": false,
+        "rayX": 0.17450201077996277,
+        "rayY": 0.9846567971804949,
+        "rayZ": 0.0001999999986666667,
+        "visualHit": null,
+        "roll": 0
+      },
+      "near": true,
+      "chunks": 25,
+      "tasks": 0,
+      "bake": {
+        "entries": 16,
+        "bytes": 96555216,
+        "hits": 19008,
+        "diskHits": 423,
+        "offlineLoads": 42,
+        "computations": 0,
+        "completed": 58,
+        "stale": 0,
+        "previews": 16,
+        "workers": 4,
+        "active": 2,
+        "queued": 16,
+        "initialQueued": 0,
+        "refining": 16,
+        "stages": [
+          {
+            "key": "4:19:20261006:-10,-10:1fdcf17b:high",
+            "provisional": true,
+            "generationMs": 223.70000000298023,
+            "geometryMs": 46.70000000298023,
+            "bakeMs": 1658.4000000059605,
+            "samples": 79443,
+            "rays": 280313,
+            "bytes": 6307136
+          },
+          {
+            "key": "4:19:20261006:-12,-8:fb076929:high",
+            "provisional": true,
+            "generationMs": 285,
+            "geometryMs": 32.6000000089407,
+            "bakeMs": 1812.5,
+            "samples": 88013,
+            "rays": 336425,
+            "bytes": 5981456
+          },
+          {
+            "key": "4:19:20261006:-10,-9:99b8df52:high",
+            "provisional": true,
+            "generationMs": 258.20000000298023,
+            "geometryMs": 83.5,
+            "bakeMs": 1563.699999988079,
+            "samples": 82376,
+            "rays": 280622,
+            "bytes": 6391224
+          },
+          {
+            "key": "4:19:20261006:-11,-8:5de380bd:high",
+            "provisional": true,
+            "generationMs": 261,
+            "geometryMs": 32.8999999910593,
+            "bakeMs": 1834.7000000029802,
+            "samples": 88834,
+            "rays": 344265,
+            "bytes": 5998016
+          },
+          {
+            "key": "4:19:20261006:-10,-11:6c06c0f1:high",
+            "provisional": true,
+            "generationMs": 131.90000000596046,
+            "geometryMs": 19,
+            "bakeMs": 1717.8999999910593,
+            "samples": 84637,
+            "rays": 305943,
+            "bytes": 6079896
+          },
+          {
+            "key": "4:19:20261006:-13,-8:d651953:high",
+            "provisional": true,
+            "generationMs": 177.90000000596046,
+            "geometryMs": 26.200000002980232,
+            "bakeMs": 1989.5999999940395,
+            "samples": 87882,
+            "rays": 336659,
+            "bytes": 6020832
+          },
+          {
+            "key": "4:19:20261006:-12,-12:b7ef9068:high",
+            "provisional": true,
+            "generationMs": 181.3999999910593,
+            "geometryMs": 22.700000002980232,
+            "bakeMs": 1407.7000000029802,
+            "samples": 82849,
+            "rays": 253306,
+            "bytes": 5793040
+          },
+          {
+            "key": "4:19:20261006:-14,-10:8bb15719:high",
+            "provisional": true,
+            "generationMs": 142.1000000089407,
+            "geometryMs": 39.70000000298023,
+            "bakeMs": 1619.5,
+            "samples": 78562,
+            "rays": 285997,
+            "bytes": 6415880
+          },
+          {
+            "key": "4:19:20261006:-11,-12:3ab92a16:high",
+            "provisional": true,
+            "generationMs": 66.5,
+            "geometryMs": 13.300000011920929,
+            "bakeMs": 1392.7999999970198,
+            "samples": 82623,
+            "rays": 255176,
+            "bytes": 5762128
+          },
+          {
+            "key": "4:19:20261006:-14,-9:cde68d83:high",
+            "provisional": true,
+            "generationMs": 48.70000000298023,
+            "geometryMs": 33.20000000298023,
+            "bakeMs": 1498.2999999970198,
+            "samples": 80764,
+            "rays": 284168,
+            "bytes": 6477336
+          },
+          {
+            "key": "4:19:20261006:-13,-12:d9912225:high",
+            "provisional": true,
+            "generationMs": 121.09999999403954,
+            "geometryMs": 8.799999997019768,
+            "bakeMs": 1070.6000000089407,
+            "samples": 82126,
+            "rays": 196299,
+            "bytes": 5739312
+          },
+          {
+            "key": "4:19:20261006:-14,-11:5420142a:high",
+            "provisional": true,
+            "generationMs": 153.29999999701977,
+            "geometryMs": 28.30000001192093,
+            "bakeMs": 1395.199999988079,
+            "samples": 84120,
+            "rays": 288580,
+            "bytes": 6185144
+          },
+          {
+            "key": "4:19:20261006:-10,-8:1e5a0272:high",
+            "provisional": true,
+            "generationMs": 117.3999999910593,
+            "geometryMs": 12.600000008940697,
+            "bakeMs": 1596.5999999940395,
+            "samples": 88190,
+            "rays": 342283,
+            "bytes": 5986424
+          },
+          {
+            "key": "4:19:20261006:-10,-12:867bcfa4:high",
+            "provisional": true,
+            "generationMs": 31.200000002980232,
+            "geometryMs": 14.199999988079071,
+            "bakeMs": 1132.300000011921,
+            "samples": 82296,
+            "rays": 243892,
+            "bytes": 5757160
+          },
+          {
+            "key": "4:19:20261006:-14,-8:fca71b54:high",
+            "provisional": true,
+            "generationMs": 87.40000000596046,
+            "geometryMs": 12,
+            "bakeMs": 1504.2000000029802,
+            "samples": 87698,
+            "rays": 306001,
+            "bytes": 5918712
+          },
+          {
+            "key": "4:19:20261006:-14,-12:4eb83a98:high",
+            "provisional": true,
+            "generationMs": 69.09999999403954,
+            "geometryMs": 11.200000002980232,
+            "bakeMs": 1434,
+            "samples": 81932,
+            "rays": 285349,
+            "bytes": 5741520
+          }
+        ]
+      },
+      "memory": {
+        "geometries": 762,
+        "textures": 190,
+        "programs": 108
+      },
+      "draws": 296,
+      "triangles": 165905
+    }
+  ],
+  "performanceScene": {
+    "name": "ouroboros",
+    "anchor": {
+      "id": "ouroboros",
+      "file": "衔尾段.png",
+      "variant": "ouroboros",
+      "width": 1482,
+      "height": 746,
+      "x": -365.0789999999997,
+      "y": -301.74,
+      "z": 0.4071,
+      "yaw": 0.1754,
+      "pitch": 0.0002,
+      "roll": 0,
+      "fov": 63.6509,
+      "centerX": -368,
+      "centerY": -304,
+      "blackout": false
+    },
+    "readyMs": 1202.5,
+    "props": [
+      {
+        "kind": "grate",
+        "x": -417.13,
+        "y": -330.75,
+        "deg": 90
+      },
+      {
+        "kind": "matpile",
+        "x": -412.75000000000006,
+        "y": -336.6,
+        "deg": 0
+      },
+      {
+        "kind": "grate",
+        "x": -396.72999999999996,
+        "y": -330.75,
+        "deg": 90
+      },
+      {
+        "kind": "grate",
+        "x": -389.92999999999995,
+        "y": -324.75,
+        "deg": 90
+      },
+      {
+        "kind": "grate",
+        "x": -383.13,
+        "y": -330.75,
+        "deg": 90
+      },
+      {
+        "kind": "grate",
+        "x": -362.72999999999996,
+        "y": -324.75,
+        "deg": 90
+      },
+      {
+        "kind": "matpile",
+        "x": -344.75000000000006,
+        "y": -330.6,
+        "deg": 0
+      },
+      {
+        "kind": "grate",
+        "x": -349.13,
+        "y": -324.75,
+        "deg": 90
+      },
+      {
+        "kind": "matpile",
+        "x": -317.55000000000007,
+        "y": -324.6,
+        "deg": 0
+      },
+      {
+        "kind": "matpile",
+        "x": -303.49,
+        "y": -323.1,
+        "deg": 180
+      },
+      {
+        "kind": "grate",
+        "x": -293.99,
+        "y": -323.25,
+        "deg": 90
+      },
+      {
+        "kind": "matpile",
+        "x": -443.49,
+        "y": -309.1,
+        "deg": 180
+      },
+      {
+        "kind": "grate",
+        "x": -417.13,
+        "y": -318.75,
+        "deg": 90
+      },
+      {
+        "kind": "grate",
+        "x": -417.13,
+        "y": -312.75,
+        "deg": 90
+      },
+      {
+        "kind": "grate",
+        "x": -410.33,
+        "y": -318.75,
+        "deg": 90
+      },
+      {
+        "kind": "matpile",
+        "x": -399.15000000000003,
+        "y": -312.6,
+        "deg": 0
+      },
+      {
+        "kind": "grate",
+        "x": -410.33,
+        "y": -306.75,
+        "deg": 90
+      },
+      {
+        "kind": "matpile",
+        "x": -405.95000000000005,
+        "y": -306.6,
+        "deg": 0
+      },
+      {
+        "kind": "matpile",
+        "x": -412.75000000000006,
+        "y": -300.6,
+        "deg": 0
+      },
+      {
+        "kind": "grate",
+        "x": -403.53,
+        "y": -300.75,
+        "deg": 90
+      },
+      {
+        "kind": "grate",
+        "x": -396.72999999999996,
+        "y": -300.75,
+        "deg": 90
+      },
+      {
+        "kind": "grate",
+        "x": -383.13,
+        "y": -318.75,
+        "deg": 90
+      },
+      {
+        "kind": "grate",
+        "x": -376.33,
+        "y": -318.75,
+        "deg": 90
+      },
+      {
+        "kind": "grate",
+        "x": -355.92999999999995,
+        "y": -318.75,
+        "deg": 90
+      },
+      {
+        "kind": "grate",
+        "x": -376.33,
+        "y": -312.75,
+        "deg": 90
+      },
+      {
+        "kind": "grate",
+        "x": -369.53,
+        "y": -312.75,
+        "deg": 90
+      },
+      {
+        "kind": "matpile",
+        "x": -358.35,
+        "y": -312.6,
+        "deg": 0
+      },
+      {
+        "kind": "grate",
+        "x": -369.53,
+        "y": -300.75,
+        "deg": 90
+      },
+      {
+        "kind": "grate",
+        "x": -355.92999999999995,
+        "y": -300.75,
+        "deg": 90
+      },
+      {
+        "kind": "matpile",
+        "x": -378.75000000000006,
+        "y": -294.6,
+        "deg": 180
+      },
+      {
+        "kind": "matpile",
+        "x": -365.15000000000003,
+        "y": -294.6,
+        "deg": 180
+      },
+      {
+        "kind": "grate",
+        "x": -335.53,
+        "y": -318.75,
+        "deg": 90
+      },
+      {
+        "kind": "grate",
+        "x": -328.72999999999996,
+        "y": -318.75,
+        "deg": 90
+      },
+      {
+        "kind": "grate",
+        "x": -321.92999999999995,
+        "y": -318.75,
+        "deg": 90
+      },
+      {
+        "kind": "matpile",
+        "x": -337.95000000000005,
+        "y": -306.6,
+        "deg": 180
+      },
+      {
+        "kind": "matpile",
+        "x": -331.15000000000003,
+        "y": -306.6,
+        "deg": 0
+      },
+      {
+        "kind": "grate",
+        "x": -307.99,
+        "y": -316.25,
+        "deg": 90
+      },
+      {
+        "kind": "matpile",
+        "x": -310.49,
+        "y": -302.1,
+        "deg": 0
+      },
+      {
+        "kind": "grate",
+        "x": -293.99,
+        "y": -295.25,
+        "deg": 90
+      },
+      {
+        "kind": "matpile",
+        "x": -443.49,
+        "y": -281.1,
+        "deg": 180
+      },
+      {
+        "kind": "grate",
+        "x": -433.99,
+        "y": -267.25,
+        "deg": 90
+      },
+      {
+        "kind": "grate",
+        "x": -417.13,
+        "y": -276.75,
+        "deg": 90
+      },
+      {
+        "kind": "matpile",
+        "x": -412.75000000000006,
+        "y": -282.6,
+        "deg": 0
+      },
+      {
+        "kind": "matpile",
+        "x": -399.15000000000003,
+        "y": -282.6,
+        "deg": 0
+      },
+      {
+        "kind": "grate",
+        "x": -410.33,
+        "y": -276.75,
+        "deg": 90
+      },
+      {
+        "kind": "matpile",
+        "x": -412.75000000000006,
+        "y": -270.6,
+        "deg": 0
+      },
+      {
+        "kind": "grate",
+        "x": -403.53,
+        "y": -270.75,
+        "deg": 90
+      },
+      {
+        "kind": "grate",
+        "x": -410.33,
+        "y": -258.75,
+        "deg": 90
+      },
+      {
+        "kind": "matpile",
+        "x": -378.75000000000006,
+        "y": -282.6,
+        "deg": 0
+      },
+      {
+        "kind": "grate",
+        "x": -355.92999999999995,
+        "y": -282.75,
+        "deg": 90
+      },
+      {
+        "kind": "grate",
+        "x": -383.13,
+        "y": -270.75,
+        "deg": 90
+      },
+      {
+        "kind": "grate",
+        "x": -383.13,
+        "y": -264.75,
+        "deg": 90
+      },
+      {
+        "kind": "grate",
+        "x": -362.72999999999996,
+        "y": -264.75,
+        "deg": 90
+      },
+      {
+        "kind": "grate",
+        "x": -349.13,
+        "y": -270.75,
+        "deg": 90
+      },
+      {
+        "kind": "grate",
+        "x": -335.53,
+        "y": -270.75,
+        "deg": 90
+      },
+      {
+        "kind": "grate",
+        "x": -328.72999999999996,
+        "y": -270.75,
+        "deg": 90
+      },
+      {
+        "kind": "matpile",
+        "x": -337.95000000000005,
+        "y": -264.6,
+        "deg": 180
+      },
+      {
+        "kind": "grate",
+        "x": -349.13,
+        "y": -258.75,
+        "deg": 90
+      },
+      {
+        "kind": "matpile",
+        "x": -344.75000000000006,
+        "y": -258.6,
+        "deg": 180
+      },
+      {
+        "kind": "grate",
+        "x": -315.13,
+        "y": -282.75,
+        "deg": 90
+      },
+      {
+        "kind": "matpile",
+        "x": -317.55000000000007,
+        "y": -270.6,
+        "deg": 180
+      },
+      {
+        "kind": "grate",
+        "x": -307.99,
+        "y": -281.25,
+        "deg": 90
+      },
+      {
+        "kind": "grate",
+        "x": -300.99,
+        "y": -281.25,
+        "deg": 90
+      },
+      {
+        "kind": "grate",
+        "x": -440.99,
+        "y": -253.25,
+        "deg": 90
+      },
+      {
+        "kind": "grate",
+        "x": -417.13,
+        "y": -252.75,
+        "deg": 90
+      },
+      {
+        "kind": "matpile",
+        "x": -392.35,
+        "y": -252.6,
+        "deg": 0
+      },
+      {
+        "kind": "grate",
+        "x": -355.92999999999995,
+        "y": -252.75,
+        "deg": 90
+      },
+      {
+        "kind": "grate",
+        "x": -335.53,
+        "y": -252.75,
+        "deg": 90
+      },
+      {
+        "kind": "matpile",
+        "x": -331.15000000000003,
+        "y": -252.6,
+        "deg": 180
+      },
+      {
+        "kind": "matpile",
+        "x": -317.55000000000007,
+        "y": -252.6,
+        "deg": 0
+      }
+    ],
+    "propMeshes": 397,
+    "emitterBatches": 52,
+    "level": 1,
+    "world": [
+      -365.0789999999997,
+      -301.74,
+      0
+    ],
+    "camera": [
+      82.92100000000028,
+      1.5458158858381537,
+      82.25999999999999
+    ],
+    "look": {
+      "yaw": 0.1754,
+      "pitch": 0.0002,
+      "locked": false,
+      "rayX": -0.1745020107799631,
+      "rayY": -0.9846567971804948,
+      "rayZ": 0.0001999999986666667,
+      "visualHit": null,
+      "roll": 0
+    },
+    "near": true,
+    "chunks": 25,
+    "tasks": 0,
+    "bake": {
+      "entries": 16,
+      "bytes": 96555216,
+      "hits": 19008,
+      "diskHits": 423,
+      "offlineLoads": 42,
+      "computations": 0,
+      "completed": 58,
+      "stale": 0,
+      "previews": 16,
+      "workers": 4,
+      "active": 2,
+      "queued": 16,
+      "initialQueued": 0,
+      "refining": 16,
+      "stages": [
+        {
+          "key": "4:19:20261006:-10,-10:1fdcf17b:high",
+          "provisional": true,
+          "generationMs": 223.70000000298023,
+          "geometryMs": 46.70000000298023,
+          "bakeMs": 1658.4000000059605,
+          "samples": 79443,
+          "rays": 280313,
+          "bytes": 6307136
+        },
+        {
+          "key": "4:19:20261006:-12,-8:fb076929:high",
+          "provisional": true,
+          "generationMs": 285,
+          "geometryMs": 32.6000000089407,
+          "bakeMs": 1812.5,
+          "samples": 88013,
+          "rays": 336425,
+          "bytes": 5981456
+        },
+        {
+          "key": "4:19:20261006:-10,-9:99b8df52:high",
+          "provisional": true,
+          "generationMs": 258.20000000298023,
+          "geometryMs": 83.5,
+          "bakeMs": 1563.699999988079,
+          "samples": 82376,
+          "rays": 280622,
+          "bytes": 6391224
+        },
+        {
+          "key": "4:19:20261006:-11,-8:5de380bd:high",
+          "provisional": true,
+          "generationMs": 261,
+          "geometryMs": 32.8999999910593,
+          "bakeMs": 1834.7000000029802,
+          "samples": 88834,
+          "rays": 344265,
+          "bytes": 5998016
+        },
+        {
+          "key": "4:19:20261006:-10,-11:6c06c0f1:high",
+          "provisional": true,
+          "generationMs": 131.90000000596046,
+          "geometryMs": 19,
+          "bakeMs": 1717.8999999910593,
+          "samples": 84637,
+          "rays": 305943,
+          "bytes": 6079896
+        },
+        {
+          "key": "4:19:20261006:-13,-8:d651953:high",
+          "provisional": true,
+          "generationMs": 177.90000000596046,
+          "geometryMs": 26.200000002980232,
+          "bakeMs": 1989.5999999940395,
+          "samples": 87882,
+          "rays": 336659,
+          "bytes": 6020832
+        },
+        {
+          "key": "4:19:20261006:-12,-12:b7ef9068:high",
+          "provisional": true,
+          "generationMs": 181.3999999910593,
+          "geometryMs": 22.700000002980232,
+          "bakeMs": 1407.7000000029802,
+          "samples": 82849,
+          "rays": 253306,
+          "bytes": 5793040
+        },
+        {
+          "key": "4:19:20261006:-14,-10:8bb15719:high",
+          "provisional": true,
+          "generationMs": 142.1000000089407,
+          "geometryMs": 39.70000000298023,
+          "bakeMs": 1619.5,
+          "samples": 78562,
+          "rays": 285997,
+          "bytes": 6415880
+        },
+        {
+          "key": "4:19:20261006:-11,-12:3ab92a16:high",
+          "provisional": true,
+          "generationMs": 66.5,
+          "geometryMs": 13.300000011920929,
+          "bakeMs": 1392.7999999970198,
+          "samples": 82623,
+          "rays": 255176,
+          "bytes": 5762128
+        },
+        {
+          "key": "4:19:20261006:-14,-9:cde68d83:high",
+          "provisional": true,
+          "generationMs": 48.70000000298023,
+          "geometryMs": 33.20000000298023,
+          "bakeMs": 1498.2999999970198,
+          "samples": 80764,
+          "rays": 284168,
+          "bytes": 6477336
+        },
+        {
+          "key": "4:19:20261006:-13,-12:d9912225:high",
+          "provisional": true,
+          "generationMs": 121.09999999403954,
+          "geometryMs": 8.799999997019768,
+          "bakeMs": 1070.6000000089407,
+          "samples": 82126,
+          "rays": 196299,
+          "bytes": 5739312
+        },
+        {
+          "key": "4:19:20261006:-14,-11:5420142a:high",
+          "provisional": true,
+          "generationMs": 153.29999999701977,
+          "geometryMs": 28.30000001192093,
+          "bakeMs": 1395.199999988079,
+          "samples": 84120,
+          "rays": 288580,
+          "bytes": 6185144
+        },
+        {
+          "key": "4:19:20261006:-10,-8:1e5a0272:high",
+          "provisional": true,
+          "generationMs": 117.3999999910593,
+          "geometryMs": 12.600000008940697,
+          "bakeMs": 1596.5999999940395,
+          "samples": 88190,
+          "rays": 342283,
+          "bytes": 5986424
+        },
+        {
+          "key": "4:19:20261006:-10,-12:867bcfa4:high",
+          "provisional": true,
+          "generationMs": 31.200000002980232,
+          "geometryMs": 14.199999988079071,
+          "bakeMs": 1132.300000011921,
+          "samples": 82296,
+          "rays": 243892,
+          "bytes": 5757160
+        },
+        {
+          "key": "4:19:20261006:-14,-8:fca71b54:high",
+          "provisional": true,
+          "generationMs": 87.40000000596046,
+          "geometryMs": 12,
+          "bakeMs": 1504.2000000029802,
+          "samples": 87698,
+          "rays": 306001,
+          "bytes": 5918712
+        },
+        {
+          "key": "4:19:20261006:-14,-12:4eb83a98:high",
+          "provisional": true,
+          "generationMs": 69.09999999403954,
+          "geometryMs": 11.200000002980232,
+          "bakeMs": 1434,
+          "samples": 81932,
+          "rays": 285349,
+          "bytes": 5741520
+        }
+      ]
+    },
+    "memory": {
+      "geometries": 772,
+      "textures": 190,
+      "programs": 108
+    },
+    "draws": 610,
+    "triangles": 523211
+  },
+  "performance": {
+    "rounds": [
+      {
+        "median": 7.0999999940395355,
+        "p95": 9.5,
+        "cpuMedian": 5.200000002980232,
+        "cpuP95": 7.699999988079071,
+        "geometries": 775,
+        "textures": 190,
+        "programs": 108,
+        "draws": 320,
+        "triangles": 147729
+      },
+      {
+        "median": 7.4000000059604645,
+        "p95": 10.799999997019768,
+        "cpuMedian": 5.600000008940697,
+        "cpuP95": 8.799999997019768,
+        "geometries": 775,
+        "textures": 190,
+        "programs": 108,
+        "draws": 320,
+        "triangles": 147729
+      },
+      {
+        "median": 6.299999997019768,
+        "p95": 9,
+        "cpuMedian": 4.700000002980232,
+        "cpuP95": 6.600000008940697,
+        "geometries": 775,
+        "textures": 190,
+        "programs": 108,
+        "draws": 320,
+        "triangles": 147729
+      },
+      {
+        "median": 7.199999988079071,
+        "p95": 9.799999997019768,
+        "cpuMedian": 5.4000000059604645,
+        "cpuP95": 7.300000011920929,
+        "geometries": 775,
+        "textures": 190,
+        "programs": 108,
+        "draws": 320,
+        "triangles": 147729
+      },
+      {
+        "median": 9.700000002980232,
+        "p95": 15.299999997019768,
+        "cpuMedian": 7.5,
+        "cpuP95": 12.299999997019768,
+        "geometries": 775,
+        "textures": 190,
+        "programs": 108,
+        "draws": 614,
+        "triangles": 517335
+      }
+    ],
+    "scope": "Actual App, native GPU headless frame cadence; final bake ready; one fixed view, five rounds",
+    "bake": {
+      "entries": 16,
+      "bytes": 96555216,
+      "hits": 19008,
+      "diskHits": 423,
+      "offlineLoads": 42,
+      "computations": 16,
+      "completed": 74,
+      "stale": 0,
+      "previews": 16,
+      "workers": 4,
+      "active": 0,
+      "queued": 0,
+      "initialQueued": 0,
+      "refining": 0,
+      "stages": [
+        {
+          "key": "4:19:20261006:-10,-10:1fdcf17b:high",
+          "provisional": false,
+          "generationMs": 14.5,
+          "geometryMs": 27.30000001192093,
+          "bakeMs": 24014.5,
+          "samples": 79443,
+          "rays": 7044971,
+          "bytes": 6307136
+        },
+        {
+          "key": "4:19:20261006:-12,-8:fb076929:high",
+          "provisional": false,
+          "generationMs": 12.299999997019768,
+          "geometryMs": 17.599999994039536,
+          "bakeMs": 16668.20000000298,
+          "samples": 88013,
+          "rays": 5240861,
+          "bytes": 5981456
+        },
+        {
+          "key": "4:19:20261006:-10,-9:99b8df52:high",
+          "provisional": false,
+          "generationMs": 14.199999988079071,
+          "geometryMs": 27.80000001192093,
+          "bakeMs": 22594.09999999404,
+          "samples": 82376,
+          "rays": 6922358,
+          "bytes": 6391224
+        },
+        {
+          "key": "4:19:20261006:-11,-8:5de380bd:high",
+          "provisional": false,
+          "generationMs": 79.70000000298023,
+          "geometryMs": 10.599999994039536,
+          "bakeMs": 15678.10000000894,
+          "samples": 88834,
+          "rays": 5209055,
+          "bytes": 5998016
+        },
+        {
+          "key": "4:19:20261006:-10,-11:6c06c0f1:high",
+          "provisional": false,
+          "generationMs": 12.400000005960464,
+          "geometryMs": 12.299999997019768,
+          "bakeMs": 19097.60000000894,
+          "samples": 84637,
+          "rays": 5993341,
+          "bytes": 6079896
+        },
+        {
+          "key": "4:19:20261006:-13,-8:d651953:high",
+          "provisional": false,
+          "generationMs": 51.80000001192093,
+          "geometryMs": 16.5,
+          "bakeMs": 17808.19999998808,
+          "samples": 87882,
+          "rays": 5684025,
+          "bytes": 6020832
+        },
+        {
+          "key": "4:19:20261006:-12,-12:b7ef9068:high",
+          "provisional": false,
+          "generationMs": 29,
+          "geometryMs": 9.299999997019768,
+          "bakeMs": 8980.40000000596,
+          "samples": 82849,
+          "rays": 3258458,
+          "bytes": 5793040
+        },
+        {
+          "key": "4:19:20261006:-14,-10:8bb15719:high",
+          "provisional": false,
+          "generationMs": 76.6000000089407,
+          "geometryMs": 14.799999997019768,
+          "bakeMs": 22689.29999999702,
+          "samples": 78562,
+          "rays": 8176451,
+          "bytes": 6415880
+        },
+        {
+          "key": "4:19:20261006:-11,-12:3ab92a16:high",
+          "provisional": false,
+          "generationMs": 28.700000002980232,
+          "geometryMs": 12.099999994039536,
+          "bakeMs": 8874.70000000298,
+          "samples": 82623,
+          "rays": 3122998,
+          "bytes": 5762128
+        },
+        {
+          "key": "4:19:20261006:-14,-9:cde68d83:high",
+          "provisional": false,
+          "generationMs": 61.900000005960464,
+          "geometryMs": 20.099999994039536,
+          "bakeMs": 21337.5,
+          "samples": 80764,
+          "rays": 7846324,
+          "bytes": 6477336
+        },
+        {
+          "key": "4:19:20261006:-13,-12:d9912225:high",
+          "provisional": false,
+          "generationMs": 34,
+          "geometryMs": 6.5999999940395355,
+          "bakeMs": 6931.300000011921,
+          "samples": 82126,
+          "rays": 2489574,
+          "bytes": 5739312
+        },
+        {
+          "key": "4:19:20261006:-14,-11:5420142a:high",
+          "provisional": false,
+          "generationMs": 16,
+          "geometryMs": 11.899999991059303,
+          "bakeMs": 17625.70000000298,
+          "samples": 84120,
+          "rays": 6382959,
+          "bytes": 6185144
+        },
+        {
+          "key": "4:19:20261006:-10,-8:1e5a0272:high",
+          "provisional": false,
+          "generationMs": 7.299999997019768,
+          "geometryMs": 9.299999997019768,
+          "bakeMs": 13991.5,
+          "samples": 88190,
+          "rays": 5050664,
+          "bytes": 5986424
+        },
+        {
+          "key": "4:19:20261006:-10,-12:867bcfa4:high",
+          "provisional": false,
+          "generationMs": 12.599999994039536,
+          "geometryMs": 8.799999997019768,
+          "bakeMs": 8053.100000008941,
+          "samples": 82296,
+          "rays": 2894431,
+          "bytes": 5757160
+        },
+        {
+          "key": "4:19:20261006:-14,-8:fca71b54:high",
+          "provisional": false,
+          "generationMs": 18.5,
+          "geometryMs": 8.399999991059303,
+          "bakeMs": 13579.300000011921,
+          "samples": 87698,
+          "rays": 5060821,
+          "bytes": 5918712
+        },
+        {
+          "key": "4:19:20261006:-14,-12:4eb83a98:high",
+          "provisional": false,
+          "generationMs": 16.799999997019768,
+          "geometryMs": 5.5999999940395355,
+          "bakeMs": 9741.5,
+          "samples": 81932,
+          "rays": 3577929,
+          "bytes": 5741520
+        }
+      ]
+    }
+  },
+  "cycles": [
+    {
+      "shown": {
+        "geometries": 782,
+        "textures": 190,
+        "programs": 108
+      },
+      "empty": {
+        "geometries": 775,
+        "textures": 190,
+        "programs": 108
+      }
+    },
+    {
+      "shown": {
+        "geometries": 782,
+        "textures": 190,
+        "programs": 108
+      },
+      "empty": {
+        "geometries": 775,
+        "textures": 190,
+        "programs": 108
+      }
+    },
+    {
+      "shown": {
+        "geometries": 782,
+        "textures": 190,
+        "programs": 108
+      },
+      "empty": {
+        "geometries": 775,
+        "textures": 190,
+        "programs": 108
+      }
+    },
+    {
+      "shown": {
+        "geometries": 782,
+        "textures": 190,
+        "programs": 108
+      },
+      "empty": {
+        "geometries": 775,
+        "textures": 190,
+        "programs": 108
+      }
+    },
+    {
+      "shown": {
+        "geometries": 782,
+        "textures": 190,
+        "programs": 108
+      },
+      "empty": {
+        "geometries": 775,
+        "textures": 190,
+        "programs": 108
+      }
+    },
+    {
+      "shown": {
+        "geometries": 782,
+        "textures": 190,
+        "programs": 108
+      },
+      "empty": {
+        "geometries": 775,
+        "textures": 190,
+        "programs": 108
+      }
+    }
+  ],
+  "summary": {
+    "checks": [
+      "reference exists: ouroboros",
+      "native scene visible: ouroboros",
+      "reference exists: ouro-left",
+      "native scene visible: ouro-left",
+      "reference exists: ouro-ceiling",
+      "native scene visible: ouro-ceiling",
+      "reference exists: ouro-back",
+      "native scene visible: ouro-back",
+      "reference exists: ouroboros",
+      "native scene visible: ouroboros",
+      "actual streamed ouro geometry exists for resource check",
+      "six full GPU prop and lamp recycle cycles are stable"
+    ],
+    "records": [
+      {
+        "name": "ouroboros",
+        "anchor": {
+          "id": "ouroboros",
+          "file": "衔尾段.png",
+          "variant": "ouroboros",
+          "width": 1482,
+          "height": 746,
+          "x": -365.0789999999997,
+          "y": -301.74,
+          "z": 0.4071,
+          "yaw": 0.1754,
+          "pitch": 0.0002,
+          "roll": 0,
+          "fov": 63.6509,
+          "centerX": -368,
+          "centerY": -304,
+          "blackout": false
+        },
+        "readyMs": 9007,
+        "props": [
+          {
+            "kind": "grate",
+            "x": -417.13,
+            "y": -330.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -412.75000000000006,
+            "y": -336.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -396.72999999999996,
+            "y": -330.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -389.92999999999995,
+            "y": -324.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -383.13,
+            "y": -330.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -362.72999999999996,
+            "y": -324.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -344.75000000000006,
+            "y": -330.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -349.13,
+            "y": -324.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -317.55000000000007,
+            "y": -324.6,
+            "deg": 0
+          },
+          {
+            "kind": "matpile",
+            "x": -303.49,
+            "y": -323.1,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -293.99,
+            "y": -323.25,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -443.49,
+            "y": -309.1,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -417.13,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -417.13,
+            "y": -312.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -410.33,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -399.15000000000003,
+            "y": -312.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -410.33,
+            "y": -306.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -405.95000000000005,
+            "y": -306.6,
+            "deg": 0
+          },
+          {
+            "kind": "matpile",
+            "x": -412.75000000000006,
+            "y": -300.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -403.53,
+            "y": -300.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -396.72999999999996,
+            "y": -300.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -383.13,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -376.33,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -355.92999999999995,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -376.33,
+            "y": -312.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -369.53,
+            "y": -312.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -358.35,
+            "y": -312.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -369.53,
+            "y": -300.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -355.92999999999995,
+            "y": -300.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -378.75000000000006,
+            "y": -294.6,
+            "deg": 180
+          },
+          {
+            "kind": "matpile",
+            "x": -365.15000000000003,
+            "y": -294.6,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -335.53,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -328.72999999999996,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -321.92999999999995,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -337.95000000000005,
+            "y": -306.6,
+            "deg": 180
+          },
+          {
+            "kind": "matpile",
+            "x": -331.15000000000003,
+            "y": -306.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -307.99,
+            "y": -316.25,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -310.49,
+            "y": -302.1,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -293.99,
+            "y": -295.25,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -443.49,
+            "y": -281.1,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -433.99,
+            "y": -267.25,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -417.13,
+            "y": -276.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -412.75000000000006,
+            "y": -282.6,
+            "deg": 0
+          },
+          {
+            "kind": "matpile",
+            "x": -399.15000000000003,
+            "y": -282.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -410.33,
+            "y": -276.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -412.75000000000006,
+            "y": -270.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -403.53,
+            "y": -270.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -410.33,
+            "y": -258.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -378.75000000000006,
+            "y": -282.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -355.92999999999995,
+            "y": -282.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -383.13,
+            "y": -270.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -383.13,
+            "y": -264.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -362.72999999999996,
+            "y": -264.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -349.13,
+            "y": -270.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -335.53,
+            "y": -270.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -328.72999999999996,
+            "y": -270.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -337.95000000000005,
+            "y": -264.6,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -349.13,
+            "y": -258.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -344.75000000000006,
+            "y": -258.6,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -315.13,
+            "y": -282.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -317.55000000000007,
+            "y": -270.6,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -307.99,
+            "y": -281.25,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -300.99,
+            "y": -281.25,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -440.99,
+            "y": -253.25,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -417.13,
+            "y": -252.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -392.35,
+            "y": -252.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -355.92999999999995,
+            "y": -252.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -335.53,
+            "y": -252.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -331.15000000000003,
+            "y": -252.6,
+            "deg": 180
+          },
+          {
+            "kind": "matpile",
+            "x": -317.55000000000007,
+            "y": -252.6,
+            "deg": 0
+          }
+        ],
+        "propMeshes": 316,
+        "emitterBatches": 32,
+        "level": 1,
+        "world": [
+          -365.0789999999997,
+          -301.74,
+          0
+        ],
+        "camera": [
+          82.92100000000028,
+          1.5579057350942824,
+          82.25999999999999
+        ],
+        "look": {
+          "yaw": 0.1754,
+          "pitch": 0.0002,
+          "locked": false,
+          "rayX": -0.1745020107799631,
+          "rayY": -0.9846567971804948,
+          "rayZ": 0.0001999999986666667,
+          "visualHit": null,
+          "roll": 0
+        },
+        "near": true,
+        "chunks": 16,
+        "tasks": 1,
+        "bake": {
+          "entries": 16,
+          "bytes": 96555216,
+          "hits": 18428,
+          "diskHits": 423,
+          "offlineLoads": 42,
+          "computations": 0,
+          "completed": 58,
+          "stale": 0,
+          "previews": 16,
+          "workers": 4,
+          "active": 2,
+          "queued": 16,
+          "initialQueued": 0,
+          "refining": 16,
+          "stages": [
+            {
+              "key": "4:19:20261006:-10,-10:1fdcf17b:high",
+              "provisional": true,
+              "generationMs": 223.70000000298023,
+              "geometryMs": 46.70000000298023,
+              "bakeMs": 1658.4000000059605,
+              "samples": 79443,
+              "rays": 280313,
+              "bytes": 6307136
+            },
+            {
+              "key": "4:19:20261006:-12,-8:fb076929:high",
+              "provisional": true,
+              "generationMs": 285,
+              "geometryMs": 32.6000000089407,
+              "bakeMs": 1812.5,
+              "samples": 88013,
+              "rays": 336425,
+              "bytes": 5981456
+            },
+            {
+              "key": "4:19:20261006:-10,-9:99b8df52:high",
+              "provisional": true,
+              "generationMs": 258.20000000298023,
+              "geometryMs": 83.5,
+              "bakeMs": 1563.699999988079,
+              "samples": 82376,
+              "rays": 280622,
+              "bytes": 6391224
+            },
+            {
+              "key": "4:19:20261006:-11,-8:5de380bd:high",
+              "provisional": true,
+              "generationMs": 261,
+              "geometryMs": 32.8999999910593,
+              "bakeMs": 1834.7000000029802,
+              "samples": 88834,
+              "rays": 344265,
+              "bytes": 5998016
+            },
+            {
+              "key": "4:19:20261006:-10,-11:6c06c0f1:high",
+              "provisional": true,
+              "generationMs": 131.90000000596046,
+              "geometryMs": 19,
+              "bakeMs": 1717.8999999910593,
+              "samples": 84637,
+              "rays": 305943,
+              "bytes": 6079896
+            },
+            {
+              "key": "4:19:20261006:-13,-8:d651953:high",
+              "provisional": true,
+              "generationMs": 177.90000000596046,
+              "geometryMs": 26.200000002980232,
+              "bakeMs": 1989.5999999940395,
+              "samples": 87882,
+              "rays": 336659,
+              "bytes": 6020832
+            },
+            {
+              "key": "4:19:20261006:-12,-12:b7ef9068:high",
+              "provisional": true,
+              "generationMs": 181.3999999910593,
+              "geometryMs": 22.700000002980232,
+              "bakeMs": 1407.7000000029802,
+              "samples": 82849,
+              "rays": 253306,
+              "bytes": 5793040
+            },
+            {
+              "key": "4:19:20261006:-14,-10:8bb15719:high",
+              "provisional": true,
+              "generationMs": 142.1000000089407,
+              "geometryMs": 39.70000000298023,
+              "bakeMs": 1619.5,
+              "samples": 78562,
+              "rays": 285997,
+              "bytes": 6415880
+            },
+            {
+              "key": "4:19:20261006:-11,-12:3ab92a16:high",
+              "provisional": true,
+              "generationMs": 66.5,
+              "geometryMs": 13.300000011920929,
+              "bakeMs": 1392.7999999970198,
+              "samples": 82623,
+              "rays": 255176,
+              "bytes": 5762128
+            },
+            {
+              "key": "4:19:20261006:-14,-9:cde68d83:high",
+              "provisional": true,
+              "generationMs": 48.70000000298023,
+              "geometryMs": 33.20000000298023,
+              "bakeMs": 1498.2999999970198,
+              "samples": 80764,
+              "rays": 284168,
+              "bytes": 6477336
+            },
+            {
+              "key": "4:19:20261006:-13,-12:d9912225:high",
+              "provisional": true,
+              "generationMs": 121.09999999403954,
+              "geometryMs": 8.799999997019768,
+              "bakeMs": 1070.6000000089407,
+              "samples": 82126,
+              "rays": 196299,
+              "bytes": 5739312
+            },
+            {
+              "key": "4:19:20261006:-14,-11:5420142a:high",
+              "provisional": true,
+              "generationMs": 153.29999999701977,
+              "geometryMs": 28.30000001192093,
+              "bakeMs": 1395.199999988079,
+              "samples": 84120,
+              "rays": 288580,
+              "bytes": 6185144
+            },
+            {
+              "key": "4:19:20261006:-10,-8:1e5a0272:high",
+              "provisional": true,
+              "generationMs": 117.3999999910593,
+              "geometryMs": 12.600000008940697,
+              "bakeMs": 1596.5999999940395,
+              "samples": 88190,
+              "rays": 342283,
+              "bytes": 5986424
+            },
+            {
+              "key": "4:19:20261006:-10,-12:867bcfa4:high",
+              "provisional": true,
+              "generationMs": 31.200000002980232,
+              "geometryMs": 14.199999988079071,
+              "bakeMs": 1132.300000011921,
+              "samples": 82296,
+              "rays": 243892,
+              "bytes": 5757160
+            },
+            {
+              "key": "4:19:20261006:-14,-8:fca71b54:high",
+              "provisional": true,
+              "generationMs": 87.40000000596046,
+              "geometryMs": 12,
+              "bakeMs": 1504.2000000029802,
+              "samples": 87698,
+              "rays": 306001,
+              "bytes": 5918712
+            },
+            {
+              "key": "4:19:20261006:-14,-12:4eb83a98:high",
+              "provisional": true,
+              "generationMs": 69.09999999403954,
+              "geometryMs": 11.200000002980232,
+              "bakeMs": 1434,
+              "samples": 81932,
+              "rays": 285349,
+              "bytes": 5741520
+            }
+          ]
+        },
+        "memory": {
+          "geometries": 383,
+          "textures": 162,
+          "programs": 107
+        },
+        "draws": 269,
+        "triangles": 125589
+      },
+      {
+        "name": "ouro-left",
+        "anchor": {
+          "id": "ouroboros",
+          "file": "衔尾段.png",
+          "variant": "ouroboros",
+          "width": 1482,
+          "height": 746,
+          "x": -365.0789999999997,
+          "y": -301.74,
+          "z": 0.4071,
+          "yaw": 0.1754,
+          "pitch": 0.0002,
+          "roll": 0,
+          "fov": 63.6509,
+          "centerX": -368,
+          "centerY": -304,
+          "blackout": false
+        },
+        "readyMs": 2638.0999999940395,
+        "props": [
+          {
+            "kind": "grate",
+            "x": -417.13,
+            "y": -330.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -412.75000000000006,
+            "y": -336.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -396.72999999999996,
+            "y": -330.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -389.92999999999995,
+            "y": -324.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -383.13,
+            "y": -330.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -362.72999999999996,
+            "y": -324.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -344.75000000000006,
+            "y": -330.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -349.13,
+            "y": -324.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -317.55000000000007,
+            "y": -324.6,
+            "deg": 0
+          },
+          {
+            "kind": "matpile",
+            "x": -303.49,
+            "y": -323.1,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -293.99,
+            "y": -323.25,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -443.49,
+            "y": -309.1,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -417.13,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -417.13,
+            "y": -312.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -410.33,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -399.15000000000003,
+            "y": -312.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -410.33,
+            "y": -306.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -405.95000000000005,
+            "y": -306.6,
+            "deg": 0
+          },
+          {
+            "kind": "matpile",
+            "x": -412.75000000000006,
+            "y": -300.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -403.53,
+            "y": -300.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -396.72999999999996,
+            "y": -300.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -383.13,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -376.33,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -355.92999999999995,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -376.33,
+            "y": -312.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -369.53,
+            "y": -312.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -358.35,
+            "y": -312.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -369.53,
+            "y": -300.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -355.92999999999995,
+            "y": -300.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -378.75000000000006,
+            "y": -294.6,
+            "deg": 180
+          },
+          {
+            "kind": "matpile",
+            "x": -365.15000000000003,
+            "y": -294.6,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -335.53,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -328.72999999999996,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -321.92999999999995,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -337.95000000000005,
+            "y": -306.6,
+            "deg": 180
+          },
+          {
+            "kind": "matpile",
+            "x": -331.15000000000003,
+            "y": -306.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -307.99,
+            "y": -316.25,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -310.49,
+            "y": -302.1,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -293.99,
+            "y": -295.25,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -443.49,
+            "y": -281.1,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -433.99,
+            "y": -267.25,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -417.13,
+            "y": -276.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -412.75000000000006,
+            "y": -282.6,
+            "deg": 0
+          },
+          {
+            "kind": "matpile",
+            "x": -399.15000000000003,
+            "y": -282.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -410.33,
+            "y": -276.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -412.75000000000006,
+            "y": -270.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -403.53,
+            "y": -270.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -410.33,
+            "y": -258.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -378.75000000000006,
+            "y": -282.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -355.92999999999995,
+            "y": -282.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -383.13,
+            "y": -270.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -383.13,
+            "y": -264.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -362.72999999999996,
+            "y": -264.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -349.13,
+            "y": -270.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -335.53,
+            "y": -270.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -328.72999999999996,
+            "y": -270.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -337.95000000000005,
+            "y": -264.6,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -349.13,
+            "y": -258.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -344.75000000000006,
+            "y": -258.6,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -315.13,
+            "y": -282.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -317.55000000000007,
+            "y": -270.6,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -307.99,
+            "y": -281.25,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -300.99,
+            "y": -281.25,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -440.99,
+            "y": -253.25,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -417.13,
+            "y": -252.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -392.35,
+            "y": -252.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -355.92999999999995,
+            "y": -252.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -335.53,
+            "y": -252.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -331.15000000000003,
+            "y": -252.6,
+            "deg": 180
+          },
+          {
+            "kind": "matpile",
+            "x": -317.55000000000007,
+            "y": -252.6,
+            "deg": 0
+          }
+        ],
+        "propMeshes": 397,
+        "emitterBatches": 52,
+        "level": 1,
+        "world": [
+          -365.0789999999997,
+          -301.74,
+          0
+        ],
+        "camera": [
+          82.92100000000028,
+          1.5535361338812117,
+          82.25999999999999
+        ],
+        "look": {
+          "yaw": 1.2754,
+          "pitch": 0.0002,
+          "locked": false,
+          "rayX": -0.9566868200525326,
+          "rayY": -0.29111902778378074,
+          "rayZ": 0.0001999999986666667,
+          "visualHit": null,
+          "roll": 0
+        },
+        "near": true,
+        "chunks": 25,
+        "tasks": 0,
+        "bake": {
+          "entries": 16,
+          "bytes": 96555216,
+          "hits": 19008,
+          "diskHits": 423,
+          "offlineLoads": 42,
+          "computations": 0,
+          "completed": 58,
+          "stale": 0,
+          "previews": 16,
+          "workers": 4,
+          "active": 2,
+          "queued": 16,
+          "initialQueued": 0,
+          "refining": 16,
+          "stages": [
+            {
+              "key": "4:19:20261006:-10,-10:1fdcf17b:high",
+              "provisional": true,
+              "generationMs": 223.70000000298023,
+              "geometryMs": 46.70000000298023,
+              "bakeMs": 1658.4000000059605,
+              "samples": 79443,
+              "rays": 280313,
+              "bytes": 6307136
+            },
+            {
+              "key": "4:19:20261006:-12,-8:fb076929:high",
+              "provisional": true,
+              "generationMs": 285,
+              "geometryMs": 32.6000000089407,
+              "bakeMs": 1812.5,
+              "samples": 88013,
+              "rays": 336425,
+              "bytes": 5981456
+            },
+            {
+              "key": "4:19:20261006:-10,-9:99b8df52:high",
+              "provisional": true,
+              "generationMs": 258.20000000298023,
+              "geometryMs": 83.5,
+              "bakeMs": 1563.699999988079,
+              "samples": 82376,
+              "rays": 280622,
+              "bytes": 6391224
+            },
+            {
+              "key": "4:19:20261006:-11,-8:5de380bd:high",
+              "provisional": true,
+              "generationMs": 261,
+              "geometryMs": 32.8999999910593,
+              "bakeMs": 1834.7000000029802,
+              "samples": 88834,
+              "rays": 344265,
+              "bytes": 5998016
+            },
+            {
+              "key": "4:19:20261006:-10,-11:6c06c0f1:high",
+              "provisional": true,
+              "generationMs": 131.90000000596046,
+              "geometryMs": 19,
+              "bakeMs": 1717.8999999910593,
+              "samples": 84637,
+              "rays": 305943,
+              "bytes": 6079896
+            },
+            {
+              "key": "4:19:20261006:-13,-8:d651953:high",
+              "provisional": true,
+              "generationMs": 177.90000000596046,
+              "geometryMs": 26.200000002980232,
+              "bakeMs": 1989.5999999940395,
+              "samples": 87882,
+              "rays": 336659,
+              "bytes": 6020832
+            },
+            {
+              "key": "4:19:20261006:-12,-12:b7ef9068:high",
+              "provisional": true,
+              "generationMs": 181.3999999910593,
+              "geometryMs": 22.700000002980232,
+              "bakeMs": 1407.7000000029802,
+              "samples": 82849,
+              "rays": 253306,
+              "bytes": 5793040
+            },
+            {
+              "key": "4:19:20261006:-14,-10:8bb15719:high",
+              "provisional": true,
+              "generationMs": 142.1000000089407,
+              "geometryMs": 39.70000000298023,
+              "bakeMs": 1619.5,
+              "samples": 78562,
+              "rays": 285997,
+              "bytes": 6415880
+            },
+            {
+              "key": "4:19:20261006:-11,-12:3ab92a16:high",
+              "provisional": true,
+              "generationMs": 66.5,
+              "geometryMs": 13.300000011920929,
+              "bakeMs": 1392.7999999970198,
+              "samples": 82623,
+              "rays": 255176,
+              "bytes": 5762128
+            },
+            {
+              "key": "4:19:20261006:-14,-9:cde68d83:high",
+              "provisional": true,
+              "generationMs": 48.70000000298023,
+              "geometryMs": 33.20000000298023,
+              "bakeMs": 1498.2999999970198,
+              "samples": 80764,
+              "rays": 284168,
+              "bytes": 6477336
+            },
+            {
+              "key": "4:19:20261006:-13,-12:d9912225:high",
+              "provisional": true,
+              "generationMs": 121.09999999403954,
+              "geometryMs": 8.799999997019768,
+              "bakeMs": 1070.6000000089407,
+              "samples": 82126,
+              "rays": 196299,
+              "bytes": 5739312
+            },
+            {
+              "key": "4:19:20261006:-14,-11:5420142a:high",
+              "provisional": true,
+              "generationMs": 153.29999999701977,
+              "geometryMs": 28.30000001192093,
+              "bakeMs": 1395.199999988079,
+              "samples": 84120,
+              "rays": 288580,
+              "bytes": 6185144
+            },
+            {
+              "key": "4:19:20261006:-10,-8:1e5a0272:high",
+              "provisional": true,
+              "generationMs": 117.3999999910593,
+              "geometryMs": 12.600000008940697,
+              "bakeMs": 1596.5999999940395,
+              "samples": 88190,
+              "rays": 342283,
+              "bytes": 5986424
+            },
+            {
+              "key": "4:19:20261006:-10,-12:867bcfa4:high",
+              "provisional": true,
+              "generationMs": 31.200000002980232,
+              "geometryMs": 14.199999988079071,
+              "bakeMs": 1132.300000011921,
+              "samples": 82296,
+              "rays": 243892,
+              "bytes": 5757160
+            },
+            {
+              "key": "4:19:20261006:-14,-8:fca71b54:high",
+              "provisional": true,
+              "generationMs": 87.40000000596046,
+              "geometryMs": 12,
+              "bakeMs": 1504.2000000029802,
+              "samples": 87698,
+              "rays": 306001,
+              "bytes": 5918712
+            },
+            {
+              "key": "4:19:20261006:-14,-12:4eb83a98:high",
+              "provisional": true,
+              "generationMs": 69.09999999403954,
+              "geometryMs": 11.200000002980232,
+              "bakeMs": 1434,
+              "samples": 81932,
+              "rays": 285349,
+              "bytes": 5741520
+            }
+          ]
+        },
+        "memory": {
+          "geometries": 553,
+          "textures": 187,
+          "programs": 107
+        },
+        "draws": 287,
+        "triangles": 170677
+      },
+      {
+        "name": "ouro-ceiling",
+        "anchor": {
+          "id": "ouroboros",
+          "file": "衔尾段.png",
+          "variant": "ouroboros",
+          "width": 1482,
+          "height": 746,
+          "x": -365.0789999999997,
+          "y": -301.74,
+          "z": 0.4071,
+          "yaw": 0.1754,
+          "pitch": 0.0002,
+          "roll": 0,
+          "fov": 63.6509,
+          "centerX": -368,
+          "centerY": -304,
+          "blackout": false
+        },
+        "readyMs": 1206.2000000029802,
+        "props": [
+          {
+            "kind": "grate",
+            "x": -417.13,
+            "y": -330.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -412.75000000000006,
+            "y": -336.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -396.72999999999996,
+            "y": -330.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -389.92999999999995,
+            "y": -324.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -383.13,
+            "y": -330.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -362.72999999999996,
+            "y": -324.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -344.75000000000006,
+            "y": -330.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -349.13,
+            "y": -324.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -317.55000000000007,
+            "y": -324.6,
+            "deg": 0
+          },
+          {
+            "kind": "matpile",
+            "x": -303.49,
+            "y": -323.1,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -293.99,
+            "y": -323.25,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -443.49,
+            "y": -309.1,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -417.13,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -417.13,
+            "y": -312.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -410.33,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -399.15000000000003,
+            "y": -312.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -410.33,
+            "y": -306.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -405.95000000000005,
+            "y": -306.6,
+            "deg": 0
+          },
+          {
+            "kind": "matpile",
+            "x": -412.75000000000006,
+            "y": -300.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -403.53,
+            "y": -300.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -396.72999999999996,
+            "y": -300.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -383.13,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -376.33,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -355.92999999999995,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -376.33,
+            "y": -312.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -369.53,
+            "y": -312.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -358.35,
+            "y": -312.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -369.53,
+            "y": -300.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -355.92999999999995,
+            "y": -300.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -378.75000000000006,
+            "y": -294.6,
+            "deg": 180
+          },
+          {
+            "kind": "matpile",
+            "x": -365.15000000000003,
+            "y": -294.6,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -335.53,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -328.72999999999996,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -321.92999999999995,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -337.95000000000005,
+            "y": -306.6,
+            "deg": 180
+          },
+          {
+            "kind": "matpile",
+            "x": -331.15000000000003,
+            "y": -306.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -307.99,
+            "y": -316.25,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -310.49,
+            "y": -302.1,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -293.99,
+            "y": -295.25,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -443.49,
+            "y": -281.1,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -433.99,
+            "y": -267.25,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -417.13,
+            "y": -276.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -412.75000000000006,
+            "y": -282.6,
+            "deg": 0
+          },
+          {
+            "kind": "matpile",
+            "x": -399.15000000000003,
+            "y": -282.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -410.33,
+            "y": -276.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -412.75000000000006,
+            "y": -270.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -403.53,
+            "y": -270.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -410.33,
+            "y": -258.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -378.75000000000006,
+            "y": -282.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -355.92999999999995,
+            "y": -282.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -383.13,
+            "y": -270.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -383.13,
+            "y": -264.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -362.72999999999996,
+            "y": -264.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -349.13,
+            "y": -270.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -335.53,
+            "y": -270.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -328.72999999999996,
+            "y": -270.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -337.95000000000005,
+            "y": -264.6,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -349.13,
+            "y": -258.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -344.75000000000006,
+            "y": -258.6,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -315.13,
+            "y": -282.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -317.55000000000007,
+            "y": -270.6,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -307.99,
+            "y": -281.25,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -300.99,
+            "y": -281.25,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -440.99,
+            "y": -253.25,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -417.13,
+            "y": -252.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -392.35,
+            "y": -252.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -355.92999999999995,
+            "y": -252.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -335.53,
+            "y": -252.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -331.15000000000003,
+            "y": -252.6,
+            "deg": 180
+          },
+          {
+            "kind": "matpile",
+            "x": -317.55000000000007,
+            "y": -252.6,
+            "deg": 0
+          }
+        ],
+        "propMeshes": 397,
+        "emitterBatches": 52,
+        "level": 1,
+        "world": [
+          -365.0789999999997,
+          -301.74,
+          0
+        ],
+        "camera": [
+          82.92100000000028,
+          1.5565862228671083,
+          82.25999999999999
+        ],
+        "look": {
+          "yaw": 0.1754,
+          "pitch": 0.65,
+          "locked": false,
+          "rayX": -0.13891822637452583,
+          "rayY": -0.7838693390439825,
+          "rayZ": 0.6051864057360397,
+          "visualHit": null,
+          "roll": 0
+        },
+        "near": true,
+        "chunks": 25,
+        "tasks": 0,
+        "bake": {
+          "entries": 16,
+          "bytes": 96555216,
+          "hits": 19008,
+          "diskHits": 423,
+          "offlineLoads": 42,
+          "computations": 0,
+          "completed": 58,
+          "stale": 0,
+          "previews": 16,
+          "workers": 4,
+          "active": 2,
+          "queued": 16,
+          "initialQueued": 0,
+          "refining": 16,
+          "stages": [
+            {
+              "key": "4:19:20261006:-10,-10:1fdcf17b:high",
+              "provisional": true,
+              "generationMs": 223.70000000298023,
+              "geometryMs": 46.70000000298023,
+              "bakeMs": 1658.4000000059605,
+              "samples": 79443,
+              "rays": 280313,
+              "bytes": 6307136
+            },
+            {
+              "key": "4:19:20261006:-12,-8:fb076929:high",
+              "provisional": true,
+              "generationMs": 285,
+              "geometryMs": 32.6000000089407,
+              "bakeMs": 1812.5,
+              "samples": 88013,
+              "rays": 336425,
+              "bytes": 5981456
+            },
+            {
+              "key": "4:19:20261006:-10,-9:99b8df52:high",
+              "provisional": true,
+              "generationMs": 258.20000000298023,
+              "geometryMs": 83.5,
+              "bakeMs": 1563.699999988079,
+              "samples": 82376,
+              "rays": 280622,
+              "bytes": 6391224
+            },
+            {
+              "key": "4:19:20261006:-11,-8:5de380bd:high",
+              "provisional": true,
+              "generationMs": 261,
+              "geometryMs": 32.8999999910593,
+              "bakeMs": 1834.7000000029802,
+              "samples": 88834,
+              "rays": 344265,
+              "bytes": 5998016
+            },
+            {
+              "key": "4:19:20261006:-10,-11:6c06c0f1:high",
+              "provisional": true,
+              "generationMs": 131.90000000596046,
+              "geometryMs": 19,
+              "bakeMs": 1717.8999999910593,
+              "samples": 84637,
+              "rays": 305943,
+              "bytes": 6079896
+            },
+            {
+              "key": "4:19:20261006:-13,-8:d651953:high",
+              "provisional": true,
+              "generationMs": 177.90000000596046,
+              "geometryMs": 26.200000002980232,
+              "bakeMs": 1989.5999999940395,
+              "samples": 87882,
+              "rays": 336659,
+              "bytes": 6020832
+            },
+            {
+              "key": "4:19:20261006:-12,-12:b7ef9068:high",
+              "provisional": true,
+              "generationMs": 181.3999999910593,
+              "geometryMs": 22.700000002980232,
+              "bakeMs": 1407.7000000029802,
+              "samples": 82849,
+              "rays": 253306,
+              "bytes": 5793040
+            },
+            {
+              "key": "4:19:20261006:-14,-10:8bb15719:high",
+              "provisional": true,
+              "generationMs": 142.1000000089407,
+              "geometryMs": 39.70000000298023,
+              "bakeMs": 1619.5,
+              "samples": 78562,
+              "rays": 285997,
+              "bytes": 6415880
+            },
+            {
+              "key": "4:19:20261006:-11,-12:3ab92a16:high",
+              "provisional": true,
+              "generationMs": 66.5,
+              "geometryMs": 13.300000011920929,
+              "bakeMs": 1392.7999999970198,
+              "samples": 82623,
+              "rays": 255176,
+              "bytes": 5762128
+            },
+            {
+              "key": "4:19:20261006:-14,-9:cde68d83:high",
+              "provisional": true,
+              "generationMs": 48.70000000298023,
+              "geometryMs": 33.20000000298023,
+              "bakeMs": 1498.2999999970198,
+              "samples": 80764,
+              "rays": 284168,
+              "bytes": 6477336
+            },
+            {
+              "key": "4:19:20261006:-13,-12:d9912225:high",
+              "provisional": true,
+              "generationMs": 121.09999999403954,
+              "geometryMs": 8.799999997019768,
+              "bakeMs": 1070.6000000089407,
+              "samples": 82126,
+              "rays": 196299,
+              "bytes": 5739312
+            },
+            {
+              "key": "4:19:20261006:-14,-11:5420142a:high",
+              "provisional": true,
+              "generationMs": 153.29999999701977,
+              "geometryMs": 28.30000001192093,
+              "bakeMs": 1395.199999988079,
+              "samples": 84120,
+              "rays": 288580,
+              "bytes": 6185144
+            },
+            {
+              "key": "4:19:20261006:-10,-8:1e5a0272:high",
+              "provisional": true,
+              "generationMs": 117.3999999910593,
+              "geometryMs": 12.600000008940697,
+              "bakeMs": 1596.5999999940395,
+              "samples": 88190,
+              "rays": 342283,
+              "bytes": 5986424
+            },
+            {
+              "key": "4:19:20261006:-10,-12:867bcfa4:high",
+              "provisional": true,
+              "generationMs": 31.200000002980232,
+              "geometryMs": 14.199999988079071,
+              "bakeMs": 1132.300000011921,
+              "samples": 82296,
+              "rays": 243892,
+              "bytes": 5757160
+            },
+            {
+              "key": "4:19:20261006:-14,-8:fca71b54:high",
+              "provisional": true,
+              "generationMs": 87.40000000596046,
+              "geometryMs": 12,
+              "bakeMs": 1504.2000000029802,
+              "samples": 87698,
+              "rays": 306001,
+              "bytes": 5918712
+            },
+            {
+              "key": "4:19:20261006:-14,-12:4eb83a98:high",
+              "provisional": true,
+              "generationMs": 69.09999999403954,
+              "geometryMs": 11.200000002980232,
+              "bakeMs": 1434,
+              "samples": 81932,
+              "rays": 285349,
+              "bytes": 5741520
+            }
+          ]
+        },
+        "memory": {
+          "geometries": 560,
+          "textures": 187,
+          "programs": 107
+        },
+        "draws": 447,
+        "triangles": 509707
+      },
+      {
+        "name": "ouro-back",
+        "anchor": {
+          "id": "ouroboros",
+          "file": "衔尾段.png",
+          "variant": "ouroboros",
+          "width": 1482,
+          "height": 746,
+          "x": -365.0789999999997,
+          "y": -301.74,
+          "z": 0.4071,
+          "yaw": 0.1754,
+          "pitch": 0.0002,
+          "roll": 0,
+          "fov": 63.6509,
+          "centerX": -368,
+          "centerY": -304,
+          "blackout": false
+        },
+        "readyMs": 1207.5,
+        "props": [
+          {
+            "kind": "grate",
+            "x": -417.13,
+            "y": -330.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -412.75000000000006,
+            "y": -336.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -396.72999999999996,
+            "y": -330.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -389.92999999999995,
+            "y": -324.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -383.13,
+            "y": -330.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -362.72999999999996,
+            "y": -324.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -344.75000000000006,
+            "y": -330.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -349.13,
+            "y": -324.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -317.55000000000007,
+            "y": -324.6,
+            "deg": 0
+          },
+          {
+            "kind": "matpile",
+            "x": -303.49,
+            "y": -323.1,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -293.99,
+            "y": -323.25,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -443.49,
+            "y": -309.1,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -417.13,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -417.13,
+            "y": -312.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -410.33,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -399.15000000000003,
+            "y": -312.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -410.33,
+            "y": -306.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -405.95000000000005,
+            "y": -306.6,
+            "deg": 0
+          },
+          {
+            "kind": "matpile",
+            "x": -412.75000000000006,
+            "y": -300.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -403.53,
+            "y": -300.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -396.72999999999996,
+            "y": -300.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -383.13,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -376.33,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -355.92999999999995,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -376.33,
+            "y": -312.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -369.53,
+            "y": -312.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -358.35,
+            "y": -312.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -369.53,
+            "y": -300.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -355.92999999999995,
+            "y": -300.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -378.75000000000006,
+            "y": -294.6,
+            "deg": 180
+          },
+          {
+            "kind": "matpile",
+            "x": -365.15000000000003,
+            "y": -294.6,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -335.53,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -328.72999999999996,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -321.92999999999995,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -337.95000000000005,
+            "y": -306.6,
+            "deg": 180
+          },
+          {
+            "kind": "matpile",
+            "x": -331.15000000000003,
+            "y": -306.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -307.99,
+            "y": -316.25,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -310.49,
+            "y": -302.1,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -293.99,
+            "y": -295.25,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -443.49,
+            "y": -281.1,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -433.99,
+            "y": -267.25,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -417.13,
+            "y": -276.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -412.75000000000006,
+            "y": -282.6,
+            "deg": 0
+          },
+          {
+            "kind": "matpile",
+            "x": -399.15000000000003,
+            "y": -282.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -410.33,
+            "y": -276.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -412.75000000000006,
+            "y": -270.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -403.53,
+            "y": -270.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -410.33,
+            "y": -258.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -378.75000000000006,
+            "y": -282.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -355.92999999999995,
+            "y": -282.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -383.13,
+            "y": -270.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -383.13,
+            "y": -264.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -362.72999999999996,
+            "y": -264.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -349.13,
+            "y": -270.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -335.53,
+            "y": -270.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -328.72999999999996,
+            "y": -270.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -337.95000000000005,
+            "y": -264.6,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -349.13,
+            "y": -258.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -344.75000000000006,
+            "y": -258.6,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -315.13,
+            "y": -282.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -317.55000000000007,
+            "y": -270.6,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -307.99,
+            "y": -281.25,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -300.99,
+            "y": -281.25,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -440.99,
+            "y": -253.25,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -417.13,
+            "y": -252.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -392.35,
+            "y": -252.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -355.92999999999995,
+            "y": -252.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -335.53,
+            "y": -252.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -331.15000000000003,
+            "y": -252.6,
+            "deg": 180
+          },
+          {
+            "kind": "matpile",
+            "x": -317.55000000000007,
+            "y": -252.6,
+            "deg": 0
+          }
+        ],
+        "propMeshes": 397,
+        "emitterBatches": 52,
+        "level": 1,
+        "world": [
+          -365.0789999999997,
+          -301.74,
+          0
+        ],
+        "camera": [
+          82.92100000000028,
+          1.543862608324583,
+          82.25999999999999
+        ],
+        "look": {
+          "yaw": 3.316992653589793,
+          "pitch": 0.0002,
+          "locked": false,
+          "rayX": 0.17450201077996277,
+          "rayY": 0.9846567971804949,
+          "rayZ": 0.0001999999986666667,
+          "visualHit": null,
+          "roll": 0
+        },
+        "near": true,
+        "chunks": 25,
+        "tasks": 0,
+        "bake": {
+          "entries": 16,
+          "bytes": 96555216,
+          "hits": 19008,
+          "diskHits": 423,
+          "offlineLoads": 42,
+          "computations": 0,
+          "completed": 58,
+          "stale": 0,
+          "previews": 16,
+          "workers": 4,
+          "active": 2,
+          "queued": 16,
+          "initialQueued": 0,
+          "refining": 16,
+          "stages": [
+            {
+              "key": "4:19:20261006:-10,-10:1fdcf17b:high",
+              "provisional": true,
+              "generationMs": 223.70000000298023,
+              "geometryMs": 46.70000000298023,
+              "bakeMs": 1658.4000000059605,
+              "samples": 79443,
+              "rays": 280313,
+              "bytes": 6307136
+            },
+            {
+              "key": "4:19:20261006:-12,-8:fb076929:high",
+              "provisional": true,
+              "generationMs": 285,
+              "geometryMs": 32.6000000089407,
+              "bakeMs": 1812.5,
+              "samples": 88013,
+              "rays": 336425,
+              "bytes": 5981456
+            },
+            {
+              "key": "4:19:20261006:-10,-9:99b8df52:high",
+              "provisional": true,
+              "generationMs": 258.20000000298023,
+              "geometryMs": 83.5,
+              "bakeMs": 1563.699999988079,
+              "samples": 82376,
+              "rays": 280622,
+              "bytes": 6391224
+            },
+            {
+              "key": "4:19:20261006:-11,-8:5de380bd:high",
+              "provisional": true,
+              "generationMs": 261,
+              "geometryMs": 32.8999999910593,
+              "bakeMs": 1834.7000000029802,
+              "samples": 88834,
+              "rays": 344265,
+              "bytes": 5998016
+            },
+            {
+              "key": "4:19:20261006:-10,-11:6c06c0f1:high",
+              "provisional": true,
+              "generationMs": 131.90000000596046,
+              "geometryMs": 19,
+              "bakeMs": 1717.8999999910593,
+              "samples": 84637,
+              "rays": 305943,
+              "bytes": 6079896
+            },
+            {
+              "key": "4:19:20261006:-13,-8:d651953:high",
+              "provisional": true,
+              "generationMs": 177.90000000596046,
+              "geometryMs": 26.200000002980232,
+              "bakeMs": 1989.5999999940395,
+              "samples": 87882,
+              "rays": 336659,
+              "bytes": 6020832
+            },
+            {
+              "key": "4:19:20261006:-12,-12:b7ef9068:high",
+              "provisional": true,
+              "generationMs": 181.3999999910593,
+              "geometryMs": 22.700000002980232,
+              "bakeMs": 1407.7000000029802,
+              "samples": 82849,
+              "rays": 253306,
+              "bytes": 5793040
+            },
+            {
+              "key": "4:19:20261006:-14,-10:8bb15719:high",
+              "provisional": true,
+              "generationMs": 142.1000000089407,
+              "geometryMs": 39.70000000298023,
+              "bakeMs": 1619.5,
+              "samples": 78562,
+              "rays": 285997,
+              "bytes": 6415880
+            },
+            {
+              "key": "4:19:20261006:-11,-12:3ab92a16:high",
+              "provisional": true,
+              "generationMs": 66.5,
+              "geometryMs": 13.300000011920929,
+              "bakeMs": 1392.7999999970198,
+              "samples": 82623,
+              "rays": 255176,
+              "bytes": 5762128
+            },
+            {
+              "key": "4:19:20261006:-14,-9:cde68d83:high",
+              "provisional": true,
+              "generationMs": 48.70000000298023,
+              "geometryMs": 33.20000000298023,
+              "bakeMs": 1498.2999999970198,
+              "samples": 80764,
+              "rays": 284168,
+              "bytes": 6477336
+            },
+            {
+              "key": "4:19:20261006:-13,-12:d9912225:high",
+              "provisional": true,
+              "generationMs": 121.09999999403954,
+              "geometryMs": 8.799999997019768,
+              "bakeMs": 1070.6000000089407,
+              "samples": 82126,
+              "rays": 196299,
+              "bytes": 5739312
+            },
+            {
+              "key": "4:19:20261006:-14,-11:5420142a:high",
+              "provisional": true,
+              "generationMs": 153.29999999701977,
+              "geometryMs": 28.30000001192093,
+              "bakeMs": 1395.199999988079,
+              "samples": 84120,
+              "rays": 288580,
+              "bytes": 6185144
+            },
+            {
+              "key": "4:19:20261006:-10,-8:1e5a0272:high",
+              "provisional": true,
+              "generationMs": 117.3999999910593,
+              "geometryMs": 12.600000008940697,
+              "bakeMs": 1596.5999999940395,
+              "samples": 88190,
+              "rays": 342283,
+              "bytes": 5986424
+            },
+            {
+              "key": "4:19:20261006:-10,-12:867bcfa4:high",
+              "provisional": true,
+              "generationMs": 31.200000002980232,
+              "geometryMs": 14.199999988079071,
+              "bakeMs": 1132.300000011921,
+              "samples": 82296,
+              "rays": 243892,
+              "bytes": 5757160
+            },
+            {
+              "key": "4:19:20261006:-14,-8:fca71b54:high",
+              "provisional": true,
+              "generationMs": 87.40000000596046,
+              "geometryMs": 12,
+              "bakeMs": 1504.2000000029802,
+              "samples": 87698,
+              "rays": 306001,
+              "bytes": 5918712
+            },
+            {
+              "key": "4:19:20261006:-14,-12:4eb83a98:high",
+              "provisional": true,
+              "generationMs": 69.09999999403954,
+              "geometryMs": 11.200000002980232,
+              "bakeMs": 1434,
+              "samples": 81932,
+              "rays": 285349,
+              "bytes": 5741520
+            }
+          ]
+        },
+        "memory": {
+          "geometries": 762,
+          "textures": 190,
+          "programs": 108
+        },
+        "draws": 296,
+        "triangles": 165905
+      },
+      {
+        "name": "ouroboros",
+        "anchor": {
+          "id": "ouroboros",
+          "file": "衔尾段.png",
+          "variant": "ouroboros",
+          "width": 1482,
+          "height": 746,
+          "x": -365.0789999999997,
+          "y": -301.74,
+          "z": 0.4071,
+          "yaw": 0.1754,
+          "pitch": 0.0002,
+          "roll": 0,
+          "fov": 63.6509,
+          "centerX": -368,
+          "centerY": -304,
+          "blackout": false
+        },
+        "readyMs": 1202.5,
+        "props": [
+          {
+            "kind": "grate",
+            "x": -417.13,
+            "y": -330.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -412.75000000000006,
+            "y": -336.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -396.72999999999996,
+            "y": -330.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -389.92999999999995,
+            "y": -324.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -383.13,
+            "y": -330.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -362.72999999999996,
+            "y": -324.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -344.75000000000006,
+            "y": -330.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -349.13,
+            "y": -324.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -317.55000000000007,
+            "y": -324.6,
+            "deg": 0
+          },
+          {
+            "kind": "matpile",
+            "x": -303.49,
+            "y": -323.1,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -293.99,
+            "y": -323.25,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -443.49,
+            "y": -309.1,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -417.13,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -417.13,
+            "y": -312.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -410.33,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -399.15000000000003,
+            "y": -312.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -410.33,
+            "y": -306.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -405.95000000000005,
+            "y": -306.6,
+            "deg": 0
+          },
+          {
+            "kind": "matpile",
+            "x": -412.75000000000006,
+            "y": -300.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -403.53,
+            "y": -300.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -396.72999999999996,
+            "y": -300.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -383.13,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -376.33,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -355.92999999999995,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -376.33,
+            "y": -312.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -369.53,
+            "y": -312.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -358.35,
+            "y": -312.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -369.53,
+            "y": -300.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -355.92999999999995,
+            "y": -300.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -378.75000000000006,
+            "y": -294.6,
+            "deg": 180
+          },
+          {
+            "kind": "matpile",
+            "x": -365.15000000000003,
+            "y": -294.6,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -335.53,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -328.72999999999996,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -321.92999999999995,
+            "y": -318.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -337.95000000000005,
+            "y": -306.6,
+            "deg": 180
+          },
+          {
+            "kind": "matpile",
+            "x": -331.15000000000003,
+            "y": -306.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -307.99,
+            "y": -316.25,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -310.49,
+            "y": -302.1,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -293.99,
+            "y": -295.25,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -443.49,
+            "y": -281.1,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -433.99,
+            "y": -267.25,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -417.13,
+            "y": -276.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -412.75000000000006,
+            "y": -282.6,
+            "deg": 0
+          },
+          {
+            "kind": "matpile",
+            "x": -399.15000000000003,
+            "y": -282.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -410.33,
+            "y": -276.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -412.75000000000006,
+            "y": -270.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -403.53,
+            "y": -270.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -410.33,
+            "y": -258.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -378.75000000000006,
+            "y": -282.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -355.92999999999995,
+            "y": -282.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -383.13,
+            "y": -270.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -383.13,
+            "y": -264.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -362.72999999999996,
+            "y": -264.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -349.13,
+            "y": -270.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -335.53,
+            "y": -270.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -328.72999999999996,
+            "y": -270.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -337.95000000000005,
+            "y": -264.6,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -349.13,
+            "y": -258.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -344.75000000000006,
+            "y": -258.6,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -315.13,
+            "y": -282.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -317.55000000000007,
+            "y": -270.6,
+            "deg": 180
+          },
+          {
+            "kind": "grate",
+            "x": -307.99,
+            "y": -281.25,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -300.99,
+            "y": -281.25,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -440.99,
+            "y": -253.25,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -417.13,
+            "y": -252.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -392.35,
+            "y": -252.6,
+            "deg": 0
+          },
+          {
+            "kind": "grate",
+            "x": -355.92999999999995,
+            "y": -252.75,
+            "deg": 90
+          },
+          {
+            "kind": "grate",
+            "x": -335.53,
+            "y": -252.75,
+            "deg": 90
+          },
+          {
+            "kind": "matpile",
+            "x": -331.15000000000003,
+            "y": -252.6,
+            "deg": 180
+          },
+          {
+            "kind": "matpile",
+            "x": -317.55000000000007,
+            "y": -252.6,
+            "deg": 0
+          }
+        ],
+        "propMeshes": 397,
+        "emitterBatches": 52,
+        "level": 1,
+        "world": [
+          -365.0789999999997,
+          -301.74,
+          0
+        ],
+        "camera": [
+          82.92100000000028,
+          1.5458158858381537,
+          82.25999999999999
+        ],
+        "look": {
+          "yaw": 0.1754,
+          "pitch": 0.0002,
+          "locked": false,
+          "rayX": -0.1745020107799631,
+          "rayY": -0.9846567971804948,
+          "rayZ": 0.0001999999986666667,
+          "visualHit": null,
+          "roll": 0
+        },
+        "near": true,
+        "chunks": 25,
+        "tasks": 0,
+        "bake": {
+          "entries": 16,
+          "bytes": 96555216,
+          "hits": 19008,
+          "diskHits": 423,
+          "offlineLoads": 42,
+          "computations": 0,
+          "completed": 58,
+          "stale": 0,
+          "previews": 16,
+          "workers": 4,
+          "active": 2,
+          "queued": 16,
+          "initialQueued": 0,
+          "refining": 16,
+          "stages": [
+            {
+              "key": "4:19:20261006:-10,-10:1fdcf17b:high",
+              "provisional": true,
+              "generationMs": 223.70000000298023,
+              "geometryMs": 46.70000000298023,
+              "bakeMs": 1658.4000000059605,
+              "samples": 79443,
+              "rays": 280313,
+              "bytes": 6307136
+            },
+            {
+              "key": "4:19:20261006:-12,-8:fb076929:high",
+              "provisional": true,
+              "generationMs": 285,
+              "geometryMs": 32.6000000089407,
+              "bakeMs": 1812.5,
+              "samples": 88013,
+              "rays": 336425,
+              "bytes": 5981456
+            },
+            {
+              "key": "4:19:20261006:-10,-9:99b8df52:high",
+              "provisional": true,
+              "generationMs": 258.20000000298023,
+              "geometryMs": 83.5,
+              "bakeMs": 1563.699999988079,
+              "samples": 82376,
+              "rays": 280622,
+              "bytes": 6391224
+            },
+            {
+              "key": "4:19:20261006:-11,-8:5de380bd:high",
+              "provisional": true,
+              "generationMs": 261,
+              "geometryMs": 32.8999999910593,
+              "bakeMs": 1834.7000000029802,
+              "samples": 88834,
+              "rays": 344265,
+              "bytes": 5998016
+            },
+            {
+              "key": "4:19:20261006:-10,-11:6c06c0f1:high",
+              "provisional": true,
+              "generationMs": 131.90000000596046,
+              "geometryMs": 19,
+              "bakeMs": 1717.8999999910593,
+              "samples": 84637,
+              "rays": 305943,
+              "bytes": 6079896
+            },
+            {
+              "key": "4:19:20261006:-13,-8:d651953:high",
+              "provisional": true,
+              "generationMs": 177.90000000596046,
+              "geometryMs": 26.200000002980232,
+              "bakeMs": 1989.5999999940395,
+              "samples": 87882,
+              "rays": 336659,
+              "bytes": 6020832
+            },
+            {
+              "key": "4:19:20261006:-12,-12:b7ef9068:high",
+              "provisional": true,
+              "generationMs": 181.3999999910593,
+              "geometryMs": 22.700000002980232,
+              "bakeMs": 1407.7000000029802,
+              "samples": 82849,
+              "rays": 253306,
+              "bytes": 5793040
+            },
+            {
+              "key": "4:19:20261006:-14,-10:8bb15719:high",
+              "provisional": true,
+              "generationMs": 142.1000000089407,
+              "geometryMs": 39.70000000298023,
+              "bakeMs": 1619.5,
+              "samples": 78562,
+              "rays": 285997,
+              "bytes": 6415880
+            },
+            {
+              "key": "4:19:20261006:-11,-12:3ab92a16:high",
+              "provisional": true,
+              "generationMs": 66.5,
+              "geometryMs": 13.300000011920929,
+              "bakeMs": 1392.7999999970198,
+              "samples": 82623,
+              "rays": 255176,
+              "bytes": 5762128
+            },
+            {
+              "key": "4:19:20261006:-14,-9:cde68d83:high",
+              "provisional": true,
+              "generationMs": 48.70000000298023,
+              "geometryMs": 33.20000000298023,
+              "bakeMs": 1498.2999999970198,
+              "samples": 80764,
+              "rays": 284168,
+              "bytes": 6477336
+            },
+            {
+              "key": "4:19:20261006:-13,-12:d9912225:high",
+              "provisional": true,
+              "generationMs": 121.09999999403954,
+              "geometryMs": 8.799999997019768,
+              "bakeMs": 1070.6000000089407,
+              "samples": 82126,
+              "rays": 196299,
+              "bytes": 5739312
+            },
+            {
+              "key": "4:19:20261006:-14,-11:5420142a:high",
+              "provisional": true,
+              "generationMs": 153.29999999701977,
+              "geometryMs": 28.30000001192093,
+              "bakeMs": 1395.199999988079,
+              "samples": 84120,
+              "rays": 288580,
+              "bytes": 6185144
+            },
+            {
+              "key": "4:19:20261006:-10,-8:1e5a0272:high",
+              "provisional": true,
+              "generationMs": 117.3999999910593,
+              "geometryMs": 12.600000008940697,
+              "bakeMs": 1596.5999999940395,
+              "samples": 88190,
+              "rays": 342283,
+              "bytes": 5986424
+            },
+            {
+              "key": "4:19:20261006:-10,-12:867bcfa4:high",
+              "provisional": true,
+              "generationMs": 31.200000002980232,
+              "geometryMs": 14.199999988079071,
+              "bakeMs": 1132.300000011921,
+              "samples": 82296,
+              "rays": 243892,
+              "bytes": 5757160
+            },
+            {
+              "key": "4:19:20261006:-14,-8:fca71b54:high",
+              "provisional": true,
+              "generationMs": 87.40000000596046,
+              "geometryMs": 12,
+              "bakeMs": 1504.2000000029802,
+              "samples": 87698,
+              "rays": 306001,
+              "bytes": 5918712
+            },
+            {
+              "key": "4:19:20261006:-14,-12:4eb83a98:high",
+              "provisional": true,
+              "generationMs": 69.09999999403954,
+              "geometryMs": 11.200000002980232,
+              "bakeMs": 1434,
+              "samples": 81932,
+              "rays": 285349,
+              "bytes": 5741520
+            }
+          ]
+        },
+        "memory": {
+          "geometries": 772,
+          "textures": 190,
+          "programs": 108
+        },
+        "draws": 610,
+        "triangles": 523211
+      }
+    ],
+    "status": {
+      "level": 1,
+      "world": [
+        -365.0789999999997,
+        -301.74,
+        0
+      ],
+      "camera": [
+        82.92100000000028,
+        1.5489866063587971,
+        82.25999999999999
+      ],
+      "look": {
+        "yaw": 0.1754,
+        "pitch": 0.0002,
+        "locked": false,
+        "rayX": -0.1745020107799631,
+        "rayY": -0.9846567971804948,
+        "rayZ": 0.0001999999986666667,
+        "visualHit": null,
+        "roll": 0
+      },
+      "near": true,
+      "chunks": 25,
+      "tasks": 0,
+      "bake": {
+        "entries": 16,
+        "bytes": 96555216,
+        "hits": 19008,
+        "diskHits": 423,
+        "offlineLoads": 42,
+        "computations": 16,
+        "completed": 74,
+        "stale": 0,
+        "previews": 16,
+        "workers": 4,
+        "active": 0,
+        "queued": 0,
+        "initialQueued": 0,
+        "refining": 0,
+        "stages": [
+          {
+            "key": "4:19:20261006:-10,-10:1fdcf17b:high",
+            "provisional": false,
+            "generationMs": 14.5,
+            "geometryMs": 27.30000001192093,
+            "bakeMs": 24014.5,
+            "samples": 79443,
+            "rays": 7044971,
+            "bytes": 6307136
+          },
+          {
+            "key": "4:19:20261006:-12,-8:fb076929:high",
+            "provisional": false,
+            "generationMs": 12.299999997019768,
+            "geometryMs": 17.599999994039536,
+            "bakeMs": 16668.20000000298,
+            "samples": 88013,
+            "rays": 5240861,
+            "bytes": 5981456
+          },
+          {
+            "key": "4:19:20261006:-10,-9:99b8df52:high",
+            "provisional": false,
+            "generationMs": 14.199999988079071,
+            "geometryMs": 27.80000001192093,
+            "bakeMs": 22594.09999999404,
+            "samples": 82376,
+            "rays": 6922358,
+            "bytes": 6391224
+          },
+          {
+            "key": "4:19:20261006:-11,-8:5de380bd:high",
+            "provisional": false,
+            "generationMs": 79.70000000298023,
+            "geometryMs": 10.599999994039536,
+            "bakeMs": 15678.10000000894,
+            "samples": 88834,
+            "rays": 5209055,
+            "bytes": 5998016
+          },
+          {
+            "key": "4:19:20261006:-10,-11:6c06c0f1:high",
+            "provisional": false,
+            "generationMs": 12.400000005960464,
+            "geometryMs": 12.299999997019768,
+            "bakeMs": 19097.60000000894,
+            "samples": 84637,
+            "rays": 5993341,
+            "bytes": 6079896
+          },
+          {
+            "key": "4:19:20261006:-13,-8:d651953:high",
+            "provisional": false,
+            "generationMs": 51.80000001192093,
+            "geometryMs": 16.5,
+            "bakeMs": 17808.19999998808,
+            "samples": 87882,
+            "rays": 5684025,
+            "bytes": 6020832
+          },
+          {
+            "key": "4:19:20261006:-12,-12:b7ef9068:high",
+            "provisional": false,
+            "generationMs": 29,
+            "geometryMs": 9.299999997019768,
+            "bakeMs": 8980.40000000596,
+            "samples": 82849,
+            "rays": 3258458,
+            "bytes": 5793040
+          },
+          {
+            "key": "4:19:20261006:-14,-10:8bb15719:high",
+            "provisional": false,
+            "generationMs": 76.6000000089407,
+            "geometryMs": 14.799999997019768,
+            "bakeMs": 22689.29999999702,
+            "samples": 78562,
+            "rays": 8176451,
+            "bytes": 6415880
+          },
+          {
+            "key": "4:19:20261006:-11,-12:3ab92a16:high",
+            "provisional": false,
+            "generationMs": 28.700000002980232,
+            "geometryMs": 12.099999994039536,
+            "bakeMs": 8874.70000000298,
+            "samples": 82623,
+            "rays": 3122998,
+            "bytes": 5762128
+          },
+          {
+            "key": "4:19:20261006:-14,-9:cde68d83:high",
+            "provisional": false,
+            "generationMs": 61.900000005960464,
+            "geometryMs": 20.099999994039536,
+            "bakeMs": 21337.5,
+            "samples": 80764,
+            "rays": 7846324,
+            "bytes": 6477336
+          },
+          {
+            "key": "4:19:20261006:-13,-12:d9912225:high",
+            "provisional": false,
+            "generationMs": 34,
+            "geometryMs": 6.5999999940395355,
+            "bakeMs": 6931.300000011921,
+            "samples": 82126,
+            "rays": 2489574,
+            "bytes": 5739312
+          },
+          {
+            "key": "4:19:20261006:-14,-11:5420142a:high",
+            "provisional": false,
+            "generationMs": 16,
+            "geometryMs": 11.899999991059303,
+            "bakeMs": 17625.70000000298,
+            "samples": 84120,
+            "rays": 6382959,
+            "bytes": 6185144
+          },
+          {
+            "key": "4:19:20261006:-10,-8:1e5a0272:high",
+            "provisional": false,
+            "generationMs": 7.299999997019768,
+            "geometryMs": 9.299999997019768,
+            "bakeMs": 13991.5,
+            "samples": 88190,
+            "rays": 5050664,
+            "bytes": 5986424
+          },
+          {
+            "key": "4:19:20261006:-10,-12:867bcfa4:high",
+            "provisional": false,
+            "generationMs": 12.599999994039536,
+            "geometryMs": 8.799999997019768,
+            "bakeMs": 8053.100000008941,
+            "samples": 82296,
+            "rays": 2894431,
+            "bytes": 5757160
+          },
+          {
+            "key": "4:19:20261006:-14,-8:fca71b54:high",
+            "provisional": false,
+            "generationMs": 18.5,
+            "geometryMs": 8.399999991059303,
+            "bakeMs": 13579.300000011921,
+            "samples": 87698,
+            "rays": 5060821,
+            "bytes": 5918712
+          },
+          {
+            "key": "4:19:20261006:-14,-12:4eb83a98:high",
+            "provisional": false,
+            "generationMs": 16.799999997019768,
+            "geometryMs": 5.5999999940395355,
+            "bakeMs": 9741.5,
+            "samples": 81932,
+            "rays": 3577929,
+            "bytes": 5741520
+          }
+        ]
+      },
+      "memory": {
+        "geometries": 775,
+        "textures": 190,
+        "programs": 108
+      },
+      "draws": 320,
+      "triangles": 147729
+    }
+  },
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

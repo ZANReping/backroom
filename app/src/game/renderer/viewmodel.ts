@@ -1,10 +1,11 @@
 // 第一人称手部/手持物品 viewmodel + 屏幕中心准心（DOM 注入）
 import * as THREE from 'three'
 import { buildItemMesh } from './itemsMesh'
-import { buildRefinedItemMesh } from './refinedItemMesh'
 import { buildFlashlightMesh } from './flashlightMesh'
 import { buildDetailedItemMesh } from './detailItemsMesh'
 import { buildSquirtGunMesh } from './squirtGunMesh'
+import { buildMeleeMesh, type MeleeType } from './meleeMesh'
+import { MELEE_HOLD, meleePose } from './meleeAnim'
 import { buildRetroHand, heldHandPose, FLASH_HAND_POSE, type RetroHand } from './retroViewHand'
 export { heldHandPose, heldBox, LIGHTER_HAND_POSE, buildRetroHand, sleeveKindOf } from './retroViewHand'
 
@@ -22,6 +23,7 @@ export function buildViewmodel(vm: THREE.Group, vmFlash: THREE.Group, camera: TH
   right.setPose(heldHandPose(''))
   vm.add(right.group)
   vm.position.set(0.27, -0.3, -0.55)
+  vm.rotation.order = 'YXZ' // 近战重制：先前倾(rx)再左右扫(ry)；ry=0 时与原 XYZ 等价
   camera.add(vm)
   // 左手手电：细分灯头/反光杯/镜片/防滑握纹/尾盖/开关，金属与橡胶走真实 UV 图集。
   const flashlight = buildFlashlightMesh({ lit: true })
@@ -41,6 +43,8 @@ export interface VmAnimState {
   mx: number; my: number; bobPhase: number; time: number
   usingItem?: { t: number; dur: number; anim?: string } | null
   attackAnimT: number; attackAnimDur: number; attackAnimKind?: string; searching?: boolean
+  /** 近战武器重制：手持五把近战武器之一时给出，挥砍走 meleePose（含待机/蓄力/弹刀） */
+  melee?: { type: MeleeType; side?: number; heavy?: boolean; charge?: number; bounce?: number } | null
 }
 export function vmAnimPose(st: VmAnimState) {
   // 走路摆动（与头部 bob 同步，幅度更小）
@@ -53,7 +57,12 @@ export function vmAnimPose(st: VmAnimState) {
   let pz = -0.55
   let rx = 0
   let rz = 0
-  if (st.usingItem) {
+  let ry = 0
+  if (st.melee && !st.usingItem && !st.searching && (st.attackAnimT > 0 ? st.attackAnimKind === 'swing' : true)) {
+    const pr = st.attackAnimT > 0 ? 1 - st.attackAnimT / Math.max(0.01, st.attackAnimDur) : -1
+    const d = meleePose({ type: st.melee.type, pr, heavy: st.melee.heavy, side: st.melee.side, charge: st.melee.charge, bounce: st.melee.bounce, time: st.time, moving: mag })
+    px += d[0]; py += d[1]; pz += d[2]; rx += d[3]; ry += d[4]; rz += d[5]
+  } else if (st.usingItem) {
     const u = st.usingItem
     const pr = Math.max(0, Math.min(1, u.t / Math.max(0.01, u.dur)))
     // 进入与收回各占一小段，中段保持姿势；所有节奏都直接取自同一使用计时器。
@@ -108,7 +117,7 @@ export function vmAnimPose(st: VmAnimState) {
     rx = -0.22 + Math.sin(st.time * 9) * 0.07
     px += Math.sin(st.time * 5.2) * 0.015
   }
-  return { px, py, pz, rx, rz, sway, sway2 }
+  return { px, py, pz, rx, ry, rz, sway, sway2 }
 }
 
 // 手持物品 3D 建模（切换快捷栏时重建）
@@ -124,6 +133,17 @@ export function buildHeldItem(type: string): THREE.Group {
     m.position.set(x, y, z); m.rotation.x = rx
     g.add(m); return m
   }
+  const [base, variant] = type.split(':')
+  if (base in MELEE_HOLD) {
+    // 近战武器重制：武器原点 = 握点，直接挂到 MELEE_HOLD.at；'axe:broken' = 残件；耐久/血污外观由 renderer 调 setMeleeWear
+    const h = MELEE_HOLD[base as MeleeType]
+    const w = buildMeleeMesh(base as MeleeType, { state: variant === 'broken' ? 'broken' : 'intact' })
+    w.position.set(...h.at); w.rotation.set(...h.rot)
+    g.add(w)
+    g.userData.meleeRig = w.userData.meleeRig
+    g.userData.meleeMesh = w
+    return g
+  }
   switch (type) {
     case 'luckymilk':
     case 'capacitor':
@@ -136,55 +156,11 @@ export function buildHeldItem(type: string): THREE.Group {
       g.position.set(0, type === 'luckymilk' || type === 'capacitor' ? .1 : .08, -.075)
       break
     }
-    case 'crowbar': { // 参考《半条命》：主杆竖持，顶部羊角向视线前方弯曲
-      const detail = buildDetailedItemMesh('crowbar')
-      const pose = new THREE.Group()
-      pose.rotation.z = Math.PI / 2 // 模型 +X（羊角端）竖直转到屏幕上方 +Y
-      pose.scale.setScalar(.82)
-      pose.position.set(.015, .09, -.08)
-      pose.add(detail); g.add(pose)
-      break
-    }
-    case 'wrench': { // 竖持管钳：共享细化模型，钳头（模型 -X）朝上
-      const detail = buildRefinedItemMesh('wrench')
-      detail.rotation.z = -Math.PI / 2
-      detail.scale.setScalar(.95)
-      detail.position.set(0, .14, -.06)
-      g.add(detail)
-      break
-    }
-    case 'timber': { // 竖持木板：共享细化模型，板长（模型 X）竖直
-      const detail = buildRefinedItemMesh('timber')
-      detail.rotation.set(0, Math.PI / 2, Math.PI / 2, 'YXZ')
-      detail.position.set(0, .12, -.05)
-      g.add(detail)
-      break
-    }
     case 'lighter': {
       const detail = buildDetailedItemMesh('lighter')
       detail.scale.setScalar(.75)
       detail.position.set(0, .015, -.1)
       g.add(detail)
-      break
-    }
-    case 'knife': { // 竖持细化短刀
-      const detail = buildDetailedItemMesh('knife')
-      detail.rotation.z = Math.PI / 2
-      detail.scale.setScalar(.92)
-      detail.position.set(0, .14, -.065)
-      g.add(detail)
-      break
-    }
-    case 'axe': { // 消防斧竖持；刃口严格朝镜头前方 -Z
-      const detail = buildDetailedItemMesh('axe')
-      const upright = new THREE.Group()
-      upright.rotation.z = Math.PI / 2 // 模型 +X（斧头端）竖直转到屏幕上方 +Y
-      upright.add(detail)
-      const pose = new THREE.Group()
-      pose.rotation.y = Math.PI // +Z 斧刃精确翻转到镜头前方 -Z，不再保留横向夹角
-      pose.scale.setScalar(.82)
-      pose.position.set(.018, .1, -.085)
-      pose.add(upright); g.add(pose)
       break
     }
     case 'squirtgun': { // 共享世界模型；本地 +X 枪口旋转到相机正前方 -Z

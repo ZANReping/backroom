@@ -1,0 +1,264 @@
+{
+  "realRun": "traders-dressing-verified-20261021",
+  "classicRun": "traders-dressing-classic-verified-20261021",
+  "newPlacements": 224,
+  "reworkedObjects": 289,
+  "modelIssues": [],
+  "modelOverlaps": [],
+  "regressionPasses": 12,
+  "actualUiChecks": 39,
+  "realViews": 19,
+  "classicViews": 19,
+  "frameSamples": [
+    {
+      "medianMs": 7.299999997019768,
+      "p95Ms": 11,
+      "cpuMedianMs": 6.5999999940395355,
+      "cpuP95Ms": 8.5,
+      "calls": 630,
+      "triangles": 301099,
+      "memory": {
+        "geometries": 775,
+        "textures": 187
+      }
+    },
+    {
+      "medianMs": 10.800000011920929,
+      "p95Ms": 15.5,
+      "cpuMedianMs": 9.900000005960464,
+      "cpuP95Ms": 12,
+      "calls": 630,
+      "triangles": 301099,
+      "memory": {
+        "geometries": 775,
+        "textures": 187
+      }
+    },
+    {
+      "medianMs": 11.799999997019768,
+      "p95Ms": 15.399999991059303,
+      "cpuMedianMs": 10.5,
+      "cpuP95Ms": 11.899999991059303,
+      "calls": 630,
+      "triangles": 301099,
+      "memory": {
+        "geometries": 775,
+        "textures": 187
+      }
+    },
+    {
+      "medianMs": 12.800000011920929,
+      "p95Ms": 17.5,
+      "cpuMedianMs": 11.299999997019768,
+      "cpuP95Ms": 13.099999994039536,
+      "calls": 630,
+      "triangles": 301099,
+      "memory": {
+        "geometries": 775,
+        "textures": 187
+      }
+    },
+    {
+      "medianMs": 12.899999991059303,
+      "p95Ms": 17.69999998807907,
+      "cpuMedianMs": 11.799999997019768,
+      "cpuP95Ms": 12.899999991059303,
+      "calls": 630,
+      "triangles": 301099,
+      "memory": {
+        "geometries": 775,
+        "textures": 187
+      }
+    }
+  ],
+  "entry": {
+    "readyMs": 9380,
+    "playableMs": 10814.20000000298,
+    "x": 9,
+    "y": 109,
+    "yaw": -1.5707963267948966,
+    "returnTo": 104,
+    "seed": 437604,
+    "chunks": 22,
+    "humanHomes": 160,
+    "activeNpcs": 13
+  },
+  "teleports": [
+    {
+      "name": "service-hall",
+      "loadMs": 2533.300000011921
+    },
+    {
+      "name": "north-bazaar",
+      "loadMs": 4271.29999999702
+    },
+    {
+      "name": "vault-corridor",
+      "loadMs": 15818.20000000298
+    },
+    {
+      "name": "food-court",
+      "loadMs": 11477.70000000298
+    },
+    {
+      "name": "empty-market",
+      "loadMs": 3959.2000000029802
+    },
+    {
+      "name": "logistics",
+      "loadMs": 6388.5
+    },
+    {
+      "name": "office",
+      "loadMs": 5145.4000000059605
+    },
+    {
+      "name": "dormitory",
+      "loadMs": 2063.7000000029802
+    },
+    {
+      "name": "rail-unopened",
+      "loadMs": 2879.800000011921
+    },
+    {
+      "name": "waiting-detail",
+      "loadMs": 4242.20000000298
+    },
+    {
+      "name": "bank-services",
+      "loadMs": 4532.79999999702
+    },
+    {
+      "name": "counter-detail",
+      "loadMs": 1671
+    },
+    {
+      "name": "directory-detail",
+      "loadMs": 1470.1000000089407
+    },
+    {
+      "name": "office-detail",
+      "loadMs": 3434.2999999970198
+    },
+    {
+      "name": "dorm-bay",
+      "loadMs": 2083.6000000089407
+    },
+    {
+      "name": "vault-door",
+      "loadMs": 12602.29999999702
+    },
+    {
+      "name": "cycle-far-0",
+      "loadMs": 3389.800000011921
+    },
+    {
+      "name": "cycle-home-0",
+      "loadMs": 4710.70000000298
+    },
+    {
+      "name": "cycle-far-1",
+      "loadMs": 3165.1000000089407
+    },
+    {
+      "name": "cycle-home-1",
+      "loadMs": 4684.29999999702
+    },
+    {
+      "name": "cycle-far-2",
+      "loadMs": 3436.4000000059605
+    },
+    {
+      "name": "cycle-home-2",
+      "loadMs": 5364.29999999702
+    }
+  ],
+  "resourceCycles": [
+    {
+      "x": 23,
+      "y": 109,
+      "z": 0,
+      "ready": true,
+      "chunks": 26,
+      "built": 27,
+      "jobs": 0,
+      "peakChunks": 50,
+      "cpuChunkMaxMs": 0.9000000059604645,
+      "created": 349,
+      "activeNpcs": 16,
+      "residentDefs": 114,
+      "npcMeshes": 9,
+      "memory": {
+        "geometries": 775,
+        "textures": 187
+      },
+      "programs": 85,
+      "calls": 630,
+      "triangles": 301099
+    },
+    {
+      "x": 23,
+      "y": 109,
+      "z": 0,
+      "ready": true,
+      "chunks": 26,
+      "built": 27,
+      "jobs": 0,
+      "peakChunks": 50,
+      "cpuChunkMaxMs": 0.9000000059604645,
+      "created": 397,
+      "activeNpcs": 16,
+      "residentDefs": 114,
+      "npcMeshes": 9,
+      "memory": {
+        "geometries": 775,
+        "textures": 187
+      },
+      "programs": 85,
+      "calls": 630,
+      "triangles": 301099
+    },
+    {
+      "x": 23,
+      "y": 109,
+      "z": 0,
+      "ready": true,
+      "chunks": 26,
+      "built": 27,
+      "jobs": 0,
+      "peakChunks": 50,
+      "cpuChunkMaxMs": 0.9000000059604645,
+      "created": 445,
+      "activeNpcs": 16,
+      "residentDefs": 114,
+      "npcMeshes": 9,
+      "memory": {
+        "geometries": 775,
+        "textures": 187
+      },
+      "programs": 85,
+      "calls": 630,
+      "triangles": 301099
+    }
+  ],
+  "resourceDrift": {
+    "geometries": 0,
+    "textures": 0
+  },
+  "runtimeErrors": [],
+  "networkErrors": [
+    "http://127.0.0.1:6754/favicon.ico"
+  ],
+  "cleanup": {
+    "real": {
+      "browserExit": "SIGTERM",
+      "serverExit": "SIGTERM",
+      "profileRemoved": true
+    },
+    "classic": {
+      "browserExit": "SIGTERM",
+      "serverExit": "SIGTERM",
+      "profileRemoved": true
+    }
+  }
+}

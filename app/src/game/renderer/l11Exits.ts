@@ -1,3 +1,4 @@
+import {factionSignTexture} from './factionSigns'
 import * as THREE from 'three'
 import type { ExitInstance } from '../core/types'
 import { l11Material,l11UnfinishedConcrete,L11_SURFACE_MAPS } from './l11Materials'
@@ -43,12 +44,14 @@ export function buildL11Exit(e:ExitInstance):THREE.Group{
   if(kind==='l11unfinisheddoor'){a.box(l11Material('metal','#747b75'),0,.08,-.09,W+.18,.1,.3)}
   a.finish(g)
   const panel=(text:string,bg:string,fg:string,w:number,h:number,x:number,y:number,z:number,parent=g)=>{const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,h),label(text,bg,fg));mesh.position.set(x,y,z);mesh.rotation.y=Math.PI;parent.add(mesh);return mesh}
+  const megPanel=(text:string,w:number,h:number,x:number,y:number,z:number)=>{const mat=new THREE.MeshStandardMaterial({map:factionSignTexture('meg',text,w/h),roughness:.6,side:THREE.DoubleSide});mat.userData.shared=true;const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,h),mat);mesh.position.set(x,y,z);mesh.rotation.y=Math.PI;g.add(mesh);return mesh}
   if(kind==='basebeta'){
-    panel('EXIT  出口','#235448','#f0ead5',1.1,.28,0,2.65,-.1)
+    // v3: M.E.G. Beta entrance plates in the M.E.G. enamel/stencil dress
+    megPanel('M.E.G. BETA / 出口 EXIT',1.1,.3,0,2.65,-.1)
     const seals=new THREE.Group();seals.name='l11-archive-seals'
     for(const sign of [-1,1]){const strip=panel('档 案 封 存','#e3d9bc','#913d30',W*1.03,.18,0,1.35,-.13-sign*.002,seals);strip.rotation.z=sign*.42}
     g.add(seals)
-    panel('磁带提交处 · 6 盘','#353e3a','#dfd5b8',.84,.21,-W/2-.59,1.65,-.1)
+    megPanel('磁带提交处 / TAPE DROP · 6',.84,.24,-W/2-.59,1.65,-.1)
     const box=new CityBatch();box.box(l11Material('metal','#535a51'),-W/2-.59,1.18,.02,.55,.55,.28);box.box(l11Material('sealedglass','#151b17'),-W/2-.59,1.35,-.127,.4,.055,.01);box.finish(g)
   }else if(kind==='l11officedoor')panel(`OFFICE  ${((e.floor??1)+1)*100+4}`,'#c8c3ac','#333c38',.38,.1,0,1.83,-.125)
   return g

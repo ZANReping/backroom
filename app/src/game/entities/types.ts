@@ -2,6 +2,7 @@
 export type AIState = 'idle' | 'wander' | 'investigate' | 'chase' | 'attack' | 'stunned'
 export type MothForm = 'male' | 'female' | 'larva' | 'guard'
 export type RefinedEntityForm =
+  | 'wrangler-male' | 'wrangler-female' | 'wrangler-juvenile'
   | 'hound-hostile' | 'hound-neutral' | 'hound-ambusher'
   | 'duller-empty' | 'duller-carrying'
   | 'faceling-common' | 'faceling-anomaly' | 'faceling-tool'
@@ -23,6 +24,7 @@ export interface EntityCodex {
 }
 
 export interface EntityDef {
+  wranglerKind?: 'male'|'female'|'juvenile'
   entityForm?: EntityForm // 显式选择的父实体内子变种；不创建独立实体或图鉴 ID
   houndKind?: 'hostile' | 'neutral' | 'ambusher'
   wretchKind?: import('./wretches').WretchKind
@@ -90,6 +92,7 @@ export interface EntityDef {
   // indoor=仅室内瓦片（m.outdoor=0）；outdoor=仅室外瓦片（m.outdoor=1，如小巷/街道/田野/海面）；
   // any（缺省）=随意。生成时无符合瓦片则降级 any 并计数告警。
   habitat?: 'indoor' | 'outdoor' | 'any'
+  naturalSpawn?: false // 禁止自然生成；手动生成仍可用
   aquatic?: boolean // 水生：outdoor 栖息地额外接受水域瓦片（liquid≠0，如 L7 海面）
   flying?: boolean // 飞行实体：z 是真实飞行根高度，不再由渲染器伪造上下摆动
   flightMin?: number // 相对当地地面的最低巡航根高度（米）
@@ -125,8 +128,10 @@ export interface Entity {
   presentationPending?: boolean // Runtime-only GPU preparation; cannot attack before its model is ready.
   screamed?: boolean // 久坐者
   activated?: boolean // 人制品售货机：已被激活（背对触发，长出骷髅手腿追击玩家）
+  ar?: import('../engine/armsAI').ArmsState // 手臂（Entité 15-FR）重制：风口/状态机/焦皮血迹（局内内存，不入存档/联机）
   webX?: number // Nguithr'xurh：陷阱（结囊）位置 x/y
   webY?: number
+  ng?: import('../engine/nguithrAI').NguithrState // Nguithr'xurh 重制：巢/网囊/伏击状态机（不入存档/联机）
   disguised?: string // 窃皮者伪装：'human' = 穿着人皮（随机 NPC 外观）；v77 起不再伪装成物品
   rt?: import('../engine/ratAI').RatState
   wr?: import('../engine/wretchAI').WretchState // v78：悲尸运行时状态（变体/警觉/撞门；不入存档）
@@ -138,6 +143,7 @@ export interface Entity {
   provoked?: boolean // 被动实体（无面灵）：被玩家攻击后激怒，持续反击直到脱战平息
   l11Home?: import('../world/l11FacelingTypes').L11FacelingHome
   mothNest?: string // World-stable Beverly annex id; never rebased with the window.
+  mt?: import('../engine/mothAI').MothState // 死亡飞蛾重制：运行时状态（片段/驯化/喷液/狂暴/蜷球；不入存档/联机）
   turnSlowT?: number // v58：七层之物——体节被击后转头迟滞的剩余时间
   lightStressT?: number // 七层之物被手电持续直射的累计刺激：先避光，超过阈值后暴怒
   lightRecoilT?: number // 畏光退避窗口；窗口内普通视野不会立刻把退避状态覆盖成追击
@@ -149,9 +155,12 @@ export interface Entity {
   jy?: import('../engine/jerryAI').JerryState // 鹉主杰瑞的局内姿态与行为。
   dl?: import('../engine/dullerAI').DullerState // v63：钝人运行时状态（潜伏/隔墙抓取/携物；不入存档/联机）
   cl?: import('../engine/clumpAI').ClumpState // v64：肢团（含 L3 子变种）运行时状态（不入存档/联机）
+  nw?: import('../engine/watchAI').NWState // 邻里守望 / 残缺者运行时状态（不入存档/联机）
+  wg?: import('../engine/wranglerAI').WgState // 牧蛇运行时变种、轨迹与催眠／吞咽。
   pg?: import('../engine/partygoerAI').PartyState // 派对客（Entity 67）运行时状态：群体/伪装/断臂/狂战士/倒地爬走（不入存档/联机）
   hd?: import('../engine/houndAI').HoundState // v62：猎犬（含 L11 中立变种）运行时状态（不入存档/联机）
   sm?: import('./smilers').SmilerState // v61：笑魇变种与 AI 运行时状态（不入存档/联机）
+  l9FogTravel?: {mode:'arrive'|'active'|'leave';homeX:number;homeY:number;exitX:number;exitY:number} // World coordinates survive streaming shifts.
   l9FogSpawn?: boolean // L9 罕见浓雾期间生成的残缺者；雾散后随之退散
   l10BurrowT?: number // L10 旧挖掘点事件蠕虫：离开现场后在 15～25 秒内退回地下
   flightBand?: import('../core/types').FloorBand // 飞行所依附楼层；避免高度越过 band 中线后误判跨层

@@ -8,6 +8,7 @@ import { buildEntityMesh, type EntityMeshOpts } from './entitiesMesh'
 import { buildAvatarModel } from './retroAvatar'
 import { randomAvatar } from '../core/avatar'
 import { mulberry } from './shared'
+import {WRANGLER_DIM,type WranglerRig} from './wranglerMesh'
 
 export function entityArchiveOptions(type: string, step = 0): EntityMeshOpts {
   const { seed, specimen, form } = entityArchiveView(type, step), traits = form?.traits
@@ -16,6 +17,7 @@ export function entityArchiveOptions(type: string, step = 0): EntityMeshOpts {
     mothForm: type === 'deathmoth' ? form?.id as MothForm : undefined,
     smilerKind: type === 'smiler' ? form?.id as SmilerKind : undefined,
     l3clump: traits?.l3clump, l3face: traits?.l3face, tool: traits?.tool,
+    wranglerKind:traits?.wranglerKind,
     houndNeutral: traits?.houndKind === 'neutral', wretchKind: traits?.wretchKind,
     ratMorph: type === 'corpserat' ? ratMorphFor(0, traits ?? {}) : undefined,
     capybara: traits?.capybara, ceilingCrawler: traits?.ceilingCrawler,
@@ -58,19 +60,27 @@ export function buildEntityArchiveModel(type: string, step = 0): THREE.Group | n
   return model
 }
 
+function archiveBounds(model:THREE.Group):THREE.Box3 {
+  const rig=model.userData.wranglerRig as WranglerRig|undefined
+  if(!rig)return new THREE.Box3().setFromObject(model,true)
+  const b=new THREE.Box3().setFromPoints(rig.pts).expandByScalar(WRANGLER_DIM[rig.kind].r*1.65)
+  const head=new THREE.Box3().setFromObject(rig.headRig.head,true)
+  return b.applyMatrix4(model.matrixWorld).union(head)
+}
+
 /** Fit all eight bounds corners, including long bodies, wings and raised limbs. */
 export function frameEntityArchive(model: THREE.Group, camera: THREE.PerspectiveCamera) {
   // SkinnedMesh.updateMatrixWorld also refreshes its inverse bind matrix. Using
   // updateWorldMatrix here would count the studio scale twice in skinned bounds.
   model.updateMatrixWorld(true)
-  const original = new THREE.Box3().setFromObject(model, true)
+  const original = archiveBounds(model)
   if (original.isEmpty()) throw new Error('Entity has no renderable bounds')
   const size = original.getSize(new THREE.Vector3()), center = original.getCenter(new THREE.Vector3())
   if (![...size, ...center].every(Number.isFinite) || Math.max(...size) < .0001) throw new Error('Invalid entity bounds')
   const root = new THREE.Group(), offset = new THREE.Group()
   offset.add(model); offset.position.copy(center).multiplyScalar(-1); root.add(offset)
   root.scale.setScalar(2 / Math.max(...size)); root.updateMatrixWorld(true)
-  const bounds = new THREE.Box3().setFromObject(root, true)
+  const bounds = archiveBounds(model)
   const tanY = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * .86, tanX = tanY * camera.aspect
   let distance = 0
   for (const x of [bounds.min.x, bounds.max.x]) for (const y of [bounds.min.y, bounds.max.y]) for (const z of [bounds.min.z, bounds.max.z]) {

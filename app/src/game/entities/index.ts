@@ -23,6 +23,7 @@ export const ENTITIES: Record<string, EntityDef> = {
   ...CRITTER_ENTITIES,
   ...DEEP_ENTITIES, // v23：Level 6–11 / Level 601
 }
+export function canSpawnNaturally(type: string) { return ENTITIES[type]?.naturalSpawn !== false }
 
 let eid = 1
 export function makeEntity(type: string, x: number, y: number, z = 0, form?: EntityForm): Entity {

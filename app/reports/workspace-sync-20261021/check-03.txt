@@ -1,0 +1,9 @@
+
+> my-app@0.0.0 check:l1-offline
+> esbuild scripts/check-l1-offline.ts --bundle --platform=node --format=esm --outfile=.cache/check-l1-offline.mjs && node .cache/check-l1-offline.mjs
+
+
+  .cache\check-l1-offline.mjs  82.3kb
+
+Done in 20ms
+{"passed":true,"bakeRevision":19,"chunks":108,"anchors":11,"compressedBytes":138545133}

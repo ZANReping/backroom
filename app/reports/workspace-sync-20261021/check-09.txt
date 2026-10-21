@@ -1,0 +1,25 @@
+
+> my-app@0.0.0 check:l4-melee-wrangler-integration
+> esbuild scripts/check-l4-melee-wrangler-integration.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l4-melee-wrangler-integration.mjs && node .cache/check-l4-melee-wrangler-integration.mjs
+
+
+  .cache\check-l4-melee-wrangler-integration.mjs  4.4mb
+
+Done in 206ms
+✔ Engine.moveSlot 交换不同耐久 timber：不合并、不丢失
+✔ 旧 timber 堆叠展开为每格一件且数量守恒
+✔ 旧 InvSlot 缺 dur 按满耐久处理
+✔ 展开保留已有耐久
+✔ 真实 dropSlot 保留 dur=0 与 blood
+✔ 真实 scan/doInteract 拾取保留残件状态
+✔ quickUse 开始修理
+✔ 切换槽位中断修理且不耗材料
+✔ 正常完成修理到 50% 且消耗一件材料
+✔ 修理同槽位替换为另一件残件：按对象身份取消、不耗钉子
+✔ locked 取消前摇 pending
+✔ handsStowed 取消前摇 pending
+✔ snapshot/JSON 恢复保留 player dur、blood 且 v=1
+✔ L4 chunk 生成饮水机并带 water 剩余量
+✔ snapshotChunkState 保存饮水机 water 状态
+✔ 牧蛇换 player/map 后重建新 frame：清理黑屏、捕获、洞口与卵枝
+check:l4-melee-wrangler-integration 16/16

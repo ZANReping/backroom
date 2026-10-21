@@ -1,0 +1,1572 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 8423,
+  "cdp": 8424,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:8423/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Wed, 21 Oct 2026 12:36:22 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 338,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 8423,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 118151.487263,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.489,
+        "sendEnd": 0.553,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 144.906,
+        "receiveHeadersEnd": 145.108
+      },
+      "responseTime": 1792586182877.974,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l4-melee-wrangler-import-20261021\\realistic-v1\\qa-1792586154022-39368",
+    "--remote-debugging-port=8424",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 5072,
+    "server": 75388
+  },
+  "appBootMs": 24726.8046,
+  "entryMs": 9162.676599999999,
+  "firstPlayableMs": 46218.9645,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 4,
+    "paused": false,
+    "near": true,
+    "chunks": 9,
+    "tasks": 4,
+    "memory": {
+      "geometries": 967,
+      "textures": 67,
+      "programs": 74
+    },
+    "world": [
+      15.5,
+      15.5,
+      0
+    ]
+  },
+  "l4": [
+    {
+      "name": "hall",
+      "block": {
+        "i": -1,
+        "j": 1,
+        "type": "hall"
+      },
+      "target": {
+        "x": 69.5,
+        "y": 84.5,
+        "wx": 69.5,
+        "wy": 71.5,
+        "deg": 180
+      },
+      "world": [
+        -26.5,
+        84.5,
+        0
+      ],
+      "look": {
+        "yaw": 0,
+        "pitch": -0.005384563344859186,
+        "locked": false,
+        "rayX": 0,
+        "rayY": -0.9999855032738186,
+        "rayZ": -0.005384537325320567,
+        "visualHit": null,
+        "roll": 0
+      },
+      "fov": 58,
+      "prepareMs": 9044.59999999404,
+      "level": 4,
+      "paused": false,
+      "near": true,
+      "chunks": 12,
+      "tasks": 1,
+      "memory": {
+        "geometries": 1490,
+        "textures": 83,
+        "programs": 79
+      }
+    },
+    {
+      "name": "open",
+      "block": {
+        "i": 0,
+        "j": 0,
+        "type": "open"
+      },
+      "target": {
+        "x": 61.5,
+        "y": 73.5,
+        "wx": 61.5,
+        "wy": 66.5,
+        "deg": 180
+      },
+      "world": [
+        -2.5,
+        9.5,
+        0
+      ],
+      "look": {
+        "yaw": 0,
+        "pitch": -0.009999666686665246,
+        "locked": false,
+        "rayX": 0,
+        "rayY": -0.9999500037496876,
+        "rayZ": -0.009999500037496884,
+        "visualHit": null,
+        "roll": 0
+      },
+      "fov": 66,
+      "prepareMs": 7132.199999988079,
+      "level": 4,
+      "paused": false,
+      "near": true,
+      "chunks": 13,
+      "tasks": 1,
+      "memory": {
+        "geometries": 2115,
+        "textures": 84,
+        "programs": 79
+      }
+    },
+    {
+      "name": "cubicle",
+      "block": {
+        "i": -1,
+        "j": -1,
+        "type": "cubicle"
+      },
+      "target": {
+        "x": 59.5,
+        "y": 124,
+        "wx": 59.5,
+        "wy": 128.5,
+        "deg": 0
+      },
+      "world": [
+        -36.5,
+        -4,
+        0
+      ],
+      "look": {
+        "yaw": 3.141592653589793,
+        "pitch": -0.015554301050900473,
+        "locked": false,
+        "rayX": -1.2244986588879245e-16,
+        "rayY": 0.9998790342982713,
+        "rayZ": -0.015553673866862013,
+        "visualHit": null,
+        "roll": 0
+      },
+      "fov": 58,
+      "prepareMs": 14318.90000000596,
+      "level": 4,
+      "paused": false,
+      "near": false,
+      "chunks": 10,
+      "tasks": 1,
+      "memory": {
+        "geometries": 2106,
+        "textures": 81,
+        "programs": 79
+      }
+    },
+    {
+      "name": "rooms",
+      "block": {
+        "i": -1,
+        "j": 0,
+        "type": "rooms"
+      },
+      "target": {
+        "x": 65.5,
+        "y": 69.5,
+        "wx": 65.5,
+        "wy": 66.5,
+        "deg": 180
+      },
+      "world": [
+        -62.5,
+        5.5,
+        0
+      ],
+      "look": {
+        "yaw": 0,
+        "pitch": -0.023329100148186583,
+        "locked": false,
+        "rayX": 0,
+        "rayY": -0.9997278888847767,
+        "rayZ": -0.023326984073978145,
+        "visualHit": {
+          "kind": "structure",
+          "structure": {
+            "kind": "glasswin",
+            "x": 65,
+            "y": 66,
+            "w": 1,
+            "h": 1,
+            "solid": true,
+            "data": {
+              "l4": 1,
+              "deg": 180,
+              "rain": 1,
+              "coast": 1,
+              "l4Facade": 1,
+              "mullion": 0,
+              "revealLeft": 0,
+              "revealRight": 1,
+              "windowId": "-1:0:n:1",
+              "sid": 2938078011
+            }
+          },
+          "x": 65.5,
+          "y": 66.122,
+          "z": 1.4745462659575095,
+          "rayT": 3.3789194415374864,
+          "yaw": 0,
+          "pitch": -0.023329100148186583,
+          "playerX": 65.5,
+          "playerY": 69.5,
+          "playerZ": 0,
+          "at": 1792586254079
+        },
+        "roll": 0
+      },
+      "fov": 58,
+      "prepareMs": 10906.5,
+      "level": 4,
+      "paused": false,
+      "near": true,
+      "chunks": 13,
+      "tasks": 1,
+      "memory": {
+        "geometries": 3106,
+        "textures": 95,
+        "programs": 79
+      }
+    },
+    {
+      "name": "window-north",
+      "block": {
+        "i": -1,
+        "j": 1,
+        "type": "hall"
+      },
+      "target": {
+        "x": 69.5,
+        "y": 76,
+        "wx": 69.5,
+        "wy": 71.5,
+        "deg": 180
+      },
+      "world": [
+        -26.5,
+        76,
+        0
+      ],
+      "look": {
+        "yaw": 0,
+        "pitch": -0.015554301050900473,
+        "locked": false,
+        "rayX": 0,
+        "rayY": -0.9998790342982712,
+        "rayZ": -0.01555367386686201,
+        "visualHit": null,
+        "roll": 0
+      },
+      "fov": 58,
+      "prepareMs": 10130.29999999702,
+      "level": 4,
+      "paused": false,
+      "near": true,
+      "chunks": 12,
+      "tasks": 1,
+      "memory": {
+        "geometries": 2182,
+        "textures": 90,
+        "programs": 79
+      }
+    },
+    {
+      "name": "window-east",
+      "block": {
+        "i": -1,
+        "j": 1,
+        "type": "hall"
+      },
+      "target": {
+        "x": 60,
+        "y": 74.5,
+        "wx": 64.5,
+        "wy": 74.5,
+        "deg": 90
+      },
+      "world": [
+        -36,
+        74.5,
+        0
+      ],
+      "look": {
+        "yaw": -1.5707963267948966,
+        "pitch": -0.015554301050900473,
+        "locked": false,
+        "rayX": 0.9998790342982713,
+        "rayY": -1.1102230246251568e-16,
+        "rayZ": -0.015553673866862013,
+        "visualHit": null,
+        "roll": 0
+      },
+      "fov": 58,
+      "prepareMs": 809.8999999910593,
+      "level": 4,
+      "paused": false,
+      "near": true,
+      "chunks": 12,
+      "tasks": 1,
+      "memory": {
+        "geometries": 2421,
+        "textures": 90,
+        "programs": 79
+      }
+    },
+    {
+      "name": "watercooler",
+      "block": {
+        "i": 0,
+        "j": 0,
+        "type": "open"
+      },
+      "target": {
+        "kind": "watercooler",
+        "x": 86,
+        "y": 72,
+        "w": 1,
+        "h": 1,
+        "solid": true,
+        "data": {
+          "l4": 1,
+          "deg": 270,
+          "almond": 1,
+          "water": 4,
+          "sid": 1059301257
+        }
+      },
+      "world": [
+        -43.3,
+        40.5,
+        0
+      ],
+      "look": {
+        "yaw": -1.5707963267948966,
+        "pitch": -0.3563331370116412,
+        "locked": false,
+        "rayX": 0.9371822701578227,
+        "rayY": -3.3306690738754706e-16,
+        "rayZ": -0.3488400672254118,
+        "visualHit": {
+          "kind": "structure",
+          "structure": {
+            "kind": "watercooler",
+            "x": 86,
+            "y": 72,
+            "w": 1,
+            "h": 1,
+            "solid": true,
+            "data": {
+              "l4": 1,
+              "deg": 270,
+              "almond": 1,
+              "water": 4,
+              "sid": 1059301257
+            }
+          },
+          "x": 86.51299999994785,
+          "y": 72.5,
+          "z": 0.882791369896921,
+          "rayT": 1.9345222991068076,
+          "yaw": -1.5707963267948966,
+          "pitch": -0.3563331370116412,
+          "playerX": 84.7,
+          "playerY": 72.5,
+          "playerZ": 0,
+          "at": 1792586276867
+        },
+        "roll": 0
+      },
+      "fov": 58,
+      "prepareMs": 9589.39999999106,
+      "level": 4,
+      "paused": false,
+      "near": false,
+      "chunks": 11,
+      "tasks": 1,
+      "memory": {
+        "geometries": 2554,
+        "textures": 92,
+        "programs": 79
+      }
+    }
+  ],
+  "l4Performance": {
+    "scope": "Native GPU requestAnimationFrame cadence; full frame includes world/shadows/post; not a GPU timer or Android result",
+    "rounds": [
+      {
+        "median": 34,
+        "p95": 73,
+        "draws": 1431,
+        "triangles": 2080041
+      },
+      {
+        "median": 36.099999994039536,
+        "p95": 78.70000000298023,
+        "draws": 1448,
+        "triangles": 2145255
+      },
+      {
+        "median": 32.099999994039536,
+        "p95": 85,
+        "draws": 1448,
+        "triangles": 2145255
+      },
+      {
+        "median": 40.6000000089407,
+        "p95": 91.20000000298023,
+        "draws": 1855,
+        "triangles": 3541447
+      },
+      {
+        "median": 43.20000000298023,
+        "p95": 103.59999999403954,
+        "draws": 1855,
+        "triangles": 3541447
+      }
+    ],
+    "memory": {
+      "geometries": 2379,
+      "textures": 98,
+      "programs": 79
+    }
+  },
+  "weapons": [
+    {
+      "name": "knife-intact",
+      "budget": {
+        "tris": 2928,
+        "meshes": 8
+      },
+      "memory": {
+        "geometries": 2491,
+        "textures": 102,
+        "programs": 79
+      }
+    },
+    {
+      "name": "knife-broken",
+      "budget": {
+        "tris": 2542,
+        "meshes": 8
+      },
+      "memory": {
+        "geometries": 2501,
+        "textures": 103,
+        "programs": 81
+      }
+    },
+    {
+      "name": "crowbar-intact",
+      "budget": {
+        "tris": 2916,
+        "meshes": 3
+      },
+      "memory": {
+        "geometries": 2505,
+        "textures": 103,
+        "programs": 81
+      }
+    },
+    {
+      "name": "crowbar-broken",
+      "budget": {
+        "tris": 2916,
+        "meshes": 3
+      },
+      "memory": {
+        "geometries": 2510,
+        "textures": 103,
+        "programs": 81
+      }
+    },
+    {
+      "name": "wrench-intact",
+      "budget": {
+        "tris": 1212,
+        "meshes": 4
+      },
+      "memory": {
+        "geometries": 2515,
+        "textures": 105,
+        "programs": 81
+      }
+    },
+    {
+      "name": "wrench-broken",
+      "budget": {
+        "tris": 1020,
+        "meshes": 4
+      },
+      "memory": {
+        "geometries": 2521,
+        "textures": 105,
+        "programs": 81
+      }
+    },
+    {
+      "name": "timber-intact",
+      "budget": {
+        "tris": 1372,
+        "meshes": 2
+      },
+      "memory": {
+        "geometries": 2524,
+        "textures": 106,
+        "programs": 81
+      }
+    },
+    {
+      "name": "timber-broken",
+      "budget": {
+        "tris": 1616,
+        "meshes": 4
+      },
+      "memory": {
+        "geometries": 2530,
+        "textures": 107,
+        "programs": 81
+      }
+    },
+    {
+      "name": "axe-intact",
+      "budget": {
+        "tris": 4492,
+        "meshes": 6
+      },
+      "memory": {
+        "geometries": 2537,
+        "textures": 110,
+        "programs": 81
+      }
+    },
+    {
+      "name": "axe-broken",
+      "budget": {
+        "tris": 4984,
+        "meshes": 8
+      },
+      "memory": {
+        "geometries": 2549,
+        "textures": 110,
+        "programs": 82
+      }
+    },
+    {
+      "name": "axe-worn",
+      "budget": {
+        "tris": 4492,
+        "meshes": 6
+      },
+      "memory": {
+        "geometries": 2551,
+        "textures": 111,
+        "programs": 83
+      }
+    }
+  ],
+  "meleeMechanics": {
+    "lightDamage": 30,
+    "heavyDamage": 52.18181818181802,
+    "charge": 0.9090909090909091,
+    "repairDur": 30,
+    "level": 4,
+    "paused": false,
+    "near": true,
+    "chunks": 25,
+    "tasks": 0,
+    "memory": {
+      "geometries": 2319,
+      "textures": 119,
+      "programs": 84
+    },
+    "world": [
+      -44.5,
+      39.5,
+      0
+    ]
+  },
+  "level8": {
+    "entryMs": 9422.5,
+    "wall": {
+      "x": 78.5,
+      "y": 76.5,
+      "nx": 0,
+      "ny": -1
+    },
+    "level": 8,
+    "paused": false,
+    "near": true,
+    "chunks": 11,
+    "tasks": 1,
+    "memory": {
+      "geometries": 336,
+      "textures": 88,
+      "programs": 106
+    },
+    "world": [
+      15.5,
+      9.5,
+      -0.09867965015926425
+    ]
+  },
+  "wranglers": [
+    {
+      "name": "male",
+      "budget": {
+        "draws": 8,
+        "tris": 45162
+      },
+      "world": [
+        16.299999999999997,
+        5.5,
+        -0.19261620682735545
+      ],
+      "entity": [
+        78.5,
+        73.5,
+        0
+      ],
+      "look": {
+        "yaw": 2.718738727456853,
+        "pitch": 0.11183820081034389,
+        "locked": false,
+        "rayX": -0.40780097498648804,
+        "rayY": 0.9062243888588637,
+        "rayZ": 0.11160520524352288,
+        "visualHit": null,
+        "roll": 0
+      },
+      "memory": {
+        "geometries": 539,
+        "textures": 89,
+        "programs": 107
+      }
+    },
+    {
+      "name": "female",
+      "budget": {
+        "draws": 9,
+        "tris": 41684
+      },
+      "world": [
+        16.299999999999997,
+        5.5,
+        -0.19261620682735545
+      ],
+      "entity": [
+        78.5,
+        73.5,
+        0
+      ],
+      "look": {
+        "yaw": 2.718738727456853,
+        "pitch": 0.21820689981818198,
+        "locked": false,
+        "rayX": -0.40063377681877094,
+        "rayY": 0.8902972818194925,
+        "rayZ": 0.2164793912979949,
+        "visualHit": null,
+        "roll": 0
+      },
+      "memory": {
+        "geometries": 540,
+        "textures": 89,
+        "programs": 107
+      }
+    },
+    {
+      "name": "female-pregnant",
+      "budget": {
+        "draws": 9,
+        "tris": 41684
+      },
+      "world": [
+        16.299999999999997,
+        5.5,
+        -0.19261620682735545
+      ],
+      "entity": [
+        78.5,
+        73.5,
+        0
+      ],
+      "look": {
+        "yaw": 2.718738727456853,
+        "pitch": 0.21820689981818198,
+        "locked": false,
+        "rayX": -0.40063377681877094,
+        "rayY": 0.8902972818194925,
+        "rayZ": 0.2164793912979949,
+        "visualHit": null,
+        "roll": 0
+      },
+      "memory": {
+        "geometries": 576,
+        "textures": 91,
+        "programs": 107
+      }
+    },
+    {
+      "name": "juvenile",
+      "budget": {
+        "draws": 7,
+        "tris": 30976
+      },
+      "world": [
+        16.299999999999997,
+        5.5,
+        -0.19261620682735545
+      ],
+      "entity": [
+        78.5,
+        73.5,
+        0
+      ],
+      "look": {
+        "yaw": 2.718738727456853,
+        "pitch": -0.25157602677306884,
+        "locked": false,
+        "rayX": -0.3974469321095054,
+        "rayY": 0.8832154046877909,
+        "rayZ": -0.24893068328135856,
+        "visualHit": null,
+        "roll": 0
+      },
+      "memory": {
+        "geometries": 539,
+        "textures": 89,
+        "programs": 107
+      }
+    }
+  ],
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: Timeout actual safe wake\",\"lineNumber\":14,\"columnNumber\":50,\"scriptId\":\"615\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"until\",\"scriptId\":\"615\",\"url\":\"http://127.0.0.1:8423/verifier/l4-melee-wrangler-check.ts\",\"lineNumber\":13,\"columnNumber\":49}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: Timeout actual safe wake\\n    at until (http://127.0.0.1:8423/verifier/l4-melee-wrangler-check.ts:14:50)\\n    at async Object.wranglerMechanics (http://127.0.0.1:8423/verifier/l4-melee-wrangler-check.ts:383:5)\",\"objectId\":\"-6017908605486629716.2.1\"}}",
+  "partial": {
+    "checks": [
+      "L4 deterministic block hall",
+      "L4 deterministic block open",
+      "L4 deterministic block cubicle",
+      "L4 deterministic block rooms",
+      "L4 deterministic block hall",
+      "L4 deterministic block hall",
+      "L4 deterministic block open",
+      "real generated water cooler",
+      "safe water cooler viewpoint",
+      "real L4 has safe melee interaction position",
+      "real first-person weapon factory knife",
+      "real first-person weapon factory knife:broken",
+      "real first-person weapon factory crowbar",
+      "real first-person weapon factory crowbar:broken",
+      "real first-person weapon factory wrench",
+      "real first-person weapon factory wrench:broken",
+      "real first-person weapon factory timber",
+      "real first-person weapon factory timber:broken",
+      "real first-person weapon factory axe",
+      "real first-person weapon factory axe:broken",
+      "real first-person weapon factory axe",
+      "real L4 has safe melee interaction position",
+      "real first-person weapon factory knife",
+      "actual model visible: faceling/",
+      "light hit waits for windup",
+      "light hit costs one durability",
+      "charging does not hit early",
+      "released charge deals heavy strike",
+      "heavy hit costs two durability",
+      "actual quick-use starts repair",
+      "completed repair restores half and consumes one material",
+      "actual drop retains broken state and blood",
+      "actual crosshair selects dropped weapon",
+      "actual pickup retains durability and blood",
+      "real cave has a broad exposed rock wall",
+      "actual model visible: wrangler/male",
+      "native spine texture finite male",
+      "gameplay wrangler uses current light pool",
+      "actual model visible: wrangler/female",
+      "native spine texture finite female",
+      "gameplay wrangler uses current light pool",
+      "actual model visible: wrangler/female",
+      "native spine texture finite female",
+      "gameplay wrangler uses current light pool",
+      "actual model visible: wrangler/juvenile",
+      "native spine texture finite juvenile",
+      "gameplay wrangler uses current light pool",
+      "actual model visible: wrangler/male",
+      "real engine triggers hypnosis",
+      "flashlight toggle breaks actual hypnosis"
+    ],
+    "records": [
+      {
+        "name": "hall",
+        "block": {
+          "i": -1,
+          "j": 1,
+          "type": "hall"
+        },
+        "target": {
+          "x": 69.5,
+          "y": 84.5,
+          "wx": 69.5,
+          "wy": 71.5,
+          "deg": 180
+        },
+        "world": [
+          -26.5,
+          84.5,
+          0
+        ],
+        "look": {
+          "yaw": 0,
+          "pitch": -0.005384563344859186,
+          "locked": false,
+          "rayX": 0,
+          "rayY": -0.9999855032738186,
+          "rayZ": -0.005384537325320567,
+          "visualHit": null,
+          "roll": 0
+        },
+        "fov": 58,
+        "prepareMs": 9044.59999999404,
+        "level": 4,
+        "paused": false,
+        "near": true,
+        "chunks": 12,
+        "tasks": 1,
+        "memory": {
+          "geometries": 1490,
+          "textures": 83,
+          "programs": 79
+        }
+      },
+      {
+        "name": "open",
+        "block": {
+          "i": 0,
+          "j": 0,
+          "type": "open"
+        },
+        "target": {
+          "x": 61.5,
+          "y": 73.5,
+          "wx": 61.5,
+          "wy": 66.5,
+          "deg": 180
+        },
+        "world": [
+          -2.5,
+          9.5,
+          0
+        ],
+        "look": {
+          "yaw": 0,
+          "pitch": -0.009999666686665246,
+          "locked": false,
+          "rayX": 0,
+          "rayY": -0.9999500037496876,
+          "rayZ": -0.009999500037496884,
+          "visualHit": null,
+          "roll": 0
+        },
+        "fov": 66,
+        "prepareMs": 7132.199999988079,
+        "level": 4,
+        "paused": false,
+        "near": true,
+        "chunks": 13,
+        "tasks": 1,
+        "memory": {
+          "geometries": 2115,
+          "textures": 84,
+          "programs": 79
+        }
+      },
+      {
+        "name": "cubicle",
+        "block": {
+          "i": -1,
+          "j": -1,
+          "type": "cubicle"
+        },
+        "target": {
+          "x": 59.5,
+          "y": 124,
+          "wx": 59.5,
+          "wy": 128.5,
+          "deg": 0
+        },
+        "world": [
+          -36.5,
+          -4,
+          0
+        ],
+        "look": {
+          "yaw": 3.141592653589793,
+          "pitch": -0.015554301050900473,
+          "locked": false,
+          "rayX": -1.2244986588879245e-16,
+          "rayY": 0.9998790342982713,
+          "rayZ": -0.015553673866862013,
+          "visualHit": null,
+          "roll": 0
+        },
+        "fov": 58,
+        "prepareMs": 14318.90000000596,
+        "level": 4,
+        "paused": false,
+        "near": false,
+        "chunks": 10,
+        "tasks": 1,
+        "memory": {
+          "geometries": 2106,
+          "textures": 81,
+          "programs": 79
+        }
+      },
+      {
+        "name": "rooms",
+        "block": {
+          "i": -1,
+          "j": 0,
+          "type": "rooms"
+        },
+        "target": {
+          "x": 65.5,
+          "y": 69.5,
+          "wx": 65.5,
+          "wy": 66.5,
+          "deg": 180
+        },
+        "world": [
+          -62.5,
+          5.5,
+          0
+        ],
+        "look": {
+          "yaw": 0,
+          "pitch": -0.023329100148186583,
+          "locked": false,
+          "rayX": 0,
+          "rayY": -0.9997278888847767,
+          "rayZ": -0.023326984073978145,
+          "visualHit": {
+            "kind": "structure",
+            "structure": {
+              "kind": "glasswin",
+              "x": 65,
+              "y": 34,
+              "w": 1,
+              "h": 1,
+              "solid": true,
+              "data": {
+                "l4": 1,
+                "deg": 180,
+                "rain": 1,
+                "coast": 1,
+                "l4Facade": 1,
+                "mullion": 0,
+                "revealLeft": 0,
+                "revealRight": 1,
+                "windowId": "-1:0:n:1",
+                "sid": 2938078011
+              }
+            },
+            "x": 65.5,
+            "y": 66.122,
+            "z": 1.4745462659575095,
+            "rayT": 3.3789194415374864,
+            "yaw": 0,
+            "pitch": -0.023329100148186583,
+            "playerX": 65.5,
+            "playerY": 69.5,
+            "playerZ": 0,
+            "at": 1792586254079
+          },
+          "roll": 0
+        },
+        "fov": 58,
+        "prepareMs": 10906.5,
+        "level": 4,
+        "paused": false,
+        "near": true,
+        "chunks": 13,
+        "tasks": 1,
+        "memory": {
+          "geometries": 3106,
+          "textures": 95,
+          "programs": 79
+        }
+      },
+      {
+        "name": "window-north",
+        "block": {
+          "i": -1,
+          "j": 1,
+          "type": "hall"
+        },
+        "target": {
+          "x": 69.5,
+          "y": 76,
+          "wx": 69.5,
+          "wy": 71.5,
+          "deg": 180
+        },
+        "world": [
+          -26.5,
+          76,
+          0
+        ],
+        "look": {
+          "yaw": 0,
+          "pitch": -0.015554301050900473,
+          "locked": false,
+          "rayX": 0,
+          "rayY": -0.9998790342982712,
+          "rayZ": -0.01555367386686201,
+          "visualHit": null,
+          "roll": 0
+        },
+        "fov": 58,
+        "prepareMs": 10130.29999999702,
+        "level": 4,
+        "paused": false,
+        "near": true,
+        "chunks": 12,
+        "tasks": 1,
+        "memory": {
+          "geometries": 2182,
+          "textures": 90,
+          "programs": 79
+        }
+      },
+      {
+        "name": "window-east",
+        "block": {
+          "i": -1,
+          "j": 1,
+          "type": "hall"
+        },
+        "target": {
+          "x": 60,
+          "y": 74.5,
+          "wx": 64.5,
+          "wy": 74.5,
+          "deg": 90
+        },
+        "world": [
+          -36,
+          74.5,
+          0
+        ],
+        "look": {
+          "yaw": -1.5707963267948966,
+          "pitch": -0.015554301050900473,
+          "locked": false,
+          "rayX": 0.9998790342982713,
+          "rayY": -1.1102230246251568e-16,
+          "rayZ": -0.015553673866862013,
+          "visualHit": null,
+          "roll": 0
+        },
+        "fov": 58,
+        "prepareMs": 809.8999999910593,
+        "level": 4,
+        "paused": false,
+        "near": true,
+        "chunks": 12,
+        "tasks": 1,
+        "memory": {
+          "geometries": 2421,
+          "textures": 90,
+          "programs": 79
+        }
+      },
+      {
+        "name": "watercooler",
+        "block": {
+          "i": 0,
+          "j": 0,
+          "type": "open"
+        },
+        "target": {
+          "kind": "watercooler",
+          "x": 86,
+          "y": 72,
+          "w": 1,
+          "h": 1,
+          "solid": true,
+          "data": {
+            "l4": 1,
+            "deg": 270,
+            "almond": 1,
+            "water": 4,
+            "sid": 1059301257
+          }
+        },
+        "world": [
+          -43.3,
+          40.5,
+          0
+        ],
+        "look": {
+          "yaw": -1.5707963267948966,
+          "pitch": -0.3563331370116412,
+          "locked": false,
+          "rayX": 0.9371822701578227,
+          "rayY": -3.3306690738754706e-16,
+          "rayZ": -0.3488400672254118,
+          "visualHit": {
+            "kind": "structure",
+            "structure": {
+              "kind": "watercooler",
+              "x": 86,
+              "y": 72,
+              "w": 1,
+              "h": 1,
+              "solid": true,
+              "data": {
+                "l4": 1,
+                "deg": 270,
+                "almond": 1,
+                "water": 4,
+                "sid": 1059301257
+              }
+            },
+            "x": 86.51299999994785,
+            "y": 72.5,
+            "z": 0.882791369896921,
+            "rayT": 1.9345222991068076,
+            "yaw": -1.5707963267948966,
+            "pitch": -0.3563331370116412,
+            "playerX": 84.7,
+            "playerY": 72.5,
+            "playerZ": 0,
+            "at": 1792586276867
+          },
+          "roll": 0
+        },
+        "fov": 58,
+        "prepareMs": 9589.39999999106,
+        "level": 4,
+        "paused": false,
+        "near": false,
+        "chunks": 11,
+        "tasks": 1,
+        "memory": {
+          "geometries": 2554,
+          "textures": 92,
+          "programs": 79
+        }
+      },
+      {
+        "name": "knife-intact",
+        "budget": {
+          "tris": 2928,
+          "meshes": 8
+        },
+        "memory": {
+          "geometries": 2491,
+          "textures": 102,
+          "programs": 79
+        }
+      },
+      {
+        "name": "knife-broken",
+        "budget": {
+          "tris": 2542,
+          "meshes": 8
+        },
+        "memory": {
+          "geometries": 2501,
+          "textures": 103,
+          "programs": 81
+        }
+      },
+      {
+        "name": "crowbar-intact",
+        "budget": {
+          "tris": 2916,
+          "meshes": 3
+        },
+        "memory": {
+          "geometries": 2505,
+          "textures": 103,
+          "programs": 81
+        }
+      },
+      {
+        "name": "crowbar-broken",
+        "budget": {
+          "tris": 2916,
+          "meshes": 3
+        },
+        "memory": {
+          "geometries": 2510,
+          "textures": 103,
+          "programs": 81
+        }
+      },
+      {
+        "name": "wrench-intact",
+        "budget": {
+          "tris": 1212,
+          "meshes": 4
+        },
+        "memory": {
+          "geometries": 2515,
+          "textures": 105,
+          "programs": 81
+        }
+      },
+      {
+        "name": "wrench-broken",
+        "budget": {
+          "tris": 1020,
+          "meshes": 4
+        },
+        "memory": {
+          "geometries": 2521,
+          "textures": 105,
+          "programs": 81
+        }
+      },
+      {
+        "name": "timber-intact",
+        "budget": {
+          "tris": 1372,
+          "meshes": 2
+        },
+        "memory": {
+          "geometries": 2524,
+          "textures": 106,
+          "programs": 81
+        }
+      },
+      {
+        "name": "timber-broken",
+        "budget": {
+          "tris": 1616,
+          "meshes": 4
+        },
+        "memory": {
+          "geometries": 2530,
+          "textures": 107,
+          "programs": 81
+        }
+      },
+      {
+        "name": "axe-intact",
+        "budget": {
+          "tris": 4492,
+          "meshes": 6
+        },
+        "memory": {
+          "geometries": 2537,
+          "textures": 110,
+          "programs": 81
+        }
+      },
+      {
+        "name": "axe-broken",
+        "budget": {
+          "tris": 4984,
+          "meshes": 8
+        },
+        "memory": {
+          "geometries": 2549,
+          "textures": 110,
+          "programs": 82
+        }
+      },
+      {
+        "name": "axe-worn",
+        "budget": {
+          "tris": 4492,
+          "meshes": 6
+        },
+        "memory": {
+          "geometries": 2551,
+          "textures": 111,
+          "programs": 83
+        }
+      },
+      {
+        "name": "knife-intact",
+        "budget": {
+          "tris": 2928,
+          "meshes": 8
+        },
+        "memory": {
+          "geometries": 2552,
+          "textures": 111,
+          "programs": 83
+        }
+      },
+      {
+        "name": "melee-mechanics",
+        "lightDamage": 30,
+        "heavyDamage": 52.18181818181802,
+        "charge": 0.9090909090909091,
+        "repairDur": 30,
+        "level": 4,
+        "paused": false,
+        "near": true,
+        "chunks": 25,
+        "tasks": 0,
+        "memory": {
+          "geometries": 2319,
+          "textures": 119,
+          "programs": 84
+        },
+        "world": [
+          -44.5,
+          39.5,
+          0
+        ]
+      },
+      {
+        "name": "L8-entry",
+        "entryMs": 9422.5,
+        "level": 8,
+        "paused": false,
+        "near": true,
+        "chunks": 11,
+        "tasks": 1,
+        "memory": {
+          "geometries": 336,
+          "textures": 88,
+          "programs": 106
+        },
+        "world": [
+          15.5,
+          9.5,
+          -0.09867965015926425
+        ]
+      },
+      {
+        "name": "male",
+        "budget": {
+          "draws": 8,
+          "tris": 45162
+        },
+        "world": [
+          16.299999999999997,
+          5.5,
+          -0.19261620682735545
+        ],
+        "entity": [
+          78.5,
+          73.5,
+          0
+        ],
+        "look": {
+          "yaw": 2.718738727456853,
+          "pitch": 0.11183820081034389,
+          "locked": false,
+          "rayX": -0.40780097498648804,
+          "rayY": 0.9062243888588637,
+          "rayZ": 0.11160520524352288,
+          "visualHit": null,
+          "roll": 0
+        },
+        "memory": {
+          "geometries": 539,
+          "textures": 89,
+          "programs": 107
+        }
+      },
+      {
+        "name": "female",
+        "budget": {
+          "draws": 9,
+          "tris": 41684
+        },
+        "world": [
+          16.299999999999997,
+          5.5,
+          -0.19261620682735545
+        ],
+        "entity": [
+          78.5,
+          73.5,
+          0
+        ],
+        "look": {
+          "yaw": 2.718738727456853,
+          "pitch": 0.21820689981818198,
+          "locked": false,
+          "rayX": -0.40063377681877094,
+          "rayY": 0.8902972818194925,
+          "rayZ": 0.2164793912979949,
+          "visualHit": null,
+          "roll": 0
+        },
+        "memory": {
+          "geometries": 540,
+          "textures": 89,
+          "programs": 107
+        }
+      },
+      {
+        "name": "female-pregnant",
+        "budget": {
+          "draws": 9,
+          "tris": 41684
+        },
+        "world": [
+          16.299999999999997,
+          5.5,
+          -0.19261620682735545
+        ],
+        "entity": [
+          78.5,
+          73.5,
+          0
+        ],
+        "look": {
+          "yaw": 2.718738727456853,
+          "pitch": 0.21820689981818198,
+          "locked": false,
+          "rayX": -0.40063377681877094,
+          "rayY": 0.8902972818194925,
+          "rayZ": 0.2164793912979949,
+          "visualHit": null,
+          "roll": 0
+        },
+        "memory": {
+          "geometries": 576,
+          "textures": 91,
+          "programs": 107
+        }
+      },
+      {
+        "name": "juvenile",
+        "budget": {
+          "draws": 7,
+          "tris": 30976
+        },
+        "world": [
+          16.299999999999997,
+          5.5,
+          -0.19261620682735545
+        ],
+        "entity": [
+          78.5,
+          73.5,
+          0
+        ],
+        "look": {
+          "yaw": 2.718738727456853,
+          "pitch": -0.25157602677306884,
+          "locked": false,
+          "rayX": -0.3974469321095054,
+          "rayY": 0.8832154046877909,
+          "rayZ": -0.24893068328135856,
+          "visualHit": null,
+          "roll": 0
+        },
+        "memory": {
+          "geometries": 539,
+          "textures": 89,
+          "programs": 107
+        }
+      }
+    ],
+    "status": {
+      "level": 8,
+      "paused": false,
+      "near": false,
+      "chunks": 10,
+      "tasks": 1,
+      "memory": {
+        "geometries": 638,
+        "textures": 90,
+        "programs": 107
+      },
+      "world": [
+        -28.5,
+        76.5,
+        -0.2875260382051442
+      ]
+    }
+  },
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 20823.39999999106
+    },
+    "text": "HP\n1\n体力\n100\n饥饿\n97\n口渴\n97\n理智\n84\nLEVEL 8\n洞穴系统\nB8\n磁带\n0/6\n新莫维勒窟\n89%\n受到 12 点伤害（牧蛇的身体）\n那截冰冷滑腻的身体从你身上碾了过去，把你撞翻在石头上。别挡在它要走的路上。\n那张笑着的嘴合了上来。湿热、黑暗、四面八方都在收紧——\n你在冰冷的石头上醒来，浑身裹着发臭的黏液。这里你从没来过。它把你吐了出来——还是你从它身体的某处被挤了出来？你只剩最后一口气了。\n刀（残件） 0/60\n1\n2\n3\n4\n5\n6\n7\n空格\n跳跃\nC\n蹲伏\nF\n手电\n左Alt\n取出主手\n开发者模式\n🛠 开发者模式 · DEV\n▴"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

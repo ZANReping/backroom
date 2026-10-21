@@ -1,3 +1,4 @@
+import {ensureTradersAt} from '../world/tradersWorld'
 import type {Engine} from '../engine'
 import type {FloorBand} from '../core/types'
 import {floorHeight,structColliders} from '../world/mapgen'
@@ -73,6 +74,7 @@ export async function devMapTeleport(eng:Engine,target:{x:number;y:number;floor:
  try{
   eng.player.x=target.x-(inf?.ox??0);eng.player.y=target.y-(inf?.oy??0);eng.player.floor=floor
   if(inf)eng.updateInfiniteWindow()
+  if(m.traders)ensureTradersAt(m,target.x,target.y,6)
   const x=target.x-(m.inf?.ox??0),y=target.y-(m.inf?.oy??0)
   const candidates=[{x,y}]
   for(let r=.25;r<=3;r+=.25)for(let i=0;i<32;i++)candidates.push({x:x+r*Math.cos(i*Math.PI/16),y:y+r*Math.sin(i*Math.PI/16)})

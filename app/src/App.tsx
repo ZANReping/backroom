@@ -557,7 +557,7 @@ function Game() {
         return
       }
       // 攻击 / 快捷使用（默认在鼠标键上，改绑到键盘时由此分发）
-      if (c === b.attack) engine.input.attack = true
+      if (c === b.attack && !e.repeat) { engine.input.attack = true; engine.input.attackHeld = true }
       if (c === b.quickuse) engine.quickUse()
       if (c === b.quickdrop) engine.quickDrop() // v20：Q 快捷丢弃当前手持
       // 交互：战利品面板打开时 = 拿取全部物品（而不是重新搜索该容器）；
@@ -609,6 +609,7 @@ function Game() {
       if (isHolsterKey(e.code, b)) e.preventDefault()
       if (e.code === b.jump) engine.input.jump = false // v57t：松键即停止持续上浮（深水跳跃是长按态，不能永远锁存）
       if (e.code === b.inspect) engine.inspectHeld = false
+      if (e.code === b.attack) engine.input.attackHeld = false
       if (e.code === b.reload && reloadHold) {
         const hold = reloadHold
         reloadHold = null
@@ -708,7 +709,7 @@ function Game() {
       look.locked = rawCaptureReady && document.pointerLockElement === canvas
       mouseLook.reset(performance.now())
     }
-    const onFocusChange = () => { mouseLook.reset(performance.now());look.locked=rawCaptureReady&&document.hasFocus()&&!document.hidden&&document.pointerLockElement===canvas }
+    const onFocusChange = () => { engine.input.attackHeld = false; engine.input.attack = false; engine.meleePress = null; engine.meleePending = null; engine.meleeCharge = 0; mouseLook.reset(performance.now());look.locked=rawCaptureReady&&document.hasFocus()&&!document.hidden&&document.pointerLockElement===canvas }
     // Pointer Lock's mousemove is the authoritative relative-motion stream.
     // Do not also consume pointermove/coalesced events or reconstruct movement
     // from screen coordinates: the browser can recenter its hidden OS cursor.
@@ -765,8 +766,10 @@ function Game() {
     const onMouseDown = (e: MouseEvent) => {
       if (!look.locked) return
       if (portraitBlockedRef.current || screenRef.current !== 'game' || overlayRef.current !== 'none') return
+      if (`Mouse${e.button}` === getKeybinds().attack) engine.input.attackHeld = true // 近战重制：按住蓄力
       fireDiscrete(`Mouse${e.button}`)
     }
+    const onMouseUp = (e: MouseEvent) => { if (`Mouse${e.button}` === getKeybinds().attack) engine.input.attackHeld = false }
     // 屏蔽右键菜单（游戏中右键默认用作快捷使用）
     const onContextMenu = (e: Event) => {
       if (screenRef.current === 'game') e.preventDefault()
@@ -787,6 +790,7 @@ function Game() {
     document.addEventListener('visibilitychange',onFocusChange)
     window.addEventListener(motionEvent, onMouseMove)
     window.addEventListener('mousedown', onMouseDown)
+    window.addEventListener('mouseup', onMouseUp)
     window.addEventListener('contextmenu', onContextMenu)
     window.addEventListener('wheel', onWheel, { passive: true })
 
@@ -800,6 +804,7 @@ function Game() {
       document.removeEventListener('visibilitychange',onFocusChange)
       window.removeEventListener(motionEvent, onMouseMove)
       window.removeEventListener('mousedown', onMouseDown)
+      window.removeEventListener('mouseup', onMouseUp)
       window.removeEventListener('contextmenu', onContextMenu)
       window.removeEventListener('wheel', onWheel)
     }

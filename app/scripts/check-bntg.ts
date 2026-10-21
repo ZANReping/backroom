@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict'
 import {TRADE_DEFS,tradeParts} from '../src/game/content/tradeDecor'
 import {DECOR_REGISTRY} from '../src/game/content/decorRegistry'
+import {TRADERS_ROOMS,TRADERS_DOORS} from '../src/game/content/tradersLayout'
+import {tradersFurnishingsForChunk} from '../src/game/content/tradersFurnishings'
 import {BNTG_BLUEPRINT} from '../src/game/content/bntgBlueprint'
 import {generateLevel,structColliders} from '../src/game/world/mapgen'
 import {levelDefOf} from '../src/game/levels'
@@ -19,9 +21,9 @@ for(const d of TRADE_DEFS){
 const decors=BNTG_BLUEPRINT.decorations!
 assert(decors.every(s=>DECOR_REGISTRY.some(r=>r.id===s.kind)))
 assert(!decors.some(s=>s.kind==='settlementprop'))
-assert.equal(decors.filter(s=>s.kind==='trade_shop').length,16)
-assert.equal(decors.filter(s=>s.kind==='rollerdoor').length,8)
-assert.equal(decors.filter(s=>s.kind==='trade_car').length,1)
+assert.equal(TRADERS_ROOMS.filter(r=>r.kind==='shop').length,28)
+assert.equal(TRADERS_DOORS.length,128)
+assert.equal(Array.from({length:126},(_,i)=>tradersFurnishingsForChunk(i%14,Math.floor(i/14))).flat().filter(s=>s.kind==='trade_car').length,1)
 const e={seed:424242,career:freshCareer(),rep:{bntg:20},player:{level:102,x:34,y:31},map:generateLevel(levelDefOf(102)!,424242,true),msg(){}} as unknown as Engine
 // Keep the legacy receipt protocol regression isolated from the one-time save migration.
 factionState(e,'bntg')
@@ -47,7 +49,7 @@ const cargo=e.map.structures.find(d=>d.data?.manifest==='TH-001')!;cargo.data!.s
 assert.match(performBntgAction(e,'package'),/封签不符/,'actual cargo seal required')
 const old={...freshCareer(),routes:{bntg:{...p,task:7,rank:2,points:[{x:1,y:2,level:1}],work:2,field:2}},settled:['core:bntg:6'],pending:[{id:'core:bntg:6',items:['presses']}]}
 e.career=restoreCareer(old);migrateBntg(e);assert.equal(e.career.routes.bntg!.task,7);assert.equal(e.career.routes.bntg!.rank,2);assert.equal(e.career.routes.bntg!.work,0);assert.deepEqual(e.career.settled,old.settled);assert.deepEqual(e.career.pending,old.pending)
-console.log('BNTG checks passed: 30 registered components, collisions, 16 shops / 8 cells, pause/reload, unique moving cargo, temporary permits, remote rejection, seal validation, receipts and migration.')
+console.log('BNTG checks passed: 30 registered components, collisions, 28 shops / 128 cells, pause/reload, unique moving cargo, temporary permits, remote rejection, seal validation, receipts and migration.')
 
 // New mission participation uses the existing shared-vault wire state.
 const missionState=factionState(e,'bntg')

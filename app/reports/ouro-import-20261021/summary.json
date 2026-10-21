@@ -1,0 +1,119 @@
+{
+  "root": "E:\\ZAN\\backroom",
+  "archiveSha256": "8904002506D2EBE7B7946E4677C45AB043C6227860B768C93BC5B01B0FFCBF32",
+  "bakeRevision": 19,
+  "chunks": 108,
+  "baseline": {
+    "label": "before-realistic",
+    "ok": true,
+    "mode": "realistic",
+    "entryMs": 14660.671199999997,
+    "frameMedian": 9.699999988079071,
+    "frameP95": 15.199999988079071,
+    "worstRoundP95": 16.299999997019768,
+    "calls": 350,
+    "callsRange": [
+      350,
+      840
+    ],
+    "triangles": 148783,
+    "cycles": 0,
+    "stable": true,
+    "errors": 0,
+    "failedGameRequests": 0,
+    "gpu": {
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "contextLost": false
+    },
+    "cleanup": {
+      "browser": "SIGTERM",
+      "server": "SIGTERM",
+      "profileRemoved": true
+    },
+    "checks": 10
+  },
+  "modes": [
+    {
+      "label": "final-realistic",
+      "ok": true,
+      "mode": "realistic",
+      "entryMs": 7067.3547000000035,
+      "frameMedian": 9.599999994039536,
+      "frameP95": 15.5,
+      "worstRoundP95": 16.400000005960464,
+      "calls": 314,
+      "callsRange": [
+        314,
+        559
+      ],
+      "triangles": 136013,
+      "resources": {
+        "geometries": 815,
+        "textures": 181,
+        "programs": 98
+      },
+      "cycles": 6,
+      "stable": true,
+      "errors": 0,
+      "failedGameRequests": 0,
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      },
+      "checks": 12
+    },
+    {
+      "label": "final-classic",
+      "ok": true,
+      "mode": "classic",
+      "entryMs": 5163.804200000002,
+      "frameMedian": 4.799999997019768,
+      "frameP95": 7,
+      "worstRoundP95": 9.099999994039536,
+      "calls": 300,
+      "callsRange": [
+        300,
+        300
+      ],
+      "triangles": 121479,
+      "resources": {
+        "geometries": 798,
+        "textures": 154,
+        "programs": 89
+      },
+      "cycles": 6,
+      "stable": true,
+      "errors": 0,
+      "failedGameRequests": 0,
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      },
+      "checks": 12
+    }
+  ],
+  "build": true,
+  "regressions": true,
+  "groups": 16,
+  "static": {
+    "checks": 137261,
+    "baselineSamples": 96,
+    "layoutSamples": 12,
+    "generation": 6,
+    "bakeRevision": 19,
+    "status": "passed"
+  },
+  "audit": true,
+  "cleanup": true,
+  "ok": true
+}

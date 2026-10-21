@@ -10,6 +10,7 @@
 //   悲尸 wretch / 观察者 watcher / 派对客 partygoer / 猎犬 hound / 死亡飞蛾 deathmoth / 肢团 clump
 // 新实体请先读这些 case 再动手；设定依据在 entities/ 各定义的 codex 注释里。
 import * as THREE from 'three'
+import { buildWranglerEntity } from './wranglerRender'
 import {buildNpcBoneSpear} from './npcBoneSpear'
 import { planFacelingFace } from './facelingFace'
 import { buildMothMesh } from './mothMeshes'
@@ -20,9 +21,13 @@ import { buildWretchMesh } from './wretchMesh'
 import { buildRatMesh } from './ratMesh'
 import { buildClumpMesh } from './clumpMesh'
 import { buildDullerMesh } from './dullerMesh'
+import { buildArmsMesh, buildArmsVent, armsVent } from './armsMesh'
+import { buildNguithrAnimated } from './nguithrAnim'
+import {buildNguithrNest} from './nguithrMesh'
 import { buildShrimpMesh } from './shrimpMesh'
 import { buildPartygoerMesh } from './partygoerMesh'
 import {buildJerryMesh} from './jerryMesh'
+import { buildNWMesh } from './watchRender'
 import { ENTITIES } from '../entities'
 import { box, cyl, glow, litMaterial, mulberry } from './shared'
 import { buildAvatarModel, fitLegacyAttachments } from './retroAvatar'
@@ -38,6 +43,8 @@ type PartMap = Record<string, THREE.Object3D>
 // v53：实体建模变体（L3 高智能实体：无面灵错位面部器官/石器工具、尸鼠水豚形态；seed=实体 id，保证重建一致）
 // ratMorph：尸鼠按层级固定形态——L2 灰白廊道种群 / L3 水豚（capybara 优先）/ L5 酒店正装（小西装+领结）/ 其余层级深褐（旧档「死亡鼠」）
 export interface EntityMeshOpts {
+  arms?: {count:number;seed:number}
+  nguithr?: {scale:number;seed:number;sacs:readonly unknown[]}
   partygoerColor?: import('../entities/partygoerLook').PartygoerColor
   partygoerIntern?: boolean
   partygoerBalloonArm?: 0 | 1
@@ -52,6 +59,8 @@ export interface EntityMeshOpts {
   houndNeutral?: boolean // v62：L11 中立猎犬
   wretchKind?: import('../entities/wretches').WretchKind
   l3clump?: boolean // v64：L3 高智能肢团（v65：更大的肉团、更粗的肢体、独立持械臂）
+  wranglerKind?: 'male' | 'female' | 'juvenile' // 牧蛇变种（wranglerAI 首个 tick 决定）
+  wranglerPregnant?: boolean
 }
 
 // 七层之物使用纯程序化 UV：DataTexture 在浏览器与 Node 验收脚本中都可创建，
@@ -115,10 +124,42 @@ function getThingSkinTextures() {
   thingSkinTextures = { color, bump }
   return thingSkinTextures
 }
+/** 手臂（Entité 15-FR）容器：恒等变换的外层组（渲染层每帧把它归零），子节点 armsHome = 本体风口（buildArmsVent，
+ *  anchor 上挂 buildArmsMesh）。臂数/种子在 AI 初始化后才确定，由 renderer.updateArmsMesh 按需换一副骨架；
+ *  临时风口、焦皮碎片、血迹也由渲染层按 AI 状态补进本容器（世界坐标直接摆放）。 */
+export function buildArmsEntityMesh(count = 3, seed = 1): THREE.Group {
+  const grp = new THREE.Group()
+  grp.userData.entityType = 'arms'
+  const vent = buildArmsVent()
+  vent.name = 'armsHome'
+  const arms = buildArmsMesh(count, seed)
+  armsVent(vent)!.anchor.add(arms)
+  vent.userData.armsKey = `${count}:${seed}`
+  grp.add(vent)
+  grp.userData.armsHome = vent
+  return grp
+}
+/** Nguithr'xurh 容器：恒等变换的外层组（渲染层每帧把它归零），子节点 ngSpider 为倒挂外层组（世界坐标直接摆放），
+ *  巢（buildNguithrNest）在 AI 初始化出巢种子与网囊数后由 renderer 补进来（userData.ngNest）。 */
+export function buildNguithrEntityMesh(scale = 1, count = 4, seed = 16): THREE.Group {
+  const grp = new THREE.Group()
+  grp.userData.entityType = 'nguithr'
+  const sp = buildNguithrAnimated(scale)
+  sp.name = 'ngSpider'; sp.rotation.x = Math.PI
+  grp.add(sp)
+  grp.userData.ngSpider = sp
+  grp.userData.ngScale = scale
+  const nest=buildNguithrNest(count,seed);grp.add(nest);grp.userData.ngNest=nest
+  return grp
+}
 export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Group {
+  if (type === 'arms') return buildArmsEntityMesh(opts?.arms?.count,opts?.arms?.seed) // 手臂重制：风口 + 1–3 条蒙皮长臂（armsMesh），动画由 renderer.updateArmsMesh 按 AI 状态驱动
   if(type==='jerry')return buildJerryMesh()
+  if (type === 'nguithr') return buildNguithrEntityMesh(opts?.nguithr?.scale,opts?.nguithr?.sacs.length,opts?.nguithr?.seed) // 重制 Nguithr'xurh：避日目蒙皮模型（58 骨，3 次绘制）+ 程序化动画；巢由渲染层按 AI 的巢种子补建
+  if (type === 'watcher' || type === 'strider' || type === 'mangled') return buildNWMesh(type) // 重制邻里守望 / 残缺者（WATCH-REMAKE.md）
   if (type === 'partygoer') return buildPartygoerMesh(opts?.seed ?? 0, { color: opts?.partygoerColor, intern: opts?.partygoerIntern, balloonArm: opts?.partygoerBalloonArm })
   if(type === 'deathmoth') return buildMothMesh(opts?.mothForm ?? 'male')
+  if(type === 'wrangler') return buildWranglerEntity(opts?.wranglerKind ?? 'male', !!opts?.wranglerPregnant)
   if (type === 'clump') return buildClumpMesh(!!opts?.l3clump, opts?.seed ?? 0)
   if (type === 'duller') return buildDullerMesh(opts?.seed ?? 0) // v63：重制钝人
   if (type === 'dryshrimp') return buildShrimpMesh(opts?.seed ?? 0) // v81：重制旱虾（奇虾体型，鳍片划水着色器动画）
@@ -266,29 +307,7 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
     }
     // 鹉主杰瑞（Entity 7）：已在函数开头交给 jerryMesh.buildJerryMesh（旧方块小鹦鹉移除，见 JERRY-REMAKE.md）
     // v61：'smiler' 已在函数开头交给 smilerMesh.buildSmilerMesh（旧版方块模型移除）
-    case 'arms': { // 手臂（Level 1 特有）：自天花板通风管垂下的苍白长臂，指节反曲；
-      //             停电时伸出管口猎捕（平时 hidden 缩回管内，渲染层不可见）。
-      const sk = '#c9a684', sk2 = '#b08d6a'
-      // 上臂自管口（y≈2.55，对齐 ceilvent 端口）垂下
-      const upper = joint(0.14, 0.72, 0.14, sk, 0, 2.55, 0, 'armL')
-      // 肘部反曲的前臂
-      const fore = new THREE.Group()
-      fore.position.y = -0.72; fore.rotation.x = 0.5
-      upper.add(fore)
-      fore.add(box(0.11, 0.6, 0.11, sk2, 0, -0.3, 0))
-      // 爪状手：反曲的四根长指
-      const hand = new THREE.Group()
-      hand.position.y = -0.62
-      hand.add(box(0.15, 0.17, 0.13, sk, 0, -0.06, 0))
-      for (let i = 0; i < 4; i++) {
-        const f = box(0.028, 0.24, 0.028, sk2, (i - 1.5) * 0.045, -0.22, 0.02)
-        f.rotation.x = 0.5 // 指节反曲
-        hand.add(f)
-      }
-      fore.add(hand)
-      tag(hand, 'hand')
-      break
-    }
+    // 手臂（Entité 15-FR）：已在函数开头交给 armsMesh/armsAnim（旧方块长臂移除，见 ARMS-REMAKE.md）
     // v77：'skinstealer' 已在函数开头交给 skinStealerMesh.buildSkinStealerMesh（旧版方块模型移除）
     // v62：'hound' 已在函数开头交给 houndMesh.buildHoundMesh（旧版方块模型移除）
     case 'carrier': { // 运输车：机械厢体（底盘/货厢/驾驶室/风挡/保险杠/四轮/前后灯，原生 +X）
@@ -1071,64 +1090,7 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
       grp.add(tongue); tag(tongue, 'tongue')
       break
     }
-    case 'nguithr': { // Nguithr'xurh（Entity 16）：十二条附肢的大蜘蛛——头胸 + 分节花腹 + 复眼 + 螯牙；恐怖节肢造型
-      const cephC = '#3a332c', abdC = '#57503f', abdDark = '#332d24', band1 = '#2e2820', band2 = '#8a8272'
-      const spider = new THREE.Group()
-      // 头胸部（前方，低伏）
-      const ceph = new THREE.Group()
-      ceph.position.set(0.14, 0.1, 0)
-      ceph.add(box(0.2, 0.13, 0.18, cephC, 0, 0, 0))
-      ceph.add(box(0.1, 0.08, 0.12, abdDark, 0.08, -0.02, 0)) // 吻部前伸
-      spider.add(ceph); tag(ceph, 'ceph')
-      // 复眼群（两列暗红小点，恐怖感）
-      for (const [ey, ez] of [[0.03, -0.05], [0.03, 0.05], [0.06, -0.03], [0.06, 0.03], [0.045, -0.07], [0.045, 0.07]] as const)
-        ceph.add(face(glow(0.016, 0.016, 0.016, '#7a1a12', 0.09, ey, ez)))
-      // 螯牙（向下钩）
-      for (const z of [-0.04, 0.04]) {
-        const fang = box(0.02, 0.07, 0.02, band1, 0.14, -0.06, z)
-        fang.rotation.z = 0.5
-        ceph.add(fang)
-      }
-      // 分节腹部（后拖，四节渐大，背斑花纹）
-      const abd = new THREE.Group()
-      abd.position.set(-0.02, 0.12, 0)
-      const segs: [number, number, number][] = [[-0.08, 0.16, 0.14], [-0.2, 0.2, 0.18], [-0.32, 0.22, 0.2], [-0.44, 0.18, 0.16]]
-      for (let i = 0; i < segs.length; i++) {
-        const [sx, sw, sd] = segs[i]
-        abd.add(box(sw, 0.14, sd, i % 2 ? abdDark : abdC, sx, 0, 0))
-        abd.add(box(sw * 0.7, 0.02, sd * 0.5, band1, sx, 0.08, 0)) // 背部斑纹条
-      }
-      abd.add(glow(0.04, 0.02, 0.04, '#c9b98a', -0.26, 0.09, 0)) // 背斑亮点
-      spider.add(abd); tag(abd, 'abdomen')
-      // 12 条双节附肢（每侧 6：股节上挑外展 + 胫节下垂，深浅环带相间）
-      for (let side = -1; side <= 1; side += 2) {
-        for (let i = 0; i < 6; i++) {
-          const leg = new THREE.Group()
-          const hipX = 0.14 - i * 0.075, spread = 0.12 + (i % 3) * 0.02
-          leg.position.set(hipX, 0.12, side * spread)
-          // 股节（向外上方挑）
-          const femur = box(0.02, 0.02, 0.16, i % 2 ? band1 : band2, -0.02, 0.05, side * 0.08)
-          femur.rotation.x = side * 0.55
-          leg.add(femur)
-          // 胫节（折向下垂）
-          const tibia = box(0.015, 0.18, 0.015, i % 2 ? band2 : band1, -0.02, -0.04, side * 0.17)
-          tibia.rotation.x = side * -0.15
-          leg.add(tibia)
-          leg.rotation.y = side * (0.35 - i * 0.12) // 前后展开角
-          leg.userData.baseRy = leg.rotation.y // 供动画在每帧重建摆动时保留展开角
-          spider.add(leg); tag(leg, side < 0 ? `legL${i}` : `legR${i}`)
-        }
-      }
-      tag(spider, 'spiderBody')
-      // 球状网囊（半透白网纹球 + 一根悬丝）
-      const sac = new THREE.Group()
-      sac.add(box(0.3, 0.3, 0.3, '#e8e4d8', 0, 0, 0))
-      sac.add(box(0.34, 0.02, 0.02, '#c9c4b4', 0, 0.06, 0))
-      sac.add(box(0.02, 0.02, 0.34, '#c9c4b4', 0, -0.04, 0))
-      sac.add(box(0.012, 1.2, 0.012, '#d8d4c4', 0, 0.75, 0)) // 悬丝向上
-      tag(sac, 'sacGrp')
-      break }
-    // v81：'dryshrimp' 已在函数开头交给 shrimpMesh.buildShrimpMesh（旧版方块模型移除）
+    // Nguithr'xurh（Entity 16）：已在函数开头交给 nguithrMesh/nguithrAnim（旧 12 腿方块简模移除，见 NGUITHR-REMAKE.md）
     case 'arachnid': {
       const morph = opts?.arachnidMorph ?? 'spider'
       const breed = Math.max(0, Math.floor(opts?.arachnidBreed ?? 0))

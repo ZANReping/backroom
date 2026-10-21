@@ -1,0 +1,15 @@
+
+> my-app@0.0.0 check:traders-visibility
+> esbuild scripts/check-traders-visibility.ts --bundle --platform=node --format=esm --outfile=.cache/check-traders-visibility.mjs && node .cache/check-traders-visibility.mjs
+
+
+  .cache\check-traders-visibility.mjs  1.9mb
+
+Done in 118ms
+{
+  "ok": true,
+  "coldQueryMs": 10.317499999999995,
+  "closedRoomChunks": 1,
+  "openRoomChunks": 2,
+  "scope": "actual wall/door visibility affects readiness and priority, never mesh culling"
+}

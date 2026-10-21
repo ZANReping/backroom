@@ -1,0 +1,228 @@
+{
+  "before": false,
+  "seed": 20261006,
+  "mode": "realistic",
+  "port": 13564,
+  "cdp": 13565,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\moth-watch-import-20261021\\realistic-details\\qa-1792575154159-67096",
+    "--remote-debugging-port=13565",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 35548,
+    "server": 52412
+  },
+  "appBootMs": 16283.475500000002,
+  "entryMs": 3193.1437000000005,
+  "firstPlayableMs": 27031.5203,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 9,
+    "paused": false,
+    "near": true,
+    "chunks": 6,
+    "tasks": 4,
+    "memory": {
+      "geometries": 884,
+      "textures": 157,
+      "programs": 79
+    },
+    "active": []
+  },
+  "level5": {
+    "entryMs": 7623,
+    "totalWithNestTeleportMs": 18544.70000000298,
+    "nest": "-2,-3",
+    "world": [
+      -60,
+      -100
+    ],
+    "instances": 9,
+    "memory": {
+      "geometries": 943,
+      "textures": 167,
+      "programs": 147
+    }
+  },
+  "portraits": {
+    "builds": 7,
+    "renders": 7,
+    "hits": 0,
+    "cached": 7,
+    "bytes": 1750772,
+    "queued": 0,
+    "active": null,
+    "studio": true,
+    "memory": {
+      "geometries": 5,
+      "textures": 11
+    }
+  },
+  "summary": {
+    "checks": [
+      "deterministic actual Level 5 layout contains a main nest",
+      "L5 main nest registered by actual generator",
+      "main nest interior has a safe player position",
+      "actual Level 5 nest props displayed through world view",
+      "nest eggs use instancing",
+      "actual entity archive portrait generated for male",
+      "actual entity archive portrait generated for female",
+      "actual entity archive portrait generated for larva",
+      "actual entity archive portrait generated for guard",
+      "actual entity archive portrait generated for watcher",
+      "actual entity archive portrait generated for strider",
+      "actual entity archive portrait generated for mangled"
+    ],
+    "records": [
+      {
+        "name": "level5",
+        "entryMs": 7623,
+        "totalWithNestTeleportMs": 18544.70000000298,
+        "nest": "-2,-3",
+        "world": [
+          -60,
+          -100
+        ],
+        "instances": 9,
+        "memory": {
+          "geometries": 943,
+          "textures": 167,
+          "programs": 147
+        }
+      }
+    ],
+    "status": {
+      "level": 5,
+      "paused": false,
+      "near": true,
+      "chunks": 8,
+      "tasks": 1,
+      "memory": {
+        "geometries": 1108,
+        "textures": 174,
+        "programs": 147
+      },
+      "active": []
+    }
+  },
+  "assetViews": [
+    {
+      "page": "deathmoth",
+      "view": "top",
+      "ready": true,
+      "retries": 0,
+      "budget": {
+        "male": {
+          "meshes": 1,
+          "draws": 4,
+          "tris": 6384,
+          "bones": 37
+        },
+        "female": {
+          "meshes": 1,
+          "draws": 4,
+          "tris": 6568,
+          "bones": 38
+        }
+      },
+      "cpu": false
+    },
+    {
+      "page": "deathmoth",
+      "view": "guardhead",
+      "ready": true,
+      "retries": 0,
+      "budget": {
+        "guard": {
+          "meshes": 1,
+          "draws": 4,
+          "tris": 11427,
+          "bones": 52
+        }
+      },
+      "cpu": false
+    },
+    {
+      "page": "deathmoth",
+      "view": "larva",
+      "ready": true,
+      "retries": 0,
+      "budget": {
+        "larva": {
+          "meshes": 1,
+          "draws": 4,
+          "tris": 7344,
+          "bones": 13
+        }
+      },
+      "cpu": false
+    },
+    {
+      "page": "watch",
+      "view": "eye",
+      "ready": true,
+      "retries": 0,
+      "budget": {
+        "观察者": {
+          "meshes": 1,
+          "draws": 5,
+          "tris": 13200,
+          "bones": 21
+        }
+      },
+      "cpu": false
+    },
+    {
+      "page": "watch",
+      "view": "strider",
+      "ready": true,
+      "retries": 0,
+      "budget": {
+        "挺进者": {
+          "meshes": 1,
+          "draws": 5,
+          "tris": 13514,
+          "bones": 34
+        }
+      },
+      "cpu": false
+    },
+    {
+      "page": "watch",
+      "view": "faces",
+      "ready": true,
+      "retries": 0,
+      "budget": {
+        "残缺者": {
+          "meshes": 4,
+          "draws": 5,
+          "tris": 190544,
+          "bones": 364
+        }
+      },
+      "cpu": false
+    }
+  ],
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>座椅与坐姿检查</title>
+<style>
+body{margin:0;background:#17191d;color:#ecebe5;font:16px/1.6 system-ui,sans-serif}main{max-width:1500px;margin:auto;padding:28px}h1{margin:0}p{color:#bfc2c8}section{margin:32px 0}.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}figure{margin:0}img{width:100%;height:auto;display:block;border-radius:6px}figcaption{padding:6px 0}a{color:#b9d7f1}@media(max-width:800px){.pair{grid-template-columns:1fr}}
+</style>
+<main><h1>座椅与坐姿</h1><p>同一套生产模型与交互。完整人物采用外部检查相机；第一人称、马尼拉和医疗据点使用实际游戏视角。点击图片查看原尺寸。<a href="REPORT.md">验证报告</a></p><div id="gallery"></div></main>
+<script>
+const cases=[['chair-sitting-down','坐下中段'],['chair-seated','木椅坐姿'],['chair-first-person','第一人称低头'],['chair-look-down','第一人称大幅低头'],['sofa-seated','沙发坐姿'],['bench-seated','长凳坐姿'],['office-seated','办公椅坐姿'],['chair-standing-up','起身中段'],['manila','实际马尼拉房间'],['settlement','实际医疗据点']];
+document.querySelector('#gallery').innerHTML=cases.map(([id,title])=>`<section><h2>${title}</h2><div class="pair">${[['realistic','真实光影'],['classic','经典光影']].map(([mode,label])=>{const url=`after-${mode}-acceptance/case-${id}.png`;return `<figure><a href="${url}"><img src="${url}" alt="${title} · ${label}" loading="lazy"></a><figcaption>${label}</figcaption></figure>`}).join('')}</div></section>`).join('');
+</script></html>

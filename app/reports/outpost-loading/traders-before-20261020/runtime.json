@@ -1,0 +1,212 @@
+{
+  "run": "qa-1792508587976-48548",
+  "label": "traders-before-20261020",
+  "mode": "realistic",
+  "port": 9044,
+  "cdp": 9045,
+  "profile": "E:\\ZAN\\backroom\\app\\reports\\outpost-loading\\traders-before-20261020\\qa-1792508587976-48548",
+  "levels": [
+    102
+  ],
+  "cases": [
+    {
+      "id": 102,
+      "cold": {
+        "id": 102,
+        "transition": false,
+        "loadMs": 4478.69999999553,
+        "sceneMs": 4452.39999999851,
+        "generationMs": 26.200000002980232,
+        "frames": 283,
+        "cpuTotalMs": 3784.4999999925494,
+        "cpuMaxMs": 1734.8999999985099,
+        "frameP95Ms": 15.700000002980232,
+        "firstRevealMs": [
+          6.700000002980232,
+          3.399999998509884
+        ],
+        "metrics": {
+          "buildLevel": {
+            "cpuMs": 1317.0999999567866,
+            "calls": 246159,
+            "maxMs": 613.8999999985099
+          },
+          "warmSceneTextures": {
+            "cpuMs": 8.399999991059303,
+            "calls": 28,
+            "maxMs": 3.6999999955296516
+          }
+        },
+        "compile": {
+          "calls": 103,
+          "submitMs": 105.69999999552965,
+          "maxSubmitMs": 18.5,
+          "targets": 103
+        },
+        "firstReady": {
+          "structures": 9944,
+          "lights": 124,
+          "npcs": 18,
+          "nearNpcs": 7,
+          "npcMeshes": 7,
+          "meshes": 695,
+          "instances": 11574,
+          "materials": 237,
+          "memory": {
+            "geometries": 311,
+            "textures": 71
+          },
+          "programs": 93,
+          "drawCalls": 654,
+          "triangles": 354581,
+          "spawn": {
+            "x": 40.5,
+            "y": 12.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      },
+      "survey": {
+        "frameP95Ms": 6.799999997019768,
+        "cpuP95Ms": 6,
+        "snapshot": {
+          "structures": 9944,
+          "lights": 124,
+          "npcs": 18,
+          "nearNpcs": 7,
+          "npcMeshes": 7,
+          "meshes": 695,
+          "instances": 11574,
+          "materials": 237,
+          "memory": {
+            "geometries": 311,
+            "textures": 76
+          },
+          "programs": 93,
+          "drawCalls": 88,
+          "triangles": 36339,
+          "spawn": {
+            "x": 40.5,
+            "y": 12.5,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\outpost-loading\\traders-before-20261020\\qa-1792508587976-48548",
+    "--remote-debugging-port=9045",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.85",
+    "revision": "@0e66b94549a8bd85f03fbdf189b752d6e7b63c32",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.25"
+  },
+  "pids": {
+    "server": 18956,
+    "browser": 49664
+  },
+  "setup": {
+    "mode": "realistic",
+    "viewport": [
+      1920,
+      1080
+    ],
+    "dpr": 1,
+    "seed": 424242,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "settings": {
+      "texture": 1,
+      "lights": 16,
+      "shadows": true,
+      "lightShadows": 1,
+      "loadingBudget": 6,
+      "chunkBudget": 3,
+      "detail": 1,
+      "bloom": true,
+      "ao": 1
+    }
+  },
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [],
+  "networkErrors": [
+    {
+      "requestId": "14816.484",
+      "loaderId": "5CF4C7CC8120B167784EDB42F10C84E4",
+      "timestamp": 40571.486585,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:9044/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Tue, 20 Oct 2026 15:03:32 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 168,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 9044,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 40571.474776,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.442,
+          "sendEnd": 0.503,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 10.964,
+          "receiveHeadersEnd": 11.131
+        },
+        "responseTime": 1792508612383.746,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "82650FC95C4A52736299D84FD6EA9BFC"
+    }
+  ]
+}

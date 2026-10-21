@@ -1,3 +1,4 @@
+import {drawFactionSign} from './factionSigns'
 import * as THREE from 'three'
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js'
 import type { Structure } from '../core/types'
@@ -106,8 +107,8 @@ function panelTexture(panel:AlphaPanel,text=''){
   c.strokeStyle='#8b8672';c.lineWidth=4;for(let i=0;i<11;i++){c.strokeRect(32+i*83,50+(i%4)*70,55,130);c.beginPath();c.moveTo(i*93,35);c.lineTo(i*93+36,465);c.stroke()}
   c.strokeStyle='#ad6957';c.lineWidth=4;c.beginPath();c.moveTo(64,444);c.lineTo(340,360);c.lineTo(473,170);c.lineTo(870,120);c.stroke();c.fillStyle='#474c3d';c.font='25px monospace';c.fillText('ALPHA / OPERATIONS',35,34)
  }else{
-  c.fillStyle='#343c35';c.textAlign='center';c.textBaseline='middle';c.font='bold 49px sans-serif';c.fillText(text||'M.E.G. / 014',w/2,h/2,w-36)
-  c.strokeStyle='#a49e88';c.lineWidth=4;c.strokeRect(8,8,w-16,h-16)
+  // v3: Alpha wayfinding wears the M.E.G. plate (olive enamel, stencil caps, crest) — factionSigns.ts
+  drawFactionSign(c,0,0,w,h,'meg',text||'M.E.G. / 014')
  }
  const t=new THREE.CanvasTexture(canvas);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;return t
 }

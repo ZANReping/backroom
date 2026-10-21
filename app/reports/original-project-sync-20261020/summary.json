@@ -1,0 +1,61 @@
+{
+  "targetRoot": "E:/ZAN/backroom",
+  "copyFiles": 212,
+  "backups": 42,
+  "build": true,
+  "checks": true,
+  "actualGame": {
+    "ok": true,
+    "entryMs": 8465.248599999995,
+    "gpu": {
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "contextLost": false
+    },
+    "scenes": [
+      "spawn",
+      "parking-props",
+      "garden"
+    ],
+    "runtimeErrors": 0,
+    "failedGameRequests": 0,
+    "resourceCycles": [
+      {
+        "geometries": 672,
+        "textures": 174,
+        "programs": 100
+      },
+      {
+        "geometries": 672,
+        "textures": 174,
+        "programs": 100
+      },
+      {
+        "geometries": 672,
+        "textures": 174,
+        "programs": 100
+      },
+      {
+        "geometries": 672,
+        "textures": 174,
+        "programs": 100
+      },
+      {
+        "geometries": 672,
+        "textures": 174,
+        "programs": 100
+      },
+      {
+        "geometries": 672,
+        "textures": 174,
+        "programs": 100
+      }
+    ],
+    "cleanup": {
+      "browser": "SIGTERM",
+      "server": "SIGTERM",
+      "profileRemoved": true
+    }
+  },
+  "audit": true,
+  "ok": true
+}

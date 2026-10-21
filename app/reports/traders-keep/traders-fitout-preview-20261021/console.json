@@ -1,0 +1,80 @@
+[
+  {
+    "type": "error",
+    "args": [
+      {
+        "type": "string",
+        "value": "THREE.BufferGeometryUtils: .mergeGeometries() failed with geometry at index 1. All geometries must have compatible attributes; make sure index attribute exists among all geometries, or in none of them."
+      }
+    ],
+    "executionContextId": 2,
+    "timestamp": 1792561120103.38,
+    "stackTrace": {
+      "callFrames": [
+        {
+          "functionName": "mergeGeometries",
+          "scriptId": "317",
+          "url": "http://127.0.0.1:1231/reports/traders-keep/traders-fitout-preview-20261021/qa-1792561102936-47160/vite-cache/deps/three_examples_jsm_utils_BufferGeometryUtils__js.js?v=eabfe6c8",
+          "lineNumber": 69,
+          "columnNumber": 14
+        },
+        {
+          "functionName": "finish",
+          "scriptId": "399",
+          "url": "http://127.0.0.1:1231/src/game/renderer/tradersFitoutMeshes.ts",
+          "lineNumber": 42,
+          "columnNumber": 16
+        },
+        {
+          "functionName": "buildTradersFitout",
+          "scriptId": "399",
+          "url": "http://127.0.0.1:1231/src/game/renderer/tradersFitoutMeshes.ts",
+          "lineNumber": 244,
+          "columnNumber": 4
+        },
+        {
+          "functionName": "build",
+          "scriptId": "299",
+          "url": "http://127.0.0.1:1231/src/game/renderer/tradersStream.ts",
+          "lineNumber": 72,
+          "columnNumber": 41
+        },
+        {
+          "functionName": "advance",
+          "scriptId": "319",
+          "url": "http://127.0.0.1:1231/src/game/renderer/chunkBuildQueue.ts",
+          "lineNumber": 25,
+          "columnNumber": 20
+        },
+        {
+          "functionName": "sync",
+          "scriptId": "299",
+          "url": "http://127.0.0.1:1231/src/game/renderer/tradersStream.ts",
+          "lineNumber": 47,
+          "columnNumber": 14
+        },
+        {
+          "functionName": "render",
+          "scriptId": "479",
+          "url": "http://127.0.0.1:1231/src/game/renderer/renderer.ts?import",
+          "lineNumber": 1069,
+          "columnNumber": 25
+        },
+        {
+          "functionName": "draw",
+          "scriptId": "481",
+          "url": "http://127.0.0.1:1231/verifier/outpost-loading.js",
+          "lineNumber": 37,
+          "columnNumber": 6
+        },
+        {
+          "functionName": "measure",
+          "scriptId": "481",
+          "url": "http://127.0.0.1:1231/verifier/outpost-loading.js",
+          "lineNumber": 59,
+          "columnNumber": 50
+        }
+      ]
+    }
+  }
+]

@@ -39,7 +39,7 @@ export const L3_VARIANT_LORE: Record<string, string[]> = {
   ],
   dark: [
     '晦暗廊道——灯稀疏到十几步才有一盏，光圈之间的黑暗浓得像固体。砖墙吸走手电的光，你只能听见远处配电箱的电流声和自己的脚步。',
-    '档案建议：在晦暗区段，笑魇与电弧体的目击报告显著增多。贴着有灯的一侧走，别在黑暗里停留——这里的黑暗不属于你。',
+    '档案建议：在晦暗区段，笑魇的目击报告显著增多。贴着有灯的一侧走，别在黑暗里停留——这里的黑暗不属于你。',
   ],
   assembly: [
     '装配线——极为开阔的工厂式房间：长传送带一排排延伸，带上还散落着板材与零件，吊装荧光灯把这里照成全层级最亮的地方。本层级大部分稀缺物资都堆在这类房间里。',
@@ -1150,6 +1150,29 @@ export function genL3ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
   // v58：电梯门碰撞体积——每个电梯出口壁龛格补一个仅碰撞结构（玩家/实体不再嵌进门扇平面；
   // 放在全部生成决策之后，避免影响 solidAtL 等放置判定）
   for (const e of exits) if (e.def.kind === 'elevatorshaft') pushStruct('elevdoor', e.x, e.y, 1, 1, true, false, { noSight: 1 })
+
+  // Nguithr'xurh（Entity 16）重制：约 6% 的 chunk 在天花板上结巢（略高于 L1/L2 的 4%；圣所内腔不结巢），
+  // 其中约 18% 是 2–3 只共享一片天花板的群居巢点。独立随机流（0x16e/0x16c）——不扰动本 chunk 其余生成。
+  {
+    const nr = new RNG(h32(seed, cx, cy, 0x16e))
+    if (variant !== 'sanct' && nr.chance(0.06)) {
+      const okN = (x: number, y: number) => x >= 1 && y >= 1 && x <= CS - 2 && y <= CS - 2 && isF(x, y) && tint[li(x, y)] !== 20
+        && !solidAtL(WX + x, WY + y) && !structures.some((s2) => s2.solid && WX + x >= s2.x && WX + x < s2.x + s2.w && WY + y >= s2.y && WY + y < s2.y + s2.h) && !nearSpawn(WX + x, WY + y)
+      for (let t = 0; t < 40; t++) {
+        const x = nr.int(2, CS - 3), y = nr.int(2, CS - 3)
+        if (!okN(x, y)) continue
+        entities.push({ type: 'nguithr', x: WX + x + 0.5, y: WY + y + 0.5 })
+        const cr = new RNG(h32(seed, cx, cy, 0x16c))
+        if (cr.chance(0.18)) for (let k = 0, n = cr.int(1, 2), tries = 0; k < n && tries < 24; tries++) {
+          const a = cr.range(0, Math.PI * 2), r = cr.range(2.6, 3.4)
+          const mx = Math.floor(x + 0.5 + Math.cos(a) * r), my = Math.floor(y + 0.5 + Math.sin(a) * r)
+          if (!okN(mx, my)) continue
+          entities.push({ type: 'nguithr', x: WX + mx + 0.5, y: WY + my + 0.5 }); k++
+        }
+        break
+      }
+    }
+  }
 
   const chunk = { variant, tiles, wet, elev, step, tint, crawl, structures, items, lights, exits, entities }
   finishL3Architecture(chunk,cx,cy,seed)

@@ -1,0 +1,90 @@
+{
+  "results": {
+    "under-real": {
+      "ready": true,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "retries": 0,
+      "budget": {
+        "meshes": 1,
+        "draws": 3,
+        "tris": 4674,
+        "bones": 58
+      },
+      "nest": null
+    },
+    "nest-real": {
+      "ready": true,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "retries": 0,
+      "budget": {
+        "meshes": 1,
+        "draws": 3,
+        "tris": 4674,
+        "bones": 58
+      },
+      "nest": [
+        {
+          "i": 0,
+          "state": "intact",
+          "r": 0.119,
+          "c": [
+            0.97,
+            -0.49,
+            0.44
+          ]
+        },
+        {
+          "i": 1,
+          "state": "intact",
+          "r": 0.136,
+          "c": [
+            -0.52,
+            -0.45,
+            1.17
+          ]
+        },
+        {
+          "i": 2,
+          "state": "intact",
+          "r": 0.122,
+          "c": [
+            -0.99,
+            -0.53,
+            -0.39
+          ]
+        },
+        {
+          "i": 3,
+          "state": "intact",
+          "r": 0.097,
+          "c": [
+            0.01,
+            -0.51,
+            -1.3
+          ]
+        },
+        {
+          "i": 4,
+          "state": "intact",
+          "r": 0.12,
+          "c": [
+            1.01,
+            -0.5,
+            -0.37
+          ]
+        }
+      ]
+    },
+    "anim-descend-mid": {
+      "ready": true,
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "retries": 0,
+      "budget": {
+        "clip": "descend",
+        "view": "follow"
+      },
+      "nest": null
+    }
+  },
+  "errors": []
+}

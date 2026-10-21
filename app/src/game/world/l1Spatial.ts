@@ -85,6 +85,17 @@ export function l1FindReference(seed:number,id:string,rx=1500):L1Anchor|undefine
  for(let y=-rx;y<=rx;y+=40)for(let x=-rx;x<=rx;x+=40){const r=l1RegionAt(seed,x,y);if(!r)continue;const a=l1RegionReference(seed,r as any);if(a&&a.id===id){const d=Math.hypot(a.centerX,a.centerY);if(d<bd){bd=d;best=a}}}
  return best
 }
+const SKIN_WEIGHTS:[string,number][]=[['common',3],['round',1.4],['water',1.3],['bright',1.2],['clean',1.2],['dry',1],['room',.8],['dim',1],['dark',.7]]
+/** v3: which of the nine 天鹰 reference looks a parking hall wears. A hall with a reference bay
+ * takes that photo's look everywhere; other halls draw one by weight from their region id. */
+export function l1ParkingSkin(seed:number,x:number,y:number):string{
+ const r=l1RegionAt(seed,Math.floor(x),Math.floor(y));if(!r)return 'common'
+ const a=l1RegionReference(seed,r as any)
+ if(a&&a.variant==='parking')return a.id==='power-out'?'dark':a.id==='parking-props'?'common':a.id.slice(8)
+ const total=SKIN_WEIGHTS.reduce((s,[,v])=>s+v,0);let t=l1Noise((r as any).ix0*3+(r as any).iy1,(r as any).iy0*5+(r as any).ix1,seed^0x5c1d)*total
+ for(const [k,v]of SKIN_WEIGHTS){if(t<v)return k;t-=v}
+ return 'common'
+}
 export function l1ParkingAt(seed:number,x:number,y:number){
  const ref=l1ReferenceAt(seed,x,y),id=ref?.id
  const wet=id==='parking-dry'||id==='parking-clean'||id==='parking-room'?0:id==='parking-water'?.95:id==='parking-common'||id==='parking-bright'?.7:field(seed^71,x,y,91)

@@ -1,0 +1,814 @@
+{
+  "run": "qa-1792556539278-62960",
+  "label": "traders-accepted-20261021",
+  "mode": "realistic",
+  "port": 1028,
+  "cdp": 1029,
+  "profile": "E:\\ZAN\\backroom\\app\\reports\\traders-keep\\traders-accepted-20261021\\qa-1792556539278-62960",
+  "levels": [
+    102
+  ],
+  "cases": [
+    {
+      "id": 102,
+      "cold": {
+        "id": 102,
+        "transition": false,
+        "loadMs": 4008.5999999940395,
+        "sceneMs": 3913.2999999970198,
+        "generationMs": 95.29999999701977,
+        "frames": 297,
+        "cpuTotalMs": 3213.199999883771,
+        "cpuMaxMs": 892.0999999940395,
+        "frameP95Ms": 26.400000005960464,
+        "firstRevealMs": [
+          9.300000011920929,
+          8.599999994039536
+        ],
+        "metrics": {
+          "warmSceneTextures": {
+            "cpuMs": 76.60000003874302,
+            "calls": 63,
+            "maxMs": 40.70000000298023
+          }
+        },
+        "compile": {
+          "calls": 31,
+          "submitMs": 69.90000002086163,
+          "maxSubmitMs": 9.700000002980232,
+          "targets": 31
+        },
+        "firstReady": {
+          "structures": 1431,
+          "lights": 352,
+          "npcs": 25,
+          "nearNpcs": 14,
+          "npcMeshes": 14,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 133,
+            "textures": 82
+          },
+          "programs": 74,
+          "drawCalls": 904,
+          "triangles": 395559,
+          "spawn": {
+            "x": 9,
+            "y": 109,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      },
+      "survey": {
+        "frameP95Ms": 9.600000008940697,
+        "cpuP95Ms": 9.400000005960464,
+        "snapshot": {
+          "structures": 1431,
+          "lights": 352,
+          "npcs": 25,
+          "nearNpcs": 14,
+          "npcMeshes": 14,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 175,
+            "textures": 91
+          },
+          "programs": 74,
+          "drawCalls": 158,
+          "triangles": 73175,
+          "spawn": {
+            "x": 9,
+            "y": 109,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\traders-keep\\traders-accepted-20261021\\qa-1792556539278-62960",
+    "--remote-debugging-port=1029",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.85",
+    "revision": "@0e66b94549a8bd85f03fbdf189b752d6e7b63c32",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.25"
+  },
+  "pids": {
+    "server": 65292,
+    "browser": 52944
+  },
+  "setup": {
+    "mode": "realistic",
+    "viewport": [
+      1920,
+      1080
+    ],
+    "dpr": 1,
+    "seed": 424242,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "settings": {
+      "texture": 1,
+      "lights": 16,
+      "shadows": true,
+      "lightShadows": 1,
+      "loadingBudget": 6,
+      "chunkBudget": 3,
+      "detail": 1,
+      "bloom": true,
+      "ao": 1
+    }
+  },
+  "app": {
+    "checks": [
+      "first arrival uses west gate",
+      "return destination preserved",
+      "resident population is lazy and capped",
+      "safe destination service-hall",
+      "safe destination north-bazaar",
+      "safe destination vault-corridor",
+      "safe destination food-court",
+      "safe destination empty-market",
+      "safe destination logistics",
+      "safe destination office",
+      "safe destination dormitory",
+      "safe destination rail-unopened",
+      "distant detail chunks are retired",
+      "safe destination vault-door",
+      "door interaction opens real collision: {\"open\":1,\"solid\":false,\"clear\":true,\"target\":{\"kind\":\"rollerdoor\",\"label\":\"放下 卷帘门\",\"s\":{\"kind\":\"rollerdoor\",\"x\":182.89999999999998,\"y\":84.30999999999999,\"w\":2.8,\"h\":0.18,\"solid\":false,\"data\":{\"tradersId\":\"door_storage_0\",\"tradeDoor\":1,\"tradersDoor\":1,\"axis\":\"x\",\"face\":-1,\"height\":2.7,\"careerDoor\":1,\"access\":2,\"faction\":\"bntg\",\"room\":\"storage_0\",\"open\":1}}},\"msg\":[{\"text\":\"[DEV] 已传送至 65.0, 243.0\",\"kind\":\"system\"},{\"text\":\"[DEV] 已传送至 184.3, 83.5\",\"kind\":\"system\"},{\"text\":\"卷帘门哗啦一声升起，室外的空气涌了进来。\",\"kind\":\"system\"}]}",
+      "shutter animation raises visible panels",
+      "map drag never teleports",
+      "normal map right-click safely teleports",
+      "map overview does not create all detail chunks",
+      "safe destination cycle-far-0",
+      "safe destination cycle-home-0",
+      "safe destination cycle-far-1",
+      "safe destination cycle-home-1",
+      "safe destination cycle-far-2",
+      "safe destination cycle-home-2",
+      "repeated route resource counts stabilize",
+      "new optional layout/world save fields",
+      "saved location restored with detail collision",
+      "door state survives unloading and reload",
+      "warehouse inventory preserved",
+      "legacy layout migrates to safe west gate: {\"x\":9,\"y\":109}",
+      "return gate uses the previous outpost destination",
+      "new run clears the previous Traders world"
+    ],
+    "entry": {
+      "readyMs": 3738.3999999910593,
+      "playableMs": 4978.29999999702,
+      "x": 9,
+      "y": 109,
+      "yaw": -1.5707963267948966,
+      "returnTo": 104,
+      "seed": 437604,
+      "chunks": 22,
+      "humanHomes": 160,
+      "activeNpcs": 21
+    },
+    "views": [
+      {
+        "name": "service-hall",
+        "loadMs": 1460.7000000029802,
+        "x": 23,
+        "y": 109,
+        "z": 0,
+        "ready": true,
+        "chunks": 26,
+        "built": 11,
+        "jobs": 3,
+        "peakChunks": 26,
+        "cpuChunkMaxMs": 0.3999999910593033,
+        "created": 26,
+        "activeNpcs": 29,
+        "residentDefs": 29,
+        "npcMeshes": 15,
+        "memory": {
+          "geometries": 187,
+          "textures": 110
+        },
+        "programs": 62,
+        "calls": 176,
+        "triangles": 80601
+      },
+      {
+        "name": "north-bazaar",
+        "loadMs": 4308.20000000298,
+        "x": 100,
+        "y": 42.4,
+        "z": 0,
+        "ready": true,
+        "chunks": 33,
+        "built": 23,
+        "jobs": 3,
+        "peakChunks": 33,
+        "cpuChunkMaxMs": 0.5,
+        "created": 38,
+        "activeNpcs": 15,
+        "residentDefs": 44,
+        "npcMeshes": 7,
+        "memory": {
+          "geometries": 382,
+          "textures": 114
+        },
+        "programs": 60,
+        "calls": 159,
+        "triangles": 81395
+      },
+      {
+        "name": "vault-corridor",
+        "loadMs": 20371.5,
+        "x": 190,
+        "y": 82.6,
+        "z": 0,
+        "ready": true,
+        "chunks": 40,
+        "built": 22,
+        "jobs": 3,
+        "peakChunks": 40,
+        "cpuChunkMaxMs": 0.5,
+        "created": 56,
+        "activeNpcs": 2,
+        "residentDefs": 46,
+        "npcMeshes": 0,
+        "memory": {
+          "geometries": 699,
+          "textures": 106
+        },
+        "programs": 55,
+        "calls": 253,
+        "triangles": 124297
+      },
+      {
+        "name": "food-court",
+        "loadMs": 31230.10000000894,
+        "x": 322,
+        "y": 74,
+        "z": 0,
+        "ready": true,
+        "chunks": 41,
+        "built": 19,
+        "jobs": 3,
+        "peakChunks": 42,
+        "cpuChunkMaxMs": 0.5,
+        "created": 81,
+        "activeNpcs": 5,
+        "residentDefs": 51,
+        "npcMeshes": 0,
+        "memory": {
+          "geometries": 677,
+          "textures": 109
+        },
+        "programs": 56,
+        "calls": 447,
+        "triangles": 257285
+      },
+      {
+        "name": "empty-market",
+        "loadMs": 4924.4000000059605,
+        "x": 98,
+        "y": 142,
+        "z": 0,
+        "ready": true,
+        "chunks": 41,
+        "built": 9,
+        "jobs": 3,
+        "peakChunks": 43,
+        "cpuChunkMaxMs": 0.5,
+        "created": 119,
+        "activeNpcs": 15,
+        "residentDefs": 63,
+        "npcMeshes": 0,
+        "memory": {
+          "geometries": 344,
+          "textures": 106
+        },
+        "programs": 56,
+        "calls": 156,
+        "triangles": 101465
+      },
+      {
+        "name": "logistics",
+        "loadMs": 12430,
+        "x": 205,
+        "y": 155,
+        "z": 0,
+        "ready": true,
+        "chunks": 48,
+        "built": 18,
+        "jobs": 3,
+        "peakChunks": 48,
+        "cpuChunkMaxMs": 0.5,
+        "created": 142,
+        "activeNpcs": 13,
+        "residentDefs": 76,
+        "npcMeshes": 12,
+        "memory": {
+          "geometries": 576,
+          "textures": 135
+        },
+        "programs": 62,
+        "calls": 178,
+        "triangles": 76545
+      },
+      {
+        "name": "office",
+        "loadMs": 8800.40000000596,
+        "x": 362,
+        "y": 229,
+        "z": 0,
+        "ready": true,
+        "chunks": 34,
+        "built": 11,
+        "jobs": 3,
+        "peakChunks": 50,
+        "cpuChunkMaxMs": 0.5,
+        "created": 165,
+        "activeNpcs": 26,
+        "residentDefs": 102,
+        "npcMeshes": 10,
+        "memory": {
+          "geometries": 288,
+          "textures": 146
+        },
+        "programs": 61,
+        "calls": 163,
+        "triangles": 68187
+      },
+      {
+        "name": "dormitory",
+        "loadMs": 3641.2999999970198,
+        "x": 403,
+        "y": 241,
+        "z": 0,
+        "ready": true,
+        "chunks": 28,
+        "built": 19,
+        "jobs": 3,
+        "peakChunks": 50,
+        "cpuChunkMaxMs": 0.5,
+        "created": 165,
+        "activeNpcs": 25,
+        "residentDefs": 108,
+        "npcMeshes": 23,
+        "memory": {
+          "geometries": 421,
+          "textures": 167
+        },
+        "programs": 63,
+        "calls": 255,
+        "triangles": 112887
+      },
+      {
+        "name": "rail-unopened",
+        "loadMs": 5768.5,
+        "x": 65,
+        "y": 243,
+        "z": 0,
+        "ready": true,
+        "chunks": 24,
+        "built": 8,
+        "jobs": 3,
+        "peakChunks": 50,
+        "cpuChunkMaxMs": 0.5,
+        "created": 189,
+        "activeNpcs": 0,
+        "residentDefs": 108,
+        "npcMeshes": 0,
+        "memory": {
+          "geometries": 108,
+          "textures": 141
+        },
+        "programs": 56,
+        "calls": 59,
+        "triangles": 44887
+      },
+      {
+        "name": "vault-door",
+        "loadMs": 19895,
+        "x": 184.3,
+        "y": 83.5,
+        "z": 0,
+        "ready": true,
+        "chunks": 41,
+        "built": 10,
+        "jobs": 3,
+        "peakChunks": 50,
+        "cpuChunkMaxMs": 0.5,
+        "created": 224,
+        "activeNpcs": 1,
+        "residentDefs": 108,
+        "npcMeshes": 0,
+        "memory": {
+          "geometries": 461,
+          "textures": 141
+        },
+        "programs": 56,
+        "calls": 259,
+        "triangles": 121349
+      },
+      {
+        "name": "cycle-far-0",
+        "loadMs": 7988.800000011921,
+        "x": 403,
+        "y": 241,
+        "z": 0,
+        "ready": true,
+        "chunks": 22,
+        "built": 8,
+        "jobs": 3,
+        "peakChunks": 50,
+        "cpuChunkMaxMs": 0.5,
+        "created": 262,
+        "activeNpcs": 25,
+        "residentDefs": 108,
+        "npcMeshes": 15,
+        "memory": {
+          "geometries": 188,
+          "textures": 156
+        },
+        "programs": 62,
+        "calls": 177,
+        "triangles": 63211
+      },
+      {
+        "name": "cycle-home-0",
+        "loadMs": 9728.59999999404,
+        "x": 23,
+        "y": 109,
+        "z": 0,
+        "ready": true,
+        "chunks": 26,
+        "built": 9,
+        "jobs": 3,
+        "peakChunks": 50,
+        "cpuChunkMaxMs": 3.0999999940395355,
+        "created": 288,
+        "activeNpcs": 29,
+        "residentDefs": 108,
+        "npcMeshes": 15,
+        "memory": {
+          "geometries": 174,
+          "textures": 157
+        },
+        "programs": 64,
+        "calls": 175,
+        "triangles": 75805
+      },
+      {
+        "name": "cycle-far-1",
+        "loadMs": 7976.29999999702,
+        "x": 403,
+        "y": 241,
+        "z": 0,
+        "ready": true,
+        "chunks": 22,
+        "built": 8,
+        "jobs": 3,
+        "peakChunks": 50,
+        "cpuChunkMaxMs": 3.0999999940395355,
+        "created": 310,
+        "activeNpcs": 25,
+        "residentDefs": 108,
+        "npcMeshes": 15,
+        "memory": {
+          "geometries": 189,
+          "textures": 158
+        },
+        "programs": 63,
+        "calls": 172,
+        "triangles": 60987
+      },
+      {
+        "name": "cycle-home-1",
+        "loadMs": 9536.89999999106,
+        "x": 23,
+        "y": 109,
+        "z": 0,
+        "ready": true,
+        "chunks": 26,
+        "built": 11,
+        "jobs": 3,
+        "peakChunks": 50,
+        "cpuChunkMaxMs": 3.0999999940395355,
+        "created": 336,
+        "activeNpcs": 29,
+        "residentDefs": 108,
+        "npcMeshes": 16,
+        "memory": {
+          "geometries": 210,
+          "textures": 162
+        },
+        "programs": 64,
+        "calls": 209,
+        "triangles": 96527
+      },
+      {
+        "name": "cycle-far-2",
+        "loadMs": 8452.79999999702,
+        "x": 403,
+        "y": 241,
+        "z": 0,
+        "ready": true,
+        "chunks": 22,
+        "built": 8,
+        "jobs": 3,
+        "peakChunks": 50,
+        "cpuChunkMaxMs": 3.0999999940395355,
+        "created": 358,
+        "activeNpcs": 25,
+        "residentDefs": 108,
+        "npcMeshes": 14,
+        "memory": {
+          "geometries": 187,
+          "textures": 157
+        },
+        "programs": 63,
+        "calls": 172,
+        "triangles": 60987
+      },
+      {
+        "name": "cycle-home-2",
+        "loadMs": 9289.40000000596,
+        "x": 23,
+        "y": 109,
+        "z": 0,
+        "ready": true,
+        "chunks": 26,
+        "built": 7,
+        "jobs": 3,
+        "peakChunks": 50,
+        "cpuChunkMaxMs": 3.0999999940395355,
+        "created": 384,
+        "activeNpcs": 29,
+        "residentDefs": 108,
+        "npcMeshes": 15,
+        "memory": {
+          "geometries": 156,
+          "textures": 158
+        },
+        "programs": 64,
+        "calls": 165,
+        "triangles": 66451
+      }
+    ],
+    "mapBefore": {
+      "x": 184.29999999999998,
+      "y": 83.50999999999999,
+      "z": 0,
+      "ready": true,
+      "chunks": 41,
+      "built": 10,
+      "jobs": 3,
+      "peakChunks": 50,
+      "cpuChunkMaxMs": 0.5,
+      "created": 224,
+      "activeNpcs": 1,
+      "residentDefs": 108,
+      "npcMeshes": 0,
+      "memory": {
+        "geometries": 461,
+        "textures": 141
+      },
+      "programs": 56,
+      "calls": 259,
+      "triangles": 121349
+    },
+    "cycles": [
+      {
+        "x": 23,
+        "y": 109,
+        "z": 0,
+        "ready": true,
+        "chunks": 26,
+        "built": 27,
+        "jobs": 0,
+        "peakChunks": 50,
+        "cpuChunkMaxMs": 3.0999999940395355,
+        "created": 288,
+        "activeNpcs": 29,
+        "residentDefs": 108,
+        "npcMeshes": 16,
+        "memory": {
+          "geometries": 453,
+          "textures": 165
+        },
+        "programs": 64,
+        "calls": 388,
+        "triangles": 200883
+      },
+      {
+        "x": 23,
+        "y": 109,
+        "z": 0,
+        "ready": true,
+        "chunks": 26,
+        "built": 27,
+        "jobs": 0,
+        "peakChunks": 50,
+        "cpuChunkMaxMs": 3.0999999940395355,
+        "created": 336,
+        "activeNpcs": 29,
+        "residentDefs": 108,
+        "npcMeshes": 16,
+        "memory": {
+          "geometries": 452,
+          "textures": 164
+        },
+        "programs": 64,
+        "calls": 382,
+        "triangles": 198909
+      },
+      {
+        "x": 23,
+        "y": 109,
+        "z": 0,
+        "ready": true,
+        "chunks": 26,
+        "built": 27,
+        "jobs": 0,
+        "peakChunks": 50,
+        "cpuChunkMaxMs": 3.0999999940395355,
+        "created": 384,
+        "activeNpcs": 29,
+        "residentDefs": 108,
+        "npcMeshes": 15,
+        "memory": {
+          "geometries": 453,
+          "textures": 166
+        },
+        "programs": 64,
+        "calls": 384,
+        "triangles": 198913
+      }
+    ],
+    "drift": {
+      "geometries": 1,
+      "textures": 2
+    },
+    "samples": [
+      {
+        "medianMs": 4.200000002980232,
+        "p95Ms": 5.600000008940697,
+        "cpuMedianMs": 3.2999999970197678,
+        "cpuP95Ms": 4.4000000059604645,
+        "calls": 384,
+        "triangles": 198913,
+        "memory": {
+          "geometries": 453,
+          "textures": 166
+        }
+      },
+      {
+        "medianMs": 4.200000002980232,
+        "p95Ms": 6.0999999940395355,
+        "cpuMedianMs": 3.2000000029802322,
+        "cpuP95Ms": 4,
+        "calls": 382,
+        "triangles": 198909,
+        "memory": {
+          "geometries": 453,
+          "textures": 166
+        }
+      },
+      {
+        "medianMs": 4.199999988079071,
+        "p95Ms": 5.700000002980232,
+        "cpuMedianMs": 3.1000000089406967,
+        "cpuP95Ms": 4,
+        "calls": 382,
+        "triangles": 198909,
+        "memory": {
+          "geometries": 453,
+          "textures": 166
+        }
+      },
+      {
+        "medianMs": 4.0999999940395355,
+        "p95Ms": 6,
+        "cpuMedianMs": 3.1000000089406967,
+        "cpuP95Ms": 4,
+        "calls": 382,
+        "triangles": 198909,
+        "memory": {
+          "geometries": 453,
+          "textures": 166
+        }
+      },
+      {
+        "medianMs": 4,
+        "p95Ms": 5.600000008940697,
+        "cpuMedianMs": 3.3999999910593033,
+        "cpuP95Ms": 4.299999997019768,
+        "calls": 383,
+        "triangles": 198911,
+        "memory": {
+          "geometries": 453,
+          "textures": 166
+        }
+      }
+    ],
+    "saved": {
+      "seed": 424242,
+      "mapSeed": 437604,
+      "bntgLayout": 4,
+      "worldVersion": 4
+    },
+    "restored": {
+      "x": 23,
+      "y": 109,
+      "door": 1,
+      "returnTo": 104
+    },
+    "migrated": {
+      "x": 9,
+      "y": 109
+    }
+  },
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [],
+  "networkErrors": [
+    {
+      "requestId": "50956.492",
+      "loaderId": "24293A9D120BE085C22CDB6323B3C6D1",
+      "timestamp": 88520.787987,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:1028/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Wed, 21 Oct 2026 04:22:32 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 137,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 1028,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 88520.7744,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.427,
+          "sendEnd": 0.493,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 12.829,
+          "receiveHeadersEnd": 12.931
+        },
+        "responseTime": 1792556552225.733,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "7641E0706FB4884AE34328B9AD6AD360"
+    }
+  ]
+}

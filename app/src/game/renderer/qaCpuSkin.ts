@@ -36,8 +36,11 @@ export function bakeCpuSkin(sk: THREE.SkinnedMesh) {
   sk.skeleton.update()
   const src = sk.geometry, sp = src.attributes.position as THREE.BufferAttribute, sn = src.attributes.normal as THREE.BufferAttribute | undefined
   const dp = proxy.geometry.attributes.position as THREE.BufferAttribute, dn = proxy.geometry.attributes.normal as THREE.BufferAttribute | undefined
+  // 带 morph 目标的蒙皮网格（如手臂的「伸长变细」）：先按 morphTargetInfluences 叠加位移，再做骨骼变换（与 GPU 顺序一致）
+  const morphed = !!(src.morphAttributes.position?.length && sk.morphTargetInfluences?.some((x) => x !== 0))
   for (let i = 0; i < sp.count; i++) {
-    _v.fromBufferAttribute(sp, i)
+    if (morphed) THREE.Mesh.prototype.getVertexPosition.call(sk, i, _v)
+    else _v.fromBufferAttribute(sp, i)
     if (sn && dn) { _n.fromBufferAttribute(sn, i); _a.copy(_v).addScaledVector(_n, 0.01) }
     sk.applyBoneTransform(i, _v)
     dp.setXYZ(i, _v.x, _v.y, _v.z)

@@ -1,10 +1,15 @@
+import { isMelee } from '../content/melee'
+import { finishRepair, tryRepairHeld, slotName } from './melee'
 // v53：背包/装备/物品使用（槽位读写、快捷使用/丢弃、粉笔头、迁跃浆果）——
 // 自 engine.ts 拆分，逻辑逐语句搬运。
+import { aimMothToTame, tameMoth, stopMothBleed } from './mothAI'
 import { ITEMS, itemName, itemUseProfile, type ItemUseProfile } from '../content/items'
 import { tileAt } from '../world/mapgen'
 import { audio } from '../core/audio'
 import { dullerAlmondScent } from './dullerAI'
 import {jerryLureRead,jerryInputLock} from './jerryAI'
+import {nguithrInputLock} from './nguithrAI'
+import {armsInputLock} from './armsAI'
 import { addPartyConversion, PARTY } from './partygoerAI'
 import { releaseShrimp, SHRIMP_BAIT_TIME } from './shrimpAI'
 import type { Engine, InvSlot, SlotRef, SlotWhere } from '../engine'
@@ -31,21 +36,21 @@ export function warpToBerryLevel(eng: Engine, tag?: number) {    const dest = ta
   eng.emit({ kind: 'transition', anim: 'bloom', dest })
 }
 // ---------- 背包 ----------
-export function addItem(eng: Engine, type: string): boolean {
+export function addItem(eng: Engine, type: string, extra?: Partial<InvSlot>): boolean {
   const p = eng.player
   const def = ITEMS[type]
   const tag = type === 'warpberry' ? p.level : undefined // 迁跃浆果：获得时打上当前层级标签
   const all = [...p.hotbar, ...p.backpack]
   let ok = false
-  for (const s of all) if (!ok && s && s.type === type && s.tag === tag && s.count < def.stack) { s.count++; ok = true }
-  for (let i = 0; !ok && i < p.hotbar.length; i++) if (!p.hotbar[i]) { p.hotbar[i] = { type, count: 1, ...(tag !== undefined ? { tag } : {}) }; ok = true }
-  for (let i = 0; !ok && i < p.backpack.length; i++) if (!p.backpack[i]) { p.backpack[i] = { type, count: 1, ...(tag !== undefined ? { tag } : {}) }; ok = true }
+  // 近战武器带单件耐久/血污（extra 来自地面物品），永不堆叠
+  const ex = extra && isMelee(type) ? { ...(extra.dur !== undefined ? { dur: extra.dur } : {}), ...(extra.blood ? { blood: extra.blood } : {}) } : {}
+  for (const s of all) if (!ok && s && s.type === type && s.tag === tag && s.count < def.stack && !isMelee(type)) { s.count++; ok = true }
+  for (let i = 0; !ok && i < p.hotbar.length; i++) if (!p.hotbar[i]) { p.hotbar[i] = { type, count: 1, ...(tag !== undefined ? { tag } : {}), ...ex }; ok = true }
+  for (let i = 0; !ok && i < p.backpack.length; i++) if (!p.backpack[i]) { p.backpack[i] = { type, count: 1, ...(tag !== undefined ? { tag } : {}), ...ex }; ok = true }
   if (ok) {
     eng.syncPassives()
     // v32：迁跃浆果——首次获得时记录所在层级（旧存档无标签浆果的回退传送目标；新档按格子标签传送）
     if (type === 'warpberry' && eng.warpBerryLevel === null) eng.warpBerryLevel = p.level
-    // v32：斧头——获得时重置耐久（5 点，破门消耗）
-    if (type === 'axe' && eng.axeDur <= 0) eng.axeDur = 5
   }
   return ok
 }
@@ -71,7 +76,7 @@ export function consumeItem(eng: Engine, type: string): boolean {
 }
 /** 开始使用物品。返回 true 表示进入了需要回到游戏画面播放的计时动作。 */
 export function useSlot(eng: Engine, where: SlotWhere, i: number): boolean {
-  if (jerryInputLock(eng)) return false
+  if (jerryInputLock(eng)||(nguithrInputLock(eng)||armsInputLock(eng))) return false
   if (eng.handsStowed) { eng.msg('主手已收起，取出后才能使用物品。', 'system'); return false }
   const s = eng.slotGet({ w: where, i })
   if (!s) return false
@@ -94,6 +99,7 @@ export function useSlot(eng: Engine, where: SlotWhere, i: number): boolean {
     where, i, type: s.type, tag: s.tag, t: 0, dur: profile.duration,
     anim: profile.anim, label: profile.label,
     targetJerry: !!(s.type === 'almond' && eng.player.level === 274 && !eng.jerryTamed && eng.aimJerry()),
+    targetMoth: s.type === 'almond' ? aimMothToTame(eng)?.id : undefined, // 死亡飞蛾：对准雄蛾喂杏仁水 = 驯化
   }
   audio.uiTick()
   return true
@@ -101,11 +107,11 @@ export function useSlot(eng: Engine, where: SlotWhere, i: number): boolean {
 
 /** 主循环推进消耗品动作；只有完整结束且原槽位仍是同一件物品时才结算。 */
 export function updateItemUse(eng: Engine, dt: number) {
-  if (eng.handsStowed || jerryInputLock(eng)) { eng.usingItem = null; return }
+  if (eng.handsStowed || jerryInputLock(eng)||(nguithrInputLock(eng)||armsInputLock(eng))) { eng.usingItem = null; return }
   const u = eng.usingItem
   if (!u) return
   const s = eng.slotGet({ w: u.where, i: u.i })
-  if (!s || s.type !== u.type || s.tag !== u.tag) {
+  if (!s || s.type !== u.type || s.tag !== u.tag || (u.repairSlot && s !== u.repairSlot) || (u.label === '修理' && u.where === 'hotbar' && eng.player.selected !== u.i)) { // 近战重制：修理中切走 = 中断
     eng.usingItem = null
     eng.msg('使用动作中断了。', 'system')
     return
@@ -113,10 +119,11 @@ export function updateItemUse(eng: Engine, dt: number) {
   u.t = Math.min(u.dur, u.t + dt)
   if (u.t < u.dur) return
   eng.usingItem = null
-  finishUseSlot(eng, u.where, u.i, !!u.targetJerry)
+  if (u.label === '修理' && isMelee(s.type)) { finishRepair(eng, s); return }
+  finishUseSlot(eng, u.where, u.i, !!u.targetJerry, u.targetMoth)
 }
 
-function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = false) {
+function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = false, targetMoth?: number) {
   const s = eng.slotGet({ w: where, i })
   if (!s) return
   const def = ITEMS[s.type]
@@ -164,6 +171,10 @@ function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = f
   const applyThirst = (v?: number) => { if (v) p.thirst = Math.max(0, Math.min(100, p.thirst + v)) }
   let noConsume = false // v51：人制品效应拒食——效果门控时不消耗物品
   // v45：对杰瑞给予杏仁水（Level 274 视线内 2.5m）→ 驯服鹉主，而不是自己喝掉
+  if (s.type === 'almond' && targetMoth !== undefined) {
+    const moth = eng.map?.entities.find((q) => q.id === targetMoth && !q.dead)
+    if (moth && tameMoth(eng, moth)) return
+  }
   if (s.type === 'almond' && p.level === 274 && !eng.jerryTamed && targetJerry) {
     eng.tameJerry()
     return
@@ -264,7 +275,12 @@ function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = f
       if (s.type === 'warpberry') eng.warpToBerryLevel(s.tag)
       break
     }
-    case 'heal': p.hp = Math.min(100, p.hp + (def.value ?? 30) * (eng.manmadeT > 0 ? 0.5 : 1) * (p.infection >= 300 ? 0.5 : 1)); break // v51：人制品效应中治疗减半；v55：疫疾三阶起治疗减半
+    case 'heal': if (s.type === 'bandage') stopMothBleed(eng)
+    if (s.type === 'sedgland') { // 镇静腺：天然止痛剂——回少量血、稳住理智、压下迟缓/缠丝麻痹
+      p.hp = Math.min(100, p.hp + (def.value ?? 15) * (eng.manmadeT > 0 ? 0.5 : 1)); p.sanity = Math.min(100, p.sanity + 10); p.slowT = 0; eng.webbedT = 0
+      eng.msg('微苦、发凉的分泌物滑下喉咙——疼痛像被一层棉花裹住了。（生命 +15 · 理智 +10 · 解除迟缓）', 'loot'); break
+    }
+    p.hp = Math.min(100, p.hp + (def.value ?? 30) * (eng.manmadeT > 0 ? 0.5 : 1) * (p.infection >= 300 ? 0.5 : 1)); break // v51：人制品效应中治疗减半；v55：疫疾三阶起治疗减半
     case 'cure': {
       // 消毒液：消去疫疾（v55 实装）——一阶完全清除；二阶只能退回 50；三阶起病灶入里、消毒无效；
       // 生效即获 60s「恢复」buff（阻增长 + 非感染区自然消退；重复服用重置计时）
@@ -310,7 +326,7 @@ function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = f
 // ---------- 粉笔头：在墙上画白色记号 ----------
 /** 手持粉笔头右键：在面前墙上画记号（消耗 1 支；同一墙面不重复消耗） */
 export function drawChalk(eng: Engine) {
-  if (eng.handsStowed) return
+  if (eng.handsStowed||(nguithrInputLock(eng)||armsInputLock(eng))) return
   const p = eng.player, m = eng.map!
   const ox = m.inf ? m.inf.ox : 0, oy = m.inf ? m.inf.oy : 0
   // 沿朝向由近及远探测墙面
@@ -342,7 +358,7 @@ export function drawChalk(eng: Engine) {
 // （占位则互换——v23b 曾实现后随仓库同步丢失，玩家反馈"没有实现"，此为断链修复）；
 // 武器（撬棍/扳手/木板）本就握在主手，右键提示用法；其余物品 = 使用（吃/喝/治疗…）
 export function quickUse(eng: Engine) {
-  if (eng.handsStowed) return
+  if (eng.handsStowed||(nguithrInputLock(eng)||armsInputLock(eng))) return
   const p = eng.player
   const s = p.hotbar[p.selected]
   if (!s) return
@@ -356,6 +372,7 @@ export function quickUse(eng: Engine) {
     eng.msg(`${def.name} 就握在你手里——左键把它掷出去。`, 'system')
     return
   }
+  if (isMelee(s.type)) { tryRepairHeld(eng); return } // 近战重制：右键 = 修理（耐久不足一半时）
   if (def?.weapon) {
     eng.msg(`${def.name} 就握在你手里——左键挥舞攻击（伤害 ${def.weapon}）。`, 'system')
     return
@@ -364,7 +381,7 @@ export function quickUse(eng: Engine) {
 }
 // v20：快捷丢弃当前手持物品（默认 Q，整叠丢到脚下地面；空手无效）
 export function quickDrop(eng: Engine) {
-  if (eng.handsStowed) return
+  if (eng.handsStowed||(nguithrInputLock(eng)||armsInputLock(eng))) return
   const p = eng.player
   if (!p.hotbar[p.selected]) return
   eng.dropSlot('hotbar', p.selected)
@@ -408,10 +425,10 @@ export function dropSlot(eng: Engine, where: SlotWhere, i: number) {
     eng.msg(n > 1 ? `放下了 ${n} 只活旱虾，它们慢慢爬开了。（诱饵 ${SHRIMP_BAIT_TIME} 秒）` : `放下了活旱虾，它慢慢爬开了。（诱饵 ${SHRIMP_BAIT_TIME} 秒）`, 'system')
     return
   }
-  eng.map.items.push({ id: Math.random(), type: s.type, count: s.count, x: p.x + 0.3, y: p.y + 0.3 })
+  eng.map.items.push({ id: Math.random(), type: s.type, count: s.count, x: p.x + 0.3, y: p.y + 0.3, ...(s.dur !== undefined ? { dur: s.dur } : {}), ...(s.blood ? { blood: s.blood } : {}) })
   eng.slotSet(r, null)
   eng.syncPassives()
-  eng.msg(s.count > 1 ? `丢下了 ${itemName(s.type)} ×${s.count}` : `丢下了 ${itemName(s.type)}`, 'system')
+  eng.msg(s.count > 1 ? `丢下了 ${itemName(s.type)} ×${s.count}` : `丢下了 ${slotName(s)}`, 'system')
 }
 // 卸下装备位物品到第一个空背包格（背包满则失败）
 export function unequipSlot(eng: Engine, where: SlotWhere, i: number): boolean {
@@ -456,7 +473,7 @@ export function moveSlot(eng: Engine, from: SlotRef, to: SlotRef): boolean {
   if (!fs) return false
   const ts = eng.slotGet(to)
   // v51：同类可堆叠物品拖到同一格——合并为一摞（合计不超过堆叠上限时优先于交换）
-  if (ts && ts.type === fs.type && ts.tag === fs.tag) {
+  if (ts && ts.type === fs.type && ts.tag === fs.tag && !isMelee(fs.type)) {
     const lim = ITEMS[fs.type]?.stack ?? 1
     if (lim > 1 && fs.count + ts.count <= lim) {
       if (to.w !== 'hotbar' && to.w !== 'backpack') return false // 装备位不合摞

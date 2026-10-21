@@ -6,6 +6,8 @@
 // 手部坐标系 H：握持轴 = +Y，穿过原点；手背朝 +X（右手），手腕在 +Z/+X 一侧，前臂沿 fdir 伸出画面。
 // 姿势用「H 的 X、Y 轴落到父节点的哪个方向」描述（ax / ay），再平移到 at。左手 = 右手几何沿 X 镜像。
 import * as THREE from 'three'
+import { MELEE_HOLD, meleeHandPose } from './meleeAnim'
+import type { MeleeType } from './meleeMesh'
 import { retroTexture } from './retroNpc'
 import { installL0EnvironmentShader } from './l0EnvironmentShader'
 import { installL1DynamicProbe } from './l1Probes'
@@ -427,13 +429,9 @@ export function heldBox(item: THREE.Object3D): HeldBox {
   return { min: [b.min.x, b.min.y, b.min.z], max: [b.max.x, b.max.y, b.max.z] }
 }
 export function heldHandPose(type: string, box?: HeldBox): HandPose {
+  if (type in MELEE_HOLD) return meleeHandPose(type as MeleeType) // 近战武器重制：握点/握把轴/半径见 meleeAnim.MELEE_HOLD
   switch (type) {
     case '': return VERT([0.004, -0.005, -0.03], 0, { fdir: [0.28, -0.4, 1] }) // 空手：握拳，指节朝前（出拳）
-    case 'crowbar': return VERT([0.015, -0.01, -0.08], 0.011)
-    case 'wrench': return VERT([0, -0.015, -0.06], 0.013)
-    case 'timber': return VERT([0, -0.005, -0.05], 0.02)
-    case 'knife': return VERT([0, -0.01, -0.065], 0.012)
-    case 'axe': return VERT([0.018, -0.02, -0.085], 0.015)
     case 'glowstick': return VERT([0, 0.03, -0.11], 0.011)
     case 'lighter': return VERT([0, -0.01, -0.1], 0.015)
     case 'guncandy': return VERT([0, -0.028, -0.03], 0.02, { trigger: true, ay: [0, 1, 0.12] })

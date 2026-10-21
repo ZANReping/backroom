@@ -3,12 +3,13 @@ import type {Structure} from '../core/types'
 import {tradeParts,isTradeKind,type TradePart} from '../content/tradeDecor'
 import {l1Texture} from './l1Materials'
 import {litMaterial} from './shared'
+import {drawFactionSign} from './factionSigns'
 function* buildJob(structs:Structure[],parent:THREE.Group,batching:boolean):Generator<void,void,unknown>{
  const materials=new Map<string,THREE.Material>(),geo=new THREE.BoxGeometry(1,1,1),parts:{s:Structure;p:TradePart}[]=[]
  for(const s of structs){for(const p of tradeParts(s))parts.push({s,p});yield}
  const texts=[...new Set(parts.flatMap(({p})=>p.text?[p.text]:[]))],canvas=document.createElement('canvas');canvas.width=2048;canvas.height=Math.max(128,Math.ceil(texts.length/4)*128)
  const ctx=canvas.getContext('2d')!;ctx.font='bold 30px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle'
- for(const [i,t] of texts.entries()){const x=i%4*512,y=Math.floor(i/4)*128;ctx.fillStyle='#f1d896';ctx.fillRect(x,y,512,128);ctx.fillStyle='#253e35';ctx.fillText(t,x+256,y+64,495);yield}
+ for(const [i,t] of texts.entries()){const x=i%4*512,y=Math.floor(i/4)*128;drawFactionSign(ctx,x,y,512,128,'bntg',t);yield} // v3: B.N.T.G. enamel shop fascia
  const atlas=new THREE.CanvasTexture(canvas);atlas.colorSpace=THREE.SRGBColorSpace
  const labelMat=new THREE.MeshBasicMaterial({map:atlas,side:THREE.DoubleSide});labelMat.userData.l1Owned=true;labelMat.userData.settlementLabelTexture=true
  function mat(p:TradePart){const key=p.surface+p.color;if(materials.has(key))return materials.get(key)!

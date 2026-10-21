@@ -1,10 +1,11 @@
+import { usableAxe, wearSlot, slotDur, slotMaxDur } from './melee'
+import { DUR_DOOR } from '../content/melee'
 import { actualRank, fieldTargets, recordField } from './career'
 import {bntgDoorAllowed} from './bntg'
-import {TRADE_DEFS} from '../content/tradeDecor'
 import type { CareerId } from '../content/settlementTypes'
 // v53：交互（scanInteract/doInteract/容器搜索/战利品面板/结构触发伤害/配电箱嗡鸣）——
 // 自 engine.ts 拆分，逻辑逐语句搬运；triggerStructs 返回 true 表示本帧已死亡（原 step 的 return）。
-import { bandOfZ, bandOfPlayerZ, floorHeight, groundHeightAt, structBlocksSight, l11InteractionBlocked, structColliders, wallAt, FLOOR_H } from '../world/mapgen'
+import { enableRuntimeStructCollisionIndex, bandOfZ, bandOfPlayerZ, floorHeight, groundHeightAt, structBlocksSight, l11InteractionBlocked, structColliders, wallAt, FLOOR_H } from '../world/mapgen'
 import { canOccupy, PLAYER_RADIUS } from '../core/player'
 import { CONTAINERS, CONTAINER_RARE } from '../decorations/containers'
 import { DECOR_VIEWS, GRAFFITI_LORE, GRAFFITI_LORE_KIND, BRAILLE_MARKS, GLASSWIN_TEXT } from '../decorations/lore'
@@ -233,6 +234,7 @@ export function structureInteractionProfile(s: Structure): StructureInteractionP
     case 'booth': lo = 0.1; hi = 2.05; horizontalRadius = Math.min(0.7, Math.max(0.45, Math.min(s.w, s.h) / 2)); break
     case 'server': lo = 0.1; hi = 2.22; horizontalRadius = Math.min(0.8, Math.max(0.45, Math.min(s.w, s.h) / 2)); break
     case 'vending': lo = 0.08; hi = 2.02; horizontalRadius = 0.5; break
+    case 'watercooler': lo = 0; hi = 1.42; horizontalRadius = 0.26; break
     case 'l6stairwell': lo = 0; hi = 1.5; horizontalRadius = 0.6; break
     case 'obelisk': lo = 0.1; hi = 2.85; horizontalRadius = Math.min(0.8, Math.max(0.45, Math.min(s.w, s.h) / 2)); break
     case 'corpse': lo = 0; hi = 0.28; horizontalRadius = 0.38; break
@@ -623,7 +625,7 @@ export function scanInteract(eng: Engine) {
       else if (s === eng.seating.structure) consider('stand', '起身', s, d, true)
       continue
     }
-    if (s.kind === 'settlementstation' || s.data?.facility || TRADE_DEFS.some(def=>def.id===s.kind&&def.interactive)) { consider('settlementstation', String(s.data?.label ?? '查看贸易设施'), s, d, true); continue }
+    if (s.kind === 'settlementstation' || s.data?.facility) { consider('settlementstation', String(s.data?.label ?? '查看贸易设施'), s, d, true); continue }
     if (s.kind === 'lift') { consider('lift', band === 0 ? '乘电梯 上楼' : '乘电梯 下楼', s, d, !eng.ride); continue }
     // v18：已搜空容器仍可选中（交互时提示「容器是空的」），未搜空的正常提示
     // v23：全部容器走统一表（含新增的储物柜/工具箱/行李箱/冰箱/保险箱/信箱/木桶/书柜/骨堆/营地摊位）
@@ -653,10 +655,10 @@ export function scanInteract(eng: Engine) {
       if (s.data?.sealed) consider('hoteldoor', '锁死的门（锁的结构闻所未闻）', s, d, true) // v41：L2 特殊锁死门——任何方式都打不开
       else if (s.data?.locked) {
         const staffCard = s.data?.staff === 1 && eng.hasPocket('keycard')
-        const canAxe = eng.hasItem('axe') && eng.axeDur > 0
+        const axe = usableAxe(eng), canAxe = !!axe
         const can = staffCard || eng.hasItem('crowbar') || eng.hasPocket('skeleton') || canAxe
         const label = staffCard ? '刷员工卡 打开员工门'
-          : canAxe ? `劈开 上锁的房门（斧头耐久 ${eng.axeDur}/5）`
+          : canAxe ? `劈开 上锁的房门（斧头耐久 ${slotDur(axe!)}/${slotMaxDur(axe!)}，每次 -${DUR_DOOR}）`
           : can ? '撬开 上锁的房门' : s.data?.staff === 1 ? '上锁的员工门（需要员工卡/撬棍/万能钥匙/斧头）' : '上锁的房门（需要撬棍/万能钥匙/斧头）'
         consider('hoteldoor', label, s, d, can)
       } else consider('hoteldoor', s.data?.open ? '关上 房门' : '打开 房门', s, d, true)
@@ -687,6 +689,7 @@ export function scanInteract(eng: Engine) {
     else if (s.kind === 'booth' && !eng.player.leverPulled) consider('lever', '扳动 电源拉杆', s, d, true)
     else if (s.kind === 'server' && s.locked) consider('server', '刷门禁卡 进入', s, d, eng.hasPocket('keycard'))
     else if (s.kind === 'vending') consider('vending', '使用 自动售货机', s, d, true)
+    else if (s.kind === 'watercooler') consider('watercooler', s.data?.almond && s.data?.searched !== 1 ? '接取 杏仁水' : '饮用 饮水机', s, d, true)
     else if (s.kind === 'frontdesk') consider('frontdesk', '与前台交易', s, d, true)
     else if (s.kind === 'l6stairwell') consider('l6stairwell', band === 0 ? '沿废弃楼梯井下行' : '沿废弃楼梯井返回地表', s, d, true)
     else if (s.kind === 'obelisk') consider('obelisk', '辨认 方尖碑上的字迹', s, d, true)
@@ -796,7 +799,7 @@ export function doInteract(eng: Engine) {
     case 'careerField': { recordField(eng,String(t.s?.data?.faction) as CareerId);break }
     case 'settlementstation': {
       const s=t.s!;
-      if(s.kind.startsWith('trade_')&&!s.data?.facility&&s.data?.cargoId===undefined){eng.msg(s.kind==='trade_car'?'保险库固定藏品：浅蓝色 250 GT。仅作展示，不可驾驶或搜刮。':String(s.data?.label??'贸易设施，尚未配置现场业务。'),'lore');break}
+      if(s.kind!=='settlementstation'&&!s.data?.facility)break
       const id=String(t.s?.data?.faction) as CareerId
       eng.activeStation=String(t.s?.data?.room ?? '')
       eng.emit({kind:(t.s?.data?.services as string[]|undefined)?.includes('career')?'faction':'facility',text:id})
@@ -870,7 +873,7 @@ export function doInteract(eng: Engine) {
         }
         const n = bi.count ?? 1 // 整叠丢弃的地面物品带堆叠数量
         let got = 0
-        for (let k = 0; k < n; k++) if (eng.addItem(bi.type)) got++
+        for (let k = 0; k < n; k++) if (eng.addItem(bi.type, { dur: bi.dur, blood: bi.blood })) got++
         if (got > 0) {
           if (got >= n) {
             m.items = m.items.filter((i) => i !== bi)
@@ -1089,20 +1092,15 @@ export function doInteract(eng: Engine) {
           audio.uiTick()
           eng.msg('你刷员工卡打开了员工门。', 'system')
           eng.emit({ kind: 'mpevent', mp: { t: 'door', x: s.x + (m.inf?.ox ?? 0), y: s.y + (m.inf?.oy ?? 0), open: true } })
-        } else if (eng.hasItem('axe') && eng.axeDur > 0) {
-          // v32：斧头破门——消耗 1 点耐久（共 5 点，耗尽斧头报废）
-          eng.axeDur--
+        } else if (usableAxe(eng)) {
+          // 近战重制：斧头破门——单件耐久 -8（满 40，约 5 扇门）；耗尽变残件（斧柄），可修理
+          const axe = usableAxe(eng)!
           s.data = { ...s.data, locked: 0, open: 1 }
           s.solid = false
           audio.hit()
           eng.noiseEvent(p.x, p.y, 16, true) // 破门巨响引来实体
-          if (eng.axeDur <= 0) {
-            eng.consumeItem('axe')
-            eng.axeDur = eng.hasItem('axe') ? 5 : 0
-            eng.msg('你一斧劈开了门锁——斧刃崩断，斧头报废了！', 'damage')
-          } else {
-            eng.msg(`你一斧劈开了门锁！（斧头耐久剩余 ${eng.axeDur}）`, 'system')
-          }
+          if (!wearSlot(eng, axe, DUR_DOOR)) eng.msg(`你一斧劈开了门锁！（斧头耐久 ${slotDur(axe)}/${slotMaxDur(axe)}）`, 'system')
+          else eng.msg('你一斧劈开了门锁——斧柄也跟着裂了。', 'damage')
         } else if (eng.hasPocket('skeleton')) {
           s.data = { ...s.data, locked: 0, open: 1 }
           s.solid = false
@@ -1199,6 +1197,7 @@ export function doInteract(eng: Engine) {
       }
       s.data = { ...s.data, open }
       s.solid = !open
+      if(m.traders)enableRuntimeStructCollisionIndex(m)
       eng.msg(
         open
           ? t.kind === 'rollerdoor' ? '卷帘门哗啦一声升起，室外的空气涌了进来。' : '玻璃门无声滑开。'
@@ -1215,6 +1214,7 @@ export function doInteract(eng: Engine) {
       const open = s.data?.open ? 0 : 1
       s.data = { ...s.data, open }
       s.solid = !open
+      if(m.traders)enableRuntimeStructCollisionIndex(m)
       eng.msg(open ? '墨黑色金属门吱呀一声开了——门后是一片晃眼的白。' : '你带上了墨黑色金属门。', 'system')
       audio.uiTick()
       break
@@ -1428,6 +1428,23 @@ export function doInteract(eng: Engine) {
         if (s) { s.locked = false; s.solid = false; eng.msg('服务器机房解锁了。里面有些设备。', 'loot'); eng.addItem('battery'); eng.addItem('capacitor') }
       } else eng.msg('需要门禁卡（放在口袋栏生效）。', 'system')
       break
+    }
+    case 'watercooler': {
+      // L4 v2：饮水机。约 30% 水桶里是杏仁水（Fandom：L4 的饮水机会流出杏仁水），可接取一瓶；
+      // 其余为普通清水，可饮用 4 次。状态写入 data 随区块持久化。
+      const s = t.s
+      if (!s) return
+      if (s.data?.almond && s.data?.searched !== 1) {
+        if (!eng.addItem('almond')) { eng.msg('背包已满，没地方装杏仁水。', 'system'); return }
+        s.data = { ...s.data, searched: 1 }
+        eng.msg('水桶里晃着淡黄的液体。你接满一瓶——甜腻的杏仁香。', 'loot'); audio.pickup(); break
+      }
+      const left = Number(s.data?.water ?? 4)
+      if (left <= 0) { eng.msg('水桶已经空了，出水口只滴下几滴。', 'system'); break }
+      s.data = { ...s.data, water: left - 1 }
+      p.thirst = Math.min(100, p.thirst + 20)
+      if (s.data?.almond) p.sanity = Math.min(100, p.sanity + 4)
+      eng.msg(s.data?.almond ? '你用纸杯接了点杏仁水喝下。（口渴 +20，理智 +4）' : '你用纸杯接了一杯水。冷得刚好。（口渴 +20）', 'loot'); audio.pickup(); break
     }
     case 'vending': {
       if (t.s?.data?.trade) {

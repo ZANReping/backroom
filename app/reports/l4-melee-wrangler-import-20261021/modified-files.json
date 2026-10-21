@@ -1,0 +1,233 @@
+{
+  "note": "Shared-file differences from captured start, including concurrent workspace edits; not a rollback patch.",
+  "files": [
+    {
+      "path": "app/package.json",
+      "bytes": 35277,
+      "sha256": "e18c3a32f7da6014eb429f2c5539cb3a4e443be3aa8ed6011a0c58fa3cee9e33"
+    },
+    {
+      "path": "app/scripts/check-entity-forms.ts",
+      "bytes": 5347,
+      "sha256": "eca5a30ca65460d6516249de2520725e87abeb8ffbd446323e381c6d87d7a624"
+    },
+    {
+      "path": "app/scripts/check-l4-generation.ts",
+      "bytes": 5282,
+      "sha256": "75fb7187c61c4c1d22baebf89c4fdb843fbc5438c07b50fe6037329213dd6c93"
+    },
+    {
+      "path": "app/src/App.tsx",
+      "bytes": 67159,
+      "sha256": "5c9db285c01c2d66fb263e4bdf94f47f3fc264abdeb0166b32c1fa7c7955ddbd"
+    },
+    {
+      "path": "app/src/components/entityPortrait.ts",
+      "bytes": 7073,
+      "sha256": "7e4659b47562571b16cd312d573461d77882143485a8f95b9147cae075e8c63d"
+    },
+    {
+      "path": "app/src/components/HUD.tsx",
+      "bytes": 112425,
+      "sha256": "904d66c9148bf85d2a580c90279d2ea459121387174358a7de866171671ddb55"
+    },
+    {
+      "path": "app/src/components/InventoryOverlay.tsx",
+      "bytes": 104180,
+      "sha256": "9b7c6c280d51e35c112badb9912e81ecc04fb0957492eb88de449c1b8b9ecbcd"
+    },
+    {
+      "path": "app/src/components/TouchControls.tsx",
+      "bytes": 25671,
+      "sha256": "9f2fdce0158d4bbfb2846c78f5a4b09a000640046aa99ba4a7b7f04ca9126fae"
+    },
+    {
+      "path": "app/src/game/content/decorRegistry.ts",
+      "bytes": 39489,
+      "sha256": "adb5d0e2f4cdf5174e0256e050a7c6f2a2dbbc7759ade180cb62a9cb226385c0"
+    },
+    {
+      "path": "app/src/game/content/items.ts",
+      "bytes": 30056,
+      "sha256": "7e752a4daf40f163ec50e898ed795fef9df0997cbcace33c38156b0176ef3e6e"
+    },
+    {
+      "path": "app/src/game/core/audio.ts",
+      "bytes": 104625,
+      "sha256": "a33fe3f9e1704abd354dfd75797dd44fa006be3517d13b0e9961b631d3b658d4"
+    },
+    {
+      "path": "app/src/game/core/types.ts",
+      "bytes": 27488,
+      "sha256": "0b6f3006304df87bf7823e5a827629730f80c91b4af3f0abde5ffebf0b736599"
+    },
+    {
+      "path": "app/src/game/engine/ambient.ts",
+      "bytes": 17133,
+      "sha256": "561f7cdbd3dfb381476d857c15385f186016bef02aecd0261b8f7648492b61a6"
+    },
+    {
+      "path": "app/src/game/engine/combat.ts",
+      "bytes": 42482,
+      "sha256": "b69ae58783ec8c80051401974406bb14c52c68412b2c9f246069eb75aaa3b09b"
+    },
+    {
+      "path": "app/src/game/engine/entityAI.ts",
+      "bytes": 54666,
+      "sha256": "79307acca98d60933644ab4d098123f0675a2519b360cc00dfb9ea729852ab8b"
+    },
+    {
+      "path": "app/src/game/engine/interact.ts",
+      "bytes": 86135,
+      "sha256": "fba5a7b02532a3984baf811591d4829ec09b1f89163dd48aae285c0ede221330"
+    },
+    {
+      "path": "app/src/game/engine/inventory.ts",
+      "bytes": 28858,
+      "sha256": "784969d62cad4c2045081e5d228f07476c4d97759854ec9b57656a5e60e6c385"
+    },
+    {
+      "path": "app/src/game/engine/melee.ts",
+      "bytes": 10052,
+      "sha256": "de4089244bb83c554656a4ff67c974d3ababe7d4635ce7be877babd4bad0727a"
+    },
+    {
+      "path": "app/src/game/engine/movement.ts",
+      "bytes": 36618,
+      "sha256": "801590d5edae152427aa6b06d9f7566d052b3abbc567396a38e60450567f6862"
+    },
+    {
+      "path": "app/src/game/engine/wranglerAI.ts",
+      "bytes": 41792,
+      "sha256": "2f80b7763829789a488ece33b718be1be79e1324c70e15dca9d5b2fee2028abe"
+    },
+    {
+      "path": "app/src/game/engine.ts",
+      "bytes": 67916,
+      "sha256": "9a7cee6e43efd8e79a84d3a50dcc7847cf47c3a7981bd7d602294fead88d9244"
+    },
+    {
+      "path": "app/src/game/entities/deep.ts",
+      "bytes": 27187,
+      "sha256": "3d9de05c54ca6ebd18ca46ceeadb2f715608363f6b75cb9e2cf21c7b8cbb13f1"
+    },
+    {
+      "path": "app/src/game/entities/forms.ts",
+      "bytes": 6764,
+      "sha256": "b99b58e30a7ed6730f136f24be194c72aee41a34e9f9b669c16924413a868d28"
+    },
+    {
+      "path": "app/src/game/entities/types.ts",
+      "bytes": 11870,
+      "sha256": "224e09fb99f84f0867ae66cf0131f1ea4713eceb1b329519f6fede9e4dc8154b"
+    },
+    {
+      "path": "app/src/game/levels/l4.ts",
+      "bytes": 3299,
+      "sha256": "6f2911caa9815fc6898dbbc7e8ea66009fece8e1ce4122955abffbf0dbf303c6"
+    },
+    {
+      "path": "app/src/game/levels/l8.ts",
+      "bytes": 4049,
+      "sha256": "c84454ab634145b4de1e2b980f82dc00a089edcedfca6ca7b5034248df36d9c1"
+    },
+    {
+      "path": "app/src/game/renderer/entitiesMesh.ts",
+      "bytes": 84349,
+      "sha256": "696fa38ced4d4d4f950cd21612f574643bd4fd650de5a242acacd5140861b7c2"
+    },
+    {
+      "path": "app/src/game/renderer/entityArchiveModel.ts",
+      "bytes": 5166,
+      "sha256": "81f3407b58058e12f3c5d57856cce0c65a8704dba5d865e68d27b2490bba0a68"
+    },
+    {
+      "path": "app/src/game/renderer/itemsMesh.ts",
+      "bytes": 12072,
+      "sha256": "d6c8b0782f8911c8f1dc0009f82f3cdf7428285168c8d6c6c9858fb55238e3aa"
+    },
+    {
+      "path": "app/src/game/renderer/l4Batch.ts",
+      "bytes": 3540,
+      "sha256": "f8cd205a0c849197b48d372e34711685510b7443203f39dd597237c8602d1c02"
+    },
+    {
+      "path": "app/src/game/renderer/l4Materials.ts",
+      "bytes": 6329,
+      "sha256": "df55ef524141a2f174963d2e6a02f4bda4d6a6077666edba2c134a913fdd50dd"
+    },
+    {
+      "path": "app/src/game/renderer/l4Meshes.ts",
+      "bytes": 15063,
+      "sha256": "f47080b4077b3084f258808cf6128b9ae47a639e5759711fec9d88640fe843b0"
+    },
+    {
+      "path": "app/src/game/renderer/l4OfficeDetails.ts",
+      "bytes": 9999,
+      "sha256": "47c3a5e5569834f5b05340ecbbddb2f5e2f423f71ddc5acd3757a8a6620948ae"
+    },
+    {
+      "path": "app/src/game/renderer/l4Terrain.ts",
+      "bytes": 4715,
+      "sha256": "926d91bbf4ea55ec3e78fc2b0e015ba02d3cc56b9ff515c0c452762e33c7d232"
+    },
+    {
+      "path": "app/src/game/renderer/meleeMesh.ts",
+      "bytes": 47060,
+      "sha256": "5e013e543c68c29b8b373a5a4a85f3dc6e595e62ff1242344f277f2f2d3eaa23"
+    },
+    {
+      "path": "app/src/game/renderer/renderer.ts",
+      "bytes": 332305,
+      "sha256": "945668133668b83b378567078dafdd03dd3743112ec46694e48ddbee307d330e"
+    },
+    {
+      "path": "app/src/game/renderer/retroViewHand.ts",
+      "bytes": 27774,
+      "sha256": "32663518f27f18981d6263dbb73229f83cb8fb399680de1b451b28f9c2cfea72"
+    },
+    {
+      "path": "app/src/game/renderer/viewmodel.ts",
+      "bytes": 11416,
+      "sha256": "7e81c8f0a10498e94d1c56462cb7454bdb8b573cb3512513e69a126636fc9109"
+    },
+    {
+      "path": "app/src/game/renderer/wranglerMesh.ts",
+      "bytes": 53694,
+      "sha256": "c66514cfe731383192f892f8c28e533cde9ab26e52741452784ba0bf718d6319"
+    },
+    {
+      "path": "app/src/game/world/infinite.ts",
+      "bytes": 46720,
+      "sha256": "4a43176e3cbadf265e47a457d718f9cf5bde20d5637c9a69f0300b36cb32cf49"
+    },
+    {
+      "path": "app/src/game/world/infiniteL4.ts",
+      "bytes": 6630,
+      "sha256": "546cd58787deba1909676c5883b9a7e37363e596ca65e5b463c7de17b3787848"
+    },
+    {
+      "path": "app/src/game/world/l4Layout.ts",
+      "bytes": 1845,
+      "sha256": "824d92bbbfd34bf5f97dacd14cde5b0666d0055a0bfc952f29603ad00b766b03"
+    },
+    {
+      "path": "info.md",
+      "bytes": 450298,
+      "sha256": "06e2a38026050bfefafff527a747b65156e93f78e99c76d80f6fc7728e6cc8ff"
+    }
+  ],
+  "eolPreserved": [
+    "app/package.json",
+    "app/src/game/content/decorRegistry.ts",
+    "app/src/game/content/items.ts",
+    "app/src/game/core/types.ts",
+    "app/src/game/engine.ts",
+    "app/src/game/entities/deep.ts",
+    "app/src/game/renderer/entitiesMesh.ts",
+    "app/src/game/renderer/l4Materials.ts",
+    "app/src/game/renderer/l4Meshes.ts",
+    "app/src/game/world/infinite.ts",
+    "info.md"
+  ]
+}

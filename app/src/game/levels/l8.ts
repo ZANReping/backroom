@@ -22,7 +22,7 @@ export const L8: LevelDef = {
   entryAnim: 'crawl',
   containerBias: 0.5,
   entities: [
-    { type: 'wrangler', w: 6, min: 0, max: 1 },
+    { type: 'wrangler', w: 3, min: 0, max: 1 }, // ZAN 2026-10-21：权重 6 → 3
     { type: 'camocrawler', w: 12, min: 1, max: 2 },
     { type: 'lightguide', w: 16, min: 2, max: 4 },
     { type: 'corpserat', w: 14, min: 2, max: 3 }, // v42：死亡鼠并入尸鼠（同一种群，成群 2~3）

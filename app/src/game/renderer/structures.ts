@@ -1,3 +1,5 @@
+import { l1PlanTile } from '../world/l1Plan'
+import { factionSignTexture, signStyleFor, highVoltageTexture, type SignStyle } from './factionSigns'
 import {isAlphaKind} from '../content/alphaDecor'
 import {buildAlphaDecor} from './alphaMeshes'
 import {buildL0Furniture} from './l0Furniture'
@@ -8,10 +10,11 @@ import {l3Structure} from './l3Meshes'
 import {buildL3Glass} from './l3Glass'
 import {isTradeKind} from '../content/tradeDecor'
 import {buildTradeDecor} from './tradeMeshes'
-import { buildSettlementStation } from './settlementMeshes'
+import { buildSettlementStation, buildSettlementBoard } from './settlementMeshes'
 // 结构/出口低模（按 StructKind 建造，含可动盖板/门铰链 userData 约定）
 import * as THREE from 'three'
 import { buildRatMesh, buildRatGearMesh } from './ratMesh'
+import { buildArmsVent } from './armsMesh'
 import {buildL4OldStairs} from './l4OldStairs'
 import { buildL1Column } from './l1Architecture'
 import { buildL1Prop } from './l1Props'
@@ -921,10 +924,11 @@ function exitSignTexture(): THREE.Texture {
 
 // v55：墙面字牌程序纹理（wallsign 用——房号/「员工专用」/「Beverly Room」等；gold=金底描金酒店牌）。
 // 动态文本无磁盘贴图——走独立缓存（levelTexture 会先尝试纹理文件、动态名必然 404）
-const signTexCache = new Map<string, THREE.Texture>()
-function signTexture(text: string, gold: boolean): THREE.Texture {
+const legacySignCache = new Map<string, THREE.Texture>()
+/** Original 128×40 plate, kept for L5 (user: L4/L5 signs unchanged). */
+function legacySignTexture(text: string, gold: boolean): THREE.Texture {
   const key = `${text}|${gold ? 'g' : 'd'}`
-  const hit = signTexCache.get(key)
+  const hit = legacySignCache.get(key)
   if (hit) return hit
   const [cv, c] = makeCanvasCtx(128, 40)
   c.fillStyle = gold ? '#3a2c12' : '#22252a'
@@ -938,9 +942,14 @@ function signTexture(text: string, gold: boolean): THREE.Texture {
   c.textBaseline = 'middle'
   c.fillText(text, 64, 21)
   const t = toTex(cv)
-  signTexCache.set(key, t)
+  legacySignCache.set(key, t)
   return t
 }
+function signTexture(text: string, gold: boolean, style?: SignStyle, aspect = 3.2): THREE.Texture {
+  // v3: faction-styled plates (factionSigns.ts) instead of the 128×40 flat text card
+  return factionSignTexture(style ?? (gold ? 'brass' : 'industrial'), text, aspect)
+}
+
 
 function mergedL10Crop(parts: { g: THREE.BufferGeometry; c: string }[]): THREE.Mesh {
   for (const { g, c } of parts) {
@@ -1200,7 +1209,7 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
   if(_def.id===0){const furniture=buildL0Furniture(s);if(furniture)return furniture}
   if(isAlphaKind(s.kind))return m.settlement?.blueprint.id==='alpha'?null:buildAlphaDecor(s)
   if(isTradeKind(s.kind))return m.settlement?.blueprint.decorations&&s.kind!=='trade_anomaly'?null:buildTradeDecor(s)
-  if(s.kind === 'settlementprop') return null
+  if(s.kind === 'settlementprop') return s.data?.board?buildSettlementBoard(s):null
   if(s.kind === 'settlementstation') return buildSettlementStation(s)
   if(s.data?.l1Prop){const prop=buildL1Prop(s);if(prop)return prop}
   if(s.data?.l1Column)return buildL1Column(s,m.inf?.ox??0,m.inf?.oy??0)
@@ -1896,10 +1905,13 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       break
     }
     case 'ceilvent': {
-      // v33：自天花板向下伸出的通风管道（Level 1；停电时「手臂」由此伸出猎捕）——少量出现于常规区段
-      grp.add(box(0.55, 0.8, 0.55, '#4a4a4e', 0, CH - 0.4, 0)) // 垂下的管体
-      grp.add(box(0.64, 0.07, 0.64, '#3a3a3e', 0, CH - 0.83, 0)) // 端口边框
-      for (let i = 0; i < 3; i++) grp.add(box(0.5, 0.035, 0.07, '#202023', 0, CH - 0.87, -0.17 + i * 0.17)) // 百叶栅格
+      // 天花板通风管（Level 1）。手臂重制：有手臂入住的风口（data.arms=1）由手臂实体自己渲染（同一套 buildArmsVent，
+      // 格栅随动画推开/猛关，管道朝向按 AI 的管道规划旋转），这里不再画，避免两套管体重叠；
+      // 没有手臂的风口（设计模式布局等）画同一个新模型（格栅关闭），管口高度 = 天花板 − ARMS_VENT_DROP，与手臂锚点一致。
+      if (s.data?.arms) break
+      const vent = buildArmsVent()
+      vent.position.y = CH
+      grp.add(vent)
       break
     }
     case 'rebar': {
@@ -2770,6 +2782,8 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       // 高压警示牌（贴墙，强制贴最近墙不浮空）：黄白牌 + 黑色闪电折线 + 编号小牌；data.tilt 微倾
       const inner = new THREE.Group()
       grp.add(inner)
+      // v3: real enamel high-voltage plate (factionSigns.highVoltageTexture) instead of box glyphs
+      if (_def.id === 5) { // L5 keeps its original box-built plate (user: L4/L5 signs unchanged)
       inner.add(box(0.4, 0.5, 0.02, '#d8c94a', 0, 1.6, 0)) // 黄牌
       const boltA = box(0.045, 0.2, 0.014, '#16161a', 0.04, 1.74, 0.014)
       boltA.rotation.z = 0.5
@@ -2780,6 +2794,10 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       inner.add(box(0.3, 0.03, 0.014, '#16161a', 0, 1.46, 0.014)) // 三角底边
       inner.add(box(0.2, 0.09, 0.015, '#e8e4da', 0, 1.32, 0.012)) // 编号牌
       inner.add(box(0.14, 0.02, 0.017, '#16161a', 0, 1.32, 0.013))
+      } else {
+      inner.add(box(0.42, 0.53, 0.018, '#8a7a2a', 0, 1.6, 0))
+      { const face = new THREE.Mesh(new THREE.PlaneGeometry(0.4, 0.5), new THREE.MeshLambertMaterial({ map: highVoltageTexture(String(10 + Math.abs(Math.floor(s.x * 7 + s.y * 13)) % 89)) })); face.position.set(0, 1.6, 0.0105); inner.add(face) }
+      }
       const tilt = Number(s.data?.tilt ?? 0)
       if (tilt) inner.rotation.z = (tilt - 1.5) * 0.06 // 微倾变体
       mountOnWall(inner, grp, s, m)
@@ -3849,17 +3867,10 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       grp.add(cyl(0.035, 0.045, 2.0, '#7a7570', 0, 1.0, 0, 6))
       const bd = new THREE.Group()
       bd.position.y = 1.72
-      bd.add(box(0.66, 0.5, 0.05, '#d8d2c4', 0, 0, 0))
-      for (const zz of [0.031, -0.031]) { // 双面
-        const em = megEmblem(0.15, '#2e4a6a')
-        em.position.set(-0.19, 0, zz)
-        if (zz < 0) em.rotation.y = Math.PI
-        bd.add(em)
-        for (let i = 0; i < 3; i++) {
-          const bar = box(0.3, 0.035, 0.012, '#3a3a3c', 0.11, 0.11 - i * 0.1, zz)
-          bd.add(bar)
-        }
-      }
+      bd.add(box(0.68, 0.52, 0.05, '#4c5341', 0, 0, 0))
+      // v3: M.E.G.-maintained avenue marker plate, numbered (was emblem + three dark bars)
+      { const t = factionSignTexture('meg', `第九大道 / NINTH AVE · ${String(Number(s.data?.seq ?? 0) + 1).padStart(2, '0')}${s.data?.final ? ' · END' : ''}`, 0.66 / 0.5)
+        for (const zz of [0.0255, -0.0255]) { const f = new THREE.Mesh(new THREE.PlaneGeometry(0.66, 0.5), new THREE.MeshLambertMaterial({ map: t })); f.position.z = zz; if (zz < 0) f.rotation.y = Math.PI; bd.add(f) } }
       grp.add(bd)
       break
     }
@@ -5121,7 +5132,9 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       // 维护通廊墨黑色金属门：嵌在墙洞里的门框（双立柱 + 门楣 + 门槛，横跨 2 格门洞）
       // + 一扇向走廊内敞开的门扇——一眼即知「这是门，而且能过」。
       // 标准朝向：通行沿本地 x 轴（门框平面垂直 x）；data.rot=1 旋转 90°（通行沿本地 z 轴）。
-      const ink = '#14161a', ink2 = '#1c1f24'
+      // v3.2 衔尾段：参考图里是米黄色木门与外露门框（其余区段保持墨黑金属门）
+      const ouroDoor = !!s.data?.l1PathDoor && !!m.inf && [-1.5, 0, 1.5].some(d => l1PlanTile(m.inf!.seed, s.x + s.w / 2 + m.inf!.ox + (s.data?.rot ? 0 : d), s.y + s.h / 2 + m.inf!.oy + (s.data?.rot ? d : 0)).style === 'ouroboros')
+      const ink = ouroDoor ? '#b8a77a' : '#14161a', ink2 = ouroDoor ? '#a8986c' : '#1c1f24'
       const doorH = s.data?.l1PathDoor ? 2.2 : H * 0.78
       grp.add(box(0.5, doorH, 0.24, ink, 0, doorH / 2, -0.95)) // 门洞两侧立柱（跨 2 瓦片）
       grp.add(box(0.5, doorH, 0.24, ink, 0, doorH / 2, 0.95))
@@ -5140,7 +5153,7 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       grp.add(glow(0.32, 0.05, 0.05, '#3ae06a', 0, doorH + 0.32, 0)) // EXIT 绿色底光
       // 门扇：初始关闭（恰好覆盖门洞），铰链在 +z 侧立柱；
       // userData.lid 由 renderer.updateStructs 驱动——交互开门后向走廊内旋开至 ~106°
-      const leaf = box(0.08, doorH - 0.18, 1.7, '#181b20', 0, 0, 0)
+      const leaf = box(0.08, doorH - 0.18, 1.7, ouroDoor ? '#d9c792' : '#181b20', 0, 0, 0)
       leaf.geometry.translate(0, 0, -0.85) // 铰链边移到局部 z=0
       leaf.position.set(0.06, doorH / 2, 0.86)
       leaf.userData.lid = 1
@@ -6261,7 +6274,7 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
         grp.add(box(.08,1.64,.08,'#73766b',0,.82,0))
         grp.add(box(1.8,.56,.07,'#38493f',0,1.9,0))
         for(const dir of [-1,1]){
-          const mat=new THREE.MeshBasicMaterial({map:signTexture(String(s.data.text??''),false)});mat.userData.l1Owned=true
+          const mat=new THREE.MeshBasicMaterial({map:signTexture(String(s.data.text??''),false,signStyleFor(String(s.data.org??'meg')),1.72/.48)});mat.userData.l1Owned=true
           const face=new THREE.Mesh(new THREE.PlaneGeometry(1.72,.48),mat)
           face.position.set(0,1.9,dir*.039);face.rotation.y=dir<0?Math.PI:0;grp.add(face)
         }
@@ -6285,7 +6298,7 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       inner.add(box(0.6, 0.03, 0.025, gold ? '#6a541f' : '#2a2d30', 0, 1.49, 0)) // 牌框下沿
       const panel = new THREE.Mesh(
         new THREE.PlaneGeometry(0.52, 0.16),
-        new THREE.MeshBasicMaterial({ map: signTexture(txt, gold), transparent: true }),
+        new THREE.MeshBasicMaterial({ map: _def.id === 5 ? legacySignTexture(txt, gold) : signTexture(txt, gold), transparent: true }),
       )
       panel.position.set(0, 1.6, 0.013)
       inner.add(panel)
@@ -6464,6 +6477,21 @@ export function buildExit(kind: string, def: LevelDef, structure?: Structure): T
       break
     }
     case 'freight': case 'elevatorshaft': case 'stafflift': case 'servicelift': {
+      if(def.id===4&&kind==='elevatorshaft'){
+        grp.name='l4-wall-elevator'
+        // Fill the carved 3m bay; the 1.76m door sits behind its front jambs.
+        for(const sign of [-1,1]){
+          grp.add(box(.60,2.9,1,'#c9c7bf',sign*1.2,1.45,0))
+          grp.add(box(.14,2.5,.16,'#2f3236',sign*.81,1.25,-.42))
+        }
+        grp.add(box(1.8,.34,1,'#c9c7bf',0,2.73,0))
+        grp.add(box(1.76,.18,.16,'#2f3236',0,2.54,-.42))
+        grp.add(box(1.55,2.42,.14,'#4a4d52',0,1.21,-.23))
+        grp.add(box(.04,2.36,.02,'#24292d',0,1.20,-.31))
+        grp.add(box(1.6,.025,.72,'#41464a',0,.013,-.12))
+        const indicator=new THREE.Mesh(new THREE.BoxGeometry(.25,.08,.03),pulseMat());indicator.position.set(0,2.54,-.515);grp.add(indicator)
+        break
+      }
       // 金属电梯门 + 指示灯（v51：门框 + 门扇凹进框面 0.12——L3 嵌墙电梯观感）
       grp.add(box(0.2, 2.5, 0.2, '#2f3236', -0.78, 1.25, -0.18)) // 门框立柱
       grp.add(box(0.2, 2.5, 0.2, '#2f3236', 0.78, 1.25, -0.18))

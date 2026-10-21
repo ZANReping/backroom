@@ -1,4 +1,6 @@
 // 游戏 HUD（桌面 + 移动端自适应）
+import { isMelee } from '../game/content/melee'
+import { slotDur, slotMaxDur, slotName } from '../game/engine/melee'
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import type { Engine } from '@/game/engine'
@@ -33,13 +35,18 @@ import { IconHP, IconStamina, IconHunger, IconThirst, IconSanity, IconBattery, I
 import { PHENOMENA, rarityText } from '@/game/content/phenomena'
 import MegQuestTracker from './MegQuestTracker'
 import AlphaMapPanel from './AlphaMapPanel'
+import TradersMapPanel from './TradersMapPanel'
+import {drawTradersMap} from '@/game/content/tradersMap'
 import L11MapPanel, { L11Minimap } from './L11MapPanel'
 import DevExitTools from './DevExitTools'
 import {drawL0Map} from '@/game/content/l0Map'
 import {drawL1Map} from '@/game/content/l1Map'
+import {drawL4Map} from '@/game/content/l4Map'
 import { drawMapPlayer } from '@/game/content/mapPlayer'
 import { mapSight } from '@/game/world/mapSight'
 import { jerryOverlay, jerryLureMarks } from '@/game/engine/jerryAI'
+import { armsOverlay, armsStruggleTap } from '@/game/engine/armsAI'
+import { nguithrOverlay } from '@/game/engine/nguithrAI'
 
 // 现象图标映射（phenomena.ts 中 def.icon → 具体 SVG 组件）
 const PHEN_ICON = { isolation: IconIsolation, plant: IconPlant, flicker: IconStamina } as const
@@ -101,6 +108,7 @@ function LegacyMinimap({ engine, size }: { engine: Engine; size: number }) {
     const g = c.getContext('2d')!
     const k = size / 140 // 标记随尺寸缩放
     c.width = size; c.height = size
+    if (m.traders) { drawTradersMap(g,m,{width:size,height:size,centerX:engine.player.x,centerY:engine.player.y,scale:size/72,playerX:engine.player.x,playerY:engine.player.y,yaw:look.yaw,sight:mapSight(engine,look.yaw),mini:true}); return }
     if (m.settlement?.blueprint.id === 'alpha') { drawAlphaMap(g, size, engine.player, { mini: true, yaw: look.yaw, sight: mapSight(engine, look.yaw) }); return }
     // ---- v17：无限模式（L0）——以玩家为中心显示已探索 chunk（窗口内读实时探索，窗口外读持久位图）----
     if (m.inf) {
@@ -115,10 +123,10 @@ function LegacyMinimap({ engine, size }: { engine: Engine; size: number }) {
       const wx0 = Math.floor(inf.ox + px), wy0 = Math.floor(inf.oy + py)
       const mod = (v: number, n: number) => ((v % n) + n) % n
       g.fillStyle = '#0a0908'; g.fillRect(0, 0, size, size)
-      if(inf.l0||m.l1Architecture){
+      if(inf.l0||m.l1Architecture||engine.levelDef.id===4){
         g.save();g.translate((half-px)*s,(half-py)*s)
         const view={x0:px-half,y0:py-half,x1:px+half,y1:py+half,scale:s}
-        if(inf.l0)drawL0Map(g,engine,view);else drawL1Map(g,engine,view)
+        if(inf.l0)drawL0Map(g,engine,view);else if(engine.levelDef.id===4)drawL4Map(g,engine,view);else drawL1Map(g,engine,view)
         g.restore()
       }else{
       for (let dy = -half; dy < half; dy++)
@@ -349,6 +357,13 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
   const [mapOpen, setMapOpen] = useState(false)
   // v29b：快捷栏 touchstart 直触后抑制紧随其后的合成 click（React 根委托为 passive，不能 preventDefault）
   const hotbarTouchT = useRef(0)
+  // 手臂（Entité 15-FR）：被抓时触屏「点屏幕任意处」也算一次挣扎（捕获阶段、passive，不拦截摇杆/按钮本身的触摸）
+  useEffect(() => {
+    if (!isMobile) return
+    const onTouch = () => armsStruggleTap(engine)
+    window.addEventListener('touchstart', onTouch, { capture: true, passive: true })
+    return () => window.removeEventListener('touchstart', onTouch, { capture: true })
+  }, [isMobile, engine])
   const bigMapSize = Math.max(180, Math.floor(Math.min(window.innerHeight - 96, window.innerWidth * 0.45, 360)))
 
   // 当前区域名（无限层=所在区段/变种房间；据点=所在区域；其余层级不显示）
@@ -452,7 +467,8 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
         <div
           className="hud-hotbar-name font-mono2 px-2 py-0.5 text-[11px]"
         >
-          {ITEMS[p.hotbar[p.selected]!.type]?.name ?? p.hotbar[p.selected]!.type}
+          {slotName(p.hotbar[p.selected]!)}
+          {isMelee(p.hotbar[p.selected]!.type) && <span style={{ color: 'var(--text-dim)' }}> {slotDur(p.hotbar[p.selected]!)}/{slotMaxDur(p.hotbar[p.selected]!)}</span>}
         </div>
       )}
       <div className="hud-hotbar-row flex gap-1">
@@ -480,6 +496,12 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
             <>
               <ItemGlyph type={s.type} count={s.count} />
               {s.count > 1 && <span className="font-mono2 absolute bottom-0 right-0.5 text-[9px]" style={{ color: 'var(--amber)' }}>{s.count}</span>}
+              {isMelee(s.type) && (() => { // 近战重制：耐久条（≤25% 变红，残件灰）
+                const k = slotDur(s) / slotMaxDur(s)
+                return <span className="absolute bottom-0.5 left-1 right-1 h-[3px]" style={{ background: 'rgba(0,0,0,.45)' }}>
+                  <span className="block h-full" style={{ width: `${Math.max(k > 0 ? 6 : 100, k * 100)}%`, background: k <= 0 ? '#5a5650' : k <= .25 ? '#c0392b' : k <= .5 ? '#d9a13a' : '#8fbf6a' }} />
+                </span>
+              })()}
             </>
           )}
         </button>
@@ -793,7 +815,33 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
       {p.flashJamT > 0 && (
         <div className="hud-panel font-mono2 absolute left-1/2 top-14 -translate-x-1/2 px-3 py-1 text-[11px]" style={{ color: 'var(--sanity)' }}>⚡ 手电瘫痪 {p.flashJamT.toFixed(1)}s</div>
       )}
-      {/* v51：Nguithr'xurh 镇静剂麻痹——视野模糊（毛玻璃覆盖层） */}
+      {/* 手臂（Entité 15-FR）：被拖进风口的黑屏 / 被抓时的挣扎提示（按设备区分，桌面键位取自自定义绑定）/ 挣脱提示 */}
+      {(() => {
+        const ao = armsOverlay(engine)
+        return <>
+          {ao.black > 0.01 && <div data-arms-black={ao.black.toFixed(2)} className="pointer-events-none fixed inset-0 z-[34]" style={{ background: '#000', opacity: Math.min(1, ao.black) }} />}
+          {ao.grabbed && <>
+            <div className="pointer-events-none fixed inset-0 z-[31]" style={{ background: 'radial-gradient(ellipse at center, rgba(0,0,0,0) 45%, rgba(70,8,4,0.55) 100%)' }} />
+            <div data-arms-struggle className="pointer-events-none fixed inset-x-0 top-[60%] z-[35] text-center text-[15px]" style={{ color: 'rgba(240,226,200,0.92)', textShadow: '0 1px 6px #000' }}>
+              {isMobile ? '它在把你往风口里拖！连点屏幕任意处、按「跳」或左右甩动摇杆挣扎' : `它在把你往风口里拖！连按【${bindLabelFor('jump')}】或交替按【${bindLabelFor('left')}】【${bindLabelFor('right')}】挣扎`}
+            </div>
+            <div className="pointer-events-none fixed left-1/2 top-[65%] z-[35] h-[7px] w-[220px] -translate-x-1/2 overflow-hidden rounded-sm" style={{ background: 'rgba(0,0,0,0.55)', border: '1px solid rgba(220,200,170,0.35)' }}><div style={{ width: `${Math.min(100, ao.struggle / ao.need * 100).toFixed(1)}%`, height: '100%', background: '#d98a5a' }} /></div>
+          </>}
+          {ao.freed && <div className="pointer-events-none fixed inset-x-0 top-[30%] z-[33] text-center text-[15px]" style={{ color: 'rgba(230,226,200,0.85)', textShadow: '0 1px 6px #000' }}>你挣脱了——快离开风口下面，或者用光照它。</div>}
+        </>
+      })()}
+      {/* Nguithr'xurh 重制：轻度镇静（视野发雾、含糊提示）/ 重度镇静（画面变暗、无法移动、摇晃身体挣脱） */}
+      {(() => {
+        const no = nguithrOverlay(engine)
+        if (no.level === 'none') return no.freed ? <div className="pointer-events-none fixed inset-x-0 top-[30%] z-[33] text-center text-[15px]" style={{ color: 'rgba(230,226,200,0.85)', textShadow: '0 1px 6px #000' }}>你挣脱了——快离开天花板下面。</div> : null
+        const heavy = no.level === 'heavy'
+        return <>
+          <div data-nguithr-sedation={no.level} className="pointer-events-none fixed inset-0 z-[30]" style={{ backdropFilter: `blur(${no.blur.toFixed(2)}px) brightness(${(1 - no.dark).toFixed(3)}) saturate(${heavy ? 0.45 : 0.8})`, WebkitBackdropFilter: `blur(${no.blur.toFixed(2)}px) brightness(${(1 - no.dark).toFixed(3)}) saturate(${heavy ? 0.45 : 0.8})`, background: `radial-gradient(ellipse at center, rgba(222,214,180,${(no.fog * 0.35).toFixed(3)}) 0%, rgba(206,198,160,${(no.fog * 0.6).toFixed(3)}) 70%, rgba(${heavy ? '10,8,4' : '190,182,150'},${(heavy ? 0.75 : no.fog * 0.7).toFixed(3)}) 100%)` }} />
+          <div className="pointer-events-none fixed inset-x-0 top-[62%] z-[33] text-center text-[14px]" style={{ color: heavy ? 'rgba(236,228,196,0.9)' : 'rgba(220,214,190,0.55)', textShadow: '0 1px 6px #000', filter: heavy ? 'none' : 'blur(0.6px)' }}>{no.hint}</div>
+          {heavy && <div className="pointer-events-none fixed left-1/2 top-[67%] z-[33] h-[7px] w-[220px] -translate-x-1/2 overflow-hidden rounded-sm" style={{ background: 'rgba(0,0,0,0.55)', border: '1px solid rgba(220,210,170,0.35)' }}><div style={{ width: `${Math.min(100, no.struggle / no.need * 100).toFixed(1)}%`, height: '100%', background: '#d9c46a' }} /></div>}
+        </>
+      })()}
+      {/* 缠丝麻痹（死亡飞蛾守卫）——视野模糊（毛玻璃覆盖层） */}
       {engine.webbedT > 0 && (
         <div className="pointer-events-none fixed inset-0 z-[30]" style={{ backdropFilter: 'blur(3px) brightness(0.92)', WebkitBackdropFilter: 'blur(3px) brightness(0.92)' }} />
       )}
@@ -876,8 +924,10 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
           >
             {engine.player.level === 11 && engine.map?.inf
               ? <L11MapPanel engine={engine} compact />
-              : engine.map?.settlement?.blueprint.id === 'alpha'
-                ? <AlphaMapPanel engine={engine} compact />
+              : engine.map?.traders
+                ? <TradersMapPanel engine={engine} compact />
+                : engine.map?.settlement?.blueprint.id === 'alpha'
+                  ? <AlphaMapPanel engine={engine} compact />
                 : <Minimap engine={engine} size={bigMapSize} />}
             {/* v13：当前楼层标注（多楼层契约存在时） */}
             {floorInfo && !(engine.player.level === 11 && engine.map?.inf) && (
@@ -885,7 +935,7 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
                 L{dispId} · {def.name} · 当前 {floorInfo.cur + 1}F / 共{floorInfo.total}层
               </div>
             )}
-            {engine.map?.settlement?.blueprint.id !== 'alpha' && !(engine.player.level === 11 && engine.map?.inf) && <div className="font-mono2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>
+            {!engine.map?.traders && engine.map?.settlement?.blueprint.id !== 'alpha' && engine.levelDef.id !== 4 && !(engine.player.level === 11 && engine.map?.inf) && <div className="font-mono2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px]" style={{ color: 'var(--text-dim)' }}>
               <span><span style={{ color: 'var(--amber)' }}>●</span> 你的位置</span>
               <span><span style={{ color: 'var(--exit)' }}>●</span> 出口</span>
               {mapZData(engine.map).elev && <span><span style={{ color: MINIMAP_COLORS.high }}>■</span> 高台</span>}
@@ -1466,6 +1516,7 @@ const GLYPH_COLOR: Record<string, string> = {
   grilledsteak: '#a86a3e', jambread: '#c98a6a',
   // ===== v40：此前缺专属色的两件（像素图已补齐，此处仅作 404 兜底配色） =====
   disinfectant: '#9fd0d8', welcomenote: '#f0e6c0',
+  sedgland: '#d9c46a', // Nguithr'xurh 掉落的镇静腺
 }
 // v28：全部 66 件物品的原创像素画图标（128×128 RGBA，32×32 原稿放大，内部原创、无外部版权，
 // 见 public/textures/icons/SOURCES.md；v40 补齐消毒液/欢迎纸条/Tom 餐馆 10 道菜，
@@ -1501,6 +1552,7 @@ const PIXEL_ICON: Record<string, true> = {
   luckymilk: true, // v54 幸运豆奶（Object 28）
   velvetcake: true,
   jerryflyer: true, fakelog: true,
+  sedgland: true, // Nguithr'xurh 镇静腺（gen-item-icons.py draw_sedgland）
 }
 // v14：网络素材贴图图标（game-icons.net，CC BY 3.0，见 public/textures/icons/SOURCES.md）；
 // 不在表内或加载失败的物品回退手绘 SVG。
@@ -1575,6 +1627,7 @@ export function ItemGlyph({ type, size = 24, count }: { type: string; size?: num
       case 'card': return <><rect x="3" y="6" width="18" height="12" rx="1.5" {...s} /><rect x="5.5" y="9" width="5" height="3.5" {...s} /><path d="M14 9h5m-5 3h5" {...s} /></>
       case 'skeleton': return <><circle cx="8" cy="7" r="3.5" {...s} /><path d="M10.5 9.5 19 18m-3 0 2-2m-5-1 2-2" {...s} /></>
       case 'silver': return <path d="M8 3v7a2 2 0 0 0 4 0V3m-2 0v18m6-15c0 4-1 5-1 5v10" {...s} />
+      case 'gland': return <><ellipse cx="12" cy="13.5" rx="6.5" ry="5.5" {...s} /><circle cx="12" cy="13.5" r="2" {...f} /><path d="M16 9l2-4" {...s} /></>
       case 'syringe': return <><path d="M4 20l6-6m0 0L17 7m-9 5 3 3" {...s} /><path d="M15 5l4 4m-7-2 4 4" {...s} /></>
       case 'scrap': return <><path d="M5 4h14v13l-4 3H5z" {...s} /><path d="M15 20v-3h4" {...s} /><path d="M8 8h8M8 12h5" {...s} /></>
       {/* ===== v25：v23/v25 新增物品专属图标（此前全部落到默认 box） ===== */}

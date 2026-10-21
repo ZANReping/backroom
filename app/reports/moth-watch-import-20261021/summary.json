@@ -1,0 +1,489 @@
+{
+  "date": "2026-10-21",
+  "root": "E:/ZAN/backroom",
+  "build": {
+    "command": "npm run build",
+    "exitCode": 0,
+    "log": "build.log",
+    "note": "Vite retains the large chunk size advisory; no build errors."
+  },
+  "regressions": [
+    {
+      "check": "check:deathmoth",
+      "exit": 0,
+      "log": "deathmoth.log"
+    },
+    {
+      "check": "check:deathmoth-anim",
+      "exit": 0,
+      "log": "deathmoth-anim.log"
+    },
+    {
+      "check": "check:watch",
+      "exit": 0,
+      "log": "watch.log"
+    },
+    {
+      "check": "check:moth-watch-resources",
+      "exit": 0,
+      "log": "moth-watch-resources.log"
+    },
+    {
+      "check": "check:entity-forms",
+      "exit": 0,
+      "log": "entity-forms.log"
+    },
+    {
+      "check": "check:model-warmup",
+      "exit": 0,
+      "log": "model-warmup.log"
+    },
+    {
+      "check": "check:program-completion",
+      "exit": 0,
+      "log": "program-completion.log"
+    },
+    {
+      "check": "check:entity-preparation",
+      "exit": 0,
+      "log": "entity-preparation.log"
+    },
+    {
+      "check": "check:shrimp",
+      "exit": 0,
+      "log": "shrimp.log"
+    },
+    {
+      "check": "check:shrimp-item-cache",
+      "exit": 0,
+      "log": "shrimp-item-cache.log"
+    },
+    {
+      "check": "check:nguithr",
+      "exit": 0,
+      "log": "nguithr.log"
+    },
+    {
+      "check": "check:nguithr-anim",
+      "exit": 0,
+      "log": "nguithr-anim.log"
+    },
+    {
+      "check": "check:arms-integration",
+      "exit": 0,
+      "log": "arms-integration.log"
+    }
+  ],
+  "runs": [
+    {
+      "name": "realistic-v3",
+      "ok": true,
+      "checks": 1787,
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "errors": 0,
+      "failedRequests": 0,
+      "entryMs": 4139.041300000001,
+      "appBootMs": 10923.650699999998,
+      "firstPlayableMs": 22323.9286,
+      "level5": {
+        "entryMs": 6757.5999999940395,
+        "totalWithNestTeleportMs": 14427.20000000298,
+        "nest": "-2,-3",
+        "world": [
+          -60,
+          -100
+        ],
+        "instances": 9,
+        "memory": {
+          "geometries": 1467,
+          "textures": 156,
+          "programs": 155
+        }
+      },
+      "performance": {
+        "scope": "Actual Chrome headless requestAnimationFrame cadence, developer fixed lighting, L9 mangled scene; not a GPU timer or Android result",
+        "rounds": [
+          {
+            "median": 13.900000005960464,
+            "p95": 18.5,
+            "drawCalls": {
+              "median": 2788,
+              "min": 1562,
+              "max": 3071
+            },
+            "triangles": 1977969
+          },
+          {
+            "median": 13.700000002980232,
+            "p95": 18.600000008940697,
+            "drawCalls": {
+              "median": 2787,
+              "min": 1561,
+              "max": 2949
+            },
+            "triangles": 1977921
+          },
+          {
+            "median": 13.299999997019768,
+            "p95": 17.299999997019768,
+            "drawCalls": {
+              "median": 2787,
+              "min": 1561,
+              "max": 3070
+            },
+            "triangles": 1977921
+          },
+          {
+            "median": 13.299999997019768,
+            "p95": 18.399999991059303,
+            "drawCalls": {
+              "median": 2788,
+              "min": 1562,
+              "max": 3071
+            },
+            "triangles": 1977969
+          },
+          {
+            "median": 14.299999997019768,
+            "p95": 18.400000005960464,
+            "drawCalls": {
+              "median": 2787,
+              "min": 1561,
+              "max": 3069
+            },
+            "triangles": 1977921
+          }
+        ],
+        "memory": {
+          "geometries": 2150,
+          "textures": 223,
+          "programs": 88
+        }
+      },
+      "cycles": [
+        {
+          "shown": {
+            "geometries": 2156,
+            "textures": 229,
+            "programs": 90
+          },
+          "empty": {
+            "geometries": 2145,
+            "textures": 222,
+            "programs": 88
+          }
+        },
+        {
+          "shown": {
+            "geometries": 2156,
+            "textures": 229,
+            "programs": 90
+          },
+          "empty": {
+            "geometries": 2145,
+            "textures": 222,
+            "programs": 88
+          }
+        },
+        {
+          "shown": {
+            "geometries": 2156,
+            "textures": 229,
+            "programs": 90
+          },
+          "empty": {
+            "geometries": 2145,
+            "textures": 222,
+            "programs": 88
+          }
+        },
+        {
+          "shown": {
+            "geometries": 2156,
+            "textures": 229,
+            "programs": 90
+          },
+          "empty": {
+            "geometries": 2145,
+            "textures": 222,
+            "programs": 88
+          }
+        },
+        {
+          "shown": {
+            "geometries": 2156,
+            "textures": 229,
+            "programs": 90
+          },
+          "empty": {
+            "geometries": 2145,
+            "textures": 222,
+            "programs": 88
+          }
+        },
+        {
+          "shown": {
+            "geometries": 2156,
+            "textures": 229,
+            "programs": 90
+          },
+          "empty": {
+            "geometries": 2145,
+            "textures": 222,
+            "programs": 88
+          }
+        }
+      ],
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "name": "classic-v1",
+      "ok": true,
+      "checks": 1787,
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "errors": 0,
+      "failedRequests": 0,
+      "entryMs": 2837.5898000000016,
+      "appBootMs": 11649.299700000001,
+      "firstPlayableMs": 19317.762499999997,
+      "level5": {
+        "entryMs": 4200.5,
+        "totalWithNestTeleportMs": 9951.89999999106,
+        "nest": "-2,-3",
+        "world": [
+          -60,
+          -100
+        ],
+        "instances": 9,
+        "memory": {
+          "geometries": 1320,
+          "textures": 144,
+          "programs": 144
+        }
+      },
+      "performance": {
+        "scope": "Actual Chrome headless requestAnimationFrame cadence, developer fixed lighting, L9 mangled scene; not a GPU timer or Android result",
+        "rounds": [
+          {
+            "median": 7.799999997019768,
+            "p95": 14.300000011920929,
+            "drawCalls": {
+              "median": 747,
+              "min": 747,
+              "max": 2255
+            },
+            "triangles": 410653
+          },
+          {
+            "median": 7.5,
+            "p95": 13.800000011920929,
+            "drawCalls": {
+              "median": 748,
+              "min": 747,
+              "max": 2257
+            },
+            "triangles": 410701
+          },
+          {
+            "median": 7.5,
+            "p95": 13.5,
+            "drawCalls": {
+              "median": 748,
+              "min": 748,
+              "max": 2135
+            },
+            "triangles": 410701
+          },
+          {
+            "median": 7.199999988079071,
+            "p95": 12.799999997019768,
+            "drawCalls": {
+              "median": 748,
+              "min": 747,
+              "max": 2255
+            },
+            "triangles": 410701
+          },
+          {
+            "median": 6.799999997019768,
+            "p95": 11.900000005960464,
+            "drawCalls": {
+              "median": 747,
+              "min": 747,
+              "max": 2134
+            },
+            "triangles": 410653
+          }
+        ],
+        "memory": {
+          "geometries": 2083,
+          "textures": 147,
+          "programs": 86
+        }
+      },
+      "cycles": [
+        {
+          "shown": {
+            "geometries": 2089,
+            "textures": 153,
+            "programs": 88
+          },
+          "empty": {
+            "geometries": 2078,
+            "textures": 146,
+            "programs": 86
+          }
+        },
+        {
+          "shown": {
+            "geometries": 2089,
+            "textures": 153,
+            "programs": 88
+          },
+          "empty": {
+            "geometries": 2078,
+            "textures": 146,
+            "programs": 86
+          }
+        },
+        {
+          "shown": {
+            "geometries": 2089,
+            "textures": 153,
+            "programs": 88
+          },
+          "empty": {
+            "geometries": 2078,
+            "textures": 146,
+            "programs": 86
+          }
+        },
+        {
+          "shown": {
+            "geometries": 2089,
+            "textures": 153,
+            "programs": 88
+          },
+          "empty": {
+            "geometries": 2078,
+            "textures": 146,
+            "programs": 86
+          }
+        },
+        {
+          "shown": {
+            "geometries": 2089,
+            "textures": 153,
+            "programs": 88
+          },
+          "empty": {
+            "geometries": 2078,
+            "textures": 146,
+            "programs": 86
+          }
+        },
+        {
+          "shown": {
+            "geometries": 2089,
+            "textures": 153,
+            "programs": 88
+          },
+          "empty": {
+            "geometries": 2078,
+            "textures": 146,
+            "programs": 86
+          }
+        }
+      ],
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "name": "realistic-details",
+      "ok": true,
+      "checks": 12,
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "errors": 0,
+      "failedRequests": 0,
+      "entryMs": 3193.1437000000005,
+      "appBootMs": 16283.475500000002,
+      "firstPlayableMs": 27031.5203,
+      "level5": {
+        "entryMs": 7623,
+        "totalWithNestTeleportMs": 18544.70000000298,
+        "nest": "-2,-3",
+        "world": [
+          -60,
+          -100
+        ],
+        "instances": 9,
+        "memory": {
+          "geometries": 943,
+          "textures": 167,
+          "programs": 147
+        }
+      },
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "name": "classic-details",
+      "ok": true,
+      "checks": 12,
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "errors": 0,
+      "failedRequests": 0,
+      "entryMs": 2948.5256999999983,
+      "appBootMs": 12151.489899999999,
+      "firstPlayableMs": 20125.2284,
+      "level5": {
+        "entryMs": 4738.899999991059,
+        "totalWithNestTeleportMs": 12995.89999999106,
+        "nest": "-2,-3",
+        "world": [
+          -60,
+          -100
+        ],
+        "instances": 9,
+        "memory": {
+          "geometries": 1066,
+          "textures": 144,
+          "programs": 138
+        }
+      },
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    }
+  ],
+  "limits": [
+    "Native desktop GPU requestAnimationFrame cadence, not GPU timer or Android performance.",
+    "No before/after timing baseline was recorded; no percentage speedup claimed.",
+    "L9 entry excludes app bootstrap, isolated fixture setup, and menu interaction waits.",
+    "Upstream swimmer interface is not an implemented entity; guidance reuses current movement rather than global pathfinding."
+  ]
+}

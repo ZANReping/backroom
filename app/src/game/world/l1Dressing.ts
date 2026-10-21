@@ -6,6 +6,20 @@ import type {L1ArchitectureData} from './l1BuildingTypes'
 
 /** Assembly is placed after the building is complete, so legacy loot clearance
  * cannot silently delete the table. The same assembly fits ordinary hall walls. */
+/** v3.2 衔尾段 (ref 衔尾段.png): black grating panels leaned against columns and small material piles
+ * (plywood sheets, a drum, a tin). Movable-free props, fitted like the other hall dressing. */
+export function l1OuroDressing(a:L1ArchitectureData):Structure[]{
+ const out:Structure[]=[]
+ for(const b of a.boxes){
+  if(b.style!=='ouroboros'||!b.solid||!b.id.startsWith('column:')||b.id.includes(':',7))continue
+  const cx=(b.min[0]+b.max[0])/2,cz=(b.min[2]+b.max[2])/2,k=l1Noise(Math.round(cx*3),Math.round(cz*3),a.seed^0x0d71)
+  if(k<.16){const x=b.max[0]+.12;out.push({kind:'pillar',x,y:cz-.75,w:.32,h:1.5,solid:true,data:{l1Prop:'grate',deg:90,l1HallDressing:1,l1OuroDressing:1}})}
+  else if(k>.9){const x=b.min[0]-1.6;out.push({kind:'pillar',x,y:cz-.6,w:1.3,h:1.2,solid:true,data:{l1Prop:'matpile',deg:Math.floor(k*1000)%2?0:180,l1HallDressing:1,l1OuroDressing:1,sid:Math.floor(k*1e6)}})}
+ }
+ return out
+}
+/** Assembly is placed after the building is complete, so legacy loot clearance
+ * cannot silently delete the table. The same assembly fits ordinary hall walls. */
 export function l1HallDressing(a:L1ArchitectureData):Structure[]{
  const {seed,cx,cy}=a,ref=l1ReferenceAt(seed,cx*32+16,cy*32+16)
  if(ref?(ref.id!=='parking-props'||cx!==Math.floor(ref.centerX/32)||cy!==Math.floor(ref.centerY/32)):l1Noise(cx,cy,seed^881)>=.14)return[]

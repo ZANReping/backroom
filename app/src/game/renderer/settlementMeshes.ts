@@ -1,3 +1,4 @@
+import {factionSignTexture,signStyleFor,drawFactionSign} from './factionSigns'
 import {buildAlphaBatchJob} from './alphaMeshes'
 import * as THREE from 'three'
 import type { GameMap } from '../world/mapgen'
@@ -97,12 +98,58 @@ const drain=(job:Generator<void,void,unknown>)=>{for(let r=job.next();!r.done;r=
 export function buildSettlementTerrain(m:GameMap,parent:THREE.Group){drain(buildSettlementTerrainJob(m,parent))}
 export function buildSettlementStation(s:Structure){
  const g=new THREE.Group();g.position.set(s.x+s.w/2,0,s.y+s.h/2)
- const canvas=document.createElement('canvas');canvas.width=512;canvas.height=192
- const ctx=canvas.getContext('2d')!;ctx.fillStyle='#263b39';ctx.fillRect(0,0,512,192);ctx.fillStyle='#eee8ca';ctx.font='30px sans-serif';ctx.textAlign='center'
- ctx.fillText(String(s.data?.label??'服务台'),256,66,490);ctx.font='24px sans-serif';ctx.fillText(Number(s.data?.access)>0?'工作人员 · 资格核验':'公共服务 · 按 E 查看',256,122,490)
- const texture=new THREE.CanvasTexture(canvas),mat=new THREE.MeshBasicMaterial({map:texture})
- mat.userData.l1Owned=true;mat.userData.settlementLabelTexture=true
+ // v3: each faction's counter plate in its own trade dress (factionSigns.ts); shared cached texture.
+ const label=String(s.data?.label??'服务台'),sub=Number(s.data?.access)>0?'工作人员 · 资格核验':'公共服务 · 按 E 查看'
+ const mat=new THREE.MeshBasicMaterial({map:factionSignTexture(signStyleFor(String(s.data?.faction??'')),label,.95/.356,sub)})
+ mat.userData.l1Owned=true
  // Small counter placard; no freestanding identical door-side service poles.
  const sign=new THREE.Mesh(new THREE.BoxGeometry(.95,.356,.035),mat);sign.position.y=1.3;g.add(sign)
  return g
+}
+
+// v3: settlement notice boards (were blank teal boxes). Faction header strip + pinned notices, per blueprint.
+const BOARD_NOTES:Record<string,string[]>={
+ bntg:['今日汇率','杏仁水 ×3 = 1 电池','保险库开放 08–20','禁止私下交易','寻：手电筒','收购：绳索'],
+ ariane:['候诊须知','请保持安静','免费诊疗','体温登记','药品发放 14:00','献血招募'],
+ tom:['今日特供','炖菜 · 面包','欢迎光临','招服务员','卡座请勿占用','营业至深夜'],
+ meg:['公告','巡逻排班','失踪人员','层级通报','禁止携带实体样本','报案请至窗口'],
+ industrial:['公告','注意安全','值班表','维修登记','失物招领','禁止吸烟'],
+}
+const boardCache=new Map<string,THREE.CanvasTexture>()
+export function boardTexture(style:string,title:string,w:number,seed:number){
+ const key=style+'|'+title+'|'+w.toFixed(1)
+ const hit=boardCache.get(key);if(hit)return hit
+ const W=Math.min(2048,Math.max(256,Math.round(w*220))),H=275,cv=document.createElement('canvas');cv.width=W;cv.height=H
+ const c=cv.getContext('2d')!
+ let r=seed>>>0||1;const rnd=()=>{r^=r<<13;r^=r>>>17;r^=r<<5;return (r>>>0)/4294967296}
+ // cork / felt field with frame
+ const felt=style==='ariane'?'#6f8f8a':style==='meg'?'#4a5f6b':style==='tom'?'#7a5a3c':style==='bntg'?'#5b6448':'#6b6458'
+ c.fillStyle='#3a332b';c.fillRect(0,0,W,H);c.fillStyle=felt;c.fillRect(8,8,W-16,H-16)
+ for(let i=0;i<W*H/60;i++){c.fillStyle=`rgba(${rnd()<.5?0:255},${rnd()<.5?0:255},0,.05)`;c.fillRect(rnd()*W,rnd()*H,2,2)}
+ const st=signStyleFor(style)
+ drawFactionSign(c,14,14,W-28,58,st,title.split('·')[0].trim())
+ const notes=BOARD_NOTES[style]??BOARD_NOTES.industrial
+ const n=Math.max(3,Math.floor((W-28)/92))
+ for(let i=0;i<n;i++){
+  const nw=70+rnd()*14,nh=96+rnd()*60,x=20+i*((W-40)/n)+rnd()*8,y=84+rnd()*(H-96-nh-6)
+  c.save();c.translate(x+nw/2,y+nh/2);c.rotate((rnd()-.5)*.12)
+  c.fillStyle=['#efe9d6','#f3e7b4','#e6eef0','#f2dccf'][Math.floor(rnd()*4)];c.fillRect(-nw/2,-nh/2,nw,nh)
+  c.fillStyle='rgba(0,0,0,.18)';c.fillRect(-nw/2+3,nh/2,nw,3)
+  c.fillStyle='#2a2622';c.font=`bold 13px 'Noto Sans CJK SC','Microsoft YaHei',sans-serif`;c.textAlign='center'
+  c.fillText(notes[i%notes.length],0,-nh/2+20,nw-8)
+  c.fillStyle='rgba(40,36,30,.55)'
+  for(let ly=-nh/2+32;ly<nh/2-8;ly+=9)c.fillRect(-nw/2+7,ly,(nw-14)*(.5+rnd()*.5),3)
+  c.fillStyle=['#c0392b','#2e6fb0','#d4a017'][i%3];c.beginPath();c.arc(0,-nh/2+5,4,0,Math.PI*2);c.fill()
+  c.restore()
+ }
+ const t=new THREE.CanvasTexture(cv);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;boardCache.set(key,t);return t
+}
+export function buildSettlementBoard(s:Structure){
+ const g=new THREE.Group(),w=s.w,h=1.25
+ const style=String(s.data?.blueprint??s.data?.faction??'industrial')
+ const tex=boardTexture(style,String(s.data?.title??'公告'),w,Math.floor(s.x*131+s.y*71))
+ const mat=new THREE.MeshStandardMaterial({map:tex,roughness:.85,metalness:0})
+ const plane=new THREE.Mesh(new THREE.PlaneGeometry(w,h),mat)
+ plane.position.set(s.x+w/2,1.15+h/2,s.y+.08+.006)
+ g.add(plane);return g
 }

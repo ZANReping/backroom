@@ -8,6 +8,7 @@ import {l1NativePower,registerL1Probes,removeL1Probes} from './l1Probes'
 import {recordL1BuildStage} from './l1BuildMetrics'
 import {bindL1Portals} from './l1PortalLighting'
 import {l1ModuleAt} from '../world/l1Building'
+import {l1SurfaceMeshes} from './l1SurfaceMeshes'
 import {l1BakedPointLights} from './l1BakedShader'
 const bakedPointChunk=l1BakedPointLights(THREE.ShaderChunk.lights_fragment_begin)
 type Fixture={mat:THREE.MeshBasicMaterial;seed:number;src?:LightSource;batch?:THREE.InstancedMesh;index?:number}
@@ -22,11 +23,11 @@ export function *buildL1BakedScene(data:L1ArchitectureData,ox:number,oz:number,g
  for(const t of [light,direction,...(portal?[portal]:[])]){t.minFilter=t.magFilter=THREE.LinearFilter;t.colorSpace=THREE.NoColorSpace;t.generateMipmaps=false;t.needsUpdate=true;t.channel=1}
  let owners=0,registered=false,current=r,previous:THREE.DataTexture|null=null,pending:{r:typeof r;light:THREE.DataTexture;step:number}|null=null,fadeAt=0,disposed=false
  const preview={value:light},blend={value:1},materials:THREE.MeshStandardMaterial[]=[]
- for(const b of r.meshes){
+ for(const original of r.meshes)for(const b of l1SurfaceMeshes(data.seed,data.cx,data.cy,original)){
   const started=performance.now()
   const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(b.position,3));geo.setAttribute('normal',new THREE.BufferAttribute(b.normal,3));geo.setAttribute('uv',new THREE.BufferAttribute(b.uv,2));geo.setAttribute('uv1',new THREE.BufferAttribute(b.uv1,2));geo.setIndex(new THREE.BufferAttribute(b.index,1));geo.computeBoundingSphere()
   const surface=b.surface==='paint'?(b.style==='maintenance'?'wall':b.style==='fabled'?'column':'columnPaint'):b.surface
-  const source=l1Material(b.style==='maintenance'&&b.surface==='paint'?'maintenance-plaster':b.style,surface),mat=source.clone() as THREE.MeshStandardMaterial
+  const source=l1Material(b.style==='maintenance'&&b.surface==='paint'?'maintenance-plaster':b.style==='parking'?`parking@${b.skin}`:b.style,surface),mat=source.clone() as THREE.MeshStandardMaterial
   mat.onBeforeCompile=source.onBeforeCompile;mat.customProgramCacheKey=source.customProgramCacheKey
   mat.userData={...source.userData,l1Owned:true,l1Baked:true,l1Textures:[direction,...(portal?[portal]:[])]};mat.lightMap=b.surface==='leaf'?null:light;mat.lightMapIntensity=Math.PI
   const prior=mat.onBeforeCompile,key=mat.customProgramCacheKey();owners++;materials.push(mat)
@@ -51,7 +52,7 @@ export function *buildL1BakedScene(data:L1ArchitectureData,ox:number,oz:number,g
     irradiance += lightMapIrradiance*l1NativePower*l1DetailResponse*l1Transmission;`))
   }
   mat.customProgramCacheKey=()=>key+'|l1-baked-v4|skip-native-v1'+(quality==='high'?'|refine-v1':'')+(portal?'|portals':'');mat.addEventListener('dispose',()=>{if(--owners===0){disposed=true;light.dispose();previous?.dispose();pending?.light.dispose();direction.dispose();portal?.dispose();binding?.dispose();if(registered)removeL1Probes(current)}})
-  const mesh=new THREE.Mesh(geo,mat);mesh.position.set(data.cx*32-ox,0,data.cy*32-oz);mesh.name=`l1-baked-${b.style}-${b.surface}`;mesh.userData.noCastShadow=['floor','ground','leaf'].includes(b.surface);group.add(mesh);recordL1BuildStage('meshAndMaterialCpu',performance.now()-started);yield
+  const mesh=new THREE.Mesh(geo,mat);mesh.position.set(data.cx*32-ox,0,data.cy*32-oz);mesh.name=`l1-baked-${b.style}-${b.surface}`;mesh.userData.l1Skin=b.skin;mesh.userData.noCastShadow=['floor','ground','leaf'].includes(b.surface);group.add(mesh);recordL1BuildStage('meshAndMaterialCpu',performance.now()-started);yield
  }
  registerL1Probes(r);registered=true;group.userData.l1Bake=r.metrics;group.userData.l1BakeProvisional=!!r.provisional
  // Geometry, UVs, materials, interaction and collision stay installed. Only the
@@ -93,13 +94,25 @@ export function buildL1EmitterMeshes(data:L1ArchitectureData,ox:number,oz:number
  data.emitters.forEach((e,index)=>{
   if(e.kind==='sky')return
   const t=new THREE.Vector3(...e.tangent).normalize(),n=new THREE.Vector3(...e.normal).normalize(),v=new THREE.Vector3().crossVectors(t,n).normalize()
-  basis.makeBasis(t,n,v);const q=new THREE.Quaternion().setFromRotationMatrix(basis),m=new THREE.Matrix4().compose(new THREE.Vector3(e.position[0]-ox,e.position[1],e.position[2]-oz),q,new THREE.Vector3(e.width,.045,e.height))
+  basis.makeBasis(t,n,v);const q=new THREE.Quaternion().setFromRotationMatrix(basis),m=new THREE.Matrix4().compose(new THREE.Vector3(e.position[0]-ox,e.position[1],e.position[2]-oz),q,(e.style==='ouroboros'&&e.kind!=='emergency'?new THREE.Vector3(e.width,1,1):new THREE.Vector3(e.width,.045,e.height)))
   const key=e.style+':'+e.kind,a=groups.get(key)??{entries:[],kind:e.kind};a.entries.push({index,matrix:m});groups.set(key,a)
  })
  for(const {entries,kind}of groups.values()){
   const mat=new THREE.MeshBasicMaterial({color:0xffffff,toneMapped:false});mat.userData.base=new THREE.Color(kind==='emergency'?'#558b62':'#f5f5e9').multiplyScalar(kind==='emergency'?.5:3)
-  mat.userData.l1Owned=true;const mesh=new THREE.InstancedMesh(new THREE.BoxGeometry(1,1,1),mat,entries.length)
+  mat.userData.l1Owned=true;const sag=entries.length&&data.emitters[entries[0].index].style==='ouroboros'&&kind!=='emergency'
+  const mesh=new THREE.InstancedMesh(sag?ouroStripGeometry():new THREE.BoxGeometry(1,1,1),mat,entries.length)
   entries.forEach((a,i)=>{mesh.setMatrixAt(i,a.matrix);mesh.setColorAt(i,(mat.userData.base as THREE.Color).clone());fixtures.push({mat,seed:lights[a.index]?.flickerSeed??0,src:lights[a.index],batch:mesh,index:i})})
   mesh.name='l1-emitter-'+kind;mesh.userData.noCastShadow=true;g.add(mesh)
  }
+}
+
+// v3.2 衔尾段 (ref 衔尾段.png): loose LED rope strung between hooks, sagging ~0.42 m. Unit length along
+// local x (scaled by the emitter width), local +y = emitter normal (down), so the arc hangs below the hooks.
+let ouroStrip:THREE.BufferGeometry|null=null
+function ouroStripGeometry(){
+ if(ouroStrip)return ouroStrip.clone()
+ const pts:THREE.Vector3[]=[]
+ for(let i=0;i<=16;i++){const x=i/16-.5;pts.push(new THREE.Vector3(x,.42*(1-(2*x)**2)+.04*Math.sin(i*1.7),.03*Math.sin(i*.9)))}
+ ouroStrip=new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),24,.016,5,false)
+ return ouroStrip.clone()
 }

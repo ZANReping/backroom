@@ -1,0 +1,219 @@
+diff --git a/app/src/game/engine/ambient.ts b/app/src/game/engine/ambient.ts
+--- a/app/src/game/engine/ambient.ts
++++ b/app/src/game/engine/ambient.ts
+@@ -1,4 +1,5 @@
+ import { flickerL1Crates,tickL1Dynamics } from './l1State'
++import { wranglerAmbient } from './wranglerAI'
+ import {l0Sample} from '../world/l0Architecture'
+ import {mapWallOccluded} from '../content/mapPlayer'
+ import {revealMapSight,mapSight} from '../world/mapSight'
+@@ -1,6 +1,7 @@
+ // （原 step 内联段，逐语句搬运）
+ export function updateAmbient(eng: Engine, dt: number) {
+   tickL1Dynamics(eng,dt)
++  wranglerAmbient(eng, dt) // 牧蛇：黑屏/洞口计时 + L2 偶发雄性事件
+   const map=eng.map,p=eng.player,tint=map?.tint[Math.floor(p.y)*map.w+Math.floor(p.x)]
+   if(eng.levelDef.id===5&&(tint===24||tint===67)){
+     const sound=l5BoilerSound.get(eng)??{pulse:0,whisper:14}
+diff --git a/app/src/game/engine/combat.ts b/app/src/game/engine/combat.ts
+--- a/app/src/game/engine/combat.ts
++++ b/app/src/game/engine/combat.ts
+@@ -1,5 +1,6 @@
+ import { witnessedOffense } from './career'
+ import { provokeMoths } from './moths'
++import { isWrangler, wranglerFire, wranglerFireEggs, wranglerKillGuard, wranglerMelee } from './wranglerAI'
+ import { provokeHound } from './houndAI'
+ // v53：战斗/投掷/击退 + 伤害/死亡结算 + 粒子生成 —— 自 engine.ts 拆分，逻辑逐语句搬运。
+ import { ITEMS } from '../content/items'
+@@ -1,6 +1,7 @@
+ }
+ 
+ export function killCheck(eng: Engine, e: Entity) {
++  if (isWrangler(e.def.type) && wranglerKillGuard(e)) return // 牧蛇：成体不死；幼体只能被火油烧死（wranglerFire）
+   if (partygoerKillGuard(eng, e)) return // 派对客：击杀必须按顺序（断臂→狂战士→倒地→火烧），血量见底只会倒地
+   skinStealerHit(eng, e)
+   if(!e.dead)provokeMoths(eng,e)
+@@ -1,6 +1,7 @@
+       eng.provoked = true
+       continue
+     }
++    if (isWrangler(e.def.type) && wranglerMelee(eng, e)) { hit = true; continue } // 牧蛇：刀枪不入（成体）/ 只怕火（幼体）
+     if (e.def.type === 'partygoer') {
+       // 派对客：按准星打中的部位结算（面条臂 / 头脸 / 躯干），胸甲闭合时躯体减伤 90%，倒地后只能用火烧尽
+       const dir = crosshairDirection(), off = seatedEyeOffset(eng)
+@@ -1,6 +1,7 @@
+         const d = Math.hypot(e.x - x, e.y - y)
+         if (d > 3.2 || Math.abs(e.z - pr.floorZ) >= 1) continue
+         if (e.def.type === 'jerry' && eng.indoctrination > 0) continue // v47：教化约束——投掷波及对鹉主无效
++        if (isWrangler(e.def.type)) { if (wranglerFire(eng, e, d)) n++; continue } // 牧蛇：只有幼体会被烧死，死了引来母亲
+         if (e.def.type === 'partygoer') { partygoerDamage(eng, e, d < 2.2 ? 45 : 20, 'fire'); e.stunT = Math.max(e.stunT, e.pg?.phase === 'burn' ? 0 : 0.6); n++; continue } // 派对客：皮肤防火；倒地/爬行的「尸体」被点燃即烧尽
+         if (!mpHurtEntity(eng, e, d < 2.2 ? 45 : 20)) { e.hp -= d < 2.2 ? 45 : 20; eng.killCheck(e) } // v59：联机走房主结算
+         e.stunT = Math.max(e.stunT, 0.6)
+@@ -1,6 +1,7 @@
+         if (e.def.type === 'jerry') { eng.hurtJerryRep(); if (!e.dead) jerryHurt(eng, e) } // v47：伤害鹉主 → 信众哗然 -50；重制：尖啸反扑
+         n++
+       }
++      wranglerFireEggs(eng, x, y)
+       eng.msg(n > 0 ? `汽油罐轰然炸开——火焰吞没了 ${n} 个实体。` : '汽油罐轰然炸开，火焰很快熄灭了。', n > 0 ? 'damage' : 'system')
+       break
+     }
+diff --git a/app/src/game/engine/entityAI.ts b/app/src/game/engine/entityAI.ts
+--- a/app/src/game/engine/entityAI.ts
++++ b/app/src/game/engine/entityAI.ts
+@@ -1,6 +1,7 @@
+ import { beginDullerFrame, updateDuller } from './dullerAI'
+ import { beginSkinStealerFrame, updateSkinStealer } from './skinStealerAI'
+ import { updateWretch, wretchHear } from './wretchAI'
++import { isWrangler, updateWrangler, wranglerHear } from './wranglerAI'
+ import {updateJerryEntity} from './jerryAI'
+ import { updateRat, updateRatGear } from './ratAI'
+ import { updateShrimp, devourShrimp } from './shrimpAI'
+@@ -1,6 +1,7 @@
+       continue
+     }
+     if (e.def.type === 'smiler') { smilerHear(eng, e, x, y, radius, sprint); continue }
++    if (isWrangler(e.def.type)) { wranglerHear(eng, e, x, y, radius, sprint); continue } // 牧蛇：靠震动感知（wranglerAI）
+     if (e.def.type === 'hound') { houndHear(eng, e, x, y, radius, sprint); continue }
+     if (e.def.type === 'clump') { clumpHear(eng, e, x, y, radius, sprint); continue } // v64：肢团专属听觉（clumpAI）
+     if (e.def.type === 'partygoer') { partygoerHear(eng, e, x, y, radius, sprint); continue } // 派对客专属听觉（近视、以听觉为主）
+@@ -1,6 +1,8 @@
+       }
+     }
+     if (e.stunT > 0) { e.stunT -= dt; if(e.sm){e.sm.strikeT=undefined;e.sm.strikeAge=undefined;e.state='stunned'} continue }
++    // 重制牧蛇：岩层潜行/切出/催眠/吞咽传送/雌性啃岩/幼体（wranglerAI；不走通用状态机）
++    if (isWrangler(def.type)) { updateWrangler(eng, e, dt, d); continue }
+ 
+     // v51：L3 圣所威慑——实体畏惧天使雕像：不进入圣所 chunk 及其八邻（含入口走廊）。
+     // 踏上圣所邻域/tint 20 瓦片的实体立刻以 ×1.4 速度逃向最近的非圣所可走瓦片，
+diff --git a/app/src/game/engine/movement.ts b/app/src/game/engine/movement.ts
+--- a/app/src/game/engine/movement.ts
++++ b/app/src/game/engine/movement.ts
+@@ -1,6 +1,7 @@
+ import { l0Sample } from '../world/l0Architecture'
+ import { stableAt } from './career'
+ import { dullerControlsPlayer } from './dullerAI'
++import { wranglerControlsPlayer } from './wranglerAI'
+ import { clumpControlsPlayer } from './clumpAI'
+ import { l1DistanceScale } from '../world/l1Layout'
+ import { l1BuildingStyleAt } from '../world/l1Building'
+@@ -1,7 +1,7 @@
+   const p = eng.player, m = eng.map!
+   const verticalStart=p.z
+   // A scripted wall crossing owns position temporarily; gravity must not snap onto a wall/upper floor.
+-  if(dullerControlsPlayer(eng)||clumpControlsPlayer(eng)){eng.seating=null;return 0}
++  if(dullerControlsPlayer(eng)||clumpControlsPlayer(eng)||wranglerControlsPlayer(eng)){eng.seating=null;return 0}
+   if (eng.devEnabled && eng.dev.fly) {
+     eng.seating = null
+     const mag = Math.hypot(eng.input.mx,eng.input.my), divisor = Math.max(1,mag)
+diff --git a/app/src/game/entities/types.ts b/app/src/game/entities/types.ts
+--- a/app/src/game/entities/types.ts
++++ b/app/src/game/entities/types.ts
+@@ -1,6 +1,7 @@
+   jy?: import('../engine/jerryAI').JerryState // 鹉主杰瑞的局内姿态与行为。
+   dl?: import('../engine/dullerAI').DullerState // v63：钝人运行时状态（潜伏/隔墙抓取/携物；不入存档/联机）
+   cl?: import('../engine/clumpAI').ClumpState // v64：肢团（含 L3 子变种）运行时状态（不入存档/联机）
++  wg?: import('../engine/wranglerAI').WgState // 牧蛇（Entity 75）运行时状态：变种/轨迹/催眠/吞咽（不入存档/联机）
+   pg?: import('../engine/partygoerAI').PartyState // 派对客（Entity 67）运行时状态：群体/伪装/断臂/狂战士/倒地爬走（不入存档/联机）
+   hd?: import('../engine/houndAI').HoundState // v62：猎犬（含 L11 中立变种）运行时状态（不入存档/联机）
+   sm?: import('./smilers').SmilerState // v61：笑魇变种与 AI 运行时状态（不入存档/联机）
+diff --git a/app/src/game/levels/l8.ts b/app/src/game/levels/l8.ts
+--- a/app/src/game/levels/l8.ts
++++ b/app/src/game/levels/l8.ts
+@@ -1,7 +1,7 @@
+   entryAnim: 'crawl',
+   containerBias: 0.5,
+   entities: [
+-    { type: 'wrangler', w: 6, min: 0, max: 1 },
++    { type: 'wrangler', w: 3, min: 0, max: 1 }, // ZAN 2026-10-21：权重 6 → 3
+     { type: 'camocrawler', w: 12, min: 1, max: 2 },
+     { type: 'lightguide', w: 16, min: 2, max: 4 },
+     { type: 'corpserat', w: 14, min: 2, max: 3 }, // v42：死亡鼠并入尸鼠（同一种群，成群 2~3）
+diff --git a/app/src/game/renderer/entitiesMesh.ts b/app/src/game/renderer/entitiesMesh.ts
+--- a/app/src/game/renderer/entitiesMesh.ts
++++ b/app/src/game/renderer/entitiesMesh.ts
+@@ -1,6 +1,7 @@
+ //   悲尸 wretch / 观察者 watcher / 派对客 partygoer / 猎犬 hound / 死亡飞蛾 deathmoth / 肢团 clump
+ // 新实体请先读这些 case 再动手；设定依据在 entities/ 各定义的 codex 注释里。
+ import * as THREE from 'three'
++import { buildWranglerEntity } from './wranglerRender'
+ import {buildNpcBoneSpear} from './npcBoneSpear'
+ import { planFacelingFace } from './facelingFace'
+ import { buildMothMesh } from './mothMeshes'
+@@ -1,6 +1,8 @@
+   houndNeutral?: boolean // v62：L11 中立猎犬
+   wretchKind?: import('../entities/wretches').WretchKind
+   l3clump?: boolean // v64：L3 高智能肢团（v65：更大的肉团、更粗的肢体、独立持械臂）
++  wranglerKind?: 'male' | 'female' | 'juvenile' // 牧蛇变种（wranglerAI 首个 tick 决定）
++  wranglerPregnant?: boolean
+ }
+ 
+ // 七层之物使用纯程序化 UV：DataTexture 在浏览器与 Node 验收脚本中都可创建，
+@@ -1,6 +1,7 @@
+   if(type==='jerry')return buildJerryMesh()
+   if (type === 'partygoer') return buildPartygoerMesh(opts?.seed ?? 0, { color: opts?.partygoerColor, intern: opts?.partygoerIntern, balloonArm: opts?.partygoerBalloonArm })
+   if(type === 'deathmoth') return buildMothMesh(opts?.mothForm ?? 'male')
++  if (type === 'wrangler') return buildWranglerEntity(opts?.wranglerKind ?? 'male', !!opts?.wranglerPregnant) // 重制牧蛇（WRANGLER-REMAKE.md）
+   if (type === 'clump') return buildClumpMesh(!!opts?.l3clump, opts?.seed ?? 0)
+   if (type === 'duller') return buildDullerMesh(opts?.seed ?? 0) // v63：重制钝人
+   if (type === 'dryshrimp') return buildShrimpMesh(opts?.seed ?? 0) // v81：重制旱虾（奇虾体型，鳍片划水着色器动画）
+diff --git a/app/src/game/renderer/renderer.ts b/app/src/game/renderer/renderer.ts
+--- a/app/src/game/renderer/renderer.ts
++++ b/app/src/game/renderer/renderer.ts
+@@ -1,6 +1,7 @@
+ import { ALPHA_ENTRIES } from '../content/alphaBlueprint'
+ import { buildDecorationsJob } from './decorations'
+ import { buildEntityMesh } from './entitiesMesh'
++import { animateWrangler, syncWranglerProps } from './wranglerRender'
+ import { animateMoth, buildMothMesh } from './mothMeshes'
+ import { buildItemMesh } from './itemsMesh'
+ import { batchRigidItem } from './itemBatches'
+@@ -1,6 +1,7 @@
+     }
+ 
+     this.updateEntities(engine, dt)
++    syncWranglerProps(this.scene, this.camera, engine) // 牧蛇：岩壁洞口/鼓包/卵枝 + 被吞黑屏
+     this.remoteViews.update(this.scene, engine, engine.mpSession, this.time, dt) // v58：联机远端玩家
+     this.updateNpcs(engine, dt)
+     this.updateItems(engine, dt)
+@@ -1,13 +1,13 @@
+     for (const e of m.entities) {
+       seen.add(e.id)
+       let grp = this.entityMeshes.get(e.id)
+-      const radius = (e.def.type === 'thething' ? 48 : 12) * Math.max(1, e.def.scale ?? 1)
++      const radius = (e.def.type === 'thething' ? 48 : e.def.type === 'wrangler' ? 36 : 12) * Math.max(1, e.def.scale ?? 1)
+       const reach = Math.min(this.camera.far, this.fogEnabled ? (this.scene.fog as THREE.Fog)?.far ?? 60 : this.camera.far) + radius
+       const distance = Math.hypot(e.x-engine.player.x,e.y-engine.player.y)
+       if (distance > (e.def.mothForm==='larva'?12:reach)) { if (grp) grp.visible = false; e.presentationPending = false; continue }
+       // v53：L3 高智能实体建模变体（无面灵错位器官/石器、水豚尸鼠；seed=实体 id 保证重建一致）；
+       // 尸鼠形态按层级固定：L2 灰白廊道种群 / L3 水豚 / 其余深褐（v53，替代原随机二选一）
+-      const eOpts = (e.def.l3face || e.def.tool || e.def.capybara || e.def.type === 'faceling' || e.def.type === 'corpserat' || e.def.type === 'arachnid' || e.def.type === 'deathmoth' || e.def.type === 'smiler' || e.def.type === 'hound' || e.def.type === 'duller' || e.def.type === 'skinstealer' || e.def.type === 'clump' || e.def.type === 'wretch' || e.def.type === 'dryshrimp' || e.def.type === 'partygoer')
++      const eOpts = (e.def.l3face || e.def.tool || e.def.capybara || e.def.type === 'faceling' || e.def.type === 'corpserat' || e.def.type === 'arachnid' || e.def.type === 'deathmoth' || e.def.type === 'smiler' || e.def.type === 'hound' || e.def.type === 'duller' || e.def.type === 'skinstealer' || e.def.type === 'clump' || e.def.type === 'wretch' || e.def.type === 'dryshrimp' || e.def.type === 'partygoer' || e.def.type === 'wrangler')
+         ? {
+           l3face: e.def.l3face, tool: e.def.tool, capybara: e.def.capybara, mothForm: e.def.mothForm,
+           ratMorph: ratMorphFor(engine.levelDef.id, e.def),
+@@ -1,6 +1,7 @@
+           wretchKind: e.wr?.kind ?? e.def.wretchKind,
+           partygoerColor: e.pg?.color, partygoerIntern: e.pg?.intern, partygoerBalloonArm: e.pg?.balloonArm,
+           l3clump: !!e.def.l3clump,
++          wranglerKind: e.wg?.kind, wranglerPregnant: e.wg?.pregnant,
+         } : undefined // v60：L8 洞顶尸鼠与蛛形纲生态变体随实例固定
+       if (!grp) {
+         e.presentationPending = true
+@@ -1,7 +1,8 @@
+       // v51：人制品售货机活化——def 切换（vendingmachine→vmad）时重建模型（含骷髅手腿）
+       if (grp.userData.entType !== e.def.type || (e.def.type === 'deathmoth' && grp.userData.mothForm !== (e.def.mothForm ?? 'male'))
+         || (e.def.type === 'smiler' && e.sm && grp.userData.smilerKind !== e.sm.kind)
+-        || (e.def.type === 'hound' && e.hd && grp.userData.houndNeutral !== e.hd.neutral)) { // v61：笑魇变种在首个 AI tick 决定
++        || (e.def.type === 'hound' && e.hd && grp.userData.houndNeutral !== e.hd.neutral)
++        || (e.def.type === 'wrangler' && e.wg && (grp.userData.wranglerKind !== e.wg.kind || grp.userData.wranglerPregnant !== e.wg.pregnant))) { // v61：笑魇变种在首个 AI tick 决定
+         this.scene.remove(grp)
+         this.disposeItemModel(grp)
+         grp = buildEntityMesh(e.def.type, eOpts)
+@@ -1,6 +1,7 @@
+         distance: Math.hypot(e.x - engine.player.x, e.y - engine.player.y), dt,
+       })
+       if (et === 'hound' && !e.dead) animateHound(grp, e, this.time, gz)
++      if (et === 'wrangler') animateWrangler(grp, e, engine, this.time) // 重制牧蛇：世界坐标轨迹驱动脊线（覆盖通用位置/朝向）
+       if (et === 'clump' && !e.dead) {
+         const up = (e.cl?.ceil ?? 0) > 0.01 || e.cl?.phase === 'pullup' ? ceilingHeightAt(m, e.x, e.y, this.wallH, bandOfZ(e.z)) - gz : 3
+         animateClump(grp, e, this.time, gz, Number.isFinite(up) ? up : 3)

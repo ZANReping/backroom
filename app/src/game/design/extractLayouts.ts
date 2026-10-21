@@ -158,7 +158,7 @@ const L3_RAND_STRUCT: Record<string, RandMark> = { // infiniteL3.ts（布局决�
   '*:cabinet': true, '*:toolbox': true, '*:locker': true, '*:megcrate': true, '*:safebox': true, // 每 chunk 1~2 容器
 }
 const L3_RAND_ITEM: Record<string, RandMark> = { '*:firesalt': 0.15, '*:tape': 0.1, 'assembly:almond': 0.3 }
-const L3_RAND_ENTITY: Record<string, RandMark> = { '*:dryshrimp': 0.22 }
+const L3_RAND_ENTITY: Record<string, RandMark> = { '*:dryshrimp': 0.22, '*:nguithr': 0.06 }
 const L4_RAND_STRUCT: Record<string, RandMark> = { // infiniteL4.ts（v54；门/家具/窗均掷点）
   '*:hoteldoor': 0.5, '*:cubicle': 0.75, '*:officechair': 0.6, '*:bigcomputer': 0.5,
   '*:cabinet': 0.2, '*:locker': 0.2, '*:pillar': 0.5, '*:glasswin': true,
@@ -249,7 +249,6 @@ const L0_RULES: SpawnRule[] = [ // infinite.ts（variantOf / genL0ChunkRaw）
 ]
 const L1_RULES: SpawnRule[] = [ // infiniteL1.ts（l1VariantOf / genL1ChunkRaw）
   { key: 'infiniteL1.variant.parking.chance', value: 0.32, note: '天鹰段每 chunk 概率（最常见）' },
-  { key: 'infiniteL1.variant.aisle.chance', value: 0.38, note: '过道每 chunk 概率' },
   { key: 'infiniteL1.variant.storage.chance', value: 0.14, note: '跃金段每 chunk 概率' },
   { key: 'infiniteL1.variant.gothic.chance', value: 0.07, note: '哥特段每 chunk 概率' },
   { key: 'infiniteL1.variant.maintenance.chance', value: 0.055, note: '维护通廊每 chunk 概率' },
@@ -265,7 +264,7 @@ const L1_RULES: SpawnRule[] = [ // infiniteL1.ts（l1VariantOf / genL1ChunkRaw�
   { key: 'infiniteL1.entity.chance', value: 0.15, note: '常规区段实体每 chunk 概率' },
   { key: 'infiniteL1.entitySafe.chance', value: 0.05, note: '维护通廊/花园段实体每 chunk 概率（几无可遇）' },
   { key: 'infiniteL1.dryshrimp.chance', value: 0.25, note: '旱虾（湿地 1~2 只）每 chunk 概率' },
-  { key: 'infiniteL1.nguithr.chance', value: 0.04, note: 'Nguithr\'xurh 网囊每 chunk 概率' },
+  { key: 'infiniteL1.nguithr.chance', value: 0.04, note: 'Nguithr\'xurh 巢每 chunk 概率（巢点另有 18% 群居 2–3 只）' },
   { key: 'infiniteL1.firesalt.chance', value: 0.18, note: '火盐晶体每 chunk 概率' },
   { key: 'infiniteL1.tape.chance', value: 0.1, note: '磁带低频保底每 chunk 概率' },
   { key: 'infiniteL1.cashew.replace', value: 0.1, note: '腰果水替代杏仁水的概率' },
@@ -295,7 +294,7 @@ const L2_RULES: SpawnRule[] = [ // infiniteL2.ts（l2VariantOf / genL2ChunkRaw�
   { key: 'infiniteL2.faceling.bedroom.chance', value: 0.4, note: '卧室无面灵概率（无面灵仅卧室生成）' },
   { key: 'infiniteL2.vendingmachine.chance', value: 0.1, note: '人制品售货机（三面墙死胡同）每 chunk 概率' },
   { key: 'infiniteL2.dryshrimp.chance', value: 0.25, note: '旱虾（湿地 1~2 只）每 chunk 概率' },
-  { key: 'infiniteL2.nguithr.chance', value: 0.04, note: 'Nguithr\'xurh 网囊每 chunk 概率' },
+  { key: 'infiniteL2.nguithr.chance', value: 0.04, note: 'Nguithr\'xurh 巢每 chunk 概率（巢点另有 18% 群居 2–3 只）' },
   { key: 'infiniteL2.firesalt.chance', value: 0.18, note: '火盐晶体每 chunk 概率' },
   { key: 'infiniteL2.tape.chance', value: 0.08, note: '磁带低频保底每 chunk 概率' },
 ]
@@ -320,21 +319,19 @@ const L3_RULES: SpawnRule[] = [ // infiniteL3.ts（l3VariantOf / genL3ChunkRaw�
   { key: 'infiniteL3.entity.chance', value: 0.38, note: '实体每 chunk 概率（0.12 概率第二只；圣所/出生 chunk 不生成）' },
   { key: 'infiniteL3.firesalt.chance', value: 0.15, note: '火盐晶体（角落 1~2 枚）每 chunk 概率' },
   { key: 'infiniteL3.wet.chance', value: 0.22, note: '湿地 + 旱虾每 chunk 概率（圣所不生成）' },
+  { key: 'infiniteL3.nguithr.chance', value: 0.06, note: 'Nguithr\'xurh 巢每 chunk 概率（圣所不生成；巢点另有 18% 群居 2–3 只；独立随机流）' },
   { key: 'infiniteL3.graffiti.dark.chance', value: 0.25, note: '涂鸦每 chunk 概率（晦暗廊道；其余变体 0.12）' },
   { key: 'infiniteL3.exit.perRegion', value: '1/8×8', note: '电梯出口：每 8×8 chunk 超区域 1 个，→L4/→L5 各半' },
 ]
 
-const L4_RULES: SpawnRule[] = [ // infiniteL4.ts（l4Layout / genL4ChunkRaw）
-  { key: 'infiniteL4.district.void.chance', value: 0.25, note: '每个 80m 街区的 40×40m 虚空区域占比' },
-  { key: 'infiniteL4.coast.windowview.chance', value: 0.38, note: '临虚空办公翼成为窗景区的概率' },
-  { key: 'infiniteL4.smallrooms.loopstairs.chance', value: 0.07, note: '小房间区现代循环楼梯概率；上下楼回到同一楼梯间，不是出口' },
-  { key: 'infiniteL4.exit.trapdoor.chance', value: 0.015, note: '每个小房间出现通往 L6 的活板门概率' },
-  { key: 'infiniteL4.entity.chance', value: 0.012, note: '实体每 chunk 概率（仅猎犬/钝人；出生安全区不生成）' },
-  { key: 'infiniteL4.exit.elevator.perRegion', value: '1/8×8 + spawn', note: '电梯（→L3 免费回程）：每 8×8 chunk 超区域 1 个，出生 chunk 另有保底' },
-  { key: 'infiniteL4.exit.oldstairs.openWing.chance', value: 0.00625, note: '空旷区古典楼梯出口（→L5）概率；现代循环楼梯不计入出口' },
-  { key: 'infiniteL4.item.almond.weight', value: 40, note: '杏仁水物品权重，全后室最高' },
-  { key: 'infiniteL4.window.ordinary.trap.chance', value: 0.12, note: '非窗景沿岸窗户成为未涂黑陷阱窗的概率；其余通常涂黑' },
-  { key: 'infiniteL4.vending.nonWindowWing.chance', value: 0.22, note: '非窗景办公翼自动售货机概率' },
+const L4_RULES: SpawnRule[] = [
+  { key:'infiniteL4.blocks.types',value:'hall / cubicle / open / rooms',note:'连续办公室四类基础区域，窗沿属于宿主区域' },
+  { key:'infiniteL4.core.loopstairs',value:1,note:'每个服务核心一座循环楼梯，不是出口' },
+  { key:'infiniteL4.exit.trapdoor.chance',value:.015,note:'小房间候选活板门，放置前检查家具净空' },
+  { key:'infiniteL4.entity.chance',value:.008,note:'每chunk概率，出生安全区不生成' },
+  { key:'infiniteL4.exit.elevator.perRegion',value:'1/8×8 + spawn',note:'服务核心西墙壁龛，显式朝向' },
+  { key:'infiniteL4.exit.oldstairs.hall.chance',value:.09,note:'大厅中的古典楼梯，保留实际楼板开口与净空' },
+  { key:'infiniteL4.item.almond.weight',value:40,note:'杏仁水物品权重' },
 ]
 
 const L5_RULES: SpawnRule[] = [ // infiniteL5.ts（l5BlockBiome / genL5ChunkRaw）

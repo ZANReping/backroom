@@ -1,0 +1,336 @@
+{
+  "run": "qa-1792558270015-28984",
+  "label": "traders-state-final-20261021",
+  "mode": "realistic",
+  "port": 11238,
+  "cdp": 11239,
+  "profile": "E:\\ZAN\\backroom\\app\\reports\\traders-keep\\traders-state-final-20261021\\qa-1792558270015-28984",
+  "levels": [
+    102
+  ],
+  "cases": [
+    {
+      "id": 102,
+      "cold": {
+        "id": 102,
+        "transition": false,
+        "loadMs": 4491.0999999940395,
+        "sceneMs": 4353.70000000298,
+        "generationMs": 137.29999999701977,
+        "frames": 339,
+        "cpuTotalMs": 3520.999999895692,
+        "cpuMaxMs": 944.8999999910593,
+        "frameP95Ms": 29.299999997019768,
+        "firstRevealMs": [
+          8.799999997019768,
+          8.100000008940697
+        ],
+        "metrics": {
+          "warmSceneTextures": {
+            "cpuMs": 99.90000002086163,
+            "calls": 63,
+            "maxMs": 30.400000005960464
+          }
+        },
+        "compile": {
+          "calls": 31,
+          "submitMs": 54.89999994635582,
+          "maxSubmitMs": 9.299999997019768,
+          "targets": 31
+        },
+        "firstReady": {
+          "structures": 1431,
+          "lights": 352,
+          "npcs": 25,
+          "nearNpcs": 14,
+          "npcMeshes": 14,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 133,
+            "textures": 82
+          },
+          "programs": 74,
+          "drawCalls": 904,
+          "triangles": 395559,
+          "spawn": {
+            "x": 9,
+            "y": 109,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      },
+      "survey": {
+        "frameP95Ms": 10.200000002980232,
+        "cpuP95Ms": 9.899999991059303,
+        "snapshot": {
+          "structures": 1431,
+          "lights": 352,
+          "npcs": 25,
+          "nearNpcs": 14,
+          "npcMeshes": 14,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 175,
+            "textures": 93
+          },
+          "programs": 74,
+          "drawCalls": 158,
+          "triangles": 73175,
+          "spawn": {
+            "x": 9,
+            "y": 109,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\traders-keep\\traders-state-final-20261021\\qa-1792558270015-28984",
+    "--remote-debugging-port=11239",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.85",
+    "revision": "@0e66b94549a8bd85f03fbdf189b752d6e7b63c32",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.25"
+  },
+  "pids": {
+    "server": 15156,
+    "browser": 74192
+  },
+  "setup": {
+    "mode": "realistic",
+    "viewport": [
+      1920,
+      1080
+    ],
+    "dpr": 1,
+    "seed": 424242,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "settings": {
+      "texture": 1,
+      "lights": 16,
+      "shadows": true,
+      "lightShadows": 1,
+      "loadingBudget": 6,
+      "chunkBudget": 3,
+      "detail": 1,
+      "bloom": true,
+      "ao": 1
+    }
+  },
+  "quality": {
+    "ok": true,
+    "rows": [
+      {
+        "label": "classic-texture-0",
+        "readyMs": 1613,
+        "groups": 7,
+        "jobs": 3,
+        "memory": {
+          "geometries": 153,
+          "textures": 73
+        },
+        "programs": 79,
+        "proxies": 8,
+        "geometriesChecked": 123,
+        "calls": 155,
+        "triangles": 79578
+      },
+      {
+        "label": "realistic-texture-1",
+        "readyMs": 998,
+        "groups": 7,
+        "jobs": 3,
+        "memory": {
+          "geometries": 154,
+          "textures": 93
+        },
+        "programs": 90,
+        "proxies": 8,
+        "geometriesChecked": 123,
+        "calls": 172,
+        "triangles": 79595
+      },
+      {
+        "label": "classic-texture-1",
+        "readyMs": 731.2000000029802,
+        "groups": 6,
+        "jobs": 3,
+        "memory": {
+          "geometries": 152,
+          "textures": 73
+        },
+        "programs": 79,
+        "proxies": 4,
+        "geometriesChecked": 88,
+        "calls": 152,
+        "triangles": 71324
+      },
+      {
+        "label": "realistic-texture-0",
+        "readyMs": 995.5999999940395,
+        "groups": 7,
+        "jobs": 2,
+        "memory": {
+          "geometries": 154,
+          "textures": 90
+        },
+        "programs": 89,
+        "proxies": 8,
+        "geometriesChecked": 123,
+        "calls": 299,
+        "triangles": 141168
+      },
+      {
+        "label": "realistic-texture-1",
+        "readyMs": 341.29999999701977,
+        "groups": 7,
+        "jobs": 3,
+        "memory": {
+          "geometries": 154,
+          "textures": 93
+        },
+        "programs": 90,
+        "proxies": 8,
+        "geometriesChecked": 123,
+        "calls": 172,
+        "triangles": 79595
+      },
+      {
+        "label": "cancel-to-other-outpost",
+        "readyMs": 2675.0999999940395,
+        "memory": {
+          "geometries": 160,
+          "textures": 119
+        },
+        "programs": 97,
+        "proxies": 0,
+        "geometriesChecked": 0,
+        "calls": 760,
+        "triangles": 316817
+      },
+      {
+        "label": "return-after-cancel",
+        "readyMs": 5312.199999988079,
+        "groups": 23,
+        "jobs": 0,
+        "memory": {
+          "geometries": 377,
+          "textures": 115
+        },
+        "programs": 96,
+        "proxies": 28,
+        "geometriesChecked": 444,
+        "calls": 315,
+        "triangles": 171461
+      },
+      {
+        "label": "nonempty-save-and-legacy-migration",
+        "readyMs": 946.3999999910593,
+        "groups": 6,
+        "jobs": 3,
+        "memory": {
+          "geometries": 137,
+          "textures": 112
+        },
+        "programs": 95,
+        "proxies": 4,
+        "geometriesChecked": 88,
+        "calls": 155,
+        "triangles": 71341
+      }
+    ],
+    "stateChecks": [
+      "actual deposit and withdrawal",
+      "nonempty warehouse and inventory reload",
+      "attributes and rank/task/proofs/vault progress reload",
+      "same records preserved by old-layout migration"
+    ]
+  },
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [],
+  "networkErrors": [
+    {
+      "requestId": "63232.494",
+      "loaderId": "72C24C1CA13A05970AC0AB339F32DCAE",
+      "timestamp": 90253.96076,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:11238/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Wed, 21 Oct 2026 04:51:25 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 131,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 11238,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 90253.945296,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.471,
+          "sendEnd": 0.53,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 14.787,
+          "receiveHeadersEnd": 14.904
+        },
+        "responseTime": 1792558285398.587,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "AB913F6E32EDF5901D8AE309D6CAEC80"
+    }
+  ]
+}

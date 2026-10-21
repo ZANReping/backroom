@@ -42,7 +42,7 @@ export interface DecorEntry {
 const INTERACT_EXTRA: ReadonlySet<string> = new Set([
   'lift', 'lightswitch', 'megsign', 'arcadecab',
   'hoteldoor', 'rollerdoor', 'glassdoor', 'inkdoor', 'bargate',
-  'windowtrap', 'megdoc', 'landmark', 'invitation', 'valve', 'booth', 'server', 'vending', 'frontdesk',
+  'windowtrap', 'megdoc', 'landmark', 'invitation', 'valve', 'booth', 'server', 'vending', 'watercooler', 'frontdesk',
   // Alpha furniture becomes interactive only when the instance carries data.facility;
   // these entries are non-container by default and do not create business services alone.
   'alpha_desk', 'alpha_labbench', 'alpha_cold_cabinet', 'alpha_archive_reader',
@@ -75,6 +75,7 @@ const RAW: RawEntry[] = [
   S('cubicle', '办公隔间', 'solid', ['L4'], 'mapgen office 工位矩阵'),
   S('copier', '复印机', 'solid', ['L1', 'L4', '据点101', '据点103', '据点106'], 'infiniteL1 民居段、L4 复印区、Alpha/希波克拉底手工'),
   S('server', '服务器机柜', 'solid', ['L4'], 'mapgen office 机房（刷门禁卡进入）'),
+  S('watercooler', '饮水机（L4）', 'solid', ['L4'], 'l4Plan 服务核心西墙每块 1 台 + 大厅/空旷区柱边；30% 为杏仁水桶（可接取一瓶），其余可饮用 4 次（口渴 +20）'),
   S('vending', '自动售货机', 'solid', ['L4', 'L11', '据点105', '据点106'], 'infiniteL4 办公间区/小房间区墙边（data.trade 免费取用、25% 卡死）、mapgenDeep L11 楼内、EL3A 上层'),
   S('desk', '办公桌', 'solid', ['L1', 'L2', 'L4', 'L11', '据点101', '据点102', '据点103', '据点105', '据点106'], 'infiniteL1/L2 房间、L4 办公室+夹层、L11 楼内、据点手工'),
   S('door', '门（保留类型）', 'solid', [], '无任何生成器放置（仅 mapgen 校验代码引用；L5 structures 列表为死文档）'),
@@ -194,7 +195,7 @@ const RAW: RawEntry[] = [
   S('debrispile', '建材碎料堆', 'nonsolid', ['L1', 'L2', 'L3', '据点105'], 'infiniteL1 衔尾段、infiniteL2/L3 地面散件、EL3A 仓库'),
   S('inkdoor', '墨黑色金属门', 'solid', ['L1'], 'infiniteL1 维护通廊连接门'),
   S('megdoc', 'M.E.G. 文档', 'nonsolid', ['L0', '据点101', '据点106'], 'infinite L0 马尼拉室桌上、Alpha 基地档案室'),
-  S('ceilvent', '天花通风管', 'nonsolid', ['L1'], 'infiniteL1（停电时「手臂」由此伸出）'),
+  S('ceilvent', '天花通风管', 'nonsolid', ['L1'], 'infiniteL1（「手臂」Entité 15-FR 的风口：黑暗 + 噪音时由此伸出）'),
   S('landmark', '定居点地标', 'nonsolid', ['L1', 'L2'], 'infiniteL1 各段（alpha/tom/bntg/ariane）、infiniteL2 tidy 段（el3a）'),
   // ===== 据点家具 =====
   S('serverrack', '无线电机柜', 'solid', ['据点101', '据点102', '据点106'], 'Alpha 中控室、商人之家机房'),

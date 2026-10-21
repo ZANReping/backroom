@@ -1,0 +1,1655 @@
+{
+  "before": false,
+  "seed": 20261006,
+  "mode": "classic",
+  "port": 8765,
+  "cdp": 8766,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:8765/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Tue, 20 Oct 2026 14:01:15 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 280,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 8765,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 36834.418617,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.344,
+        "sendEnd": 0.412,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 61.761,
+        "receiveHeadersEnd": 61.922
+      },
+      "responseTime": 1792504875378.385,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\arms-import-20261020\\final-classic\\qa-1792504861593-62284",
+    "--remote-debugging-port=8766",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 6540,
+    "server": 64012
+  },
+  "appBootMs": 12972.5129,
+  "entryMs": 5927.275399999999,
+  "firstPlayableMs": 27903.4328,
+  "initial": {
+    "level": 1,
+    "paused": false,
+    "over": false,
+    "current": null,
+    "near": true,
+    "chunks": 9,
+    "tasks": 4,
+    "memory": {
+      "geometries": 272,
+      "textures": 93,
+      "programs": 96
+    }
+  },
+  "entity": {
+    "name": "setup",
+    "prepareMs": 414.3999999985099,
+    "homeWorld": {
+      "x": 15.5,
+      "y": 15.5
+    },
+    "spot": {
+      "x": 79.5,
+      "y": 79.5,
+      "ceil": 3.25
+    },
+    "seed": 10076,
+    "mode": "hidden",
+    "clipT": 0,
+    "phase": "none",
+    "black": 0,
+    "struggle": 0,
+    "hp": 100,
+    "world": [
+      18.299999999999997,
+      16.700000000000003,
+      0
+    ],
+    "visible": true,
+    "gpuSkin": false,
+    "cpuProxy": false,
+    "count": 2,
+    "stat": {
+      "triggers": 0,
+      "burns": 0,
+      "grabs": 0,
+      "escapes": 0,
+      "swallows": 0,
+      "banishes": 0,
+      "flinches": 0
+    },
+    "resources": {
+      "geometries": 403,
+      "textures": 112,
+      "programs": 93
+    },
+    "budget": {
+      "meshes": 3,
+      "draws": 4,
+      "tris": 4868,
+      "bones": 53
+    }
+  },
+  "poses": [
+    {
+      "name": "hidden",
+      "mode": "hidden",
+      "clipT": 0,
+      "phase": "none",
+      "black": 0,
+      "struggle": 0,
+      "hp": 100,
+      "world": [
+        18.299999999999997,
+        16.599999999999994,
+        0
+      ],
+      "visible": true,
+      "gpuSkin": false,
+      "cpuProxy": false,
+      "count": 2,
+      "stat": {
+        "triggers": 0,
+        "burns": 0,
+        "grabs": 0,
+        "escapes": 0,
+        "swallows": 0,
+        "banishes": 0,
+        "flinches": 0
+      },
+      "resources": {
+        "geometries": 404,
+        "textures": 125,
+        "programs": 93
+      },
+      "budget": {
+        "meshes": 3,
+        "draws": 4,
+        "tris": 4868,
+        "bones": 53
+      }
+    },
+    {
+      "name": "emerge",
+      "mode": "emerge",
+      "clipT": 3.1,
+      "phase": "none",
+      "black": 0,
+      "struggle": 0,
+      "hp": 100,
+      "world": [
+        18.299999999999997,
+        16.599999999999994,
+        0
+      ],
+      "visible": true,
+      "gpuSkin": true,
+      "cpuProxy": false,
+      "count": 2,
+      "stat": {
+        "triggers": 0,
+        "burns": 0,
+        "grabs": 0,
+        "escapes": 0,
+        "swallows": 0,
+        "banishes": 0,
+        "flinches": 0
+      },
+      "resources": {
+        "geometries": 420,
+        "textures": 133,
+        "programs": 94
+      },
+      "budget": {
+        "meshes": 3,
+        "draws": 4,
+        "tris": 4868,
+        "bones": 53
+      }
+    },
+    {
+      "name": "search",
+      "mode": "search",
+      "clipT": 2,
+      "phase": "none",
+      "black": 0,
+      "struggle": 0,
+      "hp": 100,
+      "world": [
+        18.299999999999997,
+        16.599999999999994,
+        0
+      ],
+      "visible": true,
+      "gpuSkin": true,
+      "cpuProxy": false,
+      "count": 2,
+      "stat": {
+        "triggers": 0,
+        "burns": 0,
+        "grabs": 0,
+        "escapes": 0,
+        "swallows": 0,
+        "banishes": 0,
+        "flinches": 0
+      },
+      "resources": {
+        "geometries": 427,
+        "textures": 142,
+        "programs": 95
+      },
+      "budget": {
+        "meshes": 3,
+        "draws": 4,
+        "tris": 4868,
+        "bones": 53
+      }
+    },
+    {
+      "name": "lunge",
+      "mode": "lunge",
+      "clipT": 1.13,
+      "phase": "none",
+      "black": 0,
+      "struggle": 0,
+      "hp": 100,
+      "world": [
+        18.299999999999997,
+        16.599999999999994,
+        0
+      ],
+      "visible": true,
+      "gpuSkin": true,
+      "cpuProxy": false,
+      "count": 2,
+      "stat": {
+        "triggers": 0,
+        "burns": 0,
+        "grabs": 0,
+        "escapes": 0,
+        "swallows": 0,
+        "banishes": 0,
+        "flinches": 0
+      },
+      "resources": {
+        "geometries": 433,
+        "textures": 149,
+        "programs": 95
+      },
+      "budget": {
+        "meshes": 3,
+        "draws": 4,
+        "tris": 4868,
+        "bones": 53
+      }
+    },
+    {
+      "name": "drag",
+      "mode": "drag",
+      "clipT": 1.2,
+      "phase": "held",
+      "black": 0,
+      "struggle": 2.455079999999996,
+      "hp": 100,
+      "world": [
+        17.685771506599906,
+        16.32973946290396,
+        0.3511920786787204
+      ],
+      "visible": true,
+      "gpuSkin": true,
+      "cpuProxy": false,
+      "count": 2,
+      "stat": {
+        "triggers": 0,
+        "burns": 0,
+        "grabs": 0,
+        "escapes": 0,
+        "swallows": 0,
+        "banishes": 0,
+        "flinches": 0
+      },
+      "resources": {
+        "geometries": 445,
+        "textures": 149,
+        "programs": 95
+      },
+      "budget": {
+        "meshes": 3,
+        "draws": 4,
+        "tris": 4868,
+        "bones": 53
+      }
+    }
+  ],
+  "grab": {
+    "name": "live-grab",
+    "trace": [
+      {
+        "ms": 702.3999999985099,
+        "mode": "stir",
+        "clipT": 0.4416999999999974,
+        "phase": "none",
+        "black": 0,
+        "struggle": 0,
+        "hp": 100,
+        "world": [
+          17.700000000000003,
+          15.75,
+          0
+        ],
+        "visible": true,
+        "gpuSkin": false,
+        "cpuProxy": false,
+        "count": 2,
+        "stat": {
+          "triggers": 1,
+          "burns": 0,
+          "grabs": 1,
+          "escapes": 0,
+          "swallows": 0,
+          "banishes": 0,
+          "flinches": 0
+        },
+        "resources": {
+          "geometries": 486,
+          "textures": 149,
+          "programs": 95
+        },
+        "budget": {
+          "meshes": 3,
+          "draws": 4,
+          "tris": 4868,
+          "bones": 53
+        }
+      },
+      {
+        "ms": 2688,
+        "mode": "emerge",
+        "clipT": 0.6209000000000015,
+        "phase": "none",
+        "black": 0,
+        "struggle": 0,
+        "hp": 100,
+        "world": [
+          17.700000000000003,
+          15.75,
+          0
+        ],
+        "visible": true,
+        "gpuSkin": false,
+        "cpuProxy": false,
+        "count": 2,
+        "stat": {
+          "triggers": 1,
+          "burns": 0,
+          "grabs": 1,
+          "escapes": 0,
+          "swallows": 0,
+          "banishes": 0,
+          "flinches": 0
+        },
+        "resources": {
+          "geometries": 486,
+          "textures": 149,
+          "programs": 95
+        },
+        "budget": {
+          "meshes": 3,
+          "draws": 4,
+          "tris": 4868,
+          "bones": 53
+        }
+      },
+      {
+        "ms": 5698.79999999702,
+        "mode": "lunge",
+        "clipT": 0.41660000000000585,
+        "phase": "none",
+        "black": 0,
+        "struggle": 0,
+        "hp": 100,
+        "world": [
+          17.700000000000003,
+          15.75,
+          0
+        ],
+        "visible": true,
+        "gpuSkin": true,
+        "cpuProxy": false,
+        "count": 2,
+        "stat": {
+          "triggers": 1,
+          "burns": 0,
+          "grabs": 1,
+          "escapes": 0,
+          "swallows": 0,
+          "banishes": 0,
+          "flinches": 0
+        },
+        "resources": {
+          "geometries": 487,
+          "textures": 149,
+          "programs": 95
+        },
+        "budget": {
+          "meshes": 3,
+          "draws": 4,
+          "tris": 4868,
+          "bones": 53
+        }
+      },
+      {
+        "ms": 6512,
+        "mode": "grab",
+        "clipT": 0.012599999999998545,
+        "phase": "held",
+        "black": 0,
+        "struggle": 0,
+        "hp": 84,
+        "world": [
+          17.700000000000003,
+          15.75,
+          0
+        ],
+        "visible": true,
+        "gpuSkin": true,
+        "cpuProxy": false,
+        "count": 2,
+        "stat": {
+          "triggers": 1,
+          "burns": 0,
+          "grabs": 1,
+          "escapes": 0,
+          "swallows": 0,
+          "banishes": 0,
+          "flinches": 0
+        },
+        "resources": {
+          "geometries": 487,
+          "textures": 149,
+          "programs": 95
+        },
+        "budget": {
+          "meshes": 3,
+          "draws": 4,
+          "tris": 4868,
+          "bones": 53
+        }
+      }
+    ],
+    "mode": "grab",
+    "clipT": 0.012599999999998545,
+    "phase": "held",
+    "black": 0,
+    "struggle": 0,
+    "hp": 84,
+    "world": [
+      17.700000000000003,
+      15.75,
+      0
+    ],
+    "visible": true,
+    "gpuSkin": true,
+    "cpuProxy": false,
+    "count": 2,
+    "stat": {
+      "triggers": 1,
+      "burns": 0,
+      "grabs": 1,
+      "escapes": 0,
+      "swallows": 0,
+      "banishes": 0,
+      "flinches": 0
+    },
+    "resources": {
+      "geometries": 487,
+      "textures": 149,
+      "programs": 95
+    },
+    "budget": {
+      "meshes": 3,
+      "draws": 4,
+      "tris": 4868,
+      "bones": 53
+    }
+  },
+  "escape": {
+    "name": "escape",
+    "mode": "flinch",
+    "clipT": 0.5041999999999973,
+    "phase": "none",
+    "black": 0,
+    "struggle": 0,
+    "hp": 84,
+    "world": [
+      16.80222140905093,
+      15.647979705573974,
+      0
+    ],
+    "visible": true,
+    "gpuSkin": true,
+    "cpuProxy": false,
+    "count": 2,
+    "stat": {
+      "triggers": 1,
+      "burns": 0,
+      "grabs": 1,
+      "escapes": 1,
+      "swallows": 0,
+      "banishes": 0,
+      "flinches": 0
+    },
+    "resources": {
+      "geometries": 487,
+      "textures": 149,
+      "programs": 95
+    },
+    "budget": {
+      "meshes": 3,
+      "draws": 4,
+      "tris": 4868,
+      "bones": 53
+    }
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: Timeout streaming after spit\",\"lineNumber\":11,\"columnNumber\":47,\"scriptId\":\"571\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"until\",\"scriptId\":\"571\",\"url\":\"http://127.0.0.1:8765/verifier/arms-import-check.ts\",\"lineNumber\":10,\"columnNumber\":46}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: Timeout streaming after spit\\n    at until (http://127.0.0.1:8765/verifier/arms-import-check.ts:11:47)\\n    at async Object.transit (http://127.0.0.1:8765/verifier/arms-import-check.ts:196:5)\",\"objectId\":\"-8492161821488480147.2.1\"}}",
+  "partial": {
+    "checks": [
+      "real L1 hall has a clear ceiling and collision-safe floor",
+      "real instance starts with the correct prepared count and seed",
+      "native GPU skin is visible in emerge",
+      "native GPU skin is visible in search",
+      "native GPU skin is visible in lunge",
+      "native GPU skin is visible in drag",
+      "real AI warning and lunge grab the player and deal damage",
+      "keyboard struggle releases the player",
+      "escaped player lands outside solids",
+      "real AI warning and lunge grab the player and deal damage",
+      "real movement and HUD enter the duct phase",
+      "swallow applies internal non-lethal injury while shielding outside damage",
+      "spit reaches a safe distant floor"
+    ],
+    "records": [
+      {
+        "name": "setup",
+        "prepareMs": 414.3999999985099,
+        "homeWorld": {
+          "x": 15.5,
+          "y": 15.5
+        },
+        "spot": {
+          "x": 79.5,
+          "y": 79.5,
+          "ceil": 3.25
+        },
+        "seed": 10076,
+        "mode": "hidden",
+        "clipT": 0,
+        "phase": "none",
+        "black": 0,
+        "struggle": 0,
+        "hp": 100,
+        "world": [
+          18.299999999999997,
+          16.700000000000003,
+          0
+        ],
+        "visible": true,
+        "gpuSkin": false,
+        "cpuProxy": false,
+        "count": 2,
+        "stat": {
+          "triggers": 2,
+          "burns": 0,
+          "grabs": 2,
+          "escapes": 1,
+          "swallows": 1,
+          "banishes": 0,
+          "flinches": 0
+        },
+        "resources": {
+          "geometries": 403,
+          "textures": 112,
+          "programs": 93
+        },
+        "budget": {
+          "meshes": 3,
+          "draws": 4,
+          "tris": 4868,
+          "bones": 53
+        }
+      },
+      {
+        "name": "hidden",
+        "mode": "hidden",
+        "clipT": 0,
+        "phase": "none",
+        "black": 0,
+        "struggle": 0,
+        "hp": 100,
+        "world": [
+          18.299999999999997,
+          16.599999999999994,
+          0
+        ],
+        "visible": true,
+        "gpuSkin": false,
+        "cpuProxy": false,
+        "count": 2,
+        "stat": {
+          "triggers": 2,
+          "burns": 0,
+          "grabs": 2,
+          "escapes": 1,
+          "swallows": 1,
+          "banishes": 0,
+          "flinches": 0
+        },
+        "resources": {
+          "geometries": 404,
+          "textures": 125,
+          "programs": 93
+        },
+        "budget": {
+          "meshes": 3,
+          "draws": 4,
+          "tris": 4868,
+          "bones": 53
+        }
+      },
+      {
+        "name": "emerge",
+        "mode": "emerge",
+        "clipT": 3.1,
+        "phase": "none",
+        "black": 0,
+        "struggle": 0,
+        "hp": 100,
+        "world": [
+          18.299999999999997,
+          16.599999999999994,
+          0
+        ],
+        "visible": true,
+        "gpuSkin": true,
+        "cpuProxy": false,
+        "count": 2,
+        "stat": {
+          "triggers": 2,
+          "burns": 0,
+          "grabs": 2,
+          "escapes": 1,
+          "swallows": 1,
+          "banishes": 0,
+          "flinches": 0
+        },
+        "resources": {
+          "geometries": 420,
+          "textures": 133,
+          "programs": 94
+        },
+        "budget": {
+          "meshes": 3,
+          "draws": 4,
+          "tris": 4868,
+          "bones": 53
+        }
+      },
+      {
+        "name": "search",
+        "mode": "search",
+        "clipT": 2,
+        "phase": "none",
+        "black": 0,
+        "struggle": 0,
+        "hp": 100,
+        "world": [
+          18.299999999999997,
+          16.599999999999994,
+          0
+        ],
+        "visible": true,
+        "gpuSkin": true,
+        "cpuProxy": false,
+        "count": 2,
+        "stat": {
+          "triggers": 2,
+          "burns": 0,
+          "grabs": 2,
+          "escapes": 1,
+          "swallows": 1,
+          "banishes": 0,
+          "flinches": 0
+        },
+        "resources": {
+          "geometries": 427,
+          "textures": 142,
+          "programs": 95
+        },
+        "budget": {
+          "meshes": 3,
+          "draws": 4,
+          "tris": 4868,
+          "bones": 53
+        }
+      },
+      {
+        "name": "lunge",
+        "mode": "lunge",
+        "clipT": 1.13,
+        "phase": "none",
+        "black": 0,
+        "struggle": 0,
+        "hp": 100,
+        "world": [
+          18.299999999999997,
+          16.599999999999994,
+          0
+        ],
+        "visible": true,
+        "gpuSkin": true,
+        "cpuProxy": false,
+        "count": 2,
+        "stat": {
+          "triggers": 2,
+          "burns": 0,
+          "grabs": 2,
+          "escapes": 1,
+          "swallows": 1,
+          "banishes": 0,
+          "flinches": 0
+        },
+        "resources": {
+          "geometries": 433,
+          "textures": 149,
+          "programs": 95
+        },
+        "budget": {
+          "meshes": 3,
+          "draws": 4,
+          "tris": 4868,
+          "bones": 53
+        }
+      },
+      {
+        "name": "drag",
+        "mode": "drag",
+        "clipT": 1.2,
+        "phase": "held",
+        "black": 0,
+        "struggle": 2.455079999999996,
+        "hp": 100,
+        "world": [
+          17.685771506599906,
+          16.32973946290396,
+          0.3511920786787204
+        ],
+        "visible": true,
+        "gpuSkin": true,
+        "cpuProxy": false,
+        "count": 2,
+        "stat": {
+          "triggers": 2,
+          "burns": 0,
+          "grabs": 2,
+          "escapes": 1,
+          "swallows": 1,
+          "banishes": 0,
+          "flinches": 0
+        },
+        "resources": {
+          "geometries": 445,
+          "textures": 149,
+          "programs": 95
+        },
+        "budget": {
+          "meshes": 3,
+          "draws": 4,
+          "tris": 4868,
+          "bones": 53
+        }
+      },
+      {
+        "name": "live-grab",
+        "trace": [
+          {
+            "ms": 702.3999999985099,
+            "mode": "stir",
+            "clipT": 0.4416999999999974,
+            "phase": "none",
+            "black": 0,
+            "struggle": 0,
+            "hp": 100,
+            "world": [
+              17.700000000000003,
+              15.75,
+              0
+            ],
+            "visible": true,
+            "gpuSkin": false,
+            "cpuProxy": false,
+            "count": 2,
+            "stat": {
+              "triggers": 2,
+              "burns": 0,
+              "grabs": 2,
+              "escapes": 1,
+              "swallows": 1,
+              "banishes": 0,
+              "flinches": 0
+            },
+            "resources": {
+              "geometries": 486,
+              "textures": 149,
+              "programs": 95
+            },
+            "budget": {
+              "meshes": 3,
+              "draws": 4,
+              "tris": 4868,
+              "bones": 53
+            }
+          },
+          {
+            "ms": 2688,
+            "mode": "emerge",
+            "clipT": 0.6209000000000015,
+            "phase": "none",
+            "black": 0,
+            "struggle": 0,
+            "hp": 100,
+            "world": [
+              17.700000000000003,
+              15.75,
+              0
+            ],
+            "visible": true,
+            "gpuSkin": false,
+            "cpuProxy": false,
+            "count": 2,
+            "stat": {
+              "triggers": 2,
+              "burns": 0,
+              "grabs": 2,
+              "escapes": 1,
+              "swallows": 1,
+              "banishes": 0,
+              "flinches": 0
+            },
+            "resources": {
+              "geometries": 486,
+              "textures": 149,
+              "programs": 95
+            },
+            "budget": {
+              "meshes": 3,
+              "draws": 4,
+              "tris": 4868,
+              "bones": 53
+            }
+          },
+          {
+            "ms": 5698.79999999702,
+            "mode": "lunge",
+            "clipT": 0.41660000000000585,
+            "phase": "none",
+            "black": 0,
+            "struggle": 0,
+            "hp": 100,
+            "world": [
+              17.700000000000003,
+              15.75,
+              0
+            ],
+            "visible": true,
+            "gpuSkin": true,
+            "cpuProxy": false,
+            "count": 2,
+            "stat": {
+              "triggers": 2,
+              "burns": 0,
+              "grabs": 2,
+              "escapes": 1,
+              "swallows": 1,
+              "banishes": 0,
+              "flinches": 0
+            },
+            "resources": {
+              "geometries": 487,
+              "textures": 149,
+              "programs": 95
+            },
+            "budget": {
+              "meshes": 3,
+              "draws": 4,
+              "tris": 4868,
+              "bones": 53
+            }
+          },
+          {
+            "ms": 6512,
+            "mode": "grab",
+            "clipT": 0.012599999999998545,
+            "phase": "held",
+            "black": 0,
+            "struggle": 0,
+            "hp": 84,
+            "world": [
+              17.700000000000003,
+              15.75,
+              0
+            ],
+            "visible": true,
+            "gpuSkin": true,
+            "cpuProxy": false,
+            "count": 2,
+            "stat": {
+              "triggers": 2,
+              "burns": 0,
+              "grabs": 2,
+              "escapes": 1,
+              "swallows": 1,
+              "banishes": 0,
+              "flinches": 0
+            },
+            "resources": {
+              "geometries": 487,
+              "textures": 149,
+              "programs": 95
+            },
+            "budget": {
+              "meshes": 3,
+              "draws": 4,
+              "tris": 4868,
+              "bones": 53
+            }
+          }
+        ],
+        "mode": "grab",
+        "clipT": 0.012599999999998545,
+        "phase": "held",
+        "black": 0,
+        "struggle": 0,
+        "hp": 84,
+        "world": [
+          17.700000000000003,
+          15.75,
+          0
+        ],
+        "visible": true,
+        "gpuSkin": true,
+        "cpuProxy": false,
+        "count": 2,
+        "stat": {
+          "triggers": 2,
+          "burns": 0,
+          "grabs": 2,
+          "escapes": 1,
+          "swallows": 1,
+          "banishes": 0,
+          "flinches": 0
+        },
+        "resources": {
+          "geometries": 487,
+          "textures": 149,
+          "programs": 95
+        },
+        "budget": {
+          "meshes": 3,
+          "draws": 4,
+          "tris": 4868,
+          "bones": 53
+        }
+      },
+      {
+        "name": "escape",
+        "mode": "flinch",
+        "clipT": 0.5041999999999973,
+        "phase": "none",
+        "black": 0,
+        "struggle": 0,
+        "hp": 84,
+        "world": [
+          16.80222140905093,
+          15.647979705573974,
+          0
+        ],
+        "visible": true,
+        "gpuSkin": true,
+        "cpuProxy": false,
+        "count": 2,
+        "stat": {
+          "triggers": 2,
+          "burns": 0,
+          "grabs": 2,
+          "escapes": 1,
+          "swallows": 1,
+          "banishes": 0,
+          "flinches": 0
+        },
+        "resources": {
+          "geometries": 487,
+          "textures": 149,
+          "programs": 95
+        },
+        "budget": {
+          "meshes": 3,
+          "draws": 4,
+          "tris": 4868,
+          "bones": 53
+        }
+      },
+      {
+        "name": "live-grab",
+        "trace": [
+          {
+            "ms": 744,
+            "mode": "stir",
+            "clipT": 0.4749000000000017,
+            "phase": "none",
+            "black": 0,
+            "struggle": 0,
+            "hp": 100,
+            "world": [
+              17.700000000000003,
+              15.75,
+              0
+            ],
+            "visible": true,
+            "gpuSkin": false,
+            "cpuProxy": false,
+            "count": 2,
+            "stat": {
+              "triggers": 2,
+              "burns": 0,
+              "grabs": 2,
+              "escapes": 1,
+              "swallows": 1,
+              "banishes": 0,
+              "flinches": 0
+            },
+            "resources": {
+              "geometries": 487,
+              "textures": 149,
+              "programs": 95
+            },
+            "budget": {
+              "meshes": 3,
+              "draws": 4,
+              "tris": 4868,
+              "bones": 53
+            }
+          },
+          {
+            "ms": 2687.0999999940395,
+            "mode": "emerge",
+            "clipT": 0.6167000000000044,
+            "phase": "none",
+            "black": 0,
+            "struggle": 0,
+            "hp": 100,
+            "world": [
+              17.700000000000003,
+              15.75,
+              0
+            ],
+            "visible": true,
+            "gpuSkin": false,
+            "cpuProxy": false,
+            "count": 2,
+            "stat": {
+              "triggers": 2,
+              "burns": 0,
+              "grabs": 2,
+              "escapes": 1,
+              "swallows": 1,
+              "banishes": 0,
+              "flinches": 0
+            },
+            "resources": {
+              "geometries": 487,
+              "textures": 149,
+              "programs": 95
+            },
+            "budget": {
+              "meshes": 3,
+              "draws": 4,
+              "tris": 4868,
+              "bones": 53
+            }
+          },
+          {
+            "ms": 5679.29999999702,
+            "mode": "search",
+            "clipT": 0,
+            "phase": "none",
+            "black": 0,
+            "struggle": 0,
+            "hp": 100,
+            "world": [
+              17.700000000000003,
+              15.75,
+              0
+            ],
+            "visible": true,
+            "gpuSkin": true,
+            "cpuProxy": false,
+            "count": 2,
+            "stat": {
+              "triggers": 2,
+              "burns": 0,
+              "grabs": 2,
+              "escapes": 1,
+              "swallows": 1,
+              "banishes": 0,
+              "flinches": 0
+            },
+            "resources": {
+              "geometries": 487,
+              "textures": 149,
+              "programs": 95
+            },
+            "budget": {
+              "meshes": 3,
+              "draws": 4,
+              "tris": 4868,
+              "bones": 53
+            }
+          },
+          {
+            "ms": 5724.5,
+            "mode": "lunge",
+            "clipT": 0.4374000000000015,
+            "phase": "none",
+            "black": 0,
+            "struggle": 0,
+            "hp": 100,
+            "world": [
+              17.700000000000003,
+              15.75,
+              0
+            ],
+            "visible": true,
+            "gpuSkin": true,
+            "cpuProxy": false,
+            "count": 2,
+            "stat": {
+              "triggers": 2,
+              "burns": 0,
+              "grabs": 2,
+              "escapes": 1,
+              "swallows": 1,
+              "banishes": 0,
+              "flinches": 0
+            },
+            "resources": {
+              "geometries": 487,
+              "textures": 149,
+              "programs": 95
+            },
+            "budget": {
+              "meshes": 3,
+              "draws": 4,
+              "tris": 4868,
+              "bones": 53
+            }
+          },
+          {
+            "ms": 6515.89999999851,
+            "mode": "grab",
+            "clipT": 0.008400000000001455,
+            "phase": "held",
+            "black": 0,
+            "struggle": 0,
+            "hp": 84,
+            "world": [
+              17.700000000000003,
+              15.75,
+              0
+            ],
+            "visible": true,
+            "gpuSkin": true,
+            "cpuProxy": false,
+            "count": 2,
+            "stat": {
+              "triggers": 2,
+              "burns": 0,
+              "grabs": 2,
+              "escapes": 1,
+              "swallows": 1,
+              "banishes": 0,
+              "flinches": 0
+            },
+            "resources": {
+              "geometries": 487,
+              "textures": 149,
+              "programs": 95
+            },
+            "budget": {
+              "meshes": 3,
+              "draws": 4,
+              "tris": 4868,
+              "bones": 53
+            }
+          }
+        ],
+        "mode": "grab",
+        "clipT": 0.008400000000001455,
+        "phase": "held",
+        "black": 0,
+        "struggle": 0,
+        "hp": 84,
+        "world": [
+          17.700000000000003,
+          15.75,
+          0
+        ],
+        "visible": true,
+        "gpuSkin": true,
+        "cpuProxy": false,
+        "count": 2,
+        "stat": {
+          "triggers": 2,
+          "burns": 0,
+          "grabs": 2,
+          "escapes": 1,
+          "swallows": 1,
+          "banishes": 0,
+          "flinches": 0
+        },
+        "resources": {
+          "geometries": 487,
+          "textures": 149,
+          "programs": 95
+        },
+        "budget": {
+          "meshes": 3,
+          "draws": 4,
+          "tris": 4868,
+          "bones": 53
+        }
+      },
+      {
+        "name": "transit-trace",
+        "trace": [
+          {
+            "ms": 23.05399999999979,
+            "mode": "grab",
+            "clipT": 0.008400000000001455,
+            "phase": "held",
+            "black": 0,
+            "struggle": 0,
+            "hp": 84,
+            "world": [
+              17.700000000000003,
+              15.75,
+              0
+            ],
+            "visible": true,
+            "gpuSkin": true,
+            "cpuProxy": false,
+            "count": 2,
+            "stat": {
+              "triggers": 2,
+              "burns": 0,
+              "grabs": 2,
+              "escapes": 1,
+              "swallows": 1,
+              "banishes": 0,
+              "flinches": 0
+            },
+            "resources": {
+              "geometries": 487,
+              "textures": 149,
+              "programs": 95
+            },
+            "budget": {
+              "meshes": 3,
+              "draws": 4,
+              "tris": 4868,
+              "bones": 53
+            }
+          },
+          {
+            "ms": 23.76229999999977,
+            "mode": "drag",
+            "clipT": 0.0085,
+            "phase": "held",
+            "black": 0,
+            "struggle": 0,
+            "hp": 84,
+            "world": [
+              17.700000000000003,
+              15.75,
+              0.1200000000000001
+            ],
+            "visible": true,
+            "gpuSkin": true,
+            "cpuProxy": false,
+            "count": 2,
+            "stat": {
+              "triggers": 2,
+              "burns": 0,
+              "grabs": 2,
+              "escapes": 1,
+              "swallows": 1,
+              "banishes": 0,
+              "flinches": 0
+            },
+            "resources": {
+              "geometries": 487,
+              "textures": 149,
+              "programs": 95
+            },
+            "budget": {
+              "meshes": 3,
+              "draws": 4,
+              "tris": 4868,
+              "bones": 53
+            }
+          },
+          {
+            "ms": 27.3787999999997,
+            "mode": "swallow",
+            "clipT": 0.016700000000004364,
+            "phase": "held",
+            "black": 0,
+            "struggle": 0,
+            "hp": 84,
+            "world": [
+              15.817687479030184,
+              15.536100849889792,
+              0.5503767565311999
+            ],
+            "visible": true,
+            "gpuSkin": true,
+            "cpuProxy": false,
+            "count": 2,
+            "stat": {
+              "triggers": 2,
+              "burns": 0,
+              "grabs": 2,
+              "escapes": 1,
+              "swallows": 1,
+              "banishes": 0,
+              "flinches": 0
+            },
+            "resources": {
+              "geometries": 487,
+              "textures": 149,
+              "programs": 95
+            },
+            "budget": {
+              "meshes": 3,
+              "draws": 4,
+              "tris": 4868,
+              "bones": 53
+            }
+          },
+          {
+            "ms": 28.70789999999968,
+            "mode": "swallow",
+            "clipT": 1.3458000000000006,
+            "phase": "inside",
+            "black": 1,
+            "struggle": 0,
+            "hp": 54,
+            "world": [
+              15.5,
+              15.5,
+              0
+            ],
+            "visible": true,
+            "gpuSkin": false,
+            "cpuProxy": false,
+            "count": 2,
+            "stat": {
+              "triggers": 2,
+              "burns": 0,
+              "grabs": 2,
+              "escapes": 1,
+              "swallows": 1,
+              "banishes": 0,
+              "flinches": 0
+            },
+            "resources": {
+              "geometries": 487,
+              "textures": 149,
+              "programs": 95
+            },
+            "budget": {
+              "meshes": 4,
+              "draws": 5,
+              "tris": 4886,
+              "bones": 53
+            }
+          },
+          {
+            "ms": 30.007899999999665,
+            "mode": "duct",
+            "clipT": 0.04169999999999709,
+            "phase": "inside",
+            "black": 1,
+            "struggle": 0,
+            "hp": 54,
+            "world": [
+              15.5,
+              15.5,
+              0
+            ],
+            "visible": true,
+            "gpuSkin": false,
+            "cpuProxy": false,
+            "count": 2,
+            "stat": {
+              "triggers": 2,
+              "burns": 0,
+              "grabs": 2,
+              "escapes": 1,
+              "swallows": 1,
+              "banishes": 0,
+              "flinches": 0
+            },
+            "resources": {
+              "geometries": 487,
+              "textures": 149,
+              "programs": 95
+            },
+            "budget": {
+              "meshes": 4,
+              "draws": 5,
+              "tris": 4886,
+              "bones": 53
+            }
+          },
+          {
+            "ms": 34.18699999999997,
+            "mode": "spit",
+            "clipT": 0.02069999999999709,
+            "phase": "held",
+            "black": 0.9965113772500009,
+            "struggle": 0,
+            "hp": 54,
+            "world": [
+              39.5,
+              5.5,
+              1.75
+            ],
+            "visible": true,
+            "gpuSkin": false,
+            "cpuProxy": false,
+            "count": 2,
+            "stat": {
+              "triggers": 2,
+              "burns": 0,
+              "grabs": 2,
+              "escapes": 1,
+              "swallows": 1,
+              "banishes": 0,
+              "flinches": 0
+            },
+            "resources": {
+              "geometries": 442,
+              "textures": 132,
+              "programs": 95
+            },
+            "budget": {
+              "meshes": 7,
+              "draws": 9,
+              "tris": 7742,
+              "bones": 80
+            }
+          },
+          {
+            "ms": 35.77430000000003,
+            "mode": "spit",
+            "clipT": 1.2287999999999952,
+            "phase": "falling",
+            "black": 0,
+            "struggle": 0,
+            "hp": 54,
+            "world": [
+              40.849999999999994,
+              5.5,
+              0.09932487800000057
+            ],
+            "visible": true,
+            "gpuSkin": false,
+            "cpuProxy": false,
+            "count": 2,
+            "stat": {
+              "triggers": 2,
+              "burns": 0,
+              "grabs": 2,
+              "escapes": 1,
+              "swallows": 1,
+              "banishes": 0,
+              "flinches": 0
+            },
+            "resources": {
+              "geometries": 425,
+              "textures": 143,
+              "programs": 96
+            },
+            "budget": {
+              "meshes": 7,
+              "draws": 9,
+              "tris": 7742,
+              "bones": 80
+            }
+          },
+          {
+            "ms": 35.916100000000036,
+            "mode": "spit",
+            "clipT": 1.3705999999999983,
+            "phase": "none",
+            "black": 0,
+            "struggle": 0,
+            "hp": 54,
+            "world": [
+              40.849999999999994,
+              5.5,
+              0
+            ],
+            "visible": true,
+            "gpuSkin": false,
+            "cpuProxy": false,
+            "count": 2,
+            "stat": {
+              "triggers": 2,
+              "burns": 0,
+              "grabs": 2,
+              "escapes": 1,
+              "swallows": 1,
+              "banishes": 0,
+              "flinches": 0
+            },
+            "resources": {
+              "geometries": 425,
+              "textures": 143,
+              "programs": 96
+            },
+            "budget": {
+              "meshes": 7,
+              "draws": 9,
+              "tris": 7742,
+              "bones": 80
+            }
+          }
+        ]
+      }
+    ],
+    "status": {
+      "level": 1,
+      "paused": false,
+      "over": false,
+      "current": {
+        "mode": "spit",
+        "clipT": 1.3705999999999983,
+        "phase": "none",
+        "black": 0,
+        "struggle": 0,
+        "hp": 100,
+        "world": [
+          40.849999999999994,
+          5.5,
+          0
+        ],
+        "visible": true,
+        "gpuSkin": false,
+        "cpuProxy": false,
+        "count": 2,
+        "stat": {
+          "triggers": 2,
+          "burns": 0,
+          "grabs": 2,
+          "escapes": 1,
+          "swallows": 1,
+          "banishes": 0,
+          "flinches": 0
+        },
+        "resources": {
+          "geometries": 425,
+          "textures": 149,
+          "programs": 97
+        },
+        "budget": {
+          "meshes": 7,
+          "draws": 9,
+          "tris": 7742,
+          "bones": 80
+        }
+      },
+      "near": true,
+      "chunks": 24,
+      "tasks": 0,
+      "memory": {
+        "geometries": 425,
+        "textures": 149,
+        "programs": 97
+      }
+    }
+  },
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 10477.39999999851
+    },
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\n闪烁\nLEVEL 1\n宜居地带\nB1\n磁带\n0/6\n天鹰段\n100%\n杏仁水水洼蒸发的雾气更浓了，远处的立柱没入灰白之中。\n杏仁水水洼蒸发的雾气更浓了，远处的立柱没入灰白之中。\n维护走廊的方向还亮着灯——据说那里的供电从不受停电影响。\n维护走廊的方向还亮着灯——据说那里的供电从不受停电影响。\n1\n2\n3\n4\n5\n6\n7\n空格\n跳跃\nC\n蹲伏\nF\n手电\n左Alt\n取出主手\n开发者模式\n🛠 开发者模式 · DEV\n▴"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

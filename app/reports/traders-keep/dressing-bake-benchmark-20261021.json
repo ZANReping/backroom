@@ -1,0 +1,50 @@
+{
+  "scope": "CPU bake only; same production rack mesh and world lighting; not a GPU frame benchmark",
+  "seed": 424242,
+  "object": "storage_0.rack",
+  "rounds": [
+    {
+      "round": 1,
+      "vertexMs": 45.70010000000002,
+      "probeMs": 3.230299999999943,
+      "triangles": 1994,
+      "maxDifference": 0.5626592040061951,
+      "rmsDifference": 0.10701429402948426
+    },
+    {
+      "round": 2,
+      "vertexMs": 43.67650000000003,
+      "probeMs": 2.2794000000000096,
+      "triangles": 1994,
+      "maxDifference": 0.5626592040061951,
+      "rmsDifference": 0.10701429402948426
+    },
+    {
+      "round": 3,
+      "vertexMs": 40.02299999999991,
+      "probeMs": 2.3774000000000797,
+      "triangles": 1994,
+      "maxDifference": 0.5626592040061951,
+      "rmsDifference": 0.10701429402948426
+    },
+    {
+      "round": 4,
+      "vertexMs": 43.216499999999996,
+      "probeMs": 2.141300000000001,
+      "triangles": 1994,
+      "maxDifference": 0.5626592040061951,
+      "rmsDifference": 0.10701429402948426
+    },
+    {
+      "round": 5,
+      "vertexMs": 40.5865,
+      "probeMs": 2.3965999999999212,
+      "triangles": 1994,
+      "maxDifference": 0.5626592040061951,
+      "rmsDifference": 0.10701429402948426
+    }
+  ],
+  "vertexMedianMs": 43.216499999999996,
+  "probeMedianMs": 2.3774000000000797,
+  "speedup": 18.178051653065765
+}

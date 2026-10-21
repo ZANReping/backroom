@@ -78,7 +78,7 @@ export const PHENOMENA: Record<string, PhenomenonDef> = {
     rarity: 'rare',
     rarityNote: 'Level 9',
     levels: [9],
-    desc: 'Level 9 极罕见的浓雾事件。能见度会在短暂预警后急剧下降，Entity 63「残缺者」随雾成形；雾散后，它也会一并退去。',
+    desc: 'Level 9 极罕见的浓雾事件。Entity 63「残缺者」从视野之外缓缓走近，雾随它的接近逐渐形成。浓雾通常持续 2–3 分钟；随后雾慢慢散去，它也转身走远。',
     icon: 'flicker',
   },
 }

@@ -11,7 +11,7 @@ assert(row,'published entry bake exists')
 const full=bakeL1(row.seed,row.cx,row.cy,'high'),published=decode(JSON.parse(gunzipSync(readFileSync('public/assets/l1-bakes/'+row.file)).toString())) as L1BakeResult
 const preview=bakeL1(row.seed,row.cx,row.cy,'high',true)
 assert.equal(full.provisional,undefined);assert.equal(preview.provisional,true)
-assert.deepEqual(full.irradiance,published.irradiance,'final radiance unchanged from revision 17')
+assert.deepEqual(full.irradiance,published.irradiance,'final radiance matches the current published revision')
 assert.deepEqual(full.direction,published.direction);assert.deepEqual(full.portalWeights,published.portalWeights)
 assert.deepEqual(full.meshes,published.meshes,'published geometry remains identical')
 assert.deepEqual(preview.meshes,full.meshes,'first presentation has final geometry and UVs')

@@ -1,3 +1,4 @@
+import { SAT_NEST_CHANCE, findSatelliteNest, wildMothForm, mainNestDesc, registerNest, satelliteColony } from './mothNests'
 import {genL0Architecture,l0RegionOf,newL0Space,l0RestoredDropPosition,type L0Layout,type L0SpaceState} from './l0Architecture'
 import {applyL0TestField} from './l0TestField'
 import { newL1Dynamics, restoreL1Container, rememberL1Container, type L1Dynamics } from './l1Dynamics'
@@ -16,7 +17,7 @@ import {placeL0StarterSupplies} from './starterSupplies'
 import { canOccupy, PLAYER_RADIUS } from '../core/player'
 import { preparedL11, prefetchL11 } from './l11ChunkCache'
 import { takePreparedChunk, prefetchChunks } from './chunkCache'
-import { makeEntity, type Entity } from '../entities'
+import { makeEntity, canSpawnNaturally, type Entity } from '../entities'
 import type { NpcState } from '../content/npcs'
 import type { GameMap } from './mapgen'
 import { fixHanging, HANGING_KINDS, waterItemZForTile } from './mapgen'
@@ -124,6 +125,8 @@ export interface InfiniteState {
   l0Pending?: import("../engine/l0State").L0Pending
   l0?: L0SpaceState
   mothAlerts?: { all: boolean; nests: Record<string, boolean> }
+  mothNests?: Record<string, import('./mothNests').MothNestDesc> // 死亡飞蛾巢穴登记（主巢 + 卫星巢，世界坐标）
+  mothEggs?: Record<string, number> // 每个巢道具已被打破的卵数（键 = 巢 id + ':' + 道具 key）
   l1Dynamics?: L1Dynamics
   // Compact permanent inventory ledger, independent of the bounded geometry/chunk cache.
   cityContainers?: Record<string, { items: string[]; looted?: boolean; searched?: boolean }>
@@ -255,8 +258,13 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
   // A pedestrian can leave its birth chunk while that chunk unloads/reloads.
   // Its stable ecological ID prevents a second copy appearing at the old post.
   const cityResidents=def.id===11?new Set([...inf.chunks.values()].flatMap(c=>c.entities.filter(e=>!e.dead).map(e=>e.l11Home?.id))):undefined
-  const entities: Entity[] = raw.entities.filter(e=>!e.l11Home||!cityResidents?.has(e.l11Home.id)).map((e) => {
-    const ent = makeEntity(e.type, e.x - ox, e.y - oy, e.z ?? 0, e.mothForm)
+  // 死亡飞蛾巢穴：登记 L5 主巢；L2/L3/L8/L9 按 chunk 确定性哈希生成稀有卫星巢（附带种群，不改动生成器随机序列）
+  const satNest = SAT_NEST_CHANCE[def.id] && !inf.plague ? findSatelliteNest(def.id, inf.seed, cx, cy, raw.tiles, CS) : null
+  if (satNest) registerNest(inf, satNest)
+  for (const e of raw.entities) if (def.id === 5 && e.type === 'deathmoth' && e.mothNest && !inf.mothNests?.[e.mothNest]) { const d = mainNestDesc(inf.seed, e.mothNest); if (d) registerNest(inf, d) }
+  const rawEntities: typeof raw.entities = satNest ? [...raw.entities, ...satelliteColony(satNest)] : raw.entities
+  const entities: Entity[] = rawEntities.filter(e=>canSpawnNaturally(e.type)&&(!e.l11Home||!cityResidents?.has(e.l11Home.id))).map((e) => {
+    const ent = makeEntity(e.type, e.x - ox, e.y - oy, e.z ?? 0, e.type === 'deathmoth' && !e.mothForm && !e.mothNest ? wildMothForm(def.id, inf.seed, e.x, e.y) : e.mothForm)
     ent.mothNest = e.mothNest
     ent.l11Home = e.l11Home
     if (ent.def.type === 'deathmoth' && inf.mothAlerts?.all && ent.def.mothForm !== 'larva') ent.provoked = true
@@ -415,7 +423,7 @@ export function snapshotChunkState(m: GameMap, c: LiveChunk):ChunkDynState {
     const d = s.data
     if (d) {
       const dyn: Record<string, number | string | boolean | string[]> = {}
-      for (const k of ['open', 'locked', 'opened', 'triggered', 'readHint', 'loreIdx', 'on', 'car', 'carZ', 'searched', 'deployed', 'forced'] as const) {
+      for (const k of ['open', 'locked', 'opened', 'triggered', 'readHint', 'loreIdx', 'on', 'car', 'carZ', 'searched', 'deployed', 'forced', 'water'] as const) {
         const v = d[k]
         if (typeof v === 'number' || typeof v === 'string' || typeof v === 'boolean') dyn[k] = v
       }
@@ -621,12 +629,12 @@ export function updateInfinite(m: GameMap, def: LevelDef, px: number, py: number
     for (const it of c.items) { it.x -= dx; it.y -= dy }
     for (const l of c.lights) { l.x -= dx; l.y -= dy }
     for (const e of c.exits) { e.x -= dx; e.y -= dy }
-    for (const e of c.entities) { e.x -= dx; e.y -= dy; e.targetX -= dx; e.targetY -= dy } // v25；v33 补 target（游荡/调查目标同为窗口坐标）
+    for (const e of c.entities) { e.x -= dx; e.y -= dy; e.targetX -= dx; e.targetY -= dy; if(e.ng){e.ng.tx-=dx;e.ng.ty-=dy} } // v25；v33 补 target（游荡/调查目标同为窗口坐标）
     for (const n of c.npcs) { n.x -= dx; n.y -= dy; n.homeX -= dx; n.homeY -= dy; n.tx -= dx; n.ty -= dy } // v39：chunk NPC 同样随窗口平移
   }
   // v33：仍无 chunk 归属的实体（所在 chunk 未加载的召唤/事件实体）同样随窗口平移，
   // 否则窗口跳动后它们保留旧窗口坐标——视觉上相对世界“瞬移”一个 chunk
-  for (const e of m.entities) if (!inAnyChunk((c) => c.entities, e)) { e.x -= dx; e.y -= dy; e.targetX -= dx; e.targetY -= dy }
+  for (const e of m.entities) if (!inAnyChunk((c) => c.entities, e)) { e.x -= dx; e.y -= dy; e.targetX -= dx; e.targetY -= dy; if(e.ng){e.ng.tx-=dx;e.ng.ty-=dy} }
   inf.ox = nox; inf.oy = noy
   // 加载新进入窗口的 chunk
   for (let cy = ncy0; cy < ncy0 + WIN_CHUNKS; cy++)

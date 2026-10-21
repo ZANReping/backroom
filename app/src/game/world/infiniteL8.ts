@@ -593,7 +593,7 @@ export function genL8ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
       dryOnly: true,
       data: () => ({ arachnidMorph: rng.chance(0.72) ? 'spider' : 'mite', arachnidBreed: rng.int(0, 7), herbivore: 1, scale: rng.range(0.66, 1.12) }),
     })
-    if (handLocal === slot(0x81c3)) placeEntity('nguithr', 1)
+    if (handLocal === slot(0x81c3) && h32(seed, 0x81c6, handZoneX, handZoneY) % 3 === 0) placeEntity('nguithr', 1) // Nguithr'xurh 重制：L8 极少（每宏区 1/3 概率才有这一槽）
     if (handLocal === slot(0x81c4)) placeEntity('smiler', 1)
     if (handLocal === slot(0x81c5) || handLocal === slot(0x81c5, 8)) placeEntity('camocrawler', 1)
   } else {

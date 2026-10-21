@@ -5,6 +5,16 @@ import { settlementColliders } from '../src/game/world/settlementColliders'
 import type { Structure } from '../src/game/core/types'
 import type { ColliderBox } from '../src/game/world/mapgen'
 
+// Rotation may differ by <= 2e-15 due to equivalent centre/pivot arithmetic.
+// Compare geometry numerically; cache identity assertions below remain strict.
+function sameBoxes(a:ColliderBox[]|null,b:ColliderBox[]|null){
+ if(a===null||b===null)return a===b
+ if(a.length!==b.length)return false
+ return a.every((box,i)=>['x0','x1','y0','y1','bottom','top','stand'].every(key=>{
+  const x=box[key as keyof ColliderBox],y=b[i][key as keyof ColliderBox]
+  return typeof x==='number'&&typeof y==='number'?Math.abs(x-y)<1e-10:x===y
+ }))
+}
 let checks = 0
 const check = (condition: unknown, message: string): void => {
   checks++
@@ -43,7 +53,7 @@ function structure(kind: string, x: number, y: number, w: number, h: number, sol
 for (const def of ALPHA_DEFS) {
   for (const deg of [0, 37, 90, -25]) {
     const s = structure(def.id, 13.25, -8.5, def.w * 1.17, def.d * 0.83, def.solid, { height: def.height + 0.35, z: 0.27, deg })
-    check(JSON.stringify(settlementColliders(s)) === JSON.stringify(expected(s)), `alpha geometry ${def.id} at ${deg} degrees`)
+    check(sameBoxes(settlementColliders(s),expected(s)), `alpha geometry ${def.id} at ${deg} degrees`)
     const first = settlementColliders(s)
     check(first === settlementColliders(s), `alpha cache identity ${def.id} at ${deg} degrees`)
   }
@@ -52,7 +62,7 @@ for (const def of ALPHA_DEFS) {
 for (const def of TRADE_DEFS) {
   for (const deg of [0, 37, 90, -25]) {
     const s = structure(def.id, -21.5, 17.75, def.w * 1.11, def.d * 0.91, def.solid, { height: def.height + 0.2, z: 0.41, deg })
-    check(JSON.stringify(settlementColliders(s)) === JSON.stringify(expected(s)), `trade geometry ${def.id} at ${deg} degrees`)
+    check(sameBoxes(settlementColliders(s),expected(s)), `trade geometry ${def.id} at ${deg} degrees`)
     check(settlementColliders(s) === settlementColliders(s), `trade cache identity ${def.id} at ${deg} degrees`)
   }
 }
@@ -64,7 +74,7 @@ const refresh = (label: string, mutate: () => void): void => {
   mutate()
   const next = settlementColliders(mutable)
   check(next !== previous, `${label} invalidates cache identity`)
-  check(JSON.stringify(next) === JSON.stringify(expected(mutable)), `${label} matches reference geometry`)
+  check(sameBoxes(next,expected(mutable)), `${label} matches reference geometry`)
   previous = next
 }
 refresh('x', () => { mutable.x += 3 })

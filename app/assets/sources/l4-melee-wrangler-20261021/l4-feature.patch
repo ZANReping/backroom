@@ -1,0 +1,1826 @@
+diff --git a/app/public/textures/l4/SOURCES.md b/app/public/textures/l4/SOURCES.md
+--- a/app/public/textures/l4/SOURCES.md
++++ b/app/public/textures/l4/SOURCES.md
+@@ -1,3 +1,13 @@
+ | Ceiling Interior | Color, NormalGL, Roughness | [Poly Haven asset](https://polyhaven.com/a/ceiling_interior) / [API](https://api.polyhaven.com/files/ceiling_interior) | Dimitrios Savva |
+ | White Plaster 02 | Color, NormalGL, Roughness | [Poly Haven asset](https://polyhaven.com/a/white_plaster_02) / [API](https://api.polyhaven.com/files/white_plaster_02) | Rob Tuytel |
+ | Denim Fabric | Color, NormalGL, Roughness | [Poly Haven asset](https://polyhaven.com/a/denim_fabric) / [API](https://api.polyhaven.com/files/denim_fabric) | Rob Tuytel |
++
++## L4 v2 stage E1 (2026-10-21)
++
++| File | Source |
++| --- | --- |
++| ceiltile_Color/NormalGL/Roughness.jpg | AI-generated (Hark generate_image, prompt: "Seamless tileable PBR albedo texture, orthographic flat close scan of a white mineral-fiber acoustic suspended ceiling tile surface, classic fissured 'worm-hole' pattern…"), low-frequency flattened, made seamless, desaturated; normal/roughness derived from luminance |
++| drywall_Color/NormalGL/Roughness.jpg | AI-generated (prompt: "Seamless tileable PBR albedo texture, orthographic flat scan of an old office painted drywall wall, beige off-white latex paint with very fine orange-peel roller texture, faint scuffs…"), same processing |
++| carpet2_Color.jpg | Derived from Poly Haven Dirty Carpet (CC0): luminance only, row stripes removed, cool tint; Normal/Roughness copied from dirty_carpet |
++
++Processing script: kept outside the repo (numpy: Gaussian flatten r=64–160, half-offset seam blend, Sobel normal).
+diff --git a/app/scripts/check-l4-generation.ts b/app/scripts/check-l4-generation.ts
+--- a/app/scripts/check-l4-generation.ts
++++ b/app/scripts/check-l4-generation.ts
+@@ -1,39 +1,59 @@
++// Level 4 v2 (continuous building) generation checks.
+ import assert from 'node:assert/strict'
+-import {genL4ChunkRaw,l4SpawnElevSlot} from '../src/game/world/infiniteL4'
+-import {l4VoidAt,l4VoidCell,l4Biome} from '../src/game/world/l4Layout'
++import {genL4ChunkRaw,l4SpawnElevSlot,L4_SPAWN} from '../src/game/world/infiniteL4'
++import {l4Block,l4BlockIndex,l4InteriorAt} from '../src/game/world/l4Plan'
+ import {L4} from '../src/game/levels/l4'
+ import {CS} from '../src/game/world/infinite'
+-let checks=0,windows=0,traps=0,black=0,stairs=0
++let pass=0,fail=0
++const ok=(c:boolean,msg:string)=>{if(c)pass++;else{fail++;if(fail<40)console.log('FAIL',msg)}}
++const stats:Record<string,number>={hall:0,cubicle:0,open:0,rooms:0}
++let coolers=0,reveals=0,windows=0,stairs=0,elev=0,trap=0,old=0,vending=0,floorTiles=0,tot=0,ents=0,chunksN=0
+ for(const seed of [424242,17,9091]){
+-  for(let my=-4;my<=4;my++)for(let mx=-4;mx<=4;mx++){
+-    let count=0;for(let y=0;y<4;y++)for(let x=0;x<4;x++)if(l4VoidCell(seed,mx*4+x,my*4+y))count++
+-    assert.equal(count,4);checks++
+-  }
+-  const chunks=new Map<string,ReturnType<typeof genL4ChunkRaw>>()
+-  for(let cy=-5;cy<=5;cy++)for(let cx=-5;cx<=5;cx++){
+-    const c=genL4ChunkRaw(L4,seed,cx,cy);chunks.set(`${cx},${cy}`,c)
+-    assert.deepEqual(c,genL4ChunkRaw(L4,seed,cx,cy));checks++
+-    for(let y=0;y<CS;y++)for(let x=0;x<CS;x++){
+-      const v=l4VoidAt(seed,cx*CS+x,cy*CS+y),i=y*CS+x
+-      assert.equal(!!c.outdoor?.[i],v);if(v)assert.equal(c.tiles[i],0)
+-    }
+-    for(const l of c.lights){const i=(Math.floor(l.y)-cy*CS)*CS+Math.floor(l.x)-cx*CS;assert.equal(c.tiles[i],1);assert.equal(c.outdoor?.[i],0)}
+-    const ids=c.structures.map(s=>s.data?.sid);assert.equal(new Set(ids).size,ids.length,JSON.stringify(c.structures.filter((s,i)=>ids.indexOf(s.data?.sid)!==i||ids.lastIndexOf(s.data?.sid)!==i)))
++  const R=6,chunks=new Map<string,ReturnType<typeof genL4ChunkRaw>>()
++  for(let cy=-R;cy<=R;cy++)for(let cx=-R;cx<=R;cx++){
++    const c=genL4ChunkRaw(L4,seed,cx,cy);chunks.set(`${cx},${cy}`,c);chunksN++
++    if(Math.abs(cx)<=1&&Math.abs(cy)<=1)ok(JSON.stringify(c)===JSON.stringify(genL4ChunkRaw(L4,seed,cx,cy)),`deterministic ${seed} ${cx},${cy}`)
++    ok(c.tiles.every(t=>t===1||t===2),`no void tiles ${seed} ${cx},${cy}`)
++    ok(c.outdoor!.every(v=>v===0),`no outdoor ${seed} ${cx},${cy}`)
++    for(const l of c.lights){const i=(Math.floor(l.y)-cy*CS)*CS+Math.floor(l.x)-cx*CS;ok(c.tiles[i]===1,`light on floor ${l.x},${l.y}`)}
++    const ids=c.structures.map(s=>s.data?.sid);ok(new Set(ids).size===ids.length,`unique sid ${seed} ${cx},${cy}`)
+     for(const s of c.structures){
+-      assert.ok(s.x>=cx*CS&&s.x<(cx+1)*CS&&s.y>=cy*CS&&s.y<(cy+1)*CS)
+-      assert.ok(!l4VoidAt(seed,s.x,s.y))
+-      if(s.kind==='windowtrap')traps++;if(s.kind==='windowblack')black++;if(s.kind==='l4stairs')stairs++
+-      if(s.data?.coast){windows++;const deg=Number(s.data.deg),dx=deg===90?1:deg===270?-1:0,dy=deg===0?1:deg===180?-1:0;assert.ok(l4VoidAt(seed,s.x+dx,s.y+dy))}
++      ok(s.x>=cx*CS&&s.x<(cx+1)*CS&&s.y>=cy*CS&&s.y<(cy+1)*CS,`struct in chunk ${s.kind}`)
++      if(s.kind==='windowblack'||s.kind==='windowtrap')ok(false,'no blacked/trap windows in v2')
++      if(s.data?.l4Facade){windows++
++        const deg=Number(s.data.deg),dx=deg===90?1:deg===270?-1:0,dy=deg===0?1:deg===180?-1:0
++        // outside of a facade window is the strip's wall, inside is walkable interior
++        ok(!l4InteriorAt(seed,s.x+dx,s.y+dy),`facade window backs onto strip ${s.x},${s.y}`)
++        ok(l4InteriorAt(seed,s.x-dx,s.y-dy),`facade window faces interior ${s.x},${s.y}`)
++        // reveal side plates must sit against the pier (wall tile), never mid-bay against another window
++        for(const side of [-1,1])if(s.data[side<0?'revealLeft':'revealRight']){
++          const r=deg*Math.PI/180,nx=Math.floor(s.x)+Math.round(side*Math.cos(r)),ny=Math.floor(s.y)+Math.round(-side*Math.sin(r))
++          if(nx>=cx*CS&&nx<(cx+1)*CS&&ny>=cy*CS&&ny<(cy+1)*CS){reveals++;ok(c.tiles[(ny-cy*CS)*CS+nx-cx*CS]===2&&!c.structures.some(o=>o.data?.l4Facade&&Math.floor(o.x)===nx&&Math.floor(o.y)===ny),`window reveal against pier ${s.x},${s.y} deg ${deg}`)}
++        }
++      }
++      if(s.kind==='watercooler'){coolers++;ok(c.tiles[(Math.floor(s.y)-cy*CS)*CS+Math.floor(s.x)-cx*CS]===1,`watercooler on floor ${s.x},${s.y}`)}
++      if(s.kind==='l4stairs')stairs++;if(s.kind==='vending')vending++
+     }
++    for(const e of c.exits){if(e.def.kind==='elevatorshaft')elev++;if(e.def.kind==='trapdoor')trap++;if(e.def.kind==='oldstairs')old++}
++    ents+=c.entities.length
++    for(const t of c.tiles){tot++;if(t===1)floorTiles++}
+   }
++  for(let j=-2;j<=2;j++)for(let i=-2;i<=2;i++)stats[l4Block(seed,i,j).type]++
++  for(let j=-2;j<=2;j++)for(let i=-2;i<=2;i++){const b=l4Block(seed,i,j),n=b.ops.filter(o=>o.o==='light').length,area=(b.ix1-b.ix0)*(b.iy1-b.iy0);ok(n>=area/16,`lamps in block ${seed} ${i},${j}: ${n}`)}
+   const tile=(x:number,y:number)=>{const cx=Math.floor(x/CS),cy=Math.floor(y/CS),c=chunks.get(`${cx},${cy}`);return c?.tiles[(y-cy*CS)*CS+x-cx*CS]??0}
+-  const start=l4SpawnElevSlot(seed);assert.equal(tile(start.x,start.y),1);assert.equal(tile(start.bx,start.by),2);assert.equal(tile(15,15),1)
+-  const seen=new Set<string>(),queue:[[number,number]]=[[15,15]];seen.add('15,15')
+-  for(let n=0;n<queue.length;n++){const[x,y]=queue[n];for(const[dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]]){const xx=x+dx,yy=y+dy,key=`${xx},${yy}`;if(tile(xx,yy)!==1||seen.has(key))continue;seen.add(key);queue.push([xx,yy])}}
+-  let disconnected=0,sample=''
+-  for(let y=-128;y<160;y++)for(let x=-128;x<160;x++)if(tile(x,y)===1&&!seen.has(`${x},${y}`)){disconnected++;sample||=`${x},${y}`}
+-  assert.equal(disconnected,0,`seed ${seed}: disconnected floor (${sample})`);checks++
+-  for(let r=-10;r<10;r++)for(let k=-10;k<10;k++)if(l4Biome(seed,k,r)==='windowview')assert.ok([[1,0],[-1,0],[0,1],[0,-1]].some(([dx,dy])=>l4VoidCell(seed,k+dx,r+dy)))
++  const solidAt=(x:number,y:number)=>{const cx=Math.floor(x/CS),cy=Math.floor(y/CS),c=chunks.get(`${cx},${cy}`);return !!c?.structures.some(s=>s.solid&&s.kind!=='hoteldoor'&&s.kind!=='glassdoor'&&x>=Math.floor(s.x)&&x<Math.ceil(s.x+s.w)&&y>=Math.floor(s.y)&&y<Math.ceil(s.y+s.h))}
++  const sp=L4_SPAWN;ok(tile(sp.x,sp.y)===1&&!solidAt(sp.x,sp.y),`spawn floor ${seed}`)
++  const slot=l4SpawnElevSlot(seed);ok(tile(slot.x,slot.y)===1&&tile(slot.bx,slot.by)===2,`spawn elevator slot ${seed}`)
++  // connectivity over walkable tiles (doors passable, solid furniture blocks) inside the generated area
++  const lo=-R*CS+40,hi=(R+1)*CS-40,walk=(x:number,y:number)=>x>=lo&&y>=lo&&x<hi&&y<hi&&tile(x,y)===1&&!solidAt(x,y)
++  const seen=new Set<number>(),key=(x:number,y:number)=>(y+10000)*20000+x+10000,q:[number,number][]=[[sp.x,sp.y]];seen.add(key(sp.x,sp.y))
++  for(let n=0;n<q.length;n++){const[x,y]=q[n];for(const[dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]]){const a=x+dx,b=y+dy;if(!walk(a,b)||seen.has(key(a,b)))continue;seen.add(key(a,b));q.push([a,b])}}
++  let lost=0,sample='',total=0
++  for(let y=lo+20;y<hi-20;y++)for(let x=lo+20;x<hi-20;x++)if(walk(x,y)){total++;if(!seen.has(key(x,y))){lost++;sample||=`${x},${y}`}}
++  ok(lost/total<.01,`seed ${seed}: unreachable walkable ${lost}/${total} (${sample})`)
++  console.log(`seed ${seed}: reachable ${total-lost}/${total}`)
+ }
+-assert.ok(windows>0&&traps>0&&black>traps*3&&stairs>0)
+-console.log(JSON.stringify({checks,windows,traps,black,stairs,voidRatio:.25},null,2))
++ok(windows>500,'many facade windows');ok(reveals>200,'window reveals checked '+reveals);ok(stairs>20,'loop stairs in cores');ok(elev>0,'elevators');ok(vending>5,'vending')
++console.log(JSON.stringify({blocks:stats,windows,stairs,elev,trap,old,vending,coolers,floorRatio:+(floorTiles/tot).toFixed(3),entitiesPerChunk:+(ents/chunksN).toFixed(4)}))
++console.log(`L4 v2: ${pass} passed, ${fail} failed`)
++if(fail)process.exit(1)
+diff --git a/app/src/game/content/decorRegistry.ts b/app/src/game/content/decorRegistry.ts
+--- a/app/src/game/content/decorRegistry.ts
++++ b/app/src/game/content/decorRegistry.ts
+@@ -42,7 +42,7 @@ export interface DecorEntry {
+ const INTERACT_EXTRA: ReadonlySet<string> = new Set([
+   'lift', 'lightswitch', 'megsign', 'arcadecab',
+   'hoteldoor', 'rollerdoor', 'glassdoor', 'inkdoor', 'bargate',
+-  'windowtrap', 'megdoc', 'landmark', 'invitation', 'valve', 'booth', 'server', 'vending', 'frontdesk',
++  'windowtrap', 'megdoc', 'landmark', 'invitation', 'valve', 'booth', 'server', 'vending', 'watercooler', 'frontdesk',
+   // Alpha furniture becomes interactive only when the instance carries data.facility;
+   // these entries are non-container by default and do not create business services alone.
+   'alpha_desk', 'alpha_labbench', 'alpha_cold_cabinet', 'alpha_archive_reader',
+@@ -75,6 +75,7 @@ const RAW: RawEntry[] = [
+   S('cubicle', '办公隔间', 'solid', ['L4'], 'mapgen office 工位矩阵'),
+   S('copier', '复印机', 'solid', ['L1', 'L4', '据点101', '据点103', '据点106'], 'infiniteL1 民居段、L4 复印区、Alpha/希波克拉底手工'),
+   S('server', '服务器机柜', 'solid', ['L4'], 'mapgen office 机房（刷门禁卡进入）'),
++  S('watercooler', '饮水机（L4）', 'solid', ['L4'], 'l4Plan 服务核心西墙每块 1 台 + 大厅/空旷区柱边；30% 为杏仁水桶（可接取一瓶），其余可饮用 4 次（口渴 +20）'),
+   S('vending', '自动售货机', 'solid', ['L4', 'L11', '据点105', '据点106'], 'infiniteL4 办公间区/小房间区墙边（data.trade 免费取用、25% 卡死）、mapgenDeep L11 楼内、EL3A 上层'),
+   S('desk', '办公桌', 'solid', ['L1', 'L2', 'L4', 'L11', '据点101', '据点102', '据点103', '据点105', '据点106'], 'infiniteL1/L2 房间、L4 办公室+夹层、L11 楼内、据点手工'),
+   S('door', '门（保留类型）', 'solid', [], '无任何生成器放置（仅 mapgen 校验代码引用；L5 structures 列表为死文档）'),
+diff --git a/app/src/game/core/types.ts b/app/src/game/core/types.ts
+--- a/app/src/game/core/types.ts
++++ b/app/src/game/core/types.ts
+@@ -113,7 +113,7 @@ export interface ExitInstance {
+ 
+ export type StructKind = import('../content/tradeDecor').TradeKind | import('../content/l5Decor').L5DecorKind | import('../content/alphaDecor').AlphaKind | import('../content/l11Decor').L11DecorKind | 'settlementprop' | 'settlementstation' | 'l4stairs' | 'l4prop'
+   | 'pillar' | 'car' | 'booth' | 'pipes' | 'valve' | 'gauge' | 'boiler'
+-  | 'generator' | 'cabinet' | 'trench' | 'cubicle' | 'copier' | 'server' | 'vending'
++  | 'generator' | 'cabinet' | 'trench' | 'cubicle' | 'copier' | 'server' | 'vending' | 'watercooler'
+   | 'desk' | 'door' | 'ballroom' | 'lightgrid' | 'wet'   | 'graffiti' | 'crate'
+   | 'corpse' | 'ladder' | 'vent' | 'mirror' | 'elevator' | 'frontdesk' | 'bed' | 'sconce'
+   | 'socket' // 墙上插板（L0 装饰：米色插座面板）
+diff --git a/app/src/game/engine/interact.ts b/app/src/game/engine/interact.ts
+--- a/app/src/game/engine/interact.ts
++++ b/app/src/game/engine/interact.ts
+@@ -233,6 +233,7 @@ export function structureInteractionProfile(s: Structure): StructureInteractionP
+     case 'booth': lo = 0.1; hi = 2.05; horizontalRadius = Math.min(0.7, Math.max(0.45, Math.min(s.w, s.h) / 2)); break
+     case 'server': lo = 0.1; hi = 2.22; horizontalRadius = Math.min(0.8, Math.max(0.45, Math.min(s.w, s.h) / 2)); break
+     case 'vending': lo = 0.08; hi = 2.02; horizontalRadius = 0.5; break
++    case 'watercooler': lo = 0; hi = 1.42; horizontalRadius = 0.26; break
+     case 'l6stairwell': lo = 0; hi = 1.5; horizontalRadius = 0.6; break
+     case 'obelisk': lo = 0.1; hi = 2.85; horizontalRadius = Math.min(0.8, Math.max(0.45, Math.min(s.w, s.h) / 2)); break
+     case 'corpse': lo = 0; hi = 0.28; horizontalRadius = 0.38; break
+@@ -687,6 +688,7 @@ export function scanInteract(eng: Engine) {
+     else if (s.kind === 'booth' && !eng.player.leverPulled) consider('lever', '扳动 电源拉杆', s, d, true)
+     else if (s.kind === 'server' && s.locked) consider('server', '刷门禁卡 进入', s, d, eng.hasPocket('keycard'))
+     else if (s.kind === 'vending') consider('vending', '使用 自动售货机', s, d, true)
++    else if (s.kind === 'watercooler') consider('watercooler', s.data?.almond && s.data?.searched !== 1 ? '接取 杏仁水' : '饮用 饮水机', s, d, true)
+     else if (s.kind === 'frontdesk') consider('frontdesk', '与前台交易', s, d, true)
+     else if (s.kind === 'l6stairwell') consider('l6stairwell', band === 0 ? '沿废弃楼梯井下行' : '沿废弃楼梯井返回地表', s, d, true)
+     else if (s.kind === 'obelisk') consider('obelisk', '辨认 方尖碑上的字迹', s, d, true)
+@@ -1429,6 +1431,23 @@ export function doInteract(eng: Engine) {
+       } else eng.msg('需要门禁卡（放在口袋栏生效）。', 'system')
+       break
+     }
++    case 'watercooler': {
++      // L4 v2：饮水机。约 30% 水桶里是杏仁水（Fandom：L4 的饮水机会流出杏仁水），可接取一瓶；
++      // 其余为普通清水，可饮用 4 次。状态写入 data 随区块持久化。
++      const s = t.s
++      if (!s) return
++      if (s.data?.almond && s.data?.searched !== 1) {
++        if (!eng.addItem('almond')) { eng.msg('背包已满，没地方装杏仁水。', 'system'); return }
++        s.data = { ...s.data, searched: 1 }
++        eng.msg('水桶里晃着淡黄的液体。你接满一瓶——甜腻的杏仁香。', 'loot'); audio.pickup(); break
++      }
++      const left = Number(s.data?.water ?? 4)
++      if (left <= 0) { eng.msg('水桶已经空了，出水口只滴下几滴。', 'system'); break }
++      s.data = { ...s.data, water: left - 1 }
++      p.thirst = Math.min(100, p.thirst + 20)
++      if (s.data?.almond) p.sanity = Math.min(100, p.sanity + 4)
++      eng.msg(s.data?.almond ? '你用纸杯接了点杏仁水喝下。（口渴 +20，理智 +4）' : '你用纸杯接了一杯水。冷得刚好。（口渴 +20）', 'loot'); audio.pickup(); break
++    }
+     case 'vending': {
+       if (t.s?.data?.trade) {
+         // v54：免费取用——但每台机器迟早会卡：每次出货后 25% 概率卡死（data.jammed），之后无法再用
+diff --git a/app/src/game/renderer/alphaMeshes.ts b/app/src/game/renderer/alphaMeshes.ts
+--- a/app/src/game/renderer/alphaMeshes.ts
++++ b/app/src/game/renderer/alphaMeshes.ts
+@@ -1,3 +1,4 @@
++import {drawFactionSign} from './factionSigns'
+ import * as THREE from 'three'
+ import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js'
+ import type { Structure } from '../core/types'
+@@ -106,8 +107,8 @@ function panelTexture(panel:AlphaPanel,text=''){
+   c.strokeStyle='#8b8672';c.lineWidth=4;for(let i=0;i<11;i++){c.strokeRect(32+i*83,50+(i%4)*70,55,130);c.beginPath();c.moveTo(i*93,35);c.lineTo(i*93+36,465);c.stroke()}
+   c.strokeStyle='#ad6957';c.lineWidth=4;c.beginPath();c.moveTo(64,444);c.lineTo(340,360);c.lineTo(473,170);c.lineTo(870,120);c.stroke();c.fillStyle='#474c3d';c.font='25px monospace';c.fillText('ALPHA / OPERATIONS',35,34)
+  }else{
+-  c.fillStyle='#343c35';c.textAlign='center';c.textBaseline='middle';c.font='bold 49px sans-serif';c.fillText(text||'M.E.G. / 014',w/2,h/2,w-36)
+-  c.strokeStyle='#a49e88';c.lineWidth=4;c.strokeRect(8,8,w-16,h-16)
++  // v3: Alpha wayfinding wears the M.E.G. plate (olive enamel, stencil caps, crest) — factionSigns.ts
++  drawFactionSign(c,0,0,w,h,'meg',text||'M.E.G. / 014')
+  }
+  const t=new THREE.CanvasTexture(canvas);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;return t
+ }
+diff --git a/app/src/game/renderer/l11Exits.ts b/app/src/game/renderer/l11Exits.ts
+--- a/app/src/game/renderer/l11Exits.ts
++++ b/app/src/game/renderer/l11Exits.ts
+@@ -1,3 +1,4 @@
++import {factionSignTexture} from './factionSigns'
+ import * as THREE from 'three'
+ import type { ExitInstance } from '../core/types'
+ import { l11Material,l11UnfinishedConcrete,L11_SURFACE_MAPS } from './l11Materials'
+@@ -1,12 +1,14 @@
+   if(kind==='l11unfinisheddoor'){a.box(l11Material('metal','#747b75'),0,.08,-.09,W+.18,.1,.3)}
+   a.finish(g)
+   const panel=(text:string,bg:string,fg:string,w:number,h:number,x:number,y:number,z:number,parent=g)=>{const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,h),label(text,bg,fg));mesh.position.set(x,y,z);mesh.rotation.y=Math.PI;parent.add(mesh);return mesh}
++  const megPanel=(text:string,w:number,h:number,x:number,y:number,z:number)=>{const mat=new THREE.MeshStandardMaterial({map:factionSignTexture('meg',text,w/h),roughness:.6,side:THREE.DoubleSide});mat.userData.shared=true;const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,h),mat);mesh.position.set(x,y,z);mesh.rotation.y=Math.PI;g.add(mesh);return mesh}
+   if(kind==='basebeta'){
+-    panel('EXIT  出口','#235448','#f0ead5',1.1,.28,0,2.65,-.1)
++    // v3: M.E.G. Beta entrance plates in the M.E.G. enamel/stencil dress
++    megPanel('M.E.G. BETA / 出口 EXIT',1.1,.3,0,2.65,-.1)
+     const seals=new THREE.Group();seals.name='l11-archive-seals'
+     for(const sign of [-1,1]){const strip=panel('档 案 封 存','#e3d9bc','#913d30',W*1.03,.18,0,1.35,-.13-sign*.002,seals);strip.rotation.z=sign*.42}
+     g.add(seals)
+-    panel('磁带提交处 · 6 盘','#353e3a','#dfd5b8',.84,.21,-W/2-.59,1.65,-.1)
++    megPanel('磁带提交处 / TAPE DROP · 6',.84,.24,-W/2-.59,1.65,-.1)
+     const box=new CityBatch();box.box(l11Material('metal','#535a51'),-W/2-.59,1.18,.02,.55,.55,.28);box.box(l11Material('sealedglass','#151b17'),-W/2-.59,1.35,-.127,.4,.055,.01);box.finish(g)
+   }else if(kind==='l11officedoor')panel(`OFFICE  ${((e.floor??1)+1)*100+4}`,'#c8c3ac','#333c38',.38,.1,0,1.83,-.125)
+   return g
+diff --git a/app/src/game/renderer/l1Architecture.ts b/app/src/game/renderer/l1Architecture.ts
+--- a/app/src/game/renderer/l1Architecture.ts
++++ b/app/src/game/renderer/l1Architecture.ts
+@@ -1,8 +1,30 @@
+         }
+       }
+     }
++    // v3: the second foliage atlas (public/textures/l1/garden/atlas.png): 0 trailing vine, 1 fern, 2 shrub, 3 grass tuft.
++    const layers2=[0,1,2].map(()=>({p:[] as number[],n:[] as number[],uv:[] as number[]}))
++    const sprite=(x:number,y:number,z:number,w:number,h:number,angle:number,q:number,n:number,cross=true)=>{
++      const u0=(q%2)*.5+.004,v0=(q<2?.5:0)+.004
++      for(const extra of cross?[0,Math.PI/2]:[0]){
++        const ca=Math.cos(angle+extra),sa=Math.sin(angle+extra)
++        for(let lod=0;lod<3;lod++){
++          if(lod===1&&n%2||lod===2&&n%5)continue
++          const a=layers2[lod]
++          for(const [u,v] of [[0,0],[1,0],[1,1],[0,0],[1,1],[0,1]]){
++            const pu=(u-.5)*w
++            a.p.push(x+pu*ca,y+v*h,z-pu*sa);a.n.push(sa,0,ca);a.uv.push(u0+u*.492,v0+v*.492)
++          }
++        }
++      }
++    }
+     for(const s of columns){
+-      for(let k=0;k<650;k++){
++      // v3: ivy cover varies per column — bare, patchy, or smothered
++      const cover=l1Hash(s.x+ox,s.y+oz,61),kMax=cover<.18?60:cover<.5?320:cover<.85?650:950
++      if(l1Hash(s.x+ox,s.y+oz,63)<.35)for(let j=0;j<2+Math.floor(cover*3);j++){
++        const a=j*2.1+cover*6,r=s.w/2+.35+l1Hash(j,s.x+ox,65)*.4,sz=.7+l1Hash(j,s.y+oz,67)*.7
++        sprite(s.x+s.w/2+Math.cos(a)*r,0,s.y+s.h/2+Math.sin(a)*r,sz*1.15,sz,a,2,j)
++      }
++      for(let k=0;k<kMax;k++){
+         const a=k*2.4,h=.15+l1Hash(s.x+ox,k,19)*(H-.4),side=k%4,u=(l1Hash(k,s.y+oz,23)-.5)*s.w,r=s.w/2+.018
+         const dx=side<2?(side===0?r:-r):u,dz=side>=2?(side===2?r:-r):u
+         card(s.x+s.w/2+dx,h,s.y+s.h/2+dz,.12,.17,side<2?Math.PI/2:0,k,Math.sin(a)*.25)
+@@ -1,6 +1,13 @@
+     for(let z=z0+2;z<z1;z+=4)for(let x=x0+2;x<x1;x+=4){
+       if(!floor(x,z))continue
+       const h=l1Hash(x+ox,z+oz,17),len=2+h*3.2
++      // v3: thin trailing vine strands, in clumps; some bays stay open
++      const vn=l1Hash((x+ox)*3,(z+oz)*3,71)
++      if(vn<.55)for(let j=0;j<1+Math.floor(vn*6);j++){
++        const L=1.6+l1Hash(j,(x+ox)*5,73)*(H-2.2),sx=x+(l1Hash(j,z+oz,75)-.5)*3.4,sz=z+(l1Hash(j,x+ox,77)-.5)*3.4
++        if(floor(sx,sz))sprite(sx,H-L,sz,.45+L*.08,L,l1Hash(j,j,79)*3,0,j)
++      }
++      if(h<.3)continue
+       for(let j=0;j<110;j++){
+         const a=j*2.4,t=j/110
+         card(x+Math.sin(a)*.17+Math.sin(t*4)*.18,H-.2-t*len,z+Math.cos(a)*.15,.11,.16,a,j)
+@@ -1,6 +1,10 @@
+       const r=l1Hash((x+ox)*7,(z+oz)*7,11)
+       const jx=(r-.5)*.6,jz=(l1Hash((x+ox)*11,(z+oz)*11,37)-.5)*.6
+       for(let j=0;j<4;j++)card(x+.3+jx+Math.sin(j*1.7)*.16,.025+r*.035,z+.3+jz+Math.cos(j*1.7)*.16,.085,.12,r*6+j,j,-1.25)
++      // v3: fern drifts and grass tufts follow a slow field, so patches read as distinct plantings
++      const fern=l1Hash(Math.floor((x+ox)/6),Math.floor((z+oz)/6),81),tuft=l1Hash(Math.floor((x+ox)/5),Math.floor((z+oz)/5),83)
++      if(fern>.68&&r<.32){const sz=.55+r*1.6;sprite(x+.3+jx,0,z+.3+jz,sz*1.2,sz,r*9,1,Math.floor(r*97))}
++      else if(tuft>.62&&r>.82){const sz=.3+(r-.82)*2.6;sprite(x+.3+jx,0,z+.3+jz,sz*1.3,sz,r*7,3,Math.floor(r*89))}
+     }
+     const lod=new THREE.LOD();lod.name='l1-ivy-lod';lod.position.set((x0+x1)/2,0,(z0+z1)/2)
+     for(let i=0;i<layers.length;i++){
+@@ -1,6 +1,13 @@
+       const mesh=new THREE.Mesh(geo,l1Material(v,'leaf'));mesh.userData.noCastShadow=dist>0;lod.addLevel(mesh,dist)
+     }
+     g.add(lod)
++    const lod2=new THREE.LOD();lod2.name='l1-garden-plants-lod';lod2.position.copy(lod.position)
++    for(let i=0;i<layers2.length;i++){
++      const a=layers2[i],dist=[0,26,52][i];if(!a.p.length)continue
++      const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(a.p,3));geo.setAttribute('normal',new THREE.Float32BufferAttribute(a.n,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(a.uv,2));geo.translate(-lod2.position.x,0,-lod2.position.z)
++      const mesh=new THREE.Mesh(geo,l1Material(v,'plant'));mesh.userData.noCastShadow=dist>0;lod2.addLevel(mesh,dist)
++    }
++    if(lod2.levels.length)g.add(lod2)
+     // Dapple is produced by the existing shadowed sun and alpha-tested foliage.
+   }
+   // Remove hidden end caps and repeated vertices before creating GPU buffers.
+diff --git a/app/src/game/renderer/l1BakedScene.ts b/app/src/game/renderer/l1BakedScene.ts
+--- a/app/src/game/renderer/l1BakedScene.ts
++++ b/app/src/game/renderer/l1BakedScene.ts
+@@ -1,6 +1,7 @@
+ import {recordL1BuildStage} from './l1BuildMetrics'
+ import {bindL1Portals} from './l1PortalLighting'
+ import {l1ModuleAt} from '../world/l1Building'
++import {l1ParkingSkin} from '../world/l1Spatial'
+ import {l1BakedPointLights} from './l1BakedShader'
+ const bakedPointChunk=l1BakedPointLights(THREE.ShaderChunk.lights_fragment_begin)
+ type Fixture={mat:THREE.MeshBasicMaterial;seed:number;src?:LightSource;batch?:THREE.InstancedMesh;index?:number}
+@@ -1,7 +1,7 @@
+   const started=performance.now()
+   const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(b.position,3));geo.setAttribute('normal',new THREE.BufferAttribute(b.normal,3));geo.setAttribute('uv',new THREE.BufferAttribute(b.uv,2));geo.setAttribute('uv1',new THREE.BufferAttribute(b.uv1,2));geo.setIndex(new THREE.BufferAttribute(b.index,1));geo.computeBoundingSphere()
+   const surface=b.surface==='paint'?(b.style==='maintenance'?'wall':b.style==='fabled'?'column':'columnPaint'):b.surface
+-  const source=l1Material(b.style==='maintenance'&&b.surface==='paint'?'maintenance-plaster':b.style,surface),mat=source.clone() as THREE.MeshStandardMaterial
++  const source=l1Material(b.style==='maintenance'&&b.surface==='paint'?'maintenance-plaster':b.style==='parking'?`parking@${l1ParkingSkin(data.seed,data.cx*32+16,data.cy*32+16)}`:b.style,surface),mat=source.clone() as THREE.MeshStandardMaterial
+   mat.onBeforeCompile=source.onBeforeCompile;mat.customProgramCacheKey=source.customProgramCacheKey
+   mat.userData={...source.userData,l1Owned:true,l1Baked:true,l1Textures:[direction,...(portal?[portal]:[])]};mat.lightMap=b.surface==='leaf'?null:light;mat.lightMapIntensity=Math.PI
+   const prior=mat.onBeforeCompile,key=mat.customProgramCacheKey();owners++;materials.push(mat)
+@@ -1,13 +1,25 @@
+  data.emitters.forEach((e,index)=>{
+   if(e.kind==='sky')return
+   const t=new THREE.Vector3(...e.tangent).normalize(),n=new THREE.Vector3(...e.normal).normalize(),v=new THREE.Vector3().crossVectors(t,n).normalize()
+-  basis.makeBasis(t,n,v);const q=new THREE.Quaternion().setFromRotationMatrix(basis),m=new THREE.Matrix4().compose(new THREE.Vector3(e.position[0]-ox,e.position[1],e.position[2]-oz),q,new THREE.Vector3(e.width,.045,e.height))
++  basis.makeBasis(t,n,v);const q=new THREE.Quaternion().setFromRotationMatrix(basis),m=new THREE.Matrix4().compose(new THREE.Vector3(e.position[0]-ox,e.position[1],e.position[2]-oz),q,(e.style==='ouroboros'&&e.kind!=='emergency'?new THREE.Vector3(e.width,1,1):new THREE.Vector3(e.width,.045,e.height)))
+   const key=e.style+':'+e.kind,a=groups.get(key)??{entries:[],kind:e.kind};a.entries.push({index,matrix:m});groups.set(key,a)
+  })
+  for(const {entries,kind}of groups.values()){
+   const mat=new THREE.MeshBasicMaterial({color:0xffffff,toneMapped:false});mat.userData.base=new THREE.Color(kind==='emergency'?'#558b62':'#f5f5e9').multiplyScalar(kind==='emergency'?.5:3)
+-  mat.userData.l1Owned=true;const mesh=new THREE.InstancedMesh(new THREE.BoxGeometry(1,1,1),mat,entries.length)
++  mat.userData.l1Owned=true;const sag=entries.length&&data.emitters[entries[0].index].style==='ouroboros'&&kind!=='emergency'
++  const mesh=new THREE.InstancedMesh(sag?ouroStripGeometry():new THREE.BoxGeometry(1,1,1),mat,entries.length)
+   entries.forEach((a,i)=>{mesh.setMatrixAt(i,a.matrix);mesh.setColorAt(i,(mat.userData.base as THREE.Color).clone());fixtures.push({mat,seed:lights[a.index]?.flickerSeed??0,src:lights[a.index],batch:mesh,index:i})})
+   mesh.name='l1-emitter-'+kind;mesh.userData.noCastShadow=true;g.add(mesh)
+  }
+ }
++
++// v3.2 衔尾段 (ref 衔尾段.png): loose LED rope strung between hooks, sagging ~0.42 m. Unit length along
++// local x (scaled by the emitter width), local +y = emitter normal (down), so the arc hangs below the hooks.
++let ouroStrip:THREE.BufferGeometry|null=null
++function ouroStripGeometry(){
++ if(ouroStrip)return ouroStrip
++ const pts:THREE.Vector3[]=[]
++ for(let i=0;i<=16;i++){const x=i/16-.5;pts.push(new THREE.Vector3(x,.42*(1-(2*x)**2)+.04*Math.sin(i*1.7),.03*Math.sin(i*.9)))}
++ ouroStrip=new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),24,.016,5,false)
++ return ouroStrip
++}
+diff --git a/app/src/game/renderer/l1Materials.ts b/app/src/game/renderer/l1Materials.ts
+--- a/app/src/game/renderer/l1Materials.ts
++++ b/app/src/game/renderer/l1Materials.ts
+@@ -8,6 +8,21 @@ import {installL1VaultMaterial} from './l1VaultMaterial'
+ import {l1BakedPointLights} from './l1BakedShader'
+ import {l0StaticPointMask} from './l0PointMask'
+ const cache=new Map<string,THREE.Material>()
++export type L1EagleSkin='common'|'round'|'room'|'water'|'bright'|'clean'|'dry'|'dim'|'dark'
++/** One look per 天鹰 reference photo: floor / wall(+columns) / ceiling scan names and an albedo gain. */
++export const L1_EAGLE_SKINS:Record<L1EagleSkin,{floor:string;wall:string;ceil:string;gain:number}>={
++  common:{floor:'common_floor',wall:'common_wall',ceil:'common_ceil',gain:.92},
++  round:{floor:'round_floor',wall:'round_wall',ceil:'round_ceil',gain:.95},
++  room:{floor:'room_floor',wall:'room_wall',ceil:'round_ceil',gain:.92},
++  water:{floor:'water_floor',wall:'water_wall',ceil:'dark_ceil',gain:.95},
++  bright:{floor:'bright_floor',wall:'bright_wall',ceil:'white_ceil',gain:.9},
++  clean:{floor:'clean_floor',wall:'clean_wall',ceil:'white_ceil',gain:.9},
++  dry:{floor:'dry_floor',wall:'dry_wall',ceil:'dry_ceil',gain:.9},
++  dim:{floor:'dim_floor',wall:'dim_wall',ceil:'dark_ceil',gain:1},
++  dark:{floor:'dark_floor',wall:'dark_wall',ceil:'dark_ceil',gain:1},
++}
++const L1_EAGLE_MEAN:Record<string,number>={bright_floor:.729,bright_wall:.932,clean_floor:.749,clean_wall:.875,common_ceil:.593,common_floor:.46,common_wall:.767,dark_ceil:.264,dark_floor:.22,dark_wall:.249,dim_floor:.362,dim_wall:.61,dry_ceil:.408,dry_floor:.622,dry_wall:.685,room_floor:.524,room_wall:.677,round_ceil:.566,round_floor:.768,round_wall:.755,water_floor:.569,water_wall:.455,white_ceil:.876}
++const L1_EAGLE_SURF:Partial<Record<string,'floor'|'wall'|'ceil'>>={floor:'floor',wall:'wall',column:'wall',columnRaw:'wall',columnPaint:'wall',concrete:'wall',ceiling:'ceil'}
+ /** Repeats per metre. Colour, GL normal and roughness always use the same UV. */
+ export function l1SurfaceScale(variant:string,surface:'floor'|'wall'|'ceiling'|'concrete'){
+   if(variant==='maintenance'&&surface==='wall')return .18
+@@ -20,9 +35,13 @@ export function l1Texture(name:string,data=false):THREE.Texture {
+   if(t.userData.l1Space!==mark){t.colorSpace=data?THREE.NoColorSpace:THREE.SRGBColorSpace;t.anisotropy=4;t.userData.l1Space=mark;t.needsUpdate=true}
+   return t
+ }
+-export function l1Material(variant:string,surface:'wall'|'brick'|'floor'|'ceiling'|'concrete'|'column'|'columnRaw'|'columnPaint'|'guard'|'metal'|'red'|'whitePipe'|'cable'|'peeling'|'leaf'|'ground'|'wet'|'line'|'glass'):THREE.Material {
++export function l1Material(variant:string,surface:'wall'|'brick'|'floor'|'ceiling'|'concrete'|'column'|'columnRaw'|'columnPaint'|'guard'|'metal'|'red'|'whitePipe'|'cable'|'peeling'|'leaf'|'plant'|'ground'|'wet'|'line'|'glass'):THREE.Material {
+   const key=`${getMaterialMode()}:${variant}:${surface}`,hit=cache.get(key);if(hit)return hit
+-  const p=l1Profile(variant==='maintenance-plaster'?'maintenance':variant)
++  // v3: 天鹰 skins — `parking@<skin>` swaps the floor/wall/column/ceiling scans for one of the
++  // nine reference looks (public/textures/l1/eagle, see SOURCES.md).
++  const [baseVariant,skin]=variant.split('@') as [string,L1EagleSkin|undefined]
++  const eagleSurf=skin&&L1_EAGLE_SURF[surface]
++  const p=l1Profile(baseVariant==='maintenance-plaster'?'maintenance':baseVariant)
+   let prefix='l11_concrete',color=surface==='wall'?p.wall:surface==='floor'?p.floor:surface==='ceiling'?p.ceiling:'#c4c2b4'
+   if(surface==='wall'&&variant==='storage')prefix='l11_plaster'
+   if(variant==='maintenance-plaster'){prefix='l11_plaster';color='#b9cede'}
+@@ -1,8 +1,14 @@
+   if(variant==='gothic'&&surface==='columnPaint')color='#8f8a80' // v2 C: ref drums are dirty grey, not fresh paint
+   if(variant==='ouroboros'&&(surface==='peeling'||surface==='column'))color='#948e82'
+   if(variant==='ouroboros'&&surface==='whitePipe')color='#ebe8df'
+-  const continuous=!fabledWood&&(surface==='floor'||surface==='ceiling'||surface==='wall'&&!variant.startsWith('maintenance'))
+-  const peeling=surface==='peeling'
++  // v3 衔尾段 = an abandoned construction site (ref 衔尾段.png): raw screed, blockwork, splotched columns, insulation wrap.
++  // v3.2: spray = sprayed fireproofing (beams/ducts/caps/columns), soot slab ceiling, two-tone 'peeling' columns.
++  const OURO:Partial<Record<string,string>>={floor:'floor',wall:'plaster',peeling:'beige',column:'column',columnRaw:'column',columnPaint:'patch',whitePipe:'spray',concrete:'plaster',ceiling:'floor'}
++  const ouro=baseVariant==='ouroboros'?OURO[surface]:undefined
++  const plant=surface==='plant'
++  const gardenGround=baseVariant==='garden'&&surface==='ground'
++  const continuous=!ouro&&!fabledWood&&(surface==='floor'||surface==='ceiling'||surface==='wall'&&!variant.startsWith('maintenance'))
++  const peeling=surface==='peeling'&&!ouro
+   const ground=surface==='ground'
+   const foliage=surface==='leaf'
+   const custom=peeling?'peeling':ground?'ground':undefined
+@@ -11,19 +17,87 @@
+   if(ground)color='#7ea650'
+   const masonry=variant==='maintenance'&&surface==='wall'||surface==='brick'
+   if(surface==='brick')color='#c3c4bc'
+-  const wornFloor=surface==='floor'&&!ground&&!fabledWood
++  const wornFloor=surface==='floor'&&!ground&&!fabledWood&&!ouro
+   const plasterCeiling=surface==='ceiling'&&['parking','maintenance','aisle'].includes(variant)
+   if(plasterCeiling)prefix='l11_plaster'
+   if(surface==='ceiling'&&variant==='parking')color='#8e918a'
+   // The reference paint is smooth, with faint mottling rather than exposed render.
+-  const plaster=prefix==='l11_plaster'
++  const plaster=prefix==='l11_plaster'&&!ouro
+   const woodName=surface==='floor'?'old_wood_floor':'dark_planks'
+-  const map=fabledWood?l1Texture(`l1/fabled/${woodName}_diff.jpg`):l1Texture(foliage?'l1/polyhaven/leaves_diff.jpg':wornFloor?'l3/polyhaven/concrete_floor_worn_001_Color.jpg':masonry?'l3/polyhaven/painted_brick_Color.jpg':custom?`l1/${custom}.png`:`${prefix}.jpg`)
++  const map=plant?l1Texture('l1/garden/atlas.png'):gardenGround?l1Texture('l1/garden/ivyground.jpg'):ouro?l1Texture(`l1/ouro/${ouro}.jpg`):fabledWood?l1Texture(`l1/fabled/${woodName}_diff.jpg`):l1Texture(foliage?'l1/polyhaven/leaves_diff.jpg':wornFloor?'l3/polyhaven/concrete_floor_worn_001_Color.jpg':masonry?'l3/polyhaven/painted_brick_Color.jpg':custom?`l1/${custom}.png`:`${prefix}.jpg`)
+   const mat=litMaterial({map,color,side:foliage?THREE.DoubleSide:THREE.FrontSide,
+     ...(foliage?{alphaTest:.45,alphaMap:l1Texture('l1/polyhaven/leaves_alpha.jpg',true),normalMap:l1Texture('l1/polyhaven/leaves_nor_gl.jpg',true),normalScale:new THREE.Vector2(.4,.4),roughnessMap:getMaterialMode()==='realistic'?l1Texture('l1/polyhaven/leaves_rough.jpg',true):undefined}:{normalMap:l1Texture(wornFloor?'l3/polyhaven/concrete_floor_worn_001_NormalGL.jpg':masonry?'l3/polyhaven/painted_brick_NormalGL.jpg':custom?`l1/${custom}-normal.png`:`${prefix}_normal.jpg`,true),normalScale:new THREE.Vector2(masonry?.1:plaster?.045:surface==='floor'?.14:.24,masonry?.1:plaster?.045:surface==='floor'?.14:.24),roughnessMap:getMaterialMode()==='realistic'?l1Texture(wornFloor?'l3/polyhaven/concrete_floor_worn_001_Roughness.jpg':masonry?'l3/polyhaven/painted_brick_Roughness.jpg':custom?`l1/${custom}-rough.png`:`${prefix}_roughness.jpg`,true):undefined}),
+     ...(fabledWood?{normalMap:l1Texture(`l1/fabled/${woodName}_nor_gl.jpg`,true),normalScale:new THREE.Vector2(.8,.8),...(getMaterialMode()==='realistic'?{roughnessMap:l1Texture(`l1/fabled/${woodName}_rough.jpg`,true)}:{})}:{}),
+     roughness:surface==='glass'?.32:surface==='wet'?.12:surface==='metal'?.48:.86,metalness:surface==='metal'||surface==='red'?(variant==='storage'?.18:.55):0,envBase:surface==='wet'?.7:.12,
+   })
++  if(plant&&mat instanceof THREE.MeshStandardMaterial){
++    mat.side=THREE.DoubleSide;mat.alphaTest=.5;mat.transparent=false;mat.normalMap=null;mat.roughnessMap=null;mat.color.set('#c4cfb8');mat.roughness=.8
++  }
++  if(ouro&&mat instanceof THREE.MeshStandardMaterial){
++    // v3.2: keep the shared concrete normal map. Swapping in per-surface ouro normal maps after creation
++    // reproducibly lost the WebGL context (SwiftShader) whenever 衔尾段 came into view.
++    mat.roughnessMap=null
++    mat.color.setScalar(surface==='ceiling'?.08:ouro==='floor'?.4:ouro==='spray'?.92:ouro==='plaster'?.78:.85)
++    // v3.2: multi-finish surfaces read one 2×2 atlas through the existing map sampler (no extra
++    // texture units — extra samplers broke shader linking on low-unit GPUs / SwiftShader).
++    const ouroAtlas=`vec4 ouroTex(vec2 tuv,float tile){vec2 o=vec2(mod(tile,2.),1.-floor(tile/2.))*.5;return textureGrad(map,fract(tuv)*.49+.005+o,dFdx(tuv)*.49,dFdy(tuv)*.49);}
++float ouroH(float x){return fract(sin(x*127.1)*43758.5453);}
++`
++    if(ouro==='floor')mat.color.setRGB(.34,.325,.3)
++    // v3.4: sprayed fireproofing reads as a soft continuous coat; damp the shared concrete relief so it doesn't look gravelly
++    if(ouro==='spray')mat.normalScale.set(.3,.3)
++    if(ouro==='beige'){
++      // Two-tone column (ref right column): soot-blackened top over beige spotted paint, ragged burn line.
++      // Side-face UV is (x|z, y)*.32, so world height = vMapUv.y/.32. Atlas: 0 beige, 1 soot.
++      mat.map=l1Texture('l1/ouro/colatlas.jpg')
++      const prior=mat.onBeforeCompile,key=mat.customProgramCacheKey()
++      mat.onBeforeCompile=(shader,renderer)=>{prior.call(mat,shader,renderer)
++        shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`
++        float oy=vMapUv.y/.32,ou=vMapUv.x/.32;
++        float split=1.45+.5*ouroH(floor(ou/.8)*3.1)+.18*sin(ou*9.)+.1*sin(ou*23.+oy);
++        float sk=smoothstep(split-.25,split+.35,oy);
++        vec4 sampledDiffuseColor=mix(ouroTex(vMapUv,0.),ouroTex(vMapUv*.55,1.)*.7,sk);
++        diffuseColor*=sampledDiffuseColor;`).replace('void main() {',ouroAtlas+'void main() {')}
++      mat.customProgramCacheKey=()=>key+'|l1-ouro-twotone-v2'
++    }
++    if(ouro==='plaster'){
++      // Walls (ref): mostly spotted grey skim plaster, some bare blockwork bays and pink/yellow patched
++      // panels, and on many bays a black-painted band above ~3 m. Bays ≈ 4.5 m along the wall.
++      // Atlas: 0 plaster, 1 block, 2 pink patch, 3 black block.
++      mat.map=l1Texture('l1/ouro/wallatlas.jpg')
++      const prior=mat.onBeforeCompile,key=mat.customProgramCacheKey()
++      mat.onBeforeCompile=(shader,renderer)=>{prior.call(mat,shader,renderer)
++        shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`
++        float oy=vMapUv.y/.32,bay=floor(vMapUv.x/1.45),bx=fract(vMapUv.x/1.45);
++        float pick=ouroH(bay*1.7+3.),band=ouroH(bay*2.3+11.),top=2.75+.25*ouroH(bay*5.1);
++        float tile=0.;
++        if(pick<.2&&oy<2.7&&bx>.12&&bx<.78)tile=2.;else if(pick>.72)tile=1.;
++        if(band>.45&&oy>top)tile=3.;
++        vec4 sampledDiffuseColor=ouroTex(tile==2.?vMapUv*1.2:vMapUv,tile);
++        if(tile==3.)sampledDiffuseColor.rgb*=.75;
++        diffuseColor*=sampledDiffuseColor;`).replace('void main() {',ouroAtlas+'void main() {')}
++      mat.customProgramCacheKey=()=>key+'|l1-ouro-walls-v3'
++    }
++  }
++  if(gardenGround&&mat instanceof THREE.MeshStandardMaterial){
++    // 花园段 ground: creeping ivy, cushion moss and leaf-litter patches blended by a slow world-space field.
++    const moss=l1Texture('l1/garden/moss.jpg'),litter=l1Texture('l1/garden/litter.jpg')
++    mat.normalMap=l1Texture('l1/garden/ivyground_nor.jpg',true);mat.normalScale=new THREE.Vector2(.6,.6);mat.roughnessMap=null;mat.color.set('#d0d6c4')
++    const prior=mat.onBeforeCompile,key=mat.customProgramCacheKey()
++    mat.onBeforeCompile=(shader,renderer)=>{prior.call(mat,shader,renderer);shader.uniforms.gMoss={value:moss};shader.uniforms.gLitter={value:litter}
++      shader.fragmentShader=`uniform sampler2D gMoss;uniform sampler2D gLitter;
++      float gH(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
++      float gN(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(gH(i),gH(i+vec2(1,0)),f.x),mix(gH(i+vec2(0,1)),gH(i+vec2(1,1)),f.x),f.y);}
++      `+shader.fragmentShader
++      shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`vec2 gUv=vMapUv*.5;
++      vec4 sampledDiffuseColor=texture2D(map,gUv);
++      float gF=gN(vMapUv*.045)*.65+gN(vMapUv*.13+7.)*.35;
++      float gL=gN(vMapUv*.07+31.);
++      vec3 gC=mix(sampledDiffuseColor.rgb,texture2D(gMoss,gUv*.9).rgb,smoothstep(.42,.62,gF));
++      gC=mix(gC,texture2D(gLitter,gUv*1.1).rgb,smoothstep(.66,.8,gL)*.85);
++      diffuseColor.rgb*=gC;`)}
++    mat.customProgramCacheKey=()=>key+'|l1-garden-ground-v1'
++  }
+   if(plaster){
+     const prior=mat.onBeforeCompile,key=mat.customProgramCacheKey()
+     mat.onBeforeCompile=(shader,renderer)=>{prior.call(mat,shader,renderer);shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\nfloat paintL=dot(sampledDiffuseColor.rgb,vec3(.2126,.7152,.0722));diffuseColor.rgb=diffuse*mix(.66,.82,smoothstep(.025,.65,paintL));')}
+@@ -89,6 +163,20 @@
+   }
+   if(continuous)installL1SurfaceField(mat,surface as 'floor'|'wall'|'ceiling',{ground:l1Texture('l1/ground.png'),peeling:l1Texture('l1/peeling.png'),groundNormal:l1Texture('l1/ground-normal.png',true),peelingNormal:l1Texture('l1/peeling-normal.png',true)})
+   if(variant==='gothic'&&(surface==='column'||surface==='ceiling'))installL1VaultMaterial(mat)
++  if(eagleSurf&&mat instanceof THREE.MeshStandardMaterial){
++    // v3.1 (user: keep the concrete feel): the original concrete scan stays the albedo; the reference-look texture
++    // only adds a soft, large-scale colour cast and stain variation (mip-biased so no rocky micro detail).
++    const sk=L1_EAGLE_SKINS[skin!],name=sk[eagleSurf],mean=L1_EAGLE_MEAN[name]??.6,tex=l1Texture(`l1/eagle/${name}.jpg`)
++    const shade=Math.min(1.25,Math.max(.5,Math.pow(mean/.6,.55)))
++    const prior=mat.onBeforeCompile,key=mat.customProgramCacheKey()
++    mat.onBeforeCompile=(shader,renderer)=>{prior.call(mat,shader,renderer);shader.uniforms.l1EagleTex={value:tex}
++      shader.fragmentShader='uniform sampler2D l1EagleTex;\n'+shader.fragmentShader
++      shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
++      vec3 eT=texture2D(l1EagleTex,vMapUv*.45,3.).rgb;float eL=max(dot(eT,vec3(.2126,.7152,.0722)),.04);
++      vec3 eTint=clamp(eT/eL,vec3(.6),vec3(1.5));
++      diffuseColor.rgb*=mix(vec3(1.),eTint,.4)*mix(1.,clamp(eL/${mean.toFixed(3)},.6,1.4),.3)*${shade.toFixed(3)};`)}
++    mat.customProgramCacheKey=()=>key+'|l1-eagle-tint-'+name
++  }
+   installL1Lighting(mat)
+   mat.name=`l1-${variant}-${surface}`;mat.userData.l1Shared=true;cache.set(key,mat);return mat
+ }
+diff --git a/app/src/game/renderer/l1OutpostEntrance.ts b/app/src/game/renderer/l1OutpostEntrance.ts
+--- a/app/src/game/renderer/l1OutpostEntrance.ts
++++ b/app/src/game/renderer/l1OutpostEntrance.ts
+@@ -1,6 +1,8 @@
+ import * as THREE from 'three'
+ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
+ import { litMaterial } from './shared'
++import { factionSignTexture, signStyleFor } from './factionSigns'
++const SIGN_TEXT:Record<L1OutpostOrg,string>={alpha:'M.E.G. ALPHA / 前哨入口',tom:"Tom's Diner / 餐馆 · 由此进入",bntg:'商人之家 / B.N.T.G. TRADE POST',ariane:'希波克拉底-1 / ARIANE CLINIC',cornucopia:'丰饶角 / ARGOS CORNUCOPIA'}
+ 
+ export type L1OutpostOrg = 'alpha' | 'tom' | 'bntg' | 'ariane' | 'cornucopia'
+ 
+@@ -1,7 +1,10 @@
+   const folds=[shutterParts[14]]
+   for(let i=1;i<14;i++)folds.push([new THREE.BoxGeometry(1.76,.005,.003),new THREE.Vector3(0,.002+i*step,.034),'fold seam'])
+   root.add(merged(folds, material(0x333938, 'lock and fold seams', .42), 'lock and fold seams'))
+-  root.add(merged([[new THREE.BoxGeometry(.5, .14, .025), new THREE.Vector3(0, 2.22, .09), 'sign']], material(c.sign, `${org} organization sign`, .5), `${org} organization sign`))
++  // v3: a real faction plate over the shutter (was a plain coloured bar)
++  root.add(merged([[new THREE.BoxGeometry(1.3, .38, .03), new THREE.Vector3(0, 2.2, .075), 'sign backing']], material(c.frame, `${org} sign backing`, .6), `${org} sign backing`))
++  const signMat=litMaterial({ map: factionSignTexture(signStyleFor(org==='cornucopia'?'argos':org), SIGN_TEXT[org], 1.26/.34), roughness: .55 });signMat.name=`L1 outpost entrance / ${org} sign`;signMat.userData.l1Owned=true
++  const face=new THREE.Mesh(new THREE.PlaneGeometry(1.26,.34),signMat);face.position.set(0,2.2,.0905);face.name=`${org} organization sign`;root.add(face)
+   root.traverse(o => { if (o instanceof THREE.Mesh) o.userData.l1OutpostEntrance = true })
+   return root
+ }
+diff --git a/app/src/game/renderer/l1Props.ts b/app/src/game/renderer/l1Props.ts
+--- a/app/src/game/renderer/l1Props.ts
++++ b/app/src/game/renderer/l1Props.ts
+@@ -1,6 +1,7 @@
+ import { getMaterialMode,litMaterial } from './shared'
+ import {l1Texture} from './l1Materials'
+ import {L1_CRATE,l1CrateCount} from '../world/l1Crate'
++import * as D from './l1PropDetail'
+ 
+ type Part = { geo: THREE.BufferGeometry; mat: THREE.Material }
+ const box = (x: number, y: number, z: number) => new THREE.BoxGeometry(x, y, z)
+@@ -1,30 +1,6 @@
+   geo.rotateX(rx); geo.rotateZ(rz); geo.translate(x, y, z); return { geo, mat: m }
+ }
+ 
+-function foldingtable() {
+-  const g = new THREE.Group(), top = mat('#b1b2aa'), iron = mat('#3f4544', .55, .5), a: Part[] = [p(box(1.55, .04, .72), top, 0, .74, 0)]
+-  for (const x of [-.57, .57]) for (const z of [-.22, .22]) a.push(p(box(.025, .7, .025), iron, x, .38, z, 0, (x * z > 0 ? -.28 : .28)))
+-  a.push(p(box(1.1, .025, .025), iron, 0, .16, -.22), p(box(1.1, .025, .025), iron, 0, .16, .22)); add(g, a); return g
+-}
+-function seat() {
+-  const g = new THREE.Group(), seatM = mat('#272c2d'), iron = mat('#626562', .35, .62), a: Part[] = [p(box(.43, .06, .43), seatM, 0, .46, 0), p(box(.42, .32, .06), seatM, 0, .65, .18)]
+-  for (const x of [-.16, .16]) for (const z of [-.14, .14]) a.push(p(box(.025, .44, .025), iron, x, .22, z)); add(g, a); return g
+-}
+-function panel() {
+-  const g = new THREE.Group(), grey = mat('#9b9b95'), a: Part[] = [p(box(.9, 1.65, .035), grey, 0, .825, 0, .12)]
+-  for (let i = -2; i <= 2; i++) a.push(p(box(.035, 1.5, .055), grey, i * .145, .82, -.035, .12)); add(g, a); return g
+-}
+-function louver() {
+-  const g=new THREE.Group(),grey=mat('#8b8e88',.28,.75),a:Part[]=[]
+-  for(const x of [-.43,.43])a.push(p(box(.04,.85,.07),grey,x,.435,0,.10))
+-  for(const y of [.035,.835])a.push(p(box(.9,.045,.07),grey,0,y,0,.10))
+-  for(let i=0;i<10;i++)a.push(p(box(.83,.065,.016),grey,0,.09+i*.073,0,-.15))
+-  add(g,a);return g
+-}
+-function extinguisher() {
+-  const g = new THREE.Group(), red = mat('#a9362e', .12, .62), black = mat('#202321', .05, .82), a: Part[] = [p(cyl(.105, .47, 12), red, 0, .26, 0), p(new THREE.ConeGeometry(.095, .11, 10), red, 0, .55, 0), p(cyl(.045, .07, 8), black, 0, .64, 0), p(box(.13, .025, .025), black, 0, .69, 0)]
+-  const hose = p(cyl(.012, .14, 6), black, .105, .42, 0, 0, Math.PI / 2); a.push(hose, p(cyl(.012, .14, 6), black, .17, .36, 0, 0, Math.PI / 2), p(cyl(.012, .12, 6), black, .21, .29, 0, 0, Math.PI / 2)); add(g, a); return g
+-}
+ function crate(number = 0,count=1,upperNumber=number+10) {
+   const g=new THREE.Group(),wood=mat('#e0c995',0,.92),frame=mat('#eddbad',0,.92),parts:Part[]=[]
+   const board=(w:number,h:number,d:number,x:number,y:number,z:number,m:THREE.Material,vertical=false)=>{
+@@ -1,16 +1,11 @@
+   for (const x of [-.245, .245]) for (const y of [.1, .6]) a.push(p(cyl(.012, .008, 8), metal, x, y, -.16, Math.PI / 2))
+   add(g, a); return g
+ }
+-function paintcan() {
+-  const g = new THREE.Group(), blue = mat('#263d61', .08, .72), grey = mat('#b5b8b0', .25, .62), metal = mat('#777b78', .72, .36), a: Part[] = [p(cyl(.115, .29, 12), blue, 0, .145, 0), p(new THREE.TorusGeometry(.108, .009, 4, 12), blue, 0, .025, 0,Math.PI/2), p(new THREE.TorusGeometry(.108, .009, 4, 12), blue, 0, .265, 0,Math.PI/2), p(cyl(.108, .012, 12), grey, 0, .3, 0), p(new THREE.TorusGeometry(.1, .008, 4, 12, Math.PI), metal, 0, .265, 0)]
+-  add(g, a); return g
+-}
+-function caution() { const g = new THREE.Group(), yellow = mat('#d2ad27'), a = [p(box(.28, .55, .025), yellow, 0, .275, -.08, -.12), p(box(.28, .55, .025), yellow, 0, .275, .08, .12), p(box(.24, .025, .16), yellow, 0, .04, 0)]; add(g, a); return g }
+ 
+ export function buildL1Prop(s: Structure): THREE.Group | null {
+   const kind = typeof s.data?.l1Prop === 'string' ? s.data.l1Prop : ''
+   const rawNumber=Number(s.data?.l1Number), rawSid=Number(s.data?.sid), selected=Number.isFinite(rawNumber)?rawNumber:rawSid
+-  const makers: Record<string, () => THREE.Group> = { foldingtable, seat, panel, louver, extinguisher, crate: () => crate(selected,l1CrateCount(s),Number(s.data?.l1UpperNumber??selected+10)), pathchair, airunit, paintcan, caution }
++  const makers: Record<string, () => THREE.Group> = { foldingtable:D.foldingtable, seat:D.seat, panel:D.panel, louver:D.louver, extinguisher:D.extinguisher, grate:D.grate, matpile:D.matpile, crate: () => crate(selected,l1CrateCount(s),Number(s.data?.l1UpperNumber??selected+10)), pathchair, airunit, paintcan:D.paintcan, caution:D.caution }
+   const made = makers[kind]?.(); if (!made) return null
+   made.position.set(s.x + s.w / 2, 0, s.y + s.h / 2)
+   made.rotation.y = (Number(s.data?.deg) || 0) * Math.PI / 180
+diff --git a/app/src/game/renderer/l4Batch.ts b/app/src/game/renderer/l4Batch.ts
+--- a/app/src/game/renderer/l4Batch.ts
++++ b/app/src/game/renderer/l4Batch.ts
+@@ -1,6 +1,9 @@
+ import {mergeGeometries} from 'three/examples/jsm/utils/BufferGeometryUtils.js'
+ import {materialBatchKey} from './materialBatch'
+ import {cloneRenderGeometry} from './renderGeometry'
++import {bakeL4Coarse,type L4Sampler} from './l4Bake'
++/** Set by the renderer while an L4 chunk builds; static details get baked light like the terrain. */
++export const l4BatchSampler:{s:L4Sampler|null}={s:null}
+ 
+ // Small spatial buckets keep culling useful. All opaque parts sharing a material
+ // merge, irrespective of box dimensions; unique phone/key/vent shapes don't each
+@@ -1,6 +1,7 @@
+       owned.add(geo);geo.applyMatrix4(mesh.matrixWorld)
+       if(mat.transparent){const pane=new THREE.Mesh(geo,mat);pane.renderOrder=mesh.renderOrder;staged.add(pane);continue}
+       const normalized=geo.index?geo.toNonIndexed():geo
++      if(l4BatchSampler.s&&!normalized.getAttribute('l4Bake'))bakeL4Coarse(normalized,l4BatchSampler.s)
+       owned.add(normalized)
+       if(normalized!==geo){geo.dispose();owned.delete(geo)}
+       const layout=Object.keys(normalized.attributes).sort().map(key=>{const a=normalized.getAttribute(key);return `${key}:${a.itemSize}:${a.normalized}:${a.array.constructor.name}`}).join('|')
+diff --git a/app/src/game/renderer/l4Materials.ts b/app/src/game/renderer/l4Materials.ts
+--- a/app/src/game/renderer/l4Materials.ts
++++ b/app/src/game/renderer/l4Materials.ts
+@@ -1,35 +1,47 @@
+ import * as THREE from 'three'
+ import {litMaterial,levelTexture,noiseTexture,getMaterialMode,configureSurfaceTexture} from './shared'
+ import {l2WorldUV} from './l2Materials'
++import {installL4Bake} from './l4Bake'
+ export const l4WorldUV=l2WorldUV
+ export type L4Surface='floor'|'wall'|'ceiling'|'fabric'|'frame'|'edge'|'trim'|'desk'|'chair'|'door'|'facade'|'tile'
+ const cache=new Map<string,THREE.Material>()
+ export function l4Material(surface:L4Surface,style='officehall'):THREE.Material {
+   const key=`${getMaterialMode()}:${surface}:${style}`,old=cache.get(key);if(old)return old
+-  const asset=surface==='floor'?'dirty_carpet':surface==='ceiling'?'ceiling_interior':surface==='fabric'||surface==='chair'?'denim_fabric':'white_plaster_02'
++  const asset=surface==='floor'?'carpet2':surface==='ceiling'||surface==='tile'&&false?'ceiltile':surface==='fabric'||surface==='chair'?'denim_fabric':surface==='wall'?'drywall':'white_plaster_02'
+   const textured=['floor','ceiling','wall','fabric','chair','tile'].includes(surface)
+   const texture=(map:string)=>{
+     const t=levelTexture(`l4/${asset}_${map}.jpg`,()=>noiseTexture(map==='NormalGL'?'#8080ff':'#c2c0b9',map==='NormalGL'?'#8080ff':'#aaa9a4'))
+     return configureSurfaceTexture(t,map==='Color'?THREE.SRGBColorSpace:THREE.NoColorSpace)
+   }
+-  const colors:Record<L4Surface,string>={floor:style==='windowview'?'#717d7e':style==='open'?'#85827f':'#8e908b',wall:style==='open'?'#b8b6a8':'#bfbbad',ceiling:'#bcbeb5',fabric:'#788990',frame:'#20282a',edge:'#9fa7a5',trim:'#323432',desk:'#bdb9a3',chair:'#233447',door:'#a4b0aa',facade:'#66747c',tile:'#878b85'}
++  const colors:Record<L4Surface,string>={floor:style==='windowview'?'#5c666c':style==='hall'?'#606a6f':style==='open'?'#6b6a73':'#8a8c88',wall:style==='open'?'#cbcbc6':style==='hall'?'#cfd0cc':'#c9c7bf',ceiling:'#a9aba7',fabric:'#788990',frame:'#20282a',edge:'#9fa7a5',trim:'#323432',desk:'#bdb9a3',chair:'#233447',door:'#a4b0aa',facade:'#66747c',tile:'#878b85'}
+   const m=litMaterial({color:colors[surface],...(textured?{map:texture('Color'),normalMap:texture('NormalGL'),normalScale:new THREE.Vector2(surface==='floor'?.22:.10,surface==='floor'?.22:.10),roughnessMap:getMaterialMode()==='realistic'?texture('Roughness'):undefined}:{}),roughness:surface==='frame'?.42:surface==='desk'?.7:.98,metalness:surface==='frame'?.45:0,envBase:.04})
+   if(textured){
+     // This hook changes only surface color/UV shading: no displacement, discard
+     // or alpha cutouts. Its wall rectangles remain valid opaque occluders.
+     m.userData.occlusionOpaque=true
+     m.onBeforeCompile=shader=>{
++      installL4Bake(shader)
+       shader.vertexShader='varying vec3 l4Local;\n'+shader.vertexShader
+       shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\n l4Local=position;')
+       shader.fragmentShader='varying vec3 l4Local;\n'+shader.fragmentShader
+       shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#include <map_fragment>
+         float fiber=dot(texture2D(map,vMapUv).rgb,vec3(.299,.587,.114));
++        ${surface==='floor'?`vec2 ruv=mat2(.8,-.6,.6,.8)*vMapUv*.61+.37;fiber=mix(fiber,dot(texture2D(map,ruv).rgb,vec3(.299,.587,.114)),.45);fiber=clamp((fiber-.5)*1.25+.42,0.,1.);`:''}
++        ${surface==='ceiling'?`fiber=clamp(fiber*1.05,0.,1.);`:''}
+         diffuseColor.rgb=diffuse*mix(.58,.96,pow(clamp(fiber,0.0,1.0),.65));
+-        ${surface==='wall'?`float h=clamp(l4Local.y,0.,2.9);float edgeShade=smoothstep(0.,.38,h)*smoothstep(0.,.35,2.9-h);float wear=texture2D(map,vMapUv*.17).r;diffuseColor.rgb*=mix(.71,1.,edgeShade)*mix(.88,1.03,wear);`:''}
+-        ${surface==='ceiling'||surface==='tile'?`vec2 tuv=vMapUv*vec2(1.666667,.833333);vec2 tile=abs(fract(tuv+.5)-.5);vec2 aa=max(fwidth(tuv),vec2(.002));vec2 line=1.-smoothstep(vec2(.003),vec2(.009)+aa,tile);diffuseColor.rgb*=1.-max(line.x,line.y)*.35;`:''}
++        ${surface==='wall'?`diffuseColor.rgb*=clamp(1.+(fiber-.82)*2.2,.78,1.08);vec2 wq=vMapUv;float seam=1.-smoothstep(.0,.012,abs(fract(wq.x/1.2+.5)-.5)*1.2);diffuseColor.rgb*=1.-seam*.07;float scuff=smoothstep(.62,.8,l4Local.y)*smoothstep(1.05,.88,l4Local.y)*smoothstep(.45,.8,texture2D(map,wq*vec2(.9,3.)).r);diffuseColor.rgb*=1.-scuff*.06;float h=clamp(l4Local.y,0.,2.9);float edgeShade=smoothstep(0.,.38,h)*smoothstep(0.,.35,2.9-h);float wear=texture2D(map,vMapUv*.17).r;diffuseColor.rgb*=mix(.71,1.,edgeShade)*mix(.88,1.03,wear);`:''}
++        ${surface==='floor'?`vec2 wm=vMapUv/.48;
++          float stain=texture2D(map,wm*.021).g;diffuseColor.rgb*=mix(.86,1.02,smoothstep(.25,.75,stain));
++          ${style==='hall'||style==='open'||style==='windowview'?`vec2 cg=floor(wm/vec2(3.6,2.8)),cf=fract(wm/vec2(3.6,2.8))*vec2(3.6,2.8);
++          float rnd=fract(sin(dot(cg,vec2(41.3,289.1)))*43758.5);
++          if(rnd>.38){vec2 c=vec2(1.8,1.4)+vec2(rnd-.5,fract(rnd*7.)-.5)*.5;vec2 hs=rnd>.7?vec2(.8,.4):vec2(.6,.3);
++            vec2 q=abs(cf-c)-hs;float edge=1.-smoothstep(0.,.05,abs(max(q.x,q.y)));float inner=step(max(q.x,q.y),0.);
++            float legs=0.;for(int k=0;k<4;k++){vec2 lp=c+hs*vec2(k<2?-1.:1.,mod(float(k),2.)<1.?-1.:1.)*.92;legs+=1.-smoothstep(.02,.05,length(cf-lp));}
++            diffuseColor.rgb*=1.-edge*.10-inner*.035-min(legs,1.)*.22;}`:''}`:''}
++        ${surface==='ceiling'||surface==='tile'?`vec2 tuv=vMapUv*vec2(1.666667,.833333);vec2 tile=abs(fract(tuv+.5)-.5);vec2 aa=max(fwidth(tuv),vec2(.002));vec2 line=1.-smoothstep(vec2(.003),vec2(.009)+aa,tile);diffuseColor.rgb*=1.-max(line.x,line.y)*.35;${surface==='ceiling'?`vec2 tid=floor(tuv+.5);float gone=fract(sin(dot(tid,vec2(91.7,157.3)))*24634.6);if(gone<.006){vec2 tf=abs(fract(tuv+.5)-.5);float lip=smoothstep(.40,.47,max(tf.x*1.,tf.y));diffuseColor.rgb=mix(vec3(.035,.035,.032),diffuseColor.rgb*.55,lip*.5);}else if(gone<.02)diffuseColor.rgb*=mix(.78,.9,fract(gone*977.));`:''}`:''}
+       `)
+-    };m.customProgramCacheKey=()=>`l4-${surface}-aged-matte-v2`
+-  }
++    };m.customProgramCacheKey=()=>`l4-${surface}-${style}-aged-matte-v5-bake`
++  }else if(surface!=='facade'){m.onBeforeCompile=shader=>installL4Bake(shader);m.customProgramCacheKey=()=>'l4-plain-bake'}
+   if(surface==='facade'){
+     // Continuous vertical floor rhythm, with unlit glazing and occasional offices.
+     const fm=new THREE.MeshBasicMaterial({color:'#7c898f',fog:true})
+diff --git a/app/src/game/renderer/l4Meshes.ts b/app/src/game/renderer/l4Meshes.ts
+--- a/app/src/game/renderer/l4Meshes.ts
++++ b/app/src/game/renderer/l4Meshes.ts
+@@ -1,6 +1,37 @@
+ import {l4Material,l4WorldUV,type L4Surface} from './l4Materials'
+ import {buildL4OfficeDetail} from './l4OfficeDetails'
+ import {buildL4WallDecor} from './l4WallDecor'
++import {l0FlickerTime} from './l0Flicker'
++/* Fake sky (Fandom: the storm outside is static and false). Infinite-distance view, so the
++ * window reads as depth without any exterior geometry: low grey-blue rain clouds, the misty
++ * silhouettes of more office towers above and below, falling rain streaks. */
++const fakeSky=new THREE.ShaderMaterial({
++  uniforms:{time:l0FlickerTime},fog:false,
++  vertexShader:`varying vec3 wp;void main(){vec4 w=modelMatrix*vec4(position,1.);wp=w.xyz;gl_Position=projectionMatrix*viewMatrix*w;}`,
++  fragmentShader:`uniform float time;varying vec3 wp;
++    float h(vec2 v){return fract(sin(dot(v,vec2(127.1,311.7)))*43758.5453);}
++    float n(vec2 v){vec2 i=floor(v),f=fract(v);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+1.),f.x),f.y);}
++    void main(){
++      vec3 d=normalize(wp-cameraPosition);
++      float az=atan(d.x,d.z),el=d.y/max(.2,length(d.xz));
++      vec3 sky=mix(vec3(.50,.56,.60),vec3(.36,.42,.47),smoothstep(-.1,.9,el));
++      vec2 cu=vec2(az*3.,el*5.);float cl=n(cu)*.55+n(cu*2.3)*.3+n(cu*5.1)*.15;
++      sky*=.86+cl*.22;
++      // distant towers: columns of floors with dark glazing, fading into rain haze
++      float col=floor(az*14.),tw=h(vec2(col,3.)),gap=step(.22,fract(az*14.))*step(fract(az*14.),.94);
++      float top=.05+tw*.55;
++      float tower=step(el,top)*gap*step(.35,tw);
++      float fl=fract(el*22.+tw*7.),win=step(.35,fl)*step(.15,fract(az*140.));
++      vec3 tc=mix(vec3(.38,.43,.46),vec3(.26,.31,.34),win)*(1.+.08*h(vec2(col,floor(el*22.))));
++      float haze=.55+.25*cl;
++      sky=mix(sky,mix(tc,sky,haze),tower);
++      // rain streaks (screen-independent, in view direction space)
++      vec2 ru=vec2(az*260.,el*9.+time*7.);float st=step(.986,h(vec2(floor(ru.x),floor(ru.y))))*smoothstep(0.,.6,fract(ru.y));
++      sky+=st*.08;
++      // authored in display space; the scene renders linear → convert, and keep it below the lit interior
++      gl_FragColor=vec4(pow(sky,vec3(2.2))*.9,1.);
++    }`,
++})
+ function owned<T extends THREE.Material>(m:T):T{m.userData.l4Owned=true;return m}
+ const glassCache=new Map<number,THREE.MeshPhysicalMaterial>()
+ function glassMaterial(opacity:number){let mat=glassCache.get(opacity);if(!mat){mat=new THREE.MeshPhysicalMaterial({color:'#93b5bf',opacity,transparent:true,depthWrite:false,side:THREE.DoubleSide,forceSinglePass:true,roughness:.2,metalness:.03});glassCache.set(opacity,mat)}return mat}
+@@ -1,6 +1,7 @@
+     if(partition&&Number(s.data?.sid??0)%3!==0){const blinds=buildL4OfficeDetail('blinds');blinds.position.z=-.065;g.add(blinds)}
+     if(!partition&&kind!=='windowblack'){
+       const haze=new THREE.Mesh(new THREE.PlaneGeometry(1,top-bottom),mist);haze.position.set(0,(bottom+top)/2,z-.012);g.add(haze)
++      if(s.data?.l4Facade){const back=new THREE.Mesh(new THREE.PlaneGeometry(1,top-bottom),fakeSky);back.rotation.y=Math.PI;back.position.set(0,(bottom+top)/2,z+.07);back.userData.noCastShadow=true;back.castShadow=false;g.add(back)}
+       // Wet tracks are in the shared pane shader, not nine transparent meshes.
+     }
+   }else if(kind==='hoteldoor'||kind==='glassdoor'){
+@@ -1,6 +1,21 @@
+       for(const x of [-.43,.43])part(panel,.035,2.2,.045,x,1.1,0,'frame')
+       part(panel,.035,.40,.05,.30,1.10,.06,'frame')
+     }
++  }else if(kind==='watercooler'){
++    // Bottled office water cooler: off-white cabinet, hot/cold taps, drip tray, inverted 18.9 L bottle.
++    g.rotation.y=Number(s.data?.deg??0)*Math.PI/180
++    const z=-.18,almond=!!s.data?.almond,empty=Number(s.data?.water??4)<=0||(almond&&s.data?.searched===1)
++    part(g,.32,.98,.32,0,.49,z,'desk');part(g,.34,.04,.34,0,.99,z,'edge');part(g,.30,.05,.30,0,.025,z,'trim')
++    part(g,.20,.02,.07,0,.56,z+.18,'trim');part(g,.22,.015,.09,0,.575,z+.18,'edge') // drip tray
++    part(g,.26,.22,.012,0,.78,z+.161,'trim') // recessed tap bay
++    for(const[x,c]of [[-.055,'#b9312b'],[.055,'#2c5fa8']]as const){const tap=new THREE.Mesh(new THREE.BoxGeometry(.035,.05,.05),owned(new THREE.MeshStandardMaterial({color:c,roughness:.5})));tap.position.set(x,.8,z+.19);g.add(tap)}
++    part(g,.12,.006,.12,0,1.012,z,'frame') // bottle collar
++    const bottle=new THREE.Mesh(new THREE.CylinderGeometry(.135,.135,.40,20),owned(new THREE.MeshPhysicalMaterial({color:almond?'#e8d7a8':'#a9cbd8',transparent:true,opacity:.45,roughness:.15,depthWrite:false})));bottle.position.set(0,1.27,z);g.add(bottle)
++    const neck=new THREE.Mesh(new THREE.CylinderGeometry(.05,.11,.08,16),bottle.material);neck.position.set(0,1.04,z);g.add(neck)
++    for(const y of [1.17,1.37]){const rib=new THREE.Mesh(new THREE.TorusGeometry(.136,.006,4,20),bottle.material);rib.rotation.x=Math.PI/2;rib.position.set(0,y,z);g.add(rib)}
++    if(!empty){const fill=new THREE.Mesh(new THREE.CylinderGeometry(.128,.128,almond?.30:.26,18),owned(new THREE.MeshStandardMaterial({color:almond?'#d9b56a':'#6fa3b8',roughness:.2,transparent:true,opacity:.7})));fill.position.set(0,almond?1.20:1.18,z);g.add(fill)}
++    if(almond){const tag=new THREE.Mesh(new THREE.PlaneGeometry(.12,.08),owned(new THREE.MeshStandardMaterial({color:'#f2ead2',roughness:.8})));tag.position.set(0,1.27,z+.137);g.add(tag)}
++    part(g,.08,.10,.06,.11,.92,z+.19,'edge') // paper cup dispenser
+   }else if(kind==='l4stairs'){
+     // Two opposed height directions, sharing the same landing and loop identity.
+     for(const [x,sign]of [[-1,1],[1,-1]])for(let n=0;n<16;n++){
+@@ -1,11 +1,11 @@
+   return g
+ }
+ export function buildL4Lights(m:GameMap,g:THREE.Group,lights:LightSource[],fixtures:{mat:THREE.MeshBasicMaterial;seed:number;src?:LightSource;batch?:THREE.InstancedMesh;index?:number}[]){
+-  const styles=['officehall','open','smallrooms','windowview']
++  const styles=['officehall','open','smallrooms','windowview','hall']
+   const matrix=new THREE.Matrix4(),rotation=new THREE.Quaternion(),scale=new THREE.Vector3(1,1,1),position=new THREE.Vector3()
+   for(const style of styles){
+     const sources=lights.filter(l=>!l.noFix&&l4StyleAt(m,l.x,l.y)===style);if(!sources.length)continue
+-    const strip=style==='windowview',open=style==='open',w=strip?3.9:open?1.18:1.25,d=strip?.032:open?.59:.27
++    const strip=style==='windowview',open=style==='open'||style==='hall',w=strip?3.9:open?1.18:1.25,d=strip?.032:open?.59:.27
+     rotation.setFromAxisAngle(new THREE.Vector3(0,1,0),style==='officehall'?Math.PI/2:0)
+     const frame=new THREE.InstancedMesh(new THREE.BoxGeometry(w+.045,.045,d+.045),l4Material('edge'),sources.length)
+     const mat=owned(new THREE.MeshBasicMaterial({color:'white'}));mat.userData.base=new THREE.Color(strip?'#dccab0':'#fffef2')
+diff --git a/app/src/game/renderer/l4OfficeDetails.ts b/app/src/game/renderer/l4OfficeDetails.ts
+--- a/app/src/game/renderer/l4OfficeDetails.ts
++++ b/app/src/game/renderer/l4OfficeDetails.ts
+@@ -1,7 +1,7 @@
+ import * as THREE from 'three'
+ import { l4Material } from './l4Materials'
+ 
+-type DetailKind = 'services'|'wallkit'|'printer'|'pantry'|'toilet'|'server'|'archive'|'deskItems'|'blinds'
++type DetailKind = 'services'|'wallkit'|'printer'|'pantry'|'toilet'|'server'|'archive'|'deskItems'|'blinds'|'boxes'|'chairstack'|'plant'|'whiteboard'
+ const red = new THREE.MeshLambertMaterial({ color: '#a52b2b' })
+ const paper = new THREE.MeshLambertMaterial({ color: '#f3f0e5' })
+ const steel = new THREE.MeshStandardMaterial({ color: '#aeb5b3', metalness: .45, roughness: .42 })
+@@ -1,8 +1,55 @@
+   const edge = material('edge'); for(let i=0;i<12;i++){const m=box(g,edge,[.92,.012,.045],[0,1.75+(i-5.5)*.125,0]);m.rotation.x=.2} for(const x of [-.38,.38]) box(g,black,[.012,1.65,.012],[x,1.75,.04])
+ }
+ 
++// ---- v2 abandoned-office clutter (hall/open zones)
++const card = new THREE.MeshLambertMaterial({ color: '#9c8b70' }), cardDark = new THREE.MeshLambertMaterial({ color: '#86765c' })
++const tape = new THREE.MeshLambertMaterial({ color: '#c9b78c' }), soil = new THREE.MeshLambertMaterial({ color: '#3b3128' })
++const deadLeaf = new THREE.MeshLambertMaterial({ color: '#7a7348', side: THREE.DoubleSide }), pot = new THREE.MeshLambertMaterial({ color: '#d8d4c8' })
++const r01 = (seed: number, k: number) => { const v = Math.sin(seed * 12.9898 + k * 78.233) * 43758.5453; return v - Math.floor(v) }
++function boxes(g: THREE.Group, seed: number) {
++  // archive cartons stacked against each other, one lid ajar, one fallen
++  const n = 3 + Math.floor(r01(seed, 1) * 4)
++  for (let i = 0; i < n; i++) {
++    const stack = i % 3, row = Math.floor(i / 3), w = .46, h = .30, d = .34
++    const b = box(g, i % 2 ? card : cardDark, [w, h, d], [-.25 + row * .5 + (r01(seed, i) - .5) * .06, h / 2 + stack * h, (r01(seed, i + 9) - .5) * .1])
++    b.rotation.y = (r01(seed, i + 3) - .5) * .25
++    box(g, tape, [w + .004, .02, .06], [b.position.x, b.position.y + h / 2 - .005, b.position.z]).rotation.y = b.rotation.y
++    if (stack === 2 && r01(seed, 20) > .5) i += 3 - stack
++  }
++  if (r01(seed, 30) > .5) { const f = box(g, card, [.46, .30, .34], [.55, .17, .35]); f.rotation.set(0, .9, Math.PI / 2) }
++  box(g, paper, [.21, .004, .30], [.2, .002, .45]).rotation.y = r01(seed, 31) * 3
++}
++function chairstack(g: THREE.Group, seed: number) {
++  // stacking guest chairs: tubular frame + grey shell, 4–6 high
++  const frame = material('frame'), shell = material('chair'), n = 4 + Math.floor(r01(seed, 2) * 3)
++  for (let i = 0; i < n; i++) {
++    const y = .45 + i * .085
++    box(g, shell, [.44, .035, .42], [0, y, 0]); const back = box(g, shell, [.44, .34, .03], [0, y + .21, -.22]); back.rotation.x = -.12
++  }
++  for (const x of [-.21, .21]) for (const z of [-.19, .19]) box(g, frame, [.022, .45, .022], [x, .225, z])
++  for (const x of [-.21, .21]) box(g, frame, [.022, .022, .42], [x, .02, 0])
++}
++function plant(g: THREE.Group, seed: number) {
++  // dead office ficus in a plastic planter
++  cyl(g, pot, .19, .42, [0, .21, 0], 16); cyl(g, soil, .175, .02, [0, .415, 0], 16)
++  const trunk = cyl(g, brown, .018, .9, [0, .86, 0], 6); trunk.rotation.z = .06
++  const leaves = 9 + Math.floor(r01(seed, 3) * 6)
++  for (let i = 0; i < leaves; i++) {
++    const a = r01(seed, i + 40) * Math.PI * 2, h = .9 + r01(seed, i + 60) * .45, r = .1 + r01(seed, i + 80) * .22
++    const l = new THREE.Mesh(new THREE.PlaneGeometry(.09, .16), deadLeaf); l.position.set(Math.cos(a) * r, h, Math.sin(a) * r); l.rotation.set(-.9 - r01(seed, i) * .9, a, 0); g.add(l)
++  }
++  for (let i = 0; i < 4; i++) { const l = new THREE.Mesh(new THREE.PlaneGeometry(.09, .16), deadLeaf); l.rotation.x = -Math.PI / 2; l.rotation.z = r01(seed, i + 100) * 6; l.position.set((r01(seed, i + 110) - .5) * .8, .004, (r01(seed, i + 120) - .5) * .8); g.add(l) }
++}
++function whiteboard(g: THREE.Group, seed: number) {
++  // mobile whiteboard, faint ghost marks
++  const frame = material('frame'), edge = material('edge')
++  box(g, paper, [1.2, .9, .02], [0, 1.35, 0]); box(g, edge, [1.24, .03, .04], [0, 1.81, 0]); box(g, edge, [1.24, .05, .08], [0, .89, .02])
++  for (const x of [-.6, .6]) { box(g, frame, [.03, 1.75, .03], [x, .9, 0]); box(g, frame, [.03, .03, .5], [x, .06, 0]); for (const z of [-.22, .22]) cyl(g, rubber, .03, .03, [x, .03, z], 8) }
++  for (let i = 0; i < 4; i++) box(g, i % 2 ? blue : red, [.25 + r01(seed, i) * .4, .008, .001], [(r01(seed, i + 5) - .5) * .7, 1.1 + r01(seed, i + 7) * .5, .011]).rotation.z = (r01(seed, i + 9) - .5) * .4
++}
++
+ export function buildL4OfficeDetail(kind: DetailKind, seed = 0): THREE.Group {
+   const g = new THREE.Group();
+-  if (kind === 'services') services(g); else if (kind === 'wallkit') wallkit(g); else if (kind === 'printer') printer(g); else if (kind === 'pantry') pantry(g); else if (kind === 'toilet') toilet(g); else if (kind === 'server') server(g, seed); else if (kind === 'archive') archive(g, seed); else if (kind === 'deskItems') deskItems(g, seed); else blinds(g)
++  if (kind === 'boxes') boxes(g, seed); else if (kind === 'chairstack') chairstack(g, seed); else if (kind === 'plant') plant(g, seed); else if (kind === 'whiteboard') whiteboard(g, seed); else if (kind === 'services') services(g); else if (kind === 'wallkit') wallkit(g); else if (kind === 'printer') printer(g); else if (kind === 'pantry') pantry(g); else if (kind === 'toilet') toilet(g); else if (kind === 'server') server(g, seed); else if (kind === 'archive') archive(g, seed); else if (kind === 'deskItems') deskItems(g, seed); else blinds(g)
+   return g
+ }
+diff --git a/app/src/game/renderer/l4Terrain.ts b/app/src/game/renderer/l4Terrain.ts
+--- a/app/src/game/renderer/l4Terrain.ts
++++ b/app/src/game/renderer/l4Terrain.ts
+@@ -1,22 +1,27 @@
+ import {mergeGeometries} from 'three/examples/jsm/utils/BufferGeometryUtils.js'
+ import type {GameMap} from '../world/mapgen'
+ import type {TerrainRange} from './geometry'
+-import {l4StyleAt,L4_HEIGHT,l4Cell,l4Origin,l4VoidAt} from '../world/l4Layout'
++import {l4StyleAt,L4_HEIGHT,l4VoidAt} from '../world/l4Layout'
+ import {l4Material,l4WorldUV,type L4Surface} from './l4Materials'
++import {bakeL4Geometry,l4SamplerFor,l4BakeMemo} from './l4Bake'
+ export function buildL4Terrain(m:GameMap,g:THREE.Group,range?:TerrainRange){
+   const groups=new Map<string,{geos:THREE.BufferGeometry[];surface:L4Surface;style:string}>()
++  const sampler=l4SamplerFor(m)
++  l4BakeMemo(true)
+   const add=(geo:THREE.BufferGeometry,surface:L4Surface,style='officehall')=>{
+     l4WorldUV(geo,m.inf?.ox??0,m.inf?.oy??0,surface==='floor'?.48:surface==='fabric'?2:1)
++    // Baked lighting: planes test occlusion from their own centre (corner vertices sit on tile edges).
++    if(geo.type==='PlaneGeometry'){geo.computeBoundingBox();const c=geo.boundingBox!.getCenter(new THREE.Vector3()),n=geo.getAttribute('normal');const ox=c.x+n.getX(0)*.05,oz=c.z+n.getZ(0)*.05;bakeL4Geometry(geo,sampler,undefined,()=>[ox,oz])}
++    else bakeL4Geometry(geo,sampler,undefined,(x,_y,z,nx,_ny,nz)=>[x+nx*.08,z+nz*.08])
+     const key=surface+style,rec=groups.get(key)??{geos:[],surface,style};rec.geos.push(geo);groups.set(key,rec)
+   }
+   const box=(w:number,h:number,d:number,x:number,y:number,z:number,s:L4Surface,v='officehall')=>add(new THREE.BoxGeometry(w,h,d).translate(x,y,z),s,v)
+   const floor=(x:number,y:number)=>x>=0&&y>=0&&x<m.w&&y<m.h&&m.tiles[y*m.w+x]===1
+   const outside=(x:number,y:number)=>m.inf?l4VoidAt(m.inf.seed,x+m.inf.ox,y+m.inf.oy):!!m.outdoor[y*m.w+x]
+   const stairs=m.structures.filter(s=>s.kind==='l4stairs')
+-  const tiled=m.structures.filter(s=>s.kind==='l4prop'&&['toilet','pantry'].includes(String(s.data?.room))).map(s=>{
+-    const bx=l4Origin(l4Cell(s.x+(m.inf?.ox??0)))-(m.inf?.ox??0),by=l4Origin(l4Cell(s.y+(m.inf?.oy??0)))-(m.inf?.oy??0)
+-    return{x:bx+(s.x-bx<10?4:14),y:by+(s.y-by<11?3:12),w:s.x-bx<10?6:5,h:s.y-by<11?8:7}
+-  })
++  // v2: toilet/pantry floor tiles come from the planner (data.tile = [x,y,w,h] in world tiles)
++  const ox=m.inf?.ox??0,oy=m.inf?.oy??0
++  const tiled=m.structures.filter(s=>s.kind==='l4prop'&&Array.isArray(s.data?.tile)).map(s=>{const t=s.data!.tile as number[];return{x:t[0]-ox,y:t[1]-oy,w:t[2],h:t[3]}})
+   for(let y=range?.y0??0;y<(range?.y1??m.h);y++)for(let x=range?.x0??0;x<(range?.x1??m.w);x++){
+     // A vertex has one canonical owner, including at chunk boundaries. The
+     // analytic world field keeps returns intact as the streaming window moves.
+@@ -1,8 +1,8 @@
+     const i=y*m.w+x;if(m.outdoor[i])continue
+     const style=l4StyleAt(m,x,y),stair=stairs.find(s=>x>=s.x&&x<s.x+s.w&&y>=s.y&&y<s.y+s.h)
+     if(floor(x,y)){
+-      if(m.elev[i]!==4)add(new THREE.PlaneGeometry(1,1).rotateX(-Math.PI/2).translate(x+.5,0,y+.5),tiled.some(r=>x>=r.x&&x<r.x+r.w&&y>=r.y&&y<r.y+r.h)?'tile':'floor',style)
+-      if(!stair)add(new THREE.PlaneGeometry(1,1).rotateX(Math.PI/2).translate(x+.5,L4_HEIGHT,y+.5),'ceiling',style)
++      if(m.elev[i]!==4)add(new THREE.PlaneGeometry(1,1,4,4).rotateX(-Math.PI/2).translate(x+.5,0,y+.5),tiled.some(r=>x>=r.x&&x<r.x+r.w&&y>=r.y&&y<r.y+r.h)?'tile':'floor',style)
++      if(!stair)add(new THREE.PlaneGeometry(1,1,3,3).rotateX(Math.PI/2).translate(x+.5,L4_HEIGHT,y+.5),'ceiling',style)
+       for(const [dx,dy]of [[1,0],[0,1]])if(floor(x+dx,y+dy)&&l4StyleAt(m,x+dx,y+dy)!==style){
+         box(dx?.055:1,.006,dy?.055:1,x+.5+dx*.5,.003,y+.5+dy*.5,'trim')
+         box(dx?.14:1,.12,dy?.14:1,x+.5+dx*.5,L4_HEIGHT-.06,y+.5+dy*.5,'edge')
+@@ -1,7 +1,7 @@
+     }else if(m.tiles[i]===2){
+       // Only exposed faces; dark vinyl skirting follows the same wall contour.
+       for(const [dx,dy,rot]of [[0,1,0],[0,-1,Math.PI],[1,0,Math.PI/2],[-1,0,-Math.PI/2]])if(floor(x+dx,y+dy)||((x+dx<0||x+dx>=m.w||y+dy<0||y+dy>=m.h)&&!outside(x+dx,y+dy))){
+-        add(new THREE.PlaneGeometry(1,L4_HEIGHT).rotateY(rot).translate(x+.5+dx*.5,L4_HEIGHT/2,y+.5+dy*.5),'wall',style)
++        add(new THREE.PlaneGeometry(1,L4_HEIGHT,4,6).rotateY(rot).translate(x+.5+dx*.5,L4_HEIGHT/2,y+.5+dy*.5),'wall',style)
+         box(dx?.035:1,.11,dy?.035:1,x+.5+dx*.516,.055,y+.5+dy*.516,'trim')
+       }
+     }
+@@ -1,6 +1,7 @@
+       box(dx?.24:1,.30,dy?.24:1,x+.5+dx*.5,L4_HEIGHT+.10,y+.5+dy*.5,'wall')
+     }
+   }
++  l4BakeMemo(false)
+   for(const {geos,surface,style}of groups.values()){
+     const merged=mergeGeometries(geos,false);if(merged){const mesh=new THREE.Mesh(merged,l4Material(surface,style));mesh.receiveShadow=true;mesh.castShadow=surface==='wall';g.add(mesh)}
+     for(const geo of geos)geo.dispose()
+diff --git a/app/src/game/renderer/renderer.ts b/app/src/game/renderer/renderer.ts
+--- a/app/src/game/renderer/renderer.ts
++++ b/app/src/game/renderer/renderer.ts
+@@ -1,7 +1,8 @@
+ import { l1Transition } from '../world/l1Layout'
+ import {buildL4Lights,disposeL4Owned} from './l4Meshes'
+ import {L4VolumeFog} from './l4VolumeFog'
+-import {batchL4StaticJob} from './l4Batch'
++import {batchL4StaticJob,l4BatchSampler} from './l4Batch'
++import {l4SamplerFor} from './l4Bake'
+ import {l4StyleAt} from '../world/l4Layout'
+ // Three.js 第一人称低多边形渲染器：主循环（静态几何/灯光池/实体动画编排，构建逻辑见同级模块）
+ import * as THREE from 'three'
+@@ -1,7 +1,7 @@
+       this.l6WasActive = false
+       this.l6DarkAdapt = 0
+       // L0 保留旧相机照片般的柔和高光，不让奶油黄材质再次曝成饱和亮黄。
+-      this.three.toneMappingExposure = this.userExposure * (def.id === 0 ? 0.94 : 1)
++      this.three.toneMappingExposure = this.userExposure * (def.id === 0 ? 0.94 : def.id === 4 ? 0.78 : 1) // L4 v2：参考图对照——室内整体压暗，窗景保持最亮
+     }
+     // Reserve the level's shadow slots before compiling incoming geometry.
+     // Room/garden/outdoor transitions change light intensity, never shader counts.
+@@ -1,7 +1,8 @@
+       : (def.id === 9 || def.id === 11) ? Math.min(2, this.lightShadowCount) : 0
+     for (let i = 0; i < this.activeLightPool.length; i++) this.activeLightPool[i].castShadow = i < pointSlots
+     if (this.levelCfg?.id === 1 && def.id !== 1) cancelL1BakeWork()
+-    const buildBudget = engine.paused && !this.isNearWorldReady(engine) ? this.loadingBudgetMs : this.chunkBudgetMs
++    // Dev/capture hook: headless SwiftShader runs at a few fps, so screenshots raise the per-frame build budget.
++    const buildBudget = (globalThis as {__chunkBudget?:number}).__chunkBudget ?? (engine.paused && !this.isNearWorldReady(engine) ? this.loadingBudgetMs : this.chunkBudgetMs)
+     if (m.inf) {
+       // v17：无限模式（L0）——chunk 几何按视野流式构建/卸载
+       if (this.builtMap !== m) {
+@@ -1,6 +1,9 @@
+     const fov = this.fovBase + Math.sin(this.time * 1.8) * 7 * insanity + (engine.input.sprint && mag > 0.1 ? 5 : 0) + dropFov // v58：拖拽演出 FOV 扩张
+     if (Math.abs(fov - this.camera.fov) > 0.05) { this.camera.fov = fov; this.camera.updateProjectionMatrix() }
+     mapVision.fov=2*Math.atan(Math.tan(this.camera.fov*Math.PI/360)*this.camera.aspect)
++    // dev 截图机位覆盖（参考图对照用；仅当 window.__camOverride 存在时生效）：相对玩家的偏移/高度/朝向/FOV，可隐藏手部
++    const camO=(globalThis as any).__camOverride
++    if(camO){this.camera.position.set(camO.x??p.x+(camO.dx??0),camO.h??this.camera.position.y,camO.y??p.y+(camO.dy??0));this.camera.rotation.set(camO.pitch??0,camO.yaw??look.yaw,camO.roll??0);if(camO.fov&&Math.abs(camO.fov-this.camera.fov)>.01){this.camera.fov=camO.fov;this.camera.updateProjectionMatrix()};if(camO.hideVm)for(const c of this.camera.children)if(!(c as any).isLight)c.visible=false}
+ 
+     // 手电（低电量闪烁警告 / 电弧体瘫痪抖动）
+     // Level 6「熄灯」仍禁用外带光源；其余层（含 L8）按 LevelDef.lightMul 正常照明。
+@@ -1,6 +1,14 @@
+       }
+       this.hemi.color.set('#9aa2b0')
+       this.hemi.groundColor.set('#3a342c')
++      if(def.id===4){
++        // L4 v2：室内由 l4Bake 烘焙提供漫反射；通用环境光/窗外 k 补光会把吊顶洗白（参考图天花明显暗于灯具）。
++        this.ambient.intensity=.035;this.hemi.intensity=.06
++      }
++      if(def.id===4){
++        // L4 v2：室内由 l4Bake 烘焙提供漫反射；通用环境光/窗外 k 补光会把吊顶洗白（参考图天花明显暗于灯具）。
++        this.ambient.intensity=.035;this.hemi.intensity=.06
++      }
+       if(def.id===11){
+         // Directional daylight carries facade relief. Skylight fills the
+         // shaded street without washing every surface into the same grey.
+@@ -1,7 +1,8 @@
+       for(const[dx,dy]of [[0,0],[1,0],[-1,0],[0,1],[0,-1]])if(l4StyleAt(m,p.x+dx,p.y+dy)==='windowview')target+=.2
+       this.l4DarkBlend+=(target-this.l4DarkBlend)*(1-Math.exp(-dt*5))
+       const dark=this.l4DarkBlend
+-      this.ambient.intensity=.32-dark*.23;this.hemi.intensity=.34-dark*.22
++      // v2: baked lighting carries the troffer pools; flat ambient only fills unbaked props.
++      this.ambient.intensity=.24-dark*.08;this.hemi.intensity=.22-dark*.08
+       const fog=this.scene.fog as THREE.Fog|null
+       if(fog){fog.near=30-dark*12;fog.far=110;fog.color.set('#59676d')}
+     }
+@@ -1,6 +1,7 @@
+       else if (m.up2[li] === 1 || m.upWall2[li] === 1) ptY = 2 * FLOOR_H - 0.35 - 0.25 // v54c：3F 板/屋面板墙底（2F 挑空处——中庭灯光贴 5.65 而非 1F 顶）
+       else if (m.ceiling[li] === 1) ptY = tallCeilH(m, this.wallH) - 0.25 // 挑高真实顶（单/多层一致）
+       else ptY = this.wallH - 0.25
++      if (def.id === 4 && L.z === undefined && L.fixZ === undefined) ptY = this.wallH - 0.03 // L4 v2：灯贴吊顶面，避免点光把天花打成白斑（troffer 不照亮吊顶；吊顶亮度来自烘焙）
+       pl.position.set(L.x, ptY, L.y)
+       pl.color.set(L.color)
+       const flick = 1
+@@ -1,6 +1,7 @@
+     }
+     const eyeExposure=this.eyeAdaptation.update(this.eyeMeter,dt,adaptEye,def.id===1?{maxExposure:1.35,hold:engine.blackoutWarnT>0,darkTau:m.inf?.blackout?3.6:2.8}:def.id===11?{maxExposure:1.28}:undefined)
+     this.three.toneMappingExposure*=eyeExposure
++    if((globalThis as any).__expMul)this.three.toneMappingExposure*=(globalThis as any).__expMul // dev 截图曝光对照
+     // Native L1 light has no energy during an outage; portable lights still use the light pool.
+     this.scene.environmentIntensity=(real?photoProfile.reflection:1)*(def.id===1&&!bright&&m.inf?.blackout ? .018 : 1)*(def.id===11?.42+.58*this.outK:1)
+     const ao=real&&this.textureQuality>0?this.photo.ao:0
+@@ -1,6 +1,7 @@
+       if(this.photoPass){const u=this.photoPass.material.uniforms;u.white.value.fromArray(real?photoProfile.white:[1,1,1]);u.saturation.value=(this.photo.grade==='bleached'?.62:this.photo.grade==='cold'?.8:this.photo.grade==='liminal'?.88:1)*(real?(photoProfile.saturation??1):1);if(this.photo.grade==='cold')u.white.value.multiply(new THREE.Vector3(.96,1,1.025));if(this.photo.grade==='liminal')u.white.value.multiply(new THREE.Vector3(1.02,1,.97));u.strength.value=photoProfile.ao;u.halation.value=0}
+       if(this.photoFinish){const u=this.photoFinish.uniforms;u.time.value=this.time;u.grain.value=this.photo.grain;u.vignette.value=this.photo.vignette;u.scanline.value=this.photo.scanline*.0015;u.blur.value=focusBlur;this.three.getDrawingBufferSize(u.resolution.value)}
+       if(this.bloomPass){this.bloomPass.threshold=1.02;this.bloomPass.strength=this.bloomStrength/35*photoProfile.bloom*(1+this.eyeAdaptation.glare);this.bloomPass.radius=.3+this.eyeAdaptation.glare*.12}
++      if((globalThis as any).__camOverride?.hideVm)for(const c of this.camera.children)if(!(c as any).isLight)c.visible=false
+       if (!preparingEntry) this.composer.render()
+     } else {
+       // 所有后处理关闭后立即释放中间帧缓冲，避免原生/720P 档仍占着上一档的显存。
+@@ -1,7 +1,7 @@
+       const cg = this.chunkGroups.get(c.key)
+       if (!cg) {
+         const dx = Math.max(wx-p.x,0,p.x-(wx+CS)), dy = Math.max(wy-p.y,0,p.y-(wy+CS))
+-        const reach = (this.fogEnabled ? Math.min(this.camera.far, (this.scene.fog as THREE.Fog)?.far ?? 60) : this.camera.far) + 32
++        const reach = (globalThis as {__chunkReach?:number}).__chunkReach ?? (this.fogEnabled ? Math.min(this.camera.far, (this.scene.fog as THREE.Fog)?.far ?? 60) : this.camera.far) + 32
+         if (dx*dx+dy*dy <= reach*reach) queue.push(c)
+         continue
+       }
+@@ -1,7 +1,8 @@
+     }
+     this.chunkBuilds.cancelWhere(task=>task.map!==m||task.rev!==inf.rev||!want.has(task.key))
+     // City structures span chunks and keep their existing serial ownership.
+-    const capacity=loading&&def.id!==11?(/Android|iPhone|iPad/i.test(navigator.userAgent)?2:4):1
++    ;(globalThis as {__chunkQueue?:number}).__chunkQueue=queue.length // dev/capture: unbuilt chunks in reach
++    const capacity=(globalThis as {__chunkBudget?:number}).__chunkBudget?4:loading&&def.id!==11?(/Android|iPhone|iPad/i.test(navigator.userAgent)?2:4):1
+     const entryPending=loading&&queue.some(c=>distance(c)<=24*24)
+     for(const c of queue){
+       if(entryPending&&distance(c)>24*24)break
+@@ -1,7 +1,7 @@
+     }
+     if(!m.organicCave && def.id!==11 && def.id!==0 && !(def.id===1&&c.l1)){
+       const slices=[...g.children],merged=new THREE.Group()
+-      if(def.id===4)yield* batchL4StaticJob(merged,slices);else yield* batchStaticRootsJob(merged,slices)
++      if(def.id===4){l4BatchSampler.s=l4SamplerFor(m);yield* batchL4StaticJob(merged,slices)}else yield* batchStaticRootsJob(merged,slices)
+       for(const slice of slices)if(slice.parent!==merged){g.remove(slice);slice.traverse(disposeWorldGeometry)}
+       merged.name='terrain-batch';g.add(merged)
+       if(def.id===5)yield* buildL5Architecture(m,H,merged,range)
+@@ -1,7 +1,7 @@
+       // Keep the original roots as exact raycast/collision proxies. Three's
+       // raycaster still visits invisible roots; only the batched copies render.
+       const batch=new THREE.Group();batch.name=def.id===8?'l8-static-rock-batch':'l3-static-equipment-batch'
+-      if(def.id===4)yield* batchL4StaticJob(batch,roots);else yield* batchStaticRootsJob(batch,roots)
++      if(def.id===4){l4BatchSampler.s=l4SamplerFor(m);yield* batchL4StaticJob(batch,roots)}else yield* batchStaticRootsJob(batch,roots)
+       if(def.id===8)batch.userData.noCollision=true
+       g.add(batch)
+       for(const root of roots)if(root.parent!==batch){root.visible=false;if(def.id===8)root.userData.colliderProxy=true}
+@@ -1,8 +1,8 @@
+         }
+         posA.needsUpdate = true
+       } else if (this.voidRain) this.voidRain.visible = false
+-      this.l4Volume??=new L4VolumeFog()
+-      this.l4Volume.update(m,this.scene,this.camera,p.x,p.y,this.time,this.shadowQuality)
++      // L4 v2 is one continuous building: no void seas, so no void fog volumes.
++      if(def.id!==4){this.l4Volume??=new L4VolumeFog();this.l4Volume.update(m,this.scene,this.camera,p.x,p.y,this.time,this.shadowQuality)}else this.l4Volume?.hide()
+     } else {
+       if(this.voidRain)this.voidRain.visible=false
+       this.l4Volume?.hide()
+diff --git a/app/src/game/renderer/settlementMeshes.ts b/app/src/game/renderer/settlementMeshes.ts
+--- a/app/src/game/renderer/settlementMeshes.ts
++++ b/app/src/game/renderer/settlementMeshes.ts
+@@ -1,3 +1,4 @@
++import {factionSignTexture,signStyleFor,drawFactionSign} from './factionSigns'
+ import {buildAlphaBatchJob} from './alphaMeshes'
+ import * as THREE from 'three'
+ import type { GameMap } from '../world/mapgen'
+@@ -97,12 +98,58 @@ const drain=(job:Generator<void,void,unknown>)=>{for(let r=job.next();!r.done;r=
+ export function buildSettlementTerrain(m:GameMap,parent:THREE.Group){drain(buildSettlementTerrainJob(m,parent))}
+ export function buildSettlementStation(s:Structure){
+  const g=new THREE.Group();g.position.set(s.x+s.w/2,0,s.y+s.h/2)
+- const canvas=document.createElement('canvas');canvas.width=512;canvas.height=192
+- const ctx=canvas.getContext('2d')!;ctx.fillStyle='#263b39';ctx.fillRect(0,0,512,192);ctx.fillStyle='#eee8ca';ctx.font='30px sans-serif';ctx.textAlign='center'
+- ctx.fillText(String(s.data?.label??'服务台'),256,66,490);ctx.font='24px sans-serif';ctx.fillText(Number(s.data?.access)>0?'工作人员 · 资格核验':'公共服务 · 按 E 查看',256,122,490)
+- const texture=new THREE.CanvasTexture(canvas),mat=new THREE.MeshBasicMaterial({map:texture})
+- mat.userData.l1Owned=true;mat.userData.settlementLabelTexture=true
++ // v3: each faction's counter plate in its own trade dress (factionSigns.ts); shared cached texture.
++ const label=String(s.data?.label??'服务台'),sub=Number(s.data?.access)>0?'工作人员 · 资格核验':'公共服务 · 按 E 查看'
++ const mat=new THREE.MeshBasicMaterial({map:factionSignTexture(signStyleFor(String(s.data?.faction??'')),label,.95/.356,sub)})
++ mat.userData.l1Owned=true
+  // Small counter placard; no freestanding identical door-side service poles.
+  const sign=new THREE.Mesh(new THREE.BoxGeometry(.95,.356,.035),mat);sign.position.y=1.3;g.add(sign)
+  return g
+ }
++
++// v3: settlement notice boards (were blank teal boxes). Faction header strip + pinned notices, per blueprint.
++const BOARD_NOTES:Record<string,string[]>={
++ bntg:['今日汇率','杏仁水 ×3 = 1 电池','保险库开放 08–20','禁止私下交易','寻：手电筒','收购：绳索'],
++ ariane:['候诊须知','请保持安静','免费诊疗','体温登记','药品发放 14:00','献血招募'],
++ tom:['今日特供','炖菜 · 面包','欢迎光临','招服务员','卡座请勿占用','营业至深夜'],
++ meg:['公告','巡逻排班','失踪人员','层级通报','禁止携带实体样本','报案请至窗口'],
++ industrial:['公告','注意安全','值班表','维修登记','失物招领','禁止吸烟'],
++}
++const boardCache=new Map<string,THREE.CanvasTexture>()
++export function boardTexture(style:string,title:string,w:number,seed:number){
++ const key=style+'|'+title+'|'+w.toFixed(1)
++ const hit=boardCache.get(key);if(hit)return hit
++ const W=Math.min(2048,Math.max(256,Math.round(w*220))),H=275,cv=document.createElement('canvas');cv.width=W;cv.height=H
++ const c=cv.getContext('2d')!
++ let r=seed>>>0||1;const rnd=()=>{r^=r<<13;r^=r>>>17;r^=r<<5;return (r>>>0)/4294967296}
++ // cork / felt field with frame
++ const felt=style==='ariane'?'#6f8f8a':style==='meg'?'#4a5f6b':style==='tom'?'#7a5a3c':style==='bntg'?'#5b6448':'#6b6458'
++ c.fillStyle='#3a332b';c.fillRect(0,0,W,H);c.fillStyle=felt;c.fillRect(8,8,W-16,H-16)
++ for(let i=0;i<W*H/60;i++){c.fillStyle=`rgba(${rnd()<.5?0:255},${rnd()<.5?0:255},0,.05)`;c.fillRect(rnd()*W,rnd()*H,2,2)}
++ const st=signStyleFor(style)
++ drawFactionSign(c,14,14,W-28,58,st,title.split('·')[0].trim())
++ const notes=BOARD_NOTES[style]??BOARD_NOTES.industrial
++ const n=Math.max(3,Math.floor((W-28)/92))
++ for(let i=0;i<n;i++){
++  const nw=70+rnd()*14,nh=96+rnd()*60,x=20+i*((W-40)/n)+rnd()*8,y=84+rnd()*(H-96-nh-6)
++  c.save();c.translate(x+nw/2,y+nh/2);c.rotate((rnd()-.5)*.12)
++  c.fillStyle=['#efe9d6','#f3e7b4','#e6eef0','#f2dccf'][Math.floor(rnd()*4)];c.fillRect(-nw/2,-nh/2,nw,nh)
++  c.fillStyle='rgba(0,0,0,.18)';c.fillRect(-nw/2+3,nh/2,nw,3)
++  c.fillStyle='#2a2622';c.font=`bold 13px 'Noto Sans CJK SC','Microsoft YaHei',sans-serif`;c.textAlign='center'
++  c.fillText(notes[i%notes.length],0,-nh/2+20,nw-8)
++  c.fillStyle='rgba(40,36,30,.55)'
++  for(let ly=-nh/2+32;ly<nh/2-8;ly+=9)c.fillRect(-nw/2+7,ly,(nw-14)*(.5+rnd()*.5),3)
++  c.fillStyle=['#c0392b','#2e6fb0','#d4a017'][i%3];c.beginPath();c.arc(0,-nh/2+5,4,0,Math.PI*2);c.fill()
++  c.restore()
++ }
++ const t=new THREE.CanvasTexture(cv);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=4;boardCache.set(key,t);return t
++}
++export function buildSettlementBoard(s:Structure){
++ const g=new THREE.Group(),w=s.w,h=1.25
++ const style=String(s.data?.blueprint??s.data?.faction??'industrial')
++ const tex=boardTexture(style,String(s.data?.title??'公告'),w,Math.floor(s.x*131+s.y*71))
++ const mat=new THREE.MeshStandardMaterial({map:tex,roughness:.85,metalness:0})
++ const plane=new THREE.Mesh(new THREE.PlaneGeometry(w,h),mat)
++ plane.position.set(s.x+w/2,1.15+h/2,s.y+.08+.006)
++ g.add(plane);return g
++}
+diff --git a/app/src/game/renderer/structures.ts b/app/src/game/renderer/structures.ts
+--- a/app/src/game/renderer/structures.ts
++++ b/app/src/game/renderer/structures.ts
+@@ -1,3 +1,5 @@
++import { l1PlanTile } from '../world/l1Plan'
++import { factionSignTexture, signStyleFor, highVoltageTexture, type SignStyle } from './factionSigns'
+ import {isAlphaKind} from '../content/alphaDecor'
+ import {buildAlphaDecor} from './alphaMeshes'
+ import {buildL0Furniture} from './l0Furniture'
+@@ -1,7 +1,7 @@
+ import {buildL3Glass} from './l3Glass'
+ import {isTradeKind} from '../content/tradeDecor'
+ import {buildTradeDecor} from './tradeMeshes'
+-import { buildSettlementStation } from './settlementMeshes'
++import { buildSettlementStation, buildSettlementBoard } from './settlementMeshes'
+ // 结构/出口低模（按 StructKind 建造，含可动盖板/门铰链 userData 约定）
+ import * as THREE from 'three'
+ import { buildRatMesh, buildRatGearMesh } from './ratMesh'
+@@ -1,10 +1,11 @@
+ 
+ // v55：墙面字牌程序纹理（wallsign 用——房号/「员工专用」/「Beverly Room」等；gold=金底描金酒店牌）。
+ // 动态文本无磁盘贴图——走独立缓存（levelTexture 会先尝试纹理文件、动态名必然 404）
+-const signTexCache = new Map<string, THREE.Texture>()
+-function signTexture(text: string, gold: boolean): THREE.Texture {
++const legacySignCache = new Map<string, THREE.Texture>()
++/** Original 128×40 plate, kept for L5 (user: L4/L5 signs unchanged). */
++function legacySignTexture(text: string, gold: boolean): THREE.Texture {
+   const key = `${text}|${gold ? 'g' : 'd'}`
+-  const hit = signTexCache.get(key)
++  const hit = legacySignCache.get(key)
+   if (hit) return hit
+   const [cv, c] = makeCanvasCtx(128, 40)
+   c.fillStyle = gold ? '#3a2c12' : '#22252a'
+@@ -1,9 +1,14 @@
+   c.textBaseline = 'middle'
+   c.fillText(text, 64, 21)
+   const t = toTex(cv)
+-  signTexCache.set(key, t)
++  legacySignCache.set(key, t)
+   return t
+ }
++function signTexture(text: string, gold: boolean, style?: SignStyle, aspect = 3.2): THREE.Texture {
++  // v3: faction-styled plates (factionSigns.ts) instead of the 128×40 flat text card
++  return factionSignTexture(style ?? (gold ? 'brass' : 'industrial'), text, aspect)
++}
++
+ 
+ function mergedL10Crop(parts: { g: THREE.BufferGeometry; c: string }[]): THREE.Mesh {
+   for (const { g, c } of parts) {
+@@ -1,7 +1,7 @@
+   if(_def.id===0){const furniture=buildL0Furniture(s);if(furniture)return furniture}
+   if(isAlphaKind(s.kind))return m.settlement?.blueprint.id==='alpha'?null:buildAlphaDecor(s)
+   if(isTradeKind(s.kind))return m.settlement?.blueprint.decorations&&s.kind!=='trade_anomaly'?null:buildTradeDecor(s)
+-  if(s.kind === 'settlementprop') return null
++  if(s.kind === 'settlementprop') return s.data?.board?buildSettlementBoard(s):null
+   if(s.kind === 'settlementstation') return buildSettlementStation(s)
+   if(s.data?.l1Prop){const prop=buildL1Prop(s);if(prop)return prop}
+   if(s.data?.l1Column)return buildL1Column(s,m.inf?.ox??0,m.inf?.oy??0)
+@@ -1,6 +1,8 @@
+       // 高压警示牌（贴墙，强制贴最近墙不浮空）：黄白牌 + 黑色闪电折线 + 编号小牌；data.tilt 微倾
+       const inner = new THREE.Group()
+       grp.add(inner)
++      // v3: real enamel high-voltage plate (factionSigns.highVoltageTexture) instead of box glyphs
++      if (_def.id === 5) { // L5 keeps its original box-built plate (user: L4/L5 signs unchanged)
+       inner.add(box(0.4, 0.5, 0.02, '#d8c94a', 0, 1.6, 0)) // 黄牌
+       const boltA = box(0.045, 0.2, 0.014, '#16161a', 0.04, 1.74, 0.014)
+       boltA.rotation.z = 0.5
+@@ -1,6 +1,10 @@
+       inner.add(box(0.3, 0.03, 0.014, '#16161a', 0, 1.46, 0.014)) // 三角底边
+       inner.add(box(0.2, 0.09, 0.015, '#e8e4da', 0, 1.32, 0.012)) // 编号牌
+       inner.add(box(0.14, 0.02, 0.017, '#16161a', 0, 1.32, 0.013))
++      } else {
++      inner.add(box(0.42, 0.53, 0.018, '#8a7a2a', 0, 1.6, 0))
++      { const face = new THREE.Mesh(new THREE.PlaneGeometry(0.4, 0.5), new THREE.MeshLambertMaterial({ map: highVoltageTexture(String(10 + Math.abs(Math.floor(s.x * 7 + s.y * 13)) % 89)) })); face.position.set(0, 1.6, 0.0105); inner.add(face) }
++      }
+       const tilt = Number(s.data?.tilt ?? 0)
+       if (tilt) inner.rotation.z = (tilt - 1.5) * 0.06 // 微倾变体
+       mountOnWall(inner, grp, s, m)
+@@ -1,17 +1,10 @@
+       grp.add(cyl(0.035, 0.045, 2.0, '#7a7570', 0, 1.0, 0, 6))
+       const bd = new THREE.Group()
+       bd.position.y = 1.72
+-      bd.add(box(0.66, 0.5, 0.05, '#d8d2c4', 0, 0, 0))
+-      for (const zz of [0.031, -0.031]) { // 双面
+-        const em = megEmblem(0.15, '#2e4a6a')
+-        em.position.set(-0.19, 0, zz)
+-        if (zz < 0) em.rotation.y = Math.PI
+-        bd.add(em)
+-        for (let i = 0; i < 3; i++) {
+-          const bar = box(0.3, 0.035, 0.012, '#3a3a3c', 0.11, 0.11 - i * 0.1, zz)
+-          bd.add(bar)
+-        }
+-      }
++      bd.add(box(0.68, 0.52, 0.05, '#4c5341', 0, 0, 0))
++      // v3: M.E.G.-maintained avenue marker plate, numbered (was emblem + three dark bars)
++      { const t = factionSignTexture('meg', `第九大道 / NINTH AVE · ${String(Number(s.data?.seq ?? 0) + 1).padStart(2, '0')}${s.data?.final ? ' · END' : ''}`, 0.66 / 0.5)
++        for (const zz of [0.0255, -0.0255]) { const f = new THREE.Mesh(new THREE.PlaneGeometry(0.66, 0.5), new THREE.MeshLambertMaterial({ map: t })); f.position.z = zz; if (zz < 0) f.rotation.y = Math.PI; bd.add(f) } }
+       grp.add(bd)
+       break
+     }
+@@ -1,7 +1,9 @@
+       // 维护通廊墨黑色金属门：嵌在墙洞里的门框（双立柱 + 门楣 + 门槛，横跨 2 格门洞）
+       // + 一扇向走廊内敞开的门扇——一眼即知「这是门，而且能过」。
+       // 标准朝向：通行沿本地 x 轴（门框平面垂直 x）；data.rot=1 旋转 90°（通行沿本地 z 轴）。
+-      const ink = '#14161a', ink2 = '#1c1f24'
++      // v3.2 衔尾段：参考图里是米黄色木门与外露门框（其余区段保持墨黑金属门）
++      const ouroDoor = !!s.data?.l1PathDoor && !!m.inf && l1PlanTile(m.inf.seed, s.x + s.w / 2 + m.inf.ox, s.y + s.h / 2 + m.inf.oy).style === 'ouroboros'
++      const ink = ouroDoor ? '#b8a77a' : '#14161a', ink2 = ouroDoor ? '#a8986c' : '#1c1f24'
+       const doorH = s.data?.l1PathDoor ? 2.2 : H * 0.78
+       grp.add(box(0.5, doorH, 0.24, ink, 0, doorH / 2, -0.95)) // 门洞两侧立柱（跨 2 瓦片）
+       grp.add(box(0.5, doorH, 0.24, ink, 0, doorH / 2, 0.95))
+@@ -1,7 +1,7 @@
+       grp.add(glow(0.32, 0.05, 0.05, '#3ae06a', 0, doorH + 0.32, 0)) // EXIT 绿色底光
+       // 门扇：初始关闭（恰好覆盖门洞），铰链在 +z 侧立柱；
+       // userData.lid 由 renderer.updateStructs 驱动——交互开门后向走廊内旋开至 ~106°
+-      const leaf = box(0.08, doorH - 0.18, 1.7, '#181b20', 0, 0, 0)
++      const leaf = box(0.08, doorH - 0.18, 1.7, ouroDoor ? '#d9c792' : '#181b20', 0, 0, 0)
+       leaf.geometry.translate(0, 0, -0.85) // 铰链边移到局部 z=0
+       leaf.position.set(0.06, doorH / 2, 0.86)
+       leaf.userData.lid = 1
+@@ -1,7 +1,7 @@
+         grp.add(box(.08,1.64,.08,'#73766b',0,.82,0))
+         grp.add(box(1.8,.56,.07,'#38493f',0,1.9,0))
+         for(const dir of [-1,1]){
+-          const mat=new THREE.MeshBasicMaterial({map:signTexture(String(s.data.text??''),false)});mat.userData.l1Owned=true
++          const mat=new THREE.MeshBasicMaterial({map:signTexture(String(s.data.text??''),false,signStyleFor(String(s.data.org??'meg')),1.72/.48)});mat.userData.l1Owned=true
+           const face=new THREE.Mesh(new THREE.PlaneGeometry(1.72,.48),mat)
+           face.position.set(0,1.9,dir*.039);face.rotation.y=dir<0?Math.PI:0;grp.add(face)
+         }
+@@ -1,7 +1,7 @@
+       inner.add(box(0.6, 0.03, 0.025, gold ? '#6a541f' : '#2a2d30', 0, 1.49, 0)) // 牌框下沿
+       const panel = new THREE.Mesh(
+         new THREE.PlaneGeometry(0.52, 0.16),
+-        new THREE.MeshBasicMaterial({ map: signTexture(txt, gold), transparent: true }),
++        new THREE.MeshBasicMaterial({ map: _def.id === 5 ? legacySignTexture(txt, gold) : signTexture(txt, gold), transparent: true }),
+       )
+       panel.position.set(0, 1.6, 0.013)
+       inner.add(panel)
+diff --git a/app/src/game/renderer/tradeMeshes.ts b/app/src/game/renderer/tradeMeshes.ts
+--- a/app/src/game/renderer/tradeMeshes.ts
++++ b/app/src/game/renderer/tradeMeshes.ts
+@@ -3,12 +3,13 @@ import type {Structure} from '../core/types'
+ import {tradeParts,isTradeKind,type TradePart} from '../content/tradeDecor'
+ import {l1Texture} from './l1Materials'
+ import {litMaterial} from './shared'
++import {drawFactionSign} from './factionSigns'
+ function* buildJob(structs:Structure[],parent:THREE.Group,batching:boolean):Generator<void,void,unknown>{
+  const materials=new Map<string,THREE.Material>(),geo=new THREE.BoxGeometry(1,1,1),parts:{s:Structure;p:TradePart}[]=[]
+  for(const s of structs){for(const p of tradeParts(s))parts.push({s,p});yield}
+  const texts=[...new Set(parts.flatMap(({p})=>p.text?[p.text]:[]))],canvas=document.createElement('canvas');canvas.width=2048;canvas.height=Math.max(128,Math.ceil(texts.length/4)*128)
+  const ctx=canvas.getContext('2d')!;ctx.font='bold 30px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle'
+- for(const [i,t] of texts.entries()){const x=i%4*512,y=Math.floor(i/4)*128;ctx.fillStyle='#f1d896';ctx.fillRect(x,y,512,128);ctx.fillStyle='#253e35';ctx.fillText(t,x+256,y+64,495);yield}
++ for(const [i,t] of texts.entries()){const x=i%4*512,y=Math.floor(i/4)*128;drawFactionSign(ctx,x,y,512,128,'bntg',t);yield} // v3: B.N.T.G. enamel shop fascia
+  const atlas=new THREE.CanvasTexture(canvas);atlas.colorSpace=THREE.SRGBColorSpace
+  const labelMat=new THREE.MeshBasicMaterial({map:atlas,side:THREE.DoubleSide});labelMat.userData.l1Owned=true;labelMat.userData.settlementLabelTexture=true
+  function mat(p:TradePart){const key=p.surface+p.color;if(materials.has(key))return materials.get(key)!
+diff --git a/app/src/game/world/infiniteL1.ts b/app/src/game/world/infiniteL1.ts
+--- a/app/src/game/world/infiniteL1.ts
++++ b/app/src/game/world/infiniteL1.ts
+@@ -1,8 +1,8 @@
+           if (px >= 0 && py >= 0 && px < CS && py < CS) tint[li(px, py)] = 11
+         }
+       }
+-      for (let i = 0, n = rng.int(3, 5); i < n; i++) placeFree('scaffold', 2, 1, true)
+-      for (let i = 0, n = rng.int(4, 6); i < n; i++) placeFree('roadblock', 1, 1, true)
++      for (let i = 0, n = rng.int(0, 1); i < n; i++) placeFree('scaffold', 2, 1, true) // v3.2：参考图是空旷的毛坯层，脚手架/路障大幅减少
++      for (let i = 0, n = rng.int(0, 2); i < n; i++) placeFree('roadblock', 1, 1, true)
+       for (let i = 0, n = rng.int(2, 3); i < n; i++) placeWallHug('pipes') // 红色管道（裸露管线）
+       for (let i = 0, n = rng.int(1, 3); i < n; i++) placeFree('debrispile', 1, 1, false) // 建材碎料堆
+       for (let i = 0, n = rng.int(2, 4); i < n; i++) {
+@@ -1,7 +1,8 @@
+         }
+         return null
+       }
+-      for (let i = 0, n = rng.int(1, 2); i < n; i++) {
++      // v3.2：减少卡顿——每个区块约 35% 概率仅 1 名员工（原 1~2 名必刷）
++      for (let i = 0, n = rng.chance(0.35) ? 1 : 0; i < n; i++) {
+         const p = anchorAt()
+         if (!p) break
+         npcs.push({ def: brcWorkerDef(seed, cx, cy, i), x: WX + p.x + 0.5, y: WY + p.y + 0.5, facing: p.face })
+diff --git a/app/src/game/world/infiniteL4.ts b/app/src/game/world/infiniteL4.ts
+--- a/app/src/game/world/infiniteL4.ts
++++ b/app/src/game/world/infiniteL4.ts
+@@ -1,29 +1,25 @@
+ import type { LevelDef, Structure, LightSource, ExitInstance, GroundItem } from '../core/types'
+ import { CS, RS, h32, GEN_ITEM_BASE, regionHost } from './infinite'
+ import { registerInfiniteLevel, type GenChunk } from './infiniteRegistry'
+-import { l4Cell, l4Origin, l4VoidCell, l4Coast, l4Biome, L4_TINT, type L4Variant } from './l4Layout'
++import { L4_TINT, type L4Variant } from './l4Layout'
++import { l4Block, l4BlockIndex, l4BlockType, type L4BlockType } from './l4Plan'
+ export type { L4Variant } from './l4Layout'
+-export const L4_VARIANT_NAMES: Record<L4Variant,string> = {officehall:'办公间区',open:'空旷区',windowview:'窗景区',smallrooms:'小房间区'}
++export const L4_VARIANT_NAMES: Record<L4Variant,string> = {officehall:'办公间区',open:'空旷区',windowview:'窗景区',smallrooms:'小房间区',hall:'空旷大厅'}
+ export const L4_VARIANT_LORE: Record<string,string[]> = {
+-  officehall:['灰蓝色隔板排成两列，中央过道通向黑框玻璃后的会议室。冷白荧光灯依然亮着。'],
+-  open:['地毯上只剩几根白色立柱。多扇浅色办公门通向另一片沉寂。'],
+-  windowview:['灯带在暗处勾出吊顶的边缘。完整的玻璃外，办公楼向上向下消失在雨雾中。'],
+-  smallrooms:['工作室、狭小办公室与走廊相连。偶尔出现的楼梯间，总会把人送回原处。'],
++  officehall:['灰蓝色隔板排成两列，中央过道通向黑框玻璃后的会议室。'],
++  open:['地毯上只剩几根白色立柱。几扇浅色的门通向更小的房间。'],
++  windowview:['雨点不停拍打着窗。窗外的雨云一动不动，像一张画。'],
++  smallrooms:['工作室、狭小的办公室与走廊相连。楼梯间总会把人送回原处。'],
++  hall:['空荡荡的大厅，地毯上的凹痕说明这里曾经摆满家具。大多数灯都不亮了。'],
+ }
+-export const L4_RARE_VARIANTS: readonly string[] = ['windowview']
+-export const l4CorrX = (_seed:number,k:number) => l4Origin(k)
+-export const l4RowY = (_seed:number,r:number) => l4Origin(r)
+-export const l4BlockBiome = l4Biome
+-export function l4VariantOf(seed:number,cx:number,cy:number):L4Variant {return l4Biome(seed,l4Cell(cx*CS+16),l4Cell(cy*CS+16))}
+-function slot(k:number,r:number){return{x:l4Origin(k)+3,y:l4Origin(r)+10,bx:l4Origin(k)+4,by:l4Origin(r)+10}}
+-export const l4SpawnElevSlot=(_seed:number)=>slot(0,0)
++export const L4_RARE_VARIANTS: readonly string[] = []
++const TYPE_VARIANT:Record<L4BlockType,L4Variant>={hall:'hall',cubicle:'officehall',open:'open',rooms:'smallrooms'}
++export function l4VariantOf(seed:number,cx:number,cy:number):L4Variant {const {i,j}=l4BlockIndex(seed,cx*CS+16,cy*CS+16);return TYPE_VARIANT[l4BlockType(seed,i,j)]}
++export const l4SpawnElevSlot=(seed:number)=>l4Block(seed,0,0).elevSlot
++export const L4_SPAWN={x:15,y:15}
+ export function l4ElevSlot(seed:number,rx:number,ry:number){
+-  const host=regionHost(seed,rx,ry),k0=l4Cell(host.cx*CS+16),r0=l4Cell(host.cy*CS+16)
+-  for(let d=0;d<=4;d++)for(let y=-d;y<=d;y++)for(let x=-d;x<=d;x++){
+-    const k=k0+x,r=r0+y
+-    if(!l4VoidCell(seed,k,r)&&!l4Coast(seed,k,r)[3])return slot(k,r)
+-  }
+-  return null
++  const host=regionHost(seed,rx,ry),{i,j}=l4BlockIndex(seed,host.cx*CS+16,host.cy*CS+16)
++  return l4Block(seed,i,j).elevSlot
+ }
+ export function genL4ChunkRaw(def:LevelDef,seed:number,cx:number,cy:number,forceVariant?:string):GenChunk {
+   const rng=new RNG(h32(seed,cx,cy,0x4a4)),WX=cx*CS,WY=cy*CS
+@@ -1,117 +1,40 @@
+   const structures:Structure[]=[],lights:LightSource[]=[],exits:ExitInstance[]=[],items:GroundItem[]=[],entities:GenChunk['entities']=[]
+   const inside=(x:number,y:number)=>x>=WX&&y>=WY&&x<WX+CS&&y<WY+CS
+   const idx=(x:number,y:number)=>(y-WY)*CS+x-WX
+-  const rect=(x0:number,y0:number,x1:number,y1:number,t=1,style?:L4Variant)=>{
+-    for(let y=Math.max(WY,y0);y<=Math.min(WY+CS-1,y1);y++)for(let x=Math.max(WX,x0);x<=Math.min(WX+CS-1,x1);x++){
+-      tiles[idx(x,y)]=t;if(style)tint[idx(x,y)]=L4_TINT[style]
+-    }
+-  }
+-  const add=(kind:Structure['kind'],x:number,y:number,w=1,h=1,solid=true,data:Structure['data']={})=>{
+-    if(!inside(x,y))return
+-    structures.push({kind,x,y,w,h,solid,data:{l4:1,...data,sid:h32(seed,0x4ff,Math.round(x*10),Math.round(y*10),kind.split('').reduce((s,c)=>s+c.charCodeAt(0),0))}})
+-  }
+-  const light=(x:number,y:number,style:L4Variant)=>{
+-    if(!inside(x,y))return
+-    lights.push({x:x+.5,y:y+.5,r:style==='windowview'?2:4.7,color:style==='windowview'?'#b7cfdb':'#eee9dd',intensityMul:style==='windowview'?.025:style==='open'?.12:.14,flickerSeed:h32(seed,x,y)%100,gen:1,fixZ:2.84})
+-  }
+-  const door=(x:number,y:number,axis:'x'|'y',glass=false)=>{rect(x,y,x,y);add(glass?'glassdoor':'hoteldoor',x,y,1,1,true,{open:0,axis,officeDoor:1})}
+   const slots=[l4SpawnElevSlot(seed)],rx=Math.floor(cx/RS),ry=Math.floor(cy/RS)
+-  for(let b=-1;b<=1;b++)for(let a=-1;a<=1;a++){const s=l4ElevSlot(seed,rx+a,ry+b);if(s&&!slots.some(v=>v.x===s.x&&v.y===s.y))slots.push(s)}
+-  for(let r=l4Cell(WY)-1;r<=l4Cell(WY+CS)+1;r++)for(let k=l4Cell(WX)-1;k<=l4Cell(WX+CS)+1;k++){
+-    const X=l4Origin(k),Y=l4Origin(r)
+-    if(X+19<WX||Y+19<WY||X>=WX+CS||Y>=WY+CS)continue
+-    if(l4VoidCell(seed,k,r)){
+-      rect(X,Y,X+19,Y+19,0)
+-      for(let y=Math.max(WY,Y);y<=Math.min(WY+CS-1,Y+19);y++)for(let x=Math.max(WX,X);x<=Math.min(WX+CS-1,X+19);x++)outdoor[idx(x,y)]=1
+-      continue
+-    }
+-    const coast=l4Coast(seed,k,r),style=(forceVariant??l4Biome(seed,k,r)) as L4Variant
+-    rect(X,Y,X+19,Y+19,2,style)
+-    rect(X,Y,X+2,Y+19,1,style);rect(X,Y,X+19,Y+1,1,style)
+-    let x0=X+4,y0=Y+3
+-    const x1=X+18,y1=Y+18
+-    if(style==='windowview'){if(coast[3])x0=X+1;if(coast[0])y0=Y+1}
+-    rect(x0,y0,x1,y1,1,style)
+-    if(!coast[0])door(X+10,Y+2,'x')
+-    if(!coast[3])door(X+3,Y+7,'y')
+-    if(!coast[1])door(X+19,Y+7,'y')
+-    if(!coast[2])door(X+10,Y+19,'x')
+-    const niche=slots.find(s=>s.x===X+3&&s.y===Y+10)
+-    if(niche){rect(X+3,Y+9,X+4,Y+11,2,style);rect(niche.x,niche.y,niche.x,niche.y);if(inside(niche.x,niche.y)){const ed=def.exits.find(e=>e.kind==='elevatorshaft');if(ed)exits.push({def:ed,x:niche.x,y:niche.y,discovered:false});add('elevdoor',niche.x,niche.y,1,1,true,{noSight:1})}}
+-    if(style==='officehall'){
+-      // Photo 1: fabric banks, central aisle and glazed conference room.
+-      const gy=Y+6,dx=X+11
+-      for(let x=x0;x<=x1;x++){rect(x,gy,x,gy);if(x!==dx)add('glasswin',x,gy,1,1,true,{partition:1,deg:0})}
+-      door(dx,gy,'x',true)
+-      add('table',X+9,Y+4,4,1,true,{meeting:1})
+-      for(const x of [X+8,X+10,X+12,X+14])add('officechair',x,Y+3,1,1,false,{deg:180})
+-      if(h32(seed,k,r,0x43)%3===0){rect(X+15,Y+3,X+15,Y+5,2,style);door(X+15,Y+4,'y',true);add('desk',X+17,Y+4,1,1,true,{deg:0})}
+-      for(let y=Y+8;y<=Y+16;y+=2)for(const [x,deg]of [[X+5,270],[X+13,90]]){
+-        add('cubicle',x,y,4,2,true,{deg});add('officechair',deg===270?x+2.4:x+.6,y+.45,1,1,false,{deg:deg===270?90:270})
+-      }
+-    }else if(style==='open'){
+-      for(const [x,y]of [[X+7,Y+8],[X+15,Y+13]])add('pillar',x,y,1,1,true)
+-      if(!coast[3])door(X+3,Y+15,'y');if(!coast[1])door(X+19,Y+15,'y')
+-    }else if(style==='smallrooms'){
+-      rect(X+10,Y+3,X+10,Y+18,2,style);rect(X+13,Y+3,X+13,Y+18,2,style)
+-      rect(X+4,Y+11,X+9,Y+11,2,style);rect(X+14,Y+11,X+18,Y+11,2,style)
+-      for(const y of [Y+7,Y+15]){door(X+10,y,'y');door(X+13,y,'y')}
+-      if(!coast[0]){rect(X+10,Y+2,X+10,Y+2,2,style);door(X+11,Y+2,'x')}
+-      if(!coast[2]){rect(X+10,Y+19,X+10,Y+19,2,style);door(X+11,Y+19,'x')}
+-      const loop=h32(seed,0x4ee,k,r)%100<7&&!niche
+-      for(const [x,y]of [[X+5,Y+4],[X+15,Y+4],[X+5,Y+13],[X+15,Y+13]]){
+-        if(loop&&x===X+5&&y===Y+13)continue
+-        const service=h32(seed,0x4c01,x,y)%10
+-        const detail=service<2?'pantry':service===2?'toilet':service===3?'server':service===4?'archive':service===5?'printer':null
+-        if(detail){
+-          add('l4prop',x,y-1,detail==='pantry'?3:detail==='toilet'||detail==='archive'?2:1,detail==='toilet'?2:1,true,{detail,room:detail})
+-          if(detail==='printer')add('l4prop',x+2,y-1,2,1,true,{detail:'archive'})
+-          if(detail==='server')add('l4prop',x+2,y-1,1,1,true,{detail:'server'})
+-          const dd=structures.find(s=>s.kind==='hoteldoor'&&s.x===(x===X+5?X+10:X+13)&&s.y===(y===Y+4?Y+7:Y+15))
+-          if(dd)dd.data!.room=detail
+-        }else{add('desk',x,y,2,1,true);add('officechair',x+.5,y+1.2,1,1,false,{deg:0});add('cabinet',x+2,y,1,1,true,{loot:1})}
++  for(let b=-1;b<=1;b++)for(let a=-1;a<=1;a++){const s=l4ElevSlot(seed,rx+a,ry+b);if(!slots.some(v=>v.x===s.x&&v.y===s.y))slots.push(s)}
++  // every block whose rectangle overlaps this chunk
++  const blocks=new Map<string,ReturnType<typeof l4Block>>()
++  for(let y=WY;y<WY+CS;y+=8)for(let x=WX;x<WX+CS;x+=8)for(const [xx,yy] of [[x,y],[x+7,y],[x,y+7],[x+7,y+7]]){const {i,j}=l4BlockIndex(seed,xx,yy);blocks.set(`${i},${j}`,l4Block(seed,i,j))}
++  for(const blk of blocks.values()){
++    const style0=forceVariant as L4Variant|undefined
++    for(const op of blk.ops){
++      if(op.o==='rect'){
++        for(let y=Math.max(WY,op.y0);y<=Math.min(WY+CS-1,op.y1);y++)for(let x=Math.max(WX,op.x0);x<=Math.min(WX+CS-1,op.x1);x++){tiles[idx(x,y)]=op.t;if(op.style)tint[idx(x,y)]=L4_TINT[style0??op.style]}
++      }else if(op.o==='add'){
++        if(!inside(op.x,op.y))continue
++        structures.push({kind:op.kind,x:op.x,y:op.y,w:op.w,h:op.h,solid:op.solid,data:{l4:1,...op.data,sid:h32(seed,0x4ff,Math.round(op.x*10),Math.round(op.y*10),(op.kind+String(op.data?.detail??'')).split('').reduce((s,c)=>s*31+c.charCodeAt(0)|0,0))}})
++      }else if(op.o==='light'){
++        if(!inside(op.x,op.y))continue
++        const st=style0??op.style
++        lights.push({x:op.x+.5,y:op.y+.5,r:st==='windowview'?2:4.7,color:st==='windowview'?'#b7cfdb':'#eee9dd',intensityMul:st==='windowview'?.08:st==='open'||st==='hall'?.12:.14,flickerSeed:h32(seed,op.x,op.y)%100,gen:1,fixZ:2.84,on:op.on})
++      }else if(op.o==='elev'){
++        for(let y=op.y+1;y<=op.y+5;y++)for(let x=op.x+2;x<=op.x+3;x++)if(inside(x,y))elev[idx(x,y)]=4
++      }else if(op.o==='exit'){
++        const e=def.exits.find(e=>e.kind===op.kind);if(!e||!inside(op.x,op.y))continue
++        exits.push({def:e,x:op.x,y:op.y,discovered:false})
++        if(op.kind==='oldstairs')for(let n=1;n<=3;n++){if(inside(op.x,op.y-n))elev[idx(op.x,op.y-n)]=4;structures.push({kind:'stairrail',x:op.x,y:op.y-n,w:1,h:1,solid:true,data:{l4:1,deg:0,end:n===3?1:0,sid:h32(seed,0x4fe,op.x,op.y-n)}})}
+       }
+-      if(loop){const sx=X+5,sy=Y+12;add('l4stairs',sx,sy,4,6,true,{loop:1});for(let y=sy+1;y<=sy+5;y++)for(let x=sx+2;x<=sx+3;x++)if(inside(x,y))elev[idx(x,y)]=4}
+-      if(h32(seed,0x46,k,r)%1000<15){const e=def.exits.find(e=>e.kind==='trapdoor');if(e&&inside(X+17,Y+17))exits.push({def:e,x:X+17,y:Y+17,discovered:false})}
+-    }
+-    // Building services are attached to walls/ceiling, leaving circulation clear.
+-    for(const x of [X+7,X+15])for(const y of [Y+6,Y+15]){
+-      if(style==='smallrooms'&&x===X+7&&y===Y+15)continue // rare stair shaft
+-      add('l4prop',x,y,1,1,false,{detail:'services'})
+-    }
+-    if(!coast[0])add('l4prop',X+9,Y+3,1,1,false,{detail:'wallkit',deg:0,wallOffset:1})
+-    // Blank charts and diagram boards sit flush against real wall faces.
+-    if(!coast[0])add('l4prop',X+15,Y+1,1,1,false,{detail:'wallDecor',deg:180,wallOffset:1})
+-    if(!coast[3])add('l4prop',X+2,Y+13,1,1,false,{detail:'wallDecor',deg:270,wallOffset:1})
+-    if(style==='smallrooms')add('l4prop',X+11,Y+10,1,1,false,{detail:'wallDecor',deg:90,wallOffset:1})
+-    if(style==='officehall')add('l4prop',X+17,Y+16,1,1,true,{detail:'printer'})
+-    // Complete enclosing facade, with windows in both ordinary and view wings.
+-    for(let d=0;d<4;d++)if(coast[d])for(let t=0;t<20;t++){
+-      const x=d===1?X+19:d===3?X:X+t,y=d===0?Y:d===2?Y+19:Y+t
+-      rect(x,y,x,y,2,style)
+-      if(!(t>=4&&t<=17&&(style==='windowview'||t%5<2)))continue
+-      rect(x,y,x,y,1,style)
+-      if(d===0)rect(x,Y+1,x,Y+3,1,style)
+-      if(d===3)rect(X+1,y,X+4,y,1,style)
+-      const kind=style==='windowview'?'glasswin':h32(seed,0x4bad,k,r,d,Math.floor(t/5))%100<12?'windowtrap':'windowblack'
+-      const start=style==='windowview'?t===4:t%5===0,end=style==='windowview'?t===17:t%5===1
+-      add(kind,x,y,1,1,true,{deg:[180,90,0,270][d],rain:1,coast:1,mullion:t%2===0?1:0,revealLeft:(d<2?end:start)?1:0,revealRight:(d<2?start:end)?1:0,windowId:`${k}:${r}:${d}:${Math.floor(t/5)}`})
+     }
+-    for(let y=Y+4;y<=Y+18;y+=3)for(let x=X+5;x<=X+18;x+=4)light(x,y,style)
+-    if(!coast[3])for(let y=Y+4;y<Y+20;y+=6)light(X+1,y,'smallrooms')
+-    if(!coast[0])for(let x=X+5;x<X+20;x+=6)light(x,Y,'smallrooms')
+-    if(style!=='windowview'&&h32(seed,0x4abc,k,r)%100<22)add('vending',X+1,Y+5,1,1,true,{trade:1})
+-    if(h32(seed,0x4bcd,k,r)%1000<12)add('landmark',X+2,Y+12,1,1,false,{outpost:'omega',poster:1,tex:'omega_poster.png'})
+-    // Rare old stair exits coexist with the looping modern stairwells.
+-    if(style==='open'&&h32(seed,0x405,k,r)%160===0){
+-      const e=def.exits.find(e=>e.kind==='oldstairs'),sx=X+6,sy=Y+17
+-      if(e&&inside(sx,sy))exits.push({def:e,x:sx,y:sy,discovered:false})
+-      // Fixed north-facing flight: keep the entry landing clear, no orientation-dummy wall.
+-      for(let n=1;n<=3;n++){if(inside(sx,sy-n))elev[idx(sx,sy-n)]=4;add('stairrail',sx,sy-n,1,1,true,{deg:0,end:n===3?1:0})}
++    const sl=blk.elevSlot
++    if(slots.some(s=>s.x===sl.x&&s.y===sl.y)&&inside(sl.x,sl.y)){
++      tiles[idx(sl.x,sl.y)]=1
++      const ed=def.exits.find(e=>e.kind==='elevatorshaft');if(ed)exits.push({def:ed,x:sl.x,y:sl.y,discovered:false})
++      structures.push({kind:'elevdoor',x:sl.x,y:sl.y,w:1,h:1,solid:true,data:{l4:1,noSight:1,sid:h32(seed,0x4fd,sl.x,sl.y)}})
+     }
+   }
+-  const floor=(x:number,y:number)=>inside(Math.floor(x),Math.floor(y))&&tiles[idx(Math.floor(x),Math.floor(y))]===1&&!outdoor[idx(Math.floor(x),Math.floor(y))]
+-  for(let i=lights.length-1;i>=0;i--)if(!floor(lights[i].x,lights[i].y)||structures.some(s=>s.kind==='l4stairs'&&lights[i].x>=s.x&&lights[i].x<s.x+s.w&&lights[i].y>=s.y&&lights[i].y<s.y+s.h))lights.splice(i,1)
++  const floor=(x:number,y:number)=>inside(Math.floor(x),Math.floor(y))&&tiles[idx(Math.floor(x),Math.floor(y))]===1
++  for(let i=lights.length-1;i>=0;i--)if(!floor(lights[i].x,lights[i].y)||structures.some(s=>(s.kind==='l4stairs'||s.solid&&s.kind!=='l4prop')&&lights[i].x>=s.x&&lights[i].x<s.x+s.w&&lights[i].y>=s.y&&lights[i].y<s.y+s.h))lights.splice(i,1)
+   const occupied=(x:number,y:number)=>structures.some(s=>s.solid&&x>=s.x-1&&x<s.x+s.w+1&&y>=s.y-1&&y<s.y+s.h+1)
+   const pool=[...def.items,...UNIVERSAL_ITEMS]
+   for(let n=0;n<3;n++)for(let t=0;t<40;t++){
+@@ -1,11 +1,12 @@
+     if(!floor(x,y)||occupied(x,y)||elev[idx(x,y)]===4)continue
+     items.push({id:GEN_ITEM_BASE+((cx&255)<<12)+((cy&255)<<4)+n,type:rng.weighted(pool.map(p=>({v:p.type,w:p.w}))),x:x+.5,y:y+.5});break
+   }
+-  if((Math.abs(cx)>1||Math.abs(cy)>1)&&rng.chance(.012)&&def.entities.length)for(let t=0;t<40;t++){
++  // v2: hounds and dullers remain, very rare
++  if((Math.abs(cx)>1||Math.abs(cy)>1)&&rng.chance(.008)&&def.entities.length)for(let t=0;t<40;t++){
+     const x=WX+rng.int(2,CS-3),y=WY+rng.int(2,CS-3)
+     if(!floor(x,y)||occupied(x,y))continue
+     entities.push({type:rng.weighted(def.entities.map(e=>({v:e.type,w:e.w}))),x:x+.5,y:y+.5});break
+   }
+   return{variant:forceVariant??l4VariantOf(seed,cx,cy),tiles,wet,elev,step,tint,crawl,outdoor,structures,lights,exits,items,entities}
+ }
+-registerInfiniteLevel(4,{genRaw:genL4ChunkRaw,variantOf:l4VariantOf,rareVariants:L4_RARE_VARIANTS,variantNames:L4_VARIANT_NAMES,variantLore:L4_VARIANT_LORE})
++registerInfiniteLevel(4,{genRaw:genL4ChunkRaw,variantOf:l4VariantOf,rareVariants:L4_RARE_VARIANTS,variantNames:L4_VARIANT_NAMES,variantLore:L4_VARIANT_LORE,spawnWorld:L4_SPAWN})
+diff --git a/app/src/game/world/l1Architecture.ts b/app/src/game/world/l1Architecture.ts
+--- a/app/src/game/world/l1Architecture.ts
++++ b/app/src/game/world/l1Architecture.ts
+@@ -1,7 +1,7 @@
+     for(let z=9;z<=23;z++)for(let x=9;x<=23;x++)c.tiles[z*32+x]=1
+     c.structures=c.structures.filter(s=>!(s.x>=wx+10&&s.x<wx+23&&s.y>=wz+10&&s.y<wz+23&&!s.data?.sid))
+     c.structures.push({kind:'landmark',x:wx+20,y:wz+20,w:1,h:1,solid:false,data:{outpost}})
+-    for(const [x,z] of [[11,11],[21,11],[11,21],[23,22]])c.structures.push({kind:'wallsign',x:wx+x,y:wz+z,w:1,h:1,solid:false,data:{text:names[outpost]+' / CORE',l1Waymark:1,targetX:wx+20.5,targetY:wz+20.5}})
++    for(const [x,z] of [[11,11],[21,11],[11,21],[23,22]])c.structures.push({kind:'wallsign',x:wx+x,y:wz+z,w:1,h:1,solid:false,data:{text:names[outpost]+' / CORE',org:outpost,l1Waymark:1,targetX:wx+20.5,targetY:wz+20.5}})
+   }
+   if(v!=='maintenance'&&v!=='aisle')for(let j=0;j<(v==='storage'?5:3);j++){
+     for(let trial=0;trial<20;trial++){
+@@ -1,7 +1,7 @@
+   }
+   // Stable reserve slots: hidden crates retain their identities and inventories.
+   for(const s of c.structures)if(s.kind==='crate'&&s.data?.sid!==undefined){s.data.l1Prop='crate';s.data.l1Crate=1;s.data.l1Stack=l1Hash(s.x,s.y,seed^929)<.13?2:1;s.data.l1Hidden=l1Hash(s.x,s.y,seed^919)<.3?1:0}
+-  if(v==='aisle')for(const [x,z] of [[5,8],[5,24]])if(c.tiles[z*32+x]===1)c.structures.push({kind:'wallsign',x:wx+x,y:wz+z,w:1,h:1,solid:false,data:{text:'REF 08 / KEEP IN SIGHT',l1Waymark:1}})
++  if(v==='aisle')for(const [x,z] of [[5,8],[5,24]])if(c.tiles[z*32+x]===1)c.structures.push({kind:'wallsign',x:wx+x,y:wz+z,w:1,h:1,solid:false,data:{text:'REF 08 / KEEP IN SIGHT',org:'meg',l1Waymark:1}})
+   // Remove obsolete non-interactive scenery. Loot containers and NPC work anchors stay intact.
+   c.structures=c.structures.filter(s=>s.kind!=='vaultcol' && !((v==='parking'||v==='aisle')&&s.kind==='pillar') &&
+     !(v==='garden'&&['wheatpatch','hedgerow','glowshroom'].includes(s.kind)))
+@@ -1,7 +1,7 @@
+   if(!photo&&!outpost&&v!=='maintenance'){
+     const d=l1District(seed,cx,cy),ax=d.cx,ay=d.cy
+     const target=l1Outpost(seed,ax,ay),dist=Math.abs(cx-ax)+Math.abs(cy-ay)
+-    if(target&&dist>=1&&dist<=3&&(cx===ax||cy===ay)&&c.tiles[16*32+16]===1)c.structures.push({kind:'wallsign',x:wx+16,y:wz+16,w:1,h:1,solid:false,data:{text:target.toUpperCase()+' / SHELTER',l1Waymark:1,targetX:ax*32+20.5,targetY:ay*32+20.5}})
++    if(target&&dist>=1&&dist<=3&&(cx===ax||cy===ay)&&c.tiles[16*32+16]===1)c.structures.push({kind:'wallsign',x:wx+16,y:wz+16,w:1,h:1,solid:false,data:{text:target.toUpperCase()+' / SHELTER',org:target,l1Waymark:1,targetX:ax*32+20.5,targetY:ay*32+20.5}})
+   }
+   c.lights=[]
+   for(let z=0;z<32;z++)for(let x=0;x<32;x++){
+diff --git a/app/src/game/world/l1Bake.ts b/app/src/game/world/l1Bake.ts
+--- a/app/src/game/world/l1Bake.ts
++++ b/app/src/game/world/l1Bake.ts
+@@ -1,8 +1,12 @@
+  if(style==='parking'&&surface==='ceiling')return[.34,.35,.33]
+  if(style==='parking'&&surface==='floor')return[.35,.35,.33]
+  if(style==='storage'&&surface==='ceiling')return[.24,.2,.16]
+- if(style==='ouroboros'&&surface==='whitePipe')return[.66,.65,.6]
+- if(style==='ouroboros'&&surface==='floor')return[.46,.43,.37]
++ if(style==='ouroboros'&&surface==='whitePipe')return[.7,.69,.66]
++ if(style==='ouroboros'&&surface==='floor')return[.3,.29,.27]
++ if(style==='ouroboros'&&surface==='ceiling')return[.06,.06,.06]
++ if(style==='ouroboros'&&surface==='peeling')return[.34,.31,.26]
++ if(style==='ouroboros'&&surface==='column')return[.3,.3,.29]
++ if(style==='ouroboros'&&surface==='wall')return[.5,.49,.47]
+  if(style==='storage'&&surface==='column')return[.36,.31,.24]
+  if(style==='storage'&&surface==='floor')return[.4,.38,.34]
+  if(style==='storage'&&surface==='metal')return[.3,.23,.16]
+diff --git a/app/src/game/world/l1BakeTypes.ts b/app/src/game/world/l1BakeTypes.ts
+--- a/app/src/game/world/l1BakeTypes.ts
++++ b/app/src/game/world/l1BakeTypes.ts
+@@ -1,6 +1,6 @@
+ import type {L1StyleName,L1SurfaceName,V3} from './l1BuildingTypes'
+ export type L1BakeQuality='low'|'high'
+-export const L1_BAKE_REVISION=17
++export const L1_BAKE_REVISION = 19
+ export interface L1BakedMesh {style:L1StyleName;surface:L1SurfaceName;position:Float32Array;normal:Float32Array;uv:Float32Array;uv1:Float32Array;index:Uint32Array}
+ export interface L1Probe {position:V3;color:V3;indirect:V3;direction:V3;portal?:number[];indirectPortal?:number[]}
+ export interface L1BakeResult {
+diff --git a/app/src/game/world/l1Building.ts b/app/src/game/world/l1Building.ts
+--- a/app/src/game/world/l1Building.ts
++++ b/app/src/game/world/l1Building.ts
+@@ -1,7 +1,7 @@
+  parking:{height:3.25,spacingX:7,spacingZ:7,phaseX:6.5,phaseZ:6.5,columnWidth:.92,columnDepth:1.08,round:false,beamDepth:.27,beamWidth:.42,lampSpacing:7,wallTubes:true,power:1.25,finish:'raw'},
+  storage:{height:6.2,spacingX:10,spacingZ:9,phaseX:6.5,phaseZ:6.5,columnWidth:.62,columnDepth:.62,round:false,beamDepth:1.1,beamWidth:.30,lampSpacing:7,wallTubes:false,power:2,finish:'raw'},
+  gothic:{height:3.65,spacingX:6,spacingZ:6,phaseX:4.5,phaseZ:4.5,columnWidth:1.08,columnDepth:1.08,round:true,beamDepth:0,beamWidth:0,lampSpacing:6,wallTubes:false,power:1.05,finish:'raw'},
+- ouroboros:{height:4.25,spacingX:7,spacingZ:7,phaseX:6.5,phaseZ:6.5,columnWidth:.78,columnDepth:.78,round:false,beamDepth:.55,beamWidth:.55,lampSpacing:7,wallTubes:false,power:1.55,finish:'peeling'},
++ ouroboros:{height:4.25,spacingX:7,spacingZ:7,phaseX:6.5,phaseZ:6.5,columnWidth:.78,columnDepth:.78,round:false,beamDepth:.55,beamWidth:.55,lampSpacing:7,wallTubes:false,power:1.1,finish:'peeling'},
+  garden:{height:7.8,spacingX:7.2,spacingZ:7.2,phaseX:6.5,phaseZ:6.5,columnWidth:1.65,columnDepth:1.65,round:false,beamDepth:.4,beamWidth:.65,lampSpacing:7.2,wallTubes:false,power:4.6,finish:'raw'},
+  fabled:{height:3.3,spacingX:6,spacingZ:6,phaseX:4.5,phaseZ:4.5,columnWidth:.34,columnDepth:.34,round:false,beamDepth:.32,beamWidth:.28,lampSpacing:6,wallTubes:false,power:3.4,finish:'paint'},
+  maintenance:{height:2.65,spacingX:8,spacingZ:8,phaseX:6.5,phaseZ:6.5,columnWidth:.6,columnDepth:.6,round:false,beamDepth:.14,beamWidth:.18,lampSpacing:5,wallTubes:false,power:.9,finish:'paint'},
+@@ -1,7 +1,7 @@
+  const addBox=(id:string,min:V3,max:V3,style:L1StyleName,surface:L1Box['surface'],solid=false,detail=false,shape?:'round',axis?:0|1|2)=>boxes.push({id,min,max,style,surface,solid,detail,occlude:!detail,shape,axis})
+  const lamp=(id:string,p:V3,n:V3,t:V3,w:number,h:number,style:L1StyleName,kind:L1Emitter['kind'],power:number,range?:number)=>{
+   const color:V3=style==='gothic'?[1,.9,.75]:style==='garden'?[1,.94,.75]:style==='storage'?[1,.97,.87]:[.93,.97,1]
+-  emitters.push({id,position:p,normal:n,tangent:t,width:w,height:h,style,kind,power,range:range??(kind==='sky'?20:kind==='emergency'?2.2:16),color:kind==='emergency'?[.27,.64,.4]:color,backEmission:kind==='panel'?.12:0})
++  emitters.push({id,position:p,normal:n,tangent:t,width:w,height:h,style,kind,power,range:range??(kind==='sky'?20:kind==='emergency'?2.2:16),color:kind==='emergency'?[.27,.64,.4]:color,backEmission:kind==='panel'&&style!=='ouroboros'?.12:0})
+  }
+  for(let z=0;z<32;z++)for(let x=0;x<32;x++){const style=styleAt(x0+x+.5,z0+z+.5);styles[z*32+x]=L1_STYLE_NAMES.indexOf(style);floor[z*32+x]=+l1BuildingFloorAt(seed,x0+x,z0+z,force)}
+  // Coalesce actual wall volumes; their exact faces are also the lighting occluders.
+@@ -1,9 +1,25 @@
+      // Painted steel sections, with a recessed web and two actual flanges.
+      addBox(id+':web',[x-.045,0,z-p.columnDepth/2],[x+.045,top,z+p.columnDepth/2],style,'paint',true)
+      for(const side of [-1,1])addBox(id+':flange'+side,[x-p.columnWidth/2,0,z+side*(p.columnDepth/2-.03)-.03],[x+p.columnWidth/2,top,z+side*(p.columnDepth/2-.03)+.03],style,'paint',true)
++    }else if(style==='ouroboros'){
++     // v3.2 衔尾段 (ref 衔尾段.png): three column finishes — fully spray-fireproofed with a lagged
++     // drop cap, soot-black top over beige spotted paint (two-tone shader on 'peeling'), or raw concrete.
++     const k=l1Noise(gx,gz,seed^0x0c01)
++     const surf=k<.3?'whitePipe':k<.78?'peeling':'column'
++     addBox(id,[x-p.columnWidth/2,0,z-p.columnDepth/2],[x+p.columnWidth/2,top,z+p.columnDepth/2],style,surf,true)
++     if(surf==='whitePipe'){
++      const cap=.95+l1Noise(gx,gz,seed^0x0c03)*.2,y1=p.height-p.beamDepth+.02,y0=y1-.34
++      addBox(id+':cap',[x-cap,y0,z-cap],[x+cap,y1,z+cap],style,'whitePipe',false,true)
++      addBox(id+':cap2',[x-cap*.62,y0-.14,z-cap*.62],[x+cap*.62,y0,z+cap*.62],style,'whitePipe',false,true)
++      for(let n=0;n<4;n++){const q=l1Noise(gx*5+n,gz,seed^0x0c25),a=n*Math.PI/2+q,ox=Math.cos(a)*cap*.55,oz=Math.sin(a)*cap*.55,r=.22+q*.25
++       addBox(id+':lump'+n,[x+ox-r,y0-.06-q*.08,z+oz-r],[x+ox+r,y0+.02,z+oz+r],style,'whitePipe',false,true)}
++      for(let n=0;n<2;n++){const q=l1Noise(gx+n*3,gz*5,seed^0x0c27),y=.6+q*2.4,e=.025+q*.03
++       addBox(id+':clump'+n,[x-p.columnWidth/2-e,y,z-p.columnDepth/2-e],[x+p.columnWidth/2+e,y+.25+q*.4,z+p.columnDepth/2+e],style,'whitePipe',false,true)}
++     }
++     if(l1Noise(gx,gz,seed^0x0c05)<.35)addBox(id+':tag',[x-.09,.42,z-p.columnDepth/2-.006],[x+.03,.52,z-p.columnDepth/2],style,'red',false,true)
+     }else addBox(id,[x-p.columnWidth/2,0,z-p.columnDepth/2],[x+p.columnWidth/2,top,z+p.columnDepth/2],style,p.finish==='peeling'?'peeling':p.finish==='paint'?'paint':'column',true,false,round?'round':undefined)
+     const dress=Math.floor(l1Noise(gx,gz,seed^517)*5)
+-    if(style==='ouroboros'||style==='parking'&&dress===3){const h=style==='ouroboros'?1.7+(.3*dress):1.15;addBox(id+':repair',[x-p.columnWidth/2-.008,.22,z-p.columnDepth/2-.008],[x+p.columnWidth/2+.008,h,round?z+p.columnDepth/2+.008:z-p.columnDepth/2+.008],style,style==='ouroboros'?'peeling':'paint',false,true,round?'round':undefined)}
++    if(style==='parking'&&dress===3){const h=1.15;addBox(id+':repair',[x-p.columnWidth/2-.008,.22,z-p.columnDepth/2-.008],[x+p.columnWidth/2+.008,h,round?z+p.columnDepth/2+.008:z-p.columnDepth/2+.008],style,'paint',false,true,round?'round':undefined)}
+     if(style==='parking'&&dress===1&&!round)for(const side of [-1,1])addBox(id+':guard'+side,[x+side*(p.columnWidth/2-.03)-.025,.06,z-p.columnDepth/2-.025],[x+side*(p.columnWidth/2-.03)+.025,.85,z-p.columnDepth/2+.07],style,'metal',false,true)
+     if(p.wallTubes&&!p.lighting){
+      const brightness=l1ParkingAt(seed,x,z).brightness,on=l1Noise(gx,gz,seed^771)<Math.min(1,brightness),side=p.tubeSide??1
+@@ -1,7 +1,7 @@
+   if(style!=='gothic'&&style!=='maintenance')for(let k=Math.ceil((z0-p.phaseZ)/p.spacingZ);;k++){
+    const z=p.phaseZ+k*p.spacingZ;if(z>=z0+32)break
+    for(let x=x0;x<x0+32;x+=2)if(styleAt(x+1,z)===style&&clear(x+1,z,.05)){
+-    addBox(`beam:${x},${z}`,[x,p.height-(style==='storage'?.32:p.beamDepth),z-p.beamWidth/2],[x+2,p.height+.1,z+p.beamWidth/2],style,style==='storage'?'metal':'ceiling')
++    addBox(`beam:${x},${z}`,[x,p.height-(style==='storage'?.32:p.beamDepth),z-p.beamWidth/2],[x+2,p.height+.1,z+p.beamWidth/2],style,style==='storage'?'metal':style==='ouroboros'?'whitePipe':'ceiling')
+    }
+   }
+   if(style==='storage'){
+@@ -1,46 +1,53 @@
+    }
+   }
+   if(style==='ouroboros'){
+-   // 衔尾段 ref: big lagged (insulated) ducts on hangers and red sprinkler mains under a dark slab.
++   // v3.2 衔尾段 ref: spray-fireproofed cross beams + rectangular lagged ducts on hangers, dense red
++   // sprinkler mains with drops and elbows, all under a black bare slab.
++   for(let k=Math.ceil((x0-p.phaseX)/p.spacingX);;k++){
++    const x=p.phaseX+k*p.spacingX;if(x>=x0+32)break
++    for(let z=z0;z<z0+32;z+=2)if(styleAt(x,z+1)===style&&clear(x,z+1,.05))addBox(`our-xbeam:${x},${z}`,[x-p.beamWidth/2,p.height-p.beamDepth,z],[x+p.beamWidth/2,p.height+.1,z+2],style,'whitePipe')
++   }
+    for(let k=Math.ceil((x0-p.phaseX-3.4)/(p.spacingX*2));;k++){
+     const x=p.phaseX+3.4+k*p.spacingX*2;if(x>=x0+32)break
+-    const r=.42,y=p.height-.95
++    const w=.62,t=.34,y=p.height-p.beamDepth-.12-t/2
+     for(let z=z0;z<z0+32;z+=4)if(styleAt(x,z+2)===style){
+-     addBox(`our-duct:${x},${z}`,[x-r,y-r,z],[x+r,y+r,z+4],style,'whitePipe',false,false,'round',2)
+-     addBox(`our-hanger:${x},${z}`,[x-.02,y+r,z+1.98],[x+.02,p.height,z+2.02],style,'metal')
++     addBox(`our-duct:${x},${z}`,[x-w,y-t,z],[x+w,y+t,z+4],style,'whitePipe',false,true)
++     // sprayed-on lumps: the coating bulges unevenly along the run
++     for(let n=0;n<3;n++){const q=l1Noise(x*7+n,z,seed^0x0c21),zz=z+.3+n*1.25+q*.5,len=.35+q*.55,bw=.03+.05*l1Noise(n,x+z,seed^0x0c23)
++      addBox(`our-lump:${x},${z}:${n}`,[x-w-bw,y-t-bw*.8,zz],[x+w+bw*.6,y+t+.005,zz+len],style,'whitePipe',false,true)}
++     for(const o of [-w*.7,w*.7])addBox(`our-hanger:${x+o},${z}`,[x+o-.02,y+t,z+1.98],[x+o+.02,p.height,z+2.02],style,'whitePipe',false,true)
+     }
+    }
+    for(let k=Math.ceil((x0-p.phaseX-1.2)/p.spacingX);;k++){
+     const x=p.phaseX+1.2+k*p.spacingX;if(x>=x0+32)break
+-    for(let z=z0;z<z0+32;z+=4)if(styleAt(x,z+2)===style)for(const o of [0,.22])addBox(`our-red:${x+o},${z}`,[x+o-.045,p.height-.42,z],[x+o+.045,p.height-.33,z+4],style,'red',false,true,'round',2)
++    for(let z=z0;z<z0+32;z+=4)if(styleAt(x,z+2)===style){
++     for(const o of [0,.24])addBox(`our-red:${x+o},${z}`,[x+o-.05,p.height-.44,z],[x+o+.05,p.height-.34,z+4],style,'red',false,true,'round',2)
++     // sprinkler drops: vertical riser, elbow and short branch at the lower level
++     if(l1Mod(Math.floor(z/4),2)===0){
++      const dz=z+1.3+l1Noise(x,z,seed^0x0c11)*1.4
++      addBox(`our-drop:${x},${z}`,[x-.035,p.height-1.05,dz-.035],[x+.035,p.height-.4,dz+.035],style,'red',false,true,'round',1)
++      addBox(`our-elbow:${x},${z}`,[x-.035,p.height-1.1,dz-.035],[x+.9,p.height-1.03,dz+.035],style,'red',false,true,'round',0)
++     }
++    }
++   }
++   // cross mains along x (a second red layer, as in the ref's left half)
++   for(let j=Math.ceil((z0-p.phaseZ-2.3)/p.spacingZ);;j++){
++    const z=p.phaseZ+2.3+j*p.spacingZ;if(z>=z0+32)break
++    if(l1Mod(j,2))continue
++    for(let x=x0;x<x0+32;x+=4)if(styleAt(x+2,z)===style)addBox(`our-redx:${x},${z}`,[x,p.height-.62,z-.06],[x+4,p.height-.5,z+.06],style,'red',false,true,'round',0)
+    }
+-   // v2 C: ref 衔尾段 is an abandoned, littered floor — paper/rubble scraps and dark boards stood against columns.
+-   for(let n=0;n<46;n++){
++   // abandoned floor: paper scraps, rubble chips, dark bits, a few red/blue wrappers
++   for(let n=0;n<40;n++){
+     const x=x0+l1Noise(n,x0*3+z0,seed^0x7a1)*32,z=z0+l1Noise(n,z0*5+x0,seed^0x7a3)*32
+     if(styleAt(x,z)!==style||!clear(x,z,.35))continue
+-    const q=l1Noise(n,x0+z0,seed^0x7a5),w=.08+q*.42,d=.06+l1Noise(n,7,seed^0x7a7)*.34,h=.004+q*q*.05
+-    addBox(`our-litter:${x.toFixed(2)},${z.toFixed(2)}`,[x,0,z],[x+w,h,z+d],style,q<.55?'paint':q<.8?'cable':'peeling',false,true)
+-   }
+-   for(let k=Math.ceil((x0-p.phaseX)/p.spacingX);;k++){const cxk=p.phaseX+k*p.spacingX;if(cxk>=x0+32)break
+-    for(let j=Math.ceil((z0-p.phaseZ)/p.spacingZ);;j++){const czk=p.phaseZ+j*p.spacingZ;if(czk>=z0+32)break
+-     if(cxk<x0||czk<z0||styleAt(cxk,czk)!==style||l1Noise(k,j,seed^0x7b1)>.16)continue
+-     const fx=cxk+p.columnWidth/2+.02
+-     addBox(`our-board:${cxk},${czk}`,[fx,0,czk-.55],[fx+.035,1.25+l1Noise(k,j,seed^0x7b3)*.6,czk+.55],style,'cable',false,true)
+-    }
++    const q=l1Noise(n,x0+z0,seed^0x7a5),w=.05+q*.22,d=.04+l1Noise(n,7,seed^0x7a7)*.18,h=.006+q*q*.04
++    addBox(`our-litter:${x.toFixed(2)},${z.toFixed(2)}`,[x,0,z],[x+w,h,z+d],style,q<.5?'line':q<.78?'column':q<.92?'cable':'red',false,true)
+    }
+   }
+   if(style==='parking')boxes.push(...l1ParkingServices(p,x0,z0,(x,z)=>styleAt(x,z)==='parking'&&clear(x,z,.05)))
+   for(let z=z0;z<z0+32;z+=4)for(let x=x0;x<x0+32;x+=4){
+    if(styleAt(x+2,z+2)!==style||!clear(x+2,z+2,.2))continue
+-   if(style==='ouroboros'){
+-    const count=6
+-    if(l1Mod(Math.floor((x+2-p.phaseX)/4),2)===0)for(let n=0;n<count;n++)addBox(`red:${x},${z}:${n}`,[x+.7+n*.13,p.height-.36,z],[x+.735+n*.13,p.height-.325,z+4],style,'red',false,true,'round',2)
+-    if(l1Mod(Math.floor((z+2-p.phaseZ)/4),3)===0)addBox(`pipe:${x},${z}`,[x,p.height-.52,z+1.85],[x+4,p.height-.32,z+2.05],style,'whitePipe',false,false,'round',0)
+-    if(l1Mod(Math.floor((x+2-p.phaseX)/4),3)===0){
+-     for(const side of [-1,1])addBox(`tray:${x},${z}:${side}`,[x+2+side*.25-.022,p.height-.62,z],[x+2+side*.25+.022,p.height-.53,z+4],style,'metal',false,true)
+-     for(let k=0;k<4;k++)addBox(`rung:${x},${z}:${k}`,[x+1.75,p.height-.62,z+k+.18],[x+2.25,p.height-.595,z+k+.22],style,'metal',false,true)
+-    }
+-   }
++   if(style==='ouroboros'&&l1Mod(Math.floor((x+2-p.phaseX)/4),3)===0)addBox(`conduit:${x},${z}`,[x+1.97,p.height-.3,z],[x+2.03,p.height-.24,z+4],style,'cable',false,true,'round',2)
+    if(style==='storage'){
+     addBox(`purlin:${x},${z}`,[x+1.91,p.height-.24,z],[x+2.09,p.height-.195,z+4],style,'metal',false,true)
+     addBox(`web:${x},${z}`,[x+1.975,p.height-.195,z],[x+2.025,p.height,z+4],style,'metal',false,true)
+@@ -1,7 +1,7 @@
+     if(p.lighting==='wall-bay'||p.lighting==='wall-tubes'&&l1Noise(gx,gz,seed^123)>.2)continue
+     const on=p.lighting!=='service-bay'&&(style!=='parking'||!p.wallTubes||l1Noise(gx,gz,seed^123)<.25)
+     if(style==='garden'&&l1Mod(gx+gz,2))continue // v2: skylights plus a sparse grey fill grid (ref is evenly bright moss)
+-    lamp(`lamp:${x.toFixed(3)},${z.toFixed(3)}`,[x,(style==='gothic'?l1BuildingRoof(seed,x,z,true):p.height)-(style==='storage'?p.beamDepth+.25:.15),z],[0,-1,0],p.lampAlongZ?[0,0,1]:[1,0,0],style==='storage'?1.4:1.2,style==='storage'?.48:.045,style,style==='storage'?'panel':'tube',on?(style==='garden'?p.power*.45:p.power):0)
++    lamp(`lamp:${x.toFixed(3)},${z.toFixed(3)}`,[x,(style==='gothic'?l1BuildingRoof(seed,x,z,true):p.height)-(style==='storage'?p.beamDepth+.25:.15),z],[0,-1,0],p.lampAlongZ||style==='ouroboros'&&l1Mod(gx+gz,2)?[0,0,1]:[1,0,0],style==='storage'?1.4:style==='ouroboros'?2.6:1.2,style==='storage'?.48:.045,style,style==='storage'||style==='ouroboros'?'panel':'tube',on?(style==='garden'?p.power*.45:p.power):0)
+    }
+   }
+  }
+diff --git a/app/src/game/world/l1Dressing.ts b/app/src/game/world/l1Dressing.ts
+--- a/app/src/game/world/l1Dressing.ts
++++ b/app/src/game/world/l1Dressing.ts
+@@ -1,6 +1,18 @@
+ 
+ /** Assembly is placed after the building is complete, so legacy loot clearance
+  * cannot silently delete the table. The same assembly fits ordinary hall walls. */
++/** v3.2 衔尾段 (ref 衔尾段.png): black grating panels leaned against columns and small material piles
++ * (plywood sheets, a drum, a tin). Movable-free props, fitted like the other hall dressing. */
++export function l1OuroDressing(a:L1ArchitectureData):Structure[]{
++ const out:Structure[]=[]
++ for(const b of a.boxes){
++  if(b.style!=='ouroboros'||!b.solid||!b.id.startsWith('column:')||b.id.includes(':',7))continue
++  const cx=(b.min[0]+b.max[0])/2,cz=(b.min[2]+b.max[2])/2,k=l1Noise(Math.round(cx*3),Math.round(cz*3),a.seed^0x0d71)
++  if(k<.16){const x=b.max[0]+.12;out.push({kind:'pillar',x,y:cz-.75,w:.32,h:1.5,solid:true,data:{l1Prop:'grate',deg:90,l1HallDressing:1}})}
++  else if(k>.9){const x=b.min[0]-1.6;out.push({kind:'pillar',x,y:cz-.6,w:1.3,h:1.2,solid:true,data:{l1Prop:'matpile',deg:Math.floor(k*1000)%2?0:180,l1HallDressing:1,sid:Math.floor(k*1e6)}})}
++ }
++ return out
++}
+ export function l1HallDressing(a:L1ArchitectureData):Structure[]{
+  const {seed,cx,cy}=a,ref=l1ReferenceAt(seed,cx*32+16,cy*32+16)
+  if(ref?(ref.id!=='parking-props'||cx!==Math.floor(ref.centerX/32)||cy!==Math.floor(ref.centerY/32)):l1Noise(cx,cy,seed^881)>=.14)return[]
+diff --git a/app/src/game/world/l1Placement.ts b/app/src/game/world/l1Placement.ts
+--- a/app/src/game/world/l1Placement.ts
++++ b/app/src/game/world/l1Placement.ts
+@@ -1,7 +1,7 @@
+ import type {GenChunk} from './infiniteRegistry'
+ import type {L1ArchitectureData} from './l1BuildingTypes'
+ import {l1PuddleContains} from './l1Puddles'
+-import {l1RoomDressing,l1HallDressing} from './l1Dressing'
++import {l1RoomDressing,l1HallDressing,l1OuroDressing} from './l1Dressing'
+ import {l1PathRoom} from './l1Spatial'
+ import {l1PlanTile,l1PlanHash} from './l1Plan'
+ import {l1OutpostSites,l1OutpostSite} from './l1OutpostSites'
+@@ -1,6 +1,7 @@
+  const dressing=l1RoomDressing(a.seed,a.cx,a.cy),room=dressing.length?l1PathRoom(a.seed,a.cx,a.cy):null
+  if(dressing.length)c.structures=[...dressing,...c.structures.filter(s=>!['pathchair','airunit','caution','paintcan'].includes(String(s.data?.l1Prop)))]
+  const hall=l1HallDressing(a)
++ c.structures.push(...l1OuroDressing(a))
+  if(hall.length)c.structures=[...hall,...c.structures.filter(s=>!['foldingtable','seat','panel','extinguisher'].includes(String(s.data?.l1Prop)))]
+  const architecture=a.boxes.filter(b=>b.solid)
+  const occupied:{x:number;y:number;w:number;h:number}[]=[]
+diff --git a/app/src/game/world/l1Plan.ts b/app/src/game/world/l1Plan.ts
+--- a/app/src/game/world/l1Plan.ts
++++ b/app/src/game/world/l1Plan.ts
+@@ -1,7 +1,7 @@
+   ix0:l.x0+l.hl,iy0:l.y0+l.ht,ix1:l.x1-l.hr,iy1:l.y1-l.hb,
+   section:l.fab?'fabled':pickSection(seed,sx,sy,i,l.x1-l.x0,l.y1-l.y0),
+  }))
+- if(spawn){const r=regions.find(q=>15>=q.ix0&&15<=q.ix1&&15>=q.iy0&&15<=q.iy1);if(r)r.section='parking'}
++ if(spawn){const r=regions.find(q=>15>=q.ix0&&15<=q.ix1&&15>=q.iy0&&15<=q.iy1);if(r)r.section=(globalThis as any).__l1SpawnSection??'parking'} // dev capture hook
+ 
+  // ---- 小径 maze on the cell grid ----
+  const cells=new Uint8Array(NC*NC)
+diff --git a/app/src/game/world/l1Spatial.ts b/app/src/game/world/l1Spatial.ts
+--- a/app/src/game/world/l1Spatial.ts
++++ b/app/src/game/world/l1Spatial.ts
+@@ -1,6 +1,18 @@
+  for(let y=-rx;y<=rx;y+=40)for(let x=-rx;x<=rx;x+=40){const r=l1RegionAt(seed,x,y);if(!r)continue;const a=l1RegionReference(seed,r as any);if(a&&a.id===id){const d=Math.hypot(a.centerX,a.centerY);if(d<bd){bd=d;best=a}}}
+  return best
+ }
++const SKIN_WEIGHTS:[string,number][]=[['common',3],['round',1.4],['water',1.3],['bright',1.2],['clean',1.2],['dry',1],['room',.8],['dim',1],['dark',.7]]
++/** v3: which of the nine 天鹰 reference looks a parking hall wears. A hall with a reference bay
++ * takes that photo's look everywhere; other halls draw one by weight from their region id. */
++export function l1ParkingSkin(seed:number,x:number,y:number):string{
++ const dev=(globalThis as any).__l1Skin;if(dev)return dev // dev capture hook
++ const r=l1RegionAt(seed,Math.floor(x),Math.floor(y));if(!r)return 'common'
++ const a=l1RegionReference(seed,r as any)
++ if(a&&a.variant==='parking')return a.id==='power-out'?'dark':a.id==='parking-props'?'common':a.id.slice(8)
++ const total=SKIN_WEIGHTS.reduce((s,[,v])=>s+v,0);let t=l1Noise((r as any).ix0*3+(r as any).iy1,(r as any).iy0*5+(r as any).ix1,seed^0x5c1d)*total
++ for(const [k,v]of SKIN_WEIGHTS){if(t<v)return k;t-=v}
++ return 'common'
++}
+ export function l1ParkingAt(seed:number,x:number,y:number){
+  const ref=l1ReferenceAt(seed,x,y),id=ref?.id
+  const wet=id==='parking-dry'||id==='parking-clean'||id==='parking-room'?0:id==='parking-water'?.95:id==='parking-common'||id==='parking-bright'?.7:field(seed^71,x,y,91)
+diff --git a/app/src/game/world/l4Layout.ts b/app/src/game/world/l4Layout.ts
+--- a/app/src/game/world/l4Layout.ts
++++ b/app/src/game/world/l4Layout.ts
+@@ -1,7 +1,7 @@
+ // The remaining rectangular office wings form a connected land network.
+ import { h32 } from './infinite'
+ import type { GameMap } from './mapgen'
+-export type L4Variant = 'officehall' | 'open' | 'windowview' | 'smallrooms'
++export type L4Variant = 'officehall' | 'open' | 'windowview' | 'smallrooms' | 'hall'
+ export const L4_CELL = 20
+ export const L4_HEIGHT = 2.9
+ export const l4Cell = (v: number) => Math.floor((v - 13) / L4_CELL)
+@@ -1,7 +1,8 @@
+   const sy = 1 + h32(seed, 0x4a02, mx, my) % 2
+   return k - mx * 4 >= sx && k - mx * 4 < sx + 2 && r - my * 4 >= sy && r - my * 4 < sy + 2
+ }
+-export const l4VoidAt = (seed: number, x: number, y: number) => l4VoidCell(seed, l4Cell(x), l4Cell(y))
++/** v2 (continuous building): there is no void anywhere. Legacy cell helpers below are unused. */
++export const l4VoidAt = (_seed: number, _x: number, _y: number) => false
+ export function l4Coast(seed: number, k: number, r: number) {
+   return [l4VoidCell(seed,k,r-1),l4VoidCell(seed,k+1,r),l4VoidCell(seed,k,r+1),l4VoidCell(seed,k-1,r)]
+ }
+@@ -1,8 +1,8 @@
+   const n=h32(seed,0x4b13,Math.floor(k/2),Math.floor(r/2))%100
+   return n<38?'officehall':n<68?'open':'smallrooms'
+ }
+-export const L4_TINT: Record<L4Variant,number> = {officehall:51,open:52,windowview:53,smallrooms:54}
++export const L4_TINT: Record<L4Variant,number> = {officehall:51,open:52,windowview:53,smallrooms:54,hall:55}
+ export function l4StyleAt(m: GameMap,x:number,y:number):L4Variant {
+   const t=m.tint[Math.floor(y)*m.w+Math.floor(x)]
+-  return t===53?'windowview':t===52?'open':t===54?'smallrooms':'officehall'
++  return t===53?'windowview':t===52?'open':t===54?'smallrooms':t===55?'hall':'officehall'
+ }
+diff --git a/app/src/game/world/settlement.ts b/app/src/game/world/settlement.ts
+--- a/app/src/game/world/settlement.ts
++++ b/app/src/game/world/settlement.ts
+@@ -1,6 +1,7 @@
+  b.rooms.forEach((r,ri)=>{
+   paint(r,i=>roomIndex[i]=ri)
+   m.zones!.push({name:r.name,x:r.x+r.w/2,y:r.y+r.h/2,x0:r.x,y0:r.y,x1:r.x+r.w,y1:r.y+r.h})
++  for(const p of r.furniture??[])if(p.kind==='board')m.structures.push({kind:'settlementprop',x:r.x+p.x,y:r.y+p.y,w:p.w??2,h:.08,solid:false,data:{board:1,title:r.name,faction:b.faction,blueprint:b.id,bottom:1.15,height:2.4,partition:1}})
+   for(const p of furnishings(r))if(p.solid)m.structures.push({kind:'settlementprop',x:p.x,y:p.y,w:p.w,h:p.d,solid:true,data:{height:p.z+p.h,...(p.seat?{seatHeight:p.z+p.h,seatYaw:p.seat.yaw,seatLabel:p.seat.label,seatCount:p.seat.count??1,seatRelaxed:!!p.seat.relaxed}:{})}})
+  })
+  m.settlement={blueprint:b,heights,roomIndex,roofIndex}

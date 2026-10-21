@@ -6,6 +6,37 @@ import {l4StyleAt} from '../world/l4Layout'
 import {l4Material,l4WorldUV,type L4Surface} from './l4Materials'
 import {buildL4OfficeDetail} from './l4OfficeDetails'
 import {buildL4WallDecor} from './l4WallDecor'
+import {l0FlickerTime} from './l0Flicker'
+/* Fake sky (Fandom: the storm outside is static and false). Infinite-distance view, so the
+ * window reads as depth without any exterior geometry: low grey-blue rain clouds, the misty
+ * silhouettes of more office towers above and below, falling rain streaks. */
+const fakeSky=new THREE.ShaderMaterial({
+  uniforms:{time:l0FlickerTime},fog:false,
+  vertexShader:`varying vec3 wp;void main(){vec4 w=modelMatrix*vec4(position,1.);wp=w.xyz;gl_Position=projectionMatrix*viewMatrix*w;}`,
+  fragmentShader:`uniform float time;varying vec3 wp;
+    float h(vec2 v){return fract(sin(dot(v,vec2(127.1,311.7)))*43758.5453);}
+    float n(vec2 v){vec2 i=floor(v),f=fract(v);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+1.),f.x),f.y);}
+    void main(){
+      vec3 d=normalize(wp-cameraPosition);
+      float az=atan(d.x,d.z),el=d.y/max(.2,length(d.xz));
+      vec3 sky=mix(vec3(.50,.56,.60),vec3(.36,.42,.47),smoothstep(-.1,.9,el));
+      vec2 cu=vec2(az*3.,el*5.);float cl=n(cu)*.55+n(cu*2.3)*.3+n(cu*5.1)*.15;
+      sky*=.86+cl*.22;
+      // distant towers: columns of floors with dark glazing, fading into rain haze
+      float col=floor(az*14.),tw=h(vec2(col,3.)),gap=step(.22,fract(az*14.))*step(fract(az*14.),.94);
+      float top=.05+tw*.55;
+      float tower=step(el,top)*gap*step(.35,tw);
+      float fl=fract(el*22.+tw*7.),win=step(.35,fl)*step(.15,fract(az*140.));
+      vec3 tc=mix(vec3(.38,.43,.46),vec3(.26,.31,.34),win)*(1.+.08*h(vec2(col,floor(el*22.))));
+      float haze=.55+.25*cl;
+      sky=mix(sky,mix(tc,sky,haze),tower);
+      // rain streaks (screen-independent, in view direction space)
+      vec2 ru=vec2(az*260.,el*9.+time*7.);float st=step(.986,h(vec2(floor(ru.x),floor(ru.y))))*smoothstep(0.,.6,fract(ru.y));
+      sky+=st*.08;
+      // authored in display space; the scene renders linear → convert, and keep it below the lit interior
+      gl_FragColor=vec4(pow(sky,vec3(2.2))*.9,1.);
+    }`,
+})
 function owned<T extends THREE.Material>(m:T):T{m.userData.l4Owned=true;return m}
 const glassCache=new Map<number,THREE.MeshPhysicalMaterial>()
 function glassMaterial(opacity:number){let mat=glassCache.get(opacity);if(!mat){mat=new THREE.MeshPhysicalMaterial({color:'#93b5bf',opacity,transparent:true,depthWrite:false,side:THREE.DoubleSide,forceSinglePass:true,roughness:.2,metalness:.03});glassCache.set(opacity,mat)}return mat}
@@ -91,6 +122,7 @@ export function buildL4Structure(s:Structure):THREE.Group|null {
     if(partition&&Number(s.data?.sid??0)%3!==0){const blinds=buildL4OfficeDetail('blinds');blinds.position.z=-.065;g.add(blinds)}
     if(!partition&&kind!=='windowblack'){
       const haze=new THREE.Mesh(new THREE.PlaneGeometry(1,top-bottom),mist);haze.position.set(0,(bottom+top)/2,z-.012);g.add(haze)
+      if(s.data?.l4Facade){const back=new THREE.Mesh(new THREE.PlaneGeometry(1,top-bottom),fakeSky);back.rotation.y=Math.PI;back.position.set(0,(bottom+top)/2,z+.07);back.userData.noCastShadow=true;back.castShadow=false;g.add(back)}
       // Wet tracks are in the shared pane shader, not nine transparent meshes.
     }
   }else if(kind==='hoteldoor'||kind==='glassdoor'){
@@ -109,6 +141,21 @@ export function buildL4Structure(s:Structure):THREE.Group|null {
       for(const x of [-.43,.43])part(panel,.035,2.2,.045,x,1.1,0,'frame')
       part(panel,.035,.40,.05,.30,1.10,.06,'frame')
     }
+  }else if(kind==='watercooler'){
+    // Bottled office water cooler: off-white cabinet, hot/cold taps, drip tray, inverted 18.9 L bottle.
+    g.rotation.y=Number(s.data?.deg??0)*Math.PI/180
+    const z=-.18,almond=!!s.data?.almond,empty=Number(s.data?.water??4)<=0||(almond&&s.data?.searched===1)
+    part(g,.32,.98,.32,0,.49,z,'desk');part(g,.34,.04,.34,0,.99,z,'edge');part(g,.30,.05,.30,0,.025,z,'trim')
+    part(g,.20,.02,.07,0,.56,z+.18,'trim');part(g,.22,.015,.09,0,.575,z+.18,'edge') // drip tray
+    part(g,.26,.22,.012,0,.78,z+.161,'trim') // recessed tap bay
+    for(const[x,c]of [[-.055,'#b9312b'],[.055,'#2c5fa8']]as const){const tap=new THREE.Mesh(new THREE.BoxGeometry(.035,.05,.05),owned(new THREE.MeshStandardMaterial({color:c,roughness:.5})));tap.position.set(x,.8,z+.19);g.add(tap)}
+    part(g,.12,.006,.12,0,1.012,z,'frame') // bottle collar
+    const bottle=new THREE.Mesh(new THREE.CylinderGeometry(.135,.135,.40,20),owned(new THREE.MeshPhysicalMaterial({color:almond?'#e8d7a8':'#a9cbd8',transparent:true,opacity:.45,roughness:.15,depthWrite:false})));bottle.position.set(0,1.27,z);g.add(bottle)
+    const neck=new THREE.Mesh(new THREE.CylinderGeometry(.05,.11,.08,16),bottle.material);neck.position.set(0,1.04,z);g.add(neck)
+    for(const y of [1.17,1.37]){const rib=new THREE.Mesh(new THREE.TorusGeometry(.136,.006,4,20),bottle.material);rib.rotation.x=Math.PI/2;rib.position.set(0,y,z);g.add(rib)}
+    if(!empty){const fill=new THREE.Mesh(new THREE.CylinderGeometry(.128,.128,almond?.30:.26,18),owned(new THREE.MeshStandardMaterial({color:almond?'#d9b56a':'#6fa3b8',roughness:.2,transparent:true,opacity:.7})));fill.position.set(0,almond?1.20:1.18,z);g.add(fill)}
+    if(almond){const tag=new THREE.Mesh(new THREE.PlaneGeometry(.12,.08),owned(new THREE.MeshStandardMaterial({color:'#f2ead2',roughness:.8})));tag.position.set(0,1.27,z+.137);g.add(tag)}
+    part(g,.08,.10,.06,.11,.92,z+.19,'edge') // paper cup dispenser
   }else if(kind==='l4stairs'){
     // Two opposed height directions, sharing the same landing and loop identity.
     for(const [x,sign]of [[-1,1],[1,-1]])for(let n=0;n<16;n++){
@@ -122,14 +169,14 @@ export function buildL4Structure(s:Structure):THREE.Group|null {
   return g
 }
 export function buildL4Lights(m:GameMap,g:THREE.Group,lights:LightSource[],fixtures:{mat:THREE.MeshBasicMaterial;seed:number;src?:LightSource;batch?:THREE.InstancedMesh;index?:number}[]){
-  const styles=['officehall','open','smallrooms','windowview']
+  const styles=['officehall','open','smallrooms','hall']
   const matrix=new THREE.Matrix4(),rotation=new THREE.Quaternion(),scale=new THREE.Vector3(1,1,1),position=new THREE.Vector3()
   for(const style of styles){
     const sources=lights.filter(l=>!l.noFix&&l4StyleAt(m,l.x,l.y)===style);if(!sources.length)continue
-    const strip=style==='windowview',open=style==='open',w=strip?3.9:open?1.18:1.25,d=strip?.032:open?.59:.27
+    const open=style==='open'||style==='hall',w=open?1.18:1.25,d=open?.59:.27
     rotation.setFromAxisAngle(new THREE.Vector3(0,1,0),style==='officehall'?Math.PI/2:0)
     const frame=new THREE.InstancedMesh(new THREE.BoxGeometry(w+.045,.045,d+.045),l4Material('edge'),sources.length)
-    const mat=owned(new THREE.MeshBasicMaterial({color:'white'}));mat.userData.base=new THREE.Color(strip?'#dccab0':'#fffef2')
+    const mat=owned(new THREE.MeshBasicMaterial({color:'white'}));mat.userData.base=new THREE.Color('#fffef2')
     const emit=new THREE.InstancedMesh(new THREE.BoxGeometry(w,.024,d),mat,sources.length)
     emit.name='l4-instanced-fixtures';frame.name='l4-instanced-fixture-frames'
     for(let i=0;i<sources.length;i++){

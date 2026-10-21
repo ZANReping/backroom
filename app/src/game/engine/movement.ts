@@ -1,9 +1,13 @@
+import { wranglerControlsPlayer } from './wranglerAI'
+import { nguithrSpeedMult } from './nguithrAI'
 import { stepL7Events } from './l7Events'
 import { tickL0 } from './l0State'
 import { l0Sample } from '../world/l0Architecture'
 import { stableAt } from './career'
 import { dullerControlsPlayer } from './dullerAI'
 import { clumpControlsPlayer } from './clumpAI'
+import { nwControlsPlayer } from './watchAI'
+import { armsControlsPlayer } from './armsAI'
 import { l1DistanceScale } from '../world/l1Layout'
 import { l1BuildingStyleAt } from '../world/l1Building'
 // v53：移动/输入积分 + 垂直物理（固定子步积分主段、液体浮沉、跳跃重力、梯子攀爬）——
@@ -33,7 +37,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   const p = eng.player, m = eng.map!
   const verticalStart=p.z
   // A scripted wall crossing owns position temporarily; gravity must not snap onto a wall/upper floor.
-  if(dullerControlsPlayer(eng)||clumpControlsPlayer(eng)){eng.seating=null;return 0}
+  if(wranglerControlsPlayer(eng)||dullerControlsPlayer(eng)||clumpControlsPlayer(eng)||nwControlsPlayer(eng)||armsControlsPlayer(eng,dt)){eng.seating=null;return 0}
   if (eng.devEnabled && eng.dev.fly) {
     eng.seating = null
     const mag = Math.hypot(eng.input.mx,eng.input.my), divisor = Math.max(1,mag)
@@ -137,7 +141,8 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   if (lq === 1 && l7Swim) speed *= 0.72 // v57o：开放水域游泳比室内水池更快
   else if (lq !== 0) speed *= 0.5 // v13：液体中移动减速
   if (p.slowT > 0) { p.slowT -= dt; speed *= 0.5 }
-  if (eng.webbedT > 0) speed *= 0.5 // v51：镇静剂麻痹——移动迟缓
+  if (eng.webbedT > 0) speed *= 0.5 // v51：缠丝麻痹——移动迟缓
+  speed *= nguithrSpeedMult(eng) // Nguithr'xurh 轻度镇静：移动略慢
   if (p.flashJamT > 0) p.flashJamT -= dt
   if (eng.dev.speed) speed *= 1.8
   if (eng.plantK > 0) speed *= 1 - 0.55 * Math.min(1, eng.plantK) // v30 植殖癌：行为逐渐僵硬
@@ -665,4 +670,3 @@ export function updateClimb(eng: Engine, dt: number, mag: number) {
     }
   }
 }
-

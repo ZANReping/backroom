@@ -18,7 +18,7 @@ export const L5: LevelDef = {
     { type: 'hound', w: 10, min: 0, max: 1 },
     { type: 'skinstealer', w: 10, min: 0, max: 1 },
     { type: 'corpserat', w: 8, min: 0, max: 1 },
-    { type: 'nguithr', w: 6, min: 0, max: 1 },
+    { type: 'nguithr', w: 2, min: 0, max: 1 }, // Nguithr'xurh 重制：L5 只是零星记录（原 w6 → w2，稀有）
   ],
   items: [
     { type: 'skeleton', w: 6 }, // 万能钥匙——客房上锁门的对应解法（房门锁机制保留）

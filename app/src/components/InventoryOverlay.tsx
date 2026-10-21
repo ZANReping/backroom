@@ -1,12 +1,16 @@
 // 背包/图鉴/状态/地图 覆盖层
+import { isMelee } from '../game/content/melee'
+import { slotDur, slotMaxDur, slotName, isBroken } from '../game/engine/melee'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import {drawL0Map} from '@/game/content/l0Map'
 import {drawL1Map} from '@/game/content/l1Map'
+import {drawL4Map} from '@/game/content/l4Map'
 import { drawMapPlayer } from '@/game/content/mapPlayer'
 import { look } from '@/game/core/renderer3d'
 import { mapSight } from '@/game/world/mapSight'
 import L0MapLegend from './L0MapLegend'
 import L1MapLegend from './L1MapLegend'
+import L4MapLegend from './L4MapLegend'
 import NpcPortraitImage from './NpcPortraitImage'
 import EntityPreviewImage from './EntityPreviewImage'
 import type { Engine, SlotRef, SlotWhere } from '@/game/engine'
@@ -42,6 +46,7 @@ import { completedFactionLines, factionState, trackFactionTask } from '@/game/en
 import DocOverlay from './DocOverlay'
 import {requestDevMapPreview,devMapTeleport,type DevMapPreview} from '@/game/engine/devMap'
 import AlphaMapPanel from './AlphaMapPanel'
+import TradersMapPanel from './TradersMapPanel'
 import L11MapPanel from './L11MapPanel'
 // （物品显示稀有度已由 IOTS 罕见度取代，见 codexScores.ITEM_IOTS / IOTS_FREQ_COLORS）
 import { PHENOMENA, rarityText } from '@/game/content/phenomena'
@@ -171,7 +176,7 @@ function BigMap({ engine }: { engine: Engine }) {
     // v54c：wallwindow 格按墙绘制（瓦片虽雕成地板，渲染/碰撞均为整格墙）
     const wwSet = new Set<number>()
     for (const st of m.structures) if (st.kind === 'wallwindow') wwSet.add(Math.floor(st.y + st.h / 2) * m.w + Math.floor(st.x + st.w / 2))
-    if(!((m.inf?.l0||m.l1Architecture)&&viewFloor===0))for (let y = 0; y < m.h; y++)
+    if(!( (m.inf?.l0||m.l1Architecture||engine.levelDef.id===4) && viewFloor===0))for (let y = 0; y < m.h; y++)
       for (let x = 0; x < m.w; x++) {
         const i = y * m.w + x
         if (!(engine.devEnabled&&reveal) && !engine.explored[i]) continue
@@ -193,6 +198,8 @@ function BigMap({ engine }: { engine: Engine }) {
       }
     if(m.inf?.l0&&viewFloor===0){
       drawL0Map(g,engine,{x0:px-size/(2*s),y0:py-size/(2*s),x1:px+size/(2*s),y1:py+size/(2*s),scale:s,preview})
+    }else if(engine.levelDef.id===4&&viewFloor===0){
+      drawL4Map(g,engine,{x0:px-size/(2*s),y0:py-size/(2*s),x1:px+size/(2*s),y1:py+size/(2*s),scale:s,preview})
     }else if(m.l1Architecture&&viewFloor===0){
       drawL1Map(g,engine,{x0:px-size/(2*s),y0:py-size/(2*s),x1:px+size/(2*s),y1:py+size/(2*s),scale:s,preview})
     }else if(engine.devEnabled&&reveal&&preview){
@@ -372,7 +379,8 @@ function BigMap({ engine }: { engine: Engine }) {
       </div>
       {engine.devEnabled&&<div className="flex items-center gap-3 text-xs"><label><input type="checkbox" checked={reveal} onChange={e=>{engine.dev.mapReveal=e.target.checked;refreshMap(n=>n+1)}}/> 地图全开</label><span>右键安全传送 · 拖动平移</span></div>}
       {engine.map?.inf?.l0&&<L0MapLegend/>}
-      {engine.map?.l1Architecture&&<L1MapLegend/>}
+      {engine.map?.l1Architecture&&engine.levelDef.id!==4&&<L1MapLegend/>}
+      {engine.levelDef.id===4&&<L4MapLegend/>}
       {mapMessage&&<div className="text-xs" role="status">{mapMessage}</div>}
       {floorText && <div className="font-mono2 text-[12px]" style={{ color: 'var(--amber)' }}>{floorText}</div>}
       <div className="flex gap-2">
@@ -867,7 +875,12 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
       {selDef && selSlot && sel ? (
                 <div className="flex flex-col gap-2">
                   <div className="flex justify-center" style={{ color: 'var(--amber)' }}><ItemGlyph type={selSlot.type} size={64} count={selSlot.count} /></div>
-                  <div className="font-title text-center text-[18px]" style={{ color: 'var(--text)' }}>{selDef.name}</div>
+                  <div className="font-title text-center text-[18px]" style={{ color: 'var(--text)' }}>{slotName(selSlot)}</div>
+                  {isMelee(selSlot.type) && ( // 近战重制：单件耐久 + 修理/重击说明
+                    <div className="font-mono2 text-center text-[10px]" style={{ color: isBroken(selSlot) ? 'var(--blood)' : slotDur(selSlot) <= slotMaxDur(selSlot) * .25 ? '#d9a13a' : 'var(--text-dim)' }}>
+                      耐久 {slotDur(selSlot)}/{slotMaxDur(selSlot)}{isBroken(selSlot) ? ' · 残件（伤害与距离下降）' : ''} · 按住攻击键蓄力重击{slotDur(selSlot) < slotMaxDur(selSlot) * .5 ? ' · 右键用钉子/尼龙绳修理' : ''}
+                    </div>
+                  )}
                   <div className="font-mono2 text-center text-[10px]" style={{ color: selDef.anomalous ? 'var(--sanity)' : 'var(--text-dim)' }}>
                     {selDef.anomalous ? '后室物品' : '普通物品'} · <span style={{ color: IOTS_FREQ_COLORS[ITEM_IOTS[selSlot.type].frequency] }}>{ITEM_IOTS[selSlot.type].frequency}</span>
                   </div>
@@ -1504,8 +1517,10 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
 
         {tab === '地图' && (engine.player.level === 11 && engine.map?.inf
           ? <L11MapPanel engine={engine} />
-          : engine.map?.settlement?.blueprint.id === 'alpha'
-            ? <AlphaMapPanel engine={engine} />
+          : engine.map?.traders
+            ? <TradersMapPanel engine={engine} />
+            : engine.map?.settlement?.blueprint.id === 'alpha'
+              ? <AlphaMapPanel engine={engine} />
             : <BigMap engine={engine} />)}
 
         {tab === '日志' && <LogTab engine={engine} />}

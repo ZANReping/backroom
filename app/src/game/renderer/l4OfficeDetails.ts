@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { l4Material } from './l4Materials'
 
-type DetailKind = 'services'|'wallkit'|'printer'|'pantry'|'toilet'|'server'|'archive'|'deskItems'|'blinds'
+type DetailKind = 'services'|'wallkit'|'printer'|'pantry'|'toilet'|'server'|'archive'|'deskItems'|'blinds'|'boxes'|'chairstack'|'plant'|'whiteboard'
 const red = new THREE.MeshLambertMaterial({ color: '#a52b2b' })
 const paper = new THREE.MeshLambertMaterial({ color: '#f3f0e5' })
 const steel = new THREE.MeshStandardMaterial({ color: '#aeb5b3', metalness: .45, roughness: .42 })
@@ -67,8 +67,55 @@ function blinds(g: THREE.Group) {
   const edge = material('edge'); for(let i=0;i<12;i++){const m=box(g,edge,[.92,.012,.045],[0,1.75+(i-5.5)*.125,0]);m.rotation.x=.2} for(const x of [-.38,.38]) box(g,black,[.012,1.65,.012],[x,1.75,.04])
 }
 
+// ---- v2 abandoned-office clutter (hall/open zones)
+const card = new THREE.MeshLambertMaterial({ color: '#9c8b70' }), cardDark = new THREE.MeshLambertMaterial({ color: '#86765c' })
+const tape = new THREE.MeshLambertMaterial({ color: '#c9b78c' }), soil = new THREE.MeshLambertMaterial({ color: '#3b3128' })
+const deadLeaf = new THREE.MeshLambertMaterial({ color: '#7a7348', side: THREE.DoubleSide }), pot = new THREE.MeshLambertMaterial({ color: '#d8d4c8' })
+const r01 = (seed: number, k: number) => { const v = Math.sin(seed * 12.9898 + k * 78.233) * 43758.5453; return v - Math.floor(v) }
+function boxes(g: THREE.Group, seed: number) {
+  // archive cartons stacked against each other, one lid ajar, one fallen
+  const n = 3 + Math.floor(r01(seed, 1) * 4)
+  for (let i = 0; i < n; i++) {
+    const stack = i % 3, row = Math.floor(i / 3), w = .46, h = .30, d = .34
+    const b = box(g, i % 2 ? card : cardDark, [w, h, d], [-.25 + row * .5 + (r01(seed, i) - .5) * .06, h / 2 + stack * h, (r01(seed, i + 9) - .5) * .1])
+    b.rotation.y = (r01(seed, i + 3) - .5) * .25
+    box(g, tape, [w + .004, .02, .06], [b.position.x, b.position.y + h / 2 - .005, b.position.z]).rotation.y = b.rotation.y
+    if (stack === 2 && r01(seed, 20) > .5) i += 3 - stack
+  }
+  if (r01(seed, 30) > .5) { const f = box(g, card, [.46, .30, .34], [.55, .17, .35]); f.rotation.set(0, .9, Math.PI / 2) }
+  box(g, paper, [.21, .004, .30], [.2, .002, .45]).rotation.y = r01(seed, 31) * 3
+}
+function chairstack(g: THREE.Group, seed: number) {
+  // stacking guest chairs: tubular frame + grey shell, 4–6 high
+  const frame = material('frame'), shell = material('chair'), n = 4 + Math.floor(r01(seed, 2) * 3)
+  for (let i = 0; i < n; i++) {
+    const y = .45 + i * .085
+    box(g, shell, [.44, .035, .42], [0, y, 0]); const back = box(g, shell, [.44, .34, .03], [0, y + .21, -.22]); back.rotation.x = -.12
+  }
+  for (const x of [-.21, .21]) for (const z of [-.19, .19]) box(g, frame, [.022, .45, .022], [x, .225, z])
+  for (const x of [-.21, .21]) box(g, frame, [.022, .022, .42], [x, .02, 0])
+}
+function plant(g: THREE.Group, seed: number) {
+  // dead office ficus in a plastic planter
+  cyl(g, pot, .19, .42, [0, .21, 0], 16); cyl(g, soil, .175, .02, [0, .415, 0], 16)
+  const trunk = cyl(g, brown, .018, .9, [0, .86, 0], 6); trunk.rotation.z = .06
+  const leaves = 9 + Math.floor(r01(seed, 3) * 6)
+  for (let i = 0; i < leaves; i++) {
+    const a = r01(seed, i + 40) * Math.PI * 2, h = .9 + r01(seed, i + 60) * .45, r = .1 + r01(seed, i + 80) * .22
+    const l = new THREE.Mesh(new THREE.PlaneGeometry(.09, .16), deadLeaf); l.position.set(Math.cos(a) * r, h, Math.sin(a) * r); l.rotation.set(-.9 - r01(seed, i) * .9, a, 0); g.add(l)
+  }
+  for (let i = 0; i < 4; i++) { const l = new THREE.Mesh(new THREE.PlaneGeometry(.09, .16), deadLeaf); l.rotation.x = -Math.PI / 2; l.rotation.z = r01(seed, i + 100) * 6; l.position.set((r01(seed, i + 110) - .5) * .8, .004, (r01(seed, i + 120) - .5) * .8); g.add(l) }
+}
+function whiteboard(g: THREE.Group, seed: number) {
+  // mobile whiteboard, faint ghost marks
+  const frame = material('frame'), edge = material('edge')
+  box(g, paper, [1.2, .9, .02], [0, 1.35, 0]); box(g, edge, [1.24, .03, .04], [0, 1.81, 0]); box(g, edge, [1.24, .05, .08], [0, .89, .02])
+  for (const x of [-.6, .6]) { box(g, frame, [.03, 1.75, .03], [x, .9, 0]); box(g, frame, [.03, .03, .5], [x, .06, 0]); for (const z of [-.22, .22]) cyl(g, rubber, .03, .03, [x, .03, z], 8) }
+  for (let i = 0; i < 4; i++) box(g, i % 2 ? blue : red, [.25 + r01(seed, i) * .4, .008, .001], [(r01(seed, i + 5) - .5) * .7, 1.1 + r01(seed, i + 7) * .5, .011]).rotation.z = (r01(seed, i + 9) - .5) * .4
+}
+
 export function buildL4OfficeDetail(kind: DetailKind, seed = 0): THREE.Group {
   const g = new THREE.Group();
-  if (kind === 'services') services(g); else if (kind === 'wallkit') wallkit(g); else if (kind === 'printer') printer(g); else if (kind === 'pantry') pantry(g); else if (kind === 'toilet') toilet(g); else if (kind === 'server') server(g, seed); else if (kind === 'archive') archive(g, seed); else if (kind === 'deskItems') deskItems(g, seed); else blinds(g)
+  if (kind === 'boxes') boxes(g, seed); else if (kind === 'chairstack') chairstack(g, seed); else if (kind === 'plant') plant(g, seed); else if (kind === 'whiteboard') whiteboard(g, seed); else if (kind === 'services') services(g); else if (kind === 'wallkit') wallkit(g); else if (kind === 'printer') printer(g); else if (kind === 'pantry') pantry(g); else if (kind === 'toilet') toilet(g); else if (kind === 'server') server(g, seed); else if (kind === 'archive') archive(g, seed); else if (kind === 'deskItems') deskItems(g, seed); else blinds(g)
   return g
 }

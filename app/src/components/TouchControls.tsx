@@ -228,9 +228,10 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
         (e) => {
           e.stopPropagation()
           if (engine.getInteract()) engine.input.interact = true
-          else if (!engine.handsStowed) engine.input.attack = true
+          else if (!engine.handsStowed) { engine.input.attack = true; engine.input.attackHeld = true }
         },
-        undefined,
+        (e) => { e.stopPropagation(); engine.input.attackHeld = false }, // 近战重制：按住攻击键蓄力重击
+
         interact ? <IconInteract width={30} height={30} /> : <IconAttack width={30} height={30} />,
         interact ? 'anim-pulseAmber' : '',
       )}
@@ -349,8 +350,10 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
               onTouchStart={(e) => {
                 e.stopPropagation()
                 if (engine.getInteract()) engine.input.interact = true
-                else if (!engine.handsStowed) engine.input.attack = true
+                else if (!engine.handsStowed) { engine.input.attack = true; engine.input.attackHeld = true }
               }}
+              onTouchEnd={(e) => { e.stopPropagation(); engine.input.attackHeld = false }}
+              onTouchCancel={() => { engine.input.attackHeld = false }}
             >
               {interact ? <IconInteract width={32} height={32} /> : <IconAttack width={32} height={32} />}
             </button>
@@ -430,8 +433,10 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
                   onTouchStart={(e) => {
                     e.stopPropagation()
                     if (engine.getInteract()) engine.input.interact = true
-                    else if (!engine.handsStowed) engine.input.attack = true
+                    else if (!engine.handsStowed) { engine.input.attack = true; engine.input.attackHeld = true }
                   }}
+                  onTouchEnd={(e) => { e.stopPropagation(); engine.input.attackHeld = false }}
+                  onTouchCancel={() => { engine.input.attackHeld = false }}
                 >
                   {interact ? <IconInteract width={30} height={30} /> : <IconAttack width={30} height={30} />}
                 </button>

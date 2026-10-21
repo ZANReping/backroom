@@ -1,0 +1,158 @@
+
+> my-app@0.0.0 check:arms-integration
+> esbuild scripts/check-arms-integration.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-arms-integration.mjs && node .cache/check-arms-integration.mjs
+
+
+  .cache\check-arms-integration.mjs  3.1mb
+
+Done in 203ms
+{
+  "checks": 142464,
+  "modes": [
+    {
+      "mode": "classic",
+      "count": 1,
+      "arms": {
+        "meshes": 1,
+        "draws": 2,
+        "tris": 2012,
+        "bones": 27
+      },
+      "vent": {
+        "meshes": 2,
+        "draws": 2,
+        "tris": 844,
+        "bones": 0
+      },
+      "entity": {
+        "meshes": 3,
+        "draws": 4,
+        "tris": 2856,
+        "bones": 27
+      }
+    },
+    {
+      "mode": "classic",
+      "count": 2,
+      "arms": {
+        "meshes": 1,
+        "draws": 2,
+        "tris": 4024,
+        "bones": 53
+      },
+      "vent": {
+        "meshes": 2,
+        "draws": 2,
+        "tris": 844,
+        "bones": 0
+      },
+      "entity": {
+        "meshes": 3,
+        "draws": 4,
+        "tris": 4868,
+        "bones": 53
+      }
+    },
+    {
+      "mode": "classic",
+      "count": 3,
+      "arms": {
+        "meshes": 1,
+        "draws": 2,
+        "tris": 6036,
+        "bones": 79
+      },
+      "vent": {
+        "meshes": 2,
+        "draws": 2,
+        "tris": 844,
+        "bones": 0
+      },
+      "entity": {
+        "meshes": 3,
+        "draws": 4,
+        "tris": 6880,
+        "bones": 79
+      }
+    },
+    {
+      "mode": "realistic",
+      "count": 1,
+      "arms": {
+        "meshes": 1,
+        "draws": 2,
+        "tris": 2012,
+        "bones": 27
+      },
+      "vent": {
+        "meshes": 2,
+        "draws": 2,
+        "tris": 844,
+        "bones": 0
+      },
+      "entity": {
+        "meshes": 3,
+        "draws": 4,
+        "tris": 2856,
+        "bones": 27
+      }
+    },
+    {
+      "mode": "realistic",
+      "count": 2,
+      "arms": {
+        "meshes": 1,
+        "draws": 2,
+        "tris": 4024,
+        "bones": 53
+      },
+      "vent": {
+        "meshes": 2,
+        "draws": 2,
+        "tris": 844,
+        "bones": 0
+      },
+      "entity": {
+        "meshes": 3,
+        "draws": 4,
+        "tris": 4868,
+        "bones": 53
+      }
+    },
+    {
+      "mode": "realistic",
+      "count": 3,
+      "arms": {
+        "meshes": 1,
+        "draws": 2,
+        "tris": 6036,
+        "bones": 79
+      },
+      "vent": {
+        "meshes": 2,
+        "draws": 2,
+        "tris": 844,
+        "bones": 0
+      },
+      "entity": {
+        "meshes": 3,
+        "draws": 4,
+        "tris": 6880,
+        "bones": 79
+      }
+    }
+  ],
+  "prepResults": [
+    {
+      "seed": 717,
+      "steps": 7,
+      "ready": true
+    },
+    {
+      "seed": 718,
+      "steps": 7,
+      "ready": true
+    }
+  ],
+  "disposedOnCancel": 7
+}

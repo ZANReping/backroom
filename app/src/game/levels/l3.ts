@@ -12,7 +12,6 @@ export const L3: LevelDef = {
   infinite: true,
   size: 72, // 兼容占位（无限模式不使用）
   entities: [
-    { type: 'arcwraith', w: 16, min: 2, max: 3 },
     { type: 'smiler', w: 12, min: 2, max: 4 },
     { type: 'clump', w: 10, min: 1, max: 3 },
     // v53：L3 高智能实体（wikidot Level 3 条目）——伏击猎犬 / 敌意无面灵（部分持石器）/

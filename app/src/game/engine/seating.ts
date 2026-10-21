@@ -60,6 +60,7 @@ export function pickSeat(eng: Engine, s: Structure): SeatAnchor | null {
   if (!eng.map || eng.seating || eng.climb || eng.ride || eng.porchDrop || eng.inLiquid === 1 || eng.introT > 0 || eng.dev.fly || Math.abs(eng.player.vz) > .2) return null
   const p = eng.player, m = eng.map
   const choices = seatsFor(s, m, eng.levelDef.id).filter(a => {
+    if(m.traders&&eng.npcs.some(n=>!n.dead&&m.traders!.duties.get(n.id)?.seatHeight&&Math.hypot(n.x-a.x,n.y-a.y)<.5))return false
     const dx = p.x - a.x, dy = p.y - a.y
     const ground = floorHeight(m, a.x, a.y, a.floor)
     // The backrest is not an entrance. Side approaches remain available.

@@ -1,0 +1,860 @@
+diff --git a/app/src/App.tsx b/app/src/App.tsx
+--- a/app/src/App.tsx
++++ b/app/src/App.tsx
+@@ -1,7 +1,7 @@
+         return
+       }
+       // 攻击 / 快捷使用（默认在鼠标键上，改绑到键盘时由此分发）
+-      if (c === b.attack) engine.input.attack = true
++      if (c === b.attack && !e.repeat) { engine.input.attack = true; engine.input.attackHeld = true }
+       if (c === b.quickuse) engine.quickUse()
+       if (c === b.quickdrop) engine.quickDrop() // v20：Q 快捷丢弃当前手持
+       // 交互：战利品面板打开时 = 拿取全部物品（而不是重新搜索该容器）；
+@@ -1,6 +1,7 @@
+       if (isHolsterKey(e.code, b)) e.preventDefault()
+       if (e.code === b.jump) engine.input.jump = false // v57t：松键即停止持续上浮（深水跳跃是长按态，不能永远锁存）
+       if (e.code === b.inspect) engine.inspectHeld = false
++      if (e.code === b.attack) engine.input.attackHeld = false
+       if (e.code === b.reload && reloadHold) {
+         const hold = reloadHold
+         reloadHold = null
+@@ -1,7 +1,7 @@
+       look.locked = rawCaptureReady && document.pointerLockElement === canvas
+       mouseLook.reset(performance.now())
+     }
+-    const onFocusChange = () => { mouseLook.reset(performance.now());look.locked=rawCaptureReady&&document.hasFocus()&&!document.hidden&&document.pointerLockElement===canvas }
++    const onFocusChange = () => { engine.input.attackHeld = false; mouseLook.reset(performance.now());look.locked=rawCaptureReady&&document.hasFocus()&&!document.hidden&&document.pointerLockElement===canvas }
+     // Pointer Lock's mousemove is the authoritative relative-motion stream.
+     // Do not also consume pointermove/coalesced events or reconstruct movement
+     // from screen coordinates: the browser can recenter its hidden OS cursor.
+@@ -1,8 +1,10 @@
+     const onMouseDown = (e: MouseEvent) => {
+       if (!look.locked) return
+       if (portraitBlockedRef.current || screenRef.current !== 'game' || overlayRef.current !== 'none') return
++      if (`Mouse${e.button}` === getKeybinds().attack) engine.input.attackHeld = true // 近战重制：按住蓄力
+       fireDiscrete(`Mouse${e.button}`)
+     }
++    const onMouseUp = (e: MouseEvent) => { if (`Mouse${e.button}` === getKeybinds().attack) engine.input.attackHeld = false }
+     // 屏蔽右键菜单（游戏中右键默认用作快捷使用）
+     const onContextMenu = (e: Event) => {
+       if (screenRef.current === 'game') e.preventDefault()
+@@ -1,6 +1,7 @@
+     document.addEventListener('visibilitychange',onFocusChange)
+     window.addEventListener(motionEvent, onMouseMove)
+     window.addEventListener('mousedown', onMouseDown)
++    window.addEventListener('mouseup', onMouseUp)
+     window.addEventListener('contextmenu', onContextMenu)
+     window.addEventListener('wheel', onWheel, { passive: true })
+ 
+@@ -1,6 +1,7 @@
+       document.removeEventListener('visibilitychange',onFocusChange)
+       window.removeEventListener(motionEvent, onMouseMove)
+       window.removeEventListener('mousedown', onMouseDown)
++    window.removeEventListener('mouseup', onMouseUp)
+       window.removeEventListener('contextmenu', onContextMenu)
+       window.removeEventListener('wheel', onWheel)
+     }
+diff --git a/app/src/components/HUD.tsx b/app/src/components/HUD.tsx
+--- a/app/src/components/HUD.tsx
++++ b/app/src/components/HUD.tsx
+@@ -1,4 +1,6 @@
+ // 游戏 HUD（桌面 + 移动端自适应）
++import { isMelee } from '../game/content/melee'
++import { slotDur, slotMaxDur, slotName } from '../game/engine/melee'
+ import { useEffect, useRef, useState } from 'react'
+ import { createPortal } from 'react-dom'
+ import type { Engine } from '@/game/engine'
+@@ -1,7 +1,8 @@
+         <div
+           className="hud-hotbar-name font-mono2 px-2 py-0.5 text-[11px]"
+         >
+-          {ITEMS[p.hotbar[p.selected]!.type]?.name ?? p.hotbar[p.selected]!.type}
++          {slotName(p.hotbar[p.selected]!)}
++          {isMelee(p.hotbar[p.selected]!.type) && <span style={{ color: 'var(--text-dim)' }}> {slotDur(p.hotbar[p.selected]!)}/{slotMaxDur(p.hotbar[p.selected]!)}</span>}
+         </div>
+       )}
+       <div className="hud-hotbar-row flex gap-1">
+@@ -1,6 +1,12 @@
+             <>
+               <ItemGlyph type={s.type} count={s.count} />
+               {s.count > 1 && <span className="font-mono2 absolute bottom-0 right-0.5 text-[9px]" style={{ color: 'var(--amber)' }}>{s.count}</span>}
++              {isMelee(s.type) && (() => { // 近战重制：耐久条（≤25% 变红，残件灰）
++                const k = slotDur(s) / slotMaxDur(s)
++                return <span className="absolute bottom-0.5 left-1 right-1 h-[3px]" style={{ background: 'rgba(0,0,0,.45)' }}>
++                  <span className="block h-full" style={{ width: `${Math.max(k > 0 ? 6 : 100, k * 100)}%`, background: k <= 0 ? '#5a5650' : k <= .25 ? '#c0392b' : k <= .5 ? '#d9a13a' : '#8fbf6a' }} />
++                </span>
++              })()}
+             </>
+           )}
+         </button>
+diff --git a/app/src/components/InventoryOverlay.tsx b/app/src/components/InventoryOverlay.tsx
+--- a/app/src/components/InventoryOverlay.tsx
++++ b/app/src/components/InventoryOverlay.tsx
+@@ -1,4 +1,6 @@
+ // 背包/图鉴/状态/地图 覆盖层
++import { isMelee } from '../game/content/melee'
++import { slotDur, slotMaxDur, slotName, isBroken } from '../game/engine/melee'
+ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+ import {drawL0Map} from '@/game/content/l0Map'
+ import {drawL1Map} from '@/game/content/l1Map'
+@@ -1,7 +1,12 @@
+       {selDef && selSlot && sel ? (
+                 <div className="flex flex-col gap-2">
+                   <div className="flex justify-center" style={{ color: 'var(--amber)' }}><ItemGlyph type={selSlot.type} size={64} count={selSlot.count} /></div>
+-                  <div className="font-title text-center text-[18px]" style={{ color: 'var(--text)' }}>{selDef.name}</div>
++                  <div className="font-title text-center text-[18px]" style={{ color: 'var(--text)' }}>{slotName(selSlot)}</div>
++                  {isMelee(selSlot.type) && ( // 近战重制：单件耐久 + 修理/重击说明
++                    <div className="font-mono2 text-center text-[10px]" style={{ color: isBroken(selSlot) ? 'var(--blood)' : slotDur(selSlot) <= slotMaxDur(selSlot) * .25 ? '#d9a13a' : 'var(--text-dim)' }}>
++                      耐久 {slotDur(selSlot)}/{slotMaxDur(selSlot)}{isBroken(selSlot) ? ' · 残件（伤害与距离下降）' : ''} · 按住攻击键蓄力重击{slotDur(selSlot) < slotMaxDur(selSlot) * .5 ? ' · 右键用钉子/尼龙绳修理' : ''}
++                    </div>
++                  )}
+                   <div className="font-mono2 text-center text-[10px]" style={{ color: selDef.anomalous ? 'var(--sanity)' : 'var(--text-dim)' }}>
+                     {selDef.anomalous ? '后室物品' : '普通物品'} · <span style={{ color: IOTS_FREQ_COLORS[ITEM_IOTS[selSlot.type].frequency] }}>{ITEM_IOTS[selSlot.type].frequency}</span>
+                   </div>
+diff --git a/app/src/components/TouchControls.tsx b/app/src/components/TouchControls.tsx
+--- a/app/src/components/TouchControls.tsx
++++ b/app/src/components/TouchControls.tsx
+@@ -1,9 +1,10 @@
+         (e) => {
+           e.stopPropagation()
+           if (engine.getInteract()) engine.input.interact = true
+-          else if (!engine.handsStowed) engine.input.attack = true
++          else if (!engine.handsStowed) { engine.input.attack = true; engine.input.attackHeld = true }
+         },
+-        undefined,
++        (e) => { e.stopPropagation(); engine.input.attackHeld = false }, // 近战重制：按住攻击键蓄力重击
++
+         interact ? <IconInteract width={30} height={30} /> : <IconAttack width={30} height={30} />,
+         interact ? 'anim-pulseAmber' : '',
+       )}
+@@ -1,8 +1,10 @@
+               onTouchStart={(e) => {
+                 e.stopPropagation()
+                 if (engine.getInteract()) engine.input.interact = true
+-                else if (!engine.handsStowed) engine.input.attack = true
++                else if (!engine.handsStowed) { engine.input.attack = true; engine.input.attackHeld = true }
+               }}
++              onTouchEnd={(e) => { e.stopPropagation(); engine.input.attackHeld = false }}
++              onTouchCancel={() => { engine.input.attackHeld = false }}
+             >
+               {interact ? <IconInteract width={32} height={32} /> : <IconAttack width={32} height={32} />}
+             </button>
+@@ -1,8 +1,10 @@
+                   onTouchStart={(e) => {
+                     e.stopPropagation()
+                     if (engine.getInteract()) engine.input.interact = true
+-                    else if (!engine.handsStowed) engine.input.attack = true
++                    else if (!engine.handsStowed) { engine.input.attack = true; engine.input.attackHeld = true }
+                   }}
++                  onTouchEnd={(e) => { e.stopPropagation(); engine.input.attackHeld = false }}
++                  onTouchCancel={() => { engine.input.attackHeld = false }}
+                 >
+                   {interact ? <IconInteract width={30} height={30} /> : <IconAttack width={30} height={30} />}
+                 </button>
+diff --git a/app/src/game/core/audio.ts b/app/src/game/core/audio.ts
+--- a/app/src/game/core/audio.ts
++++ b/app/src/game/core/audio.ts
+@@ -1,6 +1,27 @@
+     o.connect(g).connect(this.sfx); o.start(); o.stop(this.ctx.currentTime + 0.13)
+   }
+ 
++  /** 近战重制：打墙弹刀——金属类高频「铛」+ 木头类闷响；broke=武器断裂（更长的碎裂噪声） */
++  clang(metal = true, broke = false) {
++    if (!this.ctx || !this.sfx) return
++    const t = this.ctx.currentTime
++    const g = this.ctx.createGain()
++    g.gain.setValueAtTime(metal ? 0.13 : 0.18, t)
++    g.gain.exponentialRampToValueAtTime(0.001, t + (metal ? 0.45 : 0.16))
++    g.connect(this.sfx)
++    for (const f of metal ? [1180, 1730, 2650] : [140, 210]) {
++      const o = this.ctx.createOscillator()
++      o.type = metal ? 'triangle' : 'square'; o.frequency.setValueAtTime(f, t); o.frequency.exponentialRampToValueAtTime(f * 0.94, t + 0.4)
++      o.connect(g); o.start(t); o.stop(t + 0.46)
++    }
++    if (broke) {
++      const n = this.noiseSrc(), f = this.ctx.createBiquadFilter(), g2 = this.ctx.createGain()
++      f.type = 'highpass'; f.frequency.value = metal ? 2200 : 600
++      g2.gain.setValueAtTime(0.16, t); g2.gain.exponentialRampToValueAtTime(0.001, t + 0.3)
++      n.connect(f).connect(g2).connect(this.sfx); n.start(t); n.stop(t + 0.32)
++    }
++  }
++
+   // 胃部咕噜声（饥饿）
+   stomach() {
+     if (!this.ctx || !this.sfx) return
+diff --git a/app/src/game/core/types.ts b/app/src/game/core/types.ts
+--- a/app/src/game/core/types.ts
++++ b/app/src/game/core/types.ts
+@@ -1,6 +1,8 @@
+   y: number
+   fake?: boolean
+   z?: number // v13：所在高度（米；缺省=所在地面高度，上层物品=FLOOR_H）
++  dur?: number // 近战重制：丢下的近战武器保留单件耐久（0=残件）
++  blood?: number
+ }
+ 
+ export interface LightSource {
+diff --git a/app/src/game/engine.ts b/app/src/game/engine.ts
+--- a/app/src/game/engine.ts
++++ b/app/src/game/engine.ts
+@@ -1,3 +1,4 @@
++import { heldMelee, updateMeleeInput, type MeleePending } from './engine/melee'
+ import * as careerSystem from './engine/career'
+ import {restoreGlowFlight} from './engine/glowsticks'
+ import { megState, resetMegRuntime, updateMegMissions } from './engine/megMissions'
+@@ -1,7 +1,7 @@
+ export type { Difficulty } from './engine/shared'
+ export { EFFECTS } from './engine/effects'
+ 
+-export interface InvSlot { type: string; count: number; tag?: number } // tag：来源层级标签（迁跃浆果=发现它的层级；不同标签不堆叠）
++export interface InvSlot { type: string; count: number; tag?: number; dur?: number; blood?: number } // dur：近战武器单件耐久（缺省=满；0=残件）；blood：刃上血污 0..1 // tag：来源层级标签（迁跃浆果=发现它的层级；不同标签不堆叠）
+ // 装备槽位标识：hotbar/backpack 为背包格；offhand/body/gloves/pocket 为装备位（主手=快捷栏选中项，不是独立槽位）
+ export type SlotWhere = 'hotbar' | 'backpack' | 'offhand' | 'body' | 'gloves' | 'head' | 'pocket'
+ export interface SlotRef { w: SlotWhere; i: number }
+@@ -1,6 +1,8 @@
+   mx: number; my: number // 移动向量（-1..1）
+   sprint: boolean
+   attack: boolean
++  /** 攻击键是否仍按着（近战蓄力用；触屏/键鼠松开时清零） */
++  attackHeld?: boolean
+   interact: boolean
+   toggleLight: boolean
+   jump: boolean // v7：跳跃（桌面空格 / 移动端按钮，边沿触发由引擎消费）
+@@ -1,7 +1,7 @@
+   // 消耗品使用：动作完成前不结算效果/扣除物品；槽位内容变化会安全取消。
+   usingItem: { where: SlotWhere; i: number; type: string; tag?: number; t: number; dur: number; anim: ItemUseAnim; label: string; targetJerry?: boolean } | null = null
+   lootPanel: { sid: number; label: string; items: string[] } | null = null
+-  statusMsgT = { hunger: 0, thirst: 0, battery: 0, stamina: 0 }
++  statusMsgT = { hunger: 0, thirst: 0, battery: 0, stamina: 0, bounce: 0, backstab: 0 }
+   redAnnounced = new Set<string>() // 本层已播报预警的红室 chunk（chunkKey）
+   // 固定子步移动积分器（帧间保留时间余数，保证高低帧率位移一致）
+   moveIt: MoveIntegrator = createIntegrator()
+@@ -1,6 +1,19 @@
+   attackCooldownDur = 0
+   // 攻击动画种类（渲染层据此切换动作）：punch=空手出拳 swing=武器挥舞 throw=投掷
+   attackAnimKind: 'punch' | 'swing' | 'throw' | 'spray' | 'drink' = 'punch'
++  /** 近战重制：普攻左右交替（刀）1/-1；本次挥砍是否重击；蓄力 0..1；弹刀回震 0..1 */
++  meleeSide = 1
++  meleeHeavy = false
++  meleeCharge = 0
++  meleeBounce = 0
++  /** 当前手持近战武器的攻击距离（0 = 非近战，用旧的 1.9m） */
++  meleeReach = 0
++  /** 按下攻击键后的计时（判断短按/蓄力）；slot 防止中途换武器 */
++  meleePress: { t: number; slot: InvSlot } | null = null
++  /** 前摇中、等待判定的挥砍 */
++  meleePending: MeleePending | null = null
++  /** 命中卡帧剩余（秒）：期间挥砍动画与判定计时冻结 */
++  hitStopT = 0
+   // 飞行中的投掷物（订书机/汽油罐等；落地触发效果，见 landProjectile）
+   projectiles: Projectile[] = []
+   projId = 1
+@@ -1,7 +1,8 @@
+   plantStage = 0
+   inGardenEff = false // 本帧植殖癌是否生效（含开发者强制开/关），供现象列表读取
+   // ===== v32：新物品机制状态 =====
+-  axeDur = 0 // 斧头耐久（获得时重置为 5；破门 -1，耗尽报废）
++  /** @deprecated 近战重制后耐久按单件记录（InvSlot.dur）；保留字段只为兼容旧代码读取，恒为 0 */
++  axeDur = 0
+   squirtTank: 'none' | 'water' | 'almond' | 'cashew' | 'liquidpain' = 'none' // 滋水枪储罐液体（单一种类）
+   // R 短按快速装填使用的液体；长按轮盘选中液体后更新。清水无需背包物品，因此作为初始回退。
+   squirtQuickLiquid: 'water' | 'almond' | 'cashew' | 'liquidpain' = 'water'
+@@ -1,7 +1,8 @@
+   cureInfection(npcId: string): boolean { return npc.cureInfection(this, npcId) }
+ 
+   // ---------- 背包/装备/物品使用（engine/inventory.ts）----------
+-  addItem(type: string): boolean { return inventory.addItem(this, type) }
++  addItem(type: string, extra?: Partial<InvSlot>): boolean { return inventory.addItem(this, type, extra) }
++  strike(dmg: number, melee?: combat.MeleeStrike) { return combat.strike(this, dmg, melee) }
+   hasItem(type: string): boolean { return inventory.hasItem(this, type) }
+   countItem(type: string): number { return inventory.countItem(this, type) }
+   consumeItem(type: string): boolean { return inventory.consumeItem(this, type) }
+@@ -1,12 +1,16 @@
+     if (this.updateSurvival(dt, dm, mag)) return
+ 
+     // ---- 攻击 ----
+-    if (this.attackAnimT > 0) this.attackAnimT -= dt
++    if (this.hitStopT > 0) this.hitStopT = Math.max(0, this.hitStopT - dt)
++    else if (this.attackAnimT > 0) this.attackAnimT -= dt
+     if (this.attackCooldownT > 0) this.attackCooldownT = Math.max(0, this.attackCooldownT - dt)
+     if (this.input.attack) {
+       this.input.attack = false
+-      if (!introLock && !this.usingItem) this.attack()
++      const mh = heldMelee(this)
++      if (mh && !introLock && !this.usingItem && !this.handsStowed && !jerryInputLock(this)) this.meleePress = { t: 0, slot: mh } // 近战：松开时决定普攻/重击
++      else if (!introLock && !this.usingItem) this.attack()
+     }
++    updateMeleeInput(this, dt, introLock)
+     this.updateProjectiles(dt)
+     if (this.input.toggleLight) {
+       this.input.toggleLight = false
+diff --git a/app/src/game/engine/combat.ts b/app/src/game/engine/combat.ts
+--- a/app/src/game/engine/combat.ts
++++ b/app/src/game/engine/combat.ts
+@@ -1,3 +1,4 @@
++import { heldMelee, startMeleeSwing } from './melee'
+ import { witnessedOffense } from './career'
+ import { provokeMoths } from './moths'
+ import { provokeHound } from './houndAI'
+@@ -1,7 +1,7 @@
+ 
+ // 攻击距离：基础 1.9m，巨型实体按体量加成（v28：原 1.6 过短，近身常常够不到）
+ export function attackReach(_eng: Engine, e: Entity): number {
+-  return 1.9 + Math.max(0, (e.def.huge ?? 1) - 1) * 0.6
++  return (_eng.meleeReach > 0 ? _eng.meleeReach : 1.9) + Math.max(0, (e.def.huge ?? 1) - 1) * 0.6
+ }
+ 
+ /** v59 联机：客人攻击房主权威实体（带 netId）——伤害改报房主结算（快照回同步 hp/死亡/激怒），
+@@ -1,6 +1,8 @@
+     return
+   }
+   if (!eng.dev.noAttackCooldown && eng.attackCooldownT > 0) return
++  // 近战重制：五把近战武器走三段式挥砍（前摇结束才判定，见 engine/melee.ts）
++  if (heldMelee(eng)) { startMeleeSwing(eng, false, 0); return }
+   const def = held ? ITEMS[held.type] : undefined
+   // 所有左键攻击共用冷却入口；近战武器从物品定义读取独立间隔/体力，特殊攻击使用轻量模板。
+   const interval = eng.gunCandyT > 0 ? 0.24
+@@ -1,6 +1,7 @@
+   const duration = exhausted ? Math.max(3.1, interval * 4.5) : interval
+   eng.attackCooldownDur = eng.dev.noAttackCooldown ? 0 : duration
+   eng.attackCooldownT = eng.attackCooldownDur
++  if (def?.weapon && eng.gunCandyT <= 0) eng.meleeSide = -eng.meleeSide // 近战重制：刀左右交替快划
+   startAttackAnimation(eng,
+     eng.gunCandyT > 0 || held?.type === 'squirtgun' ? 'spray'
+       : def?.throw ? 'throw'
+@@ -1,8 +1,30 @@
+   // v32：滋水枪——左键喷射储罐液体
+   if (held?.type === 'squirtgun') { eng.squirt(); return }
+   audio.swing()
+-  // 开发者模式：一击必杀
+-  const dmg = eng.dev.oneHit ? 99999 : held ? (ITEMS[held.type].weapon ?? 8) : 8
++  const r = strike(eng, eng.dev.oneHit ? 99999 : held ? (ITEMS[held.type].weapon ?? 8) : 8)
++  void r
++}
++
++export interface MeleeStrike { kind: string; heavy: boolean; broken: boolean; targets: number; stun: number; backstab?: number; reach: number }
++/** 一次近战结算（空手/旧路径立即调用；五把近战武器在前摇结束时由 engine/melee.ts 调用）。 */
++export function strike(eng: Engine, dmgIn: number, melee?: MeleeStrike): { hit: boolean; wall: boolean } {
++  const p = eng.player, m = eng.map!
++  if (melee) audio.swing()
++  // 目标数限制：只取最近的 N 个可命中实体（木板 3，其余 1）
++  let allowed: Set<Entity> | null = null
++  if (melee) {
++    const c = m.entities.filter((e) => eng.canHit(e)).sort((a, b) => Math.hypot(a.x - p.x, a.y - p.y) - Math.hypot(b.x - p.x, b.y - p.y))
++    allowed = new Set(c.slice(0, melee.targets))
++  }
++  // 背刺：刀从目标背后（目标未在追击/攻击）出手 ×2
++  const dmgFor = (e: Entity) => {
++    if (!melee?.backstab || e.state === 'chase' || e.state === 'attack') return dmgIn
++    const toP = Math.atan2(p.y - e.y, p.x - e.x)
++    let d = Math.abs(toP - e.facing); if (d > Math.PI) d = Math.PI * 2 - d
++    if (d < 2.1) return dmgIn
++    if (eng.statusMsgT.backstab <= 0) { eng.msg('背刺！刀从它背后捅了进去。（伤害 ×2）', 'loot'); eng.statusMsgT.backstab = 4 }
++    return dmgIn * melee.backstab
++  }
+   let hit = false
+   let blockedJerry = false // v47：教化约束——被拦下的对鹉主挥击（提示「你下不去手」）
+   for (const e of m.entities) {
+@@ -1,13 +1,15 @@
+       }
+       if (!thingBody) continue
+     } else if (!eng.canHit(e)) continue
++    if (allowed && !allowed.has(e) && !thingBody) continue
++    const edmg = dmgFor(e)
+     recordEntityEncounter(e) // v54：攻击命中计一次遭遇（按个体去重）
+     // v47：教化约束——教化值 >0 后无法再对鹉主出手（驯服清零后解除约束）
+     if (e.def.type === 'jerry' && eng.indoctrination > 0) { blockedJerry = true; continue }
+     const ang = Math.atan2(e.y - p.y, e.x - p.x)
+     // v59 联机：客人挥中房主权威实体——伤害上报房主结算（快照回同步 hp/死亡/激怒），
+     // 本地只做打击反馈（血迹/挥中音效），不扣血不击杀（防两端状态与掉落分叉）
+-    if (mpHurtEntity(eng, e, thingBody ? dmg * 0.25 : dmg)) {
++    if (mpHurtEntity(eng, e, thingBody ? edmg * 0.25 : edmg)) {
+       if (thingBody && (e.turnSlowT ?? 0) <= 0) eng.msg('刀刃没入它皮革般的身体——伤害甚微，但它转头的动作滞涩了一瞬。', 'system')
+       hit = true
+       eng.bloodParticles(e.x, e.y)
+@@ -1,17 +1,17 @@
+       // 派对客：按准星打中的部位结算（面条臂 / 头脸 / 躯干），胸甲闭合时躯体减伤 90%，倒地后只能用火烧尽
+       const dir = crosshairDirection(), off = seatedEyeOffset(eng)
+       const part = partygoerAimPart(eng, e, { ox: p.x + off.x, oy: p.y + off.y, oz: p.z + seatedEyeHeight(eng), dx: dir.x, dy: dir.y, dz: dir.z })
+-      partygoerDamage(eng, e, dmg, 'melee', part)
++      partygoerDamage(eng, e, edmg, 'melee', part)
+     } else if (thingBody) {
+       // v58：体节命中——伤害大减，但让它转头迟滞 3 秒；巨躯不被击退
+-      e.hp -= dmg * 0.25
++      e.hp -= edmg * 0.25
+       if ((e.turnSlowT ?? 0) <= 0) eng.msg('刀刃没入它皮革般的身体——伤害甚微，但它转头的动作滞涩了一瞬。', 'system')
+       e.turnSlowT = 3
+     } else if (e.def.type === 'jerry') {
+-      e.hp -= dmg // 鹉主杰瑞：不被击退（它在栖木/神父肩上），受伤后尖啸反扑（jerryAI.jerryHurt）
++      e.hp -= edmg // 鹉主杰瑞：不被击退（它在栖木/神父肩上），受伤后尖啸反扑（jerryAI.jerryHurt）
+       jerryHurt(eng, e)
+     } else {
+-      e.hp -= dmg
++      e.hp -= edmg
+       // 击退位移做墙体校验：落点不可走（墙/实心结构/不可达高差）则不位移——
+       // 击杀后的尸体同样不会被钉进墙里（尸体落点即击退落点）
+       const kx = e.x + Math.cos(ang) * 0.4, ky = e.y + Math.sin(ang) * 0.4
+@@ -1,7 +1,7 @@
+       if (eng.entityWalkH(m, ktx, kty, bandOfZ(e.z)) !== null
+         && (!l9StreetBound || m.outdoor[kty * m.w + ktx] === 1)) { e.x = kx; e.y = ky }
+     }
+-    e.stunT = 0.35
++    e.stunT = melee ? melee.stun : 0.35
+     // v47：伤害鹉主杰瑞——信众哗然：jerry 声望立即 -50（每次）
+     if (e.def.type === 'jerry') eng.hurtJerryRep()
+     hit = true
+@@ -1,7 +1,7 @@
+     if (e.def.type === 'corpserat' && e.provoked) eng.provokeRatPack(e) // v44：尸鼠群体激怒——周围同伴一同反击同一目标
+     eng.killCheck(e)
+   }
+-  if (hit) { audio.hit(); eng.camShake = Math.min(1, eng.camShake + 0.15) }
++  if (hit) { audio.hit(); eng.camShake = Math.min(1, eng.camShake + (melee?.heavy ? 0.3 : 0.15)) }
+   else if (blockedJerry) eng.msg('你下不去手——鹉主的蓝羽在你眼中只剩神圣。（教化约束：驯服祂才能解除）', 'system')
+   // v35：挥击波及 NPC——降低其所属团体声望（NPC 是居民不是实体：不会受伤、不会死亡）
+   let blockedFollower = false // v47：教化约束——被拦下的对信众挥击
+@@ -1,7 +1,7 @@
+     // v39：BRC 员工——跳过 changeRep(-15)：不立即降声望，改记未告发次数（坦白时结清）。
+     // 员工不受攻击影响（不逃跑/不反击/不停手），但可被杀死；敌对员工被杀死不另记罪（已坦白结清）
+     if (n.def.faction === 'brc') {
+-      const dmg2 = eng.dev.oneHit ? 99999 : held ? (ITEMS[held.type].weapon ?? 8) : 8
++      const dmg2 = dmgIn
+       n.hp = (n.hp ?? 55) - dmg2
+       eng.bloodParticles(n.x, n.y)
+       audio.hit()
+@@ -1,7 +1,7 @@
+     if (n.def.faction === 'jerry') {
+       // v47：教化约束——教化值 ≥50 后无法再攻击信众 NPC（他们是你的兄弟姐妹；驯服清零后解除）
+       if (eng.indoctrination >= 50) { blockedFollower = true; continue }
+-      const dmg2 = eng.dev.oneHit ? 99999 : held ? (ITEMS[held.type].weapon ?? 8) : 8
++      const dmg2 = dmgIn
+       n.hp = (n.hp ?? 45) - dmg2
+       eng.bloodParticles(n.x, n.y)
+       audio.hit()
+@@ -1,7 +1,14 @@
+   }
+   if (blockedFollower) eng.msg('你下不去手——他们是你的兄弟姐妹。（教化约束：驯服鹉主才能解除）', 'system')
+   // 空手/武器挥击也产生噪音（可主动威慑猎犬）
+-  eng.noiseEvent(p.x, p.y, 8, false)
++  eng.noiseEvent(p.x, p.y, melee?.heavy ? 11 : 8, false)
++  // 近战重制：什么都没打中时，沿准星检查是否砸到了墙（弹刀）
++  let wall = false
++  if (melee && !hit && !blockedJerry) {
++    const tr = traceCrosshair(eng, melee.reach)
++    wall = !tr.entity && tr.travel < melee.reach - 0.05
++  }
++  return { hit, wall }
+ }
+ 
+ // ---------- v28：可投掷道具 ----------
+diff --git a/app/src/game/engine/interact.ts b/app/src/game/engine/interact.ts
+--- a/app/src/game/engine/interact.ts
++++ b/app/src/game/engine/interact.ts
+@@ -1,3 +1,5 @@
++import { usableAxe, wearSlot, slotDur, slotMaxDur } from './melee'
++import { DUR_DOOR } from '../content/melee'
+ import { actualRank, fieldTargets, recordField } from './career'
+ import {bntgDoorAllowed} from './bntg'
+ import {TRADE_DEFS} from '../content/tradeDecor'
+@@ -1,10 +1,10 @@
+       if (s.data?.sealed) consider('hoteldoor', '锁死的门（锁的结构闻所未闻）', s, d, true) // v41：L2 特殊锁死门——任何方式都打不开
+       else if (s.data?.locked) {
+         const staffCard = s.data?.staff === 1 && eng.hasPocket('keycard')
+-        const canAxe = eng.hasItem('axe') && eng.axeDur > 0
++        const axe = usableAxe(eng), canAxe = !!axe
+         const can = staffCard || eng.hasItem('crowbar') || eng.hasPocket('skeleton') || canAxe
+         const label = staffCard ? '刷员工卡 打开员工门'
+-          : canAxe ? `劈开 上锁的房门（斧头耐久 ${eng.axeDur}/5）`
++          : canAxe ? `劈开 上锁的房门（斧头耐久 ${slotDur(axe!)}/${slotMaxDur(axe!)}，每次 -${DUR_DOOR}）`
+           : can ? '撬开 上锁的房门' : s.data?.staff === 1 ? '上锁的员工门（需要员工卡/撬棍/万能钥匙/斧头）' : '上锁的房门（需要撬棍/万能钥匙/斧头）'
+         consider('hoteldoor', label, s, d, can)
+       } else consider('hoteldoor', s.data?.open ? '关上 房门' : '打开 房门', s, d, true)
+@@ -1,7 +1,7 @@
+         }
+         const n = bi.count ?? 1 // 整叠丢弃的地面物品带堆叠数量
+         let got = 0
+-        for (let k = 0; k < n; k++) if (eng.addItem(bi.type)) got++
++        for (let k = 0; k < n; k++) if (eng.addItem(bi.type, { dur: bi.dur, blood: bi.blood })) got++
+         if (got > 0) {
+           if (got >= n) {
+             m.items = m.items.filter((i) => i !== bi)
+@@ -1,20 +1,15 @@
+           audio.uiTick()
+           eng.msg('你刷员工卡打开了员工门。', 'system')
+           eng.emit({ kind: 'mpevent', mp: { t: 'door', x: s.x + (m.inf?.ox ?? 0), y: s.y + (m.inf?.oy ?? 0), open: true } })
+-        } else if (eng.hasItem('axe') && eng.axeDur > 0) {
+-          // v32：斧头破门——消耗 1 点耐久（共 5 点，耗尽斧头报废）
+-          eng.axeDur--
++        } else if (usableAxe(eng)) {
++          // 近战重制：斧头破门——单件耐久 -8（满 40，约 5 扇门）；耗尽变残件（斧柄），可修理
++          const axe = usableAxe(eng)!
+           s.data = { ...s.data, locked: 0, open: 1 }
+           s.solid = false
+           audio.hit()
+           eng.noiseEvent(p.x, p.y, 16, true) // 破门巨响引来实体
+-          if (eng.axeDur <= 0) {
+-            eng.consumeItem('axe')
+-            eng.axeDur = eng.hasItem('axe') ? 5 : 0
+-            eng.msg('你一斧劈开了门锁——斧刃崩断，斧头报废了！', 'damage')
+-          } else {
+-            eng.msg(`你一斧劈开了门锁！（斧头耐久剩余 ${eng.axeDur}）`, 'system')
+-          }
++          if (!wearSlot(eng, axe, DUR_DOOR)) eng.msg(`你一斧劈开了门锁！（斧头耐久 ${slotDur(axe)}/${slotMaxDur(axe)}）`, 'system')
++          else eng.msg('你一斧劈开了门锁——斧柄也跟着裂了。', 'damage')
+         } else if (eng.hasPocket('skeleton')) {
+           s.data = { ...s.data, locked: 0, open: 1 }
+           s.solid = false
+diff --git a/app/src/game/engine/inventory.ts b/app/src/game/engine/inventory.ts
+--- a/app/src/game/engine/inventory.ts
++++ b/app/src/game/engine/inventory.ts
+@@ -1,5 +1,7 @@
+ // v53：背包/装备/物品使用（槽位读写、快捷使用/丢弃、粉笔头、迁跃浆果）——
+ // 自 engine.ts 拆分，逻辑逐语句搬运。
++import { isMelee } from '../content/melee'
++import { finishRepair, tryRepairHeld, slotName } from './melee'
+ import { ITEMS, itemName, itemUseProfile, type ItemUseProfile } from '../content/items'
+ import { tileAt } from '../world/mapgen'
+ import { audio } from '../core/audio'
+@@ -1,21 +1,21 @@
+   eng.emit({ kind: 'transition', anim: 'bloom', dest })
+ }
+ // ---------- 背包 ----------
+-export function addItem(eng: Engine, type: string): boolean {
++export function addItem(eng: Engine, type: string, extra?: Partial<InvSlot>): boolean {
+   const p = eng.player
+   const def = ITEMS[type]
+   const tag = type === 'warpberry' ? p.level : undefined // 迁跃浆果：获得时打上当前层级标签
+   const all = [...p.hotbar, ...p.backpack]
+   let ok = false
+-  for (const s of all) if (!ok && s && s.type === type && s.tag === tag && s.count < def.stack) { s.count++; ok = true }
+-  for (let i = 0; !ok && i < p.hotbar.length; i++) if (!p.hotbar[i]) { p.hotbar[i] = { type, count: 1, ...(tag !== undefined ? { tag } : {}) }; ok = true }
+-  for (let i = 0; !ok && i < p.backpack.length; i++) if (!p.backpack[i]) { p.backpack[i] = { type, count: 1, ...(tag !== undefined ? { tag } : {}) }; ok = true }
++  // 近战武器带单件耐久/血污（extra 来自地面物品），永不堆叠
++  const ex = extra && isMelee(type) ? { ...(extra.dur !== undefined ? { dur: extra.dur } : {}), ...(extra.blood ? { blood: extra.blood } : {}) } : {}
++  for (const s of all) if (!ok && s && s.type === type && s.tag === tag && s.count < def.stack && !isMelee(type)) { s.count++; ok = true }
++  for (let i = 0; !ok && i < p.hotbar.length; i++) if (!p.hotbar[i]) { p.hotbar[i] = { type, count: 1, ...(tag !== undefined ? { tag } : {}), ...ex }; ok = true }
++  for (let i = 0; !ok && i < p.backpack.length; i++) if (!p.backpack[i]) { p.backpack[i] = { type, count: 1, ...(tag !== undefined ? { tag } : {}), ...ex }; ok = true }
+   if (ok) {
+     eng.syncPassives()
+     // v32：迁跃浆果——首次获得时记录所在层级（旧存档无标签浆果的回退传送目标；新档按格子标签传送）
+     if (type === 'warpberry' && eng.warpBerryLevel === null) eng.warpBerryLevel = p.level
+-    // v32：斧头——获得时重置耐久（5 点，破门消耗）
+-    if (type === 'axe' && eng.axeDur <= 0) eng.axeDur = 5
+   }
+   return ok
+ }
+@@ -1,7 +1,7 @@
+   const u = eng.usingItem
+   if (!u) return
+   const s = eng.slotGet({ w: u.where, i: u.i })
+-  if (!s || s.type !== u.type || s.tag !== u.tag) {
++  if (!s || s.type !== u.type || s.tag !== u.tag || (u.label === '修理' && u.where === 'hotbar' && eng.player.selected !== u.i)) { // 近战重制：修理中切走 = 中断
+     eng.usingItem = null
+     eng.msg('使用动作中断了。', 'system')
+     return
+@@ -1,6 +1,7 @@
+   u.t = Math.min(u.dur, u.t + dt)
+   if (u.t < u.dur) return
+   eng.usingItem = null
++  if (u.label === '修理' && isMelee(s.type)) { finishRepair(eng, s); return }
+   finishUseSlot(eng, u.where, u.i, !!u.targetJerry)
+ }
+ 
+@@ -1,6 +1,7 @@
+     eng.msg(`${def.name} 就握在你手里——左键把它掷出去。`, 'system')
+     return
+   }
++  if (isMelee(s.type)) { tryRepairHeld(eng); return } // 近战重制：右键 = 修理（耐久不足一半时）
+   if (def?.weapon) {
+     eng.msg(`${def.name} 就握在你手里——左键挥舞攻击（伤害 ${def.weapon}）。`, 'system')
+     return
+@@ -1,10 +1,10 @@
+     eng.msg(n > 1 ? `放下了 ${n} 只活旱虾，它们慢慢爬开了。（诱饵 ${SHRIMP_BAIT_TIME} 秒）` : `放下了活旱虾，它慢慢爬开了。（诱饵 ${SHRIMP_BAIT_TIME} 秒）`, 'system')
+     return
+   }
+-  eng.map.items.push({ id: Math.random(), type: s.type, count: s.count, x: p.x + 0.3, y: p.y + 0.3 })
++  eng.map.items.push({ id: Math.random(), type: s.type, count: s.count, x: p.x + 0.3, y: p.y + 0.3, ...(s.dur !== undefined ? { dur: s.dur } : {}), ...(s.blood ? { blood: s.blood } : {}) })
+   eng.slotSet(r, null)
+   eng.syncPassives()
+-  eng.msg(s.count > 1 ? `丢下了 ${itemName(s.type)} ×${s.count}` : `丢下了 ${itemName(s.type)}`, 'system')
++  eng.msg(s.count > 1 ? `丢下了 ${itemName(s.type)} ×${s.count}` : `丢下了 ${slotName(s)}`, 'system')
+ }
+ // 卸下装备位物品到第一个空背包格（背包满则失败）
+ export function unequipSlot(eng: Engine, where: SlotWhere, i: number): boolean {
+diff --git a/app/src/game/renderer/itemsMesh.ts b/app/src/game/renderer/itemsMesh.ts
+--- a/app/src/game/renderer/itemsMesh.ts
++++ b/app/src/game/renderer/itemsMesh.ts
+@@ -1,6 +1,8 @@
+ import { buildBandageMesh, buildCannedFoodMesh } from './supplyMesh'
+ import { buildBatteryMesh, buildWaterThermosMesh } from './provisionsMesh'
+ import { buildDetailedItemMesh } from './detailItemsMesh'
++import { buildMeleeGroundMesh } from './meleeMesh'
++import { isMelee } from '../content/melee'
+ import { buildFiresaltMesh } from './firesaltMesh'
+ import { buildSquirtGunMesh } from './squirtGunMesh'
+ import { buildLiquidPainMesh, buildRoyalRationMesh, buildWarpberryMesh } from './anomalousProvisionMesh'
+@@ -1,7 +1,15 @@
+   }
+   // 2026-10-07：此前以方块/圆柱拼接的 55 件统一改为 refinedItemMesh（四套共享 UV 图集，≤1,200 面、≤3 批）。
+   // v81：旱虾三件（旱虾 / 活旱虾 / 酥炸旱虾）与 Entity 20 实体共用奇虾几何（shrimpMesh）
+-  if (type === 'dryshrimp' || type === 'liveshrimp' || type === 'friedshrimp') grp.add(buildShrimpItemMesh(type))
++  const [meleeBase, meleeVar] = type.split(':')
++  // 近战重制：五把近战武器（含 'type:broken' 残件）统一用 meleeMesh 的地面平躺版
++  if (isMelee(meleeBase)) {
++    // 地面物品统一悬浮旋转展示（renderer 抬高 0.45m）：平躺模型竖直居中，与其它物品同一基准
++    const gm = buildMeleeGroundMesh(meleeBase, { state: meleeVar === 'broken' ? 'broken' : 'intact' })
++    const bb = new THREE.Box3().setFromObject(gm); gm.position.y -= (bb.max.y + bb.min.y) / 2
++    grp.add(gm); grp.userData.itemType = meleeBase
++  }
++  else if (type === 'dryshrimp' || type === 'liveshrimp' || type === 'friedshrimp') grp.add(buildShrimpItemMesh(type))
+   else if (isRefinedItemType(type)) grp.add(buildRefinedItemMesh(type))
+   else switch (type) {
+     // Six detailed models share UV atlases; their factory emits at most three material batches.
+@@ -1,7 +1,7 @@
+     meatstew: '#8fd98f', pizza: '#8fd98f', lasagna: '#8fd98f', tomsspecial: '#8fd98f',
+     grilledsteak: '#8fd98f', jambread: '#8fd98f', // 菜肴：补给绿
+   }
+-  const gc = ITEM_GLOW[type] ?? '#e8b93c'
++  const gc = ITEM_GLOW[meleeBase] ?? ITEM_GLOW[type] ?? '#e8b93c'
+   if (opts?.halo !== false) {
+     // This zero-thickness plane ring does not need separate front/back draws.
+     const halo = new THREE.Mesh(new THREE.RingGeometry(0.18, 0.26, 10), new THREE.MeshBasicMaterial({ color: gc, transparent: true, opacity: 0.45, side: THREE.DoubleSide, forceSinglePass: true }))
+diff --git a/app/src/game/renderer/renderer.ts b/app/src/game/renderer/renderer.ts
+--- a/app/src/game/renderer/renderer.ts
++++ b/app/src/game/renderer/renderer.ts
+@@ -1,6 +1,11 @@
+ import { animateMoth, buildMothMesh } from './mothMeshes'
+ import { buildItemMesh } from './itemsMesh'
+ import { batchRigidItem } from './itemBatches'
++import { setMeleeWear } from './meleeMesh'
++import { isBroken, slotDur, slotMaxDur } from '../engine/melee'
++import { LOW_DUR, isMelee } from '../content/melee'
++import { MELEE_HOLD } from './meleeAnim'
++import type { MeleeType } from './meleeMesh'
+ import { buildViewmodel, buildHeldItem, buildCrosshair, vmat, vmAnimPose, heldHandPose, heldBox, buildRetroHand, LIGHTER_HAND_POSE, sleeveKindOf, type ViewmodelParts } from './viewmodel'
+ import { ViewmodelSwitch } from './viewmodelSwitch'
+ import { getAvatar, randomAvatar } from '../core/avatar'
+@@ -1,6 +1,8 @@
+   private mothWarmupDone = false
+   private mothProgramOwners: THREE.Group[] = []
+   private vmParts!: ViewmodelParts
++  /** 当前手持的近战武器（重制后的五把之一），null = 其它物品 */
++  private vmMeleeType: MeleeType | null = null
+   // 副手打火机 viewmodel（装备打火机时显示；与手电互斥——副手只有一个槽位）
+   private vmLighter = new THREE.Group()
+   // v51：视角惯性滞后状态（转动视角时手部反向偏移并回正）
+@@ -1,7 +1,9 @@
+       heldObj = it
+     }
+     // v72：手指按物品真实网格接触求解（不穿模）
+-    this.vmParts.right.setPose(heldHandPose(type, box), heldObj)
++    const baseType = type.split(':')[0]
++    this.vmParts.right.setPose(heldHandPose(baseType, box), heldObj)
++    this.vmMeleeType = baseType in MELEE_HOLD ? baseType as MeleeType : null
+     const hp = this.vmParts.right.group.position
+     this.vmHandBase = { x: hp.x, y: hp.y, z: hp.z }
+     this.vmHandQ.copy(this.vmParts.right.group.quaternion)
+@@ -1,11 +1,18 @@
+       this.vmParts.right.setLook(look); this.vmParts.left.setLook(look); this.vmLighterHand.setLook(look)
+     }
+     // 从背包开始使用时也把对应物品临时放入手中，让动作与实际耗时完整可见。
+-    const requested = engine.gunCandyT > 0 ? 'guncandy' : (engine.usingItem?.type ?? p.hotbar[p.selected]?.type ?? '') // v51：枪糖生效中右手恒为枪
++    const selSlot = p.hotbar[p.selected]
++    const requested = engine.gunCandyT > 0 ? 'guncandy' : engine.usingItem ? engine.usingItem.type + (engine.usingItem.where === 'hotbar' && engine.usingItem.i === p.selected && isBroken(selSlot) ? ':broken' : '') : selSlot ? selSlot.type + (isBroken(selSlot) ? ':broken' : '') : '' // v51：枪糖生效中右手恒为枪；近战重制：残件用 'type:broken' 区分模型
+     this.vmSwitch.update(p.selected,requested,dt,show&&!engine.handsStowed&&!engine.usingItem&&engine.attackAnimT<=0&&engine.gunCandyT<=0)
+     if (!show || !this.vm.visible) return
+     const held=this.vmSwitch.held
+     if (held !== this.vmHeld) this.setHeldItem(held)
++    // 近战重制：刃上血污 + 低耐久裂纹/磨损（值变化时才写材质）
++    if (this.vmMeleeType && this.vmItem?.userData.meleeMesh && selSlot?.type === this.vmMeleeType) {
++      const blood = Math.round((selSlot.blood ?? 0) * 20) / 20, fr = slotDur(selSlot) / slotMaxDur(selSlot), worn = Math.round((fr <= 0 ? 1 : Math.max(0, 1 - fr / LOW_DUR)) * 20) / 20
++      const k = blood + ':' + worn
++      if (this.vmItem.userData.wearKey !== k) { this.vmItem.userData.wearKey = k; setMeleeWear(this.vmItem.userData.meleeMesh, { blood, worn }) }
++    }
+     // 储罐液体与余量直接更新现有材质/液面，不因每次喷射或换液重建整把枪。
+     if (held === 'squirtgun' && this.vmItem) {
+       const liquid = engine.squirtTank
+@@ -1,10 +1,11 @@
+         hand.position.set(hb.x, hb.y, hb.z); hand.quaternion.copy(this.vmHandQ)
+       }
+     }
+-    const { px: px0, py: py0, pz, rx: rx0, rz: rz0, sway2 } = vmAnimPose({
++    const { px: px0, py: py0, pz, rx: rx0, ry: ry0, rz: rz0, sway2 } = vmAnimPose({
+       mx: engine.input.mx, my: engine.input.my, bobPhase: this.bobPhase, time: this.time,
+       usingItem: engine.usingItem, attackAnimT: engine.attackAnimT, attackAnimDur: engine.attackAnimDur,
+       attackAnimKind: engine.attackAnimKind, searching: !!engine.searching,
++      melee: this.vmMeleeType && !engine.handsStowed && engine.gunCandyT <= 0 ? { type: this.vmMeleeType, side: engine.meleeSide, heavy: engine.meleeHeavy, charge: engine.meleeCharge, bounce: engine.meleeBounce } : null,
+     })
+     let px = px0, py = py0, rx = rx0, rz = rz0
+     // v51：视角惯性——转动视角（含原地转身）时手部向反方向滞后偏移并缓慢回正
+@@ -1,6 +1,7 @@
+     this.vm.position.set(px+dip*.025, py - this.stowK * .68 - dip*.52, pz + this.stowK * .18+dip*.025)
+     this.vm.rotation.x = rx - this.stowK * .4-dip*.3
+     this.vm.rotation.z = rz-dip*.08
++    this.vm.rotation.y = ry0
+     // 手电随移动轻微浮动
+     this.vmFlash.position.y = -0.28 - sway2 * 0.01
+   }
+@@ -1,7 +1,7 @@
+       if (!grp) {
+         if (created && distance > 3) continue
+         created = true
+-        grp = this.acquireItemModel(it.type)
++        grp = this.acquireItemModel(it.dur === 0 && isMelee(it.type) ? it.type + ':broken' : it.type)
+         grp.userData.phase = Math.random() * Math.PI * 2
+         this.enableShadows(grp)
+         this.itemMeshes.set(id, grp)
+diff --git a/app/src/game/renderer/retroViewHand.ts b/app/src/game/renderer/retroViewHand.ts
+--- a/app/src/game/renderer/retroViewHand.ts
++++ b/app/src/game/renderer/retroViewHand.ts
+@@ -1,6 +1,8 @@
+ // 手部坐标系 H：握持轴 = +Y，穿过原点；手背朝 +X（右手），手腕在 +Z/+X 一侧，前臂沿 fdir 伸出画面。
+ // 姿势用「H 的 X、Y 轴落到父节点的哪个方向」描述（ax / ay），再平移到 at。左手 = 右手几何沿 X 镜像。
+ import * as THREE from 'three'
++import { MELEE_HOLD, meleeHandPose } from './meleeAnim'
++import type { MeleeType } from './meleeMesh'
+ import { retroTexture } from './retroNpc'
+ import { installL0EnvironmentShader } from './l0EnvironmentShader'
+ import { installL1DynamicProbe } from './l1Probes'
+@@ -1,13 +1,9 @@
+   return { min: [b.min.x, b.min.y, b.min.z], max: [b.max.x, b.max.y, b.max.z] }
+ }
+ export function heldHandPose(type: string, box?: HeldBox): HandPose {
++  if (type in MELEE_HOLD) return meleeHandPose(type as MeleeType) // 近战武器重制：握点/握把轴/半径见 meleeAnim.MELEE_HOLD
+   switch (type) {
+     case '': return VERT([0.004, -0.005, -0.03], 0, { fdir: [0.28, -0.4, 1] }) // 空手：握拳，指节朝前（出拳）
+-    case 'crowbar': return VERT([0.015, -0.01, -0.08], 0.011)
+-    case 'wrench': return VERT([0, -0.015, -0.06], 0.013)
+-    case 'timber': return VERT([0, -0.005, -0.05], 0.02)
+-    case 'knife': return VERT([0, -0.01, -0.065], 0.012)
+-    case 'axe': return VERT([0.018, -0.02, -0.085], 0.015)
+     case 'glowstick': return VERT([0, 0.03, -0.11], 0.011)
+     case 'lighter': return VERT([0, -0.01, -0.1], 0.015)
+     case 'guncandy': return VERT([0, -0.028, -0.03], 0.02, { trigger: true, ay: [0, 1, 0.12] })
+diff --git a/app/src/game/renderer/viewmodel.ts b/app/src/game/renderer/viewmodel.ts
+--- a/app/src/game/renderer/viewmodel.ts
++++ b/app/src/game/renderer/viewmodel.ts
+@@ -1,6 +1,8 @@
+ import { buildFlashlightMesh } from './flashlightMesh'
+ import { buildDetailedItemMesh } from './detailItemsMesh'
+ import { buildSquirtGunMesh } from './squirtGunMesh'
++import { buildMeleeMesh, type MeleeType } from './meleeMesh'
++import { MELEE_HOLD, meleePose } from './meleeAnim'
+ import { buildRetroHand, heldHandPose, FLASH_HAND_POSE, type RetroHand } from './retroViewHand'
+ export { heldHandPose, heldBox, LIGHTER_HAND_POSE, buildRetroHand, sleeveKindOf } from './retroViewHand'
+ 
+@@ -1,6 +1,7 @@
+   right.setPose(heldHandPose(''))
+   vm.add(right.group)
+   vm.position.set(0.27, -0.3, -0.55)
++  vm.rotation.order = 'YXZ' // 近战重制：先前倾(rx)再左右扫(ry)；ry=0 时与原 XYZ 等价
+   camera.add(vm)
+   // 左手手电：细分灯头/反光杯/镜片/防滑握纹/尾盖/开关，金属与橡胶走真实 UV 图集。
+   const flashlight = buildFlashlightMesh({ lit: true })
+@@ -1,6 +1,8 @@
+   mx: number; my: number; bobPhase: number; time: number
+   usingItem?: { t: number; dur: number; anim?: string } | null
+   attackAnimT: number; attackAnimDur: number; attackAnimKind?: string; searching?: boolean
++  /** 近战武器重制：手持五把近战武器之一时给出，挥砍走 meleePose（含待机/蓄力/弹刀） */
++  melee?: { type: MeleeType; side?: number; heavy?: boolean; charge?: number; bounce?: number } | null
+ }
+ export function vmAnimPose(st: VmAnimState) {
+   // 走路摆动（与头部 bob 同步，幅度更小）
+@@ -1,7 +1,12 @@
+   let pz = -0.55
+   let rx = 0
+   let rz = 0
+-  if (st.usingItem) {
++  let ry = 0
++  if (st.melee && !st.usingItem && !st.searching && (st.attackAnimT > 0 ? st.attackAnimKind === 'swing' : true)) {
++    const pr = st.attackAnimT > 0 ? 1 - st.attackAnimT / Math.max(0.01, st.attackAnimDur) : -1
++    const d = meleePose({ type: st.melee.type, pr, heavy: st.melee.heavy, side: st.melee.side, charge: st.melee.charge, bounce: st.melee.bounce, time: st.time, moving: mag })
++    px += d[0]; py += d[1]; pz += d[2]; rx += d[3]; ry += d[4]; rz += d[5]
++  } else if (st.usingItem) {
+     const u = st.usingItem
+     const pr = Math.max(0, Math.min(1, u.t / Math.max(0.01, u.dur)))
+     // 进入与收回各占一小段，中段保持姿势；所有节奏都直接取自同一使用计时器。
+@@ -1,7 +1,7 @@
+     rx = -0.22 + Math.sin(st.time * 9) * 0.07
+     px += Math.sin(st.time * 5.2) * 0.015
+   }
+-  return { px, py, pz, rx, rz, sway, sway2 }
++  return { px, py, pz, rx, ry, rz, sway, sway2 }
+ }
+ 
+ // 手持物品 3D 建模（切换快捷栏时重建）
+@@ -1,6 +1,17 @@
+     m.position.set(x, y, z); m.rotation.x = rx
+     g.add(m); return m
+   }
++  const [base, variant] = type.split(':')
++  if (base in MELEE_HOLD) {
++    // 近战武器重制：武器原点 = 握点，直接挂到 MELEE_HOLD.at；'axe:broken' = 残件；耐久/血污外观由 renderer 调 setMeleeWear
++    const h = MELEE_HOLD[base as MeleeType]
++    const w = buildMeleeMesh(base as MeleeType, { state: variant === 'broken' ? 'broken' : 'intact' })
++    w.position.set(...h.at); w.rotation.set(...h.rot)
++    g.add(w)
++    g.userData.meleeRig = w.userData.meleeRig
++    g.userData.meleeMesh = w
++    return g
++  }
+   switch (type) {
+     case 'luckymilk':
+     case 'capacitor':
+@@ -1,30 +1,6 @@
+       g.position.set(0, type === 'luckymilk' || type === 'capacitor' ? .1 : .08, -.075)
+       break
+     }
+-    case 'crowbar': { // 参考《半条命》：主杆竖持，顶部羊角向视线前方弯曲
+-      const detail = buildDetailedItemMesh('crowbar')
+-      const pose = new THREE.Group()
+-      pose.rotation.z = Math.PI / 2 // 模型 +X（羊角端）竖直转到屏幕上方 +Y
+-      pose.scale.setScalar(.82)
+-      pose.position.set(.015, .09, -.08)
+-      pose.add(detail); g.add(pose)
+-      break
+-    }
+-    case 'wrench': { // 竖持管钳：共享细化模型，钳头（模型 -X）朝上
+-      const detail = buildRefinedItemMesh('wrench')
+-      detail.rotation.z = -Math.PI / 2
+-      detail.scale.setScalar(.95)
+-      detail.position.set(0, .14, -.06)
+-      g.add(detail)
+-      break
+-    }
+-    case 'timber': { // 竖持木板：共享细化模型，板长（模型 X）竖直
+-      const detail = buildRefinedItemMesh('timber')
+-      detail.rotation.set(0, Math.PI / 2, Math.PI / 2, 'YXZ')
+-      detail.position.set(0, .12, -.05)
+-      g.add(detail)
+-      break
+-    }
+     case 'lighter': {
+       const detail = buildDetailedItemMesh('lighter')
+       detail.scale.setScalar(.75)
+@@ -1,26 +1,6 @@
+       g.add(detail)
+       break
+     }
+-    case 'knife': { // 竖持细化短刀
+-      const detail = buildDetailedItemMesh('knife')
+-      detail.rotation.z = Math.PI / 2
+-      detail.scale.setScalar(.92)
+-      detail.position.set(0, .14, -.065)
+-      g.add(detail)
+-      break
+-    }
+-    case 'axe': { // 消防斧竖持；刃口严格朝镜头前方 -Z
+-      const detail = buildDetailedItemMesh('axe')
+-      const upright = new THREE.Group()
+-      upright.rotation.z = Math.PI / 2 // 模型 +X（斧头端）竖直转到屏幕上方 +Y
+-      upright.add(detail)
+-      const pose = new THREE.Group()
+-      pose.rotation.y = Math.PI // +Z 斧刃精确翻转到镜头前方 -Z，不再保留横向夹角
+-      pose.scale.setScalar(.82)
+-      pose.position.set(.018, .1, -.085)
+-      pose.add(upright); g.add(pose)
+-      break
+-    }
+     case 'squirtgun': { // 共享世界模型；本地 +X 枪口旋转到相机正前方 -Z
+       const gun = buildSquirtGunMesh()
+       gun.rotation.y = Math.PI / 2

@@ -1,0 +1,892 @@
+{
+  "assets": {
+    "files": 43,
+    "bytes": 16272843
+  },
+  "static": {
+    "checks": 49718,
+    "slices": {
+      "count": 26,
+      "maxMs": 47.685700000000054,
+      "totalMs": 66.1106000000002
+    },
+    "modes": [
+      {
+        "mode": "classic",
+        "spider": {
+          "meshes": 1,
+          "draws": 3,
+          "tris": 4674,
+          "bones": 58
+        },
+        "whole": {
+          "meshes": 5,
+          "draws": 7,
+          "tris": 16354,
+          "bones": 58
+        }
+      },
+      {
+        "mode": "realistic",
+        "spider": {
+          "meshes": 1,
+          "draws": 3,
+          "tris": 4674,
+          "bones": 58
+        },
+        "whole": {
+          "meshes": 5,
+          "draws": 7,
+          "tris": 16354,
+          "bones": 58
+        }
+      }
+    ],
+    "skins": [
+      "dim",
+      "bright",
+      "round",
+      "dry",
+      "common",
+      "clean",
+      "water",
+      "room",
+      "dark"
+    ],
+    "triangles": 75668,
+    "partitions": 61
+  },
+  "mechanicsLog": "nguithr-mechanics.log",
+  "regressions": [
+    {
+      "check": "check:nguithr-anim",
+      "status": 0,
+      "ms": 2246
+    },
+    {
+      "check": "check:l1-interactions",
+      "status": 0,
+      "ms": 4890
+    },
+    {
+      "check": "check:shrimp-item-cache",
+      "status": 0,
+      "ms": 2448
+    },
+    {
+      "check": "check:model-warmup",
+      "status": 0,
+      "ms": 1392
+    },
+    {
+      "check": "check:program-completion",
+      "status": 0,
+      "ms": 1298
+    },
+    {
+      "check": "check:entity-preparation",
+      "status": 0,
+      "ms": 1888
+    },
+    {
+      "check": "check:entity-forms",
+      "status": 0,
+      "ms": 1566
+    }
+  ],
+  "runs": [
+    {
+      "name": "final-classic",
+      "ok": true,
+      "seed": 20261006,
+      "mode": "classic",
+      "entryMs": 5111.537099999998,
+      "entityMs": 103.69999999925494,
+      "scenes": [
+        {
+          "name": "spawn",
+          "readyMs": 3266.199999999255,
+          "world": [
+            15.5,
+            15.5,
+            0
+          ],
+          "camera": [
+            79.5,
+            1.5457645735658407,
+            79.5
+          ],
+          "skins": [
+            "common"
+          ]
+        },
+        {
+          "name": "parking-props",
+          "readyMs": 8805.89999999851,
+          "world": [
+            337.4223000000002,
+            -618.3775,
+            0
+          ],
+          "camera": [
+            81.42230000000018,
+            1.555648472395712,
+            85.62249999999995
+          ],
+          "skins": [
+            "common"
+          ]
+        },
+        {
+          "name": "garden",
+          "readyMs": 7053,
+          "world": [
+            -141.73089999999956,
+            -109.9105,
+            0
+          ],
+          "camera": [
+            82.26910000000044,
+            1.5456469435113704,
+            82.0895
+          ],
+          "skins": []
+        }
+      ],
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "errors": 0,
+      "cycles": [
+        {
+          "shown": {
+            "geometries": 619,
+            "textures": 146,
+            "programs": 90
+          },
+          "empty": {
+            "geometries": 613,
+            "textures": 145,
+            "programs": 90
+          }
+        },
+        {
+          "shown": {
+            "geometries": 619,
+            "textures": 146,
+            "programs": 90
+          },
+          "empty": {
+            "geometries": 613,
+            "textures": 145,
+            "programs": 90
+          }
+        },
+        {
+          "shown": {
+            "geometries": 619,
+            "textures": 146,
+            "programs": 90
+          },
+          "empty": {
+            "geometries": 613,
+            "textures": 145,
+            "programs": 90
+          }
+        },
+        {
+          "shown": {
+            "geometries": 619,
+            "textures": 146,
+            "programs": 90
+          },
+          "empty": {
+            "geometries": 613,
+            "textures": 145,
+            "programs": 90
+          }
+        },
+        {
+          "shown": {
+            "geometries": 619,
+            "textures": 146,
+            "programs": 90
+          },
+          "empty": {
+            "geometries": 613,
+            "textures": 145,
+            "programs": 90
+          }
+        },
+        {
+          "shown": {
+            "geometries": 619,
+            "textures": 146,
+            "programs": 90
+          },
+          "empty": {
+            "geometries": 613,
+            "textures": 145,
+            "programs": 90
+          }
+        }
+      ],
+      "performance": [
+        {
+          "median": 4.199999999254942,
+          "p95": 4.899999998509884,
+          "cpuMedian": 1.800000000745058,
+          "cpuP95": 2.199999999254942,
+          "geometries": 613,
+          "textures": 145,
+          "programs": 90,
+          "draws": 117,
+          "triangles": 84461
+        },
+        {
+          "median": 4.199999999254942,
+          "p95": 4.699999999254942,
+          "cpuMedian": 1.699999999254942,
+          "cpuP95": 2.100000001490116,
+          "geometries": 613,
+          "textures": 145,
+          "programs": 90,
+          "draws": 117,
+          "triangles": 84461
+        },
+        {
+          "median": 4.199999999254942,
+          "p95": 4.899999998509884,
+          "cpuMedian": 1.699999999254942,
+          "cpuP95": 2,
+          "geometries": 613,
+          "textures": 145,
+          "programs": 90,
+          "draws": 117,
+          "triangles": 84461
+        },
+        {
+          "median": 4.199999999254942,
+          "p95": 4.899999998509884,
+          "cpuMedian": 1.800000000745058,
+          "cpuP95": 2.2999999970197678,
+          "geometries": 613,
+          "textures": 145,
+          "programs": 90,
+          "draws": 117,
+          "triangles": 84461
+        },
+        {
+          "median": 4.199999999254942,
+          "p95": 4.600000001490116,
+          "cpuMedian": 1.699999999254942,
+          "cpuP95": 2.100000001490116,
+          "geometries": 613,
+          "textures": 145,
+          "programs": 90,
+          "draws": 117,
+          "triangles": 84461
+        }
+      ],
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "name": "final-realistic",
+      "ok": true,
+      "seed": 20261006,
+      "mode": "realistic",
+      "entryMs": 6299.477800000001,
+      "entityMs": 106.80000000074506,
+      "scenes": [
+        {
+          "name": "spawn",
+          "readyMs": 4765.20000000298,
+          "world": [
+            15.5,
+            15.5,
+            0
+          ],
+          "camera": [
+            79.5,
+            1.542066986454573,
+            79.5
+          ],
+          "skins": [
+            "common"
+          ]
+        },
+        {
+          "name": "parking-props",
+          "readyMs": 9254,
+          "world": [
+            337.4223000000002,
+            -618.3775,
+            0
+          ],
+          "camera": [
+            81.42230000000018,
+            1.5540134895980435,
+            85.62249999999995
+          ],
+          "skins": [
+            "common"
+          ]
+        },
+        {
+          "name": "garden",
+          "readyMs": 9046,
+          "world": [
+            -141.73089999999956,
+            -109.9105,
+            0
+          ],
+          "camera": [
+            82.26910000000044,
+            1.5577610882762252,
+            82.0895
+          ],
+          "skins": []
+        }
+      ],
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "errors": 0,
+      "cycles": [
+        {
+          "shown": {
+            "geometries": 684,
+            "textures": 173,
+            "programs": 100
+          },
+          "empty": {
+            "geometries": 678,
+            "textures": 172,
+            "programs": 100
+          }
+        },
+        {
+          "shown": {
+            "geometries": 684,
+            "textures": 173,
+            "programs": 100
+          },
+          "empty": {
+            "geometries": 678,
+            "textures": 172,
+            "programs": 100
+          }
+        },
+        {
+          "shown": {
+            "geometries": 684,
+            "textures": 173,
+            "programs": 100
+          },
+          "empty": {
+            "geometries": 678,
+            "textures": 172,
+            "programs": 100
+          }
+        },
+        {
+          "shown": {
+            "geometries": 684,
+            "textures": 173,
+            "programs": 100
+          },
+          "empty": {
+            "geometries": 678,
+            "textures": 172,
+            "programs": 100
+          }
+        },
+        {
+          "shown": {
+            "geometries": 684,
+            "textures": 173,
+            "programs": 100
+          },
+          "empty": {
+            "geometries": 678,
+            "textures": 172,
+            "programs": 100
+          }
+        },
+        {
+          "shown": {
+            "geometries": 684,
+            "textures": 173,
+            "programs": 100
+          },
+          "empty": {
+            "geometries": 678,
+            "textures": 172,
+            "programs": 100
+          }
+        }
+      ],
+      "performance": [
+        {
+          "median": 4.199999999254942,
+          "p95": 4.899999998509884,
+          "cpuMedian": 2.099999997764826,
+          "cpuP95": 3.300000000745058,
+          "geometries": 678,
+          "textures": 172,
+          "programs": 100,
+          "draws": 133,
+          "triangles": 105894
+        },
+        {
+          "median": 4.199999999254942,
+          "p95": 4.699999999254942,
+          "cpuMedian": 2,
+          "cpuP95": 2.7999999970197678,
+          "geometries": 678,
+          "textures": 172,
+          "programs": 100,
+          "draws": 133,
+          "triangles": 105894
+        },
+        {
+          "median": 4.100000001490116,
+          "p95": 4.900000002235174,
+          "cpuMedian": 2,
+          "cpuP95": 2.800000000745058,
+          "geometries": 678,
+          "textures": 172,
+          "programs": 100,
+          "draws": 133,
+          "triangles": 105894
+        },
+        {
+          "median": 4.199999999254942,
+          "p95": 5.199999999254942,
+          "cpuMedian": 2.399999998509884,
+          "cpuP95": 3.699999999254942,
+          "geometries": 678,
+          "textures": 172,
+          "programs": 100,
+          "draws": 133,
+          "triangles": 105894
+        },
+        {
+          "median": 4.199999999254942,
+          "p95": 5,
+          "cpuMedian": 2.199999999254942,
+          "cpuP95": 3.5,
+          "geometries": 678,
+          "textures": 172,
+          "programs": 100,
+          "draws": 133,
+          "triangles": 105894
+        }
+      ],
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "name": "after-realistic-20261006-scenes",
+      "ok": true,
+      "seed": 20261006,
+      "mode": "realistic",
+      "entryMs": 4945.261000000002,
+      "scenes": [
+        {
+          "name": "spawn",
+          "readyMs": 3949,
+          "world": [
+            15.5,
+            15.5,
+            0
+          ],
+          "camera": [
+            79.5,
+            1.5455938779364886,
+            79.5
+          ],
+          "skins": [
+            "common"
+          ]
+        },
+        {
+          "name": "parking-bright",
+          "readyMs": 11070.699999999255,
+          "world": [
+            627.0958,
+            -623.0283,
+            0
+          ],
+          "camera": [
+            83.09580000000005,
+            1.5518492069265224,
+            80.97170000000006
+          ],
+          "skins": [
+            "bright"
+          ]
+        },
+        {
+          "name": "parking-dark",
+          "readyMs": 12817.60000000149,
+          "world": [
+            -884.5470999999998,
+            343.0716,
+            0
+          ],
+          "camera": [
+            75.45290000000023,
+            1.5468243789244591,
+            87.07159999999999
+          ],
+          "skins": [
+            "dark",
+            "common"
+          ]
+        },
+        {
+          "name": "ouroboros",
+          "readyMs": 10096.89999999851,
+          "world": [
+            -365.0789999999997,
+            -301.74,
+            0
+          ],
+          "camera": [
+            82.92100000000028,
+            1.5563460718712718,
+            82.25999999999999
+          ],
+          "skins": [
+            "clean",
+            "common"
+          ]
+        },
+        {
+          "name": "garden",
+          "readyMs": 15179.39999999851,
+          "world": [
+            -141.73089999999956,
+            -109.9105,
+            0
+          ],
+          "camera": [
+            82.26910000000044,
+            1.5489333412693853,
+            82.0895
+          ],
+          "skins": []
+        }
+      ],
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "errors": 0,
+      "performance": [
+        {
+          "median": 4.100000001490116,
+          "p95": 6,
+          "cpuMedian": 2.300000000745058,
+          "cpuP95": 4.399999998509884,
+          "geometries": 299,
+          "textures": 130,
+          "programs": 83,
+          "draws": 152,
+          "triangles": 543945
+        },
+        {
+          "median": 4.199999999254942,
+          "p95": 4.900000002235174,
+          "cpuMedian": 2.199999999254942,
+          "cpuP95": 3,
+          "geometries": 299,
+          "textures": 130,
+          "programs": 83,
+          "draws": 152,
+          "triangles": 543945
+        },
+        {
+          "median": 4.100000001490116,
+          "p95": 5.600000001490116,
+          "cpuMedian": 2.399999998509884,
+          "cpuP95": 4.199999999254942,
+          "geometries": 299,
+          "textures": 130,
+          "programs": 83,
+          "draws": 152,
+          "triangles": 543945
+        },
+        {
+          "median": 4.100000001490116,
+          "p95": 4.900000002235174,
+          "cpuMedian": 2.199999999254942,
+          "cpuP95": 2.900000002235174,
+          "geometries": 299,
+          "textures": 130,
+          "programs": 83,
+          "draws": 152,
+          "triangles": 543945
+        },
+        {
+          "median": 4.100000001490116,
+          "p95": 5.100000001490116,
+          "cpuMedian": 2.2999999970197678,
+          "cpuP95": 3.099999997764826,
+          "geometries": 299,
+          "textures": 130,
+          "programs": 83,
+          "draws": 152,
+          "triangles": 543945
+        }
+      ],
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "name": "final-input-collision",
+      "ok": true,
+      "seed": 20261006,
+      "mode": "realistic",
+      "entryMs": 6039.552599999999,
+      "entityMs": 111.69999999925494,
+      "errors": 0,
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "cycles": [
+        {
+          "shown": {
+            "geometries": 615,
+            "textures": 163,
+            "programs": 97
+          },
+          "empty": {
+            "geometries": 609,
+            "textures": 162,
+            "programs": 97
+          }
+        },
+        {
+          "shown": {
+            "geometries": 615,
+            "textures": 163,
+            "programs": 97
+          },
+          "empty": {
+            "geometries": 609,
+            "textures": 162,
+            "programs": 97
+          }
+        },
+        {
+          "shown": {
+            "geometries": 615,
+            "textures": 163,
+            "programs": 97
+          },
+          "empty": {
+            "geometries": 609,
+            "textures": 162,
+            "programs": 97
+          }
+        },
+        {
+          "shown": {
+            "geometries": 615,
+            "textures": 163,
+            "programs": 97
+          },
+          "empty": {
+            "geometries": 609,
+            "textures": 162,
+            "programs": 97
+          }
+        },
+        {
+          "shown": {
+            "geometries": 615,
+            "textures": 163,
+            "programs": 97
+          },
+          "empty": {
+            "geometries": 609,
+            "textures": 162,
+            "programs": 97
+          }
+        },
+        {
+          "shown": {
+            "geometries": 615,
+            "textures": 163,
+            "programs": 97
+          },
+          "empty": {
+            "geometries": 609,
+            "textures": 162,
+            "programs": 97
+          }
+        }
+      ],
+      "performance": [
+        {
+          "median": 4.199999999254942,
+          "p95": 5.5,
+          "cpuMedian": 2.300000000745058,
+          "cpuP95": 4.099999997764826,
+          "geometries": 609,
+          "textures": 162,
+          "programs": 97,
+          "draws": 209,
+          "triangles": 167698
+        },
+        {
+          "median": 4.100000001490116,
+          "p95": 5.400000002235174,
+          "cpuMedian": 2.300000000745058,
+          "cpuP95": 3.899999998509884,
+          "geometries": 609,
+          "textures": 162,
+          "programs": 97,
+          "draws": 134,
+          "triangles": 109278
+        },
+        {
+          "median": 4.100000001490116,
+          "p95": 5.199999999254942,
+          "cpuMedian": 2.300000000745058,
+          "cpuP95": 4,
+          "geometries": 609,
+          "textures": 162,
+          "programs": 97,
+          "draws": 133,
+          "triangles": 105894
+        },
+        {
+          "median": 4.100000001490116,
+          "p95": 5.199999999254942,
+          "cpuMedian": 2.399999998509884,
+          "cpuP95": 3.100000001490116,
+          "geometries": 609,
+          "textures": 162,
+          "programs": 97,
+          "draws": 134,
+          "triangles": 109278
+        },
+        {
+          "median": 4.100000001490116,
+          "p95": 5.5,
+          "cpuMedian": 2.300000000745058,
+          "cpuP95": 3.699999999254942,
+          "geometries": 609,
+          "textures": 162,
+          "programs": 97,
+          "draws": 209,
+          "triangles": 167698
+        }
+      ],
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    }
+  ],
+  "entry": {
+    "cases": [
+      {
+        "id": 1,
+        "status": "ready",
+        "ms": 9450.800000000745
+      },
+      {
+        "id": 2,
+        "status": "ready",
+        "ms": 2339
+      },
+      {
+        "id": 3,
+        "status": "ready",
+        "ms": 2519.2000000029802
+      },
+      {
+        "id": 5,
+        "status": "ready",
+        "ms": 7081.79999999702
+      },
+      {
+        "id": 8,
+        "status": "ready",
+        "ms": 3885.199999999255
+      }
+    ],
+    "errors": 0,
+    "cleanup": {
+      "browserExit": "SIGTERM",
+      "serverExit": "SIGTERM",
+      "profileRemoved": true
+    }
+  },
+  "combatRegressions": [
+    {
+      "check": "check:jerry",
+      "status": 0,
+      "ms": 14068
+    },
+    {
+      "check": "check:partygoers",
+      "status": 0,
+      "ms": 1849
+    },
+    {
+      "check": "check:shrimp",
+      "status": 0,
+      "ms": 2210
+    }
+  ],
+  "holster": {
+    "ok": true,
+    "checks": 73,
+    "errors": 0,
+    "cleanup": {
+      "browser": "SIGTERM",
+      "server": "SIGTERM",
+      "profileRemoved": true
+    }
+  },
+  "commandCorrection": {
+    "attempted": "check:holster",
+    "reason": "No such npm script; the existing verify-holster.mjs was executed successfully instead."
+  },
+  "build": {
+    "passed": true,
+    "command": "npm run build",
+    "log": "build.log",
+    "warnings": "Existing bundle-size, PostCSS/font and Browserslist notices; see complete log."
+  },
+  "mechanisms": {
+    "passed": 80,
+    "total": 80,
+    "log": "nguithr-mechanics.log"
+  },
+  "bake": {
+    "revision": 17,
+    "generation": 6,
+    "offlineChunks": 108,
+    "finalGeometryUnchanged": true
+  }
+}

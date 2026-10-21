@@ -1,3 +1,4 @@
+import {createTradersMap} from './tradersWorld'
 import {settlementColliders} from './settlementColliders'
 import { object70Keep, object70Sid } from '../decorations/object70'
 import {isL5DecorKind,L5_DECOR_DEFS} from '../content/l5Decor'
@@ -8,7 +9,7 @@ import { l1RoofAt } from './l1Architecture'
 import { l3RoofAt } from './l3Architecture'
 import type { LevelDef, Structure, GroundItem, LightSource, ExitInstance, FloorBand } from '../core/types'
 import { UNIVERSAL_ITEMS } from '../content/items'
-import { makeEntity, ENTITIES, type Entity } from '../entities'
+import { makeEntity, ENTITIES, canSpawnNaturally, type Entity } from '../entities'
 import { placePrefabs, scatterFeatures } from '../prefabs'
 import { generateInfinite, type InfiniteState } from './infinite'
 import { bedHeadDeg, infiniteImplFor, type CaveVolumeDef } from './infiniteRegistry' // v55：床类床头靠墙朝向助手
@@ -38,6 +39,7 @@ import { generationObstacles } from './generationObstacles'
 import { l1CrateCollider } from './l1Crate'
 
 export interface GameMap {
+  traders?: import("./tradersWorld").TradersRuntime
   settlement?: import('../content/settlementTypes').SettlementMapData
   l1Architecture?: boolean // Derived Level 1 capability, regenerated on load (no save schema change).
   w: number
@@ -1518,6 +1520,7 @@ function thinObject70(m: GameMap, levelId: number): GameMap {
 }
 
 export function generateLevel(def: LevelDef, seed: number, firstVisit = true): GameMap {
+  if(def.id===102)return createTradersMap(def,seed)
   // v17：无限模式层级（L0/L1）走 chunk 流式生成路径，不做有限地图质量校验
   // v29：firstVisit=false 时跳过出生点物资散落（初始物资仅首次到层刷新）
   if (def.infinite) return generateInfinite(def, seed, firstVisit)
@@ -2150,6 +2153,7 @@ function genOnce(def: LevelDef, seed: number): GameMap {
   // any=随意（仅排除楼梯坡道/液体）。无符合瓦片时降级 any 并在 m.habitatFallback 计数告警。
   const habMiss: Record<string, number> = {}
   for (const se of def.entities) {
+    if (!canSpawnNaturally(se.type)) continue
     const n = rng.int(se.min, se.max)
     const edef = ENTITIES[se.type]
     const hab = edef?.habitat ?? 'any'
@@ -2860,7 +2864,8 @@ function placeUpperContent(m: GameMap, rng: RNG, def: LevelDef) {
     m.items.push({ id: 970000 + m.items.length * 13, type: rng.pick(upItems), x: p.x + 0.5, y: p.y + 0.5, z: FLOOR_H })
   }
   // 上层实体 ×1（上层房间有独立威胁；v25：上层房间属室内，跳过 outdoor 栖息地的实体）
-  const se = def.entities.find((e) => (ENTITIES[e.type]?.habitat ?? 'any') !== 'outdoor') ?? def.entities[0]
+  const upperPool = def.entities.filter((e) => canSpawnNaturally(e.type))
+  const se = upperPool.find((e) => (ENTITIES[e.type]?.habitat ?? 'any') !== 'outdoor') ?? upperPool[0]
   if (se && spots.length > 1) {
     const p = take()
     if (p) m.entities.push(makeEntity(se.type, p.x + 0.5, p.y + 0.5, FLOOR_H))

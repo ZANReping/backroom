@@ -1,0 +1,50 @@
+
+> my-app@0.0.0 check:traders-gates
+> esbuild scripts/check-traders-gates.ts --bundle --platform=node --format=esm --outfile=.cache/check-traders-gates.mjs && node .cache/check-traders-gates.mjs
+
+
+  .cache\check-traders-gates.mjs  2.5mb
+
+Done in 94ms
+{
+  "ok": true,
+  "natural": [
+    {
+      "seed": 23,
+      "rawArcwraiths": 2,
+      "infiniteArcwraiths": 0,
+      "finiteArcwraiths": 0
+    },
+    {
+      "seed": 424242,
+      "rawArcwraiths": 4,
+      "infiniteArcwraiths": 0,
+      "finiteArcwraiths": 0
+    },
+    {
+      "seed": 20261006,
+      "rawArcwraiths": 4,
+      "infiniteArcwraiths": 0,
+      "finiteArcwraiths": 0
+    }
+  ],
+  "manualArcwraith": true,
+  "gates": [
+    {
+      "id": "west",
+      "meshes": 11,
+      "triangles": 1794
+    },
+    {
+      "id": "north",
+      "meshes": 11,
+      "triangles": 1794
+    },
+    {
+      "id": "east",
+      "meshes": 11,
+      "triangles": 1794
+    }
+  ],
+  "services": 8
+}

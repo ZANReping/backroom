@@ -1,3 +1,4 @@
+import {tradersFitoutColliders} from '../content/tradersFitout'
 import { alphaParts, isAlphaKind } from '../content/alphaDecor'
 import { tradeParts, isTradeKind } from '../content/tradeDecor'
 import type { Structure } from '../core/types'
@@ -26,6 +27,8 @@ function sameData(a: Cached, data: Structure['data']) {
 
 /** Shared read-only collision result, or null for other structure families. */
 export function settlementColliders(s: Structure): ColliderBox[] | null {
+  if(s.data?.tradersWindow)return s.solid?[{x0:s.x,y0:s.y,x1:s.x+s.w,y1:s.y+s.h,bottom:0,top:3.12,stand:false}]:[]
+  if(s.data?.tradersModel)return tradersFitoutColliders(s)
   const alpha = isAlphaKind(s.kind)
   if (!alpha && !isTradeKind(s.kind)) return null
   const hit = cache.get(s)

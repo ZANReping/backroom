@@ -88,7 +88,8 @@ for(const seed of [20261006,7]){
  const entDensity={path:+(pathEnt/pathTiles*1000).toFixed(2),hall:+(hallEnt/hallTiles*1000).toFixed(2)}
  report.lootPer1000Tiles=lootDensity;report.entitiesPer1000Tiles=entDensity;report.doors=doors;report.outposts=outposts
  ok(lootDensity.path<lootDensity.hall*.5,'path supplies scarce')
- ok(entDensity.path<=entDensity.hall*.25,'entities rare in paths')
+ // Compare unrounded densities; rounding 0.126 to 0.13 used to reject a valid ratio below 1/4.
+ ok(pathEnt/pathTiles<=hallEnt/hallTiles*.25,'entities rare in paths')
  ok(doors>20,'doors generated');ok(outposts>=1,'settlement outposts')
  ok(l1LayoutVariant(seed,0,0)==='parking','spawn chunk variant')
 }

@@ -5,7 +5,10 @@ import { entityArchiveView } from '@/game/entities/archiveViews'
 import { disposeCharacterModel } from '@/game/renderer/retroResources'
 import { retroModelReady } from '@/game/renderer/retroAvatar'
 import { prepareClumpBlob } from '@/game/renderer/clumpBlob'
-import { prepareMothTextures } from '@/game/renderer/mothTextures'
+import { prepareDeathmothJob } from '@/game/renderer/deathmothMesh'
+import { prepareWatchJob } from '@/game/renderer/neighborhoodWatchMesh'
+import { prepareMangledJob } from '@/game/renderer/watchRender'
+import { prepareWranglerJob } from '@/game/renderer/wranglerMesh'
 import { prepareShrimpTextures } from '@/game/renderer/shrimpMesh'
 import { prepareRatTextures } from '@/game/renderer/ratMesh'
 import { preparePartygoerJob } from '@/game/renderer/partygoerMesh'
@@ -23,7 +26,10 @@ const check = (job: Job) => { if (job.abort.signal.aborted) throw new DOMExcepti
 async function prepare(job: Job) {
   const options = entityArchiveOptions(job.type, job.view)
   const task = job.type === 'clump' ? prepareClumpBlob(!!options.l3clump, options.seed!)
-    : job.type === 'deathmoth' ? prepareMothTextures()
+    : job.type === 'deathmoth' ? prepareDeathmothJob(options.mothForm ?? 'male')
+    : job.type === 'watcher' || job.type === 'strider' ? prepareWatchJob(job.type)
+    : job.type === 'mangled' ? prepareMangledJob(1)
+    : job.type === 'wrangler' ? prepareWranglerJob(options.wranglerKind??'male',!!options.wranglerPregnant)
     : job.type === 'dryshrimp' ? prepareShrimpTextures()
     : job.type === 'corpserat' ? prepareRatTextures(options.ratMorph ?? 'common')
     : job.type === 'partygoer' ? preparePartygoerJob() : null

@@ -4,6 +4,7 @@ import type { Structure } from '../core/types'
 import { getMaterialMode,litMaterial } from './shared'
 import {l1Texture} from './l1Materials'
 import {L1_CRATE,l1CrateCount} from '../world/l1Crate'
+import * as D from './l1PropDetail'
 
 type Part = { geo: THREE.BufferGeometry; mat: THREE.Material }
 const box = (x: number, y: number, z: number) => new THREE.BoxGeometry(x, y, z)
@@ -31,30 +32,6 @@ function p(geo: THREE.BufferGeometry, m: THREE.Material, x = 0, y = 0, z = 0, rx
   geo.rotateX(rx); geo.rotateZ(rz); geo.translate(x, y, z); return { geo, mat: m }
 }
 
-function foldingtable() {
-  const g = new THREE.Group(), top = mat('#b1b2aa'), iron = mat('#3f4544', .55, .5), a: Part[] = [p(box(1.55, .04, .72), top, 0, .74, 0)]
-  for (const x of [-.57, .57]) for (const z of [-.22, .22]) a.push(p(box(.025, .7, .025), iron, x, .38, z, 0, (x * z > 0 ? -.28 : .28)))
-  a.push(p(box(1.1, .025, .025), iron, 0, .16, -.22), p(box(1.1, .025, .025), iron, 0, .16, .22)); add(g, a); return g
-}
-function seat() {
-  const g = new THREE.Group(), seatM = mat('#272c2d'), iron = mat('#626562', .35, .62), a: Part[] = [p(box(.43, .06, .43), seatM, 0, .46, 0), p(box(.42, .32, .06), seatM, 0, .65, .18)]
-  for (const x of [-.16, .16]) for (const z of [-.14, .14]) a.push(p(box(.025, .44, .025), iron, x, .22, z)); add(g, a); return g
-}
-function panel() {
-  const g = new THREE.Group(), grey = mat('#9b9b95'), a: Part[] = [p(box(.9, 1.65, .035), grey, 0, .825, 0, .12)]
-  for (let i = -2; i <= 2; i++) a.push(p(box(.035, 1.5, .055), grey, i * .145, .82, -.035, .12)); add(g, a); return g
-}
-function louver() {
-  const g=new THREE.Group(),grey=mat('#8b8e88',.28,.75),a:Part[]=[]
-  for(const x of [-.43,.43])a.push(p(box(.04,.85,.07),grey,x,.435,0,.10))
-  for(const y of [.035,.835])a.push(p(box(.9,.045,.07),grey,0,y,0,.10))
-  for(let i=0;i<10;i++)a.push(p(box(.83,.065,.016),grey,0,.09+i*.073,0,-.15))
-  add(g,a);return g
-}
-function extinguisher() {
-  const g = new THREE.Group(), red = mat('#a9362e', .12, .62), black = mat('#202321', .05, .82), a: Part[] = [p(cyl(.105, .47, 12), red, 0, .26, 0), p(new THREE.ConeGeometry(.095, .11, 10), red, 0, .55, 0), p(cyl(.045, .07, 8), black, 0, .64, 0), p(box(.13, .025, .025), black, 0, .69, 0)]
-  const hose = p(cyl(.012, .14, 6), black, .105, .42, 0, 0, Math.PI / 2); a.push(hose, p(cyl(.012, .14, 6), black, .17, .36, 0, 0, Math.PI / 2), p(cyl(.012, .12, 6), black, .21, .29, 0, 0, Math.PI / 2)); add(g, a); return g
-}
 function crate(number = 0,count=1,upperNumber=number+10) {
   const g=new THREE.Group(),wood=mat('#e0c995',0,.92),frame=mat('#eddbad',0,.92),parts:Part[]=[]
   const board=(w:number,h:number,d:number,x:number,y:number,z:number,m:THREE.Material,vertical=false)=>{
@@ -113,16 +90,11 @@ function airunit() {
   for (const x of [-.245, .245]) for (const y of [.1, .6]) a.push(p(cyl(.012, .008, 8), metal, x, y, -.16, Math.PI / 2))
   add(g, a); return g
 }
-function paintcan() {
-  const g = new THREE.Group(), blue = mat('#263d61', .08, .72), grey = mat('#b5b8b0', .25, .62), metal = mat('#777b78', .72, .36), a: Part[] = [p(cyl(.115, .29, 12), blue, 0, .145, 0), p(new THREE.TorusGeometry(.108, .009, 4, 12), blue, 0, .025, 0,Math.PI/2), p(new THREE.TorusGeometry(.108, .009, 4, 12), blue, 0, .265, 0,Math.PI/2), p(cyl(.108, .012, 12), grey, 0, .3, 0), p(new THREE.TorusGeometry(.1, .008, 4, 12, Math.PI), metal, 0, .265, 0)]
-  add(g, a); return g
-}
-function caution() { const g = new THREE.Group(), yellow = mat('#d2ad27'), a = [p(box(.28, .55, .025), yellow, 0, .275, -.08, -.12), p(box(.28, .55, .025), yellow, 0, .275, .08, .12), p(box(.24, .025, .16), yellow, 0, .04, 0)]; add(g, a); return g }
 
 export function buildL1Prop(s: Structure): THREE.Group | null {
   const kind = typeof s.data?.l1Prop === 'string' ? s.data.l1Prop : ''
   const rawNumber=Number(s.data?.l1Number), rawSid=Number(s.data?.sid), selected=Number.isFinite(rawNumber)?rawNumber:rawSid
-  const makers: Record<string, () => THREE.Group> = { foldingtable, seat, panel, louver, extinguisher, crate: () => crate(selected,l1CrateCount(s),Number(s.data?.l1UpperNumber??selected+10)), pathchair, airunit, paintcan, caution }
+  const makers: Record<string, () => THREE.Group> = { foldingtable:D.foldingtable, seat:D.seat, panel:D.panel, louver:D.louver, extinguisher:D.extinguisher, grate:D.grate, matpile:D.matpile, crate: () => crate(selected,l1CrateCount(s),Number(s.data?.l1UpperNumber??selected+10)), pathchair, airunit, paintcan:D.paintcan, caution:D.caution }
   const made = makers[kind]?.(); if (!made) return null
   made.position.set(s.x + s.w / 2, 0, s.y + s.h / 2)
   made.rotation.y = (Number(s.data?.deg) || 0) * Math.PI / 180

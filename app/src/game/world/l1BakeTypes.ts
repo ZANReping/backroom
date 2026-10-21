@@ -1,6 +1,6 @@
 import type {L1StyleName,L1SurfaceName,V3} from './l1BuildingTypes'
 export type L1BakeQuality='low'|'high'
-export const L1_BAKE_REVISION=17
+export const L1_BAKE_REVISION = 19
 export interface L1BakedMesh {style:L1StyleName;surface:L1SurfaceName;position:Float32Array;normal:Float32Array;uv:Float32Array;uv1:Float32Array;index:Uint32Array}
 export interface L1Probe {position:V3;color:V3;indirect:V3;direction:V3;portal?:number[];indirectPortal?:number[]}
 export interface L1BakeResult {

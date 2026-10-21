@@ -999,12 +999,20 @@ export function genL2ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
       entities.push({ type: 'dryshrimp', x: WX + (i % CS) + 0.5, y: WY + ((i / CS) | 0) + 0.5 })
     }
   }
-  // Nguithr'xurh（Entity 16）：约 4% 的 chunk 在天花板上结一球状网囊
+  // Nguithr'xurh（Entity 16）：约 4% 的 chunk 在天花板上结巢（巢与 3–6 个网囊由 nguithrAI 按巢点坐标确定）
   if (rng.chance(0.04)) {
     for (let t = 0; t < 30; t++) {
       const x = rng.int(2, CS - 3), y = rng.int(2, CS - 3)
       if (!isF(x, y) || solidAtL(WX + x, WY + y)) continue
       entities.push({ type: 'nguithr', x: WX + x + 0.5, y: WY + y + 0.5 })
+      // 群居：少数巢点 2–3 只共享一片天花板（独立随机流，不扰动本 chunk 主随机序列）
+      const cr = new RNG(h32(seed, cx, cy, 0x16c))
+      if (cr.chance(0.18)) for (let k = 0, n = cr.int(1, 2), tries = 0; k < n && tries < 24; tries++) {
+        const a = cr.range(0, Math.PI * 2), r = cr.range(2.6, 3.4)
+        const mx = Math.floor(x + 0.5 + Math.cos(a) * r), my = Math.floor(y + 0.5 + Math.sin(a) * r)
+        if (mx < 1 || my < 1 || mx > CS - 2 || my > CS - 2 || !isF(mx, my) || solidAtL(WX + mx, WY + my)) continue
+        entities.push({ type: 'nguithr', x: WX + mx + 0.5, y: WY + my + 0.5 }); k++
+      }
       break
     }
   }
@@ -1067,4 +1075,3 @@ registerInfiniteLevel(2, {
   variantNames: L2_VARIANT_NAMES,
   variantLore: L2_VARIANT_LORE,
 })
-

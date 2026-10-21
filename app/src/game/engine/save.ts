@@ -1,3 +1,4 @@
+import {captureTradersWorld} from '../world/tradersWorld'
 import { captureL0,type L0WorldSave } from './l0State'
 import {captureGlowFlight} from './glowsticks'
 import { captureL1, type L1WorldSave } from './l1State'
@@ -37,6 +38,7 @@ export const SAVE_KEY = 'br_save_state'
 const LEGACY_SEED_KEY = 'br_save'
 
 export interface SaveSnapshot {
+  tradersWorld?: import('../world/tradersWorld').TradersWorldSave
   glowProjectiles?: import('../engine').Projectile[]
   l5MothAlerts?: { all: boolean; nests: Record<string, boolean> }
   profile?: import('../core/playerProfile').PlayerProfile
@@ -44,7 +46,7 @@ export interface SaveSnapshot {
   /** v59：据点连续公共空间布局版本；缺省/1 为旧版小房间布局。 */
   settlementLayout?: 1 | 2
   alphaLayout?: 1 | 2 | 3 | 4 | 5
-  bntgLayout?:3
+  bntgLayout?:3 | 4
   l0World?: L0WorldSave
   l0SharedWorld?: L0WorldSave
   l1World?: L1WorldSave
@@ -170,7 +172,8 @@ export function snapshot(eng: Engine): SaveSnapshot {
     career: structuredClone(eng.career),
     settlementLayout: 2,
     alphaLayout: 5,
-    bntgLayout:3,
+    bntgLayout:4,
+    tradersWorld:eng.map?.traders?captureTradersWorld(eng.map):eng.tradersWorld,
     outpostReturn: eng.outpostReturn,
     rep: eng.rep,
     quests: eng.quests,

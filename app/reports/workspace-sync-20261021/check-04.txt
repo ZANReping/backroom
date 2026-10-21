@@ -1,0 +1,9 @@
+
+> my-app@0.0.0 check:model-warmup
+> esbuild scripts/check-model-warmup.ts --bundle --platform=node --format=esm --outfile=.cache/check-model-warmup.mjs && node .cache/check-model-warmup.mjs
+
+
+  .cache\check-model-warmup.mjs  640.6kb
+
+Done in 65ms
+{"passed":111}

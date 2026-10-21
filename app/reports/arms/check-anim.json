@@ -1,0 +1,379 @@
+{
+  "budget": {
+    "meshes": 3,
+    "draws": 4,
+    "tris": 6880,
+    "bones": 79
+  },
+  "lurk": {
+    "nan": 0,
+    "outClosed": 0,
+    "grateHit": 0,
+    "wallHit": 0,
+    "floor": 0,
+    "minY": 3.777,
+    "maxJump": 0,
+    "jumpAt": 0,
+    "jumpBone": "",
+    "maxK": 1,
+    "grateHitAt": -1,
+    "wallHitAt": -1,
+    "outClosedAt": -1
+  },
+  "emerge": {
+    "nan": 0,
+    "outClosed": 0,
+    "grateHit": 0,
+    "wallHit": 0,
+    "floor": 0,
+    "minY": 0.674,
+    "maxJump": 0.276,
+    "jumpAt": 4.18,
+    "jumpBone": "arm2_hand",
+    "maxK": 1,
+    "grateHitAt": -1,
+    "wallHitAt": -1,
+    "outClosedAt": -1
+  },
+  "search": {
+    "nan": 0,
+    "outClosed": 0,
+    "grateHit": 0,
+    "wallHit": 0,
+    "floor": 0,
+    "minY": 0.737,
+    "maxJump": 0.186,
+    "jumpAt": 0.37,
+    "jumpBone": "arm2_m4",
+    "maxK": 1,
+    "grateHitAt": -1,
+    "wallHitAt": -1,
+    "outClosedAt": -1
+  },
+  "lunge": {
+    "nan": 0,
+    "outClosed": 0,
+    "grateHit": 0,
+    "wallHit": 0,
+    "floor": 0,
+    "minY": 0.945,
+    "maxJump": 0.352,
+    "jumpAt": 1.08,
+    "jumpBone": "arm0_s4",
+    "maxK": 1.14,
+    "grateHitAt": -1,
+    "wallHitAt": -1,
+    "outClosedAt": -1
+  },
+  "grab": {
+    "nan": 0,
+    "outClosed": 0,
+    "grateHit": 0,
+    "wallHit": 0,
+    "floor": 0,
+    "minY": 0.937,
+    "maxJump": 0.074,
+    "jumpAt": 0.12,
+    "jumpBone": "arm0_hand",
+    "maxK": 1.4,
+    "grateHitAt": -1,
+    "wallHitAt": -1,
+    "outClosedAt": -1
+  },
+  "drag": {
+    "nan": 0,
+    "outClosed": 0,
+    "grateHit": 0,
+    "wallHit": 0,
+    "floor": 0,
+    "minY": 1.062,
+    "maxJump": 0.094,
+    "jumpAt": 3.28,
+    "jumpBone": "arm0_hand",
+    "maxK": 1.37,
+    "grateHitAt": -1,
+    "wallHitAt": -1,
+    "outClosedAt": -1
+  },
+  "swallow": {
+    "nan": 0,
+    "outClosed": 0,
+    "grateHit": 0,
+    "wallHit": 0,
+    "floor": 0,
+    "minY": 1.071,
+    "maxJump": 0.158,
+    "jumpAt": 0.48,
+    "jumpBone": "arm2_m7",
+    "maxK": 1,
+    "grateHitAt": -1,
+    "wallHitAt": -1,
+    "outClosedAt": -1
+  },
+  "flinch": {
+    "nan": 0,
+    "outClosed": 0,
+    "grateHit": 0,
+    "wallHit": 0,
+    "floor": 0,
+    "minY": 0.939,
+    "maxJump": 0.258,
+    "jumpAt": 0.1,
+    "jumpBone": "arm0_s2",
+    "maxK": 1.38,
+    "grateHitAt": -1,
+    "wallHitAt": -1,
+    "outClosedAt": -1
+  },
+  "burnRetreat": {
+    "nan": 0,
+    "outClosed": 0,
+    "grateHit": 0,
+    "wallHit": 0,
+    "floor": 0,
+    "minY": 0.996,
+    "maxJump": 0.467,
+    "jumpAt": 0.2,
+    "jumpBone": "arm2_s6",
+    "maxK": 1,
+    "grateHitAt": -1,
+    "wallHitAt": -1,
+    "outClosedAt": -1
+  },
+  "spit": {
+    "nan": 0,
+    "outClosed": 0,
+    "grateHit": 0,
+    "wallHit": 0,
+    "floor": 0,
+    "minY": 0.946,
+    "maxJump": 0.32,
+    "jumpAt": 2.07,
+    "jumpBone": "arm0_hand",
+    "maxK": 1.05,
+    "grateHitAt": -1,
+    "wallHitAt": -1,
+    "outClosedAt": -1
+  },
+  "loop": {
+    "nan": 0,
+    "outClosed": 0,
+    "grateHit": 0,
+    "wallHit": 0,
+    "floor": 0,
+    "minY": 0.675,
+    "maxJump": 0.49,
+    "jumpAt": 33.82,
+    "jumpBone": "arm2_hand",
+    "maxK": 1.39,
+    "grateHitAt": -1,
+    "wallHitAt": -1,
+    "outClosedAt": -1
+  },
+  "ik": [
+    {
+      "x": 0,
+      "y": -1.3,
+      "z": 2.1,
+      "tipAim": 0,
+      "curl": -1,
+      "err": 0,
+      "k": 1.37
+    },
+    {
+      "x": 0,
+      "y": -1.3,
+      "z": 2.1,
+      "tipAim": 0,
+      "curl": 1,
+      "err": 0,
+      "k": 1.37
+    },
+    {
+      "x": 0,
+      "y": -1.3,
+      "z": 2.1,
+      "tipAim": 1,
+      "curl": -1,
+      "err": 0,
+      "k": 1.21
+    },
+    {
+      "x": 0,
+      "y": -1.3,
+      "z": 2.1,
+      "tipAim": 1,
+      "curl": 1,
+      "err": 0,
+      "k": 1.39
+    },
+    {
+      "x": 1.2,
+      "y": -2,
+      "z": 0.8,
+      "tipAim": 0,
+      "curl": -1,
+      "err": 0,
+      "k": 1.32
+    },
+    {
+      "x": 1.2,
+      "y": -2,
+      "z": 0.8,
+      "tipAim": 0,
+      "curl": 1,
+      "err": 0,
+      "k": 1.32
+    },
+    {
+      "x": 1.2,
+      "y": -2,
+      "z": 0.8,
+      "tipAim": 1,
+      "curl": -1,
+      "err": 0,
+      "k": 1.16
+    },
+    {
+      "x": 1.2,
+      "y": -2,
+      "z": 0.8,
+      "tipAim": 1,
+      "curl": 1,
+      "err": 0,
+      "k": 1.34
+    },
+    {
+      "x": -0.8,
+      "y": -0.9,
+      "z": 1.6,
+      "tipAim": 0,
+      "curl": -1,
+      "err": 0,
+      "k": 1.08
+    },
+    {
+      "x": -0.8,
+      "y": -0.9,
+      "z": 1.6,
+      "tipAim": 0,
+      "curl": 1,
+      "err": 0,
+      "k": 1.08
+    },
+    {
+      "x": -0.8,
+      "y": -0.9,
+      "z": 1.6,
+      "tipAim": 1,
+      "curl": -1,
+      "err": 0,
+      "k": 1
+    },
+    {
+      "x": -0.8,
+      "y": -0.9,
+      "z": 1.6,
+      "tipAim": 1,
+      "curl": 1,
+      "err": 0,
+      "k": 1.1
+    },
+    {
+      "x": 0.3,
+      "y": -2.3,
+      "z": 3.2,
+      "tipAim": 0,
+      "curl": -1,
+      "err": 0,
+      "k": 2.38
+    },
+    {
+      "x": 0.3,
+      "y": -2.3,
+      "z": 3.2,
+      "tipAim": 0,
+      "curl": 1,
+      "err": 0,
+      "k": 2.38
+    },
+    {
+      "x": 0.3,
+      "y": -2.3,
+      "z": 3.2,
+      "tipAim": 1,
+      "curl": -1,
+      "err": 0,
+      "k": 2.22
+    },
+    {
+      "x": 0.3,
+      "y": -2.3,
+      "z": 3.2,
+      "tipAim": 1,
+      "curl": 1,
+      "err": 0,
+      "k": 2.4
+    },
+    {
+      "x": 0,
+      "y": -1,
+      "z": 0.5,
+      "tipAim": 0,
+      "curl": -1,
+      "err": 0,
+      "k": 1
+    },
+    {
+      "x": 0,
+      "y": -1,
+      "z": 0.5,
+      "tipAim": 0,
+      "curl": 1,
+      "err": 0,
+      "k": 1
+    },
+    {
+      "x": 0,
+      "y": -1,
+      "z": 0.5,
+      "tipAim": 1,
+      "curl": -1,
+      "err": 0.0005,
+      "k": 1
+    },
+    {
+      "x": 0,
+      "y": -1,
+      "z": 0.5,
+      "tipAim": 1,
+      "curl": 1,
+      "err": 0,
+      "k": 1
+    }
+  ],
+  "maxReach": {
+    "tipArc": 4.981,
+    "straight": 4.737,
+    "k": 2.89
+  },
+  "thin": {
+    "r1": 0.0503,
+    "r25": 0.0318,
+    "ratio": 0.632,
+    "expect": 0.632
+  },
+  "light": {
+    "capsules": 52,
+    "toward": [
+      0.62,
+      0.48,
+      0.64
+    ],
+    "away": [
+      0,
+      0,
+      0
+    ]
+  }
+}

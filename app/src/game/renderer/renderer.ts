@@ -1,3 +1,10 @@
+import { setMeleeWear, meleeResourcesReady, prepareMeleeJob } from './meleeMesh'
+import { prepareWranglerJob, wranglerResourcesReady } from './wranglerMesh'
+import { isBroken, slotDur, slotMaxDur } from '../engine/melee'
+import { LOW_DUR, isMelee } from '../content/melee'
+import { MELEE_HOLD } from './meleeAnim'
+import type { MeleeType } from './meleeMesh'
+import { animateWrangler, syncWranglerProps, clearWranglerProps } from './wranglerRender'
 import { L7OceanFx, l7CausticUniforms } from './l7Ocean'
 import { l7SurgeUniforms, waterUniforms } from './water'
 import { l7SurgeShaderParams } from '../engine/l7Events'
@@ -26,16 +33,19 @@ import {PhotoPass,PhotoRenderPass,PhotoFinishShader,perceptionBlur} from './phot
 import {buildL0Architecture} from './l0Architecture'
 import {syncL0PointMask} from './l0PointMask'
 import {alphaBakedActive,alphaBakeOverride} from './alphaBakedLighting'
+import {TradersSceneStream} from './tradersStream'
+import {tradersBakeOverride} from './tradersBakedLighting'
 import {commitL0Revision,type L0Pending} from '../engine/l0State'
 import {l0WallMount} from '../world/l0Architecture'
 import { l1Transition } from '../world/l1Layout'
 import {buildL4Lights,disposeL4Owned} from './l4Meshes'
 import {L4VolumeFog} from './l4VolumeFog'
 import {batchL4StaticJob} from './l4Batch'
-import {l4StyleAt} from '../world/l4Layout'
+import {l4SamplerFor} from './l4Bake'
 // Three.js 第一人称低多边形渲染器：主循环（静态几何/灯光池/实体动画编排，构建逻辑见同级模块）
 import * as THREE from 'three'
 import { buildL1Architecture } from './l1Architecture'
+import {buildL1GardenPlants} from './l1GardenPlants'
 import { buildL3Architecture } from './l3Architecture'
 import { buildL5Architecture } from './l5Architecture'
 import { l3Height, l3StyleAt } from '../world/l3Architecture'
@@ -65,7 +75,8 @@ import { waitForSubmittedPrograms } from './programCompletion'
 import { ModelWarmupQueue } from './modelWarmup'
 import { EntityPreparationQueue } from './entityPreparation'
 import { clumpBlobReady, prepareClumpBlob } from './clumpBlob'
-import { mothTexturesReady, prepareMothTextures } from './mothTextures'
+import { deathmothResourcesReady, prepareDeathmothJob } from './deathmothMesh'
+import { watchResourcesReady, prepareWatchJob } from './neighborhoodWatchMesh'
 import { buildCaveVolumeTerrainJob } from './caveVolume'
 import { CS, type LiveChunk } from '../world/infinite'
 import { buildSkyAndLiquidsJob, buildLiquidSurfacesJob, updateLiquidTime, resetLiquidWaves } from './liquidsSky'
@@ -77,6 +88,7 @@ import { ALPHA_ENTRIES } from '../content/alphaBlueprint'
 import { buildDecorationsJob } from './decorations'
 import { buildEntityMesh } from './entitiesMesh'
 import { animateMoth, buildMothMesh } from './mothMeshes'
+import { MothWorldView } from './mothWorldView'
 import { buildItemMesh } from './itemsMesh'
 import { batchRigidItem } from './itemBatches'
 import { buildViewmodel, buildHeldItem, buildCrosshair, vmat, vmAnimPose, heldHandPose, heldBox, buildRetroHand, LIGHTER_HAND_POSE, sleeveKindOf, type ViewmodelParts } from './viewmodel'
@@ -84,6 +96,7 @@ import { ViewmodelSwitch } from './viewmodelSwitch'
 import { getAvatar, randomAvatar } from '../core/avatar'
 import { buildAvatarModel } from './retroAvatar'
 import { buildCharacterModel } from './characterModel'
+import {applyTradersNpcPose} from './tradersNpcPose'
 import { SeatedPlayer } from './seatedPlayer'
 import { syncFurnitureSeats } from './furnitureSeats'
 import { seatedEyeHeight, seatedEyeOffset } from '../engine/seating'
@@ -126,7 +139,17 @@ import { animateObject70Part } from './object70Mesh'
 import { animateSkinStealer } from './skinStealerMesh'
 import { animateWretch } from './wretchMesh'
 import { animateRat, buildRatGearMesh, animateRatGear, prepareRatTextures, ratTexturesReady } from './ratMesh'
+import { nguithrNest, nguithrResourcesReady, prepareNguithrJob, type NguithrRig } from './nguithrMesh'
+import { nguithrState } from '../engine/nguithrAI'
+import { nguithrAnimator, nguithrClipPose, nguithrFloorDrop, nguithrPose, nguithrToMount, poseNguithr, type NguithrPose } from './nguithrAnim'
+import { QA_CPU_SKIN, syncSceneCpuSkins } from './qaCpuSkin'
 import { animateJerry, buildStonePool, jerryShoulderPoint, syncStonePool } from './jerryMesh'
+import { armsDebris, armsRig, armsVent, armsResourcesReady, prepareArmsJob, buildArmsBurntDebris, buildArmsMesh, buildArmsVent } from './armsMesh'
+import { ArmsAnimator, armsClipPose, armsWorldToLocal, poseArms, setArmsDuct, type ArmsPose } from './armsAnim'
+import { ARMS, armsHeldChest, armsState, type ArmsMark, type ArmsVentSpot } from '../engine/armsAI'
+const sm01 = (x: number) => { const k = x < 0 ? 0 : x > 1 ? 1 : x; return k * k * (3 - 2 * k) }
+import { animateNW, mangledGeometryReady, prepareMangledJob } from './watchRender'
+import { mangledGrowth, nwCaptor } from '../engine/watchAI'
 import { ratMorphFor } from '../entities/rats'
 import { updateWaterUniforms } from './water'
 import { l10WindUniforms } from './l10Wind'
@@ -148,7 +171,7 @@ function disposeWorldGeometry(object: THREE.Object3D): void {
  * 外接盒把桌底、路灯灯臂下方或树冠下方全部填成空气墙。
  */
 export function syncStructureModelColliders(s: Structure, root: THREE.Object3D, groundY: number): void {
-  if (!s.solid) return
+  if (!s.solid||s.data?.tradersModel) return
   // L1 case boards are merged BufferGeometry; the semantic closed lid and
   // stacked height come from the same dimensions as the actual crate model.
   if(s.kind==='crate'&&s.data?.l1Crate)return
@@ -618,8 +641,21 @@ export class Renderer3D {
   private shrimpHeldWarmupKey = ''
   private mothWarmup: Generator<void, void, unknown> | null = null
   private mothWarmupDone = false
+  private watchWarmup: Generator<void, void, unknown> | null = null
+  private watchWarmupDone = false
+  private watchProgramOwners: THREE.Group[] = []
+  private nguithrWarmup:Generator<void,void,unknown>|null=null
+  private nguithrWarmupKey=''
+  private nguithrProgramOwner:THREE.Group|null=null
+  private armsWarmup:Generator<void,void,unknown>|null=null
+  private armsWarmupKey=''
+  private armsProgramOwners:THREE.Group[]=[]
   private mothProgramOwners: THREE.Group[] = []
   private vmParts!: ViewmodelParts
+  private vmMeleeType: MeleeType | null = null
+  private wranglerWarmup:Generator<void,void,unknown>|null=null
+  private wranglerWarmupDone=false
+  private wranglerProgramOwners:THREE.Group[]=[]
   // 副手打火机 viewmodel（装备打火机时显示；与手电互斥——副手只有一个槽位）
   private vmLighter = new THREE.Group()
   // v51：视角惯性滞后状态（转动视角时手部反向偏移并回正）
@@ -644,6 +680,7 @@ export class Renderer3D {
   get cityChunkTask() { return this.chunkBuilds.first }
   private l0RevisionJob: {map:GameMap;pending:L0Pending;iter:Generator<void,void,unknown>} | null = null
   private finiteTask: Generator<void, void, unknown> | null = null
+  private tradersStream: TradersSceneStream | null = null
   private finitePendingRoot: THREE.Group | null = null
   private cityDistant:THREE.Group|null=null
   private cityInstances=new Map<string,{structure:Structure;mesh:THREE.Group}>()
@@ -794,7 +831,9 @@ export class Renderer3D {
       heldObj = it
     }
     // v72：手指按物品真实网格接触求解（不穿模）
-    this.vmParts.right.setPose(heldHandPose(type, box), heldObj)
+    const baseType = type.split(':')[0]
+    this.vmParts.right.setPose(heldHandPose(baseType, box), heldObj)
+    this.vmMeleeType = baseType in MELEE_HOLD ? baseType as MeleeType : null
     const hp = this.vmParts.right.group.position
     this.vmHandBase = { x: hp.x, y: hp.y, z: hp.z }
     this.vmHandQ.copy(this.vmParts.right.group.quaternion)
@@ -845,11 +884,19 @@ export class Renderer3D {
       this.vmParts.right.setLook(look); this.vmParts.left.setLook(look); this.vmLighterHand.setLook(look)
     }
     // 从背包开始使用时也把对应物品临时放入手中，让动作与实际耗时完整可见。
-    const requested = engine.gunCandyT > 0 ? 'guncandy' : (engine.usingItem?.type ?? p.hotbar[p.selected]?.type ?? '') // v51：枪糖生效中右手恒为枪
+    const selSlot = p.hotbar[p.selected]
+    const requested = engine.gunCandyT > 0 ? 'guncandy' : engine.usingItem ? engine.usingItem.type + (engine.usingItem.where === 'hotbar' && engine.usingItem.i === p.selected && isBroken(selSlot) ? ':broken' : '') : selSlot ? selSlot.type + (isBroken(selSlot) ? ':broken' : '') : '' // v51：枪糖生效中右手恒为枪；近战重制：残件用 'type:broken' 区分模型
     this.vmSwitch.update(p.selected,requested,dt,show&&!engine.handsStowed&&!engine.usingItem&&engine.attackAnimT<=0&&engine.gunCandyT<=0)
     if (!show || !this.vm.visible) return
     const held=this.vmSwitch.held
+    if(isMelee(held.split(':')[0])&&!this.entityCpuWarmup.request('melee-surfaces',meleeResourcesReady(),prepareMeleeJob)){return}
     if (held !== this.vmHeld) this.setHeldItem(held)
+    // 近战重制：刃上血污 + 低耐久裂纹/磨损（值变化时才写材质）
+    if (this.vmMeleeType && this.vmItem?.userData.meleeMesh && selSlot?.type === this.vmMeleeType) {
+      const blood = Math.round((selSlot.blood ?? 0) * 20) / 20, fr = slotDur(selSlot) / slotMaxDur(selSlot), worn = Math.round((fr <= 0 ? 1 : Math.max(0, 1 - fr / LOW_DUR)) * 20) / 20
+      const k = blood + ':' + worn
+      if (this.vmItem.userData.wearKey !== k) { this.vmItem.userData.wearKey = k; setMeleeWear(this.vmItem.userData.meleeMesh, { blood, worn }) }
+    }
     // 储罐液体与余量直接更新现有材质/液面，不因每次喷射或换液重建整把枪。
     if (held === 'squirtgun' && this.vmItem) {
       const liquid = engine.squirtTank
@@ -888,10 +935,11 @@ export class Renderer3D {
         hand.position.set(hb.x, hb.y, hb.z); hand.quaternion.copy(this.vmHandQ)
       }
     }
-    const { px: px0, py: py0, pz, rx: rx0, rz: rz0, sway2 } = vmAnimPose({
+    const { px: px0, py: py0, pz, rx: rx0, ry: ry0, rz: rz0, sway2 } = vmAnimPose({
       mx: engine.input.mx, my: engine.input.my, bobPhase: this.bobPhase, time: this.time,
       usingItem: engine.usingItem, attackAnimT: engine.attackAnimT, attackAnimDur: engine.attackAnimDur,
       attackAnimKind: engine.attackAnimKind, searching: !!engine.searching,
+      melee: this.vmMeleeType && !engine.handsStowed && engine.gunCandyT <= 0 ? { type: this.vmMeleeType, side: engine.meleeSide, heavy: engine.meleeHeavy, charge: engine.meleeCharge, bounce: engine.meleeBounce } : null,
     })
     let px = px0, py = py0, rx = rx0, rz = rz0
     // v51：视角惯性——转动视角（含原地转身）时手部向反方向滞后偏移并缓慢回正
@@ -914,6 +962,7 @@ export class Renderer3D {
     this.vm.position.set(px+dip*.025, py - this.stowK * .68 - dip*.52, pz + this.stowK * .18+dip*.025)
     this.vm.rotation.x = rx - this.stowK * .4-dip*.3
     this.vm.rotation.z = rz-dip*.08
+    this.vm.rotation.y = ry0
     // 手电随移动轻微浮动
     this.vmFlash.position.y = -0.28 - sway2 * 0.01
   }
@@ -979,7 +1028,7 @@ export class Renderer3D {
     const def = levelDefOf(engine.player.level)!
     const weather=def.id===11?engine.l11Weather:engine.l10Weather
     this.updateL11Distant(m,def.id)
-    const far=def.id===11?800:60
+    const far=def.id===11?800:m.traders?104:60
     if(this.camera.far!==far){this.camera.far=far;this.camera.updateProjectionMatrix()}
     // v64：风场相位按速度积分、强度/风向平滑过渡；带上窗口原点与玩家位置（玩家穿过麦田时作物分开）
     if (def.id === 10) stepL10Wind(dt, engine.l10Weather.kind, engine.l10Weather.k, { x: m.inf?.ox ?? 0, y: m.inf?.oy ?? 0 }, { x: engine.player.x, y: engine.player.z, z: engine.player.y })
@@ -1004,7 +1053,7 @@ export class Renderer3D {
       this.l6WasActive = false
       this.l6DarkAdapt = 0
       // L0 保留旧相机照片般的柔和高光，不让奶油黄材质再次曝成饱和亮黄。
-      this.three.toneMappingExposure = this.userExposure * (def.id === 0 ? 0.94 : 1)
+      this.three.toneMappingExposure = this.userExposure * (def.id === 0 ? 0.94 : def.id === 4 ? 0.78 : 1) // L4 v2：参考图对照——室内整体压暗，窗景保持最亮
     }
     // Reserve the level's shadow slots before compiling incoming geometry.
     // Room/garden/outdoor transitions change light intensity, never shader counts.
@@ -1016,7 +1065,36 @@ export class Renderer3D {
     for (let i = 0; i < this.activeLightPool.length; i++) this.activeLightPool[i].castShadow = i < pointSlots
     if (this.levelCfg?.id === 1 && def.id !== 1) cancelL1BakeWork()
     const buildBudget = engine.paused && !this.isNearWorldReady(engine) ? this.loadingBudgetMs : this.chunkBudgetMs
-    if (m.inf) {
+    if (m.traders) {
+      if (this.builtMap !== m || this.builtRev !== engine.mapRev) {
+        this.finiteTask?.return(); this.finiteTask = null
+        this.buildInfiniteEnv(m, def)
+        this.builtRev = engine.mapRev
+        this.tradersStream = new TradersSceneStream(m, def, {
+          three: this.three, scene: this.scene, camera: this.camera,
+          target: () => this.composer?.readBuffer ?? null,
+          shadow: () => this.flashShadowsOn ? this.flash : null,
+          prepare: (s, root) => { syncStructureModelColliders(s, root, 0); syncFurnitureSeats(s, root, 0, def.id) },
+          warm: root => this.warmTradersRoot(root),
+          add: (key, chunk, group, models, exits) => {
+            for (const {s, root} of models) {
+              this.structMeshes.set(s, root)
+              if (ANIM_STRUCT(s)) this.animatedStructMeshes.set(s, root)
+            }
+            this.freezeStaticTransforms(group)
+            this.chunkGroups.set(key, {group, wx:chunk?.bounds.x??0, wy:chunk?.bounds.y??0,
+              structs:models.map(model=>model.s), fixtures:[], exitMeshes:[], exitRoots:exits, l9Interiors:[]})
+          },
+          remove: (key, group, models) => {
+            group.removeFromParent(); this.chunkGroups.delete(key)
+            for (const {s} of models) { this.structMeshes.delete(s); this.animatedStructMeshes.delete(s) }
+            this.textureHandoffUntil = performance.now() + 4000
+          },
+          retire: root => this.retireWorld(root),
+        })
+      }
+      this.tradersStream!.sync(engine, buildBudget, engine.paused)
+    } else if (m.inf) {
       // v17：无限模式（L0）——chunk 几何按视野流式构建/卸载
       if (this.builtMap !== m) {
         this.finiteTask?.return(); this.finiteTask = null
@@ -1291,6 +1369,10 @@ export class Renderer3D {
       }
       this.hemi.color.set('#9aa2b0')
       this.hemi.groundColor.set('#3a342c')
+      if(def.id===4){
+        // L4 v2：室内由 l4Bake 烘焙提供漫反射；通用环境光/窗外 k 补光会把吊顶洗白（参考图天花明显暗于灯具）。
+        this.ambient.intensity=.035;this.hemi.intensity=.06
+      }
       if(def.id===11){
         // Directional daylight carries facade relief. Skylight fills the
         // shaded street without washing every surface into the same grey.
@@ -1469,10 +1551,10 @@ export class Renderer3D {
     }
     if(def.id===4&&!bright){
       let target=0
-      for(const[dx,dy]of [[0,0],[1,0],[-1,0],[0,1],[0,-1]])if(l4StyleAt(m,p.x+dx,p.y+dy)==='windowview')target+=.2
       this.l4DarkBlend+=(target-this.l4DarkBlend)*(1-Math.exp(-dt*5))
       const dark=this.l4DarkBlend
-      this.ambient.intensity=.32-dark*.23;this.hemi.intensity=.34-dark*.22
+      // v2: baked lighting carries the troffer pools; flat ambient only fills unbaked props.
+      this.ambient.intensity=this.lightMode==='realistic'?.035:.24-dark*.08;this.hemi.intensity=this.lightMode==='realistic'?.06:.22-dark*.08
       const fog=this.scene.fog as THREE.Fog|null
       if(fog){fog.near=30-dark*12;fog.far=110;fog.color.set('#59676d')}
     }
@@ -1568,7 +1650,7 @@ export class Renderer3D {
           continue
         }
       }
-      pl.userData.l0Baked=!bright&&((def.id===0||def.id===1&&L.keep!==1)&&L.gen===1||def.id===101&&alphaBakedActive()&&!portableLights.includes(L))
+      pl.userData.l0Baked=!bright&&((def.id===0||def.id===1&&L.keep!==1)&&L.gen===1||(def.id===101&&alphaBakedActive()||def.id===102&&!!m.traders)&&!portableLights.includes(L))
       const li = Math.floor(L.y) * m.w + Math.floor(L.x)
       // v46：光源点高度与灯具贴附规则一致——z=层基准（z+2.4）、fixZ=绝对安装高（fixZ-0.2）、
       // 多层时贴所在瓦片真实天花/楼板底（灯具不再悬空或嵌进楼板）；
@@ -1581,6 +1663,7 @@ export class Renderer3D {
       else if (m.up2[li] === 1 || m.upWall2[li] === 1) ptY = 2 * FLOOR_H - 0.35 - 0.25 // v54c：3F 板/屋面板墙底（2F 挑空处——中庭灯光贴 5.65 而非 1F 顶）
       else if (m.ceiling[li] === 1) ptY = tallCeilH(m, this.wallH) - 0.25 // 挑高真实顶（单/多层一致）
       else ptY = this.wallH - 0.25
+      if (def.id === 4 && L.z === undefined && L.fixZ === undefined) ptY = this.wallH - 0.03 // L4 v2：灯贴吊顶面，避免点光把天花打成白斑（troffer 不照亮吊顶；吊顶亮度来自烘焙）
       pl.position.set(L.x, ptY, L.y)
       pl.color.set(L.color)
       const flick = 1
@@ -1596,7 +1679,7 @@ export class Renderer3D {
       pl.intensity = bright ? 14 * rankFade : 12 * flick * warnF * rankFade * Math.max(.12, 1 - this.effectiveDarkness() * .35) * lm * (this.levelCfg?.lightSoft ?? 1) * (L.intensityMul ?? 1)
       // Fixed Alpha transport is baked. A subdued live contribution only lights
       // characters/doors/items; baked batches skip it through the shared mask.
-      if(def.id===101&&pl.userData.l0Baked)pl.intensity*=.55
+      if((def.id===101||def.id===102&&m.traders)&&pl.userData.l0Baked)pl.intensity*=.55
       pl.distance = bright ? Math.max(L.r * 2.6 * 1.6, 11) : L.r * 2.6 * (lm > 0 ? Math.max(0.35, lm) : 1)
       const playerTile = Math.floor(p.y) * m.w + Math.floor(p.x)
       const allowBounce = L.outdoorOnly !== 1 || m.outdoor[playerTile] === 1
@@ -1622,7 +1705,7 @@ export class Renderer3D {
       const occludedShadow = L.occluded === 1 && i < Math.min(2, this.lightShadowCount)
       // 路灯进室内后强度为 0，但保留 castShadow 状态，避免每次跨门槛都让 Three.js 重编译
       // 光照程序/重建阴影资源；真正的阴影绘制仍因灯强度为 0 而没有可见贡献。
-      const cast = !(def.id===101&&pl.userData.l0Baked)&&(occludedShadow
+      const cast = !((def.id===101||def.id===102&&m.traders)&&pl.userData.l0Baked)&&(occludedShadow
         || (pl.intensity > 0.01 && this.lightMode === 'realistic' && i < this.lightShadowCount && (def.id===1||def.id===4 || (L.intensityMul ?? 1) >= 0.5))
       )
       // Keep each configured pool slot even when its assigned source is dim,
@@ -1656,8 +1739,9 @@ export class Renderer3D {
         }
       }
     }
-    if(def.id===0||def.id===1||def.id===101)syncL0PointMask(this.scene,this.camera)
+    if(def.id===0||def.id===1||def.id===101||def.id===102&&m.traders)syncL0PointMask(this.scene,this.camera)
     alphaBakeOverride.value=bright?1:0
+    tradersBakeOverride.value=bright?1:0
     // 点光负责直接光；按玩家附近实际点亮的灯估算低成本漫反射回弹。
     // 它会柔和天花板与墙角的死黑，但停电区没有能量，L6 的禁用灯光也不会被照亮。
     if (!bright && this.levelCfg?.id !== 6 && def.id!==1) {
@@ -1768,6 +1852,7 @@ export class Renderer3D {
     }
 
     this.updateEntities(engine, dt)
+    syncWranglerProps(this.scene, this.camera, engine) // 牧蛇：岩壁洞口/鼓包/卵枝 + 被吞黑屏
     this.remoteViews.update(this.scene, engine, engine.mpSession, this.time, dt) // v58：联机远端玩家
     this.updateNpcs(engine, dt)
     this.updateItems(engine, dt)
@@ -1805,10 +1890,19 @@ export class Renderer3D {
     if (!this.pendingEnvProbe) this.itemWarmup.advance()
     this.advanceFlashWarmup()
     this.advanceShrimpHeldWarmup()
-    if (!this.pendingEnvProbe && (def.id === 5 || def.id === 11) && !this.mothWarmupDone) {
+    this.advanceNguithrWarmup()
+    this.advanceArmsWarmup()
+    if (!this.pendingEnvProbe && [2, 3, 5, 8, 9, 11].includes(def.id) && !this.mothWarmupDone) {
       this.mothWarmup ??= this.warmMothModels()
       if (this.mothWarmup.next().done) { this.mothWarmupDone = true; this.mothWarmup = null }
     }
+
+    if (!this.pendingEnvProbe && def.id === 9 && !this.watchWarmupDone) {
+      this.watchWarmup ??= this.warmWatchModels()
+      if (this.watchWarmup.next().done) { this.watchWarmupDone = true; this.watchWarmup = null }
+    }
+
+    if(!this.pendingEnvProbe && [2,8].includes(def.id) && !this.wranglerWarmupDone){this.wranglerWarmup??=this.warmWranglerModels();if(this.wranglerWarmup.next().done){this.wranglerWarmup=null;this.wranglerWarmupDone=true}}
 
     // realistic 泛光、VCR、PS1 色阶抖动或夜视滤镜开启时走 EffectComposer；其余保持直接渲染。
     const photoProfile=lightingProfile(engine),real=this.lightMode==='realistic'
@@ -1917,6 +2011,7 @@ export class Renderer3D {
       if(this.photoPass){const u=this.photoPass.material.uniforms;u.white.value.fromArray(real?photoProfile.white:[1,1,1]);u.saturation.value=(this.photo.grade==='bleached'?.62:this.photo.grade==='cold'?.8:this.photo.grade==='liminal'?.88:1)*(real?(photoProfile.saturation??1):1);if(this.photo.grade==='cold')u.white.value.multiply(new THREE.Vector3(.96,1,1.025));if(this.photo.grade==='liminal')u.white.value.multiply(new THREE.Vector3(1.02,1,.97));u.strength.value=photoProfile.ao;u.halation.value=0}
       if(this.photoFinish){const u=this.photoFinish.uniforms;u.time.value=this.time;u.grain.value=this.photo.grain;u.vignette.value=this.photo.vignette;u.scanline.value=this.photo.scanline*.0015;u.blur.value=focusBlur;this.three.getDrawingBufferSize(u.resolution.value)}
       if(this.bloomPass){this.bloomPass.threshold=1.02;this.bloomPass.strength=this.bloomStrength/35*photoProfile.bloom*(1+this.eyeAdaptation.glare);this.bloomPass.radius=.3+this.eyeAdaptation.glare*.12}
+      if (QA_CPU_SKIN) syncSceneCpuSkins(this.scene) // 仅 ?cpu=1：无头 SwiftShader 不能画 GPU 蒙皮，改用 CPU 替身
       if (!preparingEntry) this.composer.render()
     } else {
       // 所有后处理关闭后立即释放中间帧缓冲，避免原生/720P 档仍占着上一档的显存。
@@ -1929,6 +2024,7 @@ export class Renderer3D {
         this.nvPass = null
         this.composerKey = ''
       }
+      if (QA_CPU_SKIN) syncSceneCpuSkins(this.scene)
       if (!preparingEntry) this.three.render(this.scene, this.camera)
     }
     this.drainRetiredWorld(.65)
@@ -2086,7 +2182,7 @@ export class Renderer3D {
     root.traverse(node => {
       const material = (node as THREE.Mesh).material
       for (const mat of Array.isArray(material) ? material : material ? [material] : []) {
-        for(const texture of mat.userData.l1Textures??[])if(texture?.isTexture)textures.add(texture)
+        for(const texture of [...(mat.userData.l1Textures??[]),...(mat.userData.l1ExtraTextures??[])])if(texture?.isTexture)textures.add(texture)
         for (const value of Object.values(mat)) {
           const texture = value as THREE.Texture | undefined
           if (texture?.isTexture && !texture.isRenderTargetTexture && !texture.userData.skyOwned && !texture.userData.retroShared && !texture.userData.entityShared) textures.add(texture)
@@ -2110,9 +2206,9 @@ export class Renderer3D {
 
   /** Pay template, texture and skinning-program cost behind the level loading screen. */
   private *warmMothModels(): Generator<void, void, unknown> {
-    while (!this.entityCpuWarmup.request('moth-textures', mothTexturesReady(), prepareMothTextures)) yield
-    const forms = this.levelCfg?.id === 11 ? ['male'] as const : ['male', 'female', 'larva', 'guard'] as const
+    const forms = this.levelCfg?.id === 11 ? ['male'] as const : this.levelCfg?.id === 5 ? ['male', 'female', 'larva', 'guard'] as const : ['male', 'female', 'larva'] as const
     for (const form of forms) {
+      while (!this.entityCpuWarmup.request('deathmoth-' + form, deathmothResourcesReady(form), () => prepareDeathmothJob(form))) yield
       const model = buildMothMesh(form)
       let retained = false
       try {
@@ -2129,6 +2225,82 @@ export class Renderer3D {
         this.mothProgramOwners.push(model); retained = true
       } finally { if (!retained) this.disposeItemModel(model) }
     }
+  }
+
+  private *warmWranglerModels():Generator<void,void,unknown>{
+    const forms=this.levelCfg?.id===2?[['male',false] as const]:[['male',false] as const,['female',false] as const,['female',true] as const,['juvenile',false] as const]
+    for(const [kind,pregnant]of forms){
+      while(!this.entityCpuWarmup.request('wrangler-'+kind+'-'+pregnant,wranglerResourcesReady(kind,pregnant),()=>prepareWranglerJob(kind,pregnant)))yield
+      const model=buildEntityMesh('wrangler',{wranglerKind:kind,wranglerPregnant:pregnant});let retained=false
+      try{yield;this.applyTextureQuality(model);this.enableShadows(model);yield* compileSceneJob(this.three,model,this.camera,this.scene,this.composer?.readBuffer??null);yield* uploadSceneJob(this.three,model,this.camera,this.scene,false,null,this.composer?.readBuffer??null);this.wranglerProgramOwners.push(model);retained=true}finally{if(!retained)this.disposeItemModel(model)}
+    }
+  }
+
+  private *warmWatchModels(): Generator<void, void, unknown> {
+    for (const kind of ['watcher', 'strider', 'mangled'] as const) {
+      if (kind === 'mangled') {
+        while (!this.entityCpuWarmup.request('mangled-geo-1', mangledGeometryReady(1), () => prepareMangledJob(1))) yield
+      } else {
+        while (!this.entityCpuWarmup.request('watch-' + kind, watchResourcesReady(kind), () => prepareWatchJob(kind))) yield
+      }
+      const model = buildEntityMesh(kind)
+      let retained = false
+      try {
+        yield
+        this.applyTextureQuality(model); this.enableShadows(model)
+        yield* compileSceneJob(this.three, model, this.camera, this.scene, this.composer?.readBuffer ?? null)
+        model.updateWorldMatrix(true, true)
+        yield* uploadSceneJob(this.three, model, this.camera, this.scene, false, null, this.composer?.readBuffer ?? null)
+        this.watchProgramOwners.push(model); retained = true
+      } finally { if (!retained) this.disposeItemModel(model) }
+    }
+  }
+
+  /** Retain one prepared owner so its skinning/transparent programs survive until live use. */
+  private *warmNguithrModel():Generator<void,void,unknown>{
+    yield* prepareNguithrJob()
+    const model=buildEntityMesh('nguithr');let retained=false
+    try{
+      yield;this.applyTextureQuality(model);this.enableShadows(model)
+      yield* this.warmSceneTextures(model)
+      yield* compileSceneJob(this.three,model,this.camera,this.scene,this.composer?.readBuffer??null)
+      model.updateWorldMatrix(true,true)
+      yield* uploadSceneJob(this.three,model,this.camera,this.scene,false,null,this.composer?.readBuffer??null)
+      this.nguithrProgramOwner=model;retained=true
+    }finally{if(!retained)this.disposeItemModel(model)}
+  }
+  private advanceNguithrWarmup(){
+    if(![1,2,3,5,8].includes(this.levelCfg?.id??-1)||this.pendingEnvProbe||!this.flashWarmupKey)return
+    const key=this.flashWarmupKey
+    if(this.nguithrWarmupKey!==key){
+      this.nguithrWarmup?.return();if(this.nguithrProgramOwner)this.disposeItemModel(this.nguithrProgramOwner)
+      this.nguithrProgramOwner=null;this.nguithrWarmupKey=key;this.nguithrWarmup=this.warmNguithrModel()
+    }
+    if(this.nguithrWarmup?.next().done)this.nguithrWarmup=null
+  }
+
+  private *warmArmsModels():Generator<void,void,unknown>{
+    for(const count of [1,2,3]){
+      yield* prepareArmsJob(count,1)
+      const model=buildEntityMesh('arms',{arms:{count,seed:1}});let retained=false
+      if(count===1)model.add(buildArmsBurntDebris(1))
+      try {
+        yield;this.applyTextureQuality(model);this.enableShadows(model)
+        yield* compileSceneJob(this.three,model,this.camera,this.scene,this.composer?.readBuffer??null)
+        model.updateWorldMatrix(true,true)
+        yield* uploadSceneJob(this.three,model,this.camera,this.scene,false,null,this.composer?.readBuffer??null)
+        this.armsProgramOwners.push(model);retained=true
+      } finally { if(!retained)this.disposeItemModel(model) }
+    }
+  }
+  private advanceArmsWarmup(){
+    if(this.levelCfg?.id!==1||this.pendingEnvProbe||!this.flashWarmupKey)return
+    const key=this.flashWarmupKey
+    if(this.armsWarmupKey!==key){
+      this.armsWarmup?.return();for(const model of this.armsProgramOwners)this.disposeItemModel(model)
+      this.armsProgramOwners=[];this.armsWarmupKey=key;this.armsWarmup=this.warmArmsModels()
+    }
+    if(this.armsWarmup?.next().done)this.armsWarmup=null
   }
 
   private advanceFlashWarmup() {
@@ -2202,6 +2374,11 @@ export class Renderer3D {
       this.worldTextures.add(texture)
     }
     return textures
+  }
+
+  private *warmTradersRoot(root:THREE.Object3D):Generator<void,void,unknown> {
+    this.applyTextureQuality(root); this.enableShadows(root)
+    yield* this.warmSceneTextures(root)
   }
 
   private *warmSceneTextures(root: THREE.Object3D): Generator<void, void, unknown> {
@@ -2584,7 +2761,11 @@ export class Renderer3D {
     if (!m || this.builtMap !== m) return false
     if (this.pendingEnvProbe || !this.flashWarmupKey || this.flashWarmup) return false
     if (!this.shrimpHeldWarmupKey || this.shrimpHeldWarmup) return false
-    if ((engine.levelDef.id === 5 || engine.levelDef.id === 11) && !this.mothWarmupDone) return false
+    if ([1,2,3,5,8].includes(engine.levelDef.id) && (!this.nguithrWarmupKey||this.nguithrWarmup)) return false
+    if (engine.levelDef.id===1 && (!this.armsWarmupKey||this.armsWarmup)) return false
+    if ([2, 3, 5, 8, 9, 11].includes(engine.levelDef.id) && !this.mothWarmupDone) return false
+    if (engine.levelDef.id === 9 && !this.watchWarmupDone) return false
+    if ([2,8].includes(engine.levelDef.id) && !this.wranglerWarmupDone) return false
     const skyMap = (this.skyMesh?.material as THREE.MeshBasicMaterial | undefined)?.map
     if (skyMap?.userData.skyPending) return false
     for (const item of m.items) {
@@ -2600,6 +2781,7 @@ export class Renderer3D {
       const model = this.entityMeshes.get(entity.id)
       if (!entity.hidden && !entity.dead && Math.hypot(entity.x-engine.player.x,entity.y-engine.player.y) <= (entity.def.mothForm === 'larva' ? 12 : 24) && (!model || !this.itemWarmup.ready(model))) return false
     }
+    if (m.traders) return this.tradersStream?.ready(engine.player.x, engine.player.y) ?? false
     if (!m.inf) return this.levelGroup !== null && this.finiteTask === null
     const reach = 24
     for (const c of m.inf.chunks.values()) {
@@ -2783,6 +2965,7 @@ export class Renderer3D {
   }
 
   private teardown() {
+    this.tradersStream?.dispose(); this.tradersStream = null
     this.environmentFirstFrame=true;this.skyEnclosure=0;this.uwK=0;this.tintK=0
     this.entityCpuWarmup.clear()
     this.stopEntryPreparation?.(); this.stopEntryPreparation = null
@@ -2791,6 +2974,17 @@ export class Renderer3D {
     this.cityDistantTask?.return(new THREE.Group());this.cityDistantTask=null;this.cityDistantKey=''
     if(this.cityDistant){this.cityDistant.removeFromParent();this.retireWorld(this.cityDistant);this.cityDistant=null}
     this.l0RevisionJob?.iter.return();this.l0RevisionJob=null
+    this.nguithrWarmup?.return();this.nguithrWarmup=null;this.nguithrWarmupKey=''
+    this.armsWarmup?.return();this.armsWarmup=null;this.armsWarmupKey=''
+    for(const model of this.armsProgramOwners)this.disposeItemModel(model);this.armsProgramOwners=[]
+    if(this.nguithrProgramOwner)this.disposeItemModel(this.nguithrProgramOwner);this.nguithrProgramOwner=null
+    this.watchWarmup?.return(); this.watchWarmup = null; this.watchWarmupDone = false
+    for (const model of this.watchProgramOwners) this.disposeItemModel(model)
+    this.watchProgramOwners.length = 0
+    this.wranglerWarmup?.return();this.wranglerWarmup=null;this.wranglerWarmupDone=false
+    for(const model of this.wranglerProgramOwners)this.disposeItemModel(model);this.wranglerProgramOwners=[]
+    clearWranglerProps(this.scene)
+    this.mothView?.dispose(); this.mothView = undefined
     this.mothWarmup?.return(); this.mothWarmup = null; this.mothWarmupDone = false
     for (const model of this.mothProgramOwners) this.disposeItemModel(model)
     this.mothProgramOwners.length = 0
@@ -2908,6 +3102,7 @@ export class Renderer3D {
     this.ambientBase = def.id === 11 ? .48 : def.id === 6 ? 0.012 : def.id === 7 ? 0.55 : def.id === 9 ? 0.045 : def.id === 10 ? 0.38 : def.id === 0 ? 0.15 : 0.09 + def.darkness * 0.06
     this.hemiBase = def.id === 11 ? .62 : def.id === 6 ? 0.018 : def.id === 7 ? 0.6 : def.id === 9 ? 0.055 : def.id === 10 ? 0.46 : def.id === 0 ? 0.19 : 0.12 + def.darkness * 0.06
     if(m.settlement){this.ambientBase=.3;this.hemiBase=.36}
+    if(m.traders){this.ambientBase=.12;this.hemiBase=.16;this.fogNear=32;this.fogFar=90}
     if(def.id===5){this.ambientBase=.25;this.hemiBase=.28;this.fogNear=7}
     this.hemi.color.set(col(pal.wallTop).lerp(col('#9aa2b0'), 0.5))
     this.hemi.groundColor.set(col(pal.floor).multiplyScalar(0.8))
@@ -3145,10 +3340,7 @@ export class Renderer3D {
       const dir=l5StairWallDirection(m,e)
       if(dir){grp.rotation.y=Math.atan2(dir[0],dir[1]);grp.position.set(e.x+.5,0,e.y+.5);return}
     }
-    // L4's generated old stair points north. Its own rails must not influence orientation.
-    if(m.tint[ty*m.w+tx]===52&&m.exits.some(v=>v.x===e.x&&v.y===e.y&&v.def.kind==='oldstairs')){
-      grp.rotation.y=0;grp.position.set(e.x+.5,0,e.y+.5);return
-    }
+
     const at = (x: number, y: number) => (x < 0 || y < 0 || x >= m.w || y >= m.h ? 0 : m.tiles[y * m.w + x])
     const solidAt = (x: number, y: number) => m.structures.some((s) => s.solid && x >= s.x && x < s.x + s.w && y >= s.y && y < s.y + s.h)
     const sides: [number, number][] = []
@@ -3248,7 +3440,7 @@ export class Renderer3D {
     }
     if(!m.organicCave && def.id!==11 && def.id!==0 && !(def.id===1&&c.l1)){
       const slices=[...g.children],merged=new THREE.Group()
-      if(def.id===4)yield* batchL4StaticJob(merged,slices);else yield* batchStaticRootsJob(merged,slices)
+      if(def.id===4){yield* batchL4StaticJob(merged,slices,l4SamplerFor(m))}else yield* batchStaticRootsJob(merged,slices)
       for(const slice of slices)if(slice.parent!==merged){g.remove(slice);slice.traverse(disposeWorldGeometry)}
       merged.name='terrain-batch';g.add(merged)
       if(def.id===5)yield* buildL5Architecture(m,H,merged,range)
@@ -3373,7 +3565,7 @@ export class Renderer3D {
       // Keep the original roots as exact raycast/collision proxies. Three's
       // raycaster still visits invisible roots; only the batched copies render.
       const batch=new THREE.Group();batch.name=def.id===8?'l8-static-rock-batch':'l3-static-equipment-batch'
-      if(def.id===4)yield* batchL4StaticJob(batch,roots);else yield* batchStaticRootsJob(batch,roots)
+      if(def.id===4){yield* batchL4StaticJob(batch,roots,l4SamplerFor(m))}else yield* batchStaticRootsJob(batch,roots)
       if(def.id===8)batch.userData.noCollision=true
       g.add(batch)
       for(const root of roots)if(root.parent!==batch){root.visible=false;if(def.id===8)root.userData.colliderProxy=true}
@@ -3383,6 +3575,7 @@ export class Renderer3D {
     const fixtures: { mat: THREE.MeshBasicMaterial; seed: number; src?: LightSource; batch?: THREE.InstancedMesh; index?: number }[] = []
     if(def.id===1&&c.l1){
       buildL1EmitterMeshes(c.l1,inf.ox,inf.oy,g,c.lights,fixtures)
+      yield* buildL1GardenPlants(c.l1,inf.ox,inf.oy,g)
       const wet=yield* l1PuddleGeometryJob(m,range);if(wet){const mesh=new THREE.Mesh(wet,l1Material('parking','wet'));mesh.userData.noCastShadow=true;mesh.name='l1-wet-floor';g.add(mesh)}
     }
     else if(def.id===1)for(const r of ranges)yield* buildL1Architecture(m,r,g,c.lights.filter(l=>l.x>=r.x0&&l.x<r.x1&&l.y>=r.y0&&l.y<r.y1),fixtures)
@@ -3419,7 +3612,8 @@ export class Renderer3D {
       const grp = def.id===11&&e.l11?buildL11Exit(e):buildExit(e.def.kind, def)
       grp.userData.exitRef = e // v58：准星射线命中时回溯出口实例
       grp.userData.interactionTarget = { kind: 'exit', exit: e }
-      if(e.l11&&def.id===11){grp.position.set(e.x+.5,e.z??0,e.y+.5);grp.rotation.y=-e.l11.angle}
+      if(e.l4&&def.id===4){grp.position.set(e.x+.5,e.z??0,e.y+.5);grp.rotation.y=e.l4.yaw}
+      else if(e.l11&&def.id===11){grp.position.set(e.x+.5,e.z??0,e.y+.5);grp.rotation.y=-e.l11.angle}
       else if (e.def.kind === 'flickerdoor') this.orientExitToWall(m, grp, e)
       else if (e.def.kind === 'graystairs' || e.def.kind === 'graystairsup' || e.def.kind === 'oldstairs') this.orientStairs(m, grp, e) // v54：L4 古典楼梯同为可行走阶梯
       else if (e.def.kind === 'stairs' || e.def.kind === 'unlockeddoor' || e.def.kind === 'fireexit' || e.def.kind === 'officedoor' || e.def.kind === 'boilerdeep') this.orientDoor(m, grp, e) // v55d：L5 黑门纳入门洞类出口（模型嵌门洞格贴墙）
@@ -3643,7 +3837,8 @@ export class Renderer3D {
       const grp = def.id===11&&e.l11?buildL11Exit(e):buildExit(e.def.kind, def)
       grp.userData.exitRef = e // v58：准星射线命中时回溯出口实例
       grp.userData.interactionTarget = { kind: 'exit', exit: e }
-      if(e.l11&&def.id===11){grp.position.set(e.x+.5,e.z??0,e.y+.5);grp.rotation.y=-e.l11.angle}
+      if(e.l4&&def.id===4){grp.position.set(e.x+.5,e.z??0,e.y+.5);grp.rotation.y=e.l4.yaw}
+      else if(e.l11&&def.id===11){grp.position.set(e.x+.5,e.z??0,e.y+.5);grp.rotation.y=-e.l11.angle}
       else if (e.def.kind === 'flickerdoor') this.orientExitToWall(m, grp, e)
       else if (e.def.kind === 'graystairs' || e.def.kind === 'graystairsup' || e.def.kind === 'oldstairs') this.orientStairs(m, grp, e) // v54：L4 古典楼梯同为可行走阶梯
       else if (e.def.kind === 'stairs' || e.def.kind === 'unlockeddoor' || e.def.kind === 'fireexit' || e.def.kind === 'officedoor' || e.def.kind === 'boilerdeep') this.orientDoor(m, grp, e) // v55d：L5 黑门纳入门洞类出口（模型嵌门洞格贴墙）
@@ -3711,8 +3906,13 @@ export class Renderer3D {
     this.scene.environment = envProbe(def, skyTex,this.three)
   }
 
+  private mothView?: MothWorldView
   private updateEntities(engine: Engine, dt: number) {
     const m = engine.map!
+    // 残缺者只在 L9 浓雾事件里出现，但它的四个部位要分帧准备很久：进入 L9 就在后台先备好远景精度，
+    // 否则雾事件刚生成时它会在准备完成前一直不可见（却已经能出手）
+    if (engine.levelDef.id === 9) this.entityCpuWarmup.request('mangled-geo-1', mangledGeometryReady(1), () => prepareMangledJob(1))
+    ;(this.mothView ??= new MothWorldView(this.scene)).sync(engine, this.wallH) // 死亡飞蛾巢穴道具、酸池、胶状球
     this.entityCpuWarmup.advance()
     const seen = new Set<number>()
     const entityBuildDeadline=performance.now()+1.5
@@ -3721,13 +3921,13 @@ export class Renderer3D {
     for (const e of m.entities) {
       seen.add(e.id)
       let grp = this.entityMeshes.get(e.id)
-      const radius = (e.def.type === 'thething' ? 48 : 12) * Math.max(1, e.def.scale ?? 1)
+      const radius = (e.def.type === 'thething' ? 48 : e.def.type === 'mangled' ? 30 : e.def.type === 'wrangler' ? 36 : 12) * Math.max(1, e.def.scale ?? 1)
       const reach = Math.min(this.camera.far, this.fogEnabled ? (this.scene.fog as THREE.Fog)?.far ?? 60 : this.camera.far) + radius
       const distance = Math.hypot(e.x-engine.player.x,e.y-engine.player.y)
       if (distance > (e.def.mothForm==='larva'?12:reach)) { if (grp) grp.visible = false; e.presentationPending = false; continue }
       // v53：L3 高智能实体建模变体（无面灵错位器官/石器、水豚尸鼠；seed=实体 id 保证重建一致）；
       // 尸鼠形态按层级固定：L2 灰白廊道种群 / L3 水豚 / 其余深褐（v53，替代原随机二选一）
-      const eOpts = (e.def.l3face || e.def.tool || e.def.capybara || e.def.type === 'faceling' || e.def.type === 'corpserat' || e.def.type === 'arachnid' || e.def.type === 'deathmoth' || e.def.type === 'smiler' || e.def.type === 'hound' || e.def.type === 'duller' || e.def.type === 'skinstealer' || e.def.type === 'clump' || e.def.type === 'wretch' || e.def.type === 'dryshrimp' || e.def.type === 'partygoer')
+      const eOpts = (e.def.type === 'wrangler' || e.def.l3face || e.def.tool || e.def.capybara || e.def.type === 'faceling' || e.def.type === 'corpserat' || e.def.type === 'arachnid' || e.def.type === 'deathmoth' || e.def.type === 'smiler' || e.def.type === 'hound' || e.def.type === 'duller' || e.def.type === 'skinstealer' || e.def.type === 'clump' || e.def.type === 'wretch' || e.def.type === 'dryshrimp' || e.def.type === 'partygoer' || e.def.type === 'nguithr' || e.def.type === 'arms')
         ? {
           l3face: e.def.l3face, tool: e.def.tool, capybara: e.def.capybara, mothForm: e.def.mothForm,
           ratMorph: ratMorphFor(engine.levelDef.id, e.def),
@@ -3738,6 +3938,9 @@ export class Renderer3D {
           wretchKind: e.wr?.kind ?? e.def.wretchKind,
           partygoerColor: e.pg?.color, partygoerIntern: e.pg?.intern, partygoerBalloonArm: e.pg?.balloonArm,
           l3clump: !!e.def.l3clump,
+          wranglerKind: e.wg?.kind??e.def.wranglerKind, wranglerPregnant: e.wg?.pregnant,
+          nguithr: e.def.type === 'nguithr' ? nguithrState(engine,e) : undefined,
+          arms: e.def.type === 'arms' ? armsState(engine,e) : undefined,
         } : undefined // v60：L8 洞顶尸鼠与蛛形纲生态变体随实例固定
       if (!grp) {
         e.presentationPending = true
@@ -3746,7 +3949,12 @@ export class Renderer3D {
           if (!this.entityCpuWarmup.request(key, clumpBlobReady(l3, e.id), () => prepareClumpBlob(l3, e.id))) continue
         }
         if (e.def.type === 'partygoer' && !this.entityCpuWarmup.request('partygoer-geo', partygoerGeometryReady(), preparePartygoerJob)) continue
-        if (e.def.type === 'deathmoth' && !this.entityCpuWarmup.request('moth-textures', mothTexturesReady(), prepareMothTextures)) continue
+        if(e.def.type==='wrangler'){const kind=e.wg?.kind??e.def.wranglerKind??'male',pregnant=!!e.wg?.pregnant;if(!this.entityCpuWarmup.request('wrangler-'+kind+'-'+pregnant,wranglerResourcesReady(kind,pregnant),()=>prepareWranglerJob(kind,pregnant)))continue}
+        if (e.def.type === 'mangled' && !this.entityCpuWarmup.request('mangled-geo-1', mangledGeometryReady(1), () => prepareMangledJob(1))) continue // 残缺者：远景精度各部位分帧准备
+        if (e.def.type === 'nguithr' && !this.entityCpuWarmup.request('nguithr-resources', nguithrResourcesReady(), prepareNguithrJob)) continue
+        if (eOpts?.arms) {const a=eOpts.arms;if(!this.entityCpuWarmup.request('arms-'+a.count+':'+a.seed,armsResourcesReady(a.count,a.seed),()=>prepareArmsJob(a.count,a.seed)))continue}
+        if (e.def.type === 'deathmoth' && !this.entityCpuWarmup.request('deathmoth-' + (e.def.mothForm ?? 'male'), deathmothResourcesReady(e.def.mothForm ?? 'male'), () => prepareDeathmothJob(e.def.mothForm ?? 'male'))) continue
+        if ((e.def.type === 'watcher' || e.def.type === 'strider') && !this.entityCpuWarmup.request('watch-' + e.def.type, watchResourcesReady(e.def.type), () => prepareWatchJob(e.def.type as 'watcher' | 'strider'))) continue
         if (e.def.type === 'dryshrimp' && !this.entityCpuWarmup.request('shrimp-textures', shrimpTexturesReady(), prepareShrimpTextures)) continue
         if (e.def.type === 'corpserat') {
           const morph = ratMorphFor(engine.levelDef.id, e.def)
@@ -3788,7 +3996,8 @@ export class Renderer3D {
       // v51：人制品售货机活化——def 切换（vendingmachine→vmad）时重建模型（含骷髅手腿）
       if (grp.userData.entType !== e.def.type || (e.def.type === 'deathmoth' && grp.userData.mothForm !== (e.def.mothForm ?? 'male'))
         || (e.def.type === 'smiler' && e.sm && grp.userData.smilerKind !== e.sm.kind)
-        || (e.def.type === 'hound' && e.hd && grp.userData.houndNeutral !== e.hd.neutral)) { // v61：笑魇变种在首个 AI tick 决定
+        || (e.def.type === 'hound' && e.hd && grp.userData.houndNeutral !== e.hd.neutral)
+        || (e.def.type === 'wrangler' && e.wg && (grp.userData.wranglerKind !== e.wg.kind || grp.userData.wranglerPregnant !== e.wg.pregnant))) { // v61：笑魇变种在首个 AI tick 决定
         this.scene.remove(grp)
         this.disposeItemModel(grp)
         grp = buildEntityMesh(e.def.type, eOpts)
@@ -3817,15 +4026,6 @@ export class Renderer3D {
       const gz = ceilingRat ? ratRoof - 0.04 : (e.z ?? floorHeight(m, e.x, e.y))
       grp.position.set(e.x, gz, e.y)
       grp.visible = !e.hidden // 埋伏/蛰伏实体（管道蠕虫、通风管手臂）未现身时不渲染
-      // v51：Nguithr'xurh 双形态显隐——网囊形态只显示网囊球（hidden），爆开后只显示蜘蛛本体
-      if (e.def.type === 'nguithr') {
-        const parts = grp.userData.parts as Record<string, THREE.Object3D> | undefined
-        if (parts?.spiderBody && parts?.sacGrp) {
-          parts.spiderBody.visible = !e.hidden
-          parts.sacGrp.visible = !!e.hidden
-          grp.visible = true // 网囊形态也要渲染（不被全局 hidden 隐藏）
-        }
-      }
       // 朝向：模型面向 +x（v34：转向平滑——显示朝向按 ~6.5 rad/s 上限短弧追赶引擎朝向，死亡动画仍硬赋值）
       {
         const target = -e.facing
@@ -3869,7 +4069,7 @@ export class Renderer3D {
       } else if (et === 'thething') {
         // 巨躯悬在水中，不能套用陆生实体“踩地颠簸”；极慢的升沉让尺度更重。
         grp.position.y = gz + Math.sin(t * 0.42) * 0.16
-      } else if (et === 'corpserat' || et === 'dryshrimp' || et === 'partygoer') {
+      } else if (et === 'corpserat' || et === 'dryshrimp' || et === 'partygoer' || et === 'watcher' || et === 'strider' || et === 'mangled') {
         grp.position.y = gz // Dedicated rat/shrimp/partygoer animations own their vertical pose.
       } else if (!e.def.stationary && et !== 'deathmoth') {
         grp.position.y = gz + Math.abs(Math.sin(gait)) * gaitAmp * 0.12
@@ -3911,7 +4111,7 @@ export class Renderer3D {
           const lastX = grp.userData.mothX as number | undefined, lastY = grp.userData.mothY as number | undefined
           const speed = lastX === undefined || lastY === undefined || dt <= 0 ? 0 : Math.min(3.5, Math.hypot(e.x - lastX, e.y - lastY) / dt)
           grp.userData.mothX = e.x; grp.userData.mothY = e.y
-          animateMoth(grp, t, dt, speed, lunging ? Math.sin(Math.min(1, lk) * Math.PI) : 0, e.dead ? 1 - Math.max(0, e.deathT) / 1.4 : 0)
+          animateMoth(grp, t, dt, speed, lunging ? Math.sin(Math.min(1, lk) * Math.PI) : 0, e.dead ? 1 - Math.max(0, e.deathT) / 1.4 : 0, e)
         }
         // 受眷鸟：萎缩翅仅作低频修正，胶囊与长舌则随悬浮惯性缓慢摆动。
         if (et === 'curabitur') {
@@ -3942,57 +4142,7 @@ export class Renderer3D {
         }
         // 复印机幽灵：漂浮纸张翻飞（重制派对客的胸甲不再叫 sheet，不受影响）
         if (parts.sheet) { parts.sheet.rotation.y = t * 1.4; parts.sheet.position.y = 1.0 + Math.sin(t * 2.2) * 0.12 }
-        // Nguithr'xurh：节肢恐怖动画——交替步态 / 腹部脉动 / 闲置肢抖 / 前摇后仰下扑
-        if (et === 'nguithr' && parts.spiderBody) {
-          const sb = parts.spiderBody
-          const moving = e.animT > 0 && gaitAmp > 0
-          const baseRy = (o: THREE.Object3D | undefined) => (o?.userData.baseRy as number | undefined) ?? 0
-          if (lunging) {
-            // 前摇：后仰蓄力（前身抬起、前两对腿高举、腹部下勾），出手瞬间下扑
-            // 模型正面=+X：俯仰绕本地 z 轴（+ 后仰 / - 下扑）
-            const wind = lk > 0.45 ? (1 - lk) / 0.55 : 1 // 0→1 蓄力进程
-            const snap = lk <= 0.45 ? lk / 0.45 : 0 // 0→1 下扑进程
-            sb.rotation.z = 0.55 * wind - 0.75 * snap
-            sb.position.y = 0.1 * wind - 0.06 * snap
-            for (let i = 0; i < 6; i++) {
-              const lift = i < 2 ? 1.2 : 0.4
-              const lL = parts[`legL${i}`], lR = parts[`legR${i}`]
-              // 左腿（-z 侧）抬高=+rotation.x，右腿（+z 侧）抬高=-rotation.x
-              if (lL) { lL.rotation.x = lift * wind - 0.5 * snap; lL.rotation.y = baseRy(lL) }
-              if (lR) { lR.rotation.x = -lift * wind + 0.5 * snap; lR.rotation.y = baseRy(lR) }
-            }
-          } else if (moving) {
-            // 行走：交替三步态（偶数腿抬起外展时奇数腿支撑），腹部微摆、躯体小幅起伏
-            sb.rotation.z = 0; sb.position.y = 0
-            const g = e.animT * 6
-            for (let i = 0; i < 6; i++) {
-              const ph = Math.sin(g + (i % 2) * Math.PI + (i * 0.4))
-              const lL = parts[`legL${i}`], lR = parts[`legR${i}`]
-              // 抬腿相：左腿抬高=+rotation.x，右腿抬高=-rotation.x，左右交替
-              if (lL) { lL.rotation.x = Math.max(0, ph) * 0.5; lL.rotation.y = baseRy(lL) + ph * 0.1 }
-              if (lR) { lR.rotation.x = Math.min(0, ph) * 0.5; lR.rotation.y = baseRy(lR) + ph * 0.1 }
-            }
-            if (parts.abdomen) {
-              parts.abdomen.rotation.y = Math.sin(g * 0.5) * 0.1 // 腹部侧摆
-              parts.abdomen.position.y = 0.12 + Math.abs(Math.sin(g)) * 0.025
-            }
-            if (parts.ceph) parts.ceph.rotation.x = Math.sin(g * 0.5 + 1) * 0.06
-          } else {
-            // 闲置：附肢高频小幅抖动（恐怖感）、腹部呼吸脉动、复眼微光闪烁
-            sb.rotation.z = 0; sb.position.y = 0
-            for (let i = 0; i < 6; i++) {
-              const lL = parts[`legL${i}`], lR = parts[`legR${i}`]
-              const jt = Math.sin(t * 9 + i * 1.7) * 0.06 + Math.sin(t * 23 + i * 3.1) * 0.025
-              if (lL) { lL.rotation.x = jt; lL.rotation.y = baseRy(lL) }
-              if (lR) { lR.rotation.x = -jt; lR.rotation.y = baseRy(lR) }
-            }
-            if (parts.abdomen) {
-              parts.abdomen.scale.y = 1 + Math.sin(t * 1.6) * 0.05 // 呼吸
-              parts.abdomen.rotation.y = Math.sin(t * 0.6) * 0.06
-            }
-            if (parts.ceph) parts.ceph.rotation.y = Math.sin(t * 0.5) * 0.25 // 缓慢张望
-          }
-        }
+        // Nguithr'xurh：重制后由 updateNguithrMesh（nguithrAnim 姿态量 + 巢）驱动，见本循环末尾
         // 蠕虫：分节蠕动（v58：七层之物体节由拖链驱动，不走此路）
         if (et !== 'thething') for (let i = 0; i < 6; i++) {
           const seg = parts[`seg${i}`]
@@ -4251,7 +4401,12 @@ export class Renderer3D {
         eyeAboveFeet: this.camera.position.y - gz,
         distance: Math.hypot(e.x - engine.player.x, e.y - engine.player.y), dt,
       })
+      if (et === 'wrangler') animateWrangler(grp, e, engine, this.time)
       if (et === 'hound' && !e.dead) animateHound(grp, e, this.time, gz)
+      if ((et === 'watcher' || et === 'strider' || et === 'mangled') && (!e.dead || et === 'strider')) {
+        if (et === 'mangled') this.entityCpuWarmup.request('mangled-geo-0', mangledGeometryReady(0), () => prepareMangledJob(0)) // 精细精度在后台继续分帧准备
+        animateNW(grp, e, gz, { player: engine.player, camera: this.camera, growth: mangledGrowth(engine), held: nwCaptor(engine) === e })
+      }
       if (et === 'clump' && !e.dead) {
         const up = (e.cl?.ceil ?? 0) > 0.01 || e.cl?.phase === 'pullup' ? ceilingHeightAt(m, e.x, e.y, this.wallH, bandOfZ(e.z)) - gz : 3
         animateClump(grp, e, this.time, gz, Number.isFinite(up) ? up : 3)
@@ -4293,8 +4448,8 @@ export class Renderer3D {
           // 所有飞行实体都从其真实空中高度坠向当地地面；飞蛾额外螺旋，受眷鸟/向导缓慢失速。
           const ground = floorHeight(m, e.x, e.y, e.flightBand ?? 0)
           grp.position.y = ground + (gz - ground) * k
-          grp.rotation.y += d * (et === 'deathmoth' ? 6 : 2.2)
-          grp.rotation.z = d * (et === 'deathmoth' ? 0.9 : 1.15)
+          grp.rotation.y += d * (et === 'deathmoth' ? 1.2 : 2.2) // 死亡飞蛾的翻滚/蜷足由 death 片段负责
+          grp.rotation.z = d * (et === 'deathmoth' ? 0 : 1.15)
           if (et === 'lightguide') grp.scale.setScalar(Math.max(0.01, esc * k))
         } else if (et === 'thething') {
           // 巨物不会像人形那样侧翻缩没：它失去浮力缓慢下沉，故障从远端向头部吞噬轮廓。
@@ -4311,6 +4466,8 @@ export class Renderer3D {
             if (parts.upperJaw) parts.upperJaw.rotation.z = 0.32 + d * 0.12
             if (parts.jaw) parts.jaw.rotation.z = -0.72 - d * 0.28
           }
+        } else if (et === 'deathmoth') {
+          grp.position.y = gz // 禁卫级/幼虫：death 片段自己把身体放倒
         } else if (et === 'dryshrimp') {
           // v81：被吃掉（缩进捕食者嘴里）/ 被打死（翻肚、鳍片耷拉）
           grp.scale.setScalar(esc)
@@ -4359,6 +4516,8 @@ export class Renderer3D {
           grp.scale.setScalar(Math.max(0.01, k))
         }
       }
+      if (et === 'nguithr') this.updateNguithrMesh(engine, e, grp, dt, gz) // 最后执行：覆盖通用的朝向/缩放/死亡变换
+      if (et === 'arms') this.updateArmsMesh(engine, e, grp, dt) // 最后执行：覆盖通用的位置/朝向/显隐（风口一直可见）
     }
     for (const [id, grp] of this.entityMeshes) {
       if (!this.itemWarmup.ready(grp)) grp.visible = false
@@ -4437,6 +4596,226 @@ export class Renderer3D {
     const s = e.ss
     this.updateEntityBubble(engine, e, gz, s && e.disguised && !e.dead && s.bubbleT > 0 ? s.bubbleText : '', 2.2)
   }
+
+  /** 手臂（Entité 15-FR）重制：容器归零；本体风口 / 临时风口按 AI 的世界坐标摆放（管道水平段朝向 = AI 的管道规划），
+   *  每个风口一个 ArmsAnimator，按 AI 状态取 armsClipPose 片段姿态（目标 = 玩家胸口 / 扑击点），焦皮碎片与血迹按 AI 记录补建。 */
+  private updateArmsMesh(engine: Engine, e: import('../entities').Entity, grp: THREE.Group, dt: number) {
+    grp.position.set(0, 0, 0); grp.rotation.set(0, 0, 0); grp.scale.setScalar(1)
+    grp.visible = true // 风口本身一直可见（手臂缩在管内时也要看得见天花板上的风口）
+    const m = engine.map!, s = e.ar
+    const home = grp.userData.armsHome as THREE.Group | undefined
+    if (!home) return
+    if (!s) { // AI 尚未初始化（模型预热中）：先挂在实体正上方的天花板
+      const c = ceilingHeightAt(m, e.x, e.y, this.wallH, bandOfZ(e.z))
+      home.position.set(e.x, Number.isFinite(c) ? c : e.z + this.wallH, e.y)
+      return
+    }
+    const ox = m.inf?.ox ?? 0, oy = m.inf?.oy ?? 0
+    const placeVent = (g: THREE.Group, v: ArmsVentSpot) => {
+      g.position.set(v.wx - ox, v.ceil, v.wy - oy); g.rotation.set(0, Math.PI - v.yaw, 0)
+      // 挑高处的吊管：从风口顶一直通到真正的天花板（同一个铁皮材质）
+      const extra = v.roof - v.ceil
+      let hang = g.getObjectByName('armsHang') as THREE.Mesh | undefined
+      if (extra > 0.05 && (!hang || Math.abs((hang.userData.len as number) - extra) > 1e-3)) {
+        if (hang) {g.remove(hang);this.disposeItemModel(hang as unknown as THREE.Group)}
+        const duct = g.getObjectByName('armsVentDuct') as THREE.Mesh | undefined
+        const hg = new THREE.BoxGeometry(0.56, extra, 0.56)
+        hg.setAttribute('color', new THREE.Float32BufferAttribute(new Array(hg.attributes.position.count * 3).fill(0.82), 3)) // 风管材质用顶点色
+        hang = new THREE.Mesh(hg, (duct?.material as THREE.Material | undefined)?.clone() ?? new THREE.MeshLambertMaterial({ color: '#8a8a86' }))
+        hang.name = 'armsHang'; hang.userData.len = extra; hang.position.y = 0.45 + extra / 2; hang.castShadow = true
+        g.add(hang)
+      }
+    }
+    const swapArms = (g: THREE.Group, count: number, seed: number) => {
+      const key = `${count}:${seed}`
+      if (g.userData.armsKey === key) return
+      const anchor = armsVent(g)!.anchor
+      for (const old of [...anchor.children]) {
+        anchor.remove(old);this.disposeItemModel(old as THREE.Group)
+      }
+      const arms = buildArmsMesh(count, seed)
+      arms.traverse((o) => { if ((o as THREE.Mesh).isMesh) (o as THREE.Mesh).castShadow = true })
+      anchor.add(arms)
+      g.userData.armsKey = key
+      g.userData.armsAnim = undefined
+      this.applyTextureQuality(arms);this.itemWarmup.cancel(grp);grp.userData.entryPrepared=false
+    }
+    swapArms(home, s.count, s.seed)
+    placeVent(home, s.vent)
+    // —— 临时风口（吐出用；平时格栅关着）——
+    let temps = grp.userData.armsTemps as Map<number, THREE.Group> | undefined
+    if (!temps) { temps = new Map(); grp.userData.armsTemps = temps }
+    for (const t of s.temps) {
+      let g = temps.get(t.id)
+      if (!g) {
+        const seed=(s.seed+t.id*17)&0xffff
+        if(!this.entityCpuWarmup.request('arms-1:'+seed,armsResourcesReady(1,seed),()=>prepareArmsJob(1,seed)))continue
+        g=buildArmsVent();g.name='armsTemp';swapArms(g,1,seed);this.enableShadows(g);grp.add(g);temps.set(t.id,g)
+      }
+      placeVent(g, t)
+    }
+    for (const [id, g] of temps) if (!s.temps.some((t) => t.id === id)) { grp.remove(g);this.disposeItemModel(g);temps.delete(id) }
+    // —— 焦皮碎片 / 血迹 ——
+    let marks = grp.userData.armsMarks as Map<ArmsMark, THREE.Object3D> | undefined
+    if (!marks) { marks = new Map(); grp.userData.armsMarks = marks }
+    for (const mk of s.marks) {
+      let o = marks.get(mk)
+      if (!o) {
+        if (mk.kind === 'burn') o = buildArmsBurntDebris(mk.seed)
+        else {
+          o = new THREE.Mesh(new THREE.CircleGeometry(0.42, 18), new THREE.MeshLambertMaterial({ color: '#3a0a07', transparent: true, opacity: 0.78, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 }))
+          o.rotation.x = -Math.PI / 2; o.scale.set(1, 0.7 + (mk.seed % 7) * 0.05, 1); o.rotation.z = mk.seed % 6
+        }
+        grp.add(o); marks.set(mk, o)
+      }
+      o.position.set(mk.wx - ox, mk.z + 0.012, mk.wy - oy)
+      const d = armsDebris(o)
+      if (d) { d.setSmoke(Math.max(0, 1 - mk.age / 45)); d.setEmber(Math.max(0, 1 - mk.age / 10)); d.update(Math.min(0.1, dt)) }
+    }
+    for (const [mk, o] of marks) if (!s.marks.includes(mk)) { grp.remove(o);this.disposeItemModel(o as THREE.Group);marks.delete(mk) }
+    // —— 姿态 ——
+    const p = engine.player
+    const held = engine.armsRun.captor === e.id ? armsHeldChest(engine, e) : null
+    const chestW = held ? new THREE.Vector3(held.wx - ox, held.z, held.wy - oy) : new THREE.Vector3(p.x, p.z + ARMS.chestH, p.y)
+    const spitTemp = s.mode === 'spit' && s.spitVent && s.spitVent !== s.vent ? s.spitVent : null
+    const drive = (g: THREE.Group, count: number, local: boolean) => {
+      const rig = armsRig(armsVent(g)!.anchor.children[0])
+      if (!rig) return
+      setArmsDuct(rig, (local ? s.vent : spitTemp ?? s.vent).ductUp)
+      g.updateMatrixWorld(true)
+      const L = (v: THREE.Vector3) => armsWorldToLocal(rig, v, new THREE.Vector3())
+      const W = (q: { wx: number; wy: number; z: number }) => new THREE.Vector3(q.wx - ox, q.z, q.wy - oy)
+      const target = L(chestW)
+      let tp: ArmsPose
+      const idle = () => { const q = armsClipPose('lurk', 0, { count }); q.rattle = 0; return q }
+      const mode = local ? s.mode : (spitTemp ? 'spit' : 'hidden')
+      switch (mode) {
+        case 'stir': tp = armsClipPose('lurk', s.t, { count, target }); tp.rattle *= sm01((s.t / ARMS.stirDur - 0.35) / 0.65); break
+        case 'emerge': tp = armsClipPose('emerge', s.clipT, { count, target }); break
+        case 'search': tp = armsClipPose('search', s.t, { count, target }); break
+        case 'lunge': tp = armsClipPose('lunge', s.clipT, { count, target: s.clipT < ARMS.lungeLockT ? target : L(W(s.strike)) }); break
+        case 'grab': tp = armsClipPose('grab', s.clipT, { count, target }); break
+        case 'drag': tp = armsClipPose('drag', s.clipT, { count, target, dragTo: L(W(s.dragTo)) }); Object.assign(tp.arms[0], { tx: target.x, ty: target.y, tz: target.z }); break
+        case 'swallow': {
+          tp = armsClipPose('swallow', s.clipT, { count, target, dragTo: L(W(s.dragTo)) })
+          if (held && s.clipT < ARMS.swallowInside) Object.assign(tp.arms[0], { tx: target.x, ty: target.y, tz: target.z })
+          break
+        }
+        case 'flinch': tp = armsClipPose('flinch', s.clipT, { count, target: L(W(s.hand)) }); break
+        case 'burnRetreat': tp = armsClipPose('burnRetreat', s.clipT, { count, target }); break
+        case 'banished': tp = s.t < ARMS.banishAnim ? armsClipPose('burnRetreat', s.t, { count, target }) : idle(); for (const a of tp.arms) a.burn = 0; break
+        case 'retract': tp = armsClipPose('swallow', s.clipT, { count, target, dragTo: L(W(s.hand)) }); break
+        case 'spit': {
+          const sp = s.spit
+          if (!sp || (local && spitTemp)) { tp = idle(); break }
+          tp = armsClipPose('spit', s.clipT, { count, target, spitHold: L(W({ wx: sp.holdWX, wy: sp.holdWY, z: sp.holdZ })), spitPush: L(W({ wx: sp.pushWX, wy: sp.pushWY, z: sp.pushZ })) })
+          if (held && s.clipT < ARMS.spitRelease) Object.assign(tp.arms[0], { tx: target.x, ty: target.y, tz: target.z })
+          break
+        }
+        default: tp = idle()
+      }
+      let anim = g.userData.armsAnim as ArmsAnimator | undefined
+      if (!anim) { anim = new ArmsAnimator(count, tp); g.userData.armsAnim = anim }
+      anim.set(tp)
+      anim.update(Math.min(0.1, dt))
+      poseArms(rig, anim.pose, this.time + e.id * 1.37, g)
+    }
+    drive(home, s.count, true)
+    for (const [id, g] of temps) {
+      if (spitTemp && spitTemp.id === id) drive(g, 1, false)
+      else { const rig = armsRig(armsVent(g)!.anchor.children[0]); if (rig) { const q = armsClipPose('lurk', 0, { count: 1 }); q.rattle = 0; poseArms(rig, q, this.time, g) } }
+    }
+  }
+
+  /** Nguithr'xurh 重制：容器归零；倒挂外层组按 AI 的 yaw/片段摆放，NguithrAnimator 平滑姿态量；巢按 AI 网囊状态同步、手电反光 */
+  private updateNguithrMesh(engine: Engine, e: import('../entities').Entity, grp: THREE.Group, dt: number, gz: number) {
+    grp.position.set(0, 0, 0); grp.rotation.set(0, 0, 0); grp.scale.setScalar(1)
+    const s = e.ng
+    let sp = grp.userData.ngSpider as THREE.Group | undefined
+    if (!sp) return
+    const m = engine.map!
+    if (!s) { // AI 尚未初始化（模型预热中）：先倒挂在实体正上方的天花板
+      const c = ceilingHeightAt(m, e.x, e.y, this.wallH, bandOfZ(e.z))
+      sp.position.set(e.x, Number.isFinite(c) ? c : gz + this.wallH, e.y)
+      sp.rotation.set(Math.PI, e.facing, 0)
+      return
+    }
+    if (Math.abs((grp.userData.ngScale as number) - s.scale) > 0.001) {
+      // Scale the existing private rig: retain prepared GPU buffers and skeleton.
+      const rig=sp.userData.nguithrRig as NguithrRig
+      rig.scale=s.scale;rig.inner.scale.setScalar(s.scale)
+      const animator=nguithrAnimator(sp);if(animator)animator.scale=s.scale
+      grp.userData.ngScale=s.scale
+    }
+    const ox = m.inf?.ox ?? 0, oy = m.inf?.oy ?? 0
+    const nx = s.nestWX - ox, ny = s.nestWY - oy
+    // —— 巢 ——
+    let nest = grp.userData.ngNest as THREE.Group | undefined
+    if (!nest) return // The complete nest is prepared with the entity, before first display.
+    nest.position.set(nx, s.ceil, ny)
+    const nh = nguithrNest(nest)
+    if (nh) {
+      for (let i = 0; i < nh.sacs.length && i < s.sacs.length; i++) {
+        const want = s.sacs[i].state
+        if (nh.sacs[i].state === want) continue
+        if (want === 'intact') nh.sacs[i].show(); else if (want === 'popped') nh.sacs[i].pop(); else nh.sacs[i].hide()
+      }
+      // 手电照到网囊：镇静液泛起油亮反光（距离 + 光锥衰减）
+      const p = engine.player
+      let k = 0
+      if (p.flashlight && p.battery > 0 && p.flashJamT <= 0) {
+        this.camera.getWorldDirection(this.ngTmp)
+        const vx = nx - this.camera.position.x, vy = s.ceil - 0.35 - this.camera.position.y, vz = ny - this.camera.position.z
+        const dist = Math.hypot(vx, vy, vz)
+        const cos = (this.ngTmp.x * vx + this.ngTmp.y * vy + this.ngTmp.z * vz) / Math.max(1e-3, dist), c0 = Math.cos(0.5)
+        if (dist < 9 && cos > c0) k = (1 - dist / 9) * Math.min(1, (cos - c0) / (1 - c0) * 1.6)
+      }
+      const kq = Math.round(k * 20) / 20
+      if (grp.userData.ngGlow !== kq) { grp.userData.ngGlow = kq; nh.setSacGlow(0.05 + kq * 0.55, 1 + kq * 2.4) }
+    }
+    // —— 本体姿态 ——
+    const anim = nguithrAnimator(sp)
+    if (!anim) return
+    const ceilRel = Math.max(1.8, s.ceil - gz), sc = s.scale
+    const F = s.yaw + Math.PI
+    const off0 = 0.67 * sc * Math.min(1, Math.max(0, anim.pose.flip))
+    sp.position.set(e.x - off0 * Math.cos(F), s.ceil, e.y - off0 * Math.sin(F))
+    sp.rotation.set(Math.PI, s.yaw, 0)
+    sp.updateMatrixWorld(true)
+    const floor = { ceil: ceilRel, scale: sc, onFloorFromCeiling: true }
+    let tp: NguithrPose
+    if (e.dead) tp = nguithrClipPose('dead', Math.max(0, 1.4 - e.deathT) * 2.8, floor)
+    else switch (s.clip) {
+      case 'cut': case 'weave': {
+        const c = s.sacs[s.sacIdx]
+        if (c) this.ngTmp.set(nx + c.ox, s.ceil + c.oz + c.r + 0.1, ny + c.oy); else this.ngTmp.set(e.x + Math.cos(s.yaw) * 0.8, s.ceil - 0.2, e.y + Math.sin(s.yaw) * 0.8)
+        const reach = nguithrToMount(sp, this.ngTmp, this.ngTmp2)
+        tp = nguithrClipPose('cut', s.clip === 'weave' ? 0.6 + Math.min(1, s.t / 2.2) * 3.9 : s.clipT, { reach })
+        tp.shiftX += Math.sign(reach.x) * 0.06 * tp.reach; tp.shiftZ += 0.05 * tp.reach
+        break
+      }
+      case 'release': tp = nguithrPose({ crouch: -0.12, tremble: 0.35, abdPulse: 1, palpRaise: 0.6, chelOpen: 0.45, twitch: 0.8, spread: 1.04 }); break
+      case 'sleep': tp = nguithrClipPose('sleep', s.t); break
+      case 'cower': tp = nguithrClipPose('cower', s.clipT); break
+      case 'spray': tp = nguithrClipPose('spray', s.clipT); tp.flip = 0; tp.drop = 0; break // 天花板上前身朝下抬起喷射
+      case 'descend': tp = nguithrClipPose('descend', s.clipT, { ceil: ceilRel, scale: sc }); break
+      case 'climb': tp = nguithrClipPose('climb', s.clipT, { ceil: ceilRel, scale: sc }); break
+      case 'feed': tp = nguithrClipPose('feed', s.clipT, floor); break
+      case 'recoil': tp = nguithrClipPose('cower', s.clipT, floor); tp.flip = 1; tp.drop = nguithrFloorDrop(ceilRel, sc); break
+      case 'bite': tp = nguithrClipPose('spray', 0.5 + Math.min(1, s.clipT / 0.45) * 1.3, floor); break
+      case 'crawl': tp = nguithrClipPose('crawl', 6, floor); tp.speed = s.speed; tp.turn = s.turn; break
+      default: tp = nguithrClipPose(s.mode === 'ground' ? 'crawl' : 'idle', 0, s.mode === 'ground' ? floor : {}); tp.speed = s.speed; tp.turn = s.turn
+    }
+    if (s.clip === 'idle' || s.clip === 'crawl') { tp.speed = s.speed; tp.turn = s.turn }
+    anim.set(tp)
+    if (!grp.userData.ngPoseInit) { anim.snap(); grp.userData.ngPoseInit = true }
+    anim.update(Math.min(0.1, dt))
+    const off = 0.67 * sc * Math.min(1, Math.max(0, anim.pose.flip))
+    sp.position.set(e.x - off * Math.cos(F), s.ceil, e.y - off * Math.sin(F))
+    poseNguithr(sp, anim.pose, this.time + e.id * 1.37)
+  }
+  private ngTmp = new THREE.Vector3()
+  private ngTmp2 = new THREE.Vector3()
 
   /** 实体头顶气泡（样式与据点 NPC 相同）：v77 窃皮者借来的自言自语 / v79 水豚种尸鼠音箱里的合成音 */
   /** 鹉主杰瑞的说话气泡：台词是成年人的完整句子，气泡更大且自动折行（字幕同时进消息栏） */
@@ -4678,6 +5057,7 @@ export class Renderer3D {
         }
         rec.grp.position.y = gz
       }
+      if(m.traders&&!n.dead&&!n.hostile)applyTradersNpcPose(rec.grp,n,m.traders.duties.get(n.id),this.time)
       // v56：乐手乔伊的吉他位姿插值（演奏时挪到身前，平时斜背在背后）
       if (n.id === 'joey') {
         const gtr = parts.torso?.children.find((o) => (o as THREE.Object3D).userData.joeyGuitar) as THREE.Group | undefined
@@ -4772,15 +5152,17 @@ export class Renderer3D {
       const distance = Math.hypot(it.x-engine.player.x,it.y-engine.player.y)
       if (distance > reach) { if (grp) grp.visible = false; continue }
       if (!grp) {
+        if(isMelee(it.type)&&!this.entityCpuWarmup.request('melee-surfaces',meleeResourcesReady(),prepareMeleeJob))continue
         if (created && distance > 3) continue
         created = true
-        grp = this.acquireItemModel(it.type)
+        grp = this.acquireItemModel(it.dur === 0 && isMelee(it.type) ? it.type + ':broken' : it.type)
         grp.userData.phase = Math.random() * Math.PI * 2
         this.enableShadows(grp)
         this.itemMeshes.set(id, grp)
         this.scene.add(grp)
       }
       grp.visible = this.itemWarmup.ready(grp)
+      if(isMelee(it.type)&&grp.userData.meleeRig){const blood=it.blood??0,fr=slotDur({...it,count:1})/slotMaxDur({...it,count:1}),worn=fr<=0?1:Math.max(0,1-fr/LOW_DUR),key=blood+':'+worn;if(grp.userData.wearKey!==key){setMeleeWear(grp,{blood,worn});grp.userData.wearKey=key}}
       // v29a：液体瓦片上的漂浮物贴水面渲染（低悬浮+轻微起伏），不再按陆地的 +0.45 悬空
       const li = Math.floor(it.y) * m.w + Math.floor(it.x)
       const onLiquid = it.z !== undefined && m.liquid[li] !== 0
@@ -4983,7 +5365,7 @@ export class Renderer3D {
         const idx = (ch.userData.idx as number) ?? 0
         // 门类（非容器）：维持既有旋/移约定
         if (k0 === 'hoteldoor') { ch.rotation.y = -k * 1.55 * ((g.userData.swing as number) ?? 1); return } // v10：铰链门向门洞内侧旋开 ~89°（不穿侧墙；双开门镜像对开）
-        if (k0 === 'rollerdoor') { ch.position.y = k * 1.85; ch.scale.y = 1 - k * 0.8; return } // v10：卷帘收进卷轴盒（不再悬穿门头/天花板）
+        if (k0 === 'rollerdoor') { ch.position.y = k * Number(g.userData.rollerLift ?? 1.85); ch.scale.y = 1 - k * 0.8; return } // v10：卷帘收进卷轴盒（不再悬穿门头/天花板）
         if (k0 === 'glassdoor') { ch.position.x = k * 0.95; return } // v10：玻璃门侧滑入墙袋（不再悬在半空）
         if (k0 === 'inkdoor') { ch.rotation.y = k * 1.85; return } // v31：墨黑色金属门向走廊内侧旋开 ~106°
         if (k0 === 'bargate') { ch.rotation.y = k * 1.6; return } // v51：栅栏门扇绕铰链旋开 ~92°
@@ -5173,8 +5555,8 @@ export class Renderer3D {
         }
         posA.needsUpdate = true
       } else if (this.voidRain) this.voidRain.visible = false
-      this.l4Volume??=new L4VolumeFog()
-      this.l4Volume.update(m,this.scene,this.camera,p.x,p.y,this.time,this.shadowQuality)
+      // L4 v2 is one continuous building: no void seas, so no void fog volumes.
+      if(def.id!==4){this.l4Volume??=new L4VolumeFog();this.l4Volume.update(m,this.scene,this.camera,p.x,p.y,this.time,this.shadowQuality)}else this.l4Volume?.hide()
     } else {
       if(this.voidRain)this.voidRain.visible=false
       this.l4Volume?.hide()

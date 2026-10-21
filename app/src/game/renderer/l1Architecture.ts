@@ -265,8 +265,30 @@ export function* buildL1Architecture(m:GameMap,range:TerrainRange,g:THREE.Group,
         }
       }
     }
+    // v3: the second foliage atlas (public/textures/l1/garden/atlas.png): 0 trailing vine, 1 fern, 2 shrub, 3 grass tuft.
+    const layers2=[0,1,2].map(()=>({p:[] as number[],n:[] as number[],uv:[] as number[]}))
+    const sprite=(x:number,y:number,z:number,w:number,h:number,angle:number,q:number,n:number,cross=true)=>{
+      const u0=(q%2)*.5+.004,v0=(q<2?.5:0)+.004
+      for(const extra of cross?[0,Math.PI/2]:[0]){
+        const ca=Math.cos(angle+extra),sa=Math.sin(angle+extra)
+        for(let lod=0;lod<3;lod++){
+          if(lod===1&&n%2||lod===2&&n%5)continue
+          const a=layers2[lod]
+          for(const [u,v] of [[0,0],[1,0],[1,1],[0,0],[1,1],[0,1]]){
+            const pu=(u-.5)*w
+            a.p.push(x+pu*ca,y+v*h,z-pu*sa);a.n.push(sa,0,ca);a.uv.push(u0+u*.492,v0+v*.492)
+          }
+        }
+      }
+    }
     for(const s of columns){
-      for(let k=0;k<650;k++){
+      // v3: ivy cover varies per column — bare, patchy, or smothered
+      const cover=l1Hash(s.x+ox,s.y+oz,61),kMax=cover<.18?60:cover<.5?320:cover<.85?650:950
+      if(l1Hash(s.x+ox,s.y+oz,63)<.35)for(let j=0;j<2+Math.floor(cover*3);j++){
+        const a=j*2.1+cover*6,r=s.w/2+.35+l1Hash(j,s.x+ox,65)*.4,sz=.7+l1Hash(j,s.y+oz,67)*.7
+        sprite(s.x+s.w/2+Math.cos(a)*r,0,s.y+s.h/2+Math.sin(a)*r,sz*1.15,sz,a,2,j)
+      }
+      for(let k=0;k<kMax;k++){
         const a=k*2.4,h=.15+l1Hash(s.x+ox,k,19)*(H-.4),side=k%4,u=(l1Hash(k,s.y+oz,23)-.5)*s.w,r=s.w/2+.018
         const dx=side<2?(side===0?r:-r):u,dz=side>=2?(side===2?r:-r):u
         card(s.x+s.w/2+dx,h,s.y+s.h/2+dz,.12,.17,side<2?Math.PI/2:0,k,Math.sin(a)*.25)
@@ -275,6 +297,13 @@ export function* buildL1Architecture(m:GameMap,range:TerrainRange,g:THREE.Group,
     for(let z=z0+2;z<z1;z+=4)for(let x=x0+2;x<x1;x+=4){
       if(!floor(x,z))continue
       const h=l1Hash(x+ox,z+oz,17),len=2+h*3.2
+      // v3: thin trailing vine strands, in clumps; some bays stay open
+      const vn=l1Hash((x+ox)*3,(z+oz)*3,71)
+      if(vn<.55)for(let j=0;j<1+Math.floor(vn*6);j++){
+        const L=1.6+l1Hash(j,(x+ox)*5,73)*(H-2.2),sx=x+(l1Hash(j,z+oz,75)-.5)*3.4,sz=z+(l1Hash(j,x+ox,77)-.5)*3.4
+        if(floor(sx,sz))sprite(sx,H-L,sz,.45+L*.08,L,l1Hash(j,j,79)*3,0,j)
+      }
+      if(h<.3)continue
       for(let j=0;j<110;j++){
         const a=j*2.4,t=j/110
         card(x+Math.sin(a)*.17+Math.sin(t*4)*.18,H-.2-t*len,z+Math.cos(a)*.15,.11,.16,a,j)
@@ -286,6 +315,10 @@ export function* buildL1Architecture(m:GameMap,range:TerrainRange,g:THREE.Group,
       const r=l1Hash((x+ox)*7,(z+oz)*7,11)
       const jx=(r-.5)*.6,jz=(l1Hash((x+ox)*11,(z+oz)*11,37)-.5)*.6
       for(let j=0;j<4;j++)card(x+.3+jx+Math.sin(j*1.7)*.16,.025+r*.035,z+.3+jz+Math.cos(j*1.7)*.16,.085,.12,r*6+j,j,-1.25)
+      // v3: fern drifts and grass tufts follow a slow field, so patches read as distinct plantings
+      const fern=l1Hash(Math.floor((x+ox)/6),Math.floor((z+oz)/6),81),tuft=l1Hash(Math.floor((x+ox)/5),Math.floor((z+oz)/5),83)
+      if(fern>.68&&r<.32){const sz=.55+r*1.6;sprite(x+.3+jx,0,z+.3+jz,sz*1.2,sz,r*9,1,Math.floor(r*97))}
+      else if(tuft>.62&&r>.82){const sz=.3+(r-.82)*2.6;sprite(x+.3+jx,0,z+.3+jz,sz*1.3,sz,r*7,3,Math.floor(r*89))}
     }
     const lod=new THREE.LOD();lod.name='l1-ivy-lod';lod.position.set((x0+x1)/2,0,(z0+z1)/2)
     for(let i=0;i<layers.length;i++){
@@ -294,6 +327,13 @@ export function* buildL1Architecture(m:GameMap,range:TerrainRange,g:THREE.Group,
       const mesh=new THREE.Mesh(geo,l1Material(v,'leaf'));mesh.userData.noCastShadow=dist>0;lod.addLevel(mesh,dist)
     }
     g.add(lod)
+    const lod2=new THREE.LOD();lod2.name='l1-garden-plants-lod';lod2.position.copy(lod.position)
+    for(let i=0;i<layers2.length;i++){
+      const a=layers2[i],dist=[0,26,52][i];if(!a.p.length)continue
+      const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(a.p,3));geo.setAttribute('normal',new THREE.Float32BufferAttribute(a.n,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(a.uv,2));geo.translate(-lod2.position.x,0,-lod2.position.z)
+      const mesh=new THREE.Mesh(geo,l1Material(v,'plant'));mesh.userData.noCastShadow=dist>0;lod2.addLevel(mesh,dist)
+    }
+    if(lod2.levels.length)g.add(lod2)
     // Dapple is produced by the existing shadowed sun and alpha-tested foliage.
   }
   // Remove hidden end caps and repeated vertices before creating GPU buffers.

@@ -16,6 +16,9 @@ const seat = (y: number, x = 0, z = 0, yaw = 0, label = '座椅', relaxed = fals
 /** Explicit seat surfaces, never inferred from a prop's bounding box (tables are not seats). */
 export function furnitureSeats(s: Structure, level: number): FurnitureSeat[] {
   if (s.data?.fallen || s.data?.hidden || s.data?.noSit) return []
+  if(s.data?.tradersModel==='waiting')return [-1.18,0,1.18].map(x=>seat(.46,x,0,0,'候场排椅'))
+  if(s.data?.tradersModel==='workstation')return [seat(.46,0,.76,Math.PI,'工作椅')]
+  if(s.data?.tradersModel==='lounge')return [-1,1].flatMap(side=>[-.7,.7].map(z=>seat(.54,side*1.55,z,-side*Math.PI/2,'休息软座',true)))
   const k = s.kind, w = s.w, d = s.h
   switch (k) {
     case 'settlementprop': {

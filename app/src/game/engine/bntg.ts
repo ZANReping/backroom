@@ -1,3 +1,4 @@
+import {TRADERS_CARGO_SLOTS,TRADERS_VAULT_CELLS} from '../content/tradersLayout'
 import type {Engine} from '../engine'
 import {availableStation,route} from './career'
 import {BNTG_BLUEPRINT} from '../content/bntgBlueprint'
@@ -7,14 +8,15 @@ import {facilitySight} from './facilitySight'
 import type {Structure} from '../core/types'
 import {actualRank} from './career'
 import {hasVaultMission} from './factionMissions'
+const inventoryCells=new Set(TRADERS_VAULT_CELLS.filter(c=>TRADERS_CARGO_SLOTS.some(p=>p.x>=c.x&&p.x<c.x+c.w&&p.y>=c.y&&p.y<c.y+c.h)).map(c=>c.id))
 export function bntgDoorAllowed(eng:Engine,s:Structure){
  const p=eng.career.routes.bntg,rank=actualRank(eng,'bntg')
  if(rank>=Number(s.data?.access??2))return true
- return (hasVaultMission(eng)||!!p?.active&&[3,4,5].includes(p.task))&&['storage_0','storage_1','storage_2','storage_3','storage_4','storage_6'].includes(String(s.data?.room))
+ return (hasVaultMission(eng)||!!p?.active&&[3,4,5].includes(p.task))&&inventoryCells.has(String(s.data?.room))
 }
 export interface VaultState{sequence:number;remaining:number;phase:number;slots:number[];moving:number}
 export interface BntgSave{version:2;proofs:Record<string,string[]>;vault:VaultState;baseline:number}
-export const VAULT_SLOTS=[{x:34,y:31},{x:46,y:31},{x:34,y:38},{x:46,y:38},{x:34,y:45},{x:34,y:52}]
+export const VAULT_SLOTS=TRADERS_CARGO_SLOTS
 export function migrateBntg(eng:Engine){
  if(eng.career.bntg?.version===2)return eng.career.bntg
  const p=eng.career.routes.bntg

@@ -41,3 +41,56 @@ Peeling paint uses the existing CC0 `l11_concrete.jpg` as its base, with origina
 `crate-marks.png` 的当前版本由 `scripts/gen-l1-crate-marks.mjs` 重新绘制：红色数字、运输文字及朝上/易碎/防潮轮廓。构图、文字参考用户提供的板条箱照片（Thelmadatter，CC BY 3.0，原图及链接见根级 L1-REMAKE-SOURCES.md）；没有提取或粘贴照片像素。图集以各格内裁切和透明边距避免串色。与第四轮线段版不同，本版通过本机 Windows Georgia 字体栅格化文字，没有随游戏分发字体文件；可复现环境为 Windows + Georgia + @napi-rs/canvas。绘制脚本与 PNG 均随项目保存。
 
 Wood051 原扫描文件保持不变，运行时重映射为 `clamp(.22 + L*1.5, .22, .86)`；单箱/双层箱共享同一木材与印字图集。印字采用柔和 alpha 测试、表面偏移，不参与实体投影。玻璃杯和伞等符号都是图集内的平面印字，不产生额外灯光或独立几何细件。
+
+## v3 (2026-10-20) — AI-generated scans (Hark image model), post-processed in-house
+Post-process for all: resize 1024², half-offset seam blend (tileable), low-frequency light flattening (gaussian 160 px),
+partial desaturation; `*_nor.jpg` normal maps derived from luminance gradients.
+
+### eagle/ — 天鹰段 nine reference looks (one skin per photo in reference/L1)
+v3.1: per user feedback ("keep concrete, not rocky") these are NOT used as albedo. The original concrete scans stay the albedo;
+each eagle texture is sampled at .45x UV with mip bias 3 and applied as a soft colour cast (40%) + luminance variation (30%)
++ per-skin brightness (texture mean / .6, clamped). eagle `_nor.jpg` files were removed.
+Prompt pattern: "Seamless tileable square surface texture of <surface>, straight-on orthographic view filling the
+entire frame, flat even diffuse lighting, no shadows, no perspective, photographic realism. No text, no border."
+| skin | ref photo | floor | wall/column | ceiling |
+|---|---|---|---|---|
+| common | 最普遍的天鹰段.jpg | worn grey parking concrete, tyre scuffs, oil stains | painted concrete, grime band | coffered concrete slab |
+| round | 圆柱天鹰段，天鹰段的墙壁.png | dusty concrete | rough cast concrete, formwork rings | rusty-stained slab |
+| room | 天鹰段中的小房间.png | smooth grey screed | off-white painted block | (round ceiling) |
+| water | 天鹰段的水洼.png | damp concrete, water marks, puddle stains | damp-streaked concrete | dark slab |
+| bright | 较为光亮的天鹰段.png | pale polished concrete | clean white paint | white painted slab |
+| clean | 较为干净的天鹰段.png | sealed grey epoxy | fresh light-grey paint | white painted slab |
+| dry | 较为干燥的天鹰段.jpg | sandy dusty concrete | yellowed dry plaster | dusty ochre slab |
+| dim | 较为黑暗的天鹰段.png | dark worn concrete | dirty grey concrete | dark slab |
+| dark | 黑暗的天鹰段.png | near-black oily concrete | sooty concrete | dark slab |
+
+### ouro/ — 衔尾段 construction site (ref 衔尾段.png)
+floor: pale dusty screed, chalk lines, cement splatter · column: dark raw concrete with white plaster dabs, yellow primer foot ·
+block: bare hollow-block wall, mortar smears · patch: grey plaster with yellow/orange primer + white filler patches ·
+black: black-painted block with white plaster blobs · insul: fibrous mineral-wool duct wrap.
+
+### garden/ — 花园段 vegetation variety (ref 花园段.png)
+ivyground: dense small-leaf creeping ivy / periwinkle carpet · moss: cushion moss + clover over concrete ·
+litter: damp soil, dead leaves, moss tufts · atlas.png: 2×2 cutouts (trailing vine strand, fern clump, round shrub, grass tuft),
+generated on chroma green with transparent background, quadrant borders cleared.
+
+## 2026-10-20：v3 接入当前烘焙路径
+
+以上 v3 图片由用户附件提供，独立署名／许可信息与内容哈希记录在 [附件来源](../../../assets/sources/l1v3-nguithr/README.md)。它们不被重新标为 CC0；原有 Poly Haven／ambientCG 扫描的许可与作者记录保持不变。
+
+天鹰的外观按实际大厅表面分配，不按区块中心决定。`renderer/l1GardenPlants.ts` 将附件花园 atlas 接到当前烘焙场景，三档 LOD 共用贴图；未把参考照片作为背景。所有新增自定义 shader 采样纹理登记到 `l1ExtraTextures`，随真实场景准备，经典路径同步处理颜色与透明裁切。原 r17 受光数据和连续世界 UV 保留。
+
+
+## 2026-10-21：衔尾段 v3.4 附件接入
+
+v3.2 (2026-10-20, generate_image with crops of 衔尾段.png as reference; made tileable by half-offset crossfade,
+normals from luminance): spray — "sprayed cellulose / mineral fiber fireproofing coating, off-white to light grey, fine
+lumpy popcorn-like fibrous surface" · beige — "old cream-beige painted concrete column covered with round white
+plaster/putty dabs, grey drips" · soot — "soot-blackened charcoal raw concrete with white plaster dabs and drips" ·
+plaster — "unfinished light grey rough skim-coat plaster wall with whitish filler blotches" · pink — "patched wall,
+faded salmon-pink base with mustard-yellow primer blocks and white filler blobs". All prompts: seamless tileable,
+flat orthographic, even light, no text/watermark. (insul/patch kept for legacy, no longer mapped.)
+
+- 2026-10-21 v3.4 `l1/ouro/spray.jpg`: reprocessed from the v3.2 AI-generated spray texture — tileable FFT Gaussian blur (σ≈7 px) blended 75%, contrast ×0.55, plus soft low-frequency mottling (seeded noise, σ≈60 px). Reason: user found sprayed columns too fragmented.
+
+以上新增纹理均为用户提供的程序／生成资产，原始阶段说明、哈希和许可状态见 [本次附件来源](../../../assets/sources/ouro-v34/README.md)。当前原生 GPU 实测和重建光照见 [衔尾段接入说明](../../../OUROBOROS-IMPORT.md)。

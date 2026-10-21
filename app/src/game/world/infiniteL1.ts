@@ -19,8 +19,8 @@ import { registerInfiniteLevel, type GenChunk } from './infiniteRegistry'
 export type L1Variant =
   | 'parking' | 'aisle' | 'storage' | 'gothic' | 'ouroboros' | 'garden'
   | 'maintenance' | 'fabled'
-export const L1_VARIANT_NAMES: Record<L1Variant, string> = {
-  parking: '天鹰段', aisle: '过道', storage: '跃金段', gothic: '哥特段',
+export const L1_VARIANT_NAMES: Record<Exclude<L1Variant,'aisle'>, string> = {
+  parking: '天鹰段', storage: '跃金段', gothic: '哥特段',
   ouroboros: '衔尾段', garden: '花园段',
   maintenance: '小径', fabled: '传说段',
 }
@@ -29,10 +29,6 @@ export const L1_VARIANT_LORE: Record<string, string[]> = {
   parking: [
     '天鹰段——Level 1 最常见的区段。灰色墙面与地坪，加上巨型混凝土柱子，空旷得像没有车辆的停车层；新流浪者从黄色厅房切入时总会落在这里。探险者总署在此设立了 Alpha 基地，巡逻队穿着明亮淡黄外套、佩戴雄鹰徽章。',
     '天花板上漏水的小管子偶尔滴落水珠，但那些水不适合安全饮用。地面四散的水坑闻起来不甚干净，有种塑料般的死水气息。',
-  ],
-  aisle: [
-    '「地下停车场和废弃仓库的无尽缝合体」。宽敞开阔的过道绵延数英里，单调褪色的墙壁间偶尔立起混凝土支柱，天花板的管道间不时传来零星的金属撞击声。',
-    '宜居地带受非欧几何影响：你感知的距离不过是感官的假象。档案建议用地标导航——彩色的柱子、配电柜、板条箱——行进时保持视线固定。',
   ],
   storage: [
     '跃金段——白墙、工业梁架与裸露风管组成挑高仓库，悬吊灯盘照亮灰褐地坪，彩色管线和标识点缀其间。照明充足，板条箱成群，是搜集杏仁水、罐装食品和武器的重要场所。',
@@ -346,6 +342,7 @@ function genL1LegacyManifest(def: LevelDef, seed: number, cx: number, cy: number
         }
         return null
       }
+      // Keep the legacy candidate RNG and IDs; v3.4 display density is selected below on an independent stream.
       for (let i = 0, n = rng.int(1, 2); i < n; i++) {
         const p = anchorAt()
         if (!p) break
@@ -533,13 +530,14 @@ function genL1LegacyManifest(def: LevelDef, seed: number, cx: number, cy: number
     }
   }
 
-  // ---- v33：少量自天花板向下伸出的通风管道（「手臂」巢位；维护通廊/花园段不出现）----
-  // 层级灯光熄灭（「闪烁」停电）时，手臂从管内伸出猎捕——见 engine.updateEntities 的 arms 分支
+  // ---- 天花板通风管 + 「手臂」（Entité 15-FR，每 chunk 6%；维护通廊/花园段不出现）----
+  // 黑暗 + 噪音时由管内伸出抓人（engine/armsAI.ts）。结构带 data.arms=1：风口由手臂实体自己渲染（格栅要随动画开合），
+  // ceilvent 结构只保留位置/悬挂物登记；概率与随机序列与旧版一致（不改变其它生成内容）。
   if (variant !== 'maintenance' && variant !== 'garden' && rng.chance(0.06)) {
     for (let t = 0; t < 40; t++) {
       const x = rng.int(3, CS - 4), y = rng.int(3, CS - 4)
       if (!isF(x, y) || solidAtL(x, y)) continue
-      pushStruct('ceilvent', x, y, 1, 1, false)
+      pushStruct('ceilvent', x, y, 1, 1, false, false, { arms: 1 })
       entities.push({ type: 'arms', x: WX + x + 0.5, y: WY + y + 0.5 })
       break
     }
@@ -582,12 +580,20 @@ function genL1LegacyManifest(def: LevelDef, seed: number, cx: number, cy: number
       entities.push({ type: 'dryshrimp', x: WX + (i % CS) + 0.5, y: WY + ((i / CS) | 0) + 0.5 })
     }
   }
-  // Nguithr'xurh（Entity 16）：约 4% 的 chunk 在天花板上结一球状网囊
+  // Nguithr'xurh（Entity 16）：约 4% 的 chunk 在天花板上结巢（巢与 3–6 个网囊由 nguithrAI 按巢点坐标确定）
   if (rng.chance(0.04)) {
     for (let t = 0; t < 30; t++) {
       const x = rng.int(2, CS - 3), y = rng.int(2, CS - 3)
       if (!isF(x, y) || solidAtL(x, y)) continue
       entities.push({ type: 'nguithr', x: WX + x + 0.5, y: WY + y + 0.5 })
+      // 群居：少数巢点 2–3 只共享一片天花板（独立随机流，不扰动本 chunk 主随机序列）
+      const cr = new RNG(h32(seed, cx, cy, 0x16c))
+      if (cr.chance(0.18)) for (let k = 0, n = cr.int(1, 2), tries = 0; k < n && tries < 24; tries++) {
+        const a = cr.range(0, Math.PI * 2), r = cr.range(2.6, 3.4)
+        const mx = Math.floor(x + 0.5 + Math.cos(a) * r), my = Math.floor(y + 0.5 + Math.sin(a) * r)
+        if (mx < 1 || my < 1 || mx > CS - 2 || my > CS - 2 || !isF(mx, my) || solidAtL(mx, my)) continue
+        entities.push({ type: 'nguithr', x: WX + mx + 0.5, y: WY + my + 0.5 }); k++
+      }
       break
     }
   }
@@ -613,10 +619,25 @@ import type {L1StyleName} from './l1BuildingTypes'
 export function genL1ChunkRaw(def:LevelDef,seed:number,cx:number,cy:number,forceVariant?:string):GenChunk {
   const architecture=buildL1Data(seed,cx,cy,forceVariant&&forceVariant!=='aisle'?forceVariant as L1StyleName:undefined)
   const content=genL1LegacyManifest(def,seed,cx,cy,forceVariant)
+  // Sparse construction dressing must not reroll unrelated loot or vent identities.
+  if(content.variant==='ouroboros'){
+    const dress=new RNG(h32(seed,cx,cy,0x0f34))
+    let scaffolds=dress.int(0,1),barriers=dress.int(0,2),stations=dress.chance(.35)?1:0
+    const workers=stations
+    content.structures=content.structures.filter(s=>s.kind==='scaffold'?scaffolds-->0:s.kind==='roadblock'?barriers-->0:s.kind==='settlementstation'&&s.data?.room==='brc_work'?stations-->0:true)
+    if(content.npcs)content.npcs=content.npcs.slice(0,workers)
+  }
   if(architecture.exit){const p=architecture.exit,exitDef=def.exits.find(e=>e.kind===p.kind)
     if(exitDef)content.exits=[{def:exitDef,x:p.x,y:p.z,discovered:false,l1:{wallDir:p.dir}}]
   }
-  return placeL1Content(content,architecture)
+  const out=placeL1Content(content,architecture)
+  // 手臂（Entité 15-FR）：placeL1Content 会把 ceilvent 挪到合法位置、并剔除小径里的大部分实体——
+  // 让手臂实体跟到风口的最终位置；手臂被剔除的风口去掉 data.arms（改由结构自己画一个关着的空风口）
+  for(const s of out.structures)if(s.kind==='ceilvent'&&s.data?.arms){
+    const a=out.entities.find(e=>e.type==='arms'&&Math.hypot(e.x-(s.x+s.w/2),e.y-(s.y+s.h/2))<4)
+    if(a){a.x=s.x+s.w/2;a.y=s.y+s.h/2}else{const d={...s.data};delete d.arms;s.data=d}
+  }
+  return out
 }
 registerInfiniteLevel(1, {
   genRaw: genL1ChunkRaw,
@@ -625,4 +646,3 @@ registerInfiniteLevel(1, {
   variantNames: L1_VARIANT_NAMES,
   variantLore: L1_VARIANT_LORE,
 })
-

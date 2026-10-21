@@ -8,7 +8,7 @@ import type { EntityDef } from './types'
 export interface EntitySpawn { id: number; w: number; event?: boolean }
 
 // 特殊事件生成归属（v34）：不在任何生成池、但在特定层级经事件生成的实体——
-// 笑魇=L1 停电期间于黑暗处生成；手臂=L1 天花板通风管在灯光熄灭时伸出。
+// 笑魇=L1 停电期间于黑暗处生成；手臂=L1 天花板通风管（每 chunk 6%，黑暗 + 噪音时伸出抓人）。
 // v42 补 Level 2 特殊生成（infiniteL2 生成器内追加，均不在生成池）：
 // 笑魇=L2 黑暗廊道区概率替代池中抽取；管道蠕虫=L2 伪装成 pipes 拟态生成；
 // 窗户=L2 走廊尽头墙上的未涂黑窗户（windowtrap）。
@@ -21,7 +21,7 @@ export const ENTITY_EVENT_SPAWNS: Record<string, number[]> = {
   pipeworm: [2],
   windowent: [2],
   vendingmachine: [2], // 人制品售货机：L2 走廊尽头（生成器定点放置）
-  nguithr: [1, 2], // Nguithr'xurh：L1/L2 天花板结囊（生成器定点放置）
+  nguithr: [1, 2, 3, 8], // Nguithr'xurh：L1/L2/L3 天花板结巢（生成器定点放置，含 2–3 只的群居巢点）；L8 巨臂林地极少；L5 走生成池（稀有）
   tiny: [7], // v58：小小——仅 L7 环形场定点生成（唯一可对话个体；生成池保留 w 仅为图鉴归属）
 }
 

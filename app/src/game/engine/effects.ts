@@ -9,6 +9,9 @@ import type { Engine } from '../engine'
 import type { SaveSnapshot } from './save'
 import { freshWarehouses } from './warehouse'
 import { freshJerryRun } from './jerryAI'
+import { freshArmsRun } from './armsAI'
+import { freshNgRun } from './nguithrAI'
+import {audio} from '../core/audio'
 
 export interface EffectDef {
   id: string // 唯一 id
@@ -63,9 +66,11 @@ export const EFFECTS: EffectDef[] = [
   { id: 'manmade', field: 'manmadeT', def: 0, cat: 'candy', tickPhase: 'post', mount: 'effects tick（post）', tick(eng, dt) {
     if (eng.manmadeT > 0) eng.manmadeT -= dt
   } },
-  { id: 'webbed', field: 'webbedT', def: 0, cat: 'misc', tickPhase: 'post', mount: 'effects tick（post）+ movement 减速 + entityAI.updateNguithr 触发', tick(eng, dt) {
+  { id: 'webbed', field: 'webbedT', def: 0, cat: 'misc', tickPhase: 'post', mount: 'effects tick（post）+ movement 减速（死亡飞蛾守卫的缠丝；Nguithr 重制后改用 ngRun）', tick(eng, dt) {
     if (eng.webbedT > 0) eng.webbedT -= dt
   } },
+  { id: 'arms-run', field: 'armsRun', def: () => freshArmsRun(), cat: 'misc', resetOnNewRun: true, resetOnLevel: true, mount: 'armsAI.armsPlayerTick（engine.step 移动前）+ movement 的 armsControlsPlayer（被抓/管道/坠落接管位置；不写存档）' },
+  { id: 'nguithr-run', field: 'ngRun', def: () => freshNgRun(), cat: 'misc', resetOnNewRun: true, resetOnLevel: true, mount: 'nguithrAI.nguithrPlayerTick（轻度/重度镇静、挣脱；engine.step 移动前；不写存档）' },
   // ===== 玩家噪音残余 =====
   { id: 'player-noise', field: 'playerNoiseT', def: 0, cat: 'misc', mount: 'movement.updateMovement（每帧衰减；entityAI.noiseEvent 刷新）' },
   // ===== 杰瑞的信众 / Level 274 教化 =====
@@ -106,6 +111,7 @@ export function runEffectTicks(eng: Engine, dt: number, phase: 'pre' | 'post') {
 
 /** 按注册表重置持续性效果状态（scope=newRun：新一局；scope=level：换层） */
 export function resetEffects(eng: Engine, scope: 'newRun' | 'level') {
+  audio.setMuffled(false) // Reset the actual audio filter together with ngRun.
   for (const e of EFFECTS) {
     if (e.field.includes('.')) continue // dev 子字段不参与重置
     if (scope === 'newRun' ? !e.resetOnNewRun : !e.resetOnLevel) continue

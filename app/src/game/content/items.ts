@@ -54,6 +54,7 @@ export function itemUseProfile(def: ItemDef): ItemUseProfile | null {
   if (def.type === 'bandage') return { duration: 2.8, anim: 'medical', label: '包扎' }
   if (def.type === 'disinfectant') return { duration: 2.2, anim: 'medical', label: '消毒' }
   if (def.type === 'sedative') return { duration: 1.55, anim: 'inject', label: '注射' }
+  if (def.type === 'sedgland') return { duration: 1.4, anim: 'eat', label: '吞服' }
   if (def.use === 'battery') return { duration: 1.6, anim: 'battery', label: '更换电池' }
   if (def.use === 'light') return { duration: 0.9, anim: 'activate', label: '启动' }
   if (READ_ITEMS.has(def.type)) return { duration: 1.5, anim: 'read', label: '阅读' }
@@ -108,6 +109,8 @@ export const ITEMS: Record<string, ItemDef> = {
   skeleton: { type: 'skeleton', name: '万能钥匙', desc: '酒店黄铜万能钥匙。可以打开任意一扇上锁的门。', stack: 1, unique: 5, equip: 'pocket', anomalous: true, rarity: 'rare', glyph: 'skeleton' },
   silverware: { type: 'silverware', name: '银餐具', desc: '擦得发亮的银质餐具。侍者也许会感兴趣。', stack: 3, unique: 5, rarity: 'uncommon', glyph: 'silver' },
   sedative: { type: 'sedative', name: '镇定剂', desc: '一针强效镇定剂。', stack: 2, unique: 5, use: 'bigsanity', value: 60, rarity: 'uncommon', glyph: 'syringe' },
+  // Nguithr'xurh（Entity 16）击杀掉落：维基——其分泌物即使大剂量也相对无害，M.E.G. 正以此研制止痛药与抗抑郁药
+  sedgland: { type: 'sedgland', name: '镇静腺', desc: '从 Nguithr\'xurh 腹下割下的半透明腺体，鼓着淡黄色的分泌物，摸上去微微发凉。M.E.G. 正用它研制止痛药——即使大剂量也相对无害。吞服：止痛（生命 +15）、理智 +10，并解除迟缓与缠丝麻痹。', stack: 3, use: 'heal', value: 15, anomalous: true, rarity: 'uncommon', glyph: 'gland' },
 
   // ================= v23：Level 6–11 与 Level 601 专属物品（设定依据 Backrooms Wikidot）=================
   // Level 6「Lights Out」——本层没有任何补给记载，只有前人留下的东西
@@ -118,6 +121,7 @@ export const ITEMS: Record<string, ItemDef> = {
   rope: { type: 'rope', name: '尼龙绳', desc: '一卷结实的尼龙绳。Wikidot 明确建议进入 Level 7 前携带绳索或梯子——否则掉进水里就再也爬不回入口房间。', stack: 1, unique: 7, equip: 'pocket', passive: '可攀回高处', rarity: 'uncommon', glyph: 'rope' },
   divemask: { type: 'divemask', name: '潜水面罩', desc: '海面上方的空气有种未知性质，能让人屏息约三十分钟。有了它，还能更久一点。', stack: 1, unique: 7, equip: 'head', passive: '延长屏息', rarity: 'uncommon', glyph: 'mask' },
   thingmeat: { type: 'thingmeat', name: '巨兽之肉', desc: '油腻、富脂、黏滑，强烈的硫磺味。档案强调：必须生食——加热会唤醒里面休眠的寄生虫。', stack: 2, unique: 7, use: 'eat', value: 55, anomalous: true, rarity: 'rare', glyph: 'meat' },
+  ashpile: { type: 'ashpile', name: '一捧细灰', desc: 'Level 9 街面上的一小堆灰色粉尘，细得能从指缝里漏下去。观察者的光束照中过什么东西之后，就会留下这样一堆。灰里有时还埋着那人身上的东西。', stack: 5, unique: 0, rarity: 'common', glyph: 'scrap' },
   ratmeat: { type: 'ratmeat', name: '尸鼠肉', desc: '从尸鼠身上割下的一条瘦肉，带着一股霉味和飞蛾翅粉的苦味。档案说它「在某种程度上」能当食物——生吃能顶饿，但有可能让你病一场。', stack: 3, use: 'eat', value: 18, anomalous: true, rarity: 'common', glyph: 'meat' },
   oddbook: { type: 'oddbook', name: '来源不明的书', desc: '入口房间书柜上的一本旧书。没有作者，没有出版信息。翻开，是一个在 Level 7 待过的人留下的记录。', stack: 1, unique: 7, use: 'doc', anomalous: true, rarity: 'rare', glyph: 'book' },
 
@@ -135,7 +139,7 @@ export const ITEMS: Record<string, ItemDef> = {
   // Level 10「Bumper Crop」
   wheatgrain: { type: 'wheatgrain', name: '割下的小麦', desc: '可安全食用，磨成面粉还能当增稠剂，但营养价值很低，不能作为可靠主食。M.E.G. 已停止在此收割。', stack: 4, unique: 10, use: 'eat', value: 6, rarity: 'common', glyph: 'wheat' },
   nails: { type: 'nails', name: '一把钉子', desc: '谷仓里到处都是。配上木材，能把一扇门钉死一会儿。', stack: 4, unique: 10, use: 'none', rarity: 'common', glyph: 'nails' },
-  timber: { type: 'timber', name: '木板', desc: '从棚屋上拆下来的木板。挥起来沉得很，也能拿来封门。', stack: 2, unique: 10, weapon: 22, attackInterval: 0.94, attackStamina: 11, rarity: 'common', glyph: 'timber' },
+  timber: { type: 'timber', name: '木板', desc: '从棚屋上拆下来的木板。挥起来沉得很，也能拿来封门。', stack: 1, unique: 10, weapon: 22, attackInterval: 0.94, attackStamina: 11, rarity: 'common', glyph: 'timber' },
 
   // Level 11「The City That Never Sleeps」
   presses: { type: 'presses', name: 'B.N.T.G.压印币', desc: 'B.N.T.G. 在新时代广场与商人之家通用的压印币。「繁荣缔造和平」——一瓶杏仁水可兑两枚。', stack: 60, unique: 11, anomalous: true, rarity: 'rare', glyph: 'coin' },

@@ -1,0 +1,33 @@
+{
+  "passed": [
+    {
+      "check": "check:jerry",
+      "status": 0,
+      "ms": 14068
+    },
+    {
+      "check": "check:partygoers",
+      "status": 0,
+      "ms": 1849
+    },
+    {
+      "check": "check:shrimp",
+      "status": 0,
+      "ms": 2210
+    }
+  ],
+  "holster": {
+    "ok": true,
+    "checks": 73,
+    "errors": 0,
+    "cleanup": {
+      "browser": "SIGTERM",
+      "server": "SIGTERM",
+      "profileRemoved": true
+    }
+  },
+  "commandCorrection": {
+    "attempted": "check:holster",
+    "reason": "No such npm script; the existing verify-holster.mjs was executed successfully instead."
+  }
+}

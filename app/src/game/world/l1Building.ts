@@ -11,7 +11,7 @@ const BASE:Record<L1StyleName,L1Module>={
  parking:{height:3.25,spacingX:7,spacingZ:7,phaseX:6.5,phaseZ:6.5,columnWidth:.92,columnDepth:1.08,round:false,beamDepth:.27,beamWidth:.42,lampSpacing:7,wallTubes:true,power:1.25,finish:'raw'},
  storage:{height:6.2,spacingX:10,spacingZ:9,phaseX:6.5,phaseZ:6.5,columnWidth:.62,columnDepth:.62,round:false,beamDepth:1.1,beamWidth:.30,lampSpacing:7,wallTubes:false,power:2,finish:'raw'},
  gothic:{height:3.65,spacingX:6,spacingZ:6,phaseX:4.5,phaseZ:4.5,columnWidth:1.08,columnDepth:1.08,round:true,beamDepth:0,beamWidth:0,lampSpacing:6,wallTubes:false,power:1.05,finish:'raw'},
- ouroboros:{height:4.25,spacingX:7,spacingZ:7,phaseX:6.5,phaseZ:6.5,columnWidth:.78,columnDepth:.78,round:false,beamDepth:.55,beamWidth:.55,lampSpacing:7,wallTubes:false,power:1.55,finish:'peeling'},
+ ouroboros:{height:4.25,spacingX:7,spacingZ:7,phaseX:6.5,phaseZ:6.5,columnWidth:.78,columnDepth:.78,round:false,beamDepth:.55,beamWidth:.55,lampSpacing:7,wallTubes:false,power:1.1,finish:'peeling'},
  garden:{height:7.8,spacingX:7.2,spacingZ:7.2,phaseX:6.5,phaseZ:6.5,columnWidth:1.65,columnDepth:1.65,round:false,beamDepth:.4,beamWidth:.65,lampSpacing:7.2,wallTubes:false,power:4.6,finish:'raw'},
  fabled:{height:3.3,spacingX:6,spacingZ:6,phaseX:4.5,phaseZ:4.5,columnWidth:.34,columnDepth:.34,round:false,beamDepth:.32,beamWidth:.28,lampSpacing:6,wallTubes:false,power:3.4,finish:'paint'},
  maintenance:{height:2.65,spacingX:8,spacingZ:8,phaseX:6.5,phaseZ:6.5,columnWidth:.6,columnDepth:.6,round:false,beamDepth:.14,beamWidth:.18,lampSpacing:5,wallTubes:false,power:.9,finish:'paint'},
@@ -92,7 +92,7 @@ export function buildL1Data(seed:number,cx:number,cy:number,force?:L1StyleName):
  const addBox=(id:string,min:V3,max:V3,style:L1StyleName,surface:L1Box['surface'],solid=false,detail=false,shape?:'round',axis?:0|1|2)=>boxes.push({id,min,max,style,surface,solid,detail,occlude:!detail,shape,axis})
  const lamp=(id:string,p:V3,n:V3,t:V3,w:number,h:number,style:L1StyleName,kind:L1Emitter['kind'],power:number,range?:number)=>{
   const color:V3=style==='gothic'?[1,.9,.75]:style==='garden'?[1,.94,.75]:style==='storage'?[1,.97,.87]:[.93,.97,1]
-  emitters.push({id,position:p,normal:n,tangent:t,width:w,height:h,style,kind,power,range:range??(kind==='sky'?20:kind==='emergency'?2.2:16),color:kind==='emergency'?[.27,.64,.4]:color,backEmission:kind==='panel'?.12:0})
+  emitters.push({id,position:p,normal:n,tangent:t,width:w,height:h,style,kind,power,range:range??(kind==='sky'?20:kind==='emergency'?2.2:16),color:kind==='emergency'?[.27,.64,.4]:color,backEmission:kind==='panel'&&style!=='ouroboros'?.12:0})
  }
  for(let z=0;z<32;z++)for(let x=0;x<32;x++){const style=styleAt(x0+x+.5,z0+z+.5);styles[z*32+x]=L1_STYLE_NAMES.indexOf(style);floor[z*32+x]=+l1BuildingFloorAt(seed,x0+x,z0+z,force)}
  // Coalesce actual wall volumes; their exact faces are also the lighting occluders.
@@ -175,9 +175,25 @@ export function buildL1Data(seed:number,cx:number,cy:number,force?:L1StyleName):
      // Painted steel sections, with a recessed web and two actual flanges.
      addBox(id+':web',[x-.045,0,z-p.columnDepth/2],[x+.045,top,z+p.columnDepth/2],style,'paint',true)
      for(const side of [-1,1])addBox(id+':flange'+side,[x-p.columnWidth/2,0,z+side*(p.columnDepth/2-.03)-.03],[x+p.columnWidth/2,top,z+side*(p.columnDepth/2-.03)+.03],style,'paint',true)
+    }else if(style==='ouroboros'){
+     // v3.2 衔尾段 (ref 衔尾段.png): three column finishes — fully spray-fireproofed with a lagged
+     // drop cap, soot-black top over beige spotted paint (two-tone shader on 'peeling'), or raw concrete.
+     const k=l1Noise(gx,gz,seed^0x0c01)
+     const surf=k<.3?'whitePipe':k<.78?'peeling':'column'
+     addBox(id,[x-p.columnWidth/2,0,z-p.columnDepth/2],[x+p.columnWidth/2,top,z+p.columnDepth/2],style,surf,true)
+     if(surf==='whitePipe'){
+      const cap=.95+l1Noise(gx,gz,seed^0x0c03)*.2,y1=p.height-p.beamDepth+.02,y0=y1-.34
+      addBox(id+':cap',[x-cap,y0,z-cap],[x+cap,y1,z+cap],style,'whitePipe',false,true)
+      addBox(id+':cap2',[x-cap*.62,y0-.14,z-cap*.62],[x+cap*.62,y0,z+cap*.62],style,'whitePipe',false,true)
+      for(let n=0;n<4;n++){const q=l1Noise(gx*5+n,gz,seed^0x0c25),a=n*Math.PI/2+q,ox=Math.cos(a)*cap*.55,oz=Math.sin(a)*cap*.55,r=.22+q*.25
+       addBox(id+':lump'+n,[x+ox-r,y0-.06-q*.08,z+oz-r],[x+ox+r,y0+.02,z+oz+r],style,'whitePipe',false,true)}
+      for(let n=0;n<2;n++){const q=l1Noise(gx+n*3,gz*5,seed^0x0c27),y=.6+q*2.4,e=.025+q*.03
+       addBox(id+':clump'+n,[x-p.columnWidth/2-e,y,z-p.columnDepth/2-e],[x+p.columnWidth/2+e,y+.25+q*.4,z+p.columnDepth/2+e],style,'whitePipe',false,true)}
+     }
+     if(l1Noise(gx,gz,seed^0x0c05)<.35)addBox(id+':tag',[x-.09,.42,z-p.columnDepth/2-.006],[x+.03,.52,z-p.columnDepth/2],style,'red',false,true)
     }else addBox(id,[x-p.columnWidth/2,0,z-p.columnDepth/2],[x+p.columnWidth/2,top,z+p.columnDepth/2],style,p.finish==='peeling'?'peeling':p.finish==='paint'?'paint':'column',true,false,round?'round':undefined)
     const dress=Math.floor(l1Noise(gx,gz,seed^517)*5)
-    if(style==='ouroboros'||style==='parking'&&dress===3){const h=style==='ouroboros'?1.7+(.3*dress):1.15;addBox(id+':repair',[x-p.columnWidth/2-.008,.22,z-p.columnDepth/2-.008],[x+p.columnWidth/2+.008,h,round?z+p.columnDepth/2+.008:z-p.columnDepth/2+.008],style,style==='ouroboros'?'peeling':'paint',false,true,round?'round':undefined)}
+    if(style==='parking'&&dress===3){const h=1.15;addBox(id+':repair',[x-p.columnWidth/2-.008,.22,z-p.columnDepth/2-.008],[x+p.columnWidth/2+.008,h,round?z+p.columnDepth/2+.008:z-p.columnDepth/2+.008],style,'paint',false,true,round?'round':undefined)}
     if(style==='parking'&&dress===1&&!round)for(const side of [-1,1])addBox(id+':guard'+side,[x+side*(p.columnWidth/2-.03)-.025,.06,z-p.columnDepth/2-.025],[x+side*(p.columnWidth/2-.03)+.025,.85,z-p.columnDepth/2+.07],style,'metal',false,true)
     if(p.wallTubes&&!p.lighting){
      const brightness=l1ParkingAt(seed,x,z).brightness,on=l1Noise(gx,gz,seed^771)<Math.min(1,brightness),side=p.tubeSide??1
@@ -200,7 +216,7 @@ export function buildL1Data(seed:number,cx:number,cy:number,force?:L1StyleName):
   if(style!=='gothic'&&style!=='maintenance')for(let k=Math.ceil((z0-p.phaseZ)/p.spacingZ);;k++){
    const z=p.phaseZ+k*p.spacingZ;if(z>=z0+32)break
    for(let x=x0;x<x0+32;x+=2)if(styleAt(x+1,z)===style&&clear(x+1,z,.05)){
-    addBox(`beam:${x},${z}`,[x,p.height-(style==='storage'?.32:p.beamDepth),z-p.beamWidth/2],[x+2,p.height+.1,z+p.beamWidth/2],style,style==='storage'?'metal':'ceiling')
+    addBox(`beam:${x},${z}`,[x,p.height-(style==='storage'?.32:p.beamDepth),z-p.beamWidth/2],[x+2,p.height+.1,z+p.beamWidth/2],style,style==='storage'?'metal':style==='ouroboros'?'whitePipe':'ceiling')
    }
   }
   if(style==='storage'){
@@ -221,46 +237,53 @@ export function buildL1Data(seed:number,cx:number,cy:number,force?:L1StyleName):
    }
   }
   if(style==='ouroboros'){
-   // 衔尾段 ref: big lagged (insulated) ducts on hangers and red sprinkler mains under a dark slab.
+   // v3.2 衔尾段 ref: spray-fireproofed cross beams + rectangular lagged ducts on hangers, dense red
+   // sprinkler mains with drops and elbows, all under a black bare slab.
+   for(let k=Math.ceil((x0-p.phaseX)/p.spacingX);;k++){
+    const x=p.phaseX+k*p.spacingX;if(x>=x0+32)break
+    for(let z=z0;z<z0+32;z+=2)if(styleAt(x,z+1)===style&&clear(x,z+1,.05))addBox(`our-xbeam:${x},${z}`,[x-p.beamWidth/2,p.height-p.beamDepth,z],[x+p.beamWidth/2,p.height+.1,z+2],style,'whitePipe')
+   }
    for(let k=Math.ceil((x0-p.phaseX-3.4)/(p.spacingX*2));;k++){
     const x=p.phaseX+3.4+k*p.spacingX*2;if(x>=x0+32)break
-    const r=.42,y=p.height-.95
+    const w=.62,t=.34,y=p.height-p.beamDepth-.12-t/2
     for(let z=z0;z<z0+32;z+=4)if(styleAt(x,z+2)===style){
-     addBox(`our-duct:${x},${z}`,[x-r,y-r,z],[x+r,y+r,z+4],style,'whitePipe',false,false,'round',2)
-     addBox(`our-hanger:${x},${z}`,[x-.02,y+r,z+1.98],[x+.02,p.height,z+2.02],style,'metal')
+     addBox(`our-duct:${x},${z}`,[x-w,y-t,z],[x+w,y+t,z+4],style,'whitePipe',false,true)
+     // sprayed-on lumps: the coating bulges unevenly along the run
+     for(let n=0;n<3;n++){const q=l1Noise(x*7+n,z,seed^0x0c21),zz=z+.3+n*1.25+q*.5,len=.35+q*.55,bw=.03+.05*l1Noise(n,x+z,seed^0x0c23)
+      addBox(`our-lump:${x},${z}:${n}`,[x-w-bw,y-t-bw*.8,zz],[x+w+bw*.6,y+t+.005,zz+len],style,'whitePipe',false,true)}
+     for(const o of [-w*.7,w*.7])addBox(`our-hanger:${x+o},${z}`,[x+o-.02,y+t,z+1.98],[x+o+.02,p.height,z+2.02],style,'whitePipe',false,true)
     }
    }
    for(let k=Math.ceil((x0-p.phaseX-1.2)/p.spacingX);;k++){
     const x=p.phaseX+1.2+k*p.spacingX;if(x>=x0+32)break
-    for(let z=z0;z<z0+32;z+=4)if(styleAt(x,z+2)===style)for(const o of [0,.22])addBox(`our-red:${x+o},${z}`,[x+o-.045,p.height-.42,z],[x+o+.045,p.height-.33,z+4],style,'red',false,true,'round',2)
+    for(let z=z0;z<z0+32;z+=4)if(styleAt(x,z+2)===style){
+     for(const o of [0,.24])addBox(`our-red:${x+o},${z}`,[x+o-.05,p.height-.44,z],[x+o+.05,p.height-.34,z+4],style,'red',false,true,'round',2)
+     // sprinkler drops: vertical riser, elbow and short branch at the lower level
+     if(l1Mod(Math.floor(z/4),2)===0){
+      const dz=z+1.3+l1Noise(x,z,seed^0x0c11)*1.4
+      addBox(`our-drop:${x},${z}`,[x-.035,p.height-1.05,dz-.035],[x+.035,p.height-.4,dz+.035],style,'red',false,true,'round',1)
+      addBox(`our-elbow:${x},${z}`,[x-.035,p.height-1.1,dz-.035],[x+.9,p.height-1.03,dz+.035],style,'red',false,true,'round',0)
+     }
+    }
    }
-   // v2 C: ref 衔尾段 is an abandoned, littered floor — paper/rubble scraps and dark boards stood against columns.
-   for(let n=0;n<46;n++){
+   // cross mains along x (a second red layer, as in the ref's left half)
+   for(let j=Math.ceil((z0-p.phaseZ-2.3)/p.spacingZ);;j++){
+    const z=p.phaseZ+2.3+j*p.spacingZ;if(z>=z0+32)break
+    if(l1Mod(j,2))continue
+    for(let x=x0;x<x0+32;x+=4)if(styleAt(x+2,z)===style)addBox(`our-redx:${x},${z}`,[x,p.height-.62,z-.06],[x+4,p.height-.5,z+.06],style,'red',false,true,'round',0)
+   }
+   // abandoned floor: paper scraps, rubble chips, dark bits, a few red/blue wrappers
+   for(let n=0;n<40;n++){
     const x=x0+l1Noise(n,x0*3+z0,seed^0x7a1)*32,z=z0+l1Noise(n,z0*5+x0,seed^0x7a3)*32
     if(styleAt(x,z)!==style||!clear(x,z,.35))continue
-    const q=l1Noise(n,x0+z0,seed^0x7a5),w=.08+q*.42,d=.06+l1Noise(n,7,seed^0x7a7)*.34,h=.004+q*q*.05
-    addBox(`our-litter:${x.toFixed(2)},${z.toFixed(2)}`,[x,0,z],[x+w,h,z+d],style,q<.55?'paint':q<.8?'cable':'peeling',false,true)
-   }
-   for(let k=Math.ceil((x0-p.phaseX)/p.spacingX);;k++){const cxk=p.phaseX+k*p.spacingX;if(cxk>=x0+32)break
-    for(let j=Math.ceil((z0-p.phaseZ)/p.spacingZ);;j++){const czk=p.phaseZ+j*p.spacingZ;if(czk>=z0+32)break
-     if(cxk<x0||czk<z0||styleAt(cxk,czk)!==style||l1Noise(k,j,seed^0x7b1)>.16)continue
-     const fx=cxk+p.columnWidth/2+.02
-     addBox(`our-board:${cxk},${czk}`,[fx,0,czk-.55],[fx+.035,1.25+l1Noise(k,j,seed^0x7b3)*.6,czk+.55],style,'cable',false,true)
-    }
+    const q=l1Noise(n,x0+z0,seed^0x7a5),w=.05+q*.22,d=.04+l1Noise(n,7,seed^0x7a7)*.18,h=.006+q*q*.04
+    addBox(`our-litter:${x.toFixed(2)},${z.toFixed(2)}`,[x,0,z],[x+w,h,z+d],style,q<.5?'line':q<.78?'column':q<.92?'cable':'red',false,true)
    }
   }
   if(style==='parking')boxes.push(...l1ParkingServices(p,x0,z0,(x,z)=>styleAt(x,z)==='parking'&&clear(x,z,.05)))
   for(let z=z0;z<z0+32;z+=4)for(let x=x0;x<x0+32;x+=4){
    if(styleAt(x+2,z+2)!==style||!clear(x+2,z+2,.2))continue
-   if(style==='ouroboros'){
-    const count=6
-    if(l1Mod(Math.floor((x+2-p.phaseX)/4),2)===0)for(let n=0;n<count;n++)addBox(`red:${x},${z}:${n}`,[x+.7+n*.13,p.height-.36,z],[x+.735+n*.13,p.height-.325,z+4],style,'red',false,true,'round',2)
-    if(l1Mod(Math.floor((z+2-p.phaseZ)/4),3)===0)addBox(`pipe:${x},${z}`,[x,p.height-.52,z+1.85],[x+4,p.height-.32,z+2.05],style,'whitePipe',false,false,'round',0)
-    if(l1Mod(Math.floor((x+2-p.phaseX)/4),3)===0){
-     for(const side of [-1,1])addBox(`tray:${x},${z}:${side}`,[x+2+side*.25-.022,p.height-.62,z],[x+2+side*.25+.022,p.height-.53,z+4],style,'metal',false,true)
-     for(let k=0;k<4;k++)addBox(`rung:${x},${z}:${k}`,[x+1.75,p.height-.62,z+k+.18],[x+2.25,p.height-.595,z+k+.22],style,'metal',false,true)
-    }
-   }
+   if(style==='ouroboros'&&l1Mod(Math.floor((x+2-p.phaseX)/4),3)===0)addBox(`conduit:${x},${z}`,[x+1.97,p.height-.3,z],[x+2.03,p.height-.24,z+4],style,'cable',false,true,'round',2)
    if(style==='storage'){
     addBox(`purlin:${x},${z}`,[x+1.91,p.height-.24,z],[x+2.09,p.height-.195,z+4],style,'metal',false,true)
     addBox(`web:${x},${z}`,[x+1.975,p.height-.195,z],[x+2.025,p.height,z+4],style,'metal',false,true)
@@ -292,7 +315,7 @@ export function buildL1Data(seed:number,cx:number,cy:number,force?:L1StyleName):
     if(p.lighting==='wall-bay'||p.lighting==='wall-tubes'&&l1Noise(gx,gz,seed^123)>.2)continue
     const on=p.lighting!=='service-bay'&&(style!=='parking'||!p.wallTubes||l1Noise(gx,gz,seed^123)<.25)
     if(style==='garden'&&l1Mod(gx+gz,2))continue // v2: skylights plus a sparse grey fill grid (ref is evenly bright moss)
-    lamp(`lamp:${x.toFixed(3)},${z.toFixed(3)}`,[x,(style==='gothic'?l1BuildingRoof(seed,x,z,true):p.height)-(style==='storage'?p.beamDepth+.25:.15),z],[0,-1,0],p.lampAlongZ?[0,0,1]:[1,0,0],style==='storage'?1.4:1.2,style==='storage'?.48:.045,style,style==='storage'?'panel':'tube',on?(style==='garden'?p.power*.45:p.power):0)
+    lamp(`lamp:${x.toFixed(3)},${z.toFixed(3)}`,[x,(style==='gothic'?l1BuildingRoof(seed,x,z,true):p.height)-(style==='storage'?p.beamDepth+.25:.15),z],[0,-1,0],p.lampAlongZ||style==='ouroboros'&&l1Mod(gx+gz,2)?[0,0,1]:[1,0,0],style==='storage'?1.4:style==='ouroboros'?2.6:1.2,style==='storage'?.48:.045,style,style==='storage'||style==='ouroboros'?'panel':'tube',on?(style==='garden'?p.power*.45:p.power):0)
    }
   }
  }

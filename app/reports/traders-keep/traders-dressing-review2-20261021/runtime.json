@@ -1,0 +1,478 @@
+{
+  "run": "qa-1792579893528-51984",
+  "label": "traders-dressing-review2-20261021",
+  "mode": "realistic",
+  "port": 10948,
+  "cdp": 10949,
+  "profile": "E:\\ZAN\\backroom\\app\\reports\\traders-keep\\traders-dressing-review2-20261021\\qa-1792579893528-51984",
+  "levels": [
+    102
+  ],
+  "cases": [
+    {
+      "id": 102,
+      "cold": {
+        "id": 102,
+        "transition": false,
+        "loadMs": 8236.20000000298,
+        "sceneMs": 8086.4000000059605,
+        "generationMs": 149.79999999701977,
+        "frames": 1151,
+        "cpuTotalMs": 6054.199999943376,
+        "cpuMaxMs": 820.7999999970198,
+        "frameP95Ms": 9.099999994039536,
+        "firstRevealMs": [
+          9.5,
+          9.099999994039536
+        ],
+        "metrics": {
+          "warmSceneTextures": {
+            "cpuMs": 93.0000000745058,
+            "calls": 583,
+            "maxMs": 16.200000002980232
+          }
+        },
+        "compile": {
+          "calls": 90,
+          "submitMs": 88.39999997615814,
+          "maxSubmitMs": 9.799999997019768,
+          "targets": 90
+        },
+        "firstReady": {
+          "structures": 1452,
+          "lights": 352,
+          "npcs": 13,
+          "nearNpcs": 5,
+          "npcMeshes": 5,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 589,
+            "textures": 76
+          },
+          "programs": 92,
+          "drawCalls": 804,
+          "triangles": 425201,
+          "spawn": {
+            "x": 9,
+            "y": 109,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      },
+      "survey": {
+        "frameP95Ms": 9.100000008940697,
+        "cpuP95Ms": 8.800000011920929,
+        "snapshot": {
+          "structures": 1452,
+          "lights": 352,
+          "npcs": 13,
+          "nearNpcs": 5,
+          "npcMeshes": 5,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 643,
+            "textures": 78
+          },
+          "programs": 92,
+          "drawCalls": 223,
+          "triangles": 117315,
+          "spawn": {
+            "x": 9,
+            "y": 109,
+            "z": 0
+          },
+          "mapSeed": 424242,
+          "ready": true
+        }
+      }
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\traders-keep\\traders-dressing-review2-20261021\\qa-1792579893528-51984",
+    "--remote-debugging-port=10949",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.85",
+    "revision": "@0e66b94549a8bd85f03fbdf189b752d6e7b63c32",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.25"
+  },
+  "pids": {
+    "server": 46892,
+    "browser": 58072
+  },
+  "setup": {
+    "mode": "realistic",
+    "viewport": [
+      1920,
+      1080
+    ],
+    "dpr": 1,
+    "seed": 424242,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "settings": {
+      "texture": 1,
+      "lights": 16,
+      "shadows": true,
+      "lightShadows": 1,
+      "loadingBudget": 6,
+      "chunkBudget": 3,
+      "detail": 1,
+      "bloom": true,
+      "ao": 1
+    }
+  },
+  "dressing": {
+    "ok": true,
+    "rows": [
+      {
+        "label": "west-waiting",
+        "x": 21,
+        "y": 101,
+        "yaw": 0,
+        "pitch": -0.1,
+        "readyMs": 715.6000000089407,
+        "npcs": 16,
+        "drift": 0,
+        "memory": {
+          "geometries": 712,
+          "textures": 85
+        }
+      },
+      {
+        "label": "arrival-guide",
+        "x": 18,
+        "y": 99.3,
+        "yaw": 0,
+        "pitch": 0.03,
+        "readyMs": 273.40000000596046,
+        "npcs": 14,
+        "drift": 0,
+        "memory": {
+          "geometries": 712,
+          "textures": 85
+        }
+      },
+      {
+        "label": "bank-layout",
+        "x": 108,
+        "y": 94,
+        "yaw": 0,
+        "pitch": -0.04,
+        "readyMs": 8732.90000000596,
+        "npcs": 27,
+        "drift": 0,
+        "memory": {
+          "geometries": 1611,
+          "textures": 115
+        }
+      },
+      {
+        "label": "archive-detail",
+        "x": 81,
+        "y": 51.8,
+        "yaw": 0,
+        "pitch": -0.08,
+        "readyMs": 563.8999999910593,
+        "npcs": 23,
+        "drift": 0,
+        "memory": {
+          "geometries": 1506,
+          "textures": 122
+        }
+      },
+      {
+        "label": "copy-detail",
+        "x": 89,
+        "y": 51.3,
+        "yaw": 0,
+        "pitch": -0.12,
+        "readyMs": 540.8999999910593,
+        "npcs": 23,
+        "drift": 0,
+        "memory": {
+          "geometries": 1717,
+          "textures": 138
+        }
+      },
+      {
+        "label": "tea-detail",
+        "x": 83,
+        "y": 103.8,
+        "yaw": 3.141592653589793,
+        "pitch": -0.23,
+        "readyMs": 813.2000000029802,
+        "npcs": 31,
+        "drift": 0,
+        "memory": {
+          "geometries": 1775,
+          "textures": 148
+        }
+      },
+      {
+        "label": "food-court",
+        "x": 325,
+        "y": 100,
+        "yaw": 0,
+        "pitch": -0.04,
+        "readyMs": 8890.699999988079,
+        "npcs": 11,
+        "drift": 0,
+        "memory": {
+          "geometries": 1384,
+          "textures": 135
+        }
+      },
+      {
+        "label": "tray-return",
+        "x": 311,
+        "y": 122.6,
+        "yaw": 3.141592653589793,
+        "pitch": -0.1,
+        "readyMs": 3076.5,
+        "npcs": 9,
+        "drift": 0,
+        "memory": {
+          "geometries": 2062,
+          "textures": 137
+        }
+      },
+      {
+        "label": "wash-basins",
+        "x": 82,
+        "y": 111.7,
+        "yaw": 3.141592653589793,
+        "pitch": -0.07,
+        "readyMs": 8045.0999999940395,
+        "npcs": 27,
+        "drift": 0,
+        "memory": {
+          "geometries": 1725,
+          "textures": 133
+        }
+      },
+      {
+        "label": "wash-cubicles",
+        "x": 86.2,
+        "y": 112.4,
+        "yaw": 0,
+        "pitch": -0.1,
+        "readyMs": 384.8999999910593,
+        "npcs": 27,
+        "drift": 0,
+        "memory": {
+          "geometries": 2113,
+          "textures": 134
+        }
+      },
+      {
+        "label": "office-detail",
+        "x": 353.5,
+        "y": 219,
+        "yaw": 0.55,
+        "pitch": -0.05,
+        "readyMs": 4323.79999999702,
+        "npcs": 13,
+        "drift": 0,
+        "memory": {
+          "geometries": 1064,
+          "textures": 142
+        }
+      },
+      {
+        "label": "office-layout",
+        "x": 370,
+        "y": 232,
+        "yaw": 0.6,
+        "pitch": -0.04,
+        "readyMs": 295.5,
+        "npcs": 15,
+        "drift": 0,
+        "memory": {
+          "geometries": 1066,
+          "textures": 145
+        }
+      },
+      {
+        "label": "monitor-room",
+        "x": 338,
+        "y": 246.4,
+        "yaw": 0,
+        "pitch": 0.03,
+        "readyMs": 577.2999999970198,
+        "npcs": 13,
+        "drift": 0,
+        "memory": {
+          "geometries": 1061,
+          "textures": 148
+        }
+      },
+      {
+        "label": "security-desk",
+        "x": 307.7,
+        "y": 216.4,
+        "yaw": 0,
+        "pitch": -0.06,
+        "readyMs": 1832.7999999970198,
+        "npcs": 12,
+        "drift": 0,
+        "memory": {
+          "geometries": 1313,
+          "textures": 145
+        }
+      },
+      {
+        "label": "meeting-room",
+        "x": 364.6,
+        "y": 266,
+        "yaw": 0,
+        "pitch": -0.08,
+        "readyMs": 284.29999999701977,
+        "npcs": 14,
+        "drift": 0,
+        "memory": {
+          "geometries": 1013,
+          "textures": 141
+        }
+      },
+      {
+        "label": "dorm-bed",
+        "x": 394.8,
+        "y": 220.1,
+        "yaw": 0.75,
+        "pitch": -0.14,
+        "readyMs": 757.1999999880791,
+        "npcs": 21,
+        "drift": 0,
+        "memory": {
+          "geometries": 1060,
+          "textures": 155
+        }
+      },
+      {
+        "label": "packing-bench",
+        "x": 239,
+        "y": 148,
+        "yaw": -0.896,
+        "pitch": -0.1,
+        "readyMs": 13319.79999999702,
+        "npcs": 21,
+        "drift": 0,
+        "memory": {
+          "geometries": 1938,
+          "textures": 144
+        }
+      },
+      {
+        "label": "vault-storage",
+        "x": 184.29999999999998,
+        "y": 85.6,
+        "yaw": 3.141592653589793,
+        "pitch": -0.1,
+        "readyMs": 4228.4000000059605,
+        "npcs": 5,
+        "drift": 0,
+        "memory": {
+          "geometries": 2582,
+          "textures": 142
+        }
+      },
+      {
+        "label": "cold-storage",
+        "x": 173.49999999999997,
+        "y": 85.6,
+        "yaw": 3.141592653589793,
+        "pitch": -0.14,
+        "readyMs": 865.5,
+        "npcs": 5,
+        "drift": 0,
+        "memory": {
+          "geometries": 2830,
+          "textures": 144
+        }
+      }
+    ]
+  },
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [],
+  "networkErrors": [
+    {
+      "requestId": "7612.513",
+      "loaderId": "54843D633CA7EE1F5CE3FC6B678F7049",
+      "timestamp": 111874.94133,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:10948/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Wed, 21 Oct 2026 10:51:46 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 138,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 10948,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 111874.931473,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.847,
+          "sendEnd": 0.886,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 9.211,
+          "receiveHeadersEnd": 9.317
+        },
+        "responseTime": 1792579906378.931,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "01FCDE7687816C73173F0FCCE90C6702"
+    }
+  ]
+}

@@ -361,7 +361,20 @@ def candy_bag(label):
         d.point([(10, 23), (13, 24), (18, 24), (22, 23)], fill='#c9b890')             # 袋底褶皱
     return fn
 
+def draw_sedgland(d):
+    # 镇静腺（Nguithr'xurh 掉落）：半透明淡黄腺体 + 深色内核 + 一截褐色导管 + 高光
+    d.ellipse([7, 10, 25, 26], fill='#d9c46a', outline=INK)      # 腺体外膜
+    d.ellipse([10, 13, 22, 23], fill='#e8d888')                  # 内层分泌物
+    d.ellipse([13, 15, 19, 21], fill='#a8862e')                  # 内核
+    d.rectangle([20, 6, 22, 11], fill='#8a6a4a', outline=INK)    # 导管
+    d.point([(21, 5), (22, 4)], fill='#8a6a4a')
+    d.rectangle([11, 13, 12, 14], fill='#fff6d0')                # 高光
+    d.point([(14, 12), (10, 16)], fill='#fff6d0')
+    for x, y in [(9, 27), (16, 28), (23, 27)]:                   # 渗出的液滴
+        d.point([(x, y)], fill='#d9c46a')
+
 DRAW = {
+    'sedgland': draw_sedgland,
     'disinfectant': draw_disinfectant,
     'luckymilk': draw_luckymilk,  # v54
     'nightvision': draw_nightvision,

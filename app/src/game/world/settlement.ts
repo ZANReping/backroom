@@ -1,3 +1,4 @@
+import {tradersCeilingAt} from '../content/tradersLayout'
 import {ALPHA_LIGHTS, ALPHA_PLACEMENT_CLEARANCES} from '../content/alphaBlueprint'
 import { CAREERS } from '../content/careers'
 import { NPCS, genRandomNpcs } from '../content/npcs'
@@ -9,6 +10,7 @@ import type { LevelDef } from '../core/types'
 import type { RoomSpec, SettlementBlueprint, SurfaceMaterial, Rect } from '../content/settlementTypes'
 export interface Furnishing {x:number;y:number;w:number;d:number;z:number;h:number;color:string;material:SurfaceMaterial;solid?:boolean;seat?:{yaw:number;label:string;count?:number;relaxed?:boolean}}
 export function settlementCeiling(m:GameMap,x:number,y:number){
+ if(m.traders)return tradersCeilingAt(x,y)
  const s=m.settlement!,i=Math.floor(y)*m.w+Math.floor(x),roof=s.blueprint.shells[s.roofIndex[i]]
  if(roof?.roof==='vault')return roof.height-.75+.75*Math.sqrt(Math.max(0,1-((x%5-2.5)/2.5)**2))
  return s.heights[i]
@@ -85,6 +87,7 @@ export function genSettlement(m:GameMap,def:LevelDef,b:SettlementBlueprint){
  b.rooms.forEach((r,ri)=>{
   paint(r,i=>roomIndex[i]=ri)
   m.zones!.push({name:r.name,x:r.x+r.w/2,y:r.y+r.h/2,x0:r.x,y0:r.y,x1:r.x+r.w,y1:r.y+r.h})
+  for(const p of r.furniture??[])if(p.kind==='board')m.structures.push({kind:'settlementprop',x:r.x+p.x,y:r.y+p.y,w:p.w??2,h:.08,solid:false,data:{board:1,title:r.name,faction:b.faction,blueprint:b.id,bottom:1.15,height:2.4,partition:1}})
   for(const p of furnishings(r))if(p.solid)m.structures.push({kind:'settlementprop',x:p.x,y:p.y,w:p.w,h:p.d,solid:true,data:{height:p.z+p.h,...(p.seat?{seatHeight:p.z+p.h,seatYaw:p.seat.yaw,seatLabel:p.seat.label,seatCount:p.seat.count??1,seatRelaxed:!!p.seat.relaxed}:{})}})
  })
  m.settlement={blueprint:b,heights,roomIndex,roofIndex}

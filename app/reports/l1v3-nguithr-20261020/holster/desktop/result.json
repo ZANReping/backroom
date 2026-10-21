@@ -1,0 +1,491 @@
+{
+  "label": "desktop",
+  "port": 17922,
+  "cdp": 21253,
+  "views": [],
+  "checks": [
+    {
+      "checks": [
+        "Production App is running with its input listeners",
+        "Main hand lowers out of view and stays stowed",
+        "Offhand flashlight remains usable",
+        "Interaction crosshair stays visible",
+        "Desktop hints show draw action instead of blocked attacks",
+        "Guard check begins stowed",
+        "Stowed attack/use/throw/drop blocked: crowbar",
+        "Stowed attack/use/throw/drop blocked: glowstick",
+        "Stowed attack/use/throw/drop blocked: almond",
+        "Stowed attack/use/throw/drop blocked: chalkstub",
+        "Stowed attack/use/throw/drop blocked: squirtgun",
+        "Spray, reload, empty and backpack use cannot bypass holster",
+        "Blocked actions spend no damage, stamina, ammunition or attack effect",
+        "Hotbar switching does not draw the hand",
+        "Actual keyboard attack and quick use remain blocked",
+        "Stowing and drawing cannot reset attack cooldown",
+        "Drawn consumable can begin its real timed action",
+        "Stowing cancels an unfinished use without consuming it",
+        "Interaction check begins stowed",
+        "Actual scan finds a loose item while hands are stowed",
+        "Production E interaction still picks up an item",
+        "Player can still move while stowed",
+        "Immersion mode does not draw the hand",
+        "Leaving immersion keeps gameplay holster active",
+        "Drawing restores the held model",
+        "Actual keyboard attack resumes after drawing",
+        "Actual keyboard quick use begins after drawing",
+        "Timed consumable completes and consumes once after drawing",
+        "Key repeat cannot repeatedly toggle holster",
+        "Right Alt alias does not steal another explicit binding",
+        "Rebinding removes the default Alt action",
+        "Rebound key toggles through production App",
+        "New binding defaults to Alt for existing settings"
+      ],
+      "state": {
+        "stowed": false,
+        "visible": true,
+        "vmHeld": "",
+        "stow": 1.8250591871893617e-26,
+        "cooldown": 0,
+        "using": null,
+        "offhand": true,
+        "light": 29.411352750000308,
+        "position": [
+          42.323333333333395,
+          25.5,
+          0
+        ],
+        "memory": {
+          "geometries": 180,
+          "textures": 101
+        },
+        "crosshair": "block"
+      },
+      "memoryKeys": [
+        "br_settings",
+        "br_save_slot1",
+        "br_codex_seen",
+        "br_keybinds"
+      ]
+    },
+    {
+      "checks": [
+        "Production App is running with its input listeners",
+        "Main hand lowers out of view and stays stowed",
+        "Offhand flashlight remains usable",
+        "Interaction crosshair stays visible",
+        "Desktop hints show draw action instead of blocked attacks",
+        "Guard check begins stowed",
+        "Stowed attack/use/throw/drop blocked: crowbar",
+        "Stowed attack/use/throw/drop blocked: glowstick",
+        "Stowed attack/use/throw/drop blocked: almond",
+        "Stowed attack/use/throw/drop blocked: chalkstub",
+        "Stowed attack/use/throw/drop blocked: squirtgun",
+        "Spray, reload, empty and backpack use cannot bypass holster",
+        "Blocked actions spend no damage, stamina, ammunition or attack effect",
+        "Hotbar switching does not draw the hand",
+        "Actual keyboard attack and quick use remain blocked",
+        "Stowing and drawing cannot reset attack cooldown",
+        "Drawn consumable can begin its real timed action",
+        "Stowing cancels an unfinished use without consuming it",
+        "Interaction check begins stowed",
+        "Actual scan finds a loose item while hands are stowed",
+        "Production E interaction still picks up an item",
+        "Player can still move while stowed",
+        "Immersion mode does not draw the hand",
+        "Leaving immersion keeps gameplay holster active",
+        "Drawing restores the held model",
+        "Actual keyboard attack resumes after drawing",
+        "Actual keyboard quick use begins after drawing",
+        "Timed consumable completes and consumes once after drawing",
+        "Key repeat cannot repeatedly toggle holster",
+        "Right Alt alias does not steal another explicit binding",
+        "Rebinding removes the default Alt action",
+        "Rebound key toggles through production App",
+        "New binding defaults to Alt for existing settings",
+        "Production App is running with its input listeners",
+        "Actual game NPC uses pool face",
+        "Actual game NPC uses the new hair shader",
+        "Actual game NPC uses pool face",
+        "Actual game NPC uses the new hair shader",
+        "Actual game NPC uses pool face",
+        "Actual game NPC uses the new hair shader"
+      ],
+      "state": {
+        "stowed": true,
+        "visible": false,
+        "vmHeld": "crowbar",
+        "stow": 0.9999999999999998,
+        "cooldown": 0,
+        "using": null,
+        "offhand": false,
+        "light": 0,
+        "position": [
+          42.9,
+          27,
+          0
+        ],
+        "memory": {
+          "geometries": 167,
+          "textures": 97
+        },
+        "crosshair": "block"
+      },
+      "memoryKeys": [
+        "br_settings",
+        "br_save_slot1",
+        "br_codex_seen",
+        "br_keybinds"
+      ]
+    }
+  ],
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:17922/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Tue, 20 Oct 2026 10:55:34 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 370,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 17922,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 25693.372575,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.699,
+        "sendEnd": 0.776,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 130.395,
+        "receiveHeadersEnd": 130.646
+      },
+      "responseTime": 1792493734400.977,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\l1v3-nguithr-20261020\\holster\\desktop\\qa-holster-1792493695040-11020",
+    "--remote-debugging-port=21253",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "server": 56388,
+    "browser": 9892
+  },
+  "drawn": {
+    "stowed": false,
+    "visible": true,
+    "vmHeld": "crowbar",
+    "stow": 0,
+    "cooldown": 0,
+    "using": null,
+    "offhand": true,
+    "light": 29.95668525,
+    "position": [
+      41.7,
+      25.5,
+      0
+    ],
+    "memory": {
+      "geometries": 162,
+      "textures": 94
+    },
+    "crosshair": "block"
+  },
+  "stowed": {
+    "stowed": true,
+    "visible": false,
+    "vmHeld": "crowbar",
+    "stow": 0.9996863396984917,
+    "cooldown": 0,
+    "using": null,
+    "offhand": true,
+    "light": 29.830683000000068,
+    "position": [
+      41.7,
+      25.5,
+      0
+    ],
+    "memory": {
+      "geometries": 162,
+      "textures": 99
+    },
+    "crosshair": "block"
+  },
+  "guards": {
+    "checks": [
+      "Production App is running with its input listeners",
+      "Main hand lowers out of view and stays stowed",
+      "Offhand flashlight remains usable",
+      "Interaction crosshair stays visible",
+      "Desktop hints show draw action instead of blocked attacks",
+      "Guard check begins stowed",
+      "Stowed attack/use/throw/drop blocked: crowbar",
+      "Stowed attack/use/throw/drop blocked: glowstick",
+      "Stowed attack/use/throw/drop blocked: almond",
+      "Stowed attack/use/throw/drop blocked: chalkstub",
+      "Stowed attack/use/throw/drop blocked: squirtgun",
+      "Spray, reload, empty and backpack use cannot bypass holster",
+      "Blocked actions spend no damage, stamina, ammunition or attack effect",
+      "Hotbar switching does not draw the hand",
+      "Actual keyboard attack and quick use remain blocked",
+      "Stowing and drawing cannot reset attack cooldown",
+      "Drawn consumable can begin its real timed action",
+      "Stowing cancels an unfinished use without consuming it"
+    ],
+    "state": {
+      "stowed": true,
+      "visible": false,
+      "vmHeld": "crowbar",
+      "stow": 0.9999999999999999,
+      "cooldown": 0,
+      "using": null,
+      "offhand": true,
+      "light": 29.694272250000157,
+      "position": [
+        41.7,
+        25.5,
+        0
+      ],
+      "memory": {
+        "geometries": 162,
+        "textures": 99
+      },
+      "crosshair": "block"
+    }
+  },
+  "interaction": {
+    "checks": [
+      "Production App is running with its input listeners",
+      "Main hand lowers out of view and stays stowed",
+      "Offhand flashlight remains usable",
+      "Interaction crosshair stays visible",
+      "Desktop hints show draw action instead of blocked attacks",
+      "Guard check begins stowed",
+      "Stowed attack/use/throw/drop blocked: crowbar",
+      "Stowed attack/use/throw/drop blocked: glowstick",
+      "Stowed attack/use/throw/drop blocked: almond",
+      "Stowed attack/use/throw/drop blocked: chalkstub",
+      "Stowed attack/use/throw/drop blocked: squirtgun",
+      "Spray, reload, empty and backpack use cannot bypass holster",
+      "Blocked actions spend no damage, stamina, ammunition or attack effect",
+      "Hotbar switching does not draw the hand",
+      "Actual keyboard attack and quick use remain blocked",
+      "Stowing and drawing cannot reset attack cooldown",
+      "Drawn consumable can begin its real timed action",
+      "Stowing cancels an unfinished use without consuming it",
+      "Interaction check begins stowed",
+      "Actual scan finds a loose item while hands are stowed",
+      "Production E interaction still picks up an item",
+      "Player can still move while stowed",
+      "Immersion mode does not draw the hand",
+      "Leaving immersion keeps gameplay holster active"
+    ],
+    "state": {
+      "stowed": true,
+      "visible": false,
+      "vmHeld": "crowbar",
+      "stow": 0.9999999999999999,
+      "cooldown": 0,
+      "using": null,
+      "offhand": true,
+      "light": 29.65180800000017,
+      "position": [
+        42.323333333333395,
+        25.5,
+        0
+      ],
+      "memory": {
+        "geometries": 162,
+        "textures": 99
+      },
+      "crosshair": "block"
+    }
+  },
+  "restored": {
+    "checks": [
+      "Production App is running with its input listeners",
+      "Main hand lowers out of view and stays stowed",
+      "Offhand flashlight remains usable",
+      "Interaction crosshair stays visible",
+      "Desktop hints show draw action instead of blocked attacks",
+      "Guard check begins stowed",
+      "Stowed attack/use/throw/drop blocked: crowbar",
+      "Stowed attack/use/throw/drop blocked: glowstick",
+      "Stowed attack/use/throw/drop blocked: almond",
+      "Stowed attack/use/throw/drop blocked: chalkstub",
+      "Stowed attack/use/throw/drop blocked: squirtgun",
+      "Spray, reload, empty and backpack use cannot bypass holster",
+      "Blocked actions spend no damage, stamina, ammunition or attack effect",
+      "Hotbar switching does not draw the hand",
+      "Actual keyboard attack and quick use remain blocked",
+      "Stowing and drawing cannot reset attack cooldown",
+      "Drawn consumable can begin its real timed action",
+      "Stowing cancels an unfinished use without consuming it",
+      "Interaction check begins stowed",
+      "Actual scan finds a loose item while hands are stowed",
+      "Production E interaction still picks up an item",
+      "Player can still move while stowed",
+      "Immersion mode does not draw the hand",
+      "Leaving immersion keeps gameplay holster active",
+      "Drawing restores the held model",
+      "Actual keyboard attack resumes after drawing",
+      "Actual keyboard quick use begins after drawing",
+      "Timed consumable completes and consumes once after drawing"
+    ],
+    "state": {
+      "stowed": false,
+      "visible": true,
+      "vmHeld": "",
+      "stow": 1.510962070761899e-17,
+      "cooldown": 0,
+      "using": null,
+      "offhand": true,
+      "light": 29.497982250000256,
+      "position": [
+        42.323333333333395,
+        25.5,
+        0
+      ],
+      "memory": {
+        "geometries": 180,
+        "textures": 101
+      },
+      "crosshair": "block"
+    }
+  },
+  "binding": {
+    "checks": [
+      "Production App is running with its input listeners",
+      "Main hand lowers out of view and stays stowed",
+      "Offhand flashlight remains usable",
+      "Interaction crosshair stays visible",
+      "Desktop hints show draw action instead of blocked attacks",
+      "Guard check begins stowed",
+      "Stowed attack/use/throw/drop blocked: crowbar",
+      "Stowed attack/use/throw/drop blocked: glowstick",
+      "Stowed attack/use/throw/drop blocked: almond",
+      "Stowed attack/use/throw/drop blocked: chalkstub",
+      "Stowed attack/use/throw/drop blocked: squirtgun",
+      "Spray, reload, empty and backpack use cannot bypass holster",
+      "Blocked actions spend no damage, stamina, ammunition or attack effect",
+      "Hotbar switching does not draw the hand",
+      "Actual keyboard attack and quick use remain blocked",
+      "Stowing and drawing cannot reset attack cooldown",
+      "Drawn consumable can begin its real timed action",
+      "Stowing cancels an unfinished use without consuming it",
+      "Interaction check begins stowed",
+      "Actual scan finds a loose item while hands are stowed",
+      "Production E interaction still picks up an item",
+      "Player can still move while stowed",
+      "Immersion mode does not draw the hand",
+      "Leaving immersion keeps gameplay holster active",
+      "Drawing restores the held model",
+      "Actual keyboard attack resumes after drawing",
+      "Actual keyboard quick use begins after drawing",
+      "Timed consumable completes and consumes once after drawing",
+      "Key repeat cannot repeatedly toggle holster",
+      "Right Alt alias does not steal another explicit binding",
+      "Rebinding removes the default Alt action",
+      "Rebound key toggles through production App",
+      "New binding defaults to Alt for existing settings"
+    ],
+    "state": {
+      "stowed": false,
+      "visible": true,
+      "vmHeld": "",
+      "stow": 2.0875944408496673e-26,
+      "cooldown": 0,
+      "using": null,
+      "offhand": true,
+      "light": 29.411919750000305,
+      "position": [
+        42.323333333333395,
+        25.5,
+        0
+      ],
+      "memory": {
+        "geometries": 180,
+        "textures": 101
+      },
+      "crosshair": "block"
+    }
+  },
+  "gameFaces": {
+    "records": [
+      {
+        "id": "rand_0",
+        "path": "http://127.0.0.1:17922/textures/npc-retro/pool/m0-2/neutral.png"
+      },
+      {
+        "id": "rand_1",
+        "path": "http://127.0.0.1:17922/textures/npc-retro/pool/m3-0/neutral.png"
+      },
+      {
+        "id": "rand_2",
+        "path": "http://127.0.0.1:17922/textures/npc-retro/pool/m3-1/neutral.png"
+      }
+    ],
+    "state": {
+      "stowed": true,
+      "visible": false,
+      "vmHeld": "crowbar",
+      "stow": 0.9999999866853378,
+      "cooldown": 0,
+      "using": null,
+      "offhand": false,
+      "light": 0,
+      "position": [
+        42.9,
+        27,
+        0
+      ],
+      "memory": {
+        "geometries": 167,
+        "textures": 97
+      },
+      "crosshair": "block"
+    }
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

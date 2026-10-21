@@ -6,6 +6,8 @@ import { buildFlashlightMesh } from './flashlightMesh'
 import { buildBandageMesh, buildCannedFoodMesh } from './supplyMesh'
 import { buildBatteryMesh, buildWaterThermosMesh } from './provisionsMesh'
 import { buildDetailedItemMesh } from './detailItemsMesh'
+import { buildMeleeGroundMesh } from './meleeMesh'
+import { isMelee } from '../content/melee'
 import { buildFiresaltMesh } from './firesaltMesh'
 import { buildSquirtGunMesh } from './squirtGunMesh'
 import { buildLiquidPainMesh, buildRoyalRationMesh, buildWarpberryMesh } from './anomalousProvisionMesh'
@@ -28,7 +30,15 @@ export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Gr
   }
   // 2026-10-07：此前以方块/圆柱拼接的 55 件统一改为 refinedItemMesh（四套共享 UV 图集，≤1,200 面、≤3 批）。
   // v81：旱虾三件（旱虾 / 活旱虾 / 酥炸旱虾）与 Entity 20 实体共用奇虾几何（shrimpMesh）
-  if (type === 'dryshrimp' || type === 'liveshrimp' || type === 'friedshrimp') grp.add(buildShrimpItemMesh(type))
+  const [meleeBase, meleeVar] = type.split(':')
+  // 近战重制：五把近战武器（含 'type:broken' 残件）统一用 meleeMesh 的地面平躺版
+  if (isMelee(meleeBase)) {
+    // 地面物品统一悬浮旋转展示（renderer 抬高 0.45m）：平躺模型竖直居中，与其它物品同一基准
+    const gm = buildMeleeGroundMesh(meleeBase, { state: meleeVar === 'broken' ? 'broken' : 'intact' })
+    const bb = new THREE.Box3().setFromObject(gm); gm.position.y -= (bb.max.y + bb.min.y) / 2
+    grp.add(gm); grp.userData.itemType = meleeBase; grp.userData.meleeRig=gm.userData.meleeRig
+  }
+  else if (type === 'dryshrimp' || type === 'liveshrimp' || type === 'friedshrimp') grp.add(buildShrimpItemMesh(type))
   else if (isRefinedItemType(type)) grp.add(buildRefinedItemMesh(type))
   else switch (type) {
     // Six detailed models share UV atlases; their factory emits at most three material batches.
@@ -101,13 +111,31 @@ export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Gr
       for (let i = 0; i < 7; i++) em(0.12, 0.002, 0.005, i === 0 ? '#7a2a22' : '#4a4436', 0, 0.008, -0.075 + i * 0.024, 0, -0.06) // 横格上的字迹
       break
     }
+    case 'sedgland': { // Nguithr'xurh 镇静腺：半透明淡黄腺体 + 深色内核 + 一截褐色导管
+      const gland = new THREE.Mesh(new THREE.SphereGeometry(0.075, 14, 10), new THREE.MeshLambertMaterial({ color: '#d9c46a', emissive: '#6b5214', emissiveIntensity: 0.35, transparent: true, opacity: 0.82, depthWrite: false }))
+      gland.scale.set(1.25, 0.78, 1); gland.position.y = 0.06; grp.add(gland)
+      const core = new THREE.Mesh(new THREE.SphereGeometry(0.036, 10, 8), new THREE.MeshLambertMaterial({ color: '#a8862e', emissive: '#3a2a08', emissiveIntensity: 0.3 }))
+      core.position.y = 0.06; grp.add(core)
+      const duct = new THREE.Mesh(new THREE.CylinderGeometry(0.011, 0.016, 0.09, 6), new THREE.MeshLambertMaterial({ color: '#8a6a4a' }))
+      duct.position.set(0.07, 0.1, 0); duct.rotation.z = -0.9; grp.add(duct)
+      break
+    }
+    case 'ashpile': {
+      const geo = new THREE.SphereGeometry(1, 12, 6, 0, Math.PI * 2, 0, Math.PI / 2)
+      geo.scale(.17, .046, .13)
+      const p = geo.getAttribute('position')
+      for (let i = 0; i < p.count; i++) { const x = p.getX(i), z = p.getZ(i); p.setY(i, Math.max(0, p.getY(i) * (1 + .14 * Math.sin(x * 61 + z * 37)))) }
+      geo.computeVertexNormals()
+      grp.add(new THREE.Mesh(geo, new THREE.MeshLambertMaterial({color:'#85817b'})))
+      break
+    }
     default: em(0.2, 0.2, 0.2, '#d6cfae'); grp.userData.fallback = 1 // v40：标记通用 fallback（mesh-smoke 断言零 fallback）
   }
   // 发光描边底座（按稀有度/类别配色）
   const ITEM_GLOW: Record<string, string> = {
     tape: '#ffd94d', // 胜利物品：金
     almond: '#8fd98f', canned: '#8fd98f', bento: '#8fd98f', coffee: '#8fd98f', // 补给：绿
-    bandage: '#e8e2d2', sedative: '#9adfff', // 医疗：白/蓝
+    bandage: '#e8e2d2', sedative: '#9adfff', sedgland: '#d9c46a', // 医疗：白/蓝/镇静腺淡黄
     battery: '#e8b93c', fuse: '#e8b93c', capacitor: '#6abfff', glowstick: '#a8e0a0', flashlight: '#e8b93c', // 电气：琥珀（电容器=瓶装闪电：蓝）
     crowbar: '#d96a4a', wrench: '#d96a4a', gas: '#d96a4a', stapler: '#d96a4a', // 武器/工具：红
     keycard: '#7fb0c9', carkey: '#7fb0c9', skeleton: '#7fb0c9', // 钥匙：冰蓝
@@ -141,7 +169,7 @@ export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Gr
     meatstew: '#8fd98f', pizza: '#8fd98f', lasagna: '#8fd98f', tomsspecial: '#8fd98f',
     grilledsteak: '#8fd98f', jambread: '#8fd98f', // 菜肴：补给绿
   }
-  const gc = ITEM_GLOW[type] ?? '#e8b93c'
+  const gc = ITEM_GLOW[meleeBase] ?? ITEM_GLOW[type] ?? '#e8b93c'
   if (opts?.halo !== false) {
     // This zero-thickness plane ring does not need separate front/back draws.
     const halo = new THREE.Mesh(new THREE.RingGeometry(0.18, 0.26, 10), new THREE.MeshBasicMaterial({ color: gc, transparent: true, opacity: 0.45, side: THREE.DoubleSide, forceSinglePass: true }))

@@ -1,3 +1,5 @@
+import {ensureTradersAt} from './world/tradersWorld'
+import { heldMelee, updateMeleeInput, normalizeMeleeInventory, type MeleePending } from './engine/melee'
 import * as careerSystem from './engine/career'
 import {restoreGlowFlight} from './engine/glowsticks'
 import { megState, resetMegRuntime, updateMegMissions } from './engine/megMissions'
@@ -16,6 +18,8 @@ import { type Entity } from './entities'
 import { createIntegrator, type MoveIntegrator } from './core/player'
 import { look } from './core/renderer3d'
 import { freshJerryRun, jerryInputLock, type JerryRunState } from './engine/jerryAI'
+import { armsInputLock, armsPlayerTick, freshArmsRun, type ArmsRunState } from './engine/armsAI'
+import { freshNgRun, nguithrInputLock, nguithrPlayerTick, updateNguithrEntity, type NguithrRunState } from './engine/nguithrAI'
 import type { ExitDef, FloorBand, LightSource, Structure } from './core/types'
 import { audio } from './core/audio'
 import { ROCK_SONG_IDS, musicName, setRadioCfg } from './core/midi'
@@ -52,7 +56,7 @@ export type { SaveSnapshot, SaveSlotId, SlotInfo } from './engine/save'
 export type { Difficulty } from './engine/shared'
 export { EFFECTS } from './engine/effects'
 
-export interface InvSlot { type: string; count: number; tag?: number } // tag：来源层级标签（迁跃浆果=发现它的层级；不同标签不堆叠）
+export interface InvSlot { type: string; count: number; tag?: number; dur?: number; blood?: number } // dur：近战武器单件耐久（缺省=满；0=残件）；blood：刃上血污 0..1 // tag：来源层级标签（迁跃浆果=发现它的层级；不同标签不堆叠）
 // 装备槽位标识：hotbar/backpack 为背包格；offhand/body/gloves/pocket 为装备位（主手=快捷栏选中项，不是独立槽位）
 export type SlotWhere = 'hotbar' | 'backpack' | 'offhand' | 'body' | 'gloves' | 'head' | 'pocket'
 export interface SlotRef { w: SlotWhere; i: number }
@@ -122,6 +126,8 @@ export interface InputState {
   mx: number; my: number // 移动向量（-1..1）
   sprint: boolean
   attack: boolean
+  /** 攻击键是否仍按着（近战蓄力用；触屏/键鼠松开时清零） */
+  attackHeld?: boolean
   interact: boolean
   toggleLight: boolean
   jump: boolean // v7：跳跃（桌面空格 / 移动端按钮，边沿触发由引擎消费）
@@ -129,6 +135,7 @@ export interface InputState {
 }
 
 export class Engine {
+  tradersWorld?: import("./world/tradersWorld").TradersWorldSave
   map: GameMap | null = null
   player: PlayerState
   input: InputState = { mx: 0, my: 0, sprint: false, attack: false, interact: false, toggleLight: false, jump: false, crouch: false }
@@ -207,9 +214,9 @@ export class Engine {
   // 容器搜索（按住交互 → 进度 → 战利品面板）
   searching: { sid: number; t: number; dur: number; label: string } | null = null
   // 消耗品使用：动作完成前不结算效果/扣除物品；槽位内容变化会安全取消。
-  usingItem: { where: SlotWhere; i: number; type: string; tag?: number; t: number; dur: number; anim: ItemUseAnim; label: string; targetJerry?: boolean } | null = null
+  usingItem: { where: SlotWhere; i: number; type: string; tag?: number; t: number; dur: number; anim: ItemUseAnim; label: string; targetJerry?: boolean; targetMoth?: number; repairSlot?: InvSlot } | null = null
   lootPanel: { sid: number; label: string; items: string[] } | null = null
-  statusMsgT = { hunger: 0, thirst: 0, battery: 0, stamina: 0 }
+  statusMsgT = { hunger: 0, thirst: 0, battery: 0, stamina: 0, bounce: 0, backstab: 0 }
   redAnnounced = new Set<string>() // 本层已播报预警的红室 chunk（chunkKey）
   // 固定子步移动积分器（帧间保留时间余数，保证高低帧率位移一致）
   moveIt: MoveIntegrator = createIntegrator()
@@ -222,6 +229,19 @@ export class Engine {
   attackCooldownDur = 0
   // 攻击动画种类（渲染层据此切换动作）：punch=空手出拳 swing=武器挥舞 throw=投掷
   attackAnimKind: 'punch' | 'swing' | 'throw' | 'spray' | 'drink' = 'punch'
+  /** 近战重制：普攻左右交替（刀）1/-1；本次挥砍是否重击；蓄力 0..1；弹刀回震 0..1 */
+  meleeSide = 1
+  meleeHeavy = false
+  meleeCharge = 0
+  meleeBounce = 0
+  /** 当前手持近战武器的攻击距离（0 = 非近战，用旧的 1.9m） */
+  meleeReach = 0
+  /** 按下攻击键后的计时（判断短按/蓄力）；slot 防止中途换武器 */
+  meleePress: { t: number; slot: InvSlot } | null = null
+  /** 前摇中、等待判定的挥砍 */
+  meleePending: MeleePending | null = null
+  /** 命中卡帧剩余（秒）：期间挥砍动画与判定计时冻结 */
+  hitStopT = 0
   // 飞行中的投掷物（订书机/汽油罐等；落地触发效果，见 landProjectile）
   projectiles: Projectile[] = []
   projId = 1
@@ -318,7 +338,8 @@ export class Engine {
   plantStage = 0
   inGardenEff = false // 本帧植殖癌是否生效（含开发者强制开/关），供现象列表读取
   // ===== v32：新物品机制状态 =====
-  axeDur = 0 // 斧头耐久（获得时重置为 5；破门 -1，耗尽报废）
+  /** @deprecated 近战重制后耐久按单件记录（InvSlot.dur）；保留字段只为兼容旧代码读取，恒为 0 */
+  axeDur = 0
   squirtTank: 'none' | 'water' | 'almond' | 'cashew' | 'liquidpain' = 'none' // 滋水枪储罐液体（单一种类）
   // R 短按快速装填使用的液体；长按轮盘选中液体后更新。清水无需背包物品，因此作为初始回退。
   squirtQuickLiquid: 'water' | 'almond' | 'cashew' | 'liquidpain' = 'water'
@@ -331,7 +352,9 @@ export class Engine {
   slipVy = 0
   chocoCd = 0 // 巧克力子弹射速冷却
   manmadeT = 0 // v51：人制品效应剩余秒数（5 分钟：拒食他物/治疗减半/恒显饥饿特效/体力恢复减半消耗加倍/受伤 -10%）
-  webbedT = 0 // v51：Nguithr'xurh 镇静剂麻痹剩余秒数（视野模糊 + 移动迟缓）
+  armsRun: ArmsRunState = freshArmsRun() // 手臂重制：被抓/挣扎/管道黑屏/吐出坠落（只在内存，不写存档）
+  webbedT = 0 // v51：缠丝麻痹剩余秒数（视野模糊 + 移动迟缓；现仅死亡飞蛾守卫使用）
+  ngRun: NguithrRunState = freshNgRun() // Nguithr'xurh 重制：玩家轻度/重度镇静与挣脱（只在内存，不写存档）
   /** 当前是否身处据点（饥饿减速/体力加速的判定依据） */
   get inOutpost(): boolean { return Object.values(OUTPOSTS).some((o) => o.levelId === this.player.level) }
   squirtAmmo = 0 // 储罐剩余喷射份数（1 瓶 = 3 份，上限 9 瓶 = 27 份）
@@ -449,6 +472,7 @@ export class Engine {
   }
 
   newRun(seed: number, difficulty: Difficulty, slot: save.SaveSlotId = 'slot1', forceFresh = false) {
+    if(this.map?.traders)this.map=null // A fresh run must not recapture the previous Traders world.
     this.seed = seed
     this.difficulty = difficulty
     this.saveSlot = slot
@@ -477,6 +501,7 @@ export class Engine {
     this.arriveL8AvenueEnd = false
     this.l10Weather = { kind: 'calm', t: 80, k: 0, wetness: 0 }
     this.l0RestorePosition = undefined
+    this.tradersWorld = undefined
     this.l0World = undefined
     this.l0SharedWorld = undefined
     this.l0Loops=0;this.l0Meeting=0;this.l0Blur=0
@@ -532,6 +557,7 @@ export class Engine {
       this.radio.perLevel = this.radio.perLevel ?? {}
       this.heardSongs = snap.heardSongs ?? []
       this.l10Weather = snap.l10Weather ?? { kind: 'calm', t: 80, k: 0, wetness: 0 }
+      this.tradersWorld = snap.tradersWorld
       this.l0World = snap.l0World
       this.l0SharedWorld = snap.l0SharedWorld
       this.l1World = snap.l1World
@@ -547,11 +573,13 @@ export class Engine {
         equip: { ...fresh.equip, ...(snap.player.equip ?? {}), pockets: snap.player.equip?.pockets ?? fresh.equip.pockets },
       }
       this.player.level = snap.level
+      normalizeMeleeInventory(this)
       // v59：旧版据点布局的坐标落在已移除的小房间/墙体中，统一迁移到新布局的安全出生点。
       // 布局版本 2 保留世界坐标恢复及既有安全校正逻辑。
-      const legacySettlement = (snap.level===101 && snap.alphaLayout!==5) || (snap.level===102 && snap.bntgLayout!==3) || (snap.settlementLayout !== 2 && [101,103,104,116].includes(snap.level))
+      const legacySettlement = (snap.level===101 && snap.alphaLayout!==5) || (snap.level===102 && snap.bntgLayout!==4) || (snap.settlementLayout !== 2 && [101,103,104,116].includes(snap.level))
       const legacyL0=snap.level===0&&!snap.l0World
-      if (legacySettlement||legacyL0) { this.player.x=this.map!.spawn.x; this.player.y=this.map!.spawn.y; this.player.z=0; this.player.floor=0 }
+      if (legacySettlement||legacyL0) { const shift=this.map!.traders ? .5 : 0; this.player.x=this.map!.spawn.x+shift; this.player.y=this.map!.spawn.y+shift; this.player.z=0; this.player.floor=0 }
+      if(this.map?.traders)ensureTradersAt(this.map,this.player.x,this.player.y,4)
       const placement = legacyL0 ? 'legacy-l0-spawn' : legacySettlement ? 'legacy-settlement-spawn' : level.restoreSavedPlayerPosition(this, snap.worldPos)
       restoreGlowFlight(this,snap.glowProjectiles)
       if(snap.level===5&&this.map?.inf&&snap.l5MothAlerts)this.map.inf.mothAlerts=structuredClone(snap.l5MothAlerts)
@@ -658,7 +686,7 @@ export class Engine {
   wanderTarget(e: Entity) { entityAI.wanderTarget(this, e) }
   wanderDeflect(e: Entity) { entityAI.wanderDeflect(this, e) }
   provokeRatPack(e: Entity) { entityAI.provokeRatPack(this, e) }
-  updateNguithr(e: Entity, d: number, dt: number) { entityAI.updateNguithr(this, e, d, dt) }
+  updateNguithr(e: Entity, _d: number, dt: number) { updateNguithrEntity(this, e, dt) }
   faceToward(e: Entity, tx: number, ty: number, dt: number, rate: number) { entityAI.faceToward(this, e, tx, ty, dt, rate) }
   entityWalkH(m: GameMap, tx: number, ty: number, band: FloorBand, aquatic = false, flying = false): number | null { return entityAI.entityWalkH(this, m, tx, ty, band, aquatic, flying) }
   stepEntity(e: Entity, speed: number, dt: number): boolean { return entityAI.stepEntity(this, e, speed, dt) }
@@ -757,7 +785,8 @@ export class Engine {
   cureInfection(npcId: string): boolean { return npc.cureInfection(this, npcId) }
 
   // ---------- 背包/装备/物品使用（engine/inventory.ts）----------
-  addItem(type: string): boolean { return inventory.addItem(this, type) }
+  addItem(type: string, extra?: Partial<InvSlot>): boolean { return inventory.addItem(this, type, extra) }
+  strike(dmg: number, melee?: combat.MeleeStrike) { return combat.strike(this, dmg, melee) }
   hasItem(type: string): boolean { return inventory.hasItem(this, type) }
   countItem(type: string): number { return inventory.countItem(this, type) }
   consumeItem(type: string): boolean { return inventory.consumeItem(this, type) }
@@ -899,7 +928,9 @@ export class Engine {
       const skip = Math.hypot(this.input.mx, this.input.my) > 0.1 || this.input.jump || this.input.attack
       this.introT = skip ? 0 : Math.max(0, this.introT - dt)
     }
-    const introLock = this.introT > 0 || jerryInputLock(this) // 杰瑞木僵/信众击晕/残响失神：锁定移动、攻击与跳跃
+    armsPlayerTick(this, dt) // 手臂：挣扎衰减 / 挣脱判定（输入计数在 movement 的 armsControlsPlayer）
+    nguithrPlayerTick(this, dt) // Nguithr'xurh：镇静计时 + 摇晃身体挣脱（读取跳跃/横移输入，须在移动结算之前）
+    const introLock = this.introT > 0 || jerryInputLock(this) || nguithrInputLock(this) || armsInputLock(this) // 杰瑞木僵/信众击晕/残响失神/Nguithr 重度镇静：锁定移动、攻击与跳跃
 
     // ---- 移动 ----（engine/movement.ts；返回 null=本帧已死亡/终止，同原 step 内 return）
     const mag = this.updateMovement(dt, dm, introLock)
@@ -909,12 +940,16 @@ export class Engine {
     if (this.updateSurvival(dt, dm, mag)) return
 
     // ---- 攻击 ----
-    if (this.attackAnimT > 0) this.attackAnimT -= dt
+    if (this.hitStopT > 0) this.hitStopT = Math.max(0, this.hitStopT - dt)
+    else if (this.attackAnimT > 0) this.attackAnimT -= dt
     if (this.attackCooldownT > 0) this.attackCooldownT = Math.max(0, this.attackCooldownT - dt)
     if (this.input.attack) {
       this.input.attack = false
-      if (!introLock && !this.usingItem) this.attack()
+      const mh = heldMelee(this)
+      if (mh && !introLock && !this.usingItem && !this.handsStowed && !jerryInputLock(this)) this.meleePress = { t: 0, slot: mh } // 近战：松开时决定普攻/重击
+      else if (!introLock && !this.usingItem) this.attack()
     }
+    updateMeleeInput(this, dt, introLock)
     this.updateProjectiles(dt)
     if (this.input.toggleLight) {
       this.input.toggleLight = false
@@ -1044,5 +1079,3 @@ export class Engine {
 }
 
 export const engine = new Engine()
-
-

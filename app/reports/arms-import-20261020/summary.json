@@ -1,0 +1,216 @@
+{
+  "root": "E:\\ZAN\\backroom",
+  "archiveSha256": "7E5164BD75762A9208160E0660A4A74585ADB96A3B08E1FE1DCCC05E4863C751",
+  "build": true,
+  "regressions": true,
+  "regressionGroups": 15,
+  "integrationAssertions": 142464,
+  "mechanics": "80/80",
+  "model": {
+    "triangles": 6880,
+    "draws": 4,
+    "bones": 79
+  },
+  "modes": [
+    {
+      "label": "final-realistic",
+      "ok": true,
+      "entryMs": 8978.6227,
+      "prepareMs": 1685.2000000029802,
+      "count": 2,
+      "hpAtLanding": 54,
+      "spitDistance": 20.438260689207382,
+      "checks": 17,
+      "cycles": [
+        {
+          "shown": {
+            "geometries": 613,
+            "textures": 176,
+            "programs": 108
+          },
+          "empty": {
+            "geometries": 607,
+            "textures": 174,
+            "programs": 108
+          }
+        },
+        {
+          "shown": {
+            "geometries": 613,
+            "textures": 176,
+            "programs": 108
+          },
+          "empty": {
+            "geometries": 607,
+            "textures": 174,
+            "programs": 108
+          }
+        },
+        {
+          "shown": {
+            "geometries": 613,
+            "textures": 176,
+            "programs": 108
+          },
+          "empty": {
+            "geometries": 607,
+            "textures": 174,
+            "programs": 108
+          }
+        },
+        {
+          "shown": {
+            "geometries": 613,
+            "textures": 176,
+            "programs": 108
+          },
+          "empty": {
+            "geometries": 607,
+            "textures": 174,
+            "programs": 108
+          }
+        },
+        {
+          "shown": {
+            "geometries": 613,
+            "textures": 176,
+            "programs": 108
+          },
+          "empty": {
+            "geometries": 607,
+            "textures": 174,
+            "programs": 108
+          }
+        },
+        {
+          "shown": {
+            "geometries": 613,
+            "textures": 176,
+            "programs": 108
+          },
+          "empty": {
+            "geometries": 607,
+            "textures": 174,
+            "programs": 108
+          }
+        }
+      ],
+      "errors": 0,
+      "failedGameRequests": 0,
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      },
+      "pids": {
+        "browser": 37392,
+        "server": 68156
+      }
+    },
+    {
+      "label": "final-classic-complete",
+      "ok": true,
+      "entryMs": 6549.460200000001,
+      "prepareMs": 471,
+      "count": 2,
+      "hpAtLanding": 54,
+      "spitDistance": 29.772848368941787,
+      "checks": 17,
+      "cycles": [
+        {
+          "shown": {
+            "geometries": 530,
+            "textures": 146,
+            "programs": 99
+          },
+          "empty": {
+            "geometries": 524,
+            "textures": 144,
+            "programs": 99
+          }
+        },
+        {
+          "shown": {
+            "geometries": 530,
+            "textures": 146,
+            "programs": 99
+          },
+          "empty": {
+            "geometries": 524,
+            "textures": 144,
+            "programs": 99
+          }
+        },
+        {
+          "shown": {
+            "geometries": 530,
+            "textures": 146,
+            "programs": 99
+          },
+          "empty": {
+            "geometries": 524,
+            "textures": 144,
+            "programs": 99
+          }
+        },
+        {
+          "shown": {
+            "geometries": 530,
+            "textures": 146,
+            "programs": 99
+          },
+          "empty": {
+            "geometries": 524,
+            "textures": 144,
+            "programs": 99
+          }
+        },
+        {
+          "shown": {
+            "geometries": 530,
+            "textures": 146,
+            "programs": 99
+          },
+          "empty": {
+            "geometries": 524,
+            "textures": 144,
+            "programs": 99
+          }
+        },
+        {
+          "shown": {
+            "geometries": 530,
+            "textures": 146,
+            "programs": 99
+          },
+          "empty": {
+            "geometries": 524,
+            "textures": 144,
+            "programs": 99
+          }
+        }
+      ],
+      "errors": 0,
+      "failedGameRequests": 0,
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      },
+      "pids": {
+        "browser": 27700,
+        "server": 53008
+      }
+    }
+  ],
+  "audit": true,
+  "ok": true
+}

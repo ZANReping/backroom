@@ -486,7 +486,15 @@ export class GameAudio {
     if (on === this.underwater) return
     this.underwater = on
     if (!this.ctx || !this.uwFilter) return
-    this.uwFilter.frequency.setTargetAtTime(on ? 620 : 19000, this.ctx.currentTime, 0.08)
+    this.uwFilter.frequency.setTargetAtTime(on ? 620 : this.muffled ? 1100 : 19000, this.ctx.currentTime, 0.08)
+  }
+  // Nguithr'xurh 镇静：声音发闷（与水下共用全局低通；水下优先）
+  private muffled = false
+  setMuffled(on: boolean) {
+    if (on === this.muffled) return
+    this.muffled = on
+    if (!this.ctx || !this.uwFilter || this.underwater) return
+    this.uwFilter.frequency.setTargetAtTime(on ? 1100 : 19000, this.ctx.currentTime, 0.25)
   }
 
   pickup(isTape = false) {
@@ -867,6 +875,27 @@ export class GameAudio {
     o.connect(g).connect(this.sfx); o.start(); o.stop(this.ctx.currentTime + 0.13)
   }
 
+  /** 近战重制：打墙弹刀——金属类高频「铛」+ 木头类闷响；broke=武器断裂（更长的碎裂噪声） */
+  clang(metal = true, broke = false) {
+    if (!this.ctx || !this.sfx) return
+    const t = this.ctx.currentTime
+    const g = this.ctx.createGain()
+    g.gain.setValueAtTime(metal ? 0.13 : 0.18, t)
+    g.gain.exponentialRampToValueAtTime(0.001, t + (metal ? 0.45 : 0.16))
+    g.connect(this.sfx)
+    for (const f of metal ? [1180, 1730, 2650] : [140, 210]) {
+      const o = this.ctx.createOscillator()
+      o.type = metal ? 'triangle' : 'square'; o.frequency.setValueAtTime(f, t); o.frequency.exponentialRampToValueAtTime(f * 0.94, t + 0.4)
+      o.connect(g); o.start(t); o.stop(t + 0.46)
+    }
+    if (broke) {
+      const n = this.noiseSrc(), f = this.ctx.createBiquadFilter(), g2 = this.ctx.createGain()
+      f.type = 'highpass'; f.frequency.value = metal ? 2200 : 600
+      g2.gain.setValueAtTime(0.16, t); g2.gain.exponentialRampToValueAtTime(0.001, t + 0.3)
+      n.connect(f).connect(g2).connect(this.sfx); n.start(t); n.stop(t + 0.32)
+    }
+  }
+
   // 胃部咕噜声（饥饿）
   stomach() {
     if (!this.ctx || !this.sfx) return
@@ -919,6 +948,50 @@ export class GameAudio {
   }
   searchStart() { this.searchTick(); this.searchTick() }
   searchDone() { this.pickup(false) }
+
+  // 手臂（Entité 15-FR）：管道刮擦 / 格栅轻推 / 哀嚎 / 灼烧嘶声 / 格栅猛关 / 管内撞击 / 扣住 / 吐出。
+  // vol 已按距离衰减；pan −1..1 = 左..右（StereoPanner）；clarity 0..1 越小越闷（管道里远去的撞击声）。
+  armsSfx(kind: 'scrape' | 'grate' | 'wail' | 'sizzle' | 'slam' | 'thump' | 'grab' | 'spit', vol = 1, pan = 0, clarity = 1) {
+    if (!this.ctx || !this.sfx || vol <= 0.01) return
+    const ctx = this.ctx, t = ctx.currentTime
+    const out = ctx.createStereoPanner ? ctx.createStereoPanner() : null
+    if (out) { out.pan.value = Math.max(-1, Math.min(1, pan)); out.connect(this.sfx) }
+    const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 400 + 15000 * Math.max(0, Math.min(1, clarity)) ** 2
+    lp.connect(out ?? this.sfx)
+    const noise = (dur: number, type: BiquadFilterType, f0: number, f1: number, q: number, g0: number, attack = 0.02) => {
+      const n = this.noiseSrc(), f = ctx.createBiquadFilter(), g = ctx.createGain()
+      f.type = type; f.Q.value = q; f.frequency.setValueAtTime(f0, t); f.frequency.exponentialRampToValueAtTime(Math.max(30, f1), t + dur)
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(Math.max(0.0002, g0 * vol), t + attack); g.gain.exponentialRampToValueAtTime(0.0001, t + dur)
+      n.connect(f).connect(g).connect(lp); n.start(t); n.stop(t + dur + 0.02)
+      return g
+    }
+    const tone = (dur: number, type: OscillatorType, f0: number, f1: number, g0: number, at = 0) => {
+      const o = ctx.createOscillator(), g = ctx.createGain()
+      o.type = type; o.frequency.setValueAtTime(f0, t + at); o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t + at + dur)
+      g.gain.setValueAtTime(0.0001, t + at); g.gain.exponentialRampToValueAtTime(Math.max(0.0002, g0 * vol), t + at + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + at + dur)
+      o.connect(g).connect(lp); o.start(t + at); o.stop(t + at + dur + 0.02)
+    }
+    switch (kind) {
+      case 'scrape': { // 指甲 / 骨节刮过铁皮管：带通噪声 + 金属共鸣的高频泛音
+        const g = noise(0.45, 'bandpass', 1800 + Math.random() * 900, 900 + Math.random() * 400, 3.5, 0.12)
+        const lfo = ctx.createOscillator(), lg = ctx.createGain(); lfo.type = 'square'; lfo.frequency.value = 9 + Math.random() * 6; lg.gain.value = 0.05 * vol
+        lfo.connect(lg).connect(g.gain); lfo.start(t); lfo.stop(t + 0.47)
+        tone(0.5, 'triangle', 2600 + Math.random() * 500, 2300, 0.012)
+        break
+      }
+      case 'grate': noise(0.35, 'bandpass', 700, 420, 5, 0.05, 0.08); tone(0.3, 'sine', 330, 290, 0.01); break // 格栅推开：很轻的铰链吱声
+      case 'wail': { // 哀嚎：两路失谐锯齿 + 下滑
+        for (const d of [0, 7]) tone(1.1, 'sawtooth', 620 + d * 9, 240, 0.045)
+        noise(0.9, 'bandpass', 1400, 600, 1.4, 0.06)
+        break
+      }
+      case 'sizzle': noise(1.6, 'highpass', 4200, 2600, 0.7, 0.07, 0.05); break // 灼烧嘶声
+      case 'slam': noise(0.25, 'lowpass', 1600, 200, 0.8, 0.22, 0.005); tone(0.4, 'square', 140, 70, 0.05); break // 格栅猛关
+      case 'thump': noise(0.3, 'lowpass', 500, 90, 0.9, 0.3, 0.005); tone(0.25, 'sine', 80, 40, 0.12); break // 管内撞击
+      case 'grab': noise(0.2, 'bandpass', 900, 300, 1.2, 0.18, 0.004); tone(0.3, 'sine', 110, 55, 0.15); break // 扣住胸口
+      case 'spit': noise(0.6, 'lowpass', 1200, 160, 0.9, 0.25, 0.01); tone(0.5, 'sine', 95, 45, 0.12, 0.08); break // 吐出 + 落地
+    }
+  }
 
   // 穿墙实体的刺耳沙沙声（钝人行动；vol 按距离衰减）
   scrape(vol: number) {

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>室内天空修复 · 实际游戏对照</title>
+<style>
+  :root{color-scheme:dark;font:15px/1.6 system-ui,sans-serif;background:#14171b;color:#e3e6e9}
+  body{margin:0;padding:24px;max-width:1800px;margin-inline:auto}h1{font-size:25px;margin:0 0 6px}
+  p{color:#adb7c1;margin:8px 0}select{font:inherit;padding:8px 12px;border:1px solid #56616c;border-radius:6px;background:#252c33;color:inherit}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:20px}
+  figure{margin:0;background:#090b0d;border:1px solid #343c45;border-radius:8px;overflow:hidden}
+  figcaption{padding:8px 14px;background:#20262d}img{width:100%;display:block;aspect-ratio:16/9;object-fit:contain}
+  a{color:#9fcee7}small{color:#adb7c1}label{display:inline-block;margin:12px 18px 0 0}
+  @media(max-width:900px){.grid{grid-template-columns:1fr}body{padding:16px}}
+</style>
+<h1>室内天空修复 · 实际游戏对照</h1>
+<p>种子 20261006 · 1920×1080 · FOV 75° · 独立无头 Chrome · 实际 Engine / Renderer。图片未做后期修改。</p>
+<label>场景 <select id="view" aria-label="对照场景"></select></label>
+<label>右侧模式 <select id="mode" aria-label="修复后光影模式"><option value="realistic">真实光影</option><option value="classic">经典光影</option></select></label>
+<div class="grid">
+  <figure><figcaption>修复前 · 真实光影</figcaption><a id="before-link"><img id="before" alt="修复前游戏截图"></a></figure>
+  <figure><figcaption id="after-caption">修复后 · 真实光影</figcaption><a id="after-link"><img id="after" alt="修复后游戏截图"></a></figure>
+</div>
+<p id="note"></p>
+<p><a href="REPORT.md">实现、验证与限制</a> · <a href="verification-summary.json">全部视角与来源汇总</a> · <a href="after-realistic-final/runtime.json">真实光影定向复验</a> · <a href="after-classic-final/runtime.json">经典光影逐场景记录</a> · <a href="after-classic-transition/runtime.json">经典光影切换复验</a> · <a href="measurements.csv">性能原始数据</a></p>
+<small>帧时间仅为这些固定视角的短时抽样；完整相机坐标、天空绘制次数、云图更新次数及设备信息保存在 JSON 中。</small>
+<script>
+const views=[
+ ['l11-metro-far','L11 地铁远端','原先远端的亮色天空矩形消失；开启距离雾时，走廊逐渐隐入地下环境色。'],
+ ['l11-entrance','L11 回望入口','楼梯口的天空保留，只有穿过真实入口的方向显示天空。'],
+ ['l11-ramp','L11 坡道','地表与地下氛围按坡道深度连续变化。'],
+ ['l11-street','L11 地表','现有 HDR 天空正常保留。'],
+ ['l2-corridor','L2 走廊','当前室内建筑不创建天空或云图。'],
+ ['l3-corridor','L3 走廊','远处雾与背景使用同一种室内环境色。'],
+ ['l4-office','L4 办公区','保留办公室材质与照明，移除远端天空。'],
+ ['l4-window','L4 窗边','保留原有窗外雨雾景观。'],
+ ['l5-corridor','L5 旅馆走廊','距离雾在实际相机裁剪距离之前完成过渡。'],
+ ['l2-fog-off','L2 关闭雾效','关闭距离雾也不会重新显示天空。'],
+ ['l6-underground','L6 地下','按本层规则保持无光；天空与体积云停止绘制。'],
+ ['l7-sea','L7 海面','海面天空与体积云保留。'],
+ ['l7-underwater','L7 水下','不仅隐藏天空，也停止原先仍运行的体积云更新。'],
+ ['l9-street','L9 地表','户外天空保留。'],
+ ['l10-field','L10 田野','户外天空保留。']
+];
+const select=document.querySelector('#view'),mode=document.querySelector('#mode');
+for(const [id,label]of views){const option=document.createElement('option');option.value=id;option.textContent=label;select.append(option)}
+function show(){const id=select.value;for(const side of ['before','after']){const folder=side==='before'?'before-realistic':mode.value==='classic'?'after-classic-final':['l5-corridor','l11-street'].includes(id)?'after-realistic-final':'after-realistic';const url=`${folder}/case-${id}.png`;document.querySelector('#'+side).src=url;document.querySelector('#'+side+'-link').href=url}document.querySelector('#after-caption').textContent='修复后 · '+(mode.value==='classic'?'经典光影':'真实光影');document.querySelector('#note').textContent=views.find(v=>v[0]===id)[2]}
+select.onchange=mode.onchange=show;show();
+</script>
+</html>

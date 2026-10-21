@@ -1,0 +1,1276 @@
+{
+  "run": "qa-1792492153768-19992",
+  "label": "l1v3-nguithr-entry",
+  "mode": "realistic",
+  "production": false,
+  "port": 7083,
+  "cdp": 7084,
+  "profile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\level-entry\\l1v3-nguithr-entry\\qa-1792492153768-19992",
+  "levels": [
+    1,
+    2,
+    3,
+    5,
+    8
+  ],
+  "cases": [
+    {
+      "id": 1,
+      "cold": {
+        "id": 1,
+        "name": "Level 1",
+        "seed": 20261020,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 9343.099999997765,
+        "readyMs": 9343.199999999255,
+        "loadMs": 9450.800000000745,
+        "preparationMs": 956,
+        "generationMs": 6.800000000745058,
+        "sceneMs": 8380.39999999851,
+        "frames": 989,
+        "cpuTotalMs": 5605.800000049174,
+        "cpuMaxMs": 560.8000000007451,
+        "frameP95Ms": 22.699999999254942,
+        "metrics": {
+          "warmSceneTextures": {
+            "calls": 260,
+            "cpuMs": 64.69999999552965,
+            "maxMs": 10
+          },
+          "buildInfiniteChunk": {
+            "calls": 87876,
+            "cpuMs": 2814.7000000476837,
+            "maxMs": 245.29999999701977
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 1524.8999999985099,
+            "chunks": 0,
+            "finiteTask": false,
+            "flashlight": true,
+            "moth": true,
+            "items": 3,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 7,
+              "textures": 3
+            }
+          },
+          {
+            "atMs": 6387.39999999851,
+            "chunks": 2,
+            "chunkTask": "0,0",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 16,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 136,
+              "textures": 71
+            }
+          },
+          {
+            "atMs": 6413.89999999851,
+            "chunks": 3,
+            "chunkTask": "1,0",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 16,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 147,
+              "textures": 75
+            }
+          },
+          {
+            "atMs": 6749,
+            "chunks": 4,
+            "chunkTask": "0,1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 16,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 160,
+              "textures": 78
+            }
+          },
+          {
+            "atMs": 7566,
+            "chunks": 5,
+            "chunkTask": "-1,-1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 16,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 160,
+              "textures": 89
+            }
+          },
+          {
+            "atMs": 8762.099999997765,
+            "chunks": 7,
+            "chunkTask": "1,-1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 16,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 192,
+              "textures": 96
+            }
+          },
+          {
+            "atMs": 9343.099999997765,
+            "chunks": 9,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 16,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": true,
+            "memory": {
+              "geometries": 379,
+              "textures": 116
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 9,
+          "chunkTask": "0,2",
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 16,
+          "npcs": 0,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 379,
+            "textures": 117
+          }
+        },
+        "firstReady": {
+          "structures": 869,
+          "lights": 938,
+          "npcs": 4,
+          "nearNpcs": 0,
+          "npcMeshes": 0,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 379,
+            "textures": 117
+          },
+          "programs": 115,
+          "drawCalls": 259,
+          "triangles": 79458,
+          "spawn": {
+            "x": 79.5,
+            "y": 79.5,
+            "z": 0
+          },
+          "mapSeed": 20261020,
+          "ready": true
+        },
+        "bakes": {
+          "entries": 25,
+          "bytes": 77750912,
+          "hits": 2366,
+          "diskHits": 0,
+          "offlineLoads": 0,
+          "computations": 0,
+          "completed": 13,
+          "stale": 0,
+          "previews": 13,
+          "workers": 4,
+          "active": 4,
+          "queued": 25,
+          "initialQueued": 12,
+          "refining": 13,
+          "stages": [
+            {
+              "key": "4:17:20261020:0,0:f65249f0:high",
+              "provisional": true,
+              "generationMs": 283.69999999925494,
+              "geometryMs": 52.69999999925494,
+              "bakeMs": 2077.900000002235,
+              "samples": 80732,
+              "rays": 282524,
+              "bytes": 6263528
+            },
+            {
+              "key": "4:17:20261020:0,-1:ab8f2d9f:high",
+              "provisional": true,
+              "generationMs": 264.80000000074506,
+              "geometryMs": 43.30000000074506,
+              "bakeMs": 1896.5,
+              "samples": 91536,
+              "rays": 272446,
+              "bytes": 6043096
+            },
+            {
+              "key": "4:17:20261020:-1,0:7c40d03a:high",
+              "provisional": true,
+              "generationMs": 369.5,
+              "geometryMs": 44.80000000074506,
+              "bakeMs": 1947.6000000014901,
+              "samples": 80890,
+              "rays": 308067,
+              "bytes": 6274936
+            },
+            {
+              "key": "4:17:20261020:1,0:9d442f3e:high",
+              "provisional": true,
+              "generationMs": 290.6000000014901,
+              "geometryMs": 34.899999998509884,
+              "bakeMs": 2377.2000000029802,
+              "samples": 88075,
+              "rays": 400621,
+              "bytes": 5862592
+            },
+            {
+              "key": "4:17:20261020:0,1:90a68196:high",
+              "provisional": true,
+              "generationMs": 102,
+              "geometryMs": 17.900000002235174,
+              "bakeMs": 2463.599999997765,
+              "samples": 81383,
+              "rays": 305993,
+              "bytes": 6148528
+            },
+            {
+              "key": "4:17:20261020:-1,-1:809c0b9e:high",
+              "provisional": true,
+              "generationMs": 127.59999999776483,
+              "geometryMs": 47.80000000074506,
+              "bakeMs": 2048.39999999851,
+              "samples": 86915,
+              "rays": 232611,
+              "bytes": 5890192
+            },
+            {
+              "key": "4:17:20261020:1,-1:d12a130c:high",
+              "provisional": true,
+              "generationMs": 128.90000000223517,
+              "geometryMs": 33.5,
+              "bakeMs": 2357.39999999851,
+              "samples": 93065,
+              "rays": 379973,
+              "bytes": 6190296
+            },
+            {
+              "key": "4:17:20261020:-1,1:e5b9c09:high",
+              "provisional": true,
+              "generationMs": 190.40000000223517,
+              "geometryMs": 38.19999999925494,
+              "bakeMs": 2212.199999999255,
+              "samples": 83824,
+              "rays": 403378,
+              "bytes": 4084128
+            },
+            {
+              "key": "4:17:20261020:1,1:8a6a8970:high",
+              "provisional": true,
+              "generationMs": 113.80000000074506,
+              "geometryMs": 9.899999998509884,
+              "bakeMs": 1176.699999999255,
+              "samples": 87355,
+              "rays": 389547,
+              "bytes": 5794328
+            },
+            {
+              "key": "4:17:20261020:0,-2:2478ba34:high",
+              "provisional": true,
+              "generationMs": 30.300000000745058,
+              "geometryMs": 16.399999998509884,
+              "bakeMs": 1253.699999999255,
+              "samples": 90156,
+              "rays": 371175,
+              "bytes": 6527568
+            },
+            {
+              "key": "4:17:20261020:-2,0:76d5a9f2:high",
+              "provisional": true,
+              "generationMs": 70.39999999850988,
+              "geometryMs": 15.199999999254942,
+              "bakeMs": 1535,
+              "samples": 83796,
+              "rays": 335872,
+              "bytes": 6255064
+            },
+            {
+              "key": "4:17:20261020:2,0:3deacb71:high",
+              "provisional": true,
+              "generationMs": 41.600000001490116,
+              "geometryMs": 11.399999998509884,
+              "bakeMs": 1967.6000000014901,
+              "samples": 83396,
+              "rays": 451438,
+              "bytes": 6294072
+            },
+            {
+              "key": "4:17:20261020:0,2:28d6e2ce:high",
+              "provisional": true,
+              "generationMs": 60.900000002235174,
+              "geometryMs": 17.5,
+              "bakeMs": 1056.5999999977648,
+              "samples": 75689,
+              "rays": 224519,
+              "bytes": 6122584
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": 2,
+      "cold": {
+        "id": 2,
+        "name": "Level 2",
+        "seed": 20261020,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 2316.400000002235,
+        "readyMs": 2316.400000002235,
+        "loadMs": 2339,
+        "preparationMs": 516.4000000022352,
+        "generationMs": 9.300000000745058,
+        "sceneMs": 1790.699999999255,
+        "frames": 233,
+        "cpuTotalMs": 1179.6000000350177,
+        "cpuMaxMs": 170,
+        "frameP95Ms": 17.600000001490116,
+        "metrics": {
+          "buildInfiniteChunk": {
+            "calls": 33174,
+            "cpuMs": 683.2999999932945,
+            "maxMs": 44.100000001490116
+          },
+          "warmSceneTextures": {
+            "calls": 192,
+            "cpuMs": 16.50000000745058,
+            "maxMs": 3.400000002235174
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 585.6000000014901,
+            "chunks": 0,
+            "chunkTask": "-1,0",
+            "finiteTask": false,
+            "flashlight": true,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 7,
+              "textures": 3
+            }
+          },
+          {
+            "atMs": 1785.4000000022352,
+            "chunks": 1,
+            "chunkTask": "0,0",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 39,
+              "textures": 63
+            }
+          },
+          {
+            "atMs": 1833.300000000745,
+            "chunks": 2,
+            "chunkTask": "0,-1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 41,
+              "textures": 71
+            }
+          },
+          {
+            "atMs": 1896.7000000029802,
+            "chunks": 3,
+            "chunkTask": "0,-1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 321,
+              "textures": 76
+            }
+          },
+          {
+            "atMs": 1903.6000000014901,
+            "chunks": 4,
+            "chunkTask": "1,0",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 384,
+              "textures": 76
+            }
+          },
+          {
+            "atMs": 2109.800000000745,
+            "chunks": 5,
+            "chunkTask": "1,0",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 498,
+              "textures": 109
+            }
+          },
+          {
+            "atMs": 2124.60000000149,
+            "chunks": 6,
+            "chunkTask": "1,0",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 498,
+              "textures": 120
+            }
+          },
+          {
+            "atMs": 2131.2000000029802,
+            "chunks": 7,
+            "chunkTask": "1,-1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 501,
+              "textures": 120
+            }
+          },
+          {
+            "atMs": 2316.400000002235,
+            "chunks": 8,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 0,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": true,
+            "memory": {
+              "geometries": 801,
+              "textures": 135
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 8,
+          "chunkTask": "1,1",
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 0,
+          "npcs": 0,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 801,
+            "textures": 136
+          }
+        },
+        "firstReady": {
+          "structures": 1748,
+          "lights": 292,
+          "npcs": 0,
+          "nearNpcs": 0,
+          "npcMeshes": 0,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 801,
+            "textures": 136
+          },
+          "programs": 71,
+          "drawCalls": 709,
+          "triangles": 200597,
+          "spawn": {
+            "x": 78.5,
+            "y": 79.5,
+            "z": 0
+          },
+          "mapSeed": 20261020,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 3,
+      "cold": {
+        "id": 3,
+        "name": "Level 3",
+        "seed": 20261020,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 2509,
+        "readyMs": 2509,
+        "loadMs": 2519.2000000029802,
+        "preparationMs": 432.1000000014901,
+        "generationMs": 5,
+        "sceneMs": 2071.89999999851,
+        "frames": 253,
+        "cpuTotalMs": 1401.0999999716878,
+        "cpuMaxMs": 172.29999999701977,
+        "frameP95Ms": 18.199999999254942,
+        "metrics": {
+          "buildInfiniteChunk": {
+            "calls": 37445,
+            "cpuMs": 781.6000000275671,
+            "maxMs": 98.19999999925494
+          },
+          "warmSceneTextures": {
+            "calls": 128,
+            "cpuMs": 7.300000008195639,
+            "maxMs": 3.7000000029802322
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 490.80000000074506,
+            "chunks": 0,
+            "chunkTask": "1,0",
+            "finiteTask": false,
+            "flashlight": true,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 7,
+              "textures": 3
+            }
+          },
+          {
+            "atMs": 2012.5,
+            "chunks": 2,
+            "chunkTask": "0,0",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 3,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 97,
+              "textures": 33
+            }
+          },
+          {
+            "atMs": 2033.300000000745,
+            "chunks": 3,
+            "chunkTask": "0,1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 3,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 141,
+              "textures": 34
+            }
+          },
+          {
+            "atMs": 2039.7000000029802,
+            "chunks": 4,
+            "chunkTask": "0,1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 3,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 187,
+              "textures": 34
+            }
+          },
+          {
+            "atMs": 2243.60000000149,
+            "chunks": 6,
+            "chunkTask": "1,-1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 3,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 195,
+              "textures": 36
+            }
+          },
+          {
+            "atMs": 2256.7000000029802,
+            "chunks": 8,
+            "chunkTask": "1,1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 3,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 285,
+              "textures": 36
+            }
+          },
+          {
+            "atMs": 2509,
+            "chunks": 9,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 3,
+            "npcs": 0,
+            "texturesPending": 1,
+            "ready": true,
+            "memory": {
+              "geometries": 328,
+              "textures": 54
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 9,
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 3,
+          "npcs": 0,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 328,
+            "textures": 54
+          }
+        },
+        "firstReady": {
+          "structures": 1136,
+          "lights": 372,
+          "npcs": 0,
+          "nearNpcs": 0,
+          "npcMeshes": 0,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 328,
+            "textures": 54
+          },
+          "programs": 85,
+          "drawCalls": 264,
+          "triangles": 376281,
+          "spawn": {
+            "x": 79.5,
+            "y": 79.5,
+            "z": 0
+          },
+          "mapSeed": 20261020,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 5,
+      "cold": {
+        "id": 5,
+        "name": "Level 5",
+        "seed": 20261020,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 7035.29999999702,
+        "readyMs": 7035.29999999702,
+        "loadMs": 7081.79999999702,
+        "preparationMs": 446.5,
+        "generationMs": 5.899999998509884,
+        "sceneMs": 6582.89999999851,
+        "frames": 912,
+        "cpuTotalMs": 4965.599999960512,
+        "cpuMaxMs": 280.69999999925494,
+        "frameP95Ms": 15.800000000745058,
+        "metrics": {
+          "buildInfiniteChunk": {
+            "calls": 119615,
+            "cpuMs": 3681.1000000834465,
+            "maxMs": 33.79999999701977
+          },
+          "warmSceneTextures": {
+            "calls": 404,
+            "cpuMs": 423.7999999783933,
+            "maxMs": 33.79999999701977
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 513.2999999970198,
+            "chunks": 0,
+            "chunkTask": "0,-1",
+            "finiteTask": false,
+            "flashlight": true,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 7,
+              "textures": 3
+            }
+          },
+          {
+            "atMs": 4619.29999999702,
+            "chunks": 1,
+            "chunkTask": "0,-1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 15,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 78,
+              "textures": 96
+            }
+          },
+          {
+            "atMs": 5098.199999999255,
+            "chunks": 2,
+            "chunkTask": "0,-1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 15,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 240,
+              "textures": 96
+            }
+          },
+          {
+            "atMs": 5129.79999999702,
+            "chunks": 3,
+            "chunkTask": "0,1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 15,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 308,
+              "textures": 96
+            }
+          },
+          {
+            "atMs": 5165.29999999702,
+            "chunks": 4,
+            "chunkTask": "1,-1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 15,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 610,
+              "textures": 96
+            }
+          },
+          {
+            "atMs": 5889.199999999255,
+            "chunks": 5,
+            "chunkTask": "1,-1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 15,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 923,
+              "textures": 101
+            }
+          },
+          {
+            "atMs": 6317.89999999851,
+            "chunks": 6,
+            "chunkTask": "1,-1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 15,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 923,
+              "textures": 108
+            }
+          },
+          {
+            "atMs": 6412.39999999851,
+            "chunks": 7,
+            "chunkTask": "1,-1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 15,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 923,
+              "textures": 112
+            }
+          },
+          {
+            "atMs": 6697.89999999851,
+            "chunks": 8,
+            "chunkTask": "1,1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 15,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 1227,
+              "textures": 121
+            }
+          },
+          {
+            "atMs": 7035.29999999702,
+            "chunks": 9,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": false,
+            "items": 15,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": true,
+            "memory": {
+              "geometries": 1445,
+              "textures": 148
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 9,
+          "chunkTask": "0,-2",
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": false,
+          "items": 15,
+          "npcs": 0,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 1445,
+            "textures": 149
+          }
+        },
+        "firstReady": {
+          "structures": 1964,
+          "lights": 900,
+          "npcs": 0,
+          "nearNpcs": 0,
+          "npcMeshes": 0,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 1445,
+            "textures": 149
+          },
+          "programs": 110,
+          "drawCalls": 1909,
+          "triangles": 2424616,
+          "spawn": {
+            "x": 79.5,
+            "y": 79.5,
+            "z": 0
+          },
+          "mapSeed": 20261020,
+          "ready": true
+        }
+      }
+    },
+    {
+      "id": 8,
+      "cold": {
+        "id": 8,
+        "name": "Level 8",
+        "seed": 20261020,
+        "mode": "realistic",
+        "status": "ready",
+        "elapsedMs": 3872.699999999255,
+        "readyMs": 3872.699999999255,
+        "loadMs": 3885.199999999255,
+        "preparationMs": 679.3999999985099,
+        "generationMs": 5.699999999254942,
+        "sceneMs": 3187.60000000149,
+        "frames": 502,
+        "cpuTotalMs": 1920.4000000022352,
+        "cpuMaxMs": 525,
+        "frameP95Ms": 7.899999998509884,
+        "metrics": {
+          "buildInfiniteChunk": {
+            "calls": 88062,
+            "cpuMs": 1372.1000000685453,
+            "maxMs": 519.9000000022352
+          },
+          "warmSceneTextures": {
+            "calls": 32,
+            "cpuMs": 7.800000004470348,
+            "maxMs": 2.5
+          }
+        },
+        "milestones": [
+          {
+            "atMs": 739.0999999977648,
+            "chunks": 0,
+            "chunkTask": "1,0",
+            "finiteTask": false,
+            "flashlight": true,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 7,
+              "textures": 3
+            }
+          },
+          {
+            "atMs": 2077.89999999851,
+            "chunks": 2,
+            "chunkTask": "0,0",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 47,
+              "textures": 18
+            }
+          },
+          {
+            "atMs": 2085.699999999255,
+            "chunks": 3,
+            "chunkTask": "1,-1",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 72,
+              "textures": 18
+            }
+          },
+          {
+            "atMs": 2348.5,
+            "chunks": 4,
+            "chunkTask": "0,0",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 97,
+              "textures": 18
+            }
+          },
+          {
+            "atMs": 2445.800000000745,
+            "chunks": 5,
+            "chunkTask": "0,0",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 109,
+              "textures": 18
+            }
+          },
+          {
+            "atMs": 2490.89999999851,
+            "chunks": 6,
+            "chunkTask": "0,0",
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": false,
+            "memory": {
+              "geometries": 109,
+              "textures": 18
+            }
+          },
+          {
+            "atMs": 3872.699999999255,
+            "chunks": 7,
+            "finiteTask": false,
+            "flashlight": false,
+            "moth": true,
+            "items": 1,
+            "npcs": 0,
+            "texturesPending": 0,
+            "ready": true,
+            "memory": {
+              "geometries": 126,
+              "textures": 34
+            }
+          }
+        ],
+        "pending": {
+          "chunks": 7,
+          "chunkTask": "1,1",
+          "finiteTask": false,
+          "flashlight": false,
+          "moth": true,
+          "items": 1,
+          "npcs": 0,
+          "texturesPending": 0,
+          "ready": true,
+          "memory": {
+            "geometries": 126,
+            "textures": 35
+          }
+        },
+        "firstReady": {
+          "structures": 528,
+          "lights": 18,
+          "npcs": 0,
+          "nearNpcs": 0,
+          "npcMeshes": 0,
+          "meshes": 0,
+          "instances": 0,
+          "materials": 0,
+          "memory": {
+            "geometries": 126,
+            "textures": 35
+          },
+          "programs": 74,
+          "drawCalls": 108,
+          "triangles": 85039,
+          "spawn": {
+            "x": 79.5,
+            "y": 73.5,
+            "z": 0.29825366726992397
+          },
+          "mapSeed": 20261020,
+          "ready": true
+        }
+      }
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\level-entry\\l1v3-nguithr-entry\\qa-1792492153768-19992",
+    "--remote-debugging-port=7084",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/155.0.8059.85",
+    "revision": "@0e66b94549a8bd85f03fbdf189b752d6e7b63c32",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+    "jsVersion": "15.5.35.25"
+  },
+  "pids": {
+    "server": 23504,
+    "browser": 66528
+  },
+  "setup": {
+    "mode": "realistic",
+    "viewport": [
+      1920,
+      1080
+    ],
+    "dpr": 1,
+    "seed": 424242,
+    "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "settings": {
+      "texture": 1,
+      "lights": 16,
+      "shadows": true,
+      "lightShadows": 1,
+      "loadingBudget": 6,
+      "chunkBudget": 3,
+      "detail": 1,
+      "bloom": true,
+      "ao": 1
+    },
+    "hardwareConcurrency": 32
+  },
+  "ok": true,
+  "cleanup": {
+    "browserExit": "SIGTERM",
+    "serverExit": "SIGTERM",
+    "profileRemoved": true
+  },
+  "errors": [],
+  "networkErrors": [
+    {
+      "requestId": "66208.484",
+      "loaderId": "058CCEAE53A43A33C83D8DF91F70360B",
+      "timestamp": 24127.76624,
+      "type": "Other",
+      "response": {
+        "url": "http://127.0.0.1:7083/favicon.ico",
+        "status": 404,
+        "statusText": "Not Found",
+        "headers": {
+          "Keep-Alive": "timeout=5",
+          "Content-Length": "0",
+          "Date": "Tue, 20 Oct 2026 10:29:28 GMT",
+          "Vary": "Origin",
+          "Connection": "keep-alive"
+        },
+        "mimeType": "text/plain",
+        "charset": "",
+        "connectionReused": true,
+        "connectionId": 176,
+        "remoteIPAddress": "127.0.0.1",
+        "remotePort": 7083,
+        "fromDiskCache": false,
+        "fromServiceWorker": false,
+        "fromPrefetchCache": false,
+        "encodedDataLength": 143,
+        "timing": {
+          "requestTime": 24127.756822,
+          "proxyStart": -1,
+          "proxyEnd": -1,
+          "dnsStart": -1,
+          "dnsEnd": -1,
+          "connectStart": -1,
+          "connectEnd": -1,
+          "sslStart": -1,
+          "sslEnd": -1,
+          "workerStart": -1,
+          "workerReady": -1,
+          "workerFetchStart": -1,
+          "workerRespondWithSettled": -1,
+          "sendStart": 0.545,
+          "sendEnd": 0.609,
+          "pushStart": 0,
+          "pushEnd": 0,
+          "receiveHeadersStart": 8.824,
+          "receiveHeadersEnd": 8.954
+        },
+        "responseTime": 1792492168663.652,
+        "protocol": "http/1.1",
+        "alternateProtocolUsage": "unspecifiedReason",
+        "securityState": "secure"
+      },
+      "hasExtraInfo": true,
+      "frameId": "9BF4CB2C758D4FB05DF13631DC61B3BA"
+    }
+  ]
+}

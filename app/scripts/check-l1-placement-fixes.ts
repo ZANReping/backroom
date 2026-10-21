@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import {createCanvas} from '@napi-rs/canvas'
 import {mkdirSync,writeFileSync} from 'node:fs'
 import * as THREE from 'three'
 import {genL1ChunkRaw} from '../src/game/world/infiniteL1'
@@ -13,6 +14,7 @@ import {regionHost} from '../src/game/world/infinite'
 import {layoutL1BakeCharts} from '../src/game/world/l1Bake'
 import {buildL1OutpostEntrance,type L1OutpostOrg} from '../src/game/renderer/l1OutpostEntrance'
 
+Object.defineProperty(globalThis,'document',{value:{createElement:()=>createCanvas(512,512),createElementNS:()=>({})}})
 let checks=0;const counts={chunks:0,columns:0,wallColumns:0,exits:0,wallProps:0,outposts:0},cases:Record<string,unknown>={}
 function ok(value:unknown,message:string){assert(value,message);checks++}
 const overlap=(b:any,x:number,z:number,r=.2)=>b.solid&&b.min[1]<1.8&&b.max[1]>.05&&x+r>b.min[0]&&x-r<b.max[0]&&z+r>b.min[2]&&z-r<b.max[2]

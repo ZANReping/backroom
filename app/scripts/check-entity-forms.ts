@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import { ENTITIES, ENTITY_FORMS, entityForm, entityForms, makeEntity } from '../src/game/entities'
+import { initWrangler } from '../src/game/engine/wranglerAI'
 import { initHound } from '../src/game/engine/houndAI'
 import { initDuller } from '../src/game/engine/dullerAI'
 import { initSkinStealer } from '../src/game/engine/skinStealerAI'
@@ -12,8 +13,8 @@ const eq = (a: unknown, b: unknown, msg: string) => { assert.deepEqual(a, b, msg
 
 const parents = Object.keys(ENTITY_FORMS)
 const forms = parents.flatMap(type => entityForms(type).map(form => ({ type, form })))
-eq(forms.length, 33, 'forms registry has 33 entries')
-eq(parents.length, 9, 'forms registry has 9 parent entities')
+eq(forms.length, 36, 'forms registry has 36 entries including wrangler')
+eq(parents.length, 10, 'forms registry has 10 parent entities')
 eq(entityForms('duller').length, 0, 'duller has no registered subforms')
 eq(entityForms('clump').length, 2, 'clump has common and intelligent subforms')
 eq(entityForms('faceling').length, 2, 'faceling has common and hostile subforms')
@@ -62,4 +63,7 @@ for (let n=0;n<30;n++) {
   initWretch(engine(1),e)
   eq(e.wr?.kind,expected,'unselected wretch retains deterministic natural kind')
 }
+
+for(const kind of ['male','female','juvenile'] as const){const e=makeEntity('wrangler',0,0,0,`wrangler-${kind}`);initWrangler(engine(8),e);eq(e.wg?.kind,kind,`${kind} explicit wrangler form initializes requested AI kind`)}
+
 console.log(`entity forms checks: ${checks} passed; ${forms.length} forms / ${parents.length} parents`)

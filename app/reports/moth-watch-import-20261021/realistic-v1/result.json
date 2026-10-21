@@ -1,0 +1,1208 @@
+{
+  "before": false,
+  "seed": 20261006,
+  "mode": "realistic",
+  "port": 14022,
+  "cdp": 14023,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://127.0.0.1:14022/favicon.ico",
+      "status": 404,
+      "statusText": "Not Found",
+      "headers": {
+        "Keep-Alive": "timeout=5",
+        "Content-Length": "0",
+        "Date": "Wed, 21 Oct 2026 08:44:17 GMT",
+        "Vary": "Origin",
+        "Connection": "keep-alive"
+      },
+      "mimeType": "text/plain",
+      "charset": "",
+      "connectionReused": true,
+      "connectionId": 116,
+      "remoteIPAddress": "127.0.0.1",
+      "remotePort": 14022,
+      "fromDiskCache": false,
+      "fromServiceWorker": false,
+      "fromPrefetchCache": false,
+      "encodedDataLength": 143,
+      "timing": {
+        "requestTime": 104225.754821,
+        "proxyStart": -1,
+        "proxyEnd": -1,
+        "dnsStart": -1,
+        "dnsEnd": -1,
+        "connectStart": -1,
+        "connectEnd": -1,
+        "sslStart": -1,
+        "sslEnd": -1,
+        "workerStart": -1,
+        "workerReady": -1,
+        "workerFetchStart": -1,
+        "workerRespondWithSettled": -1,
+        "sendStart": 0.487,
+        "sendEnd": 0.526,
+        "pushStart": 0,
+        "pushEnd": 0,
+        "receiveHeadersStart": 91.465,
+        "receiveHeadersEnd": 91.693
+      },
+      "responseTime": 1792572257284.79,
+      "protocol": "http/1.1",
+      "alternateProtocolUsage": "unspecifiedReason",
+      "securityState": "secure"
+    }
+  ],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\moth-watch-import-20261021\\realistic-v1\\qa-1792572238915-67648",
+    "--remote-debugging-port=14023",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 60824,
+    "server": 67928
+  },
+  "appBootMs": 16744.6052,
+  "entryMs": 4356.1302,
+  "firstPlayableMs": 32885.1746,
+  "initial": {
+    "level": 9,
+    "paused": false,
+    "near": true,
+    "chunks": 6,
+    "tasks": 4,
+    "memory": {
+      "geometries": 884,
+      "textures": 157,
+      "programs": 79
+    },
+    "active": []
+  },
+  "setup": {
+    "base": {
+      "x": 66.5,
+      "y": 79.5
+    },
+    "world": [
+      2.5,
+      15.5
+    ],
+    "level": 9,
+    "paused": true,
+    "near": true,
+    "chunks": 6,
+    "tasks": 4,
+    "memory": {
+      "geometries": 884,
+      "textures": 157,
+      "programs": 79
+    },
+    "active": []
+  },
+  "scenes": [
+    {
+      "name": "watcher",
+      "type": "watcher",
+      "detail": {
+        "prepareMs": 472.09999999403954,
+        "budget": {
+          "meshes": 2,
+          "draws": 6,
+          "tris": 13216,
+          "bones": 21
+        },
+        "memory": {
+          "geometries": 943,
+          "textures": 158,
+          "programs": 82
+        },
+        "skins": 1
+      },
+      "finalBudget": {
+        "meshes": 2,
+        "draws": 6,
+        "tris": 13216,
+        "bones": 21
+      },
+      "player": [
+        66.5,
+        79.5,
+        0
+      ],
+      "entity": [
+        72.5,
+        79.5,
+        0
+      ],
+      "look": {
+        "yaw": -1.5707963267948966,
+        "pitch": 0.02166327718921949,
+        "locked": false,
+        "rayX": 0.9997653603872438,
+        "rayY": 0,
+        "rayZ": 0.021661582808390263,
+        "visualHit": null,
+        "roll": 0
+      },
+      "mode": "realistic"
+    },
+    {
+      "name": "watcher-beam",
+      "type": "watcher",
+      "detail": {
+        "prepareMs": 340.09999999403954,
+        "budget": {
+          "meshes": 3,
+          "draws": 7,
+          "tris": 13240,
+          "bones": 21
+        },
+        "memory": {
+          "geometries": 1025,
+          "textures": 158,
+          "programs": 83
+        },
+        "skins": 1
+      },
+      "finalBudget": {
+        "meshes": 3,
+        "draws": 7,
+        "tris": 13240,
+        "bones": 21
+      },
+      "player": [
+        66.5,
+        79.5,
+        0
+      ],
+      "entity": [
+        72.5,
+        79.5,
+        0
+      ],
+      "look": {
+        "yaw": -1.5707963267948966,
+        "pitch": 0.02166327718921949,
+        "locked": false,
+        "rayX": 0.9997653603872438,
+        "rayY": 0,
+        "rayZ": 0.021661582808390263,
+        "visualHit": null,
+        "roll": 0
+      },
+      "mode": "realistic"
+    },
+    {
+      "name": "strider",
+      "type": "strider",
+      "detail": {
+        "prepareMs": 411.20000000298023,
+        "budget": {
+          "meshes": 1,
+          "draws": 5,
+          "tris": 13514,
+          "bones": 34
+        },
+        "memory": {
+          "geometries": 1571,
+          "textures": 186,
+          "programs": 84
+        },
+        "skins": 1
+      },
+      "finalBudget": {
+        "meshes": 1,
+        "draws": 5,
+        "tris": 13514,
+        "bones": 34
+      },
+      "player": [
+        66.5,
+        79.5,
+        0
+      ],
+      "entity": [
+        72.2,
+        79.5,
+        0
+      ],
+      "look": {
+        "yaw": -1.5707963267948966,
+        "pitch": 0.03156845648777804,
+        "locked": false,
+        "rayX": 0.9995017576572264,
+        "rayY": 0,
+        "rayZ": 0.03156321339970186,
+        "visualHit": null,
+        "roll": 0
+      },
+      "mode": "realistic"
+    },
+    {
+      "name": "mangled",
+      "type": "mangled",
+      "detail": {
+        "prepareMs": 559.7999999970198,
+        "budget": {
+          "meshes": 5,
+          "draws": 6,
+          "tris": 74872,
+          "bones": 364
+        },
+        "memory": {
+          "geometries": 1665,
+          "textures": 186,
+          "programs": 84
+        },
+        "skins": 4
+      },
+      "finalBudget": {
+        "meshes": 5,
+        "draws": 6,
+        "tris": 190672,
+        "bones": 364
+      },
+      "player": [
+        66.5,
+        79.5,
+        0
+      ],
+      "entity": [
+        91.5,
+        79.5,
+        0
+      ],
+      "look": {
+        "yaw": -1.5707963267948966,
+        "pitch": 0.5515210659147594,
+        "locked": false,
+        "rayX": 0.8517284944201988,
+        "rayY": 0,
+        "rayZ": 0.5239833697673062,
+        "visualHit": null,
+        "roll": 0
+      },
+      "mode": "realistic"
+    },
+    {
+      "name": "moth-male",
+      "type": "deathmoth",
+      "form": "male",
+      "detail": {
+        "prepareMs": 515.5,
+        "budget": {
+          "meshes": 1,
+          "draws": 4,
+          "tris": 6384,
+          "bones": 37
+        },
+        "memory": {
+          "geometries": 1756,
+          "textures": 186,
+          "programs": 88
+        },
+        "skins": 1
+      },
+      "finalBudget": {
+        "meshes": 1,
+        "draws": 4,
+        "tris": 6384,
+        "bones": 37
+      },
+      "player": [
+        66.5,
+        79.5,
+        0
+      ],
+      "entity": [
+        67.7,
+        79.5,
+        1.05
+      ],
+      "look": {
+        "yaw": -1.5707963267948966,
+        "pitch": -0.4434483364197373,
+        "locked": false,
+        "rayX": 0.9032775043542903,
+        "rayY": -1.1102230246251568e-16,
+        "rayZ": -0.4290568145682869,
+        "visualHit": null,
+        "roll": 0
+      },
+      "mode": "realistic"
+    },
+    {
+      "name": "moth-female",
+      "type": "deathmoth",
+      "form": "female",
+      "detail": {
+        "prepareMs": 498.90000000596046,
+        "budget": {
+          "meshes": 1,
+          "draws": 4,
+          "tris": 6568,
+          "bones": 38
+        },
+        "memory": {
+          "geometries": 1794,
+          "textures": 204,
+          "programs": 88
+        },
+        "skins": 1
+      },
+      "finalBudget": {
+        "meshes": 1,
+        "draws": 4,
+        "tris": 6568,
+        "bones": 38
+      },
+      "player": [
+        66.5,
+        79.5,
+        0
+      ],
+      "entity": [
+        67.7,
+        79.5,
+        1.05
+      ],
+      "look": {
+        "yaw": -1.5707963267948966,
+        "pitch": -0.4434483364197373,
+        "locked": false,
+        "rayX": 0.9032775043542903,
+        "rayY": -1.1102230246251568e-16,
+        "rayZ": -0.4290568145682869,
+        "visualHit": null,
+        "roll": 0
+      },
+      "mode": "realistic"
+    },
+    {
+      "name": "moth-guard",
+      "type": "deathmoth",
+      "form": "guard",
+      "detail": {
+        "prepareMs": 566.5,
+        "budget": {
+          "meshes": 1,
+          "draws": 4,
+          "tris": 11427,
+          "bones": 52
+        },
+        "memory": {
+          "geometries": 2045,
+          "textures": 222,
+          "programs": 88
+        },
+        "skins": 1
+      },
+      "finalBudget": {
+        "meshes": 1,
+        "draws": 4,
+        "tris": 11427,
+        "bones": 52
+      },
+      "player": [
+        66.5,
+        79.5,
+        0
+      ],
+      "entity": [
+        68.1,
+        79.5,
+        0
+      ],
+      "look": {
+        "yaw": -1.5707963267948966,
+        "pitch": -0.5894435247405307,
+        "locked": false,
+        "rayX": 0.8312501515722681,
+        "rayY": -1.1102230246251568e-16,
+        "rayZ": -0.5558985388639563,
+        "visualHit": null,
+        "roll": 0
+      },
+      "mode": "realistic"
+    },
+    {
+      "name": "moth-larva",
+      "type": "deathmoth",
+      "form": "larva",
+      "detail": {
+        "prepareMs": 354.70000000298023,
+        "budget": {
+          "meshes": 1,
+          "draws": 4,
+          "tris": 7344,
+          "bones": 13
+        },
+        "memory": {
+          "geometries": 2045,
+          "textures": 222,
+          "programs": 88
+        },
+        "skins": 1
+      },
+      "finalBudget": {
+        "meshes": 1,
+        "draws": 4,
+        "tris": 7344,
+        "bones": 13
+      },
+      "player": [
+        66.5,
+        79.5,
+        0
+      ],
+      "entity": [
+        67.3,
+        79.5,
+        0
+      ],
+      "look": {
+        "yaw": -1.5707963267948966,
+        "pitch": -1.0982431008191265,
+        "locked": false,
+        "rayX": 0.4551611820447542,
+        "rayY": -2.2204460492503136e-16,
+        "rayZ": -0.8904090623750538,
+        "visualHit": null,
+        "roll": 0
+      },
+      "mode": "realistic"
+    }
+  ],
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: actual consume animation completion tames one male and consumes exactly one bottle\",\"lineNumber\":22,\"columnNumber\":19,\"scriptId\":\"598\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"ok\",\"scriptId\":\"598\",\"url\":\"http://127.0.0.1:14022/verifier/moth-watch-check.ts\",\"lineNumber\":21,\"columnNumber\":18},{\"functionName\":\"mechanics\",\"scriptId\":\"598\",\"url\":\"http://127.0.0.1:14022/verifier/moth-watch-check.ts\",\"lineNumber\":213,\"columnNumber\":4}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: actual consume animation completion tames one male and consumes exactly one bottle\\n    at ok (http://127.0.0.1:14022/verifier/moth-watch-check.ts:22:19)\\n    at Object.mechanics (http://127.0.0.1:14022/verifier/moth-watch-check.ts:214:5)\",\"objectId\":\"-4819433801671640461.2.1\"}}",
+  "partial": {
+    "checks": [
+      "real Level 9 has a collision-safe outdoor road",
+      "native GPU skins shown: watcher/",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "native GPU skins shown: watcher/",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "native GPU skins shown: strider/",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "native GPU skins shown: mangled/",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "native GPU skins shown: deathmoth/male",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "native GPU skins shown: deathmoth/female",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "native GPU skins shown: deathmoth/guard",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "native GPU skins shown: deathmoth/larva",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "native GPU skins shown: watcher/",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "watcher beam has warning and deals non-instant damage through actual Engine loop",
+      "native GPU skins shown: strider/",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "strider reaches and grabs in the running game",
+      "actual movement jump-edge struggle releases player alive",
+      "native GPU skins shown: deathmoth/male",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "finite GPU skin vertices",
+      "real inventory begins almond feeding"
+    ],
+    "records": [
+      {
+        "name": "watcher",
+        "type": "watcher",
+        "detail": {
+          "prepareMs": 472.09999999403954,
+          "budget": {
+            "meshes": 2,
+            "draws": 6,
+            "tris": 13216,
+            "bones": 21
+          },
+          "memory": {
+            "geometries": 943,
+            "textures": 158,
+            "programs": 82
+          },
+          "skins": 1
+        },
+        "finalBudget": {
+          "meshes": 2,
+          "draws": 6,
+          "tris": 13216,
+          "bones": 21
+        },
+        "player": [
+          66.5,
+          79.5,
+          0
+        ],
+        "entity": [
+          72.5,
+          79.5,
+          0
+        ],
+        "look": {
+          "yaw": -1.5707963267948966,
+          "pitch": 0.02166327718921949,
+          "locked": false,
+          "rayX": 0.9997653603872438,
+          "rayY": 0,
+          "rayZ": 0.021661582808390263,
+          "visualHit": null,
+          "roll": 0
+        },
+        "mode": "realistic"
+      },
+      {
+        "name": "watcher-beam",
+        "type": "watcher",
+        "detail": {
+          "prepareMs": 340.09999999403954,
+          "budget": {
+            "meshes": 3,
+            "draws": 7,
+            "tris": 13240,
+            "bones": 21
+          },
+          "memory": {
+            "geometries": 1025,
+            "textures": 158,
+            "programs": 83
+          },
+          "skins": 1
+        },
+        "finalBudget": {
+          "meshes": 3,
+          "draws": 7,
+          "tris": 13240,
+          "bones": 21
+        },
+        "player": [
+          66.5,
+          79.5,
+          0
+        ],
+        "entity": [
+          72.5,
+          79.5,
+          0
+        ],
+        "look": {
+          "yaw": -1.5707963267948966,
+          "pitch": 0.02166327718921949,
+          "locked": false,
+          "rayX": 0.9997653603872438,
+          "rayY": 0,
+          "rayZ": 0.021661582808390263,
+          "visualHit": null,
+          "roll": 0
+        },
+        "mode": "realistic"
+      },
+      {
+        "name": "strider",
+        "type": "strider",
+        "detail": {
+          "prepareMs": 411.20000000298023,
+          "budget": {
+            "meshes": 1,
+            "draws": 5,
+            "tris": 13514,
+            "bones": 34
+          },
+          "memory": {
+            "geometries": 1571,
+            "textures": 186,
+            "programs": 84
+          },
+          "skins": 1
+        },
+        "finalBudget": {
+          "meshes": 1,
+          "draws": 5,
+          "tris": 13514,
+          "bones": 34
+        },
+        "player": [
+          66.5,
+          79.5,
+          0
+        ],
+        "entity": [
+          72.2,
+          79.5,
+          0
+        ],
+        "look": {
+          "yaw": -1.5707963267948966,
+          "pitch": 0.03156845648777804,
+          "locked": false,
+          "rayX": 0.9995017576572264,
+          "rayY": 0,
+          "rayZ": 0.03156321339970186,
+          "visualHit": null,
+          "roll": 0
+        },
+        "mode": "realistic"
+      },
+      {
+        "name": "mangled",
+        "type": "mangled",
+        "detail": {
+          "prepareMs": 559.7999999970198,
+          "budget": {
+            "meshes": 5,
+            "draws": 6,
+            "tris": 74872,
+            "bones": 364
+          },
+          "memory": {
+            "geometries": 1665,
+            "textures": 186,
+            "programs": 84
+          },
+          "skins": 4
+        },
+        "finalBudget": {
+          "meshes": 5,
+          "draws": 6,
+          "tris": 190672,
+          "bones": 364
+        },
+        "player": [
+          66.5,
+          79.5,
+          0
+        ],
+        "entity": [
+          91.5,
+          79.5,
+          0
+        ],
+        "look": {
+          "yaw": -1.5707963267948966,
+          "pitch": 0.5515210659147594,
+          "locked": false,
+          "rayX": 0.8517284944201988,
+          "rayY": 0,
+          "rayZ": 0.5239833697673062,
+          "visualHit": null,
+          "roll": 0
+        },
+        "mode": "realistic"
+      },
+      {
+        "name": "moth-male",
+        "type": "deathmoth",
+        "form": "male",
+        "detail": {
+          "prepareMs": 515.5,
+          "budget": {
+            "meshes": 1,
+            "draws": 4,
+            "tris": 6384,
+            "bones": 37
+          },
+          "memory": {
+            "geometries": 1756,
+            "textures": 186,
+            "programs": 88
+          },
+          "skins": 1
+        },
+        "finalBudget": {
+          "meshes": 1,
+          "draws": 4,
+          "tris": 6384,
+          "bones": 37
+        },
+        "player": [
+          66.5,
+          79.5,
+          0
+        ],
+        "entity": [
+          67.7,
+          79.5,
+          1.05
+        ],
+        "look": {
+          "yaw": -1.5707963267948966,
+          "pitch": -0.4434483364197373,
+          "locked": false,
+          "rayX": 0.9032775043542903,
+          "rayY": -1.1102230246251568e-16,
+          "rayZ": -0.4290568145682869,
+          "visualHit": null,
+          "roll": 0
+        },
+        "mode": "realistic"
+      },
+      {
+        "name": "moth-female",
+        "type": "deathmoth",
+        "form": "female",
+        "detail": {
+          "prepareMs": 498.90000000596046,
+          "budget": {
+            "meshes": 1,
+            "draws": 4,
+            "tris": 6568,
+            "bones": 38
+          },
+          "memory": {
+            "geometries": 1794,
+            "textures": 204,
+            "programs": 88
+          },
+          "skins": 1
+        },
+        "finalBudget": {
+          "meshes": 1,
+          "draws": 4,
+          "tris": 6568,
+          "bones": 38
+        },
+        "player": [
+          66.5,
+          79.5,
+          0
+        ],
+        "entity": [
+          67.7,
+          79.5,
+          1.05
+        ],
+        "look": {
+          "yaw": -1.5707963267948966,
+          "pitch": -0.4434483364197373,
+          "locked": false,
+          "rayX": 0.9032775043542903,
+          "rayY": -1.1102230246251568e-16,
+          "rayZ": -0.4290568145682869,
+          "visualHit": null,
+          "roll": 0
+        },
+        "mode": "realistic"
+      },
+      {
+        "name": "moth-guard",
+        "type": "deathmoth",
+        "form": "guard",
+        "detail": {
+          "prepareMs": 566.5,
+          "budget": {
+            "meshes": 1,
+            "draws": 4,
+            "tris": 11427,
+            "bones": 52
+          },
+          "memory": {
+            "geometries": 2045,
+            "textures": 222,
+            "programs": 88
+          },
+          "skins": 1
+        },
+        "finalBudget": {
+          "meshes": 1,
+          "draws": 4,
+          "tris": 11427,
+          "bones": 52
+        },
+        "player": [
+          66.5,
+          79.5,
+          0
+        ],
+        "entity": [
+          68.1,
+          79.5,
+          0
+        ],
+        "look": {
+          "yaw": -1.5707963267948966,
+          "pitch": -0.5894435247405307,
+          "locked": false,
+          "rayX": 0.8312501515722681,
+          "rayY": -1.1102230246251568e-16,
+          "rayZ": -0.5558985388639563,
+          "visualHit": null,
+          "roll": 0
+        },
+        "mode": "realistic"
+      },
+      {
+        "name": "moth-larva",
+        "type": "deathmoth",
+        "form": "larva",
+        "detail": {
+          "prepareMs": 354.70000000298023,
+          "budget": {
+            "meshes": 1,
+            "draws": 4,
+            "tris": 7344,
+            "bones": 13
+          },
+          "memory": {
+            "geometries": 2045,
+            "textures": 222,
+            "programs": 88
+          },
+          "skins": 1
+        },
+        "finalBudget": {
+          "meshes": 1,
+          "draws": 4,
+          "tris": 7344,
+          "bones": 13
+        },
+        "player": [
+          66.5,
+          79.5,
+          0
+        ],
+        "entity": [
+          67.3,
+          79.5,
+          0
+        ],
+        "look": {
+          "yaw": -1.5707963267948966,
+          "pitch": -1.0982431008191265,
+          "locked": false,
+          "rayX": 0.4551611820447542,
+          "rayY": -2.2204460492503136e-16,
+          "rayZ": -0.8904090623750538,
+          "visualHit": null,
+          "roll": 0
+        },
+        "mode": "realistic"
+      }
+    ],
+    "status": {
+      "level": 9,
+      "paused": false,
+      "near": true,
+      "chunks": 23,
+      "tasks": 0,
+      "memory": {
+        "geometries": 2057,
+        "textures": 223,
+        "programs": 90
+      },
+      "active": [
+        {
+          "type": "deathmoth",
+          "form": "male",
+          "visible": true,
+          "pending": false
+        }
+      ]
+    }
+  },
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 12961.90000000596
+    },
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\nLEVEL 9\n郊区\nB9\n磁带\n0/6\n午夜森林\n100%\n六声落点停了一下，然后变得更快。\n附肢朝你甩了过来！\n附肢缠住了你，把你往外拖！连按 跳跃/攻击/交互 挣脱！\n你蹬开了缠在身上的附肢，滚落在地。\n使用了 杏仁水\n杏仁水\n1\n2\n3\n4\n5\n6\n7\n左键\n攻击\n空格\n跳跃\nC\n蹲伏\nF\n手电\n右键\n使用\nQ\n丢弃\nV\n检视\n左Alt\n收起主手\n➤\n你感觉到明显的气流（1m）\n开发者模式\n🛠 开发者模式 · DEV\n▴"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

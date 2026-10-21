@@ -1,0 +1,128 @@
+{
+  "ok": true,
+  "groups": 16,
+  "rerunGroups": 7,
+  "results": [
+    {
+      "command": "check:ouro-import",
+      "exit": 0,
+      "elapsedMs": 3404.6709,
+      "log": "check-ouro-import.log",
+      "ok": true
+    },
+    {
+      "command": "check:l1-v2",
+      "exit": 0,
+      "elapsedMs": 24997.4074,
+      "log": "check-l1-v2.log",
+      "ok": true
+    },
+    {
+      "command": "check:l1-d-import",
+      "exit": 0,
+      "elapsedMs": 4380.281100000004,
+      "log": "check-l1-d-import.log",
+      "ok": true
+    },
+    {
+      "command": "check:l1v3-nguithr",
+      "exit": 0,
+      "elapsedMs": 3091.386900000005,
+      "log": "check-l1v3-nguithr.log",
+      "ok": true
+    },
+    {
+      "command": "check:l1-progressive",
+      "exit": 0,
+      "elapsedMs": 18847.3792,
+      "log": "check-l1-progressive.log",
+      "ok": true,
+      "retainedFromFirstPass": true
+    },
+    {
+      "command": "check:l1-offline",
+      "exit": 0,
+      "elapsedMs": 5562.2880000000005,
+      "log": "check-l1-offline.log",
+      "ok": true,
+      "retainedFromFirstPass": true
+    },
+    {
+      "command": "check:l1-placement-fixes",
+      "exit": 0,
+      "elapsedMs": 23494.722700000006,
+      "log": "check-l1-placement-fixes.log",
+      "ok": true
+    },
+    {
+      "command": "check:l1-interactions",
+      "exit": 0,
+      "elapsedMs": 2809.794600000001,
+      "log": "check-l1-interactions.log",
+      "ok": true
+    },
+    {
+      "command": "check:arms",
+      "exit": 0,
+      "elapsedMs": 43742.6882,
+      "log": "check-arms.log",
+      "ok": true
+    },
+    {
+      "command": "check:arms-integration",
+      "exit": 0,
+      "elapsedMs": 1706.5262000000075,
+      "log": "check-arms-integration.log",
+      "ok": true,
+      "retainedFromFirstPass": true
+    },
+    {
+      "command": "check:nguithr",
+      "exit": 0,
+      "elapsedMs": 17665.164799999984,
+      "log": "check-nguithr.log",
+      "ok": true,
+      "retainedFromFirstPass": true
+    },
+    {
+      "command": "check:model-warmup",
+      "exit": 0,
+      "elapsedMs": 1063.9627000000037,
+      "log": "check-model-warmup.log",
+      "ok": true,
+      "retainedFromFirstPass": true
+    },
+    {
+      "command": "check:program-completion",
+      "exit": 0,
+      "elapsedMs": 1037.3640000000014,
+      "log": "check-program-completion.log",
+      "ok": true,
+      "retainedFromFirstPass": true
+    },
+    {
+      "command": "check:entity-preparation",
+      "exit": 0,
+      "elapsedMs": 1477.3178999999946,
+      "log": "check-entity-preparation.log",
+      "ok": true,
+      "retainedFromFirstPass": true
+    },
+    {
+      "command": "check:shrimp-item-cache",
+      "exit": 0,
+      "elapsedMs": 1688.4947000000102,
+      "log": "check-shrimp-item-cache.log",
+      "ok": true,
+      "retainedFromFirstPass": true
+    },
+    {
+      "command": "check:entity-forms",
+      "exit": 0,
+      "elapsedMs": 1365.4679999999935,
+      "log": "check-entity-forms.log",
+      "ok": true,
+      "retainedFromFirstPass": true
+    }
+  ]
+}

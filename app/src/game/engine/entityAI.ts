@@ -1,5 +1,7 @@
+import { isWrangler, updateWrangler, wranglerHear } from './wranglerAI'
 import { stableAt } from './career'
-import { updateMothDoors, updateNestMoth } from './moths'
+import { updateMothDoors } from './moths'
+import { updateMoth, updateMothWorld } from './mothAI'
 // v53：实体 AI 步进（状态机/游荡/撞墙偏转/hunts 猎杀/provoked 激怒/群体激怒/圣所威慑/售货机活化）
 // + 感知判定（los/视线锥/噪音事件/光照）——自 engine.ts 拆分，逻辑逐语句搬运。
 import { caveCeilingAt, floorHeight, structBlocksPoint, tileAt, tileH, walkableAt, wallAt, solidStructAtFloor, bandOfZ, bandOfPlayerZ, stairServesBand, upAt, upWallAt, FLOOR_H, JUMP_REACH, UNDER_FLOOR, type GameMap } from '../world/mapgen'
@@ -19,6 +21,8 @@ import { beginDullerFrame, updateDuller } from './dullerAI'
 import { beginSkinStealerFrame, updateSkinStealer } from './skinStealerAI'
 import { updateWretch, wretchHear } from './wretchAI'
 import {updateJerryEntity} from './jerryAI'
+import { isNW, nwHear, updateNW } from './watchAI'
+import { armsHear, armsRevive, updateArmsEntity } from './armsAI'
 import { updateRat, updateRatGear } from './ratAI'
 import { updateShrimp, devourShrimp } from './shrimpAI'
 import { beginSmilerFrame, flushSmilerSpawns, smilerHear, updateSmiler } from './smilerAI'
@@ -51,6 +55,7 @@ export function isLit(eng: Engine, x: number, y: number): boolean {
 }
 
 export function noiseEvent(eng: Engine, x: number, y: number, radius: number, sprint: boolean) {
+  armsHear(eng, x, y, radius, sprint) // 手臂：风口听得见的响动累计到噪音计（stationary，不走下面的通用循环）
   eng.playerNoiseT = 0.8 // 玩家噪音残余计时（猎犬威慑「持续发声」判定；脚步/挥击/搜索等都会刷新）
   for (const e of eng.map!.entities) {
     if (e.dead || e.def.stationary) continue
@@ -76,8 +81,10 @@ export function noiseEvent(eng: Engine, x: number, y: number, radius: number, sp
       }
       continue
     }
+    if (isWrangler(e.def.type)) { wranglerHear(eng, e, x, y, radius, sprint); continue }
     if (e.def.type === 'smiler') { smilerHear(eng, e, x, y, radius, sprint); continue }
     if (e.def.type === 'hound') { houndHear(eng, e, x, y, radius, sprint); continue }
+    if (isNW(e.def.type)) { nwHear(eng, e, x, y, radius, sprint); continue } // 邻里守望/残缺者专属感知（watchAI）
     if (e.def.type === 'clump') { clumpHear(eng, e, x, y, radius, sprint); continue } // v64：肢团专属听觉（clumpAI）
     if (e.def.type === 'partygoer') { partygoerHear(eng, e, x, y, radius, sprint); continue } // 派对客专属听觉（近视、以听觉为主）
     if (e.def.type === 'duller') continue // Dedicated stalking; ordinary noise never forces a chase.
@@ -210,6 +217,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
     return
   }
   updateMothDoors(eng)
+  updateMothWorld(eng, dt) // 死亡飞蛾：失血、酸池、踩卵、胶状球
   beginSmilerFrame(eng, dt, lightOn)
   beginHoundFrame(eng, dt)
   beginClumpFrame(eng, dt)
@@ -220,6 +228,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
   if(eng.levelDef.id===11)beginL11FacelingFrame(m)
   for (const e of m.entities) {
     // 死亡动画计时（倒地/消散后移除）
+    if (e.dead && e.def.type === 'arms') armsRevive(eng, e) // 手臂永不死亡（兜底：其它系统直接写 dead 时转为「被赶走」）
     if (e.dead) { e.deathT -= dt; continue }
     if (e.presentationPending) continue
     if (e.l10BurrowT !== undefined) {
@@ -254,10 +263,12 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
     const def = e.def
     if (e.targetEnt?.dead) e.targetEnt = undefined
     if (def.aquatic) updateAquaticDepth(eng, e, dt)
-    if (def.flying) updateFlyingAltitude(eng, e, dt)
-    if (updateNestMoth(eng,e,dt,d,dmgMult)) continue
-    // v51：Nguithr'xurh（Entity 16）——天花板网囊陷阱专属状态机
+    if (def.flying && !(def.type === 'deathmoth' && e.mt?.mode === 'feed')) updateFlyingAltitude(eng, e, dt)
+    if (updateMoth(eng, e, dt, d, dmgMult)) continue // 死亡飞蛾重制：四种形态的专属 AI（engine/mothAI.ts）
+    // Nguithr'xurh（Entity 16）重制：两段式伏击状态机（engine/nguithrAI.ts）
     if (def.type === 'nguithr') { eng.updateNguithr(e, d, dt); continue }
+    // 手臂（Entité 15-FR）重制：黑暗 + 噪音诱发、抓人拖走、从别处吐出；只能用光赶走（engine/armsAI.ts）
+    if (def.type === 'arms') { updateArmsEntity(eng, e, dt, dmgMult); continue }
     // 猎犬威慑：玩家「实时直视 + 持续制造噪音」才定身——逐帧刷新 stunT，
     // 停止发声或移开视线即不再刷新，猎犬在 0.25s 内恢复行动（对已在追击的猎犬同样有效）
     if (def.intimidatable) {
@@ -275,6 +286,8 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
       }
     }
     if (e.stunT > 0) { e.stunT -= dt; if(e.sm){e.sm.strikeT=undefined;e.sm.strikeAge=undefined;e.state='stunned'} continue }
+    // 重制牧蛇：岩层潜行/切出/催眠/吞咽传送/雌性啃岩/幼体（wranglerAI；不走通用状态机）
+    if (isWrangler(def.type)) { updateWrangler(eng, e, dt, d); continue }
 
     // v51：L3 圣所威慑——实体畏惧天使雕像：不进入圣所 chunk 及其八邻（含入口走廊）。
     // 踏上圣所邻域/tint 20 瓦片的实体立刻以 ×1.4 速度逃向最近的非圣所可走瓦片，
@@ -316,26 +329,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
     if (!e.targetEnt && (e.state === 'chase' || e.state === 'attack'
       || (e.state === 'investigate' && Math.hypot(e.targetX - p.x, e.targetY - p.y) < 2))) recordEntityEncounter(e)
 
-    // 手臂：蛰伏于天花板通风管（hidden=缩回管内）；层级灯光熄灭时伸出猎捕
-    if (def.type === 'arms') {
-      const darkOut = (m.inf?.blackout ?? false) || eng.blackoutT > 0
-      if (e.hidden) {
-        if (darkOut && d < 5) {
-          e.hidden = undefined
-          eng.msg('头顶的通风管里伸出了一只手臂！', 'damage')
-          audio.aggro()
-        } else continue
-      }
-      if (!darkOut || d > 7) { e.hidden = true; continue } // 灯光恢复或玩家远离：缩回管内
-      if (d < 2.2 && e.attackCd <= 0) {
-        e.attackCd = 1.6
-        eng.hurtPlayer(def.damage * dmgMult, def.name)
-        p.slowT = Math.max(p.slowT, 1.5)
-        eng.msg('通风管的手臂抓住了你！', 'damage')
-      }
-      e.animT += dt
-      continue
-    }
+    // 手臂（Entité 15-FR）：重制后整套状态机在 engine/armsAI.ts（updateArmsEntity，见本循环前部分派）
     // 管道蠕虫埋伏：近身破土
     if (e.hidden) {
       if (d < 3.2) {
@@ -365,6 +359,8 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
 
     // 重制鹉主杰瑞：栖木/神父肩头/扑击/地上蹦跳回栖木/注视教化/主动搭话（jerryAI；不走通用状态机）
     if (def.type === 'jerry') { updateJerryEntity(eng, e, dt, d); continue }
+    // 重制邻里守望（观察者/挺进者）与残缺者：光束/门窗抓取/触须吊起/雾中诱骗（watchAI；不走通用状态机）
+    if (isNW(def.type)) { updateNW(eng, e, dt, d); continue }
     if (def.stationary) {
       // 久坐者：看见玩家就尖叫
       if (def.type === 'seated' && !e.screamed && d < def.sight && eng.los(e.x, e.y, p.x, p.y)) {
@@ -795,73 +791,7 @@ export function provokeRatPack(eng: Engine, e: Entity) {
   }
 }
 
-/** Nguithr'xurh（Entity 16）：网囊（hidden）→ 玩家经过正下方爆开（麻痹）→ 未离开即降下攻击 → 逃脱则回巢结囊 */
-export function updateNguithr(eng: Engine, e: Entity, d: number, dt: number) {
-  const p = eng.player, m = eng.map!
-  const ceilZ = (WALL_H[eng.levelDef.gen] ?? 3) - 0.55
-  // 陷阱点初始化（生成位置即结囊处）
-  if (e.webX === undefined) { e.webX = e.x; e.webY = e.y; e.hidden = true }
-  if (e.hidden) {
-    // 网囊形态：挂顶不动，缓缓升到天花板
-    e.z += (ceilZ - e.z) * Math.min(1, dt * 3)
-    if (d < 1.3 && eng.webbedT <= 0 && !eng.dev.invisible) {
-      // 爆开：镇静剂洒落——视野模糊 + 移动迟缓 4 秒
-      eng.webbedT = 4
-      e.hidden = false
-      e.state = 'idle'; e.stateT = 4 // 等待麻痹期（与 webbedT 同步）
-      eng.camShake = Math.min(1, eng.camShake + 0.4)
-      audio.aggro()
-      eng.msg('头顶的球状网囊突然爆开——镇静剂洒了你一身。（视线模糊 · 移动迟缓）', 'damage')
-    }
-    return
-  }
-  if (e.state === 'idle') {
-    // 麻痹等待期：玩家仍停留在那一格 → 垂降进食；已离开 → 回巢重新结囊
-    e.z += (ceilZ - e.z) * Math.min(1, dt * 3)
-    if (e.stateT <= 0) {
-      const sameTile = Math.floor(p.x) === Math.floor(e.webX!) && Math.floor(p.y) === Math.floor(e.webY!)
-      if (sameTile) {
-        e.state = 'chase'; e.stateT = 0
-        audio.aggro()
-        eng.msg('有什么东西顺着丝从天花板降了下来——', 'damage')
-      } else {
-        e.hidden = true; e.stateT = 0 // 猎物已离开：重新结囊
-      }
-    }
-    return
-  }
-  // 地面态：慢速逼近玩家；玩家逃出 8m（且未杀死它）→ 回到陷阱点重新结囊
-  if (d > 8) {
-    const tx = e.webX, ty = e.webY!
-    const dd = Math.hypot(tx - e.x, ty - e.y)
-    if (dd < 0.4) { e.hidden = true; e.stateT = 0; return }
-    eng.faceToward(e, tx, ty, dt, 6)
-    e.targetX = tx; e.targetY = ty
-    eng.stepEntity(e, e.def.speed, dt)
-    e.animT += dt
-    return
-  }
-  // 落地（z 降到地面）
-  const gz = floorHeight(m, e.x, e.y, bandOfZ(e.z))
-  e.z += (gz - e.z) * Math.min(1, dt * 6)
-  // 攻击前摇：原地停步、抬起前身（节肢式蓄力），随后下扑
-  if (e.lungeT > 0) {
-    e.lungeT -= dt
-    if (e.lungeT <= 0 && d < 1.3 && eng.meleeZOk(e)) {
-      e.attackCd = 1.4
-      eng.hurtPlayer(e.def.damage, e.def.name)
-      // 每次遭到 Nguithr'xurh 攻击 → 麻痹 1 秒（模糊+迟缓）
-      eng.webbedT = Math.max(eng.webbedT, 1)
-      eng.msg('镇静剂的余效让你浑身发麻。（麻痹 1 秒）', 'damage')
-    }
-    return
-  }
-  eng.faceToward(e, p.x, p.y, dt, 5)
-  e.targetX = p.x; e.targetY = p.y
-  eng.stepEntity(e, e.def.speed, dt)
-  e.animT += dt
-  if (d < 1.3 && e.attackCd <= 0 && eng.meleeZOk(e)) e.lungeT = 0.45 // 进入前摇
-}
+// Nguithr'xurh（Entity 16）：重制后整套状态机在 engine/nguithrAI.ts（updateNguithrEntity，经 eng.updateNguithr 分派）
 
 // 平滑转向（最短弧 lerp yaw）面向目标点
 export function faceToward(_eng: Engine, e: Entity, tx: number, ty: number, dt: number, rate: number) {    const want = Math.atan2(ty - e.y, tx - e.x)
@@ -996,4 +926,3 @@ export function stepEntity(eng: Engine, e: Entity, speed: number, dt: number): b
 export function meleeZOk(eng: Engine, e: Entity): boolean {
   return Math.abs(e.z - eng.player.z) < 1
 }
-

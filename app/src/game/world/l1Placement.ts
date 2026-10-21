@@ -1,7 +1,7 @@
 import type {GenChunk} from './infiniteRegistry'
 import type {L1ArchitectureData} from './l1BuildingTypes'
 import {l1PuddleContains} from './l1Puddles'
-import {l1RoomDressing,l1HallDressing} from './l1Dressing'
+import {l1RoomDressing,l1HallDressing,l1OuroDressing} from './l1Dressing'
 import {l1PathRoom} from './l1Spatial'
 import {l1PlanTile,l1PlanHash} from './l1Plan'
 import {l1OutpostSites,l1OutpostSite} from './l1OutpostSites'
@@ -32,6 +32,7 @@ export function placeL1Content(c:GenChunk,a:L1ArchitectureData):GenChunk {
  const dressing=l1RoomDressing(a.seed,a.cx,a.cy),room=dressing.length?l1PathRoom(a.seed,a.cx,a.cy):null
  if(dressing.length)c.structures=[...dressing,...c.structures.filter(s=>!['pathchair','airunit','caution','paintcan'].includes(String(s.data?.l1Prop)))]
  const hall=l1HallDressing(a)
+ c.structures.push(...l1OuroDressing(a))
  if(hall.length)c.structures=[...hall,...c.structures.filter(s=>!['foldingtable','seat','panel','extinguisher'].includes(String(s.data?.l1Prop)))]
  const architecture=a.boxes.filter(b=>b.solid)
  const occupied:{x:number;y:number;w:number;h:number}[]=[]
@@ -72,6 +73,8 @@ export function placeL1Content(c:GenChunk,a:L1ArchitectureData):GenChunk {
    if(!p)continue
    s.x=p.x;s.y=p.z;s.data={...s.data,l1WallDir:p.dir};placed.push(s);continue
   }
+  // Optional construction props stay beside their real support; never move a leaning grate into a corridor.
+  if(s.data?.l1OuroDressing&&!valid(s.x,s.y,s.w,s.h))continue
   const p=fit(s.x,s.y,s.w,s.h);s.x=p.x;s.y=p.y
   placed.push(s)
   // A passable barber chair still occupies visual space. Reserve its armrests

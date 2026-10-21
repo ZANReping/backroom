@@ -4,7 +4,7 @@ import {fileURLToPath} from 'node:url'
 import path from 'node:path'
 import net from 'node:net'
 const app=fileURLToPath(new URL('../',import.meta.url)),touch=process.argv.includes('--touch'),label=touch?'touch':'desktop'
-const out=path.join(app,'reports/holster',label);mkdirSync(out,{recursive:true})
+const out=path.join(app,process.argv.find(a=>a.startsWith('--out='))?.slice(6)??'reports/holster',label);mkdirSync(out,{recursive:true})
 const profile=path.join(out,`qa-holster-${Date.now()}-${process.pid}`);mkdirSync(profile)
 const free=()=>new Promise(resolve=>{const s=net.createServer();s.once('error',()=>resolve(free()));s.listen(16000+Math.floor(Math.random()*16000),'127.0.0.1',()=>{const p=s.address().port;s.close(()=>resolve(p))})})
 const sleep=ms=>new Promise(r=>setTimeout(r,ms)),wait=async(fn,name)=>{for(let i=0;i<600;i++){if(result.errors.length||result.failedRequests.some(r=>r.status>=500))throw Error('Browser runtime or module error during '+name);try{const v=await fn();if(v)return v}catch(error){if(result.errors.length)throw error}await sleep(200)}throw Error('Timeout '+name)}
