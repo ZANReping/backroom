@@ -531,6 +531,58 @@ export class GameAudio {
     n.connect(bp).connect(g).connect(this.sfx); n.start(); n.stop(t + 0.24)
   }
 
+  // [swim] 憋气心跳：一声「咚-咚」，越憋越响越闷（不受水下低通以外的处理）
+  breathBeat(vol = 1) {
+    if (!this.ctx || !this.sfx || vol <= 0.01) return
+    const ctx = this.ctx, t = ctx.currentTime
+    for (const [dt0, amp, f0] of [[0, 1, 62], [0.17, 0.7, 54]] as const) {
+      const o = ctx.createOscillator(), g = ctx.createGain()
+      o.type = 'sine'; o.frequency.setValueAtTime(f0, t + dt0); o.frequency.exponentialRampToValueAtTime(34, t + dt0 + 0.16)
+      g.gain.setValueAtTime(0.0001, t + dt0); g.gain.exponentialRampToValueAtTime(0.42 * vol * amp, t + dt0 + 0.02)
+      g.gain.exponentialRampToValueAtTime(0.001, t + dt0 + 0.2)
+      o.connect(g).connect(this.sfx); o.start(t + dt0); o.stop(t + dt0 + 0.22)
+    }
+  }
+  // [swim] 憋不住吐出一串气泡：低沉的咕噜声
+  bubbleBurst(vol = 1) {
+    if (!this.ctx || !this.sfx || vol <= 0.01) return
+    const ctx = this.ctx, t = ctx.currentTime
+    for (let i = 0; i < 6; i++) {
+      const t0 = t + i * (0.04 + Math.random() * 0.05)
+      const o = ctx.createOscillator(), g = ctx.createGain()
+      o.type = 'sine'; const f = 260 + Math.random() * 380
+      o.frequency.setValueAtTime(f, t0); o.frequency.exponentialRampToValueAtTime(f * 1.9, t0 + 0.06)
+      g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.09 * vol, t0 + 0.01)
+      g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.08)
+      o.connect(g).connect(this.sfx); o.start(t0); o.stop(t0 + 0.09)
+    }
+  }
+  // [swim] 浮出水面大口吸气：k=憋气程度 0–1，越憋越急越响；后面跟两声短喘
+  gasp(k = 1) {
+    if (!this.ctx || !this.sfx) return
+    const ctx = this.ctx, t = ctx.currentTime, out = this.sfx
+    const breath = (t0: number, dur: number, vol: number, f: number) => {
+      const n = this.noiseSrc(), bp = ctx.createBiquadFilter(), g = ctx.createGain()
+      bp.type = 'bandpass'; bp.frequency.setValueAtTime(f, t0); bp.frequency.linearRampToValueAtTime(f * 1.6, t0 + dur); bp.Q.value = 1.6
+      g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(vol, t0 + dur * 0.25)
+      g.gain.exponentialRampToValueAtTime(0.001, t0 + dur)
+      n.connect(bp).connect(g).connect(out); n.start(t0); n.stop(t0 + dur + 0.02)
+    }
+    breath(t, 0.55 + 0.25 * k, 0.12 + 0.2 * k, 700)
+    if (k > 0.5) { breath(t + 0.9, 0.3, 0.08 * k, 900); breath(t + 1.4, 0.28, 0.06 * k, 900) }
+  }
+  // [swim] 划水：水面是水花声，水下是闷的推水声；vol 按速度
+  swimStroke(underwater: boolean, vol = 1) {
+    if (!this.ctx || !this.sfx || vol <= 0.01) return
+    const t = this.ctx.currentTime
+    const n = this.noiseSrc()
+    const bp = this.ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = underwater ? 380 : 1100; bp.Q.value = underwater ? 0.9 : 1.2
+    const g = this.ctx.createGain()
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime((underwater ? 0.16 : 0.11) * vol, t + 0.06)
+    g.gain.exponentialRampToValueAtTime(0.001, t + (underwater ? 0.36 : 0.24))
+    n.connect(bp).connect(g).connect(this.sfx); n.start(); n.stop(t + 0.4)
+  }
+
   // 水下环境低通滤波（全局闷化；出水恢复）
   setUnderwater(on: boolean) {
     if (on === this.underwater) return

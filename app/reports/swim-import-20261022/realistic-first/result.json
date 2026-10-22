@@ -1,0 +1,156 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 14554,
+  "cdp": 14555,
+  "errors": [
+    {
+      "type": "error",
+      "args": [
+        {
+          "type": "string",
+          "value": "THREE.WebGLProgram: Shader Error 1282 - VALIDATE_STATUS false\n\nMaterial Name: unspecified\nMaterial Type: ShaderMaterial\n\nProgram Info Log: Fragment shader is not compiled.\n\nFRAGMENT\n\nERROR: 0:169: 'swimBreath' : undeclared identifier\nERROR: 0:169: 'y' :  field selection requires structure, vector, or interface block on left hand side\nERROR: 0:169: 'swimBreath' : undeclared identifier\nERROR: 0:169: 'x' :  field selection requires structure, vector, or interface block on left hand side\nERROR: 0:169: 'swimBreath' : undeclared identifier\nERROR: 0:169: 'z' :  field selection requires structure, vector, or interface block on left hand side\n\n  164:  float wx=abs(x)==2?1.:abs(x)==1?4.:6.;float wy=abs(y)==2?1.:abs(y)==1?4.:6.;\n  165:  c+=texture2D(tDiffuse,vUv+vec2(float(x),float(y))*d).rgb*(wx*wy/256.);\n  166:  }\n  167:  }\n  168:  float noise=fract(sin(dot(gl_FragCoord.xy+floor(time*24.),vec2(12.9898,78.233)))*43758.5453)-.5;\n> 169:  vec2 p=vUv*2.-1.;float edge=smoothstep(.12,1.45,dot(p,p));c=mix(c,vec3(.39,.49,.08),arachnidAcid*(.04+.34*edge));c=mix(c,vec3(.92,.90,.84),arachnidWeb*.2*edge);c*=1.-vignette*smoothstep(.25,1.7,dot(p,p));c*=1.-scanline*(.5+.5*cos(gl_FragCoord.y*3.14159));c+=noise*grain;float luminance=dot(c,vec3(.2126,.7152,.0722));c=mix(c,vec3(luminance),swimBreath.y);c*=1.-swimBreath.x*smoothstep(.08,1.35,dot(p,p));c*=1.-swimBreath.z;gl_FragColor=vec4(c,1.);}"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1792680368332.979,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "error",
+            "scriptId": "352",
+            "url": "http://127.0.0.1:14554/reports/swim-import-20261022/realistic-first/qa-1792680339398-44980/vite-cache/deps/chunk-BWT6IPVN.js?v=3fe89e76",
+            "lineNumber": 310,
+            "columnNumber": 14
+          },
+          {
+            "functionName": "onFirstUse",
+            "scriptId": "352",
+            "url": "http://127.0.0.1:14554/reports/swim-import-20261022/realistic-first/qa-1792680339398-44980/vite-cache/deps/chunk-BWT6IPVN.js?v=3fe89e76",
+            "lineNumber": 36013,
+            "columnNumber": 10
+          },
+          {
+            "functionName": "WebGLProgram.getUniforms",
+            "scriptId": "352",
+            "url": "http://127.0.0.1:14554/reports/swim-import-20261022/realistic-first/qa-1792680339398-44980/vite-cache/deps/chunk-BWT6IPVN.js?v=3fe89e76",
+            "lineNumber": 36045,
+            "columnNumber": 6
+          },
+          {
+            "functionName": "setProgram",
+            "scriptId": "352",
+            "url": "http://127.0.0.1:14554/reports/swim-import-20261022/realistic-first/qa-1792680339398-44980/vite-cache/deps/chunk-BWT6IPVN.js?v=3fe89e76",
+            "lineNumber": 42520,
+            "columnNumber": 33
+          },
+          {
+            "functionName": "WebGLRenderer.renderBufferDirect",
+            "scriptId": "352",
+            "url": "http://127.0.0.1:14554/reports/swim-import-20261022/realistic-first/qa-1792680339398-44980/vite-cache/deps/chunk-BWT6IPVN.js?v=3fe89e76",
+            "lineNumber": 41864,
+            "columnNumber": 22
+          },
+          {
+            "functionName": "renderObject",
+            "scriptId": "352",
+            "url": "http://127.0.0.1:14554/reports/swim-import-20261022/realistic-first/qa-1792680339398-44980/vite-cache/deps/chunk-BWT6IPVN.js?v=3fe89e76",
+            "lineNumber": 42317,
+            "columnNumber": 14
+          },
+          {
+            "functionName": "renderObjects",
+            "scriptId": "352",
+            "url": "http://127.0.0.1:14554/reports/swim-import-20261022/realistic-first/qa-1792680339398-44980/vite-cache/deps/chunk-BWT6IPVN.js?v=3fe89e76",
+            "lineNumber": 42299,
+            "columnNumber": 10
+          },
+          {
+            "functionName": "renderScene",
+            "scriptId": "352",
+            "url": "http://127.0.0.1:14554/reports/swim-import-20261022/realistic-first/qa-1792680339398-44980/vite-cache/deps/chunk-BWT6IPVN.js?v=3fe89e76",
+            "lineNumber": 42216,
+            "columnNumber": 36
+          },
+          {
+            "functionName": "WebGLRenderer.render",
+            "scriptId": "352",
+            "url": "http://127.0.0.1:14554/reports/swim-import-20261022/realistic-first/qa-1792680339398-44980/vite-cache/deps/chunk-BWT6IPVN.js?v=3fe89e76",
+            "lineNumber": 42119,
+            "columnNumber": 10
+          },
+          {
+            "functionName": "render",
+            "scriptId": "447",
+            "url": "http://127.0.0.1:14554/reports/swim-import-20261022/realistic-first/qa-1792680339398-44980/vite-cache/deps/chunk-64XURTKU.js?v=3fe89e76",
+            "lineNumber": 83,
+            "columnNumber": 13
+          },
+          {
+            "functionName": "render",
+            "scriptId": "446",
+            "url": "http://127.0.0.1:14554/reports/swim-import-20261022/realistic-first/qa-1792680339398-44980/vite-cache/deps/chunk-EEYZO6X2.js?v=3fe89e76",
+            "lineNumber": 57,
+            "columnNumber": 19
+          },
+          {
+            "functionName": "render",
+            "scriptId": "186",
+            "url": "http://127.0.0.1:14554/reports/swim-import-20261022/realistic-first/qa-1792680339398-44980/vite-cache/deps/three_examples_jsm_postprocessing_EffectComposer__js.js?v=df66e919",
+            "lineNumber": 209,
+            "columnNumber": 11
+          },
+          {
+            "functionName": "render",
+            "scriptId": "15",
+            "url": "http://127.0.0.1:14554/src/game/renderer/renderer.ts",
+            "lineNumber": 2071,
+            "columnNumber": 41
+          },
+          {
+            "functionName": "loop",
+            "scriptId": "559",
+            "url": "http://127.0.0.1:14554/src/App.tsx",
+            "lineNumber": 960,
+            "columnNumber": 19
+          }
+        ]
+      }
+    }
+  ],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\swim-import-20261022\\realistic-first\\qa-1792680339398-44980",
+    "--remote-debugging-port=14555",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 34764,
+    "server": 54552
+  },
+  "appBootMs": 17123.582,
+  "ok": false,
+  "failure": "Error: Runtime/module error at title",
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 13897.39999999851
+    },
+    "text": "SECTOR 0.7.13\nNOCLIP DETECTED\nHUM: 50Hz\nCAM_04 OFFLINE\nDEPTH: ??\nSIGNAL LOST\n● REC · SIGNAL RECOVERED · CAM_04\n后 室\nBACKROOMS : DESCENT\n01\n开始游戏\n新的下坠 · 写入槽位 1\n02\n继续游戏\n存档槽 1 · Level 4「废弃办公室」· 磁带 0/6\n03\n图鉴档案\n层级 · 实体 · 物品 · 团体\n04\n形象编辑\n05\n设置\n06\n操作说明\n07\n设计模式\nv1.0 · 所有层级均为程序生成 · 戴上耳机体验更佳"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

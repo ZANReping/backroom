@@ -526,23 +526,38 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
                 <span style={{ color: swim.submerged ? '#79b8d8' : 'var(--text-dim)' }}>
                   {swim.submerged ? '水下' : '水面'} · 水深 {swim.depth.toFixed(1)}m
                 </span>
-                <span style={{ color: swim.breath > swim.limit * 0.25 ? 'var(--amber)' : 'var(--blood)' }}>
-                  氧气 {Math.max(0, swim.limit - swim.breath).toFixed(0)}s
+                <span className={engine.swim.stage >= 2 ? 'anim-thirstPulse' : ''} style={{ color: engine.swim.stage === 0 ? 'var(--amber)' : 'var(--blood)' }}>
+                  {engine.swim.stage === 3 ? '缺氧！' : `氧气 ${Math.max(0, swim.limit - swim.breath).toFixed(0)}s`}
                 </span>
               </div>
               <div className="mt-1 h-[4px] w-full overflow-hidden" style={{ background: 'color-mix(in srgb, var(--ink) 80%, transparent)' }}>
                 <div style={{
                   width: `${Math.max(0, Math.min(100, ((swim.limit - swim.breath) / swim.limit) * 100))}%`,
                   height: '100%',
-                  background: swim.breath > swim.limit * 0.6 ? 'var(--blood)' : 'var(--amber)',
+                  background: engine.swim.stage >= 1 ? 'var(--blood)' : swim.submerged ? '#79b8d8' : 'var(--amber)',
                   transition: 'width 0.12s linear',
                 }} />
               </div>
-              {def.id === 7 && (
-                <div className="mt-0.5 text-[9px]" style={{ color: 'var(--text-dim)' }}>
-                  [蹲伏] 下潜　[跳跃] 上浮　[冲刺] 快速游
-                </div>
-              )}
+              {/* [swim] 升降指示 + L7 深度计（150m 起水压伤害） */}
+              <div className="mt-1 flex items-center gap-2 text-[10px]" style={{ color: 'var(--text-dim)' }}>
+                <span style={{ minWidth: 64, color: Math.abs(engine.swim.vz) > 0.2 ? '#79b8d8' : 'var(--text-dim)' }}>
+                  {engine.swim.vz > 0.2 ? '▲ 上浮' : engine.swim.vz < -0.2 ? '▼ 下潜' : '— 悬停'} {Math.abs(engine.swim.vz).toFixed(1)}m/s
+                </span>
+                {def.id === 7 && (
+                  <span className="relative h-[3px] flex-1" style={{ background: 'linear-gradient(90deg, #2b5f78 0%, #173246 70%, #6b1f1a 75%, #3a0d0b 100%)' }}>
+                    <span className="absolute top-[-3px] h-[9px] w-[2px]" style={{ left: `${Math.min(100, swim.depth / 200 * 100)}%`, background: swim.depth > 150 ? 'var(--blood)' : '#d8eef8' }} />
+                  </span>
+                )}
+              </div>
+              <div className="mt-0.5 text-[9px]" style={{ color: 'var(--text-dim)' }}>
+                {engine.swimMode === 'view' ? '[前进] 沿视线游　' : ''}[蹲伏] 下潜　[跳跃] 上浮　[冲刺] 划水{swim.edge ? '　[跳跃] 撑上岸' : ''}
+              </div>
+            </div>
+          )}
+          {/* [swim 阶段 3] 减压病状态 */}
+          {engine.swim.bendsT > 0 && (
+            <div className="mt-1.5 text-[11px] anim-thirstPulse" style={{ color: 'var(--blood)' }}>
+              减压病 {Math.ceil(engine.swim.bendsT)}s{swim && swim.depth >= 15 ? ' · 再加压中' : ''}
             </div>
           )}
           {/* 福友玉（口袋栏）：实体感应——随最近实体距离改变温度提示 */}
@@ -726,6 +741,7 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
       {swim?.submerged && (
         <div className="pointer-events-none fixed inset-0 z-[31]" style={{ boxShadow: 'inset 0 0 140px 34px rgba(13,74,110,0.32)' }} />
       )}
+      {/* 屏气晕影、缺氧褪色与黑屏由 PhotoFinishShader 处理，不遮盖状态和交互 UI。 */}
       {/* ---- 状态低下画面效果（受减闪烁设置缩放）---- */}
       {/* 饥饿 ≤25：边缘发黄收缩脉冲 */}
       {/* v51：人制品效应中始终显示饥饿画面特效（哪怕刚吃饱） */}

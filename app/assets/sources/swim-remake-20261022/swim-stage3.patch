@@ -1,0 +1,2730 @@
+diff --git a/app/SWIM-REMAKE.md b/app/SWIM-REMAKE.md
+index 0cef65b..a92133e 100644
+--- a/app/SWIM-REMAKE.md
++++ b/app/SWIM-REMAKE.md
+@@ -123,5 +123,50 @@
+ - `check:l7-cliffs` 20/20、`check:l7` 2433/0、`check:thing` 50/50、`check:thing-anim` 31/31、`check:tiny` 85/85、`check:tiny-net` 23/23、`check:shrimp` 57/57、`tsc` 0
+ - 实机：`scripts/verify-swim-ingame.mjs`（假 rAF 时间戳，每帧固定 1/30s，逐帧截图）。
+ 
+-## 阶段 3（待做）
+-噪音分级、水下战斗系数、L7 水流、水压与减压病。
++## 阶段 3：机制
++
++### 噪音分级（`noiseEvent` 半径）
++| 动作 | 半径 | 算明显响动（sprint） |
++|---|---|---|
++| 悬停 / 静止 | 无 | — |
++| 水下普通游（每 0.9m） | 3m | 否 |
++| 水面普通游 | 5m | 否 |
++| 水下冲刺（每划一下） | 8m | 是 |
++| 水面冲刺拍水 | 11m | 是 |
++| 翻身入水 | 6m | 否 |
++| 撑上岸 | 5m | 否 |
++- 以前深水里走的是陆地脚步规则（普通 4m、冲刺每 0.9m 一次 10m）。现在冲刺按划水次数发声，节奏更好读：小小、七层之物这类对「明显响动」敏感的实体，只会被冲刺惊动。
++- 浅水（齐腰水）沿用原来的趟水规则。
++
++### 水下战斗（头没在水下时）
++- 近战 / 徒手攻击间隔 ×1.3（体力消耗不变）。
++- 滋水枪、枪糖扣不响：不耗弹、不进冷却，冒一串气泡并提示。头露出水面就能开枪。
++- 投掷：出手速度 ×0.6、水阻 2/s、下沉加速度 2.45 m/s²，水平射程约为岸上的一半（实测 2.69m 对 4.80m）。
++
++### L7 水流（`swim.cx / cy`，单独积分，不受游速上限影响）
++- 涌浪：浪峰推力 = 浪高 × 2.4 × e^(−深度/4)，越深越弱（8m 只剩约 13%）；水流以 0.9/s 衰减，浪过去后还会被带着漂一段。以前是直接改位置，浪一过立刻停。
++- 涌浪不再只在水面 2.5m 内生效，水下也会感到（只是很弱）。
++- 水墙：朝墙体中面的拉力改为水流加速度（1.2 × 偏离量）。
++- 水流只在水格里推，碰到岸就停。
++
++### 水压提示与减压病（只在 L7）
++- 下潜越过 30 / 60 / 100 / 150m 各提示一次（耳膜胀痛 → 胸口被攥紧 → 手电被吞掉 → 骨头作响）；回浅 10m 后可以再次提示。150m 以下扣血是原有逻辑。
++- 减压病：
++  - 只有最近潜到过 40m 以下才会累积；在 ≤8m 的浅水停留时这个「最深记录」每秒回落 1m。
++  - 上浮速度超过 1.6m/s 时累积「快速上浮米数」；慢慢上浮或停下来时以 0.5m/s 消退（相当于减压停留）。累计到 15m 时提醒一次。
++  - 回到 8m 以内结算：超过 25m 就发作，再多 40m 为最重。
++  - 发作：持续 30 + 30×严重度 秒；关节痛每秒扣 0.15 + 0.25×严重度（最重一次总共最多扣约 24 血）；体力恢复减半；镜头轻晃；HUD 显示剩余秒数。
++  - 潜回 15m 以下「再加压」：症状消退快 3 倍。
++- 实际手感：从 60m 按上浮键直冲上来（约 2.45m/s），严重度约 0.67、持续约 50s；沿视线仰角约 33° 斜着游上来（垂直约 1.3m/s）不会发作；只潜到 30m 也不会。
++
++### 改动文件
++- `engine/swim.ts`：阶段 3 的数值表与 `stepPressure`、`stepCurrent`、`surgePush`、`wallPull`、`meleeIntervalMul`、`blockUnderwaterGun`。
++- `engine/movement.ts`：深水噪音分级；每帧调用水压/减压病与水流；水墙拉力；发作期间体力恢复减半。
++- `engine/l7Events.ts`：涌浪改为水流加速度。
++- `engine/combat.ts`：近战间隔、水下禁枪、水下投掷弹道。
++- `engine.ts`：`Projectile.water`。
++- `renderer/renderer.ts`：减压病镜头轻晃。`components/HUD.tsx`：减压病状态。
++
++### 验证
++- `check:swim` 89/89（阶段 3 新增 27 项）
++- `check:l7-cliffs` 20/20、`check:l7` 2433/0、`check:thing` 50/50、`check:thing-anim` 31/31、`check:tiny` 85/85、`check:tiny-net` 23/23、`check:shrimp` 57/57、`check:l10`、`check:l11-collision`、`check:l11-waterways`、`check:career-network` 通过，`tsc` 0。
+diff --git a/app/scripts/check-swim.ts b/app/scripts/check-swim.ts
+index 333b2eb..542b039 100644
+--- a/app/scripts/check-swim.ts
++++ b/app/scripts/check-swim.ts
+@@ -338,6 +338,125 @@ const L7MAX = 3.4 * 0.72, POOLMAX = 3.4 * 0.56
+   ok(/anim-o2Pulse/.test(hud) && /blackK/.test(hud) && /▲ 上浮/.test(hud), 'HUD 接入：憋气脉冲晕影、缺氧黑屏、升降指示与深度计')
+ }
+ 
++// ===== 阶段 3：噪音分级 =====
++{
++  const spy = (w: any) => { const ev: { r: number; s: boolean }[] = []; w.eng.noiseEvent = (_x: number, _y: number, r: number, sp: boolean) => ev.push({ r, s: sp }); return ev }
++  const w = world(7); w.p.z = -20; const ev = spy(w); w.clear(); w.run(3)
++  ok(ev.length === 0, `水下悬停 3s：没有噪音（${ev.length} 次）`)
++  const w2 = world(7); w2.p.z = -20; const ev2 = spy(w2); w2.keys({ w: 1 }); w2.run(4)
++  ok(ev2.length >= 5 && ev2.every((e) => e.r === SWIM.NOISE_SWIM_SUB && !e.s), `水下普通游：${ev2.length} 次轻响，半径 ${SWIM.NOISE_SWIM_SUB}m，不算明显响动`, ev2.slice(0, 3))
++  const w3 = world(7); w3.p.z = 0.1; w3.eng.submerged = false; const ev3 = spy(w3); look.pitch = 0; w3.keys({ w: 1 }); w3.run(4)
++  ok(ev3.length >= 5 && ev3.every((e) => e.r === SWIM.NOISE_SWIM_SURF && !e.s), `水面普通游：半径 ${SWIM.NOISE_SWIM_SURF}m（比水下响）`, ev3.slice(0, 3))
++  const w4 = world(7); w4.p.z = -20; const ev4 = spy(w4); w4.keys({ w: 1, sprint: true }); w4.run(3.1)
++  ok(ev4.length === w4.eng.swim.strokes && ev4.every((e) => e.r === SWIM.NOISE_STROKE_SUB && e.s), `水下冲刺：每划一下一次明显响动（${ev4.length} 下，半径 ${SWIM.NOISE_STROKE_SUB}m）`, ev4.slice(0, 3))
++  const w5 = world(7); w5.p.z = 0.1; w5.eng.submerged = false; const ev5 = spy(w5); w5.keys({ w: 1, sprint: true }); w5.run(2)
++  ok(ev5.length > 0 && ev5.every((e) => e.r === SWIM.NOISE_STROKE_SURF && e.s), `水面冲刺拍水：半径 ${SWIM.NOISE_STROKE_SURF}m`, ev5.slice(0, 3))
++}
++// ===== 阶段 3：水下战斗 =====
++{
++  const w = world(7); w.p.z = -20; w.step()
++  w.p.hotbar[w.p.selected] = null; w.eng.attackCooldownT = 0; w.eng.attack()
++  const sub = w.eng.attackCooldownDur
++  const w2 = world(0); w2.p.z = -0.5; w2.eng.submerged = false; w2.eng.inLiquid = 0
++  w2.p.hotbar[w2.p.selected] = null; w2.eng.attackCooldownT = 0; w2.eng.attack()
++  const dry = w2.eng.attackCooldownDur
++  ok(Math.abs(sub / dry - 1.3) < 1e-6, `水下徒手攻击间隔 ${f2(sub)}s = 岸上 ${f2(dry)}s × 1.3`)
++  const w3 = world(7); w3.p.z = -20; w3.step()
++  w3.p.hotbar[w3.p.selected] = { type: 'squirtgun', count: 1 }; w3.eng.squirtAmmo = 5; w3.eng.squirtTank = 'water'; w3.eng.attackCooldownT = 0
++  const msgs: string[] = []; const om = w3.eng.msg.bind(w3.eng); w3.eng.msg = (t: string, k?: any) => { msgs.push(t); return om(t, k) }
++  w3.eng.attack()
++  ok(w3.eng.squirtAmmo === 5 && w3.eng.attackCooldownT === 0 && msgs.some((t) => t.includes('开不了枪')), '水下滋水枪扣不响：不耗弹、不进冷却、提示')
++  w3.eng.gunCandyT = 5; w3.p.hotbar[w3.p.selected] = null; const pj = w3.eng.projectiles.length; w3.eng.chocoCd = 0; w3.eng.shootChocolate()
++  ok(w3.eng.projectiles.length === pj && w3.eng.chocoCd === 0, '水下枪糖也开不了枪')
++  w3.p.z = 0.1; w3.eng.submerged = false; w3.eng.squirtAmmo = 5; w3.eng.gunCandyT = 0; w3.p.hotbar[w3.p.selected] = { type: 'squirtgun', count: 1 }; w3.eng.attackCooldownT = 0
++  w3.eng.attack()
++  ok(w3.eng.squirtAmmo === 4, '头露出水面就能开枪')
++  // 投掷射程：同样水平掷出，比较落点距离
++  const range = (water: boolean) => {
++    const e = world(7).eng; e.player.z = -20
++    e.projectiles = [{ id: 1, type: 'gas', x: 40, y: 40, z: -18.45, floorZ: -20, vx: 9 * (water ? SWIM.THROW_SPEED : 1), vy: 0, vz: 0, ...(water ? { water: true } : {}) }]
++    let land = NaN; e.landProjectile = (pr: any) => { land = pr.x }
++    for (let i = 0; i < 300 && e.projectiles.length; i++) e.updateProjectiles(DT)
++    return land - 40
++  }
++  const rAir = range(false), rWater = range(true)
++  ok(Math.abs(rWater / rAir - 0.5) < 0.08, `水下投掷射程 ${f2(rWater)}m ≈ 岸上 ${f2(rAir)}m 的一半（${f2(rWater / rAir)}）`)
++  const cs = readFileSync('src/game/engine/combat.ts', 'utf8')
++  ok(/water \? \{ water: true \}/.test(cs) && /underwater\(eng\)/.test(cs), '投掷接入：头在水下才按水下弹道')
++}
++// ===== 阶段 3：L7 水流 =====
++{
++  const w = world(7); w.p.z = 0.05; w.clear()
++  const x0 = w.p.x
++  w.run(2, () => SW.surgePush(w.eng, w.eng.swim, DT, 1, 1, 0))
++  const xPush = w.p.x - x0
++  w.run(4)
++  const xAfter = w.p.x - x0 - xPush
++  ok(xPush > 1.5 && xAfter > 1.2, `1m 浪峰推 2s：被推开 ${f2(xPush)}m，浪过后还漂了 ${f2(xAfter)}m（有惯性）`)
++  const d = world(7); d.p.z = -8; d.clear()
++  const dx0 = d.p.x
++  d.run(2, () => SW.surgePush(d.eng, d.eng.swim, DT, 1, 1, 0))
++  ok((d.p.x - dx0) < xPush * 0.2, `水下 8m 涌浪推力弱很多（${f2(d.p.x - dx0)}m）`)
++  const s = SW.newSwimState(); SW.wallPull(s, 1, 1, 0, 2)
++  ok(Math.abs(s.cx + 2.4) < 1e-6, '水墙：朝墙体中面的水流加速度')
++  const ev = readFileSync('src/game/engine/l7Events.ts', 'utf8'), mv = readFileSync('src/game/engine/movement.ts', 'utf8')
++  ok(/surgePush\(eng, eng\.swim/.test(ev) && !/push = Math\.max\(0, fx\.surgeH\) \* 1\.5/.test(ev) && /wallPull\(sw/.test(mv), '涌浪/水墙改成水流加速度（不再直接挪位置）')
++}
++// ===== 阶段 3：水压提示 + 减压病 =====
++{
++  const w = world(7); w.eng.dev.god = false; w.p.z = -10
++  const msgs: string[] = []; const om = w.eng.msg.bind(w.eng); w.eng.msg = (t: string, k?: any) => { msgs.push(t); return om(t, k) }
++  const at = (z: number) => { w.p.z = z; w.eng.swim.lz = z; w.clear(); w.step() }
++  at(-31); at(-32); at(-61)
++  ok(msgs.filter((t) => t.includes('30 米')).length === 1 && msgs.some((t) => t.includes('60')), '下潜越过 30m、60m 各提示一次')
++  at(-15); at(-31)
++  ok(msgs.filter((t) => t.includes('30 米')).length === 2, '回浅 10m 以上再下去会再次提示')
++}
++{
++  // 从 60m 用上浮键直冲上来：约 2.45m/s，累计远超 25m → 发作
++  const w = world(7); w.eng.dev.god = false; w.eng.swimMode = 'flat'
++  w.p.z = -60; w.eng.swim.lz = -60; w.clear(); w.step()
++  const msgs: string[] = []; const om = w.eng.msg.bind(w.eng); w.eng.msg = (t: string, k?: any) => { msgs.push(t); return om(t, k) }
++  w.keys({ jump: true })
++  for (let t = 0; t < 40 && w.p.z < -7.5; t += DT) { w.eng.breathT = 0; w.step()}
++  w.clear(); w.step()
++  ok(msgs.some((t) => t.includes('上浮得太快')), '快速上浮途中提醒一次')
++  ok(w.eng.swim.bendsT > 30 && w.eng.swim.bendsSev > 0.3, `60m 直冲上来：减压病 ${f2(w.eng.swim.bendsT)}s，严重度 ${f2(w.eng.swim.bendsSev)}`)
++  const hp0 = w.p.hp; w.p.stamina = 50
++  w.run(10, () => { w.eng.breathT = 0 })
++  const lost = hp0 - w.p.hp
++  ok(lost > 2 && lost < 6, `发作中关节痛轻微扣血（10s 扣 ${f2(lost)}）`)
++  ok(w.p.stamina < 50 + 12 * 10 * 0.6, `发作中体力恢复减半（10s 回到 ${f2(w.p.stamina)}）`)
++  // 再加压：潜回 15m 以下消退快 3 倍
++  const t0 = w.eng.swim.bendsT
++  w.p.z = -20; w.eng.swim.lz = -20; w.clear()
++  w.run(3, () => { w.eng.breathT = 0 })
++  ok(Math.abs((t0 - w.eng.swim.bendsT) - 9) < 0.5, `潜回 20m：3s 消退 ${f2(t0 - w.eng.swim.bendsT)}s（×3）`)
++  const worst = (SWIM.BENDS_DMG0 + SWIM.BENDS_DMG1) * (SWIM.BENDS_BASE_T + SWIM.BENDS_EXTRA_T)
++  ok(worst <= 25, `最重一次总共最多扣 ${f2(worst)} 血（轻度）`)
++}
++{
++  // 斜着慢慢游上来（沿视线、仰角 33°，垂直约 1.3m/s）：不发作
++  const w = world(7); w.eng.dev.god = false
++  w.p.z = -60; w.eng.swim.lz = -60; w.clear(); w.step()
++  look.pitch = 0.58
++  for (let t = 0; t < 80 && w.p.z < -7.5; t += DT) { look.yaw += 0.03; w.keys({ w: 1 }); w.eng.breathT = 0; w.step() } // 绕圈游，免得撞墙
++  w.clear(); w.step(); look.pitch = 0; look.yaw = 0
++  ok(w.eng.swim.bendsT === 0 && w.p.z > -8, `仰角 33° 慢慢游上来不发作（快速上浮累计 ${f2(w.eng.swim.fastUp)}m）`)
++  // 只潜到 30m 就直冲上来：不发作
++  const s = world(7); s.eng.dev.god = false; s.eng.swimMode = 'flat'
++  s.p.z = -30; s.eng.swim.lz = -30; s.clear(); s.step()
++  s.keys({ jump: true })
++  for (let t = 0; t < 30 && s.p.z < -7.5; t += DT) s.step()
++  s.clear(); s.step()
++  ok(s.eng.swim.bendsT === 0, '只潜到 30m 再快速上浮：不发作')
++  // 水池没有减压病
++  const pl = world(0); pl.eng.dev.god = false; pl.eng.swim.fastUp = 99; pl.eng.swim.deepMax = 99; pl.run(1)
++  ok(pl.eng.swim.bendsT === 0, '水池 / 运河没有水压和减压病')
++  const hud = readFileSync('src/components/HUD.tsx', 'utf8'), rs = readFileSync('src/game/renderer/renderer.ts', 'utf8')
++  ok(/减压病 \{/.test(hud) && /swim\.bendsT > 0/.test(rs), 'HUD 显示减压病剩余时间；镜头随关节痛轻晃')
++}
++
+ // ===== 12. 设置 =====
+ {
+   const src = readFileSync('src/components/SettingsModal.tsx', 'utf8')
+diff --git a/app/src/components/HUD.tsx b/app/src/components/HUD.tsx
+index 1ab02d3..403703f 100644
+--- a/app/src/components/HUD.tsx
++++ b/app/src/components/HUD.tsx
+@@ -528,6 +528,12 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
+               </div>
+             </div>
+           )}
++          {/* [swim 阶段 3] 减压病状态 */}
++          {engine.swim.bendsT > 0 && (
++            <div className="mt-1.5 text-[11px] anim-thirstPulse" style={{ color: 'var(--blood)' }}>
++              减压病 {Math.ceil(engine.swim.bendsT)}s{swim && swim.depth >= 15 ? ' · 再加压中' : ''}
++            </div>
++          )}
+           {/* 福友玉（口袋栏）：实体感应——随最近实体距离改变温度提示 */}
+           {p.equip.pockets.some((s) => s?.type === 'fuyouyu') && (() => {
+             let best = Infinity
+diff --git a/app/src/game/engine.ts b/app/src/game/engine.ts
+index 80957aa..921f87b 100644
+--- a/app/src/game/engine.ts
++++ b/app/src/game/engine.ts
+@@ -1,1060 +1,1062 @@
+-import { newSwimState, findClimbOut, type SwimState, type SwimMode } from './engine/swim'
+-import * as careerSystem from './engine/career'
+-import {restoreGlowFlight} from './engine/glowsticks'
+-import { megState, resetMegRuntime, updateMegMissions } from './engine/megMissions'
+-import { updateFactionMissions } from './engine/factionMissions'
+-import { freshProfile, normalizeProfile, type PlayerProfile } from './core/playerProfile'
+-import type { L1WorldSave } from './engine/l1State'
+-// 游戏引擎：组合根——全部状态字段、主循环 step()、对外公共 API 门面。
+-// v53：机制实现按类别拆分到 engine/ 子模块（持续性效果注册表 effects / 存档 save /
+-// 层级切换 level / 移动积分 movement / 生存属性 survival / 实体AI entityAI / 战斗投掷 combat /
+-// 交互容器 interact / NPC委托声望 npc / 背包装备 inventory / 现象停电 ambient / 开发者API dev），
+-// 逻辑逐语句搬运，行为/数值/时序不变；本类方法与字段名保持对外契约完全一致
+-// （字段改由子模块直接读写，故不再标 private——TS 可见性放宽，运行时语义不变）。
+-import { type GameMap, l11MapWater } from './world/mapgen'
+-import { NORMAL_LEVELS, levelLabel, levelDefOf } from './levels'
+-import { type Entity } from './entities'
+-import { createIntegrator, type MoveIntegrator } from './core/player'
+-import { look } from './core/renderer3d'
+-import { freshJerryRun, jerryInputLock, type JerryRunState } from './engine/jerryAI'
+-import type { ExitDef, FloorBand, LightSource, Structure } from './core/types'
+-import { audio } from './core/audio'
+-import { ROCK_SONG_IDS, musicName, setRadioCfg } from './core/midi'
+-import { seedString } from './core/rng'
+-import { type NpcState, type NpcDef } from './content/npcs'
+-import type { ItemUseAnim } from './content/items'
+-import { OUTPOSTS } from './content/outposts'
+-import { REP_START, type QuestDef, type QuestFaction } from './content/factions'
+-import { DIFF, type Difficulty } from './engine/shared'
+-import { runEffectTicks, resetEffects } from './engine/effects'
+-import * as save from './engine/save'
+-import * as level from './engine/level'
+-import * as movement from './engine/movement'
+-import { newL7Fx, type L7Fx } from './engine/l7Events'
+-import * as survival from './engine/survival'
+-import * as entityAI from './engine/entityAI'
+-import * as combat from './engine/combat'
+-import * as interact from './engine/interact'
+-import type { SittingState } from './engine/seating'
+-import * as npc from './engine/npc'
+-import * as inventory from './engine/inventory'
+-import * as warehouse from './engine/warehouse'
+-import * as ambient from './engine/ambient'
+-import * as dev from './engine/dev'
+-import { devOperateExit } from './engine/devExits'
+-import * as unstuck from './engine/unstuck'
+-import { loadSaveSnapshot, type SaveSnapshot } from './engine/save'
+-import { canPrepareChunks, prepareChunkWindow } from './world/chunkCache'
+-import type { L11WorldSave } from './engine/l11State'
+-
+-// v53：对外契约再导出（原 engine.ts 直接导出的符号保持不变）
+-export { SAVE_KEY, loadSaveSnapshot, clearSaveSnapshot, listSaveSlots, readSaveSlot, SAVE_SLOT_KEYS, SAVE_SLOT_LABELS } from './engine/save'
+-export type { SaveSnapshot, SaveSlotId, SlotInfo } from './engine/save'
+-export type { Difficulty } from './engine/shared'
+-export { EFFECTS } from './engine/effects'
+-
+-export interface InvSlot { type: string; count: number; tag?: number } // tag：来源层级标签（迁跃浆果=发现它的层级；不同标签不堆叠）
+-// 装备槽位标识：hotbar/backpack 为背包格；offhand/body/gloves/pocket 为装备位（主手=快捷栏选中项，不是独立槽位）
+-export type SlotWhere = 'hotbar' | 'backpack' | 'offhand' | 'body' | 'gloves' | 'head' | 'pocket'
+-export interface SlotRef { w: SlotWhere; i: number }
+-export interface EquipState {
+-  offhand: InvSlot | null // 副手：持久手持（打火机/手电筒）
+-  body: InvSlot | null // 身体：服饰（绝缘服/保温服）
+-  gloves: InvSlot | null // 手套：隔热手套
+-  head: InvSlot | null // 头饰：潜水面罩
+-  pockets: (InvSlot | null)[] // 口袋 ×4：持久小物（兔子脚/门禁卡/钥匙）
+-}
+-export type MsgKind = 'loot' | 'damage' | 'lore' | 'system'
+-/** 飞行中的投掷物（v28 可投掷道具；落地触发效果） */
+-export interface Projectile {
+-  id: number
+-  type: string
+-  x: number; y: number; z: number // z=离地高度（米）
+-  floorZ: number // 落点地面高度（掷出时玩家脚下高度）
+-  vx: number; vy: number; vz: number
+-  done?: boolean
+-}
+-export interface HudEvent {
+-  kind: 'faction' | 'facility' | 'msg' | 'toast' | 'damage' | 'sanityhit' | 'transition' | 'floorchange' | 'dead' | 'victory' | 'levelchange' | 'lootpanel' | 'notebook' | 'doc' | 'landmark' | 'dialog' | 'radioheard' | 'mpevent'
+-  cutIn?: string
+-  dest?: number | 'random' | 'win'
+-  text?: string
+-  msgKind?: MsgKind
+-  anim?: string
+-  fallDamage?: number
+-  song?: string // v56：radioheard——新收听的曲目 id
+-  mp?: import('./net/protocol').MpEvent // v58：联机世界事件（session 订阅转发）
+-}
+-
+-export interface PlayerState {
+-  x: number; y: number; facing: number
+-  // v7 数据契约：z 轴高度系统
+-  z: number // 脚底高度（米，随地面高度档/坡道/跳跃变化）
+-  vz: number // 垂直速度（重力积分）
+-  crouching: boolean // 蹲伏（减速、过低通道）
+-  floor: FloorBand
+-  hp: number; sanity: number; hunger: number; stamina: number
+-  thirst: number // v54：口渴值（0-100；与饥饿同率流失，归零持续扣血）
+-  infection: number // v55：疫疾感染值（0+，隐藏数值——游戏内无数值/提示文本，仅风味特效；每 100 点进一阶）
+-  battery: number; flashlight: boolean
+-  level: number
+-  hotbar: (InvSlot | null)[]
+-  backpack: (InvSlot | null)[]
+-  selected: number
+-  equip: EquipState // 装备栏（副手/身体/手套/口袋×4；主手=快捷栏选中项）
+-  kills: number; tapes: number; steps: number
+-  startTime: number; aliveTime: number
+-  hasGloves: boolean; hasSuit: boolean; hasLighter: boolean; hasRabbit: boolean; hasPockets: boolean
+-  coffeeT: number
+-  leverPulled: boolean // L1 电梯拉杆
+-  slowT: number // 被团块抓住的减速
+-  flashJamT: number // 手电被电弧体瘫痪
+-}
+-
+-/** L8 第九大道的已揭示地图标记；坐标始终使用无限层世界坐标。 */
+-export interface AvenueMapMark {
+-  seq: number
+-  wx: number
+-  wy: number
+-  kind: 'sign' | 'exit'
+-}
+-
+-export interface InputState {
+-  mx: number; my: number // 移动向量（-1..1）
+-  sprint: boolean
+-  attack: boolean
+-  interact: boolean
+-  toggleLight: boolean
+-  jump: boolean // v7：跳跃（桌面空格 / 移动端按钮，边沿触发由引擎消费）
+-  crouch: boolean // v7：蹲伏（桌面 C/Ctrl / 移动端按钮，按住状态）
+-}
+-
+-export class Engine {
+-  map: GameMap | null = null
+-  player: PlayerState
+-  input: InputState = { mx: 0, my: 0, sprint: false, attack: false, interact: false, toggleLight: false, jump: false, crouch: false }
+-  listeners: ((e: HudEvent) => void)[] = []
+-  difficulty: Difficulty = 'normal'
+-  seed = 1
+-  noise = 0 // 当前噪音值 0-1（HUD 显示）
+-  playerNoiseT = 0 // 玩家噪音残余时间（>0 = 正在/刚刚制造噪音；猎犬威慑判定，noiseEvent 刷新）
+-  camShake = 0
+-  time = 0
+-  paused = false
+-  over = false
+-  victory = false
+-  // v54：F1 沉浸模式——隐藏全部 HUD DOM 与第一人称手部建模（UI 状态，不入存档；新一局重置）
+-  hudHidden = false
+-  // v54：F1/F2 互斥状态机——hudHidden=隐藏 HUD 铬件；handsHidden=连手部建模/准星一起隐藏。
+-  // F1 全沉浸（hudHidden+handsHidden）/ F2 半沉浸（仅 hudHidden，保留手部建模与准星）；
+-  // 按当前生效的键恢复，按另一个键直接切换到另一种模式（互不叠加）。
+-  handsHidden = false
+-  // 收起主手是玩法状态，与 F1 仅隐藏画面的沉浸模式分开；不改变选中槽或副手照明。
+-  handsStowed = false
+-  // 主手检视只驱动第一人称模型姿态，不参与移动、攻击、交互或物品使用判定。
+-  inspectHeld = false
+-  // v29a：存档/读档状态
+-  mapSeed = 0 // 当前层级地图生成种子（loadLevel 记录，读档恢复同一张图用）
+-  mapFirstVisit = true // 当前地图生成时的 firstVisit 标记
+-  // v58：联机状态——会话引用（App 注入）；mpMapSeed 覆盖 loadLevel 种子算法（全房间同图）；
+-  // mpSpawnSlot 为本次开局的出生槽位（0=默认出生点）
+-  mpSession: import('./net/session').MpSession | null = null
+-  mpMapSeed: ((id: number) => number) | null = null
+-  mpSpawnSlot: number | null = null
+-  applyingNet = false // v59：正在应用远端联机事件（applyMpEvent）——此期间引擎函数不再广播，防回环
+-  autosaveT = 0 // 周期自动存档计时（秒）
+-  idleSaved = false // 暂停/结束后已落盘一次（避免每帧重复写存储）
+-  // 暂停页脱困检测（仅内存态；3 秒内观测移动后自动清除）
+-  unstuckCheck: unstuck.UnstuckCheckState | null = null
+-  // v54：本局绑定的存档槽（slot1/2/3=手动槽，暂停/退标题落盘写入；auto=从自动槽继续的局）
+-  saveSlot: save.SaveSlotId = 'slot1'
+-  /** v23：本层内是否主动挑衅过实体（解除 Level 11 Effect 的被动状态） */
+-  provoked = false
+-  /** v23：在 Level 601 走进过多少次「你家的前门」 */
+-  fakeEnds = 0
+-  pocketsAlarmT = 6
+-  manilaT = 4
+-  transition: { anim: string; t: number; startedAt?: number; dest: number | 'random' | 'win'; fallDamage?: number; preparing?: boolean; prepared?: boolean; mapSeed?: number } | null = null
+-  explored: Uint8Array = new Uint8Array(0)
+-  visible: Uint8Array = new Uint8Array(0)
+-  fakes: { x: number; y: number; t: number }[] = [] // 理智幻影
+-  particles: { x: number; y: number; vx: number; vy: number; t: number; life: number; color: string; size: number; z?: number; vz?: number; opacity?: number }[] = []
+-  // v13：液体状态
+-  l7fx: L7Fx = newL7Fx() // v66：L7 涌浪/致幻/重力交界区事件状态
+-  inLiquid = 0 // 当前所在液体类型（0 无 1 深水 2 浅水）
+-  submerged = false // 头部没入水下
+-  breathT = 0 // 水下屏气计时（超限微扣 HP）
+-  /** [swim] 游泳三维速度/划水/撑上岸状态（engine/swim.ts） */
+-  swim: SwimState = newSwimState()
+-  /** [swim] 游泳方向操作：view=沿视线游，flat=水平游+按键升降（设置 → 操作） */
+-  swimMode: SwimMode = 'view'
+-  wasSubmerged = false
+-  bubbleT = 0
+-  rippleT = 0
+-  // v13：电梯乘降 / 梯子攀爬（脚本化垂直移动，期间锁定水平移动与重力）
+-  ride: { sx: number; sy: number; from: number; to: number; t: number } | null = null
+-  climb: { baseX: number; baseY: number; topX: number; topY: number; dir: 1 | -1; zBase?: number; zTop?: number; rope?: 1 } | null = null
+-  climbCd = 0 // 攀爬送达后的再触发冷却（防止到顶立即又爬下）
+-  // v58：L7 门廊舱门异常重力拖拽演出——非空即进行中（t 秒；sx/sy/sz 起点 → dx/dy 落海点）
+-  porchDrop: { t: number; sx: number; sy: number; sz: number; dx: number; dy: number } | null = null
+-  stepAcc = 0
+-  // v12：interactTarget 携带目标引用（结构/物品/出口），HUD 提示与 doInteract 执行
+-  // 共用 scanInteract 的同一选择结果，杜绝「提示普通门却触发相邻上锁门」的目标漂移。
+-  interactTarget: { kind: string; label: string; s?: Structure; it?: GameMap['items'][number]; e?: GameMap['exits'][number]; npc?: NpcState; ent?: Entity; vmBack?: boolean } | null = null
+-  seating: SittingState | null = null
+-  // 开发者模式（noAttackCooldown=true 时仅绕过攻击间隔；体力消耗仍保留，便于单独调试战斗节奏）
+-  devEnabled = false
+-  dev = { mapReveal: false, god: false, noclip: false, fly: false, speed: false, statLock: true, oneHit: false, invisible: false, frozenAI: false, bright: false, noAttackCooldown: false, phenOn: new Set<string>(), phenOff: new Set<string>(), hintDist: 30 }
+-  // 地图就地修改版本号（开发者强制生成固定结构时 +1；渲染层据此重建有限层静态几何）
+-  mapRev = 0
+-  // 开场爬起动画计时（>0 时锁定移动/攻击/跳跃，渲染层相机从贴地侧躺缓慢起身）
+-  introT = 0
+-  // 容器搜索（按住交互 → 进度 → 战利品面板）
+-  searching: { sid: number; t: number; dur: number; label: string } | null = null
+-  // 消耗品使用：动作完成前不结算效果/扣除物品；槽位内容变化会安全取消。
+-  usingItem: { where: SlotWhere; i: number; type: string; tag?: number; t: number; dur: number; anim: ItemUseAnim; label: string; targetJerry?: boolean } | null = null
+-  lootPanel: { sid: number; label: string; items: string[] } | null = null
+-  statusMsgT = { hunger: 0, thirst: 0, battery: 0, stamina: 0 }
+-  redAnnounced = new Set<string>() // 本层已播报预警的红室 chunk（chunkKey）
+-  // 固定子步移动积分器（帧间保留时间余数，保证高低帧率位移一致）
+-  moveIt: MoveIntegrator = createIntegrator()
+-  // 攻击挥动动画计时（渲染层读取做手部挥砍/准心收缩）
+-  attackAnimT = 0
+-  // 当前攻击动画的完整时长；动画与攻击间隔共用同一节奏。
+-  attackAnimDur = 0.35
+-  // 玩家攻击间隔及本次间隔总长（冷却条以二者的比值显示）。
+-  attackCooldownT = 0
+-  attackCooldownDur = 0
+-  // 攻击动画种类（渲染层据此切换动作）：punch=空手出拳 swing=武器挥舞 throw=投掷
+-  attackAnimKind: 'punch' | 'swing' | 'throw' | 'spray' | 'drink' = 'punch'
+-  // 飞行中的投掷物（订书机/汽油罐等；落地触发效果，见 landProjectile）
+-  projectiles: Projectile[] = []
+-  projId = 1
+-  // 层级氛围事件（wiki 设定播报）计时
+-  ambientT = 14
+-  // L9 罕见浓雾事件：renderer 读取 l9FogK 平滑压缩视距；阶段推进与残缺者生成在 ambient.ts。
+-  l9FogPhase: 'idle' | 'warning' | 'active' | 'fade' = 'idle'
+-  l9FogT = 240
+-  l9FogK = 0
+-  // L1 停电事件：剩余时间 + 被移除光源的备份
+-  blackoutT = 0
+-  // v31：「闪烁」预警期（完全停电前灯光快速闪烁的秒数；渲染层据此做灯光快闪）
+-  blackoutWarnT = 0
+-  blackoutPendingDur = 0
+-  blackoutBackup: LightSource[] | null = null
+-
+-  // v29：经 L0「向下的灰色阶梯」进入 L1 的标记（下一次 loadLevel(1) 时在出生点附近生成返程阶梯）
+-  arriveStairs = false
+-  // v51：乘电梯（elevatorshaft）抵达的标记——下一次 loadLevel 把出生点改到本层电梯旁（内存标记，不入存档）
+-  arriveElevator = false
+-  // v54：经古典楼梯（oldstairs）抵达的标记——下一次 loadLevel(5) 把出生点改到 L5 保底楼梯 2 格外的空旷地板
+-  // （内存标记，不入存档；仅 L5 消费——L4 的古典楼梯落点维持默认出生点不变）
+-  arriveOldstairs = false
+-  arriveL6Band: FloorBand | null = null // L5 黑门=-1；L4/Omega 活板门=0
+-  arriveL9From: number | null = null // L5=住宅门口；L7=后院泳池；L8=道路尽头石洞
+-  arriveL10From: number | null = null // L9=田野边缘步道；L11=乡间主路旁
+-  arriveL11From: number | null = null
+-  l0RestorePosition?: {x:number;y:number}
+-  l0World?: import("./engine/l0State").L0WorldSave
+-  l0SharedWorld?: import("./engine/l0State").L0WorldSave
+-  l0Loops=0
+-  l0Meeting=0
+-  l0Blur=0
+-  l1World?: L1WorldSave
+-  l11World?: L11WorldSave
+-  l11Weather: {kind:'calm'|'gust'|'rain'|'mist';t:number;k:number;wetness:number} = {kind:'calm',t:120,k:0,wetness:0}
+-  arriveL7SafeWater = false // L10 深湖抵达：落在安全水域并重置呼吸
+-  arriveL8AvenueEnd = false // 从 L9 石洞返回 L8 第九大道最终洞口
+-  l10Weather: { kind: 'calm' | 'gust' | 'rain' | 'mist'; t: number; k: number; wetness: number } = { kind: 'calm', t: 80, k: 0, wetness: 0 }
+-  l10Action: { kind: 'drink' | 'dig' | 'dive'; t: number; dur: number; sid?: number; x: number; y: number } | null = null
+-  // v29：返程「向上的灰色阶梯」（世界坐标固定；窗口平移 stitch 后重新注入）
+-  bonusExit: { def: ExitDef; wx: number; wy: number } | null = null
+-  // v29：本局已到过的层级（初始物资仅首次进 L0 刷新）
+-  visitedLevels = new Set<number>()
+-  // v35：据点——进入据点前的层级（据点出口 dest:'back' 的返程落点；随存档持久）
+-  career = careerSystem.freshCareer()
+-  activeStation: string | null = null
+-  outpostReturn: number | null = null
+-  el3aReliefClaimed = false // v43：本次进入 EL3A 是否已领过免费补给包（每次进入重置）
+-  // v35：本层 NPC（据点居民；不是实体——不进 m.entities，不可被 dev 召唤，换层重建）
+-  npcs: NpcState[] = []
+-  // v35：本局已遇见的 NPC 定义（图鉴「人士」页数据源；随机 NPC 在同局内跨层保留）
+-  knownNpcs: NpcDef[] = []
+-  profile = freshProfile()
+-  // v35：团体声望（factions.ts；流浪者不参与声望；MEG 默认 30 友好）与委托任务
+-  rep: Record<string, number> = { meg: REP_START }
+-  quests: { def: QuestDef; progress: number; baseline: number; done: boolean }[] = []
+-  // v54：据点寄存仓库（阵营互通，每阵营 48 栏；随存档持久；新一局由 EFFECTS 注册表重置）
+-  warehouses: warehouse.WarehouseState = warehouse.freshWarehouses()
+-  // v54 二轮：BNTG 付费通道——本次对话临时解锁的阵营仓库（不持久；DialogOverlay 卸载即清空）
+-  warehouseTempUnlock = new Set<warehouse.WarehouseFaction>()
+-  // v39：BRC（后室装修公司）——未告发的伤害/杀死计数（攻击/杀死员工不立即降声望，
+-  // 与员工对话「坦白」时按 伤害-10/人、杀死-30/人 结清；随存档持久）与模仿装修冷却
+-  brcSin = { hurt: 0, killed: 0 }
+-  brcMimicCd = 0 // 模仿装修全局冷却剩余秒数（~90s 防连点）
+-  brcMimicPending = 0 // 模仿动作进行中（挥臂动画播完后结算 +2 声望）
+-  // ===== v45：杰瑞的信众 / Level 274 教化系统（随存档持久）=====
+-  indoctrination = 0 // 教化值 0~100（接触杰瑞 +25；≥100 成为信众一员，无法主动离开 L274）
+-  jerryTamed = false // 鹉主已被杏仁水驯服（教化清零且此后接触不再积累）
+-  jerryAgreed = new Set<string>() // 已「认同杰瑞」的信众 NPC id（引路选项按此显示；v49 起每局至多一名）
+-  jerryOath = false // v49：本局已宣誓认同杰瑞（+10 每局仅首次有效——宣誓一次，全鹦鹉门下皆知）
+-  homelyApplied = false // v55：家常酒店（L5 据点 111）入住申请已提交（地标卡办理；随存档持久）
+-  // v56：电台（MIDI 曲风下暂停页电台管理）——随层级变化/固定音乐 + 单层覆盖；随存档持久
+-  radio: { mode: 'follow' | 'fixed'; fixed: string | null; perLevel: Record<number, string> } = { mode: 'follow', fixed: null, perLevel: {} }
+-  // v56：已收听曲目 id 列表（电台可选的前提；乐手演奏后解锁摇滚曲目；随存档持久）
+-  heardSongs: string[] = []
+-  // v56：乐手（乔伊）演奏中标记（渲染层弹奏动画 + 对话「停下」选项；播完/叫停/切层自动清除）
+-  joeyPlaying = false
+-  jerryContactCd = 0 // v47：接触杰瑞冷却剩余秒数（20s 防连点刷声望/教化；HUD 交互提示显示剩余）
+-  jerryRun: JerryRunState = freshJerryRun() // 重制杰瑞/信众的局内状态（木僵、残响、理智上限、击晕、飞石、伏击、诱导标记）——只在内存，不写存档（effects 表 resetOnNewRun、无 saveKey）
+-  jerryTerritory = false // 玩家身处信众宣传间矩形内（HUD 显示 jerry 声望；引擎每帧维护）
+-  chantT = 0 // 诵咏计时（L274 内被教化后周期性咏出崇拜词）
+-  // v29：玩家当前在可行走阶梯上（碰撞 z 按地面处理、跳过重力贴地；由 updateStairs 每帧维护）
+-  onStairs = false
+-
+-  // 现象系统：当前生效的现象 id 列表（每帧由 step 重算；HUD 左上角与物品栏「状态」页读取展示）
+-  activePhenomena: string[] = []
+-  // 现象「孤立效应」的附加表现：每次进入 Level 0，画面色调/饱和度/对比度/亮度
+-  // 发生极轻微偏移（幅度刻意控制在一般无法察觉的范围；App.tsx 以 CSS filter 施加到画布）
+-  colorGrade = { hue: 0, sat: 1, con: 1, bri: 1 }
+-  // v30：植殖癌（Level 1 花园段）——0..1 进展度：在花园段内约 75 秒涨满，离开后以 2 倍速消退。
+-  // 行为逐渐僵硬（移动减速）、视野逐渐变绿（App.tsx 绿色覆盖层），涨满即原地生根（死亡）
+-  plantK = 0
+-  plantStage = 0
+-  inGardenEff = false // 本帧植殖癌是否生效（含开发者强制开/关），供现象列表读取
+-  // ===== v32：新物品机制状态 =====
+-  axeDur = 0 // 斧头耐久（获得时重置为 5；破门 -1，耗尽报废）
+-  squirtTank: 'none' | 'water' | 'almond' | 'cashew' | 'liquidpain' = 'none' // 滋水枪储罐液体（单一种类）
+-  // R 短按快速装填使用的液体；长按轮盘选中液体后更新。清水无需背包物品，因此作为初始回退。
+-  squirtQuickLiquid: 'water' | 'almond' | 'cashew' | 'liquidpain' = 'water'
+-  // v51：Object 5 糖果效果计时器
+-  candyAddictT = 0 // 糖瘾：吃糖后 60s 内需再吃，否则理智 -10
+-  silverTongueT = 0 // 银舌头：交易 95 折（秒）
+-  slipperyT = 0 // 咀嚼子弹：脚滑（秒）
+-  gunCandyT = 0 // 枪糖：右手变枪（秒）
+-  slipVx = 0
+-  slipVy = 0
+-  chocoCd = 0 // 巧克力子弹射速冷却
+-  thingBreathT = 0 // [thing] 吃巨兽之肉后的硫磺口臭剩余秒数（thingAI：每 25s 散一次气味）
+-  thingBreathPingT = 0 // [thing] 下一次口臭气味的倒计时
+-  thingMeatCd = 0 // [thing] 两块巨兽之肉之间的割肉冷却
+-  manmadeT = 0 // v51：人制品效应剩余秒数（5 分钟：拒食他物/治疗减半/恒显饥饿特效/体力恢复减半消耗加倍/受伤 -10%）
+-  webbedT = 0 // v51：Nguithr'xurh 镇静剂麻痹剩余秒数（视野模糊 + 移动迟缓）
+-  /** 当前是否身处据点（饥饿减速/体力加速的判定依据） */
+-  get inOutpost(): boolean { return Object.values(OUTPOSTS).some((o) => o.levelId === this.player.level) }
+-  squirtAmmo = 0 // 储罐剩余喷射份数（1 瓶 = 3 份，上限 9 瓶 = 27 份）
+-  warpBerryLevel: number | null = null // 迁跃浆果：首次获得时所在层级（食用传送目标）
+-  royalAddictT = 0 // 皇家口粮成瘾剩余秒数（期间其他食物不回饥饿）
+-  sanityFloor = 0 // 皇家口粮锁定的理智下限（成瘾崩塌期间不生效）
+-  royalDrainT = 0 // 成瘾崩塌：理智急速下降剩余秒数
+-  // v55：疫疾（Entity 19）——感染阶段跟踪（升阶计图鉴遭遇）与潜藏期咳嗽计时；
+-  // infection 本体在 PlayerState（随存档快照持久，freshPlayer 清零）
+-  infectionStage = 0
+-  coughT = 0
+-  // v55：「恢复」buff 剩余秒数（杏仁水/幸运豆奶/消毒液/皇家口粮 60s；重复服用重置计时）——
+-  // 持续期间感染值不再增长，且在非感染区（非湿地/非锅炉房）每 5s 自然 -1
+-  infectionRecoverT = 0
+-  partyConv = 0 // 派对客（Entity 67）转化值 0–100：咬伤/丝绒蛋糕累积、不消退、无解药；满值即「加入派对」。只存在当局内存，不写进存档（effects 表 resetOnNewRun、无 saveKey）
+-
+-  constructor() {
+-    this.player = this.freshPlayer()
+-    // v56：BGM 曲目播放回调 → 电台收听记录（heardSongs 持久，电台管理可选范围）
+-    audio.onSongPlayed = (id: string) => { this.markSongHeard(id) }
+-    // v56：乐手演奏结束（播完/被叫停/切层）→ 清除演奏标记（渲染层弹奏动画随止）
+-    audio.onOneshotEnd = () => { this.joeyPlaying = false }
+-  }
+-
+-  // ===== v56：电台（音乐库收听 + 配置） =====
+-  /** 标记已收听曲目（去重；随存档持久；乐手摇滚曲目播报「已加入电台」） */
+-  markSongHeard(id: string) {
+-    if (this.heardSongs.includes(id)) return
+-    this.heardSongs.push(id)
+-    this.emit({ kind: 'radioheard', song: id })
+-    if (id.startsWith('rock_')) this.msg(`♪ 已收听新曲目「${musicName(id)}」——已加入电台（暂停页 → 电台管理）。`, 'lore')
+-  }
+-  /** 电台配置变更：同步解析器 + 立即重开当前 BGM + 落盘 */
+-  setRadio(cfg: { mode: 'follow' | 'fixed'; fixed: string | null; perLevel: Record<number, string> }) {
+-    this.radio = { mode: cfg.mode, fixed: cfg.fixed, perLevel: { ...cfg.perLevel } }
+-    setRadioCfg(this.radio)
+-    audio.startBGM(this.player.level) // 立即换曲
+-    this.persist()
+-  }
+-  /** v56：乐手演奏——MIDI 曲风下随机一首摇滚风格（收听解锁电台），程序化曲风下普通摇滚 */
+-  musicianPlay(): string {
+-    this.joeyPlaying = true
+-    if (audio.midiEnabled) {
+-      const pool = ROCK_SONG_IDS.filter((id) => id !== audio.currentSong) // 尽量不重上一首
+-      const id = (pool.length ? pool : ROCK_SONG_IDS)[Math.floor(Math.random() * (pool.length ? pool.length : ROCK_SONG_IDS.length))]
+-      audio.playMusicianSong(id)
+-      return musicName(id)
+-    }
+-    audio.playProceduralRock()
+-    return '一首老式摇滚'
+-  }
+-  /** v56：乐手停止演奏（对话「停下」）——淡出演奏并恢复 BGM */
+-  musicianStop() {
+-    this.joeyPlaying = false
+-    audio.stopMusician()
+-  }
+-
+-  private freshPlayer(): PlayerState {
+-    return {
+-      x: 2.5, y: 2.5, facing: 0,
+-      z: 0, vz: 0, crouching: false, floor: 0,
+-      hp: 100, sanity: 100, hunger: 100, stamina: 100,
+-      thirst: 100,
+-      infection: 0,
+-      battery: 100, flashlight: false,
+-      level: 0,
+-      hotbar: new Array(7).fill(null), // 开局一无所有（物资散落在出生点周围）
+-      backpack: new Array(16).fill(null),
+-      selected: 0,
+-      equip: { offhand: null, body: null, gloves: null, head: null, pockets: [null, null, null, null] },
+-      kills: 0, tapes: 0, steps: 0,
+-      startTime: Date.now(), aliveTime: 0,
+-      hasGloves: false, hasSuit: false, hasLighter: false, hasRabbit: false, hasPockets: false,
+-      coffeeT: 0, leverPulled: false, slowT: 0, flashJamT: 0,
+-    }
+-  }
+-
+-  // 全量播报历史（HUD 左下仅显示最近几条且截断；物品栏「日志」页展示完整记录，上限 400 条）
+-  msgLog: { text: string; kind: MsgKind }[] = []
+-
+-  // 粉笔头画在墙上的记号（level + 世界坐标 + 墙面朝向；换层重新生成地图时清空）
+-  wallMarks: { level: number; wx: number; wy: number; dir: number }[] = []
+-  // 第九大道：历史标记全部保留，但 HUD 方向提示只跟随 avenueHintSeq 指向的最新一枚。
+-  avenueMarks: AvenueMapMark[] = []
+-  avenueHintSeq: number | null = null
+-
+-  /** 订阅引擎事件；返回取消订阅函数（调用方必须在卸载时取消，否则监听器累积会导致播报重复） */
+-  on(fn: (e: HudEvent) => void): () => void {
+-    this.listeners.push(fn)
+-    return () => { this.listeners = this.listeners.filter((f) => f !== fn) }
+-  }
+-  emit(e: HudEvent) {
+-    if (e.kind === 'transition' && e.anim !== 'intro' && this.transition) {
+-      this.transition.startedAt ??= performance.now()
+-      this.prepareLevelTransition()
+-    }
+-    for (const f of this.listeners) f(e)
+-  }
+-
+-  /** Raw map work overlaps the exit animation; live state changes under its card. */
+-  private prepareLevelTransition() {
+-    const t = this.transition
+-    if (!t || t.dest === 'win' || t.preparing || t.prepared) return
+-    if (t.dest === 'random') t.dest = Math.floor(Math.random() * NORMAL_LEVELS)
+-    const def = levelDefOf(t.dest)
+-    if (!def || !canPrepareChunks(def)) return
+-    t.preparing = true
+-    t.mapSeed = level.nextMapSeed(this, t.dest)
+-    void prepareChunkWindow(def, t.mapSeed).catch(() => undefined).then(() => { t.prepared = true })
+-  }
+-  msg(text: string, kind: MsgKind = 'system') {
+-    this.msgLog.push({ text, kind })
+-    if (this.msgLog.length > 400) this.msgLog.splice(0, this.msgLog.length - 400)
+-    this.emit({ kind: 'msg', text, msgKind: kind })
+-  }
+-
+-  newRun(seed: number, difficulty: Difficulty, slot: save.SaveSlotId = 'slot1', forceFresh = false) {
+-    this.seed = seed
+-    this.difficulty = difficulty
+-    this.saveSlot = slot
+-    this.player = this.freshPlayer()
+-    this.over = false; this.victory = false; this.transition = null
+-    this.usingItem = null
+-    this.attackAnimT = 0
+-    this.attackAnimDur = 0.35
+-    this.attackCooldownT = 0
+-    this.attackCooldownDur = 0
+-    this.inspectHeld = false
+-    this.handsStowed = false
+-    this.squirtTank = 'none'
+-    this.squirtAmmo = 0
+-    this.squirtQuickLiquid = 'water'
+-    this.unstuckCheck = null
+-    this.idleSaved = false
+-    this.autosaveT = 0
+-    this.time = 0
+-    this.msgLog = [] // 新一局清空播报历史
+-    this.avenueMarks = []
+-    this.avenueHintSeq = null
+-    this.arriveL9From = null
+-    this.arriveL10From = null
+-    this.arriveL7SafeWater = false
+-    this.arriveL8AvenueEnd = false
+-    this.l10Weather = { kind: 'calm', t: 80, k: 0, wetness: 0 }
+-    this.l0RestorePosition = undefined
+-    this.l0World = undefined
+-    this.l0SharedWorld = undefined
+-    this.l0Loops=0;this.l0Meeting=0;this.l0Blur=0
+-    this.l1World = undefined
+-    this.l11World = undefined
+-    this.l11Weather = {kind:'calm',t:120,k:0,wetness:0}
+-    this.l10Action = null
+-    this.l9FogPhase = 'idle'
+-    this.l9FogT = 240
+-    this.l9FogK = 0
+-    this.visitedLevels.clear() // 新一局重置到层记录（初始物资首访刷新用）
+-    this.career = careerSystem.freshCareer()
+-    resetMegRuntime(this)
+-    this.outpostReturn = null // 新一局清空据点返程记录（读档时由快照恢复）
+-    this.knownNpcs = [] // 新一局清空随机 NPC 记录（静态 NPC 由注册表恒定提供）
+-    this.profile = freshProfile()
+-    this.rep = { meg: REP_START } // 新一局声望重置（MEG 默认友好；读档时由快照恢复）
+-    this.quests = []
+-    this.warehouseTempUnlock.clear() // v54：新一局清空仓库付费临时解锁
+-    // v56：电台重置（随层级变化 + 无收听记录；读档时由快照恢复）
+-    this.radio = { mode: 'follow', fixed: null, perLevel: {} }
+-    this.heardSongs = []
+-    setRadioCfg(this.radio)
+-    // v39/v45/v47 等持续性效果状态清空（EFFECTS 注册表 newRun 组：BRC 未告发记录与模仿冷却、
+-    // 教化系统/宣誓/接触冷却/诵咏——逐字段语义与原显式赋值一致；读档时由快照恢复）
+-    resetEffects(this, 'newRun')
+-    // v29a：主界面「继续游戏」用存档种子重进 newRun——存在同种子快照时恢复进度而不是重开新游戏。
+-    // （「开始新游戏」的种子是随机新生成的，与快照种子不同，自然走全新开局路径。）
+-    // v54：从绑定的存档槽读取快照（slot1/2/3/auto）；v58：联机开局一律全新（不读档）
+-    const snap = forceFresh ? null : this.mpSession ? this.mpSession.resumeSnapshot??null : loadSaveSnapshot(slot)
+-    if (snap && snap.seed === seed) {
+-      this.difficulty = snap.difficulty ?? difficulty
+-      this.time = snap.time
+-      for (const id of snap.visited ?? []) this.visitedLevels.add(id)
+-      this.career = careerSystem.restoreCareer(snap.career)
+-      megState(this)
+-      this.outpostReturn = snap.outpostReturn ?? null
+-      this.rep = snap.rep ?? { meg: REP_START }
+-      this.quests = snap.quests ?? []
+-      this.profile = snap.profile ? normalizeProfile(snap.profile) : freshProfile()
+-      this.warehouses = snap.warehouses ?? warehouse.freshWarehouses() // v54：恢复寄存仓库库存
+-      this.brcSin = snap.brcSin ?? { hurt: 0, killed: 0 } // v39：恢复 BRC 未告发记录
+-      this.brcMimicCd = snap.brcMimicCd ?? 0
+-      // v45：恢复教化系统状态
+-      this.indoctrination = snap.indoctrination ?? 0
+-      this.jerryTamed = snap.jerryTamed ?? false
+-      this.jerryAgreed = new Set(snap.jerryAgreed ?? [])
+-      // v49：恢复宣誓标记；旧档无此字段时按「已认同过任一信众」迁移（每局仅首次认同有效）
+-      this.jerryOath = snap.jerryOath ?? ((snap.jerryAgreed ?? []).length > 0)
+-      this.homelyApplied = snap.homelyApplied ?? false // v55：家常酒店入住申请
+-      // v56：恢复电台配置与收听记录（旧档缺省=随层级变化/空）
+-      this.radio = snap.radio ?? { mode: 'follow', fixed: null, perLevel: {} }
+-      this.radio.perLevel = this.radio.perLevel ?? {}
+-      this.heardSongs = snap.heardSongs ?? []
+-      this.l10Weather = snap.l10Weather ?? { kind: 'calm', t: 80, k: 0, wetness: 0 }
+-      this.l0World = snap.l0World
+-      this.l0SharedWorld = snap.l0SharedWorld
+-      this.l1World = snap.l1World
+-      this.l11World = snap.l11World
+-      this.l11Weather = snap.l11Weather ?? {kind:'calm',t:120,k:0,wetness:0}
+-      setRadioCfg(this.radio)
+-      this.loadLevel(snap.level, { mapSeed: snap.mapSeed, firstVisit: snap.mapFirstVisit })
+-      // loadLevel 已把 player 放到出生点；此处整体恢复为存档时的玩家状态
+-      const fresh = this.freshPlayer()
+-      this.player = {
+-        ...fresh,
+-        ...snap.player,
+-        equip: { ...fresh.equip, ...(snap.player.equip ?? {}), pockets: snap.player.equip?.pockets ?? fresh.equip.pockets },
+-      }
+-      this.player.level = snap.level
+-      // v59：旧版据点布局的坐标落在已移除的小房间/墙体中，统一迁移到新布局的安全出生点。
+-      // 布局版本 2 保留世界坐标恢复及既有安全校正逻辑。
+-      const legacySettlement = (snap.level===101 && snap.alphaLayout!==5) || (snap.level===102 && snap.bntgLayout!==3) || (snap.settlementLayout !== 2 && [101,103,104,116].includes(snap.level))
+-      const legacyL0=snap.level===0&&!snap.l0World
+-      if (legacySettlement||legacyL0) { this.player.x=this.map!.spawn.x; this.player.y=this.map!.spawn.y; this.player.z=0; this.player.floor=0 }
+-      const placement = legacyL0 ? 'legacy-l0-spawn' : legacySettlement ? 'legacy-settlement-spawn' : level.restoreSavedPlayerPosition(this, snap.worldPos)
+-      restoreGlowFlight(this,snap.glowProjectiles)
+-      if(snap.level===5&&this.map?.inf&&snap.l5MothAlerts)this.map.inf.mothAlerts=structuredClone(snap.l5MothAlerts)
+-      if (snap.level === 8 && Array.isArray(snap.avenueMarks) && snap.avenueMarks.length > 0) {
+-        const restored = snap.avenueMarks.filter((mk) =>
+-          Number.isFinite(mk.seq) && Number.isFinite(mk.wx) && Number.isFinite(mk.wy)
+-          && (mk.kind === 'sign' || mk.kind === 'exit'))
+-        if (restored.length > 0) {
+-          this.avenueMarks = restored.map((mk) => ({ ...mk }))
+-          // 旧版可能因后来交互了低序号路标而把提示目标倒退。
+-          // 恢复时以已记录的最大序号为准，自动修正这类存档。
+-          this.avenueHintSeq = restored.reduce((max, mk) => Math.max(max, mk.seq), -1)
+-        }
+-      }
+-      // v55：感染阶段从存档感染值推导（升阶遭遇计数的基准）
+-      this.infectionStage = Math.min(4, Math.floor((this.player.infection ?? 0) / 100))
+-      // aliveTime 由 (Date.now()-startTime) 推导：平移 startTime 保持存活时长连续
+-      this.player.startTime = Date.now() - (snap.player.aliveTime ?? 0) * 1000
+-      this.introT = 0 // 读档不播摔落爬起动画
+-      if (placement === 'legacy-l0-spawn') this.msg('Level 0 已更新，已迁移到安全入口；背包、属性、任务与图鉴均已保留。','system')
+-      else if (placement === 'legacy-settlement-spawn') this.msg('旧版据点布局已迁移至新的安全接待点。', 'system')
+-      else if (placement === 'legacy-spawn') this.msg('旧版无限层存档缺少世界坐标，已移至本层安全入口。', 'system')
+-      else if (placement !== 'exact') this.msg('原存档落点已被地形占用，已移至附近安全位置。', 'system')
+-      this.msg(`读档成功——回到 ${levelLabel(snap.level)}。`, 'system')
+-      return
+-    }
+-    this.loadLevel(0)
+-    if (this.mpSpawnSlot !== null) level.applyMpSpawn(this, this.mpSpawnSlot) // v58：联机槽位出生 + 全槽位物资
+-    this.introT = 3.2 // 开场：摔到 L0 地面后缓慢爬起
+-    this.msg(`你坠入了后室。种子 ${seedString(seed)}`, 'system')
+-    this.msg('找到每层的出口，向下探索。收集 6 盘磁带。', 'lore')
+-    this.persist() // v29a/v54：新开局立即写入绑定槽位，保证槽内快照始终同局（自动槽由 loadLevel 切层存档覆盖）
+-  }
+-
+-  // ---------- 存档读写（engine/save.ts）----------
+-  // v29a：当前进度快照（纯 JSON 可序列化）
+-  snapshot(): SaveSnapshot { return save.snapshot(this) }
+-  updateProfile(profile: PlayerProfile) {
+-    this.profile = normalizeProfile(profile)
+-    this.persist()
+-  }
+-  /** 立即写盘（暂停/退回主界面/周期自动存档共用入口；死亡与胜利后不再覆盖存档） */
+-  persist() { save.persist(this) }
+-
+-  // ---------- 层级切换与出口（engine/level.ts）----------
+-  loadLevel(id: number, restore?: { mapSeed: number; firstVisit: boolean }, preparedMapSeed?: number) { level.loadLevel(this, id, restore, preparedMapSeed) }
+-  /** v39：无限层级 NPC 同步——从已加载 LiveChunk 收集活体 NPC（窗口平移后重收集） */
+-  syncInfNpcs() { level.syncInfNpcs(this) }
+-  updateInfiniteWindow(prepared?:ReadonlyMap<string,import('./world/infiniteRegistry').GenChunk>) { level.updateInfiniteWindow(this,prepared) }
+-  nearestExit() { return level.nearestExit(this) }
+-  /** v35：最近的定居点地标（出口提示的替代目标——附近无出口时指向它） */
+-  nearestLandmark() { return level.nearestLandmark(this) }
+-  /** 将一枚第九大道地标记入地图；路线进度只前进，后补的低序号标记不会抢走 HUD 目标。 */
+-  markAvenueLandmark(seq: number, wx: number, wy: number, kind: AvenueMapMark['kind'] = 'sign') {
+-    if (this.player.level !== 8 || !Number.isFinite(seq) || !Number.isFinite(wx) || !Number.isFinite(wy)) return
+-    const mark: AvenueMapMark = { seq: Math.max(0, Math.floor(seq)), wx, wy, kind }
+-    const old = this.avenueMarks.findIndex((mk) => mk.seq === mark.seq)
+-    if (old >= 0) this.avenueMarks[old] = mark
+-    else this.avenueMarks.push(mark)
+-    this.avenueMarks.sort((a, b) => a.seq - b.seq)
+-    if (this.avenueHintSeq === null || mark.seq > this.avenueHintSeq) this.avenueHintSeq = mark.seq
+-  }
+-  /** 无限窗口内的当前第九大道提示目标；旧标记不参与方向选择。 */
+-  avenueHintTarget(): { x: number; y: number; d: number; mark: AvenueMapMark } | null {
+-    const m = this.map
+-    if (this.player.level !== 8 || !m?.inf || this.avenueHintSeq === null) return null
+-    const mark = this.avenueMarks.find((mk) => mk.seq === this.avenueHintSeq)
+-    if (!mark) return null
+-    const x = mark.wx - m.inf.ox, y = mark.wy - m.inf.oy
+-    return { x, y, d: Math.hypot(x - this.player.x, y - this.player.y), mark }
+-  }
+-  /** v57o：游泳信息（HUD 水深/氧气显示；仅在深水中非 null） */
+-  swimInfo() {
+-    const p = this.player, m = this.map
+-    if (!m || this.inLiquid !== 1) return null
+-    const i = Math.floor(p.y) * m.w + Math.floor(p.x)
+-    const depth = this.levelDef.id === 7 ? Math.max(0, -p.z) : (m.seaFloor?.[i] ?? 1.7)
+-    // [swim] 前方（视线水平方向）有能撑上去的岸边时 HUD 提示
+-    const canal = this.levelDef.id === 11 ? l11MapWater(m, p.x, p.y) : null
+-    const surf = canal ? canal.surface + .1 : 0.1
+-    const edge = !!findClimbOut(this, surf, -Math.sin(look.yaw), -Math.cos(look.yaw))
+-    return { depth, breath: this.breathT, limit: movement.breathLimit(this), submerged: this.submerged, edge }
+-  }
+-  takeExit(def: ExitDef) { level.takeExit(this, def) }
+-  tinyBlocksLittleDoor(exit?: GameMap['exits'][number]): boolean { return level.tinyBlocksLittleDoor(this, exit) }
+-  updateStairs(dt: number) { level.updateStairs(this, dt) }
+-  switchL6Floor(target: -1 | 0, reason: 'stairs' | 'pit' = 'stairs') { return level.switchL6Floor(this, target, reason) }
+-  placeBonusStairs() { level.placeBonusStairs(this) }
+-  /** v35：前往据点（地标弹窗「前往」/DevPanel 据点跳转共用）：记录返程层级后切入 */
+-  enterOutpost(outpostId: string, dev = false): boolean { return level.enterOutpost(this, outpostId, dev) } // v54：dev=DevPanel 跳转绕过准入门槛
+-  /** v55：家常酒店入住申请（地标卡办理，永久解锁） */
+-  applyHomelyStay() { level.applyHomelyStay(this) }
+-
+-  // ---------- 移动/输入积分 + 垂直物理（engine/movement.ts）----------
+-  updateMovement(dt: number, dm: (typeof DIFF)[Difficulty], introLock: boolean): number | null { return movement.updateMovement(this, dt, dm, introLock) }
+-  updateClimb(dt: number, mag: number) { movement.updateClimb(this, dt, mag) }
+-
+-  // ---------- 生存属性（engine/survival.ts）----------
+-  updateSurvival(dt: number, dm: (typeof DIFF)[Difficulty], mag: number): boolean { return survival.updateSurvival(this, dt, dm, mag) }
+-
+-  // ---------- 实体 AI 与感知（engine/entityAI.ts）----------
+-  updateVendingMachines() { entityAI.updateVendingMachines(this) }
+-  isLit(x: number, y: number): boolean { return entityAI.isLit(this, x, y) }
+-  noiseEvent(x: number, y: number, radius: number, sprint: boolean) { entityAI.noiseEvent(this, x, y, radius, sprint) }
+-  lookingAt(e: Entity): boolean { return entityAI.lookingAt(this, e) }
+-  los(x0: number, y0: number, x1: number, y1: number): boolean { return entityAI.los(this, x0, y0, x1, y1) }
+-  updateEntities(dt: number, dmgMult: number) { entityAI.updateEntities(this, dt, dmgMult) }
+-  wanderTarget(e: Entity) { entityAI.wanderTarget(this, e) }
+-  wanderDeflect(e: Entity) { entityAI.wanderDeflect(this, e) }
+-  provokeRatPack(e: Entity) { entityAI.provokeRatPack(this, e) }
+-  updateNguithr(e: Entity, d: number, dt: number) { entityAI.updateNguithr(this, e, d, dt) }
+-  faceToward(e: Entity, tx: number, ty: number, dt: number, rate: number) { entityAI.faceToward(this, e, tx, ty, dt, rate) }
+-  entityWalkH(m: GameMap, tx: number, ty: number, band: FloorBand, aquatic = false, flying = false): number | null { return entityAI.entityWalkH(this, m, tx, ty, band, aquatic, flying) }
+-  stepEntity(e: Entity, speed: number, dt: number): boolean { return entityAI.stepEntity(this, e, speed, dt) }
+-  meleeZOk(e: Entity): boolean { return entityAI.meleeZOk(this, e) }
+-
+-  // ---------- 战斗/投掷/击退 + 粒子（engine/combat.ts）----------
+-  hurtPlayer(dmg: number, source: string) { combat.hurtPlayer(this, dmg, source) }
+-  die(cause: string, force = false) { combat.die(this, cause, force) }
+-  attackReach(e: Entity): number { return combat.attackReach(this, e) }
+-  canHit(e: Entity): boolean { return combat.canHit(this, e) }
+-  /** 准星当前可命中的最近实体（渲染层据此改变准星样式） */
+-  aimEntity(): Entity | null { return combat.aimEntity(this) }
+-  killCheck(e: Entity) { combat.killCheck(this, e) }
+-  attack() { combat.attack(this) }
+-  toggleHands() {
+-    if (!this.map || this.over) return
+-    this.handsStowed = !this.handsStowed
+-    this.input.attack = false
+-    this.inspectHeld = false
+-    this.usingItem = null // 中断未完成的使用动作，不消耗物品。
+-    this.attackAnimT = 0 // 仅取消姿势；保留实际攻击冷却，防止反复收放绕过间隔。
+-    this.msg(this.handsStowed ? '已收起主手，可继续交互。' : '已取出主手。', 'system')
+-  }
+-  throwHeld(type: string) { combat.throwHeld(this, type) }
+-  /** 往滋水枪储罐装入 1 瓶液体（3 份喷射量；储罐只能装一种液体，清水无需对应物品） */
+-  loadSquirt(liquid: 'water' | 'almond' | 'cashew' | 'liquidpain'): boolean { return combat.loadSquirt(this, liquid) }
+-  /** 清空储罐（把残液倒掉，换液体免喷完） */
+-  clearSquirt() { combat.clearSquirt(this) }
+-  stanleyTeleport() { combat.stanleyTeleport(this) }
+-  shootChocolate() { combat.shootChocolate(this) }
+-  squirt() { combat.squirt(this) }
+-  updateProjectiles(dt: number) { combat.updateProjectiles(this, dt) }
+-  landProjectile(pr: Projectile, x: number, y: number) { combat.landProjectile(this, pr, x, y) }
+-  bloodParticles(x: number, y: number, clear: boolean | 'wretch' = false) { combat.bloodParticles(this, x, y, clear) }
+-  steamParticles(x: number, y: number) { combat.steamParticles(this, x, y) }
+-  splashParticles(x: number, y: number, z: number) { combat.splashParticles(this, x, y, z) }
+-  bubbleParticles(x: number, y: number, z: number) { combat.bubbleParticles(this, x, y, z) }
+-  rippleParticles(x: number, y: number) { combat.rippleParticles(this, x, y) }
+-  updateParticles(dt: number) { combat.updateParticles(this, dt) }
+-
+-  // ---------- 交互/容器/结构触发（engine/interact.ts）----------
+-  updateElecHum() { interact.updateElecHum(this) }
+-  updateContainerSearch(dt: number) { interact.updateContainerSearch(this, dt) }
+-  updateL10Actions(dt: number) { interact.updateL10Actions(this, dt) }
+-  triggerStructs(dt: number, dm: (typeof DIFF)[Difficulty]): boolean { return interact.triggerStructs(this, dt, dm) }
+-  inView(x: number, y: number, radius: number): boolean { return interact.inView(this, x, y, radius) }
+-  viewAngle(x: number, y: number): number { return interact.viewAngle(this, x, y) }
+-  interactionProbe(
+-    x: number, y: number, z: number, band: FloorBand, maxDistance: number, radius = 0.25,
+-    volume?: interact.InteractionVolume, surfaceDistance?: number, verticalRadius = radius, target?: Structure,
+-  ) {
+-    return interact.interactionProbe(this, x, y, z, band, maxDistance, radius, volume, target, surfaceDistance, verticalRadius)
+-  }
+-  scanInteract() { interact.scanInteract(this) }
+-  doInteract() { interact.doInteract(this) }
+-  rollLoot(kind: string): string[] { return interact.rollLoot(this, kind) }
+-  finishSearch(s: Structure) { interact.finishSearch(this, s) }
+-  // 从战利品面板拿取一件（返回 false=背包满）
+-  takeLoot(i: number): boolean { return interact.takeLoot(this, i) }
+-  takeAllLoot() { interact.takeAllLoot(this) }
+-  closeLootPanel() { interact.closeLootPanel(this) }
+-  afterLootChange() { interact.afterLootChange(this) }
+-
+-  // ---------- NPC/对话/委托/声望（engine/npc.ts）----------
+-  updateJerry(dt: number) { npc.updateJerry(this, dt) }
+-  updateNpcs(dt: number) { npc.updateNpcs(this, dt) }
+-  trackQuests(dt: number) { npc.trackQuests(this, dt) }
+-  /** 调整某团体声望（clamp ±100；流浪者等无声望团体直接忽略） */
+-  changeRep(factionId: string, delta: number) { npc.changeRep(this, factionId, delta) }
+-  /** 模仿 BRC 员工的动作进行装修：播放挥臂动画，动作播完 +2 声望；全局冷却 ~90s（冷却中返回 false） */
+-  mimicBrc(): boolean { return npc.mimicBrc(this) }
+-  /** 向 BRC 员工坦白你伤害/杀死了他们的同事：结清未告发记录，且该员工转为敌对 */
+-  confessBrc(npcId: string): boolean { return npc.confessBrc(this, npcId) }
+-  aimJerry(): Entity | null { return npc.aimJerry(this) }
+-  canAgreeJerry(npcId: string): boolean { return npc.canAgreeJerry(this, npcId) }
+-  agreeJerry(npcId: string): boolean { return npc.agreeJerry(this, npcId) }
+-  gotoJerryRoom(npcId: string): boolean { return npc.gotoJerryRoom(this, npcId) }
+-  slanderJerry(npcId: string): boolean { return npc.slanderJerry(this, npcId) }
+-  hurtJerryRep() { npc.hurtJerryRep(this) }
+-  contactJerry(ent?: Entity): boolean { return npc.contactJerry(this, ent) }
+-  tameJerry(): boolean { return npc.tameJerry(this) }
+-  preachQuest() { return npc.preachQuest(this) }
+-  preachTargetOk(npcId: string): boolean { return npc.preachTargetOk(this, npcId) }
+-  preachTo(npcId: string): boolean { return npc.preachTo(this, npcId) }
+-  questOffers(faction: QuestFaction = 'meg'): QuestDef[] { return npc.questOffers(this, faction) }
+-  acceptQuest(def?: QuestDef, issuerId?: string): boolean { return npc.acceptQuest(this, def, issuerId) }
+-  turnInQuest(faction: QuestFaction = 'meg'): boolean { return npc.turnInQuest(this, faction) }
+-  deliverQuestTo(npcId: string): boolean { return npc.deliverQuestTo(this, npcId) }
+-  goodsQuestOffers(): QuestDef[] { return npc.goodsQuestOffers(this) }
+-  deliverGoodsTo(npcId: string): boolean { return npc.deliverGoodsTo(this, npcId) }
+-  failGoodsQuest(): boolean { return npc.failGoodsQuest(this) }
+-  basicSupplyCount(): number { return npc.basicSupplyCount(this) }
+-  canClaimEl3aRelief(): boolean { return npc.canClaimEl3aRelief(this) }
+-  claimEl3aRelief(): boolean { return npc.claimEl3aRelief(this) }
+-  /** v55：求治感染（疫疾三阶以上，仅医疗身份 NPC——杜邦/马丁/莫雷尔/萨伊拉·昆恩） */
+-  cureInfection(npcId: string): boolean { return npc.cureInfection(this, npcId) }
+-
+-  // ---------- 背包/装备/物品使用（engine/inventory.ts）----------
+-  addItem(type: string): boolean { return inventory.addItem(this, type) }
+-  hasItem(type: string): boolean { return inventory.hasItem(this, type) }
+-  countItem(type: string): number { return inventory.countItem(this, type) }
+-  consumeItem(type: string): boolean { return inventory.consumeItem(this, type) }
+-  useSlot(where: SlotWhere, i: number): boolean { return inventory.useSlot(this, where, i) }
+-  updateItemUse(dt: number) { inventory.updateItemUse(this, dt) }
+-  drawChalk() { inventory.drawChalk(this) }
+-  quickUse() { inventory.quickUse(this) }
+-  quickDrop() { inventory.quickDrop(this) }
+-  slotGet(r: SlotRef): InvSlot | null { return inventory.slotGet(this, r) }
+-  slotSet(r: SlotRef, v: InvSlot | null) { inventory.slotSet(this, r, v) }
+-  // 口袋中是否有指定物品（钥匙/门禁卡/护符类判定走口袋，不再全背包生效）
+-  hasPocket(type: string): boolean { return inventory.hasPocket(this, type) }
+-  dropSlot(where: SlotWhere, i: number) { inventory.dropSlot(this, where, i) }
+-  unequipSlot(where: SlotWhere, i: number): boolean { return inventory.unequipSlot(this, where, i) }
+-  equipItem(where: SlotWhere, i: number): boolean { return inventory.equipItem(this, where, i) }
+-  moveSlot(from: SlotRef, to: SlotRef): boolean { return inventory.moveSlot(this, from, to) }
+-  syncPassives() { inventory.syncPassives(this) }
+-  warpToBerryLevel(tag?: number) { inventory.warpToBerryLevel(this, tag) }
+-
+-  // ---------- 据点寄存仓库（engine/warehouse.ts，v54）----------
+-  /** NPC 的阵营仓库 id（非寄存 NPC 返回 null） */
+-  warehouseOfNpc(npcId: string): warehouse.WarehouseFaction | null { return warehouse.warehouseOfNpc(npcId) }
+-  /** 声望门槛：对应团体声望 ≥10 开放（或 BNTG 付费临时解锁） */
+-  canUseWarehouse(npcId: string): boolean { return warehouse.canUseWarehouse(this, npcId) }
+-  /** BNTG 付费通道：付 5 压印币，本次对话临时使用仓库（MEG 无付费通道） */
+-  payWarehouseAccess(fac: warehouse.WarehouseFaction): boolean { return warehouse.payWarehouseAccess(this, fac) }
+-  /** 寄存：背包/快捷栏物品移入阵营仓库（同类并摞；满仓失败） */
+-  warehouseDeposit(fac: warehouse.WarehouseFaction, from: SlotRef): boolean { return warehouse.warehouseDeposit(this, fac, from) }
+-  /** 取回：仓库栏位移回背包（背包满失败） */
+-  warehouseWithdraw(fac: warehouse.WarehouseFaction, i: number): boolean { return warehouse.warehouseWithdraw(this, fac, i) }
+-
+-  // ---------- 现象与停电/视野（engine/ambient.ts）----------
+-  updateAmbient(dt: number) { ambient.updateAmbient(this, dt) }
+-  rollAmbientEvent() { ambient.rollAmbientEvent(this) }
+-  startBlackout(dur: number) { ambient.startBlackout(this, dur) }
+-  applyBlackout() { ambient.applyBlackout(this) }
+-  spawnBlackoutSmilers() { ambient.spawnBlackoutSmilers(this) }
+-  endBlackout() { ambient.endBlackout(this) }
+-  computeVisibility() { ambient.computeVisibility(this) }
+-
+-  // ---------- 主更新 ----------
+-  update(dt: number) {
+-    // renderer3d.applyView 会把 input 向量「就地」旋转到世界系；键盘/触屏按住期间
+-    // mx/my 不会每帧重写，若消费后不复原，旋转将逐帧叠加 → 移动方向漂移、
+-    // 周期性朝反方向走（玩家感知为「卡顿/位置被拉回」）。
+-    // 这里保证：无论 step 从哪个分支返回，input 都被转回屏幕系。
+-    try {
+-      this.step(dt)
+-    } finally {
+-      this.unwindInput()
+-    }
+-    unstuck.updateUnstuckCheck(this, dt)
+-    // v29a：暂停（暂停菜单）或退回主界面（over=true 且存活）时落盘一次
+-    if (this.paused || this.over) {
+-      if (!this.idleSaved) { this.idleSaved = true; this.persist() }
+-    } else this.idleSaved = false
+-  }
+-
+-  // applyView 旋转的逆变换（R^-1 = R^T）
+-  private unwindInput() {
+-    const i = this.input
+-    if (Math.abs(i.mx) < 1e-6 && Math.abs(i.my) < 1e-6) return
+-    const s = Math.sin(look.yaw), c = Math.cos(look.yaw)
+-    const mx = c * i.mx - s * i.my
+-    const my = s * i.mx + c * i.my
+-    i.mx = mx; i.my = my
+-  }
+-
+-  getInteract(): { kind: string; label: string } | null { return this.interactTarget }
+-
+-  /** 暂停页脱困：开始 3 秒真实移动检测；成功后由引擎自动传送到安全连通地块。 */
+-  startUnstuckCheck(): boolean { return unstuck.startUnstuckCheck(this) }
+-  /** 暴露给冒烟测试/诊断：当前位置是否存在连续逃生路径。 */
+-  canEscapeCurrentPosition(): boolean { return unstuck.canEscapeCurrentPosition(this) }
+-  /** 暴露给冒烟测试/诊断：计算最近的开阔连通安全落点。 */
+-  findUnstuckDestination(): unstuck.UnstuckDestination | null { return unstuck.findUnstuckDestination(this) }
+-
+-  private step(dt: number) {
+-    if (!this.map || this.paused || this.over) return
+-    if (this.transition?.preparing && !this.transition.prepared) return
+-    dt = Math.min(dt, 0.05)
+-    this.time += dt
+-    // v29a/v54：每 60 秒自动存档到「自动保存」槽（退回主界面后从自动槽继续可恢复进度用；
+-    // 手动槽由暂停/退回标题落盘与切层之外的节点维护）
+-    this.autosaveT += dt
+-    if (this.autosaveT >= 60) { this.autosaveT = 0; save.persist(this, 'auto') }
+-    const p = this.player
+-    const dm = DIFF[this.difficulty]
+-    // v51：糖果效果计时器（EFFECTS 注册表 pre 组：糖瘾/银舌头/枪糖/巧克力冷却——与原内联顺序一致）
+-    runEffectTicks(this, dt, 'pre')
+-    // v51：人制品售货机——看过背面后，玩家背对它（视线锥外且 10m 内）即活化追击；受到攻击也会活化
+-    this.updateVendingMachines()
+-    // v51：人制品效应计时（5 分钟）+ Nguithr'xurh 镇静剂麻痹计时（EFFECTS 注册表 post 组）
+-    runEffectTicks(this, dt, 'post')
+-    // Three.js 相机前方在游戏平面中为 (-sin(yaw), -cos(yaw))；atan2 的参数必须是 (dy, dx)。
+-    // 旧实现交换了二者，使逻辑朝向相对画面准星恒偏约 90°。
+-    p.facing = Math.atan2(-Math.cos(look.yaw), -Math.sin(look.yaw))
+-
+-    // 过渡动画中
+-    if (this.transition) {
+-      this.transition.t += dt
+-      // App deliberately suspends simulation while the departure animation is
+-      // visible. Count that wall time once rather than replaying its delay.
+-      if (this.transition.startedAt !== undefined)
+-        this.transition.t = Math.max(this.transition.t, (performance.now() - this.transition.startedAt) / 1000)
+-      if (this.transition.t > 0.9) {
+-        const t = this.transition
+-        if (t.dest === 'random') t.dest = Math.floor(Math.random()*NORMAL_LEVELS)
+-        if (t.dest !== 'win' && !t.prepared && canPrepareChunks(levelDefOf(t.dest)!)) {
+-          this.prepareLevelTransition()
+-          return
+-        }
+-        this.transition = null
+-        if (t.dest === 'win') {
+-          this.victory = true; this.over = true
+-          save.clearRunSlots(this) // v29a/v54：通关后本局进度的存档槽失效（绑定槽 + 自动槽）
+-          this.emit({ kind: 'victory' })
+-          audio.stopHum(); audio.stopBGM(); audio.stopRain(); audio.stopCaveWeather(); audio.setHeartbeat(false, 0) // v54：雨声随通关停止
+-        } else {
+-          const dest = t.dest
+-          if (t.fallDamage) {
+-            p.hp -= t.fallDamage
+-            this.emit({ kind: 'damage' })
+-            if (p.hp <= 0) { this.die('坠亡'); return }
+-          }
+-          this.loadLevel(dest, undefined, t.mapSeed)
+-          this.emit({ kind: 'transition', anim: 'intro' })
+-        }
+-      }
+-      return
+-    }
+-
+-    this.updateItemUse(dt)
+-
+-    p.aliveTime = (Date.now() - p.startTime) / 1000
+-
+-    // 开场爬起：计时递减，期间锁定移动/攻击/跳跃（任意输入=立即起身跳过）
+-    if (this.introT > 0) {
+-      const skip = Math.hypot(this.input.mx, this.input.my) > 0.1 || this.input.jump || this.input.attack
+-      this.introT = skip ? 0 : Math.max(0, this.introT - dt)
+-    }
+-    const introLock = this.introT > 0 || jerryInputLock(this) // 杰瑞木僵/信众击晕/残响失神：锁定移动、攻击与跳跃
+-
+-    // ---- 移动 ----（engine/movement.ts；返回 null=本帧已死亡/终止，同原 step 内 return）
+-    const mag = this.updateMovement(dt, dm, introLock)
+-    if (mag === null) return
+-
+-    // ---- 生存消耗（engine/survival.ts；返回 true=本帧已死亡）----
+-    if (this.updateSurvival(dt, dm, mag)) return
+-
+-    // ---- 攻击 ----
+-    if (this.attackAnimT > 0) this.attackAnimT -= dt
+-    if (this.attackCooldownT > 0) this.attackCooldownT = Math.max(0, this.attackCooldownT - dt)
+-    if (this.input.attack) {
+-      this.input.attack = false
+-      if (!introLock && !this.usingItem) this.attack()
+-    }
+-    this.updateProjectiles(dt)
+-    if (this.input.toggleLight) {
+-      this.input.toggleLight = false
+-      // v32：头灯（头饰栏）与手电筒（副手）共用开关与电池
+-      const beamKind = p.equip.offhand?.type === 'flashlight' ? '手电筒' : p.equip.head?.type === 'headlamp' ? '头灯' : null
+-      if (!beamKind) {
+-        this.msg('没有手电筒或头灯。手电筒装在【副手】，头灯装在【头饰】。', 'system')
+-      } else if (p.battery > 0 || p.flashlight) {
+-        p.flashlight = !p.flashlight
+-        audio.uiTick()
+-        this.msg(`${beamKind}：${p.flashlight ? '开' : '关'}`, 'system')
+-      }
+-    }
+-
+-    // ---- 实体 AI ----
+-    this.updateEntities(dt, dm.dmg)
+-    careerSystem.updateCareer(this, dt)
+-    this.trackQuests(dt) // v35：委托进度追踪
+-    updateMegMissions(this, dt)
+-    updateFactionMissions(this, dt)
+-
+-    // ---- v45：信众领地判定 / 教化诵咏 / 接触冷却（engine/npc.ts）----
+-    this.updateJerry(dt)
+-    // ---- v35：NPC 步进 + v39：BRC 模仿装修结算（engine/npc.ts）----
+-    this.updateNpcs(dt)
+-
+-    // ---- v51：L3 配电箱电流嗡鸣（engine/interact.ts）----
+-    this.updateElecHum()
+-
+-    // ---- 交互检测 ----
+-    this.scanInteract()
+-    if (this.input.interact) {
+-      this.input.interact = false
+-      this.doInteract()
+-    }
+-
+-    // ---- 容器搜索进度 / 战利品面板自动关闭（engine/interact.ts）----
+-    this.updateContainerSearch(dt)
+-    this.updateL10Actions(dt)
+-
+-    // ---- 粒子 ----
+-    this.updateParticles(dt)
+-
+-    // 未涂黑窗户陷阱 / 锈蚀钢筋 / 蒸汽阀门伤害（engine/interact.ts；返回 true=本帧已死亡）
+-    if (this.triggerStructs(dt, dm)) return
+-
+-    // ---- 层级氛围事件（wiki 设定播报）+ L1 停电恢复（engine/ambient.ts）----
+-    this.updateAmbient(dt)
+-
+-    // ---- 视野 ----
+-    this.computeVisibility()
+-
+-    this.camShake = Math.max(0, this.camShake - dt * 2.2)
+-  }
+-
+-  get levelDef() { return levelDefOf(this.player.level)! }
+-
+-  // ---------- 开发者模式 API（engine/dev.ts；仅供开发者面板/冒烟测试调用）----------
+-  devJump(id: number) { dev.devJump(this, id) }
+-  devJumpOutpost(outpostId: string): boolean { return dev.devJumpOutpost(this, outpostId) }
+-  devForward(): { fx: number; fy: number } { return dev.devForward(this) }
+-  devFindSpot(cx: number, cy: number, maxR = 6, band: FloorBand = this.player.floor): { x: number; y: number } | null { return dev.devFindSpot(this, cx, cy, maxR, band) }
+-  /** 召唤实体：在玩家前方 dist 格（默认 3）生成指定类型实体 */
+-  devSpawnEntity(type: string, dist = 3, form?: import('./entities').EntityForm): boolean { return dev.devSpawnEntity(this, type, dist, form) }
+-  devSetFlight(enabled: boolean): void {
+-    this.dev.fly = this.devEnabled && enabled
+-    this.player.vz = 0
+-    this.moveIt.acc = 0
+-    this.input.jump = this.input.crouch = false
+-    if (this.dev.fly) {
+-      this.ride = this.climb = this.porchDrop = null
+-      this.onStairs = false
+-      this.player.crouching = false
+-    }
+-  }
+-  /** 每种实体各召唤一只，环绕玩家排开 */
+-  devSpawnAllEntities(): number { return dev.devSpawnAllEntities(this) }
+-  /** 给予物品：默认进背包；toGround=true 时生成在玩家脚下 */
+-  devGiveItem(type: string, toGround = false): boolean { return dev.devGiveItem(this, type, toGround) }
+-  /** 一键全套补给：杏仁水×5 罐头×5 电池×3（放不下的掉到脚下） */
+-  devGiveSupplies() { dev.devGiveSupplies(this) }
+-  /** 状态控制：设置单项数值（0-100）。会自动解除状态锁定使数值生效。 */
+-  devSetStat(key: 'hp' | 'sanity' | 'hunger' | 'thirst' | 'stamina' | 'battery' | 'infection', v: number) { dev.devSetStat(this, key, v) }
+-  /** 全部补满 */
+-  devFillStats() { dev.devFillStats(this) }
+-  /** 全部清空（HP 保留 1 防死亡） */
+-  devDrainStats() { dev.devDrainStats(this) }
+-  /** 按本层出口的建筑、道路与通行条件，在附近生成并标记已发现。 */
+-  devSummonExit(kind: string): boolean { return dev.devSummonExit(this, kind) }
+-  /** Explicit summon/nearest safe teleport; never falls back to the other action. */
+-  devOperateExit(kind:string,mode:'summon'|'teleport',signal?:AbortSignal,destination?:ExitDef['dest'],progress?:(message:string)=>void) { return devOperateExit(this,kind,mode,signal,destination,progress) }
+-  devGotoExitKind(kind: string): Promise<boolean> { return dev.devGotoExitKind(this, kind) }
+-  /** v54：召唤装饰物（decorRegistry 结构类条目；落位面前 1 格，无限层同步写 LiveChunk） */
+-  devSpawnDecor(kind: string): boolean { return dev.devSpawnDecor(this, kind) }
+-  /** 传送：exit=最近出口 / entity=最近实体 / container=最近未搜容器 / spawn=出生点 / landmark=最近定居点地标 */
+-  devTeleport(target: 'exit' | 'entity' | 'container' | 'spawn' | 'landmark' | 'island'): boolean { return dev.devTeleport(this, target) }
+-  /** v57t：传送到最近的 L7 荒岛 */
+-  devGotoIsland(): boolean { return dev.devGotoIsland(this) }
+-  /** 开发者：传送到本层指定 NPC 身旁（DevPanel 传送页 NPC 列表） */
+-  devGotoNpc(id: string): boolean { return dev.devGotoNpc(this, id) }
+-  /** 时间快进：模拟 sec 秒的生存消耗（饥饿/理智/电池），不触发伤害死亡 */
+-  devFastForward(sec = 60) { dev.devFastForward(this, sec) }
+-  /** 立即触发一次本层随机氛围事件 */
+-  devTriggerEvent() { dev.devTriggerEvent(this) }
+-  /** 强制停电 dur 秒（已在停电中则先恢复再触发） */
+-  devForceBlackout(dur = 20) { dev.devForceBlackout(this, dur) }
+-  /** v17：传送到无限 L0 最近的指定变体 chunk 中心（截图/冒烟测试用） */
+-  devGotoVariant(kind: string): boolean { return dev.devGotoVariant(this, kind) }
+-  /** 当前层级可能生成的固定结构（prefab）与变种房间清单，标注是否已出现在已生成区域 */
+-  devLevelStructures() { return dev.devLevelStructures(this) }
+-  /** 传送到指定固定结构；已生成区域没有时先在墙区开洞强制生成一个再传送 */
+-  devGotoPrefab(id: string): boolean { return dev.devGotoPrefab(this, id) }
+-  /** 测试场地：仅 L0 无限模式、开发者模式专用——在附近开辟 80×80 无墙空旷区域并传送（不会自然生成） */
+-  devTestField(): boolean { return dev.devTestField(this) }
+-  /** v17：传送到最近的保底出口「闪烁的墙壁」（窗口外也可达） */
+-  devGotoExit(): boolean { return dev.devGotoExit(this) }
+-  /** 重新生成当前层级：newSeed=true 换随机种子，否则同种子重建 */
+-  devRegenLevel(newSeed: boolean) { dev.devRegenLevel(this, newSeed) }
+-  /** 清场：击杀本层全部实体 */
+-  devKillAllEntities(): number { return dev.devKillAllEntities(this) }
+-  /** 调试信息快照（信息页签展示用） */
+-  devInfo() { return dev.devInfo(this) }
+-
+-  /** 滋水枪储罐容量（份数）：9 瓶 × 每瓶 3 份 = 27 */
+-  static readonly SQUIRT_CAP = combat.SQUIRT_CAP
+-  static readonly BRC_MIMIC_CD = npc.BRC_MIMIC_CD // 模仿装修全局冷却（秒，防连点）
+-}
+-
+-export const engine = new Engine()
+-
+-
++import { newSwimState, findClimbOut, type SwimState, type SwimMode } from './engine/swim'
++import * as careerSystem from './engine/career'
++import {restoreGlowFlight} from './engine/glowsticks'
++import { megState, resetMegRuntime, updateMegMissions } from './engine/megMissions'
++import { updateFactionMissions } from './engine/factionMissions'
++import { freshProfile, normalizeProfile, type PlayerProfile } from './core/playerProfile'
++import type { L1WorldSave } from './engine/l1State'
++// 游戏引擎：组合根——全部状态字段、主循环 step()、对外公共 API 门面。
++// v53：机制实现按类别拆分到 engine/ 子模块（持续性效果注册表 effects / 存档 save /
++// 层级切换 level / 移动积分 movement / 生存属性 survival / 实体AI entityAI / 战斗投掷 combat /
++// 交互容器 interact / NPC委托声望 npc / 背包装备 inventory / 现象停电 ambient / 开发者API dev），
++// 逻辑逐语句搬运，行为/数值/时序不变；本类方法与字段名保持对外契约完全一致
++// （字段改由子模块直接读写，故不再标 private——TS 可见性放宽，运行时语义不变）。
++import { type GameMap, l11MapWater } from './world/mapgen'
++import { NORMAL_LEVELS, levelLabel, levelDefOf } from './levels'
++import { type Entity } from './entities'
++import { createIntegrator, type MoveIntegrator } from './core/player'
++import { look } from './core/renderer3d'
++import { freshJerryRun, jerryInputLock, type JerryRunState } from './engine/jerryAI'
++import type { ExitDef, FloorBand, LightSource, Structure } from './core/types'
++import { audio } from './core/audio'
++import { ROCK_SONG_IDS, musicName, setRadioCfg } from './core/midi'
++import { seedString } from './core/rng'
++import { type NpcState, type NpcDef } from './content/npcs'
++import type { ItemUseAnim } from './content/items'
++import { OUTPOSTS } from './content/outposts'
++import { REP_START, type QuestDef, type QuestFaction } from './content/factions'
++import { DIFF, type Difficulty } from './engine/shared'
++import { runEffectTicks, resetEffects } from './engine/effects'
++import * as save from './engine/save'
++import * as level from './engine/level'
++import * as movement from './engine/movement'
++import { newL7Fx, type L7Fx } from './engine/l7Events'
++import * as survival from './engine/survival'
++import * as entityAI from './engine/entityAI'
++import * as combat from './engine/combat'
++import * as interact from './engine/interact'
++import type { SittingState } from './engine/seating'
++import * as npc from './engine/npc'
++import * as inventory from './engine/inventory'
++import * as warehouse from './engine/warehouse'
++import * as ambient from './engine/ambient'
++import * as dev from './engine/dev'
++import { devOperateExit } from './engine/devExits'
++import * as unstuck from './engine/unstuck'
++import { loadSaveSnapshot, type SaveSnapshot } from './engine/save'
++import { canPrepareChunks, prepareChunkWindow } from './world/chunkCache'
++import type { L11WorldSave } from './engine/l11State'
++
++// v53：对外契约再导出（原 engine.ts 直接导出的符号保持不变）
++export { SAVE_KEY, loadSaveSnapshot, clearSaveSnapshot, listSaveSlots, readSaveSlot, SAVE_SLOT_KEYS, SAVE_SLOT_LABELS } from './engine/save'
++export type { SaveSnapshot, SaveSlotId, SlotInfo } from './engine/save'
++export type { Difficulty } from './engine/shared'
++export { EFFECTS } from './engine/effects'
++
++export interface InvSlot { type: string; count: number; tag?: number } // tag：来源层级标签（迁跃浆果=发现它的层级；不同标签不堆叠）
++// 装备槽位标识：hotbar/backpack 为背包格；offhand/body/gloves/pocket 为装备位（主手=快捷栏选中项，不是独立槽位）
++export type SlotWhere = 'hotbar' | 'backpack' | 'offhand' | 'body' | 'gloves' | 'head' | 'pocket'
++export interface SlotRef { w: SlotWhere; i: number }
++export interface EquipState {
++  offhand: InvSlot | null // 副手：持久手持（打火机/手电筒）
++  body: InvSlot | null // 身体：服饰（绝缘服/保温服）
++  gloves: InvSlot | null // 手套：隔热手套
++  head: InvSlot | null // 头饰：潜水面罩
++  pockets: (InvSlot | null)[] // 口袋 ×4：持久小物（兔子脚/门禁卡/钥匙）
++}
++export type MsgKind = 'loot' | 'damage' | 'lore' | 'system'
++/** 飞行中的投掷物（v28 可投掷道具；落地触发效果） */
++export interface Projectile {
++  id: number
++  type: string
++  x: number; y: number; z: number // z=离地高度（米）
++  floorZ: number // 落点地面高度（掷出时玩家脚下高度）
++  vx: number; vy: number; vz: number
++  done?: boolean
++  /** [swim] 水下掷出：受水阻、慢慢下沉 */
++  water?: boolean
++}
++export interface HudEvent {
++  kind: 'faction' | 'facility' | 'msg' | 'toast' | 'damage' | 'sanityhit' | 'transition' | 'floorchange' | 'dead' | 'victory' | 'levelchange' | 'lootpanel' | 'notebook' | 'doc' | 'landmark' | 'dialog' | 'radioheard' | 'mpevent'
++  cutIn?: string
++  dest?: number | 'random' | 'win'
++  text?: string
++  msgKind?: MsgKind
++  anim?: string
++  fallDamage?: number
++  song?: string // v56：radioheard——新收听的曲目 id
++  mp?: import('./net/protocol').MpEvent // v58：联机世界事件（session 订阅转发）
++}
++
++export interface PlayerState {
++  x: number; y: number; facing: number
++  // v7 数据契约：z 轴高度系统
++  z: number // 脚底高度（米，随地面高度档/坡道/跳跃变化）
++  vz: number // 垂直速度（重力积分）
++  crouching: boolean // 蹲伏（减速、过低通道）
++  floor: FloorBand
++  hp: number; sanity: number; hunger: number; stamina: number
++  thirst: number // v54：口渴值（0-100；与饥饿同率流失，归零持续扣血）
++  infection: number // v55：疫疾感染值（0+，隐藏数值——游戏内无数值/提示文本，仅风味特效；每 100 点进一阶）
++  battery: number; flashlight: boolean
++  level: number
++  hotbar: (InvSlot | null)[]
++  backpack: (InvSlot | null)[]
++  selected: number
++  equip: EquipState // 装备栏（副手/身体/手套/口袋×4；主手=快捷栏选中项）
++  kills: number; tapes: number; steps: number
++  startTime: number; aliveTime: number
++  hasGloves: boolean; hasSuit: boolean; hasLighter: boolean; hasRabbit: boolean; hasPockets: boolean
++  coffeeT: number
++  leverPulled: boolean // L1 电梯拉杆
++  slowT: number // 被团块抓住的减速
++  flashJamT: number // 手电被电弧体瘫痪
++}
++
++/** L8 第九大道的已揭示地图标记；坐标始终使用无限层世界坐标。 */
++export interface AvenueMapMark {
++  seq: number
++  wx: number
++  wy: number
++  kind: 'sign' | 'exit'
++}
++
++export interface InputState {
++  mx: number; my: number // 移动向量（-1..1）
++  sprint: boolean
++  attack: boolean
++  interact: boolean
++  toggleLight: boolean
++  jump: boolean // v7：跳跃（桌面空格 / 移动端按钮，边沿触发由引擎消费）
++  crouch: boolean // v7：蹲伏（桌面 C/Ctrl / 移动端按钮，按住状态）
++}
++
++export class Engine {
++  map: GameMap | null = null
++  player: PlayerState
++  input: InputState = { mx: 0, my: 0, sprint: false, attack: false, interact: false, toggleLight: false, jump: false, crouch: false }
++  listeners: ((e: HudEvent) => void)[] = []
++  difficulty: Difficulty = 'normal'
++  seed = 1
++  noise = 0 // 当前噪音值 0-1（HUD 显示）
++  playerNoiseT = 0 // 玩家噪音残余时间（>0 = 正在/刚刚制造噪音；猎犬威慑判定，noiseEvent 刷新）
++  camShake = 0
++  time = 0
++  paused = false
++  over = false
++  victory = false
++  // v54：F1 沉浸模式——隐藏全部 HUD DOM 与第一人称手部建模（UI 状态，不入存档；新一局重置）
++  hudHidden = false
++  // v54：F1/F2 互斥状态机——hudHidden=隐藏 HUD 铬件；handsHidden=连手部建模/准星一起隐藏。
++  // F1 全沉浸（hudHidden+handsHidden）/ F2 半沉浸（仅 hudHidden，保留手部建模与准星）；
++  // 按当前生效的键恢复，按另一个键直接切换到另一种模式（互不叠加）。
++  handsHidden = false
++  // 收起主手是玩法状态，与 F1 仅隐藏画面的沉浸模式分开；不改变选中槽或副手照明。
++  handsStowed = false
++  // 主手检视只驱动第一人称模型姿态，不参与移动、攻击、交互或物品使用判定。
++  inspectHeld = false
++  // v29a：存档/读档状态
++  mapSeed = 0 // 当前层级地图生成种子（loadLevel 记录，读档恢复同一张图用）
++  mapFirstVisit = true // 当前地图生成时的 firstVisit 标记
++  // v58：联机状态——会话引用（App 注入）；mpMapSeed 覆盖 loadLevel 种子算法（全房间同图）；
++  // mpSpawnSlot 为本次开局的出生槽位（0=默认出生点）
++  mpSession: import('./net/session').MpSession | null = null
++  mpMapSeed: ((id: number) => number) | null = null
++  mpSpawnSlot: number | null = null
++  applyingNet = false // v59：正在应用远端联机事件（applyMpEvent）——此期间引擎函数不再广播，防回环
++  autosaveT = 0 // 周期自动存档计时（秒）
++  idleSaved = false // 暂停/结束后已落盘一次（避免每帧重复写存储）
++  // 暂停页脱困检测（仅内存态；3 秒内观测移动后自动清除）
++  unstuckCheck: unstuck.UnstuckCheckState | null = null
++  // v54：本局绑定的存档槽（slot1/2/3=手动槽，暂停/退标题落盘写入；auto=从自动槽继续的局）
++  saveSlot: save.SaveSlotId = 'slot1'
++  /** v23：本层内是否主动挑衅过实体（解除 Level 11 Effect 的被动状态） */
++  provoked = false
++  /** v23：在 Level 601 走进过多少次「你家的前门」 */
++  fakeEnds = 0
++  pocketsAlarmT = 6
++  manilaT = 4
++  transition: { anim: string; t: number; startedAt?: number; dest: number | 'random' | 'win'; fallDamage?: number; preparing?: boolean; prepared?: boolean; mapSeed?: number } | null = null
++  explored: Uint8Array = new Uint8Array(0)
++  visible: Uint8Array = new Uint8Array(0)
++  fakes: { x: number; y: number; t: number }[] = [] // 理智幻影
++  particles: { x: number; y: number; vx: number; vy: number; t: number; life: number; color: string; size: number; z?: number; vz?: number; opacity?: number }[] = []
++  // v13：液体状态
++  l7fx: L7Fx = newL7Fx() // v66：L7 涌浪/致幻/重力交界区事件状态
++  inLiquid = 0 // 当前所在液体类型（0 无 1 深水 2 浅水）
++  submerged = false // 头部没入水下
++  breathT = 0 // 水下屏气计时（超限微扣 HP）
++  /** [swim] 游泳三维速度/划水/撑上岸状态（engine/swim.ts） */
++  swim: SwimState = newSwimState()
++  /** [swim] 游泳方向操作：view=沿视线游，flat=水平游+按键升降（设置 → 操作） */
++  swimMode: SwimMode = 'view'
++  wasSubmerged = false
++  bubbleT = 0
++  rippleT = 0
++  // v13：电梯乘降 / 梯子攀爬（脚本化垂直移动，期间锁定水平移动与重力）
++  ride: { sx: number; sy: number; from: number; to: number; t: number } | null = null
++  climb: { baseX: number; baseY: number; topX: number; topY: number; dir: 1 | -1; zBase?: number; zTop?: number; rope?: 1 } | null = null
++  climbCd = 0 // 攀爬送达后的再触发冷却（防止到顶立即又爬下）
++  // v58：L7 门廊舱门异常重力拖拽演出——非空即进行中（t 秒；sx/sy/sz 起点 → dx/dy 落海点）
++  porchDrop: { t: number; sx: number; sy: number; sz: number; dx: number; dy: number } | null = null
++  stepAcc = 0
++  // v12：interactTarget 携带目标引用（结构/物品/出口），HUD 提示与 doInteract 执行
++  // 共用 scanInteract 的同一选择结果，杜绝「提示普通门却触发相邻上锁门」的目标漂移。
++  interactTarget: { kind: string; label: string; s?: Structure; it?: GameMap['items'][number]; e?: GameMap['exits'][number]; npc?: NpcState; ent?: Entity; vmBack?: boolean } | null = null
++  seating: SittingState | null = null
++  // 开发者模式（noAttackCooldown=true 时仅绕过攻击间隔；体力消耗仍保留，便于单独调试战斗节奏）
++  devEnabled = false
++  dev = { mapReveal: false, god: false, noclip: false, fly: false, speed: false, statLock: true, oneHit: false, invisible: false, frozenAI: false, bright: false, noAttackCooldown: false, phenOn: new Set<string>(), phenOff: new Set<string>(), hintDist: 30 }
++  // 地图就地修改版本号（开发者强制生成固定结构时 +1；渲染层据此重建有限层静态几何）
++  mapRev = 0
++  // 开场爬起动画计时（>0 时锁定移动/攻击/跳跃，渲染层相机从贴地侧躺缓慢起身）
++  introT = 0
++  // 容器搜索（按住交互 → 进度 → 战利品面板）
++  searching: { sid: number; t: number; dur: number; label: string } | null = null
++  // 消耗品使用：动作完成前不结算效果/扣除物品；槽位内容变化会安全取消。
++  usingItem: { where: SlotWhere; i: number; type: string; tag?: number; t: number; dur: number; anim: ItemUseAnim; label: string; targetJerry?: boolean } | null = null
++  lootPanel: { sid: number; label: string; items: string[] } | null = null
++  statusMsgT = { hunger: 0, thirst: 0, battery: 0, stamina: 0 }
++  redAnnounced = new Set<string>() // 本层已播报预警的红室 chunk（chunkKey）
++  // 固定子步移动积分器（帧间保留时间余数，保证高低帧率位移一致）
++  moveIt: MoveIntegrator = createIntegrator()
++  // 攻击挥动动画计时（渲染层读取做手部挥砍/准心收缩）
++  attackAnimT = 0
++  // 当前攻击动画的完整时长；动画与攻击间隔共用同一节奏。
++  attackAnimDur = 0.35
++  // 玩家攻击间隔及本次间隔总长（冷却条以二者的比值显示）。
++  attackCooldownT = 0
++  attackCooldownDur = 0
++  // 攻击动画种类（渲染层据此切换动作）：punch=空手出拳 swing=武器挥舞 throw=投掷
++  attackAnimKind: 'punch' | 'swing' | 'throw' | 'spray' | 'drink' = 'punch'
++  // 飞行中的投掷物（订书机/汽油罐等；落地触发效果，见 landProjectile）
++  projectiles: Projectile[] = []
++  projId = 1
++  // 层级氛围事件（wiki 设定播报）计时
++  ambientT = 14
++  // L9 罕见浓雾事件：renderer 读取 l9FogK 平滑压缩视距；阶段推进与残缺者生成在 ambient.ts。
++  l9FogPhase: 'idle' | 'warning' | 'active' | 'fade' = 'idle'
++  l9FogT = 240
++  l9FogK = 0
++  // L1 停电事件：剩余时间 + 被移除光源的备份
++  blackoutT = 0
++  // v31：「闪烁」预警期（完全停电前灯光快速闪烁的秒数；渲染层据此做灯光快闪）
++  blackoutWarnT = 0
++  blackoutPendingDur = 0
++  blackoutBackup: LightSource[] | null = null
++
++  // v29：经 L0「向下的灰色阶梯」进入 L1 的标记（下一次 loadLevel(1) 时在出生点附近生成返程阶梯）
++  arriveStairs = false
++  // v51：乘电梯（elevatorshaft）抵达的标记——下一次 loadLevel 把出生点改到本层电梯旁（内存标记，不入存档）
++  arriveElevator = false
++  // v54：经古典楼梯（oldstairs）抵达的标记——下一次 loadLevel(5) 把出生点改到 L5 保底楼梯 2 格外的空旷地板
++  // （内存标记，不入存档；仅 L5 消费——L4 的古典楼梯落点维持默认出生点不变）
++  arriveOldstairs = false
++  arriveL6Band: FloorBand | null = null // L5 黑门=-1；L4/Omega 活板门=0
++  arriveL9From: number | null = null // L5=住宅门口；L7=后院泳池；L8=道路尽头石洞
++  arriveL10From: number | null = null // L9=田野边缘步道；L11=乡间主路旁
++  arriveL11From: number | null = null
++  l0RestorePosition?: {x:number;y:number}
++  l0World?: import("./engine/l0State").L0WorldSave
++  l0SharedWorld?: import("./engine/l0State").L0WorldSave
++  l0Loops=0
++  l0Meeting=0
++  l0Blur=0
++  l1World?: L1WorldSave
++  l11World?: L11WorldSave
++  l11Weather: {kind:'calm'|'gust'|'rain'|'mist';t:number;k:number;wetness:number} = {kind:'calm',t:120,k:0,wetness:0}
++  arriveL7SafeWater = false // L10 深湖抵达：落在安全水域并重置呼吸
++  arriveL8AvenueEnd = false // 从 L9 石洞返回 L8 第九大道最终洞口
++  l10Weather: { kind: 'calm' | 'gust' | 'rain' | 'mist'; t: number; k: number; wetness: number } = { kind: 'calm', t: 80, k: 0, wetness: 0 }
++  l10Action: { kind: 'drink' | 'dig' | 'dive'; t: number; dur: number; sid?: number; x: number; y: number } | null = null
++  // v29：返程「向上的灰色阶梯」（世界坐标固定；窗口平移 stitch 后重新注入）
++  bonusExit: { def: ExitDef; wx: number; wy: number } | null = null
++  // v29：本局已到过的层级（初始物资仅首次进 L0 刷新）
++  visitedLevels = new Set<number>()
++  // v35：据点——进入据点前的层级（据点出口 dest:'back' 的返程落点；随存档持久）
++  career = careerSystem.freshCareer()
++  activeStation: string | null = null
++  outpostReturn: number | null = null
++  el3aReliefClaimed = false // v43：本次进入 EL3A 是否已领过免费补给包（每次进入重置）
++  // v35：本层 NPC（据点居民；不是实体——不进 m.entities，不可被 dev 召唤，换层重建）
++  npcs: NpcState[] = []
++  // v35：本局已遇见的 NPC 定义（图鉴「人士」页数据源；随机 NPC 在同局内跨层保留）
++  knownNpcs: NpcDef[] = []
++  profile = freshProfile()
++  // v35：团体声望（factions.ts；流浪者不参与声望；MEG 默认 30 友好）与委托任务
++  rep: Record<string, number> = { meg: REP_START }
++  quests: { def: QuestDef; progress: number; baseline: number; done: boolean }[] = []
++  // v54：据点寄存仓库（阵营互通，每阵营 48 栏；随存档持久；新一局由 EFFECTS 注册表重置）
++  warehouses: warehouse.WarehouseState = warehouse.freshWarehouses()
++  // v54 二轮：BNTG 付费通道——本次对话临时解锁的阵营仓库（不持久；DialogOverlay 卸载即清空）
++  warehouseTempUnlock = new Set<warehouse.WarehouseFaction>()
++  // v39：BRC（后室装修公司）——未告发的伤害/杀死计数（攻击/杀死员工不立即降声望，
++  // 与员工对话「坦白」时按 伤害-10/人、杀死-30/人 结清；随存档持久）与模仿装修冷却
++  brcSin = { hurt: 0, killed: 0 }
++  brcMimicCd = 0 // 模仿装修全局冷却剩余秒数（~90s 防连点）
++  brcMimicPending = 0 // 模仿动作进行中（挥臂动画播完后结算 +2 声望）
++  // ===== v45：杰瑞的信众 / Level 274 教化系统（随存档持久）=====
++  indoctrination = 0 // 教化值 0~100（接触杰瑞 +25；≥100 成为信众一员，无法主动离开 L274）
++  jerryTamed = false // 鹉主已被杏仁水驯服（教化清零且此后接触不再积累）
++  jerryAgreed = new Set<string>() // 已「认同杰瑞」的信众 NPC id（引路选项按此显示；v49 起每局至多一名）
++  jerryOath = false // v49：本局已宣誓认同杰瑞（+10 每局仅首次有效——宣誓一次，全鹦鹉门下皆知）
++  homelyApplied = false // v55：家常酒店（L5 据点 111）入住申请已提交（地标卡办理；随存档持久）
++  // v56：电台（MIDI 曲风下暂停页电台管理）——随层级变化/固定音乐 + 单层覆盖；随存档持久
++  radio: { mode: 'follow' | 'fixed'; fixed: string | null; perLevel: Record<number, string> } = { mode: 'follow', fixed: null, perLevel: {} }
++  // v56：已收听曲目 id 列表（电台可选的前提；乐手演奏后解锁摇滚曲目；随存档持久）
++  heardSongs: string[] = []
++  // v56：乐手（乔伊）演奏中标记（渲染层弹奏动画 + 对话「停下」选项；播完/叫停/切层自动清除）
++  joeyPlaying = false
++  jerryContactCd = 0 // v47：接触杰瑞冷却剩余秒数（20s 防连点刷声望/教化；HUD 交互提示显示剩余）
++  jerryRun: JerryRunState = freshJerryRun() // 重制杰瑞/信众的局内状态（木僵、残响、理智上限、击晕、飞石、伏击、诱导标记）——只在内存，不写存档（effects 表 resetOnNewRun、无 saveKey）
++  jerryTerritory = false // 玩家身处信众宣传间矩形内（HUD 显示 jerry 声望；引擎每帧维护）
++  chantT = 0 // 诵咏计时（L274 内被教化后周期性咏出崇拜词）
++  // v29：玩家当前在可行走阶梯上（碰撞 z 按地面处理、跳过重力贴地；由 updateStairs 每帧维护）
++  onStairs = false
++
++  // 现象系统：当前生效的现象 id 列表（每帧由 step 重算；HUD 左上角与物品栏「状态」页读取展示）
++  activePhenomena: string[] = []
++  // 现象「孤立效应」的附加表现：每次进入 Level 0，画面色调/饱和度/对比度/亮度
++  // 发生极轻微偏移（幅度刻意控制在一般无法察觉的范围；App.tsx 以 CSS filter 施加到画布）
++  colorGrade = { hue: 0, sat: 1, con: 1, bri: 1 }
++  // v30：植殖癌（Level 1 花园段）——0..1 进展度：在花园段内约 75 秒涨满，离开后以 2 倍速消退。
++  // 行为逐渐僵硬（移动减速）、视野逐渐变绿（App.tsx 绿色覆盖层），涨满即原地生根（死亡）
++  plantK = 0
++  plantStage = 0
++  inGardenEff = false // 本帧植殖癌是否生效（含开发者强制开/关），供现象列表读取
++  // ===== v32：新物品机制状态 =====
++  axeDur = 0 // 斧头耐久（获得时重置为 5；破门 -1，耗尽报废）
++  squirtTank: 'none' | 'water' | 'almond' | 'cashew' | 'liquidpain' = 'none' // 滋水枪储罐液体（单一种类）
++  // R 短按快速装填使用的液体；长按轮盘选中液体后更新。清水无需背包物品，因此作为初始回退。
++  squirtQuickLiquid: 'water' | 'almond' | 'cashew' | 'liquidpain' = 'water'
++  // v51：Object 5 糖果效果计时器
++  candyAddictT = 0 // 糖瘾：吃糖后 60s 内需再吃，否则理智 -10
++  silverTongueT = 0 // 银舌头：交易 95 折（秒）
++  slipperyT = 0 // 咀嚼子弹：脚滑（秒）
++  gunCandyT = 0 // 枪糖：右手变枪（秒）
++  slipVx = 0
++  slipVy = 0
++  chocoCd = 0 // 巧克力子弹射速冷却
++  thingBreathT = 0 // [thing] 吃巨兽之肉后的硫磺口臭剩余秒数（thingAI：每 25s 散一次气味）
++  thingBreathPingT = 0 // [thing] 下一次口臭气味的倒计时
++  thingMeatCd = 0 // [thing] 两块巨兽之肉之间的割肉冷却
++  manmadeT = 0 // v51：人制品效应剩余秒数（5 分钟：拒食他物/治疗减半/恒显饥饿特效/体力恢复减半消耗加倍/受伤 -10%）
++  webbedT = 0 // v51：Nguithr'xurh 镇静剂麻痹剩余秒数（视野模糊 + 移动迟缓）
++  /** 当前是否身处据点（饥饿减速/体力加速的判定依据） */
++  get inOutpost(): boolean { return Object.values(OUTPOSTS).some((o) => o.levelId === this.player.level) }
++  squirtAmmo = 0 // 储罐剩余喷射份数（1 瓶 = 3 份，上限 9 瓶 = 27 份）
++  warpBerryLevel: number | null = null // 迁跃浆果：首次获得时所在层级（食用传送目标）
++  royalAddictT = 0 // 皇家口粮成瘾剩余秒数（期间其他食物不回饥饿）
++  sanityFloor = 0 // 皇家口粮锁定的理智下限（成瘾崩塌期间不生效）
++  royalDrainT = 0 // 成瘾崩塌：理智急速下降剩余秒数
++  // v55：疫疾（Entity 19）——感染阶段跟踪（升阶计图鉴遭遇）与潜藏期咳嗽计时；
++  // infection 本体在 PlayerState（随存档快照持久，freshPlayer 清零）
++  infectionStage = 0
++  coughT = 0
++  // v55：「恢复」buff 剩余秒数（杏仁水/幸运豆奶/消毒液/皇家口粮 60s；重复服用重置计时）——
++  // 持续期间感染值不再增长，且在非感染区（非湿地/非锅炉房）每 5s 自然 -1
++  infectionRecoverT = 0
++  partyConv = 0 // 派对客（Entity 67）转化值 0–100：咬伤/丝绒蛋糕累积、不消退、无解药；满值即「加入派对」。只存在当局内存，不写进存档（effects 表 resetOnNewRun、无 saveKey）
++
++  constructor() {
++    this.player = this.freshPlayer()
++    // v56：BGM 曲目播放回调 → 电台收听记录（heardSongs 持久，电台管理可选范围）
++    audio.onSongPlayed = (id: string) => { this.markSongHeard(id) }
++    // v56：乐手演奏结束（播完/被叫停/切层）→ 清除演奏标记（渲染层弹奏动画随止）
++    audio.onOneshotEnd = () => { this.joeyPlaying = false }
++  }
++
++  // ===== v56：电台（音乐库收听 + 配置） =====
++  /** 标记已收听曲目（去重；随存档持久；乐手摇滚曲目播报「已加入电台」） */
++  markSongHeard(id: string) {
++    if (this.heardSongs.includes(id)) return
++    this.heardSongs.push(id)
++    this.emit({ kind: 'radioheard', song: id })
++    if (id.startsWith('rock_')) this.msg(`♪ 已收听新曲目「${musicName(id)}」——已加入电台（暂停页 → 电台管理）。`, 'lore')
++  }
++  /** 电台配置变更：同步解析器 + 立即重开当前 BGM + 落盘 */
++  setRadio(cfg: { mode: 'follow' | 'fixed'; fixed: string | null; perLevel: Record<number, string> }) {
++    this.radio = { mode: cfg.mode, fixed: cfg.fixed, perLevel: { ...cfg.perLevel } }
++    setRadioCfg(this.radio)
++    audio.startBGM(this.player.level) // 立即换曲
++    this.persist()
++  }
++  /** v56：乐手演奏——MIDI 曲风下随机一首摇滚风格（收听解锁电台），程序化曲风下普通摇滚 */
++  musicianPlay(): string {
++    this.joeyPlaying = true
++    if (audio.midiEnabled) {
++      const pool = ROCK_SONG_IDS.filter((id) => id !== audio.currentSong) // 尽量不重上一首
++      const id = (pool.length ? pool : ROCK_SONG_IDS)[Math.floor(Math.random() * (pool.length ? pool.length : ROCK_SONG_IDS.length))]
++      audio.playMusicianSong(id)
++      return musicName(id)
++    }
++    audio.playProceduralRock()
++    return '一首老式摇滚'
++  }
++  /** v56：乐手停止演奏（对话「停下」）——淡出演奏并恢复 BGM */
++  musicianStop() {
++    this.joeyPlaying = false
++    audio.stopMusician()
++  }
++
++  private freshPlayer(): PlayerState {
++    return {
++      x: 2.5, y: 2.5, facing: 0,
++      z: 0, vz: 0, crouching: false, floor: 0,
++      hp: 100, sanity: 100, hunger: 100, stamina: 100,
++      thirst: 100,
++      infection: 0,
++      battery: 100, flashlight: false,
++      level: 0,
++      hotbar: new Array(7).fill(null), // 开局一无所有（物资散落在出生点周围）
++      backpack: new Array(16).fill(null),
++      selected: 0,
++      equip: { offhand: null, body: null, gloves: null, head: null, pockets: [null, null, null, null] },
++      kills: 0, tapes: 0, steps: 0,
++      startTime: Date.now(), aliveTime: 0,
++      hasGloves: false, hasSuit: false, hasLighter: false, hasRabbit: false, hasPockets: false,
++      coffeeT: 0, leverPulled: false, slowT: 0, flashJamT: 0,
++    }
++  }
++
++  // 全量播报历史（HUD 左下仅显示最近几条且截断；物品栏「日志」页展示完整记录，上限 400 条）
++  msgLog: { text: string; kind: MsgKind }[] = []
++
++  // 粉笔头画在墙上的记号（level + 世界坐标 + 墙面朝向；换层重新生成地图时清空）
++  wallMarks: { level: number; wx: number; wy: number; dir: number }[] = []
++  // 第九大道：历史标记全部保留，但 HUD 方向提示只跟随 avenueHintSeq 指向的最新一枚。
++  avenueMarks: AvenueMapMark[] = []
++  avenueHintSeq: number | null = null
++
++  /** 订阅引擎事件；返回取消订阅函数（调用方必须在卸载时取消，否则监听器累积会导致播报重复） */
++  on(fn: (e: HudEvent) => void): () => void {
++    this.listeners.push(fn)
++    return () => { this.listeners = this.listeners.filter((f) => f !== fn) }
++  }
++  emit(e: HudEvent) {
++    if (e.kind === 'transition' && e.anim !== 'intro' && this.transition) {
++      this.transition.startedAt ??= performance.now()
++      this.prepareLevelTransition()
++    }
++    for (const f of this.listeners) f(e)
++  }
++
++  /** Raw map work overlaps the exit animation; live state changes under its card. */
++  private prepareLevelTransition() {
++    const t = this.transition
++    if (!t || t.dest === 'win' || t.preparing || t.prepared) return
++    if (t.dest === 'random') t.dest = Math.floor(Math.random() * NORMAL_LEVELS)
++    const def = levelDefOf(t.dest)
++    if (!def || !canPrepareChunks(def)) return
++    t.preparing = true
++    t.mapSeed = level.nextMapSeed(this, t.dest)
++    void prepareChunkWindow(def, t.mapSeed).catch(() => undefined).then(() => { t.prepared = true })
++  }
++  msg(text: string, kind: MsgKind = 'system') {
++    this.msgLog.push({ text, kind })
++    if (this.msgLog.length > 400) this.msgLog.splice(0, this.msgLog.length - 400)
++    this.emit({ kind: 'msg', text, msgKind: kind })
++  }
++
++  newRun(seed: number, difficulty: Difficulty, slot: save.SaveSlotId = 'slot1', forceFresh = false) {
++    this.seed = seed
++    this.difficulty = difficulty
++    this.saveSlot = slot
++    this.player = this.freshPlayer()
++    this.over = false; this.victory = false; this.transition = null
++    this.usingItem = null
++    this.attackAnimT = 0
++    this.attackAnimDur = 0.35
++    this.attackCooldownT = 0
++    this.attackCooldownDur = 0
++    this.inspectHeld = false
++    this.handsStowed = false
++    this.squirtTank = 'none'
++    this.squirtAmmo = 0
++    this.squirtQuickLiquid = 'water'
++    this.unstuckCheck = null
++    this.idleSaved = false
++    this.autosaveT = 0
++    this.time = 0
++    this.msgLog = [] // 新一局清空播报历史
++    this.avenueMarks = []
++    this.avenueHintSeq = null
++    this.arriveL9From = null
++    this.arriveL10From = null
++    this.arriveL7SafeWater = false
++    this.arriveL8AvenueEnd = false
++    this.l10Weather = { kind: 'calm', t: 80, k: 0, wetness: 0 }
++    this.l0RestorePosition = undefined
++    this.l0World = undefined
++    this.l0SharedWorld = undefined
++    this.l0Loops=0;this.l0Meeting=0;this.l0Blur=0
++    this.l1World = undefined
++    this.l11World = undefined
++    this.l11Weather = {kind:'calm',t:120,k:0,wetness:0}
++    this.l10Action = null
++    this.l9FogPhase = 'idle'
++    this.l9FogT = 240
++    this.l9FogK = 0
++    this.visitedLevels.clear() // 新一局重置到层记录（初始物资首访刷新用）
++    this.career = careerSystem.freshCareer()
++    resetMegRuntime(this)
++    this.outpostReturn = null // 新一局清空据点返程记录（读档时由快照恢复）
++    this.knownNpcs = [] // 新一局清空随机 NPC 记录（静态 NPC 由注册表恒定提供）
++    this.profile = freshProfile()
++    this.rep = { meg: REP_START } // 新一局声望重置（MEG 默认友好；读档时由快照恢复）
++    this.quests = []
++    this.warehouseTempUnlock.clear() // v54：新一局清空仓库付费临时解锁
++    // v56：电台重置（随层级变化 + 无收听记录；读档时由快照恢复）
++    this.radio = { mode: 'follow', fixed: null, perLevel: {} }
++    this.heardSongs = []
++    setRadioCfg(this.radio)
++    // v39/v45/v47 等持续性效果状态清空（EFFECTS 注册表 newRun 组：BRC 未告发记录与模仿冷却、
++    // 教化系统/宣誓/接触冷却/诵咏——逐字段语义与原显式赋值一致；读档时由快照恢复）
++    resetEffects(this, 'newRun')
++    // v29a：主界面「继续游戏」用存档种子重进 newRun——存在同种子快照时恢复进度而不是重开新游戏。
++    // （「开始新游戏」的种子是随机新生成的，与快照种子不同，自然走全新开局路径。）
++    // v54：从绑定的存档槽读取快照（slot1/2/3/auto）；v58：联机开局一律全新（不读档）
++    const snap = forceFresh ? null : this.mpSession ? this.mpSession.resumeSnapshot??null : loadSaveSnapshot(slot)
++    if (snap && snap.seed === seed) {
++      this.difficulty = snap.difficulty ?? difficulty
++      this.time = snap.time
++      for (const id of snap.visited ?? []) this.visitedLevels.add(id)
++      this.career = careerSystem.restoreCareer(snap.career)
++      megState(this)
++      this.outpostReturn = snap.outpostReturn ?? null
++      this.rep = snap.rep ?? { meg: REP_START }
++      this.quests = snap.quests ?? []
++      this.profile = snap.profile ? normalizeProfile(snap.profile) : freshProfile()
++      this.warehouses = snap.warehouses ?? warehouse.freshWarehouses() // v54：恢复寄存仓库库存
++      this.brcSin = snap.brcSin ?? { hurt: 0, killed: 0 } // v39：恢复 BRC 未告发记录
++      this.brcMimicCd = snap.brcMimicCd ?? 0
++      // v45：恢复教化系统状态
++      this.indoctrination = snap.indoctrination ?? 0
++      this.jerryTamed = snap.jerryTamed ?? false
++      this.jerryAgreed = new Set(snap.jerryAgreed ?? [])
++      // v49：恢复宣誓标记；旧档无此字段时按「已认同过任一信众」迁移（每局仅首次认同有效）
++      this.jerryOath = snap.jerryOath ?? ((snap.jerryAgreed ?? []).length > 0)
++      this.homelyApplied = snap.homelyApplied ?? false // v55：家常酒店入住申请
++      // v56：恢复电台配置与收听记录（旧档缺省=随层级变化/空）
++      this.radio = snap.radio ?? { mode: 'follow', fixed: null, perLevel: {} }
++      this.radio.perLevel = this.radio.perLevel ?? {}
++      this.heardSongs = snap.heardSongs ?? []
++      this.l10Weather = snap.l10Weather ?? { kind: 'calm', t: 80, k: 0, wetness: 0 }
++      this.l0World = snap.l0World
++      this.l0SharedWorld = snap.l0SharedWorld
++      this.l1World = snap.l1World
++      this.l11World = snap.l11World
++      this.l11Weather = snap.l11Weather ?? {kind:'calm',t:120,k:0,wetness:0}
++      setRadioCfg(this.radio)
++      this.loadLevel(snap.level, { mapSeed: snap.mapSeed, firstVisit: snap.mapFirstVisit })
++      // loadLevel 已把 player 放到出生点；此处整体恢复为存档时的玩家状态
++      const fresh = this.freshPlayer()
++      this.player = {
++        ...fresh,
++        ...snap.player,
++        equip: { ...fresh.equip, ...(snap.player.equip ?? {}), pockets: snap.player.equip?.pockets ?? fresh.equip.pockets },
++      }
++      this.player.level = snap.level
++      // v59：旧版据点布局的坐标落在已移除的小房间/墙体中，统一迁移到新布局的安全出生点。
++      // 布局版本 2 保留世界坐标恢复及既有安全校正逻辑。
++      const legacySettlement = (snap.level===101 && snap.alphaLayout!==5) || (snap.level===102 && snap.bntgLayout!==3) || (snap.settlementLayout !== 2 && [101,103,104,116].includes(snap.level))
++      const legacyL0=snap.level===0&&!snap.l0World
++      if (legacySettlement||legacyL0) { this.player.x=this.map!.spawn.x; this.player.y=this.map!.spawn.y; this.player.z=0; this.player.floor=0 }
++      const placement = legacyL0 ? 'legacy-l0-spawn' : legacySettlement ? 'legacy-settlement-spawn' : level.restoreSavedPlayerPosition(this, snap.worldPos)
++      restoreGlowFlight(this,snap.glowProjectiles)
++      if(snap.level===5&&this.map?.inf&&snap.l5MothAlerts)this.map.inf.mothAlerts=structuredClone(snap.l5MothAlerts)
++      if (snap.level === 8 && Array.isArray(snap.avenueMarks) && snap.avenueMarks.length > 0) {
++        const restored = snap.avenueMarks.filter((mk) =>
++          Number.isFinite(mk.seq) && Number.isFinite(mk.wx) && Number.isFinite(mk.wy)
++          && (mk.kind === 'sign' || mk.kind === 'exit'))
++        if (restored.length > 0) {
++          this.avenueMarks = restored.map((mk) => ({ ...mk }))
++          // 旧版可能因后来交互了低序号路标而把提示目标倒退。
++          // 恢复时以已记录的最大序号为准，自动修正这类存档。
++          this.avenueHintSeq = restored.reduce((max, mk) => Math.max(max, mk.seq), -1)
++        }
++      }
++      // v55：感染阶段从存档感染值推导（升阶遭遇计数的基准）
++      this.infectionStage = Math.min(4, Math.floor((this.player.infection ?? 0) / 100))
++      // aliveTime 由 (Date.now()-startTime) 推导：平移 startTime 保持存活时长连续
++      this.player.startTime = Date.now() - (snap.player.aliveTime ?? 0) * 1000
++      this.introT = 0 // 读档不播摔落爬起动画
++      if (placement === 'legacy-l0-spawn') this.msg('Level 0 已更新，已迁移到安全入口；背包、属性、任务与图鉴均已保留。','system')
++      else if (placement === 'legacy-settlement-spawn') this.msg('旧版据点布局已迁移至新的安全接待点。', 'system')
++      else if (placement === 'legacy-spawn') this.msg('旧版无限层存档缺少世界坐标，已移至本层安全入口。', 'system')
++      else if (placement !== 'exact') this.msg('原存档落点已被地形占用，已移至附近安全位置。', 'system')
++      this.msg(`读档成功——回到 ${levelLabel(snap.level)}。`, 'system')
++      return
++    }
++    this.loadLevel(0)
++    if (this.mpSpawnSlot !== null) level.applyMpSpawn(this, this.mpSpawnSlot) // v58：联机槽位出生 + 全槽位物资
++    this.introT = 3.2 // 开场：摔到 L0 地面后缓慢爬起
++    this.msg(`你坠入了后室。种子 ${seedString(seed)}`, 'system')
++    this.msg('找到每层的出口，向下探索。收集 6 盘磁带。', 'lore')
++    this.persist() // v29a/v54：新开局立即写入绑定槽位，保证槽内快照始终同局（自动槽由 loadLevel 切层存档覆盖）
++  }
++
++  // ---------- 存档读写（engine/save.ts）----------
++  // v29a：当前进度快照（纯 JSON 可序列化）
++  snapshot(): SaveSnapshot { return save.snapshot(this) }
++  updateProfile(profile: PlayerProfile) {
++    this.profile = normalizeProfile(profile)
++    this.persist()
++  }
++  /** 立即写盘（暂停/退回主界面/周期自动存档共用入口；死亡与胜利后不再覆盖存档） */
++  persist() { save.persist(this) }
++
++  // ---------- 层级切换与出口（engine/level.ts）----------
++  loadLevel(id: number, restore?: { mapSeed: number; firstVisit: boolean }, preparedMapSeed?: number) { level.loadLevel(this, id, restore, preparedMapSeed) }
++  /** v39：无限层级 NPC 同步——从已加载 LiveChunk 收集活体 NPC（窗口平移后重收集） */
++  syncInfNpcs() { level.syncInfNpcs(this) }
++  updateInfiniteWindow(prepared?:ReadonlyMap<string,import('./world/infiniteRegistry').GenChunk>) { level.updateInfiniteWindow(this,prepared) }
++  nearestExit() { return level.nearestExit(this) }
++  /** v35：最近的定居点地标（出口提示的替代目标——附近无出口时指向它） */
++  nearestLandmark() { return level.nearestLandmark(this) }
++  /** 将一枚第九大道地标记入地图；路线进度只前进，后补的低序号标记不会抢走 HUD 目标。 */
++  markAvenueLandmark(seq: number, wx: number, wy: number, kind: AvenueMapMark['kind'] = 'sign') {
++    if (this.player.level !== 8 || !Number.isFinite(seq) || !Number.isFinite(wx) || !Number.isFinite(wy)) return
++    const mark: AvenueMapMark = { seq: Math.max(0, Math.floor(seq)), wx, wy, kind }
++    const old = this.avenueMarks.findIndex((mk) => mk.seq === mark.seq)
++    if (old >= 0) this.avenueMarks[old] = mark
++    else this.avenueMarks.push(mark)
++    this.avenueMarks.sort((a, b) => a.seq - b.seq)
++    if (this.avenueHintSeq === null || mark.seq > this.avenueHintSeq) this.avenueHintSeq = mark.seq
++  }
++  /** 无限窗口内的当前第九大道提示目标；旧标记不参与方向选择。 */
++  avenueHintTarget(): { x: number; y: number; d: number; mark: AvenueMapMark } | null {
++    const m = this.map
++    if (this.player.level !== 8 || !m?.inf || this.avenueHintSeq === null) return null
++    const mark = this.avenueMarks.find((mk) => mk.seq === this.avenueHintSeq)
++    if (!mark) return null
++    const x = mark.wx - m.inf.ox, y = mark.wy - m.inf.oy
++    return { x, y, d: Math.hypot(x - this.player.x, y - this.player.y), mark }
++  }
++  /** v57o：游泳信息（HUD 水深/氧气显示；仅在深水中非 null） */
++  swimInfo() {
++    const p = this.player, m = this.map
++    if (!m || this.inLiquid !== 1) return null
++    const i = Math.floor(p.y) * m.w + Math.floor(p.x)
++    const depth = this.levelDef.id === 7 ? Math.max(0, -p.z) : (m.seaFloor?.[i] ?? 1.7)
++    // [swim] 前方（视线水平方向）有能撑上去的岸边时 HUD 提示
++    const canal = this.levelDef.id === 11 ? l11MapWater(m, p.x, p.y) : null
++    const surf = canal ? canal.surface + .1 : 0.1
++    const edge = !!findClimbOut(this, surf, -Math.sin(look.yaw), -Math.cos(look.yaw))
++    return { depth, breath: this.breathT, limit: movement.breathLimit(this), submerged: this.submerged, edge }
++  }
++  takeExit(def: ExitDef) { level.takeExit(this, def) }
++  tinyBlocksLittleDoor(exit?: GameMap['exits'][number]): boolean { return level.tinyBlocksLittleDoor(this, exit) }
++  updateStairs(dt: number) { level.updateStairs(this, dt) }
++  switchL6Floor(target: -1 | 0, reason: 'stairs' | 'pit' = 'stairs') { return level.switchL6Floor(this, target, reason) }
++  placeBonusStairs() { level.placeBonusStairs(this) }
++  /** v35：前往据点（地标弹窗「前往」/DevPanel 据点跳转共用）：记录返程层级后切入 */
++  enterOutpost(outpostId: string, dev = false): boolean { return level.enterOutpost(this, outpostId, dev) } // v54：dev=DevPanel 跳转绕过准入门槛
++  /** v55：家常酒店入住申请（地标卡办理，永久解锁） */
++  applyHomelyStay() { level.applyHomelyStay(this) }
++
++  // ---------- 移动/输入积分 + 垂直物理（engine/movement.ts）----------
++  updateMovement(dt: number, dm: (typeof DIFF)[Difficulty], introLock: boolean): number | null { return movement.updateMovement(this, dt, dm, introLock) }
++  updateClimb(dt: number, mag: number) { movement.updateClimb(this, dt, mag) }
++
++  // ---------- 生存属性（engine/survival.ts）----------
++  updateSurvival(dt: number, dm: (typeof DIFF)[Difficulty], mag: number): boolean { return survival.updateSurvival(this, dt, dm, mag) }
++
++  // ---------- 实体 AI 与感知（engine/entityAI.ts）----------
++  updateVendingMachines() { entityAI.updateVendingMachines(this) }
++  isLit(x: number, y: number): boolean { return entityAI.isLit(this, x, y) }
++  noiseEvent(x: number, y: number, radius: number, sprint: boolean) { entityAI.noiseEvent(this, x, y, radius, sprint) }
++  lookingAt(e: Entity): boolean { return entityAI.lookingAt(this, e) }
++  los(x0: number, y0: number, x1: number, y1: number): boolean { return entityAI.los(this, x0, y0, x1, y1) }
++  updateEntities(dt: number, dmgMult: number) { entityAI.updateEntities(this, dt, dmgMult) }
++  wanderTarget(e: Entity) { entityAI.wanderTarget(this, e) }
++  wanderDeflect(e: Entity) { entityAI.wanderDeflect(this, e) }
++  provokeRatPack(e: Entity) { entityAI.provokeRatPack(this, e) }
++  updateNguithr(e: Entity, d: number, dt: number) { entityAI.updateNguithr(this, e, d, dt) }
++  faceToward(e: Entity, tx: number, ty: number, dt: number, rate: number) { entityAI.faceToward(this, e, tx, ty, dt, rate) }
++  entityWalkH(m: GameMap, tx: number, ty: number, band: FloorBand, aquatic = false, flying = false): number | null { return entityAI.entityWalkH(this, m, tx, ty, band, aquatic, flying) }
++  stepEntity(e: Entity, speed: number, dt: number): boolean { return entityAI.stepEntity(this, e, speed, dt) }
++  meleeZOk(e: Entity): boolean { return entityAI.meleeZOk(this, e) }
++
++  // ---------- 战斗/投掷/击退 + 粒子（engine/combat.ts）----------
++  hurtPlayer(dmg: number, source: string) { combat.hurtPlayer(this, dmg, source) }
++  die(cause: string, force = false) { combat.die(this, cause, force) }
++  attackReach(e: Entity): number { return combat.attackReach(this, e) }
++  canHit(e: Entity): boolean { return combat.canHit(this, e) }
++  /** 准星当前可命中的最近实体（渲染层据此改变准星样式） */
++  aimEntity(): Entity | null { return combat.aimEntity(this) }
++  killCheck(e: Entity) { combat.killCheck(this, e) }
++  attack() { combat.attack(this) }
++  toggleHands() {
++    if (!this.map || this.over) return
++    this.handsStowed = !this.handsStowed
++    this.input.attack = false
++    this.inspectHeld = false
++    this.usingItem = null // 中断未完成的使用动作，不消耗物品。
++    this.attackAnimT = 0 // 仅取消姿势；保留实际攻击冷却，防止反复收放绕过间隔。
++    this.msg(this.handsStowed ? '已收起主手，可继续交互。' : '已取出主手。', 'system')
++  }
++  throwHeld(type: string) { combat.throwHeld(this, type) }
++  /** 往滋水枪储罐装入 1 瓶液体（3 份喷射量；储罐只能装一种液体，清水无需对应物品） */
++  loadSquirt(liquid: 'water' | 'almond' | 'cashew' | 'liquidpain'): boolean { return combat.loadSquirt(this, liquid) }
++  /** 清空储罐（把残液倒掉，换液体免喷完） */
++  clearSquirt() { combat.clearSquirt(this) }
++  stanleyTeleport() { combat.stanleyTeleport(this) }
++  shootChocolate() { combat.shootChocolate(this) }
++  squirt() { combat.squirt(this) }
++  updateProjectiles(dt: number) { combat.updateProjectiles(this, dt) }
++  landProjectile(pr: Projectile, x: number, y: number) { combat.landProjectile(this, pr, x, y) }
++  bloodParticles(x: number, y: number, clear: boolean | 'wretch' = false) { combat.bloodParticles(this, x, y, clear) }
++  steamParticles(x: number, y: number) { combat.steamParticles(this, x, y) }
++  splashParticles(x: number, y: number, z: number) { combat.splashParticles(this, x, y, z) }
++  bubbleParticles(x: number, y: number, z: number) { combat.bubbleParticles(this, x, y, z) }
++  rippleParticles(x: number, y: number) { combat.rippleParticles(this, x, y) }
++  updateParticles(dt: number) { combat.updateParticles(this, dt) }
++
++  // ---------- 交互/容器/结构触发（engine/interact.ts）----------
++  updateElecHum() { interact.updateElecHum(this) }
++  updateContainerSearch(dt: number) { interact.updateContainerSearch(this, dt) }
++  updateL10Actions(dt: number) { interact.updateL10Actions(this, dt) }
++  triggerStructs(dt: number, dm: (typeof DIFF)[Difficulty]): boolean { return interact.triggerStructs(this, dt, dm) }
++  inView(x: number, y: number, radius: number): boolean { return interact.inView(this, x, y, radius) }
++  viewAngle(x: number, y: number): number { return interact.viewAngle(this, x, y) }
++  interactionProbe(
++    x: number, y: number, z: number, band: FloorBand, maxDistance: number, radius = 0.25,
++    volume?: interact.InteractionVolume, surfaceDistance?: number, verticalRadius = radius, target?: Structure,
++  ) {
++    return interact.interactionProbe(this, x, y, z, band, maxDistance, radius, volume, target, surfaceDistance, verticalRadius)
++  }
++  scanInteract() { interact.scanInteract(this) }
++  doInteract() { interact.doInteract(this) }
++  rollLoot(kind: string): string[] { return interact.rollLoot(this, kind) }
++  finishSearch(s: Structure) { interact.finishSearch(this, s) }
++  // 从战利品面板拿取一件（返回 false=背包满）
++  takeLoot(i: number): boolean { return interact.takeLoot(this, i) }
++  takeAllLoot() { interact.takeAllLoot(this) }
++  closeLootPanel() { interact.closeLootPanel(this) }
++  afterLootChange() { interact.afterLootChange(this) }
++
++  // ---------- NPC/对话/委托/声望（engine/npc.ts）----------
++  updateJerry(dt: number) { npc.updateJerry(this, dt) }
++  updateNpcs(dt: number) { npc.updateNpcs(this, dt) }
++  trackQuests(dt: number) { npc.trackQuests(this, dt) }
++  /** 调整某团体声望（clamp ±100；流浪者等无声望团体直接忽略） */
++  changeRep(factionId: string, delta: number) { npc.changeRep(this, factionId, delta) }
++  /** 模仿 BRC 员工的动作进行装修：播放挥臂动画，动作播完 +2 声望；全局冷却 ~90s（冷却中返回 false） */
++  mimicBrc(): boolean { return npc.mimicBrc(this) }
++  /** 向 BRC 员工坦白你伤害/杀死了他们的同事：结清未告发记录，且该员工转为敌对 */
++  confessBrc(npcId: string): boolean { return npc.confessBrc(this, npcId) }
++  aimJerry(): Entity | null { return npc.aimJerry(this) }
++  canAgreeJerry(npcId: string): boolean { return npc.canAgreeJerry(this, npcId) }
++  agreeJerry(npcId: string): boolean { return npc.agreeJerry(this, npcId) }
++  gotoJerryRoom(npcId: string): boolean { return npc.gotoJerryRoom(this, npcId) }
++  slanderJerry(npcId: string): boolean { return npc.slanderJerry(this, npcId) }
++  hurtJerryRep() { npc.hurtJerryRep(this) }
++  contactJerry(ent?: Entity): boolean { return npc.contactJerry(this, ent) }
++  tameJerry(): boolean { return npc.tameJerry(this) }
++  preachQuest() { return npc.preachQuest(this) }
++  preachTargetOk(npcId: string): boolean { return npc.preachTargetOk(this, npcId) }
++  preachTo(npcId: string): boolean { return npc.preachTo(this, npcId) }
++  questOffers(faction: QuestFaction = 'meg'): QuestDef[] { return npc.questOffers(this, faction) }
++  acceptQuest(def?: QuestDef, issuerId?: string): boolean { return npc.acceptQuest(this, def, issuerId) }
++  turnInQuest(faction: QuestFaction = 'meg'): boolean { return npc.turnInQuest(this, faction) }
++  deliverQuestTo(npcId: string): boolean { return npc.deliverQuestTo(this, npcId) }
++  goodsQuestOffers(): QuestDef[] { return npc.goodsQuestOffers(this) }
++  deliverGoodsTo(npcId: string): boolean { return npc.deliverGoodsTo(this, npcId) }
++  failGoodsQuest(): boolean { return npc.failGoodsQuest(this) }
++  basicSupplyCount(): number { return npc.basicSupplyCount(this) }
++  canClaimEl3aRelief(): boolean { return npc.canClaimEl3aRelief(this) }
++  claimEl3aRelief(): boolean { return npc.claimEl3aRelief(this) }
++  /** v55：求治感染（疫疾三阶以上，仅医疗身份 NPC——杜邦/马丁/莫雷尔/萨伊拉·昆恩） */
++  cureInfection(npcId: string): boolean { return npc.cureInfection(this, npcId) }
++
++  // ---------- 背包/装备/物品使用（engine/inventory.ts）----------
++  addItem(type: string): boolean { return inventory.addItem(this, type) }
++  hasItem(type: string): boolean { return inventory.hasItem(this, type) }
++  countItem(type: string): number { return inventory.countItem(this, type) }
++  consumeItem(type: string): boolean { return inventory.consumeItem(this, type) }
++  useSlot(where: SlotWhere, i: number): boolean { return inventory.useSlot(this, where, i) }
++  updateItemUse(dt: number) { inventory.updateItemUse(this, dt) }
++  drawChalk() { inventory.drawChalk(this) }
++  quickUse() { inventory.quickUse(this) }
++  quickDrop() { inventory.quickDrop(this) }
++  slotGet(r: SlotRef): InvSlot | null { return inventory.slotGet(this, r) }
++  slotSet(r: SlotRef, v: InvSlot | null) { inventory.slotSet(this, r, v) }
++  // 口袋中是否有指定物品（钥匙/门禁卡/护符类判定走口袋，不再全背包生效）
++  hasPocket(type: string): boolean { return inventory.hasPocket(this, type) }
++  dropSlot(where: SlotWhere, i: number) { inventory.dropSlot(this, where, i) }
++  unequipSlot(where: SlotWhere, i: number): boolean { return inventory.unequipSlot(this, where, i) }
++  equipItem(where: SlotWhere, i: number): boolean { return inventory.equipItem(this, where, i) }
++  moveSlot(from: SlotRef, to: SlotRef): boolean { return inventory.moveSlot(this, from, to) }
++  syncPassives() { inventory.syncPassives(this) }
++  warpToBerryLevel(tag?: number) { inventory.warpToBerryLevel(this, tag) }
++
++  // ---------- 据点寄存仓库（engine/warehouse.ts，v54）----------
++  /** NPC 的阵营仓库 id（非寄存 NPC 返回 null） */
++  warehouseOfNpc(npcId: string): warehouse.WarehouseFaction | null { return warehouse.warehouseOfNpc(npcId) }
++  /** 声望门槛：对应团体声望 ≥10 开放（或 BNTG 付费临时解锁） */
++  canUseWarehouse(npcId: string): boolean { return warehouse.canUseWarehouse(this, npcId) }
++  /** BNTG 付费通道：付 5 压印币，本次对话临时使用仓库（MEG 无付费通道） */
++  payWarehouseAccess(fac: warehouse.WarehouseFaction): boolean { return warehouse.payWarehouseAccess(this, fac) }
++  /** 寄存：背包/快捷栏物品移入阵营仓库（同类并摞；满仓失败） */
++  warehouseDeposit(fac: warehouse.WarehouseFaction, from: SlotRef): boolean { return warehouse.warehouseDeposit(this, fac, from) }
++  /** 取回：仓库栏位移回背包（背包满失败） */
++  warehouseWithdraw(fac: warehouse.WarehouseFaction, i: number): boolean { return warehouse.warehouseWithdraw(this, fac, i) }
++
++  // ---------- 现象与停电/视野（engine/ambient.ts）----------
++  updateAmbient(dt: number) { ambient.updateAmbient(this, dt) }
++  rollAmbientEvent() { ambient.rollAmbientEvent(this) }
++  startBlackout(dur: number) { ambient.startBlackout(this, dur) }
++  applyBlackout() { ambient.applyBlackout(this) }
++  spawnBlackoutSmilers() { ambient.spawnBlackoutSmilers(this) }
++  endBlackout() { ambient.endBlackout(this) }
++  computeVisibility() { ambient.computeVisibility(this) }
++
++  // ---------- 主更新 ----------
++  update(dt: number) {
++    // renderer3d.applyView 会把 input 向量「就地」旋转到世界系；键盘/触屏按住期间
++    // mx/my 不会每帧重写，若消费后不复原，旋转将逐帧叠加 → 移动方向漂移、
++    // 周期性朝反方向走（玩家感知为「卡顿/位置被拉回」）。
++    // 这里保证：无论 step 从哪个分支返回，input 都被转回屏幕系。
++    try {
++      this.step(dt)
++    } finally {
++      this.unwindInput()
++    }
++    unstuck.updateUnstuckCheck(this, dt)
++    // v29a：暂停（暂停菜单）或退回主界面（over=true 且存活）时落盘一次
++    if (this.paused || this.over) {
++      if (!this.idleSaved) { this.idleSaved = true; this.persist() }
++    } else this.idleSaved = false
++  }
++
++  // applyView 旋转的逆变换（R^-1 = R^T）
++  private unwindInput() {
++    const i = this.input
++    if (Math.abs(i.mx) < 1e-6 && Math.abs(i.my) < 1e-6) return
++    const s = Math.sin(look.yaw), c = Math.cos(look.yaw)
++    const mx = c * i.mx - s * i.my
++    const my = s * i.mx + c * i.my
++    i.mx = mx; i.my = my
++  }
++
++  getInteract(): { kind: string; label: string } | null { return this.interactTarget }
++
++  /** 暂停页脱困：开始 3 秒真实移动检测；成功后由引擎自动传送到安全连通地块。 */
++  startUnstuckCheck(): boolean { return unstuck.startUnstuckCheck(this) }
++  /** 暴露给冒烟测试/诊断：当前位置是否存在连续逃生路径。 */
++  canEscapeCurrentPosition(): boolean { return unstuck.canEscapeCurrentPosition(this) }
++  /** 暴露给冒烟测试/诊断：计算最近的开阔连通安全落点。 */
++  findUnstuckDestination(): unstuck.UnstuckDestination | null { return unstuck.findUnstuckDestination(this) }
++
++  private step(dt: number) {
++    if (!this.map || this.paused || this.over) return
++    if (this.transition?.preparing && !this.transition.prepared) return
++    dt = Math.min(dt, 0.05)
++    this.time += dt
++    // v29a/v54：每 60 秒自动存档到「自动保存」槽（退回主界面后从自动槽继续可恢复进度用；
++    // 手动槽由暂停/退回标题落盘与切层之外的节点维护）
++    this.autosaveT += dt
++    if (this.autosaveT >= 60) { this.autosaveT = 0; save.persist(this, 'auto') }
++    const p = this.player
++    const dm = DIFF[this.difficulty]
++    // v51：糖果效果计时器（EFFECTS 注册表 pre 组：糖瘾/银舌头/枪糖/巧克力冷却——与原内联顺序一致）
++    runEffectTicks(this, dt, 'pre')
++    // v51：人制品售货机——看过背面后，玩家背对它（视线锥外且 10m 内）即活化追击；受到攻击也会活化
++    this.updateVendingMachines()
++    // v51：人制品效应计时（5 分钟）+ Nguithr'xurh 镇静剂麻痹计时（EFFECTS 注册表 post 组）
++    runEffectTicks(this, dt, 'post')
++    // Three.js 相机前方在游戏平面中为 (-sin(yaw), -cos(yaw))；atan2 的参数必须是 (dy, dx)。
++    // 旧实现交换了二者，使逻辑朝向相对画面准星恒偏约 90°。
++    p.facing = Math.atan2(-Math.cos(look.yaw), -Math.sin(look.yaw))
++
++    // 过渡动画中
++    if (this.transition) {
++      this.transition.t += dt
++      // App deliberately suspends simulation while the departure animation is
++      // visible. Count that wall time once rather than replaying its delay.
++      if (this.transition.startedAt !== undefined)
++        this.transition.t = Math.max(this.transition.t, (performance.now() - this.transition.startedAt) / 1000)
++      if (this.transition.t > 0.9) {
++        const t = this.transition
++        if (t.dest === 'random') t.dest = Math.floor(Math.random()*NORMAL_LEVELS)
++        if (t.dest !== 'win' && !t.prepared && canPrepareChunks(levelDefOf(t.dest)!)) {
++          this.prepareLevelTransition()
++          return
++        }
++        this.transition = null
++        if (t.dest === 'win') {
++          this.victory = true; this.over = true
++          save.clearRunSlots(this) // v29a/v54：通关后本局进度的存档槽失效（绑定槽 + 自动槽）
++          this.emit({ kind: 'victory' })
++          audio.stopHum(); audio.stopBGM(); audio.stopRain(); audio.stopCaveWeather(); audio.setHeartbeat(false, 0) // v54：雨声随通关停止
++        } else {
++          const dest = t.dest
++          if (t.fallDamage) {
++            p.hp -= t.fallDamage
++            this.emit({ kind: 'damage' })
++            if (p.hp <= 0) { this.die('坠亡'); return }
++          }
++          this.loadLevel(dest, undefined, t.mapSeed)
++          this.emit({ kind: 'transition', anim: 'intro' })
++        }
++      }
++      return
++    }
++
++    this.updateItemUse(dt)
++
++    p.aliveTime = (Date.now() - p.startTime) / 1000
++
++    // 开场爬起：计时递减，期间锁定移动/攻击/跳跃（任意输入=立即起身跳过）
++    if (this.introT > 0) {
++      const skip = Math.hypot(this.input.mx, this.input.my) > 0.1 || this.input.jump || this.input.attack
++      this.introT = skip ? 0 : Math.max(0, this.introT - dt)
++    }
++    const introLock = this.introT > 0 || jerryInputLock(this) // 杰瑞木僵/信众击晕/残响失神：锁定移动、攻击与跳跃
++
++    // ---- 移动 ----（engine/movement.ts；返回 null=本帧已死亡/终止，同原 step 内 return）
++    const mag = this.updateMovement(dt, dm, introLock)
++    if (mag === null) return
++
++    // ---- 生存消耗（engine/survival.ts；返回 true=本帧已死亡）----
++    if (this.updateSurvival(dt, dm, mag)) return
++
++    // ---- 攻击 ----
++    if (this.attackAnimT > 0) this.attackAnimT -= dt
++    if (this.attackCooldownT > 0) this.attackCooldownT = Math.max(0, this.attackCooldownT - dt)
++    if (this.input.attack) {
++      this.input.attack = false
++      if (!introLock && !this.usingItem) this.attack()
++    }
++    this.updateProjectiles(dt)
++    if (this.input.toggleLight) {
++      this.input.toggleLight = false
++      // v32：头灯（头饰栏）与手电筒（副手）共用开关与电池
++      const beamKind = p.equip.offhand?.type === 'flashlight' ? '手电筒' : p.equip.head?.type === 'headlamp' ? '头灯' : null
++      if (!beamKind) {
++        this.msg('没有手电筒或头灯。手电筒装在【副手】，头灯装在【头饰】。', 'system')
++      } else if (p.battery > 0 || p.flashlight) {
++        p.flashlight = !p.flashlight
++        audio.uiTick()
++        this.msg(`${beamKind}：${p.flashlight ? '开' : '关'}`, 'system')
++      }
++    }
++
++    // ---- 实体 AI ----
++    this.updateEntities(dt, dm.dmg)
++    careerSystem.updateCareer(this, dt)
++    this.trackQuests(dt) // v35：委托进度追踪
++    updateMegMissions(this, dt)
++    updateFactionMissions(this, dt)
++
++    // ---- v45：信众领地判定 / 教化诵咏 / 接触冷却（engine/npc.ts）----
++    this.updateJerry(dt)
++    // ---- v35：NPC 步进 + v39：BRC 模仿装修结算（engine/npc.ts）----
++    this.updateNpcs(dt)
++
++    // ---- v51：L3 配电箱电流嗡鸣（engine/interact.ts）----
++    this.updateElecHum()
++
++    // ---- 交互检测 ----
++    this.scanInteract()
++    if (this.input.interact) {
++      this.input.interact = false
++      this.doInteract()
++    }
++
++    // ---- 容器搜索进度 / 战利品面板自动关闭（engine/interact.ts）----
++    this.updateContainerSearch(dt)
++    this.updateL10Actions(dt)
++
++    // ---- 粒子 ----
++    this.updateParticles(dt)
++
++    // 未涂黑窗户陷阱 / 锈蚀钢筋 / 蒸汽阀门伤害（engine/interact.ts；返回 true=本帧已死亡）
++    if (this.triggerStructs(dt, dm)) return
++
++    // ---- 层级氛围事件（wiki 设定播报）+ L1 停电恢复（engine/ambient.ts）----
++    this.updateAmbient(dt)
++
++    // ---- 视野 ----
++    this.computeVisibility()
++
++    this.camShake = Math.max(0, this.camShake - dt * 2.2)
++  }
++
++  get levelDef() { return levelDefOf(this.player.level)! }
++
++  // ---------- 开发者模式 API（engine/dev.ts；仅供开发者面板/冒烟测试调用）----------
++  devJump(id: number) { dev.devJump(this, id) }
++  devJumpOutpost(outpostId: string): boolean { return dev.devJumpOutpost(this, outpostId) }
++  devForward(): { fx: number; fy: number } { return dev.devForward(this) }
++  devFindSpot(cx: number, cy: number, maxR = 6, band: FloorBand = this.player.floor): { x: number; y: number } | null { return dev.devFindSpot(this, cx, cy, maxR, band) }
++  /** 召唤实体：在玩家前方 dist 格（默认 3）生成指定类型实体 */
++  devSpawnEntity(type: string, dist = 3, form?: import('./entities').EntityForm): boolean { return dev.devSpawnEntity(this, type, dist, form) }
++  devSetFlight(enabled: boolean): void {
++    this.dev.fly = this.devEnabled && enabled
++    this.player.vz = 0
++    this.moveIt.acc = 0
++    this.input.jump = this.input.crouch = false
++    if (this.dev.fly) {
++      this.ride = this.climb = this.porchDrop = null
++      this.onStairs = false
++      this.player.crouching = false
++    }
++  }
++  /** 每种实体各召唤一只，环绕玩家排开 */
++  devSpawnAllEntities(): number { return dev.devSpawnAllEntities(this) }
++  /** 给予物品：默认进背包；toGround=true 时生成在玩家脚下 */
++  devGiveItem(type: string, toGround = false): boolean { return dev.devGiveItem(this, type, toGround) }
++  /** 一键全套补给：杏仁水×5 罐头×5 电池×3（放不下的掉到脚下） */
++  devGiveSupplies() { dev.devGiveSupplies(this) }
++  /** 状态控制：设置单项数值（0-100）。会自动解除状态锁定使数值生效。 */
++  devSetStat(key: 'hp' | 'sanity' | 'hunger' | 'thirst' | 'stamina' | 'battery' | 'infection', v: number) { dev.devSetStat(this, key, v) }
++  /** 全部补满 */
++  devFillStats() { dev.devFillStats(this) }
++  /** 全部清空（HP 保留 1 防死亡） */
++  devDrainStats() { dev.devDrainStats(this) }
++  /** 按本层出口的建筑、道路与通行条件，在附近生成并标记已发现。 */
++  devSummonExit(kind: string): boolean { return dev.devSummonExit(this, kind) }
++  /** Explicit summon/nearest safe teleport; never falls back to the other action. */
++  devOperateExit(kind:string,mode:'summon'|'teleport',signal?:AbortSignal,destination?:ExitDef['dest'],progress?:(message:string)=>void) { return devOperateExit(this,kind,mode,signal,destination,progress) }
++  devGotoExitKind(kind: string): Promise<boolean> { return dev.devGotoExitKind(this, kind) }
++  /** v54：召唤装饰物（decorRegistry 结构类条目；落位面前 1 格，无限层同步写 LiveChunk） */
++  devSpawnDecor(kind: string): boolean { return dev.devSpawnDecor(this, kind) }
++  /** 传送：exit=最近出口 / entity=最近实体 / container=最近未搜容器 / spawn=出生点 / landmark=最近定居点地标 */
++  devTeleport(target: 'exit' | 'entity' | 'container' | 'spawn' | 'landmark' | 'island'): boolean { return dev.devTeleport(this, target) }
++  /** v57t：传送到最近的 L7 荒岛 */
++  devGotoIsland(): boolean { return dev.devGotoIsland(this) }
++  /** 开发者：传送到本层指定 NPC 身旁（DevPanel 传送页 NPC 列表） */
++  devGotoNpc(id: string): boolean { return dev.devGotoNpc(this, id) }
++  /** 时间快进：模拟 sec 秒的生存消耗（饥饿/理智/电池），不触发伤害死亡 */
++  devFastForward(sec = 60) { dev.devFastForward(this, sec) }
++  /** 立即触发一次本层随机氛围事件 */
++  devTriggerEvent() { dev.devTriggerEvent(this) }
++  /** 强制停电 dur 秒（已在停电中则先恢复再触发） */
++  devForceBlackout(dur = 20) { dev.devForceBlackout(this, dur) }
++  /** v17：传送到无限 L0 最近的指定变体 chunk 中心（截图/冒烟测试用） */
++  devGotoVariant(kind: string): boolean { return dev.devGotoVariant(this, kind) }
++  /** 当前层级可能生成的固定结构（prefab）与变种房间清单，标注是否已出现在已生成区域 */
++  devLevelStructures() { return dev.devLevelStructures(this) }
++  /** 传送到指定固定结构；已生成区域没有时先在墙区开洞强制生成一个再传送 */
++  devGotoPrefab(id: string): boolean { return dev.devGotoPrefab(this, id) }
++  /** 测试场地：仅 L0 无限模式、开发者模式专用——在附近开辟 80×80 无墙空旷区域并传送（不会自然生成） */
++  devTestField(): boolean { return dev.devTestField(this) }
++  /** v17：传送到最近的保底出口「闪烁的墙壁」（窗口外也可达） */
++  devGotoExit(): boolean { return dev.devGotoExit(this) }
++  /** 重新生成当前层级：newSeed=true 换随机种子，否则同种子重建 */
++  devRegenLevel(newSeed: boolean) { dev.devRegenLevel(this, newSeed) }
++  /** 清场：击杀本层全部实体 */
++  devKillAllEntities(): number { return dev.devKillAllEntities(this) }
++  /** 调试信息快照（信息页签展示用） */
++  devInfo() { return dev.devInfo(this) }
++
++  /** 滋水枪储罐容量（份数）：9 瓶 × 每瓶 3 份 = 27 */
++  static readonly SQUIRT_CAP = combat.SQUIRT_CAP
++  static readonly BRC_MIMIC_CD = npc.BRC_MIMIC_CD // 模仿装修全局冷却（秒，防连点）
++}
++
++export const engine = new Engine()
++
++
+diff --git a/app/src/game/engine/combat.ts b/app/src/game/engine/combat.ts
+index e649cd1..f38160c 100644
+--- a/app/src/game/engine/combat.ts
++++ b/app/src/game/engine/combat.ts
+@@ -1,3 +1,4 @@
++import { SWIM, underwater, meleeIntervalMul, blockUnderwaterGun } from './swim'
+ import { witnessedOffense } from './career'
+ import { provokeMoths } from './moths'
+ import { provokeHound } from './houndAI'
+@@ -204,13 +205,15 @@ export function attack(eng: Engine) {
+     return
+   }
+   if (!eng.dev.noAttackCooldown && eng.attackCooldownT > 0) return
++  // [swim 阶段 3] 水下不能开枪（滋水枪 / 枪糖）
++  if ((eng.gunCandyT > 0 || held?.type === 'squirtgun') && blockUnderwaterGun(eng, eng.swim)) return
+   const def = held ? ITEMS[held.type] : undefined
+   // 所有左键攻击共用冷却入口；近战武器从物品定义读取独立间隔/体力，特殊攻击使用轻量模板。
+   const interval = eng.gunCandyT > 0 ? 0.24
+     : def?.throw ? 0.72
+       : held?.type === 'squirtgun' ? 0.3
+-        : def?.weapon ? (def.attackInterval ?? 0.65)
+-          : 0.58
++        : (def?.weapon ? (def.attackInterval ?? 0.65)
++          : 0.58) * meleeIntervalMul(eng) // [swim 阶段 3] 水下近战 / 徒手间隔 ×1.3
+   const staminaCost = eng.gunCandyT > 0 ? 2
+     : def?.throw ? 5
+       : held?.type === 'squirtgun' ? 2
+@@ -385,7 +388,8 @@ export function throwHeld(eng: Engine, type: string) {
+   slot.count--
+   if (slot.count <= 0) p.hotbar[p.selected] = null
+   audio.swing()
+-  const speed = 9
++  const water = underwater(eng) // [swim 阶段 3] 水下投掷：出手慢、受水阻、慢慢下沉——射程约一半
++  const speed = 9 * (water ? SWIM.THROW_SPEED : 1)
+   const dir = crosshairDirection()
+   const lead = type==='glowstick'?.08:.38
+   const offset = seatedEyeOffset(eng)
+@@ -394,6 +398,7 @@ export function throwHeld(eng: Engine, type: string) {
+     x: p.x + offset.x + dir.x * lead, y: p.y + offset.y + dir.y * lead,
+     z: p.z + seatedEyeHeight(eng) + dir.z * lead, floorZ: p.z,
+     vx: dir.x * speed, vy: dir.y * speed, vz: dir.z * speed,
++    ...(water ? { water: true } : {}),
+   })
+   eng.msg(`你掷出了${ITEMS[type].name}。`, 'system')
+   eng.noiseEvent(p.x, p.y, 4, false)
+@@ -460,6 +465,7 @@ export function stanleyTeleport(eng: Engine) {
+ /** 枪糖：左键发射巧克力子弹（直线 12m，1 点伤害，命中也只是糊一脸） */
+ export function shootChocolate(eng: Engine) {
+   if (eng.handsStowed) return
++  if (blockUnderwaterGun(eng, eng.swim)) return
+   const p = eng.player
+   if (!eng.dev.noAttackCooldown && eng.chocoCd > 0) return
+   eng.chocoCd = eng.dev.noAttackCooldown ? 0 : 0.22
+@@ -495,6 +501,7 @@ export function shootChocolate(eng: Engine) {
+ /** 滋水枪喷射：清水无效果；杏仁水雾轻伤实体，腰果水雾造成更大伤害 */
+ export function squirt(eng: Engine) {
+   if (eng.handsStowed) return
++  if (blockUnderwaterGun(eng, eng.swim)) return
+   const p = eng.player
+   if (eng.squirtAmmo <= 0 || eng.squirtTank === 'none') {
+     eng.msg('储罐是空的——先装入液体。', 'system')
+@@ -563,7 +570,8 @@ export function updateProjectiles(eng: Engine, dt: number) {
+   for (const pr of eng.projectiles) {
+     const nx = pr.x + pr.vx * dt, ny = pr.y + pr.vy * dt
+     const oldZ = pr.z
+-    pr.vz -= 9.8 * dt
++    if (pr.water) { const g = Math.exp(-SWIM.THROW_DRAG * dt); pr.vx *= g; pr.vy *= g; pr.vz = pr.vz * g - SWIM.THROW_G * dt }
++    else pr.vz -= 9.8 * dt
+     const nz = oldZ + pr.vz * dt
+     if(pr.type==='glowstick')pr.floorZ=groundHeightAt(m,pr.x,pr.y,bandOfPlayerZ(m,pr.floorZ,pr.x,pr.y))
+     if (nz <= pr.floorZ) { pr.done = true; eng.landProjectile(pr, pr.x, pr.y); continue }
+diff --git a/app/src/game/engine/l7Events.ts b/app/src/game/engine/l7Events.ts
+index 72c3a3d..9c31694 100644
+--- a/app/src/game/engine/l7Events.ts
++++ b/app/src/game/engine/l7Events.ts
+@@ -12,6 +12,7 @@ import type { Engine } from '../engine'
+ import { audio } from '../core/audio'
+ import { L7_ORIGIN, l7GravWallAt, l7GravDistance } from '../world/infiniteL7'
+ import { l7SurgeHeight } from '../renderer/water'
++import { surgePush } from './swim'
+ 
+ export interface L7Surge {
+   /** 背脊当前世界坐标（瓦片） */
+@@ -92,12 +93,10 @@ export function stepL7Events(eng: Engine, dt: number) {
+   if (fx.surge) {
+     const sp = l7SurgeShaderParams(eng)
+     fx.surgeH = l7SurgeHeight(p.x, p.y, sp)
+-    if (nearSurface && Math.abs(fx.surgeH) > 0.05) {
+-      // 推离波源：只在波峰（h>0）推，力度与浪高成正比
++    if (inSea && fx.surgeH > 0.05) {
++      // 推离波源：只在波峰（h>0）推。[swim 阶段 3] 改成给水流加速度（swim.cx/cy）：越深越弱，浪过去后还会被带着漂一段
+       const ddx = p.x - sp.x, ddy = p.y - sp.y, L = Math.hypot(ddx, ddy) || 1
+-      const push = Math.max(0, fx.surgeH) * 1.5 * dt
+-      moveIfWater(eng, (ddx / L) * push, (ddy / L) * push)
+-      fx.surgeH = l7SurgeHeight(p.x, p.y, sp)
++      surgePush(eng, eng.swim, dt, fx.surgeH, ddx / L, ddy / L)
+     }
+   }
+ 
+diff --git a/app/src/game/engine/movement.ts b/app/src/game/engine/movement.ts
+index 6f6f4b2..7846bfd 100644
+--- a/app/src/game/engine/movement.ts
++++ b/app/src/game/engine/movement.ts
+@@ -12,7 +12,7 @@ import { l1BuildingStyleAt } from '../world/l1Building'
+ import { bandOfZ, bandOfPlayerZ, groundHeightAt, structStandTopAt, ceilingHeightAt, l11HeadCeilingAt, l11MapWater, floorHeight, liquidSurfaceH, POOL_DEPTH, FLOOR_H } from '../world/mapgen'
+ import { L11_WATER_SURFACE } from '../world/l11Hydrology'
+ import { integrateMove, resolvePlayerPenetration, FIXED_STEP } from '../core/player'
+-import { stepSwimVelocity, absorbBlocked, tryClimbOut, stepClimbOut, stepBreathFx, o2Rate, SWIM } from './swim'
++import { stepSwimVelocity, absorbBlocked, tryClimbOut, stepClimbOut, stepBreathFx, o2Rate, stepCurrent, stepPressure, wallPull, SWIM } from './swim'
+ import { WALL_H } from '../renderer/shared'
+ import { levelDefOf, NORMAL_LEVELS } from '../levels'
+ import { audio } from '../core/audio'
+@@ -39,6 +39,9 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
+   const p = eng.player, m = eng.map!
+   const verticalStart=p.z
+   stepBreathFx(eng, eng.swim, dt, eng.submerged, breathLimit(eng)) // [swim] 屏气反馈 + 出水恢复（放在最前：脚本演出/撑上岸期间也要恢复）
++  stepPressure(eng, eng.swim, dt) // [swim 阶段 3] 水压提示 + 减压病
++  if (eng.over) return 0
++  stepCurrent(eng, eng.swim, dt) // [swim 阶段 3] 涌浪 / 水墙的水流（带惯性）
+   // A scripted wall crossing owns position temporarily; gravity must not snap onto a wall/upper floor.
+   if(dullerControlsPlayer(eng)||clumpControlsPlayer(eng)){eng.seating=null;return 0}
+   if (eng.devEnabled && eng.dev.fly) {
+@@ -140,7 +143,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
+   }
+   // [swim] 游泳冲刺的体力按划水次数扣（swim.ts），不再持续扣；水下体力恢复变慢，水面踩水正常恢复
+   if (wantSprint) { speed = 6.0; if (!swimming) p.stamina = Math.max(0, p.stamina - 22 * (eng.manmadeT > 0 ? 2 : 1) * dt) } // v51：人制品效应中体力消耗 ×2
+-  else p.stamina = Math.min(100, p.stamina + (p.coffeeT > 0 ? 24 : 12) * (eng.inOutpost ? 2 : 1) * (eng.manmadeT > 0 ? 0.5 : 1) * (p.infection >= 100 ? 0.9 : 1) * (swimming && eng.submerged ? SWIM.SUB_STAMINA_REGEN : 1) * dt) // v51：人制品效应中体力恢复 ×0.5；v55：疫疾一阶起 ×0.9
++  else p.stamina = Math.min(100, p.stamina + (p.coffeeT > 0 ? 24 : 12) * (eng.inOutpost ? 2 : 1) * (eng.manmadeT > 0 ? 0.5 : 1) * (p.infection >= 100 ? 0.9 : 1) * (swimming && eng.submerged ? SWIM.SUB_STAMINA_REGEN : 1) * (eng.swim.bendsT > 0 ? SWIM.BENDS_STAMINA : 1) * dt) // v51：人制品效应中体力恢复 ×0.5；v55：疫疾一阶起 ×0.9
+   if (p.crouching && !swimming) speed *= 0.5 // 蹲伏减速（L7 潜泳由下潜逻辑负责，不再额外砍半）
+     const carpet=l0Sample(m,p.x,p.y)
+     speed*=(1-.10*(carpet?.arch??0))*(1-.40*(carpet?.red??0))
+@@ -303,11 +306,20 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
+       eng.stepAcc = 0
+       const g0 = eng.levelDef.gen
+       if (wet&&eng.player.level===0) audio.splash(.1)
+-      if (lq !== 0) audio.swim() // 水中移动划水声
+-      else audio.footstep(g0 === 'garage' || g0 === 'grid' ? 'concrete' : g0 === 'pipes' ? 'metal' : 'carpet')
+-      eng.noise = Math.min(1, eng.noise + (wantSprint ? 0.5 : 0.15))
+-      if (wantSprint) eng.noiseEvent(p.x, p.y, 10, true)
+-      else eng.noiseEvent(p.x, p.y, p.crouching ? 1 : 4, false) // 蹲行近乎无声（肢团听不见）
++      if (lq === 1) {
++        // [swim 阶段 3] 深水噪音分级：普通游很轻（水下 3m / 水面 5m）；冲刺划水的响动按每一下在 swim.ts 里发
++        if (!wantSprint) {
++          audio.swimStroke(eng.submerged, 0.45)
++          eng.noise = Math.min(1, eng.noise + 0.1)
++          eng.noiseEvent(p.x, p.y, eng.submerged ? SWIM.NOISE_SWIM_SUB : SWIM.NOISE_SWIM_SURF, false)
++        }
++      } else {
++        if (lq !== 0) audio.swim() // 浅水趟水声
++        else audio.footstep(g0 === 'garage' || g0 === 'grid' ? 'concrete' : g0 === 'pipes' ? 'metal' : 'carpet')
++        eng.noise = Math.min(1, eng.noise + (wantSprint ? 0.5 : 0.15))
++        if (wantSprint) eng.noiseEvent(p.x, p.y, 10, true)
++        else eng.noiseEvent(p.x, p.y, p.crouching ? 1 : 4, false) // 蹲行近乎无声（肢团听不见）
++      }
+     }
+     // v13：移动涟漪（浅水与水面）
+     if (lq !== 0 && movedDist > 0.01) {
+@@ -411,7 +423,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
+     if (l7f) {
+       if (wall) l7f.wallFall = p.z > surfZ + 0.3
+       // 墙内重力偏向墙体中面：轻微横向拉力（「侧着」漂在水墙里）
+-      if (wall && p.z > 0.2) { p.x -= wall.nx * wall.perp * 0.7 * dt; p.y -= wall.ny * wall.perp * 0.7 * dt }
++      if (wall && p.z > 0.2) wallPull(sw, dt, wall.nx, wall.ny, wall.perp) // [swim 阶段 3] 改成水流加速度（带惯性）
+     }
+     const airborne = !!l7f && !wall && p.z > surfZ + 0.05
+     if (airborne) {
+diff --git a/app/src/game/engine/swim.ts b/app/src/game/engine/swim.ts
+index db3e47d..d0b407d 100644
+--- a/app/src/game/engine/swim.ts
++++ b/app/src/game/engine/swim.ts
+@@ -71,6 +71,54 @@ export const SWIM = {
+   RECOVER: 3,
+   /** 出水时憋气程度超过这个比例会大口吸气 */
+   GASP_K: 0.4,
++  // ---- 阶段 3：噪音分级（noiseEvent 半径，米） ----
++  /** 普通游（每游 0.9m 一次）：水下 / 水面 */
++  NOISE_SWIM_SUB: 3,
++  NOISE_SWIM_SURF: 5,
++  /** 冲刺划水（每划一下，算明显响动）：水下 / 水面拍水 */
++  NOISE_STROKE_SUB: 8,
++  NOISE_STROKE_SURF: 11,
++  /** 翻身入水 / 撑上岸 */
++  NOISE_DUCK: 6,
++  NOISE_CLIMB: 5,
++  // ---- 阶段 3：水下战斗 ----
++  /** 头没在水下时近战间隔倍率 */
++  MELEE_SLOW: 1.3,
++  /** 水下投掷：出手速度倍率、水阻（1/s）、下沉加速度。水平射程约为岸上的一半 */
++  THROW_SPEED: 0.6,
++  THROW_DRAG: 2.0,
++  THROW_G: 2.45,
++  // ---- 阶段 3：L7 水流 ----
++  /** 水流速度的衰减（1/s）：浪过去后还会被带着漂一段 */
++  CUR_DRAG: 0.9,
++  /** 涌浪推力：加速度 = 浪高 × SURGE_ACC × exp(−深度 / SURGE_DEPTH) */
++  SURGE_ACC: 2.4,
++  SURGE_DEPTH: 4,
++  /** 水墙内朝中面的拉力（m/s² × 偏离量） */
++  WALL_ACC: 1.2,
++  // ---- 阶段 3：水压 / 减压病（只在 L7） ----
++  /** 水压提示的深度（米）；150m 起扣血是原有逻辑 */
++  PRESS_DEPTHS: [30, 60, 100, 150] as readonly number[],
++  /** 超过这个上浮速度算「上浮太快」（m/s） */
++  ASCENT_FAST: 1.6,
++  /** 只有最近潜到过这么深才会累积 */
++  BENDS_MIN_DEPTH: 40,
++  /** 慢慢上浮 / 停留时「快速上浮米数」的消退速度（m/s，相当于减压停留） */
++  BENDS_DECAY: 0.5,
++  /** 回到这么浅时结算：快速上浮超过 BENDS_SAFE 米就发作 */
++  BENDS_CHECK_DEPTH: 8,
++  BENDS_SAFE: 25,
++  /** 快速上浮超过 BENDS_SAFE 后，再多 BENDS_FULL 米就是最重 */
++  BENDS_FULL: 40,
++  /** 发作时长 = BASE + 严重度 × EXTRA（秒）；关节痛扣血 = DMG0 + 严重度 × DMG1（每秒） */
++  BENDS_BASE_T: 30,
++  BENDS_EXTRA_T: 30,
++  BENDS_DMG0: 0.15,
++  BENDS_DMG1: 0.25,
++  /** 发作期间体力恢复倍率 */
++  BENDS_STAMINA: 0.5,
++  /** 潜回这么深可以「再加压」，症状消退快 3 倍 */
++  BENDS_RECOMP_DEPTH: 15,
+ } as const
+ 
+ export interface SwimState {
+@@ -109,9 +157,21 @@ export interface SwimState {
+   /** 入水冲击（渲染层镜头用，0–1 衰减） */
+   entryK: number
+   sinceMsg: number
++  /** ---- 阶段 3 ---- */
++  /** 外部水流速度（涌浪 / 水墙），单独积分，不受游速上限影响 */
++  cx: number; cy: number
++  /** 已提示到的水压阶段（PRESS_DEPTHS 的下标 +1；0 = 没提示过） */
++  pressStage: number
++  /** 最近潜到的最深处（米，浅水时慢慢回落） */
++  deepMax: number
++  /** 「快速上浮」累计米数 */
++  fastUp: number
++  fastWarned: boolean
++  /** 减压病剩余时长与严重度（0–1） */
++  bendsT: number; bendsSev: number
+ }
+ 
+-export const newSwimState = (): SwimState => ({ vx: 0, vy: 0, vz: 0, strokeT: -1, strokes: 0, sinceStroke: 9, pushT: 0, px: 0, py: 0, pz: 0, duckCd: 0, prevCrouch: false, atSurface: false, out: null, lx: NaN, ly: NaN, lz: NaN, stuckT: 0, o2k: 0, stage: 0, blackK: 0, beatT: 0, sinceBeat: 9, contractT: 0, sinceContract: 9, airT: 9, entryK: 0, sinceMsg: 99 })
++export const newSwimState = (): SwimState => ({ vx: 0, vy: 0, vz: 0, strokeT: -1, strokes: 0, sinceStroke: 9, pushT: 0, px: 0, py: 0, pz: 0, duckCd: 0, prevCrouch: false, atSurface: false, out: null, lx: NaN, ly: NaN, lz: NaN, stuckT: 0, o2k: 0, stage: 0, blackK: 0, beatT: 0, sinceBeat: 9, contractT: 0, sinceContract: 9, airT: 9, entryK: 0, sinceMsg: 99, cx: 0, cy: 0, pressStage: 0, deepMax: 0, fastUp: 0, fastWarned: false, bendsT: 0, bendsSev: 0 })
+ 
+ export function resetSwim(s: SwimState) { Object.assign(s, newSwimState()) }
+ 
+@@ -193,6 +253,9 @@ export function stepSwimVelocity(eng: Engine, s: SwimState, dt: number, c: SwimC
+       if (!(eng.dev.god && eng.dev.statLock)) p.stamina = Math.max(0, p.stamina - SWIM.STROKE_STAMINA * (eng.manmadeT > 0 ? 2 : 1))
+       audio.swimStroke(eng.submerged, 0.8 + 0.4 * Math.min(1, Math.hypot(s.vx, s.vy, s.vz) / Math.max(0.1, max)))
+       stroked = true
++      // [swim 阶段 3] 冲刺划水是明显响动：水面拍水更响
++      eng.noise = Math.min(1, eng.noise + 0.45)
++      eng.noiseEvent(p.x, p.y, eng.submerged ? SWIM.NOISE_STROKE_SUB : SWIM.NOISE_STROKE_SURF, true)
+     }
+   } else s.strokeT = -1
+   // 划水发力：冲量按正弦包络分摊在 STROKE_PUSH 秒里（总量 = STROKE_K × 最高速）
+@@ -246,6 +309,7 @@ export function stepSwimVelocity(eng: Engine, s: SwimState, dt: number, c: SwimC
+     s.duckCd = SWIM.DUCK_CD
+     audio.splash(0.35)
+     eng.splashParticles(p.x, p.y, c.surfaceZ)
++    eng.noiseEvent(p.x, p.y, SWIM.NOISE_DUCK, false)
+   }
+   s.prevCrouch = !!inp.crouch
+ 
+@@ -302,6 +366,7 @@ export function tryClimbOut(eng: Engine, s: SwimState, surfaceZ: number, dirX: n
+   eng.input.jump = false
+   audio.splash(0.6)
+   eng.splashParticles(p.x, p.y, surfaceZ)
++  eng.noiseEvent(p.x, p.y, SWIM.NOISE_CLIMB, false)
+   return true
+ }
+ 
+@@ -379,3 +444,107 @@ export function stepBreathFx(eng: Engine, s: SwimState, dt: number, sub: boolean
+   s.entryK = Math.max(0, s.entryK - dt * 2.2)
+   s.sinceMsg += dt
+ }
++
++// ======================= 阶段 3 =======================
++
++/** 头没在水下（真正的水下战斗） */
++export const underwater = (eng: Engine) => eng.inLiquid === 1 && eng.submerged
++
++/** 近战 / 徒手攻击间隔倍率 */
++export function meleeIntervalMul(eng: Engine): number { return underwater(eng) ? SWIM.MELEE_SLOW : 1 }
++
++/** 水下开枪：扣不响，只冒一串气泡。返回 true = 已拦下 */
++export function blockUnderwaterGun(eng: Engine, s: SwimState): boolean {
++  if (!underwater(eng)) return false
++  const p = eng.player
++  audio.bubbleBurst(0.5)
++  eng.bubbleParticles(p.x, p.y, p.z + 1.2)
++  if (s.sinceMsg > 2.5) { s.sinceMsg = 0; eng.msg('水下开不了枪——扳机扣下去，只冒出一串气泡。', 'system') }
++  return true
++}
++
++/** 每帧推进外部水流：衰减 + 按水流把玩家挪开（只在水格里挪，撞到岸就停） */
++export function stepCurrent(eng: Engine, s: SwimState, dt: number) {
++  const g = Math.exp(-SWIM.CUR_DRAG * dt)
++  s.cx *= g; s.cy *= g
++  if (Math.abs(s.cx) + Math.abs(s.cy) < 1e-4) { s.cx = s.cy = 0; return }
++  if (eng.inLiquid !== 1) { s.cx = s.cy = 0; return }
++  const m = eng.map!, p = eng.player
++  const nx = p.x + s.cx * dt, ny = p.y + s.cy * dt
++  const tx = Math.floor(nx), ty = Math.floor(ny)
++  if (tx < 1 || ty < 1 || tx >= m.w - 1 || ty >= m.h - 1 || m.liquid[ty * m.w + tx] !== 1 || m.up?.[ty * m.w + tx] === 1) { s.cx = s.cy = 0; return }
++  p.x = nx; p.y = ny
++}
++
++/** 涌浪推力：浪峰（h>0）沿离开波源的方向加速，越深越弱 */
++export function surgePush(eng: Engine, s: SwimState, dt: number, h: number, dirX: number, dirY: number) {
++  if (h <= 0) return
++  const depth = Math.max(0, -eng.player.z)
++  const a = h * SWIM.SURGE_ACC * Math.exp(-depth / SWIM.SURGE_DEPTH)
++  s.cx += dirX * a * dt; s.cy += dirY * a * dt
++}
++
++/** 水墙拉力：朝墙体中面 */
++export function wallPull(s: SwimState, dt: number, nx: number, ny: number, perp: number) {
++  s.cx -= nx * perp * SWIM.WALL_ACC * dt; s.cy -= ny * perp * SWIM.WALL_ACC * dt
++}
++
++const PRESS_MSG = [
++  '耳膜被压得生疼——你已经在 30 米以下了。',
++  '胸口像被一只手攥紧。60 米，阳光几乎到不了这里。',
++  '100 米。手电的光被黑水一口一口吞掉，四周安静得可怕。',
++  '水压大得骨头都在响——再往下就是死区了。',
++]
++
++/**
++ * 水压提示 + 轻度减压病（只在 L7）。
++ * - 下潜越过 30/60/100/150m 各提示一次（回浅 10m 后可再次提示）；
++ * - 最近到过 40m 以下时，以超过 1.6m/s 的速度上浮会累积「快速上浮米数」；慢慢上浮或停留会消退；
++ * - 回到 8m 以内结算：超过 25m 就发作。发作期间关节痛轻微扣血、体力恢复减半、视野晃；潜回 15m 以下消退快 3 倍。
++ */
++export function stepPressure(eng: Engine, s: SwimState, dt: number) {
++  const p = eng.player
++  const l7 = eng.levelDef.id === 7
++  const inSea = l7 && eng.inLiquid === 1
++  const depth = inSea ? Math.max(0, -p.z) : 0
++  // 水压阶段提示
++  if (inSea) {
++    const D = SWIM.PRESS_DEPTHS
++    while (s.pressStage < D.length && depth >= D[s.pressStage]) {
++      eng.msg(PRESS_MSG[s.pressStage], s.pressStage >= 3 ? 'damage' : 'system')
++      s.pressStage++
++    }
++    while (s.pressStage > 0 && depth < D[s.pressStage - 1] - 10) s.pressStage--
++  } else s.pressStage = 0
++  // 最深记录：更深时立刻刷新；只有回到浅水（≤8m）停留时才每秒回落 1m（相当于水面休息）
++  s.deepMax = depth > s.deepMax ? depth : depth <= SWIM.BENDS_CHECK_DEPTH ? Math.max(depth, s.deepMax - dt) : s.deepMax
++  // 快速上浮累积
++  const up = inSea ? p.vz : 0
++  if (inSea && s.deepMax >= SWIM.BENDS_MIN_DEPTH && up > SWIM.ASCENT_FAST && depth > SWIM.BENDS_CHECK_DEPTH) {
++    s.fastUp += up * dt
++    if (!s.fastWarned && s.fastUp > SWIM.BENDS_SAFE * 0.6) {
++      s.fastWarned = true
++      eng.msg('你上浮得太快了——耳朵和关节一阵刺痛。慢一点，或者停一停。', 'damage')
++    }
++  } else if (up < 1.2) s.fastUp = Math.max(0, s.fastUp - SWIM.BENDS_DECAY * dt)
++  // 回到浅水结算
++  if (inSea && depth <= SWIM.BENDS_CHECK_DEPTH && s.fastUp > 0) {
++    if (s.fastUp > SWIM.BENDS_SAFE) {
++      const sev = Math.min(1, (s.fastUp - SWIM.BENDS_SAFE) / SWIM.BENDS_FULL)
++      s.bendsSev = Math.max(s.bendsSev, sev)
++      s.bendsT = Math.max(s.bendsT, SWIM.BENDS_BASE_T + sev * SWIM.BENDS_EXTRA_T)
++      eng.msg('关节里像灌进了碎玻璃——减压病。潜回 15 米以下能缓一缓。', 'damage')
++    }
++    s.fastUp = 0; s.fastWarned = false
++  }
++  // 发作
++  if (s.bendsT > 0) {
++    const recomp = inSea && depth >= SWIM.BENDS_RECOMP_DEPTH
++    s.bendsT = Math.max(0, s.bendsT - dt * (recomp ? 3 : 1))
++    if (!eng.dev.god) {
++      p.hp -= (SWIM.BENDS_DMG0 + s.bendsSev * SWIM.BENDS_DMG1) * dt
++      if (p.hp <= 0) { eng.die('死于减压病'); return }
++    }
++    if (s.bendsT <= 0) { s.bendsSev = 0; eng.msg('关节里的刺痛终于退了。', 'system') }
++  }
++}
+diff --git a/app/src/game/renderer/renderer.ts b/app/src/game/renderer/renderer.ts
+index 8b45036..72eb04c 100644
+--- a/app/src/game/renderer/renderer.ts
++++ b/app/src/game/renderer/renderer.ts
+@@ -1150,6 +1150,12 @@ export class Renderer3D {
+       const ct = Math.max(0, 1 - sw.sinceContract / 0.35)
+       if (ct > 0) { bobPitch += Math.sin(ct * Math.PI) * 0.05 * ct; bob -= Math.sin(ct * Math.PI) * 0.04 }
+     } else this.swimCamK = 0
++    // [swim 阶段 3] 减压病：关节痛带来的轻微摇晃（不论在不在水里）
++    if (engine.swim.bendsT > 0) {
++      const bk = Math.min(1, engine.swim.bendsT / 6) * (0.4 + 0.6 * engine.swim.bendsSev)
++      bobRoll += Math.sin(this.time * 1.3) * 0.03 * bk
++      bobPitch += Math.sin(this.time * 0.9 + 1.7) * 0.015 * bk
++    }
+     // v57t：水面的相机随浪起伏——避免像踩在固体平面上；离开水面后平滑归零
+     {
+       const target = def.id === 7 && engine.inLiquid === 1

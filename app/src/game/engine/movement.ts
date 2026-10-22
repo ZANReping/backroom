@@ -16,8 +16,9 @@ import { l1BuildingStyleAt } from '../world/l1Building'
 // 自 engine.ts step 内联段拆分，逻辑逐语句搬运；updateMovement 返回 null 表示本帧已死亡/终止（原 step 的 return）。
 import { bandOfZ, bandOfPlayerZ, groundHeightAt, structStandTopAt, ceilingHeightAt, l11HeadCeilingAt, l11MapWater, floorHeight, liquidSurfaceH, POOL_DEPTH, FLOOR_H } from '../world/mapgen'
 import { L11_WATER_SURFACE } from '../world/l11Hydrology'
-import { integrateMove, resolvePlayerPenetration } from '../core/player'
-import { WALL_H, look } from '../renderer/shared'
+import { integrateMove, resolvePlayerPenetration, FIXED_STEP } from '../core/player'
+import { stepSwimVelocity, absorbBlocked, tryClimbOut, stepClimbOut, stepBreathFx, o2Rate, stepCurrent, stepPressure, wallPull, SWIM } from './swim'
+import { WALL_H } from '../renderer/shared'
 import { levelDefOf, NORMAL_LEVELS } from '../levels'
 import { audio } from '../core/audio'
 import { RemotePlayerViews } from '../renderer/remotePlayers' // v58：联机玩家碰撞查询
@@ -44,10 +45,14 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   audio.setDeepPressure(eng.levelDef.id === 7 && eng.submerged ? Math.min(1, Math.max(0, (-eng.player.z - 30) / 170)) : 0, dt)
   const p = eng.player, m = eng.map!
   const verticalStart=p.z
+  stepBreathFx(eng, eng.swim, dt, eng.submerged, breathLimit(eng)) // [swim] 屏气反馈 + 出水恢复（放在最前：脚本演出/撑上岸期间也要恢复）
+  stepPressure(eng, eng.swim, dt) // [swim 阶段 3] 水压提示 + 减压病
+  if (eng.over) return 0
   // A scripted wall crossing owns position temporarily; gravity must not snap onto a wall/upper floor.
   if(bursterControlsPlayer(eng)||wranglerControlsPlayer(eng)||dullerControlsPlayer(eng)||clumpControlsPlayer(eng)||nwControlsPlayer(eng)||armsControlsPlayer(eng,dt)){eng.seating=null;return 0}
   if (eng.devEnabled && eng.dev.fly) {
     eng.seating = null
+    eng.swim.out = null; eng.swim.vx = eng.swim.vy = eng.swim.vz = eng.swim.cx = eng.swim.cy = 0
     const mag = Math.hypot(eng.input.mx,eng.input.my), divisor = Math.max(1,mag)
     const speed = (eng.input.sprint ? 6 : 3.4)*(eng.dev.speed ? 1.8 : 1)
     p.vz = 0; p.crouching = false; eng.stepAcc = 0
@@ -65,6 +70,8 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
     eng.playerNoiseT = Math.max(0,eng.playerNoiseT-dt)
     return introLock ? 0 : mag
   }
+  // Scripted movement, climbing, seats and developer flight own their position.
+  if (!introLock && !eng.seating && !eng.ride && !eng.climb && !eng.onStairs && !eng.porchDrop && !eng.swim.out) stepCurrent(eng, eng.swim, dt)
   // ---- 移动 ----
   const mag = eng.seating ? 0 : Math.hypot(eng.input.mx, eng.input.my)
   let tileI = Math.floor(p.y) * m.w + Math.floor(p.x)
@@ -94,10 +101,11 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
       audio.splash()
       eng.splashParticles(p.x, p.y, eng.levelDef.id===11?L11_WATER_SURFACE:0)
       eng.msg('你跌进了水里——冰冷刺骨。', 'system')
+      eng.swim.entryK = Math.min(1, 0.35 + Math.max(0, -p.vz) / 9) // [swim] 入水冲击：落得越快越猛
+      eng.swim.vz = Math.max(-5, Math.min(0, p.vz)) * 0.6; eng.swim.lz = p.z // [swim] 落水带着下坠惯性扎进水里
     } else if (eng.inLiquid === 1 && lq !== 1) { // 出水
       audio.splash(0.5)
       eng.splashParticles(p.x, p.y, eng.levelDef.id===11?L11_WATER_SURFACE:0)
-      eng.breathT = 0
       if(eng.levelDef.id===11){eng.submerged=false;eng.wasSubmerged=false;audio.setUnderwater(false)}
     }
     eng.inLiquid = lq
@@ -135,18 +143,22 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   const l7Swim = lq === 1 && eng.levelDef.id === 7
   let speed = 3.4
   // v57o：L7 深水允许快速游泳（消耗体力，噪音更大——会吸引 tiny）
-  const wantSprint = eng.input.sprint && (!p.crouching || l7Swim) && mag > 0.1 && p.stamina > 1 && (lq !== 1 || l7Swim)
+  // [swim] 所有深水都能冲刺划水（以前只有 L7）；水里下蹲=下潜，不妨碍冲刺
+  const swimming = lq === 1
+  const wantSprint = eng.input.sprint && (!p.crouching || swimming) && mag > 0.1 && p.stamina > 1
   if (eng.input.sprint && mag > 0.1 && p.stamina <= 1) {
     // 体力耗尽提示（节流 4 秒）
     if (eng.statusMsgT.stamina <= 0) { eng.msg('体力耗尽——喘口气再游。', 'system'); eng.statusMsgT.stamina = 4 }
   }
-  if (wantSprint) { speed = 6.0; p.stamina = Math.max(0, p.stamina - (l7Swim ? 16 : 22) * (eng.manmadeT > 0 ? 2 : 1) * dt) } // v51：人制品效应中体力消耗 ×2
-  else p.stamina = Math.min(100, p.stamina + (p.coffeeT > 0 ? 24 : 12) * (eng.inOutpost ? 2 : 1) * (eng.manmadeT > 0 ? 0.5 : 1) * (p.infection >= 100 ? 0.9 : 1) * dt) // v51：人制品效应中体力恢复 ×0.5；v55：疫疾一阶起 ×0.9
-  if (p.crouching && !l7Swim) speed *= 0.5 // 蹲伏减速（L7 潜泳由下潜逻辑负责，不再额外砍半）
+  // [swim] 游泳冲刺的体力按划水次数扣（swim.ts），不再持续扣；水下体力恢复变慢，水面踩水正常恢复
+  if (wantSprint) { speed = 6.0; if (!swimming) p.stamina = Math.max(0, p.stamina - 22 * (eng.manmadeT > 0 ? 2 : 1) * dt) } // v51：人制品效应中体力消耗 ×2
+  else p.stamina = Math.min(100, p.stamina + (p.coffeeT > 0 ? 24 : 12) * (eng.inOutpost ? 2 : 1) * (eng.manmadeT > 0 ? 0.5 : 1) * (p.infection >= 100 ? 0.9 : 1) * (swimming && eng.submerged ? SWIM.SUB_STAMINA_REGEN : 1) * (eng.swim.bendsT > 0 ? SWIM.BENDS_STAMINA : 1) * dt) // v51：人制品效应中体力恢复 ×0.5；v55：疫疾一阶起 ×0.9
+  if (p.crouching && !swimming) speed *= 0.5 // 蹲伏减速（L7 潜泳由下潜逻辑负责，不再额外砍半）
     const carpet=l0Sample(m,p.x,p.y)
     speed*=(1-.10*(carpet?.arch??0))*(1-.40*(carpet?.red??0))
   if (wet && lq === 0) speed *= 0.55
   if (lq === 1 && l7Swim) speed *= 0.72 // v57o：开放水域游泳比室内水池更快
+  else if (lq === 1) speed *= 0.56 // [swim] 水池/运河：比 L7 慢，但冲刺也能划
   else if (lq !== 0) speed *= 0.5 // v13：液体中移动减速
   if (p.slowT > 0) { p.slowT -= dt; speed *= 0.5 }
   if (eng.webbedT > 0) speed *= 0.5 // v51：缠丝麻痹——移动迟缓
@@ -222,8 +234,22 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   // v13：电梯乘降 / 梯子攀爬进行中：锁定水平移动（垂直由对应逻辑驱动）
   // v51：脚滑漂移量足够时，即使松开方向键也会继续滑动
   l7CliffClimb = false
+  // [swim] 撑上岸演出进行中：锁定移动与垂直物理
+  const sw = eng.swim
+  if (sw.out) {
+    if (stepClimbOut(eng, sw, dt)) eng.msg('你撑着边缘爬出了水。', 'system')
+    return mag
+  }
+  // [swim] 游泳速度（三维、带惯性）。水面/水底高度与下方垂直段一致
+  const swimNow = lq === 1 && !eng.ride && !eng.climb && !eng.onStairs && !eng.porchDrop
+  const swimSurf = canal ? canal.surface + .1 : 0.1 + (eng.levelDef.id === 7 ? Math.max(0, eng.l7fx.surgeH) : 0)
+  if (swimNow && !introLock) {
+    const swimFloor = canal?.bottom ?? (m.l7SeaTerrain ? floorHeight(m, p.x, p.y, 0) : -(m.seaFloor?.[tileI] || POOL_DEPTH))
+    stepSwimVelocity(eng, sw, dt, { maxSpeed: speed, sprint: wantSprint, surfaceZ: swimSurf, floorZ: swimFloor })
+  } else if (!swimNow || introLock) { sw.vx = 0; sw.vy = 0; if (!swimNow) sw.vz = 0; sw.strokeT = -1 }
+  const swimH = swimNow ? Math.hypot(sw.vx, sw.vy) : 0
   const slipDrift = Math.hypot(eng.slipVx, eng.slipVy)
-  if ((mag > 0.1 || (eng.slipperyT > 0 && slipDrift > 0.05)) && !eng.ride && !eng.climb && !introLock) {
+  if ((mag > 0.1 || (eng.slipperyT > 0 && slipDrift > 0.05) || swimH > 0.02) && !eng.ride && !eng.climb && !introLock) {
     // 固定子步积分：dt 先入累加器，按 FIXED_STEP 切分子步逐次「移动→解碰撞」。
     // 高帧率不会积分抖动，低帧率不会大步长穿墙弹回；脚步声/噪音按实际位移计。
     const scale = mag > 0.1 ? Math.min(mag, 1) / mag : 0
@@ -237,25 +263,40 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
     } else { eng.slipVx = 0; eng.slipVy = 0 }
     // v57t：L7 快速游泳严格朝准星 3D 方向冲刺（WASD 只负责是否冲刺，不再决定方向）；
     // 水平位移按 cos(pitch) 投影，垂直分量由下方按 sin(pitch) 驱动。
-    const fastSwim = wantSprint && l7Swim
-    const fastPitch = fastSwim ? Math.cos(look.pitch) : 1
-    const dirX = fastSwim ? -Math.sin(look.yaw) * fastPitch : eng.input.mx * scale + eng.slipVx
-    const dirY = fastSwim ? -Math.cos(look.yaw) * fastPitch : eng.input.my * scale + eng.slipVy
+    // [swim] 游泳时水平位移=游泳速度（方向+大小都来自 swim.ts），不再直接等于输入
+    const dirX = swimNow ? (swimH > 1e-6 ? sw.vx / swimH : 0) : eng.input.mx * scale + eng.slipVx
+    const dirY = swimNow ? (swimH > 1e-6 ? sw.vy / swimH : 0) : eng.input.my * scale + eng.slipVy
+    const moveSpeed = swimNow ? swimH : speed
     const metric=eng.levelDef.id===1&&m.inf&&!eng.dev.noclip&&!stableAt(eng,p.x,p.y)?l1DistanceScale(m.inf.seed,p.x+m.inf.ox,p.y+m.inf.oy):1
-    const moved = integrateMove(m, p, dirX, dirY, speed*metric, dt, eng.moveIt, { noclip: eng.dev.noclip, z: eng.onStairs ? 0 : p.z, crouch: p.crouching, band: eng.onStairs ? 0 : band })
+    const acc0 = eng.moveIt.acc
+    const moved = integrateMove(m, p, dirX, dirY, moveSpeed*metric, dt, eng.moveIt, { noclip: eng.dev.noclip, z: eng.onStairs ? 0 : p.z, crouch: p.crouching, band: eng.onStairs ? 0 : band })
     const movedDist = Math.hypot(moved.x, moved.y)/metric
+    if (swimNow && !eng.dev.noclip) {
+      // 撑上岸：朝意图方向（没有水平速度时用输入方向）
+      const ix = Math.abs(eng.input.mx) + Math.abs(eng.input.my) > 0.1 ? eng.input.mx : dirX
+      const iy = Math.abs(eng.input.mx) + Math.abs(eng.input.my) > 0.1 ? eng.input.my : dirY
+      if (tryClimbOut(eng, sw, swimSurf, ix, iy)) return mag
+    }
     // [thing] L7 贴崖上攀：游泳时朝崖壁推进被海床挡住，就沿崖面自动往上游（不必另按上浮键），
     // 免得玩家贴在陡崖上以为卡死。只看前方 0.5m 海床确实高过脚底，结构/墙挡住不算。
     if (l7Swim && !eng.dev.noclip && !p.crouching) {
-      const want = Math.hypot(dirX, dirY) * speed * dt
-      const dl = Math.hypot(dirX, dirY) || 1
+      // [swim] 用「想游的方向/速度」判断（游泳速度撞崖后会被削成 0，不能拿它当意图）
+      const intent = swimNow && mag > 0.1
+      const cX = intent ? eng.input.mx * scale : dirX, cY = intent ? eng.input.my * scale : dirY
+      const want = intent ? Math.max(moveSpeed, speed * 0.5) * dt : Math.hypot(dirX, dirY) * moveSpeed * dt
+      const dl = Math.hypot(cX, cY) || 1
       // 前方 0.06m 处身体 8 个采样点里最高的海床（与 canOccupy 同一组采样），高过脚底就往上游
-      const ax = p.x + dirX / dl * 0.06, ay = p.y + dirY / dl * 0.06, R = 0.32
+      const ax = p.x + cX / dl * 0.06, ay = p.y + cY / dl * 0.06, R = 0.32
       let ahead = -Infinity
-      for (const [ox, oy] of [[-R, -R], [R, -R], [-R, R], [R, R], [-R, 0], [R, 0], [0, -R], [0, R], [dirX / dl * 0.5, dirY / dl * 0.5]])
+      for (const [ox, oy] of [[-R, -R], [R, -R], [-R, R], [R, R], [-R, 0], [R, 0], [0, -R], [0, R], [cX / dl * 0.5, cY / dl * 0.5]])
         ahead = Math.max(ahead, floorHeight(m, ax + ox, ay + oy, 0))
       l7CliffClimb = want > 1e-4 && movedDist < want * 0.6 && ahead > p.z + 0.25
-    } else l7CliffClimb = false
+      // [swim] 想游却被（岩块/箱子等）完全挡住超过 0.3s：同样往上游，翻过障碍
+      if (intent && movedDist < want * 0.2) sw.stuckT += dt; else sw.stuckT = 0
+      if (sw.stuckT > 0.3) l7CliffClimb = true
+    } else { l7CliffClimb = false; sw.stuckT = 0 }
+    // [swim] 撞墙去掉顶墙分量（贴崖上攀时不削：崖面是靠上攀翻过去的，不是墙）
+    if (swimNow && !eng.dev.noclip && !l7CliffClimb) absorbBlocked(sw, { x: moved.x / metric, y: moved.y / metric }, Math.min(acc0 + dt, FIXED_STEP * 16) - eng.moveIt.acc)
     // v58：联机玩家碰撞体积——与同层远端玩家软推挤，双方不可重叠
     if (eng.mpSession?.started) {
       for (const rp of RemotePlayerViews.nearby(eng, eng.mpSession)) {
@@ -276,11 +317,20 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
       eng.stepAcc = 0
       const g0 = eng.levelDef.gen
       if (wet&&eng.player.level===0) audio.splash(.1)
-      if (lq !== 0) audio.swim() // 水中移动划水声
-      else audio.footstep(g0 === 'garage' || g0 === 'grid' ? 'concrete' : g0 === 'pipes' ? 'metal' : 'carpet')
-      eng.noise = Math.min(1, eng.noise + (wantSprint ? 0.5 : 0.15))
-      if (wantSprint) eng.noiseEvent(p.x, p.y, 10, true)
-      else eng.noiseEvent(p.x, p.y, p.crouching ? 1 : 4, false) // 蹲行近乎无声（肢团听不见）
+      if (lq === 1) {
+        // [swim 阶段 3] 深水噪音分级：普通游很轻（水下 3m / 水面 5m）；冲刺划水的响动按每一下在 swim.ts 里发
+        if (!wantSprint) {
+          audio.swimStroke(eng.submerged, 0.45)
+          eng.noise = Math.min(1, eng.noise + 0.1)
+          eng.noiseEvent(p.x, p.y, eng.submerged ? SWIM.NOISE_SWIM_SUB : SWIM.NOISE_SWIM_SURF, false)
+        }
+      } else {
+        if (lq !== 0) audio.swim() // 浅水趟水声
+        else audio.footstep(g0 === 'garage' || g0 === 'grid' ? 'concrete' : g0 === 'pipes' ? 'metal' : 'carpet')
+        eng.noise = Math.min(1, eng.noise + (wantSprint ? 0.5 : 0.15))
+        if (wantSprint) eng.noiseEvent(p.x, p.y, 10, true)
+        else eng.noiseEvent(p.x, p.y, p.crouching ? 1 : 4, false) // 蹲行近乎无声（肢团听不见）
+      }
     }
     // v13：移动涟漪（浅水与水面）
     if (lq !== 0 && movedDist > 0.01) {
@@ -375,11 +425,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
     // v57o 细化游泳：不按方向键时浮向水面（浮力平衡在 FLOAT_Z）；
     // 跳跃/上浮键=向上划水，下蹲键=主动下潜；非 L7 的小水池仍可下潜到池底。
     const l7Water = eng.levelDef.id === 7
-    const upMax = l7Water ? 5.0 : 2.6
-    const sinkMax = l7Water ? -6.5 : -1.5
-    const waterG = l7Water ? 7.0 : 5.0
     const floorZ = canal?.bottom??(m.l7SeaTerrain ? floorHeight(m, p.x, p.y, 0) : -(m.seaFloor?.[tileI] || POOL_DEPTH))
-    const fastSwimVertical = wantSprint && l7Swim && mag > 0.1
     // v66：L7 水面上限 = 海面 + 涌浪抬升；位于重力交界区水墙内时上限抬到墙顶（可顺着水墙游上去）
     const l7f = l7Water ? eng.l7fx : null
     const wall = l7f?.wall ?? null
@@ -388,52 +434,38 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
     if (l7f) {
       if (wall) l7f.wallFall = p.z > surfZ + 0.3
       // 墙内重力偏向墙体中面：轻微横向拉力（「侧着」漂在水墙里）
-      if (wall && p.z > 0.2) { p.x -= wall.nx * wall.perp * 0.7 * dt; p.y -= wall.ny * wall.perp * 0.7 * dt }
+      if (wall && p.z > 0.2) wallPull(sw, dt, wall.nx, wall.ny, wall.perp) // [swim 阶段 3] 改成水流加速度（带惯性）
     }
     const airborne = !!l7f && !wall && p.z > surfZ + 0.05
     if (airborne) {
       // 离开水墙时已高出海面：按正常重力坠回海里
       p.vz = Math.max(-28, p.vz - 11 * dt)
       p.z += p.vz * dt
+      sw.vz = 0
       if (p.z <= surfZ) {
+        sw.vz = Math.max(-5, p.vz) * 0.6; sw.entryK = Math.min(1, 0.35 + Math.max(0, -p.vz) / 9) // [swim] 带着下坠惯性扎进水里
         p.z = surfZ; p.vz = 0; l7f!.wallFall = false
         audio.splash(); eng.splashParticles(p.x, p.y, 0)
         eng.msg('你从水墙上摔回了海面。', 'system')
       }
-    } else
-    // v57q：取消被动浮力——只有主动操作才会改变深度。
-    // v57t 优先级：快速游泳（严格按准星俯仰）> 蹲伏下潜 > 跳跃上浮 > 中性悬浮。
-    if (fastSwimVertical) {
-      // 准星所指方向即完整 3D 方向：水平分量已按 cos(pitch)，垂直分量严格等于 speed·sin(pitch)。
-      p.vz = speed * Math.sin(look.pitch)
-      eng.rippleT = 0
-    } else if (eng.input.crouch && p.z > floorZ + (canal?0:0.08)) {
-      // 长按下蹲=持续垂直下潜（非冲刺状态）；先清掉残余上浮速度，避免「按下潜却仍在上升」
-      if (p.vz > 0) p.vz = 0
-      p.vz -= waterG * 1.25 * dt
-      eng.rippleT = 0
-    } else if (eng.input.jump) {
-      // 长按跳跃=持续垂直上浮（非冲刺状态；不消费跳跃输入，松开才停止）
-      p.vz = upMax
-      eng.rippleT = 0
-      audio.swim()
     } else {
-      // Deep canals use the same neutral swimming buoyancy as other water.
-      p.vz = l7Water && l7CliffClimb ? L7_CLIFF_CLIMB : 0
-    }
-    if (!airborne) {
-      p.vz = Math.max(sinkMax, Math.min(upMax, p.vz))
+      // [swim] 垂直速度来自 swim.ts（惯性 + 浮力 + 划水）。贴崖上攀时（L7）至少以上攀速度上升
+      if (introLock) sw.vz = 0
+      // 上攀速度只作用于这一帧的位移，不写进游泳速度（否则会挤占速度上限、横向游不动）
+      p.vz = l7Water && l7CliffClimb && !eng.input.crouch ? Math.max(sw.vz, L7_CLIFF_CLIMB) : sw.vz
       p.z += p.vz * dt
+      if (Math.abs(sw.vz) > 0.3) eng.rippleT = 0
     }
-    if (p.z <= floorZ) { p.z = floorZ; p.vz = 0 } // 池底/海床（v57o：L7 按瓦片深度）
-    if (p.z > ceilZ && !airborne) { p.z = ceilZ; p.vz = 0 } // 不越出水面（v66：涌浪/水墙抬升上限）
-    // v57t：水面的自然漂浮起伏——无垂直输入时身体随波浪在 -0.1~0.1m 间浮动，
-    // 而不是固定在 0.1m 像踩在固体平面上。
-    if (l7Water && !wall && !airborne && !eng.input.jump && !eng.input.crouch && !fastSwimVertical && p.z > -0.12) {
+    if (p.z <= floorZ) { p.z = floorZ; p.vz = 0; if (sw.vz < 0) sw.vz = 0 } // 池底/海床（v57o：L7 按瓦片深度）
+    if (p.z > ceilZ && !airborne) { p.z = ceilZ; p.vz = 0; if (sw.vz > 0) sw.vz = 0 } // 不越出水面（v66：涌浪/水墙抬升上限）
+    // v57t：水面的自然漂浮起伏——没往下潜时身体随波浪在 -0.1~0.1m 间浮动，而不是固定在 0.1m 像踩在固体平面上。
+    // [swim] 条件改成「没有明显的下潜速度」：水面上平游也会随浪起伏
+    if (l7Water && !wall && !airborne && sw.vz > -0.25 && !eng.input.crouch && p.z > -0.12) {
       p.z = Math.max(-0.1, Math.min(0.1,
         Math.sin(eng.time * 1.35 + p.x * 0.7 + p.y * 0.55) * 0.09
         + Math.sin(eng.time * 2.3 + p.y * 1.1) * 0.04)) + (l7f?.surgeH ?? 0)
       p.vz = 0
+      if (sw.vz > 0) sw.vz = 0
     }
     // 水下状态：屏气 + 低通滤波 + 气泡
     const sub = p.z + (canal&&p.crouching?1:1.55) < (canal?canal.surface:wall ? wall.top : l7f ? l7f.surgeH : 0)
@@ -443,10 +475,10 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
     audio.setUnderwater(sub)
     if (sub) {
       // v57p：开发者状态锁定=氧气永远保持满
-      if (eng.dev.statLock) eng.breathT = 0
-      else eng.breathT += dt
+      if (eng.dev.god && eng.dev.statLock) eng.breathT = 0 // [swim] 修复：以前只看 statLock（默认开），普通游戏里氧气永远不掉
+      else eng.breathT += dt * o2Rate(eng, sw) // [swim] 静止 0.7 / 游 1 / 冲刺划水 1.8
       eng.bubbleT -= dt
-      if (eng.bubbleT <= 0) { eng.bubbleT = 0.5; eng.bubbleParticles(p.x, p.y, p.z + 1.3) }
+      if (eng.bubbleT <= 0) { eng.bubbleT = 0.5 / o2Rate(eng, sw); eng.bubbleParticles(p.x, p.y, p.z + 1.3) } // [swim] 呼出的气泡随用力程度变密
       // v57o：L7 真实水深压力——超过 150m 后开始持续伤害，越深越快（深渊带是真正死区）
       if (l7Water && !eng.dev.god) {
         const depth = -p.z
@@ -465,7 +497,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
         if (eng.statusMsgT.hunger <= 0) { eng.statusMsgT.hunger = 5; eng.msg('你快喘不上气了——快浮上去！', 'damage') }
         if (p.hp <= 0) { eng.die('溺亡在水中'); return null }
       }
-    } else eng.breathT = Math.max(0, eng.breathT - dt * 3) // 浮出水面快速恢复
+    } // [swim] 出水恢复改在 stepBreathFx：前 2s 快、之后慢
   } else {
     // v26：地面高度 = 地形地面 与 可站立结构顶面（桌/床/箱等低矮家具）取高者
     const g = Math.max(groundHeightAt(m, p.x, p.y, gBand,p.z), structStandTopAt(m, p.x, p.y, p.z, gBand))
@@ -550,9 +582,9 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
     eng.inLiquid = 0
     eng.submerged = false
     eng.wasSubmerged = false
-    eng.breathT = 0
     audio.setUnderwater(false)
   }
+  sw.lx = p.x + (eng.map?.inf?.ox ?? 0); sw.ly = p.y + (eng.map?.inf?.oy ?? 0); sw.lz = p.z // [swim] 位置突变检测
   stepL11Canal(eng,dt)
   stepL11Shaft(eng)
   return mag

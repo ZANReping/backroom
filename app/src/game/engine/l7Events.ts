@@ -12,6 +12,7 @@ import type { Engine } from '../engine'
 import { audio } from '../core/audio'
 import { L7_ORIGIN, l7GravWallAt, l7GravDistance } from '../world/infiniteL7'
 import { l7SurgeHeight } from '../renderer/water'
+import { surgePush } from './swim'
 
 export interface L7Surge {
   /** 背脊当前世界坐标（瓦片） */
@@ -92,12 +93,10 @@ export function stepL7Events(eng: Engine, dt: number) {
   if (fx.surge) {
     const sp = l7SurgeShaderParams(eng)
     fx.surgeH = l7SurgeHeight(p.x, p.y, sp)
-    if (nearSurface && Math.abs(fx.surgeH) > 0.05) {
-      // 推离波源：只在波峰（h>0）推，力度与浪高成正比
+    if (inSea && fx.surgeH > 0.05) {
+      // 推离波源：只在波峰（h>0）推。[swim 阶段 3] 改成给水流加速度（swim.cx/cy）：越深越弱，浪过去后还会被带着漂一段
       const ddx = p.x - sp.x, ddy = p.y - sp.y, L = Math.hypot(ddx, ddy) || 1
-      const push = Math.max(0, fx.surgeH) * 1.5 * dt
-      moveIfWater(eng, (ddx / L) * push, (ddy / L) * push)
-      fx.surgeH = l7SurgeHeight(p.x, p.y, sp)
+      surgePush(eng, eng.swim, dt, fx.surgeH, ddx / L, ddy / L)
     }
   }
 

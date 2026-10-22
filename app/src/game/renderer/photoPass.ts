@@ -70,8 +70,13 @@ export class PhotoPass extends Pass {
  }
  override dispose(){this.aoTarget.dispose();this.aoMaterial.dispose();this.material.dispose();this.quad.dispose();this.aoQuad.dispose();this.sourceDepth=null}
 }
-export const PhotoFinishShader={uniforms:{tDiffuse:{value:null},time:{value:0},grain:{value:.0015},vignette:{value:.12},blur:{value:0},arachnidAcid:{value:0},arachnidWeb:{value:0},scanline:{value:0},resolution:{value:new THREE.Vector2(1,1)}},vertexShader,fragmentShader:`
- varying vec2 vUv;uniform sampler2D tDiffuse;uniform float time,grain,vignette,blur,scanline,arachnidAcid,arachnidWeb;uniform vec2 resolution;
+/** Hypoxia affects the game image; the DOM HUD remains readable. */
+export function swimBreathVisuals(stage: number, oxygen: number, black: number, time: number) {
+ const u=Math.max(0,Math.min(1,(oxygen-.6)/.4)),pulse=.84+.16*Math.sin(time*2*Math.PI/(1.05-.5*u))
+ return {edge:stage>=1?(.25+.5*u)*pulse:0,gray:stage>=2?.55*u:0,black:Math.max(0,Math.min(.96,black*.96))}
+}
+export const PhotoFinishShader={uniforms:{tDiffuse:{value:null},time:{value:0},grain:{value:.0015},vignette:{value:.12},blur:{value:0},arachnidAcid:{value:0},arachnidWeb:{value:0},scanline:{value:0},swimBreath:{value:new THREE.Vector3()},resolution:{value:new THREE.Vector2(1,1)}},vertexShader,fragmentShader:`
+ varying vec2 vUv;uniform sampler2D tDiffuse;uniform float time,grain,vignette,blur,scanline,arachnidAcid,arachnidWeb;uniform vec2 resolution;uniform vec3 swimBreath;
  void main(){vec3 c=texture2D(tDiffuse,vUv).rgb;if(blur>.001){
  vec2 d=vec2(1.4*blur)/resolution;c=vec3(0.);
  // Compact binomial Gaussian. Adjacent taps avoid the doubled lamp edges of
@@ -82,5 +87,5 @@ export const PhotoFinishShader={uniforms:{tDiffuse:{value:null},time:{value:0},g
  }
  }
  float noise=fract(sin(dot(gl_FragCoord.xy+floor(time*24.),vec2(12.9898,78.233)))*43758.5453)-.5;
- vec2 p=vUv*2.-1.;float edge=smoothstep(.12,1.45,dot(p,p));c=mix(c,vec3(.39,.49,.08),arachnidAcid*(.04+.34*edge));c=mix(c,vec3(.92,.90,.84),arachnidWeb*.2*edge);c*=1.-vignette*smoothstep(.25,1.7,dot(p,p));c*=1.-scanline*(.5+.5*cos(gl_FragCoord.y*3.14159));c+=noise*grain;gl_FragColor=vec4(c,1.);}`}
+ vec2 p=vUv*2.-1.;float edge=smoothstep(.12,1.45,dot(p,p));c=mix(c,vec3(.39,.49,.08),arachnidAcid*(.04+.34*edge));c=mix(c,vec3(.92,.90,.84),arachnidWeb*.2*edge);c*=1.-vignette*smoothstep(.25,1.7,dot(p,p));c*=1.-scanline*(.5+.5*cos(gl_FragCoord.y*3.14159));c+=noise*grain;float luminance=dot(c,vec3(.2126,.7152,.0722));c=mix(c,vec3(luminance),swimBreath.y);c*=1.-swimBreath.x*smoothstep(.08,1.35,dot(p,p));c*=1.-swimBreath.z;gl_FragColor=vec4(c,1.);}`}
 

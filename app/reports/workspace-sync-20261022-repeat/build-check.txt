@@ -1,0 +1,61 @@
+
+> backroom-workspace@0.0.0 build
+> npm --prefix app run build
+
+
+> my-app@0.0.0 build
+> tsc -b && vite build
+
+vite v7.3.0 building client environment for production...
+transforming...
+Browserslist: browsers data (caniuse-lite) is 10 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+
+./fonts/fantasque-sans-mono-400.woff2 referenced in ./fonts/fantasque-sans-mono-400.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+./fonts/fantasque-sans-mono-700.woff2 referenced in ./fonts/fantasque-sans-mono-700.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+./fonts/glow-sans-sc-ext-400.woff2 referenced in ./fonts/glow-sans-sc-ext-400.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+./fonts/glow-sans-sc-ext-700.woff2 referenced in ./fonts/glow-sans-sc-ext-700.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+./fonts/metropolis-400.woff2 referenced in ./fonts/metropolis-400.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+./fonts/metropolis-700.woff2 referenced in ./fonts/metropolis-700.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+./fonts/zihunbiantaoti.woff2 referenced in ./fonts/zihunbiantaoti.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+./fonts/chillgsans.woff2 referenced in ./fonts/chillgsans.woff2 didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+./fonts/zhimangxing.ttf referenced in ./fonts/zhimangxing.ttf didn't resolve at build time, it will remain unchanged to be resolved at runtime
+
+A PostCSS plugin did not pass the `from` option to `postcss.parse`. This may cause imported assets to be incorrectly transformed. If you've recently added a PostCSS plugin that raised this warning, please contact the package author to fix the issue.
+✓ 2401 modules transformed.
+rendering chunks...
+[plugin vite:reporter] 
+(!) C:/Users/ZANRe/Documents/GitHub/backroom/app/src/game/renderer/l11Materials.ts is dynamically imported by C:/Users/ZANRe/Documents/GitHub/backroom/app/src/game/core/preload.ts but also statically imported by C:/Users/ZANRe/Documents/GitHub/backroom/app/src/game/renderer/l11BridgeSkin.ts, C:/Users/ZANRe/Documents/GitHub/backroom/app/src/game/renderer/l11Bridges.ts, C:/Users/ZANRe/Documents/GitHub/backroom/app/src/game/renderer/l11DistantTerrain.ts, C:/Users/ZANRe/Documents/GitHub/backroom/app/src/game/renderer/l11Exits.ts, C:/Users/ZANRe/Documents/GitHub/backroom/app/src/game/renderer/l11Meshes.ts, C:/Users/ZANRe/Documents/GitHub/backroom/app/src/game/renderer/l11ReferenceFacades.ts, C:/Users/ZANRe/Documents/GitHub/backroom/app/src/game/renderer/l11RoofDetails.ts, C:/Users/ZANRe/Documents/GitHub/backroom/app/src/game/renderer/l11Signs.ts, C:/Users/ZANRe/Documents/GitHub/backroom/app/src/game/renderer/structures.ts, dynamic import will not move module into another chunk.
+
+computing gzip size...
+dist/assets/skyPixels.worker-Cpg8up34.js          9.31 kB
+dist/index.html                                  10.29 kB │ gzip:     3.77 kB
+dist/assets/title-hand-CnbeC-Ra.woff2            34.98 kB
+dist/assets/l11Map.worker-BQ9g9lh-.js            68.48 kB
+dist/assets/l1Bake.worker-BKULHx0C.js            75.77 kB
+dist/assets/title-wide-DWglw-ed.woff2           104.13 kB
+dist/assets/l11.worker-BY7ldmnN.js              155.28 kB
+dist/assets/chunks.worker-CG97NObR.js           916.91 kB
+dist/assets/devExitSearch.worker-DMQrD-to.js    919.83 kB
+dist/assets/devMap.worker-BOwZNufR.js         1,027.19 kB
+dist/assets/App-BYJytVmO.css                     61.60 kB │ gzip:    13.05 kB
+dist/assets/index-D34Wa4x7.css                  142.79 kB │ gzip:    26.10 kB
+dist/assets/entityPortrait-NY6YJ4Xt.js            5.79 kB │ gzip:     2.72 kB
+dist/assets/index-0DaKQ83V.js                   233.43 kB │ gzip:    75.17 kB
+dist/assets/retroAvatar--Em9x5-b.js             480.07 kB │ gzip:   144.87 kB
+dist/assets/App-B2AmmYEQ.js                   5,190.16 kB │ gzip: 1,839.09 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 37.15s

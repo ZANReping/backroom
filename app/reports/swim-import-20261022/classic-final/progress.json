@@ -1,0 +1,395 @@
+{
+  "seed": 424242,
+  "mode": "classic",
+  "port": 13136,
+  "cdp": 13137,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\swim-import-20261022\\classic-final\\qa-1792681282311-44272",
+    "--remote-debugging-port=13137",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 61540,
+    "server": 69152
+  },
+  "appBootMs": 22665.819499999998,
+  "entryMs": 4412.8247999999985,
+  "firstPlayableMs": 33149.621900000006,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "checks": [],
+    "records": [],
+    "status": {
+      "level": 4,
+      "position": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "submerged": false,
+      "liquid": 0,
+      "velocity": [
+        0,
+        0,
+        0
+      ],
+      "oxygen": {
+        "used": 0,
+        "stage": 0,
+        "black": 0
+      },
+      "hands": {
+        "right": true,
+        "left": false,
+        "lighter": false,
+        "rightPose": "",
+        "leftPalm": false,
+        "blend": 0
+      },
+      "memory": {
+        "geometries": 387,
+        "textures": 43
+      },
+      "calls": 1,
+      "triangles": 1
+    }
+  },
+  "ocean": {
+    "level": 7,
+    "position": {
+      "x": -10,
+      "y": 15,
+      "z": -5
+    },
+    "submerged": true,
+    "liquid": 1,
+    "velocity": [
+      0,
+      0,
+      0
+    ],
+    "oxygen": {
+      "used": 1.0178700000000045,
+      "stage": 0,
+      "black": 0
+    },
+    "hands": {
+      "right": true,
+      "left": true,
+      "lighter": false,
+      "rightPose": "__swim",
+      "leftPalm": true,
+      "blend": 1
+    },
+    "memory": {
+      "geometries": 214,
+      "textures": 146
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "controls": {
+    "speed": 2.371414799228026,
+    "glide": 1.2187851199365696,
+    "dive": -1.3288084756712966,
+    "flat": 0,
+    "down": -2.3251279349736236,
+    "strokes": 3,
+    "level": 7,
+    "position": {
+      "x": -3.435440875034118,
+      "y": 15,
+      "z": -6.604959287816392
+    },
+    "submerged": true,
+    "liquid": 1,
+    "velocity": [
+      3.3536472259732406,
+      -2.0535166703787618e-16,
+      -0.8206934912076833
+    ],
+    "oxygen": {
+      "used": 3.6003199999999858,
+      "stage": 0,
+      "black": 0
+    },
+    "hands": {
+      "right": true,
+      "left": true,
+      "lighter": false,
+      "rightPose": "__swim",
+      "leftPalm": true,
+      "blend": 1
+    },
+    "memory": {
+      "geometries": 222,
+      "textures": 146
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "hands": {
+    "attack": {
+      "duration": 0.546,
+      "remaining": 0.46679999999999583,
+      "pending": 0.0627599999999956
+    },
+    "level": 7,
+    "position": {
+      "x": -9.561611111728709,
+      "y": 15,
+      "z": -5.084593053036803
+    },
+    "submerged": true,
+    "liquid": 1,
+    "velocity": [
+      0.005131452847378694,
+      -3.1421086522589433e-19,
+      -0.00027010480524345044
+    ],
+    "oxygen": {
+      "used": 3.1003300000000085,
+      "stage": 0,
+      "black": 0
+    },
+    "hands": {
+      "right": true,
+      "left": true,
+      "lighter": false,
+      "rightPose": "__swim",
+      "leftPalm": false,
+      "blend": 0.9520017462295869
+    },
+    "memory": {
+      "geometries": 256,
+      "textures": 151
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "breath": {
+    "level": 7,
+    "position": {
+      "x": -9.561611111728709,
+      "y": 15,
+      "z": -5.084729324912185
+    },
+    "submerged": true,
+    "liquid": 1,
+    "velocity": [
+      0.0014703034752090436,
+      -9.00301222344992e-20,
+      -0.000051021649938759826
+    ],
+    "oxygen": {
+      "used": 32.899999999999885,
+      "stage": 2,
+      "black": 0
+    },
+    "hands": {
+      "right": true,
+      "left": true,
+      "lighter": false,
+      "rightPose": "__swim",
+      "leftPalm": false,
+      "blend": 0.9997562914198038
+    },
+    "memory": {
+      "geometries": 256,
+      "textures": 151
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "blackout": {
+    "level": 7,
+    "position": {
+      "x": -9.561611111728709,
+      "y": 15,
+      "z": -5.084760771866632
+    },
+    "submerged": true,
+    "liquid": 1,
+    "velocity": [
+      0.00004621868271826623,
+      -2.830078092586591e-21,
+      -5.061764531969782e-7
+    ],
+    "oxygen": {
+      "used": 40.68286999999995,
+      "stage": 3,
+      "black": 0.4006833333333326
+    },
+    "hands": {
+      "right": true,
+      "left": true,
+      "lighter": false,
+      "rightPose": "__swim",
+      "leftPalm": false,
+      "blend": 0.9999999998886396
+    },
+    "memory": {
+      "geometries": 256,
+      "textures": 151
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "recover": {
+    "level": 7,
+    "position": {
+      "x": -9.561611111728709,
+      "y": 15,
+      "z": -0.1
+    },
+    "submerged": false,
+    "liquid": 1,
+    "velocity": [
+      0,
+      0,
+      0
+    ],
+    "oxygen": {
+      "used": 0,
+      "stage": 0,
+      "black": 0
+    },
+    "hands": {
+      "right": true,
+      "left": true,
+      "lighter": false,
+      "rightPose": "__swim",
+      "leftPalm": false,
+      "blend": 0.9999999999999992
+    },
+    "memory": {
+      "geometries": 284,
+      "textures": 179
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "canal": {
+    "level": 11,
+    "position": {
+      "x": 686.5,
+      "y": 486.5,
+      "z": -3.6365476887648565
+    },
+    "submerged": true,
+    "liquid": 1,
+    "velocity": [
+      0,
+      0,
+      1.756053279052727
+    ],
+    "oxygen": {
+      "used": 1.97910999999999,
+      "stage": 0,
+      "black": 0
+    },
+    "hands": {
+      "right": true,
+      "left": true,
+      "lighter": false,
+      "rightPose": "__swim",
+      "leftPalm": false,
+      "blend": 1
+    },
+    "memory": {
+      "geometries": 530,
+      "textures": 79
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "resources": {
+    "rounds": [
+      {
+        "median": 4.700000002980232,
+        "p95": 8.800000004470348,
+        "drawsPerFrame": 153.6,
+        "trianglesPerFrame": 83367.7
+      },
+      {
+        "median": 4.5,
+        "p95": 7.799999997019768,
+        "drawsPerFrame": 153.6,
+        "trianglesPerFrame": 83367.7
+      },
+      {
+        "median": 4.5,
+        "p95": 8,
+        "drawsPerFrame": 153.6,
+        "trianglesPerFrame": 83367.7
+      },
+      {
+        "median": 4.200000002980232,
+        "p95": 6.200000002980232,
+        "drawsPerFrame": 153.6,
+        "trianglesPerFrame": 83367.7
+      },
+      {
+        "median": 4.200000002980232,
+        "p95": 6.200000002980232,
+        "drawsPerFrame": 153.6,
+        "trianglesPerFrame": 83367.7
+      }
+    ],
+    "before": {
+      "geometries": 270,
+      "textures": 156
+    },
+    "after": {
+      "geometries": 270,
+      "textures": 156
+    },
+    "level": 7,
+    "position": {
+      "x": -10,
+      "y": 15,
+      "z": -5
+    },
+    "submerged": true,
+    "liquid": 1,
+    "velocity": [
+      0,
+      0,
+      0
+    ],
+    "oxygen": {
+      "used": 3.459050000000008,
+      "stage": 0,
+      "black": 0
+    },
+    "hands": {
+      "right": true,
+      "left": true,
+      "lighter": false,
+      "rightPose": "__swim",
+      "leftPalm": true,
+      "blend": 0.969788238092291
+    },
+    "memory": {
+      "geometries": 270,
+      "textures": 156
+    },
+    "calls": 1,
+    "triangles": 1
+  }
+}

@@ -8,6 +8,14 @@ import {buildL1Data} from './l1Building'
 import {l1MapGeometry} from './l1MapData'
 type Request={id:number;def:LevelDef;seed:number;coords:{cx:number;cy:number}[];floor:number;state?:L0SpaceState;cancel?:boolean}
 const cache=new Map<string,GenChunk>()
+const l7PreviewCache=new Map<string,ReturnType<typeof l7BathymetryCell>>()
+function l7Preview(seed:number,cx:number,cy:number){
+ const key=`${seed},${cx},${cy}`,hit=l7PreviewCache.get(key)
+ if(hit){l7PreviewCache.delete(key);l7PreviewCache.set(key,hit);return hit}
+ const cell=l7BathymetryCell(seed,cx,cy);l7PreviewCache.set(key,cell)
+ if(l7PreviewCache.size>384)l7PreviewCache.delete(l7PreviewCache.keys().next().value!)
+ return cell
+}
 let current:Request|undefined,index=0
 self.onmessage=(e:MessageEvent<Request>)=>{if(e.data.cancel){if(current?.id===e.data.id)current=undefined;return}current=e.data;index=0;setTimeout(()=>pump(e.data.id),0)}
 function pump(id:number){
@@ -21,7 +29,7 @@ function pump(id:number){
    self.postMessage({id:job.id,cell:{...at,...geometry,tint:new Uint8Array(1024),elev:new Uint8Array(1024)}})
    continue
   }
-  if(job.def.id===7){self.postMessage({id:job.id,cell:l7BathymetryCell(job.seed,at.cx,at.cy)});continue}
+  if(job.def.id===7){self.postMessage({id:job.id,cell:l7Preview(job.seed,at.cx,at.cy)});continue}
   const key=JSON.stringify([job.def.id,job.seed,at,job.state?.revisions[`${at.cx},${at.cy}`]??0,job.state?.redProgress])
   let raw=cache.get(key)
   if(!raw){raw=job.def.id===0?genL0Architecture(job.def,job.seed,at.cx,at.cy,undefined,job.state?.revisions[`${at.cx},${at.cy}`]??0,job.state?.redProgress):infiniteImplFor(job.def.id).genRaw(job.def,job.seed,at.cx,at.cy);cache.set(key,raw);if(cache.size>256)cache.delete(cache.keys().next().value!)}

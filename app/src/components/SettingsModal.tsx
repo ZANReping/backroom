@@ -63,6 +63,7 @@ export interface GameSettings {
   sfx: number // 音效（攻击/拾取/UI/实体叫声等全部单发）0-100
   muted: boolean
   leftHanded: boolean
+  swimMode: 'view' | 'flat' // [swim] 游泳方向：view=沿视线游，flat=水平游+按键升降
   stickSize: number
   btnOpacity: number
   sensitivity: number // 视角灵敏度 0.2–3.0 倍
@@ -87,7 +88,7 @@ export const defaultSettings: GameSettings = {
   volume: 80, ambient: 50, bgm: 100, sfx: 90, muted: false,
   bgmStyle: 'procedural',
   newGameSeed: '',
-  leftHanded: false, stickSize: 120, btnOpacity: 70,
+  leftHanded: false, stickSize: 120, btnOpacity: 70, swimMode: 'view',
   sensitivity: 1.0, devMode: false,
   theme: 'amber',
   uiPresentation: 'classic',
@@ -614,6 +615,15 @@ export default function SettingsModal({ settings, onChange, onClose, onOpenLayou
                 />
                 <span className="text-[11px]" style={{ color: 'var(--text-dim)' }}>同时作用于桌面鼠标与移动端拖动转视角（0.2× – 3.0×）</span>
               </label>
+              <div className="mb-3">
+                <div className="mb-1 text-[14px]">游泳方向</div>
+                <div role="group" aria-label="游泳方向" className="grid grid-cols-2 gap-2">
+                  {([['view', '沿视线游'], ['flat', '水平游 + 按键升降']] as const).map(([v, l]) => (
+                    <button type="button" aria-pressed={settings.swimMode === v} key={v} className="border px-2 py-2 text-[12px]" style={{ borderColor: settings.swimMode === v ? 'var(--amber)' : 'var(--panel-edge)', color: settings.swimMode === v ? 'var(--amber)' : 'var(--text-dim)', background: 'var(--panel)' }} onClick={() => { audio.uiTick(); set('swimMode', v) }}>{l}</button>
+                  ))}
+                </div>
+                <span className="text-[11px]" style={{ color: 'var(--text-dim)' }}>{settings.swimMode === 'view' ? '前进/后退沿准星方向（低头前进就往下游），跳跃 / 下蹲额外上浮 / 下潜；水面上稍微低头不会钻下去。' : '前后左右只管水平方向，跳跃上浮、下蹲下潜。'}</span>
+              </div>
               {!isMobile && <KeybindSection />}
               <div className="mb-1 mt-3 text-[13px]" style={{ color: 'var(--amber)' }}>移动端</div>
               <Toggle k="leftHanded" label="左撇子镜像布局" value={settings.leftHanded as boolean} onSet={setBool} />

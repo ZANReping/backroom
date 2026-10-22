@@ -1,0 +1,406 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 6635,
+  "cdp": 6636,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\swim-import-20261022\\realistic-second\\qa-1792680629208-40972",
+    "--remote-debugging-port=6636",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 48908,
+    "server": 53876
+  },
+  "appBootMs": 13450.873599999999,
+  "entryMs": 3723.0133000000023,
+  "firstPlayableMs": 23035.5615,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "checks": [],
+    "records": [],
+    "status": {
+      "level": 4,
+      "position": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "submerged": false,
+      "liquid": 0,
+      "velocity": [
+        0,
+        0,
+        0
+      ],
+      "oxygen": {
+        "used": 0,
+        "stage": 0,
+        "black": 0
+      },
+      "hands": {
+        "right": true,
+        "left": false,
+        "lighter": false,
+        "rightPose": "",
+        "leftPalm": false,
+        "blend": 0
+      },
+      "memory": {
+        "geometries": 446,
+        "textures": 67
+      },
+      "calls": 1,
+      "triangles": 1
+    }
+  },
+  "ocean": {
+    "level": 7,
+    "position": {
+      "x": -10,
+      "y": 15,
+      "z": -5
+    },
+    "submerged": true,
+    "liquid": 1,
+    "velocity": [
+      0,
+      0,
+      0
+    ],
+    "oxygen": {
+      "used": 1.017940000000001,
+      "stage": 0,
+      "black": 0
+    },
+    "hands": {
+      "right": true,
+      "left": true,
+      "lighter": false,
+      "rightPose": "__swim",
+      "leftPalm": true,
+      "blend": 1
+    },
+    "memory": {
+      "geometries": 299,
+      "textures": 170
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "controls": {
+    "speed": 2.371189823180366,
+    "glide": 1.2095902432636336,
+    "dive": -1.327572507521321,
+    "flat": 0,
+    "down": -2.3220039769210086,
+    "strokes": 3,
+    "level": 7,
+    "position": {
+      "x": -3.472569809636468,
+      "y": 15,
+      "z": -6.598705277586072
+    },
+    "submerged": true,
+    "liquid": 1,
+    "velocity": [
+      3.356557113372342,
+      -2.0552984625233585e-16,
+      -0.8214055892572625
+    ],
+    "oxygen": {
+      "used": 3.592689999999997,
+      "stage": 0,
+      "black": 0
+    },
+    "hands": {
+      "right": true,
+      "left": true,
+      "lighter": false,
+      "rightPose": "__swim",
+      "leftPalm": true,
+      "blend": 1
+    },
+    "memory": {
+      "geometries": 307,
+      "textures": 170
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "hands": {
+    "attack": {
+      "duration": 0.546,
+      "remaining": 0.4624000000000016,
+      "pending": 0.058360000000001466
+    },
+    "level": 7,
+    "position": {
+      "x": -9.56321858916722,
+      "y": 15,
+      "z": -5.084648732526538
+    },
+    "submerged": true,
+    "liquid": 1,
+    "velocity": [
+      0.005191299847040793,
+      -3.1787543705463194e-19,
+      -0.0002741746587736139
+    ],
+    "oxygen": {
+      "used": 3.0916100000000104,
+      "stage": 0,
+      "black": 0
+    },
+    "hands": {
+      "right": true,
+      "left": true,
+      "lighter": false,
+      "rightPose": "__swim",
+      "leftPalm": false,
+      "blend": 0.9484357976581973
+    },
+    "memory": {
+      "geometries": 341,
+      "textures": 175
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "breath": {
+    "level": 7,
+    "position": {
+      "x": -9.56321858916722,
+      "y": 15,
+      "z": -5.084785938477479
+    },
+    "submerged": true,
+    "liquid": 1,
+    "velocity": [
+      0.0015248623108920416,
+      -9.337088740871853e-20,
+      -0.00005353444851088027
+    ],
+    "oxygen": {
+      "used": 32.90587999999998,
+      "stage": 2,
+      "black": 0
+    },
+    "hands": {
+      "right": true,
+      "left": true,
+      "lighter": false,
+      "rightPose": "__swim",
+      "leftPalm": false,
+      "blend": 0.9997125115358338
+    },
+    "memory": {
+      "geometries": 341,
+      "textures": 175
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "blackout": {
+    "level": 7,
+    "position": {
+      "x": -9.56321858916722,
+      "y": 15,
+      "z": -5.084818921847934
+    },
+    "submerged": true,
+    "liquid": 1,
+    "velocity": [
+      0.00004337396589848275,
+      -2.6558894251951677e-21,
+      -4.648341257220582e-7
+    ],
+    "oxygen": {
+      "used": 40.68580999999961,
+      "stage": 3,
+      "black": 0.4013833333333338
+    },
+    "hands": {
+      "right": true,
+      "left": true,
+      "lighter": false,
+      "rightPose": "__swim",
+      "leftPalm": false,
+      "blend": 0.999999999917648
+    },
+    "memory": {
+      "geometries": 341,
+      "textures": 175
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "recover": {
+    "level": 7,
+    "position": {
+      "x": -9.56321858916722,
+      "y": 15,
+      "z": -0.1
+    },
+    "submerged": false,
+    "liquid": 1,
+    "velocity": [
+      0,
+      0,
+      0
+    ],
+    "oxygen": {
+      "used": 0,
+      "stage": 0,
+      "black": 0
+    },
+    "hands": {
+      "right": true,
+      "left": true,
+      "lighter": false,
+      "rightPose": "__swim",
+      "leftPalm": false,
+      "blend": 0.9999999999999991
+    },
+    "memory": {
+      "geometries": 350,
+      "textures": 203
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: Generated L11 has an unobstructed canal test point\",\"lineNumber\":16,\"columnNumber\":19,\"scriptId\":\"672\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"ok\",\"scriptId\":\"672\",\"url\":\"http://127.0.0.1:6635/verifier/swim-game-check.ts\",\"lineNumber\":15,\"columnNumber\":18},{\"functionName\":\"canal\",\"scriptId\":\"672\",\"url\":\"http://127.0.0.1:6635/verifier/swim-game-check.ts\",\"lineNumber\":224,\"columnNumber\":4}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: Generated L11 has an unobstructed canal test point\\n    at ok (http://127.0.0.1:6635/verifier/swim-game-check.ts:16:19)\\n    at Object.canal (http://127.0.0.1:6635/verifier/swim-game-check.ts:225:5)\",\"objectId\":\"5122745710507985892.2.1\"}}",
+  "partial": {
+    "checks": [
+      "Actual L7 water activates the shared swim controller",
+      "Empty hands display both swimming palms",
+      "Right fist changes to the cached swimming palm",
+      "Actual forward key accelerates to the configured swim speed",
+      "Releasing the movement key preserves a short glide",
+      "View swimming follows downward camera pitch",
+      "Flat swimming keeps camera pitch independent of depth",
+      "Holding crouch dives with the real game input",
+      "Holding jump ascends with the real game input",
+      "Real sprint input creates repeated strokes and spends stamina",
+      "Equipped flashlight retains its grip during swimming",
+      "Offhand flashlight beam follows the swimming arm",
+      "Underwater melee keeps the equipped weapon and attack animation",
+      "Melee animation moves the viewmodel while swimming",
+      "Swimming palm returns after putting away a weapon",
+      "Holstering hides the main hand while swimming",
+      "Offhand lighter does not create a third arm",
+      "High oxygen consumption activates contractions in the actual game",
+      "Hypoxia reaches the existing WebGL finish shader",
+      "Hypoxia does not install a HUD-covering backdrop filter",
+      "Sustained hypoxia progressively darkens the game image",
+      "Oxygen HUD remains mounted during blackout",
+      "Surfacing triggers gradual fast oxygen recovery",
+      "Blackout fades after breathing air",
+      "Recovered oxygen clears all breath shader terms"
+    ],
+    "records": [
+      {
+        "speed": 2.371189823180366,
+        "glide": 1.2095902432636336,
+        "dive": -1.327572507521321,
+        "flat": 0,
+        "down": -2.3220039769210086,
+        "strokes": 3,
+        "level": 7,
+        "position": {
+          "x": -3.472569809636468,
+          "y": 15,
+          "z": -6.598705277586072
+        },
+        "submerged": true,
+        "liquid": 1,
+        "velocity": [
+          3.356557113372342,
+          -2.0552984625233585e-16,
+          -0.8214055892572625
+        ],
+        "oxygen": {
+          "used": 3.592689999999997,
+          "stage": 0,
+          "black": 0
+        },
+        "hands": {
+          "right": true,
+          "left": true,
+          "lighter": false,
+          "rightPose": "__swim",
+          "leftPalm": true,
+          "blend": 1
+        },
+        "memory": {
+          "geometries": 307,
+          "textures": 170
+        },
+        "calls": 1,
+        "triangles": 1
+      }
+    ],
+    "status": {
+      "level": 11,
+      "position": {
+        "x": 26.5,
+        "y": 26.5,
+        "z": 0
+      },
+      "submerged": false,
+      "liquid": 0,
+      "velocity": [
+        0,
+        0,
+        0
+      ],
+      "oxygen": {
+        "used": 0,
+        "stage": 0,
+        "black": 0
+      },
+      "hands": {
+        "right": true,
+        "left": true,
+        "lighter": false,
+        "rightPose": "",
+        "leftPalm": false,
+        "blend": 0
+      },
+      "memory": {
+        "geometries": 443,
+        "textures": 112
+      },
+      "calls": 1,
+      "triangles": 1
+    }
+  },
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 11470.39999999851
+    },
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\nLEVEL 11\n不夜城\nB11 · 地表\n磁带\n0/6\nL11 城市\n北向上\n住宅\n办公\n商业\n工业\n公共\n道路\n步行岸道\n水系\n公园\n未探索\n多层住宅区\n100%\nLevel 11「不夜城」\nSurvival Difficulty: Class 2 · Safe / Unsecure / Low Entity Count · 无人城市，实体生态稀疏\n入口：Level 9 箭头公路 / Level 10 乡间小路\n出口线索：城市边缘分出一条乡间小路，沿着它可以回到 Level 10。\n1\n2\n3\n4\n5\n6\n7\n左键\n攻击\n空格\n跳跃\nC\n蹲伏\nF\n手电\n右键\n使用\nQ\n丢弃\nV\n检视\n左Alt\n收起主手\n➤\n你感觉到一丝气流（21m）\n开发者模式\n🛠 开发者模式 · DEV\n▴"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

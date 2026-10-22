@@ -1,4 +1,5 @@
 import {captureTradersWorld,restoreTradersWorld} from '../world/tradersWorld'
+import { resetSwim } from './swim'
 import { newL7Fx } from './l7Events'
 import { captureL0,restoreL0 } from './l0State'
 import {settleGlowFlight} from './glowsticks'
@@ -223,6 +224,7 @@ export function loadLevel(eng: Engine, id: number, restore?: { mapSeed: number; 
   eng.submerged = false
   eng.breathT = 0
   eng.wasSubmerged = false
+  resetSwim(eng.swim) // [swim]
   eng.ride = null
   eng.climb = null
   eng.porchDrop = null // v58：换层中止门廊拖拽演出

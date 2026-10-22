@@ -1,0 +1,162 @@
+{
+  "seed": 424242,
+  "mode": "classic",
+  "port": 5955,
+  "cdp": 5956,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\swim-import-20261022\\classic-ui\\qa-1792681632241-67924",
+    "--remote-debugging-port=5956",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 1376,
+    "server": 71492
+  },
+  "appBootMs": 14067.1366,
+  "entryMs": 2822.7366,
+  "firstPlayableMs": 20985.557399999998,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "checks": [],
+    "records": [],
+    "status": {
+      "level": 4,
+      "position": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "submerged": false,
+      "liquid": 0,
+      "velocity": [
+        0,
+        0,
+        0
+      ],
+      "oxygen": {
+        "used": 0,
+        "stage": 0,
+        "black": 0
+      },
+      "hands": {
+        "right": true,
+        "left": false,
+        "lighter": false,
+        "rightPose": "",
+        "leftPalm": false,
+        "blend": 0
+      },
+      "memory": {
+        "geometries": 387,
+        "textures": 43
+      },
+      "calls": 1,
+      "triangles": 1
+    }
+  },
+  "ocean": {
+    "level": 7,
+    "position": {
+      "x": -10,
+      "y": 15,
+      "z": -5
+    },
+    "submerged": true,
+    "liquid": 1,
+    "velocity": [
+      0,
+      0,
+      0
+    ],
+    "oxygen": {
+      "used": 0.9128699999999996,
+      "stage": 0,
+      "black": 0
+    },
+    "hands": {
+      "right": true,
+      "left": true,
+      "lighter": false,
+      "rightPose": "__swim",
+      "leftPalm": true,
+      "blend": 1
+    },
+    "memory": {
+      "geometries": 213,
+      "textures": 146
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: Timeout swimming settings\",\"lineNumber\":10,\"columnNumber\":46,\"scriptId\":\"672\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"until\",\"scriptId\":\"672\",\"url\":\"http://127.0.0.1:5955/verifier/swim-game-check.ts\",\"lineNumber\":9,\"columnNumber\":45}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: Timeout swimming settings\\n    at until (http://127.0.0.1:5955/verifier/swim-game-check.ts:10:46)\\n    at async Object.settings (http://127.0.0.1:5955/verifier/swim-game-check.ts:310:5)\",\"objectId\":\"-5596002115341346781.2.1\"}}",
+  "partial": {
+    "checks": [
+      "Actual L7 water activates the shared swim controller",
+      "Empty hands display both swimming palms",
+      "Right fist changes to the cached swimming palm"
+    ],
+    "records": [],
+    "status": {
+      "level": 7,
+      "position": {
+        "x": -10,
+        "y": 15,
+        "z": -5
+      },
+      "submerged": true,
+      "liquid": 1,
+      "velocity": [
+        0,
+        0,
+        0
+      ],
+      "oxygen": {
+        "used": 0,
+        "stage": 0,
+        "black": 0
+      },
+      "hands": {
+        "right": false,
+        "left": false,
+        "lighter": false,
+        "rightPose": "__swim",
+        "leftPalm": true,
+        "blend": 1
+      },
+      "memory": {
+        "geometries": 213,
+        "textures": 146
+      },
+      "calls": 1,
+      "triangles": 1
+    }
+  },
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 11723.20000000298
+    },
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\n水下 · 水深 5.0m\n氧气 35s\n— 悬停 0.0m/s\n[前进] 沿视线游　[蹲伏] 下潜　[跳跃] 上浮　[冲刺] 划水\nLEVEL 7\n深海恐惧\nB7 · 1F/共2层\n磁带\n0/6\n有光带\n99%\n入口：Level 6 深海锈蚀活板门 · 入口房间（固定出生点：锈蚀金属舱体 + 书橱/咖啡桌/椅/荧光吊灯，增长门廊尽头舱门外即深海）\n出口线索：午夜带的海床上偶尔会露出一个岩洞洞口。里面很深，深得不像海。\n你跌进了水里——冰冷刺骨。\n水没过了头顶——视野变成浑浊的蓝。\n1\n2\n3\n4\n5\n6\n7\n左键\n攻击\n空格\n跳跃\nC\n蹲伏\nF\n手电\n右键\n使用\nQ\n丢弃\nV\n检视\n左Alt\n收起主手\n开发者模式\n🛠 开发者模式 · DEV\n▴\n设备维护 · SETTINGS\n设置\n✕\nEsc\n游戏\nGAME\n画面\nVIDEO\n音频\nAUDIO\n操作\nINPUT\n主题\nTHEME\nAPI\nLLM\n难度\n轻松\n标准\n硬核\n自动冲刺\n新游戏种子\n应用\n仅影响下次新游戏，不影响继续存档。格式：XXXX-XXXX 或十进制数字。\n语言：简体中文（固定）\n开发者模式（调试面板）\n已开启：游戏中无敌，HUD 左下角显示开发者面板（召唤实体 / 给予物品 / 状态控制 / 传送 / 世界工具 / 调试信息），画面带「开发者模式」水印。"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

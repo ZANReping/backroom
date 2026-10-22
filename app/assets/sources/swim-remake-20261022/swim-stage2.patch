@@ -1,0 +1,843 @@
+diff --git a/app/SWIM-REMAKE.md b/app/SWIM-REMAKE.md
+index 9f0f634..0cef65b 100644
+--- a/app/SWIM-REMAKE.md
++++ b/app/SWIM-REMAKE.md
+@@ -73,8 +73,55 @@
+ - `check:l11-waterways` 通过
+ - `tsc` 0 错误
+ 
+-## 阶段 2（待做）
+-手臂动画、镜头、屏气三段反馈、按动作调整耗氧、声音、HUD。
++## 阶段 2：手感与反馈
++
++### 耗氧（`swim.ts` 的 `o2Rate`）
++| 动作 | 倍率 | L7 屏气上限 35s 能撑 |
++|---|---|---|
++| 静止 / 悬停 | ×0.7 | 50s |
++| 正常游 | ×1.0 | 35s |
++| 冲刺划水 | ×1.8 | 19s |
++- 呼出气泡的间隔也按倍率变密（0.5s ÷ 倍率）。
++- 潜水面罩 +25s 不变；石卡祖笛每声仍扣 5s。
++
++### 屏气三段（`stepBreathFx`）
++| 阶段 | 条件 | 表现 |
++|---|---|---|
++| 憋气感 | 用掉 60% | 心跳声出现（间隔 1.05s→0.55s，越来越响）；视野边缘随心跳一收一松，越憋越暗 |
++| 胸口抽动 | 用掉 85% | 每 2–3s 抽一下：镜头猛地一抖、吐出一串气泡（有声音）；画面发灰变暗；提示一次 |
++| 缺氧 | 超过上限 | 抽动变成每 1.1–1.7s；6s 内逐渐黑屏；继续扣血 2.5/s（原有） |
++- 出水：憋气超过 40% 会大口吸气（超过 50% 还跟两声喘气）；超过 85% 提示「大口大口地喘着气」。
++- 恢复改成曲线：出水前 2s ×6，之后 ×3（原来是一律 ×3）。
++- 修正：以前离开水池/运河格子时氧气瞬间清零，现在上岸后也按曲线恢复，心跳会慢慢平复。
++- 黑屏一有空气就以 0.8/s 退去。
++
++### 镜头（`renderer.ts`）
++- 水里不再用走路的步频摇晃，改为：随游速的缓慢起伏、左右轻摆、水下漂浮横滚（约 ±2°）。水面时幅度只剩 35%。
++- 每次划水：镜头轻压 + FOV 短促 +3°；水里不吃冲刺的 +5° FOV。
++- 入水冲击：落得越快越猛，镜头一沉再回弹；L7 从高处落水会带着惯性扎进水里约 0.9m 再浮回。
++- 胸口抽动时镜头猛抽一下。
++
++### 蛙泳手臂（新文件 `renderer/swimArms.ts`）
++- 关键帧：0 前伸 → 0.2 外划 → 0.4 往身下拨水 → 0.65 收到胸前 → 0.85 前伸滑行。
++- 冲刺时手臂相位直接对齐划水冲量（发力那一下 = 外划），不冲刺时按游速推进。
++- 静止时切成踩水：双手在胸前画小「8」字。
++- 空手时右手由拳头换成并拢的手掌；拿着东西时右手只划 40% 幅度、东西放低；左手（手电）照常划，光束会跟着晃。
++- 使用物品、攻击、搜索、收手时手臂动画让位。
++
++### 声音（`audio.ts`）
++- `swimStroke`：水面是水花声，水下是闷的推水声，音量随速度变化。
++- `breathBeat`（憋气心跳）、`bubbleBurst`（吐气泡）、`gasp`（出水吸气）。
++
++### HUD
++- 氧气条：水下蓝色，憋气感后变红；胸口抽动后数字闪烁，缺氧时显示「缺氧！」。
++- 新增升降指示「▲ 上浮 / ▼ 下潜 / — 悬停」和速度。
++- L7 新增深度计：0–200m 色带，150m 以后是水压伤害区（红）。
++- 憋气晕影（`anim-o2Pulse`）、缺氧黑屏。
++
++### 验证
++- `check:swim` 62/62（新增 19 项：耗氧倍率、三段、恢复曲线、上岸恢复、落水惯性、手臂关键帧/连续性/同步/让位、接入检查）
++- `check:l7-cliffs` 20/20、`check:l7` 2433/0、`check:thing` 50/50、`check:thing-anim` 31/31、`check:tiny` 85/85、`check:tiny-net` 23/23、`check:shrimp` 57/57、`tsc` 0
++- 实机：`scripts/verify-swim-ingame.mjs`（假 rAF 时间戳，每帧固定 1/30s，逐帧截图）。
+ 
+ ## 阶段 3（待做）
+ 噪音分级、水下战斗系数、L7 水流、水压与减压病。
+diff --git a/app/scripts/check-swim.ts b/app/scripts/check-swim.ts
+index b58fd03..333b2eb 100644
+--- a/app/scripts/check-swim.ts
++++ b/app/scripts/check-swim.ts
+@@ -13,8 +13,11 @@ const { Engine } = await import('../src/game/engine')
+ const { look } = await import('../src/game/core/renderer3d')
+ const { audio } = await import('../src/game/core/audio')
+ const SW = await import('../src/game/engine/swim')
++const ARMS = await import('../src/game/renderer/swimArms')
+ const { SWIM } = SW
+-for (const k of Object.keys(audio)) if (typeof (audio as any)[k] === 'function') (audio as any)[k] = () => {}
++const calls: Record<string, number> = {}
++for (const k of Object.keys(audio)) if (typeof (audio as any)[k] === 'function') (audio as any)[k] = () => { calls[k] = (calls[k] ?? 0) + 1 }
++for (const k of Object.getOwnPropertyNames(Object.getPrototypeOf(audio))) if (k !== 'constructor' && typeof (audio as any)[k] === 'function') (audio as any)[k] = () => { calls[k] = (calls[k] ?? 0) + 1 }
+ 
+ let fails = 0, n = 0
+ const ok = (c: unknown, m: string, dbg?: unknown) => { n++; console.log(`${c ? '✔' : '✘'} ${m}${!c && dbg !== undefined ? ' ⟵ ' + JSON.stringify(dbg) : ''}`); if (!c) fails++ }
+@@ -257,13 +260,84 @@ const L7MAX = 3.4 * 0.72, POOLMAX = 3.4 * 0.56
+   const w = world(7); w.p.z = -20; w.clear()
+   w.eng.dev.god = false; w.eng.dev.statLock = true // 普通开局的默认值
+   w.eng.breathT = 0; w.run(2)
+-  ok(Math.abs(w.eng.breathT - 2) < 0.1, `非开发者模式下水下 2s，屏气计时 ${f2(w.eng.breathT)}s（以前恒为 0）`)
++  ok(Math.abs(w.eng.breathT - 1.4) < 0.1, `非开发者模式下水下静止 2s，屏气计时 ${f2(w.eng.breathT)}s（以前恒为 0）`)
+   const w2 = world(7); w2.p.z = -20; w2.clear()
+   w2.eng.dev.god = true; w2.eng.dev.statLock = true
+   w2.run(2)
+   ok(w2.eng.breathT === 0, '开发者无敌 + 状态锁定时仍然满氧')
+ }
+ 
++// ===== 阶段 2：耗氧、屏气三段、出水恢复、入水、手臂 =====
++{
++  const real = (w: any) => { w.eng.dev.god = false; w.eng.dev.statLock = true; w.p.hp = 100 }
++  const w = world(7); real(w); w.p.z = -20; w.eng.breathT = 0; w.clear(); w.run(2)
++  const idle = w.eng.breathT
++  const w2 = world(7); real(w2); w2.p.z = -20; w2.eng.breathT = 0; w2.keys({ w: 1 }); w2.run(2)
++  const swim = w2.eng.breathT
++  const w3 = world(7); real(w3); w3.p.z = -20; w3.eng.breathT = 0; w3.keys({ w: 1, sprint: true }); w3.run(2)
++  const spr = w3.eng.breathT
++  ok(Math.abs(idle - 1.4) < 0.1 && Math.abs(swim - 2) < 0.1 && spr > 3.3 && spr < 3.7, `耗氧：静止 2s 用 ${f2(idle)}s、游 ${f2(swim)}s、冲刺划水 ${f2(spr)}s（×0.7 / ×1 / ×1.8）`)
++
++  // 屏气三段
++  const L = 35
++  const a = world(7); real(a); a.p.z = -20; a.clear(); a.eng.breathT = L * 0.5; a.step()
++  ok(a.eng.swim.stage === 0, '一半氧气以内：正常（阶段 0）')
++  const b0 = calls.breathBeat ?? 0
++  a.eng.breathT = L * 0.7; a.run(3)
++  ok(a.eng.swim.stage === 1 && (calls.breathBeat ?? 0) - b0 >= 2, `用掉 60% 后进入憋气感：3s 心跳 ${(calls.breathBeat ?? 0) - b0} 声`)
++  const c0 = calls.bubbleBurst ?? 0
++  a.eng.breathT = L * 0.86; a.run(4.5)
++  ok(a.eng.swim.stage === 2 && (calls.bubbleBurst ?? 0) - c0 >= 2, `用掉 85% 后胸口抽动：4.5s 抽 ${(calls.bubbleBurst ?? 0) - c0} 下（吐气泡 + 镜头抖）`)
++  a.eng.breathT = L + 0.01; const hp0 = a.p.hp; a.run(3)
++  ok(a.eng.swim.stage === 3 && Math.abs(a.eng.swim.blackK - 0.5) < 0.06, `缺氧：3s 黑屏到 ${f2(a.eng.swim.blackK)}（6s 全黑）`)
++  ok(hp0 - a.p.hp > 5, `缺氧扣血（3s 扣 ${f2(hp0 - a.p.hp)}）`)
++  // 出水：前 2s 快速恢复，之后变慢；大口吸气
++  const g0 = calls.gasp ?? 0
++  const before = a.eng.breathT
++  a.p.z = 0.05; a.run(2)
++  const after2 = a.eng.breathT
++  a.run(2)
++  const after4 = a.eng.breathT
++  ok((calls.gasp ?? 0) > g0, '憋到缺氧再浮出水面：大口吸气')
++  ok(Math.abs(before - after2 - 12) < 1.2 && Math.abs(after2 - after4 - 6) < 0.6, `出水恢复：前 2s 回 ${f2(before - after2)}s 氧（×6），之后 2s 回 ${f2(after2 - after4)}s（×3）`)
++  ok(a.eng.swim.blackK < 0.1, `出水后黑屏很快退去（${f2(a.eng.swim.blackK)}）`)
++  // 水池（上限 8s）上岸后氧气不再瞬间回满，而是同样按曲线恢复
++  const p = world(0); real(p)
++  p.p.x = 40.5; p.p.y = 10.45; p.p.z = 0.1; look.yaw = 0
++  p.eng.breathT = 7
++  p.keys({ w: 1, jump: true }); p.step(); p.clear()
++  for (let t = 0; t < 1.5 && (p.eng.swim.out || p.eng.inLiquid === 1); t += DT) p.step()
++  ok(p.eng.inLiquid === 0 && p.eng.breathT > 0.5 && p.eng.breathT < 6.5, `上岸后氧气按曲线恢复，不是瞬间回满（还差 ${f2(p.eng.breathT)}s）`)
++  p.run(3)
++  ok(p.eng.breathT === 0, '上岸 3s 后完全恢复')
++}
++{
++  // 入水：从高处落水会带着惯性扎进去，镜头有入水冲击
++  const w = world(7); w.eng.inLiquid = 0; w.eng.submerged = false
++  w.p.z = 0.6; w.p.vz = -8; w.eng.l7fx.wallFall = true
++  let minZ = 1
++  w.clear()
++  w.run(1.5, () => { minZ = Math.min(minZ, w.p.z) })
++  ok(minZ < -0.8, `高处落水扎进水里 ${f2(-minZ)}m 才浮回`)
++}
++{
++  const p0 = ARMS.strokePose(0), p1 = ARMS.strokePose(0.9999)
++  ok(Math.abs(p0.px - p1.px) + Math.abs(p0.py - p1.py) + Math.abs(p0.pz - p1.pz) < 0.01, '手臂划水循环首尾相接（不跳帧）')
++  ok(ARMS.strokePose(0.2).px > 0.3 && ARMS.strokePose(0.4).py < -0.33 && ARMS.strokePose(0.65).pz > -0.36, '划水关键帧：0.2 外划、0.4 往身下拨水、0.65 收到胸前')
++  let maxJump = 0
++  for (let i = 0; i < 400; i++) { const a = ARMS.strokePose(i / 400), b = ARMS.strokePose((i + 1) / 400); maxJump = Math.max(maxJump, Math.hypot(a.px - b.px, a.py - b.py, a.pz - b.pz)) }
++  ok(maxJump < 0.008, `手臂轨迹连续（每 1/400 周期最大位移 ${maxJump.toFixed(4)}）`)
++  const st = { phase: 0, k: 0 }
++  const r = ARMS.advanceArms(st, 1 / 30, { swimming: true, busy: false, speed: 4, maxSpeed: 2.45, sprintStroke: true, sinceStroke: 0.124, strokeT: 0.62, moving: true })
++  ok(Math.abs(r.phase - 0.2) < 1e-6, '冲刺时手臂相位和划水冲量同步（发力 0.12s = 外划关键帧）')
++  for (let i = 0; i < 30; i++) ARMS.advanceArms(st, 1 / 30, { swimming: true, busy: true, speed: 0, maxSpeed: 2.45, sprintStroke: false, sinceStroke: 9, strokeT: 0.62, moving: false })
++  ok(st.k < 0.05, '使用物品 / 攻击时手臂让位（权重回到 0）')
++  const rs = readFileSync('src/game/renderer/renderer.ts', 'utf8')
++  ok(/advanceArms\(/.test(rs) && /strokeFov/.test(rs) && /swimCamK/.test(rs) && /engine\.inLiquid !== 1 \? 5 : 0/.test(rs), '渲染层接入：蛙泳手臂、划水 FOV、游泳镜头，且水里不吃冲刺 FOV')
++  const hud = readFileSync('src/components/HUD.tsx', 'utf8')
++  ok(/anim-o2Pulse/.test(hud) && /blackK/.test(hud) && /▲ 上浮/.test(hud), 'HUD 接入：憋气脉冲晕影、缺氧黑屏、升降指示与深度计')
++}
++
+ // ===== 12. 设置 =====
+ {
+   const src = readFileSync('src/components/SettingsModal.tsx', 'utf8')
+diff --git a/app/scripts/verify-swim-ingame.mjs b/app/scripts/verify-swim-ingame.mjs
+new file mode 100644
+index 0000000..12a000e
+--- /dev/null
++++ b/app/scripts/verify-swim-ingame.mjs
+@@ -0,0 +1,140 @@
++// [swim] 游泳重制阶段 2 实机截图：蛙泳手臂、踩水、憋气晕影、缺氧黑屏（真实应用、真实引擎与渲染器）。
++// 用法：node scripts/verify-swim-ingame.mjs → reports/swim-ingame/
++// swiftshader 下一帧要好几秒：用假的 rAF 时间戳让每个渲染帧固定前进 1/30s，逐帧截图合成 GIF。
++// 用法：node scripts/verify-tiny-ingame.mjs [l7] [l8]      截图与结果 → reports/tiny-ingame/
++// 流程：标题页 → 写一个 L7 存档走「继续游戏」进入 → 借调试入口把玩家放到环形场台心门（世界坐标 L7_ARENA）前 →
++//   (a) 小小盘踞在门上方；(b) 真实使用动作连吹 4 声石卡祖笛（engine.useSlot + engine.step）→ 小小进入 repel，抱头退开；
++//   (d) 第一人称：持笛静止手型 + 吹奏动作中段（门上方的小小正在抱头）；
++//   再用调试入口 devJump(8) 进 L8 → 传送到乐器洞（l8InstrumentCave(seed)）→ (c) 洞厅全景、岩壁乐器近景（按渲染层真实网格位置取景）。
++// swiftshader 下每秒只有零点几到几帧：每张图前等 near-world 就绪、实体网格 visible，并按 rAF 计数预热 ≥ 40 帧。
++// 若 TINY_QA_URL 未提供且 3473 端口无服务，本脚本自己启动 vite（--port 3473 --strictPort），结束时关闭。
++// 本脚本自己启动/关闭专属 QA 浏览器（/workspace/work/.pw-libs/chromium.sh、--headless=new、独立用户目录 .cache/swim-ingame-qa、调试端口 9473）。
++import { spawn } from 'node:child_process'
++import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
++const port = process.env.SWIM_QA_CDP ?? '9475', out = process.env.SWIM_OUT ?? 'reports/swim-ingame/'
++const vport = process.env.SWIM_PORT ?? '3475'
++const base = process.env.TINY_QA_URL ?? `http://127.0.0.1:${vport}`
++const want = new Set(process.argv.slice(2).length ? process.argv.slice(2) : ['l7', 'l8'])
++const W = 1280, H = 720
++mkdirSync(out, { recursive: true })
++// 中文字体（HUD 提示）：/workspace/work/.fonts 里的 NotoSansSC，经一份最小 fontconfig 交给 Chromium
++mkdirSync('.cache', { recursive: true })
++if (!existsSync('.cache/fonts.conf')) writeFileSync('.cache/fonts.conf', '<?xml version="1.0"?>\n<!DOCTYPE fontconfig SYSTEM "fonts.dtd">\n<fontconfig><include ignore_missing="yes">/etc/fonts/fonts.conf</include><dir>/workspace/work/.fonts</dir></fontconfig>\n')
++const up = async () => { try { return (await fetch(base + '/')).ok } catch { return false } }
++let vite = null
++if (!(await up())) {
++  vite = spawn('npx', ['vite', '--port', vport, '--strictPort', '--host', '127.0.0.1'], { stdio: 'ignore', detached: true, env: { ...process.env, L0_VERIFY: '1' } })
++  for (let i = 0; i < 240 && !(await up()); i++) await new Promise((r) => setTimeout(r, 500))
++}
++const chrome = spawn(process.env.CHROME ?? '/workspace/work/.pw-libs/chromium.sh', ['--headless=new', `--remote-debugging-port=${port}`, `--user-data-dir=${process.cwd()}/.cache/swim-ingame-qa`, '--enable-automation', '--no-first-run', '--no-default-browser-check', '--disable-gpu-sandbox', '--no-sandbox', '--enable-unsafe-swiftshader', '--use-angle=swiftshader', `--window-size=${W},${H}`, 'about:blank'], { stdio: 'ignore', env: { ...process.env, FONTCONFIG_FILE: process.env.FONTCONFIG_FILE ?? `${process.cwd()}/.cache/fonts.conf` } })
++const errors = [], result = { checks: [], shots: [], info: {} }
++const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
++const log = (...a) => console.log(new Date().toISOString().slice(11, 19), ...a)
++try {
++  let page
++  for (let i = 0; i < 120 && !page; i++) { await sleep(250); try { page = (await (await fetch(`http://127.0.0.1:${port}/json/list`)).json()).find((p) => p.type === 'page') } catch { /* 等浏览器起来 */ } }
++  if (!page) throw Error('QA 浏览器未启动')
++  const ws = new WebSocket(page.webSocketDebuggerUrl); await new Promise((r) => ws.addEventListener('open', r, { once: true }))
++  let seq = 0; const pending = new Map()
++  ws.addEventListener('message', (e) => {
++    const r = JSON.parse(e.data)
++    if (r.method === 'Runtime.exceptionThrown') errors.push(JSON.stringify(r.params.exceptionDetails).slice(0, 600))
++    if (r.method === 'Runtime.consoleAPICalled' && r.params.type === 'error') errors.push(r.params.args?.map((a) => a.value ?? a.description).join(' ').slice(0, 600))
++    const p = pending.get(r.id); if (p) { pending.delete(r.id); r.error ? p.reject(r.error) : p.resolve(r.result) }
++  })
++  const send = (method, params = {}) => new Promise((resolve, reject) => { const id = ++seq; pending.set(id, { resolve, reject }); ws.send(JSON.stringify({ id, method, params })) })
++  const ev = async (expression) => { const r = await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true }); if (r.exceptionDetails) throw Error(JSON.stringify(r.exceptionDetails).slice(0, 900)); return r.result?.value }
++  const until = async (expr, label, tries = 900) => { for (let i = 0; i < tries; i++) { if (await ev(`Boolean(${expr})`).catch(() => false)) return; await sleep(250) } throw Error('超时：' + label) }
++  const shot = async (name) => { writeFileSync(out + name + '.png', Buffer.from((await send('Page.captureScreenshot', { format: 'png' })).data, 'base64')); result.shots.push(out + name + '.png'); log('📷', name) }
++  const check = (ok, label) => { result.checks.push(`${ok ? '✔' : '✘'} ${label}`); log(`${ok ? '✔' : '✘'} ${label}`) }
++  await send('Runtime.enable'); await send('Page.enable')
++  const ver = await send('Browser.getVersion'), cl = await send('Browser.getBrowserCommandLine')
++  if (!ver.userAgent.includes('HeadlessChrome') || !cl.arguments.includes('--headless=new')) throw Error('不是本脚本的无头 QA 浏览器')
++  await send('Emulation.setDeviceMetricsOverride', { width: W, height: H, deviceScaleFactor: 1, mobile: false })
++  const init = await send('Page.addScriptToEvaluateOnNewDocument', { source: `(()=>{const raf=window.requestAnimationFrame.bind(window);let fake=performance.now();window.requestAnimationFrame=(cb)=>raf(()=>{fake+=1000/30;cb(fake)})})();localStorage.clear();sessionStorage.clear();localStorage.setItem('br_settings',JSON.stringify({renderResolution:'native',renderScale:100,maxPixelRatio:1,dynamicRes:false,lightMode:'realistic',sceneLightLimit:8,shadowQuality:0,lightShadows:0,loadingBudgetMs:6,devMode:true}))` })
++  await send('Page.navigate', { url: base + '/' })
++  await until('window.__engine && document.querySelector(".title-menu")', '标题页')
++  await send('Page.removeScriptToEvaluateOnNewDocument', { identifier: init.identifier })
++  log('标题页就绪')
++  // 写一个 L7 存档，走「继续游戏」进入（真实加载路径）
++  await ev(`(()=>{const raw=__engine.snapshot();localStorage.setItem('br_save_slot1',JSON.stringify({...raw,seed:720,level:7,mapSeed:720,savedAt:Date.now(),player:{...raw.player,level:7}}))})()`)
++  await send('Page.reload')
++  await until(`document.querySelector('canvas[data-title-level="7"][data-title-ready=true]')`, 'L7 存档标题')
++  const click = (sel, text) => ev(`(()=>{const b=[...document.querySelectorAll(${JSON.stringify(sel)})].find(b=>b.textContent.includes(${JSON.stringify(text)}));if(!b)throw Error('缺按钮 '+${JSON.stringify(text)});b.click()})()`)
++  await click('.menu-btn', '继续游戏'); await sleep(300); await click('.hud-panel button', '继续')
++  const playable = (lv) => `__engine.player.level===${lv} && !__engine.paused && !__engine.transition && !document.querySelector("[data-cutscene]") && __renderer.isNearWorldReady(__engine)`
++  await until(playable(7), 'L7 可玩', 1200)
++  check(true, '进入 L7（读档继续游戏）')
++  // 页面侧工具：rAF 帧计数、固定玩家位置/视角（主循环的游泳浮力不会把镜头带走）、钉住小小的抱头 recoil
++  await ev(`(()=>{window.__fc=0;window.__pin=null;window.__holdRecoil=null;(function f(){__fc++;const e=__engine,p=e.player,q=__pin;if(q){const m=e.map;p.x=q.wx-(m.inf?.ox??0);p.y=q.wy-(m.inf?.oy??0);p.z=q.z;p.vz=0;__look.yaw=q.yaw;__look.pitch=q.pitch;e.particles=e.particles.filter(o=>Math.hypot(o.x-p.x,o.y-p.y)>2.5)}
++    if(__holdRecoil!==null){for(const [id,g] of __renderer.entityMeshes){const sm=g.userData.tinySm;if(sm&&id===__holdRecoil)sm.recoilT=Math.max(sm.recoilT,1.0)}}requestAnimationFrame(f)})()})()`)
++  // swiftshader 下 L8 体积洞穴一块 chunk 要好几秒：放宽每帧建网格预算（默认 3/6ms，设置里最多 6/8ms）
++  await ev(`(()=>{__renderer.chunkBudgetMs=60;__renderer.loadingBudgetMs=60})()`)
++  const settle = async (minFrames = 40, extra = '', maxWait = 1200) => {
++    await sleep(600)
++    for (let i = 0; i < maxWait; i++) { if (await ev(`__engine.map.entities.every(q=>!q.presentationPending) && __renderer.isNearWorldReady(__engine) ${extra}`).catch(() => false)) break; if (i === maxWait - 1) { result.checks.push('⚠ 就绪等待超时'); log('⚠ 就绪等待超时') } await sleep(250) }
++    const f0 = await ev('__fc'); for (let i = 0; i < 2400; i++) { if ((await ev('__fc')) - f0 >= minFrames) break; await sleep(100) }
++    result.info.lastFrames = (await ev('__fc')) - f0
++  }
++  // 镜头：站在 (x,y,z)（地图局部坐标，z = 脚底），看向 (tx,ty,tz)。钉住的是世界坐标：
++  // 无限层窗口平移（updateInfiniteWindow 把玩家坐标减掉平移量）后仍站在原地——钉局部坐标会让窗口一路平移下去
++  const aim = (x, y, z, tx, ty, tz) => ev(`(()=>{const dx=${tx}-(${x}),dy=${ty}-(${y}),dz=${tz}-(${z}+1.55);const m=__engine.map;window.__pin={wx:${x}+(m.inf?.ox??0),wy:${y}+(m.inf?.oy??0),z:${z},yaw:Math.atan2(-dx,-dy),pitch:Math.atan2(dz,Math.hypot(dx,dy))};__engine.player.facing=Math.atan2(dy,dx);return __pin})()`)
++
++
++  await ev(`(()=>{const e=__engine,p=e.player;e.dev.god=true;e.dev.statLock=false;e.dev.frozenAI=true
++    p.flashlight=true;p.battery=100;p.equip.offhand={type:'flashlight',count:1};p.hotbar[p.selected]=null;e.syncPassives?.();e.map.entities=[];return true})()`)
++  const goto = async (wx, wy, z) => {
++    await ev(`(()=>{const e=__engine,m=e.map,p=e.player;p.x=${wx}-m.inf.ox;p.y=${wy}-m.inf.oy;p.z=${z};e.updateInfiniteWindow();p.x=${wx}-m.inf.ox;p.y=${wy}-m.inf.oy;p.z=${z}})()`)
++    await sleep(400)
++  }
++  const L = await ev(`(async()=>{const L7=await import('/src/game/world/infiniteL7.ts');return {O:L7.L7_ORIGIN}})()`)
++  const O = L.O
++  const wx = O.x + 70, wy = O.y + 10
++  const key = (code, down) => ev(`window.dispatchEvent(new KeyboardEvent('${down ? 'keydown' : 'keyup'}',{code:'${code}'}))`)
++  const pin = (z, yaw, pitch, breath) => ev(`(()=>{const m=__engine.map;window.__pin={wx:${wx}+0*(m.inf?.ox??0),wy:${wy},z:${z},yaw:${yaw},pitch:${pitch}};window.__breath=${breath ?? 'null'};return 1})()`)
++  // 每个 rAF：钉住世界坐标与视角（游泳速度照常算，划水和手臂照常动）；可选钉住憋气程度
++  await ev(`(()=>{window.__fc=0;window.__pin=null;window.__breath=null;(function f(){__fc++;const e=__engine,p=e.player,q=__pin;if(q){const m=e.map;p.x=q.wx-(m.inf?.ox??0);p.y=q.wy-(m.inf?.oy??0);p.z=q.z;p.vz=0;__look.yaw=q.yaw;__look.pitch=q.pitch;e.particles=e.particles.filter(o=>Math.hypot(o.x-p.x,o.y-p.y)>1.2)}
++    if(__breath!==null)e.breathT=__breath;requestAnimationFrame(f)})()})()`)
++  await ev(`(()=>{__renderer.chunkBudgetMs=60;__renderer.loadingBudgetMs=60})()`)
++  const waitFrames = async (n) => { const f0 = await ev('__fc'); for (let i = 0; i < 6000; i++) { if ((await ev('__fc')) - f0 >= n) break; await sleep(50) } }
++  const ready = async () => { for (let i = 0; i < 600; i++) { if (await ev('__renderer.isNearWorldReady(__engine)').catch(() => false)) break; await sleep(250) } }
++  const shotSeq = async (name, n) => { for (let i = 0; i < n; i++) { await waitFrames(1); await shot(`${name}-${String(i).padStart(2, '0')}`) } }
++  await goto(wx, wy, -6)
++  await pin(-6, 1.2, -0.12)
++  await ready(); await waitFrames(30)
++  if (process.env.SWIM_PROBE) {
++    await ev('__breath=35*0.75'); await waitFrames(20)
++    result.info.probe = await ev(`({hud:!!document.querySelector('.game-hud'),panels:document.querySelectorAll('.hud-panel').length,o2:!!document.querySelector('.anim-o2Pulse'),stage:__engine.swim.stage,o2k:__engine.swim.o2k,hudHidden:__engine.hudHidden,overlay:document.querySelector('.game-hud')?.getAttribute('style')?.slice(0,80),ui:document.documentElement.dataset.ui||document.body.dataset.ui||'',chain:(()=>{const out=[];let el=document.querySelector('.anim-o2Pulse');while(el&&el!==document.body){const cs=getComputedStyle(el);out.push([el.className.slice(0,40),cs.opacity,cs.display,cs.visibility,cs.zIndex,cs.transform.slice(0,30)]);el=el.parentElement}return out})(),canvasZ:getComputedStyle(document.querySelector('canvas')).zIndex,top:(()=>{const e=document.elementFromPoint(640,360);return e?e.tagName+'.'+String(e.className).slice(0,50):''})()})`)
++    log(JSON.stringify(result.info.probe)); await shot('probe'); throw Error('probe done')
++  }
++  // A：水下冲刺划水（W + Shift）
++  await key('KeyW', true); await key('ShiftLeft', true)
++  await waitFrames(20)
++  const st = await ev('({stroke:__engine.swim.strokes,since:__engine.swim.sinceStroke,v:Math.hypot(__engine.swim.vx,__engine.swim.vy,__engine.swim.vz),sub:__engine.submerged})')
++  check(st.stroke > 0 && st.sub, `水下冲刺在划水（${JSON.stringify(st)}）`)
++  await shotSeq('a-stroke', 18)
++  await key('ShiftLeft', false); await key('KeyW', false)
++  // B：水面踩水
++  await pin(0.05, 1.2, -0.05)
++  await waitFrames(40)
++  await shotSeq('b-tread', 8)
++  // C：憋气 → 胸口抽动 → 缺氧
++  await pin(-6, 1.2, -0.12, 35 * 0.75)
++  await waitFrames(30); await shot('c1-urge')
++  await ev('__breath=35*0.93'); await waitFrames(40); await shot('c2-contract')
++  await ev('__breath=37.5'); await waitFrames(80); await shot('c3-blackout')
++  check(await ev('__engine.swim.blackK>0.2'), '缺氧黑屏在推进')
++  writeFileSync(out + 'verify-result.json', JSON.stringify(result, null, 2) + '\n')
++  await send('Browser.close').catch(() => {})
++  ws.close()
++} catch (err) {
++  result.error = String(err?.stack ?? err)
++  console.error(err)
++} finally {
++  result.errors = errors
++  writeFileSync(out + 'verify-result.json', JSON.stringify(result, null, 2) + '\n')
++  try { chrome.kill('SIGKILL') } catch { /* 已退出 */ }
++  if (vite) try { process.kill(-vite.pid, 'SIGKILL') } catch { /* 已退出 */ }
++  log(errors.length ? `浏览器错误 ${errors.length} 条（见 verify-result.json）` : '无浏览器错误')
++  process.exit(0)
++}
+diff --git a/app/src/components/HUD.tsx b/app/src/components/HUD.tsx
+index 08a7d5b..1ab02d3 100644
+--- a/app/src/components/HUD.tsx
++++ b/app/src/components/HUD.tsx
+@@ -500,18 +500,29 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
+                 <span style={{ color: swim.submerged ? '#79b8d8' : 'var(--text-dim)' }}>
+                   {swim.submerged ? '水下' : '水面'} · 水深 {swim.depth.toFixed(1)}m
+                 </span>
+-                <span style={{ color: swim.breath > swim.limit * 0.25 ? 'var(--amber)' : 'var(--blood)' }}>
+-                  氧气 {Math.max(0, swim.limit - swim.breath).toFixed(0)}s
++                <span className={engine.swim.stage >= 2 ? 'anim-thirstPulse' : ''} style={{ color: engine.swim.stage === 0 ? 'var(--amber)' : 'var(--blood)' }}>
++                  {engine.swim.stage === 3 ? '缺氧！' : `氧气 ${Math.max(0, swim.limit - swim.breath).toFixed(0)}s`}
+                 </span>
+               </div>
+               <div className="mt-1 h-[4px] w-full overflow-hidden" style={{ background: 'color-mix(in srgb, var(--ink) 80%, transparent)' }}>
+                 <div style={{
+                   width: `${Math.max(0, Math.min(100, ((swim.limit - swim.breath) / swim.limit) * 100))}%`,
+                   height: '100%',
+-                  background: swim.breath > swim.limit * 0.6 ? 'var(--blood)' : 'var(--amber)',
++                  background: engine.swim.stage >= 1 ? 'var(--blood)' : swim.submerged ? '#79b8d8' : 'var(--amber)',
+                   transition: 'width 0.12s linear',
+                 }} />
+               </div>
++              {/* [swim] 升降指示 + L7 深度计（150m 起水压伤害） */}
++              <div className="mt-1 flex items-center gap-2 text-[10px]" style={{ color: 'var(--text-dim)' }}>
++                <span style={{ minWidth: 64, color: Math.abs(engine.swim.vz) > 0.2 ? '#79b8d8' : 'var(--text-dim)' }}>
++                  {engine.swim.vz > 0.2 ? '▲ 上浮' : engine.swim.vz < -0.2 ? '▼ 下潜' : '— 悬停'} {Math.abs(engine.swim.vz).toFixed(1)}m/s
++                </span>
++                {def.id === 7 && (
++                  <span className="relative h-[3px] flex-1" style={{ background: 'linear-gradient(90deg, #2b5f78 0%, #173246 70%, #6b1f1a 75%, #3a0d0b 100%)' }}>
++                    <span className="absolute top-[-3px] h-[9px] w-[2px]" style={{ left: `${Math.min(100, swim.depth / 200 * 100)}%`, background: swim.depth > 150 ? 'var(--blood)' : '#d8eef8' }} />
++                  </span>
++                )}
++              </div>
+               <div className="mt-0.5 text-[9px]" style={{ color: 'var(--text-dim)' }}>
+                 {engine.swimMode === 'view' ? '[前进] 沿视线游　' : ''}[蹲伏] 下潜　[跳跃] 上浮　[冲刺] 划水{swim.edge ? '　[跳跃] 撑上岸' : ''}
+               </div>
+@@ -698,6 +709,21 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
+       {swim?.submerged && (
+         <div className="pointer-events-none fixed inset-0 z-[31]" style={{ boxShadow: 'inset 0 0 140px 34px rgba(13,74,110,0.32)' }} />
+       )}
++      {/* [swim] 憋气三段：憋气感（心跳收缩视野）→ 胸口抽动（发灰发暗）→ 缺氧（逐渐黑屏）。出水后随氧气恢复慢慢退去 */}
++      {engine.swim.stage >= 1 && (() => {
++        const u = Math.min(1, (engine.swim.o2k - 0.6) / 0.4)
++        return (
++          <div key={`o2-${engine.swim.stage}`} className="pointer-events-none fixed inset-0 z-[31] anim-o2Pulse"
++            style={{
++              animationDuration: `${(1.05 - 0.5 * u).toFixed(2)}s`,
++              boxShadow: `inset 0 0 ${180 + 220 * u}px ${70 + 170 * u}px rgba(4,8,12,${(0.55 + 0.35 * u).toFixed(2)})`,
++              ...(engine.swim.stage >= 2 ? { backdropFilter: `saturate(${(1 - 0.55 * u).toFixed(2)}) brightness(${(1 - 0.18 * u).toFixed(2)})`, WebkitBackdropFilter: `saturate(${(1 - 0.55 * u).toFixed(2)}) brightness(${(1 - 0.18 * u).toFixed(2)})` } : {}),
++            }} />
++        )
++      })()}
++      {engine.swim.blackK > 0.01 && (
++        <div className="pointer-events-none fixed inset-0 z-[32]" style={{ background: '#000', opacity: Math.min(0.96, engine.swim.blackK * 0.96), transition: 'opacity 0.25s linear' }} />
++      )}
+       {/* ---- 状态低下画面效果（受减闪烁设置缩放）---- */}
+       {/* 饥饿 ≤25：边缘发黄收缩脉冲 */}
+       {/* v51：人制品效应中始终显示饥饿画面特效（哪怕刚吃饱） */}
+diff --git a/app/src/game/core/audio.ts b/app/src/game/core/audio.ts
+index 579036b..15bf502 100644
+--- a/app/src/game/core/audio.ts
++++ b/app/src/game/core/audio.ts
+@@ -531,6 +531,58 @@ export class GameAudio {
+     n.connect(bp).connect(g).connect(this.sfx); n.start(); n.stop(t + 0.24)
+   }
+ 
++  // [swim] 憋气心跳：一声「咚-咚」，越憋越响越闷（不受水下低通以外的处理）
++  breathBeat(vol = 1) {
++    if (!this.ctx || !this.sfx || vol <= 0.01) return
++    const ctx = this.ctx, t = ctx.currentTime
++    for (const [dt0, amp, f0] of [[0, 1, 62], [0.17, 0.7, 54]] as const) {
++      const o = ctx.createOscillator(), g = ctx.createGain()
++      o.type = 'sine'; o.frequency.setValueAtTime(f0, t + dt0); o.frequency.exponentialRampToValueAtTime(34, t + dt0 + 0.16)
++      g.gain.setValueAtTime(0.0001, t + dt0); g.gain.exponentialRampToValueAtTime(0.42 * vol * amp, t + dt0 + 0.02)
++      g.gain.exponentialRampToValueAtTime(0.001, t + dt0 + 0.2)
++      o.connect(g).connect(this.sfx); o.start(t + dt0); o.stop(t + dt0 + 0.22)
++    }
++  }
++  // [swim] 憋不住吐出一串气泡：低沉的咕噜声
++  bubbleBurst(vol = 1) {
++    if (!this.ctx || !this.sfx || vol <= 0.01) return
++    const ctx = this.ctx, t = ctx.currentTime
++    for (let i = 0; i < 6; i++) {
++      const t0 = t + i * (0.04 + Math.random() * 0.05)
++      const o = ctx.createOscillator(), g = ctx.createGain()
++      o.type = 'sine'; const f = 260 + Math.random() * 380
++      o.frequency.setValueAtTime(f, t0); o.frequency.exponentialRampToValueAtTime(f * 1.9, t0 + 0.06)
++      g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.09 * vol, t0 + 0.01)
++      g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.08)
++      o.connect(g).connect(this.sfx); o.start(t0); o.stop(t0 + 0.09)
++    }
++  }
++  // [swim] 浮出水面大口吸气：k=憋气程度 0–1，越憋越急越响；后面跟两声短喘
++  gasp(k = 1) {
++    if (!this.ctx || !this.sfx) return
++    const ctx = this.ctx, t = ctx.currentTime, out = this.sfx
++    const breath = (t0: number, dur: number, vol: number, f: number) => {
++      const n = this.noiseSrc(), bp = ctx.createBiquadFilter(), g = ctx.createGain()
++      bp.type = 'bandpass'; bp.frequency.setValueAtTime(f, t0); bp.frequency.linearRampToValueAtTime(f * 1.6, t0 + dur); bp.Q.value = 1.6
++      g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(vol, t0 + dur * 0.25)
++      g.gain.exponentialRampToValueAtTime(0.001, t0 + dur)
++      n.connect(bp).connect(g).connect(out); n.start(t0); n.stop(t0 + dur + 0.02)
++    }
++    breath(t, 0.55 + 0.25 * k, 0.12 + 0.2 * k, 700)
++    if (k > 0.5) { breath(t + 0.9, 0.3, 0.08 * k, 900); breath(t + 1.4, 0.28, 0.06 * k, 900) }
++  }
++  // [swim] 划水：水面是水花声，水下是闷的推水声；vol 按速度
++  swimStroke(underwater: boolean, vol = 1) {
++    if (!this.ctx || !this.sfx || vol <= 0.01) return
++    const t = this.ctx.currentTime
++    const n = this.noiseSrc()
++    const bp = this.ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = underwater ? 380 : 1100; bp.Q.value = underwater ? 0.9 : 1.2
++    const g = this.ctx.createGain()
++    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime((underwater ? 0.16 : 0.11) * vol, t + 0.06)
++    g.gain.exponentialRampToValueAtTime(0.001, t + (underwater ? 0.36 : 0.24))
++    n.connect(bp).connect(g).connect(this.sfx); n.start(); n.stop(t + 0.4)
++  }
++
+   // 水下环境低通滤波（全局闷化；出水恢复）
+   setUnderwater(on: boolean) {
+     if (on === this.underwater) return
+diff --git a/app/src/game/engine/movement.ts b/app/src/game/engine/movement.ts
+index 8f5f834..6f6f4b2 100644
+--- a/app/src/game/engine/movement.ts
++++ b/app/src/game/engine/movement.ts
+@@ -12,7 +12,7 @@ import { l1BuildingStyleAt } from '../world/l1Building'
+ import { bandOfZ, bandOfPlayerZ, groundHeightAt, structStandTopAt, ceilingHeightAt, l11HeadCeilingAt, l11MapWater, floorHeight, liquidSurfaceH, POOL_DEPTH, FLOOR_H } from '../world/mapgen'
+ import { L11_WATER_SURFACE } from '../world/l11Hydrology'
+ import { integrateMove, resolvePlayerPenetration, FIXED_STEP } from '../core/player'
+-import { stepSwimVelocity, absorbBlocked, tryClimbOut, stepClimbOut, SWIM } from './swim'
++import { stepSwimVelocity, absorbBlocked, tryClimbOut, stepClimbOut, stepBreathFx, o2Rate, SWIM } from './swim'
+ import { WALL_H } from '../renderer/shared'
+ import { levelDefOf, NORMAL_LEVELS } from '../levels'
+ import { audio } from '../core/audio'
+@@ -38,6 +38,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
+   audio.setDeepPressure(eng.levelDef.id === 7 && eng.submerged ? Math.min(1, Math.max(0, (-eng.player.z - 30) / 170)) : 0, dt)
+   const p = eng.player, m = eng.map!
+   const verticalStart=p.z
++  stepBreathFx(eng, eng.swim, dt, eng.submerged, breathLimit(eng)) // [swim] 屏气反馈 + 出水恢复（放在最前：脚本演出/撑上岸期间也要恢复）
+   // A scripted wall crossing owns position temporarily; gravity must not snap onto a wall/upper floor.
+   if(dullerControlsPlayer(eng)||clumpControlsPlayer(eng)){eng.seating=null;return 0}
+   if (eng.devEnabled && eng.dev.fly) {
+@@ -88,10 +89,11 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
+       audio.splash()
+       eng.splashParticles(p.x, p.y, eng.levelDef.id===11?L11_WATER_SURFACE:0)
+       eng.msg('你跌进了水里——冰冷刺骨。', 'system')
++      eng.swim.entryK = Math.min(1, 0.35 + Math.max(0, -p.vz) / 9) // [swim] 入水冲击：落得越快越猛
++      eng.swim.vz = Math.max(-5, Math.min(0, p.vz)) * 0.6; eng.swim.lz = p.z // [swim] 落水带着下坠惯性扎进水里
+     } else if (eng.inLiquid === 1 && lq !== 1) { // 出水
+       audio.splash(0.5)
+       eng.splashParticles(p.x, p.y, eng.levelDef.id===11?L11_WATER_SURFACE:0)
+-      eng.breathT = 0
+       if(eng.levelDef.id===11){eng.submerged=false;eng.wasSubmerged=false;audio.setUnderwater(false)}
+     }
+     eng.inLiquid = lq
+@@ -418,6 +420,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
+       p.z += p.vz * dt
+       sw.vz = 0
+       if (p.z <= surfZ) {
++        sw.vz = Math.max(-5, p.vz) * 0.6; sw.entryK = Math.min(1, 0.35 + Math.max(0, -p.vz) / 9) // [swim] 带着下坠惯性扎进水里
+         p.z = surfZ; p.vz = 0; l7f!.wallFall = false
+         audio.splash(); eng.splashParticles(p.x, p.y, 0)
+         eng.msg('你从水墙上摔回了海面。', 'system')
+@@ -450,9 +453,9 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
+     if (sub) {
+       // v57p：开发者状态锁定=氧气永远保持满
+       if (eng.dev.god && eng.dev.statLock) eng.breathT = 0 // [swim] 修复：以前只看 statLock（默认开），普通游戏里氧气永远不掉
+-      else eng.breathT += dt
++      else eng.breathT += dt * o2Rate(eng, sw) // [swim] 静止 0.7 / 游 1 / 冲刺划水 1.8
+       eng.bubbleT -= dt
+-      if (eng.bubbleT <= 0) { eng.bubbleT = 0.5; eng.bubbleParticles(p.x, p.y, p.z + 1.3) }
++      if (eng.bubbleT <= 0) { eng.bubbleT = 0.5 / o2Rate(eng, sw); eng.bubbleParticles(p.x, p.y, p.z + 1.3) } // [swim] 呼出的气泡随用力程度变密
+       // v57o：L7 真实水深压力——超过 150m 后开始持续伤害，越深越快（深渊带是真正死区）
+       if (l7Water && !eng.dev.god) {
+         const depth = -p.z
+@@ -471,7 +474,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
+         if (eng.statusMsgT.hunger <= 0) { eng.statusMsgT.hunger = 5; eng.msg('你快喘不上气了——快浮上去！', 'damage') }
+         if (p.hp <= 0) { eng.die('溺亡在水中'); return null }
+       }
+-    } else eng.breathT = Math.max(0, eng.breathT - dt * 3) // 浮出水面快速恢复
++    } // [swim] 出水恢复改在 stepBreathFx：前 2s 快、之后慢
+   } else {
+     // v26：地面高度 = 地形地面 与 可站立结构顶面（桌/床/箱等低矮家具）取高者
+     const g = Math.max(groundHeightAt(m, p.x, p.y, gBand,p.z), structStandTopAt(m, p.x, p.y, p.z, gBand))
+@@ -555,7 +558,6 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
+     eng.inLiquid = 0
+     eng.submerged = false
+     eng.wasSubmerged = false
+-    eng.breathT = 0
+     audio.setUnderwater(false)
+   }
+   sw.lx = p.x + (eng.map?.inf?.ox ?? 0); sw.ly = p.y + (eng.map?.inf?.oy ?? 0); sw.lz = p.z // [swim] 位置突变检测
+diff --git a/app/src/game/engine/swim.ts b/app/src/game/engine/swim.ts
+index 6d890ca..db3e47d 100644
+--- a/app/src/game/engine/swim.ts
++++ b/app/src/game/engine/swim.ts
+@@ -56,6 +56,21 @@ export const SWIM = {
+   VKEY_K: 1.0,
+   /** 水下体力恢复倍率（水面踩水正常恢复） */
+   SUB_STAMINA_REGEN: 0.6,
++  /** 耗氧倍率：静止 / 正常游 / 冲刺划水 */
++  O2_IDLE: 0.7,
++  O2_SWIM: 1.0,
++  O2_SPRINT: 1.8,
++  /** 屏气阶段（占屏气上限的比例）：憋气感 / 胸口抽动 */
++  O2_URGE: 0.6,
++  O2_CONTRACT: 0.85,
++  /** 超过屏气上限后多少秒视野完全变黑 */
++  BLACKOUT_T: 6,
++  /** 出水恢复：前 RECOVER_FAST_T 秒以 RECOVER_FAST 倍速恢复，之后 RECOVER 倍速 */
++  RECOVER_FAST: 6,
++  RECOVER_FAST_T: 2,
++  RECOVER: 3,
++  /** 出水时憋气程度超过这个比例会大口吸气 */
++  GASP_K: 0.4,
+ } as const
+ 
+ export interface SwimState {
+@@ -78,9 +93,25 @@ export interface SwimState {
+   lx: number; ly: number; lz: number
+   /** 想游却被挡住的持续时间（L7 用于自动翻越障碍） */
+   stuckT: number
++  /** ---- 屏气反馈（渲染层/HUD 读取） ---- */
++  /** 憋气程度 = breathT / 上限（>1 = 缺氧） */
++  o2k: number
++  /** 0 正常 / 1 憋气感 / 2 胸口抽动 / 3 缺氧 */
++  stage: 0 | 1 | 2 | 3
++  /** 缺氧黑屏程度 0–1 */
++  blackK: number
++  /** 心跳计时、最近一次心跳后的时间（HUD 脉冲） */
++  beatT: number; sinceBeat: number
++  /** 胸口抽动计时、最近一次抽动后的时间 */
++  contractT: number; sinceContract: number
++  /** 出水后经过的时间 */
++  airT: number
++  /** 入水冲击（渲染层镜头用，0–1 衰减） */
++  entryK: number
++  sinceMsg: number
+ }
+ 
+-export const newSwimState = (): SwimState => ({ vx: 0, vy: 0, vz: 0, strokeT: -1, strokes: 0, sinceStroke: 9, pushT: 0, px: 0, py: 0, pz: 0, duckCd: 0, prevCrouch: false, atSurface: false, out: null, lx: NaN, ly: NaN, lz: NaN, stuckT: 0 })
++export const newSwimState = (): SwimState => ({ vx: 0, vy: 0, vz: 0, strokeT: -1, strokes: 0, sinceStroke: 9, pushT: 0, px: 0, py: 0, pz: 0, duckCd: 0, prevCrouch: false, atSurface: false, out: null, lx: NaN, ly: NaN, lz: NaN, stuckT: 0, o2k: 0, stage: 0, blackK: 0, beatT: 0, sinceBeat: 9, contractT: 0, sinceContract: 9, airT: 9, entryK: 0, sinceMsg: 99 })
+ 
+ export function resetSwim(s: SwimState) { Object.assign(s, newSwimState()) }
+ 
+@@ -160,7 +191,7 @@ export function stepSwimVelocity(eng: Engine, s: SwimState, dt: number, c: SwimC
+       s.px = it.x / it.mag; s.py = it.y / it.mag; s.pz = it.z / it.mag
+       s.strokes++; s.sinceStroke = 0
+       if (!(eng.dev.god && eng.dev.statLock)) p.stamina = Math.max(0, p.stamina - SWIM.STROKE_STAMINA * (eng.manmadeT > 0 ? 2 : 1))
+-      audio.swim()
++      audio.swimStroke(eng.submerged, 0.8 + 0.4 * Math.min(1, Math.hypot(s.vx, s.vy, s.vz) / Math.max(0.1, max)))
+       stroked = true
+     }
+   } else s.strokeT = -1
+@@ -289,3 +320,62 @@ export function stepClimbOut(eng: Engine, s: SwimState, dt: number): boolean {
+   if (k >= 1) { s.out = null; return true }
+   return false
+ }
++
++/** 当前耗氧倍率：静止 0.7、正常游 1、冲刺划水 1.8 */
++export function o2Rate(eng: Engine, s: SwimState): number {
++  if (s.sinceStroke < SWIM.STROKE_T * 1.5 && eng.input.sprint) return SWIM.O2_SPRINT
++  const moving = Math.hypot(eng.input.mx, eng.input.my) > 0.1 || eng.input.jump || eng.input.crouch
++  return moving ? SWIM.O2_SWIM : SWIM.O2_IDLE
++}
++
++/**
++ * 每帧推进屏气反馈：阶段、心跳、胸口抽动、缺氧黑屏、出水吸气。
++ * sub=当前是否在水下；limit=屏气上限。只读写 eng.breathT 的恢复，不负责扣血（movement 负责）。
++ */
++export function stepBreathFx(eng: Engine, s: SwimState, dt: number, sub: boolean, limit: number) {
++  const wasSub = s.airT <= 0
++  if (sub) s.airT = 0
++  else {
++    if (wasSub) {
++      // 刚浮出水面
++      if (s.o2k > SWIM.GASP_K) {
++        audio.gasp(Math.min(1, (s.o2k - SWIM.GASP_K) / (1 - SWIM.GASP_K)))
++        if (s.o2k > 0.85) eng.msg('你冲出水面，大口大口地喘着气。', 'system')
++      }
++    }
++    s.airT += dt
++    const rate = s.airT < SWIM.RECOVER_FAST_T ? SWIM.RECOVER_FAST : SWIM.RECOVER
++    eng.breathT = Math.max(0, eng.breathT - dt * rate)
++  }
++  s.o2k = limit > 0 ? eng.breathT / limit : 0
++  s.stage = s.o2k > 1 ? 3 : s.o2k > SWIM.O2_CONTRACT ? 2 : s.o2k > SWIM.O2_URGE ? 1 : 0
++  // 心跳：憋气感阶段开始出现，越憋越快越响（出水后还会跳一会儿，跟着氧气恢复慢下来）
++  s.sinceBeat += dt
++  if (s.stage >= 1) {
++    s.beatT -= dt
++    if (s.beatT <= 0) {
++      const u = Math.min(1, (s.o2k - SWIM.O2_URGE) / (1 - SWIM.O2_URGE))
++      s.beatT = 1.05 - 0.5 * u
++      s.sinceBeat = 0
++      audio.breathBeat(0.35 + 0.65 * u)
++    }
++  } else s.beatT = 0
++  // 胸口抽动：本能地想吸气，镜头一抖、吐出一串气泡
++  s.sinceContract += dt
++  if (sub && s.stage >= 2) {
++    s.contractT -= dt
++    if (s.contractT <= 0) {
++      s.contractT = s.stage === 3 ? 1.1 + Math.random() * 0.6 : 2.0 + Math.random() * 1.2
++      s.sinceContract = 0
++      eng.camShake = Math.min(1, eng.camShake + (s.stage === 3 ? 0.32 : 0.18))
++      audio.bubbleBurst(s.stage === 3 ? 1 : 0.6)
++      eng.bubbleParticles(eng.player.x, eng.player.y, eng.player.z + 1.35)
++      if (s.stage === 2 && s.sinceMsg > 8) { s.sinceMsg = 0; eng.msg('胸口一阵阵抽紧——身体在逼你吸气。', 'damage') }
++    }
++  } else s.contractT = 0.8
++  // 缺氧黑屏：超过上限后 BLACKOUT_T 秒内逐渐全黑；有空气后很快退去
++  if (s.stage === 3 && sub) s.blackK = Math.min(1, s.blackK + dt / SWIM.BLACKOUT_T)
++  else s.blackK = Math.max(0, s.blackK - dt * 0.8)
++  s.entryK = Math.max(0, s.entryK - dt * 2.2)
++  s.sinceMsg += dt
++}
+diff --git a/app/src/game/renderer/renderer.ts b/app/src/game/renderer/renderer.ts
+index e637931..8b45036 100644
+--- a/app/src/game/renderer/renderer.ts
++++ b/app/src/game/renderer/renderer.ts
+@@ -84,6 +84,7 @@ import { swingStoneChime } from './instrumentCave'
+ import { animateMoth, buildMothMesh } from './mothMeshes'
+ import { buildItemMesh } from './itemsMesh'
+ import { batchRigidItem } from './itemBatches'
++import { advanceArms, strokePose, treadPose, mirrorPose, blendPose } from './swimArms'
+ import { buildViewmodel, buildHeldItem, buildCrosshair, vmat, vmAnimPose, heldHandPose, heldBox, buildRetroHand, LIGHTER_HAND_POSE, sleeveKindOf, type ViewmodelParts } from './viewmodel'
+ import { ViewmodelSwitch } from './viewmodelSwitch'
+ import { getAvatar, randomAvatar } from '../core/avatar'
+@@ -528,6 +529,11 @@ export class Renderer3D {
+   private bobPhase = 0
+   // v54：真实视角摇晃（设置开关，默认关闭=保持基础 bob）——幅度平滑/落地下沉回弹状态
+   private headBobReal = false
++  private swimCamK = 0 // [swim]
++  private swimCamPhase = 0 // [swim]
++  private swimArmSt = { phase: 0, k: 0 } // [swim] 游泳手臂相位与权重
++  private swimTreadK = 1 // [swim] 踩水小动作权重
++  private swimHand = '' // [swim] 当前右手是否换成划水手掌
+   private bobAmp = 0
+   private surfaceFloatK = 0 // v57t：水面漂浮感（相机随浪起伏）
+   private landT = 0
+@@ -786,6 +792,7 @@ export class Renderer3D {
+   private setHeldItem(type: string) {
+     if (this.vmItem) { this.vm.remove(this.vmItem); this.vmItem = null }
+     this.vmHeld = type
++    this.swimHand = ''
+     // v71：右手握法随手持物切换（把手半径/位置/扳机指），空手 = 握拳；其余物品按包围盒自适应（首次建模时量一次）
+     let box: ReturnType<typeof heldBox> | undefined
+     let heldObj: THREE.Object3D | null = null
+@@ -923,6 +930,39 @@ export class Renderer3D {
+     this.vm.rotation.y = ry // [tiny 收尾] 吹石卡祖笛时把斜握的笛身转正
+     // 手电随移动轻微浮动
+     this.vmFlash.position.y = -0.28 - sway2 * 0.01
++    this.vmFlash.position.x = -0.24; this.vmFlash.position.z = -0.42; this.vmFlash.rotation.set(0, 0, 0)
++    // [swim] 蛙泳手臂：空手时双手划水；手里拿着东西时右手只轻轻划、东西放低；左手（手电）照样划
++    {
++      const sw = engine.swim
++      const busy = !!engine.usingItem || engine.attackAnimT > 0 || !!engine.searching || this.stowK > 0.5
++      const moving = Math.hypot(engine.input.mx, engine.input.my) > 0.1 || engine.input.jump || engine.input.crouch
++      const arms = advanceArms(this.swimArmSt, dt, {
++        swimming: engine.inLiquid === 1 && !sw.out, busy, speed: Math.hypot(sw.vx, sw.vy, sw.vz), maxSpeed: 2.45,
++        sprintStroke: engine.input.sprint && sw.sinceStroke < 0.62 * 1.2, sinceStroke: sw.sinceStroke, strokeT: 0.62, moving,
++      })
++      this.swimTreadK += (arms.tread - this.swimTreadK) * Math.min(1, dt * 3)
++      const k = arms.k
++      // 空手划水：拳头换成并拢的手掌
++      const wantHand = !this.vmHeld && k > 0.4 ? '__swim' : ''
++      if (!this.vmHeld && wantHand !== this.swimHand) {
++        this.swimHand = wantHand
++        this.vmParts.right.setPose(heldHandPose(wantHand), null)
++      }
++      if (k > 0.002) {
++        const tp = treadPose(this.time), spose = strokePose(arms.phase)
++        const arm = blendPose(spose, tp, this.swimTreadK)
++        const held = !!this.vmItem
++        const rk = k * (held ? 0.4 : 1)
++        const rBase = { px: this.vm.position.x, py: this.vm.position.y, pz: this.vm.position.z, rx: this.vm.rotation.x, ry: this.vm.rotation.y, rz: this.vm.rotation.z }
++        const r = blendPose(rBase, held ? { ...arm, py: arm.py - 0.08, rx: arm.rx * 0.5 } : arm, rk)
++        this.vm.position.set(r.px, r.py, r.pz); this.vm.rotation.set(r.rx, r.ry, r.rz)
++        const lBase = { px: -0.24, py: this.vmFlash.position.y, pz: -0.42, rx: 0, ry: 0, rz: 0 }
++        // 左手相位错开一点点，划水不像机械同步
++        const la = mirrorPose(blendPose(strokePose(arms.phase - 0.03), treadPose(this.time + 0.4), this.swimTreadK))
++        const l = blendPose(lBase, la, k)
++        this.vmFlash.position.set(l.px, l.py, l.pz); this.vmFlash.rotation.set(l.rx, l.ry, l.rz)
++      }
++    }
+   }
+ 
+   private updateCrosshair(engine: Engine) {
+@@ -1089,6 +1129,27 @@ export class Renderer3D {
+         else bob -= this.landAmp * Math.sin(k * Math.PI)
+       }
+     }
++    // [swim] 游泳镜头：水里不用走路的步频摇晃；改成随划水节奏的缓慢起伏 + 水下漂浮横滚 + 划水前冲 + 入水冲击
++    if (engine.inLiquid === 1) {
++      const sw = engine.swim
++      const sp = Math.hypot(sw.vx, sw.vy, sw.vz)
++      this.swimCamK += ((engine.submerged ? 1 : 0.35) - this.swimCamK) * Math.min(1, dt * 2)
++      const k = this.swimCamK
++      this.swimCamPhase += dt * (0.9 + sp * 0.45)
++      bob = Math.sin(this.swimCamPhase * 1.7) * 0.03 * k + Math.sin(this.time * 0.61) * 0.025 * k
++      swayX = Math.sin(this.swimCamPhase * 0.85) * 0.02 * k
++      bobRoll = Math.sin(this.time * 0.47 + 0.9) * 0.035 * k + Math.sin(this.swimCamPhase * 0.85) * 0.012 * k
++      bobPitch = Math.sin(this.time * 0.73) * 0.012 * k
++      // 划水：发力那一下身体前冲、镜头轻压
++      const st = Math.max(0, 1 - sw.sinceStroke / 0.45)
++      bobPitch -= Math.sin(st * Math.PI) * 0.025
++      // 入水冲击：镜头往下一沉再回弹
++      const ek = sw.entryK
++      if (ek > 0) { bobPitch -= Math.sin(ek * Math.PI) * 0.12 * ek; bob -= ek * ek * 0.18 }
++      // 胸口抽动：一下猛抽
++      const ct = Math.max(0, 1 - sw.sinceContract / 0.35)
++      if (ct > 0) { bobPitch += Math.sin(ct * Math.PI) * 0.05 * ct; bob -= Math.sin(ct * Math.PI) * 0.04 }
++    } else this.swimCamK = 0
+     // v57t：水面的相机随浪起伏——避免像踩在固体平面上；离开水面后平滑归零
+     {
+       const target = def.id === 7 && engine.inLiquid === 1
+@@ -1144,7 +1205,9 @@ export class Renderer3D {
+         this.camera.rotation.x += (1 - ease) * 0.3
+       }
+     }
+-    const fov = this.fovBase + Math.sin(this.time * 1.8) * 7 * insanity + (engine.input.sprint && mag > 0.1 ? 5 : 0) + dropFov // v58：拖拽演出 FOV 扩张
++    // [swim] 水里不吃冲刺 FOV；改成每次划水 +3° 的短促冲刺感
++    const strokeFov = engine.inLiquid === 1 ? Math.max(0, 1 - engine.swim.sinceStroke / 0.5) * 3 : 0
++    const fov = this.fovBase + Math.sin(this.time * 1.8) * 7 * insanity + (engine.input.sprint && mag > 0.1 && engine.inLiquid !== 1 ? 5 : 0) + dropFov + strokeFov // v58：拖拽演出 FOV 扩张
+     if (Math.abs(fov - this.camera.fov) > 0.05) { this.camera.fov = fov; this.camera.updateProjectionMatrix() }
+     mapVision.fov=2*Math.atan(Math.tan(this.camera.fov*Math.PI/360)*this.camera.aspect)
+ 
+diff --git a/app/src/game/renderer/retroViewHand.ts b/app/src/game/renderer/retroViewHand.ts
+index efe86f8..31cfbaa 100644
+--- a/app/src/game/renderer/retroViewHand.ts
++++ b/app/src/game/renderer/retroViewHand.ts
+@@ -429,6 +429,7 @@ export function heldBox(item: THREE.Object3D): HeldBox {
+ export function heldHandPose(type: string, box?: HeldBox): HandPose {
+   switch (type) {
+     case '': return VERT([0.004, -0.005, -0.03], 0, { fdir: [0.28, -0.4, 1] }) // 空手：握拳，指节朝前（出拳）
++    case '__swim': return VERT([0.004, -0.005, -0.03], 0.08, { fdir: [0.28, -0.4, 1] }) // [swim] 划水：手指并拢微弯成掌（虚握一根很粗的圆柱）
+     case 'crowbar': return VERT([0.015, -0.01, -0.08], 0.011)
+     case 'wrench': return VERT([0, -0.015, -0.06], 0.013)
+     case 'timber': return VERT([0, -0.005, -0.05], 0.02)
+diff --git a/app/src/game/renderer/swimArms.ts b/app/src/game/renderer/swimArms.ts
+new file mode 100644
+index 0000000..771e8dc
+--- /dev/null
++++ b/app/src/game/renderer/swimArms.ts
+@@ -0,0 +1,65 @@
++// [swim] 第一人称蛙泳手臂：纯函数关键帧（相机空间，右手；左手镜像）。
++// 相位 0 = 手臂前伸、刚开始发力；0–0.4 外划 + 内收（发力段，与 swim.ts 的划水冲量同步）；
++// 0.4–0.65 收到胸前；0.65–1 往前伸出、滑行。
++export interface ArmPose { px: number; py: number; pz: number; rx: number; ry: number; rz: number }
++
++const KEYS: [number, ArmPose][] = [
++  [0.0, { px: 0.10, py: -0.17, pz: -0.72, rx: -0.25, ry: 0.0, rz: 0.0 }], // 前伸
++  [0.2, { px: 0.38, py: -0.21, pz: -0.58, rx: -0.15, ry: 0.35, rz: -0.55 }], // 外划（掌心朝外）
++  [0.4, { px: 0.18, py: -0.37, pz: -0.37, rx: 0.4, ry: 0.15, rz: 0.2 }], // 内收（往身下拨水）
++  [0.65, { px: 0.06, py: -0.27, pz: -0.33, rx: -0.6, ry: -0.1, rz: 0.1 }], // 收到胸前
++  [0.85, { px: 0.07, py: -0.19, pz: -0.62, rx: -0.4, ry: 0.0, rz: 0.02 }], // 前伸
++  [1.0, { px: 0.10, py: -0.17, pz: -0.72, rx: -0.25, ry: 0.0, rz: 0.0 }],
++]
++
++const smooth = (t: number) => t * t * (3 - 2 * t)
++
++/** 右手划水姿势（phase 0–1） */
++export function strokePose(phase: number): ArmPose {
++  const ph = ((phase % 1) + 1) % 1
++  for (let i = 0; i < KEYS.length - 1; i++) {
++    const [t0, a] = KEYS[i], [t1, b] = KEYS[i + 1]
++    if (ph <= t1) {
++      const k = smooth((ph - t0) / (t1 - t0))
++      return {
++        px: a.px + (b.px - a.px) * k, py: a.py + (b.py - a.py) * k, pz: a.pz + (b.pz - a.pz) * k,
++        rx: a.rx + (b.rx - a.rx) * k, ry: a.ry + (b.ry - a.ry) * k, rz: a.rz + (b.rz - a.rz) * k,
++      }
++    }
++  }
++  return { ...KEYS[0][1] }
++}
++
++/** 原地踩水：手在胸前小幅画「8」字（time 秒） */
++export function treadPose(time: number): ArmPose {
++  const a = time * 2.6
++  return { px: 0.2 + Math.sin(a) * 0.05, py: -0.23 + Math.sin(a * 2) * 0.018, pz: -0.46 + Math.cos(a) * 0.03, rx: 0.15, ry: 0, rz: Math.sin(a) * 0.35 }
++}
++
++/** 把右手姿势镜像成左手（x、ry、rz 取反） */
++export const mirrorPose = (p: ArmPose): ArmPose => ({ px: -p.px, py: p.py, pz: p.pz, rx: p.rx, ry: -p.ry, rz: -p.rz })
++
++/** 在 base 与 target 之间按 k 插值 */
++export function blendPose(base: ArmPose, target: ArmPose, k: number): ArmPose {
++  return {
++    px: base.px + (target.px - base.px) * k, py: base.py + (target.py - base.py) * k, pz: base.pz + (target.pz - base.pz) * k,
++    rx: base.rx + (target.rx - base.rx) * k, ry: base.ry + (target.ry - base.ry) * k, rz: base.rz + (target.rz - base.rz) * k,
++  }
++}
++
++/**
++ * 每帧推进手臂相位与权重。返回新的 { phase, k, tread }。
++ * - 冲刺划水时相位直接跟 swim.ts 的划水对齐（sinceStroke / 周期），手臂发力那一下正好是冲量那一下；
++ * - 普通游按速度推进；静止时切到踩水小动作。
++ */
++export function advanceArms(st: { phase: number; k: number }, dt: number, o: {
++  swimming: boolean; busy: boolean; speed: number; maxSpeed: number; sprintStroke: boolean; sinceStroke: number; strokeT: number; moving: boolean
++}) {
++  const target = o.swimming && !o.busy ? 1 : 0
++  st.k += (target - st.k) * Math.min(1, dt * (target ? 5 : 8))
++  if (o.sprintStroke) st.phase = Math.min(0.999, o.sinceStroke / o.strokeT)
++  else if (o.moving) st.phase = (st.phase + dt * (0.45 + 0.35 * Math.min(1, o.speed / Math.max(0.1, o.maxSpeed)))) % 1
++  else st.phase = (st.phase + dt * 0.25) % 1
++  const tread = o.moving || o.sprintStroke ? 0 : 1
++  return { phase: st.phase, k: st.k, tread }
++}
+diff --git a/app/src/index.css b/app/src/index.css
+index b5daa9e..a141f0b 100644
+--- a/app/src/index.css
++++ b/app/src/index.css
+@@ -299,6 +299,15 @@
+   to { transform: scale(1); opacity: 1; }
+ }
+ .anim-hungerPulse { animation: hungerPulse 2.2s ease-in-out infinite; }
++/* [swim] 憋气：心跳时视野边缘猛地一收再松开 */
++@keyframes o2Pulse {
++  0% { opacity: 1; transform: scale(1); }
++  12% { opacity: 1; transform: scale(0.965); }
++  30% { opacity: 0.82; transform: scale(1); }
++  42% { opacity: 1; transform: scale(0.98); }
++  100% { opacity: 0.78; transform: scale(1); }
++}
++.anim-o2Pulse { animation-name: o2Pulse; animation-timing-function: ease-out; animation-iteration-count: infinite; transform-origin: 50% 50%; }
+ .anim-thirstPulse { animation: thirstPulse 2.8s ease-in-out infinite; }
+ .anim-sanityBreathe { animation: sanityBreathe 3.2s ease-in-out infinite; }
+ .anim-hpPulse { animation: hpPulse 1s ease-in-out infinite; }

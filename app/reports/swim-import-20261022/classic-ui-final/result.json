@@ -1,0 +1,2681 @@
+{
+  "seed": 424242,
+  "mode": "classic",
+  "port": 10189,
+  "cdp": 10190,
+  "errors": [
+    {
+      "type": "error",
+      "args": [
+        {
+          "type": "string",
+          "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+        },
+        {
+          "type": "string",
+          "value": "code-path"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1792682054755.231,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4570,
+            "columnNumber": 24
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "validateFragmentProps",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4567,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "updateElement",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4706,
+            "columnNumber": 15
+          },
+          {
+            "functionName": "updateSlot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4796,
+            "columnNumber": 103
+          },
+          {
+            "functionName": "reconcileChildrenArray",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4938,
+            "columnNumber": 27
+          },
+          {
+            "functionName": "reconcileChildFibersImpl",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5170,
+            "columnNumber": 87
+          },
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5236,
+            "columnNumber": 34
+          },
+          {
+            "functionName": "reconcileChildren",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 7181,
+            "columnNumber": 122
+          },
+          {
+            "functionName": "beginWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 8742,
+            "columnNumber": 19
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "performUnitOfWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12560,
+            "columnNumber": 97
+          },
+          {
+            "functionName": "workLoopSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12423,
+            "columnNumber": 42
+          },
+          {
+            "functionName": "renderRootSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12407,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "performWorkOnRoot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 11765,
+            "columnNumber": 188
+          },
+          {
+            "functionName": "performWorkOnRootViaSchedulerTask",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 13504,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "performWorkUntilDeadline",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 35,
+            "columnNumber": 49
+          }
+        ]
+      }
+    },
+    {
+      "type": "error",
+      "args": [
+        {
+          "type": "string",
+          "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+        },
+        {
+          "type": "string",
+          "value": "code-path"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1792682054755.404,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4570,
+            "columnNumber": 24
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "validateFragmentProps",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4567,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "updateElement",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4706,
+            "columnNumber": 15
+          },
+          {
+            "functionName": "updateSlot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4796,
+            "columnNumber": 103
+          },
+          {
+            "functionName": "reconcileChildrenArray",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4938,
+            "columnNumber": 27
+          },
+          {
+            "functionName": "reconcileChildFibersImpl",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5170,
+            "columnNumber": 87
+          },
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5236,
+            "columnNumber": 34
+          },
+          {
+            "functionName": "reconcileChildren",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 7181,
+            "columnNumber": 122
+          },
+          {
+            "functionName": "beginWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 8742,
+            "columnNumber": 19
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "performUnitOfWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12560,
+            "columnNumber": 97
+          },
+          {
+            "functionName": "workLoopSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12423,
+            "columnNumber": 42
+          },
+          {
+            "functionName": "renderRootSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12407,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "performWorkOnRoot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 11765,
+            "columnNumber": 188
+          },
+          {
+            "functionName": "performWorkOnRootViaSchedulerTask",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 13504,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "performWorkUntilDeadline",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 35,
+            "columnNumber": 49
+          }
+        ]
+      }
+    },
+    {
+      "type": "error",
+      "args": [
+        {
+          "type": "string",
+          "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+        },
+        {
+          "type": "string",
+          "value": "code-path"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1792682054755.491,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4570,
+            "columnNumber": 24
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "validateFragmentProps",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4567,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "updateElement",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4706,
+            "columnNumber": 15
+          },
+          {
+            "functionName": "updateSlot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4796,
+            "columnNumber": 103
+          },
+          {
+            "functionName": "reconcileChildrenArray",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4938,
+            "columnNumber": 27
+          },
+          {
+            "functionName": "reconcileChildFibersImpl",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5170,
+            "columnNumber": 87
+          },
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5236,
+            "columnNumber": 34
+          },
+          {
+            "functionName": "reconcileChildren",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 7181,
+            "columnNumber": 122
+          },
+          {
+            "functionName": "beginWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 8742,
+            "columnNumber": 19
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "performUnitOfWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12560,
+            "columnNumber": 97
+          },
+          {
+            "functionName": "workLoopSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12423,
+            "columnNumber": 42
+          },
+          {
+            "functionName": "renderRootSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12407,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "performWorkOnRoot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 11765,
+            "columnNumber": 188
+          },
+          {
+            "functionName": "performWorkOnRootViaSchedulerTask",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 13504,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "performWorkUntilDeadline",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 35,
+            "columnNumber": 49
+          }
+        ]
+      }
+    },
+    {
+      "type": "error",
+      "args": [
+        {
+          "type": "string",
+          "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+        },
+        {
+          "type": "string",
+          "value": "code-path"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1792682054755.538,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4570,
+            "columnNumber": 24
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "validateFragmentProps",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4567,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "updateElement",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4706,
+            "columnNumber": 15
+          },
+          {
+            "functionName": "updateSlot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4796,
+            "columnNumber": 103
+          },
+          {
+            "functionName": "reconcileChildrenArray",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4938,
+            "columnNumber": 27
+          },
+          {
+            "functionName": "reconcileChildFibersImpl",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5170,
+            "columnNumber": 87
+          },
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5236,
+            "columnNumber": 34
+          },
+          {
+            "functionName": "reconcileChildren",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 7181,
+            "columnNumber": 122
+          },
+          {
+            "functionName": "beginWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 8742,
+            "columnNumber": 19
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "performUnitOfWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12560,
+            "columnNumber": 97
+          },
+          {
+            "functionName": "workLoopSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12423,
+            "columnNumber": 42
+          },
+          {
+            "functionName": "renderRootSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12407,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "performWorkOnRoot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 11765,
+            "columnNumber": 188
+          },
+          {
+            "functionName": "performWorkOnRootViaSchedulerTask",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 13504,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "performWorkUntilDeadline",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 35,
+            "columnNumber": 49
+          }
+        ]
+      }
+    },
+    {
+      "type": "error",
+      "args": [
+        {
+          "type": "string",
+          "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+        },
+        {
+          "type": "string",
+          "value": "code-path"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1792682054755.585,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4570,
+            "columnNumber": 24
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "validateFragmentProps",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4567,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "updateElement",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4706,
+            "columnNumber": 15
+          },
+          {
+            "functionName": "updateSlot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4796,
+            "columnNumber": 103
+          },
+          {
+            "functionName": "reconcileChildrenArray",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4938,
+            "columnNumber": 27
+          },
+          {
+            "functionName": "reconcileChildFibersImpl",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5170,
+            "columnNumber": 87
+          },
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5236,
+            "columnNumber": 34
+          },
+          {
+            "functionName": "reconcileChildren",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 7181,
+            "columnNumber": 122
+          },
+          {
+            "functionName": "beginWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 8742,
+            "columnNumber": 19
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "performUnitOfWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12560,
+            "columnNumber": 97
+          },
+          {
+            "functionName": "workLoopSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12423,
+            "columnNumber": 42
+          },
+          {
+            "functionName": "renderRootSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12407,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "performWorkOnRoot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 11765,
+            "columnNumber": 188
+          },
+          {
+            "functionName": "performWorkOnRootViaSchedulerTask",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 13504,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "performWorkUntilDeadline",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 35,
+            "columnNumber": 49
+          }
+        ]
+      }
+    },
+    {
+      "type": "error",
+      "args": [
+        {
+          "type": "string",
+          "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+        },
+        {
+          "type": "string",
+          "value": "code-path"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1792682054755.631,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4570,
+            "columnNumber": 24
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "validateFragmentProps",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4567,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "updateElement",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4706,
+            "columnNumber": 15
+          },
+          {
+            "functionName": "updateSlot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4796,
+            "columnNumber": 103
+          },
+          {
+            "functionName": "reconcileChildrenArray",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4938,
+            "columnNumber": 27
+          },
+          {
+            "functionName": "reconcileChildFibersImpl",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5170,
+            "columnNumber": 87
+          },
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5236,
+            "columnNumber": 34
+          },
+          {
+            "functionName": "reconcileChildren",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 7181,
+            "columnNumber": 122
+          },
+          {
+            "functionName": "beginWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 8742,
+            "columnNumber": 19
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "performUnitOfWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12560,
+            "columnNumber": 97
+          },
+          {
+            "functionName": "workLoopSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12423,
+            "columnNumber": 42
+          },
+          {
+            "functionName": "renderRootSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12407,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "performWorkOnRoot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 11765,
+            "columnNumber": 188
+          },
+          {
+            "functionName": "performWorkOnRootViaSchedulerTask",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 13504,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "performWorkUntilDeadline",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 35,
+            "columnNumber": 49
+          }
+        ]
+      }
+    },
+    {
+      "type": "error",
+      "args": [
+        {
+          "type": "string",
+          "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+        },
+        {
+          "type": "string",
+          "value": "code-path"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1792682055283.653,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4570,
+            "columnNumber": 24
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "validateFragmentProps",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4567,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "updateElement",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4706,
+            "columnNumber": 15
+          },
+          {
+            "functionName": "updateSlot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4796,
+            "columnNumber": 103
+          },
+          {
+            "functionName": "reconcileChildrenArray",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4938,
+            "columnNumber": 27
+          },
+          {
+            "functionName": "reconcileChildFibersImpl",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5170,
+            "columnNumber": 87
+          },
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5236,
+            "columnNumber": 34
+          },
+          {
+            "functionName": "reconcileChildren",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 7181,
+            "columnNumber": 122
+          },
+          {
+            "functionName": "beginWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 8742,
+            "columnNumber": 19
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "performUnitOfWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12560,
+            "columnNumber": 97
+          },
+          {
+            "functionName": "workLoopSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12423,
+            "columnNumber": 42
+          },
+          {
+            "functionName": "renderRootSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12407,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "performWorkOnRoot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 11765,
+            "columnNumber": 188
+          },
+          {
+            "functionName": "performWorkOnRootViaSchedulerTask",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 13504,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "performWorkUntilDeadline",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 35,
+            "columnNumber": 49
+          }
+        ]
+      }
+    },
+    {
+      "type": "error",
+      "args": [
+        {
+          "type": "string",
+          "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+        },
+        {
+          "type": "string",
+          "value": "code-path"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1792682055283.798,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4570,
+            "columnNumber": 24
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "validateFragmentProps",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4567,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "updateElement",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4706,
+            "columnNumber": 15
+          },
+          {
+            "functionName": "updateSlot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4796,
+            "columnNumber": 103
+          },
+          {
+            "functionName": "reconcileChildrenArray",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4938,
+            "columnNumber": 27
+          },
+          {
+            "functionName": "reconcileChildFibersImpl",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5170,
+            "columnNumber": 87
+          },
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5236,
+            "columnNumber": 34
+          },
+          {
+            "functionName": "reconcileChildren",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 7181,
+            "columnNumber": 122
+          },
+          {
+            "functionName": "beginWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 8742,
+            "columnNumber": 19
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "performUnitOfWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12560,
+            "columnNumber": 97
+          },
+          {
+            "functionName": "workLoopSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12423,
+            "columnNumber": 42
+          },
+          {
+            "functionName": "renderRootSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12407,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "performWorkOnRoot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 11765,
+            "columnNumber": 188
+          },
+          {
+            "functionName": "performWorkOnRootViaSchedulerTask",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 13504,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "performWorkUntilDeadline",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 35,
+            "columnNumber": 49
+          }
+        ]
+      }
+    },
+    {
+      "type": "error",
+      "args": [
+        {
+          "type": "string",
+          "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+        },
+        {
+          "type": "string",
+          "value": "code-path"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1792682055283.85,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4570,
+            "columnNumber": 24
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "validateFragmentProps",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4567,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "updateElement",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4706,
+            "columnNumber": 15
+          },
+          {
+            "functionName": "updateSlot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4796,
+            "columnNumber": 103
+          },
+          {
+            "functionName": "reconcileChildrenArray",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4938,
+            "columnNumber": 27
+          },
+          {
+            "functionName": "reconcileChildFibersImpl",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5170,
+            "columnNumber": 87
+          },
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5236,
+            "columnNumber": 34
+          },
+          {
+            "functionName": "reconcileChildren",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 7181,
+            "columnNumber": 122
+          },
+          {
+            "functionName": "beginWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 8742,
+            "columnNumber": 19
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "performUnitOfWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12560,
+            "columnNumber": 97
+          },
+          {
+            "functionName": "workLoopSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12423,
+            "columnNumber": 42
+          },
+          {
+            "functionName": "renderRootSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12407,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "performWorkOnRoot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 11765,
+            "columnNumber": 188
+          },
+          {
+            "functionName": "performWorkOnRootViaSchedulerTask",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 13504,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "performWorkUntilDeadline",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 35,
+            "columnNumber": 49
+          }
+        ]
+      }
+    },
+    {
+      "type": "error",
+      "args": [
+        {
+          "type": "string",
+          "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+        },
+        {
+          "type": "string",
+          "value": "code-path"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1792682055283.894,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4570,
+            "columnNumber": 24
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "validateFragmentProps",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4567,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "updateElement",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4706,
+            "columnNumber": 15
+          },
+          {
+            "functionName": "updateSlot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4796,
+            "columnNumber": 103
+          },
+          {
+            "functionName": "reconcileChildrenArray",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4938,
+            "columnNumber": 27
+          },
+          {
+            "functionName": "reconcileChildFibersImpl",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5170,
+            "columnNumber": 87
+          },
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5236,
+            "columnNumber": 34
+          },
+          {
+            "functionName": "reconcileChildren",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 7181,
+            "columnNumber": 122
+          },
+          {
+            "functionName": "beginWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 8742,
+            "columnNumber": 19
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "performUnitOfWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12560,
+            "columnNumber": 97
+          },
+          {
+            "functionName": "workLoopSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12423,
+            "columnNumber": 42
+          },
+          {
+            "functionName": "renderRootSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12407,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "performWorkOnRoot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 11765,
+            "columnNumber": 188
+          },
+          {
+            "functionName": "performWorkOnRootViaSchedulerTask",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 13504,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "performWorkUntilDeadline",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 35,
+            "columnNumber": 49
+          }
+        ]
+      }
+    },
+    {
+      "type": "error",
+      "args": [
+        {
+          "type": "string",
+          "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+        },
+        {
+          "type": "string",
+          "value": "code-path"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1792682055283.935,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4570,
+            "columnNumber": 24
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "validateFragmentProps",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4567,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "updateElement",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4706,
+            "columnNumber": 15
+          },
+          {
+            "functionName": "updateSlot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4796,
+            "columnNumber": 103
+          },
+          {
+            "functionName": "reconcileChildrenArray",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4938,
+            "columnNumber": 27
+          },
+          {
+            "functionName": "reconcileChildFibersImpl",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5170,
+            "columnNumber": 87
+          },
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5236,
+            "columnNumber": 34
+          },
+          {
+            "functionName": "reconcileChildren",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 7181,
+            "columnNumber": 122
+          },
+          {
+            "functionName": "beginWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 8742,
+            "columnNumber": 19
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "performUnitOfWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12560,
+            "columnNumber": 97
+          },
+          {
+            "functionName": "workLoopSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12423,
+            "columnNumber": 42
+          },
+          {
+            "functionName": "renderRootSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12407,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "performWorkOnRoot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 11765,
+            "columnNumber": 188
+          },
+          {
+            "functionName": "performWorkOnRootViaSchedulerTask",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 13504,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "performWorkUntilDeadline",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 35,
+            "columnNumber": 49
+          }
+        ]
+      }
+    },
+    {
+      "type": "error",
+      "args": [
+        {
+          "type": "string",
+          "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+        },
+        {
+          "type": "string",
+          "value": "code-path"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1792682055283.975,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4570,
+            "columnNumber": 24
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "validateFragmentProps",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4567,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "updateElement",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4706,
+            "columnNumber": 15
+          },
+          {
+            "functionName": "updateSlot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4796,
+            "columnNumber": 103
+          },
+          {
+            "functionName": "reconcileChildrenArray",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4938,
+            "columnNumber": 27
+          },
+          {
+            "functionName": "reconcileChildFibersImpl",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5170,
+            "columnNumber": 87
+          },
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5236,
+            "columnNumber": 34
+          },
+          {
+            "functionName": "reconcileChildren",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 7181,
+            "columnNumber": 122
+          },
+          {
+            "functionName": "beginWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 8742,
+            "columnNumber": 19
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "performUnitOfWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12560,
+            "columnNumber": 97
+          },
+          {
+            "functionName": "workLoopSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12423,
+            "columnNumber": 42
+          },
+          {
+            "functionName": "renderRootSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12407,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "performWorkOnRoot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 11765,
+            "columnNumber": 188
+          },
+          {
+            "functionName": "performWorkOnRootViaSchedulerTask",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 13504,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "performWorkUntilDeadline",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 35,
+            "columnNumber": 49
+          }
+        ]
+      }
+    },
+    {
+      "type": "error",
+      "args": [
+        {
+          "type": "string",
+          "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+        },
+        {
+          "type": "string",
+          "value": "code-path"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1792682055412.396,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4570,
+            "columnNumber": 24
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "validateFragmentProps",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4567,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "updateElement",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4706,
+            "columnNumber": 15
+          },
+          {
+            "functionName": "updateSlot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4796,
+            "columnNumber": 103
+          },
+          {
+            "functionName": "reconcileChildrenArray",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4938,
+            "columnNumber": 27
+          },
+          {
+            "functionName": "reconcileChildFibersImpl",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5170,
+            "columnNumber": 87
+          },
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5236,
+            "columnNumber": 34
+          },
+          {
+            "functionName": "reconcileChildren",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 7181,
+            "columnNumber": 122
+          },
+          {
+            "functionName": "beginWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 8742,
+            "columnNumber": 19
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "performUnitOfWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12560,
+            "columnNumber": 97
+          },
+          {
+            "functionName": "workLoopSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12423,
+            "columnNumber": 42
+          },
+          {
+            "functionName": "renderRootSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12407,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "performWorkOnRoot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 11765,
+            "columnNumber": 188
+          },
+          {
+            "functionName": "performWorkOnRootViaSchedulerTask",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 13504,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "performWorkUntilDeadline",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 35,
+            "columnNumber": 49
+          }
+        ]
+      }
+    },
+    {
+      "type": "error",
+      "args": [
+        {
+          "type": "string",
+          "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+        },
+        {
+          "type": "string",
+          "value": "code-path"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1792682055412.517,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4570,
+            "columnNumber": 24
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "validateFragmentProps",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4567,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "updateElement",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4706,
+            "columnNumber": 15
+          },
+          {
+            "functionName": "updateSlot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4796,
+            "columnNumber": 103
+          },
+          {
+            "functionName": "reconcileChildrenArray",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4938,
+            "columnNumber": 27
+          },
+          {
+            "functionName": "reconcileChildFibersImpl",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5170,
+            "columnNumber": 87
+          },
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5236,
+            "columnNumber": 34
+          },
+          {
+            "functionName": "reconcileChildren",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 7181,
+            "columnNumber": 122
+          },
+          {
+            "functionName": "beginWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 8742,
+            "columnNumber": 19
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "performUnitOfWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12560,
+            "columnNumber": 97
+          },
+          {
+            "functionName": "workLoopSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12423,
+            "columnNumber": 42
+          },
+          {
+            "functionName": "renderRootSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12407,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "performWorkOnRoot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 11765,
+            "columnNumber": 188
+          },
+          {
+            "functionName": "performWorkOnRootViaSchedulerTask",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 13504,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "performWorkUntilDeadline",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 35,
+            "columnNumber": 49
+          }
+        ]
+      }
+    },
+    {
+      "type": "error",
+      "args": [
+        {
+          "type": "string",
+          "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+        },
+        {
+          "type": "string",
+          "value": "code-path"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1792682055412.561,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4570,
+            "columnNumber": 24
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "validateFragmentProps",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4567,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "updateElement",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4706,
+            "columnNumber": 15
+          },
+          {
+            "functionName": "updateSlot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4796,
+            "columnNumber": 103
+          },
+          {
+            "functionName": "reconcileChildrenArray",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4938,
+            "columnNumber": 27
+          },
+          {
+            "functionName": "reconcileChildFibersImpl",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5170,
+            "columnNumber": 87
+          },
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5236,
+            "columnNumber": 34
+          },
+          {
+            "functionName": "reconcileChildren",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 7181,
+            "columnNumber": 122
+          },
+          {
+            "functionName": "beginWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 8742,
+            "columnNumber": 19
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "performUnitOfWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12560,
+            "columnNumber": 97
+          },
+          {
+            "functionName": "workLoopSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12423,
+            "columnNumber": 42
+          },
+          {
+            "functionName": "renderRootSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12407,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "performWorkOnRoot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 11765,
+            "columnNumber": 188
+          },
+          {
+            "functionName": "performWorkOnRootViaSchedulerTask",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 13504,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "performWorkUntilDeadline",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 35,
+            "columnNumber": 49
+          }
+        ]
+      }
+    },
+    {
+      "type": "error",
+      "args": [
+        {
+          "type": "string",
+          "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+        },
+        {
+          "type": "string",
+          "value": "code-path"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1792682055412.601,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4570,
+            "columnNumber": 24
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "validateFragmentProps",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4567,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "updateElement",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4706,
+            "columnNumber": 15
+          },
+          {
+            "functionName": "updateSlot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4796,
+            "columnNumber": 103
+          },
+          {
+            "functionName": "reconcileChildrenArray",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4938,
+            "columnNumber": 27
+          },
+          {
+            "functionName": "reconcileChildFibersImpl",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5170,
+            "columnNumber": 87
+          },
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5236,
+            "columnNumber": 34
+          },
+          {
+            "functionName": "reconcileChildren",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 7181,
+            "columnNumber": 122
+          },
+          {
+            "functionName": "beginWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 8742,
+            "columnNumber": 19
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "performUnitOfWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12560,
+            "columnNumber": 97
+          },
+          {
+            "functionName": "workLoopSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12423,
+            "columnNumber": 42
+          },
+          {
+            "functionName": "renderRootSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12407,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "performWorkOnRoot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 11765,
+            "columnNumber": 188
+          },
+          {
+            "functionName": "performWorkOnRootViaSchedulerTask",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 13504,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "performWorkUntilDeadline",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 35,
+            "columnNumber": 49
+          }
+        ]
+      }
+    },
+    {
+      "type": "error",
+      "args": [
+        {
+          "type": "string",
+          "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+        },
+        {
+          "type": "string",
+          "value": "code-path"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1792682055412.639,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4570,
+            "columnNumber": 24
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "validateFragmentProps",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4567,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "updateElement",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4706,
+            "columnNumber": 15
+          },
+          {
+            "functionName": "updateSlot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4796,
+            "columnNumber": 103
+          },
+          {
+            "functionName": "reconcileChildrenArray",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4938,
+            "columnNumber": 27
+          },
+          {
+            "functionName": "reconcileChildFibersImpl",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5170,
+            "columnNumber": 87
+          },
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5236,
+            "columnNumber": 34
+          },
+          {
+            "functionName": "reconcileChildren",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 7181,
+            "columnNumber": 122
+          },
+          {
+            "functionName": "beginWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 8742,
+            "columnNumber": 19
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "performUnitOfWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12560,
+            "columnNumber": 97
+          },
+          {
+            "functionName": "workLoopSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12423,
+            "columnNumber": 42
+          },
+          {
+            "functionName": "renderRootSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12407,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "performWorkOnRoot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 11765,
+            "columnNumber": 188
+          },
+          {
+            "functionName": "performWorkOnRootViaSchedulerTask",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 13504,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "performWorkUntilDeadline",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 35,
+            "columnNumber": 49
+          }
+        ]
+      }
+    },
+    {
+      "type": "error",
+      "args": [
+        {
+          "type": "string",
+          "value": "Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props."
+        },
+        {
+          "type": "string",
+          "value": "code-path"
+        }
+      ],
+      "executionContextId": 2,
+      "timestamp": 1792682055412.678,
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4570,
+            "columnNumber": 24
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "validateFragmentProps",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4567,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "updateElement",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4706,
+            "columnNumber": 15
+          },
+          {
+            "functionName": "updateSlot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4796,
+            "columnNumber": 103
+          },
+          {
+            "functionName": "reconcileChildrenArray",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 4938,
+            "columnNumber": 27
+          },
+          {
+            "functionName": "reconcileChildFibersImpl",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5170,
+            "columnNumber": 87
+          },
+          {
+            "functionName": "",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 5236,
+            "columnNumber": 34
+          },
+          {
+            "functionName": "reconcileChildren",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 7181,
+            "columnNumber": 122
+          },
+          {
+            "functionName": "beginWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 8742,
+            "columnNumber": 19
+          },
+          {
+            "functionName": "runWithFiberInDEV",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 996,
+            "columnNumber": 71
+          },
+          {
+            "functionName": "performUnitOfWork",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12560,
+            "columnNumber": 97
+          },
+          {
+            "functionName": "workLoopSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12423,
+            "columnNumber": 42
+          },
+          {
+            "functionName": "renderRootSync",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 12407,
+            "columnNumber": 12
+          },
+          {
+            "functionName": "performWorkOnRoot",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 11765,
+            "columnNumber": 188
+          },
+          {
+            "functionName": "performWorkOnRootViaSchedulerTask",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 13504,
+            "columnNumber": 8
+          },
+          {
+            "functionName": "performWorkUntilDeadline",
+            "scriptId": "135",
+            "url": "http://127.0.0.1:10189/reports/swim-import-20261022/classic-ui-final/qa-1792682014564-33176/vite-cache/deps/react-dom_client.js?v=db567500",
+            "lineNumber": 35,
+            "columnNumber": 49
+          }
+        ]
+      }
+    }
+  ],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\swim-import-20261022\\classic-ui-final\\qa-1792682014564-33176",
+    "--remote-debugging-port=10190",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 47552,
+    "server": 25176
+  },
+  "appBootMs": 20652.8842,
+  "entryMs": 3139.839700000004,
+  "firstPlayableMs": 28740.679900000003,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "checks": [],
+    "records": [],
+    "status": {
+      "level": 4,
+      "position": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "submerged": false,
+      "liquid": 0,
+      "velocity": [
+        0,
+        0,
+        0
+      ],
+      "oxygen": {
+        "used": 0,
+        "stage": 0,
+        "black": 0
+      },
+      "hands": {
+        "right": true,
+        "left": false,
+        "lighter": false,
+        "rightPose": "",
+        "leftPalm": false,
+        "blend": 0
+      },
+      "memory": {
+        "geometries": 387,
+        "textures": 43
+      },
+      "calls": 1,
+      "triangles": 1
+    }
+  },
+  "ocean": {
+    "level": 7,
+    "position": {
+      "x": -10,
+      "y": 15,
+      "z": -5
+    },
+    "submerged": true,
+    "liquid": 1,
+    "velocity": [
+      0,
+      0,
+      0
+    ],
+    "oxygen": {
+      "used": 0.9333799999999991,
+      "stage": 0,
+      "black": 0
+    },
+    "hands": {
+      "right": true,
+      "left": true,
+      "lighter": false,
+      "rightPose": "__swim",
+      "leftPalm": true,
+      "blend": 1
+    },
+    "memory": {
+      "geometries": 213,
+      "textures": 146
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "settings": {
+    "mode": "view",
+    "saved": "view"
+  },
+  "touch": {
+    "desktopTouchEmulation": true,
+    "viewport": [
+      844,
+      390
+    ],
+    "dive": {
+      "crouch": true,
+      "jump": false,
+      "vz": -2.3778772944672335,
+      "z": -6.521226012812686
+    },
+    "cancelled": {
+      "crouch": false,
+      "jump": false,
+      "vz": -2.1273578792288252,
+      "z": -7.119572074336513
+    },
+    "ascend": {
+      "crouch": false,
+      "jump": true,
+      "vz": 2.413422620284407,
+      "z": -5.354368036834136
+    },
+    "released": {
+      "crouch": false,
+      "jump": false,
+      "vz": 2.0861383095661075,
+      "z": -4.705369198408532
+    }
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  },
+  "summary": {
+    "checks": [
+      "Actual L7 water activates the shared swim controller",
+      "Empty hands display both swimming palms",
+      "Right fist changes to the cached swimming palm",
+      "Swim mode persists through the actual settings UI",
+      "Selected swim mode is exposed as active",
+      "Touch hold dives in the actual game",
+      "Touch cancellation clears the diving hold",
+      "Touch hold ascends in the actual game",
+      "Touch release clears the ascent hold",
+      "Changing level clears transient swim, breath and mantle states"
+    ],
+    "records": [],
+    "status": {
+      "level": 4,
+      "position": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "submerged": false,
+      "liquid": 0,
+      "velocity": [
+        0,
+        0,
+        0
+      ],
+      "oxygen": {
+        "used": 0,
+        "stage": 0,
+        "black": 0
+      },
+      "hands": {
+        "right": true,
+        "left": false,
+        "lighter": false,
+        "rightPose": "",
+        "leftPalm": false,
+        "blend": 0.000010685486144800174
+      },
+      "memory": {
+        "geometries": 405,
+        "textures": 55
+      },
+      "calls": 1,
+      "triangles": 1
+    }
+  },
+  "ok": false
+}

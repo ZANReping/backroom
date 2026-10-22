@@ -1,0 +1,32 @@
+[
+  {
+    "command": "npm --prefix app ls --depth=0",
+    "exitCode": 0,
+    "durationMs": 2776,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261022-repeat\\dependency-check.txt"
+  },
+  {
+    "command": "npm run build",
+    "exitCode": 0,
+    "durationMs": 60438,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261022-repeat\\build-check.txt"
+  },
+  {
+    "command": "node app/scripts/check-vercel-config.mjs --built",
+    "exitCode": 0,
+    "durationMs": 8306,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261022-repeat\\config-built-check.txt"
+  },
+  {
+    "command": "npm --prefix app run check:swim",
+    "exitCode": 0,
+    "durationMs": 6219,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261022-repeat\\check-04.txt"
+  },
+  {
+    "command": "npm --prefix app run check:swim-integration",
+    "exitCode": 0,
+    "durationMs": 2323,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261022-repeat\\check-05.txt"
+  }
+]

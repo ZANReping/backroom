@@ -131,12 +131,15 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
   const attackUnavailable = handsStowed && !interact
   const holsterContent = <><IconHolster width={18} height={18} /><span className="text-[10px] leading-tight">{handsStowed ? '取出' : '收起'}</span></>
   // v7：跳跃/蹲伏输入（游戏层契约字段，防御性写入，字段不存在也只是无害的额外属性）
+  const verticalCrouchHold = useRef(false)
+  useEffect(() => () => { if (verticalCrouchHold.current) engine.input.crouch = false; engine.input.jump = false }, [engine])
   const zInput = engine.input as unknown as { jump?: boolean; crouch?: boolean }
   const setJump = (v: boolean) => { zInput.jump = v }
   const toggleCrouch = () => { zInput.crouch = !zInput.crouch }
   const flightActive = engine.devEnabled && engine.dev.fly
-  const crouchStart = (e: React.TouchEvent) => { e.stopPropagation(); flightActive ? (zInput.crouch = true) : toggleCrouch() }
-  const crouchEnd = (e: React.TouchEvent) => { e.stopPropagation(); if (flightActive) zInput.crouch = false }
+  const deepSwimming = engine.inLiquid === 1
+  const crouchStart = (e: React.TouchEvent) => { e.stopPropagation(); if (flightActive || deepSwimming) { verticalCrouchHold.current = true; zInput.crouch = true } else toggleCrouch() }
+  const crouchEnd = (e: React.TouchEvent) => { e.stopPropagation(); if (verticalCrouchHold.current || flightActive || deepSwimming) zInput.crouch = false; verticalCrouchHold.current = false }
   const crouchOn = !!zInput.crouch || !!(engine.player as unknown as { crouching?: boolean }).crouching
   // 横屏：按钮弧形排布，避免遮挡画面中心
   const landscape = typeof window !== 'undefined' && window.innerWidth > window.innerHeight
@@ -160,7 +163,7 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
     return (
       <button
         data-touch-id={id}
-        aria-label={id === 'holster' ? (handsStowed ? '取出主手' : '收起主手') : id === 'attack' ? interact ? '交互' : '攻击' : id === 'crouch' ? flightActive ? '下降（按住）' : '蹲伏（切换）' : id === 'jump' ? flightActive ? '上升（按住）' : '跳跃' : undefined}
+        aria-label={id === 'holster' ? (handsStowed ? '取出主手' : '收起主手') : id === 'attack' ? interact ? '交互' : '攻击' : id === 'crouch' ? flightActive || deepSwimming ? (deepSwimming && !flightActive ? '下潜（按住）' : '下降（按住）') : '蹲伏（切换）' : id === 'jump' ? flightActive || deepSwimming ? (deepSwimming && !flightActive ? '上浮（按住）' : '上升（按住）') : '跳跃' : undefined}
         aria-pressed={id === 'holster' ? handsStowed : undefined}
         aria-disabled={id === 'attack' ? attackUnavailable : undefined}
         className={`flex items-center justify-center rounded-full active:scale-90 ${cls}`}
@@ -308,7 +311,7 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
             const common = { ...btnBase, position: 'absolute' as const, width: size, height: size, left: 38 + dx - size / 2, top: 38 + dy - size / 2 }
             const label = { jump: '跳', sprint: '冲刺', crouch: '蹲', flashlight: '手电', backpack: '背包' }[id]
             if (id === 'jump') return (
-              <button key={id} aria-label="跳跃" data-label={label} className="tc-btn pointer-events-auto flex items-center justify-center rounded-full active:scale-90" style={common}
+              <button key={id} aria-label={deepSwimming ? '上浮（按住）' : '跳跃'} data-label={deepSwimming ? '上浮' : label} className="tc-btn pointer-events-auto flex items-center justify-center rounded-full active:scale-90" style={common}
                 onTouchStart={(e) => { e.stopPropagation(); setJump(true) }} onTouchEnd={(e) => { e.stopPropagation(); setJump(false) }} onTouchCancel={(e) => { e.stopPropagation(); setJump(false) }}>
                 <IconJump width={24} height={24} />
               </button>
@@ -320,7 +323,7 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
               </button>
             )
             if (id === 'crouch') return (
-              <button key={id} aria-label={flightActive ? '下降（按住）' : '蹲伏（切换）'} data-label={flightActive ? '下降' : label} className={`tc-btn pointer-events-auto flex items-center justify-center rounded-full active:scale-90 ${crouchOn ? 'is-on' : ''}`}
+              <button key={id} aria-label={flightActive || deepSwimming ? (deepSwimming && !flightActive ? '下潜（按住）' : '下降（按住）') : '蹲伏（切换）'} data-label={flightActive || deepSwimming ? (deepSwimming && !flightActive ? '下潜' : '下降') : label} className={`tc-btn pointer-events-auto flex items-center justify-center rounded-full active:scale-90 ${crouchOn ? 'is-on' : ''}`}
                 style={{ ...common, color: crouchOn ? 'var(--amber)' : 'var(--text)', borderColor: crouchOn ? 'var(--amber)' : 'var(--panel-edge)', boxShadow: crouchOn ? 'inset 0 0 8px color-mix(in srgb, var(--amber) 50%, transparent)' : 'none' }}
                 onTouchStart={crouchStart} onTouchEnd={crouchEnd} onTouchCancel={crouchEnd}>
                 <IconCrouch width={24} height={24} />
@@ -386,7 +389,7 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
           )}
           {!isCustom('crouch') && (
             <button
-              aria-label={flightActive ? '下降（按住）' : '蹲伏（切换）'}
+              aria-label={flightActive || deepSwimming ? (deepSwimming && !flightActive ? '下潜（按住）' : '下降（按住）') : '蹲伏（切换）'}
               className="flex items-center justify-center rounded-full active:scale-90"
               style={{
                 ...btnBase, width: 56, height: 56,
@@ -414,6 +417,7 @@ export default function TouchControls({ engine, settings, onInventory, layout, o
               )}
               {!isCustom('jump') && (
                 <button
+                  aria-label={deepSwimming ? '上浮（按住）' : '跳跃'}
                   className="flex items-center justify-center rounded-full active:scale-90"
                   style={{ ...btnBase, width: 56, height: 56, ...(landscape ? { transform: 'translateY(-8px)' } : {}) }}
                   onTouchStart={(e) => { e.stopPropagation(); setJump(true) }}

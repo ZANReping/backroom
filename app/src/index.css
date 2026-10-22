@@ -299,6 +299,15 @@
   to { transform: scale(1); opacity: 1; }
 }
 .anim-hungerPulse { animation: hungerPulse 2.2s ease-in-out infinite; }
+/* [swim] 憋气：心跳时视野边缘猛地一收再松开 */
+@keyframes o2Pulse {
+  0% { opacity: 1; transform: scale(1); }
+  12% { opacity: 1; transform: scale(0.965); }
+  30% { opacity: 0.82; transform: scale(1); }
+  42% { opacity: 1; transform: scale(0.98); }
+  100% { opacity: 0.78; transform: scale(1); }
+}
+.anim-o2Pulse { animation-name: o2Pulse; animation-timing-function: ease-out; animation-iteration-count: infinite; transform-origin: 50% 50%; }
 .anim-thirstPulse { animation: thirstPulse 2.8s ease-in-out infinite; }
 .anim-sanityBreathe { animation: sanityBreathe 3.2s ease-in-out infinite; }
 .anim-hpPulse { animation: hpPulse 1s ease-in-out infinite; }

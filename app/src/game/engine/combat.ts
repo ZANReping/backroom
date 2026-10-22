@@ -2,6 +2,7 @@ import { lightguideHit, lightguideLure } from './lightguideAI'
 import {bursterKillGuard,bursterMelee,bursterSquirt,acidBurnEntity,BURSTER} from './bursterAI'
 import { heldMelee, startMeleeSwing } from './melee'
 import { isWrangler, wranglerFire, wranglerFireEggs, wranglerKillGuard, wranglerMelee } from './wranglerAI'
+import { SWIM, underwater, meleeIntervalMul, blockUnderwaterGun } from './swim'
 import { witnessedOffense } from './career'
 import { nwInvulnerable, nwKilled, releaseNW } from './watchAI'
 import { provokeMoths } from './moths'
@@ -229,6 +230,8 @@ export function attack(eng: Engine) {
     return
   }
   if (!eng.dev.noAttackCooldown && eng.attackCooldownT > 0) return
+  // [swim 阶段 3] 水下不能开枪（滋水枪 / 枪糖）
+  if ((eng.gunCandyT > 0 || held?.type === 'squirtgun') && blockUnderwaterGun(eng, eng.swim)) return
   // 近战重制：五把近战武器走三段式挥砍（前摇结束才判定，见 engine/melee.ts）
   if (heldMelee(eng)) { startMeleeSwing(eng, false, 0); return }
   const def = held ? ITEMS[held.type] : undefined
@@ -236,8 +239,8 @@ export function attack(eng: Engine) {
   const interval = eng.gunCandyT > 0 ? 0.24
     : def?.throw ? 0.72
       : held?.type === 'squirtgun' ? 0.3
-        : def?.weapon ? (def.attackInterval ?? 0.65)
-          : 0.58
+        : (def?.weapon ? (def.attackInterval ?? 0.65)
+          : 0.58) * meleeIntervalMul(eng) // [swim 阶段 3] 水下近战 / 徒手间隔 ×1.3
   const staminaCost = eng.gunCandyT > 0 ? 2
     : def?.throw ? 5
       : held?.type === 'squirtgun' ? 2
@@ -453,7 +456,8 @@ export function throwHeld(eng: Engine, type: string) {
   slot.count--
   if (slot.count <= 0) p.hotbar[p.selected] = null
   audio.swing()
-  const speed = 9
+  const water = underwater(eng) // [swim 阶段 3] 水下投掷：出手慢、受水阻、慢慢下沉——射程约一半
+  const speed = 9 * (water ? SWIM.THROW_SPEED : 1)
   const dir = crosshairDirection()
   const lead = type==='glowstick'?.08:.38
   const offset = seatedEyeOffset(eng)
@@ -462,6 +466,7 @@ export function throwHeld(eng: Engine, type: string) {
     x: p.x + offset.x + dir.x * lead, y: p.y + offset.y + dir.y * lead,
     z: p.z + seatedEyeHeight(eng) + dir.z * lead, floorZ: p.z,
     vx: dir.x * speed, vy: dir.y * speed, vz: dir.z * speed,
+    ...(water ? { water: true } : {}),
   })
   eng.msg(`你掷出了${ITEMS[type].name}。`, 'system')
   eng.noiseEvent(p.x, p.y, 4, false)
@@ -529,6 +534,7 @@ export function stanleyTeleport(eng: Engine) {
 /** 枪糖：左键发射巧克力子弹（直线 12m，1 点伤害，命中也只是糊一脸） */
 export function shootChocolate(eng: Engine) {
   if (eng.handsStowed||(nguithrInputLock(eng)||armsInputLock(eng))) return
+  if (blockUnderwaterGun(eng, eng.swim)) return
   const p = eng.player
   if (!eng.dev.noAttackCooldown && eng.chocoCd > 0) return
   eng.chocoCd = eng.dev.noAttackCooldown ? 0 : 0.22
@@ -566,6 +572,7 @@ export function shootChocolate(eng: Engine) {
 /** 滋水枪喷射：清水无效果；杏仁水雾轻伤实体，腰果水雾造成更大伤害 */
 export function squirt(eng: Engine) {
   if (eng.handsStowed||(nguithrInputLock(eng)||armsInputLock(eng))) return
+  if (blockUnderwaterGun(eng, eng.swim)) return
   const p = eng.player
   if (eng.squirtAmmo <= 0 || eng.squirtTank === 'none') {
     eng.msg('储罐是空的——先装入液体。', 'system')
@@ -638,7 +645,8 @@ export function updateProjectiles(eng: Engine, dt: number) {
   for (const pr of eng.projectiles) {
     const nx = pr.x + pr.vx * dt, ny = pr.y + pr.vy * dt
     const oldZ = pr.z
-    pr.vz -= 9.8 * dt
+    if (pr.water) { const g = Math.exp(-SWIM.THROW_DRAG * dt); pr.vx *= g; pr.vy *= g; pr.vz = pr.vz * g - SWIM.THROW_G * dt }
+    else pr.vz -= 9.8 * dt
     const nz = oldZ + pr.vz * dt
     if(pr.type==='glowstick')pr.floorZ=groundHeightAt(m,pr.x,pr.y,bandOfPlayerZ(m,pr.floorZ,pr.x,pr.y))
     if (nz <= pr.floorZ) { pr.done = true; eng.landProjectile(pr, pr.x, pr.y); continue }

@@ -1,5 +1,6 @@
 import {ensureTradersAt} from './world/tradersWorld'
 import { heldMelee, updateMeleeInput, normalizeMeleeInventory, type MeleePending } from './engine/melee'
+import { newSwimState, findClimbOut, type SwimState, type SwimMode } from './engine/swim'
 import * as careerSystem from './engine/career'
 import {restoreGlowFlight} from './engine/glowsticks'
 import { megState, resetMegRuntime, updateMegMissions } from './engine/megMissions'
@@ -12,7 +13,7 @@ import type { L1WorldSave } from './engine/l1State'
 // 交互容器 interact / NPC委托声望 npc / 背包装备 inventory / 现象停电 ambient / 开发者API dev），
 // 逻辑逐语句搬运，行为/数值/时序不变；本类方法与字段名保持对外契约完全一致
 // （字段改由子模块直接读写，故不再标 private——TS 可见性放宽，运行时语义不变）。
-import { type GameMap } from './world/mapgen'
+import { type GameMap, l11MapWater } from './world/mapgen'
 import { NORMAL_LEVELS, levelLabel, levelDefOf } from './levels'
 import { type Entity } from './entities'
 import { createIntegrator, type MoveIntegrator } from './core/player'
@@ -77,6 +78,8 @@ export interface Projectile {
   floorZ: number // 落点地面高度（掷出时玩家脚下高度）
   vx: number; vy: number; vz: number
   done?: boolean
+  /** [swim] 水下掷出：受水阻、慢慢下沉 */
+  water?: boolean
 }
 export interface HudEvent {
   kind: 'bank' | 'faction' | 'facility' | 'msg' | 'toast' | 'damage' | 'sanityhit' | 'transition' | 'floorchange' | 'dead' | 'victory' | 'levelchange' | 'lootpanel' | 'notebook' | 'doc' | 'landmark' | 'dialog' | 'radioheard' | 'mpevent'
@@ -191,6 +194,10 @@ export class Engine {
   inLiquid = 0 // 当前所在液体类型（0 无 1 深水 2 浅水）
   submerged = false // 头部没入水下
   breathT = 0 // 水下屏气计时（超限微扣 HP）
+  /** [swim] 游泳三维速度/划水/撑上岸状态（engine/swim.ts） */
+  swim: SwimState = newSwimState()
+  /** [swim] 游泳方向操作：view=沿视线游，flat=水平游+按键升降（设置 → 操作） */
+  swimMode: SwimMode = 'view'
   wasSubmerged = false
   bubbleT = 0
   rippleT = 0
@@ -664,7 +671,11 @@ export class Engine {
     if (!m || this.inLiquid !== 1) return null
     const i = Math.floor(p.y) * m.w + Math.floor(p.x)
     const depth = this.levelDef.id === 7 ? Math.max(0, -p.z) : (m.seaFloor?.[i] ?? 1.7)
-    return { depth, breath: this.breathT, limit: movement.breathLimit(this), submerged: this.submerged }
+    // [swim] 前方（视线水平方向）有能撑上去的岸边时 HUD 提示
+    const canal = this.levelDef.id === 11 ? l11MapWater(m, p.x, p.y) : null
+    const surf = canal ? canal.surface + .1 : 0.1
+    const edge = !!findClimbOut(this, surf, -Math.sin(look.yaw), -Math.cos(look.yaw))
+    return { depth, breath: this.breathT, limit: movement.breathLimit(this), submerged: this.submerged, edge }
   }
   takeExit(def: ExitDef) { level.takeExit(this, def) }
   tinyBlocksLittleDoor(exit?: GameMap['exits'][number]): boolean { return level.tinyBlocksLittleDoor(this, exit) }

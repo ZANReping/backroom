@@ -246,7 +246,10 @@
     "check:vercel": "node scripts/check-vercel-config.mjs",
     "check:l7-seams": "esbuild scripts/check-l7-seams.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l7-seams.mjs && node .cache/check-l7-seams.mjs",
     "check:l7-chart": "esbuild scripts/check-l7-chart.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l7-chart.mjs && node .cache/check-l7-chart.mjs",
-    "verify:l7-seams-map": "node scripts/verify-l7-seams-map.mjs"
+    "verify:l7-seams-map": "node scripts/verify-l7-seams-map.mjs",
+    "check:swim": "esbuild scripts/check-swim.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-swim.mjs && node .cache/check-swim.mjs",
+    "check:swim-integration": "esbuild scripts/check-swim-integration.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-swim-integration.mjs && node .cache/check-swim-integration.mjs",
+    "verify:swim": "node scripts/verify-swim-ingame.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

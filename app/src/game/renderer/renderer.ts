@@ -43,7 +43,7 @@ import {l1PuddleGeometryJob} from './l1Water'
 import {l1Material} from './l1Materials'
 import {L1Shafts} from './l1Shafts'
 import {lightingProfile} from './lightingProfiles'
-import {PhotoPass,PhotoRenderPass,PhotoFinishShader,perceptionBlur} from './photoPass'
+import {PhotoPass,PhotoRenderPass,PhotoFinishShader,perceptionBlur,swimBreathVisuals} from './photoPass'
 import {buildL0Architecture} from './l0Architecture'
 import {syncL0PointMask} from './l0PointMask'
 import {alphaBakedActive,alphaBakeOverride} from './alphaBakedLighting'
@@ -106,7 +106,8 @@ import { animateMoth, buildMothMesh } from './mothMeshes'
 import { MothWorldView } from './mothWorldView'
 import { buildItemMesh } from './itemsMesh'
 import { batchRigidItem } from './itemBatches'
-import { buildViewmodel, buildHeldItem, buildCrosshair, vmat, vmAnimPose, heldHandPose, heldBox, buildRetroHand, LIGHTER_HAND_POSE, sleeveKindOf, type ViewmodelParts } from './viewmodel'
+import { advanceArms, strokePose, treadPose, mirrorPose, blendPose } from './swimArms'
+import { buildViewmodel, buildHeldItem, buildCrosshair, vmat, vmAnimPose, heldHandPose, heldBox, buildRetroHand, LIGHTER_HAND_POSE, FLASH_HAND_POSE, SWIM_LEFT_HAND_POSE, sleeveKindOf, type ViewmodelParts } from './viewmodel'
 import { ViewmodelSwitch } from './viewmodelSwitch'
 import { getAvatar, randomAvatar } from '../core/avatar'
 import { buildAvatarModel } from './retroAvatar'
@@ -562,6 +563,14 @@ export class Renderer3D {
   private bobPhase = 0
   // v54：真实视角摇晃（设置开关，默认关闭=保持基础 bob）——幅度平滑/落地下沉回弹状态
   private headBobReal = false
+  private swimCamK = 0 // [swim]
+  private swimCamPhase = 0 // [swim]
+  private swimArmSt = { phase: 0, k: 0 } // [swim] 游泳手臂相位与权重
+  private swimTreadK = 1 // [swim] 踩水小动作权重
+  private swimHand = '' // [swim] 当前右手是否换成划水手掌
+  private swimLeftHand = false
+  private swimBeamOrigin = new THREE.Vector3()
+  private swimBeamDir = new THREE.Vector3()
   private bobAmp = 0
   private surfaceFloatK = 0 // v57t：水面漂浮感（相机随浪起伏）
   private landT = 0
@@ -847,6 +856,7 @@ export class Renderer3D {
   private setHeldItem(type: string) {
     if (this.vmItem) { this.vm.remove(this.vmItem); this.vmItem = null }
     this.vmHeld = type
+    this.swimHand = ''
     // v71：右手握法随手持物切换（把手半径/位置/扳机指），空手 = 握拳；其余物品按包围盒自适应（首次建模时量一次）
     let box: ReturnType<typeof heldBox> | undefined
     let heldObj: THREE.Object3D | null = null
@@ -896,7 +906,15 @@ export class Renderer3D {
     this.stowK = THREE.MathUtils.damp(this.stowK, engine.handsStowed ? 1 : 0, 16, dt)
     this.vm.visible = show && this.stowK < .995
     curabiturCoatViewmodel(this.vmItem, engine) // [L8-curabitur] 涂了受眷胶的武器外层发光壳
-    this.vmFlash.visible = show && p.equip.offhand?.type === 'flashlight' && p.flashlight && p.battery > 0 && p.flashJamT <= 0 // v32：手部模型仅手电（头灯戴在头上，无手部模型）
+    const flashHeld = p.equip.offhand?.type === 'flashlight'
+    const swimLeft = engine.inLiquid === 1 && !engine.swim.out && !engine.handsStowed && !p.hasLighter
+    this.vmFlash.visible = show && !p.hasLighter && (swimLeft || flashHeld && p.flashlight && p.battery > 0 && p.flashJamT <= 0)
+    this.vmParts.flashlight.visible = flashHeld
+    const palm = swimLeft && !flashHeld
+    if (palm !== this.swimLeftHand) {
+      this.swimLeftHand = palm
+      this.vmParts.left.setPose(palm ? SWIM_LEFT_HAND_POSE : FLASH_HAND_POSE, palm ? null : this.vmParts.flashlight)
+    }
     // 副手打火机：装备即常显（火苗随时间跳动）
     this.vmLighter.visible = show && p.hasLighter
     if (this.vmLighter.visible) {
@@ -996,6 +1014,39 @@ export class Renderer3D {
     this.vm.rotation.y = ry0
     // 手电随移动轻微浮动
     this.vmFlash.position.y = -0.28 - sway2 * 0.01
+    this.vmFlash.position.x = -0.24; this.vmFlash.position.z = -0.42; this.vmFlash.rotation.set(0, 0, 0)
+    // [swim] 蛙泳手臂：空手时双手划水；手里拿着东西时右手只轻轻划、东西放低；左手（手电）照样划
+    {
+      const sw = engine.swim
+      const busy = !!engine.usingItem || engine.attackAnimT > 0 || !!engine.searching || this.stowK > 0.5
+      const moving = Math.hypot(engine.input.mx, engine.input.my) > 0.1 || engine.input.jump || engine.input.crouch
+      const arms = advanceArms(this.swimArmSt, dt, {
+        swimming: engine.inLiquid === 1 && !sw.out, busy, speed: Math.hypot(sw.vx, sw.vy, sw.vz), maxSpeed: 2.45,
+        sprintStroke: engine.input.sprint && sw.sinceStroke < 0.62 * 1.2, sinceStroke: sw.sinceStroke, strokeT: 0.62, moving,
+      })
+      this.swimTreadK += (arms.tread - this.swimTreadK) * Math.min(1, dt * 3)
+      const k = busy ? 0 : arms.k
+      // 空手划水：拳头换成并拢的手掌
+      const wantHand = !busy && !this.vmHeld && k > 0.4 ? '__swim' : ''
+      if (!this.vmHeld && wantHand !== this.swimHand) {
+        this.swimHand = wantHand
+        this.vmParts.right.setPose(heldHandPose(wantHand), null)
+      }
+      if (k > 0.002) {
+        const tp = treadPose(this.time), spose = strokePose(arms.phase)
+        const arm = blendPose(spose, tp, this.swimTreadK)
+        const held = !!this.vmItem
+        const rk = k * (held ? 0.4 : 1)
+        const rBase = { px: this.vm.position.x, py: this.vm.position.y, pz: this.vm.position.z, rx: this.vm.rotation.x, ry: this.vm.rotation.y, rz: this.vm.rotation.z }
+        const r = blendPose(rBase, held ? { ...arm, py: arm.py - 0.08, rx: arm.rx * 0.5 } : arm, rk)
+        this.vm.position.set(r.px, r.py, r.pz); this.vm.rotation.set(r.rx, r.ry, r.rz)
+        const lBase = { px: -0.24, py: this.vmFlash.position.y, pz: -0.42, rx: 0, ry: 0, rz: 0 }
+        // 左手相位错开一点点，划水不像机械同步
+        const la = mirrorPose(blendPose(strokePose(arms.phase - 0.03), treadPose(this.time + 0.4), this.swimTreadK))
+        const l = blendPose(lBase, la, k)
+        this.vmFlash.position.set(l.px, l.py, l.pz); this.vmFlash.rotation.set(l.rx, l.ry, l.rz)
+      }
+    }
   }
 
   private updateCrosshair(engine: Engine) {
@@ -1191,6 +1242,33 @@ export class Renderer3D {
         else bob -= this.landAmp * Math.sin(k * Math.PI)
       }
     }
+    // [swim] 游泳镜头：水里不用走路的步频摇晃；改成随划水节奏的缓慢起伏 + 水下漂浮横滚 + 划水前冲 + 入水冲击
+    if (engine.inLiquid === 1 && this.headBobReal) {
+      const sw = engine.swim
+      const sp = Math.hypot(sw.vx, sw.vy, sw.vz)
+      this.swimCamK += ((engine.submerged ? 1 : 0.35) - this.swimCamK) * Math.min(1, dt * 2)
+      const k = this.swimCamK
+      this.swimCamPhase += dt * (0.9 + sp * 0.45)
+      bob = Math.sin(this.swimCamPhase * 1.7) * 0.03 * k + Math.sin(this.time * 0.61) * 0.025 * k
+      swayX = Math.sin(this.swimCamPhase * 0.85) * 0.02 * k
+      bobRoll = Math.sin(this.time * 0.47 + 0.9) * 0.035 * k + Math.sin(this.swimCamPhase * 0.85) * 0.012 * k
+      bobPitch = Math.sin(this.time * 0.73) * 0.012 * k
+      // 划水：发力那一下身体前冲、镜头轻压
+      const st = Math.max(0, 1 - sw.sinceStroke / 0.45)
+      bobPitch -= Math.sin(st * Math.PI) * 0.025
+      // 入水冲击：镜头往下一沉再回弹
+      const ek = sw.entryK
+      if (ek > 0) { bobPitch -= Math.sin(ek * Math.PI) * 0.12 * ek; bob -= ek * ek * 0.18 }
+      // 胸口抽动：一下猛抽
+      const ct = Math.max(0, 1 - sw.sinceContract / 0.35)
+      if (ct > 0) { bobPitch += Math.sin(ct * Math.PI) * 0.05 * ct; bob -= Math.sin(ct * Math.PI) * 0.04 }
+    } else this.swimCamK = 0
+    // [swim 阶段 3] 减压病：关节痛带来的轻微摇晃（不论在不在水里）
+    if (engine.swim.bendsT > 0 && opts.shake) {
+      const bk = Math.min(1, engine.swim.bendsT / 6) * (0.4 + 0.6 * engine.swim.bendsSev)
+      bobRoll += Math.sin(this.time * 1.3) * 0.03 * bk
+      bobPitch += Math.sin(this.time * 0.9 + 1.7) * 0.015 * bk
+    }
     // v57t：水面的相机随浪起伏——避免像踩在固体平面上；离开水面后平滑归零
     {
       const target = def.id === 7 && engine.inLiquid === 1
@@ -1246,7 +1324,9 @@ export class Renderer3D {
         this.camera.rotation.x += (1 - ease) * 0.3
       }
     }
-    const fov = this.fovBase + Math.sin(this.time * 1.8) * 7 * insanity + (engine.input.sprint && mag > 0.1 ? 5 : 0) + dropFov // v58：拖拽演出 FOV 扩张
+    // [swim] 水里不吃冲刺 FOV；改成每次划水 +3° 的短促冲刺感
+    const strokeFov = engine.inLiquid === 1 ? Math.max(0, 1 - engine.swim.sinceStroke / 0.5) * 3 : 0
+    const fov = this.fovBase + Math.sin(this.time * 1.8) * 7 * insanity + (engine.input.sprint && mag > 0.1 && engine.inLiquid !== 1 ? 5 : 0) + dropFov + strokeFov // v58：拖拽演出 FOV 扩张
     if (Math.abs(fov - this.camera.fov) > 0.05) { this.camera.fov = fov; this.camera.updateProjectionMatrix() }
     mapVision.fov=2*Math.atan(Math.tan(this.camera.fov*Math.PI/360)*this.camera.aspect)
 
@@ -1289,6 +1369,15 @@ export class Renderer3D {
       this.flash.position.y -= 0.1
     }
     this.flash.target.position.copy(this.camera.position).addScaledVector(dir, 6)
+    if (engine.inLiquid === 1 && !engine.handsStowed && this.vmFlash.visible && p.equip.offhand?.type === 'flashlight') {
+      // A restrained sweep follows the offhand. Headlamps keep their steady aim.
+      this.vmFlash.updateWorldMatrix(true, false)
+      this.swimBeamOrigin.setFromMatrixPosition(this.vmFlash.matrixWorld)
+      this.swimBeamDir.set(0, 0, -1).transformDirection(this.vmFlash.matrixWorld)
+      this.flash.position.lerp(this.swimBeamOrigin, .65)
+      this.swimBeamDir.lerp(dir, .7).normalize()
+      this.flash.target.position.copy(this.flash.position).addScaledVector(this.swimBeamDir, 6)
+    }
     // v58：手电阴影按需更新。阴影贴图只取决于光源姿态与场景内容；静止时仅保留
     // 低频心跳刷新动态投影体，移动时按光影模式隔帧更新。
     const shadowContentChanged = this.builtRev !== this.flashShadowBuiltRev
@@ -1972,7 +2061,9 @@ export class Renderer3D {
     const ao=real&&this.textureQuality>0?this.photo.ao:0
     const arView=engine.over?null:arachnidHudState(engine),arAcid=arView?.acid??0,arWeb=Math.min(1,(arView?.web??0)/2)
     const focusBlur=Math.max(arAcid>0?2+arAcid*4:0,perceptionBlur(engine.player.sanity,engine.player.level===0?engine.l0Blur:0),engine.over?0:bursterVision(engine).blind*3)
-    const wantPhoto=real||this.photo.grain>0||this.photo.vignette>0||this.photo.scanline>0||this.photo.grade!=='neutral'||focusBlur>0||arWeb>0
+    const breathFx=swimBreathVisuals(engine.swim.stage,engine.swim.o2k,engine.swim.blackK,this.time)
+    const oxygenFx=breathFx.edge>0||breathFx.gray>0||breathFx.black>0
+    const wantPhoto=oxygenFx||real||this.photo.grain>0||this.photo.vignette>0||this.photo.scanline>0||this.photo.grade!=='neutral'||focusBlur>0||arWeb>0
     // HDR tube emitters participate in the same thresholded bloom as other levels.
     const wantBloom = this.lightMode === 'realistic' && this.bloomOn
     const wantPs1 = this.resolutionMode === '320p_ps1'
@@ -2044,7 +2135,7 @@ export class Renderer3D {
         ;(this.nvPass.uniforms.resolution.value as THREE.Vector2).copy(dbSize)
       }
       if(this.photoPass){const u=this.photoPass.material.uniforms;u.white.value.fromArray(real?photoProfile.white:[1,1,1]);u.saturation.value=(this.photo.grade==='bleached'?.62:this.photo.grade==='cold'?.8:this.photo.grade==='liminal'?.88:1)*(real?(photoProfile.saturation??1):1);if(this.photo.grade==='cold')u.white.value.multiply(new THREE.Vector3(.96,1,1.025));if(this.photo.grade==='liminal')u.white.value.multiply(new THREE.Vector3(1.02,1,.97));u.strength.value=photoProfile.ao;u.halation.value=0}
-      if(this.photoFinish){const u=this.photoFinish.uniforms;u.time.value=this.time;u.grain.value=this.photo.grain;u.vignette.value=this.photo.vignette;u.scanline.value=this.photo.scanline*.0015;u.blur.value=focusBlur;u.arachnidAcid.value=arAcid;u.arachnidWeb.value=arWeb;this.three.getDrawingBufferSize(u.resolution.value)}
+      if(this.photoFinish){const u=this.photoFinish.uniforms;u.time.value=this.time;u.grain.value=this.photo.grain;u.vignette.value=this.photo.vignette;u.scanline.value=this.photo.scanline*.0015;u.blur.value=focusBlur;u.arachnidAcid.value=arAcid;u.arachnidWeb.value=arWeb;u.swimBreath.value.set(breathFx.edge,breathFx.gray,breathFx.black);this.three.getDrawingBufferSize(u.resolution.value)}
       if(this.bloomPass){this.bloomPass.threshold=1.02;this.bloomPass.strength=this.bloomStrength/35*photoProfile.bloom*(1+this.eyeAdaptation.glare);this.bloomPass.radius=.3+this.eyeAdaptation.glare*.12}
       if (QA_CPU_SKIN) syncSceneCpuSkins(this.scene) // 仅 ?cpu=1：无头 SwiftShader 不能画 GPU 蒙皮，改用 CPU 替身
       if (!preparingEntry) this.composer.render()

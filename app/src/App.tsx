@@ -217,6 +217,7 @@ function Game() {
     audio.setAmbVolume(settings.ambient / 100)
     audio.setSfxVolume(settings.sfx / 100)
     engine.devEnabled = settings.devMode
+    engine.swimMode = settings.swimMode === 'flat' ? 'flat' : 'view' // [swim]
     if (!settings.devMode) {
       engine.dev.mapReveal = false
       if (engine.dev.fly) engine.devSetFlight(false)

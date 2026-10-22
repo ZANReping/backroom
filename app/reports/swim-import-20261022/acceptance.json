@@ -1,0 +1,106 @@
+{
+  "date": "2026-10-22",
+  "target": "E:/ZAN/backroom/app",
+  "archive": "swim-full.zip",
+  "sha256": "94c4f8567a571d9202a665f6dc6903bb1044d6672ceba5dce64d57fa717ecfba",
+  "checks": {
+    "swim": 89,
+    "integration": 60,
+    "melee": 131,
+    "retroHands": 13756,
+    "l7Cliffs": 20,
+    "thingIntegration": 799,
+    "l7Seams": 829,
+    "l7Chart": 24633
+  },
+  "build": "tsc -b && vite build: passed",
+  "actualGame": {
+    "realistic": {
+      "file": "realistic-final/result.json",
+      "checks": 34,
+      "errors": 0,
+      "requests": 0,
+      "medianMs": 8.8,
+      "p95Ms": 15.1,
+      "worstP95Ms": 17.8,
+      "draws": 345.43,
+      "triangles": 235171,
+      "before": {
+        "geometries": 341,
+        "textures": 181
+      },
+      "after": {
+        "geometries": 341,
+        "textures": 181
+      }
+    },
+    "classic": {
+      "file": "classic-accepted/result.json",
+      "checks": 40,
+      "errors": 0,
+      "requests": 0,
+      "medianMs": 9.6,
+      "p95Ms": 11,
+      "worstP95Ms": 13.7,
+      "draws": 153.6,
+      "triangles": 83368,
+      "before": {
+        "geometries": 259,
+        "textures": 156
+      },
+      "after": {
+        "geometries": 259,
+        "textures": 156
+      }
+    }
+  },
+  "desktopTouchEmulation": {
+    "desktopTouchEmulation": true,
+    "viewport": [
+      844,
+      390
+    ],
+    "dive": {
+      "crouch": true,
+      "jump": false,
+      "vz": -2.379161261668068,
+      "z": -6.529785775725108
+    },
+    "cancelled": {
+      "crouch": false,
+      "jump": false,
+      "vz": -2.142112720792168,
+      "z": -7.230685719364219
+    },
+    "ascend": {
+      "crouch": false,
+      "jump": true,
+      "vz": 2.4134228083270632,
+      "z": -5.429350635118894
+    },
+    "released": {
+      "crouch": false,
+      "jump": false,
+      "vz": 2.122140109770543,
+      "z": -4.67942448433747
+    }
+  },
+  "limitations": [
+    "GPU frame cadence in an isolated headless fixed scene; not a full game performance guarantee",
+    "No Android hardware or audible audio listening test",
+    "No pre-import swimming performance comparison; baseline source backups only",
+    "Multiplayer remains frozen"
+  ],
+  "cleanup": {
+    "realistic": {
+      "browser": "SIGTERM",
+      "server": "SIGTERM",
+      "profileRemoved": true
+    },
+    "classic": {
+      "browser": "SIGTERM",
+      "server": "SIGTERM",
+      "profileRemoved": true
+    }
+  }
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "name": "check:swim",
+    "status": 0,
+    "ms": 5707,
+    "tail": "时手臂相位和划水冲量同步（发力 0.12s = 外划关键帧）\n✔ 使用物品 / 攻击时手臂让位（权重回到 0）\n✔ 渲染层接入：蛙泳手臂、划水 FOV、游泳镜头，且水里不吃冲刺 FOV\n✔ 渲染与 HUD 接入：屏气效果只作用游戏画面，升降指示与深度计保持可读\n✔ 水下悬停 3s：没有噪音（0 次）\n✔ 水下普通游：9 次轻响，半径 3m，不算明显响动\n✔ 水面普通游：半径 5m（比水下响）\n✔ 水下冲刺：每划一下一次明显响动（5 下，半径 8m）\n✔ 水面冲刺拍水：半径 11m\n✔ 水下徒手攻击间隔 0.75s = 岸上 0.58s × 1.3\n✔ 水下滋水枪扣不响：不耗弹、不进冷却、提示\n✔ 水下枪糖也开不了枪\n✔ 头露出水面就能开枪\n✔ 水下投掷射程 2.69m ≈ 岸上 4.80m 的一半（0.56）\n✔ 投掷接入：头在水下才按水下弹道\n✔ 1m 浪峰推 2s：被推开 2.85m，浪过后还漂了 2.31m（有惯性）\n✔ 水下 8m 涌浪推力弱很多（0.39m）\n✔ 水墙：朝墙体中面的水流加速度\n✔ 涌浪/水墙改成水流加速度（不再直接挪位置）\n✔ 下潜越过 30m、60m 各提示一次\n✔ 回浅 10m 以上再下去会再次提示\n✔ 快速上浮途中提醒一次\n✔ 60m 直冲上来：减压病 49.80s，严重度 0.67\n✔ 发作中关节痛轻微扣血（10s 扣 3.17）\n✔ 发作中体力恢复减半（10s 回到 86.00）\n✔ 潜回 20m：3s 消退 9.00s（×3）\n✔ 最重一次总共最多扣 24.00 血（轻度）\n✔ 仰角 33° 慢慢游上来不发作（快速上浮累计 0.00m）\n✔ 只潜到 30m 再快速上浮：不发作\n✔ 水池 / 运河没有水压和减压病\n✔ HUD 显示减压病剩余时间；镜头随关节痛轻晃\n✔ 设置 → 操作：游泳方向（沿视线游 / 水平游 + 按键升降），默认沿视线\n✔ App 把设置同步到引擎\n✔ 旧的「冲刺锁准星 / 松键即停」游泳代码已移除\n\n89/89 通过\n\n  .cache\\check-swim.mjs  8.3mb\n\nDone in 208ms\n"
+  },
+  {
+    "name": "check:swim-integration",
+    "status": 0,
+    "ms": 2021,
+    "tail": "stage 1, oxygen 1\nPASS Breath uniforms are bounded at stage 1, oxygen 1.5\nPASS Breath uniforms are bounded at stage 2, oxygen 0\nPASS Breath uniforms are bounded at stage 2, oxygen 0.6\nPASS Breath uniforms are bounded at stage 2, oxygen 0.85\nPASS Breath uniforms are bounded at stage 2, oxygen 1\nPASS Breath uniforms are bounded at stage 2, oxygen 1.5\nPASS Breath uniforms are bounded at stage 3, oxygen 0\nPASS Breath uniforms are bounded at stage 3, oxygen 0.6\nPASS Breath uniforms are bounded at stage 3, oxygen 0.85\nPASS Breath uniforms are bounded at stage 3, oxygen 1\nPASS Breath uniforms are bounded at stage 3, oxygen 1.5\nPASS Recovery clears the effect regardless of pulse phase\nPASS Swimming hands and thumbs mirror in camera space\nPASS Swimming fingers extend rather than forming the empty-hand fist\n58/58 integration checks passed\n\n  .cache\\check-swim-integration.mjs  5.6mb\n\nDone in 174ms\n"
+  },
+  {
+    "name": "check:melee",
+    "status": 0,
+    "ms": 5561,
+    "tail": "-0.015 / 旧 -0.117）\n✔ 第一人称模型 crowbar 带握持数据\n✔ 地面模型 crowbar:broken：平躺（高 0.030m）\n✔ 地面模型 crowbar:broken：竖直居中，与旧模型同一悬浮基准（底 -0.015 / 旧 -0.117）\n✔ 第一人称模型 crowbar:broken 带握持数据\n✔ 地面模型 wrench：平躺（高 0.035m）\n✔ 地面模型 wrench：竖直居中，与旧模型同一悬浮基准（底 -0.018 / 旧 -0.023）\n✔ 第一人称模型 wrench 带握持数据\n✔ 地面模型 wrench:broken：平躺（高 0.036m）\n✔ 地面模型 wrench:broken：竖直居中，与旧模型同一悬浮基准（底 -0.018 / 旧 -0.023）\n✔ 第一人称模型 wrench:broken 带握持数据\n✔ 地面模型 timber：平躺（高 0.041m）\n✔ 地面模型 timber：竖直居中，与旧模型同一悬浮基准（底 -0.021 / 旧 -0.023）\n✔ 第一人称模型 timber 带握持数据\n✔ 地面模型 timber:broken：平躺（高 0.041m）\n✔ 地面模型 timber:broken：竖直居中，与旧模型同一悬浮基准（底 -0.021 / 旧 -0.023）\n✔ 第一人称模型 timber:broken 带握持数据\n✔ 地面模型 axe：平躺（高 0.047m）\n✔ 地面模型 axe：竖直居中，与旧模型同一悬浮基准（底 -0.024 / 旧 -0.043）\n✔ 第一人称模型 axe 带握持数据\n✔ 地面模型 axe:broken：平躺（高 0.047m）\n✔ 地面模型 axe:broken：竖直居中，与旧模型同一悬浮基准（底 -0.024 / 旧 -0.043）\n✔ 第一人称模型 axe:broken 带握持数据\n✔ 挥砍姿势全程有限值，前倾 rx 不超过前臂翻起的上限\n\n131/131 通过\n\n  .cache\\check-melee.mjs  4.8mb\n\nDone in 170ms\n"
+  },
+  {
+    "name": "check:retro-hands",
+    "status": 0,
+    "ms": 22237,
+    "tail": "\n> my-app@0.0.0 check:retro-hands\n> esbuild scripts/check-retro-hands.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-retro-hands.mjs && node .cache/check-retro-hands.mjs\n\n{\n  \"checks\": 13756,\n  \"itemTypes\": 95,\n  \"stats\": 564\n}\n\n  .cache\\check-retro-hands.mjs  2.6mb\n\nDone in 125ms\n"
+  },
+  {
+    "name": "check:l7-cliffs",
+    "status": 0,
+    "ms": 22949,
+    "tail": "次 2s 内挪动 >1m（边横移边沿崖上攀）\nseed 777: 崖带 1344 点，陡于 STEP_UP 1056，旧判定困死 1060，新判定困死 0\n✔ seed 777 崖带采样有效（1344 点 / 陡点 1056）\n✔ seed 777 新判定：静态困点降到 1% 以内（0/1344，旧 1060）\n✔ seed 777 凹坑困点只按前进 3s 都能脱出（0/0）\n✔ seed 777 贴崖只按前进：8/8 次沿崖壁上攀 >6m 或翻脊游出 >5m\n✔ seed 777 贴崖横移：8/8 次 2s 内挪动 >1m（边横移边沿崖上攀）\nseed 12345: 崖带 1344 点，陡于 STEP_UP 1053，旧判定困死 1058，新判定困死 1\n✔ seed 12345 崖带采样有效（1344 点 / 陡点 1053）\n✔ seed 12345 新判定：静态困点降到 1% 以内（1/1344，旧 1058）\n✔ seed 12345 凹坑困点只按前进 3s 都能脱出（1/1）\n✔ seed 12345 贴崖只按前进：8/8 次沿崖壁上攀 >6m 或翻脊游出 >5m\n✔ seed 12345 贴崖横移：8/8 次 2s 内挪动 >1m（边横移边沿崖上攀）\nseed 20261009: 崖带 1344 点，陡于 STEP_UP 1051，旧判定困死 1056，新判定困死 5\n✔ seed 20261009 崖带采样有效（1344 点 / 陡点 1051）\n✔ seed 20261009 新判定：静态困点降到 1% 以内（5/1344，旧 1056）\n✔ seed 20261009 凹坑困点只按前进 3s 都能脱出（5/5）\n✔ seed 20261009 贴崖只按前进：8/8 次沿崖壁上攀 >6m 或翻脊游出 >5m\n✔ seed 20261009 贴崖横移：8/8 次 2s 内挪动 >1m（边横移边沿崖上攀）\nL7 cliffs: 20/20 passed\n\n  .cache\\check-l7-cliffs.mjs  4.7mb\n\nDone in 137ms\n"
+  },
+  {
+    "name": "check:thing-integration",
+    "status": 0,
+    "ms": 2389,
+    "tail": "gment 13\n✔ visual chain rebase segment 14\n✔ visual chain rebase segment 15\n✔ visual chain rebase segment 16\n✔ visual chain rebase segment 17\n✔ visual chain rebase segment 18\n✔ visual chain rebase segment 19\n✔ visual chain rebase segment 20\n✔ visual chain rebase segment 21\n✔ visual chain rebase segment 22\n✔ visual chain rebase segment 23\n✔ visual chain rebase segment 24\n✔ visual chain rebase segment 25\n✔ visual chain rebase segment 26\n✔ visual chain rebase segment 27\n✔ thething uses cooperative queue\n✔ first queue request does not build synchronously\n✔ model prepared over multiple queue turns\n✔ base job yields across geometry rings\n✔ partial base job can be cancelled\n✔ head LOD is built over multiple time slices\n✔ high LOD finite\n✔ far view returns to low LOD\n✔ tar glyph texture is protected and shared\nthing integration: 799/799\n\n  .cache\\check-thing-integration.mjs  3.9mb\n\nDone in 134ms\n"
+  },
+  {
+    "name": "check:l7-seams",
+    "status": 0,
+    "ms": 16085,
+    "tail": "   \"samples\": 65\n    },\n    {\n      \"seed\": 777,\n      \"dir\": 0,\n      \"gap\": 0,\n      \"norm\": 0,\n      \"samples\": 65\n    },\n    {\n      \"seed\": 777,\n      \"dir\": 1,\n      \"gap\": 0,\n      \"norm\": 0,\n      \"samples\": 65\n    },\n    {\n      \"seed\": 777,\n      \"dir\": 2,\n      \"gap\": 0,\n      \"norm\": 0,\n      \"samples\": 65\n    },\n    {\n      \"seed\": 777,\n      \"dir\": 3,\n      \"gap\": 0,\n      \"norm\": 0,\n      \"samples\": 65\n    },\n    {\n      \"seed\": 424242,\n      \"dir\": 0,\n      \"gap\": 0,\n      \"norm\": 0,\n      \"samples\": 65\n    },\n    {\n      \"seed\": 424242,\n      \"dir\": 1,\n      \"gap\": 0,\n      \"norm\": 0,\n      \"samples\": 65\n    },\n    {\n      \"seed\": 424242,\n      \"dir\": 2,\n      \"gap\": 0,\n      \"norm\": 0,\n      \"samples\": 65\n    },\n    {\n      \"seed\": 424242,\n      \"dir\": 3,\n      \"gap\": 0,\n      \"norm\": 0,\n      \"samples\": 65\n    }\n  ]\n}\n\n  .cache\\check-l7-seams.mjs  4.1mb\n\nDone in 114ms\n"
+  },
+  {
+    "name": "check:l7-chart",
+    "status": 0,
+    "ms": 2196,
+    "tail": "\n> my-app@0.0.0 check:l7-chart\n> esbuild scripts/check-l7-chart.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l7-chart.mjs && node .cache/check-l7-chart.mjs\n\n{\"pass\":24633,\"fail\":0}\n\n  .cache\\check-l7-chart.mjs  2.1mb\n\nDone in 112ms\n"
+  }
+]

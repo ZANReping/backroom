@@ -7,8 +7,8 @@ import { buildDetailedItemMesh } from './detailItemsMesh'
 import { buildSquirtGunMesh } from './squirtGunMesh'
 import { buildMeleeMesh, type MeleeType } from './meleeMesh'
 import { MELEE_HOLD, meleePose } from './meleeAnim'
-import { buildRetroHand, heldHandPose, FLASH_HAND_POSE, KAZOO_HELD, type RetroHand } from './retroViewHand'
-export { heldHandPose, heldBox, LIGHTER_HAND_POSE, KAZOO_HAND_POSE, buildRetroHand, sleeveKindOf } from './retroViewHand'
+import { buildRetroHand, heldHandPose, FLASH_HAND_POSE, SWIM_LEFT_HAND_POSE, KAZOO_HELD, type RetroHand } from './retroViewHand'
+export { heldHandPose, heldBox, LIGHTER_HAND_POSE, FLASH_HAND_POSE, SWIM_LEFT_HAND_POSE, KAZOO_HAND_POSE, buildRetroHand, sleeveKindOf } from './retroViewHand'
 
 // ---------- 第一人称手部/手持物品 ----------
 // v53：去掉自发光（原 emissiveIntensity 0.25）——手部/袖管/手持物在黑暗中不再自发光，
@@ -17,7 +17,7 @@ export function vmat(color: string | number) {
   return new THREE.MeshLambertMaterial({ color })
 }
 
-export interface ViewmodelParts { right: RetroHand; left: RetroHand }
+export interface ViewmodelParts { right: RetroHand; left: RetroHand; flashlight: THREE.Group }
 export function buildViewmodel(vm: THREE.Group, vmFlash: THREE.Group, camera: THREE.Camera): ViewmodelParts {
   // v71：右手 = 复古低模手（指节分段包住把手 + 前臂 + 袖管），握法随手持物切换（heldHandPose），位于屏幕右下
   const right = buildRetroHand()
@@ -36,7 +36,10 @@ export function buildViewmodel(vm: THREE.Group, vmFlash: THREE.Group, camera: TH
   vmFlash.add(left.group)
   vmFlash.position.set(-0.24, -0.28, -0.42)
   camera.add(vmFlash)
-  return { right, left }
+  // Reuse the contact/pose caches before the first entry into water.
+  right.preparePose(heldHandPose('__swim'), null)
+  left.preparePose(SWIM_LEFT_HAND_POSE, null)
+  return { right, left, flashlight }
 }
 
 /** 手部（vm 节点）动作姿势：走路摆动 / 使用物品 / 攻击 / 搜索。纯函数，renderer 与预览页共用（v71 抽出，数值未改）。 */

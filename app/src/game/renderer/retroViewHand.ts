@@ -20,6 +20,7 @@ export interface HandPose {
   r: number // 把手半径（米）；0 = 空手握拳
   fdir?: V3 // 前臂方向（H 坐标），默认 (0.3,-0.35,1)
   trigger?: boolean // 食指伸直搭在扳机上
+  open?: boolean // 游泳：四指伸直并拢，拇指自然微张；不参与物品握持求解
 }
 export type SleeveKind = 'long' | 'short' | 'none'
 export interface RetroHandLook { skin: string; sleeve: string; sleeveKind: SleeveKind; topStyle: number; plainSleeve?: boolean; gloved?: boolean }
@@ -248,7 +249,7 @@ function buildHandGeo(p: HandPose, mirror: boolean, sleeveKind: SleeveKind, col?
     const phi = PHI0 + dphi
     const trig = p.trigger && fi === 0
     const rad = [th / 2, th * 0.46, th * 0.4]
-    const J = closeChain(mcp[fi], [-Math.sin(phi), 0, -Math.cos(phi)], L, rad, [0, 0, 0], trig ? [0.12, 0.4, 0.5] : [1.55, 1.85, 1.35], [0.05, 0.06, 0.045], 1)
+    const J = closeChain(mcp[fi], [-Math.sin(phi), 0, -Math.cos(phi)], L, rad, [0, 0, 0], p.open ? [0.04, 0.12, 0.08] : trig ? [0.12, 0.4, 0.5] : [1.55, 1.85, 1.35], [0.05, 0.06, 0.045], 1)
     for (let k = 0; k < 3; k++) caps.push([J[k], J[k + 1], rad[k]])
     const pts = [add(J[0], mul(tb, 0.012)), ...J] // 指根埋进掌内
     for (let k = 0; k < pts.length - 1; k++) {
@@ -282,7 +283,7 @@ function buildHandGeo(p: HandPose, mirror: boolean, sleeveKind: SleeveKind, col?
     if (!(col?.near(q, 0.0105 + SKIN_GAP)) && !caps.some(([a, b, r]) => segDist(q, a, b) < (r + 0.0105) * 0.72)) { T1 = q; break }
   }
   const dT: V3 = norm([Math.sin(pt), 0, Math.cos(pt)])
-  const TJ = closeChain(T1, dT, [0.031, 0.026], [0.0095, 0.0082], [0.5, 0.2], [-1.35, -1.1], [-0.05, -0.05], 9, caps, 0.2)
+  const TJ = closeChain(T1, dT, [0.031, 0.026], [0.0095, 0.0082], [0.5, 0.2], p.open ? [0.15, 0.05] : [-1.35, -1.1], [-0.05, -0.05], 9, caps, 0.2)
   prism(S, T0, T1, [0, 1, 0], 0.012, 0.014, 0.0105, 0.0118, 0.95, 0.92)
   prism(S, sub(TJ[0], mul(norm(sub(TJ[1], TJ[0])), 0.003)), TJ[1], [0, 1, 0], 0.0098, 0.0108, 0.009, 0.01, 0.88, 0.98, 6, [false, true])
   prism(S, sub(TJ[1], mul(norm(sub(TJ[2], TJ[1])), 0.003)), TJ[2], [0, 1, 0], 0.009, 0.0096, 0.0074, 0.008, 0.88, 1.06, 6, [false, true])
@@ -428,10 +429,14 @@ export function heldBox(item: THREE.Object3D): HeldBox {
   const b = new THREE.Box3().setFromObject(item, true)
   return { min: [b.min.x, b.min.y, b.min.z], max: [b.max.x, b.max.y, b.max.z] }
 }
+export const SWIM_HAND_POSE: HandPose = { at: [0, 0, -.03], r: 0, open: true, ax: [0, 1, 0], ay: [-1, 0, 0], fdir: [-.28, -.4, 1] }
+// Mirror the basis as well as the geometry so both thumbs face inwards.
+export const SWIM_LEFT_HAND_POSE: HandPose = { ...SWIM_HAND_POSE, ax: [0, -1, 0], ay: [1, 0, 0] }
 export function heldHandPose(type: string, box?: HeldBox): HandPose {
   if (type in MELEE_HOLD) return meleeHandPose(type as MeleeType) // 近战武器重制：握点/握把轴/半径见 meleeAnim.MELEE_HOLD
   switch (type) {
     case '': return VERT([0.004, -0.005, -0.03], 0, { fdir: [0.28, -0.4, 1] }) // 空手：握拳，指节朝前（出拳）
+    case '__swim': return SWIM_HAND_POSE // 张开并拢的划水掌
     case 'glowstick': return VERT([0, 0.03, -0.11], 0.011)
     case 'lighter': return VERT([0, -0.01, -0.1], 0.015)
     case 'guncandy': return VERT([0, -0.028, -0.03], 0.02, { trigger: true, ay: [0, 1, 0.12] })
