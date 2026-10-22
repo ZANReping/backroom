@@ -1,0 +1,9 @@
+
+> my-app@0.0.0 check:l7-chart
+> esbuild scripts/check-l7-chart.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l7-chart.mjs && node .cache/check-l7-chart.mjs
+
+
+  .cache\check-l7-chart.mjs  2.1mb
+
+Done in 112ms
+{"pass":24633,"fail":0}

@@ -20,6 +20,10 @@ function world(o: { indoorFrom?: number } = {}) {
     camShake: 0, hurt: 0, dead: '', wall: false,
     msg: (t: string) => msgs.push(t),
     los() { return !this.wall },
+    entityWalkH(_m: any, tx: number, ty: number) {
+      if (tx < 0 || ty < 0 || tx >= W || ty >= H) return null
+      return this.map.outdoor[ty * W + tx] === 1 ? 0 : null
+    },
     wanderTarget(e: Entity) { e.targetX = e.x; e.targetY = e.y; e.stateT = 3 },
     stepEntity(e: Entity, sp: number, dt: number) { const dx = e.targetX - e.x, dy = e.targetY - e.y, d = Math.hypot(dx, dy); if (d < 0.3) return true; const k = Math.min(d, sp * dt) / d; const nx = e.x + dx * k, ny = e.y + dy * k; if (this.map.outdoor[Math.floor(ny) * this.map.w + Math.floor(nx)] !== 1) return true; e.x = nx; e.y = ny; e.facing = Math.atan2(dy, dx); this.lastSpeed = sp; return false },
     hurtPlayer(dmg: number) { this.hurt += dmg; this.player.hp -= dmg; if (this.player.hp <= 0 && !this.dead) this.dead = 'hurt' },

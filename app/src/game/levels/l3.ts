@@ -22,6 +22,7 @@ export const L3: LevelDef = {
     { type: 'skinstealer', w: 5, min: 1, max: 1 },
     { type: 'corpserat', w: 5, min: 1, max: 2 },
     { type: 'wretch', w: 1, min: 1, max: 1 }, // 极其罕见
+    { type: 'burster', w: 6, min: 1, max: 1 }, // 爆酸者（Entity 11）：只在 L3，单只出现（ZAN 2026-10-21）
   ],
   items: [
     // wiki：稀有材料与电气设备刷新率全后室最高（保险丝/电池/门禁卡）

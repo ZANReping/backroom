@@ -100,3 +100,19 @@ function animateNWPose(grp: THREE.Group, e: Entity, gz: number, ctx: NWRenderCtx
 }
 /** 精细几何是否都准备好了（渲染器据此决定要不要继续排队准备 LOD0） */
 export const mangledHiReady = () => mangledGeometryReady(0)
+
+/** Publish the posed leg bones to physics. Reused records retain no scene references. */
+export function syncMangledLegColliders(grp:THREE.Group,e:Entity){
+ const rig=grp.userData.mangledRig;if(!rig)return
+ grp.updateWorldMatrix(true,true)
+ const colliders=e.mangledLegs??(e.mangledLegs=[]),radii=[2.05,1.45,1.04]
+ let n=0
+ for(let i=0;i<8;i++)for(let j=0;j<3;j++){
+  const a=rig.byName['leg'+i+'_'+j]?.matrixWorld.elements,b=rig.byName['leg'+i+'_'+(j+1)]?.matrixWorld.elements
+  if(!a||!b)continue
+  const c=colliders[n]??(colliders[n]={ax:0,ay:0,az:0,bx:0,by:0,bz:0,radius:0});n++
+  c.ax=a[12]-grp.position.x;c.ay=a[14]-grp.position.z;c.az=a[13]-grp.position.y
+  c.bx=b[12]-grp.position.x;c.by=b[14]-grp.position.z;c.bz=b[13]-grp.position.y;c.radius=radii[j]*Math.abs(grp.scale.x)
+ }
+ colliders.length=n
+}

@@ -1,0 +1,92 @@
+[
+  {
+    "name": "burster",
+    "ok": true,
+    "code": 0,
+    "tail": "涨后再喷一轮\n✔ 侧移 2.5m 躲开酸液（血 100.0）\n✔ 潜水面罩：失明只剩 30%（0.20 / 0.70）\n✔ 夜视镜：失明只剩 60%（0.41）\n✔ 伤害同样被挡（裸 15.0 / 面罩 4.5 / 夜视 9.0）\n✔ 面罩被腐蚀：每滴 -4 耐久（76）\n✔ 耐久归零：面罩被蚀穿报废\n✔ 先被糊眼\n✔ 市政自来水洗眼：失明与灼烧清零\n✔ 洗眼消耗 1 瓶水\n✔ 没被糊眼时喝水照常是喝水\n✔ 滋水枪里的清水也能洗眼（消耗 1 份）\n✔ 低血量且大半失明 → 休克倒地，无法移动\n✔ 它爬过来准备消化\n✔ 5 秒内没洗眼 → 死亡\n✔ 死因：昏迷中被爆酸者消化\n✔ 休克中用杏仁水洗眼：重新站起来\n✔ 洗过眼就不会被消化\n✔ 清水喷中鼓胀中的它：僵直，这一轮作废\n✔ 清水反应提示\n✔ 杏仁水重度灼伤：-45 并留疤\n✔ 打休眠中的它：立刻爆一轮，几乎没有前摇\n✔ 血量降到 30% 以下：结茧而不是死亡（30）\n✔ 2.2s 后茧壳硬化完成\n✔ 普攻打茧：弹开，无效\n✔ 重击（真实 strike 路径）在茧上砸出裂纹（0.50）\n✔ 重击打碎茧 → 死亡\n✔ 计入击杀并掉落酸性胼胝\n✔ 茧放着 90 秒不管：重新孵出来\n✔ 孵化后 60% 血（72）\n✔ 被杏仁水烧伤留疤的，孵化后只有 40% 血（48）\n✔ 近身打醒着的它：约 40% 概率打爆水泡溅酸（17/40）\n✔ 踩在地面酸液上会灼脚\n✔ 5m 内的响动把它吵醒\n✔ 看不见猎物 12 秒后重新蜷起来休眠\n✔ 一块酸性胼胝挤进储罐 = 3 份酸液\n✔ 酸线命中：直接 22 伤害（22）\n✔ 之后持续腐蚀 4/s × 5s（20.0）\n✔ 酸液对爆酸者无效\n✔ 自饮酸液：重创并糊眼\n✔ 储罐里是酸液时不能拿来洗眼\n✔ 公共遭遇记录：发现爆酸者会解锁图鉴\n✔ 圣所内先执行公共驱离，不开始喷酸\n\n57/57 通过\n\n  .cache\\check-burster.mjs  7.7mb\n\nDone in 119ms\n"
+  },
+  {
+    "name": "l23-map",
+    "ok": true,
+    "code": 0,
+    "tail": "\n> my-app@0.0.0 check:l23-map\n> esbuild scripts/check-l23-map.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l23-map.mjs && node .cache/check-l23-map.mjs\n\nL2/L3 map legend, region classification, immutable draw and exploration clipping: PASS\n\n  .cache\\check-l23-map.mjs  2.1mb\n\nDone in 97ms\n"
+  },
+  {
+    "name": "mangled-legs",
+    "ok": true,
+    "code": 0,
+    "tail": "\n> my-app@0.0.0 check:mangled-legs\n> esbuild scripts/check-mangled-legs.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-mangled-legs.mjs && node .cache/check-mangled-legs.mjs\n\nMangled leg capsule count, leg-gap passage, raised-foot clearance, dead cleanup and escape: PASS\n\n  .cache\\check-mangled-legs.mjs  2.2mb\n\nDone in 78ms\n"
+  },
+  {
+    "name": "l4-burster-integration",
+    "ok": true,
+    "code": 0,
+    "tail": "\n> my-app@0.0.0 check:l4-burster-integration\n> esbuild scripts/check-l4-burster-integration.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l4-burster-integration.mjs && node .cache/check-l4-burster-integration.mjs\n\n{\"ok\":true,\"proxyTriangles\":360,\"bursterGeometry\":29,\"bursterMaterials\":8,\"sharedTextures\":2,\"checks\":\"proxy raycast/transform/bounds, tiny caster suppression, cooperative templates, private rigs/buffers/materials, all animation clips, cocoon cracks, streaming rebase and scene reset\"}\n\n  .cache\\check-l4-burster-integration.mjs  2.2mb\n\nDone in 72ms\n"
+  },
+  {
+    "name": "l4",
+    "ok": true,
+    "code": 0,
+    "tail": "\n> my-app@0.0.0 check:l4\n> esbuild scripts/check-l4-generation.ts --bundle --platform=node --format=esm --outfile=.cache/check-l4-generation.mjs && node .cache/check-l4-generation.mjs\n\nseed 424242: reachable 68906/68906\nseed 17: reachable 68295/68295\nseed 9091: reachable 69829/69829\n{\"blocks\":{\"hall\":22,\"cubicle\":21,\"open\":14,\"rooms\":18},\"windows\":15110,\"stairs\":100,\"elev\":10,\"trap\":22,\"old\":2,\"vending\":42,\"coolers\":122,\"floorRatio\":0.9,\"entitiesPerChunk\":0.0138}\nL4 v2: 114500 passed, 0 failed\n\n  .cache\\check-l4-generation.mjs  1.9mb\n\nDone in 74ms\n"
+  },
+  {
+    "name": "l4-collisions",
+    "ok": true,
+    "code": 0,
+    "tail": "\n> my-app@0.0.0 check:l4-collisions\n> esbuild scripts/check-l4-collisions.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l4-collisions.mjs && node .cache/check-l4-collisions.mjs\n\n{\"checks\":418,\"cubicleOrientations\":2,\"glassDoorAxes\":2}\n\n  .cache\\check-l4-collisions.mjs  2.4mb\n\nDone in 82ms\n"
+  },
+  {
+    "name": "l4-details",
+    "ok": true,
+    "code": 0,
+    "tail": "\n> my-app@0.0.0 check:l4-details\n> esbuild scripts/check-l4-details.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l4-details.mjs && node .cache/check-l4-details.mjs\n\nL4 detail checks passed: 3388\nGenerated l4prop counts: toilet=56, services=2558, pantry=44, wallDecor=91, chairstack=12, archive=49, printer=84, boxes=18, server=44, whiteboard=15, plant=8\n\n  .cache\\check-l4-details.mjs  1.9mb\n\nDone in 72ms\n"
+  },
+  {
+    "name": "l4-batch-job",
+    "ok": true,
+    "code": 0,
+    "tail": "\n> my-app@0.0.0 check:l4-batch-job\n> esbuild scripts/check-l4-batch-job.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l4-batch-job.mjs && node .cache/check-l4-batch-job.mjs\n\n{\"passed\":856,\"yields\":36,\"cancelledGeometries\":957}\n\n  .cache\\check-l4-batch-job.mjs  610.0kb\n\nDone in 50ms\n"
+  },
+  {
+    "name": "l4-region-exits",
+    "ok": true,
+    "code": 0,
+    "tail": "\n> my-app@0.0.0 check:l4-region-exits\n> esbuild scripts/check-l4-region-exits.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l4-region-exits.mjs && node .cache/check-l4-region-exits.mjs\n\n{\"checks\":95249,\"chunks\":363,\"exits\":{\"trapdoor\":18,\"elevatorshaft\":10,\"oldstairs\":2},\"colors\":[{\"name\":\"办公间区\",\"color\":\"#405462\"},{\"name\":\"空旷区\",\"color\":\"#58516d\"},{\"name\":\"小房间区\",\"color\":\"#6c6250\"},{\"name\":\"空旷大厅\",\"color\":\"#486564\"}]}\n\n  .cache\\check-l4-region-exits.mjs  1.9mb\n\nDone in 71ms\n"
+  },
+  {
+    "name": "l4-melee-wrangler-integration",
+    "ok": true,
+    "code": 0,
+    "tail": "\n> my-app@0.0.0 check:l4-melee-wrangler-integration\n> esbuild scripts/check-l4-melee-wrangler-integration.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l4-melee-wrangler-integration.mjs && node .cache/check-l4-melee-wrangler-integration.mjs\n\n✔ Engine.moveSlot 交换不同耐久 timber：不合并、不丢失\n✔ 旧 timber 堆叠展开为每格一件且数量守恒\n✔ 旧 InvSlot 缺 dur 按满耐久处理\n✔ 展开保留已有耐久\n✔ 真实 dropSlot 保留 dur=0 与 blood\n✔ 真实 scan/doInteract 拾取保留残件状态\n✔ quickUse 开始修理\n✔ 切换槽位中断修理且不耗材料\n✔ 正常完成修理到 50% 且消耗一件材料\n✔ 修理同槽位替换为另一件残件：按对象身份取消、不耗钉子\n✔ locked 取消前摇 pending\n✔ handsStowed 取消前摇 pending\n✔ snapshot/JSON 恢复保留 player dur、blood 且 v=1\n✔ L4 chunk 生成饮水机并带 water 剩余量\n✔ snapshotChunkState 保存饮水机 water 状态\n✔ 牧蛇换 player/map 后重建新 frame：清理黑屏、捕获、洞口与卵枝\ncheck:l4-melee-wrangler-integration 16/16\n\n  .cache\\check-l4-melee-wrangler-integration.mjs  4.4mb\n\nDone in 115ms\n"
+  },
+  {
+    "name": "l4-melee-wrangler-resources",
+    "ok": true,
+    "code": 0,
+    "tail": "\n> my-app@0.0.0 check:l4-melee-wrangler-resources\n> esbuild scripts/check-l4-melee-wrangler-resources.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l4-melee-wrangler-resources.mjs && node .cache/check-l4-melee-wrangler-resources.mjs\n\n{\n  \"checks\": 2950192,\n  \"modes\": [\n    \"classic\",\n    \"realistic\"\n  ],\n  \"melee\": 10,\n  \"wrangler\": 4,\n  \"decorations\": 2\n}\n\n  .cache\\check-l4-melee-wrangler-resources.mjs  856.5kb\n\nDone in 63ms\n"
+  },
+  {
+    "name": "l9-fog",
+    "ok": true,
+    "code": 0,
+    "tail": "\n> my-app@0.0.0 check:l9-fog\n> esbuild scripts/check-l9-fog.ts --bundle --platform=node --format=esm --outfile=.cache/check-l9-fog.mjs && node .cache/check-l9-fog.mjs\n\n{\"checks\":482,\"arrival\":35,\"active\":[120,180],\"departure\":50}\n\n  .cache\\check-l9-fog.mjs  856.3kb\n\nDone in 62ms\n"
+  },
+  {
+    "name": "entity-forms",
+    "ok": true,
+    "code": 0,
+    "tail": "\n> my-app@0.0.0 check:entity-forms\n> esbuild scripts/check-entity-forms.ts --bundle --platform=node --format=esm --outfile=.cache/check-entity-forms.mjs && node .cache/check-entity-forms.mjs\n\nentity forms checks: 213 passed; 36 forms / 10 parents\n\n  .cache\\check-entity-forms.mjs  2.2mb\n\nDone in 95ms\n"
+  },
+  {
+    "name": "entity-preparation",
+    "ok": true,
+    "code": 0,
+    "tail": "\n> my-app@0.0.0 check:entity-preparation\n> esbuild scripts/check-entity-preparation.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-entity-preparation.mjs && node .cache/check-entity-preparation.mjs\n\nentity preparation checks: 17 passed\n\n  .cache\\check-entity-preparation.mjs  551.7kb\n\nDone in 55ms\n"
+  },
+  {
+    "name": "seating",
+    "ok": true,
+    "code": 0,
+    "tail": "\n> my-app@0.0.0 check:seating\n> esbuild scripts/check-seating.ts --bundle --platform=node --format=esm --outfile=.cache/check-seating.mjs && node .cache/check-seating.mjs\n\nSeating: 310 checks passed (3 avatar configurations, 6 seat heights, 5 animation stages).\n\n  .cache\\check-seating.mjs  844.3kb\n\nDone in 62ms\n"
+  }
+]

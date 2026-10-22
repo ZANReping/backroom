@@ -11,7 +11,7 @@ import { ALPHA_PEOPLE, ALPHA_REVISIONS } from './alphaPeople'
 
 export interface DialogueNode {
   npc: string // NPC 台词
-  opts: { text: string; next?: number; action?: 'trade' | 'leave' | 'play' }[] // 玩家回复选项（play=v56 乐手演奏）
+  opts: { text: string; next?: number; action?: 'trade' | 'leave' | 'play' | 'scorn' }[] // 玩家回复选项（play=v56 乐手演奏；scorn=[tiny] 对小小提起门/出路——惹恼它并结束对话）
 }
 
 export interface NpcDef {
@@ -380,74 +380,96 @@ export function jerryFollowerDef(...nums: number[]): NpcDef {
 
 export const NPCS: Record<string, NpcDef> = {
   ...ALPHA_PEOPLE,
-  // v58：小小（Entity 720）——L7 环形场的可对话实体；傲慢、恶意毫不掩饰、隐瞒 L9 出口。
-  // 非人形实体走实体交互通道（interact.ts case 'tiny'），此处仅承载对话树与人设；被激怒后由交互层拒绝对话。
+  // v58：小小（Entity 720）——L7 环形场的可对话实体。[tiny] 阶段 3 按中文维基 trimmed:entity-720 重写：
+  // 心灵感应式说话；智力高、健谈、傲慢、恶意毫不掩饰、厌恶噪音与肢体接触、讨厌听人讲道理；
+  // 它从不说出「出口」，玩家一提「门/出路」就选中 action 'scorn'（tinyAI.tinyScorn：第一次警告并记恼怒，再提就追杀）。
+  // 非人形实体走实体交互通道（interact.ts case 'tiny'），此处仅承载对话树与人设；被激怒/被逼退时由交互层拒绝对话。
   tiny: {
     id: 'tiny', name: '小小', role: 'Entity 720',
     faction: 'wanderer', // 无声望体系（hasRep=false——不会触发拒谈门槛，拒谈由 provoked 走交互层）
-    personality: '极端傲慢、自信，恶意毫不掩饰；高智商家伙，讨厌听别人讲道理，毫无同理心。',
-    background: '盘踞在 Level 7 暮色带环形场的巨大类人形实体。焦油外壳、荧光斑点、面部甲壳与一具巨物尸骨磨成的长矛。',
+    personality: '用心灵感应说话。智力极高、健谈，极端傲慢自信，对自己的恶意毫不掩饰；讨厌听别人讲道理，毫无同理心。厌恶噪音和任何肢体接触。从不提起「出口」——谁跟它提门或出路，它就翻脸。',
+    background: '盘踞在 Level 7 暮色带环形场台心那扇门上方的巨大类人形实体。2019 年 6 月被一名匿名流浪者发现，「小小」是那人起的讽刺外号，它拒绝说出真名。身披一整张鲨鱼皮，焦油外壳下是荧光斑点，面覆甲壳，长矛是某种巨物的牙。与更深处的 Entity 20 有约：它在上，那条鱼在下。',
     // avatar 仅为 NpcDef 的兼容字段；档案与对话框会直接复用 entitiesMesh 中的小小实体模型。
     avatar: { gender: 0, hair: 0, hairColor: '#0e1216', skin: '#10151a', pants: '#0c1013', pantsStyle: 0, face: 2 },
     lines: [
       {
-        npc: '哦？一个活人。游到我这里来，是想被记住——还是想被吃掉？',
+        npc: '（声音不是从水里传来的——它直接在你脑子里响起。）又一个。你们总是这样，扑腾着那点可怜的水花游过来，好像这片海欠你们一个解释。说吧。小声点。',
         opts: [
           { text: '你是什么东西？', next: 1 },
-          { text: '我在找出路。', next: 2 },
+          { text: '他们都叫你「小小」。', next: 2 },
+          { text: '这片水里只有你一个？', next: 3 },
+          { text: '我在找离开这里的门。', action: 'scorn' },
           { text: '（退开）', action: 'leave' },
         ],
       },
       {
-        npc: '「东西」？（它笑了，水面起了一圈细纹）我是小小。这片水里唯一还愿意同你说话的。你该荣幸。',
+        npc: '「东西」。（甲壳下传出一声短促的、像骨头互相刮擦的笑）我比你古老，比你聪明，也比你快得多。你能想到的每一种逃法，我都在你想到之前看过了。至于名字——我的名字不是给你这种东西叫的。',
         opts: [
-          { text: '荣幸？你刚才是不是想攻击我？', next: 3 },
-          { text: '这附近有什么特别的吗？', next: 4 },
-          { text: '先这样吧。', action: 'leave' },
+          { text: '那我该怎么称呼你？', next: 2 },
+          { text: '你为什么一直待在这儿？', next: 4 },
+          { text: '……打扰了。', action: 'leave' },
         ],
       },
       {
-        npc: '出路？没有出路。（它用骨矛慢条斯理地敲着石台）西边是水，东边是水，上面是雾，下面是黑的。你就待在这儿陪我——或者陪到你不愿待为止。',
+        npc: '「小小」。2019 年 6 月，你们的一个同类给我起的。他以为一个讽刺的外号能刺痛我的自尊。说完这句话，他又游了很久。没游多远。',
         opts: [
-          { text: '这座石台中央的台面上，明明嵌着一扇门。', next: 5 },
-          { text: '那我走了。', action: 'leave' },
-        ],
-      },
-      {
-        npc: '想。现在也想。你说话时肌肉的动静、血液的味道，都在求我动手。（它歪了歪头）但你说话还算有趣——再多说两句。',
-        opts: [
-          { text: '你为什么待在这儿？', next: 4 },
-          { text: '……我还是走吧。', action: 'leave' },
-        ],
-      },
-      {
-        npc: '这儿是我的。环是我的椅子，台子是我的桌子。以前水里有过很多声音，后来都安静了——你猜是谁让它们安静的。',
-        opts: [
-          { text: '这些骨头都是你留下的？', next: 6 },
-          { text: '（看向石台中央）', next: 5 },
-          { text: '告辞。', action: 'leave' },
-        ],
-      },
-      {
-        npc: '门？（它的眼睛亮了一瞬，又暗下去）你看错了，那是石头。别再跟我提门——我最讨厌别人跟我讲道理。',
-        opts: [
-          { text: '你隐瞒不了。那扇门通向 Level 9。', next: 7 },
-          { text: '好，不提了。', next: 0 },
-        ],
-      },
-      {
-        npc: '它们只是坐得比我矮了。（它拨弄长矛）别紧张——你现在还不是骨头。你还「有趣」着。',
-        opts: [
-          { text: '（看向石台中央）', next: 5 },
+          { text: '你杀了他？', next: 5 },
+          { text: '你讨厌我们。', next: 6 },
           { text: '我该走了。', action: 'leave' },
         ],
       },
       {
-        npc: '（它沉默了很久，面部的甲壳微微张开一线，露出里面的尖牙）知道太多的人类，在我这儿从来不长寿。滚。趁我还想听你下次来说点什么。',
+        npc: '大部分时间如此。我尽可能独处。下面还有一条鱼——你们管它叫 Entity 20？我在上面，它在下面，我们约定好了。那是我们的契约。至于这里别的生物……（它瞪着你）我给你个机会猜猜看。',
+        opts: [
+          { text: '它们都是你……？', next: 5 },
+          { text: '你身上披的那张皮——', next: 7 },
+          { text: '我不猜了。', action: 'leave' },
+        ],
+      },
+      {
+        npc: '这儿是我的。环是我的椅子，台子是我的桌子。你们管这叫「盘踞」，我管这叫「坐着」。别靠太近——我不喜欢被碰，也不喜欢吵。这两样偏偏是你们人类最擅长的。',
+        opts: [
+          { text: '我会保持安静。', next: 6 },
+          { text: '（看向它身下的石台）', next: 8 },
+          { text: '（慢慢退开）', action: 'leave' },
+        ],
+      },
+      {
+        npc: '我不必回答你。你们的仁慈真有意思：觉得自己溜得掉就聪明得不得了，觉得抱成一团就什么都能挺过去。可到了最后，你们不过是案板上的鱼肉。没有利爪，没有尖牙。',
+        opts: [
+          { text: '至少我们懂得讲道理。', next: 9 },
+          { text: '……', next: 6 },
+          { text: '（离开）', action: 'leave' },
+        ],
+      },
+      {
+        npc: '讨厌？不。我只是不需要你们。你们来，问问题，带着「发现」游回去，等着别人夸奖你那卑贱的小命。去吧。只是别忘了你在水里是什么——研究再多，你们也没法游得更快。',
+        opts: [
+          { text: '再问一件事。', next: 0 },
+          { text: '（离开）', action: 'leave' },
+        ],
+      },
+      {
+        npc: '这张？（它拽了拽披在背上的鲨鱼皮，鲨颚的牙在它脸侧轻轻碰响）上一个以为自己是这片海主人的东西。现在它负责替我挡光。很合身，不是吗？',
+        opts: [
+          { text: '你很得意。', next: 5 },
+          { text: '（离开）', action: 'leave' },
+        ],
+      },
+      {
+        npc: '你在看什么？那是石头。（长矛的尖轻轻敲着台面，一圈，又一圈）不管你以为自己看见了什么，我劝你别说出来。',
+        opts: [
+          { text: '你身下压着的，是一扇门吧？', action: 'scorn' },
+          { text: '我什么也没看见。', next: 6 },
+          { text: '（移开视线，离开）', action: 'leave' },
+        ],
+      },
+      {
+        npc: '道理。（它的眼睛暗了一瞬，焦油下的荧光斑一齐熄灭又亮起）我最讨厌的就是道理。上一个跟我讲道理的人，现在就躺在环外那堆骨头里，很讲道理地一动不动。滚吧——趁我还觉得你有趣。',
         opts: [{ text: '（离开）', action: 'leave' }],
       },
     ],
-    idle: ['（它用骨矛敲着石台，一圈，又一圈。）', '（荧光斑点在焦油下一明一灭。）', '（它哼着不成调的曲子，像从谁那儿学来的。）'],
+    idle: ['（它用长矛敲着石台，一圈，又一圈。）', '（荧光斑点在焦油下一明一灭。）', '（它哼着不成调的曲子，像从谁那儿学来的。）', '（鲨鱼皮的尾鳍在它身后懒懒地摆动。）'],
   },
   kat: {
     id: 'kat', name: 'Kat', role: '监督者',
@@ -1143,13 +1165,13 @@ export const NPCS: Record<string, NpcDef> = {
       { give: 'canned', giveN: 1, get: 'tomatosoup', getN: 1 },
       { give: 'canned', giveN: 1, get: 'garlicbread', getN: 1 },
       { give: 'driedfruit', giveN: 1, get: 'gardensalad', getN: 1 },
-      // 中等（罐装×2 / 巨兽之肉×1 / 旱虾×1 / 杏仁水×1+罐装×1）
+      // 中等（罐装×2 / 彼物之肉×1 / 旱虾×1 / 杏仁水×1+罐装×1）
       { give: 'canned', giveN: 2, get: 'pasta', getN: 1 },
       { give: 'thingmeat', giveN: 1, get: 'meatstew', getN: 1 },
       { give: 'dryshrimp', giveN: 1, get: 'friedshrimp', getN: 1 },
       { give: 'liveshrimp', giveN: 1, get: 'friedshrimp', getN: 1 }, // v81：活抓的旱虾同样可以
       { give: 'almond', giveN: 1, give2: 'canned', give2N: 1, get: 'pizza', getN: 1 },
-      // 复杂（巨兽之肉×2 / 皇家口粮×1 / 杏仁水×2+罐装×2）
+      // 复杂（彼物之肉×2 / 皇家口粮×1 / 杏仁水×2+罐装×2）
       { give: 'thingmeat', giveN: 2, get: 'lasagna', getN: 1 },
       { give: 'royalration', giveN: 1, get: 'tomsspecial', getN: 1 },
       { give: 'almond', giveN: 2, give2: 'canned', give2N: 2, get: 'tomsspecial', getN: 1 },
@@ -1523,7 +1545,7 @@ export const NPCS: Record<string, NpcDef> = {
         ],
       },
       {
-        npc: '杏仁水、实体绝迹、楼层稳定——还有比这更适合当枢纽的地方吗？我们把每层楼的窗景区都编了号，雨声当白噪音用。去忙吧，别挡灯。',
+        npc: '杏仁水、实体绝迹、楼层稳定——还有比这更适合当枢纽的地方吗？我们把每层楼的沿窗地带都编了号，雨声当白噪音用。去忙吧，别挡灯。',
         opts: [{ text: '告辞。', action: 'leave' }],
       },
     ],
@@ -1544,7 +1566,7 @@ export const NPCS: Record<string, NpcDef> = {
         ],
       },
       {
-        npc: '当然。窗景区的雾在 1987 年的记录里就一模一样，雨从没停过。至于那些楼梯——旧档里写着「楼梯大多不通向任何地方」，后来主管把这句划掉了，只留古典楼梯和活板门的索引。档案只记确认过的路。',
+        npc: '当然。窗外的雾在 1987 年的记录里就一模一样，雨从没停过。至于那些楼梯——旧档里写着「楼梯大多不通向任何地方」，后来主管把这句划掉了，只留古典楼梯和活板门的索引。档案只记确认过的路。',
         opts: [{ text: '多谢。', action: 'leave' }],
       },
     ],
@@ -1597,7 +1619,7 @@ export const NPCS: Record<string, NpcDef> = {
     id: 'saira', name: '萨伊拉·昆恩', role: '医护', faction: 'meg',
     medic: true,
     personality: '温声细语但不容拒绝；先看你的瞳孔再听你说事。',
-    background: '居住区的驻点医护，管擦伤、低血糖和「在窗景区待太久」引发的心神不宁。她的医嘱永远同一句：去睡一觉，多喝杏仁水。',
+    background: '居住区的驻点医护，管擦伤、低血糖和「在沿窗地带待太久」引发的心神不宁。她的医嘱永远同一句：去睡一觉，多喝杏仁水。',
     uniform: { top: '#e8e8e0', topStyle: 2, badge: '#4a5568' },
     avatar: { gender: 1, hair: 1, hairColor: '#232326', skin: '#c98a5a', pants: '#4a5568', pantsStyle: 0, face: 1 },
     lines: [
@@ -1630,7 +1652,7 @@ export const NPCS: Record<string, NpcDef> = {
         ],
       },
       {
-        npc: '几乎。猎犬和钝人一年露不了几面，进了灯网范围更是闻所未闻——所以这里才叫枢纽。但走廊尽头的窗景区少去：不是危险，是……容易发呆。登记完就放行。',
+        npc: '几乎。猎犬和钝人一年露不了几面，进了灯网范围更是闻所未闻——所以这里才叫枢纽。但走廊尽头的沿窗地带少去：不是危险，是……容易发呆。登记完就放行。',
         opts: [{ text: '明白。', action: 'leave' }],
       },
     ],

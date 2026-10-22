@@ -1,6 +1,8 @@
+import {bursterControlsPlayer} from './bursterAI'
 import { wranglerControlsPlayer } from './wranglerAI'
 import { nguithrSpeedMult } from './nguithrAI'
 import { stepL7Events } from './l7Events'
+import { stepThingWorld } from './thingAI'
 import { tickL0 } from './l0State'
 import { l0Sample } from '../world/l0Architecture'
 import { stableAt } from './career'
@@ -20,6 +22,9 @@ import { levelDefOf, NORMAL_LEVELS } from '../levels'
 import { audio } from '../core/audio'
 import { RemotePlayerViews } from '../renderer/remotePlayers' // v58：联机玩家碰撞查询
 import type { Engine } from '../engine'
+/** [thing] L7 贴崖自动上攀速度（米/秒）与本帧状态（单机玩家，模块级即可） */
+export const L7_CLIFF_CLIMB = 3.4
+let l7CliffClimb = false
 import { l8AvenuePortalContact } from '../world/infiniteL8'
 import { makeEntity } from '../entities'
 import { integrateFlight } from '../core/flight'
@@ -27,17 +32,20 @@ import { ratProvoke } from './ratAI'
 import { stepL11Canal } from './l11Canal'
 import { stepL11Shaft } from './l11Exits'
 import { updateSitting } from './seating'
+import { camoSound } from './camoAI' // [L8-camo]
+import { arachnidMoveMul } from './arachnidAI' // [L8-arachnid]
 
 type DiffMult = { dmg: number; drain: number }
 
 /** 移动主段（原 step「---- 移动 ----」至离水判定一整段；返回本帧输入向量模长 mag，null=中止本帧） */
 export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock: boolean): number | null {
   if (eng.levelDef.id === 7) stepL7Events(eng, dt)
+  stepThingWorld(eng, dt) // [thing] 口臭气味 + 读焦油字
   audio.setDeepPressure(eng.levelDef.id === 7 && eng.submerged ? Math.min(1, Math.max(0, (-eng.player.z - 30) / 170)) : 0, dt)
   const p = eng.player, m = eng.map!
   const verticalStart=p.z
   // A scripted wall crossing owns position temporarily; gravity must not snap onto a wall/upper floor.
-  if(wranglerControlsPlayer(eng)||dullerControlsPlayer(eng)||clumpControlsPlayer(eng)||nwControlsPlayer(eng)||armsControlsPlayer(eng,dt)){eng.seating=null;return 0}
+  if(bursterControlsPlayer(eng)||wranglerControlsPlayer(eng)||dullerControlsPlayer(eng)||clumpControlsPlayer(eng)||nwControlsPlayer(eng)||armsControlsPlayer(eng,dt)){eng.seating=null;return 0}
   if (eng.devEnabled && eng.dev.fly) {
     eng.seating = null
     const mag = Math.hypot(eng.input.mx,eng.input.my), divisor = Math.max(1,mag)
@@ -142,6 +150,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   else if (lq !== 0) speed *= 0.5 // v13：液体中移动减速
   if (p.slowT > 0) { p.slowT -= dt; speed *= 0.5 }
   if (eng.webbedT > 0) speed *= 0.5 // v51：缠丝麻痹——移动迟缓
+  speed *= arachnidMoveMul(eng)
   speed *= nguithrSpeedMult(eng) // Nguithr'xurh 轻度镇静：移动略慢
   if (p.flashJamT > 0) p.flashJamT -= dt
   if (eng.dev.speed) speed *= 1.8
@@ -212,6 +221,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
   if (updateSitting(eng, dt)) return 0
   // v13：电梯乘降 / 梯子攀爬进行中：锁定水平移动（垂直由对应逻辑驱动）
   // v51：脚滑漂移量足够时，即使松开方向键也会继续滑动
+  l7CliffClimb = false
   const slipDrift = Math.hypot(eng.slipVx, eng.slipVy)
   if ((mag > 0.1 || (eng.slipperyT > 0 && slipDrift > 0.05)) && !eng.ride && !eng.climb && !introLock) {
     // 固定子步积分：dt 先入累加器，按 FIXED_STEP 切分子步逐次「移动→解碰撞」。
@@ -234,6 +244,18 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
     const metric=eng.levelDef.id===1&&m.inf&&!eng.dev.noclip&&!stableAt(eng,p.x,p.y)?l1DistanceScale(m.inf.seed,p.x+m.inf.ox,p.y+m.inf.oy):1
     const moved = integrateMove(m, p, dirX, dirY, speed*metric, dt, eng.moveIt, { noclip: eng.dev.noclip, z: eng.onStairs ? 0 : p.z, crouch: p.crouching, band: eng.onStairs ? 0 : band })
     const movedDist = Math.hypot(moved.x, moved.y)/metric
+    // [thing] L7 贴崖上攀：游泳时朝崖壁推进被海床挡住，就沿崖面自动往上游（不必另按上浮键），
+    // 免得玩家贴在陡崖上以为卡死。只看前方 0.5m 海床确实高过脚底，结构/墙挡住不算。
+    if (l7Swim && !eng.dev.noclip && !p.crouching) {
+      const want = Math.hypot(dirX, dirY) * speed * dt
+      const dl = Math.hypot(dirX, dirY) || 1
+      // 前方 0.06m 处身体 8 个采样点里最高的海床（与 canOccupy 同一组采样），高过脚底就往上游
+      const ax = p.x + dirX / dl * 0.06, ay = p.y + dirY / dl * 0.06, R = 0.32
+      let ahead = -Infinity
+      for (const [ox, oy] of [[-R, -R], [R, -R], [-R, R], [R, R], [-R, 0], [R, 0], [0, -R], [0, R], [dirX / dl * 0.5, dirY / dl * 0.5]])
+        ahead = Math.max(ahead, floorHeight(m, ax + ox, ay + oy, 0))
+      l7CliffClimb = want > 1e-4 && movedDist < want * 0.6 && ahead > p.z + 0.25
+    } else l7CliffClimb = false
     // v58：联机玩家碰撞体积——与同层远端玩家软推挤，双方不可重叠
     if (eng.mpSession?.started) {
       for (const rp of RemotePlayerViews.nearby(eng, eng.mpSession)) {
@@ -397,7 +419,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
       audio.swim()
     } else {
       // Deep canals use the same neutral swimming buoyancy as other water.
-      p.vz = 0
+      p.vz = l7Water && l7CliffClimb ? L7_CLIFF_CLIMB : 0
     }
     if (!airborne) {
       p.vz = Math.max(sinkMax, Math.min(upMax, p.vz))
@@ -463,6 +485,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
       if (p.z <= g) {
         // 落地（重着地震屏 + 脚步声）
         if (p.vz < -4) {
+          camoSound(eng, p.x, p.y, 7) // [L8-camo] 跳跃落地声（只进迷彩爬行者的声音队列，不改其他实体的听觉）
           eng.camShake = Math.min(1, eng.camShake + 0.18)
           const g0 = eng.levelDef.gen
           audio.footstep(g0 === 'garage' || g0 === 'grid' ? 'concrete' : g0 === 'pipes' ? 'metal' : 'carpet')

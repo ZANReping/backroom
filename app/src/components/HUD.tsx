@@ -1,3 +1,5 @@
+import {drawL7Map} from '@/game/content/l7Map'
+import {drawL23Map} from '@/game/content/l23Map'
 // 游戏 HUD（桌面 + 移动端自适应）
 import { isMelee } from '../game/content/melee'
 import { slotDur, slotMaxDur, slotName } from '../game/engine/melee'
@@ -45,6 +47,7 @@ import {drawL4Map} from '@/game/content/l4Map'
 import { drawMapPlayer } from '@/game/content/mapPlayer'
 import { mapSight } from '@/game/world/mapSight'
 import { jerryOverlay, jerryLureMarks } from '@/game/engine/jerryAI'
+import ArachnidHud from './arachnidHud' // [L8-arachnid]
 import { armsOverlay, armsStruggleTap } from '@/game/engine/armsAI'
 import { nguithrOverlay } from '@/game/engine/nguithrAI'
 
@@ -106,6 +109,7 @@ function LegacyMinimap({ engine, size }: { engine: Engine; size: number }) {
     const m = engine.map
     if (!c || !m) return
     const g = c.getContext('2d')!
+    if(engine.levelDef.id!==7)delete c.dataset.l7Bathymetry
     const k = size / 140 // 标记随尺寸缩放
     c.width = size; c.height = size
     if (m.traders) { drawTradersMap(g,m,{width:size,height:size,centerX:engine.player.x,centerY:engine.player.y,scale:size/72,playerX:engine.player.x,playerY:engine.player.y,yaw:look.yaw,sight:mapSight(engine,look.yaw),mini:true}); return }
@@ -123,10 +127,10 @@ function LegacyMinimap({ engine, size }: { engine: Engine; size: number }) {
       const wx0 = Math.floor(inf.ox + px), wy0 = Math.floor(inf.oy + py)
       const mod = (v: number, n: number) => ((v % n) + n) % n
       g.fillStyle = '#0a0908'; g.fillRect(0, 0, size, size)
-      if(inf.l0||m.l1Architecture||engine.levelDef.id===4){
+      if(inf.l0||m.l1Architecture||[2,3,4,7].includes(engine.levelDef.id)){
         g.save();g.translate((half-px)*s,(half-py)*s)
         const view={x0:px-half,y0:py-half,x1:px+half,y1:py+half,scale:s}
-        if(inf.l0)drawL0Map(g,engine,view);else if(engine.levelDef.id===4)drawL4Map(g,engine,view);else drawL1Map(g,engine,view)
+        if(inf.l0)drawL0Map(g,engine,view);else if(engine.levelDef.id===2||engine.levelDef.id===3)drawL23Map(g,engine,view);else if(engine.levelDef.id===4)drawL4Map(g,engine,view);else if(engine.levelDef.id===7)c.dataset.l7Bathymetry=JSON.stringify(drawL7Map(g,engine,{...view,mini:size<=180}));else drawL1Map(g,engine,view)
         g.restore()
       }else{
       for (let dy = -half; dy < half; dy++)
@@ -331,8 +335,8 @@ function LegacyMinimap({ engine, size }: { engine: Engine; size: number }) {
       g.fillStyle = pEl === 1 ? '#8fa3c9' : '#ffe37a'
       g.fillText(pEl === 1 ? '↓' : '↑', engine.player.x * s, engine.player.y * s - 3.2 * k)
     }
-  }, [engine, size, look.yaw, engine.player.x, engine.player.y, engine.player.z, engine.player.floor, engine.player.crouching, engine.mapRev, engine.map?.inf?.rev, Math.floor(engine.time * 8)])
-  return <canvas data-minimap ref={ref} style={{ width: size, height: size, imageRendering: 'pixelated' }} />
+  }, [engine, size, engine.devEnabled, engine.dev.mapReveal, look.yaw, engine.player.x, engine.player.y, engine.player.z, engine.player.floor, engine.player.crouching, engine.mapRev, engine.map?.inf?.rev, Math.floor(engine.time * 8)])
+  return <canvas data-minimap aria-label={engine.levelDef.id===7?'Level 7 等深线小地图':undefined} ref={ref} style={{ width: size, height: size, imageRendering: 'pixelated' }} />
 }
 
 // Level 11 uses the city-plan map while all other levels keep the legacy minimap.
@@ -842,6 +846,7 @@ export default function HUD({ engine, isMobile, log, toasts, devMode, fxScale, o
         </>
       })()}
       {/* 缠丝麻痹（死亡飞蛾守卫）——视野模糊（毛玻璃覆盖层） */}
+      <ArachnidHud engine={engine} />
       {engine.webbedT > 0 && (
         <div className="pointer-events-none fixed inset-0 z-[30]" style={{ backdropFilter: 'blur(3px) brightness(0.92)', WebkitBackdropFilter: 'blur(3px) brightness(0.92)' }} />
       )}
@@ -1639,7 +1644,7 @@ export function ItemGlyph({ type, size = 24, count }: { type: string; size?: num
       case 'rope': return <><ellipse cx="10.5" cy="10" rx="6.5" ry="5" {...s} /><ellipse cx="10.5" cy="10" rx="3" ry="2.2" {...s} /><path d="M14 14.2c2 1 3.5 2.8 4 5.3" {...s} /></>
       {/* 潜水面罩：大镜窗 + 呼吸管 */}
       case 'mask': return <><path d="M4 10a3 3 0 0 1 3-3h7a3 3 0 0 1 3 3v2a3 3 0 0 1-3 3h-1.5l-1.5-1.5L9.5 15H7a3 3 0 0 1-3-3z" {...s} /><path d="M4 11H2m17-1v5a2 2 0 0 1-2 2h-1.5M19 10V4" {...s} /></>
-      {/* 巨兽之肉：带骨肉的腿肉 */}
+      {/* 彼物之肉：带骨肉的腿肉 */}
       case 'meat': return <><ellipse cx="10" cy="14.5" rx="6.5" ry="4.8" {...s} /><path d="M14.8 11 18.5 6.5" {...s} /><circle cx="18.3" cy="4.8" r="1.3" {...s} /><circle cx="20" cy="6.6" r="1.3" {...s} /></>
       {/* 书本：封面 + 书脊带 + 书名行（oddbook/pamphlet） */}
       case 'book': return <><rect x="5" y="3" width="14" height="18" rx="1.5" {...s} /><path d="M9 3v18" {...s} /><path d="M12.5 7.5h4M12.5 10.5h2.5" {...s} /></>

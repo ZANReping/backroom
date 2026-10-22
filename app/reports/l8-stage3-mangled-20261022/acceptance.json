@@ -1,0 +1,174 @@
+{
+  "date": "2026-10-22",
+  "target": "E:/ZAN/backroom/app",
+  "implementationComplete": true,
+  "productionBuild": "passed",
+  "automatedChecks": [
+    {
+      "name": "camo",
+      "code": 0,
+      "ms": 16413
+    },
+    {
+      "name": "arachnid",
+      "code": 0,
+      "ms": 22573
+    },
+    {
+      "name": "curabitur",
+      "code": 0,
+      "ms": 9280
+    },
+    {
+      "name": "l8-resources",
+      "code": 0,
+      "ms": 2524
+    },
+    {
+      "name": "mangled-pursuit",
+      "code": 0,
+      "ms": 671
+    },
+    {
+      "name": "watch",
+      "code": 0,
+      "ms": 611
+    },
+    {
+      "name": "l9-fog",
+      "code": 0,
+      "ms": 714
+    },
+    {
+      "name": "mangled-legs",
+      "code": 0,
+      "ms": 1078
+    },
+    {
+      "name": "entity-forms",
+      "code": 0,
+      "ms": 1091
+    },
+    {
+      "name": "entity-preparation",
+      "code": 0,
+      "ms": 1082
+    },
+    {
+      "name": "moth-watch-resources",
+      "code": 0,
+      "ms": 2949
+    },
+    {
+      "name": "burster",
+      "code": 0,
+      "ms": 1553
+    },
+    {
+      "name": "lightguide",
+      "code": 0,
+      "ms": 21340
+    }
+  ],
+  "modelChecks": {
+    "checks": 4526,
+    "failures": 0,
+    "appearances": 23
+  },
+  "unchangedL8Surfaces": {
+    "checks": 28792,
+    "passed": true
+  },
+  "actualGame": {
+    "realistic": {
+      "passed": true,
+      "checks": 82,
+      "errors": 0,
+      "requests": 0,
+      "entryMs": 5300.0999999996275,
+      "repeatAttacks": 2,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    "classic": {
+      "passed": true,
+      "checks": 87,
+      "errors": 0,
+      "requests": 0,
+      "entryMs": 2944.4000000003725,
+      "repeatAttacks": 2,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    "gpu": {
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "contextLost": false
+    },
+    "viewport": [
+      1920,
+      1080
+    ]
+  },
+  "fixedWindowResourceCycles": {
+    "classic": [
+      {
+        "geometries": 356,
+        "textures": 63,
+        "chunks": 14
+      },
+      {
+        "geometries": 356,
+        "textures": 63,
+        "chunks": 14
+      },
+      {
+        "geometries": 356,
+        "textures": 63,
+        "chunks": 14
+      }
+    ],
+    "realistic": [
+      {
+        "geometries": 384,
+        "textures": 66,
+        "chunks": 14
+      },
+      {
+        "geometries": 384,
+        "textures": 66,
+        "chunks": 14
+      },
+      {
+        "geometries": 384,
+        "textures": 66,
+        "chunks": 14
+      }
+    ],
+    "realisticCleanup": {
+      "browser": "SIGTERM",
+      "server": "SIGTERM",
+      "profileRemoved": true
+    }
+  },
+  "legacyEcology": {
+    "status": "not_passing",
+    "beforeFailures": 6,
+    "afterFailures": 8,
+    "newRuleDifferences": [
+      "✗ 多维之路不生成蛛形纲",
+      "✗ 新莫维勒窟的蛛形纲自然生成限定为蜘蛛"
+    ],
+    "comparison": "legacy-ecology-comparison.json"
+  },
+  "notMeasured": [
+    "Android hardware",
+    "full rare-star-cluster stress test",
+    "all-level five-round frame-time benchmark"
+  ]
+}

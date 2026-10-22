@@ -469,6 +469,56 @@ export class GameAudio {
     n2.connect(hp).connect(g2).connect(this.sfx); n2.start(); n2.stop(t + 0.3)
   }
 
+  // [kazoo] 石卡祖笛：锯齿波 + 颤音，经共鸣带通出「膜片嗡鸣」；石腔加一层低八度方波。
+  // 水下：低通闷化 + 一串气泡噪声。echoDist>0：岩壁回声——按距离延迟的一声更闷、更弱的复读。
+  kazoo(underwater = false, echoDist = 0, gain = 1) {
+    if (!this.ctx || !this.sfx || gain <= 0.01) return
+    const ctx = this.ctx, out = this.sfx
+    const voice = (t0: number, vol: number, cutoff: number) => {
+      const o = ctx.createOscillator(), o2 = ctx.createOscillator(), lfo = ctx.createOscillator(), lg = ctx.createGain()
+      o.type = 'sawtooth'; o2.type = 'square'
+      o.frequency.setValueAtTime(392, t0); o.frequency.linearRampToValueAtTime(440, t0 + 0.08); o.frequency.linearRampToValueAtTime(415, t0 + 0.42)
+      o2.frequency.setValueAtTime(196, t0); o2.frequency.linearRampToValueAtTime(207, t0 + 0.42)
+      lfo.frequency.value = 6.5; lg.gain.value = 9; lfo.connect(lg); lg.connect(o.frequency)
+      const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1250; bp.Q.value = 2.2
+      const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = cutoff
+      const g = ctx.createGain(), g2 = ctx.createGain()
+      g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.22 * vol, t0 + 0.03)
+      g.gain.setValueAtTime(0.22 * vol, t0 + 0.38); g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.5)
+      g2.gain.value = 0.25
+      o.connect(bp).connect(lp).connect(g).connect(out)
+      o2.connect(g2).connect(lp)
+      for (const n of [o, o2, lfo]) { n.start(t0); n.stop(t0 + 0.52) }
+    }
+    const t = ctx.currentTime
+    voice(t, (underwater ? 0.8 : 1) * gain, underwater ? 700 : 6000)
+    if (echoDist > 0) voice(t + 0.06 + echoDist * 0.012, 0.45 * gain, 1600)
+    if (underwater) {
+      const n = this.noiseSrc(), bp = ctx.createBiquadFilter(), g = ctx.createGain()
+      bp.type = 'bandpass'; bp.frequency.value = 520; bp.Q.value = 3
+      g.gain.setValueAtTime(0.12 * gain, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.45)
+      n.connect(bp).connect(g).connect(out); n.start(t); n.stop(t + 0.46)
+    }
+  }
+
+  // [kazoo] L8 乐器洞石风铃：几根不成谐的石管叮当声（每次随机 2–3 根，长衰减）
+  stoneChime(vol = 1) {
+    if (!this.ctx || !this.sfx || vol <= 0.01) return
+    const ctx = this.ctx, t = ctx.currentTime
+    const tones = [1318, 1567, 1760, 2093, 2349, 2637]
+    const k = 2 + Math.floor(Math.random() * 2)
+    for (let i = 0; i < k; i++) {
+      const f = tones[Math.floor(Math.random() * tones.length)] * (0.98 + Math.random() * 0.04), t0 = t + i * (0.05 + Math.random() * 0.12)
+      for (const [mul, amp] of [[1, 1], [2.76, 0.35], [5.4, 0.12]] as const) {
+        const o = ctx.createOscillator(), g = ctx.createGain()
+        o.type = 'sine'; o.frequency.value = f * mul
+        g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.08 * vol * amp, t0 + 0.005)
+        g.gain.exponentialRampToValueAtTime(0.0005, t0 + 2.4 / mul)
+        o.connect(g).connect(this.sfx); o.start(t0); o.stop(t0 + 2.5 / mul)
+      }
+    }
+  }
+
   // 划水：短促的中频水花搅动
   swim() {
     if (!this.ctx || !this.sfx) return

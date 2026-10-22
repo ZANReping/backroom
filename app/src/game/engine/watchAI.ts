@@ -1,3 +1,4 @@
+import {stepMangledFog,stepMangledPursuit} from './mangledWalk'
 // 邻里守望（Entity 96：观察者 Watcher + 挺进者 Strider）与残缺者（Entity 63：The Mangled）专属 AI。
 // 依据中文维基 entity-96、entity-63，以及 ZAN 2026-10-21 确认的设计约束：
 //  · 观察者：悬浮巡视，无声扫视；看见目标后锁定 → 蓄力 1.5s（瞳孔收缩、发光）→ 持续光束。
@@ -391,10 +392,8 @@ function updateMangled(eng: Engine, e: Entity, dt: number) {
   const travel=e.l9FogTravel
   if(travel&&travel.mode!=='active'){
     if(f.captor===e)releaseNW(eng,'drop')
-    const [ox,oy]=origin(eng)
     setPhase(s,'stalk','stride')
-    e.targetX=travel.mode==='leave'?travel.exitX-ox:p.x;e.targetY=travel.mode==='leave'?travel.exitY-oy:p.y
-    eng.stepEntity(e,NW.M_SPEED*g*(travel.mode==='leave'?.85:1),dt)
+    stepMangledFog(eng,e,NW.M_SPEED*g*(travel.mode==='leave'?.85:1),dt)
     return
   }
   s.aimX = p.x; s.aimY = p.y; s.aimZ = p.z
@@ -411,8 +410,7 @@ function updateMangled(eng: Engine, e: Entity, dt: number) {
   switch (s.phase) {
     case 'stalk': {
       setPhase(s, 'stalk', 'stride')
-      e.targetX = p.x; e.targetY = p.y
-      eng.stepEntity(e, NW.M_SPEED * g, dt)
+      stepMangledPursuit(eng, e, NW.M_SPEED * g, dt, NW.M_GRAB_R * g * .65)
       if (dh < NW.M_GRAB_R * g && e.attackCd <= 0 && !f.captor && !eng.dev.invisible && p.z < 3 && !playerIndoor(eng) && eng.los(e.x, e.y, p.x, p.y)) {
         setPhase(s, 'warn', 'snatch')
         eng.camShake = Math.min(1, eng.camShake + 0.3)
@@ -438,9 +436,16 @@ function updateMangled(eng: Engine, e: Entity, dt: number) {
       if (s.t > 1.5) once(eng, 'm-faces', '你被拉近那团东西的腹面——那里挤满了人脸。有几张脸在对你尖叫。')
       if (takeMash(s)) { releaseNW(eng, 'escape'); break }
       if (s.t > NW.M_HOLD_T) {
+        // Finish the attack even when death is intercepted (e.g. developer invulnerability).
+        // Releasing before die() avoids applying escape fall damage as a second death attempt.
         f.captor = undefined; s.holdZ = 0
-        f.growth = Math.min((NW.M_GROW_MAX - 1) / NW.M_GROW, f.growth + 1)
+        setPhase(s, 'stalk', 'stride'); e.attackCd = NW.M_COOL
+        const map = eng.map
         eng.die('被残缺者同化——你成了雾里的又一张脸，又一个声音')
+        if (eng.map === map && eng.player === p) {
+          if (eng.over || p.hp <= 0) f.growth = Math.min((NW.M_GROW_MAX - 1) / NW.M_GROW, f.growth + 1)
+          else p.vz = Math.min(p.vz, 0) // Surviving players fall naturally; the next grab still requires ground range.
+        }
       }
       break
   }

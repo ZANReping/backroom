@@ -1,7 +1,7 @@
 // ================= v29：Level 1「宜居地带」无限 chunk 生成 =================
 // 布局基调（wikidot/Fandom 共识）：开阔停车层、工业仓储厅与多个主题区段的无尽缝合体。
 // 开阔大厅 + 墙块孤岛 + 柱阵 + 悬挂荧光灯，而非 L0 的迷宫。
-// v30：区段（Sections）扩展——天鹰段/过道/跃金段/哥特段/衔尾段/花园段与嵌入各区段门后的白墙小径；
+// v30：区段（Sections）扩展——天鹰段/跃金段/哥特段/衔尾段/花园段与嵌入各区段门后的白墙小径；
 // 原始装饰与旧灯光在末尾 applyL1Architecture 统一替换，最终五区与小径共享同一停电规则。
 import { RNG } from '../core/rng'
 import { applyL1Architecture } from './l1Architecture'
@@ -16,6 +16,7 @@ import {
 import { registerInfiniteLevel, type GenChunk } from './infiniteRegistry'
 
 // ---------- 变体 ----------
+// aisle is a private generation compatibility alias; it is absent from all region registries.
 export type L1Variant =
   | 'parking' | 'aisle' | 'storage' | 'gothic' | 'ouroboros' | 'garden'
   | 'maintenance' | 'fabled'

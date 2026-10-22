@@ -6,7 +6,7 @@ import {CS} from '../src/game/world/infinite'
 
 
 const seeds = [424242, 17, 9091]
-const kinds = ['services','wallkit','printer','pantry','toilet','server','archive'] as const
+const kinds = ['services','wallDecor','printer','pantry','toilet','server','archive'] as const
 
 const counts = new Map<string, number>()
 let checks = 0
@@ -30,7 +30,7 @@ for (const seed of seeds) {
   for (const c of samples) for (const s of c.structures) if (s.kind === 'l4prop') {
     const detail = String(s.data?.detail ?? '')
     counts.set(detail, (counts.get(detail) ?? 0) + 1)
-    if (detail === 'services' || detail === 'wallkit') { if (s.solid) fail(`${detail} must be non-solid`); checks++ }
+    if (detail === 'services' || detail === 'wallDecor') { if (s.solid) fail(`${detail} must be non-solid`); checks++ }
     if (s.solid) {
       for (let y = s.y; y < s.y + s.h; y++) for (let x = s.x; x < s.x + s.w; x++) {
         const t = tileAt(seed, x, y); if (t.c.outdoor[t.i] || t.c.tiles[t.i] !== 1) fail(`${detail} at ${x},${y} is not indoor floor`)

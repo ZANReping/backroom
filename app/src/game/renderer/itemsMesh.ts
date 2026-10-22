@@ -15,6 +15,7 @@ import { buildRefinedItemMesh, isRefinedItemType } from './refinedItemMesh'
 import { buildShrimpItemMesh } from './shrimpMesh'
 import { buildBentoItemMesh } from './object70Mesh'
 import { velvetCakeGeometry } from './partygoerMesh'
+import { buildCurabiturItemMesh, isCurabiturItem } from './curabiturRender' // [L8-curabitur]
 
 // ---------- 物品低模 ----------
 // v59：halo 选项——联机远端玩家的手持物品不显示脚底稀有度光圈（地面掉落物保留）
@@ -39,6 +40,7 @@ export function buildItemMesh(type: string, opts?: { halo?: boolean }): THREE.Gr
     grp.add(gm); grp.userData.itemType = meleeBase; grp.userData.meleeRig=gm.userData.meleeRig
   }
   else if (type === 'dryshrimp' || type === 'liveshrimp' || type === 'friedshrimp') grp.add(buildShrimpItemMesh(type))
+  else if (isCurabiturItem(type)) grp.add(buildCurabiturItemMesh(type))
   else if (isRefinedItemType(type)) grp.add(buildRefinedItemMesh(type))
   else switch (type) {
     // Six detailed models share UV atlases; their factory emits at most three material batches.

@@ -35,6 +35,22 @@ export const SPECIAL_ENTITIES: Record<string, EntityDef> = {
     },
     aggroStinger: true,
   },
+  burster: {
+    type: 'burster', name: '爆酸者', hp: 120, speed: 0.9, damage: 0, sight: 4, hearing: 5, color: '#8a6a52', habitat: 'indoor',
+    desc: '蜷在走廊角落、像胎儿一样的人形东西。背上长满了黄色的胼胝。',
+    codex: {
+      no: 'Entity 11「Burster」', danger: '3 级（中等威胁）', habitat: 'Level 3 门厅与走廊',
+      behavior: '平时以胎儿般的姿势休眠。活物靠近时，背上的胼胝成串爆裂，把酸液朝受害者的脸喷过去，然后原地等待酸液起效；受害者没倒下就继续喷，直到对方休克，再爬过去消化。',
+      counter: '靠近前戴上潜水面罩（夜视镜也能挡一部分），并随身带水：清水或杏仁水能冲掉眼里的酸。用滋水枪喷清水能让它僵住；杏仁水会把它严重烧伤。它被自己的酸伤得够重就会结茧——这时用蓄力重击把茧砸碎。',
+      lore: [
+        '爆酸者有模糊的人形外表，靠四肢爬行；后腿比人类长得多，结构更像犬科。背上生着许多胼胝，狩猎或激动时会爆出小股酸性流体。',
+        '它看起来也会被自己的酸所伤。酸液过多或受到类似伤害时，它会把表皮「硬化」成茧状物质。茧在足够的力量下可以被打破，爆酸者随之死亡。',
+        '它极易被杏仁水严重烧伤，而且很难痊愈。推测它产生的酸与任何类型的水接触都会起负反应。首次发现时它被归为猎犬亚种，直到有人赶在它结茧前杀死了一只。',
+      ],
+      sighting: '「别碰那团东西，也别吵醒它。如果非要过去，捂住脸，手里攥着水。」——Level 3 走廊上用粉笔写的字。',
+    },
+    aggroStinger: true,
+  },
   arcwraith: {
     type: 'arcwraith', name: '电弧体', hp: 40, speed: 3.0, damage: 24, sight: 8, hearing: 2, jamsLight: true, color: '#9adfff', habitat: 'any', naturalSpawn: false,
     desc: '沿电缆沟游走的蓝色电弧，靠近时你的手电会失灵。',

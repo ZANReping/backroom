@@ -1,0 +1,98 @@
+
+> my-app@0.0.0 check:l7-seams
+> esbuild scripts/check-l7-seams.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l7-seams.mjs && node .cache/check-l7-seams.mjs
+
+
+  .cache\check-l7-seams.mjs  4.1mb
+
+Done in 134ms
+{
+  "pass": 829,
+  "fail": 0,
+  "records": [
+    {
+      "seed": 1,
+      "dir": 0,
+      "gap": 0,
+      "norm": 0,
+      "samples": 65
+    },
+    {
+      "seed": 1,
+      "dir": 1,
+      "gap": 0,
+      "norm": 0,
+      "samples": 65
+    },
+    {
+      "seed": 1,
+      "dir": 2,
+      "gap": 0,
+      "norm": 0,
+      "samples": 65
+    },
+    {
+      "seed": 1,
+      "dir": 3,
+      "gap": 0,
+      "norm": 0,
+      "samples": 65
+    },
+    {
+      "seed": 777,
+      "dir": 0,
+      "gap": 0,
+      "norm": 0,
+      "samples": 65
+    },
+    {
+      "seed": 777,
+      "dir": 1,
+      "gap": 0,
+      "norm": 0,
+      "samples": 65
+    },
+    {
+      "seed": 777,
+      "dir": 2,
+      "gap": 0,
+      "norm": 0,
+      "samples": 65
+    },
+    {
+      "seed": 777,
+      "dir": 3,
+      "gap": 0,
+      "norm": 0,
+      "samples": 65
+    },
+    {
+      "seed": 424242,
+      "dir": 0,
+      "gap": 0,
+      "norm": 0,
+      "samples": 65
+    },
+    {
+      "seed": 424242,
+      "dir": 1,
+      "gap": 0,
+      "norm": 0,
+      "samples": 65
+    },
+    {
+      "seed": 424242,
+      "dir": 2,
+      "gap": 0,
+      "norm": 0,
+      "samples": 65
+    },
+    {
+      "seed": 424242,
+      "dir": 3,
+      "gap": 0,
+      "norm": 0,
+      "samples": 65
+    }
+  ]
+}

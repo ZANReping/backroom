@@ -1,0 +1,155 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 5073,
+  "cdp": 5074,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l7-seams-map-20261022\\game-realistic\\qa-1792676307261-63444",
+    "--remote-debugging-port=5074",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 39564,
+    "server": 52644
+  },
+  "appBootMs": 15211.295,
+  "entryMs": 3274.7430999999997,
+  "firstPlayableMs": 24910.0723,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "checks": [],
+    "records": [],
+    "status": {
+      "level": 4,
+      "player": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "origin": [
+        -64,
+        -64
+      ],
+      "mode": "realistic",
+      "memory": {
+        "geometries": 467,
+        "textures": 67
+      },
+      "chunks": 9,
+      "tasks": 4
+    }
+  },
+  "seams": {
+    "gapMetres": 0,
+    "samples": 65,
+    "at": {
+      "x": 64,
+      "y": 15.5,
+      "ha": -141.58493041992188,
+      "hb": -141.58493041992188
+    },
+    "level": 7,
+    "player": {
+      "x": 30,
+      "y": 15,
+      "z": -50
+    },
+    "origin": [
+      -64,
+      -64
+    ],
+    "mode": "realistic",
+    "memory": {
+      "geometries": 341,
+      "textures": 199
+    },
+    "chunks": 22,
+    "tasks": 0
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: Timeout wide chart lightweight previews\",\"lineNumber\":9,\"columnNumber\":46,\"scriptId\":\"670\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"until\",\"scriptId\":\"670\",\"url\":\"http://127.0.0.1:5073/verifier/l7-seams-map-check.ts\",\"lineNumber\":8,\"columnNumber\":45}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: Timeout wide chart lightweight previews\\n    at until (http://127.0.0.1:5073/verifier/l7-seams-map-check.ts:9:46)\\n    at async Object.maps (http://127.0.0.1:5073/verifier/l7-seams-map-check.ts:163:5)\",\"objectId\":\"8369682568442390747.2.1\"}}",
+  "partial": {
+    "checks": [
+      "both real chunk meshes contain the shared boundary",
+      "retained and new seabed vertices meet after streaming",
+      "no legend is placed under the minimap",
+      "big map opens at full width",
+      "bathymetric band legend is in original big map"
+    ],
+    "records": [
+      {
+        "gapMetres": 0,
+        "samples": 65,
+        "at": {
+          "x": 64,
+          "y": 15.5,
+          "ha": -141.58493041992188,
+          "hb": -141.58493041992188
+        },
+        "level": 7,
+        "player": {
+          "x": 30,
+          "y": 15,
+          "z": -50
+        },
+        "origin": [
+          -64,
+          -64
+        ],
+        "mode": "realistic",
+        "memory": {
+          "geometries": 341,
+          "textures": 199
+        },
+        "chunks": 22,
+        "tasks": 0
+      }
+    ],
+    "status": {
+      "level": 7,
+      "player": {
+        "x": 15,
+        "y": 15,
+        "z": 3
+      },
+      "origin": [
+        -64,
+        -64
+      ],
+      "mode": "realistic",
+      "memory": {
+        "geometries": 417,
+        "textures": 195
+      },
+      "chunks": 21,
+      "tasks": 0
+    }
+  },
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 12926.29999999702
+    },
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\nLEVEL 7\n深海恐惧\nB7 · 2F/共2层\n磁带\n0/6\n入口房间\n100%\n入口：Level 6 深海锈蚀活板门 · 入口房间（固定出生点：锈蚀金属舱体 + 书橱/咖啡桌/椅/荧光吊灯，增长门廊尽头舱门外即深海）\n出口线索：午夜带的海床上偶尔会露出一个岩洞洞口。里面很深，深得不像海。\n你跌进了水里——冰冷刺骨。\n水没过了头顶——视野变成浑浊的蓝。\n1\n2\n3\n4\n5\n6\n7\n左键\n攻击\n空格\n跳跃\nC\n蹲伏\nF\n手电\n右键\n使用\nQ\n丢弃\nV\n检视\n左Alt\n收起主手\n开发者模式\n🛠 开发者模式 · DEV\n▴\nFIELD KIT · 档案工作台\n磁带 0/6\n背包\nI\n图鉴\nG\n状态\nU\n地图\nM\n日志\nL\n任务\nJ\n✕\nEsc\n1F\n2F·\n 地图全开\n右键安全传送 · 拖动平移\n有光带 0–24 m\n微光带 24–90 m\n午夜带 90–230 m\n深渊 ≥230 m\n主等深线\n次等深线\n灰色陆地／舱室\n数字为海床水深（米）；深度带按海床最深处划分，与当前下潜深度无关。\n地图预览暂不可用\n当前 2F / 共2层\n－\n＋\n回正"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

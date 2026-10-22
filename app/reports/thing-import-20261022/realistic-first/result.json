@@ -1,0 +1,171 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 1381,
+  "cdp": 1382,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\thing-import-20261022\\realistic-first\\qa-1792670789489-57316",
+    "--remote-debugging-port=1382",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 4856,
+    "server": 62404
+  },
+  "appBootMs": 20351.195200000002,
+  "entryMs": 3640.347799999996,
+  "firstPlayableMs": 31757.8206,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "checks": [],
+    "records": [],
+    "status": {
+      "level": 4,
+      "center": {
+        "x": -340,
+        "y": -240,
+        "z": -120
+      },
+      "player": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "mode": "realistic",
+      "memory": {
+        "geometries": 467,
+        "textures": 67
+      },
+      "chunks": 9,
+      "tasks": 4,
+      "visibleTriangles": 0
+    }
+  },
+  "overview": {
+    "entryAndStreamingMs": 9256,
+    "headHi": true,
+    "level": 7,
+    "center": {
+      "x": -340,
+      "y": -240,
+      "z": -103.45539215519695
+    },
+    "player": {
+      "x": -321,
+      "y": -228,
+      "z": -104.45539215519695
+    },
+    "mode": "realistic",
+    "memory": {
+      "geometries": 726,
+      "textures": 215
+    },
+    "chunks": 14,
+    "tasks": 0,
+    "visibleTriangles": 335537
+  },
+  "close": {
+    "level": 7,
+    "center": {
+      "x": -340,
+      "y": -240,
+      "z": -103.45539215519695
+    },
+    "player": {
+      "x": -328,
+      "y": -232,
+      "z": -104.25539215519694
+    },
+    "mode": "realistic",
+    "memory": {
+      "geometries": 741,
+      "textures": 154
+    },
+    "chunks": 15,
+    "tasks": 0,
+    "visibleTriangles": 355833
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: actual attack state opens articulated jaw\",\"lineNumber\":18,\"columnNumber\":19,\"scriptId\":\"668\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"ok\",\"scriptId\":\"668\",\"url\":\"http://127.0.0.1:1381/verifier/thing-import-check.ts\",\"lineNumber\":17,\"columnNumber\":18},{\"functionName\":\"bite\",\"scriptId\":\"668\",\"url\":\"http://127.0.0.1:1381/verifier/thing-import-check.ts\",\"lineNumber\":113,\"columnNumber\":4}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: actual attack state opens articulated jaw\\n    at ok (http://127.0.0.1:1381/verifier/thing-import-check.ts:18:19)\\n    at Object.bite (http://127.0.0.1:1381/verifier/thing-import-check.ts:114:5)\",\"objectId\":\"-1487744298959630237.2.1\"}}",
+  "partial": {
+    "checks": [
+      "new head, jaw, gills and 28 body segments are rendered in actual App",
+      "near head uses detailed LOD",
+      "item keeps thingmeat ID and new name",
+      "lure emission is animated"
+    ],
+    "records": [
+      {
+        "entryAndStreamingMs": 9256,
+        "headHi": true,
+        "level": 7,
+        "center": {
+          "x": -340,
+          "y": -240,
+          "z": -103.45539215519695
+        },
+        "player": {
+          "x": -321,
+          "y": -228,
+          "z": -104.45539215519695
+        },
+        "mode": "realistic",
+        "memory": {
+          "geometries": 726,
+          "textures": 215
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "visibleTriangles": 335537
+      }
+    ],
+    "status": {
+      "level": 7,
+      "center": {
+        "x": -340,
+        "y": -240,
+        "z": -103.45539215519695
+      },
+      "player": {
+        "x": -328,
+        "y": -232,
+        "z": -104.25539215519694
+      },
+      "mode": "realistic",
+      "memory": {
+        "geometries": 741,
+        "textures": 154
+      },
+      "chunks": 15,
+      "tasks": 0,
+      "visibleTriangles": 355833
+    }
+  },
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 17297.60000000149
+    },
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\n水下 · 水深 104.3m\n氧气 35s\n[蹲伏] 下潜　[跳跃] 上浮　[冲刺] 快速游\nLEVEL 7\n深海恐惧\nB7\n磁带\n0/6\n午夜带\n100%\n入口：Level 6 深海锈蚀活板门 · 入口房间（固定出生点：锈蚀金属舱体 + 书橱/咖啡桌/椅/荧光吊灯，增长门廊尽头舱门外即深海）\n出口线索：午夜带的海床上偶尔会露出一个岩洞洞口。里面很深，深得不像海。\n你跌进了水里——冰冷刺骨。\n水没过了头顶——视野变成浑浊的蓝。\n刀 60/60\n1\n2\n3\n4\n5\n6\n7\n左键\n攻击\n空格\n跳跃\nC\n蹲伏\nF\n手电\n右键\n使用\nQ\n丢弃\nV\n检视\n左Alt\n收起主手\n开发者模式\n🛠 开发者模式 · DEV\n▴"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

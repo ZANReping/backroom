@@ -1,0 +1,51 @@
+import * as THREE from 'three'
+import {mount as mountBase} from './l9-l4-regions-check'
+import {makeEntity} from '../src/game/entities'
+import {floorHeight,caveCeilingAt} from '../src/game/world/mapgen'
+import {canOccupy} from '../src/game/core/player'
+import {ensureArachnid,getArachnidWorld,devGotoArachnidNest} from '../src/game/engine/arachnidAI'
+import {initCamo,camoSound} from '../src/game/engine/camoAI'
+import {ensureCurabitur,setCurabiturSex} from '../src/game/engine/curabiturAI'
+import {curabiturPuddles} from '../src/game/engine/curabiturAI'
+import {nwCaptor,mangledGrowth} from '../src/game/engine/watchAI'
+const sleep=(n=100)=>new Promise(r=>setTimeout(r,n))
+const until=async(f:()=>unknown,label:string,limit=120000)=>{const t=performance.now();while(!f()){if(performance.now()-t>limit)throw Error('Timeout '+label);await sleep(30)}}
+export async function mount(app:any){
+ const base=await mountBase(app),e=app.engine,r=app.renderer(),checks:string[]=[],records:any[]=[]
+ const ok=(v:unknown,s:string)=>{if(!v)throw Error(s);checks.push(s)}
+ const aim=(x:number,y:number,z=1.2)=>{const p=e.player;app.look.yaw=Math.atan2(p.x-x,p.y-y);app.look.pitch=Math.atan2(z-(p.z+1.62),Math.hypot(x-p.x,y-p.y));p.facing=Math.atan2(y-p.y,x-p.x)}
+ const spot=(room=4)=>{const m=e.map;let best:any,score=Infinity;for(let y=5;y<m.h-5;y+=2)for(let x=5;x<m.w-5;x+=2){const z=floorHeight(m,x+.5,y+.5,0),roof=caveCeilingAt(m,x+.5,y+.5);if(roof-z<5)continue;const points=[[0,0],[room,0],[-room,0],[0,room],[0,-room]];if(!points.every(([dx,dy])=>canOccupy(m,x+.5+dx,y+.5+dy,.5,{z:floorHeight(m,x+.5+dx,y+.5+dy,0)})))continue;const d=Math.hypot(x-e.player.x,y-e.player.y);if(d<score){best={x:x+.5,y:y+.5,z,roof};score=d}}ok(best,'real L8 cave has free encounter space');return best}
+ let actor:any,at:any
+ const clear=()=>{e.dev.frozenAI=true;e.map.entities=[];for(const c of e.map.inf?.chunks.values()??[])c.entities=[]}
+ const boot=async()=>{const state=await base.load(8);e.dev.bright=false;e.dev.invisible=false;at=spot(4);Object.assign(e.player,{x:at.x-3,y:at.y,z:floorHeight(e.map,at.x-3,at.y),vz:0,flashlight:true,battery:100});r.fovBase=62;await sleep(1200);return{...state,at}}
+ const specimen=async(type:string,kind?:string)=>{clear();const m=e.map;actor=makeEntity(type,at.x,at.y,at.z);actor.facing=Math.PI
+  if(type==='arachnid'){actor.def={...actor.def,arachnidVariant:kind};ensureArachnid(actor,e)}
+  if(type==='camocrawler')initCamo(e,actor)
+  if(type==='curabitur'){setCurabiturSex(e,actor,kind==='male'?'male':'female');const s=ensureCurabitur(e,actor);s.z=at.z+2.3;actor.z=s.z}
+  if(type==='lightguide')actor.z=at.z+1.5
+  m.entities.push(actor);e.dev.invisible=false;e.dev.bright=false;e.player.flashlight=true;e.player.battery=100
+  let cx=actor.x-3.2,cy=actor.y,cz=floorHeight(m,cx,cy)
+  if(!canOccupy(m,cx,cy,.32,{z:cz})){cx=at.x-3;cy=at.y;cz=floorHeight(m,cx,cy)}
+  Object.assign(e.player,{x:cx,y:cy,z:cz,vz:0});aim(actor.x,actor.y,actor.z+(type==='arachnid'?.25:type==='curabitur'?0:.7));if(type==='lightguide')aim(actor.x,actor.y,actor.z)
+  const start=performance.now();await until(()=>r.entityMeshes.has(actor.id)&&!actor.presentationPending,'visible '+type+'/'+kind);const readyMs=performance.now()-start;await sleep(500)
+  const g=r.entityMeshes.get(actor.id),b=new THREE.Box3().setFromObject(g,true),size=b.getSize(new THREE.Vector3());ok(!b.isEmpty()&&size.toArray().every(Number.isFinite),'complete finite model '+type+'/'+kind)
+  let meshes=0,triangles=0;g.traverse((o:any)=>{if(o.isMesh){meshes++;triangles+=(o.geometry.index?.count??o.geometry.attributes.position.count)/3*(o.isInstancedMesh?o.count:1)}});ok(meshes>0,'rendered meshes '+type+'/'+kind)
+  const rec={type,kind,readyMs,settledMs:performance.now()-start,meshes,triangles,size:size.toArray(),...base.status()};records.push(rec);return rec
+ }
+ const camoWake=async()=>{await specimen('camocrawler');e.dev.frozenAI=false;camoSound(e,actor.x+2,actor.y,14);await until(()=>actor.cc?.mode==='reveal','real camo hears noise',8000);e.dev.frozenAI=true;await sleep(400);ok(actor.cc.mode==='reveal','live camo reveal animation');return{mode:actor.cc.mode}}
+ const birdIdle=async()=>{await specimen('curabitur','female');e.dev.invisible=true;e.dev.frozenAI=false;await sleep(3000);e.dev.frozenAI=true;ok(!!r.entityMeshes.get(actor.id).userData.cbRig,'bird has animated rig before display');aim(actor.x,actor.y,actor.z);return{mode:ensureCurabitur(e,actor).mode,z:actor.z}}
+ const cleanup=async()=>{await base.load(4);await sleep(1200);const names=['arachnid-world','curabitur-view','camo-boulder'];let remnants:string[]=[];r.scene.traverse((o:any)=>{if(names.includes(o.name))remnants.push(o.name)});ok(!remnants.includes('arachnid-world'),'leaving L8 clears web/nest roots');ok(!remnants.includes('camo-boulder'),'leaving L8 clears boulders');ok(!remnants.includes('curabitur-view'),'leaving L8 clears spore/puddle views');return{remnants,...base.status()}}
+
+ const vision=async()=>{clear();const w=getArachnidWorld(e);w.acidT=8;w.webT=4;await sleep(500);ok(r.photoFinish.uniforms.arachnidAcid.value>0&&r.photoFinish.uniforms.blur.value>2,'acid blur is in WebGL game image');ok(!document.querySelector('.game-hud [style*="backdrop-filter"]'),'acid does not filter HUD');return{acid:r.photoFinish.uniforms.arachnidAcid.value,web:r.photoFinish.uniforms.arachnidWeb.value,blur:r.photoFinish.uniforms.blur.value}}
+ const items=async()=>{getArachnidWorld(e).acidT=0;getArachnidWorld(e).webT=0;clear();e.dev.invisible=true;e.handsStowed=false;e.player.hotbar=Array(e.player.hotbar.length).fill(null);e.player.backpack=Array(e.player.backpack.length).fill(null);e.addItem('curabiturgel');e.player.selected=e.player.hotbar.findIndex((s:any)=>s?.type==='curabiturgel');const count=e.countItem('curabiturgel');e.useSlot('hotbar',e.player.selected);ok(e.countItem('curabiturgel')===count-1&&e.map.items.some((i:any)=>i.type==='curabiturgel'),'actual use opens and places a glowing jar');e.addItem('curabiturspore');e.player.selected=e.player.hotbar.findIndex((s:any)=>s?.type==='curabiturspore');e.useSlot('hotbar',e.player.selected);ok(e.countItem('curabiturrepellent')===1,'actual use crushes spore into repellent');e.player.selected=e.player.hotbar.findIndex((s:any)=>s?.type==='curabiturrepellent');e.useSlot('hotbar',e.player.selected);ok(curabiturPuddles(e).length>0,'actual repellent use produces puddle');aim(e.player.x+1,e.player.y,.1);await sleep(700);ok(r.scene.getObjectByName('curabitur-view'),'puddle is rendered in game');return{puddles:curabiturPuddles(e).length,groundJars:e.map.items.filter((i:any)=>i.type==='curabiturgel').length}}
+ const nest=async()=>{clear();e.dev.invisible=true;e.handsStowed=true;const n=devGotoArachnidNest(e);ok(n,'fixed seed has actual procedural rune nest');await until(()=>r.isNearWorldReady(e),'nest terrain ready');clear();aim(n.x-e.map.inf.ox,n.y-e.map.inf.oy,1);e.player.flashlight=true;await sleep(1000);const root=r.scene.getObjectByName('arachnid-world');ok(root&&root.children.length>0,'rune nest/web/cocoon meshes render on actual terrain');return{nest:n.id,world:{x:n.x,y:n.y},children:root.children.length,...base.status()}}
+ const recycle=async()=>{await boot();clear();app.look.yaw=0;app.look.pitch=0;await sleep(6000);await until(()=>r.chunkBuilds.size===0,'fixed world queue settles');const initialKeys=[...r.chunkGroups.keys()].sort().join('|'),samples:any[]=[];for(let i=0;i<3;i++){await specimen('arachnid','wolf');await specimen('curabitur','male');await specimen('lightguide');clear();await until(()=>r.entityMeshes.size===0,'live models recycled');await sleep(1200);samples.push({...r.three.info.memory,chunks:r.chunkGroups.size,keys:[...r.chunkGroups.keys()].sort().join('|')})}ok(samples.every(s=>s.keys===initialKeys),'model recycling uses identical world chunks');ok(samples[2].geometries<=samples[1].geometries+2&&samples[2].textures===samples[1].textures,'fixed-window L8 recycling has stable resources '+JSON.stringify(samples.map(({keys,...s})=>s)));return samples.map(({keys,...s})=>s)}
+ let attempts=0,warnCount=0,prev='',originalDie:any,track:number|undefined
+ const mangledStart=async()=>{await base.load(9);e.dev.invisible=false;e.dev.frozenAI=true;e.dev.bright=false;e.player.flashlight=true;const p=e.player,m=e.map;let point:any
+  for(let y=12;y<m.h-12&&!point;y++)for(let x=12;x<m.w-24&&!point;x++){const all=[0,3,6,9,12,15,18].every(dx=>m.outdoor[y*m.w+x+dx]===1&&e.entityWalkH(m,x+dx,y,0)!==null);if(all&&canOccupy(m,x+.5,y+.5,.32,{z:0}))point={x:x+.5,y:y+.5}}
+  ok(point,'L9 has actual outdoor pursuit route');Object.assign(p,{x:point.x,y:point.y,z:floorHeight(m,point.x,point.y),vz:0});actor=makeEntity('mangled',point.x+18,point.y,0);m.entities.push(actor);aim(actor.x,actor.y,18);r.fovBase=80
+  await until(()=>r.entityMeshes.has(actor.id)&&!actor.presentationPending&&actor.mangledLegs?.length===24,'actual mangled ready');originalDie=e.die.bind(e);e.die=(cause:string,force?:boolean)=>{if(cause.includes('残缺者'))attempts++;return originalDie(cause,force)};prev='';track=window.setInterval(()=>{if(!m.entities.includes(actor))return;const phase=actor.nw?.phase;if(phase==='warn'&&prev!=='warn')warnCount++;prev=phase},20);e.dev.frozenAI=false;return{distance:Math.hypot(actor.x-p.x,actor.y-p.y),...base.status()}}
+ const mangledFirst=async()=>{await until(()=>attempts>=1,'first survived mangled attack',50000);ok(!e.over&&e.player.hp>0,'god-mode player survives first assimilation');ok(actor.nw.phase==='stalk'&&!nwCaptor(e),'first attack releases and resets to pursuit');ok(mangledGrowth(e)===1,'surviving player does not grow entity');return{attempts,warnCount,phase:actor.nw.phase,z:e.player.z,cd:actor.attackCd}}
+ const mangledAgain=async()=>{await until(()=>attempts>=2,'second survived mangled attack',50000);e.dev.frozenAI=true;clearInterval(track);e.die=originalDie;ok(warnCount>=2,'actual manual-spawned mangled attacks more than once');ok(!e.over&&actor.nw.phase==='stalk','second attack ends in pursuit too');aim(actor.x,actor.y,18);return{attempts,warnCount,phase:actor.nw.phase,legs:actor.mangledLegs.length,growth:mangledGrowth(e),...base.status()}}
+ return{boot,specimen,camoWake,birdIdle,vision,items,nest,recycle,cleanup,mangledStart,mangledFirst,mangledAgain,summary:()=>({checks,records,status:base.status()})}
+}

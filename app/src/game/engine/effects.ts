@@ -66,6 +66,13 @@ export const EFFECTS: EffectDef[] = [
   { id: 'manmade', field: 'manmadeT', def: 0, cat: 'candy', tickPhase: 'post', mount: 'effects tick（post）', tick(eng, dt) {
     if (eng.manmadeT > 0) eng.manmadeT -= dt
   } },
+  { id: 'thing-breath', field: 'thingBreathT', def: 0, cat: 'misc', resetOnNewRun: true, tickPhase: 'post', mount: 'thingAI.stepThingWorld', tick(eng, dt) {
+    if (eng.thingBreathT > 0) { eng.thingBreathT = Math.max(0, eng.thingBreathT - dt); if (eng.thingBreathT === 0) eng.msg('嘴里的硫磺味终于散了。', 'system') }
+  } },
+  { id: 'thing-breath-ping', field: 'thingBreathPingT', def: 0, cat: 'misc', resetOnNewRun: true, mount: 'thingAI.stepThingWorld' },
+  { id: 'thing-meat-cd', field: 'thingMeatCd', def: 0, cat: 'misc', resetOnNewRun: true, tickPhase: 'post', mount: 'thingAI', tick(eng, dt) {
+    eng.thingMeatCd = Math.max(0, eng.thingMeatCd - dt)
+  } },
   { id: 'webbed', field: 'webbedT', def: 0, cat: 'misc', tickPhase: 'post', mount: 'effects tick（post）+ movement 减速（死亡飞蛾守卫的缠丝；Nguithr 重制后改用 ngRun）', tick(eng, dt) {
     if (eng.webbedT > 0) eng.webbedT -= dt
   } },

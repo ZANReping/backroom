@@ -1,0 +1,155 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 8935,
+  "cdp": 8936,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l7-seams-map-20261022\\game-realistic-v2\\qa-1792676638762-34852",
+    "--remote-debugging-port=8936",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 68740,
+    "server": 27192
+  },
+  "appBootMs": 20488.0051,
+  "entryMs": 4823.484199999999,
+  "firstPlayableMs": 33899.229400000004,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "checks": [],
+    "records": [],
+    "status": {
+      "level": 4,
+      "player": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "origin": [
+        -64,
+        -64
+      ],
+      "mode": "realistic",
+      "memory": {
+        "geometries": 467,
+        "textures": 67
+      },
+      "chunks": 9,
+      "tasks": 4
+    }
+  },
+  "seams": {
+    "gapMetres": 0,
+    "samples": 65,
+    "at": {
+      "x": 64,
+      "y": 15.5,
+      "ha": -141.58493041992188,
+      "hb": -141.58493041992188
+    },
+    "level": 7,
+    "player": {
+      "x": 30,
+      "y": 15,
+      "z": -50
+    },
+    "origin": [
+      -64,
+      -64
+    ],
+    "mode": "realistic",
+    "memory": {
+      "geometries": 319,
+      "textures": 181
+    },
+    "chunks": 19,
+    "tasks": 0
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise)\",\"lineNumber\":0,\"columnNumber\":0,\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"DOMException\",\"description\":\"AbortError: Replaced\",\"objectId\":\"4567724059600671612.2.1\",\"preview\":{\"type\":\"object\",\"subtype\":\"error\",\"description\":\"AbortError: Replaced\",\"overflow\":false,\"properties\":[{\"name\":\"code\",\"type\":\"number\",\"value\":\"20\"},{\"name\":\"name\",\"type\":\"string\",\"value\":\"AbortError\"},{\"name\":\"message\",\"type\":\"string\",\"value\":\"Replaced\"}]}}}",
+  "partial": {
+    "checks": [
+      "both real chunk meshes contain the shared boundary",
+      "retained and new seabed vertices meet after streaming",
+      "no legend is placed under the minimap",
+      "big map opens at full width",
+      "bathymetric band legend is in original big map"
+    ],
+    "records": [
+      {
+        "gapMetres": 0,
+        "samples": 65,
+        "at": {
+          "x": 64,
+          "y": 15.5,
+          "ha": -141.58493041992188,
+          "hb": -141.58493041992188
+        },
+        "level": 7,
+        "player": {
+          "x": 30,
+          "y": 15,
+          "z": -50
+        },
+        "origin": [
+          -64,
+          -64
+        ],
+        "mode": "realistic",
+        "memory": {
+          "geometries": 319,
+          "textures": 181
+        },
+        "chunks": 19,
+        "tasks": 0
+      }
+    ],
+    "status": {
+      "level": 7,
+      "player": {
+        "x": 15,
+        "y": 15,
+        "z": 3
+      },
+      "origin": [
+        -64,
+        -64
+      ],
+      "mode": "realistic",
+      "memory": {
+        "geometries": 405,
+        "textures": 161
+      },
+      "chunks": 16,
+      "tasks": 4
+    }
+  },
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 16914.69999999553
+    },
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\nLEVEL 7\n深海恐惧\nB7 · 2F/共2层\n磁带\n0/6\n入口房间\n100%\n入口：Level 6 深海锈蚀活板门 · 入口房间（固定出生点：锈蚀金属舱体 + 书橱/咖啡桌/椅/荧光吊灯，增长门廊尽头舱门外即深海）\n出口线索：午夜带的海床上偶尔会露出一个岩洞洞口。里面很深，深得不像海。\n你跌进了水里——冰冷刺骨。\n水没过了头顶——视野变成浑浊的蓝。\n1\n2\n3\n4\n5\n6\n7\n左键\n攻击\n空格\n跳跃\nC\n蹲伏\nF\n手电\n右键\n使用\nQ\n丢弃\nV\n检视\n左Alt\n收起主手\n开发者模式\n🛠 开发者模式 · DEV\n▴\nFIELD KIT · 档案工作台\n磁带 0/6\n背包\nI\n图鉴\nG\n状态\nU\n地图\nM\n日志\nL\n任务\nJ\n✕\nEsc\n1F\n2F·\n 地图全开\n右键安全传送 · 拖动平移\n有光带 0–24 m\n微光带 24–90 m\n午夜带 90–230 m\n深渊 ≥230 m\n主等深线\n次等深线\n灰色陆地／舱室\n数字为海床水深（米）；深度带按海床最深处划分，与当前下潜深度无关。\n当前 2F / 共2层\n－\n＋\n回正"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

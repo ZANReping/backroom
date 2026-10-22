@@ -1,0 +1,203 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 8803,
+  "cdp": 8804,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l4-burster-maps-20261021\\burster-final-realistic\\qa-1792644543646-54412",
+    "--remote-debugging-port=8804",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 18580,
+    "server": 13992
+  },
+  "appBootMs": 12863.776300000001,
+  "entryMs": 2976.868200000001,
+  "firstPlayableMs": 21490.480499999998,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "checks": [],
+    "records": [],
+    "status": {
+      "level": 4,
+      "world": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "chunks": 9,
+      "tasks": 4,
+      "memory": {
+        "geometries": 467,
+        "textures": 67
+      },
+      "fog": "idle",
+      "k": 0,
+      "t": 240
+    }
+  },
+  "burster-sleep": {
+    "id": 14,
+    "world": {
+      "level": 3,
+      "world": {
+        "x": 27.5,
+        "y": -58.5,
+        "z": 0
+      },
+      "chunks": 8,
+      "tasks": 1,
+      "memory": {
+        "geometries": 660,
+        "textures": 75
+      },
+      "fog": "idle",
+      "k": 0,
+      "t": 240
+    },
+    "modelParts": 1
+  },
+  "burster-burst": {
+    "phase": "burst",
+    "t": 0.7500000000000003,
+    "globs": 0
+  },
+  "burster-blind": {
+    "vision": {
+      "blind": 0.7107500000000002,
+      "shock": false,
+      "burn": 6.87500000000001
+    },
+    "blur": 2.132250000000001
+  },
+  "burster-shell": {
+    "vision": {
+      "blind": 0,
+      "shock": false,
+      "burn": 0
+    },
+    "phase": "shell",
+    "hp": 30
+  },
+  "burster-crack": {
+    "crack": 0.5
+  },
+  "burster-broken": {
+    "dead": true,
+    "drop": true,
+    "checks": 11
+  },
+  "cleared": {
+    "level": 4,
+    "world": {
+      "x": 15.5,
+      "y": 15.5,
+      "z": 0
+    },
+    "chunks": 9,
+    "tasks": 1,
+    "memory": {
+      "geometries": 371,
+      "textures": 93
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "summary": {
+    "checks": [
+      "L3 has actual unobstructed encounter location",
+      "actual imported rig",
+      "actual burster discovery registered",
+      "acid effect does not cover HUD with DOM filter",
+      "water item in real inventory",
+      "actual water use starts",
+      "water removes burn",
+      "almond damage enters cocoon",
+      "heavy strike cracks cocoon",
+      "broken cocoon drops acid callus",
+      "acid callus loads 3 shots",
+      "leaving level clears acid frame",
+      "leaving level removes acid instanced effects"
+    ],
+    "records": [
+      {
+        "load": 3,
+        "entryMs": 3849.0999999996275,
+        "level": 3,
+        "world": {
+          "x": 15.5,
+          "y": 15.5,
+          "z": 0
+        },
+        "chunks": 9,
+        "tasks": 0,
+        "memory": {
+          "geometries": 483,
+          "textures": 68
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "load": 4,
+        "entryMs": 2091.800000000745,
+        "level": 4,
+        "world": {
+          "x": 15.5,
+          "y": 15.5,
+          "z": 0
+        },
+        "chunks": 9,
+        "tasks": 1,
+        "memory": {
+          "geometries": 371,
+          "textures": 93
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      }
+    ],
+    "status": {
+      "level": 4,
+      "world": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "chunks": 9,
+      "tasks": 1,
+      "memory": {
+        "geometries": 371,
+        "textures": 93
+      },
+      "fog": "idle",
+      "k": 0,
+      "t": 240
+    }
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

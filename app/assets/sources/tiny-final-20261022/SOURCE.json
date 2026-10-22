@@ -1,0 +1,217 @@
+{
+  "imported": "2026-10-22",
+  "archive": "C:/Users/ZANRe/Downloads/tiny-final.zip",
+  "archiveSHA256": "af1ecf00fdb468bd13c3e6ec3ec3415ee70a15280fe38ecaf1f77a5f0972d242",
+  "sourceType": "User-provided procedural Three.js model, texture, animation, gameplay and landmark patch",
+  "upstreamRange": "002514e..1284981 (as identified by supplied patch and notes)",
+  "author": "Archive supplied by project owner; no standalone author list included.",
+  "license": "No standalone license file included. Retain the project existing attribution and license records; no new redistribution license inferred.",
+  "archiveReferences": [
+    {
+      "url": "https://backrooms-wiki-cn.wikidot.com/trimmed:entity-720",
+      "illustrationAuthorAsCreditedInCode": "stellate",
+      "usage": "Visual/lore reference cited by archive. No original Wikidot image imported."
+    },
+    {
+      "url": "https://backrooms-wiki-cn.wikidot.com/level-8",
+      "usage": "Instrument cave narrative cited by archive."
+    }
+  ],
+  "textures": {
+    "externalBitmapAssets": 0,
+    "source": "Procedural canvas texture functions in tinyMesh.ts; existing item atlases and L8 PBR maps reused."
+  },
+  "localAdjustments": [
+    "Merged into current original project, preserving recent L8, Mangled, Burster, Melee and BNTG changes",
+    "Only single-player content imported under project multiplayer freeze",
+    "Shared marked procedural textures, independent instance geometry/materials, cooperative cancellable Tiny construction and existing GPU warmup",
+    "World-stable flee/home targets and animation velocity across stream-origin changes",
+    "Cooperative cave surface fitting, private render geometry clones, and applying ground height only once",
+    "Current timed melee path in regression tests; actual App verification in both light modes"
+  ],
+  "upstreamNotes": [
+    "upstream/TINY-REMAKE.md"
+  ],
+  "files": [
+    {
+      "path": "package.json",
+      "installedSHA256": "e3847d91652f9ec075ba8dd17c3187ec2eaf6cc55064862d813089fa46e6e232",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "proto-tiny.html",
+      "installedSHA256": "a7c31beda82cc600fbfc0b24dc5e55c17cdd047abdc19fc017a0d8cc97d9fcb9",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "scripts/check-tiny-arms.ts",
+      "installedSHA256": "79eea1709948a754d2cf6bf139cf7cdbb8557d86c3d5251f41a04b34f2b8cab4",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "scripts/check-tiny-pelt.ts",
+      "installedSHA256": "8287c8e62349dbaaf412abfc4b5d8fe78fef353039e6ea67c1f938f5cacdc67e",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "scripts/check-tiny.ts",
+      "installedSHA256": "6f0ff1caaf1eccaf2cafe0f3f306faac9e498755ce2f9406c3357f8f69aac6bf",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/components/DialogOverlay.tsx",
+      "installedSHA256": "3c6f7ec61d53d8980e471518d9c5b408b80958ac31d7f0e0ba6c440c2202a1ed",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/content/decorRegistry.ts",
+      "installedSHA256": "0283788e2dfbc429bdbd82885245b7163c259dbbf7f3b709e83ebf08f43a9efc",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/content/items.ts",
+      "installedSHA256": "c7853524a463058cef5af61fc8008fecc8115eaf8019dd66267a19d92c4f647c",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/content/npcs.ts",
+      "installedSHA256": "dab7ccb61cc72650f099ffacdbc69e7c6ca3bf088c15754465dffc7c22049b96",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/core/audio.ts",
+      "installedSHA256": "74dc3c4a144cc47f9724b1b991f7acba5c97a384db790f46230b0cba8a4d00dc",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/core/types.ts",
+      "installedSHA256": "46b60b0ab9deaa5ed23bd4cabffe8376db3ceb4c757d2f3b47f8af9d90bf6bc2",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/engine/ambient.ts",
+      "installedSHA256": "185ffed6d2a55f68adb2418d61c2cd4f8ba6706d5ce6056fa3efcb5f153ad8d3",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/engine/combat.ts",
+      "installedSHA256": "c0ec650ee67bde8c6b2a090810ac3cbcdefcd7ad37c0dded366021c833d1304d",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/engine/entityAI.ts",
+      "installedSHA256": "bc9324deb6ef90fe1cdf897f9031010783ac8ec615652f9e5395202fec69c899",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/engine/interact.ts",
+      "installedSHA256": "df6bb674aa3b3fb725ade7dd15f072d6e2056276589f639265778ce72114fed1",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/engine/inventory.ts",
+      "installedSHA256": "15da1b0bce8af3d21395fbf529367e332274c5f80bf84e7153c3092c7bd9f139",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/engine/level.ts",
+      "installedSHA256": "6bc4db9b513704db8092cebaf1f6409869111f37f88aeab84d548d9f0ef6a66e",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/engine/tinyAI.ts",
+      "installedSHA256": "213bb9e820b2df54d055f6ea8c4727d7131ef610e02bfef69fc160ba181ac063",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/entities/deep.ts",
+      "installedSHA256": "d6db394eea308b12077b271ec32c9c129834093201e480a92cba2f95e2d4a757",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/entities/types.ts",
+      "installedSHA256": "8958573b6e83e55d40db770c96d176e884dc6072fa7377c1d4fbcecf2518f686",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/levels/l8.ts",
+      "installedSHA256": "b5a5c4d5c7e7fe1ddb9bcda230603aa5a5b5ac3600061c7bd5ced7cfa26fbdd5",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/renderer/entitiesMesh.ts",
+      "installedSHA256": "2464b23b5451bbe09009960dced0a863fc610d1373e872c4dd5c302ce8a257b1",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/renderer/instrumentCave.ts",
+      "installedSHA256": "b78c325679c051a06ccc46593d271f36faf72002e43022a233a3a7b7d18ff18f",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/renderer/refinedItemMesh.ts",
+      "installedSHA256": "aab03f4b299f67bd5ec8d4775113133cbe3e727b7b3a432c7c6f5b72d5cadf50",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/renderer/renderer.ts",
+      "installedSHA256": "5d2229210b00583f0b3015063393a61e3dc7a6a63f8cc4410265032a0091c555",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/renderer/retroViewHand.ts",
+      "installedSHA256": "f8fc1e0e87b175c311a7800bf60fa00a525caac27019577fee89a722a6c88d07",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/renderer/stoneInstrumentsMesh.ts",
+      "installedSHA256": "82ffc45c2eda94c2a8547e4132ffbce0222f04af636a211e8f8b2fa2990678d6",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/renderer/structures.ts",
+      "installedSHA256": "03b0bae5f1b39217f6e858336824720fd112e0c12e8c3bac295114b206d2935e",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/renderer/tinyAnim.ts",
+      "installedSHA256": "58d13f40d826a40f7361f9f1d7add7050ce34243913c812794d843adad94ab74",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/renderer/tinyMesh.ts",
+      "installedSHA256": "9f39e32aaec12e573268543206a8613ab89a6ee3c06eadaa18427897663ea533",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/renderer/tinyRender.ts",
+      "installedSHA256": "bec2a8acef0631db79f68786b033eb96c28bb021212c0be7d713d3bfa5f47504",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/renderer/viewmodel.ts",
+      "installedSHA256": "0ed5c25408f83f5ec683016fed1a48d1ab56d751db489a31a326f0fabdec016a",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/world/infiniteL8.ts",
+      "installedSHA256": "d36e52f3e4b81b2fe04cb6f91ca9f5764874b37b9e25a1a4a66f188bc6214b2f",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/proto/tinyAnimProto.ts",
+      "installedSHA256": "96bf5893530614c7d4373cd2f6691d59808161da9f72999bf31de97abda0233e",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/proto/tinyEntry.ts",
+      "installedSHA256": "d694f651619e9f0580a60af127d4b8c6212788f3929cfcc225567bc3c04075aa",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/proto/tinyProto.ts",
+      "installedSHA256": "7f4cd648f84153aa553d2c0467f5b3697d68363a20d7e69d8fbdb7b2f9ef5be9",
+      "existingBeforeImport": false
+    }
+  ]
+}

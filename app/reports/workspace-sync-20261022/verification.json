@@ -1,0 +1,68 @@
+[
+  {
+    "command": "npm ci --prefix app --include=dev --no-audit --no-fund --registry=https://registry.npmjs.org",
+    "exitCode": 0,
+    "durationMs": 60925,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261022\\install-check.txt"
+  },
+  {
+    "command": "npm --prefix app ls --depth=0",
+    "exitCode": 0,
+    "durationMs": 2027,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261022\\dependency-check.txt"
+  },
+  {
+    "command": "node app/scripts/check-vercel-config.mjs",
+    "exitCode": 0,
+    "durationMs": 10628,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261022\\config-check.txt"
+  },
+  {
+    "command": "npm run build",
+    "exitCode": 0,
+    "durationMs": 85920,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261022\\build-check.txt"
+  },
+  {
+    "command": "node app/scripts/check-vercel-config.mjs --built",
+    "exitCode": 0,
+    "durationMs": 15732,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261022\\config-built-check.txt"
+  },
+  {
+    "command": "npm --prefix app run check:l1-offline",
+    "exitCode": 0,
+    "durationMs": 10176,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261022\\check-06.txt"
+  },
+  {
+    "command": "npm --prefix app run check:model-warmup",
+    "exitCode": 0,
+    "durationMs": 1542,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261022\\check-07.txt"
+  },
+  {
+    "command": "npm --prefix app run check:l8-resources",
+    "exitCode": 0,
+    "durationMs": 9384,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261022\\check-08.txt"
+  },
+  {
+    "command": "npm --prefix app run check:tiny-resources",
+    "exitCode": 0,
+    "durationMs": 4081,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261022\\check-09.txt"
+  },
+  {
+    "command": "npm --prefix app run check:thing-integration",
+    "exitCode": 0,
+    "durationMs": 4036,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261022\\check-10.txt"
+  },
+  {
+    "command": "npm --prefix app run check:bntg-bank",
+    "exitCode": 0,
+    "durationMs": 2140,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261022\\check-11.txt"
+  }
+]

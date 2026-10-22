@@ -28,7 +28,6 @@ export const L7: LevelDef = {
   items: [
     { type: 'rope', w: 12 },
     { type: 'divemask', w: 8 },
-    { type: 'thingmeat', w: 8 },
   ],
   itemCount: [9, 13],
   structures: ['bookcase', 'table', 'hanglight', 'vent', 'hoteldoor', 'ropeanchor', 'barrel', 'crate', 'rockisle', 'bonepile', 'fishbones', 'seatarpit', 'corpse', 'seapillar', 'seapipe', 'seadais'],

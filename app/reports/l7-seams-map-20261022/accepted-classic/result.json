@@ -1,0 +1,512 @@
+{
+  "seed": 424242,
+  "mode": "classic",
+  "port": 8330,
+  "cdp": 8331,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l7-seams-map-20261022\\accepted-classic\\qa-1792677613976-49028",
+    "--remote-debugging-port=8331",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 61136,
+    "server": 65332
+  },
+  "appBootMs": 12716.445600000001,
+  "entryMs": 3039.1358999999975,
+  "firstPlayableMs": 19840.4373,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "checks": [],
+    "records": [],
+    "status": {
+      "level": 4,
+      "player": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "origin": [
+        -64,
+        -64
+      ],
+      "mode": "classic",
+      "memory": {
+        "geometries": 408,
+        "textures": 43
+      },
+      "chunks": 9,
+      "tasks": 4
+    }
+  },
+  "seams": {
+    "gapMetres": 0,
+    "samples": 65,
+    "at": {
+      "x": 64,
+      "y": 15.5,
+      "ha": -141.58493041992188,
+      "hb": -141.58493041992188
+    },
+    "level": 7,
+    "player": {
+      "x": 30,
+      "y": 15,
+      "z": -50
+    },
+    "origin": [
+      -64,
+      -64
+    ],
+    "mode": "classic",
+    "memory": {
+      "geometries": 169,
+      "textures": 174
+    },
+    "chunks": 22,
+    "tasks": 0
+  },
+  "maps": {
+    "minimap": {
+      "maxDepth": 206.73705291748047,
+      "band": "午夜带",
+      "contours": 1307,
+      "known": 6400,
+      "missing": 0,
+      "labels": []
+    },
+    "wide": {
+      "maxDepth": 240.60293579101562,
+      "band": "深渊",
+      "contours": 6189,
+      "known": 57600,
+      "missing": 0,
+      "labels": [
+        "午夜带 · 最深 229m",
+        "深渊 · 最深 240m",
+        "深渊 · 最深 237m",
+        "有光带 · 最深 23m",
+        "深渊 · 最深 233m",
+        "200m",
+        "150m",
+        "100m",
+        "230m",
+        "24m"
+      ]
+    },
+    "remotePreviewMs": 1107.8999999985099,
+    "remoteCells": 72,
+    "width": 480,
+    "level": 7,
+    "player": {
+      "x": 15,
+      "y": 15,
+      "z": 3
+    },
+    "origin": [
+      -64,
+      -64
+    ],
+    "mode": "classic",
+    "memory": {
+      "geometries": 376,
+      "textures": 173
+    },
+    "chunks": 21,
+    "tasks": 0
+  },
+  "mapDrag": {
+    "before": {
+      "rect": {
+        "x": 715,
+        "y": 230,
+        "width": 480,
+        "height": 480
+      },
+      "hash": 970081972,
+      "stats": {
+        "maxDepth": 240.60293579101562,
+        "band": "深渊",
+        "contours": 6189,
+        "known": 57600,
+        "missing": 0,
+        "labels": [
+          "午夜带 · 最深 229m",
+          "深渊 · 最深 240m",
+          "深渊 · 最深 237m",
+          "有光带 · 最深 23m",
+          "深渊 · 最深 233m",
+          "200m",
+          "150m",
+          "100m",
+          "230m",
+          "24m"
+        ]
+      },
+      "chunks": 25,
+      "player": {
+        "x": 79,
+        "y": 79
+      }
+    },
+    "after": {
+      "rect": {
+        "x": 715,
+        "y": 230,
+        "width": 480,
+        "height": 480
+      },
+      "hash": -2016673021,
+      "stats": {
+        "maxDepth": 240.60293579101562,
+        "band": "深渊",
+        "contours": 7053,
+        "known": 57600,
+        "missing": 0,
+        "labels": [
+          "午夜带 · 最深 229m",
+          "深渊 · 最深 240m",
+          "有光带 · 最深 23m",
+          "深渊 · 最深 237m",
+          "200m",
+          "150m",
+          "100m",
+          "230m",
+          "24m"
+        ]
+      },
+      "chunks": 25,
+      "player": {
+        "x": 79,
+        "y": 79
+      }
+    }
+  },
+  "mapFog": {
+    "maxDepth": 239.96767807006836,
+    "band": "深渊",
+    "contours": 5061,
+    "known": 1466,
+    "missing": 0,
+    "labels": [
+      "200m",
+      "50m",
+      "90m"
+    ]
+  },
+  "stream": [
+    {
+      "x": -70,
+      "y": 15,
+      "n": 1755,
+      "gap": 0,
+      "level": 7,
+      "player": {
+        "x": -70,
+        "y": 15,
+        "z": -25
+      },
+      "origin": [
+        -160,
+        -64
+      ],
+      "mode": "classic",
+      "memory": {
+        "geometries": 160,
+        "textures": 148
+      },
+      "chunks": 18,
+      "tasks": 0
+    },
+    {
+      "x": -10,
+      "y": -70,
+      "n": 1625,
+      "gap": 0,
+      "level": 7,
+      "player": {
+        "x": -10,
+        "y": -70,
+        "z": -25
+      },
+      "origin": [
+        -96,
+        -160
+      ],
+      "mode": "classic",
+      "memory": {
+        "geometries": 75,
+        "textures": 142
+      },
+      "chunks": 17,
+      "tasks": 0
+    },
+    {
+      "x": 35,
+      "y": -10,
+      "n": 1755,
+      "gap": 0,
+      "level": 7,
+      "player": {
+        "x": 35,
+        "y": -10,
+        "z": -25
+      },
+      "origin": [
+        -32,
+        -96
+      ],
+      "mode": "classic",
+      "memory": {
+        "geometries": 107,
+        "textures": 155
+      },
+      "chunks": 18,
+      "tasks": 0
+    },
+    {
+      "x": 35,
+      "y": 35,
+      "n": 1170,
+      "gap": 0,
+      "level": 7,
+      "player": {
+        "x": 35,
+        "y": 35,
+        "z": -25
+      },
+      "origin": [
+        -32,
+        -32
+      ],
+      "mode": "classic",
+      "memory": {
+        "geometries": 132,
+        "textures": 122
+      },
+      "chunks": 13,
+      "tasks": 1
+    },
+    {
+      "x": 15,
+      "y": 15,
+      "n": 2080,
+      "gap": 0,
+      "level": 7,
+      "player": {
+        "x": 15,
+        "y": 15,
+        "z": -25
+      },
+      "origin": [
+        -64,
+        -64
+      ],
+      "mode": "classic",
+      "memory": {
+        "geometries": 148,
+        "textures": 178
+      },
+      "chunks": 21,
+      "tasks": 0
+    }
+  ],
+  "frames": {
+    "rounds": [
+      {
+        "median": 4.199999995529652,
+        "p95": 5.399999998509884
+      },
+      {
+        "median": 4.199999995529652,
+        "p95": 5.300000004470348
+      },
+      {
+        "median": 4.200000002980232,
+        "p95": 5.300000004470348
+      },
+      {
+        "median": 4.199999995529652,
+        "p95": 5.700000002980232
+      },
+      {
+        "median": 4.199999995529652,
+        "p95": 5.299999997019768
+      }
+    ],
+    "drawRounds": [
+      {
+        "span": 80,
+        "median": 2.899999998509884,
+        "max": 4.199999995529652
+      },
+      {
+        "span": 120,
+        "median": 6.899999998509884,
+        "max": 7.5
+      },
+      {
+        "span": 240,
+        "median": 10.700000002980232,
+        "max": 17
+      }
+    ],
+    "level": 7,
+    "player": {
+      "x": 63,
+      "y": 17.5,
+      "z": -136.7556579589844
+    },
+    "origin": [
+      -32,
+      -64
+    ],
+    "mode": "classic",
+    "memory": {
+      "geometries": 560,
+      "textures": 176
+    },
+    "chunks": 21,
+    "tasks": 0
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  },
+  "summary": {
+    "checks": [
+      "both real chunk meshes contain the shared boundary",
+      "retained and new seabed vertices meet after streaming",
+      "no legend is placed under the minimap",
+      "big map opens at full width",
+      "bathymetric band legend is in original big map",
+      "wide chart is classified by deepest seabed, even at cabin height",
+      "chart bands stay the same when swimmer depth changes",
+      "remote chart preview does not load live chunks",
+      "remote chart preview does not create loot or actors",
+      "remote preview does not mark terrain explored",
+      "worker returns terrain-only depth records",
+      "original reveal checkbox is active",
+      "fogged map shows only discovered terrain",
+      "all real seams align at streamed origin -70,15 (1755 vertices, 0m)",
+      "all real seams align at streamed origin -10,-70 (1625 vertices, 0m)",
+      "all real seams align at streamed origin 35,-10 (1755 vertices, 0m)",
+      "all real seams align at streamed origin 35,35 (1170 vertices, 0m)",
+      "all real seams align at streamed origin 15,15 (2080 vertices, 0m)"
+    ],
+    "records": [
+      {
+        "gapMetres": 0,
+        "samples": 65,
+        "at": {
+          "x": 64,
+          "y": 15.5,
+          "ha": -141.58493041992188,
+          "hb": -141.58493041992188
+        },
+        "level": 7,
+        "player": {
+          "x": 30,
+          "y": 15,
+          "z": -50
+        },
+        "origin": [
+          -64,
+          -64
+        ],
+        "mode": "classic",
+        "memory": {
+          "geometries": 169,
+          "textures": 174
+        },
+        "chunks": 22,
+        "tasks": 0
+      },
+      {
+        "minimap": {
+          "maxDepth": 206.73705291748047,
+          "band": "午夜带",
+          "contours": 1307,
+          "known": 6400,
+          "missing": 0,
+          "labels": []
+        },
+        "wide": {
+          "maxDepth": 240.60293579101562,
+          "band": "深渊",
+          "contours": 6189,
+          "known": 57600,
+          "missing": 0,
+          "labels": [
+            "午夜带 · 最深 229m",
+            "深渊 · 最深 240m",
+            "深渊 · 最深 237m",
+            "有光带 · 最深 23m",
+            "深渊 · 最深 233m",
+            "200m",
+            "150m",
+            "100m",
+            "230m",
+            "24m"
+          ]
+        },
+        "remotePreviewMs": 1107.8999999985099,
+        "remoteCells": 72,
+        "width": 480,
+        "level": 7,
+        "player": {
+          "x": 15,
+          "y": 15,
+          "z": 3
+        },
+        "origin": [
+          -64,
+          -64
+        ],
+        "mode": "classic",
+        "memory": {
+          "geometries": 376,
+          "textures": 173
+        },
+        "chunks": 21,
+        "tasks": 0
+      }
+    ],
+    "status": {
+      "level": 4,
+      "player": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "origin": [
+        -64,
+        -64
+      ],
+      "mode": "classic",
+      "memory": {
+        "geometries": 98,
+        "textures": 60
+      },
+      "chunks": 11,
+      "tasks": 1
+    }
+  },
+  "ok": true
+}

@@ -64,3 +64,8 @@
 - 印刷图集为 `scripts/generate-traders-dressing.py` 的原始代码绘制，固定种子 `20261021`。输出 `public/textures/traders/dressing_color.jpg`（1024²）、`dressing_normalgl.jpg` 与 `dressing_roughness.jpg`（各 512²）。图格外扩、OpenGL 法线、重建命令、字体使用及 SHA-256 见 [图集来源记录](public/textures/traders/DRESSING-SOURCES.md)。脚本没有采样外部位图，没有 AI 生成步骤；印刷平面使用平法线，织物/纸箱/木材的细纹使用已有扫描法线。
 - 新增模型沿用本页已记录的 Cardboard004、Metal012、Wood051、Fabric061 等 CC0 材料。纯色搪瓷、塑胶、橡胶、低成本水面与镜面参数由代码提供；未增加新外部贴图或实时反射捕获。
 - 图集中导览、通知、条码、值班表和表单均为游戏内装饰，未使用真实人物或商户标识；当前仍不设置具体商铺内容。没有把参考照片当作墙面或背景贴入场景。
+
+## 银行 ATM（2026-10-22）
+
+- `src/game/renderer/tradersAtm.ts` 为本项目参数化原创 ATM 模型，复用本页已记录的授权材质与共享文字图集；没有新增第三方模型或贴图。
+- `BntgAtm.tsx` 与配套 CSS 为代码绘制的原创交互界面，模拟存取款、余额和最近交易明细；不接入真实银行卡、账户或支付服务。

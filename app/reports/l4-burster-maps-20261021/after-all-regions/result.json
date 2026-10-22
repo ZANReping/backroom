@@ -1,0 +1,1519 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 11620,
+  "cdp": 11621,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l4-burster-maps-20261021\\after-all-regions\\qa-1792643325176-49268",
+    "--remote-debugging-port=11621",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 60252,
+    "server": 51556
+  },
+  "appBootMs": 10932.7093,
+  "entryMs": 2824.1718,
+  "firstPlayableMs": 19335.5876,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 4,
+    "paused": false,
+    "near": true,
+    "chunks": 9,
+    "tasks": 4,
+    "memory": {
+      "geometries": 467,
+      "textures": 67,
+      "programs": 67
+    },
+    "world": [
+      15.5,
+      15.5,
+      0
+    ]
+  },
+  "view": {
+    "name": "hall",
+    "block": {
+      "i": -1,
+      "j": 1,
+      "type": "hall"
+    },
+    "target": {
+      "x": 69.5,
+      "y": 84.5,
+      "wx": 69.5,
+      "wy": 71.5,
+      "deg": 180
+    },
+    "world": [
+      -26.5,
+      84.5,
+      0
+    ],
+    "look": {
+      "yaw": 0,
+      "pitch": -0.005384563344859186,
+      "locked": false,
+      "rayX": 0,
+      "rayY": -0.9999855032738186,
+      "rayZ": -0.005384537325320567,
+      "visualHit": null,
+      "roll": 0
+    },
+    "fov": 58,
+    "prepareMs": 3300.5,
+    "level": 4,
+    "paused": false,
+    "near": true,
+    "chunks": 15,
+    "tasks": 1,
+    "memory": {
+      "geometries": 914,
+      "textures": 85,
+      "programs": 72
+    }
+  },
+  "performance": {
+    "settleMs": 8070.199999999721,
+    "chunks": 25,
+    "tasks": 0,
+    "scope": "Native GPU requestAnimationFrame cadence; full frame includes world/shadows/post; not a GPU timer or Android result",
+    "rounds": [
+      {
+        "median": 6.599999999627471,
+        "p95": 10.200000000186265,
+        "draws": 733,
+        "triangles": 277671
+      },
+      {
+        "median": 6.2000000001862645,
+        "p95": 11,
+        "draws": 733,
+        "triangles": 277671
+      },
+      {
+        "median": 6.600000000093132,
+        "p95": 10.800000000279397,
+        "draws": 733,
+        "triangles": 277671
+      },
+      {
+        "median": 6.5,
+        "p95": 10.300000000279397,
+        "draws": 733,
+        "triangles": 277671
+      },
+      {
+        "median": 6.599999999627471,
+        "p95": 10.400000000372529,
+        "draws": 733,
+        "triangles": 277671
+      }
+    ],
+    "memory": {
+      "geometries": 1032,
+      "textures": 94,
+      "programs": 73
+    }
+  },
+  "regions": [
+    {
+      "name": "cubicle",
+      "view": {
+        "name": "cubicle",
+        "block": {
+          "i": -1,
+          "j": -1,
+          "type": "cubicle"
+        },
+        "target": {
+          "x": 72.5,
+          "y": 78.5,
+          "wx": 70,
+          "wy": 79
+        },
+        "world": [
+          -23.5,
+          -49.5,
+          0
+        ],
+        "look": {
+          "yaw": 1.7681918866447774,
+          "pitch": -0.027449362773195325,
+          "locked": false,
+          "rayX": -0.9802112810424036,
+          "rayY": 0.19604225620848054,
+          "rayZ": -0.027445915869187324,
+          "visualHit": null,
+          "roll": 0
+        },
+        "fov": 58,
+        "prepareMs": 4271.600000000093,
+        "level": 4,
+        "paused": false,
+        "near": true,
+        "chunks": 13,
+        "tasks": 1,
+        "memory": {
+          "geometries": 1134,
+          "textures": 90,
+          "programs": 73
+        }
+      },
+      "performance": {
+        "settleMs": 8520.100000000093,
+        "chunks": 25,
+        "tasks": 0,
+        "scope": "Native GPU requestAnimationFrame cadence; full frame includes world/shadows/post; not a GPU timer or Android result",
+        "rounds": [
+          {
+            "median": 6.7000000001862645,
+            "p95": 11,
+            "draws": 768,
+            "triangles": 314329
+          },
+          {
+            "median": 6.5,
+            "p95": 10.399999999906868,
+            "draws": 768,
+            "triangles": 314329
+          },
+          {
+            "median": 6.7000000001862645,
+            "p95": 10.600000000093132,
+            "draws": 768,
+            "triangles": 314329
+          },
+          {
+            "median": 7,
+            "p95": 11.400000000372529,
+            "draws": 768,
+            "triangles": 314329
+          },
+          {
+            "median": 6.699999999720603,
+            "p95": 11.799999999813735,
+            "draws": 768,
+            "triangles": 314329
+          }
+        ],
+        "memory": {
+          "geometries": 1402,
+          "textures": 94,
+          "programs": 74
+        }
+      }
+    },
+    {
+      "name": "open",
+      "view": {
+        "name": "open",
+        "block": {
+          "i": 0,
+          "j": 0,
+          "type": "open"
+        },
+        "target": {
+          "x": 69.5,
+          "y": 73.5,
+          "wx": 73.5,
+          "wy": 73.5
+        },
+        "world": [
+          5.5,
+          9.5,
+          0
+        ],
+        "look": {
+          "yaw": -1.5707963267948966,
+          "pitch": -0.017498213869856612,
+          "locked": false,
+          "rayX": 0.9998469101619251,
+          "rayY": -3.3306690738754706e-16,
+          "rayZ": -0.017497320927833706,
+          "visualHit": null,
+          "roll": 0
+        },
+        "fov": 66,
+        "prepareMs": 1465.2999999998137,
+        "level": 4,
+        "paused": false,
+        "near": true,
+        "chunks": 16,
+        "tasks": 1,
+        "memory": {
+          "geometries": 1670,
+          "textures": 103,
+          "programs": 75
+        }
+      },
+      "performance": {
+        "settleMs": 6898.5,
+        "chunks": 25,
+        "tasks": 0,
+        "scope": "Native GPU requestAnimationFrame cadence; full frame includes world/shadows/post; not a GPU timer or Android result",
+        "rounds": [
+          {
+            "median": 6,
+            "p95": 10.399999999906868,
+            "draws": 595,
+            "triangles": 282809
+          },
+          {
+            "median": 5.899999999906868,
+            "p95": 10.300000000279397,
+            "draws": 595,
+            "triangles": 282809
+          },
+          {
+            "median": 5.7000000001862645,
+            "p95": 9.699999999720603,
+            "draws": 595,
+            "triangles": 282809
+          },
+          {
+            "median": 5.899999999906868,
+            "p95": 11,
+            "draws": 595,
+            "triangles": 282809
+          },
+          {
+            "median": 5.600000000093132,
+            "p95": 9.899999999906868,
+            "draws": 595,
+            "triangles": 282809
+          }
+        ],
+        "memory": {
+          "geometries": 1788,
+          "textures": 106,
+          "programs": 75
+        }
+      }
+    },
+    {
+      "name": "rooms",
+      "view": {
+        "name": "rooms",
+        "block": {
+          "i": -1,
+          "j": 0,
+          "type": "rooms"
+        },
+        "target": {
+          "x": 63.5,
+          "y": 71.5,
+          "wx": 68,
+          "wy": 71.5
+        },
+        "world": [
+          -64.5,
+          7.5,
+          0
+        ],
+        "look": {
+          "yaw": -1.5707963267948966,
+          "pitch": -0.015554301050900473,
+          "locked": false,
+          "rayX": 0.9998790342982713,
+          "rayY": -1.1102230246251568e-16,
+          "rayZ": -0.015553673866862013,
+          "visualHit": {
+            "kind": "structure",
+            "structure": {
+              "kind": "hoteldoor",
+              "x": 97,
+              "y": 71,
+              "w": 1,
+              "h": 1,
+              "solid": true,
+              "data": {
+                "l4": 1,
+                "open": 0,
+                "axis": "y",
+                "officeDoor": 1,
+                "sid": 3537295919
+              }
+            },
+            "x": 97.47250000014901,
+            "y": 71.50000000000001,
+            "z": 1.5190446147598065,
+            "rayT": 1.9727386338621844,
+            "yaw": -1.5707963267948966,
+            "pitch": -0.015554301050900473,
+            "playerX": 95.5,
+            "playerY": 71.5,
+            "playerZ": 0,
+            "at": 1792643385721
+          },
+          "roll": 0
+        },
+        "fov": 58,
+        "prepareMs": 2574,
+        "level": 4,
+        "paused": false,
+        "near": true,
+        "chunks": 13,
+        "tasks": 1,
+        "memory": {
+          "geometries": 1587,
+          "textures": 102,
+          "programs": 75
+        }
+      },
+      "performance": {
+        "settleMs": 11932.80000000028,
+        "chunks": 25,
+        "tasks": 0,
+        "scope": "Native GPU requestAnimationFrame cadence; full frame includes world/shadows/post; not a GPU timer or Android result",
+        "rounds": [
+          {
+            "median": 8.200000000186265,
+            "p95": 14,
+            "draws": 761,
+            "triangles": 341489
+          },
+          {
+            "median": 9,
+            "p95": 13.899999999906868,
+            "draws": 761,
+            "triangles": 341489
+          },
+          {
+            "median": 8.600000000093132,
+            "p95": 15.200000000186265,
+            "draws": 761,
+            "triangles": 341489
+          },
+          {
+            "median": 8.600000000093132,
+            "p95": 14.300000000279397,
+            "draws": 761,
+            "triangles": 341489
+          },
+          {
+            "median": 7.7000000001862645,
+            "p95": 13.100000000093132,
+            "draws": 761,
+            "triangles": 341489
+          }
+        ],
+        "memory": {
+          "geometries": 1590,
+          "textures": 120,
+          "programs": 75
+        }
+      }
+    },
+    {
+      "name": "window-north",
+      "view": {
+        "name": "window-north",
+        "block": {
+          "i": -1,
+          "j": 1,
+          "type": "hall"
+        },
+        "target": {
+          "x": 69.5,
+          "y": 76,
+          "wx": 69.5,
+          "wy": 71.5,
+          "deg": 180
+        },
+        "world": [
+          -26.5,
+          76,
+          0
+        ],
+        "look": {
+          "yaw": 0,
+          "pitch": -0.015554301050900473,
+          "locked": false,
+          "rayX": 0,
+          "rayY": -0.9998790342982712,
+          "rayZ": -0.01555367386686201,
+          "visualHit": null,
+          "roll": 0
+        },
+        "fov": 58,
+        "prepareMs": 1691.2999999998137,
+        "level": 4,
+        "paused": false,
+        "near": true,
+        "chunks": 15,
+        "tasks": 1,
+        "memory": {
+          "geometries": 1342,
+          "textures": 93,
+          "programs": 75
+        }
+      },
+      "performance": {
+        "settleMs": 7670.799999999814,
+        "chunks": 25,
+        "tasks": 0,
+        "scope": "Native GPU requestAnimationFrame cadence; full frame includes world/shadows/post; not a GPU timer or Android result",
+        "rounds": [
+          {
+            "median": 7.300000000279397,
+            "p95": 11.399999999906868,
+            "draws": 760,
+            "triangles": 317361
+          },
+          {
+            "median": 7.100000000093132,
+            "p95": 12.299999999813735,
+            "draws": 760,
+            "triangles": 317361
+          },
+          {
+            "median": 6.599999999627471,
+            "p95": 10,
+            "draws": 760,
+            "triangles": 317361
+          },
+          {
+            "median": 6.7999999998137355,
+            "p95": 10.599999999627471,
+            "draws": 760,
+            "triangles": 317361
+          },
+          {
+            "median": 7.100000000093132,
+            "p95": 10.600000000093132,
+            "draws": 760,
+            "triangles": 317361
+          }
+        ],
+        "memory": {
+          "geometries": 1382,
+          "textures": 98,
+          "programs": 75
+        }
+      }
+    }
+  ],
+  "profile": {
+    "meshes": 4259,
+    "triangles": 1118862,
+    "transparent": 97,
+    "casters": 1465,
+    "materials": {
+      "MeshStandardMaterial::6a7056d1-72ee-4e87-ba8d-9170d4d042af": 252,
+      "MeshStandardMaterial::1d64aa03-5b17-436d-8fe5-0079d0837c59": 147,
+      "MeshStandardMaterial::7cde2ff9-7988-43b3-b0e4-d0f945bfb4fb": 25,
+      "MeshStandardMaterial::a27abd39-e4cc-4235-aa1b-8316a36c305d": 115,
+      "MeshStandardMaterial::e4e3f1a7-ab6c-4969-9dab-eab47a38b01d": 17,
+      "MeshStandardMaterial::e8f8c8cd-b328-4a89-9501-3d28c8422635": 17,
+      "MeshStandardMaterial::6274bc59-4459-418c-8c31-8de4f0fa84b5": 160,
+      "MeshStandardMaterial::5836e9b4-4ba7-4e73-a18b-a78ad42a57bc": 14,
+      "MeshStandardMaterial::a363e7bc-4521-440d-a082-2792f3f3a62b": 13,
+      "MeshBasicMaterial::9480937c-1eff-443a-a998-faf537c41040": 1631,
+      "MeshLambertMaterial::bf435548-7fd1-4984-8b13-821c316ec757": 2,
+      "MeshLambertMaterial::2a2f3d66-318b-4d45-8f73-88db9ddf8f6d": 2,
+      "MeshBasicMaterial::81a7a5ab-5eda-4c5b-ad85-3c777ad8a00b": 2,
+      "MeshLambertMaterial::0580b3a7-1297-41fb-a000-bc58e6a7efde": 2,
+      "MeshLambertMaterial::0227f82f-8d45-49d4-9107-1322479b5406": 2,
+      "MeshLambertMaterial::b29a4d55-d5d6-4da0-ba4e-72b1b6252184": 1,
+      "MeshLambertMaterial::e80f1c74-8984-4957-aee8-cfd787e307ab": 1,
+      "MeshLambertMaterial::1fb3240c-72c5-4f18-8f9d-e0bb2b51fb59": 1,
+      "MeshLambertMaterial::22a018ab-4452-4835-82df-919afe072a8f": 2,
+      "MeshLambertMaterial::c76c880d-d91e-4c15-a039-4dab05e7ac00": 1,
+      "MeshLambertMaterial::34796ab8-54f6-4e11-bb89-6dbb911edef7": 2,
+      "MeshLambertMaterial::9503cd79-df99-47bb-a9a7-04e8c486081d": 2,
+      "MeshLambertMaterial::bab2429a-3545-4d25-a100-7d34b0a1019c": 1,
+      "MeshLambertMaterial::376012e2-03d7-494b-919d-9ec57bca11fc": 1,
+      "MeshLambertMaterial::b5e3afca-77af-4bf0-a9da-dc507b64942b": 1,
+      "MeshLambertMaterial::5b6c337a-eb0a-40dd-8863-da2c27b8f8c1": 1,
+      "MeshLambertMaterial::358e2b5d-f1ad-4a23-acfc-45b32da589b8": 2,
+      "MeshLambertMaterial::e127d924-6186-4835-b4d1-7ebf8301e658": 2,
+      "MeshBasicMaterial::5e8f0606-6fef-4270-ac5f-0dc29a351199": 2,
+      "MeshLambertMaterial::e0cfd43f-1989-491d-9f9e-3fcd5d7dcf3a": 2,
+      "MeshLambertMaterial::a159affc-73e0-48c4-a276-d2781503717a": 2,
+      "MeshLambertMaterial::b0505389-78c0-4dde-962a-18fd362a46da": 1,
+      "MeshLambertMaterial::366c0efa-5e3c-43d1-a284-ff0346e26d02": 1,
+      "MeshLambertMaterial::63973ae4-592d-46d5-a6e3-8623b4dda4e0": 1,
+      "MeshLambertMaterial::1796e492-a0be-4be7-9d79-fe28fc9043d2": 2,
+      "MeshLambertMaterial::a6c86983-24db-452b-9d53-fe4c4e7b96ae": 1,
+      "MeshLambertMaterial::1a246a33-08b9-4dce-a707-f5ae6e403e7b": 2,
+      "MeshLambertMaterial::dc6e912a-7d7e-4ce8-901a-a32f17beaf88": 2,
+      "MeshLambertMaterial::dfc80ebc-6db2-4aca-affa-879ef012981d": 1,
+      "MeshLambertMaterial::1a64f353-b342-4e40-9520-d7dd73107547": 1,
+      "MeshLambertMaterial::1a8d6622-b2f6-4f2c-abe2-dad355c094fc": 1,
+      "MeshLambertMaterial::7ccc1cc7-792c-4855-97a6-25d0f90cfebc": 1,
+      "MeshStandardMaterial::faadbde0-f2c0-4c07-b870-571c1f941c5c": 238,
+      "MeshBasicMaterial::02f794b4-32bb-4e90-b95f-045a0a8a5e1c": 4,
+      "MeshStandardMaterial::5cd3cb93-c980-4b34-a765-5f873ae5e3ed": 274,
+      "MeshLambertMaterial::4e7cdece-64f2-44f6-a66a-723f2ed8aa9b": 2,
+      "MeshLambertMaterial::75c7d312-2bc5-4367-bb26-499fbf6840ee": 2,
+      "MeshBasicMaterial::c0bc8d8b-c43a-4980-9704-2b94a9481e71": 2,
+      "MeshLambertMaterial::25be3340-8773-491b-a8d4-aed06e24836f": 2,
+      "MeshLambertMaterial::5007715c-26b3-4609-8d6c-a1155d35795f": 2,
+      "MeshLambertMaterial::07cbbf9e-0f93-4c0b-a2d2-62f8644f0d75": 1,
+      "MeshLambertMaterial::6f54d40f-f08f-4176-a16d-063f05a878d1": 1,
+      "MeshLambertMaterial::e58e308f-acf5-4c76-bd16-96529b4629b4": 1,
+      "MeshLambertMaterial::85aeb0a7-522c-48c2-9bc2-fcd59b47b54d": 2,
+      "MeshLambertMaterial::0123c5f6-d95c-4293-9bb7-ed1c76056d16": 1,
+      "MeshLambertMaterial::44800620-70e1-4a12-981b-44d2ff181086": 2,
+      "MeshLambertMaterial::5d25e5a2-584c-4a05-b759-75af698a129e": 2,
+      "MeshLambertMaterial::b306ab98-1037-4422-acb4-81ab89071102": 1,
+      "MeshLambertMaterial::e8c0ff84-f176-481f-bea0-98275ba2dc81": 1,
+      "MeshLambertMaterial::fa535d85-d26a-4e3b-8465-f4b8f04c2ae2": 1,
+      "MeshLambertMaterial::bb737495-7b9d-4840-aa7e-644d572cd74e": 1,
+      "MeshBasicMaterial::4e8a91f7-e35f-4d5c-906c-ae7e2ee12224": 2,
+      "MeshLambertMaterial::091fec8a-748a-4d34-b9fb-de2e9f28b9dd": 2,
+      "MeshLambertMaterial::db763b3e-5649-44a4-85be-50d418831e7b": 2,
+      "MeshBasicMaterial::78e1f7c9-2ae6-45ec-9ebf-53de11079421": 2,
+      "MeshLambertMaterial::12d93ae2-db89-4ea0-884f-9b74094ffec5": 2,
+      "MeshLambertMaterial::c3082ce2-f00a-4e5f-ad91-491bf8a13834": 2,
+      "MeshLambertMaterial::4e443eee-8baa-4c14-99b8-240de215dfb3": 1,
+      "MeshLambertMaterial::4346bcf5-ed90-455d-b222-2241c688e76a": 1,
+      "MeshLambertMaterial::83fea107-2ffc-41a2-8c86-9cd42ec5fbd0": 1,
+      "MeshLambertMaterial::65c1333b-2087-4efb-ae3d-197356f22a09": 2,
+      "MeshLambertMaterial::cda4eb8b-e34d-44c3-8ab9-fbcd1163ab1c": 1,
+      "MeshLambertMaterial::928d0ff5-f661-46e4-b4d0-bc3cb1f52e54": 2,
+      "MeshLambertMaterial::190d691e-bde8-4616-9ea1-4b94a4f0d220": 2,
+      "MeshLambertMaterial::a064300d-d630-4b1c-bc2e-4e7667c95906": 1,
+      "MeshLambertMaterial::aaf98f6a-2eee-4840-9ad4-ee8a76bd9e20": 1,
+      "MeshLambertMaterial::5c98c713-0de2-4129-b267-d8c36a21ac93": 1,
+      "MeshLambertMaterial::fa674de3-8986-4303-9eb7-ff1acffe9d8a": 1,
+      "MeshBasicMaterial::31b63584-63f5-49d1-ae99-0766e1daab3e": 4,
+      "MeshLambertMaterial::4c9c400b-277f-48e8-8037-b8b61f6add39": 2,
+      "MeshLambertMaterial::96796136-551b-4d08-a94c-07d6eb48551a": 2,
+      "MeshBasicMaterial::c8d6d71f-4789-4510-b9e2-998e136004e1": 2,
+      "MeshLambertMaterial::83d3b065-0d6b-42b3-a63a-6a9f77b9daa2": 2,
+      "MeshLambertMaterial::cd49ad3e-ff20-4ea3-8e93-d16e59483b4b": 2,
+      "MeshLambertMaterial::33f7ea0a-fa4d-4a89-9266-e7d6c6f1ea4e": 1,
+      "MeshLambertMaterial::d89b980c-e0ac-4e6c-b127-014cd960e16e": 1,
+      "MeshLambertMaterial::48ce9588-dd08-4f8b-8663-c5e6dabf79ec": 1,
+      "MeshLambertMaterial::b1604cf7-9f6d-4446-ae77-51f93f90a383": 2,
+      "MeshLambertMaterial::d879c51f-5866-4646-b25a-f119dfcb72df": 1,
+      "MeshLambertMaterial::b0874397-cc4e-4afc-a108-d48d5b53f607": 2,
+      "MeshLambertMaterial::fb107199-0600-4c94-aa16-047c843b6edc": 2,
+      "MeshLambertMaterial::f7596b2b-1abf-4586-a291-635f43771c8a": 1,
+      "MeshLambertMaterial::7f6afead-b423-48e0-8d26-eef25049482d": 1,
+      "MeshLambertMaterial::4730a730-b569-4af2-95bc-9ad5f99ceac7": 1,
+      "MeshLambertMaterial::83301490-a2e2-4e24-ac04-28c68752f4be": 1,
+      "MeshBasicMaterial::addcdcc4-f099-4ac7-805d-96bb0ce38bea": 2,
+      "MeshLambertMaterial::ae2a05b2-f4c1-4e9a-8809-9e509069cf9c": 2,
+      "MeshLambertMaterial::d40fac8f-d0ac-400f-8d96-5a5520cab0ad": 2,
+      "MeshBasicMaterial::a2e40c70-4066-4eed-9c9e-72101861cdc2": 2,
+      "MeshLambertMaterial::8b6188e8-8931-4d23-997d-c27c03af1f96": 2,
+      "MeshLambertMaterial::e518eef1-2292-44d5-8b53-c50db51d7947": 2,
+      "MeshLambertMaterial::16843d5b-856a-4109-9fc3-ae923e47ee43": 1,
+      "MeshLambertMaterial::82aa9f8f-56ca-4299-ab30-e2c73332cd52": 1,
+      "MeshLambertMaterial::3a5317a2-3c46-4c01-ae08-42cc846923a5": 1,
+      "MeshLambertMaterial::975d5cae-f599-443a-ab9c-0738f09ec4f2": 2,
+      "MeshLambertMaterial::c7efd1fb-1bb1-41e4-bfa7-6ccc543c98b9": 1,
+      "MeshLambertMaterial::ba811808-8773-4531-a7fc-8a0afd6e5225": 2,
+      "MeshLambertMaterial::46f92d93-4005-4190-8f87-c19fcaff7cae": 2,
+      "MeshLambertMaterial::98d985da-8c40-4901-a34d-dc6326b73c24": 1,
+      "MeshLambertMaterial::719deb36-2653-43ef-841e-d800bde4df7b": 1,
+      "MeshLambertMaterial::21ec7c0d-2b1c-4672-85ef-9155203234f9": 1,
+      "MeshLambertMaterial::1bf16faa-ee3b-4c30-9fe5-5a5472186b1b": 1,
+      "MeshBasicMaterial::f9a1b187-812f-4558-8671-ecd1de76783c": 4,
+      "ShaderMaterial::96d5c799-dd7c-4bea-be9b-c6258949c2cd": 44,
+      "MeshStandardMaterial::f038b9cb-0dcd-47e2-8109-4d97a3a4313e": 37,
+      "MeshBasicMaterial::557b6135-ff27-409b-a5c3-a7cceaff5130": 19,
+      "MeshLambertMaterial::900190ec-68f3-42e1-b604-c72d7a0b5500": 43,
+      "MeshLambertMaterial::7e634954-8090-4203-9c9a-b8fa35b356b7": 104,
+      "MeshLambertMaterial::df4254b7-b665-417b-800e-a734d91e3b64": 22,
+      "MeshStandardMaterial::b26651b5-18dd-450f-b929-73030e38dc67": 42,
+      "MeshStandardMaterial::9a00884b-6773-4241-9316-362359dbae65": 102,
+      "MeshLambertMaterial::895d2b9f-42ac-4c08-ba7e-0593e77030c5": 18,
+      "MeshLambertMaterial::9b1b1a0f-daa2-4f20-bdaf-fe029069cb6f": 5,
+      "MeshLambertMaterial::029d5dce-527c-4c19-807b-d5c82185f0d8": 4,
+      "MeshBasicMaterial::2a7a2182-0f9b-49a9-97ba-d940f6aa610f": 1,
+      "MeshBasicMaterial::17115872-0ee9-45ea-a9ff-c522d4ca30ee": 2,
+      "MeshLambertMaterial::fda66bd1-a4fb-49a6-bd01-b5559fddba7c": 2,
+      "MeshLambertMaterial::8ebdd5fa-aa70-44ca-ae24-16571fd68e82": 2,
+      "MeshBasicMaterial::894857b9-5bec-4698-8657-bf29b17ef49f": 2,
+      "MeshLambertMaterial::8751c1aa-01ca-4d3a-aa4c-b63b3af74c02": 2,
+      "MeshLambertMaterial::3a301998-a992-48a3-baf7-cd27c6744161": 2,
+      "MeshLambertMaterial::f90c1ad1-fc2b-4400-a46f-4fb467af44b5": 1,
+      "MeshLambertMaterial::c2f9e53c-089d-40f8-8c71-9ed977c6b945": 1,
+      "MeshLambertMaterial::f2dcee5e-68d0-4928-bb49-2f4f9ab2467a": 1,
+      "MeshLambertMaterial::e125adfd-e2bb-43a6-bd75-df79084bf305": 2,
+      "MeshLambertMaterial::3837dd37-629f-4a05-a175-f64101031e8b": 1,
+      "MeshLambertMaterial::3445a5b9-6bb6-4d6e-8d06-2a1b1e547b5e": 2,
+      "MeshLambertMaterial::07ffe887-ec55-40b6-af27-ffa1045e41b9": 2,
+      "MeshLambertMaterial::73bbac68-01c1-42e7-8976-b4b8118f2860": 1,
+      "MeshLambertMaterial::afd58720-a68a-477f-896d-868a45ad84a4": 1,
+      "MeshLambertMaterial::86d75fdf-1c8a-456c-ac3c-6251f1dda7f3": 1,
+      "MeshLambertMaterial::2d3524c6-a1f9-4c58-8856-10aaac402e1c": 1,
+      "MeshBasicMaterial::7114386b-44fa-49fb-9763-09c7daaeb436": 2,
+      "MeshLambertMaterial::447c2447-eed8-4659-b0cd-143549ab19f2": 2,
+      "MeshLambertMaterial::2fa8eade-28cd-4788-9cab-b2bf226c29a2": 2,
+      "MeshBasicMaterial::70c6d9e0-22f2-4faa-aadd-3901c5d45d47": 2,
+      "MeshLambertMaterial::0a21a31e-2460-4596-a717-8abf839caf1b": 2,
+      "MeshLambertMaterial::638d5c2c-0da7-4fcb-acb7-19cfd847058b": 2,
+      "MeshLambertMaterial::9375457d-680b-40fc-a010-3eb5aed8b66d": 1,
+      "MeshLambertMaterial::106763f2-85a7-4383-961e-d420fc06db57": 1,
+      "MeshLambertMaterial::4bead5fd-3231-4d69-a08e-497248762a6b": 1,
+      "MeshLambertMaterial::dee48bf4-98fb-486d-831f-a5e8c74a49c1": 2,
+      "MeshLambertMaterial::e3ddfe49-8b3c-4aac-8f24-2d3019e004de": 1,
+      "MeshLambertMaterial::94963851-07bb-4ff9-84a3-54337c2b76be": 2,
+      "MeshLambertMaterial::0ea86501-e09c-46c6-bf50-f9cdc7ed2d76": 2,
+      "MeshLambertMaterial::ae6606d4-e08d-4943-8f88-a899128c4c46": 1,
+      "MeshLambertMaterial::a757ce6b-09dd-49c1-ae60-612ae074cfdd": 1,
+      "MeshLambertMaterial::4233e899-ba08-4887-a434-044d78dfb765": 1,
+      "MeshLambertMaterial::cb3e10c8-2ce4-4162-8645-cb30221259f9": 1,
+      "MeshBasicMaterial::38155b54-a1a0-446e-aba0-447e0826f4c0": 2,
+      "MeshLambertMaterial::10cce6b6-9c8d-4aff-a428-7040eee4d770": 2,
+      "MeshLambertMaterial::a8be9b7d-da7f-4198-aab5-e886aa0886d3": 2,
+      "MeshBasicMaterial::789a5b6c-6274-4b5e-a820-19ae0bfb5582": 2,
+      "MeshLambertMaterial::ea387a27-a652-47cd-8c6c-901b10b319c1": 2,
+      "MeshLambertMaterial::60d3e805-de98-4d04-a218-c94ee1893741": 2,
+      "MeshLambertMaterial::8f8ced4b-3983-4546-9933-c6c2b239e7d6": 1,
+      "MeshLambertMaterial::dbe388d9-aa95-40bb-89f0-8dcbae880541": 1,
+      "MeshLambertMaterial::bb4fbff1-0505-4b1c-87f7-df88d5a494ed": 1,
+      "MeshLambertMaterial::8518e3e4-2c69-4123-b993-387b749cc5c9": 2,
+      "MeshLambertMaterial::1a6e0a89-e2f7-40c1-a250-beaabcd834db": 1,
+      "MeshLambertMaterial::25cced46-e105-4fa3-a918-a44fdfa4189d": 2,
+      "MeshLambertMaterial::2b5c7c54-a04a-4852-bc61-4a28b0210f86": 2,
+      "MeshLambertMaterial::d4f12301-ba22-4d2e-92be-0d2346024bd5": 1,
+      "MeshLambertMaterial::9ead6b81-2d55-4e38-9d75-a288b3af9fca": 1,
+      "MeshLambertMaterial::f80a4f41-9a34-4ff3-9f42-7c35ab208a90": 1,
+      "MeshLambertMaterial::6c5c4fff-3f84-4f74-87ed-124e66ed2efa": 1,
+      "MeshBasicMaterial::09bc8055-ef2f-4a60-a45b-1010354823d7": 2,
+      "MeshLambertMaterial::e239b01e-f9a2-4f6b-ad4b-3e6343def583": 2,
+      "MeshLambertMaterial::a15ae731-4b60-4308-a152-f484a4d4365b": 2,
+      "MeshBasicMaterial::ccb3ac5e-9f83-44b1-84b1-8a472b5fe445": 2,
+      "MeshLambertMaterial::b7f1f5cd-a582-425f-9095-bc759473cb68": 2,
+      "MeshLambertMaterial::79b2f6b4-e9f7-4704-876d-b612fc612ef3": 2,
+      "MeshLambertMaterial::5f1326e2-1495-483c-aeb8-162aac871c80": 1,
+      "MeshLambertMaterial::7a7e5a76-e8af-4ef2-b516-f64908708eea": 1,
+      "MeshLambertMaterial::a45d62f3-fdf5-44e5-94ae-c2424c037b5c": 1,
+      "MeshLambertMaterial::a78a6096-00cc-4ec6-98c4-669098852ec9": 2,
+      "MeshLambertMaterial::889855da-4aa7-47bf-8c20-d72158cfbf87": 1,
+      "MeshLambertMaterial::62e8c6d2-73d4-4e92-be49-32b166710c62": 2,
+      "MeshLambertMaterial::215502a5-547c-459e-8e41-704af9e75d96": 2,
+      "MeshLambertMaterial::17e82fd2-0d7f-46a4-9759-a026e5e4e346": 1,
+      "MeshLambertMaterial::fed94f2b-b13c-4a88-a143-bc5c1fc8583d": 1,
+      "MeshLambertMaterial::57f26e86-8d0f-4db3-a02e-7821ea490226": 1,
+      "MeshLambertMaterial::ec860015-a8f9-4b00-81f9-217494944aa7": 1,
+      "MeshBasicMaterial::7273c749-94c6-48e0-b9a0-cd5f7b1b95f4": 2,
+      "MeshBasicMaterial::2333e6ea-8be9-47cb-b7db-6f73d3622a5e": 2,
+      "MeshLambertMaterial::8d19f74d-a14c-4997-9acc-9b92da8ce88b": 2,
+      "MeshLambertMaterial::40e939f1-b3de-4397-838b-dc45dff8ec10": 2,
+      "MeshBasicMaterial::74ee170b-e5f9-4ef0-ab8f-da8b9fb1e98f": 2,
+      "MeshLambertMaterial::05f2d5b8-b7d1-4246-96b3-798e6b593924": 2,
+      "MeshLambertMaterial::bc1970a9-0458-4d54-ad1b-77cd023cad7a": 2,
+      "MeshLambertMaterial::e63ce7af-ab7d-4b42-a5b2-f325b5fc26d9": 1,
+      "MeshLambertMaterial::c17a532d-4a2a-47c9-b3ab-e03c49267ed6": 1,
+      "MeshLambertMaterial::3b4518bb-dca2-4a76-9b58-be201fb16dfa": 1,
+      "MeshLambertMaterial::3834e34f-0219-42a3-b425-da70e6c6b54b": 2,
+      "MeshLambertMaterial::e972178a-f53a-4a09-8e98-34f8fa23c464": 1,
+      "MeshLambertMaterial::c5e64ba0-4731-4049-b094-8cc7465ecee9": 2,
+      "MeshLambertMaterial::0da16c8b-ffd0-49ad-9efa-03b85d63718a": 2,
+      "MeshLambertMaterial::ede28f27-e30a-46c7-aa58-8016e95d3fca": 1,
+      "MeshLambertMaterial::77118775-160f-4a68-ac33-0f3f5e33f749": 1,
+      "MeshLambertMaterial::e5b95ca5-d9fe-4090-a5c1-d2d851ee74db": 1,
+      "MeshLambertMaterial::e634ef87-e097-48ab-88c5-8559cb339dfd": 1,
+      "MeshBasicMaterial::f7ed9b59-8ec7-4dda-a58d-817c1c9fc8da": 4,
+      "MeshBasicMaterial::fd83899a-c8ef-4140-bd9e-71a9b5823c35": 2,
+      "MeshStandardMaterial::9654405f-e89a-42ee-ae5f-5be84679e085": 1,
+      "MeshStandardMaterial::76f0ceb3-26a4-4e15-93dc-8d1ed7a2aead": 1,
+      "MeshPhysicalMaterial::51ffb191-e19b-4155-9bcf-116ba2104646": 4,
+      "MeshStandardMaterial::5f7a3784-4ce7-4351-8d5e-96fd96e7b600": 1,
+      "MeshStandardMaterial::a96c6dc2-465c-4746-bc60-6daabb2a16b1": 1,
+      "MeshBasicMaterial::e19f76c3-905b-45c2-bff7-c3113aa95f8a": 1,
+      "MeshLambertMaterial::ee9032bf-7f56-4d94-a225-4e4e79e662f9": 2,
+      "MeshLambertMaterial::cf65d86f-55b3-45ca-b587-b9728f6a96f2": 2,
+      "MeshBasicMaterial::11806e45-b000-48fb-a46a-59a498236dc5": 2,
+      "MeshLambertMaterial::e65108cb-4857-41c1-a518-6404f6cfeb97": 2,
+      "MeshLambertMaterial::a0bfefa1-c31e-43cc-9b59-957938484a47": 2,
+      "MeshLambertMaterial::e54b7302-7f5c-46f8-9091-9c110b8d3bd9": 1,
+      "MeshLambertMaterial::17cf6206-fcfb-42bc-9eb2-082249bf3067": 1,
+      "MeshLambertMaterial::0acbed46-41c8-4fce-abf8-212155e7136b": 1,
+      "MeshLambertMaterial::87641de0-bd15-4bcd-ab25-6329d6a12d38": 2,
+      "MeshLambertMaterial::98b4cefd-1556-4b92-9011-9b7232e399f8": 1,
+      "MeshLambertMaterial::c29fdbf4-465e-47c7-b9f4-6ff1b9bfce45": 2,
+      "MeshLambertMaterial::538ce1a3-61e6-4e35-acdd-544f26280a6b": 2,
+      "MeshLambertMaterial::4bb741a0-62cb-4eac-90f7-26b28927cbb4": 1,
+      "MeshLambertMaterial::f4e2c0ad-7af5-4c65-a8b6-f681ee202363": 1,
+      "MeshLambertMaterial::ec38647f-bebb-48c5-8505-09c344d38d9c": 1,
+      "MeshLambertMaterial::a76b9596-7fa9-4445-8d43-138bd8576105": 1,
+      "MeshBasicMaterial::26662387-201a-40ff-95b7-7b6a09a57f7c": 2,
+      "MeshLambertMaterial::eb94aadb-14c2-4a5f-a8e5-f10d9177c5ab": 2,
+      "MeshLambertMaterial::37de99bf-2bf3-436a-b9f7-cbb68065edb6": 2,
+      "MeshBasicMaterial::54df40b9-73f6-4a3c-9e4f-01587f4cf571": 2,
+      "MeshLambertMaterial::605aa55b-97e5-4091-8e50-3d049901cc76": 2,
+      "MeshLambertMaterial::79b94850-aaf5-49c8-bcd6-8c3cff678e87": 2,
+      "MeshLambertMaterial::22291525-95a8-42d4-ac81-863e6a4e58f3": 1,
+      "MeshLambertMaterial::fc1b17e9-8b68-4308-a413-6320707bd791": 1,
+      "MeshLambertMaterial::01a307d9-4f03-40d3-ae0c-f3798000e1fd": 1,
+      "MeshLambertMaterial::c9ac6026-be68-431c-8683-ca604bfe00a4": 2,
+      "MeshLambertMaterial::7adda681-db2e-4e15-bfd3-f6d48a39e8f1": 1,
+      "MeshLambertMaterial::61cce26b-881b-4deb-a63a-6a0e5edce4ff": 2,
+      "MeshLambertMaterial::f9d5b651-3697-4c9d-97e0-494f20acbe94": 2,
+      "MeshLambertMaterial::0be26bb6-5a62-45a4-8902-4ee4c88a0351": 1,
+      "MeshLambertMaterial::e7bca7bf-025d-40ae-a8be-7f5bc9adf02b": 1,
+      "MeshLambertMaterial::e3c4810b-b641-4780-8ca5-2a036da4c9a5": 1,
+      "MeshLambertMaterial::c7359c62-e406-43f0-8661-84cb9026cf51": 1,
+      "MeshBasicMaterial::67480770-2f4c-4400-964c-f95be5361684": 2,
+      "MeshLambertMaterial::2b2d270d-77fc-4c48-a342-01426144f5b4": 2,
+      "MeshLambertMaterial::33edb3d4-c464-4e05-b721-55aad17b0805": 2,
+      "MeshBasicMaterial::8632c451-7ff5-4416-9729-240a6a229cb3": 2,
+      "MeshLambertMaterial::549e818a-e383-42dd-9518-cc713c8e4a82": 2,
+      "MeshLambertMaterial::430d995b-c95f-407a-afc0-8db885792da8": 2,
+      "MeshLambertMaterial::53b417e2-e692-462b-8f7c-30b32baa22fb": 1,
+      "MeshLambertMaterial::e33cc6aa-fa93-4318-8b47-3cfc6c40c2de": 1,
+      "MeshLambertMaterial::bf412cc7-68a0-44c4-b735-dbdd6826b81f": 1,
+      "MeshLambertMaterial::cbb494fd-cdfa-4371-ba1f-ed0e6b5780f6": 2,
+      "MeshLambertMaterial::62a0b46a-6bdd-4082-b561-c6e920a7079e": 1,
+      "MeshLambertMaterial::b403b694-f5b7-44ad-93a3-8e7128e723cc": 2,
+      "MeshLambertMaterial::cd003c8c-74c8-494a-bd34-82636c1fac5f": 2,
+      "MeshLambertMaterial::18c57521-495a-4d88-ba1e-06dbadbdcf77": 1,
+      "MeshLambertMaterial::f328279c-7681-4b46-be8b-2d24eea1a91a": 1,
+      "MeshLambertMaterial::e64f77a3-ac72-4c8f-96f1-e2d731017c01": 1,
+      "MeshLambertMaterial::fe636c6c-06c7-4ec7-98a8-3a5a9465ba16": 1,
+      "MeshBasicMaterial::a49011b7-054b-4d95-bb47-e7282a092616": 2,
+      "MeshLambertMaterial::e961b876-f5eb-4f30-acd0-35cf5dfd3e83": 2,
+      "MeshLambertMaterial::03540bde-376f-4b2f-a73f-3654203e5cd0": 2,
+      "MeshBasicMaterial::51304373-7a00-4888-874e-0cdfcabde31a": 2,
+      "MeshLambertMaterial::6e89d1ac-7775-4e73-ac43-a3edd73403b6": 2,
+      "MeshLambertMaterial::ba2a658a-1a86-487e-9efe-1f93f77988e2": 2,
+      "MeshLambertMaterial::8135b5f3-ce22-488a-afc6-e9d79ddea8a6": 1,
+      "MeshLambertMaterial::ce5c969b-3be8-4789-a0cc-ffd40c09946d": 1,
+      "MeshLambertMaterial::c04cf317-8380-4381-b502-94084a0e2c19": 1,
+      "MeshLambertMaterial::1ff8c423-d926-47a9-994c-2895a186ce7e": 2,
+      "MeshLambertMaterial::770e3aa9-fcec-4d59-8058-fc6bd99d618c": 1,
+      "MeshLambertMaterial::a0ea6a39-90bc-482e-8055-cd47ef64d440": 2,
+      "MeshLambertMaterial::9b9cdcd6-3964-4844-b3de-1db8e8980c86": 2,
+      "MeshLambertMaterial::e2ab3dc3-6e59-43b0-95f6-29f690fde57c": 1,
+      "MeshLambertMaterial::101b36e3-fd9c-4f5e-9880-abf339cab217": 1,
+      "MeshLambertMaterial::9eb1acc7-728a-465b-b180-d821ce3b7211": 1,
+      "MeshLambertMaterial::cb9b3056-7477-4ef1-8f5d-d1b9097e2982": 1,
+      "MeshBasicMaterial::5caa3184-caeb-4e01-b5ee-734cf9fa996e": 2,
+      "MeshBasicMaterial::d1a622ab-5c22-472a-890e-b1f7b4fc5e6e": 2,
+      "MeshBasicMaterial::90d9c69d-8f41-444c-a044-5cb71ad91a93": 8,
+      "MeshBasicMaterial::554eef99-5224-4735-97fa-9c6cba404529": 8,
+      "MeshBasicMaterial::848825cf-a066-4985-9615-cc77ed583ec1": 1,
+      "MeshLambertMaterial::fd0283fe-416c-44d3-aa3a-7aae09247fbb": 2,
+      "MeshLambertMaterial::d52e039d-0656-4367-adb0-de3cf7e60dd1": 2,
+      "MeshBasicMaterial::596c1edc-1816-45f4-b88f-0b538e846e7a": 2,
+      "MeshLambertMaterial::ec0101bf-a799-4c15-8416-604d782e9123": 2,
+      "MeshLambertMaterial::9086707b-1ed4-459d-8abe-8c1a988bcda9": 2,
+      "MeshLambertMaterial::a027533a-b7ec-4b2d-8dff-0ec34f90daaf": 1,
+      "MeshLambertMaterial::45e7b3e1-6328-432e-90ee-00b1c8113eb5": 1,
+      "MeshLambertMaterial::ae6f9f58-460e-490b-a7b5-3e94b7c356a5": 1,
+      "MeshLambertMaterial::6fbd12ce-95dd-4fce-b4b1-d3a64003239f": 2,
+      "MeshLambertMaterial::39d14fa7-9fd6-4095-b3a2-eb9404d815cf": 1,
+      "MeshLambertMaterial::a4d2ff30-14d6-4ee9-a9da-e04a5e45946b": 2,
+      "MeshLambertMaterial::9263d455-58dc-4d6c-b73c-c65b30830afb": 2,
+      "MeshLambertMaterial::ee3349fa-3508-4ee9-bc76-10cd437b75de": 1,
+      "MeshLambertMaterial::c382aa0a-af42-4b43-be8a-bb5656e9e2ea": 1,
+      "MeshLambertMaterial::c465e376-88d1-40f0-89bf-37d414e998a6": 1,
+      "MeshLambertMaterial::118103f2-ec33-4449-9c27-6bc3704f567f": 1,
+      "MeshBasicMaterial::4e2233f0-faab-45e9-80e5-ff4187c2505e": 2,
+      "MeshLambertMaterial::47581dc0-522b-4aa6-81c4-457e991ddf2d": 2,
+      "MeshLambertMaterial::69069e32-285e-46a6-a473-fb2e75fe2bb6": 2,
+      "MeshBasicMaterial::7aad5b64-f4c2-46b6-a8ca-7c45716fd521": 2,
+      "MeshLambertMaterial::a66a047b-8cbc-4649-af05-77a26f7e3e8f": 2,
+      "MeshLambertMaterial::8b33eaaf-2ab7-4068-a88e-9b829b112587": 2,
+      "MeshLambertMaterial::e6030961-e161-44d5-9dac-8d91b0ca719f": 1,
+      "MeshLambertMaterial::e00f49cb-7acc-4c10-bfd9-8635717c9466": 1,
+      "MeshLambertMaterial::b2871507-0f68-4744-9ecb-6016e8a790b9": 1,
+      "MeshLambertMaterial::460438cd-edb1-4cb8-a41c-5647d15dcf88": 2,
+      "MeshLambertMaterial::2e69f2cf-9082-4d9f-9d32-2277d39a921f": 1,
+      "MeshLambertMaterial::f70d4879-0855-4a61-8465-d7ebe487dcee": 2,
+      "MeshLambertMaterial::6f470124-3f78-4f06-9c57-f0393936d3d3": 2,
+      "MeshLambertMaterial::fdfb50ec-aced-4d3f-bcf2-0856e6ffd383": 1,
+      "MeshLambertMaterial::840619f6-d678-422d-a1eb-2679072bbbd4": 1,
+      "MeshLambertMaterial::cf2e24cf-7b6c-4ed1-b9bd-fc72a1c02661": 1,
+      "MeshLambertMaterial::215ae6f6-3e51-4b2a-8ae1-79c67797137d": 1,
+      "MeshBasicMaterial::746ab17d-0749-413c-bbd1-09fc9d62a543": 2,
+      "MeshLambertMaterial::9c925022-fcae-4fa0-891d-36f051ad90d1": 2,
+      "MeshLambertMaterial::4052f8c6-2337-412a-a6df-c44219f89f8a": 2,
+      "MeshBasicMaterial::61bf16e0-ddfe-4fc9-9ecd-62b7a581f35d": 2,
+      "MeshLambertMaterial::8b26e80e-1f1b-47a8-92bf-5ac3ca8d2a8b": 2,
+      "MeshLambertMaterial::f4a622c8-4c0f-4545-a3ee-04fb8a44e422": 2,
+      "MeshLambertMaterial::5cb4d35e-9bd6-4c98-b757-7288b92d977e": 1,
+      "MeshLambertMaterial::30059ea4-b0bd-4de5-803a-d65975e97f4c": 1,
+      "MeshLambertMaterial::43b589e3-55a9-49cb-ba98-2586ba86a05d": 1,
+      "MeshLambertMaterial::c38d28d5-df86-40c9-ab64-f0d60d51327d": 2,
+      "MeshLambertMaterial::41d7c02b-49bd-40ce-83e7-76841e73f306": 1,
+      "MeshLambertMaterial::39c9343e-d400-4dbc-93c9-c1e35ff191ec": 2,
+      "MeshLambertMaterial::22577116-d0d9-489d-8900-42168523d070": 2,
+      "MeshLambertMaterial::82a9b915-b834-4a16-be00-d143346be851": 1,
+      "MeshLambertMaterial::2c758cfb-bf14-4fc1-b007-0c2b13e282c9": 1,
+      "MeshLambertMaterial::5b91ec8a-083a-47ab-9ed6-b052ab189b9b": 1,
+      "MeshLambertMaterial::ea58aef3-7375-4f39-a6da-9dbb997dd53f": 1,
+      "MeshBasicMaterial::3d71e97c-3adf-49c5-ac24-35a9b9a11145": 4,
+      "MeshLambertMaterial::0c6d964c-aa04-477e-8b75-ffaf16f7137c": 2,
+      "MeshLambertMaterial::90ed1229-cc67-4be5-b8e7-c0c5315496c7": 2,
+      "MeshBasicMaterial::a29977db-15f5-48e4-a0c2-bedab8032861": 2,
+      "MeshLambertMaterial::77d3e207-6dd4-473f-a69d-83fb35005475": 2,
+      "MeshLambertMaterial::ce357a0d-7840-4817-b4ac-6b3132b976dc": 2,
+      "MeshLambertMaterial::de0dfffa-6c0e-44d0-ba2a-9fc62573043a": 1,
+      "MeshLambertMaterial::73874089-13a4-42dc-be80-7e99b15e9eb6": 1,
+      "MeshLambertMaterial::aaf351ea-cea2-4158-9a5d-4048b51b9f98": 1,
+      "MeshLambertMaterial::7aa8da90-b81a-4545-b261-1872e71dfcc7": 2,
+      "MeshLambertMaterial::9b0ea351-c098-4c3a-b8ed-87aeb61ab654": 1,
+      "MeshLambertMaterial::d2bfc7b8-706e-4f02-bba8-ba63bc1fe0a9": 2,
+      "MeshLambertMaterial::e0dd53fd-9733-44b0-ab92-4f22bd2549be": 2,
+      "MeshLambertMaterial::d5f26bf6-1925-4b6d-9b42-222c15544229": 1,
+      "MeshLambertMaterial::aeed9cbb-8813-4bba-8fa8-4db6c359b2b0": 1,
+      "MeshLambertMaterial::45c20756-872c-48b7-8a07-f38bfe94e198": 1,
+      "MeshLambertMaterial::4897f687-ecfa-43b1-9109-1c4210123b0a": 1,
+      "MeshBasicMaterial::ccf8a458-e3ad-4009-8d74-8797e8482adc": 2,
+      "MeshLambertMaterial::cace70e3-f731-40a2-a95b-ab2404c9ab77": 2,
+      "MeshLambertMaterial::bfbb73dd-dbd0-4283-8136-08c6acbbd2d8": 2,
+      "MeshBasicMaterial::e78aad17-b655-42bd-81d3-2132432e7150": 2,
+      "MeshLambertMaterial::66104933-401a-4527-b35a-bab0baf96be8": 2,
+      "MeshLambertMaterial::2fbeaa17-5c30-46da-bb56-62db365ba20f": 2,
+      "MeshLambertMaterial::257ecf36-105a-4b43-9e04-3f04fce338c9": 1,
+      "MeshLambertMaterial::78b543cb-64e7-4552-9940-ae4bb43decca": 1,
+      "MeshLambertMaterial::5e241d60-2e30-4cb0-8208-febf63f70b78": 1,
+      "MeshLambertMaterial::0511c9a1-19c0-413e-b73a-b01b0be0e6e7": 2,
+      "MeshLambertMaterial::6da17895-36f9-4e5c-8066-6960400157a9": 1,
+      "MeshLambertMaterial::762678c9-ccbf-446b-b6c1-5dfe3e54f77a": 2,
+      "MeshLambertMaterial::6deb43eb-8be9-4f3f-bf64-3f1b6bfde99d": 2,
+      "MeshLambertMaterial::80a4afba-ddcd-4f93-817b-829973773df7": 1,
+      "MeshLambertMaterial::511e58bc-4dee-4957-8c90-795386e251bb": 1,
+      "MeshLambertMaterial::b61c9470-af0a-4f42-9496-e2eef0794354": 1,
+      "MeshLambertMaterial::1a8f1c9f-58cd-4e3a-8fcf-30252fbbf67e": 1,
+      "MeshBasicMaterial::ac858569-7b3b-4fe3-8471-346165819d3d": 2,
+      "MeshLambertMaterial::27679a69-b929-45eb-95dd-501517f9183f": 2,
+      "MeshLambertMaterial::c549c5ec-2c51-4a2e-ab6b-e2b4dfa8fc1f": 2,
+      "MeshBasicMaterial::0ea5ce50-1c3c-40e8-97bc-e53f66cf44c9": 2,
+      "MeshLambertMaterial::dc9c6d54-fbf7-4c27-bb65-b8f505e90ec4": 2,
+      "MeshLambertMaterial::4b7f8422-be02-4182-8da8-2dbe477d8edc": 2,
+      "MeshLambertMaterial::4b9d7af5-3b8c-4926-b7ea-37d64da5d48e": 1,
+      "MeshLambertMaterial::5bb7d99d-dde8-4164-bdce-6b33de34995f": 1,
+      "MeshLambertMaterial::e03bba48-0377-402d-b3a2-f7d140290f27": 1,
+      "MeshLambertMaterial::ede95ecc-b744-4922-bb79-dd9e6d744360": 2,
+      "MeshLambertMaterial::41b79e32-f42d-4ee7-a340-5f5627ee9567": 1,
+      "MeshLambertMaterial::d252e41b-f4a0-4d7e-a5d6-6f0c4f46502b": 2,
+      "MeshLambertMaterial::c28e8386-5082-45fc-977a-e5d33e69f64d": 2,
+      "MeshLambertMaterial::614f99b8-2060-4cb2-8bee-83ac8496fc4a": 1,
+      "MeshLambertMaterial::07391168-4a8f-4302-8c74-661764765639": 1,
+      "MeshLambertMaterial::7aae5fcf-462a-4e61-8f0f-b04f1862fa8a": 1,
+      "MeshLambertMaterial::bfb168b4-db57-4c05-a4dd-437140cd9e61": 1,
+      "MeshBasicMaterial::9628e14a-5c18-4637-8546-c42f027c09ea": 2,
+      "MeshBasicMaterial::7aa9caca-2dc5-4a1d-b540-a311869d8c8d": 4,
+      "MeshLambertMaterial::dacf9b5e-9f13-4100-8554-b1b350fe6784": 1,
+      "MeshBasicMaterial::4d19acff-deb0-404f-9999-9908ba668048": 1,
+      "MeshLambertMaterial::7c47bffa-4d9b-488b-be6b-02cfb69cb5da": 1,
+      "MeshLambertMaterial::66bda1f5-db74-4279-9296-35cf346801c8": 1,
+      "MeshLambertMaterial::d9407478-de63-4631-83df-91298da1fbe9": 1,
+      "MeshLambertMaterial::f4408909-3d8c-43fb-a98a-3f78953b735b": 1,
+      "MeshLambertMaterial::8965e846-f38e-4cd5-9a8b-8c4bca67effc": 1,
+      "MeshLambertMaterial::4aa679eb-0f76-439f-84ac-4dce1c20e728": 1,
+      "MeshLambertMaterial::3025a800-d81e-48b9-a35a-6620389f36b9": 1,
+      "MeshLambertMaterial::7951446b-e62a-4928-a021-417ef8976fe9": 1,
+      "MeshLambertMaterial::2187d317-0717-41d6-b9e1-fa29120417d7": 1,
+      "MeshLambertMaterial::e48aa348-a9f9-4430-8c3d-7455928d8389": 1,
+      "MeshLambertMaterial::28ef08eb-4f70-443f-b227-7e3de901e555": 1,
+      "MeshLambertMaterial::8d17ecdf-fb56-4e44-ad21-301d812bbe59": 1,
+      "MeshLambertMaterial::c1a74adf-87a5-4516-bcc5-ba582216cefd": 1,
+      "MeshLambertMaterial::4dc686ed-9fec-48af-a4cc-0fea10513a6b": 1,
+      "MeshLambertMaterial::16b11985-3c64-4de8-b5ce-1ddfa26843d7": 1,
+      "MeshLambertMaterial::35470863-de42-40d6-9d1d-fa9622cc6a30": 1,
+      "MeshLambertMaterial::05a978cc-c069-48e2-933a-bf9a129727d9": 1,
+      "MeshLambertMaterial::a3924b2a-1723-4b3d-8011-183dc8dac973": 1,
+      "MeshLambertMaterial::84dca509-451d-4459-b787-2d1239d5b959": 1,
+      "MeshLambertMaterial::5743f730-9347-4f91-bcee-69d4be8e7911": 1,
+      "MeshLambertMaterial::a7dfd135-cae8-48e5-996d-f062cab0e1e3": 1,
+      "MeshLambertMaterial::4ac2c58b-ddb9-4976-9ae2-01b823e49452": 1,
+      "MeshBasicMaterial::a7e9f728-25f0-4448-b666-aeea8a1e0bb6": 1,
+      "MeshStandardMaterial::1155e360-11e5-48c8-ab19-ad50d4ba0161": 3,
+      "MeshStandardMaterial::15707d63-4294-4e9c-bfe4-8d257383cfe8": 10,
+      "MeshBasicMaterial::0fba87fe-c392-4674-bb69-e96d5e3e735b": 1,
+      "MeshStandardMaterial::dad9f34a-a99f-436f-b4ed-071829fa8083": 15,
+      "MeshStandardMaterial::de3e1885-9a56-4bc4-a1c0-7e50f0fe145d": 15,
+      "MeshStandardMaterial::b19fa762-b787-4c46-a4dc-ac7af94c7b60": 1,
+      "MeshStandardMaterial::e8e04fb6-4846-42f2-8c55-2aa754b3f011": 1,
+      "MeshPhysicalMaterial::35575575-b388-4861-a23a-3e25c42b7c35": 4,
+      "MeshStandardMaterial::ad3ddae8-a1ca-430c-b882-dcfb1da89c9f": 1,
+      "MeshStandardMaterial::1ca28cd7-be49-46b7-8f14-382ecc210898": 1,
+      "MeshLambertMaterial::a2f598ac-c8dd-492d-a87b-6ad202cc31c1": 3,
+      "MeshLambertMaterial::28754718-227a-4b65-bdba-f3b12665df5e": 3,
+      "MeshLambertMaterial::4ccd0991-d7d9-4a08-8f96-80c1b255d6c5": 3,
+      "MeshLambertMaterial::7ad00a2e-61d7-4797-98f4-bcfd1410a8b5": 1,
+      "MeshLambertMaterial::11af0f8c-82f2-4f71-9ddd-9c70c0c571bc": 1,
+      "MeshLambertMaterial::1209e136-9215-4d99-aaf7-6add3f6cdaf6": 1,
+      "MeshBasicMaterial::f77c3f27-7666-4501-bca8-c75d11801d68": 1,
+      "MeshBasicMaterial::3615c83b-b065-43dc-945b-8c3d835d9f89": 1,
+      "MeshBasicMaterial::d125f48a-ebbc-4a95-82b0-32e32a9f5698": 1,
+      "MeshBasicMaterial::7e3e904f-02c4-4094-9b9a-79843b0ed9ed": 1,
+      "MeshBasicMaterial::73b9beee-af1d-4436-be04-df119f690dc3": 4,
+      "MeshPhysicalMaterial::9ab5b793-7130-4089-9af6-f1236d2b5ff9": 2,
+      "MeshPhysicalMaterial::01cccab0-4947-4eb8-8ba0-8b08c4104f7d": 55,
+      "MeshStandardMaterial::9408c23f-e77d-4433-af9d-03a56f1726e6": 7,
+      "MeshBasicMaterial::f92afcec-00d6-49ca-b599-575b9e956490": 1,
+      "MeshBasicMaterial::0191a35c-0344-447b-a9a3-38a02f5ed622": 1,
+      "MeshBasicMaterial::b7f84dcf-4f9b-4997-9fdb-0029773655f9": 1,
+      "MeshBasicMaterial::d46fbe27-8480-4041-b27c-ab2b1ffa852f": 1,
+      "MeshStandardMaterial::aa807011-7a2e-437b-aedb-a022693ca068": 6,
+      "MeshStandardMaterial::c37e2abe-a9de-41f6-9864-a8da19327f42": 1,
+      "MeshStandardMaterial::ea62277b-05b0-44bc-b227-d14e5689be8c": 1,
+      "MeshPhysicalMaterial::77e15365-09d3-486f-ab8d-6c4ef99c3c64": 4,
+      "MeshStandardMaterial::876f12c7-f6a9-4f40-b9ec-0035920a7a8f": 1,
+      "MeshBasicMaterial::a8459c9c-a869-46e4-91c9-c73a5268ee8b": 1,
+      "MeshBasicMaterial::550a2c51-a522-4e36-8ec7-e3186784263d": 1,
+      "MeshBasicMaterial::7eed1206-2646-4ff0-b54a-622993d6761c": 1,
+      "MeshBasicMaterial::109c7e95-45f2-4e30-a745-ccb1742983b6": 1,
+      "MeshBasicMaterial::c891ffaf-9f46-48b7-b292-9d330ae27dcc": 1,
+      "MeshStandardMaterial::d1920cff-e622-45ad-b738-1525ff3f36eb": 10,
+      "MeshStandardMaterial::ad3b9162-b05b-4279-8d6b-063e145fe36b": 10,
+      "MeshStandardMaterial::a2603ff1-66a3-4786-a68e-23437225840b": 1,
+      "MeshStandardMaterial::740d26f1-e589-473c-8463-ba071f0b3dc8": 1,
+      "MeshPhysicalMaterial::bcf72075-071c-4508-9d19-0fb2dfbde5a9": 4,
+      "MeshStandardMaterial::b4911677-3b94-4de3-a9a2-908272846e3d": 1,
+      "MeshBasicMaterial::4e3e035b-1d2d-4ebf-8346-39bc3da5856d": 1,
+      "MeshBasicMaterial::4ade4062-222d-48e4-bd90-0127c95410ef": 1,
+      "MeshBasicMaterial::1b76311d-ebfc-4855-b61e-f307d9676e4c": 1,
+      "MeshBasicMaterial::9f1d1884-9ec1-44b5-bbc7-0b01b2ba567a": 1,
+      "MeshBasicMaterial::b2abb74b-6152-4841-8b65-328cfcd85c7b": 2,
+      "MeshLambertMaterial::17e844f6-19f2-4899-8469-a5df100060f7": 1,
+      "MeshBasicMaterial::6979ac88-8625-4480-90d0-8e4485d76d87": 1,
+      "MeshLambertMaterial::f0c27f42-3738-4199-870e-9bd79d58f25e": 1,
+      "MeshLambertMaterial::186ce530-0aff-4618-a0e5-7d6c5705bcd5": 1,
+      "MeshLambertMaterial::349be6f6-964a-49da-af73-527e52cf0558": 1,
+      "MeshLambertMaterial::966ecdd5-e6f1-488c-b7b8-c20aa1dc1371": 1,
+      "MeshLambertMaterial::0205bd85-c98b-4074-8bb7-ac6ca1849916": 1,
+      "MeshLambertMaterial::68b6da5a-bcd5-443d-8b9b-0b2e4a3d9b12": 1,
+      "MeshLambertMaterial::cb4e6252-2425-4e05-bb73-e857b2a58420": 1,
+      "MeshLambertMaterial::d6036657-9360-4ff7-9fd2-20a33e416af8": 1,
+      "MeshLambertMaterial::cbfc2897-8fa4-4373-b17a-7a2eb30c95f2": 1,
+      "MeshLambertMaterial::86e6abd6-d6f7-41e4-837a-2652c9cac869": 1,
+      "MeshLambertMaterial::7ee2d45f-d306-4a3a-962f-2f1a1b4d232a": 1,
+      "MeshLambertMaterial::a283f79f-955e-422a-b751-7964c6c88da8": 1,
+      "MeshLambertMaterial::7c316a45-f749-4c8e-b995-9386b73c262c": 1,
+      "MeshLambertMaterial::69e6b9c4-014d-41d8-99fc-c6ce3e13e539": 1,
+      "MeshLambertMaterial::98bbecc9-1ae2-4166-a396-2a0bc2506d71": 1,
+      "MeshLambertMaterial::447464c0-2e2f-48cd-8888-682fc9fb78aa": 1,
+      "MeshLambertMaterial::e4b67089-c1bc-406a-af1b-a694716b2b8c": 1,
+      "MeshLambertMaterial::46803cf9-bbba-499d-b5fd-90c70a714e3c": 1,
+      "MeshLambertMaterial::868426b9-a910-466b-b313-ce76a947c8e7": 1,
+      "MeshLambertMaterial::b3522938-f68d-44b5-8c12-7f67e6614dbc": 1,
+      "MeshLambertMaterial::dae3e589-a2f6-453e-8e98-84497254f439": 1,
+      "MeshLambertMaterial::fc6af87c-0f5d-4717-9613-a11c7f44a36c": 1,
+      "MeshBasicMaterial::eb53f91e-4d79-410c-b333-e0df11d6ee6b": 1,
+      "MeshStandardMaterial::0d9d0b89-2835-471a-a8d0-5d3a4b579193": 3,
+      "MeshBasicMaterial::7fbe3650-6959-4589-8a10-04fa4ebe38af": 1,
+      "MeshBasicMaterial::6a43961b-aec5-404e-b366-f708593932f3": 1,
+      "MeshBasicMaterial::446f0f3a-42c9-4230-90ba-2d52f947b0ba": 2,
+      "MeshStandardMaterial::926d1b79-3d44-441e-9898-141f1648e71d": 1,
+      "MeshBasicMaterial::01159ce7-4420-4200-8e4b-4e979ef55f35": 1,
+      "MeshBasicMaterial::ad3bfee1-b283-42f8-8aca-a945db39c526": 1,
+      "MeshBasicMaterial::5d6435bc-f70e-49ae-bdf3-3a29ad4e00fe": 1,
+      "MeshStandardMaterial::a598edc5-7e68-4136-a478-a383fb11f88d": 4,
+      "MeshBasicMaterial::60ab8f75-18f0-4edb-a7bb-00f6962c781d": 2,
+      "MeshBasicMaterial::e489c9f0-b8d6-4f07-b932-c2232635e897": 1,
+      "MeshBasicMaterial::6e73e76a-9c30-44ee-a0ec-e2aa1451244c": 1,
+      "MeshStandardMaterial::12b105fc-fda8-45f2-ac7e-be871a465716": 1,
+      "MeshStandardMaterial::86bd3851-67c0-4d65-8c8b-5bcfe4a661d6": 1,
+      "MeshPhysicalMaterial::fed7d21e-56a0-49e2-9925-79c5aea8598f": 4,
+      "MeshStandardMaterial::a03a3579-eea4-4dd2-9977-006931fdbf20": 1,
+      "MeshBasicMaterial::abe97966-c400-4a5f-82b2-93ee714dfbf3": 1,
+      "MeshBasicMaterial::fff72773-ec55-4bc2-81c2-b04f314551f7": 1,
+      "MeshStandardMaterial::533bd9a6-a7a0-47c1-a354-6bec5f5c05ff": 1,
+      "MeshStandardMaterial::652c23a4-d85f-4c69-8c00-e477968eeef1": 1,
+      "MeshPhysicalMaterial::5ee20760-4bbe-40b0-bf37-ca7fe22fcda8": 4,
+      "MeshStandardMaterial::c4fb6bf9-817b-48e5-9b95-f5ccfc978c28": 1,
+      "MeshStandardMaterial::60ebb7a8-0d44-470d-b016-67d4561a68c7": 1,
+      "MeshStandardMaterial::51457bc2-4197-4e41-8f9e-9dda4da9bc3b": 1,
+      "MeshPhysicalMaterial::749fd387-d4e2-420c-8061-563046b8a238": 4,
+      "MeshStandardMaterial::4fef09ff-317c-42bc-8b7d-989565c1fdb3": 1,
+      "MeshBasicMaterial::3fa67d99-9e62-4592-ba92-dfd88d06cfb6": 1,
+      "MeshBasicMaterial::a32607f3-fe88-4831-b37c-8ec890999216": 1,
+      "MeshBasicMaterial::2e698481-55e6-42e7-92c8-5cbd8401a5a1": 1,
+      "MeshBasicMaterial::7959fa17-2230-47eb-99eb-d58f46227c73": 1,
+      "MeshBasicMaterial::fa92351d-55cd-422d-9321-348d86edbe8e": 1,
+      "MeshBasicMaterial::c5b4c1d2-8bbf-45c1-98f1-e1075670ec6f": 2,
+      "MeshBasicMaterial::376963ef-a333-436e-9f06-89a2bc44e720": 2,
+      "MeshBasicMaterial::4a5f71bf-f75c-4f5a-bfd1-de409686cb6a": 2,
+      "MeshBasicMaterial::9ffedafb-7ea2-4ff1-96da-54c98c91b916": 2,
+      "MeshBasicMaterial::b63e3466-b23d-42c7-ac43-c806106afa57": 1,
+      "MeshBasicMaterial::a5379143-1bd9-4f54-bc5a-77e5d0716c0b": 1,
+      "MeshLambertMaterial::7f8b07b4-0fb7-43e8-9ac5-ccf41f3d9ca4": 1,
+      "MeshLambertMaterial::5735b394-9d58-43d1-ad01-863026bf0036": 1,
+      "MeshLambertMaterial::a2b1b430-214c-4bf9-86ac-09f4fc52b7f1": 1,
+      "MeshLambertMaterial::2dee4694-2665-4187-9bd7-7fcb10c907d8": 1,
+      "MeshLambertMaterial::02498618-75be-4f96-8395-97efef50bd1c": 1,
+      "MeshLambertMaterial::fb7d51e8-c9ce-4a49-9d30-194fdc5a0162": 1,
+      "MeshLambertMaterial::75bdc45b-fd01-4ffb-810f-8962717c3168": 1,
+      "MeshLambertMaterial::ffc1cda1-3357-4408-bfd0-5468acd70eb5": 1,
+      "MeshLambertMaterial::49bcb60a-fa97-4cd7-ae36-e931edaab660": 1,
+      "MeshBasicMaterial::1494aec6-5855-487d-8179-32ab7f9beb39": 1,
+      "MeshBasicMaterial::1c31f408-13c3-4b7e-ab93-19ecf34c0403": 1,
+      "MeshBasicMaterial::e0e0a094-5860-49e4-abe5-49de7ea05e24": 1,
+      "MeshBasicMaterial::e67852fc-40e5-4ba9-afc4-98388eaa7f2f": 1,
+      "MeshBasicMaterial::2de2403c-6807-4902-a2da-44add8d71b9f": 1,
+      "MeshStandardMaterial::9cc1e73f-8c7c-4d89-a294-5f6774f10c18": 1,
+      "MeshStandardMaterial::bed33634-e920-48ba-ae7a-43a15396b959": 1,
+      "MeshPhysicalMaterial::bcfc415d-f573-40a7-83ed-e8a8260d3514": 4,
+      "MeshStandardMaterial::e3e25836-7ac2-4acf-82f3-9927dceb3c15": 1,
+      "MeshBasicMaterial::f6feea5a-9fdb-4835-b706-28580cb09bd2": 1,
+      "MeshBasicMaterial::df019675-c45d-4c86-be45-10f492e4e08a": 1,
+      "MeshBasicMaterial::4add2901-2cb0-4369-8ad3-99c3dd4d1a74": 1,
+      "MeshBasicMaterial::a3f22c89-1baf-44a2-9453-bb8b3ffa5533": 1
+    },
+    "roots": [
+      {
+        "key": "-1,0",
+        "meshes": 327,
+        "tri": 48202,
+        "transparent": 0,
+        "casters": 203
+      },
+      {
+        "key": "-2,0",
+        "meshes": 358,
+        "tri": 56586,
+        "transparent": 5,
+        "casters": 217
+      },
+      {
+        "key": "-1,1",
+        "meshes": 258,
+        "tri": 39106,
+        "transparent": 0,
+        "casters": 170
+      },
+      {
+        "key": "-2,1",
+        "meshes": 361,
+        "tri": 49378,
+        "transparent": 0,
+        "casters": 252
+      },
+      {
+        "key": "-1,2",
+        "meshes": 152,
+        "tri": 35874,
+        "transparent": 5,
+        "casters": 31
+      },
+      {
+        "key": "-2,2",
+        "meshes": 95,
+        "tri": 27820,
+        "transparent": 0,
+        "casters": 14
+      },
+      {
+        "key": "-3,0",
+        "meshes": 254,
+        "tri": 103456,
+        "transparent": 33,
+        "casters": 34
+      },
+      {
+        "key": "-3,1",
+        "meshes": 167,
+        "tri": 101944,
+        "transparent": 0,
+        "casters": 21
+      },
+      {
+        "key": "-3,2",
+        "meshes": 142,
+        "tri": 34650,
+        "transparent": 5,
+        "casters": 33
+      },
+      {
+        "key": "-1,3",
+        "meshes": 100,
+        "tri": 29840,
+        "transparent": 0,
+        "casters": 12
+      },
+      {
+        "key": "-2,3",
+        "meshes": 62,
+        "tri": 21800,
+        "transparent": 0,
+        "casters": 7
+      },
+      {
+        "key": "0,2",
+        "meshes": 150,
+        "tri": 39224,
+        "transparent": 5,
+        "casters": 33
+      },
+      {
+        "key": "0,1",
+        "meshes": 101,
+        "tri": 29432,
+        "transparent": 0,
+        "casters": 12
+      },
+      {
+        "key": "0,3",
+        "meshes": 132,
+        "tri": 24496,
+        "transparent": 0,
+        "casters": 63
+      },
+      {
+        "key": "-3,3",
+        "meshes": 109,
+        "tri": 24292,
+        "transparent": 0,
+        "casters": 41
+      },
+      {
+        "key": "0,0",
+        "meshes": 121,
+        "tri": 34566,
+        "transparent": 0,
+        "casters": 15
+      },
+      {
+        "key": "-1,4",
+        "meshes": 113,
+        "tri": 28328,
+        "transparent": 0,
+        "casters": 23
+      },
+      {
+        "key": "-2,4",
+        "meshes": 131,
+        "tri": 34140,
+        "transparent": 5,
+        "casters": 29
+      },
+      {
+        "key": "0,4",
+        "meshes": 160,
+        "tri": 37256,
+        "transparent": 10,
+        "casters": 37
+      },
+      {
+        "key": "1,2",
+        "meshes": 228,
+        "tri": 83690,
+        "transparent": 24,
+        "casters": 32
+      },
+      {
+        "key": "1,1",
+        "meshes": 168,
+        "tri": 31468,
+        "transparent": 0,
+        "casters": 87
+      },
+      {
+        "key": "1,3",
+        "meshes": 174,
+        "tri": 98952,
+        "transparent": 0,
+        "casters": 21
+      },
+      {
+        "key": "-3,4",
+        "meshes": 128,
+        "tri": 35002,
+        "transparent": 0,
+        "casters": 16
+      },
+      {
+        "key": "1,0",
+        "meshes": 149,
+        "tri": 36242,
+        "transparent": 5,
+        "casters": 40
+      },
+      {
+        "key": "1,4",
+        "meshes": 119,
+        "tri": 33118,
+        "transparent": 0,
+        "casters": 22
+      }
+    ]
+  },
+  "summary": {
+    "checks": [
+      "L4 deterministic block hall",
+      "L4 deterministic block cubicle",
+      "L4 deterministic block open",
+      "L4 deterministic block rooms",
+      "L4 deterministic block hall"
+    ],
+    "records": [
+      {
+        "name": "hall",
+        "block": {
+          "i": -1,
+          "j": 1,
+          "type": "hall"
+        },
+        "target": {
+          "x": 69.5,
+          "y": 84.5,
+          "wx": 69.5,
+          "wy": 71.5,
+          "deg": 180
+        },
+        "world": [
+          -26.5,
+          84.5,
+          0
+        ],
+        "look": {
+          "yaw": 0,
+          "pitch": -0.005384563344859186,
+          "locked": false,
+          "rayX": 0,
+          "rayY": -0.9999855032738186,
+          "rayZ": -0.005384537325320567,
+          "visualHit": null,
+          "roll": 0
+        },
+        "fov": 58,
+        "prepareMs": 3300.5,
+        "level": 4,
+        "paused": false,
+        "near": true,
+        "chunks": 15,
+        "tasks": 1,
+        "memory": {
+          "geometries": 914,
+          "textures": 85,
+          "programs": 72
+        }
+      },
+      {
+        "name": "cubicle",
+        "block": {
+          "i": -1,
+          "j": -1,
+          "type": "cubicle"
+        },
+        "target": {
+          "x": 72.5,
+          "y": 78.5,
+          "wx": 70,
+          "wy": 79
+        },
+        "world": [
+          -23.5,
+          -49.5,
+          0
+        ],
+        "look": {
+          "yaw": 1.7681918866447774,
+          "pitch": -0.027449362773195325,
+          "locked": false,
+          "rayX": -0.9802112810424036,
+          "rayY": 0.19604225620848054,
+          "rayZ": -0.027445915869187324,
+          "visualHit": null,
+          "roll": 0
+        },
+        "fov": 58,
+        "prepareMs": 4271.600000000093,
+        "level": 4,
+        "paused": false,
+        "near": true,
+        "chunks": 13,
+        "tasks": 1,
+        "memory": {
+          "geometries": 1134,
+          "textures": 90,
+          "programs": 73
+        }
+      },
+      {
+        "name": "open",
+        "block": {
+          "i": 0,
+          "j": 0,
+          "type": "open"
+        },
+        "target": {
+          "x": 69.5,
+          "y": 73.5,
+          "wx": 73.5,
+          "wy": 73.5
+        },
+        "world": [
+          5.5,
+          9.5,
+          0
+        ],
+        "look": {
+          "yaw": -1.5707963267948966,
+          "pitch": -0.017498213869856612,
+          "locked": false,
+          "rayX": 0.9998469101619251,
+          "rayY": -3.3306690738754706e-16,
+          "rayZ": -0.017497320927833706,
+          "visualHit": null,
+          "roll": 0
+        },
+        "fov": 66,
+        "prepareMs": 1465.2999999998137,
+        "level": 4,
+        "paused": false,
+        "near": true,
+        "chunks": 16,
+        "tasks": 1,
+        "memory": {
+          "geometries": 1670,
+          "textures": 103,
+          "programs": 75
+        }
+      },
+      {
+        "name": "rooms",
+        "block": {
+          "i": -1,
+          "j": 0,
+          "type": "rooms"
+        },
+        "target": {
+          "x": 63.5,
+          "y": 71.5,
+          "wx": 68,
+          "wy": 71.5
+        },
+        "world": [
+          -64.5,
+          7.5,
+          0
+        ],
+        "look": {
+          "yaw": -1.5707963267948966,
+          "pitch": -0.015554301050900473,
+          "locked": false,
+          "rayX": 0.9998790342982713,
+          "rayY": -1.1102230246251568e-16,
+          "rayZ": -0.015553673866862013,
+          "visualHit": {
+            "kind": "structure",
+            "structure": {
+              "kind": "hoteldoor",
+              "x": 33,
+              "y": 7,
+              "w": 1,
+              "h": 1,
+              "solid": true,
+              "data": {
+                "l4": 1,
+                "open": 0,
+                "axis": "y",
+                "officeDoor": 1,
+                "sid": 3537295919
+              }
+            },
+            "x": 97.47250000014901,
+            "y": 71.50000000000001,
+            "z": 1.5190446147598065,
+            "rayT": 1.9727386338621844,
+            "yaw": -1.5707963267948966,
+            "pitch": -0.015554301050900473,
+            "playerX": 95.5,
+            "playerY": 71.5,
+            "playerZ": 0,
+            "at": 1792643385721
+          },
+          "roll": 0
+        },
+        "fov": 58,
+        "prepareMs": 2574,
+        "level": 4,
+        "paused": false,
+        "near": true,
+        "chunks": 13,
+        "tasks": 1,
+        "memory": {
+          "geometries": 1587,
+          "textures": 102,
+          "programs": 75
+        }
+      },
+      {
+        "name": "window-north",
+        "block": {
+          "i": -1,
+          "j": 1,
+          "type": "hall"
+        },
+        "target": {
+          "x": 69.5,
+          "y": 76,
+          "wx": 69.5,
+          "wy": 71.5,
+          "deg": 180
+        },
+        "world": [
+          -26.5,
+          76,
+          0
+        ],
+        "look": {
+          "yaw": 0,
+          "pitch": -0.015554301050900473,
+          "locked": false,
+          "rayX": 0,
+          "rayY": -0.9998790342982712,
+          "rayZ": -0.01555367386686201,
+          "visualHit": null,
+          "roll": 0
+        },
+        "fov": 58,
+        "prepareMs": 1691.2999999998137,
+        "level": 4,
+        "paused": false,
+        "near": true,
+        "chunks": 15,
+        "tasks": 1,
+        "memory": {
+          "geometries": 1342,
+          "textures": 93,
+          "programs": 75
+        }
+      }
+    ],
+    "status": {
+      "level": 4,
+      "paused": false,
+      "near": true,
+      "chunks": 25,
+      "tasks": 0,
+      "memory": {
+        "geometries": 1382,
+        "textures": 98,
+        "programs": 75
+      },
+      "world": [
+        -26.5,
+        76,
+        0
+      ]
+    }
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

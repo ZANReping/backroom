@@ -31,6 +31,7 @@
 //
 // 纯函数契约：同 (seed,cx,cy) 永远输出相同 GenChunk；动态状态（容器搜刮/物品拾取）走 sid/taken。
 import { RNG } from '../core/rng'
+import { TAR_WORDS } from '../content/thingTar'
 import { UNIVERSAL_ITEMS } from '../content/items'
 import type { LevelDef, Structure, LightSource, ExitInstance, GroundItem } from '../core/types'
 import { CS, GEN_ITEM_BASE, RS, h32, regionHost, waterItemZForTile } from './infinite'
@@ -263,6 +264,31 @@ export function l7SeaFloorAt(seed: number, wx: number, wy: number): number {
       sum += l7SeaFloorRaw(seed, wx + dx, wy + dy) * w
     }
   return Math.max(0, sum / 16)
+}
+
+/** Lightweight terrain record; also used beyond the live window and by chart previews.
+ * No structures, entities, loot or runtime chunk state are generated here. */
+export function l7TerrainTileAt(seed: number, wx: number, wy: number) {
+  // Match the Float32 chunk field before testing the shoreline threshold.
+  const d = Math.fround(l7SeaFloorAt(seed, wx, wy))
+  const land = d <= .6 && Math.hypot(wx - L7_ORIGIN.x, wy - L7_ORIGIN.y) >= 64
+    && !(wx >= L7_ENTRY.x0 - 4 && wx <= L7_ENTRY.x1 + 4 && wy >= L7_ENTRY.y0 - 4 && wy <= L7_PORCH.y1 + 4)
+  const elev = land && l7SeaFloorRaw(seed, wx, wy) < -.8 ? 2 : 0
+  const cabin = l7CabinTileAt(wx, wy)
+  return { depth: land ? 0 : d, height: land ? (elev === 2 ? 1.2 : 0) : -d, elev, water: !land, smooth: cabin === 0, cabin }
+}
+
+/** 0=sea, 1=cabin floor, 2=cabin wall (including the porch). */
+export function l7CabinTileAt(wx: number, wy: number): 0 | 1 | 2 {
+  const E = L7_ENTRY, P = L7_PORCH
+  if (wx >= E.x0 - 1 && wx <= E.x1 + 1 && wy >= E.y0 - 1 && wy <= E.doorY) {
+    if (wx >= E.x0 && wx <= E.x1 && wy >= E.y0 && wy <= E.y1 || wy === E.doorY && E.doorX.includes(wx)) return 1
+    return 2
+  }
+  if (wx >= P.x0 && wx <= P.x1 && wy >= P.y0 && wy <= P.y1) {
+    return wx === P.x0 || wx === P.x1 || wy === P.y1 && wx !== P.door.x ? 2 : 1
+  }
+  return 0
 }
 
 /** v57t：世界瓦片是否能成为荒岛（与 genL7ChunkRaw 的判定完全一致：海床抬升到 0.6m 以内，
@@ -598,6 +624,22 @@ export function genL7ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
   if (rng.chance(0.1)) placeOnWater('corpse', 1, 1, false, true, { loot: 1 }, 'midnight')
   // 深渊带：焦油岩堆持续冒泡
   for (let i = 0, n = rng.int(2, 3); i < n; i++) placeOnWater('seatarpit', 2, 2, false, false, { bubbles: 1 }, 'abyss')
+  // [thing] 它会写字：午夜带/深渊的焦油地上偶尔有一行被拖出来的字（独立随机流，不扰动既有生成序列）
+  {
+    const trng = new RNG(h32(seed, 0x7a2, cx, cy))
+    for (const want of ['midnight', 'abyss'] as const) {
+      if (!trng.chance(want === 'abyss' ? 0.1 : 0.05)) continue
+      for (let tr = 0; tr < 40; tr++) {
+        const x = trng.int(3, CS - 8), y = trng.int(3, CS - 6)
+        if (nearEntry(x, y, 3) || nearFixedExit(x, y, 3) || zoneAt(x, y) !== want) continue
+        let ok = true
+        for (let j = y; j < y + 2 && ok; j++) for (let i = x; i < x + 4 && ok; i++) if (!isWaterTile(i, j) || solidAt(WX + i, WY + j)) ok = false
+        if (!ok) continue
+        pushStruct('tarwriting', WX + x, WY + y, 4, 2, false, false, { text: TAR_WORDS[trng.int(0, TAR_WORDS.length - 1)], rot: Math.round(trng.next() * 628) / 100 })
+        break
+      }
+    }
+  }
   if (rng.chance(0.7)) placeOnWater('bonepile', 1, 1, false, true, { loot: 1 }, 'abyss')
   if (rng.chance(0.16)) placeOnWater('fishbones', 3, 2, false, false, undefined, 'abyss')
 

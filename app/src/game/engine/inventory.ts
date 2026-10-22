@@ -1,3 +1,4 @@
+import {acidDrink,bursterWash} from './bursterAI'
 import { isMelee } from '../content/melee'
 import { finishRepair, tryRepairHeld, slotName } from './melee'
 // v53：背包/装备/物品使用（槽位读写、快捷使用/丢弃、粉笔头、迁跃浆果）——
@@ -6,12 +7,15 @@ import { aimMothToTame, tameMoth, stopMothBleed } from './mothAI'
 import { ITEMS, itemName, itemUseProfile, type ItemUseProfile } from '../content/items'
 import { tileAt } from '../world/mapgen'
 import { audio } from '../core/audio'
+import { blowKazoo } from './tinyAI'
+import { eatThingMeat } from './thingAI'
 import { dullerAlmondScent } from './dullerAI'
 import {jerryLureRead,jerryInputLock} from './jerryAI'
 import {nguithrInputLock} from './nguithrAI'
 import {armsInputLock} from './armsAI'
 import { addPartyConversion, PARTY } from './partygoerAI'
 import { releaseShrimp, SHRIMP_BAIT_TIME } from './shrimpAI'
+import { curabiturUseItem } from './curabiturAI' // [L8-curabitur]
 import type { Engine, InvSlot, SlotRef, SlotWhere } from '../engine'
 
 // v51：天才糖的「冷知识」（简单但常被人认错）
@@ -127,6 +131,8 @@ function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = f
   const s = eng.slotGet({ w: where, i })
   if (!s) return
   const def = ITEMS[s.type]
+  if (curabiturUseItem(eng, where, i)) return
+  if (bursterWash(eng, s.type)) return // 爆酸者：被酸糊眼时，喝水类物品改为洗眼
   // v57t：来源不明的书——翻开记录「七层之物」的旧书页（不消耗，读过的内容已存进图鉴文档）
   if (s.type === 'oddbook') {
     audio.uiTick()
@@ -140,6 +146,8 @@ function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = f
     eng.msg(`${def.name} 是装备（${def.passive ?? def.desc}），应放在【${slotName}】栏——在背包中拖拽到对应装备位。`, 'system')
     return
   }
+  // [kazoo] 石卡祖笛：吹一声（不消耗）。声源/回声、耗氧、逼退小小全在 tinyAI
+  if (def.use === 'kazoo') { blowKazoo(eng); return }
   if (!def.use || def.use === 'none') {
     // v32：笔记本和笔——翻开笔记本（可自由书写，字迹自动保留）
     if (s.type === 'notebook') { eng.emit({ kind: 'notebook' }); return }
@@ -153,6 +161,7 @@ function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = f
       audio.pickup()
       if (eng.squirtTank === 'almond') { eng.player.sanity = Math.min(100, eng.player.sanity + 10); eng.msg('你就着储罐喝了一口杏仁水——甜腻。（理智 +10）', 'loot'); dullerAlmondScent(eng) }
       else if (eng.squirtTank === 'cashew') { eng.player.sanity = Math.max(0, eng.player.sanity - 10); eng.msg('你就着储罐喝了一口腰果水——苦涩烧喉。（理智 -10）', 'damage') }
+      else if (eng.squirtTank === 'acid') acidDrink(eng) // 爆酸者酸液：自饮重创 + 呛进眼里
       else if (eng.squirtTank === 'liquidpain') {
         // 液态痛苦（Object 48）：腐蚀性酸液——自饮重创
         eng.player.hp = Math.max(1, eng.player.hp - 35)
@@ -195,6 +204,8 @@ function finishUseSlot(eng: Engine, where: SlotWhere, i: number, targetJerry = f
         break
       }
       // v51：Object 5 糖果——统一 饥饿+5 理智+5 + 糖瘾计时 + 各自超自然效果
+      // [thing] 彼物之肉：生吃——饱腹极强，硫磺口臭 10 分钟（气味会引来实体；L7 里会引来七层之物）
+      if (s.type === 'thingmeat') { eatThingMeat(eng); break }
       if (s.type.startsWith('candy')) {
         p.hunger = Math.min(100, p.hunger + 5)
         p.sanity = Math.min(100, p.sanity + 5)

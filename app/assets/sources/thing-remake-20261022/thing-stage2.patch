@@ -1,0 +1,1024 @@
+diff --git a/app/package.json b/app/package.json
+index a5429a4..51ef698 100644
+--- a/app/package.json
++++ b/app/package.json
+@@ -42,6 +42,7 @@
+     "fetch:l5-assets": "node scripts/fetch-l5-assets.mjs",
+     "generate:l10-pbr": "esbuild scripts/gen-l10-pbr.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/gen-l10-pbr.mjs && node .cache/gen-l10-pbr.mjs",
+     "check:l7-cliffs": "esbuild scripts/check-l7-cliffs.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l7-cliffs.mjs && node .cache/check-l7-cliffs.mjs",
++    "check:thing-anim": "esbuild scripts/check-thing-anim.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-thing-anim.mjs --log-level=error && node .cache/check-thing-anim.mjs",
+     "check:l7": "esbuild scripts/check-l7-generation.ts --bundle --platform=node --format=esm --outfile=.cache/check-l7-generation.mjs && node .cache/check-l7-generation.mjs",
+     "check:l10": "esbuild scripts/check-l10-generation.ts --bundle --platform=node --format=esm --outfile=.cache/check-l10-generation.mjs && node .cache/check-l10-generation.mjs",
+     "check:l11": "esbuild scripts/check-l11-generation.ts --bundle --platform=node --format=esm --outfile=.cache/check-l11-generation.mjs && node .cache/check-l11-generation.mjs && esbuild scripts/check-l11-migration.ts --bundle --platform=node --format=esm --outfile=.cache/check-l11-migration.mjs && node .cache/check-l11-migration.mjs && esbuild scripts/check-l11-missions.ts --bundle --platform=node --format=esm --outfile=.cache/check-l11-missions.mjs && node .cache/check-l11-missions.mjs",
+diff --git a/app/scripts/check-thing-anim.ts b/app/scripts/check-thing-anim.ts
+new file mode 100644
+index 0000000..ee5fc44
+--- /dev/null
++++ b/app/scripts/check-thing-anim.ts
+@@ -0,0 +1,51 @@
++// [thing] 七层之物阶段 2 动画无头验收：8 个片段各跑 10 秒，检查体节连续、无 NaN、头颈不脱节、各片段的特征量。运行：npm run check:thing-anim
++import { createCanvas } from '@napi-rs/canvas'
++Object.assign(globalThis, { document: { createElement: () => createCanvas(64, 64) } })
++const THREE = await import('three')
++const { buildThingMesh, THING } = await import('../src/game/renderer/thingMesh')
++const { animateThing, makeThingAnimState, THING_CLIPS, THING_CLIP_LEN } = await import('../src/game/renderer/thingAnim')
++let n = 0, fails = 0
++const ok = (c: unknown, m: string) => { n++; console.log(`${c ? '✔' : '✘'} ${m}`); if (!c) fails++ }
++const DT = 1 / 30
++const g = buildThingMesh()
++const parts = g.userData.parts as Record<string, any>
++let tri = 0, meshes = 0; g.traverse((o: any) => { if (o.isMesh) { meshes++; tri += (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position.count) / 3 } })
++ok(meshes < 420 && tri < 90000, `模型规模：${meshes} 个网格、${Math.round(tri)} 个三角形`)
++ok(THING.headLen + THING.segs * THING.spacing > 60 && THING.headLen + THING.segs * THING.spacing < 80, `可见长度 ${(THING.headLen + THING.segs * THING.spacing).toFixed(0)}m 在 60~80m`)
++ok(!!parts.jaw && !!parts.lure && !!parts.gillL && !!parts.eyeL && !!parts.photoL, '头部部件齐全（下颌 / 饵球 / 鳃 / 眼 / 发光条）')
++for (const clip of THING_CLIPS) {
++  const st = makeThingAnimState()
++  let t = 0, yaw = 0, x = 0, maxGap = 0, minGap = 99, nan = false, maxGape = 0, maxNeck = 0, maxLat = 0, lureMin = 9, recoilYaw = 0
++  const len = THING_CLIP_LEN[clip] ?? 10
++  for (let i = 0; i < 300; i++) {
++    if (clip === 'circle') yaw += 0.27 * DT
++    x += Math.cos(yaw) * 4 * DT
++    g.position.set(x, 0, 0); g.rotation.y = yaw; g.updateMatrixWorld(true)
++    animateThing(g, st, { t, dt: DT, clip, progress: THING_CLIP_LEN[clip] ? Math.min(1, i * DT / len) : undefined })
++    g.updateMatrixWorld(true)
++    t += DT
++    if (i < (THING_CLIP_LEN[clip] ? 0 : 120)) continue
++    const w = (o: any) => o.getWorldPosition(new THREE.Vector3())
++    for (let s = 0; s < THING.segs - 1; s++) {
++      const a = w(parts[`seg${s}`]), b = w(parts[`seg${s + 1}`])
++      const d = a.distanceTo(b)
++      if (!Number.isFinite(d)) nan = true
++      maxGap = Math.max(maxGap, d); minGap = Math.min(minGap, d)
++    }
++    const hd = w(parts.head), s0 = w(parts.seg0)
++    maxNeck = Math.max(maxNeck, hd.distanceTo(s0))
++    maxGape = Math.max(maxGape, -parts.jaw.rotation.z)
++    const tail = w(parts[`seg${THING.segs - 1}`])
++    maxLat = Math.max(maxLat, Math.abs(tail.z))
++    lureMin = Math.min(lureMin, g.userData.thingLureMat.emissiveIntensity)
++    recoilYaw = Math.max(recoilYaw, parts.head.rotation.y)
++  }
++  ok(!nan && maxGap < THING.spacing * (clip === 'glitch' ? 1.45 : 1.3) && minGap > THING.spacing * 0.6, `${clip}：相邻体节间距 ${minGap.toFixed(2)}~${maxGap.toFixed(2)}m（节距 ${THING.spacing}）`)
++  ok(maxNeck < 1.2, `${clip}：头颈最大间距 ${maxNeck.toFixed(2)}m（不脱节）`)
++  if (clip === 'bite') ok(maxGape > 0.9, `bite：下颌最大张开 ${(maxGape * 57.3).toFixed(0)}°`)
++  if (clip === 'drift') ok(maxGape < 0.3, `drift：装死时嘴只微张（${(maxGape * 57.3).toFixed(0)}°）`)
++  if (clip === 'flinch') ok(recoilYaw > 0.4 && lureMin < 0.3, `flinch：头偏开 ${(recoilYaw * 57.3).toFixed(0)}°，饵球压暗到 ${lureMin.toFixed(2)}`)
++  if (clip === 'dash' || clip === 'flee') ok(maxLat > 1.2, `${clip}：尾段摆幅 ${maxLat.toFixed(1)}m`)
++}
++console.log(`check:thing-anim ${n - fails}/${n}${fails ? '' : ' 全部通过'}`)
++if (fails) process.exit(1)
+diff --git a/app/scripts/verify-thing-ingame.mjs b/app/scripts/verify-thing-ingame.mjs
+new file mode 100644
+index 0000000..32b1d0c
+--- /dev/null
++++ b/app/scripts/verify-thing-ingame.mjs
+@@ -0,0 +1,139 @@
++// [thing] 七层之物新模型 + 动画接入游戏的实机截图（真实应用、真实引擎与渲染器）。
++// 用法：node scripts/verify-tiny-ingame.mjs [l7] [l8]      截图与结果 → reports/tiny-ingame/
++// 流程：标题页 → 写一个 L7 存档走「继续游戏」进入 → 借调试入口把玩家放到环形场台心门（世界坐标 L7_ARENA）前 →
++//   (a) 小小盘踞在门上方；(b) 真实使用动作连吹 4 声石卡祖笛（engine.useSlot + engine.step）→ 小小进入 repel，抱头退开；
++//   (d) 第一人称：持笛静止手型 + 吹奏动作中段（门上方的小小正在抱头）；
++//   再用调试入口 devJump(8) 进 L8 → 传送到乐器洞（l8InstrumentCave(seed)）→ (c) 洞厅全景、岩壁乐器近景（按渲染层真实网格位置取景）。
++// swiftshader 下每秒只有零点几到几帧：每张图前等 near-world 就绪、实体网格 visible，并按 rAF 计数预热 ≥ 40 帧。
++// 若 TINY_QA_URL 未提供且 3473 端口无服务，本脚本自己启动 vite（--port 3473 --strictPort），结束时关闭。
++// 本脚本自己启动/关闭专属 QA 浏览器（/workspace/work/.pw-libs/chromium.sh、--headless=new、独立用户目录 .cache/thing-ingame-qa、调试端口 9473）。
++import { spawn } from 'node:child_process'
++import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
++const port = process.env.TINY_QA_CDP ?? '9474', out = process.env.L7T_OUT ?? 'reports/thing-ingame/'
++const vport = process.env.L7T_PORT ?? '3474'
++const base = process.env.TINY_QA_URL ?? `http://127.0.0.1:${vport}`
++const want = new Set(process.argv.slice(2).length ? process.argv.slice(2) : ['l7', 'l8'])
++const W = 1280, H = 720
++mkdirSync(out, { recursive: true })
++// 中文字体（HUD 提示）：/workspace/work/.fonts 里的 NotoSansSC，经一份最小 fontconfig 交给 Chromium
++mkdirSync('.cache', { recursive: true })
++if (!existsSync('.cache/fonts.conf')) writeFileSync('.cache/fonts.conf', '<?xml version="1.0"?>\n<!DOCTYPE fontconfig SYSTEM "fonts.dtd">\n<fontconfig><include ignore_missing="yes">/etc/fonts/fonts.conf</include><dir>/workspace/work/.fonts</dir></fontconfig>\n')
++const up = async () => { try { return (await fetch(base + '/')).ok } catch { return false } }
++let vite = null
++if (!(await up())) {
++  vite = spawn('npx', ['vite', '--port', vport, '--strictPort', '--host', '127.0.0.1'], { stdio: 'ignore', detached: true, env: { ...process.env, L0_VERIFY: '1' } })
++  for (let i = 0; i < 240 && !(await up()); i++) await new Promise((r) => setTimeout(r, 500))
++}
++const chrome = spawn(process.env.CHROME ?? '/workspace/work/.pw-libs/chromium.sh', ['--headless=new', `--remote-debugging-port=${port}`, `--user-data-dir=${process.cwd()}/.cache/thing-ingame-qa`, '--enable-automation', '--no-first-run', '--no-default-browser-check', '--disable-gpu-sandbox', '--no-sandbox', '--enable-unsafe-swiftshader', '--use-angle=swiftshader', `--window-size=${W},${H}`, 'about:blank'], { stdio: 'ignore', env: { ...process.env, FONTCONFIG_FILE: process.env.FONTCONFIG_FILE ?? `${process.cwd()}/.cache/fonts.conf` } })
++const errors = [], result = { checks: [], shots: [], info: {} }
++const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
++const log = (...a) => console.log(new Date().toISOString().slice(11, 19), ...a)
++try {
++  let page
++  for (let i = 0; i < 120 && !page; i++) { await sleep(250); try { page = (await (await fetch(`http://127.0.0.1:${port}/json/list`)).json()).find((p) => p.type === 'page') } catch { /* 等浏览器起来 */ } }
++  if (!page) throw Error('QA 浏览器未启动')
++  const ws = new WebSocket(page.webSocketDebuggerUrl); await new Promise((r) => ws.addEventListener('open', r, { once: true }))
++  let seq = 0; const pending = new Map()
++  ws.addEventListener('message', (e) => {
++    const r = JSON.parse(e.data)
++    if (r.method === 'Runtime.exceptionThrown') errors.push(JSON.stringify(r.params.exceptionDetails).slice(0, 600))
++    if (r.method === 'Runtime.consoleAPICalled' && r.params.type === 'error') errors.push(r.params.args?.map((a) => a.value ?? a.description).join(' ').slice(0, 600))
++    const p = pending.get(r.id); if (p) { pending.delete(r.id); r.error ? p.reject(r.error) : p.resolve(r.result) }
++  })
++  const send = (method, params = {}) => new Promise((resolve, reject) => { const id = ++seq; pending.set(id, { resolve, reject }); ws.send(JSON.stringify({ id, method, params })) })
++  const ev = async (expression) => { const r = await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true }); if (r.exceptionDetails) throw Error(JSON.stringify(r.exceptionDetails).slice(0, 900)); return r.result?.value }
++  const until = async (expr, label, tries = 900) => { for (let i = 0; i < tries; i++) { if (await ev(`Boolean(${expr})`).catch(() => false)) return; await sleep(250) } throw Error('超时：' + label) }
++  const shot = async (name) => { writeFileSync(out + name + '.png', Buffer.from((await send('Page.captureScreenshot', { format: 'png' })).data, 'base64')); result.shots.push(out + name + '.png'); log('📷', name) }
++  const check = (ok, label) => { result.checks.push(`${ok ? '✔' : '✘'} ${label}`); log(`${ok ? '✔' : '✘'} ${label}`) }
++  await send('Runtime.enable'); await send('Page.enable')
++  const ver = await send('Browser.getVersion'), cl = await send('Browser.getBrowserCommandLine')
++  if (!ver.userAgent.includes('HeadlessChrome') || !cl.arguments.includes('--headless=new')) throw Error('不是本脚本的无头 QA 浏览器')
++  await send('Emulation.setDeviceMetricsOverride', { width: W, height: H, deviceScaleFactor: 1, mobile: false })
++  const init = await send('Page.addScriptToEvaluateOnNewDocument', { source: `localStorage.clear();sessionStorage.clear();localStorage.setItem('br_settings',JSON.stringify({renderResolution:'native',renderScale:100,maxPixelRatio:1,dynamicRes:false,lightMode:'realistic',sceneLightLimit:8,shadowQuality:0,lightShadows:0,loadingBudgetMs:6,devMode:true}))` })
++  await send('Page.navigate', { url: base + '/' })
++  await until('window.__engine && document.querySelector(".title-menu")', '标题页')
++  await send('Page.removeScriptToEvaluateOnNewDocument', { identifier: init.identifier })
++  log('标题页就绪')
++  // 写一个 L7 存档，走「继续游戏」进入（真实加载路径）
++  await ev(`(()=>{const raw=__engine.snapshot();localStorage.setItem('br_save_slot1',JSON.stringify({...raw,seed:720,level:7,mapSeed:720,savedAt:Date.now(),player:{...raw.player,level:7}}))})()`)
++  await send('Page.reload')
++  await until(`document.querySelector('canvas[data-title-level="7"][data-title-ready=true]')`, 'L7 存档标题')
++  const click = (sel, text) => ev(`(()=>{const b=[...document.querySelectorAll(${JSON.stringify(sel)})].find(b=>b.textContent.includes(${JSON.stringify(text)}));if(!b)throw Error('缺按钮 '+${JSON.stringify(text)});b.click()})()`)
++  await click('.menu-btn', '继续游戏'); await sleep(300); await click('.hud-panel button', '继续')
++  const playable = (lv) => `__engine.player.level===${lv} && !__engine.paused && !__engine.transition && !document.querySelector("[data-cutscene]") && __renderer.isNearWorldReady(__engine)`
++  await until(playable(7), 'L7 可玩', 1200)
++  check(true, '进入 L7（读档继续游戏）')
++  // 页面侧工具：rAF 帧计数、固定玩家位置/视角（主循环的游泳浮力不会把镜头带走）、钉住小小的抱头 recoil
++  await ev(`(()=>{window.__fc=0;window.__pin=null;window.__holdRecoil=null;(function f(){__fc++;const e=__engine,p=e.player,q=__pin;if(q){const m=e.map;p.x=q.wx-(m.inf?.ox??0);p.y=q.wy-(m.inf?.oy??0);p.z=q.z;p.vz=0;__look.yaw=q.yaw;__look.pitch=q.pitch;e.particles=e.particles.filter(o=>Math.hypot(o.x-p.x,o.y-p.y)>2.5)}
++    if(__holdRecoil!==null){for(const [id,g] of __renderer.entityMeshes){const sm=g.userData.tinySm;if(sm&&id===__holdRecoil)sm.recoilT=Math.max(sm.recoilT,1.0)}}requestAnimationFrame(f)})()})()`)
++  // swiftshader 下 L8 体积洞穴一块 chunk 要好几秒：放宽每帧建网格预算（默认 3/6ms，设置里最多 6/8ms）
++  await ev(`(()=>{__renderer.chunkBudgetMs=60;__renderer.loadingBudgetMs=60})()`)
++  const settle = async (minFrames = 40, extra = '', maxWait = 1200) => {
++    await sleep(600)
++    for (let i = 0; i < maxWait; i++) { if (await ev(`__engine.map.entities.every(q=>!q.presentationPending) && __renderer.isNearWorldReady(__engine) ${extra}`).catch(() => false)) break; if (i === maxWait - 1) { result.checks.push('⚠ 就绪等待超时'); log('⚠ 就绪等待超时') } await sleep(250) }
++    const f0 = await ev('__fc'); for (let i = 0; i < 2400; i++) { if ((await ev('__fc')) - f0 >= minFrames) break; await sleep(100) }
++    result.info.lastFrames = (await ev('__fc')) - f0
++  }
++  // 镜头：站在 (x,y,z)（地图局部坐标，z = 脚底），看向 (tx,ty,tz)。钉住的是世界坐标：
++  // 无限层窗口平移（updateInfiniteWindow 把玩家坐标减掉平移量）后仍站在原地——钉局部坐标会让窗口一路平移下去
++  const aim = (x, y, z, tx, ty, tz) => ev(`(()=>{const dx=${tx}-(${x}),dy=${ty}-(${y}),dz=${tz}-(${z}+1.55);const m=__engine.map;window.__pin={wx:${x}+(m.inf?.ox??0),wy:${y}+(m.inf?.oy??0),z:${z},yaw:Math.atan2(-dx,-dy),pitch:Math.atan2(dz,Math.hypot(dx,dy))};__engine.player.facing=Math.atan2(dy,dx);return __pin})()`)
++
++
++  const s7 = await ev(`(()=>{const e=__engine,p=e.player;e.dev.god=true;e.dev.statLock=true;e.dev.frozenAI=true
++    p.flashlight=true;p.battery=100;p.equip.offhand={type:'flashlight',count:1};e.syncPassives?.();e.map.entities=e.map.entities.filter(q=>q.def.type!=='tiny');return true})()`)
++  // 把玩家放到世界坐标 (wx,wy,z)，等窗口平移完再取地图局部坐标
++  const goto = async (wx, wy, z) => {
++    await ev(`(()=>{const e=__engine,m=e.map,p=e.player;p.x=${wx}-m.inf.ox;p.y=${wy}-m.inf.oy;p.z=${z};e.updateInfiniteWindow();p.x=${wx}-m.inf.ox;p.y=${wy}-m.inf.oy;p.z=${z}})()`)
++    await sleep(400)
++    return ev(`({ox:__engine.map.inf.ox,oy:__engine.map.inf.oy})`)
++  }
++  const floorAt = (wx, wy) => ev(`(async()=>{const M=await import('/src/game/world/mapgen.ts');const m=__engine.map;return M.floorHeight(m,${wx}-m.inf.ox,${wy}-m.inf.oy,0)})()`)
++  const L = await ev(`(async()=>{const L7=await import('/src/game/world/infiniteL7.ts');return {O:L7.L7_ORIGIN,M:L7.L7_MOUNT}})()`)
++  const O = L.O, M = L.M
++  // 站在世界坐标 (wx,wy)、脚底离海床 dz 米，看向 (twx,twy) 离海床 dtz 米处；海床高度在窗口搬过去之后再取
++  // 出生台地外的开阔水域（离岸 60m、水深约 18m，有天光），在玩家前方 22m 放一只七层之物
++  const wx = O.x + 70, wy = O.y + 10
++  const o = await goto(wx, wy, -6)
++  const info = await ev(`(async()=>{const {makeEntity}=await import('/src/game/entities/index.ts');const e=__engine,m=e.map,p=e.player
++    m.entities=m.entities.filter(q=>q.def.type!=='thething')
++    const t=makeEntity('thething',p.x+22,p.y+4);t.z=-7;t.state='wander';t.facing=Math.PI*0.5;m.entities.push(t);window.__thingId=t.id;return {id:t.id,x:t.x,y:t.y}})()`)
++  // 放开 AI 推进 6 秒让链条舒展，再冻住
++  await ev(`(()=>{const e=__engine;e.dev.frozenAI=true;const t=e.map.entities.find(q=>q.id===__thingId);for(let k=0;k<180;k++){t.x+=Math.cos(t.facing)*0.12;t.y+=Math.sin(t.facing)*0.12;e.step(1/30)}return {x:t.x,y:t.y}})()`)
++  const tp = await ev(`(()=>{const t=__engine.map.entities.find(q=>q.id===__thingId);return {x:t.x,y:t.y,z:t.z,f:t.facing}})()`)
++  result.info.thing = tp
++  // facing=atan2(dy,dx)，渲染 rotation.y=-facing
++  // 用渲染器里头部 / 第 12 节的真实世界位置取景（渲染世界 x,z = 地图局部 x+0.5, y+0.5）
++  const TW = () => ev(`(()=>{const g=__renderer.entityMeshes.get(__thingId),P=g.userData.parts,a=new g.position.constructor(),b=a.clone(),c=a.clone();P.head.getWorldPosition(a);P.seg3.getWorldPosition(b);P.seg2.getWorldPosition(c);return {h:[a.x-.5,a.z-.5,a.y],m:[b.x-.5,b.z-.5,b.y],n:[c.x-.5,c.z-.5,c.y]}})()`)
++  await settle(20)
++  let w = await TW()
++  {
++    const [hx, hy] = w.h, [mx, my, mz] = w.m
++    const ax = hx - mx, ay = hy - my, al = Math.hypot(ax, ay) || 1
++    // 颈后第 3 节的侧面 11m（L7 水下消光很强，>15m 的黑色躯干会完全没入水色）
++    await aim(mx - ay / al * 11, my + ax / al * 11, mz + 1.5, mx, my, mz)
++  }
++  await settle(60)
++  await shot('g1-thing-wide')
++  w = await TW()
++  {
++    const [hx, hy, hz] = w.h, [nx, ny] = w.n
++    const ax = hx - nx, ay = hy - ny, al = Math.hypot(ax, ay) || 1
++    await aim(hx + ax / al * 2.5 - ay / al * 8, hy + ay / al * 2.5 + ax / al * 8, hz - 0.8, hx + ax / al * 1.5, hy + ay / al * 1.5, hz - 1.2)
++  }
++  await settle(40)
++  await shot('g2-thing-head')
++  check(await ev(`!!__renderer.entityMeshes.get(__thingId)?.userData.thingAnim?.chain`), '渲染器在跑 thingAnim 跟随链')
++  writeFileSync(out + 'verify-result.json', JSON.stringify(result, null, 2) + '\n')
++  await send('Browser.close').catch(() => {})
++  ws.close()
++} catch (err) {
++  result.error = String(err?.stack ?? err)
++  console.error(err)
++} finally {
++  result.errors = errors
++  writeFileSync(out + 'verify-result.json', JSON.stringify(result, null, 2) + '\n')
++  try { chrome.kill('SIGKILL') } catch { /* 已退出 */ }
++  if (vite) try { process.kill(-vite.pid, 'SIGKILL') } catch { /* 已退出 */ }
++  log(errors.length ? `浏览器错误 ${errors.length} 条（见 verify-result.json）` : '无浏览器错误')
++  process.exit(0)
++}
+diff --git a/app/src/game/renderer/entitiesMesh.ts b/app/src/game/renderer/entitiesMesh.ts
+index 98b5d8c..ccafc82 100644
+--- a/app/src/game/renderer/entitiesMesh.ts
++++ b/app/src/game/renderer/entitiesMesh.ts
+@@ -11,6 +11,7 @@
+ // 新实体请先读这些 case 再动手；设定依据在 entities/ 各定义的 codex 注释里。
+ import * as THREE from 'three'
+ import { buildTinyMesh } from './tinyMesh'
++import { buildThingMesh } from './thingMesh'
+ import { planFacelingFace } from './facelingFace'
+ import { buildMothMesh } from './mothMeshes'
+ import { buildSmilerMesh } from './smilerMesh'
+@@ -126,6 +127,7 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
+   if (type === 'corpserat') return buildRatMesh(opts?.ratMorph ?? (opts?.capybara ? 'capybara' : opts?.ceilingCrawler ? 'cave' : 'common'), opts?.seed ?? 0, !!opts?.ceilingCrawler)
+   if (type === 'wretch') return buildWretchMesh(opts?.seed ?? 0, opts?.wretchKind)
+   if (type === 'skinstealer') return buildSkinStealerMesh(opts?.seed ?? 0) // v77：重制窃皮者（真身）
++  if (type === 'thething') return buildThingMesh() // [thing] 重制七层之物（Entity 20）：黑巨口鱼式头 + 28 节鳞甲躯干
+   if (type === 'tiny') return buildTinyMesh() // [tiny] 重制小小（Entity 720，披鲨皮的瘦长类人形）
+   if (type === 'smiler') return buildSmilerMesh(opts?.smilerKind ?? 'common', opts?.seed ?? 0) // v61：重制笑魇（含 5 变种）
+   const grp = new THREE.Group()
+diff --git a/app/src/game/renderer/renderer.ts b/app/src/game/renderer/renderer.ts
+index 00de99a..139e606 100644
+--- a/app/src/game/renderer/renderer.ts
++++ b/app/src/game/renderer/renderer.ts
+@@ -1,3 +1,4 @@
++import { animateThing, makeThingAnimState, type ThingAnimState, type ThingClip } from './thingAnim'
+ import { L7OceanFx, l7CausticUniforms } from './l7Ocean'
+ import { animateTinyEntity } from './tinyRender'
+ import { l7SurgeUniforms, waterUniforms } from './water'
+@@ -3725,7 +3726,7 @@ export class Renderer3D {
+     for (const e of m.entities) {
+       seen.add(e.id)
+       let grp = this.entityMeshes.get(e.id)
+-      const radius = (e.def.type === 'thething' ? 48 : 12) * Math.max(1, e.def.scale ?? 1)
++      const radius = (e.def.type === 'thething' ? 80 : 12) * Math.max(1, e.def.scale ?? 1)
+       const reach = Math.min(this.camera.far, this.fogEnabled ? (this.scene.fog as THREE.Fog)?.far ?? 60 : this.camera.far) + radius
+       const distance = Math.hypot(e.x-engine.player.x,e.y-engine.player.y)
+       if (distance > (e.def.mothForm==='larva'?12:reach)) { if (grp) grp.visible = false; e.presentationPending = false; continue }
+@@ -4008,113 +4009,17 @@ export class Renderer3D {
+           if (grp.userData.facesZ) { parts.torso.rotation.x = chase ? 0.16 : 0; parts.torso.rotation.z = 0 }
+           else parts.torso.rotation.z = chase ? -0.16 : 0
+         }
+-        // 七层之物——18 节、约 40m 的连续拖链：头领航，后段以更大的相位延迟游动；
+-        // 鳃、残鳍、咽喉与“故障”切片全部随状态驱动，而不是只有整条模型平移。
++        // [thing] 七层之物：28 节跟随链 + 8 段动画（renderer/thingAnim.ts）。AI 状态 → 片段：
++        //   attack 扑咬（按前摇进度）/ flee 惊逃 / chase 冲刺 / investigate 盘旋 / wander 缓游 / 其余 休眠漂流；强光照中叠加畏光。
+         if (et === 'thething') {
+-          interface ChainNode { x: number; y: number; z: number }
+-          const count = Number(grp.userData.thingSegmentCount ?? 18)
+-          const spacing = Number(grp.userData.thingSegmentSpacing ?? 2.16)
+-          if (!grp.userData.chain) {
+-            grp.userData.chain = Array.from({ length: count }, (_, i) => ({
+-              x: grp.position.x - Math.cos(e.facing) * (1.2 + i * spacing),
+-              y: grp.position.y,
+-              z: grp.position.z + Math.sin(e.facing) * (1.2 + i * spacing),
+-            }))
+-          }
+-          const chain = grp.userData.chain as ChainNode[]
+-          const ry = grp.rotation.y, cs = Math.cos(ry), sn = Math.sin(ry)
+-          const swimK = e.state === 'chase' || e.state === 'attack' ? 1 : e.state === 'investigate' ? 0.58 : e.state === 'wander' ? 0.34 : 0.12
+-          const waveRate = 0.68 + swimK * 1.12
+-          let px = grp.position.x, py = grp.position.y, pz = grp.position.z
+-          for (let i = 0; i < count; i++) {
+-            const seg = parts[`seg${i}`]
+-            const c = chain[i]
+-            if (!seg) { px = c.x; pz = c.z; continue }
+-            seg.scale.set(1, 1, 1) // 故障脉冲会临时拉伸，下一帧先恢复
+-            // 期望位置：上一节后方 spacing 米；后段拖延更明显，形成沉重而非蛇玩具式的摆动。
+-            const dx = c.x - px, dz = c.z - pz
+-            const dd = Math.hypot(dx, dz) || 1
+-            const lag = Math.min(1, dt * Math.max(1.05, 3.15 - i * 0.075))
+-            c.x += (px + (dx / dd) * spacing - c.x) * lag
+-            c.z += (pz + (dz / dd) * spacing - c.z) * lag
+-            c.y += (py - c.y) * Math.min(1, dt * Math.max(0.9, 2.15 - i * 0.045))
+-            const tailGain = 0.28 + i / Math.max(1, count - 1) * 1.28
+-            const sway = (Math.sin(t * waveRate - i * 0.58) * (0.18 + swimK * 0.3)
+-              + Math.sin(t * 0.31 + i * 1.37) * 0.08) * tailGain
+-            const swayY = (Math.sin(t * (waveRate * 0.72) - i * 0.44) * (0.07 + swimK * 0.13)
+-              + Math.sin(t * 0.23 + i * 0.91) * 0.035) * tailGain
+-            const perpX = -Math.sin(e.facing), perpZ = -Math.cos(e.facing) // 世界系垂直于面向（x,z）
+-            const wx = c.x + perpX * sway, wz = c.z + perpZ * sway, wy = c.y + swayY
+-            // 世界 → grp 局部（grp 仅平移 + 绕 y 转 ry）：local = R_y(-ry)·(world-pos)
+-            const ox = wx - grp.position.x, oz = wz - grp.position.z
+-            seg.position.set(ox * cs - oz * sn, wy - grp.position.y, ox * sn + oz * cs)
+-            // 体节朝向：指向前一节（朝头方向），局部系换算
+-            const fx0 = px - wx, fz0 = pz - wz
+-            const fd = Math.hypot(fx0, fz0) || 1
+-            const worldYaw = Math.atan2(-(fz0 / fd), fx0 / fd) // +X 模型：rotation.y = atan2(-dz, dx)
+-            let rel = worldYaw - ry
+-            rel = ((rel + Math.PI * 3) % (Math.PI * 2)) - Math.PI
+-            seg.rotation.y = rel
+-            const vertical = py - wy
+-            seg.rotation.z = Math.atan2(vertical, Math.max(0.01, Math.hypot(fx0, fz0)))
+-            seg.rotation.x = Math.sin(t * waveRate - i * 0.62) * (0.025 + swimK * 0.055)
+-            const fin = parts[`fin${i}`]
+-            if (fin) {
+-              fin.scale.y = 1
+-              fin.rotation.x = Math.sin(t * (0.74 + swimK * 0.9) - i * 0.7) * (0.06 + swimK * 0.12)
+-            }
+-            const gill = parts[`gill${i}`]
+-            if (gill) {
+-              const breath = 1 + Math.max(0, Math.sin(t * 1.55 - i * 0.18)) * (0.08 + swimK * 0.16)
+-              gill.scale.set(1, breath, breath)
+-            }
+-            for (const side of ['L', 'R']) {
+-              const pect = parts[`pect${side}${i}`]
+-              if (pect) pect.rotation.x = (side === 'L' ? 1 : -1) * (0.12 + Math.sin(t * waveRate - i) * (0.1 + swimK * 0.18))
+-            }
+-            px = c.x; py = c.y; pz = c.z
+-          }
+-          // 呼吸与微小颅骨偏航。追击时头更稳定，像一艘有惯性的潜艇，而非左右乱摇。
+-          const breath = 0.5 + 0.5 * Math.sin(t * 1.48)
+-          const recoilK = THREE.MathUtils.clamp((e.lightRecoilT ?? 0) / 0.42, 0, 1)
+-          if (parts.head) {
+-            parts.head.rotation.y = Math.sin(t * 0.29) * (chase ? 0.025 : 0.085) + recoilK * 0.22
+-            parts.head.rotation.z = Math.sin(t * 0.37) * 0.025 + recoilK * 0.11
+-          }
+-          if (parts.throat) parts.throat.scale.set(1 + breath * 0.012, 1 + breath * 0.025, 1 + breath * 0.018)
+-          if (parts.jaw && e.state !== 'attack') {
+-            const jawRest = -0.055 + recoilK * 0.045 // 被强光刺中时本能闭口、收紧咽喉
+-            parts.jaw.rotation.z += (jawRest - parts.jaw.rotation.z) * Math.min(1, dt * 3.2)
+-          }
+-          if (parts.upperJaw && e.state !== 'attack') {
+-            const upperRest = 0.018 - recoilK * 0.014
+-            parts.upperJaw.rotation.z += (upperRest - parts.upperJaw.rotation.z) * Math.min(1, dt * 3.2)
+-          }
+-          if (parts.tongue) parts.tongue.position.z = Math.sin(t * 0.9) * 0.025
+-          if (recoilK > 0) for (let i = 0; i < Math.min(6, count); i++) {
+-            const gill = parts[`gill${i}`], fin = parts[`fin${i}`]
+-            if (gill) gill.scale.z *= 1 - recoilK * 0.52
+-            if (fin) fin.scale.y = 1 - recoilK * 0.34
+-          }
+-          const eyeMats = grp.userData.eyeMats as THREE.MeshLambertMaterial[] | undefined
+-          if (eyeMats) for (const mat of eyeMats) mat.emissiveIntensity = 0.28 + breath * 0.24 + (chase ? 0.28 : 0)
+-          const lureMat = grp.userData.thingLureMat as THREE.MeshLambertMaterial | undefined
+-          if (lureMat) lureMat.emissiveIntensity = (0.28 + Math.pow(Math.max(0, Math.sin(t * 0.71)), 4) * 1.2) * (1 - recoilK * 0.82)
+-          // 故障脉冲：低占空比、确定性地触发色差鬼影/扫描切片，并把三个远隔体节沿不同轴拉断。
+-          // 大多数时间完全不可见，避免一直亮成科幻霓虹灯。
+-          const fl = Math.sin(t * 7.31) * Math.sin(t * 19.7) + Math.sin(t * 41.3) * 0.42
+-          const burst = THREE.MathUtils.clamp((fl - 0.42) / 0.58, 0, 1)
+-          const glitchMats = grp.userData.glitchMats as THREE.MeshBasicMaterial[] | undefined
+-          if (glitchMats) for (let i = 0; i < glitchMats.length; i++) glitchMats[i].opacity = burst * (i % 5 < 2 ? 0.22 : 0.5)
+-          for (const [j, gi] of [4, 10, 16].entries()) {
+-            const gs = parts[`seg${gi}`], ghost = parts[`glitch${gi}`]
+-            if (!gs || !ghost) continue
+-            ghost.visible = burst > 0.025
+-            ghost.position.set(Math.sin(t * 53 + j) * burst * 0.34, Math.sin(t * 37 + j * 2) * burst * 0.18, Math.cos(t * 47 + j) * burst * 0.24)
+-            gs.scale.set(1 + burst * (j === 1 ? 0.12 : -0.045), 1 + burst * (j === 0 ? 0.16 : -0.08), 1 + burst * (j === 2 ? 0.22 : 0.04))
+-            gs.position.x += Math.sin(t * 61 + gi) * burst * 0.12
+-            gs.position.z += Math.cos(t * 43 + gi) * burst * 0.16
+-          }
++          const ts = (grp.userData.thingAnim ??= makeThingAnimState()) as ThingAnimState
++          const clip: ThingClip = e.state === 'attack' ? 'bite' : e.state === 'stunned' ? 'flee' : chase ? 'dash'
++            : e.state === 'investigate' ? 'circle' : e.state === 'wander' ? 'cruise' : 'drift'
++          animateThing(grp, ts, {
++            t, dt, clip,
++            progress: clip === 'bite' ? THREE.MathUtils.clamp(1 - lk, 0, 1) : undefined,
++            recoil: THREE.MathUtils.clamp((e.lightRecoilT ?? 0) / 0.42, 0, 1),
++          })
+         }
+         if (et === 'arachnid' && parts.arachnidBody) {
+           const moving = gaitAmp > 0
+@@ -4154,19 +4059,7 @@ export class Renderer3D {
+           const wind = lk > 0.45 ? (1 - lk) / 0.55 : 0 // 蓄力 0→1
+           const strike = lk <= 0.45 ? 1 - lk / 0.45 : 0 // 出手 0→1
+           if (et === 'thething') {
+-            // 上颚抬起、下颚下掀形成真正的剪式开口；口腔面和咽喉不再缩放，杜绝“红泡膨胀”。
+-            const gape = THREE.MathUtils.clamp(wind * 0.72 + strike, 0, 1)
+-            if (parts.upperJaw) parts.upperJaw.rotation.z = 0.018 + gape * 0.38
+-            if (parts.jaw) parts.jaw.rotation.z = -(0.055 + gape * 0.96)
+-            if (parts.throat) parts.throat.scale.set(1, 1 + wind * 0.025, 1 + wind * 0.018)
+-            if (parts.tongue) parts.tongue.scale.set(1 + strike * 0.15, 1, 1)
+-            for (let i = 0; i < 6; i++) {
+-              const gill = parts[`gill${i}`], fin = parts[`fin${i}`]
+-              if (gill) gill.scale.z = 1 + gape * 0.48
+-              if (fin) fin.rotation.x += Math.sin(t * 9 + i) * gape * 0.16
+-            }
+-            grp.position.x += Math.cos(e.facing) * strike * 0.9
+-            grp.position.z += -Math.sin(e.facing) * strike * 0.9
++            // [thing] 扑咬由 thingAnim 的 bite 片段驱动（头和整条链一起前冲），这里不再额外推 grp
+           } else if (et === 'hound') {
+             // 后坐蓄力 → 前扑：躯干俯仰 + 前肢扬起 + 整体前冲
+             if (parts.torso) parts.torso.rotation.z = wind * 0.35 - strike * 0.4
+diff --git a/app/src/game/renderer/thingAnim.ts b/app/src/game/renderer/thingAnim.ts
+new file mode 100644
+index 0000000..1ee5490
+--- /dev/null
++++ b/app/src/game/renderer/thingAnim.ts
+@@ -0,0 +1,185 @@
++// [thing] 七层之物（Entity 20）动画——阶段 2。
++// 8 个片段：drift 休眠漂流（装死） / cruise 缓游 / circle 盘旋 / dash 冲刺 / bite 扑咬 /
++//           flinch 畏光收鳃偏头 / flee 惊逃甩身 / glitch 故障抖动（也作为常驻低频叠加）。
++// 躯干是一条世界空间的跟随链：每节追随前一节、保持节距 THING.spacing；在链的切线法向上叠加
++// 一列从头往后传的游动波（鳗形 anguilliform：振幅随离头距离增大）。头部的颌、鳃、颏须饵球、眼按片段驱动。
++// grp 只做平移 + 绕 Y 旋转（与渲染器其余实体一致），本模块把每节的世界位姿换算回 grp 局部。
++import * as THREE from 'three'
++import { THING } from './thingMesh'
++
++export type ThingClip = 'drift' | 'cruise' | 'circle' | 'dash' | 'bite' | 'flinch' | 'flee' | 'glitch'
++export const THING_CLIPS: readonly ThingClip[] = ['drift', 'cruise', 'circle', 'dash', 'bite', 'flinch', 'flee', 'glitch']
++/** 一次性片段的时长（秒）；其余循环 */
++export const THING_CLIP_LEN: Partial<Record<ThingClip, number>> = { bite: 1.6, flinch: 1.8, flee: 2.4 }
++
++interface ClipParams {
++  /** 侧向游动波振幅（米，尾端） */ amp: number
++  /** 波速（弧度/秒） */ freq: number
++  /** 相邻两节相位差（弧度） */ k: number
++  /** 竖直起伏振幅（米） */ vamp: number
++  /** 链跟随速度（越大越紧） */ follow: number
++  /** 鳃开合频率（弧度/秒）与张度 */ gillRate: number; gill: number
++  /** 静息张口 */ gape: number
++  /** 饵球亮度 */ lure: number
++  /** 故障强度 */ glitch: number
++}
++const P: Record<ThingClip, ClipParams> = {
++  drift: { amp: 0.22, freq: 0.32, k: 0.28, vamp: 0.35, follow: 0.9, gillRate: 0.5, gill: 0.15, gape: 0.1, lure: 0.35, glitch: 0.08 },
++  cruise: { amp: 1.35, freq: 1.15, k: 0.42, vamp: 0.18, follow: 2.2, gillRate: 1.3, gill: 0.35, gape: 0.06, lure: 0.8, glitch: 0.1 },
++  circle: { amp: 0.75, freq: 1.0, k: 0.4, vamp: 0.15, follow: 2.0, gillRate: 1.4, gill: 0.45, gape: 0.14, lure: 1, glitch: 0.12 },
++  dash: { amp: 1.7, freq: 2.9, k: 0.5, vamp: 0.12, follow: 4.2, gillRate: 3.4, gill: 0.85, gape: 0.25, lure: 1, glitch: 0.15 },
++  bite: { amp: 1.1, freq: 2.2, k: 0.48, vamp: 0.1, follow: 3.6, gillRate: 3, gill: 0.9, gape: 0, lure: 1, glitch: 0.15 },
++  flinch: { amp: 0.6, freq: 1.4, k: 0.45, vamp: 0.2, follow: 3, gillRate: 0, gill: 0, gape: 0, lure: 0.1, glitch: 0.35 },
++  flee: { amp: 2.6, freq: 3.6, k: 0.55, vamp: 0.3, follow: 4.8, gillRate: 4, gill: 0.7, gape: 0.35, lure: 0.2, glitch: 0.25 },
++  glitch: { amp: 1.2, freq: 1.1, k: 0.42, vamp: 0.18, follow: 2.2, gillRate: 1.3, gill: 0.35, gape: 0.06, lure: 0.7, glitch: 1 },
++}
++
++interface Node { x: number; y: number; z: number }
++export interface ThingAnimState {
++  chain: Node[] | null
++  /** 当前片段与它开始的时刻（一次性片段按此求进度） */
++  clip: ThingClip
++  clipT0: number
++  /** 平滑后的参数（片段切换时插值，避免跳变） */
++  cur: ClipParams
++  phase: number
++}
++export function makeThingAnimState(): ThingAnimState {
++  return { chain: null, clip: 'cruise', clipT0: 0, cur: { ...P.cruise }, phase: 0 }
++}
++
++const h = (n: number) => { const s = Math.sin(n * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s) }
++const sstep = (a: number, b: number, x: number) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t) }
++const _q = new THREE.Quaternion(), _v = new THREE.Vector3(), _X = new THREE.Vector3(1, 0, 0), _qy = new THREE.Quaternion(), _Y = new THREE.Vector3(0, 1, 0)
++
++export interface ThingAnimInput {
++  t: number
++  dt: number
++  clip: ThingClip
++  /** 外部强光刺激 0..1（叠加在任意片段上：收鳃、偏头、闭口） */
++  recoil?: number
++  /** 一次性片段的进度覆盖（0..1）。不给就按 clipT0 计时 */
++  progress?: number
++}
++
++/** 推进一帧。grp 的 position / rotation.y 由调用方先摆好（头在 grp 原点、朝 +X）。 */
++export function animateThing(grp: THREE.Group, st: ThingAnimState, inp: ThingAnimInput): void {
++  const parts = grp.userData.parts as Record<string, THREE.Object3D>
++  const { t, dt } = inp
++  if (inp.clip !== st.clip) { st.clip = inp.clip; st.clipT0 = t }
++  const tgt = P[st.clip]
++  const blend = Math.min(1, dt * 2.5)
++  for (const k of Object.keys(tgt) as (keyof ClipParams)[]) st.cur[k] += (tgt[k] - st.cur[k]) * blend
++  const c = st.cur
++  st.phase += c.freq * dt
++  const len = THING_CLIP_LEN[st.clip]
++  const prog = inp.progress ?? (len ? Math.min(1, (t - st.clipT0) / len) : 0)
++  const recoil = Math.max(inp.recoil ?? 0, st.clip === 'flinch' ? Math.sin(Math.min(1, prog * 1.6) * Math.PI) ** 0.6 : 0)
++
++  // ---------- 头部 ----------
++  let gape = c.gape + Math.max(0, Math.sin(t * 0.37)) ** 6 * 0.08 // 偶尔无意识地张一下
++  let headYaw = Math.sin(t * 0.29) * 0.05, headPitch = Math.sin(t * 0.21) * 0.03, lunge = 0
++  if (st.clip === 'bite') {
++    // 0~0.38 慢慢张到最大（头微抬）→ 0.38~0.5 猛扑合口（头前冲 2.4m）→ 之后回收
++    const open = sstep(0, 0.38, prog) * (1 - sstep(0.4, 0.5, prog))
++    gape = Math.max(gape, open * 1.0)
++    headPitch += open * 0.16 - sstep(0.38, 0.5, prog) * (1 - sstep(0.55, 0.95, prog)) * 0.12
++    lunge = sstep(0.36, 0.5, prog) * (1 - sstep(0.55, 1, prog)) * 2.4
++  }
++  if (st.clip === 'flee') { gape = Math.max(gape, 0.35 * (1 - prog)); headYaw += Math.sin(t * 7) * 0.12 * (1 - prog) }
++  // 畏光：头偏开、下压，闭口、鳃收紧、饵球熄灭
++  headYaw += recoil * 0.55; headPitch -= recoil * 0.18; gape *= 1 - recoil
++  if (parts.head) parts.head.rotation.set(0, headYaw, headPitch)
++  if (parts.jaw) parts.jaw.rotation.z = -gape * 1.08
++  const gillOpen = (c.gill * (0.5 + 0.5 * Math.sin(t * c.gillRate))) * (1 - recoil)
++  if (parts.gillL) parts.gillL.rotation.x = -gillOpen * 0.55
++  if (parts.gillR) parts.gillR.rotation.x = gillOpen * 0.55
++  const lm = grp.userData.thingLureMat as THREE.MeshStandardMaterial | undefined
++  if (lm) lm.emissiveIntensity = (0.15 + c.lure * (0.6 + 0.6 * Math.max(0, Math.sin(t * 0.8)) ** 3)) * (1 - recoil * 0.9)
++  const pm = grp.userData.eyeMats as THREE.MeshStandardMaterial[] | undefined
++  if (pm) for (const m of pm) m.emissiveIntensity = (0.22 + 0.12 * Math.sin(t * 0.6)) * (1 - recoil * 0.7)
++
++  // ---------- 躯干跟随链 ----------
++  const n = THING.segs, sp = THING.spacing
++  const ry = grp.rotation.y, cs = Math.cos(ry), sn = Math.sin(ry)
++  // 头部 +X 方向的世界向量（three：rotation.y=ry 时局部 +X → (cos ry, 0, -sin ry)）
++  const fx = cs, fz = -sn
++  // 扑咬前冲：整条链的锚点跟着头一起前冲（头不与颈部脱开）
++  if (parts.head) parts.head.position.set(lunge, 0, 0)
++  const hx = grp.position.x + fx * (lunge - 0.3), hy = grp.position.y, hz = grp.position.z + fz * (lunge - 0.3)
++  if (!st.chain) st.chain = Array.from({ length: n + 1 }, (_, i) => ({ x: hx - fx * sp * i, y: hy, z: hz - fz * sp * i }))
++  const ch = st.chain
++  ch[0].x = hx; ch[0].y = hy; ch[0].z = hz
++  for (let i = 1; i <= n; i++) {
++    const a = ch[i - 1], b = ch[i]
++    // 先松弛地向前一节靠拢（后段更懒），再硬约束节距
++    const lag = Math.min(1, dt * c.follow * (1 - i / (n + 6)))
++    b.y += (a.y - b.y) * lag * 0.6
++    let dx = b.x - a.x, dy = b.y - a.y, dz = b.z - a.z
++    const d = Math.hypot(dx, dy, dz) || 1
++    dx /= d; dy /= d; dz /= d
++    b.x = a.x + dx * sp; b.y = a.y + dy * sp; b.z = a.z + dz * sp
++  }
++  // 故障：常驻低频，偶尔一节「跳帧」——位置瞬间错开再弹回
++  const gPulse = (i: number) => {
++    const slot = Math.floor(t * (3 + c.glitch * 9) + i * 0.37)
++    const on = h(slot * 13.1 + i * 7.7) < 0.04 + c.glitch * 0.22
++    return on ? (h(slot + i) - 0.5) * (0.4 + c.glitch * 1.4) : 0
++  }
++  const wpos: THREE.Vector3[] = []
++  for (let i = 0; i <= n; i++) {
++    const a = ch[Math.max(0, i - 1)], b = ch[Math.min(n, i + 1)]
++    let tx = a.x - b.x, tz = a.z - b.z
++    const tl = Math.hypot(tx, tz) || 1; tx /= tl; tz /= tl
++    // 振幅：头后几节很小，越往后越大（鳗形游动）
++    const u = i / n
++    const env = 0.12 + 0.88 * sstep(0, 0.7, u)
++    let lat = Math.sin(st.phase - i * c.k) * c.amp * env
++    if (st.clip === 'flee') lat += Math.sin(st.phase * 0.5 - i * 0.2) * 2.2 * env * (1 - prog * 0.5) // 惊逃：整条身体甩出一个大 S
++    if (st.clip === 'flinch') lat += Math.sin(Math.min(1, prog * 1.6) * Math.PI) * -1.6 * (1 - u) * (u > 0.02 ? 1 : 0) // 受刺激时颈部向反侧弯
++    const ver = Math.sin(st.phase * 0.7 - i * c.k * 0.6 + 1.3) * c.vamp * env + (st.clip === 'drift' ? Math.sin(t * 0.2 + i * 0.15) * 0.6 * u : 0)
++    const gj = gPulse(i)
++    wpos.push(new THREE.Vector3(ch[i].x - tz * (lat + gj), ch[i].y + ver + gj * 0.4, ch[i].z + tx * (lat + gj)))
++  }
++  // 头本身也跟着第一节轻摆（让颈部过渡自然）
++  for (let i = 0; i < n; i++) {
++    const seg = parts[`seg${i}`]; if (!seg) continue
++    const p0 = wpos[i], p1 = wpos[i + 1]
++    // 世界 → grp 局部
++    const ox = p0.x - grp.position.x, oz = p0.z - grp.position.z
++    seg.position.set(ox * cs - oz * sn, p0.y - grp.position.y, ox * sn + oz * cs)
++    // 体节局部 +X 指向前一节（朝头）：方向 = p0 - p1
++    _v.set(p0.x - p1.x, p0.y - p1.y, p0.z - p1.z).normalize()
++    // 转到 grp 局部
++    const lx = _v.x * cs - _v.z * sn, lz = _v.x * sn + _v.z * cs
++    _v.set(lx, _v.y, lz)
++    _q.setFromUnitVectors(_X, _v)
++    // 绕自身轴的缓慢翻滚（死物般的漂浮感，drift 更明显）
++    _qy.setFromAxisAngle(_X, Math.sin(t * 0.3 + i * 0.25) * (0.05 + (st.clip === 'drift' ? 0.18 : 0)))
++    seg.quaternion.copy(_q).multiply(_qy)
++    // 故障体节：后半截的错位漂浮
++    const b = parts[`seg${i}b`]
++    if (b) {
++      const gk = 0.35 + c.glitch * 0.9
++      const jump = gPulse(i + 100) * 0.8
++      b.position.set(-0.45 * gk + jump * 0.3, Math.sin(t * 1.3 + i) * 0.3 * gk + jump, Math.cos(t * 1.1 + i * 1.7) * 0.35 * gk)
++      b.rotation.set(Math.sin(t * 0.9 + i) * 0.12 * gk, Math.sin(t * 0.7 + i) * 0.1 * gk, Math.cos(t * 0.8 + i) * 0.08 * gk)
++    }
++    // 偶发「拉伸切片」：极短的一帧体节被拉长/压扁
++    const s = gPulse(i + 50)
++    seg.scale.set(1 + Math.abs(s) * 0.25, 1 - Math.abs(s) * 0.12, 1 + s * 0.1)
++  }
++  void _Y
++  // 错位的鳍：随波拍动；冲刺/惊逃贴身收拢
++  const tuck = sstep(1.2, 2.8, c.freq)
++  for (const key of Object.keys(parts)) {
++    if (key.startsWith('fin')) {
++      const o = parts[key], i = Number(key.slice(3).split('_')[0])
++      o.rotation.z = Math.sin(st.phase * 1.3 - i * 0.5) * 0.25 * (1 - tuck) - tuck * 0.6
++    } else if (key.startsWith('gill') && key.includes('_')) {
++      const o = parts[key], i = Number(key.slice(4).split('_')[0])
++      const br = 1 + Math.max(0, Math.sin(t * c.gillRate - i * 0.4)) * c.gill * 0.5 * (1 - recoil)
++      for (const sl of o.children) sl.scale.set(1, br, 1)
++    }
++  }
++}
+diff --git a/app/src/game/renderer/thingMesh.ts b/app/src/game/renderer/thingMesh.ts
+index 1612ff0..6a3aa1b 100644
+--- a/app/src/game/renderer/thingMesh.ts
++++ b/app/src/game/renderer/thingMesh.ts
+@@ -23,7 +23,7 @@ export const THING = {
+   r0: 1.42,
+   r1: 1.02,
+   /** 巨口铰链（头局部坐标），下颌绕 Z 轴向下掀开 */
+-  hinge: { x: 1.35, y: -0.42 },
++  hinge: { x: 0.95, y: -0.62 },
+   /** 「故障」体节：这几节前后断开，切面露出凝血胶质，但仍跟着整条身体一起动 */
+   glitchSegs: [6, 7, 15, 22] as readonly number[],
+   /** 体节上的错位鳍 / 鳃（[节号, 绕身角度, 尺度]），参照「大小差异极大、毫无功能目的」 */
+@@ -104,12 +104,18 @@ function textures() {
+     c.strokeStyle = 'rgba(160,140,110,0.5)'; c.lineWidth = 7; c.beginPath(); c.arc(128, 150, 26, 0, Math.PI * 2); c.stroke()
+   }, false)
+   // 头皮：更细的鳞 + 骨板纹，眼周一圈发灰
++  // 头皮：照片里是无鳞、湿滑的黑皮——细碎的明暗斑驳 + 皱褶细纹 + 几道发白的旧疤
+   const head = canvasTex(512, 256, (c, R) => {
+-    c.fillStyle = '#121214'; c.fillRect(0, 0, 512, 256)
+-    for (let i = 0; i < 900; i++) { const x = R() * 512, y = R() * 256, r = 2 + R() * 5; { const g0 = 30 + R() * 26; c.fillStyle = `rgba(${g0},${g0},${g0 + 3},0.55)` }; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill() }
+-    for (let i = 0; i < 40; i++) {
+-      const x = R() * 512, y = R() * 256, l = 20 + R() * 60, a = (R() - 0.5) * 0.6
+-      c.strokeStyle = `rgba(120,116,104,${0.25 + R() * 0.3})`; c.lineWidth = 1 + R() * 2
++    c.fillStyle = '#141416'; c.fillRect(0, 0, 512, 256)
++    for (let i = 0; i < 2600; i++) { const x = R() * 512, y = R() * 256, g0 = 14 + R() * 22; c.fillStyle = `rgba(${g0},${g0},${g0 + 2},0.35)`; c.fillRect(x, y, 1 + R() * 3, 1 + R() * 2) }
++    for (let i = 0; i < 160; i++) {
++      const x = R() * 512, y = R() * 256, l = 8 + R() * 30
++      c.strokeStyle = `rgba(0,0,0,${0.25 + R() * 0.3})`; c.lineWidth = 0.6 + R()
++      c.beginPath(); c.moveTo(x, y); c.quadraticCurveTo(x + l * 0.5, y + (R() - 0.5) * 6, x + l, y + (R() - 0.5) * 4); c.stroke()
++    }
++    for (let i = 0; i < 9; i++) {
++      const x = R() * 512, y = R() * 256, l = 30 + R() * 70, a = (R() - 0.5) * 0.8
++      c.strokeStyle = `rgba(96,92,84,${0.3 + R() * 0.25})`; c.lineWidth = 1.5 + R() * 2; c.lineCap = 'round'
+       c.beginPath(); c.moveTo(x, y); c.lineTo(x + Math.cos(a) * l, y + Math.sin(a) * l); c.stroke()
+     }
+   }, true)
+@@ -122,24 +128,28 @@ let MATS: ReturnType<typeof makeMats> | null = null
+ function makeMats() {
+   const T = textures()
+   const skin = litMaterial({ color: '#c9c7c0', map: T.skin ?? undefined, bumpMap: T.skinBump ?? undefined, bumpScale: 2.2, vertexColors: true, roughness: 0.58, metalness: 0.04, envBase: 0.16, emissive: '#0d0e10', emissiveIntensity: 0.18, side: THREE.DoubleSide })
+-  const head = litMaterial({ color: '#b8b6ae', map: T.head ?? undefined, bumpMap: T.head ?? undefined, bumpScale: 1.4, vertexColors: true, roughness: 0.5, metalness: 0.05, envBase: 0.2, emissive: '#0c0c0e', emissiveIntensity: 0.18, side: THREE.DoubleSide })
++  const head = litMaterial({ color: '#c4c2bc', map: T.head ?? undefined, bumpMap: T.head ?? undefined, bumpScale: 0.9, vertexColors: true, roughness: 0.3, metalness: 0.06, envBase: 0.45, emissive: '#0c0c0e', emissiveIntensity: 0.18, side: THREE.DoubleSide })
+   const tar = litMaterial({ color: '#050403', roughness: 0.12, metalness: 0.1, envBase: 0.85, emissive: '#000000' })
+   const mouth = litMaterial({ color: '#100607', roughness: 0.85, emissive: '#050102', emissiveIntensity: 0.05, side: THREE.DoubleSide })
+   const gum = litMaterial({ color: '#3a0d12', roughness: 0.55, emissive: '#0a0103', emissiveIntensity: 0.06 })
+   // 獠牙：照片里是半透明的玻璃质，根部泛黄
+-  const tooth = new THREE.MeshStandardMaterial({ color: '#e7e2cf', roughness: 0.22, metalness: 0, transparent: true, opacity: 0.86, emissive: '#2b2a24', emissiveIntensity: 0.25 })
+-  const eye = new THREE.MeshStandardMaterial({ color: '#0c1416', roughness: 0.06, metalness: 0.1, emissive: '#1d2a2e', emissiveIntensity: 0.25 })
+-  const eyeFilm = new THREE.MeshStandardMaterial({ color: '#c8d4d6', roughness: 0.05, transparent: true, opacity: 0.42, emissive: '#5b6a6e', emissiveIntensity: 0.35 })
+-  const photophore = new THREE.MeshStandardMaterial({ color: '#efe4b8', roughness: 0.3, emissive: '#d8c98a', emissiveIntensity: 0.55 })
+-  const gillRed = litMaterial({ color: '#8a1d2c', roughness: 0.45, emissive: '#2a040b', emissiveIntensity: 0.4, side: THREE.DoubleSide })
+-  const membrane = new THREE.MeshStandardMaterial({ color: '#2a2622', roughness: 0.55, transparent: true, opacity: 0.62, side: THREE.DoubleSide, emissive: '#0c0a08', emissiveIntensity: 0.2 })
++  const tooth = new THREE.MeshStandardMaterial({ color: '#dfe6e6', roughness: 0.12, metalness: 0, transparent: true, opacity: 0.62, emissive: '#1d2224', emissiveIntensity: 0.2 })
++  const eye = new THREE.MeshStandardMaterial({ color: '#06090b', roughness: 0.04, metalness: 0.2, emissive: '#0b1216', emissiveIntensity: 0.2 })
++  // 照膜反光：照片里瞳孔深处那团发白的蓝光
++  const tapetum = new THREE.MeshStandardMaterial({ color: '#cfe4ee', roughness: 0.15, emissive: '#7fa9bf', emissiveIntensity: 0.45 })
++  const bone = litMaterial({ color: '#2b1714', roughness: 0.62, envBase: 0.15, emissive: '#070202', emissiveIntensity: 0.1 })
++  const dots = new THREE.MeshStandardMaterial({ color: '#7f97a3', roughness: 0.3, emissive: '#4f6f80', emissiveIntensity: 0.45 })
++  const eyeFilm = new THREE.MeshStandardMaterial({ color: '#9fb0b6', roughness: 0.03, transparent: true, opacity: 0.14, depthWrite: false, emissive: '#2a3438', emissiveIntensity: 0.2 })
++  const photophore = new THREE.MeshStandardMaterial({ color: '#b8a878', roughness: 0.35, emissive: '#8f8150', emissiveIntensity: 0.32 })
++  const gillRed = litMaterial({ color: '#7a1c38', roughness: 0.75, emissive: '#22030f', emissiveIntensity: 0.3, side: THREE.DoubleSide })
++  const membrane = new THREE.MeshStandardMaterial({ color: '#1d1512', roughness: 0.35, transparent: true, opacity: 0.4, depthWrite: false, side: THREE.DoubleSide, emissive: '#0c0a08', emissiveIntensity: 0.2 })
+   const ray = litMaterial({ color: '#8e8a7c', roughness: 0.7, emissive: '#121110', emissiveIntensity: 0.1 })
+-  const barbel = litMaterial({ color: '#5b5850', roughness: 0.6, emissive: '#0d0c0a', emissiveIntensity: 0.15 })
++  const barbel = new THREE.MeshStandardMaterial({ color: '#a9b8be', roughness: 0.3, transparent: true, opacity: 0.55, depthWrite: false, emissive: '#2c3438', emissiveIntensity: 0.3 })
+   const lure = new THREE.MeshStandardMaterial({ color: '#d4bb5c', roughness: 0.35, emissive: '#c5a646', emissiveIntensity: 1.2 })
+   const flesh = litMaterial({ color: '#ffffff', map: T.flesh ?? undefined, roughness: 0.3, envBase: 0.5, emissive: '#2a0507', emissiveIntensity: 0.25, side: THREE.DoubleSide })
+   const worm = litMaterial({ color: '#ddd3b8', roughness: 0.4, emissive: '#2a2620', emissiveIntensity: 0.2 })
+   const hole = litMaterial({ color: '#030202', roughness: 1, emissive: '#000000' })
+-  return { skin, head, tar, mouth, gum, tooth, eye, eyeFilm, photophore, gillRed, membrane, ray, barbel, lure, flesh, worm, hole }
++  return { skin, head, tar, mouth, gum, tooth, eye, eyeFilm, photophore, gillRed, membrane, ray, barbel, lure, flesh, worm, hole, tapetum, bone, dots }
+ }
+ const mats = () => (MATS ??= makeMats())
+ 
+@@ -150,19 +160,6 @@ function fang(len: number, root: number, curl: number, R: () => number): THREE.B
+   return sweep(pts, (t) => root * (1 - t * 0.94), { radial: 6, seg: 6 })
+ }
+ 
+-/** 一束红色鳃丝（羽状细条），沿 +Y 展开 */
+-function gillFrill(w: number, h: number, n: number, R: () => number): THREE.BufferGeometry {
+-  const gs: THREE.BufferGeometry[] = []
+-  for (let i = 0; i < n; i++) {
+-    const u = i / (n - 1)
+-    const len = h * (0.55 + 0.45 * Math.sin(u * Math.PI)) * (0.8 + R() * 0.4)
+-    const x0 = (u - 0.5) * w
+-    const pts = [V(x0, 0, 0), V(x0 + (R() - 0.5) * 0.05, len * 0.5, 0.04 + R() * 0.05), V(x0 + (R() - 0.5) * 0.08, len, 0.1 + R() * 0.08)]
+-    gs.push(sweep(pts, (t, _d, _cs, sn) => 0.035 * (1 - t * 0.7) * (Math.abs(sn) > 0.5 ? 1 : 0.35) + 0.004, { radial: 4, seg: 4 }))
+-  }
+-  return merge(gs)
+-}
+-
+ /** 细长鳍条扇（三脚鱼那种长丝状鳍条 + 半透明鳍膜），沿 +Y 伸出，后掠 */
+ function rayFin(size: number, R: () => number): THREE.Group {
+   const M = mats()
+@@ -250,114 +247,162 @@ function cutFace(r: number): THREE.Mesh {
+ }
+ 
+ // ---------------- 头 ----------------
++// 按黑巨口鱼照片的比例：吻极短，大眼几乎贴在吻端、正好在嘴角上方；嘴裂一直开到鳃后（约头长 80%），
++// 下颌是两根细长骨杆，比上颌更长、尖端带钩；牙稀疏、长短悬殊、玻璃般半透明；
++// 眼后一条乳白发光条；颏下一根苍白的长须向前下方伸出；鳃后翻出一大片粉红鳃丝。
++// 头皮无鳞、湿滑发亮（版画的鳞只从颈后开始）。
++/** 颅部轮廓（头局部 x → 上缘 y、下缘 y＝嘴裂、半宽 z） */
++const HEAD_PROFILE = {
++  top: [[0, 1.42], [0.9, 1.52], [2.0, 1.4], [3.0, 1.12], [3.7, 0.86], [4.2, 0.5], [4.5, 0.05]] as const,
++  bot: [[0, -1.42], [0.6, -1.0], [1.1, -0.62], [2.4, -0.5], [3.6, -0.36], [4.35, -0.18], [4.5, -0.05]] as const,
++  half: [[0, 1.42], [1.2, 1.3], [2.4, 1.08], [3.4, 0.86], [4.1, 0.58], [4.5, 0.12]] as const,
++}
++function lerpTab(tab: readonly (readonly [number, number])[], x: number): number {
++  if (x <= tab[0][0]) return tab[0][1]
++  for (let i = 1; i < tab.length; i++) if (x <= tab[i][0]) { const [x0, y0] = tab[i - 1], [x1, y1] = tab[i]; const t = sstep(0, 1, (x - x0) / (x1 - x0)); return y0 + (y1 - y0) * t }
++  return tab[tab.length - 1][1]
++}
+ function buildHead(parts: Record<string, THREE.Object3D>): THREE.Group {
+   const M = mats(), R = rng(0x20e7)
+   const head = new THREE.Group(); head.name = 'thingHead'
+   const HX = THING.hinge.x, HY = THING.hinge.y
+-  // 颅：从颈接口 (x=0, r≈r0) 向前收成钝吻，背线微拱；嘴裂以下由下颌负责
+-  const cran = sweep([V(-0.2, 0, 0), V(1.2, 0.08, 0), V(2.6, 0.12, 0), V(3.7, 0.0, 0), V(4.45, -0.18, 0)], (t, d) => {
+-    const base = THING.r0 * (1 - 0.68 * sstep(0.35, 1, t)) * (1 + 0.06 * gauss(t, 0.18, 0.12))
+-    // 下半截被嘴裂切掉：腹侧压扁到嘴线上方
+-    const down = Math.max(0, -d.y)
+-    const flat = 1 - down * (0.55 + 0.25 * sstep(0.2, 0.7, t))
+-    const side = 1 - 0.18 * Math.abs(d.z) * sstep(0.4, 1, t) // 吻部侧扁
+-    return Math.max(0.06, base * flat * side * (t > 0.97 ? Math.sqrt((1 - t) / 0.03) : 1))
+-  }, { radial: 24, seg: 22, uRep: 1, vRep: 1, shade: (t, d) => 0.6 + 0.4 * (0.5 + 0.5 * d.y) - 0.15 * gauss(t, 0.62, 0.05) })
+-  const cranM = new THREE.Mesh(cran, M.head); head.add(cranM)
+-  // 上颌缘（嘴裂的上沿）：一条从铰链到吻端的肉质唇，挂上颌牙
+-  const lipPts = [V(HX, HY + 0.08, 0), V(2.4, HY + 0.12, 0), V(3.5, HY + 0.08, 0), V(4.38, -0.32, 0)]
+-  const upperGum = new THREE.Group()
++  // 颅：逐截面椭圆（中心线随上下缘移动），比球体拼接更像一整块头骨上蒙的皮
++  {
++    const X0 = -0.3, X1 = 4.5, NX = 40, NR = 30
++    const pos: number[] = [], uv: number[] = [], col: number[] = [], idx: number[] = []
++    for (let i = 0; i <= NX; i++) {
++      const x = X0 + (X1 - X0) * i / NX
++      const top = lerpTab(HEAD_PROFILE.top, x), bot = lerpTab(HEAD_PROFILE.bot, x), hw = lerpTab(HEAD_PROFILE.half, x)
++      const cy = (top + bot) / 2, ry = (top - bot) / 2
++      for (let j = 0; j <= NR; j++) {
++        const a = j / NR * Math.PI * 2
++        let dy = Math.cos(a), dz = Math.sin(a)
++        // 截面：背侧略收成钝脊，腹侧（嘴线）压平
++        const flatK = dy < 0 ? 0.55 + 0.45 * (1 - sstep(0.5, 3, x)) : 1
++        dy *= flatK
++        // 眼眶处的骨突与眼后凹陷
++        const bump = 0.06 * gauss(x, 3.62, 0.35) * Math.max(0, dz * dz) - 0.05 * gauss(x, 2.9, 0.3) * Math.abs(dz)
++        const k = 1 + bump + 0.012 * Math.sin(a * 7 + x * 3)
++        pos.push(x, cy + dy * ry * k, dz * hw * k)
++        uv.push(j / NR * 2, x / 4.5)
++        col.push(...Array(3).fill(0.45 + 0.55 * (0.5 + 0.5 * Math.cos(a)) - 0.1 * gauss(x, 2.95, 0.25)))
++      }
++    }
++    for (let i = 0; i < NX; i++) for (let j = 0; j < NR; j++) { const a = i * (NR + 1) + j, b = a + NR + 1; idx.push(a, b, a + 1, b, b + 1, a + 1) }
++    const g = new THREE.BufferGeometry()
++    g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3))
++    g.setIndex(idx); g.computeVertexNormals()
++    head.add(new THREE.Mesh(g, M.head))
++  }
++  // 上颌骨（嘴裂上沿）：细骨条，挂稀疏的玻璃獠牙；前端两颗前颌大牙
++  const upper: [number, number, number][] = [[HX, HY + 0.02, 1.0], [2.2, -0.48, 0.98], [3.2, -0.36, 0.8], [4.0, -0.24, 0.5], [4.42, -0.12, 0.12]]
+   for (const side of [-1, 1]) {
+-    const pts = lipPts.map((p, k) => V(p.x, p.y, side * (0.9 - k * 0.2)))
+-    upperGum.add(new THREE.Mesh(sweep(pts, () => 0.09, { radial: 6, seg: 12 }), M.gum))
++    const pts = upper.map(([x, y, z]) => V(x, y, side * z))
++    head.add(new THREE.Mesh(sweep(pts, (t) => 0.05 - t * 0.022, { radial: 6, seg: 14 }), M.bone))
+     const curve = new THREE.CatmullRomCurve3(pts)
+     const teeth: THREE.BufferGeometry[] = []
+-    for (let k = 0; k < 15; k++) {
+-      const u = 0.12 + k / 15 * 0.86
+-      const P = curve.getPointAt(u)
+-      const big = k === 12 || k === 6 ? 2.2 : 1
+-      const len = (0.18 + R() * 0.16) * big * (0.8 + u * 0.5)
+-      const f = fang(len, 0.035 * big + 0.012, -0.4, R)
+-      f.rotateZ(Math.PI) // 向下
+-      f.rotateX(side * 0.15)
+-      f.translate(P.x, P.y - 0.02, P.z)
++    const n = 9
++    for (let k = 0; k < n; k++) {
++      const u = 0.18 + k / n * 0.8 + (R() - 0.5) * 0.04
++      const P = curve.getPointAt(Math.min(0.99, u))
++      const big = k === n - 1 ? 2.4 : k === n - 3 ? 1.7 : R() < 0.3 ? 1.4 : 0.75 + R() * 0.4
++      const len = 0.22 * big
++      const f = fang(len, 0.022 * big + 0.008, -0.35 - R() * 0.3, R)
++      f.rotateZ(Math.PI + 0.25) // 向下、略后勾
++      f.rotateX(side * (0.1 + R() * 0.15))
++      f.translate(P.x, P.y - 0.03, P.z)
+       teeth.push(f)
+     }
+-    upperGum.add(new THREE.Mesh(merge(teeth), M.tooth))
++    head.add(new THREE.Mesh(merge(teeth), M.tooth))
+   }
+-  head.add(upperGum)
+-  // 口腔顶：暗色上颚
+-  const ps = new THREE.Shape(); ps.moveTo(HX, -0.85); ps.quadraticCurveTo(3.4, -0.6, 4.3, 0); ps.quadraticCurveTo(3.4, 0.6, HX, 0.85); ps.closePath()
+-  const palate = new THREE.Mesh(new THREE.ShapeGeometry(ps, 8), M.mouth)
+-  palate.rotation.x = Math.PI / 2; palate.position.set(0, HY + 0.14, 0)
+-  head.add(palate)
+-  const throatBack = new THREE.Mesh(new THREE.CircleGeometry(0.85, 20), M.hole); throatBack.rotation.y = Math.PI / 2; throatBack.position.set(HX - 0.05, HY - 0.25, 0); head.add(throatBack)
++  // 口腔：深处只是一团黑（喉咙），上颚是暗色湿肉
++  const ps = new THREE.Shape(); ps.moveTo(HX, -0.98); ps.quadraticCurveTo(3.4, -0.75, 4.35, 0); ps.quadraticCurveTo(3.4, 0.75, HX, 0.98); ps.closePath()
++  const palate = new THREE.Mesh(new THREE.ShapeGeometry(ps, 10), M.mouth)
++  palate.rotation.x = Math.PI / 2; palate.position.set(0, HY + 0.1, 0); head.add(palate)
++  const throatBack = new THREE.Mesh(new THREE.CircleGeometry(0.9, 20), M.hole); throatBack.rotation.y = Math.PI / 2; throatBack.position.set(HX - 0.08, HY - 0.3, 0); head.add(throatBack)
+ 
+-  // 下颌：铰链在眼后，向前远超吻端（下颌前突），U 形细长，前端獠牙最长
++  // 下颌：两根细骨杆，前端在中线合拢成钩状颏，比吻端长约 0.5m；中间只有一层半透明薄膜
+   const jaw = new THREE.Group(); jaw.name = 'thingJaw'; jaw.position.set(HX, HY, 0); head.add(jaw)
+   parts.jaw = jaw
++  const ram: [number, number, number][] = [[0, -0.02, 1.02], [1.2, -0.1, 0.96], [2.3, -0.08, 0.72], [3.2, 0.0, 0.36], [3.6, 0.1, 0.06]]
+   for (const side of [-1, 1]) {
+-    const pts = [V(0, 0, side * 0.95), V(1.3, -0.12, side * 0.82), V(2.6, -0.16, side * 0.55), V(3.55, -0.05, side * 0.22), V(3.9, 0.05, side * 0.02)]
+-    const ramus = sweep(pts, (t, d) => (0.26 - t * 0.14) * (d.y < 0 ? 1.25 : 0.8), { radial: 10, seg: 14, shade: (_t, d) => 0.5 + 0.4 * (0.5 + 0.5 * d.y) })
+-    jaw.add(new THREE.Mesh(ramus, M.head))
++    const pts = ram.map(([x, y, z]) => V(x, y, side * z))
++    jaw.add(new THREE.Mesh(sweep(pts, (t, d) => (0.12 - t * 0.06) * (d.y < 0 ? 1.15 : 0.85), { radial: 8, seg: 16, shade: (_t, d) => 0.55 + 0.35 * (0.5 + 0.5 * d.y) }), M.bone))
+     const curve = new THREE.CatmullRomCurve3(pts)
+     const teeth: THREE.BufferGeometry[] = []
+-    for (let k = 0; k < 14; k++) {
+-      const u = 0.1 + k / 14 * 0.9
+-      const P = curve.getPointAt(u)
+-      const front = sstep(0.6, 1, u)
+-      const fangK = k === 13 ? 3.6 : k === 11 ? 2.6 : k === 8 ? 1.8 : 1
+-      const len = (0.16 + R() * 0.14) * fangK * (1 + front * 0.6)
+-      const f = fang(len, 0.03 * fangK + 0.012, 0.5 + front * 0.5, R)
+-      f.rotateX(-side * (0.12 + front * 0.2))
+-      f.translate(P.x, P.y + 0.08, P.z)
++    const n = 8
++    for (let k = 0; k < n; k++) {
++      const u = 0.22 + k / n * 0.76 + (R() - 0.5) * 0.04
++      const P = curve.getPointAt(Math.min(0.99, u))
++      const front = sstep(0.55, 1, u)
++      const big = k === n - 1 ? 3.4 : k === n - 2 ? 2.2 : k === 3 ? 1.9 : 0.7 + R() * 0.5
++      const len = 0.22 * big
++      const f = fang(len, 0.022 * big + 0.008, 0.25 + front * 0.6, R)
++      f.rotateZ(-0.25 - front * 0.35) // 前端獠牙前倾
++      f.rotateX(-side * (0.08 + R() * 0.12))
++      f.translate(P.x, P.y + 0.1, P.z)
+       teeth.push(f)
+     }
+     jaw.add(new THREE.Mesh(merge(teeth), M.tooth))
+   }
+-  // 下颌之间的皮膜与口底（张嘴时露出暗红口底）
+-  const fs = new THREE.Shape(); fs.moveTo(0, -0.9); fs.quadraticCurveTo(2.4, -0.62, 3.85, 0); fs.quadraticCurveTo(2.4, 0.62, 0, 0.9); fs.closePath()
+-  const floor = new THREE.Mesh(new THREE.ShapeGeometry(fs, 8), M.mouth)
+-  floor.rotation.x = -Math.PI / 2; floor.position.set(0, -0.02, 0); jaw.add(floor)
+-  const gular = sweep([V(0.1, -0.15, 0), V(1.6, -0.36, 0), V(3.2, -0.2, 0), V(3.85, 0.0, 0)], (t, d) => (0.92 - t * 0.78) * (d.y < 0 ? 0.42 : 0.08) * (Math.abs(d.z) > 0.2 ? 1.05 : 1), { radial: 14, seg: 12, shade: () => 0.45 })
+-  jaw.add(new THREE.Mesh(gular, M.membrane))
+-  // 颏须：下颌尖垂下的长须，末端是发「肮脏黄光」的饵球（几缕细丝）
+-  const barbelPts = [V(3.7, -0.12, 0), V(3.6, -0.9, 0.05), V(3.1, -1.9, -0.1), V(2.5, -2.8, 0.15), V(2.2, -3.4, 0.05)]
+-  jaw.add(new THREE.Mesh(sweep(barbelPts, (t) => 0.055 - t * 0.03, { radial: 6, seg: 16 }), M.barbel))
+-  const lure = new THREE.Mesh(new THREE.SphereGeometry(0.17, 14, 10), M.lure); lure.position.copy(barbelPts[4]); lure.scale.set(1, 1.3, 1)
++  // 颏钩
++  jaw.add(new THREE.Mesh(sweep([V(3.5, 0.08, 0), V(3.78, 0.18, 0), V(3.92, 0.42, 0)], (t) => 0.1 * (1 - t * 0.8), { radial: 6, seg: 6 }), M.bone))
++  // 下颌间的半透明皮膜 + 一列小发光点（龙鱼腹侧的发光器）
++  const ms = new THREE.Shape(); ms.moveTo(0, -1.0); ms.quadraticCurveTo(2.3, -0.75, 3.6, -0.04); ms.lineTo(3.6, 0.04); ms.quadraticCurveTo(2.3, 0.75, 0, 1.0); ms.closePath()
++  const mem = new THREE.Mesh(new THREE.ShapeGeometry(ms, 10), M.membrane); mem.rotation.x = -Math.PI / 2; mem.position.y = -0.16; jaw.add(mem)
++  const dotG: THREE.BufferGeometry[] = []
++  for (const side of [-1, 1]) for (let k = 0; k < 14; k++) {
++    const u = k / 14, P = new THREE.CatmullRomCurve3(ram.map(([x, y, z]) => V(x, y - 0.16, side * z * 0.92))).getPointAt(u)
++    if (R() < 0.25) continue; const d = new THREE.SphereGeometry(0.018 + R() * 0.014, 6, 4); d.translate(P.x + (R() - 0.5) * 0.08, P.y - 0.02, P.z); dotG.push(d)
++  }
++  jaw.add(new THREE.Mesh(merge(dotG), M.dots))
++  // 颏须：从颏下伸出，先向前下、再下垂；苍白半透明，末端是发「肮脏黄光」的饵球和几缕细丝
++  const bp = [V(3.25, -0.12, 0), V(3.7, -0.75, 0.04), V(3.95, -1.6, -0.06), V(3.8, -2.5, 0.08), V(3.55, -3.1, 0.02)]
++  jaw.add(new THREE.Mesh(sweep(bp, (t) => 0.036 - t * 0.018, { radial: 7, seg: 18 }), M.barbel))
++  const lure = new THREE.Mesh(new THREE.SphereGeometry(0.15, 14, 10), M.lure); lure.position.copy(bp[4]); lure.scale.set(0.9, 1.35, 0.9)
+   jaw.add(lure); parts.lure = lure
+   const fil: THREE.BufferGeometry[] = []
+-  for (let k = 0; k < 6; k++) { const a = k / 6 * 6.28; const p = barbelPts[4]; fil.push(sweep([p.clone(), V(p.x + Math.cos(a) * 0.15, p.y - 0.25, p.z + Math.sin(a) * 0.15), V(p.x + Math.cos(a) * 0.3, p.y - 0.55 - R() * 0.3, p.z + Math.sin(a) * 0.3)], () => 0.012, { radial: 4, seg: 5 })) }
++  for (let k = 0; k < 7; k++) { const a = k / 7 * 6.28; const p = bp[4]; fil.push(sweep([p.clone(), V(p.x + Math.cos(a) * 0.12, p.y - 0.3, p.z + Math.sin(a) * 0.12), V(p.x + Math.cos(a) * 0.22, p.y - 0.6 - R() * 0.4, p.z + Math.sin(a) * 0.22)], () => 0.01, { radial: 4, seg: 5 })) }
+   jaw.add(new THREE.Mesh(merge(fil), M.barbel))
+ 
+-  // 眼：浑浊的大眼（深色玻璃体 + 一层乳白翳），眼眶骨环；眼后下方一枚乳白发光器
++  // 眼：几乎贴在吻端、嘴角上方；黑色玻璃体 + 深处发白的照膜反光 + 一层浑浊薄翳 + 骨质眼眶
+   for (const side of [-1, 1]) {
+-    const socket = new THREE.Mesh(new THREE.TorusGeometry(0.47, 0.11, 8, 22), M.head)
+-    socket.position.set(3.15, 0.32, side * 0.66); socket.rotation.y = side * 0.32; head.add(socket)
+-    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.44, 20, 14), M.eye)
+-    eye.position.set(3.12, 0.32, side * 0.6); eye.scale.set(1, 1, 0.62); head.add(eye)
+-    const film = new THREE.Mesh(new THREE.SphereGeometry(0.45, 20, 14, 0, Math.PI * 2, 0, Math.PI * 0.42), M.eyeFilm)
++    const ex = 3.72, ey = 0.36, ez = side * 0.62
++    const socket = new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.09, 8, 26), M.head)
++    socket.position.set(ex, ey, side * 0.76); socket.rotation.y = side * 0.38; head.add(socket)
++    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.5, 24, 16), M.eye)
++    eye.position.set(ex, ey, ez); eye.scale.set(1, 1, 0.7); head.add(eye)
++    const tap = new THREE.Mesh(new THREE.SphereGeometry(0.085, 12, 8), M.tapetum)
++    tap.position.set(ex + 0.06, ey + 0.03, side * 0.965); tap.scale.set(1, 1, 0.22); head.add(tap)
++    const film = new THREE.Mesh(new THREE.SphereGeometry(0.51, 24, 16, 0, Math.PI * 2, 0, Math.PI * 0.45), M.eyeFilm)
+     film.position.copy(eye.position); film.scale.copy(eye.scale); film.rotation.x = side * Math.PI / 2; head.add(film)
+-    const glint = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 6), M.eyeFilm); glint.position.set(3.32, 0.47, side * 0.86); head.add(glint)
+-    const ph = new THREE.Mesh(new THREE.SphereGeometry(0.3, 14, 8), M.photophore)
+-    ph.position.set(2.5, 0.06, side * 0.98); ph.scale.set(1.25, 0.45, 0.28); ph.rotation.y = side * 0.25; head.add(ph)
++    // 眼后发光条：照片里那条乳白的横条
++    const ph = new THREE.Mesh(new THREE.CapsuleGeometry(0.085, 0.5, 4, 10), M.photophore)
++    ph.rotation.z = Math.PI / 2 + 0.06; ph.position.set(3.0, 0.24, side * 0.93); ph.scale.set(1, 1, 0.45); ph.rotation.y = side * 0.32; head.add(ph)
+     parts[side < 0 ? 'eyeL' : 'eyeR'] = eye
+     parts[side < 0 ? 'photoL' : 'photoR'] = ph
+   }
+-  // 鳃盖：铰链后方的骨板，下缘翻出红色鳃丝（照片里那圈粉红）
++  // 鳃：铰链后下方一大片粉红鳃丝（绒毛般成束外翻），外面是一层半透明鳃盖膜
+   for (const side of [-1, 1]) {
+     const op = new THREE.Group(); op.name = 'opercle'
+-    op.position.set(0.75, -0.25, side * 1.18); op.rotation.y = side > 0 ? 0 : Math.PI
+-    const plate = sweep([V(0.55, 0.85, 0), V(0.1, 0.2, 0.08), V(0.2, -0.65, 0.05), V(0.9, -0.95, 0)], (t, d) => (0.42 - Math.abs(t - 0.5) * 0.3) * (Math.abs(d.z) > 0.5 ? 0.18 : 1), { radial: 8, seg: 10, shade: () => 0.6 })
+-    op.add(new THREE.Mesh(plate, M.head))
+-    const frill = new THREE.Mesh(gillFrill(1.5, 0.55, 14, R), M.gillRed)
+-    frill.rotation.z = Math.PI * 0.62; frill.position.set(0.15, -0.1, 0.12); op.add(frill)
++    op.position.set(0.7, -0.62, side * 1.08); op.rotation.y = side > 0 ? 0 : Math.PI
++    const strands: THREE.BufferGeometry[] = []
++    for (let k = 0; k < 150; k++) {
++      const u = R(), along = u * 1.6 // 沿鳃弓从上（后上）到下（前下）
++      const bx = -0.15 + along * 0.35, by = 0.55 - along * 1.05
++      const l = (0.35 + 0.45 * Math.sin(u * Math.PI)) * (0.7 + R() * 0.6)
++      const ox = -0.45 - R() * 0.4, oy = (R() - 0.6) * 0.5
++      strands.push(sweep([V(bx, by, 0), V(bx + ox * l * 0.5, by + oy * l * 0.5, 0.06 + R() * 0.08), V(bx + ox * l, by + oy * l, 0.1 + R() * 0.18)], (t) => 0.024 * (1 - t * 0.55), { radial: 4, seg: 4 }))
++    }
++    op.add(new THREE.Mesh(merge(strands), M.gillRed))
++    const cover = sweep([V(0.25, 0.75, 0), V(-0.05, 0.1, 0.04), V(0.1, -0.7, 0.02), V(0.6, -1.0, 0)], (t, d) => (0.36 - Math.abs(t - 0.5) * 0.3) * (Math.abs(d.z) > 0.5 ? 0.12 : 1), { radial: 8, seg: 10 })
++    op.add(new THREE.Mesh(cover, M.membrane))
+     head.add(op)
+     parts[side < 0 ? 'gillL' : 'gillR'] = op
+   }
+-  // 头上的几道深疤与焦油
+-  for (const [x, y, z, s] of [[1.4, 1.2, 0.55, 0.22], [2.2, 0.85, -0.7, 0.16], [0.6, 1.25, -0.3, 0.3]] as const) {
+-    const t = new THREE.Mesh(tarSeep(s, R), M.tar); t.position.set(x, y, z); t.lookAt(x, y + 3, z * 3); head.add(t)
++  // 头上几道旧伤与焦油
++  for (const [x, y, z, s0] of [[1.2, 1.3, 0.6, 0.2], [2.1, 1.15, -0.7, 0.14]] as const) {
++    const t = new THREE.Mesh(tarSeep(s0, R), M.tar); t.position.set(x, y, z); t.lookAt(x, y + 3, z * 3); head.add(t)
+   }
+   return head
+ }
+diff --git a/app/src/proto/thingAnimProto.ts b/app/src/proto/thingAnimProto.ts
+new file mode 100644
+index 0000000..f9dda8e
+--- /dev/null
++++ b/app/src/proto/thingAnimProto.ts
+@@ -0,0 +1,61 @@
++// 第 2 阶段动画预览：?anim=<clip>[&view=far|head]——同一条模型连续模拟，12 帧依次画进 4×3 的格子里，
++// 截图后由 scripts/verify-thing.mjs 切帧合成 GIF。
++import * as THREE from 'three'
++import { buildThingMesh, THING } from '../game/renderer/thingMesh'
++import { animateThing, makeThingAnimState, THING_CLIP_LEN, type ThingClip } from '../game/renderer/thingAnim'
++const q = new URLSearchParams(location.search)
++const clip = (q.get('anim') ?? 'cruise') as ThingClip
++const close = clip === 'bite' || clip === 'flinch' || q.get('view') === 'head'
++const W = innerWidth, H = innerHeight, COLS = 4, ROWS = 3, NF = COLS * ROWS
++const renderer = new THREE.WebGLRenderer({ antialias: true }); renderer.setSize(W, H); renderer.outputColorSpace = THREE.SRGBColorSpace
++renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.15; renderer.autoClear = false
++document.body.appendChild(renderer.domElement)
++const scene = new THREE.Scene()
++scene.background = new THREE.Color('#071521'); scene.fog = new THREE.FogExp2('#071521', close ? 0.018 : 0.006)
++scene.add(new THREE.HemisphereLight('#b6d4e6', '#2a3640', 2.6))
++const sun = new THREE.DirectionalLight('#cfe2f0', 1.1); sun.position.set(10, 30, 12); scene.add(sun)
++const rim = new THREE.DirectionalLight('#6f9fbf', 1.2); rim.position.set(-8, 6, -10); scene.add(rim)
++const g = buildThingMesh(); scene.add(g)
++const st = makeThingAnimState()
++const cam = new THREE.PerspectiveCamera(close ? 40 : 46, (W / COLS) / (H / ROWS), 0.1, 500)
++const DT = 1 / 30
++let t = 0, yaw = 0, x = 0, y = 0, z = 0
++const speed: Record<ThingClip, number> = { drift: 0.6, cruise: 4, circle: 6, dash: 14, bite: 2, flinch: 1.5, flee: 9, glitch: 4 }
++const step = (c: ThingClip, progress?: number) => {
++  const v = speed[c]
++  if (c === 'circle') yaw += v / 22 * DT
++  if (c === 'flee' && progress !== undefined && progress < 0.45) yaw += Math.PI / (0.45 * (THING_CLIP_LEN.flee ?? 2.4)) * DT // 0.45 段内调头 180°
++  if (c === 'drift') y -= 0.05 * DT
++  x += Math.cos(yaw) * v * DT; z -= Math.sin(yaw) * v * DT
++  g.position.set(x, y, z); g.rotation.y = yaw
++  animateThing(g, st, { t, dt: DT, clip: c, progress })
++  t += DT
++}
++// 预热：先以 cruise（或 drift 本身）游 8 秒，让链条舒展
++const warm: ThingClip = clip === 'drift' ? 'drift' : clip === 'circle' ? 'circle' : 'cruise'
++for (let i = 0; i < 240; i++) step(warm)
++const len = THING_CLIP_LEN[clip] ?? 3.0
++const tw = W / COLS, th = H / ROWS
++let stepCount = 0
++renderer.setScissorTest(true)
++renderer.clear()
++for (let f = 0; f < NF; f++) {
++  const t1 = (f / (NF - 1)) * len
++  // 一次性片段从 0 开始计时
++  const total = Math.round(t1 / DT)
++  while (stepCount < total) { step(clip, THING_CLIP_LEN[clip] ? stepCount / Math.round(len / DT) : undefined); stepCount++ }
++  const hp = new THREE.Vector3(x, y, z)
++  const hw = new THREE.Vector3(); (g.userData.parts.head as THREE.Object3D).getWorldPosition(hw)
++  const fwd = new THREE.Vector3(Math.cos(yaw), 0, -Math.sin(yaw))
++  if (close) { const hp0 = hp.clone(); hp.copy(hp0).lerp(hw, 0.6); cam.position.copy(hp).addScaledVector(fwd, 3).add(new THREE.Vector3(0, 2.5, 0)).addScaledVector(new THREE.Vector3(-fwd.z, 0, fwd.x), -12); cam.lookAt(hp.clone().addScaledVector(fwd, 0.5).add(new THREE.Vector3(0, -1.6, 0))) }
++  else {
++    // 俯视 3/4：看链中段，整条身体都在画面里
++    const c0 = st.chain![12], mid = new THREE.Vector3(c0.x, c0.y, c0.z).lerp(hp, 0.35)
++    cam.position.copy(mid).add(new THREE.Vector3(6, 34, 26)); cam.lookAt(mid)
++  }
++  const col = f % COLS, row = Math.floor(f / COLS)
++  renderer.setViewport(col * tw, (ROWS - 1 - row) * th, tw, th); renderer.setScissor(col * tw, (ROWS - 1 - row) * th, tw, th)
++  renderer.clear(); renderer.render(scene, cam)
++}
++;(window as any).__ready = true
++;(window as any).__info = { clip, len, segs: THING.segs }
+diff --git a/app/src/proto/thingEntry.ts b/app/src/proto/thingEntry.ts
+index e130a91..73e23d6 100644
+--- a/app/src/proto/thingEntry.ts
++++ b/app/src/proto/thingEntry.ts
+@@ -1,3 +1,5 @@
+-// proto-thing.html 入口：?mode=seabed → L7 海床材质预览；否则七层之物模型
+-if (new URLSearchParams(location.search).get('mode') === 'seabed') void import('./seabedProto')
++// proto-thing.html 入口：?anim=… → 阶段 2 动画格子；?mode=seabed → L7 海床材质预览；否则七层之物静态模型
++const q = new URLSearchParams(location.search)
++if (q.has('anim')) void import('./thingAnimProto')
++else if (q.get('mode') === 'seabed') void import('./seabedProto')
+ else void import('./thingProto')
+diff --git a/app/src/proto/thingProto.ts b/app/src/proto/thingProto.ts
+index 9ce2e4b..4bfe4f2 100644
+--- a/app/src/proto/thingProto.ts
++++ b/app/src/proto/thingProto.ts
+@@ -61,15 +61,17 @@ if (mode === 'lineup') {
+   water(0.02)
+   const g = thing({ gape: mode === 'mouth' ? 1 : mode === 'under' ? 0.35 : 0.12, lure: 1, gill: mode === 'mouth' ? 1 : 0.4 }, 0.03)
+   const views: Record<string, [THREE.Vector3, THREE.Vector3]> = {
+-    head: [new THREE.Vector3(5.6, 1.6, 9.5), new THREE.Vector3(1.6, -0.6, 0)],
+-    mouth: [new THREE.Vector3(10.5, 0.6, 5.5), new THREE.Vector3(2.4, -0.9, 0)],
++    head: [new THREE.Vector3(5.2, 0.8, 9.0), new THREE.Vector3(2.0, -0.7, 0)],
++    mouth: [new THREE.Vector3(9.5, 0.2, 6.5), new THREE.Vector3(2.4, -1.3, 0)],
+     under: [new THREE.Vector3(6.5, -4.2, 6.5), new THREE.Vector3(2.2, -1.6, 0)],
+   }
+   const [c0, l0] = views[mode]
+   cam.position.copy(vec(q.get('cam')) ?? c0); cam.lookAt(vec(q.get('look')) ?? l0)
+   torch(cam.position.clone().add(new THREE.Vector3(0.5, 0.4, 0)), (vec(q.get('look')) ?? l0), 700)
++  // 背后一道冷色轮廓光：深海里只有轮廓被勾出来
++  const rim = new THREE.DirectionalLight('#6f9fbf', 1.4); rim.position.set(-8, 6, -10); scene.add(rim)
+   info.count = count(g)
+-  const t = { head: '头部侧面：浑浊大眼 · 眼后发光器 · 下颌前突 · 透明獠牙 · 红鳃丝', mouth: '巨口全张（下颌掀开约 62°）', under: '仰视：颏须与饵球（那点「肮脏黄光」）' }[mode]
++  const t = { head: '头部侧面：贴近吻端的大眼 · 眼后发光条 · 鳃后粉红鳃丝 · 下颌前突 · 玻璃獠牙', mouth: '巨口全张（下颌掀开约 62°）', under: '仰视：颏须与饵球（那点「肮脏黄光」）' }[mode]
+   lab.insertAdjacentHTML('beforeend', `<div class="l" style="left:${W / 2}px;top:14px">${t}</div>`)
+ } else if (mode === 'detail') {
+   water(0.02)

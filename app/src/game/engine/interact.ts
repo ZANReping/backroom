@@ -1,6 +1,7 @@
 import { usableAxe, wearSlot, slotDur, slotMaxDur } from './melee'
 import { DUR_DOOR } from '../content/melee'
 import { actualRank, fieldTargets, recordField } from './career'
+import {bntgAtmAccessible} from './bntgBank'
 import {bntgDoorAllowed} from './bntg'
 import type { CareerId } from '../content/settlementTypes'
 // v53：交互（scanInteract/doInteract/容器搜索/战利品面板/结构触发伤害/配电箱嗡鸣）——
@@ -24,6 +25,9 @@ import type { FloorBand, Structure } from '../core/types'
 import type { Engine } from '../engine'
 import { beginSitting, pickSeat, standUp, seatedEyeHeight, seatedEyeOffset } from './seating'
 import { furnitureSeats } from '../content/furnitureSeats'
+import { tinyState, tinyRefusesTalk, pokeChime, chimeRinging } from './tinyAI'
+import { thingBreathRemark } from './thingAI'
+import { arachnidInteract } from './arachnidAI' // [L8-arachnid]
 
 type DiffMult = { dmg: number; drain: number }
 
@@ -197,6 +201,7 @@ export function structureInteractionProfile(s: Structure): StructureInteractionP
       horizontalRadius = s.data?.poster ? 0.49 : 0.32
       break
     case 'roadsign': lo = 0.2; hi = 2.02; horizontalRadius = 0.36; break
+    case 'stonechime': lo = 1.55; hi = 2.45; horizontalRadius = 0.32; break // [kazoo] 乐器洞石风铃：挂在 1.6–2.4m
     case 'l9arrowsign': lo = 0.15; hi = 2.12; horizontalRadius = 0.42; break
     case 'l9stair': lo = 0.05; hi = 2.75; horizontalRadius = Math.min(0.85, Math.max(0.5, s.w / 2)); break
     case 'megsign': lo = 0.2; hi = 2.55; horizontalRadius = 0.52; break
@@ -625,6 +630,7 @@ export function scanInteract(eng: Engine) {
       else if (s === eng.seating.structure) consider('stand', '起身', s, d, true)
       continue
     }
+    if (s.data?.bntgAtm) { consider('bntgAtm', '使用 银行 ATM', s, d, bntgAtmAccessible(eng,String(s.data.tradersId))); continue }
     if (s.kind === 'settlementstation' || s.data?.facility) { consider('settlementstation', String(s.data?.label ?? '查看贸易设施'), s, d, true); continue }
     if (s.kind === 'lift') { consider('lift', band === 0 ? '乘电梯 上楼' : '乘电梯 下楼', s, d, !eng.ride); continue }
     // v18：已搜空容器仍可选中（交互时提示「容器是空的」），未搜空的正常提示
@@ -644,6 +650,7 @@ export function scanInteract(eng: Engine) {
     }
     else if (s.kind === 'lightswitch') consider('lightswitch', s.data?.flipped ? '电灯开关（已经拨过了）' : '拨动 电灯开关', s, d, true)
     else if (s.kind === 'roadsign' || s.kind === 'megsign') consider('roadsign', DECOR_VIEWS.roadsign.label, s, d, true)
+    else if (s.kind === 'stonechime') consider('stonechime', chimeRinging(s) ? '石风铃（铃声还在回荡）' : eng.hasItem('stonekazoo') ? '用石卡祖笛戳 石风铃' : '拨动 石风铃', s, d, !chimeRinging(s))
     else if (s.kind === 'l9arrowsign') consider('l9arrowsign', `查看 第 ${Number(s.data?.seq ?? 1)} 块箭头路牌`, s, d, true)
     else if (s.kind === 'l9stair') consider('l9stair', '查看 通往二层的楼梯', s, d, true)
     else if (s.kind === 'braille') consider('braille', DECOR_VIEWS.braille.label, s, d, true)
@@ -737,7 +744,7 @@ export function scanInteract(eng: Engine) {
     const surfaceDistance = Math.max(0, Math.hypot(e.x - p.x, e.y - p.y) - bodyRadius)
     considerTarget({
         kind: 'tiny',
-        label: e.provoked ? '小小（已被激怒，不再对话）' : '与 小小 交谈',
+        label: e.provoked ? '小小（已被激怒，不再对话）' : tinyState(e).phase === 'repel' ? '小小（被笛声逼退）' : '与 小小 交谈',
         ent: e,
       }, e.x, e.y, e.z + bodyHeight * 0.48, entityBand, INTERACT_RANGE.npc, true, bodyRadius,
       volumeAt(e.x, e.y, e.z - 0.18 * scale, bodyRadius, bodyHeight), surfaceDistance, undefined, bodyHeight * 0.48)
@@ -786,6 +793,7 @@ function sameInteractionTarget(a: Engine['interactTarget'], b: Engine['interactT
 
 export function doInteract(eng: Engine) {
   if (jerryInputLock(eng)) return
+  if (arachnidInteract(eng)) return // [L8-arachnid] 拔掉吸附蜱 / 拆人形茧
   const scanned = eng.interactTarget
   if (!scanned || !eng.map) return
   // 输入到真正执行之间再次跑同一套距离、楼层带、硬准星与三维 LOS；目标发生变化则本次按键作废。
@@ -797,6 +805,9 @@ export function doInteract(eng: Engine) {
     case 'sit': { if (t.s) beginSitting(eng, t.s); break }
     case 'stand': { standUp(eng); break }
     case 'careerField': { recordField(eng,String(t.s?.data?.faction) as CareerId);break }
+    case 'bntgAtm': {
+      const id=String(t.s?.data?.tradersId??'');if(bntgAtmAccessible(eng,id)){audio.uiTick();eng.emit({kind:'bank',text:id})}break
+    }
     case 'settlementstation': {
       const s=t.s!;
       if(s.kind!=='settlementstation'&&!s.data?.facility)break
@@ -1277,6 +1288,7 @@ export function doInteract(eng: Engine) {
       // NPC 转身面向玩家（v39：工作循环的 BRC 员工不转身——他们从不停手）
       if (!n.def.workLoop) n.facing = Math.atan2(p.y - n.y, p.x - n.x)
       audio.uiTick()
+      { const r = thingBreathRemark(eng, n.def.name); if (r) eng.msg(r, 'system') } // [thing] 硫磺口臭
       eng.emit({ kind: 'dialog', text: n.id })
       break
     }
@@ -1286,11 +1298,12 @@ export function doInteract(eng: Engine) {
       break
     }
     case 'tiny': {
-      // v58：与小小对话——被激怒（噪音/肢体接触）后拒绝一切对话
+      // v58：与小小对话——被激怒（噪音/肢体接触）后拒绝一切对话；[tiny] 被笛声逼退、正在回门时也不理人（tinyAI）
       const e = t.ent
       if (!e || e.dead || e.def.type !== 'tiny') return
-      if (e.provoked) {
-        eng.msg('它不再回答。焦油层下的荧光斑冷冷地亮着，只剩毫不掩饰的恶意。', 'system')
+      const refuse = tinyRefusesTalk(e)
+      if (refuse) {
+        eng.msg(refuse, 'system')
         return
       }
       e.facing = Math.atan2(p.y - e.y, p.x - e.x) // 转身面向玩家
@@ -1298,6 +1311,7 @@ export function doInteract(eng: Engine) {
       eng.emit({ kind: 'dialog', text: 'tiny' })
       break
     }
+    case 'stonechime': { if (t.s) pokeChime(eng, t.s); break } // [kazoo] L8 乐器洞：铃声经久不息的持续声源（tinyAI）
     case 'skinstealer': {
       const e = t.ent
       if (!e || e.dead || e.def.type !== 'skinstealer' || e.disguised !== 'human') return

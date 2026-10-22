@@ -1,3 +1,4 @@
+import {bursterAmbient} from './bursterAI'
 import { wranglerAmbient } from './wranglerAI'
 import { flickerL1Crates,tickL1Dynamics } from './l1State'
 import {updateL9Fog} from './l9Fog'
@@ -12,6 +13,7 @@ import { makeEntity } from '../entities'
 import { restitch } from '../world/infinite'
 import { l1StyleAt } from '../world/l1Architecture'
 import { audio } from '../core/audio'
+import { kazooAmbient } from './tinyAI'
 import type { Engine } from '../engine'
 
 const handWeatherThunder = new WeakMap<Engine, string>()
@@ -23,6 +25,7 @@ const l5BoilerSound=new WeakMap<Engine,{pulse:number;whisper:number}>()
 // （原 step 内联段，逐语句搬运）
 export function updateAmbient(eng: Engine, dt: number) {
   tickL1Dynamics(eng,dt)
+  bursterAmbient(eng,dt)
   wranglerAmbient(eng, dt) // 牧蛇：黑屏/洞口计时 + L2 偶发雄性事件
   const map=eng.map,p=eng.player,tint=map?.tint[Math.floor(p.y)*map.w+Math.floor(p.x)]
   if(eng.levelDef.id===5&&(tint===24||tint===67)){
@@ -55,6 +58,7 @@ export function updateAmbient(eng: Engine, dt: number) {
   }
   updateL9Fog(eng, dt)
   updateL10Weather(eng, dt)
+  kazooAmbient(eng, dt) // [kazoo] L8 乐器洞石风铃：被戳响后经久不息的诱饵声源
   // 开发者现象开关：强制触发/屏蔽「闪烁」
   if (eng.dev.phenOn.has('flicker') && eng.levelDef.id === 1 && eng.blackoutT <= 0 && eng.blackoutWarnT <= 0) eng.startBlackout(20)
   if (eng.dev.phenOff.has('flicker')) {

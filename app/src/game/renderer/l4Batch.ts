@@ -40,9 +40,12 @@ export function* batchL4StaticJob(target:THREE.Group,roots:THREE.Object3D[],samp
       owned.add(normalized)
       if(normalized!==geo){geo.dispose();owned.delete(geo)}
       const layout=Object.keys(normalized.attributes).sort().map(key=>{const a=normalized.getAttribute(key);return `${key}:${a.itemSize}:${a.normalized}:${a.array.constructor.name}`}).join('|')
-      const noCast=!!mesh.userData.noCastShadow
-      const key=`${materialKeys.get(mat)??(materialKeys.set(mat,materialBatchKey(mat)),materialKeys.get(mat)!)}|${mesh.castShadow}|${noCast}|${mesh.renderOrder}|${layout}`
-      const group=groups.get(key)??{mat,cast:mesh.castShadow,noCast,order:mesh.renderOrder,geos:[]};group.geos.push(normalized);groups.set(key,group)
+      normalized.computeBoundingBox();const size=normalized.boundingBox!.getSize(new THREE.Vector3())
+      const tiny=Math.max(size.x,size.y,size.z)<.45||size.y<.18
+      const cast=mesh.castShadow&&!tiny
+      const noCast=!!mesh.userData.noCastShadow||tiny
+      const key=`${materialKeys.get(mat)??(materialKeys.set(mat,materialBatchKey(mat)),materialKeys.get(mat)!)}|${cast}|${noCast}|${mesh.renderOrder}|${layout}`
+      const group=groups.get(key)??{mat,cast,noCast,order:mesh.renderOrder,geos:[]};group.geos.push(normalized);groups.set(key,group)
     }
   }
   for(const{mat,cast,noCast,order,geos}of groups.values()){
@@ -62,4 +65,23 @@ export function* batchL4StaticJob(target:THREE.Group,roots:THREE.Object3D[],samp
     for(const geo of owned)geo.dispose()
     staged.clear()
   }
+}
+
+// Exact invisible interaction proxies need positions only, not thousands of scene nodes.
+const proxyMaterial=new THREE.MeshBasicMaterial({side:THREE.DoubleSide})
+export function compactL4Proxy(root:THREE.Object3D){
+ root.updateWorldMatrix(true,true)
+ const inverse=new THREE.Matrix4().copy(root.matrixWorld).invert(),matrix=new THREE.Matrix4(),parts:THREE.BufferGeometry[]=[],old=new Set<THREE.BufferGeometry>()
+ root.traverse(o=>{const m=o as THREE.Mesh;if(!m.isMesh||!m.geometry)return
+  const p=m.geometry.getAttribute('position');if(!p)return
+  const geo=new THREE.BufferGeometry();geo.setAttribute('position',p.clone());if(m.geometry.index)geo.setIndex(m.geometry.index.clone())
+  matrix.multiplyMatrices(inverse,m.matrixWorld);geo.applyMatrix4(matrix)
+  const flat=geo.index?geo.toNonIndexed():geo;parts.push(flat);if(flat!==geo)geo.dispose();old.add(m.geometry)
+ })
+ if(!parts.length){root.visible=false;return}
+ const merged=mergeGeometries(parts,false);if(!merged){parts.forEach(g=>g.dispose());root.visible=false;return}
+ parts.forEach(g=>g.dispose());for(const child of [...root.children])root.remove(child)
+ // L4 static roots are groups with instance-owned geometries. Preserve shared assets.
+ for(const geo of old)if(!geo.userData.shared&&!geo.userData.sharedModelGeometry)geo.dispose()
+ const mesh=new THREE.Mesh(merged,proxyMaterial);mesh.name='l4-interaction-proxy';mesh.userData.noCastShadow=true;root.add(mesh);root.visible=false;root.updateWorldMatrix(true,true)
 }

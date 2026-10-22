@@ -1,0 +1,26 @@
+[
+  {
+    "command": "npm run build",
+    "exitCode": 0,
+    "durationMs": 56821,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261022\\followup-0.txt"
+  },
+  {
+    "command": "node app/scripts/check-vercel-config.mjs --built",
+    "exitCode": 0,
+    "durationMs": 6704,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261022\\followup-1.txt"
+  },
+  {
+    "command": "npm --prefix app run check:l7-seams",
+    "exitCode": 0,
+    "durationMs": 11607,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261022\\followup-2.txt"
+  },
+  {
+    "command": "npm --prefix app run check:l7-chart",
+    "exitCode": 0,
+    "durationMs": 1859,
+    "reportFile": "C:\\Users\\ZANRe\\Documents\\GitHub\\backroom\\app\\reports\\workspace-sync-20261022\\followup-3.txt"
+  }
+]

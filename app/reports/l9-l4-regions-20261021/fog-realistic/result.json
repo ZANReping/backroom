@@ -1,0 +1,175 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 11005,
+  "cdp": 11006,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l9-l4-regions-20261021\\fog-realistic\\qa-1792596059470-75504",
+    "--remote-debugging-port=11006",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 31568,
+    "server": 31560
+  },
+  "appBootMs": 45642.0801,
+  "entryMs": 12747.425499999998,
+  "firstPlayableMs": 77682.4055,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 4,
+    "world": {
+      "x": 15.5,
+      "y": 15.5,
+      "z": 0
+    },
+    "chunks": 9,
+    "tasks": 4,
+    "memory": {
+      "geometries": 946,
+      "textures": 67
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "arrival": {
+    "id": 6,
+    "actor": {
+      "x": 18.5,
+      "y": 78.5,
+      "travel": "arrive",
+      "pending": false,
+      "dead": false,
+      "distance": 63.18623267769649
+    },
+    "visible": true,
+    "range": 38,
+    "level": 9,
+    "world": {
+      "x": 4,
+      "y": 17,
+      "z": 0
+    },
+    "chunks": 6,
+    "tasks": 1,
+    "memory": {
+      "geometries": 907,
+      "textures": 161
+    },
+    "fog": "warning",
+    "k": 0.0001292349374734051,
+    "t": 34.70000000000002
+  },
+  "look": {
+    "id": 6,
+    "actor": {
+      "x": 17.833038255105976,
+      "y": 75.67116225441475,
+      "travel": "arrive",
+      "pending": false,
+      "dead": false,
+      "distance": 60.279832677696504
+    },
+    "visible": false,
+    "range": 37.80485278373046,
+    "level": 9,
+    "world": {
+      "x": 4,
+      "y": 17,
+      "z": 0
+    },
+    "chunks": 6,
+    "tasks": 1,
+    "memory": {
+      "geometries": 976,
+      "textures": 161
+    },
+    "fog": "warning",
+    "k": 0.006023062230541412,
+    "t": 32.76240000000013
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: Timeout natural walking arrival\",\"lineNumber\":11,\"columnNumber\":46,\"scriptId\":\"618\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"until\",\"scriptId\":\"618\",\"url\":\"http://127.0.0.1:11005/verifier/l9-l4-regions-check.ts\",\"lineNumber\":10,\"columnNumber\":45}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: Timeout natural walking arrival\\n    at until (http://127.0.0.1:11005/verifier/l9-l4-regions-check.ts:11:46)\\n    at async Object.fogActive (http://127.0.0.1:11005/verifier/l9-l4-regions-check.ts:176:5)\",\"objectId\":\"-7404932558924313551.2.1\"}}",
+  "partial": {
+    "checks": [
+      "actual giant spawned fully outside player view",
+      "fog initially thin"
+    ],
+    "records": [
+      {
+        "name": "arrival",
+        "id": 6,
+        "actor": {
+          "x": 18.5,
+          "y": 78.5,
+          "travel": "arrive",
+          "pending": false,
+          "dead": false,
+          "distance": 63.18623267769649
+        },
+        "visible": true,
+        "range": 38,
+        "level": 9,
+        "world": {
+          "x": 4,
+          "y": 17,
+          "z": 0
+        },
+        "chunks": 6,
+        "tasks": 1,
+        "memory": {
+          "geometries": 907,
+          "textures": 161
+        },
+        "fog": "warning",
+        "k": 0.0001292349374734051,
+        "t": 34.70000000000002
+      }
+    ],
+    "status": {
+      "level": 9,
+      "world": {
+        "x": 4,
+        "y": 17,
+        "z": 0
+      },
+      "chunks": 16,
+      "tasks": 1,
+      "memory": {
+        "geometries": 1570,
+        "textures": 234
+      },
+      "fog": "warning",
+      "k": 0.38946253844142975,
+      "t": -1.3584000000001557
+    }
+  },
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 39236.70000000298
+    },
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\n残缺之雾\nLEVEL 9\n郊区\nB9\n磁带\n0/6\n午夜森林\n100%\n雾的深处滚过一声闷雷。\n地面震了一下。路边车的警报没有响——它们早就没电了。\n远处有一台自动喷灌器转了半圈。这里没有电，也没有接通的供水管。\n地面震了一下。路边车的警报没有响——它们早就没电了。\n1\n2\n3\n4\n5\n6\n7\n空格\n跳跃\nC\n蹲伏\nF\n手电\n左Alt\n取出主手\n➤\n你感觉到明显的气流（3m）\n开发者模式\n🛠 开发者模式 · DEV\n▴"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

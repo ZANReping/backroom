@@ -1,0 +1,462 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 6833,
+  "cdp": 6834,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\thing-import-20261022\\realistic-third\\qa-1792671958203-56724",
+    "--remote-debugging-port=6834",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 62560,
+    "server": 57188
+  },
+  "appBootMs": 13061.811300000001,
+  "entryMs": 3254.4562000000005,
+  "firstPlayableMs": 23832.7555,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "checks": [],
+    "records": [],
+    "status": {
+      "level": 4,
+      "center": {
+        "x": -340,
+        "y": -240,
+        "z": -120
+      },
+      "player": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "mode": "realistic",
+      "actor": null,
+      "memory": {
+        "geometries": 467,
+        "textures": 67
+      },
+      "chunks": 9,
+      "tasks": 4,
+      "visibleTriangles": 0
+    }
+  },
+  "overview": {
+    "entryAndStreamingMs": 8604.300000000745,
+    "headHi": true,
+    "level": 7,
+    "center": {
+      "x": -340,
+      "y": -240,
+      "z": -103.45539215519695
+    },
+    "player": {
+      "x": -321,
+      "y": -228,
+      "z": -104.45539215519695
+    },
+    "mode": "realistic",
+    "actor": {
+      "live": true,
+      "pending": false,
+      "state": "idle",
+      "th": {
+        "dormant": true,
+        "lost": false,
+        "still": 0,
+        "lastPx": 95,
+        "lastPy": 92,
+        "originX": -416,
+        "originY": -320
+      },
+      "x": 76,
+      "y": 80,
+      "flashlight": true,
+      "paused": false,
+      "ai": true
+    },
+    "memory": {
+      "geometries": 725,
+      "textures": 215
+    },
+    "chunks": 14,
+    "tasks": 0,
+    "visibleTriangles": 335537
+  },
+  "close": {
+    "level": 7,
+    "center": {
+      "x": -340,
+      "y": -240,
+      "z": -103.45539215519695
+    },
+    "player": {
+      "x": -328,
+      "y": -232,
+      "z": -104.25539215519694
+    },
+    "mode": "realistic",
+    "actor": {
+      "live": true,
+      "pending": false,
+      "state": "idle",
+      "th": {
+        "dormant": true,
+        "lost": false,
+        "still": 0,
+        "lastPx": 95,
+        "lastPy": 92,
+        "originX": -416,
+        "originY": -320
+      },
+      "x": 76,
+      "y": 80,
+      "flashlight": true,
+      "paused": false,
+      "ai": true
+    },
+    "memory": {
+      "geometries": 740,
+      "textures": 154
+    },
+    "chunks": 15,
+    "tasks": 0,
+    "visibleTriangles": 355833
+  },
+  "bite": {
+    "jaw": -0.9898747311925936,
+    "level": 7,
+    "center": {
+      "x": -340,
+      "y": -240,
+      "z": -103.45539215519695
+    },
+    "player": {
+      "x": -328,
+      "y": -232,
+      "z": -104.25539215519694
+    },
+    "mode": "realistic",
+    "actor": {
+      "live": true,
+      "pending": false,
+      "state": "attack",
+      "th": {
+        "dormant": false,
+        "lost": false,
+        "still": 0,
+        "lastPx": 95,
+        "lastPy": 92,
+        "originX": -416,
+        "originY": -320
+      },
+      "x": 76,
+      "y": 80,
+      "flashlight": true,
+      "paused": false,
+      "ai": true
+    },
+    "memory": {
+      "geometries": 740,
+      "textures": 154
+    },
+    "chunks": 15,
+    "tasks": 0,
+    "visibleTriangles": 355833
+  },
+  "side": {
+    "level": 7,
+    "center": {
+      "x": -340,
+      "y": -240,
+      "z": -103.45539215519695
+    },
+    "player": {
+      "x": -368.56,
+      "y": -227,
+      "z": -103.95539215519695
+    },
+    "mode": "realistic",
+    "actor": {
+      "live": true,
+      "pending": false,
+      "state": "idle",
+      "th": {
+        "dormant": false,
+        "lost": false,
+        "still": 0,
+        "lastPx": 127,
+        "lastPy": 92,
+        "originX": -448,
+        "originY": -320
+      },
+      "x": 108,
+      "y": 80,
+      "flashlight": true,
+      "paused": false,
+      "ai": true
+    },
+    "memory": {
+      "geometries": 812,
+      "textures": 160
+    },
+    "chunks": 16,
+    "tasks": 0,
+    "visibleTriangles": 440465
+  },
+  "harvest": {
+    "meat": 1,
+    "d": 1.3054929094761532,
+    "level": 7,
+    "center": {
+      "x": -340,
+      "y": -240,
+      "z": -103.45539215519695
+    },
+    "player": {
+      "x": -376.71999999999997,
+      "y": -233.51,
+      "z": -104.80539215519694
+    },
+    "mode": "realistic",
+    "actor": {
+      "live": true,
+      "pending": false,
+      "state": "idle",
+      "th": {
+        "dormant": true,
+        "lost": false,
+        "still": 0,
+        "lastPx": 127,
+        "lastPy": 92,
+        "originX": -448,
+        "originY": -320
+      },
+      "x": 108,
+      "y": 80,
+      "flashlight": false,
+      "paused": false,
+      "ai": true
+    },
+    "memory": {
+      "geometries": 848,
+      "textures": 183
+    },
+    "chunks": 19,
+    "tasks": 0,
+    "visibleTriangles": 460761
+  },
+  "consume": {
+    "breath": 599.9918,
+    "level": 7,
+    "center": {
+      "x": -340,
+      "y": -240,
+      "z": -103.45539215519695
+    },
+    "player": {
+      "x": -376.71999999999997,
+      "y": -233.51,
+      "z": -104.80539215519694
+    },
+    "mode": "realistic",
+    "actor": {
+      "live": true,
+      "pending": false,
+      "state": "idle",
+      "th": {
+        "dormant": true,
+        "lost": false,
+        "still": 0,
+        "lastPx": 127,
+        "lastPy": 92,
+        "originX": -448,
+        "originY": -320
+      },
+      "x": 108,
+      "y": 80,
+      "flashlight": false,
+      "paused": false,
+      "ai": true
+    },
+    "memory": {
+      "geometries": 850,
+      "textures": 186
+    },
+    "chunks": 19,
+    "tasks": 0,
+    "visibleTriangles": 460761
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: Timeout stationary target lost\",\"lineNumber\":11,\"columnNumber\":46,\"scriptId\":\"668\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"until\",\"scriptId\":\"668\",\"url\":\"http://127.0.0.1:6833/verifier/thing-import-check.ts\",\"lineNumber\":10,\"columnNumber\":45}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: Timeout stationary target lost\\n    at until (http://127.0.0.1:6833/verifier/thing-import-check.ts:11:46)\\n    at async Object.still (http://127.0.0.1:6833/verifier/thing-import-check.ts:181:5)\",\"objectId\":\"-6554325820259537300.2.1\"}}",
+  "partial": {
+    "checks": [
+      "new head, jaw, gills and 28 body segments are rendered in actual App",
+      "near head uses detailed LOD",
+      "item keeps thingmeat ID and new name",
+      "lure emission is animated",
+      "actual attack state opens articulated jaw",
+      "body is animated near player",
+      "actual player is within harvest surface reach",
+      "three actual timed knife swings yield exactly one piece",
+      "harvesting a sleeping Thing does not wake it",
+      "harvest cooldown starts",
+      "harvested item available in real inventory",
+      "sulfur breath starts after eating"
+    ],
+    "records": [
+      {
+        "entryAndStreamingMs": 8604.300000000745,
+        "headHi": true,
+        "level": 7,
+        "center": {
+          "x": -340,
+          "y": -240,
+          "z": -103.45539215519695
+        },
+        "player": {
+          "x": -321,
+          "y": -228,
+          "z": -104.45539215519695
+        },
+        "mode": "realistic",
+        "actor": {
+          "live": true,
+          "pending": false,
+          "state": "idle",
+          "th": {
+            "dormant": true,
+            "lost": false,
+            "still": 0,
+            "lastPx": 95,
+            "lastPy": 92,
+            "originX": -416,
+            "originY": -320
+          },
+          "x": 76,
+          "y": 80,
+          "flashlight": true,
+          "paused": false,
+          "ai": true
+        },
+        "memory": {
+          "geometries": 725,
+          "textures": 215
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "visibleTriangles": 335537
+      },
+      {
+        "meat": 1,
+        "d": 1.3054929094761532,
+        "level": 7,
+        "center": {
+          "x": -340,
+          "y": -240,
+          "z": -103.45539215519695
+        },
+        "player": {
+          "x": -376.71999999999997,
+          "y": -233.51,
+          "z": -104.80539215519694
+        },
+        "mode": "realistic",
+        "actor": {
+          "live": true,
+          "pending": false,
+          "state": "idle",
+          "th": {
+            "dormant": true,
+            "lost": false,
+            "still": 0,
+            "lastPx": 127,
+            "lastPy": 92,
+            "originX": -448,
+            "originY": -320
+          },
+          "x": 108,
+          "y": 80,
+          "flashlight": false,
+          "paused": false,
+          "ai": true
+        },
+        "memory": {
+          "geometries": 848,
+          "textures": 183
+        },
+        "chunks": 19,
+        "tasks": 0,
+        "visibleTriangles": 460761
+      }
+    ],
+    "status": {
+      "level": 7,
+      "center": {
+        "x": -340,
+        "y": -240,
+        "z": -103.45539215519695
+      },
+      "player": {
+        "x": -305,
+        "y": -240,
+        "z": -104.80539215519694
+      },
+      "mode": "realistic",
+      "actor": {
+        "live": true,
+        "pending": false,
+        "state": "wander",
+        "th": {
+          "dormant": false,
+          "lost": false,
+          "still": 0,
+          "lastPx": 79,
+          "lastPy": 80,
+          "originX": -384,
+          "originY": -320
+        },
+        "x": 46.271056624664816,
+        "y": 76.65281116142566,
+        "flashlight": false,
+        "paused": false,
+        "ai": false
+      },
+      "memory": {
+        "geometries": 847,
+        "textures": 159
+      },
+      "chunks": 15,
+      "tasks": 0,
+      "visibleTriangles": 355833
+    }
+  },
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 10501.89999999851
+    },
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\n水下 · 水深 104.8m\n氧气 35s\n[蹲伏] 下潜　[跳跃] 上浮　[冲刺] 快速游\nLEVEL 7\n深海恐惧\nB7\n磁带\n0/6\n午夜带\n100%\n你来回锯着那块油腻的肉……\n一块彼物之肉被你割了下来。它还在你手里微微抽动。\n油腻、富脂、带着腥甜和硫磺味，咽下去时还在你喉咙里抽了一下。（饥饿 +55 · 生命 +10 · 理智 -8 · 口臭 10 分钟：气味会把附近的东西引过来）\n你在海底捞起一片织物碎屑。是合成纤维。这片海床下面铺着地毯。\n刀 57/60\n1\n2\n3\n4\n5\n6\n7\n左键\n攻击\n空格\n跳跃\nC\n蹲伏\nF\n手电\n右键\n使用\nQ\n丢弃\nV\n检视\n左Alt\n收起主手\n开发者模式\n🛠 开发者模式 · DEV\n▴"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

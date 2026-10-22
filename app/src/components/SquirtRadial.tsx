@@ -1,6 +1,6 @@
 import { bindLabelFor } from '@/game/core/keybinds'
 
-export type SquirtWheelAction = 'cancel' | 'clear' | 'water' | 'almond' | 'cashew' | 'liquidpain'
+export type SquirtWheelAction = 'cancel' | 'clear' | 'water' | 'almond' | 'cashew' | 'liquidpain' | 'acid'
 
 export interface SquirtWheelOption {
   action: Exclude<SquirtWheelAction, 'cancel'>

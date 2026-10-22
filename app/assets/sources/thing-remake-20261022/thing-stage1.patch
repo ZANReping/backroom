@@ -1,0 +1,1327 @@
+From 9cf12705afed6906f0ed53b23d30bac858b9e44d Mon Sep 17 00:00:00 2001
+From: hark <hark@local>
+Date: Thu, 22 Oct 2026 08:41:18 +0000
+Subject: [PATCH] =?UTF-8?q?[thing]=20L7=20=E9=99=A1=E5=B4=96=E9=98=B2?=
+ =?UTF-8?q?=E5=8D=A1=E6=AD=BB=20+=20=E6=B5=B7=E5=BA=8A=E4=B8=89=E5=B9=B3?=
+ =?UTF-8?q?=E9=9D=A2=E6=9D=90=E8=B4=A8=EF=BC=9B=E4=B8=83=E5=B1=82=E4=B9=8B?=
+ =?UTF-8?q?=E7=89=A9=E9=98=B6=E6=AE=B5=201=20=E6=A8=A1=E5=9E=8B=EF=BC=9B?=
+ =?UTF-8?q?=E5=B7=A8=E5=85=BD=E4=B9=8B=E8=82=89=E4=B8=8D=E5=86=8D=E8=87=AA?=
+ =?UTF-8?q?=E7=84=B6=E7=94=9F=E6=88=90?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ app/package.json                       |   1 +
+ app/proto-thing.html                   |   5 +
+ app/scripts/check-l7-cliffs.ts         |  87 +++++
+ app/scripts/verify-l7-terrain.mjs      | 134 +++++++
+ app/scripts/verify-thing.mjs           |  42 +++
+ app/src/game/core/player.ts            |  34 +-
+ app/src/game/decorations/containers.ts |   2 +-
+ app/src/game/engine/movement.ts        |  18 +-
+ app/src/game/entities/deep.ts          |   2 +-
+ app/src/game/levels/l7.ts              |   1 -
+ app/src/game/renderer/geometry.ts      |  31 +-
+ app/src/game/renderer/l7Seabed.ts      | 128 +++++++
+ app/src/game/renderer/thingMesh.ts     | 479 +++++++++++++++++++++++++
+ app/src/proto/seabedProto.ts           |  39 ++
+ app/src/proto/thingEntry.ts            |   3 +
+ app/src/proto/thingProto.ts            |  86 +++++
+ 16 files changed, 1058 insertions(+), 34 deletions(-)
+ create mode 100644 app/proto-thing.html
+ create mode 100644 app/scripts/check-l7-cliffs.ts
+ create mode 100644 app/scripts/verify-l7-terrain.mjs
+ create mode 100644 app/scripts/verify-thing.mjs
+ create mode 100644 app/src/game/renderer/l7Seabed.ts
+ create mode 100644 app/src/game/renderer/thingMesh.ts
+ create mode 100644 app/src/proto/seabedProto.ts
+ create mode 100644 app/src/proto/thingEntry.ts
+ create mode 100644 app/src/proto/thingProto.ts
+
+diff --git a/app/package.json b/app/package.json
+index 95af471..a5429a4 100644
+--- a/app/package.json
++++ b/app/package.json
+@@ -41,6 +41,7 @@
+     "fetch:l4-assets": "node scripts/fetch-l4-assets.mjs",
+     "fetch:l5-assets": "node scripts/fetch-l5-assets.mjs",
+     "generate:l10-pbr": "esbuild scripts/gen-l10-pbr.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/gen-l10-pbr.mjs && node .cache/gen-l10-pbr.mjs",
++    "check:l7-cliffs": "esbuild scripts/check-l7-cliffs.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l7-cliffs.mjs && node .cache/check-l7-cliffs.mjs",
+     "check:l7": "esbuild scripts/check-l7-generation.ts --bundle --platform=node --format=esm --outfile=.cache/check-l7-generation.mjs && node .cache/check-l7-generation.mjs",
+     "check:l10": "esbuild scripts/check-l10-generation.ts --bundle --platform=node --format=esm --outfile=.cache/check-l10-generation.mjs && node .cache/check-l10-generation.mjs",
+     "check:l11": "esbuild scripts/check-l11-generation.ts --bundle --platform=node --format=esm --outfile=.cache/check-l11-generation.mjs && node .cache/check-l11-generation.mjs && esbuild scripts/check-l11-migration.ts --bundle --platform=node --format=esm --outfile=.cache/check-l11-migration.mjs && node .cache/check-l11-migration.mjs && esbuild scripts/check-l11-missions.ts --bundle --platform=node --format=esm --outfile=.cache/check-l11-missions.mjs && node .cache/check-l11-missions.mjs",
+diff --git a/app/proto-thing.html b/app/proto-thing.html
+new file mode 100644
+index 0000000..c040412
+--- /dev/null
++++ b/app/proto-thing.html
+@@ -0,0 +1,5 @@
++<!doctype html>
++<html lang="zh-CN"><head><meta charset="UTF-8" /><link rel="icon" href="data:," /><title>七层之物重制预览</title>
++<style>html,body{margin:0;background:#000;overflow:hidden;font-family:'Noto Sans CJK SC',sans-serif}#lab{position:fixed;inset:0;pointer-events:none}
++.l{position:absolute;transform:translateX(-50%);color:#f3eedf;font-size:17px;font-weight:700;text-shadow:0 1px 3px #000;white-space:nowrap;text-align:center}.s{font-size:12px;font-weight:400;color:#ddd6c2}</style></head>
++<body><div id="lab"></div><script type="module" src="/src/proto/thingEntry.ts"></script></body></html>
+diff --git a/app/scripts/check-l7-cliffs.ts b/app/scripts/check-l7-cliffs.ts
+new file mode 100644
+index 0000000..d998843
+--- /dev/null
++++ b/app/scripts/check-l7-cliffs.ts
+@@ -0,0 +1,87 @@
++/* eslint-disable @typescript-eslint/no-explicit-any -- 验收脚本直接拨动引擎内部字段 */
++// [thing] L7 陡崖防卡死验收：在入口海山崖壁与远海陡坡上逐点放置玩家（贴着海床），
++// 比较旧判定（无出发点）与新判定（海床「不变差就放行」）下 8 个方向是否都走不动。运行：npm run check:l7-cliffs
++import { createCanvas } from '@napi-rs/canvas'
++const memory = new Map<string, string>()
++Object.assign(globalThis, {
++  document: { createElement: () => createCanvas(256, 256) },
++  window: { addEventListener() {}, removeEventListener() {}, matchMedia: () => ({ matches: false }) },
++  localStorage: { getItem: (k: string) => memory.get(k) ?? null, setItem: (k: string, v: string) => memory.set(k, v), removeItem: (k: string) => memory.delete(k) },
++})
++const { Engine } = await import('../src/game/engine')
++const { audio } = await import('../src/game/core/audio')
++const { canOccupy, moveStep } = await import('../src/game/core/player')
++const { floorHeight } = await import('../src/game/world/mapgen')
++const L7 = await import('../src/game/world/infiniteL7')
++for (const k of Object.keys(audio)) if (typeof (audio as any)[k] === 'function') (audio as any)[k] = () => {}
++
++let fails = 0, n = 0
++const ok = (c: unknown, m: string) => { n++; console.log(`${c ? '✔' : '✘'} ${m}`); if (!c) fails++ }
++const DIRS = Array.from({ length: 8 }, (_, i) => [Math.cos(i * Math.PI / 4), Math.sin(i * Math.PI / 4)])
++
++for (const seed of [1, 777, 12345, 20261009]) {
++  const eng: any = new Engine(); eng.seed = seed; eng.emit = () => {}; eng.persist = () => {}
++  eng.loadLevel(7, { mapSeed: seed, firstVisit: false })
++  const m = eng.map
++  let pts = 0, oldTrap = 0, newTrap = 0, steep = 0
++  const basins: { x: number; y: number }[] = []
++  const O = L7.L7_ORIGIN
++  for (let a = 0; a < 96; a++) for (let rr = 0; rr < 14; rr++) {
++    const ang = a / 96 * Math.PI * 2, r = L7.L7_MOUNT.edge - 6 + rr * 2.6
++    const x = O.x + Math.cos(ang) * r - m.inf.ox + 0.37, y = O.y + Math.sin(ang) * r - m.inf.oy + 0.21
++    const tx = Math.floor(x), ty = Math.floor(y)
++    if (tx < 2 || ty < 2 || tx >= m.w - 2 || ty >= m.h - 2 || m.liquid[ty * m.w + tx] !== 1 || m.up[ty * m.w + tx] === 1) continue
++    const z = floorHeight(m, x, y, 0)
++    const g = Math.max(...DIRS.map(([dx, dy]) => floorHeight(m, x + dx * 0.32, y + dy * 0.32, 0) - z))
++    if (g > 0.65) steep++
++    pts++
++    const opts = { z, band: 0 as const }
++    if (DIRS.every(([dx, dy]) => !canOccupy(m, x + dx * 0.05, y + dy * 0.05, 0.32, opts))) oldTrap++
++    if (DIRS.every(([dx, dy]) => { const p = { x, y }; const d = moveStep(m, p, dx * 0.05, dy * 0.05, 0.32, opts); return !d.x && !d.y })) { newTrap++; basins.push({ x: x + m.inf.ox, y: y + m.inf.oy }) }
++  }
++  console.log(`seed ${seed}: 崖带 ${pts} 点，陡于 STEP_UP ${steep}，旧判定困死 ${oldTrap}，新判定困死 ${newTrap}`)
++  ok(pts > 300 && steep > 50, `seed ${seed} 崖带采样有效（${pts} 点 / 陡点 ${steep}）`)
++  ok(newTrap <= pts * 0.01, `seed ${seed} 新判定：静态困点降到 1% 以内（${newTrap}/${pts}，旧 ${oldTrap}）`)
++  // 剩下的是真正的沟底凹坑（往哪走都上坡）：真实引擎里按前进，贴崖上攀会把人带出来
++  const p0 = eng.player
++  let freed = 0
++  for (const b of basins) {
++    const wx0 = b.x, wy0 = b.y
++    p0.x = wx0 - m.inf.ox; p0.y = wy0 - m.inf.oy; p0.z = floorHeight(m, p0.x, p0.y, 0); p0.vz = 0; eng.dev.god = true
++    const z0 = p0.z
++    for (let k = 0; k < 90; k++) { eng.input.mx = 1; eng.input.my = 0.3; eng.step(1 / 30) }
++    eng.input.mx = 0; eng.input.my = 0
++    if (p0.z > z0 + 2 || Math.hypot(p0.x + m.inf.ox - wx0, p0.y + m.inf.oy - wy0) > 1) freed++
++  }
++  ok(freed === basins.length, `seed ${seed} 凹坑困点只按前进 3s 都能脱出（${freed}/${basins.length}）`)
++
++  // 真实引擎：贴在崖面上，只按「前进」朝台地方向游，6s 内应沿崖壁上攀并回到台地（不按上浮键）
++  const p = eng.player
++  let climbOk = 0, tries = 0, slideOk = 0
++  for (let a = 0; a < 8; a++) {
++    const ang = a / 8 * Math.PI * 2 + 0.2
++    const r = L7.L7_MOUNT.edge + 9
++    p.x = O.x + Math.cos(ang) * r - m.inf.ox + 0.4; p.y = O.y + Math.sin(ang) * r - m.inf.oy + 0.4
++    if (m.liquid[Math.floor(p.y) * m.w + Math.floor(p.x)] !== 1) continue
++    tries++
++    p.z = floorHeight(m, p.x, p.y, 0); p.vz = 0
++    eng.dev.god = true; eng.breathT = 0
++    const z0 = p.z, wx0 = p.x + m.inf.ox, wy0 = p.y + m.inf.oy
++    // 朝台地（圆心）方向：mx/my 为世界系方向
++    const dx = O.x - m.inf.ox - p.x, dy = O.y - m.inf.oy - p.y, dl = Math.hypot(dx, dy)
++    for (let k = 0; k < 180; k++) { eng.input.mx = dx / dl; eng.input.my = dy / dl; eng.input.jump = false; eng.input.crouch = false; eng.input.sprint = false; eng.step(1 / 30) }
++    // 上攀 6m，或者翻过一道小脊后已经横向游出 5m（海床在前方又下落，人自然悬浮前进）
++    if (p.z > z0 + 6 || Math.hypot(p.x + m.inf.ox - wx0, p.y + m.inf.oy - wy0) > 5) climbOk++
++    // 回到起点贴崖，沿崖横移 2s：至少挪动 1m
++    p.x = wx0 - m.inf.ox; p.y = wy0 - m.inf.oy; p.z = floorHeight(m, p.x, p.y, 0); p.vz = 0
++    const x0 = p.x + m.inf.ox, y0 = p.y + m.inf.oy
++    for (let k = 0; k < 60; k++) { eng.input.mx = -dy / dl; eng.input.my = dx / dl; eng.step(1 / 30) }
++    const sd = Math.hypot(p.x + m.inf.ox - x0, p.y + m.inf.oy - y0)
++    if (sd > 1.0) slideOk++; else console.log(`  横移不足 seed ${seed} a${a}: ${sd.toFixed(2)}m z ${p.z.toFixed(1)} floor ${floorHeight(m, p.x, p.y, 0).toFixed(1)} 结构 ${m.structures.filter((q: any) => q.solid && Math.hypot(q.x - p.x, q.y - p.y) < 2).map((q: any) => q.kind).join(',')}`)
++    eng.input.mx = 0; eng.input.my = 0
++  }
++  ok(tries >= 4 && climbOk === tries, `seed ${seed} 贴崖只按前进：${climbOk}/${tries} 次沿崖壁上攀 >6m 或翻脊游出 >5m`)
++  ok(tries >= 4 && slideOk === tries, `seed ${seed} 贴崖横移：${slideOk}/${tries} 次 2s 内挪动 >1m（边横移边沿崖上攀）`)
++}
++console.log(`L7 cliffs: ${n - fails}/${n} passed`)
++if (fails) process.exit(1)
+diff --git a/app/scripts/verify-l7-terrain.mjs b/app/scripts/verify-l7-terrain.mjs
+new file mode 100644
+index 0000000..4547b79
+--- /dev/null
++++ b/app/scripts/verify-l7-terrain.mjs
+@@ -0,0 +1,134 @@
++// [thing] L7 地形：海床三平面材质 + 陡崖防卡死的游戏内实机截图（真实应用、真实加载路径、真实引擎与渲染器）。
++// 用法：node scripts/verify-tiny-ingame.mjs [l7] [l8]      截图与结果 → reports/tiny-ingame/
++// 流程：标题页 → 写一个 L7 存档走「继续游戏」进入 → 借调试入口把玩家放到环形场台心门（世界坐标 L7_ARENA）前 →
++//   (a) 小小盘踞在门上方；(b) 真实使用动作连吹 4 声石卡祖笛（engine.useSlot + engine.step）→ 小小进入 repel，抱头退开；
++//   (d) 第一人称：持笛静止手型 + 吹奏动作中段（门上方的小小正在抱头）；
++//   再用调试入口 devJump(8) 进 L8 → 传送到乐器洞（l8InstrumentCave(seed)）→ (c) 洞厅全景、岩壁乐器近景（按渲染层真实网格位置取景）。
++// swiftshader 下每秒只有零点几到几帧：每张图前等 near-world 就绪、实体网格 visible，并按 rAF 计数预热 ≥ 40 帧。
++// 若 TINY_QA_URL 未提供且 3473 端口无服务，本脚本自己启动 vite（--port 3473 --strictPort），结束时关闭。
++// 本脚本自己启动/关闭专属 QA 浏览器（/workspace/work/.pw-libs/chromium.sh、--headless=new、独立用户目录 .cache/l7-terrain-qa、调试端口 9473）。
++import { spawn } from 'node:child_process'
++import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
++const port = process.env.TINY_QA_CDP ?? '9474', out = process.env.L7T_OUT ?? 'reports/l7-terrain/'
++const vport = process.env.L7T_PORT ?? '3474'
++const base = process.env.TINY_QA_URL ?? `http://127.0.0.1:${vport}`
++const want = new Set(process.argv.slice(2).length ? process.argv.slice(2) : ['l7', 'l8'])
++const W = 1280, H = 720
++mkdirSync(out, { recursive: true })
++// 中文字体（HUD 提示）：/workspace/work/.fonts 里的 NotoSansSC，经一份最小 fontconfig 交给 Chromium
++mkdirSync('.cache', { recursive: true })
++if (!existsSync('.cache/fonts.conf')) writeFileSync('.cache/fonts.conf', '<?xml version="1.0"?>\n<!DOCTYPE fontconfig SYSTEM "fonts.dtd">\n<fontconfig><include ignore_missing="yes">/etc/fonts/fonts.conf</include><dir>/workspace/work/.fonts</dir></fontconfig>\n')
++const up = async () => { try { return (await fetch(base + '/')).ok } catch { return false } }
++let vite = null
++if (!(await up())) {
++  vite = spawn('npx', ['vite', '--port', vport, '--strictPort', '--host', '127.0.0.1'], { stdio: 'ignore', detached: true, env: { ...process.env, L0_VERIFY: '1' } })
++  for (let i = 0; i < 240 && !(await up()); i++) await new Promise((r) => setTimeout(r, 500))
++}
++const chrome = spawn(process.env.CHROME ?? '/workspace/work/.pw-libs/chromium.sh', ['--headless=new', `--remote-debugging-port=${port}`, `--user-data-dir=${process.cwd()}/.cache/l7-terrain-qa`, '--enable-automation', '--no-first-run', '--no-default-browser-check', '--disable-gpu-sandbox', '--no-sandbox', '--enable-unsafe-swiftshader', '--use-angle=swiftshader', `--window-size=${W},${H}`, 'about:blank'], { stdio: 'ignore', env: { ...process.env, FONTCONFIG_FILE: process.env.FONTCONFIG_FILE ?? `${process.cwd()}/.cache/fonts.conf` } })
++const errors = [], result = { checks: [], shots: [], info: {} }
++const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
++const log = (...a) => console.log(new Date().toISOString().slice(11, 19), ...a)
++try {
++  let page
++  for (let i = 0; i < 120 && !page; i++) { await sleep(250); try { page = (await (await fetch(`http://127.0.0.1:${port}/json/list`)).json()).find((p) => p.type === 'page') } catch { /* 等浏览器起来 */ } }
++  if (!page) throw Error('QA 浏览器未启动')
++  const ws = new WebSocket(page.webSocketDebuggerUrl); await new Promise((r) => ws.addEventListener('open', r, { once: true }))
++  let seq = 0; const pending = new Map()
++  ws.addEventListener('message', (e) => {
++    const r = JSON.parse(e.data)
++    if (r.method === 'Runtime.exceptionThrown') errors.push(JSON.stringify(r.params.exceptionDetails).slice(0, 600))
++    if (r.method === 'Runtime.consoleAPICalled' && r.params.type === 'error') errors.push(r.params.args?.map((a) => a.value ?? a.description).join(' ').slice(0, 600))
++    const p = pending.get(r.id); if (p) { pending.delete(r.id); r.error ? p.reject(r.error) : p.resolve(r.result) }
++  })
++  const send = (method, params = {}) => new Promise((resolve, reject) => { const id = ++seq; pending.set(id, { resolve, reject }); ws.send(JSON.stringify({ id, method, params })) })
++  const ev = async (expression) => { const r = await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true }); if (r.exceptionDetails) throw Error(JSON.stringify(r.exceptionDetails).slice(0, 900)); return r.result?.value }
++  const until = async (expr, label, tries = 900) => { for (let i = 0; i < tries; i++) { if (await ev(`Boolean(${expr})`).catch(() => false)) return; await sleep(250) } throw Error('超时：' + label) }
++  const shot = async (name) => { writeFileSync(out + name + '.png', Buffer.from((await send('Page.captureScreenshot', { format: 'png' })).data, 'base64')); result.shots.push(out + name + '.png'); log('📷', name) }
++  const check = (ok, label) => { result.checks.push(`${ok ? '✔' : '✘'} ${label}`); log(`${ok ? '✔' : '✘'} ${label}`) }
++  await send('Runtime.enable'); await send('Page.enable')
++  const ver = await send('Browser.getVersion'), cl = await send('Browser.getBrowserCommandLine')
++  if (!ver.userAgent.includes('HeadlessChrome') || !cl.arguments.includes('--headless=new')) throw Error('不是本脚本的无头 QA 浏览器')
++  await send('Emulation.setDeviceMetricsOverride', { width: W, height: H, deviceScaleFactor: 1, mobile: false })
++  const init = await send('Page.addScriptToEvaluateOnNewDocument', { source: `localStorage.clear();sessionStorage.clear();localStorage.setItem('br_settings',JSON.stringify({renderResolution:'native',renderScale:100,maxPixelRatio:1,dynamicRes:false,lightMode:'realistic',sceneLightLimit:8,shadowQuality:0,lightShadows:0,loadingBudgetMs:6,devMode:true}))` })
++  await send('Page.navigate', { url: base + '/' })
++  await until('window.__engine && document.querySelector(".title-menu")', '标题页')
++  await send('Page.removeScriptToEvaluateOnNewDocument', { identifier: init.identifier })
++  log('标题页就绪')
++  // 写一个 L7 存档，走「继续游戏」进入（真实加载路径）
++  await ev(`(()=>{const raw=__engine.snapshot();localStorage.setItem('br_save_slot1',JSON.stringify({...raw,seed:720,level:7,mapSeed:720,savedAt:Date.now(),player:{...raw.player,level:7}}))})()`)
++  await send('Page.reload')
++  await until(`document.querySelector('canvas[data-title-level="7"][data-title-ready=true]')`, 'L7 存档标题')
++  const click = (sel, text) => ev(`(()=>{const b=[...document.querySelectorAll(${JSON.stringify(sel)})].find(b=>b.textContent.includes(${JSON.stringify(text)}));if(!b)throw Error('缺按钮 '+${JSON.stringify(text)});b.click()})()`)
++  await click('.menu-btn', '继续游戏'); await sleep(300); await click('.hud-panel button', '继续')
++  const playable = (lv) => `__engine.player.level===${lv} && !__engine.paused && !__engine.transition && !document.querySelector("[data-cutscene]") && __renderer.isNearWorldReady(__engine)`
++  await until(playable(7), 'L7 可玩', 1200)
++  check(true, '进入 L7（读档继续游戏）')
++  // 页面侧工具：rAF 帧计数、固定玩家位置/视角（主循环的游泳浮力不会把镜头带走）、钉住小小的抱头 recoil
++  await ev(`(()=>{window.__fc=0;window.__pin=null;window.__holdRecoil=null;(function f(){__fc++;const e=__engine,p=e.player,q=__pin;if(q){const m=e.map;p.x=q.wx-(m.inf?.ox??0);p.y=q.wy-(m.inf?.oy??0);p.z=q.z;p.vz=0;__look.yaw=q.yaw;__look.pitch=q.pitch;e.particles=e.particles.filter(o=>Math.hypot(o.x-p.x,o.y-p.y)>2.5)}
++    if(__holdRecoil!==null){for(const [id,g] of __renderer.entityMeshes){const sm=g.userData.tinySm;if(sm&&id===__holdRecoil)sm.recoilT=Math.max(sm.recoilT,1.0)}}requestAnimationFrame(f)})()})()`)
++  // swiftshader 下 L8 体积洞穴一块 chunk 要好几秒：放宽每帧建网格预算（默认 3/6ms，设置里最多 6/8ms）
++  await ev(`(()=>{__renderer.chunkBudgetMs=60;__renderer.loadingBudgetMs=60})()`)
++  const settle = async (minFrames = 40, extra = '', maxWait = 1200) => {
++    await sleep(600)
++    for (let i = 0; i < maxWait; i++) { if (await ev(`__engine.map.entities.every(q=>!q.presentationPending) && __renderer.isNearWorldReady(__engine) ${extra}`).catch(() => false)) break; if (i === maxWait - 1) { result.checks.push('⚠ 就绪等待超时'); log('⚠ 就绪等待超时') } await sleep(250) }
++    const f0 = await ev('__fc'); for (let i = 0; i < 2400; i++) { if ((await ev('__fc')) - f0 >= minFrames) break; await sleep(100) }
++    result.info.lastFrames = (await ev('__fc')) - f0
++  }
++  // 镜头：站在 (x,y,z)（地图局部坐标，z = 脚底），看向 (tx,ty,tz)。钉住的是世界坐标：
++  // 无限层窗口平移（updateInfiniteWindow 把玩家坐标减掉平移量）后仍站在原地——钉局部坐标会让窗口一路平移下去
++  const aim = (x, y, z, tx, ty, tz) => ev(`(()=>{const dx=${tx}-(${x}),dy=${ty}-(${y}),dz=${tz}-(${z}+1.55);const m=__engine.map;window.__pin={wx:${x}+(m.inf?.ox??0),wy:${y}+(m.inf?.oy??0),z:${z},yaw:Math.atan2(-dx,-dy),pitch:Math.atan2(dz,Math.hypot(dx,dy))};__engine.player.facing=Math.atan2(dy,dx);return __pin})()`)
++
++
++  const s7 = await ev(`(()=>{const e=__engine,p=e.player;e.dev.god=true;e.dev.statLock=true;e.dev.frozenAI=true
++    p.flashlight=true;p.battery=100;p.equip.offhand={type:'flashlight',count:1};e.syncPassives?.();e.map.entities=e.map.entities.filter(q=>q.def.type!=='tiny');return true})()`)
++  // 把玩家放到世界坐标 (wx,wy,z)，等窗口平移完再取地图局部坐标
++  const goto = async (wx, wy, z) => {
++    await ev(`(()=>{const e=__engine,m=e.map,p=e.player;p.x=${wx}-m.inf.ox;p.y=${wy}-m.inf.oy;p.z=${z};e.updateInfiniteWindow();p.x=${wx}-m.inf.ox;p.y=${wy}-m.inf.oy;p.z=${z}})()`)
++    await sleep(400)
++    return ev(`({ox:__engine.map.inf.ox,oy:__engine.map.inf.oy})`)
++  }
++  const floorAt = (wx, wy) => ev(`(async()=>{const M=await import('/src/game/world/mapgen.ts');const m=__engine.map;return M.floorHeight(m,${wx}-m.inf.ox,${wy}-m.inf.oy,0)})()`)
++  const L = await ev(`(async()=>{const L7=await import('/src/game/world/infiniteL7.ts');return {O:L7.L7_ORIGIN,M:L7.L7_MOUNT}})()`)
++  const O = L.O, M = L.M
++  // 站在世界坐标 (wx,wy)、脚底离海床 dz 米，看向 (twx,twy) 离海床 dtz 米处；海床高度在窗口搬过去之后再取
++  const view = async (name, wx, wy, dz, twx, twy, dtz) => {
++    let o = await goto(wx, wy, -5)
++    const fz = await floorAt(wx, wy), tz = await floorAt(twx, twy)
++    o = await goto(wx, wy, fz + dz)
++    await aim(wx - o.ox, wy - o.oy, fz + dz, twx - o.ox, twy - o.oy, tz + dtz)
++    await settle(45)
++    await shot(name)
++    result.info[name] = { fz, tz }
++  }
++  // 1) 入口海山陡崖：崖脚外 7m、离海床 3m，仰望崖面
++  { const ang = 0.6, a = M.edge + 22, b = M.edge + 12
++    await view('t1-cliff-face', O.x + Math.cos(ang) * a, O.y + Math.sin(ang) * a, 3, O.x + Math.cos(ang) * b, O.y + Math.sin(ang) * b, 4) }
++  // 2) 贴崖近景：沿崖面斜看
++  { const ang = 2.2, a = M.edge + 14, b = M.edge + 9
++    await view('t2-cliff-close', O.x + Math.cos(ang) * a, O.y + Math.sin(ang) * a, 2.5, O.x + Math.cos(ang + 0.08) * b, O.y + Math.sin(ang + 0.08) * b, 1) }
++  // 3) 台地浅海
++  await view('t3-shelf-sand', O.x + 4, O.y + 24, 2.2, O.x + 9, O.y + 27, 0)
++  // 4~6) 深度带：找平坦海床（窗口先搬到出生点外 220m 的海域）
++  for (const [name, lo, hi, dir] of [['t4-twilight', 40, 80, 0.3], ['t5-midnight', 120, 215, 1.9], ['t6-abyss', 236, 420, 3.6]]) {
++    await goto(O.x + Math.cos(dir) * 230, O.y + Math.sin(dir) * 230, -5)
++    const spot = await ev(`(()=>{const m=__engine.map;let best=null
++      for(let y=6;y<m.h-6;y+=2)for(let x=6;x<m.w-6;x+=2){const i=y*m.w+x;if(m.liquid[i]!==1||m.up[i]===1)continue;const d=m.seaFloor[i];if(d<${lo}||d>${hi})continue
++        const g=Math.abs(m.seaFloor[i+3]-d)+Math.abs(m.seaFloor[i+3*m.w]-d);if(!best||g<best.g)best={g,wx:x+m.inf.ox+0.5,wy:y+m.inf.oy+0.5,d}}
++      return best})()`)
++    if (!spot) { check(false, `${name}：窗口内没有 ${lo}~${hi}m 的海床`); continue }
++    await view(name, spot.wx, spot.wy, 2.2, spot.wx + 4.5, spot.wy + 2.5, 0)
++  }
++  writeFileSync(out + 'verify-result.json', JSON.stringify(result, null, 2) + '\n')
++  await send('Browser.close').catch(() => {})
++  ws.close()
++} catch (err) {
++  result.error = String(err?.stack ?? err)
++  console.error(err)
++} finally {
++  result.errors = errors
++  writeFileSync(out + 'verify-result.json', JSON.stringify(result, null, 2) + '\n')
++  try { chrome.kill('SIGKILL') } catch { /* 已退出 */ }
++  if (vite) try { process.kill(-vite.pid, 'SIGKILL') } catch { /* 已退出 */ }
++  log(errors.length ? `浏览器错误 ${errors.length} 条（见 verify-result.json）` : '无浏览器错误')
++  process.exit(0)
++}
+diff --git a/app/scripts/verify-thing.mjs b/app/scripts/verify-thing.mjs
+new file mode 100644
+index 0000000..b52f6ed
+--- /dev/null
++++ b/app/scripts/verify-thing.mjs
+@@ -0,0 +1,42 @@
++// [thing] 七层之物重制：原型预览页截图（proto-thing.html，无头 chromium / swiftshader）。
++// 用法：node scripts/verify-thing.mjs [mode...]   默认 lineup head mouth under detail；图 → reports/thing/
++import { spawn } from 'node:child_process'
++import { mkdirSync, writeFileSync } from 'node:fs'
++const out = 'reports/thing/', vport = process.env.THING_PORT ?? '3475', cdp = '9475'
++const base = `http://127.0.0.1:${vport}`
++const modes = process.argv.slice(2).length ? process.argv.slice(2) : ['lineup', 'head', 'mouth', 'under', 'detail']
++mkdirSync(out, { recursive: true })
++const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
++const up = async () => { try { return (await fetch(base + '/proto-thing.html')).ok } catch { return false } }
++let vite = null
++if (!(await up())) {
++  vite = spawn('npx', ['vite', '--port', vport, '--strictPort', '--host', '127.0.0.1'], { stdio: 'ignore', detached: true })
++  for (let i = 0; i < 240 && !(await up()); i++) await sleep(500)
++}
++const W = 1600, H = 900
++const chrome = spawn('/workspace/work/.pw-libs/chromium.sh', ['--headless=new', `--remote-debugging-port=${cdp}`, `--user-data-dir=${process.cwd()}/.cache/thing-qa`, '--no-first-run', '--no-sandbox', '--enable-unsafe-swiftshader', '--use-angle=swiftshader', `--window-size=${W},${H}`, 'about:blank'], { stdio: 'ignore', env: { ...process.env, FONTCONFIG_FILE: `${process.cwd()}/.cache/fonts.conf` } })
++const errors = []
++try {
++  let page
++  for (let i = 0; i < 120 && !page; i++) { await sleep(250); try { page = (await (await fetch(`http://127.0.0.1:${cdp}/json/list`)).json()).find((p) => p.type === 'page') } catch { /* 等 */ } }
++  const ws = new WebSocket(page.webSocketDebuggerUrl); await new Promise((r) => ws.addEventListener('open', r, { once: true }))
++  let seq = 0; const pending = new Map()
++  ws.addEventListener('message', (e) => { const r = JSON.parse(e.data); if (r.method === 'Runtime.exceptionThrown') errors.push(JSON.stringify(r.params.exceptionDetails).slice(0, 500)); if (r.method === 'Runtime.consoleAPICalled' && r.params.type === 'error') errors.push(r.params.args?.map((a) => a.value ?? a.description).join(' ').slice(0, 500)); const p = pending.get(r.id); if (p) { pending.delete(r.id); r.error ? p.reject(r.error) : p.resolve(r.result) } })
++  const send = (method, params = {}) => new Promise((resolve, reject) => { const id = ++seq; pending.set(id, { resolve, reject }); ws.send(JSON.stringify({ id, method, params })) })
++  await send('Runtime.enable'); await send('Page.enable')
++  await send('Emulation.setDeviceMetricsOverride', { width: W, height: H, deviceScaleFactor: 1, mobile: false })
++  for (const m of modes) {
++    const [mode, extra = ''] = m.split('?')
++    await send('Page.navigate', { url: `${base}/proto-thing.html?mode=${mode}${extra ? '&' + extra : ''}` })
++    for (let i = 0; i < 600; i++) { const r = await send('Runtime.evaluate', { expression: 'Boolean(window.__ready)', returnByValue: true }).catch(() => null); if (r?.result?.value) break; await sleep(250) }
++    await sleep(1500)
++    const info = (await send('Runtime.evaluate', { expression: 'JSON.stringify(window.__info||{})', returnByValue: true })).result.value
++    writeFileSync(`${out}${mode}${extra ? '-' + extra.replace(/[^a-z0-9]+/gi, '_') : ''}.png`, Buffer.from((await send('Page.captureScreenshot', { format: 'png' })).data, 'base64'))
++    console.log('📷', mode, info)
++  }
++} catch (e) { console.error(e) } finally {
++  console.log(errors.length ? `浏览器错误 ${errors.length}：\n${errors.join('\n')}` : '无浏览器错误')
++  try { chrome.kill('SIGKILL') } catch { /* */ }
++  if (vite) try { process.kill(-vite.pid, 'SIGKILL') } catch { /* */ }
++  process.exit(0)
++}
+diff --git a/app/src/game/core/player.ts b/app/src/game/core/player.ts
+index 78cf312..8b7001a 100644
+--- a/app/src/game/core/player.ts
++++ b/app/src/game/core/player.ts
+@@ -21,6 +21,8 @@ export interface OccupyOpts {
+   crouch?: boolean // 是否蹲伏（低通道必需）
+   band?: FloorBand
+   ignoreStructure?: import('./types').Structure // A sit/stand path may cross only its own seat surface.
++  /** 本子步出发点。L7 海床：采样点地面比出发时对应采样点更低或持平就不拦（只拦「越走越高」）。 */
++  from?: Vec2
+ }
+ 
+ // 8 点采样（四角 + 四边中点）判断半径 r 的圆能否位于 (x,y)，防止角落穿透
+@@ -44,6 +46,7 @@ export function canOccupy(m: GameMap, x: number, y: number, r = PLAYER_RADIUS, o
+     [-r, -r], [r, -r], [-r, r], [r, r],
+     [-r, 0], [r, 0], [0, -r], [0, r],
+   ]
++  let fromMax: number | undefined
+   for (const [ox, oy] of offs) {
+     // Structures already use an exact circular test above. The four legacy
+     // terrain corner probes lie outside that circle and must not enlarge props.
+@@ -85,7 +88,19 @@ export function canOccupy(m: GameMap, x: number, y: number, r = PLAYER_RADIUS, o
+     // 高度档：目标地面高于脚底 STEP_UP 以上不可直接踏上（跳跃抬高 z 后放行）
+     // （溢出格按主层地面计——悬在一层上空时一层地面远低于脚底，不再误拦）
+     const g = floorHeight(m, sx, sy, spill ? 0 : band)
+-    if (g - z > STEP_UP) return false
++    if (g - z > STEP_UP) {
++      // L7 陡崖防卡死：贴在陡坡上时，半径 0.32m 的上坡一侧采样点高出脚底远超 STEP_UP，
++      // 旧逻辑连沿坡横移、往下坡退都会被拦，玩家只能原地上浮。海床瓦片改为「不变差就放行」。
++      // 判据取「出发时身体下最高的海床」：只要新位置每个采样点都不超过它（容差 3cm/子步）就放行——
++      // 沟底、凹角里也总能朝某个方向挪出去；嵌入深度不会比出发时更深。
++      const f = opts.from
++      if (!(f && m.l7SeaTerrain && m.liquid[i] === 1 && band === 0)) return false
++      if (fromMax === undefined) {
++        fromMax = -Infinity
++        for (const [qx, qy] of offs) fromMax = Math.max(fromMax, floorHeight(m, f.x + qx, f.y + qy, 0))
++      }
++      if (g > fromMax + 0.03) return false
++    }
+   }
+   return true
+ }
+@@ -110,8 +125,21 @@ export function resolvePlayerPenetration(m:GameMap,pos:Vec2,r=PLAYER_RADIUS,opts
+ // 单个子步的移动：先 x 分量后 y 分量（轴分离 → 沿墙滑动），返回实际位移
+ export function moveStep(m: GameMap, pos: Vec2, dx: number, dy: number, r = PLAYER_RADIUS, opts: OccupyOpts = {}): Vec2 {
+   let mx = 0, my = 0
+-  if (dx !== 0 && canOccupy(m, pos.x + dx, pos.y, r, opts)) { pos.x += dx; mx = dx }
+-  if (dy !== 0 && canOccupy(m, pos.x, pos.y + dy, r, opts)) { pos.y += dy; my = dy }
++  const sea = !!m.l7SeaTerrain
++  if (dx !== 0 && canOccupy(m, pos.x + dx, pos.y, r, sea ? { ...opts, from: { x: pos.x, y: pos.y } } : opts)) { pos.x += dx; mx = dx }
++  if (dy !== 0 && canOccupy(m, pos.x, pos.y + dy, r, sea ? { ...opts, from: { x: pos.x, y: pos.y } } : opts)) { pos.y += dy; my = dy }
++  // [thing] L7 海床沿等高线滑移：两轴都被陡坡挡住时，把这一步转 ±25°/±50°/±75° 再试（长度按 cos 缩短），
++  // 贴着崖面横移时不会一顿一顿地停住。
++  if (sea && !mx && !my && (dx || dy)) {
++    const ti = Math.floor(pos.y) * m.w + Math.floor(pos.x)
++    if (m.liquid[ti] === 1 && (opts.band ?? 0) === 0) {
++      for (const deg of [25, -25, 50, -50, 75, -75]) {
++        const a = deg * Math.PI / 180, c = Math.cos(a), s = Math.sin(a)
++        const rx = (dx * c - dy * s) * c, ry = (dx * s + dy * c) * c
++        if (canOccupy(m, pos.x + rx, pos.y + ry, r, { ...opts, from: { x: pos.x, y: pos.y } })) { pos.x += rx; pos.y += ry; return { x: rx, y: ry } }
++      }
++    }
++  }
+   if(!mx&&!my&&(dx||dy))resolvePlayerPenetration(m,pos,r,opts)
+   if(!mx&&!my&&(dx||dy)&&m.tint[Math.floor(pos.y)*m.w+Math.floor(pos.x)]===51&&!canOccupy(m,pos.x,pos.y,r,opts)){
+     const escape=l4CubicleEscapePoints(m,pos.x,pos.y,opts.z??0,r).find(p=>canOccupy(m,p.x,p.y,r,opts))
+diff --git a/app/src/game/decorations/containers.ts b/app/src/game/decorations/containers.ts
+index 70a6844..fe5fa82 100644
+--- a/app/src/game/decorations/containers.ts
++++ b/app/src/game/decorations/containers.ts
+@@ -26,7 +26,7 @@ export const CONTAINERS: Record<string, ContainerDef> = {
+   locker:   { label: '储物柜',        dur: 1.6, n: 2, pool: ['battery', 'bandage', 'canned', 'flashlight', 'housekey', 'tape'] },
+   toolbox:  { label: '工具箱',        dur: 1.4, n: 2, pool: ['crowbar', 'wrench', 'nails', 'battery', 'timber', 'tape'] },
+   suitcase: { label: '行李箱',        dur: 1.6, n: 2, pool: ['bandage', 'almond', 'lighter', 'rabbit', 'pamphlet', 'tape'] },
+-  fridge:   { label: '冰箱',          dur: 1.5, n: 2, pool: ['canned', 'almond', 'citywater', 'driedfruit', 'thingmeat'] },
++  fridge:   { label: '冰箱',          dur: 1.5, n: 2, pool: ['canned', 'almond', 'citywater', 'driedfruit'] },
+   safebox:  { label: '保险箱',        dur: 2.4, n: 3, pool: ['presses', 'sedative', 'keycard', 'skeleton', 'rabbit', 'tape'], gate: 'crowbar' },
+   mailbox:  { label: '信箱',          dur: 1.1, n: 1, pool: ['housekey', 'pamphlet', 'wallpaper', 'endnote', 'tape'] },
+   barrel:   { label: '木桶',          dur: 1.5, n: 2, pool: ['almond', 'almond', 'rope', 'tape'] },
+diff --git a/app/src/game/engine/movement.ts b/app/src/game/engine/movement.ts
+index 2381534..3a2588a 100644
+--- a/app/src/game/engine/movement.ts
++++ b/app/src/game/engine/movement.ts
+@@ -16,6 +16,9 @@ import { levelDefOf, NORMAL_LEVELS } from '../levels'
+ import { audio } from '../core/audio'
+ import { RemotePlayerViews } from '../renderer/remotePlayers' // v58：联机玩家碰撞查询
+ import type { Engine } from '../engine'
++/** [thing] L7 贴崖自动上攀速度（米/秒）与本帧状态（单机玩家，模块级即可） */
++export const L7_CLIFF_CLIMB = 3.4
++let l7CliffClimb = false
+ import { l8AvenuePortalContact } from '../world/infiniteL8'
+ import { makeEntity } from '../entities'
+ import { integrateFlight } from '../core/flight'
+@@ -207,6 +210,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
+   if (updateSitting(eng, dt)) return 0
+   // v13：电梯乘降 / 梯子攀爬进行中：锁定水平移动（垂直由对应逻辑驱动）
+   // v51：脚滑漂移量足够时，即使松开方向键也会继续滑动
++  l7CliffClimb = false
+   const slipDrift = Math.hypot(eng.slipVx, eng.slipVy)
+   if ((mag > 0.1 || (eng.slipperyT > 0 && slipDrift > 0.05)) && !eng.ride && !eng.climb && !introLock) {
+     // 固定子步积分：dt 先入累加器，按 FIXED_STEP 切分子步逐次「移动→解碰撞」。
+@@ -229,6 +233,18 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
+     const metric=eng.levelDef.id===1&&m.inf&&!eng.dev.noclip&&!stableAt(eng,p.x,p.y)?l1DistanceScale(m.inf.seed,p.x+m.inf.ox,p.y+m.inf.oy):1
+     const moved = integrateMove(m, p, dirX, dirY, speed*metric, dt, eng.moveIt, { noclip: eng.dev.noclip, z: eng.onStairs ? 0 : p.z, crouch: p.crouching, band: eng.onStairs ? 0 : band })
+     const movedDist = Math.hypot(moved.x, moved.y)/metric
++    // [thing] L7 贴崖上攀：游泳时朝崖壁推进被海床挡住，就沿崖面自动往上游（不必另按上浮键），
++    // 免得玩家贴在陡崖上以为卡死。只看前方 0.5m 海床确实高过脚底，结构/墙挡住不算。
++    if (l7Swim && !eng.dev.noclip && !p.crouching) {
++      const want = Math.hypot(dirX, dirY) * speed * dt
++      const dl = Math.hypot(dirX, dirY) || 1
++      // 前方 0.06m 处身体 8 个采样点里最高的海床（与 canOccupy 同一组采样），高过脚底就往上游
++      const ax = p.x + dirX / dl * 0.06, ay = p.y + dirY / dl * 0.06, R = 0.32
++      let ahead = -Infinity
++      for (const [ox, oy] of [[-R, -R], [R, -R], [-R, R], [R, R], [-R, 0], [R, 0], [0, -R], [0, R], [dirX / dl * 0.5, dirY / dl * 0.5]])
++        ahead = Math.max(ahead, floorHeight(m, ax + ox, ay + oy, 0))
++      l7CliffClimb = want > 1e-4 && movedDist < want * 0.6 && ahead > p.z + 0.25
++    } else l7CliffClimb = false
+     // v58：联机玩家碰撞体积——与同层远端玩家软推挤，双方不可重叠
+     if (eng.mpSession?.started) {
+       for (const rp of RemotePlayerViews.nearby(eng, eng.mpSession)) {
+@@ -392,7 +408,7 @@ export function updateMovement(eng: Engine, dt: number, dm: DiffMult, introLock:
+       audio.swim()
+     } else {
+       // Deep canals use the same neutral swimming buoyancy as other water.
+-      p.vz = 0
++      p.vz = l7Water && l7CliffClimb ? L7_CLIFF_CLIMB : 0
+     }
+     if (!airborne) {
+       p.vz = Math.max(sinkMax, Math.min(upMax, p.vz))
+diff --git a/app/src/game/entities/deep.ts b/app/src/game/entities/deep.ts
+index 878dc1b..39b8272 100644
+--- a/app/src/game/entities/deep.ts
++++ b/app/src/game/entities/deep.ts
+@@ -50,7 +50,7 @@ export const DEEP_ENTITIES: Record<string, EntityDef> = {
+     lightAverse: true, huge: 3.4, color: '#50534a', habitat: 'outdoor', aquatic: true, // L7 开放水域（午夜区/深渊上部）
+     desc: '一条尺寸无法完整测量的鳗形巨物。厚实的皮革状皮肤正在腐烂，盐渍、坏死洞与隆起旧疤遍布全身；血盆巨口后方排列着仍在呼吸的鳃裂、破损鳍膜与无法稳定成像的躯体。',
+     codex: {
+-      no: 'The Thing On Level 7（Entity 20）', danger: '5 级（极端威胁）', habitat: 'Level 7 · Midnight Zone 与 Abyss 上部',
++      no: 'The Thing On Level 7（Entity 20（旧））', danger: '5 级（极端威胁）', habitat: 'Level 7 · Midnight Zone 与 Abyss 上部',
+       behavior: '栖息于午夜带以下，会从很远处循水中扰动靠近。强光直射会使它先收鳃、偏头退避；若仍不移开光束，刺激会越过阈值并触发暴怒。它把庞大的头转向猎物需要可观的时间，但一旦对准，速度与体型完全不相称。',
+       counter: '发现那点肮脏黄光时立刻关灯并停止划水。若已惊动它，绕到身侧攻击头后的长躯只能暂时拖慢转头；不要把“畏光”误解为可以一直拿手电压制。',
+       lore: [
+diff --git a/app/src/game/levels/l7.ts b/app/src/game/levels/l7.ts
+index 4f80844..63590bc 100644
+--- a/app/src/game/levels/l7.ts
++++ b/app/src/game/levels/l7.ts
+@@ -28,7 +28,6 @@ export const L7: LevelDef = {
+   items: [
+     { type: 'rope', w: 12 },
+     { type: 'divemask', w: 8 },
+-    { type: 'thingmeat', w: 8 },
+   ],
+   itemCount: [9, 13],
+   structures: ['bookcase', 'table', 'hanglight', 'vent', 'hoteldoor', 'ropeanchor', 'barrel', 'crate', 'rockisle', 'bonepile', 'fishbones', 'seatarpit', 'corpse', 'seapillar', 'seapipe', 'seadais'],
+diff --git a/app/src/game/renderer/geometry.ts b/app/src/game/renderer/geometry.ts
+index 1ec46ac..51a3da2 100644
+--- a/app/src/game/renderer/geometry.ts
++++ b/app/src/game/renderer/geometry.ts
+@@ -1,4 +1,4 @@
+-import { addL7Caustics } from './l7Ocean'
++import { l7SeabedMaterial } from './l7Seabed'
+ import {buildL4Terrain} from './l4Terrain'
+ import { l5SurfaceBatches } from './l5Materials'
+ import { buildL5Architecture } from './l5Architecture'
+@@ -461,7 +461,7 @@ for (let y = RY0; y < RY1; y++) {
+     // 颜色贴图已经包含真实砂砾色；顶点色只做轻微生态色调变化。旧色在 sRGB→线性后
+     // 只有约 8%～25% 强度，再与贴图相乘会让海床即使受光也近乎纯黑。
+     const seabedTint = l7Seabed
+-      ? col(tnt === 29 ? '#f1eee2' : tnt === 30 ? '#dfe9e3' : tnt === 31 ? '#d8e2e5' : '#d2dcdf')
++      ? col('#ffffff') // v-thing：深度带色调由 l7Seabed 材质按真实深度合成
+       : l1 ? col('#ffffff') : c
+     for (let i = 0; i < n; i++) { carr[i * 3] = seabedTint.r; carr[i * 3 + 1] = seabedTint.g; carr[i * 3 + 2] = seabedTint.b }
+     geo.setAttribute('color', new THREE.BufferAttribute(carr, 3))
+@@ -487,7 +487,7 @@ for (let y = RY0; y < RY1; y++) {
+       l10SplatGeos.push(geo)
+       continue
+     }
+-    const seabedRock = l7Seabed && hv(Math.floor(x / 5), Math.floor(y / 5), 0x71) > 0.63
++    const seabedRock = false // v-thing：海床改为单一三平面材质（l7Seabed.ts），不再按 5×5 硬切石质块
+     if (def.id === 9 && isWet && (tnt === 34 || tnt === 39)) makeL9Puddle(x, y, tnt === 39)
+     ;(l7Seabed ? (seabedRock ? l7RockSeabedGeos : l7SandSeabedGeos)
+       : def.id === 9 && tnt === 34 ? l9AsphaltGeos
+@@ -510,30 +510,7 @@ for (let y = RY0; y < RY1; y++) {
+ }
+ if (l7SandSeabedGeos.length) {
+   yield
+-  const sand = levelTexture('l7_seabed_sand_gravel.png', () => noiseTexture('#71664c', '#9a8d69'))
+-  if (!sand.userData.l7SeabedConfigured) {
+-    configureSurfaceTexture(sand, THREE.SRGBColorSpace)
+-    sand.userData.l7SeabedConfigured = 1
+-  }
+-  g.add(new THREE.Mesh(mergeGeometries(l7SandSeabedGeos)!, addL7Caustics(litMaterial({
+-    color: '#ffffff', vertexColors: true, map: sand, bumpMap: sand, bumpScale: 0.038,
+-    roughness: 0.7, envBase: 0.34,
+-    // 深水带仍保留极低的贴图化亮度下限；主要凹凸和高光由下潜自然光负责。
+-    emissive: '#78908b', emissiveMap: sand, emissiveIntensity: 0.1,
+-  }))))
+-}
+-if (l7RockSeabedGeos.length) {
+-  yield
+-  const rock = levelTexture('l7_seabed_rock_gravel.png', () => noiseTexture('#494b47', '#716b5f'))
+-  if (!rock.userData.l7SeabedConfigured) {
+-    configureSurfaceTexture(rock, THREE.SRGBColorSpace)
+-    rock.userData.l7SeabedConfigured = 1
+-  }
+-  g.add(new THREE.Mesh(mergeGeometries(l7RockSeabedGeos)!, addL7Caustics(litMaterial({
+-    color: '#ffffff', vertexColors: true, map: rock, bumpMap: rock, bumpScale: 0.055,
+-    roughness: 0.6, envBase: 0.4,
+-    emissive: '#718783', emissiveMap: rock, emissiveIntensity: 0.09,
+-  }))))
++  g.add(new THREE.Mesh(mergeGeometries(l7SandSeabedGeos)!, l7SeabedMaterial()))
+ }
+ if (floorGeos.length) {
+   yield
+diff --git a/app/src/game/renderer/l7Seabed.ts b/app/src/game/renderer/l7Seabed.ts
+new file mode 100644
+index 0000000..47bd944
+--- /dev/null
++++ b/app/src/game/renderer/l7Seabed.ts
+@@ -0,0 +1,128 @@
++// L7 海床材质重制（Entity 20 重制附带的 L7 地形优化）。
++// 旧版是两张砾石贴图按 5×5 瓦片硬切；世界 UV 只沿水平投影，崖壁上被拉成竖直条纹。
++// 新版是一张材质：
++//   · 三平面投影：平地走顶视投影，崖面走两个侧向投影，陡崖不再被拉伸；
++//   · 坡度混合：坡度越大越接近湿玄武岩崖面（层理、竖向裂沟、焦油流痕）；
++//   · 深度带混合（按顶点世界深度）：
++//       有光带=冷灰沙纹，微光带=骨屑细泥，午夜带=深色骨灰淤泥，深渊=焦油沥青；
++//     深度带之间按噪声错开边界，局部还会提前冒出焦油斑块；
++//   · 两种尺度、旋转错相的采样相乘，打散 1024² 贴图的重复感；
++//   · 由合成灰度做屏幕空间凹凸，再用灰度加一层缝隙 AO，让骨屑和裂缝在手电下显出立体。
++// 依赖 addL7Caustics 注入的 uWaterOrigin（它的 common 注入排在本段之前）。
++// 贴图（public/textures）：l7_t_sand / l7_t_silt_bone / l7_t_tar / l7_t_cliff（AI 生成后做了无缝处理）。
++import * as THREE from 'three'
++import { levelTexture, noiseTexture, configureSurfaceTexture, litMaterial } from './shared'
++import { addL7Caustics } from './l7Ocean'
++
++let shared: THREE.Material | null = null
++
++function tex(name: string, a: string, b: string): THREE.Texture {
++  const t = levelTexture(name, () => noiseTexture(a, b))
++  configureSurfaceTexture(t, THREE.SRGBColorSpace)
++  t.wrapS = t.wrapT = THREE.RepeatWrapping
++  return t
++}
++
++/** 深度带边界（米），与 infiniteL7 的 l7ZoneOfDepth 一致。 */
++export const L7_SEABED_BANDS = { twilight: 24, midnight: 90, abyss: 230 } as const
++
++export const L7_SEABED_GLSL_COMMON = /* glsl */`
++varying vec3 vL7SW; varying vec3 vL7SN;
++uniform sampler2D tL7Sand; uniform sampler2D tL7Silt; uniform sampler2D tL7Tar; uniform sampler2D tL7Cliff;
++uniform float uL7Bump;
++float l7h2(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
++float l7vn(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
++  return mix(mix(l7h2(i), l7h2(i + vec2(1, 0)), f.x), mix(l7h2(i + vec2(0, 1)), l7h2(i + vec2(1, 1)), f.x), f.y); }
++// 两尺度旋转错相采样：细节层 × 宏观层（宏观层压到 0.75~1.25 只调明暗）
++vec3 l7Two(sampler2D t, vec2 uv){
++  vec3 a = texture2D(t, uv).rgb;
++  vec2 r = mat2(0.8, -0.6, 0.6, 0.8) * uv * 0.27 + 0.37;
++  vec3 b = texture2D(t, r).rgb;
++  float lb = dot(b, vec3(0.333));
++  return a * (0.7 + lb * 0.75);
++}
++vec3 l7Flat(vec2 P, vec2 uv, float dep, float n){
++  vec3 sand = l7Two(tL7Sand, uv);
++  vec3 silt = l7Two(tL7Silt, uv * 0.85);
++  vec3 tar  = l7Two(tL7Tar,  uv * 0.7);
++  float e = (n - 0.5) * 14.0;
++  float kS = smoothstep(${L7_SEABED_BANDS.twilight - 6}.0, ${L7_SEABED_BANDS.twilight + 10}.0, dep + e);
++  vec3 c = mix(sand, silt, kS);
++  // 午夜带：同一泥层但更暗、更冷，骨屑变成灰白的「骨灰」
++  float kM = smoothstep(${L7_SEABED_BANDS.midnight - 10}.0, ${L7_SEABED_BANDS.midnight + 40}.0, dep + e * 2.0);
++  c = mix(c, c * vec3(0.62, 0.64, 0.66), kM);
++  // 焦油：深渊整片；午夜带深处零星斑块
++  float patchN = l7vn(P * 0.045 + 11.3);
++  float kT = smoothstep(${L7_SEABED_BANDS.abyss - 25}.0, ${L7_SEABED_BANDS.abyss + 15}.0, dep + e * 2.5);
++  kT = max(kT, smoothstep(0.72, 0.8, patchN) * smoothstep(140.0, 190.0, dep));
++  return mix(c, tar, kT);
++}
++`
++
++export function l7SeabedMaterial(): THREE.Material {
++  if (shared) return shared
++  const sand = tex('l7_t_sand.jpg', '#a7a79c', '#8b8a80')
++  const silt = tex('l7_t_silt_bone.jpg', '#4d4a43', '#6b675c')
++  const tar = tex('l7_t_tar.jpg', '#120f0c', '#2a241e')
++  const cliff = tex('l7_t_cliff.jpg', '#2c3430', '#46514b')
++  const mat = litMaterial({
++    color: '#ffffff', vertexColors: true,
++    roughness: 0.62, envBase: 0.3,
++    // 深水保留极低亮度下限（与旧材质一致），在 shader 里乘上合成反照率
++    emissive: '#6f8580', emissiveIntensity: 0.085,
++  })
++  const prev = mat.onBeforeCompile
++  mat.onBeforeCompile = (sh, r) => {
++    prev?.call(mat, sh, r)
++    Object.assign(sh.uniforms, {
++      tL7Sand: { value: sand }, tL7Silt: { value: silt }, tL7Tar: { value: tar }, tL7Cliff: { value: cliff },
++      uL7Bump: { value: 0.9 },
++    })
++    sh.vertexShader = sh.vertexShader
++      .replace('#include <common>', '#include <common>\nvarying vec3 vL7SW; varying vec3 vL7SN;')
++      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvL7SW = (modelMatrix * vec4(position, 1.0)).xyz;\nvL7SN = normalize(mat3(modelMatrix) * objectNormal);')
++    sh.fragmentShader = sh.fragmentShader
++      .replace('#include <common>', '#include <common>\n' + L7_SEABED_GLSL_COMMON)
++      .replace('#include <map_fragment>', /* glsl */`
++vec3 l7Alb; float l7H;
++{
++  vec3 n = normalize(vL7SN);
++  vec3 w = pow(abs(n), vec3(4.0)); w /= (w.x + w.y + w.z + 1e-5);
++  float dep = max(0.0, -vL7SW.y);
++  vec2 P = vL7SW.xz + uWaterOrigin; // 世界相位：窗口流式平移时贴图不跟着跳
++  float nz = l7vn(P * 0.03);
++  vec3 top = l7Flat(P, P * 0.34, dep, nz);
++  // 崖面：两个侧投影（竖直方向拉长一点，层理更像沉积岩）
++  vec3 cx = l7Two(tL7Cliff, vec2(P.y, vL7SW.y * 0.8) * 0.21);
++  vec3 cz = l7Two(tL7Cliff, vec2(P.x, vL7SW.y * 0.8) * 0.21);
++  vec3 side = cx * w.x + cz * w.z;
++  // 侧面权重：三平面权重的水平分量，再按坡度加硬过渡（> ~40° 基本是岩）
++  float slope = 1.0 - n.y;
++  float kC = clamp((w.x + w.z) * 1.15, 0.0, 1.0) * smoothstep(0.18, 0.42, slope);
++  // 崖底冲积：平地也会混进碎岩
++  vec3 topRock = l7Two(tL7Cliff, P * 0.3);
++  top = mix(top, topRock * vec3(0.8), smoothstep(0.1, 0.22, slope) * 0.6);
++  // 深渊崖面也挂焦油
++  vec3 sideTar = mix(side, side * vec3(0.35, 0.32, 0.3), smoothstep(150.0, 260.0, dep));
++  l7Alb = mix(top, sideTar, kC);
++  l7H = dot(l7Alb, vec3(0.299, 0.587, 0.114));
++  // 缝隙 AO：暗部再压一点，骨屑/裂缝更立体
++  l7Alb *= mix(0.72, 1.06, smoothstep(0.03, 0.35, l7H));
++  diffuseColor.rgb *= l7Alb;
++}`)
++      .replace('#include <normal_fragment_maps>', /* glsl */`#include <normal_fragment_maps>
++{
++  vec3 dpx = dFdx(-vViewPosition), dpy = dFdy(-vViewPosition);
++  float hx = dFdx(l7H), hy = dFdy(l7H);
++  vec3 r1 = cross(dpy, normal), r2 = cross(normal, dpx);
++  float det = dot(dpx, r1);
++  vec3 grad = sign(det) * (hx * r1 + hy * r2);
++  normal = normalize(abs(det) * normal - grad * uL7Bump);
++}`)
++      .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance *= l7Alb;')
++  }
++  const key = mat.customProgramCacheKey?.bind(mat)
++  mat.customProgramCacheKey = () => (key ? key() : '') + '-l7seabed1'
++  shared = addL7Caustics(mat)
++  return shared
++}
+diff --git a/app/src/game/renderer/thingMesh.ts b/app/src/game/renderer/thingMesh.ts
+new file mode 100644
+index 0000000..1612ff0
+--- /dev/null
++++ b/app/src/game/renderer/thingMesh.ts
+@@ -0,0 +1,479 @@
++// [thing] 七层之物（Entity 20）重制模型。参照：
++//   · Fandom 中文 Entity_20：鳗形巨躯、头尾从未被同时观测；厚实皮革质、伤痕累累的皮；
++//     鳃和鳍在身上随机错位、大小悬殊（尾鳍从未被观察到）；身体局部「故障」——看似断开的几段仍像连着一样游动；
++//     体内是凝血与寄生虫的胶状物；会从皮里排出焦油。
++//   · wikidot old:entity-20：黑色蛇状身体，巨口占脸的三分之一，里面是长而锋利的牙。
++//   · ZAN 提供的两张附图（仅作造型参考）：黑巨口鱼照片（浑浊的大眼、眼下的乳白发光器、
++//     透明獠牙、下颌远长于上颌、颏下长须、翻出来的红色鳃丝）与蓝色版画「THE THING ON LEVEL 7」
++//     （鳞片密布的鳗身、龙鱼式的头、身上零散的细长鳍条）。
++// 原创程序化建模，无外部素材。模型正面 +X、背 +Y；头部局部原点在后脑（颈接口），巨口铰链在眼后。
++// 躯干是 THING.segs 节可独立摆放的体节（seg0 紧接头后），沿 -X 排列，节距 THING.spacing；
++// 动画层（阶段 2）按拖链把每节放到世界里。末段保持粗壮、没入雾中——不做尾巴。
++import * as THREE from 'three'
++import { litMaterial } from './shared'
++import { rng, merge, V, gauss, sstep, sweep, canvasTex } from './houndMesh'
++
++export const THING = {
++  /** 头长（后脑 → 下颌尖） */
++  headLen: 5.2,
++  /** 躯干体节数与节距（米）；可见长度 ≈ headLen + segs × spacing */
++  segs: 28,
++  spacing: 2.4,
++  /** 躯干半径：颈部 → 末段（缓慢收细但不收尖） */
++  r0: 1.42,
++  r1: 1.02,
++  /** 巨口铰链（头局部坐标），下颌绕 Z 轴向下掀开 */
++  hinge: { x: 1.35, y: -0.42 },
++  /** 「故障」体节：这几节前后断开，切面露出凝血胶质，但仍跟着整条身体一起动 */
++  glitchSegs: [6, 7, 15, 22] as readonly number[],
++  /** 体节上的错位鳍 / 鳃（[节号, 绕身角度, 尺度]），参照「大小差异极大、毫无功能目的」 */
++  fins: [[1, 1.4, 1.0], [3, -2.2, 0.55], [5, 0.2, 2.1], [9, 2.6, 0.4], [11, -0.9, 1.5], [13, 1.9, 0.7], [17, -2.7, 2.6], [19, 0.6, 0.35], [21, -1.6, 1.1], [24, 2.3, 1.8], [26, -0.3, 0.6]] as const,
++  gills: [[0, 1.2, 1], [0, -1.2, 1], [2, 2.3, 0.6], [8, -0.4, 1.3], [12, 2.9, 0.5], [16, -1.9, 0.9], [20, 1.0, 1.6], [25, -2.6, 0.7]] as const,
++} as const
++
++export interface ThingPose {
++  /** 巨口张开 0..1（下颌掀开约 62°） */
++  gape?: number
++  /** 鳃盖外翻 0..1（呼吸 / 畏光收鳃时为负意味——这里只做张开量） */
++  gill?: number
++  /** 颏须饵球亮度 0..1 */
++  lure?: number
++}
++
++// ---------------- 贴图 ----------------
++let TEX: { skin: THREE.Texture | null; skinBump: THREE.Texture | null; flesh: THREE.Texture | null; head: THREE.Texture | null } | null = null
++function textures() {
++  if (TEX) return TEX
++  // 躯干皮：版画那种菱形/六角鳞片排成斜列，鳞缘发灰；之上叠旧疤、剥落的白斑、焦油流痕。
++  const drawSkin = (c: CanvasRenderingContext2D, R: () => number, bump: boolean) => {
++    const S = 512
++    c.fillStyle = bump ? '#5a5a5a' : '#17171a'; c.fillRect(0, 0, S, S)
++    const cols = 12, rows = 16, w = S / cols, h = S / rows
++    for (let r = -1; r <= rows; r++) for (let q = -1; q <= cols; q++) {
++      const cx = (q + (r & 1) * 0.5) * w, cy = r * h
++      const jit = (R() - 0.5) * 0.18
++      const g = c.createLinearGradient(cx, cy - h, cx, cy + h * 0.8)
++      if (bump) { g.addColorStop(0, '#9a9a9a'); g.addColorStop(0.55, '#6c6c6c'); g.addColorStop(1, '#2a2a2a') }
++      else {
++        const b = 26 + R() * 18
++        g.addColorStop(0, `rgb(${b + 18},${b + 18},${b + 22})`); g.addColorStop(0.6, `rgb(${b},${b},${b + 3})`); g.addColorStop(1, `rgb(${b * 0.45},${b * 0.45},${b * 0.5})`)
++      }
++      c.fillStyle = g
++      c.beginPath()
++      c.moveTo(cx, cy - h * (1.05 + jit)); c.lineTo(cx + w * 0.52, cy - h * 0.2); c.lineTo(cx + w * 0.4, cy + h * 0.62)
++      c.lineTo(cx, cy + h * 0.82); c.lineTo(cx - w * 0.4, cy + h * 0.62); c.lineTo(cx - w * 0.52, cy - h * 0.2); c.closePath(); c.fill()
++      c.strokeStyle = bump ? '#202020' : 'rgba(150,150,140,0.22)'; c.lineWidth = 1.2; c.stroke()
++    }
++    // 掉鳞斑：露出底下灰白的皮革
++    for (let i = 0; i < 14; i++) {
++      const x = R() * S, y = R() * S, rx = 10 + R() * 34, ry = 6 + R() * 18
++      c.fillStyle = bump ? '#3c3c3c' : `rgba(${52 + R() * 16},${50 + R() * 14},${46 + R() * 12},0.45)`
++      c.beginPath(); c.ellipse(x, y, rx, ry, R() * 3, 0, Math.PI * 2); c.fill()
++    }
++    // 旧疤：长条隆起的划痕（鱼叉、钩子、刀）
++    for (let i = 0; i < 26; i++) {
++      const x = R() * S, y = R() * S, l = 30 + R() * 140, a = (R() - 0.5) * 1.2
++      c.strokeStyle = bump ? '#c8c8c8' : `rgba(${78 + R() * 26},${70 + R() * 20},${64 + R() * 18},0.38)`
++      c.lineWidth = 1.5 + R() * 3.5; c.lineCap = 'round'
++      c.beginPath(); c.moveTo(x, y); c.quadraticCurveTo(x + Math.cos(a) * l * 0.5 + (R() - 0.5) * 20, y + Math.sin(a) * l * 0.5 + (R() - 0.5) * 20, x + Math.cos(a) * l, y + Math.sin(a) * l); c.stroke()
++    }
++    // 焦油流痕：从鳞缝里往下淌（贴图 v 向下=身体下方）
++    for (let i = 0; i < 9; i++) {
++      const x = R() * S, y = R() * S, l = 50 + R() * 120, w = 3 + R() * 5
++      for (let k = 0; k < l; k += 2) {
++        const f = 1 - k / l, ww = w * (0.5 + 0.5 * f) * (1 + 0.3 * Math.sin(k * 0.3))
++        c.fillStyle = bump ? `rgba(128,128,128,${0.5 * f})` : `rgba(4,3,2,${0.55 * f})`
++        c.beginPath(); c.ellipse(x + Math.sin(k * 0.07) * 3, y + k, ww, 2.2, 0, 0, Math.PI * 2); c.fill()
++      }
++    }
++  }
++  const skin = canvasTex(512, 512, (c, R) => drawSkin(c, R, false), true)
++  const skinBump = canvasTex(512, 512, (c, R) => drawSkin(c, R, true), true)
++  // 切面胶质：凝血的暗红、发黑的血块、白色线状寄生虫
++  const flesh = canvasTex(256, 256, (c, R) => {
++    const g = c.createRadialGradient(128, 128, 10, 128, 128, 128)
++    g.addColorStop(0, '#4a0b10'); g.addColorStop(0.7, '#2a0608'); g.addColorStop(1, '#120304')
++    c.fillStyle = g; c.fillRect(0, 0, 256, 256)
++    for (let i = 0; i < 60; i++) { c.fillStyle = `rgba(${10 + R() * 30},0,${R() * 6},0.6)`; c.beginPath(); c.arc(R() * 256, R() * 256, 4 + R() * 18, 0, Math.PI * 2); c.fill() }
++    for (let i = 0; i < 70; i++) {
++      const x = R() * 256, y = R() * 256, a = R() * 6.28
++      c.strokeStyle = `rgba(${210 + R() * 40},${200 + R() * 30},${170 + R() * 30},0.85)`; c.lineWidth = 1 + R() * 1.2
++      c.beginPath(); c.moveTo(x, y); c.bezierCurveTo(x + Math.cos(a) * 8, y + Math.sin(a) * 8, x + Math.cos(a + 1.5) * 12, y + Math.sin(a + 1.5) * 12, x + Math.cos(a + 0.7) * 18, y + Math.sin(a + 0.7) * 18); c.stroke()
++    }
++    // 软骨环（脊椎残迹）
++    c.strokeStyle = 'rgba(160,140,110,0.5)'; c.lineWidth = 7; c.beginPath(); c.arc(128, 150, 26, 0, Math.PI * 2); c.stroke()
++  }, false)
++  // 头皮：更细的鳞 + 骨板纹，眼周一圈发灰
++  const head = canvasTex(512, 256, (c, R) => {
++    c.fillStyle = '#121214'; c.fillRect(0, 0, 512, 256)
++    for (let i = 0; i < 900; i++) { const x = R() * 512, y = R() * 256, r = 2 + R() * 5; { const g0 = 30 + R() * 26; c.fillStyle = `rgba(${g0},${g0},${g0 + 3},0.55)` }; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill() }
++    for (let i = 0; i < 40; i++) {
++      const x = R() * 512, y = R() * 256, l = 20 + R() * 60, a = (R() - 0.5) * 0.6
++      c.strokeStyle = `rgba(120,116,104,${0.25 + R() * 0.3})`; c.lineWidth = 1 + R() * 2
++      c.beginPath(); c.moveTo(x, y); c.lineTo(x + Math.cos(a) * l, y + Math.sin(a) * l); c.stroke()
++    }
++  }, true)
++  TEX = { skin, skinBump, flesh, head }
++  return TEX
++}
++
++// ---------------- 材质 ----------------
++let MATS: ReturnType<typeof makeMats> | null = null
++function makeMats() {
++  const T = textures()
++  const skin = litMaterial({ color: '#c9c7c0', map: T.skin ?? undefined, bumpMap: T.skinBump ?? undefined, bumpScale: 2.2, vertexColors: true, roughness: 0.58, metalness: 0.04, envBase: 0.16, emissive: '#0d0e10', emissiveIntensity: 0.18, side: THREE.DoubleSide })
++  const head = litMaterial({ color: '#b8b6ae', map: T.head ?? undefined, bumpMap: T.head ?? undefined, bumpScale: 1.4, vertexColors: true, roughness: 0.5, metalness: 0.05, envBase: 0.2, emissive: '#0c0c0e', emissiveIntensity: 0.18, side: THREE.DoubleSide })
++  const tar = litMaterial({ color: '#050403', roughness: 0.12, metalness: 0.1, envBase: 0.85, emissive: '#000000' })
++  const mouth = litMaterial({ color: '#100607', roughness: 0.85, emissive: '#050102', emissiveIntensity: 0.05, side: THREE.DoubleSide })
++  const gum = litMaterial({ color: '#3a0d12', roughness: 0.55, emissive: '#0a0103', emissiveIntensity: 0.06 })
++  // 獠牙：照片里是半透明的玻璃质，根部泛黄
++  const tooth = new THREE.MeshStandardMaterial({ color: '#e7e2cf', roughness: 0.22, metalness: 0, transparent: true, opacity: 0.86, emissive: '#2b2a24', emissiveIntensity: 0.25 })
++  const eye = new THREE.MeshStandardMaterial({ color: '#0c1416', roughness: 0.06, metalness: 0.1, emissive: '#1d2a2e', emissiveIntensity: 0.25 })
++  const eyeFilm = new THREE.MeshStandardMaterial({ color: '#c8d4d6', roughness: 0.05, transparent: true, opacity: 0.42, emissive: '#5b6a6e', emissiveIntensity: 0.35 })
++  const photophore = new THREE.MeshStandardMaterial({ color: '#efe4b8', roughness: 0.3, emissive: '#d8c98a', emissiveIntensity: 0.55 })
++  const gillRed = litMaterial({ color: '#8a1d2c', roughness: 0.45, emissive: '#2a040b', emissiveIntensity: 0.4, side: THREE.DoubleSide })
++  const membrane = new THREE.MeshStandardMaterial({ color: '#2a2622', roughness: 0.55, transparent: true, opacity: 0.62, side: THREE.DoubleSide, emissive: '#0c0a08', emissiveIntensity: 0.2 })
++  const ray = litMaterial({ color: '#8e8a7c', roughness: 0.7, emissive: '#121110', emissiveIntensity: 0.1 })
++  const barbel = litMaterial({ color: '#5b5850', roughness: 0.6, emissive: '#0d0c0a', emissiveIntensity: 0.15 })
++  const lure = new THREE.MeshStandardMaterial({ color: '#d4bb5c', roughness: 0.35, emissive: '#c5a646', emissiveIntensity: 1.2 })
++  const flesh = litMaterial({ color: '#ffffff', map: T.flesh ?? undefined, roughness: 0.3, envBase: 0.5, emissive: '#2a0507', emissiveIntensity: 0.25, side: THREE.DoubleSide })
++  const worm = litMaterial({ color: '#ddd3b8', roughness: 0.4, emissive: '#2a2620', emissiveIntensity: 0.2 })
++  const hole = litMaterial({ color: '#030202', roughness: 1, emissive: '#000000' })
++  return { skin, head, tar, mouth, gum, tooth, eye, eyeFilm, photophore, gillRed, membrane, ray, barbel, lure, flesh, worm, hole }
++}
++const mats = () => (MATS ??= makeMats())
++
++// ---------------- 部件 ----------------
++/** 弯曲獠牙：根部粗、尖端细，向 dir 方向伸、末端朝 curl 方向勾 */
++function fang(len: number, root: number, curl: number, R: () => number): THREE.BufferGeometry {
++  const pts = [V(0, 0, 0), V(curl * 0.12 * len, len * 0.45, 0), V(curl * 0.38 * len, len * 0.86, (R() - 0.5) * 0.08 * len), V(curl * 0.55 * len, len, 0)]
++  return sweep(pts, (t) => root * (1 - t * 0.94), { radial: 6, seg: 6 })
++}
++
++/** 一束红色鳃丝（羽状细条），沿 +Y 展开 */
++function gillFrill(w: number, h: number, n: number, R: () => number): THREE.BufferGeometry {
++  const gs: THREE.BufferGeometry[] = []
++  for (let i = 0; i < n; i++) {
++    const u = i / (n - 1)
++    const len = h * (0.55 + 0.45 * Math.sin(u * Math.PI)) * (0.8 + R() * 0.4)
++    const x0 = (u - 0.5) * w
++    const pts = [V(x0, 0, 0), V(x0 + (R() - 0.5) * 0.05, len * 0.5, 0.04 + R() * 0.05), V(x0 + (R() - 0.5) * 0.08, len, 0.1 + R() * 0.08)]
++    gs.push(sweep(pts, (t, _d, _cs, sn) => 0.035 * (1 - t * 0.7) * (Math.abs(sn) > 0.5 ? 1 : 0.35) + 0.004, { radial: 4, seg: 4 }))
++  }
++  return merge(gs)
++}
++
++/** 细长鳍条扇（三脚鱼那种长丝状鳍条 + 半透明鳍膜），沿 +Y 伸出，后掠 */
++function rayFin(size: number, R: () => number): THREE.Group {
++  const M = mats()
++  const g = new THREE.Group()
++  const n = 5 + Math.floor(R() * 4)
++  const rays: THREE.BufferGeometry[] = []
++  const tips: THREE.Vector3[] = []
++  for (let i = 0; i < n; i++) {
++    const u = i / (n - 1)
++    const len = size * (0.7 + 0.6 * Math.sin(u * Math.PI * 0.9 + 0.2)) * (0.75 + R() * 0.5)
++    const back = -size * (0.25 + u * 0.55)
++    const tip = V(back, len, (u - 0.5) * size * 0.2)
++    tips.push(tip)
++    rays.push(sweep([V((u - 0.5) * size * 0.3, 0, 0), V(back * 0.45 + (u - 0.5) * size * 0.15, len * 0.55, tip.z * 0.5), tip], (t) => size * 0.03 * (1 - t * 0.85) + 0.006, { radial: 4, seg: 6 }))
++  }
++  g.add(new THREE.Mesh(merge(rays), M.ray))
++  // 鳍膜：只连到鳍条长度的 55%，边缘破烂
++  const pos: number[] = []
++  for (let i = 0; i < n - 1; i++) {
++    const a0 = V((i / (n - 1) - 0.5) * size * 0.3, 0, 0), b0 = V(((i + 1) / (n - 1) - 0.5) * size * 0.3, 0, 0)
++    const k1 = 0.35 + R() * 0.25, k2 = 0.35 + R() * 0.25
++    const a1 = a0.clone().lerp(tips[i], k1), b1 = b0.clone().lerp(tips[i + 1], k2)
++    pos.push(a0.x, a0.y, a0.z, b0.x, b0.y, b0.z, a1.x, a1.y, a1.z, b0.x, b0.y, b0.z, b1.x, b1.y, b1.z, a1.x, a1.y, a1.z)
++  }
++  const mg = new THREE.BufferGeometry(); mg.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); mg.computeVertexNormals()
++  g.add(new THREE.Mesh(mg, M.membrane))
++  return g
++}
++
++/** 伤口：黑洞 + 外翻的肉缘 + 探出来的寄生虫 */
++function wound(r: number, R: () => number): THREE.Group {
++  const M = mats(), g = new THREE.Group()
++  const holeM = new THREE.Mesh(new THREE.CircleGeometry(r * 0.62, 14), M.hole); holeM.position.z = 0.01; g.add(holeM)
++  const rim = new THREE.Mesh(new THREE.TorusGeometry(r * 0.72, r * 0.2, 6, 16), M.flesh); rim.scale.z = 0.5; g.add(rim)
++  for (let i = 0; i < 3 + Math.floor(R() * 4); i++) {
++    const a = R() * 6.28, rr = R() * r * 0.45
++    const l = r * (0.5 + R() * 0.9)
++    const w = sweep([V(Math.cos(a) * rr, Math.sin(a) * rr, -0.05), V(Math.cos(a) * rr + (R() - 0.5) * l * 0.4, Math.sin(a) * rr + (R() - 0.5) * l * 0.4, l * 0.5), V(Math.cos(a) * rr + (R() - 0.5) * l * 0.8, Math.sin(a) * rr + (R() - 0.5) * l * 0.8, l)], (t) => 0.018 + 0.012 * Math.sin(t * Math.PI), { radial: 5, seg: 6 })
++    g.add(new THREE.Mesh(w, M.worm))
++  }
++  return g
++}
++
++/** 皮上的焦油：鼓起的油亮团块 + 往下淌的一条 */
++function tarSeep(s: number, R: () => number): THREE.BufferGeometry {
++  const gs: THREE.BufferGeometry[] = []
++  const blob = new THREE.SphereGeometry(s, 10, 7); blob.scale(1.3, 1, 0.32); gs.push(blob)
++  const l = s * (2 + R() * 3)
++  gs.push(sweep([V(0, 0, 0.02), V((R() - 0.5) * s, -l * 0.5, 0.03), V((R() - 0.5) * s, -l, 0.02)], (t) => s * 0.35 * (1 - t * 0.6) * (t > 0.92 ? 1.6 : 1), { radial: 6, seg: 8 }))
++  return merge(gs.map((g) => g.index ? g.toNonIndexed() : g).map((g) => { g.deleteAttribute('uv'); if (g.getAttribute('color')) g.deleteAttribute('color'); return g }))
++}
++
++/** 躯干半径（体节 i 的局部 t=0..1 处） */
++export function thingRadius(i: number, t = 0.5): number {
++  const u = (i + t) / THING.segs
++  return THING.r0 + (THING.r1 - THING.r0) * sstep(0, 1, u)
++}
++
++/** 一节躯干管：沿 -X 从 x=+0.15（与前一节重叠）到 x=-spacing-0.15；截面略扁，腹侧更平 */
++function segmentTube(i: number, x0 = 0.45, x1 = -THING.spacing - 0.45, capFront = false, capBack = false): THREE.BufferGeometry {
++  const R = rng(0x7e5 + i * 31)
++  const bumps = Array.from({ length: 5 }, () => [R(), R() * 6.28, 0.04 + R() * 0.08, 0.1 + R() * 0.15] as const)
++  const L = x0 - x1
++  const pts = [V(x0, 0, 0), V(x0 - L * 0.5, 0, 0), V(x1, 0, 0)]
++  return sweep(pts, (t, d) => {
++    const tt = (x0 - (x0 - L * t)) / THING.spacing
++    let r = thingRadius(i, Math.min(1, Math.max(0, tt)))
++    // 截面：背侧圆、腹侧略平；随机隆起（旧伤愈合的瘤）
++    r *= 1 - 0.1 * Math.max(0, -d.y) ** 2 + 0.03 * Math.max(0, d.y)
++    for (const [bt, ba, bh, bw] of bumps) r *= 1 + bh * gauss(t, bt, bw) * Math.max(0, Math.cos(Math.atan2(d.z, d.y) - ba)) ** 6
++    if (capFront) r *= Math.sqrt(Math.min(1, t / 0.06 + 0.15))
++    if (capBack) r *= Math.sqrt(Math.min(1, (1 - t) / 0.06 + 0.15))
++    return r
++  }, {
++    radial: 22, seg: 10, uRep: 2, vRep: 1.2,
++    shade: (_t, d) => 0.55 + 0.45 * (0.5 + 0.5 * d.y), // 腹侧暗、背侧亮的假 AO
++  })
++}
++
++/** 切面圆盘：凝血胶质 + 软骨环（故障体节断口） */
++function cutFace(r: number): THREE.Mesh {
++  const m = new THREE.Mesh(new THREE.CircleGeometry(r * 0.96, 24), mats().flesh)
++  m.rotation.y = Math.PI / 2
++  return m
++}
++
++// ---------------- 头 ----------------
++function buildHead(parts: Record<string, THREE.Object3D>): THREE.Group {
++  const M = mats(), R = rng(0x20e7)
++  const head = new THREE.Group(); head.name = 'thingHead'
++  const HX = THING.hinge.x, HY = THING.hinge.y
++  // 颅：从颈接口 (x=0, r≈r0) 向前收成钝吻，背线微拱；嘴裂以下由下颌负责
++  const cran = sweep([V(-0.2, 0, 0), V(1.2, 0.08, 0), V(2.6, 0.12, 0), V(3.7, 0.0, 0), V(4.45, -0.18, 0)], (t, d) => {
++    const base = THING.r0 * (1 - 0.68 * sstep(0.35, 1, t)) * (1 + 0.06 * gauss(t, 0.18, 0.12))
++    // 下半截被嘴裂切掉：腹侧压扁到嘴线上方
++    const down = Math.max(0, -d.y)
++    const flat = 1 - down * (0.55 + 0.25 * sstep(0.2, 0.7, t))
++    const side = 1 - 0.18 * Math.abs(d.z) * sstep(0.4, 1, t) // 吻部侧扁
++    return Math.max(0.06, base * flat * side * (t > 0.97 ? Math.sqrt((1 - t) / 0.03) : 1))
++  }, { radial: 24, seg: 22, uRep: 1, vRep: 1, shade: (t, d) => 0.6 + 0.4 * (0.5 + 0.5 * d.y) - 0.15 * gauss(t, 0.62, 0.05) })
++  const cranM = new THREE.Mesh(cran, M.head); head.add(cranM)
++  // 上颌缘（嘴裂的上沿）：一条从铰链到吻端的肉质唇，挂上颌牙
++  const lipPts = [V(HX, HY + 0.08, 0), V(2.4, HY + 0.12, 0), V(3.5, HY + 0.08, 0), V(4.38, -0.32, 0)]
++  const upperGum = new THREE.Group()
++  for (const side of [-1, 1]) {
++    const pts = lipPts.map((p, k) => V(p.x, p.y, side * (0.9 - k * 0.2)))
++    upperGum.add(new THREE.Mesh(sweep(pts, () => 0.09, { radial: 6, seg: 12 }), M.gum))
++    const curve = new THREE.CatmullRomCurve3(pts)
++    const teeth: THREE.BufferGeometry[] = []
++    for (let k = 0; k < 15; k++) {
++      const u = 0.12 + k / 15 * 0.86
++      const P = curve.getPointAt(u)
++      const big = k === 12 || k === 6 ? 2.2 : 1
++      const len = (0.18 + R() * 0.16) * big * (0.8 + u * 0.5)
++      const f = fang(len, 0.035 * big + 0.012, -0.4, R)
++      f.rotateZ(Math.PI) // 向下
++      f.rotateX(side * 0.15)
++      f.translate(P.x, P.y - 0.02, P.z)
++      teeth.push(f)
++    }
++    upperGum.add(new THREE.Mesh(merge(teeth), M.tooth))
++  }
++  head.add(upperGum)
++  // 口腔顶：暗色上颚
++  const ps = new THREE.Shape(); ps.moveTo(HX, -0.85); ps.quadraticCurveTo(3.4, -0.6, 4.3, 0); ps.quadraticCurveTo(3.4, 0.6, HX, 0.85); ps.closePath()
++  const palate = new THREE.Mesh(new THREE.ShapeGeometry(ps, 8), M.mouth)
++  palate.rotation.x = Math.PI / 2; palate.position.set(0, HY + 0.14, 0)
++  head.add(palate)
++  const throatBack = new THREE.Mesh(new THREE.CircleGeometry(0.85, 20), M.hole); throatBack.rotation.y = Math.PI / 2; throatBack.position.set(HX - 0.05, HY - 0.25, 0); head.add(throatBack)
++
++  // 下颌：铰链在眼后，向前远超吻端（下颌前突），U 形细长，前端獠牙最长
++  const jaw = new THREE.Group(); jaw.name = 'thingJaw'; jaw.position.set(HX, HY, 0); head.add(jaw)
++  parts.jaw = jaw
++  for (const side of [-1, 1]) {
++    const pts = [V(0, 0, side * 0.95), V(1.3, -0.12, side * 0.82), V(2.6, -0.16, side * 0.55), V(3.55, -0.05, side * 0.22), V(3.9, 0.05, side * 0.02)]
++    const ramus = sweep(pts, (t, d) => (0.26 - t * 0.14) * (d.y < 0 ? 1.25 : 0.8), { radial: 10, seg: 14, shade: (_t, d) => 0.5 + 0.4 * (0.5 + 0.5 * d.y) })
++    jaw.add(new THREE.Mesh(ramus, M.head))
++    const curve = new THREE.CatmullRomCurve3(pts)
++    const teeth: THREE.BufferGeometry[] = []
++    for (let k = 0; k < 14; k++) {
++      const u = 0.1 + k / 14 * 0.9
++      const P = curve.getPointAt(u)
++      const front = sstep(0.6, 1, u)
++      const fangK = k === 13 ? 3.6 : k === 11 ? 2.6 : k === 8 ? 1.8 : 1
++      const len = (0.16 + R() * 0.14) * fangK * (1 + front * 0.6)
++      const f = fang(len, 0.03 * fangK + 0.012, 0.5 + front * 0.5, R)
++      f.rotateX(-side * (0.12 + front * 0.2))
++      f.translate(P.x, P.y + 0.08, P.z)
++      teeth.push(f)
++    }
++    jaw.add(new THREE.Mesh(merge(teeth), M.tooth))
++  }
++  // 下颌之间的皮膜与口底（张嘴时露出暗红口底）
++  const fs = new THREE.Shape(); fs.moveTo(0, -0.9); fs.quadraticCurveTo(2.4, -0.62, 3.85, 0); fs.quadraticCurveTo(2.4, 0.62, 0, 0.9); fs.closePath()
++  const floor = new THREE.Mesh(new THREE.ShapeGeometry(fs, 8), M.mouth)
++  floor.rotation.x = -Math.PI / 2; floor.position.set(0, -0.02, 0); jaw.add(floor)
++  const gular = sweep([V(0.1, -0.15, 0), V(1.6, -0.36, 0), V(3.2, -0.2, 0), V(3.85, 0.0, 0)], (t, d) => (0.92 - t * 0.78) * (d.y < 0 ? 0.42 : 0.08) * (Math.abs(d.z) > 0.2 ? 1.05 : 1), { radial: 14, seg: 12, shade: () => 0.45 })
++  jaw.add(new THREE.Mesh(gular, M.membrane))
++  // 颏须：下颌尖垂下的长须，末端是发「肮脏黄光」的饵球（几缕细丝）
++  const barbelPts = [V(3.7, -0.12, 0), V(3.6, -0.9, 0.05), V(3.1, -1.9, -0.1), V(2.5, -2.8, 0.15), V(2.2, -3.4, 0.05)]
++  jaw.add(new THREE.Mesh(sweep(barbelPts, (t) => 0.055 - t * 0.03, { radial: 6, seg: 16 }), M.barbel))
++  const lure = new THREE.Mesh(new THREE.SphereGeometry(0.17, 14, 10), M.lure); lure.position.copy(barbelPts[4]); lure.scale.set(1, 1.3, 1)
++  jaw.add(lure); parts.lure = lure
++  const fil: THREE.BufferGeometry[] = []
++  for (let k = 0; k < 6; k++) { const a = k / 6 * 6.28; const p = barbelPts[4]; fil.push(sweep([p.clone(), V(p.x + Math.cos(a) * 0.15, p.y - 0.25, p.z + Math.sin(a) * 0.15), V(p.x + Math.cos(a) * 0.3, p.y - 0.55 - R() * 0.3, p.z + Math.sin(a) * 0.3)], () => 0.012, { radial: 4, seg: 5 })) }
++  jaw.add(new THREE.Mesh(merge(fil), M.barbel))
++
++  // 眼：浑浊的大眼（深色玻璃体 + 一层乳白翳），眼眶骨环；眼后下方一枚乳白发光器
++  for (const side of [-1, 1]) {
++    const socket = new THREE.Mesh(new THREE.TorusGeometry(0.47, 0.11, 8, 22), M.head)
++    socket.position.set(3.15, 0.32, side * 0.66); socket.rotation.y = side * 0.32; head.add(socket)
++    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.44, 20, 14), M.eye)
++    eye.position.set(3.12, 0.32, side * 0.6); eye.scale.set(1, 1, 0.62); head.add(eye)
++    const film = new THREE.Mesh(new THREE.SphereGeometry(0.45, 20, 14, 0, Math.PI * 2, 0, Math.PI * 0.42), M.eyeFilm)
++    film.position.copy(eye.position); film.scale.copy(eye.scale); film.rotation.x = side * Math.PI / 2; head.add(film)
++    const glint = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 6), M.eyeFilm); glint.position.set(3.32, 0.47, side * 0.86); head.add(glint)
++    const ph = new THREE.Mesh(new THREE.SphereGeometry(0.3, 14, 8), M.photophore)
++    ph.position.set(2.5, 0.06, side * 0.98); ph.scale.set(1.25, 0.45, 0.28); ph.rotation.y = side * 0.25; head.add(ph)
++    parts[side < 0 ? 'eyeL' : 'eyeR'] = eye
++    parts[side < 0 ? 'photoL' : 'photoR'] = ph
++  }
++  // 鳃盖：铰链后方的骨板，下缘翻出红色鳃丝（照片里那圈粉红）
++  for (const side of [-1, 1]) {
++    const op = new THREE.Group(); op.name = 'opercle'
++    op.position.set(0.75, -0.25, side * 1.18); op.rotation.y = side > 0 ? 0 : Math.PI
++    const plate = sweep([V(0.55, 0.85, 0), V(0.1, 0.2, 0.08), V(0.2, -0.65, 0.05), V(0.9, -0.95, 0)], (t, d) => (0.42 - Math.abs(t - 0.5) * 0.3) * (Math.abs(d.z) > 0.5 ? 0.18 : 1), { radial: 8, seg: 10, shade: () => 0.6 })
++    op.add(new THREE.Mesh(plate, M.head))
++    const frill = new THREE.Mesh(gillFrill(1.5, 0.55, 14, R), M.gillRed)
++    frill.rotation.z = Math.PI * 0.62; frill.position.set(0.15, -0.1, 0.12); op.add(frill)
++    head.add(op)
++    parts[side < 0 ? 'gillL' : 'gillR'] = op
++  }
++  // 头上的几道深疤与焦油
++  for (const [x, y, z, s] of [[1.4, 1.2, 0.55, 0.22], [2.2, 0.85, -0.7, 0.16], [0.6, 1.25, -0.3, 0.3]] as const) {
++    const t = new THREE.Mesh(tarSeep(s, R), M.tar); t.position.set(x, y, z); t.lookAt(x, y + 3, z * 3); head.add(t)
++  }
++  return head
++}
++
++// ---------------- 组装 ----------------
++/** 七层之物完整模型。返回的 group：userData.parts 含 head / jaw / lure / eyeL·R / gillL·R / seg{i} / fin{i}* / gill{i}*。 */
++export function buildThingMesh(): THREE.Group {
++  const M = mats()
++  const grp = new THREE.Group(); grp.name = 'thething'
++  const parts: Record<string, THREE.Object3D> = {}
++  const head = buildHead(parts)
++  grp.add(head); parts.head = head
++  // 头颈过渡：一段短管把颅后接到 seg0
++  for (let i = 0; i < THING.segs; i++) {
++    const R = rng(0x5e9 + i * 101)
++    const seg = new THREE.Group(); seg.name = `seg${i}`
++    seg.position.set(-i * THING.spacing - 0.1, 0, 0)
++    const glitch = THING.glitchSegs.includes(i)
++    if (glitch) {
++      // 断口：本节在 40% 处断开（两截各自封口、露出切面），中间空 0.7m——动画层会让两截错位漂浮
++      const cut = -THING.spacing * 0.4
++      const a = new THREE.Mesh(segmentTube(i, 0.15, cut + 0.35, false, true), M.skin)
++      const b = new THREE.Group(); b.name = `seg${i}b`
++      const bm = new THREE.Mesh(segmentTube(i, cut - 0.35, -THING.spacing - 0.15, true, false), M.skin)
++      b.add(bm)
++      const f1 = cutFace(thingRadius(i, 0.4)); f1.position.x = cut + 0.36; f1.rotation.y = -Math.PI / 2
++      const f2 = cutFace(thingRadius(i, 0.4)); f2.position.x = cut - 0.36
++      seg.add(a, f1); b.add(f2); seg.add(b)
++      parts[`seg${i}b`] = b
++      seg.userData.glitch = true
++    } else {
++      seg.add(new THREE.Mesh(segmentTube(i), M.skin))
++    }
++    // 伤口与焦油
++    const nW = R() < 0.55 ? 1 + Math.floor(R() * 2) : 0
++    for (let k = 0; k < nW; k++) {
++      const a = (R() - 0.5) * 3.6 // 多在侧面与背上
++      const x = -THING.spacing * (0.15 + R() * 0.7)
++      const r = thingRadius(i)
++      const w = wound(0.18 + R() * 0.3, R)
++      w.position.set(x, Math.cos(a) * r * 0.98, Math.sin(a) * r * 0.98)
++      w.lookAt(V(x, Math.cos(a) * r * 3, Math.sin(a) * r * 3))
++      seg.add(w)
++    }
++    const nT = 1 + Math.floor(R() * 3)
++    const tg: THREE.BufferGeometry[] = []
++    for (let k = 0; k < nT; k++) {
++      const a = (R() - 0.5) * 2.8
++      const x = -THING.spacing * (0.1 + R() * 0.8)
++      const r = thingRadius(i)
++      const g = tarSeep(0.12 + R() * 0.22, R)
++      // 局部 Z=表面法线，局部 -Y=沿表面朝下（重力在切面上的投影），X=Y×Z 保证右手系
++      const Zb = V(0, Math.cos(a), Math.sin(a))
++      const Db = V(0, -1, 0).addScaledVector(Zb, Zb.y)
++      if (Db.lengthSq() < 1e-4) Db.set(0, 0, 1)
++      const Yb = Db.normalize().negate(), Xb = new THREE.Vector3().crossVectors(Yb, Zb)
++      g.applyMatrix4(new THREE.Matrix4().makeBasis(Xb, Yb, Zb))
++      g.translate(x, Math.cos(a) * r * 0.97, Math.sin(a) * r * 0.97)
++      tg.push(g)
++    }
++    if (tg.length) seg.add(new THREE.Mesh(merge(tg), M.tar))
++    grp.add(seg); parts[`seg${i}`] = seg
++  }
++  // 错位的鳍（大小悬殊、方向随机）
++  THING.fins.forEach(([si, ang, size], k) => {
++    const seg = parts[`seg${si}`]; if (!seg) return
++    const R = rng(0xf1 + k * 7)
++    const fin = rayFin(size, R)
++    const r = thingRadius(si)
++    const holder = new THREE.Group(); holder.name = `fin${si}_${k}`
++    holder.position.set(-THING.spacing * (0.3 + R() * 0.4), 0, 0)
++    holder.rotation.x = ang
++    fin.position.y = r * 0.95
++    holder.add(fin); seg.add(holder); parts[`fin${si}_${k}`] = holder
++  })
++  // 错位的鳃裂：一列 3~5 道发红的裂口
++  THING.gills.forEach(([si, ang, size], k) => {
++    const seg = parts[`seg${si}`]; if (!seg) return
++    const R = rng(0x9a + k * 13)
++    const holder = new THREE.Group(); holder.name = `gill${si}_${k}`
++    holder.position.set(-THING.spacing * (si === 0 ? 0.2 : 0.3 + R() * 0.4), 0, 0)
++    holder.rotation.x = ang
++    const r = thingRadius(si)
++    const n = 3 + Math.floor(R() * 3)
++    for (let j = 0; j < n; j++) {
++      const slit = new THREE.Group()
++      slit.position.set(-j * 0.32 * size, r * 0.985, 0)
++      slit.rotation.z = 0.25 // 鳃裂略斜
++      const dark = new THREE.Mesh(new THREE.CircleGeometry(0.5, 12), M.hole); dark.rotation.x = -Math.PI / 2; dark.scale.set(0.12 * size, 0.9 * size, 1); dark.position.y = 0.012
++      slit.add(dark)
++      // 鳃丝：从裂口后缘往外翻出的一排短红丝
++      const strands: THREE.BufferGeometry[] = []
++      for (let q = 0; q < 9; q++) {
++        const zq = (q / 8 - 0.5) * 0.8 * size, l = (0.1 + R() * 0.12) * size * (1 - Math.abs(zq / size))
++        strands.push(sweep([V(-0.05 * size, 0, zq), V(-0.09 * size, l * 0.6, zq + (R() - 0.5) * 0.04), V(-0.16 * size, l, zq + (R() - 0.5) * 0.06)], (t) => 0.022 * size * (1 - t * 0.6), { radial: 4, seg: 3 }))
++      }
++      slit.add(new THREE.Mesh(merge(strands), M.gillRed))
++      holder.add(slit)
++    }
++    seg.add(holder); parts[`gill${si}_${k}`] = holder
++  })
++  grp.userData.parts = parts
++  grp.userData.thingSegmentCount = THING.segs
++  grp.userData.thingSegmentSpacing = THING.spacing
++  grp.userData.thingLureMat = M.lure
++  grp.userData.eyeMats = [M.photophore]
++  return grp
++}
++
++/** 静态姿态（预览与阶段 2 动画共用的基础件） */
++export function poseThing(grp: THREE.Group, p: ThingPose): void {
++  const parts = grp.userData.parts as Record<string, THREE.Object3D>
++  if (parts.jaw) parts.jaw.rotation.z = -(p.gape ?? 0) * 1.08
++  for (const k of ['gillL', 'gillR']) {
++    const g = parts[k]; if (g) g.rotation.x = (k === 'gillL' ? -1 : 1) * (p.gill ?? 0.2) * 0.5
++  }
++  const lm = grp.userData.thingLureMat as THREE.MeshStandardMaterial | undefined
++  if (lm) lm.emissiveIntensity = 0.3 + (p.lure ?? 0.8) * 1.2
++}
+diff --git a/app/src/proto/seabedProto.ts b/app/src/proto/seabedProto.ts
+new file mode 100644
+index 0000000..0352ebf
+--- /dev/null
++++ b/app/src/proto/seabedProto.ts
+@@ -0,0 +1,39 @@
++// 原型预览：L7 海床材质（?mode=seabed&depth=米&view=flat|cliff）。用游戏同一份 l7SeabedMaterial，
++// 场景只是一块带一道陡崖的高度场 + 按深度变暗的水色/雾 + 一盏潜水手电。
++import * as THREE from 'three'
++import { l7SeabedMaterial } from '../game/renderer/l7Seabed'
++const q = new URLSearchParams(location.search)
++const depth = Number(q.get('depth') ?? 60), view = q.get('view') ?? 'flat'
++const W = innerWidth, H = innerHeight
++const renderer = new THREE.WebGLRenderer({ antialias: true }); renderer.setSize(W, H); renderer.outputColorSpace = THREE.SRGBColorSpace
++document.body.appendChild(renderer.domElement)
++const scene = new THREE.Scene()
++const k = Math.exp(-depth / 45) // 天光随深度衰减
++const fogC = new THREE.Color('#0b3550').multiplyScalar(0.15 + 0.85 * k)
++scene.background = fogC; scene.fog = new THREE.FogExp2(fogC, 0.03 + 0.03 * (1 - k))
++scene.add(new THREE.HemisphereLight('#8fc0d8', '#0a1014', 0.15 + 1.4 * k))
++const sun = new THREE.DirectionalLight('#d7ecf5', 1.6 * k); sun.position.set(5, 30, 8); scene.add(sun)
++const N = 220, S = 44
++const geo = new THREE.PlaneGeometry(S, S, N, N); geo.rotateX(-Math.PI / 2)
++const pos = geo.attributes.position as THREE.BufferAttribute
++const n2 = (x: number, z: number) => Math.sin(x * 0.7 + Math.sin(z * 0.4) * 1.3) * 0.25 + Math.sin(z * 1.3 + x * 0.2) * 0.12 + Math.sin(x * 2.9 + z * 3.1) * 0.04
++for (let i = 0; i < pos.count; i++) {
++  const x = pos.getX(i), z = pos.getZ(i)
++  let y = -depth + n2(x, z)
++  if (view === 'cliff') { const u = x - 6 + Math.sin(z * 0.5) * 1.5 + Math.sin(z * 1.7) * 0.5; if (u > 0) y += Math.min(30, u * 6) + Math.sin(z * 2.3 + u) * 0.4 * Math.min(1, u) }
++  pos.setY(i, y)
++}
++geo.computeVertexNormals()
++const col = new Float32Array(pos.count * 3).fill(1); geo.setAttribute('color', new THREE.BufferAttribute(col, 3))
++scene.add(new THREE.Mesh(geo, l7SeabedMaterial()))
++const cam = new THREE.PerspectiveCamera(60, W / H, 0.05, 200)
++if (view === 'cliff') { cam.position.set(-4, -depth + 2.4, 6); cam.lookAt(7, -depth + 4.5, -1) }
++else { cam.position.set(0, -depth + 2.2, 5); cam.lookAt(1.5, -depth, -1.5) }
++const torch = new THREE.SpotLight('#fff3dc', 260, 26, 0.5, 0.6, 1.4); torch.position.copy(cam.position).add(new THREE.Vector3(0.3, -0.2, 0))
++const tgt = new THREE.Vector3(); cam.getWorldDirection(tgt); torch.target.position.copy(cam.position).addScaledVector(tgt, 8); scene.add(torch, torch.target)
++const lab = document.getElementById('lab')!
++const band = depth < 24 ? '有光带' : depth < 90 ? '微光带' : depth < 230 ? '午夜带' : '深渊'
++lab.insertAdjacentHTML('beforeend', `<div class="l" style="left:${W / 2}px;top:14px">${band} · 海床约 ${depth} m${view === 'cliff' ? ' · 陡崖' : ''}（潜水手电）</div>`)
++let n = 0
++const loop = () => { renderer.render(scene, cam); if (++n > 40) (window as any).__ready = true; requestAnimationFrame(loop) }
++loop()
+diff --git a/app/src/proto/thingEntry.ts b/app/src/proto/thingEntry.ts
+new file mode 100644
+index 0000000..e130a91
+--- /dev/null
++++ b/app/src/proto/thingEntry.ts
+@@ -0,0 +1,3 @@
++// proto-thing.html 入口：?mode=seabed → L7 海床材质预览；否则七层之物模型
++if (new URLSearchParams(location.search).get('mode') === 'seabed') void import('./seabedProto')
++else void import('./thingProto')
+diff --git a/app/src/proto/thingProto.ts b/app/src/proto/thingProto.ts
+new file mode 100644
+index 0000000..9ce2e4b
+--- /dev/null
++++ b/app/src/proto/thingProto.ts
+@@ -0,0 +1,86 @@
++// 原型预览页：七层之物（Entity 20）重制模型（?mode=lineup | head | mouth | under | detail），可加 &cam=x,y,z&look=x,y,z
++import * as THREE from 'three'
++import { buildThingMesh, poseThing, THING, type ThingPose } from '../game/renderer/thingMesh'
++
++const q = new URLSearchParams(location.search)
++const mode = q.get('mode') ?? 'lineup'
++const W = innerWidth, H = innerHeight
++const renderer = new THREE.WebGLRenderer({ antialias: true }); renderer.setSize(W, H); renderer.outputColorSpace = THREE.SRGBColorSpace
++renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.15
++document.body.appendChild(renderer.domElement)
++const scene = new THREE.Scene()
++const cam = new THREE.PerspectiveCamera(36, W / H, 0.05, 400)
++const lab = document.getElementById('lab')!
++const label = (p3: THREE.Vector3, html: string) => { const p = p3.clone().project(cam); lab.insertAdjacentHTML('beforeend', `<div class="l" style="left:${(p.x * 0.5 + 0.5) * W}px;top:${(0.5 - p.y * 0.5) * H}px">${html}</div>`) }
++const count = (g: THREE.Object3D) => { let c = 0, t = 0; g.traverse((m: any) => { if (m.isMesh) { c++; t += (m.geometry.index ? m.geometry.index.count : m.geometry.attributes.position.count) / 3 } }); return { meshes: c, tris: Math.round(t) } }
++const vec = (s: string | null) => s ? new THREE.Vector3(...s.split(',').map(Number) as [number, number, number]) : null
++const info: any = {}
++// 深海：冷暗的水色 + 指数雾；一盏顶光模拟残余的天光，一盏暖白聚光模拟潜水手电
++const water = (fogD = 0.012) => {
++  scene.background = new THREE.Color('#071521'); scene.fog = new THREE.FogExp2('#071521', fogD)
++  scene.add(new THREE.HemisphereLight('#7fa3bd', '#0b1218', 0.75))
++  const sun = new THREE.DirectionalLight('#cfe2f0', 0.9); sun.position.set(10, 30, 12); scene.add(sun)
++}
++const torch = (from: THREE.Vector3, to: THREE.Vector3, power = 900) => {
++  const s = new THREE.SpotLight('#fff1d6', power, 60, 0.42, 0.55, 1.6); s.position.copy(from); s.target.position.copy(to); scene.add(s, s.target)
++}
++/** 把体节排成一条缓弯的曲线（静态预览用，阶段 2 换成拖链动画） */
++const layout = (g: THREE.Group, bend = 0.06, rise = 0.015, glitchGap = 1) => {
++  const parts = g.userData.parts as Record<string, THREE.Object3D>
++  let x = -0.1, z = 0, y = 0, ang = 0
++  for (let i = 0; i < THING.segs; i++) {
++    const seg = parts[`seg${i}`]
++    seg.position.set(x, y, z); seg.rotation.y = -ang
++    ang += bend * Math.sin(i * 0.33 + 0.4); y += rise * Math.sin(i * 0.5) * THING.spacing
++    x -= Math.cos(ang) * THING.spacing; z -= Math.sin(ang) * THING.spacing
++    const b = parts[`seg${i}b`]
++    if (b) { b.position.set(-0.55 * glitchGap, 0.35 * glitchGap * Math.sin(i), 0.4 * glitchGap * Math.cos(i * 1.7)); b.rotation.set(0.08 * glitchGap, 0.12 * glitchGap, -0.05 * glitchGap) }
++  }
++}
++const thing = (pose: ThingPose, bend?: number) => { const g = buildThingMesh(); poseThing(g, pose); layout(g, bend); scene.add(g); return g }
++// 人形标尺（1.75m）
++const person = (x: number, y: number, z: number) => {
++  const m = new THREE.MeshStandardMaterial({ color: '#d9d2c0', roughness: 0.8 })
++  const g = new THREE.Group()
++  const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.2, 1.1, 4, 8), m); body.position.y = 0.75; g.add(body)
++  const hd = new THREE.Mesh(new THREE.SphereGeometry(0.13, 10, 8), m); hd.position.y = 1.58; g.add(hd)
++  g.position.set(x, y, z); scene.add(g); return g
++}
++if (mode === 'lineup') {
++  water(0.006)
++  scene.add(new THREE.HemisphereLight('#9ec2da', '#1a242c', 1.1))
++  const g = thing({ gape: 0.25, lure: 0.9 }, 0.09)
++  g.rotation.y = 0.35
++  person(4, -2.2, 3.5)
++  const c0 = vec(q.get('cam')) ?? new THREE.Vector3(-18, 16, 52), l0 = vec(q.get('look')) ?? new THREE.Vector3(-26, -2, 0)
++  cam.fov = 44; cam.updateProjectionMatrix(); cam.position.copy(c0); cam.lookAt(l0)
++  info.count = count(g)
++  label(new THREE.Vector3(4, 0.4, 3.5), '<span class="s">1.75 m</span>')
++  lab.insertAdjacentHTML('beforeend', `<div class="l" style="left:${W / 2}px;top:14px">七层之物 · 可见长度约 ${(THING.headLen + THING.segs * THING.spacing).toFixed(0)} m（末段没入雾中，不做尾）<br><span class="s">${info.count.meshes} 个网格 · ${info.count.tris} 个三角形 · 故障断节 ${THING.glitchSegs.length} 处 · 错位鳍 ${THING.fins.length} · 错位鳃 ${THING.gills.length}</span></div>`)
++} else if (mode === 'head' || mode === 'mouth' || mode === 'under') {
++  water(0.02)
++  const g = thing({ gape: mode === 'mouth' ? 1 : mode === 'under' ? 0.35 : 0.12, lure: 1, gill: mode === 'mouth' ? 1 : 0.4 }, 0.03)
++  const views: Record<string, [THREE.Vector3, THREE.Vector3]> = {
++    head: [new THREE.Vector3(5.6, 1.6, 9.5), new THREE.Vector3(1.6, -0.6, 0)],
++    mouth: [new THREE.Vector3(10.5, 0.6, 5.5), new THREE.Vector3(2.4, -0.9, 0)],
++    under: [new THREE.Vector3(6.5, -4.2, 6.5), new THREE.Vector3(2.2, -1.6, 0)],
++  }
++  const [c0, l0] = views[mode]
++  cam.position.copy(vec(q.get('cam')) ?? c0); cam.lookAt(vec(q.get('look')) ?? l0)
++  torch(cam.position.clone().add(new THREE.Vector3(0.5, 0.4, 0)), (vec(q.get('look')) ?? l0), 700)
++  info.count = count(g)
++  const t = { head: '头部侧面：浑浊大眼 · 眼后发光器 · 下颌前突 · 透明獠牙 · 红鳃丝', mouth: '巨口全张（下颌掀开约 62°）', under: '仰视：颏须与饵球（那点「肮脏黄光」）' }[mode]
++  lab.insertAdjacentHTML('beforeend', `<div class="l" style="left:${W / 2}px;top:14px">${t}</div>`)
++} else if (mode === 'detail') {
++  water(0.02)
++  const g = thing({ gape: 0.1 }, 0.02)
++  // 镜头对准第一处故障断节
++  const parts = g.userData.parts as Record<string, THREE.Object3D>
++  const si = THING.glitchSegs[0]
++  const p = new THREE.Vector3(); parts[`seg${si}`].getWorldPosition(p); p.x -= THING.spacing * 0.4
++  cam.position.copy(vec(q.get('cam')) ?? p.clone().add(new THREE.Vector3(3.5, 2.6, 6.2))); cam.lookAt(vec(q.get('look')) ?? p)
++  torch(cam.position.clone().add(new THREE.Vector3(0, 1, 0)), p, 650)
++  lab.insertAdjacentHTML('beforeend', `<div class="l" style="left:${W / 2}px;top:14px">故障断节：断成两截仍跟着游，切面是凝血胶质与白色寄生虫</div>`)
++}
++renderer.render(scene, cam)
++requestAnimationFrame(() => { renderer.render(scene, cam); (window as any).__ready = true; (window as any).__info = info })
+-- 
+2.47.3
+

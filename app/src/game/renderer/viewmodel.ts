@@ -1,13 +1,14 @@
 // 第一人称手部/手持物品 viewmodel + 屏幕中心准心（DOM 注入）
 import * as THREE from 'three'
 import { buildItemMesh } from './itemsMesh'
+import { buildRefinedItemMesh } from './refinedItemMesh'
 import { buildFlashlightMesh } from './flashlightMesh'
 import { buildDetailedItemMesh } from './detailItemsMesh'
 import { buildSquirtGunMesh } from './squirtGunMesh'
 import { buildMeleeMesh, type MeleeType } from './meleeMesh'
 import { MELEE_HOLD, meleePose } from './meleeAnim'
-import { buildRetroHand, heldHandPose, FLASH_HAND_POSE, type RetroHand } from './retroViewHand'
-export { heldHandPose, heldBox, LIGHTER_HAND_POSE, buildRetroHand, sleeveKindOf } from './retroViewHand'
+import { buildRetroHand, heldHandPose, FLASH_HAND_POSE, KAZOO_HELD, type RetroHand } from './retroViewHand'
+export { heldHandPose, heldBox, LIGHTER_HAND_POSE, KAZOO_HAND_POSE, buildRetroHand, sleeveKindOf } from './retroViewHand'
 
 // ---------- 第一人称手部/手持物品 ----------
 // v53：去掉自发光（原 emissiveIntensity 0.25）——手部/袖管/手持物在黑暗中不再自发光，
@@ -85,6 +86,13 @@ export function vmAnimPose(st: VmAnimState) {
       px -= pose * 0.18; py += pose * 0.1; rx = -pose * 0.48; rz = pose * 0.95
     } else if (u.anim === 'battery') {
       px -= pose * 0.16; py -= pose * 0.08; rx = pose * 0.48; rz = pulse * pose * 0.08
+    } else if (u.anim === 'blow') {
+      // [kazoo/tiny 收尾] 吹石卡祖笛（KAZOO_HAND_POSE 持笛手型）：笛身前后向，整只手收到画面下方正中，把笛口送到嘴边；
+      // 出音口略压低（嘴在视线下方），中段随吹气高频轻颤、手腕微微前后鼓动
+      const buzz = Math.sin(pr * Math.PI * 22) * pose * 0.005
+      const puff = Math.sin(Math.max(0, Math.min(1, (pr - 0.2) / 0.62)) * Math.PI) * pose
+      px -= pose * 0.25; py += pose * 0.135 + buzz; pz += pose * 0.34 - puff * 0.012
+      rx = -pose * 0.1 + buzz * 2; rz = pose * 0.04; ry = -pose * KAZOO_HELD.yaw
     } else if (u.anim === 'activate') {
       py += pose * 0.08; pz -= pose * 0.08; rx = -pose * 0.38; rz = pulse * pose * 0.12
     } else { // read：举到视线下方稳定查看
@@ -177,6 +185,16 @@ export function buildHeldItem(type: string): THREE.Group {
       vb(0.04, 0.1, 0.05, '#4a3a2e', 0, -0.03, -0.03) // 握把
       vb(0.008, 0.03, 0.01, '#2a2d30', 0, 0.005, -0.07) // 扳机
       break
+    case 'stonekazoo': {
+      // [tiny 收尾] 石卡祖笛：笛口（模型 -X）朝镜头、出音口（+X）朝前，笛膜座朝上不被手指挡住；
+      // 右手握住笛尾那一段（KAZOO_HAND_POSE），食指收在笛膜座后面
+      const detail = buildRefinedItemMesh('stonekazoo')
+      detail.rotation.y = Math.PI / 2
+      detail.position.set(0, 0, KAZOO_HELD.z)
+      g.add(detail)
+      g.rotation.set(KAZOO_HELD.tilt, KAZOO_HELD.yaw, 0) // 出音口微微上扬、笛身斜向画面中线，看得到侧面和笛膜座
+      break
+    }
     case 'glowstick': {
       const detail = buildDetailedItemMesh('glowstick')
       detail.rotation.z = Math.PI / 2

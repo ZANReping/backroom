@@ -1175,6 +1175,8 @@ export function genL3ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
   }
 
   const chunk = { variant, tiles, wet, elev, step, tint, crawl, structures, items, lights, exits, entities }
+  let seenBurster=false
+  chunk.entities=entities.filter(e=>e.type!=='burster'||(!seenBurster&&(seenBurster=true)))
   finishL3Architecture(chunk,cx,cy,seed)
   return chunk
 }

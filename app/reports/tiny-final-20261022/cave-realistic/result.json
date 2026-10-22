@@ -1,0 +1,101 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 11356,
+  "cdp": 11357,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\tiny-final-20261022\\cave-realistic\\qa-1792661606590-18388",
+    "--remote-debugging-port=11357",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 39036,
+    "server": 20788
+  },
+  "appBootMs": 13192.8973,
+  "entryMs": 2775.1682999999975,
+  "firstPlayableMs": 22052.784,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "checks": [],
+    "records": [],
+    "status": {
+      "level": 4,
+      "player": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "chunks": 9,
+      "tasks": 4,
+      "memory": {
+        "geometries": 467,
+        "textures": 67
+      },
+      "calls": 1,
+      "triangles": 1
+    }
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: rendered instrument contacts rock with single ground offset: instr:kazoospike 0.337\",\"lineNumber\":17,\"columnNumber\":19,\"scriptId\":\"662\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"ok\",\"scriptId\":\"662\",\"url\":\"http://127.0.0.1:11356/verifier/tiny-final-check.ts\",\"lineNumber\":16,\"columnNumber\":18},{\"functionName\":\"\",\"scriptId\":\"662\",\"url\":\"http://127.0.0.1:11356/verifier/tiny-final-check.ts\",\"lineNumber\":210,\"columnNumber\":6},{\"functionName\":\"traverse\",\"scriptId\":\"348\",\"url\":\"http://127.0.0.1:11356/reports/tiny-final-20261022/cave-realistic/qa-1792661606590-18388/vite-cache/deps/chunk-BWT6IPVN.js?v=10cbcc08\",\"lineNumber\":7201,\"columnNumber\":4},{\"functionName\":\"traverse\",\"scriptId\":\"348\",\"url\":\"http://127.0.0.1:11356/reports/tiny-final-20261022/cave-realistic/qa-1792661606590-18388/vite-cache/deps/chunk-BWT6IPVN.js?v=10cbcc08\",\"lineNumber\":7204,\"columnNumber\":18},{\"functionName\":\"cave\",\"scriptId\":\"662\",\"url\":\"http://127.0.0.1:11356/verifier/tiny-final-check.ts\",\"lineNumber\":199,\"columnNumber\":9}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: rendered instrument contacts rock with single ground offset: instr:kazoospike 0.337\\n    at ok (http://127.0.0.1:11356/verifier/tiny-final-check.ts:17:19)\\n    at http://127.0.0.1:11356/verifier/tiny-final-check.ts:211:7\\n    at Mesh.traverse (http://127.0.0.1:11356/reports/tiny-final-20261022/cave-realistic/qa-1792661606590-18388/vite-cache/deps/chunk-BWT6IPVN.js?v=10cbcc08:7202:5)\\n    at Group.traverse (http://127.0.0.1:11356/reports/tiny-final-20261022/cave-realistic/qa-1792661606590-18388/vite-cache/deps/chunk-BWT6IPVN.js?v=10cbcc08:7205:19)\\n    at Object.cave (http://127.0.0.1:11356/verifier/tiny-final-check.ts:200:10)\",\"objectId\":\"5315669849506163337.2.1\"}}",
+  "partial": {
+    "checks": [
+      "single generated instrument cave rendered",
+      "all eleven instruments fit actual cave field",
+      "rendered instrument contacts rock with single ground offset: instr:violin -0.060",
+      "rendered instrument contacts rock with single ground offset: instr:guitar -0.060",
+      "rendered instrument contacts rock with single ground offset: instr:trombone -0.020",
+      "rendered instrument contacts rock with single ground offset: instr:toilet -0.014",
+      "rendered instrument contacts rock with single ground offset: instr:bongo -0.015",
+      "rendered instrument contacts rock with single ground offset: instr:bongo -0.015",
+      "rendered instrument contacts rock with single ground offset: instr:bongo -0.015",
+      "rendered instrument contacts rock with single ground offset: instr:bongo -0.016",
+      "rendered instrument contacts rock with single ground offset: instr:bongo -0.015",
+      "rendered instrument contacts rock with single ground offset: instr:bongo -0.018"
+    ],
+    "records": [],
+    "status": {
+      "level": 8,
+      "player": {
+        "x": 114.46402343493628,
+        "y": 4.871647546506196,
+        "z": 0.31256301383872254
+      },
+      "chunks": 10,
+      "tasks": 1,
+      "memory": {
+        "geometries": 268,
+        "textures": 63
+      },
+      "calls": 1,
+      "triangles": 1
+    }
+  },
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 11041.89999999851
+    },
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\nLEVEL 8\n洞穴系统\nB8\n磁带\n0/6\n多维之路\n100%\nLevel 8「洞穴系统」\nSurvival Difficulty: Class 4 · 逃脱 4/5 · 环境 4/5 · 实体 4/5\n入口：Level 6 地下廊道的天然洞口 / Level 7 午夜带海床的水下洞穴\n石卡祖笛\n1\n2\n3\n4\n5\n6\n7\n左键\n攻击\n空格\n跳跃\nC\n蹲伏\nF\n手电\n右键\n使用\nQ\n丢弃\nV\n检视\n左Alt\n收起主手\n开发者模式\n🛠 开发者模式 · DEV\n▴"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

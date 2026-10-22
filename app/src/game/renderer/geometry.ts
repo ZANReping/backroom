@@ -1,4 +1,4 @@
-import { addL7Caustics } from './l7Ocean'
+import { l7SeabedMaterial } from './l7Seabed'
 import {buildL4Terrain} from './l4Terrain'
 import { l5SurfaceBatches } from './l5Materials'
 import { buildL5Architecture } from './l5Architecture'
@@ -12,7 +12,7 @@ import { l1SkylightAt } from '../world/l1Spatial'
 import { l1Material,l1SurfaceScale,l1WorldUV,l1PathWallFaces } from './l1Materials'
 import { buildL1RoofClosure } from './l1RoofGeometry'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
-import { ELEV_H, FLOOR_H, UNDER_CEIL, UNDER_FLOOR, surfaceUndulationAt, tallCeilH, wallBaseTopAt, ceilingSteps, l7SeaTile, l7SeaTileH, type GameMap } from '../world/mapgen'
+import { ELEV_H, FLOOR_H, UNDER_CEIL, UNDER_FLOOR, surfaceUndulationAt, tallCeilH, wallBaseTopAt, ceilingSteps, l7SeaTile, l7SeaNodeH, type GameMap } from '../world/mapgen'
 import type { LevelDef } from '../core/types'
 import { col, rampGeo, levelTexture, noiseTexture, OUTDOOR_FLOOR, manilaWallTexture, makeCanvasCtx, toTex, litMaterial, texLevelId, getReflectK, configureSurfaceTexture } from './shared'
 import { l2Material, l2WorldUV, type L2Surface } from './l2Materials'
@@ -293,33 +293,9 @@ const l7Grid = def.id === 7 && m.l7SeaTerrain
       const gw = (gx1 - gx0) * 2 + 1, gh = (gy1 - gy0) * 2 + 1
       const arr = new Float32Array(gw * gh)
       // 直接在 0.5m 网格节点上按「中心/边中点/四角均值」规则求值，避免逐点调用 l7SeaHAt。
-      const nodeH = (x: number, z: number): number => {
-        let tx = Math.floor(x), ty = Math.floor(z)
-        if (tx < 0) tx = 0; else if (tx >= m.w) tx = m.w - 1
-        if (ty < 0) ty = 0; else if (ty >= m.h) ty = m.h - 1
-        const fx = Math.max(0, Math.min(1, x - tx)), fz = Math.max(0, Math.min(1, z - ty))
-        const c = l7SeaTileH(m, tx, ty)
-        const midX = fx > 0.25 && fx < 0.75, midZ = fz > 0.25 && fz < 0.75
-        if (midX && midZ) return c
-        if (midZ) {
-          const nx = tx + (fx > 0.5 ? 1 : -1)
-          return l7SeaTile(m, nx, ty) ? (c + l7SeaTileH(m, nx, ty)) / 2 : c
-        }
-        if (midX) {
-          const ny = ty + (fz > 0.5 ? 1 : -1)
-          return l7SeaTile(m, tx, ny) ? (c + l7SeaTileH(m, tx, ny)) / 2 : c
-        }
-        const ax = fx > 0.5 ? tx : tx - 1, ay = fz > 0.5 ? ty : ty - 1
-        let sum = 0, n = 0
-        for (let dy = 0; dy <= 1; dy++) for (let dx = 0; dx <= 1; dx++) {
-          if (!l7SeaTile(m, ax + dx, ay + dy)) continue
-          sum += l7SeaTileH(m, ax + dx, ay + dy); n++
-        }
-        return n ? sum / n : c
-      }
       for (let gy = 0; gy < gh; gy++) {
         const z = gy0 + gy * 0.5
-        for (let gx = 0; gx < gw; gx++) arr[gy * gw + gx] = nodeH(gx0 + gx * 0.5, z)
+        for (let gx = 0; gx < gw; gx++) arr[gy * gw + gx] = l7SeaNodeH(m, gx0 + gx * 0.5, z)
       }
       return { arr, gx0, gy0, gw, gh }
     })()
@@ -461,7 +437,7 @@ for (let y = RY0; y < RY1; y++) {
     // 颜色贴图已经包含真实砂砾色；顶点色只做轻微生态色调变化。旧色在 sRGB→线性后
     // 只有约 8%～25% 强度，再与贴图相乘会让海床即使受光也近乎纯黑。
     const seabedTint = l7Seabed
-      ? col(tnt === 29 ? '#f1eee2' : tnt === 30 ? '#dfe9e3' : tnt === 31 ? '#d8e2e5' : '#d2dcdf')
+      ? col('#ffffff') // v-thing：深度带色调由 l7Seabed 材质按真实深度合成
       : l1 ? col('#ffffff') : c
     for (let i = 0; i < n; i++) { carr[i * 3] = seabedTint.r; carr[i * 3 + 1] = seabedTint.g; carr[i * 3 + 2] = seabedTint.b }
     geo.setAttribute('color', new THREE.BufferAttribute(carr, 3))
@@ -487,7 +463,7 @@ for (let y = RY0; y < RY1; y++) {
       l10SplatGeos.push(geo)
       continue
     }
-    const seabedRock = l7Seabed && hv(Math.floor(x / 5), Math.floor(y / 5), 0x71) > 0.63
+    const seabedRock = false // v-thing：海床改为单一三平面材质（l7Seabed.ts），不再按 5×5 硬切石质块
     if (def.id === 9 && isWet && (tnt === 34 || tnt === 39)) makeL9Puddle(x, y, tnt === 39)
     ;(l7Seabed ? (seabedRock ? l7RockSeabedGeos : l7SandSeabedGeos)
       : def.id === 9 && tnt === 34 ? l9AsphaltGeos
@@ -510,30 +486,7 @@ for (let y = RY0; y < RY1; y++) {
 }
 if (l7SandSeabedGeos.length) {
   yield
-  const sand = levelTexture('l7_seabed_sand_gravel.png', () => noiseTexture('#71664c', '#9a8d69'))
-  if (!sand.userData.l7SeabedConfigured) {
-    configureSurfaceTexture(sand, THREE.SRGBColorSpace)
-    sand.userData.l7SeabedConfigured = 1
-  }
-  g.add(new THREE.Mesh(mergeGeometries(l7SandSeabedGeos)!, addL7Caustics(litMaterial({
-    color: '#ffffff', vertexColors: true, map: sand, bumpMap: sand, bumpScale: 0.038,
-    roughness: 0.7, envBase: 0.34,
-    // 深水带仍保留极低的贴图化亮度下限；主要凹凸和高光由下潜自然光负责。
-    emissive: '#78908b', emissiveMap: sand, emissiveIntensity: 0.1,
-  }))))
-}
-if (l7RockSeabedGeos.length) {
-  yield
-  const rock = levelTexture('l7_seabed_rock_gravel.png', () => noiseTexture('#494b47', '#716b5f'))
-  if (!rock.userData.l7SeabedConfigured) {
-    configureSurfaceTexture(rock, THREE.SRGBColorSpace)
-    rock.userData.l7SeabedConfigured = 1
-  }
-  g.add(new THREE.Mesh(mergeGeometries(l7RockSeabedGeos)!, addL7Caustics(litMaterial({
-    color: '#ffffff', vertexColors: true, map: rock, bumpMap: rock, bumpScale: 0.055,
-    roughness: 0.6, envBase: 0.4,
-    emissive: '#718783', emissiveMap: rock, emissiveIntensity: 0.09,
-  }))))
+  g.add(new THREE.Mesh(mergeGeometries(l7SandSeabedGeos)!, l7SeabedMaterial()))
 }
 if (floorGeos.length) {
   yield

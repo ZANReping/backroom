@@ -1,3 +1,9 @@
+import {L8EntityPreparation,isL8Remade} from './l8EntityPreparation'
+import {ensureCurabitur} from '../engine/curabiturAI'
+import {animateBursterEntity,syncBursterProps,clearBursterProps} from './bursterRender'
+import {bursterResourcesReady,prepareBursterJob} from './bursterMesh'
+import {animateBurster} from './bursterAnim'
+import {bursterVision} from '../engine/bursterAI'
 import { setMeleeWear, meleeResourcesReady, prepareMeleeJob } from './meleeMesh'
 import { prepareWranglerJob, wranglerResourcesReady } from './wranglerMesh'
 import { isBroken, slotDur, slotMaxDur } from '../engine/melee'
@@ -5,7 +11,11 @@ import { LOW_DUR, isMelee } from '../content/melee'
 import { MELEE_HOLD } from './meleeAnim'
 import type { MeleeType } from './meleeMesh'
 import { animateWrangler, syncWranglerProps, clearWranglerProps } from './wranglerRender'
+import { updateThingLod } from './thingMesh'
+import { THINGM } from '../engine/thingAI'
+import { animateThing, makeThingAnimState, type ThingAnimState, type ThingClip } from './thingAnim'
 import { L7OceanFx, l7CausticUniforms } from './l7Ocean'
+import { animateTinyEntity } from './tinyRender'
 import { l7SurgeUniforms, waterUniforms } from './water'
 import { l7SurgeShaderParams } from '../engine/l7Events'
 import { l7GravZonesNear } from '../world/infiniteL7'
@@ -16,6 +26,10 @@ import {applyL0TestField} from '../world/l0TestField'
 import {mapVision} from '../content/mapPlayer'
 import {EyeAdaptation} from './eyeAdaptation'
 import {glowstickLights} from './glowstickLights'
+import { animateLightguideEntity, lightguideLights } from './lightguideRender' // [L8-lightguide]
+import { animateArachnidEntity, arachnidDeathPose, arachnidLights, updateArachnidWorldView, clearArachnidWorldView } from './arachnidRender' // [L8-arachnid]
+import { arachnidHudState, arachnidKindOf } from '../engine/arachnidAI' // [L8-arachnid]
+import { animateCurabiturEntity, curabiturLights, updateCurabiturView, curabiturCoatViewmodel, clearCurabiturView } from './curabiturRender' // [L8-curabitur]
 import {l0FlickerTime} from './l0Flicker'
 import {updateL0EnvironmentShader} from './l0EnvironmentShader'
 import {updateL1SurfaceField,disposeL1SurfaceField} from './l1SurfaceField'
@@ -40,7 +54,7 @@ import {l0WallMount} from '../world/l0Architecture'
 import { l1Transition } from '../world/l1Layout'
 import {buildL4Lights,disposeL4Owned} from './l4Meshes'
 import {L4VolumeFog} from './l4VolumeFog'
-import {batchL4StaticJob} from './l4Batch'
+import {batchL4StaticJob,compactL4Proxy} from './l4Batch'
 import {l4SamplerFor} from './l4Bake'
 // Three.js 第一人称低多边形渲染器：主循环（静态几何/灯光池/实体动画编排，构建逻辑见同级模块）
 import * as THREE from 'three'
@@ -87,6 +101,7 @@ import { buildStructure, buildExit, buildL10CropLodJob, stepL10Wind } from './st
 import { ALPHA_ENTRIES } from '../content/alphaBlueprint'
 import { buildDecorationsJob } from './decorations'
 import { buildEntityMesh } from './entitiesMesh'
+import { prepareInstrumentCave, swingStoneChime } from './instrumentCave'
 import { animateMoth, buildMothMesh } from './mothMeshes'
 import { MothWorldView } from './mothWorldView'
 import { buildItemMesh } from './itemsMesh'
@@ -130,6 +145,7 @@ import { l5StairWallDirection } from '../world/l5Topology'
 import { L5NestLighting } from './l5NestLighting'
 import { animateSmiler } from './smilerMesh'
 import { animateHound } from './houndMesh'
+import { animateCamo, animateCamoDeath, syncCamoBoulders, clearCamoBoulders } from './camoRender' // [L8-camo]
 import { animateClump, animateClumpDeath } from './clumpMesh'
 import { animatePartygoer, animatePartygoerDeath, partygoerGeometryReady, preparePartygoerJob } from './partygoerMesh'
 import { partyConvK } from '../engine/partygoerAI'
@@ -148,7 +164,7 @@ import { armsDebris, armsRig, armsVent, armsResourcesReady, prepareArmsJob, buil
 import { ArmsAnimator, armsClipPose, armsWorldToLocal, poseArms, setArmsDuct, type ArmsPose } from './armsAnim'
 import { ARMS, armsHeldChest, armsState, type ArmsMark, type ArmsVentSpot } from '../engine/armsAI'
 const sm01 = (x: number) => { const k = x < 0 ? 0 : x > 1 ? 1 : x; return k * k * (3 - 2 * k) }
-import { animateNW, mangledGeometryReady, prepareMangledJob } from './watchRender'
+import { animateNW, syncMangledLegColliders, mangledGeometryReady, prepareMangledJob } from './watchRender'
 import { mangledGrowth, nwCaptor } from '../engine/watchAI'
 import { ratMorphFor } from '../entities/rats'
 import { updateWaterUniforms } from './water'
@@ -262,6 +278,7 @@ const ANIM_STRUCT = (s: Structure) =>
   s.kind === 'trade_anomaly' || s.kind === 'lift' || s.kind === 'phonograph' || s.kind in CONTAINER_ANIM
   || s.kind === 'hoteldoor' || s.kind === 'rollerdoor' || s.kind === 'glassdoor' || s.kind === 'inkdoor' || s.kind === 'bargate'
   || (s.kind === 'table' && !!s.data?.drink) || s.kind === 'ropeanchor' || s.kind === 'cavefloat' || s.kind === 'handweather'
+  || s.kind === 'stonechime' // [kazoo] 乐器洞石风铃摆动
 
 // L9 静态结构优化：门、容器和需要查看的结构仍保留独立根节点，确保动画、准星射线与
 // 存档对象引用完全不变；其余不可交互部件才进入合批/实例化路径。
@@ -655,6 +672,9 @@ export class Renderer3D {
   private vmMeleeType: MeleeType | null = null
   private wranglerWarmup:Generator<void,void,unknown>|null=null
   private wranglerWarmupDone=false
+  private bursterWarmup:Generator<void,void,unknown>|null=null
+  private bursterWarmupDone=false
+  private bursterProgramOwner:THREE.Group|null=null
   private wranglerProgramOwners:THREE.Group[]=[]
   // 副手打火机 viewmodel（装备打火机时显示；与手电互斥——副手只有一个槽位）
   private vmLighter = new THREE.Group()
@@ -767,7 +787,17 @@ export class Renderer3D {
     this.particlesGeo = new THREE.BufferGeometry()
     this.particlesGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(120 * 3), 3))
     this.particlesGeo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(120 * 4), 4))
-    this.particlesPts = new THREE.Points(this.particlesGeo, new THREE.PointsMaterial({ size: 0.14, vertexColors: true, transparent: true, opacity: 0.9, depthWrite: false }))
+    const particleMaterial = new THREE.PointsMaterial({ size: 0.14, vertexColors: true, transparent: true, opacity: 0.9, depthWrite: false })
+    // Bubbles can originate beside the eye. Bound their screen size and fade the
+    // near clip instead of drawing an enormous opaque square over the scene.
+    particleMaterial.onBeforeCompile = shader => {
+      shader.vertexShader = shader.vertexShader.replace('#include <common>', '#include <common>\nvarying float vParticleDepth;')
+        .replace('#include <logdepthbuf_vertex>', 'vParticleDepth = -mvPosition.z; gl_PointSize = min(gl_PointSize, 18.0);\n#include <logdepthbuf_vertex>')
+      shader.fragmentShader = shader.fragmentShader.replace('#include <common>', '#include <common>\nvarying float vParticleDepth;')
+        .replace('#include <color_fragment>', '#include <color_fragment>\ndiffuseColor.a *= (1.0 - smoothstep(0.27, 0.5, length(gl_PointCoord - vec2(0.5)))) * smoothstep(0.2, 0.7, vParticleDepth);')
+    }
+    particleMaterial.customProgramCacheKey = () => 'soft-near-particles-v1'
+    this.particlesPts = new THREE.Points(this.particlesGeo, particleMaterial)
     this.particlesPts.frustumCulled = false
     this.scene.add(this.particlesPts)
     {
@@ -865,6 +895,7 @@ export class Renderer3D {
     const show = !engine.paused && !engine.over && !!engine.map && !engine.handsHidden // v54：F1 全沉浸隐藏手部建模（F2 半沉浸保留）
     this.stowK = THREE.MathUtils.damp(this.stowK, engine.handsStowed ? 1 : 0, 16, dt)
     this.vm.visible = show && this.stowK < .995
+    curabiturCoatViewmodel(this.vmItem, engine) // [L8-curabitur] 涂了受眷胶的武器外层发光壳
     this.vmFlash.visible = show && p.equip.offhand?.type === 'flashlight' && p.flashlight && p.battery > 0 && p.flashJamT <= 0 // v32：手部模型仅手电（头灯戴在头上，无手部模型）
     // 副手打火机：装备即常显（火苗随时间跳动）
     this.vmLighter.visible = show && p.hasLighter
@@ -1606,7 +1637,8 @@ export class Renderer3D {
     }
     const cityLightAllowed=(l:LightSource)=>!l.l11Building||l.l11Building===cityBuilding?.id&&Math.abs((l.z??0)-p.z)<1.6&&(l.l11Room?l.l11Room===cityRoom?.id:!cityRoom)||!!l.l11Room&&visibleRetailRooms.has(l.l11Room)
     const sorted = this.lightSortScratch
-    const portableLights=glowstickLights(engine)
+    const portableLights=[...glowstickLights(engine),...lightguideLights(engine),...arachnidLights(engine)] // [L8-lightguide] 向导小点光源（数量上限 3）；[L8-arachnid] 最近 2 只符文个体 + 1 个蛛巢
+    portableLights.push(...curabiturLights(engine)) // [L8-curabitur] 受眷胶（手持/涂层/放置）+ 最近 3 只受眷鸟
     if (this.lightSortMap !== m || this.lightSortRev !== (m.inf?.rev ?? engine.mapRev) ||
         sorted.length !== m.lights.length+portableLights.length || portableLights.length>0 || this.time - this.lightSortTime >= .1 ||
         Math.abs(p.x - this.lightSortX) + Math.abs(p.y - this.lightSortY) > .75) {
@@ -1852,6 +1884,7 @@ export class Renderer3D {
     }
 
     this.updateEntities(engine, dt)
+    syncBursterProps(this.scene,this.camera,engine)
     syncWranglerProps(this.scene, this.camera, engine) // 牧蛇：岩壁洞口/鼓包/卵枝 + 被吞黑屏
     this.remoteViews.update(this.scene, engine, engine.mpSession, this.time, dt) // v58：联机远端玩家
     this.updateNpcs(engine, dt)
@@ -1904,6 +1937,7 @@ export class Renderer3D {
 
     if(!this.pendingEnvProbe && [2,8].includes(def.id) && !this.wranglerWarmupDone){this.wranglerWarmup??=this.warmWranglerModels();if(this.wranglerWarmup.next().done){this.wranglerWarmup=null;this.wranglerWarmupDone=true}}
 
+    if(!this.pendingEnvProbe&&def.id===3&&!this.bursterWarmupDone){this.bursterWarmup??=this.warmBursterModel();if(this.bursterWarmup.next().done){this.bursterWarmup=null;this.bursterWarmupDone=true}}
     // realistic 泛光、VCR、PS1 色阶抖动或夜视滤镜开启时走 EffectComposer；其余保持直接渲染。
     const photoProfile=lightingProfile(engine),real=this.lightMode==='realistic'
     l1NativePower.value=bright?1:m.inf?.blackout?.04:engine.blackoutWarnT>0?(Math.sin(this.time*43)>-.2?.1:1):1
@@ -1936,8 +1970,9 @@ export class Renderer3D {
     // Native L1 light has no energy during an outage; portable lights still use the light pool.
     this.scene.environmentIntensity=(real?photoProfile.reflection:1)*(def.id===1&&!bright&&m.inf?.blackout ? .018 : 1)*(def.id===11?.42+.58*this.outK:1)
     const ao=real&&this.textureQuality>0?this.photo.ao:0
-    const focusBlur=perceptionBlur(engine.player.sanity,engine.player.level===0?engine.l0Blur:0)
-    const wantPhoto=real||this.photo.grain>0||this.photo.vignette>0||this.photo.scanline>0||this.photo.grade!=='neutral'||focusBlur>0
+    const arView=engine.over?null:arachnidHudState(engine),arAcid=arView?.acid??0,arWeb=Math.min(1,(arView?.web??0)/2)
+    const focusBlur=Math.max(arAcid>0?2+arAcid*4:0,perceptionBlur(engine.player.sanity,engine.player.level===0?engine.l0Blur:0),engine.over?0:bursterVision(engine).blind*3)
+    const wantPhoto=real||this.photo.grain>0||this.photo.vignette>0||this.photo.scanline>0||this.photo.grade!=='neutral'||focusBlur>0||arWeb>0
     // HDR tube emitters participate in the same thresholded bloom as other levels.
     const wantBloom = this.lightMode === 'realistic' && this.bloomOn
     const wantPs1 = this.resolutionMode === '320p_ps1'
@@ -2009,7 +2044,7 @@ export class Renderer3D {
         ;(this.nvPass.uniforms.resolution.value as THREE.Vector2).copy(dbSize)
       }
       if(this.photoPass){const u=this.photoPass.material.uniforms;u.white.value.fromArray(real?photoProfile.white:[1,1,1]);u.saturation.value=(this.photo.grade==='bleached'?.62:this.photo.grade==='cold'?.8:this.photo.grade==='liminal'?.88:1)*(real?(photoProfile.saturation??1):1);if(this.photo.grade==='cold')u.white.value.multiply(new THREE.Vector3(.96,1,1.025));if(this.photo.grade==='liminal')u.white.value.multiply(new THREE.Vector3(1.02,1,.97));u.strength.value=photoProfile.ao;u.halation.value=0}
-      if(this.photoFinish){const u=this.photoFinish.uniforms;u.time.value=this.time;u.grain.value=this.photo.grain;u.vignette.value=this.photo.vignette;u.scanline.value=this.photo.scanline*.0015;u.blur.value=focusBlur;this.three.getDrawingBufferSize(u.resolution.value)}
+      if(this.photoFinish){const u=this.photoFinish.uniforms;u.time.value=this.time;u.grain.value=this.photo.grain;u.vignette.value=this.photo.vignette;u.scanline.value=this.photo.scanline*.0015;u.blur.value=focusBlur;u.arachnidAcid.value=arAcid;u.arachnidWeb.value=arWeb;this.three.getDrawingBufferSize(u.resolution.value)}
       if(this.bloomPass){this.bloomPass.threshold=1.02;this.bloomPass.strength=this.bloomStrength/35*photoProfile.bloom*(1+this.eyeAdaptation.glare);this.bloomPass.radius=.3+this.eyeAdaptation.glare*.12}
       if (QA_CPU_SKIN) syncSceneCpuSkins(this.scene) // 仅 ?cpu=1：无头 SwiftShader 不能画 GPU 蒙皮，改用 CPU 替身
       if (!preparingEntry) this.composer.render()
@@ -2225,6 +2260,12 @@ export class Renderer3D {
         this.mothProgramOwners.push(model); retained = true
       } finally { if (!retained) this.disposeItemModel(model) }
     }
+  }
+
+  private *warmBursterModel():Generator<void,void,unknown>{
+    for(let seed=0;seed<2;seed++)while(!this.entityCpuWarmup.request('burster-'+seed,bursterResourcesReady(seed),()=>prepareBursterJob(seed)))yield
+    const model=buildEntityMesh('burster',{seed:0});let retained=false
+    try{for(const cocoon of [0,1]){yield;animateBurster(model,{t:0,move:0,curl:1,arch:0,jaw:0,headYaw:0,headPitch:0,headRoll:0,burst:-1,regrow:1,cocoon,breathe:0});this.applyTextureQuality(model);this.enableShadows(model);yield* this.warmSceneTextures(model);yield* compileSceneJob(this.three,model,this.camera,this.scene,this.composer?.readBuffer??null);yield* uploadSceneJob(this.three,model,this.camera,this.scene,false,null,this.composer?.readBuffer??null)}this.bursterProgramOwner=model;retained=true}finally{if(!retained)this.disposeItemModel(model)}
   }
 
   private *warmWranglerModels():Generator<void,void,unknown>{
@@ -2765,6 +2806,7 @@ export class Renderer3D {
     if (engine.levelDef.id===1 && (!this.armsWarmupKey||this.armsWarmup)) return false
     if ([2, 3, 5, 8, 9, 11].includes(engine.levelDef.id) && !this.mothWarmupDone) return false
     if (engine.levelDef.id === 9 && !this.watchWarmupDone) return false
+    if (engine.levelDef.id===3&&!this.bursterWarmupDone) return false
     if ([2,8].includes(engine.levelDef.id) && !this.wranglerWarmupDone) return false
     const skyMap = (this.skyMesh?.material as THREE.MeshBasicMaterial | undefined)?.map
     if (skyMap?.userData.skyPending) return false
@@ -2968,6 +3010,7 @@ export class Renderer3D {
     this.tradersStream?.dispose(); this.tradersStream = null
     this.environmentFirstFrame=true;this.skyEnclosure=0;this.uwK=0;this.tintK=0
     this.entityCpuWarmup.clear()
+    this.l8Preparation.clear();clearArachnidWorldView(this.scene);clearCurabiturView(this.scene);clearCamoBoulders(this.scene)
     this.stopEntryPreparation?.(); this.stopEntryPreparation = null
     for(const {mesh}of this.cityInstances.values()){mesh.removeFromParent();this.retireWorld(mesh)}
     this.cityInstances.clear()
@@ -2983,6 +3026,9 @@ export class Renderer3D {
     this.watchProgramOwners.length = 0
     this.wranglerWarmup?.return();this.wranglerWarmup=null;this.wranglerWarmupDone=false
     for(const model of this.wranglerProgramOwners)this.disposeItemModel(model);this.wranglerProgramOwners=[]
+    this.bursterWarmup?.return();this.bursterWarmup=null;this.bursterWarmupDone=false
+    if(this.bursterProgramOwner)this.disposeItemModel(this.bursterProgramOwner);this.bursterProgramOwner=null
+    clearBursterProps(this.scene)
     clearWranglerProps(this.scene)
     this.mothView?.dispose(); this.mothView = undefined
     this.mothWarmup?.return(); this.mothWarmup = null; this.mothWarmupDone = false
@@ -3506,6 +3552,7 @@ export class Renderer3D {
       if(def.id===3 && (s.kind==='l3service'||s.kind==='cables'||s.kind==='pipes'&&s.data?.ceil)){structs.push(s);continue}
       yield
       if (def.id === 10 && s.kind === 'wheatpatch') { structs.push(s); continue }
+      if (s.kind === 'stoneinstruments') yield* prepareInstrumentCave(s, m)
       const mesh = def.id===11 && s.kind==='l11building' ? yield* buildL11Building(s) : buildStructure(s, def, m, def.id===1?l1RoofAt(m,s.x+s.w/2,s.y+s.h/2,H):H)
       if (mesh) {
         // Loop stair roots sit at their entrance landing, not the lower flight's void tile.
@@ -3529,7 +3576,7 @@ export class Renderer3D {
              def.id===5&&!ANIM_STRUCT(s)&&s.data?.sid===undefined){
             // L4 office furniture uses many material groups. A 16 m batch at
             // reduced detail cuts CPU draw submissions; exact proxies remain.
-            const batchSize=def.id===1?32:def.id===4&&this.detailDistanceScale<=.75?16:8
+            const batchSize=def.id===1?32:def.id===4?16:8
             const key=`${Math.floor((s.x-wx)/batchSize)},${Math.floor((s.y-wy)/batchSize)}`,roots=l3Static.get(key)??[]
             roots.push(mesh);l3Static.set(key,roots)
           }
@@ -3568,7 +3615,7 @@ export class Renderer3D {
       if(def.id===4){yield* batchL4StaticJob(batch,roots,l4SamplerFor(m))}else yield* batchStaticRootsJob(batch,roots)
       if(def.id===8)batch.userData.noCollision=true
       g.add(batch)
-      for(const root of roots)if(root.parent!==batch){root.visible=false;if(def.id===8)root.userData.colliderProxy=true}
+      for(const root of roots)if(root.parent!==batch){if(def.id===4)compactL4Proxy(root);else root.visible=false;if(def.id===8)root.userData.colliderProxy=true}
       yield
     }
     // 灯具（L0 全室内：自发光盒；v53：src 记录光源，亮度随其点亮状态）
@@ -3752,6 +3799,7 @@ export class Renderer3D {
     const staticBuckets = new Map<string, THREE.Object3D[]>()
     for (const s of m.structures) {
       yield
+      if (s.kind === 'stoneinstruments') yield* prepareInstrumentCave(s, m)
       const mesh = buildStructure(s, def, m, H)
       if (mesh) {
         // v7：结构模型按所在地面高度偏移（高台/低洼上的家具贴合地面）；v13：上层结构抬升 FLOOR_H；v54：三层结构抬升 2×FLOOR_H
@@ -3906,6 +3954,7 @@ export class Renderer3D {
     this.scene.environment = envProbe(def, skyTex,this.three)
   }
 
+  private l8Preparation=new L8EntityPreparation()
   private mothView?: MothWorldView
   private updateEntities(engine: Engine, dt: number) {
     const m = engine.map!
@@ -3914,6 +3963,7 @@ export class Renderer3D {
     if (engine.levelDef.id === 9) this.entityCpuWarmup.request('mangled-geo-1', mangledGeometryReady(1), () => prepareMangledJob(1))
     ;(this.mothView ??= new MothWorldView(this.scene)).sync(engine, this.wallH) // 死亡飞蛾巢穴道具、酸池、胶状球
     this.entityCpuWarmup.advance()
+    this.l8Preparation.advance(new Set(m.entities))
     const seen = new Set<number>()
     const entityBuildDeadline=performance.now()+1.5
     let entityBuilds=0
@@ -3921,22 +3971,25 @@ export class Renderer3D {
     for (const e of m.entities) {
       seen.add(e.id)
       let grp = this.entityMeshes.get(e.id)
-      const radius = (e.def.type === 'thething' ? 48 : e.def.type === 'mangled' ? 30 : e.def.type === 'wrangler' ? 36 : 12) * Math.max(1, e.def.scale ?? 1)
+      const radius = (e.def.type === 'thething' ? 300 : e.def.type === 'mangled' ? 30 : e.def.type === 'wrangler' ? 36 : 12) * Math.max(1, e.def.scale ?? 1)
       const reach = Math.min(this.camera.far, this.fogEnabled ? (this.scene.fog as THREE.Fog)?.far ?? 60 : this.camera.far) + radius
       const distance = Math.hypot(e.x-engine.player.x,e.y-engine.player.y)
       if (distance > (e.def.mothForm==='larva'?12:reach)) { if (grp) grp.visible = false; e.presentationPending = false; continue }
       // v53：L3 高智能实体建模变体（无面灵错位器官/石器、水豚尸鼠；seed=实体 id 保证重建一致）；
       // 尸鼠形态按层级固定：L2 灰白廊道种群 / L3 水豚 / 其余深褐（v53，替代原随机二选一）
-      const eOpts = (e.def.type === 'wrangler' || e.def.l3face || e.def.tool || e.def.capybara || e.def.type === 'faceling' || e.def.type === 'corpserat' || e.def.type === 'arachnid' || e.def.type === 'deathmoth' || e.def.type === 'smiler' || e.def.type === 'hound' || e.def.type === 'duller' || e.def.type === 'skinstealer' || e.def.type === 'clump' || e.def.type === 'wretch' || e.def.type === 'dryshrimp' || e.def.type === 'partygoer' || e.def.type === 'nguithr' || e.def.type === 'arms')
+      const cb=e.def.type==='curabitur'?ensureCurabitur(engine,e):undefined
+      const eOpts = (e.def.type === 'camocrawler' || e.def.type === 'curabitur' || e.def.type === 'lightguide' || e.def.type === 'burster' || e.def.type === 'wrangler' || e.def.l3face || e.def.tool || e.def.capybara || e.def.type === 'faceling' || e.def.type === 'corpserat' || e.def.type === 'arachnid' || e.def.type === 'deathmoth' || e.def.type === 'smiler' || e.def.type === 'hound' || e.def.type === 'duller' || e.def.type === 'skinstealer' || e.def.type === 'clump' || e.def.type === 'wretch' || e.def.type === 'dryshrimp' || e.def.type === 'partygoer' || e.def.type === 'nguithr' || e.def.type === 'arms')
         ? {
           l3face: e.def.l3face, tool: e.def.tool, capybara: e.def.capybara, mothForm: e.def.mothForm,
           ratMorph: ratMorphFor(engine.levelDef.id, e.def),
+          curabiturSex:cb?.sex,curabiturSeed:cb?.seed,
           seed: e.id, ceilingCrawler: e.def.ceilingCrawler,
           arachnidMorph: e.def.arachnidMorph, arachnidBreed: e.def.arachnidBreed, herbivore: e.def.herbivore,
           smilerKind: e.sm?.kind ?? e.def.smilerKind,
           houndNeutral: e.hd?.neutral ?? ((e.def.houndKind ? e.def.houndKind === 'neutral' : engine.levelDef.id === 11) && !e.provoked && e.hp >= e.def.hp),
           wretchKind: e.wr?.kind ?? e.def.wretchKind,
           partygoerColor: e.pg?.color, partygoerIntern: e.pg?.intern, partygoerBalloonArm: e.pg?.balloonArm,
+          arachnidVariant: e.def.type === 'arachnid' ? arachnidKindOf(e) : undefined, arachnidMother: e.arachnid?.mother, // [L8-arachnid]
           l3clump: !!e.def.l3clump,
           wranglerKind: e.wg?.kind??e.def.wranglerKind, wranglerPregnant: e.wg?.pregnant,
           nguithr: e.def.type === 'nguithr' ? nguithrState(engine,e) : undefined,
@@ -3948,6 +4001,7 @@ export class Renderer3D {
           const l3 = !!e.def.l3clump, key = `clump-${l3}-${((e.id % 3) + 3) % 3}`
           if (!this.entityCpuWarmup.request(key, clumpBlobReady(l3, e.id), () => prepareClumpBlob(l3, e.id))) continue
         }
+        if(e.def.type==='burster'&&!this.entityCpuWarmup.request('burster-'+Math.abs(Math.floor(e.id))%2,bursterResourcesReady(e.id),()=>prepareBursterJob(e.id)))continue
         if (e.def.type === 'partygoer' && !this.entityCpuWarmup.request('partygoer-geo', partygoerGeometryReady(), preparePartygoerJob)) continue
         if(e.def.type==='wrangler'){const kind=e.wg?.kind??e.def.wranglerKind??'male',pregnant=!!e.wg?.pregnant;if(!this.entityCpuWarmup.request('wrangler-'+kind+'-'+pregnant,wranglerResourcesReady(kind,pregnant),()=>prepareWranglerJob(kind,pregnant)))continue}
         if (e.def.type === 'mangled' && !this.entityCpuWarmup.request('mangled-geo-1', mangledGeometryReady(1), () => prepareMangledJob(1))) continue // 残缺者：远景精度各部位分帧准备
@@ -3962,7 +4016,8 @@ export class Renderer3D {
         }
         if(entityBuilds>0&&(entityBuilds>=2||performance.now()>entityBuildDeadline))continue
         entityBuilds++
-        grp = e.disguised
+        if(isL8Remade(e.def.type)){grp=this.l8Preparation.request(e,eOpts??{})??undefined;if(!grp)continue}
+        grp ??= e.disguised
           ? (e.disguised === 'human' ? humanDisguiseMesh(e.id, engine.levelDef.id, e.ss?.skinSeed) : buildItemMesh(e.disguised))
           : buildEntityMesh(e.def.type, eOpts)
         grp.userData.wasDisguised = !!e.disguised
@@ -4069,7 +4124,8 @@ export class Renderer3D {
       } else if (et === 'thething') {
         // 巨躯悬在水中，不能套用陆生实体“踩地颠簸”；极慢的升沉让尺度更重。
         grp.position.y = gz + Math.sin(t * 0.42) * 0.16
-      } else if (et === 'corpserat' || et === 'dryshrimp' || et === 'partygoer' || et === 'watcher' || et === 'strider' || et === 'mangled') {
+        grp.position.x -= Math.cos(e.facing) * THINGM.HEAD_C; grp.position.z -= Math.sin(e.facing) * THINGM.HEAD_C
+      } else if (et === 'arachnid' || et === 'camocrawler' || et === 'curabitur' || et === 'lightguide' || et === 'burster' || et === 'corpserat' || et === 'dryshrimp' || et === 'partygoer' || et === 'watcher' || et === 'strider' || et === 'mangled') {
         grp.position.y = gz // Dedicated rat/shrimp/partygoer animations own their vertical pose.
       } else if (!e.def.stationary && et !== 'deathmoth') {
         grp.position.y = gz + Math.abs(Math.sin(gait)) * gaitAmp * 0.12
@@ -4154,155 +4210,22 @@ export class Renderer3D {
           if (grp.userData.facesZ) { parts.torso.rotation.x = chase ? 0.16 : 0; parts.torso.rotation.z = 0 }
           else parts.torso.rotation.z = chase ? -0.16 : 0
         }
-        // v58：小小——泳姿（常泳/速游平滑过渡）+ 甲壳终段张开 + 暗处亮眼/荧光斑
-        if (et === 'tiny') {          const pd = Math.hypot(e.x - engine.player.x, e.y - engine.player.y)
-          const swimK = (grp.userData.swimK = THREE.MathUtils.lerp(Number(grp.userData.swimK ?? 0.15), chase ? 1 : e.state === 'idle' ? 0.12 : 0.4, Math.min(1, dt * 3.5)))
-          const openK = (grp.userData.openK = THREE.MathUtils.lerp(Number(grp.userData.openK ?? 0), e.state === 'attack' || (chase && pd < 3.2) ? 1 : 0, Math.min(1, dt * 5)))
-          const wf = 2.2 + swimK * 4.2 // 摆动频率随泳速
-          if (parts.torso) {
-            parts.torso.rotation.z = -(0.28 + swimK * 0.5) // 俯身前探（+X 模型前倾=本地 z 负转）
-            parts.torso.rotation.x = Math.sin(t * wf) * 0.05 * (0.4 + swimK)
-          }
-          if (parts.tarfin) parts.tarfin.rotation.x = Math.sin(t * wf * 0.8) * 0.12 * (0.5 + swimK)
-          if (parts.armL && e.state !== 'attack') parts.armL.rotation.x = 0.55 * swimK + Math.sin(t * wf) * 0.22 * (1 - swimK * 0.4)
-          if (parts.armR && e.state !== 'attack') parts.armR.rotation.x = 0.55 * swimK + Math.sin(t * wf + 1.3) * 0.22 * (1 - swimK * 0.4)
-          if (parts.legL) parts.legL.rotation.x = Math.sin(t * wf * 1.1) * (0.12 + swimK * 0.45)
-          if (parts.legR) parts.legR.rotation.x = Math.sin(t * wf * 1.1 + Math.PI) * (0.12 + swimK * 0.45)
-          if (parts.carL) parts.carL.rotation.y = openK * 1.15
-          if (parts.carR) parts.carR.rotation.y = -openK * 1.15
-          if (parts.mouth) parts.mouth.scale.setScalar(0.01 + openK * 0.99)
-          const eyeMat = (grp.userData.eyeMats as THREE.MeshLambertMaterial[] | undefined)?.[0]
-          if (eyeMat) eyeMat.emissiveIntensity = (0.12 + Math.min(1, Math.max(0, -e.z) / 35) * 1.5) * (0.85 + Math.sin(t * 2.3) * 0.15)
-          const spotMat = grp.userData.spotMat as THREE.MeshLambertMaterial | undefined
-          if (spotMat) spotMat.emissiveIntensity = 0.35 + Math.min(1, Math.max(0, -e.z) / 40) * 0.6 + Math.sin(t * 3.1) * 0.12
-        }
-        // 七层之物——18 节、约 40m 的连续拖链：头领航，后段以更大的相位延迟游动；
-        // 鳃、残鳍、咽喉与“故障”切片全部随状态驱动，而不是只有整条模型平移。
+        // [thing] 七层之物：28 节跟随链 + 8 段动画（renderer/thingAnim.ts）。AI 状态 → 片段：
+        //   attack 扑咬（按前摇进度）/ flee 惊逃 / chase 冲刺 / investigate 盘旋 / wander 缓游 / 其余 休眠漂流；强光照中叠加畏光。
         if (et === 'thething') {
-          interface ChainNode { x: number; y: number; z: number }
-          const count = Number(grp.userData.thingSegmentCount ?? 18)
-          const spacing = Number(grp.userData.thingSegmentSpacing ?? 2.16)
-          if (!grp.userData.chain) {
-            grp.userData.chain = Array.from({ length: count }, (_, i) => ({
-              x: grp.position.x - Math.cos(e.facing) * (1.2 + i * spacing),
-              y: grp.position.y,
-              z: grp.position.z + Math.sin(e.facing) * (1.2 + i * spacing),
-            }))
-          }
-          const chain = grp.userData.chain as ChainNode[]
-          const ry = grp.rotation.y, cs = Math.cos(ry), sn = Math.sin(ry)
-          const swimK = e.state === 'chase' || e.state === 'attack' ? 1 : e.state === 'investigate' ? 0.58 : e.state === 'wander' ? 0.34 : 0.12
-          const waveRate = 0.68 + swimK * 1.12
-          let px = grp.position.x, py = grp.position.y, pz = grp.position.z
-          for (let i = 0; i < count; i++) {
-            const seg = parts[`seg${i}`]
-            const c = chain[i]
-            if (!seg) { px = c.x; pz = c.z; continue }
-            seg.scale.set(1, 1, 1) // 故障脉冲会临时拉伸，下一帧先恢复
-            // 期望位置：上一节后方 spacing 米；后段拖延更明显，形成沉重而非蛇玩具式的摆动。
-            const dx = c.x - px, dz = c.z - pz
-            const dd = Math.hypot(dx, dz) || 1
-            const lag = Math.min(1, dt * Math.max(1.05, 3.15 - i * 0.075))
-            c.x += (px + (dx / dd) * spacing - c.x) * lag
-            c.z += (pz + (dz / dd) * spacing - c.z) * lag
-            c.y += (py - c.y) * Math.min(1, dt * Math.max(0.9, 2.15 - i * 0.045))
-            const tailGain = 0.28 + i / Math.max(1, count - 1) * 1.28
-            const sway = (Math.sin(t * waveRate - i * 0.58) * (0.18 + swimK * 0.3)
-              + Math.sin(t * 0.31 + i * 1.37) * 0.08) * tailGain
-            const swayY = (Math.sin(t * (waveRate * 0.72) - i * 0.44) * (0.07 + swimK * 0.13)
-              + Math.sin(t * 0.23 + i * 0.91) * 0.035) * tailGain
-            const perpX = -Math.sin(e.facing), perpZ = -Math.cos(e.facing) // 世界系垂直于面向（x,z）
-            const wx = c.x + perpX * sway, wz = c.z + perpZ * sway, wy = c.y + swayY
-            // 世界 → grp 局部（grp 仅平移 + 绕 y 转 ry）：local = R_y(-ry)·(world-pos)
-            const ox = wx - grp.position.x, oz = wz - grp.position.z
-            seg.position.set(ox * cs - oz * sn, wy - grp.position.y, ox * sn + oz * cs)
-            // 体节朝向：指向前一节（朝头方向），局部系换算
-            const fx0 = px - wx, fz0 = pz - wz
-            const fd = Math.hypot(fx0, fz0) || 1
-            const worldYaw = Math.atan2(-(fz0 / fd), fx0 / fd) // +X 模型：rotation.y = atan2(-dz, dx)
-            let rel = worldYaw - ry
-            rel = ((rel + Math.PI * 3) % (Math.PI * 2)) - Math.PI
-            seg.rotation.y = rel
-            const vertical = py - wy
-            seg.rotation.z = Math.atan2(vertical, Math.max(0.01, Math.hypot(fx0, fz0)))
-            seg.rotation.x = Math.sin(t * waveRate - i * 0.62) * (0.025 + swimK * 0.055)
-            const fin = parts[`fin${i}`]
-            if (fin) {
-              fin.scale.y = 1
-              fin.rotation.x = Math.sin(t * (0.74 + swimK * 0.9) - i * 0.7) * (0.06 + swimK * 0.12)
-            }
-            const gill = parts[`gill${i}`]
-            if (gill) {
-              const breath = 1 + Math.max(0, Math.sin(t * 1.55 - i * 0.18)) * (0.08 + swimK * 0.16)
-              gill.scale.set(1, breath, breath)
-            }
-            for (const side of ['L', 'R']) {
-              const pect = parts[`pect${side}${i}`]
-              if (pect) pect.rotation.x = (side === 'L' ? 1 : -1) * (0.12 + Math.sin(t * waveRate - i) * (0.1 + swimK * 0.18))
-            }
-            px = c.x; py = c.y; pz = c.z
-          }
-          // 呼吸与微小颅骨偏航。追击时头更稳定，像一艘有惯性的潜艇，而非左右乱摇。
-          const breath = 0.5 + 0.5 * Math.sin(t * 1.48)
-          const recoilK = THREE.MathUtils.clamp((e.lightRecoilT ?? 0) / 0.42, 0, 1)
-          if (parts.head) {
-            parts.head.rotation.y = Math.sin(t * 0.29) * (chase ? 0.025 : 0.085) + recoilK * 0.22
-            parts.head.rotation.z = Math.sin(t * 0.37) * 0.025 + recoilK * 0.11
-          }
-          if (parts.throat) parts.throat.scale.set(1 + breath * 0.012, 1 + breath * 0.025, 1 + breath * 0.018)
-          if (parts.jaw && e.state !== 'attack') {
-            const jawRest = -0.055 + recoilK * 0.045 // 被强光刺中时本能闭口、收紧咽喉
-            parts.jaw.rotation.z += (jawRest - parts.jaw.rotation.z) * Math.min(1, dt * 3.2)
-          }
-          if (parts.upperJaw && e.state !== 'attack') {
-            const upperRest = 0.018 - recoilK * 0.014
-            parts.upperJaw.rotation.z += (upperRest - parts.upperJaw.rotation.z) * Math.min(1, dt * 3.2)
-          }
-          if (parts.tongue) parts.tongue.position.z = Math.sin(t * 0.9) * 0.025
-          if (recoilK > 0) for (let i = 0; i < Math.min(6, count); i++) {
-            const gill = parts[`gill${i}`], fin = parts[`fin${i}`]
-            if (gill) gill.scale.z *= 1 - recoilK * 0.52
-            if (fin) fin.scale.y = 1 - recoilK * 0.34
-          }
-          const eyeMats = grp.userData.eyeMats as THREE.MeshLambertMaterial[] | undefined
-          if (eyeMats) for (const mat of eyeMats) mat.emissiveIntensity = 0.28 + breath * 0.24 + (chase ? 0.28 : 0)
-          const lureMat = grp.userData.thingLureMat as THREE.MeshLambertMaterial | undefined
-          if (lureMat) lureMat.emissiveIntensity = (0.28 + Math.pow(Math.max(0, Math.sin(t * 0.71)), 4) * 1.2) * (1 - recoilK * 0.82)
-          // 故障脉冲：低占空比、确定性地触发色差鬼影/扫描切片，并把三个远隔体节沿不同轴拉断。
-          // 大多数时间完全不可见，避免一直亮成科幻霓虹灯。
-          const fl = Math.sin(t * 7.31) * Math.sin(t * 19.7) + Math.sin(t * 41.3) * 0.42
-          const burst = THREE.MathUtils.clamp((fl - 0.42) / 0.58, 0, 1)
-          const glitchMats = grp.userData.glitchMats as THREE.MeshBasicMaterial[] | undefined
-          if (glitchMats) for (let i = 0; i < glitchMats.length; i++) glitchMats[i].opacity = burst * (i % 5 < 2 ? 0.22 : 0.5)
-          for (const [j, gi] of [4, 10, 16].entries()) {
-            const gs = parts[`seg${gi}`], ghost = parts[`glitch${gi}`]
-            if (!gs || !ghost) continue
-            ghost.visible = burst > 0.025
-            ghost.position.set(Math.sin(t * 53 + j) * burst * 0.34, Math.sin(t * 37 + j * 2) * burst * 0.18, Math.cos(t * 47 + j) * burst * 0.24)
-            gs.scale.set(1 + burst * (j === 1 ? 0.12 : -0.045), 1 + burst * (j === 0 ? 0.16 : -0.08), 1 + burst * (j === 2 ? 0.22 : 0.04))
-            gs.position.x += Math.sin(t * 61 + gi) * burst * 0.12
-            gs.position.z += Math.cos(t * 43 + gi) * burst * 0.16
-          }
+          const ts = (grp.userData.thingAnim ??= makeThingAnimState()) as ThingAnimState
+          // [thing] 阶段 3：惊逃用 thingAI 的 fleeT（不再借 stunned）；休眠 = 漂流装死
+          const th = e.th
+          const clip: ThingClip = (th?.fleeT ?? 0) > 0 ? 'flee' : th?.dormant ? 'drift' : e.state === 'attack' ? 'bite' : chase ? 'dash'
+            : e.state === 'investigate' ? 'circle' : e.state === 'wander' ? 'cruise' : 'drift'
+          updateThingLod(grp, this.camera.position, 1) // 分部位 LOD：靠近才按需构建精细级（每帧最多 1 个部位）
+          animateThing(grp, ts, {
+            t, dt, clip, originX: m.inf?.ox ?? 0, originY: m.inf?.oy ?? 0,
+            progress: clip === 'bite' ? THREE.MathUtils.clamp(1 - lk, 0, 1) : undefined,
+            recoil: THREE.MathUtils.clamp((e.lightRecoilT ?? 0) / 0.42, 0, 1),
+          })
         }
-        if (et === 'arachnid' && parts.arachnidBody) {
-          const moving = gaitAmp > 0
-          const g = e.animT * (e.def.arachnidMorph === 'mite' ? 10.5 : 8.2)
-          for (let i = 0; i < 4; i++) {
-            const ph = Math.sin(g + i * 1.35) * (moving ? 0.42 : 0.07)
-            const l = parts[`legL${i}`], r = parts[`legR${i}`]
-            const lBase = Number(l?.userData.baseRy ?? 0), rBase = Number(r?.userData.baseRy ?? 0)
-            if (l) { l.rotation.x = Math.max(-0.1, ph); l.rotation.y = lBase + ph * 0.16 }
-            if (r) { r.rotation.x = Math.min(0.1, -ph); r.rotation.y = rBase - ph * 0.16 }
-          }
-          if (parts.abdomen) {
-            if (parts.abdomen.userData.baseScaleY === undefined) parts.abdomen.userData.baseScaleY = parts.abdomen.scale.y
-            parts.abdomen.scale.y = Number(parts.abdomen.userData.baseScaleY) * (1 + Math.sin(t * 2.1) * 0.025)
-            parts.abdomen.rotation.y = Math.sin(t * 0.75) * 0.08
-          }
-          if (parts.tail) parts.tail.rotation.z = Math.sin(t * 1.8) * 0.09 + (lunging ? -0.35 : 0)
-          if (parts.clawL) parts.clawL.rotation.y = Math.sin(t * 3.2) * 0.12
-          if (parts.clawR) parts.clawR.rotation.y = -Math.sin(t * 3.2) * 0.12
-        }
+        // [L8-arachnid] 旧蛛形纲「只换皮」腿摆动已移除，改由 arachnidRender.animateArachnidEntity 播放片段
         if (ceilingRat) {
           // 每约 19 秒出现一个短暂排泄循环：先在洞顶竖起身体，随后粪粒向地面坠落。
           const cycle = ((this.time + e.id * 1.73) % 19) / 19
@@ -4321,26 +4244,8 @@ export class Renderer3D {
         if (e.state === 'attack') {
           const wind = lk > 0.45 ? (1 - lk) / 0.55 : 0 // 蓄力 0→1
           const strike = lk <= 0.45 ? 1 - lk / 0.45 : 0 // 出手 0→1
-          if (et === 'tiny') {
-            // v58：骨矛后收蓄力 → 拧身前刺（甲壳由 openK 分支同步张开）
-            if (parts.armR) parts.armR.rotation.x = -wind * 0.9 + strike * 1.3
-            if (parts.spear) parts.spear.position.x = (parts.spear.userData.gripX??0.1) - wind * 0.3 + strike * 0.6
-            grp.position.x += Math.cos(e.facing) * strike * 0.4
-            grp.position.z += -Math.sin(e.facing) * strike * 0.4
-          } else if (et === 'thething') {
-            // 上颚抬起、下颚下掀形成真正的剪式开口；口腔面和咽喉不再缩放，杜绝“红泡膨胀”。
-            const gape = THREE.MathUtils.clamp(wind * 0.72 + strike, 0, 1)
-            if (parts.upperJaw) parts.upperJaw.rotation.z = 0.018 + gape * 0.38
-            if (parts.jaw) parts.jaw.rotation.z = -(0.055 + gape * 0.96)
-            if (parts.throat) parts.throat.scale.set(1, 1 + wind * 0.025, 1 + wind * 0.018)
-            if (parts.tongue) parts.tongue.scale.set(1 + strike * 0.15, 1, 1)
-            for (let i = 0; i < 6; i++) {
-              const gill = parts[`gill${i}`], fin = parts[`fin${i}`]
-              if (gill) gill.scale.z = 1 + gape * 0.48
-              if (fin) fin.rotation.x += Math.sin(t * 9 + i) * gape * 0.16
-            }
-            grp.position.x += Math.cos(e.facing) * strike * 0.9
-            grp.position.z += -Math.sin(e.facing) * strike * 0.9
+          if (et === 'thething') {
+            // [thing] 扑咬由 thingAnim 的 bite 片段驱动（头和整条链一起前冲），这里不再额外推 grp
           } else if (et === 'hound') {
             // 后坐蓄力 → 前扑：躯干俯仰 + 前肢扬起 + 整体前冲
             if (parts.torso) parts.torso.rotation.z = wind * 0.35 - strike * 0.4
@@ -4403,9 +4308,11 @@ export class Renderer3D {
       })
       if (et === 'wrangler') animateWrangler(grp, e, engine, this.time)
       if (et === 'hound' && !e.dead) animateHound(grp, e, this.time, gz)
+      if (et === 'camocrawler' && !e.dead) animateCamo(grp, e, dt, distance, gz, engine)
       if ((et === 'watcher' || et === 'strider' || et === 'mangled') && (!e.dead || et === 'strider')) {
         if (et === 'mangled') this.entityCpuWarmup.request('mangled-geo-0', mangledGeometryReady(0), () => prepareMangledJob(0)) // 精细精度在后台继续分帧准备
         animateNW(grp, e, gz, { player: engine.player, camera: this.camera, growth: mangledGrowth(engine), held: nwCaptor(engine) === e })
+        if(et==='mangled')syncMangledLegColliders(grp,e)
       }
       if (et === 'clump' && !e.dead) {
         const up = (e.cl?.ceil ?? 0) > 0.01 || e.cl?.phase === 'pullup' ? ceilingHeightAt(m, e.x, e.y, this.wallH, bandOfZ(e.z)) - gz : 3
@@ -4415,8 +4322,11 @@ export class Renderer3D {
       if (et === 'duller' && !e.dead) animateDuller(grp, e, this.time, gz, m.inf?.ox??0, m.inf?.oy??0)
       if (et === 'skinstealer' && !e.dead && !e.disguised) animateSkinStealer(grp, e, this.time, gz)
       if (et === 'skinstealer') this.updateSkinBubble(engine, e, gz)
+      if (et === 'lightguide' && !e.dead) animateLightguideEntity(grp, e, dt) // [L8-lightguide]
       if (et === 'wretch' && !e.dead) animateWretch(grp, e, this.time, gz)
+      if (et === 'tiny') animateTinyEntity(grp, e, this.time, dt, gz, Math.hypot(e.x - engine.player.x, e.y - engine.player.y), m.inf?.ox ?? 0, m.inf?.oy ?? 0) // [tiny] 重制小小：泳姿/盘踞/张口/刺击/被巨响逼退，覆盖通用动画
       if (et === 'corpserat' && !e.dead) animateRat(grp, e, this.time, gz) // v79
+      if (et === 'arachnid') animateArachnidEntity(grp, e, this.time, gz, dt, distance) // [L8-arachnid] 按 AI 片段采样（含 death）
       if (et === 'dryshrimp' && !e.dead) { animateShrimp(grp, e, this.time, gz); const rig = grp.userData.shrimpRig as { detail?: THREE.Object3D[] } | undefined; if (rig?.detail) for (const o of rig.detail) o.visible = distance < 12 } // v81：前附肢（带小刺）12m 外隐藏
       if (et === 'corpserat') { const fur = (grp.userData.ratRig as { fur?: THREE.Mesh[] } | undefined)?.fur; if (fur) for (const f of fur) { f.visible = distance < 10; f.castShadow = false } } // v80：毛壳 10m 外隐藏
       if (et === 'corpserat') this.updateEntityBubble(engine, e, gz, e.rt && !e.dead && e.rt.bubbleT > 0 ? e.rt.bubbleText : '', 0.75 * (e.def.scale ?? 1))
@@ -4472,6 +4382,8 @@ export class Renderer3D {
           // v81：被吃掉（缩进捕食者嘴里）/ 被打死（翻肚、鳍片耷拉）
           grp.scale.setScalar(esc)
           animateShrimpDeath(grp, e, d, gz)
+        } else if (et === 'camocrawler') {
+          animateCamoDeath(grp, e, gz, dt) // [L8-camo] death 片段（膝软侧倒蜷缩）
         } else if (et === 'hound') {
           // 侧翻瘫倒、四肢抽搐收拢
           grp.rotation.z = d * 1.55
@@ -4504,6 +4416,8 @@ export class Renderer3D {
           grp.position.y=gz+Math.max(.08,start-4.9*age*age)
           grp.rotation.z=-Math.min(1,age/.55)*1.3
           grp.scale.setScalar(Math.max(.01,Math.min(1,k*2.5)))
+        } else if (et === 'arachnid') {
+          arachnidDeathPose(grp, e, d, gz) // [L8-arachnid] death 片段已在上面播放
         } else if (et === 'seated') {
           // 瘫倒在前方扶手
           if (parts?.torso) parts.torso.rotation.x = d * 0.85
@@ -4517,8 +4431,12 @@ export class Renderer3D {
         }
       }
       if (et === 'nguithr') this.updateNguithrMesh(engine, e, grp, dt, gz) // 最后执行：覆盖通用的朝向/缩放/死亡变换
+      if (et === 'curabitur') animateCurabiturEntity(grp, e, engine, dt, distance, gz)
+      if(et==='burster')animateBursterEntity(grp,e,this.time,dt,gz)
       if (et === 'arms') this.updateArmsMesh(engine, e, grp, dt) // 最后执行：覆盖通用的位置/朝向/显隐（风口一直可见）
     }
+    updateCurabiturView(this.scene, engine, dt, this.entityMeshes) // [L8-curabitur] 腐液滩 / 下落孢子 / 散播粒子
+    updateArachnidWorldView(this.scene, engine, this.time, dt, (id) => this.entityMeshes.get(id)) // [L8-arachnid] 蛛巢/茧/网/酸雾
     for (const [id, grp] of this.entityMeshes) {
       if (!this.itemWarmup.ready(grp)) grp.visible = false
       if (!seen.has(id)) {
@@ -4538,6 +4456,7 @@ export class Renderer3D {
       for (const mt of pk.mats) mt.opacity = 1 - k
       if (k >= 1) { this.scene.remove(pk.grp); this.disposeItemModel(pk.grp); this.skinPeels.splice(i, 1) }
     }
+    syncCamoBoulders(this.scene, engine) // [L8-camo] 砸地后留在原地的巨石
     const gearSeen = new Set<number>()
     for (const gear of m.ratGear ?? []) {
       const x = gear.wx - (m.inf?.ox ?? 0), y = gear.wy - (m.inf?.oy ?? 0)
@@ -5101,12 +5020,14 @@ export class Renderer3D {
   }
 
   private disposeItemModel(root: THREE.Group) {
+    root.userData.releasePending?.()
     this.itemWarmup.cancel(root)
     afterSceneCompile(root, () => {
       const geometries = new Set<THREE.BufferGeometry>(), materials = new Set<THREE.Material>(), skeletons = new Set<THREE.Skeleton>()
       root.traverse(o => {
         const mesh = o as THREE.Mesh
         if (mesh.geometry) geometries.add(mesh.geometry)
+        if((mesh as THREE.InstancedMesh).isInstancedMesh)(mesh as THREE.InstancedMesh).dispose()
         if ((mesh as THREE.SkinnedMesh).isSkinnedMesh) skeletons.add((mesh as THREE.SkinnedMesh).skeleton)
         if (mesh.material) for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) materials.add(material)
       })
@@ -5318,6 +5239,7 @@ export class Renderer3D {
         }
         continue
       }
+      if (k0 === 'stonechime') { swingStoneChime(g, s.data?.ring === 1, this.time, dt); continue } // [kazoo] 乐器洞石风铃：铃声未息时石管摆动
       if (k0 === 'cavefloat') {
         if (g.userData.floatBase === undefined) g.userData.floatBase = g.position.y
         g.position.y = Number(g.userData.floatBase) + Math.sin(this.time * 0.72 + Number(g.userData.bob?.phase ?? 0)) * 0.075

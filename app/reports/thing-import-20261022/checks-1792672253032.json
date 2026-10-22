@@ -1,0 +1,102 @@
+[
+  {
+    "name": "check:thing",
+    "code": 0,
+    "elapsedMs": 12650.8652,
+    "tail": [
+      "✔ L7 生成仍是纯函数",
+      "✔ 引擎侧跟随链与渲染模型同节距、同节数、同半径",
+      "check:thing 52/52 全部通过"
+    ]
+  },
+  {
+    "name": "check:thing-anim",
+    "code": 0,
+    "elapsedMs": 1595.772500000001,
+    "tail": [
+      "✔ glitch：相邻体节间距 8.16~10.89m（节距 8.16）",
+      "✔ glitch：头颈最大间距 3.82m（不脱节）",
+      "check:thing-anim 31/31 全部通过"
+    ]
+  },
+  {
+    "name": "check:thing-integration",
+    "code": 0,
+    "elapsedMs": 2234.115899999999,
+    "tail": [
+      "✔ far view returns to low LOD",
+      "✔ tar glyph texture is protected and shared",
+      "thing integration: 799/799"
+    ]
+  },
+  {
+    "name": "check:entity-preparation",
+    "code": 0,
+    "elapsedMs": 1028.1900999999998,
+    "tail": [
+      "> my-app@0.0.0 check:entity-preparation",
+      "> esbuild scripts/check-entity-preparation.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-entity-preparation.mjs && node .cache/check-entity-preparation.mjs",
+      "entity preparation checks: 17 passed"
+    ]
+  },
+  {
+    "name": "check:entity-forms",
+    "code": 0,
+    "elapsedMs": 1021.145800000002,
+    "tail": [
+      "> my-app@0.0.0 check:entity-forms",
+      "> esbuild scripts/check-entity-forms.ts --bundle --platform=node --format=esm --outfile=.cache/check-entity-forms.mjs && node .cache/check-entity-forms.mjs",
+      "entity forms checks: 252 passed; 49 forms / 10 parents"
+    ]
+  },
+  {
+    "name": "check:tiny-arms",
+    "code": 0,
+    "elapsedMs": 15150.809100000002,
+    "tail": [
+      "  \"where\": {}",
+      " }",
+      "}"
+    ]
+  },
+  {
+    "name": "check:jerry",
+    "code": 0,
+    "elapsedMs": 9938.410499999998,
+    "tail": [
+      "✔ 按交互键接触：教化 +25（0 → 25）",
+      "✔ 3.4m 外：超出接触距离",
+      "120/120 通过"
+    ]
+  },
+  {
+    "name": "check:item-batches",
+    "code": 0,
+    "elapsedMs": 624.1754999999976,
+    "tail": [
+      "> my-app@0.0.0 check:item-batches",
+      "> esbuild scripts/check-item-batches.ts --bundle --platform=node --format=esm --outfile=.cache/check-item-batches.mjs && node .cache/check-item-batches.mjs",
+      "item batches regression passed: 29 checks"
+    ]
+  },
+  {
+    "name": "check:refined-items",
+    "code": 0,
+    "elapsedMs": 1736.431199999999,
+    "tail": [
+      "> esbuild scripts/check-refined-item-meshes.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-refined-item-meshes.mjs && node .cache/check-refined-item-meshes.mjs",
+      "{\"items\":54,\"maxTriangles\":980,\"maxBatches\":3,\"checks\":2050}",
+      "refined item mesh checks passed"
+    ]
+  },
+  {
+    "name": "build",
+    "code": 0,
+    "elapsedMs": 48859.232899999995,
+    "tail": [
+      "dist/assets/retroAvatar-ByynA38K.js             480.07 kB │ gzip:   144.87 kB",
+      "dist/assets/App-73dqt2A1.js                   5,156.76 kB │ gzip: 1,825.82 kB",
+      "✓ built in 30.53s"
+    ]
+  }
+]

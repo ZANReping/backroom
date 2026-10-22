@@ -1,0 +1,128 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 1221,
+  "cdp": 1222,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\tiny-final-20261022\\realistic\\qa-1792660708863-52332",
+    "--remote-debugging-port=1222",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 23504,
+    "server": 24944
+  },
+  "appBootMs": 19219.7115,
+  "entryMs": 3760.705099999999,
+  "firstPlayableMs": 30901.641600000003,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "checks": [],
+    "records": [],
+    "status": {
+      "level": 4,
+      "player": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "chunks": 9,
+      "tasks": 4,
+      "memory": {
+        "geometries": 467,
+        "textures": 67
+      },
+      "calls": 1,
+      "triangles": 1
+    }
+  },
+  "perch": {
+    "name": "perch",
+    "level": 7,
+    "entryMs": 4989.10000000149,
+    "player": {
+      "x": -128.3,
+      "y": 18.900000000000006,
+      "z": -44.68
+    },
+    "chunks": 10,
+    "tasks": 1,
+    "memory": {
+      "geometries": 500,
+      "textures": 184
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: actual aiming finds Tiny conversation\",\"lineNumber\":17,\"columnNumber\":19,\"scriptId\":\"662\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"ok\",\"scriptId\":\"662\",\"url\":\"http://127.0.0.1:1221/verifier/tiny-final-check.ts\",\"lineNumber\":16,\"columnNumber\":18},{\"functionName\":\"close\",\"scriptId\":\"662\",\"url\":\"http://127.0.0.1:1221/verifier/tiny-final-check.ts\",\"lineNumber\":113,\"columnNumber\":4}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: actual aiming finds Tiny conversation\\n    at ok (http://127.0.0.1:1221/verifier/tiny-final-check.ts:17:19)\\n    at Object.close (http://127.0.0.1:1221/verifier/tiny-final-check.ts:114:5)\",\"objectId\":\"-6604559669579022106.2.1\"}}",
+  "partial": {
+    "checks": [
+      "natural Tiny guards generated L9 door",
+      "new shark-pelt model in actual renderer"
+    ],
+    "records": [
+      {
+        "name": "perch",
+        "level": 7,
+        "entryMs": 4989.10000000149,
+        "player": {
+          "x": -128.3,
+          "y": 18.900000000000006,
+          "z": -44.68
+        },
+        "chunks": 10,
+        "tasks": 1,
+        "memory": {
+          "geometries": 500,
+          "textures": 184
+        },
+        "calls": 1,
+        "triangles": 1
+      }
+    ],
+    "status": {
+      "level": 7,
+      "player": {
+        "x": -131.3,
+        "y": 17.099999999999994,
+        "z": -45.38
+      },
+      "chunks": 16,
+      "tasks": 0,
+      "memory": {
+        "geometries": 507,
+        "textures": 225
+      },
+      "calls": 1,
+      "triangles": 1
+    }
+  },
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 16051.89999999851
+    },
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\n水下 · 水深 45.4m\n氧气 35s\n[蹲伏] 下潜　[跳跃] 上浮　[冲刺] 快速游\nLEVEL 7\n深海恐惧\nB7\n磁带\n0/6\n微光带\n100%\n入口：Level 6 深海锈蚀活板门 · 入口房间（固定出生点：锈蚀金属舱体 + 书橱/咖啡桌/椅/荧光吊灯，增长门廊尽头舱门外即深海）\n出口线索：午夜带的海床上偶尔会露出一个岩洞洞口。里面很深，深得不像海。\n你跌进了水里——冰冷刺骨。\n水没过了头顶——视野变成浑浊的蓝。\n石卡祖笛\n1\n2\n3\n4\n5\n6\n7\n左键\n攻击\n空格\n跳跃\nC\n蹲伏\nF\n手电\n右键\n使用\nQ\n丢弃\nV\n检视\n左Alt\n收起主手\n➤\n你感觉到明显的气流（4m）\n开发者模式\n🛠 开发者模式 · DEV\n▴"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

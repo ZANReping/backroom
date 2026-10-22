@@ -1,4 +1,5 @@
 import {tradersLocalStructure} from '../content/tradersDressingShapes'
+import {buildTradersAtm} from './tradersAtm'
 import {buildTradersDressing} from './tradersDressingMeshes'
 import * as THREE from 'three'
 import {RoundedBoxGeometry} from 'three/examples/jsm/geometries/RoundedBoxGeometry.js'
@@ -57,6 +58,7 @@ function plant(p:Parts,w=1.05){
 }
 export function buildTradersFitout(s:Structure,assets:TradersAssets){
  const model=s.data?.tradersModel as TradersModel|undefined;if(!model)return null
+ if(model==='atm')return buildTradersAtm(s,assets)
  if(model==='dressing')return buildTradersDressing(s,assets)
  s=tradersLocalStructure(s)
  const root=new THREE.Group();root.userData.tradersOwnGeometry=true;root.name='traders-'+model;root.position.set(s.x+s.w/2,0,s.y+s.h/2);root.rotation.y=Number(s.data?.deg??0)*Math.PI/180

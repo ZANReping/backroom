@@ -40,7 +40,7 @@ export const L8: LevelDef = {
     { type: 'fuyouyu', w: 1 }, // v32：福友玉——很小概率
   ],
   itemCount: [13, 18],
-  structures: ['stalagspike', 'caveboulder', 'cavebank', 'caveglowpoints', 'cavebacteria', 'cavefern', 'cavemoss', 'fungalmat', 'handspike', 'bloodmoss', 'handweather', 'glowshroom', 'tarhands', 'roadsign', 'cavefloat', 'bonepile', 'crate', 'corpse'],
+  structures: ['stalagspike', 'caveboulder', 'cavebank', 'caveglowpoints', 'cavebacteria', 'cavefern', 'cavemoss', 'fungalmat', 'handspike', 'bloodmoss', 'handweather', 'glowshroom', 'tarhands', 'roadsign', 'stoneinstruments', 'stonechime', 'cavefloat', 'bonepile', 'crate', 'corpse'],
   exits: [
     { kind: 'ninthroad', name: '第九大道洞口', dest: 9, anim: 'collapse', cutIn: 'collapse' },
     { kind: 'l8vent', name: '罗特尼斯大丛林天顶通风口', dest: 2, anim: 'noclip', cutIn: 'crawl' },

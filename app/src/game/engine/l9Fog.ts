@@ -7,7 +7,7 @@ import {mangledGrowth,mangledOmen,nwCaptor,releaseNW} from './watchAI'
 
 export const L9_FOG={arrival:35,activeMin:120,activeMax:180,departure:50,spawnMin:52,spawnMax:68,bodyRadius:30,unseenTime:2} as const
 const smooth=(a:number,b:number,v:number)=>{const t=Math.max(0,Math.min(1,(v-a)/(b-a)));return t*t*(3-2*t)}
-type Frame={map:Engine['map'];run:number;actor?:Entity;unseen:number;arrivalElapsed:number;retry:number}
+type Frame={map:Engine['map'];run:number;actor?:Entity;unseen:number;arrivalElapsed:number;retry:number;fadeStart:number}
 const frames=new WeakMap<Engine,Frame>()
 /** Conservative horizontal silhouette: buildings cannot conceal the forty-metre body. */
 export function mangledOutsideView(eng:Engine,x:number,y:number,radius:number=L9_FOG.bodyRadius){
@@ -24,7 +24,7 @@ export function spawnL9FogMangled(eng:Engine):Entity|undefined{
   const angle=facing+Math.PI+(Math.random()-.5)*(a<64?1.7:Math.PI*2),d=min+Math.random()*(max-min)
   const x=Math.floor(p.x+Math.cos(angle)*d)+.5,y=Math.floor(p.y+Math.sin(angle)*d)+.5
   if(x<2||y<2||x>=m.w-2||y>=m.h-2||!mangledOutsideView(eng,x,y,radius))continue
-  if(m.outdoor[Math.floor(y)*m.w+Math.floor(x)]!==1||eng.entityWalkH(m,x,y,0)===null)continue
+  if(m.outdoor[Math.floor(y)*m.w+Math.floor(x)]!==1||eng.entityWalkH(m,Math.floor(x),Math.floor(y),0)===null)continue
   const e=makeEntity('mangled',x,y),ox=m.inf?.ox??0,oy=m.inf?.oy??0
   e.l9FogSpawn=true;e.l9FogTravel={mode:'arrive',homeX:x+ox,homeY:y+oy,exitX:x+ox,exitY:y+oy}
   e.state='chase';e.targetX=p.x;e.targetY=p.y;m.entities.push(e)
@@ -37,7 +37,7 @@ function finish(eng:Engine,f:Frame){
  f.actor=undefined;f.unseen=0;eng.l9FogPhase='idle';eng.l9FogK=0;eng.l9FogT=320+Math.random()*520
 }
 function leave(eng:Engine,f:Frame){
- const e=f.actor;eng.l9FogPhase='fade';eng.l9FogT=L9_FOG.departure
+ const e=f.actor;f.fadeStart=eng.l9FogK;eng.l9FogPhase='fade';eng.l9FogT=L9_FOG.departure
  if(e?.l9FogTravel){
   if(nwCaptor(eng)===e)releaseNW(eng,'drop')
   const ox=eng.map?.inf?.ox??0,oy=eng.map?.inf?.oy??0
@@ -54,7 +54,7 @@ export function updateL9Fog(eng:Engine,dt:number){
  const m=eng.map
  if(eng.levelDef.id!==9||!m){frames.delete(eng);eng.l9FogPhase='idle';eng.l9FogK=0;eng.l9FogT=240;return}
  let f=frames.get(eng)
- if(!f||f.map!==m||f.run!==eng.player.startTime){f={map:m,run:eng.player.startTime,unseen:0,arrivalElapsed:0,retry:0};frames.set(eng,f);eng.l9FogPhase='idle';eng.l9FogK=0;eng.l9FogT=240}
+ if(!f||f.map!==m||f.run!==eng.player.startTime){f={map:m,run:eng.player.startTime,unseen:0,arrivalElapsed:0,retry:0,fadeStart:0};frames.set(eng,f);eng.l9FogPhase='idle';eng.l9FogK=0;eng.l9FogT=240}
  if(eng.dev.phenOff.has('l9fog')){if(eng.l9FogPhase==='idle')return;if(eng.l9FogPhase!=='fade')leave(eng,f)}
  if(eng.dev.phenOn.has('l9fog')&&eng.l9FogPhase==='idle')eng.l9FogT=0
  eng.l9FogT-=dt
@@ -85,7 +85,7 @@ export function updateL9Fog(eng:Engine,dt:number){
   if(eng.l9FogT<=0)leave(eng,f)
   return
  }
- const target=smooth(0,L9_FOG.departure,Math.max(0,eng.l9FogT))
+ const target=f.fadeStart*smooth(0,L9_FOG.departure,Math.max(0,eng.l9FogT))
  eng.l9FogK+=(target-eng.l9FogK)*(1-Math.exp(-dt/1.5))
  if(eng.l9FogT>0)return
  const radius=L9_FOG.bodyRadius*mangledGrowth(eng),d=e?Math.hypot(e.x-eng.player.x,e.y-eng.player.y):Infinity

@@ -1,0 +1,81 @@
+{
+  "date": "2026-10-22",
+  "project": "E:/ZAN/backroom/app",
+  "order": [
+    "stage1",
+    "stage2",
+    "v3",
+    "stage3"
+  ],
+  "entries": [
+    {
+      "archive": "C:/Users/ZANRe/Downloads/thing-stage1.zip",
+      "archiveSha256": "bbf950debaeaa67174d408c68050eea3604b723b2fb08e15b0920a94704eddb0",
+      "patch": "assets/sources/thing-remake-20261022/thing-stage1.patch",
+      "patchSha256": "17dbc5e3728f4dd9fbd8cf1e82980ac3795165a2617491dcb08222ac24d44733",
+      "author": "hark <hark@local> (patch header)",
+      "license": "Not specified in the supplied archive; no additional open-source license asserted."
+    },
+    {
+      "archive": "C:/Users/ZANRe/Downloads/thing-stage2.zip",
+      "archiveSha256": "545d06a4e70e1f5fcec46d817364af5fc5ebeb4b30e04c0b66c3c56d37536263",
+      "patch": "assets/sources/thing-remake-20261022/thing-stage2.patch",
+      "patchSha256": "49e4800caaac575c09bede8b6834815946670950af5832f43d866fad0912acd1",
+      "author": "not supplied",
+      "license": "Not specified in the supplied archive; no additional open-source license asserted."
+    },
+    {
+      "archive": "C:/Users/ZANRe/Downloads/thing-v3.zip",
+      "archiveSha256": "ac6dd8fc2f32526d53c1eea8becbd348e2d77038c4e5308b052fc1e3cb93f05e",
+      "patch": "assets/sources/thing-remake-20261022/thing-v3.patch",
+      "patchSha256": "7ca91882d7d309340c98a4902ed234ecffce17caa7141a6bb16e926c07d19793",
+      "author": "not supplied",
+      "license": "Not specified in the supplied archive; no additional open-source license asserted."
+    },
+    {
+      "archive": "C:/Users/ZANRe/Downloads/thing-stage3.zip",
+      "archiveSha256": "63891baf869318f5f6df082e7ab84d6ca642f01b262e9963e4739e44d413baeb",
+      "patch": "assets/sources/thing-remake-20261022/thing-stage3.patch",
+      "patchSha256": "1150652f167dbd2a544bcb4292832fcb00530e05e1d43cdc48f5e139a9a189a6",
+      "author": "not supplied",
+      "license": "Not specified in the supplied archive; no additional open-source license asserted."
+    }
+  ],
+  "textures": [
+    {
+      "source": "C:\\Users\\ZANRe\\AppData\\Local\\Temp\\backroom-thing-stage1-20261022\\app\\public\\textures\\l7_t_cliff.jpg",
+      "dest": "E:\\ZAN\\backroom\\app\\public\\textures\\l7_t_cliff.jpg",
+      "oldHash": null,
+      "newHash": "3F6F84D9AA5494EAC8EC4A1CD1A9067042CCF0FA3647C026877CA07791932038"
+    },
+    {
+      "source": "C:\\Users\\ZANRe\\AppData\\Local\\Temp\\backroom-thing-stage1-20261022\\app\\public\\textures\\l7_t_sand.jpg",
+      "dest": "E:\\ZAN\\backroom\\app\\public\\textures\\l7_t_sand.jpg",
+      "oldHash": null,
+      "newHash": "25A1C27A4B6B5A93B8772693881443B4B86504502F030189AB556EB9D2E1C881"
+    },
+    {
+      "source": "C:\\Users\\ZANRe\\AppData\\Local\\Temp\\backroom-thing-stage1-20261022\\app\\public\\textures\\l7_t_silt_bone.jpg",
+      "dest": "E:\\ZAN\\backroom\\app\\public\\textures\\l7_t_silt_bone.jpg",
+      "oldHash": null,
+      "newHash": "1F0C6A7CE837EAD3A81319EA9EBB18CA56A7EC146C71E3D882D61FE4557E42FD"
+    },
+    {
+      "source": "C:\\Users\\ZANRe\\AppData\\Local\\Temp\\backroom-thing-stage1-20261022\\app\\public\\textures\\l7_t_tar.jpg",
+      "dest": "E:\\ZAN\\backroom\\app\\public\\textures\\l7_t_tar.jpg",
+      "oldHash": null,
+      "newHash": "1CD08211205EF551F7BCF043B4D778B47E85E8BC4D42B955ED511D2A71F6910E"
+    }
+  ],
+  "textureProvenance": "The supplied patch describes these four JPEGs as AI generated and made seamless. Original prompts, generation service and separate texture license were not supplied.",
+  "referenceNotes": [
+    "Upstream cites Wikidot old:entity-20 and Fandom Entity_20 for lore and user-supplied fish/engraving images for shape. Those source images and page authors are not bundled, and this import does not assert a verified license for them.",
+    "Existing project attribution and licenses remain in force.",
+    "The supplied verify-thing/terrain/ingame browser scripts are retained as patch source only; QA uses the current project native-GPU headless harness."
+  ],
+  "sourceOnlyScripts": [
+    "scripts/verify-l7-terrain.mjs",
+    "scripts/verify-thing.mjs",
+    "scripts/verify-thing-ingame.mjs"
+  ]
+}

@@ -22,6 +22,7 @@ export function entityArchiveOptions(type: string, step = 0): EntityMeshOpts {
     ratMorph: type === 'corpserat' ? ratMorphFor(0, traits ?? {}) : undefined,
     capybara: traits?.capybara, ceilingCrawler: traits?.ceilingCrawler,
     arachnidMorph: traits?.arachnidMorph, arachnidBreed: specimen, herbivore: traits?.herbivore,
+    arachnidVariant: traits?.arachnidVariant, // [L8-arachnid]
   }
 }
 

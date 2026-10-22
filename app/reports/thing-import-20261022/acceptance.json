@@ -1,0 +1,213 @@
+{
+  "ok": true,
+  "project": "E:/ZAN/backroom/app",
+  "mechanismChecks": 56,
+  "animationChecks": 31,
+  "integrationChecks": 799,
+  "build": "build.log",
+  "actualGame": [
+    {
+      "label": "realistic-accepted",
+      "checks": 26,
+      "errors": 0,
+      "failedRequests": 0,
+      "recycle": [
+        {
+          "geometries": 800,
+          "textures": 170
+        },
+        {
+          "geometries": 800,
+          "textures": 170
+        },
+        {
+          "geometries": 800,
+          "textures": 170
+        }
+      ],
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    },
+    {
+      "label": "classic-final",
+      "checks": 25,
+      "errors": 0,
+      "failedRequests": 0,
+      "recycle": [
+        {
+          "geometries": 685,
+          "textures": 145
+        },
+        {
+          "geometries": 685,
+          "textures": 145
+        },
+        {
+          "geometries": 685,
+          "textures": 145
+        }
+      ],
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      }
+    }
+  ],
+  "frameSamples": [
+    {
+      "label": "realistic-accepted",
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "median": 4.100000001490116,
+      "p95": 5.199999999254942,
+      "n": 600,
+      "rounds": [
+        {
+          "median": 4.199999999254942,
+          "p95": 5.699999999254942,
+          "n": 120
+        },
+        {
+          "median": 4.099999997764826,
+          "p95": 5.199999999254942,
+          "n": 120
+        },
+        {
+          "median": 4.100000001490116,
+          "p95": 6.699999999254942,
+          "n": 120
+        },
+        {
+          "median": 4.100000001490116,
+          "p95": 5,
+          "n": 120
+        },
+        {
+          "median": 4.100000001490116,
+          "p95": 4.800000000745058,
+          "n": 120
+        }
+      ],
+      "level": 7,
+      "center": {
+        "x": -340,
+        "y": -240,
+        "z": -103.45539215519695
+      },
+      "player": {
+        "x": -328,
+        "y": -232,
+        "z": -104.25539215519694
+      },
+      "mode": "realistic",
+      "actor": {
+        "live": true,
+        "pending": false,
+        "state": "idle",
+        "th": {
+          "dormant": true,
+          "lost": true,
+          "still": 0,
+          "lastPx": 90.63197519294427,
+          "lastPy": 79.99999942816136,
+          "originX": -416,
+          "originY": -320
+        },
+        "x": 83.57547124999758,
+        "y": 80.00000297799646,
+        "flashlight": true,
+        "paused": false,
+        "ai": true
+      },
+      "memory": {
+        "geometries": 800,
+        "textures": 170
+      },
+      "chunks": 16,
+      "tasks": 0,
+      "visibleTriangles": 376129
+    },
+    {
+      "label": "classic-metrics",
+      "gpu": {
+        "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "contextLost": false
+      },
+      "median": 4.100000001490116,
+      "p95": 5.600000001490116,
+      "n": 600,
+      "rounds": [
+        {
+          "median": 4.199999995529652,
+          "p95": 4.9000000059604645,
+          "n": 120
+        },
+        {
+          "median": 4.199999995529652,
+          "p95": 5.100000001490116,
+          "n": 120
+        },
+        {
+          "median": 4.100000001490116,
+          "p95": 5.600000001490116,
+          "n": 120
+        },
+        {
+          "median": 4.0999999940395355,
+          "p95": 7.0999999940395355,
+          "n": 120
+        },
+        {
+          "median": 4.100000001490116,
+          "p95": 6.600000001490116,
+          "n": 120
+        }
+      ],
+      "level": 7,
+      "center": {
+        "x": -340,
+        "y": -240,
+        "z": -103.45539215519695
+      },
+      "player": {
+        "x": -328,
+        "y": -232,
+        "z": -104.25539215519694
+      },
+      "mode": "classic",
+      "actor": {
+        "live": true,
+        "pending": false,
+        "state": "idle",
+        "th": {
+          "dormant": true,
+          "lost": false,
+          "still": 0,
+          "lastPx": 95,
+          "lastPy": 92,
+          "originX": -416,
+          "originY": -320
+        },
+        "x": 76,
+        "y": 80,
+        "flashlight": true,
+        "paused": false,
+        "ai": true
+      },
+      "memory": {
+        "geometries": 653,
+        "textures": 130
+      },
+      "chunks": 15,
+      "tasks": 0,
+      "visibleTriangles": 355833
+    }
+  ],
+  "packagePreserved": true
+}

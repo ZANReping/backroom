@@ -607,14 +607,35 @@ function chalkstub(p: Parts) {
   p.add(lumpyWelded(sphere(.012, 8, 5), .002, 200, 5), chalk, B.chalk, { p: [-.05, -.018, .03], s: [1, .7, 1] })
 }
 
+// [kazoo] 石卡祖笛（维基 Level 8：从钟乳石底部断下的天然卡祖笛，质感粗糙拙朴，笛口和石锥底部严丝合缝）。
+// 沿 +X 的锥管：-X 端是扁椭圆笛口（即钟乳石断口，带断面），+X 端是圆形出音口；顶部一座圆形笛膜座，
+// 座口封着一片天然薄岩当笛膜；表面一圈圈石钟乳的生长纹，下侧挂着几粒还没长大的小滴石。
 function stonekazoo(p: Parts) {
   const stone = surface('gear', 0, .9)
-  const body = lathe([[0, -.105], [.03, -.104], [.044, -.08], [.05, -.03], [.048, .03], [.042, .08], [.034, .1], [.026, .106], [.02, .106]], 12)
-  lumpyWelded(body, .006, 40, 1)
-  p.add(body, stone, B.stone, { r: [0, 0, HP] })
-  p.add(lathe([[.02, 0], [.034, 0], [.03, .04], [.022, .05], [.016, .05]], 10), stone, B.stone, { p: [.015, .036, 0] })
-  for (const [x, z, r] of [[-.07, .03, .7], [.05, -.035, -.9], [-.02, .04, 1.2]] as const) {
-    p.add(lumpyWelded(new THREE.ConeGeometry(.012, .035, 6), .002, 80, x * 100), stone, B.stone, { p: [x, .02, z], r: [r, 0, r * .5] })
+  // 外壁 + 内壁（两端开口）：剖面 [半径, 轴向]；笛口端（-X）略细
+  const body = lathe([[.009, -.06], [.0125, -.064], [.0175, -.062], [.0195, -.045], [.022, -.01], [.025, .03], [.027, .056], [.0285, .064], [.024, .066], [.02, .058], [.016, .02], [.011, -.03], [.009, -.06]], 16)
+  warp(body, v => {
+    const t = (v.y + .064) / .13
+    const ring = Math.sin(v.y * 230) * .0011 + Math.sin(v.y * 610 + 1.3) * .0004 // 生长纹
+    const rr = Math.hypot(v.x, v.z), k = rr > 1e-5 ? (rr + ring * Math.min(1, rr / .015)) / rr : 1
+    v.x *= k; v.z *= k
+    v.x *= 1 - (1 - Math.min(1, t * 2.2)) * .32 // 笛口一端上下压扁（lathe 的 x 转到模型后是竖直方向）
+  })
+  lumpyWelded(body, .0022, 90, 1)
+  p.add(body, stone, B.stone, { r: [0, 0, -HP] })
+  // 笛口断面：一圈不规则的断茬
+  const lip = torus(.0155, .0032, 14, 5); warp(lip, v => { v.y *= .68; v.z += Math.sin(Math.atan2(v.y, v.x) * 5) * .0012 })
+  lumpyWelded(lip, .0012, 160, 4)
+  p.add(lip, stone, B.stone, { p: [-.0625, 0, 0], r: [0, HP, 0] })
+  // 笛膜座 + 天然薄岩笛膜
+  const turret = lathe([[.0125, 0], [.0145, .004], [.0138, .016], [.0152, .02], [.0118, .021], [.0105, .006]], 14)
+  lumpyWelded(turret, .0012, 120, 2)
+  p.add(turret, stone, B.stone, { p: [.016, .021, 0] })
+  const membrane = circle(.0112, 14); lumpyWelded(membrane, .0006, 200, 3)
+  p.add(membrane, stone, B.stone, { p: [.016, .0385, 0], r: [-HP, 0, 0] })
+  // 下侧小滴石
+  for (const [x, l, s] of [[-.03, .012, 1], [.004, .016, 2], [.035, .01, 3], [.05, .007, 4]] as const) {
+    p.add(lumpyWelded(new THREE.ConeGeometry(.0034, l, 6), .0006, 220, s), stone, B.stone, { p: [x, -.0215 - l / 2 - (x < 0 ? -.002 : 0), (s % 2 ? .003 : -.004)], r: [PI, 0, 0] })
   }
 }
 

@@ -1,0 +1,87 @@
+
+> my-app@0.0.0 check:bntg-bank
+> esbuild scripts/check-bntg-bank.ts --bundle --platform=node --format=esm --outfile=.cache/check-bntg-bank.mjs && node .cache/check-bntg-bank.mjs
+
+
+  .cache\check-bntg-bank.mjs  2.5mb
+
+Done in 319ms
+{
+  "ok": true,
+  "checks": [
+    "multi-stack 1:1 deposit/withdraw, receipt and immediate save",
+    "invalid amount 0",
+    "invalid amount -1",
+    "invalid amount 0.5",
+    "invalid amount NaN",
+    "invalid amount Infinity",
+    "invalid amount 1000000000000000",
+    "insufficient physical cash",
+    "insufficient credits",
+    "unknown terminal",
+    "terminal rear is not usable",
+    "remote terminal cannot deposit",
+    "ATM restricted to real bank",
+    "blocked sight prevents terminal use",
+    "account maximum",
+    "full inventory rejects withdrawal",
+    "partial cash stack capacity is enforced",
+    "withdrawal uses existing partial stacks",
+    "auto payment charges the expected credit/cash split",
+    "credits-only does not spend cash",
+    "cash payment charges the expected credit/cash split",
+    "existing reputation and silver tongue discounts preserved",
+    "full inventory never loses credits",
+    "payment can release the slot used by purchased goods",
+    "reputation refusal remains active",
+    "other faction cannot spend BNTG credits",
+    "merchant must be nearby",
+    "hostile merchant cannot trade",
+    "merchant floor check",
+    "Candyman accepts credits for original bulk candy deal",
+    "bulk barter output must fit in full",
+    "credits also work at original EL3A and L3 storage merchants",
+    "coin exchange keeps original 1 almond : 2 presses rate",
+    "bounded independent ledger, old saves default to zero, invalid save entries rejected",
+    "only original six named NPCs; stale relocated NPC save records removed; 154 local residents retained",
+    "existing temporary warehouse fee accepts mixed payment once per dialogue",
+    "two finite low-poly ATM models with matching collision footprint",
+    "recycling one ATM preserves second-instance geometry and shared materials"
+  ],
+  "models": [
+    {
+      "id": "fitout.bank.atm.0",
+      "triangles": 2630,
+      "meshes": 10,
+      "bounds": [
+        [
+          102.45999997854233,
+          2.98023217215615e-10,
+          104.87200000953675
+        ],
+        [
+          103.54000002145767,
+          1.9800000190734863,
+          105.80199998688698
+        ]
+      ]
+    },
+    {
+      "id": "fitout.bank.atm.1",
+      "triangles": 2630,
+      "meshes": 10,
+      "bounds": [
+        [
+          106.45999997854233,
+          2.98023217215615e-10,
+          104.87200000953675
+        ],
+        [
+          107.54000002145767,
+          1.9800000190734863,
+          105.80199998688698
+        ]
+      ]
+    }
+  ]
+}

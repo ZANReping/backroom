@@ -1,0 +1,308 @@
+{
+  "checks": [
+    "old save with no bank field initializes zero credit",
+    "only original six named Keep NPCs are instantiated from homes",
+    "outside BNTG NPCs absent; local resident population retained",
+    "safe QA position 105,101.8",
+    "safe QA position 103,103.65",
+    "look-at scan selects real bank terminal",
+    "terminal pauses game inputs",
+    "double confirm commits once: 100 credits / 50 cash",
+    "withdrawal gives physical coins at 1:1",
+    "ATM fits 390px width without horizontal clipping",
+    "all four services visible at 390×844",
+    "ATM fits 844px width without horizontal clipping",
+    "all four services visible at 844×390",
+    "safe QA position 85.5,123.2",
+    "original candy bulk deal accepts credit only",
+    "safe QA position 98.5,65.95",
+    "Tang purchase uses credits and preserves physical coins",
+    "safe QA position 107,103.65",
+    "look-at scan selects real bank terminal",
+    "terminal pauses game inputs",
+    "safe QA position 98.5,65.95",
+    "automatic payment splits 16 into 5 credits + 11 cash",
+    "transaction balances and receipts written to real save slot",
+    "save/reload preserves money and purchased goods without duplication",
+    "safe QA position 103,103.65",
+    "look-at scan selects real bank terminal",
+    "terminal pauses game inputs",
+    "safe QA position 103,103.65",
+    "look-at scan selects real bank terminal",
+    "terminal pauses game inputs",
+    "zero amount rejected by keyboard confirmation",
+    "physical keypad correction removes one digit",
+    "cancel/back never transfers funds",
+    "12 ATM open/close cycles keep GPU resource counts stable",
+    "new game starts with no previous account balance"
+  ],
+  "shots": [
+    "01-bank-machines",
+    "02-atm-home",
+    "03-deposit-amount",
+    "04-deposit-confirm",
+    "05-deposit-receipt",
+    "06-withdrawal-receipt",
+    "07-statement",
+    "08-atm-mobile",
+    "09-atm-landscape",
+    "10-candy-credit-payment",
+    "11-merchant-credit-receipt",
+    "12-mixed-payment",
+    "13-restored-ledger",
+    "14-bank-final-scene"
+  ],
+  "payments": [],
+  "metrics": [],
+  "population": {
+    "all": 160,
+    "fixed": [
+      "candyman",
+      "kui",
+      "lan",
+      "laozhangfang",
+      "shen",
+      "tang"
+    ],
+    "present": [
+      "traders_resident_23",
+      "traders_resident_22",
+      "traders_resident_21",
+      "traders_resident_20",
+      "traders_resident_19",
+      "traders_resident_18",
+      "traders_resident_74",
+      "traders_resident_75",
+      "candyman",
+      "shen",
+      "traders_resident_17",
+      "traders_resident_16",
+      "traders_resident_113",
+      "traders_resident_15",
+      "traders_resident_73",
+      "traders_resident_14",
+      "traders_resident_64",
+      "traders_resident_13",
+      "traders_resident_12",
+      "traders_resident_65",
+      "tang",
+      "traders_resident_87",
+      "traders_resident_86",
+      "traders_resident_72",
+      "traders_resident_66",
+      "traders_resident_85",
+      "lan",
+      "traders_resident_67",
+      "traders_resident_76",
+      "traders_resident_77"
+    ],
+    "chunks": 41
+  },
+  "lastTarget": {
+    "kind": "bntgAtm",
+    "label": "使用 银行 ATM"
+  },
+  "saved": {
+    "bank": {
+      "v": 1,
+      "balance": 0,
+      "sequence": 6,
+      "history": [
+        {
+          "id": 1,
+          "at": 1792647976160,
+          "kind": "deposit",
+          "delta": 100,
+          "balance": 100,
+          "cashDelta": -100,
+          "detail": "存入 100 枚压印币，入账 100 信用点。"
+        },
+        {
+          "id": 2,
+          "at": 1792647977199,
+          "kind": "withdraw",
+          "delta": -20,
+          "balance": 80,
+          "cashDelta": 20,
+          "detail": "取出 20 枚压印币，扣除 20 信用点。"
+        },
+        {
+          "id": 3,
+          "at": 1792647982479,
+          "kind": "purchase",
+          "delta": -5,
+          "balance": 75,
+          "cashDelta": 0,
+          "detail": "换取 银舌头 ×8：信用点 5，压印币 0。"
+        },
+        {
+          "id": 4,
+          "at": 1792647984031,
+          "kind": "purchase",
+          "delta": -26,
+          "balance": 49,
+          "cashDelta": 0,
+          "detail": "购买 头灯：信用点 26，压印币 0。"
+        },
+        {
+          "id": 5,
+          "at": 1792647985390,
+          "kind": "withdraw",
+          "delta": -44,
+          "balance": 5,
+          "cashDelta": 44,
+          "detail": "取出 44 枚压印币，扣除 44 信用点。"
+        },
+        {
+          "id": 6,
+          "at": 1792647987330,
+          "kind": "purchase",
+          "delta": -5,
+          "balance": 0,
+          "cashDelta": -11,
+          "detail": "购买 笔记本和笔：信用点 5，压印币 11。"
+        }
+      ]
+    },
+    "cash": 103,
+    "headlamp": 1,
+    "notebook": 1,
+    "snapshot": {
+      "v": 1,
+      "balance": 0,
+      "sequence": 6,
+      "history": [
+        {
+          "id": 1,
+          "at": 1792647976160,
+          "kind": "deposit",
+          "delta": 100,
+          "balance": 100,
+          "cashDelta": -100,
+          "detail": "存入 100 枚压印币，入账 100 信用点。"
+        },
+        {
+          "id": 2,
+          "at": 1792647977199,
+          "kind": "withdraw",
+          "delta": -20,
+          "balance": 80,
+          "cashDelta": 20,
+          "detail": "取出 20 枚压印币，扣除 20 信用点。"
+        },
+        {
+          "id": 3,
+          "at": 1792647982479,
+          "kind": "purchase",
+          "delta": -5,
+          "balance": 75,
+          "cashDelta": 0,
+          "detail": "换取 银舌头 ×8：信用点 5，压印币 0。"
+        },
+        {
+          "id": 4,
+          "at": 1792647984031,
+          "kind": "purchase",
+          "delta": -26,
+          "balance": 49,
+          "cashDelta": 0,
+          "detail": "购买 头灯：信用点 26，压印币 0。"
+        },
+        {
+          "id": 5,
+          "at": 1792647985390,
+          "kind": "withdraw",
+          "delta": -44,
+          "balance": 5,
+          "cashDelta": 44,
+          "detail": "取出 44 枚压印币，扣除 44 信用点。"
+        },
+        {
+          "id": 6,
+          "at": 1792647987330,
+          "kind": "purchase",
+          "delta": -5,
+          "balance": 0,
+          "cashDelta": -11,
+          "detail": "购买 笔记本和笔：信用点 5，压印币 11。"
+        }
+      ]
+    }
+  },
+  "openCloseResources": [
+    {
+      "geometries": 2111,
+      "textures": 136,
+      "chunks": 43,
+      "built": 44,
+      "jobs": 0
+    },
+    {
+      "geometries": 2111,
+      "textures": 136,
+      "chunks": 43,
+      "built": 44,
+      "jobs": 0
+    },
+    {
+      "geometries": 2111,
+      "textures": 136,
+      "chunks": 43,
+      "built": 44,
+      "jobs": 0
+    }
+  ],
+  "samples": [
+    {
+      "medianMs": 4.400000000372529,
+      "p95Ms": 6,
+      "calls": 473,
+      "triangles": 244745,
+      "memory": {
+        "geometries": 2111,
+        "textures": 136
+      }
+    },
+    {
+      "medianMs": 4.5,
+      "p95Ms": 6.300000000745058,
+      "calls": 473,
+      "triangles": 244745,
+      "memory": {
+        "geometries": 2111,
+        "textures": 136
+      }
+    },
+    {
+      "medianMs": 4.800000000745058,
+      "p95Ms": 7.099999999627471,
+      "calls": 473,
+      "triangles": 244745,
+      "memory": {
+        "geometries": 2111,
+        "textures": 136
+      }
+    },
+    {
+      "medianMs": 4.599999999627471,
+      "p95Ms": 6.099999999627471,
+      "calls": 473,
+      "triangles": 244745,
+      "memory": {
+        "geometries": 2111,
+        "textures": 136
+      }
+    },
+    {
+      "medianMs": 4.400000000372529,
+      "p95Ms": 7.099999999627471,
+      "calls": 473,
+      "triangles": 244745,
+      "memory": {
+        "geometries": 2111,
+        "textures": 136
+      }
+    }
+  ],
+  "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+}

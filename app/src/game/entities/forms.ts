@@ -1,6 +1,7 @@
 import { MOTH_FORMS } from './moths'
 import { SMILER_KINDS } from './smilers'
 import { WRETCH_STATS } from './wretches'
+import { ARACHNID_FORM_ROWS } from '../engine/arachnidStats' // [L8-arachnid]
 import type { EntityDef, EntityForm, RefinedEntityForm } from './types'
 
 /** Shared by the factory, codex and developer tools. Parent IDs never change. */
@@ -54,13 +55,8 @@ export const ENTITY_FORMS: Readonly<Record<string, readonly EntitySubform[]>> = 
     form('corpserat-capybara', '水豚尸鼠', 'Level 3 的大型水豚体态，牙齿刻意磨尖，胸前绑着语音装置。', '磨牙、指挥尸鼠编队，并设置简陋陷阱与仿制炸弹。', { capybara: true, scale: 1.45, ratMorph: 'capybara' }),
     form('corpserat-ceiling', '罗特尼斯尸鼠', 'Level 8 穴顶的尸鼠，适应反向重力并倒挂在洞顶。', '沿洞顶倒挂爬行；需要有顶空间观察。', { ceilingCrawler: true, ratMorph: 'cave' }),
   ],
-  arachnid: [
-    form('arachnid-spider', '蜘蛛形', '八足蜘蛛体态，保留随机花纹。', '沿用蛛形纲的原有行为。', { arachnidMorph: 'spider' }),
-    form('arachnid-scorpion', '蝎形', '带有螯肢和弯曲尾部。', '沿用蛛形纲的原有行为。', { arachnidMorph: 'scorpion' }),
-    form('arachnid-tick', '蜱形', '圆腹、短肢的蜱形体态。', '沿用蛛形纲的原有行为。', { arachnidMorph: 'tick' }),
-    form('arachnid-mite', '螨形', '紧凑的螨形体态。', '沿用蛛形纲的原有行为。', { arachnidMorph: 'mite' }),
-    form('arachnid-herbivore', '食草型', '植被区的被动蜘蛛形个体。', '不主动攻击，被伤害后仍会防卫。', { arachnidMorph: 'spider', herbivore: true, passive: true }),
-  ],
+  // [L8-arachnid] 重制：17 个变种 + 旧「食草被动型」行为标志（engine/arachnidStats.ts）；旧 spider/scorpion/tick/mite 外形数据由 legacyArachnidKind 映射
+  arachnid: ARACHNID_FORM_ROWS.map((r) => form(r.id, r.name, r.desc, r.behavior, { arachnidVariant: r.kind, ...(r.herbivore ? { herbivore: true, passive: true } : {}) })),
 }
 const EMPTY: readonly EntitySubform[] = []
 export const entityForms = (type: string): readonly EntitySubform[] => ENTITY_FORMS[type] ?? EMPTY

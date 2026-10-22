@@ -9,6 +9,7 @@
 //   - 蹲伏低通道（crawl=1）未蹲伏不可进入。
 import { l11MapSpace, caveVolumeFieldAt, floorHeight, structBlocksCircle, structBlocksPoint, structEscapePoints, bandOfZ, stairServesBand, walkableAt, STEP_UP, l4CubicleEscapePoints, type GameMap } from '../world/mapgen'
 import type { FloorBand } from './types'
+import { mangledLegBlocks, mangledLegEscapePoints } from './mangledCollision'
 
 export const PLAYER_RADIUS = 0.32
 export const FIXED_STEP = 1 / 120 // 固定物理子步（秒）
@@ -21,11 +22,14 @@ export interface OccupyOpts {
   crouch?: boolean // 是否蹲伏（低通道必需）
   band?: FloorBand
   ignoreStructure?: import('./types').Structure // A sit/stand path may cross only its own seat surface.
+  /** 本子步出发点。L7 海床：采样点地面比出发时对应采样点更低或持平就不拦（只拦「越走越高」）。 */
+  from?: Vec2
 }
 
 // 8 点采样（四角 + 四边中点）判断半径 r 的圆能否位于 (x,y)，防止角落穿透
 export function canOccupy(m: GameMap, x: number, y: number, r = PLAYER_RADIUS, opts: OccupyOpts = {}): boolean {
   const z = opts.z ?? 0
+  if(mangledLegBlocks(m,x,y,r,z,opts.crouch?.88:1.48))return false
   const band: FloorBand = opts.band ?? bandOfZ(z)
   // 先做完整圆-AABB 相交：细柱可能完全处于玩家圆内部，单纯采样圆周永远碰不到它。
   if (structBlocksCircle(m, x, y, r, z, band,opts.crouch?.88:1.48,undefined,opts.ignoreStructure)) return false
@@ -44,6 +48,7 @@ export function canOccupy(m: GameMap, x: number, y: number, r = PLAYER_RADIUS, o
     [-r, -r], [r, -r], [-r, r], [r, r],
     [-r, 0], [r, 0], [0, -r], [0, r],
   ]
+  let fromMax: number | undefined
   for (const [ox, oy] of offs) {
     // Structures already use an exact circular test above. The four legacy
     // terrain corner probes lie outside that circle and must not enlarge props.
@@ -85,7 +90,19 @@ export function canOccupy(m: GameMap, x: number, y: number, r = PLAYER_RADIUS, o
     // 高度档：目标地面高于脚底 STEP_UP 以上不可直接踏上（跳跃抬高 z 后放行）
     // （溢出格按主层地面计——悬在一层上空时一层地面远低于脚底，不再误拦）
     const g = floorHeight(m, sx, sy, spill ? 0 : band)
-    if (g - z > STEP_UP) return false
+    if (g - z > STEP_UP) {
+      // L7 陡崖防卡死：贴在陡坡上时，半径 0.32m 的上坡一侧采样点高出脚底远超 STEP_UP，
+      // 旧逻辑连沿坡横移、往下坡退都会被拦，玩家只能原地上浮。海床瓦片改为「不变差就放行」。
+      // 判据取「出发时身体下最高的海床」：只要新位置每个采样点都不超过它（容差 3cm/子步）就放行——
+      // 沟底、凹角里也总能朝某个方向挪出去；嵌入深度不会比出发时更深。
+      const f = opts.from
+      if (!(f && m.l7SeaTerrain && m.liquid[i] === 1 && band === 0)) return false
+      if (fromMax === undefined) {
+        fromMax = -Infinity
+        for (const [qx, qy] of offs) fromMax = Math.max(fromMax, floorHeight(m, f.x + qx, f.y + qy, 0))
+      }
+      if (g > fromMax + 0.03) return false
+    }
   }
   return true
 }
@@ -96,13 +113,14 @@ export function resolvePlayerPenetration(m:GameMap,pos:Vec2,r=PLAYER_RADIUS,opts
  const zero={x:0,y:0},z=opts.z??0,band=opts.band??bandOfZ(z)
  if(!Number.isFinite(pos.x+pos.y+z)||canOccupy(m,pos.x,pos.y,r,opts))return zero
  const tx=Math.floor(pos.x),ty=Math.floor(pos.y),wall=tx>=0&&ty>=0&&tx<m.w&&ty<m.h&&m.tiles[ty*m.w+tx]===2
- if(!wall&&!structBlocksCircle(m,pos.x,pos.y,r,z,band,opts.crouch?.88:1.48,undefined,opts.ignoreStructure))return zero
- const candidates=structEscapePoints(m,pos.x,pos.y,z,band,r),pad=r+.003
+ const legs=mangledLegEscapePoints(m,pos.x,pos.y,r,z,opts.crouch?.88:1.48)
+ if(!wall&&!legs.length&&!structBlocksCircle(m,pos.x,pos.y,r,z,band,opts.crouch?.88:1.48,undefined,opts.ignoreStructure))return zero
+ const candidates=[...legs,...structEscapePoints(m,pos.x,pos.y,z,band,r)],pad=r+.003
  if(wall)for(let y=ty-1;y<=ty+1;y++)for(let x=tx-1;x<=tx+1;x++)if(x>=0&&y>=0&&x<m.w&&y<m.h&&m.tiles[y*m.w+x]===2)candidates.push({x:x-pad,y:pos.y},{x:x+1+pad,y:pos.y},{x:pos.x,y:y-pad},{x:pos.x,y:y+1+pad})
  const distance=(p:Vec2)=>(p.x-pos.x)**2+(p.y-pos.y)**2
  candidates.sort((a,b)=>distance(a)-distance(b))
  for(const p of candidates){
-  if(distance(p)>4||!canOccupy(m,p.x,p.y,r,opts))continue
+  if(distance(p)>(legs.length?16:4)||!canOccupy(m,p.x,p.y,r,opts))continue
   const d={x:p.x-pos.x,y:p.y-pos.y};pos.x=p.x;pos.y=p.y;return d
  }return zero
 }
@@ -110,8 +128,21 @@ export function resolvePlayerPenetration(m:GameMap,pos:Vec2,r=PLAYER_RADIUS,opts
 // 单个子步的移动：先 x 分量后 y 分量（轴分离 → 沿墙滑动），返回实际位移
 export function moveStep(m: GameMap, pos: Vec2, dx: number, dy: number, r = PLAYER_RADIUS, opts: OccupyOpts = {}): Vec2 {
   let mx = 0, my = 0
-  if (dx !== 0 && canOccupy(m, pos.x + dx, pos.y, r, opts)) { pos.x += dx; mx = dx }
-  if (dy !== 0 && canOccupy(m, pos.x, pos.y + dy, r, opts)) { pos.y += dy; my = dy }
+  const sea = !!m.l7SeaTerrain
+  if (dx !== 0 && canOccupy(m, pos.x + dx, pos.y, r, sea ? { ...opts, from: { x: pos.x, y: pos.y } } : opts)) { pos.x += dx; mx = dx }
+  if (dy !== 0 && canOccupy(m, pos.x, pos.y + dy, r, sea ? { ...opts, from: { x: pos.x, y: pos.y } } : opts)) { pos.y += dy; my = dy }
+  // [thing] L7 海床沿等高线滑移：两轴都被陡坡挡住时，把这一步转 ±25°/±50°/±75° 再试（长度按 cos 缩短），
+  // 贴着崖面横移时不会一顿一顿地停住。
+  if (sea && !mx && !my && (dx || dy)) {
+    const ti = Math.floor(pos.y) * m.w + Math.floor(pos.x)
+    if (m.liquid[ti] === 1 && (opts.band ?? 0) === 0) {
+      for (const deg of [25, -25, 50, -50, 75, -75]) {
+        const a = deg * Math.PI / 180, c = Math.cos(a), s = Math.sin(a)
+        const rx = (dx * c - dy * s) * c, ry = (dx * s + dy * c) * c
+        if (canOccupy(m, pos.x + rx, pos.y + ry, r, { ...opts, from: { x: pos.x, y: pos.y } })) { pos.x += rx; pos.y += ry; return { x: rx, y: ry } }
+      }
+    }
+  }
   if(!mx&&!my&&(dx||dy))resolvePlayerPenetration(m,pos,r,opts)
   if(!mx&&!my&&(dx||dy)&&m.tint[Math.floor(pos.y)*m.w+Math.floor(pos.x)]===51&&!canOccupy(m,pos.x,pos.y,r,opts)){
     const escape=l4CubicleEscapePoints(m,pos.x,pos.y,opts.z??0,r).find(p=>canOccupy(m,p.x,p.y,r,opts))

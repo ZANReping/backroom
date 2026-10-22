@@ -26,7 +26,7 @@ export const CONTAINERS: Record<string, ContainerDef> = {
   locker:   { label: '储物柜',        dur: 1.6, n: 2, pool: ['battery', 'bandage', 'canned', 'flashlight', 'housekey', 'tape'] },
   toolbox:  { label: '工具箱',        dur: 1.4, n: 2, pool: ['crowbar', 'wrench', 'nails', 'battery', 'timber', 'tape'] },
   suitcase: { label: '行李箱',        dur: 1.6, n: 2, pool: ['bandage', 'almond', 'lighter', 'rabbit', 'pamphlet', 'tape'] },
-  fridge:   { label: '冰箱',          dur: 1.5, n: 2, pool: ['canned', 'almond', 'citywater', 'driedfruit', 'thingmeat'] },
+  fridge:   { label: '冰箱',          dur: 1.5, n: 2, pool: ['canned', 'almond', 'citywater', 'driedfruit'] },
   safebox:  { label: '保险箱',        dur: 2.4, n: 3, pool: ['presses', 'sedative', 'keycard', 'skeleton', 'rabbit', 'tape'], gate: 'crowbar' },
   mailbox:  { label: '信箱',          dur: 1.1, n: 1, pool: ['housekey', 'pamphlet', 'wallpaper', 'endnote', 'tape'] },
   barrel:   { label: '木桶',          dur: 1.5, n: 2, pool: ['almond', 'almond', 'rope', 'tape'] },

@@ -179,6 +179,8 @@ export function captureTradersWorld(m:GameMap):TradersWorldSave|undefined{
 export function restoreTradersWorld(m:GameMap,save?:TradersWorldSave){
  const w=m.traders;if(!w||save?.version!==TRADERS_LAYOUT_VERSION)return
  w.seed=Number.isFinite(save.seed)?save.seed>>>0:w.seed
- w.fitout=save.fitout;w.states=structuredClone(save.structures??{});w.savedResidents=structuredClone(save.residents??{});w.homes=tradersHomes(w.seed)
+ w.fitout=save.fitout;w.states=structuredClone(save.structures??{});w.homes=tradersHomes(w.seed)
+ const allowed=new Set(w.homes.map(h=>h.id))
+ w.savedResidents=structuredClone(Object.fromEntries(Object.entries(save.residents??{}).filter(([id])=>allowed.has(id))))
  for(const s of w.base)applyState(w,s)
 }

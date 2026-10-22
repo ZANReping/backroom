@@ -1,0 +1,702 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 13186,
+  "cdp": 13187,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\thing-import-20261022\\realistic-final\\qa-1792672290059-65520",
+    "--remote-debugging-port=13187",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 56076,
+    "server": 27304
+  },
+  "appBootMs": 16355.948400000001,
+  "entryMs": 3203.7134000000005,
+  "firstPlayableMs": 25927.2513,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "checks": [],
+    "records": [],
+    "status": {
+      "level": 4,
+      "center": {
+        "x": -340,
+        "y": -240,
+        "z": -120
+      },
+      "player": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "mode": "realistic",
+      "actor": null,
+      "memory": {
+        "geometries": 467,
+        "textures": 67
+      },
+      "chunks": 9,
+      "tasks": 4,
+      "visibleTriangles": 0
+    }
+  },
+  "overview": {
+    "entryAndStreamingMs": 7766.599999997765,
+    "headHi": true,
+    "level": 7,
+    "center": {
+      "x": -340,
+      "y": -240,
+      "z": -103.45539215519695
+    },
+    "player": {
+      "x": -321,
+      "y": -228,
+      "z": -104.45539215519695
+    },
+    "mode": "realistic",
+    "actor": {
+      "live": true,
+      "pending": false,
+      "state": "idle",
+      "th": {
+        "dormant": true,
+        "lost": false,
+        "still": 0,
+        "lastPx": 95,
+        "lastPy": 92,
+        "originX": -416,
+        "originY": -320
+      },
+      "x": 76,
+      "y": 80,
+      "flashlight": true,
+      "paused": false,
+      "ai": true
+    },
+    "memory": {
+      "geometries": 725,
+      "textures": 215
+    },
+    "chunks": 14,
+    "tasks": 0,
+    "visibleTriangles": 335537
+  },
+  "close": {
+    "level": 7,
+    "center": {
+      "x": -340,
+      "y": -240,
+      "z": -103.45539215519695
+    },
+    "player": {
+      "x": -328,
+      "y": -232,
+      "z": -104.25539215519694
+    },
+    "mode": "realistic",
+    "actor": {
+      "live": true,
+      "pending": false,
+      "state": "idle",
+      "th": {
+        "dormant": true,
+        "lost": false,
+        "still": 0,
+        "lastPx": 95,
+        "lastPy": 92,
+        "originX": -416,
+        "originY": -320
+      },
+      "x": 76,
+      "y": 80,
+      "flashlight": true,
+      "paused": false,
+      "ai": true
+    },
+    "memory": {
+      "geometries": 740,
+      "textures": 154
+    },
+    "chunks": 15,
+    "tasks": 0,
+    "visibleTriangles": 355833
+  },
+  "bite": {
+    "jaw": -0.9898747311925936,
+    "level": 7,
+    "center": {
+      "x": -340,
+      "y": -240,
+      "z": -103.45539215519695
+    },
+    "player": {
+      "x": -328,
+      "y": -232,
+      "z": -104.25539215519694
+    },
+    "mode": "realistic",
+    "actor": {
+      "live": true,
+      "pending": false,
+      "state": "attack",
+      "th": {
+        "dormant": false,
+        "lost": false,
+        "still": 0,
+        "lastPx": 95,
+        "lastPy": 92,
+        "originX": -416,
+        "originY": -320
+      },
+      "x": 76,
+      "y": 80,
+      "flashlight": true,
+      "paused": false,
+      "ai": true
+    },
+    "memory": {
+      "geometries": 740,
+      "textures": 154
+    },
+    "chunks": 15,
+    "tasks": 0,
+    "visibleTriangles": 355833
+  },
+  "side": {
+    "level": 7,
+    "center": {
+      "x": -340,
+      "y": -240,
+      "z": -103.45539215519695
+    },
+    "player": {
+      "x": -368.56,
+      "y": -227,
+      "z": -103.95539215519695
+    },
+    "mode": "realistic",
+    "actor": {
+      "live": true,
+      "pending": false,
+      "state": "idle",
+      "th": {
+        "dormant": false,
+        "lost": false,
+        "still": 0,
+        "lastPx": 127,
+        "lastPy": 92,
+        "originX": -448,
+        "originY": -320
+      },
+      "x": 108,
+      "y": 80,
+      "flashlight": true,
+      "paused": false,
+      "ai": true
+    },
+    "memory": {
+      "geometries": 812,
+      "textures": 160
+    },
+    "chunks": 16,
+    "tasks": 0,
+    "visibleTriangles": 440465
+  },
+  "harvest": {
+    "meat": 1,
+    "d": 1.3054929094761532,
+    "level": 7,
+    "center": {
+      "x": -340,
+      "y": -240,
+      "z": -103.45539215519695
+    },
+    "player": {
+      "x": -376.71999999999997,
+      "y": -233.51,
+      "z": -104.80539215519694
+    },
+    "mode": "realistic",
+    "actor": {
+      "live": true,
+      "pending": false,
+      "state": "idle",
+      "th": {
+        "dormant": true,
+        "lost": false,
+        "still": 0,
+        "lastPx": 127,
+        "lastPy": 92,
+        "originX": -448,
+        "originY": -320
+      },
+      "x": 108,
+      "y": 80,
+      "flashlight": false,
+      "paused": false,
+      "ai": true
+    },
+    "memory": {
+      "geometries": 848,
+      "textures": 183
+    },
+    "chunks": 19,
+    "tasks": 0,
+    "visibleTriangles": 460761
+  },
+  "consume": {
+    "breath": 599.9959,
+    "level": 7,
+    "center": {
+      "x": -340,
+      "y": -240,
+      "z": -103.45539215519695
+    },
+    "player": {
+      "x": -376.71999999999997,
+      "y": -233.51,
+      "z": -104.80539215519694
+    },
+    "mode": "realistic",
+    "actor": {
+      "live": true,
+      "pending": false,
+      "state": "idle",
+      "th": {
+        "dormant": true,
+        "lost": false,
+        "still": 0,
+        "lastPx": 127,
+        "lastPy": 92,
+        "originX": -448,
+        "originY": -320
+      },
+      "x": 108,
+      "y": 80,
+      "flashlight": false,
+      "paused": false,
+      "ai": true
+    },
+    "memory": {
+      "geometries": 850,
+      "textures": 186
+    },
+    "chunks": 19,
+    "tasks": 0,
+    "visibleTriangles": 460761
+  },
+  "still": {
+    "state": "wander",
+    "lost": true,
+    "level": 7,
+    "center": {
+      "x": -340,
+      "y": -240,
+      "z": -103.45539215519695
+    },
+    "player": {
+      "x": -325.3411097983178,
+      "y": -240.000000584131,
+      "z": -104.69920834500809
+    },
+    "mode": "realistic",
+    "actor": {
+      "live": true,
+      "pending": false,
+      "state": "wander",
+      "th": {
+        "dormant": false,
+        "lost": true,
+        "still": 0,
+        "lastPx": 90.6588902016822,
+        "lastPy": 79.99999941586903,
+        "originX": -416,
+        "originY": -320
+      },
+      "x": 83.60274399999761,
+      "y": 80.00000295820666,
+      "flashlight": false,
+      "paused": false,
+      "ai": true
+    },
+    "memory": {
+      "geometries": 868,
+      "textures": 184
+    },
+    "chunks": 19,
+    "tasks": 0,
+    "visibleTriangles": 388001
+  },
+  "recoil": {
+    "level": 7,
+    "center": {
+      "x": -340,
+      "y": -240,
+      "z": -103.45539215519695
+    },
+    "player": {
+      "x": -325.3411097983178,
+      "y": -240.000000584131,
+      "z": -104.69920834500809
+    },
+    "mode": "realistic",
+    "actor": {
+      "live": true,
+      "pending": false,
+      "state": "wander",
+      "th": {
+        "dormant": false,
+        "lost": true,
+        "still": 0,
+        "lastPx": 90.6588902016822,
+        "lastPy": 79.99999941586903,
+        "originX": -416,
+        "originY": -320
+      },
+      "x": 83.60274399999761,
+      "y": 80.00000295820666,
+      "flashlight": false,
+      "paused": false,
+      "ai": true
+    },
+    "memory": {
+      "geometries": 868,
+      "textures": 184
+    },
+    "chunks": 19,
+    "tasks": 0,
+    "visibleTriangles": 388001
+  },
+  "seabed": {
+    "seabedMeshes": 16,
+    "level": 7,
+    "center": {
+      "x": -340,
+      "y": -240,
+      "z": -103.45539215519695
+    },
+    "player": {
+      "x": -315,
+      "y": -223,
+      "z": -125.65038414001465
+    },
+    "mode": "realistic",
+    "actor": {
+      "live": true,
+      "pending": false,
+      "state": "idle",
+      "th": {
+        "dormant": true,
+        "lost": true,
+        "still": 0,
+        "lastPx": 58.6588902016822,
+        "lastPy": 47.99999941586903,
+        "originX": -384,
+        "originY": -288
+      },
+      "x": 51.602743999997614,
+      "y": 48.000002958206665,
+      "flashlight": true,
+      "paused": false,
+      "ai": true
+    },
+    "memory": {
+      "geometries": 852,
+      "textures": 168
+    },
+    "chunks": 16,
+    "tasks": 0,
+    "visibleTriangles": 355833
+  },
+  "frames": {
+    "median": 4.199999999254942,
+    "p95": 4.699999999254942,
+    "n": 120,
+    "level": 7,
+    "center": {
+      "x": -340,
+      "y": -240,
+      "z": -103.45539215519695
+    },
+    "player": {
+      "x": -315,
+      "y": -223,
+      "z": -125.65038414001465
+    },
+    "mode": "realistic",
+    "actor": {
+      "live": true,
+      "pending": false,
+      "state": "idle",
+      "th": {
+        "dormant": true,
+        "lost": true,
+        "still": 0,
+        "lastPx": 58.6588902016822,
+        "lastPy": 47.99999941586903,
+        "originX": -384,
+        "originY": -288
+      },
+      "x": 51.602743999997614,
+      "y": 48.000002958206665,
+      "flashlight": true,
+      "paused": false,
+      "ai": true
+    },
+    "memory": {
+      "geometries": 852,
+      "textures": 168
+    },
+    "chunks": 16,
+    "tasks": 0,
+    "visibleTriangles": 355833
+  },
+  "recycle": {
+    "rows": [
+      {
+        "geometries": 852,
+        "textures": 168
+      },
+      {
+        "geometries": 852,
+        "textures": 168
+      },
+      {
+        "geometries": 852,
+        "textures": 168
+      }
+    ],
+    "level": 7,
+    "center": {
+      "x": -340,
+      "y": -240,
+      "z": -103.45539215519695
+    },
+    "player": {
+      "x": -328,
+      "y": -232,
+      "z": -104.25539215519694
+    },
+    "mode": "realistic",
+    "actor": {
+      "live": true,
+      "pending": false,
+      "state": "idle",
+      "th": {
+        "dormant": true,
+        "lost": true,
+        "still": 0,
+        "lastPx": 90.6588902016822,
+        "lastPy": 79.99999941586903,
+        "originX": -416,
+        "originY": -320
+      },
+      "x": 83.60274399999761,
+      "y": 80.00000295820666,
+      "flashlight": true,
+      "paused": false,
+      "ai": true
+    },
+    "memory": {
+      "geometries": 852,
+      "textures": 168
+    },
+    "chunks": 16,
+    "tasks": 0,
+    "visibleTriangles": 376129
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  },
+  "summary": {
+    "checks": [
+      "new head, jaw, gills and 28 body segments are rendered in actual App",
+      "near head uses detailed LOD",
+      "item keeps thingmeat ID and new name",
+      "lure emission is animated",
+      "actual attack state opens articulated jaw",
+      "body is animated near player",
+      "actual player is within harvest surface reach",
+      "three actual timed knife swings yield exactly one piece",
+      "harvesting a sleeping Thing does not wake it",
+      "harvest cooldown starts",
+      "harvested item available in real inventory",
+      "sulfur breath starts after eating",
+      "stationary dark player stays lost after generic AI update",
+      "flee state selects dedicated animation",
+      "actual streamed seabed uses new triplanar material",
+      "lure emission is animated",
+      "live instances own emission materials 0",
+      "surviving instance remains valid 0",
+      "live instances own emission materials 1",
+      "surviving instance remains valid 1",
+      "live instances own emission materials 2",
+      "surviving instance remains valid 2",
+      "three recycle rounds have stable GPU geometry and texture counts",
+      "new model is removed on level switch"
+    ],
+    "records": [
+      {
+        "entryAndStreamingMs": 7766.599999997765,
+        "headHi": true,
+        "level": 7,
+        "center": {
+          "x": -340,
+          "y": -240,
+          "z": -103.45539215519695
+        },
+        "player": {
+          "x": -321,
+          "y": -228,
+          "z": -104.45539215519695
+        },
+        "mode": "realistic",
+        "actor": {
+          "live": true,
+          "pending": false,
+          "state": "idle",
+          "th": {
+            "dormant": true,
+            "lost": false,
+            "still": 0,
+            "lastPx": 95,
+            "lastPy": 92,
+            "originX": -416,
+            "originY": -320
+          },
+          "x": 76,
+          "y": 80,
+          "flashlight": true,
+          "paused": false,
+          "ai": true
+        },
+        "memory": {
+          "geometries": 725,
+          "textures": 215
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "visibleTriangles": 335537
+      },
+      {
+        "meat": 1,
+        "d": 1.3054929094761532,
+        "level": 7,
+        "center": {
+          "x": -340,
+          "y": -240,
+          "z": -103.45539215519695
+        },
+        "player": {
+          "x": -376.71999999999997,
+          "y": -233.51,
+          "z": -104.80539215519694
+        },
+        "mode": "realistic",
+        "actor": {
+          "live": true,
+          "pending": false,
+          "state": "idle",
+          "th": {
+            "dormant": true,
+            "lost": false,
+            "still": 0,
+            "lastPx": 127,
+            "lastPy": 92,
+            "originX": -448,
+            "originY": -320
+          },
+          "x": 108,
+          "y": 80,
+          "flashlight": false,
+          "paused": false,
+          "ai": true
+        },
+        "memory": {
+          "geometries": 848,
+          "textures": 183
+        },
+        "chunks": 19,
+        "tasks": 0,
+        "visibleTriangles": 460761
+      },
+      {
+        "recycle": [
+          {
+            "geometries": 852,
+            "textures": 168
+          },
+          {
+            "geometries": 852,
+            "textures": 168
+          },
+          {
+            "geometries": 852,
+            "textures": 168
+          }
+        ]
+      }
+    ],
+    "status": {
+      "level": 4,
+      "center": {
+        "x": -340,
+        "y": -240,
+        "z": -103.45539215519695
+      },
+      "player": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "mode": "realistic",
+      "actor": {
+        "live": false,
+        "pending": false,
+        "state": "idle",
+        "th": {
+          "dormant": true,
+          "lost": true,
+          "still": 0,
+          "lastPx": 90.6588902016822,
+          "lastPy": 79.99999941586903,
+          "originX": -416,
+          "originY": -320
+        },
+        "x": 83.60274399999761,
+        "y": 80.00000295820666,
+        "flashlight": true,
+        "paused": false,
+        "ai": true
+      },
+      "memory": {
+        "geometries": 724,
+        "textures": 92
+      },
+      "chunks": 10,
+      "tasks": 1,
+      "visibleTriangles": 0
+    }
+  },
+  "ok": true
+}

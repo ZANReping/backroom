@@ -8,14 +8,14 @@ export interface GenChunk {
   l11?: import('./l11Types').L11ChunkData
   l0?: import('./l0Architecture').L0Layout
   l1?: L1ArchitectureData
-  variant: string // 变体 id（L0=maze/pillars/… L1=aisle/parking/…）
+  variant: string // 变体 id（L0=maze/pillars/… L1=parking/storage/…）
   tiles: Uint8Array
   wet: Uint8Array
   elev: Uint8Array
   step: Uint8Array
   tint: Uint8Array
   crawl: Uint8Array // v41：蹲伏低通道（L2 扭曲的廊道横穿管道；L0/L1 恒全 0）
-  outdoor?: Uint8Array // v54：室外瓦片（L4 窗景区窗外虚空条带；其余层级缺省=全室内）
+  outdoor?: Uint8Array // v54：室外瓦片（各层级真实露天区域；L4 缺省=全室内）
   ceiling?: Uint8Array // v54：挑高瓦片（L5 主厅 ceiling=1；缺省=全部正常层高）
   liquid?: Uint8Array // v54：液体瓦片（L5 室内泳池 1=深水/2=浅水，同有限层 m.liquid 契约；缺省=无液体）
   dn?: Uint8Array // v56 九轮：地下可走地板瓦片（L6 -1F 走廊；缺省=全 0）
@@ -43,6 +43,7 @@ export interface GenChunk {
     arachnidMorph?: 'spider' | 'scorpion' | 'tick' | 'mite'
     arachnidBreed?: number
     herbivore?: 1
+    arachnidVariant?: import('../engine/arachnidStats').ArachnidKind; arachnidNest?: string; arachnidMother?: 1 // [L8-arachnid]
     mothNest?: string
     mothForm?: import('../entities/types').MothForm
   }[] // v60：L8 增加洞顶尸鼠与蛛形纲实例生态变体

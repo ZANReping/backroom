@@ -1,0 +1,273 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 9754,
+  "cdp": 9755,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\tiny-final-20261022\\realistic-final\\qa-1792661094951-58700",
+    "--remote-debugging-port=9755",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 30048,
+    "server": 12024
+  },
+  "appBootMs": 12078.699,
+  "entryMs": 2574.776399999999,
+  "firstPlayableMs": 20362.057999999997,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "checks": [],
+    "records": [],
+    "status": {
+      "level": 4,
+      "player": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "chunks": 9,
+      "tasks": 4,
+      "memory": {
+        "geometries": 467,
+        "textures": 67
+      },
+      "calls": 1,
+      "triangles": 1
+    }
+  },
+  "perch": {
+    "name": "perch",
+    "level": 7,
+    "entryMs": 4058.89999999851,
+    "player": {
+      "x": -128.3,
+      "y": 18.900000000000006,
+      "z": -44.68
+    },
+    "chunks": 12,
+    "tasks": 0,
+    "memory": {
+      "geometries": 503,
+      "textures": 197
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "close": {
+    "target": "与 小小 交谈",
+    "level": 7,
+    "player": {
+      "x": -132.1,
+      "y": 16.400000000000006,
+      "z": -45.38
+    },
+    "chunks": 16,
+    "tasks": 0,
+    "memory": {
+      "geometries": 511,
+      "textures": 225
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "blowFour": {
+    "phases": [
+      "perch",
+      "perch",
+      "perch",
+      "repel"
+    ],
+    "oxygen": 22.649899999999977,
+    "state": "repel",
+    "level": 7,
+    "player": {
+      "x": -129.9,
+      "y": 16.099999999999994,
+      "z": -45.18
+    },
+    "chunks": 16,
+    "tasks": 0,
+    "memory": {
+      "geometries": 511,
+      "textures": 159
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "flee": {
+    "distance": 5.04587199999976,
+    "phase": "repel",
+    "blocked": false,
+    "level": 7,
+    "player": {
+      "x": -129.9,
+      "y": 16.099999999999994,
+      "z": -45.18
+    },
+    "chunks": 16,
+    "tasks": 0,
+    "memory": {
+      "geometries": 526,
+      "textures": 159
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "hold": {
+    "held": "stonekazoo",
+    "level": 7,
+    "player": {
+      "x": -129.9,
+      "y": 16.099999999999994,
+      "z": -45.18
+    },
+    "chunks": 16,
+    "tasks": 0,
+    "memory": {
+      "geometries": 526,
+      "textures": 159
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "blowing": {
+    "anim": "blow",
+    "t": 0.24990000000000162,
+    "duration": 0.55,
+    "rotation": [
+      -0.10012481284534992,
+      -0.5,
+      0.04,
+      "YXZ"
+    ],
+    "level": 7,
+    "player": {
+      "x": -129.9,
+      "y": 16.099999999999994,
+      "z": -45.18
+    },
+    "chunks": 16,
+    "tasks": 0,
+    "memory": {
+      "geometries": 526,
+      "textures": 159
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "returned": {
+    "phase": "hunt",
+    "hp": 90,
+    "level": 7,
+    "player": {
+      "x": -129.9,
+      "y": 16.099999999999994,
+      "z": -45.18
+    },
+    "chunks": 16,
+    "tasks": 0,
+    "memory": {
+      "geometries": 526,
+      "textures": 159
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: rendered instrument contacts rock with single ground offset: instr:kazoospike\",\"lineNumber\":17,\"columnNumber\":19,\"scriptId\":\"662\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"ok\",\"scriptId\":\"662\",\"url\":\"http://127.0.0.1:9754/verifier/tiny-final-check.ts\",\"lineNumber\":16,\"columnNumber\":18},{\"functionName\":\"\",\"scriptId\":\"662\",\"url\":\"http://127.0.0.1:9754/verifier/tiny-final-check.ts\",\"lineNumber\":208,\"columnNumber\":6},{\"functionName\":\"traverse\",\"scriptId\":\"343\",\"url\":\"http://127.0.0.1:9754/reports/tiny-final-20261022/realistic-final/qa-1792661094951-58700/vite-cache/deps/chunk-BWT6IPVN.js?v=8210ed3f\",\"lineNumber\":7201,\"columnNumber\":4},{\"functionName\":\"traverse\",\"scriptId\":\"343\",\"url\":\"http://127.0.0.1:9754/reports/tiny-final-20261022/realistic-final/qa-1792661094951-58700/vite-cache/deps/chunk-BWT6IPVN.js?v=8210ed3f\",\"lineNumber\":7204,\"columnNumber\":18},{\"functionName\":\"cave\",\"scriptId\":\"662\",\"url\":\"http://127.0.0.1:9754/verifier/tiny-final-check.ts\",\"lineNumber\":199,\"columnNumber\":9}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: rendered instrument contacts rock with single ground offset: instr:kazoospike\\n    at ok (http://127.0.0.1:9754/verifier/tiny-final-check.ts:17:19)\\n    at http://127.0.0.1:9754/verifier/tiny-final-check.ts:209:7\\n    at Mesh.traverse (http://127.0.0.1:9754/reports/tiny-final-20261022/realistic-final/qa-1792661094951-58700/vite-cache/deps/chunk-BWT6IPVN.js?v=8210ed3f:7202:5)\\n    at Group.traverse (http://127.0.0.1:9754/reports/tiny-final-20261022/realistic-final/qa-1792661094951-58700/vite-cache/deps/chunk-BWT6IPVN.js?v=8210ed3f:7205:19)\\n    at Object.cave (http://127.0.0.1:9754/verifier/tiny-final-check.ts:200:10)\",\"objectId\":\"-1673214009932491206.2.1\"}}",
+  "partial": {
+    "checks": [
+      "natural Tiny guards generated L9 door",
+      "new shark-pelt model in actual renderer",
+      "actual aiming finds Tiny conversation",
+      "use starts blow animation 0",
+      "use starts blow animation 1",
+      "use starts blow animation 2",
+      "use starts blow animation 3",
+      "four actual timed uses repel Tiny",
+      "underwater blows spend at least twenty seconds of oxygen",
+      "stone kazoo is reusable",
+      "door opens during repel",
+      "actual first-person kazoo model selected",
+      "first-person hand raises and turns kazoo toward mouth",
+      "Tiny returns and blocks door after repel expires",
+      "actual combat guard prevents death and provokes Tiny",
+      "single generated instrument cave rendered",
+      "all eleven instruments fit actual cave field",
+      "rendered instrument contacts rock with single ground offset: instr:violin",
+      "rendered instrument contacts rock with single ground offset: instr:guitar",
+      "rendered instrument contacts rock with single ground offset: instr:trombone",
+      "rendered instrument contacts rock with single ground offset: instr:toilet",
+      "rendered instrument contacts rock with single ground offset: instr:bongo",
+      "rendered instrument contacts rock with single ground offset: instr:bongo",
+      "rendered instrument contacts rock with single ground offset: instr:bongo",
+      "rendered instrument contacts rock with single ground offset: instr:bongo",
+      "rendered instrument contacts rock with single ground offset: instr:bongo",
+      "rendered instrument contacts rock with single ground offset: instr:bongo"
+    ],
+    "records": [
+      {
+        "name": "perch",
+        "level": 7,
+        "entryMs": 4058.89999999851,
+        "player": {
+          "x": -128.3,
+          "y": 18.900000000000006,
+          "z": -44.68
+        },
+        "chunks": 12,
+        "tasks": 0,
+        "memory": {
+          "geometries": 503,
+          "textures": 197
+        },
+        "calls": 1,
+        "triangles": 1
+      }
+    ],
+    "status": {
+      "level": 8,
+      "player": {
+        "x": 114.46402343493628,
+        "y": 4.871647546506196,
+        "z": 0.31256301383872254
+      },
+      "chunks": 10,
+      "tasks": 1,
+      "memory": {
+        "geometries": 279,
+        "textures": 73
+      },
+      "calls": 1,
+      "triangles": 1
+    }
+  },
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 10154
+    },
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\nLEVEL 8\n洞穴系统\nB8\n磁带\n0/6\n多维之路\n100%\n你碰到了它。焦油下的荧光斑骤然亮起——小小的长矛已经转向你。\nLevel 8「洞穴系统」\nSurvival Difficulty: Class 4 · 逃脱 4/5 · 环境 4/5 · 实体 4/5\n入口：Level 6 地下廊道的天然洞口 / Level 7 午夜带海床的水下洞穴\n石卡祖笛\n1\n2\n3\n4\n5\n6\n7\n左键\n攻击\n空格\n跳跃\nC\n蹲伏\nF\n手电\n右键\n使用\nQ\n丢弃\nV\n检视\n左Alt\n收起主手\n开发者模式\n🛠 开发者模式 · DEV\n▴"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

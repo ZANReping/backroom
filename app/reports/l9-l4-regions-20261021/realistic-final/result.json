@@ -1,0 +1,370 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 9592,
+  "cdp": 9593,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l9-l4-regions-20261021\\realistic-final\\qa-1792595717888-17580",
+    "--remote-debugging-port=9593",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 74644,
+    "server": 79468
+  },
+  "appBootMs": 11630.5608,
+  "entryMs": 5497.5075,
+  "firstPlayableMs": 25469.985699999997,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 4,
+    "world": {
+      "x": 15.5,
+      "y": 15.5,
+      "z": 0
+    },
+    "chunks": 9,
+    "tasks": 4,
+    "memory": {
+      "geometries": 946,
+      "textures": 67
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "map": {
+    "width": 480,
+    "height": 480,
+    "level": 4,
+    "world": {
+      "x": 15.5,
+      "y": 15.5,
+      "z": 0
+    },
+    "chunks": 9,
+    "tasks": 4,
+    "memory": {
+      "geometries": 946,
+      "textures": 75
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "exits": [
+    {
+      "scene": {
+        "kind": "elevatorshaft",
+        "anchor": {
+          "x": -329,
+          "y": -408,
+          "yaw": 1.5707963267948966
+        },
+        "model": {
+          "x": 87.5,
+          "y": 0,
+          "z": 72.5,
+          "yaw": 1.5707963267948966
+        },
+        "level": 4,
+        "world": {
+          "x": -331.6,
+          "y": -407.5,
+          "z": 0
+        },
+        "chunks": 8,
+        "tasks": 1,
+        "memory": {
+          "geometries": 1723,
+          "textures": 62
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      "transition": {
+        "level": 3,
+        "world": {
+          "x": -14.5,
+          "y": 25.5,
+          "z": 0
+        },
+        "chunks": 6,
+        "tasks": 4,
+        "memory": {
+          "geometries": 449,
+          "textures": 79
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      }
+    },
+    {
+      "scene": {
+        "kind": "oldstairs",
+        "anchor": {
+          "x": 49,
+          "y": -214,
+          "yaw": 0
+        },
+        "model": {
+          "x": 81.5,
+          "y": 0,
+          "z": 74.5,
+          "yaw": 0
+        },
+        "level": 4,
+        "world": {
+          "x": 49.5,
+          "y": -212.25,
+          "z": 0
+        },
+        "chunks": 7,
+        "tasks": 4,
+        "memory": {
+          "geometries": 1087,
+          "textures": 104
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      "transition": {
+        "level": 5,
+        "world": {
+          "x": 20.5,
+          "y": 2.5,
+          "z": 0
+        },
+        "chunks": 6,
+        "tasks": 4,
+        "memory": {
+          "geometries": 638,
+          "textures": 146
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      }
+    },
+    {
+      "scene": {
+        "kind": "trapdoor",
+        "anchor": {
+          "x": -92,
+          "y": -474,
+          "yaw": 0
+        },
+        "model": {
+          "x": 68.5,
+          "y": 0,
+          "z": 70.5,
+          "yaw": 0
+        },
+        "level": 4,
+        "world": {
+          "x": -91.5,
+          "y": -472.35,
+          "z": 0
+        },
+        "chunks": 5,
+        "tasks": 4,
+        "memory": {
+          "geometries": 367,
+          "textures": 110
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      "transition": {
+        "level": 6,
+        "world": {
+          "x": 14.5,
+          "y": 14.5,
+          "z": -0.1263907286338508
+        },
+        "chunks": 8,
+        "tasks": 4,
+        "memory": {
+          "geometries": 601,
+          "textures": 152
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      }
+    }
+  ],
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: Timeout offscreen fog arrival\",\"lineNumber\":11,\"columnNumber\":46,\"scriptId\":\"618\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"until\",\"scriptId\":\"618\",\"url\":\"http://127.0.0.1:9592/verifier/l9-l4-regions-check.ts\",\"lineNumber\":10,\"columnNumber\":45}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: Timeout offscreen fog arrival\\n    at until (http://127.0.0.1:9592/verifier/l9-l4-regions-check.ts:11:46)\\n    at async Object.fogStart (http://127.0.0.1:9592/verifier/l9-l4-regions-check.ts:158:5)\",\"objectId\":\"-261049171494067697.2.1\"}}",
+  "partial": {
+    "checks": [
+      "original map legend 办公间区",
+      "original map legend 空旷区",
+      "original map legend 小房间区",
+      "original map legend 空旷大厅",
+      "retired window region absent from map",
+      "original map opens at full canvas size",
+      "generated elevatorshaft",
+      "live generated elevatorshaft",
+      "rendered exit root elevatorshaft",
+      "render and layout share exit yaw elevatorshaft",
+      "exit has collision-safe approach elevatorshaft",
+      "live exit to use",
+      "actual exit interaction elevatorshaft",
+      "actual transition destination 3",
+      "generated oldstairs",
+      "live generated oldstairs",
+      "rendered exit root oldstairs",
+      "render and layout share exit yaw oldstairs",
+      "exit has collision-safe approach oldstairs",
+      "live exit to use",
+      "actual transition destination 5",
+      "generated trapdoor",
+      "live generated trapdoor",
+      "rendered exit root trapdoor",
+      "render and layout share exit yaw trapdoor",
+      "exit has collision-safe approach trapdoor",
+      "actual aimed exit interaction trapdoor",
+      "live exit to use",
+      "actual exit interaction trapdoor",
+      "actual transition destination 6"
+    ],
+    "records": [
+      {
+        "kind": "elevatorshaft",
+        "anchor": {
+          "x": -329,
+          "y": -408,
+          "yaw": 1.5707963267948966
+        },
+        "model": {
+          "x": 87.5,
+          "y": 0,
+          "z": 72.5,
+          "yaw": 1.5707963267948966
+        },
+        "level": 4,
+        "world": {
+          "x": -331.6,
+          "y": -407.5,
+          "z": 0
+        },
+        "chunks": 8,
+        "tasks": 1,
+        "memory": {
+          "geometries": 1723,
+          "textures": 62
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "kind": "oldstairs",
+        "anchor": {
+          "x": 49,
+          "y": -214,
+          "yaw": 0
+        },
+        "model": {
+          "x": 81.5,
+          "y": 0,
+          "z": 74.5,
+          "yaw": 0
+        },
+        "level": 4,
+        "world": {
+          "x": 49.5,
+          "y": -212.25,
+          "z": 0
+        },
+        "chunks": 7,
+        "tasks": 4,
+        "memory": {
+          "geometries": 1087,
+          "textures": 104
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "kind": "trapdoor",
+        "anchor": {
+          "x": -92,
+          "y": -474,
+          "yaw": 0
+        },
+        "model": {
+          "x": 68.5,
+          "y": 0,
+          "z": 70.5,
+          "yaw": 0
+        },
+        "level": 4,
+        "world": {
+          "x": -91.5,
+          "y": -472.35,
+          "z": 0
+        },
+        "chunks": 5,
+        "tasks": 4,
+        "memory": {
+          "geometries": 367,
+          "textures": 110
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      }
+    ],
+    "status": {
+      "level": 9,
+      "world": {
+        "x": 4,
+        "y": 17,
+        "z": 0
+      },
+      "chunks": 23,
+      "tasks": 0,
+      "memory": {
+        "geometries": 1776,
+        "textures": 369
+      },
+      "fog": "idle",
+      "k": 0,
+      "t": -0.02089999999999418
+    }
+  },
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 9636.40000000596
+    },
+    "text": "HP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\nLEVEL 9\n郊区\nB9\n磁带\n0/6\n午夜森林\n100%\nSurvival Difficulty: Class 5 · 无任何已建立的基地或社区\n入口：Level 5 深色木门（住宅门口） / Level 7 水域切出（后院泳池） / Level 8 第九大道洞口（道路尽头）\n出口线索：道路尽头嵌着一座潮湿的石质洞口，里面仍是 Level 8 的岩层。\n风沿着没有路牌线的街道掠过。每一栋住宅的窗帘都在同一秒轻轻动了一下。\n1\n2\n3\n4\n5\n6\n7\n空格\n跳跃\nC\n蹲伏\nF\n手电\n左Alt\n取出主手\n➤\n你感觉到明显的气流（3m）\n开发者模式\n🛠 开发者模式 · DEV\n▴"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

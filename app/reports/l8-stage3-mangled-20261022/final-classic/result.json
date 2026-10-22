@@ -1,0 +1,1774 @@
+{
+  "seed": 424242,
+  "mode": "classic",
+  "port": 10608,
+  "cdp": 10609,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l8-stage3-mangled-20261022\\final-classic\\qa-1792649632321-12912",
+    "--remote-debugging-port=10609",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 20640,
+    "server": 17896
+  },
+  "appBootMs": 11961.9949,
+  "entryMs": 2497.8247999999985,
+  "firstPlayableMs": 18028.4796,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "checks": [],
+    "records": [],
+    "status": {
+      "level": 4,
+      "world": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "chunks": 9,
+      "tasks": 4,
+      "memory": {
+        "geometries": 408,
+        "textures": 43
+      },
+      "fog": "idle",
+      "k": 0,
+      "t": 240
+    }
+  },
+  "boot": {
+    "entryMs": 2944.4000000003725,
+    "level": 8,
+    "world": {
+      "x": 15.5,
+      "y": 9.5,
+      "z": -0.0120497300000004
+    },
+    "chunks": 7,
+    "tasks": 1,
+    "memory": {
+      "geometries": 163,
+      "textures": 34
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240,
+    "at": {
+      "x": 79.5,
+      "y": 71.5,
+      "z": -0.20031982949495464,
+      "roof": 5.775152861892456
+    }
+  },
+  "arachnid-wolf": {
+    "type": "arachnid",
+    "kind": "wolf",
+    "readyMs": 624.3000000007451,
+    "settledMs": 1125.7000000011176,
+    "meshes": 23,
+    "triangles": 10556,
+    "size": [
+      0.8495156538690196,
+      0.348184581296206,
+      0.721006218544133
+    ],
+    "level": 8,
+    "world": {
+      "x": 12.299999999999997,
+      "y": 7.5,
+      "z": -0.16214660772254028
+    },
+    "chunks": 14,
+    "tasks": 0,
+    "memory": {
+      "geometries": 344,
+      "textures": 37
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "arachnid-weaver": {
+    "type": "arachnid",
+    "kind": "weaver",
+    "readyMs": 128.7000000011176,
+    "settledMs": 630.2000000011176,
+    "meshes": 23,
+    "triangles": 9352,
+    "size": [
+      0.7616954219670191,
+      0.416669532848066,
+      0.7457217303347079
+    ],
+    "level": 8,
+    "world": {
+      "x": 12.299999999999997,
+      "y": 7.5,
+      "z": -0.16214660772254028
+    },
+    "chunks": 14,
+    "tasks": 0,
+    "memory": {
+      "geometries": 344,
+      "textures": 37
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "arachnid-jumper": {
+    "type": "arachnid",
+    "kind": "jumper",
+    "readyMs": 222.5,
+    "settledMs": 725.0999999996275,
+    "meshes": 23,
+    "triangles": 10052,
+    "size": [
+      0.47096931068375625,
+      0.1723007545780504,
+      0.40730981527400445
+    ],
+    "level": 8,
+    "world": {
+      "x": 12.299999999999997,
+      "y": 7.5,
+      "z": -0.16214660772254028
+    },
+    "chunks": 14,
+    "tasks": 0,
+    "memory": {
+      "geometries": 344,
+      "textures": 37
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "arachnid-blindcave": {
+    "type": "arachnid",
+    "kind": "blindcave",
+    "readyMs": 191.5,
+    "settledMs": 693.3000000007451,
+    "meshes": 22,
+    "triangles": 7852,
+    "size": [
+      0.9516168353575551,
+      0.420171668179354,
+      0.9626228626632383
+    ],
+    "level": 8,
+    "world": {
+      "x": 12.299999999999997,
+      "y": 7.5,
+      "z": -0.16214660772254028
+    },
+    "chunks": 14,
+    "tasks": 0,
+    "memory": {
+      "geometries": 343,
+      "textures": 38
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "arachnid-broodswarm": {
+    "type": "arachnid",
+    "kind": "broodswarm",
+    "readyMs": 187.90000000037253,
+    "settledMs": 689.9000000003725,
+    "meshes": 1,
+    "triangles": 16896,
+    "size": [
+      1.1894074881697918,
+      0.039381081265818546,
+      0.7848814290461803
+    ],
+    "level": 8,
+    "world": {
+      "x": 12.299999999999997,
+      "y": 7.5,
+      "z": -0.16214660772254028
+    },
+    "chunks": 14,
+    "tasks": 0,
+    "memory": {
+      "geometries": 322,
+      "textures": 38
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "arachnid-harvestman": {
+    "type": "arachnid",
+    "kind": "harvestman",
+    "readyMs": 94.79999999888241,
+    "settledMs": 596.0999999996275,
+    "meshes": 23,
+    "triangles": 7764,
+    "size": [
+      1.0532953830329745,
+      0.743986891628401,
+      1.6440197404916006
+    ],
+    "level": 8,
+    "world": {
+      "x": 12.299999999999997,
+      "y": 7.5,
+      "z": -0.16214660772254028
+    },
+    "chunks": 14,
+    "tasks": 0,
+    "memory": {
+      "geometries": 344,
+      "textures": 38
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "arachnid-diving": {
+    "type": "arachnid",
+    "kind": "diving",
+    "readyMs": 223,
+    "settledMs": 724,
+    "meshes": 24,
+    "triangles": 11480,
+    "size": [
+      0.6103683519958736,
+      0.2306380759852352,
+      0.512473605266095
+    ],
+    "level": 8,
+    "world": {
+      "x": 12.299999999999997,
+      "y": 7.5,
+      "z": -0.16214660772254028
+    },
+    "chunks": 14,
+    "tasks": 0,
+    "memory": {
+      "geometries": 345,
+      "textures": 38
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "arachnid-colossus": {
+    "type": "arachnid",
+    "kind": "colossus",
+    "readyMs": 217.80000000074506,
+    "settledMs": 720.6000000014901,
+    "meshes": 24,
+    "triangles": 10628,
+    "size": [
+      3.6886082742018687,
+      1.3797260761977832,
+      3.783989387264114
+    ],
+    "level": 8,
+    "world": {
+      "x": 12.299999999999997,
+      "y": 7.5,
+      "z": -0.16214660772254028
+    },
+    "chunks": 14,
+    "tasks": 0,
+    "memory": {
+      "geometries": 345,
+      "textures": 39
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "arachnid-widow": {
+    "type": "arachnid",
+    "kind": "widow",
+    "readyMs": 226.40000000037253,
+    "settledMs": 729.1000000014901,
+    "meshes": 24,
+    "triangles": 10636,
+    "size": [
+      0.7416081701173454,
+      0.38624206267765593,
+      0.6686226380618194
+    ],
+    "level": 8,
+    "world": {
+      "x": 12.299999999999997,
+      "y": 7.5,
+      "z": -0.16214660772254028
+    },
+    "chunks": 14,
+    "tasks": 0,
+    "memory": {
+      "geometries": 345,
+      "textures": 40
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "arachnid-regen": {
+    "type": "arachnid",
+    "kind": "regen",
+    "readyMs": 128.7000000011176,
+    "settledMs": 631.4000000003725,
+    "meshes": 25,
+    "triangles": 11036,
+    "size": [
+      0.9087536586681466,
+      0.3717196671843902,
+      0.8050022693422392
+    ],
+    "level": 8,
+    "world": {
+      "x": 12.299999999999997,
+      "y": 7.5,
+      "z": -0.16214660772254028
+    },
+    "chunks": 14,
+    "tasks": 0,
+    "memory": {
+      "geometries": 346,
+      "textures": 42
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "arachnid-undying": {
+    "type": "arachnid",
+    "kind": "undying",
+    "readyMs": 163.19999999925494,
+    "settledMs": 666.6999999992549,
+    "meshes": 23,
+    "triangles": 9999,
+    "size": [
+      0.959213310834059,
+      0.4372220463804477,
+      0.8523937194939606
+    ],
+    "level": 8,
+    "world": {
+      "x": 12.299999999999997,
+      "y": 7.5,
+      "z": -0.16214660772254028
+    },
+    "chunks": 14,
+    "tasks": 0,
+    "memory": {
+      "geometries": 344,
+      "textures": 44
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "arachnid-fireproof": {
+    "type": "arachnid",
+    "kind": "fireproof",
+    "readyMs": 220.59999999962747,
+    "settledMs": 722.4000000003725,
+    "meshes": 24,
+    "triangles": 9732,
+    "size": [
+      0.9126311377103491,
+      0.3742646175467478,
+      0.7749984462311375
+    ],
+    "level": 8,
+    "world": {
+      "x": 12.299999999999997,
+      "y": 7.5,
+      "z": -0.16214660772254028
+    },
+    "chunks": 14,
+    "tasks": 0,
+    "memory": {
+      "geometries": 345,
+      "textures": 46
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "arachnid-anoxic": {
+    "type": "arachnid",
+    "kind": "anoxic",
+    "readyMs": 124.59999999962747,
+    "settledMs": 625.3999999985099,
+    "meshes": 24,
+    "triangles": 9948,
+    "size": [
+      0.7951391574078741,
+      0.3353394588711025,
+      0.7067800841075069
+    ],
+    "level": 8,
+    "world": {
+      "x": 12.299999999999997,
+      "y": 7.5,
+      "z": -0.16214660772254028
+    },
+    "chunks": 14,
+    "tasks": 0,
+    "memory": {
+      "geometries": 345,
+      "textures": 47
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "arachnid-cavescorpion": {
+    "type": "arachnid",
+    "kind": "cavescorpion",
+    "readyMs": 123.59999999962747,
+    "settledMs": 624.5,
+    "meshes": 25,
+    "triangles": 11692,
+    "size": [
+      0.7946376005273947,
+      0.3505873775000427,
+      0.45563242069593457
+    ],
+    "level": 8,
+    "world": {
+      "x": 12.299999999999997,
+      "y": 7.5,
+      "z": -0.16214660772254028
+    },
+    "chunks": 14,
+    "tasks": 0,
+    "memory": {
+      "geometries": 346,
+      "textures": 47
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "arachnid-whipscorpion": {
+    "type": "arachnid",
+    "kind": "whipscorpion",
+    "readyMs": 128.7999999988824,
+    "settledMs": 629.6999999992549,
+    "meshes": 25,
+    "triangles": 9452,
+    "size": [
+      1.1937686784955872,
+      0.17327630289837687,
+      0.5154814116154398
+    ],
+    "level": 8,
+    "world": {
+      "x": 12.299999999999997,
+      "y": 7.5,
+      "z": -0.16214660772254028
+    },
+    "chunks": 14,
+    "tasks": 0,
+    "memory": {
+      "geometries": 346,
+      "textures": 47
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "arachnid-tick": {
+    "type": "arachnid",
+    "kind": "tick",
+    "readyMs": 94.70000000111759,
+    "settledMs": 595.1000000014901,
+    "meshes": 18,
+    "triangles": 6464,
+    "size": [
+      0.26630038281142276,
+      0.07394670693017333,
+      0.23566913219138996
+    ],
+    "level": 8,
+    "world": {
+      "x": 12.299999999999997,
+      "y": 7.5,
+      "z": -0.16214660772254028
+    },
+    "chunks": 14,
+    "tasks": 0,
+    "memory": {
+      "geometries": 339,
+      "textures": 47
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "arachnid-mitecloud": {
+    "type": "arachnid",
+    "kind": "mitecloud",
+    "readyMs": 251.5,
+    "settledMs": 753.8000000007451,
+    "meshes": 1,
+    "triangles": 52000,
+    "size": [
+      1.2465704554164745,
+      0.6777475196300016,
+      1.3151154817367967
+    ],
+    "level": 8,
+    "world": {
+      "x": 12.299999999999997,
+      "y": 7.5,
+      "z": -0.16214660772254028
+    },
+    "chunks": 14,
+    "tasks": 0,
+    "memory": {
+      "geometries": 322,
+      "textures": 47
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "camocrawler": {
+    "type": "camocrawler",
+    "kind": null,
+    "readyMs": 328.69999999925494,
+    "settledMs": 833.3999999985099,
+    "meshes": 35,
+    "triangles": 20100,
+    "size": [
+      1.876521740917596,
+      2.214462759143853,
+      0.9274960258378968
+    ],
+    "level": 8,
+    "world": {
+      "x": 16.95606646967191,
+      "y": 5.222887351880431,
+      "z": -0.19291026677712164
+    },
+    "chunks": 14,
+    "tasks": 0,
+    "memory": {
+      "geometries": 360,
+      "textures": 53
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "curabitur-female": {
+    "type": "curabitur",
+    "kind": "female",
+    "readyMs": 390.6000000014901,
+    "settledMs": 895.1000000014901,
+    "meshes": 19,
+    "triangles": 13208,
+    "size": [
+      1.3102948494338023,
+      1.3298491836326969,
+      0.5711422007253475
+    ],
+    "level": 8,
+    "world": {
+      "x": 12.299999999999997,
+      "y": 7.5,
+      "z": -0.16214660772254028
+    },
+    "chunks": 14,
+    "tasks": 0,
+    "memory": {
+      "geometries": 366,
+      "textures": 57
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "curabitur-male": {
+    "type": "curabitur",
+    "kind": "male",
+    "readyMs": 315.5,
+    "settledMs": 817.9000000003725,
+    "meshes": 20,
+    "triangles": 14074,
+    "size": [
+      0.7831531523154354,
+      0.8215468352082373,
+      0.40024557641194747
+    ],
+    "level": 8,
+    "world": {
+      "x": 12.299999999999997,
+      "y": 7.5,
+      "z": -0.16214660772254028
+    },
+    "chunks": 14,
+    "tasks": 0,
+    "memory": {
+      "geometries": 367,
+      "textures": 57
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "lightguide": {
+    "type": "lightguide",
+    "kind": null,
+    "readyMs": 32.59999999962747,
+    "settledMs": 532.7999999988824,
+    "meshes": 1,
+    "triangles": 216,
+    "size": [
+      0.29335468080597593,
+      0.2933546808059888,
+      0.03085082210600376
+    ],
+    "level": 8,
+    "world": {
+      "x": 12.299999999999997,
+      "y": 7.5,
+      "z": -0.16214660772254028
+    },
+    "chunks": 14,
+    "tasks": 0,
+    "memory": {
+      "geometries": 350,
+      "textures": 59
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "camo-reveal": {
+    "mode": "reveal"
+  },
+  "bird-live": {
+    "mode": "hover",
+    "z": 4.763589646530977
+  },
+  "acid-web-vision": {
+    "acid": 1,
+    "web": 1,
+    "blur": 6
+  },
+  "glowing-items": {
+    "puddles": 1,
+    "groundJars": 1
+  },
+  "rune-nest": {
+    "nest": "an:-5,3",
+    "world": {
+      "x": -148.5,
+      "y": 110.5,
+      "z": 0.7624978768257026
+    },
+    "children": 7,
+    "level": 8,
+    "chunks": 10,
+    "tasks": 1,
+    "memory": {
+      "geometries": 221,
+      "textures": 66
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "resource-cycles": [
+    {
+      "geometries": 356,
+      "textures": 63,
+      "chunks": 14
+    },
+    {
+      "geometries": 356,
+      "textures": 63,
+      "chunks": 14
+    },
+    {
+      "geometries": 356,
+      "textures": 63,
+      "chunks": 14
+    }
+  ],
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  },
+  "mangled-manual": {
+    "distance": 18,
+    "level": 9,
+    "world": {
+      "x": -37.5,
+      "y": -51.5,
+      "z": 0
+    },
+    "chunks": 4,
+    "tasks": 1,
+    "memory": {
+      "geometries": 855,
+      "textures": 130
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 239.62920000000003
+  },
+  "mangled-first": {
+    "attempts": 1,
+    "warnCount": 1,
+    "phase": "stalk",
+    "z": 14.328923966576799,
+    "cd": 4.9833000000000025
+  },
+  "mangled-repeat": {
+    "attempts": 2,
+    "warnCount": 2,
+    "phase": "stalk",
+    "legs": 24,
+    "growth": 1,
+    "level": 9,
+    "world": {
+      "x": -37.5,
+      "y": -51.5,
+      "z": 14.33209600068383
+    },
+    "chunks": 23,
+    "tasks": 0,
+    "memory": {
+      "geometries": 1605,
+      "textures": 260
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 209.87970000001482
+  },
+  "summary": {
+    "checks": [
+      "real L8 cave has free encounter space",
+      "complete finite model arachnid/wolf",
+      "rendered meshes arachnid/wolf",
+      "complete finite model arachnid/weaver",
+      "rendered meshes arachnid/weaver",
+      "complete finite model arachnid/jumper",
+      "rendered meshes arachnid/jumper",
+      "complete finite model arachnid/blindcave",
+      "rendered meshes arachnid/blindcave",
+      "complete finite model arachnid/broodswarm",
+      "rendered meshes arachnid/broodswarm",
+      "complete finite model arachnid/harvestman",
+      "rendered meshes arachnid/harvestman",
+      "complete finite model arachnid/diving",
+      "rendered meshes arachnid/diving",
+      "complete finite model arachnid/colossus",
+      "rendered meshes arachnid/colossus",
+      "complete finite model arachnid/widow",
+      "rendered meshes arachnid/widow",
+      "complete finite model arachnid/regen",
+      "rendered meshes arachnid/regen",
+      "complete finite model arachnid/undying",
+      "rendered meshes arachnid/undying",
+      "complete finite model arachnid/fireproof",
+      "rendered meshes arachnid/fireproof",
+      "complete finite model arachnid/anoxic",
+      "rendered meshes arachnid/anoxic",
+      "complete finite model arachnid/cavescorpion",
+      "rendered meshes arachnid/cavescorpion",
+      "complete finite model arachnid/whipscorpion",
+      "rendered meshes arachnid/whipscorpion",
+      "complete finite model arachnid/tick",
+      "rendered meshes arachnid/tick",
+      "complete finite model arachnid/mitecloud",
+      "rendered meshes arachnid/mitecloud",
+      "complete finite model camocrawler/null",
+      "rendered meshes camocrawler/null",
+      "complete finite model curabitur/female",
+      "rendered meshes curabitur/female",
+      "complete finite model curabitur/male",
+      "rendered meshes curabitur/male",
+      "complete finite model lightguide/null",
+      "rendered meshes lightguide/null",
+      "complete finite model camocrawler/undefined",
+      "rendered meshes camocrawler/undefined",
+      "live camo reveal animation",
+      "complete finite model curabitur/female",
+      "rendered meshes curabitur/female",
+      "bird has animated rig before display",
+      "acid blur is in WebGL game image",
+      "acid does not filter HUD",
+      "actual use opens and places a glowing jar",
+      "actual use crushes spore into repellent",
+      "actual repellent use produces puddle",
+      "puddle is rendered in game",
+      "fixed seed has actual procedural rune nest",
+      "rune nest/web/cocoon meshes render on actual terrain",
+      "real L8 cave has free encounter space",
+      "complete finite model arachnid/wolf",
+      "rendered meshes arachnid/wolf",
+      "complete finite model curabitur/male",
+      "rendered meshes curabitur/male",
+      "complete finite model lightguide/undefined",
+      "rendered meshes lightguide/undefined",
+      "complete finite model arachnid/wolf",
+      "rendered meshes arachnid/wolf",
+      "complete finite model curabitur/male",
+      "rendered meshes curabitur/male",
+      "complete finite model lightguide/undefined",
+      "rendered meshes lightguide/undefined",
+      "complete finite model arachnid/wolf",
+      "rendered meshes arachnid/wolf",
+      "complete finite model curabitur/male",
+      "rendered meshes curabitur/male",
+      "complete finite model lightguide/undefined",
+      "rendered meshes lightguide/undefined",
+      "model recycling uses identical world chunks",
+      "fixed-window L8 recycling has stable resources [{\"geometries\":356,\"textures\":63,\"chunks\":14},{\"geometries\":356,\"textures\":63,\"chunks\":14},{\"geometries\":356,\"textures\":63,\"chunks\":14}]",
+      "leaving L8 clears web/nest roots",
+      "leaving L8 clears boulders",
+      "leaving L8 clears spore/puddle views",
+      "L9 has actual outdoor pursuit route",
+      "god-mode player survives first assimilation",
+      "first attack releases and resets to pursuit",
+      "surviving player does not grow entity",
+      "actual manual-spawned mangled attacks more than once",
+      "second attack ends in pursuit too"
+    ],
+    "records": [
+      {
+        "type": "arachnid",
+        "kind": "wolf",
+        "readyMs": 624.3000000007451,
+        "settledMs": 1125.7000000011176,
+        "meshes": 23,
+        "triangles": 10556,
+        "size": [
+          0.8495156538690196,
+          0.348184581296206,
+          0.721006218544133
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 344,
+          "textures": 37
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "arachnid",
+        "kind": "weaver",
+        "readyMs": 128.7000000011176,
+        "settledMs": 630.2000000011176,
+        "meshes": 23,
+        "triangles": 9352,
+        "size": [
+          0.7616954219670191,
+          0.416669532848066,
+          0.7457217303347079
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 344,
+          "textures": 37
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "arachnid",
+        "kind": "jumper",
+        "readyMs": 222.5,
+        "settledMs": 725.0999999996275,
+        "meshes": 23,
+        "triangles": 10052,
+        "size": [
+          0.47096931068375625,
+          0.1723007545780504,
+          0.40730981527400445
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 344,
+          "textures": 37
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "arachnid",
+        "kind": "blindcave",
+        "readyMs": 191.5,
+        "settledMs": 693.3000000007451,
+        "meshes": 22,
+        "triangles": 7852,
+        "size": [
+          0.9516168353575551,
+          0.420171668179354,
+          0.9626228626632383
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 343,
+          "textures": 38
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "arachnid",
+        "kind": "broodswarm",
+        "readyMs": 187.90000000037253,
+        "settledMs": 689.9000000003725,
+        "meshes": 1,
+        "triangles": 16896,
+        "size": [
+          1.1894074881697918,
+          0.039381081265818546,
+          0.7848814290461803
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 322,
+          "textures": 38
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "arachnid",
+        "kind": "harvestman",
+        "readyMs": 94.79999999888241,
+        "settledMs": 596.0999999996275,
+        "meshes": 23,
+        "triangles": 7764,
+        "size": [
+          1.0532953830329745,
+          0.743986891628401,
+          1.6440197404916006
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 344,
+          "textures": 38
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "arachnid",
+        "kind": "diving",
+        "readyMs": 223,
+        "settledMs": 724,
+        "meshes": 24,
+        "triangles": 11480,
+        "size": [
+          0.6103683519958736,
+          0.2306380759852352,
+          0.512473605266095
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 345,
+          "textures": 38
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "arachnid",
+        "kind": "colossus",
+        "readyMs": 217.80000000074506,
+        "settledMs": 720.6000000014901,
+        "meshes": 24,
+        "triangles": 10628,
+        "size": [
+          3.6886082742018687,
+          1.3797260761977832,
+          3.783989387264114
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 345,
+          "textures": 39
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "arachnid",
+        "kind": "widow",
+        "readyMs": 226.40000000037253,
+        "settledMs": 729.1000000014901,
+        "meshes": 24,
+        "triangles": 10636,
+        "size": [
+          0.7416081701173454,
+          0.38624206267765593,
+          0.6686226380618194
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 345,
+          "textures": 40
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "arachnid",
+        "kind": "regen",
+        "readyMs": 128.7000000011176,
+        "settledMs": 631.4000000003725,
+        "meshes": 25,
+        "triangles": 11036,
+        "size": [
+          0.9087536586681466,
+          0.3717196671843902,
+          0.8050022693422392
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 346,
+          "textures": 42
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "arachnid",
+        "kind": "undying",
+        "readyMs": 163.19999999925494,
+        "settledMs": 666.6999999992549,
+        "meshes": 23,
+        "triangles": 9999,
+        "size": [
+          0.959213310834059,
+          0.4372220463804477,
+          0.8523937194939606
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 344,
+          "textures": 44
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "arachnid",
+        "kind": "fireproof",
+        "readyMs": 220.59999999962747,
+        "settledMs": 722.4000000003725,
+        "meshes": 24,
+        "triangles": 9732,
+        "size": [
+          0.9126311377103491,
+          0.3742646175467478,
+          0.7749984462311375
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 345,
+          "textures": 46
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "arachnid",
+        "kind": "anoxic",
+        "readyMs": 124.59999999962747,
+        "settledMs": 625.3999999985099,
+        "meshes": 24,
+        "triangles": 9948,
+        "size": [
+          0.7951391574078741,
+          0.3353394588711025,
+          0.7067800841075069
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 345,
+          "textures": 47
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "arachnid",
+        "kind": "cavescorpion",
+        "readyMs": 123.59999999962747,
+        "settledMs": 624.5,
+        "meshes": 25,
+        "triangles": 11692,
+        "size": [
+          0.7946376005273947,
+          0.3505873775000427,
+          0.45563242069593457
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 346,
+          "textures": 47
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "arachnid",
+        "kind": "whipscorpion",
+        "readyMs": 128.7999999988824,
+        "settledMs": 629.6999999992549,
+        "meshes": 25,
+        "triangles": 9452,
+        "size": [
+          1.1937686784955872,
+          0.17327630289837687,
+          0.5154814116154398
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 346,
+          "textures": 47
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "arachnid",
+        "kind": "tick",
+        "readyMs": 94.70000000111759,
+        "settledMs": 595.1000000014901,
+        "meshes": 18,
+        "triangles": 6464,
+        "size": [
+          0.26630038281142276,
+          0.07394670693017333,
+          0.23566913219138996
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 339,
+          "textures": 47
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "arachnid",
+        "kind": "mitecloud",
+        "readyMs": 251.5,
+        "settledMs": 753.8000000007451,
+        "meshes": 1,
+        "triangles": 52000,
+        "size": [
+          1.2465704554164745,
+          0.6777475196300016,
+          1.3151154817367967
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 322,
+          "textures": 47
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "camocrawler",
+        "kind": null,
+        "readyMs": 328.69999999925494,
+        "settledMs": 833.3999999985099,
+        "meshes": 35,
+        "triangles": 20100,
+        "size": [
+          1.876521740917596,
+          2.214462759143853,
+          0.9274960258378968
+        ],
+        "level": 8,
+        "world": {
+          "x": 16.95606646967191,
+          "y": 5.222887351880431,
+          "z": -0.19291026677712164
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 360,
+          "textures": 53
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "curabitur",
+        "kind": "female",
+        "readyMs": 390.6000000014901,
+        "settledMs": 895.1000000014901,
+        "meshes": 19,
+        "triangles": 13208,
+        "size": [
+          1.3102948494338023,
+          1.3298491836326969,
+          0.5711422007253475
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 366,
+          "textures": 57
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "curabitur",
+        "kind": "male",
+        "readyMs": 315.5,
+        "settledMs": 817.9000000003725,
+        "meshes": 20,
+        "triangles": 14074,
+        "size": [
+          0.7831531523154354,
+          0.8215468352082373,
+          0.40024557641194747
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 367,
+          "textures": 57
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "lightguide",
+        "kind": null,
+        "readyMs": 32.59999999962747,
+        "settledMs": 532.7999999988824,
+        "meshes": 1,
+        "triangles": 216,
+        "size": [
+          0.29335468080597593,
+          0.2933546808059888,
+          0.03085082210600376
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 350,
+          "textures": 59
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "camocrawler",
+        "readyMs": 163.40000000037253,
+        "settledMs": 666.9000000003725,
+        "meshes": 35,
+        "triangles": 20100,
+        "size": [
+          1.2789616310182765,
+          2.2163148244686353,
+          1.5992713603632183
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.5,
+          "y": 7.5,
+          "z": -0.16271086176827398
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 385,
+          "textures": 59
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "curabitur",
+        "kind": "female",
+        "readyMs": 293.40000000037253,
+        "settledMs": 794.0999999996275,
+        "meshes": 19,
+        "triangles": 13208,
+        "size": [
+          1.3102948494338023,
+          1.3298491836326969,
+          0.5711422007253475
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 372,
+          "textures": 59
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "arachnid",
+        "kind": "wolf",
+        "readyMs": 133.7999999988824,
+        "settledMs": 634.5999999996275,
+        "meshes": 23,
+        "triangles": 10556,
+        "size": [
+          0.8426008576759898,
+          0.33956593231335763,
+          0.7211145776160492
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 358,
+          "textures": 63
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "curabitur",
+        "kind": "male",
+        "readyMs": 294.80000000074506,
+        "settledMs": 796.5999999996275,
+        "meshes": 20,
+        "triangles": 14074,
+        "size": [
+          0.7831531523154354,
+          0.8215468352082373,
+          0.40024557641194747
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 377,
+          "textures": 63
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "lightguide",
+        "readyMs": 31.399999998509884,
+        "settledMs": 531.3999999985099,
+        "meshes": 1,
+        "triangles": 216,
+        "size": [
+          0.2907730843170384,
+          0.29077308431702775,
+          0.029919713735580444
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 360,
+          "textures": 63
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "arachnid",
+        "kind": "wolf",
+        "readyMs": 129.5,
+        "settledMs": 632.3000000007451,
+        "meshes": 23,
+        "triangles": 10556,
+        "size": [
+          0.8408825009428966,
+          0.3426074409111191,
+          0.731033432309161
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 379,
+          "textures": 63
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "curabitur",
+        "kind": "male",
+        "readyMs": 286.1000000014901,
+        "settledMs": 789.4000000003725,
+        "meshes": 20,
+        "triangles": 14074,
+        "size": [
+          0.7831531523154354,
+          0.8215468352082373,
+          0.40024557641194747
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 378,
+          "textures": 63
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "lightguide",
+        "readyMs": 61.5,
+        "settledMs": 561.5999999996275,
+        "meshes": 1,
+        "triangles": 216,
+        "size": [
+          0.28701468276096875,
+          0.2870146827609692,
+          0.030054494738578796
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 360,
+          "textures": 63
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "arachnid",
+        "kind": "wolf",
+        "readyMs": 131.2999999988824,
+        "settledMs": 633.7999999988824,
+        "meshes": 23,
+        "triangles": 10556,
+        "size": [
+          0.8460780001330335,
+          0.3414346868063649,
+          0.7456188881245822
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 379,
+          "textures": 63
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "curabitur",
+        "kind": "male",
+        "readyMs": 288.59999999962747,
+        "settledMs": 789.5999999996275,
+        "meshes": 20,
+        "triangles": 14074,
+        "size": [
+          0.7831531523154354,
+          0.8215468352082373,
+          0.40024557641194747
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 378,
+          "textures": 63
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "type": "lightguide",
+        "readyMs": 61.70000000111759,
+        "settledMs": 562.8000000007451,
+        "meshes": 1,
+        "triangles": 216,
+        "size": [
+          0.1954585841819778,
+          0.19545858418198225,
+          0.02063996158540249
+        ],
+        "level": 8,
+        "world": {
+          "x": 12.299999999999997,
+          "y": 7.5,
+          "z": -0.16214660772254028
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 360,
+          "textures": 63
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      }
+    ],
+    "status": {
+      "level": 9,
+      "world": {
+        "x": -37.5,
+        "y": -51.5,
+        "z": 13.559613740683842
+      },
+      "chunks": 23,
+      "tasks": 0,
+      "memory": {
+        "geometries": 1634,
+        "textures": 260
+      },
+      "fog": "idle",
+      "k": 0,
+      "t": 209.51310000001504
+    }
+  },
+  "ok": true
+}

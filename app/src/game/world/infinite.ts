@@ -280,6 +280,7 @@ function instantiate(def: LevelDef, inf: InfiniteState, cx: number, cy: number, 
       ...(e.arachnidBreed !== undefined ? { arachnidBreed: e.arachnidBreed } : {}),
       ...(e.herbivore ? { herbivore: true, passive: true } : {}),
     }
+    if (e.arachnidVariant || e.arachnidNest || e.arachnidMother) ent.def = { ...ent.def, ...(e.arachnidVariant ? { arachnidVariant: e.arachnidVariant } : {}), ...(e.arachnidNest ? { arachnidNest: e.arachnidNest } : {}), ...(e.arachnidMother ? { arachnidMother: true } : {}) } // [L8-arachnid]
     if (e.human) ent.disguised = 'human'
     if (e.facing !== undefined) ent.facing = e.facing // v51：人制品售货机等生成时指定朝向
     return ent

@@ -1,0 +1,431 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 11437,
+  "cdp": 11439,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l7-seams-map-20261022\\game-realistic-v3\\qa-1792676793529-69068",
+    "--remote-debugging-port=11439",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 38216,
+    "server": 32276
+  },
+  "appBootMs": 26066.994900000005,
+  "entryMs": 6307.9329,
+  "firstPlayableMs": 40922.5438,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "checks": [],
+    "records": [],
+    "status": {
+      "level": 4,
+      "player": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "origin": [
+        -64,
+        -64
+      ],
+      "mode": "realistic",
+      "memory": {
+        "geometries": 467,
+        "textures": 67
+      },
+      "chunks": 9,
+      "tasks": 4
+    }
+  },
+  "seams": {
+    "gapMetres": 0,
+    "samples": 65,
+    "at": {
+      "x": 64,
+      "y": 15.5,
+      "ha": -141.58493041992188,
+      "hb": -141.58493041992188
+    },
+    "level": 7,
+    "player": {
+      "x": 30,
+      "y": 15,
+      "z": -50
+    },
+    "origin": [
+      -64,
+      -64
+    ],
+    "mode": "realistic",
+    "memory": {
+      "geometries": 319,
+      "textures": 167
+    },
+    "chunks": 17,
+    "tasks": 1
+  },
+  "maps": {
+    "minimap": {
+      "maxDepth": 239.96767807006836,
+      "band": "深渊",
+      "contours": 955,
+      "known": 942,
+      "missing": 0,
+      "labels": []
+    },
+    "wide": {
+      "maxDepth": 240.60293579101562,
+      "band": "深渊",
+      "contours": 12279,
+      "known": 57600,
+      "missing": 0,
+      "labels": [
+        "午夜带 · 最深 229m",
+        "深渊 · 最深 240m",
+        "深渊 · 最深 237m",
+        "午夜带 · 最深 229m",
+        "有光带 · 最深 23m",
+        "深渊 · 最深 233m",
+        "200m",
+        "150m",
+        "100m",
+        "230m"
+      ]
+    },
+    "remotePreviewMs": 2159.39999999851,
+    "remoteCells": 72,
+    "width": 480,
+    "level": 7,
+    "player": {
+      "x": 15,
+      "y": 15,
+      "z": 3
+    },
+    "origin": [
+      -64,
+      -64
+    ],
+    "mode": "realistic",
+    "memory": {
+      "geometries": 541,
+      "textures": 198
+    },
+    "chunks": 21,
+    "tasks": 0
+  },
+  "stream": [
+    {
+      "x": -70,
+      "y": 15,
+      "n": 1755,
+      "gap": 0,
+      "level": 7,
+      "player": {
+        "x": -70,
+        "y": 15,
+        "z": -25
+      },
+      "origin": [
+        -160,
+        -64
+      ],
+      "mode": "realistic",
+      "memory": {
+        "geometries": 307,
+        "textures": 171
+      },
+      "chunks": 18,
+      "tasks": 0
+    },
+    {
+      "x": -10,
+      "y": -70,
+      "n": 1300,
+      "gap": 0,
+      "level": 7,
+      "player": {
+        "x": -10,
+        "y": -70,
+        "z": -25
+      },
+      "origin": [
+        -96,
+        -160
+      ],
+      "mode": "realistic",
+      "memory": {
+        "geometries": 234,
+        "textures": 146
+      },
+      "chunks": 14,
+      "tasks": 1
+    },
+    {
+      "x": 35,
+      "y": -10,
+      "n": 1625,
+      "gap": 0,
+      "level": 7,
+      "player": {
+        "x": 35,
+        "y": -10,
+        "z": -25
+      },
+      "origin": [
+        -32,
+        -96
+      ],
+      "mode": "realistic",
+      "memory": {
+        "geometries": 297,
+        "textures": 174
+      },
+      "chunks": 17,
+      "tasks": 0
+    },
+    {
+      "x": 35,
+      "y": 35,
+      "n": 975,
+      "gap": 0,
+      "level": 7,
+      "player": {
+        "x": 35,
+        "y": 35,
+        "z": -25
+      },
+      "origin": [
+        -32,
+        -32
+      ],
+      "mode": "realistic",
+      "memory": {
+        "geometries": 398,
+        "textures": 138
+      },
+      "chunks": 11,
+      "tasks": 1
+    },
+    {
+      "x": 15,
+      "y": 15,
+      "n": 1170,
+      "gap": 0,
+      "level": 7,
+      "player": {
+        "x": 15,
+        "y": 15,
+        "z": -25
+      },
+      "origin": [
+        -64,
+        -64
+      ],
+      "mode": "realistic",
+      "memory": {
+        "geometries": 421,
+        "textures": 154
+      },
+      "chunks": 13,
+      "tasks": 1
+    }
+  ],
+  "frames": {
+    "rounds": [
+      {
+        "median": 6.899999998509884,
+        "p95": 13
+      },
+      {
+        "median": 6.5,
+        "p95": 12.600000001490116
+      },
+      {
+        "median": 6.399999998509884,
+        "p95": 12.699999995529652
+      },
+      {
+        "median": 6.200000002980232,
+        "p95": 12
+      },
+      {
+        "median": 6.0999999940395355,
+        "p95": 10.299999997019768
+      }
+    ],
+    "drawRounds": [
+      {
+        "span": 80,
+        "median": 4.699999995529652,
+        "max": 9
+      },
+      {
+        "span": 120,
+        "median": 13.100000001490116,
+        "max": 14
+      },
+      {
+        "span": 240,
+        "median": 26.30000000447035,
+        "max": 33.20000000298023
+      }
+    ],
+    "level": 7,
+    "player": {
+      "x": 63,
+      "y": 17.5,
+      "z": -136.7556579589844
+    },
+    "origin": [
+      -32,
+      -64
+    ],
+    "mode": "realistic",
+    "memory": {
+      "geometries": 841,
+      "textures": 167
+    },
+    "chunks": 16,
+    "tasks": 0
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  },
+  "summary": {
+    "checks": [
+      "both real chunk meshes contain the shared boundary",
+      "retained and new seabed vertices meet after streaming",
+      "no legend is placed under the minimap",
+      "big map opens at full width",
+      "bathymetric band legend is in original big map",
+      "wide chart is classified by deepest seabed, even at cabin height",
+      "chart bands stay the same when swimmer depth changes",
+      "remote chart preview does not load live chunks",
+      "remote chart preview does not create loot or actors",
+      "remote preview does not mark terrain explored",
+      "worker returns terrain-only depth records",
+      "all real seams align at streamed origin -70,15 (1755 vertices, 0m)",
+      "all real seams align at streamed origin -10,-70 (1300 vertices, 0m)",
+      "all real seams align at streamed origin 35,-10 (1625 vertices, 0m)",
+      "all real seams align at streamed origin 35,35 (975 vertices, 0m)",
+      "all real seams align at streamed origin 15,15 (1170 vertices, 0m)"
+    ],
+    "records": [
+      {
+        "gapMetres": 0,
+        "samples": 65,
+        "at": {
+          "x": 64,
+          "y": 15.5,
+          "ha": -141.58493041992188,
+          "hb": -141.58493041992188
+        },
+        "level": 7,
+        "player": {
+          "x": 30,
+          "y": 15,
+          "z": -50
+        },
+        "origin": [
+          -64,
+          -64
+        ],
+        "mode": "realistic",
+        "memory": {
+          "geometries": 319,
+          "textures": 167
+        },
+        "chunks": 17,
+        "tasks": 1
+      },
+      {
+        "minimap": {
+          "maxDepth": 239.96767807006836,
+          "band": "深渊",
+          "contours": 955,
+          "known": 942,
+          "missing": 0,
+          "labels": []
+        },
+        "wide": {
+          "maxDepth": 240.60293579101562,
+          "band": "深渊",
+          "contours": 12279,
+          "known": 57600,
+          "missing": 0,
+          "labels": [
+            "午夜带 · 最深 229m",
+            "深渊 · 最深 240m",
+            "深渊 · 最深 237m",
+            "午夜带 · 最深 229m",
+            "有光带 · 最深 23m",
+            "深渊 · 最深 233m",
+            "200m",
+            "150m",
+            "100m",
+            "230m"
+          ]
+        },
+        "remotePreviewMs": 2159.39999999851,
+        "remoteCells": 72,
+        "width": 480,
+        "level": 7,
+        "player": {
+          "x": 15,
+          "y": 15,
+          "z": 3
+        },
+        "origin": [
+          -64,
+          -64
+        ],
+        "mode": "realistic",
+        "memory": {
+          "geometries": 541,
+          "textures": 198
+        },
+        "chunks": 21,
+        "tasks": 0
+      }
+    ],
+    "status": {
+      "level": 4,
+      "player": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "origin": [
+        -64,
+        -64
+      ],
+      "mode": "realistic",
+      "memory": {
+        "geometries": 274,
+        "textures": 80
+      },
+      "chunks": 9,
+      "tasks": 1
+    }
+  },
+  "ok": true
+}

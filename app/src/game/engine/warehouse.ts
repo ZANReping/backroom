@@ -7,6 +7,7 @@
 import { ITEMS, itemName } from '../content/items'
 import { NPCS } from '../content/npcs'
 import { audio } from '../core/audio'
+import {payBntgService} from './bntgBank'
 import type { Engine, InvSlot, SlotRef } from '../engine'
 
 export type WarehouseFaction = 'meg' | 'bntg'
@@ -36,11 +37,11 @@ export function canUseWarehouse(eng: Engine, npcId: string): boolean {
 export function payWarehouseAccess(eng: Engine, fac: WarehouseFaction): boolean {
   if (fac !== 'bntg') { eng.msg('M.E.G. 的仓库只认声望，不收钱。', 'system'); return false }
   if (eng.warehouseTempUnlock.has(fac)) return true
-  if (eng.countItem('presses') < WAREHOUSE_PAY_COST) { eng.msg(`压印币不够（需要 ${WAREHOUSE_PAY_COST} 枚）。`, 'system'); return false }
-  for (let i = 0; i < WAREHOUSE_PAY_COST; i++) eng.consumeItem('presses')
+  const paid=payBntgService(eng,WAREHOUSE_PAY_COST,'临时使用 B.N.T.G. 仓库')
+  if(!paid.ok){eng.msg(paid.message,'system');return false}
   eng.warehouseTempUnlock.add(fac)
   audio.pickup()
-  eng.msg(`收下 ${WAREHOUSE_PAY_COST} 枚压印币——仓库这次随你用。（仅本次对话有效）`, 'loot')
+  eng.msg(`已付 ${WAREHOUSE_PAY_COST} 信用点／压印币——仓库这次随你用。（仅本次对话有效）`, 'loot')
   return true
 }
 

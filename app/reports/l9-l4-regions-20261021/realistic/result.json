@@ -1,0 +1,200 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 6563,
+  "cdp": 6564,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l9-l4-regions-20261021\\realistic\\qa-1792595468430-49556",
+    "--remote-debugging-port=6564",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 25456,
+    "server": 74520
+  },
+  "appBootMs": 19620.9482,
+  "entryMs": 5603.031000000003,
+  "firstPlayableMs": 33803.7354,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 4,
+    "world": {
+      "x": 15.5,
+      "y": 15.5,
+      "z": 0
+    },
+    "chunks": 9,
+    "tasks": 4,
+    "memory": {
+      "geometries": 946,
+      "textures": 67
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "map": {
+    "width": 480,
+    "height": 480,
+    "level": 4,
+    "world": {
+      "x": 15.5,
+      "y": 15.5,
+      "z": 0
+    },
+    "chunks": 9,
+    "tasks": 4,
+    "memory": {
+      "geometries": 946,
+      "textures": 67
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "exits": [
+    {
+      "scene": {
+        "kind": "elevatorshaft",
+        "anchor": {
+          "x": 153,
+          "y": -28,
+          "yaw": 1.5707963267948966
+        },
+        "model": {
+          "x": 89.5,
+          "y": 0,
+          "z": 68.5,
+          "yaw": 1.5707963267948966
+        },
+        "level": 4,
+        "world": {
+          "x": 151.85,
+          "y": -27.5,
+          "z": 0
+        },
+        "chunks": 7,
+        "tasks": 1,
+        "memory": {
+          "geometries": 1341,
+          "textures": 62
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      "transition": {
+        "level": 3,
+        "world": {
+          "x": 81.5,
+          "y": -19.5,
+          "z": 0
+        },
+        "chunks": 5,
+        "tasks": 4,
+        "memory": {
+          "geometries": 297,
+          "textures": 75
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      }
+    }
+  ],
+  "ok": false,
+  "failure": "Error: {\"exceptionId\":1,\"text\":\"Uncaught (in promise) Error: generated oldstairs\",\"lineNumber\":18,\"columnNumber\":19,\"scriptId\":\"618\",\"stackTrace\":{\"callFrames\":[{\"functionName\":\"ok\",\"scriptId\":\"618\",\"url\":\"http://127.0.0.1:6563/verifier/l9-l4-regions-check.ts\",\"lineNumber\":17,\"columnNumber\":18},{\"functionName\":\"exitScene\",\"scriptId\":\"618\",\"url\":\"http://127.0.0.1:6563/verifier/l9-l4-regions-check.ts\",\"lineNumber\":71,\"columnNumber\":4}]},\"exception\":{\"type\":\"object\",\"subtype\":\"error\",\"className\":\"Error\",\"description\":\"Error: generated oldstairs\\n    at ok (http://127.0.0.1:6563/verifier/l9-l4-regions-check.ts:18:19)\\n    at Object.exitScene (http://127.0.0.1:6563/verifier/l9-l4-regions-check.ts:72:5)\",\"objectId\":\"8016889946631784372.2.1\"}}",
+  "partial": {
+    "checks": [
+      "original map legend 办公间区",
+      "original map legend 空旷区",
+      "original map legend 小房间区",
+      "original map legend 空旷大厅",
+      "retired window region absent from map",
+      "original map opens at full canvas size",
+      "generated elevatorshaft",
+      "live generated elevatorshaft",
+      "rendered exit root elevatorshaft",
+      "render and layout share exit yaw elevatorshaft",
+      "exit has collision-safe approach elevatorshaft",
+      "actual aimed exit interaction elevatorshaft",
+      "live exit to use",
+      "actual transition destination 3"
+    ],
+    "records": [
+      {
+        "kind": "elevatorshaft",
+        "anchor": {
+          "x": 153,
+          "y": -28,
+          "yaw": 1.5707963267948966
+        },
+        "model": {
+          "x": 89.5,
+          "y": 0,
+          "z": 68.5,
+          "yaw": 1.5707963267948966
+        },
+        "level": 4,
+        "world": {
+          "x": 151.85,
+          "y": -27.5,
+          "z": 0
+        },
+        "chunks": 7,
+        "tasks": 1,
+        "memory": {
+          "geometries": 1341,
+          "textures": 62
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      }
+    ],
+    "status": {
+      "level": 4,
+      "world": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "chunks": 9,
+      "tasks": 4,
+      "memory": {
+        "geometries": 924,
+        "textures": 87
+      },
+      "fog": "idle",
+      "k": 0,
+      "t": 240
+    }
+  },
+  "bootstrap": {
+    "boot": {
+      "phase": "importing-app",
+      "at": 16413.90000000596
+    },
+    "text": "—— 门在你身后合拢 ——\nLevel 3 · 电站\n附近场景已就绪\nHP\n100\n体力\n100\n饥饿\n100\n口渴\n100\n理智\n100\nLEVEL 4\n废弃办公室\nB4\n磁带\n0/6\n空旷区\n100%\nLevel 4「废弃办公室」\nSurvival Difficulty: Class 1 · 杏仁水全后室最富集 · 实体几乎绝迹\n入口：办公走廊尽头\n出口线索：电梯井在等两枚保险丝。\n1\n2\n3\n4\n5\n6\n7\nE 进入 电梯\n空格\n跳跃\nC\n蹲伏\nF\n手电\n左Alt\n取出主手\n开发者模式\n🛠 开发者模式 · DEV\n▴"
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

@@ -1,0 +1,143 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 11131,
+  "cdp": 11132,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l7-seams-map-20261022\\after-seam-realistic\\qa-1792676064226-49384",
+    "--remote-debugging-port=11132",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 63548,
+    "server": 69392
+  },
+  "appBootMs": 13220.8668,
+  "entryMs": 2768.106499999998,
+  "firstPlayableMs": 22030.8278,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "checks": [],
+    "records": [],
+    "status": {
+      "level": 4,
+      "player": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "origin": [
+        -64,
+        -64
+      ],
+      "mode": "realistic",
+      "memory": {
+        "geometries": 467,
+        "textures": 67
+      },
+      "chunks": 9,
+      "tasks": 4
+    }
+  },
+  "seams": {
+    "gapMetres": 0,
+    "samples": 65,
+    "at": {
+      "x": 64,
+      "y": 15,
+      "ha": 0,
+      "hb": 0
+    },
+    "level": 7,
+    "player": {
+      "x": 30,
+      "y": 15,
+      "z": -50
+    },
+    "origin": [
+      -64,
+      -64
+    ],
+    "mode": "realistic",
+    "memory": {
+      "geometries": 341,
+      "textures": 197
+    },
+    "chunks": 22,
+    "tasks": 0
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  },
+  "summary": {
+    "checks": [
+      "both real chunk meshes contain the shared boundary"
+    ],
+    "records": [
+      {
+        "gapMetres": 0,
+        "samples": 65,
+        "at": {
+          "x": 64,
+          "y": 15,
+          "ha": 0,
+          "hb": 0
+        },
+        "level": 7,
+        "player": {
+          "x": 30,
+          "y": 15,
+          "z": -50
+        },
+        "origin": [
+          -64,
+          -64
+        ],
+        "mode": "realistic",
+        "memory": {
+          "geometries": 341,
+          "textures": 197
+        },
+        "chunks": 22,
+        "tasks": 0
+      }
+    ],
+    "status": {
+      "level": 4,
+      "player": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "origin": [
+        -64,
+        -64
+      ],
+      "mode": "realistic",
+      "memory": {
+        "geometries": 440,
+        "textures": 82
+      },
+      "chunks": 9,
+      "tasks": 1
+    }
+  },
+  "ok": true
+}

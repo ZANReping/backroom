@@ -1,0 +1,32 @@
+[
+  {
+    "name": "check:l7-chart",
+    "code": 0,
+    "ms": 2881.8792,
+    "tail": "\n> my-app@0.0.0 check:l7-chart\n> esbuild scripts/check-l7-chart.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l7-chart.mjs && node .cache/check-l7-chart.mjs\n\n{\"pass\":24633,\"fail\":0}\n\n  .cache\\check-l7-chart.mjs  2.1mb\n\nDone in 150ms\n"
+  },
+  {
+    "name": "check:l7-seams",
+    "code": 0,
+    "ms": 16315.091199999999,
+    "tail": "    \"samples\": 65\n    },\n    {\n      \"seed\": 1,\n      \"dir\": 3,\n      \"gap\": 0,\n      \"norm\": 0,\n      \"samples\": 65\n    },\n    {\n      \"seed\": 777,\n      \"dir\": 0,\n      \"gap\": 0,\n      \"norm\": 0,\n      \"samples\": 65\n    },\n    {\n      \"seed\": 777,\n      \"dir\": 1,\n      \"gap\": 0,\n      \"norm\": 0,\n      \"samples\": 65\n    },\n    {\n      \"seed\": 777,\n      \"dir\": 2,\n      \"gap\": 0,\n      \"norm\": 0,\n      \"samples\": 65\n    },\n    {\n      \"seed\": 777,\n      \"dir\": 3,\n      \"gap\": 0,\n      \"norm\": 0,\n      \"samples\": 65\n    },\n    {\n      \"seed\": 424242,\n      \"dir\": 0,\n      \"gap\": 0,\n      \"norm\": 0,\n      \"samples\": 65\n    },\n    {\n      \"seed\": 424242,\n      \"dir\": 1,\n      \"gap\": 0,\n      \"norm\": 0,\n      \"samples\": 65\n    },\n    {\n      \"seed\": 424242,\n      \"dir\": 2,\n      \"gap\": 0,\n      \"norm\": 0,\n      \"samples\": 65\n    },\n    {\n      \"seed\": 424242,\n      \"dir\": 3,\n      \"gap\": 0,\n      \"norm\": 0,\n      \"samples\": 65\n    }\n  ]\n}\n\n  .cache\\check-l7-seams.mjs  4.1mb\n\nDone in 138ms\n"
+  },
+  {
+    "name": "check:l7",
+    "code": 0,
+    "ms": 9033.8079,
+    "tail": "2,\"hanglight\":1,\"vent\":1,\"ropeanchor\":1,\"hoteldoor\":1}\nseed 12345 {\"bonepile\":197,\"fishbones\":40,\"barrel\":21,\"tarwriting\":8,\"l7debris\":63,\"l7skeleton\":144,\"l7giantfish\":6,\"l7carpet\":57,\"seatarpit\":57,\"l7bubbles\":22,\"corpse\":7,\"seapillar\":3,\"seapipe\":1,\"bookcase\":1,\"table\":2,\"hanglight\":1,\"vent\":1,\"ropeanchor\":1,\"hoteldoor\":1,\"crate\":2}\nseed 20261009 {\"bonepile\":189,\"l7debris\":63,\"l7skeleton\":146,\"l7carpet\":68,\"barrel\":28,\"seatarpit\":64,\"tarwriting\":6,\"l7bubbles\":28,\"fishbones\":32,\"corpse\":12,\"l7giantfish\":3,\"seapillar\":3,\"seapipe\":1,\"crate\":3,\"bookcase\":1,\"table\":2,\"hanglight\":1,\"vent\":1,\"ropeanchor\":1,\"hoteldoor\":1}\nseed 99991 {\"bonepile\":194,\"fishbones\":32,\"l7debris\":63,\"l7skeleton\":144,\"l7carpet\":58,\"seatarpit\":54,\"barrel\":15,\"l7bubbles\":21,\"tarwriting\":5,\"l7giantfish\":6,\"corpse\":8,\"seapillar\":3,\"seapipe\":1,\"bookcase\":1,\"table\":2,\"hanglight\":1,\"vent\":1,\"ropeanchor\":1,\"hoteldoor\":1,\"crate\":2}\nL7 generation: 2433 passed, 0 failed\n\n  .cache\\check-l7-generation.mjs  2.0mb\n\nDone in 97ms\n"
+  },
+  {
+    "name": "check:l7-cliffs",
+    "code": 0,
+    "ms": 25606.043099999995,
+    "tail": "4，旧 1084）\n✔ seed 1 凹坑困点只按前进 3s 都能脱出（2/2）\n✔ seed 1 贴崖只按前进：8/8 次沿崖壁上攀 >6m 或翻脊游出 >5m\n✔ seed 1 贴崖横移：8/8 次 2s 内挪动 >1m（边横移边沿崖上攀）\nseed 777: 崖带 1344 点，陡于 STEP_UP 1056，旧判定困死 1060，新判定困死 0\n✔ seed 777 崖带采样有效（1344 点 / 陡点 1056）\n✔ seed 777 新判定：静态困点降到 1% 以内（0/1344，旧 1060）\n✔ seed 777 凹坑困点只按前进 3s 都能脱出（0/0）\n✔ seed 777 贴崖只按前进：8/8 次沿崖壁上攀 >6m 或翻脊游出 >5m\n✔ seed 777 贴崖横移：8/8 次 2s 内挪动 >1m（边横移边沿崖上攀）\nseed 12345: 崖带 1344 点，陡于 STEP_UP 1053，旧判定困死 1058，新判定困死 1\n✔ seed 12345 崖带采样有效（1344 点 / 陡点 1053）\n✔ seed 12345 新判定：静态困点降到 1% 以内（1/1344，旧 1058）\n✔ seed 12345 凹坑困点只按前进 3s 都能脱出（1/1）\n✔ seed 12345 贴崖只按前进：8/8 次沿崖壁上攀 >6m 或翻脊游出 >5m\n✔ seed 12345 贴崖横移：8/8 次 2s 内挪动 >1m（边横移边沿崖上攀）\nseed 20261009: 崖带 1344 点，陡于 STEP_UP 1051，旧判定困死 1056，新判定困死 5\n✔ seed 20261009 崖带采样有效（1344 点 / 陡点 1051）\n✔ seed 20261009 新判定：静态困点降到 1% 以内（5/1344，旧 1056）\n✔ seed 20261009 凹坑困点只按前进 3s 都能脱出（5/5）\n✔ seed 20261009 贴崖只按前进：8/8 次沿崖壁上攀 >6m 或翻脊游出 >5m\n✔ seed 20261009 贴崖横移：8/8 次 2s 内挪动 >1m（边横移边沿崖上攀）\nL7 cliffs: 20/20 passed\n\n  .cache\\check-l7-cliffs.mjs  4.7mb\n\nDone in 160ms\n"
+  },
+  {
+    "name": "check:thing-integration",
+    "code": 0,
+    "ms": 2616.1846000000005,
+    "tail": "egment 10\n✔ visual chain rebase segment 11\n✔ visual chain rebase segment 12\n✔ visual chain rebase segment 13\n✔ visual chain rebase segment 14\n✔ visual chain rebase segment 15\n✔ visual chain rebase segment 16\n✔ visual chain rebase segment 17\n✔ visual chain rebase segment 18\n✔ visual chain rebase segment 19\n✔ visual chain rebase segment 20\n✔ visual chain rebase segment 21\n✔ visual chain rebase segment 22\n✔ visual chain rebase segment 23\n✔ visual chain rebase segment 24\n✔ visual chain rebase segment 25\n✔ visual chain rebase segment 26\n✔ visual chain rebase segment 27\n✔ thething uses cooperative queue\n✔ first queue request does not build synchronously\n✔ model prepared over multiple queue turns\n✔ base job yields across geometry rings\n✔ partial base job can be cancelled\n✔ head LOD is built over multiple time slices\n✔ high LOD finite\n✔ far view returns to low LOD\n✔ tar glyph texture is protected and shared\nthing integration: 799/799\n\n  .cache\\check-thing-integration.mjs  3.9mb\n\nDone in 138ms\n"
+  }
+]

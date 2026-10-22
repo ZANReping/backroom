@@ -1,0 +1,391 @@
+{
+  "imported": "2026-10-22",
+  "archive": "C:/Users/ZANRe/Downloads/l8-stage3.zip",
+  "archiveSHA256": "b247eba68f6e7c50a56677689ea64c3c062d08886de343a91d3ef1d42cac29c9",
+  "scope": [
+    "arachnid",
+    "camocrawler",
+    "curabitur",
+    "lightguide"
+  ],
+  "sourceType": "User-provided procedural Three.js models, textures, animations, AI and generation patch",
+  "author": "Archive supplied by the project owner; no independent author list is included.",
+  "license": "No standalone license file is included in the archive. Preserve the project’s existing attributions; do not infer a new asset license.",
+  "textures": {
+    "source": "Procedural canvas functions in the supplied model modules",
+    "externalBitmapAssets": 0,
+    "localAdjustments": "Shared-source markers, bounded rune atlas variants and cooperative generation; visual algorithms retained."
+  },
+  "localAdjustments": [
+    "Merged into current original project without replacing later entity remakes",
+    "Renamed arachnid runtime state to avoid ArmsState field collision",
+    "Complete Curabitur bodies before GPU warmup and archive framing",
+    "Cooperative cancellable instance construction",
+    "Private sprite/instance buffers; shared textures; scene cleanup and world coordinates",
+    "Moved acid/web screen effects to existing WebGL finishing pass"
+  ],
+  "upstreamNotes": [
+    "upstream/ARACHNID-REMAKE.md",
+    "upstream/CAMO-REMAKE.md",
+    "upstream/CURABITUR-REMAKE.md",
+    "upstream/LIGHTGUIDE-REMAKE.md"
+  ],
+  "files": [
+    {
+      "path": "scripts/check-arachnid.ts",
+      "archiveSHA256": "74ba7d270a96e681f981584165c081d614ff9561b50bc22796fb255bf645bd5e",
+      "installedSHA256": "7471cf8d0a38f208d4a5a4631b487849b7185f8ef03ca9cea2c3b57d96f9345d",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "scripts/check-camo.ts",
+      "archiveSHA256": "14a6ee7e3cff763679fe6be52c2a89be5a38e374aff57b9c98d4be1c7964b488",
+      "installedSHA256": "14a6ee7e3cff763679fe6be52c2a89be5a38e374aff57b9c98d4be1c7964b488",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "scripts/check-curabitur.ts",
+      "archiveSHA256": "aea23f85e44c1f6bf6f0d4d7adeebd87ab36c8521c92df73ed588c64babe802c",
+      "installedSHA256": "aea23f85e44c1f6bf6f0d4d7adeebd87ab36c8521c92df73ed588c64babe802c",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "scripts/check-lightguide.ts",
+      "archiveSHA256": "38fef7e81f21a5c52659302b55f0111933de9714f2c18678277c6f32a7c45722",
+      "installedSHA256": "38fef7e81f21a5c52659302b55f0111933de9714f2c18678277c6f32a7c45722",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/components/arachnidHud.tsx",
+      "archiveSHA256": "e71c2258adcd7d38c8b0b6c8fe11e61994f85c207f465d718dec89f79221b323",
+      "installedSHA256": "a808c27ed8bcb8b6f1f962ef849d7efb2f2b84df1832919365859492525ce268",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/components/HUD.tsx",
+      "archiveSHA256": "298b3c24e556beac68f8b3faf6434b3ca0fc31693f4f5711a8146476033dd706",
+      "installedSHA256": "69c9cae13ae1ce1ddf5cc2e04431d20545ff225ad8b0e7ea823297501bf778ea",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/content/curabiturItems.ts",
+      "archiveSHA256": "4644a88b7fcae0c0f1fc11bfdafc0cf9ab0c297915494972f6d6690d6c5606bc",
+      "installedSHA256": "4644a88b7fcae0c0f1fc11bfdafc0cf9ab0c297915494972f6d6690d6c5606bc",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/content/items.ts",
+      "archiveSHA256": "57013cb1895782cf0df06b8e7dcca97fc6139cea111aac4e9f63dee4e7a4ccf1",
+      "installedSHA256": "faaa9eae2079beec462f09263968c8db7b6b4feafe667e9b97fe5fce59667510",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/engine/arachnidAI.ts",
+      "archiveSHA256": "9cd0d29e381f1391376a9e453ec2f15515962ea53f6fc1aa5d4df97b69a9d43f",
+      "installedSHA256": "5849c92314c231e341fd962ef317a8625d791fe672e6b5256a8f1a07ae2f0408",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/engine/arachnidStats.ts",
+      "archiveSHA256": "09a002b28919fdce6680e8d26373b57123bf073e98bf3cf7bd18362d845de585",
+      "installedSHA256": "09a002b28919fdce6680e8d26373b57123bf073e98bf3cf7bd18362d845de585",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/engine/camoAI.ts",
+      "archiveSHA256": "a1902cf52b46b8a01ba0614b2a39ef42a42384d3c91e9a1290b9a0be02b3060e",
+      "installedSHA256": "a1902cf52b46b8a01ba0614b2a39ef42a42384d3c91e9a1290b9a0be02b3060e",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/engine/combat.ts",
+      "archiveSHA256": "9fa56fb9dec788632e5cc516b15c696d162571af5599ac114b2773dd971dfd12",
+      "installedSHA256": "3f9102e1118cd3492e560c395a9359b937c587b6a931c4ce7959bf51c61764ed",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/engine/curabiturAI.ts",
+      "archiveSHA256": "fee1aeda20df15556c1a0c3bcc185400b570095b6cf5d1bf5d9fb74a13a73e16",
+      "installedSHA256": "0c9f0238250a87dc067d3892add20ab2cad0f5331468456f6ac7072656e8a1f3",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/engine/curabiturTuning.ts",
+      "archiveSHA256": "faf4ef1d8c376aed5c8cec903b03a20a310b1337a757a578a23d2407fe2f6ed1",
+      "installedSHA256": "faf4ef1d8c376aed5c8cec903b03a20a310b1337a757a578a23d2407fe2f6ed1",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/engine/dev.ts",
+      "archiveSHA256": "f15ef3b03aa7d0f2c35c4c27e6559a49d59a2aa67bc65012040a8dab1eec9be6",
+      "installedSHA256": "9c81d39dd52818d275d90d116691628d1bd75084fe89ad322fb994a8c786de57",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/engine/entityAI.ts",
+      "archiveSHA256": "13d68addd90c56d21424e4a42b5936d514caf495c95a6d498d4ffafe750eae68",
+      "installedSHA256": "42f91c4540db975ff91329b063d071a7a5efe9182fa852066d750421c6881aea",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/engine/interact.ts",
+      "archiveSHA256": "f9b6721936d937be71f10be3589dc3c7ffcb14a3cfbfedbd9dd4727272c5ffbe",
+      "installedSHA256": "24e60c5b9b624ad966564da96fe5240d6ca0d15e0e0bd2a2bb0be1e731aa8256",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/engine/inventory.ts",
+      "archiveSHA256": "723a135c8e9b0c3125b892cc8c28469b91bc16c6656f4991326266b064f8e4a9",
+      "installedSHA256": "ebeba1de9b3e639085bb434f79337a8bc3e4d8b5f9226a7e8b1321be1baac5d3",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/engine/lightguideAI.ts",
+      "archiveSHA256": "173b7473f21f181f3c01d40ebdd5fbf2852cbb18a9ffcf98c50ad3225f72c046",
+      "installedSHA256": "173b7473f21f181f3c01d40ebdd5fbf2852cbb18a9ffcf98c50ad3225f72c046",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/engine/movement.ts",
+      "archiveSHA256": "7bdefed6ac15e7d2f2f74936cb874a6195feb9a493f959683537a5cdeab82753",
+      "installedSHA256": "141a41cac0ab6c9c6d66c2e0b2b355420222d9ad44f15b202e66208bbd903996",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/entities/critters.ts",
+      "archiveSHA256": "dc2065e78972352b720cf10bb793da9f58c94eea44d4c32e116c17874f022cfc",
+      "installedSHA256": "2c010646cbe9a429571f0e6cb78188d887f4451a5e9c47b223ad99d43d17d35f",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/entities/deep.ts",
+      "archiveSHA256": "afa2a1b8397b7e2a72b8233ff4925b420571d3ad465d4d3ca292290c925bb738",
+      "installedSHA256": "67513813afced646f68e07fb0be24ae256d5cbf6ce0b3d5b17100b5cd4f621ee",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/entities/forms.ts",
+      "archiveSHA256": "5a8945681c5cf3d239c2098bab7e4231aab9c73677002e8bea211797781d7b0d",
+      "installedSHA256": "69e7ec0dc642ae43c12b17b7850d43b2d44869cc520d375ab058d44b5bd49425",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/entities/types.ts",
+      "archiveSHA256": "7f111b29eebd30f1184055112873c52b0936c004d12dd4632f8be21439165845",
+      "installedSHA256": "34af7aa9b73e6c35537e21445e685fbd8c1b38534735fcd7f83d8a4a2ced07e9",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/renderer/arachnidAnim.ts",
+      "archiveSHA256": "7faa3da4311d18646029d702b936c99c4968dec663eb5a4a3167f83ded024c02",
+      "installedSHA256": "7faa3da4311d18646029d702b936c99c4968dec663eb5a4a3167f83ded024c02",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/renderer/arachnidMesh.ts",
+      "archiveSHA256": "012e543e37ff71e47274e2ced37dc16de47d85e62180645f69d2255a5511df49",
+      "installedSHA256": "4a099f4e72782b8de2ed451572ec123ca1570d508519752088db2c77d4d532c8",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/renderer/arachnidRender.ts",
+      "archiveSHA256": "3cfb3d8fa5bc9666363e9a56b44496d845b2c010834a0f0199f3588426bda29c",
+      "installedSHA256": "ecacf22db1878010b85a76a988ef01e189e75d96fc38dc1fde8b0563b5ec9537",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/renderer/camoCrawlerAnim.ts",
+      "archiveSHA256": "57fa6a239fc19814bca9e3e030b0c991bb2fdc77330fa452bed173d7ccb4566a",
+      "installedSHA256": "57fa6a239fc19814bca9e3e030b0c991bb2fdc77330fa452bed173d7ccb4566a",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/renderer/camoCrawlerMesh.ts",
+      "archiveSHA256": "1ac4348de4212a715acbb76ea71fa0004c15c8d50db643a74d8dbf58f54aa1e6",
+      "installedSHA256": "d478087de7313d6d803e4b9542ffeacf1c2f92fb9fa6e688a93438345dfdf160",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/renderer/camoRender.ts",
+      "archiveSHA256": "ed9694f714ea96bee25f27e49114c251d7944cca4ef1408992795dde00f9a85c",
+      "installedSHA256": "5698c7d5c316481cc3a0c03c5edde95cab12dc9a679901be3cee3f3c141b6e70",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/renderer/curabiturAnim.ts",
+      "archiveSHA256": "34af2edacab68190023c3922eff6819a9211b7e09c7a5b16f086e61c28855a4b",
+      "installedSHA256": "34af2edacab68190023c3922eff6819a9211b7e09c7a5b16f086e61c28855a4b",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/renderer/curabiturMesh.ts",
+      "archiveSHA256": "32bdacda210c62ab916504997aa9647c95679ea83eb61a399f2ceea17a37e097",
+      "installedSHA256": "5e0f1421ca1f6a03db12daceabd2516916d5136e29c2bc61eea40a3a1a102831",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/renderer/curabiturRender.ts",
+      "archiveSHA256": "cbfdd28f8a4b52e77e326dfbb58b463d5064aa7833a37545146e05116288a543",
+      "installedSHA256": "d6cebb83a2ba28ea9c3cccb916cf3dd2855a03f5e21451f76a33158475d49c0a",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/renderer/entitiesMesh.ts",
+      "archiveSHA256": "c51100faa8fdfa0042245977cb7845ab2ae2ea6adc30bc491ee19d4120c57a34",
+      "installedSHA256": "22f682655bc27ad89fb61edab97bc1f55c6fa4c711f30608beee0f4b5abdfe64",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/renderer/entityArchiveModel.ts",
+      "archiveSHA256": "810d0eb8b1d181e20d8328c13d735af5abb31a5ba8d5f936666e7cfb8632501d",
+      "installedSHA256": "a347891ee8eaa98f65b2ae6cc6e8f8591785dc71ea422af755cfd05cb6f64403",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/renderer/itemsMesh.ts",
+      "archiveSHA256": "f98482855091c8fc145189b5befd2831c905ef45c2d3ef0ee9531b1e043896a0",
+      "installedSHA256": "86b0ff8973a535f5fe41d154a4501d9ec6d14ed3973d4e5fb67e2401132ee562",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/renderer/lightguideAnim.ts",
+      "archiveSHA256": "a359fd6b1b96841be7f5df72bad5056feb96e9fced6b1373db1565b9da87d0b8",
+      "installedSHA256": "a359fd6b1b96841be7f5df72bad5056feb96e9fced6b1373db1565b9da87d0b8",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/renderer/lightguideMesh.ts",
+      "archiveSHA256": "db511d1e5a958568a5522f0e0ffd03a42cb38eddd18bf7ec7b30c4d788b2c3a1",
+      "installedSHA256": "73a30278ae67086794950c596b6f6dca1569df0d31c8357e438326bbaecf6a09",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/renderer/lightguideRender.ts",
+      "archiveSHA256": "76905ec9d098d8b5c11eb065fbcafc5125dbd8c9e55a02e8636cd446d9c66f62",
+      "installedSHA256": "280b99487b62445b573235b8096ba7e91c0ce1f4db9494b95c8116e60f202488",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/renderer/renderer.ts",
+      "archiveSHA256": "b1801006324188b61bcc83f67480f53c717e7ecf88142a5ee6c3542eca11ea1b",
+      "installedSHA256": "971c99045fc9b62655f6ef2d95aaa68c8b7c0b9f05081ee8f52558995b36fe41",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/world/arachnidNest.ts",
+      "archiveSHA256": "845eadc5158bbbd292b3d9da2512e484913ce61831d82e37e2572dfaaed5c7cb",
+      "installedSHA256": "845eadc5158bbbd292b3d9da2512e484913ce61831d82e37e2572dfaaed5c7cb",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/world/camoSpawn.ts",
+      "archiveSHA256": "8325d087adee8681f11cf9e80bbef23b9f857786e7c8edd36f42205e1128b733",
+      "installedSHA256": "8325d087adee8681f11cf9e80bbef23b9f857786e7c8edd36f42205e1128b733",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/world/curabiturSpawn.ts",
+      "archiveSHA256": "9e736dcbe9af43c8e482c9fd2f74738a559f3db5a0e3872eb952d7d9d2217d79",
+      "installedSHA256": "9e736dcbe9af43c8e482c9fd2f74738a559f3db5a0e3872eb952d7d9d2217d79",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/game/world/infinite.ts",
+      "archiveSHA256": "9cf7909eb7b34c7e09d3e73406a1f6588cded43041e9cc59ab25e80d8f6ee95c",
+      "installedSHA256": "88a8c249eafa219cdf04b1cf84a87c9c11c7bce8c6fe0af37309dfb7c0e67ea9",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/world/infiniteL8.ts",
+      "archiveSHA256": "93f9a44623a637e4dd12c013888496eef3726f9d5c9f95588ed234240d336127",
+      "installedSHA256": "cd629bfe6c6534c8f29fbaaac5309e846d12f4ed5c31d82f92c7685f92bf8e1d",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/game/world/infiniteRegistry.ts",
+      "archiveSHA256": "2f0cbca2214c815fae4eab8fef4959fd41a3dea788fefc0edfa42905443fe08c",
+      "installedSHA256": "fd9808890b4c75e8b071ebbb1ab730836b4a3d3dd9e647bfeaba8b0e5c9d5bee",
+      "existingBeforeImport": true
+    },
+    {
+      "path": "src/proto/arachnidEntry.ts",
+      "archiveSHA256": "623bf1b01c46e5a616c3419552782472979f33f09ef74b07390e682a6301cdaa",
+      "installedSHA256": "623bf1b01c46e5a616c3419552782472979f33f09ef74b07390e682a6301cdaa",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/proto/arachnidProto.ts",
+      "archiveSHA256": "891efd7d4ec4de069c0c740a197fc6f432f558a672fc9e5afb379ae83acdfc8c",
+      "installedSHA256": "891efd7d4ec4de069c0c740a197fc6f432f558a672fc9e5afb379ae83acdfc8c",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/proto/camoAnimProto.ts",
+      "archiveSHA256": "2df2a75414d8a4522d22c6b3e2a8c5109920f72d2d37565accfbadfd4f53750d",
+      "installedSHA256": "2df2a75414d8a4522d22c6b3e2a8c5109920f72d2d37565accfbadfd4f53750d",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/proto/camoEntry.ts",
+      "archiveSHA256": "fc76be98ad9324ebee4a491a9051f5d0a6b7750bf00540bcd7602b736acc5cec",
+      "installedSHA256": "fc76be98ad9324ebee4a491a9051f5d0a6b7750bf00540bcd7602b736acc5cec",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/proto/camoProto.ts",
+      "archiveSHA256": "ab6479efe47dc5de038c7f8417131938a49238573f0e78d2dc240854bc621ecd",
+      "installedSHA256": "ab6479efe47dc5de038c7f8417131938a49238573f0e78d2dc240854bc621ecd",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/proto/faunaAnimProto.ts",
+      "archiveSHA256": "22f09d59813e4292016926bb62b8d2f77d36ffc4e8b42d9f96a5cdf17183ae9d",
+      "installedSHA256": "22f09d59813e4292016926bb62b8d2f77d36ffc4e8b42d9f96a5cdf17183ae9d",
+      "existingBeforeImport": false
+    },
+    {
+      "path": "src/proto/faunaProto.ts",
+      "archiveSHA256": "6a43a8d8445fec4518c5bb5db7b0b28bc2a0756a70e89fc97afcb49b13f0a284",
+      "installedSHA256": "6a43a8d8445fec4518c5bb5db7b0b28bc2a0756a70e89fc97afcb49b13f0a284",
+      "existingBeforeImport": false
+    }
+  ],
+  "integrationFiles": [
+    {
+      "path": "src/game/renderer/l8EntityPreparation.ts",
+      "sha256": "b5cb940f320213a6b27dde3bec86a7d66d5ce84cd62e236ce6971ed7d30ba16f"
+    },
+    {
+      "path": "src/game/renderer/l8ModelResources.ts",
+      "sha256": "5ad03b8393a335488461d61b55eb9b375c0684be1ab2a00b4d228a444ccb643e"
+    },
+    {
+      "path": "src/game/engine/watchAI.ts",
+      "sha256": "31f6797a5e0783ec123ce4b522efd66e53f753da831ac58a777c48f4f750214d"
+    },
+    {
+      "path": "src/game/engine/mangledWalk.ts",
+      "sha256": "5acdf130752d63d3e37f9286bfe2b605c4021e19d9838cfccdd5501a593a8f07"
+    },
+    {
+      "path": "src/game/renderer/photoPass.ts",
+      "sha256": "dba680b9131ade7efb5934b748cdb921f3c89b10d0173fe36d665350debfdf21"
+    },
+    {
+      "path": "scripts/check-l8-resources.ts",
+      "sha256": "c82fa35d62afe025c160129bf65cce905e5ae2ccf6c4ab560bc44e494cf81941"
+    },
+    {
+      "path": "scripts/check-mangled-pursuit.ts",
+      "sha256": "13b323bf263d5624b0e3a0a9684ed8d76022cee4d8c3c957210600f5f58b546e"
+    },
+    {
+      "path": "scripts/verify-l8-stage3-mangled.mjs",
+      "sha256": "a2fd3502e73e81ae2e0da95453c42249fc5413c078d936e1bdbc027b58058011"
+    },
+    {
+      "path": "verifier/l8-stage3-mangled-check.ts",
+      "sha256": "c8a789b3c3ce8e163712ae80a2a7628201ca6630e40b2b6d87cc0c37873e0c1e"
+    }
+  ]
+}

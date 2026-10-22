@@ -1,0 +1,100 @@
+{
+  "date": "2026-10-22",
+  "project": "E:/ZAN/backroom/app",
+  "allChecksPassed": true,
+  "checkGroups": 15,
+  "buildLog": "build.log",
+  "performance": {
+    "before": {
+      "median": 20.100000008940697,
+      "p95": 26,
+      "draws": 1391,
+      "tris": 1949793
+    },
+    "after": {
+      "median": 6.2999999998137355,
+      "p95": 10.399999999906868,
+      "draws": 733,
+      "tris": 277671
+    }
+  },
+  "runs": {
+    "before-realistic": {
+      "ok": true,
+      "errors": 0,
+      "failedRequests": 0,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      },
+      "checks": 1
+    },
+    "after-realistic": {
+      "ok": true,
+      "errors": 0,
+      "failedRequests": 0,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      },
+      "checks": 1
+    },
+    "after-all-regions": {
+      "ok": true,
+      "errors": 0,
+      "failedRequests": 0,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      },
+      "checks": 5
+    },
+    "game-realistic-final": {
+      "ok": true,
+      "errors": 0,
+      "failedRequests": 0,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      },
+      "checks": 47
+    },
+    "game-classic-final": {
+      "ok": true,
+      "errors": 0,
+      "failedRequests": 0,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      },
+      "checks": 47
+    },
+    "burster-final-realistic": {
+      "ok": true,
+      "errors": 0,
+      "failedRequests": 0,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      },
+      "checks": 13
+    },
+    "burster-final-classic": {
+      "ok": true,
+      "errors": 0,
+      "failedRequests": 0,
+      "cleanup": {
+        "browser": "SIGTERM",
+        "server": "SIGTERM",
+        "profileRemoved": true
+      },
+      "checks": 13
+    }
+  }
+}

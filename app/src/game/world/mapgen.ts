@@ -19,7 +19,7 @@ import './infiniteL3' // v51：注册 Level 3 无限 chunk 生成器（副作用
 import './infiniteL4' // v54：注册 Level 4 无限 chunk 生成器（副作用导入）
 import './infiniteL5' // v54：注册 Level 5 无限 chunk 生成器（副作用导入）
 import './infiniteL6' // v56：注册 Level 6 地表/地下双层无限生成器（副作用导入）
-import './infiniteL7' // v57：注册 Level 7 入口房间 + 四深度带无限海洋生成器（副作用导入）
+import { l7TerrainTileAt } from './infiniteL7' // v57：注册 Level 7 入口房间 + 四深度带无限海洋生成器（副作用导入）
 import './infiniteL8' // v59：注册 Level 8 无限有机洞穴与生态分区生成器（副作用导入）
 import './infiniteL9' // v61：注册 Level 9 无限郊区、住宅街与第九大道引导路线生成器
 import './infiniteL10' // v62：注册 Level 10 无限农田、连续道路与湖泊生成器
@@ -244,52 +244,56 @@ export function caveCeilingAt(m: GameMap, x: number, y: number): number {
 // 每个参与瓦片取 3×3 网格：中心=本瓦片代表高度；边中点=本瓦片与相邻瓦片中心的均值；
 // 四角=共享该角的参与瓦片中心均值。相邻瓦片在边/角上取到完全相同的顶点高度，
 // 因此 chunk 接缝处几何无缝，瓦片之间由四个小斜面连接，而非垂直台阶。
+// The halo is keyed in world coordinates, not in the moving 160 m window.
+// Only off-window tiles need procedural queries; in-window reads remain O(1).
+const l7Halo = new WeakMap<GameMap, {seed:number; tiles:Map<string,ReturnType<typeof l7TerrainTileAt>>}>()
+function l7HaloTile(m: GameMap, tx: number, ty: number) {
+  const inf = m.inf
+  if (!inf) return undefined
+  let c = l7Halo.get(m)
+  if (!c || c.seed !== inf.seed) { c = {seed:inf.seed, tiles:new Map()}; l7Halo.set(m,c) }
+  const wx = tx + inf.ox, wy = ty + inf.oy, key = wx + ',' + wy
+  let t = c.tiles.get(key)
+  if (!t) {
+    t = l7TerrainTileAt(inf.seed,wx,wy); c.tiles.set(key,t)
+    if (c.tiles.size > 4096) c.tiles.delete(c.tiles.keys().next().value!)
+  }
+  return t
+}
 export function l7SeaTile(m: GameMap, tx: number, ty: number): boolean {
-  if (!m.l7SeaTerrain || tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return false
+  if (!m.l7SeaTerrain) return false
+  if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return l7HaloTile(m,tx,ty)?.smooth ?? false
   const i = ty * m.w + tx
   if (m.tiles[i] !== 1 || m.outdoor[i] !== 1) return false
-  if (m.liquid[i] === 1) return true
-  return m.liquid[i] === 0 && (m.seaFloor?.[i] ?? POOL_DEPTH) <= 0.01 // 抬升到海面的荒岛
+  return m.liquid[i] === 1 || m.liquid[i] === 0 && (m.seaFloor?.[i] ?? POOL_DEPTH) <= .01
 }
-/** L7 室外连续地形瓦片代表高度（海床=-seaFloor；荒岛=ELEV_H[elev]）。 */
 export function l7SeaTileH(m: GameMap, tx: number, ty: number): number {
+  if (tx < 0 || ty < 0 || tx >= m.w || ty >= m.h) return l7HaloTile(m,tx,ty)?.height ?? 0
   const i = ty * m.w + tx
   return m.liquid[i] === 1 ? -(m.seaFloor?.[i] ?? POOL_DEPTH) : ELEV_H[m.elev[i]]
 }
-/** L7 室外连续地形任意世界点高度：瓦片内 2×2 分段双线性，中心恰为瓦片代表高度。 */
-export function l7SeaHAt(m: GameMap, x: number, y: number): number {
-  // 窗口边缘 chunk 的最外侧顶点会落在 x/y = m.w/m.h 上：把采样钳制到最后一个瓦片的
-  // 外缘（fx/fy=1），避免用越界瓦片中心参与插值产生 NaN。
-  let tx = Math.floor(x), ty = Math.floor(y)
-  if (tx < 0) tx = 0; else if (tx >= m.w) tx = m.w - 1
-  if (ty < 0) ty = 0; else if (ty >= m.h) ty = m.h - 1
-  const fx = Math.max(0, Math.min(1, x - tx)), fy = Math.max(0, Math.min(1, y - ty))
-  const gx = fx * 2, gy = fy * 2
-  const qx = Math.min(1, Math.floor(gx + 1e-6)), qy = Math.min(1, Math.floor(gy + 1e-6))
-  const ux = gx - qx, uy = gy - qy
-  const node = (px: number, py: number): number => {
-    if (px === 1 && py === 1) return l7SeaTileH(m, tx, ty)
-    if (py === 1) {
-      const nx = tx + (px === 2 ? 1 : -1)
-      return l7SeaTile(m, nx, ty) ? (l7SeaTileH(m, tx, ty) + l7SeaTileH(m, nx, ty)) / 2 : l7SeaTileH(m, tx, ty)
-    }
-    if (px === 1) {
-      const ny = ty + (py === 2 ? 1 : -1)
-      return l7SeaTile(m, tx, ny) ? (l7SeaTileH(m, tx, ty) + l7SeaTileH(m, tx, ny)) / 2 : l7SeaTileH(m, tx, ty)
-    }
-    // 四角：共享该角的四个参与瓦片取均值；角落无邻接时退回本瓦片高度，边缘保持封闭
-    const ax = px === 2 ? tx : tx - 1, ay = py === 2 ? ty : ty - 1
-    let sum = 0, n = 0
-    for (let dy = 0; dy <= 1; dy++) for (let dx = 0; dx <= 1; dx++) {
-      if (!l7SeaTile(m, ax + dx, ay + dy)) continue
-      sum += l7SeaTileH(m, ax + dx, ay + dy); n++
-    }
-    return n ? sum / n : l7SeaTileH(m, tx, ty)
-  }
-  const a = node(qx, qy), b = node(qx + 1, qy), c = node(qx, qy + 1), d = node(qx + 1, qy + 1)
-  return (a + (b - a) * ux) * (1 - uy) + (c + (d - c) * ux) * uy
+/** Shared 0.5 m lattice node for rendering and collision. Never clamp an
+ * infinite ocean edge: that edge may become the middle of the next window. */
+export function l7SeaNodeH(m: GameMap, x: number, y: number): number {
+  let tx=Math.floor(x),ty=Math.floor(y)
+  if(!m.inf){tx=Math.max(0,Math.min(m.w-1,tx));ty=Math.max(0,Math.min(m.h-1,ty))}
+  const fx=Math.max(0,Math.min(1,x-tx)),fy=Math.max(0,Math.min(1,y-ty))
+  const c=l7SeaTileH(m,tx,ty),mx=fx>.25&&fx<.75,my=fy>.25&&fy<.75
+  if(mx&&my)return c
+  if(my){const nx=tx+(fx>.5?1:-1);return l7SeaTile(m,nx,ty)?(c+l7SeaTileH(m,nx,ty))/2:c}
+  if(mx){const ny=ty+(fy>.5?1:-1);return l7SeaTile(m,tx,ny)?(c+l7SeaTileH(m,tx,ny))/2:c}
+  const ax=fx>.5?tx:tx-1,ay=fy>.5?ty:ty-1
+  let sum=0,n=0
+  for(let dy=0;dy<=1;dy++)for(let dx=0;dx<=1;dx++)if(l7SeaTile(m,ax+dx,ay+dy)){sum+=l7SeaTileH(m,ax+dx,ay+dy);n++}
+  return n?sum/n:c
 }
-
+/** Bilinear interpolation of the same lattice used by seabed geometry. */
+export function l7SeaHAt(m: GameMap, x: number, y: number): number {
+  if(!m.inf){x=Math.max(0,Math.min(m.w-.000001,x));y=Math.max(0,Math.min(m.h-.000001,y))}
+  const ax=Math.floor(x*2)/2,ay=Math.floor(y*2)/2,u=(x-ax)*2,v=(y-ay)*2
+  const a=l7SeaNodeH(m,ax,ay),b=l7SeaNodeH(m,ax+.5,ay),c=l7SeaNodeH(m,ax,ay+.5),d=l7SeaNodeH(m,ax+.5,ay+.5)
+  return (a+(b-a)*u)*(1-v)+(c+(d-c)*u)*v
+}
 
 // 连续地面高度（世界坐标，坡道 smoothstep 平滑插值；玩家脚底/相机/实体站立用）
 // band：楼层高度带（0=主层 1=上层 2=第三层[v54]），上层非楼梯瓦片地面=band×FLOOR_H

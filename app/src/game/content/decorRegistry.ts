@@ -40,7 +40,7 @@ export interface DecorEntry {
 
 // engine scanInteract 中既非容器也不在 DECOR_VIEWS 的可交互 kind（门/机关/交易点等）
 const INTERACT_EXTRA: ReadonlySet<string> = new Set([
-  'lift', 'lightswitch', 'megsign', 'arcadecab',
+  'lift', 'lightswitch', 'megsign', 'arcadecab', 'stonechime',
   'hoteldoor', 'rollerdoor', 'glassdoor', 'inkdoor', 'bargate',
   'windowtrap', 'megdoc', 'landmark', 'invitation', 'valve', 'booth', 'server', 'vending', 'watercooler', 'frontdesk',
   // Alpha furniture becomes interactive only when the instance carries data.facility;
@@ -107,7 +107,7 @@ const RAW: RawEntry[] = [
   S('maingen', '主发电机', 'solid', ['L2'], 'infiniteL2 大机房（maingenroom 预制件随 L3 无限化成死代码）'),
   S('megcrate', 'M.E.G. 补给箱', 'solid', ['L2', 'L3', 'L4'], 'infiniteL2 储藏房、infiniteL3 容器掷点、L4 megoutpost 预制件'),
   S('prefabmark', '预制件标记（不可见）', 'nonsolid', ['L4', 'L5'], '有限层预制件埋点（可达性校验/冒烟断言用）；L0–L3 预制件为死代码'),
-  S('glasswin', '半透玻璃窗', 'solid', ['L4', 'L274'], 'infiniteL4 窗景区整排窗（data.deg 定向 + data.rain 雨痕，窗外 outdoor 虚空，仅观察不可达）；L274 蓝白圣辉彩窗'),
+  S('glasswin', '半透玻璃窗', 'solid', ['L4', 'L274'], 'L4 连续办公室雨景窗（data.deg 定向 + data.rain 雨痕，无独立窗景区域或可进入的窗外空间）；L274 蓝白圣辉彩窗'),
   S('rollerdoor', '卷帘门', 'solid', ['据点105'], 'EL3A 储藏区门；L1 小巷卷帘门随有限 garage 成死代码'),
   S('glassdoor', '玻璃门', 'solid', [], '有限 mapgen hotel 庭院泳池门——L5 已无限化（新 L5 单层无户外庭院），当前实际不到达（死代码）'),
   S('lift', '载客电梯', 'nonsolid', ['L4'], 'mapgen office 夹层电梯（轿厢垂直送达上层）'),
@@ -127,6 +127,7 @@ const RAW: RawEntry[] = [
   S('bonepile', '骨堆', 'nonsolid', ['L7', 'L8'], 'mapgenDeep L7/L8 散点'),
   S('fishbones', '巨鱼骨架', 'nonsolid', ['L7'], 'mapgenDeep L7'),
   S('seatarpit', '深渊焦油岩堆', 'nonsolid', ['L7'], 'mapgenDeep L7'),
+  S('tarwriting', '焦油写下的字', 'nonsolid', ['L7'], 'infiniteL7 午夜/深渊 · 割肉后 thingAI.writeTar'),
   S('l7debris', '漂浮碎屑场', 'nonsolid', ['L7'], 'infiniteL7 v66 每 chunk 一组实例：书皮纸块/骨片/锈蚀废铁/纤维，按落点深度带'),
   S('l7skeleton', '类人骨架（巨颚鳍足）', 'nonsolid', ['L7'], 'infiniteL7 v66 暮色带起出现，午夜带成群'),
   S('l7giantfish', '不可理解的巨鱼骨架', 'nonsolid', ['L7'], 'infiniteL7 v66 午夜带/深渊稀有地标'),
@@ -148,6 +149,8 @@ const RAW: RawEntry[] = [
   S('glowshroom', '发光蘑菇', 'nonsolid', ['L1', 'L8'], 'infiniteL1 花园段、mapgenDeep L8 罗特尼斯大丛林；高大变体实心'),
   S('tarhands', '焦油之手', 'nonsolid', ['L8'], 'mapgenDeep L8'),
   S('roadsign', '第九大道路标', 'nonsolid', ['L8'], 'infiniteL8 固定路线（每 50 米一块，带 M.E.G. 标志）'),
+  S('stoneinstruments', '乐器洞石乐器群', 'nonsolid', ['L8'], 'infiniteL8 乐器洞地标（第九大道 2 号路标旁唯一一处；模型 renderer/stoneInstrumentsMesh.ts）'),
+  S('stonechime', '乐器洞石风铃', 'nonsolid', ['L8'], 'infiniteL8 乐器洞；用石卡祖笛戳响后 90 秒持续发声引开实体（engine/tinyAI.ts）'),
   S('campstall', '营地摊位', 'solid', ['L8'], 'mapgenDeep L8 营地中枢'),
   S('house', '郊区房屋（标记）', 'nonsolid', ['L9'], 'mapgenDeep L9（墙体由瓦片雕刻，内含家具）'),
   S('l9window', '郊区住宅透明窗', 'solid', ['L9'], 'infiniteL9 一层真实墙洞与透明玻璃'),

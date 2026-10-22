@@ -1,0 +1,72 @@
+[
+  {
+    "name": "check:thing",
+    "code": 0,
+    "elapsedMs": 13418.617900000001,
+    "tail": [
+      "✔ L7 生成仍是纯函数",
+      "✔ 引擎侧跟随链与渲染模型同节距、同节数、同半径",
+      "check:thing 51/51 全部通过"
+    ]
+  },
+  {
+    "name": "check:thing-anim",
+    "code": 0,
+    "elapsedMs": 1825.9461999999985,
+    "tail": [
+      "✔ glitch：相邻体节间距 8.16~10.89m（节距 8.16）",
+      "✔ glitch：头颈最大间距 3.82m（不脱节）",
+      "check:thing-anim 31/31 全部通过"
+    ]
+  },
+  {
+    "name": "check:thing-integration",
+    "code": 1,
+    "elapsedMs": 1653.8945999999996,
+    "tail": [
+      "✔ finite geometry and UV 174",
+      "✔ finite geometry and UV 175",
+      "✔ finite geometry and UV 176"
+    ]
+  },
+  {
+    "name": "check:l7-cliffs",
+    "code": 0,
+    "elapsedMs": 26022.362599999997,
+    "tail": [
+      "✔ seed 20261009 贴崖只按前进：8/8 次沿崖壁上攀 >6m 或翻脊游出 >5m",
+      "✔ seed 20261009 贴崖横移：8/8 次 2s 内挪动 >1m（边横移边沿崖上攀）",
+      "L7 cliffs: 20/20 passed"
+    ]
+  },
+  {
+    "name": "check:l7",
+    "code": 0,
+    "elapsedMs": 11053.756699999998,
+    "tail": [
+      "seed 20261009 {\"bonepile\":189,\"l7debris\":63,\"l7skeleton\":146,\"l7carpet\":68,\"barrel\":28,\"seatarpit\":64,\"tarwriting\":6,\"l7bubbles\":28,\"fishbones\":32,\"corpse\":12,\"l7giantfish\":3,\"seapillar\":3,\"seapipe\":1,\"crate\":3,\"bookcase\":1,\"table\":2,\"hanglight\":1,\"vent\":1,\"ropeanchor\":1,\"hoteldoor\":1}",
+      "seed 99991 {\"bonepile\":194,\"fishbones\":32,\"l7debris\":63,\"l7skeleton\":144,\"l7carpet\":58,\"seatarpit\":54,\"barrel\":15,\"l7bubbles\":21,\"tarwriting\":5,\"l7giantfish\":6,\"corpse\":8,\"seapillar\":3,\"seapipe\":1,\"bookcase\":1,\"table\":2,\"hanglight\":1,\"vent\":1,\"ropeanchor\":1,\"hoteldoor\":1,\"crate\":2}",
+      "L7 generation: 2433 passed, 0 failed"
+    ]
+  },
+  {
+    "name": "check:tiny",
+    "code": 0,
+    "elapsedMs": 16260.665699999998,
+    "tail": [
+      "✔ 流式窗口平移后，退避目标世界坐标不变",
+      "✔ 流式窗口平移后，回门目标世界坐标不变",
+      "check:tiny 87/87 全部通过"
+    ]
+  },
+  {
+    "name": "check:melee",
+    "code": 0,
+    "elapsedMs": 10025.091100000005,
+    "tail": [
+      "✔ 第一人称模型 axe:broken 带握持数据",
+      "✔ 挥砍姿势全程有限值，前倾 rx 不超过前臂翻起的上限",
+      "131/131 通过"
+    ]
+  }
+]

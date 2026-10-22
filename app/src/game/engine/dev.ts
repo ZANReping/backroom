@@ -31,6 +31,7 @@ import type { FloorBand, Structure, StructKind } from '../core/types'
 import type { Engine } from '../engine'
 import { canOccupy, PLAYER_RADIUS } from '../core/player'
 import {l3StyleAt,L3_NARROW_TINT} from '../world/l3Architecture'
+import { initCamo } from './camoAI' // [L8-camo]
 
 // 开发者模式：层级跳转
 export function devJump(eng: Engine, id: number) {
@@ -92,6 +93,7 @@ function initDevEntity(eng: Engine, ent: Entity, explicit: boolean) {
   if (type === 'skinstealer') initSkinStealer(eng, ent)
   if (type === 'clump') initClump(eng, ent)
   if (type === 'partygoer') initPartygoer(eng, ent) // 派对客：召唤时即确定颜色变体/实习生气球与派对伪装状态
+  if (type === 'camocrawler') initCamo(eng, ent) // [L8-camo] 召唤后就近贴到岩壁上伪装
   if (eng.levelDef.id === 5 && ent.def.mothForm === 'male') ent.def = { ...ent.def, passive: true, grudge: true, hunts: undefined }
   if (ent.def.aquatic) ent.z = eng.player.z
   if (ent.def.flying) {
@@ -578,7 +580,7 @@ export function devKillAllEntities(eng: Engine): number {
   if (!m) return 0
   let n = 0
   for (const e of m.entities) {
-    if (e.dead) continue
+    if (e.dead || e.def.type === 'thething') continue // [thing] 七层之物不可杀
     e.hp = 0; e.dead = true; e.deathT = 1.4; n++
     eng.bloodParticles(e.x, e.y)
   }

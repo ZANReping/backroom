@@ -1,3 +1,4 @@
+import {bursterHear,updateBurster} from './bursterAI'
 import { isWrangler, updateWrangler, wranglerHear } from './wranglerAI'
 import { stableAt } from './career'
 import { updateMothDoors } from './moths'
@@ -24,9 +25,15 @@ import {updateJerryEntity} from './jerryAI'
 import { isNW, nwHear, updateNW } from './watchAI'
 import { armsHear, armsRevive, updateArmsEntity } from './armsAI'
 import { updateRat, updateRatGear } from './ratAI'
+import { beginLightguideFrame, updateLightguide } from './lightguideAI' // [L8-lightguide]
+import { beginCamoFrame, camoSound, updateCamo } from './camoAI' // [L8-camo]
+import { beginArachnidFrame, updateArachnid, arachnidHear } from './arachnidAI' // [L8-arachnid]
+import { updateCurabitur, curabiturPostStep } from './curabiturAI' // [L8-curabitur]
 import { updateShrimp, devourShrimp } from './shrimpAI'
 import { beginSmilerFrame, flushSmilerSpawns, smilerHear, updateSmiler } from './smilerAI'
 import { beginL11FacelingFrame,updateL11Faceling,canPlaceL11Faceling } from './l11FacelingAI'
+import { tinyHear, updateTiny } from './tinyAI'
+import { thingHear, updateThing, THINGM } from './thingAI'
 
 // v51：人制品售货机——看过背面后，玩家背对它（视线锥外且 10m 内）即活化追击；受到攻击也会活化
 // （原 step 内联段，逐语句搬运；位于糖果计时器 pre 组与人制品/麻痹 post 组之间）
@@ -55,34 +62,19 @@ export function isLit(eng: Engine, x: number, y: number): boolean {
 }
 
 export function noiseEvent(eng: Engine, x: number, y: number, radius: number, sprint: boolean) {
+  camoSound(eng, x, y, radius)
   armsHear(eng, x, y, radius, sprint) // 手臂：风口听得见的响动累计到噪音计（stationary，不走下面的通用循环）
   eng.playerNoiseT = 0.8 // 玩家噪音残余计时（猎犬威慑「持续发声」判定；脚步/挥击/搜索等都会刷新）
   for (const e of eng.map!.entities) {
     if (e.dead || e.def.stationary) continue
-    // v58：小小（可对话被动个体）极其厌恶噪音——首次近处巨响先退避低鸣，再次被吵则彻底激怒
-    if (e.def.type === 'tiny' && e.def.passive) {
-      if (e.provoked) continue
-      // 普通走路/蹲行也会周期性调用 noiseEvent；若把听觉半径直接用于所有脚步，玩家尚未
-      // 接近对话距离便会在数帧内必然激怒小小。这里只把奔跑、攻击、破门等明显响动计入恼怒。
-      if (!sprint && radius < 8) continue
-      const d0 = Math.hypot(e.x - x, e.y - y)
-      if (d0 >= Math.max(radius, e.def.hearing * 2.4)) continue
-      e.scrapeT = (e.scrapeT ?? 0) + 1 // 借用 scrapeT 作恼怒计数
-      if (e.scrapeT >= 2) {
-        e.provoked = true
-        e.state = 'chase'; e.targetX = x; e.targetY = y; e.stateT = 8
-        eng.msg('噪音在水下炸开——小小的耐心耗尽了。它不再掩饰恶意。', 'damage')
-        audio.aggro()
-      } else {
-        // 受惊退避：朝远离声源的方向蹿出一段
-        const dd = Math.max(0.01, d0)
-        e.state = 'investigate'; e.targetX = e.x + ((e.x - x) / dd) * 6; e.targetY = e.y + ((e.y - y) / dd) * 6; e.stateT = 2.5
-        eng.msg('水下传来一声不悦的低鸣——噪音把它惹恼了。', 'system')
-      }
-      continue
-    }
+    // [tiny] 小小：断续的明显响动（快速游泳、投掷物落水、爆炸、破门…）记恼怒，两次追杀；石卡祖笛另走 tinyKazoo（tinyAI）
+    if (e.def.type === 'tiny') { tinyHear(eng, e, x, y, radius, sprint); continue }
+    if (e.def.type === 'thething' && thingHear(eng, e, x, y, radius, sprint)) continue
+    if (e.def.type === 'camocrawler') continue
+    if (e.def.type === 'arachnid') { arachnidHear(eng, e, x, y, radius, sprint); continue }
     if (isWrangler(e.def.type)) { wranglerHear(eng, e, x, y, radius, sprint); continue }
     if (e.def.type === 'smiler') { smilerHear(eng, e, x, y, radius, sprint); continue }
+    if(e.def.type==='burster'){bursterHear(e,x,y,radius);continue}
     if (e.def.type === 'hound') { houndHear(eng, e, x, y, radius, sprint); continue }
     if (isNW(e.def.type)) { nwHear(eng, e, x, y, radius, sprint); continue } // 邻里守望/残缺者专属感知（watchAI）
     if (e.def.type === 'clump') { clumpHear(eng, e, x, y, radius, sprint); continue } // v64：肢团专属听觉（clumpAI）
@@ -91,19 +83,12 @@ export function noiseEvent(eng: Engine, x: number, y: number, radius: number, sp
     if (e.def.type === 'wretch') { wretchHear(eng, e, x, y, radius, sprint); continue }
     if (e.def.passive) continue // 被动实体（无面灵）不循声索敌——只有被攻击才反击
     const d = Math.hypot(e.x - x, e.y - y)
-    // v57o：tiny 对水下/水面噪音极敏感——投掷物落水、爆炸与游泳声都能从更远处把它引开
-    const hearR = e.def.type === 'tiny' ? e.def.hearing * 2.4
-      : e.def.type === 'thething' ? e.def.hearing * 2.2 // 维基：会被水中扰动吸引；在黑水里先“听”见玩家
+    // v57o：水生巨物对水中扰动极敏感（小小已迁入 tinyAI.tinyHear）
+    const hearR = e.def.type === 'thething' ? e.def.hearing * 2.2 // 维基：会被水中扰动吸引；在黑水里先“听”见玩家
       : sprint && e.def.hearsSprint ? e.def.hearing * 1.6 : e.def.hearing
-    // 失明实体（迷彩爬行者）只按「响度半径」听觉——蹲行/慢走的小声响不会被顺风耳放大
-    const effR = e.def.blind ? radius : Math.max(radius, hearR)
+    const effR = Math.max(radius, hearR)
     if (d >= effR) continue
     if (e.state === 'chase' || e.state === 'attack') continue
-    // 失明实体（迷彩爬行者）：听见声音即径直冲向声源
-    if (e.def.blind) {
-      e.state = 'chase'; e.targetX = x; e.targetY = y; e.stateT = 8
-      continue
-    }
     e.state = 'investigate'; e.targetX = x; e.targetY = y; e.stateT = 6
   }
 }
@@ -156,7 +141,7 @@ export function updateAquaticDepth(eng: Engine, e: Entity, dt: number) {
     // v58fix4：七层之物压低巡逻水层——贴近海床蛰伏（原 45% 水深在深海太高）；
     // 其余水生实体保持约 45% 水层巡游
     const depth = e.def.type === 'thething'
-      ? Math.min(18, Math.max(2.5, (m.seaFloor?.[ti] || 1.7) * 0.12))
+      ? Math.min(24, Math.max(9, (m.seaFloor?.[ti] || 1.7) * 0.12)) // [thing] 头高约 12m：头心离底至少 9m，不插进海床
       : Math.min(90, Math.max(3, m.seaFloor?.[ti] || 1.7) * 0.45)
     target = bottom + depth // 巡逻在离底目标高度的水体中
   }
@@ -224,6 +209,9 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
   beginPartygoerFrame(eng, dt) // 派对客：心灵感应共享目标、包抄角、低语冷却
   beginDullerFrame(eng, dt)
   beginSkinStealerFrame(eng, dt)
+  beginLightguideFrame(eng, dt) // [L8-lightguide]
+  beginCamoFrame(eng, dt) // [L8-camo] 声音队列换帧、巨石计时与碰撞
+  beginArachnidFrame(eng, dt, dmgMult) // [L8-arachnid] 玩家中毒/蛛网/酸雾/螨群/蛛巢登记
   updateRatGear(eng, dt, dmgMult)
   if(eng.levelDef.id===11)beginL11FacelingFrame(m)
   for (const e of m.entities) {
@@ -262,11 +250,15 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
     const d = eng.dev.invisible ? 1e9 : Math.hypot(e.x - p.x, e.y - p.y)
     const def = e.def
     if (e.targetEnt?.dead) e.targetEnt = undefined
+    if (def.type === 'tiny' && updateTiny(eng, e, dt, d)) continue
+    if (def.type === 'lightguide') { updateLightguide(eng, e, dt, d); continue } // [L8-lightguide] 微光向导专属 AI（带路/警示/守巢/逃离）
     if (def.aquatic) updateAquaticDepth(eng, e, dt)
+    if (def.type === 'thething' && updateThing(eng, e, dt, d, lightOn, lightOn && d < THINGM.LIGHT_D && Math.abs(e.z - p.z) < THINGM.LIGHT_Z && lookingAt(eng, e))) continue
     if (def.flying && !(def.type === 'deathmoth' && e.mt?.mode === 'feed')) updateFlyingAltitude(eng, e, dt)
     if (updateMoth(eng, e, dt, d, dmgMult)) continue // 死亡飞蛾重制：四种形态的专属 AI（engine/mothAI.ts）
     // Nguithr'xurh（Entity 16）重制：两段式伏击状态机（engine/nguithrAI.ts）
     if (def.type === 'nguithr') { eng.updateNguithr(e, d, dt); continue }
+
     // 手臂（Entité 15-FR）重制：黑暗 + 噪音诱发、抓人拖走、从别处吐出；只能用光赶走（engine/armsAI.ts）
     if (def.type === 'arms') { updateArmsEntity(eng, e, dt, dmgMult); continue }
     // 猎犬威慑：玩家「实时直视 + 持续制造噪音」才定身——逐帧刷新 stunT，
@@ -285,7 +277,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
         eng.msg('猎犬摆脱了震慑，重新扑来！', 'damage')
       }
     }
-    if (e.stunT > 0) { e.stunT -= dt; if(e.sm){e.sm.strikeT=undefined;e.sm.strikeAge=undefined;e.state='stunned'} continue }
+    if (e.stunT > 0&&def.type!=='burster') { e.stunT -= dt; if(e.sm){e.sm.strikeT=undefined;e.sm.strikeAge=undefined;e.state='stunned'} continue }
     // 重制牧蛇：岩层潜行/切出/催眠/吞咽传送/雌性啃岩/幼体（wranglerAI；不走通用状态机）
     if (isWrangler(def.type)) { updateWrangler(eng, e, dt, d); continue }
 
@@ -328,6 +320,8 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
     //    或 调查且目标点是玩家所在（噪音引动；尸鼠 investigate 猎物时目标≠玩家，不计）
     if (!e.targetEnt && (e.state === 'chase' || e.state === 'attack'
       || (e.state === 'investigate' && Math.hypot(e.targetX - p.x, e.targetY - p.y) < 2))) recordEntityEncounter(e)
+
+    if(def.type==='burster'){updateBurster(eng,e,dt,d);continue}
 
     // 手臂（Entité 15-FR）：重制后整套状态机在 engine/armsAI.ts（updateArmsEntity，见本循环前部分派）
     // 管道蠕虫埋伏：近身破土
@@ -377,6 +371,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
 
     // v61：笑魇（含变种）走专属状态机 smilerAI，跳过下方通用特殊行为与状态机；末尾的碰撞分离照常执行
     generic: {
+    if (def.type === 'curabitur') { updateCurabitur(eng, e, dt, d); break generic } // [L8-curabitur] 受眷鸟专属 AI（诱捕/散孢/避人/逃离），替换旧的 avoidsHumans+hunts 通用逻辑
     if (def.type === 'smiler') { updateSmiler(eng, e, dt, d, dmgMult, l3); break generic }
     if (def.type === 'hound') { updateHound(eng, e, dt, d, dmgMult, l3); break generic } // v62：猎犬专属 AI
     if (def.type === 'clump') { updateClump(eng, e, dt, d, dmgMult); break generic }
@@ -384,6 +379,8 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
     if (def.type === 'duller') { updateDuller(eng, e, dt, d, dmgMult); break generic } // v63：钝人专属 AI（隔墙抓取/受注视逃离）
     if (def.type === 'skinstealer') { updateSkinStealer(eng, e, dt, d, dmgMult); break generic } // v77：窃皮者专属 AI（人皮伪装/温顺/饥饿/激怒）
     if (def.type === 'wretch') { updateWretch(eng, e, dt, d, dmgMult); break generic }
+    if (def.type === 'camocrawler') { updateCamo(eng, e, dt, d, dmgMult); break generic } // [L8-camo] 迷彩爬行者专属 AI（伪装/听声/群猎/砸地/引开）
+    if (def.type === 'arachnid') { updateArachnid(eng, e, dt, d, dmgMult); break generic } // [L8-arachnid] 蛛形纲 17 变种专属 AI
     if (def.type === 'corpserat') { updateRat(eng, e, dt, d, dmgMult); break generic }
     if (def.type === 'dryshrimp') { updateShrimp(eng, e, dt, d); break generic } // v81：旱虾专属 AI（两栖游荡/有丝分裂/受惊/诱饵）
     // —— 特殊行为 ——
@@ -430,7 +427,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
 
     // 七层之物的畏光分两段：短暂直射会让它收鳃、偏头退入黑水；持续盯住才把防御反应
     // 推过阈值，转为高速攻击。必须真的把手电朝向它，单纯开灯不再隔着背后“激怒”巨物。
-    const thingLit = def.type === 'thething' && lightOn && d < 14 && Math.abs(e.z - p.z) < 7 && lookingAt(eng, e)
+    const thingLit = def.type === 'thething' && lightOn && d < THINGM.LIGHT_D && Math.abs(e.z - p.z) < THINGM.LIGHT_Z && lookingAt(eng, e)
     if (def.type === 'thething') {
       if (thingLit) e.lightStressT = Math.min(2.4, (e.lightStressT ?? 0) + dt)
       else e.lightStressT = Math.max(0, (e.lightStressT ?? 0) - dt * 0.42)
@@ -466,7 +463,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
       e.targetEnt = undefined
       e.stateT = 0.8
     }
-    const canSee = !lightRecoiling && (hearP || (d < def.sight + darkBonus && (!def.lightHunter || lightOn || l3) && eng.los(e.x, e.y, p.x, p.y)))
+    const canSee = !(def.type === 'thething' && e.th?.lost) && !lightRecoiling && (hearP || (d < def.sight + darkBonus && (!def.lightHunter || lightOn || l3) && eng.los(e.x, e.y, p.x, p.y)))
     const feigning = def.feignNeutral && d > 2.4 && e.state !== 'chase' && e.state !== 'attack' // 侍者装中立
     // v23「Level 11 Effect」：本层敌对实体更不倾向于攻击——但主动挑衅（攻击过任何实体）会解除
     const pacified = eng.levelDef.id === 11
@@ -611,12 +608,6 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
           }
           e.animT += dt * def.speed
           break
-        } else if (def.blind) {
-          // 失明实体（迷彩爬行者）：径直冲向最后听见的声音点；冲达后无处可依则回游荡
-          // （v64：原 L3 肢团分支已迁入 clumpAI）
-          const arrived = eng.stepEntity(e, def.speed, dt)
-          eng.faceToward(e, e.targetX, e.targetY, dt, 9)
-          if (arrived) { e.state = 'wander'; eng.wanderTarget(e) }
         } else if (e.targetEnt) {
           // 实体对实体反击（死亡飞蛾反击尸鼠）：追击伤害者本人
           const tgt = e.targetEnt
@@ -637,17 +628,17 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
           eng.faceToward(e, p.x, p.y, dt, rate)
           e.targetX = e.x + Math.cos(e.facing) * 6
           e.targetY = e.y + Math.sin(e.facing) * 6
-          eng.stepEntity(e, def.speed * (d > 3 ? 1 : 0.55), dt)
+          eng.stepEntity(e, def.speed * (d > THINGM.BITE_REACH ? 1 : 0.55), dt)
         } else {
           e.targetX = p.x; e.targetY = p.y
           eng.stepEntity(e, def.speed, dt)
           eng.faceToward(e, p.x, p.y, dt, 9) // 追击时平滑转向面向玩家
         }
         e.animT += dt * def.speed
-        const meleeReach = def.type === 'thething' ? 3.05 : 0.85 // 近四米长头颅的巨口攻击距离
+        const meleeReach = def.type === 'thething' ? THINGM.BITE_REACH : 0.85 // [thing] 头长约 18m：口在头心前约 6.5m
         if (!e.targetEnt && d < meleeReach && e.attackCd <= 0) {
           e.state = 'attack'; e.lungeT = 0.32; e.attackCd = 1.4
-        } else if (!e.targetEnt && !canSee && d > def.sight * 1.4 && !def.mirrorMove && !def.blind && !(def.grudge && e.provoked)) {
+        } else if (!e.targetEnt && !canSee && d > def.sight * 1.4 && !def.mirrorMove && !(def.grudge && e.provoked)) {
           e.state = 'investigate'; e.stateT = 5
         }
         break
@@ -662,8 +653,8 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
           let diff = Math.abs(want - e.facing)
           if (diff > Math.PI) diff = Math.PI * 2 - diff
           if (diff > 0.7) { e.lungeT = 0.1; break }
-          const hitReach = def.type === 'thething' ? 3.15 : 1.2
-          const hitZ = def.type === 'thething' ? Math.abs(e.z - p.z) < 2.8 : eng.meleeZOk(e)
+          const hitReach = def.type === 'thething' ? THINGM.BITE_HIT : 1.2
+          const hitZ = def.type === 'thething' ? Math.abs(e.z - p.z) < THINGM.BITE_Z : eng.meleeZOk(e)
           if (d < hitReach && hitZ) eng.hurtPlayer(def.damage * dmgMult, def.name)
           if (def.type === 'faceling') e.meleeRecoveryT = HUMANOID_RECOVERY
           e.state = 'chase'
@@ -685,7 +676,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
     }
 
     // ---- v26：实体-玩家最小间距（碰撞推挤分离，攻击判定用距离+面向而非重叠）----
-    if (!eng.dev.invisible && Math.abs(e.z - p.z) < 1.2 && e.dl?.phase!=='drag' && e.dl?.phase!=='hold' && e.cl?.phase!=='grab' && e.cl?.phase!=='devour') {
+    if (!eng.dev.invisible && Math.abs(e.z - p.z) < 1.2 && e.dl?.phase!=='drag' && e.dl?.phase!=='hold' && e.cl?.phase!=='grab' && e.cl?.phase!=='devour' && !e.arachnid?.latched) { // [L8-arachnid] 吸附在玩家身上的蜱不参与推挤
       const MIN_SEP = def.stationary ? 0.5 : 0.56
       let sx = e.x - p.x, sy = e.y - p.y
       let sd = Math.hypot(sx, sy)
@@ -709,6 +700,7 @@ export function updateEntities(eng: Engine, dt: number, dmgMult: number) {
       }
     }
   }
+  curabiturPostStep(eng, dt) // [L8-curabitur] 飞蛾诱引/驱避、受眷胶燃烧、孢子下落与腐解、腐液滩
   flushSmilerSpawns(eng)
   m.entities = m.entities.filter((e) => !e.dead || e.deathT > 0)
 }

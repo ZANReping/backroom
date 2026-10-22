@@ -13,6 +13,7 @@ import {buildTradeDecor} from './tradeMeshes'
 import { buildSettlementStation, buildSettlementBoard } from './settlementMeshes'
 // 结构/出口低模（按 StructKind 建造，含可动盖板/门铰链 userData 约定）
 import * as THREE from 'three'
+import { buildTarWriting } from './tarWriting'
 import { buildRatMesh, buildRatGearMesh } from './ratMesh'
 import { buildArmsVent } from './armsMesh'
 import {buildL4OldStairs} from './l4OldStairs'
@@ -74,6 +75,7 @@ function wallMatchBox(w: number, h: number, d: number, def: LevelDef, tintK = 1,
 import { graffitiTextures } from './textures'
 import { buildObject70 } from './object70Mesh'
 import { buildL1OutpostEntrance, type L1OutpostOrg } from './l1OutpostEntrance'
+import { buildInstrumentCave, buildStoneChimeStructure } from './instrumentCave'
 
 // 贴图 Lambert 材质（v34：容器木纹/金属贴图）——磁盘贴图经 levelTexture 缓存，离线自动回退程序噪点；
 // tint 近白叠乘保留贴图本色（looted 时传暗色达成变暗）
@@ -86,7 +88,8 @@ function caveRockMaterial(variant0: unknown, normalStrength = 0.88) {
   const variant = String(variant0 ?? 'phreatic')
   const terrain = variant === 'breakdown' || variant === 'rottnest' ? 'floor'
     : variant === 'vadose' || variant === 'movile' ? 'ceil' : 'wall'
-  const tint = variant === 'rottnest' ? '#aeb7a1' : variant === 'movile' ? '#bbb994'
+  const tint = variant === 'flowstone' ? '#efe4cf' // [kazoo] 乐器洞石乐器：后长出来的流石，比岩壁略浅
+    : variant === 'rottnest' ? '#aeb7a1' : variant === 'movile' ? '#bbb994'
     : variant === 'handyland' ? '#bd968e' : variant === 'hyperspace' ? '#aec5bd' : '#c5beb0'
   const base = `l8_${terrain}`
   return litMaterial({
@@ -3446,6 +3449,7 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       grp.add(cyl(0.05, 0.05, 0.55, bone, len / 2 + 0.12, y0 + 0.16, 0, 5)) // 尾鳍骨
       break
     }
+    case 'tarwriting': { grp.add(buildTarWriting(s, m)); break } // [thing] 焦油写下的字
     case 'seatarpit': {
       // 深渊的焦油与岩石堆：黑色黏稠堆体 + 正在上升的小气泡
       const r = mulberry(s.x * 83 + s.y * 47)
@@ -3862,6 +3866,8 @@ export function buildStructure(s: Structure, _def: LevelDef, m: GameMap, wallH: 
       }
       break
     }
+    case 'stoneinstruments': grp.add(buildInstrumentCave(s, m, caveRockMaterial('flowstone'))); break // [kazoo] L8 乐器洞
+    case 'stonechime': { const c = buildStoneChimeStructure(s, m, caveRockMaterial('flowstone')); grp.add(c); grp.userData.rods = c.userData.rods; break }
     case 'roadsign': {
       // 第九大道路标：杆 + 方牌 + M.E.G. 标志
       grp.add(cyl(0.035, 0.045, 2.0, '#7a7570', 0, 1.0, 0, 6))

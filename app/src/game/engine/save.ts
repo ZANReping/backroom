@@ -38,6 +38,7 @@ export const SAVE_KEY = 'br_save_state'
 const LEGACY_SEED_KEY = 'br_save'
 
 export interface SaveSnapshot {
+  bntgBank?: import('./bntgBank').BntgBankState
   tradersWorld?: import('../world/tradersWorld').TradersWorldSave
   glowProjectiles?: import('../engine').Projectile[]
   l5MothAlerts?: { all: boolean; nests: Record<string, boolean> }
@@ -178,6 +179,7 @@ export function snapshot(eng: Engine): SaveSnapshot {
     rep: eng.rep,
     quests: eng.quests,
     profile: { ...eng.profile },
+    bntgBank: structuredClone(eng.bntgBank),
     warehouses: JSON.parse(JSON.stringify(eng.warehouses)) as WarehouseState, // v54：寄存仓库库存
     brcSin: eng.brcSin,
     brcMimicCd: eng.brcMimicCd,

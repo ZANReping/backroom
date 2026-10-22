@@ -550,7 +550,7 @@ export function applyMpSpawn(eng: Engine, slot: number) {
   }
 }
 
-/** “小小的谎言”门区：活着的小小横向距门心 5m 内时，门无法进入。 */
+/** “小小的谎言”门区：小小横向距门心 5m 内时，门无法进入。[tiny] 小小不可杀；只有被石卡祖笛的持续尖啸逼退（tinyAI）时它才离开门区。 */
 export function tinyBlocksLittleDoor(eng: Engine, exit?: ExitInstance): boolean {
   const m = eng.map
   if (!m) return false
@@ -564,7 +564,7 @@ export function takeExit(eng: Engine, def: ExitDef) {  const p = eng.player
   if(p.level===11&&def.kind==='basebeta'&&submitL11ArchiveTapes(eng))return
   if (def.kind === 'graystairs' || def.kind === 'graystairsup') return
   if (def.kind === 'littledoor' && tinyBlocksLittleDoor(eng)) {
-    eng.msg('小小正盘踞在门扇上方。只要它还在附近，你就不可能掀开「小小的谎言」。', 'system')
+    eng.msg('小小正盘踞在门扇上方。只要它还在附近，你就不可能掀开「小小的谎言」。（它惧怕持续的巨响）', 'system')
     audio.uiTick()
     return
   }

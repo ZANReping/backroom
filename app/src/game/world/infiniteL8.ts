@@ -6,6 +6,10 @@ import { UNIVERSAL_ITEMS } from '../content/items'
 import type { ExitInstance, GroundItem, LevelDef, LightSource, Structure } from '../core/types'
 import { CS, GEN_ITEM_BASE, h32 } from './infinite'
 import { registerInfiniteLevel, type CaveVolumeColumn, type GenChunk } from './infiniteRegistry'
+import { camoPackSpots } from './camoSpawn' // [L8-camo]
+import { groupLightguideSpawns } from '../engine/lightguideAI' // [L8-lightguide]
+import { curabiturChunkPass } from './curabiturSpawn' // [L8-curabitur]
+import { arachnidL8Chunk } from './arachnidNest' // [L8-arachnid]
 
 export type L8Variant = 'phreatic' | 'vadose' | 'breakdown' | 'hyperspace' | 'rottnest' | 'movile' | 'handyland'
 
@@ -146,6 +150,71 @@ export function l8AvenuePortalContact(seed: number, wx: number, wy: number): boo
   return forward >= -0.42 && forward <= 0.8 && Math.abs(lateral) <= 1.34
 }
 
+// ---- [kazoo] 乐器洞（中文维基 Level 8 正文里那段石头乐器洞穴）----
+// 规则：每层恰好一处。锚在第九大道 2 号路标（离出生石岸约 100m）上，沿大道法线偏到一侧 12m（左右由 seed 决定）。
+// 洞厅半径 4.4m、洞底压平到洞心原高度、洞顶压到 2.7–3.1m（风铃伸手可及）；从 2 号路标到洞心挖一条半径 1.75m 的直洞管。
+// 三者都直接写进洞穴场（l8CaveMarginAt / l8FloorAt / l8CeilingFrom），所以不论周围生态如何，乐器洞都与大道连通、可走到。
+export const L8_INSTRUMENT_CAVE = { anchorSeq: 2, offset: 12, r: 4.4, tunnel: 1.75, ceilMin: 2.7, ceilMax: 3.1 } as const
+export interface L8InstrumentCave { x: number; y: number; ax: number; ay: number; floor: number; rot: number }
+const instrumentCaves = new Map<number, L8InstrumentCave>()
+export function l8InstrumentCave(seed: number): L8InstrumentCave {
+  const hit = instrumentCaves.get(seed); if (hit) return hit
+  const C = L8_INSTRUMENT_CAVE
+  const a = l8AvenuePoint(seed, C.anchorSeq), prev = l8AvenuePoint(seed, C.anchorSeq - 1), next = l8AvenuePoint(seed, C.anchorSeq + 1)
+  const len = Math.hypot(next.x - prev.x, next.y - prev.y) || 1
+  const side = h01(seed, 0x81f3, C.anchorSeq) < 0.5 ? -1 : 1
+  const nx = -(next.y - prev.y) / len * side, ny = (next.x - prev.x) / len * side
+  const x = a.x + nx * C.offset, y = a.y + ny * C.offset
+  const cave = { x, y, ax: a.x, ay: a.y, floor: l8FloorBase(seed, x, y), rot: Math.atan2(a.y - y, a.x - x) }
+  if (instrumentCaves.size > 8) instrumentCaves.clear()
+  instrumentCaves.set(seed, cave)
+  return cave
+}
+/**
+ * 乐器洞内的摆放（生成与渲染共用；坐标系随传入的洞心，世界或地图局部都可以）。rot = 洞心→2 号路标（入口）方向。
+ * 入口对面的岩壁上斜嵌小提琴/吉他/长号；洞心偏里是马桶和一圈邦戈鼓；入口左侧挂石风铃，右侧是断口钟乳石，石卡祖笛就掉在它正下方。
+ */
+export function l8InstrumentLayout(c: { x: number; y: number; rot: number }) {
+  const R = L8_INSTRUMENT_CAVE.r
+  const at = (da: number, r: number) => ({ x: c.x + Math.cos(c.rot + da) * r, y: c.y + Math.sin(c.rot + da) * r, a: c.rot + da })
+  return {
+    wall: [
+      { kind: 'violin' as const, ...at(Math.PI - 0.95, R - 0.45), h: 1.25, roll: 0.55, s: 1.5 },
+      { kind: 'guitar' as const, ...at(Math.PI - 0.2, R - 0.5), h: 0.7, roll: -0.35, s: 1.25 },
+      { kind: 'trombone' as const, ...at(Math.PI + 0.7, R - 0.5), h: 1.0, roll: 1.15, s: 1.4 },
+    ],
+    toilet: at(Math.PI + 0.15, 1.3),
+    chime: at(1.75, 1.8),
+    spike: at(-1.75, 1.9),
+    kazoo: at(-1.75, 1.65),
+  }
+}
+/** 0..1：离乐器洞厅中心的平滑权重（洞厅内 1，向外 1.6m 内衰减到 0） */
+function instrumentCaveWeight(seed: number, wx: number, wy: number, pad = 0.8): number {
+  const c = l8InstrumentCave(seed)
+  return smooth(Math.max(0, Math.min(1, (L8_INSTRUMENT_CAVE.r + pad - Math.hypot(wx - c.x, wy - c.y)) / 1.6)))
+}
+/** 验收用：从 2 号路标沿洞管走到洞心，每 0.25m 检查余量、净高与坡度；再绕洞厅一圈检查净高。 */
+export function l8InstrumentCaveReachable(seed: number): { ok: boolean; minMargin: number; minClear: number; maxStep: number; ringMinClear: number } {
+  const c = l8InstrumentCave(seed)
+  let minMargin = Infinity, minClear = Infinity, maxStep = 0, ringMinClear = Infinity
+  const n = Math.ceil(Math.hypot(c.x - c.ax, c.y - c.ay) / 0.25)
+  let last = l8GroundAt(seed, c.ax, c.ay)
+  for (let i = 0; i <= n; i++) {
+    const t = i / n, x = c.ax + (c.x - c.ax) * t, y = c.ay + (c.y - c.ay) * t
+    const g = l8GroundAt(seed, x, y)
+    minMargin = Math.min(minMargin, l8CaveMarginAt(seed, x, y))
+    minClear = Math.min(minClear, l8RoofAt(seed, x, y) - g)
+    if (i) maxStep = Math.max(maxStep, Math.abs(g - last))
+    last = g
+  }
+  for (let k = 0; k < 16; k++) {
+    const a = k / 16 * Math.PI * 2, x = c.x + Math.cos(a) * 2.2, y = c.y + Math.sin(a) * 2.2
+    ringMinClear = Math.min(ringMinClear, l8RoofAt(seed, x, y) - l8GroundAt(seed, x, y))
+  }
+  return { ok: minMargin > 0.9 && minClear > 1.9 && maxStep < 0.3 && ringMinClear > 1.9, minMargin, minClear, maxStep, ringMinClear }
+}
+
 export const l8LakeDistanceAt = (wx: number, wy: number) => Math.hypot(wx - L8_LAKE_CENTER.x, wy - L8_LAKE_CENTER.y)
 export const l8LakeWaterAt = (wx: number, wy: number) => l8LakeDistanceAt(wx, wy) < L8_LAKE_WATER_RADIUS
 
@@ -218,10 +287,21 @@ export function l8CaveMarginAt(seed: number, wx: number, wy: number): number {
   margin = Math.max(margin, avenueRadius - l8AvenueDistanceAt(seed, wx, wy))
   // 湖岸出生点额外拓宽，给路标、转身和开发者安全传送留出无遮挡空间。
   margin = Math.max(margin, 5.8 - Math.hypot(wx - L8_ORIGIN.x, wy - L8_ORIGIN.y))
+  // [kazoo] 乐器洞厅 + 通向 2 号路标的洞管
+  const ic = l8InstrumentCave(seed)
+  margin = Math.max(margin, L8_INSTRUMENT_CAVE.r - Math.hypot(wx - ic.x, wy - ic.y))
+  margin = Math.max(margin, L8_INSTRUMENT_CAVE.tunnel - curvedSegDist(wx, wy, ic.ax, ic.ay, ic.x, ic.y, 0))
   return margin
 }
 
+/** 洞底高度：基础起伏 + [kazoo] 乐器洞厅压平 */
 export function l8FloorAt(seed: number, wx: number, wy: number): number {
+  const base = l8FloorBase(seed, wx, wy)
+  const k = instrumentCaveWeight(seed, wx, wy)
+  return k > 0 ? lerp(base, l8InstrumentCave(seed).floor, k) : base
+}
+
+function l8FloorBase(seed: number, wx: number, wy: number): number {
   const rottnest = variantBandWeightAt(seed, wx, wy, 'rottnest')
   const movile = variantBandWeightAt(seed, wx, wy, 'movile')
   const handy = variantBandWeightAt(seed, wx, wy, 'handyland')
@@ -272,6 +352,9 @@ function l8CeilingFrom(seed: number, wx: number, wy: number, floor: number, rawM
   const endDistance = Math.hypot(wx - avenueEnd.x, wy - avenueEnd.y)
   const neckT = smooth(Math.max(0, Math.min(1, (10 - endDistance) / 10)))
   clearance = lerp(clearance, Math.min(clearance, 3.05), neckT)
+  // [kazoo] 乐器洞：低矮洞厅，洞顶 2.7–3.1m，悬着的风铃伸手可及
+  const caveK = instrumentCaveWeight(seed, wx, wy, 0.4)
+  if (caveK > 0) clearance = lerp(clearance, Math.max(L8_INSTRUMENT_CAVE.ceilMin, Math.min(L8_INSTRUMENT_CAVE.ceilMax, clearance)), caveK)
   return floor + Math.max(2.15, Math.min(12.6, clearance))
 }
 
@@ -450,6 +533,8 @@ export function genL8ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
       if (p) entities.push({ type, x: WX + p.x + 0.5, y: WY + p.y + 0.5, ...opts?.data?.() })
     }
   }
+  // [L8-camo] 迷彩爬行者只成组（2–3 只）出现，组内分散贴在锚点附近的岩壁上；朝向 = 岩面法线（world/camoSpawn.ts）
+  const placeCamoPack = () => { for (let t = 0; t < 5; t++) { const a = findSpot(true, 0.55, true); if (!a) continue; const pack = camoPackSpots(rng.int(0, 0x7fffffff), { x: WX + a.x + 0.5, y: WY + a.y + 0.5 }, (x, y) => { const lx = Math.floor(x - WX), ly = Math.floor(y - WY), i = li(lx, ly); return lx >= 1 && ly >= 1 && lx < CS - 1 && ly < CS - 1 && tiles[i] === 1 && liquid[i] === 0 && !solidAt(x, y) && Math.hypot(x - L8_ORIGIN.x, y - L8_ORIGIN.y) >= 6.5 && l8AvenueDistanceAt(seed, x, y) >= 2.65 && l8CaveMarginAt(seed, x, y) < 3.2 }, (x, y) => { const c = l8VolumeColumn(seed, x, y); return (h) => l8VolumeField(seed, x, h, y, c) }, (x, y) => l8GroundAt(seed, x, y)); if (pack.length) { for (const q of pack) entities.push({ type: 'camocrawler', ...q }); return } } }
 
   // 固定地下湖石岸：分层侵蚀岩棚沿真实地形落位；出生点与第九大道起点附近留出安全缺口。
   for (let n = 0; n < 34; n++) {
@@ -508,7 +593,9 @@ export function genL8ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
         pushLight(WX + p.x, WY + p.y, 3.2, n ? '#55d9ff' : '#69e8d6', l8RoofAt(seed, lx, ly) - 0.08, 0.065)
       }
     }
+    const lgStart = entities.length // [L8-lightguide] 稀有：单只或 2–3 只一组（不改随机序列，只整理已放下的条目）
     placeEntity('lightguide', rng.int(2, 4))
+    groupLightguideSpawns(entities, lgStart, h32(seed, 0x8235, cx, cy), (x, y) => tiles[li(Math.floor(x - WX), Math.floor(y - WY))] === 1 && Math.floor(x - WX) >= 0 && Math.floor(x - WX) < CS && Math.floor(y - WY) >= 0 && Math.floor(y - WY) < CS) // [L8-lightguide]
   } else if (variant === 'rottnest') {
     // 苔藓/蕨类按区块合批成实例网格，替代上千个独立小网格。
     pushStruct('cavemoss', WX, WY, CS, CS, false, { count: rng.int(90, 135), hue: rng.int(0, 3) })
@@ -595,9 +682,9 @@ export function genL8ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
     })
     if (handLocal === slot(0x81c3) && h32(seed, 0x81c6, handZoneX, handZoneY) % 3 === 0) placeEntity('nguithr', 1) // Nguithr'xurh 重制：L8 极少（每宏区 1/3 概率才有这一槽）
     if (handLocal === slot(0x81c4)) placeEntity('smiler', 1)
-    if (handLocal === slot(0x81c5) || handLocal === slot(0x81c5, 8)) placeEntity('camocrawler', 1)
+    if (handLocal === slot(0x81c5)) placeCamoPack() // [L8-camo] 原 2 槽 × 1 只 → 1 槽 × 一组 2–3 只（期望个体数相当）
   } else {
-    if (rng.chance(0.28)) placeEntity('camocrawler', 1)
+    if (rng.chance(0.28)) placeCamoPack() // [L8-camo] 沿用原 28% 抽签，但每次放一组 2–3 只；墙面凑不够两只的区块整组放弃（实测每区块 ≈0.28 只）
   }
 
   // 旱虾只在排除罗特尼斯、新莫维勒和巨臂林地后的干燥洞底低概率出现。
@@ -628,6 +715,8 @@ export function genL8ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
     })
   }
 
+  arachnidL8Chunk(seed, cx, cy, variant, { tiles, liquid, entities, solidAt }) // [L8-arachnid] 野外蛛形纲 + 稀有符文蛛巢区种群（独立 RNG，不改本 chunk 随机序列）
+
   // 补给和特有物严格落在洞内；氙气玻璃珠在多维之路明显更常见。
   const itemPool = [...def.items, ...UNIVERSAL_ITEMS].filter((q) => q.type !== 'xenonmarble')
   const itemCount = variant === 'hyperspace' ? rng.int(2, 4) : rng.int(0, 2)
@@ -654,6 +743,17 @@ export function genL8ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
       outpost: mark.outpost, l8Post: 1, avenueSeq: 1,
     })
   }
+  // [kazoo] 乐器洞：洞心所属的唯一 chunk 放整洞石乐器、石风铃、一盏暗暖的洞顶反光和断口钟乳石下的一支石卡祖笛
+  {
+    const ic = l8InstrumentCave(seed)
+    if (Math.floor(ic.x / CS) === cx && Math.floor(ic.y / CS) === cy) {
+      const L = l8InstrumentLayout(ic)
+      pushStruct('stoneinstruments', ic.x - 0.5, ic.y - 0.5, 1, 1, false, { r: L8_INSTRUMENT_CAVE.r, rot: ic.rot, l8Instruments: 1 })
+      pushStruct('stonechime', L.chime.x - 0.5, L.chime.y - 0.5, 1, 1, false, { hang: 2.05, ring: 0 })
+      pushLight(ic.x - 0.5, ic.y - 0.5, 6.5, '#e3c89a', undefined, 0.42)
+      items.push({ id: GEN_ITEM_BASE + (h32(seed, 0x81f4, cx, cy) & 0xfffff), type: 'stonekazoo', x: L.kazoo.x, y: L.kazoo.y })
+    }
+  }
   const avenueEnd = l8AvenuePoint(seed, L8_AVENUE_SEGMENTS)
   if (Math.floor(avenueEnd.x / CS) === cx && Math.floor(avenueEnd.y / CS) === cy) {
     const e = byKind('ninthroad')
@@ -666,6 +766,7 @@ export function genL8ChunkRaw(def: LevelDef, seed: number, cx: number, cy: numbe
       exits.push({ def: e, x: WX + p.x, y: WY + p.y, z: l8RoofAt(seed, ex, ey) - 0.76, discovered: false })
     }
   }
+  curabiturChunkPass(seed, cx, cy, tiles, liquid, entities, items, l8CaveMarginAt, l8GroundAt, l8RoofAt) // [L8-curabitur] 只留洞顶够高处的受眷鸟、栖点受眷胶、0.5% 星群（哈希判定，不动 rng 序列）
   return { variant, tiles, wet, elev, step, tint, crawl, liquid, seaFloor, terrain, caveCeil, structures, items, lights, exits, entities }
 }
 

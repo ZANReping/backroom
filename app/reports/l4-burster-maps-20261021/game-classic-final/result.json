@@ -1,0 +1,576 @@
+{
+  "seed": 424242,
+  "mode": "classic",
+  "port": 7839,
+  "cdp": 7840,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l4-burster-maps-20261021\\game-classic-final\\qa-1792643705941-56612",
+    "--remote-debugging-port=7840",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 61716,
+    "server": 56664
+  },
+  "appBootMs": 18952.9991,
+  "entryMs": 3839.648500000003,
+  "firstPlayableMs": 28167.0929,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "checks": [],
+    "records": [],
+    "status": {
+      "level": 4,
+      "world": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "chunks": 9,
+      "tasks": 4,
+      "memory": {
+        "geometries": 408,
+        "textures": 43
+      },
+      "fog": "idle",
+      "k": 0,
+      "t": 240
+    }
+  },
+  "proxies": [
+    {
+      "kind": "l4prop",
+      "children": 1,
+      "size": [
+        2.200000047683716,
+        2,
+        0.7524999976158142
+      ]
+    },
+    {
+      "kind": "l4prop",
+      "children": 1,
+      "size": [
+        1.399999976158142,
+        1.059999942779541,
+        0.04500001668930054
+      ]
+    },
+    {
+      "kind": "cubicle",
+      "children": 1,
+      "size": [
+        3.934000015258789,
+        1.3624999690055848,
+        2.0179998874664307
+      ]
+    },
+    {
+      "kind": "officechair",
+      "children": 1,
+      "size": [
+        0.6227051019668579,
+        0.990897636860609,
+        0.6356338858604431
+      ]
+    },
+    {
+      "kind": "cubicle",
+      "children": 1,
+      "size": [
+        3.934000015258789,
+        1.3624999690055848,
+        2.0179998874664307
+      ]
+    },
+    {
+      "kind": "officechair",
+      "children": 1,
+      "size": [
+        0.6227051019668579,
+        0.990897636860609,
+        0.6356338858604431
+      ]
+    },
+    {
+      "kind": "cubicle",
+      "children": 1,
+      "size": [
+        3.934000015258789,
+        1.3624999690055848,
+        2.0179998874664307
+      ]
+    },
+    {
+      "kind": "glasswin",
+      "children": 1,
+      "size": [
+        1,
+        2.900000102519989,
+        1.0099999904632568
+      ]
+    }
+  ],
+  "map2": {
+    "level": 2,
+    "width": 480,
+    "legend": "整洁的廊道晦暗的廊道肮脏的廊道扭曲的廊道狭窄的廊道办公走廊墙/柱门栅栏低矮管道",
+    "world": {
+      "x": 14.5,
+      "y": 15.5,
+      "z": 0
+    },
+    "chunks": 10,
+    "tasks": 0,
+    "memory": {
+      "geometries": 622,
+      "textures": 159
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "map3": {
+    "level": 3,
+    "width": 480,
+    "legend": "照明廊道晦暗廊道狭窄廊道装配线发电室锅炉房圣所墙/柱门栅栏低矮管道",
+    "world": {
+      "x": 15.5,
+      "y": 15.5,
+      "z": 0
+    },
+    "chunks": 9,
+    "tasks": 0,
+    "memory": {
+      "geometries": 435,
+      "textures": 52
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "burster-sleep": {
+    "id": 35,
+    "world": {
+      "level": 3,
+      "world": {
+        "x": 27.5,
+        "y": -58.5,
+        "z": 0
+      },
+      "chunks": 10,
+      "tasks": 1,
+      "memory": {
+        "geometries": 610,
+        "textures": 58
+      },
+      "fog": "idle",
+      "k": 0,
+      "t": 240
+    },
+    "modelParts": 1
+  },
+  "burster-burst": {
+    "phase": "burst",
+    "t": 0.7833000000000022,
+    "globs": 0
+  },
+  "burster-blind": {
+    "vision": {
+      "blind": 0.710668,
+      "shock": false,
+      "burn": 6.866799999999998
+    },
+    "blur": 2.132004
+  },
+  "burster-shell": {
+    "vision": {
+      "blind": 0,
+      "shock": false,
+      "burn": 0
+    },
+    "phase": "shell",
+    "hp": 30
+  },
+  "burster-crack": {
+    "crack": 0.5
+  },
+  "burster-broken": {
+    "dead": true,
+    "drop": true,
+    "checks": 40
+  },
+  "mangled-legs": {
+    "capsules": 24,
+    "foot": {
+      "x": 94.98672208941456,
+      "y": 101.08080312238809
+    },
+    "player": {
+      "x": 93.61872208941456,
+      "y": 69.08080312238809,
+      "z": 0
+    },
+    "level": 9,
+    "world": {
+      "x": 29.61872208941456,
+      "y": 37.08080312238809,
+      "z": 0
+    },
+    "chunks": 6,
+    "tasks": 1,
+    "memory": {
+      "geometries": 1219,
+      "textures": 128
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 238.92079999999993
+  },
+  "mangled-foot": {
+    "world": {
+      "x": 30.986722089414556,
+      "y": 37.08080312238809
+    }
+  },
+  "cleared": {
+    "level": 4,
+    "world": {
+      "x": 15.5,
+      "y": 15.5,
+      "z": 0
+    },
+    "chunks": 9,
+    "tasks": 0,
+    "memory": {
+      "geometries": 468,
+      "textures": 78
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "resourceCycles": [
+    {
+      "geometries": 799,
+      "textures": 104,
+      "chunks": 25,
+      "tasks": 0
+    },
+    {
+      "geometries": 769,
+      "textures": 104,
+      "chunks": 25,
+      "tasks": 0
+    },
+    {
+      "geometries": 756,
+      "textures": 104,
+      "chunks": 25,
+      "tasks": 0
+    }
+  ],
+  "summary": {
+    "checks": [
+      "compacted proxy remains raycastable l4prop",
+      "compacted proxy remains raycastable l4prop",
+      "compacted proxy remains raycastable cubicle",
+      "compacted proxy remains raycastable officechair",
+      "compacted proxy remains raycastable cubicle",
+      "compacted proxy remains raycastable officechair",
+      "compacted proxy remains raycastable cubicle",
+      "compacted proxy remains raycastable glasswin",
+      "actual L4 completed compact proxies",
+      "original L2 map has graphic legend",
+      "region legend 2/tidy",
+      "region legend 2/dim",
+      "region legend 2/dirty",
+      "region legend 2/warped",
+      "region legend 2/narrow",
+      "region legend 2/office",
+      "all regions and structure symbols drawn",
+      "map initially full size",
+      "original minimap remains present",
+      "original L3 map has graphic legend",
+      "region legend 3/lit",
+      "region legend 3/dark",
+      "region legend 3/narrow",
+      "region legend 3/assembly",
+      "region legend 3/genhall",
+      "region legend 3/boiler",
+      "region legend 3/sanct",
+      "all regions and structure symbols drawn",
+      "map initially full size",
+      "original minimap remains present",
+      "L3 has actual unobstructed encounter location",
+      "actual imported rig",
+      "acid effect does not cover HUD with DOM filter",
+      "water item in real inventory",
+      "actual water use starts",
+      "water removes burn",
+      "almond damage enters cocoon",
+      "heavy strike cracks cocoon",
+      "broken cocoon drops acid callus",
+      "acid callus loads 3 shots",
+      "actual outdoor foot has clear underlying terrain",
+      "actual rendered foot blocks walking",
+      "actual movement recovers from animated foot penetration",
+      "actual player pushed clear of foot",
+      "leaving level clears acid frame",
+      "leaving level removes acid instanced effects",
+      "repeated L3/L4 transitions have stable textures and no accumulated geometry [{\"geometries\":799,\"textures\":104,\"chunks\":25,\"tasks\":0},{\"geometries\":769,\"textures\":104,\"chunks\":25,\"tasks\":0},{\"geometries\":756,\"textures\":104,\"chunks\":25,\"tasks\":0}]"
+    ],
+    "records": [
+      {
+        "load": 2,
+        "entryMs": 3318.399999999441,
+        "level": 2,
+        "world": {
+          "x": 14.5,
+          "y": 15.5,
+          "z": 0
+        },
+        "chunks": 8,
+        "tasks": 1,
+        "memory": {
+          "geometries": 622,
+          "textures": 136
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "load": 3,
+        "entryMs": 1854.3999999994412,
+        "level": 3,
+        "world": {
+          "x": 15.5,
+          "y": 15.5,
+          "z": 0
+        },
+        "chunks": 9,
+        "tasks": 0,
+        "memory": {
+          "geometries": 435,
+          "textures": 52
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "load": 9,
+        "entryMs": 3817.5,
+        "level": 9,
+        "world": {
+          "x": 4,
+          "y": 17,
+          "z": 0
+        },
+        "chunks": 6,
+        "tasks": 1,
+        "memory": {
+          "geometries": 1034,
+          "textures": 127
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 239.95
+      },
+      {
+        "load": 4,
+        "entryMs": 1864.2999999998137,
+        "level": 4,
+        "world": {
+          "x": 15.5,
+          "y": 15.5,
+          "z": 0
+        },
+        "chunks": 9,
+        "tasks": 0,
+        "memory": {
+          "geometries": 468,
+          "textures": 78
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "load": 3,
+        "entryMs": 815.5,
+        "level": 3,
+        "world": {
+          "x": 15.5,
+          "y": 15.5,
+          "z": 0
+        },
+        "chunks": 9,
+        "tasks": 0,
+        "memory": {
+          "geometries": 482,
+          "textures": 72
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "load": 4,
+        "entryMs": 1851.2999999998137,
+        "level": 4,
+        "world": {
+          "x": 15.5,
+          "y": 15.5,
+          "z": 0
+        },
+        "chunks": 9,
+        "tasks": 1,
+        "memory": {
+          "geometries": 513,
+          "textures": 78
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "load": 3,
+        "entryMs": 859,
+        "level": 3,
+        "world": {
+          "x": 15.5,
+          "y": 15.5,
+          "z": 0
+        },
+        "chunks": 9,
+        "tasks": 0,
+        "memory": {
+          "geometries": 524,
+          "textures": 73
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "load": 4,
+        "entryMs": 1646.300000000745,
+        "level": 4,
+        "world": {
+          "x": 15.5,
+          "y": 15.5,
+          "z": 0
+        },
+        "chunks": 9,
+        "tasks": 1,
+        "memory": {
+          "geometries": 483,
+          "textures": 78
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "load": 3,
+        "entryMs": 800.9000000003725,
+        "level": 3,
+        "world": {
+          "x": 15.5,
+          "y": 15.5,
+          "z": 0
+        },
+        "chunks": 9,
+        "tasks": 0,
+        "memory": {
+          "geometries": 495,
+          "textures": 72
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "load": 4,
+        "entryMs": 1605.3999999994412,
+        "level": 4,
+        "world": {
+          "x": 15.5,
+          "y": 15.5,
+          "z": 0
+        },
+        "chunks": 9,
+        "tasks": 1,
+        "memory": {
+          "geometries": 470,
+          "textures": 78
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 240
+      },
+      {
+        "resourceCycles": [
+          {
+            "geometries": 799,
+            "textures": 104,
+            "chunks": 25,
+            "tasks": 0
+          },
+          {
+            "geometries": 769,
+            "textures": 104,
+            "chunks": 25,
+            "tasks": 0
+          },
+          {
+            "geometries": 756,
+            "textures": 104,
+            "chunks": 25,
+            "tasks": 0
+          }
+        ]
+      }
+    ],
+    "status": {
+      "level": 4,
+      "world": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "chunks": 25,
+      "tasks": 0,
+      "memory": {
+        "geometries": 756,
+        "textures": 104
+      },
+      "fog": "idle",
+      "k": 0,
+      "t": 240
+    }
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

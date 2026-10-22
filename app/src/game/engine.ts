@@ -42,6 +42,7 @@ import type { SittingState } from './engine/seating'
 import * as npc from './engine/npc'
 import * as inventory from './engine/inventory'
 import * as warehouse from './engine/warehouse'
+import * as bntgBank from './engine/bntgBank'
 import * as ambient from './engine/ambient'
 import * as dev from './engine/dev'
 import { devOperateExit } from './engine/devExits'
@@ -78,7 +79,7 @@ export interface Projectile {
   done?: boolean
 }
 export interface HudEvent {
-  kind: 'faction' | 'facility' | 'msg' | 'toast' | 'damage' | 'sanityhit' | 'transition' | 'floorchange' | 'dead' | 'victory' | 'levelchange' | 'lootpanel' | 'notebook' | 'doc' | 'landmark' | 'dialog' | 'radioheard' | 'mpevent'
+  kind: 'bank' | 'faction' | 'facility' | 'msg' | 'toast' | 'damage' | 'sanityhit' | 'transition' | 'floorchange' | 'dead' | 'victory' | 'levelchange' | 'lootpanel' | 'notebook' | 'doc' | 'landmark' | 'dialog' | 'radioheard' | 'mpevent'
   cutIn?: string
   dest?: number | 'random' | 'win'
   text?: string
@@ -300,6 +301,7 @@ export class Engine {
   rep: Record<string, number> = { meg: REP_START }
   quests: { def: QuestDef; progress: number; baseline: number; done: boolean }[] = []
   // v54：据点寄存仓库（阵营互通，每阵营 48 栏；随存档持久；新一局由 EFFECTS 注册表重置）
+  bntgBank: bntgBank.BntgBankState = bntgBank.freshBntgBank()
   warehouses: warehouse.WarehouseState = warehouse.freshWarehouses()
   // v54 二轮：BNTG 付费通道——本次对话临时解锁的阵营仓库（不持久；DialogOverlay 卸载即清空）
   warehouseTempUnlock = new Set<warehouse.WarehouseFaction>()
@@ -340,9 +342,9 @@ export class Engine {
   // ===== v32：新物品机制状态 =====
   /** @deprecated 近战重制后耐久按单件记录（InvSlot.dur）；保留字段只为兼容旧代码读取，恒为 0 */
   axeDur = 0
-  squirtTank: 'none' | 'water' | 'almond' | 'cashew' | 'liquidpain' = 'none' // 滋水枪储罐液体（单一种类）
+  squirtTank: 'none' | 'water' | 'almond' | 'cashew' | 'liquidpain' | 'acid' = 'none' // 滋水枪储罐液体（单一种类）
   // R 短按快速装填使用的液体；长按轮盘选中液体后更新。清水无需背包物品，因此作为初始回退。
-  squirtQuickLiquid: 'water' | 'almond' | 'cashew' | 'liquidpain' = 'water'
+  squirtQuickLiquid: 'water' | 'almond' | 'cashew' | 'liquidpain' | 'acid' = 'water'
   // v51：Object 5 糖果效果计时器
   candyAddictT = 0 // 糖瘾：吃糖后 60s 内需再吃，否则理智 -10
   silverTongueT = 0 // 银舌头：交易 95 折（秒）
@@ -351,6 +353,9 @@ export class Engine {
   slipVx = 0
   slipVy = 0
   chocoCd = 0 // 巧克力子弹射速冷却
+  thingBreathT = 0 // [thing] 吃彼物之肉后的硫磺口臭剩余秒数（thingAI：每 25s 散一次气味）
+  thingBreathPingT = 0 // [thing] 下一次口臭气味的倒计时
+  thingMeatCd = 0 // [thing] 两块彼物之肉之间的割肉冷却
   manmadeT = 0 // v51：人制品效应剩余秒数（5 分钟：拒食他物/治疗减半/恒显饥饿特效/体力恢复减半消耗加倍/受伤 -10%）
   armsRun: ArmsRunState = freshArmsRun() // 手臂重制：被抓/挣扎/管道黑屏/吐出坠落（只在内存，不写存档）
   webbedT = 0 // v51：缠丝麻痹剩余秒数（视野模糊 + 移动迟缓；现仅死亡飞蛾守卫使用）
@@ -502,6 +507,7 @@ export class Engine {
     this.l10Weather = { kind: 'calm', t: 80, k: 0, wetness: 0 }
     this.l0RestorePosition = undefined
     this.tradersWorld = undefined
+    this.bntgBank = bntgBank.freshBntgBank()
     this.l0World = undefined
     this.l0SharedWorld = undefined
     this.l0Loops=0;this.l0Meeting=0;this.l0Blur=0
@@ -558,6 +564,7 @@ export class Engine {
       this.heardSongs = snap.heardSongs ?? []
       this.l10Weather = snap.l10Weather ?? { kind: 'calm', t: 80, k: 0, wetness: 0 }
       this.tradersWorld = snap.tradersWorld
+      this.bntgBank = bntgBank.restoreBntgBank(snap.bntgBank)
       this.l0World = snap.l0World
       this.l0SharedWorld = snap.l0SharedWorld
       this.l1World = snap.l1World
@@ -712,7 +719,7 @@ export class Engine {
   }
   throwHeld(type: string) { combat.throwHeld(this, type) }
   /** 往滋水枪储罐装入 1 瓶液体（3 份喷射量；储罐只能装一种液体，清水无需对应物品） */
-  loadSquirt(liquid: 'water' | 'almond' | 'cashew' | 'liquidpain'): boolean { return combat.loadSquirt(this, liquid) }
+  loadSquirt(liquid: 'water' | 'almond' | 'cashew' | 'liquidpain' | 'acid'): boolean { return combat.loadSquirt(this, liquid) }
   /** 清空储罐（把残液倒掉，换液体免喷完） */
   clearSquirt() { combat.clearSquirt(this) }
   stanleyTeleport() { combat.stanleyTeleport(this) }
@@ -805,6 +812,11 @@ export class Engine {
   moveSlot(from: SlotRef, to: SlotRef): boolean { return inventory.moveSlot(this, from, to) }
   syncPassives() { inventory.syncPassives(this) }
   warpToBerryLevel(tag?: number) { inventory.warpToBerryLevel(this, tag) }
+
+  bntgBankTransaction(id:string,kind:'deposit'|'withdraw',amount:number) { return bntgBank.bntgBankTransaction(this,id,kind,amount) }
+  bntgBuy(id:string,item:string,mode:bntgBank.BntgPaymentMode='auto') { return bntgBank.bntgBuy(this,id,item,mode) }
+  bntgBarter(id:string,index:number,mode:bntgBank.BntgPaymentMode='auto') { return bntgBank.bntgBarter(this,id,index,mode) }
+  bntgExchange(id:string,direction:'buyAlmond'|'sellAlmond',mode:bntgBank.BntgPaymentMode='auto') { return bntgBank.bntgExchange(this,id,direction,mode) }
 
   // ---------- 据点寄存仓库（engine/warehouse.ts，v54）----------
   /** NPC 的阵营仓库 id（非寄存 NPC 返回 null） */

@@ -1,0 +1,563 @@
+{
+  "seed": 424242,
+  "mode": "classic",
+  "port": 4525,
+  "cdp": 4526,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\tiny-final-20261022\\final-classic\\qa-1792662496506-58636",
+    "--remote-debugging-port=4526",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 35476,
+    "server": 58456
+  },
+  "appBootMs": 10608.8336,
+  "entryMs": 2547.899599999997,
+  "firstPlayableMs": 16790.748699999996,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "checks": [],
+    "records": [],
+    "status": {
+      "level": 4,
+      "player": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "chunks": 9,
+      "tasks": 4,
+      "memory": {
+        "geometries": 408,
+        "textures": 43
+      },
+      "calls": 1,
+      "triangles": 1
+    }
+  },
+  "perch": {
+    "name": "perch",
+    "level": 7,
+    "entryMs": 1487,
+    "player": {
+      "x": -128.3,
+      "y": 18.900000000000006,
+      "z": -44.68
+    },
+    "chunks": 13,
+    "tasks": 1,
+    "memory": {
+      "geometries": 328,
+      "textures": 188
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "close": {
+    "target": "与 小小 交谈",
+    "level": 7,
+    "player": {
+      "x": -132.1,
+      "y": 16.400000000000006,
+      "z": -45.38
+    },
+    "chunks": 16,
+    "tasks": 0,
+    "memory": {
+      "geometries": 334,
+      "textures": 201
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "talk": {
+    "level": 7,
+    "player": {
+      "x": -132.1,
+      "y": 16.400000000000006,
+      "z": -45.38
+    },
+    "chunks": 16,
+    "tasks": 0,
+    "memory": {
+      "geometries": 334,
+      "textures": 201
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "leaveTalk": {
+    "level": 7,
+    "player": {
+      "x": -132.1,
+      "y": 16.400000000000006,
+      "z": -45.38
+    },
+    "chunks": 16,
+    "tasks": 0,
+    "memory": {
+      "geometries": 334,
+      "textures": 201
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "blowFour": {
+    "phases": [
+      "perch",
+      "perch",
+      "perch",
+      "repel"
+    ],
+    "oxygen": 22.57920000000002,
+    "state": "repel",
+    "level": 7,
+    "player": {
+      "x": -129.9,
+      "y": 16.099999999999994,
+      "z": -45.18
+    },
+    "chunks": 16,
+    "tasks": 0,
+    "memory": {
+      "geometries": 335,
+      "textures": 135
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "flee": {
+    "distance": 5.230627999998913,
+    "phase": "repel",
+    "blocked": false,
+    "level": 7,
+    "player": {
+      "x": -129.9,
+      "y": 16.099999999999994,
+      "z": -45.18
+    },
+    "chunks": 16,
+    "tasks": 0,
+    "memory": {
+      "geometries": 357,
+      "textures": 135
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "hold": {
+    "held": "stonekazoo",
+    "level": 7,
+    "player": {
+      "x": -129.9,
+      "y": 16.099999999999994,
+      "z": -45.18
+    },
+    "chunks": 16,
+    "tasks": 0,
+    "memory": {
+      "geometries": 357,
+      "textures": 135
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "blowing": {
+    "anim": "blow",
+    "t": 0.2500000000000001,
+    "duration": 0.55,
+    "rotation": [
+      -0.09999848597654658,
+      -0.5,
+      0.04,
+      "YXZ"
+    ],
+    "level": 7,
+    "player": {
+      "x": -129.9,
+      "y": 16.099999999999994,
+      "z": -45.18
+    },
+    "chunks": 16,
+    "tasks": 0,
+    "memory": {
+      "geometries": 357,
+      "textures": 135
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "returned": {
+    "phase": "hunt",
+    "hp": 90,
+    "level": 7,
+    "player": {
+      "x": -129.9,
+      "y": 16.099999999999994,
+      "z": -45.18
+    },
+    "chunks": 16,
+    "tasks": 0,
+    "memory": {
+      "geometries": 357,
+      "textures": 135
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "cave": {
+    "name": "cave",
+    "level": 8,
+    "entryMs": 2944.39999999851,
+    "cave": {
+      "x": 114.26072197922245,
+      "y": 1.577915845516472,
+      "ax": 115,
+      "ay": 13.555122030933639,
+      "floor": 0.12243697624106642,
+      "rot": 1.5091507885360682
+    },
+    "samples": [
+      {
+        "kind": "instr:violin",
+        "minField": -0.059957231316124696,
+        "maxField": 0.4010647713570765
+      },
+      {
+        "kind": "instr:guitar",
+        "minField": -0.06034594653095536,
+        "maxField": 0.3952463719694149
+      },
+      {
+        "kind": "instr:trombone",
+        "minField": -0.019975358010191797,
+        "maxField": 0.3844451850019009
+      },
+      {
+        "kind": "instr:toilet",
+        "minField": -0.013571324106306015,
+        "maxField": 0.7646848873399856
+      },
+      {
+        "kind": "instr:bongo",
+        "minField": -0.014999571722000837,
+        "maxField": 0.1924464074591616
+      },
+      {
+        "kind": "instr:bongo",
+        "minField": -0.01502177654736192,
+        "maxField": 0.1931487743505329
+      },
+      {
+        "kind": "instr:bongo",
+        "minField": -0.014926705252072089,
+        "maxField": 0.26452269999405925
+      },
+      {
+        "kind": "instr:bongo",
+        "minField": -0.015862166024344045,
+        "maxField": 0.21169236966748417
+      },
+      {
+        "kind": "instr:bongo",
+        "minField": -0.014958039501458131,
+        "maxField": 0.20392332211690528
+      },
+      {
+        "kind": "instr:bongo",
+        "minField": -0.018008050160299938,
+        "maxField": 0.19455467671424662
+      },
+      {
+        "kind": "instr:kazoospike",
+        "minField": 0.33674224048889645,
+        "maxField": 1.1266584816681615
+      }
+    ],
+    "player": {
+      "x": 114.46402343493628,
+      "y": 4.871647546506196,
+      "z": 0.31256301383872254
+    },
+    "chunks": 9,
+    "tasks": 1,
+    "memory": {
+      "geometries": 208,
+      "textures": 47
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "reverse": {
+    "level": 8,
+    "player": {
+      "x": 113.30206466235951,
+      "y": -0.9678602932720821,
+      "z": 0.3145649669637226
+    },
+    "chunks": 11,
+    "tasks": 1,
+    "memory": {
+      "geometries": 278,
+      "textures": 47
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "chime": {
+    "target": "stonechime",
+    "ring": 1,
+    "level": 8,
+    "player": {
+      "x": 112.54707338722609,
+      "y": 2.564518877512185,
+      "z": 0.12312819938559763
+    },
+    "chunks": 14,
+    "tasks": 0,
+    "memory": {
+      "geometries": 281,
+      "textures": 47
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "recycle": {
+    "baseline": {
+      "geometries": 330,
+      "textures": 134
+    },
+    "rows": [
+      {
+        "geometries": 330,
+        "textures": 134
+      },
+      {
+        "geometries": 330,
+        "textures": 134
+      },
+      {
+        "geometries": 330,
+        "textures": 134
+      }
+    ],
+    "level": 7,
+    "player": {
+      "x": -128.3,
+      "y": 18.900000000000006,
+      "z": -44.68
+    },
+    "chunks": 14,
+    "tasks": 0,
+    "memory": {
+      "geometries": 330,
+      "textures": 134
+    },
+    "calls": 1,
+    "triangles": 1
+  },
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  },
+  "summary": {
+    "checks": [
+      "natural Tiny guards generated L9 door",
+      "new shark-pelt model in actual renderer",
+      "actual aiming finds Tiny conversation",
+      "updated Tiny dialogue opens in actual App",
+      "Tiny peaceful leave reply",
+      "peaceful dialogue does not provoke Tiny",
+      "use starts blow animation 0",
+      "use starts blow animation 1",
+      "use starts blow animation 2",
+      "use starts blow animation 3",
+      "four actual timed uses repel Tiny",
+      "underwater blows spend at least twenty seconds of oxygen",
+      "stone kazoo is reusable",
+      "door opens during repel",
+      "actual first-person kazoo model selected",
+      "first-person hand raises and turns kazoo toward mouth",
+      "Tiny returns and blocks door after repel expires",
+      "actual combat guard prevents death and provokes Tiny",
+      "single generated instrument cave rendered",
+      "all eleven instruments fit actual cave field",
+      "rendered instrument contacts rock with single ground offset: instr:violin -0.060",
+      "rendered instrument contacts rock with single ground offset: instr:guitar -0.060",
+      "rendered instrument contacts rock with single ground offset: instr:trombone -0.020",
+      "rendered instrument contacts rock with single ground offset: instr:toilet -0.014",
+      "rendered instrument contacts rock with single ground offset: instr:bongo -0.015",
+      "rendered instrument contacts rock with single ground offset: instr:bongo -0.015",
+      "rendered instrument contacts rock with single ground offset: instr:bongo -0.015",
+      "rendered instrument contacts rock with single ground offset: instr:bongo -0.016",
+      "rendered instrument contacts rock with single ground offset: instr:bongo -0.015",
+      "rendered instrument contacts rock with single ground offset: instr:bongo -0.018",
+      "stalactite extension reaches roof",
+      "stalactite joins its extension",
+      "extension inserts into actual cave roof",
+      "one natural stone kazoo below broken stalactite",
+      "natural stone chime",
+      "actual aiming finds chime",
+      "actual interaction starts ninety-second stone chime",
+      "natural Tiny guards generated L9 door",
+      "new shark-pelt model in actual renderer",
+      "three fixed-scene model recycle rounds retain stable geometry and texture counts",
+      "Tiny model removed on level switch"
+    ],
+    "records": [
+      {
+        "name": "perch",
+        "level": 7,
+        "entryMs": 1487,
+        "player": {
+          "x": -128.3,
+          "y": 18.900000000000006,
+          "z": -44.68
+        },
+        "chunks": 13,
+        "tasks": 1,
+        "memory": {
+          "geometries": 328,
+          "textures": 188
+        },
+        "calls": 1,
+        "triangles": 1
+      },
+      {
+        "name": "cave",
+        "level": 8,
+        "entryMs": 2944.39999999851,
+        "cave": {
+          "x": 114.26072197922245,
+          "y": 1.577915845516472,
+          "ax": 115,
+          "ay": 13.555122030933639,
+          "floor": 0.12243697624106642,
+          "rot": 1.5091507885360682
+        },
+        "samples": [
+          {
+            "kind": "instr:violin",
+            "minField": -0.059957231316124696,
+            "maxField": 0.4010647713570765
+          },
+          {
+            "kind": "instr:guitar",
+            "minField": -0.06034594653095536,
+            "maxField": 0.3952463719694149
+          },
+          {
+            "kind": "instr:trombone",
+            "minField": -0.019975358010191797,
+            "maxField": 0.3844451850019009
+          },
+          {
+            "kind": "instr:toilet",
+            "minField": -0.013571324106306015,
+            "maxField": 0.7646848873399856
+          },
+          {
+            "kind": "instr:bongo",
+            "minField": -0.014999571722000837,
+            "maxField": 0.1924464074591616
+          },
+          {
+            "kind": "instr:bongo",
+            "minField": -0.01502177654736192,
+            "maxField": 0.1931487743505329
+          },
+          {
+            "kind": "instr:bongo",
+            "minField": -0.014926705252072089,
+            "maxField": 0.26452269999405925
+          },
+          {
+            "kind": "instr:bongo",
+            "minField": -0.015862166024344045,
+            "maxField": 0.21169236966748417
+          },
+          {
+            "kind": "instr:bongo",
+            "minField": -0.014958039501458131,
+            "maxField": 0.20392332211690528
+          },
+          {
+            "kind": "instr:bongo",
+            "minField": -0.018008050160299938,
+            "maxField": 0.19455467671424662
+          },
+          {
+            "kind": "instr:kazoospike",
+            "minField": 0.33674224048889645,
+            "maxField": 1.1266584816681615
+          }
+        ],
+        "player": {
+          "x": 114.46402343493628,
+          "y": 4.871647546506196,
+          "z": 0.31256301383872254
+        },
+        "chunks": 9,
+        "tasks": 1,
+        "memory": {
+          "geometries": 208,
+          "textures": 47
+        },
+        "calls": 1,
+        "triangles": 1
+      },
+      {
+        "name": "perch",
+        "level": 7,
+        "entryMs": 763.1999999992549,
+        "player": {
+          "x": -128.3,
+          "y": 18.900000000000006,
+          "z": -44.68
+        },
+        "chunks": 14,
+        "tasks": 0,
+        "memory": {
+          "geometries": 330,
+          "textures": 201
+        },
+        "calls": 1,
+        "triangles": 1
+      }
+    ],
+    "status": {
+      "level": 4,
+      "player": {
+        "x": 15.5,
+        "y": 15.5,
+        "z": 0
+      },
+      "chunks": 10,
+      "tasks": 1,
+      "memory": {
+        "geometries": 571,
+        "textures": 70
+      },
+      "calls": 1,
+      "triangles": 1
+    }
+  },
+  "ok": true
+}

@@ -14,6 +14,13 @@ import { MegNpcMissions } from './MegMissions'
 import { FactionNpcMissions } from './FactionMissions'
 import { isNewFaction } from '@/game/content/factionTerminals'
 import { megQuestProgress } from '@/game/content/megTerminal'
+import { tinyScorn } from '@/game/engine/tinyAI'
+import {bntgPaymentPlan, type BntgPaymentMode, type BankResult} from '@/game/engine/bntgBank'
+import './BntgPayment.css'
+
+function BntgPaymentChoice({mode,onChange}:{mode:BntgPaymentMode;onChange:(mode:BntgPaymentMode)=>void}){
+ return <fieldset className="bntg-payment"><legend>B.N.T.G. 结账方式</legend><div className="bntg-payment-balances"><span>信用点 <b>{engine.bntgBank.balance.toLocaleString('zh-CN')}</b></span><span>随身压印币 <b>{engine.countItem('presses')}</b></span></div><div className="bntg-payment-options">{([['auto','优先信用点'],['credits','仅信用点'],['cash','仅压印币']] as const).map(([value,label])=><button key={value} type="button" aria-pressed={mode===value} onClick={()=>onChange(value)}>{label}</button>)}</div><p>{mode==='auto'?'优先扣除信用点，不足部分使用随身压印币。':mode==='credits'?'仅扣除账户信用点；余额不足时不成交。':'仅使用随身压印币，账户余额不变。'} 1 信用点 = 1 枚压印币。</p></fieldset>
+}
 
 export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClose: () => void }) {
   // 定义解析：静态注册表 + 运行时随机 NPC（否则随机 NPC 无法弹窗）
@@ -22,6 +29,9 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
   const [mode, setMode] = useState<'chat' | 'trade' | 'chatpage' | 'quest' | 'warehouse'>('chat')
   // v56：乐手演奏反馈（演奏中的曲名提示）
   const [playNote, setPlayNote] = useState('')
+  const [paymentMode,setPaymentMode]=useState<BntgPaymentMode>('auto')
+  const [tradeNotice,setTradeNotice]=useState('')
+  const [smallTalk, setSmallTalk] = useState<string>(() => def?.idle[Math.floor(Math.random() * def.idle.length)] ?? '')
   // 委托三选一（生成 → 选择 → 确认接取）
   const [offers, setOffers] = useState<import('@/game/content/factions').QuestDef[]>([])
   const [selOffer, setSelOffer] = useState(0)
@@ -65,11 +75,15 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
   const coinRate = def.currency === 'presses' ? 2 : 1 // 1 杏仁水 = coinRate 币
   // 随机居民：未接入 API 时只能闲聊随机内容（不接对话树）
   const isRand = npcId.startsWith('rand_')
-  const [smallTalk, setSmallTalk] = useState<string>(() => def.idle[Math.floor(Math.random() * def.idle.length)] ?? '')
+  const isBntg=def.faction==='bntg'
+  const creditTrade=isBntg&&coinItem==='presses'
+  const showPayment=isBntg&&(creditTrade&&!!def.trade||def.barter?.some(b=>b.give==='presses'||b.give2==='presses'))
+  const reportTrade=(r:BankResult)=>{setTradeNotice(r.message);setBrcTick(x=>x+1);if(r.ok)audio.pickup();else engine.msg(r.message,'system')}
 
-  const pick = (next?: number, action?: 'trade' | 'leave' | 'play') => {
+  const pick = (next?: number, action?: 'trade' | 'leave' | 'play' | 'scorn') => {
     audio.uiTick()
     if (action === 'trade') { setMode('trade'); return }
+    if (action === 'scorn') { onClose(); tinyScorn(engine); return } // [tiny] 跟小小提门/出路：第一次警告并记恼怒，再提就追杀
     if (action === 'leave') { onClose(); return }
     if (action === 'play') {
       // v56：乐手演奏——MIDI 曲风下随机摇滚风格（收听后进电台），程序化曲风下普通摇滚
@@ -362,9 +376,9 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
                 {def.warehouse === 'bntg' && !engine.canUseWarehouse(npcId) && (
                   <button
                     className="menu-btn px-3 py-1.5 text-left text-[12px]"
-                    style={{ borderColor: 'var(--amber)', color: 'var(--amber)', opacity: engine.countItem('presses') >= 5 ? 1 : 0.55 }}
+                    style={{ borderColor: 'var(--amber)', color: 'var(--amber)', opacity: engine.countItem('presses') + engine.bntgBank.balance >= 5 ? 1 : 0.55 }}
                     onClick={() => { engine.payWarehouseAccess('bntg'); setBrcTick((x) => x + 1) }}
-                  >花 5 压印币临时使用仓库（持有 {engine.countItem('presses')} 枚 · 仅本次对话有效）</button>
+                  >花 5 信用点／压印币临时使用仓库（合计 {engine.countItem('presses')+engine.bntgBank.balance} · 仅本次对话有效）</button>
                 )}
                 {(def.trade || def.barter) && !cur.opts.some((o) => o.action === 'trade') && (
                   <button className="menu-btn px-3 py-1.5 text-left text-[12px]" onClick={() => pick(undefined, 'trade')}>看看货。</button>
@@ -514,18 +528,21 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
                 </div>
               ) : (
               <>
+              {showPayment&&<BntgPaymentChoice mode={paymentMode} onChange={setPaymentMode}/>}
+              {tradeNotice&&<p className="bntg-trade-notice" role="status">{tradeNotice}</p>}
               {def.barter && (
               <>
               {/* 以物易物（阿丽亚娜医疗品↔物资 / Tom 的餐馆食材↔菜肴：无货币，可含第二种食材 give2） */}
               <div className="mb-2 text-[12px]" style={{ color: 'var(--text-dim)' }}>
-                以物易物——只收实物，不收货币。（{discount && <span style={{ color: 'var(--exit)' }}>声望卓著的流浪者，欢迎。</span>}）
+                {showPayment?'压印币报价支持信用点结算；其余换物仍需相应实物。':'以物易物——只收实物，不收货币。'}（{discount && <span style={{ color: 'var(--exit)' }}>声望卓著的流浪者，欢迎。</span>}）
               </div>
               <div className="mb-2 grid gap-1">
                 {def.barter.map((b, i) => {
                   const giveIt = ITEMS[b.give], getIt = ITEMS[b.get], give2It = b.give2 ? ITEMS[b.give2] : undefined
                   const have = engine.countItem(b.give)
                   const have2 = b.give2 ? engine.countItem(b.give2) : 0
-                  const afford = have >= b.giveN && (!b.give2 || have2 >= (b.give2N ?? 0))
+                  const cashCost=(b.give==='presses'?b.giveN:0)+(b.give2==='presses'?(b.give2N??1):0)
+                  const afford = isBntg?(!cashCost||!!bntgPaymentPlan(engine,cashCost,paymentMode))&&(b.give==='presses'||have>=b.giveN)&&(!b.give2||b.give2==='presses'||have2>=(b.give2N??1)):have >= b.giveN && (!b.give2 || have2 >= (b.give2N ?? 1))
                   const giveText = `${giveIt?.name ?? b.give} ×${b.giveN}${b.give2 ? ` + ${give2It?.name ?? b.give2} ×${b.give2N ?? 1}` : ''}`
                   return (
                     <button
@@ -533,6 +550,7 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
                       className="flex items-center gap-2 border px-2 py-1.5 text-left"
                       style={{ borderColor: afford ? facColor : 'var(--panel-edge)', opacity: afford ? 1 : 0.45 }}
                       onClick={() => {
+                        if(isBntg){reportTrade(engine.bntgBarter(npcId,i,paymentMode));return}
                         if (engine.countItem(b.give) < b.giveN) { engine.msg(`${giveIt?.name ?? b.give}不够。`, 'system'); return }
                         if (b.give2 && engine.countItem(b.give2) < (b.give2N ?? 1)) { engine.msg(`${give2It?.name ?? b.give2}不够。`, 'system'); return }
                         for (let k = 0; k < b.giveN; k++) engine.consumeItem(b.give)
@@ -554,7 +572,7 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
               {def.trade && (
               <>
               <div className="mb-2 text-[12px]" style={{ color: 'var(--text-dim)' }}>
-                {coinName}结账，概不赊欠。（{coinName}：{engine.countItem(coinItem)} {coinUnit}
+                {creditTrade?'支持信用点或压印币结账。':`${coinName}结账，概不赊欠。`}（{coinName}：{engine.countItem(coinItem)} {coinUnit}
                 {def.currency !== 'almond' && ` · 杏仁水：${engine.countItem('almond')} 瓶`}）
                 {discount && <span style={{ color: 'var(--exit)' }}>声望优惠：全部八折</span>}
               </div>
@@ -563,17 +581,18 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
               <div className="mb-2 flex gap-2">
                 <button
                   className="menu-btn flex-1 px-2 py-1 text-[11px]"
-                  onClick={() => { if (engine.consumeItem('almond')) { for (let i = 0; i < coinRate; i++) engine.addItem(coinItem); audio.uiTick() } }}
+                  onClick={() => { if(creditTrade){reportTrade(engine.bntgExchange(npcId,'sellAlmond',paymentMode));return} if (engine.consumeItem('almond')) { for (let i = 0; i < coinRate; i++) engine.addItem(coinItem); audio.uiTick() } }}
                 >1 杏仁水 → {coinRate} {coinName}</button>
                 <button
                   className="menu-btn flex-1 px-2 py-1 text-[11px]"
                   onClick={() => {
+                    if(creditTrade){reportTrade(engine.bntgExchange(npcId,'buyAlmond',paymentMode));return}
                     if (engine.countItem(coinItem) >= coinRate) {
                       for (let i = 0; i < coinRate; i++) engine.consumeItem(coinItem)
                       engine.addItem('almond'); audio.uiTick()
                     } else engine.msg(`${coinName}不够。`, 'system')
                   }}
-                >{coinRate} {coinName} → 1 杏仁水</button>
+                >{coinRate} {creditTrade?'信用点／压印币':coinName} → 1 杏仁水</button>
               </div>
               )}
               <div className="mb-2 grid gap-1">
@@ -581,13 +600,15 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
                   const it = ITEMS[t.item]
                   // v51：银舌头（Object 5）——生效中交易再享 95 折
                   const price = Math.max(1, Math.floor((discount ? t.price * 0.8 : t.price) * (engine.silverTongueT > 0 ? 0.95 : 1)))
-                  const afford = engine.countItem(coinItem) >= price
+                  const payment=creditTrade?bntgPaymentPlan(engine,price,paymentMode):null
+                  const afford = creditTrade?!!payment:engine.countItem(coinItem) >= price
                   return (
                     <button
                       key={t.item}
                       className="flex items-center gap-2 border px-2 py-1.5 text-left"
                       style={{ borderColor: afford ? facColor : 'var(--panel-edge)', opacity: afford ? 1 : 0.45 }}
                       onClick={() => {
+                        if(creditTrade){reportTrade(engine.bntgBuy(npcId,t.item,paymentMode));return}
                         if (engine.countItem(coinItem) < price) { engine.msg(`${coinName}不够。`, 'system'); return }
                         for (let i = 0; i < price; i++) engine.consumeItem(coinItem)
                         engine.addItem(t.item)
@@ -597,7 +618,7 @@ export default function DialogOverlay({ npcId, onClose }: { npcId: string; onClo
                     >
                       <ItemGlyph type={t.item} size={20} />
                       <span className="flex-1 text-[12px]" style={{ color: 'var(--text)' }}>{it?.name ?? t.item}</span>
-                      <span className="font-mono2 text-[11px]" style={{ color: 'var(--amber)' }}>{price} {coinUnit}{discount && price < t.price ? `（原 ${t.price}）` : ''}</span>
+                      <span className="font-mono2 text-[11px]" style={{ color: 'var(--amber)' }}>{creditTrade&&payment?`${payment.credit?payment.credit+' 信用点':''}${payment.credit&&payment.cash?' + ':''}${payment.cash?payment.cash+' 压印币':''}`:`${price} ${creditTrade&&paymentMode==='credits'?'信用点':coinUnit}`}{discount && price < t.price ? `（原 ${t.price}）` : ''}</span>
                     </button>
                   )
                 })}

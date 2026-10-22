@@ -1,0 +1,22 @@
+[
+  {
+    "name": "check:thing",
+    "code": 0,
+    "elapsedMs": 14768.447199999999,
+    "tail": [
+      "✔ L7 生成仍是纯函数",
+      "✔ 引擎侧跟随链与渲染模型同节距、同节数、同半径",
+      "check:thing 52/52 全部通过"
+    ]
+  },
+  {
+    "name": "check:texture-images",
+    "code": 0,
+    "elapsedMs": 5687.5689,
+    "tail": [
+      "> my-app@0.0.0 check:texture-images",
+      "> esbuild scripts/check-texture-images.ts --bundle --platform=node --format=esm --outfile=.cache/check-texture-images.mjs && node .cache/check-texture-images.mjs",
+      "texture image lifecycle regression passed: 96 checks"
+    ]
+  }
+]

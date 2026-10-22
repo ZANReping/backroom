@@ -1,3 +1,7 @@
+import {drawL7Map} from '@/game/content/l7Map'
+import L7MapLegend from './L7MapLegend'
+import {drawL23Map} from '@/game/content/l23Map'
+import L23MapLegend from './L23MapLegend'
 // 背包/图鉴/状态/地图 覆盖层
 import { isMelee } from '../game/content/melee'
 import { slotDur, slotMaxDur, slotName, isBroken } from '../game/engine/melee'
@@ -148,10 +152,10 @@ function BigMap({ engine }: { engine: Engine }) {
   const [floorSel, setFloorSel] = useState<FloorBand | null>(null)
   const viewFloor: FloorBand = floorSel ?? playerBand
   useEffect(()=>{
-    if((!engine.devEnabled||!reveal)&&!engine.map?.l1Architecture){setPreview(null);return}
+    if((!engine.devEnabled||!reveal)&&!engine.map?.l1Architecture&&![2,3,4,7].includes(engine.levelDef.id)){setPreview(null);return}
     const c=new AbortController(),m=engine.map
     if(!m)return
-    const timeout=setTimeout(()=>{void requestDevMapPreview(engine,{x:engine.player.x+pan.x+(m.inf?.ox??0),y:engine.player.y+pan.y+(m.inf?.oy??0),span:Math.min(512,480/zoom),floor:viewFloor},c.signal).then(setPreview).catch(e=>{if(e.name!=='AbortError')setMapMessage('地图预览暂不可用')})},40)
+    const timeout=setTimeout(()=>{void requestDevMapPreview(engine,{x:engine.player.x+pan.x+(m.inf?.ox??0),y:engine.player.y+pan.y+(m.inf?.oy??0),span:Math.min(512,480/zoom+(engine.levelDef.id===7?4:0)),floor:viewFloor},c.signal).then(setPreview).catch(e=>{if(e.name!=='AbortError')setMapMessage('地图预览暂不可用')})},40)
     return()=>{clearTimeout(timeout);c.abort()}
   },[engine,pan,zoom,viewFloor,reveal,engine.levelDef.id,engine.map?.inf?.seed,engine.map?.inf?.rev])
   const host=useRef<HTMLDivElement>(null)
@@ -176,7 +180,7 @@ function BigMap({ engine }: { engine: Engine }) {
     // v54c：wallwindow 格按墙绘制（瓦片虽雕成地板，渲染/碰撞均为整格墙）
     const wwSet = new Set<number>()
     for (const st of m.structures) if (st.kind === 'wallwindow') wwSet.add(Math.floor(st.y + st.h / 2) * m.w + Math.floor(st.x + st.w / 2))
-    if(!( (m.inf?.l0||m.l1Architecture||engine.levelDef.id===4) && viewFloor===0))for (let y = 0; y < m.h; y++)
+    if(!( (m.inf?.l0||m.l1Architecture||[2,3,4].includes(engine.levelDef.id)) && viewFloor===0 || engine.levelDef.id===7))for (let y = 0; y < m.h; y++)
       for (let x = 0; x < m.w; x++) {
         const i = y * m.w + x
         if (!(engine.devEnabled&&reveal) && !engine.explored[i]) continue
@@ -196,8 +200,12 @@ function BigMap({ engine }: { engine: Engine }) {
         }
         g.fillRect(x * s, y * s, s, s)
       }
-    if(m.inf?.l0&&viewFloor===0){
+    if(engine.levelDef.id===7){
+      c.dataset.l7Bathymetry=JSON.stringify(drawL7Map(g,engine,{x0:px-size/(2*s),y0:py-size/(2*s),x1:px+size/(2*s),y1:py+size/(2*s),scale:s,preview}))
+    }else if(m.inf?.l0&&viewFloor===0){
       drawL0Map(g,engine,{x0:px-size/(2*s),y0:py-size/(2*s),x1:px+size/(2*s),y1:py+size/(2*s),scale:s,preview})
+    }else if((engine.levelDef.id===2||engine.levelDef.id===3)&&viewFloor===0){
+      drawL23Map(g,engine,{x0:px-size/(2*s),y0:py-size/(2*s),x1:px+size/(2*s),y1:py+size/(2*s),scale:s,preview})
     }else if(engine.levelDef.id===4&&viewFloor===0){
       drawL4Map(g,engine,{x0:px-size/(2*s),y0:py-size/(2*s),x1:px+size/(2*s),y1:py+size/(2*s),scale:s,preview})
     }else if(m.l1Architecture&&viewFloor===0){
@@ -341,6 +349,7 @@ function BigMap({ engine }: { engine: Engine }) {
       <div ref={host} className="relative w-full max-w-[480px]">
         <canvas
           data-world-map="true"
+          aria-label={engine.levelDef.id===7?'Level 7 等深线地图':undefined}
           ref={ref}
           style={{ width: mapSize, height: mapSize, imageRendering: 'pixelated', border: '1px solid var(--panel-edge)', touchAction: 'none', cursor: drag.current ? 'grabbing' : 'grab' }}
           onContextMenu={async(e)=>{
@@ -380,7 +389,9 @@ function BigMap({ engine }: { engine: Engine }) {
       {engine.devEnabled&&<div className="flex items-center gap-3 text-xs"><label><input type="checkbox" checked={reveal} onChange={e=>{engine.dev.mapReveal=e.target.checked;refreshMap(n=>n+1)}}/> 地图全开</label><span>右键安全传送 · 拖动平移</span></div>}
       {engine.map?.inf?.l0&&<L0MapLegend/>}
       {engine.map?.l1Architecture&&engine.levelDef.id!==4&&<L1MapLegend/>}
+      {(engine.levelDef.id===2||engine.levelDef.id===3)&&<L23MapLegend level={engine.levelDef.id}/>}
       {engine.levelDef.id===4&&<L4MapLegend/>}
+      {engine.levelDef.id===7&&<L7MapLegend/>}
       {mapMessage&&<div className="text-xs" role="status">{mapMessage}</div>}
       {floorText && <div className="font-mono2 text-[12px]" style={{ color: 'var(--amber)' }}>{floorText}</div>}
       <div className="flex gap-2">
@@ -394,7 +405,7 @@ function BigMap({ engine }: { engine: Engine }) {
         >回正</button>
       </div>
       {/* 图例（v32） */}
-      {!engine.map?.l1Architecture&&<div className="font-mono2 grid grid-cols-2 gap-x-5 gap-y-0.5 self-center text-[10px] md:grid-cols-3" style={{ color: 'var(--text-dim)' }}>
+      {!engine.map?.l1Architecture&&engine.levelDef.id!==7&&<div className="font-mono2 grid grid-cols-2 gap-x-5 gap-y-0.5 self-center text-[10px] md:grid-cols-3" style={{ color: 'var(--text-dim)' }}>
         <span><span style={{ color: 'var(--amber)' }}>●</span> 玩家</span>
         <span><span style={{ color: '#f5e37a' }}>●</span> 出口（亮=已发现）</span>
         <span><span style={{ color: '#c9a03a' }}>■</span> 容器（未搜刮）</span>
@@ -903,7 +914,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                       <div className="font-mono2 text-center text-[11px]" style={{ color: 'var(--amber)' }}>
                         储罐：{engine.squirtTank === 'none'
                           ? '空（0/27）'
-                          : `${{ water: '清水', almond: '杏仁水', cashew: '腰果水', liquidpain: '液态痛苦' }[engine.squirtTank as 'water' | 'almond' | 'cashew' | 'liquidpain']} ${engine.squirtAmmo}/27（约 ${Math.ceil(engine.squirtAmmo / 3)} 瓶）`}
+                          : `${{ water: '清水', almond: '杏仁水', cashew: '腰果水', liquidpain: '液态痛苦', acid: '酸液' }[engine.squirtTank as 'water' | 'almond' | 'cashew' | 'liquidpain' | 'acid']} ${engine.squirtAmmo}/27（约 ${Math.ceil(engine.squirtAmmo / 3)} 瓶）`}
                       </div>
                       <div className="font-mono2 text-center text-[10px]" style={{ color: 'var(--text-dim)' }}>
                         装入 1 瓶 = 3 份喷射 · 储罐只能装一种液体 · 右键/使用 = 自己喝一口
@@ -923,6 +934,13 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                             style={{ borderColor: 'var(--blood)', color: 'var(--blood)' }}
                             onClick={() => { engine.loadSquirt('liquidpain'); refresh() }}
                           >装液态痛苦×{engine.countItem('liquidpain')}</button>
+                        )}
+                        {engine.hasItem('acidcallus') && (
+                          <button
+                            className="menu-btn flex-1 py-1 text-center text-[11px]"
+                            style={{ borderColor: '#c9d83a', color: '#c9d83a' }}
+                            onClick={() => { engine.loadSquirt('acid'); refresh() }}
+                          >装酸液×{engine.countItem('acidcallus')}</button>
                         )}
                       </div>
                       {engine.squirtTank !== 'none' && (
@@ -1490,6 +1508,7 @@ export default function InventoryOverlay({ engine, onClose, codexOnly, initialTa
                 p.hasLighter && '微光照明',
                 p.hasRabbit && '幸运提升',
                 p.coffeeT > 0 && `咖啡（${Math.ceil(p.coffeeT)}s）`,
+                engine.thingBreathT > 0 && `硫磺口臭（${Math.ceil(engine.thingBreathT)}s · 气味引来实体）`,
               ].filter(Boolean).join('、') || '无'}
             </div>
             {/* 现象：当前层或玩家身上正在发生的超自然事件 */}

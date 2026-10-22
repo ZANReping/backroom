@@ -34,8 +34,8 @@ export function buildL4Terrain(m:GameMap,g:THREE.Group,range?:TerrainRange){
     const i=y*m.w+x;if(m.outdoor[i])continue
     const style=l4StyleAt(m,x,y),stair=stairs.find(s=>x>=s.x&&x<s.x+s.w&&y>=s.y&&y<s.y+s.h)
     if(floor(x,y)){
-      if(m.elev[i]!==4)add(new THREE.PlaneGeometry(1,1,4,4).rotateX(-Math.PI/2).translate(x+.5,0,y+.5),tiled.some(r=>x>=r.x&&x<r.x+r.w&&y>=r.y&&y<r.y+r.h)?'tile':'floor',style)
-      if(!stair)add(new THREE.PlaneGeometry(1,1,3,3).rotateX(Math.PI/2).translate(x+.5,L4_HEIGHT,y+.5),'ceiling',style)
+      if(m.elev[i]!==4)add(new THREE.PlaneGeometry(1,1,2,2).rotateX(-Math.PI/2).translate(x+.5,0,y+.5),tiled.some(r=>x>=r.x&&x<r.x+r.w&&y>=r.y&&y<r.y+r.h)?'tile':'floor',style)
+      if(!stair)add(new THREE.PlaneGeometry(1,1,1,1).rotateX(Math.PI/2).translate(x+.5,L4_HEIGHT,y+.5),'ceiling',style)
       for(const [dx,dy]of [[1,0],[0,1]])if(floor(x+dx,y+dy)&&l4StyleAt(m,x+dx,y+dy)!==style){
         box(dx?.055:1,.006,dy?.055:1,x+.5+dx*.5,.003,y+.5+dy*.5,'trim')
         box(dx?.14:1,.12,dy?.14:1,x+.5+dx*.5,L4_HEIGHT-.06,y+.5+dy*.5,'edge')
@@ -43,7 +43,7 @@ export function buildL4Terrain(m:GameMap,g:THREE.Group,range?:TerrainRange){
     }else if(m.tiles[i]===2){
       // Only exposed faces; dark vinyl skirting follows the same wall contour.
       for(const [dx,dy,rot]of [[0,1,0],[0,-1,Math.PI],[1,0,Math.PI/2],[-1,0,-Math.PI/2]])if(floor(x+dx,y+dy)||((x+dx<0||x+dx>=m.w||y+dy<0||y+dy>=m.h)&&!outside(x+dx,y+dy))){
-        add(new THREE.PlaneGeometry(1,L4_HEIGHT,4,6).rotateY(rot).translate(x+.5+dx*.5,L4_HEIGHT/2,y+.5+dy*.5),'wall',style)
+        add(new THREE.PlaneGeometry(1,L4_HEIGHT,2,4).rotateY(rot).translate(x+.5+dx*.5,L4_HEIGHT/2,y+.5+dy*.5),'wall',style)
         box(dx?.035:1,.11,dy?.035:1,x+.5+dx*.516,.055,y+.5+dy*.516,'trim')
       }
     }

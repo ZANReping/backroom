@@ -36,6 +36,7 @@ import DocOverlay from '@/components/DocOverlay'
 import LandmarkOverlay from '@/components/LandmarkOverlay'
 import DialogOverlay from '@/components/DialogOverlay'
 import FacilityPanel from '@/components/FacilityPanel'
+import BntgAtm from '@/components/BntgAtm'
 import AvatarEditor from '@/components/AvatarEditor'
 import DeathScreen from '@/components/DeathScreen'
 import NotebookOverlay from '@/components/NotebookOverlay'
@@ -53,7 +54,7 @@ import { applyMpEvent } from '@/game/net/apply'
 import { MULTIPLAYER_ENABLED } from '@/game/core/features'
 
 type Screen = 'title' | 'loading' | 'intro' | 'game' | 'fall' | 'design'
-type Overlay = 'none' | 'settings' | 'howto' | 'pause' | 'radio' | 'inventory' | 'codex' | 'death' | 'victory' | 'avatar' | 'notebook' | 'doc' | 'landmark' | 'dialog' | 'lobby' | 'facility'
+type Overlay = 'none' | 'settings' | 'howto' | 'pause' | 'radio' | 'inventory' | 'codex' | 'death' | 'victory' | 'avatar' | 'notebook' | 'doc' | 'landmark' | 'dialog' | 'lobby' | 'facility' | 'bank'
 
 // 冒烟测试钩子（Playwright page.evaluate 用）
 if (typeof window !== 'undefined') {
@@ -138,6 +139,7 @@ function Game() {
   const [dialogId, setDialogId] = useState('kat')
   const [factionPage,setFactionPage]=useState<string|undefined>()
   const [facilityFaction,setFacilityFaction]=useState('meg')
+  const [atmId,setAtmId]=useState('')
   const [invTab, setInvTab] = useState<'背包' | '图鉴' | '状态' | '地图' | '日志' | '任务'>('背包')
   // v54：存档槽位列表（标题屏展示；回标题时刷新）
   const [slots, setSlots] = useState<SlotInfo[]>(() => listSaveSlots())
@@ -347,6 +349,9 @@ function Game() {
         case 'faction':
           if(screenRef.current!=='game')break
           setFactionPage(e.text??'meg');setInvTab('图鉴');setOverlay('inventory');break
+        case 'bank':
+          if(screenRef.current!=='game')break
+          setAtmId(e.text??'');setOverlay('bank');break
         case 'facility':
           if(screenRef.current!=='game')break
           setFacilityFaction(e.text??'meg');setOverlay('facility');break
@@ -498,6 +503,7 @@ function Game() {
             ...(engine.countItem('almond') > 0 ? [{ action: 'almond', label: '杏仁水', detail: `背包 ×${engine.countItem('almond')}`, color: '#a7d982' }] as SquirtWheelOption[] : []),
             ...(engine.countItem('cashew') > 0 ? [{ action: 'cashew', label: '腰果水', detail: `背包 ×${engine.countItem('cashew')}`, color: '#c59a57' }] as SquirtWheelOption[] : []),
             ...(engine.countItem('liquidpain') > 0 ? [{ action: 'liquidpain', label: '液态痛苦', detail: `背包 ×${engine.countItem('liquidpain')}`, color: '#d65343' }] as SquirtWheelOption[] : []),
+            ...(engine.countItem('acidcallus') > 0 ? [{ action: 'acid', label: '酸液', detail: `酸性胼胝 ×${engine.countItem('acidcallus')}`, color: '#c9d83a' }] as SquirtWheelOption[] : []),
           ]
         : [{ action: 'clear', label: '清空储罐', detail: `${engine.squirtAmmo} 份残液`, color: '#d06a55' }]
       publishWheel({ options, selected: 'cancel', cursorX: 0, cursorY: 0 })
@@ -1287,6 +1293,7 @@ function Game() {
         />
       )}
       {overlay === 'radio' && <RadioOverlay onClose={() => setOverlay('pause')} />}
+      {overlay === 'bank' && <BntgAtm key={atmId} atmId={atmId} onClose={()=>setOverlay('none')}/>}
       {overlay === 'facility' && <FacilityPanel faction={facilityFaction} onClose={()=>setOverlay('none')}/>}
       {overlay === 'inventory' && <InventoryOverlay key={factionPage??'all'} engine={engine} onClose={() => {setOverlay('none');setFactionPage(undefined)}} initialTab={invTab} initialFaction={factionPage} />}
       {overlay === 'codex' && <InventoryOverlay engine={engine} onClose={() => setOverlay('none')} codexOnly />}

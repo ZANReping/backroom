@@ -1,10 +1,11 @@
 // 物品定义（通用池 + 各层独特物品）
+import { CURABITUR_ITEMS } from './curabiturItems' // [L8-curabitur]
 export type ItemRarity = 'common' | 'uncommon' | 'rare' | 'epic'
 export const ITEM_RARITY_LABEL: Record<ItemRarity, string> = { common: '常见', uncommon: '少见', rare: '稀有', epic: '珍稀' }
 export const ITEM_RARITY_COLOR: Record<ItemRarity, string> = { common: 'var(--text-dim)', uncommon: '#8fd98f', rare: '#6fa8ff', epic: 'var(--amber)' }
 
 export type EquipSlot = 'offhand' | 'body' | 'gloves' | 'head' | 'pocket'
-export type ItemUseAnim = 'bottleDrink' | 'drink' | 'eat' | 'medical' | 'inject' | 'battery' | 'activate' | 'read'
+export type ItemUseAnim = 'bottleDrink' | 'drink' | 'eat' | 'medical' | 'inject' | 'battery' | 'activate' | 'read' | 'blow'
 export interface ItemUseProfile {
   /** 从开始动作到效果结算、物品扣除的完整秒数。 */
   duration: number
@@ -17,7 +18,7 @@ export interface ItemDef {
   name: string
   desc: string
   stack: number
-  use?: 'eat' | 'heal' | 'sanity' | 'battery' | 'stamina' | 'bigsanity' | 'light' | 'none' | 'cure' | 'sanityeat' | 'doc' // v57t：doc=阅读文档（来源不明的书）
+  use?: 'eat' | 'heal' | 'sanity' | 'battery' | 'stamina' | 'bigsanity' | 'light' | 'none' | 'cure' | 'sanityeat' | 'doc' | 'kazoo' // v57t：doc=阅读文档（来源不明的书）；[kazoo] kazoo=吹石卡祖笛（不消耗，tinyAI.blowKazoo）
   value?: number
   value2?: number // v54：第二效果量（sanityeat 的饥饿恢复量）
   value3?: number // v54：口渴效果量（正负均可；饮用类物品——杏仁水/咖啡/幸运豆奶/市政自来水/番茄浓汤为正，液态痛苦/腰果水为负）
@@ -57,6 +58,7 @@ export function itemUseProfile(def: ItemDef): ItemUseProfile | null {
   if (def.type === 'sedgland') return { duration: 1.4, anim: 'eat', label: '吞服' }
   if (def.use === 'battery') return { duration: 1.6, anim: 'battery', label: '更换电池' }
   if (def.use === 'light') return { duration: 0.9, anim: 'activate', label: '启动' }
+  if (def.use === 'kazoo') return { duration: 0.55, anim: 'blow', label: '吹奏' } // 与 tinyAI.KAZOO.useT 一致
   if (READ_ITEMS.has(def.type)) return { duration: 1.5, anim: 'read', label: '阅读' }
   if (def.use === 'eat') return { duration: 1.65, anim: 'eat', label: '食用' }
   if (def.use === 'heal' || def.use === 'cure') return { duration: 2.2, anim: 'medical', label: '处理' }
@@ -65,6 +67,7 @@ export function itemUseProfile(def: ItemDef): ItemUseProfile | null {
 }
 
 export const ITEMS: Record<string, ItemDef> = {
+  ...CURABITUR_ITEMS, // [L8-curabitur] 受眷胶 / 受眷孢子 / 孢子驱蛾剂（content/curabiturItems.ts）
   almond: { type: 'almond', name: '杏仁水', desc: '甜腻的液体，后室里最受欢迎的补给。', stack: 3, use: 'sanity', value: 30, value3: 30, anomalous: true, rarity: 'uncommon', glyph: 'bottle' },
   bento: { type: 'bento', name: '自制便当', desc: '从 Object 70 的公文包里找到的便当盒，橡皮筋还勒着盒盖。米饭、煎蛋和一点腌菜，像是有人每天早上替他准备好的。', stack: 2, use: 'eat', value: 45, rarity: 'uncommon', glyph: 'bowl' }, // v83
   canned: { type: 'canned', name: '罐装食品', desc: '标签已经脱落的罐头。', stack: 3, use: 'eat', value: 35, rarity: 'common', glyph: 'can' },
@@ -83,6 +86,7 @@ export const ITEMS: Record<string, ItemDef> = {
   firesalt: { type: 'firesalt', name: '火盐晶体', desc: '一小撮橙色半透明晶体碎片，受冲击即爆裂出炽热的火花——后室探险者的首选自卫武器。（Object 15）', stack: 3, use: 'none', throw: 'explode', rarity: 'uncommon', anomalous: true, glyph: 'firesalt' },
   // 派对客（Entity 67）的「丝绒蛋糕」：L601 派对客附近的地上可以捡到——陷阱。吃下去会增加转化值（不入存档的当局数值）
   velvetcake: { type: 'velvetcake', name: '丝绒蛋糕', desc: '一块深红色、湿润发亮的丝绒蛋糕，奶油霜上插着一根没点燃的蜡烛，闻起来甜得发腻。纸托上用血红的字写着「=)」。M.E.G. 档案：切勿食用。', stack: 2, unique: 12, use: 'eat', value: 0, anomalous: true, rarity: 'uncommon', glyph: 'meat' },
+  acidcallus: { type: 'acidcallus', name: '酸性胼胝', desc: '从爆酸者碎茧里取出的一块胼胝，表面还在缓慢渗出黄色酸液。挤进滋水枪储罐能装 3 份酸液：命中实体会持续腐蚀，但对爆酸者本身无效。千万别就着枪口喝。（Entity 11 的遗物）', stack: 3, anomalous: true, rarity: 'rare', glyph: 'meat' },
   liquidpain: { type: 'liquidpain', name: '液态痛苦', desc: '半透明的淡红色液体——杏仁水的致命变种。绝不能喝。但装进滋水枪，它就是武器。（Object 48）', stack: 1, use: 'eat', value3: -30, anomalous: true, rarity: 'epic', glyph: 'pain' },
   manmade: { type: 'manmade', name: '人制品', desc: '一包用糖果纸简单包裹的「产品」，散发着不正常的甜香。吃下后的 5 分钟内：无法进食其他食物、治疗减半、始终感到饥饿与口渴、体力恢复减半消耗加倍，但受伤略轻。（Entity 36 的产品）', stack: 1, use: 'eat', value: 15, anomalous: true, rarity: 'uncommon', glyph: 'meat' },
   // ---------- Object 5：B.N.T.G. 糖果（商人之家糖果贩兑换，统一 饥饿+5 理智+5，糖瘾 60s）----------
@@ -120,7 +124,7 @@ export const ITEMS: Record<string, ItemDef> = {
   // Level 7「Thalassophobia」
   rope: { type: 'rope', name: '尼龙绳', desc: '一卷结实的尼龙绳。Wikidot 明确建议进入 Level 7 前携带绳索或梯子——否则掉进水里就再也爬不回入口房间。', stack: 1, unique: 7, equip: 'pocket', passive: '可攀回高处', rarity: 'uncommon', glyph: 'rope' },
   divemask: { type: 'divemask', name: '潜水面罩', desc: '海面上方的空气有种未知性质，能让人屏息约三十分钟。有了它，还能更久一点。', stack: 1, unique: 7, equip: 'head', passive: '延长屏息', rarity: 'uncommon', glyph: 'mask' },
-  thingmeat: { type: 'thingmeat', name: '巨兽之肉', desc: '油腻、富脂、黏滑，强烈的硫磺味。档案强调：必须生食——加热会唤醒里面休眠的寄生虫。', stack: 2, unique: 7, use: 'eat', value: 55, anomalous: true, rarity: 'rare', glyph: 'meat' },
+  thingmeat: { type: 'thingmeat', name: '彼物之肉', desc: '油腻、富脂、黏滑，强烈的硫磺味。只能拿刀从 Level 7 那东西身上割下来。档案强调：必须生食——加热会唤醒里面休眠的寄生虫。吃下后口中的硫磺味 10 分钟不散，会把附近的东西引过来。', stack: 2, unique: 7, use: 'eat', value: 55, anomalous: true, rarity: 'rare', glyph: 'meat' },
   ashpile: { type: 'ashpile', name: '一捧细灰', desc: 'Level 9 街面上的一小堆灰色粉尘，细得能从指缝里漏下去。观察者的光束照中过什么东西之后，就会留下这样一堆。灰里有时还埋着那人身上的东西。', stack: 5, unique: 0, rarity: 'common', glyph: 'scrap' },
   ratmeat: { type: 'ratmeat', name: '尸鼠肉', desc: '从尸鼠身上割下的一条瘦肉，带着一股霉味和飞蛾翅粉的苦味。档案说它「在某种程度上」能当食物——生吃能顶饿，但有可能让你病一场。', stack: 3, use: 'eat', value: 18, anomalous: true, rarity: 'common', glyph: 'meat' },
   oddbook: { type: 'oddbook', name: '来源不明的书', desc: '入口房间书柜上的一本旧书。没有作者，没有出版信息。翻开，是一个在 Level 7 待过的人留下的记录。', stack: 1, unique: 7, use: 'doc', anomalous: true, rarity: 'rare', glyph: 'book' },
@@ -130,7 +134,7 @@ export const ITEMS: Record<string, ItemDef> = {
   xenonmarble: { type: 'xenonmarble', name: '氙弹珠', desc: '在多维之路的淡水溪底捞到的发光弹珠。这是微光向导的筑巢材料——那些蓝绿色的「宝石星星」会被它吸引。', stack: 3, unique: 8, use: 'none', throw: 'lure', anomalous: true, rarity: 'rare', glyph: 'marble' },
   driedfruit: { type: 'driedfruit', name: '干果与干菜', desc: '洞穴聚落配发的维生素 C 来源。长期不见天日的人格外需要它。', stack: 3, unique: 8, use: 'eat', value: 30, rarity: 'common', glyph: 'fruit' },
   uvlamp: { type: 'uvlamp', name: '人工紫外灯', desc: '不见日照的日子太久了。这盏灯补的不是照明，是维生素 D。', stack: 2, unique: 8, use: 'light', value: 2, rarity: 'uncommon', glyph: 'uv' },
-  stonekazoo: { type: 'stonekazoo', name: '石卡祖笛', desc: '天然形成的岩刺，形状恰好是一支卡祖笛，检测证实没有任何人工雕刻痕迹。吹一声，回声会比你预想的更响——足以把实体引往别处。', stack: 1, unique: 8, use: 'none', anomalous: true, rarity: 'rare', glyph: 'kazoo' },
+  stonekazoo: { type: 'stonekazoo', name: '石卡祖笛', desc: '天然形成的岩刺，形状恰好是一支卡祖笛，检测证实没有任何人工雕刻痕迹。吹一声，回声会比你预想的更响——在洞穴里朝岩壁吹，声音会从岩壁那头炸开，把实体引过去。水下也能吹，只是很费气。据说 Level 7 的某个东西受不了它持续的尖啸。', stack: 1, unique: 8, use: 'kazoo', anomalous: true, rarity: 'rare', glyph: 'kazoo' },
 
   // Level 9「The Suburbs」
   pockets: { type: 'pockets', name: '一些口袋', desc: 'Object 51。两片银色雕叶托着一颗蓝绿色蛋白石，金色包镶和小铆珠点缀其间。胸针能收纳远超自身体积的物品，背包上限 +4。⚠ M.E.G. 红字警告：切勿把一些口袋带入 Level 9——邻里守望会立刻找上门。', stack: 1, unique: 9, equip: 'pocket', passive: '背包 +4 · L9 危险', anomalous: true, rarity: 'epic', glyph: 'pocket' },
@@ -175,12 +179,12 @@ export const ITEMS: Record<string, ItemDef> = {
   gardensalad: { type: 'gardensalad', name: '田园沙拉', desc: '干果干菜重新焕发出生机的一盘——爱子坚持要在上面摆一片完整的叶子。', stack: 2, use: 'stamina', value: 40, rarity: 'uncommon', glyph: 'bowl' },
   garlicbread: { type: 'garlicbread', name: '蒜香烤面包', desc: '炉边现烤，蒜香黄油渗进每一道切缝。「小心，「幸运」最怕切大蒜。」——爱子语。', stack: 2, use: 'eat', value: 40, rarity: 'common', glyph: 'bread' },
   pasta: { type: 'pasta', name: '番茄意面', desc: '正经的意大利做法：番茄酱汁收得浓稠，面条弹牙。Tom 会说「Al dente！」然后盯着看你第一口的表情。', stack: 2, use: 'eat', value: 65, rarity: 'uncommon', glyph: 'plate' },
-  meatstew: { type: 'meatstew', name: '炖肉煲', desc: '巨兽之肉炖到酥烂，硫磺味全化成浓郁肉香。吃完感觉伤口都好得快了些。', stack: 2, use: 'heal', value: 70, rarity: 'uncommon', glyph: 'bowl' },
+  meatstew: { type: 'meatstew', name: '炖肉煲', desc: '彼物之肉炖到酥烂，硫磺味全化成浓郁肉香。吃完感觉伤口都好得快了些。', stack: 2, use: 'heal', value: 70, rarity: 'uncommon', glyph: 'bowl' },
   pizza: { type: 'pizza', name: '意式披萨', desc: '薄底、焦边、番茄与融化的奶酪。在后室，这是接近「正常生活」的最短路径。', stack: 2, use: 'eat', value: 70, rarity: 'uncommon', glyph: 'plate' },
   lasagna: { type: 'lasagna', name: '千层面', desc: '一层肉酱一层白酱，烤到表面金黄。一口下去的满足感，足以让人暂时忘记自己迷失在哪一层。', stack: 1, use: 'bigsanity', value: 85, rarity: 'uncommon', glyph: 'plate' },
   tomsspecial: { type: 'tomsspecial', name: 'Tom 招牌炖菜', desc: '菜单上没有、只换给识货人的一锅——配方是 Esposito 家三代人的秘密。吃完你会明白为什么这家小餐馆从不缺客人。', stack: 1, use: 'eat', value: 130, rarity: 'rare', glyph: 'bowl' },
   // 来料加工（爱子经手）：玩家自带食材，餐馆代做
-  grilledsteak: { type: 'grilledsteak', name: '烤兽肉排', desc: '来料加工：巨兽之肉烤得外焦里嫩。档案警告生食才安全——但吃过这口的人都不打算回头。', stack: 2, use: 'eat', value: 85, rarity: 'uncommon', glyph: 'meat' },
+  grilledsteak: { type: 'grilledsteak', name: '烤兽肉排', desc: '来料加工：彼物之肉烤得外焦里嫩。档案警告生食才安全——但吃过这口的人都不打算回头。', stack: 2, use: 'eat', value: 85, rarity: 'uncommon', glyph: 'meat' },
   jambread: { type: 'jambread', name: '果酱面包', desc: '来料加工：干果与干菜熬成果酱，厚厚地抹在新烤的面包上。', stack: 2, use: 'eat', value: 45, rarity: 'common', glyph: 'bread' },
 }
 

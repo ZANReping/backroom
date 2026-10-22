@@ -13,7 +13,7 @@ const eq = (a: unknown, b: unknown, msg: string) => { assert.deepEqual(a, b, msg
 
 const parents = Object.keys(ENTITY_FORMS)
 const forms = parents.flatMap(type => entityForms(type).map(form => ({ type, form })))
-eq(forms.length, 36, 'forms registry has 36 entries including wrangler')
+eq(forms.length, 49, 'forms registry includes all 17 arachnids and the herbivore form')
 eq(parents.length, 10, 'forms registry has 10 parent entities')
 eq(entityForms('duller').length, 0, 'duller has no registered subforms')
 eq(entityForms('clump').length, 2, 'clump has common and intelligent subforms')

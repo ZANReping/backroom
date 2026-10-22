@@ -166,6 +166,7 @@ export type StructKind = import('../content/tradeDecor').TradeKind | import('../
   | 'bonepile'     // 骨堆（容器；下颌增大、腿末端成鳍的类人骨架）
   | 'fishbones'    // 不可理解的巨鱼骨架（Midnight Zone）
   | 'seatarpit'    // 深渊焦油与岩石堆（持续冒泡）
+  | 'tarwriting'   // [thing] 海床上被七层之物用焦油拖出来的字（data.text）
   | 'l7debris'     // v66 L7 每 chunk 一组漂浮/沉底碎屑实例（骨片/废铁/书皮纸块/纤维）
   | 'l7skeleton'   // v66 L7 巨颚长牙鳍足的类人骨架（合并单网格）
   | 'l7giantfish'  // v66 L7 午夜带/深渊「不可理解」的巨鱼骨架地标
@@ -181,6 +182,8 @@ export type StructKind = import('../content/tradeDecor').TradeKind | import('../
   | 'glowshroom'   // 罗特尼斯大丛林多彩生物发光蘑菇（可长到小树大小）
   | 'tarhands'     // 焦油之手（95°C 焦油池，伸出覆满焦油的手臂拖人）
   | 'roadsign'     // 第九大道路标（每 50 米一个，带 M.E.G. 标志）
+  | 'stoneinstruments' // [kazoo] L8 乐器洞：岩壁上的石小提琴/吉他/长号、马桶与一圈邦戈鼓、断口钟乳石（整洞装饰，data.r=洞厅半径）
+  | 'stonechime'   // [kazoo] L8 乐器洞石风铃：用石卡祖笛戳响后经久不息（tinyAI.pokeChime；data.ring=1 时石管摆动）
   | 'campstall'    // Hollow Nest / Harmouth 营地摊位（补给与向导）
   | 'cavefloat'    // L8 断层室中不受重力影响的悬浮岩块
   | 'caveboulder'  // L8 各生态带突兀裸岩/崩落巨石（真实岩石 PBR）

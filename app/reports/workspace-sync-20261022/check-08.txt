@@ -1,0 +1,9 @@
+
+> my-app@0.0.0 check:l8-resources
+> esbuild scripts/check-l8-resources.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l8-resources.mjs && node .cache/check-l8-resources.mjs
+
+
+  .cache\check-l8-resources.mjs  3.8mb
+
+Done in 1044ms
+{"checks":4526,"failures":0,"models":23,"cancellations":[{"name":"arachnid","steps":48,"disposed":5},{"name":"camo","steps":85,"disposed":3},{"name":"curabitur","steps":677,"disposed":12},{"name":"queue-clear","disposed":2}]}

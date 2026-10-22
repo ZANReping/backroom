@@ -4,6 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "check:bntg-bank": "esbuild scripts/check-bntg-bank.ts --bundle --platform=node --format=esm --outfile=.cache/check-bntg-bank.mjs && node .cache/check-bntg-bank.mjs",
+    "verify:bntg-bank": "node scripts/verify-bntg-bank.mjs",
     "check:traders-visibility": "esbuild scripts/check-traders-visibility.ts --bundle --platform=node --format=esm --outfile=.cache/check-traders-visibility.mjs && node .cache/check-traders-visibility.mjs",
     "check:traders-dressing": "esbuild scripts/audit-traders-dressing.ts --bundle --platform=node --format=esm --outfile=.cache/audit-traders-dressing.mjs && node .cache/audit-traders-dressing.mjs",
     "check:l1-progressive": "esbuild scripts/check-l1-progressive.ts --bundle --platform=node --format=esm --outfile=.cache/check-l1-progressive.mjs && node .cache/check-l1-progressive.mjs",
@@ -112,7 +114,7 @@
     "check:texture-images": "esbuild scripts/check-texture-images.ts --bundle --platform=node --format=esm --outfile=.cache/check-texture-images.mjs && node .cache/check-texture-images.mjs",
     "check:model-warmup": "esbuild scripts/check-model-warmup.ts --bundle --platform=node --format=esm --outfile=.cache/check-model-warmup.mjs && node .cache/check-model-warmup.mjs",
     "check:program-completion": "esbuild scripts/check-program-completion.ts --bundle --platform=node --format=esm --outfile=.cache/check-program-completion.mjs && node .cache/check-program-completion.mjs",
-    "check:l4-batch-job": "esbuild scripts/check-l4-batch-job.ts --bundle --platform=node --format=esm --outfile=.cache/check-l4-batch-job.mjs && node .cache/check-l4-batch-job.mjs",
+    "check:l4-batch-job": "esbuild scripts/check-l4-batch-job.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l4-batch-job.mjs && node .cache/check-l4-batch-job.mjs",
     "check:static-batch-job": "esbuild scripts/check-static-batch-job.ts --bundle --platform=node --format=esm --outfile=.cache/check-static-batch-job.mjs && node .cache/check-static-batch-job.mjs",
     "generate:l1-materials": "node scripts/gen-l1-materials.mjs",
     "generate:l5-ornament": "node scripts/gen-l5-ornament.mjs",
@@ -214,7 +216,37 @@
     "verify:l4-melee-wrangler": "node scripts/verify-l4-melee-wrangler-import.mjs",
     "check:l4-melee-wrangler-integration": "esbuild scripts/check-l4-melee-wrangler-integration.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l4-melee-wrangler-integration.mjs && node .cache/check-l4-melee-wrangler-integration.mjs",
     "check:l9-fog": "esbuild scripts/check-l9-fog.ts --bundle --platform=node --format=esm --outfile=.cache/check-l9-fog.mjs && node .cache/check-l9-fog.mjs",
-    "check:l4-region-exits": "esbuild scripts/check-l4-region-exits.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l4-region-exits.mjs && node .cache/check-l4-region-exits.mjs"
+    "check:l4-region-exits": "esbuild scripts/check-l4-region-exits.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l4-region-exits.mjs && node .cache/check-l4-region-exits.mjs",
+    "verify:l9-l4-regions": "node scripts/verify-l9-l4-regions.mjs",
+    "check:burster": "esbuild scripts/check-burster.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-burster.mjs && node .cache/check-burster.mjs",
+    "check:l23-map": "esbuild scripts/check-l23-map.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l23-map.mjs && node .cache/check-l23-map.mjs",
+    "check:mangled-legs": "esbuild scripts/check-mangled-legs.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-mangled-legs.mjs && node .cache/check-mangled-legs.mjs",
+    "check:l4-burster-integration": "esbuild scripts/check-l4-burster-integration.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l4-burster-integration.mjs && node .cache/check-l4-burster-integration.mjs",
+    "verify:l4-burster-maps": "node scripts/verify-l4-burster-maps.mjs",
+    "verify:l4-performance": "node scripts/verify-l4-performance-current.mjs",
+    "check:l4-collisions": "esbuild scripts/check-l4-collisions.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l4-collisions.mjs && node .cache/check-l4-collisions.mjs",
+    "check:l4-details": "esbuild scripts/check-l4-details.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l4-details.mjs && node .cache/check-l4-details.mjs",
+    "check:arachnid": "esbuild scripts/check-arachnid.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-arachnid.mjs && node .cache/check-arachnid.mjs",
+    "check:camo": "esbuild scripts/check-camo.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-camo.mjs && node .cache/check-camo.mjs",
+    "check:curabitur": "esbuild scripts/check-curabitur.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-curabitur.mjs && node .cache/check-curabitur.mjs",
+    "check:lightguide": "esbuild scripts/check-lightguide.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-lightguide.mjs && node .cache/check-lightguide.mjs",
+    "check:l8-resources": "esbuild scripts/check-l8-resources.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l8-resources.mjs && node .cache/check-l8-resources.mjs",
+    "check:mangled-pursuit": "esbuild scripts/check-mangled-pursuit.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-mangled-pursuit.mjs && node .cache/check-mangled-pursuit.mjs",
+    "verify:l8-stage3-mangled": "node scripts/verify-l8-stage3-mangled.mjs",
+    "check:tiny": "esbuild scripts/check-tiny.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-tiny.mjs && node .cache/check-tiny.mjs",
+    "check:tiny-arms": "esbuild scripts/check-tiny-arms.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-tiny-arms.mjs && node .cache/check-tiny-arms.mjs",
+    "check:tiny-pelt": "esbuild scripts/check-tiny-pelt.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-tiny-pelt.mjs && node .cache/check-tiny-pelt.mjs",
+    "verify:tiny": "node scripts/verify-tiny-final.mjs",
+    "check:tiny-resources": "esbuild scripts/check-tiny-resources.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-tiny-resources.mjs && node .cache/check-tiny-resources.mjs",
+    "check:l7-cliffs": "esbuild scripts/check-l7-cliffs.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l7-cliffs.mjs && node .cache/check-l7-cliffs.mjs",
+    "check:thing-anim": "esbuild scripts/check-thing-anim.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-thing-anim.mjs && node .cache/check-thing-anim.mjs",
+    "check:thing": "esbuild scripts/check-thing.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-thing.mjs && node .cache/check-thing.mjs",
+    "check:thing-integration": "esbuild scripts/check-thing-integration.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-thing-integration.mjs && node .cache/check-thing-integration.mjs",
+    "verify:thing": "node scripts/verify-thing-import.mjs",
+    "check:vercel": "node scripts/check-vercel-config.mjs",
+    "check:l7-seams": "esbuild scripts/check-l7-seams.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l7-seams.mjs && node .cache/check-l7-seams.mjs",
+    "check:l7-chart": "esbuild scripts/check-l7-chart.ts --bundle --platform=node --format=esm --external:@napi-rs/canvas --outfile=.cache/check-l7-chart.mjs && node .cache/check-l7-chart.mjs",
+    "verify:l7-seams-map": "node scripts/verify-l7-seams-map.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -288,5 +320,8 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
     "vite": "^7.2.4"
+  },
+  "engines": {
+    "node": "24.x"
   }
 }

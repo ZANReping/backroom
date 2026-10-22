@@ -34,8 +34,8 @@ const ok = (c: unknown, m: string) => { n++; const l = `${c ? '✔' : '✘'} ${m
 const info = (m: string) => { console.log('  · ' + m); lines.push('  · ' + m) }
 const A = AI.ARMS
 
-// 基线 002514e + 项目既有 tradersWorld 可选字段；手臂与衔尾接入不增加存档键。
-const BASE_SNAP = { top: ['alphaLayout', 'avenueHintSeq', 'avenueMarks', 'bntgLayout', 'brcMimicCd', 'brcSin', 'career', 'difficulty', 'glowProjectiles', 'heardSongs', 'homelyApplied', 'indoctrination', 'jerryAgreed', 'jerryOath', 'jerryTamed', 'l0SharedWorld', 'l0World', 'l10Weather', 'l11Weather', 'l11World', 'l1World', 'l5MothAlerts', 'level', 'mapFirstVisit', 'mapSeed', 'outpostReturn', 'player', 'profile', 'quests', 'radio', 'rep', 'seed', 'settlementLayout', 'time', 'tradersWorld', 'v', 'visited', 'warehouses', 'worldPos'], player: ['aliveTime', 'backpack', 'battery', 'coffeeT', 'crouching', 'equip', 'facing', 'flashJamT', 'flashlight', 'floor', 'hasGloves', 'hasLighter', 'hasPockets', 'hasRabbit', 'hasSuit', 'hotbar', 'hp', 'hunger', 'infection', 'kills', 'level', 'leverPulled', 'sanity', 'selected', 'slowT', 'stamina', 'startTime', 'steps', 'tapes', 'thirst', 'vz', 'x', 'y', 'z'], l1World: ['dynamics', 'generation', 'migration', 'runtime', 'seed', 'taken', 'version'], saveKeys: ['brcMimicCd', 'brcSin', 'indoctrination', 'jerryAgreed', 'jerryOath', 'jerryTamed', 'warehouses'] }
+// 基线 002514e + 项目既有 tradersWorld、bntgBank 可选字段；手臂与衔尾接入不增加存档键。
+const BASE_SNAP = { top: ['alphaLayout', 'avenueHintSeq', 'avenueMarks', 'bntgBank', 'bntgLayout', 'brcMimicCd', 'brcSin', 'career', 'difficulty', 'glowProjectiles', 'heardSongs', 'homelyApplied', 'indoctrination', 'jerryAgreed', 'jerryOath', 'jerryTamed', 'l0SharedWorld', 'l0World', 'l10Weather', 'l11Weather', 'l11World', 'l1World', 'l5MothAlerts', 'level', 'mapFirstVisit', 'mapSeed', 'outpostReturn', 'player', 'profile', 'quests', 'radio', 'rep', 'seed', 'settlementLayout', 'time', 'tradersWorld', 'v', 'visited', 'warehouses', 'worldPos'], player: ['aliveTime', 'backpack', 'battery', 'coffeeT', 'crouching', 'equip', 'facing', 'flashJamT', 'flashlight', 'floor', 'hasGloves', 'hasLighter', 'hasPockets', 'hasRabbit', 'hasSuit', 'hotbar', 'hp', 'hunger', 'infection', 'kills', 'level', 'leverPulled', 'sanity', 'selected', 'slowT', 'stamina', 'startTime', 'steps', 'tapes', 'thirst', 'vz', 'x', 'y', 'z'], l1World: ['dynamics', 'generation', 'migration', 'runtime', 'seed', 'taken', 'version'], saveKeys: ['brcMimicCd', 'brcSin', 'indoctrination', 'jerryAgreed', 'jerryOath', 'jerryTamed', 'warehouses'] }
 
 // ---------------------------------------------------------------------------
 // 场景：真实 L1，找一块「半径 4.5m 内同高可走 + 有天花板」的开阔地，放一只手臂；停电与灯光由测试控制
@@ -508,7 +508,7 @@ function swallowFlow(seed: number, hp: number, second?: (e: any, spot: any) => a
   ok(S(arms).mode !== 'hidden' && S(far).mode === 'hidden', '连通的两个风口：只有离玩家最近的那个出动')
   const snap = e.snapshot(), js = JSON.stringify(snap)
   const keys = { top: Object.keys(snap).sort(), player: Object.keys(snap.player).sort(), l1World: Object.keys(snap.l1World ?? {}).sort(), saveKeys: EFFECTS.filter((x: any) => x.saveKey).map((x: any) => x.saveKey).sort() }
-  ok(JSON.stringify(keys) === JSON.stringify(BASE_SNAP), '存档快照字段与项目现有格式一致（含 tradersWorld）（顶层 / player / l1World / effects 存档键）')
+  ok(JSON.stringify(keys) === JSON.stringify(BASE_SNAP), '存档快照字段与项目现有格式一致（含 tradersWorld、bntgBank）（顶层 / player / l1World / effects 存档键）')
   ok(!/armsRun|"ar"|"marks"|"temps"/.test(js), '存档里没有手臂的任何运行时状态')
 }
 

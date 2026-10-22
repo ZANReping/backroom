@@ -11,6 +11,7 @@ import {l0FlickerTime} from './l0Flicker'
  * window reads as depth without any exterior geometry: low grey-blue rain clouds, the misty
  * silhouettes of more office towers above and below, falling rain streaks. */
 const fakeSky=new THREE.ShaderMaterial({
+  side:THREE.DoubleSide,
   uniforms:{time:l0FlickerTime},fog:false,
   vertexShader:`varying vec3 wp;void main(){vec4 w=modelMatrix*vec4(position,1.);wp=w.xyz;gl_Position=projectionMatrix*viewMatrix*w;}`,
   fragmentShader:`uniform float time;varying vec3 wp;
@@ -117,10 +118,11 @@ export function buildL4Structure(s:Structure):THREE.Group|null {
     }
     for(const x of partition?[-.475,.475]:s.data?.mullion?[-.475]:[])part(inner,.05,top-bottom,.09,x,(bottom+top)/2,z,'frame')
     for(const y of [bottom,top,...(partition?[2.42]:[])])part(inner,1,.045,.10,0,y,z,'frame')
-    const mat=kind==='windowblack'?blackWindowMaterial:glassMaterial(partition?.11:.17)
+    const falseWindow=!partition&&kind!=='windowblack'&&!!s.data?.l4Facade
+    const mat=kind==='windowblack'?blackWindowMaterial:falseWindow?fakeSky:glassMaterial(partition?.11:.17)
     const pane=new THREE.Mesh(new THREE.PlaneGeometry(partition?.94:1,top-bottom),mat);pane.position.set(0,(bottom+top)/2,z);g.add(pane)
     if(partition&&Number(s.data?.sid??0)%3!==0){const blinds=buildL4OfficeDetail('blinds');blinds.position.z=-.065;g.add(blinds)}
-    if(!partition&&kind!=='windowblack'){
+    if(!partition&&kind!=='windowblack'&&!falseWindow){
       const haze=new THREE.Mesh(new THREE.PlaneGeometry(1,top-bottom),mist);haze.position.set(0,(bottom+top)/2,z-.012);g.add(haze)
       if(s.data?.l4Facade){const back=new THREE.Mesh(new THREE.PlaneGeometry(1,top-bottom),fakeSky);back.rotation.y=Math.PI;back.position.set(0,(bottom+top)/2,z+.07);back.userData.noCastShadow=true;back.castShadow=false;g.add(back)}
       // Wet tracks are in the shared pane shader, not nine transparent meshes.

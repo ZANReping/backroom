@@ -1,0 +1,430 @@
+{
+  "seed": 424242,
+  "mode": "realistic",
+  "port": 10344,
+  "cdp": 10345,
+  "errors": [],
+  "failedRequests": [],
+  "command": [
+    "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "--user-data-dir=E:\\ZAN\\backroom\\app\\reports\\l9-l4-regions-20261021\\fog-final\\qa-1792596990200-70652",
+    "--remote-debugging-port=10345",
+    "--headless=new",
+    "--enable-automation",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-background-networking",
+    "--window-size=1920,1080",
+    "--noerrdialogs",
+    "--flag-switches-begin",
+    "--flag-switches-end",
+    "about:blank"
+  ],
+  "pids": {
+    "browser": 3712,
+    "server": 45688
+  },
+  "appBootMs": 18919.812899999997,
+  "entryMs": 7495.231,
+  "firstPlayableMs": 37796.039300000004,
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "contextLost": false
+  },
+  "initial": {
+    "level": 4,
+    "world": {
+      "x": 15.5,
+      "y": 15.5,
+      "z": 0
+    },
+    "chunks": 9,
+    "tasks": 4,
+    "memory": {
+      "geometries": 946,
+      "textures": 67
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 240
+  },
+  "arrival": {
+    "id": 6,
+    "actor": {
+      "x": 36.5,
+      "y": 60.5,
+      "travel": "arrive",
+      "pending": false,
+      "dead": false,
+      "distance": 54.30009208095323
+    },
+    "visible": true,
+    "range": 37.50265368618356,
+    "level": 9,
+    "world": {
+      "x": 4,
+      "y": 17,
+      "z": 0
+    },
+    "chunks": 6,
+    "tasks": 1,
+    "memory": {
+      "geometries": 907,
+      "textures": 161
+    },
+    "fog": "warning",
+    "k": 0.015350194870877888,
+    "t": 34.71250000000001
+  },
+  "look": {
+    "id": 6,
+    "actor": {
+      "x": 35.239463004940944,
+      "y": 57.79884929630215,
+      "travel": "arrive",
+      "pending": false,
+      "dead": false,
+      "distance": 51.38531067084686
+    },
+    "visible": false,
+    "range": 34.658323428104566,
+    "level": 9,
+    "world": {
+      "x": 4,
+      "y": 17,
+      "z": 0
+    },
+    "chunks": 7,
+    "tasks": 1,
+    "memory": {
+      "geometries": 1147,
+      "textures": 180
+    },
+    "fog": "warning",
+    "k": 0.10313816579924173,
+    "t": 32.725300000000026
+  },
+  "active": {
+    "id": 6,
+    "actor": {
+      "x": 20.354333878379506,
+      "y": 30.456836620710135,
+      "travel": "active",
+      "pending": false,
+      "dead": false,
+      "distance": 21.179015284993703
+    },
+    "visible": false,
+    "range": 6.897032820758504,
+    "level": 9,
+    "world": {
+      "x": 4,
+      "y": 17,
+      "z": 0
+    },
+    "chunks": 16,
+    "tasks": 0,
+    "memory": {
+      "geometries": 1754,
+      "textures": 234
+    },
+    "fog": "active",
+    "k": 0.9599681228160956,
+    "t": 163.81080506326168
+  },
+  "departure": {
+    "id": 6,
+    "actor": {
+      "x": 33.72755886988534,
+      "y": 32.55104442858611,
+      "travel": "leave",
+      "pending": false,
+      "dead": false,
+      "distance": 33.5494074341464
+    },
+    "visible": false,
+    "range": 10.222289619386078,
+    "level": 9,
+    "world": {
+      "x": 4,
+      "y": 17,
+      "z": 0
+    },
+    "chunks": 16,
+    "tasks": 0,
+    "memory": {
+      "geometries": 1769,
+      "textures": 234
+    },
+    "fog": "fade",
+    "k": 0.857336740142405,
+    "t": 37.9460999999997
+  },
+  "clear": {
+    "id": 6,
+    "actor": {
+      "x": 46.37528809062826,
+      "y": 34.76272067709969,
+      "travel": "leave",
+      "pending": false,
+      "dead": false,
+      "distance": 45.9475710632935
+    },
+    "visible": false,
+    "range": 37.94056909605048,
+    "level": 9,
+    "world": {
+      "x": 4,
+      "y": 17,
+      "z": 0
+    },
+    "chunks": 21,
+    "tasks": 1,
+    "memory": {
+      "geometries": 2061,
+      "textures": 306
+    },
+    "fog": "fade",
+    "k": 0.0018342871589356533,
+    "t": -3.5288999999999984
+  },
+  "retired": {
+    "id": 6,
+    "actor": {
+      "x": 49.74883200660874,
+      "y": 35.332575596509926,
+      "travel": "leave",
+      "pending": false,
+      "dead": false,
+      "distance": 49.285281352252206
+    },
+    "visible": true,
+    "range": 38,
+    "level": 9,
+    "world": {
+      "x": 4,
+      "y": 17,
+      "z": 0
+    },
+    "chunks": 23,
+    "tasks": 0,
+    "memory": {
+      "geometries": 2276,
+      "textures": 335
+    },
+    "fog": "idle",
+    "k": 0,
+    "t": 468.64803307317874
+  },
+  "summary": {
+    "checks": [
+      "actual giant spawned fully outside player view",
+      "fog initially thin",
+      "actual active event duration is two to three minutes",
+      "actual actor walks away during thinning mist",
+      "actual mist clears gradually",
+      "watched actor remains alive instead of pop-out",
+      "event cooldown after physical departure",
+      "no death loot during departure"
+    ],
+    "records": [
+      {
+        "name": "arrival",
+        "id": 6,
+        "actor": {
+          "x": 36.5,
+          "y": 60.5,
+          "travel": "arrive",
+          "pending": false,
+          "dead": false,
+          "distance": 54.30009208095323
+        },
+        "visible": true,
+        "range": 37.50265368618356,
+        "level": 9,
+        "world": {
+          "x": 4,
+          "y": 17,
+          "z": 0
+        },
+        "chunks": 6,
+        "tasks": 1,
+        "memory": {
+          "geometries": 907,
+          "textures": 161
+        },
+        "fog": "warning",
+        "k": 0.015350194870877888,
+        "t": 34.71250000000001
+      },
+      {
+        "name": "active",
+        "id": 6,
+        "actor": {
+          "x": 20.354333878379506,
+          "y": 30.456836620710135,
+          "travel": "active",
+          "pending": false,
+          "dead": false,
+          "distance": 21.179015284993703
+        },
+        "visible": false,
+        "range": 6.897032820758504,
+        "level": 9,
+        "world": {
+          "x": 4,
+          "y": 17,
+          "z": 0
+        },
+        "chunks": 16,
+        "tasks": 0,
+        "memory": {
+          "geometries": 1754,
+          "textures": 234
+        },
+        "fog": "active",
+        "k": 0.9599681228160956,
+        "t": 163.81080506326168
+      },
+      {
+        "name": "departure",
+        "id": 6,
+        "actor": {
+          "x": 33.72755886988534,
+          "y": 32.55104442858611,
+          "travel": "leave",
+          "pending": false,
+          "dead": false,
+          "distance": 33.5494074341464
+        },
+        "visible": false,
+        "range": 10.222289619386078,
+        "level": 9,
+        "world": {
+          "x": 4,
+          "y": 17,
+          "z": 0
+        },
+        "chunks": 16,
+        "tasks": 0,
+        "memory": {
+          "geometries": 1769,
+          "textures": 234
+        },
+        "fog": "fade",
+        "k": 0.857336740142405,
+        "t": 37.9460999999997
+      },
+      {
+        "name": "clear-watching",
+        "id": 6,
+        "actor": {
+          "x": 46.37528809062826,
+          "y": 34.76272067709969,
+          "travel": "leave",
+          "pending": false,
+          "dead": false,
+          "distance": 45.9475710632935
+        },
+        "visible": false,
+        "range": 37.94056909605048,
+        "level": 9,
+        "world": {
+          "x": 4,
+          "y": 17,
+          "z": 0
+        },
+        "chunks": 21,
+        "tasks": 1,
+        "memory": {
+          "geometries": 2061,
+          "textures": 306
+        },
+        "fog": "fade",
+        "k": 0.0018342871589356533,
+        "t": -3.5288999999999984
+      },
+      {
+        "name": "retired",
+        "id": 6,
+        "actor": {
+          "x": 49.74883200660874,
+          "y": 35.332575596509926,
+          "travel": "leave",
+          "pending": false,
+          "dead": false,
+          "distance": 49.285281352252206
+        },
+        "visible": true,
+        "range": 38,
+        "level": 9,
+        "world": {
+          "x": 4,
+          "y": 17,
+          "z": 0
+        },
+        "chunks": 23,
+        "tasks": 0,
+        "memory": {
+          "geometries": 2276,
+          "textures": 335
+        },
+        "fog": "idle",
+        "k": 0,
+        "t": 468.64803307317874
+      }
+    ],
+    "status": {
+      "level": 9,
+      "world": {
+        "x": 4,
+        "y": 17,
+        "z": 0
+      },
+      "chunks": 23,
+      "tasks": 0,
+      "memory": {
+        "geometries": 2276,
+        "textures": 335
+      },
+      "fog": "idle",
+      "k": 0,
+      "t": 467.79383307317875
+    },
+    "giant": {
+      "id": 6,
+      "actor": {
+        "x": 49.74883200660874,
+        "y": 35.332575596509926,
+        "travel": "leave",
+        "pending": false,
+        "dead": false,
+        "distance": 49.285281352252206
+      },
+      "visible": true,
+      "range": 38,
+      "level": 9,
+      "world": {
+        "x": 4,
+        "y": 17,
+        "z": 0
+      },
+      "chunks": 23,
+      "tasks": 0,
+      "memory": {
+        "geometries": 2276,
+        "textures": 335
+      },
+      "fog": "idle",
+      "k": 0,
+      "t": 467.79383307317875
+    },
+    "frozen": false
+  },
+  "ok": true,
+  "cleanup": {
+    "browser": "SIGTERM",
+    "server": "SIGTERM",
+    "profileRemoved": true
+  }
+}

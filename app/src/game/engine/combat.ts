@@ -1,3 +1,5 @@
+import { lightguideHit, lightguideLure } from './lightguideAI'
+import {bursterKillGuard,bursterMelee,bursterSquirt,acidBurnEntity,BURSTER} from './bursterAI'
 import { heldMelee, startMeleeSwing } from './melee'
 import { isWrangler, wranglerFire, wranglerFireEggs, wranglerKillGuard, wranglerMelee } from './wranglerAI'
 import { witnessedOffense } from './career'
@@ -5,6 +7,11 @@ import { nwInvulnerable, nwKilled, releaseNW } from './watchAI'
 import { provokeMoths } from './moths'
 import { mothEggSwing, mothHurt } from './mothAI'
 import { provokeHound } from './houndAI'
+import { tinyKillGuard, tinyStruck } from './tinyAI'
+import { thingKillGuard, thingMeleePart, thingCut, thingStruck } from './thingAI'
+import { camoHurt, camoProjectileLanded, camoSound } from './camoAI' // [L8-camo]
+import { curabiturKilled } from './curabiturAI' // [L8-curabitur]
+import { arachnidHurt, arachnidFireHit, arachnidExplosion, arachnidSquirted } from './arachnidAI' // [L8-arachnid]
 // v53：战斗/投掷/击退 + 伤害/死亡结算 + 粒子生成 —— 自 engine.ts 拆分，逻辑逐语句搬运。
 import { ITEMS } from '../content/items'
 import { bandOfZ, bandOfPlayerZ, groundHeightAt, wallAt, structBlocksSight, l11MapWater } from '../world/mapgen'
@@ -75,6 +82,7 @@ function mpDrop(eng: Engine, id: number, it: string, x: number, y: number) {
  *  实体与玩家几乎重合时 atan2 方向退化，旧判定会永远 miss，这就是"近身打不到"的根因） */
 export function canHit(eng: Engine, e: Entity): boolean {
   const p = eng.player
+  if (e.def.type === 'thething') return thingMeleePart(eng, e) !== null
   if (e.def.type === 'arms' && !armsHittable(e)) return false // 手臂：缩在管内 / 被赶走时打不到
   if (e.dead || (e.disguised && e.disguised !== 'human')) return false // v77：穿着人皮的窃皮者是真实的身体，可以被击中
   const d = Math.hypot(e.x - p.x, e.y - p.y)
@@ -152,6 +160,11 @@ function startAttackAnimation(eng: Engine, kind: Engine['attackAnimKind'], durat
 }
 
 export function killCheck(eng: Engine, e: Entity) {
+  if (thingKillGuard(eng, e)) return
+  if (tinyKillGuard(eng, e)) return // Tiny cannot die or drop loot; attacks provoke it.
+  if (lightguideHit(eng, e)) return
+  if (e.def.type === 'arachnid' && arachnidHurt(eng, e)) return
+  if(e.def.type==='burster'&&bursterKillGuard(eng,e))return
   if (isWrangler(e.def.type) && wranglerKillGuard(e)) return
   if (nwInvulnerable(e.def.type)) { e.hp = e.def.hp; return } // 观察者 / 残缺者：常规方式杀不死
   if (armsKillGuard(eng, e)) return // 手臂：永不死亡、不计击杀——血量清零 = 被赶走 90–120s 后回满
@@ -159,10 +172,12 @@ export function killCheck(eng: Engine, e: Entity) {
   skinStealerHit(eng, e)
   if(!e.dead){provokeMoths(eng,e);mothHurt(eng,e,true)}
   provokeHound(eng,e)
+  camoHurt(eng, e) // [L8-camo] 迷彩爬行者受击：播 hit、记下玩家位置、首次受击召唤同伴
   dullerHurt(eng,e)
   if (e.hp > 0 || e.dead) return
   const p = eng.player, m = eng.map!
   e.dead = true; e.deathT = 1.4
+  curabiturKilled(eng, e) // [L8-curabitur] 受眷鸟：坠落尸体停留 9s + 掉落受眷胶
   if (e.def.type === 'clump') releaseClumpPlayer(eng, e)
   if (e.def.type === 'strider') nwKilled(eng, e)
   if (e.def.type === 'nguithr') nguithrKilled(eng, e) // 掉落镇静腺；释放被它重度镇静的玩家
@@ -258,7 +273,7 @@ export function attack(eng: Engine) {
 export interface MeleeStrike { kind: string; heavy: boolean; broken: boolean; targets: number; stun: number; backstab?: number; reach: number }
 /** 一次近战结算（空手/旧路径立即调用；五把近战武器在前摇结束时由 engine/melee.ts 调用）。 */
 export function strike(eng: Engine, dmgIn: number, melee?: MeleeStrike): { hit: boolean; wall: boolean } {
-  const p = eng.player, m = eng.map!
+  const p = eng.player, m = eng.map!, held = p.hotbar[p.selected]
   if (melee) audio.swing()
   // 目标数限制：只取最近的 N 个可命中实体（木板 3，其余 1）
   let allowed: Set<Entity> | null = null
@@ -278,23 +293,16 @@ export function strike(eng: Engine, dmgIn: number, melee?: MeleeStrike): { hit: 
   let hit = false
   let blockedJerry = false // v47：教化约束——被拦下的对鹉主挥击（提示「你下不去手」）
   for (const e of m.entities) {
-    // v58：七层之物——头部之后的体节可被击中：伤害大减，但能迟滞它转头/转身
-    let thingBody = false
-    if (e.def.type === 'thething' && !e.dead && !e.disguised && !eng.canHit(e)) {
-      const reach = eng.attackReach(e)
-      for (let i = 0; i < 18 && !thingBody; i++) { // 与渲染侧 18 节、2.16m 节距一致（转弯时仍用直链作保守命中近似）
-        const bx = e.x - Math.cos(e.facing) * (2.2 + i * 2.16), by = e.y - Math.sin(e.facing) * (2.2 + i * 2.16)
-        const bd = Math.hypot(bx - p.x, by - p.y)
-        if (bd > reach || Math.abs(e.z - p.z) >= 2.2) continue
-        if (bd >= 0.9) {
-          const ang2 = Math.atan2(by - p.y, bx - p.x)
-          let diff2 = Math.abs(ang2 - p.facing)
-          if (diff2 > Math.PI) diff2 = Math.PI * 2 - diff2
-          if (diff2 > 1.1) continue
-        }
-        thingBody = true
-      }
-      if (!thingBody) continue
+    // [thing] 七层之物：按简化跟随链的头部/躯干胶囊判定命中；拿刀=割肉，其它武器=不掉血、转头迟滞、打醒（thingAI）
+    const thingBody = false // 旧版体节减伤路径已由 thingAI 接管，保留变量供下方旧分支编译
+    if (e.def.type === 'thething' && !e.dead && !e.disguised) {
+      const part = thingMeleePart(eng, e)
+      if (!part) continue
+      recordEntityEncounter(e)
+      hit = true
+      if (held?.type === 'knife') thingCut(eng, e, part)
+      else thingStruck(eng, e)
+      continue
     } else if (!eng.canHit(e)) continue
     if (allowed && !allowed.has(e) && !thingBody) continue
     const edmg = dmgFor(e)
@@ -318,6 +326,8 @@ export function strike(eng: Engine, dmgIn: number, melee?: MeleeStrike): { hit: 
       continue
     }
     if (isWrangler(e.def.type) && wranglerMelee(eng, e)) { hit = true; continue }
+    if(e.def.type==='burster'){bursterMelee(eng,e,edmg,!!melee?.heavy);hit=true;eng.provoked=true;continue}
+    if (e.def.type === 'tiny') { tinyStruck(eng, e); hit = true; eng.provoked = true; continue }
     if (e.def.type === 'partygoer') {
       // 派对客：按准星打中的部位结算（面条臂 / 头脸 / 躯干），胸甲闭合时躯体减伤 90%，倒地后只能用火烧尽
       const dir = crosshairDirection(), off = seatedEyeOffset(eng)
@@ -461,16 +471,17 @@ export function throwHeld(eng: Engine, type: string) {
 /** 滋水枪储罐容量（份数）：9 瓶 × 每瓶 3 份 = 27 */
 export const SQUIRT_CAP = 27
 /** 往滋水枪储罐装入 1 瓶液体（3 份喷射量；储罐只能装一种液体，清水无需对应物品） */
-export function loadSquirt(eng: Engine, liquid: 'water' | 'almond' | 'cashew' | 'liquidpain'): boolean {
+export function loadSquirt(eng: Engine, liquid: 'water' | 'almond' | 'cashew' | 'liquidpain' | 'acid'): boolean {
   if (eng.handsStowed||(nguithrInputLock(eng)||armsInputLock(eng))) return false
-  const NAME = { water: '清水', almond: '杏仁水', cashew: '腰果水', liquidpain: '液态痛苦' } as const
+  const NAME = { water: '清水', almond: '杏仁水', cashew: '腰果水', liquidpain: '液态痛苦', acid: '酸液' } as const
   if (eng.squirtTank !== 'none' && eng.squirtTank !== liquid) {
     eng.msg(`储罐里还有别的液体——喷完或喝完才能换。`, 'system')
     return false
   }
   if (eng.squirtAmmo >= SQUIRT_CAP) { eng.msg(`储罐已经装满了。（${SQUIRT_CAP}/${SQUIRT_CAP}）`, 'system'); return false }
-  if (liquid !== 'water' && !eng.hasItem(liquid)) { eng.msg(`背包里没有${NAME[liquid]}。`, 'system'); return false }
-  if (liquid !== 'water') eng.consumeItem(liquid)
+  const src=liquid==='acid'?'acidcallus':liquid
+  if (liquid !== 'water' && !eng.hasItem(src)) { eng.msg(`背包里没有${NAME[liquid]}。`, 'system'); return false }
+  if (liquid !== 'water') eng.consumeItem(src)
   eng.squirtTank = liquid
   eng.squirtAmmo = Math.min(SQUIRT_CAP, eng.squirtAmmo + 3)
   audio.pickup()
@@ -482,7 +493,7 @@ export function loadSquirt(eng: Engine, liquid: 'water' | 'almond' | 'cashew' | 
 export function clearSquirt(eng: Engine) {
   if (eng.handsStowed||(nguithrInputLock(eng)||armsInputLock(eng))) return
   if (eng.squirtTank === 'none') { eng.msg('储罐本来就是空的。', 'system'); return }
-  const NAME = { water: '清水', almond: '杏仁水', cashew: '腰果水', liquidpain: '液态痛苦' } as const
+  const NAME = { water: '清水', almond: '杏仁水', cashew: '腰果水', liquidpain: '液态痛苦', acid: '酸液' } as const
   eng.msg(`倒空了储罐里的${NAME[eng.squirtTank]}（${eng.squirtAmmo} 份残液）。`, 'system')
   eng.squirtTank = 'none'
   eng.squirtAmmo = 0
@@ -521,6 +532,7 @@ export function shootChocolate(eng: Engine) {
   const p = eng.player
   if (!eng.dev.noAttackCooldown && eng.chocoCd > 0) return
   eng.chocoCd = eng.dev.noAttackCooldown ? 0 : 0.22
+  camoSound(eng, eng.player.x, eng.player.y, 14) // [L8-camo] 枪声
   audio.swing()
   armsGunshot(eng) // 开枪声：通风管里的手臂听得见
   const aim = crosshairDirection()
@@ -561,8 +573,8 @@ export function squirt(eng: Engine) {
   }
   eng.squirtAmmo--
   audio.swing()
-  const dmg = eng.squirtTank === 'liquidpain' ? 60 : eng.squirtTank === 'cashew' ? 20 : 8 // 液态痛苦：腐蚀性高伤
-  const pc = eng.squirtTank === 'liquidpain' ? '#d94a3a' : eng.squirtTank === 'cashew' ? '#c9a05a' : eng.squirtTank === 'almond' ? '#c9e8a0' : '#9adfff'
+  const dmg = eng.squirtTank === 'liquidpain' ? 60 : eng.squirtTank === 'acid' ? BURSTER.acidShot : eng.squirtTank === 'cashew' ? 20 : 8 // 液态痛苦：腐蚀性高伤；酸液：中等直伤 + 持续腐蚀
+  const pc = eng.squirtTank === 'acid' ? '#c9d83a' : eng.squirtTank === 'liquidpain' ? '#d94a3a' : eng.squirtTank === 'cashew' ? '#c9a05a' : eng.squirtTank === 'almond' ? '#c9e8a0' : '#9adfff'
   // 三维水线：实际命中、墙地遮挡与画面特效全部沿同一条准星射线。
   const aim = crosshairDirection()
   const flat = Math.hypot(aim.x, aim.y) || 1
@@ -592,9 +604,12 @@ export function squirt(eng: Engine) {
       t: 0, life: 0.3, color: pc, size: 1.4, z: tz,
     })
   }
-  if (hitEnt) {
+  if (hitEnt && hitEnt.def.type === 'burster') {
+    bursterSquirt(eng, hitEnt, eng.squirtTank) // 爆酸者：清水让它僵直，杏仁水重度灼伤
+    audio.hit()
+  } else if (hitEnt) {
     const e = hitEnt
-    if (eng.squirtTank !== 'water') {
+    if (e.def.type === 'arachnid' && arachnidSquirted(eng, e, eng.squirtTank)) { /* [L8-arachnid] 螨群被泼散 */ } else if (eng.squirtTank !== 'water') {
       eng.provoked = true // v23：主动挑衅解除「Level 11 Effect」的被动状态
       if (!mpHurtEntity(eng, e, dmg)) { // v59：联机实体伤害走房主结算
         e.hp -= dmg
@@ -605,12 +620,13 @@ export function squirt(eng: Engine) {
       e.stunT = 0.4
       audio.hit()
       if (eng.squirtTank === 'almond' && e.def.type === 'duller' && !e.dead) dullerSquirted(eng, e) // v63：钝人厌恶杏仁水
-      eng.msg(eng.squirtTank === 'liquidpain' ? `水线正中${e.def.name}——液态痛苦嘶嘶地腐蚀着它的表皮。` : eng.squirtTank === 'cashew' ? `水线正中${e.def.name}——苦涩的腰果水把它灼得发颤。` : `水线正中${e.def.name}，甜腻的杏仁水四溅。`, 'system')
+      if (eng.squirtTank === 'acid' && !e.dead) acidBurnEntity(eng, e) // 爆酸者酸液：命中后持续腐蚀
+      eng.msg(eng.squirtTank === 'acid' ? `黄色酸线正中${e.def.name}——它的表皮冒起白烟，开始被腐蚀。` : eng.squirtTank === 'liquidpain' ? `水线正中${e.def.name}——液态痛苦嘶嘶地腐蚀着它的表皮。` : eng.squirtTank === 'cashew' ? `水线正中${e.def.name}——苦涩的腰果水把它灼得发颤。` : `水线正中${e.def.name}，甜腻的杏仁水四溅。`, 'system')
     } else {
       eng.msg(`水线滋了${e.def.name}一身清水——什么效果也没有。`, 'system')
     }
   } else {
-    eng.msg(eng.squirtTank === 'water' ? '你喷出一道清水——什么效果也没有。' : eng.squirtTank === 'liquidpain' ? '你喷出一道淡红色的腐蚀水线。' : eng.squirtTank === 'cashew' ? '你喷出一道苦涩的腰果水线。' : '你喷出一道甜腻的杏仁水线。', 'system')
+    eng.msg(eng.squirtTank === 'water' ? '你喷出一道清水——什么效果也没有。' : eng.squirtTank === 'acid' ? '你喷出一道冒烟的黄色酸线。' : eng.squirtTank === 'liquidpain' ? '你喷出一道淡红色的腐蚀水线。' : eng.squirtTank === 'cashew' ? '你喷出一道苦涩的腰果水线。' : '你喷出一道甜腻的杏仁水线。', 'system')
   }
   if (eng.squirtAmmo <= 0) {
     eng.squirtTank = 'none'
@@ -647,6 +663,12 @@ export function updateProjectiles(eng: Engine, dt: number) {
 export function landProjectile(eng: Engine, pr: Projectile, x: number, y: number) {
   const m = eng.map!
   const kind = ITEMS[pr.type].throw
+  camoProjectileLanded(eng, x, y) // [L8-camo] 所有投掷物落点都会发声，可引开迷彩爬行者
+  const tx = Math.floor(x), ty = Math.floor(y)
+  if (eng.levelDef.id === 7 && tx >= 0 && ty >= 0 && tx < m.w && ty < m.h && m.liquid[ty * m.w + tx] === 1) {
+    audio.splash(0.6)
+    eng.noiseEvent(x, y, 12, true)
+  }
   switch (kind) {
     case 'light': {
       const z=groundHeightAt(m,x,y,bandOfPlayerZ(m,pr.floorZ,x,y))
@@ -667,12 +689,14 @@ export function landProjectile(eng: Engine, pr: Projectile, x: number, y: number
         eng.particles.push({ x, y, vx: Math.cos(a) * 3, vy: Math.sin(a) * 3, t: 0, life: 0.6, color: i % 3 === 0 ? '#e8823c' : '#c93a1e', size: 3 + Math.random() * 3 })
       }
       let n = 0
+      arachnidExplosion(eng, x, y) // [L8-arachnid] 火焰烧掉附近的蛛网
       for (const e of m.entities) {
         if (e.dead || (e.disguised && e.disguised !== 'human')) continue
         const d = Math.hypot(e.x - x, e.y - y)
         if (d > 3.2 || Math.abs(e.z - pr.floorZ) >= 1) continue
         if (e.def.type === 'jerry' && eng.indoctrination > 0) continue // v47：教化约束——投掷波及对鹉主无效
         if (isWrangler(e.def.type)) { if (wranglerFire(eng, e, d)) n++; continue } // 牧蛇：只有幼体会被烧死，死了引来母亲
+        if (e.def.type === 'arachnid' && arachnidFireHit(eng, e, d < 2.2 ? 45 : 20)) { n++; continue }
         if (e.def.type === 'partygoer') { partygoerDamage(eng, e, d < 2.2 ? 45 : 20, 'fire'); e.stunT = Math.max(e.stunT, e.pg?.phase === 'burn' ? 0 : 0.6); n++; continue } // 派对客：皮肤防火；倒地/爬行的「尸体」被点燃即烧尽
         if (!mpHurtEntity(eng, e, d < 2.2 ? 45 : 20)) { e.hp -= d < 2.2 ? 45 : 20; eng.killCheck(e) } // v59：联机走房主结算
         e.stunT = Math.max(e.stunT, 0.6)
@@ -715,20 +739,15 @@ export function landProjectile(eng: Engine, pr: Projectile, x: number, y: number
     case 'lure': { // 氙气玻璃珠：引路者的筑巢材料（可捡回）
       m.items.push({ id: Math.random(), type: pr.type, x, y })
       eng.noiseEvent(x, y, 8, false)
-      let n = 0
-      for (const e of m.entities) {
-        if (e.dead || e.def.type !== 'lightguide') continue
-        e.state = 'investigate'; e.targetX = x; e.targetY = y; e.stateT = 10
-        n++
-      }
+      const n = lightguideLure(eng, x, y) // [L8-lightguide] 附近的向导全部过来守巢（nest_orbit）
       eng.msg(n > 0 ? '玻璃珠滚落在地——蓝绿色的微光朝它聚拢过来。' : '玻璃珠滚落在地，发出清脆的声响。', n > 0 ? 'lore' : 'system')
       break
     }
   }
 }
 
-/** 实体血液种类：v77 窃皮者半透明；v78 悲尸是浓稠的红褐分泌物混着棕色淤泥 */
-export const bloodKind = (e: Entity): boolean | 'wretch' => (e.def.type === 'skinstealer' ? true : e.def.type === 'wretch' ? 'wretch' : false)
+/** 实体血液种类：v77 窃皮者半透明（[L8-lightguide] 微光向导也走半透明碎光，不溅红血）；v78 悲尸是浓稠的红褐分泌物混着棕色淤泥 */
+export const bloodKind = (e: Entity): boolean | 'wretch' => (e.def.type === 'skinstealer' || e.def.type === 'lightguide' ? true : e.def.type === 'wretch' ? 'wretch' : false)
 /** clear：v77 窃皮者的血完全半透明（水样、带一点反光）；'wretch'：v78 悲尸红褐稠液（量多、落得慢）；人类/其他实体为红色 */
 export function bloodParticles(eng: Engine, x: number, y: number, clear: boolean | 'wretch' = false) {
   const wr = clear === 'wretch'

@@ -436,6 +436,7 @@ export function heldHandPose(type: string, box?: HeldBox): HandPose {
     case 'lighter': return VERT([0, -0.01, -0.1], 0.015)
     case 'guncandy': return VERT([0, -0.028, -0.03], 0.02, { trigger: true, ay: [0, 1, 0.12] })
     case 'squirtgun': return VERT([0, -0.125, -0.1], 0.036, { trigger: true, ay: [0, 1, 0.16] })
+    case 'stonekazoo': return KAZOO_HAND_POSE
     default: {
       // 其余物品（瓶/罐/盒/小件）：按包围盒自适应——竖着握住物体下部三分之一，半径取横截面较小半宽，
       // 太粗的物体（>5.5cm）手贴在右后侧托住，不穿进去。
@@ -454,4 +455,19 @@ export function heldHandPose(type: string, box?: HeldBox): HandPose {
 /** 副手：手电（筒身沿 -Z）与打火机（竖持）。 */
 // v72：从下方握住手电：手背朝左下、四指从右侧包上来、拇指搭在左上，前臂往左后下方回到画面外
 export const FLASH_HAND_POSE: HandPose = { at: [0, 0, -0.04], r: 0.034, ax: [0.3, 0.95, 0], ay: [0, 0, -1], fdir: [0.53, -0.8, 0.2] }
+/**
+ * [tiny 收尾] 持石卡祖笛：笛身沿镜头前后方向（笛口朝镜头），右手从右下方握住笛尾最粗的一段——
+ * 握持轴 H.Y 指向镜头（食指在近端、紧贴笛膜座后沿，小指收在出音口外），手背朝右下，前臂往右后下方出画面。
+ * 笛膜座露在食指前方，吹奏时（vmAnimPose 'blow'）整只手把笛口送到嘴边。
+ */
+export const KAZOO_HELD = { z: -0.05, tilt: 0.12, yaw: 0.5 } as const
+const kazooFrame = new THREE.Euler(KAZOO_HELD.tilt, KAZOO_HELD.yaw, 0)
+const kz = (v: V3): V3 => new THREE.Vector3(...v).applyEuler(kazooFrame).toArray() as V3
+export const KAZOO_HAND_POSE: HandPose = {
+  // 笛尾中心：模型 +X 0.045 → 手持组内 z = KAZOO_HELD.z - 0.045，再按手持组的朝向（抬头 tilt、偏航 yaw）转过去
+  at: kz([0, 0, KAZOO_HELD.z - 0.045]),
+  r: 0.027,
+  ax: kz([0.82, -0.57, 0]), ay: kz([0, 0, 1]),
+  fdir: [0.49, 0.84, 0.25], // 画面坐标约 (0.35, -0.5, 1)：往右后下方出画面
+}
 export const LIGHTER_HAND_POSE: HandPose = { at: [0, -0.035, 0], r: 0.017, fdir: [0.25, -0.4, 1] }

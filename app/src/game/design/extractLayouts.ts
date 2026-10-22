@@ -124,7 +124,7 @@ const L0_RAND_ITEM: Record<string, RandMark> = {
   '*:tape': 0.1, 'arch:squirtgun': 0.05, 'manila:almond': 0.7,
 }
 const L1_RAND_STRUCT: Record<string, RandMark> = { // infiniteL1.ts
-  'parking:pillar': 0.8, 'aisle:pillar': true, 'aisle:car': 0.2, 'aisle:rebar': 0.4,
+  'parking:pillar': 0.8,
   'parking:car': true, 'parking:suitcase': 0.5, 'parking:pipes': true,
   'parking:landmark': 0.06, 'storage:landmark': 0.06, 'gothic:landmark': 0.06, // 地标（alpha 0.06 / tom 0.025 / bntg 0.06 / ariane 0.06）
   'storage:crate': true, 'storage:toolbox': 0.7, 'storage:locker': 0.6, 'storage:suitcase': 0.4,

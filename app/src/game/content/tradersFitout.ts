@@ -3,10 +3,10 @@ import type {Structure} from '../core/types'
 import {TRADERS_ROOMS,TRADERS_WALLS,TRADERS_BOUNDS,tradersContains,type TradersRect} from './tradersLayout'
 
 /** Shared authored fit-out and duty anchors: meshes, collision and seated residents agree. */
-export type TradersModel='waiting'|'planter'|'directory'|'queue'|'workstation'|'locker'|'divider'|'waterpoint'|'noticeboard'|'servicebay'|'parcel_cart'|'reception'|'lounge'|'dressing'
+export type TradersModel='waiting'|'planter'|'directory'|'queue'|'workstation'|'locker'|'divider'|'waterpoint'|'noticeboard'|'servicebay'|'parcel_cart'|'reception'|'lounge'|'dressing'|'atm'
 export type TradersActivity='sit'|'desk'|'queue'|'guard'|'work'|'chat'|'walk'
 export interface TradersDuty{id:string;x:number;y:number;facing:number;activity:TradersActivity;label:string;seatHeight?:number;route?:readonly [number,number][]}
-export const TRADERS_SIGN_TEXT=['B.N.T.G.','商人之家','TRADERS KEEP','咨询与导览 / INFORMATION','候场区 / WAITING','公共服务 / SERVICES','取号 · 等候叫号','员工通道 / STAFF','交易保险库 / TRADERS VAULT','货物交接 / DISPATCH','北步行街 / NORTH MALL','南步行街 / SOUTH MALL','库区 A / WAREHOUSE A','库区 B / WAREHOUSE B','库区 C / WAREHOUSE C','库区 D / WAREHOUSE D','冷藏库 / COLD STORE','高安库 / RESTRICTED','饮水与回收 / WATER','休息区 / LOUNGE','办公与登记 / ADMINISTRATION','装卸作业 / LOADING','应急出口 / EXIT','WC','A01','A02','A03','A04','请保持通道畅通'] as const
+export const TRADERS_SIGN_TEXT=['B.N.T.G. / ATM','存款 / DEPOSIT','取款 / CASH','信用点 / CREDIT','银行咨询与账户服务','B.N.T.G.','商人之家','TRADERS KEEP','咨询与导览 / INFORMATION','候场区 / WAITING','公共服务 / SERVICES','取号 · 等候叫号','员工通道 / STAFF','交易保险库 / TRADERS VAULT','货物交接 / DISPATCH','北步行街 / NORTH MALL','南步行街 / SOUTH MALL','库区 A / WAREHOUSE A','库区 B / WAREHOUSE B','库区 C / WAREHOUSE C','库区 D / WAREHOUSE D','冷藏库 / COLD STORE','高安库 / RESTRICTED','饮水与回收 / WATER','休息区 / LOUNGE','办公与登记 / ADMINISTRATION','装卸作业 / LOADING','应急出口 / EXIT','WC','A01','A02','A03','A04','请保持通道畅通'] as const
 const props:Structure[]=[],duties:TradersDuty[]=[]
 const room=(id:string)=>TRADERS_ROOMS.find(r=>r.id===id)!
 function prop(model:TradersModel,id:string,x:number,y:number,w:number,h:number,data:Record<string,unknown>={}){
@@ -29,6 +29,7 @@ for(let i=0;i<6;i++){duty(12+i,97+(i%2)*1.9,69.4+Math.floor(i/2)*1.15,-Math.PI/2
 for(const y of [71,90.5])prop('queue','bank.queue.'+y,97.6,y,3.1,4.5,{height:.95})
 for(const x of [91,112]){prop('waiting','bank.wait.'+x,x,100,3.8,.8,{height:.98,deg:180});prop('planter','bank.green.'+x,x,97.5,1.05,1.05,{height:1.55})}
 prop('servicebay','bank.assessment',106,73.2,4,1.3,{height:1.15,label:'办公与登记 / ADMINISTRATION'})
+for(const [i,x] of [103,107].entries())prop('atm','bank.atm.'+i,x,105.382,1.08,1.04,{height:1.98,deg:180,bntgAtm:1,label:'银行 ATM '+(i+1)})
 prop('directory','bank.tickets',115,90,1.1,.8,{height:1.85,label:'取号 · 等候叫号'})
 for(let i=0;i<8;i++){
  const r=room('N'+String(2+i).padStart(2,'0'));const x=r.x+r.w/2,y=r.y+r.h+3.7
@@ -126,7 +127,7 @@ export function tradersFitoutColliders(s:Structure){
  else if(model==='planter')add(0,0,s.w,s.h,.66)
  else if(model==='queue')for(const x of [-s.w/2,s.w/2])for(const z of [-s.h/2,s.h/2])add(x,z,.17,.17,1)
  else if(model==='lounge'){for(const x of [-1.55,1.55])add(x,0,1.3,2.6,.58);add(0,0,1.1,1.2,.45)}
- else add(0,0,s.w,s.h,model==='divider'?2.15:model==='directory'?2.3:model==='locker'?1.8:model==='waterpoint'?1.4:1.15)
+ else add(0,0,s.w,s.h,model==='divider'?2.15:model==='directory'?2.3:model==='locker'?1.8:model==='waterpoint'?1.4:model==='atm'?1.98:1.15)
  const a=Number(s.data?.deg??0)*Math.PI/180,c=Math.cos(a),sn=Math.sin(a),cx=s.x+s.w/2,cy=s.y+s.h/2
  return pieces.map(p=>{const points=[[-p.w/2,-p.d/2],[-p.w/2,p.d/2],[p.w/2,-p.d/2],[p.w/2,p.d/2]].map(([x,z])=>[cx+(x+p.x)*c+(z+p.z)*sn,cy-(x+p.x)*sn+(z+p.z)*c]);return{x0:Math.min(...points.map(p=>p[0])),x1:Math.max(...points.map(p=>p[0])),y0:Math.min(...points.map(p=>p[1])),y1:Math.max(...points.map(p=>p[1])),bottom:p.bottom,top:p.top,stand:false}})
 }

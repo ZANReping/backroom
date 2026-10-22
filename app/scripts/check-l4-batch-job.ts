@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import * as THREE from 'three'
 import { batchL4Static, batchL4StaticJob } from '../src/game/renderer/l4Batch'
-import { batchL4Static as baseline } from '../.check/l4Batch-baseline'
+import { batchL4Static as baseline } from '../verifier/fixtures/l4Batch-sync-baseline'
 
 let checks=0
 const check=(ok:unknown,label:string)=>{assert.ok(ok,label);checks++}

@@ -1,3 +1,4 @@
+import {buildBursterEntity} from './bursterRender'
 // 实体低模（骨骼式分组：四肢/头独立 pivot，可程序化动画）
 // v14：全实体模型审计+精细化——每种实体专属分支、统一正面=+X、
 // 面部特征 mesh 打 userData.face 标记（验收脚本据此校验朝向质心）。
@@ -11,9 +12,12 @@
 // 新实体请先读这些 case 再动手；设定依据在 entities/ 各定义的 codex 注释里。
 import * as THREE from 'three'
 import { buildWranglerEntity } from './wranglerRender'
-import {buildNpcBoneSpear} from './npcBoneSpear'
+import { buildTinyMesh } from './tinyMesh'
+import { buildThingMesh } from './thingMesh'
 import { planFacelingFace } from './facelingFace'
 import { buildMothMesh } from './mothMeshes'
+import { buildLightguideEntityMesh } from './lightguideRender' // [L8-lightguide]
+import { buildCurabiturEntityMesh } from './curabiturRender' // [L8-curabitur]
 import { buildSmilerMesh } from './smilerMesh'
 import { buildHoundMesh } from './houndMesh'
 import { buildSkinStealerMesh } from './skinStealerMesh'
@@ -32,6 +36,8 @@ import { ENTITIES } from '../entities'
 import { box, cyl, glow, litMaterial, mulberry } from './shared'
 import { buildAvatarModel, fitLegacyAttachments } from './retroAvatar'
 import { randomAvatar } from '../core/avatar'
+import { buildCamoEntity } from './camoRender' // [L8-camo]
+import { buildArachnidEntityMesh } from './arachnidRender' // [L8-arachnid]
 
 // ---------- 实体低模（骨骼式分组：四肢/头独立 pivot，可程序化动画）----------
 // 朝向约定：模型正面 = +X（updateEntities 用 rotation.y = -e.facing 对齐移动/玩家方向）。
@@ -55,6 +61,10 @@ export interface EntityMeshOpts {
   arachnidMorph?: 'spider' | 'scorpion' | 'tick' | 'mite'
   arachnidBreed?: number
   herbivore?: boolean
+  curabiturSex?: 'female'|'male'
+  curabiturSeed?: number
+  arachnidVariant?: string // [L8-arachnid] 重制变种
+  arachnidMother?: boolean // [L8-arachnid] 幼蛛潮带母蛛
   smilerKind?: import('../entities/smilers').SmilerKind // v61：笑魇变种
   houndNeutral?: boolean // v62：L11 中立猎犬
   wretchKind?: import('../entities/wretches').WretchKind
@@ -153,6 +163,9 @@ export function buildNguithrEntityMesh(scale = 1, count = 4, seed = 16): THREE.G
   return grp
 }
 export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Group {
+  if (type === 'curabitur') return buildCurabiturEntityMesh(opts)
+  if (type === 'lightguide') return buildLightguideEntityMesh(opts?.seed ?? 0)
+  if(type==='burster')return buildBursterEntity(opts?.seed??0)
   if (type === 'arms') return buildArmsEntityMesh(opts?.arms?.count,opts?.arms?.seed) // 手臂重制：风口 + 1–3 条蒙皮长臂（armsMesh），动画由 renderer.updateArmsMesh 按 AI 状态驱动
   if(type==='jerry')return buildJerryMesh()
   if (type === 'nguithr') return buildNguithrEntityMesh(opts?.nguithr?.scale,opts?.nguithr?.sacs.length,opts?.nguithr?.seed) // 重制 Nguithr'xurh：避日目蒙皮模型（58 骨，3 次绘制）+ 程序化动画；巢由渲染层按 AI 的巢种子补建
@@ -163,10 +176,14 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
   if (type === 'clump') return buildClumpMesh(!!opts?.l3clump, opts?.seed ?? 0)
   if (type === 'duller') return buildDullerMesh(opts?.seed ?? 0) // v63：重制钝人
   if (type === 'dryshrimp') return buildShrimpMesh(opts?.seed ?? 0) // v81：重制旱虾（奇虾体型，鳍片划水着色器动画）
+  if (type === 'camocrawler') return buildCamoEntity(opts?.seed) // [L8-camo] 重制四臂潜伏者（共享伪装统一量 + 手上巨石）
+  if (type === 'arachnid') return buildArachnidEntityMesh(opts) // [L8-arachnid] 重制 17 变种（arachnidMesh）
   if (type === 'hound') return buildHoundMesh(!!opts?.houndNeutral, opts?.seed ?? 0) // v62：重制猎犬
   if (type === 'corpserat') return buildRatMesh(opts?.ratMorph ?? (opts?.capybara ? 'capybara' : opts?.ceilingCrawler ? 'cave' : 'common'), opts?.seed ?? 0, !!opts?.ceilingCrawler)
   if (type === 'wretch') return buildWretchMesh(opts?.seed ?? 0, opts?.wretchKind)
   if (type === 'skinstealer') return buildSkinStealerMesh(opts?.seed ?? 0) // v77：重制窃皮者（真身）
+  if (type === 'thething') return buildThingMesh() // [thing] 重制七层之物（Entity 20）：黑巨口鱼式头 + 28 节鳞甲躯干
+  if (type === 'tiny') return buildTinyMesh() // [tiny] 重制小小（Entity 720，披鲨皮的瘦长类人形）
   if (type === 'smiler') return buildSmilerMesh(opts?.smilerKind ?? 'common', opts?.seed ?? 0) // v61：重制笑魇（含 5 变种）
   const grp = new THREE.Group()
   grp.userData.entityType = type
@@ -489,109 +506,6 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
       face(gum)
       grp.add(box(0.27, 0.022, 0.03, '#14171c', 0, 1.7, 0.135)) // 上唇
       grp.add(box(0.27, 0.022, 0.03, '#14171c', 0, 1.56, 0.135)) // 下唇
-      break
-    }
-    case 'tiny': { // 小小（v58 重制 · Entity 720 参照 backrooms-wiki-cn）：巨型类人形——
-      // 厚焦油罩袍 + 焦油层下两栖式生物荧光斑点 + 橡胶质坚韧皮肤 + 面部甲壳（终段张开露尖牙巨口）
-      // + 巨物尸骨长矛 + 利爪。原生 +X；眼在暗处变亮、近水面暗淡（renderer 按深度驱动 eyeMats）。
-      const skin = '#6f7d6b', skinD = '#525f4e', tar = '#14171c', tarL = '#232b34'
-      const boneD = '#b0a586', faceC = '#d8c9a8', cara = '#39404a'
-      // 眼睛材质（自发光强度由 renderer 按水深/光照写入——暗处亮、水面几乎无光）
-      const eyeMat = emat('#9fd8e8', 0.25)
-      const spotMat = emat('#7fd8e8', 0.5)
-      grp.userData.eyeMats = [eyeMat]
-      grp.userData.spotMat = spotMat
-      // ---- 腿（髋部 pivot；泳姿由 renderer 驱动） ----
-      for (const zs of [-1, 1]) {
-        const leg = jointX(0.11, 0.52, 0.13, skin, 0, 1.06, zs * 0.1, zs < 0 ? 'legL' : 'legR', zs * 0.06)
-        const shin = tip(leg, 0.09, 0.5, 0.11, skinD, -0.5)
-        tip(shin, 0.05, 0.3, 0.02, tar, -0.22, 0.07) // 小腿后侧蹼刃
-        for (let c = 0; c < 3; c++) tip(shin, 0.05, 0.1, 0.03, tar, -0.52, (c - 1) * 0.05) // 爪趾
-        if (zs > 0) tip(leg, 0.03, 0.06, 0.03, '#7fd8e8', -0.3, 0.08).material = spotMat // 大腿荧光斑
-      }
-      // ---- 躯干（焦油罩袍） ----
-      const torso = new THREE.Group()
-      torso.position.set(0, 1.42, 0)
-      torso.add(new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.62, 0.24), lam(skin))) // 精瘦胸廓
-      const waist = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.16, 0.2), lam(skinD)) // 腰
-      waist.position.set(0, -0.42, 0)
-      torso.add(waist)
-      const cowl = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.3, 0.34), lam(tar)) // 焦油罩肩
-      cowl.position.set(-0.05, 0.22, 0)
-      torso.add(cowl)
-      for (let i = 0; i < 4; i++) { // 罩袍下垂的焦油条
-        const strip = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.5 + (i % 2) * 0.18, 0.07), lam(i % 2 ? tar : tarL))
-        strip.position.set(-0.16 - (i % 2) * 0.04, -0.28 - (i % 2) * 0.08, (i - 1.5) * 0.09)
-        strip.rotation.z = 0.12
-        torso.add(strip)
-      }
-      // 荧光斑点（焦油层下，躯干 +X 侧与两侧）
-      const spotPos: [number, number, number][] = [[0.16, 0.12, 0.07], [0.16, -0.08, -0.06], [0.15, -0.26, 0.04], [0.02, 0.2, 0.18], [-0.02, -0.16, 0.16], [0.02, 0.02, -0.17]]
-      for (const [sx, sy, sz] of spotPos) {
-        const sp = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.05, 0.035), spotMat)
-        sp.position.set(sx, sy, sz)
-        torso.add(sp)
-      }
-      tag(torso, 'torso')
-      // ---- 手臂（肩部 pivot；利爪；右臂持骨矛） ----
-      for (const zs of [-1, 1]) {
-        const arm = jointX(0.1, 0.46, 0.11, skin, 0.02, 1.92, zs * 0.26, zs < 0 ? 'armL' : 'armR', zs * 0.1)
-        const fore = tip(arm, 0.09, 0.44, 0.1, skinD, -0.44)
-        for (let c = 0; c < 3; c++) tip(fore, 0.03, 0.16, 0.03, boneD, -0.52, (c - 1) * 0.045) // 利爪
-        tip(arm, 0.03, 0.06, 0.03, '#7fd8e8', -0.2, 0.07).material = spotMat // 手臂荧光斑
-      }
-      // ---- 骨矛（挂 armR 末端；随攻击前刺） ----
-      const spear = buildNpcBoneSpear()
-      parts.armR!.add(spear)
-      tag(spear, 'spear')
-      // ---- 头（面部甲壳 + 眼 + 甲壳下尖牙巨口 + 焦油头冠） ----
-      const hg = new THREE.Group()
-      hg.position.set(0.04, 2.34, 0)
-      hg.add(cyl(0.07, 0.09, 0.18, skinD, 0, -0.14, 0, 6)) // 颈
-      const skull = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.3, 0.24), lam(skin))
-      hg.add(skull)
-      const faceplate = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.24, 0.18), lam(faceC)) // 面部浅色壳底
-      faceplate.position.set(0.13, 0.01, 0)
-      hg.add(faceplate)
-      for (const zs of [-1, 1]) { // 双眼（+X 面）
-        const eye = face(new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.055, 0.05), eyeMat))
-        eye.position.set(0.165, 0.05, zs * 0.055)
-        hg.add(eye)
-      }
-      // 尖牙巨口（甲壳下；终段张口时可见）
-      const mouth = new THREE.Group()
-      mouth.position.set(0.14, -0.07, 0)
-      mouth.add(new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.09, 0.13), lam('#1c1016')))
-      for (let i = 0; i < 6; i++) {
-        const f1 = face(glow(0.02, 0.045, 0.02, '#e8e2d2', 0.03, 0.045, (i / 5 - 0.5) * 0.11))
-        const f2 = face(glow(0.02, 0.045, 0.02, '#e8e2d2', 0.03, -0.045, (i / 5 - 0.5) * 0.11))
-        mouth.add(f1, f2)
-      }
-      mouth.scale.setScalar(0.01) // 平时收起
-      hg.add(mouth)
-      tag(mouth, 'mouth')
-      // 面部甲壳（左右两片；终段向两侧张开）
-      for (const zs of [-1, 1]) {
-        const plate = new THREE.Group()
-        plate.position.set(0.1, 0.02, zs * 0.1)
-        const pl = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.3, 0.06), lam(cara))
-        pl.position.set(0.02, 0, -zs * 0.055)
-        plate.add(pl)
-        hg.add(plate)
-        tag(plate, zs < 0 ? 'carL' : 'carR')
-      }
-      // 焦油头冠（向后上方扫出的标志性罩冠）
-      const fin = new THREE.Group()
-      fin.position.set(-0.1, 0.12, 0)
-      for (let i = 0; i < 3; i++) {
-        const seg = new THREE.Mesh(new THREE.BoxGeometry(0.34 - i * 0.07, 0.1, 0.2 - i * 0.04), lam(i === 1 ? tarL : tar))
-        seg.position.set(-0.12 - i * 0.16, 0.1 + i * 0.09, 0)
-        seg.rotation.z = 0.5 + i * 0.25
-        fin.add(seg)
-      }
-      hg.add(fin)
-      tag(fin, 'tarfin')
-      tag(hg, 'head')
       break
     }
     case 'thething': { // Entity 20「七层之物」：近乎无尽的腐烂巨鳗（原生正面 +X）
@@ -941,79 +855,8 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
       hold.add(hg); tag(hg, 'head')
       break
     }
-    case 'camocrawler': { // 迷彩爬行者：失明（头部无眼，靠回声定位）；四条手臂——前一对着地爬行、
-      //                    后一对更粗壮专职投掷（抓着一块石头）；低伏四足姿态。（原生 +X）
-      const cc1 = '#5c5a4a', cc2 = '#4c4a3c', cc3 = '#6a6754'
-      const body = new THREE.Group()
-      body.position.set(0, 0.72, 0)
-      body.add(box(0.92, 0.4, 0.5, cc1, 0, 0, 0))
-      body.add(box(0.52, 0.46, 0.48, cc2, -0.5, -0.05, 0)) // 粗壮的后胯（投掷发力）
-      body.add(box(0.36, 0.32, 0.36, cc1, 0.5, 0.02, 0)) // 肩带
-      for (const [px, py, pz, s] of [[0.2, 0.2, 0.1, 0.2], [-0.3, 0.18, -0.14, 0.16], [0.05, 0.16, 0.24, 0.14]]) {
-        body.add(box(s * 1.6, 0.05, s, cc3, px, py, pz)) // 岩色迷彩斑块
-      }
-      tag(body, 'torso')
-      const hg = new THREE.Group()
-      hg.position.set(0.8, 0.68, 0)
-      hg.add(box(0.3, 0.27, 0.27, cc3, 0, 0, 0)) // 光滑无特征的头（失明，无眼）
-      hg.add(box(0.17, 0.14, 0.2, cc3, 0.2, -0.05, 0))
-      for (const z of [-0.07, 0.07]) hg.add(face(box(0.05, 0.06, 0.06, '#171512', 0.28, 0.02, z))) // 回声定位孔
-      hg.add(box(0.1, 0.05, 0.2, '#241c16', 0.24, -0.13, 0)) // 口裂
-      for (let i = 0; i < 4; i++) hg.add(face(glow(0.02, 0.045, 0.02, '#ded4bc', 0.27, -0.14, (i / 3 - 0.5) * 0.14)))
-      for (const z of [-0.14, 0.14]) { // 一对大耳（回声定位）
-        const ear = box(0.06, 0.3, 0.22, cc2, -0.02, 0.22, z)
-        ear.rotation.x = z > 0 ? 0.3 : -0.3
-        ear.rotation.z = -0.2
-        hg.add(ear)
-      }
-      tag(hg, 'head')
-      jointX(0.12, 0.64, 0.13, cc2, 0.55, 0.66, -0.2, 'armL', -0.12) // 前一对手臂：着地爬行
-      jointX(0.12, 0.64, 0.13, cc2, 0.55, 0.66, 0.2, 'armR', 0.12)
-      for (const a of [parts.armL, parts.armR]) {
-        tip(a, 0.14, 0.07, 0.16, cc3, -0.64, 0.04)
-        for (let i = 0; i < 3; i++) a.add(box(0.1, 0.03, 0.03, '#33312a', 0, -0.66, (i - 1) * 0.05))
-      }
-      jointX(0.15, 0.6, 0.16, cc1, -0.45, 0.96, -0.24, 't1', -0.18) // 后一对手臂：更粗壮，专职投掷
-      jointX(0.15, 0.6, 0.16, cc1, -0.45, 0.96, 0.24, 't2', 0.18)
-      parts.t1.rotation.x = 1.9 // 抬起前伸的投掷姿（renderer 不驱动 t1/t2，预摆姿保留）
-      parts.t2.rotation.x = 1.9
-      for (const a of [parts.t1, parts.t2]) tip(a, 0.16, 0.1, 0.17, cc3, -0.62)
-      const rock = new THREE.Mesh(new THREE.IcosahedronGeometry(0.24, 0), lam('#6e6a5e')) // 抓着的巨石
-      rock.position.set(0.12, 1.22, 0)
-      rock.rotation.set(0.4, 0.8, 0.3)
-      grp.add(rock)
-      jointX(0.15, 0.52, 0.16, cc2, -0.58, 0.52, -0.22, 'legL', -0.1) // 短后肢（支撑后半身）
-      jointX(0.15, 0.52, 0.16, cc2, -0.58, 0.52, 0.22, 'legR', 0.1)
-      for (const l of [parts.legL, parts.legR]) tip(l, 0.15, 0.08, 0.2, cc3, -0.52, 0.03)
-      break
-    }
-    case 'lightguide': { // 引路者（Entity 35）：发光的「缀满宝石的星星」——核心 + 8 根向外辐射的
-      //                   发光尖刺，全部蓝绿色 MeshBasicMaterial，直径约 0.4m，悬浮。（原生 +X）
-      const gm = basic('#66e0d0'), gm2 = basic('#8ff0e2'), gm3 = basic('#eafff8')
-      const core = new THREE.Mesh(new THREE.IcosahedronGeometry(0.1, 0), gm)
-      core.position.set(0, 1.2, 0)
-      tag(core, 'core') // renderer 驱动核心自转，尖刺作为子级一起翻滚
-      const up = new THREE.Vector3(0, 1, 0)
-      const dirs: [number, number, number][] = [
-        [1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1], [0.7, 0.7, 0], [-0.7, -0.7, 0],
-      ]
-      dirs.forEach((d, i) => {
-        const geo = new THREE.ConeGeometry(0.036, 0.17, 4)
-        geo.translate(0, 0.085, 0) // 锥底贴核心、锥尖朝外
-        const sp = new THREE.Mesh(geo, i % 2 ? gm : gm2)
-        const v = new THREE.Vector3(d[0], d[1], d[2]).normalize()
-        sp.position.copy(v.clone().multiplyScalar(0.1))
-        sp.quaternion.setFromUnitVectors(up, v)
-        core.add(sp)
-        if (i === 0) face(sp) // +X 尖刺定义朝向
-      })
-      for (const [gx, gy] of [[0.07, 0.07], [-0.07, 0.07], [0.07, -0.07], [-0.07, -0.07]]) { // 缀满的宝石
-        const gem = new THREE.Mesh(new THREE.IcosahedronGeometry(0.03, 0), gm3)
-        gem.position.set(gx, gy, 0)
-        core.add(gem)
-      }
-      break
-    }
+    // [L8-camo] 'camocrawler' 已在函数开头交给 camoRender.buildCamoEntity（旧版方块模型与抓着的石头移除）
+    // [L8-lightguide] 旧的「宝石星星」网格已移除：'lightguide' 在函数开头交给 lightguideRender.buildLightguideEntityMesh
     case 'curabitur': { // 受眷鸟（Entity 37）：退化悬浮鸟体 + 低密度荧光胶囊 + 黏性诱饵长舌（原生 +X）
       const feather = lam('#786552'), featherLight = lam('#9a846d')
       const body = sph(0.43, '#786552', 12, feather)
@@ -1091,83 +934,7 @@ export function buildEntityMesh(type: string, opts?: EntityMeshOpts): THREE.Grou
       break
     }
     // Nguithr'xurh（Entity 16）：已在函数开头交给 nguithrMesh/nguithrAnim（旧 12 腿方块简模移除，见 NGUITHR-REMAKE.md）
-    case 'arachnid': {
-      const morph = opts?.arachnidMorph ?? 'spider'
-      const breed = Math.max(0, Math.floor(opts?.arachnidBreed ?? 0))
-      const herb = !!opts?.herbivore
-      const palettes = [
-        ['#3d322a', '#6b5745', '#171411'], ['#5b3529', '#9a6747', '#281914'],
-        ['#24272a', '#626a70', '#0e1012'], ['#554c31', '#9c8b50', '#211d14'],
-        ['#3d293e', '#7a5571', '#171018'], ['#273c32', '#58745f', '#101913'],
-        ['#6a5f56', '#b2a18d', '#27221f'], ['#402c23', '#7d3b2b', '#17100d'],
-      ]
-      const [dark, light, nearBlack] = palettes[breed % palettes.length]
-      const body = new THREE.Group()
-      const legCount = 4
-      const addEyes = (holder: THREE.Object3D, x: number, y: number, spread: number, n = 4) => {
-        for (let i = 0; i < n; i++) {
-          const eye = sph(0.012 + (i < 2 ? 0.005 : 0), herb ? '#8fb887' : '#d06b39', 6, basic(herb ? '#8fb887' : '#d06b39'))
-          eye.position.set(x, y + (i >= 2 ? 0.025 : 0), (i % 2 ? 1 : -1) * spread * (i >= 2 ? 0.55 : 1))
-          eye.userData.face = 1; holder.add(eye)
-        }
-      }
-      const addLegs = (span: number, length: number, thick: number) => {
-        for (let side = -1; side <= 1; side += 2) for (let i = 0; i < legCount; i++) {
-          const root = new THREE.Group()
-          root.position.set(0.18 - i * 0.14, 0.12, side * span * 0.42)
-          root.rotation.y = side * (0.22 + (i - 1.5) * 0.14)
-          root.userData.baseRy = root.rotation.y
-          const femur = box(length * 0.55, thick, thick, i % 2 ? light : dark, length * 0.25, 0.025, side * length * 0.23)
-          femur.rotation.y = side * -0.62; root.add(femur)
-          const shin = box(length * 0.62, thick * 0.82, thick * 0.82, nearBlack, length * 0.48, -0.055, side * length * 0.54)
-          shin.rotation.y = side * -0.88; shin.rotation.z = side * 0.04
-          root.add(shin)
-          body.add(root); tag(root, side < 0 ? `legL${i}` : `legR${i}`)
-        }
-      }
-      if (morph === 'scorpion') {
-        const abdomen = new THREE.Mesh(new THREE.DodecahedronGeometry(0.18, 1), lam(dark))
-        abdomen.scale.set(1.45, 0.62, 1); abdomen.position.set(-0.08, 0.18, 0); body.add(abdomen); tag(abdomen, 'abdomen')
-        const ceph = new THREE.Mesh(new THREE.DodecahedronGeometry(0.14, 1), lam(light))
-        ceph.scale.set(1.25, 0.55, 1); ceph.position.set(0.2, 0.17, 0); body.add(ceph); tag(ceph, 'ceph')
-        addEyes(ceph, 0.13, 0.025, 0.055, 4); addLegs(0.2, 0.34, 0.026)
-        for (const side of [-1, 1]) {
-          const claw = new THREE.Group(); claw.position.set(0.29, 0.16, side * 0.1)
-          const arm = box(0.24, 0.035, 0.045, light, 0.1, 0, side * 0.05); arm.rotation.y = side * -0.35; claw.add(arm)
-          const palm = box(0.12, 0.065, 0.08, dark, 0.25, 0, side * 0.11); claw.add(palm)
-          const p1 = box(0.13, 0.028, 0.03, nearBlack, 0.34, 0.035, side * 0.085); p1.rotation.z = -0.45; claw.add(p1)
-          const p2 = box(0.13, 0.028, 0.03, nearBlack, 0.34, -0.035, side * 0.135); p2.rotation.z = 0.45; claw.add(p2)
-          body.add(claw); tag(claw, side < 0 ? 'clawL' : 'clawR')
-        }
-        const tail = new THREE.Group(); tail.position.set(-0.23, 0.2, 0)
-        for (let i = 0; i < 5; i++) {
-          const seg = cyl(0.055 - i * 0.005, 0.065 - i * 0.005, 0.14, i % 2 ? dark : light, -0.07 * i, 0.08 + i * 0.115, 0, 7)
-          seg.rotation.z = 0.58 + i * 0.12; tail.add(seg)
-        }
-        const sting = new THREE.Mesh(new THREE.ConeGeometry(0.055, 0.18, 7), lam(nearBlack)); sting.position.set(-0.26, 0.7, 0); sting.rotation.z = -1.0; tail.add(sting)
-        body.add(tail); tag(tail, 'tail')
-      } else if (morph === 'tick' || morph === 'mite') {
-        const round = new THREE.Mesh(new THREE.SphereGeometry(morph === 'tick' ? 0.22 : 0.17, 12, 8), lam(light))
-        round.scale.set(morph === 'tick' ? 1.3 : 1, 0.42, morph === 'tick' ? 0.92 : 1)
-        round.position.set(-0.02, 0.16, 0); body.add(round); tag(round, 'abdomen')
-        const ceph = new THREE.Mesh(new THREE.DodecahedronGeometry(0.09, 1), lam(dark)); ceph.scale.set(1.25, 0.55, 0.9); ceph.position.set(0.2, 0.145, 0); body.add(ceph); tag(ceph, 'ceph')
-        addEyes(ceph, 0.08, 0.01, 0.035, morph === 'mite' ? 2 : 4); addLegs(0.16, morph === 'tick' ? 0.27 : 0.22, 0.022)
-        if (morph === 'mite') for (let i = 0; i < 14; i++) {
-          const a = i / 14 * Math.PI * 2
-          const bristle = box(0.1, 0.008, 0.008, nearBlack, Math.cos(a) * 0.15, 0.2, Math.sin(a) * 0.15)
-          bristle.rotation.y = -a; body.add(bristle)
-        }
-      } else {
-        const abdomen = new THREE.Mesh(new THREE.SphereGeometry(0.2, 12, 9), lam(dark))
-        abdomen.scale.set(1.35 + (breed % 3) * 0.12, 0.68 + (breed % 2) * 0.12, 1); abdomen.position.set(-0.14, 0.2, 0); body.add(abdomen); tag(abdomen, 'abdomen')
-        const stripe = box(0.31, 0.025, 0.19, light, -0.16, 0.31, 0); stripe.rotation.y = (breed % 2 ? 0.35 : -0.28); body.add(stripe)
-        const ceph = new THREE.Mesh(new THREE.DodecahedronGeometry(0.14, 1), lam(light)); ceph.scale.set(1.15, 0.65, 0.92); ceph.position.set(0.18, 0.18, 0); body.add(ceph); tag(ceph, 'ceph')
-        addEyes(ceph, 0.13, 0.025, 0.055, breed % 3 === 0 ? 8 : 4); addLegs(0.21, 0.37 + (breed % 2) * 0.08, 0.025)
-        for (const z of [-0.045, 0.045]) { const fang = new THREE.Mesh(new THREE.ConeGeometry(0.024, 0.1, 6), lam(nearBlack)); fang.position.set(0.34, 0.12, z); fang.rotation.z = -1.15; body.add(fang) }
-      }
-      tag(body, 'arachnidBody')
-      break
-    }
+    // [L8-arachnid] 'arachnid' 已在函数开头交给 arachnidRender.buildArachnidEntityMesh（旧版只换皮模型移除）
     // v79：'corpserat' 已在函数开头交给 ratMesh.buildRatMesh（旧版方块模型移除）
     // v78：'wretch' 已在函数开头交给 wretchMesh.buildWretchMesh（旧版方块模型移除）
     case 'watcher': { // 观察者（Entity 96）：巨型眼球（直径约 1.2m，白色巩膜 + 深色虹膜 + 黑瞳），

@@ -160,7 +160,7 @@ export const TRADERS_SERVICES:readonly TradersService[]=[
  {id:'market',zone:'market',...point(155,105),services:['market','seal'],kind:'trade_counter',npc:'tang',label:'公共交易柜台'},
  {id:'employment',zone:'market',...point(155,116),services:['career','contract','report'],kind:'trade_terminal',label:'雇佣与业务登记'},
  {id:'vault_entry',zone:'vault_entry',...point(335,225),services:['inventory','evidence','seal'],kind:'trade_terminal',label:'保险库登记'},
- {id:'warehouse',zone:'bank',...point(155,138),services:['warehouse','inventory'],kind:'trade_counter',npc:'vesper',label:'兑换与寄存'},
+ {id:'warehouse',zone:'bank',...point(155,138),services:['warehouse','inventory'],kind:'trade_counter',label:'银行咨询与账户服务'},
  {id:'dispatch',zone:'transport',...point(600,365),services:['dispatch','contract','report','evidence'],kind:'trade_terminal',label:'业务与调度'},
  {id:'receiving',zone:'logistics',...point(315,252),services:['cargo','inspect'],kind:'trade_scale',label:'货物核验'},
  {id:'seal',zone:'logistics',...point(350,252),services:['seal','inventory'],kind:'trade_seal',label:'封签核验'},
@@ -169,7 +169,7 @@ export const TRADERS_SERVICES:readonly TradersService[]=[
 export const TRADERS_FIXED_PEOPLE=[
  {id:'laozhangfang',x:205,y:137.99,facing:Math.PI/2},{id:'kui',...point(348,217),facing:Math.PI/2},
  {id:'shen',x:106,y:72.0,facing:Math.PI/2},{id:'tang',x:97,y:65.95,facing:Math.PI/2},
- {id:'vesper',x:97,y:85.78,facing:Math.PI/2},{id:'dorian',x:214,y:154.18,facing:Math.PI/2}
+ {id:'lan',x:62,y:114.25,facing:Math.PI/2},{id:'candyman',x:84,y:123.2,facing:Math.PI/2}
 ]
 export function tradersServiceStructures():Structure[]{
  const a:Structure[]=TRADERS_SERVICES.map(s=>({kind:s.kind,x:s.x-1.2,y:s.y-.5,w:2.4,h:1,solid:true,data:{tradersId:'service_'+s.id,tradersModel:'servicebay',facility:true,faction:'bntg',room:s.zone,label:s.label,services:[...s.services],service:s.services[0],npc:s.npc??'',height:1.1}}))
